@@ -1,0 +1,321 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{180DEA91-88AF-4FEB-8B82-7F3716E118BB}</ProjectGuid>
+    <RootNamespace>Kaiplayer</RootNamespace>
+    <ProjectName>KaiNote</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v100</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v100</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">I:\Programy\Spell\src\hunspell;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">I:\Programy\Spell\src\win_api\Release_dll\libhunspell;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(LibraryPath)</LibraryPath>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <EmbedManifest>true</EmbedManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>I:\Programy\zlib-1.2.8;I:\Programy\Spell\src\hunspell;I:\Programy\WX 2.9.4\include;J:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;J:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;H:\Programy\freetype-2.6\include;I:\Programy\lua51\src;I:\Programy\WX 2.9.4\lib\vc_lib\mswud;J:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>wxmsw29ud_core.lib;wxbase29ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;strmbasd.lib;odbc32.lib;odbccp32.lib;ffms2D.lib;lua51_vc9.lib;freetype26MTd.lib;d3d9.lib;D3dx9d.lib;zlibwapid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>I:\Programy\zlib-1.2.8\contrib\vstudio\vc10\x86\ZlibDllDebug;J:\Program Files\Microsoft SDKs\Windows\v6.1\Lib;I:\Programy\Spell\src\win_api\Release_dll\libhunspell;I:\Programy\WX 2.9.4\lib\vc_lib;H:\Programy\freetype-2.6\objs\vc2010\Win32;J:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses\Debug;I:\Programy\lua51\Debug;J:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <TargetMachine>MachineX86</TargetMachine>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMTD.lib;</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>I:\Programy\zlib-1.2.8;H:\Programy\freetype-2.6\include;J:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses;I:\Programy\lua51\src;I:\Programy\WX 2.9.4\include;I:\Programy\WX 2.9.4\lib\vc_lib\mswu;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;J:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>wxmsw29u_core.lib;wxbase29u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;odbc32.lib;odbccp32.lib;lua51_vc9.lib;d3d9.lib;D3dx9.lib;ffms2.lib;freetype26MT.lib;strmbase.lib;zlibwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>I:\Programy\zlib-1.2.8\contrib\vstudio\vc10\x86\ZlibDllRelease;H:\Programy\freetype-2.6\objs\vc2010\Win32;J:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses\Release;I:\Programy\lua51\Release;I:\Programy\WX 2.9.4\lib\vc_lib;J:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;J:\Program Files\Microsoft SDKs\Windows\v6.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <PostBuildEvent>
+      <Command>..\AutoVersioning "$(ProjectDir)VersionKainote.h"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="audio_box.cpp" />
+    <ClCompile Include="audio_display.cpp" />
+    <ClCompile Include="audio_player_dsound2.cpp" />
+    <ClCompile Include="audio_spectrum.cpp" />
+    <ClCompile Include="Automation.cpp" />
+    <ClCompile Include="AutomationDialog.cpp" />
+    <ClCompile Include="AutomationProgress.cpp" />
+    <ClCompile Include="AutomationScriptsDialog.cpp" />
+    <ClCompile Include="AutomationToFile.cpp" />
+    <ClCompile Include="BitmapButton.cpp" />
+    <ClCompile Include="ChangeTime.cpp" />
+    <ClCompile Include="ColorChange.cpp" />
+    <ClCompile Include="colorspace.cpp" />
+    <ClCompile Include="ColorSpaceConverter.cpp" />
+    <ClCompile Include="config.cpp" />
+    <ClCompile Include="dialog_colorpicker.cpp" />
+    <ClCompile Include="DropFiles.cpp" />
+    <ClCompile Include="dshowplayer.cpp" />
+    <ClCompile Include="DshowRenderer.cpp" />
+    <ClCompile Include="EditBox.cpp" />
+    <ClCompile Include="fft.cpp" />
+    <ClCompile Include="findreplace.cpp" />
+    <ClCompile Include="FontCollector.cpp" />
+    <ClCompile Include="FontDialog.cpp" />
+    <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="Hotkeys.cpp" />
+    <ClCompile Include="kainoteApp.cpp" />
+    <ClCompile Include="kainoteMain.cpp" />
+    <ClCompile Include="KaraokeSplitting.cpp" />
+    <ClCompile Include="MatroskaParser.c" />
+    <ClCompile Include="mkv_wrap.cpp" />
+    <ClCompile Include="MyTextEditor.cpp" />
+    <ClCompile Include="NewCatalog.cpp" />
+    <ClCompile Include="NumCtrl.cpp" />
+    <ClCompile Include="OpennWrite.cpp" />
+    <ClCompile Include="OptionsDialog.cpp" />
+    <ClCompile Include="ProgressDialog.cpp" />
+    <ClCompile Include="ScriptInfo.cpp" />
+    <ClCompile Include="SpellChecker.cpp" />
+    <ClCompile Include="StyleList.cpp" />
+    <ClCompile Include="Stylelistbox.cpp" />
+    <ClCompile Include="StylePreview.cpp" />
+    <ClCompile Include="styles.cpp" />
+    <ClCompile Include="stylestore.cpp" />
+    <ClCompile Include="SubsDialogue.cpp" />
+    <ClCompile Include="SubsFile.cpp" />
+    <ClCompile Include="SubsGrid.cpp" />
+    <ClCompile Include="TabDialog.cpp" />
+    <ClCompile Include="TabPanel.cpp" />
+    <ClCompile Include="timeconv.cpp" />
+    <ClCompile Include="TimeCtrl.cpp" />
+    <ClCompile Include="TLDialog.cpp" />
+    <ClCompile Include="Toolbar.cpp" />
+    <ClCompile Include="Videobox.cpp" />
+    <ClCompile Include="VideoFfmpeg.cpp" />
+    <ClCompile Include="VideoFullscreen.cpp" />
+    <ClCompile Include="VideoRenderer.cpp" />
+    <ClCompile Include="VideoSlider.cpp" />
+    <ClCompile Include="VisualClips.cpp" />
+    <ClCompile Include="Visuals.cpp" />
+    <ClCompile Include="Vsfilterapi.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="audio_box.h" />
+    <ClInclude Include="audio_display.h" />
+    <ClInclude Include="audio_player_dsound2.h" />
+    <ClInclude Include="audio_spectrum.h" />
+    <ClInclude Include="Automation.h" />
+    <ClInclude Include="AutomationDialog.h" />
+    <ClInclude Include="AutomationProgress.h" />
+    <ClInclude Include="AutomationScriptsDialog.h" />
+    <ClInclude Include="AutomationToFile.h" />
+    <ClInclude Include="BitmapButton.h" />
+    <ClInclude Include="ChangeTime.h" />
+    <ClInclude Include="ColorChange.h" />
+    <ClInclude Include="colorspace.h" />
+    <ClInclude Include="ColorSpaceConverter.h" />
+    <ClInclude Include="config.h" />
+    <ClInclude Include="dialog_colorpicker.h" />
+    <ClInclude Include="DropFiles.h" />
+    <ClInclude Include="dshowplayer.h" />
+    <ClInclude Include="DshowRenderer.h" />
+    <ClInclude Include="EditBox.h" />
+    <ClInclude Include="fft.h" />
+    <ClInclude Include="findreplace.h" />
+    <ClInclude Include="FontCollector.h" />
+    <ClInclude Include="FontDialog.h" />
+    <ClInclude Include="Grid.h" />
+    <ClInclude Include="Toolbar.h" />
+    <ClInclude Include="VersionKainote.h" />
+    <ClInclude Include="Hotkeys.h" />
+    <ClInclude Include="kainoteApp.h" />
+    <ClInclude Include="kainoteMain.h" />
+    <ClInclude Include="KaraokeSplitting.h" />
+    <ClInclude Include="MatroskaParser.h" />
+    <ClInclude Include="mkv_wrap.h" />
+    <ClInclude Include="MyTextEditor.h" />
+    <ClInclude Include="NewCatalog.h" />
+    <ClInclude Include="NumCtrl.h" />
+    <ClInclude Include="OpennWrite.h" />
+    <ClInclude Include="OptionsDialog.h" />
+    <ClInclude Include="ProgressDialog.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ScriptInfo.h" />
+    <ClInclude Include="SpellChecker.h" />
+    <ClInclude Include="StyleList.h" />
+    <ClInclude Include="Stylelistbox.h" />
+    <ClInclude Include="StylePreview.h" />
+    <ClInclude Include="styles.h" />
+    <ClInclude Include="stylestore.h" />
+    <ClInclude Include="SubsDialogue.h" />
+    <ClInclude Include="SubsFile.h" />
+    <ClInclude Include="SubsGrid.h" />
+    <ClInclude Include="TabDialog.h" />
+    <ClInclude Include="TabPanel.h" />
+    <ClInclude Include="timeconv.h" />
+    <ClInclude Include="TimeCtrl.h" />
+    <ClInclude Include="TLDialog.h" />
+    <ClInclude Include="Videobox.h" />
+    <ClInclude Include="VideoFfmpeg.h" />
+    <ClInclude Include="VideoFullscreen.h" />
+    <ClInclude Include="VideoRenderer.h" />
+    <ClInclude Include="VideoSlider.h" />
+    <ClInclude Include="Visuals.h" />
+    <ClInclude Include="Vsfilterapi.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Bitmaps\assprops.bmp" />
+    <None Include="Bitmaps\Automation.bmp" />
+    <None Include="Bitmaps\backward.bmp" />
+    <None Include="Bitmaps\backward1.bmp" />
+    <None Include="Bitmaps\blank.cur" />
+    <None Include="Bitmaps\Bold.bmp" />
+    <None Include="Bitmaps\button_audio_commit.bmp" />
+    <None Include="Bitmaps\button_audio_go.bmp" />
+    <None Include="Bitmaps\button_auto_commit.bmp" />
+    <None Include="Bitmaps\button_auto_go.bmp" />
+    <None Include="Bitmaps\button_auto_split.bmp" />
+    <None Include="Bitmaps\button_go_next_after_commit.bmp" />
+    <None Include="Bitmaps\button_karaoke.bmp" />
+    <None Include="Bitmaps\button_leadin.bmp" />
+    <None Include="Bitmaps\button_leadout.bmp" />
+    <None Include="Bitmaps\button_link.bmp" />
+    <None Include="Bitmaps\button_next.bmp" />
+    <None Include="Bitmaps\button_playafter.bmp" />
+    <None Include="Bitmaps\button_playbefore.bmp" />
+    <None Include="Bitmaps\button_playfirstfiveh.bmp" />
+    <None Include="Bitmaps\button_playfivehafter.bmp" />
+    <None Include="Bitmaps\button_playfivehbefore.bmp" />
+    <None Include="Bitmaps\button_playlastfiveh.bmp" />
+    <None Include="Bitmaps\button_playsel.bmp" />
+    <None Include="Bitmaps\button_playtoend.bmp" />
+    <None Include="Bitmaps\button_prev.bmp" />
+    <None Include="Bitmaps\button_spectrum.bmp" />
+    <None Include="Bitmaps\button_stop.bmp" />
+    <None Include="Bitmaps\Close.bmp" />
+    <None Include="Bitmaps\Convass.bmp" />
+    <None Include="Bitmaps\Convsrt.bmp" />
+    <None Include="Bitmaps\Editor.bmp" />
+    <None Include="Bitmaps\eyedropper.bmp" />
+    <None Include="Bitmaps\eyedropper.cur" />
+    <None Include="Bitmaps\Font.bmp" />
+    <None Include="Bitmaps\forward.bmp" />
+    <None Include="Bitmaps\forward1.bmp" />
+    <None Include="Bitmaps\Italic.bmp" />
+    <None Include="Bitmaps\kolor1.bmp" />
+    <None Include="Bitmaps\kolor2.bmp" />
+    <None Include="Bitmaps\kolor3.bmp" />
+    <None Include="Bitmaps\kolor4.bmp" />
+    <None Include="Bitmaps\open.bmp" />
+    <None Include="Bitmaps\opensubs.bmp" />
+    <None Include="Bitmaps\openvideo.bmp" />
+    <None Include="Bitmaps\pause.bmp" />
+    <None Include="Bitmaps\pause1.bmp" />
+    <None Include="Bitmaps\play.bmp" />
+    <None Include="Bitmaps\play1.bmp" />
+    <None Include="Bitmaps\playline.bmp" />
+    <None Include="Bitmaps\playline1.bmp" />
+    <None Include="Bitmaps\progressbar1.bmp" />
+    <None Include="Bitmaps\progressbar2.bmp" />
+    <None Include="Bitmaps\progressbar3.bmp" />
+    <None Include="Bitmaps\progresshandle.bmp" />
+    <None Include="Bitmaps\save.bmp" />
+    <None Include="Bitmaps\Savered.bmp" />
+    <None Include="Bitmaps\search.bmp" />
+    <None Include="Bitmaps\Settings.bmp" />
+    <None Include="Bitmaps\stop.bmp" />
+    <None Include="Bitmaps\stop1.bmp" />
+    <None Include="Bitmaps\Strike.bmp" />
+    <None Include="Bitmaps\Style.bmp" />
+    <None Include="Bitmaps\time.bmp" />
+    <None Include="Bitmaps\Under.bmp" />
+    <None Include="kai.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

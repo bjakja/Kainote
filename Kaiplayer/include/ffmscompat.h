@@ -1,0 +1,117 @@
+//  Copyright (c) 2007-2011 Fredrik Mellbin
+//
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
+
+#ifndef FFMSCOMPAT_H
+#define	FFMSCOMPAT_H
+
+// Defaults to libav compatibility, uncomment (when building with msvc) to force ffmpeg compatibility.
+//#define FFMS_USE_FFMPEG_COMPAT
+
+// Attempt to auto-detect whether or not we are using ffmpeg.  Newer versions of ffmpeg have their micro versions 100+
+#if LIBAVFORMAT_VERSION_MICRO > 99 || LIBAVUTIL_VERSION_MICRO > 99 || LIBAVCODEC_VERSION_MICRO > 99 || LIBSWSCALE_VERSION_MICRO > 99
+#	ifndef FFMS_USE_FFMPEG_COMPAT
+#		define FFMS_USE_FFMPEG_COMPAT
+#	endif
+#endif
+
+// Helper to handle checking for different versions in libav and ffmpeg
+// First version is required libav versio, second is required ffmpeg version
+#ifdef FFMS_USE_FFMPEG_COMPAT
+#  define VERSION_CHECK(LIB, cmp, u1, u2, u3, major, minor, micro) ((LIB) cmp (AV_VERSION_INT(major, minor, micro)))
+#else
+#  define VERSION_CHECK(LIB, cmp, major, minor, micro, u1, u2, u3) ((LIB) cmp (AV_VERSION_INT(major, minor, micro)))
+#endif
+
+#if defined(_WIN32) && !defined(__MINGW64_VERSION_MAJOR)
+#	define snprintf _snprintf
+#	ifdef __MINGW32__
+#		define fseeko fseeko64
+#		define ftello ftello64
+#	else
+#		define fseeko _fseeki64
+#		define ftello _ftelli64
+#	endif
+#endif
+
+// Compatibility with older/newer ffmpegs
+#ifdef LIBAVFORMAT_VERSION_INT
+#	if VERSION_CHECK(LIBAVFORMAT_VERSION_INT, <, 53, 17, 0, 53, 25, 0)
+#		define avformat_close_input(c) av_close_input_file(*c)
+#	endif
+#	if (LIBAVFORMAT_VERSION_INT) < (AV_VERSION_INT(54,2,0))
+#		define AV_DISPOSITION_ATTACHED_PIC 0xBEEFFACE
+#	endif
+#endif
+
+#ifdef LIBAVCODEC_VERSION_INT
+#	undef SampleFormat
+#	define FFMS_CALCULATE_DELAY (CodecContext->has_b_frames + (CodecContext->thread_count - 1))
+#   if VERSION_CHECK(LIBAVCODEC_VERSION_INT, <, 54, 25, 0, 54, 51, 100)
+#       define FFMS_ID(x) (CODEC_ID_##x)
+#       define FFMS_CodecID CodecID
+#   else
+#       define FFMS_ID(x) (AV_CODEC_ID_##x)
+#       define FFMS_CodecID AVCodecID
+#       undef CodecID
+#   endif
+#   if VERSION_CHECK(LIBAVCODEC_VERSION_INT, <, 54, 28, 0, 54, 59, 100)
+static void avcodec_free_frame(AVFrame **frame) { av_freep(frame); }
+#   endif
+#endif
+
+#ifdef LIBAVUTIL_VERSION_INT
+#	if VERSION_CHECK(LIBAVUTIL_VERSION_INT, <, 51, 27, 0, 51, 46, 100)
+#		define av_get_packed_sample_fmt(fmt) (fmt < AV_SAMPLE_FMT_U8P ? fmt : fmt - (AV_SAMPLE_FMT_U8P - AV_SAMPLE_FMT_U8))
+#	endif
+#	if VERSION_CHECK(LIBAVUTIL_VERSION_INT, <, 51, 44, 0, 51, 76, 100)
+#		include <libavutil/pixdesc.h>
+
+static const AVPixFmtDescriptor *av_pix_fmt_desc_get(AVPixelFormat pix_fmt) {
+	if (pix_fmt < 0 || pix_fmt >= AV_PIX_FMT_NB)
+		return NULL;
+
+	return &av_pix_fmt_descriptors[pix_fmt];
+}
+
+#	endif
+#endif
+
+enum  	PixelFormat {
+  PIX_FMT_NONE = -1, PIX_FMT_YUV420P, PIX_FMT_YUYV422, PIX_FMT_RGB24,
+  PIX_FMT_BGR24, PIX_FMT_YUV422P, PIX_FMT_YUV444P, PIX_FMT_YUV410P,
+  PIX_FMT_YUV411P, PIX_FMT_GRAY8, PIX_FMT_MONOWHITE, PIX_FMT_MONOBLACK,
+  PIX_FMT_PAL8, PIX_FMT_YUVJ420P, PIX_FMT_YUVJ422P, PIX_FMT_YUVJ444P,
+  PIX_FMT_XVMC_MPEG2_MC, PIX_FMT_XVMC_MPEG2_IDCT, PIX_FMT_UYVY422, PIX_FMT_UYYVYY411,
+  PIX_FMT_BGR8, PIX_FMT_BGR4, PIX_FMT_BGR4_BYTE, PIX_FMT_RGB8,
+  PIX_FMT_RGB4, PIX_FMT_RGB4_BYTE, PIX_FMT_NV12, PIX_FMT_NV21,
+  PIX_FMT_ARGB, PIX_FMT_RGBA, PIX_FMT_ABGR, PIX_FMT_BGRA,
+  PIX_FMT_GRAY16BE, PIX_FMT_GRAY16LE, PIX_FMT_YUV440P, PIX_FMT_YUVJ440P,
+  PIX_FMT_YUVA420P, PIX_FMT_VDPAU_H264, PIX_FMT_VDPAU_MPEG1, PIX_FMT_VDPAU_MPEG2,
+  PIX_FMT_VDPAU_WMV3, PIX_FMT_VDPAU_VC1, PIX_FMT_RGB48BE, PIX_FMT_RGB48LE,
+  PIX_FMT_RGB565BE, PIX_FMT_RGB565LE, PIX_FMT_RGB555BE, PIX_FMT_RGB555LE,
+  PIX_FMT_BGR565BE, PIX_FMT_BGR565LE, PIX_FMT_BGR555BE, PIX_FMT_BGR555LE,
+  PIX_FMT_VAAPI_MOCO, PIX_FMT_VAAPI_IDCT, PIX_FMT_VAAPI_VLD, PIX_FMT_YUV420P16LE,
+  PIX_FMT_YUV420P16BE, PIX_FMT_YUV422P16LE, PIX_FMT_YUV422P16BE, PIX_FMT_YUV444P16LE,
+  PIX_FMT_YUV444P16BE, PIX_FMT_VDPAU_MPEG4, PIX_FMT_DXVA2_VLD, PIX_FMT_RGB444BE,
+  PIX_FMT_RGB444LE, PIX_FMT_BGR444BE, PIX_FMT_BGR444LE, PIX_FMT_Y400A,
+  PIX_FMT_NB
+};
+
+#endif // FFMSCOMPAT_H

@@ -1,0 +1,229 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+/////////////////////////////////////////////////////////////////////////////
+// Polish (Poland) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_PLK)
+LANGUAGE LANG_POLISH, SUBLANG_DEFAULT
+#pragma code_page(1250)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+AAAA                    ICON                    "kai.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+PLAY                    RCDATA                  "Bitmaps/play.png"
+STOP                    RCDATA                  "Bitmaps/stop.png"
+PAUSE                   RCDATA                  "Bitmaps/pause.png"
+BACKWARD                RCDATA                  "Bitmaps/backward.png"
+FORWARD                 RCDATA                  "Bitmaps/forward.png"
+PLAY1                   RCDATA                  "Bitmaps/play1.png"
+STOP1                   RCDATA                  "Bitmaps/stop1.png"
+PAUSE1                  RCDATA                  "Bitmaps/pause1.png"
+PLAYLINE                RCDATA                  "Bitmaps/playline.png"
+PLAYLINE1               RCDATA                  "Bitmaps/playline1.png"
+BACKWARD1               RCDATA                  "Bitmaps/backward1.png"
+FORWARD1                RCDATA                  "Bitmaps/forward1.png"
+PBAR                    RCDATA                  "Bitmaps/progressbar.png"
+PBARHANDLE              RCDATA                  "Bitmaps/progresshandle.png"
+OPENSUBS                RCDATA                  "Bitmaps/opensubs.png"
+OPENVIDEO               RCDATA                  "Bitmaps/openvideo.png"
+SAVE                    RCDATA                  "Bitmaps/Save.png"
+SAVEAS                  RCDATA                  "Bitmaps/saveas.png"
+SAVEALL                 RCDATA                  "Bitmaps/saveall.png"
+REDO                    RCDATA                  "Bitmaps/Redo.png"
+UNDO                    RCDATA                  "Bitmaps/Undo.png"
+CLOSE                   RCDATA                  "Bitmaps/Close.png"
+STYLES                  RCDATA                  "Bitmaps/Style.png"
+TIMES                   RCDATA                  "Bitmaps/time.png"
+EDITOR                  RCDATA                  "Bitmaps/Editor.png"
+ASSPROPS                RCDATA                  "Bitmaps/assprops.png"
+CONVASS                 RCDATA                  "Bitmaps/Convass.png"
+CONVSRT                 RCDATA                  "Bitmaps/Convsrt.png"
+AUTOMATION              RCDATA                  "Bitmaps/Automation.png"
+SEARCH                  RCDATA                  "Bitmaps/search.png"
+SETTINGS                RCDATA                  "Bitmaps/Settings.png"
+AUDIOFROMVIDEO          RCDATA                  "Bitmaps/OpenAudioFromVideo.png"
+OPENAUDIO               RCDATA                  "Bitmaps/OpenAudio.png"
+CLOSEAUDIO              RCDATA                  "Bitmaps/CloseAudio.png"
+RECENTAUDIO             RCDATA                  "Bitmaps/RecentAudio.png"
+RECENTSUBS              RCDATA                  "Bitmaps/RecentSubs.png"
+RECENTVIDEO             RCDATA                  "Bitmaps/RecentVideo.png"
+PLAYMENU                RCDATA                  "Bitmaps/PlayMenu.png"
+PAUSEMENU               RCDATA                  "Bitmaps/PauseMenu.png"
+SETSTARTTIME            RCDATA                  "Bitmaps/Setstarttime.png"
+SETENDTIME              RCDATA                  "Bitmaps/Setendtime.png"
+PREVFRAME               RCDATA                  "Bitmaps/PrevFrame.png"
+NEXTFRAME               RCDATA                  "Bitmaps/NextFrame.png"
+VIDEOONSTIME            RCDATA                  "Bitmaps/Videoonstime.png"
+VIDEOONETIME            RCDATA                  "Bitmaps/Videoonetime.png"
+SELLINES                RCDATA                  "Bitmaps/sellines.png"
+FINDREPLACE             RCDATA                  "Bitmaps/FindReplace.png"
+CONVERT	                RCDATA                  "Bitmaps/Convert.png"
+CONVMDVD                RCDATA                  "Bitmaps/Convmdvd.png"
+CONVMPL2                RCDATA                  "Bitmaps/Convmpl2.png"
+CONVTMP                 RCDATA                  "Bitmaps/Convtmp.png"
+SAVETL	                RCDATA                  "Bitmaps/SaveTl.png"
+HIDETAGS                RCDATA                  "Bitmaps/HideTags.png"
+FONTCOLLECTOR           RCDATA                  "Bitmaps/FontCollector.png"
+EXIT	                RCDATA                  "Bitmaps/Exit.png"
+ABOUT	                RCDATA                  "Bitmaps/About.png"
+HELPERS	                RCDATA                  "Bitmaps/Helpers.png"
+SORT                    RCDATA                  "Bitmaps/Sort.png"
+SORTSEL                 RCDATA                  "Bitmaps/SortSel.png"
+MOVE                    RCDATA                  "Bitmaps/Move.png"
+FRZ	                    RCDATA                  "Bitmaps/FRZ.png"
+FRXY                    RCDATA                  "Bitmaps/FRXY.png"
+SCALE                   RCDATA                  "Bitmaps/Scale.png"
+CLIPRECT                RCDATA                  "Bitmaps/cliprect.png"
+DRAWING                 RCDATA                  "Bitmaps/Drawing.png"
+CLIP                    RCDATA                  "Bitmaps/Clip.png"
+CHECK                   RCDATA                  "Bitmaps/Check.png"
+EYEDROPPER_TOOL         RCDATA                  "Bitmaps/eyedropper.png"
+BOLD                    RCDATA                  "Bitmaps/Bold.png"
+ITALIC                  RCDATA                  "Bitmaps/Italic.png"
+UNDER                   RCDATA                  "Bitmaps/Under.png"
+STRIKE                  RCDATA                  "Bitmaps/Strike.png"
+FONTS                   RCDATA                  "Bitmaps/Font.png"
+KOLOR1                  RCDATA                  "Bitmaps/kolor1.png"
+KOLOR2                  RCDATA                  "Bitmaps/kolor2.png"
+KOLOR3                  RCDATA                  "Bitmaps/kolor3.png"
+KOLOR4                  RCDATA                  "Bitmaps/kolor4.png"
+BUTTON_PREV             RCDATA                  "Bitmaps/button_prev.png"
+BUTTON_NEXT             RCDATA                  "Bitmaps/button_next.png"
+BUTTON_PLAYSEL          RCDATA                  "Bitmaps/button_playsel.png"
+BUTTON_STOP             RCDATA                  "Bitmaps/button_stop.png"
+BUTTON_PLAYFIVEHBEFORE  RCDATA                  "Bitmaps/button_playfivehbefore.png"
+BUTTON_PLAYFIVEHAFTER   RCDATA                  "Bitmaps/button_playfivehafter.png"
+BUTTON_PLAYFIRSTFIVEH   RCDATA                  "Bitmaps/button_playfirstfiveh.png"
+BUTTON_PLAYLASTFIVEH    RCDATA                  "Bitmaps/button_playlastfiveh.png"
+BUTTON_PLAYTOEND        RCDATA                  "Bitmaps/button_playtoend.png"
+BUTTON_LEADIN           RCDATA                  "Bitmaps/button_leadin.png"
+BUTTON_LEADOUT          RCDATA                  "Bitmaps/button_leadout.png"
+BUTTON_AUDIO_COMMIT     RCDATA                  "Bitmaps/button_audio_commit.png"
+BUTTON_AUDIO_GOTO       RCDATA                  "Bitmaps/button_audio_go.png"
+BUTTON_PLAYAFTER        RCDATA                  "Bitmaps/button_playafter.png"
+BUTTON_PLAYBEFORE       RCDATA                  "Bitmaps/button_playbefore.png"
+BUTTON_AUTO_COMMIT      RCDATA                  "Bitmaps/button_auto_commit.png"
+BUTTON_AUTO_GO          RCDATA                  "Bitmaps/button_auto_go.png"
+BUTTON_AUTO_SPLIT       RCDATA                  "Bitmaps/button_auto_split.png"
+BUTTON_NEXT_A_COMMIT    RCDATA                  "Bitmaps/button_go_next_after_commit.png"
+BUTTON_KARAOKE          RCDATA                  "Bitmaps/button_karaoke.png"
+BUTTON_SPECTRUM         RCDATA                  "Bitmaps/button_spectrum.png"
+BUTTON_LINK             BITMAP                  "Bitmaps/button_link.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+WXWINDOWMENU MENU
+BEGIN
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&Cascade",                    4002
+        MENUITEM "Tile &Horizontally",          4001
+        MENUITEM "Tile &Vertically",            4005
+        MENUITEM "",                            65535
+        MENUITEM "&Arrange Icons",              4003
+        MENUITEM "&Next",                       4004
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+WXCURSOR_BLANK          CURSOR                  "Bitmaps/blank.cur"
+EYEDROPPER_CURSOR       CURSOR                  "Bitmaps/eyedropper.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION NumVersionKainote
+ PRODUCTVERSION NumVersionKainote
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041504b0"
+        BEGIN
+            VALUE "Comments", "Edytor napisów"
+            VALUE "CompanyName", "Bakura & Spó³a"
+            VALUE "FileDescription", "Kainote edytor napisów"
+            VALUE "FileVersion", VersionKainote
+            VALUE "InternalName", "Kainote"
+            VALUE "LegalCopyright", "Copyright Bakura (C) 2012-2015"
+            VALUE "OriginalFilename", "KaiNote.EXE"
+            VALUE "ProductName", "Kainote edytor napisów"
+            VALUE "ProductVersion", VersionKainote
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x415, 1200
+    END
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Polish (Poland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

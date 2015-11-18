@@ -1,0 +1,595 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ColorChange.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DropFiles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EditBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="findreplace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kainoteApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kainoteMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NewCatalog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OpennWrite.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Stylelistbox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="styles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stylestore.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsDialogue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsGrid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="timeconv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Videobox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoSlider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BitmapButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpellChecker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionsDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hotkeys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dialog_colorpicker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="colorspace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TLDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mkv_wrap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MatroskaParser.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StyleList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FontDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NumCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChangeTime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TabPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TabDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="audio_box.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="audio_display.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="audio_spectrum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fft.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="audio_player_dsound2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KaraokeSplitting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Automation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationToFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationProgress.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationScriptsDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StylePreview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoFfmpeg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dshowplayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgressDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DshowRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoFullscreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FontCollector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyTextEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualClips.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vsfilterapi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Toolbar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorSpaceConverter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Visuals.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ColorChange.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DropFiles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EditBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="findreplace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kainoteApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kainoteMain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NewCatalog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OpennWrite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Stylelistbox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="styles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stylestore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsDialogue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="timeconv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeCtrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Videobox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoSlider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BitmapButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpellChecker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hotkeys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dialog_colorpicker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colorspace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TLDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MatroskaParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mkv_wrap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StyleList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FontDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NumCtrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChangeTime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TabPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TabDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="audio_box.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="audio_display.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="audio_spectrum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fft.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="audio_player_dsound2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KaraokeSplitting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Automation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationToFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationProgress.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationScriptsDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StylePreview.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoFfmpeg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dshowplayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgressDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DshowRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoFullscreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FontCollector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyTextEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vsfilterapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VersionKainote.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Toolbar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorSpaceConverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Visuals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="kai.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\open.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\play.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\stop.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\pause.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\backward.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\forward.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\play1.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\stop1.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\pause1.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\backward1.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\forward1.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\progressbar1.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\progressbar2.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\progressbar3.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\progresshandle.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\opensubs.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\openvideo.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\save.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\Close.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\Style.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\time.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\Editor.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\assprops.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\Convass.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\Convsrt.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\search.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\Savered.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\Settings.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\blank.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\playline.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\playline1.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\eyedropper.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\Bold.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\Italic.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\Under.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\Strike.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\Font.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\kolor1.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\kolor2.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\kolor3.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\kolor4.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_prev.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_next.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_playsel.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_stop.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_playfivehbefore.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_playfivehafter.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_playfirstfiveh.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_playlastfiveh.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_playtoend.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_leadin.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_leadout.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_audio_commit.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_audio_go.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\Automation.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_playafter.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_playbefore.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_auto_commit.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_auto_go.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_auto_split.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_go_next_after_commit.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_karaoke.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_spectrum.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_link.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\eyedropper.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>
