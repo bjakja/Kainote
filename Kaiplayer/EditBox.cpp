@@ -1115,33 +1115,30 @@ wxString EditBox::GetVisual(int type)
 {
 	//wxLogStatus("EGetClip");
 	wxString txt=TextEdit->GetValue();
-	wxString xytype= (type==0)? "x" : "y";
+	//wxString xytype= (type==0)? "x" : "y";
+	wxString Res;
 	wxRegEx re;
+	bool found=false;
 	if(Visual==VECTORCLIP || Visual==CLIPRECT){
-		re.Compile("\\\\(i?clip[^\\}]+)", wxRE_ADVANCED);
+		found=FindVal("(i?clip[^\\)]+)", &Res);
 	}else if(Visual==VECTORDRAW){
 		re.Compile("}(m[^{]*){\\\\p0}", wxRE_ADVANCED);
 	}else if(Visual==MOVE){
-		re.Compile("\\\\move([^\\}]+)", wxRE_ADVANCED);
-	}else if(Visual==SCALE){
-		re.Compile("\\\\fsc"+xytype+"([^\\}]+)", wxRE_ADVANCED);
-	}else if(Visual==ROTATEZ){
-		re.Compile("\\\\frz?([^\\}]+)", wxRE_ADVANCED);
-	}else if(Visual==ROTATEXY){
-		re.Compile("\\\\fr"+xytype+"([^\\}]+)", wxRE_ADVANCED);
-	}else if(Visual==FAXY){
-		re.Compile("\\\\fa"+xytype+"([^\\}]+)", wxRE_ADVANCED);
+		found=FindVal("move\\(([^\\)]+)", &Res);
 	}
-	if(re.Matches(txt))
+	if(Visual==VECTORDRAW && re.Matches(txt))
 	{
 		wxString result =re.GetMatch(txt,1);
-		if(Visual==VECTORCLIP || Visual==CLIPRECT){
-			int rres = result.Replace(",",",");
-			if( rres == 3 && Visual==VECTORCLIP) {return "";}
-			else if( rres !=3 && Visual==CLIPRECT) {return "";} 
-		}
 		return result;
 	}
+	if(Visual==VECTORCLIP || Visual==CLIPRECT){
+		int rres = Res.Replace(",",",");
+		if( rres == 3 && Visual==VECTORCLIP) {return "";}
+		else if( rres !=3 && Visual==CLIPRECT) {return "";} 
+		return Res;
+	}
+
+	if(found){return Res;}
 	return "";
 }
 
@@ -1404,8 +1401,8 @@ D3DXVECTOR2 EditBox::GetPosnScale(D3DXVECTOR2 *scale, byte *AN,bool beforeCursor
 			ppos.y = (y/2);
 		}
 	}
-	wxLogStatus("scale %f %f, %f %f", scale->x,scale->y,ppos.x,ppos.y);
-	//wxLogStatus(" pos %i %i", ppos.x, ppos.y);
+	//wxLogStatus("scale %f %f, %f %f", scale->x,scale->y,ppos.x,ppos.y);
+	
 	return ppos;
 }
 
@@ -1445,7 +1442,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		}
 	}
 	//dummytext="";
-	wxLogStatus(*text);
+	//wxLogStatus(*text);
 	if(visible && panel->Video->IsShown()){
 		panel->Video->OpenSubs(text);OnVideo=true;
 		if(panel->Video->GetState()==Paused){panel->Video->Render();}
@@ -1532,7 +1529,7 @@ wxString EditBox::GetTags(const wxString &text) const
 
 void EditBox::OnCursorMoved(wxCommandEvent& event)
 {
-	if(Visual){TabPanel* pan=(TabPanel*)GetParent();
-		pan->Video->SetVisual(GetVisual(),line->Start.mstime, line->End.mstime,false,true);
+	if(Visual==SCALE||Visual==ROTATEZ||Visual==ROTATEXY){TabPanel* pan=(TabPanel*)GetParent();
+		pan->Video->SetVisual(GetVisual(),line->Start.mstime, line->End.mstime);
 	}
 }

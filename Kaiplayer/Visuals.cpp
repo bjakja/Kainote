@@ -15,6 +15,7 @@ Visuals::Visuals(wxWindow *_parent)
 	drawtxt=true;
 	parent=_parent;
 	subssize.x=-1;
+	invClip=false;
 	//firstangle=0;
 }
 	
@@ -23,7 +24,7 @@ Visuals::~Visuals()
 	Points.clear();
 }
 	
-void Visuals::SetVisual(int _visual,bool keeporg,wxString vis,int _start,int _end,wxSize wsize, wxSize ssize, D3DXVECTOR2 linepos, D3DXVECTOR2 _scale, byte An, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device)
+void Visuals::SetVisual(int _visual,wxString vis,int _start,int _end,wxSize wsize, wxSize ssize, D3DXVECTOR2 linepos, D3DXVECTOR2 _scale, byte An, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device)
 {
 	Visual=_visual;
 	subssize=ssize;
@@ -41,72 +42,109 @@ void Visuals::SetVisual(int _visual,bool keeporg,wxString vis,int _start,int _en
 	SetNewSize(wsize, _line, _font, _device);
 	_x=0;
 	_y=0;
+	if(Visual<VECTORCLIP){
+		from = to = D3DXVECTOR2(linepos.x/wspw,linepos.y/wsph);
+		lastmove = D3DXVECTOR2(0, 0);
+	}
 	if(Visual>=VECTORCLIP){
 		if(Visual==VECTORDRAW){
 			_x=linepos.x/scale.x;
 			_y=linepos.y/scale.y;
-		}
+		}else{vis=vis.AfterFirst('(');}
+
 		SetClip(vis,_x,_y);
 	}else if(Visual==CLIPRECT){
 		int x1=0,x2=subssize.x,y1=0,y2=subssize.y;
 		wxString rest;
 		Points.clear();
 		if(vis!=""){
-			int x1=wxAtoi(vis.BeforeFirst(',',&rest));
-			int y1=wxAtoi(rest.BeforeFirst(',',&rest));
-			int x2=wxAtoi(rest.BeforeFirst(',',&rest));
-			int y2=wxAtoi(rest);
+			if(vis.StartsWith("i")){invClip=true;}else{invClip=false;}
+			vis.BeforeFirst('(',&vis);
+			x1=wxAtoi(vis.BeforeFirst(',',&rest));
+			wxString y11=rest;//niestety u¿ywaj¹c rest do tej samej operacji coœ zwraca póŸniejsze liczby:/
+			y1=wxAtoi(y11.BeforeFirst(',',&rest));
+			wxString x22=rest;
+			x2=wxAtoi(x22.BeforeFirst(',',&rest));
+			y2=wxAtoi(rest);
 		}
-		Points.push_back(ClipPoint(x1,y1,"r",true));
-		Points.push_back(ClipPoint(x2,y2,"r",true));
-	}
-	if(Visual<VECTORCLIP){
-		from = to = D3DXVECTOR2(linepos.x/wspw,linepos.y/wsph);
-		lastmove = D3DXVECTOR2(0, 0);
-	}
-	if(Visual==SCALE){
+		Points.push_back(ClipPoint(x1, y1,"r",true));
+		Points.push_back(ClipPoint(x2, y2,"r",true));
+	}else if(Visual==MOVE){
+		moveStart=start;
+		moveEnd=end;
+		if(vis!=""){
+			times="";
+			double tbl[6]= {linepos.x/wspw, linepos.y/wsph, linepos.x/wspw, linepos.y/wsph, 0, end-start};
+			wxStringTokenizer tkz(vis,",");
+			int ipos=0;
+			while(tkz.HasMoreTokens()){
+				wxString token=tkz.GetNextToken();
+				token.ToDouble(&tbl[ipos]);
+				if(ipos>3){
+					times<<","<<token;
+				}
+				ipos++;
+			}
+			
+			from.x=tbl[0]/wspw; from.y=tbl[1]/wsph; to.x=tbl[2]/wspw, to.y=tbl[3]/wsph;
+			moveStart=(int)tbl[4]+start;
+			if(tbl[4]>tbl[5]){tbl[5]=end;}
+			moveEnd=(int)tbl[5]+start;
+			//wxLogStatus(" move %f %f %f %f, %i %i "+times, (float)tbl[0], (float)tbl[1], (float)tbl[2], (float)tbl[3], (int)tbl[4], (int)tbl[5]);
+		}
+		
+	}else if(Visual==SCALE){
 		int addy=(AN>3)?60 : -60, addx= (AN % 3 == 0)?-60 : 60;
 		to.x=from.x+(scale.x*addx);
 		to.y=from.y+(scale.y*addy);
-	}
-	if(Visual==ROTATEZ){
+	}else if(Visual==ROTATEZ){
 		TabPanel* pan=(TabPanel*)parent->GetParent();
 		wxString res;
-		//wxLogStatus("rotatez");
 		if(pan->Edit->FindVal("frz?([^\\\\}]+)", &res)){
-			//wxLogStatus("frz "+res);
 			double result=0; res.ToDouble(&result);
 			lastmove.y=result;
 			lastmove.x+=lastmove.y;
 		}
-		if(!keeporg){org=from;}
+		if(pan->Edit->FindVal("org\\(([^\\)]+)", &res)){
+			wxString rest;
+			double orx,ory;
+			if(res.BeforeFirst(',',&rest).ToDouble(&orx)){org.x=orx/wspw;}
+			if(rest.ToDouble(&ory)){org.y=ory/wspw;}
+		//wxLogStatus("%f %f", orx,ory);
+		}else{org=from;}
 		to=org;
 	}
-	if(Visual==ROTATEXY){
+	else if(Visual==ROTATEXY){
 		TabPanel* pan=(TabPanel*)parent->GetParent();
 		wxString res;
 		scale=D3DXVECTOR2(0,0);//skala robi tu za przechowywanie wczeœniejszych wartoœci by nie dawaæ dodatkowych zmiennych.
-		//wxLogStatus("rotatexx");
 		if(pan->Edit->FindVal("frx([^\\\\}]+)", &res)){
-			//wxLogStatus("frx "+res);
 			double result=0; res.ToDouble(&result);
-			scale.y=-result;
+			scale.y= result;
+		//wxLogStatus("%f ", scale.y);
 		}
 		if(pan->Edit->FindVal("fry([^\\\\}]+)", &res)){
 			//wxLogStatus("fry "+res);
 			double result=0; res.ToDouble(&result);
 			scale.x= result;
+		//wxLogStatus("%f ", scale.x);
 		}
-		if(!keeporg){org=from;}
+		if(pan->Edit->FindVal("org\\(([^\\)]+)", &res)){
+			wxString rest;
+			double orx,ory;
+			if(res.BeforeFirst(',',&rest).ToDouble(&orx)){org.x=orx/wspw;}
+			if(rest.ToDouble(&ory)){org.y=ory/wsph;}
+		}else{org=from;}
+		//wxLogStatus("org %f %f %f %f", org.x, org.y, from.x, from.y);
 		firstmove=to;
 		angle=scale;
 		lastmove=org;
 	}
 }
 
-void Visuals::Move()
+void Visuals::Move(int time)
 {
-	D3DXVECTOR2 v4[4];
+	D3DXVECTOR2 v4[8];
 	v4[0].x=from.x;
 	v4[0].y=from.y;
 	v4[1].x=to.x;
@@ -115,9 +153,33 @@ void Visuals::Move()
 	v4[2].y=to.y;
 	v4[3].x=to.x+5.0f;
 	v4[3].y=to.y;
+
+	
+	float tmpt=time-moveStart;
+	float tmpt1=moveEnd-moveStart;
+	float actime= tmpt/tmpt1;
+	float distx, disty;
+	if(time < moveStart){distx=from.x, disty= from.y;}
+	else if(time > moveEnd){distx=to.x, disty= to.y;}
+	else {
+		distx= from.x -((from.x-to.x)*actime); 
+		disty = from.y -((from.y-to.y)*actime);
+	}
+	//wxLogStatus(" times %i %i %i %i %i, %f %f", moveStart, moveEnd, start, end, time, distx, disty);
+	//dokoñcz to i dorób liniê do obracania.
+	v4[4].x=distx-15.0f;
+	v4[4].y=disty;
+	v4[5].x=distx+15.0f;
+	v4[5].y=disty;
+	v4[6].x=distx;
+	v4[6].y=disty-15.0f;
+	v4[7].x=distx;
+	v4[7].y=disty+15.0f;
 	
 	line->Begin();
 	line->Draw(v4,2,0xFFFF0000);
+	line->Draw(&v4[4],2,0xFFFF0000);
+	line->Draw(&v4[6],2,0xFFFF0000);
 	line->End();
 
 	v4[0].x=from.x-5.0f;
@@ -202,7 +264,7 @@ void Visuals::Scale()
 void Visuals::RotateZ()
 {
 	float rad =0.01745329251994329576923690768489f;
-	float radius= sqrt(pow(abs(org.x - from.x),2) + pow(abs(org.y - from.y),2));
+	float radius= sqrt(pow(abs(org.x - from.x),2) + pow(abs(org.y - from.y),2)) +40;
 	D3DXVECTOR2 v2[6];
 	MYVERTEX v5[726];
 	CreateMYVERTEX(&v5[0], org.x, org.y + (radius + 10.f), 0x4CFFA928);
@@ -220,8 +282,8 @@ void Visuals::RotateZ()
 		
 	}
 	if(radius){
-		float xx1= org.x + (radius * sin ( lastmove.y * rad ));
-		float yy1= org.y + (radius * cos ( lastmove.y * rad ));
+		float xx1= org.x + ((radius-40) * sin ( lastmove.y * rad ));
+		float yy1= org.y + ((radius-40) * cos ( lastmove.y * rad ));
 		v2[0].x=xx1-5.0f;
 		v2[0].y=yy1;
 		v2[1].x=xx1+5.0f;
@@ -229,6 +291,14 @@ void Visuals::RotateZ()
 		v2[2]=org;
 		v2[3].x=xx1;
 		v2[3].y=yy1;
+		float xx2= xx1 + (radius * sin ( (lastmove.y+90) * rad ));
+		float yy2= yy1 + (radius * cos ( (lastmove.y+90) * rad ));
+		float xx3= xx1 + (radius * sin ( (lastmove.y-90) * rad ));
+		float yy3= yy1 + (radius * cos ( (lastmove.y-90) * rad ));
+		v2[4].x=xx2;
+		v2[4].y=yy2;
+		v2[5].x=xx3;
+		v2[5].y=yy3;
 		line->SetWidth(10.f);
 		line->Begin();
 		line->Draw(v2,2,0xAAFF0000);
@@ -236,6 +306,7 @@ void Visuals::RotateZ()
 		line->SetWidth(2.f);
 		line->Begin();
 		line->Draw(&v2[2],2,0xFFFF0000);
+		line->Draw(&v2[4],2,0xFFFF0000);
 		line->End();
 	}
 	v2[0]=org;
@@ -281,12 +352,12 @@ void Visuals::RotateXY()
 	D3DXMATRIX matTramsate;
 	
 	D3DXMatrixRotationYawPitchRoll(&matRotate, D3DXToRadian(-angle.x),D3DXToRadian(angle.y),0);
-	
+//wxLogStatus("angle x %f y %f ", angle.x, angle.y);
 	if(from!=org){
 		float txx=((from.x/s.x)*60)-30;
 		float tyy=((from.y/s.y)*60)-30;
 		//wxLogStatus(" %f %f %f %f", from.x-org.x, from.y-org.y, txx, tyy);
-		D3DXMatrixTranslation(&matTramsate,txx,-tyy,0.0f);
+		D3DXMatrixTranslation(&matTramsate,txx-(xxx),-(tyy-(yyy*30)),0.0f);
 		matRotate=matTramsate*matRotate;
 	}
 	device->SetTransform(D3DTS_WORLD, &matRotate);
@@ -418,23 +489,32 @@ void Visuals::ClipRect()
 	v2[7].x=s.x;
 	v2[7].y=(Points[1].y/wsph)-1;
 
-	MYVERTEX v24[12];
-	CreateMYVERTEX(&v24[0],0, 0, 0x88000000);
-	CreateMYVERTEX(&v24[1],s.x, 0, 0x88000000);
-	CreateMYVERTEX(&v24[2],v2[4].x, v2[2].y, 0x88000000);
-	CreateMYVERTEX(&v24[3],v2[0].x, v2[2].y, 0x88000000);
-	CreateMYVERTEX(&v24[4],v2[0].x, v2[6].y, 0x88000000);
-	CreateMYVERTEX(&v24[5],0, v2[5].y, 0x88000000);
-	CreateMYVERTEX(&v24[6],s.x, v2[5].y, 0x88000000);
-	CreateMYVERTEX(&v24[7],0, v2[5].y, 0x88000000);
-	CreateMYVERTEX(&v24[8],v2[0].x, v2[6].y, 0x88000000);
-	CreateMYVERTEX(&v24[9],v2[4].x, v2[6].y, 0x88000000);
-	CreateMYVERTEX(&v24[10],v2[4].x, v2[2].y, 0x88000000);
-	CreateMYVERTEX(&v24[11],s.x, 0, 0x88000000);
+	if(!invClip){
+		MYVERTEX v24[12];
+		CreateMYVERTEX(&v24[0],0, 0, 0x88000000);
+		CreateMYVERTEX(&v24[1],s.x, 0, 0x88000000);
+		CreateMYVERTEX(&v24[2],v2[4].x, v2[2].y, 0x88000000);
+		CreateMYVERTEX(&v24[3],v2[0].x, v2[2].y, 0x88000000);
+		CreateMYVERTEX(&v24[4],v2[0].x, v2[6].y, 0x88000000);
+		CreateMYVERTEX(&v24[5],0, v2[5].y, 0x88000000);
+		CreateMYVERTEX(&v24[6],s.x, v2[5].y, 0x88000000);
+		CreateMYVERTEX(&v24[7],0, v2[5].y, 0x88000000);
+		CreateMYVERTEX(&v24[8],v2[0].x, v2[6].y, 0x88000000);
+		CreateMYVERTEX(&v24[9],v2[4].x, v2[6].y, 0x88000000);
+		CreateMYVERTEX(&v24[10],v2[4].x, v2[2].y, 0x88000000);
+		CreateMYVERTEX(&v24[11],s.x, 0, 0x88000000);
 
-	HRN(device->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE), "fvf failed");
-    HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLEFAN, 4, v24, sizeof(MYVERTEX) ),"primitive failed");
-    HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(MYVERTEX) ),"primitive failed");
+		HRN(device->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE), "fvf failed");
+		HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLEFAN, 4, v24, sizeof(MYVERTEX) ),"primitive failed");
+		HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(MYVERTEX) ),"primitive failed");
+	}else{
+		MYVERTEX v24[4];
+		CreateMYVERTEX(&v24[0],v2[0].x, v2[2].y, 0x88000000);
+		CreateMYVERTEX(&v24[1],v2[4].x, v2[2].y, 0x88000000);
+		CreateMYVERTEX(&v24[2],v2[0].x, v2[6].y, 0x88000000);
+		CreateMYVERTEX(&v24[3],v2[5].x, v2[6].y, 0x88000000);
+		HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v24, sizeof(MYVERTEX) ),"primitive failed");
+	}
 
 	line->Begin();
 	line->Draw(v2,2,0xFFFF0000);
@@ -469,7 +549,7 @@ void Visuals::Draw(int time)
 	switch(Visual)
 	{
 	case MOVE:
-		Move();
+		Move(time);
 		break;
 	case SCALE:
 		Scale();
@@ -505,21 +585,21 @@ wxString Visuals::GetVisual(bool _org)
 	if(_org){
 		result=wxString::Format("\\org(%f,%f)", org.x*wspw, org.y*wsph);
 	}else if(Visual==CLIPRECT && Points.size()>1){
-		result=wxString::Format("\\clip(%i,%i,%i,%i)", Points[0].x, Points[0].y, Points[1].x, Points[1].y);
+		result=wxString::Format("\\%sclip(%i,%i,%i,%i)",(invClip)? "i" : "", Points[0].x, Points[0].y, Points[1].x, Points[1].y);
 	}else if(Visual==MOVE){
-		result=wxString::Format("\\move(%f,%f,%f,%f)", from.x*wspw, from.y*wsph, to.x*wspw, to.y*wsph);
+		result=wxString::Format("\\move(%03f,%03f,%03f,%03f"+times+")", from.x*wspw, from.y*wsph, to.x*wspw, to.y*wsph);
 	}else if(Visual==SCALE){
 		if(to.x==from.x){to.x=from.x+60.f;}
 		if(to.y==from.y){to.y=from.y+60.f;}
 		//wxLogStatus("to %f %f from %f %f", to.x, to.y, from.x, from.y);
 		if(type!=1){
 			float res=(abs(to.x - from.x))/60.f;
-			result+=wxString::Format("\\fscx%f", res*100);
+			result+=wxString::Format("\\fscx%03f", res*100);
 			scale.x=res;
 			//wxLogStatus("fscx %f to-from %f", res, to.x - from.x);
 		}if(type!=0){
 			float res=(abs(to.y - from.y))/60.f;
-			result+=wxString::Format("\\fscy%f", res*100);
+			result+=wxString::Format("\\fscy%03f", res*100);
 			scale.y=res;
 			//wxLogStatus("fscy %f to - from %f ", res, to.y-from.y);
 		}
@@ -528,20 +608,20 @@ wxString Visuals::GetVisual(bool _org)
 		float angle = lastmove.x - atan2((org.y-to.y), (org.x-to.x)) * (180.f / 3.1415926536f);
 		angle = fmodf(angle + 360.f, 360.f);
 		//wxLogStatus("angle %f %f", angle, lastmove.x);
-		result=wxString::Format("\\frz%f", angle);
+		result=wxString::Format("\\frz%03f", angle);
 		lastmove.y=angle;
 		
 	}else if(Visual==ROTATEXY){
 		if(type!=1){
 			angle.x = (to.x - firstmove.x) + scale.x;
 			angle.x = fmodf(angle.x + 360.f, 360.f);
-			result += wxString::Format("\\fry%f", angle.x);
+			result += wxString::Format("\\fry%03f", angle.x);
 			//wxLogStatus("rot x %f", angle.x);
 		}
 		if(type!=0){
-			angle.y = (to.y - firstmove.y) + scale.y;
-			angle.y = fmodf((-angle.y) + 360.f, 360.f);
-			result += wxString::Format("\\frx%f", angle.y);
+			float angy = (to.y - firstmove.y) - scale.y;// zmieniony plus na minus by nie trzebaby³o 
+			angle.y = (fmodf((-angy) + 360.f, 360.f));//przetrzymywaæ scale i angle w minusach.
+			result += wxString::Format("\\frx%03f", angle.y);
 			//wxLogStatus("rot y %f", angle.y);
 		}
 		//wxLogStatus("rot xy %f, %f", angle.x, angle.y);
@@ -571,10 +651,34 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 			pan->Video->Render();
 		}
 		if(Visual==ROTATEXY){
-			scale.x=angle.x;
-			scale.y= -angle.y;// vobsub jeden frx ma zamieniony i st¹d te minusy;
+			scale=angle;// vobsub jeden frx ma zamieniony i st¹d te minusy // nie ma ju¿ minusów i precz z nimi;
 		}
+		if(!hasArrow){parent->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 		grabbed=-1;
+	}
+
+	if(Visual==CLIPRECT && !holding){
+
+		bool setarrow=false;
+		for(int i = 0; i<2; i++){
+			int pointx = Points[i].x/wspw, pointy = Points[i].y/wsph;
+			if(abs(x-pointx)<5){
+				setarrow=true;
+				parent->SetCursor(wxCURSOR_SIZEWE);
+				hasArrow=false;break;}
+			if(abs(y-pointy)<5){
+				setarrow=true;
+				parent->SetCursor(wxCURSOR_SIZENS);
+				hasArrow=false;break;
+			}
+		}
+		if(!setarrow && !hasArrow){parent->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
+		//return;
+	}else if(Visual==SCALE && !holding){
+		if(abs(lastmove.x-x)<8 && abs(lastmove.y-y)<8){if(hasArrow){parent->SetCursor(wxCURSOR_SIZING);hasArrow=false;}}
+		else if(abs(lastmove.x-x)<8 && abs(from.y-y)<8){if(hasArrow){parent->SetCursor(wxCURSOR_SIZEWE);hasArrow=false;}}
+		else if(abs(lastmove.y-y)<8 && abs(from.x-x)<8){if(hasArrow){parent->SetCursor(wxCURSOR_SIZENS);hasArrow=false;}}
+		else if(!hasArrow){parent->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 	}
 	
 	if(click){
@@ -583,8 +687,13 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 			grabbed=-1;
 			for(int i = 0; i<2; i++){
 				int pointx = Points[i].x/wspw, pointy = Points[i].y/wsph;
-				if(abs(x-pointx)<3){diffs.x=(pointx)-x; grabbed=i;break;}
-				if(abs(y-pointy)<3){diffs.y=(pointy)-y; grabbed=i+2;break;}
+				if(abs(x-pointx)<5){
+					diffs.x=(pointx)-x; grabbed=i;
+					break;}
+				if(abs(y-pointy)<5){
+					diffs.y=(pointy)-y; grabbed=i+2;
+					break;
+				}
 			}
 			return;
 		}
@@ -592,16 +701,27 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 			if(evt.LeftDown()){type=0;}
 			if(evt.RightDown()){type=1;}
 			if(evt.MiddleDown()){type=2;}
-			if(abs(lastmove.x-x)<8){grabbed=0;type=0;}
-			if(abs(lastmove.y-y)<8){grabbed=1;type=1;}
-			if(abs(lastmove.x-x)<8 && abs(lastmove.y-y)<8){grabbed=2;type=2;}
+			if(abs(lastmove.x-x)<8 && abs(from.y-y)<8){grabbed=0;type=0;}
+			else if(abs(lastmove.y-y)<8 && abs(from.x-x)<8){grabbed=1;type=1;}
+			else if(abs(lastmove.x-x)<8 && abs(lastmove.y-y)<8){grabbed=2;type=2;}
 			diffs.x=lastmove.x-x;
 			diffs.y=lastmove.y-y;
+			if(type==0){parent->SetCursor(wxCURSOR_SIZEWE);}
+			if(type==1){parent->SetCursor(wxCURSOR_SIZENS);}
+			if(type==2){parent->SetCursor(wxCURSOR_SIZING);}
+			hasArrow=false;
+			if(grabbed==-1){
+				int addy=(AN>3)?60 : -60, addx= (AN % 3 == 0)?-60 : 60;
+				diffs.x=(from.x-x)+(addx*scale.x);
+				diffs.y=(from.y-y)+(addy*scale.y);
+			}
 			//wxLogStatus("%i %f %f %f %f %i %i",type, lastmove.x, lastmove.y, from.x, from.y, x, y);
 		}
 		else if(Visual==ROTATEZ){
 			parent->CaptureMouse();
 			grabbed=-1;
+			parent->SetCursor(wxCURSOR_SIZING);
+			hasArrow=false;
 			if(abs(org.x-x)<8 && abs(org.y-y)<8){
 				grabbed=100; 
 				diffs.x=org.x-x;
@@ -624,9 +744,18 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 				diffs.y=org.y-y;
 			}
 			firstmove= D3DXVECTOR2(x,y);
+			if(type==0){parent->SetCursor(wxCURSOR_SIZEWE);}
+			if(type==1){parent->SetCursor(wxCURSOR_SIZENS);}
+			if(type==2){parent->SetCursor(wxCURSOR_SIZING);}
+			hasArrow=false;
 		}else if(Visual==MOVE){
 
-
+			parent->SetCursor(wxCURSOR_SIZING );
+			hasArrow=false;
+			if(abs(from.x-x)<8 && abs(from.y-y)<8){grabbed=2;type=2;}
+			to.x=x;to.y=y;
+			pan->Edit->SetVisual(GetVisual(),true,type);
+			//pan->Video->Render();
 		}
 		to.x=x;to.y=y;
 
@@ -657,14 +786,20 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 			pan->Edit->SetVisual(GetVisual(true),true,grabbed);//type tak¿e ma liczbê 100 by by³o rozpoznawalne.
 			
 			return;
-		}else if(Visual==SCALE && grabbed!=-1){
+		}else if(Visual==SCALE){
 			//wxLogStatus("type hold %i %i",type, grabbed);
-			if(type!=1){
+			//if(grabbed!= -1){
+				if(type!=1){
+					to.x=x+diffs.x;
+				}
+				if(type!=0){
+					to.y=y+diffs.y;
+				}
+				wxLogStatus("hold %f %f",to.x, to.y);
+			/*}else{
 				to.x=x+diffs.x;
-			}
-			if(type!=0){
 				to.y=y+diffs.y;
-			}
+			}*/
 			goto done;
 		}	
 		//}else if((Visual==SCALE || Visual==ROTATEXY)&& newmove){

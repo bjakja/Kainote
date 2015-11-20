@@ -113,7 +113,7 @@ void Visuals::SetClip(wxString clip, float x, float y)
 		}
 	
 	}
-
+	//wxLogStatus(clip);
 	if(Points.empty()){
 		AddMove(wxPoint(((subssize.x)/(wspw*scale.x))/2, ((subssize.y)/(wsph*scale.y))/2),0);
 	}
@@ -131,10 +131,10 @@ wxString Visuals::GetClip()
 		ClipPoint pos=Points[i];
 		int x= pos.x;
 		int y= pos.y;
-		if(cntb){
+		if(cntb && !pos.start){
 			clip<<x<<" "<<y<<" ";
 			cntb++;
-			if(cntb>2 && pos.type=="b"){cntb=0;}
+			//if(cntb>2 && pos.type=="b"){cntb=0;}
 		}else{
 			if(spline){clip<<"c ";spline=false;}
 			clip<<pos.type<<" "<<x<<" "<<y<<" ";
@@ -158,7 +158,7 @@ int Visuals::CheckPos(wxPoint pos, bool retlast)
 	pos.x =(pos.x*wspw)-_x; pos.y =(pos.y*wsph)-_y;
 	for(size_t i=0; i<Points.size(); i++)
 	{
-		if(Points[i].IsInPos(pos,2)){return i;}
+		if(Points[i].IsInPos(pos,5)){return i;}
 	}
 	return (retlast)? Points.size() : -1;
 }
@@ -174,6 +174,8 @@ void Visuals::AddCurve(wxPoint pos, int whereis, wxString type)
 {
 	pos.x =(pos.x*wspw)-_x; pos.y =(pos.y*wsph)-_y;
 	wxPoint oldpos;
+	if(whereis!=Points.size()){whereis++;}//gdy wstawiamy beziera w œrodku to trzeba mu przesun¹æ punkt o 1,
+	//bo stworzy nam krzyw¹ zamiast poprzedniej linii
 	oldpos.x=Points[whereis-1].x;
 	oldpos.y=Points[whereis-1].y;
 	int diffx=(pos.x-oldpos.x)/3.0f;
@@ -207,8 +209,8 @@ void Visuals::AddMove(wxPoint pos, int whereis)
 	
 void Visuals::DrawLine(int i)
 {
-	
-	D3DXVECTOR2 v2[2]={Points[i-1].GetVector(),Points[i].GetVector()};
+	int diff = (Points[i-1].type=="s")? 2 : 1;
+	D3DXVECTOR2 v2[2]={Points[i-diff].GetVector(),Points[i].GetVector()};
 	line->Draw(v2, 2, 0xFFFF0000);
 	DrawRect(i-1);
 	/*MYVERTEX v5[3];
@@ -226,21 +228,24 @@ int Visuals::DrawCurve(int i, bool bspline)
 	std::vector<D3DXVECTOR2> v4;
 	
 	int pts=3;
+	ClipPoint tmp(0,0,"r",true);
+	if(Points[i-1].type=="s"){tmp=Points[i-1];Points[i-1]=Points[i-2];}
 	if(bspline){
 		
 		int acpos=i-1;
-		int bssize=0;
-		int spos=i;
-		while(1){if(spos>=(int)Points.size() || Points[spos].type!="s"){break;}bssize++;spos++;}
-
+		int bssize=1;
+		int spos=i+1;
+		while(spos<(int)Points.size()){
+			if(Points[spos].start){break;}
+			bssize++;spos++;
+		}
 		pts=bssize;
 		bssize++;
 		for(int k=0; k<bssize; k++){
 			Curve(acpos, &v4, true, bssize, k);
 		}
-		
 		D3DXVECTOR2 *v2=new D3DXVECTOR2[pts+2];
-
+		if(tmp.type=="s"){Points.insert(Points.begin()+i-1,tmp);}
 		for(int j=0, g=i-1; j<bssize; j++, g++)
 		{
 			v2[j]=Points[g].GetVector();
@@ -251,14 +256,15 @@ int Visuals::DrawCurve(int i, bool bspline)
 		
 	}else{
 		Curve(i-1, &v4,false);
+		if(tmp.type=="s"){Points[i-1]=tmp;}
 		D3DXVECTOR2 v2[4]={Points[i-1].GetVector(),Points[i].GetVector(),Points[i+1].GetVector(),Points[i+2].GetVector()};
 		line->Draw(v2, 2, 0xFF0000FF);
 		line->Draw(&v2[2], 2, 0xFF0000FF);
 	}
 	line->Draw(&v4[0], v4.size(), 0xFFFF0000);
 
-	
-	for(int j=0; j<pts; j++){DrawCircle(i+j-1);}
+	DrawRect(i-1);
+	for(int j=1; j<pts; j++){DrawCircle(i+j-1);}
 	return pts;
 }
 
@@ -303,7 +309,7 @@ void Visuals::DrawCircle(int i)
 	
 	
 	
-	HRN(device->SetFVF( D3DFVF_XYZRHW|D3DFVF_DIFFUSE), "fvf failed");
+	HRN(device->SetFVF( D3DFVF_XYZ|D3DFVF_DIFFUSE), "fvf failed");
 	HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLEFAN, 18, v5, sizeof(MYVERTEX) ),"primitive failed");
 	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 18, &v5[21], sizeof(MYVERTEX) ),"primitive failed");
 	line->Begin();
@@ -317,8 +323,10 @@ void Visuals::Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bspline, int 
 	for(int g=0; g<4; g++)
 	{
 		if(acpt>(spoints-1)){acpt=0;}
+		//if(g==0 && Points[pos].type=="s" ){acpt--;}
 		x[g]=(Points[pos+acpt].x+_x)/wspw;
 		y[g]=(Points[pos+acpt].y+_y)/wsph;
+		//if(g==0 && Points[pos].type=="s" ){acpt++;}
 		acpt++;
 	}
 	
@@ -370,6 +378,14 @@ void Visuals::OnMouseEvent(wxMouseEvent &event)
 	bool ctrl=event.ControlDown();
 	//bool click=event.LeftDown();
 	drawtxt=(event.MiddleUp())?false : true;
+
+	if(!event.ButtonDown() && !event.LeftIsDown()){
+		//wxLogStatus(" bdown %i", (int)event.ButtonDown());
+		int pos = CheckPos(xy);
+		if(pos!= -1 && hasArrow){
+			parent->SetCursor(wxCURSOR_SIZING);hasArrow=false;
+		}else if(pos== -1 && !hasArrow){parent->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
+	}
 	
 	if(event.ButtonUp()){
 		TabPanel* pan=(TabPanel*)parent->GetParent();

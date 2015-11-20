@@ -1044,7 +1044,7 @@ void VideoRend::ChangeVobsub(bool vobsub)
 	pan->Video->ChangeStream();
 }
 
-void VideoRend::SetVisual(wxString visual, int start, int end, bool remove, bool keeporg)
+void VideoRend::SetVisual(wxString visual, int start, int end, bool remove)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
 	SAFE_DELETE(pan->Edit->dummytext);
@@ -1061,7 +1061,7 @@ void VideoRend::SetVisual(wxString visual, int start, int end, bool remove, bool
 		D3DXVECTOR2 scale(1,1);
 		byte an=0;
 		D3DXVECTOR2 lpos=(pan->Edit->Visual==VECTORCLIP)? D3DXVECTOR2(0,0) : pan->Edit->GetPosnScale(&scale, &an, !(pan->Edit->Visual==VECTORDRAW || pan->Edit->Visual== MOVE), pan->Edit->Visual==VECTORDRAW);
-		Vclips->SetVisual(pan->Edit->Visual,keeporg, visual,start, end, GetClientSize(),wxSize(nx,ny),lpos, scale, an, lines, m_font, d3device);
+		Vclips->SetVisual(pan->Edit->Visual, visual,start, end, GetClientSize(),wxSize(nx,ny),lpos, scale, an, lines, m_font, d3device);
 		VisEdit=true;
 		if(pan->Edit->Visual>FAXY){
 			pan->Edit->SetClip(Vclips->GetClip(),true);

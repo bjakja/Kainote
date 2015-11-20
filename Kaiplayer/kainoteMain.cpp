@@ -154,7 +154,7 @@ kainoteFrame::kainoteFrame(wxWindow* parent)
 	AppendBitmap(SubsMenu,ID_SCALE, _T("W³¹cz / Wy³¹cz skalowanie"), _T("W³¹cz / Wy³¹cz skalowanie tekstu"),wxBITMAP_PNG("scale"),false);
 	AppendBitmap(SubsMenu,ID_ROTATEZ, _T("W³¹cz / Wy³¹cz obracanie w osi Z"), _T("W³¹cz / Wy³¹cz obracanie tekstu w osi Z"),wxBITMAP_PNG("frz"),false);
 	AppendBitmap(SubsMenu,ID_ROTATEXY, _T("W³¹cz / Wy³¹cz obracanie w osi X i Y"), _T("W³¹cz / Wy³¹cz obracanie tekstu w osi X i Y"),wxBITMAP_PNG("frxy"),false);
-	AppendBitmap(SubsMenu,ID_FAXY, _T("W³¹cz / Wy³¹cz pochylanie tekstu"), _T("W³¹cz / Wy³¹cz pochylanie tekstu"),wxBITMAP_PNG("clip"),false);
+	//AppendBitmap(SubsMenu,ID_FAXY, _T("W³¹cz / Wy³¹cz pochylanie tekstu"), _T("W³¹cz / Wy³¹cz pochylanie tekstu"),wxBITMAP_PNG("clip"),false);
 	AppendBitmap(SubsMenu,ID_CLIPRECT, _T("W³¹cz / Wy³¹cz wycinki prostok¹tne"), _T("W³¹cz / Wy³¹cz tworzenie wycinków prostok¹tnych"),wxBITMAP_PNG("cliprect"),false);
 	AppendBitmap(SubsMenu,ID_CLIPS, _T("W³¹cz / Wy³¹cz wycinki wektorowe"), _T("W³¹cz / Wy³¹cz tworzenie wycinków wektorowych"),wxBITMAP_PNG("clip"),false);
 	AppendBitmap(SubsMenu,ID_DRAWINGS, _T("W³¹cz / Wy³¹cz rysunki wektorowe"), _T("W³¹cz / Wy³¹cz tworzenie rysunków"),wxBITMAP_PNG("drawing"),false);
@@ -190,7 +190,8 @@ kainoteFrame::kainoteFrame(wxWindow* parent)
 	Connect(ID_ADDPAGE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnPageAdd);
     Connect(ID_CLOSEPAGE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnPageClose);
 	Connect(ID_NEXT_TAB,ID_PREV_TAB,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnPageChange);
-    Connect(ID_SAVE,ID_SETVIDATEND,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
+	//tutaj dodawaj nowe idy
+    Connect(ID_SAVE,ID_SORTSEL,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
 	Connect(7000,7011,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
 	Connect(ID_OPENSUBS,ID_HELPERS,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
 	Connect(ID_P5SEC,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnP5Sec);
@@ -278,7 +279,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 
 		return;
 	}
-
+	//wxLogStatus("%i", id);
 	if(id==ID_SAVE){
 		Save(false);
 	}else if(id==ID_SAVEAS){
@@ -1267,6 +1268,7 @@ void kainoteFrame::OnMenuOpened(wxMenuEvent& event)
 	bool editor=GetTab()->edytor;
 	for(int i=ID_SAVE;i<=ID_AUTO;i++){//po kolejne idy zajrzyj do enuma z pliku h, ostatni jest ID_AUTO
 		forms=true;
+		if(i==ID_FAXY){continue;}
 		if(i>=ID_ASSPROPS&&i<ID_ASS){forms=form<SRT;}//menager stylów i sinfo
 		else if(i==ID_ASS){forms=form>SSA;}//konwersja na ass
 		else if(i==ID_SRT){forms=form!=SRT;}//konwersja na srt

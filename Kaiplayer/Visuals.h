@@ -78,8 +78,8 @@ public:
 		v->Color = Color;	
 	}
 	//visuals
-	void SetVisual(int visual,bool keeporg, wxString vis,int _start,int _end,wxSize wsize, wxSize ssize, D3DXVECTOR2 linepos, D3DXVECTOR2 scale, byte AN, LPD3DXLINE line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 device);
-	void Move();
+	void SetVisual(int visual, wxString vis,int _start,int _end,wxSize wsize, wxSize ssize, D3DXVECTOR2 linepos, D3DXVECTOR2 scale, byte AN, LPD3DXLINE line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 device);
+	void Move(int time);
 	void Scale();
 	void RotateZ();
 	void RotateXY();
@@ -98,6 +98,7 @@ public:
 	D3DXVECTOR2 org;
 	byte AN;
 	unsigned char type;
+
 private:
 	LPD3DXLINE line;
 	LPD3DXFONT font;
@@ -108,6 +109,9 @@ private:
 
 	int start;
 	int end;
+	int moveStart;
+	int moveEnd;
+	wxString times;
 	
 	unsigned char Visual;
 	
@@ -123,6 +127,8 @@ private:
 	wxWindow *parent;
 	wxString coords;
 	RECT cpos;
+	bool hasArrow;
+	bool invClip;
 	DECLARE_EVENT_TABLE()
 };
 

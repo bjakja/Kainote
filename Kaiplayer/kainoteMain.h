@@ -169,7 +169,7 @@ enum{// nowe idy dodawaj na dole, bo ludzie bêd¹ mieli niespodziankê przy odpale
 	ID_SETVIDATEND,
 	ID_REDO1,
 	ID_UNDO1,
-	ID_SORTSEL,
+	ID_SORTSEL,//dodaj¹c tu nowe idy pamiêtaj by zmieniæ je w connect kainote main
 	
 
 	ID_OPENSUBS=6800,

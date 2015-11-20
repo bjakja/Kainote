@@ -99,7 +99,7 @@ class VideoRend : public wxWindow
 		void ChangeVobsub(bool vobsub=false);
 		void SetEvent(wxMouseEvent& event);
 		wxArrayString GetStreams();
-		void SetVisual(wxString visual, int start, int end, bool remove=false, bool keeporg=false);
+		void SetVisual(wxString visual, int start, int end, bool remove=false);
 		//void EndofStream();
 		byte *GetFramewithSubs(bool subs, bool *del);
 		
