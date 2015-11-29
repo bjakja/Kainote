@@ -7,15 +7,17 @@
 #include <d3dx9.h>
 // wspw i h - potrzebne s¹ do przejœcia z rozdzielczoœci napisów i do niej
 // _x i _y to punkt przemieszczenia w przypadku rysunków.
-static float wspw, wsph, _x, _y;
+
 
 enum{
-	MOVE=1,
+	CHANGEPOS=1,
+	MOVE,
+	//MOVEONCURVE,
 	SCALE,
 	ROTATEZ,
 	ROTATEXY,
 	CLIPRECT,
-	FAXY,
+	//FAXY,
 	VECTORCLIP,
 	VECTORDRAW
 };
@@ -28,8 +30,6 @@ struct MYVERTEX
 	D3DCOLOR Color;	
 };
 
-//void CreateMYVERTEX (MYVERTEX *v, float X, float Y, D3DCOLOR Color);
-
 
 class ClipPoint
 {
@@ -37,7 +37,7 @@ public:
 	ClipPoint(int x, int y, wxString type, bool isstart);
 	ClipPoint();
 	bool IsInPos(wxPoint pos, int diff);
-	D3DXVECTOR2 GetVector();
+	D3DXVECTOR2 GetVector(bool wsp=true);
 	int wx();
 	int wy();
 	int x;
@@ -54,10 +54,10 @@ public:
 	//clips
 	void DrawClip();
 	void SetClip(wxString clip, float x, float y);
-	void SetNewSize(wxSize wsize, LPD3DXLINE line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 device);
+	void SetNewSize(wxSize wsize);
 	wxString GetClip();
 	void SetPos(int x, int y);
-	int CheckPos(wxPoint pos, bool retlast=false);
+	int CheckPos(wxPoint pos, bool retlast=false, bool wsp=true);
 	void MovePoint(wxPoint pos, int point);
 	void AddCurve(wxPoint pos, int whereis, wxString type="b");
 	void AddCurvePoint(wxPoint pos, int whereis);
@@ -65,8 +65,8 @@ public:
 	void AddMove(wxPoint pos, int whereis);
 	void DrawLine(int i);
 	int DrawCurve(int i,bool bspline=false);
-	void DrawRect(int i);
-	void DrawCircle(int i);
+	void DrawRect(int i, bool wsp=true);
+	void DrawCircle(int i, bool wsp=true);
 	void OnMouseEvent(wxMouseEvent &event);
 	void Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bspline, int spoints=4, int acpt=0);
 	D3DXVECTOR2 CalcWH();
@@ -79,7 +79,9 @@ public:
 	}
 	//visuals
 	void SetVisual(int visual, wxString vis,int _start,int _end,wxSize wsize, wxSize ssize, D3DXVECTOR2 linepos, D3DXVECTOR2 scale, byte AN, LPD3DXLINE line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 device);
+	void Position();
 	void Move(int time);
+	void MoveOnCurve(int time);
 	void Scale();
 	void RotateZ();
 	void RotateXY();
@@ -98,6 +100,7 @@ public:
 	D3DXVECTOR2 org;
 	byte AN;
 	unsigned char type;
+	static float wspw, wsph, _x, _y;
 
 private:
 	LPD3DXLINE line;
@@ -111,11 +114,14 @@ private:
 	int end;
 	int moveStart;
 	int moveEnd;
+	int x, y;
+	int curvelines;
 	wxString times;
 	
 	unsigned char Visual;
 	
 	wxSize subssize;
+	wxSize widsize;
 	D3DXVECTOR2 scale;
 	int grabbed;
 	bool drawtxt;

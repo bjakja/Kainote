@@ -14,8 +14,8 @@
 #if vertices
 struct CUSTOMVERTEX
 {
-    D3DXVECTOR3 position; // The position
-    FLOAT       tu, tv;   // The texture coordinates
+	D3DXVECTOR3 position; // The position
+	FLOAT       tu, tv;   // The texture coordinates
 };
 #define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_TEX1)
 #endif
@@ -25,7 +25,7 @@ VideoRend::VideoRend(wxWindow *_parent, const wxSize &size)
 	:wxWindow(_parent,-1,wxDefaultPosition, size)//wxFULL_REPAINT_ON_RESIZE
 {
 	hwnd=GetHWND();
-	
+
 	//---------------------------- format
 	d3dformat=D3DFORMAT('21VN');
 	//-----------------------------------
@@ -66,7 +66,7 @@ VideoRend::VideoRend(wxWindow *_parent, const wxSize &size)
 
 bool VideoRend::InitDX(bool reset)
 {
-	
+
 	//wxMutexLocker lock(videomutex);
 	//wxMutexLocker lock(videomutex);
 	if(!reset){
@@ -78,20 +78,20 @@ bool VideoRend::InitDX(bool reset)
 		SAFE_RELEASE(lines);
 		SAFE_RELEASE(m_font);
 	}
-	
+
 	HRESULT hr;
 
-    D3DPRESENT_PARAMETERS d3dpp;
-    ZeroMemory( &d3dpp, sizeof(d3dpp) );
-    d3dpp.Windowed               = TRUE;
+	D3DPRESENT_PARAMETERS d3dpp;
+	ZeroMemory( &d3dpp, sizeof(d3dpp) );
+	d3dpp.Windowed               = TRUE;
 	d3dpp.hDeviceWindow          = hwnd;
-    d3dpp.BackBufferWidth        = rt3.right;
+	d3dpp.BackBufferWidth        = rt3.right;
 	d3dpp.BackBufferHeight       = rt3.bottom;
 	d3dpp.BackBufferCount	     = 1;
-    d3dpp.SwapEffect			 = D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_DISCARD;//D3DSWAPEFFECT_COPY;//
-    d3dpp.BackBufferFormat       = D3DFMT_X8R8G8B8;
-    d3dpp.Flags					 = D3DPRESENTFLAG_VIDEO;//|D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
-	d3dpp.PresentationInterval   = D3DPRESENT_INTERVAL_DEFAULT;
+	d3dpp.SwapEffect			 = D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_DISCARD;//D3DSWAPEFFECT_COPY;//
+	d3dpp.BackBufferFormat       = D3DFMT_X8R8G8B8;
+	d3dpp.Flags					 = 0;//|D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
+	//d3dpp.PresentationInterval   = D3DPRESENT_INTERVAL_DEFAULT;
 
 	if(reset){
 		hr=d3device->Reset(&d3dpp);
@@ -105,14 +105,14 @@ bool VideoRend::InitDX(bool reset)
 		} 
 	}
 	//hr = d3device->SetSamplerState( 0, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP );
-    //hr = d3device->SetSamplerState( 0, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP );
+	//hr = d3device->SetSamplerState( 0, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP );
 	hr = d3device->SetSamplerState( 0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR );
-    hr = d3device->SetSamplerState( 0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR );
+	hr = d3device->SetSamplerState( 0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR );
 	hr = d3device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
-    hr = d3device->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
+	hr = d3device->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
 	hr = d3device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-    hr = d3device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-    hr = d3device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	hr = d3device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	hr = d3device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	hr = d3device->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE);
 	hr = d3device->SetRenderState( D3DRS_LIGHTING, FALSE );
 	hr = d3device->SetRenderState( D3DRS_ZENABLE, D3DZB_TRUE);
@@ -123,47 +123,47 @@ bool VideoRend::InitDX(bool reset)
 	HR(hr,"Zawiod³o któreœ z ustawieñ dx");
 
 	D3DXMATRIX matOrtho; 
-    D3DXMATRIX matIdentity;
+	D3DXMATRIX matIdentity;
 
-    D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, rt3.right, rt3.bottom, 0, 0.0f, 1.0f);
-    D3DXMatrixIdentity(&matIdentity);
+	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, rt3.right, rt3.bottom, 0, 0.0f, 1.0f);
+	D3DXMatrixIdentity(&matIdentity);
 
-    HR(d3device->SetTransform(D3DTS_PROJECTION, &matOrtho), "Nie mo¿na ustawiæ matrixa projection");
-    HR(d3device->SetTransform(D3DTS_WORLD, &matIdentity), "Nie mo¿na ustawiæ matrixa world");
-    HR(d3device->SetTransform(D3DTS_VIEW, &matIdentity), "Nie mo¿na ustawiæ matrixa view");
+	HR(d3device->SetTransform(D3DTS_PROJECTION, &matOrtho), "Nie mo¿na ustawiæ matrixa projection");
+	HR(d3device->SetTransform(D3DTS_WORLD, &matIdentity), "Nie mo¿na ustawiæ matrixa world");
+	HR(d3device->SetTransform(D3DTS_VIEW, &matIdentity), "Nie mo¿na ustawiæ matrixa view");
 
 #if vertices
 	HR(d3device->CreateTexture(vwidth, vwidth, 1, D3DUSAGE_RENDERTARGET,
-          D3DFMT_X8R8G8B8,D3DPOOL_DEFAULT,&texture, NULL), "Nie mo¿na utworzyæ tekstury" );
+		D3DFMT_X8R8G8B8,D3DPOOL_DEFAULT,&texture, NULL), "Nie mo¿na utworzyæ tekstury" );
 
 	HR(texture->GetSurfaceLevel(0, &bars), "nie mo¿na utworzyæ powierzchni");
-	
+
 	d3device->CreateOffscreenPlainSurface(vwidth,vheight,d3dformat, D3DPOOL_DEFAULT,&MainStream,0);
 
 	HR(d3device->CreateVertexBuffer( 4*sizeof(CUSTOMVERTEX),D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX,D3DPOOL_DEFAULT, &vertex, NULL ),
 		"Nie mo¿na utworzyæ bufora wertex")
 
-    CUSTOMVERTEX* pVertices;
-    HR ( hr = vertex->Lock( 0, 0, (void**)&pVertices, 0 ), "nie mo¿na zablokowaæ bufora vertex" ); 
+		CUSTOMVERTEX* pVertices;
+	HR ( hr = vertex->Lock( 0, 0, (void**)&pVertices, 0 ), "nie mo¿na zablokowaæ bufora vertex" ); 
 
 	pVertices[0].position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-    pVertices[0].tu       = 0.0f;
-    pVertices[0].tv       = 0.0f; 
+	pVertices[0].tu       = 0.0f;
+	pVertices[0].tv       = 0.0f; 
 	pVertices[1].position = D3DXVECTOR3(vwidth, 0.0f, 0.0f);
-    pVertices[1].tu       = 1.0f;
-    pVertices[1].tv       = 0.0f;
+	pVertices[1].tu       = 1.0f;
+	pVertices[1].tv       = 0.0f;
 	pVertices[2].position = D3DXVECTOR3(vwidth, vheight, 0.0f);
-    pVertices[2].tu       = 1.0f;
-    pVertices[2].tv       = 1.0f; 
+	pVertices[2].tu       = 1.0f;
+	pVertices[2].tv       = 1.0f; 
 	pVertices[3].position = D3DXVECTOR3(0.0f, vheight, 0.0f);
-    pVertices[3].tu       = 0.0f;
-    pVertices[3].tv       = 1.0f;
-		
-    vertex->Unlock();
+	pVertices[3].tu       = 0.0f;
+	pVertices[3].tv       = 1.0f;
 
-	
+	vertex->Unlock();
+
+
 	//if (d3dformat != ddsd.Format) {
-		//wxLogStatus("Textura ma niew³aœciwy format"); return false;	
+	//wxLogStatus("Textura ma niew³aœciwy format"); return false;	
 	//}
 
 #else
@@ -184,39 +184,28 @@ void VideoRend::Render(bool Frame)
 	wxMutexLocker lock(videomutex);
 	HRESULT hr = S_OK;
 
-    //if (!parent->IsShown())return;
-
-    // Handle the loss of the Direct3D surface (for example, by switching
-    // to a full-screen command prompt and back again)
-    if( devicelost )
-    {//wxLogMessage("DeviceLost");
-        // Test the cooperative level to see if it's okay to render
-        if( FAILED( hr = d3device->TestCooperativeLevel() ) )
-        {
-            // If the device was lost, do not render until we get it back
-            if( D3DERR_DEVICELOST == hr ||
+	if( devicelost )
+	{
+		if( FAILED( hr = d3device->TestCooperativeLevel() ) )
+		{
+			if( D3DERR_DEVICELOST == hr ||
 				D3DERR_DRIVERINTERNALERROR == hr )
-                return;
+				return;
 
-            // Check if the device needs to be reset.
-            if( D3DERR_DEVICENOTRESET == hr )
-            {
-                // Reset the D3D environment
-                Clear();
-                InitDX();
-               
-            }
+			if( D3DERR_DEVICENOTRESET == hr )
+			{
+				Clear();
+				InitDX();
+			}
+			return;
+		}
 
-            return;
-        }
-
-        // TestCooperativeLevel() succeeded, so we have regained the device
-        devicelost = false;
-    }
+		devicelost = false;
+	}
 
 	hr = d3device->Clear( 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0,0,0), 1.0f, 0 );
 
-	
+
 
 #ifndef vertices
 	hr = d3device->StretchRect(MainStream,&rt5,bars,&rt4,D3DTEXF_LINEAR);
@@ -224,17 +213,17 @@ void VideoRend::Render(bool Frame)
 #endif
 
 
-    hr = d3device->BeginScene();
+	hr = d3device->BeginScene();
 
 #if vertices
-	
 
-    // Render the vertex buffer contents
-    hr = d3device->SetStreamSource( 0, vertex, 0, sizeof(CUSTOMVERTEX) );
-    hr = d3device->SetVertexShader( NULL );
-    hr = d3device->SetFVF( D3DFVF_CUSTOMVERTEX);
+
+	// Render the vertex buffer contents
+	hr = d3device->SetStreamSource( 0, vertex, 0, sizeof(CUSTOMVERTEX) );
+	hr = d3device->SetVertexShader( NULL );
+	hr = d3device->SetFVF( D3DFVF_CUSTOMVERTEX);
 	hr = d3device->SetTexture( 0, texture );
-    hr = d3device->DrawPrimitive( D3DPT_TRIANGLEFAN, 0, 2 );
+	hr = d3device->DrawPrimitive( D3DPT_TRIANGLEFAN, 0, 2 );
 #endif
 
 	if(Vclips){Vclips->Draw(time);}
@@ -242,7 +231,6 @@ void VideoRend::Render(bool Frame)
 	if(cross){
 		DRAWOUTTEXT(m_font,coords,rt1, (rt1.left < vectors[0].x)? 10 : 8 ,0xFFFFFFFF)
 		lines->SetWidth(3);
-		
 		hr=lines->Begin();
 		hr=lines->Draw(&vectors[0], 2, 0xFF000000);
 		hr=lines->Draw(&vectors[2], 2, 0xFF000000);
@@ -275,32 +263,32 @@ void VideoRend::Render(bool Frame)
 		hr=lines->Draw(&vectors[14], 2, 0xFFFFFFFF);
 		hr=lines->End();
 	}
-	
-	
-    // End the scene
-    hr = d3device->EndScene();
+
+
+	// End the scene
+	hr = d3device->EndScene();
 
 #if vertices
 	hr = d3device->StretchRect(MainStream,&rt5,bars,&rt4,D3DTEXF_LINEAR);
 	if(FAILED(hr)){wxLogStatus("cannot stretch main stream");}
 #endif
-	
+
 	hr = d3device->Present(NULL, &rt3, NULL, NULL );
-    if( D3DERR_DEVICELOST == hr ||
+	if( D3DERR_DEVICELOST == hr ||
 		D3DERR_DRIVERINTERNALERROR == hr )
-        devicelost = true;
+		devicelost = true;
 }
 
 
 bool VideoRend::DrawTexture(byte *nframe, bool copy)
 {
-	
+
 	wxMutexLocker lock(videomutex);
 	byte *fdata=NULL;
 	byte *texbuf;
 	byte bytes=(vformat==RGB32)? 4 : (vformat==YUY2)? 2 : 1;
-	
-	
+
+
 	D3DLOCKED_RECT d3dlr;
 	//wxLogStatus("kopiowanie");
 	if(nframe){	
@@ -314,25 +302,25 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 	else{
 		wxLogStatus("nie ma wskaŸnika bufora");return false;
 	}
-	
-	
+
+
 	if(instance){
 		framee->strides[0]= vwidth * bytes;
 		framee->planes[0]= fdata;
 		csri_render(instance,framee,(time/1000.0));
 	}
-	
-	
+
+
 	HR(MainStream->LockRect( &d3dlr,0, D3DLOCK_NOSYSLOCK), L"Nie mo¿na zablokowaæ bufora tekstury");//D3DLOCK_NOSYSLOCK
 
 	texbuf = static_cast<byte *>(d3dlr.pBits);
-		
+
 	diff=d3dlr.Pitch- (vwidth*bytes);
 	//wxLogStatus("diff %i", diff);	
 	//int check=0;	
 	if (!diff){memcpy(texbuf,fdata,(vheight*pitch));}
 	else{
-		
+
 		if(vformat>=YV12){	
 			for(int i=0; i <vheight; i++){
 				memcpy(texbuf,fdata,vwidth);
@@ -345,7 +333,7 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 			int hheight=vheight/2;
 			int fwidth=(vformat==NV12)? vwidth : vwidth/2;
 			int fdiff=(vformat==NV12)? diff : diff/2;
-			
+
 			for(int i=0; i <hheight; i++){
 				memcpy(texbuf,fdata,fwidth);
 				texbuf+=fwidth;
@@ -377,11 +365,11 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 				fdata+=fwidth;	
 			}
 		}
-		
+
 	}
 
 	MainStream->UnlockRect();
-	
+
 	return true;
 }
 
@@ -408,7 +396,7 @@ VideoRend::~VideoRend()
 	//SAFE_DELETE(VA);
 	//wxLogStatus("VFF");
 	SAFE_DELETE(VFF);
-	
+
 	//wxLogStatus("datas");
 	if(datas){delete[] datas;datas=NULL;}
 	//wxLogStatus("all");
@@ -416,7 +404,7 @@ VideoRend::~VideoRend()
 
 void VideoRend::Clear()
 {
-	
+
 	//wxLogStatus("MainStream");
 	SAFE_RELEASE(MainStream);
 	//wxLogStatus("bars");
@@ -458,14 +446,14 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 		resized=seek=cross=pbar=false;
 		vstate=None;Clear();SAFE_DELETE(VFF);
 	}
-	
+
 	time=0;
 	lastframe=0;
-	
-	
+
+
 	if(!Dshow){
 		SAFE_DELETE(vplayer);
-	
+
 		//VFF=new VideoFfmpeg(fname, Kaia->Frame->Tabs->GetSelection(),&success);
 		VFF=tmpvff;
 		d3dformat=D3DFORMAT('21VN');
@@ -473,20 +461,20 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 		vwidth=VFF->width;vheight=VFF->height;fps=VFF->fps;
 		if(vwidth % 2 != 0 ){vwidth++;}
 		pitch=vwidth*1.5f;
-	
+
 		if(VFF->GetSampleRate()>0){
 			wxCommandEvent evt;
 			evt.SetId(40000);
 			evt.SetString(fname);
 			//wxLogStatus("przed audio");
 			Kaia->Frame->OnOpenAudio(evt);
-	
+
 			player=Kaia->Frame->GetTab()->Edit->ABox->audioDisplay;
 		}else if(player){wxCommandEvent evt;evt.SetId(ID_CLOSEAUDIO);Kaia->Frame->OnOpenAudio(evt);}
 	}else{
-		
+
 		if(!vplayer){vplayer= new DShowPlayer(this);}
-		
+
 		if(!vplayer->OpenFile(fname, __vobsub)){return false;}
 
 		wxSize siz=vplayer->GetVideoSize();
@@ -505,7 +493,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	}
 	diff=0;
 	avtpf=(1000.0f/fps);
-	
+
 	//wxLogStatus("format %i", (int)vformat);
 	//-------------------------- najwa¿niejsza czêœæ, zmieniaæ w zale¿noœci od formatu
 	//pitch=vwidth*1.5f; 
@@ -516,9 +504,9 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	rt5.top=0;
 	if(datas){delete[] datas;datas=NULL;}
 	datas=new char[vheight*pitch];
-	
+
 	if(!InitDX()){return false;}
-	
+
 	if(!framee){framee=new csri_frame;}
 	if(!format){format=new csri_fmt;}
 	for(int i=1;i<4;i++){
@@ -552,9 +540,9 @@ void VideoRend::Play(int end)
 
 	if(end>0){playend=end;}else if(IsDshow){playend=0;}else{playend=GetDuration();}
 	if(IsDshow){vplayer->Play();}
-	
+
 	vstate=Playing;
-	
+
 	if(!IsDshow){
 		if(thread){
 			WaitForSingleObject(thread,2000);CloseHandle(thread);thread=NULL;
@@ -564,38 +552,38 @@ void VideoRend::Play(int end)
 		if(player){player->Play(time,-1,false);}
 		lastframe++;
 		time=VFF->Timecodes[lastframe];
-		
+
 		DWORD kkk;
 		thread = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)playingProc, this, 0, &kkk);
 		//if(thread){
-			//SetThreadPriority(thread, THREAD_PRIORITY_TIME_CRITICAL);
+		//SetThreadPriority(thread, THREAD_PRIORITY_TIME_CRITICAL);
 		//}
-		
+
 	}
-	
+
 }
 
 void VideoRend::PlayLine(int start, int eend)
 {
 	if(vstate==None || start>=eend){return;}
-	
+
 	SetPosition(start);
 	Play(eend);
-	
+
 }
 
 void VideoRend::Pause()
 {
 	if(vstate==Playing){
 		vstate=Paused;
-		if(!IsDshow){if(player){player->player->Stop();}//if(thread){CloseHandle(thread);thread=NULL;}
+		if(!IsDshow){if(player){player->player->Stop();/*player->Refresh(false);*/}//if(thread){CloseHandle(thread);thread=NULL;}
 		}
 		else{vplayer->Pause();}
 	}
 	else if(vstate==Paused || vstate==Stopped){
 		Play();
 	}
-	
+
 }
 
 void VideoRend::Stop()
@@ -603,23 +591,23 @@ void VideoRend::Stop()
 	if(vstate==Playing){
 		vstate=Stopped;
 		if(IsDshow){vplayer->Stop();}
-		
+
 		if(!IsDshow){if(player){player->Stop();}//if(thread){CloseHandle(thread);thread=NULL;}
 		}
 
 		time=0;
 		playend=(IsDshow)? 0 : GetDuration();
-	
-	
+
+
 	}
-	
+
 }
 
 void VideoRend::SetPosition(int _time, bool starttime, bool corect)
 {
-		
-	
-	
+
+
+
 	if(IsDshow){
 		time=MID(0,_time,GetDuration());
 		if(corect&&IsDshow){
@@ -628,9 +616,9 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect)
 			time*=avtpf;
 		}
 		if(VisEdit){TabPanel* pan=(TabPanel*)GetParent();
-			SAFE_DELETE(pan->Edit->dummytext);
-			SetVisual(pan->Edit->GetVisual(),pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);
-			VisEdit=false;
+		SAFE_DELETE(pan->Edit->dummytext);
+		SetVisual(pan->Edit->GetVisual(),pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);
+		VisEdit=false;
 		}	
 		playend=(IsDshow)? 0 : GetDuration();
 		seek=true; vplayer->SetPosition(time);
@@ -639,14 +627,14 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect)
 		if(!starttime){lastframe--;if(VFF->Timecodes[lastframe]>=_time){lastframe--;}}
 		time = VFF->Timecodes[lastframe];
 		if(VisEdit){TabPanel* pan=(TabPanel*)GetParent();
-			SAFE_DELETE(pan->Edit->dummytext);
-			SetVisual(pan->Edit->GetVisual(),pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);
-			VisEdit=false;
+		SAFE_DELETE(pan->Edit->dummytext);
+		SetVisual(pan->Edit->GetVisual(),pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);
+		VisEdit=false;
 		}	
 		if(vstate==Playing){
-		lasttime=timeGetTime()-time;
-		if(player){
-			player->player->SetCurrentPosition(player->GetSampleAtMS(time));}
+			lasttime=timeGetTime()-time;
+			if(player){
+				player->player->SetCurrentPosition(player->GetSampleAtMS(time));}
 		}
 		else{Render();}
 	}
@@ -663,20 +651,20 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 	//const char *buffer= textsubs.mb_str(wxConvUTF8).data();
 	wxScopedCharBuffer buffer= textsubs->mb_str(wxConvUTF8);
 	int size = strlen(buffer);
-	
-	
+
+
 	// Select renderer
 	//if(!vobsub){
-		vobsub = csri_renderer_default();
+	vobsub = csri_renderer_default();
 	//}
 	PTR(vobsub,"Csri failed.");
 
-	
+
 	instance = csri_open_mem(vobsub,buffer,size,NULL);
 	PTR(instance,"Instancja vobsuba nie utworzy³a siê.");
 
 	if(csri_request_fmt(instance,format)){wxLogStatus("request format failed");}
-	
+
 	if(redraw && vstate!=None && IsDshow && datas){
 		int all=vheight*pitch;
 		char *cpy=new char[all];
@@ -713,13 +701,13 @@ DWORD VideoRend::playingProc(void* cls)
 void VideoRend::playing()
 {
 	int tdiff=0;
-	
+
 	wxRect rt(0,0,1,1);
 	while(1){
 		Refresh(false,&rt);
 		//DrawTexture((byte*)datas);
 		//Render();
-		
+
 		if(time>=playend){
 			wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED,23333);
 			wxQueueEvent(this, evt);
@@ -727,9 +715,9 @@ void VideoRend::playing()
 		}
 		else if(vstate!=Playing){
 			break;}	
-	
-	
-		
+
+
+
 
 		time= timeGetTime() - lasttime;
 
@@ -746,7 +734,7 @@ void VideoRend::playing()
 		//wxThreadEvent *evt = new wxThreadEvent(wxEVT_THREAD,23334);
 		tdiff=VFF->Timecodes[lastframe] - time;
 		time = VFF->Timecodes[lastframe];
-		
+
 		//wxQueueEvent(parent, evt);
 		Sleep(tdiff);
 	}
@@ -754,8 +742,8 @@ void VideoRend::playing()
 
 //funkcja zmiany rozdzia³ki okna wideo
 void VideoRend::UpdateVideoWindow(bool bar)
-	{
-	
+{
+
 	//wxMutexLocker lock(videomutex);
 	wxMutexLocker lock(videomutex);
 	if(block){while(!block){Sleep(5);}}
@@ -765,89 +753,44 @@ void VideoRend::UpdateVideoWindow(bool bar)
 	TabPanel* tab=(TabPanel*)Video->GetParent();
 	if(bar){hwnd=GetHWND();rt=GetClientRect();rt.height-=44;}
 	else{hwnd=Video->TD->GetHWND();rt=Video->TD->GetClientRect();pbar=true;cross=false;}
-	
+
 	rt3.bottom=rt.height;
 	rt3.right=rt.width;
 	rt3.left=rt.x;
 	rt3.top=rt.y;
 	if(tab->edytor&&!Video->isfullskreen){
-	rt4=rt3;
-		}
+		rt4=rt3;
+	}
 	else
-		{
+	{
 		int arwidth=rt.height/Video->AR;
 		int arheight=rt.width*Video->AR;
 		if(arwidth > rt.width)
-			{
+		{
 			int onebar=(rt.height-arheight)/2;
 			rt4.bottom=arheight+onebar;
 			rt4.right=rt.width;//zostaje bez zmian
 			rt4.left=0;
 			rt4.top=onebar;
-			}
+		}
 		else if(arheight > rt.height)
-			{
+		{
 			int onebar=(rt.width-arwidth)/2;
 			rt4.bottom=rt.height;//zostaje bez zmian
 			rt4.right=arwidth+onebar;
 			rt4.left=onebar;
 			rt4.top=0;
-			}
-		else
-			{
-			rt4=rt3;
-			}
 		}
-	
-	
-	//D3DPRESENT_PARAMETERS d3dpp;
- //   ZeroMemory( &d3dpp, sizeof(d3dpp) );
- //   d3dpp.Windowed               = TRUE;
-	//d3dpp.hDeviceWindow          = hwnd;
- //   d3dpp.BackBufferWidth        = rt3.right;
-	//d3dpp.BackBufferHeight       = rt3.bottom;
-	//d3dpp.BackBufferCount	     = 1;
- //   d3dpp.SwapEffect			 = D3DSWAPEFFECT_DISCARD;//D3DSWAPEFFECT_COPY;//
- //   d3dpp.BackBufferFormat       = D3DFMT_X8R8G8B8;
- //   d3dpp.Flags					 = D3DPRESENTFLAG_VIDEO;//|D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
-	//d3dpp.PresentationInterval   = D3DPRESENT_INTERVAL_DEFAULT;
-	//HRESULT hr=d3device->Reset(&d3dpp);
-	//if(FAILED(hr)){wxLogStatus("Nie mo¿na zresetowaæ d3d");}
-	////InitDX();
-	//hr = d3device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
- //   hr = d3device->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
-	//hr = d3device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
- //   hr = d3device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
- //   hr = d3device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-	//hr = d3device->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
-	//hr = d3device->SetRenderState( D3DRS_LIGHTING, FALSE );
-	//hr = d3device->SetRenderState( D3DRS_ZENABLE, FALSE );
-	//////hr = d3device->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );
- //   hr = d3device->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	//hr = d3device->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-	//hr = d3device->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_DISABLE );
-	//HRN(hr,"Zawiod³o któreœ z ustawieñ dx");
+		else
+		{
+			rt4=rt3;
+		}
+	}
 
-	//D3DXMATRIX matOrtho; 
- //   D3DXMATRIX matIdentity;
-
- //   D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, vwidth, vheight, 0, 0.0f, 1.0f);
- //   D3DXMatrixIdentity(&matIdentity);
-
- //   HRN(d3device->SetTransform(D3DTS_PROJECTION, &matOrtho), "Nie mo¿na ustawiæ matrixa projection");
- //   HRN(d3device->SetTransform(D3DTS_WORLD, &matIdentity), "Nie mo¿na ustawiæ matrixa world");
- //   HRN(d3device->SetTransform(D3DTS_VIEW, &matIdentity), "Nie mo¿na ustawiæ matrixa view");
-	//hr= d3device->GetBackBuffer(0,0, D3DBACKBUFFER_TYPE_MONO, &bars);
-	//if(FAILED(hr)){wxLogStatus("Nie mo¿na pobraæ back buffera");}
-	//hr = d3device->CreateOffscreenPlainSurface(vwidth,vheight,d3dformat, D3DPOOL_DEFAULT,&MainStream,0);
-	//if(FAILED(hr)){wxLogStatus("Nie mo¿na stworzyæ offscreen plain surface");}
-	//D3DXCreateLine(d3device, &lines);
-	//D3DXCreateFont(d3device, 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &m_font );
-	//
 	if(!InitDX(true)){return;}
 
 	if(IsDshow&& datas){
-		
+
 		int all=vheight*pitch;
 		char *cpy=new char[all];
 		byte *cpy1=(byte*)cpy;
@@ -856,11 +799,11 @@ void VideoRend::UpdateVideoWindow(bool bar)
 		DrawTexture(cpy1);
 		delete[] cpy;
 	}
-	
+
 
 	resized=true;
 	block=false;
-	if(Vclips){Vclips->SetNewSize(GetClientSize(), lines, m_font, d3device);}
+	if(Vclips){SetVisual(tab->Edit->GetVisual(Vclips->type), tab->Edit->line->Start.mstime, tab->Edit->line->End.mstime);}
 }
 
 void VideoRend::GetFpsnRatio(float *fps, long *arx, long *ary)
@@ -901,7 +844,7 @@ void VideoRend::DrawLines(wxPoint point)
 	rt1.bottom= (h>point.y)? point.y+23 : point.y-5;
 	rt1.left= (w<point.x)? point.x-100 : point.x+5;
 	rt1.right= (w<point.x)? point.x-5 : point.x+100;
-	
+
 	vectors[0].x = point.x;
 	vectors[0].y = 0;
 	vectors[1].x = point.x;
@@ -987,7 +930,8 @@ int VideoRend::GetVolume()
 }
 
 void VideoRend::MovePos(int cpos)
-{	if(!IsDshow){
+{	
+	if(!IsDshow){
 		lastframe=MID(0,lastframe+cpos,VFF->NumFrames-1);
 		time = VFF->Timecodes[lastframe];
 		TabPanel* pan=(TabPanel*)GetParent();
@@ -999,19 +943,18 @@ void VideoRend::MovePos(int cpos)
 		Render();
 	}
 	else{
-		time+=((avtpf)*cpos);
-		SetPosition(time,true,false);
+		//for(int i = 1; i<100; i++){
+			time+=((avtpf)*cpos);
+			//int tmpt=time;
+			SetPosition(time,true,false);
+			//wxLogStatus("times %i, %i", tmpt, time);
+			//if(tmpt!=time){break;}
+		//}
 	}
 	VideoCtrl *vb=(VideoCtrl*)this;
 	vb->displaytime();
 }
-/*
-void VideoRend::EndStream(wxCommandEvent& event)
-{
-	VideoCtrl* video= (VideoCtrl*)this;
-	video->OnEndFile();
-}
-*/
+
 
 wxArrayString VideoRend::GetStreams()
 {
@@ -1031,7 +974,7 @@ void VideoRend::ChangeVobsub(bool vobsub)
 {
 	if(!vplayer){return;}
 	kainoteApp *Kaia=(kainoteApp*)wxTheApp;
-	
+
 	int tmptime = time;
 	TabPanel *pan=Kaia->Frame->GetTab();
 	OpenSubs((vobsub)? NULL : pan->Grid1->SaveText());
@@ -1052,24 +995,26 @@ void VideoRend::SetVisual(wxString visual, int start, int end, bool remove)
 		SAFE_DELETE(Vclips); pan->Edit->Visual=0;
 		VisEdit=false;
 		OpenSubs(pan->Grid1->SaveText());
+
 	}
 	else{
-		
+
 		int nx=0, ny=0;
 		pan->Grid1->GetASSRes(&nx, &ny);
 		if(!Vclips){Vclips=new Visuals(this);}
 		D3DXVECTOR2 scale(1,1);
 		byte an=0;
 		D3DXVECTOR2 lpos=(pan->Edit->Visual==VECTORCLIP)? D3DXVECTOR2(0,0) : pan->Edit->GetPosnScale(&scale, &an, !(pan->Edit->Visual==VECTORDRAW || pan->Edit->Visual== MOVE), pan->Edit->Visual==VECTORDRAW);
-		Vclips->SetVisual(pan->Edit->Visual, visual,start, end, GetClientSize(),wxSize(nx,ny),lpos, scale, an, lines, m_font, d3device);
+		Vclips->SetVisual(pan->Edit->Visual, visual,start, end, wxSize(rt3.right, rt3.bottom),wxSize(nx,ny),lpos, scale, an, lines, m_font, d3device);
 		VisEdit=true;
-		if(pan->Edit->Visual>FAXY){
+		if(pan->Edit->Visual>=VECTORCLIP){
 			pan->Edit->SetClip(Vclips->GetClip(),true);
 		}else{
 			pan->Edit->SetVisual(Vclips->GetVisual(),true,0);
 		}
-		Render();
+
 	}
+	//Render();
 }
 
 bool VideoRend::EnumFilters(wxMenu *menu)
@@ -1077,7 +1022,7 @@ bool VideoRend::EnumFilters(wxMenu *menu)
 	if(vplayer){return vplayer->EnumFilters(menu);}
 	return false;
 }
-		
+
 bool VideoRend::FilterConfig(wxString name, int idx, wxPoint pos)
 {
 	if(vplayer){return vplayer->FilterConfig(name,idx,pos);}
@@ -1110,5 +1055,5 @@ byte *VideoRend::GetFramewithSubs(bool subs, bool *del)
 
 void VideoRend::SetEvent(wxMouseEvent& event)
 {
-	Vclips->AddPendingEvent(event);
+	Vclips->MouseEvent(event);
 }

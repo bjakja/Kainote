@@ -30,7 +30,7 @@ public:
 	bool CalcSize(int *width, int *height,int wwidth=0,int wheight=0,bool setstatus=false,bool calcH=false);
 
 	void NextFile(bool next=true);
-	void SetFullskreen();
+	void SetFullskreen(int wmonitor=0);
 	void SetAspectRatio(float AR);
 	VideoSlider* vslider;
 	wxPanel* panel;
@@ -58,12 +58,14 @@ public:
 	void NextChap();
 	void PrevChap();
 	void ConnectAcc(int id);
+	wxRect GetMonitorRect(int wmonitor);
 	float fps,wspx,wspy;
 	long ax,ay;
 	float AR;
 	Fullscreen *TD;
 	bool isarrow;
 	wxString oldpath;
+	std::vector<RECT> MonRects;
 private:
     BitmapButton* bprev;
 	BitmapButton* bpause;
@@ -137,7 +139,8 @@ enum
 	ID_MRECVIDEO,
 	ID_IDLE,
 	MENU_STREAMS=3333,
-	MENU_CHAPTERS=12000
+	MENU_CHAPTERS=12000,
+	MENU_MONITORS=15000,
 	};
 
 #endif

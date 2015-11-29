@@ -28,6 +28,7 @@ void Visuals::SetVisual(int _visual,wxString vis,int _start,int _end,wxSize wsiz
 {
 	Visual=_visual;
 	subssize=ssize;
+	widsize=wsize;
 	line=_line;
 	font=_font;
 	device=_device;
@@ -38,14 +39,16 @@ void Visuals::SetVisual(int _visual,wxString vis,int _start,int _end,wxSize wsiz
 	//pamiêtaj wspw wsph _x i _y definiuj w obu plikach cpp 
 	//bo g³upi static tak ma, ¿e bez takiej definicji nie bêd¹ widoczne.
 	wspw=((float)ssize.x/(float)wsize.x);
-	wsph=((float)ssize.y/(float)(wsize.y-44));
-	SetNewSize(wsize, _line, _font, _device);
+	wsph=((float)ssize.y/(float)wsize.y);
+	//SetNewSize(wsize);
+	wxLogStatus("wsps %f %f, %i %i", wspw, wsph, wsize.x, wsize.y);
 	_x=0;
 	_y=0;
 	if(Visual<VECTORCLIP){
 		from = to = D3DXVECTOR2(linepos.x/wspw,linepos.y/wsph);
 		lastmove = D3DXVECTOR2(0, 0);
 	}
+	
 	if(Visual>=VECTORCLIP){
 		if(Visual==VECTORDRAW){
 			_x=linepos.x/scale.x;
@@ -69,7 +72,7 @@ void Visuals::SetVisual(int _visual,wxString vis,int _start,int _end,wxSize wsiz
 		}
 		Points.push_back(ClipPoint(x1, y1,"r",true));
 		Points.push_back(ClipPoint(x2, y2,"r",true));
-	}else if(Visual==MOVE){
+	}else if(Visual==MOVE||Visual==CHANGEPOS){
 		moveStart=start;
 		moveEnd=end;
 		if(vis!=""){
@@ -140,6 +143,27 @@ void Visuals::SetVisual(int _visual,wxString vis,int _start,int _end,wxSize wsiz
 		angle=scale;
 		lastmove=org;
 	}
+	/*else if(Visual==MOVEONCURVE){
+		TabPanel* pan=(TabPanel*)parent->GetParent();
+		curvelines=(end-start)/pan->Video->avtpf;
+	}*/
+}
+void Visuals::Position()
+{
+	D3DXVECTOR2 v4[4];
+	v4[0].x=from.x-15.0f;
+	v4[0].y=from.y;
+	v4[1].x=from.x+15.0f;
+	v4[1].y=from.y;
+	v4[2].x=from.x;
+	v4[2].y=from.y-15.0f;
+	v4[3].x=from.x;
+	v4[3].y=from.y+15.0f;
+	line->Begin();
+	line->Draw(v4,2,0xFFFF0000);
+	line->Draw(&v4[2],2,0xFFFF0000);
+	line->End();
+
 }
 
 void Visuals::Move(int time)
@@ -192,6 +216,104 @@ void Visuals::Move(int time)
 	line->Draw(&v4[2], 2, 0xAAFF0000);
 	line->Draw(v4, 2, 0xAAFF0000);
 	line->End();
+}
+
+int factk(int n)
+{
+	int k=1;
+	if(n>1){
+		for(int i=2; i<=n; i++){
+			k*=i;
+		}
+	}
+	return k;
+}
+	
+float bernstein(int i, int n, float t)
+{
+	return (factk(n) / (factk(i)*factk(n-i))) * pow(t, i) * pow((1-t), (n-i));
+}
+	
+D3DXVECTOR2 Bezier(int n, ClipPoint *points, float t)
+{
+
+	float p_x=0, p_y=0;
+	//wxLogStatus("points %f %f %f %f", points[2].x, points[2].y, points[3].x, points[3].y);
+	for(int i=0; i<n; i++)
+	{
+		float bern=bernstein(i,n-1,t);
+		p_x += ((points[i].x)*bern);
+		p_y += ((points[i].y)*bern);
+	}
+	if(t>=1){p_x= points[n-1].x; p_y=points[n-1].y;}
+	return D3DXVECTOR2(p_x,p_y);
+}
+
+void Visuals::MoveOnCurve(int time)
+{
+	int numBezier=Points.size();
+	if(Points.size()>3){
+		float curvestep= 1.f/curvelines;
+		float tmpt=time-start;
+		float tmpt1=end-start;
+		float actime= tmpt/tmpt1;
+		float acpos=actime;
+		//wxLogStatus("acpos %f", acpos);
+		
+		D3DXVECTOR2 *v5 = new D3DXVECTOR2[curvelines+1];
+		D3DXVECTOR2 v6[4];
+		bool cross=false;
+		float f=0.f;
+		for(int g=0; g<=curvelines; g++){
+			v5[g]=Bezier(numBezier,&Points[0],f);
+			if(f >= acpos && !cross){
+				//wxLogStatus("acpos %f %f", acpos, f);
+				v6[0].x=v5[g].x-15.0f;
+				v6[0].y=v5[g].y;
+				v6[1].x=v5[g].x+15.0f;
+				v6[1].y=v5[g].y;
+				v6[2].x=v5[g].x;
+				v6[2].y=v5[g].y-15.0f;
+				v6[3].x=v5[g].x;
+				v6[3].y=v5[g].y+15.0f;
+				cross=true;
+			}
+			f += curvestep;
+		}
+		
+		D3DXVECTOR2 *v1 = new D3DXVECTOR2[numBezier];
+		for(int p=0; p<numBezier; p++){
+			v1[p]=D3DXVECTOR2(Points[p].x, Points[p].y);
+		}
+
+		line->Begin();
+		line->Draw(v5, curvelines+1, 0xFFFF0000);
+		line->Draw(v1, numBezier, 0xFF0000FF);
+
+		DrawRect(0,false);
+		DrawRect(numBezier-1,false);
+		for(int j=1; j<numBezier-1; j++){
+			DrawCircle(j,false);
+		}
+		if(cross){
+			line->Draw(v6, 2, 0xFFFF0000);
+			line->Draw(&v6[2], 2, 0xFFFF0000);
+		}
+		line->End();
+		delete [] v5;
+		delete [] v1;
+	}else{
+		D3DXVECTOR2 v4[2];
+		v4[0].x=from.x-5.0f;
+		v4[0].y=from.y;
+		v4[1].x=from.x+5.0f;
+		v4[1].y=from.y;
+		line->SetWidth(10.f);
+		line->Begin();
+		line->Draw(v4, 2, 0xFFFF0000);
+		line->End();
+	}
+	
 }
 	
 void Visuals::Scale()
@@ -322,9 +444,9 @@ void Visuals::RotateZ()
 	line->SetWidth(5.f);
 
 	HRN(device->SetFVF( D3DFVF_XYZ|D3DFVF_DIFFUSE), "fvf failed");
-    HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 360, v5, sizeof(MYVERTEX) ),"primitive failed");
-    HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 180, &v5[364], sizeof(MYVERTEX) ),"primitive failed");
-    HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 180, &v5[545], sizeof(MYVERTEX) ),"primitive failed");
+	HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 360, v5, sizeof(MYVERTEX) ),"primitive failed");
+	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 180, &v5[364], sizeof(MYVERTEX) ),"primitive failed");
+	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 180, &v5[545], sizeof(MYVERTEX) ),"primitive failed");
 	line->SetWidth(2.f);
 	line->Begin();
 	line->Draw(&v2[2],2,0xFFFF0000);
@@ -341,9 +463,7 @@ void Visuals::RotateZ()
 
 void Visuals::RotateXY()
 {
-	
-	wxSize s = parent->GetClientSize();
-	s.y-=44;
+	wxSize s = widsize;
 	float ratio= (float)s.x/(float)s.y;
 	float xxx=((org.x/s.x)*2)-1;
 	float yyy=((org.y/s.y)*2)-1;
@@ -352,7 +472,7 @@ void Visuals::RotateXY()
 	D3DXMATRIX matTramsate;
 	
 	D3DXMatrixRotationYawPitchRoll(&matRotate, D3DXToRadian(-angle.x),D3DXToRadian(angle.y),0);
-//wxLogStatus("angle x %f y %f ", angle.x, angle.y);
+	
 	if(from!=org){
 		float txx=((from.x/s.x)*60)-30;
 		float tyy=((from.y/s.y)*60)-30;
@@ -362,16 +482,16 @@ void Visuals::RotateXY()
 	}
 	device->SetTransform(D3DTS_WORLD, &matRotate);
 	
-    D3DXMATRIX matView;    // the view transform matrix
+	D3DXMATRIX matView;    // the view transform matrix
 
-    D3DXMatrixLookAtLH(&matView,
-                       &D3DXVECTOR3 (0.0f, 0.0f, -17.2f),    // the camera position
-                       &D3DXVECTOR3 (0.0f, 0.0f, 0.0f),    // the look-at position
-                       &D3DXVECTOR3 (0.0f, 1.0f, 0.0f));    // the up direction
+	D3DXMatrixLookAtLH(&matView,
+					   &D3DXVECTOR3 (0.0f, 0.0f, -17.2f),    // the camera position
+					   &D3DXVECTOR3 (0.0f, 0.0f, 0.0f),    // the look-at position
+					   &D3DXVECTOR3 (0.0f, 1.0f, 0.0f));    // the up direction
 	
-    device->SetTransform(D3DTS_VIEW, &matView);    // set the view transform to matView
+	device->SetTransform(D3DTS_VIEW, &matView);    // set the view transform to matView
 
-    D3DXMATRIX matProjection;     // the projection transform matrix
+	D3DXMATRIX matProjection;     // the projection transform matrix
 	
 	D3DXMatrixPerspectiveFovLH(&matProjection,
 								D3DXToRadian(120),    // the horizontal field of view
@@ -380,7 +500,7 @@ void Visuals::RotateXY()
 								100000.0f);    // the far view-plane
 
 	D3DXMatrixTranslation(&matTramsate,xxx,-yyy,0.0f);
-    device->SetTransform(D3DTS_PROJECTION, &(matProjection*matTramsate));    // set the projection
+	device->SetTransform(D3DTS_PROJECTION, &(matProjection*matTramsate));    // set the projection
 	device->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE);
 	MYVERTEX vertices[199];
 	bool ster=true;
@@ -442,14 +562,14 @@ void Visuals::RotateXY()
 	device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &vertices[187], sizeof(MYVERTEX));
 	device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &vertices[193], sizeof(MYVERTEX));
 	D3DXMATRIX matOrtho; 
-    D3DXMATRIX matIdentity;
+	D3DXMATRIX matIdentity;
 
-    D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, s.x, s.y, 0, 0.0f, 1.0f);
-    D3DXMatrixIdentity(&matIdentity);
+	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, s.x, s.y, 0, 0.0f, 1.0f);
+	D3DXMatrixIdentity(&matIdentity);
 
-    HRN(device->SetTransform(D3DTS_PROJECTION, &matOrtho), "Nie mo¿na ustawiæ matrixa projection");
-    HRN(device->SetTransform(D3DTS_WORLD, &matIdentity), "Nie mo¿na ustawiæ matrixa world");
-    HRN(device->SetTransform(D3DTS_VIEW, &matIdentity), "Nie mo¿na ustawiæ matrixa view");
+	HRN(device->SetTransform(D3DTS_PROJECTION, &matOrtho), "Nie mo¿na ustawiæ matrixa projection");
+	HRN(device->SetTransform(D3DTS_WORLD, &matIdentity), "Nie mo¿na ustawiæ matrixa world");
+	HRN(device->SetTransform(D3DTS_VIEW, &matIdentity), "Nie mo¿na ustawiæ matrixa view");
 	D3DXVECTOR2 v2[4];
 	v2[0].x=org.x-10.0f;
 	v2[0].y=org.y;
@@ -471,11 +591,11 @@ void Visuals::ClipRect()
 {
 	//wxLogStatus("siz %i,%i", Points[1].x, Points[1].y);
 	D3DXVECTOR2 v2[8];
-	wxSize s = parent->GetClientSize();
+	wxSize s = widsize;
 	v2[0].x=Points[0].x/wspw;
 	v2[0].y=0;
 	v2[1].x=Points[0].x/wspw;
-	v2[1].y=s.y-44;
+	v2[1].y=s.y;
 	v2[2].x=0;
 	v2[2].y=Points[0].y/wsph;
 	v2[3].x=s.x;
@@ -483,7 +603,7 @@ void Visuals::ClipRect()
 	v2[4].x=(Points[1].x/wspw)-1;
 	v2[4].y=0;
 	v2[5].x=(Points[1].x/wspw)-1;
-	v2[5].y=s.y-44;
+	v2[5].y=s.y;
 	v2[6].x=0;
 	v2[6].y=(Points[1].y/wsph)-1;
 	v2[7].x=s.x;
@@ -548,9 +668,15 @@ void Visuals::Draw(int time)
 	line->SetWidth(2.0);
 	switch(Visual)
 	{
+	case CHANGEPOS:
+		Position();
+		break;
 	case MOVE:
 		Move(time);
 		break;
+	/*case MOVEONCURVE:
+		MoveOnCurve(time);
+		break;*/
 	case SCALE:
 		Scale();
 		break;
@@ -563,9 +689,9 @@ void Visuals::Draw(int time)
 	case CLIPRECT:
 		ClipRect();
 		break;
-	case FAXY:
+	/*case FAXY:
 		FaXY();
-		break;
+		break;*/
 	case VECTORCLIP:
 	case VECTORDRAW:
 		DrawClip();
@@ -574,7 +700,18 @@ void Visuals::Draw(int time)
 		wxLogStatus("Unknown drawing %i", Visual);
 		break;
 	}
-
+	if(drawtxt){
+		wxSize wsize = widsize;
+		wsize.x/=2; wsize.y/=2;
+		align=0;
+		align |= (x>wsize.x)? DT_RIGHT : 0;
+		align |= (y>wsize.y)? DT_BOTTOM : 0;
+		cpos.left=(x>wsize.x)? x-150 : x+5;
+		cpos.top=(y>wsize.y)? y-50 : y+5;
+		cpos.right=(x>wsize.x)? x-5 : x+150;
+		cpos.bottom=(y>wsize.y)? y-5 : y+50;
+		DRAWOUTTEXT(font,coords,cpos,align,0xFFFFFFFF)
+	}
 	line->SetAntialias(FALSE);
 }
 
@@ -583,23 +720,25 @@ wxString Visuals::GetVisual(bool _org)
 {
 	wxString result;
 	if(_org){
-		result=wxString::Format("\\org(%f,%f)", org.x*wspw, org.y*wsph);
+		result = "\\org("+getfloat(org.x*wspw)+","+getfloat(org.y*wsph)+")";
 	}else if(Visual==CLIPRECT && Points.size()>1){
-		result=wxString::Format("\\%sclip(%i,%i,%i,%i)",(invClip)? "i" : "", Points[0].x, Points[0].y, Points[1].x, Points[1].y);
+		result = wxString::Format("\\%sclip(%i,%i,%i,%i)",(invClip)? "i" : "", Points[0].x, Points[0].y, Points[1].x, Points[1].y);
+	}else if(Visual==CHANGEPOS){
+		result = "\\pos("+getfloat(from.x*wspw)+","+getfloat(from.y*wsph)+")";
 	}else if(Visual==MOVE){
-		result=wxString::Format("\\move(%03f,%03f,%03f,%03f"+times+")", from.x*wspw, from.y*wsph, to.x*wspw, to.y*wsph);
+		result = "\\move("+getfloat(from.x*wspw)+","+getfloat(from.y*wsph)+","+getfloat(to.x*wspw)+","+getfloat(to.y*wsph)+times+")";
 	}else if(Visual==SCALE){
 		if(to.x==from.x){to.x=from.x+60.f;}
 		if(to.y==from.y){to.y=from.y+60.f;}
 		//wxLogStatus("to %f %f from %f %f", to.x, to.y, from.x, from.y);
 		if(type!=1){
 			float res=(abs(to.x - from.x))/60.f;
-			result+=wxString::Format("\\fscx%03f", res*100);
+			result += "\\fscx" + getfloat(res*100);
 			scale.x=res;
 			//wxLogStatus("fscx %f to-from %f", res, to.x - from.x);
 		}if(type!=0){
 			float res=(abs(to.y - from.y))/60.f;
-			result+=wxString::Format("\\fscy%03f", res*100);
+			result += "\\fscy" + getfloat(res*100);
 			scale.y=res;
 			//wxLogStatus("fscy %f to - from %f ", res, to.y-from.y);
 		}
@@ -608,20 +747,20 @@ wxString Visuals::GetVisual(bool _org)
 		float angle = lastmove.x - atan2((org.y-to.y), (org.x-to.x)) * (180.f / 3.1415926536f);
 		angle = fmodf(angle + 360.f, 360.f);
 		//wxLogStatus("angle %f %f", angle, lastmove.x);
-		result=wxString::Format("\\frz%03f", angle);
+		result="\\frz"+ getfloat(angle);
 		lastmove.y=angle;
 		
 	}else if(Visual==ROTATEXY){
 		if(type!=1){
 			angle.x = (to.x - firstmove.x) + scale.x;
 			angle.x = fmodf(angle.x + 360.f, 360.f);
-			result += wxString::Format("\\fry%03f", angle.x);
+			result += "\\fry"+ getfloat(angle.x);
 			//wxLogStatus("rot x %f", angle.x);
 		}
 		if(type!=0){
 			float angy = (to.y - firstmove.y) - scale.y;// zmieniony plus na minus by nie trzebaby³o 
 			angle.y = (fmodf((-angy) + 360.f, 360.f));//przetrzymywaæ scale i angle w minusach.
-			result += wxString::Format("\\frx%03f", angle.y);
+			result += "\\frx" + getfloat(angle.y);
 			//wxLogStatus("rot y %f", angle.y);
 		}
 		//wxLogStatus("rot xy %f, %f", angle.x, angle.y);
@@ -631,17 +770,21 @@ wxString Visuals::GetVisual(bool _org)
 
 void Visuals::MouseEvent(wxMouseEvent &evt)
 {
-	if(Visual>6){OnMouseEvent(evt);return;}//clipy wektorowe i rysunki
+	if(Visual>=VECTORCLIP){OnMouseEvent(evt);return;}//clipy wektorowe i rysunki
 	bool click = evt.LeftDown()||evt.RightDown()||evt.MiddleDown();
 	bool holding = (evt.LeftIsDown()||evt.RightIsDown()||evt.MiddleIsDown());
-	int x, y;
-	evt.GetPosition(&x,&y);
+	
 	TabPanel* pan=(TabPanel*)parent->GetParent();
+	
+	if(pan->Video->isfullskreen){wxGetMousePosition(&x,&y);}
+	else{evt.GetPosition(&x,&y);}
+
 	if(evt.ButtonUp()){
-		//send something
-		//TabPanel* pan=(TabPanel*)parent->GetParent();
 		if(parent->HasCapture()){parent->ReleaseMouse();}
-		pan->Edit->SetVisual(GetVisual(grabbed==100),false,(grabbed==100) ? 100 : type);
+		//usun¹æ po zrobieniu ca³oœci visuala
+		/*if(Visual!=MOVEONCURVE){*/
+			pan->Edit->SetVisual(GetVisual(grabbed==100),false,(grabbed==100) ? 100 : type);
+		//}
 		if(Visual==ROTATEZ){
 			to=org;
 			if(grabbed==100){
@@ -655,6 +798,7 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 		}
 		if(!hasArrow){parent->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 		grabbed=-1;
+		drawtxt=false;
 	}
 
 	if(Visual==CLIPRECT && !holding){
@@ -680,10 +824,21 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 		else if(abs(lastmove.y-y)<8 && abs(from.x-x)<8){if(hasArrow){parent->SetCursor(wxCURSOR_SIZENS);hasArrow=false;}}
 		else if(!hasArrow){parent->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 	}
-	
+
+	if(click || holding){
+		drawtxt=true;
+		coords=""; 
+		coords<<(int)(x*wspw)<<", "<<(int)(y*wsph);
+	}
+	//klikniêcie
 	if(click){
-		
-		if(Visual==CLIPRECT){
+		if(Visual==CHANGEPOS){
+			parent->SetCursor(wxCURSOR_SIZING);
+			hasArrow=false;
+			firstmove.x=x;
+			firstmove.y=y;
+			lastmove=from;
+		}else if(Visual==CLIPRECT){
 			grabbed=-1;
 			for(int i = 0; i<2; i++){
 				int pointx = Points[i].x/wspw, pointy = Points[i].y/wsph;
@@ -715,7 +870,6 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 				diffs.x=(from.x-x)+(addx*scale.x);
 				diffs.y=(from.y-y)+(addy*scale.y);
 			}
-			//wxLogStatus("%i %f %f %f %f %i %i",type, lastmove.x, lastmove.y, from.x, from.y, x, y);
 		}
 		else if(Visual==ROTATEZ){
 			parent->CaptureMouse();
@@ -731,7 +885,6 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 				lastmove.x = atan2((org.y-y), (org.x-x)) * (180.f / 3.1415926536f);
 				lastmove.x+=lastmove.y;
 			}
-				//wxLogStatus("lastmove %f %f", lastmove.x, lastmove.y);
 			
 		}
 		else if(Visual==ROTATEXY){
@@ -756,23 +909,42 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 			to.x=x;to.y=y;
 			pan->Edit->SetVisual(GetVisual(),true,type);
 			//pan->Video->Render();
-		}
+		}/*else if(Visual==MOVEONCURVE){
+			if(Points.size()<4){
+				Points.clear();
+				int diffx=(from.x-x)/3.0f;
+				int diffy=(from.y-y)/3.0f;
+				Points.push_back(ClipPoint(from.x,from.y,"r",true));
+				Points.push_back(ClipPoint(x+(diffx*2),y+(diffy*2),"r", false));
+				Points.push_back(ClipPoint(x+diffx,y+diffy,"r",false));
+				Points.push_back(ClipPoint(x,y,"r",false));
+			}
+
+			grabbed = CheckPos(wxPoint(x,y),false,false);
+			if(grabbed!= -1){
+				acpoint=Points[grabbed];
+				diffs.x=acpoint.x-x;
+				diffs.y=acpoint.y-y;
+			}
+			pan->Video->Render();
+			return;
+		}*/
 		to.x=x;to.y=y;
 
-
+		//trzymamie myszy
 	}else if(holding){
-
-		
-		if(Visual==CLIPRECT && grabbed!=-1){
-			wxSize wsize=parent->GetClientSize();
+		if(Visual==CHANGEPOS){
+			from.x = lastmove.x-(firstmove.x-x);
+			from.y = lastmove.y-(firstmove.y-y);
+		}else if(Visual==CLIPRECT && grabbed!=-1){
 
 			if(grabbed<2){
-				x=MID(0,x,wsize.x);
+				x=MID(0,x,widsize.x);
 				Points[grabbed].x=((x+diffs.x)*wspw);
 				if(grabbed==0 && Points[0].x > Points[1].x){Points[0].x = Points[1].x;}
 				if(grabbed==1 && Points[1].x < Points[0].x){Points[1].x = Points[0].x;}	
 			}else{
-				y=MID(0,y,wsize.y-44);
+				y=MID(0,y,widsize.y);
 				Points[grabbed-2].y=((y+diffs.y)*wsph);
 				if(grabbed==2 && Points[0].y > Points[1].y){Points[0].y = Points[1].y;}
 				if(grabbed==3 && Points[1].y < Points[0].y){Points[1].y = Points[0].y;}	
@@ -795,13 +967,20 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 				if(type!=0){
 					to.y=y+diffs.y;
 				}
-				wxLogStatus("hold %f %f",to.x, to.y);
-			/*}else{
-				to.x=x+diffs.x;
-				to.y=y+diffs.y;
-			}*/
+				//wxLogStatus("hold %f %f",to.x, to.y);
 			goto done;
-		}	
+		}
+		//else if(Visual==MOVEONCURVE && grabbed!=-1){
+		//
+		//	x=MID(0,x,widsize.x);
+		//	y=MID(0,y,widsize.y-44);
+		//	Points[grabbed].x=(x+diffs.x);
+		//	Points[grabbed].y=(y+diffs.y);
+		//	//acpoint=Points[grabbed];
+		//	TabPanel* pan=(TabPanel*)parent->GetParent();
+		//	pan->Video->Render();//Edit->SetClip(GetClip(),true);
+		//	return;
+		//}
 		//}else if((Visual==SCALE || Visual==ROTATEXY)&& newmove){
 		//	if(type==0 && (abs(to.y-y) > abs(to.x-x))){type=1;}
 		//	else if(type==1 && (abs(to.y-y) < abs(to.x-x))){type=0;}

@@ -102,7 +102,7 @@ class kainoteFrame: public wxFrame
 		void OnChangeLine(wxCommandEvent& event);
 		void OnDelete(wxCommandEvent& event);
 		void OnClose1(wxCloseEvent& event);
-		void AppendBitmap(wxMenu *menu, int id, wxString text, wxString help, wxBitmap bitmap,bool enable=true, wxMenu *SubMenu=0, wxAcceleratorEntry *entry=0);
+		void AppendBitmap(wxMenu *menu, int id, wxString text, wxString help, wxBitmap bitmap,bool enable=true, wxMenu *SubMenu=0);
 		static void OnOutofMemory();
        
         wxMenu* ConvMenu;
@@ -137,12 +137,15 @@ enum{// nowe idy dodawaj na dole, bo ludzie bêd¹ mieli niespodziankê przy odpale
 	ID_ASSPROPS,
 	ID_STYLEMNGR,
 	ID_COLLECTOR,
+	ID_CROSS,
+	ID_POSITION,
 	ID_MOVEMENT,
+	//ID_MOVEONCURVE,
 	ID_SCALE,
 	ID_ROTATEZ,
 	ID_ROTATEXY,
 	ID_CLIPRECT,
-	ID_FAXY,
+	//ID_FAXY,
 	ID_CLIPS,
 	ID_DRAWINGS,
 	ID_ASS,

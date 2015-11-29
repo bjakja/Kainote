@@ -79,6 +79,7 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	peak = NULL;
 	min = NULL;
 	dialogue=NULL;
+	cursorPaint=false;
 	defCursor = true;
 	karaAuto=Options.GetBool(_T("Audio Karaoke Split Mode"));
 	hasKara =Options.GetBool(_T("Audio Karaoke"));
@@ -229,14 +230,14 @@ void AudioDisplay::DoUpdateImage() {
 	int64_t drawSelStart = 0;
 	int64_t drawSelEnd = 0;
 	
-		GetDialoguePos(lineStart,lineEnd,false);
-		hasSel = true;
+	GetDialoguePos(lineStart,lineEnd,false);
+	hasSel = true;
 		
-			GetDialoguePos(selStartCap,selEndCap,true);
-			selStart = lineStart;
-			selEnd = lineEnd;
-			drawSelStart = lineStart;
-			drawSelEnd = lineEnd;
+	GetDialoguePos(selStartCap,selEndCap,true);
+	selStart = lineStart;
+	selEnd = lineEnd;
+	drawSelStart = lineStart;
+	drawSelEnd = lineEnd;
 		
 	// Draw selection bg
 	if (hasSel && drawSelStart < drawSelEnd && draw_selection_background) {
@@ -276,6 +277,9 @@ void AudioDisplay::DoUpdateImage() {
 		}
 	}
 
+	// Draw previous line
+	DrawInactiveLines(dc);
+
 	// Draw current frame
 	if (Options.GetBool(_T("Audio Draw Video Position"))) {
 		VideoCtrl *Video= Notebook::GetTab()->Video;
@@ -286,10 +290,6 @@ void AudioDisplay::DoUpdateImage() {
 			dc.DrawLine(x,0,x,h);
 		}
 	}
-	
-	
-	// Draw previous line
-	DrawInactiveLines(dc);
 
 
 	// Draw keyframes
@@ -859,7 +859,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 			// Get player
 			player = new DirectSoundPlayer2();
 			//wxMessageBox("Player konstruktor");
-			player->SetDisplayTimer(&UpdateTimer);
+			//player->SetDisplayTimer(&UpdateTimer);
 			//wxMessageBox("Timer");
 			player->SetProvider(provider);
 			player->OpenStream();
@@ -980,6 +980,7 @@ void AudioDisplay::Play(int start,int end,bool pause) {
 
 	// Call play
 	player->Play(start,end-start);
+	if (!UpdateTimer.IsRunning()) UpdateTimer.Start(30);
 }
 
 
@@ -987,7 +988,11 @@ void AudioDisplay::Play(int start,int end,bool pause) {
 // Stop
 void AudioDisplay::Stop() {
 	if(Notebook::GetTab()->Video->GetState()==Playing){Notebook::GetTab()->Video->Pause();}
-	else if (player) player->Stop();
+	else if (player) {
+		player->Stop();
+		if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
+	}
+
 }
 
 
@@ -1254,7 +1259,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 
 	
 	// Timing
-	if (hasSel && !(event.ControlDown() && hold==0)) {
+	if (hasSel && !(event.ControlDown() && !event.AltDown() && hold==0)) {
 		
 		letter=-1;
 		// znacznik
@@ -1356,6 +1361,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 			// Release
 			if(buttonUP) {
 				// Prevent negative times
+				//wxLogStatus(" hold1 %i", Grabbed);
 				if(Grabbed==-1)
 				{
 					curStartMS = MAX(0, curStartMS);
@@ -1366,8 +1372,10 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 					selEnd = MAX(0, selEnd);
 					int nn = Edit->ebrow;
 					//automatyczne ustawianie czasów nastêpnej linijki (Chwyt mysz¹ end + ctrl)
+					//wxLogStatus(" hold %i %i %i %i", hold, nn, (int)event.ControlDown(), (int)event.AltDown());
 					if(hold==2 && nn<grid->GetCount()-1 && event.ControlDown() && event.AltDown())
 					{
+						//wxLogStatus(" hold1 %i %i %i %i", hold, nn, (int)event.ControlDown(), (int)event.AltDown());
 						Dialogue *dialc=grid->CopyDial(nn+1);
 						dialc->Start.NewTime(curEndMS);
 						dialc->End.NewTime(curEndMS+5000);
@@ -1734,11 +1742,20 @@ void AudioDisplay::OnSize(wxSizeEvent &event) {
 ///////////////
 // Timer event
 void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
+
 	if (!origImage)
 		return;
 
-		
-	if (!player->IsPlaying()) return;
+	//wxLogStatus("Isplaying %i", (int)player->IsPlaying());	
+	/*if (!player->IsPlaying()){
+		if(cursorPaint){
+			needImageUpdate=false;
+			Refresh(false);
+			cursorPaint=false;
+		}
+		return;
+	}*/
+	wxMutexLocker lock(mutex);
 
 	// Get DCs
 	wxClientDC dc(this);
@@ -1746,6 +1763,7 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 	// Draw cursor
 	int curpos = -1;
 	if (player->IsPlaying()) {
+		cursorPaint=true;
 		int64_t curPos = player->GetCurrentPosition();
 		//wxLogStatus("Cur %i", curPos);
 		if (curPos > player->GetStartPosition() && curPos < player->GetEndPosition()) {
@@ -1780,8 +1798,8 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 			curpos = GetXAtSample(curPos);
 			if (curpos >= 0 && curpos < GetClientSize().GetWidth()) {
 
-				dc.SetPen(wxPen(Options.GetColour(_T("Audio Play Cursor"))));
-				src.SelectObject(*origImage);
+				dc.SetPen(wxPen(Options.GetColour(_T("Audio Play Cursor")),2));
+				
 				if (fullDraw) {
 					//dc.Blit(0,0,w,h,&src,0,0);
 					dc.DrawLine(curpos,0,curpos,h);
@@ -1789,10 +1807,11 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 					//dc.Blit(curpos+10,0,w-curpos-10,h,&src,curpos+10,0);
 				}
 				else {
-					dc.Blit(oldCurPos,0,1,h,&src,oldCurPos,0);
+					src.SelectObject(*origImage);
+					dc.Blit(oldCurPos-1,0,2,h,&src,oldCurPos-1,0);
 					dc.DrawLine(curpos,0,curpos,h);
 				}
-
+				
 			}
 		}
 		else {
@@ -1800,20 +1819,24 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 				player->Stop();
 			}
 
-			wxMemoryDC src;
-			src.SelectObject(*origImage);
-			dc.Blit(oldCurPos,0,1,h,&src,oldCurPos,0);
-
+			if(cursorPaint){
+				wxMemoryDC src;
+				src.SelectObject(*origImage);
+				dc.Blit(oldCurPos-1,0,2,h,&src,oldCurPos-1,0);
+				cursorPaint=false;
+			}
 		}
 	}
 
 	// Restore background
 	else {
 
-		wxMemoryDC src;
-		src.SelectObject(*origImage);
-		dc.Blit(oldCurPos,0,1,h,&src,oldCurPos,0);
-
+		//wxMemoryDC src;
+		//src.SelectObject(*origImage);
+		//dc.Blit(oldCurPos-1,0,2,h,&src,oldCurPos-1,0);
+		needImageUpdate=true;
+		Refresh(false);
+		if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
 	}
 	oldCurPos = curpos;
 	if (oldCurPos < 0) oldCurPos = 0;

@@ -1035,7 +1035,15 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 		GetSelection(&from,&to);
 		wxString word= MText.SubString(from,to-1).Trim();
 		if(word.IsWord()){
-			wxLaunchDefaultBrowser(page+word);
+			//wxLaunchDefaultBrowser(page+word);
+			wxString url=page+word;
+			WinStruct<SHELLEXECUTEINFO> sei;
+			sei.lpFile = url.c_str();
+			sei.lpVerb = wxT("open");
+			sei.nShow = SW_RESTORE;
+			sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
+
+			ShellExecuteEx(&sei);
 		}
 
 	}

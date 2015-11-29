@@ -198,14 +198,14 @@ void DirectSoundPlayer2Thread::Run()
 		REPORT_ERROR("Could not initialise COM")
 
 
-	// Create DirectSound object
-	COMObjectRetainer<IDirectSound8> ds;
+		// Create DirectSound object
+		COMObjectRetainer<IDirectSound8> ds;
 	if (FAILED(DirectSoundCreate8(&DSDEVID_DefaultPlayback, &ds.obj, NULL)))
 		REPORT_ERROR("Cound not create DirectSound object")
 
 
-	// Ensure we can get interesting wave formats (unless we have PRIORITY we can only use a standard 8 bit format)
-	kainoteApp *app = (kainoteApp*) wxTheApp;
+		// Ensure we can get interesting wave formats (unless we have PRIORITY we can only use a standard 8 bit format)
+		kainoteApp *app = (kainoteApp*) wxTheApp;
 	ds->SetCooperativeLevel((HWND)app->Frame->GetHandle(), DSSCL_PRIORITY);
 
 	// Describe the wave format
@@ -236,11 +236,11 @@ void DirectSoundPlayer2Thread::Run()
 	if FAILED(ds->CreateSoundBuffer(&desc, &bfr7, 0))
 		REPORT_ERROR("Could not create buffer")
 
-	// But it's an old version interface we get, query it for the DSound8 interface
-	COMObjectRetainer<IDirectSoundBuffer8> bfr;
+		// But it's an old version interface we get, query it for the DSound8 interface
+		COMObjectRetainer<IDirectSoundBuffer8> bfr;
 	if (FAILED(bfr7->QueryInterface(IID_IDirectSoundBuffer8, (LPVOID*)&bfr.obj)))
 		REPORT_ERROR("Buffer doesn't support version 8 interface")
-	bfr7->Release();
+		bfr7->Release();
 	bfr7 = 0;
 
 
@@ -283,7 +283,7 @@ void DirectSoundPlayer2Thread::Run()
 				if (FAILED(bfr->SetCurrentPosition(0)))
 					REPORT_ERROR("Could not reset playback buffer cursor before filling first buffer.")
 
-				HRESULT res = bfr->Lock(buffer_offset, 0, &buf, &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER);
+					HRESULT res = bfr->Lock(buffer_offset, 0, &buf, &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER);
 				while (FAILED(res)) // yes, while, so I can break out of it without a goto!
 				{
 					if (res == DSERR_BUFFERLOST)
@@ -311,25 +311,25 @@ void DirectSoundPlayer2Thread::Run()
 				if (FAILED(bfr->SetCurrentPosition(0)))
 					REPORT_ERROR("Could not reset playback buffer cursor before playback.")
 
-				if (bytes_filled < wanted_latency_bytes)
-				{
-					// Very short playback length, do without streaming playback
-					current_latency = (bytes_filled*1000) / (waveFormat.nSamplesPerSec*provider->GetBytesPerSample());
-					if (FAILED(bfr->Play(0, 0, 0)))
-						REPORT_ERROR("Could not start single-buffer playback.")
-				}
-				else
-				{
-					// We filled the entire buffer so there's reason to do streaming playback
-					current_latency = wanted_latency;
-					if (FAILED(bfr->Play(0, 0, DSBPLAY_LOOPING)))
-						REPORT_ERROR("Could not start looping playback.")
-				}
+					if (bytes_filled < wanted_latency_bytes)
+					{
+						// Very short playback length, do without streaming playback
+						current_latency = (bytes_filled*1000) / (waveFormat.nSamplesPerSec*provider->GetBytesPerSample());
+						if (FAILED(bfr->Play(0, 0, 0)))
+							REPORT_ERROR("Could not start single-buffer playback.")
+					}
+					else
+					{
+						// We filled the entire buffer so there's reason to do streaming playback
+						current_latency = wanted_latency;
+						if (FAILED(bfr->Play(0, 0, DSBPLAY_LOOPING)))
+							REPORT_ERROR("Could not start looping playback.")
+					}
 
-				SetEvent(is_playing);
-				playback_should_be_running = true;
+					SetEvent(is_playing);
+					playback_should_be_running = true;
 
-				break;
+					break;
 			}
 
 		case WAIT_OBJECT_0+1:
@@ -392,93 +392,93 @@ do_fill_buffer:
 				if (FAILED(bfr->GetStatus(&status)))
 					REPORT_ERROR("Could not get playback buffer status")
 
-				if (!(status & DSBSTATUS_LOOPING))
-				{
-					// Not looping playback...
-					// hopefully we only triggered timeout after being done with the buffer
-					bfr->Stop();
-					ResetEvent(is_playing);
-					playback_should_be_running = false;
-					break;
-				}
-
-				DWORD play_cursor;
-				if (FAILED(bfr->GetCurrentPosition(&play_cursor, 0)))
-					REPORT_ERROR("Could not get play cursor position for filling buffer.")
-
-				int bytes_needed = (int)play_cursor - (int)buffer_offset;
-				if (bytes_needed < 0) bytes_needed += (int)bufSize;
-
-				// Requesting zero buffer makes Windows cry, and zero buffer seemed to be
-				// a common request on Windows 7. (Maybe related to the new timer coalescing?)
-				// We'll probably get non-zero bytes requested on the next iteration.
-				if (bytes_needed == 0)
-					break;
-
-				DWORD buf1sz, buf2sz;
-				void *buf1, *buf2;
-
-				assert(bytes_needed > 0);
-				assert(buffer_offset < bufSize);
-				assert((DWORD)bytes_needed <= bufSize);
-
-				HRESULT res = bfr->Lock(buffer_offset, bytes_needed, &buf1, &buf1sz, &buf2, &buf2sz, 0);
-				switch (res)
-				{
-				case DSERR_BUFFERLOST:
-					// Try to regain the buffer
-					// When the buffer was lost the entire contents was lost too, so we have to start over
-					if (SUCCEEDED(bfr->Restore()) &&
-					    SUCCEEDED(bfr->Lock(0, bufSize, &buf1, &buf1sz, &buf2, &buf2sz, 0)) &&
-					    SUCCEEDED(bfr->Play(0, 0, DSBPLAY_LOOPING)))
+					if (!(status & DSBSTATUS_LOOPING))
 					{
-						wxLogDebug(_T("DirectSoundPlayer2: Lost and restored buffer"));
+						// Not looping playback...
+						// hopefully we only triggered timeout after being done with the buffer
+						bfr->Stop();
+						ResetEvent(is_playing);
+						playback_should_be_running = false;
 						break;
 					}
-					REPORT_ERROR("Lost buffer and could not restore it.")
 
-				case DSERR_INVALIDPARAM:
-					REPORT_ERROR("Invalid parameters to IDirectSoundBuffer8::Lock().")
+					DWORD play_cursor;
+					if (FAILED(bfr->GetCurrentPosition(&play_cursor, 0)))
+						REPORT_ERROR("Could not get play cursor position for filling buffer.")
 
-				case DSERR_INVALIDCALL:
-					REPORT_ERROR("Invalid call to IDirectSoundBuffer8::Lock().")
+						int bytes_needed = (int)play_cursor - (int)buffer_offset;
+					if (bytes_needed < 0) bytes_needed += (int)bufSize;
 
-				case DSERR_PRIOLEVELNEEDED:
-					REPORT_ERROR("Incorrect priority level set on DirectSoundBuffer8 object.")
+					// Requesting zero buffer makes Windows cry, and zero buffer seemed to be
+					// a common request on Windows 7. (Maybe related to the new timer coalescing?)
+					// We'll probably get non-zero bytes requested on the next iteration.
+					if (bytes_needed == 0)
+						break;
 
-				default:
-					if (FAILED(res))
-						REPORT_ERROR("Could not lock audio buffer, unknown error.")
+					DWORD buf1sz, buf2sz;
+					void *buf1, *buf2;
+
+					assert(bytes_needed > 0);
+					assert(buffer_offset < bufSize);
+					assert((DWORD)bytes_needed <= bufSize);
+
+					HRESULT res = bfr->Lock(buffer_offset, bytes_needed, &buf1, &buf1sz, &buf2, &buf2sz, 0);
+					switch (res)
+					{
+					case DSERR_BUFFERLOST:
+						// Try to regain the buffer
+						// When the buffer was lost the entire contents was lost too, so we have to start over
+						if (SUCCEEDED(bfr->Restore()) &&
+							SUCCEEDED(bfr->Lock(0, bufSize, &buf1, &buf1sz, &buf2, &buf2sz, 0)) &&
+							SUCCEEDED(bfr->Play(0, 0, DSBPLAY_LOOPING)))
+						{
+							wxLogDebug(_T("DirectSoundPlayer2: Lost and restored buffer"));
+							break;
+						}
+						REPORT_ERROR("Lost buffer and could not restore it.")
+
+					case DSERR_INVALIDPARAM:
+						REPORT_ERROR("Invalid parameters to IDirectSoundBuffer8::Lock().")
+
+					case DSERR_INVALIDCALL:
+						REPORT_ERROR("Invalid call to IDirectSoundBuffer8::Lock().")
+
+					case DSERR_PRIOLEVELNEEDED:
+						REPORT_ERROR("Incorrect priority level set on DirectSoundBuffer8 object.")
+
+					default:
+						if (FAILED(res))
+							REPORT_ERROR("Could not lock audio buffer, unknown error.")
+							break;
+					}
+
+					DWORD bytes_filled = FillAndUnlockBuffers(buf1, buf1sz, buf2, buf2sz, next_input_frame, bfr.obj);
+					buffer_offset += bytes_filled;
+					if (buffer_offset >= bufSize) buffer_offset -= bufSize;
+
+					if (bytes_filled < 1024)
+					{
+						// Arbitrary low number, we filled in very little so better get back to filling in the rest with silence
+						// really fast... set latency to zero in this case.
+						current_latency = 0;
+					}
+					else if (bytes_filled < wanted_latency_bytes)
+					{
+						// Didn't fill as much as we wanted to, let's get back to filling sooner than normal
+						current_latency = (bytes_filled*1000) / (waveFormat.nSamplesPerSec*provider->GetBytesPerSample());
+					}
+					else
+					{
+						// Plenty filled in, do regular latency
+						current_latency = wanted_latency;
+					}
+
 					break;
-				}
-
-				DWORD bytes_filled = FillAndUnlockBuffers(buf1, buf1sz, buf2, buf2sz, next_input_frame, bfr.obj);
-				buffer_offset += bytes_filled;
-				if (buffer_offset >= bufSize) buffer_offset -= bufSize;
-
-				if (bytes_filled < 1024)
-				{
-					// Arbitrary low number, we filled in very little so better get back to filling in the rest with silence
-					// really fast... set latency to zero in this case.
-					current_latency = 0;
-				}
-				else if (bytes_filled < wanted_latency_bytes)
-				{
-					// Didn't fill as much as we wanted to, let's get back to filling sooner than normal
-					current_latency = (bytes_filled*1000) / (waveFormat.nSamplesPerSec*provider->GetBytesPerSample());
-				}
-				else
-				{
-					// Plenty filled in, do regular latency
-					current_latency = wanted_latency;
-				}
-
-				break;
 			}
 
 		default:
 			REPORT_ERROR("Something bad happened while waiting on events in playback loop, either the wait failed or an event object was abandoned.")
-			break;
+				break;
 		}
 	}
 
@@ -575,14 +575,14 @@ void DirectSoundPlayer2Thread::CheckError()
 
 
 DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(VideoFfmpeg *provider, int _WantedLatency, int _BufferLength)
-: event_start_playback  (CreateEvent(0, FALSE, FALSE, 0))
-, event_stop_playback   (CreateEvent(0, FALSE, FALSE, 0))
-, event_update_end_time (CreateEvent(0, FALSE, FALSE, 0))
-, event_set_volume      (CreateEvent(0, FALSE, FALSE, 0))
-, event_kill_self       (CreateEvent(0, FALSE, FALSE, 0))
-, thread_running        (CreateEvent(0,  TRUE, FALSE, 0))
-, is_playing            (CreateEvent(0,  TRUE, FALSE, 0))
-, error_happened        (CreateEvent(0, FALSE, FALSE, 0))
+	: event_start_playback  (CreateEvent(0, FALSE, FALSE, 0))
+	, event_stop_playback   (CreateEvent(0, FALSE, FALSE, 0))
+	, event_update_end_time (CreateEvent(0, FALSE, FALSE, 0))
+	, event_set_volume      (CreateEvent(0, FALSE, FALSE, 0))
+	, event_kill_self       (CreateEvent(0, FALSE, FALSE, 0))
+	, thread_running        (CreateEvent(0,  TRUE, FALSE, 0))
+	, is_playing            (CreateEvent(0,  TRUE, FALSE, 0))
+	, error_happened        (CreateEvent(0, FALSE, FALSE, 0))
 {
 	error_message = 0;
 	volume = 1.0;
@@ -653,7 +653,7 @@ void DirectSoundPlayer2Thread::SetEndFrame(int64_t new_end_frame)
 	end_frame = new_end_frame;
 	//if(end_frame<GetCurrentFrame()){Stop();}
 	//else{
-		SetEvent(event_update_end_time);//}
+	SetEvent(event_update_end_time);//}
 }
 
 
@@ -700,7 +700,7 @@ int DirectSoundPlayer2Thread::GetCurrentMS()
 	CheckError();
 
 	if (!IsPlaying()) return 0;
-	
+
 
 	int milliseconds_elapsed = (int)(timeGetTime() - last_playback_restart);
 
@@ -712,7 +712,7 @@ int64_t DirectSoundPlayer2Thread::GetCurrentFrame()
 	CheckError();
 
 	if (!IsPlaying()) return 0;
-	
+
 
 	int milliseconds_elapsed = (int)(timeGetTime() - last_playback_restart);
 
@@ -777,7 +777,7 @@ DirectSoundPlayer2::~DirectSoundPlayer2()
 bool DirectSoundPlayer2::IsThreadAlive()
 {
 	if (!thread) return false;
-	
+
 	if (thread->IsDead())
 	{
 		delete thread;
@@ -846,7 +846,7 @@ void DirectSoundPlayer2::Play(int64_t start,int64_t count)
 		OpenStream();
 		thread->Play(start, count);
 
-		if (displayTimer && !displayTimer->IsRunning()) displayTimer->Start(30);
+		//if (displayTimer && !displayTimer->IsRunning()) displayTimer->Start(30);
 	}
 	catch (const wxChar *msg)
 	{
@@ -861,9 +861,9 @@ void DirectSoundPlayer2::Stop(bool timerToo)
 	{
 		if (IsThreadAlive()) thread->Stop();
 
-		if (displayTimer) {
+		/*if (displayTimer) {
 			displayTimer->Stop();
-		}
+		}*/
 	}
 	catch (const wxChar *msg)
 	{
@@ -1000,8 +1000,8 @@ double DirectSoundPlayer2::GetVolume()
 }
 
 
-void DirectSoundPlayer2::SetDisplayTimer(wxTimer *Timer)
-	{
-	displayTimer=Timer;
-	}
+//void DirectSoundPlayer2::SetDisplayTimer(wxTimer *Timer)
+//{
+//	displayTimer=Timer;
+//}
 

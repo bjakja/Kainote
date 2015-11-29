@@ -4,8 +4,8 @@
 #include "config.h"
 
 
-Fullscreen::Fullscreen(wxWindow* parent, wxSize size)
-              : wxFrame(parent, -1,"", wxPoint(0,0), size, wxBORDER_NONE|wxSTAY_ON_TOP)
+Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
+              : wxFrame(parent, -1,"", pos, size, wxBORDER_NONE|wxSTAY_ON_TOP)
 {
     vb=parent;
 	SetBackgroundColour("#000000");

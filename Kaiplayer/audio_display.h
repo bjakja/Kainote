@@ -116,6 +116,7 @@ private:
 	//int64_t scrubLastPos;
 	//bool scrubbing;
 	//int scrubLastRate;
+	wxMutex mutex;
 	int whichsyl;
 	int letter;
 
@@ -160,6 +161,7 @@ public:
 	AudioBox *box;
 	wxScrollBar *ScrollBar;
 	wxTimer UpdateTimer;
+	bool cursorPaint;
 
 	AudioDisplay(wxWindow *parent);
 	virtual ~AudioDisplay();

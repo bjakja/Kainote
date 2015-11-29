@@ -27,20 +27,29 @@ bool ClipPoint::IsInPos(wxPoint pos, int diff)
 	return (abs(pos.x-x) <= diff && abs(pos.y-y) <= diff);
 }
 
-D3DXVECTOR2 ClipPoint::GetVector()
+D3DXVECTOR2 ClipPoint::GetVector(bool wsp)
 {
-	D3DXVECTOR2 v((x+_x)/wspw,(y+_y)/wsph);
+	D3DXVECTOR2 v;
+	if(wsp){
+		v = D3DXVECTOR2((x+Visuals::_x)/Visuals::wspw,(y+Visuals::_y)/Visuals::wsph);
+	}else{
+		v = D3DXVECTOR2(x,y);
+	}
 	return v;
 }
 
 int ClipPoint::wx()
 {
-	return (x+_x)/wspw;
+	return (x+Visuals::_x)/Visuals::wspw;
 }
 int ClipPoint::wy()
 {
-	return (y+_y)/wsph;
+	return (y+Visuals::_y)/Visuals::wsph;
 }
+float Visuals::_x=0;
+float Visuals::_y=0;
+float Visuals::wspw=0;
+float Visuals::wsph=0;
 
 //Rysuje clip jeœli dana linia jest widoczna na wideo
 //cur - aktualny czas wideo
@@ -153,9 +162,9 @@ void Visuals::SetPos(int x, int y)
 }
 
 // pos in skreen position
-int Visuals::CheckPos(wxPoint pos, bool retlast)
+int Visuals::CheckPos(wxPoint pos, bool retlast, bool wsp)
 {
-	pos.x =(pos.x*wspw)-_x; pos.y =(pos.y*wsph)-_y;
+	if(wsp){pos.x =(pos.x*wspw)-_x; pos.y =(pos.y*wsph)-_y;}
 	for(size_t i=0; i<Points.size(); i++)
 	{
 		if(Points[i].IsInPos(pos,5)){return i;}
@@ -268,9 +277,9 @@ int Visuals::DrawCurve(int i, bool bspline)
 	return pts;
 }
 
-void Visuals::DrawRect(int i)
+void Visuals::DrawRect(int i, bool wsp)
 {
-    D3DXVECTOR2 tmp = Points[i].GetVector();
+    D3DXVECTOR2 tmp = Points[i].GetVector(wsp);
 	D3DXVECTOR2 v2[2];
 	line->End();
 	line->SetWidth(10.0f);
@@ -286,10 +295,10 @@ void Visuals::DrawRect(int i)
 	line->Begin();
 }
 	
-void Visuals::DrawCircle(int i)
+void Visuals::DrawCircle(int i, bool wsp)
 {
 	line->End();
-	D3DXVECTOR2 tmp = Points[i].GetVector();
+	D3DXVECTOR2 tmp = Points[i].GetVector(wsp);
 	MYVERTEX v5[41];
 	float rad =0.01745329251994329576923690768489f;
 	
@@ -497,11 +506,8 @@ void Visuals::OnMouseEvent(wxMouseEvent &event)
 
 	if(event.LeftIsDown() && grabbed!=-1)
 	{
-		
-		wxSize wsize=parent->GetClientSize();
-		
-		x=MID(0,x,wsize.x);
-		y=MID(0,y,wsize.y-44);
+		x=MID(0,x,widsize.x);
+		y=MID(0,y,widsize.y-44);
 		Points[grabbed].x=((x+diffs.x)*wspw)-_x;
 		Points[grabbed].y=((y+diffs.y)*wsph)-_y;
 		acpoint=Points[grabbed];
@@ -513,11 +519,9 @@ void Visuals::OnMouseEvent(wxMouseEvent &event)
 
 }
 
-void Visuals::SetNewSize(wxSize wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device)
+void Visuals::SetNewSize(wxSize wsize)
 {
-	line=_line;
-	font=_font;
-	device=_device;
+	
 	wspw=((float)subssize.x/(float)wsize.x);
 	wsph=(float)subssize.y/(float)(wsize.y-44);
 	//wxLogStatus(" wsp %f %f %i %i", wspw, wsph ,subssize.x, wsize.x );
@@ -526,7 +530,6 @@ void Visuals::SetNewSize(wxSize wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIR
 		wspw/=scale.x;
 		wsph/=scale.y;
 	}
-
 }
 
 D3DXVECTOR2 Visuals::CalcWH()

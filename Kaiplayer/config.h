@@ -67,7 +67,7 @@ class config
     int StoreSize();
     void CatchValsLabs(wxString rawoptions);
     bool SetRawOptions(wxString textconfig);
-    bool LoadOptions();
+    int LoadOptions();
 	bool LoadAudioOpts();
 	void SaveAudioOpts();
     void SaveOptions(bool cfg=true, bool style=true);
@@ -79,8 +79,9 @@ class config
 
 };
 bool sortfunc(Styles *styl1,Styles *styl2);
-
-wxString getfloat(float num);
+//formatowanie w tym przypadku wygl¹da tak, 
+//liczba która mówi ile cyfr przed przecinkiem i ile po, np 5.3f;
+wxString getfloat(float num, wxString format="5.3f");
 wxBitmap CreateBitmapFromPngResource(const wxString& t_name);
 wxImage CreateImageFromPngResource(const wxString& t_name);
 #define wxBITMAP_PNG(x) CreateBitmapFromPngResource(x)

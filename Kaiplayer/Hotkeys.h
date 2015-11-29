@@ -5,6 +5,22 @@
 #include <wx/wx.h>
 #include <map>
 
+class hdata{
+public:
+	hdata(char accType, wxString accName, wxString _Accel)
+	{
+		Type=accType; Name=accName; Accel=_Accel;
+	}
+	hdata(wxString acc)
+	{
+		Type=acc[0]; Name=acc.Mid(2).BeforeLast('='); Accel=acc.AfterLast('=');
+	}
+	hdata(){Type='\0';}
+	wxString Name;
+	wxString Accel;
+	char Type;
+};
+
 class HkeysDialog : public wxDialog
 {
 	public:
@@ -12,6 +28,7 @@ class HkeysDialog : public wxDialog
 	virtual ~HkeysDialog();
 	int flag, hkey;
 	wxString hkname;
+
 
 	private:
 	void OnKeyPress(wxKeyEvent& event);
@@ -25,8 +42,8 @@ private:
 public:
 	Hotkeys();
 	~Hotkeys();
-	bool LoadHkeys(bool Audio=false);
-	void LoadDefault(std::map<int,wxString> &_hkeys, bool Audio=false);
+	int LoadHkeys(bool Audio=false);
+	void LoadDefault(std::map<int, hdata> &_hkeys, bool Audio=false);
 	void SaveHkeys(bool Audio=false);
 	void SetHKey(int id, wxString name, int flag, int key);
 	wxAcceleratorEntry GetHKey(int itemid);
@@ -35,7 +52,7 @@ public:
 	void ResetKey(int id);
 	wxMenuItem *SetAccMenu(wxMenu *menu, int id, const wxString &txt="", const wxString &help="", wxItemKind kind=wxITEM_NORMAL);
 	int OnMapHkey(int id, wxString name,wxWindow *parent,wxString *windows, int elems);
-	std::map<int,wxString> hkeys;
+	std::map<int, hdata> hkeys;
 	std::map<int, wxString> keys;
 	bool AudioKeys;
 	wxArrayString lscripts;

@@ -111,7 +111,8 @@ public:
 
 	void PutinText(wxString text, bool focus=true, bool onlysel=false);
 	void PutinNonass(wxString text, wxString tag);
-	wxString GetTags(const wxString &text) const;
+	//ustawia tekst i gdy trzeba wstawia tagi z orygina³u ustawiaj¹c w³aœciw¹ pozycjê kursora.
+	void SetTextWithTags();
 	void ClearErrs();
 	wxString GetVisual(int type=0);
 	void SetClip(wxString clip,bool dummy);

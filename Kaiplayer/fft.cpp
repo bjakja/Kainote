@@ -60,7 +60,7 @@ FFT::FFT(size_t nsamples, VideoFfmpeg *_prov)
 	}
 	angle_num = 2.0f * 3.1415926535897932384626433832795f;
 	NumBits = NumberOfBitsNeeded(n_samples);
-	input=0;
+	input=new short[n_samples];//0
 	output_i=new float[n_samples*4];
 	output_r=new float[n_samples*4];
 }
@@ -71,30 +71,31 @@ FFT::~FFT()
 	delete[] output_r;
 }
 
-void FFT::RecreateTable(size_t asamples)
-{
-	if(allsamples<asamples){
-		if(input){delete[] input;}
-		input = new short[asamples];
-	}
-	allsamples=asamples;
-	diff=-1;
-}
-
-void FFT::SetDiff(size_t whre)
-{
-	diff=whre;
-	prov->GetBuffer(input,whre,allsamples);
-}
+//void FFT::RecreateTable(size_t asamples)
+//{
+//	if(allsamples<asamples){
+//		if(input){delete[] input;}
+//		input = new short[asamples];
+//	}
+//	allsamples=asamples;
+//	diff=-1;
+//}
+//
+//void FFT::SetDiff(size_t whre)
+//{
+//	diff=whre;
+//	prov->GetBuffer(input,whre,allsamples);
+//}
 /////////////
 // Transform
 void FFT::Transform (size_t whre, size_t wthread, bool inverse) {
 	
-	whre -= diff;
+	//whre -= diff;
+	prov->GetBuffer(input,whre,n_samples);
 		
 	
 	int th=wthread * n_samples;
-	if(whre>=allsamples-n_samples){wxLogStatus("przekroczenie %i %i",whre, allsamples-n_samples);return;}
+	//if(whre>=allsamples-n_samples){wxLogStatus("przekroczenie %i %i",whre, allsamples-n_samples);return;}
 	//assert(whre<allsamples-n_samples);
 
 	// Variables
@@ -105,7 +106,7 @@ void FFT::Transform (size_t whre, size_t wthread, bool inverse) {
 	// Copy samples to output buffers
 	for (i=0; i<n_samples; i++) {
 		j = ReverseBits (i,NumBits)+th;
-		output_r[j] = (float)input[i+whre];
+		output_r[j] = (float)input[i/*+whre*/];
 		output_i[j] = 0.0f;
 	}
 

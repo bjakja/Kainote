@@ -76,10 +76,10 @@ public:
 
 	void SetVolume(double vol);
 	double GetVolume();
-	void SetDisplayTimer(wxTimer *Timer);
+	//void SetDisplayTimer(wxTimer *Timer);
 
 	VideoFfmpeg *provider;
-	wxTimer *displayTimer;
+	//wxTimer *displayTimer;
 };
 
 

@@ -14,7 +14,7 @@ config::config()
 {
 	progname=_T("Kainote v")+wxString(VersionKainote)+"  "+wxString(__DATE__)+"  "+wxString(__TIME__);
 #if _DEBUG
-		progname+= " DEBUG";
+	progname+= " DEBUG";
 #endif
 	AudioOpts=false;
 }
@@ -35,86 +35,86 @@ config::~config()
 bool config::SetRawOptions(wxString textconfig)
 {
 	wxStringTokenizer cfg(textconfig,_T("\n"));
-    int g=0;
-    while(cfg.HasMoreTokens())
-    {
-        wxString token=cfg.NextToken();
-        token.Trim(false);
-        token.Trim(true);
-        if (token.Len()>0){CatchValsLabs(token);g++;}
-    }
-    if (g>10){return true;};
-    return false;
+	int g=0;
+	while(cfg.HasMoreTokens())
+	{
+		wxString token=cfg.NextToken();
+		token.Trim(false);
+		token.Trim(true);
+		if (token.Len()>0){CatchValsLabs(token);g++;}
+	}
+	if (g>10){return true;};
+	return false;
 }
 
 wxString config::GetString(wxString lopt)
 {
 	//std::map<wxString,wxString>::iterator it = rawcfg.find(lopt);
 	//if(it!=rawcfg.end()){return it->second;}
-    return rawcfg[lopt];
+	return rawcfg[lopt];
 }
 
 
 bool config::GetBool(wxString lopt)
 {   wxString opt=rawcfg[lopt];
-    if(opt==_T("true")){return true;}
-    return false;
+if(opt==_T("true")){return true;}
+return false;
 }
 
 wxColour config::GetColour(wxString lopt)
 {
-    return wxString(rawcfg[lopt]);
+	return wxString(rawcfg[lopt]);
 }
 
 int config::GetInt(wxString lopt)
 {
 	//wxString intopt=rawcfg[lopt];
 	//if(intopt=="")return 0;
-    return wxAtoi(rawcfg[lopt]);
+	return wxAtoi(rawcfg[lopt]);
 }
 float config::GetFloat(wxString lopt)
 {   double fl;
-    wxString rawfloat=rawcfg[lopt];
-	//if(rawfloat=="")return 0.0;
-    if(!rawfloat.ToDouble(&fl)){return 0.0;}
-    return fl;
+wxString rawfloat=rawcfg[lopt];
+//if(rawfloat=="")return 0.0;
+if(!rawfloat.ToDouble(&fl)){return 0.0;}
+return fl;
 }
 
 void config::SetString(wxString lopt, wxString sopt)
 {
-    rawcfg[lopt]=sopt;
+	rawcfg[lopt]=sopt;
 }
 
 void config::SetBool(wxString lopt, bool bopt)
 {
-    wxString bopt1 = (bopt)? _T("true") : _T("false");
-    rawcfg[lopt]=bopt1;
+	wxString bopt1 = (bopt)? _T("true") : _T("false");
+	rawcfg[lopt]=bopt1;
 }
 
 void config::SetColour(wxString lopt, wxColour copt)
 {
-    wxString copt1 = copt.GetAsString(wxC2S_HTML_SYNTAX);
-    rawcfg[lopt]=copt1;
+	wxString copt1 = copt.GetAsString(wxC2S_HTML_SYNTAX);
+	rawcfg[lopt]=copt1;
 }
 
 void config::SetInt(wxString lopt, int iopt)
 {
-    wxString iopt1=_T("");
-    rawcfg[lopt]=iopt1<<iopt;
+	wxString iopt1=_T("");
+	rawcfg[lopt]=iopt1<<iopt;
 }
 
 void config::SetFloat(wxString lopt, float fopt)
 {
-    wxString fopt1=_T("");
+	wxString fopt1=_T("");
 	fopt1<<fopt;
 	fopt1.Replace(",",".");
-    rawcfg[lopt]=fopt1;
+	rawcfg[lopt]=fopt1;
 }
 
 wxString config::GetRawOptions(bool Audio)
 {
-    wxString TextOpt=_T("[Main]\r\n");
-    for (std::map<wxString,wxString>::iterator cur=rawcfg.begin();cur!=rawcfg.end();cur++) {
+	wxString TextOpt=_T("["+progname+"]\r\n");
+	for (std::map<wxString,wxString>::iterator cur=rawcfg.begin();cur!=rawcfg.end();cur++) {
 		if((!Audio && cur->first.StartsWith("Audio")) || (Audio && !cur->first.StartsWith("Audio"))) {continue;}
 		TextOpt<<cur->first << _T("=") << cur->second << _T("\r\n");
 	}
@@ -123,17 +123,17 @@ wxString config::GetRawOptions(bool Audio)
 
 void config::CatchValsLabs(wxString line)
 {
-    wxString Values=line.AfterFirst('=');
-    Values.Trim(false);
-    Values.Trim(true);
-    wxString Labels=line.BeforeFirst('=');
-    Labels.Trim(false);
-    Labels.Trim(true);
-    rawcfg[Labels]=Values;
+	wxString Values=line.AfterFirst('=');
+	Values.Trim(false);
+	Values.Trim(true);
+	wxString Labels=line.BeforeFirst('=');
+	Labels.Trim(false);
+	Labels.Trim(true);
+	rawcfg[Labels]=Values;
 }
 void config::AddStyle(Styles *styl)
 {
-    assstore.push_back(styl);
+	assstore.push_back(styl);
 
 }
 
@@ -143,95 +143,99 @@ Styles *config::GetStyle(int i,wxString name, Styles* _styl)
 		for(unsigned int j=0;j<assstore.size();j++){
 			if(name==assstore[j]->Name){if(_styl){_styl=assstore[j];} return assstore[j];}
 		}
-		
-    }
-    return assstore[i];
+
+	}
+	return assstore[i];
 }
 
 int config::FindStyle(wxString name, int *multiplication)
 {
-    int isfound=-1;
-    for(unsigned int j=0;j<assstore.size();j++)
-    {
-        if(name==assstore[j]->Name){isfound=j;
-			if(multiplication){
-				*multiplication++;
-			}else{break;}
+	int isfound=-1;
+	for(unsigned int j=0;j<assstore.size();j++)
+	{
+		if(name==assstore[j]->Name){isfound=j;
+		if(multiplication){
+			*multiplication++;
+		}else{break;}
 		}
-    }
-    return isfound;
+	}
+	return isfound;
 }
 
 int config::StoreSize()
 {
-    return assstore.size();
+	return assstore.size();
 }
 
 void config::ChangeStyle(Styles *styl,int i)
 {
 	Styles *style= assstore[i];
 	delete style;
-    assstore[i]=styl;
+	assstore[i]=styl;
 }
 
 void config::DelStyle(int i)
 {
 	Styles *styl= assstore[i];
 	delete styl;
-    assstore.erase(assstore.begin()+i);
+	assstore.erase(assstore.begin()+i);
 }
 
 void config::SaveOptions(bool cfg, bool style)
 {
-    OpenWrite ow;
-    if(cfg){
-    wxString textfile=GetRawOptions();
-    wxString path;
-    path<<pathfull<<_T("\\Config.txt");
-    ow.FileWrite(path, textfile);
-    }
+	OpenWrite ow;
+	if(cfg){
+		wxString textfile=GetRawOptions();
+		wxString path;
+		path<<pathfull<<_T("\\Config.txt");
+		ow.FileWrite(path, textfile);
+	}
 
 	if(style){
-    wxString stylefile;
-    for (int j=0;j<StoreSize();j++){
-         stylefile<<GetStyle(j)->styletext();
-    }
-    wxString path;
-    path<<pathfull<<_T("\\Katalogi\\")<<acdir<<_T(".sty");
-    ow.FileWrite(path, stylefile);
+		wxString stylefile;
+		for (int j=0;j<StoreSize();j++){
+			stylefile<<GetStyle(j)->styletext();
+		}
+		wxString path;
+		path<<pathfull<<_T("\\Katalogi\\")<<acdir<<_T(".sty");
+		ow.FileWrite(path, stylefile);
 	}
 }
 
-bool config::LoadOptions()
+int config::LoadOptions()
 {
-    wxStandardPathsBase &paths = wxStandardPaths::Get();
-    pathfull=paths.GetExecutablePath().BeforeLast('\\');
-    wxString path;
-    path<<pathfull<<_T("\\Config.txt");
-    OpenWrite ow;
-    wxString txt=ow.FileOpen(path,false);
-    if(txt==_T("")){
+	wxStandardPathsBase &paths = wxStandardPaths::Get();
+	pathfull=paths.GetExecutablePath().BeforeLast('\\');
+	wxString path;
+	path<<pathfull<<_T("\\Config.txt");
+	OpenWrite ow;
+	wxString txt=ow.FileOpen(path,false);
+	bool checkVer=true;
+	if(txt==_T("")){
 		txt<<_T("[Main]\r\nChange Time=2000\r\nChange mode=0\r\nDefault FPS=23.976\r\nDefault Style=Default\r\nEditbox Spellchecker=true\r\nFrames=false\r\nGrid Active Line=#CA0065\r\nGrid Background=#C0C0C0\r\nGrid Comment=#D8DEF5\r\nGrid Dialogue=#C0C0C0\r\nGrid Collisions=#FF0000\r\nGrid Font Name=Tahoma")
-		<<_T("\r\nGrid Font Size=10\r\nGrid Label Normal=#19B3EC\r\nGrid Label Modified=#FBF804\r\nGrid Label Saved=#C4ECC9\r\nGrid Lines=#808080\r\nGrid Selected Comment=#D3EEEE\r\nGrid Selected Dialogue=#CEFFE7\r\nGrid Text=#000000\r\nMove time forward=true\r\nNew end times=false")
-		<<_T("\r\nShow settings window=false\r\nStart end times=0\r\nStyles of time change=\r\nTime show of letter=110\r\nGrid Spellchecker=#FA9292\r\nVideo Prog Bar=true\r\nShow Editor=true\r\nWindow Size=800,600\r\nVideo Window Size=500,350\r\nPreview Text=Podgl¹d\r\nOffset of start time=0")
-		<<_T("\r\nOffset of end time=0\r\nConvert Resolution W=1280\r\nConvert Resolution H=720\r\nMove Video To Active Line=0\r\nPlay Afrer Selection=0\r\nGrid tag changing char=*");
-    }
-    bool isgood=SetRawOptions(txt.AfterFirst('\n'));
-    acdir=_T("Podstawowy");
-    path=_T("");
-    path<<pathfull<<_T("\\Katalogi\\");
-    wxDir kat(path);
-    if(!kat.IsOpened()){ow.FileWrite(path<<acdir<<_T(".sty"),_T("Style: Default,Garamond,30,&H00FFFFFF,&H000000FF,&H00FF0000,&H00000000,0,0,0,0,100,100,0,0,0,2,2,2,10,10,10,1"));
-		AddStyle(new Styles());dirs.Add(acdir);
+			<<_T("\r\nGrid Font Size=10\r\nGrid Label Normal=#19B3EC\r\nGrid Label Modified=#FBF804\r\nGrid Label Saved=#C4ECC9\r\nGrid Lines=#808080\r\nGrid Selected Comment=#D3EEEE\r\nGrid Selected Dialogue=#CEFFE7\r\nGrid Text=#000000\r\nMove time forward=true\r\nNew end times=false")
+			<<_T("\r\nShow settings window=false\r\nStart end times=0\r\nStyles of time change=\r\nTime show of letter=110\r\nGrid Spellchecker=#FA9292\r\nVideo Prog Bar=true\r\nShow Editor=true\r\nWindow Size=800,600\r\nVideo Window Size=500,350\r\nPreview Text=Podgl¹d\r\nOffset of start time=0")
+			<<_T("\r\nOffset of end time=0\r\nConvert Resolution W=1280\r\nConvert Resolution H=720\r\nMove Video To Active Line=0\r\nPlay Afrer Selection=0\r\nGrid tag changing char=*");
+	}else{
+		wxString ver= txt.BeforeFirst(']').Mid(1);
+		if(ver!=progname){checkVer=false;}
 	}
-    else{wxArrayString tmp;kat.GetAllFiles(path,&tmp,_T(""), wxDIR_FILES);
-		for(size_t i=0;i<tmp.GetCount();i++){
-			wxString fullpath=tmp[i].AfterLast('\\');
-			if(fullpath.EndsWith(_T(".sty"))){dirs.Add(fullpath.BeforeLast('.'));}
-		}
+	bool isgood=SetRawOptions(txt.AfterFirst('\n'));
+	acdir=_T("Podstawowy");
+	path=_T("");
+	path<<pathfull<<_T("\\Katalogi\\");
+	wxDir kat(path);
+	if(!kat.IsOpened()){ow.FileWrite(path<<acdir<<_T(".sty"),_T("Style: Default,Garamond,30,&H00FFFFFF,&H000000FF,&H00FF0000,&H00000000,0,0,0,0,100,100,0,0,0,2,2,2,10,10,10,1"));
+	AddStyle(new Styles());dirs.Add(acdir);
 	}
-    LoadStyles(acdir);
-    return isgood;
+	else{wxArrayString tmp;kat.GetAllFiles(path,&tmp,_T(""), wxDIR_FILES);
+	for(size_t i=0;i<tmp.GetCount();i++){
+		wxString fullpath=tmp[i].AfterLast('\\');
+		if(fullpath.EndsWith(_T(".sty"))){dirs.Add(fullpath.BeforeLast('.'));}
+	}
+	}
+	LoadStyles(acdir);
+	return isgood;
 }
 
 void config::LoadStyles(wxString katalog)
@@ -246,7 +250,7 @@ void config::LoadStyles(wxString katalog)
 	assstore.clear();
 	wxString stylee=ow.FileOpen(path,false);
 	if(stylee!=_T("")){
-			wxStringTokenizer cfg(stylee,_T("\n"));
+		wxStringTokenizer cfg(stylee,_T("\n"));
 		while(cfg.HasMoreTokens()){
 			wxString token=cfg.NextToken();
 			if (token.StartsWith(_T("Style: "))){
@@ -261,13 +265,13 @@ void config::clearstyles()
 	for(std::vector<Styles*>::iterator it=assstore.begin(); it!=assstore.end(); it++){
 		delete (*it);
 	}
-    assstore.clear();
+	assstore.clear();
 }
 
 void config::SetCoords(wxString lopt, int coordx, int coordy)
 {
 	wxString iopt1=_T("");
-    rawcfg[lopt]=iopt1<<coordx<<","<<coordy;
+	rawcfg[lopt]=iopt1<<coordx<<","<<coordy;
 }
 
 void config::GetCoords(wxString lopt, int *coordx, int *coordy)
@@ -338,27 +342,11 @@ void config::Sortstyles()
 	std::sort(assstore.begin(),assstore.end(),sortfunc);
 }
 
-wxString getfloat(float num)
-{
-	wxString strnum=wxString::Format(_T("%5.3f"),num);
-	strnum.Replace(",",".");
-	int rmv=0;
-	bool trim=false;
-	for(int i=strnum.Len()-1;i>0;i--)
-		{
-		if(strnum[i]=='0'&&!trim){rmv++;}
-		else if(strnum[i]=='9'){rmv++;trim=true;}
-		else if(strnum[i]=='.'){rmv++;if(!trim){break;}}
-		else{if(trim){int tmpc=static_cast < int >(strnum.GetChar(i));tmpc++;strnum[i]=(wxUniChar)tmpc;}break;}
-		}
-	if(rmv){strnum.RemoveLast(rmv);}
-	return strnum;
-}
-
 bool config::LoadAudioOpts()
 {
 	OpenWrite ow;
-    wxString txt=ow.FileOpen(pathfull+_T("\\AudioConfig.txt"),false);
+	wxString txt=ow.FileOpen(pathfull+_T("\\AudioConfig.txt"),false);
+
 	if(txt==_T("")){
 		txt="Audio Autocommit=true\r\n"\
 			"Audio Autofocus=0\r\n"\
@@ -404,75 +392,94 @@ bool config::LoadAudioOpts()
 			"Audio Waveform Modified=#FFE6E6\r\n"\
 			"Audio Waveform Selected=#FFFFFF\r\n"\
 			"Audio Wheel Default To Zoom=0";
-		}
+	}
 	return (AudioOpts=SetRawOptions(txt.AfterFirst('\n')));
 }
 
 void config::SaveAudioOpts()
 {
 	OpenWrite ow;
-    ow.FileWrite(pathfull+_T("\\AudioConfig.txt"), GetRawOptions(true));
+	ow.FileWrite(pathfull+_T("\\AudioConfig.txt"), GetRawOptions(true));
 }
 
-  bool LoadDataFromResource(char*& t_data, DWORD& t_dataSize, const wxString& t_name)
-  {
-     bool     r_result    = false;
-     HGLOBAL  a_resHandle = 0;
-     HRSRC    a_resource;
-  
-     a_resource = FindResource(0, t_name.wchar_str(), RT_RCDATA);
-  
-     if(0 != a_resource)
-     {
-        a_resHandle = LoadResource(NULL, a_resource);
-        if (0 != a_resHandle)
-        {
-           t_data = (char*)LockResource(a_resHandle);
-           t_dataSize = SizeofResource(NULL, a_resource);
-           r_result = true;
-        }
-     }
-  
-     return r_result;
-  }
+
+wxString getfloat(float num, wxString format)
+{
+	wxString strnum=wxString::Format(_T("%"+format),num);
+	//strnum.Replace(",",".");
+	int rmv=0;
+	bool trim=false;
+	for(int i=strnum.Len()-1;i>0;i--)
+	{
+		if(strnum[i]=='0'&&!trim){rmv++;}
+		else if(strnum[i]=='9'){rmv++;trim=true;}
+		else if(strnum[i]=='.'){rmv++;if(!trim){break;}}
+		else{if(trim){int tmpc=static_cast < int >(strnum.GetChar(i));tmpc++;strnum[i]=(wxUniChar)tmpc;}break;}
+	}
+	if(rmv){strnum.RemoveLast(rmv);}
+	return strnum;
+}
 
 
-  wxBitmap GetBitmapFromMemory(const char* t_data, const DWORD t_size)
-  {
-     wxMemoryInputStream a_is(t_data, t_size);
-     return wxBitmap(wxImage(a_is, wxBITMAP_TYPE_PNG, -1), -1);
-  }
+bool LoadDataFromResource(char*& t_data, DWORD& t_dataSize, const wxString& t_name)
+{
+	bool     r_result    = false;
+	HGLOBAL  a_resHandle = 0;
+	HRSRC    a_resource;
+
+	a_resource = FindResource(0, t_name.wchar_str(), RT_RCDATA);
+
+	if(0 != a_resource)
+	{
+		a_resHandle = LoadResource(NULL, a_resource);
+		if (0 != a_resHandle)
+		{
+			t_data = (char*)LockResource(a_resHandle);
+			t_dataSize = SizeofResource(NULL, a_resource);
+			r_result = true;
+		}
+	}
+
+	return r_result;
+}
+
+
+wxBitmap GetBitmapFromMemory(const char* t_data, const DWORD t_size)
+{
+	wxMemoryInputStream a_is(t_data, t_size);
+	return wxBitmap(wxImage(a_is, wxBITMAP_TYPE_PNG, -1), -1);
+}
 
 wxBitmap CreateBitmapFromPngResource(const wxString& t_name)
-  {
-     wxBitmap   r_bitmapPtr;
-  
-     char*       a_data      = 0;
-     DWORD       a_dataSize  = 0;
-  
-     if(LoadDataFromResource(a_data, a_dataSize, t_name))
-     {
-        r_bitmapPtr = GetBitmapFromMemory(a_data, a_dataSize);
-     }
-  
-     return r_bitmapPtr;
-  }
+{
+	wxBitmap   r_bitmapPtr;
+
+	char*       a_data      = 0;
+	DWORD       a_dataSize  = 0;
+
+	if(LoadDataFromResource(a_data, a_dataSize, t_name))
+	{
+		r_bitmapPtr = GetBitmapFromMemory(a_data, a_dataSize);
+	}
+
+	return r_bitmapPtr;
+}
 
 wxImage CreateImageFromPngResource(const wxString& t_name)
-  {
-     wxImage   image;
-  
-     char*       a_data      = 0;
-     DWORD       a_dataSize  = 0;
-  
-     if(LoadDataFromResource(a_data, a_dataSize, t_name))
-     {
-        wxMemoryInputStream a_is(a_data, a_dataSize);
+{
+	wxImage   image;
+
+	char*       a_data      = 0;
+	DWORD       a_dataSize  = 0;
+
+	if(LoadDataFromResource(a_data, a_dataSize, t_name))
+	{
+		wxMemoryInputStream a_is(a_data, a_dataSize);
 		image=wxImage(a_is, wxBITMAP_TYPE_PNG, -1);
-     }
-  
-     return image;
-  }
+	}
+
+	return image;
+}
 
 config Options;
 

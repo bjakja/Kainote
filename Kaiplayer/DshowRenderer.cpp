@@ -40,7 +40,7 @@ void CD2DVideoRender::OnReceiveFirstSample(IMediaSample *pMediaSample)
 	pMediaSample->GetPointer(&pBuffer);
 	
 	if(Vrend->seek){
-		//wxLogStatus("start %i", (int)(start/10000.0));
+		//wxLogStatus("start %i %i", (int)(start/10000.0), (int)(end/10000.0));
 		time=Vrend->time;
 		Vrend->time= time+(start/10000.0);}
 	Vrend->seek=false;

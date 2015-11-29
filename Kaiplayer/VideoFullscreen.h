@@ -10,7 +10,7 @@
 class Fullscreen : public wxFrame
 {
     public:
-    Fullscreen(wxWindow* parent, wxSize size);
+    Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size);
     virtual ~Fullscreen();
 	BitmapButton* bprev;
 	BitmapButton* bpause;

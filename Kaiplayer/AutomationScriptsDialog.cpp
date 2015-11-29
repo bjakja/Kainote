@@ -32,14 +32,14 @@ MacrosDialog::MacrosDialog(wxWindow *parent, int _script)
 	mst.x+=1;
 	mst.y-=(height/2);
 	SetPosition(mst);
-		//specjalna ró¿nica miêdzy pierwsz¹ zaznaczon¹ linijk¹ która jest zero a linijk¹ w lua która jest wiêksza o size sinfo + size styles
-		int diff=(Kai->GetTab()->Grid1->file->subs->sinfo.size()+Kai->GetTab()->Grid1->file->subs->styles.size()+1);
+	//specjalna ró¿nica miêdzy pierwsz¹ zaznaczon¹ linijk¹ która jest zero a linijk¹ w lua która jest wiêksza o size sinfo + size styles
+	int diff=(Kai->GetTab()->Grid1->file->subs->sinfo.size()+Kai->GetTab()->Grid1->file->subs->styles.size()+1);
 	for(size_t i=0; i<macros.size(); i++)
 	{
 		names.Add(macros[i]->name);
 		wxString hkeyname;
-		std::map<int,wxString>::iterator it=Hkeys.hkeys.find(30100+i);
-		names.Add((it!=Hkeys.hkeys.end())?it->second.AfterLast('=') : "Brak");
+		std::map<int, hdata >::iterator it=Hkeys.hkeys.find(30100+i);
+		names.Add((it!=Hkeys.hkeys.end())?it->second.Accel : "Brak");
 		
 		if(!macros[i]->Validate(sels,Kai->GetTab()->Edit->ebrow, diff)){
 			actives.push_back(false);
@@ -129,8 +129,8 @@ void MacrosDialog::OnMacro()
 			//wxLogStatus(test);
 			for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++)
 			{//wxLogStatus(cur->first);
-				if(cur->second.EndsWith(test)){
-					wxMessageBox("Ten skrót ju¿ istnieje i jest ustawiony jako skrót do \""+cur->second.BeforeLast('=')+"\", wybierz inny.", "Uwaga",wxOK);
+				if(cur->second.Accel==test){
+					wxMessageBox("Ten skrót ju¿ istnieje i jest ustawiony jako skrót do \""+cur->second.Name+"\", wybierz inny.", "Uwaga",wxOK);
 					return;
 				}
 			}
@@ -146,7 +146,7 @@ void MacrosDialog::OnMacro()
 				int id=cur->first;
 				if(id>=30100){
 					if(strt){lastid=id;strt=false;}
-					if(cur->second.BeforeLast('=') == hkeyname){
+					if(cur->second.Name == hkeyname){
 						curid=id; break;
 					}
 				}else{break;}

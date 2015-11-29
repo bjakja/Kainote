@@ -293,7 +293,8 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
     MarginREdit->SetInt(line->MarginR);
     MarginVEdit->SetInt(line->MarginV);
     EffectEdit->ChangeValue(line->Effect);
-    TextEdit->SetTextS((TextEditTl->IsShown())? GetTags(line->Text) : line->Text , false);
+    //TextEdit->SetTextS((TextEditTl->IsShown())? GetTags(line->Text) : line->Text , false);
+	SetTextWithTags();
 	if(TextEditTl->IsShown()){TextEditTl->SetTextS(line->Text, false);}
 	if(setaudio && ABox && ABox->IsShown()){ABox->audioDisplay->SetDialogue(line,ebrow);}
 	
@@ -1123,7 +1124,7 @@ wxString EditBox::GetVisual(int type)
 		found=FindVal("(i?clip[^\\)]+)", &Res);
 	}else if(Visual==VECTORDRAW){
 		re.Compile("}(m[^{]*){\\\\p0}", wxRE_ADVANCED);
-	}else if(Visual==MOVE){
+	}else if(Visual==MOVE || Visual==CHANGEPOS){
 		found=FindVal("move\\(([^\\)]+)", &Res);
 	}
 	if(Visual==VECTORDRAW && re.Matches(txt))
@@ -1263,17 +1264,17 @@ void EditBox::SetVisual(wxString visual,bool dummy, int type)
 	if(dummy){
 		wxString txt=TextEdit->GetValue();
 		wxString tmp;
-		if(Visual==MOVE||Visual==CLIPRECT){TextEdit->SetSelection(0,0);}
+		if(Visual==MOVE||Visual==CHANGEPOS||Visual==CLIPRECT){TextEdit->SetSelection(0,0);}
 		//wxLogStatus(tagpattern);
 		wxString xytype= (type==0)? "x" : "y";
 		wxString frxytype= (type==1)? "x" : "y";
 		
-		wxString tagpattern= (type==100)? "(org).+" : (Visual==MOVE)? "(move).+" : (Visual==SCALE)? "(fsc"+xytype+").+" : (Visual==ROTATEZ)? "(frz?)[0-9-]+" : (Visual==ROTATEXY)? "(fr"+frxytype+").+" : (Visual==CLIPRECT)? "(i?clip).+" : "(fa"+xytype+").+";
+		wxString tagpattern= (type==100)? "(org).+" : (Visual==MOVE||Visual==CHANGEPOS)? "(move|pos).+" : (Visual==SCALE)? "(fsc"+xytype+").+" : (Visual==ROTATEZ)? "(frz?)[0-9-]+" : (Visual==ROTATEXY)? "(fr"+frxytype+").+" : (Visual==CLIPRECT)? "(i?clip).+" : "(fa"+xytype+").+";
 		FindVal(tagpattern, &tmp);
 		if(type==2 && Visual>0){
 			if(Placed.x<Placed.y){txt.erase(txt.begin()+Placed.x, txt.begin()+Placed.y+1);}
 			wxString xytype= (type==0)? "x" : "y";
-			wxString tagpattern=(Visual==MOVE)? "(move).+" : (Visual==SCALE)? "(fscx).+" : (Visual==ROTATEZ)? "(frz?)[0-9-]+" : (Visual==ROTATEXY)? "(frx).+" : (Visual==CLIPRECT)? "(i?clip).+" : "(fax).+";
+			wxString tagpattern= (Visual==SCALE)? "(fscx).+" : (Visual==ROTATEZ)? "(frz?)[0-9-]+" : (Visual==ROTATEXY)? "(frx).+" : "(fax).+";
 			FindVal(tagpattern, &tmp, txt);
 		}
 		if(!InBracket){
@@ -1325,21 +1326,20 @@ D3DXVECTOR2 EditBox::GetPosnScale(D3DXVECTOR2 *scale, byte *AN,bool beforeCursor
 		txt=txt.SubString(0,from);
 	}
 	Styles *acstyl=grid->GetStyle(0,line->Style);
+	bool foundpos=false;
 	wxRegEx pos("\\\\pos\\(([.0-9-]+)\\,([.0-9-]+)\\)",wxRE_ADVANCED);
-	if(pos.Matches(txt))
-	{
+	if(pos.Matches(txt)){
 		double xx=0.0, yy=0.0;
 		pos.GetMatch(txt,1).ToDouble(&xx);
 		pos.GetMatch(txt,2).ToDouble(&yy);
 		ppos.x=xx;
 		ppos.y=yy;
-		
-	}else
-	{
+		foundpos=true;
+	}else{
 		ppos.x= (line->MarginL!=0)? line->MarginL : wxAtoi(acstyl->MarginL);
 		ppos.y= (line->MarginV!=0)? line->MarginV : wxAtoi(acstyl->MarginV);
 	}
-	if(Visual==MOVE||Visual>FAXY){TextEdit->SetSelection(0,0);}
+	if(Visual==MOVE||Visual>=VECTORCLIP){TextEdit->SetSelection(0,0);}
 	wxString sxfd, syfd;
 	bool scx=FindVal("fscx([.0-9-]+)", &sxfd);
 	bool scy=FindVal("fscy([.0-9-]+)", &syfd);
@@ -1379,15 +1379,14 @@ D3DXVECTOR2 EditBox::GetPosnScale(D3DXVECTOR2 *scale, byte *AN,bool beforeCursor
 		*AN=wxAtoi(acstyl->Alignment);
 		wxRegEx an("\\\\an([0-9]+)",wxRE_ADVANCED);
 
-		if(an.Matches(txt))
-		{
+		if(an.Matches(txt)){
 			*AN=wxAtoi(an.GetMatch(txt,1));
 		}
+		if(foundpos){return ppos;}
 		//D3DXVECTOR2 dsize = Notebook::GetTab()->Video->Vclips->CalcWH();
 		int x, y;
 		grid->GetASSRes(&x, &y);
 		if(*AN % 3==2){
-			
 			ppos.x = (x/2);
 		}
 		else if(*AN % 3==0){
@@ -1514,17 +1513,19 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 
 }
 
-wxString EditBox::GetTags(const wxString &text) const
+void EditBox::SetTextWithTags()
 {
-	if(line->TextTl!=""){return line->TextTl;}
-	wxString res;
-	if(text.StartsWith("{")){
-		int getr=text.Find('}');
+	if(grid->transl && line->TextTl=="" && line->Text.StartsWith("{")){
+		int getr=line->Text.Find('}');
 		if(getr>1){
-			return text.substr(0,getr+1);
+			wxString txt=line->Text.substr(0,getr+1);
+			TextEdit->SetTextS(txt, false);
+			int pos=txt.Len();
+			TextEdit->SetSelection(pos,pos);
+			return;
 		}
 	}
-	return res;
+	TextEdit->SetTextS((TextEditTl->IsShown())? line->TextTl : line->Text , false);
 }
 
 void EditBox::OnCursorMoved(wxCommandEvent& event)

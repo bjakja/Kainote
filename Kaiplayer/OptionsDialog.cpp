@@ -272,9 +272,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		//std::map<wxString,wxString>::iterator cur;
 
 		for (auto cur = Hkeys.hkeys.begin();cur != Hkeys.hkeys.end();cur++) {
-			wxString name=cur->second;
-			long pos = Shortcuts->InsertItem(ii,name.BeforeLast('='));
-			Shortcuts->SetItem(pos,1,name.AfterFirst('='));
+			wxString name=wxString(cur->second.Type)<<" "<<cur->second.Name;
+			long pos = Shortcuts->InsertItem(ii,name);
+			Shortcuts->SetItem(pos,1,cur->second.Accel);
 			ii++;
 		}
 
@@ -495,7 +495,7 @@ void OptionsDialog::OnMapHkey(wxListEvent& event)
 {
 	int num=event.GetIndex();
 	wxListItem item=event.GetItem();
-	wxString shkey=item.GetText();
+	wxString shkey=item.GetText().AfterLast(' ');
 	HkeysDialog hkd(this,shkey,shkey.StartsWith("Script"));
 	if(hkd.ShowModal()==0){
 	
@@ -513,12 +513,12 @@ void OptionsDialog::OnMapHkey(wxListEvent& event)
 		wxLogStatus(test);
 		int id=-1;
 		for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){//wxLogStatus(cur->first);
-			if(cur->second.StartsWith(shkey)){id=cur->first;}
-			if(cur->second==test && (cur->second.BeforeFirst(' ') == shkey.BeforeFirst(' ')) ){
+			if(cur->second.Name == shkey){id=cur->first;}
+			if(cur->second.Accel == test && (cur->second.Type == shkey[0]) ){
 			
-				if(wxMessageBox("Ten skrót ju¿ istnieje i jest ustawiony jako skrót do \""+cur->second.BeforeFirst(' ')+
+				if(wxMessageBox("Ten skrót ju¿ istnieje i jest ustawiony jako skrót do \""+cur->second.Name+
 					"\".\n Wykasowaæ powtarzaj¹cy siê skrót?", "Uwaga",wxYES_NO)==wxYES){
-					Hkeys.hkeys[cur->first]="";
+					Hkeys.hkeys.erase(cur);
 					long nitem=Shortcuts->FindItem(-1,cur->first);
 					if(nitem!=-1){
 						Shortcuts->SetItem(nitem,1,"");
@@ -545,7 +545,7 @@ void OptionsDialog::OnResetHkey(wxListEvent& event)
 	wxListItem item=event.GetItem();
 	int id=-1;
 	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){//wxLogStatus(cur->first);
-		if(cur->second.StartsWith(item.GetText())){id=cur->first;}
+		if(cur->second.Name == item.GetText().AfterFirst(' ')){id=cur->first;}
 	}
 	if(id<0){return;};
 	Hkeys.ResetKey(id);

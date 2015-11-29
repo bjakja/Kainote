@@ -199,11 +199,11 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 	unsigned long first_line = (unsigned long)(fft_overlaps * range_start / line_length / 2);
 	unsigned long last_line = (unsigned long)(fft_overlaps * range_end / line_length / 2);
 	//wxLogStatus("line len %i",(int)(last_line-first_line));
-	unsigned int overlap_offset = (line_length * 2);
-	size_t copysamples = ((range_end - range_start))*fft_overlaps;
+	//unsigned int overlap_offset = (line_length * 2);
+	size_t copysamples;// = ((range_end - range_start))*fft_overlaps;
 	
 	
-	fft->RecreateTable(copysamples + (overlap_offset*36));//724672 -> 752640
+	//fft->RecreateTable(copysamples + (overlap_offset*36));//724672 -> 752640
 	//wxLogStatus("line len %i %i", copysamples + (overlap_offset*36), 752640);
 	
 	copysamples = (last_line - first_line);
@@ -274,8 +274,8 @@ void SpectrumThread::MakeSubCaches(size_t _start, size_t _bufstart, size_t _len,
 	imgwidth=_imgwidth;
 	imgheight=_imgheight;
 	palette=_palette;
-	size_t sample = (start * spc->subcachelen) * (spc->line_length*2);
-	spc->fft->SetDiff(sample);
+	//size_t sample = (start * spc->subcachelen) * (spc->line_length*2);
+	//spc->fft->SetDiff(sample);
 	for(int t=0; t<4; t++){
 		thread[t] = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)proc, (void*)new std::pair<int,SpectrumThread*>(t,this), 0, 0);
 	}
