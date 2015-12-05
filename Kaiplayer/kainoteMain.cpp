@@ -250,12 +250,16 @@ kainoteFrame::~kainoteFrame()
 	Options.SetInt("Video Volume",GetTab()->Video->volslider->GetValue());
 
 	Options.SaveOptions();
-	if(SC){delete SC;SC=NULL;}
+
+	
 	if(ss){ss->Destroy();ss=NULL;}
 	if(LSD){LSD->Destroy();LSD=NULL;}
 	if(FR){FR->Destroy();FR=NULL;}
 	if(Auto){delete Auto; Auto=NULL;}
+	Tabs->Destroy();
+	Tabs=NULL;
 
+	if(SC){delete SC;SC=NULL;}
 
 }
 
@@ -365,10 +369,10 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 
 		if(vis==pan->Edit->Visual){return;}
 		if(vb->Vclips && vis == 0){ 
-			vb->SetVisual("",0,0,true); 
+			vb->SetVisual(0,0,true); 
 		}else if( vis != pan->Edit->Visual ){
 			eb->Visual = vis;
-			vb->SetVisual(eb->GetVisual(), eb->line->Start.mstime, eb->line->End.mstime);
+			vb->SetVisual(eb->line->Start.mstime, eb->line->End.mstime);
 			if(!vb->isarrow){vb->SetCursor(wxCURSOR_ARROW);vb->isarrow=true;}
 		}
 		UpdateToolbar();
@@ -1062,6 +1066,8 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 		if(cur->edytor){SetStatusText(cur->VideoName,5);}
 		else{SetStatusText("",5);}
 	}else{SetStatusText("",5);SetStatusText("",4);SetStatusText("",3);SetStatusText("",2);SetStatusText("",1);}
+
+	cur->Grid1->UpdateUR(false);
 
 	UpdateToolbar();
 	//wxLogStatus("oldpage %i", Tabs->GetOldSelection());

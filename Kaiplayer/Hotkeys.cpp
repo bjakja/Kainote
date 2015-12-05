@@ -269,7 +269,7 @@ void Hotkeys::SetHKey(int id, wxString name,int flag, int key)
 wxString Hotkeys::GetMenuH(int id)
 {
 	auto it=hkeys.find(id);
-	if(it!=hkeys.end()){return it->second.Name;}
+	if(it!=hkeys.end()){return it->second.Accel;}
 	return "";
 }
 

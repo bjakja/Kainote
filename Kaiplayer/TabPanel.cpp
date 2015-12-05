@@ -5,8 +5,8 @@
 #include "kainoteMain.h"
 
 
-TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai)
-	: wxWindow(parent,-1)
+TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const wxSize &size)
+	: wxWindow(parent,-1, pos, size)
 {
 	//SetBackgroundColour(wxColour("#808080"));
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);

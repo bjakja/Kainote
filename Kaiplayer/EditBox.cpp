@@ -106,7 +106,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	ebrow=0;
     grid=grid1;
     grid->Edit=this;
-	isdetached=OnVideo=false;
+	isdetached=OnVideo=splittedTags=false;
 	Visual=0;
 	ABox=NULL;
 	line=NULL;
@@ -295,7 +295,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
     EffectEdit->ChangeValue(line->Effect);
     //TextEdit->SetTextS((TextEditTl->IsShown())? GetTags(line->Text) : line->Text , false);
 	SetTextWithTags();
-	if(TextEditTl->IsShown()){TextEditTl->SetTextS(line->Text, false);}
+	
 	if(setaudio && ABox && ABox->IsShown()){ABox->audioDisplay->SetDialogue(line,ebrow);}
 	
 	
@@ -304,7 +304,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 	UpdateChars((TextEditTl->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
 	//ustawia clip/inny visual gdy jest w³¹czony
 	if(Visual){TabPanel* pan=(TabPanel*)GetParent();
-		pan->Video->SetVisual(GetVisual(),line->Start.mstime, line->End.mstime);
+		pan->Video->SetVisual(line->Start.mstime, line->End.mstime);
 	}
 	//resetuje edycjê na wideo
 	if(OnVideo){
@@ -336,6 +336,7 @@ done:
 		STime kkk;
 		kkk.mstime=pan->Video->Tell();
 		wxString dane;
+		if(!pan->Video->IsDshow){dane<<pan->Video->lastframe<<";  ";}
 		dane<<kkk.raw(SRT)<<";  ";
 		int sdiff=kkk.mstime - line->Start.mstime;
 		int ediff=kkk.mstime - line->End.mstime;
@@ -387,11 +388,11 @@ void EditBox::Send(bool selline, bool dummy, bool visualdummy)
     if(EndEdit->IsModified()||EndEdit->HasFocus()){
 		if(line->Start.mstime>line->End.mstime){line->End=line->Start;}
 		line->End=EndEdit->GetTime();cellm |= END;
-		StartEdit->SetModified(dummy);
+		EndEdit->SetModified(dummy);
 		}
 	if(DurEdit->IsModified()){
 		line->End=EndEdit->GetTime();cellm |= END;
-		StartEdit->SetModified(dummy);
+		DurEdit->SetModified(dummy);
 	}
 
     wxString checkstyle = StyleChoice->GetString(StyleChoice->GetSelection());
@@ -419,15 +420,14 @@ void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 	}
 
 	if(TextEdit->Modified()){
-		if(TextEditTl->IsShown()){line->TextTl=TextEdit->GetValue();cellm |= TXTTL; TextEditTl->modified=dummy;}
-		else{line->Text=TextEdit->GetValue();cellm |= TXT; TextEdit->modified=dummy;}
+		if(TextEditTl->IsShown()){line->TextTl=TextEdit->GetValue();cellm |= TXTTL;}
+		else{line->Text=TextEdit->GetValue();cellm |= TXT;}
+		TextEdit->modified=dummy;
 	}
 	if(TextEditTl->Modified()&&TextEditTl->IsShown()){
 		line->Text=TextEditTl->GetValue();cellm |= TXT;
 		TextEditTl->modified=dummy;
 	}
-	
-	
 	
 	if(cellm){
 		if(ebrow<grid->GetCount() && !dummy){
@@ -678,16 +678,20 @@ void EditBox::OnZatw(wxCommandEvent& event)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
 	pan->Video->blockpaint=true;
-	Send(false,Visual!=0);
 	if(Visual){
-		pan->Video->SetVisual(GetVisual(),line->Start.mstime,line->End.mstime);
+		pan->Video->SetVisual(line->Start.mstime,line->End.mstime);
+		TextEdit->modified=true;
 	}
+	if(splittedTags&&(TextEdit->modified || TextEditTl->modified)){TextEdit->modified=true; TextEditTl->modified=true;}
+	Send(false,false,Visual!=0);
 	if(StyleChoice->HasFocus()||Comment->HasFocus()){grid->SetFocus();}
 	pan->Video->blockpaint=false;
 }
 
 void EditBox::OnNline(wxCommandEvent& event)
 {
+	if(Visual){TextEdit->modified=true;}
+	if(splittedTags&&(TextEdit->modified || TextEditTl->modified)){TextEdit->modified=true; TextEditTl->modified=true;}
     Send(!(StartEdit->HasFocus() || EndEdit->HasFocus()) || !Options.GetBool("Times Stop On line"));
 }
 
@@ -1112,37 +1116,6 @@ bool EditBox::FindVal(wxString tag, wxString *Finded, wxString text, bool *endse
 	return false;
 }
 
-wxString EditBox::GetVisual(int type)
-{
-	//wxLogStatus("EGetClip");
-	wxString txt=TextEdit->GetValue();
-	//wxString xytype= (type==0)? "x" : "y";
-	wxString Res;
-	wxRegEx re;
-	bool found=false;
-	if(Visual==VECTORCLIP || Visual==CLIPRECT){
-		found=FindVal("(i?clip[^\\)]+)", &Res);
-	}else if(Visual==VECTORDRAW){
-		re.Compile("}(m[^{]*){\\\\p0}", wxRE_ADVANCED);
-	}else if(Visual==MOVE || Visual==CHANGEPOS){
-		found=FindVal("move\\(([^\\)]+)", &Res);
-	}
-	if(Visual==VECTORDRAW && re.Matches(txt))
-	{
-		wxString result =re.GetMatch(txt,1);
-		return result;
-	}
-	if(Visual==VECTORCLIP || Visual==CLIPRECT){
-		int rres = Res.Replace(",",",");
-		if( rres == 3 && Visual==VECTORCLIP) {return "";}
-		else if( rres !=3 && Visual==CLIPRECT) {return "";} 
-		return Res;
-	}
-
-	if(found){return Res;}
-	return "";
-}
-
 void EditBox::SetClip(wxString clip,bool dummy)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
@@ -1248,6 +1221,7 @@ void EditBox::SetClip(wxString clip,bool dummy)
 			//wxLogStatus(txt);
 		}
 		pan->Video->VisEdit=true;
+		if(splittedTags){TextEditTl->modified=true;}
 		Send(false,false,true);
 	}
 }
@@ -1304,14 +1278,18 @@ void EditBox::SetVisual(wxString visual,bool dummy, int type)
 		TextEdit->Refresh(false);
 		TextEdit->modified=true;
 		pan->Video->VisEdit=true;
+		if(splittedTags){TextEditTl->modified=true;}
 		Send(false,false,true);
 
 	}
 }
 
 //pobieranie pozycji i skali, trzeba tu zrobiæ rozróznienie na tagi dzia³aj¹ce na ca³¹ liniê i tagi miejscowe.
-D3DXVECTOR2 EditBox::GetPosnScale(D3DXVECTOR2 *scale, byte *AN,bool beforeCursor, bool draw)
+//W przypadku rysowania wektorowego, nale¿y podaæ scale, w reszcie przypadków mozna olaæ wszystko b¹dŸ jedn¹ wartoœæ.
+D3DXVECTOR2 EditBox::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl, wxString* movetimes)
 {
+	bool beforeCursor=!(Visual>=VECTORCLIP || Visual== MOVE || Visual== CHANGEPOS);
+	bool draw=(Visual >= VECTORCLIP);
 	D3DXVECTOR2 ppos(0.0f,0.0f);
 	wxString txt = TextEdit->GetValue();
 	if(beforeCursor){
@@ -1327,32 +1305,42 @@ D3DXVECTOR2 EditBox::GetPosnScale(D3DXVECTOR2 *scale, byte *AN,bool beforeCursor
 	}
 	Styles *acstyl=grid->GetStyle(0,line->Style);
 	bool foundpos=false;
-	wxRegEx pos("\\\\pos\\(([.0-9-]+)\\,([.0-9-]+)\\)",wxRE_ADVANCED);
+	wxRegEx pos("\\\\(pos|move)\\(([^\\)]+)\\)",wxRE_ADVANCED);
 	if(pos.Matches(txt)){
-		double xx=0.0, yy=0.0;
-		pos.GetMatch(txt,1).ToDouble(&xx);
-		pos.GetMatch(txt,2).ToDouble(&yy);
-		ppos.x=xx;
-		ppos.y=yy;
-		foundpos=true;
+		wxString type=pos.GetMatch(txt,1);
+		wxString txtpos = pos.GetMatch(txt,2);
+		wxStringTokenizer tkz(txtpos,",");
+		int ipos=0;
+		while(tkz.HasMoreTokens()&& ipos<6){
+			wxString token=tkz.GetNextToken();
+			token.ToDouble(&tbl[ipos]);
+			if(ipos>3 && movetimes){
+				(*movetimes)<<","<<token;
+			}
+			ipos++;
+		}
+		tbl[4]+=line->Start.mstime; tbl[5]+=line->Start.mstime;
+		tbl[6]=ipos;
+		if(ipos>1){ppos.x=tbl[0];ppos.y=tbl[1];foundpos=true;}
+		
 	}else{
+		tbl[6]=0;
 		ppos.x= (line->MarginL!=0)? line->MarginL : wxAtoi(acstyl->MarginL);
 		ppos.y= (line->MarginV!=0)? line->MarginV : wxAtoi(acstyl->MarginV);
 	}
-	if(Visual==MOVE||Visual>=VECTORCLIP){TextEdit->SetSelection(0,0);}
+	if(!beforeCursor){TextEdit->SetSelection(0,0);}
+
 	wxString sxfd, syfd;
 	bool scx=FindVal("fscx([.0-9-]+)", &sxfd);
 	bool scy=FindVal("fscy([.0-9-]+)", &syfd);
 	double fscx=100.0, fscy=100.0;
-	if(scx)
-	{
+	if(scx){
 		sxfd.ToDouble(&fscx);
 	}else{
 		acstyl->ScaleX.ToDouble(&fscx);
 	}
 	scale->x=fscx/100;
-	if(scy)
-	{
+	if(scy){
 		syfd.ToDouble(&fscy);
 	}else{
 		acstyl->ScaleY.ToDouble(&fscy);
@@ -1360,43 +1348,42 @@ D3DXVECTOR2 EditBox::GetPosnScale(D3DXVECTOR2 *scale, byte *AN,bool beforeCursor
 	scale->y=fscy/100;
 	if(draw){
 		wxRegEx drawscale;
-		if(Visual==VECTORCLIP)
-		{
+		if(Visual==VECTORCLIP){
+			*scale = D3DXVECTOR2(1,1);
 			drawscale.Compile("\\\\i?clip\\(([0-9]+),", wxRE_ADVANCED);
-		}else
-		{
+		}else{
 			drawscale.Compile("\\\\p([0-9]+)", wxRE_ADVANCED);
 		}
 		int dscale=1;
-		if(drawscale.Matches(txt))
-		{
+		if(drawscale.Matches(txt)){
 			dscale = wxAtoi(drawscale.GetMatch(txt,1));
 		}
 		dscale= pow(2.f,(dscale-1.f));
 		scale->x /= dscale;
 		scale->y /= dscale;
 	}else{
-		*AN=wxAtoi(acstyl->Alignment);
+		int tmpan;
+		tmpan=wxAtoi(acstyl->Alignment);
 		wxRegEx an("\\\\an([0-9]+)",wxRE_ADVANCED);
-
 		if(an.Matches(txt)){
-			*AN=wxAtoi(an.GetMatch(txt,1));
+			tmpan=wxAtoi(an.GetMatch(txt,1));
 		}
+		*AN = tmpan;
 		if(foundpos){return ppos;}
 		//D3DXVECTOR2 dsize = Notebook::GetTab()->Video->Vclips->CalcWH();
 		int x, y;
 		grid->GetASSRes(&x, &y);
-		if(*AN % 3==2){
+		if(tmpan % 3==2){
 			ppos.x = (x/2);
 		}
-		else if(*AN % 3==0){
+		else if(tmpan % 3==0){
 			ppos.x = (line->MarginR!=0)? line->MarginR : wxAtoi(acstyl->MarginR);
 			ppos.x = x - ppos.y;
 		}
-		if(*AN < 4){
+		if(tmpan < 4){
 			ppos.y = (line->MarginV!=0)? line->MarginV : wxAtoi(acstyl->MarginV);
 			ppos.y =  y - ppos.y;
-		}else if(*AN < 7){
+		}else if(tmpan < 7){
 			ppos.y = (y/2);
 		}
 	}
@@ -1407,7 +1394,6 @@ D3DXVECTOR2 EditBox::GetPosnScale(D3DXVECTOR2 *scale, byte *AN,bool beforeCursor
 
 void EditBox::OnEdit(wxCommandEvent& event)
 {
-	//if(HasVisual){return;}
 	TabPanel* panel= (TabPanel*)GetParent();
 	wxPoint pos;bool visible=false;
 	if(StartEdit->HasFocus()||EndEdit->HasFocus()){
@@ -1423,25 +1409,23 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	
 	wxString *text=NULL;
 	if(panel->Video->GetState()==Paused){
-		if(panel->Video->VisEdit){
+		//if(panel->Video->VisEdit){
 			//panel->Video->SetClip(GetClip(),line->Start.mstime,line->End.mstime);
-			return;
-		}else{
-			text=grid->GetVisible(&pos,&visible);
-		}
+			//return;
+		//}else{
+		text=grid->GetVisible(&pos,&visible);
+		//}
 	}
 	else if(panel->Video->GetState()==Playing){
 		Send(false,true);
-		//int time = panel->Video->time;
-		visible=true;//(line->Start.mstime>=time && line->End.mstime <=time);
-		//if(visible){
-		text=grid->SaveText();//}
-		if(panel->Video->VisEdit && Visual==VECTORCLIP){
-			(*text)<<panel->Edit->dummytext->Trim().AfterLast('\n');
-		}
+		visible=true;
+		text=grid->SaveText();
+		
 	}
-	//dummytext="";
-	//wxLogStatus(*text);
+	if(panel->Video->VisEdit && Visual==VECTORCLIP){
+		(*text)<<panel->Edit->dummytext->Trim().AfterLast('\n');
+	}
+
 	if(visible && panel->Video->IsShown()){
 		panel->Video->OpenSubs(text);OnVideo=true;
 		if(panel->Video->GetState()==Paused){panel->Video->Render();}
@@ -1518,19 +1502,24 @@ void EditBox::SetTextWithTags()
 	if(grid->transl && line->TextTl=="" && line->Text.StartsWith("{")){
 		int getr=line->Text.Find('}');
 		if(getr>1){
+			wxString null;
 			wxString txt=line->Text.substr(0,getr+1);
 			TextEdit->SetTextS(txt, false);
+			TextEditTl->SetTextS(((int)line->Text.Len()>getr+1)? line->Text.Mid(getr+1): null, false);
+			splittedTags=true;
 			int pos=txt.Len();
 			TextEdit->SetSelection(pos,pos);
 			return;
 		}
 	}
+	splittedTags=false;
 	TextEdit->SetTextS((TextEditTl->IsShown())? line->TextTl : line->Text , false);
+	if(TextEditTl->IsShown()){TextEditTl->SetTextS(line->Text, false);}
 }
 
 void EditBox::OnCursorMoved(wxCommandEvent& event)
 {
 	if(Visual==SCALE||Visual==ROTATEZ||Visual==ROTATEXY){TabPanel* pan=(TabPanel*)GetParent();
-		pan->Video->SetVisual(GetVisual(),line->Start.mstime, line->End.mstime);
+		pan->Video->SetVisual(line->Start.mstime, line->End.mstime);
 	}
 }

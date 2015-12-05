@@ -411,10 +411,10 @@ wxString getfloat(float num, wxString format)
 	bool trim=false;
 	for(int i=strnum.Len()-1;i>0;i--)
 	{
-		if(strnum[i]=='0'&&!trim){rmv++;}
-		else if(strnum[i]=='9'){rmv++;trim=true;}
-		else if(strnum[i]=='.'){rmv++;if(!trim){break;}}
-		else{if(trim){int tmpc=static_cast < int >(strnum.GetChar(i));tmpc++;strnum[i]=(wxUniChar)tmpc;}break;}
+		if(strnum[i]=='0'){rmv++;}//&&!trim
+		//else if(strnum[i]=='9'){rmv++;trim=true;}
+		else if(strnum[i]=='.'){rmv++;break;}//}if(!trim){
+		else{/*if(trim){int tmpc=static_cast < int >(strnum.GetChar(i));tmpc++;strnum[i]=(wxUniChar)tmpc;}*/break;}
 	}
 	if(rmv){strnum.RemoveLast(rmv);}
 	return strnum;

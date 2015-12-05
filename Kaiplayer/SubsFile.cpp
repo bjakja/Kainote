@@ -165,3 +165,9 @@ void SubsFile::RemoveFirst(int num)
 	undo.erase(undo.begin()+1, undo.begin()+num);
 	iter-=(num-1);
 }
+
+void SubsFile::GetURStatus(bool *_undo, bool *_redo)
+{
+	*_redo= (iter<(int)undo.size()-1);
+	*_undo= (iter>0);
+}

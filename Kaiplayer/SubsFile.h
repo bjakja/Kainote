@@ -39,6 +39,7 @@ public:
 	Dialogue *CopyDial(int i, bool push=true, bool keepstate=false);
 	Styles *CopyStyle(int i, bool push=true);
 	SInfo *CopySinfo(int i, bool push=true);
+	void GetURStatus(bool *_undo, bool *_redo);
 	bool IsNotSaved();
 	int maxx();
 	int Iter();

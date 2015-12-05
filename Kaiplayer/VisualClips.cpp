@@ -27,14 +27,9 @@ bool ClipPoint::IsInPos(wxPoint pos, int diff)
 	return (abs(pos.x-x) <= diff && abs(pos.y-y) <= diff);
 }
 
-D3DXVECTOR2 ClipPoint::GetVector(bool wsp)
+D3DXVECTOR2 ClipPoint::GetVector()
 {
-	D3DXVECTOR2 v;
-	if(wsp){
-		v = D3DXVECTOR2((x+Visuals::_x)/Visuals::wspw,(y+Visuals::_y)/Visuals::wsph);
-	}else{
-		v = D3DXVECTOR2(x,y);
-	}
+	D3DXVECTOR2 v = D3DXVECTOR2((x+Visuals::_x)/Visuals::wspw,(y+Visuals::_y)/Visuals::wsph);
 	return v;
 }
 
@@ -58,8 +53,6 @@ void Visuals::DrawClip()
 	
 	
 	//wxLogStatus("Create line %i %i", Points[0].x, Points[0].y);
-	HRESULT hr;
-	hr=line->Begin();
 	size_t g=1;
 	while(g<Points.size()){
 		if(Points[g].type=="b"||Points[g].type=="s"){
@@ -75,7 +68,6 @@ void Visuals::DrawClip()
 	
 	DrawRect(Points.size()-1);
 	
-	hr=line->End();
 
 	if(drawtxt){
 		coords=""; 
@@ -95,10 +87,9 @@ void Visuals::DrawClip()
 }
 
 	
-void Visuals::SetClip(wxString clip, float x, float y)
+void Visuals::SetClip(wxString clip)
 {
-	_x=x;
-	_y=y;
+	
 	Points.clear();
 	wxStringTokenizer tokens(clip," ");
 	int tmpx=0;
@@ -207,20 +198,24 @@ void Visuals::AddCurvePoint(wxPoint pos, int whereis)
 void Visuals::AddLine(wxPoint pos, int whereis)
 {
 	Points.insert(Points.begin()+whereis, ClipPoint((pos.x*wspw)-_x, (pos.y*wsph)-_y,"l",true));
+	//wxLogStatus("line %i, %i, %f, %f, %f, %f", pos.x, pos.y, wspw, wsph, _x, _y);
 	acpoint=Points[whereis];
 }
 // pos in skreen position	
 void Visuals::AddMove(wxPoint pos, int whereis)
 {
+	//wxLogStatus(" wsps %i, %i, %f, %f, %f, %f", pos.x, pos.y, wspw, wsph, _x, _y);
 	Points.insert(Points.begin()+whereis, ClipPoint((pos.x*wspw)-_x, (pos.y*wsph)-_y,"m",true));
 	acpoint=Points[whereis];
 }
 	
 void Visuals::DrawLine(int i)
 {
+	line->Begin();
 	int diff = (Points[i-1].type=="s")? 2 : 1;
 	D3DXVECTOR2 v2[2]={Points[i-diff].GetVector(),Points[i].GetVector()};
 	line->Draw(v2, 2, 0xFFFF0000);
+	line->End();
 	DrawRect(i-1);
 	/*MYVERTEX v5[3];
 	CreateMYVERTEX(&v5[0], 0, 0, 0xAAFF0000);
@@ -234,6 +229,7 @@ void Visuals::DrawLine(int i)
 	
 int Visuals::DrawCurve(int i, bool bspline)
 {
+	line->Begin();
 	std::vector<D3DXVECTOR2> v4;
 	
 	int pts=3;
@@ -271,57 +267,56 @@ int Visuals::DrawCurve(int i, bool bspline)
 		line->Draw(&v2[2], 2, 0xFF0000FF);
 	}
 	line->Draw(&v4[0], v4.size(), 0xFFFF0000);
-
+	line->End();
 	DrawRect(i-1);
 	for(int j=1; j<pts; j++){DrawCircle(i+j-1);}
 	return pts;
 }
 
-void Visuals::DrawRect(int i, bool wsp)
+void Visuals::DrawRect(int i, D3DXVECTOR2 *vector)
 {
-    D3DXVECTOR2 tmp = Points[i].GetVector(wsp);
-	D3DXVECTOR2 v2[2];
-	line->End();
-	line->SetWidth(10.0f);
-	line->Begin();
-	v2[0].x=tmp.x-5;
-	v2[0].y=tmp.y;
-	v2[1].x=tmp.x+5;
-	v2[1].y=tmp.y;
-	
-	line->Draw(&v2[0], 2, 0xAAFF0000);
-	line->End();
-	line->SetWidth(2.0f);
-	line->Begin();
+	//line->End();
+    D3DXVECTOR2 tmp = (vector)? (*vector) : Points[i].GetVector();
+	MYVERTEX v9[9];
+	CreateMYVERTEX(&v9[0], tmp.x-5.0f, tmp.y-5.0f, 0xAA121150);
+	CreateMYVERTEX(&v9[1], tmp.x+5.0f, tmp.y-5.0f, 0xAA121150);
+	CreateMYVERTEX(&v9[2], tmp.x-5.0f, tmp.y+5.0f, 0xAA121150);
+	CreateMYVERTEX(&v9[3], tmp.x+5.0f, tmp.y+5.0f, 0xAA121150);
+	CreateMYVERTEX(&v9[4], tmp.x-5.0f, tmp.y-5.0f, 0xFFFF0000);
+	CreateMYVERTEX(&v9[5], tmp.x+5.0f, tmp.y-5.0f, 0xFFFF0000);
+	CreateMYVERTEX(&v9[6], tmp.x+5.0f, tmp.y+5.0f, 0xFFFF0000);
+	CreateMYVERTEX(&v9[7], tmp.x-5.0f, tmp.y+5.0f, 0xFFFF0000);
+	CreateMYVERTEX(&v9[8], tmp.x-5.0f, tmp.y-5.0f, 0xFFFF0000);
+
+	HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v9, sizeof(MYVERTEX) ),"primitive failed");
+	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 4, &v9[4], sizeof(MYVERTEX) ),"primitive failed");
+	//line->Begin();
 }
 	
-void Visuals::DrawCircle(int i, bool wsp)
+void Visuals::DrawCircle(int i, D3DXVECTOR2 *vector)
 {
-	line->End();
-	D3DXVECTOR2 tmp = Points[i].GetVector(wsp);
+	//line->End();
+	D3DXVECTOR2 tmp = (vector)? (*vector) : Points[i].GetVector();
 	MYVERTEX v5[41];
 	float rad =0.01745329251994329576923690768489f;
 	
 	float xx = tmp.x;
 	float yy = tmp.y;
-	CreateMYVERTEX(&v5[0], xx, yy, 0x4CFFA928);
+	CreateMYVERTEX(&v5[0], xx, yy, 0xAA121150);
 	for(int j=0; j<20; j++)
 	{
 		float xx1= tmp.x + (6.f * sin ( (j*20) * rad ));
 		float yy1= tmp.y + (6.f * cos ( (j*20) * rad ));
-		CreateMYVERTEX(&v5[j+1], xx1, yy1, 0x4CFFA928);
-		CreateMYVERTEX(&v5[j+21], xx1, yy1, 0xAAFF0000);
+		CreateMYVERTEX(&v5[j+1], xx1, yy1, 0xAA121150);
+		CreateMYVERTEX(&v5[j+21], xx1, yy1, 0xFFFF0000);
 		xx=xx1;
 		yy=yy1;
 		
 	}
-	
-	
-	
-	HRN(device->SetFVF( D3DFVF_XYZ|D3DFVF_DIFFUSE), "fvf failed");
+
 	HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLEFAN, 18, v5, sizeof(MYVERTEX) ),"primitive failed");
 	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 18, &v5[21], sizeof(MYVERTEX) ),"primitive failed");
-	line->Begin();
+	//line->Begin();
 }
 
 	
@@ -507,7 +502,7 @@ void Visuals::OnMouseEvent(wxMouseEvent &event)
 	if(event.LeftIsDown() && grabbed!=-1)
 	{
 		x=MID(0,x,widsize.x);
-		y=MID(0,y,widsize.y-44);
+		y=MID(0,y,widsize.y);
 		Points[grabbed].x=((x+diffs.x)*wspw)-_x;
 		Points[grabbed].y=((y+diffs.y)*wsph)-_y;
 		acpoint=Points[grabbed];
@@ -519,18 +514,7 @@ void Visuals::OnMouseEvent(wxMouseEvent &event)
 
 }
 
-void Visuals::SetNewSize(wxSize wsize)
-{
-	
-	wspw=((float)subssize.x/(float)wsize.x);
-	wsph=(float)subssize.y/(float)(wsize.y-44);
-	//wxLogStatus(" wsp %f %f %i %i", wspw, wsph ,subssize.x, wsize.x );
-	if(Visual==VECTORDRAW)
-	{
-		wspw/=scale.x;
-		wsph/=scale.y;
-	}
-}
+
 
 D3DXVECTOR2 Visuals::CalcWH()
 {

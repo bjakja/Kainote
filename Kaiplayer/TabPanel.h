@@ -13,7 +13,7 @@
 class TabPanel : public wxWindow
 	{
 	public:
-		TabPanel(wxWindow *parent,kainoteFrame *kai);
+		TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize);
 		virtual ~TabPanel();
 
 		Grid* Grid1;

@@ -64,7 +64,7 @@ bool SubsGrid::IsNum(wxString test) {
 
 
 SubsGrid::SubsGrid(wxWindow *parent, const long int id,const wxPoint& pos,const wxSize& size, long style, const wxString& name)
-	  : wxWindow(parent, id, pos, size, style, name)
+	: wxWindow(parent, id, pos, size, style, name)
 {
 
 	posY=0;
@@ -89,7 +89,7 @@ SubsGrid::SubsGrid(wxWindow *parent, const long int id,const wxPoint& pos,const 
 	numsave=0;
 	file=new SubsFile();
 
-	
+
 	LoadDefault();
 	timer.SetOwner(this,ID_AUTIMER);
 	SetStyle();
@@ -136,7 +136,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	GetClientSize(&w,&h);
 	//scrollBar->GetSize(&sw,&sh);
 	//scrollBar->SetSize(w-sw,0,sw,h);
-   // w -= 18;
+	// w -= 18;
 	bool direct = false;
 
 	if (direct) {
@@ -223,7 +223,7 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 
 		wxArrayString strings;
 		wxArrayInt errors;
-		
+
 		if (i==scPos){
 			strings.Add(_T("#"));
 			if (form<SRT){
@@ -246,13 +246,13 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 			if(showtl){strings.Add(_T("Tekst T³umaczenia"));}
 		}else{
 			Dial=GetDial(i-1);
-			
+
 			strings.Add(wxString::Format(_T("%i"),i));
 
 			isd=Dial->IsComment;
 			states=Dial->State;
 			if (form<SRT){
-			strings.Add(wxString::Format(_T("%i"),Dial->Layer));
+				strings.Add(wxString::Format(_T("%i"),Dial->Layer));
 			}
 			strings.Add(Dial->Start.raw());
 			if (form!=TMP){
@@ -284,12 +284,12 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 			if(txt.Len()>1000){txt=txt.SubString(0,1000)+"...";}
 			strings.Add((!showtl&&transl&&txttl!="")?txttl : txt);
 			if(showtl){strings.Add(txttl);}
-	
+
 			if(Options.GetBool("Editbox Spellchecker")&&
 				(!transl && Dial->Text!="" || transl && Dial->TextTl!="")
 				/*&& Dial->spells.size()<1*/){CheckText(strings[strings.size()-1],errors);} 
 		}
-	
+
 		posX=0;
 
 
@@ -313,7 +313,7 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 				else if(j==0&&states==2){kol=labelBkCol;}
 				else if(j==0&&states==1){kol=labelBkColM;}
 				else if(isd&&j!=0){kol=comm;}
-	
+
 				if(i>scPos){
 					if(sel.find(i-1)!=sel.end()&&j!=0){
 						kol=seldial; 
@@ -324,30 +324,30 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 				if(unkstyle && j==4 || shorttime && (j==10||(j==3&&form>SSA))){dc.SetBrush(wxBrush(Options.GetColour("Grid Spellchecker")));}
 
 				dc.DrawRectangle(posX,posY,GridWidth[j],GridHeight);
-				
+
 				if(j==ilcol-1 && errors.size()>1){
-					
+
 					for(size_t k = 0; k < errors.size(); k+=2){
-						
+
 						wxString err=strings[j].SubString(errors[k], errors[k+1]);
 						err.Trim();
 						if(errors[k]>0){
 							wxString berr=strings[j].Mid(0, errors[k]);
 							dc.GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &font);
 						}else{bfw=0;}
-			
+
 						dc.GetTextExtent(err, &fw, &fh, NULL, NULL, &font);
 						dc.SetBrush(wxBrush(Options.GetColour("Grid Spellchecker")));
 						dc.DrawRectangle(posX+bfw+4,posY,fw,GridHeight);
 					}
-		
+
 				}
-				
+
 				bool collis=(i!=scPos && i!=Edit->ebrow+1 && (Dial->Start >= acdial->Start && Dial->Start < acdial->End 
 					|| Dial->End > acdial->Start && Dial->Start <= acdial->End) ); 
 				dc.SetTextForeground( (collis)? collcol : textcol);
 
-	
+
 
 				if(form<SRT){isCenter=!(j == 4 || j == 5 || j == 9 || j == 11 || j == 12);}
 				else if(form==TMP){isCenter=!(j == 2);}
@@ -362,7 +362,7 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 			}
 		}
 
-	posY+=GridHeight+1;
+		posY+=GridHeight+1;
 
 	}
 
@@ -376,16 +376,16 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 		tdc.DrawRectangle(0,posY,w+scHor-GridWidth[0]+1,h);
 	}
 	if(mtimerow>=scPos&&mtimerow<=scrows){
-		 mdc.SetBrush(*wxTRANSPARENT_BRUSH);
-		 mdc.SetPen(wxPen(Options.GetColour(_T("Grid Active Line")),3));
-		 mdc.DrawRectangle(1,((mtimerow-scPos+1)*(GridHeight+1))-1,(GridWidth[0]-1),GridHeight+2);
-		 }
+		mdc.SetBrush(*wxTRANSPARENT_BRUSH);
+		mdc.SetPen(wxPen(Options.GetColour(_T("Grid Active Line")),3));
+		mdc.DrawRectangle(1,((mtimerow-scPos+1)*(GridHeight+1))-1,(GridWidth[0]-1),GridHeight+2);
+	}
 
 	if(Edit->ebrow>=scPos&&Edit->ebrow<=scrows){
-		 tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-		 tdc.SetPen(wxPen(Options.GetColour(_T("Grid Active Line"))));
-		 tdc.DrawRectangle(scHor,((Edit->ebrow-scPos+1)*(GridHeight+1))-1,w+scHor-(GridWidth[0]+1),GridHeight+2);
-		 }
+		tdc.SetBrush(*wxTRANSPARENT_BRUSH);
+		tdc.SetPen(wxPen(Options.GetColour(_T("Grid Active Line"))));
+		tdc.DrawRectangle(scHor,((Edit->ebrow-scPos+1)*(GridHeight+1))-1,w+scHor-(GridWidth[0]+1),GridHeight+2);
+	}
 
 	mdc.Blit(GridWidth[0]+1,0,w+scHor-(GridWidth[0]+1),h,&tdc,scHor,0);
 }
@@ -396,14 +396,14 @@ void SubsGrid::AdjustWidths(int cell)
 	wxClientDC dc(this);
 	dc.SetFont(font);
 
-		int law=0,stw=0,edw=0,syw=0,acw=0,efw=0,fw,fh;
-		bool shml=false,shmr=false,shmv=false;
+	int law=0,stw=0,edw=0,syw=0,acw=0,efw=0,fw,fh;
+	bool shml=false,shmr=false,shmv=false;
 
 
 	int maxx=GetCount();
 
-		dc.GetTextExtent(wxString::Format(_T("%i"),GetCount()), &fw, &fh, NULL, NULL, &font);
-		GridWidth[0]=fw+10;
+	dc.GetTextExtent(wxString::Format(_T("%i"),GetCount()), &fw, &fh, NULL, NULL, &font);
+	GridWidth[0]=fw+10;
 	Dialogue *ndial;
 	for(int i=0;i<maxx;i++)
 	{
@@ -415,33 +415,33 @@ void SubsGrid::AdjustWidths(int cell)
 			dc.GetTextExtent(ndial->End.raw(), &fw, &fh, NULL, NULL, &font);
 			if(fw+10>edw){edw=fw+10;}
 		}
-			
+
 
 		if(form<SRT){
 			if((LAYER & cell) && ndial->Layer!=0){
 				dc.GetTextExtent(wxString::Format(_T("%i"),ndial->Layer), &fw, &fh, NULL, NULL, &font);
 				if(fw+10>law){law=fw+10;}}
-		if(STYLE & cell){	
-			dc.GetTextExtent(ndial->Style, &fw, &fh, NULL, NULL, &font);
+			if(STYLE & cell){	
+				dc.GetTextExtent(ndial->Style, &fw, &fh, NULL, NULL, &font);
 				if(fw+10>syw){syw=fw+10;}}
-		if((ACTOR & cell) && ndial->Actor!=""){
-			dc.GetTextExtent(ndial->Actor, &fw, &fh, NULL, NULL, &font);
+			if((ACTOR & cell) && ndial->Actor!=""){
+				dc.GetTextExtent(ndial->Actor, &fw, &fh, NULL, NULL, &font);
 				if(fw+10>acw){acw=fw+10;}}
-		if((EFFECT & cell) && ndial->Effect!=""){
-			dc.GetTextExtent(ndial->Effect, &fw, &fh, NULL, NULL, &font);
+			if((EFFECT & cell) && ndial->Effect!=""){
+				dc.GetTextExtent(ndial->Effect, &fw, &fh, NULL, NULL, &font);
 				if(fw+10>efw){efw=fw+10;}}
-		if((MARGINL & cell) && ndial->MarginL!=0){shml=true;}
-		if((MARGINR & cell) && ndial->MarginR!=0){shmr=true;}
-		if((MARGINV & cell) && ndial->MarginV!=0){shmv=true;}
+			if((MARGINL & cell) && ndial->MarginL!=0){shml=true;}
+			if((MARGINR & cell) && ndial->MarginR!=0){shmr=true;}
+			if((MARGINV & cell) && ndial->MarginV!=0){shmv=true;}
 		}
 	}
 
 	if((form<SRT)? (LAYER & cell) : (START & cell)){
-	wxString frst=(form<SRT)?_T("W."):_T("Start");
-	dc.GetTextExtent(frst, &fw, &fh, NULL, NULL, &font);
-	GridWidth[1] = (form<SRT)?law : stw;
-	if(fw+10>GridWidth[1]&&GridWidth[1]!=0){GridWidth[1]=fw+10;}
-		}
+		wxString frst=(form<SRT)?_T("W."):_T("Start");
+		dc.GetTextExtent(frst, &fw, &fh, NULL, NULL, &font);
+		GridWidth[1] = (form<SRT)?law : stw;
+		if(fw+10>GridWidth[1]&&GridWidth[1]!=0){GridWidth[1]=fw+10;}
+	}
 
 	if((form<SRT)? (START & cell) : (END & cell)){
 		wxString scnd=(form<SRT)?_T("Start"):_T("Koniec");
@@ -500,14 +500,14 @@ void SubsGrid::AdjustWidths(int cell)
 	if(EFFECT & visible){GridWidth[9]=0;}
 	if(CNZ & visible){GridWidth[10]=0;}
 	first=false;
-	
+
 }
 
 
 void SubsGrid::Clearing()
 {
 	sel.clear();
-	
+
 	wxDELETE(file);
 	Modified=false;
 	first=true;
@@ -531,15 +531,13 @@ void SubsGrid::ChangeLine(Dialogue *line1, int wline, long cells, bool selline, 
 	lastRow=wline;
 	wxArrayInt sels=GetSels();
 	if(sels.size()<2 || cells & TXT || cells & TXTTL){
-		ChangeCell(cells,wline,line1);}
-	else{
-		//selline=false;
-		for(size_t i=0;i<sels.size();i++)
-		{
+		ChangeCell(cells,wline,line1);
+	}else{
+		for(size_t i=0;i<sels.size();i++){
 			ChangeCell(cells,sels[i],line1);
 		}
 		if(selline){wline=sels[sels.size()-1];}
-		}
+	}
 	if(wline>=GetCount()-1 && selline){
 		Dialogue *tmp=new Dialogue(); 
 		tmp->State=1;
@@ -553,19 +551,19 @@ void SubsGrid::ChangeLine(Dialogue *line1, int wline, long cells, bool selline, 
 	AdjustWidths(cells);
 
 	if(selline){
-	
+
 		lastRow=wline+1;
 		sel.clear();
 		sel[lastRow]=true;
 		int h,w;
 		GetClientSize(&w,&h);
 		scPos = MID(0, lastRow-((h/(GridHeight+1))/2), GetCount()-1);
-		
+
 	}
 	Refresh(false);
 	if(selline){Edit->SetIt(lastRow);}
 	SetModified(false,dummy);
-	
+
 }
 
 void SubsGrid::ChangeCell(long wcell, int wline, Dialogue *what)
@@ -663,8 +661,8 @@ void SubsGrid::SelectRow(int row, bool addToSelected, bool select)
 	}
 	else{
 		sel.clear();
-	sel[row]=select;
-	Refresh(false);
+		sel[row]=select;
+		Refresh(false);
 	}
 }
 
@@ -673,7 +671,7 @@ void SubsGrid::ScrollTo(int y, bool center){
 	GetClientSize(&w,&h);
 	if(center){y-=(h/(GridHeight+1))/2;}
 	int nextY = MID(0,y,GetCount()+1 - h/(GridHeight+1));
-	
+
 	if (scPos != nextY) {
 		scPos = nextY;
 		Refresh(false);
@@ -699,11 +697,11 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 	bool right = event.RightDown();
 	int curY=(event.GetY());
 	int curX=(event.GetX());
-	
+
 	if(ismenushown){ScreenToClient(&curX,&curY);}
 	int row = curY / (GridHeight+1)+scPos-1;
 
-	
+
 	if (left_up && !holding) {
 		return;
 	}
@@ -730,8 +728,8 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 		int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();
 		ScrollTo(scPos - step);
 		return;}
-		
-	
+
+
 
 	if (left_up && holding) {
 		holding = false;
@@ -740,7 +738,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 		if(oldX!=-1){return;}
 	}
 
-	
+
 	// Click type
 	if (click) {
 		holding = true;
@@ -769,16 +767,16 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 		if (lastsel != -1) {
 			file->edited=true;
 			//if(!sel[lastsel]){
-		//SelectRow(row,false,true);
-		//SwapRows(lastsel,row);
-		   // }else{
+			//SelectRow(row,false,true);
+			//SwapRows(lastsel,row);
+			// }else{
 			if (row < scPos+1 ){
 				MoveRows(-1);
 			}else if(row > scPos+h/(GridHeight+1)-3){
 				MoveRows(1);
 			}else{
 				MoveRows(row-lastsel);}
-		   // }
+			// }
 		}
 		lastsel=row;
 		//return;
@@ -814,11 +812,11 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 
 	// Normal click
 	if (!shift && !alt) {
-		
+
 		//if (click) {//left_up || dclick
-			
-			//if(Edit->ebrow!=row){
-			//Refresh(false);}
+
+		//if(Edit->ebrow!=row){
+		//Refresh(false);}
 		//}
 		//jakbym chcia³ znów daæ zmianê edytowanej linii z ctrl to muszê dorobiæ mu refresh
 		if ((click && !ctrl) || (dclick && ctrl)) {// || dclick
@@ -849,8 +847,8 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 				if(Edit->ABox){Edit->ABox->audioDisplay->UpdateImage(true);}
 			}
 		}
-		
-		
+
+
 
 		if (click || dclick || left_up)
 			return;
@@ -863,7 +861,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 		}
 
 	}
-	
+
 
 
 	// Block select
@@ -932,7 +930,7 @@ void SubsGrid::Convert(char type)
 			newend += dialc->Start.mstime;
 			dialc->End.NewTime(newend);
 		}
-		
+
 		i++;	
 	}
 
@@ -962,52 +960,52 @@ void SubsGrid::Convert(char type)
 /*
 DWORD SubsGrid::saveproc(void* param)
 {
-	SubsGrid * grid = (SubsGrid*)param;
-	wxString txt=grid->GetSInfo("TLMode Style");
-	wxString kkk=grid->GetSInfo("TLMode");
-	//wxString mode = (wxFile::Exists(grid->fn))? 
-	//OpenWrite ow(grid->fn,false);
-	//FILE *file = _wfopen(grid->fn.fn_str(),L"a+b");
-	//wxFFile file;
-	//file.Open(grid->fn, "a+");
-	//wxString tmppath="\\?\\"+grid->fn;
-	//wxLogStatus("przed stworzeniem pliku");
-	HANDLE ffile=CreateFile(grid->fn.fn_str(), GENERIC_WRITE, FILE_SHARE_WRITE,NULL, OPEN_EXISTING, 0, NULL);
-	//wxLogStatus("stworzy³o plik");
-	//wxMutex mutex1;
-	DWORD savesize=0;
-	wxMutex mutex2;
-	while(1)
-	{
-		if(grid->acline>=grid->GetCount()){break;}
-		Dialogue *dial=grid->GetDial(grid->acline++);
-		//grid->acline++;
-		//wxLogStatus("acline %i", grid->acline);
-		wxString wynik;
-		if(kkk!=""){
-			if(kkk!="Translated" && dial->TextTl!=""){
-				wynik<<dial->GetRaw(false,txt)<<dial->GetRaw(true);
-			}
-			else{
-				wynik<<dial->GetRaw(dial->TextTl!="");
-			}
-		}else{
-			if(grid->form==SRT){wynik<<grid->acline+1<<"\r\n";}
-			wynik<<dial->GetRaw();
-			
-		}
-		if(dial->State==1&&grid->cstate){dial->State=2;}
-		wxScopedCharBuffer buffer= wynik.mb_str(wxConvUTF8);//mb_str(wxConvUTF8)//wxScopedCharBuffer 
-		int size = strlen(buffer);
-		grid->mutex.Lock();
-		SetFilePointer(ffile,0,0,FILE_END);
-		WriteFile(ffile, buffer, size, &savesize, 0);
-		grid->mutex.Unlock();
-	}
-	//ow.CloseFile();
-	//file.Close();
-	CloseHandle(ffile);
-	return 0;
+SubsGrid * grid = (SubsGrid*)param;
+wxString txt=grid->GetSInfo("TLMode Style");
+wxString kkk=grid->GetSInfo("TLMode");
+//wxString mode = (wxFile::Exists(grid->fn))? 
+//OpenWrite ow(grid->fn,false);
+//FILE *file = _wfopen(grid->fn.fn_str(),L"a+b");
+//wxFFile file;
+//file.Open(grid->fn, "a+");
+//wxString tmppath="\\?\\"+grid->fn;
+//wxLogStatus("przed stworzeniem pliku");
+HANDLE ffile=CreateFile(grid->fn.fn_str(), GENERIC_WRITE, FILE_SHARE_WRITE,NULL, OPEN_EXISTING, 0, NULL);
+//wxLogStatus("stworzy³o plik");
+//wxMutex mutex1;
+DWORD savesize=0;
+wxMutex mutex2;
+while(1)
+{
+if(grid->acline>=grid->GetCount()){break;}
+Dialogue *dial=grid->GetDial(grid->acline++);
+//grid->acline++;
+//wxLogStatus("acline %i", grid->acline);
+wxString wynik;
+if(kkk!=""){
+if(kkk!="Translated" && dial->TextTl!=""){
+wynik<<dial->GetRaw(false,txt)<<dial->GetRaw(true);
+}
+else{
+wynik<<dial->GetRaw(dial->TextTl!="");
+}
+}else{
+if(grid->form==SRT){wynik<<grid->acline+1<<"\r\n";}
+wynik<<dial->GetRaw();
+
+}
+if(dial->State==1&&grid->cstate){dial->State=2;}
+wxScopedCharBuffer buffer= wynik.mb_str(wxConvUTF8);//mb_str(wxConvUTF8)//wxScopedCharBuffer 
+int size = strlen(buffer);
+grid->mutex.Lock();
+SetFilePointer(ffile,0,0,FILE_END);
+WriteFile(ffile, buffer, size, &savesize, 0);
+grid->mutex.Unlock();
+}
+//ow.CloseFile();
+//file.Close();
+CloseHandle(ffile);
+return 0;
 }
 */
 void SubsGrid::SaveFile(wxString filename, bool cstat)
@@ -1017,18 +1015,18 @@ void SubsGrid::SaveFile(wxString filename, bool cstat)
 	}
 	wxString txt;
 	wxString kkk;
-	
+
 	OpenWrite ow(filename,true);
 
 	if (form<SRT){
-		 AddSInfo(_T("Last Style Storage"),Options.acdir, false);
-		
-		 AddSInfo(_T("Active Line"), kkk<<Edit->ebrow, false);
+		AddSInfo(_T("Last Style Storage"),Options.acdir, false);
 
-		 txt<<_T("[Script Info]\r\n;Plik utworzony przez ")<<Options.progname<<_T("\r\n")<<GetSInfos(GetSInfo("TLMode")=="Translated");
-		 txt<<_T("\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n");
-		 txt<<GetStyles(GetSInfo("TLMode")=="Translated");
-		 txt<<_T(" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n");
+		AddSInfo(_T("Active Line"), kkk<<Edit->ebrow, false);
+
+		txt<<_T("[Script Info]\r\n;Plik utworzony przez ")<<Options.progname<<_T("\r\n")<<GetSInfos(GetSInfo("TLMode")=="Translated");
+		txt<<_T("\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n");
+		txt<<GetStyles(GetSInfo("TLMode")=="Translated");
+		txt<<_T(" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n");
 	}
 	ow.PartFileWrite(txt);
 
@@ -1039,7 +1037,7 @@ void SubsGrid::SaveFile(wxString filename, bool cstat)
 	{
 		//if(it->first==i&&it!=file->scomm.end()){ow.PartFileWrite(it->second);if(it!=file->scomm.end()){it++;}}
 		Dialogue *dial=GetDial(i);
-		
+
 
 		if(kkk!=""){
 			if(kkk!="Translated" && dial->TextTl!=""){
@@ -1047,14 +1045,14 @@ void SubsGrid::SaveFile(wxString filename, bool cstat)
 				ow.PartFileWrite(dial->GetRaw(true));}
 			else{
 				ow.PartFileWrite(dial->GetRaw((dial->TextTl!="")));
-				}
+			}
 		}else{
 			wxString wynik;
 			if(form==SRT){wynik<<i+1<<"\r\n";}
 			ow.PartFileWrite(wynik+dial->GetRaw());
 		}
 		if(dial->State==1&&cstat){dial->State=2;}
-		
+
 		//worker[i] = CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)saveproc,this,0, NULL);
 
 	}
@@ -1068,9 +1066,9 @@ void SubsGrid::HideOver()
 	hideover=!hideover;
 	Options.SetBool("Grid Hide Tags",hideover);
 	//for(int i=0;i<GetCount();i++)
-		//{
-		//file->subs->dials[i]->spells.clear();
-		//}
+	//{
+	//file->subs->dials[i]->spells.clear();
+	//}
 	Refresh(false);
 }
 
@@ -1119,14 +1117,14 @@ int SubsGrid::FindStyle(wxString name,int *multip)
 
 wxString SubsGrid::GetStyles(bool tld)
 {   wxString allst;
-	wxString tmpst;
-	if(tld){tmpst=GetSInfo("TLMode Style");}
-	for(size_t i=0;i<file->subs->styles.size();i++)
-	{
-		if(!(tld&&file->subs->styles[i]->Name==tmpst)){
-			allst<<file->subs->styles[i]->styletext();}
-	}
-	return allst;
+wxString tmpst;
+if(tld){tmpst=GetSInfo("TLMode Style");}
+for(size_t i=0;i<file->subs->styles.size();i++)
+{
+	if(!(tld&&file->subs->styles[i]->Name==tmpst)){
+		allst<<file->subs->styles[i]->styletext();}
+}
+return allst;
 }
 
 void SubsGrid::DelStyle(int i)
@@ -1149,14 +1147,14 @@ int SubsGrid::FirstSel()
 }
 
 class compare { // simple comparison function
-	public:
-		bool operator()(Dialogue *i,Dialogue *j) {
-		  
-			if(i->Start.mstime!=j->Start.mstime){
-				return (i->Start.mstime<j->Start.mstime);
-			}
-			return i->End.mstime<j->End.mstime;
-		} // returns x>y
+public:
+	bool operator()(Dialogue *i,Dialogue *j) {
+
+		if(i->Start.mstime!=j->Start.mstime){
+			return (i->Start.mstime<j->Start.mstime);
+		}
+		return i->End.mstime<j->End.mstime;
+	} // returns x>y
 };
 
 void SubsGrid::ChangeTime()
@@ -1187,8 +1185,8 @@ void SubsGrid::ChangeTime()
 	wxString style=Options.GetString(_T("Styles of time change"));
 	if(!(mto & 1)){tim=(-tim);}
 	int VAS = mto & 2;
-	
-	
+
+
 	std::map<Dialogue *,int,compare> tmpmap;
 	if(CT>0||pe>3){
 		for (int i=0; i<GetCount(); i++)
@@ -1196,7 +1194,7 @@ void SubsGrid::ChangeTime()
 			tmpmap[GetDial(i)]=i;
 		}
 	}
- 
+
 	if(seb!=0){
 		int answer=wxMessageBox(wxString::Format(_("Czy naprawdê chcesz przesuwaæ tylko czasy %s?"), 
 			(seb==1)? "pocz¹tkowe" : "koñcowe"),"Potwierdzenije",wxYES_NO);
@@ -1212,7 +1210,7 @@ void SubsGrid::ChangeTime()
 	int fs=FirstSel();
 	if (fs==-1&&lmd!=0&&lmd!=4){
 		wxMessageBox(_T("Zaznacz coœ a pozniej przesuwaj"),_T("Uwaga"));return;}
-	
+
 	int difftime=(VAS)? file->subs->dials[mtimerow]->Start.mstime : file->subs->dials[mtimerow]->End.mstime;
 	int halfframe= (VAS)? -(vb->avtpf/2) : (vb->avtpf/2);
 	if((mto & 4) && vb->GetState()!=None){
@@ -1241,7 +1239,7 @@ void SubsGrid::ChangeTime()
 	tim+=added;
 	for (int i=0;i<GetCount();i++)
 	{
-   
+
 		if(lmd==4&&stcomp.GetCount()>0){
 			fromstyl=false;
 			wxString styl=file->subs->dials[i]->Style;
@@ -1250,7 +1248,7 @@ void SubsGrid::ChangeTime()
 			}
 		}
 		if(lmd==3){
-		fromstyl=(czas1<=file->subs->dials[i]->Start.mstime);
+			fromstyl=(czas1<=file->subs->dials[i]->Start.mstime);
 		}
 		if((i>=fs&&lmd==2)||lmd==0){fromsel=true;}
 		if((sel.find(i) != sel.end() && lmd==1) || fromsel || fromstyl){
@@ -1321,16 +1319,16 @@ void SubsGrid::ChangeTime()
 								file->subs->dials[i-1]->State=1;
 							}
 						}
-						
+
 					}
-					
+
 
 				}
 			}
-			
+
 			file->subs->dials[i]=dialc;
 		}
- 
+
 	}
 	SetModified();
 	if(form>TMP){RepaintWindow(START|END);}else{Refresh(false);}
@@ -1339,7 +1337,7 @@ void SubsGrid::ChangeTime()
 
 void SubsGrid::SortIt(short what, bool all)
 {
-	
+
 	std::vector<Dialogue*> selected;
 	if(all){
 		for(int i=0;i<GetCount();i++){file->subs->dials[i]->State=1;}
@@ -1382,12 +1380,12 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 		wxPoint pos;
 		pos.x = w/2;
 		//if (shift) {
-			//pos.y = lineHeight/2;
-			//OnPopupMenu(true, pos);
+		//pos.y = lineHeight/2;
+		//OnPopupMenu(true, pos);
 		//}
 		//else {
-			pos.y = (Edit->ebrow+1-scPos) * GridHeight + GridHeight/2;
-			ContextMenu(pos);
+		pos.y = (Edit->ebrow+1-scPos) * GridHeight + GridHeight/2;
+		ContextMenu(pos);
 		//}
 		return;
 	}
@@ -1396,7 +1394,7 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 	if (key == 'A' && ctrl && !alt && !shift) {
 		//SelectRow(0,false,true,true);
 		for(int i=0;i<GetCount();i++){
-		sel[i]=true;
+			sel[i]=true;
 		}
 		Refresh(false);
 	}
@@ -1436,9 +1434,9 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 			SelectRow(next);
 			int gridh=((h/(GridHeight+1))-1);
 			if(next==scPos&&(dir==1||dir==-1)){
-			ScrollTo(next-1);}
+				ScrollTo(next-1);}
 			else if(next==scPos+gridh&&(dir==1||dir==-1)){
-			ScrollTo(next-gridh+1);}
+				ScrollTo(next-gridh+1);}
 			else if(dir!=1&&dir!=-1){
 				ScrollTo(next);}
 
@@ -1476,9 +1474,9 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 
 			int gridh=((h/(GridHeight+1))-1);
 			if(extendRow==scPos&&(dir==1||dir==-1)){
-			ScrollTo(extendRow-1);}
+				ScrollTo(extendRow-1);}
 			else if(extendRow==scPos+gridh&&(dir==1||dir==-1)){
-			ScrollTo(extendRow-gridh+1);}
+				ScrollTo(extendRow-gridh+1);}
 			else if(dir!=1&&dir!=-1){
 				ScrollTo(extendRow);}
 			return;
@@ -1509,7 +1507,7 @@ void SubsGrid::DeleteRows()
 	SetModified();
 	//VideoCtrl *vb=Kai->GetTab()->Video;
 	//if(vb->GetState()==Paused&&Options.GetBool("Editbox Video Time")){
-		//vb->Seek(Edit->line->Start.mstime);}
+	//vb->Seek(Edit->line->Start.mstime);}
 	Thaw();
 	RepaintWindow();
 }
@@ -1521,28 +1519,28 @@ void SubsGrid::MoveRows(int step, bool sav)
 	if (sels.GetCount()<1){return;}
 	if(step<0){
 
-	for (size_t i=0;i<sels.GetCount();i++)
-	{
-	   int istep=sels[i]+step;
+		for (size_t i=0;i<sels.GetCount();i++)
+		{
+			int istep=sels[i]+step;
 			//if(istep<tmpstep){istep=tmpstep;tmpstep++;}
-	   if(istep<0){break;}
+			if(istep<0){break;}
 			if(step!=-1){
 				break;
-				
+
 				//if(istep>=GetCount()){PushDial(dial[i]);}
 				//else{
-			//dial.insert(dial.begin()+istep,1,dial[i]);}
-			//dial.erase(dial.begin()+i, dial.begin()+i+1);
+				//dial.insert(dial.begin()+istep,1,dial[i]);}
+				//dial.erase(dial.begin()+i, dial.begin()+i+1);
 			}else{
-			sel[istep]=true;
-			sel.erase(sel.find(sels[i]));
-			SwapRows(sels[i],istep);}
-	}
+				sel[istep]=true;
+				sel.erase(sel.find(sels[i]));
+				SwapRows(sels[i],istep);}
+		}
 	}else
 	{
 		for (int i=sels.GetCount()-1;i>=0;i--)
-	{
-	   int istep=sels[i]+step;
+		{
+			int istep=sels[i]+step;
 			//if(istep<0){istep=tmpstep;tmpstep++;}
 			if(istep>GetCount()-1) break;
 			if(step!=1){
@@ -1550,14 +1548,14 @@ void SubsGrid::MoveRows(int step, bool sav)
 				//int dododj=(istep>0)?1 : -1;
 				//if(istep>=GetCount()){PushDial(dial[i]);}
 				//else{
-			//dial.insert(dial.begin()+istep,1,dial[i]);}
-			//dial.erase(dial.begin()+i, dial.begin()+i+1);
+				//dial.insert(dial.begin()+istep,1,dial[i]);}
+				//dial.erase(dial.begin()+i, dial.begin()+i+1);
 			}
 			else{
-			sel[istep]=true;
-			sel.erase(sel.find(sels[i]));
-			SwapRows(sels[i],istep);}
-	}
+				sel[istep]=true;
+				sel.erase(sel.find(sels[i]));
+				SwapRows(sels[i],istep);}
+		}
 	}
 	Edit->SetIt(FirstSel());
 	Refresh(false);
@@ -1568,29 +1566,42 @@ void SubsGrid::DeleteText()
 	for (int i=0;i<GetCount();i++)
 	{
 		if(sel.find(i)!=sel.end()){
-		CopyDial(i)->Text=_T("");}
+			CopyDial(i)->Text=_T("");}
 	}
 	SetModified();
 	Refresh(false);
 }
+void SubsGrid::UpdateUR(bool toolbar)
+{
+	bool undo=false, _redo=false;
+	file->GetURStatus(&undo, &_redo);
+	Kai->MenuBar->Enable(ID_UNDO1,undo);
+	Kai->MenuBar->Enable(ID_REDO1,_redo);
+	if(toolbar){
+		Kai->Toolbar->UpdateId(ID_UNDO1,undo);
+		Kai->Toolbar->UpdateId(ID_REDO1,_redo);
+	}
+}
+
 void SubsGrid::GetUndo(bool redo)
 {
 	TabPanel *pan =Kai->GetTab();
 	Freeze();
 	if(redo){file->Redo();}else{file->Undo();}
-	
-	
-	//bool cgs=false;
-	if(!redo){Kai->MenuBar->Enable(ID_REDO1,true);Kai->Toolbar->UpdateId(ID_REDO1,true);}
+
+
+	UpdateUR();
+
+	/*if(!redo){Kai->MenuBar->Enable(ID_REDO1,true);Kai->Toolbar->UpdateId(ID_REDO1,true);}
 	if(file->Iter()==file->maxx()){Kai->MenuBar->Enable(ID_REDO1,false);Kai->Toolbar->UpdateId(ID_REDO1,false);}
 
 
 	if(file->Iter()){
-		if(redo){Modified=true;Kai->MenuBar->Enable(ID_UNDO1,true);Kai->Toolbar->UpdateId(ID_UNDO1,true);}
-	}else{Modified=false;Kai->MenuBar->Enable(ID_UNDO1,false);Kai->Toolbar->UpdateId(ID_UNDO1,false);}
+	if(redo){Modified=true;Kai->MenuBar->Enable(ID_UNDO1,true);Kai->Toolbar->UpdateId(ID_UNDO1,true);}
+	}else{Modified=false;Kai->MenuBar->Enable(ID_UNDO1,false);Kai->Toolbar->UpdateId(ID_UNDO1,false);}*/
 	Kai->Label(file->Iter());
 
-	
+
 	char oldform=form;SetSubsForm();
 	if(oldform!=form){
 		pan->CTime->Contents();
@@ -1602,7 +1613,7 @@ void SubsGrid::GetUndo(bool redo)
 	sel[erow]=true;
 	lastRow=erow;
 	Thaw();
-	
+
 	if(Kai->ss){Kai->ss->ASS->SetArray(&file->subs->styles);Kai->ss->ASS->Refresh(false);}
 	RepaintWindow();
 	Edit->SetIt(erow);
@@ -1616,7 +1627,7 @@ void SubsGrid::GetUndo(bool redo)
 	}else{
 		if(vb->GetState()==Paused){vb->Render();}
 	}
-	
+
 
 	if(makebkp){
 		timer.Start(20000,true);
@@ -1665,12 +1676,12 @@ void SubsGrid::AddSInfo(wxString SI, wxString val, bool save)
 {
 	wxString key;
 	if(val==""){
-	key=SI.BeforeFirst(':');
-	key.Trim(false);
-	key.Trim(true);
-	val=SI.AfterFirst(':');
-	val.Trim(false);
-	val.Trim(true);}
+		key=SI.BeforeFirst(':');
+		key.Trim(false);
+		key.Trim(true);
+		val=SI.AfterFirst(':');
+		val.Trim(false);
+		val.Trim(true);}
 	else{key=SI;}
 	SInfo *oldinfo=NULL;
 	int ii= -1;
@@ -1687,7 +1698,7 @@ void SubsGrid::AddSInfo(wxString SI, wxString val, bool save)
 		oldinfo->Val=val;
 	}
 	//if(save){
-		
+
 	//}
 }
 
@@ -1705,9 +1716,10 @@ wxString SubsGrid::GetSInfos(bool tld)
 void SubsGrid::SetModified(bool redit, bool dummy, bool refvid)
 {
 	if(file->IsNotSaved()){
-		if(file->Iter()<1||!Modified){Modified=true;Kai->MenuBar->Enable(ID_UNDO1,true); 
-		Kai->Toolbar->UpdateId(ID_UNDO1,true);
+		if(file->Iter()<1||!Modified){
+			Modified=true;
 		}
+
 		Kai->Label(file->Iter()+1);
 		if(redit)
 		{
@@ -1722,7 +1734,7 @@ void SubsGrid::SetModified(bool redit, bool dummy, bool refvid)
 		if(!dummy){
 			VideoCtrl *vb=Kai->GetTab()->Video;
 			if(vb->IsShown()){vb->OpenSubs(SaveText());}
-	
+
 			int opt=Options.GetInt("Move Video To Active Line");
 			if(opt>1){
 				if(vb->GetState()==Paused || (vb->GetState()==Playing && (opt==3 || opt==5))){
@@ -1731,18 +1743,19 @@ void SubsGrid::SetModified(bool redit, bool dummy, bool refvid)
 				if(vb->GetState()==Paused){vb->Render();}
 			}
 		}
-	
+
 		if(makebkp){
 			timer.Start(20000, true);
 			//CreateTimerQueueTimer(&qtimer,0,WAITORTIMERCALLBACK(OnBcktimer),this,20000,0,WT_EXECUTEONLYONCE);
 			makebkp=false;
 		}
+		UpdateUR();
 	}
 }
 
 void SubsGrid::SwapRows(int frst, int scnd, bool sav)
 {
-	
+
 	Dialogue *tmp=file->subs->dials[frst];
 	file->subs->dials[frst]=file->subs->dials[scnd];
 	file->subs->dials[scnd]=tmp;
@@ -1755,12 +1768,12 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 	Clearing();
 	int active=0;
 	file=new SubsFile();
-		  
+
 	if(ext=="srt"){
-			  
+
 		wxStringTokenizer tokenizer(str,_T("\n"),wxTOKEN_STRTOK);
 		tokenizer.GetNextToken();
-			  
+
 		wxString text1;
 		while ( tokenizer.HasMoreTokens() ){
 			wxString text=tokenizer.GetNextToken().Trim();
@@ -1768,7 +1781,7 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 				AddLine(new Dialogue(text1.Trim())); text1="";}}
 			else{text1<<text<<"\r\n";}
 		}
-		
+
 		if(text1!=""){AddLine( new Dialogue(text1.Trim())); text1="";}
 	}
 	else{
@@ -1794,11 +1807,11 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 				sinfoo=1;
 			}
 			else if(!token.StartsWith(_T(";"))&&sinfoo==0&&token.Find(':')!=wxNOT_FOUND){
-					AddSInfo(token);
+				AddSInfo(token);
 			}
 		}
 
-		
+
 		bool tlmode=(GetSInfo(_T("TLMode"))=="Yes");
 		if(GetSInfo(_T("Active Line"))!="" &&(ext==_T("ass")||ext==_T("ssa"))){active=wxAtoi(GetSInfo(_T("Active Line")));}
 		if(transl&&!tlmode){
@@ -1829,13 +1842,13 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 			}else{delete dl;}
 		}
 
-	
+
 	}
 
-		if(GetCount()<1){LoadDefault();wxMessageBox("Napisy o z³ym formacie, albo plik jest uszkodzony, b¹dŸ zawiera b³êdy");form=ASS;}
-		else{SetSubsForm();}
-		origform=form;
- 
+	if(GetCount()<1){LoadDefault();wxMessageBox("Napisy o z³ym formacie, albo plik jest uszkodzony, b¹dŸ zawiera b³êdy");form=ASS;}
+	else{SetSubsForm();}
+	origform=form;
+
 	if(GetSInfo(_T("TLMode"))==_("Yes")){
 		Edit->SetTl(true);
 		transl=true;
@@ -1848,7 +1861,7 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 		int endt=Options.GetInt(_T("Time show of letter"));
 		for(int i=0;i<GetCount();i++){
 			Dialogue *dial=GetDial(i);
-			
+
 			if(dial->End.mstime==0){
 				int newend=(endt*dial->Text.Len());
 				if(newend<1000){newend=1000;}
@@ -1865,15 +1878,15 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 	else if(form==ASS){
 		if(ext!="ass"){origform=0;AddStyle(new Styles());}
 		Edit->TlMode->Enable(true);Edit->RefreshStyle();
-	if(Options.GetBool("Grid Load Sorted")){std::sort(file->subs->dials.begin(), file->subs->dials.end(), sortstart);}}
+		if(Options.GetBool("Grid Load Sorted")){std::sort(file->subs->dials.begin(), file->subs->dials.end(), sortstart);}}
 	else{Edit->TlMode->Enable(false);}
 	if(active>=GetCount()){active=0;}
-	
-	
+
+
 	sel[active]=true;
 	lastRow=active;
 	mtimerow=active;
-	
+
 	scPos=MAX(0,active-3);
 	RepaintWindow();
 
@@ -1886,12 +1899,12 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 	//wxLogMessage("all");
 	file->EndLoad();
 	if(Kai->ss && form==ASS){Kai->ss->LoadAssStyles();}
-	
+
 }
 
 void SubsGrid::SetStartTime(int stime)
 {
-	
+
 	wxArrayInt sels=GetSels();
 	for(size_t i=0;i<sels.size();i++){
 		Dialogue *dialc=file->CopyDial(sels[i]);
@@ -1924,21 +1937,21 @@ bool SubsGrid::SetTlMode(bool mode)
 			Refresh(false);
 			int ssize=file->subs->styles.size();
 			if(ssize>0){
-			Styles *tlstyl=GetStyle(0,"Default")->Copy();
-			for(int i =0; i < ssize; i++){
-				wxString ns="TLmode";
-				wxString nss=(i==0)?ns:ns<<i;
-				if(FindStyle(nss)==-1){tlstyl->Name=nss; AddSInfo("TLMode Style", nss);break;}
-			}
-			tlstyl->Alignment="8";
-			AddStyle(tlstyl);}
-		 
+				Styles *tlstyl=GetStyle(0,"Default")->Copy();
+				for(int i =0; i < ssize; i++){
+					wxString ns="TLmode";
+					wxString nss=(i==0)?ns:ns<<i;
+					if(FindStyle(nss)==-1){tlstyl->Name=nss; AddSInfo("TLMode Style", nss);break;}
+				}
+				tlstyl->Alignment="8";
+				AddStyle(tlstyl);}
+
 		}
 		AddSInfo("TLMode", "Yes");
 		transl=true;
 		Kai->MenuBar->Enable(ID_SAVETL,true);
-		
-		
+
+
 	}else{
 		if(wxMessageBox("Czy na pewno chcesz wy³¹czyæ tryb t³umaczenia?\nObcojêzyczny tekst przet³umaczonych linijek zostanie usuniêty.","Potwierdzenie",wxYES_NO)==wxNO)
 		{
@@ -1980,7 +1993,7 @@ bool SubsGrid::SetTlMode(bool mode)
 }
 
 void SubsGrid::SelVideoLine(int curtime)
-	{
+{
 	if(Kai->GetTab()->Video->GetState()==None && curtime<0){return;}
 
 	int time=(curtime<0)? Kai->GetTab()->Video->Tell() : curtime;
@@ -1992,17 +2005,17 @@ void SubsGrid::SelVideoLine(int curtime)
 	{
 		Dialogue *dial = GetDial(i);
 		if(!dial->IsComment && (dial->Text!="" || dial->TextTl!="")){
-		if(time>= dial->Start.mstime&&time<=dial->End.mstime)
+			if(time>= dial->Start.mstime&&time<=dial->End.mstime)
 			{Edit->SetIt(i);SelectRow(i);ScrollTo(i-4);
 			break;}
-		if(dial->Start.mstime > prevtime && dial->Start.mstime < time){prevtime = dial->Start.mstime;ip=i;}
-		if(dial->Start.mstime < durtime && dial->Start.mstime > time){durtime = dial->Start.mstime;idr=i;}
-		
-			}
+			if(dial->Start.mstime > prevtime && dial->Start.mstime < time){prevtime = dial->Start.mstime;ip=i;}
+			if(dial->Start.mstime < durtime && dial->Start.mstime > time){durtime = dial->Start.mstime;idr=i;}
+
+		}
 		if(i==GetCount()-1){if((time-prevtime)>(durtime-time)){Edit->SetIt(idr);SelectRow(idr);ScrollTo(idr-4);}
 		else{Edit->SetIt(ip);SelectRow(ip);ScrollTo(ip-4);}}
 	}
-	
+
 }
 
 void SubsGrid::NextLine(int dir)
@@ -2040,10 +2053,10 @@ void SubsGrid::CheckText(wxString text, wxArrayInt &errs)
 		//Dialogue *dial=GetDial(rw);
 		wxString notchar="/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{}";
 		//wxString text=(transl)? dial->TextTl : dial->Text;
-		 
+
 		/*if (hideover){
-			wxRegEx reg(_T("\\{[^\\{]*\\}"),wxRE_ADVANCED);
-			reg.ReplaceAll(&text,_T("*"));
+		wxRegEx reg(_T("\\{[^\\{]*\\}"),wxRE_ADVANCED);
+		reg.ReplaceAll(&text,_T("*"));
 		}*/
 
 		text+=_T(" ");
@@ -2062,13 +2075,13 @@ void SubsGrid::CheckText(wxString text, wxArrayInt &errs)
 				word.Trim(false);
 				word.Trim(true);
 				bool isgood=Kai->SC->CheckWord(word);
-			if (!isgood){errs.push_back(firsti);errs.push_back(lasti);}
-			//wxMessageBox(word);
+				if (!isgood){errs.push_back(firsti);errs.push_back(lasti);}
+				//wxMessageBox(word);
 			}word="";firsti=i+1;}
 			if(ch=='{'){block=true;}
 			else if(ch=='}'){block=false;firsti=i+1;word="";}
 
-			
+
 			if(notchar.Find(ch)==-1&&text.GetChar((i==0)? 0 : i-1)!='\\'&&!block){word<<ch;lasti=i;}
 			else if(!block&&text.GetChar((i==0)? 0 : i-1)=='\\'){firsti=i+1;word="";}
 		}
@@ -2135,15 +2148,15 @@ SInfo *SubsGrid::GetSInfoP(wxString key,int *ii)
 wxString *SubsGrid::SaveText()
 {
 	wxString *txt=new wxString();
-	
+
 	if (form<SRT){
 
-		 (*txt)<<_T("[Script Info]\r\n")<<GetSInfos(GetSInfo("TLMode")=="Translated");
-		 (*txt)<<_T("\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n");
-		 (*txt)<<GetStyles(GetSInfo("TLMode")=="Translated");
-		 (*txt)<<_T(" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n");
+		(*txt)<<_T("[Script Info]\r\n")<<GetSInfos(GetSInfo("TLMode")=="Translated");
+		(*txt)<<_T("\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n");
+		(*txt)<<GetStyles(GetSInfo("TLMode")=="Translated");
+		(*txt)<<_T(" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n");
 	}
-	
+
 	for(int i=0;i<GetCount();i++)
 	{
 		Dialogue *dial=GetDial(i);
@@ -2151,13 +2164,13 @@ wxString *SubsGrid::SaveText()
 		if(GetSInfo("TLMode")=="Yes" && dial->TextTl!=""){
 			(*txt)<<dial->GetRaw(false,GetSInfo("TLMode Style"));
 			(*txt)<<dial->GetRaw(true);
-			
+
 		}else{
 			wxString wynik;
 			if(form==SRT){wynik<<i+1<<"\r\n";}
 			(*txt)<<wynik+dial->GetRaw();
 		}
-		
+
 	}
 
 	return txt;
@@ -2168,7 +2181,7 @@ wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible)
 	TabPanel *pan=(TabPanel*)GetParent();
 	int _time=pan->Video->Tell();
 	wxString *txt=new wxString();
-	
+
 	Lines.Clear();
 	if(_time>=GetDial(Edit->ebrow)->Start.mstime&&_time <= GetDial(Edit->ebrow)->End.mstime)
 	{
@@ -2177,7 +2190,7 @@ wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible)
 	}else{
 		*visible=false;
 	}
-	
+
 	//wxLogStatus("lines %i %i %i", _time, file->dial[Edit->ebrow].Start.mstime, file->dial[Edit->ebrow].End.mstime);
 	for(int i=0; i<GetCount(); i++){
 		Dialogue *dial=GetDial(i);
@@ -2186,9 +2199,9 @@ wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible)
 		}
 
 	}
-		
-	
-	
+
+
+
 	(*txt)<<_T("[Script Info]\r\n")<<GetSInfos(false);
 	(*txt)<<_T("\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n");
 	(*txt)<<GetStyles(false);
@@ -2200,7 +2213,7 @@ wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible)
 		if(GetSInfo("TLMode")=="Yes" && dial->TextTl!=""){
 			(*txt)<<dial->GetRaw(false,GetSInfo("TLMode Style"));
 			(*txt)<<dial->GetRaw(true);
-			
+
 		}else{
 			(*txt)<<dial->GetRaw();}
 		if(Lines[i]==Edit->ebrow){
@@ -2209,14 +2222,14 @@ wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible)
 				dial->TextTl.Len() : dial->Text.Len();
 			EBText->x=all-2;
 		}
-		
+
 	}
 	if(Lines.empty()){
 		Dialogue *dial=Edit->line;
 		if(GetSInfo("TLMode")=="Yes" && dial->TextTl!=""){
 			(*txt)<<dial->GetRaw(false,GetSInfo("TLMode Style"));
 			(*txt)<<dial->GetRaw(true);
-			
+
 		}else{
 			(*txt)<<dial->GetRaw();
 		}
@@ -2225,7 +2238,7 @@ wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible)
 			dial->TextTl.Len() : dial->Text.Len();
 		EBText->x=all-2;
 	}
-		 //wxLogMessage(txt);
+	//wxLogMessage(txt);
 	return txt;
 }
 
@@ -2395,13 +2408,13 @@ void SubsGrid::OnBcktimer(wxTimerEvent &event)
 	wxLogStatus("Autozapis");
 	wxString path;
 	wxString ext=(form<SRT)? "ass" : (form=SRT)? "srt" : "txt";
-	
+
 	path<<Options.pathfull<<"\\Subs\\"<<pan->SubsName.BeforeLast('.')
 		<<"_"<<Notebook::GetTabs()->FindPanel(pan)<<"_"<< numsave <<"."<<ext;
-	
+
 	SaveFile(path, false);
-	
-	
+
+
 	numsave = !numsave;
 	makebkp=true;
 	wxLogStatus("");
@@ -2447,7 +2460,7 @@ int SubsGrid::CalcChars(wxString txt, wxString *lines, bool *bad)
 			slash=false;
 		}
 		else if(!block && txt[i]!=' '){chars++;}
-		
+
 	}
 	if(lines){
 		int linechars=(chars-lastchars);
@@ -2467,5 +2480,5 @@ BEGIN_EVENT_TABLE(SubsGrid,wxWindow)
 	EVT_MOUSE_EVENTS(SubsGrid::OnMouseEvent)
 	EVT_KEY_DOWN(SubsGrid::OnKeyPress)
 	EVT_TIMER(ID_AUTIMER,SubsGrid::OnBcktimer)
-END_EVENT_TABLE()
+	END_EVENT_TABLE()
 

@@ -45,6 +45,7 @@ VideoRend::VideoRend(wxWindow *_parent, const wxSize &size)
 	Vclips=NULL;
 	resized=seek=block=cross=pbar=VisEdit=false;
 	IsDshow=true;
+	devicelost=false;
 	MainStream=NULL;
 	datas=NULL;
 	player=NULL;
@@ -67,8 +68,6 @@ VideoRend::VideoRend(wxWindow *_parent, const wxSize &size)
 bool VideoRend::InitDX(bool reset)
 {
 
-	//wxMutexLocker lock(videomutex);
-	//wxMutexLocker lock(videomutex);
 	if(!reset){
 		d3dobject = Direct3DCreate9( D3D_SDK_VERSION );
 		PTR(d3dobject,L"Nie mo¿na utwo¿yæ objektu Direct 3d");
@@ -181,7 +180,7 @@ void VideoRend::Render(bool Frame)
 {
 	//wxLogStatus("render");
 	if(Frame&&!IsDshow){if(!DrawTexture()){return;}resized=false;}
-	wxMutexLocker lock(videomutex);
+	wxMutexLocker lock(mutexRender);
 	HRESULT hr = S_OK;
 
 	if( devicelost )
@@ -283,7 +282,7 @@ void VideoRend::Render(bool Frame)
 bool VideoRend::DrawTexture(byte *nframe, bool copy)
 {
 
-	wxMutexLocker lock(videomutex);
+	wxMutexLocker lock(mutexDrawing);
 	byte *fdata=NULL;
 	byte *texbuf;
 	byte bytes=(vformat==RGB32)? 4 : (vformat==YUY2)? 2 : 1;
@@ -426,9 +425,9 @@ void VideoRend::Clear()
 
 
 
-bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, bool __vobsub)
+bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, bool __vobsub, bool fullscreen)
 {
-	wxMutexLocker lock(videomutex);
+	wxMutexLocker lock(mutexOpenFile);
 	block=true;
 	kainoteApp *Kaia=(kainoteApp*)wxTheApp;
 	VideoFfmpeg *tmpvff=NULL;
@@ -458,7 +457,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 		VFF=tmpvff;
 		d3dformat=D3DFORMAT('21VN');
 		vformat=NV12;
-		vwidth=VFF->width;vheight=VFF->height;fps=VFF->fps;
+		vwidth=VFF->width;vheight=VFF->height;fps=VFF->fps;ax=VFF->arwidth;ay=VFF->arheight;
 		if(vwidth % 2 != 0 ){vwidth++;}
 		pitch=vwidth*1.5f;
 
@@ -484,6 +483,8 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 		pitch=vwidth*vplayer->inf.bytes;
 		fps=vplayer->inf.fps;
 		vformat=vplayer->inf.CT;
+		ax=vplayer->inf.ARatioX;
+		ay=vplayer->inf.ARatioY;
 		d3dformat=(vformat==5)? D3DFORMAT('21VN') : (vformat==3)? D3DFORMAT('21VY') : (vformat==2)? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
 		if(player){
 			wxCommandEvent evt;
@@ -493,11 +494,8 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	}
 	diff=0;
 	avtpf=(1000.0f/fps);
+	if(ay==0||ax==0){AR=0.0f;}else{AR=(float)ay/(float)ax;}
 
-	//wxLogStatus("format %i", (int)vformat);
-	//-------------------------- najwa¿niejsza czêœæ, zmieniaæ w zale¿noœci od formatu
-	//pitch=vwidth*1.5f; 
-	//--------------------------
 	rt5.bottom=vheight;
 	rt5.right=vwidth;
 	rt5.left=0;
@@ -505,8 +503,9 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	if(datas){delete[] datas;datas=NULL;}
 	datas=new char[vheight*pitch];
 
-	if(!InitDX()){return false;}
-
+	if(!InitDX()){block=false;return false;}
+	UpdateRects(!fullscreen);
+	
 	if(!framee){framee=new csri_frame;}
 	if(!format){format=new csri_fmt;}
 	for(int i=1;i<4;i++){
@@ -529,8 +528,8 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 
 void VideoRend::Play(int end)
 {
-	//wxMutexLocker lock(videomutex);
-	if(!IsShown()){return;}
+	VideoCtrl *vb=((VideoCtrl*)this);
+	if( !(IsShown() || (vb->TD && vb->TD->IsShown())) ){return;}
 	TabPanel* pan=(TabPanel*)GetParent();
 	if(VisEdit){
 		wxString *txt=pan->Grid1->SaveText();
@@ -606,8 +605,6 @@ void VideoRend::Stop()
 void VideoRend::SetPosition(int _time, bool starttime, bool corect)
 {
 
-
-
 	if(IsDshow){
 		time=MID(0,_time,GetDuration());
 		if(corect&&IsDshow){
@@ -617,7 +614,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect)
 		}
 		if(VisEdit){TabPanel* pan=(TabPanel*)GetParent();
 		SAFE_DELETE(pan->Edit->dummytext);
-		SetVisual(pan->Edit->GetVisual(),pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);
+		SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);
 		VisEdit=false;
 		}	
 		playend=(IsDshow)? 0 : GetDuration();
@@ -628,7 +625,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect)
 		time = VFF->Timecodes[lastframe];
 		if(VisEdit){TabPanel* pan=(TabPanel*)GetParent();
 		SAFE_DELETE(pan->Edit->dummytext);
-		SetVisual(pan->Edit->GetVisual(),pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);
+		SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);
 		VisEdit=false;
 		}	
 		if(vstate==Playing){
@@ -642,8 +639,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect)
 
 bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 {
-	//wxMutexLocker lock(videomutex);
-	wxMutexLocker lock(videomutex);
+	wxMutexLocker lock(mutexOpenSubs);
 	if (instance) csri_close(instance);
 	instance = NULL;
 
@@ -740,14 +736,9 @@ void VideoRend::playing()
 	}
 }
 
-//funkcja zmiany rozdzia³ki okna wideo
-void VideoRend::UpdateVideoWindow(bool bar)
+//ustawia nowe recty po zmianie rozdzielczoœci wideo
+void VideoRend::UpdateRects(bool bar)
 {
-
-	//wxMutexLocker lock(videomutex);
-	wxMutexLocker lock(videomutex);
-	if(block){while(!block){Sleep(5);}}
-	block=true;
 	VideoCtrl* Video=(VideoCtrl*) this;
 	wxRect rt;
 	TabPanel* tab=(TabPanel*)Video->GetParent();
@@ -786,6 +777,17 @@ void VideoRend::UpdateVideoWindow(bool bar)
 			rt4=rt3;
 		}
 	}
+}
+
+//funkcja zmiany rozdzia³ki okna wideo
+void VideoRend::UpdateVideoWindow(bool bar, bool firstload)
+{
+
+	
+	wxMutexLocker lock(mutexSizing);
+	//if(block){while(!block){Sleep(5);}}
+	block=true;
+	UpdateRects(bar);
 
 	if(!InitDX(true)){return;}
 
@@ -803,7 +805,11 @@ void VideoRend::UpdateVideoWindow(bool bar)
 
 	resized=true;
 	block=false;
-	if(Vclips){SetVisual(tab->Edit->GetVisual(Vclips->type), tab->Edit->line->Start.mstime, tab->Edit->line->End.mstime);}
+	if(Vclips){
+		Vclips->SizeChanged(wxSize(rt3.right, rt3.bottom),lines, m_font, d3device);
+		TabPanel* tab=(TabPanel*)GetParent();
+		SetVisual(tab->Edit->line->Start.mstime, tab->Edit->line->End.mstime);
+	}
 }
 
 void VideoRend::GetFpsnRatio(float *fps, long *arx, long *ary)
@@ -835,8 +841,7 @@ wxSize VideoRend::GetVideoSize()
 
 void VideoRend::DrawLines(wxPoint point)
 {
-	//wxMutexLocker lock(videomutex);
-	wxMutexLocker lock(videomutex);
+	wxMutexLocker lock(mutexLines);
 	int w, h;
 	GetClientSize(&w, &h);
 	w/=2; h/=2;
@@ -860,8 +865,7 @@ void VideoRend::DrawLines(wxPoint point)
 void VideoRend::DrawProgBar()
 {
 	//pozycja zegara
-	//wxMutexLocker lock(videomutex);
-	wxMutexLocker lock(videomutex);
+	wxMutexLocker lock(mutexProgBar);
 	int w,h;
 	VideoCtrl *vc=(VideoCtrl*)this;
 	vc->TD->GetClientSize(&w,&h);
@@ -987,7 +991,7 @@ void VideoRend::ChangeVobsub(bool vobsub)
 	pan->Video->ChangeStream();
 }
 
-void VideoRend::SetVisual(wxString visual, int start, int end, bool remove)
+void VideoRend::SetVisual(int start, int end, bool remove)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
 	SAFE_DELETE(pan->Edit->dummytext);
@@ -995,26 +999,15 @@ void VideoRend::SetVisual(wxString visual, int start, int end, bool remove)
 		SAFE_DELETE(Vclips); pan->Edit->Visual=0;
 		VisEdit=false;
 		OpenSubs(pan->Grid1->SaveText());
-
+		Render();
 	}
 	else{
-
-		int nx=0, ny=0;
-		pan->Grid1->GetASSRes(&nx, &ny);
-		if(!Vclips){Vclips=new Visuals(this);}
-		D3DXVECTOR2 scale(1,1);
-		byte an=0;
-		D3DXVECTOR2 lpos=(pan->Edit->Visual==VECTORCLIP)? D3DXVECTOR2(0,0) : pan->Edit->GetPosnScale(&scale, &an, !(pan->Edit->Visual==VECTORDRAW || pan->Edit->Visual== MOVE), pan->Edit->Visual==VECTORDRAW);
-		Vclips->SetVisual(pan->Edit->Visual, visual,start, end, wxSize(rt3.right, rt3.bottom),wxSize(nx,ny),lpos, scale, an, lines, m_font, d3device);
-		VisEdit=true;
-		if(pan->Edit->Visual>=VECTORCLIP){
-			pan->Edit->SetClip(Vclips->GetClip(),true);
-		}else{
-			pan->Edit->SetVisual(Vclips->GetVisual(),true,0);
+		if(!Vclips){
+			Vclips=new Visuals(this);
+			Vclips->SizeChanged(wxSize(rt3.right, rt3.bottom),lines, m_font, d3device);
 		}
-
+		Vclips->SetVisual(start, end);
 	}
-	//Render();
 }
 
 bool VideoRend::EnumFilters(wxMenu *menu)

@@ -72,7 +72,7 @@ class VideoRend : public wxWindow
 		VideoRend(wxWindow *parent, const wxSize &size=wxDefaultSize);
 		virtual ~VideoRend();
 
-		bool OpenFile(const wxString &fname, wxString *textsubs, bool Dshow=true, bool vobsub=false);
+		bool OpenFile(const wxString &fname, wxString *textsubs, bool Dshow=true, bool vobsub=false, bool fullscreen=false);
 		bool OpenSubs(wxString *textsubs, bool redraw=true);
 		void Play(int end=-1);
 		void PlayLine(int start, int end);
@@ -87,7 +87,7 @@ class VideoRend : public wxWindow
 		void GetVideoSize(int *width, int *height);
 		wxSize GetVideoSize();
 		void GetFpsnRatio(float *fps, long *arx, long *ary);
-		void UpdateVideoWindow(bool bars=true);
+		void UpdateVideoWindow(bool bars=true, bool firstload=false);
 		void SetVolume(int vol);
 		
 		void Render(bool Frame=true);
@@ -99,10 +99,10 @@ class VideoRend : public wxWindow
 		void ChangeVobsub(bool vobsub=false);
 		void SetEvent(wxMouseEvent& event);
 		wxArrayString GetStreams();
-		void SetVisual(wxString visual, int start, int end, bool remove=false);
+		void SetVisual(int start, int end, bool remove=false);
 		//void EndofStream();
 		byte *GetFramewithSubs(bool subs, bool *del);
-		
+		void UpdateRects(bool bar);
 		LPDIRECT3DSURFACE9 MainStream;
 		LPDIRECT3DDEVICE9 d3device;
 		D3DFORMAT d3dformat;
@@ -118,6 +118,8 @@ class VideoRend : public wxWindow
 		int pitch;
 		int time;
 		int lastframe;
+		long ax,ay;
+		float AR, fps;
 		char *datas;
 		byte vformat;
 		float avtpf;
@@ -127,7 +129,13 @@ class VideoRend : public wxWindow
 		LPD3DXFONT m_font;
 		VideoFfmpeg *VFF;
 		AudioDisplay *player;
-		wxMutex videomutex;
+		wxMutex mutexSizing;
+		wxMutex mutexRender;
+		wxMutex mutexDrawing;
+		wxMutex mutexLines;
+		wxMutex mutexProgBar;
+		wxMutex mutexOpenFile;
+		wxMutex mutexOpenSubs;
 		PlaybackState vstate;
 		Visuals *Vclips;
 		int playend;
@@ -166,9 +174,6 @@ class VideoRend : public wxWindow
 		RECT rt3;
 		RECT rt4;
 		RECT rt5;
-		
-		
-		float fps;
 		
 		
 		int avframetime;

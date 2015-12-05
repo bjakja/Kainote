@@ -53,7 +53,9 @@ TabPanel *Notebook::GetPage()
 void Notebook::AddPage(bool refresh)
 {
 	if(Pages[iter]->Video->GetState()==Playing){Pages[iter]->Video->Pause();}
-	Pages.push_back(new TabPanel(this,(kainoteFrame*)GetParent()));
+	int w,h;
+	GetClientSize(&w,&h);
+	Pages.push_back(new TabPanel(this,(kainoteFrame*)GetParent(),wxPoint(0,0), wxSize(0,0)));
 	olditer=iter;
 	iter=Size()-1;
 	if(refresh){
@@ -64,10 +66,9 @@ void Notebook::AddPage(bool refresh)
 	wxString name=Pages[iter]->SubsName;
 	if(name.Len()>35){name=name.SubString(0,35)+"...";}
 	Names.Add(name);
-	int w,h;
-	GetClientSize(&w,&h);
-	Pages[iter]->SetPosition(wxPoint(0,0));
-	Pages[iter]->SetSize(w,h-25);
+	
+	Pages[iter]->SetPosition(Pages[olditer]->GetPosition());
+	Pages[iter]->SetSize(Pages[olditer]->GetSize());
 	CalcSizes();
 	if(refresh){RefreshRect(wxRect(0,h-25,w,25),false);
 		if(!Options.GetBool("Show Editor")){kainoteFrame *kai=(kainoteFrame *)GetParent();kai->HideEditor();}
@@ -218,14 +219,14 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			sline->Destroy();}
 			if(HasCapture()){ReleaseMouse();}
 			splitline=npos;
-			bool aciter=(Pages[iter]->GetPosition().x==0);
+			bool aciter=(Pages[iter]->GetPosition().x==1);
 			int tmpiter=(aciter)? iter : splititer;
 			int tmpsplititer=(!aciter)? iter : splititer;
 			//wxLogStatus("size iter %i splititer %i", tmpiter, tmpsplititer);
-			Pages[tmpiter]->SetSize(splitline-2,hh);
-			Pages[tmpsplititer]->SetSize(w-(splitline+2),hh);
-			Pages[tmpsplititer]->SetPosition(wxPoint(splitline+2,0));
-			RefreshRect(wxRect(0,hh,w,25),false);
+			Pages[tmpiter]->SetSize(splitline-3,hh-2);
+			Pages[tmpsplititer]->SetSize(w-(splitline+3),hh-2);
+			Pages[tmpsplititer]->SetPosition(wxPoint(splitline+2,1));
+			Refresh(false);//wxRect(0,hh,w,25),
 			SetTimer(GetHWND(), 9876, 500, (TIMERPROC)OnResized);
 		}
 		else if(event.LeftIsDown())
@@ -241,7 +242,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		return;
 	}
 		
-		if(!arrow){SetCursor(wxCURSOR_ARROW);arrow=true;}
+	if(!arrow){SetCursor(wxCURSOR_ARROW);arrow=true;}
 	
 	
 
@@ -394,7 +395,7 @@ void Notebook::OnSize(wxSizeEvent& event)
 	CalcSizes();
 	//RefreshRect(wxRect(w-20,h,w,25),false);
 	if(split){
-		bool aciter=(Pages[iter]->GetPosition().x==0);
+		bool aciter=(Pages[iter]->GetPosition().x==1);
 		int tmpsplititer=(!aciter)? iter : splititer;
 		int tmpiter=(aciter)? iter : splititer;
 		Pages[tmpsplititer]->SetSize(w-(splitline+2),h);
@@ -419,12 +420,12 @@ void Notebook::OnPaint(wxPaintEvent& event)
     dc.SetFont(font);
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE)));
-	//dc.DrawRectangle(0,0,w,TabHeight);
 	dc.GradientFillLinear(wxRect(0,0,w,TabHeight),
 		wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),
 		wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE),wxTOP);
 	
 	start=(allvis)?2 : 20;
+	
 
 	wxGraphicsContext *gc = wxGraphicsContext::Create(dc);
 	//pêtla do rysowania zak³adek
@@ -520,6 +521,13 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	dc.DrawRectangle(start+4,11,12,2);
 	dc.DrawRectangle(start+9,6,2,12);
 		//dc.SetPen(wxPen("#000000"));
+
+	/*if(split){
+		dc.SetPen(wxPen("#FF0000",2));
+		wxSize siz= Pages[iter]->GetSize();
+		wxPoint pos= Pages[iter]->GetPosition();
+		dc.DrawLine(pos.x,1,pos.x+siz.x,1);
+	}*/
 	if(gc){
 		gc->SetPen( wxPen("#000000"));
 		gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
@@ -539,11 +547,36 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		dc.DrawLine(start+17,23,start+19,21);
 		dc.DrawLine(start+19,21,start+19,0);
 	}
+	
+
 	cdc.Blit(0,h-25,w,h,&dc,0,0);
 	if(split){
 		cdc.SetPen(*wxTRANSPARENT_PEN);
-		cdc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-		cdc.DrawRectangle(splitline-2,0,4,h-25);}
+		cdc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE));
+		cdc.DrawRectangle(splitline-2,0,4,h-25);
+		cdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
+		bool aciter=(Pages[iter]->GetPosition().x==1);
+		if(aciter){
+			cdc.DrawLine(splitline+1,0,w,0);
+			cdc.DrawLine(w-1,0,w-1,h-26);
+			cdc.DrawLine(splitline+1,h-26,w,h-26);
+			cdc.SetPen(wxPen("#FF0000"));
+			cdc.DrawLine(0,0,0,h-26);
+			cdc.DrawLine(0,0,splitline-1,0);
+			cdc.DrawLine(splitline-1,0,splitline-1,h-26);
+			cdc.DrawLine(0,h-26,splitline-1,h-26);
+		}else{
+			cdc.DrawLine(0,0,splitline-1,0);
+			cdc.DrawLine(0,h-26,splitline-1,h-26);
+			cdc.DrawLine(0,0,0,h-26);
+			cdc.SetPen(wxPen("#FF0000"));
+			cdc.DrawLine(splitline+1,0,w,0);
+			cdc.DrawLine(splitline+1,0,splitline+1,h-26);
+			cdc.DrawLine(w-1,0,w-1,h-26);
+			cdc.DrawLine(splitline+1,h-26,w,h-26);
+		}
+	}
+	
 	if(gc){delete gc;}
 }
 
@@ -606,9 +639,7 @@ void Notebook::OnTabSel(int id)
 
 		olditer=iter;
 		iter=fvis;
-		int w,h;
-		GetClientSize(&w,&h);
-		RefreshRect(wxRect(0,h-25,w,25),false);
+		RefreshBar();
 	}
 }
 	
@@ -638,15 +669,17 @@ void Notebook::Split(size_t page)
 	if(!split)
 	{
 		Pages[splititer]->Hide();
+		Pages[iter]->SetPosition(wxPoint(0,0));
 		Pages[iter]->SetSize(w,h-TabHeight);
 		SetTimer(GetHWND(), 9876, 500, (TIMERPROC)OnResized);
 		return;
 	}
 	splitline=w/2;
 	splititer=page;
-	Pages[iter]->SetSize(splitline-2,h-TabHeight);
-	Pages[splititer]->SetSize(w-(splitline+2),h-TabHeight);
-	Pages[splititer]->SetPosition(wxPoint(splitline+2,0));
+	Pages[iter]->SetSize(splitline-3,h-TabHeight-2);
+	Pages[iter]->SetPosition(wxPoint(1,1));
+	Pages[splititer]->SetSize(w-(splitline+3),h-TabHeight-2);
+	Pages[splititer]->SetPosition(wxPoint(splitline+2,1));
 	Pages[splititer]->Show();
 	//Pages[iter]->SetWindowStyleFlag(wxBORDER_SUNKEN);
 	//Pages[iter]->Refresh();
@@ -674,14 +707,12 @@ void Notebook::ChangeActiv()
 	int tmp=iter;
 	iter=splititer;
 	splititer=tmp;
-	Tabsizes[iter]=Tabsizes[splititer];
-	Tabsizes[splititer]=Tabsizes[splititer]-18;
+	Tabsizes[iter]+=18;
+	Tabsizes[splititer]-=18;
 	//Pages[iter]->SetWindowStyleFlag(wxBORDER_SUNKEN);
 	//Pages[splititer]->SetWindowStyleFlag(0);
 	
-	int w,h;
-	GetClientSize(&w,&h);
-	RefreshRect(wxRect(0,h-25,w,25),false);
+	RefreshBar();
 }
 
 void Notebook::RefreshBar()
@@ -749,15 +780,17 @@ void Notebook::ChangePage(int i)
 		ChangeActiv();return;
 	}
 	if(Pages[olditer]->Video->GetState()==Playing){Pages[olditer]->Video->Pause();}
+	if(split){
+		Pages[i]->SetPosition(Pages[iter]->GetPosition());
+		Pages[i]->SetSize(Pages[iter]->GetSize());
+	}
 	Pages[i]->Show();
 	Tabsizes[i]+=18;
 	Pages[iter]->Hide();
 	Tabsizes[iter]-=18;
 	iter=i;
 	over=-1;
-	int w,h;
-	GetClientSize(&w,&h);
-	RefreshRect(wxRect(0,h-25,w,25),false);
+	RefreshBar();
 	wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 	AddPendingEvent(evt2);
 }

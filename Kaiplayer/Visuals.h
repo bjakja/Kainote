@@ -1,6 +1,7 @@
-
-#define UNICODE
-
+#ifndef VIDEOVISUALS
+#define VIDEOVISUALS
+//#define UNICODE
+#pragma once
 #include <wx/wx.h>
 #include <vector>
 #include <d3d9.h>
@@ -16,8 +17,8 @@ enum{
 	SCALE,
 	ROTATEZ,
 	ROTATEXY,
-	CLIPRECT,
 	//FAXY,
+	CLIPRECT,
 	VECTORCLIP,
 	VECTORDRAW
 };
@@ -37,7 +38,7 @@ public:
 	ClipPoint(int x, int y, wxString type, bool isstart);
 	ClipPoint();
 	bool IsInPos(wxPoint pos, int diff);
-	D3DXVECTOR2 GetVector(bool wsp=true);
+	D3DXVECTOR2 GetVector();
 	int wx();
 	int wy();
 	int x;
@@ -53,8 +54,8 @@ public:
 	virtual ~Visuals();
 	//clips
 	void DrawClip();
-	void SetClip(wxString clip, float x, float y);
-	void SetNewSize(wxSize wsize);
+	void SetClip(wxString clip);
+	void SizeChanged(wxSize wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device);
 	wxString GetClip();
 	void SetPos(int x, int y);
 	int CheckPos(wxPoint pos, bool retlast=false, bool wsp=true);
@@ -65,8 +66,9 @@ public:
 	void AddMove(wxPoint pos, int whereis);
 	void DrawLine(int i);
 	int DrawCurve(int i,bool bspline=false);
-	void DrawRect(int i, bool wsp=true);
-	void DrawCircle(int i, bool wsp=true);
+	void DrawRect(int i, D3DXVECTOR2 *vector=NULL);
+	void DrawCircle(int i, D3DXVECTOR2 *vector=NULL);
+	void DrawArrow(D3DXVECTOR2 vector, D3DXVECTOR2 *vector1, int diff=0);
 	void OnMouseEvent(wxMouseEvent &event);
 	void Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bspline, int spoints=4, int acpt=0);
 	D3DXVECTOR2 CalcWH();
@@ -78,7 +80,7 @@ public:
 		v->Color = Color;	
 	}
 	//visuals
-	void SetVisual(int visual, wxString vis,int _start,int _end,wxSize wsize, wxSize ssize, D3DXVECTOR2 linepos, D3DXVECTOR2 scale, byte AN, LPD3DXLINE line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 device);
+	void SetVisual(int _start,int _end);
 	void Position();
 	void Move(int time);
 	void MoveOnCurve(int time);
@@ -90,6 +92,7 @@ public:
 	void Draw(int time);
 	D3DXVECTOR2 IsOnPoint(wxPoint pos);
 	wxString GetVisual(bool org=false);
+	D3DXVECTOR2 CalcMovePos();
 
 	void MouseEvent(wxMouseEvent &evt);
 	D3DXVECTOR2 angle;
@@ -99,6 +102,9 @@ public:
 	D3DXVECTOR2 from;
 	D3DXVECTOR2 org;
 	byte AN;
+	wxString times;
+	D3DXVECTOR2 scale;
+	double tbl[7];
 	unsigned char type;
 	static float wspw, wsph, _x, _y;
 
@@ -109,20 +115,21 @@ private:
 	std::vector<ClipPoint> Points;
 	
 	wxMutex clipmutex;
-
+	
 	int start;
 	int end;
 	int moveStart;
 	int moveEnd;
 	int x, y;
 	int curvelines;
-	wxString times;
+	int oldtime;
+	
 	
 	unsigned char Visual;
 	
 	wxSize subssize;
 	wxSize widsize;
-	D3DXVECTOR2 scale;
+	
 	int grabbed;
 	bool drawtxt;
 	bool newline;
@@ -138,4 +145,4 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
-
+#endif

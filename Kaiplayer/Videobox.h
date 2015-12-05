@@ -59,9 +59,7 @@ public:
 	void PrevChap();
 	void ConnectAcc(int id);
 	wxRect GetMonitorRect(int wmonitor);
-	float fps,wspx,wspy;
-	long ax,ay;
-	float AR;
+	float wspx,wspy;
 	Fullscreen *TD;
 	bool isarrow;
 	wxString oldpath;

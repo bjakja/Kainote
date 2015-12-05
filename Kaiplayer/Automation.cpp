@@ -511,7 +511,9 @@ LuaScript::LuaScript(const wxString &_filename)
 		kainoteApp *Kaia = (kainoteApp*) wxTheApp;
 		VideoCtrl *video=Kaia->Frame->GetTab()->Video;
 		if (video->GetState()!=None) {
-			lua_pushnumber(L, (int)(((float)ms/1000.0)*video->fps));
+			int frame=(video->IsDshow)? ((float)ms/1000.0)*video->fps : video->VFF->GetFramefromMS(ms);
+			//wxLogStatus("frame %i %i %i", frame , (int)(((float)ms/1000.0)*video->fps), video->VFF->GetFramefromMS(ms));
+			lua_pushnumber(L, frame);
 			return 1;
 		} else {
 			lua_pushnil(L);
@@ -526,7 +528,9 @@ LuaScript::LuaScript(const wxString &_filename)
 		kainoteApp *Kaia = (kainoteApp*) wxTheApp;
 		VideoCtrl *video=Kaia->Frame->GetTab()->Video;
 		if (video->GetState()!=None) {
-			lua_pushnumber(L, (int)((frame*1000)/video->fps));
+			int ms=(video->IsDshow)? ((frame*1000)/video->fps) : video->VFF->GetMSfromFrame(frame);
+			//wxLogStatus("ms %i %i %i", ms , (int)((frame*1000)/video->fps), video->VFF->GetMSfromFrame(frame));
+			lua_pushnumber(L, ms);
 			return 1;
 		} else {
 			lua_pushnil(L);

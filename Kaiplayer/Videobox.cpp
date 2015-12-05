@@ -178,16 +178,17 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 {   
 	//wxMutexLocker lock(vbmutex);
 	//if(vstate==Playing){Pause(false);}
+	if(fulls){SetFullskreen();}
 	prevchap=-1;
 	wxMenuItem *index=Kai->MenuBar->FindItem(ID_OPVIDEOINDEX);
-	if(!OpenFile(fileName, subsName,!(index->IsChecked()&&index->IsEnabled()&&!fulls&&!isfullskreen),!Kai->GetTab()->edytor)){return false;}
+	if(!OpenFile(fileName, subsName,!(index->IsChecked()&&index->IsEnabled()&&!fulls&&!isfullskreen),!Kai->GetTab()->edytor),fulls){return false;}
 	bool shown=true;
-	if(!IsShown()){shown=false; Show();}
+	if( !(IsShown() || (TD && TD->IsShown())) ){shown=false; Show();}
 	eater=IsDshow;
-	if(fulls){SetFullskreen();}
 	
-	GetFpsnRatio(&fps,&ax,&ay);
-	if(ay==0||ax==0){AR=0.0f;}else{AR=(float)ay/(float)ax;}
+	
+	//GetFpsnRatio(&fps,&ax,&ay);
+	
 
 	if(!isfullskreen&&!fulls){
 			int sx,sy;
@@ -298,6 +299,18 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 {
 	int x=event.GetX(), y= event.GetY();
 
+
+	if(Vclips){
+		SetEvent(event);if(!isarrow){SetCursor(wxCURSOR_ARROW);isarrow=true;}
+		return;
+	}//jak na razie 
+
+	if(event.ButtonDown())
+	{
+		SetFocus();
+		if(ismenu){ismenu=false;}
+	}
+
 	if(event.LeftDClick()){
 	
 		
@@ -316,17 +329,6 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		return;
 	}
 
-	if(Vclips){
-		//if(isfullskreen){ClientToScreen(&x,&y);event.SetPosition(wxPoint(x,y));}
-		SetEvent(event);if(!isarrow){SetCursor(wxCURSOR_ARROW);isarrow=true;}
-		return;
-	}//jak na razie 
-
-	if(event.ButtonDown())
-	{
-		SetFocus();
-		if(ismenu){ismenu=false;}
-	}
 
 	if (event.GetWheelRotation() != 0) {
 		int step = event.GetWheelRotation() / event.GetWheelDelta();

@@ -72,7 +72,7 @@ public:
 	bool FindVal(wxString wval, wxString *returnval, wxString text="", bool *endsel=0);
 	void HideControls();
 	void UpdateChars(wxString text);
-	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *an, bool beforeCursor=false, bool draw=true);
+	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *an, double *move, wxString* movetimes);
 
 	Grid *grid;
 	int ebrow;
@@ -114,7 +114,6 @@ public:
 	//ustawia tekst i gdy trzeba wstawia tagi z orygina³u ustawiaj¹c w³aœciw¹ pozycjê kursora.
 	void SetTextWithTags();
 	void ClearErrs();
-	wxString GetVisual(int type=0);
 	void SetClip(wxString clip,bool dummy);
 	void SetVisual(wxString visual,bool dummy,int type);
 	wxString *dummytext;
@@ -134,6 +133,7 @@ private:
 	wxPoint Placed;
 	wxPoint dumplaced;
 	int cursorpos;
+	bool splittedTags;
 
 	wxBoxSizer* BoxSizer2;
 	wxBoxSizer* BoxSizer3;

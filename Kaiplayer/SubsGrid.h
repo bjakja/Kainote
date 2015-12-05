@@ -59,6 +59,7 @@ public:
 	void SetSubsForm(wxString ext="");
 	void AddSInfo(wxString SI, wxString val="", bool save=true);
 	void SetModified(bool redit=true, bool dummy=false, bool refvid=true);
+	void UpdateUR(bool tolbar=true);
 	wxString GetSInfos(bool tld=false);
 	wxString GetSInfo(wxString key, int *ii=0);
 	SInfo *GetSInfoP(wxString key, int *ii=0);
