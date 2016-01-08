@@ -141,8 +141,8 @@ private:
 	wxBoxSizer* BoxSizer5;
 	wxBoxSizer* BoxSizer6;
 
-	void OnNline(wxCommandEvent& event);
-	void OnZatw(wxCommandEvent& event);
+	void OnNewline(wxCommandEvent& event);
+	void OnCommit(wxCommandEvent& event);
 	void OnFontClick(wxCommandEvent& event);
 	void OnColorClick(wxCommandEvent& event);
 	void AllColClick(int kol);

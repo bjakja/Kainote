@@ -89,7 +89,6 @@ wxImage CreateImageFromPngResource(const wxString& t_name);
 
 enum{
 	ASS=1,
-	SSA,
 	SRT,
 	TMP,
 	MDVD,

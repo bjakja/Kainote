@@ -81,14 +81,14 @@ kainoteFrame::kainoteFrame(wxWindow* parent)
 	//AppendRecent();
 	AppendBitmap(FileMenu,ID_RECSUBS, _T("Ostatnio otwarte napisy"), _T("Ostatnio otwarte napisy"),wxBITMAP_PNG("recentsubs"),true, SubsRecMenu);
 	AppendBitmap(FileMenu,ID_UNSUBS, _T("Usuñ napisy z edytora"), _T("Usuñ napisy z edytora"),wxBITMAP_PNG("close"));
-	AppendBitmap(FileMenu,ID_SETTINGS, _T("&Ustawienia"), _T("Ustawienia Konwersji"),CreateBitmapFromPngResource("SETTINGS"));
+	AppendBitmap(FileMenu,ID_SETTINGS, _T("&Ustawienia"), _T("Ustawienia Konwersji"),wxBITMAP_PNG("SETTINGS"));
 	AppendBitmap(FileMenu,ID_QUIT, _T("&Wyjœcie\tAlt-F4"), _T("Zakoñcz dzia³anie programu"),wxBITMAP_PNG("exit"));
 	MenuBar->Append(FileMenu, _T("&Plik"));
 
 	EditMenu = new wxMenu();
 	AppendBitmap(EditMenu, ID_UNDO1, _T("&Cofnij"), _T("Cofnij"),wxBITMAP_PNG("undo"),false);
 	AppendBitmap(EditMenu, ID_REDO1, _T("&Ponów"), _T("Ponów"),wxBITMAP_PNG("redo"),false);
-	AppendBitmap(EditMenu,ID_FINDREP, _T("ZnajdŸ i zmieñ"), _T("Szuka i zmienia dane frazy tekstu"),CreateBitmapFromPngResource("findreplace"));
+	AppendBitmap(EditMenu,ID_FINDREP, _T("ZnajdŸ i zmieñ"), _T("Szuka i zmienia dane frazy tekstu"),wxBITMAP_PNG("findreplace"));
 	AppendBitmap(EditMenu,ID_FIND, _T("ZnajdŸ"), _T("Szuka dane frazy tekstu"),wxBITMAP_PNG("search"));
 	wxMenu *SortMenu[2];
 	for(int i=0; i<2; i++){
@@ -139,7 +139,7 @@ kainoteFrame::kainoteFrame(wxWindow* parent)
 
 	SubsMenu = new wxMenu();
 	AppendBitmap(SubsMenu,ID_EDITOR, _T("W³¹cz / Wy³¹cz edytor"), _T("W³¹czanie b¹dŸ w³¹czanie edytora"),wxBITMAP_PNG("editor"));
-	AppendBitmap(SubsMenu,ID_ASSPROPS, _T("W³aœciwoœci ASS / SSA"), _T("W³aœciwoœci napisów ASS / SSA"),CreateBitmapFromPngResource("ASSPROPS"));
+	AppendBitmap(SubsMenu,ID_ASSPROPS, _T("W³aœciwoœci ASS / SSA"), _T("W³aœciwoœci napisów ASS / SSA"),wxBITMAP_PNG("ASSPROPS"));
 	AppendBitmap(SubsMenu,ID_STYLEMNGR, _T("&Mened¿er stylów"), _T("S³u¿y do zarz¹dzania stylami ASS / SSA"),wxBITMAP_PNG("styles"));
 	ConvMenu = new wxMenu();
 	AppendBitmap(ConvMenu,ID_ASS, _T("Konwertuj do ASS"), _T("Konwertuje do formatu ASS"),wxBITMAP_PNG("convass"),false);
@@ -150,8 +150,8 @@ kainoteFrame::kainoteFrame(wxWindow* parent)
 
 	AppendBitmap(SubsMenu,ID_CONV, _T("Konwersja"), _T("Konwersja z jednego formatu napisów na inny"),wxBITMAP_PNG("convert"),true, ConvMenu);
 	AppendBitmap(SubsMenu,ID_CHANGETIME, _T("Okno zmiany &czasów\tCtrl-I"), _T("Przesuwanie czasów napisów"),wxBITMAP_PNG("times"));
-	AppendBitmap(SubsMenu,ID_CROSS, _T("W³¹cz wskaŸnik pozycji"), _T("W³¹cz / Wy³¹cz przesuwanie tekstu"),wxBITMAP_PNG("move"),false);
-	AppendBitmap(SubsMenu,ID_POSITION, _T("W³¹cz przesuwanie"), _T("W³¹cz / Wy³¹cz przesuwanie tekstu"),wxBITMAP_PNG("move"),false);
+	AppendBitmap(SubsMenu,ID_CROSS, _T("W³¹cz wskaŸnik pozycji"), _T("W³¹cz / Wy³¹cz przesuwanie tekstu"),wxBITMAP_PNG("cross"),false);
+	AppendBitmap(SubsMenu,ID_POSITION, _T("W³¹cz przesuwanie"), _T("W³¹cz / Wy³¹cz przesuwanie tekstu"),wxBITMAP_PNG("position"),false);
 	AppendBitmap(SubsMenu,ID_MOVEMENT, _T("W³¹cz ruch"), _T("W³¹cz / Wy³¹cz przesuwanie tekstu"),wxBITMAP_PNG("move"),false);
 	//AppendBitmap(SubsMenu,ID_MOVEONCURVE, _T("W³¹cz ruch po krzywej"), _T("W³¹cz / Wy³¹cz przesuwanie tekstu"),wxBITMAP_PNG("move"),false);
 	AppendBitmap(SubsMenu,ID_SCALE, _T("W³¹cz skalowanie"), _T("W³¹cz / Wy³¹cz skalowanie tekstu"),wxBITMAP_PNG("scale"),false);
@@ -170,6 +170,8 @@ kainoteFrame::kainoteFrame(wxWindow* parent)
 	MenuBar->Append(AutoMenu, _T("Automatyzacja"));
 
 	HelpMenu = new wxMenu();
+	AppendBitmap(HelpMenu,ID_HELP, _T("&Pomoc (niekompletna ale jednak)"), _T("Otwiera pomoc w domyœlnej przegl¹darce"),wxBITMAP_PNG("help"));
+	AppendBitmap(HelpMenu,ID_ANSI, _T("&W¹tek programu na forum AnimeSub.info"), _T("Otwiera w¹tek programu na forum AnimeSub.info"),wxBITMAP_PNG("ansi"));
 	AppendBitmap(HelpMenu,ID_ABOUT, _T("&O programie\tF2"), _T("Wyœwietla informacje o programie"),wxBITMAP_PNG("about"));
 	AppendBitmap(HelpMenu,ID_HELPERS, _T("&Lista osób pomocnych przy tworzeniu programu"), _T("Wyœwietla Listê osób pomocnych przy tworzeniu programu"),wxBITMAP_PNG("helpers"));
 	MenuBar->Append(HelpMenu, _T("Pomo&c"));
@@ -196,7 +198,7 @@ kainoteFrame::kainoteFrame(wxWindow* parent)
 	//tutaj dodawaj nowe idy
 	Connect(ID_SAVE,ID_SORTSEL,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
 	Connect(7000,7011,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
-	Connect(ID_OPENSUBS,ID_HELPERS,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
+	Connect(ID_OPENSUBS,ID_ANSI,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
 	Connect(ID_P5SEC,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnP5Sec);
 	Connect(ID_M5SEC,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnM5Sec);
 	Connect(ID_SELONVID,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnSelVid);
@@ -376,8 +378,8 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			if(!vb->isarrow){vb->SetCursor(wxCURSOR_ARROW);vb->isarrow=true;}
 		}
 		UpdateToolbar();
-	}else if(id>=ID_ASS&&id<=ID_TMP){
-		OnConversion((id==ID_ASS)? 1 : (id-6701));
+	}else if(id>=ID_ASS&&id<=ID_MPL2){
+		OnConversion(( id - ID_ASS ) + 1);
 	}else if(id==ID_HIDETAGS){
 		pan->Grid1->HideOver();
 	}else if(id==ID_CHANGETIME){
@@ -502,6 +504,15 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			"Podziêkowania tak¿e dla osób które u¿ywaj¹ programu i od czasu do czasu coœ wynajdowali.\r\n"\
 			"Ksenoform, Deadsoul, Z³y los, Vessin, Xandros, Areki, Nyah2211, Waski_jestem.",
 			"Lista osób pomocnych przy tworzeniu programu");
+	}else if(id==ID_HELP||id==ID_ANSI){
+		WinStruct<SHELLEXECUTEINFO> sei;
+		wxString url=(id==ID_HELP)? Options.pathfull+"\\Pomoc\\Kainote pomoc.html" : "http://animesub.info/forum/viewtopic.php?id=258715";
+		sei.lpFile = url.c_str();
+		sei.lpVerb = wxT("open");
+		sei.nShow = SW_RESTORE;
+		sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
+
+		ShellExecuteEx(&sei);
 	}
 
 }
@@ -906,7 +917,7 @@ void kainoteFrame::SetAccels(bool _all)
 			wxMenuItem *item=MenuBar->FindItem(id);
 			if(!item){continue;}
 			if(item->GetItemLabelText() != cur->second.Name){
-				//wxLogStatus(item->GetItemLabelText()+ " X "+cur->second.Name);
+
 				int cnt= MenuBar->GetMenuCount();
 				int ret;
 				for(int i=0; i<cnt; i++){
@@ -1007,7 +1018,8 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 			if(!isload){
 				if(pan->Video->IsDshow){wxMessageBox("Plik nie jest poprawnym plikiem wideo, albo jest uszkodzony,"\
 					"\r\nb¹dŸ brakuje kodeków czy te¿ splittera", _T("Uwaga"));}
-				break;}
+				break;
+			}
 			pan->CTime->Contents();
 			pan->Video->seekfiles=true;
 
@@ -1079,7 +1091,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 	if(Options.GetBool("Auto Select Lines")){
 		Grid *old=Tabs->Page(Tabs->GetOldSelection())->Grid1;
 		if(old->FirstSel()>-1){
-			cur->Grid1->SelVideoLine(old->file->subs->dials[old->FirstSel()]->Start.mstime);
+			cur->Grid1->SelVideoLine(old->GetDial(old->FirstSel())->Start.mstime);
 		}
 	}
 	if(ss&&ss->IsShown()){ss->LoadAssStyles();}
@@ -1300,7 +1312,7 @@ void kainoteFrame::OnMenuOpened(wxMenuEvent& event)
 		forms=true;
 		
 		if(i>=ID_ASSPROPS&&i<ID_ASS){forms=form<SRT;}//menager stylów i sinfo
-		else if(i==ID_ASS){forms=form>SSA;}//konwersja na ass
+		else if(i==ID_ASS){forms=form>ASS;}//konwersja na ass
 		else if(i==ID_SRT){forms=form!=SRT;}//konwersja na srt
 		else if(i==ID_MDVD){forms=form!=MDVD;}//konwersja na mdvd
 		else if(i==ID_MPL2){forms=form!=MPL2;}//konwersja na mpl2
@@ -1336,7 +1348,7 @@ void kainoteFrame::OnRunScript(wxCommandEvent& event)
 		wxMessageBox(msg); return;
 	}
 	TabPanel* pan=GetTab();
-	int diff=(pan->Grid1->file->subs->sinfo.size() + pan->Grid1->file->subs->styles.size()+1);
+	int diff=(pan->Grid1->SInfoSize() + pan->Grid1->StylesSize()+1);
 	wxArrayInt sels = pan->Grid1->GetSels(true);
 	if(scr->Macros[macro]->Validate(sels, pan->Edit->ebrow, diff)){
 		if(scr->CheckLastModified()){scr->Reload();}	

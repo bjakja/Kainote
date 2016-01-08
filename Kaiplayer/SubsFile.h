@@ -25,10 +25,11 @@ public:
 
 class SubsFile
 {
+	friend class SubsGrid;
 private:
 	std::vector<File*> undo;
 	int iter;
-
+	File *subs;
 public:
 	SubsFile();
 	~SubsFile();
@@ -44,7 +45,8 @@ public:
 	int maxx();
 	int Iter();
 	void RemoveFirst(int num);
-	File *subs;
+	File *GetSubs();
+	
 	bool edited;
 };
 

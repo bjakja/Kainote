@@ -291,7 +291,10 @@ void CTwindow::RefVals(CTwindow *from)
 
 	CorTime->SetSelection((from)? from->CorTime->GetSelection() : Options.GetInt(_("Corect times")));
 	int enables = Options.GetInt(_("Postprocessor enabling"));
-	if((enables & 16) && !LeadIn){wxCommandEvent evt; CollapsePane(evt);}
+	if(((enables & 16) && !LeadIn) || ( !(enables & 16) && LeadIn)){
+		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,22999); 
+		CollapsePane(evt);
+	}
 	if(LeadIn){
 		LeadIn->SetValue((from)? from->LeadIn->GetValue() : (enables & 1)>0);
 		LeadOut->SetValue((from)? from->LeadOut->GetValue() : (enables & 2)>0);
@@ -387,8 +390,7 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 			((TabPanel*)GetParent())->BoxSizer3->Layout();
 		}
 	
-	}else
-	{
+	}else{
 		int size=Main->GetItemCount();
 		for(int i=size-1; i>=size-3; i--){
 			Main->Detach(i);

@@ -1,7 +1,7 @@
 #ifndef AVSAUDIO
 #define AVSAUDIO
 
-#include <wx/wxprec.h>
+#include <wx/wx.h>
 #include <wx/filename.h>
 #include <stdint.h>
 #include <windows.h>
@@ -10,13 +10,22 @@
 
 typedef IScriptEnvironment* __stdcall FUNC(int);
 
-class ffmpeg2{
+class AVSProvider{
 	private:
 	char **Cache;
 	HINSTANCE hLib;
 	wxString filename;
 	PClip clip;
 	
+	int width;
+	int height;
+	int arwidth;
+	int arheight;
+	int NumFrames;
+	double Duration;
+	double Delay;
+	float fps;
+
 	int blnum;
 	int SampleRate;
 	int BytesPerSample;
@@ -26,8 +35,10 @@ class ffmpeg2{
 	bool LoadFromClip(AVSValue clip);
 	bool OpenAVSAudio();
 	void Clearcache();
-	
-	wxMutex AviSynthMutex;
+	void Cleardiskc();
+
+	wxMutex AudioMutex;
+	wxMutex VideoMutex;
 
 protected:
 	IScriptEnvironment *env;
@@ -37,15 +48,20 @@ public:
 	int GetBytesPerSample();
 	int GetChannels();
 	int64_t GetNumSamples();
-
+	void GetFrame(int frame, byte* buff);
+	int TimefromFrame(int nframe);
+	int FramefromTime(int time);
+	int GetMSfromFrame(int frame);
+	int GetFramefromMS(int MS, int seekfrom=1);
+	bool DiskCache();
 	bool CacheIt();
 
 	void GetBuffer(void *buf, int64_t start, int64_t count);
 	void GetAudio(void *buf, int64_t start, int64_t count);
 	void GetWaveForm(int *min,int *peak,int64_t start,int w,int h,int samples,float scale);
 
-	ffmpeg2(wxString filename, int tab, bool *success);
-	~ffmpeg2();
-	};
+	AVSProvider(wxString filename, int tab, bool *success);
+	~AVSProvider();
+};
 
 #endif

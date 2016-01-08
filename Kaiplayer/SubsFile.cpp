@@ -171,3 +171,8 @@ void SubsFile::GetURStatus(bool *_undo, bool *_redo)
 	*_redo= (iter<(int)undo.size()-1);
 	*_undo= (iter>0);
 }
+
+File *SubsFile::GetSubs()
+{
+	return subs;
+}

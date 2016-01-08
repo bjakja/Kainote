@@ -10,8 +10,7 @@
 
 
 
-
-#if vertices
+#if byvertices
 struct CUSTOMVERTEX
 {
 	D3DXVECTOR3 position; // The position
@@ -59,7 +58,7 @@ VideoRend::VideoRend(wxWindow *_parent, const wxSize &size)
 	diff=0;
 	avframetime=42;
 	thread=NULL;
-#if vertices
+#if byvertices
 	vertex=NULL;
 	texture=NULL;
 #endif
@@ -76,6 +75,10 @@ bool VideoRend::InitDX(bool reset)
 		SAFE_RELEASE(bars);
 		SAFE_RELEASE(lines);
 		SAFE_RELEASE(m_font);
+#if byvertices
+		SAFE_RELEASE(texture);
+		SAFE_RELEASE(vertex);
+#endif
 	}
 
 	HRESULT hr;
@@ -105,7 +108,7 @@ bool VideoRend::InitDX(bool reset)
 	}
 	//hr = d3device->SetSamplerState( 0, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP );
 	//hr = d3device->SetSamplerState( 0, D3DSAMP_ADDRESSV,  D3DTADDRESS_CLAMP );
-	hr = d3device->SetSamplerState( 0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR );
+	/*hr = d3device->SetSamplerState( 0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR );
 	hr = d3device->SetSamplerState( 0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR );
 	hr = d3device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
 	hr = d3device->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
@@ -114,11 +117,28 @@ bool VideoRend::InitDX(bool reset)
 	hr = d3device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	hr = d3device->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE);
 	hr = d3device->SetRenderState( D3DRS_LIGHTING, FALSE );
-	hr = d3device->SetRenderState( D3DRS_ZENABLE, D3DZB_TRUE);
+	hr = d3device->SetRenderState( D3DRS_ZENABLE, D3DZB_FALSE);
 	hr = d3device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
 	hr = d3device->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_DIFFUSE );
 	hr = d3device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
-	hr = d3device->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
+	hr = d3device->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);*/
+
+	hr = d3device->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE);
+    hr = d3device->SetRenderState( D3DRS_ZENABLE, D3DZB_FALSE);
+    hr = d3device->SetRenderState( D3DRS_LIGHTING, FALSE);
+    hr = d3device->SetRenderState( D3DRS_DITHERENABLE, TRUE);
+
+    hr = d3device->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE);
+    hr = d3device->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+    hr = d3device->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+    hr = d3device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+    hr = d3device->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+    hr = d3device->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_SPECULAR);
+
+    hr = d3device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    hr = d3device->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+    hr = d3device->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 	HR(hr,"Zawiod³o któreœ z ustawieñ dx");
 
 	D3DXMATRIX matOrtho; 
@@ -131,13 +151,13 @@ bool VideoRend::InitDX(bool reset)
 	HR(d3device->SetTransform(D3DTS_WORLD, &matIdentity), "Nie mo¿na ustawiæ matrixa world");
 	HR(d3device->SetTransform(D3DTS_VIEW, &matIdentity), "Nie mo¿na ustawiæ matrixa view");
 
-#if vertices
+#if byvertices
 	HR(d3device->CreateTexture(vwidth, vwidth, 1, D3DUSAGE_RENDERTARGET,
 		D3DFMT_X8R8G8B8,D3DPOOL_DEFAULT,&texture, NULL), "Nie mo¿na utworzyæ tekstury" );
 
 	HR(texture->GetSurfaceLevel(0, &bars), "nie mo¿na utworzyæ powierzchni");
 
-	d3device->CreateOffscreenPlainSurface(vwidth,vheight,d3dformat, D3DPOOL_DEFAULT,&MainStream,0);
+	HR(d3device->CreateOffscreenPlainSurface(vwidth,vheight,d3dformat, D3DPOOL_DEFAULT,&MainStream,0),"Nie mo¿na utworzyæ powierzchni");
 
 	HR(d3device->CreateVertexBuffer( 4*sizeof(CUSTOMVERTEX),D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX,D3DPOOL_DEFAULT, &vertex, NULL ),
 		"Nie mo¿na utworzyæ bufora wertex")
@@ -170,9 +190,10 @@ bool VideoRend::InitDX(bool reset)
 
 	d3device->CreateOffscreenPlainSurface(vwidth,vheight,d3dformat, D3DPOOL_DEFAULT,&MainStream,0);//D3DPOOL_DEFAULT
 #endif
-
+	//HR(d3device->ColorFill(MainStream, NULL, D3DCOLOR_ARGB(0xFF, 0xFF, 0xFF, 0xFF)),"Nie mo¿na wype³niæ tekstury");
 	D3DXCreateLine(d3device, &lines);
 	D3DXCreateFont(d3device, 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &m_font );
+
 	return true;
 }
 
@@ -206,7 +227,7 @@ void VideoRend::Render(bool Frame)
 
 
 
-#ifndef vertices
+#ifndef byvertices
 	hr = d3device->StretchRect(MainStream,&rt5,bars,&rt4,D3DTEXF_LINEAR);
 	if(FAILED(hr)){wxLogStatus("cannot stretch main stream");}
 #endif
@@ -214,7 +235,7 @@ void VideoRend::Render(bool Frame)
 
 	hr = d3device->BeginScene();
 
-#if vertices
+#if byvertices
 
 
 	// Render the vertex buffer contents
@@ -267,7 +288,7 @@ void VideoRend::Render(bool Frame)
 	// End the scene
 	hr = d3device->EndScene();
 
-#if vertices
+#if byvertices
 	hr = d3device->StretchRect(MainStream,&rt5,bars,&rt4,D3DTEXF_LINEAR);
 	if(FAILED(hr)){wxLogStatus("cannot stretch main stream");}
 #endif
@@ -282,7 +303,7 @@ void VideoRend::Render(bool Frame)
 bool VideoRend::DrawTexture(byte *nframe, bool copy)
 {
 
-	wxMutexLocker lock(mutexDrawing);
+	wxMutexLocker lock(mutexRender);
 	byte *fdata=NULL;
 	byte *texbuf;
 	byte bytes=(vformat==RGB32)? 4 : (vformat==YUY2)? 2 : 1;
@@ -409,7 +430,7 @@ void VideoRend::Clear()
 	//wxLogStatus("bars");
 	SAFE_RELEASE(bars);
 	//wxLogStatus("d3device");
-#if vertices
+#if byvertices
 	SAFE_RELEASE(vertex);
 	SAFE_RELEASE(texture);
 #endif
@@ -438,7 +459,9 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	if(!Dshow){
 		bool success;
 		tmpvff=new VideoFfmpeg(fname, Kaia->Frame->Tabs->GetSelection(),&success);
-		if(!success || !tmpvff){SAFE_DELETE(tmpvff);return false;}
+		if(!success || !tmpvff){
+			SAFE_DELETE(tmpvff);return false;
+		}
 	}
 
 	if(vstate!=None){
@@ -545,13 +568,11 @@ void VideoRend::Play(int end)
 	if(!IsDshow){
 		if(thread){
 			WaitForSingleObject(thread,2000);CloseHandle(thread);thread=NULL;
-			//CloseHandle(thread1);thread1=NULL;CloseHandle(event1);event1=NULL;
 		}
 		lasttime=timeGetTime()-time;
 		if(player){player->Play(time,-1,false);}
 		lastframe++;
 		time=VFF->Timecodes[lastframe];
-
 		DWORD kkk;
 		thread = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)playingProc, this, 0, &kkk);
 		//if(thread){
@@ -575,9 +596,11 @@ void VideoRend::Pause()
 {
 	if(vstate==Playing){
 		vstate=Paused;
-		if(!IsDshow){if(player){player->player->Stop();/*player->Refresh(false);*/}//if(thread){CloseHandle(thread);thread=NULL;}
+		if(!IsDshow){
+			if(player){player->player->Stop();}
+		}else{
+			vplayer->Pause();
 		}
-		else{vplayer->Pause();}
 	}
 	else if(vstate==Paused || vstate==Stopped){
 		Play();
@@ -639,7 +662,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect)
 
 bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 {
-	wxMutexLocker lock(mutexOpenSubs);
+	wxMutexLocker lock(mutexRender);
 	if (instance) csri_close(instance);
 	instance = NULL;
 
@@ -697,11 +720,10 @@ DWORD VideoRend::playingProc(void* cls)
 void VideoRend::playing()
 {
 	int tdiff=0;
-
 	wxRect rt(0,0,1,1);
 	while(1){
 		Refresh(false,&rt);
-		//DrawTexture((byte*)datas);
+		//DrawTexture();
 		//Render();
 
 		if(time>=playend){
@@ -780,12 +802,12 @@ void VideoRend::UpdateRects(bool bar)
 }
 
 //funkcja zmiany rozdzia³ki okna wideo
-void VideoRend::UpdateVideoWindow(bool bar, bool firstload)
+void VideoRend::UpdateVideoWindow(bool bar)
 {
 
 	
-	wxMutexLocker lock(mutexSizing);
-	//if(block){while(!block){Sleep(5);}}
+	wxMutexLocker lock(mutexRender);
+	//if(blockDS){while(!blockDS){wxLogStatus("updatewindowsleep");Sleep(5);}}
 	block=true;
 	UpdateRects(bar);
 
@@ -804,12 +826,12 @@ void VideoRend::UpdateVideoWindow(bool bar, bool firstload)
 
 
 	resized=true;
-	block=false;
 	if(Vclips){
 		Vclips->SizeChanged(wxSize(rt3.right, rt3.bottom),lines, m_font, d3device);
 		TabPanel* tab=(TabPanel*)GetParent();
 		SetVisual(tab->Edit->line->Start.mstime, tab->Edit->line->End.mstime);
 	}
+	block=false;
 }
 
 void VideoRend::GetFpsnRatio(float *fps, long *arx, long *ary)
@@ -1007,6 +1029,7 @@ void VideoRend::SetVisual(int start, int end, bool remove)
 			Vclips->SizeChanged(wxSize(rt3.right, rt3.bottom),lines, m_font, d3device);
 		}
 		Vclips->SetVisual(start, end);
+		VisEdit=true;
 	}
 }
 

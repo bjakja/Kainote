@@ -15,7 +15,7 @@ class kainoteFrame;
 
 class SubsGrid : public wxWindow
 {
-
+	friend class SubsFile;
 public:
 	std::map<int,bool> sel;
   
@@ -25,27 +25,35 @@ public:
 	wxMutex mutex;
   
 	bool Modified;
-
-	void Clearing();
-	void SetStyle();
+	void AddLine(Dialogue *line);
+	void AddStyle(Styles *nstyl);
 	void AdjustWidths(int cell=8191);
+	int CalcChars(wxString txt, wxString *lines=NULL, bool *bad=NULL);
 	void ChangeLine(Dialogue *line1, int wline, long cells, bool selline=false, bool dummy=false);
 	void ChangeCell(long cells, int wline, Dialogue *what);
-	void AddLine(Dialogue *line);
-	void RepaintWindow(int cell=8191);
-	void SelectRow(int row, bool addToSelected = false, bool select=true);
-	void ScrollTo(int y, bool center=false);
+	void ChangeStyle(Styles *nstyl,int i);
+	void Clearing();
 	void Convert(char type);
+
+	int FindStyle(wxString name,int *multiplication=NULL);
+	wxString GetStyles(bool tld=false);
+	Styles *GetStyle(int i,wxString name=_(""));
+	std::vector<Styles*> *GetStyleTable();
+	void SetStyle();
+	void RepaintWindow(int cell=8191);
+	void SelectRow(int row, bool addToSelected = false, bool select=true, bool norefresh=false);
+	void ScrollTo(int y, bool center=false);
+	
 	void SaveFile(wxString filename, bool cstat=true);
 	wxString *SaveText();
 	void HideOver();
-	void AddStyle(Styles *nstyl);
-	wxString GetStyles(bool tld=false);
+	
+	
 	int StylesSize();
-	Styles *GetStyle(int i,wxString name=_(""));
-	int FindStyle(wxString name,int *multiplication=NULL);
+	
+	
 	void DelStyle(int i);
-	void ChangeStyle(Styles *nstyl,int i);
+	
 	Dialogue *GetDialCor(int ii);
 	void ChangeTime();
 	int GetCount();
@@ -55,7 +63,8 @@ public:
 	void DeleteRow(int rw,int len=1);
 	void DeleteText();
 	void GetUndo(bool redo);
-	void InsertRow(int rw, Dialogue *dialog);
+	void InsertRows(int Row, std::vector<Dialogue *> RowsTable, bool AddToDestroy=false);
+	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy=true, bool Save=false);
 	void SetSubsForm(wxString ext="");
 	void AddSInfo(wxString SI, wxString val="", bool save=true);
 	void SetModified(bool redit=true, bool dummy=false, bool refvid=true);
@@ -72,6 +81,7 @@ public:
 	bool SetTlMode(bool mode);
 	void LoadDefault(bool line=true,bool sav=true, bool endload=true);
 	void GetASSRes(int *x,int *y);
+	int SInfoSize();
   
 	bool transl;
 	bool showtl;
@@ -83,12 +93,13 @@ public:
 	Dialogue *GetDial(int i);
 	wxString *GetVisible(wxPoint *EBText, bool *visible);
 	wxRect GetMetrics(int line);
-	int CalcChars(wxString txt, wxString *lines=NULL, bool *bad=NULL);
+
 	int lastRow;
 	bool makebkp;
 	int visible;
 	int mtimerow;
 	SubsFile* file;
+	std::vector<wxArrayInt> SpellErrors;
 
 	SubsGrid(wxWindow *parent, const long int id ,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=wxWANTS_CHARS, const wxString& name=wxPanelNameStr);
 	virtual ~SubsGrid();
@@ -99,7 +110,6 @@ private:
 	void CheckText(wxString text, wxArrayInt &errs);
 protected:
 	wxBitmap* bmp;
-	wxArrayInt Lines;
 	wxFont font;
 	int GridHeight;
 	int GridWidth[13];

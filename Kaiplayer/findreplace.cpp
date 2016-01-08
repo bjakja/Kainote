@@ -437,7 +437,6 @@ void findreplace::SelectLine()
 
 		bool isfound=false;
 
-		//if(sopt==0){Kai->Grid1->sel.erase(Kai->Grid1->sel.find(i));}
 
 		if (txt!="" && find!=""){
 			if(regex){
@@ -475,10 +474,10 @@ void findreplace::SelectLine()
 		}
 
 		if((pan->Grid1->sel.find(i)!=pan->Grid1->sel.end())&&act!=0){
-			if(act<3){whatcopy<<Dial->GetRaw(Kai->GetTab()->Grid1->transl&&Dial->TextTl!="");}
+			if(act<3){whatcopy<<Dial->GetRaw(pan->Grid1->transl&&Dial->TextTl!="");}
 			else if(act<5){Dial->State=1;mdial.push_back(Dial);}
 			else if(act<6){
-				Dialogue *dialc=pan->Grid1->CopyDial(i,false); 
+				Dialogue *dialc=pan->Grid1->CopyDial(i); 
 				dialc->State=1;
 				dialc->IsComment=true;
 			}
@@ -495,10 +494,10 @@ void findreplace::SelectLine()
 		}
 	}//przenoszenie na pocz¹tek / koniec
 	if(act==2||act==6||act==3||act==4){
-		Kai->GetTab()->Grid1->DeleteRows();
+		pan->Grid1->DeleteRows();
 		if(act==3||act==4)
 		{
-			pan->Grid1->file->subs->dials.insert((act==3)?pan->Grid1->file->subs->dials.begin() : pan->Grid1->file->subs->dials.end(), mdial.begin(), mdial.end());
+			pan->Grid1->InsertRows((act==3)? 0 : pan->Grid1->GetCount(), mdial);
 			mdial.clear();
 		}
 	}

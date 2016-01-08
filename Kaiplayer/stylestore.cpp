@@ -83,7 +83,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	wxBoxSizer *assbutt=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *assall=new wxBoxSizer(wxHORIZONTAL);
 	
-	ASS = new StyleList(this, ID_ASSSTYLES, &Notebook::GetTab()->Grid1->file->subs->styles, cc->sfont, wxDefaultPosition, wxSize(-1,200));
+	ASS = new StyleList(this, ID_ASSSTYLES, Notebook::GetTab()->Grid1->GetStyleTable(), cc->sfont, wxDefaultPosition, wxSize(-1,200));
 
 	
 	Button6 = new wxButton(this, ID_ASSNEW, _("Nowy"),wxDefaultPosition, wxSize(50,-1));
@@ -311,6 +311,7 @@ void stylestore::changestyle(Styles *cstyl)
 					grid->CopyDial(i)->Style=cstyl->Name;
 				}
 			}
+			grid->AdjustWidths(STYLE);
 		}
 	}
 	oldname=cstyl->Name;
@@ -364,7 +365,7 @@ void stylestore::OnStoreLoad(wxCommandEvent& event)
 void stylestore::OnAssSort(wxCommandEvent& event)
 {
 	Grid* grid=Notebook::GetTab()->Grid1;
-	std::sort(grid->file->subs->styles.begin(),grid->file->subs->styles.end(),sortfunc);
+	std::sort(grid->GetStyleTable()->begin(), grid->GetStyleTable()->end(),sortfunc);
 	ASS->SetSelection(0,true);
 
 	modif();
@@ -563,7 +564,7 @@ void stylestore::StyleonVideo(Styles *styl, bool fullskreen)
 	if(fullskreen&&!pan->Video->isfullskreen){pan->Video->SetFullskreen();this->SetWindowStyle(wxSTAY_ON_TOP|wxDEFAULT_DIALOG_STYLE);}
 	if(!fullskreen&&pan->Video->isfullskreen){pan->Video->SetFullskreen();this->SetWindowStyle(wxDEFAULT_DIALOG_STYLE);}
 	if(wl>=0){
-		    pan->Video->Seek(grid->file->subs->dials[wl]->Start.mstime+5);
+		    pan->Video->Seek(grid->GetDial(wl)->Start.mstime+5);
 		}else{
 			pan->Video->Render();}
 	
@@ -614,7 +615,7 @@ void stylestore::modif()
 	Notebook::GetTab()->Edit->RefreshStyle();
 	grid->SetModified(false);
 	grid->Refresh(false);
-	ASS->SetArray(&grid->file->subs->styles);
+	ASS->SetArray(grid->GetStyleTable());
 }
 
 void stylestore::LoadAssStyles()
@@ -623,7 +624,7 @@ void stylestore::LoadAssStyles()
 	if (grid->StylesSize()<1){
 		grid->AddStyle(new Styles());
     }
-	ASS->SetArray(&grid->file->subs->styles);
+	ASS->SetArray(grid->GetStyleTable());
 	int wstyle=MAX(0,grid->FindStyle(Notebook::GetTab()->Edit->line->Style));
 	ASS->SetSelection(wstyle,true);
 	if(cc->IsShown())

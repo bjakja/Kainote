@@ -13,7 +13,7 @@ Visuals::Visuals(wxWindow *_parent)
 	font=0;
 	grabbed=-1;
 	start=end=oldtime=0;
-	newline=newmove=false;
+	newline=newmove=blockevents=false;
 	drawtxt=true;
 	parent=_parent;
 	subssize.x=-1;
@@ -616,38 +616,34 @@ void Visuals::RotateXY()
 void Visuals::ClipRect()
 {
 	//wxLogStatus("siz %i,%i", Points[1].x, Points[1].y);
-	D3DXVECTOR2 v2[8];
+	D3DXVECTOR2 v2[5];
 	wxSize s = widsize;
 	v2[0].x=Points[0].x/wspw;
-	v2[0].y=0;
-	v2[1].x=Points[0].x/wspw;
-	v2[1].y=s.y;
-	v2[2].x=0;
-	v2[2].y=Points[0].y/wsph;
-	v2[3].x=s.x;
-	v2[3].y=Points[0].y/wsph;
-	v2[4].x=(Points[1].x/wspw)-1;
-	v2[4].y=0;
-	v2[5].x=(Points[1].x/wspw)-1;
-	v2[5].y=s.y;
-	v2[6].x=0;
-	v2[6].y=(Points[1].y/wsph)-1;
-	v2[7].x=s.x;
-	v2[7].y=(Points[1].y/wsph)-1;
+	v2[0].y=Points[0].y/wsph;
+	v2[1].x=v2[0].x;
+	v2[1].y=(Points[1].y/wsph)-1;
+	v2[2].x=(Points[1].x/wspw)-1;
+	v2[2].y=v2[1].y;
+	v2[3].x=v2[2].x;
+	v2[3].y=v2[0].y;
+	v2[4].x=v2[0].x;
+	v2[4].y=v2[0].y;
 
 	if(!invClip){
+		
+		
 		MYVERTEX v24[12];
 		CreateMYVERTEX(&v24[0],0, 0, 0x88000000);
 		CreateMYVERTEX(&v24[1],s.x, 0, 0x88000000);
-		CreateMYVERTEX(&v24[2],v2[4].x, v2[2].y, 0x88000000);
-		CreateMYVERTEX(&v24[3],v2[0].x, v2[2].y, 0x88000000);
-		CreateMYVERTEX(&v24[4],v2[0].x, v2[6].y, 0x88000000);
-		CreateMYVERTEX(&v24[5],0, v2[5].y, 0x88000000);
-		CreateMYVERTEX(&v24[6],s.x, v2[5].y, 0x88000000);
-		CreateMYVERTEX(&v24[7],0, v2[5].y, 0x88000000);
-		CreateMYVERTEX(&v24[8],v2[0].x, v2[6].y, 0x88000000);
-		CreateMYVERTEX(&v24[9],v2[4].x, v2[6].y, 0x88000000);
-		CreateMYVERTEX(&v24[10],v2[4].x, v2[2].y, 0x88000000);
+		CreateMYVERTEX(&v24[2],v2[2].x, v2[0].y, 0x88000000);
+		CreateMYVERTEX(&v24[3],v2[0].x, v2[0].y, 0x88000000);
+		CreateMYVERTEX(&v24[4],v2[0].x, v2[2].y, 0x88000000);
+		CreateMYVERTEX(&v24[5],0, s.y, 0x88000000);
+		CreateMYVERTEX(&v24[6],s.x, s.y, 0x88000000);
+		CreateMYVERTEX(&v24[7],0, s.y, 0x88000000);
+		CreateMYVERTEX(&v24[8],v2[0].x, v2[2].y, 0x88000000);
+		CreateMYVERTEX(&v24[9],v2[2].x, v2[2].y, 0x88000000);
+		CreateMYVERTEX(&v24[10],v2[2].x, v2[0].y, 0x88000000);
 		CreateMYVERTEX(&v24[11],s.x, 0, 0x88000000);
 
 		HRN(device->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE), "fvf failed");
@@ -655,17 +651,17 @@ void Visuals::ClipRect()
 		HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(MYVERTEX) ),"primitive failed");
 	}else{
 		MYVERTEX v24[4];
-		CreateMYVERTEX(&v24[0],v2[0].x, v2[2].y, 0x88000000);
-		CreateMYVERTEX(&v24[1],v2[4].x, v2[2].y, 0x88000000);
-		CreateMYVERTEX(&v24[2],v2[0].x, v2[6].y, 0x88000000);
-		CreateMYVERTEX(&v24[3],v2[5].x, v2[6].y, 0x88000000);
+		CreateMYVERTEX(&v24[0],v2[0].x, v2[0].y, 0x88000000);
+		CreateMYVERTEX(&v24[1],v2[2].x, v2[0].y, 0x88000000);
+		CreateMYVERTEX(&v24[2],v2[0].x, v2[2].y, 0x88000000);
+		CreateMYVERTEX(&v24[3],v2[2].x, v2[2].y, 0x88000000);
 		HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v24, sizeof(MYVERTEX) ),"primitive failed");
 	}
 
 	line->Begin();
-	line->Draw(v2,2,0xFFFF0000);
+	line->Draw(v2,5,0xFFFF0000);
 	line->End();
-	line->Begin();
+	/*line->Begin();
 	line->Draw(&v2[2],2,0xFFFF0000);
 	line->End();
 	line->Begin();
@@ -673,7 +669,7 @@ void Visuals::ClipRect()
 	line->End();
 	line->Begin();
 	line->Draw(&v2[6],2,0xFFFF0000);
-	line->End();
+	line->End();*/
 }
 	
 void Visuals::FaXY()
@@ -688,7 +684,7 @@ void Visuals::FaXY()
 
 void Visuals::Draw(int time)
 {
-	if(!(time>=start && time<end)){return;}
+	if(!(time>=start && time<end)){blockevents = true; return;}else if(blockevents){blockevents=false;}
 	wxMutexLocker lock(clipmutex);
 	line->SetAntialias(TRUE);
 	line->SetWidth(2.0);
@@ -811,6 +807,7 @@ wxString Visuals::GetVisual(bool _org)
 
 void Visuals::MouseEvent(wxMouseEvent &evt)
 {
+	if(blockevents){return;}
 	if(Visual>=VECTORCLIP){OnMouseEvent(evt);return;}//clipy wektorowe i rysunki
 	bool click = evt.LeftDown()||evt.RightDown()||evt.MiddleDown();
 	bool holding = (evt.LeftIsDown()||evt.RightIsDown()||evt.MiddleIsDown());

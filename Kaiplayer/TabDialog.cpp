@@ -110,20 +110,31 @@ void Notebook::DeletePage(size_t page)
 {
 	
 	kainoteFrame *Kai=(kainoteFrame*)GetParent();
-	//Kai->ss->IsShown();
-	//wxLogStatus("iss1");
 	block=true;
 	if(Kai->SavePrompt(1,page)){block=false; wxSize siz=GetClientSize();RefreshRect(wxRect(0,siz.y-25,siz.x,25),false); return;}
 	block=false;
-	//Kai->ss->IsShown();
-	//wxLogStatus("iss2");
+	if(split && Size()>2){
+		int i = 0;
+		for(; i < (int)Size(); i++){
+			if(i!=iter && i!=splititer){break;}
+		}
+		Pages[i]->SetSize(Pages[page]->GetSize());
+		Pages[i]->SetPosition(Pages[page]->GetPosition());
+		Pages[i]->Show();
+	}
 	Pages[page]->Destroy();
 	Pages.erase(Pages.begin()+page);
 	Names.RemoveAt(page);
 	Tabsizes.RemoveAt(page);
 
-	//Kai->ss->IsShown();
-	//wxLogStatus("iss3");
+	if(split && Size()<2){
+		split=false;
+		int w,h;
+		GetClientSize(&w,&h);
+		Pages[0]->SetPosition(wxPoint(0,0));
+		Pages[0]->SetSize(w,h-25);
+	}
+
 
 	if(Size()<1){
 		Pages.push_back(new TabPanel(this,Kai));
@@ -432,10 +443,10 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	for(size_t i=fvis;i<Tabsizes.size();i++){
 		//wybrana zak³adka
 		if(i==iter){//wxSYS_COLOUR_INACTIVEBORDER
-			
-			dc.SetPen(wxPen(wxColour("#000000"),3));
-			dc.DrawLine(0,0,start-1,0);
-			dc.DrawLine(start+Tabsizes[i]+1,0,w,0);
+			//rysowanie linii po obu stronach aktywnej zak³adki
+			dc.SetPen(wxPen(wxColour("#696969"),1));
+			dc.DrawLine(0,0,start,0);
+			dc.DrawLine(start+Tabsizes[i],0,w,0);
 			dc.SetPen(*wxTRANSPARENT_PEN);
 			dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 			dc.DrawRectangle(start+1,0,Tabsizes[i]-1,23);
@@ -460,21 +471,21 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		
 		//rysowanie konturów zak³adki
 		if(gc){
-			gc->SetPen( wxPen("#000000"));
+			gc->SetPen( wxPen("#696969"));
 			gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
 			wxGraphicsPath path = gc->CreatePath();
 			path.MoveToPoint(start,0.0);
-			path.AddLineToPoint(start,21.0);
+			path.AddLineToPoint(start,20.0);
 			double strt=start;
-			path.AddCurveToPoint(strt+0.5, 21.5, strt+1.5, 22.5, strt+2, 23.0);
+			path.AddCurveToPoint(strt, 21.5, strt+1.5, 23.0, strt+3.0, 23.0);
 			strt+=Tabsizes[i];
-			path.AddLineToPoint(strt-2.0,23.0);
-			path.AddCurveToPoint(strt-1.5, 22.5, strt-0.5, 21.5, strt, 21.0);
+			path.AddLineToPoint(strt-3.0,23.0);
+			path.AddCurveToPoint(strt-1.5, 23.0, strt, 21.5, strt, 20.0);
 			path.AddLineToPoint(strt,0);
 			gc->StrokePath(path);
 		}
 		else{
-			dc.SetPen(wxPen("#000000"));
+			dc.SetPen(wxPen("#696969"));
 			dc.DrawLine(start,0,start,21);
 			dc.DrawLine(start,21,start+2,23);
 			dc.DrawLine(start+2,23,start+Tabsizes[i]-2,23);
@@ -485,7 +496,6 @@ void Notebook::OnPaint(wxPaintEvent& event)
 
 		start+=Tabsizes[i]+2;
 	}
-
 	
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
@@ -500,7 +510,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.DrawRectangle(w-16,0,16,25);
 		}
 
-		dc.SetPen(wxPen(wxColour("#000000"),2));
+		dc.SetPen(wxPen(wxColour("#696969"),2));
 
 		dc.DrawLine(17,0,17,25);
 		dc.DrawLine(11,5,4,12);
@@ -514,9 +524,9 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	//plus który jest zawsze widoczny
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxBrush("#FFFFFF"));
-	if(plus){dc.DrawRectangle(start+1,0,18,23);}
+	if(plus){dc.DrawRectangle(start+1,1,18,23);}
 
-	dc.SetPen(wxPen(wxColour("#000000")));
+	dc.SetPen(wxPen(wxColour("#505050")));
 		//dc.SetBrush(wxBrush("#FFFFFF"));
 	dc.DrawRectangle(start+4,11,12,2);
 	dc.DrawRectangle(start+9,6,2,12);
@@ -529,15 +539,15 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		dc.DrawLine(pos.x,1,pos.x+siz.x,1);
 	}*/
 	if(gc){
-		gc->SetPen( wxPen("#000000"));
+		gc->SetPen( wxPen("#696969"));
 		gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
 		wxGraphicsPath path = gc->CreatePath();
 		path.MoveToPoint(start,0.0);
-		path.AddLineToPoint(start,21.0);
+		path.AddLineToPoint(start,20.0);
 		double strt=start;
-		path.AddCurveToPoint(strt+0.5, 21.5, strt+1.5, 22.5, strt+2, 23.0);
-		path.AddLineToPoint(strt+17.0,23.0);
-		path.AddCurveToPoint(strt+17.5, 22.5, strt+18.5, 21.5, strt+19, 21.0);
+		path.AddCurveToPoint(strt, 21.5, strt+1.5, 23.0, strt+3.0, 23.0);
+		path.AddLineToPoint(strt+16.0,23.0);
+		path.AddCurveToPoint(strt+17.5, 23.0, strt+19.0, 21.5, strt+19.0, 20.0);
 		path.AddLineToPoint(strt+19,0);
 		gc->StrokePath(path);
 	}else{
@@ -709,8 +719,7 @@ void Notebook::ChangeActiv()
 	splititer=tmp;
 	Tabsizes[iter]+=18;
 	Tabsizes[splititer]-=18;
-	//Pages[iter]->SetWindowStyleFlag(wxBORDER_SUNKEN);
-	//Pages[splititer]->SetWindowStyleFlag(0);
+	((kainoteFrame*)GetParent())->UpdateToolbar();
 	
 	RefreshBar();
 }
@@ -801,7 +810,6 @@ void Notebook::OnEraseBackground(wxEraseEvent &event)
 
 void Notebook::OnCharHook(wxKeyEvent& event)
 {
-	//wxLogStatus("key %i, unicode %i", event.GetKeyCode(),event.GetUnicodeKey());
 	int key=event.GetKeyCode();
 	int ukey=event.GetUnicodeKey();
 	bool nmodif= !(event.AltDown() || event.ControlDown() || event.ShiftDown());
@@ -818,10 +826,6 @@ void Notebook::OnCharHook(wxKeyEvent& event)
 }
 
 BEGIN_EVENT_TABLE(Notebook,wxWindow)
-	//EVT_MENU_RANGE(MENU_CHOOSE,MENU_CHOOSE+99, Notebook::OnTabSel)
-	//EVT_MENU(MENU_CHOOSE-1, Notebook::OnTabSel)
-	//EVT_MENU_RANGE(MENU_CHOOSE-101,MENU_CHOOSE-2, Notebook::OnTabSel)
-	//EVT_TIMER(33333,Notebook::OnResized)
 	EVT_CHAR_HOOK(Notebook::OnCharHook)
 	EVT_ERASE_BACKGROUND(Notebook::OnEraseBackground)
 	EVT_MOUSE_EVENTS(Notebook::OnMouseEvent)

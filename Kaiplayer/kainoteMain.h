@@ -185,6 +185,9 @@ enum{// nowe idy dodawaj na dole, bo ludzie bêd¹ mieli niespodziankê przy odpale
 	ID_SELONVID,
 	ID_RECSUBS,
 	ID_RECVIDEO,
+	ID_HELP,
+	ID_ANSI,
+	
 
 	ID_PREV_LINE=6850,
 	ID_NEXT_LINE,

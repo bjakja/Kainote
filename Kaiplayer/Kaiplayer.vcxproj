@@ -57,7 +57,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>I:\Programy\zlib-1.2.8;I:\Programy\Spell\src\hunspell;I:\Programy\WX 2.9.4\include;J:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;J:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;H:\Programy\freetype-2.6\include;I:\Programy\lua51\src;I:\Programy\WX 2.9.4\lib\vc_lib\mswud;J:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>I:\Programy\zlib-1.2.8;I:\Programy\Spell\src\hunspell;I:\Programy\WX 2.9.4\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;H:\Programy\freetype-2.6\include;I:\Programy\lua51\src;I:\Programy\WX 2.9.4\lib\vc_lib\mswud;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -73,7 +73,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>wxmsw29ud_core.lib;wxbase29ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;strmbasd.lib;odbc32.lib;odbccp32.lib;ffms2D.lib;lua51_vc9.lib;freetype26MTd.lib;d3d9.lib;D3dx9d.lib;zlibwapid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>I:\Programy\zlib-1.2.8\contrib\vstudio\vc10\x86\ZlibDllDebug;J:\Program Files\Microsoft SDKs\Windows\v6.1\Lib;I:\Programy\Spell\src\win_api\Release_dll\libhunspell;I:\Programy\WX 2.9.4\lib\vc_lib;H:\Programy\freetype-2.6\objs\vc2010\Win32;J:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses\Debug;I:\Programy\lua51\Debug;J:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>I:\Programy\zlib-1.2.8\contrib\vstudio\vc10\x86\ZlibDllDebug;C:\Program Files\Microsoft SDKs\Windows\v6.1\Lib;I:\Programy\Spell\src\win_api\Release_dll\libhunspell;I:\Programy\WX 2.9.4\lib\vc_lib;H:\Programy\freetype-2.6\objs\vc2010\Win32;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses\Debug;I:\Programy\lua51\Debug;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -88,7 +88,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>I:\Programy\zlib-1.2.8;H:\Programy\freetype-2.6\include;J:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses;I:\Programy\lua51\src;I:\Programy\WX 2.9.4\include;I:\Programy\WX 2.9.4\lib\vc_lib\mswu;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;J:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>I:\Programy\zlib-1.2.8;H:\Programy\freetype-2.6\include;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses;I:\Programy\lua51\src;I:\Programy\WX 2.9.4\include;I:\Programy\WX 2.9.4\lib\vc_lib\mswu;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -104,7 +104,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>wxmsw29u_core.lib;wxbase29u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;odbc32.lib;odbccp32.lib;lua51_vc9.lib;d3d9.lib;D3dx9.lib;ffms2.lib;freetype26MT.lib;strmbase.lib;zlibwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>I:\Programy\zlib-1.2.8\contrib\vstudio\vc10\x86\ZlibDllRelease;H:\Programy\freetype-2.6\objs\vc2010\Win32;J:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses\Release;I:\Programy\lua51\Release;I:\Programy\WX 2.9.4\lib\vc_lib;J:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;J:\Program Files\Microsoft SDKs\Windows\v6.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>I:\Programy\zlib-1.2.8\contrib\vstudio\vc10\x86\ZlibDllRelease;H:\Programy\freetype-2.6\objs\vc2010\Win32;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses\Release;I:\Programy\lua51\Release;I:\Programy\WX 2.9.4\lib\vc_lib;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;C:\Program Files\Microsoft SDKs\Windows\v6.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

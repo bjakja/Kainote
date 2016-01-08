@@ -35,7 +35,7 @@ namespace Auto{
 		static SubsEntry *LuaToLine(lua_State *L);
 	
 	private:
-		SubsFile *File;
+		SubsGrid *grid;
 		lua_State *L;
 
 		bool can_modify;

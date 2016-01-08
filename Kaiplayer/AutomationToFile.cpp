@@ -40,9 +40,11 @@ void AutoToFile::CheckAllowModify()
 bool AutoToFile::LineToLua(lua_State *L, int i)
 	{
 		//AutoToFile *laf = GetObjPointer(L, 1);
-		int sinfo=laf->File->subs->sinfo.size();
-		int styles=sinfo+laf->File->subs->styles.size();
-		int dials=styles+laf->File->subs->dials.size();
+		File *Subs=laf->grid->file->GetSubs();
+
+		int sinfo=Subs->sinfo.size();
+		int styles=sinfo+Subs->styles.size();
+		int dials=styles+Subs->dials.size();
 		//wxLogStatus("iii %i %i %i %i", i, sinfo, styles, dials);
 		if(i<0||i>=dials){
 			return false;
@@ -52,7 +54,7 @@ bool AutoToFile::LineToLua(lua_State *L, int i)
 		if(i<sinfo){
 			//wxLogStatus("sinfo %i %i", i, sinfo );
 			//to jest odczyt wiêc nie kopiujemy
-			SInfo *info=laf->File->subs->sinfo[i];
+			SInfo *info=Subs->sinfo[i];
 
 			wxString raw=info->Name+": "+info->Val;
 			lua_pushstring(L, raw.mb_str(wxConvUTF8).data());
@@ -71,7 +73,7 @@ bool AutoToFile::LineToLua(lua_State *L, int i)
 		{
 			//wxLogStatus("styles %i %i", i-sinfo, dials-sinfo );
 			//to jest odczyt wiêc nie kopiujemy
-			Styles *astyle=laf->File->subs->styles[i-sinfo];
+			Styles *astyle=Subs->styles[i-sinfo];
 			
 			wxString raw=astyle->styletext();
 			lua_pushstring(L, raw.mb_str(wxConvUTF8).data());
@@ -147,7 +149,7 @@ bool AutoToFile::LineToLua(lua_State *L, int i)
 		{
 			//wxLogStatus("dials %i %i", i-styles, dials-styles );
 			//to jest odczyt wiêc nie kopiujemy
-			Dialogue *adial=laf->File->subs->dials[i-styles];
+			Dialogue *adial=Subs->dials[i-styles];
 
 			wxString raw(adial->GetRaw());
 
@@ -363,8 +365,7 @@ SubsEntry *AutoToFile::LuaToLine(lua_State *L)
 
 int AutoToFile::ObjectIndexRead(lua_State *L)
 	{
-		//AutoToFile *laf = GetObjPointer(L, 1);
-
+		File *Subs=laf->grid->file->GetSubs();
 		switch (lua_type(L, 2)) {
 
 			case LUA_TNUMBER:
@@ -385,7 +386,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 
 					if (strcmp(idx, "n") == 0) {
 						// get number of items
-						lua_pushnumber(L, laf->File->subs->dials.size()+laf->File->subs->sinfo.size()+laf->File->subs->styles.size());
+						lua_pushnumber(L, Subs->dials.size()+Subs->sinfo.size()+Subs->styles.size());
 						return 1;
 
 					} else if (strcmp(idx, "delete") == 0) {
@@ -450,7 +451,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 			return 0;
 		}
 
-		//AutoToFile *laf = GetObjPointer(L, 1);
+		File *Subs=laf->grid->file->GetSubs();
 		laf->CheckAllowModify();
 
 		int n = lua_tointeger(L, 2);
@@ -481,9 +482,9 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 				SubsEntry *e=LuaToLine(L);
 				if(!e){return 0;}
 				int i=n-1;
-				int sinfo=laf->File->subs->sinfo.size();
-				int styles=sinfo+laf->File->subs->styles.size();
-				int dials=styles+laf->File->subs->dials.size();
+				int sinfo=Subs->sinfo.size();
+				int styles=sinfo+Subs->styles.size();
+				int dials=styles+Subs->dials.size();
 				if(i<0 || i>=dials){
 					lua_pushstring(L, "Out of range");//"Próbujesz zmodyfikowaæ linijkê o indeksie przekraczaj¹cym wielkoœæ napisów");
 					lua_error(L);
@@ -491,24 +492,24 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 				if(i<sinfo && e->lclass=="info"){
 					//wxLogStatus("Sifno nadpisanie %i, %i", i, sinfo);
 					SInfo *inf=e->info->Copy();
-					laf->File->subs->dsinfo.push_back(inf);
-					laf->File->subs->sinfo[i]=inf;
+					Subs->dsinfo.push_back(inf);
+					Subs->sinfo[i]=inf;
 					}
 				else if(i<styles && e->lclass=="style")
 					{
 					//wxLogStatus("Styles nadpisanie %i, %i", i, styles);
 					Styles *styl = e->astyle->Copy();
-					laf->File->subs->dstyles.push_back(styl);
-					laf->File->subs->styles[i-sinfo]=styl;
+					Subs->dstyles.push_back(styl);
+					Subs->styles[i-sinfo]=styl;
 					//wxLogStatus("style");
 					}
 				else if(i<dials && e->lclass=="dialogue")
 					{
 					//wxLogStatus("Dials nadpisanie %i, %i", i, dials);
 					Dialogue *dial=e->adial->Copy();
-					laf->File->subs->ddials.push_back(dial);
-					laf->File->subs->dials[i-styles]=dial;
-					
+					Subs->ddials.push_back(dial);
+					Subs->dials[i-styles]=dial;
+					laf->grid->SpellErrors[i-styles].clear();
 					//wxLogStatus(dial->GetRaw());
 					}
 				else
@@ -537,26 +538,24 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 
 	int AutoToFile::ObjectGetLen(lua_State *L)
 	{
-		//AutoToFile *laf = GetObjPointer(L, 1);
-		lua_pushnumber(L, laf->File->subs->dials.size()+laf->File->subs->sinfo.size()+laf->File->subs->styles.size());
+		File *Subs=laf->grid->file->GetSubs();
+		lua_pushnumber(L, Subs->dials.size()+Subs->sinfo.size()+Subs->styles.size());
 		return 1;
 	}
 
 	int AutoToFile::ObjectLens(lua_State *L)
 	{
-		//AutoToFile *laf = GetObjPointer(L, lua_upvalueindex(1));
-		lua_pushinteger(L, (int)laf->File->subs->sinfo.size());
-		lua_pushinteger(L, (int)laf->File->subs->styles.size());
-		lua_pushinteger(L, (int)laf->File->subs->dials.size());
+		File *Subs=laf->grid->file->GetSubs();
+		lua_pushinteger(L, (int)Subs->sinfo.size());
+		lua_pushinteger(L, (int)Subs->styles.size());
+		lua_pushinteger(L, (int)Subs->dials.size());
 
 		return 3;
 	}
 
 	int AutoToFile::ObjectDelete(lua_State *L)
 	{
-	//wxLogStatus("wesz³o");
-		//AutoToFile *laf = GetObjPointer(L, lua_upvalueindex(1));
-
+		File *Subs=laf->grid->file->GetSubs();
 		laf->CheckAllowModify();
 		
 		// get number of items to delete
@@ -565,10 +564,10 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 		std::vector<int> ids;
 		//ids.reserve(itemcount);
 		
-
-		int sinfo=laf->File->subs->sinfo.size();
-		int styles=sinfo+laf->File->subs->styles.size();
-		int dials=styles+laf->File->subs->dials.size();
+		//dorobiæ wstawianie do tablic spellerrors i charspersec podczas rysowania
+		int sinfo=Subs->sinfo.size();
+		int styles=sinfo+Subs->styles.size();
+		int dials=styles+Subs->dials.size();
 		// sort the item id's so we can delete from last to first to preserve original numbering
 		while (itemcount > 0) {
 			if (!lua_isnumber(L, itemcount)) {
@@ -598,15 +597,16 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 		{
 			if(ids[i]<sinfo){
 				//wxLogStatus("delete si %i %i", ids[i], sinfo);
-				laf->File->subs->sinfo.erase(laf->File->subs->sinfo.begin()+ids[i]);
+				Subs->sinfo.erase(Subs->sinfo.begin()+ids[i]);
 			}
 			else if(ids[i]<styles){
 				//wxLogStatus("delete st %i %i", ids[i], styles);
-				laf->File->subs->styles.erase(laf->File->subs->styles.begin()+(ids[i]-sinfo));
+				Subs->styles.erase(Subs->styles.begin()+(ids[i]-sinfo));
 			}
 			else if(ids[i]<dials){
 				//wxLogStatus("delete dial %i %i", ids[i]-styles, dials-styles);
-				laf->File->subs->dials.erase(laf->File->subs->dials.begin()+(ids[i]-styles));
+				Subs->dials.erase(Subs->dials.begin()+(ids[i]-styles));
+				laf->grid->SpellErrors.clear();
 			}
 		}
 		 
@@ -615,7 +615,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 
 	int AutoToFile::ObjectDeleteRange(lua_State *L)
 	{
-		//AutoToFile *laf = GetObjPointer(L, lua_upvalueindex(1));
+		File *Subs=laf->grid->file->GetSubs();
 
 		laf->CheckAllowModify();
 		
@@ -628,32 +628,34 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 		int a = lua_tointeger(L, 1), b = lua_tointeger(L, 2);
 
 		if (a < 1) a = 1;
-		if (b > (int)laf->File->subs->dials.size()) b = (int)laf->File->subs->dials.size();
+		if (b > (int)Subs->dials.size()) b = (int)Subs->dials.size();
 
 		if (b < a) return 0;
 		a--;b--;
-		int sinfo=laf->File->subs->sinfo.size();
-		int styles=sinfo+laf->File->subs->styles.size();
-		int dials=styles+laf->File->subs->dials.size();
+		int sinfo=Subs->sinfo.size();
+		int styles=sinfo+Subs->styles.size();
+		int dials=styles+Subs->dials.size();
 
 
 		for(int i=b-1; i >= a; i--){
 			if(i<sinfo){
 				//wxLogStatus("deleterange si %i %i", i, sinfo); 
-				laf->File->subs->sinfo.erase(laf->File->subs->sinfo.begin()+i);
+				Subs->sinfo.erase(Subs->sinfo.begin()+i);
 			}else if(i<styles){
 				//wxLogStatus("deleterange st %i %i", i, styles);
-				laf->File->subs->styles.erase(laf->File->subs->styles.begin()+i-sinfo);
+				Subs->styles.erase(Subs->styles.begin()+i-sinfo);
 			}else if(i<dials){
 				//wxLogStatus("deleterange dial %i %i", i, dials);
-				laf->File->subs->dials.erase(laf->File->subs->dials.begin()+i-styles);}
+				Subs->dials.erase(Subs->dials.begin()+i-styles);
+				laf->grid->SpellErrors.clear();
+			}
 		}	
 		return 0;
 	}
 
 	int AutoToFile::ObjectAppend(lua_State *L)
 	{
-		//AutoToFile *laf = GetObjPointer(L, lua_upvalueindex(1));
+		File *Subs=laf->grid->file->GetSubs();
 
 		laf->CheckAllowModify();
 		
@@ -665,8 +667,8 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 			if(!e){return 0;}
 			if(e->lclass=="dialogue"){
 				Dialogue *dial=e->adial->Copy();
-				laf->File->subs->ddials.push_back(dial);
-				laf->File->subs->dials.push_back(dial);
+				Subs->ddials.push_back(dial);
+				Subs->dials.push_back(dial);
 			}
 			wxDELETE(e);
 		}
@@ -676,7 +678,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 
 	int AutoToFile::ObjectInsert(lua_State *L)
 	{
-		//AutoToFile *laf = GetObjPointer(L, lua_upvalueindex(1));
+		File *Subs=laf->grid->file->GetSubs();
 
 		laf->CheckAllowModify();
 		
@@ -690,7 +692,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 
 		int start = int(lua_tonumber(L, 1)-1);
 		
-		if(start<0 || start>(int)(laf->File->subs->sinfo.size()+laf->File->subs->styles.size()+laf->File->subs->dials.size()))
+		if(start<0 || start>(int)(Subs->sinfo.size()+Subs->styles.size()+Subs->dials.size()))
 		{
 			lua_pushstring(L, "Indeks przekracza wielkosc tablicy z napiami");
 			lua_error(L);
@@ -702,35 +704,35 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 			SubsEntry *e = LuaToLine(L);
 			if(!e){return 0;}
 			lua_pop(L, 1);
-			int sinfo=laf->File->subs->sinfo.size();
-			int stylsize=laf->File->subs->styles.size();
+			int sinfo=Subs->sinfo.size();
+			int stylsize=Subs->styles.size();
 			int styles=sinfo+stylsize;
-			int dialsize=laf->File->subs->dials.size();
+			int dialsize=Subs->dials.size();
 			int dials=styles+dialsize;
 			
 			if(e->lclass=="info")
 			{
 				SInfo *inf=e->info->Copy();
 				//wxLogStatus("sinfostart %i %i", start, sinfo);
-				if(start >= sinfo){laf->File->subs->sinfo.push_back(inf);}
-				else{laf->File->subs->sinfo.insert(laf->File->subs->sinfo.begin()+start, inf);}
-				laf->File->subs->dsinfo.push_back(inf);
+				if(start >= sinfo){Subs->sinfo.push_back(inf);}
+				else{Subs->sinfo.insert(Subs->sinfo.begin()+start, inf);}
+				Subs->dsinfo.push_back(inf);
 			}
 			else if(e->lclass=="style")
 			{
 				//wxLogStatus("stylesstart %i %i", start-sinfo, stylsize);
 				Styles *styl=e->astyle->Copy();
-				if(start-sinfo >= stylsize){laf->File->subs->styles.push_back(styl);}
-				else{laf->File->subs->styles.insert(laf->File->subs->styles.begin()+(start-sinfo), styl);}
-				laf->File->subs->dstyles.push_back(styl);
+				if(start-sinfo >= stylsize){Subs->styles.push_back(styl);}
+				else{Subs->styles.insert(Subs->styles.begin()+(start-sinfo), styl);}
+				Subs->dstyles.push_back(styl);
 			}
 			else if(e->lclass=="dialogue")
 			{
-				//wxLogStatus("dialstart %i %i", start-styles, laf->File->subs->dials.size());
+				//wxLogStatus("dialstart %i %i", start-styles, Subs->dials.size());
 				Dialogue *dial=e->adial->Copy();
-				if(start-styles >= dialsize){laf->File->subs->dials.push_back(dial);}
-				else{laf->File->subs->dials.insert(laf->File->subs->dials.begin()+(start-styles), dial);}
-				laf->File->subs->ddials.push_back(dial);
+				if(start-styles >= dialsize){Subs->dials.push_back(dial);}
+				else{Subs->dials.insert(Subs->dials.begin()+(start-styles), dial);}
+				Subs->ddials.push_back(dial);
 			}
 			else{
 				
@@ -856,7 +858,7 @@ AutoToFile::AutoToFile(lua_State *_L, bool _can_modify)
 	//*((AutoToFile**)ud) = this;
 	laf=this;
 
-	File=Notebook::GetTab()->Grid1->file;
+	grid = Notebook::GetTab()->Grid1;
 	can_modify=_can_modify;
 
 

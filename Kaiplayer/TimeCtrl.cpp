@@ -3,6 +3,7 @@
 #include <wx/regex.h>
 #include <wx/clipbrd.h>
 #include "config.h"
+#include "NumCtrl.h"
 
 TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, const wxPoint& pos,const wxSize& size, long style,const wxValidator& validator, const wxString& name)
          : wxTextCtrl(parent, id, val, pos, size, style, validator, name)
@@ -80,7 +81,7 @@ void TimeCtrl::OnTimeWrite(wxCommandEvent& event)
 
 	}
 	pastes=false;
-	if(IsModified()){wxCommandEvent evt2(wxEVT_COMMAND_BUTTON_CLICKED, GetId()); AddPendingEvent(evt2);}
+	if(IsModified()){wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);}
 }
 
 void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
@@ -216,7 +217,7 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 			SetValue(value.GetFormatted(form));MarkDirty();oldposx=posx;
 			SetSelection(curpos,curpos);
 		}
-		if(IsModified()){wxCommandEvent evt2(wxEVT_COMMAND_BUTTON_CLICKED, GetId()); AddPendingEvent(evt2);}
+		if(IsModified()){wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);}
 		}
 
 	if(rclick)
@@ -256,7 +257,7 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 		if(value.mstime<0||value.mstime>35999999){return;}
 		SetValue(value.GetFormatted(form));MarkDirty();
 
-		wxCommandEvent evt2(wxEVT_COMMAND_BUTTON_CLICKED, GetId()); AddPendingEvent(evt2);
+		wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);
 		return;}
 
 	event.Skip();

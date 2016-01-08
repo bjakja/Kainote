@@ -54,7 +54,8 @@ void Visuals::DrawClip()
 	
 	//wxLogStatus("Create line %i %i", Points[0].x, Points[0].y);
 	size_t g=1;
-	while(g<Points.size()){
+	size_t size = Points.size();
+	while(g < size){
 		if(Points[g].type=="b"||Points[g].type=="s"){
 			g+=DrawCurve(g,(Points[g].type=="s"));
 		}else if(Points[g].type=="l"){
@@ -65,8 +66,13 @@ void Visuals::DrawClip()
 			g++;}
 
 	}
-	
-	DrawRect(Points.size()-1);
+	if(size>2){
+		line->Begin();
+		D3DXVECTOR2 v2[2]={Points[size-1].GetVector(), Points[0].GetVector()};
+		line->Draw(v2, 2, 0xFFFF0000);
+		line->End();
+	}
+	DrawRect(size-1);
 	
 
 	if(drawtxt){

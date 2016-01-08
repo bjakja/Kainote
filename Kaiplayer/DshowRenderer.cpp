@@ -45,11 +45,10 @@ void CD2DVideoRender::OnReceiveFirstSample(IMediaSample *pMediaSample)
 		Vrend->time= time+(start/10000.0);}
 	Vrend->seek=false;
 	if(Vrend->vstate==Playing||Vrend->block){return;}//||Vrend->block
-
 	norender=true;
+
 	Vrend->DrawTexture(pBuffer, true);
 	Vrend->Render();
-	
 }
 
 HRESULT CD2DVideoRender::Render(IMediaSample *pMediaSample)
@@ -61,7 +60,6 @@ HRESULT CD2DVideoRender::Render(IMediaSample *pMediaSample)
 	
 	BYTE* pBuffer = NULL;
 	HR1(pMediaSample->GetPointer(&pBuffer));
-	
 	//wxLogMessage("leng %i",(int)pMediaSample->GetActualDataLength());
 	
 	REFERENCE_TIME start=0, end=0;
@@ -74,7 +72,7 @@ HRESULT CD2DVideoRender::Render(IMediaSample *pMediaSample)
 		}
 		Vrend->DrawTexture(pBuffer);
 		Vrend->Render();
-	}//else{byte *cpy = (byte*) Vrend->datas; memcpy(cpy,pBuffer,pMediaSample->GetSize());}
+	}else{byte *cpy = (byte*) Vrend->datas; memcpy(cpy,pBuffer,pMediaSample->GetSize());}
 	
 	return S_OK;
 }
@@ -83,7 +81,6 @@ HRESULT CD2DVideoRender::CheckMediaType(const CMediaType *pmt)
 {
 	
 	CheckPointer(pmt, E_POINTER);
-	
 	if(pmt->majortype != MEDIATYPE_Video)
     {
         return E_FAIL;

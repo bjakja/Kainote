@@ -40,7 +40,7 @@
 #define HRN(what,err) if(FAILED(what)) {wxLogStatus(err); return;}
 #endif
 
-//#define vertices 5
+//#define byvertices 5
 
 typedef void csri_inst;
 typedef void csri_rend;
@@ -87,7 +87,7 @@ class VideoRend : public wxWindow
 		void GetVideoSize(int *width, int *height);
 		wxSize GetVideoSize();
 		void GetFpsnRatio(float *fps, long *arx, long *ary);
-		void UpdateVideoWindow(bool bars=true, bool firstload=false);
+		void UpdateVideoWindow(bool bars=true);
 		void SetVolume(int vol);
 		
 		void Render(bool Frame=true);
@@ -129,13 +129,13 @@ class VideoRend : public wxWindow
 		LPD3DXFONT m_font;
 		VideoFfmpeg *VFF;
 		AudioDisplay *player;
-		wxMutex mutexSizing;
+		//wxMutex mutexSizing;
 		wxMutex mutexRender;
-		wxMutex mutexDrawing;
+		//wxMutex mutexDrawing;
 		wxMutex mutexLines;
 		wxMutex mutexProgBar;
 		wxMutex mutexOpenFile;
-		wxMutex mutexOpenSubs;
+		//wxMutex mutexOpenSubs;
 		PlaybackState vstate;
 		Visuals *Vclips;
 		int playend;
@@ -156,7 +156,7 @@ class VideoRend : public wxWindow
 		LPDIRECT3DSURFACE9 bars;
 
 
-#if vertices
+#if byvertices
 		LPDIRECT3DVERTEXBUFFER9 vertex;
 		LPDIRECT3DTEXTURE9 texture;
 #endif

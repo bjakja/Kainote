@@ -1,25 +1,25 @@
 
 #include "NumCtrl.h"
-
+wxDEFINE_EVENT(NUMBER_CHANGED, wxCommandEvent);
 
 wxString getdouble(double num)
-	{
+{
 	wxString strnum=wxString::Format(_T("%f"),num);
 	strnum.Replace(",",".");
 	int rmv=0;
 	for(int i=strnum.Len()-1;i>0;i--)
-		{
+	{
 		if(strnum[i]=='0'){rmv++;}
 		else if(strnum[i]=='.'){rmv++;break;}
 		else{break;}
-		}
+	}
 	if(rmv){strnum.RemoveLast(rmv);}
 	return strnum;
-	}
+}
 
 NumCtrl::NumCtrl(wxWindow *parent,long id,wxString text, int rangefrom, int rangeto, bool intonly, const wxPoint &pos, const wxSize &size, long style)
 	:wxTextCtrl(parent, id, text, pos, size, style)
-	{
+{
 
 	rfrom=rangefrom;
 	rto=rangeto;
@@ -45,49 +45,49 @@ NumCtrl::NumCtrl(wxWindow *parent,long id,wxString text, int rangefrom, int rang
 	includes.Add(_T("9"));
 	if (rfrom<0){
 		includes.Add(_T("-"));
-		}
+	}
 	if (!oint){
 		includes.Add(_T("."));
 		includes.Add(_T(","));
-		}
+	}
 	valid.SetIncludes(includes);
 	SetValidator(valid);
 
 	Connect(wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&NumCtrl::OnNumWrite);
-    //Connect(wxEVT_KEY_DOWN,(wxObjectEventFunction)&NumCtrl::OnKeyEvent);
-	
-	}
+	//Connect(wxEVT_KEY_DOWN,(wxObjectEventFunction)&NumCtrl::OnKeyEvent);
+
+}
 
 NumCtrl::~NumCtrl()
-	{
+{
 }
 
 
 void NumCtrl::SetString(wxString val)
-	{
+{
 	if(!val.ToDouble(&value))
-		{val.ToCDouble(&value);}
+	{val.ToCDouble(&value);}
 
 	if(oint){
 		int finds=val.Find('.',true);
 		if(finds!=-1){val=val.BeforeFirst('.');}
 		finds=val.Find(',',true);
 		if(finds!=-1){val=val.BeforeFirst(',');}
-		}else{
-			val.Replace(",",".");}
+	}else{
+		val.Replace(",",".");}
 	if(value>(double)rto)
-		{
+	{
 		value=rto;
 		val = getdouble(value);
-		}
+	}
 	if(value<(double)rfrom)
-		{
+	{
 		value=rfrom;
 		val = getdouble(value);
-		}
+	}
 	oldval=val;
 	SetValue(val);
-	}
+}
 
 void NumCtrl::SetInt(int val)
 {
@@ -129,7 +129,7 @@ int NumCtrl::GetInt()
 	//	value=rto;
 	//if(value<(double)rfrom)
 	//	value=rfrom;
-    return (int)value;
+	return (int)value;
 }
 
 double NumCtrl::GetDouble()
@@ -140,7 +140,7 @@ double NumCtrl::GetDouble()
 	//	value=(double)rto;
 	//if(value<(double)rfrom)
 	//	value=(double)rfrom;
-    return value;
+	return value;
 }
 
 
@@ -157,7 +157,7 @@ void NumCtrl::OnNumWrite(wxCommandEvent& event)
 	else if(!val.ToCDouble(&value)||value>(double)rto||value<(double)rfrom){
 		SetValue(oldval);wxBell();
 	}else{oldval=val;}
-	if(IsModified()){wxCommandEvent evt2(wxEVT_COMMAND_BUTTON_CLICKED, GetId()); AddPendingEvent(evt2);}
+	if(IsModified()){wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);}
 	event.Skip();
 }
 
@@ -168,25 +168,25 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 	int posy=event.GetY();
 	int posx=event.GetX();
 
-	
+
 	if(holding&&right_up)
-		{
+	{
 		holding=false;
 		SetFocus();
 		ReleaseMouse();
 		return;
-		}
+	}
 	if(holding)
 	{
 		if((oldpos+5)<posy){
 			double nval=value-1;
-			if(value<(double)rfrom){return;}
+			if(value<=(double)rfrom){return;}
 			SetValue(getdouble(nval));MarkDirty();
 			oldpos=posy;value=nval;
 			SetSelection(curpos,curpos);
 		}else if((oldpos-5)>posy){
 			double nval=value+1;
-			if(value>(double)rto){return;}
+			if(value>=(double)rto){return;}
 			SetValue(getdouble(nval));MarkDirty();
 			oldpos=posy;value=nval;
 			SetSelection(curpos,curpos);
@@ -204,7 +204,7 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 			SetValue(getdouble(nval));MarkDirty();oldposx=posx;value=nval;
 			SetSelection(curpos,curpos);
 		}
-		if(IsModified()){wxCommandEvent evt2(wxEVT_COMMAND_BUTTON_CLICKED, GetId()); AddPendingEvent(evt2);}
+		if(IsModified()){wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);}
 	}
 
 	if(rclick)
@@ -220,7 +220,7 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 		CaptureMouse();
 	}
 
-	
+
 	if (event.GetWheelRotation() != 0) {
 		int step = event.GetWheelRotation() / event.GetWheelDelta();
 		value+=step;
@@ -231,12 +231,14 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 	event.Skip();
 }
 
-
+void NumCtrl::OnMouseLost(wxMouseCaptureLostEvent& event)
+{
+	if(HasCapture()){ReleaseMouse();}
+}
 
 
 BEGIN_EVENT_TABLE(NumCtrl, wxTextCtrl)
 	EVT_MOUSE_EVENTS(NumCtrl::OnMouseEvent)
-	//EVT_MENU(Time_Copy,NumCtrl::OnCopy)
-	//EVT_MENU(Time_Paste,NumCtrl::OnPaste)
-END_EVENT_TABLE()
+	EVT_MOUSE_CAPTURE_LOST(NumCtrl::OnMouseLost)
+	END_EVENT_TABLE()
 

@@ -1,19 +1,20 @@
 #ifndef VIDEOFFMPEG
 #define VIDEOFFMPEG
 
-#include <wx/wx.h>
-#include <wx/file.h>
-#include "ProgressDialog.h"
-#include <vector>
-#include <stdint.h>
-#include "include\ffms.h"
 
+#pragma once
+#include <wx/string.h>
+#include <wx/file.h>
+#include <vector>
+//#include <stdint.h>
+#include "include\ffms.h"
+#include "ProgressDialog.h"
 
 
 class VideoFfmpeg
 {
 public:
-	VideoFfmpeg(wxString filename, int tab, bool *success);
+	VideoFfmpeg(const wxString &filename, int tab, bool *success);
 	~VideoFfmpeg();
 	void GetFrame(int frame, byte* buff);
 	void GetBuffer(void *buf, int64_t start, int64_t count, double vol=1.0);
@@ -42,15 +43,12 @@ public:
 	std::vector<int> Timecodes;
 	int GetMSfromFrame(int frame);
 	int GetFramefromMS(int MS, int seekfrom=1);
-	int Init();
+	int Init(const wxString &filename, int tab);
 
-
-	//static DWORD WINAPI ThreadProc(LPVOID lpParameter);
 	//bool com_inited;
 	ProgresDialog *progress;
 	static int __stdcall UpdateProgress(int64_t Current, int64_t Total, void *ICPrivate);
 	void Clearcache();
-	//void PlayVFF(void *clsv);
 	FFMS_VideoSource *videosource;
 	FFMS_AudioSource *audiosource;
 	FFMS_ErrorInfo errinfo;
@@ -58,8 +56,8 @@ public:
 	int SampleRate;
 	int BytesPerSample;
 	int Channels;
-	int atab;
-	wxString filen;
+
+	
 	int64_t NumSamples;
 	
 	
@@ -71,7 +69,7 @@ public:
 	bool disccache;
 	wxMutex blockaudio;
 	wxMutex blockvideo;
-	volatile bool isgetstream;
+	
 private:
 	
 	char **Cache;

@@ -203,7 +203,7 @@ void MTextEditor::OnAccelerator(wxCommandEvent& event)
 		case ID_CBACK:
 			if(Cursor.x==0){return;}
 			Selend.x=Cursor.x;
-			FindWord((Cursor.x<2)? 0 : Cursor.x-2 ,&Cursor.x,&len);
+			FindWord((Cursor.x<2)? 0 : Cursor.x-1 ,&Cursor.x,&len);
 			if(Cursor.x==1 && MText[0]==' '){Cursor.x--;}
 		case ID_DEL:
 		case ID_BACK:
@@ -1028,7 +1028,8 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 		SetSelection(from,from);modified=true;}
 	else if(id==TEXTM_ADD){
 		bool succ=Kai->SC->AddWord(err);
-		if(!succ){wxMessageBox("B章d, s這wo \""+err+"\" nie zosta這 dodane.");}else{CheckText();EB->ClearErrs();Refresh(false);}
+		if(!succ){wxMessageBox("B章d, s這wo \""+err+"\" nie zosta這 dodane.");}
+		else{CheckText();EB->ClearErrs();Refresh(false);}
 	}else if(id==TEXTM_SEEKWORDL||id==TEXTM_SEEKWORDB){
 		wxString page=(id==TEXTM_SEEKWORDL)? "http://ling.pl/" : "http://pl.bab.la/slownik/angielski-polski/";
 		long from, to;

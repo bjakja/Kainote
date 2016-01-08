@@ -76,32 +76,32 @@ wxArrayString FontCollectorDialog::GetAssFonts(std::vector<bool> &founded, bool 
 	wxArrayString fonts;
 	std::map<wxString, wxString> notfindfonts;
 	std::map<wxString, wxString> stylesfonts;
-	SubsFile *file = Notebook::GetTab()->Grid1->file;
+	File *subs= Notebook::GetTab()->Grid1->file->GetSubs();
 	wxRegEx reg(_T("\\{[^\\{]*\\}"),wxRE_ADVANCED);
 
 	console->SetDefaultStyle(wxTextAttr(*wxBLACK));
-	for(size_t i=0; i<file->subs->styles.size(); i++)
+	for(size_t i=0; i<subs->styles.size(); i++)
 	{
-		wxString fn=file->subs->styles[i]->Fontname.Lower();
+		wxString fn=subs->styles[i]->Fontname.Lower();
 		if(facenames.Index(fn,false)==-1){
-			notfindfonts[fn]<<file->subs->styles[i]->Name<<" ";
+			notfindfonts[fn]<<subs->styles[i]->Name<<" ";
 			continue;
 		}
 		else if(fonts.Index(fn,false)==-1)
 		{
 			fonts.Add(fn);
-			console->AppendText("Znaleziono czcionkê o nazwie \""+file->subs->styles[i]->Fontname+"\" w stylu \""+file->subs->styles[i]->Name+"\".\n \n");
-			console->AppendText("Czcionka \""+file->subs->styles[i]->Fontname+"\" jest zainstalowana.\n \n");
+			console->AppendText("Znaleziono czcionkê o nazwie \""+subs->styles[i]->Fontname+"\" w stylu \""+subs->styles[i]->Name+"\".\n \n");
+			console->AppendText("Czcionka \""+subs->styles[i]->Fontname+"\" jest zainstalowana.\n \n");
 			founded.push_back(check);
 		}
-		stylesfonts[file->subs->styles[i]->Name]=fn;
-		//wxLogStatus(file->subs->styles[i]->Name + " " + fn);
+		stylesfonts[subs->styles[i]->Name]=fn;
+		//wxLogStatus(subs->styles[i]->Name + " " + fn);
 	}
 
-	for(size_t i=0; i<file->subs->dials.size(); i++)
+	for(size_t i=0; i<subs->dials.size(); i++)
 	{
-		wxString text=file->subs->dials[i]->Text + file->subs->dials[i]->TextTl;
-		wxString ifont=stylesfonts[file->subs->dials[i]->Style];
+		wxString text=subs->dials[i]->Text + subs->dials[i]->TextTl;
+		wxString ifont=stylesfonts[subs->dials[i]->Style];
 		//wxLogStatus(ifont);
 		int wlet=0;
 		while(true)

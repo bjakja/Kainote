@@ -2,7 +2,7 @@
 #define NUMCTRL
 
 #include <wx/wx.h>
-
+wxDECLARE_EVENT(NUMBER_CHANGED, wxCommandEvent);
 
 class NumCtrl : public wxTextCtrl
 	{
@@ -24,7 +24,7 @@ class NumCtrl : public wxTextCtrl
 		void OnNumWrite(wxCommandEvent& event);
         void OnMouseEvent(wxMouseEvent &event);
         //void OnKeyEvent(wxKeyEvent& event);
-
+		void OnMouseLost(wxMouseCaptureLostEvent& event);
 		int rfrom;
 		int rto;
 		bool oint;

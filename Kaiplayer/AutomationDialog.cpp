@@ -8,7 +8,7 @@
 
 namespace Auto{
 
-LuaConfigDialogCtrl::LuaConfigDialogCtrl(lua_State *L)
+	LuaConfigDialogCtrl::LuaConfigDialogCtrl(lua_State *L)
 	{
 		// Assume top of stack is a control table (don't do checking)
 
@@ -66,37 +66,37 @@ LuaConfigDialogCtrl::LuaConfigDialogCtrl(lua_State *L)
 		cw=NULL;
 	}
 
-Edit::Edit(lua_State *L, wxWindow *parent, bool _state)
-	: LuaConfigDialogCtrl(L)
-	, state(_state)
+	Edit::Edit(lua_State *L, wxWindow *parent, bool _state)
+		: LuaConfigDialogCtrl(L)
+		, state(_state)
 	{
-	lua_getfield(L, -1, "value");
-	if (lua_isnil(L, -1))
+		lua_getfield(L, -1, "value");
+		if (lua_isnil(L, -1))
 		{
-		lua_pop(L, 1);
-		lua_getfield(L, -1, "text");
+			lua_pop(L, 1);
+			lua_getfield(L, -1, "text");
 		}
-	text = wxString(lua_tostring(L, -1), wxConvUTF8);
-	lua_pop(L, 1);
+		text = wxString(lua_tostring(L, -1), wxConvUTF8);
+		lua_pop(L, 1);
 
-	cw = new wxTextCtrl(parent, -1, text, wxDefaultPosition, wxDefaultSize, (state)? 0 : wxTE_MULTILINE);
-	
-	cw->SetToolTip(hint);
+		cw = new wxTextCtrl(parent, -1, text, wxDefaultPosition, wxDefaultSize, (state)? 0 : wxTE_MULTILINE);
+
+		cw->SetToolTip(hint);
 	}
 
-void Edit::ControlReadBack()
+	void Edit::ControlReadBack()
 	{
 		text = ((wxTextCtrl*)cw)->GetValue();
 	}
 
-void Edit::LuaReadBack(lua_State *L)
+	void Edit::LuaReadBack(lua_State *L)
 	{
 		lua_pushfstring(L, text.mb_str(wxConvUTF8));	
 	}
 
-NumEdit::NumEdit(lua_State *L, wxWindow *parent, bool _state)
-	: LuaConfigDialogCtrl(L)
-	, state(_state)
+	NumEdit::NumEdit(lua_State *L, wxWindow *parent, bool _state)
+		: LuaConfigDialogCtrl(L)
+		, state(_state)
 	{
 
 		lua_getfield(L, -1, "value");
@@ -109,167 +109,167 @@ NumEdit::NumEdit(lua_State *L, wxWindow *parent, bool _state)
 		lua_getfield(L, -1, "min");
 		if (lua_isnumber(L, -1)){
 			min = (state)? lua_tointeger(L, -1) : lua_tonumber(L, -1);}else{nomin=true;}
-		lua_pop(L, 1);
+			lua_pop(L, 1);
 
-		lua_getfield(L, -1, "max");
-		if (lua_isnumber(L, -1)){
-			max = (state)? lua_tointeger(L, -1) : lua_tonumber(L, -1);}else{nomax=true;}
-		lua_pop(L, 1);
-		//wxLogStatus("min %i, max %i",min,max);
-		if(nomin){min=-100000000.0f;}
-		if(nomax){max=100000000.0f;}
+			lua_getfield(L, -1, "max");
+			if (lua_isnumber(L, -1)){
+				max = (state)? lua_tointeger(L, -1) : lua_tonumber(L, -1);}else{nomax=true;}
+				lua_pop(L, 1);
+				//wxLogStatus("min %i, max %i",min,max);
+				if(nomin){min=-2000000000;}
+				if(nomax){max=2000000000;}
 
-		cw = new NumCtrl(parent, -1, text, min, max, (state), wxDefaultPosition, wxDefaultSize, 0);
-		
+				cw = new NumCtrl(parent, -1, text, min, max, (state), wxDefaultPosition, wxDefaultSize, 0);
 
-	
-	cw->SetToolTip(hint);
+
+
+				cw->SetToolTip(hint);
 	}
 
-void NumEdit::ControlReadBack()
+	void NumEdit::ControlReadBack()
 	{
-	if(state){
-		value=((NumCtrl*)cw)->GetInt();
+		if(state){
+			value=((NumCtrl*)cw)->GetInt();
 		}
-	else{
-		value=(float)((NumCtrl*)cw)->GetDouble();
+		else{
+			value=(float)((NumCtrl*)cw)->GetDouble();
 		}
 	}
 
-void NumEdit::LuaReadBack(lua_State *L)
+	void NumEdit::LuaReadBack(lua_State *L)
 	{
 
-	if(state){
-		lua_pushinteger(L, (int)value);
+		if(state){
+			lua_pushinteger(L, (int)value);
 		}
-	else
+		else
 		{
-		lua_pushnumber(L, value);
+			lua_pushnumber(L, value);
 		}
 	}
 
 
-DropDown::DropDown(lua_State *L, wxWindow *parent)
-	: LuaConfigDialogCtrl(L)
+	DropDown::DropDown(lua_State *L, wxWindow *parent)
+		: LuaConfigDialogCtrl(L)
 	{
-	lua_getfield(L, -1, "value");
-	value = wxString(lua_tostring(L, -1), wxConvUTF8);
-	lua_pop(L, 1);
-
-	lua_getfield(L, -1, "items");
-	lua_pushnil(L);
-	while (lua_next(L, -2)) {
-		if (lua_isstring(L, -1)) {
-			items.Add(wxString(lua_tostring(L, -1), wxConvUTF8));
-			}
+		lua_getfield(L, -1, "value");
+		value = wxString(lua_tostring(L, -1), wxConvUTF8);
 		lua_pop(L, 1);
+
+		lua_getfield(L, -1, "items");
+		lua_pushnil(L);
+		while (lua_next(L, -2)) {
+			if (lua_isstring(L, -1)) {
+				items.Add(wxString(lua_tostring(L, -1), wxConvUTF8));
+			}
+			lua_pop(L, 1);
 		}
-	lua_pop(L, 1);
+		lua_pop(L, 1);
 
-	cw = new wxComboBox(parent, -1, value, wxDefaultPosition, wxDefaultSize, items, wxCB_READONLY);
-	cw->SetToolTip(hint);
+		cw = new wxComboBox(parent, -1, value, wxDefaultPosition, wxDefaultSize, items, wxCB_READONLY);
+		cw->SetToolTip(hint);
 	}
 
-void DropDown::ControlReadBack()
+	void DropDown::ControlReadBack()
 	{
-	value = ((wxComboBox*)cw)->GetValue();
+		value = ((wxComboBox*)cw)->GetValue();
 	}
 
-void DropDown::LuaReadBack(lua_State *L)
+	void DropDown::LuaReadBack(lua_State *L)
 	{
-	lua_pushstring(L, value.mb_str(wxConvUTF8).data());
+		lua_pushstring(L, value.mb_str(wxConvUTF8).data());
 	}
 
-Label::Label(lua_State *L, wxWindow *parent)
-	: LuaConfigDialogCtrl(L)
+	Label::Label(lua_State *L, wxWindow *parent)
+		: LuaConfigDialogCtrl(L)
 	{
-	lua_getfield(L, -1, "label");
-	label = wxString(lua_tostring(L, -1), wxConvUTF8);
-	lua_pop(L, 1);
+		lua_getfield(L, -1, "label");
+		label = wxString(lua_tostring(L, -1), wxConvUTF8);
+		lua_pop(L, 1);
 
-	cw = new wxStaticText(parent, -1, label);
+		cw = new wxStaticText(parent, -1, label);
 	}
 
-void Label::ControlReadBack()
+	void Label::ControlReadBack()
 	{
 	}
 
-void Label::LuaReadBack(lua_State *L)
+	void Label::LuaReadBack(lua_State *L)
 	{
 		lua_pushnil(L);
 	}
-	
 
-Checkbox::Checkbox(lua_State *L, wxWindow *parent)
-	: LuaConfigDialogCtrl(L)
+
+	Checkbox::Checkbox(lua_State *L, wxWindow *parent)
+		: LuaConfigDialogCtrl(L)
 	{
-	lua_getfield(L, -1, "label");
-	label = wxString(lua_tostring(L, -1), wxConvUTF8);
-	lua_pop(L, 1);
+		lua_getfield(L, -1, "label");
+		label = wxString(lua_tostring(L, -1), wxConvUTF8);
+		lua_pop(L, 1);
 
-	lua_getfield(L, -1, "value");
-	value = lua_toboolean(L, -1) != 0;
-	lua_pop(L, 1);
+		lua_getfield(L, -1, "value");
+		value = lua_toboolean(L, -1) != 0;
+		lua_pop(L, 1);
 
-	cw = new wxCheckBox(parent, -1, label);
-	cw->SetToolTip(hint);
-	static_cast<wxCheckBox*>(cw)->SetValue(value);
+		cw = new wxCheckBox(parent, -1, label);
+		cw->SetToolTip(hint);
+		static_cast<wxCheckBox*>(cw)->SetValue(value);
 
 	}
 
-void Checkbox::ControlReadBack()
+	void Checkbox::ControlReadBack()
 	{
-	value = ((wxCheckBox*)cw)->GetValue();
+		value = ((wxCheckBox*)cw)->GetValue();
 	}
 
-void Checkbox::LuaReadBack(lua_State *L)
+	void Checkbox::LuaReadBack(lua_State *L)
 	{
-	lua_pushboolean(L, value);
+		lua_pushboolean(L, value);
 	}
 
-Color::Color(lua_State *L, wxWindow *parent)
-	: LuaConfigDialogCtrl(L)
+	Color::Color(lua_State *L, wxWindow *parent)
+		: LuaConfigDialogCtrl(L)
 	{
-	lua_getfield(L, -1, "value");
-	text = wxString(lua_tostring(L, -1), wxConvUTF8);
-	lua_pop(L, 1);
-	AssColor kol(text);
-	cw = new ButtonColorPicker(parent, kol.GetWX());
-	cw->SetToolTip(hint);
+		lua_getfield(L, -1, "value");
+		text = wxString(lua_tostring(L, -1), wxConvUTF8);
+		lua_pop(L, 1);
+		AssColor kol(text);
+		cw = new ButtonColorPicker(parent, kol.GetWX());
+		cw->SetToolTip(hint);
 	}
 
-void Color::ControlReadBack()
+	void Color::ControlReadBack()
 	{
-	text = ((ButtonColorPicker*)cw)->GetColor().GetAsString(wxC2S_HTML_SYNTAX);
+		text = ((ButtonColorPicker*)cw)->GetColor().GetAsString(wxC2S_HTML_SYNTAX);
 	}
 
-void Color::LuaReadBack(lua_State *L)
+	void Color::LuaReadBack(lua_State *L)
 	{
-	lua_pushstring(L, text.mb_str(wxConvUTF8).data());
+		lua_pushstring(L, text.mb_str(wxConvUTF8).data());
 	}
 
-LuaConfigDialog::LuaConfigDialog(lua_State *L, wxWindow *_parent, wxString name)
+	LuaConfigDialog::LuaConfigDialog(lua_State *L, wxWindow *_parent, wxString name)
 		: wxDialog(_parent,-1,name)
 	{
-	//wxLogStatus("config dialog");
+		//wxLogStatus("config dialog");
 
 		button_pushed = 0;
 
-			if (!lua_istable(L, -1))
-				// Just to avoid deeper indentation...
+		if (!lua_istable(L, -1))
+			// Just to avoid deeper indentation...
 				goto skipbuttons;
-			// Iterate over items in table
-			lua_pushnil(L); // initial key
-			while (lua_next(L, -2)) {
-				// Simply skip invalid items... FIXME, warn here?
-				if (lua_isstring(L, -1)) {
-					wxString s(lua_tostring(L, -1), wxConvUTF8);
-					buttons.push_back(s);
-				}
-				lua_pop(L, 1);
+		// Iterate over items in table
+		lua_pushnil(L); // initial key
+		while (lua_next(L, -2)) {
+			// Simply skip invalid items... FIXME, warn here?
+			if (lua_isstring(L, -1)) {
+				wxString s(lua_tostring(L, -1), wxConvUTF8);
+				buttons.push_back(s);
 			}
-skipbuttons:
 			lua_pop(L, 1);
+		}
+skipbuttons:
+		lua_pop(L, 1);
 
 		// assume top of stack now contains a dialog table
 		if (!lua_istable(L, -1)) {
@@ -342,28 +342,28 @@ badcontrol:
 			}
 		}
 		//wxLogStatus("pushed controls");
-		
-			wxStdDialogButtonSizer *bs = new wxStdDialogButtonSizer();
-			if (buttons.size() > 0) {
-				for (size_t i = 0; i < buttons.size(); ++i) {
-					bs->Add(new wxButton(this, 1001+(wxWindowID)i, buttons[i]));
-				}
-			} else {
-				bs->Add(new wxButton(this, wxID_OK));
-				bs->Add(new wxButton(this, wxID_CANCEL));
-			}
-			bs->Realize();
-			//wxLogStatus("Buttons");
-			
-			// passing button_event as userdata because wx will then delete it
-			Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&LuaConfigDialog::OnButtonPush);
 
-			wxBoxSizer *ms = new wxBoxSizer(wxVERTICAL);
-			ms->Add(s, 0, wxALL, 10);
-			ms->Add(bs, 0, wxALIGN_CENTER|wxLEFT|wxRIGHT|wxBOTTOM, 10);
-			SetSizerAndFit(ms);
-			//wxLogStatus("All");
-			
+		wxStdDialogButtonSizer *bs = new wxStdDialogButtonSizer();
+		if (buttons.size() > 0) {
+			for (size_t i = 0; i < buttons.size(); ++i) {
+				bs->Add(new wxButton(this, 1001+(wxWindowID)i, buttons[i]));
+			}
+		} else {
+			bs->Add(new wxButton(this, wxID_OK));
+			bs->Add(new wxButton(this, wxID_CANCEL));
+		}
+		bs->Realize();
+		//wxLogStatus("Buttons");
+
+		// passing button_event as userdata because wx will then delete it
+		Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&LuaConfigDialog::OnButtonPush);
+
+		wxBoxSizer *ms = new wxBoxSizer(wxVERTICAL);
+		ms->Add(s, 0, wxALL, 10);
+		ms->Add(bs, 0, wxALIGN_CENTER|wxLEFT|wxRIGHT|wxBOTTOM, 10);
+		SetSizerAndFit(ms);
+		//wxLogStatus("All");
+
 	}
 
 	LuaConfigDialog::~LuaConfigDialog()
@@ -373,23 +373,23 @@ badcontrol:
 			delete controls[i];
 	}
 
-	
+
 
 	int LuaConfigDialog::LuaReadBack(lua_State *L)
 	{
 		// First read back which button was pressed, if any
 		ReadBack();
-			int btn = button_pushed;
-			if (btn == 0) {
-				// Always cancel/closed
-				lua_pushboolean(L, 0);
-			} else if (buttons.size() == 0 && btn == 1) {
-				lua_pushboolean(L, 1);
-			} else {
-				// button_pushed is index+1 to reserve 0 for Cancel
-				lua_pushstring(L, buttons[btn-1].mb_str(wxConvUTF8).data());
-			}
-		
+		int btn = button_pushed;
+		if (btn == 0) {
+			// Always cancel/closed
+			lua_pushboolean(L, 0);
+		} else if (buttons.size() == 0 && btn == 1) {
+			lua_pushboolean(L, 1);
+		} else {
+			// button_pushed is index+1 to reserve 0 for Cancel
+			lua_pushstring(L, buttons[btn-1].mb_str(wxConvUTF8).data());
+		}
+
 
 		// Then read controls back
 		lua_newtable(L);
@@ -399,7 +399,7 @@ badcontrol:
 			lua_setfield(L, -2, controls[i]->name.mb_str(wxConvUTF8));
 		}
 
-			return 2;
+		return 2;
 	}
 
 	void LuaConfigDialog::ReadBack()
@@ -428,7 +428,7 @@ badcontrol:
 			wxColourPickerCtrl *button = dynamic_cast<wxColourPickerCtrl*> (evt.GetEventObject());
 			if (button) return;
 			evt.SetId(wxID_OK);
-			
+
 		}
 		evt.Skip();
 	}
@@ -440,7 +440,6 @@ badcontrol:
 	}
 	BEGIN_EVENT_TABLE(LuaConfigDialog,wxDialog)
 		EVT_CLOSE(LuaConfigDialog::OnClose)
-	END_EVENT_TABLE()
-	};
+		END_EVENT_TABLE()
+};
 
-	

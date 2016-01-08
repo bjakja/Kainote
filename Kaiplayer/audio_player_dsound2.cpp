@@ -45,7 +45,7 @@
 #include <mmsystem.h>
 #include <dsound.h>
 #include <process.h>
-#include <wx/stopwatch.h>
+//#include <wx/stopwatch.h>
 
 #include "kainoteApp.h"
 //#include "options.h"

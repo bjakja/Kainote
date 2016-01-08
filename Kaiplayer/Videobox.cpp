@@ -181,7 +181,9 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 	if(fulls){SetFullskreen();}
 	prevchap=-1;
 	wxMenuItem *index=Kai->MenuBar->FindItem(ID_OPVIDEOINDEX);
-	if(!OpenFile(fileName, subsName,!(index->IsChecked()&&index->IsEnabled()&&!fulls&&!isfullskreen),!Kai->GetTab()->edytor),fulls){return false;}
+	if(!OpenFile(fileName, subsName,!(index->IsChecked()&&index->IsEnabled()&&!fulls&&!isfullskreen),!Kai->GetTab()->edytor,fulls)){
+		return false;
+	}
 	bool shown=true;
 	if( !(IsShown() || (TD && TD->IsShown())) ){shown=false; Show();}
 	eater=IsDshow;
@@ -232,7 +234,7 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 	
 	displaytime();
 	
-	int pos=volslider->GetValue();
+	int pos= (isfullskreen)? TD->volslider->GetValue() : volslider->GetValue();
 	SetVolume(-(pos*pos));
 	SetFocus();
 	Kai->GetTab()->VideoPath=fileName;
@@ -330,33 +332,27 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 	}
 
 
-	if (event.GetWheelRotation() != 0) {
+	if (event.GetWheelRotation() != 0 ) {
 		int step = event.GetWheelRotation() / event.GetWheelDelta();
-		if(!((TabPanel*)GetParent())->edytor){
-			int pos = volslider->GetValue();
-			pos=MID(-86,pos+(step*3),0);
-			SetVolume(-(pos*pos));
-			volslider->SetValue(pos);
-			return;
-		}
 		
-		int w,h;
+		int w,h, mw, mh;
 		GetClientSize(&w,&h);
-		if(y<h-44){
-			if(h<=350&&step>0){return;}
+		GetParent()->GetClientSize(&mw,&mh);
+		int incr=h-(step*20);
+		if(incr>=mh){incr=mh-3;}
+		if((((TabPanel*)GetParent())->edytor && !isfullskreen) && y<h-44){
+			if(h<=350 && step>0 || h == incr){return;}
 			int ww,hh;
-			CalcSize(&ww,&hh,w,h-(step*20),false,true);
+			CalcSize(&ww,&hh,w,incr,false,true);
 			SetMinSize(wxSize(ww,hh+44));
 			Options.SetCoords("Video Window Size",ww,hh+44);
 			Kai->GetTab()->BoxSizer1->Layout();
-			//resize.Start(40,true);
 		}else{
 			int pos=volslider->GetValue()+(step*3);
-			if(pos+3>0){pos=0;}
-			if(pos-3<(-90)){pos=-90;}
-			if(pos>0||pos<(-90)){return;}
+			pos=MID(-86,pos+(step*3),0);
 			SetVolume(-(pos*pos));
 			volslider->SetValue(pos);
+			if(TD){TD->volslider->SetValue(pos);}
 		}
 		return;
 	}
@@ -543,6 +539,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 			SetMinSize(wxSize(sx,sy+44));
 			Kai->GetTab()->BoxSizer1->Layout();
 		}
+		volslider->SetValue(TD->volslider->GetValue());
 		if(!IsShown()){Show();GetParent()->Layout();}	
 		UpdateVideoWindow();
 		block=true;
@@ -564,6 +561,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 			TD->SetPosition(rt.GetPosition());
 			TD->SetSize(rt.GetSize());
 		}
+		TD->volslider->SetValue(volslider->GetValue());
 		TD->panel->Hide();
 		TD->Show();
 		UpdateVideoWindow(false);
@@ -643,6 +641,7 @@ void VideoCtrl::OnVButton(wxCommandEvent& event)
 void VideoCtrl::OnVolume(wxScrollEvent& event)
 {
 	int pos=event.GetPosition();
+	
 	SetVolume(-(pos*pos));
 }
 
@@ -899,6 +898,7 @@ void VideoCtrl::OnSMinus()
 	if(pos>(-91)){
 		SetVolume(-(pos*pos));
 		volslider->SetValue(pos);
+		if(TD){TD->volslider->SetValue(pos);}
 	}
 }
 
@@ -908,13 +908,13 @@ void VideoCtrl::OnSPlus()
 	if(pos<1){
 		SetVolume(-(pos*pos));
 		volslider->SetValue(pos);
+		if(TD){TD->volslider->SetValue(pos);}
 	}
 }
 
 void VideoCtrl::OnPaint(wxPaintEvent& event)
 {
 	if(!IsDshow && GetState()==Playing|| !blockpaint && GetState()==Paused){if(!block){Render();}}
-	//|| !IsDshow && GetState()==Playing
 }
 
 void VideoCtrl::OnEndFile(wxCommandEvent &event)

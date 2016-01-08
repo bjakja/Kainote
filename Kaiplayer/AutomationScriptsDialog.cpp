@@ -33,7 +33,7 @@ MacrosDialog::MacrosDialog(wxWindow *parent, int _script)
 	mst.y-=(height/2);
 	SetPosition(mst);
 	//specjalna ró¿nica miêdzy pierwsz¹ zaznaczon¹ linijk¹ która jest zero a linijk¹ w lua która jest wiêksza o size sinfo + size styles
-	int diff=(Kai->GetTab()->Grid1->file->subs->sinfo.size()+Kai->GetTab()->Grid1->file->subs->styles.size()+1);
+	int diff=(Kai->GetTab()->Grid1->SInfoSize()+Kai->GetTab()->Grid1->StylesSize()+1);
 	for(size_t i=0; i<macros.size(); i++)
 	{
 		names.Add(macros[i]->name);
@@ -168,7 +168,7 @@ void MacrosDialog::OnMacro()
 
 		
 		//specjalna ró¿nica miêdzy pierwsz¹ zaznaczon¹ linijk¹ która jest zero a linijk¹ w lua która jest wiêksza o size sinfo + size styles
-		int diff=(pan->Grid1->file->subs->sinfo.size()+pan->Grid1->file->subs->styles.size()+1);
+		int diff=(pan->Grid1->SInfoSize() + pan->Grid1->StylesSize()+1);
 		Kai->Auto->Scripts[script]->Macros[seld-1]->Process(sels,pan->Edit->ebrow, diff, Kai);
 		for(size_t i=0; i<sels.size(); i++){
 			pan->Grid1->sel[sels[i]]=true;

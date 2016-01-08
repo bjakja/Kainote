@@ -134,6 +134,7 @@ private:
 	bool drawtxt;
 	bool newline;
 	bool newmove;
+	bool blockevents;
 	DWORD align;
 	wxPoint diffs;
 	ClipPoint acpoint;

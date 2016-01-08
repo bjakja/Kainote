@@ -16,18 +16,18 @@
 
 
 BEGIN_EVENT_TABLE(Grid,SubsGrid)
-EVT_MENU(MENU_CUT,Grid::OnAccelerator)
-EVT_MENU(MENU_COPY,Grid::OnAccelerator)
-//EVT_MENU(MENU_DUPLICATE,Grid::OnAccelerator)
-EVT_MENU(MENU_PASTE,Grid::OnAccelerator)
-//EVT_MENU(MENU_PASTECOLS,Grid::OnAccelerator)
-EVT_MENU_RANGE(MENU_PLAYP,MENU_M5SEC,Grid::OnAccelerator)
-//EVT_MENU(MENU_PPSEC,Grid::OnAccelerator)
-//EVT_MENU(MENU_MPSEC,Grid::OnAccelerator)
-END_EVENT_TABLE()
+	EVT_MENU(MENU_CUT,Grid::OnAccelerator)
+	EVT_MENU(MENU_COPY,Grid::OnAccelerator)
+	//EVT_MENU(MENU_DUPLICATE,Grid::OnAccelerator)
+	EVT_MENU(MENU_PASTE,Grid::OnAccelerator)
+	//EVT_MENU(MENU_PASTECOLS,Grid::OnAccelerator)
+	EVT_MENU_RANGE(MENU_PLAYP,MENU_M5SEC,Grid::OnAccelerator)
+	//EVT_MENU(MENU_PPSEC,Grid::OnAccelerator)
+	//EVT_MENU(MENU_MPSEC,Grid::OnAccelerator)
+	END_EVENT_TABLE()
 
-Grid::Grid(wxWindow* parent, kainoteFrame* kfparent,wxWindowID id,const wxPoint& pos,const wxSize& size, long style, const wxString& name)
-           : SubsGrid(parent, id, pos, size, style, name)
+	Grid::Grid(wxWindow* parent, kainoteFrame* kfparent,wxWindowID id,const wxPoint& pos,const wxSize& size, long style, const wxString& name)
+	: SubsGrid(parent, id, pos, size, style, name)
 {
 	Kai=kfparent;
 }
@@ -40,9 +40,9 @@ void Grid::ContextMenu(const wxPoint &pos)
 {
 	VideoCtrl *VB=((TabPanel*)GetParent())->Video;
 	VB->blockpaint=true;
-    selarr = GetSels();
-    int sels=selarr.GetCount();
-    wxMenu *menu=new wxMenu;
+	selarr = GetSels();
+	int sels=selarr.GetCount();
+	wxMenu *menu=new wxMenu;
 	hidemenu=new wxMenu;
 	wxMenuItem *item;
 	item = Hkeys.SetAccMenu(hidemenu, 5000+LAYER,_("Ukryj warstwê"),_("Ukryj warstwê"),wxITEM_CHECK);
@@ -79,11 +79,11 @@ void Grid::ContextMenu(const wxPoint &pos)
 	isen = (isen&&Kai->GetTab()->Video->GetState()!=None);
 	Hkeys.SetAccMenu(menu, MENU_INSERT_BEFORE_VIDEO,_("Wstaw przed z czasem wideo"))->Enable(isen);
 	Hkeys.SetAccMenu(menu, MENU_INSERT_AFTER_VIDEO,_("Wstaw po z czasem wideo"))->Enable(isen);
-    isen = (sels >0);
+	isen = (sels >0);
 	Hkeys.SetAccMenu(menu, MENU_DUPLICATE,_("Duplikuj Linie"))->Enable(isen);
 	isen = (sels == 2);
 	Hkeys.SetAccMenu(menu, MENU_SWAP,_("Zamieñ"))->Enable(isen);
-    isen = (sels >= 2&&sels <= 5);
+	isen = (sels >= 2&&sels <= 5);
 	Hkeys.SetAccMenu(menu, MENU_JOIN,_("Z³¹cz linijki"))->Enable(isen);
 	isen = (sels >= 2&&sels <= 50);
 	Hkeys.SetAccMenu(menu, MENU_JOINF,_("Z³¹cz linijki zostaw pierwsz¹"))->Enable(isen);
@@ -103,12 +103,12 @@ void Grid::ContextMenu(const wxPoint &pos)
 	Hkeys.SetAccMenu(menu, MENU_TLDIAL,_("Okno przesuwania dialogów"))->Enable(showtl);
 	menu->AppendSeparator();
 
-    Hkeys.SetAccMenu(menu, MENU_DELETE_TEXT,_("Usuñ tekst"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, MENU_DELETE_TEXT,_("Usuñ tekst"))->Enable(isen);
 	Hkeys.SetAccMenu(menu, MENU_DELETE,_("Usuñ"))->Enable(isen);
 	menu->AppendSeparator();
 	Hkeys.SetAccMenu(menu, ID_COLLECTOR,_("Kolekcjoner czcionek"))->Enable(form<SRT);
 	Hkeys.SetAccMenu(menu, MENU_MKV_SUBS,_("Wczytaj napisy z pliku MKV"))->Enable(Kai->GetTab()->VideoName.EndsWith(".mkv"));
-		
+
 	ismenushown = true;	
 	int id=GetPopupMenuSelectionFromUser(*menu,pos);
 	ismenushown = false;
@@ -137,31 +137,31 @@ void Grid::ContextMenu(const wxPoint &pos)
 
 void Grid::OnInsertBefore()
 {
-    int rw=selarr[0];
-    sel.clear();
-    Dialogue *dialog=CopyDial(rw, false);
-    dialog->Text=_("");
+	int rw=selarr[0];
+	sel.clear();
+	Dialogue *dialog=CopyDial(rw, false);
+	dialog->Text=_("");
 	dialog->TextTl=_("");
-    dialog->End=dialog->Start;
-    if(rw>0 && file->subs->dials[rw-1]->End > dialog->Start){
-    dialog->Start=file->subs->dials[rw-1]->End;
-    }else{dialog->Start.Change(-4000);}
-    InsertRow(rw, dialog);
+	dialog->End=dialog->Start;
+	if(rw>0 && GetDial(rw-1)->End > dialog->Start){
+		dialog->Start=GetDial(rw-1)->End;
+	}else{dialog->Start.Change(-4000);}
+	InsertRows(rw, 1, dialog, false, true);
 }
 
 void Grid::OnInsertAfter()
 {
-    int rw=selarr[0];
-    sel.clear();
-    Dialogue *dialog=CopyDial(rw, false);
-    dialog->Text=_("");
+	int rw=selarr[0];
+	sel.clear();
+	Dialogue *dialog=CopyDial(rw, false);
+	dialog->Text=_("");
 	dialog->TextTl=_("");
-    dialog->Start=dialog->End;
-    if(rw<GetCount()-1 && file->subs->dials[rw+1]->End > dialog->Start){
-    dialog->End=file->subs->dials[rw+1]->Start;
-    }else{dialog->End.Change(4000);}
+	dialog->Start=dialog->End;
+	if(rw<GetCount()-1 && GetDial(rw+1)->End > dialog->Start){
+		dialog->End=GetDial(rw+1)->Start;
+	}else{dialog->End.Change(4000);}
 	Edit->ebrow=rw+1;
-    InsertRow(rw+1, dialog);
+	InsertRows(rw+1, 1, dialog, false, true);
 }
 
 void Grid::OnDuplicate()
@@ -170,27 +170,27 @@ void Grid::OnDuplicate()
 	//sel.clear();
 	int rw1=rw+1;
 	for(size_t i=1; i<selarr.GetCount(); i++){if(rw1==selarr[i]){rw1++;}else{break;} }
-    int rw2=rw1-rw;
-    std::vector<Dialogue *> dupl;
-    for(int i=0; i<rw2; i++){
-		
-        dupl.push_back(file->CopyDial(i+rw,false));
-        //sel[i+rw1]=true;
-			
-    }
-    //Edit->ebrow=rw1;
-   
-    if(dupl.size()>0){
-        file->subs->dials.insert(file->subs->dials.begin()+rw1, dupl.begin(), dupl.end());
+	int rw2=rw1-rw;
+	std::vector<Dialogue *> dupl;
+	for(int i=0; i<rw2; i++){
+
+		dupl.push_back(file->CopyDial(i+rw,false));
+		//sel[i+rw1]=true;
+
+	}
+	//Edit->ebrow=rw1;
+
+	if(dupl.size()>0){
+		InsertRows(rw1, dupl);
 		dupl.clear();
-    }
-    SetModified(false);
+	}
+	SetModified(false);
 	Refresh(false);
 }
 
 
 void Grid::OnJoin(wxCommandEvent &event)
-	{
+{
 	wxString ntext;
 	wxString ntltext;
 	wxString en1;
@@ -211,50 +211,53 @@ void Grid::OnJoin(wxCommandEvent &event)
 
 
 	Dialogue *dialc = file->CopyDial(selarr[0]);
-	dialc->End = file->subs->dials[selarr[selarr.size()-1]]->End;
 	Edit->ebrow=selarr[0];
-
+	int start=INT_MAX, end=0;
 	for(size_t i=0;i<selarr.size();i++)
 	{
 		wxString en=(i==0)?"":en1;
 		Dialogue *dial=GetDial(selarr[i]);
+		if(dial->Start.mstime < start){ start = dial->Start.mstime;}
+		if(dial->End.mstime > end){	end = dial->End.mstime;}
 		if(dial->Text!=""){ntext<<en<<dial->Text;}
 		if(dial->TextTl!=""){ntltext<<en<<dial->TextTl;}
 	}
-	//wxLogStatus(" erase %i %i", selarr[1], selarr[selarr.size()-1]);
-	file->subs->dials.erase(file->subs->dials.begin()+selarr[1], file->subs->dials.begin()+selarr[selarr.size()-1]+1);
+
+	DeleteRow(selarr[1], selarr[selarr.size()-1]-selarr[1]+1);
+	dialc->Start.NewTime(start);
+	dialc->End.NewTime(end);
 	dialc->Text=ntext;
 	dialc->TextTl=ntltext;
 	sel.clear();
 	file->edited=true;
 	SetModified();
 	RepaintWindow();
-	}
+}
 
 void Grid::OnJoinF(int id)
-	{
+{
 
 	Dialogue *dialc = file->CopyDial(selarr[0]);
 	Dialogue *ldial = GetDial(selarr[selarr.size()-1]);
 	dialc->End = ldial->End;
-	
+
 	if(id==MENU_JOINL){
 		dialc->Text = ldial->Text;
 		dialc->TextTl = ldial->TextTl;
 	}
 	Edit->ebrow=selarr[0];
-	file->subs->dials.erase(file->subs->dials.begin()+selarr[1], file->subs->dials.begin()+selarr[selarr.size()-1]+1);
-	
+	DeleteRow(selarr[1], selarr[selarr.size()-1]-selarr[1]+1);
+
 	sel.clear();
 	sel[selarr[0]]=true;
 	SetModified();
 	RepaintWindow();
-	}
+}
 
 
 void Grid::OnPaste(int id)
 {
-	
+
 	int rw=FirstSel();
 	if(id==MENU_PASTECOLS){
 		wxString arr[ ]={"Warstwa","Czas pocz¹tkowy","Czas koñcowy","Aktor","Styl","Margines lewy","Margines prawy","Margines pionowy","Efekt","Tekst"};
@@ -275,51 +278,51 @@ void Grid::OnPaste(int id)
 	}else{
 		sel.clear();}
 	Freeze();
-    wxString whatpaste;
+	wxString whatpaste;
 	if (wxTheClipboard->Open())
-    {
-        if (wxTheClipboard->IsSupported( wxDF_TEXT ))
-        {
-            wxTextDataObject data;
-            wxTheClipboard->GetData( data );
-            whatpaste = data.GetText();
-        }
-        wxTheClipboard->Close();
+	{
+		if (wxTheClipboard->IsSupported( wxDF_TEXT ))
+		{
+			wxTextDataObject data;
+			wxTheClipboard->GetData( data );
+			whatpaste = data.GetText();
+		}
+		wxTheClipboard->Close();
 		if(whatpaste==""){Thaw();return;}
-    }
-    wxStringTokenizer wpaste(whatpaste,_("\n"), wxTOKEN_STRTOK);
-    int cttkns=wpaste.CountTokens();
+	}
+	wxStringTokenizer wpaste(whatpaste,_("\n"), wxTOKEN_STRTOK);
+	int cttkns=wpaste.CountTokens();
 	int rws= (id==MENU_PASTECOLS)? 0 : rw;
-	
-    while(wpaste.HasMoreTokens())
-    {
+	std::vector<Dialogue*> tmpdial;
+	while(wpaste.HasMoreTokens())
+	{
 		Dialogue *newdial=NULL;
-        newdial= new Dialogue(wpaste.NextToken());
+		newdial= new Dialogue(wpaste.NextToken());
 		newdial->State=1;
 		//wxLogMessage("newdialog %i", (int)newdial);
 		if(!newdial){continue;}
 		if(newdial->Form!=form){newdial->Conv(form);}
 		if(id==MENU_PASTE){
-			file->subs->dials.insert(file->subs->dials.begin()+rws, newdial);
-			file->subs->ddials.push_back(newdial);
+			tmpdial.push_back(newdial);
 			sel[rws]=true;
-			//wxLogMessage("insert");
 		}else{
 			if(rws<(int)selarr.GetCount()){
 				ChangeCell(rw, selarr[rws],newdial);
 			}
 			delete newdial;
-			//wxLogMessage("insert cols");
 		}
 		rws++;
-    }
+	}
 
+	if(tmpdial.size()>0){
+		InsertRows(rw, tmpdial,true);
+	}
 	if(sel.size()!=0){
 		Edit->ebrow=sel.begin()->first;}
-    scPos+=cttkns;
-    SetModified();
+	scPos+=cttkns;
+	SetModified();
 	Thaw();
-    RepaintWindow();
+	RepaintWindow();
 }
 
 void Grid::CopyRows(int id)
@@ -342,48 +345,48 @@ void Grid::CopyRows(int id)
 
 	}
 	selarr=GetSels();
-    wxString whatcopy;
-    for(size_t i=0; i<selarr.GetCount();i++)
-    {	
+	wxString whatcopy;
+	for(size_t i=0; i<selarr.GetCount();i++)
+	{	
 		if(id!=MENU_COPYCOLS){
 			//t³umaczenie ma pierwszeñstwo w kopiowaniu
-			whatcopy<<file->subs->dials[selarr[i]]->GetRaw(transl && file->subs->dials[selarr[i]]->TextTl!="");
+			whatcopy<<GetDial(selarr[i])->GetRaw(transl && GetDial(selarr[i])->TextTl!="");
 		}else{
-			whatcopy<<file->subs->dials[selarr[i]]->GetCols(cols,transl && file->subs->dials[selarr[i]]->TextTl!="");
+			whatcopy<<GetDial(selarr[i])->GetCols(cols,transl && GetDial(selarr[i])->TextTl!="");
 		}
-    }
-    if (wxTheClipboard->Open())
-    {
-        wxTheClipboard->SetData( new wxTextDataObject(whatcopy) );
-        wxTheClipboard->Close();
-    }
+	}
+	if (wxTheClipboard->Open())
+	{
+		wxTheClipboard->SetData( new wxTextDataObject(whatcopy) );
+		wxTheClipboard->Close();
+	}
 }
 
 void Grid::OnInsertBeforeVideo()
 {
 	int rw=selarr[0];
-    sel.erase(sel.find(rw));
-    Dialogue *dialog=CopyDial(rw, false);
-    dialog->Text=_("");
+	sel.erase(sel.find(rw));
+	Dialogue *dialog=CopyDial(rw, false);
+	dialog->Text=_("");
 	dialog->TextTl=_("");
 	int time=Kai->GetTab()->Video->Tell();
-    dialog->Start.NewTime(time);
-    dialog->End.NewTime(time+4000);
-    InsertRow(rw, dialog);
+	dialog->Start.NewTime(time);
+	dialog->End.NewTime(time+4000);
+	InsertRows(rw, 1, dialog, false, true);
 }
 
 void Grid::OnInsertAfterVideo()
 {
 	int rw=selarr[0];
-    sel.erase(sel.find(rw));
-    Dialogue *dialog=CopyDial(rw, false);
-    dialog->Text=_("");
+	sel.erase(sel.find(rw));
+	Dialogue *dialog=CopyDial(rw, false);
+	dialog->Text=_("");
 	dialog->TextTl=_("");
 	int time=Kai->GetTab()->Video->Tell();
-    dialog->Start.NewTime(time);
-    dialog->End.NewTime(time+4000);
+	dialog->Start.NewTime(time);
+	dialog->End.NewTime(time+4000);
 	Edit->ebrow=rw+1;
-    InsertRow(rw+1, dialog);
+	InsertRows(rw+1, 1, dialog, false, true);
 }
 
 
@@ -424,6 +427,7 @@ void Grid::OnAccelerator(wxCommandEvent &event)
 		int id5000=(id-5000);
 		if(visible & id5000){visible ^= id5000;}
 		else{visible |= id5000;}
+		SpellErrors.clear();
 		Options.SetInt("Grid Hide Collums", visible);
 		RepaintWindow();
 	}
@@ -433,51 +437,51 @@ void Grid::OnAccelerator(wxCommandEvent &event)
 void Grid::OnPasteTextTl()
 {
 	wxFileDialog *FileDialog1 = new wxFileDialog(this, _T("Wybierz Plik Napisów"), Kai->GetTab()->SubsPath.BeforeLast('\\'), _T(""), _T("Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"), wxFD_OPEN|wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, _T("wxFileDialog"));
-    if (FileDialog1->ShowModal() == wxID_OK){
-		 OpenWrite op;
-		 wxString pathh=FileDialog1->GetPath();
-		 wxString txt= op.FileOpen(pathh);
-		 wxString ext=pathh.AfterLast('.');
-		 int iline=0;
+	if (FileDialog1->ShowModal() == wxID_OK){
+		OpenWrite op;
+		wxString pathh=FileDialog1->GetPath();
+		wxString txt= op.FileOpen(pathh);
+		wxString ext=pathh.AfterLast('.');
+		int iline=0;
 
-		 //for(int i=0;i<GetCount();i++){file->subs.dials[i]->spells.Clear();}
+		//for(int i=0;i<GetCount();i++){file->subs.dials[i]->spells.Clear();}
 
-		 if(ext=="srt"){
-			   //wxString dbg;
-               wxStringTokenizer tokenizer(txt,_T("\n"),wxTOKEN_STRTOK);
-			   tokenizer.GetNextToken();
-			   wxString text1;
-			   while ( tokenizer.HasMoreTokens() )
-				   {
-				   wxString text=tokenizer.GetNextToken().Trim();
-				   if(IsNum(text)){if(text1!=""){
-					   //dbg<<text1<<"\n";
-				   //dbg<<ndl.Start.raw<<" x "<<ndl.End.raw<<" x "<<ndl.Text<<"\n"; 
-					    Dialogue diall=Dialogue(text1.Trim());
-						if(iline<GetCount()){
-							diall.Conv(form);
-							CopyDial(iline)->TextTl=diall.Text;
-						}
-						else{
-							diall.Conv(form);
-							diall.Start.NewTime(0);
-							diall.End.NewTime(0);
-							diall.Style=GetSInfo("TLMode Style");
-							diall.TextTl=diall.Text;
-							diall.Text="";
-							AddLine(diall.Copy());
-						}
-						iline++;text1="";}}
-				   else{text1<<text<<"\r\n";}
-	
-				   }
-			}else{
+		if(ext=="srt"){
+			//wxString dbg;
+			wxStringTokenizer tokenizer(txt,_T("\n"),wxTOKEN_STRTOK);
+			tokenizer.GetNextToken();
+			wxString text1;
+			while ( tokenizer.HasMoreTokens() )
+			{
+				wxString text=tokenizer.GetNextToken().Trim();
+				if(IsNum(text)){if(text1!=""){
+					//dbg<<text1<<"\n";
+					//dbg<<ndl.Start.raw<<" x "<<ndl.End.raw<<" x "<<ndl.Text<<"\n"; 
+					Dialogue diall=Dialogue(text1.Trim());
+					if(iline<GetCount()){
+						diall.Conv(form);
+						CopyDial(iline)->TextTl=diall.Text;
+					}
+					else{
+						diall.Conv(form);
+						diall.Start.NewTime(0);
+						diall.End.NewTime(0);
+						diall.Style=GetSInfo("TLMode Style");
+						diall.TextTl=diall.Text;
+						diall.Text="";
+						AddLine(diall.Copy());
+					}
+					iline++;text1="";}}
+				else{text1<<text<<"\r\n";}
 
-				wxStringTokenizer tokenizer(txt,_T("\n"),wxTOKEN_STRTOK);
-				while ( tokenizer.HasMoreTokens() )
-				{
-					wxString token = tokenizer.GetNextToken();
-					if(!(ext=="ass"&&!token.StartsWith("Dialogue"))){  
+			}
+		}else{
+
+			wxStringTokenizer tokenizer(txt,_T("\n"),wxTOKEN_STRTOK);
+			while ( tokenizer.HasMoreTokens() )
+			{
+				wxString token = tokenizer.GetNextToken();
+				if(!(ext=="ass"&&!token.StartsWith("Dialogue"))){  
 					Dialogue diall=Dialogue(token);
 					if(iline<GetCount()){
 						diall.Conv(form);
@@ -492,20 +496,20 @@ void Grid::OnPasteTextTl()
 						AddLine(diall.Copy());
 					}
 					iline++;}	   
-				}
 			}
-	
-		 
-		 
-		 Edit->SetTl(true);
-		 SetTlMode(true);
-		 AddSInfo("TLMode Showtl", "Yes");
-		 showtl=true;
-		 //Edit->SetIt(Edit->ebrow);
-		 SetModified();
-		 Refresh(false);
+		}
+
+
+
+		Edit->SetTl(true);
+		SetTlMode(true);
+		AddSInfo("TLMode Showtl", "Yes");
+		showtl=true;
+		//Edit->SetIt(Edit->ebrow);
+		SetModified();
+		Refresh(false);
 	}
-		 
+	FileDialog1->Destroy();
 }
 
 void Grid::MoveTextTL(char mode)
@@ -524,9 +528,10 @@ void Grid::MoveTextTL(char mode)
 	//wxMessageBox(kkk<<first<<" "<<mrow);
 	if(mode<3){// w górê ^
 		//tryb 2 gdzie dodaje puste linijki a tekst pl pozostaje bez zmian
-		if(mode==2){Dialogue *insdial =GetDial(first)->Copy();insdial->Text="";
-			file->subs->dials.insert(file->subs->dials.begin()+first,mrow,insdial);
-			file->subs->ddials.push_back(insdial);
+		if(mode==2){
+			Dialogue *insdial =GetDial(first)->Copy();
+			insdial->Text="";
+			InsertRows(first, mrow, insdial);
 		}
 		sel[first]=true;
 		for(int i=first; i<GetCount(); i++)
@@ -537,20 +542,17 @@ void Grid::MoveTextTL(char mode)
 				CopyDial(first)->TextTl << mid << GetDial(i+1)->TextTl;
 				if(i!=first){CopyDial(i)->TextTl = GetDial(i+mrow)->TextTl;}}
 				else{CopyDial(i)->TextTl = GetDial(i+mrow)->TextTl;}
-				}
+			}
 			else if(i<GetCount()-mrow){
 				CopyDial(i)->TextTl = GetDial(i+mrow)->TextTl;}
 			else if(GetDial(i)->Text!=""){mrow--;}
-				
+
 		}
 		//wxString kkk1;
 		//wxMessageBox(kkk1<<dial.size()<<" "<<sel.size());
-		
+
 		if(mrow>0){
-			file->edited=true;
-			file->subs->dials.erase(file->subs->dials.begin()+(GetCount()-mrow),file->subs->dials.end());
-			//file->subs->dials.pop_back();
-		//sel.erase(sel.begin()+(GetCount()),sel.end());
+			DeleteRow(GetCount()-mrow, mrow);
 		}
 
 		//wxString kkk;
@@ -564,30 +566,30 @@ void Grid::MoveTextTL(char mode)
 		{
 			AddLine(diall.Copy());
 		}
-			
+
 		bool onlyo=true;
 		//sel[first+mrow]=true;
 		for(int i=GetCount()-1; i>=first; i--)
 		{
-		if(i<first+mrow){
-			if(mode==3){
-				CopyDial(i)->TextTl="";}
-			else if(mode==4||mode==5){
-				if(mode==4){if(onlyo){CopyDial(first+mrow)->Start = GetDial(first)->Start; onlyo=false;}
-				CopyDial(first+mrow)->Text.Prepend(GetDial(i)->Text+"\\N");mrow--;}
-				DeleteRow(i);
+			if(i<first+mrow){
+				if(mode==3){
+					CopyDial(i)->TextTl="";}
+				else if(mode==4||mode==5){
+					if(mode==4){if(onlyo){CopyDial(first+mrow)->Start = GetDial(first)->Start; onlyo=false;}
+					CopyDial(first+mrow)->Text.Prepend(GetDial(i)->Text+"\\N");mrow--;}
+					DeleteRow(i);
+				}
 			}
+			else{
+				CopyDial(i)->TextTl = GetDial(i-mrow)->TextTl;}
+
+
 		}
-		else{
-			CopyDial(i)->TextTl = GetDial(i-mrow)->TextTl;}
-			
-				
-		}
-			
+
 	}
 	SetModified(true);
 	Refresh(false);
-	
+
 }
 
 
@@ -595,10 +597,10 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 {
 	int idd=event.GetId();
 	if(Modified){
-            int wbutton=wxMessageBox(_T("Zapisaæ plik przed wczytaniem napisów z mkv?"), 
-				_T("Potwierdzenie"),wxICON_QUESTION | wxYES_NO |wxCANCEL, this);
-					if (wbutton==wxYES){Kai->Save(false);}
-						else if(wbutton==wxCANCEL){return;}}
+		int wbutton=wxMessageBox(_T("Zapisaæ plik przed wczytaniem napisów z mkv?"), 
+			_T("Potwierdzenie"),wxICON_QUESTION | wxYES_NO |wxCANCEL, this);
+		if (wbutton==wxYES){Kai->Save(false);}
+		else if(wbutton==wxCANCEL){return;}}
 	wxString mkvpath;
 	if(idd==MENU_MKV_SUBS)
 	{
@@ -619,33 +621,33 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 		wxString ext=(form<SRT)?_("ass") : _("srt");
 		if(form<SRT){Edit->TlMode->Enable();}else{Edit->TlMode->Enable(false);}
 
-    Kai->GetTab()->SubsPath=mkvpath.BeforeLast('.')+" napisy."+ext;
-	Kai->GetTab()->SubsName=Kai->GetTab()->SubsPath.AfterLast('\\');
-	//Kai->SetRecent();
-	Kai->UpdateToolbar();
-	Edit->RefreshStyle(true);
+		Kai->GetTab()->SubsPath=mkvpath.BeforeLast('.')+" napisy."+ext;
+		Kai->GetTab()->SubsName=Kai->GetTab()->SubsPath.AfterLast('\\');
+		//Kai->SetRecent();
+		Kai->UpdateToolbar();
+		Edit->RefreshStyle(true);
 
-    Kai->Label();
-    if(form==ASS){
-		wxString katal=GetSInfo(_T("Last Style Storage"));
-		
-		if(katal!=_T("")){
-			for(size_t i=0;i<Options.dirs.size();i++){
-				if(katal==Options.dirs[i]){Options.LoadStyles(katal);}
+		Kai->Label();
+		if(form==ASS){
+			wxString katal=GetSInfo(_T("Last Style Storage"));
+
+			if(katal!=_T("")){
+				for(size_t i=0;i<Options.dirs.size();i++){
+					if(katal==Options.dirs[i]){Options.LoadStyles(katal);}
+				}
 			}
-		}
-		
 
-    }
-	if(Kai->GetTab()->Video->GetState()!=None){Kai->GetTab()->Video->OpenSubs(SaveText());
-	if(!isgood){wxMessageBox(_T("otwieranie napisów failed"), _T("Uwaga"));}}
-	
-	if(!Kai->GetTab()->edytor&&!Kai->GetTab()->Video->isfullskreen){Kai->HideEditor();}
-	Kai->GetTab()->CTime->Contents();
-	
-	RepaintWindow();
-	Edit->HideControls();
+
 		}
+		if(Kai->GetTab()->Video->GetState()!=None){Kai->GetTab()->Video->OpenSubs(SaveText());
+		if(!isgood){wxMessageBox(_T("otwieranie napisów failed"), _T("Uwaga"));}}
+
+		if(!Kai->GetTab()->edytor&&!Kai->GetTab()->Video->isfullskreen){Kai->HideEditor();}
+		Kai->GetTab()->CTime->Contents();
+
+		RepaintWindow();
+		Edit->HideControls();
+	}
 	mw.Close();
 	if(Kai->ss && form==ASS){Kai->ss->LoadAssStyles();}
 }
@@ -670,7 +672,7 @@ void Grid::ResizeSubs(float xnsize, float ynsize)
 	float val=ynsize;//(ynsize>xnsize)?ynsize:xnsize;
 	//float fscyval=ynsize/xnsize;
 
-	for(size_t i=0;i<file->subs->styles.size();i++){
+	for(int i=0;i<StylesSize();i++){
 		Styles *resized= file->CopyStyle(i);
 		int ml=wxAtoi(resized->MarginL);
 		ml*=xnsize;
@@ -702,185 +704,174 @@ void Grid::ResizeSubs(float xnsize, float ynsize)
 		//dbg<<resized.styletext()<<"\r\n";
 		//ChangeStyle(resized,i);
 	}
-	
+
 	//dialogi, najwiêkszy hardkor, wszystkie tagi zale¿ne od rozdzielczoœci trzeba zmieniæ
 	//tu zacznie siê potêga szukaczki tagów
 	wxRegEx onenum("\\\\(fax|fay|fs|bord|shad|pos|move|iclip|clip|org)([^\\\\}]*)",wxRE_ADVANCED);
 	wxRegEx drawing("\\\\p([0-9]+)[\\\\}]",wxRE_ADVANCED);
-	
+
 	for(int i=0;i<GetCount();i++){
 		//zaczniemy od naj³atwiejszego, marginesy
-	
+
 		bool sdone=false;
-		Dialogue *diall=GetDial(i)->Copy();
+		Dialogue *diall=GetDial(i);
 		if(!diall->IsComment){
-		if(diall->MarginL){diall->MarginL*=xnsize;sdone=true;}
-		if(diall->MarginR){diall->MarginR*=xnsize;sdone=true;}
-		if(diall->MarginV){diall->MarginV*=ynsize;sdone=true;}
+			diall=diall->Copy();
+			if(diall->MarginL){diall->MarginL*=xnsize;sdone=true;}
+			if(diall->MarginR){diall->MarginR*=xnsize;sdone=true;}
+			if(diall->MarginV){diall->MarginV*=ynsize;sdone=true;}
 
-		wxString txt=diall->Text;
-		size_t pos=0;
-		bool tdone=false;
-		//pêtla tagów
-		while(true){
-			wxString subtxt=txt.Mid(pos);
-			if(onenum.Matches(subtxt)){
-				//dbg<<"matches\r\n";
-				size_t start,len;
-				if(onenum.GetMatch(&start,&len,2))
+			wxString txt=diall->Text;
+			size_t pos=0;
+			bool tdone=false;
+			//pêtla tagów
+			while(true){
+				wxString subtxt=txt.Mid(pos);
+				if(onenum.Matches(subtxt)){
+					//dbg<<"matches\r\n";
+					size_t start,len;
+					if(onenum.GetMatch(&start,&len,2))
 					{
-					//dbg<<"start "<<start<<" end "<<len<<"\r\n";
-					
-					double valtag=0;
-					wxString crop=subtxt.Mid(start,len);
-					//dbg<<crop<<"\r\n";
-					//na pocz¹tek wszystko co w nawiasach
-					if(crop.StartsWith("(",&crop))
+						//dbg<<"start "<<start<<" end "<<len<<"\r\n";
+
+						double valtag=0;
+						wxString crop=subtxt.Mid(start,len);
+						//dbg<<crop<<"\r\n";
+						//na pocz¹tek wszystko co w nawiasach
+						if(crop.StartsWith("(",&crop))
 						{
-						crop.EndsWith(")",&crop);
-						int crm=crop.Find('m');
-						int crn=crop.Find('n');
-						wxString wynik="(";
-						int ii=0;
-						//clip rysunkowy
-						if (crm!=-1||crn!=-1)
+							crop.EndsWith(")",&crop);
+							int crm=crop.Find('m');
+							int crn=crop.Find('n');
+							wxString wynik="(";
+							int ii=0;
+							//clip rysunkowy
+							if (crm!=-1||crn!=-1)
 							{
-							wxStringTokenizer tknzr(crop,_T(" "),wxTOKEN_STRTOK);
-							while(tknzr.HasMoreTokens())
+								wxStringTokenizer tknzr(crop,_T(" "),wxTOKEN_STRTOK);
+								while(tknzr.HasMoreTokens())
 								{
-								wxString tkn=tknzr.NextToken();
-								if(tkn.IsNumber())
+									wxString tkn=tknzr.NextToken();
+									if(tkn.IsNumber())
 									{
-									int val=wxAtoi(tkn);
-									val*=(ii%2==0)?xnsize:ynsize;
-									wynik<<val<<" ";
-									ii++;
+										int val=wxAtoi(tkn);
+										val*=(ii%2==0)?xnsize:ynsize;
+										wynik<<val<<" ";
+										ii++;
 									}
-								else
+									else
 									{
-									wynik<<tkn<<" ";
+										wynik<<tkn<<" ";
 									}
 								}
-							wynik.Trim();
+								wynik.Trim();
 							}
-						else     //No i ca³a reszta, clip normalny, pos, move i org
+							else     //No i ca³a reszta, clip normalny, pos, move i org
 							{
-							wxStringTokenizer tknzr(crop,_T(","),wxTOKEN_STRTOK);
-							while(tknzr.HasMoreTokens())
+								wxStringTokenizer tknzr(crop,_T(","),wxTOKEN_STRTOK);
+								while(tknzr.HasMoreTokens())
 								{
-								wxString tkn=tknzr.NextToken();
-								tkn.Trim();
-								tkn.Trim(false);
-								double vlt;
+									wxString tkn=tknzr.NextToken();
+									tkn.Trim();
+									tkn.Trim(false);
+									double vlt;
 
-								if(ii<4&&tkn.ToCDouble(&vlt))
+									if(ii<4&&tkn.ToCDouble(&vlt))
 									{
-									vlt*=(ii%2==0)?xnsize:ynsize;
-									wynik<<getfloatstr(vlt)<<",";
-									ii++;
+										vlt*=(ii%2==0)?xnsize:ynsize;
+										wynik<<getfloatstr(vlt)<<",";
+										ii++;
 									}
-								else
+									else
 									{
-									wynik<<tkn<<",";
-									ii++;
+										wynik<<tkn<<",";
+										ii++;
 									}
 								}
-							wynik=wynik.BeforeLast(',');
+								wynik=wynik.BeforeLast(',');
 							}
 
-						wynik<<")";
-						//dbg<<wynik<<"\r\n";
-						txt.Remove(pos+start,len);
-						txt.insert(pos+start,wynik);
-						//dbg<<txt<<"\r\n";
-						tdone=true;
+							wynik<<")";
+							
+							txt.Remove(pos+start,len);
+							txt.insert(pos+start,wynik);
+							
+							tdone=true;
 						}
-					else if(crop.ToCDouble(&valtag))
+						else if(crop.ToCDouble(&valtag))
 						{
-						//wxString tagg=onenum.GetMatch(txt,1);
-						valtag*=val;
-						//dbg<<valtag<<"\r\n";
-						txt.Remove(pos+start,len);
-						//dbg<<txt<<"\r\n";
-						txt.insert(pos+start,getfloatstr((float)valtag));
-						//dbg<<txt<<"\r\n";
-						tdone=true;
+							
+							valtag*=val;
+							
+							txt.Remove(pos+start,len);
+							
+							txt.insert(pos+start,getfloatstr((float)valtag));
+							
+							tdone=true;
 						}
-					pos+=(start+len);
+						pos+=(start+len);
 					}else{break;}
 
 				}else{break;}
 
 			}
-		//rysunki
-		//if(ynsize!=xnsize)
-			//{
-			//dbg<<"wesz³o\r\n";
+			//rysunki
 			if(drawing.Matches(txt))
-				{
-				//dbg<<"maches"<<"\r\n";
+			{
+				
 				size_t start,len;
 				if(drawing.GetMatch(&start,&len,0))
+				{
+					wxString draw;
+					size_t brpos=txt.find('}',start+len-1);
+					if(brpos>0){
+						draw=txt.Mid(brpos);
+						start=brpos;}
+					else{draw=txt.Mid(start+len-1);}
+					int brpos1=draw.Find('{');
+					if(brpos1!=-1){draw=draw.Mid(0,brpos1-1);len=brpos1-1;}else{len=draw.Len();}
+					//dbg<<draw<<"\r\n";
+					wxStringTokenizer tknzr(draw,_T(" "),wxTOKEN_STRTOK);
+					wxString wynik1;
+					int ii=0;
+					
+					while(tknzr.HasMoreTokens())
 					{
-					//dbg<<start<<" "<<len<<"\r\n";
-				wxString draw;
-				size_t brpos=txt.find('}',start+len-1);
-				if(brpos>0){
-				draw=txt.Mid(brpos);
-				start=brpos;}
-				else{draw=txt.Mid(start+len-1);}
-				int brpos1=draw.Find('{');
-				if(brpos1!=-1){draw=draw.Mid(0,brpos1-1);len=brpos1-1;}else{len=draw.Len();}
-				//dbg<<draw<<"\r\n";
-				wxStringTokenizer tknzr(draw,_T(" "),wxTOKEN_STRTOK);
-				wxString wynik1;
-				int ii=0;
-				//float hval=(xnsize<ynsize)? xnsize/ynsize : ynsize/xnsize;
-							while(tknzr.HasMoreTokens())
-								{
-								wxString tkn=tknzr.NextToken();
-								if(tkn.IsNumber())
-									{
-									//if(ii%2==0){
-										int vala=wxAtoi(tkn);
-										vala*=val;
-										wynik1<<vala<<" ";
-										//}
-									//else{
-										//wynik1<<tkn<<" ";}
-									//dbg<<wynik1;
-									ii++;
-									}
-								else
-									{
-									wynik1<<tkn<<" ";
-									//dbg<<wynik1;
-									}
-								}
-							wynik1.Trim();
-							//dbg<<"\r\n"<<wynik1<<"\r\n";
-							txt.Remove(start,len);
-						    txt.insert(start,wynik1);
-							//dbg<<txt<<"\r\n";
-							tdone=true;
+						wxString tkn=tknzr.NextToken();
+						if(tkn.IsNumber())
+						{
+							int vala=wxAtoi(tkn);
+							vala*=val;
+							wynik1<<vala<<" ";
+							ii++;
+						}
+						else
+						{
+							wynik1<<tkn<<" ";
+						}
 					}
+					wynik1.Trim();
+					txt.Remove(start,len);
+					txt.insert(start,wynik1);
+					tdone=true;
 				}
-			//}
+			}
+			
 
-		if(tdone){//diall->spells.clear();
-			diall->Text=txt;sdone=true;}
-		if(sdone){
-		//dbg<<diall.GetRaw()<<"\r\n";
-			file->subs->ddials.push_back(diall);
-			file->subs->dials[i]=diall;
-		}
-		else{
-			delete diall;
-		}
+			if(tdone){
+				SpellErrors[i].clear();
+				diall->Text=txt; sdone=true;
+			}
+			if(sdone){
+				file->GetSubs()->ddials.push_back(diall);
+				file->GetSubs()->dials[i]=diall;
+			}
+			else{
+				delete diall;
+			}
 		}
 	}
-	//wxMessageBox(dbg);
-		
+
 	Refresh(false);
 }
 
@@ -946,7 +937,7 @@ public:
 	{
 		wxFlexGridSizer *sizer=new wxFlexGridSizer(2,2,2);
 		wxArrayString fpsy;
-		 wxTextValidator valid(wxFILTER_INCLUDE_CHAR_LIST);
+		wxTextValidator valid(wxFILTER_INCLUDE_CHAR_LIST);
 		wxArrayString includes;
 		includes.Add(_T("0"));
 		includes.Add(_T("1"));
@@ -981,7 +972,7 @@ public:
 	virtual ~fpsdial(){};
 	void OkClick(wxCommandEvent &evt)
 	{
-		
+
 		if(oldfps->GetValue().ToDouble(&ofps) && newfps->GetValue().ToDouble(&nfps)){
 			EndModal(1);
 		}else{wxMessageBox("Niew³aœciwy fps");}
@@ -1006,4 +997,4 @@ void Grid::OnSetNewFPS()
 		if(form>TMP){RepaintWindow(START|END);}else{Refresh(false);}
 	}
 }
-	
+

@@ -29,7 +29,7 @@ void STime::ParseMS(wxString raw)
 	
 	int csec1=0,sec1,min1,godz1;
 	if(raw.Trim()==""){mstime=0;}
-	else if (form<5){
+	else if (form<MDVD){
 		wxString csec,sec,min,godz;
 		size_t godz11=raw.find(_T(":"),0);
 		godz=raw.SubString(0,godz11-1);
@@ -51,15 +51,14 @@ void STime::ParseMS(wxString raw)
 		csec1=wxAtoi(csec);}
 
 		mstime=(godz1*3600000)+(min1*60000)+(sec1*1000)+csec1;
-	}else if(form==MDVD||form==MPL2)
-	{   
+	}else if(form==MDVD||form==MPL2){   
 		//float afps=(form==MPL2)?10 : Options.GetFloat("Default FPS");
 		int ress=wxAtoi(raw);
-		if(form==MDVD){orgframe=ress;mstime=(ress/Options.GetFloat("Default FPS"))*(1000);}
+		if(form==MDVD){orgframe=ress;mstime=(ress/Options.GetFloat("Default FPS"))*(1000);if(orgframe<0){orgframe=0;}}
 		else{mstime=(ress/10)*(1000);}
 	}
 
-
+	
 }
 
 wxString STime::raw(char ft)//,float custfps
