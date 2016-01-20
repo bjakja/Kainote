@@ -163,12 +163,12 @@ wxPanel(parent,-1,wxDefaultPosition,wxSize(0,0),wxBORDER_RAISED)
 	ButtonSizer->Add(temp,0,wxRIGHT,5);
 
 	KaraSwitch = new wxToggleButton(this,Audio_Button_Karaoke,"",wxDefaultPosition,wxSize(26,26));
-	KaraSwitch->SetToolTip(_("W³¹cz \\ Wy³¹cz tworzenie karaoke"));
+	KaraSwitch->SetToolTip(_("W³¹cz / Wy³¹cz tworzenie karaoke"));
 	KaraSwitch->SetBitmap(wxBITMAP_PNG("button_karaoke"));
 	KaraSwitch->SetValue(audioDisplay->hasKara);
 	ButtonSizer->Add(KaraSwitch,0,wxALIGN_CENTER | wxEXPAND,0);
 	KaraMode = new wxToggleButton(this,Audio_Button_Split,"",wxDefaultPosition,wxSize(26,26));
-	KaraMode->SetToolTip(_("W³¹cz \\ Wy³¹cz automatyczne dzielenie sylab"));
+	KaraMode->SetToolTip(_("W³¹cz / Wy³¹cz automatyczne dzielenie sylab"));
 	KaraMode->SetBitmap(wxBITMAP_PNG("button_auto_split"));
 	KaraMode->SetValue(audioDisplay->karaAuto);
 	ButtonSizer->Add(KaraMode,0,wxRIGHT | wxALIGN_CENTER | wxEXPAND,5);
@@ -189,7 +189,7 @@ wxPanel(parent,-1,wxDefaultPosition,wxSize(0,0),wxBORDER_RAISED)
 	AutoScroll->SetValue(Options.GetBool(_T("Audio Autoscroll")));
 	ButtonSizer->Add(AutoScroll,0,wxALIGN_CENTER | wxEXPAND,0);
 	SpectrumMode = new wxToggleButton(this,Audio_Check_Spectrum,"",wxDefaultPosition,wxSize(26,26));
-	SpectrumMode->SetToolTip(_("Tryb spectrum"));
+	SpectrumMode->SetToolTip(_("Tryb spektrum"));
 	SpectrumMode->SetBitmap(wxBITMAP_PNG("button_spectrum"));
 	SpectrumMode->SetValue(Options.GetBool(_T("Audio Spectrum")));
 	ButtonSizer->Add(SpectrumMode,0,wxALIGN_CENTER | wxEXPAND,0);

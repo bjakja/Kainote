@@ -14,8 +14,8 @@ ProgresDialog::ProgresDialog(wxWindow *_parent, wxString title, wxPoint pos, wxS
 	wxBoxSizer* sizer= new wxBoxSizer(wxVERTICAL);
 	text=new wxStaticText(this,-1,title);
 	gauge=new wxGauge(this, -1, 100, wxDefaultPosition, wxSize(300,20), wxGA_HORIZONTAL);
-	text1=new wxStaticText(this,-1,"Up造n窸o 00:00:00.00 sekund");
-	cancel= new wxButton(this,23333,"Anuluj");
+	text1=new wxStaticText(this,-1,_("Up造n窸o 00:00:00.00 sekund"));
+	cancel= new wxButton(this,23333,_("Anuluj"));
 	sizer->Add(text,0,wxALIGN_CENTER|wxALL, 3);//wxALIGN_CENTER|
 	sizer->Add(gauge,0,wxALIGN_CENTER|wxALL, 3);
 	sizer->Add(text1,0,wxALIGN_CENTER|wxALL, 3);
@@ -63,7 +63,7 @@ void ProgresDialog::Progress(int num)
 			taskbar->SetProgressValue(Kaia->Frame->GetHWND(),(ULONGLONG)num,100);}
 		STime kkk;
 		kkk.NewTime(newtime);
-		text1->SetLabelText("Up造n窸o "+kkk.raw()+" sekund");
+		text1->SetLabelText(wxString::Format(_("Up造n窸o %s sekund"), kkk.raw()));
 		
 	}
 	//bool main =wxThread::IsMain();

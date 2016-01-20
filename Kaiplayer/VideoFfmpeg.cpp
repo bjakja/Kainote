@@ -21,7 +21,7 @@ private:
 };
 
 listw::listw(wxWindow *parent, wxArrayString suggest)
-	: wxDialog(parent,-1,"Wybierz œcie¿kê")
+	: wxDialog(parent,-1,_("Wybierz œcie¿kê"))
 {
 	wxBoxSizer *sizer=new wxBoxSizer(wxHORIZONTAL);
 	disperrs=new wxListBox(this,29886,wxDefaultPosition,wxDefaultSize,suggest);
@@ -44,7 +44,7 @@ void listw::OnDoubleClick(wxCommandEvent& event)
 VideoFfmpeg::VideoFfmpeg(const wxString &filename, int tab, bool *success)
 {
 	//com_inited = false;
-	if(!Options.AudioOpts && !Options.LoadAudioOpts()){wxMessageBox("Dupa blada, opcje siê nie wczyta³y, na audio nie podzia³asz", "B³êdny b³¹d");}
+	if(!Options.AudioOpts && !Options.LoadAudioOpts()){wxMessageBox(_("Dupa blada, opcje siê nie wczyta³y, na audio nie podzia³asz"), _("B³êdny b³¹d"));}
 	disccache = !Options.GetBool("Audio RAM Cache");
 	blnum=0;
 	Cache=0;
@@ -184,9 +184,9 @@ done:
 		//index =FFMS_MakeIndex(filen.utf8_str(), /*(1<<audiotrack)*/0, 0, NULL,NULL, FFMS_IEH_ABORT, NULL, NULL, &errinfo);
 		//wxLogStatus("vidtrack %i, audtrack %i 2",videotrack,audiotrack);
 		if (index == NULL) {
-			if(wxString(errinfo.Buffer).StartsWith(_("Cancelled"))){wxMessageBox(_("Indeksowanie anulowane przez u¿ytkownika"),"B³¹d",5,Kaia->Frame);}
+			if(wxString(errinfo.Buffer).StartsWith(_T("Cancelled"))){wxMessageBox(_("Indeksowanie anulowane przez u¿ytkownika"),_("Uwaga"),5,Kaia->Frame);}
 			else{
-				wxMessageBox(wxString::Format(_("Wyst¹pi³ b³¹d indeksowania: %s"),errinfo.Buffer),"B³¹d",5,Kaia->Frame);}
+				wxMessageBox(wxString::Format(_("Wyst¹pi³ b³¹d indeksowania: %s"),errinfo.Buffer), _("B³¹d"),5,Kaia->Frame);}
 			//FFMS_CancelIndexing(Indexer);
 			return 0;
 		}
@@ -198,7 +198,7 @@ done:
 		//wxLogStatus("write index");
 		if(FFMS_WriteIndex(path.utf8_str(), index, &errinfo))
 		{
-			wxLogStatus("Nie mo¿na zapisaæ indeksu, wyst¹pi³ b³¹d %s", errinfo.Buffer);
+			wxLogStatus(_("Nie mo¿na zapisaæ indeksu, wyst¹pi³ b³¹d %s"), errinfo.Buffer);
 			FFMS_DestroyIndex(index);
 			return 0;
 		}
@@ -217,7 +217,7 @@ done:
 		//we can and should now destroy the index object. 
 
 		if (videosource == NULL) {
-			wxLogStatus("Dupa bada videosource failed");
+			wxLogStatus(_("Dupa bada, videosource nie utworzy³ siê."));
 			return 0;
 		}
 
@@ -257,17 +257,17 @@ done:
 
 		//wxLogStatus("Set format %i %i",width, height);
 		if (FFMS_SetOutputFormatV2(videosource, pixfmt, width, height, FFMS_RESIZER_BILINEAR, &errinfo)) {
-			wxLogStatus("Dupa bada nie mo¿na przekonwertowaæ na bgra");
+			wxLogStatus(_("Dupa bada, nie mo¿na przekonwertowaæ wideo na NV12"));
 			return 0;
 		}
 
 		FFMS_Track *FrameData = FFMS_GetTrackFromVideo(videosource);
 		if (FrameData == NULL){
-			wxLogStatus("Dupa bada nie mo¿na pobraæ œcie¿ki z wideo");
+			wxLogStatus(_("Dupa bada, nie mo¿na pobraæ œcie¿ki wideo"));
 			return 0;}
 		const FFMS_TrackTimeBase *TimeBase = FFMS_GetTimeBase(FrameData);
 		if (TimeBase == NULL){
-			wxLogStatus("Dupa bada nie mo¿na pobraæ bazy czasów");
+			wxLogStatus(_("Dupa bada, nie mo¿na pobraæ informacji o wideo"));
 			return 0;}
 
 		const FFMS_FrameInfo *CurFrameData;
@@ -298,7 +298,7 @@ done:
 	audiosource = FFMS_CreateAudioSource(filename.utf8_str(), audiotrack, index, FFMS_DELAY_FIRST_VIDEO_TRACK, &errinfo);//FFMS_DELAY_FIRST_VIDEO_TRACK
 	if (audiosource == NULL) {
 		/* handle error (you should know what to do by now) */
-		wxMessageBox(wxString::Format(_("Wyst¹pi³ b³¹d tworzenia ¿ród³a audio: %s"),errinfo.Buffer),"B³¹d",5,Kaia->Frame);
+		wxMessageBox(wxString::Format(_("Wyst¹pi³ b³¹d tworzenia Ÿród³a audio: %s"),errinfo.Buffer),_("B³¹d"),5,Kaia->Frame);
 		FFMS_DestroyIndex(index);
 		return 0;
 	}
@@ -311,7 +311,7 @@ done:
 	resopts->SampleFormat=FFMS_FMT_S16;
 
 	if (FFMS_SetOutputFormatA(audiosource, resopts, &errinfo)){
-		wxMessageBox(wxString::Format(_("Wyst¹pi³ b³¹d konwertowania audio: %s"),errinfo.Buffer),"B³¹d",5,Kaia->Frame);
+		wxMessageBox(wxString::Format(_("Wyst¹pi³ b³¹d konwertowania audio: %s"),errinfo.Buffer),_("B³¹d"),5,Kaia->Frame);
 	}
 	else{
 		BytesPerSample=2;
@@ -524,8 +524,7 @@ int64_t VideoFfmpeg::GetNumSamples()
 
 bool VideoFfmpeg::CacheIt()
 {
-	//wxLogStatus(_("bufor"));
-	progress->Title("Zapisywanie do pamiêci");
+	progress->Title(_("Zapisywanie do pamiêci RAM"));
 	//progress->cancel->Enable(false);
 	int64_t end=NumSamples*GetBytesPerSample();
 
@@ -536,7 +535,7 @@ bool VideoFfmpeg::CacheIt()
 
 	Cache=NULL;
 	Cache=new char*[blnum];
-	if(Cache==NULL){wxMessageBox("Za ma³o pamiêci ram");return false;}
+	if(Cache==NULL){wxMessageBox(_("Za ma³o pamiêci RAM"));return false;}
 
 	int64_t pos=0;
 	int halfsize=(blsize/GetBytesPerSample());
@@ -603,7 +602,7 @@ int VideoFfmpeg::FramefromTime(int time)
 
 bool VideoFfmpeg::DiskCache()
 {
-	progress->Title("Zapisywanie na dysk twardy");
+	progress->Title(_("Zapisywanie na dysk twardy"));
 	//progress->cancel->Enable(false);
 	progress->Progress(0);
 	//char* data;

@@ -327,7 +327,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			plus=true;rarr=false;
 			RefreshRect(wxRect(start,hh,start+17,25),false);
 			//if(oldtab!=i){
-				SetToolTip("Otwórz now¹ zak³adkê");
+				SetToolTip(_("Otwórz now¹ zak³adkê"));
 				//oldtab=i;}
 			return;
 			}
@@ -354,7 +354,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		}else if(i==iter){
 		}
 		if(i==iter && (x>num+Tabsizes[i]-18 && x<num+Tabsizes[i]-5)){
-			if(!onx){SetToolTip("Zamknij");}
+			if(!onx){SetToolTip(_("Zamknij"));}
 			onx=true;
 			RefreshRect(wxRect(num+Tabsizes[i]-18,hh,15,25),false);
 		}else if(onx){
@@ -376,11 +376,11 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		}
 		menu1.Check(MENU_CHOOSE+iter,true);
 		menu1.AppendSeparator();
-		if(i>=0){menu1.Append(MENU_SAVE+i,"Zapisz","Zapisz",wxITEM_NORMAL);}
-		menu1.Append(MENU_SAVE-1,"Zapisz wszystko","Zapisz wszystko",wxITEM_NORMAL);
-		menu1.Append(MENU_CHOOSE-1,"Zamknij wszystkie zak³adki","Zamknij wszystkie zak³adki",wxITEM_NORMAL);
+		if(i>=0){menu1.Append(MENU_SAVE+i,_("Zapisz"),_("Zapisz"),wxITEM_NORMAL);}
+		menu1.Append(MENU_SAVE-1,_("Zapisz wszystko"),_("Zapisz wszystko"),wxITEM_NORMAL);
+		menu1.Append(MENU_CHOOSE-1,_("Zamknij wszystkie zak³adki"),_("Zamknij wszystkie zak³adki"),wxITEM_NORMAL);
 		if((i!=iter && Size()>1 && i!=-1)||split){
-			wxString txt=(split)? "Wyœwietl jedn¹ zak³adkê" : "Wyœwietl dwie zak³adki";
+			wxString txt=(split)? _("Wyœwietl jedn¹ zak³adkê") : _("Wyœwietl dwie zak³adki");
 			menu1.Append((MENU_CHOOSE-2)-i, txt, "",wxITEM_NORMAL);
 		}
 		int id=GetPopupMenuSelectionFromUser(menu1,event.GetPosition());

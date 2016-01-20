@@ -51,19 +51,19 @@ BEGIN_EVENT_TABLE(DescTxtCtrl,wxTextCtrl)
 	EVT_MOUSE_EVENTS(TagButton::OnMouseEvent)
 	END_EVENT_TABLE()
 	txtdialog::txtdialog(wxWindow *parent, int id, const wxString &txtt, int _type, const wxPoint &position)
-	:wxDialog(parent,id,"Wpisz tag ASS",position)
+	:wxDialog(parent,id,_("Wpisz tag ASS"),position)
 {
 	wxBoxSizer *siz=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *siz1=new wxBoxSizer(wxHORIZONTAL);
-	wxString types[3]={"Tag wstawiany w miejse kursora", "Tag stawiany tylko na pocz¹tku tekstu", "Zwyk³y tekst"};
+	wxString types[3]={_("Tag wstawiany w miejse kursora"), _("Tag wstawiany na pocz¹tku tekstu"), _("Zwyk³y tekst")};
 	type=new wxChoice(this,-1,wxDefaultPosition, wxDefaultSize,3,types);
 	type->SetSelection(_type);
 	txt=new wxTextCtrl(this,-1,txtt,wxDefaultPosition,wxSize(150,25), wxTE_PROCESS_ENTER);
 	txt->SetSelection(0,txtt.Len()-1);
 	siz->Add(type,0,wxEXPAND|wxALL,4);
 	siz->Add(txt,0,wxEXPAND|wxLEFT|wxRIGHT,4);
-	siz1->Add(new wxButton(this, wxID_OK,"Zapisz tag"),0,wxEXPAND|wxALL,4);
-	siz1->Add(new wxButton(this, wxID_CANCEL,"Anuluj"),0,wxEXPAND|wxALL,4);
+	siz1->Add(new wxButton(this, wxID_OK,_("Zapisz tag")),0,wxEXPAND|wxALL,4);
+	siz1->Add(new wxButton(this, wxID_CANCEL,_("Anuluj")),0,wxEXPAND|wxALL,4);
 	siz->Add(siz1,0,wxEXPAND,0);
 	SetSizerAndFit(siz);
 }
@@ -123,23 +123,23 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	ans.Add("an8");
 	ans.Add("an9");
 
-	Bfont = new wxButton(this, ID_FONT, _(""), wxDefaultPosition, wxSize(26,26));
+	Bfont = new wxButton(this, ID_FONT, _T(""), wxDefaultPosition, wxSize(26,26));
 	Bfont->SetBitmap(wxBITMAP_PNG ("FONTS"));
-	Bcol1 = new wxButton(this, ID_COL1, _(""), wxDefaultPosition, wxSize(26,26));
+	Bcol1 = new wxButton(this, ID_COL1, _T(""), wxDefaultPosition, wxSize(26,26));
 	Bcol1->SetBitmap(wxBITMAP_PNG ("Kolor1"));
-	Bcol2 = new wxButton(this, ID_COL2, _(""), wxDefaultPosition, wxSize(26,26));
+	Bcol2 = new wxButton(this, ID_COL2, _T(""), wxDefaultPosition, wxSize(26,26));
 	Bcol2->SetBitmap(wxBITMAP_PNG ("Kolor2"));
-	Bcol3 = new wxButton(this, ID_COL3, _(""), wxDefaultPosition, wxSize(26,26));
+	Bcol3 = new wxButton(this, ID_COL3, _T(""), wxDefaultPosition, wxSize(26,26));
 	Bcol3->SetBitmap(wxBITMAP_PNG ("Kolor3"));
-	Bcol4 = new wxButton(this, ID_COL4, _(""), wxDefaultPosition, wxSize(26,26));
+	Bcol4 = new wxButton(this, ID_COL4, _T(""), wxDefaultPosition, wxSize(26,26));
 	Bcol4->SetBitmap(wxBITMAP_PNG ("Kolor4"));
-	Bbold = new wxButton(this, ID_BOLD, _(""), wxDefaultPosition, wxSize(26,26));
+	Bbold = new wxButton(this, ID_BOLD, _T(""), wxDefaultPosition, wxSize(26,26));
 	Bbold->SetBitmap(wxBITMAP_PNG ("BOLD"));
-	Bital = new wxButton(this, ID_ITAL, _(""), wxDefaultPosition, wxSize(26,26));
+	Bital = new wxButton(this, ID_ITAL, _T(""), wxDefaultPosition, wxSize(26,26));
 	Bital->SetBitmap(wxBITMAP_PNG ("ITALIC"));
-	Bund = new wxButton(this, ID_UND, _(""), wxDefaultPosition, wxSize(26,26));
+	Bund = new wxButton(this, ID_UND, _T(""), wxDefaultPosition, wxSize(26,26));
 	Bund->SetBitmap(wxBITMAP_PNG ("UNDER"));
-	Bstrike = new wxButton(this, ID_STRIKE, _(""), wxDefaultPosition, wxSize(26,26));
+	Bstrike = new wxButton(this, ID_STRIKE, _T(""), wxDefaultPosition, wxSize(26,26));
 	Bstrike->SetBitmap(wxBITMAP_PNG ("STRIKE"));
 	Ban = new wxChoice(this, ID_AN, wxDefaultPosition, wxSize(48,24),ans, wxNO_FULL_REPAINT_ON_RESIZE);
 	Ban->Select(1);
@@ -162,11 +162,11 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	}
 
 
-	TlMode= new wxCheckBox(this,ID_TLMODE,"Tryb t³umaczenia");
+	TlMode= new wxCheckBox(this,ID_TLMODE,_("Tryb t³umaczenia"));
 	TlMode->SetValue(false);
 	TlMode->Enable(false);
-	Chars = new EBStaticText(this,"Linie: 0/86");
-	Chtime = new EBStaticText(this,"Znaki na sekundê: 0<=15");
+	Chars = new EBStaticText(this,_("Linie: 0/86"));
+	Chtime = new EBStaticText(this,_("Znaki na sekundê: 0<=15"));
 
 	BoxSizer5 = new wxBoxSizer(wxHORIZONTAL);
 	BoxSizer5->Add(Chars,0,wxALIGN_CENTER|wxLEFT|wxEXPAND,2);
@@ -197,20 +197,20 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	TextEditTl->Hide();
 	Comment = new wxCheckBox(this, ID_CHECKBOX1, _("Komentarz"), wxDefaultPosition, wxSize(82,-1));
 	Comment->SetValue(false);
-	LayerEdit = new NumCtrl(this, 16668, _(""),-10000000,10000000,true, wxDefaultPosition, wxSize(50,-1));
-	StartEdit = new TimeCtrl(this, 16668, _(""), wxDefaultPosition, wxSize(87,-1),wxTE_CENTRE);
-	EndEdit = new TimeCtrl(this, 16668, _(""), wxDefaultPosition, wxSize(87,-1),wxTE_CENTRE);
-	DurEdit = new TimeCtrl(this, 16668, _(""), wxDefaultPosition, wxSize(87,-1),wxTE_CENTRE);
+	LayerEdit = new NumCtrl(this, 16668, _T(""),-10000000,10000000,true, wxDefaultPosition, wxSize(50,-1));
+	StartEdit = new TimeCtrl(this, 16668, _T(""), wxDefaultPosition, wxSize(87,-1),wxTE_CENTRE);
+	EndEdit = new TimeCtrl(this, 16668, _T(""), wxDefaultPosition, wxSize(87,-1),wxTE_CENTRE);
+	DurEdit = new TimeCtrl(this, 16668, _T(""), wxDefaultPosition, wxSize(87,-1),wxTE_CENTRE);
 	wxArrayString styles;
 	styles.Add("Default");
 	StyleChoice = new wxChoice(this, IDSTYLE, wxDefaultPosition, wxSize(100,-1),styles);//wxSize(145,-1)
 	//druga linia
 
-	ActorEdit = new DescTxtCtrl(this, wxSize(90,-1), "Aktor");
-	MarginLEdit = new NumCtrl(this, 16668, _(""),0,9999,true, wxDefaultPosition, wxSize(42,-1),wxTE_CENTRE);
-	MarginREdit = new NumCtrl(this, 16668, _(""),0,9999,true, wxDefaultPosition, wxSize(42,-1),wxTE_CENTRE);
-	MarginVEdit = new NumCtrl(this, 16668, _(""),0,9999,true, wxDefaultPosition, wxSize(42,-1),wxTE_CENTRE);
-	EffectEdit = new DescTxtCtrl(this, wxSize(90,-1), "Efekt");
+	ActorEdit = new DescTxtCtrl(this, wxSize(90,-1), _("Aktor"));
+	MarginLEdit = new NumCtrl(this, 16668, _T(""),0,9999,true, wxDefaultPosition, wxSize(42,-1),wxTE_CENTRE);
+	MarginREdit = new NumCtrl(this, 16668, _T(""),0,9999,true, wxDefaultPosition, wxSize(42,-1),wxTE_CENTRE);
+	MarginVEdit = new NumCtrl(this, 16668, _T(""),0,9999,true, wxDefaultPosition, wxSize(42,-1),wxTE_CENTRE);
+	EffectEdit = new DescTxtCtrl(this, wxSize(90,-1), _("Efekt"));
 
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
 	BoxSizer2->Add(Comment,0,wxLEFT|wxALIGN_CENTER,4);
@@ -356,11 +356,11 @@ void EditBox::UpdateChars(wxString text)
 	bool isbad=false;
 	int ilzn=grid->CalcChars(text,&result,&isbad);
 	wxColour textcolour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT); 
-	Chars->SetLabelText("Linie: "+result+"43");
+	Chars->SetLabelText(_("Linie: ")+result+"43");
 	Chars->SetForegroundColour((isbad)? *wxRED : textcolour);
 	int chtime= ilzn / ((line->End.mstime-line->Start.mstime) / 1000.0f);
 	if(chtime<0 || chtime>999){chtime=999;}
-	Chtime->SetLabelText(wxString::Format("Znaki na sekundê: %i<=15",chtime));
+	Chtime->SetLabelText(wxString::Format(_("Znaki na sekundê: %i<=15"),chtime));
 	Chtime->SetForegroundColour((chtime>15)? *wxRED : textcolour);
 	BoxSizer5->Layout();
 }
@@ -850,35 +850,35 @@ void EditBox::RefreshStyle(bool resetline)
 
 void EditBox::DoTooltips()
 {
-	Bfont->SetToolTip("Wybór czcionki.");
-	Bcol1->SetToolTip("Kolor podstawowy.");
-	Bcol2->SetToolTip("Kolor zastêpczy u¿ywany tylko w karaoke.");
-	Bcol3->SetToolTip("Kolor obwódki.");
-	Bcol4->SetToolTip("Kolor cienia.");
-	Ban->SetToolTip("Po³o¿enie tekstu.");
-	//Global->SetToolTip("Wstawia wszystkie tagi na pocz¹tku zaznaczonych linijek.");
-	Bbold->SetToolTip("Pogrubienie.");
-	Bital->SetToolTip("Pochylenie.");
-	Bund->SetToolTip("Podkreœlenie.");
-	Bstrike->SetToolTip("Przekreœlenie.");
-	TlMode->SetToolTip("Tryb t³umaczenia s³u¿y do t³umaczenia z napisów obcojêzycznych, wyœwietla i zapisuje zarówno obcojêzyczny, jak i tekst t³umaczenia.");
-	Bcpall->SetToolTip("Wtawia ca³y tekst obcojêzyczny do pola z t³umaczeniem.");
-	Bcpsel->SetToolTip("Wtawia zaznaczony tekst obcojêzyczny do pola z t³umaczeniem.");
-	//TextEdit->SetToolTip("Tekst linijki / tekst t³umaczenia, gdy tryb t³umaczenia jest w³¹czony.");
-	//TextEditTl->SetToolTip("tekst obcojêzyczny.");
-	Comment->SetToolTip("Ustawia linijkê jako komentarz. Komentarze nie s¹ wyœwietlane.");
-	LayerEdit->SetToolTip("Warstwa linijki, wy¿sze warstwy s¹ na wierzchu.");
-	StartEdit->SetToolTip("Czas pocz¹tkowy linijki.");
-	EndEdit->SetToolTip("Czas koñcowy linijki.");
-	DurEdit->SetToolTip("Czas trwania linijki.");
-	StyleChoice->SetToolTip("Styl linijki.");
-	ActorEdit->SetToolTip("Oznaczenie aktora linijki, nie wp³ywa w ¿adnym stopniu na wygl¹d napisów.");
-	MarginLEdit->SetToolTip("Margines lewy linijki.");
-	MarginREdit->SetToolTip("Margines prawy linijki.");
-	MarginVEdit->SetToolTip("Margines górny i dolny linijki.");
-	EffectEdit->SetToolTip("Pole efekt linijki, s³u¿y do oznaczania linijek efektów czy karaoke albo do efektów przejœæ ob³ugiwanych przez vsfilter.");
-	Chars->SetToolTip("Iloœæ znaków w ka¿dej linijce.\nNie wiêcej ni¿ 43 znaki na linijkê i maksymalnie 2 linijki");
-	Chtime->SetToolTip("Znaki na sekundê.\nNie powinny przekraczaæ 15 znaków na sekundê.");
+	Bfont->SetToolTip(_("Wybór czcionki"));
+	Bcol1->SetToolTip(_("Kolor podstawowy"));
+	Bcol2->SetToolTip(_("Kolor zastêpczy do karaoke"));
+	Bcol3->SetToolTip(_("Kolor obwódki"));
+	Bcol4->SetToolTip(_("Kolor cienia"));
+	Ban->SetToolTip(_("Po³o¿enie tekstu"));
+	//Global->SetToolTip(_("Wstawia wszystkie tagi na pocz¹tku zaznaczonych linijek."));
+	Bbold->SetToolTip(_("Pogrubienie"));
+	Bital->SetToolTip(_("Pochylenie"));
+	Bund->SetToolTip(_("Podkreœlenie"));
+	Bstrike->SetToolTip(_("Przekreœlenie"));
+	TlMode->SetToolTip(_("Tryb t³umaczenia wyœwietla i zapisuje zarówno tekst obcojêzyczny, jak i tekst t³umaczenia"));
+	Bcpall->SetToolTip(_("Kopiuje ca³y tekst obcojêzyczny do pola z t³umaczeniem"));
+	Bcpsel->SetToolTip(_("Kopiuje zaznaczony tekst obcojêzyczny do pola z t³umaczeniem"));
+	//TextEdit->SetToolTip(_("Tekst linijki / tekst t³umaczenia, gdy tryb t³umaczenia jest w³¹czony."));
+	//TextEditTl->SetToolTip(_("tekst obcojêzyczny."));
+	Comment->SetToolTip(_("Ustawia linijkê jako komentarz. Komentarze nie s¹ wyœwietlane"));
+	LayerEdit->SetToolTip(_("Warstwa linijki, wy¿sze warstwy s¹ na wierzchu"));
+	StartEdit->SetToolTip(_("Czas pocz¹tkowy linijki"));
+	EndEdit->SetToolTip(_("Czas koñcowy linijki"));
+	DurEdit->SetToolTip(_("Czas trwania linijki"));
+	StyleChoice->SetToolTip(_("Styl linijki"));
+	ActorEdit->SetToolTip(_("Oznaczenie aktora linijki. Nie wp³ywa na wygl¹d napisów"));
+	MarginLEdit->SetToolTip(_("Margines lewy linijki"));
+	MarginREdit->SetToolTip(_("Margines prawy linijki"));
+	MarginVEdit->SetToolTip(_("Margines górny i dolny linijki"));
+	EffectEdit->SetToolTip(_("Efekt linijki. S³u¿y do oznaczania linijek, na których zastosowane ma byæ karaoke b¹dŸ efekty VSFiltera"));
+	Chars->SetToolTip(_("Iloœæ znaków w ka¿dej linijce.\nNie wiêcej ni¿ 43 znaki na linijkê (maksymalnie 2 linijki)"));
+	Chtime->SetToolTip(_("Znaki na sekundê.\nNie powinny przekraczaæ 15 znaków na sekundê"));
 }
 
 void EditBox::OnSize(wxSizeEvent& event)
@@ -1293,7 +1293,7 @@ void EditBox::SetVisual(wxString visual,bool dummy, int type)
 
 		//wxLogStatus(*dummytext);
 		wxString *dtxt=new wxString(*dummytext);
-		if(!pan->Video->OpenSubs(dtxt)){wxLogStatus("subs open failed");}
+		if(!pan->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie mo¿na otworzyæ napisów"));}
 		pan->Video->VisEdit=true;
 		pan->Video->Render();
 	}else{
@@ -1541,7 +1541,8 @@ void EditBox::SetTextWithTags()
 
 void EditBox::OnCursorMoved(wxCommandEvent& event)
 {
-	if(Visual==SCALE||Visual==ROTATEZ||Visual==ROTATEXY){TabPanel* pan=(TabPanel*)GetParent();
-	pan->Video->SetVisual(line->Start.mstime, line->End.mstime);
+	if(Visual==SCALE||Visual==ROTATEZ||Visual==ROTATEXY){
+		TabPanel* pan=(TabPanel*)GetParent();
+		pan->Video->SetVisual(line->Start.mstime, line->End.mstime);
 	}
 }

@@ -32,7 +32,7 @@ bool SpellChecker::Initialize()
 
 	wxArrayString dic;
 	wxArrayString aff;
-	wxString pathhh=Options.pathfull+_T("\\Slownik");
+	wxString pathhh=Options.pathfull+_T("\\Dictionary");
 	wxDir kat(pathhh);
 	if(kat.IsOpened()){
 
@@ -41,14 +41,17 @@ bool SpellChecker::Initialize()
 	}
 
 	// Check if language is available
-	if(dic.size()<1&&aff.size()<1) 
-	{Options.SetBool("Editbox Spellchecker",false);
-	wxMessageBox(_T("plików s³ownika nie ma w folderze \"")+Options.pathfull+_T("\\Slownik\",\r\nsprawdzanie pisowni zostanie wy³¹czone")); return false;}
+	if(dic.size()<1 || aff.size()<1) 
+	{
+		Options.SetBool("Editbox Spellchecker",false);
+		wxMessageBox(wxString::Format(_("Brak plików s³ownika w folderze \"%s\\Dictionary\".\r\nSprawdzanie pisowni zostanie wy³¹czone"), Options.pathfull)); 
+		return false;
+	}
 	//wxMessageBox(_T("spellchecker if exist ")+aff[0]+_T(" ")+dic[0]);
 	//if (!wxFileExists(aff[0]) || !wxFileExists(dic[0])) wxMessageBox("spellchecker nie znalaz³ s³ownika"); return false;
 
 	// Load
-	hunspell = new Hunspell(aff[0].mb_str(wxConvLocal),dic[0].mb_str(wxConvLocal));
+	hunspell = new Hunspell(aff[0].mb_str(wxConvLocal), dic[0].mb_str(wxConvLocal));
 	//wxMessageBox("spellchecker new");
 	//conv = NULL;
 	if (hunspell) {
@@ -74,7 +77,7 @@ bool SpellChecker::Initialize()
 		}
 
 		return true;
-	}else{wxMessageBox(_T("spellchecker siê nie zinicjalizowa³1"));}
+	}else{wxMessageBox(_("Nie mo¿na zainicjalizowaæ sprawdzania pisowni."));}
 	return false;
 }
 

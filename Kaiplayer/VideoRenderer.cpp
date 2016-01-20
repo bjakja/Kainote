@@ -69,7 +69,7 @@ bool VideoRend::InitDX(bool reset)
 
 	if(!reset){
 		d3dobject = Direct3DCreate9( D3D_SDK_VERSION );
-		PTR(d3dobject,L"Nie mo¿na utwo¿yæ objektu Direct 3d");
+		PTR(d3dobject,_("Nie mo¿na utwo¿yæ objektu Direct3D"));
 	}else{
 		SAFE_RELEASE(MainStream);
 		SAFE_RELEASE(bars);
@@ -97,13 +97,13 @@ bool VideoRend::InitDX(bool reset)
 
 	if(reset){
 		hr=d3device->Reset(&d3dpp);
-		if(FAILED(hr)){wxLogStatus("Nie mo¿na zresetowaæ d3d");}
+		if(FAILED(hr)){wxLogStatus(_("Nie mo¿na zresetowaæ Direct3D"));}
 	}else{
 		hr=d3dobject->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,
 			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED , &d3dpp, &d3device);//| D3DCREATE_FPU_PRESERVE
 		if(FAILED(hr)){
 			HR (d3dobject->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
-				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,&d3dpp, &d3device ), L"Nie mo¿na utworzyæ urz¹dzenia D3D9"); 
+				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,&d3dpp, &d3device ), _("Nie mo¿na utworzyæ urz¹dzenia D3D9")); 
 		} 
 	}
 	//hr = d3device->SetSamplerState( 0, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP );
@@ -139,7 +139,7 @@ bool VideoRend::InitDX(bool reset)
     hr = d3device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
     hr = d3device->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
     hr = d3device->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-	HR(hr,"Zawiod³o któreœ z ustawieñ dx");
+	HR(hr,_("Zawiod³o któreœ z ustawieñ DirectX"));
 
 	D3DXMATRIX matOrtho; 
 	D3DXMATRIX matIdentity;
@@ -147,9 +147,9 @@ bool VideoRend::InitDX(bool reset)
 	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, rt3.right, rt3.bottom, 0, 0.0f, 1.0f);
 	D3DXMatrixIdentity(&matIdentity);
 
-	HR(d3device->SetTransform(D3DTS_PROJECTION, &matOrtho), "Nie mo¿na ustawiæ matrixa projection");
-	HR(d3device->SetTransform(D3DTS_WORLD, &matIdentity), "Nie mo¿na ustawiæ matrixa world");
-	HR(d3device->SetTransform(D3DTS_VIEW, &matIdentity), "Nie mo¿na ustawiæ matrixa view");
+	HR(d3device->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie mo¿na ustawiæ macierzy porojekcji"));
+	HR(d3device->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie mo¿na ustawiæ macierzy œwiata"));
+	HR(d3device->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie mo¿na ustawiæ macierzy widoku"));
 
 #if byvertices
 	HR(d3device->CreateTexture(vwidth, vwidth, 1, D3DUSAGE_RENDERTARGET,
@@ -186,7 +186,7 @@ bool VideoRend::InitDX(bool reset)
 	//}
 
 #else
-	HR (d3device->GetBackBuffer(0,0, D3DBACKBUFFER_TYPE_MONO, &bars),L"Nie mo¿na stworzyæ powierzchni");
+	HR (d3device->GetBackBuffer(0,0, D3DBACKBUFFER_TYPE_MONO, &bars),_("Nie mo¿na stworzyæ powierzchni"));
 
 	d3device->CreateOffscreenPlainSurface(vwidth,vheight,d3dformat, D3DPOOL_DEFAULT,&MainStream,0);//D3DPOOL_DEFAULT
 #endif
@@ -229,7 +229,7 @@ void VideoRend::Render(bool Frame)
 
 #ifndef byvertices
 	hr = d3device->StretchRect(MainStream,&rt5,bars,&rt4,D3DTEXF_LINEAR);
-	if(FAILED(hr)){wxLogStatus("cannot stretch main stream");}
+	if(FAILED(hr)){wxLogStatus(_("Nie mo¿na na³o¿yæ powierzchni na siebie"));}
 #endif
 
 
@@ -320,7 +320,7 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 		VFF->GetFrame(lastframe,fdata);
 	}
 	else{
-		wxLogStatus("nie ma wskaŸnika bufora");return false;
+		wxLogStatus(_("Nie ma wskaŸnika bufora klatki"));return false;
 	}
 
 
@@ -331,7 +331,7 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 	}
 
 
-	HR(MainStream->LockRect( &d3dlr,0, D3DLOCK_NOSYSLOCK), L"Nie mo¿na zablokowaæ bufora tekstury");//D3DLOCK_NOSYSLOCK
+	HR(MainStream->LockRect( &d3dlr,0, D3DLOCK_NOSYSLOCK), _("Nie mo¿na zablokowaæ bufora tekstury"));//D3DLOCK_NOSYSLOCK
 
 	texbuf = static_cast<byte *>(d3dlr.pBits);
 
@@ -676,13 +676,13 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 	//if(!vobsub){
 	vobsub = csri_renderer_default();
 	//}
-	PTR(vobsub,"Csri failed.");
+	PTR(vobsub,_("CSRI odmówi³o pos³uszeñstwa."));
 
 
 	instance = csri_open_mem(vobsub,buffer,size,NULL);
-	PTR(instance,"Instancja vobsuba nie utworzy³a siê.");
+	PTR(instance,_("Instancja VobSuba nie utworzy³a siê."));
 
-	if(csri_request_fmt(instance,format)){wxLogStatus("request format failed");}
+	if(csri_request_fmt(instance,format)){wxLogStatus(_("CSRI nie obs³uguje tego formatu."));}
 
 	if(redraw && vstate!=None && IsDshow && datas){
 		int all=vheight*pitch;

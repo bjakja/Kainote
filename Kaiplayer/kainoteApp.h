@@ -12,6 +12,7 @@
 
 #include <wx/app.h>
 #include <wx/snglinst.h>
+
 #include "kainoteMain.h"
 #if _DEBUG
 //#define _CRTDBG_MAP_ALLOC
@@ -38,6 +39,7 @@ public:
 private:
 	wxSingleInstanceChecker* m_checker;
 	KaiServer *MyServer;
+	wxLocale *locale;
 };
 
 

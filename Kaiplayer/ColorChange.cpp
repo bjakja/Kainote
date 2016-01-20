@@ -127,15 +127,15 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 	wxGridSizer *angrid=new wxGridSizer(3,5,2);
 
-	rb7 = new wxRadioButton(this, ID_RAN7, _("7"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	rb8 = new wxRadioButton(this, ID_RAN8, _("8"));
-	rb9 = new wxRadioButton(this, ID_RAN9, _("9"));
-	rb4 = new wxRadioButton(this, ID_RAN4, _("4"));
-	rb5 = new wxRadioButton(this, ID_RAN5, _("5"));
-	rb6 = new wxRadioButton(this, ID_RAN6, _("6"));
-	rb1 = new wxRadioButton(this, ID_RAN1, _("1"));
-	rb2 = new wxRadioButton(this, ID_RAN2, _("2"));
-	rb3 = new wxRadioButton(this, ID_RAN3, _("3"));
+	rb7 = new wxRadioButton(this, ID_RAN7, _T("7"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	rb8 = new wxRadioButton(this, ID_RAN8, _T("8"));
+	rb9 = new wxRadioButton(this, ID_RAN9, _T("9"));
+	rb4 = new wxRadioButton(this, ID_RAN4, _T("4"));
+	rb5 = new wxRadioButton(this, ID_RAN5, _T("5"));
+	rb6 = new wxRadioButton(this, ID_RAN6, _T("6"));
+	rb1 = new wxRadioButton(this, ID_RAN1, _T("1"));
+	rb2 = new wxRadioButton(this, ID_RAN2, _T("2"));
+	rb3 = new wxRadioButton(this, ID_RAN3, _T("3"));
 	
 	angrid->Add(rb7,1,wxEXPAND|wxALL,2);
 	angrid->Add(rb8,1,wxEXPAND|wxALL,2);
@@ -153,25 +153,25 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	sizer2->Add(stylean,0,wxEXPAND|wxLEFT,4);
 	
 	
-	encs.Add("0 - ANSI");
-	encs.Add("1 - Domyœlny");
-	encs.Add("2 - Symbol");
-	encs.Add("77 - Mac");
-	encs.Add("128 - Japoñski");
-	encs.Add("129 - Koreañski");
-	encs.Add("130 - Johab");
-	encs.Add("134 - Chiñski GB2312");
-	encs.Add("135 - Chiñski BIG5");
-	encs.Add("161 - Grecki");
-	encs.Add("162 - Turecki");
-	encs.Add("163 - Wietnamski");
-	encs.Add("177 - Hebrajski");
-	encs.Add("178 - Arabski");
-	encs.Add("186 - Jêzyki Ba³tyckie");
-	encs.Add("204 - Rosyjski");
-	encs.Add("222 - Tajski");
-	encs.Add("238 - Europa Œrodkowa (Polski)");
-	encs.Add("255 - OEM");
+	encs.Add(_("0 - ANSI"));
+	encs.Add(_("1 - Domyœlny"));
+	encs.Add(_("2 - Symbol"));
+	encs.Add(_("77 - Mac"));
+	encs.Add(_("128 - Japoñski"));
+	encs.Add(_("129 - Koreañski"));
+	encs.Add(_("130 - Johab"));
+	encs.Add(_("134 - Chiñski GB2312"));
+	encs.Add(_("135 - Chiñski BIG5"));
+	encs.Add(_("161 - Grecki"));
+	encs.Add(_("162 - Turecki"));
+	encs.Add(_("163 - Wietnamski"));
+	encs.Add(_("177 - Hebrajski"));
+	encs.Add(_("178 - Arabski"));
+	encs.Add(_("186 - Jêzyki Ba³tyckie"));
+	encs.Add(_("204 - Rosyjski"));
+	encs.Add(_("222 - Tajski"));
+	encs.Add(_("238 - Europa Œrodkowa (Polski)"));
+	encs.Add(_("255 - OEM"));
 	
 	wxStaticBoxSizer *styleenc= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Kodowanie tekstu"));
 	senc = new wxChoice(this, ID_CENCODING, wxDefaultPosition, wxDefaultSize, encs);
@@ -183,10 +183,10 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	styleprev->Add(Preview,1,wxEXPAND|wxALL,2);
 
 	wxBoxSizer *buttons=new wxBoxSizer(wxHORIZONTAL);
-	Button1 = new wxButton(this, ID_BOK, _("Ok"), wxDefaultPosition, wxSize(50,-1));
+	Button1 = new wxButton(this, ID_BOK, _T("Ok"), wxDefaultPosition, wxSize(50,-1));
 	Button3 = new wxButton(this, ID_BCANCEL, _("Anuluj"));
 	Button2 = new wxButton(this, ID_BONVID, _("Zastosuj"));
-	Button4 = new wxButton(this, ID_BONFULL, _("Zobacz na fullscrenie"));
+	Button4 = new wxButton(this, ID_BONFULL, _("Zobacz na pe³nym ekranie"));
 	buttons->Add(Button1,0,wxEXPAND|wxALL,2);
 	buttons->Add(Button2,0,wxEXPAND|wxALL,2);
 	buttons->Add(Button3,0,wxEXPAND|wxALL,2);
@@ -329,9 +329,9 @@ void ColorChange::UpdateValues(Styles *styless)
     sob->SetValue(tab->BorderStyle);
     //if(tab->BorderStyle){sob->SetValue(true);}else{sob->SetValue(false);};
     wxString an=tab->Alignment;
-    if(an==_("1")){rb1->SetValue(true);}else if(an==_("2")){rb2->SetValue(true);}else if(an==_("3")){rb3->SetValue(true);}else if(an==_("4")){rb4->SetValue(true);}
-    else if(an==_("5")){rb5->SetValue(true);}else if(an==_("6")){rb6->SetValue(true);}else if(an==_("7")){rb7->SetValue(true);}
-    else if(an==_("8")){rb8->SetValue(true);}else if(an==_("9")){rb9->SetValue(true);};
+    if(an==_T("1")){rb1->SetValue(true);}else if(an==_T("2")){rb2->SetValue(true);}else if(an==_T("3")){rb3->SetValue(true);}else if(an==_T("4")){rb4->SetValue(true);}
+    else if(an==_T("5")){rb5->SetValue(true);}else if(an==_T("6")){rb6->SetValue(true);}else if(an==_T("7")){rb7->SetValue(true);}
+    else if(an==_T("8")){rb8->SetValue(true);}else if(an==_T("9")){rb9->SetValue(true);};
     ssx->SetString(tab->ScaleX);
     ssy->SetString(tab->ScaleY);
     sml->SetString(tab->MarginL);
@@ -381,9 +381,9 @@ void ColorChange::UpdateStyle()
 	tab->Shadow = ssh->GetString();
 	tab->BorderStyle = sob->GetValue();
 	wxString an;
-	if(rb1->GetValue()){an=_("1");}else if(rb2->GetValue()){an=_("2");}else if(rb3->GetValue()){an=_("3");}else if(rb4->GetValue()){an=_("4");}
-	else if(rb5->GetValue()){an=_("5");}else if(rb6->GetValue()){an=_("6");}else if(rb7->GetValue()){an=_("7");}
-	else if(rb8->GetValue()){an=_("8");}else if(rb9->GetValue()){an=_("9");};
+	if(rb1->GetValue()){an=_T("1");}else if(rb2->GetValue()){an=_T("2");}else if(rb3->GetValue()){an=_T("3");}else if(rb4->GetValue()){an=_T("4");}
+	else if(rb5->GetValue()){an=_T("5");}else if(rb6->GetValue()){an=_T("6");}else if(rb7->GetValue()){an=_T("7");}
+	else if(rb8->GetValue()){an=_T("8");}else if(rb9->GetValue()){an=_T("9");};
 	tab->Alignment = an;
 	tab->ScaleX = ssx->GetString();
 	tab->ScaleY = ssy->GetString();
@@ -409,39 +409,39 @@ void ColorChange::OnUpdatePreview(wxCommandEvent& event)
 
 void ColorChange::DoTooltips()
 {
-	sname->SetToolTip("Nazwa stylu");
-	sfont->SetToolTip("Czcionka");
-	ssize->SetToolTip("Rozmiar czcionki");
-	sb->SetToolTip("Pogrubienie");
-	si->SetToolTip("Pochylenie");
-	su->SetToolTip("Podkreœlenie");
-	ss->SetToolTip("Przekreœlenie");
-	s1->SetToolTip("Kolor podstawowy");
-	s2->SetToolTip("Kolor zastêpczy wykorzystywany tylko w karaoke");
-	s3->SetToolTip("Kolor obwódki");
-	s4->SetToolTip("Kolor cienia");
-	alpha1->SetToolTip("Przezroczystoœæ koloru podstawowago, 0 - brak, 255 - przezroczystoœæ");
-	alpha2->SetToolTip("Przezroczystoœæ koloru zastêpczego, 0 - brak, 255 - przezroczystoœæ");
-	alpha3->SetToolTip("Przezroczystoœæ koloru obwódki, 0 - brak, 255 - przezroczystoœæ");
-	alpha4->SetToolTip("Przezroczystoœæ koloru cienia, 0 - brak, 255 - przezroczystoœæ");
-	sou->SetToolTip("Obwódka w pixelach");
-	ssh->SetToolTip("Cieñ w pixelach");
-	ssx->SetToolTip("Skala x w procentach");
-	ssy->SetToolTip("Skala y w procentach");
-	san->SetToolTip("K¹t w stopniach");
-	ssp->SetToolTip("Odstêpy miêdzy literami w pixelach, mo¿na te¿ u¿ywaæ wartoœci ujemnych");
-	sob->SetToolTip("Prostok¹tna obwódka");
-	smr->SetToolTip("Margines prawy");
-	sml->SetToolTip("Margines lewy");
-	smv->SetToolTip("Margines górny i dolny");
-	rb1->SetToolTip("Po³o¿enie tekstu lewy róg - dó³");
-	rb2->SetToolTip("Po³o¿enie tekstu œrodek - dó³");
-	rb3->SetToolTip("Po³o¿enie tekstu prawy róg - dó³");
-	rb4->SetToolTip("Po³o¿enie tekstu lewy róg - œrodek");
-	rb5->SetToolTip("Po³o¿enie tekstu œrodek");
-	rb6->SetToolTip("Po³o¿enie tekstu prawy róg - œrodek");
-	rb7->SetToolTip("Po³o¿enie tekstu lewy róg - góra");
-	rb8->SetToolTip("Po³o¿enie tekstu œrodek - góra");
-	rb9->SetToolTip("Po³o¿enie tekstu prawy róg - góra");
-	senc->SetToolTip("Kodowanie tekstu");
+	sname->SetToolTip(_("Nazwa stylu"));
+	sfont->SetToolTip(_("Czcionka"));
+	ssize->SetToolTip(_("Rozmiar czcionki"));
+	sb->SetToolTip(_("Pogrubienie"));
+	si->SetToolTip(_("Pochylenie"));
+	su->SetToolTip(_("Podkreœlenie"));
+	ss->SetToolTip(_("Przekreœlenie"));
+	s1->SetToolTip(_("Kolor podstawowy"));
+	s2->SetToolTip(_("Kolor zastêpczy do karaoke"));
+	s3->SetToolTip(_("Kolor obwódki"));
+	s4->SetToolTip(_("Kolor cienia"));
+	alpha1->SetToolTip(_("Przezroczystoœæ koloru podstawowego, 0 - brak, 255 - przezroczystoœæ"));
+	alpha2->SetToolTip(_("Przezroczystoœæ koloru zastêpczego, 0 - brak, 255 - przezroczystoœæ"));
+	alpha3->SetToolTip(_("Przezroczystoœæ koloru obwódki, 0 - brak, 255 - przezroczystoœæ"));
+	alpha4->SetToolTip(_("Przezroczystoœæ koloru cienia, 0 - brak, 255 - przezroczystoœæ"));
+	sou->SetToolTip(_("Obwódka w pikselach"));
+	ssh->SetToolTip(_("Cieñ w pikselach"));
+	ssx->SetToolTip(_("Skala x w procentach"));
+	ssy->SetToolTip(_("Skala y w procentach"));
+	san->SetToolTip(_("K¹t w stopniach"));
+	ssp->SetToolTip(_("Odstêpy miêdzy literami w pikselach (wartoœci ujemne dozwolone)"));
+	sob->SetToolTip(_("Prostok¹tna obwódka"));
+	smr->SetToolTip(_("Margines prawy"));
+	sml->SetToolTip(_("Margines lewy"));
+	smv->SetToolTip(_("Margines górny i dolny"));
+	rb1->SetToolTip(_("Lewy dolny róg"));
+	rb2->SetToolTip(_("Wyœrodkowane na dole"));
+	rb3->SetToolTip(_("Prawy dolny róg"));
+	rb4->SetToolTip(_("Wyœrodkowane po lewej"));
+	rb5->SetToolTip(_("Wyœrodkowane"));
+	rb6->SetToolTip(_("Wyœrodkowane po prawej"));
+	rb7->SetToolTip(_("Lewy górny róg"));
+	rb8->SetToolTip(_("Wyœrodkowane u góry"));
+	rb9->SetToolTip(_("Prawy górny róg"));
+	senc->SetToolTip(_("Kodowanie tekstu"));
 }

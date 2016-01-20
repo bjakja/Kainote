@@ -593,9 +593,9 @@ void Visuals::RotateXY()
 	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, s.x, s.y, 0, 0.0f, 1.0f);
 	D3DXMatrixIdentity(&matIdentity);
 
-	HRN(device->SetTransform(D3DTS_PROJECTION, &matOrtho), "Nie mo¿na ustawiæ matrixa projection");
-	HRN(device->SetTransform(D3DTS_WORLD, &matIdentity), "Nie mo¿na ustawiæ matrixa world");
-	HRN(device->SetTransform(D3DTS_VIEW, &matIdentity), "Nie mo¿na ustawiæ matrixa view");
+	HRN(device->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie mo¿na ustawiæ matrixa projection"));
+	HRN(device->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie mo¿na ustawiæ matrixa world"));
+	HRN(device->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie mo¿na ustawiæ matrixa view"));
 	D3DXVECTOR2 v2[4];
 	v2[0].x=org.x-10.0f;
 	v2[0].y=org.y;
@@ -732,7 +732,7 @@ void Visuals::Draw(int time)
 		DrawClip();
 		break;
 	default:
-		wxLogStatus("Unknown drawing %i", Visual);
+		wxLogStatus(_("Niew³aœciwy wisual %i"), Visual);
 		break;
 	}
 	

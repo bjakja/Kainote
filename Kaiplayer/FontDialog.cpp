@@ -7,45 +7,45 @@
 
 
 FontList::FontList(wxWindow *parent,long id,wxArrayString fontarray,const wxPoint &pos, const wxSize &size)
-	      :wxWindow(parent,id,pos,size)
-	{
+	:wxWindow(parent,id,pos,size)
+{
 	scrollBar = new wxScrollBar(this,ID_SCROLL1,wxDefaultPosition,wxDefaultSize,wxSB_VERTICAL);
 	scrollBar->SetScrollbar(0,10,100,10);
 	fonts=fontarray;
 	font= wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 
 	wxClientDC dc(this);
-		dc.SetFont(font);
-		int fw,fh;
-		dc.GetTextExtent(_T("#TWFfGH"), &fw, &fh, NULL, NULL, &font);
-		Height=fh+4;
+	dc.SetFont(font);
+	int fw,fh;
+	dc.GetTextExtent(_T("#TWFfGH"), &fw, &fh, NULL, NULL, &font);
+	Height=fh+4;
 
-		bmp=NULL;
-		scPos=0;
-		sel=0;
-		holding=false;
-		Refresh();
+	bmp=NULL;
+	scPos=0;
+	sel=0;
+	holding=false;
+	Refresh();
 
-	}
+}
 
 FontList::~FontList(){
 	if(bmp)delete bmp; bmp=0;
-	}
+}
 
 
 
 void FontList::OnPaint(wxPaintEvent& event)
-	{
+{
 	wxPaintDC dc(this);
-	    int w = 0;
-		int h = 0;
-		int sw=0;
-        int sh=0;
-		GetClientSize(&w,&h);
-		scrollBar->GetSize(&sw,&sh);
-        scrollBar->SetSize(w-sw,0,sw,h);
-        w -= sw;
-		
+	int w = 0;
+	int h = 0;
+	int sw=0;
+	int sh=0;
+	GetClientSize(&w,&h);
+	scrollBar->GetSize(&sw,&sh);
+	scrollBar->SetSize(w-sw,0,sw,h);
+	w -= sw;
+
 	bool direct = false;
 
 	if (direct) {
@@ -53,7 +53,7 @@ void FontList::OnPaint(wxPaintEvent& event)
 	}
 
 	else {
-		
+
 		if (bmp) {
 			if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
 				delete bmp;
@@ -69,10 +69,10 @@ void FontList::OnPaint(wxPaintEvent& event)
 		dc.Blit(0,0,w,h,&bmpDC,0,0);
 	}
 
-	}
+}
 
 void FontList::DrawFld(wxDC &dc,int w, int h)
-	{
+{
 	int fw=0,fh=0,posX=1,posY=1;
 
 	dc.SetPen(wxPen(wxColour("#808080")));
@@ -80,20 +80,20 @@ void FontList::DrawFld(wxDC &dc,int w, int h)
 	dc.DrawRectangle(0,0,w,h);
 
 
-		int panelrows=(h/Height)+1;
-		int scrows;
-		if((scPos+panelrows)>=(int)fonts.size()+1){scrows=fonts.size();scPos=(scrows-panelrows)+1;
-		if(panelrows>(int)fonts.size()){scPos=0;scrollBar->Enable(false);}else{scrollBar->SetScrollbar(scPos,panelrows,fonts.size()+1,panelrows-1);}}
-		else{scrows=(scPos+panelrows);scrollBar->Enable(true);scrollBar->SetScrollbar(scPos,panelrows,fonts.size()+1,panelrows-1);}
+	int panelrows=(h/Height)+1;
+	int scrows;
+	if((scPos+panelrows)>=(int)fonts.size()+1){scrows=fonts.size();scPos=(scrows-panelrows)+1;
+	if(panelrows>(int)fonts.size()){scPos=0;scrollBar->Enable(false);}else{scrollBar->SetScrollbar(scPos,panelrows,fonts.size()+1,panelrows-1);}}
+	else{scrows=(scPos+panelrows);scrollBar->Enable(true);scrollBar->SetScrollbar(scPos,panelrows,fonts.size()+1,panelrows-1);}
 
-		dc.SetPen(wxPen(wxColour("#000000")));
+	dc.SetPen(wxPen(wxColour("#000000")));
 
 	for(int i=scPos; i<scrows; i++)
-		{
+	{
 		if(i==sel){
 			dc.SetBrush(wxBrush(wxColour("#359AFF")));
 			dc.DrawRectangle(posX,posY,w-2,Height);
-			}else{dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));}
+		}else{dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));}
 
 		font.SetFaceName(fonts[i]);
 		dc.SetFont(font);
@@ -104,27 +104,27 @@ void FontList::DrawFld(wxDC &dc,int w, int h)
 		dc.DestroyClippingRegion();
 
 		posY+=Height;
-		}
-
 	}
+
+}
 
 void FontList::OnSize(wxSizeEvent& event)
-	{
+{
 	Refresh(false);
-	}
+}
 
 void FontList::OnScroll(wxScrollEvent& event)
-	{
+{
 	int newPos = event.GetPosition();
 
 	if (scPos != newPos) {
 		scPos = newPos;
 		Refresh(false);
 	}
-	}
+}
 
 void FontList::OnMouseEvent(wxMouseEvent& event)
-	{
+{
 	int w,h;
 	GetClientSize (&w, &h);
 	bool click = event.LeftDown();
@@ -132,7 +132,7 @@ void FontList::OnMouseEvent(wxMouseEvent& event)
 	bool dclick = event.LeftDClick();
 	int curY=(event.GetY());
 	int row = (curY / Height)+scPos;
-	
+
 	if (left_up && !holding) {
 		return;
 	}
@@ -189,33 +189,33 @@ void FontList::OnMouseEvent(wxMouseEvent& event)
 			sel=row;
 			Refresh(false);
 			wxCommandEvent evt(wxEVT_COMMAND_LISTBOX_SELECTED, GetId());
-		    AddPendingEvent(evt);
-			}
+			AddPendingEvent(evt);
+		}
 	}
 
 
-	}
+}
 
 void FontList::Insert(wxString facename,int pos)
-	{
+{
 	fonts.Insert(facename,pos);
-	}
+}
 
 void FontList::SetSelection(int pos)
-	{
+{
 	if(pos<0 || pos>=(int)fonts.size()){wxBell();return;}
 	sel=pos;
 	scPos=sel-2;
 	Refresh(false);
-	}
+}
 
 wxString FontList::GetString(int line)
-	{
+{
 	return fonts[line];
-	}
+}
 
 int FontList::GetSelection()
-	{
+{
 	return sel;
 }
 
@@ -234,48 +234,48 @@ BEGIN_EVENT_TABLE(FontList,wxWindow)
 	EVT_COMMAND_SCROLL(ID_SCROLL1,FontList::OnScroll)
 	EVT_MOUSE_EVENTS(FontList::OnMouseEvent)
 	//EVT_KEY_DOWN(FontList::OnKeyPress)
-END_EVENT_TABLE()
+	END_EVENT_TABLE()
 
-FontDialog::FontDialog(wxWindow *parent, Styles *acst)
-	:wxDialog(parent,-1,"Wybierz czcionkê")
-	{
-	
+	FontDialog::FontDialog(wxWindow *parent, Styles *acst)
+	:wxDialog(parent,-1,_("Wybierz czcionkê"))
+{
+
 	wxAcceleratorEntry entries[4];
-    entries[0].Set(wxACCEL_NORMAL, WXK_RETURN, wxID_OK);
-    entries[1].Set(wxACCEL_NORMAL, WXK_ESCAPE, wxID_CANCEL);
+	entries[0].Set(wxACCEL_NORMAL, WXK_RETURN, wxID_OK);
+	entries[1].Set(wxACCEL_NORMAL, WXK_ESCAPE, wxID_CANCEL);
 	entries[2].Set(wxACCEL_NORMAL, WXK_UP,ID_SCROLLUP);
 	entries[3].Set(wxACCEL_NORMAL, WXK_DOWN,ID_SCROLLDOWN);
-    wxAcceleratorTable accel(4, entries);
-    SetAcceleratorTable(accel);
+	wxAcceleratorTable accel(4, entries);
+	SetAcceleratorTable(accel);
 
 	wxArrayString fontList = wxFontEnumerator::GetFacenames();
 	fontList.Sort();
 
 	wxBoxSizer *Main= new wxBoxSizer(wxVERTICAL);
-	wxStaticBoxSizer *Cfont= new wxStaticBoxSizer(wxHORIZONTAL,this,"Czcionka");
-	wxStaticBoxSizer *prev= new wxStaticBoxSizer(wxVERTICAL,this,"Podgl¹d");
+	wxStaticBoxSizer *Cfont= new wxStaticBoxSizer(wxHORIZONTAL,this,_("Czcionka"));
+	wxStaticBoxSizer *prev= new wxStaticBoxSizer(wxVERTICAL,this,_("Podgl¹d"));
 	wxBoxSizer *Fattr= new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *Bsizer= new wxBoxSizer(wxHORIZONTAL);
 
 	Fonts= new FontList(this,ID_FONTLIST,fontList,wxDefaultPosition,wxSize(180,-1));
 	int sell=fontList.Index(acst->Fontname,false);
-	  if(sell==-1){
-		  Fonts->Insert(acst->Fontname,0);}
-	  else{Fonts->SetSelection(sell);}
+	if(sell==-1){
+		Fonts->Insert(acst->Fontname,0);}
+	else{Fonts->SetSelection(sell);}
 
 	Preview = new StylePreview(this,-1,wxDefaultPosition, wxSize(-1,110));
 	Preview->DrawPreview(acst);
 	FontSize= new NumCtrl(this,ID_FONTSIZE1,acst->Fontsize,1,10000,false,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
-	Bold= new wxCheckBox(this,ID_FONTATTR,"Pogrubienie");
+	Bold= new wxCheckBox(this,ID_FONTATTR,_("Pogrubienie"));
 	Bold->SetValue(acst->Bold);
-	Italic= new wxCheckBox(this,ID_FONTATTR,"Kursywa");
+	Italic= new wxCheckBox(this,ID_FONTATTR,_("Kursywa"));
 	Italic->SetValue(acst->Italic);
-	Underl= new wxCheckBox(this,ID_FONTATTR,"Podkreœlenie");
+	Underl= new wxCheckBox(this,ID_FONTATTR,_("Podkreœlenie"));
 	Underl->SetValue(acst->Underline);
-	Strike= new wxCheckBox(this,ID_FONTATTR,"Przekreœlenie");
+	Strike= new wxCheckBox(this,ID_FONTATTR,_("Przekreœlenie"));
 	Strike->SetValue(acst->StrikeOut);
 	Buttok= new wxButton(this,wxID_OK,"OK");
-	Buttcancel= new wxButton(this,wxID_CANCEL,"Anuluj");
+	Buttcancel= new wxButton(this,wxID_CANCEL,_("Anuluj"));
 
 	Fattr->Add(FontSize,0,wxEXPAND|wxALL,5);
 	Fattr->Add(Bold,1,wxEXPAND|wxALL,5);
@@ -306,15 +306,15 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst)
 	Connect(ID_FONTATTR,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&FontDialog::OnUpdatePreview);
 	Connect(ID_SCROLLUP,ID_SCROLLDOWN,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&FontDialog::OnScrollList);
 
-	}
+}
 
 FontDialog::~FontDialog()
-	{
+{
 	//Options.SetString("Preview Text",Preview->GetValue());
-	}
+}
 
 Styles *FontDialog::GetFont()
-	{
+{
 	Styles *val=new Styles();
 	val->Bold=Bold->GetValue();
 	val->Italic=Italic->GetValue();
@@ -324,16 +324,16 @@ Styles *FontDialog::GetFont()
 	wxString kkk;
 	kkk<<FontSize->GetValue();
 	if(kkk!=""){val->Fontsize=kkk;}
-    return val;
-	}
+	return val;
+}
 
 void FontDialog::OnUpdatePreview(wxCommandEvent& event)
-	{
+{
 	UpdatePreview();
-	}
+}
 
 void FontDialog::UpdatePreview()
-	{
+{
 	//wxFont prevfont(FontSize->GetInt(),wxSWISS,(Italic->GetValue())?wxFONTSTYLE_ITALIC:wxFONTSTYLE_NORMAL,(Bold->GetValue())?wxBOLD:wxNORMAL,Underl->GetValue(),Fonts->GetString(Fonts->GetSelection()));
 	//wxString prval=Preview->GetValue();
 	//Preview->SetStyle(0,prval.Len(),wxTextAttr(wxColour("#000000"),wxNullColour,prevfont));
@@ -341,13 +341,13 @@ void FontDialog::UpdatePreview()
 	Styles *styl=GetFont();
 	Preview->DrawPreview(styl);
 	delete styl;
-	}
+}
 
 void FontDialog::OnScrollList(wxCommandEvent& event)
-	{
+{
 
 	int step=(event.GetId()==ID_SCROLLUP)? -1 : 1;
 	Fonts->Scroll(step);
 	//wxLogStatus("wesz³o");
 	UpdatePreview();
-	}
+}

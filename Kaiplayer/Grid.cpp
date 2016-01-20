@@ -64,13 +64,13 @@ void Grid::ContextMenu(const wxPoint &pos)
 	item = Hkeys.SetAccMenu(hidemenu, 5000+MARGINR,_("Ukryj prawy margines"),_("Ukryj prawy margines"),wxITEM_CHECK);
 	item->Enable(form<SRT);
 	item->Check((visible & MARGINR)!=0);
-	item = Hkeys.SetAccMenu(hidemenu, 5000+MARGINV,_("Ukryj pionowy pargines"),_("Ukryj pionowy pargines"),wxITEM_CHECK);
+	item = Hkeys.SetAccMenu(hidemenu, 5000+MARGINV,_("Ukryj pionowy margines"),_("Ukryj pionowy margines"),wxITEM_CHECK);
 	item->Enable(form<SRT);
 	item->Check((visible & MARGINV)!=0);
 	item = Hkeys.SetAccMenu(hidemenu, 5000+EFFECT,_("Ukryj efekt"),_("Ukryj efekt"),wxITEM_CHECK);
 	item->Enable(form<SRT);
 	item->Check((visible & EFFECT)!=0);
-	Hkeys.SetAccMenu(hidemenu, 5000+CNZ,_("Ukryj czas na znak"),_("Ukryj czas na znak"),wxITEM_CHECK)->Check((visible & CNZ)!=0);
+	Hkeys.SetAccMenu(hidemenu, 5000+CNZ,_("Ukryj znaki na sekundê"),_("Ukryj znaki na sekundê"),wxITEM_CHECK)->Check((visible & CNZ)!=0);
 
 	bool isen;
 	isen = (sels == 1);
@@ -80,7 +80,7 @@ void Grid::ContextMenu(const wxPoint &pos)
 	Hkeys.SetAccMenu(menu, MENU_INSERT_BEFORE_VIDEO,_("Wstaw przed z czasem wideo"))->Enable(isen);
 	Hkeys.SetAccMenu(menu, MENU_INSERT_AFTER_VIDEO,_("Wstaw po z czasem wideo"))->Enable(isen);
 	isen = (sels >0);
-	Hkeys.SetAccMenu(menu, MENU_DUPLICATE,_("Duplikuj Linie"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, MENU_DUPLICATE,_("Duplikuj linie"))->Enable(isen);
 	isen = (sels == 2);
 	Hkeys.SetAccMenu(menu, MENU_SWAP,_("Zamieñ"))->Enable(isen);
 	isen = (sels >= 2&&sels <= 5);
@@ -96,9 +96,9 @@ void Grid::ContextMenu(const wxPoint &pos)
 	Hkeys.SetAccMenu(menu, MENU_PASTE,_("Wklej\tCtrl-V"));
 	Hkeys.SetAccMenu(menu, MENU_COPYCOLS,_("Kopiuj kolumny"))->Enable(isen);
 	Hkeys.SetAccMenu(menu, MENU_PASTECOLS,_("Wklej kolumny"));
-	menu->Append(4444,"Ukryj kolumny",hidemenu);
-	Hkeys.SetAccMenu(menu, MENU_NEWFPS,_("Ustaw nowy fps"));
-	Hkeys.SetAccMenu(menu, MENU_FPSFROMVIDEO,_("Ustaw fps z wideo"))->Enable(Notebook::GetTab()->Video->GetState()!=None && sels==2);
+	menu->Append(4444,_("Ukryj kolumny"),hidemenu);
+	Hkeys.SetAccMenu(menu, MENU_NEWFPS,_("Ustaw nowy FPS"));
+	Hkeys.SetAccMenu(menu, MENU_FPSFROMVIDEO,_("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState()!=None && sels==2);
 	Hkeys.SetAccMenu(menu, MENU_PASTE_TEXTTL,_("Wklej tekst t³umaczenia"))->Enable(form<SRT && ((TabPanel*)GetParent())->SubsPath!="");
 	Hkeys.SetAccMenu(menu, MENU_TLDIAL,_("Okno przesuwania dialogów"))->Enable(showtl);
 	menu->AppendSeparator();
@@ -140,8 +140,8 @@ void Grid::OnInsertBefore()
 	int rw=selarr[0];
 	sel.clear();
 	Dialogue *dialog=CopyDial(rw, false);
-	dialog->Text=_("");
-	dialog->TextTl=_("");
+	dialog->Text="";
+	dialog->TextTl="";
 	dialog->End=dialog->Start;
 	if(rw>0 && GetDial(rw-1)->End > dialog->Start){
 		dialog->Start=GetDial(rw-1)->End;
@@ -154,8 +154,8 @@ void Grid::OnInsertAfter()
 	int rw=selarr[0];
 	sel.clear();
 	Dialogue *dialog=CopyDial(rw, false);
-	dialog->Text=_("");
-	dialog->TextTl=_("");
+	dialog->Text="";
+	dialog->TextTl="";
 	dialog->Start=dialog->End;
 	if(rw<GetCount()-1 && GetDial(rw+1)->End > dialog->Start){
 		dialog->End=GetDial(rw+1)->Start;
@@ -260,7 +260,7 @@ void Grid::OnPaste(int id)
 
 	int rw=FirstSel();
 	if(id==MENU_PASTECOLS){
-		wxString arr[ ]={"Warstwa","Czas pocz¹tkowy","Czas koñcowy","Aktor","Styl","Margines lewy","Margines prawy","Margines pionowy","Efekt","Tekst"};
+		wxString arr[ ]={_("Warstwa"),_("Czas pocz¹tkowy"),_("Czas koñcowy"),_("Aktor"),_("Styl"),_("Margines lewy"),_("Margines prawy"),_("Margines pionowy"),_("Efekt"),_("Tekst")};
 		int vals[ ]={LAYER,START,END,ACTOR,STYLE,MARGINL,MARGINR,MARGINV,EFFECT,TXT};
 		Stylelistbox slx(this,false,arr,10);
 		if(slx.ShowModal()==wxID_OK)
@@ -290,7 +290,7 @@ void Grid::OnPaste(int id)
 		wxTheClipboard->Close();
 		if(whatpaste==""){Thaw();return;}
 	}
-	wxStringTokenizer wpaste(whatpaste,_("\n"), wxTOKEN_STRTOK);
+	wxStringTokenizer wpaste(whatpaste,_T("\n"), wxTOKEN_STRTOK);
 	int cttkns=wpaste.CountTokens();
 	int rws= (id==MENU_PASTECOLS)? 0 : rw;
 	std::vector<Dialogue*> tmpdial;
@@ -329,7 +329,7 @@ void Grid::CopyRows(int id)
 {
 	int cols=0;
 	if(id==MENU_COPYCOLS){
-		wxString arr[ ]={"Warstwa","Czas pocz¹tkowy","Czas koñcowy","Aktor","Styl","Margines lewy","Margines prawy","Margines pionowy","Efekt","Tekst","Tekst bez tagów"};
+		wxString arr[ ]={_("Warstwa"),_("Czas pocz¹tkowy"),_("Czas koñcowy"),_("Aktor"),_("Styl"),_("Margines lewy"),_("Margines prawy"),_("Margines pionowy"),_("Efekt"),_("Tekst"),_("Tekst bez tagów")};
 		int vals[ ]={LAYER,START,END,ACTOR,STYLE,MARGINL,MARGINR,MARGINV,EFFECT,TXT,TXTTL};
 		Stylelistbox slx(this,false,arr,11);
 		if(slx.ShowModal()==wxID_OK)
@@ -367,8 +367,8 @@ void Grid::OnInsertBeforeVideo()
 	int rw=selarr[0];
 	sel.erase(sel.find(rw));
 	Dialogue *dialog=CopyDial(rw, false);
-	dialog->Text=_("");
-	dialog->TextTl=_("");
+	dialog->Text="";
+	dialog->TextTl="";
 	int time=Kai->GetTab()->Video->Tell();
 	dialog->Start.NewTime(time);
 	dialog->End.NewTime(time+4000);
@@ -380,8 +380,8 @@ void Grid::OnInsertAfterVideo()
 	int rw=selarr[0];
 	sel.erase(sel.find(rw));
 	Dialogue *dialog=CopyDial(rw, false);
-	dialog->Text=_("");
-	dialog->TextTl=_("");
+	dialog->Text="";
+	dialog->TextTl="";
 	int time=Kai->GetTab()->Video->Tell();
 	dialog->Start.NewTime(time);
 	dialog->End.NewTime(time+4000);
@@ -402,8 +402,8 @@ void Grid::OnAccelerator(wxCommandEvent &event)
 	else if(id==MENU_INSERT_AFTER){OnInsertAfter();}
 	else if(id==MENU_INSERT_BEFORE_VIDEO){OnInsertBeforeVideo();}
 	else if(id==MENU_INSERT_AFTER_VIDEO){OnInsertAfterVideo();}
-	else if(id==MENU_SWAP){SwapRows(selarr[0],selarr[1],true);}
 	else if(id==MENU_DUPLICATE){OnDuplicate();}
+	else if(id==MENU_SWAP){SwapRows(selarr[0],selarr[1],true);}
 	else if(id==MENU_JOIN){wxCommandEvent evt; evt.SetId(id); OnJoin(evt);}
 	else if(id==MENU_JOINF || id==MENU_JOINL){OnJoinF(id);}
 	else if(id==MENU_COPY||id==MENU_COPYCOLS){CopyRows(id);}
@@ -436,7 +436,7 @@ void Grid::OnAccelerator(wxCommandEvent &event)
 
 void Grid::OnPasteTextTl()
 {
-	wxFileDialog *FileDialog1 = new wxFileDialog(this, _T("Wybierz Plik Napisów"), Kai->GetTab()->SubsPath.BeforeLast('\\'), _T(""), _T("Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"), wxFD_OPEN|wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, _T("wxFileDialog"));
+	wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"), Kai->GetTab()->SubsPath.BeforeLast('\\'), _T(""), _("Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"), wxFD_OPEN|wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, _T("wxFileDialog"));
 	if (FileDialog1->ShowModal() == wxID_OK){
 		OpenWrite op;
 		wxString pathh=FileDialog1->GetPath();
@@ -597,8 +597,8 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 {
 	int idd=event.GetId();
 	if(Modified){
-		int wbutton=wxMessageBox(_T("Zapisaæ plik przed wczytaniem napisów z mkv?"), 
-			_T("Potwierdzenie"),wxICON_QUESTION | wxYES_NO |wxCANCEL, this);
+		int wbutton=wxMessageBox(_("Zapisaæ plik przed wczytaniem napisów z MKV?"), 
+			_("Potwierdzenie"),wxICON_QUESTION | wxYES_NO |wxCANCEL, this);
 		if (wbutton==wxYES){Kai->Save(false);}
 		else if(wbutton==wxCANCEL){return;}}
 	wxString mkvpath;
@@ -618,10 +618,10 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 	if(isgood){
 		if(transl){Edit->SetTl(false); transl=false;showtl=false;Kai->MenuBar->Enable(ID_SAVETL,false);}
 		SetSubsForm();
-		wxString ext=(form<SRT)?_("ass") : _("srt");
+		wxString ext=(form<SRT)?_T("ass") : _T("srt");
 		if(form<SRT){Edit->TlMode->Enable();}else{Edit->TlMode->Enable(false);}
 
-		Kai->GetTab()->SubsPath=mkvpath.BeforeLast('.')+" napisy."+ext;
+		Kai->GetTab()->SubsPath=mkvpath.BeforeLast('.')+_(" napisy.")+ext;
 		Kai->GetTab()->SubsName=Kai->GetTab()->SubsPath.AfterLast('\\');
 		//Kai->SetRecent();
 		Kai->UpdateToolbar();
@@ -640,7 +640,7 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 
 		}
 		if(Kai->GetTab()->Video->GetState()!=None){Kai->GetTab()->Video->OpenSubs(SaveText());
-		if(!isgood){wxMessageBox(_T("otwieranie napisów failed"), _T("Uwaga"));}}
+		if(!isgood){wxMessageBox(_("Otwieranie napisów nie powiod³o siê"), _("Uwaga"));}}
 
 		if(!Kai->GetTab()->edytor&&!Kai->GetTab()->Video->isfullskreen){Kai->HideEditor();}
 		Kai->GetTab()->CTime->Contents();
@@ -933,7 +933,7 @@ class fpsdial : public wxDialog
 {
 public:
 	fpsdial(wxWindow *parent)
-		:wxDialog(parent,-1,"Wybierz nowy FPS")
+		:wxDialog(parent,-1,_("Wybierz nowy FPS"))
 	{
 		wxFlexGridSizer *sizer=new wxFlexGridSizer(2,2,2);
 		wxArrayString fpsy;
@@ -957,13 +957,13 @@ public:
 		oldfps->SetSelection(0);
 		newfps=new wxComboBox(this,-1,"",wxDefaultPosition,wxDefaultSize,fpsy,0,valid);
 		newfps->SetSelection(2);
-		sizer->Add(new wxStaticText(this,-1,"FPS napisów"),0,wxALIGN_CENTER_VERTICAL|wxALL,4);
+		sizer->Add(new wxStaticText(this,-1,_("FPS napisów")),0,wxALIGN_CENTER_VERTICAL|wxALL,4);
 		sizer->Add(oldfps,0,wxEXPAND|wxALL,4);
-		sizer->Add(new wxStaticText(this,-1,"Nowy FPS napisów"),0,wxALIGN_CENTER_VERTICAL|wxALL,4);
+		sizer->Add(new wxStaticText(this,-1,_("Nowy FPS napisów")),0,wxALIGN_CENTER_VERTICAL|wxALL,4);
 		sizer->Add(newfps,0,wxEXPAND|wxALL,4);
-		wxButton *ok=new wxButton(this,15555,"Zmieñ fps");
+		wxButton *ok=new wxButton(this,15555,_("Zmieñ fps"));
 		Connect(15555,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&fpsdial::OkClick);
-		wxButton *cancel=new wxButton(this,wxID_CANCEL,"Anuluj");
+		wxButton *cancel=new wxButton(this,wxID_CANCEL,_("Anuluj"));
 		sizer->Add(ok,0,wxEXPAND|wxALL,4);
 		sizer->Add(cancel,0,wxEXPAND|wxALL,4);
 		SetSizerAndFit(sizer);
@@ -975,7 +975,7 @@ public:
 
 		if(oldfps->GetValue().ToDouble(&ofps) && newfps->GetValue().ToDouble(&nfps)){
 			EndModal(1);
-		}else{wxMessageBox("Niew³aœciwy fps");}
+		}else{wxMessageBox(_("Niew³aœciwy fps"));}
 	}
 	double ofps,nfps;
 	wxComboBox *oldfps;

@@ -233,23 +233,23 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 		if (i==scPos){
 			strings.Add(_T("#"));
 			if (form<SRT){
-				strings.Add(_T("W."));
+				strings.Add(_("W."));
 			}
-			strings.Add(_T("Start"));
+			strings.Add(_("Start"));
 			if (form!=TMP){
-				strings.Add(_T("Koniec"));
+				strings.Add(_("Koniec"));
 			}
 			if (form<SRT){
-				strings.Add(_T("Styl"));
-				strings.Add(_T("Aktor"));
-				strings.Add(_T("L.M."));
-				strings.Add(_T("P.M."));
-				strings.Add(_T("Pi.M."));
-				strings.Add(_T("Efekt"));
+				strings.Add(_("Styl"));
+				strings.Add(_("Aktor"));
+				strings.Add(_("M.L."));
+				strings.Add(_("M.P."));
+				strings.Add(_("M.Pi."));
+				strings.Add(_("Efekt"));
 			}
-			if(form!=TMP){strings.Add(_T("ZNS"));}
-			strings.Add(_T("Tekst"));
-			if(showtl){strings.Add(_T("Tekst T³umaczenia"));}
+			if(form!=TMP){strings.Add(_("ZNS"));}
+			strings.Add(_("Tekst"));
+			if(showtl){strings.Add(_("Tekst t³umaczenia"));}
 		}else{
 			Dial=GetDial(i-1);
 
@@ -456,53 +456,53 @@ void SubsGrid::AdjustWidths(int cell)
 	}
 
 	if((form<SRT)? (LAYER & cell) : (START & cell)){
-		wxString frst=(form<SRT)?_T("W."):_T("Start");
+		wxString frst=(form<SRT)?_("W."):_("Start");
 		dc.GetTextExtent(frst, &fw, &fh, NULL, NULL, &font);
 		GridWidth[1] = (form<SRT)?law : stw;
 		if(fw+10>GridWidth[1]&&GridWidth[1]!=0){GridWidth[1]=fw+10;}
 	}
 
 	if((form<SRT)? (START & cell) : (END & cell)){
-		wxString scnd=(form<SRT)?_T("Start"):_T("Koniec");
+		wxString scnd=(form<SRT)?_("Start"):_("Koniec");
 		dc.GetTextExtent(scnd, &fw, &fh, NULL, NULL, &font);
 		GridWidth[2] = (form<SRT)?stw : edw;
 		if(fw+10>GridWidth[2]){GridWidth[2]=fw+10;};
 	}
 	if(form<SRT){
 		if(END & cell){
-			dc.GetTextExtent(_T("Koniec"), &fw, &fh, NULL, NULL, &font);
+			dc.GetTextExtent(_("Koniec"), &fw, &fh, NULL, NULL, &font);
 			GridWidth[3] = edw;
 			if(fw+10>GridWidth[3]){GridWidth[3]=fw+10;};
 		}
 
 		if(STYLE & cell){
-			dc.GetTextExtent(_T("Styl"), &fw, &fh, NULL, NULL, &font);
+			dc.GetTextExtent(_("Styl"), &fw, &fh, NULL, NULL, &font);
 			GridWidth[4] = syw;
 			if(fw+10>GridWidth[4]){GridWidth[4]=fw+10;}
 		}
 
 		if(ACTOR & cell){
-			dc.GetTextExtent(_T("Actor"), &fw, &fh, NULL, NULL, &font);
+			dc.GetTextExtent(_("Actor"), &fw, &fh, NULL, NULL, &font);
 			if(fw+10>acw&&acw!=0){acw=fw+10;};
 			GridWidth[5] = (acw==0)?0:acw;
 		}
 
 		if(224 & cell){
-			dc.GetTextExtent(_T("Pi.M."), &fw, &fh, NULL, NULL, &font);
+			dc.GetTextExtent(_("M.Pi."), &fw, &fh, NULL, NULL, &font);
 			if(MARGINL & cell){GridWidth[6]=(!shml)?0:fw+4;}
 			if(MARGINR & cell){GridWidth[7]=(!shmr)?0:fw+4;}
 			if(MARGINV & cell){GridWidth[8]=(!shmv)?0:fw+10;}
 		}
 
 		if(EFFECT & cell){
-			dc.GetTextExtent(_T("Efekt"), &fw, &fh, NULL, NULL, &font);
+			dc.GetTextExtent(_("Efekt"), &fw, &fh, NULL, NULL, &font);
 			if(fw+10>efw&&efw!=0){efw=fw+10;};
 			GridWidth[9] = (efw==0)?0:efw;
 		}
 	}
 
 	if(CNZ & cell){
-		dc.GetTextExtent(_T("ZNS"), &fw, &fh, NULL, NULL, &font);
+		dc.GetTextExtent(_("ZNS"), &fw, &fh, NULL, NULL, &font);
 		GridWidth[(form<SRT)?10 : 3]=fw+5;
 	}
 
@@ -925,7 +925,7 @@ void SubsGrid::Convert(char type)
 	}
 	if(Options.GetBool("FPS from video")&&Kai->GetTab()->VideoPath!=""){
 		Options.SetString("Default FPS",Kai->StatusBar1->GetStatusText(2).BeforeFirst(' '));}
-	if(Options.GetFloat(_T("Default FPS"))<1){wxMessageBox("Nieprawid³owy fps, popraw fps w opcjach i skonwertuj ponownie");return;}
+	if(Options.GetFloat(_T("Default FPS"))<1){wxMessageBox(_("Nieprawid³owy FPS. Popraw opcje i spróbuj ponownie."));return;}
 
 	bool newendtimes=Options.GetBool(_T("New end times"));
 	wxString stname=Options.GetString(_T("Default Style"));
@@ -1199,19 +1199,19 @@ void SubsGrid::ChangeTime()
 	int seb = MAX(0,Options.GetInt(_T("Start end times")));
 	int CT  = Options.GetInt(_T("Corect times"));
 	//1 Lead In, 2 Lead Out, 4 Make times continous, 8 Snap to keyframe;
-	int pe  = Options.GetInt(_("Postprocessor enabling"));
+	int pe  = Options.GetInt(_T("Postprocessor enabling"));
 	int li, lo, ts, te, kbs, kas, kbe, kae;
 	if(pe){
 		if(form==TMP || pe<16){pe=0;}
 		else if(pe & 8 && !vb->VFF){pe^=8;}
-		li  = Options.GetInt(_("Lead in"));
-		lo  = Options.GetInt(_("Lead out"));
-		ts  = Options.GetInt(_("Threshold start"));
-		te  = Options.GetInt(_("Threshold end"));
-		kbs = Options.GetInt(_("Keyframe before start"));
-		kas = Options.GetInt(_("Keyframe after start"));
-		kbe = Options.GetInt(_("Keyframe before end"));
-		kae = Options.GetInt(_("Keyframe after end"));
+		li  = Options.GetInt(_T("Lead in"));
+		lo  = Options.GetInt(_T("Lead out"));
+		ts  = Options.GetInt(_T("Threshold start"));
+		te  = Options.GetInt(_T("Threshold end"));
+		kbs = Options.GetInt(_T("Keyframe before start"));
+		kas = Options.GetInt(_T("Keyframe after start"));
+		kbe = Options.GetInt(_T("Keyframe before end"));
+		kae = Options.GetInt(_T("Keyframe after end"));
 	}
 	wxString style=Options.GetString(_T("Styles of time change"));
 	if(!(mto & 1)){tim=(-tim);}
@@ -1228,7 +1228,7 @@ void SubsGrid::ChangeTime()
 
 	if(seb!=0){
 		int answer=wxMessageBox(wxString::Format(_("Czy naprawdê chcesz przesuwaæ tylko czasy %s?"), 
-			(seb==1)? "pocz¹tkowe" : "koñcowe"),"Potwierdzenije",wxYES_NO);
+			(seb==1)? _("pocz¹tkowe") : _("koñcowe")),_("Potwierdzenie"),wxYES_NO);
 		if(answer==wxNO){return;}
 	}
 
@@ -1238,7 +1238,7 @@ void SubsGrid::ChangeTime()
 
 	int fs=FirstSel();
 	if (fs==-1&&lmd!=0&&lmd!=4){
-		wxMessageBox(_T("Zaznacz coœ a pozniej przesuwaj"),_T("Uwaga"));return;}
+		wxMessageBox(_("Nie zaznaczono linii do przesuniêcia"),_("Uwaga"));return;}
 
 	int difftime=(VAS)? file->subs->dials[mtimerow]->Start.mstime : file->subs->dials[mtimerow]->End.mstime;
 	int halfframe= (VAS)? -(vb->avtpf/2) : (vb->avtpf/2);
@@ -1930,14 +1930,14 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 
 	}
 
-	if(GetCount()<1){LoadDefault();wxMessageBox("Napisy o z³ym formacie, albo plik jest uszkodzony, b¹dŸ zawiera b³êdy");form=ASS;}
+	if(GetCount()<1){LoadDefault();wxMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera b³êdy)"));form=ASS;}
 	else{SetSubsForm();}
 	origform=form;
 
-	if(GetSInfo(_T("TLMode"))==_("Yes")){
+	if(GetSInfo(_T("TLMode"))==_T("Yes")){
 		Edit->SetTl(true);
 		transl=true;
-		if(GetSInfo(_T("TLMode Showtl"))==_("Yes")){showtl=true;}
+		if(GetSInfo(_T("TLMode Showtl"))==_T("Yes")){showtl=true;}
 		Kai->MenuBar->Enable(ID_SAVETL,true);
 	}
 
@@ -2038,7 +2038,7 @@ bool SubsGrid::SetTlMode(bool mode)
 
 
 	}else{
-		if(wxMessageBox("Czy na pewno chcesz wy³¹czyæ tryb t³umaczenia?\nObcojêzyczny tekst przet³umaczonych linijek zostanie usuniêty.","Potwierdzenie",wxYES_NO)==wxNO)
+		if(wxMessageBox(_("Czy na pewno chcesz wy³¹czyæ tryb t³umaczenia?\nObcojêzyczny tekst przet³umaczonych linijek zostanie usuniêty."),_("Potwierdzenie"),wxYES_NO)==wxNO)
 		{
 			return true;
 		}
@@ -2497,7 +2497,7 @@ wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible)
 void SubsGrid::OnBcktimer(wxTimerEvent &event)
 {
 	TabPanel *pan=(TabPanel*)GetParent();
-	wxLogStatus("Autozapis");
+	wxLogStatus(_("Autozapis"));
 	wxString path;
 	wxString ext=(form<SRT)? "ass" : (form=SRT)? "srt" : "txt";
 

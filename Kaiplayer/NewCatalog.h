@@ -32,7 +32,6 @@ class NewCatalog: public wxDialog
 	private:
 
 		
-		DECLARE_EVENT_TABLE()
 };
 
 #endif

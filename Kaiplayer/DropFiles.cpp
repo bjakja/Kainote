@@ -50,17 +50,17 @@ bool DragScripts::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenam
 				}
 				catch (const wchar_t *e) {
 					error_count++;
-					wxLogError(_T("B³¹d wczytywania skryptu Lua: %s\n%s"), filenames[i].c_str(), e);
+					wxLogError(_("B³¹d wczytywania skryptu Lua: %s\n%s"), filenames[i].c_str(), e);
 				}
 				catch (...) {
 					error_count++;
-					wxLogError(_T("Nieznany b³¹d wczytywania skryptu Lua: %s."), filenames[i].c_str());
+					wxLogError(_("Nieznany b³¹d wczytywania skryptu Lua: %s."), filenames[i].c_str());
 				}
 		
 
 		}
 	if (error_count > 0) {
-			wxLogWarning(_T("Jeden b¹dŸ wiêcej skryptów autoload zawiera b³êdy,\n obejrzyj opisy skryptów by uzyskaæ wiêcej informacji."));
+			wxLogWarning(_("Co najmniej jeden skrypt z pliku napisów zawiera b³êdy.\nZobacz opisy skryptów, by uzyskaæ wiêcej informacji."));
 		}
 	return true;
 	

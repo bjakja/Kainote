@@ -17,6 +17,7 @@
 #include "OpennWrite.h"
 #include "config.h"
 #include "Hotkeys.h"
+#include <wx/intl.h>
 
 wxDEFINE_EVENT(EVT_OPEN, wxThreadEvent);
 
@@ -90,7 +91,7 @@ bool kainoteApp::OnInit()
     {
 		MyServer=new KaiServer();
 		if(!MyServer){
-			wxLogStatus("Nie mo¿na utworzyæ servera");
+			wxLogStatus(_("Nie mo¿na utworzyæ serwera DDE"));
 		}
 		else if (!(MyServer->Create(server))){
 			delete MyServer;
@@ -107,7 +108,25 @@ bool kainoteApp::OnInit()
 		if ( wxsOK )
 		{
 		//wxHandleFatalExceptions(true);
-			
+			if(!Options.LoadOptions()){wxMessageBox(_("Nie uda³o siê wczytaæ opcji.\nDzia³anie programu zostanie zakoñczone."),_("Uwaga"));return false;}
+
+			locale=NULL;
+			if(Options.GetInt("Program Language") != 0){
+				locale=new wxLocale;
+				if(!locale->Init(Options.GetInt("Program Language"), wxLOCALE_DONT_LOAD_DEFAULT)){
+					wxMessageBox("wxLocale cannot initialize, language change failed");
+				}
+				locale->AddCatalogLookupPathPrefix(Options.pathfull+"\\Locale");
+				if(!locale->AddCatalog("en")){
+					wxMessageBox("Cannot find translation, language change failed");
+				}
+
+			}
+
+			if(!Hkeys.LoadHkeys()){
+				wxMessageBox(_("Nie uda³o siê wczytaæ skrótów.\nDzia³anie programu zostanie zakoñczone."),_("Uwaga"));
+				wxDELETE(locale);return false;
+			}
 			
 			for (int i=1;i<argc;i++) { paths.Add(argv[i]); }
 			Frame=NULL;
@@ -181,7 +200,7 @@ int kainoteApp::OnExit()
 {
     delete m_checker;
 	delete MyServer;
-		
+	wxDELETE(locale);	
     return 0;
 }
 

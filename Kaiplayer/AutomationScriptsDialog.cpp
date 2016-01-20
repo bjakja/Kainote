@@ -130,7 +130,8 @@ void MacrosDialog::OnMacro()
 			for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++)
 			{//wxLogStatus(cur->first);
 				if(cur->second.Accel==test){
-					wxMessageBox("Ten skrót ju¿ istnieje i jest ustawiony jako skrót do \""+cur->second.Name+"\", wybierz inny.", "Uwaga",wxOK);
+					wxMessageBox(wxString::Format(_("Ten skrót ju¿ istnieje jako skrót do \"%s\"."), 
+						cur->second.Name), _("Uwaga"), wxOK);
 					return;
 				}
 			}
@@ -213,13 +214,13 @@ void MacrosDialog::OnMouseEvents(wxMouseEvent &event)
 
 
 ScriptsDialog::ScriptsDialog(kainoteFrame *_Kai)
-	: wxDialog(_Kai,-1,"Mened¿er Skryptów Lua")
+	: wxDialog(_Kai,-1,_("Mened¿er skryptów Lua"))
 {
 	
 	Kai=_Kai;
 	wxBoxSizer *main= new wxBoxSizer(wxVERTICAL);
 	ScriptsList=new wxListCtrl(this, ID_SLIST, wxDefaultPosition, wxDefaultSize,wxLC_REPORT | wxLC_SINGLE_SEL);
-	ScriptsList->InsertColumn(0,_("Lp"),wxLIST_FORMAT_LEFT,25);
+	ScriptsList->InsertColumn(0,_("Lp."),wxLIST_FORMAT_LEFT,25);
 	ScriptsList->InsertColumn(1,_("Nazwa"),wxLIST_FORMAT_LEFT,200);
 	ScriptsList->InsertColumn(2,_("Nazwa pliku"),wxLIST_FORMAT_LEFT,180);
 	ScriptsList->InsertColumn(3,_("Opis"),wxLIST_FORMAT_LEFT,600);
@@ -240,14 +241,14 @@ ScriptsDialog::ScriptsDialog(kainoteFrame *_Kai)
 
 	wxBoxSizer *bs = new wxBoxSizer(wxHORIZONTAL);
 
-	bs->Add(new wxButton(this,ID_BADD,"Dodaj"),1,0,0);
-	bs->Add(new wxButton(this,ID_BREMOVE,"Usuñ"),1,0,0);
+	bs->Add(new wxButton(this,ID_BADD,_("Dodaj")),1,0,0);
+	bs->Add(new wxButton(this,ID_BREMOVE,_("Usuñ")),1,0,0);
 	bs->AddSpacer(5);
-	bs->Add(new wxButton(this,ID_BEDIT,"Edytuj"),1,0,0);
-	bs->Add(new wxButton(this,ID_BRELOAD,"Odœwie¿"),1,0,0);
-	bs->Add(new wxButton(this,ID_BRESCAN,"Wczytaj skrypty Autoload"),1,0,0);
+	bs->Add(new wxButton(this,ID_BEDIT,_("Edytuj")),1,0,0);
+	bs->Add(new wxButton(this,ID_BRELOAD,_("Odœwie¿")),1,0,0);
+	bs->Add(new wxButton(this,ID_BRESCAN,_("Wczytaj skrypty Autoload")),1,0,0);
 	bs->AddSpacer(5);
-	bs->Add(new wxButton(this,wxID_CANCEL,"Zamknij"),1,0,0);
+	bs->Add(new wxButton(this,wxID_CANCEL,_("Zamknij")),1,0,0);
 
 	main->Add(ScriptsList,1,wxEXPAND|wxALL, 2);
 	main->Add(bs,0,wxLEFT|wxBOTTOM|wxRIGHT, 2);
@@ -294,8 +295,8 @@ void ScriptsDialog::OnAdd(wxCommandEvent &event)
 {
 	wxString luarecent=Options.GetString("Lua Recent Folder");
 	//wxLogStatus(luarecent);
-	wxFileDialog *FD = new wxFileDialog(Kai, _T("Wybierz plik Lua"), luarecent, 
-		_T(""), _T("Pliki Lua|*.lua"), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+	wxFileDialog *FD = new wxFileDialog(Kai, _("Wybierz plik Lua"), luarecent, 
+		_T(""), _("Pliki Lua|*.lua"), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
     if (FD->ShowModal() == wxID_OK){
 		if(Kai->Auto->Add(FD->GetPath())){
 			int i=Kai->Auto->Scripts.size()-1;
@@ -306,8 +307,8 @@ void ScriptsDialog::OnAdd(wxCommandEvent &event)
 			ScriptsList->SetItem(pos,3,Kai->Auto->Scripts[i]->description);
 			ScriptsList->ScrollList(0,11111111);//ScriptsList->
 			Grid *grid=Kai->GetTab()->Grid1;
-			wxString scripts = grid->GetSInfo("Kai->Automation Scripts")+=(Kai->Auto->Scripts[i]->filename+"|");
-			grid->AddSInfo("Kai->Automation Scripts", scripts);
+			wxString scripts = grid->GetSInfo("Automation Scripts") += (Kai->Auto->Scripts[i]->filename+"|");
+			grid->AddSInfo("Automation Scripts", scripts);
 		}
 	
     }
@@ -327,8 +328,8 @@ void ScriptsDialog::OnEdit(wxCommandEvent &event)
 {
 	wxString editor=Options.GetString("Script Editor");
 	if(editor=="" || wxGetKeyState(WXK_SHIFT)){
-		editor = wxFileSelector(_T("Wybierz edytor skryptów"), _T(""),
-			_T("C:\\Windows\\Notepad.exe"), _T("exe"), _T("Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+		editor = wxFileSelector(_("Wybierz edytor skryptów"), _T(""),
+			_T("C:\\Windows\\Notepad.exe"), _T("exe"), _("Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
 		Options.SetString("Script Editor",editor);
 		Options.SaveOptions();
 	}
@@ -344,7 +345,7 @@ void ScriptsDialog::OnEdit(wxCommandEvent &event)
 	delete cmdline;
 
 	if (!res) {
-		wxMessageBox(_T("Nie mo¿na uruchomiæ edytora."), _T("B³¹d Kai->Automatyzacji"), wxOK|wxICON_ERROR);
+		wxMessageBox(_("Nie mo¿na uruchomiæ edytora."), _("B³¹d automatyzacji"), wxOK|wxICON_ERROR);
 	}
 }
 
@@ -379,7 +380,7 @@ void ScriptsDialog::OnRescan(wxCommandEvent &event)
 void ScriptsDialog::AddFromSubs()
 	{
 	//wxLogStatus("wesz³o");
-	wxString paths=Kai->GetTab()->Grid1->GetSInfo("Kai->Automation Scripts");
+	wxString paths=Kai->GetTab()->Grid1->GetSInfo("Automation Scripts");
 	//wxLogStatus("m"+paths);
 	if(paths==""){return;}
 	paths.Trim(false);
@@ -405,15 +406,15 @@ void ScriptsDialog::AddFromSubs()
 				}
 				catch (const wchar_t *e) {
 					error_count++;
-					wxLogError(_T("B³¹d wczytywania skryptu Lua: %s\n%s"), onepath.c_str(), e);
+					wxLogError(_("B³¹d wczytywania skryptu Lua: %s\n%s"), onepath.c_str(), e);
 				}
 				catch (...) {
 					error_count++;
-					wxLogError(_T("Nieznany b³¹d wczytywania skryptu Lua: %s."), onepath.c_str());
+					wxLogError(_("Nieznany b³¹d wczytywania skryptu Lua: %s."), onepath.c_str());
 				}
 		}
 		if (error_count > 0) {
-			wxLogWarning(_T("Jeden b¹dŸ wiêcej skryptów z pliku napisów zawiera b³êdy,\n obejrzyj opisy skryptów by uzyskaæ wiêcej informacji."));
+			wxLogWarning(_("Co najmniej jeden skrypt z pliku napisów zawiera b³êdy.\nZobacz opisy skryptów, by uzyskaæ wiêcej informacji."));
 		}
 
 	}

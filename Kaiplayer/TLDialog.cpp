@@ -1,34 +1,35 @@
 #include "TLDialog.h"
 
 TLDialog::TLDialog(wxWindow *parent, Grid *subsgrid)
-	: wxDialog(parent,-1,"Opcje przesuwania tekstu t³umaczenia", wxDefaultPosition, wxDefaultSize,wxDEFAULT_DIALOG_STYLE)
+	: wxDialog(parent,-1,_("Opcje dopasowywania t³umaczenia"), wxDefaultPosition, wxDefaultSize,wxDEFAULT_DIALOG_STYLE)
 {
 	Sbsgrid=subsgrid;
 
-	wxStaticBoxSizer *sizer=new wxStaticBoxSizer(wxVERTICAL,this,"Przesuwanie tekstu t³umaczenia");
+	wxStaticBoxSizer *sizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Przesuwanie tekstu t³umaczenia"));
 	wxGridSizer *sizer1 = new wxGridSizer(2,2,2);
 	//wxBoxSizer *sizer2 = new wxBoxSizer(wxHORIZONTAL);
 	//wxBoxSizer *sizer3 = new wxBoxSizer(wxHORIZONTAL);
-	Up=new wxButton(this,29995,"W górê usuñ t³umaczenie");
-	Up->SetToolTip("Przenosi t³umaczenie w górê,\nusuwaj¹c przy tym tekst pierwszej zaznaczonej");
-	Down=new wxButton(this,29997,"W dó³ zostaw puste pole");
-	Down->SetToolTip("Przenosi t³umaczenie w dó³,\npozostawiaj¹c puste miejsce");
-	UpJoin=new wxButton(this,29998,"W górê z³¹cz t³umaczenie");
-	UpJoin->SetToolTip("Przenosi t³umaczenie w górê,\nz³¹cza t³umaczenie zamiast go usuwaæ");
-	DownJoin=new wxButton(this,29996,"W górê z³¹cz orygina³");
-	DownJoin->SetToolTip("Przenosi orygina³ w górê,\nz³¹czaj¹c pierwsz¹ zaznaczon¹ linijkê z nastêpn¹");
-	DownDel=new wxButton(this,29994,"W górê usuñ orygina³");
-	DownDel->SetToolTip("Przenosi orygina³ w górê,\nusuwaj¹c puste pole");
-	UpExt=new wxButton(this,29993,"W dó³");
-	UpExt->SetToolTip("Przenosi orygina³ w dó³,\npozostawiaj¹c puste pole,\ndodan¹ linijkê nale¿y stimingowaæ");
-	sizer1->Add(new wxStaticText(this,-1,"Tekst t³umaczenia"),0,wxALL|wxEXPAND,5);
-	sizer1->Add(new wxStaticText(this,-1,"Tekst orygina³u"),0,wxALL|wxEXPAND,5);
-	sizer1->Add(Up,0,wxALL|wxEXPAND,5);
+	Up=new wxButton(this,29995,_("Usuñ liniê"));
+	Up->SetToolTip(_("Usuwa zaznaczon¹ linijkê.\nT³umaczenie idzie do góry."));
+	Down=new wxButton(this,29997,_("Dodaj liniê"));
+	Down->SetToolTip(_("Dodaje pust¹ linijkê przed zaznaczon¹.\nT³umaczenie idzie w dó³."));
+	UpJoin=new wxButton(this,29998,_("Z³¹cz linie"));
+	UpJoin->SetToolTip(_("Z³¹cza nastêpn¹ linijkê z zaznaczon¹.\nT³umaczenie idzie do góry."));
+	DownJoin=new wxButton(this,29996,_("Z³¹cz linie"));
+	DownJoin->SetToolTip(_("Z³¹cza nastêpn¹ linijkê z zaznaczon¹.\nOrygina³ idzie w górê."));
+	DownDel=new wxButton(this,29994,_("Usuñ liniê"));
+	DownDel->SetToolTip(_("Usuwa zaznaczon¹ linijkê.\nOrygina³ idzie do góry."));
+	UpExt=new wxButton(this,29993,_("Dodaj liniê"));
+	UpExt->SetToolTip(_("Dodaje pust¹ linijkê przed zaznaczon¹.\nOrygina³ idzie w dó³.\nDodanej linii nale¿y ustawiæ czasy."));
+	
+	sizer1->Add(new wxStaticText(this,-1,_("Tekst orygina³u")),0,wxALL|wxEXPAND,5);
+	sizer1->Add(new wxStaticText(this,-1,_("Tekst t³umaczenia")),0,wxALL|wxEXPAND,5);
 	sizer1->Add(DownJoin,0,wxALL|wxEXPAND,5);
-	sizer1->Add(Down,0,wxALL|wxEXPAND,5);
+	sizer1->Add(Up,0,wxALL|wxEXPAND,5);
 	sizer1->Add(DownDel,0,wxALL|wxEXPAND,5);
-	sizer1->Add(UpJoin,0,wxALL|wxEXPAND,5);
+	sizer1->Add(Down,0,wxALL|wxEXPAND,5);
 	sizer1->Add(UpExt,0,wxALL|wxEXPAND,5);
+	sizer1->Add(UpJoin,0,wxALL|wxEXPAND,5);
 	
 	sizer->Add(sizer1,0,wxEXPAND,0);
 	sizer->Add(new wxStaticText(this,-1,"Objaœnienie:\norygina³ - tekst napisów, do których przek³adamy tekst innych\nt³umaczenie - tekst, który przek³adamy do timingu wczytanych napisów"),0,wxEXPAND,0);

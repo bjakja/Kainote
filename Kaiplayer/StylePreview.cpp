@@ -53,7 +53,7 @@ void StylePreview::DrawPreview(Styles *style)
 	//if(!vobsub){
 		vobsub = csri_renderer_default();
 	//}
-	if(!vobsub){wxLogStatus("Csri failed.");return;}
+	if(!vobsub){wxLogStatus(_("CSRI odmówi³o pos³uszeñstwa."));return;}
 
 	GetClientSize(&width,&height);
 	pitch=width*4;
@@ -62,7 +62,7 @@ void StylePreview::DrawPreview(Styles *style)
 	//if(!VA->OpenMemory( &dat[0], dat.size())){wxMessageBox("Instancja vobsuba nie utworzy³a siê.");return;}
 	instance = csri_open_mem(vobsub,&dat[0],dat.size(),NULL);
 	if(!instance){
-		wxLogStatus("Instancja vobsuba nie utworzy³a siê.");return;}
+		wxLogStatus(_("Instancja VobSuba nie utworzy³a siê."));return;}
 
 	unsigned char *data= (unsigned char *)malloc(width * height * 4);
 		
@@ -99,7 +99,7 @@ void StylePreview::DrawPreview(Styles *style)
 	format.height = height;
 	format.pixfmt = frame.pixfmt;
 	int error = csri_request_fmt(instance,&format);
-	if (error) {wxLogStatus("Request format failed.");return;}
+	if (error) {wxLogStatus(_("CSRI nie obs³uguje tego formatu."));return;}
 
 	// Render
 	csri_render(instance,&frame,0);

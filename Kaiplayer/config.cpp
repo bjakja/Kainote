@@ -197,7 +197,7 @@ void config::SaveOptions(bool cfg, bool style)
 			stylefile<<GetStyle(j)->styletext();
 		}
 		wxString path;
-		path<<pathfull<<_T("\\Katalogi\\")<<acdir<<_T(".sty");
+		path<<pathfull<<_T("\\Catalog\\")<<acdir<<_T(".sty");
 		ow.FileWrite(path, stylefile);
 	}
 }
@@ -221,18 +221,19 @@ int config::LoadOptions()
 		if(ver!=progname){checkVer=false;}
 	}
 	bool isgood=SetRawOptions(txt.AfterFirst('\n'));
-	acdir=_T("Podstawowy");
+	acdir = _T("Default");
 	path=_T("");
-	path<<pathfull<<_T("\\Katalogi\\");
+	path<<pathfull<<_T("\\Catalog\\");
 	wxDir kat(path);
 	if(!kat.IsOpened()){ow.FileWrite(path<<acdir<<_T(".sty"),_T("Style: Default,Garamond,30,&H00FFFFFF,&H000000FF,&H00FF0000,&H00000000,0,0,0,0,100,100,0,0,0,2,2,2,10,10,10,1"));
 	AddStyle(new Styles());dirs.Add(acdir);
 	}
-	else{wxArrayString tmp;kat.GetAllFiles(path,&tmp,_T(""), wxDIR_FILES);
-	for(size_t i=0;i<tmp.GetCount();i++){
-		wxString fullpath=tmp[i].AfterLast('\\');
-		if(fullpath.EndsWith(_T(".sty"))){dirs.Add(fullpath.BeforeLast('.'));}
-	}
+	else{
+		wxArrayString tmp;kat.GetAllFiles(path,&tmp,_T(""), wxDIR_FILES);
+		for(size_t i=0;i<tmp.GetCount();i++){
+			wxString fullpath=tmp[i].AfterLast('\\');
+			if(fullpath.EndsWith(_T(".sty"))){dirs.Add(fullpath.BeforeLast('.'));}
+		}
 	}
 	LoadStyles(acdir);
 	return isgood;
@@ -242,7 +243,7 @@ void config::LoadStyles(wxString katalog)
 {
 	acdir=katalog;
 	wxString path;
-	path<<pathfull<<_T("\\Katalogi\\")<<katalog<<_T(".sty");
+	path<<pathfull<<_T("\\Catalog\\")<<katalog<<_T(".sty");
 	OpenWrite ow;
 	for(std::vector<Styles*>::iterator it=assstore.begin(); it!=assstore.end(); it++){
 		delete (*it);

@@ -49,7 +49,7 @@ DShowPlayer::DShowPlayer(wxWindow*_parent) :
 
 	//wxLogStatus("constructed");
 	HRESULT hr = CoInitialize(NULL);
-	if(FAILED(hr)){wxLogStatus(_("Nie mo¿na initalizowaæ com"));}
+	if(FAILED(hr)){wxLogStatus(_("Nie mo¿na zainicjalizowaæ COM"));}
 }
 
 
@@ -66,7 +66,7 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 {
 	//MessageBeep(MB_ICONERROR);
 	//wxLogStatus("wesz³o");
-	PTR(InitializeGraph(), L"Graf siê nie inicjalizowa³");
+	PTR(InitializeGraph(), _("Graf siê nie zainicjalizowa³"));
 	//wxLogStatus("graph");
 	VideoCtrl *Video =(VideoCtrl*)parent;
 	
@@ -77,9 +77,9 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 	
 	//bool anypin=false;
 	
+	wxLogStatus(sFileName);
+	HR(m_pGraph->AddSourceFilter(sFileName.wc_str(), L"Source Filter", &pSource.obj), _("Filtr Ÿród³a nie zosta³ dodany!"));
 	
-	HR(m_pGraph->AddSourceFilter(sFileName.wc_str(), L"Source Filter", &pSource.obj), L"Source do not added!");
-	//wxLogStatus("audio renderer");
 	/*if(SUCCEEDED(CoCreateInstance(CLSID_LAVVIDEO, NULL, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID *)&LAVVideo.obj)))
 	{
 		HR(m_pGraph->AddFilter(LAVVideo.obj, L"LAV Video Decoder"), L"Nie mo¿na dodaæ LAV Video Decodera");
@@ -91,11 +91,11 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 	//wxLogStatus("querry interface");
 	renderer->QueryInterface(IID_IBaseFilter,(void**)&frend.obj);
 	//wxLogStatus("add video renderer");
-	HR(m_pGraph->AddFilter(frend.obj, L"Kainote Video Renderer"), L"Nie mo¿na dodaæ video Renderera");
-	HR(CoCreateInstance(CLSID_DSoundRender, NULL, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID *)&pAudioRenderer.obj), L"Nie mo¿na utworzyæ instancji renderera dŸwiêku");
+	HR(m_pGraph->AddFilter(frend.obj, L"Kainote Video Renderer"), _("Nie mo¿na dodaæ renderera wideo"));
+	HR(CoCreateInstance(CLSID_DSoundRender, NULL, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID *)&pAudioRenderer.obj), _("Nie mo¿na utworzyæ instancji renderera dŸwiêku"));
 	
 	//wxLogStatus("audio");
-	HR(m_pGraph->AddFilter(pAudioRenderer.obj, L"Direct Sound Renderer"), L"Nie mo¿na dodaæ Direct Sound Renderera");
+	HR(m_pGraph->AddFilter(pAudioRenderer.obj, L"Direct Sound Renderer"), _("Nie mo¿na dodaæ renderera DirectSound"));
 
 	bool isstream=false;
 
@@ -106,7 +106,7 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 		Selfdest<IEnumPins> pEnum;
 		Selfdest<IPin> pPin;
 		//m_pGraph->RenderFile(sFileName.wc_str(),NULL);
-		HR(hr = pSource->EnumPins(&pEnum.obj),L"nie mo¿na wyliczyæ pinów Ÿród³a");
+		HR(hr = pSource->EnumPins(&pEnum.obj),_("Nie mo¿na wyliczyæ pinów Ÿród³a"));
 		//MessageBox(NULL, L"enumpins Initialized!", L"Open file", MB_OK);
 		// Loop through all the pins
 		bool anypin=false;
@@ -127,7 +127,7 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 		if(!anypin){return false;}
 		SAFE_RELEASE(pEnum.obj);
 		Selfdest<IPin> tmpPin;
-		HR(hr = pVobsub->EnumPins(&pEnum.obj),L"nie mo¿na wyliczyæ pinów Ÿród³a");
+		HR(hr = pVobsub->EnumPins(&pEnum.obj),_("Nie mo¿na wyliczyæ pinów Ÿród³a"));
 		bool connected=false;
 		while (S_OK == pEnum->Next(1, &pPin.obj, NULL))
 		{
@@ -147,9 +147,9 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 		Selfdest<IEnumPins> Enumaud;
 		//Selfdest<IEnumPins> Enumlav;
 		//HR(LAVVideo->EnumPins(&Enumlav.obj),L"Nie mo¿na wyliczyæ pinów lav");
-		HR(pSource->EnumPins(&Enumsrc.obj),L"Nie mo¿na wyliczyæ pinów Ÿród³a");
-		HR(frend->EnumPins(&Enumrend.obj),L"Nie mo¿na wyliczyæ pinów renderera");
-		HR(pAudioRenderer->EnumPins(&Enumaud.obj),L"Nie mo¿na wyliczyæ pinów dsound");
+		HR(pSource->EnumPins(&Enumsrc.obj),_("Nie mo¿na wyliczyæ pinów Ÿród³a"));
+		HR(frend->EnumPins(&Enumrend.obj),_("Nie mo¿na wyliczyæ pinów renderera"));
+		HR(pAudioRenderer->EnumPins(&Enumaud.obj),_("Nie mo¿na wyliczyæ pinów dsound"));
 	
 	
 		Selfdest<IPin> spin;
@@ -158,8 +158,8 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 		//Selfdest<IPin> lpin;
 		Selfdest<IEnumMediaTypes> mtypes;
   
-		HR(Enumrend->Next(1,&rpin.obj,0),L"Nie mo¿na pobraæ pinu renderera");
-		HR(Enumaud->Next(1,&apin.obj,0),L"Nie mo¿na pobraæ pinu dsound");
+		HR(Enumrend->Next(1,&rpin.obj,0),_("Nie mo¿na pobraæ pinu renderera"));
+		HR(Enumaud->Next(1,&apin.obj,0),_("Nie mo¿na pobraæ pinu dsound"));
 		/*PIN_INFO pinfo;
 
 		while(Enumaud->Next(1,&lpin.obj,0)==S_OK){
@@ -172,35 +172,35 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
    
 		while (Enumsrc->Next(1,&spin.obj,0)==S_OK)
 		{
-			HR(spin->EnumMediaTypes(&mtypes.obj),L"Nie ma Imediatypes");
-			HR(mtypes->Next(1, &info,0),L"Nie ma info");
+			HR(spin->EnumMediaTypes(&mtypes.obj),_("Brak IMediaTypes"));
+			HR(mtypes->Next(1, &info,0),_("Brak informacji o rodzaju œcie¿ki"));
 
 			if(info->majortype==MEDIATYPE_Video){
 				
-				HR(m_pGraph->Connect(spin.obj, rpin.obj),L"Nie mo¿na po³¹czyæ pinu Ÿród³a z rendererem wideo");
+				HR(m_pGraph->Connect(spin.obj, rpin.obj),_("Nie mo¿na po³¹czyæ pinu Ÿród³a z rendererem wideo"));
 			}
 			else if(info->majortype==MEDIATYPE_Audio){
 
-				HR(m_pGraph->Connect(spin.obj, apin.obj),L"Nie mo¿na po³¹czyæ pinu Ÿród³a z rendererem audio");
+				HR(m_pGraph->Connect(spin.obj, apin.obj),_("Nie mo¿na po³¹czyæ pinu Ÿród³a z rendererem audio"));
 			}
 			else if(info->majortype==MEDIATYPE_Stream){
 
-				HR(m_pGraph->Connect(spin.obj, rpin.obj),L"Nie mo¿na po³¹czyæ pinu Ÿród³a z rendererem audio1");
+				HR(m_pGraph->Connect(spin.obj, rpin.obj),_("Nie mo¿na po³¹czyæ pinu Ÿród³a z rendererem audio1"));
 				SAFE_RELEASE(rpin.obj);
-				HR(spin.obj->ConnectedTo(&rpin.obj),L"Nie mo¿na znaleŸæ po³¹czonego pinu Ÿród³a");
+				HR(spin.obj->ConnectedTo(&rpin.obj),_("Nie mo¿na znaleŸæ po³¹czonego pinu Ÿród³a"));
 				PIN_INFO pinfo;
-				HR(rpin.obj->QueryPinInfo(&pinfo),L"Nie mo¿na pobraæ informacji o pinie splittera");
+				HR(rpin.obj->QueryPinInfo(&pinfo),_("Nie mo¿na pobraæ informacji o pinie splittera"));
 				SAFE_RELEASE(spin.obj);
 				SAFE_RELEASE(Enumrend.obj);
-				HR(pinfo.pFilter->EnumPins(&Enumrend.obj),L"Nie mo¿na wyliczyæ pinów splittera");
+				HR(pinfo.pFilter->EnumPins(&Enumrend.obj),_("Nie mo¿na wyliczyæ pinów splittera"));
 				SAFE_RELEASE(mtypes.obj);
 				//DeleteMediaType(info);info=0;
 				while(Enumrend->Next(1,&spin.obj,0)==S_OK)
 				{
-					HR(spin->EnumMediaTypes(&mtypes.obj),L"Nie ma Imediatypes");
-					HR(mtypes->Next(1, &info,0),L"Nie ma info");
+					HR(spin->EnumMediaTypes(&mtypes.obj),_("Brak IMediaTypes"));
+					HR(mtypes->Next(1, &info,0),_("Brak informacji o rodzaju œcie¿ki"));
 					if(info->majortype==MEDIATYPE_Audio){
-						HR(m_pGraph->Connect(spin.obj,apin.obj),L"Nie mo¿na po³¹czyæ pinu Ÿród³a z rendererem wideo2");
+						HR(m_pGraph->Connect(spin.obj,apin.obj),_("Nie mo¿na po³¹czyæ pinu Ÿród³a z rendererem wideo2"));
 						break;
 					}
 					//DeleteMediaType(info);info=0;
@@ -229,11 +229,11 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 		Selfdest<IPin> spin;
 		Selfdest<IPin> strpin;
 		Selfdest<IEnumPins> pEnum;
-		HR(hr = pSource->EnumPins(&pEnum.obj),L"nie mo¿na wyliczyæ pinów Ÿród³a");
-		HR(pEnum->Next(1, &spin.obj, NULL),L"nie mo¿na pobraæ pinu Ÿród³a");
+		HR(hr = pSource->EnumPins(&pEnum.obj),_("Nie mo¿na wyliczyæ pinów Ÿród³a"));
+		HR(pEnum->Next(1, &spin.obj, NULL),_("Nie mo¿na pobraæ pinu Ÿród³a"));
 		spin->ConnectedTo(&strpin.obj);
 		PIN_INFO pinfo;
-		HR(strpin.obj->QueryPinInfo(&pinfo),L"Nie mo¿na pobraæ informacji o pinie splittera");
+		HR(strpin.obj->QueryPinInfo(&pinfo),_("Nie mo¿na pobraæ informacji o pinie splittera"));
 		if(FAILED(pinfo.pFilter->QueryInterface(IID_IAMStreamSelect, (void**)&stream)))
 		{wxLogStatus("z wyboru œcie¿ki nici");}
 	}
@@ -377,9 +377,9 @@ bool DShowPlayer::InitializeGraph()
 
 	// Query for graph interfaces. (These interfaces are exposed by the graph
     // manager regardless of which filters are in the graph.)
-	HR(hr = m_pGraph->QueryInterface(IID_IMediaControl, (void**)&m_pControl), L"Nie mo¿na stworzyæ kontrolera");
-	HR(hr = m_pGraph->QueryInterface(IID_IMediaSeeking, (void**)&m_pSeek), L"Nie mo¿na stworzyæ interfejsu szukania");
-	HR(hr = m_pGraph->QueryInterface(IID_IBasicAudio, (void**)&m_pBA), L"Nie mo¿na stworzyæ interfejsu audio" );
+	HR(hr = m_pGraph->QueryInterface(IID_IMediaControl, (void**)&m_pControl), _("Nie mo¿na stworzyæ kontrolera"));
+	HR(hr = m_pGraph->QueryInterface(IID_IMediaSeeking, (void**)&m_pSeek), _("Nie mo¿na stworzyæ interfejsu szukania"));
+	HR(hr = m_pGraph->QueryInterface(IID_IBasicAudio, (void**)&m_pBA), _("Nie mo¿na stworzyæ interfejsu audio") );
     
 
 
@@ -517,11 +517,11 @@ bool DShowPlayer::EnumFilters(wxMenu *menu)
 	ISpecifyPropertyPages *ppages=0;
 	FILTER_INFO fi;
 	int numfilter=0;
-	HR(m_pGraph->EnumFilters(&efilters.obj),L"Nie mo¿na wyliczyæ filtrów");
+	HR(m_pGraph->EnumFilters(&efilters.obj),_("Nie mo¿na wyliczyæ filtrów"));
 	while(S_OK==efilters->Next(1, &bfilter, 0))
 	{
 		bfilter->QueryInterface(__uuidof(ISpecifyPropertyPages), (void**)&ppages);
-		HR(bfilter->QueryFilterInfo(&fi),L"Nie mo¿na pobraæ nazwy filtra");
+		HR(bfilter->QueryFilterInfo(&fi),_("Nie mo¿na pobraæ nazwy filtra"));
 		menu->Append(13000+numfilter,wxString(fi.achName))->Enable(ppages!=0);
 		
 		numfilter++;
@@ -541,10 +541,10 @@ bool DShowPlayer::FilterConfig(wxString name, int idx, wxPoint pos)
 	Selfdest<ISpecifyPropertyPages> ppages;
 	CAUUID caGUID;
 	caGUID.pElems = NULL;
-	HR(m_pGraph->FindFilterByName(name.wc_str(),&bfilter.obj),L"Nie mo¿na wyliczyæ filtrów");
+	HR(m_pGraph->FindFilterByName(name.wc_str(),&bfilter.obj),_("Nie mo¿na wyliczyæ filtrów"));
 	bfilter->QueryInterface(__uuidof(ISpecifyPropertyPages), (void**)&ppages.obj);
 	if(ppages.obj==0){return false;}
-	HR(ppages->GetPages(&caGUID),L"Nie mo¿na pobraæ configu filtra");
+	HR(ppages->GetPages(&caGUID),_("Nie mo¿na pobraæ konfiguracji filtra"));
 	IUnknown* lpUnk = NULL;
 	ppages->QueryInterface(&lpUnk);
 	try

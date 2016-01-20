@@ -33,13 +33,9 @@
 kainoteFrame::kainoteFrame(wxWindow* parent)
 	//: wxFrame(parent, id, _T("Bez nazwy -- ")+Options.progname, wxDefaultPosition,wxDefaultSize, wxDEFAULT_FRAME_STYLE)
 {
-	int isgood=Options.LoadOptions();
-	if(!isgood){wxMessageBox(_T("Nie uda³o siê wczytaæ opcji dzia³anie programu zostanie zakoñczone"),_T("Uwaga"));Close();}
-	isgood=Hkeys.LoadHkeys();
-	if(!isgood){wxMessageBox(_T("Nie uda³o siê wczytaæ hotkeyów dzia³anie programu zostanie zakoñczone"),_T("Uwaga"));Close();}
 
 #if logging
-	mylog=new wxLogWindow(this, "logi",true, false);
+	mylog=new wxLogWindow(this, "Logi",true, false);
 	mylog->PassMessages(true);
 #else
 	mylog=NULL;
@@ -55,7 +51,7 @@ kainoteFrame::kainoteFrame(wxWindow* parent)
 	subsrec=Options.GetTable("Subs Recent");
 	videorec=Options.GetTable("Video Recent");
 	audsrec=Options.GetTable("Recent Audio");
-	Create(parent, -1, _T("Bez nazwy -- ")+Options.progname, wxDefaultPosition,wxDefaultSize, wxDEFAULT_FRAME_STYLE);
+	Create(parent, -1, _("Bez tytu³u") + " -- " + Options.progname, wxDefaultPosition,wxDefaultSize, wxDEFAULT_FRAME_STYLE);
 	wxFont thisFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
 	SetFont(thisFont);
 	wxIcon kaiicon("aaaa",wxBITMAP_TYPE_ICO_RESOURCE); 
@@ -71,110 +67,110 @@ kainoteFrame::kainoteFrame(wxWindow* parent)
 
 
 	FileMenu = new wxMenu();
-	AppendBitmap(FileMenu,ID_OPENSUBS, _T("&Otwórz napisy"), _T("Otwórz plik napisów"),wxBITMAP_PNG ("opensubs"));
-	AppendBitmap(FileMenu,ID_SAVE, _T("&Zapisz"), _T("Zapisz aktualny plik"),wxBITMAP_PNG("save"));
-	AppendBitmap(FileMenu,ID_SAVEALL, _T("Zapisz wszystko"), _T("Zapisz wszystkie napisy"),wxBITMAP_PNG("saveall"));
-	AppendBitmap(FileMenu,ID_SAVEAS, _T("Zapisz &jako..."), _T("Zapisz jako"),wxBITMAP_PNG("saveas"));
-	AppendBitmap(FileMenu,ID_SAVETL, _T("Zapisz t³umaczenie"), _T("Zapisz t³umaczenie"),wxBITMAP_PNG("savetl"),false);
+	AppendBitmap(FileMenu,ID_OPENSUBS, _("&Otwórz napisy"), _("Otwórz plik napisów"),wxBITMAP_PNG ("opensubs"));
+	AppendBitmap(FileMenu,ID_SAVE, _("&Zapisz"), _("Zapisz aktualny plik"),wxBITMAP_PNG("save"));
+	AppendBitmap(FileMenu,ID_SAVEALL, _("Zapisz wszystko"), _("Zapisz wszystkie napisy"),wxBITMAP_PNG("saveall"));
+	AppendBitmap(FileMenu,ID_SAVEAS, _("Zapisz &jako..."), _("Zapisz jako"),wxBITMAP_PNG("saveas"));
+	AppendBitmap(FileMenu,ID_SAVETL, _("Zapisz t³umaczenie"), _("Zapisz t³umaczenie"),wxBITMAP_PNG("savetl"),false);
 
 	SubsRecMenu = new wxMenu();
 	//AppendRecent();
-	AppendBitmap(FileMenu,ID_RECSUBS, _T("Ostatnio otwarte napisy"), _T("Ostatnio otwarte napisy"),wxBITMAP_PNG("recentsubs"),true, SubsRecMenu);
-	AppendBitmap(FileMenu,ID_UNSUBS, _T("Usuñ napisy z edytora"), _T("Usuñ napisy z edytora"),wxBITMAP_PNG("close"));
-	AppendBitmap(FileMenu,ID_SETTINGS, _T("&Ustawienia"), _T("Ustawienia Konwersji"),wxBITMAP_PNG("SETTINGS"));
-	AppendBitmap(FileMenu,ID_QUIT, _T("&Wyjœcie\tAlt-F4"), _T("Zakoñcz dzia³anie programu"),wxBITMAP_PNG("exit"));
-	MenuBar->Append(FileMenu, _T("&Plik"));
+	AppendBitmap(FileMenu,ID_RECSUBS, _("Ostatnio otwarte napisy"), _("Ostatnio otwarte napisy"),wxBITMAP_PNG("recentsubs"),true, SubsRecMenu);
+	AppendBitmap(FileMenu,ID_UNSUBS, _("Usuñ napisy z edytora"), _("Usuñ napisy z edytora"),wxBITMAP_PNG("close"));
+	AppendBitmap(FileMenu,ID_SETTINGS, _("&Ustawienia"), _("Ustawienia programu"),wxBITMAP_PNG("SETTINGS"));
+	AppendBitmap(FileMenu,ID_QUIT, _("&Wyjœcie\tAlt-F4"), _("Zakoñcz dzia³anie programu"),wxBITMAP_PNG("exit"));
+	MenuBar->Append(FileMenu, _("&Plik"));
 
 	EditMenu = new wxMenu();
-	AppendBitmap(EditMenu, ID_UNDO1, _T("&Cofnij"), _T("Cofnij"),wxBITMAP_PNG("undo"),false);
-	AppendBitmap(EditMenu, ID_REDO1, _T("&Ponów"), _T("Ponów"),wxBITMAP_PNG("redo"),false);
-	AppendBitmap(EditMenu,ID_FINDREP, _T("ZnajdŸ i zmieñ"), _T("Szuka i zmienia dane frazy tekstu"),wxBITMAP_PNG("findreplace"));
-	AppendBitmap(EditMenu,ID_FIND, _T("ZnajdŸ"), _T("Szuka dane frazy tekstu"),wxBITMAP_PNG("search"));
+	AppendBitmap(EditMenu, ID_UNDO1, _("&Cofnij"), _("Cofnij"),wxBITMAP_PNG("undo"),false);
+	AppendBitmap(EditMenu, ID_REDO1, _("&Ponów"), _("Ponów"),wxBITMAP_PNG("redo"),false);
+	AppendBitmap(EditMenu,ID_FINDREP, _("ZnajdŸ i zamieñ"), _("Szuka i podmienia dane frazy tekstu"),wxBITMAP_PNG("findreplace"));
+	AppendBitmap(EditMenu,ID_FIND, _("ZnajdŸ"), _("Szuka dane frazy tekstu"),wxBITMAP_PNG("search"));
 	wxMenu *SortMenu[2];
 	for(int i=0; i<2; i++){
 		SortMenu[i]=new wxMenu();
-		SortMenu[i]->Append(7000+(6*i),"Czas Pocz¹tkowy","Sortuj wed³ug czasu pocz¹tkowego");
-		SortMenu[i]->Append(7001+(6*i),"Czas Koñcowy","Sortuj wed³ug czasu koñcowego");
-		SortMenu[i]->Append(7002+(6*i),"Style","Sortuj wed³ug stylów");
-		SortMenu[i]->Append(7003+(6*i),"Aktor","Sortuj wed³ug aktora");
-		SortMenu[i]->Append(7004+(6*i),"Efekt","Sortuj wed³ug efektu");
-		SortMenu[i]->Append(7005+(6*i),"Warstwa","Sortuj wed³ug warstwy");
+		SortMenu[i]->Append(7000+(6*i),_("Czas pocz¹tkowy"),_("Sortuj wed³ug czasu pocz¹tkowego"));
+		SortMenu[i]->Append(7001+(6*i),_("Czas koñcowy"),_("Sortuj wed³ug czasu koñcowego"));
+		SortMenu[i]->Append(7002+(6*i),_("Style"),_("Sortuj wed³ug styli"));
+		SortMenu[i]->Append(7003+(6*i),_("Aktor"),_("Sortuj wed³ug aktora"));
+		SortMenu[i]->Append(7004+(6*i),_("Efekt"),_("Sortuj wed³ug efektu"));
+		SortMenu[i]->Append(7005+(6*i),_("Warstwa"),_("Sortuj wed³ug warstwy"));
 	}
 
-	AppendBitmap(EditMenu,ID_SORT, _T("Sort&uj wszystkie linie"), _T("Sortuje wszystkie linie napisów ass"),wxBITMAP_PNG("sort"),true,SortMenu[0]);
-	AppendBitmap(EditMenu,ID_SORTSEL, _T("Sort&uj zaznaczone linie"),_T("Sortuje zaznaczone linie napisów ass"),wxBITMAP_PNG("sortsel"),true, SortMenu[1]);
-	AppendBitmap(EditMenu,ID_SELLIN, _T("Zaznacz Linijki"), _T("Zaznacza linijki wg danej frazy tekstu"),wxBITMAP_PNG("sellines"));
-	MenuBar->Append(EditMenu, _T("&Edycja"));
+	AppendBitmap(EditMenu,ID_SORT, _("Sort&uj wszystkie linie"), _("Sortuje wszystkie linie napisów ASS"),wxBITMAP_PNG("sort"),true,SortMenu[0]);
+	AppendBitmap(EditMenu,ID_SORTSEL, _("Sort&uj zaznaczone linie"),_("Sortuje zaznaczone linie napisów ASS"),wxBITMAP_PNG("sortsel"),true, SortMenu[1]);
+	AppendBitmap(EditMenu,ID_SELLIN, _("Zaznacz linijki"), _("Zaznacza linijki wg danej frazy tekstu"),wxBITMAP_PNG("sellines"));
+	MenuBar->Append(EditMenu, _("&Edycja"));
 
 	VidMenu = new wxMenu();
-	AppendBitmap(VidMenu,ID_OPVIDEO, _T("Otwórz wideo"), _T("Otwiera wybrane wideo"),wxBITMAP_PNG("openvideo"));
+	AppendBitmap(VidMenu,ID_OPVIDEO, _("Otwórz wideo"), _("Otwiera wybrane wideo"),wxBITMAP_PNG("openvideo"));
 	VidsRecMenu = new wxMenu();
-	AppendBitmap(VidMenu, ID_RECVIDEO, _T("Ostatnio otwarte video"), _T("Ostatnio otwarte video"),wxBITMAP_PNG("recentvideo"),true, VidsRecMenu);
-	AppendBitmap(VidMenu, ID_SETSTIME, _T("Wstaw czas pocz¹tkowy z wideo"), _T("Wstawianie czasu pocz¹tkowego z wideo"),wxBITMAP_PNG("setstarttime"),false);
-	AppendBitmap(VidMenu, ID_SETETIME, _T("Wstaw czas koñcowy z wideo"), _T("Wstawianie czasu koñcowego z wideo"),wxBITMAP_PNG("setendtime"),false);
-	AppendBitmap(VidMenu, ID_PREVFRAME, _T("Klatka w ty³"), _T("Cofa wideo o jedn¹ klatkê"),wxBITMAP_PNG("prevframe"),false);
-	AppendBitmap(VidMenu, ID_NEXTFRAME, _T("Klatka w przód"), _T("Przechodzi o jedn¹ klatkê w przód"),wxBITMAP_PNG("nextframe"),false);
-	AppendBitmap(VidMenu, ID_SETVIDATSTART,"PrzejdŸ do czasu pocz¹tkowego linii","Przechodzi wideo do czasu pocz¹tkowego linii",wxBITMAP_PNG("videoonstime"));
-	AppendBitmap(VidMenu, ID_SETVIDATEND,"PrzejdŸ do czasu koñcowego linii","Przechodzi wideo do czasu koñcowego linii",wxBITMAP_PNG("videoonetime"));
-	AppendBitmap(VidMenu, ID_PAUSE, _T("Odtwarzaj / Pauza"), _T("Odtwarza / Pauzuje wideo"),wxBITMAP_PNG("pausemenu"),false);
-	VidMenu->Append(ID_OPVIDEOINDEX, _T("Otwieraj wideo przez FFMS2"), _T("Otwiera wideo przez FFMS2 co daje dok³adnoœæ klatkow¹"),wxITEM_CHECK)->Check(Options.GetBool("Index Video"));
+	AppendBitmap(VidMenu, ID_RECVIDEO, _("Ostatnio otwarte wideo"), _("Ostatnio otwarte video"),wxBITMAP_PNG("recentvideo"),true, VidsRecMenu);
+	AppendBitmap(VidMenu, ID_SETSTIME, _("Wstaw czas pocz¹tkowy z wideo"), _("Wstawia czas pocz¹tkowy z wideo"),wxBITMAP_PNG("setstarttime"),false);
+	AppendBitmap(VidMenu, ID_SETETIME, _("Wstaw czas koñcowy z wideo"), _("Wstawia czas koñcowy z wideo"),wxBITMAP_PNG("setendtime"),false);
+	AppendBitmap(VidMenu, ID_PREVFRAME, _("Klatka w ty³"), _("Przechodzi o jedn¹ klatkê w ty³"),wxBITMAP_PNG("prevframe"),false);
+	AppendBitmap(VidMenu, ID_NEXTFRAME, _("Klatka w przód"), _("Przechodzi o jedn¹ klatkê w przód"),wxBITMAP_PNG("nextframe"),false);
+	AppendBitmap(VidMenu, ID_SETVIDATSTART,_("PrzejdŸ do czasu pocz¹tkowego linii"),_("Przechodzi wideo do czasu pocz¹tkowego linii"),wxBITMAP_PNG("videoonstime"));
+	AppendBitmap(VidMenu, ID_SETVIDATEND,_("PrzejdŸ do czasu koñcowego linii"),_("Przechodzi wideo do czasu koñcowego linii"),wxBITMAP_PNG("videoonetime"));
+	AppendBitmap(VidMenu, ID_PAUSE, _("Odtwarzaj / Pauza"), _("Odtwarza lub pauzuje wideo"),wxBITMAP_PNG("pausemenu"),false);
+	VidMenu->Append(ID_OPVIDEOINDEX, _("Otwieraj wideo przez FFMS2"), _("Otwiera wideo przez FFMS2, co daje dok³adnoœæ klatkow¹"),wxITEM_CHECK)->Check(Options.GetBool("Index Video"));
 
-	MenuBar->Append(VidMenu, _T("&Wideo"));
+	MenuBar->Append(VidMenu, _("&Wideo"));
 
 	AudMenu = new wxMenu();
-	AppendBitmap(AudMenu,ID_OPAUDIO, _T("Otwórz audio"), _T("Otwiera wybrane audio"),wxBITMAP_PNG("openaudio"));
+	AppendBitmap(AudMenu,ID_OPAUDIO, _("Otwórz audio"), _("Otwiera wybrane audio"),wxBITMAP_PNG("openaudio"));
 	AudsRecMenu = new wxMenu();
 
-	AppendBitmap(AudMenu,ID_RECAUDIO, _T("Ostatnio otwarte audio"), _T("Ostatnio otwarte audio"),wxBITMAP_PNG("recentaudio"),true , AudsRecMenu);
-	AppendBitmap(AudMenu,ID_OPFROMVID, _T("Otwórz audio z wideo"), _T("Otwiera audio z wideo"),wxBITMAP_PNG("audiofromvideo"));
-	AppendBitmap(AudMenu,ID_CLOSEAUDIO, _T("Zamknij audio"), _T("Zamyka audio"),wxBITMAP_PNG("closeaudio"));
+	AppendBitmap(AudMenu,ID_RECAUDIO, _("Ostatnio otwarte audio"), _("Ostatnio otwarte audio"),wxBITMAP_PNG("recentaudio"),true , AudsRecMenu);
+	AppendBitmap(AudMenu,ID_OPFROMVID, _("Otwórz audio z wideo"), _("Otwiera audio z wideo"),wxBITMAP_PNG("audiofromvideo"));
+	AppendBitmap(AudMenu,ID_CLOSEAUDIO, _("Zamknij audio"), _("Zamyka audio"),wxBITMAP_PNG("closeaudio"));
 	MenuBar->Append(AudMenu, "&Audio");
 
 	ViewMenu = new wxMenu();
-	ViewMenu->Append(ID_VALL, _T("Wszystko"), _T("Wszystkie okna s¹ widoczne"));
-	ViewMenu->Append(ID_VVIDEO, _T("Wideo i napisy"), _T("Widoczne tylko okno wideo i napsów"));
-	ViewMenu->Append(ID_VAUDIO, _T("Audio i napisy"), _T("Widoczne tylko okno audio i napsów"));
-	ViewMenu->Append(ID_VSUBS, _T("Tylko napisy"), _T("Widoczne tylko okno napisów"));
+	ViewMenu->Append(ID_VALL, _("Wszystko"), _("Wszystkie okna s¹ widoczne"));
+	ViewMenu->Append(ID_VVIDEO, _("Wideo i napisy"), _("Widoczne tylko okno wideo i napisów"));
+	ViewMenu->Append(ID_VAUDIO, _("Audio i napisy"), _("Widoczne tylko okno audio i napisów"));
+	ViewMenu->Append(ID_VSUBS, _("Tylko napisy"), _("Widoczne tylko okno napisów"));
 	MenuBar->Append(ViewMenu, "Wido&k");
 
 	SubsMenu = new wxMenu();
-	AppendBitmap(SubsMenu,ID_EDITOR, _T("W³¹cz / Wy³¹cz edytor"), _T("W³¹czanie b¹dŸ w³¹czanie edytora"),wxBITMAP_PNG("editor"));
-	AppendBitmap(SubsMenu,ID_ASSPROPS, _T("W³aœciwoœci ASS / SSA"), _T("W³aœciwoœci napisów ASS / SSA"),wxBITMAP_PNG("ASSPROPS"));
-	AppendBitmap(SubsMenu,ID_STYLEMNGR, _T("&Mened¿er stylów"), _T("S³u¿y do zarz¹dzania stylami ASS / SSA"),wxBITMAP_PNG("styles"));
+	AppendBitmap(SubsMenu,ID_EDITOR, _("W³¹cz / Wy³¹cz edytor"), _("W³¹czanie b¹dŸ wy³¹czanie edytora"),wxBITMAP_PNG("editor"));
+	AppendBitmap(SubsMenu,ID_ASSPROPS, _("W³aœciwoœci ASS"), _("W³aœciwoœci napisów ASS"),wxBITMAP_PNG("ASSPROPS"));
+	AppendBitmap(SubsMenu,ID_STYLEMNGR, _("&Mened¿er stylów"), _("S³u¿y do zarz¹dzania stylami ASS"),wxBITMAP_PNG("styles"));
 	ConvMenu = new wxMenu();
-	AppendBitmap(ConvMenu,ID_ASS, _T("Konwertuj do ASS"), _T("Konwertuje do formatu ASS"),wxBITMAP_PNG("convass"),false);
-	AppendBitmap(ConvMenu,ID_SRT, _T("Konwertuj do SRT"), _T("Konwertuje do formatu SRT"),wxBITMAP_PNG("convsrt"));
-	AppendBitmap(ConvMenu,ID_MDVD, _T("Konwertuj do MDVD"), _T("Konwertuje do formatu microDVD"),wxBITMAP_PNG("convmdvd"));
-	AppendBitmap(ConvMenu,ID_MPL2, _T("Konwertuj do MPL2"), _T("Konwertuje do formatu MPL2"),wxBITMAP_PNG("convmpl2"));
-	AppendBitmap(ConvMenu,ID_TMP, _T("Konwertuj do TMP"), _T("Konwertuje do formatu TMPlayer (nie zalecene)"),wxBITMAP_PNG("convtmp"));
+	AppendBitmap(ConvMenu,ID_ASS, _("Konwertuj do ASS"), _("Konwertuje do formatu ASS"),wxBITMAP_PNG("convass"),false);
+	AppendBitmap(ConvMenu,ID_SRT, _("Konwertuj do SRT"), _("Konwertuje do formatu SRT"),wxBITMAP_PNG("convsrt"));
+	AppendBitmap(ConvMenu,ID_MDVD, _("Konwertuj do MDVD"), _("Konwertuje do formatu microDVD"),wxBITMAP_PNG("convmdvd"));
+	AppendBitmap(ConvMenu,ID_MPL2, _("Konwertuj do MPL2"), _("Konwertuje do formatu MPL2"),wxBITMAP_PNG("convmpl2"));
+	AppendBitmap(ConvMenu,ID_TMP, _("Konwertuj do TMP"), _("Konwertuje do formatu TMPlayer (niezalecene)"),wxBITMAP_PNG("convtmp"));
 
-	AppendBitmap(SubsMenu,ID_CONV, _T("Konwersja"), _T("Konwersja z jednego formatu napisów na inny"),wxBITMAP_PNG("convert"),true, ConvMenu);
-	AppendBitmap(SubsMenu,ID_CHANGETIME, _T("Okno zmiany &czasów\tCtrl-I"), _T("Przesuwanie czasów napisów"),wxBITMAP_PNG("times"));
-	AppendBitmap(SubsMenu,ID_CROSS, _T("W³¹cz wskaŸnik pozycji"), _T("W³¹cz / Wy³¹cz przesuwanie tekstu"),wxBITMAP_PNG("cross"),false);
-	AppendBitmap(SubsMenu,ID_POSITION, _T("W³¹cz przesuwanie"), _T("W³¹cz / Wy³¹cz przesuwanie tekstu"),wxBITMAP_PNG("position"),false);
-	AppendBitmap(SubsMenu,ID_MOVEMENT, _T("W³¹cz ruch"), _T("W³¹cz / Wy³¹cz przesuwanie tekstu"),wxBITMAP_PNG("move"),false);
-	//AppendBitmap(SubsMenu,ID_MOVEONCURVE, _T("W³¹cz ruch po krzywej"), _T("W³¹cz / Wy³¹cz przesuwanie tekstu"),wxBITMAP_PNG("move"),false);
-	AppendBitmap(SubsMenu,ID_SCALE, _T("W³¹cz skalowanie"), _T("W³¹cz / Wy³¹cz skalowanie tekstu"),wxBITMAP_PNG("scale"),false);
-	AppendBitmap(SubsMenu,ID_ROTATEZ, _T("W³¹cz obracanie w osi Z"), _T("W³¹cz / Wy³¹cz obracanie tekstu w osi Z"),wxBITMAP_PNG("frz"),false);
-	AppendBitmap(SubsMenu,ID_ROTATEXY, _T("W³¹cz obracanie w osi X i Y"), _T("W³¹cz / Wy³¹cz obracanie tekstu w osi X i Y"),wxBITMAP_PNG("frxy"),false);
-	//AppendBitmap(SubsMenu,ID_FAXY, _T("W³¹cz / Wy³¹cz pochylanie tekstu"), _T("W³¹cz / Wy³¹cz pochylanie tekstu"),wxBITMAP_PNG("clip"),false);
-	AppendBitmap(SubsMenu,ID_CLIPRECT, _T("W³¹cz wycinki prostok¹tne"), _T("W³¹cz / Wy³¹cz tworzenie wycinków prostok¹tnych"),wxBITMAP_PNG("cliprect"),false);
-	AppendBitmap(SubsMenu,ID_CLIPS, _T("W³¹cz wycinki wektorowe"), _T("W³¹cz / Wy³¹cz tworzenie wycinków wektorowych"),wxBITMAP_PNG("clip"),false);
-	AppendBitmap(SubsMenu,ID_DRAWINGS, _T("W³¹cz rysunki wektorowe"), _T("W³¹cz / Wy³¹cz tworzenie rysunków"),wxBITMAP_PNG("drawing"),false);
-	AppendBitmap(SubsMenu,ID_COLLECTOR, _T("Kolekcjoner czcionek"), _T("Kolekcjoner czcionek"),wxBITMAP_PNG("fontcollector"));
-	AppendBitmap(SubsMenu,ID_HIDETAGS, _T("Ukryj tagi w nawiasach"), _T("Ukrywa tagi w nawiasach ASS i MDVD"),wxBITMAP_PNG("hidetags"));
-	MenuBar->Append(SubsMenu, L"&Napisy");
+	AppendBitmap(SubsMenu,ID_CONV, _("Konwersja"), _("Konwersja z jednego formatu napisów na inny"),wxBITMAP_PNG("convert"),true, ConvMenu);
+	AppendBitmap(SubsMenu,ID_CHANGETIME, _("Okno zmiany &czasów\tCtrl-I"), _("Przesuwanie czasów napisów"),wxBITMAP_PNG("times"));
+	AppendBitmap(SubsMenu,ID_CROSS, _("W³¹cz wskaŸnik pozycji"), _("W³¹cz przesuwanie tekstu"),wxBITMAP_PNG("cross"),false);
+	AppendBitmap(SubsMenu,ID_POSITION, _("W³¹cz przesuwanie"), _("W³¹cz przesuwanie tekstu"),wxBITMAP_PNG("position"),false);
+	AppendBitmap(SubsMenu,ID_MOVEMENT, _("W³¹cz ruch"), _("W³¹cz przesuwanie tekstu"),wxBITMAP_PNG("move"),false);
+	//AppendBitmap(SubsMenu,ID_MOVEONCURVE, _("W³¹cz ruch po krzywej"), _("W³¹cz / Wy³¹cz przesuwanie tekstu"),wxBITMAP_PNG("move"),false);
+	AppendBitmap(SubsMenu,ID_SCALE, _("W³¹cz skalowanie"), _("W³¹cz skalowanie tekstu"),wxBITMAP_PNG("scale"),false);
+	AppendBitmap(SubsMenu,ID_ROTATEZ, _("W³¹cz obracanie w osi Z"), _("W³¹cz obracanie tekstu w osi Z"),wxBITMAP_PNG("frz"),false);
+	AppendBitmap(SubsMenu,ID_ROTATEXY, _("W³¹cz obracanie w osi X / Y"), _("W³¹cz obracanie tekstu w osi X / Y"),wxBITMAP_PNG("frxy"),false);
+	//AppendBitmap(SubsMenu,ID_FAXY, _("W³¹cz / Wy³¹cz pochylanie tekstu"), _("W³¹cz / Wy³¹cz pochylanie tekstu"),wxBITMAP_PNG("clip"),false);
+	AppendBitmap(SubsMenu,ID_CLIPRECT, _("W³¹cz wycinki prostok¹tne"), _("W³¹cz tworzenie wycinków prostok¹tnych"),wxBITMAP_PNG("cliprect"),false);
+	AppendBitmap(SubsMenu,ID_CLIPS, _("W³¹cz wycinki wektorowe"), _("W³¹cz tworzenie wycinków wektorowych"),wxBITMAP_PNG("clip"),false);
+	AppendBitmap(SubsMenu,ID_DRAWINGS, _("W³¹cz rysunki wektorowe"), _("W³¹cz tworzenie rysunków"),wxBITMAP_PNG("drawing"),false);
+	AppendBitmap(SubsMenu,ID_COLLECTOR, _("Kolekcjoner czcionek"), _("Kolekcjoner czcionek"),wxBITMAP_PNG("fontcollector"));
+	AppendBitmap(SubsMenu,ID_HIDETAGS, _("Ukryj tagi w nawiasach"), _("Ukrywa tagi w nawiasach ASS i MDVD"),wxBITMAP_PNG("hidetags"));
+	MenuBar->Append(SubsMenu, _("&Napisy"));
 
 	AutoMenu = new wxMenu();
-	AppendBitmap(AutoMenu,ID_AUTO, _T("Mened¿er skryptów"), _T("Mened¿er skryptów"),wxBITMAP_PNG("automation"));
-	MenuBar->Append(AutoMenu, _T("Automatyzacja"));
+	AppendBitmap(AutoMenu,ID_AUTO, _("Mened¿er skryptów"), _("Mened¿er skryptów"),wxBITMAP_PNG("automation"));
+	MenuBar->Append(AutoMenu, _("Automatyzacja"));
 
 	HelpMenu = new wxMenu();
-	AppendBitmap(HelpMenu,ID_HELP, _T("&Pomoc (niekompletna ale jednak)"), _T("Otwiera pomoc w domyœlnej przegl¹darce"),wxBITMAP_PNG("help"));
-	AppendBitmap(HelpMenu,ID_ANSI, _T("&W¹tek programu na forum AnimeSub.info"), _T("Otwiera w¹tek programu na forum AnimeSub.info"),wxBITMAP_PNG("ansi"));
-	AppendBitmap(HelpMenu,ID_ABOUT, _T("&O programie\tF2"), _T("Wyœwietla informacje o programie"),wxBITMAP_PNG("about"));
-	AppendBitmap(HelpMenu,ID_HELPERS, _T("&Lista osób pomocnych przy tworzeniu programu"), _T("Wyœwietla Listê osób pomocnych przy tworzeniu programu"),wxBITMAP_PNG("helpers"));
-	MenuBar->Append(HelpMenu, _T("Pomo&c"));
+	AppendBitmap(HelpMenu,ID_HELP, _("&Pomoc (niekompletna, ale jednak)"), _("Otwiera pomoc w domyœlnej przegl¹darce"),wxBITMAP_PNG("help"));
+	AppendBitmap(HelpMenu,ID_ANSI, _("&W¹tek programu na forum AnimeSub.info"), _("Otwiera w¹tek programu na forum AnimeSub.info"),wxBITMAP_PNG("ansi"));
+	AppendBitmap(HelpMenu,ID_ABOUT, _("&O programie\tF2"), _("Wyœwietla informacje o programie"),wxBITMAP_PNG("about"));
+	AppendBitmap(HelpMenu,ID_HELPERS, _("&Lista osób pomocnych przy tworzeniu programu"), _("Wyœwietla listê osób pomocnych przy tworzeniu programu"),wxBITMAP_PNG("helpers"));
+	MenuBar->Append(HelpMenu, _("Pomo&c"));
 
 	SetMenuBar(MenuBar);
 	Toolbar->InitToolbar();
@@ -272,7 +268,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	int id=event.GetId();
 	TabPanel *pan=GetTab();
 	byte state[256];
-	if(GetKeyboardState(state)==FALSE){wxLogStatus("nie mo¿na pobraæ stanu przycisków");}
+	if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie mo¿na pobraæ stanu przycisków"));}
 	if(state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1){
 		wxMenuItem *item=MenuBar->FindItem(id);
 		wxString wins[1]={"Globalny"};
@@ -305,7 +301,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}else if(id==ID_UNSUBS){
 		if(SavePrompt(3)){event.SetInt(-1);return;}
 		if(pan->SubsPath!=("")){
-			pan->SubsName=_T("Bez Nazwy");
+			pan->SubsName=_("Bez tytu³u");
 			pan->SubsPath=_T("");
 			Label();
 			pan->Grid1->Clearing();
@@ -423,7 +419,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	int id=event.GetId();
 	TabPanel *pan=GetTab();
 	byte state[256];
-	if(GetKeyboardState(state)==FALSE){wxLogStatus("nie mo¿na pobraæ stanu przycisków");}
+	if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie mo¿na pobraæ stanu przycisków"));}
 	if(state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1){
 		wxMenuItem *item=MenuBar->FindItem(id);
 		wxString win[]={"Globalny"};
@@ -442,9 +438,9 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	if(id==ID_OPENSUBS){
 		if(SavePrompt(2)){return;}
 
-		wxFileDialog *FileDialog1 = new wxFileDialog(this, _T("Wybierz Plik Napisów"), 
+		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"), 
 			(GetTab()->VideoPath!="")? GetTab()->VideoPath.BeforeLast('\\') : (subsrec.size()>0)?subsrec[subsrec.size()-1].BeforeLast('\\') : "", 
-			_T(""), _T("Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv)|*.mkv"), wxFD_OPEN);
+			_T(""), _("Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv)|*.mkv"), wxFD_OPEN);
 		if (FileDialog1->ShowModal() == wxID_OK){
 			wxString file=FileDialog1->GetPath();
 			if(file.AfterLast('.')=="mkv")
@@ -458,9 +454,9 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		}
 		FileDialog1->Destroy();
 	}else if(id==ID_OPVIDEO){
-		wxFileDialog* FileDialog2 = new wxFileDialog(this, _T("Wybierz Plik"), 
+		wxFileDialog* FileDialog2 = new wxFileDialog(this, _("Wybierz plik wideo"), 
 			(videorec.size()>0)?videorec[videorec.size()-1].BeforeLast('\\'):"", 
-			_T(""), _T("Pliki video(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"), wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, _T("wxFileDialog"));
+			_T(""), _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"), wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, _T("wxFileDialog"));
 		if (FileDialog2->ShowModal() == wxID_OK){
 			OpenFile(FileDialog2->GetPath());
 		}
@@ -474,9 +470,9 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	}else if(id==ID_CLOSE){
 		Close();
 	}else if(id==ID_ABOUT){
-		wxMessageBox(_T("Edytor napisów by Bjakja aka Bakura, wersja ")+Options.progname.AfterFirst(' ')+_T("\r\n\r\n")\
-			_T("Ten program to jakby moje zaplecze do nauki C++, wiêc mog¹ zdarzyæ siê ró¿ne b³êdy\r\n\r\n")\
-			_T("Kainote zawiera w sobie czêœci nastêpuj¹cych projeków:\r\n")\
+		wxMessageBox(_("Edytor napisów by Bjakja aka Bakura, wersja ") + Options.progname.AfterFirst(' ') + _T("\r\n\r\n")+
+			_("Ten program to jakby moje zaplecze do nauki C++, wiêc mog¹ zdarzyæ siê ró¿ne b³êdy\r\n\r\n")+
+			_("Kainote zawiera w sobie czêœci nastêpuj¹cych projeków:\r\n")+
 			_T("wxWidgets - Copyright © Julian Smart, Robert Roebling et al;\r\n")\
 			_T("Color picker, wymuxowywanie napsów z mkv, audiobox, audio player, czêœæ funkcji do lua\r\ni kilka innych pojedynczych funkcji wziête z Aegisuba -\r\n")\
 			_T("Copyright © Rodrigo Braz Monteiro;\r\n")\
@@ -488,22 +484,22 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_T("FreeType - Copyright ©  David Turner, Robert Wilhelm, and Werner Lemberg;\r\n")\
 			_T("Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al."), _T("O Kainote"));
 	}else if(id==ID_HELPERS){
-		wxMessageBox("Pomoc graficzna: (przyciski, obrazki do pomocy itd)\r\n"\
-			"- Archer (pierwsze przyciski do wideo).\r\n"\
-			"- Kostek00 (przyciski do audio).\r\n"\
-			"- Xandros (nowe przyciski do wideo, obrazki do pomocy).\r\n"\
-			"- Devilkan (przyciski do menu i paska narzêdzi).\r\n \r\n"\
-			"Testerzy: (mniej i bardziej wprawieni u¿ytkownicy programu)\r\n"\
-			"- Funki27 (pierwszy tester maj¹cy spory wp³yw na obecne dzia³anie programu\r\n"\
-			"i najbardziej narzekaj¹cy na wszystko).\r\n"\
-			"- Sacredus (chyba pierwszy t³umacz u¿ywaj¹cy trybu t³umaczenia,\r\n nieoceniona pomoc przy testowaniu wydajnoœci na s³abym komputerze).\r\n"\
-			"- Kostek00 (prawdziwy wynajdywacz b³êdów,\r\n"\
-			"mia³ du¿y wp³yw na rozwój wykresu audio i g³ównego pola tekstowego).\r\n"\
-			"- Devilkan (crashhunter, ze wzglêdu na swój system i przyzwyczajenia wytropi³ ju¿ wiele crashy).\r\n \r\n"\
+		wxMessageBox(_("Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\r\n")+
+			_("- Archer (pierwsze przyciski do wideo).\r\n")+
+			_("- Kostek00 (przyciski do audio).\r\n")+
+			_("- Xandros (nowe przyciski do wideo, obrazki do pomocy).\r\n")+
+			_("- Devilkan (ikony do menu i paska narzêdzi, obrazki do pomocy).\r\n \r\n")+
+			_("Testerzy: (mniej i bardziej wprawieni u¿ytkownicy programu)\r\n")+
+			_("- Funki27 (pierwszy tester maj¹cy spory wp³yw na obecne dzia³anie programu\r\n")+
+			_("i najbardziej narzekaj¹cy na wszystko).\r\n")+
+			_("- Sacredus (chyba pierwszy t³umacz u¿ywaj¹cy trybu t³umaczenia,\r\n nieoceniona pomoc przy testowaniu wydajnoœci na s³abym komputerze).\r\n")+
+			_("- Kostek00 (prawdziwy wynajdywacz b³êdów,\r\n")+
+			_("mia³ du¿y wp³yw na rozwój wykresu audio i g³ównego pola tekstowego).\r\n")+
+			_("- Devilkan (crashhunter, ze wzglêdu na swój system i przyzwyczajenia wytropi³ ju¿ wiele crashy).\r\n \r\n")+
+			_("Podziêkowania tak¿e dla osób, które u¿ywaj¹ programu i zg³aszali b³êdy.\r\n")+
+			_T("Ksenoform, Deadsoul, Z³y los, Vessin, Xandros, Areki, Nyah2211, Waski_jestem."),
+			_("Lista osób pomocnych przy tworzeniu programu"));
 
-			"Podziêkowania tak¿e dla osób które u¿ywaj¹ programu i od czasu do czasu coœ wynajdowali.\r\n"\
-			"Ksenoform, Deadsoul, Z³y los, Vessin, Xandros, Areki, Nyah2211, Waski_jestem.",
-			"Lista osób pomocnych przy tworzeniu programu");
 	}else if(id==ID_HELP||id==ID_ANSI){
 		WinStruct<SHELLEXECUTEINFO> sei;
 		wxString url=(id==ID_HELP)? Options.pathfull+"\\Pomoc\\Kainote pomoc.html" : "http://animesub.info/forum/viewtopic.php?id=258715";
@@ -628,7 +624,7 @@ void kainoteFrame::Save(bool dial, int wtab)
 		||(Options.GetBool("Subs Autonaming") && atab->SubsName.BeforeLast('.') != atab->VideoName.BeforeLast('.') && atab->VideoName!="")
 		||atab->SubsPath=="" || dial)
 	{
-		wxString extens="Plik napisów ";
+		wxString extens=_("Plik napisów ");
 
 		if (atab->Grid1->form<SRT){extens+=_T("(*.ass)|*.ass");}
 		else if (atab->Grid1->form==SRT){extens+=_T("(*.srt)|*.srt");}
@@ -639,7 +635,7 @@ void kainoteFrame::Save(bool dial, int wtab)
 		path=path.BeforeLast('\\');
 
 		wxWindow *_parent=(atab->Video->isfullskreen)? (wxWindow*)atab->Video->TD : this;
-		wxFileDialog saveFileDialog(_parent, _T("Zapisz Plik Napisów"), 
+		wxFileDialog saveFileDialog(_parent, _("Zapisz plik napisów"), 
 			path, name ,extens, wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
 
 		if (saveFileDialog.ShowModal() == wxID_OK){
@@ -707,7 +703,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 		//wxLogStatus("State %i found", GetTab()->Video->GetState(), found);
 		if(pan->Video->GetState()!=None&&!found){//wxLogStatus("opensubs");
 			bool isgood=pan->Video->OpenSubs((pan->edytor)? pan->Grid1->SaveText() : 0);
-			if(!isgood){wxMessageBox(_T("otwieranie napisów failed"), _T("Uwaga"));}
+			if(!isgood){wxMessageBox(_("Otwieranie napisów nie powiod³o siê"), _T("Uwaga"));}
 		}
 		SetRecent();
 
@@ -785,12 +781,12 @@ void kainoteFrame::AppendRecent(short what,wxMenu *Menu)
 	for(int i=0;i<size;i++)
 	{
 		if(!wxFileExists(recs[i])){continue;}
-		wxMenuItem* MI= new wxMenuItem(wmenu, idd+i, recs[i].AfterLast('\\'), _T("Otwórz ")+recs[i], wxITEM_NORMAL);
+		wxMenuItem* MI= new wxMenuItem(wmenu, idd+i, recs[i].AfterLast('\\'), _("Otwórz ")+recs[i], wxITEM_NORMAL);
 		wmenu->Append(MI);
 	}
 
 	if(!wmenu->GetMenuItemCount()){
-		wxMenuItem* MI= new wxMenuItem(wmenu, idd, "Brak","", wxITEM_NORMAL);
+		wxMenuItem* MI= new wxMenuItem(wmenu, idd, _("Brak"),"", wxITEM_NORMAL);
 		MI->Enable(false);
 		wmenu->Append(MI);
 	}
@@ -809,7 +805,7 @@ void kainoteFrame::OnRecent(wxCommandEvent& event)
 	}
 	wxString filename=MI->GetHelp().AfterFirst(' ');
 	byte state[256];
-	if(GetKeyboardState(state)==FALSE){wxLogStatus("nie mo¿na pobraæ stanu przycisków");}
+	if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie mo¿na pobraæ stanu przycisków"));}
 	if(state[VK_LCONTROL]>1 || state[VK_RCONTROL]>1){
 		wxWCharBuffer buf=filename.BeforeLast('\\').c_str();
 		/*wchar_t **cmdline = new wchar_t*[3];
@@ -825,7 +821,7 @@ void kainoteFrame::OnRecent(wxCommandEvent& event)
 		sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
 
 			
-		if(!ShellExecuteEx(&sei)){wxLogStatus("nie mo¿na otworzyæ folderu");}
+		if(!ShellExecuteEx(&sei)){wxLogStatus(_("Nie mo¿na otworzyæ folderu"));}
 		return;}
 	if(id<30040){
 		OpenFile(filename);
@@ -859,9 +855,9 @@ wxString kainoteFrame::FindFile(wxString fn,bool video,bool prompt)
 			){ }else{plik=pliki[i];break;}
 	}
 	if(plik!=""&&prompt){
-		wxString co=(video)?"wideo":"napisy"; 
-		if (wxMessageBox(_T("Wczytaæ ")+co+_T(" o nazwie ")+plik.AfterLast('\\')+_T("?"), _T("Potwierdzenie"),
-			wxICON_QUESTION | wxYES_NO, this) == wxNO ){plik="";} 
+		if (wxMessageBox(wxString::Format(_("Wczytaæ %s o nazwie %s?"), 
+			(video)? _("wideo") :_("napisy"), plik.AfterLast('\\')),
+			_("Potwierdzenie"), wxICON_QUESTION | wxYES_NO, this) == wxNO ){plik="";} 
 	}
 	pliki.clear();
 	return plik;
@@ -1016,8 +1012,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 
 
 			if(!isload){
-				if(pan->Video->IsDshow){wxMessageBox("Plik nie jest poprawnym plikiem wideo, albo jest uszkodzony,"\
-					"\r\nb¹dŸ brakuje kodeków czy te¿ splittera", _T("Uwaga"));}
+				if(pan->Video->IsDshow){wxMessageBox(_("Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\r\nb¹dŸ brakuje kodeków czy te¿ splittera"), _("Uwaga"));}
 				break;
 			}
 			pan->CTime->Contents();
@@ -1061,7 +1056,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 	if(cur->Video->GetState()!=None){
 		//wxLogStatus("video opts");
 		//if(cur->Video->GetState()==Paused){cur->Video->Render();}
-		SetStatusText(getfloat(cur->Video->fps)+" fps",2);
+		SetStatusText(getfloat(cur->Video->fps)+" FPS",2);
 		wxString tar;
 		tar<<cur->Video->ax<<" : "<<cur->Video->ay;
 		SetStatusText(tar,4);
@@ -1194,17 +1189,19 @@ void kainoteFrame::SaveAll()
 
 }
 
-
+//return anulowanie operacji
 bool kainoteFrame::SavePrompt(char mode, int wtab)
 {
 	TabPanel* atab=(wtab<0)? GetTab() : Tabs->Page(wtab);	
 	if(atab->Grid1->file->Iter()>0 && atab->Grid1->Modified){
 		wxWindow *_parent=(atab->Video->isfullskreen)? (wxWindow*)atab->Video->TD : this;
-
-		wxString info=(mode==0)? "zamkniêciem programu" : (mode==1)? "zamkniêciem zak³adki" : (mode==2)? "wczytaniem nowych napisów" : "usuniêciem napisów";
-		int answer = wxMessageBox("Zapisaæ napisy o nazwie \""+atab->SubsName+"\" przed "+info+"?", "Potwierdzenie", wxYES_NO | wxCANCEL, _parent);
+		int answer = wxMessageBox(wxString::Format(_("Zapisaæ napisy o nazwie \"%s\" przed %s?"), 
+			atab->SubsName, (mode==0)? _("zamkniêciem programu") :
+			(mode==1)? _("zamkniêciem zak³adki") : 
+			(mode==2)? _("wczytaniem nowych napisów") : 
+			_("usuniêciem napisów")), 
+			_("Potwierdzenie"), wxYES_NO | wxCANCEL, _parent);
 		if(answer==wxCANCEL){return true;}
-
 		if(answer==wxYES){
 			Save(false, wtab);
 		}
@@ -1230,14 +1227,14 @@ void kainoteFrame::OnOpenAudio(wxCommandEvent& event)
 		GetTab()->Edit->Layout();}
 	else{
 
-		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){wxMessageBox("Dupa blada, skróty klawiszowe siê nie wczyta³y, na audio nie podzia³asz", "B³êdny b³¹d");return;}
-		if(!Options.AudioOpts && !Options.LoadAudioOpts()){wxMessageBox("Dupa blada, opcje siê nie wczyta³y, na audio nie podzia³asz", "B³êdny b³¹d");return;}
+		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){wxMessageBox(_("Dupa blada, skróty klawiszowe siê nie wczyta³y, na audio nie podzia³asz"), _("B³êdny b³¹d"));return;}
+		if(!Options.AudioOpts && !Options.LoadAudioOpts()){wxMessageBox(_("Dupa blada, opcje siê nie wczyta³y, na audio nie podzia³asz"), _("B³êdny b³¹d"));return;}
 
 		wxString Path;
 		if(id==ID_OPAUDIO){
-			wxFileDialog *FileDialog1 = new wxFileDialog(this, _T("Wybierz Plik Audio"), 
+			wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik audio"), 
 				(GetTab()->VideoPath!="")? GetTab()->VideoPath.BeforeLast('\\') : (videorec.size()>0)?subsrec[videorec.size()-1].BeforeLast('\\') : "", 
-				_T(""), _T("Pliki audio i video (*.wav),(*.w64),(*.aac),(*.mp3),(*.mp4),(*.mkv),(*.avi)|*.wav;*.w64;*.aac;*.mp3;*.mp4;*.mkv;*.avi|Wszystkie Pliki |*.*"), wxFD_OPEN);
+				_T(""), _("Pliki audio i wideo (*.wav),(*.w64),(*.aac),(*.mp3),(*.mp4),(*.mkv),(*.avi)|*.wav;*.w64;*.aac;*.mp3;*.mp4;*.mkv;*.avi|Wszystkie Pliki |*.*"), wxFD_OPEN);
 			int result = FileDialog1->ShowModal();
 			if (result == wxID_OK){
 				Path=FileDialog1->GetPath();
@@ -1339,11 +1336,11 @@ void kainoteFrame::OnRunScript(wxCommandEvent& event)
 	line=wxAtoi(wscript.BeforeFirst('-'));
 	macro=wxAtoi(wscript.AfterFirst('-'));
 	if(!Auto){Auto = new Auto::Automation(this);}
-	if(line>=(int)Auto->Scripts.size()){wxMessageBox(wxString::Format("Brak wczytanego skryptu o numerze %i",line));}
+	if(line>=(int)Auto->Scripts.size()){wxMessageBox(wxString::Format(_("Brak wczytanego skryptu o numerze %i"),line));}
 	Auto::LuaScript *scr=Auto->Scripts[line];
 	if((int)scr->Macros.size()<=macro){
 		wxString msg;
-		if(scr->loaded){msg<<"Skrypt o nazwie \""<<scr->name<<"\" nie posiada "<<macro<<" makra.";}
+		if(scr->loaded){msg = wxString::Format(_("Skrypt o nazwie \"%s\" nie posiada makra %s."), scr->name, macro);}
 		else{msg=scr->description;}
 		wxMessageBox(msg); return;
 	}
@@ -1436,7 +1433,7 @@ void kainoteFrame::OnOutofMemory()
 
 	if(pan->Grid1->file->maxx()>3){
 		pan->Grid1->file->RemoveFirst(2);
-		wxLogStatus("Zabrak³o pamiêci RAM, usuniêto czêœæ historii");
+		wxLogStatus(_("Zabrak³o pamiêci RAM, usuniêto czêœæ historii"));
 		return;
 	}else if(Notebook::GetTabs()->Size()>1){
 		for(size_t i=0; i<Notebook::GetTabs()->Size(); i++)
@@ -1444,7 +1441,7 @@ void kainoteFrame::OnOutofMemory()
 			if( i!= Notebook::GetTabs()->GetSelection()){
 				if(Notebook::GetTabs()->Page(i)->Grid1->file->maxx()>3){
 					Notebook::GetTabs()->Page(i)->Grid1->file->RemoveFirst(2);
-					wxLogStatus("Zabrak³o pamiêci RAM, usuniêto czêœæ historii");
+					wxLogStatus(_("Zabrak³o pamiêci RAM, usuniêto czêœæ historii"));
 					return;
 				}
 			}

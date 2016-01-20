@@ -94,7 +94,7 @@ void MatroskaWrapper::Open(wxString filename,bool parse) {
 		if (!file) {
 			delete input;
 			//throw wxString(_T("MatroskaParser error: ") + wxString(err,wxConvUTF8)).c_str();
-			wxLogStatus(_T("MatroskaParser error: ") + wxString(err,wxConvUTF8));
+			wxLogStatus(_("B³¹d MatroskaParsera: ") + wxString(err,wxConvUTF8));
 		}
 
 		// Parse
@@ -105,7 +105,7 @@ void MatroskaWrapper::Open(wxString filename,bool parse) {
 	else {
 		delete input;
 		//throw _T("Unable to open Matroska file for parsing.");
-		wxLogStatus(_T("Unable to open Matroska file for parsing."));
+		wxLogStatus(_("Nie mo¿na otworzyæ pliku Matroska."));
 	}
 }
 
@@ -164,7 +164,7 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 	// No tracks found
 	if (tracksFound.Count() == 0) {
 		Close();
-		wxMessageBox("Plik nie ma ¿adnej œcie¿ki z napisami.");
+		wxMessageBox(_("Plik nie ma ¿adnej œcie¿ki z napisami."));
 		return false;
 	}
 	
@@ -175,10 +175,10 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 
 	// Pick a track
 	else {
-		int choice = wxGetSingleChoiceIndex(_T("Wybierz œcie¿kê do wczytania:"),_T("Znaleziono kilka œcie¿ek z napisami"),tracksNames);
+		int choice = wxGetSingleChoiceIndex(_("Wybierz œcie¿kê do wczytania:"), _("Znaleziono kilka œcie¿ek z napisami"), tracksNames);
 		if (choice == -1) {
 			Close();
-			wxMessageBox("Anulowano.");
+			wxMessageBox(_("Anulowano."));
 		return false;
 		}
 		trackToRead = tracksFound[choice];
@@ -195,7 +195,7 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 			char msg[201];
 			msg[200]=0;
 			cs=cs_Create(file,trackToRead,msg,200);
-			if(!cs){wxLogStatus("B³¹d zlib: %s", msg);}
+			if(!cs){wxLogStatus(_("B³¹d zlib: %s"), msg);}
 		}
 		wxString CodecID = wxString(trackInfo->CodecID,*wxConvCurrent);
 		int codecType = 0;
@@ -365,7 +365,7 @@ wxArrayString MatroskaWrapper::GetFontList()
 	for(size_t i=0; i<count; i++)
 	{
 		wxString mimetype(atts[i].MimeType,wxConvUTF8);
-		if(mimetype=="application/x-truetype-font"){
+		if(mimetype== "application/x-truetype-font" ){
 			attsname.Add(wxString(atts[i].Name,wxConvUTF8));}
 	}
 	return attsname;

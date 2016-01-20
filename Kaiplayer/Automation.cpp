@@ -34,7 +34,7 @@ LuaScriptReader::LuaScriptReader(const wxString &filename)
 	//Scriptdata=ow.FileOpen(filename,true);
 	f = _tfopen(filename.c_str(), _T("rb"));
 		if (!f)
-			throw _T("Nie mo¿na otworzyæ skryptu");
+			throw _("Nie mo¿na otworzyæ skryptu");
 		first = true;
 		databuf = new char[bufsize];
 	}
@@ -176,7 +176,7 @@ LuaScript::LuaScript(const wxString &_filename)
 			lua_gettable(L, -3);
 			//wxLogStatus("globals");
 			
-				wxFileName path(Options.pathfull+_("\\Include"));
+				wxFileName path(Options.pathfull+_T("\\Include"));
 				//wxFileName path1(filename.BeforeLast('\\'));
 				if (path.IsOk() && !path.IsRelative() && path.DirExists()) {
 					include_path.Add(path.GetLongPath());
@@ -243,7 +243,7 @@ LuaScript::LuaScript(const wxString &_filename)
 			LuaScriptReader script_reader(filename);
 			if (lua_load(L, script_reader.ReadScript, &script_reader, name.mb_str(wxConvUTF8).data())) {
 				wxString err(lua_tostring(L, -1), wxConvUTF8);
-				err.Prepend(_T("B³¹d wczytywania skryptu Lua \"") + filename + _T("\":\n\n"));
+				err.Prepend(_("B³¹d wczytywania skryptu Lua \"") + filename + _T("\":\n\n"));
 				throw err;
 			}
 			//wxLogStatus("Readed");
@@ -255,7 +255,7 @@ LuaScript::LuaScript(const wxString &_filename)
 			if (lua_pcall(L, 0, 0, 0)) {
 				// error occurred, assumed to be on top of Lua stack
 				wxString err(lua_tostring(L, -1), wxConvUTF8);
-				err.Prepend(_T("B³¹d inicjalizacji skryptu Lua \"") + filename + _T("\":\n\n"));
+				err.Prepend(_("B³¹d inicjalizacji skryptu Lua \"") + filename + _T("\":\n\n"));
 				throw err;
 			}
 			_stackcheck.check_stack(0);
@@ -307,7 +307,7 @@ LuaScript::LuaScript(const wxString &_filename)
 			Destroy();
 			loaded = false;
 			name = filename;
-			description = _T("Unknown error initialising Lua script");
+			description = _("Nieznany b³¹d ³adowania skryptu Lua");
 		}
 	}
 

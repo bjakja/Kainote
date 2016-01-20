@@ -37,7 +37,7 @@ TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const
 	edytor=true;
 	holding=false;
 
-	SubsName=_T("Bez Nazwy");
+	SubsName=_("Bez tytu³u");
 	VideoName=_T("");
 	SubsPath=_T("");
 	VideoPath=_T("");
