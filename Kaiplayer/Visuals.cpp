@@ -1,4 +1,4 @@
-
+Ôªø
 
 #include "Visuals.h"
 #include "TabPanel.h"
@@ -87,7 +87,7 @@ void Visuals::SetVisual(int _start,int _end)
 			if(vis.StartsWith("i")){invClip=true;}else{invClip=false;}
 			vis.BeforeFirst('(',&vis);
 			x1=wxAtoi(vis.BeforeFirst(',',&rest));
-			wxString y11=rest;//niestety uøywajπc rest do tej samej operacji coú zwraca pÛüniejsze liczby:/
+			wxString y11=rest;//niestety u≈ºywajƒÖc rest do tej samej operacji co≈õ zwraca p√≥≈∫niejsze liczby:/
 			y1=wxAtoi(y11.BeforeFirst(',',&rest));
 			wxString x22=rest;
 			x2=wxAtoi(x22.BeforeFirst(',',&rest));
@@ -131,7 +131,7 @@ void Visuals::SetVisual(int _start,int _end)
 	else if(Visual==ROTATEXY){
 
 		wxString res;
-		scale=D3DXVECTOR2(0,0);//skala robi tu za przechowywanie wczeúniejszych wartoúci by nie dawaÊ dodatkowych zmiennych.
+		scale=D3DXVECTOR2(0,0);//skala robi tu za przechowywanie wcze≈õniejszych warto≈õci by nie dawaƒá dodatkowych zmiennych.
 		if(pan->Edit->FindVal("frx([^\\\\}]+)", &res)){
 			double result=0; res.ToDouble(&result);
 			scale.y= result;
@@ -178,13 +178,13 @@ void Visuals::SizeChanged(wxSize wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDI
 
 	HRN(device->SetFVF( D3DFVF_XYZ|D3DFVF_DIFFUSE), "fvf failed");
 }
-//drawarrow od razu przesuwa punkt tak by linia koÒczy≥a siÍ przed strza≥kπ
+//drawarrow od razu przesuwa punkt tak by linia ko≈Ñczy≈Ça siƒô przed strza≈ÇkƒÖ
 void Visuals::DrawArrow(D3DXVECTOR2 from, D3DXVECTOR2 *to, int diff)
 {
 	D3DXVECTOR2 pdiff=from- (*to);
 	float len= sqrt((pdiff.x * pdiff.x) + (pdiff.y*pdiff.y));
 	D3DXVECTOR2 diffUnits = (len==0)? D3DXVECTOR2(0,0) : pdiff / len;
-	// d≥ugoúÊ moøe przyjmnowaÊ wartoúci ujemne, dlatego dajemy + strza≥ka nie by≥a odwrotnie
+	// d≈Çugo≈õƒá mo≈ºe przyjmnowaƒá warto≈õci ujemne, dlatego dajemy + strza≈Çka nie by≈Ça odwrotnie
 	D3DXVECTOR2 pend=(*to) + (diffUnits * (12+diff));
 	D3DXVECTOR2 halfbase = D3DXVECTOR2(-diffUnits.y, diffUnits.x) * 5.f;
 	
@@ -232,7 +232,7 @@ void Visuals::Move(int time)
 	v4[0].y=from.y;
 	v4[1].x=to.x;
 	v4[1].y=to.y;
-	//drawarrow od razu przesuwa punkt tak by linia koÒczy≥a siÍ przed strza≥kπ
+	//drawarrow od razu przesuwa punkt tak by linia ko≈Ñczy≈Ça siƒô przed strza≈ÇkƒÖ
 	DrawArrow(from, &v4[1], 6);
 
 	
@@ -247,7 +247,7 @@ void Visuals::Move(int time)
 		disty = from.y -((from.y-to.y)*actime);
 	}
 	//wxLogStatus(" times %i %i %i %i %i, %f %f", moveStart, moveEnd, start, end, time, distx, disty);
-	//dokoÒcz to i dorÛb liniÍ do obracania.
+	//doko≈Ñcz to i dor√≥b liniƒô do obracania.
 	v4[2].x=distx-15.0f;
 	v4[2].y=disty;
 	v4[3].x=distx+15.0f;
@@ -374,24 +374,24 @@ void Visuals::Scale()
 	
 	float movex=from.x+addx, movey=from.y+addy;
 	
-	if(type!=1){movex=to.x;}//strza≥ka w poziomie i czÍúÊ strza≥ki po skosie
+	if(type!=1){movex=to.x;}//strza≈Çka w poziomie i czƒô≈õƒá strza≈Çki po skosie
 	else{movex=from.x+(scale.x*addx);}
-	if(type>0){movey=to.y;}//strza≥ka w pionie i czÍúÊ strza≥ki po skosie
+	if(type>0){movey=to.y;}//strza≈Çka w pionie i czƒô≈õƒá strza≈Çki po skosie
 	else{movey=from.y+(scale.y*addy);}
 	if(movex==from.x){movex=from.x+addx;}
 	else if(movey==from.y){movey=from.y+addy;}
 	
 	lastmove.x = movex;
 	lastmove.y = movey;
-	v4[0]=from;//strza≥ka pozioma
+	v4[0]=from;//strza≈Çka pozioma
 	v4[1].x=movex;
-	v4[1].y=from.y;//strza≥ka pozioma
-	v4[2]=from;//strza≥ka skoúna
+	v4[1].y=from.y;//strza≈Çka pozioma
+	v4[2]=from;//strza≈Çka sko≈õna
 	v4[3].x=movex;
-	v4[3].y=movey;//strza≥ka skoúna
-	v4[4]=from;//strza≥ka pionowa
+	v4[3].y=movey;//strza≈Çka sko≈õna
+	v4[4]=from;//strza≈Çka pionowa
 	v4[5].x=from.x;
-	v4[5].y=movey;//strza≥ka pionowa
+	v4[5].y=movey;//strza≈Çka pionowa
 	
 	for(int i=1; i<6; i+=2){
 		DrawArrow(v4[0], &v4[i]);
@@ -564,19 +564,19 @@ void Visuals::RotateXY()
 	CreateMYVERTEX(&vertices[178],addx,0.f,0xFFFF0000); //linia x
 	CreateMYVERTEX(&vertices[179],0.f,0.f,0xFFFF0000); //linia z
 	CreateMYVERTEX(&vertices[180],0.f,0.f,0xFFFF0000,9.f);
-	CreateMYVERTEX(&vertices[181],0.f,add1y,0xFFFF0000); //strza≥ka y
+	CreateMYVERTEX(&vertices[181],0.f,add1y,0xFFFF0000); //strza≈Çka y
 	CreateMYVERTEX(&vertices[182],0.f,addy,0xFFFF0000,-0.6f);
 	CreateMYVERTEX(&vertices[183],-0.6f,addy,0xFFFF0000);
 	CreateMYVERTEX(&vertices[184],0.f,addy,0xFFFF0000, 0.6f);
 	CreateMYVERTEX(&vertices[185],0.6f,addy,0xFFFF0000);
 	CreateMYVERTEX(&vertices[186],0.f,addy,0xFFFF0000, -0.6f);
-	CreateMYVERTEX(&vertices[187],add1x,0.f,0xFFFF0000);//strza≥ka x
+	CreateMYVERTEX(&vertices[187],add1x,0.f,0xFFFF0000);//strza≈Çka x
 	CreateMYVERTEX(&vertices[188],addx,0.f,0xFFFF0000, -0.6f);
 	CreateMYVERTEX(&vertices[189],addx,-0.6f,0xFFFF0000);
 	CreateMYVERTEX(&vertices[190],addx,0.f,0xFFFF0000, 0.6f);
 	CreateMYVERTEX(&vertices[191],addx,0.6f,0xFFFF0000, 0.f);
 	CreateMYVERTEX(&vertices[192],addx,0.f,0xFFFF0000, -0.6f);
-	CreateMYVERTEX(&vertices[193],0.f,0.f,0xFFFF0000,10.f); //strza≥ka z
+	CreateMYVERTEX(&vertices[193],0.f,0.f,0xFFFF0000,10.f); //strza≈Çka z
 	CreateMYVERTEX(&vertices[194],-0.6f,0.f,0xFFFF0000,9.f);
 	CreateMYVERTEX(&vertices[195],0.f,0.6f,0xFFFF0000,9.f);
 	CreateMYVERTEX(&vertices[196],0.6f,0.f,0xFFFF0000,9.f);
@@ -593,9 +593,9 @@ void Visuals::RotateXY()
 	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, s.x, s.y, 0, 0.0f, 1.0f);
 	D3DXMatrixIdentity(&matIdentity);
 
-	HRN(device->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie moøna ustawiÊ matrixa projection"));
-	HRN(device->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie moøna ustawiÊ matrixa world"));
-	HRN(device->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie moøna ustawiÊ matrixa view"));
+	HRN(device->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie mo≈ºna ustawiƒá matrixa projection"));
+	HRN(device->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie mo≈ºna ustawiƒá matrixa world"));
+	HRN(device->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie mo≈ºna ustawiƒá matrixa view"));
 	D3DXVECTOR2 v2[4];
 	v2[0].x=org.x-10.0f;
 	v2[0].y=org.y;
@@ -732,7 +732,7 @@ void Visuals::Draw(int time)
 		DrawClip();
 		break;
 	default:
-		wxLogStatus(_("Niew≥aúciwy wisual %i"), Visual);
+		wxLogStatus(_("Niew≈Ça≈õciwy wisual %i"), Visual);
 		break;
 	}
 	
@@ -795,8 +795,8 @@ wxString Visuals::GetVisual(bool _org)
 			//wxLogStatus("rot x %f", angle.x);
 		}
 		if(type!=0){
-			float angy = (to.y - firstmove.y) - scale.y;// zmieniony plus na minus by nie trzebaby≥o 
-			angle.y = (fmodf((-angy) + 360.f, 360.f));//przetrzymywaÊ scale i angle w minusach.
+			float angy = (to.y - firstmove.y) - scale.y;// zmieniony plus na minus by nie trzebaby≈Ço 
+			angle.y = (fmodf((-angy) + 360.f, 360.f));//przetrzymywaƒá scale i angle w minusach.
 			result += "\\frx" + getfloat(angle.y);
 			//wxLogStatus("rot y %f", angle.y);
 		}
@@ -820,7 +820,7 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 	if(evt.ButtonUp()){
 		if(parent->HasCapture()){parent->ReleaseMouse();}
 		drawtxt=false;
-		//usunπÊ po zrobieniu ca≥oúci visuala
+		//usunƒÖƒá po zrobieniu ca≈Ço≈õci visuala
 		/*if(Visual!=MOVEONCURVE){*/
 			pan->Edit->SetVisual(GetVisual(grabbed==100),false,(grabbed==100) ? 100 : type);
 		//}
@@ -833,7 +833,7 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 			pan->Video->Render();
 		}
 		if(Visual==ROTATEXY){
-			scale=angle;// vobsub jeden frx ma zamieniony i stπd te minusy // nie ma juø minusÛw i precz z nimi;
+			scale=angle;// vobsub jeden frx ma zamieniony i stƒÖd te minusy // nie ma ju≈º minus√≥w i precz z nimi;
 		}
 		if(!hasArrow){parent->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 		grabbed=-1;
@@ -869,7 +869,7 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 		coords=""; 
 		coords<<(int)(x*wspw)<<", "<<(int)(y*wsph);
 	}*/
-	//klikniÍcie
+	//klikniƒôcie
 	if(click){
 		if(Visual==CHANGEPOS){
 			parent->SetCursor(wxCURSOR_SIZING);
@@ -1011,12 +1011,12 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 				if(grabbed==3 && Points[1].y < Points[0].y){Points[1].y = Points[0].y;}	
 			}
 			
-		}else if(grabbed==100){// przenoszenie org dosta≥o liczbÍ 100 by przypadkowo nie wbi≥o siÍ na inny punkt.
+		}else if(grabbed==100){// przenoszenie org dosta≈Ço liczbƒô 100 by przypadkowo nie wbi≈Ço siƒô na inny punkt.
 			org.x = x+diffs.x;
 			org.y = y+diffs.y;
 			//wxLogStatus("org %f, %f, %i %i %i %i", org.x,org.y, x, y, diffs.x, diffs.y);
 			
-			pan->Edit->SetVisual(GetVisual(true),true,grabbed);//type takøe ma liczbÍ 100 by by≥o rozpoznawalne.
+			pan->Edit->SetVisual(GetVisual(true),true,grabbed);//type tak≈ºe ma liczbƒô 100 by by≈Ço rozpoznawalne.
 			
 			return;
 		}else if(Visual==SCALE){

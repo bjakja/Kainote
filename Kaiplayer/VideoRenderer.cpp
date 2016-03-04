@@ -1,4 +1,4 @@
-
+Ôªø
 #include "Visuals.h"
 #include "Videobox.h"
 #include "VideoRenderer.h"
@@ -69,7 +69,7 @@ bool VideoRend::InitDX(bool reset)
 
 	if(!reset){
 		d3dobject = Direct3DCreate9( D3D_SDK_VERSION );
-		PTR(d3dobject,_("Nie moøna utwoøyÊ objektu Direct3D"));
+		PTR(d3dobject,_("Nie mo≈ºna utwo≈ºyƒá objektu Direct3D"));
 	}else{
 		SAFE_RELEASE(MainStream);
 		SAFE_RELEASE(bars);
@@ -97,13 +97,13 @@ bool VideoRend::InitDX(bool reset)
 
 	if(reset){
 		hr=d3device->Reset(&d3dpp);
-		if(FAILED(hr)){wxLogStatus(_("Nie moøna zresetowaÊ Direct3D"));}
+		if(FAILED(hr)){wxLogStatus(_("Nie mo≈ºna zresetowaƒá Direct3D"));}
 	}else{
 		hr=d3dobject->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,
 			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED , &d3dpp, &d3device);//| D3DCREATE_FPU_PRESERVE
 		if(FAILED(hr)){
 			HR (d3dobject->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
-				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,&d3dpp, &d3device ), _("Nie moøna utworzyÊ urzπdzenia D3D9")); 
+				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,&d3dpp, &d3device ), _("Nie mo≈ºna utworzyƒá urzƒÖdzenia D3D9")); 
 		} 
 	}
 	//hr = d3device->SetSamplerState( 0, D3DSAMP_ADDRESSU,  D3DTADDRESS_CLAMP );
@@ -139,7 +139,7 @@ bool VideoRend::InitDX(bool reset)
     hr = d3device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
     hr = d3device->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
     hr = d3device->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-	HR(hr,_("Zawiod≥o ktÛreú z ustawieÒ DirectX"));
+	HR(hr,_("Zawiod≈Ço kt√≥re≈õ z ustawie≈Ñ DirectX"));
 
 	D3DXMATRIX matOrtho; 
 	D3DXMATRIX matIdentity;
@@ -147,23 +147,23 @@ bool VideoRend::InitDX(bool reset)
 	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, rt3.right, rt3.bottom, 0, 0.0f, 1.0f);
 	D3DXMatrixIdentity(&matIdentity);
 
-	HR(d3device->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie moøna ustawiÊ macierzy porojekcji"));
-	HR(d3device->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie moøna ustawiÊ macierzy úwiata"));
-	HR(d3device->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie moøna ustawiÊ macierzy widoku"));
+	HR(d3device->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie mo≈ºna ustawiƒá macierzy porojekcji"));
+	HR(d3device->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie mo≈ºna ustawiƒá macierzy ≈õwiata"));
+	HR(d3device->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie mo≈ºna ustawiƒá macierzy widoku"));
 
 #if byvertices
 	HR(d3device->CreateTexture(vwidth, vwidth, 1, D3DUSAGE_RENDERTARGET,
-		D3DFMT_X8R8G8B8,D3DPOOL_DEFAULT,&texture, NULL), "Nie moøna utworzyÊ tekstury" );
+		D3DFMT_X8R8G8B8,D3DPOOL_DEFAULT,&texture, NULL), "Nie mo≈ºna utworzyƒá tekstury" );
 
-	HR(texture->GetSurfaceLevel(0, &bars), "nie moøna utworzyÊ powierzchni");
+	HR(texture->GetSurfaceLevel(0, &bars), "nie mo≈ºna utworzyƒá powierzchni");
 
-	HR(d3device->CreateOffscreenPlainSurface(vwidth,vheight,d3dformat, D3DPOOL_DEFAULT,&MainStream,0),"Nie moøna utworzyÊ powierzchni");
+	HR(d3device->CreateOffscreenPlainSurface(vwidth,vheight,d3dformat, D3DPOOL_DEFAULT,&MainStream,0),"Nie mo≈ºna utworzyƒá powierzchni");
 
 	HR(d3device->CreateVertexBuffer( 4*sizeof(CUSTOMVERTEX),D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX,D3DPOOL_DEFAULT, &vertex, NULL ),
-		"Nie moøna utworzyÊ bufora wertex")
+		"Nie mo≈ºna utworzyƒá bufora wertex")
 
 		CUSTOMVERTEX* pVertices;
-	HR ( hr = vertex->Lock( 0, 0, (void**)&pVertices, 0 ), "nie moøna zablokowaÊ bufora vertex" ); 
+	HR ( hr = vertex->Lock( 0, 0, (void**)&pVertices, 0 ), "nie mo≈ºna zablokowaƒá bufora vertex" ); 
 
 	pVertices[0].position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	pVertices[0].tu       = 0.0f;
@@ -182,15 +182,15 @@ bool VideoRend::InitDX(bool reset)
 
 
 	//if (d3dformat != ddsd.Format) {
-	//wxLogStatus("Textura ma niew≥aúciwy format"); return false;	
+	//wxLogStatus("Textura ma niew≈Ça≈õciwy format"); return false;	
 	//}
 
 #else
-	HR (d3device->GetBackBuffer(0,0, D3DBACKBUFFER_TYPE_MONO, &bars),_("Nie moøna stworzyÊ powierzchni"));
+	HR (d3device->GetBackBuffer(0,0, D3DBACKBUFFER_TYPE_MONO, &bars),_("Nie mo≈ºna stworzyƒá powierzchni"));
 
 	d3device->CreateOffscreenPlainSurface(vwidth,vheight,d3dformat, D3DPOOL_DEFAULT,&MainStream,0);//D3DPOOL_DEFAULT
 #endif
-	//HR(d3device->ColorFill(MainStream, NULL, D3DCOLOR_ARGB(0xFF, 0xFF, 0xFF, 0xFF)),"Nie moøna wype≥niÊ tekstury");
+	//HR(d3device->ColorFill(MainStream, NULL, D3DCOLOR_ARGB(0xFF, 0xFF, 0xFF, 0xFF)),"Nie mo≈ºna wype≈Çniƒá tekstury");
 	D3DXCreateLine(d3device, &lines);
 	D3DXCreateFont(d3device, 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &m_font );
 
@@ -229,7 +229,7 @@ void VideoRend::Render(bool Frame)
 
 #ifndef byvertices
 	hr = d3device->StretchRect(MainStream,&rt5,bars,&rt4,D3DTEXF_LINEAR);
-	if(FAILED(hr)){wxLogStatus(_("Nie moøna na≥oøyÊ powierzchni na siebie"));}
+	if(FAILED(hr)){wxLogStatus(_("Nie mo≈ºna na≈Ço≈ºyƒá powierzchni na siebie"));}
 #endif
 
 
@@ -320,7 +320,7 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 		VFF->GetFrame(lastframe,fdata);
 	}
 	else{
-		wxLogStatus(_("Nie ma wskaünika bufora klatki"));return false;
+		wxLogStatus(_("Nie ma wska≈∫nika bufora klatki"));return false;
 	}
 
 
@@ -331,7 +331,7 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 	}
 
 
-	HR(MainStream->LockRect( &d3dlr,0, D3DLOCK_NOSYSLOCK), _("Nie moøna zablokowaÊ bufora tekstury"));//D3DLOCK_NOSYSLOCK
+	HR(MainStream->LockRect( &d3dlr,0, D3DLOCK_NOSYSLOCK), _("Nie mo≈ºna zablokowaƒá bufora tekstury"));//D3DLOCK_NOSYSLOCK
 
 	texbuf = static_cast<byte *>(d3dlr.pBits);
 
@@ -676,13 +676,13 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 	//if(!vobsub){
 	vobsub = csri_renderer_default();
 	//}
-	PTR(vobsub,_("CSRI odmÛwi≥o pos≥uszeÒstwa."));
+	PTR(vobsub,_("CSRI odm√≥wi≈Ço pos≈Çusze≈Ñstwa."));
 
 
 	instance = csri_open_mem(vobsub,buffer,size,NULL);
-	PTR(instance,_("Instancja VobSuba nie utworzy≥a siÍ."));
+	PTR(instance,_("Instancja VobSuba nie utworzy≈Ça siƒô."));
 
-	if(csri_request_fmt(instance,format)){wxLogStatus(_("CSRI nie obs≥uguje tego formatu."));}
+	if(csri_request_fmt(instance,format)){wxLogStatus(_("CSRI nie obs≈Çuguje tego formatu."));}
 
 	if(redraw && vstate!=None && IsDshow && datas){
 		int all=vheight*pitch;
@@ -716,7 +716,7 @@ DWORD VideoRend::playingProc(void* cls)
 	return 0;
 }
 
-//funkcja odtwarzania przez ffms2 automatycznie wywo≥ywana timerem
+//funkcja odtwarzania przez ffms2 automatycznie wywo≈Çywana timerem
 void VideoRend::playing()
 {
 	int tdiff=0;
@@ -758,7 +758,7 @@ void VideoRend::playing()
 	}
 }
 
-//ustawia nowe recty po zmianie rozdzielczoúci wideo
+//ustawia nowe recty po zmianie rozdzielczo≈õci wideo
 void VideoRend::UpdateRects(bool bar)
 {
 	VideoCtrl* Video=(VideoCtrl*) this;
@@ -801,7 +801,7 @@ void VideoRend::UpdateRects(bool bar)
 	}
 }
 
-//funkcja zmiany rozdzia≥ki okna wideo
+//funkcja zmiany rozdzia≈Çki okna wideo
 void VideoRend::UpdateVideoWindow(bool bar)
 {
 
@@ -906,7 +906,7 @@ void VideoRend::DrawProgBar()
 	vectors[7].y = 15;
 	vectors[8].x = w-170;
 	vectors[8].y = 5;
-	//koordynaty bia≥ej ramki
+	//koordynaty bia≈Çej ramki
 	vectors[9].x = w-169;
 	vectors[9].y = 6;
 	vectors[10].x = w-6;
@@ -917,7 +917,7 @@ void VideoRend::DrawProgBar()
 	vectors[12].y = 14;
 	vectors[13].x = w-169;
 	vectors[13].y = 6;
-	//koordynaty paska postÍpu
+	//koordynaty paska postƒôpu
 	int rw=w-168;
 	vectors[14].x = rw;
 	vectors[14].y = 10.5;

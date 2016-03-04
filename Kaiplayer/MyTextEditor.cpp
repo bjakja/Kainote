@@ -1,4 +1,4 @@
-#include "MyTextEditor.h"
+Ôªø#include "MyTextEditor.h"
 #include "EditBox.h"
 #include "kainoteMain.h"
 #include "config.h"
@@ -91,7 +91,7 @@ MTextEditor::MTextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& p
 	wxClientDC dc(this);
 	dc.SetFont(font);
 	int fw,fh;
-	dc.GetTextExtent(_T("#TWFfGH"), &fw, &fh, NULL, NULL, &font);
+	dc.GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	Fheight=fh;
 	scroll=new wxScrollBar(this,3333,wxDefaultPosition,wxDefaultSize, wxSB_VERTICAL);
 	scroll->SetCursor(wxCURSOR_DEFAULT);
@@ -191,7 +191,7 @@ void MTextEditor::OnCharPress(wxKeyEvent& event)
 void MTextEditor::OnKeyPress(wxKeyEvent& event)
 {
 	int key=event.GetKeyCode();
-	if(!(event.ControlDown() && !event.AltDown()) && key>30){event.Skip();}
+	if(!(event.ControlDown() && !event.AltDown()) && (key>30 || key == 0)){event.Skip();}
 }
 
 void MTextEditor::OnAccelerator(wxCommandEvent& event)
@@ -452,7 +452,7 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 			wxClientDC dc(this);
 			dc.SetFont(font);
 			int fw,fh;
-			dc.GetTextExtent(_T("#TWFfGH"), &fw, &fh, NULL, NULL, &font);
+			dc.GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
 			Fheight=fh;
 			caret->SetSize(1,fh);
 			CalcWrap(false, false);
@@ -681,7 +681,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h)
 				dc.GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				wxColour kol=(val)? "#6600FF" : (slash)? "#850085" : "#000000";
 				dc.SetTextForeground(kol);
-				if(isfirst && (parttext.StartsWith("T") || parttext.StartsWith("Y") || parttext.StartsWith("£"))){fw++;isfirst=false;}
+				if(isfirst && (parttext.StartsWith(L"T") || parttext.StartsWith(L"Y") || parttext.StartsWith(L"≈Å"))){fw++;isfirst=false;}
 				mestext<<parttext;
 				dc.DrawText(parttext,fw+3,posY);
 			}
@@ -713,7 +713,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h)
 				wxString bef=parttext.BeforeLast('{');
 				dc.GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground(*wxBLACK);
-				if(isfirst && (bef.StartsWith("T") || bef.StartsWith("Y") || bef.StartsWith("£"))){fw++;isfirst=false;}
+				if(isfirst && (bef.StartsWith("T") || bef.StartsWith("Y") || bef.StartsWith(L"≈Å"))){fw++;isfirst=false;}
 				dc.DrawText(bef,fw+3,posY);
 				//posX+=fw;
 				mestext<<bef;
@@ -724,7 +724,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h)
 				wxString tmp=parttext.RemoveLast(1);
 				dc.GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground(wxColour((val)? "#6600FF" : "#000000" ));
-				if(tmp.StartsWith("T") || tmp.StartsWith("Y") || tmp.StartsWith("£")){fw--;}
+				if(tmp.StartsWith("T") || tmp.StartsWith("Y") || tmp.StartsWith(L"≈Å")){fw--;}
 				dc.DrawText(tmp,fw+3,posY);
 				//posX+=fw;
 				mestext<<tmp;
@@ -919,7 +919,7 @@ void MTextEditor::OnKillFocus(wxFocusEvent& event)
 
 void MTextEditor::FindWord(int pos, int *start, int *end)
 {
-	wxString wfind=" }])-ó'`\"\\;:,.({[><?!*~@#$%^&/+=";
+	wxString wfind=" }])-‚Äî'`\"\\;:,.({[><?!*~@#$%^&/+=";
 	int len=MText.Len();
 	bool fromend=(start!=NULL);
 	
@@ -987,17 +987,15 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 	menut.Append(TEXTM_PASTE,_("&Wklej"));
 			
 	menut.AppendSeparator();
-	menut.Append(TEXTM_SEEKWORDL,_("Szukaj t≥umaczenia s≥owa na ling.pl"))->Enable(Selend.x!=Cursor.x);
-	menut.Append(TEXTM_SEEKWORDB,_("Szukaj t≥umaczenia s≥owa na pl.ba.bla"))->Enable(Selend.x!=Cursor.x);
+	menut.Append(TEXTM_SEEKWORDL,_("Szukaj t≈Çumaczenia s≈Çowa na ling.pl"))->Enable(Selend.x!=Cursor.x);
+	menut.Append(TEXTM_SEEKWORDB,_("Szukaj t≈Çumaczenia s≈Çowa na pl.ba.bla"))->Enable(Selend.x!=Cursor.x);
+	menut.Append(TEXTM_SEEKWORDG,_("Szukaj t≈Çumaczenia s≈Çowa w google"))->Enable(Selend.x!=Cursor.x);
 
 	if(!err.IsEmpty()){
-		//addw=err;
-		menut.Append(TEXTM_ADD,_("&Dodaj s≥owo \"")+err+_("\" do s≥ownika"));
+		menut.Append(TEXTM_ADD,_("&Dodaj s≈Çowo \"")+err+_("\" do s≈Çownika"));
 	}
 						
-						
-
-	menut.Append(TEXTM_DEL,_("&UsuÒ"))->Enable(Selend.x!=Cursor.x);
+	menut.Append(TEXTM_DEL,_("&Usu≈Ñ"))->Enable(Selend.x!=Cursor.x);
 			
 	int id=-1;
 	id=GetPopupMenuSelectionFromUser(menut,mpos);
@@ -1028,24 +1026,25 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 		SetSelection(from,from);modified=true;}
 	else if(id==TEXTM_ADD){
 		bool succ=Kai->SC->AddWord(err);
-		if(!succ){wxMessageBox(_("B≥πd, s≥owo \"")+err+_("\" nie zosta≥o dodane."));}
+		if(!succ){wxMessageBox(_("B≈ÇƒÖd, s≈Çowo \"")+err+_("\" nie zosta≈Ço dodane."));}
 		else{CheckText();EB->ClearErrs();Refresh(false);}
-	}else if(id==TEXTM_SEEKWORDL||id==TEXTM_SEEKWORDB){
-		wxString page=(id==TEXTM_SEEKWORDL)? "http://ling.pl/" : "http://pl.bab.la/slownik/angielski-polski/";
+	}else if(id>=TEXTM_SEEKWORDL && id<=TEXTM_SEEKWORDG){
+		wxString page=(id==TEXTM_SEEKWORDL)? L"http://ling.pl/" : 
+			(id==TEXTM_SEEKWORDB)? L"http://pl.bab.la/slownik/angielski-polski/" : L"https://www.google.com/search?q=";
 		long from, to;
-		GetSelection(&from,&to);
-		wxString word= MText.SubString(from,to-1).Trim();
-		if(word.IsWord()){
-			//wxLaunchDefaultBrowser(page+word);
-			wxString url=page+word;
-			WinStruct<SHELLEXECUTEINFO> sei;
-			sei.lpFile = url.c_str();
-			sei.lpVerb = wxT("open");
-			sei.nShow = SW_RESTORE;
-			sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
+		GetSelection(&from, &to);
+		wxString word= MText.SubString(from, to-1).Trim();
+		//if(word.IsWord()){
+		word.Replace(" ", "+");
+		wxString url=page+word;
+		WinStruct<SHELLEXECUTEINFO> sei;
+		sei.lpFile = url.c_str();
+		sei.lpVerb = wxT("open");
+		sei.nShow = SW_RESTORE;
+		sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
 
-			ShellExecuteEx(&sei);
-		}
+		ShellExecuteEx(&sei);
+		//}
 
 	}
 			

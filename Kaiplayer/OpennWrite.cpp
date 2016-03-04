@@ -1,4 +1,4 @@
-
+ï»¿
 #include "OpennWrite.h"
 #include <wx/filename.h>
 #include <wx/ffile.h>
@@ -17,10 +17,10 @@ OpenWrite::OpenWrite(wxString fileName, bool clear)
       if(!fname.DirExists()){wxMkdir(fileName.BeforeLast('\\'));}
       if(fname.FileExists()&&!fname.IsFileReadable()){return;}
         if(!file.Exists(fileName)){
-			if(!file.Create(fileName,false,wxS_DEFAULT)){wxLogStatus(_("Nie mo¿na utworzyæ pliku."));}
+			if(!file.Create(fileName,false,wxS_DEFAULT)){wxLogStatus(_("Nie moÅ¼na utworzyÄ‡ pliku."));}
        }
    else{
-	   if(!file.Open(fileName,(clear)?wxFile::write : wxFile::write_append,wxS_DEFAULT)){wxLogStatus(_("Nie mo¿na otworzyæ pliku."));};
+	   if(!file.Open(fileName,(clear)?wxFile::write : wxFile::write_append,wxS_DEFAULT)){wxLogStatus(_("Nie moÅ¼na otworzyÄ‡ pliku."));};
    }
         isfirst=clear;
 }
@@ -38,7 +38,7 @@ wxString OpenWrite::FileOpen(wxString filename, bool test)
 	wxFile filetest;
     wxFileName fname;
     fname.Assign(filename);
-    if(!fname.IsFileReadable()){/*wxMessageBox("nie mo¿na odczytaæ pliku o œcie¿ce \""+filename+"\".");*/return _T("");}
+    if(!fname.IsFileReadable()){/*wxMessageBox("nie moÅ¼na odczytaÄ‡ pliku o Å›cieÅ¼ce \""+filename+"\".");*/return "";}
 	if (test){
 	  	wchar_t *b= new wchar_t[4];
 	filetest.Open(filename,wxFile::read,wxS_DEFAULT);
@@ -68,7 +68,7 @@ void OpenWrite::FileWrite(wxString fileName, wxString textfile, bool utf)
       wxFileName fname;
       fname.Assign(fileName);
       if(!fname.DirExists()){wxMkdir(fileName.BeforeLast('\\'));}
-      if(fname.FileExists()&&!fname.IsFileReadable()){wxLogStatus(_("Pliku nie mo¿na odczytaæ."));return;}
+      if(fname.FileExists()&&!fname.IsFileReadable()){wxLogStatus(_("Pliku nie moÅ¼na odczytaÄ‡."));return;}
         if(utf){wchar_t bom = 0xFEFF;
 		textfile = wxString(bom) + textfile;}
         wxFile file;
@@ -84,13 +84,13 @@ void OpenWrite::FileWrite(wxString fileName, wxString textfile, bool utf)
 }
 void OpenWrite::PartFileWrite(wxString parttext)
 {
-    if(!file.IsOpened()){wxLogStatus(_("Plik nie zosta³ otwarty."));return;}
+    if(!file.IsOpened()){wxLogStatus(_("Plik nie zostaÅ‚ otwarty."));return;}
     if(isfirst){
         wchar_t bom = 0xFEFF;
 		parttext = wxString(bom) + parttext;
 		isfirst=false;
     }
-	if(!file.Write(parttext,wxConvUTF8)){wxLogStatus(_("Nie mo¿na zapisaæ do pliku."));};
+	if(!file.Write(parttext,wxConvUTF8)){wxLogStatus(_("Nie moÅ¼na zapisaÄ‡ do pliku."));};
 }
 
 void OpenWrite::CloseFile()

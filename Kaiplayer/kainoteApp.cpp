@@ -1,4 +1,4 @@
-/***************************************************************
+ï»¿/***************************************************************
  * Name:      kainoteApp.cpp
  * Purpose:   Code for Application Class
  * Author:    Bjakja (bjakja@op.pl)
@@ -49,7 +49,7 @@ class KaiServer : public wxServer
 public:
      virtual wxConnectionBase *OnAcceptConnection (const wxString& topic)
      {
-         if (topic != _T("NewStart"))
+         if (topic != "NewStart")
              return NULL;
          else
              return new KaiConnection;
@@ -91,7 +91,7 @@ bool kainoteApp::OnInit()
     {
 		MyServer=new KaiServer();
 		if(!MyServer){
-			wxLogStatus(_("Nie mo¿na utworzyæ serwera DDE"));
+			wxLogStatus(_("Nie moÅ¼na utworzyÄ‡ serwera DDE"));
 		}
 		else if (!(MyServer->Create(server))){
 			delete MyServer;
@@ -108,23 +108,23 @@ bool kainoteApp::OnInit()
 		if ( wxsOK )
 		{
 		//wxHandleFatalExceptions(true);
-			if(!Options.LoadOptions()){wxMessageBox(_("Nie uda³o siê wczytaæ opcji.\nDzia³anie programu zostanie zakoñczone."),_("Uwaga"));return false;}
+			if(!Options.LoadOptions()){wxMessageBox(_("Nie udaÅ‚o siÄ™ wczytaÄ‡ opcji.\nDziaÅ‚anie programu zostanie zakoÅ„czone."),_("Uwaga"));return false;}
 
 			locale=NULL;
-			if(Options.GetInt("Program Language") != 0){
-				locale=new wxLocale;
-				if(!locale->Init(Options.GetInt("Program Language"), wxLOCALE_DONT_LOAD_DEFAULT)){
+			if(Options.GetInt(L"Program Language") != 0){
+				locale=new wxLocale();
+				if(!locale->Init(wxLANGUAGE_ENGLISH, wxLOCALE_DONT_LOAD_DEFAULT)){
 					wxMessageBox("wxLocale cannot initialize, language change failed");
 				}
-				locale->AddCatalogLookupPathPrefix(Options.pathfull+"\\Locale");
-				if(!locale->AddCatalog("en")){
+				locale->AddCatalogLookupPathPrefix(Options.pathfull+L"\\Locale\\");
+				if(!locale->AddCatalog(L"en",wxLANGUAGE_POLISH,L"UTF-8")){//
 					wxMessageBox("Cannot find translation, language change failed");
 				}
-
+				//wxMessageBox(wxString::Format("isload%i", locale->IsLoaded(L"en")));
 			}
 
 			if(!Hkeys.LoadHkeys()){
-				wxMessageBox(_("Nie uda³o siê wczytaæ skrótów.\nDzia³anie programu zostanie zakoñczone."),_("Uwaga"));
+				wxMessageBox(_("Nie udaÅ‚o siÄ™ wczytaÄ‡ skrÃ³tÃ³w.\nDziaÅ‚anie programu zostanie zakoÅ„czone."),_("Uwaga"));
 				wxDELETE(locale);return false;
 			}
 			
@@ -217,7 +217,7 @@ void kainoteApp::OnUnhandledException()
 	//op.FileWrite(Options.pathfull+"\\recover.txt",Options.pathfull+"\\recover.txt");
 	//Options.SaveOptions();
 
-	wxLogStatus("Ups, Kainote siê skraszowa³ w przysz³oœci bêdzie mo¿na wznowiæ sesjê po tym kraszu", "Krasz", wxOK | wxICON_ERROR);
+	wxLogStatus(_T("Ups, Kainote siÄ™ skraszowaÅ‚ w przyszÅ‚oÅ›ci bÄ™dzie moÅ¼na wznowiÄ‡ sesjÄ™ po tym kraszu"), "Krasz", wxOK | wxICON_ERROR);
 }
 
 void kainoteApp::OnFatalException()
@@ -233,7 +233,7 @@ void kainoteApp::OnFatalException()
 	//op.FileWrite(Options.pathfull+"\\recover.txt",recover);
 	//Options.SaveOptions();
 
-	wxLogStatus("Ups, Kainote siê skraszowa³ w przysz³oœci bêdzie mo¿na wznowiæ sesjê po tym kraszu", "Krasz", wxOK | wxICON_ERROR);
+	wxLogStatus(_T("Ups, Kainote siÄ™ skraszowaÅ‚ w przyszÅ‚oÅ›ci bÄ™dzie moÅ¼na wznowiÄ‡ sesjÄ™ po tym kraszu"), "Krasz", wxOK | wxICON_ERROR);
 }
 void kainoteApp::OnOpen(wxTimerEvent &evt)
 {

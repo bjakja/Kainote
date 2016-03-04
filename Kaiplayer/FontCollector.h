@@ -1,4 +1,4 @@
-#define UNICODE
+//#define UNICODE
 
 
 #include <wx/wx.h>
@@ -30,8 +30,11 @@ public:
 	wxArrayString GetAssFonts(std::vector<bool> &founded, bool check=false);
 	void CopyFonts(bool check=false);
 	void CopyMKVFonts();
+	void MuxVideoWithSubs();
 	wxString destdir;
 	wxArrayString facenames;
+	wxArrayString fontnames;
+	wxString copypath;
 
 private:
 	void OnButtonStart(wxCommandEvent &event);

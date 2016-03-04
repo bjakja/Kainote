@@ -1,4 +1,4 @@
-
+ï»¿
 #include "AutomationScriptsDialog.h"
 #include "OptionsDialog.h"
 #include "Hotkeys.h"
@@ -12,11 +12,11 @@ MacrosDialog::MacrosDialog(wxWindow *parent, int _script)
 {
 	script=_script;
 	names.Add(_("Nazwa makra"));
-	names.Add(_("Skrót"));
+	names.Add(_("SkrÃ³t"));
 	actives.push_back(true);
 	seld=-1;
 	block=false;
-	wxFont font(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	wxFont font(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 	int fw,fh;
 	GetTextExtent("TEKST",&fw,&fh,0,0,&font);
 	fh+=4;
@@ -32,7 +32,7 @@ MacrosDialog::MacrosDialog(wxWindow *parent, int _script)
 	mst.x+=1;
 	mst.y-=(height/2);
 	SetPosition(mst);
-	//specjalna ró¿nica miêdzy pierwsz¹ zaznaczon¹ linijk¹ która jest zero a linijk¹ w lua która jest wiêksza o size sinfo + size styles
+	//specjalna rÃ³Å¼nica miÄ™dzy pierwszÄ… zaznaczonÄ… linijkÄ… ktÃ³ra jest zero a linijkÄ… w lua ktÃ³ra jest wiÄ™ksza o size sinfo + size styles
 	int diff=(Kai->GetTab()->Grid1->SInfoSize()+Kai->GetTab()->Grid1->StylesSize()+1);
 	for(size_t i=0; i<macros.size(); i++)
 	{
@@ -61,7 +61,7 @@ void MacrosDialog::OnPaint(wxPaintEvent &event)
 	int w,h,fw,fh;
 	GetClientSize(&w,&h);
 	dc.Clear();
-	dc.SetFont(wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT));
+	dc.SetFont(wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT));
 	dc.GetTextExtent(names[0],&fw,&fh);
 	dc.SetBrush(wxBrush("#BBBBBB"));
 	dc.SetPen(*wxTRANSPARENT_PEN);
@@ -112,7 +112,7 @@ void MacrosDialog::OnMacro()
 	if(col){//kolumna 1
 
 		HkeysDialog hkd(this,names[seld*2],true);
-		//tu trzeba jeszcze okno wyboru skrótu klawiszowego
+		//tu trzeba jeszcze okno wyboru skrÃ³tu klawiszowego
 		
 		if(hkd.ShowModal()==0){
 	
@@ -130,7 +130,7 @@ void MacrosDialog::OnMacro()
 			for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++)
 			{//wxLogStatus(cur->first);
 				if(cur->second.Accel==test){
-					wxMessageBox(wxString::Format(_("Ten skrót ju¿ istnieje jako skrót do \"%s\"."), 
+					wxMessageBox(wxString::Format(_("Ten skrÃ³t juÅ¼ istnieje jako skrÃ³t do \"%s\"."), 
 						cur->second.Name), _("Uwaga"), wxOK);
 					return;
 				}
@@ -168,7 +168,7 @@ void MacrosDialog::OnMacro()
 		wxArrayInt sels=pan->Grid1->GetSels(true);
 
 		
-		//specjalna ró¿nica miêdzy pierwsz¹ zaznaczon¹ linijk¹ która jest zero a linijk¹ w lua która jest wiêksza o size sinfo + size styles
+		//specjalna rÃ³Å¼nica miÄ™dzy pierwszÄ… zaznaczonÄ… linijkÄ… ktÃ³ra jest zero a linijkÄ… w lua ktÃ³ra jest wiÄ™ksza o size sinfo + size styles
 		int diff=(pan->Grid1->SInfoSize() + pan->Grid1->StylesSize()+1);
 		Kai->Auto->Scripts[script]->Macros[seld-1]->Process(sels,pan->Edit->ebrow, diff, Kai);
 		for(size_t i=0; i<sels.size(); i++){
@@ -198,7 +198,7 @@ void MacrosDialog::OnMouseEvents(wxMouseEvent &event)
 	}
 
 	if(event.LeftDown()||event.LeftDClick()){
-		wxFont font(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+		wxFont font(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 		int fw,fh;
 		GetTextExtent("TEKST",&fw,&fh,0,0,&font);
 		int divy=y/(fh+4);
@@ -214,7 +214,7 @@ void MacrosDialog::OnMouseEvents(wxMouseEvent &event)
 
 
 ScriptsDialog::ScriptsDialog(kainoteFrame *_Kai)
-	: wxDialog(_Kai,-1,_("Mened¿er skryptów Lua"))
+	: wxDialog(_Kai,-1,_("MenedÅ¼er skryptÃ³w Lua"))
 {
 	
 	Kai=_Kai;
@@ -242,10 +242,10 @@ ScriptsDialog::ScriptsDialog(kainoteFrame *_Kai)
 	wxBoxSizer *bs = new wxBoxSizer(wxHORIZONTAL);
 
 	bs->Add(new wxButton(this,ID_BADD,_("Dodaj")),1,0,0);
-	bs->Add(new wxButton(this,ID_BREMOVE,_("Usuñ")),1,0,0);
+	bs->Add(new wxButton(this,ID_BREMOVE,_("UsuÅ„")),1,0,0);
 	bs->AddSpacer(5);
 	bs->Add(new wxButton(this,ID_BEDIT,_("Edytuj")),1,0,0);
-	bs->Add(new wxButton(this,ID_BRELOAD,_("Odœwie¿")),1,0,0);
+	bs->Add(new wxButton(this,ID_BRELOAD,_("OdÅ›wieÅ¼")),1,0,0);
 	bs->Add(new wxButton(this,ID_BRESCAN,_("Wczytaj skrypty Autoload")),1,0,0);
 	bs->AddSpacer(5);
 	bs->Add(new wxButton(this,wxID_CANCEL,_("Zamknij")),1,0,0);
@@ -276,7 +276,7 @@ void ScriptsDialog::OnShowMacros(wxListEvent &event)
 	//wxListItem item=event.GetItem();
 
 	if(Kai->Auto->Scripts[sel]->CheckLastModified()){Kai->Auto->Scripts[sel]->Reload();}
-	// tu trzeba jakieœ okno zawsze na wierzchu zrobiæ i w niego wrzuciæ makra
+	// tu trzeba jakieÅ› okno zawsze na wierzchu zrobiÄ‡ i w niego wrzuciÄ‡ makra
 	MacrosDialog MD(this, sel);
 	int ret = MD.ShowModal();
 	//wxLogStatus("endmodal");
@@ -296,7 +296,7 @@ void ScriptsDialog::OnAdd(wxCommandEvent &event)
 	wxString luarecent=Options.GetString("Lua Recent Folder");
 	//wxLogStatus(luarecent);
 	wxFileDialog *FD = new wxFileDialog(Kai, _("Wybierz plik Lua"), luarecent, 
-		_T(""), _("Pliki Lua|*.lua"), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+		"", _("Pliki Lua|*.lua"), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
     if (FD->ShowModal() == wxID_OK){
 		if(Kai->Auto->Add(FD->GetPath())){
 			int i=Kai->Auto->Scripts.size()-1;
@@ -328,8 +328,8 @@ void ScriptsDialog::OnEdit(wxCommandEvent &event)
 {
 	wxString editor=Options.GetString("Script Editor");
 	if(editor=="" || wxGetKeyState(WXK_SHIFT)){
-		editor = wxFileSelector(_("Wybierz edytor skryptów"), _T(""),
-			_T("C:\\Windows\\Notepad.exe"), _T("exe"), _("Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+		editor = wxFileSelector(_("Wybierz edytor skryptÃ³w"), "",
+			"C:\\Windows\\Notepad.exe", "exe", _("Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
 		Options.SetString("Script Editor",editor);
 		Options.SaveOptions();
 	}
@@ -345,7 +345,7 @@ void ScriptsDialog::OnEdit(wxCommandEvent &event)
 	delete cmdline;
 
 	if (!res) {
-		wxMessageBox(_("Nie mo¿na uruchomiæ edytora."), _("B³¹d automatyzacji"), wxOK|wxICON_ERROR);
+		wxMessageBox(_("Nie moÅ¼na uruchomiÄ‡ edytora."), _("BÅ‚Ä…d automatyzacji"), wxOK|wxICON_ERROR);
 	}
 }
 
@@ -379,7 +379,7 @@ void ScriptsDialog::OnRescan(wxCommandEvent &event)
 
 void ScriptsDialog::AddFromSubs()
 	{
-	//wxLogStatus("wesz³o");
+	//wxLogStatus("weszÅ‚o");
 	wxString paths=Kai->GetTab()->Grid1->GetSInfo("Automation Scripts");
 	//wxLogStatus("m"+paths);
 	if(paths==""){return;}
@@ -406,15 +406,15 @@ void ScriptsDialog::AddFromSubs()
 				}
 				catch (const wchar_t *e) {
 					error_count++;
-					wxLogError(_("B³¹d wczytywania skryptu Lua: %s\n%s"), onepath.c_str(), e);
+					wxLogError(_("BÅ‚Ä…d wczytywania skryptu Lua: %s\n%s"), onepath.c_str(), e);
 				}
 				catch (...) {
 					error_count++;
-					wxLogError(_("Nieznany b³¹d wczytywania skryptu Lua: %s."), onepath.c_str());
+					wxLogError(_("Nieznany bÅ‚Ä…d wczytywania skryptu Lua: %s."), onepath.c_str());
 				}
 		}
 		if (error_count > 0) {
-			wxLogWarning(_("Co najmniej jeden skrypt z pliku napisów zawiera b³êdy.\nZobacz opisy skryptów, by uzyskaæ wiêcej informacji."));
+			wxLogWarning(_("Co najmniej jeden skrypt z pliku napisÃ³w zawiera bÅ‚Ä™dy.\nZobacz opisy skryptÃ³w, by uzyskaÄ‡ wiÄ™cej informacji."));
 		}
 
 	}

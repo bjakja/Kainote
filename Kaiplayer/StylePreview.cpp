@@ -1,4 +1,4 @@
-
+Ôªø
 #include "StylePreview.h"
 #include "config.h"
 
@@ -53,16 +53,16 @@ void StylePreview::DrawPreview(Styles *style)
 	//if(!vobsub){
 		vobsub = csri_renderer_default();
 	//}
-	if(!vobsub){wxLogStatus(_("CSRI odmÛwi≥o pos≥uszeÒstwa."));return;}
+	if(!vobsub){wxLogStatus(_("CSRI odm√≥wi≈Ço pos≈Çusze≈Ñstwa."));return;}
 
 	GetClientSize(&width,&height);
 	pitch=width*4;
 	std::vector<byte> dat;
 	SubsText(dat);
-	//if(!VA->OpenMemory( &dat[0], dat.size())){wxMessageBox("Instancja vobsuba nie utworzy≥a siÍ.");return;}
+	//if(!VA->OpenMemory( &dat[0], dat.size())){wxMessageBox("Instancja vobsuba nie utworzy≈Ça siƒô.");return;}
 	instance = csri_open_mem(vobsub,&dat[0],dat.size(),NULL);
 	if(!instance){
-		wxLogStatus(_("Instancja VobSuba nie utworzy≥a siÍ."));return;}
+		wxLogStatus(_("Instancja VobSuba nie utworzy≈Ça siƒô."));return;}
 
 	unsigned char *data= (unsigned char *)malloc(width * height * 4);
 		
@@ -99,7 +99,7 @@ void StylePreview::DrawPreview(Styles *style)
 	format.height = height;
 	format.pixfmt = frame.pixfmt;
 	int error = csri_request_fmt(instance,&format);
-	if (error) {wxLogStatus(_("CSRI nie obs≥uguje tego formatu."));return;}
+	if (error) {wxLogStatus(_("CSRI nie obs≈Çuguje tego formatu."));return;}
 
 	// Render
 	csri_render(instance,&frame,0);
@@ -153,9 +153,9 @@ void StylePreview::SubsText(std::vector<byte> &buf)
 	//styl.MarginR="0";
 	//styl.MarginV="0";
 	wxString subs((wchar_t)0xFEFF);
-	subs<<_T("[Script Info]\r\nPlayResX: ")<<width<<_T("\r\nPlayResY: ")<<height<<_T("\r\nScaledBorderAndShadow: Yes\r\nScriptType: v4.00+\r\nWrapStyle: 0")
-         <<_T("\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\r\n")
-		 <<styl->styletext()<<_T("\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,0:01:26.00,")<<styl->Name<<_T(",,0000,0000,0000,,")<<Options.GetString("Preview Text");
+	subs<<"[Script Info]\r\nPlayResX: "<<width<<"\r\nPlayResY: "<<height<<"\r\nScaledBorderAndShadow: Yes\r\nScriptType: v4.00+\r\nWrapStyle: 0"
+         <<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\r\n"
+		 <<styl->styletext()<<"\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,0:01:26.00,"<<styl->Name<<",,0000,0000,0000,,"<<Options.GetString("Preview Text");
 
 		wxScopedCharBuffer buffer= subs.mb_str(wxConvUTF8);
 		int size = strlen(buffer);

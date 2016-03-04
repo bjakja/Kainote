@@ -1,4 +1,4 @@
-
+ï»¿
 #include "ChangeTime.h"
 #include "config.h"
 #include "Stylelistbox.h"
@@ -24,7 +24,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
     SetAcceleratorTable(ctaccel);
 	
 
-	wxFont thisFont(8,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	wxFont thisFont(8,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 
 	SetFont(thisFont);
 	Main=new wxBoxSizer(wxVERTICAL);
@@ -33,10 +33,10 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	//ramka czasu
 	wxStaticBoxSizer *timesizer=new wxStaticBoxSizer(wxVERTICAL,this,"Czas");
 	wxGridSizer *timegrid=new wxGridSizer(2, 0, 0);
-	MoveTime = new wxButton(this, ID_MOVE, _("Przesuñ"), wxDefaultPosition, wxSize(60,22));
-	TimeText = new TimeCtrl(this, -1, _T("0:00:00.00"), wxDefaultPosition, wxSize(60,22), wxTE_PROCESS_ENTER);
-	Forward = new wxRadioButton(this, -1, _("W przód"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	Backward = new wxRadioButton(this, -1, _("W ty³"));
+	MoveTime = new wxButton(this, ID_MOVE, _("PrzesuÅ„"), wxDefaultPosition, wxSize(60,22));
+	TimeText = new TimeCtrl(this, -1, "0:00:00.00", wxDefaultPosition, wxSize(60,22), wxTE_PROCESS_ENTER);
+	Forward = new wxRadioButton(this, -1, _("W przÃ³d"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	Backward = new wxRadioButton(this, -1, _("W tyÅ‚"));
 
 	timegrid->Add(TimeText,0,wxEXPAND|wxLEFT|wxRIGHT,2);
 	timegrid->Add(MoveTime,0,wxEXPAND|wxRIGHT,2);
@@ -49,17 +49,17 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	wxStaticBoxSizer *VAtiming=new wxStaticBoxSizer(wxVERTICAL,this,_("Przesuwanie wg wideo / audio"));
 
 	wxBoxSizer *SE=new wxBoxSizer(wxHORIZONTAL);
-	StartVAtime = new wxRadioButton(this, -1, _("Pocz¹tek"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	StartVAtime = new wxRadioButton(this, -1, _("PoczÄ…tek"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
 	EndVAtime = new wxRadioButton(this, -1, _("Koniec"));
 
 	SE->Add(StartVAtime,0,wxEXPAND|wxLEFT|wxRIGHT,2);
 	SE->Add(EndVAtime,0,wxEXPAND|wxRIGHT,2);
 
-	videotime = new wxCheckBox(this, ID_VIDEO, _("Przesuñ znacznik\ndo czasu wideo"));
+	videotime = new wxCheckBox(this, ID_VIDEO, _("PrzesuÅ„ znacznik\ndo czasu wideo"));
 	videotime->SetForegroundColour(*wxRED);
 	videotime->Enable(false);
 
-	audiotime = new wxCheckBox(this, ID_AUDIO, _("Przesuñ znacznik\ndo czasu audio"));
+	audiotime = new wxCheckBox(this, ID_AUDIO, _("PrzesuÅ„ znacznik\ndo czasu audio"));
 	audiotime->SetForegroundColour(*wxRED);
 	audiotime->Enable(false);
 
@@ -70,16 +70,16 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	VAtiming->Add(audiotime,0,wxEXPAND);
 
 	wxArrayString choices;
-	wxStaticBoxSizer *linesizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Które linijki"));
+	wxStaticBoxSizer *linesizer=new wxStaticBoxSizer(wxVERTICAL,this,_("KtÃ³re linijki"));
 	choices.Add(_("Wszystkie linijki"));
 	choices.Add(_("Zaznaczone linijki"));
 	choices.Add(_("Od zaznaczonej linijki"));
-	choices.Add(_("Czasy wy¿sze i równe"));
-	choices.Add(_("Wed³ug wybranych stylów"));
+	choices.Add(_("Czasy wyÅ¼sze i rÃ³wne"));
+	choices.Add(_("WedÅ‚ug wybranych stylÃ³w"));
 	WhichLines= new wxChoice(this,-1,wxDefaultPosition,wxDefaultSize,choices);
 
 	wxBoxSizer *stylesizer= new wxBoxSizer(wxHORIZONTAL);
-	AddStyles = new wxButton(this, ID_BSTYLE, _T("+"),wxDefaultPosition, wxSize(22,22));
+	AddStyles = new wxButton(this, ID_BSTYLE, "+",wxDefaultPosition, wxSize(22,22));
 	Stylestext = new wxTextCtrl(this, -1, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	stylesizer->Add(AddStyles,0,wxALL,2);
 	stylesizer->Add(Stylestext,1,wxEXPAND|wxBOTTOM|wxTOP|wxRIGHT,2);
@@ -87,19 +87,19 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	linesizer->Add(WhichLines,0,wxEXPAND|wxRIGHT|wxTOP|wxLEFT,2);
 	linesizer->Add(stylesizer,1,wxEXPAND);
 
-	wxStaticBoxSizer *timessizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Sposób przesuwania czasów"));
+	wxStaticBoxSizer *timessizer=new wxStaticBoxSizer(wxVERTICAL,this,_("SposÃ³b przesuwania czasÃ³w"));
 	choices.clear();
 	choices.Add(_("Obydwa czasy"));
-	choices.Add(_("Czas pocz¹tkowy"));
-	choices.Add(_("Czas koñcowy"));
+	choices.Add(_("Czas poczÄ…tkowy"));
+	choices.Add(_("Czas koÅ„cowy"));
 	
 	WhichTimes= new wxChoice(this,-1,wxDefaultPosition,wxDefaultSize,choices);
 	WhichTimes->Enable(form!=TMP);
 	
 	timessizer->Add(WhichTimes,0,wxEXPAND|wxRIGHT|wxTOP|wxLEFT,2);
 
-	wxStaticBoxSizer *cesizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Korekcja czasów koñcowych"));
-	wxString ctchoices[3]={_("Zostaw bez zmian"), _("Skoryguj nachodz¹ce czasy"), _("Nowe czasy")};
+	wxStaticBoxSizer *cesizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Korekcja czasÃ³w koÅ„cowych"));
+	wxString ctchoices[3]={_("Zostaw bez zmian"), _("Skoryguj nachodzÄ…ce czasy"), _("Nowe czasy")};
 	CorTime = new wxChoice(this, -1, wxDefaultPosition, wxSize(120,-1), 3, ctchoices);
 	CorTime->SetSelection(0);
 	cesizer->Add(CorTime,0,wxEXPAND|wxLEFT|wxRIGHT,2);
@@ -120,7 +120,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	Connect(22999,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&CTwindow::CollapsePane);
 
 	DoTooltips();
-	if(Options.GetInt(_T("Postprocessor enabling"))>15){wxCommandEvent evt; evt.SetId(122); CollapsePane(evt);}
+	if(Options.GetInt("Postprocessor enabling")>15){wxCommandEvent evt; evt.SetId(122); CollapsePane(evt);}
 	RefVals();
 	wxSize bsize=GetBestSize();
 	bestsize=bsize.x;
@@ -139,8 +139,8 @@ void CTwindow::Contents(bool addopts)
 		form=Kai->GetTab()->Grid1->form;
 		if(form<SRT){state=true;
 			if(WhichLines->GetCount()<5){
-				WhichLines->Append(_("Czasy wy¿sze i równe"));
-				WhichLines->Append(_("Wed³ug wybranych stylów"));
+				WhichLines->Append(_("Czasy wyÅ¼sze i rÃ³wne"));
+				WhichLines->Append(_("WedÅ‚ug wybranych stylÃ³w"));
 			}
 		}else{
 			if(WhichLines->GetCount()>3){
@@ -182,32 +182,32 @@ void CTwindow::OnAddStyles(wxCommandEvent& event)
 void CTwindow::OnOKClick(wxCommandEvent& event)
 {
 
-    Options.SetInt(_T("Change Time"),TimeText->GetTime().mstime);
+    Options.SetInt("Change Time",TimeText->GetTime().mstime);
 
 	if(form==ASS){
 		wxString sstyles=Stylestext->GetValue();
-		Options.SetString(_T("Styles of time change"),sstyles);
+		Options.SetString("Styles of time change",sstyles);
 	}
 
 	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 8 Move to audio time;
-	Options.SetInt(_T("Moving time options"),(int)Forward->GetValue()|((int)StartVAtime->GetValue()<<1)|((int)videotime->GetValue()<<2)|((int)audiotime->GetValue()<<3));
+	Options.SetInt("Moving time options",(int)Forward->GetValue()|((int)StartVAtime->GetValue()<<1)|((int)videotime->GetValue()<<2)|((int)audiotime->GetValue()<<3));
 
-	Options.SetInt(_T("Change mode"),WhichLines->GetSelection());
-	Options.SetInt(_T("Start end times"),WhichTimes->GetSelection());
-	Options.SetInt(_T("Corect times"),CorTime->GetSelection());
+	Options.SetInt("Change mode",WhichLines->GetSelection());
+	Options.SetInt("Start end times",WhichTimes->GetSelection());
+	Options.SetInt("Corect times",CorTime->GetSelection());
 	if(LeadIn){
-		Options.SetInt(_T("Lead in"),LITime->GetInt());
-		Options.SetInt(_T("Lead out"),LOTime->GetInt());
-		Options.SetInt(_T("Threshold start"),ThresStart->GetInt());
-		Options.SetInt(_T("Threshold end"),ThresEnd->GetInt());
-		Options.SetInt(_T("Keyframe before start"),BeforeStart->GetInt());
-		Options.SetInt(_T("Keyframe after start"),AfterStart->GetInt());
-		Options.SetInt(_T("Keyframe before end"),BeforeEnd->GetInt());
-		Options.SetInt(_T("Keyframe after end"),AfterEnd->GetInt());
+		Options.SetInt("Lead in",LITime->GetInt());
+		Options.SetInt("Lead out",LOTime->GetInt());
+		Options.SetInt("Threshold start",ThresStart->GetInt());
+		Options.SetInt("Threshold end",ThresEnd->GetInt());
+		Options.SetInt("Keyframe before start",BeforeStart->GetInt());
+		Options.SetInt("Keyframe after start",AfterStart->GetInt());
+		Options.SetInt("Keyframe before end",BeforeEnd->GetInt());
+		Options.SetInt("Keyframe after end",AfterEnd->GetInt());
 		//1 Lead In, 2 Lead Out, 4 Make times continous, 8 Snap to keyframe;
 		//int peres= (LeadIn->GetValue())? 1 : 0
-		Options.SetInt(_T("Postprocessor enabling"),(int)LeadIn->GetValue()+((int)LeadOut->GetValue()*2)+((int)Continous->GetValue()*4)+((int)SnapKF->GetValue()*8)+16);
-	}//else{int pe = Options.GetInt(_T("Postprocessor enabling")); if(pe>=16){Options.SetInt(_T("Postprocessor enabling"), pe^ 16);} }
+		Options.SetInt("Postprocessor enabling",(int)LeadIn->GetValue()+((int)LeadOut->GetValue()*2)+((int)Continous->GetValue()*4)+((int)SnapKF->GetValue()*8)+16);
+	}//else{int pe = Options.GetInt("Postprocessor enabling"); if(pe>=16){Options.SetInt("Postprocessor enabling", pe^ 16);} }
 	int acid=event.GetId();
 	if (acid==ID_MOVE){
 	Kai->GetTab()->Grid1->ChangeTime();
@@ -243,18 +243,18 @@ void CTwindow::OnSize(wxSizeEvent& event)
 
 void CTwindow::DoTooltips()
 {
-	TimeText->SetToolTip(_("Czas przesuniêcia"));
-	videotime->SetToolTip(_("Przesuwanie zaznaczonej linijki\ndo czasu wideo ± czas przesuniêcia"));
-	audiotime->SetToolTip(_("Przesuwanie zaznaczonej linijki do czasu\nznacznika audio ± czas przesuniêcia"));
-	StartVAtime->SetToolTip(_("Przesuwa czas pocz¹tkowy do czasu wideo / audio"));
-	EndVAtime->SetToolTip(_("Przesuwa czas koñcowy do czasu wideo / audio"));
-	Forward->SetToolTip(_("Przesuniêcie w przód"));
-	Backward->SetToolTip(_("Przesuniêcie w ty³"));
-	WhichLines->SetToolTip(_("Wybór linijek do przesuniêcia"));
-	WhichTimes->SetToolTip(_("Wybór czasów do przesuniêcia"));
+	TimeText->SetToolTip(_("Czas przesuniÄ™cia"));
+	videotime->SetToolTip(_("Przesuwanie zaznaczonej linijki\ndo czasu wideo Â± czas przesuniÄ™cia"));
+	audiotime->SetToolTip(_("Przesuwanie zaznaczonej linijki do czasu\nznacznika audio Â± czas przesuniÄ™cia"));
+	StartVAtime->SetToolTip(_("Przesuwa czas poczÄ…tkowy do czasu wideo / audio"));
+	EndVAtime->SetToolTip(_("Przesuwa czas koÅ„cowy do czasu wideo / audio"));
+	Forward->SetToolTip(_("PrzesuniÄ™cie w przÃ³d"));
+	Backward->SetToolTip(_("PrzesuniÄ™cie w tyÅ‚"));
+	WhichLines->SetToolTip(_("WybÃ³r linijek do przesuniÄ™cia"));
+	WhichTimes->SetToolTip(_("WybÃ³r czasÃ³w do przesuniÄ™cia"));
 	AddStyles->SetToolTip(_("Wybierz style z listy"));
-	Stylestext->SetToolTip(_("Przesuñ wed³ug nastêpuj¹cych styli (oddzielone œrednikiem)"));
-	CorTime->SetToolTip(_("Korekcja czasów koñcowych, gdy s¹ niew³aœciwe albo nachodz¹ na siebie"));
+	Stylestext->SetToolTip(_("PrzesuÅ„ wedÅ‚ug nastÄ™pujÄ…cych styli (oddzielone Å›rednikiem)"));
+	CorTime->SetToolTip(_("Korekcja czasÃ³w koÅ„cowych, gdy sÄ… niewÅ‚aÅ›ciwe albo nachodzÄ… na siebie"));
 	
 }
 
@@ -269,28 +269,28 @@ void CTwindow::AudioVideoTime(wxCommandEvent &event)
 
 void CTwindow::RefVals(CTwindow *from)
 {
-	STime ct=(from)? from->TimeText->GetTime() : STime(Options.GetInt(_T("Change Time")));  
+	STime ct=(from)? from->TimeText->GetTime() : STime(Options.GetInt("Change Time"));  
 	TimeText->SetTime(ct);
-	int mto=Options.GetInt(_T("Moving time options"));
+	int mto=Options.GetInt("Moving time options");
 	videotime->SetValue((from)? from->videotime->GetValue() : (mto & 4)>0);
 
 	bool movfrwd=(from)? from->Forward->GetValue() : mto & 1;
 	if(movfrwd){Forward->SetValue(true);}
 	else{Backward->SetValue(true);}
 
-	Stylestext->SetValue( (from)? from->Stylestext->GetValue() : Options.GetString(_T("Styles of time change")) );
+	Stylestext->SetValue( (from)? from->Stylestext->GetValue() : Options.GetString("Styles of time change") );
 
-	int cm= (from)? from->WhichLines->GetSelection() : Options.GetInt(_T("Change mode"));
+	int cm= (from)? from->WhichLines->GetSelection() : Options.GetInt("Change mode");
 	if(cm>(int)WhichLines->GetCount()){cm=0;}
 	WhichLines->SetSelection(cm);
    
-	WhichTimes->SetSelection((from)? from->WhichTimes->GetSelection() : Options.GetInt(_T("Start end times")));
+	WhichTimes->SetSelection((from)? from->WhichTimes->GetSelection() : Options.GetInt("Start end times"));
    
 	if( (from)? from->StartVAtime->GetValue() : (mto & 2)>0 ){StartVAtime->SetValue(true);}
 	else{EndVAtime->SetValue(true);}
 
-	CorTime->SetSelection((from)? from->CorTime->GetSelection() : Options.GetInt(_T("Corect times")));
-	int enables = Options.GetInt(_T("Postprocessor enabling"));
+	CorTime->SetSelection((from)? from->CorTime->GetSelection() : Options.GetInt("Corect times"));
+	int enables = Options.GetInt("Postprocessor enabling");
 	if(((enables & 16) && !LeadIn) || ( !(enables & 16) && LeadIn)){
 		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,22999); 
 		CollapsePane(evt);
@@ -300,14 +300,14 @@ void CTwindow::RefVals(CTwindow *from)
 		LeadOut->SetValue((from)? from->LeadOut->GetValue() : (enables & 2)>0);
 		Continous->SetValue((from)? from->Continous->GetValue() : (enables & 4)>0);
 		SnapKF->SetValue((from)? from->SnapKF->GetValue() : (enables & 8)>0);
-		LITime->SetInt((from)? from->LITime->GetInt() : Options.GetInt(_T("Lead in")));
-		LOTime->SetInt((from)? from->LOTime->GetInt() : Options.GetInt(_T("Lead out")));
-		ThresStart->SetInt((from)? from->ThresStart->GetInt() : Options.GetInt(_T("Threshold start")));
-		ThresEnd->SetInt((from)? from->ThresEnd->GetInt() : Options.GetInt(_T("Threshold end")));
-		BeforeStart->SetInt((from)? from->BeforeStart->GetInt() : Options.GetInt(_T("Keyframe before start")));
-		AfterStart->SetInt((from)? from->AfterStart->GetInt() : Options.GetInt(_T("Keyframe after start")));
-		BeforeEnd->SetInt((from)? from->BeforeEnd->GetInt() : Options.GetInt(_T("Keyframe before end")));
-		AfterEnd->SetInt((from)? from->AfterEnd->GetInt() : Options.GetInt(_T("Keyframe after end")));
+		LITime->SetInt((from)? from->LITime->GetInt() : Options.GetInt("Lead in"));
+		LOTime->SetInt((from)? from->LOTime->GetInt() : Options.GetInt("Lead out"));
+		ThresStart->SetInt((from)? from->ThresStart->GetInt() : Options.GetInt("Threshold start"));
+		ThresEnd->SetInt((from)? from->ThresEnd->GetInt() : Options.GetInt("Threshold end"));
+		BeforeStart->SetInt((from)? from->BeforeStart->GetInt() : Options.GetInt("Keyframe before start"));
+		AfterStart->SetInt((from)? from->AfterStart->GetInt() : Options.GetInt("Keyframe after start"));
+		BeforeEnd->SetInt((from)? from->BeforeEnd->GetInt() : Options.GetInt("Keyframe before end"));
+		AfterEnd->SetInt((from)? from->AfterEnd->GetInt() : Options.GetInt("Keyframe after end"));
 	}
    
 }
@@ -316,12 +316,12 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 {
 	bool hos = (LeadIn==NULL);
 	if(hos){
-		liosizer=new wxStaticBoxSizer(wxHORIZONTAL,this,_("Wstêp i zakoñczenie"));
+		liosizer=new wxStaticBoxSizer(wxHORIZONTAL,this,_("WstÄ™p i zakoÅ„czenie"));
 
 		wxFlexGridSizer *fgsizer = new wxFlexGridSizer(2, 4, 4);
-		LeadIn=new wxCheckBox(this, -1, _("Wstêp"),wxDefaultPosition, wxSize(117,-1));
+		LeadIn=new wxCheckBox(this, -1, _("WstÄ™p"),wxDefaultPosition, wxSize(117,-1));
 		LITime=new NumCtrl(this,-1,"200",-10000,10000,true,wxDefaultPosition, wxSize(40,-1));
-		LeadOut=new wxCheckBox(this, -1, _("Zakoñczenie"),wxDefaultPosition, wxSize(117,-1));
+		LeadOut=new wxCheckBox(this, -1, _("ZakoÅ„czenie"),wxDefaultPosition, wxSize(117,-1));
 		LOTime=new NumCtrl(this,-1,"300",-10000,10000,true,wxDefaultPosition, wxSize(40,-1));
 	
 		fgsizer->Add(LeadIn,wxEXPAND|wxLEFT,4);
@@ -331,8 +331,8 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 
 		liosizer->Add(fgsizer,0,wxEXPAND|wxLEFT|wxRIGHT,2);
 	
-		consizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Ustaw czasy jako ci¹g³e"));
-		Continous=new wxCheckBox(this, -1, _("W³¹cz"));
+		consizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Ustaw czasy jako ciÄ…gÅ‚e"));
+		Continous=new wxCheckBox(this, -1, _("WÅ‚Ä…cz"));
 
 		consizer->Add(Continous,0,wxEXPAND|wxALL, 2);
 
@@ -340,15 +340,15 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		ThresStart=new NumCtrl(this,-1,"0",0,10000,true,wxDefaultPosition, wxSize(40,-1));
 		ThresEnd=new NumCtrl(this,-1,"300",0,10000,true,wxDefaultPosition, wxSize(40,-1));
 	
-		fgsizer1->Add(new EBStaticText(this,_("Próg czasu pocz¹tku"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
+		fgsizer1->Add(new EBStaticText(this,_("PrÃ³g czasu poczÄ…tku"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer1->Add(ThresStart,0);
-		fgsizer1->Add(new EBStaticText(this,_("Próg czasu koñca"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
+		fgsizer1->Add(new EBStaticText(this,_("PrÃ³g czasu koÅ„ca"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer1->Add(ThresEnd,0);
 	
 		consizer->Add(fgsizer1,0,wxEXPAND,0);
 
-		snapsizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Wyrównaj do klatek kl."));
-		SnapKF=new wxCheckBox(this, -1, _("W³¹cz"));
+		snapsizer=new wxStaticBoxSizer(wxVERTICAL,this,_("WyrÃ³wnaj do klatek kl."));
+		SnapKF=new wxCheckBox(this, -1, _("WÅ‚Ä…cz"));
 		SnapKF->Enable(false);
 		snapsizer->Add(SnapKF,0,wxEXPAND|wxALL, 2);
 
@@ -358,28 +358,28 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		BeforeEnd=new NumCtrl(this,-1,"50",0,1000,true,wxDefaultPosition, wxSize(40,-1));
 		AfterEnd=new NumCtrl(this,-1,"150",0,1000,true,wxDefaultPosition, wxSize(40,-1));
 	
-		fgsizer2->Add(new EBStaticText(this,_("Przed czasem pocz¹tku"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
+		fgsizer2->Add(new EBStaticText(this,_("Przed czasem poczÄ…tku"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer2->Add(BeforeStart,0);
-		fgsizer2->Add(new EBStaticText(this,_("Po czasie pocz¹tku"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
+		fgsizer2->Add(new EBStaticText(this,_("Po czasie poczÄ…tku"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer2->Add(AfterStart,0);
-		fgsizer2->Add(new EBStaticText(this,_("Przed czasem koñca"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
+		fgsizer2->Add(new EBStaticText(this,_("Przed czasem koÅ„ca"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer2->Add(BeforeEnd,0);
-		fgsizer2->Add(new EBStaticText(this,_("Po czasie koñca"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
+		fgsizer2->Add(new EBStaticText(this,_("Po czasie koÅ„ca"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer2->Add(AfterEnd,0);
 	
 		snapsizer->Add(fgsizer2,0,wxEXPAND,0);
 
 
-		LeadIn->SetToolTip(_("Wstawia wstêp do czasu pocz¹tkowego, dobre przy stosowaniu fad"));
-		LITime->SetToolTip(_("Czas wstêpu w milisekundach"));
-		LeadOut->SetToolTip(_("Wstawia zakoñczenie do czasu koñcowego, dobre przy stosowaniu fad"));
-		LOTime->SetToolTip(_("Czas zakoñczenia w milisekundach"));
-		ThresStart->SetToolTip(_("Próg wyd³u¿ania czasu pocz¹tkowego"));
-		ThresEnd->SetToolTip(_("Próg wyd³u¿ania czasu koñcowego"));
-		BeforeStart->SetToolTip(_("Maksymalne przesuniêcie do klatki kluczowej\nprzed czasem pocz¹tkowym w milisekundach"));
-		AfterStart->SetToolTip(_("Maksymalne przesuniêcie do klatki kluczowej\npo czasie pocz¹tkowym w milisekundach"));
-		BeforeEnd->SetToolTip(_("Maksymalne przesuniêcie do klatki kluczowej\nprzed czasem koñcowym w milisekundach"));
-		AfterEnd->SetToolTip(_("Maksymalne przesuniêcie do klatki kluczowej\npo czasie koñcowym w milisekundach"));
+		LeadIn->SetToolTip(_("Wstawia wstÄ™p do czasu poczÄ…tkowego, dobre przy stosowaniu fad"));
+		LITime->SetToolTip(_("Czas wstÄ™pu w milisekundach"));
+		LeadOut->SetToolTip(_("Wstawia zakoÅ„czenie do czasu koÅ„cowego, dobre przy stosowaniu fad"));
+		LOTime->SetToolTip(_("Czas zakoÅ„czenia w milisekundach"));
+		ThresStart->SetToolTip(_("PrÃ³g wydÅ‚uÅ¼ania czasu poczÄ…tkowego"));
+		ThresEnd->SetToolTip(_("PrÃ³g wydÅ‚uÅ¼ania czasu koÅ„cowego"));
+		BeforeStart->SetToolTip(_("Maksymalne przesuniÄ™cie do klatki kluczowej\nprzed czasem poczÄ…tkowym w milisekundach"));
+		AfterStart->SetToolTip(_("Maksymalne przesuniÄ™cie do klatki kluczowej\npo czasie poczÄ…tkowym w milisekundach"));
+		BeforeEnd->SetToolTip(_("Maksymalne przesuniÄ™cie do klatki kluczowej\nprzed czasem koÅ„cowym w milisekundach"));
+		AfterEnd->SetToolTip(_("Maksymalne przesuniÄ™cie do klatki kluczowej\npo czasie koÅ„cowym w milisekundach"));
 
 		Main->Add(liosizer,0,wxEXPAND|wxLEFT|wxBOTTOM|wxRIGHT,4);
 		Main->Add(consizer,0,wxEXPAND|wxLEFT|wxBOTTOM|wxRIGHT,4);
@@ -404,8 +404,8 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		LeadIn=NULL;
 		((TabPanel*)GetParent())->BoxSizer3->Layout();
 	}
-	int pe = Options.GetInt(_T("Postprocessor enabling"));
-	Options.SetInt(_T("Postprocessor enabling"), (hos)? pe | 16 : pe ^ 16);
+	int pe = Options.GetInt("Postprocessor enabling");
+	Options.SetInt("Postprocessor enabling", (hos)? pe | 16 : pe ^ 16);
 	
 }
 

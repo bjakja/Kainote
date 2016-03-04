@@ -1,4 +1,4 @@
-
+ï»¿
 //#include "Toolbar.h"
 #include "config.h"
 #include "Hotkeys.h"
@@ -49,7 +49,7 @@ void KaiToolbar::InitToolbar()
 	{
 		/*if(IDS[i]==-1){AddSpacer();xy+=12; continue;}*/
 		wxMenuItem *item=mb->FindItem(IDS[i]);
-		if(!item){wxLogStatus(_("Nie mo¿na znaleŸæ elementu o id %i"), IDS[i]);continue;}
+		if(!item){wxLogStatus(_("Nie moÅ¼na znaleÅºÄ‡ elementu o id %i"), IDS[i]);continue;}
 		wxString desc=item->GetItemLabelText();
 		//desc.Replace("&","");
 		//size_t reps=desc.Replace("\t"," (");
@@ -118,7 +118,7 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 	
 	if(elem<0||event.Leaving()){/*if(HasCapture()){ReleaseMouse();}*/if(HasToolTips()){UnsetToolTip();}int tmpsel= sel; sel=-1;oldelem=-1;Clicked=false;if(tmpsel!=sel){Refresh(false);}return;}
 	if(elem==tools.size()-1){
-		SetToolTip(_("Wybierz ikony paska narzêdzi"));
+		SetToolTip(_("Wybierz ikony paska narzÄ™dzi"));
 		sel=elem;oldelem=elem;
 		Refresh(false);
 	}

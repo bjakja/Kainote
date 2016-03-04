@@ -1,4 +1,4 @@
-
+ï»¿
 #include <wx/wx.h>
 #include "ColorChange.h"
 #include <wx/intl.h>
@@ -42,12 +42,12 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	wxBoxSizer *fntsizer=new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *biussizer=new wxBoxSizer(wxHORIZONTAL);
 	sfont = new wxComboBox(this, ID_FONTNAME,"", wxDefaultPosition, wxDefaultSize, fontList);
-	ssize = new NumCtrl(this, ID_TOUTLINE, _T("32"),1,10000,false, wxDefaultPosition, wxSize(66,-1), wxTE_PROCESS_ENTER);
+	ssize = new NumCtrl(this, ID_TOUTLINE, "32",1,10000,false, wxDefaultPosition, wxSize(66,-1), wxTE_PROCESS_ENTER);
 
 	sb = new wxCheckBox(this, ID_CBOLD, _("Pogrubienie"), wxDefaultPosition, wxSize(73,15));
 	si = new wxCheckBox(this, ID_CBOLD, _("Kursywa"), wxDefaultPosition, wxSize(73,15));
-	su = new wxCheckBox(this, ID_CBOLD, _("Podkreœlenie"), wxDefaultPosition, wxSize(73,15));
-	ss = new wxCheckBox(this, ID_CBOLD, _("Przekreœlenie"), wxDefaultPosition, wxSize(73,15));
+	su = new wxCheckBox(this, ID_CBOLD, _("PodkreÅ›lenie"), wxDefaultPosition, wxSize(73,15));
+	ss = new wxCheckBox(this, ID_CBOLD, _("PrzekreÅ›lenie"), wxDefaultPosition, wxSize(73,15));
 
 	fntsizer->Add(sfont,4,wxEXPAND|wxALL,2);
 	fntsizer->Add(ssize,1,wxEXPAND|wxALL,2);
@@ -60,19 +60,19 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	stylefont->Add(fntsizer,0,wxEXPAND,0);
 	stylefont->Add(biussizer,0,wxEXPAND|wxALIGN_CENTER,0);
 
-	wxStaticBoxSizer *stylekol= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Kolory, przezroczystoœæ"));
+	wxStaticBoxSizer *stylekol= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Kolory, przezroczystoÅ›Ä‡"));
 
 	wxGridSizer *kolgrid=new wxGridSizer(4,2,2);
 	
 	s1 = new wxButton(this, ID_BCOLOR1, _("Pierwszy"));
 	s2 = new wxButton(this, ID_BCOLOR2, _("Drugi"));
-	s3 = new wxButton(this, ID_BCOLOR3, _("Obwódka"));
-	s4 = new wxButton(this, ID_BCOLOR4, _("Cieñ"));
+	s3 = new wxButton(this, ID_BCOLOR3, _("ObwÃ³dka"));
+	s4 = new wxButton(this, ID_BCOLOR4, _("CieÅ„"));
 
-	alpha1 = new NumCtrl(this, ID_TOUTLINE, _T("0"),0,255,true, wxDefaultPosition, wxSize(80,-1),wxTE_PROCESS_ENTER);
-	alpha2 = new NumCtrl(this, ID_TOUTLINE, _T("0"),0,255,true, wxDefaultPosition, wxSize(80,-1),wxTE_PROCESS_ENTER);
-	alpha3 = new NumCtrl(this, ID_TOUTLINE, _T("0"),0,255,true, wxDefaultPosition, wxSize(80,-1),wxTE_PROCESS_ENTER);
-	alpha4 = new NumCtrl(this, ID_TOUTLINE, _T("0"),0,255,true, wxDefaultPosition, wxSize(80,-1),wxTE_PROCESS_ENTER);
+	alpha1 = new NumCtrl(this, ID_TOUTLINE, "0",0,255,true, wxDefaultPosition, wxSize(80,-1),wxTE_PROCESS_ENTER);
+	alpha2 = new NumCtrl(this, ID_TOUTLINE, "0",0,255,true, wxDefaultPosition, wxSize(80,-1),wxTE_PROCESS_ENTER);
+	alpha3 = new NumCtrl(this, ID_TOUTLINE, "0",0,255,true, wxDefaultPosition, wxSize(80,-1),wxTE_PROCESS_ENTER);
+	alpha4 = new NumCtrl(this, ID_TOUTLINE, "0",0,255,true, wxDefaultPosition, wxSize(80,-1),wxTE_PROCESS_ENTER);
 
 	kolgrid->Add(s1,1,wxEXPAND|wxALL,2);
 	kolgrid->Add(s2,1,wxEXPAND|wxALL,2);
@@ -86,7 +86,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 	stylekol->Add(kolgrid,1,wxEXPAND|wxALL,2);
 
-	wxStaticBoxSizer *styleattr= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Obwódka, cieñ, skala"));
+	wxStaticBoxSizer *styleattr= new wxStaticBoxSizer(wxHORIZONTAL, this, _("ObwÃ³dka, cieÅ„, skala"));
 
 	sou = new NumCtrl(this, ID_TOUTLINE, "", 0,1000000,false,wxDefaultPosition, wxSize(83,-1), wxTE_PROCESS_ENTER);
 	ssh = new NumCtrl(this, ID_TOUTLINE, "", 0,1000000,false, wxDefaultPosition, wxSize(83,-1), wxTE_PROCESS_ENTER);
@@ -100,7 +100,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 	wxBoxSizer *sizer1 = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *sizer2 = new wxBoxSizer(wxHORIZONTAL);
-	wxStaticBoxSizer *styleattr1= new wxStaticBoxSizer(wxHORIZONTAL, this, _("K¹t, odstêpy, typ obwódki"));
+	wxStaticBoxSizer *styleattr1= new wxStaticBoxSizer(wxHORIZONTAL, this, _("KÄ…t, odstÄ™py, typ obwÃ³dki"));
 
 	san = new NumCtrl(this, ID_TOUTLINE, "",-1000000,1000000,false, wxDefaultPosition, wxSize(65,-1), wxTE_PROCESS_ENTER);
 	ssp = new NumCtrl(this, ID_TOUTLINE, "",-1000000,1000000,false, wxDefaultPosition, wxSize(65,-1), wxTE_PROCESS_ENTER);
@@ -123,19 +123,19 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	sizer1->Add(styleattr1,0,wxEXPAND,0);
 	sizer1->Add(stylemargs,0,wxEXPAND,0);
 
-	wxStaticBoxSizer *stylean= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Po³o¿enie tekstu"));
+	wxStaticBoxSizer *stylean= new wxStaticBoxSizer(wxHORIZONTAL, this, _("PoÅ‚oÅ¼enie tekstu"));
 
 	wxGridSizer *angrid=new wxGridSizer(3,5,2);
 
-	rb7 = new wxRadioButton(this, ID_RAN7, _T("7"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	rb8 = new wxRadioButton(this, ID_RAN8, _T("8"));
-	rb9 = new wxRadioButton(this, ID_RAN9, _T("9"));
-	rb4 = new wxRadioButton(this, ID_RAN4, _T("4"));
-	rb5 = new wxRadioButton(this, ID_RAN5, _T("5"));
-	rb6 = new wxRadioButton(this, ID_RAN6, _T("6"));
-	rb1 = new wxRadioButton(this, ID_RAN1, _T("1"));
-	rb2 = new wxRadioButton(this, ID_RAN2, _T("2"));
-	rb3 = new wxRadioButton(this, ID_RAN3, _T("3"));
+	rb7 = new wxRadioButton(this, ID_RAN7, "7", wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	rb8 = new wxRadioButton(this, ID_RAN8, "8");
+	rb9 = new wxRadioButton(this, ID_RAN9, "9");
+	rb4 = new wxRadioButton(this, ID_RAN4, "4");
+	rb5 = new wxRadioButton(this, ID_RAN5, "5");
+	rb6 = new wxRadioButton(this, ID_RAN6, "6");
+	rb1 = new wxRadioButton(this, ID_RAN1, "1");
+	rb2 = new wxRadioButton(this, ID_RAN2, "2");
+	rb3 = new wxRadioButton(this, ID_RAN3, "3");
 	
 	angrid->Add(rb7,1,wxEXPAND|wxALL,2);
 	angrid->Add(rb8,1,wxEXPAND|wxALL,2);
@@ -154,39 +154,39 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	
 	
 	encs.Add(_("0 - ANSI"));
-	encs.Add(_("1 - Domyœlny"));
+	encs.Add(_("1 - DomyÅ›lny"));
 	encs.Add(_("2 - Symbol"));
 	encs.Add(_("77 - Mac"));
-	encs.Add(_("128 - Japoñski"));
-	encs.Add(_("129 - Koreañski"));
+	encs.Add(_("128 - JapoÅ„ski"));
+	encs.Add(_("129 - KoreaÅ„ski"));
 	encs.Add(_("130 - Johab"));
-	encs.Add(_("134 - Chiñski GB2312"));
-	encs.Add(_("135 - Chiñski BIG5"));
+	encs.Add(_("134 - ChiÅ„ski GB2312"));
+	encs.Add(_("135 - ChiÅ„ski BIG5"));
 	encs.Add(_("161 - Grecki"));
 	encs.Add(_("162 - Turecki"));
 	encs.Add(_("163 - Wietnamski"));
 	encs.Add(_("177 - Hebrajski"));
 	encs.Add(_("178 - Arabski"));
-	encs.Add(_("186 - Jêzyki Ba³tyckie"));
+	encs.Add(_("186 - JÄ™zyki BaÅ‚tyckie"));
 	encs.Add(_("204 - Rosyjski"));
 	encs.Add(_("222 - Tajski"));
-	encs.Add(_("238 - Europa Œrodkowa (Polski)"));
+	encs.Add(_("238 - Europa Åšrodkowa (Polski)"));
 	encs.Add(_("255 - OEM"));
 	
 	wxStaticBoxSizer *styleenc= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Kodowanie tekstu"));
 	senc = new wxChoice(this, ID_CENCODING, wxDefaultPosition, wxDefaultSize, encs);
 	styleenc->Add(senc,1,wxEXPAND|wxALL,2);
 
-	wxStaticBoxSizer *styleprev= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Podgl¹d stylu"));
+	wxStaticBoxSizer *styleprev= new wxStaticBoxSizer(wxHORIZONTAL, this, _("PodglÄ…d stylu"));
 	//Preview= new wxTextCtrl(this, -1, Options.GetString("Preview Text"), wxDefaultPosition, wxSize(-1,100), wxTE_PROCESS_ENTER|wxTE_MULTILINE|wxTE_CENTRE);
 	Preview= new StylePreview(this, -1, wxDefaultPosition, wxSize(-1,100));
 	styleprev->Add(Preview,1,wxEXPAND|wxALL,2);
 
 	wxBoxSizer *buttons=new wxBoxSizer(wxHORIZONTAL);
-	Button1 = new wxButton(this, ID_BOK, _T("Ok"), wxDefaultPosition, wxSize(50,-1));
+	Button1 = new wxButton(this, ID_BOK, "Ok", wxDefaultPosition, wxSize(50,-1));
 	Button3 = new wxButton(this, ID_BCANCEL, _("Anuluj"));
 	Button2 = new wxButton(this, ID_BONVID, _("Zastosuj"));
-	Button4 = new wxButton(this, ID_BONFULL, _("Zobacz na pe³nym ekranie"));
+	Button4 = new wxButton(this, ID_BONFULL, _("Zobacz na peÅ‚nym ekranie"));
 	buttons->Add(Button1,0,wxEXPAND|wxALL,2);
 	buttons->Add(Button2,0,wxEXPAND|wxALL,2);
 	buttons->Add(Button3,0,wxEXPAND|wxALL,2);
@@ -276,7 +276,7 @@ void ColorChange::OnOKClick(wxCommandEvent& event)
 {
 	UpdateStyle();
 	Hide();
-	//kopiujemy, bo by zapobiec wyciekom nale¿y tab niezw³ocznie usun¹æ.
+	//kopiujemy, bo by zapobiec wyciekom naleÅ¼y tab niezwÅ‚ocznie usunÄ…Ä‡.
     SS->changestyle(tab->Copy());
 	wxDELETE(tab);
 	  
@@ -329,9 +329,9 @@ void ColorChange::UpdateValues(Styles *styless)
     sob->SetValue(tab->BorderStyle);
     //if(tab->BorderStyle){sob->SetValue(true);}else{sob->SetValue(false);};
     wxString an=tab->Alignment;
-    if(an==_T("1")){rb1->SetValue(true);}else if(an==_T("2")){rb2->SetValue(true);}else if(an==_T("3")){rb3->SetValue(true);}else if(an==_T("4")){rb4->SetValue(true);}
-    else if(an==_T("5")){rb5->SetValue(true);}else if(an==_T("6")){rb6->SetValue(true);}else if(an==_T("7")){rb7->SetValue(true);}
-    else if(an==_T("8")){rb8->SetValue(true);}else if(an==_T("9")){rb9->SetValue(true);};
+    if(an=="1"){rb1->SetValue(true);}else if(an=="2"){rb2->SetValue(true);}else if(an=="3"){rb3->SetValue(true);}else if(an=="4"){rb4->SetValue(true);}
+    else if(an=="5"){rb5->SetValue(true);}else if(an=="6"){rb6->SetValue(true);}else if(an=="7"){rb7->SetValue(true);}
+    else if(an=="8"){rb8->SetValue(true);}else if(an=="9"){rb9->SetValue(true);};
     ssx->SetString(tab->ScaleX);
     ssy->SetString(tab->ScaleY);
     sml->SetString(tab->MarginL);
@@ -351,7 +351,7 @@ void ColorChange::UpdateValues(Styles *styless)
 void ColorChange::OnStyleVideo(wxCommandEvent& event)
 {
 	UpdateStyle();
-	//tu tab zostaje bo w przeciwnym wypadku dialog straci swoj¹ klasê a przecie¿ jest jeszcze widoczny.
+	//tu tab zostaje bo w przeciwnym wypadku dialog straci swojÄ… klasÄ™ a przecieÅ¼ jest jeszcze widoczny.
 	SS->changestyle(tab->Copy());
 }
 
@@ -381,9 +381,9 @@ void ColorChange::UpdateStyle()
 	tab->Shadow = ssh->GetString();
 	tab->BorderStyle = sob->GetValue();
 	wxString an;
-	if(rb1->GetValue()){an=_T("1");}else if(rb2->GetValue()){an=_T("2");}else if(rb3->GetValue()){an=_T("3");}else if(rb4->GetValue()){an=_T("4");}
-	else if(rb5->GetValue()){an=_T("5");}else if(rb6->GetValue()){an=_T("6");}else if(rb7->GetValue()){an=_T("7");}
-	else if(rb8->GetValue()){an=_T("8");}else if(rb9->GetValue()){an=_T("9");};
+	if(rb1->GetValue()){an="1";}else if(rb2->GetValue()){an="2";}else if(rb3->GetValue()){an="3";}else if(rb4->GetValue()){an="4";}
+	else if(rb5->GetValue()){an="5";}else if(rb6->GetValue()){an="6";}else if(rb7->GetValue()){an="7";}
+	else if(rb8->GetValue()){an="8";}else if(rb9->GetValue()){an="9";};
 	tab->Alignment = an;
 	tab->ScaleX = ssx->GetString();
 	tab->ScaleY = ssy->GetString();
@@ -414,34 +414,34 @@ void ColorChange::DoTooltips()
 	ssize->SetToolTip(_("Rozmiar czcionki"));
 	sb->SetToolTip(_("Pogrubienie"));
 	si->SetToolTip(_("Pochylenie"));
-	su->SetToolTip(_("Podkreœlenie"));
-	ss->SetToolTip(_("Przekreœlenie"));
+	su->SetToolTip(_("PodkreÅ›lenie"));
+	ss->SetToolTip(_("PrzekreÅ›lenie"));
 	s1->SetToolTip(_("Kolor podstawowy"));
-	s2->SetToolTip(_("Kolor zastêpczy do karaoke"));
-	s3->SetToolTip(_("Kolor obwódki"));
+	s2->SetToolTip(_("Kolor zastÄ™pczy do karaoke"));
+	s3->SetToolTip(_("Kolor obwÃ³dki"));
 	s4->SetToolTip(_("Kolor cienia"));
-	alpha1->SetToolTip(_("Przezroczystoœæ koloru podstawowego, 0 - brak, 255 - przezroczystoœæ"));
-	alpha2->SetToolTip(_("Przezroczystoœæ koloru zastêpczego, 0 - brak, 255 - przezroczystoœæ"));
-	alpha3->SetToolTip(_("Przezroczystoœæ koloru obwódki, 0 - brak, 255 - przezroczystoœæ"));
-	alpha4->SetToolTip(_("Przezroczystoœæ koloru cienia, 0 - brak, 255 - przezroczystoœæ"));
-	sou->SetToolTip(_("Obwódka w pikselach"));
-	ssh->SetToolTip(_("Cieñ w pikselach"));
-	ssx->SetToolTip(_("Skala x w procentach"));
-	ssy->SetToolTip(_("Skala y w procentach"));
-	san->SetToolTip(_("K¹t w stopniach"));
-	ssp->SetToolTip(_("Odstêpy miêdzy literami w pikselach (wartoœci ujemne dozwolone)"));
-	sob->SetToolTip(_("Prostok¹tna obwódka"));
+	alpha1->SetToolTip(_("PrzezroczystoÅ›Ä‡ koloru podstawowego, 0 - brak, 255 - przezroczystoÅ›Ä‡"));
+	alpha2->SetToolTip(_("PrzezroczystoÅ›Ä‡ koloru zastÄ™pczego, 0 - brak, 255 - przezroczystoÅ›Ä‡"));
+	alpha3->SetToolTip(_("PrzezroczystoÅ›Ä‡ koloru obwÃ³dki, 0 - brak, 255 - przezroczystoÅ›Ä‡"));
+	alpha4->SetToolTip(_("PrzezroczystoÅ›Ä‡ koloru cienia, 0 - brak, 255 - przezroczystoÅ›Ä‡"));
+	sou->SetToolTip(_("ObwÃ³dka w pikselach"));
+	ssh->SetToolTip(_("CieÅ„ w pikselach"));
+	ssx->SetToolTip(_("Skala X w procentach"));
+	ssy->SetToolTip(_("Skala Y w procentach"));
+	san->SetToolTip(_("KÄ…t w stopniach"));
+	ssp->SetToolTip(_("OdstÄ™py miÄ™dzy literami w pikselach (wartoÅ›ci ujemne dozwolone)"));
+	sob->SetToolTip(_("ProstokÄ…tna obwÃ³dka"));
 	smr->SetToolTip(_("Margines prawy"));
 	sml->SetToolTip(_("Margines lewy"));
-	smv->SetToolTip(_("Margines górny i dolny"));
-	rb1->SetToolTip(_("Lewy dolny róg"));
-	rb2->SetToolTip(_("Wyœrodkowane na dole"));
-	rb3->SetToolTip(_("Prawy dolny róg"));
-	rb4->SetToolTip(_("Wyœrodkowane po lewej"));
-	rb5->SetToolTip(_("Wyœrodkowane"));
-	rb6->SetToolTip(_("Wyœrodkowane po prawej"));
-	rb7->SetToolTip(_("Lewy górny róg"));
-	rb8->SetToolTip(_("Wyœrodkowane u góry"));
-	rb9->SetToolTip(_("Prawy górny róg"));
+	smv->SetToolTip(_("Margines gÃ³rny i dolny"));
+	rb1->SetToolTip(_("Lewy dolny rÃ³g"));
+	rb2->SetToolTip(_("WyÅ›rodkowane na dole"));
+	rb3->SetToolTip(_("Prawy dolny rÃ³g"));
+	rb4->SetToolTip(_("WyÅ›rodkowane po lewej"));
+	rb5->SetToolTip(_("WyÅ›rodkowane"));
+	rb6->SetToolTip(_("WyÅ›rodkowane po prawej"));
+	rb7->SetToolTip(_("Lewy gÃ³rny rÃ³g"));
+	rb8->SetToolTip(_("WyÅ›rodkowane u gÃ³ry"));
+	rb9->SetToolTip(_("Prawy gÃ³rny rÃ³g"));
 	senc->SetToolTip(_("Kodowanie tekstu"));
 }

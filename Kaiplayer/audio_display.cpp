@@ -1,4 +1,4 @@
-// Copyright (c) 2005, Rodrigo Braz Monteiro
+ï»¿// Copyright (c) 2005, Rodrigo Braz Monteiro
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -852,22 +852,21 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 			if(Notebook::GetTab()->Video->VFF && fromvideo){
 				provider=Notebook::GetTab()->Video->VFF;ownProvider=false;}
 			else{provider = new VideoFfmpeg(file, Notebook::GetTabs()->iter, &success);
-			if (!success) {delete provider; provider = 0;loaded= false; return;}
-				Notebook::GetTab()->Video->player=this;ownProvider=true;}
+				if (!success || provider->SampleRate < 0) {
+					delete provider; provider = 0; 
+					loaded= false; return;
+				}
+				Notebook::GetTab()->Video->player=this;ownProvider=true;
+			}
 			
 
 			// Get player
 			player = new DirectSoundPlayer2();
-			//wxMessageBox("Player konstruktor");
-			//player->SetDisplayTimer(&UpdateTimer);
-			//wxMessageBox("Timer");
 			player->SetProvider(provider);
 			player->OpenStream();
-			//wxMessageBox("OpenStream");
 			loaded = true;
 			
 			UpdateImage();
-			//wxMessageBox("UpdateImage");
 		}
 		catch (const wxChar *e) {
 			if (player) { delete player; player = 0; }
@@ -1032,7 +1031,7 @@ void AudioDisplay::SetDialogue(Dialogue *diag,int n) {
 	// Actual parameters
 		// Set variables
 		line_n = n;
-		//dialog jest tylko odczytywany, jest on w³asnoœci¹ editboxa, usuwaæ go nie mo¿na.
+		//dialog jest tylko odczytywany, jest on wÅ‚asnoÅ›ciÄ… editboxa, usuwaÄ‡ go nie moÅ¼na.
 		dialogue = diag;
 		NeedCommit=false;
 		whichsyl=0;
@@ -1288,7 +1287,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 				}
 
 				
-				//¿ó³te linie karaoke
+				//Å¼Ã³Å‚te linie karaoke
 				else if(hasKara && y>20)
 				{
 					if(!karaoke->CheckIfOver(x, &Grabbed)){
@@ -1371,7 +1370,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 					selStart = MAX(0, selStart);
 					selEnd = MAX(0, selEnd);
 					int nn = Edit->ebrow;
-					//automatyczne ustawianie czasów nastêpnej linijki (Chwyt mysz¹ end + ctrl)
+					//automatyczne ustawianie czasÃ³w nastÄ™pnej linijki (Chwyt myszÄ… end + ctrl)
 					//wxLogStatus(" hold %i %i %i %i", hold, nn, (int)event.ControlDown(), (int)event.AltDown());
 					if(hold==2 && nn<grid->GetCount()-1 && event.ControlDown() && event.AltDown())
 					{

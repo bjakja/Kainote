@@ -45,9 +45,6 @@ class kainoteFrame: public wxFrame
 
         bool OpenFile(wxString filename,bool fulls=false);
 		void Label(int iter=0,bool video=false, int wtab=-1);
-
-        
-        //void UpdateMenu();
 		
 		void SetRecent(short what=0);
 		void AppendRecent(short what=0,wxMenu *Menu=0);

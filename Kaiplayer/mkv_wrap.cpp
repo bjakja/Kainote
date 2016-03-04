@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2006, Rodrigo Braz Monteiro, Mike Matsnev
+Ôªø// Copyright (c) 2004-2006, Rodrigo Braz Monteiro, Mike Matsnev
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -93,8 +93,8 @@ void MatroskaWrapper::Open(wxString filename,bool parse) {
 		// Failed parsing
 		if (!file) {
 			delete input;
-			//throw wxString(_T("MatroskaParser error: ") + wxString(err,wxConvUTF8)).c_str();
-			wxLogStatus(_("B≥πd MatroskaParsera: ") + wxString(err,wxConvUTF8));
+			//throw wxString("MatroskaParser error: " + wxString(err,wxConvUTF8)).c_str();
+			wxLogStatus(_("B≈ÇƒÖd MatroskaParsera: ") + wxString(err,wxConvUTF8));
 		}
 
 		// Parse
@@ -104,8 +104,8 @@ void MatroskaWrapper::Open(wxString filename,bool parse) {
 	// Failed opening
 	else {
 		delete input;
-		//throw _T("Unable to open Matroska file for parsing.");
-		wxLogStatus(_("Nie moøna otworzyÊ pliku Matroska."));
+		//throw "Unable to open Matroska file for parsing.";
+		wxLogStatus(_("Nie mo≈ºna otworzyƒá pliku Matroska."));
 	}
 }
 
@@ -153,9 +153,9 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 			wxString TrackLanguage = wxString(trackInfo->Language,*wxConvCurrent);
 			
 			// Known subtitle format
-			if (CodecID == _T("S_TEXT/SSA") || CodecID == _T("S_TEXT/ASS") || CodecID == _T("S_TEXT/UTF8")) {
+			if (CodecID == "S_TEXT/SSA" || CodecID == "S_TEXT/ASS" || CodecID == "S_TEXT/UTF8") {
 				tracksFound.Add(track);
-				tracksNames.Add(wxString::Format(_T("%i ("),track) + CodecID + _T(" ") + TrackLanguage + _T("): ") + TrackName);
+				tracksNames.Add(wxString::Format("%i (",track) + CodecID + " " + TrackLanguage + "): " + TrackName);
 			}
 		}
 	}
@@ -164,7 +164,7 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 	// No tracks found
 	if (tracksFound.Count() == 0) {
 		Close();
-		wxMessageBox(_("Plik nie ma øadnej úcieøki z napisami."));
+		wxMessageBox(_("Plik nie ma ≈ºadnej ≈õcie≈ºki z napisami."));
 		return false;
 	}
 	
@@ -175,7 +175,7 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 
 	// Pick a track
 	else {
-		int choice = wxGetSingleChoiceIndex(_("Wybierz úcieøkÍ do wczytania:"), _("Znaleziono kilka úcieøek z napisami"), tracksNames);
+		int choice = wxGetSingleChoiceIndex(_("Wybierz ≈õcie≈ºkƒô do wczytania:"), _("Znaleziono kilka ≈õcie≈ºek z napisami"), tracksNames);
 		if (choice == -1) {
 			Close();
 			wxMessageBox(_("Anulowano."));
@@ -195,11 +195,11 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 			char msg[201];
 			msg[200]=0;
 			cs=cs_Create(file,trackToRead,msg,200);
-			if(!cs){wxLogStatus(_("B≥πd zlib: %s"), msg);}
+			if(!cs){wxLogStatus(_("B≈ÇƒÖd zlib: %s"), msg);}
 		}
 		wxString CodecID = wxString(trackInfo->CodecID,*wxConvCurrent);
 		int codecType = 0;
-		if (CodecID == _T("S_TEXT/UTF8")) codecType = 1;
+		if (CodecID == "S_TEXT/UTF8") codecType = 1;
 
 		
 
@@ -215,7 +215,7 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 		// Progress bar
 		int totalTime = int(double(segInfo->Duration) / timecodeScale);
 
-		ProgresDialog *progress = new ProgresDialog(NULL,_("Odczyt napisÛw z pliku Matroska."));
+		ProgresDialog *progress = new ProgresDialog(NULL,_("Odczyt napis√≥w z pliku Matroska."));
 
 
 		// Load blocks
@@ -259,18 +259,18 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 			if (codecType == 0) { startTime=ZEROIT(startTime); endTime=ZEROIT(endTime);}
 			subStart.NewTime(startTime);
 			subEnd.NewTime(endTime);
-			//wxLogMessage(subStart.GetASSFormated() + _T("-") + subEnd.GetASSFormated() + _T(": ") + blockString);
+			//wxLogMessage(subStart.GetASSFormated() + "-" + subEnd.GetASSFormated() + ": " + blockString);
 
 			// Process SSA/ASS
 			if (codecType == 0) {
 				// Get order number
-				int pos = blockString.Find(_T(","));
+				int pos = blockString.Find(",");
 				wxString orderString = blockString.Left(pos);
 				orderString.ToLong(&order);
 				blockString = blockString.Mid(pos+1);
 
 				// Get layer number
-				pos = blockString.Find(_T(","));
+				pos = blockString.Find(",");
 				long int layer = 0;
 				if (pos) {
 					wxString layerString = blockString.Left(pos);
@@ -279,14 +279,14 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 					}
 				if(blockString==""){blockString<<"Default,,0000,0000,0000,,";}
 				// Assemble final
-				blockString = wxString::Format(_T("Dialogue: %li,"),layer) + subStart.raw() + _T(",") + subEnd.raw() + _T(",") + blockString;
+				blockString = wxString::Format("Dialogue: %li,",layer) + subStart.raw() + "," + subEnd.raw() + "," + blockString;
 					
 			}
 
 			// Process SRT
 			else {
 				
-				blockString = subStart.raw(SRT) + _T(" --> ") + subEnd.raw(SRT) + _T("\r\n") + blockString;
+				blockString = subStart.raw(SRT) + " --> " + subEnd.raw(SRT) + "\r\n" + blockString;
 				
 				order++;
 			}
@@ -320,12 +320,12 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 			delete[] privData;
 
 			// Load into file
-			wxString group = _T("[Script Info]");
-			if (CodecID == _T("S_TEXT/SSA")) form = 2;
-			wxStringTokenizer token(privString,_T("\r\n"),wxTOKEN_STRTOK);
+			wxString group = "[Script Info]";
+			if (CodecID == "S_TEXT/SSA") form = 2;
+			wxStringTokenizer token(privString,"\r\n",wxTOKEN_STRTOK);
 			while (token.HasMoreTokens()) {
 				wxString next = token.GetNextToken();
-				if (next[0] == _T('[')) group = next;
+				if (next[0] == '[') group = next;
 				if(group=="[Script Info]"&&!next.StartsWith(";")){
 					target->AddSInfo(next);
 				}
@@ -338,7 +338,7 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 
 		}
 		
-		//progress->Update(99,"Wstawianie napisÛw do okna");
+		//progress->Update(99,"Wstawianie napis√≥w do okna");
 		for (unsigned int i=0;i<subList.size();i++) {
 			target->AddLine(new Dialogue(subList[i]));
 		}

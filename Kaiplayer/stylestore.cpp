@@ -1,4 +1,4 @@
-#include "stylestore.h"
+ï»¿#include "stylestore.h"
 #include "kainoteMain.h"
 
 #include "config.h"
@@ -15,7 +15,7 @@
 
 
 stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
-	: wxDialog(parent,id,_("Mened¿er stylów"),pos,size,wxDEFAULT_DIALOG_STYLE)
+	: wxDialog(parent,id,_("MenedÅ¼er stylÃ³w"),pos,size,wxDEFAULT_DIALOG_STYLE)
 {
 
 	wxAcceleratorEntry centries[1];
@@ -23,7 +23,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	wxAcceleratorTable caccel(1, centries);
 	this->SetAcceleratorTable(caccel);
 
-	wxFont thisFont(8,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	wxFont thisFont(8,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 	SetFont(thisFont);
 
 	wxIcon icn;
@@ -42,7 +42,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	int chc=Choice1->FindString(Options.acdir);
 	Choice1->SetSelection(chc);
 	Button7 = new wxButton(this, ID_NEWCAT, _("Nowy"));
-	wxButton *delcat = new wxButton(this, ID_DELCAT, _("Usuñ"));
+	wxButton *delcat = new wxButton(this, ID_DELCAT, _("UsuÅ„"));
 	katsbs->Add(Choice1,4,wxEXPAND|wxALL,2);
 	katsbs->Add(Button7,0,wxEXPAND|wxLEFT,5);
 	katsbs->Add(delcat,0,wxEXPAND|wxLEFT,5);
@@ -57,7 +57,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	Button5 = new wxButton(this, ID_STORENEW, _("Nowy"),wxDefaultPosition, wxSize(50,-1));
 	Button8 = new wxButton(this, ID_STORECOPY, _("Kopiuj"));
 	Button9 = new wxButton(this, ID_STORELOAD, _("Wczytaj"));
-	Button12 = new wxButton(this, ID_STOREDEL, _("Usuñ"));
+	Button12 = new wxButton(this, ID_STOREDEL, _("UsuÅ„"));
 	Button13 = new wxButton(this, ID_STORESORT, _("Sortuj"));
 
 	katbutt->Add(Button5,1,wxEXPAND|wxALL,5);
@@ -89,17 +89,19 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	Button6 = new wxButton(this, ID_ASSNEW, _("Nowy"),wxDefaultPosition, wxSize(50,-1));
 	Button10 = new wxButton(this, ID_ASSCOPY, _("Kopiuj"));
 	Button11 = new wxButton(this, ID_ASSLOAD, _("Wczytaj"));
-	Button14 = new wxButton(this, ID_ASSDEL, _("Usuñ"));
+	Button14 = new wxButton(this, ID_ASSDEL, _("UsuÅ„"));
 	Button15 = new wxButton(this, ID_ASSSORT, _("Sortuj"));
+	SClean = new wxButton(this, ID_ASSCLEAN, _("OczyÅ›Ä‡"));
 
-	assbutt->Add(Button6,1,wxEXPAND|wxALL,5);
-	assbutt->Add(Button10,1,wxEXPAND|wxALL,5);
-	assbutt->Add(Button11,1,wxEXPAND|wxALL,5);
-	assbutt->Add(Button14,1,wxEXPAND|wxALL,5);
-	assbutt->Add(Button15,1,wxEXPAND|wxALL,5);
+	assbutt->Add(Button6,1,wxEXPAND|wxTOP|wxRIGHT|wxLEFT,5);
+	assbutt->Add(Button10,1,wxEXPAND|wxTOP|wxRIGHT|wxLEFT,5);
+	assbutt->Add(Button11,1,wxEXPAND|wxTOP|wxRIGHT|wxLEFT,5);
+	assbutt->Add(Button14,1,wxEXPAND|wxTOP|wxRIGHT|wxLEFT,5);
+	assbutt->Add(Button15,1,wxEXPAND|wxTOP|wxRIGHT|wxLEFT,5);
+	assbutt->Add(SClean,1,wxEXPAND|wxTOP|wxRIGHT|wxLEFT,5);
 
 	assall->Add(ASS,3,wxEXPAND,0);
-	assall->Add(assbutt,1,wxEXPAND,0);
+	assall->Add(assbutt,1,wxEXPAND|wxBOTTOM,5);
 
 	asssbs->Add(assall,0,wxEXPAND|wxALL,2);
 
@@ -136,6 +138,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	Connect(ID_ASSLOAD,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnAssLoad);
 	Connect(ID_ASSDEL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnAssDelete);
 	Connect(ID_ASSSORT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnAssSort);
+	Connect(ID_ASSCLEAN,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnCleanStyles);
 	Connect(ID_CONF,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&stylestore::OnConfirm);
 	Connect(ID_CLOSE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnClose);
 	Connect(wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&stylestore::OnClose);
@@ -196,7 +199,7 @@ void stylestore::OnAddToStore(wxCommandEvent& event)
 		Styles *stylc = grid->GetStyle(sels[i])->Copy();
 		int found=Options.FindStyle(stylc->Name);
 		if(found!=-1){
-			if(wxMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmieniæ go?"),
+			if(wxMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmieniÄ‡ go?"),
 				stylc->Name), _("Potwierdzenie"),wxICON_QUESTION | wxYES_NO, this) == wxYES ){
 					Options.ChangeStyle(stylc,found);Store->SetSelection(found);}
 		}else{Options.AddStyle(stylc);Store->SetSelection(Options.StoreSize()-1);}
@@ -217,7 +220,7 @@ void stylestore::OnAddToAss(wxCommandEvent& event)
 	{
 		Styles *stylc = Options.GetStyle(sels[i])->Copy();
 		int found=grid->FindStyle(stylc->Name);
-		if(found!=-1){if (wxMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmieniæ go?"),
+		if(found!=-1){if (wxMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmieniÄ‡ go?"),
 			stylc->Name), _("Potwierdzenie"),wxICON_QUESTION | wxYES_NO, this) == wxYES ){
 				grid->ChangeStyle(stylc,found);ASS->SetSelection(found);}
 		}else{grid->AddStyle(stylc);ASS->SetSelection(grid->StylesSize()-1);}
@@ -282,7 +285,7 @@ void stylestore::changestyle(Styles *cstyl)
 	if(fres!=-1 && dummy || (mult>1 || mult==1 && oldname!=cstyl->Name) && !dummy)
 	{
 		Mainall->Fit(this);
-		wxMessageBox(wxString::Format(_("Styl o nazwie \"%s\" jest ju¿ na liœcie."), cstyl->Name));
+		wxMessageBox(wxString::Format(_("Styl o nazwie \"%s\" jest juÅ¼ na liÅ›cie."), cstyl->Name));
 		return;
 	}
 	if(fres!=-1){selnum=fres;}
@@ -303,7 +306,7 @@ void stylestore::changestyle(Styles *cstyl)
 	}
 	Mainall->Fit(this);
 	if(oldname!=cstyl->Name && stass && !dummy){
-		int res=wxMessageBox(_("Nazwa stylu zosta³a zmieniona, czy chcesz zmieniæ j¹ tak¿e w napisach?"), _("Potwierdzenie"), wxYES_NO);
+		int res=wxMessageBox(_("Nazwa stylu zostaÅ‚a zmieniona, czy chcesz zmieniÄ‡ jÄ… takÅ¼e w napisach?"), _("Potwierdzenie"), wxYES_NO);
 		if(res==wxYES){
 			for(int i=0; i<grid->GetCount(); i++){
 				if(grid->GetDial(i)->Style==oldname)
@@ -351,7 +354,7 @@ void stylestore::OnDelCatalog(wxCommandEvent& event)
 	Options.acdir=Options.dirs[MAX(0,cat-1)];
 	Choice1->SetSelection(MAX(0,cat-1));
 	wxString path;
-	path<<Options.pathfull<<_T("\\Katalogi\\")<<Cat<<_T(".sty");
+	path<<Options.pathfull<<"\\Catalog\\"<<Cat<<".sty";
 	wxRemoveFile(path);
 	Options.LoadStyles(Options.acdir);
 	Store->Refresh(false);
@@ -388,22 +391,22 @@ void stylestore::LoadStylesS(bool isass)
 {
 	Grid* grid=Notebook::GetTab()->Grid1;
 	wxFileDialog *openFileDialog= new wxFileDialog(this, _("Wybierz plik ASS"), 
-		Notebook::GetTab()->SubsPath.BeforeLast('\\'), _T("*.ass"), _("Pliki napisów ASS(*.ass)|*.ass"), 
-		wxFD_OPEN|wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, _T("wxFileDialog"));
+		Notebook::GetTab()->SubsPath.BeforeLast('\\'), "*.ass", _("Pliki napisÃ³w ASS(*.ass)|*.ass"), 
+		wxFD_OPEN|wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "wxFileDialog");
 	if (openFileDialog->ShowModal() == wxID_OK){
 		OpenWrite op;
 		wxString ass= op.FileOpen(openFileDialog->GetPath());
-		size_t start=ass.find(_T("\nStyle: "));
-		size_t end=ass.find(_T("[Events]"));
+		size_t start=ass.find("\nStyle: ");
+		size_t end=ass.find("[Events]");
 		if(end<=start){return;}
 		std::vector<Styles*> tmps;
 		wxString styless=ass.SubString(start,end);
 		//wxMessageBox(styless);
-		wxStringTokenizer styletkn(styless,_T("\n"));
+		wxStringTokenizer styletkn(styless,"\n");
 		while(styletkn.HasMoreTokens())
 		{
 			wxString token=styletkn.NextToken();
-			if (token.StartsWith(_T("Style: "))){
+			if (token.StartsWith("Style: ")){
 				tmps.push_back(new Styles(token));
 			}
 		}
@@ -421,7 +424,7 @@ void stylestore::LoadStylesS(bool isass)
 						int fstyle=grid->FindStyle(stl.CheckListBox1->GetString(v));
 						if(fstyle==-1){grid->AddStyle(tmps[v]);ASS->Refresh(false);}
 						else{
-							if(wxMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmieniæ go?"),
+							if(wxMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmieniÄ‡ go?"),
 								stl.CheckListBox1->GetString(v)), _("Potwierdzenie"),wxICON_QUESTION | wxYES_NO, this) == wxYES ){
 									grid->ChangeStyle(tmps[v],fstyle);ASS->SetSelection(fstyle);
 							}
@@ -430,7 +433,7 @@ void stylestore::LoadStylesS(bool isass)
 						int fsstyle=Options.FindStyle(stl.CheckListBox1->GetString(v));
 						if(fsstyle==-1){Options.AddStyle(tmps[v]);Store->Refresh(false);}
 						else{
-							if(wxMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmieniæ go?"),
+							if(wxMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmieniÄ‡ go?"),
 								stl.CheckListBox1->GetString(v)), _("Potwierdzenie"),wxICON_QUESTION | wxYES_NO, this) == wxYES ){
 									Options.ChangeStyle(tmps[v],fsstyle);Store->SetSelection(fsstyle);}
 						}   
@@ -502,6 +505,39 @@ void stylestore::OnAssNew(wxCommandEvent& event)
 	modif();
 }
 
+void stylestore::OnCleanStyles(wxCommandEvent& event)
+{
+	std::map<wxString, bool> lineStyles;
+	wxString delStyles;
+	wxString existsStyles;
+	Grid *grid=Notebook::GetTab()->Grid1;
+	wxString tlStyle=grid->GetSInfo("TLMode Style");
+	
+	for(int i = 0; i < grid->GetCount(); i++){
+		lineStyles[grid->GetDial(i)->Style]=true;
+	}
+
+	int j = 0;
+	while(j < grid->StylesSize()){
+		wxString styleName = grid->GetStyle(j)->Name;
+		if(lineStyles.find(styleName) != lineStyles.end()){
+			existsStyles << styleName << L"\n";
+		}else{
+			if(styleName!=tlStyle){
+				delStyles << styleName << L"\n";
+				grid->DelStyle(j);
+				continue;
+			}else{existsStyles << styleName << L"\n";}
+		}
+		j++;
+	}
+
+	if(!delStyles.empty()){
+		modif();
+	}
+	wxMessageBox(wxString::Format(_("UÅ¼ywane style:\n%s\nUsuniÄ™te style:\n%s"), existsStyles, delStyles), _("Status usuniÄ™tych stylÃ³w"));
+}
+
 void stylestore::StyleonVideo(Styles *styl, bool fullskreen)
 {
 	TabPanel* pan=Notebook::GetTab();
@@ -542,10 +578,10 @@ void stylestore::StyleonVideo(Styles *styl, bool fullskreen)
 
 
 	wxString *txt=new wxString();
-	(*txt)<<_T("[Script Info]\r\n")<<grid->GetSInfos();
-	(*txt)<<_T("\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n");
+	(*txt)<<"[Script Info]\r\n"<<grid->GetSInfos();
+	(*txt)<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
 	(*txt)<<styl->styletext();
-	(*txt)<<_T(" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n");
+	(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
 
 	if(wl<0){
 		Dialogue tmpdial;
@@ -576,20 +612,20 @@ void stylestore::DoTooltips()
 {
 	Choice1->SetToolTip(_("Katalog styli"));
 	Button7->SetToolTip(_("Nowy katalog styli"));
-	//ASS->SetToolTip(_("Style napisów"));
+	//ASS->SetToolTip(_("Style napisÃ³w"));
 	//Store->SetToolTip(_("Style magazynu"));
-	Button5->SetToolTip(_("Utwórz nowy styl magazynu"));
+	Button5->SetToolTip(_("UtwÃ³rz nowy styl magazynu"));
 	Button8->SetToolTip(_("Kopiuj styl magazynu"));
 	Button9->SetToolTip(_("Wczytaj do magazynu styl z pliku ass"));
-	Button12->SetToolTip(_("Usuñ styl z magazynu"));
+	Button12->SetToolTip(_("UsuÅ„ styl z magazynu"));
 	Button13->SetToolTip(_("Sortuj style w magazynie"));
-	Button6->SetToolTip(_("Utwórz nowy styl napisów"));
-	Button10->SetToolTip(_("Kopiuj styl napisów"));
-	Button11->SetToolTip(_("Wczytaj do napisów styl z pliku ass"));
-	Button14->SetToolTip(_("Usuñ styl z napisów"));
+	Button6->SetToolTip(_("UtwÃ³rz nowy styl napisÃ³w"));
+	Button10->SetToolTip(_("Kopiuj styl napisÃ³w"));
+	Button11->SetToolTip(_("Wczytaj do napisÃ³w styl z pliku ass"));
+	Button14->SetToolTip(_("UsuÅ„ styl z napisÃ³w"));
 	Button15->SetToolTip(_("Sortuj style w napisach"));
-	Button3->SetToolTip(_("Dodaj do magazynu styl z napisów"));
-	Button4->SetToolTip(_("Dodaj do napisów styl z magazynu"));
+	Button3->SetToolTip(_("Dodaj do magazynu styl z napisÃ³w"));
+	Button4->SetToolTip(_("Dodaj do napisÃ³w styl z magazynu"));
 }
 
 void stylestore::OnConfirm(wxCommandEvent& event)
@@ -650,14 +686,14 @@ void stylestore::ReloadFonts()
 DWORD stylestore::CheckFontProc(void* cls)
 {
 	stylestore *ss=(stylestore*)cls;
-	if(!ss){wxLogStatus(_("Brak wskaŸnika klasy magazynu stylów."));return 0;}
+	if(!ss){wxLogStatus(_("Brak wskaÅºnika klasy magazynu stylÃ³w."));return 0;}
 
 	HANDLE hDir  = NULL; 
-	wxString fontrealpath=wxGetOSDirectory() + _T("\\fonts\\");
+	wxString fontrealpath=wxGetOSDirectory() + "\\fonts\\";
 
 	hDir = FindFirstChangeNotification( fontrealpath.wc_str(), TRUE, FILE_NOTIFY_CHANGE_FILE_NAME);// | FILE_NOTIFY_CHANGE_LAST_WRITE
 
-	if(hDir== INVALID_HANDLE_VALUE ){wxLogStatus(_("Nie mo¿na stworzyæ uchwytu notyfikacji zmian folderu czcionek.")); return 0;}
+	if(hDir== INVALID_HANDLE_VALUE ){wxLogStatus(_("Nie moÅ¼na stworzyÄ‡ uchwytu notyfikacji zmian folderu czcionek.")); return 0;}
 	while(1){
 		while( WaitForSingleObject( hDir, WAIT_TIMEOUT ) != WAIT_OBJECT_0 ){
 			if( ss->stopcheck ){
@@ -671,7 +707,7 @@ DWORD stylestore::CheckFontProc(void* cls)
 		ss->ReloadFonts();
 
 		if( FindNextChangeNotification( hDir ) == 0 ){
-			wxLogStatus(_("Nie mo¿na stworzyæ nastêpnego uchwytu notyfikacji zmian folderu czcionek."));
+			wxLogStatus(_("Nie moÅ¼na stworzyÄ‡ nastÄ™pnego uchwytu notyfikacji zmian folderu czcionek."));
 			return 0;
 		}
 	}

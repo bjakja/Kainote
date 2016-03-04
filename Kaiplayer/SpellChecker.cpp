@@ -1,4 +1,4 @@
-
+ï»¿
 #pragma comment(lib, "libhunspell.lib")
 #include "SpellChecker.h"
 
@@ -19,6 +19,7 @@ SpellChecker::~SpellChecker()
 {
 	Cleaning();
 }
+
 void SpellChecker::Cleaning()
 {
 	if(hunspell){delete hunspell;hunspell=NULL;}
@@ -26,44 +27,54 @@ void SpellChecker::Cleaning()
 
 }
 
-bool SpellChecker::Initialize()
-{//if(hunspell) return true;
-	Cleaning();
-
+void SpellChecker::AvailableDics(wxArrayString &dics)
+{
 	wxArrayString dic;
 	wxArrayString aff;
-	wxString pathhh=Options.pathfull+_T("\\Dictionary");
+	wxString pathhh=Options.pathfull+"\\Dictionary";
 	wxDir kat(pathhh);
 	if(kat.IsOpened()){
 
-		kat.GetAllFiles(pathhh,&dic,_T("*.dic"),wxDIR_FILES);
-		kat.GetAllFiles(pathhh,&aff,_T("*.aff"),wxDIR_FILES);
+		kat.GetAllFiles(pathhh,&dic,"*.dic",wxDIR_FILES);
+		kat.GetAllFiles(pathhh,&aff,"*.aff",wxDIR_FILES);
 	}
 
+	for(size_t i=0; i<dic.size(); i++){
+		if(dic[i].BeforeLast('.') == aff[i].BeforeLast('.')){
+			dics.Add(dic[i].AfterLast('\\').BeforeFirst('.'));
+		}
+	}
+}
+
+bool SpellChecker::Initialize()
+{
+	Cleaning();
+
+	wxString pathhh=Options.pathfull+"\\Dictionary\\";
+	wxString name=Options.GetString("Dictionary Name");
+	if(name==""){name="pl";}
+	wxString dic=pathhh+name+".dic";
+	wxString aff=pathhh+name+".aff";
 	// Check if language is available
-	if(dic.size()<1 || aff.size()<1) 
+	if(!wxFileExists(dic) || !wxFileExists(aff)) 
 	{
 		Options.SetBool("Editbox Spellchecker",false);
-		wxMessageBox(wxString::Format(_("Brak plików s³ownika w folderze \"%s\\Dictionary\".\r\nSprawdzanie pisowni zostanie wy³¹czone"), Options.pathfull)); 
+		wxMessageBox(wxString::Format(_("Brak plikÃ³w sÅ‚ownika w folderze \"%s\\Dictionary\".\r\nSprawdzanie pisowni zostanie wyÅ‚Ä…czone"), Options.pathfull)); 
 		return false;
 	}
-	//wxMessageBox(_T("spellchecker if exist ")+aff[0]+_T(" ")+dic[0]);
-	//if (!wxFileExists(aff[0]) || !wxFileExists(dic[0])) wxMessageBox("spellchecker nie znalaz³ s³ownika"); return false;
-
 	// Load
-	hunspell = new Hunspell(aff[0].mb_str(wxConvLocal), dic[0].mb_str(wxConvLocal));
-	//wxMessageBox("spellchecker new");
-	//conv = NULL;
+	hunspell = new Hunspell(aff.mb_str(wxConvLocal), dic.mb_str(wxConvLocal));
+	
 	if (hunspell) {
-		//wxMessageBox("spellchecker konw");
 		conv = new wxCSConv(wxString(hunspell->get_dic_encoding(),wxConvUTF8));
+		if(!conv){wxMessageBox(_("Nie moÅ¼na popraÄ‡ formatu konwersji sÅ‚ownika."));}
 		// Load user dictionary
-		wxString userpath=pathhh+"\\UserDic.udic";
+		wxString userpath=pathhh+"UserDic.udic";
 		if (wxFileExists(userpath)) {
 			OpenWrite op;
 			wxString txt=op.FileOpen(userpath,false);
 			if (txt=="") {return true;}
-			wxStringTokenizer textIn(txt,_T("\n"));
+			wxStringTokenizer textIn(txt,"\n");
 			while (textIn.HasMoreTokens()) {
 				// Read line
 				wxString curLine = textIn.NextToken();
@@ -77,7 +88,7 @@ bool SpellChecker::Initialize()
 		}
 
 		return true;
-	}else{wxMessageBox(_("Nie mo¿na zainicjalizowaæ sprawdzania pisowni."));}
+	}else{wxMessageBox(_("Nie moÅ¼na zainicjalizowaÄ‡ sprawdzania pisowni."));}
 	return false;
 }
 
@@ -100,10 +111,7 @@ wxArrayString SpellChecker::Suggestions(wxString word)
 	wxCharBuffer buf = word.mb_str(*conv);
 	if (!buf) return Results;
 
-	//wxMessageBox("funkcja suggest");
 	int n=hunspell->suggest(&result,buf);
-
-	//wxMessageBox(wxString::Format("%i sugestii",n));
 
 	for(int i=0; i<n; ++i)
 	{
@@ -122,7 +130,7 @@ bool SpellChecker::AddWord(wxString word)
 	if (word.IsEmpty() || word.IsNumber()) return false;
 
 	hunspell->add(word.mb_str(*conv));
-	wxString pathhh=Options.pathfull+_T("\\Slownik\\UserDic.udic");
+	wxString pathhh=Options.pathfull+"\\Dictionary\\UserDic.udic";
 	OpenWrite ow;
 	wxString txt=ow.FileOpen(pathhh,false);
 	if(txt==""){txt=word;}

@@ -1,4 +1,4 @@
-
+ï»¿
 #include "config.h"
 
 #include <wx/image.h>
@@ -175,7 +175,7 @@ ColorPickerRecent::ColorPickerRecent(wxWindow *parent, wxWindowID id, int _cols,
 void ColorPickerRecent::LoadFromString(const wxString &recent_string)
 {
 	colors.clear();
-	wxStringTokenizer toker(recent_string, _T(" "), wxTOKEN_STRTOK);
+	wxStringTokenizer toker(recent_string, " ", wxTOKEN_STRTOK);
 	//wxString deb;
 	while (toker.HasMoreTokens()) {
 		AssColor color;
@@ -195,7 +195,7 @@ wxString ColorPickerRecent::StoreToString()
 	wxString res;
 	for (int i = 0; i < rows*cols; i++) {
 		AssColor color(colors[i]);
-		res << color.GetAss(true, false) << _T(" ");
+		res << color.GetAss(true, false) << " ";
 	}
 	res.Trim(true);
 	return res;
@@ -451,23 +451,23 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, wxColour initial_color)
 	wxSize textinput_labelsize(45, -1);
 
 	wxSizer *rgb_box = new wxStaticBoxSizer(wxHORIZONTAL, this, _("Kolor RGB"));
-	rgb_input[0] = new NumCtrl(this, SELECTOR_RGB_R, _T(""), 0, 255,true, wxDefaultPosition, colorinput_size);
-	rgb_input[1] = new NumCtrl(this, SELECTOR_RGB_G, _T(""), 0, 255,true, wxDefaultPosition, colorinput_size);
-	rgb_input[2] = new NumCtrl(this, SELECTOR_RGB_B, _T(""), 0, 255,true, wxDefaultPosition, colorinput_size);
+	rgb_input[0] = new NumCtrl(this, SELECTOR_RGB_R, "", 0, 255,true, wxDefaultPosition, colorinput_size);
+	rgb_input[1] = new NumCtrl(this, SELECTOR_RGB_G, "", 0, 255,true, wxDefaultPosition, colorinput_size);
+	rgb_input[2] = new NumCtrl(this, SELECTOR_RGB_B, "", 0, 255,true, wxDefaultPosition, colorinput_size);
 
 	wxSizer *hsl_box = new wxStaticBoxSizer(wxVERTICAL, this, _("Kolor HSL"));
-	hsl_input[0] = new NumCtrl(this, SELECTOR_HSL_H, _T(""), 0, 255,true, wxDefaultPosition, colorinput_size);
-	hsl_input[1] = new NumCtrl(this, SELECTOR_HSL_S, _T(""), 0, 255,true, wxDefaultPosition, colorinput_size);
-	hsl_input[2] = new NumCtrl(this, SELECTOR_HSL_L, _T(""), 0, 255,true, wxDefaultPosition, colorinput_size);
+	hsl_input[0] = new NumCtrl(this, SELECTOR_HSL_H, "", 0, 255,true, wxDefaultPosition, colorinput_size);
+	hsl_input[1] = new NumCtrl(this, SELECTOR_HSL_S, "", 0, 255,true, wxDefaultPosition, colorinput_size);
+	hsl_input[2] = new NumCtrl(this, SELECTOR_HSL_L, "", 0, 255,true, wxDefaultPosition, colorinput_size);
 
 	wxSizer *hsv_box = new wxStaticBoxSizer(wxVERTICAL, this, _("Kolor HSV"));
-	hsv_input[0] = new NumCtrl(this, SELECTOR_HSV_H, _T(""), 0, 255,true, wxDefaultPosition, colorinput_size);
-	hsv_input[1] = new NumCtrl(this, SELECTOR_HSV_S, _T(""), 0, 255,true, wxDefaultPosition, colorinput_size);
-	hsv_input[2] = new NumCtrl(this, SELECTOR_HSV_V, _T(""), 0, 255,true, wxDefaultPosition, colorinput_size);
+	hsv_input[0] = new NumCtrl(this, SELECTOR_HSV_H, "", 0, 255,true, wxDefaultPosition, colorinput_size);
+	hsv_input[1] = new NumCtrl(this, SELECTOR_HSV_S, "", 0, 255,true, wxDefaultPosition, colorinput_size);
+	hsv_input[2] = new NumCtrl(this, SELECTOR_HSV_V, "", 0, 255,true, wxDefaultPosition, colorinput_size);
 
-	ass_input = new wxTextCtrl(this, SELECTOR_ASS_INPUT, _T(""), wxDefaultPosition, textinput_size);
-	html_input = new wxTextCtrl(this, SELECTOR_HTML_INPUT, _T(""), wxDefaultPosition, textinput_size);
-	alpha_input = new NumCtrl(this, SELECTOR_ALPHA_INPUT, _T(""), 0, 255,true, wxDefaultPosition, textinput_size);
+	ass_input = new wxTextCtrl(this, SELECTOR_ASS_INPUT, "", wxDefaultPosition, textinput_size);
+	html_input = new wxTextCtrl(this, SELECTOR_HTML_INPUT, "", wxDefaultPosition, textinput_size);
+	alpha_input = new NumCtrl(this, SELECTOR_ALPHA_INPUT, "", 0, 255,true, wxDefaultPosition, textinput_size);
 
 	preview_bitmap = wxBitmap(40, 40, 24);
 	preview_box = new wxStaticBitmap(this, -1, preview_bitmap, wxDefaultPosition, wxSize(40, 40), STATIC_BORDER_FLAG);
@@ -503,32 +503,32 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, wxColour initial_color)
 	rgb_box->Add(rgb_sizer, 1, wxEXPAND | wxALL, 3);
 
 	wxFlexGridSizer *ass_input_sizer = new wxFlexGridSizer(2, 5, 5);
-	ass_input_sizer->Add(new wxStaticText(this, -1, _T("ASS:"), wxDefaultPosition, textinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	ass_input_sizer->Add(new wxStaticText(this, -1, "ASS:", wxDefaultPosition, textinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
 	ass_input_sizer->Add(ass_input, 0);
-	ass_input_sizer->Add(new wxStaticText(this, -1, _T("HTML:"), wxDefaultPosition, textinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	ass_input_sizer->Add(new wxStaticText(this, -1, "HTML:", wxDefaultPosition, textinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
 	ass_input_sizer->Add(html_input, 0);
-	ass_input_sizer->Add(new wxStaticText(this, -1, _T("Alpha:"), wxDefaultPosition, textinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	ass_input_sizer->Add(new wxStaticText(this, -1, "Alpha:", wxDefaultPosition, textinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
 	ass_input_sizer->Add(alpha_input, 0);
 	//ass_input_sizer->AddStretchSpacer();
 	ass_input_sizer->AddGrowableCol(0,1);
 	rgb_box->Add(ass_input_sizer, 0, wxALL|wxCENTER|wxEXPAND, 3);
 
 	wxFlexGridSizer *hsl_sizer = new wxFlexGridSizer(2, 5, 5);
-	hsl_sizer->Add(new wxStaticText(this, -1, _("Odcieñ:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	hsl_sizer->Add(new wxStaticText(this, -1, _("OdcieÅ„:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
 	hsl_sizer->Add(hsl_input[0], 0);
 	hsl_sizer->Add(new wxStaticText(this, -1, _("Nasycenie:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
 	hsl_sizer->Add(hsl_input[1], 0);
-	hsl_sizer->Add(new wxStaticText(this, -1, _("Jaskrawoœæ:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	hsl_sizer->Add(new wxStaticText(this, -1, _("JaskrawoÅ›Ä‡:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
 	hsl_sizer->Add(hsl_input[2], 0);
 	hsl_sizer->AddGrowableCol(0,1);
 	hsl_box->Add(hsl_sizer, 0, wxALL|wxEXPAND, 3);
 
 	wxFlexGridSizer *hsv_sizer = new wxFlexGridSizer(2, 5, 5);
-	hsv_sizer->Add(new wxStaticText(this, -1, _("Odcieñ:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	hsv_sizer->Add(new wxStaticText(this, -1, _("OdcieÅ„:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
 	hsv_sizer->Add(hsv_input[0], 0);
 	hsv_sizer->Add(new wxStaticText(this, -1, _("Nasycenie:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
 	hsv_sizer->Add(hsv_input[1], 0);
-	hsv_sizer->Add(new wxStaticText(this, -1, _("Wartoœæ:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	hsv_sizer->Add(new wxStaticText(this, -1, _("WartoÅ›Ä‡:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
 	hsv_sizer->Add(hsv_input[2], 0);
 	hsv_sizer->AddGrowableCol(0,1);
 	hsv_box->Add(hsv_sizer, 0, wxALL|wxEXPAND, 3);
@@ -576,7 +576,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, wxColour initial_color)
 	// Fill the controls
 	updating_controls = false;
 	SetColor(initial_color);
-	recent_box->LoadFromString(Options.GetString(_T("Color Picker Recent")));
+	recent_box->LoadFromString(Options.GetString("Color Picker Recent"));
 
 	// The mouse event handler for the Dropper control must be manually assigned
 	// The EVT_MOUSE_EVENTS macro can't take a control id
@@ -619,7 +619,7 @@ void DialogColorPicker::SetColor(wxColour new_color)
 wxColour DialogColorPicker::GetColor()
 {
 	recent_box->AddColor(cur_color);
-	Options.SetString(_T("Color Picker Recent"), recent_box->StoreToString());
+	Options.SetString("Color Picker Recent", recent_box->StoreToString());
 	return cur_color;
 }
 
@@ -1009,7 +1009,7 @@ void DialogColorPicker::OnDropperMouse(wxMouseEvent &evt)
 {
 	if (evt.LeftDown() && !screen_dropper_icon->HasCapture()) {
 
-		screen_dropper_icon->SetCursor(wxCursor(_T("eyedropper_cursor")));
+		screen_dropper_icon->SetCursor(wxCursor("eyedropper_cursor"));
 		screen_dropper_icon->SetBitmap(wxNullBitmap);
 		screen_dropper_icon->CaptureMouse();
 		eyedropper_grab_point = evt.GetPosition();

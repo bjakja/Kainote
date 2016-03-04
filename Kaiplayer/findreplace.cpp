@@ -1,4 +1,4 @@
-#include "findreplace.h"
+ï»¿#include "findreplace.h"
 #include "kainoteMain.h"
 
 #include <wx/intl.h>
@@ -8,7 +8,7 @@
 
 
 findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace, bool sellines)
-            : wxDialog(kfparent, -1,(sellines)?_("Zaznacz"): (replace)?_("ZnajdŸ i zamieñ"):_("ZnajdŸ"))
+            : wxDialog(kfparent, -1,(sellines)?_("Zaznacz"): (replace)?_("ZnajdÅº i zamieÅ„"):_("ZnajdÅº"))
 {
     Kai=kfparent;
     reprow=posrow=0;
@@ -37,7 +37,7 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		wxBoxSizer* mainfrbsizer3=new wxBoxSizer(wxHORIZONTAL);
 
 		//pionowy sizer kolumna 1
-		wxStaticBoxSizer* frsbsizer=new wxStaticBoxSizer(wxVERTICAL,this,_("ZnajdŸ"));
+		wxStaticBoxSizer* frsbsizer=new wxStaticBoxSizer(wxVERTICAL,this,_("ZnajdÅº"));
 		FindText = new wxComboBox(this, ID_FINDTEXT, (last)?last->FindText->GetValue() : ES, wxDefaultPosition, wxSize(342,-1),wfind);
 		long from, to;
 		Kai->GetTab()->Edit->TextEdit->GetSelection(&from,&to);
@@ -48,18 +48,18 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		if(repl){
 			wxArrayString wrepl=Options.GetTable("Replace Recent","\f");
 			if(wrepl.size()>20){wrepl.RemoveAt(19,wrepl.size()-20);}
-			wxStaticBoxSizer* frsbsizer1=new wxStaticBoxSizer(wxVERTICAL,this,_("Zamieñ"));
+			wxStaticBoxSizer* frsbsizer1=new wxStaticBoxSizer(wxVERTICAL,this,_("ZamieÅ„"));
 			RepText = new wxComboBox(this, ID_REPTEXT, (last && last->RepText)?last->RepText->GetValue() : ES, wxDefaultPosition, wxSize(342,-1),wrepl);
 			frsbsizer1->Add(RepText,0,wxEXPAND,0);
 			mainfrbsizer1->Add(frsbsizer1,0,wxEXPAND|wxALL,3);
 		}
 	
 		wxBoxSizer* frbsizer1=new wxBoxSizer(wxVERTICAL);
-		MatchCase = new wxCheckBox(this, -1, _("Uwzglêdniaj wielkoœæ liter"));
+		MatchCase = new wxCheckBox(this, -1, _("UwzglÄ™dniaj wielkoÅ›Ä‡ liter"));
 		MatchCase->SetValue((last)?last->MatchCase->GetValue():false);
-		RegEx = new wxCheckBox(this, -1, _("Wyra¿enia regularne"));
+		RegEx = new wxCheckBox(this, -1, _("WyraÅ¼enia regularne"));
 		RegEx->SetValue((last)?last->RegEx->GetValue():false);
-		StartLine = new wxCheckBox(this, ID_SLINE, _("Pocz¹tek tekstu"));
+		StartLine = new wxCheckBox(this, ID_SLINE, _("PoczÄ…tek tekstu"));
 		StartLine->SetValue((last&&last->StartLine)?last->StartLine->GetValue():false);
 		EndLine = new wxCheckBox(this, ID_ELINE, _("Koniec tekstu"));
 		EndLine->SetValue((last&&last->EndLine)?last->EndLine->GetValue():false);
@@ -86,38 +86,38 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		frbsizer3->Add(RadioButton5,1,wxEXPAND|wxLEFT,1);
 		frbsizer3->Add(RadioButton6,1,wxEXPAND|wxLEFT,1);
 
-		//static box sizer dodanie pierwszego i drugiego rzêdu
+		//static box sizer dodanie pierwszego i drugiego rzÄ™du
 		frsbsizer2->Add(frbsizer2,1,wxEXPAND|wxLEFT,2);
 		frsbsizer2->Add(frbsizer3,1,wxEXPAND|wxLEFT,2);
 
-		//po³¹czenie chceckboxów i radiobutonów z wyborem pola
+		//poÅ‚Ä…czenie chceckboxÃ³w i radiobutonÃ³w z wyborem pola
 		mainfrbsizer2->Add(frbsizer1,1,wxEXPAND,0);
 		mainfrbsizer2->Add(frsbsizer2,1,wxEXPAND,0);
 
-		//po³¹czenie wczeœniejszego sizera z znajdŸ i zmieñ
-		//dwie poni¿sze linijki s¹ na samym pocz¹tku
+		//poÅ‚Ä…czenie wczeÅ›niejszego sizera z znajdÅº i zmieÅ„
+		//dwie poniÅ¼sze linijki sÄ… na samym poczÄ…tku
 	
 		mainfrbsizer1->Add(mainfrbsizer2,0,wxEXPAND|wxLEFT|wxRIGHT,3);
 
 		//pionowy sizer kolumna 2
 		wxBoxSizer* frbsizer=new wxBoxSizer(wxVERTICAL);
-		Button1 = new wxButton(this, ID_BFIND, _("ZnajdŸ"), wxDefaultPosition, wxSize(124,-1));
+		Button1 = new wxButton(this, ID_BFIND, _("ZnajdÅº"), wxDefaultPosition, wxSize(124,-1));
 		frbsizer->Add(Button1,1,wxEXPAND|wxTOP|wxBOTTOM,6);
 
 		if(repl){
-			Button2 = new wxButton(this, ID_BREP, _("Zamieñ"));
-			Button3 = new wxButton(this, ID_BREPALL, _("Zamieñ wszystko"));
+			Button2 = new wxButton(this, ID_BREP, _("ZamieÅ„"));
+			Button3 = new wxButton(this, ID_BREPALL, _("ZamieÅ„ wszystko"));
 			frbsizer->Add(Button2,1,wxEXPAND|wxTOP|wxBOTTOM,6);
 			frbsizer->Add(Button3,1,wxEXPAND|wxTOP|wxBOTTOM,6);
 		}
 		Button4 = new wxButton(this, ID_BCLOSE, _("Zamknij"));
 		frbsizer->Add(Button4,1,wxEXPAND|wxTOP|wxBOTTOM,6);
 
-		//³¹czenie ca³oœci znajdowania i opcji z przyciskami
+		//Å‚Ä…czenie caÅ‚oÅ›ci znajdowania i opcji z przyciskami
 		mainfrbsizer3->Add(mainfrbsizer1,0,wxEXPAND|wxRIGHT,3);
 		mainfrbsizer3->Add(frbsizer,0,wxEXPAND|wxLEFT,3);
 
-		//poziomy sizer spód
+		//poziomy sizer spÃ³d
 		wxStaticBoxSizer* frsbsizer3=new wxStaticBoxSizer(wxHORIZONTAL,this,_("Linijki"));
 
 		RadioButton3 = new wxRadioButton(this, -1, _("Wszystkie linijki"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
@@ -128,7 +128,7 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		RadioButton7->SetValue((last&&last->RadioButton7)?last->RadioButton7->GetValue():false);
 
 		wxBoxSizer* frbsizer4=new wxBoxSizer(wxHORIZONTAL);
-		Bplus = new wxButton(this, ID_BPLUS, _T("+"), wxDefaultPosition, wxSize(22,24));
+		Bplus = new wxButton(this, ID_BPLUS, "+", wxDefaultPosition, wxSize(22,24));
 		tcstyle = new wxTextCtrl(this, ID_TCSTYLE,(last&&last->tcstyle)?last->tcstyle->GetValue():ES);
 		frbsizer4->Add(Bplus,0,0,0);
 		frbsizer4->Add(tcstyle,0,0,0);
@@ -169,16 +169,16 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		slrbsizer->Add(RadioButton3,1,wxALL,3);
 		slrbsizer->Add(RadioButton4,1,wxALL,3);
 	
-		wxStaticBoxSizer* slsbsizer=new wxStaticBoxSizer(wxVERTICAL,this,_("ZnajdŸ"));
+		wxStaticBoxSizer* slsbsizer=new wxStaticBoxSizer(wxVERTICAL,this,_("ZnajdÅº"));
 		wxBoxSizer *sltpsizer= new wxBoxSizer(wxHORIZONTAL);
 		FindText = new wxComboBox(this, ID_FINDTEXT, (last)?last->FindText->GetValue():ES, wxDefaultPosition, wxSize(180,-1),wfind);
-		Bplus = new wxButton(this, ID_BPLUS, _T("+"), wxDefaultPosition, wxSize(24,24));
+		Bplus = new wxButton(this, ID_BPLUS, "+", wxDefaultPosition, wxSize(24,24));
 		sltpsizer->Add(FindText,0,wxALL,3);
 		sltpsizer->Add(Bplus,0,wxALL,3);
 	
-		MatchCase = new wxCheckBox(this, -1, _("Uwzglêdniaj wielkoœæ liter"));
+		MatchCase = new wxCheckBox(this, -1, _("UwzglÄ™dniaj wielkoÅ›Ä‡ liter"));
 		MatchCase->SetValue((last)?last->MatchCase->GetValue():false);
-		RegEx = new wxCheckBox(this, -1, _("Wyra¿enia regularne"));
+		RegEx = new wxCheckBox(this, -1, _("WyraÅ¼enia regularne"));
 		RegEx->SetValue((last)?last->RegEx->GetValue():false);
 	
 		slsbsizer->Add(slrbsizer,0,wxALL,0);
@@ -216,13 +216,13 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		Selections = new wxRadioBox(this,-1,_("Zaznaczenie"),wxDefaultPosition,wxDefaultSize,sels,1);
 
 		wxArrayString action;
-		action.Add(_("Nie rób nic"));
+		action.Add(_("Nie rÃ³b nic"));
 		action.Add(_("Kopiuj"));
 		action.Add(_("Wytnij"));
-		action.Add(_("Przenieœ na pocz¹tek"));
-		action.Add(_("Przenieœ na koniec"));
+		action.Add(_("PrzenieÅ› na poczÄ…tek"));
+		action.Add(_("PrzenieÅ› na koniec"));
 		action.Add(_("Ustaw jako komentarz"));
-		action.Add(_("Usuñ"));
+		action.Add(_("UsuÅ„"));
 	
 		Actions = new wxRadioBox(this,-1,_("Akcja"),wxDefaultPosition,wxDefaultSize,action,1);
 
@@ -335,15 +335,17 @@ void findreplace::OnReplaceAll(wxCommandEvent& event)
 				if(startline){
 					if(ltext.StartsWith(lfind) || lfind.empty()){
 						txt.replace(0, lfind.Len(), rep);
+						allreps=1;
 					}
 				} 
 				if(endline){
 					if(ltext.EndsWith(lfind) || lfind.empty()){
 						int lenn=txt.Len();
 						txt.replace(lenn - lfind.Len(), lenn, rep);
+						allreps=1;
 					}
 				}
-				allreps=1;
+				
             }else if(!matchcase){
 				wxString lfind=find.Lower();
 				wxString ltext=txt;
@@ -372,6 +374,7 @@ void findreplace::OnReplaceAll(wxCommandEvent& event)
 			}
 			else{allreps=txt.Replace(find,rep);}
 			if(allreps>0){
+				wxLogStatus("txt "+txt+" "+find+" "+rep);
 				Dialogue *Dialc=pan->Grid1->CopyDial(i);
 				if(wrep==TXT){Dialc->Text=txt;}
 				else if(wrep==TXTTL){Dialc->TextTl=txt;}
@@ -389,7 +392,7 @@ void findreplace::OnReplaceAll(wxCommandEvent& event)
 	pan->Grid1->SetModified();
     pan->Grid1->Refresh(false);
 
-	wxMessageBox(wxString::Format(_("Zmieniono %i razy."),allreps1),_("Szukaj Zamieñ"));
+	wxMessageBox(wxString::Format(_("Zmieniono %i razy."),allreps1),_("Szukaj ZamieÅ„"));
 	AddRecent();
 	pan->Video->blockpaint=false;
 }
@@ -492,7 +495,7 @@ void findreplace::SelectLine()
 			wxTheClipboard->SetData( new wxTextDataObject(whatcopy) );
 			wxTheClipboard->Close();
 		}
-	}//przenoszenie na pocz¹tek / koniec
+	}//przenoszenie na poczÄ…tek / koniec
 	if(act==2||act==6||act==3||act==4){
 		pan->Grid1->DeleteRows();
 		if(act==3||act==4)
@@ -606,7 +609,7 @@ void findreplace::Find()
 			&& !(onlysel && !(pan->Grid1->sel.find(posrow)!=pan->Grid1->sel.end()))){
         if(wrep==STYLE){
         txt=Dial->Style;}
-		else if(wrep==TXT){//W szukaniu t³umaczenie ma pierwszeñstwo
+		else if(wrep==TXT){//W szukaniu tÅ‚umaczenie ma pierwszeÅ„stwo
         txt=(pan->Grid1->transl&&Dial->TextTl!="")?Dial->TextTl:Dial->Text;}
 		else if(wrep==ACTOR){
         txt=Dial->Actor;}
@@ -682,7 +685,7 @@ void findreplace::Find()
 			}
 			else{postxt=0;posrow++;}
 			if(!foundsome&&posrow>pan->Grid1->GetCount()-1){
-				if (wxMessageBox(_("Wyszukiwanie zakoñczone, rozpocz¹æ od pocz¹tku?"), _("Potwierdzenie"),
+				if (wxMessageBox(_("Wyszukiwanie zakoÅ„czone, rozpoczÄ…Ä‡ od poczÄ…tku?"), _("Potwierdzenie"),
                      wxICON_QUESTION | wxYES_NO, this) == wxYES ){
                      posrow=0;foundsome=true;
 				}else{posrow=0;foundsome=true;break;}

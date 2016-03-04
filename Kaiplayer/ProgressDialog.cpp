@@ -1,8 +1,8 @@
-
+ï»¿
 #include "ProgressDialog.h"
 #include "kainoteApp.h"
 #include "timeconv.h"
-#define UNICODE
+//#define UNICODE
 #include "ShObjIdl.h"
 
 
@@ -14,7 +14,7 @@ ProgresDialog::ProgresDialog(wxWindow *_parent, wxString title, wxPoint pos, wxS
 	wxBoxSizer* sizer= new wxBoxSizer(wxVERTICAL);
 	text=new wxStaticText(this,-1,title);
 	gauge=new wxGauge(this, -1, 100, wxDefaultPosition, wxSize(300,20), wxGA_HORIZONTAL);
-	text1=new wxStaticText(this,-1,_("Up³ynê³o 00:00:00.00 sekund"));
+	text1=new wxStaticText(this,-1,_("UpÅ‚ynÄ™Å‚o 00:00:00.00 sekund"));
 	cancel= new wxButton(this,23333,_("Anuluj"));
 	sizer->Add(text,0,wxALIGN_CENTER|wxALL, 3);//wxALIGN_CENTER|
 	sizer->Add(gauge,0,wxALIGN_CENTER|wxALL, 3);
@@ -63,7 +63,7 @@ void ProgresDialog::Progress(int num)
 			taskbar->SetProgressValue(Kaia->Frame->GetHWND(),(ULONGLONG)num,100);}
 		STime kkk;
 		kkk.NewTime(newtime);
-		text1->SetLabelText(wxString::Format(_("Up³ynê³o %s sekund"), kkk.raw()));
+		text1->SetLabelText(wxString::Format(_("UpÅ‚ynÄ™Å‚o %s sekund"), kkk.raw()));
 		
 	}
 	//bool main =wxThread::IsMain();

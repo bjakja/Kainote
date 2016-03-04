@@ -1,4 +1,4 @@
-
+ï»¿
 
 #include "OptionsDialog.h"
 #include "config.h"
@@ -61,18 +61,40 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	wxPanel *AudioCols= new wxPanel(OptionsTree);
 
 	hkeymodif=0;
-	if(!Options.AudioOpts && !Options.LoadAudioOpts()){wxMessageBox(_("Dupa blada, opcje siê nie wczyta³y, audio nie skonfigurujesz"), _("B³êdny b³¹d"));}
+	if(!Options.AudioOpts && !Options.LoadAudioOpts()){wxMessageBox(_("Dupa blada, opcje siÄ™ nie wczytaÅ‚y, audio nie skonfigurujesz"), _("BÅ‚Ä™dny bÅ‚Ä…d"));}
 
 	//Main
 	{
 		wxBoxSizer *MainSizer=new wxBoxSizer(wxVERTICAL);
-		wxString labels[10]={_("Wczytywanie posortowanych napisów"),_("W³¹cz sprawdzanie pisowni"),
-			_("Zaznaczaj linijkê z czasem aktywnej\nlinijki poprzedniej zak³adki"),_("Zapisuj napisy z nazw¹ wideo"),
-			_("Poka¿ sugestie po dwukrotnym klininiêciu na b³¹d"),_("Otwieraj napisy zawsze w nowej karcie"),
-			_("Nie przechodŸ do nastêpnej linii przy edycji czasów"),_("Zapisuj zmiany po przejœciu na inn¹ liniê"),
-			_("Pierwszy kolor podgl¹du styli"),_("Drugi kolor podgl¹du styli")};
-		wxString opts[10]={"Grid Load Sorted","Editbox Spellchecker","Auto Select Lines","Subs Autonaming","Editbox Sugestions On Dclick",
-			"Open In New Card","Times Stop On line","Grid save without enter","Style Preview Color1","Style Preview Color2"};
+		wxString labels[10]={_("Wczytywanie posortowanych napisÃ³w"),_("WÅ‚Ä…cz sprawdzanie pisowni"),
+			_("Zaznaczaj linijkÄ™ z czasem aktywnej\nlinijki poprzedniej zakÅ‚adki"),_("Zapisuj napisy z nazwÄ… wideo"),
+			_("PokaÅ¼ sugestie po dwukrotnym klininiÄ™ciu na bÅ‚Ä…d"),_("Otwieraj napisy zawsze w nowej karcie"),
+			_("Nie przechodÅº do nastÄ™pnej linii przy edycji czasÃ³w"),_("Zapisuj zmiany po przejÅ›ciu na innÄ… liniÄ™"),
+			_("Pierwszy kolor podglÄ…du styli"),_("Drugi kolor podglÄ…du styli")};
+		wxString opts[10]={"Grid Load Sorted","Editbox Spellchecker","Auto Select Lines","Subs Autonaming",
+			"Editbox Sugestions On Dclick","Open In New Card","Times Stop On line","Grid save without enter",
+			"Style Preview Color1","Style Preview Color2"};
+
+		wxString langopts[2]={"Polski","English"};
+		wxStaticBoxSizer *langSizer=new wxStaticBoxSizer(wxVERTICAL, Main, _("JÄ™zyk (wymaga restartu programu)"));
+		wxChoice *lang=new wxChoice(Main,10000,wxDefaultPosition,wxDefaultSize,2,langopts);
+		lang->SetSelection(Options.GetInt("Program Language"));
+		ConOpt(lang,"Program Language");
+		langSizer->Add(lang,0,wxALL|wxEXPAND,2);
+		MainSizer->Add(langSizer,0,wxRIGHT|wxEXPAND,5);
+
+		if(!Kai->SC){Kai->SC=new SpellChecker();}
+		wxArrayString dics;
+		Kai->SC->AvailableDics(dics);
+		if(dics.size()==0){dics.Add(_("UmieÅ›Ä‡ pliki .dic i .aff do folderu \"Dictionary\""));}
+		wxStaticBoxSizer *dicSizer=new wxStaticBoxSizer(wxVERTICAL, Main, _("JÄ™zyk sprawdzania pisowni (folder \"Dictionary\")"));
+		
+		wxChoice *dic=new wxChoice(Main,10001,wxDefaultPosition,wxDefaultSize,dics);
+
+		dic->SetSelection(dic->FindString(Options.GetString("Dictionary Name")));
+		ConOpt(dic,"Dictionary Name");
+		dicSizer->Add(dic,0,wxALL|wxEXPAND,2);
+		MainSizer->Add(dicSizer,0,wxRIGHT|wxEXPAND,5);
 	
 		for(int i=0;i<8;i++)
 		{
@@ -82,26 +104,10 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			MainSizer->Add(opt,0,wxALL,2);
 		}
 
-		wxString movopts[6]={_("Dwukrotnym klikniêciu na liniê (zawsze w³¹czone)"),_("Klikniêciu na liniê"),
-			_("Klikniêciu na liniê lub edycji na pauzie"),_("Klikniêciu na liniê lub edycji"),
-			_("Edycji na pauzie"),_("Edycji") 
-		};
-		MainSizer->Add(new wxStaticText(Main,-1,_("Przesuwaj wideo do aktualnej linii po:")),0,wxALL,2);
-		wxChoice *movvid=new wxChoice(Main,10000,wxDefaultPosition,wxDefaultSize,6,movopts);
-		movvid->SetSelection(Options.GetInt("Move Video To Active Line"));
-		ConOpt(movvid,"Move Video To Active Line");
-		MainSizer->Add(movvid,0,wxALL,2);
-
-		wxString playopts[4]={_("Nic"),_("Audio do koñca linii"),_("Wideo do koñca linii"),_("Wideo do pocz¹tku nastêpnej linii")};
-		MainSizer->Add(new wxStaticText(Main,-1,_("Odtwarzaj po zmianie linii:")),0,wxALL,2);
-		wxChoice *playing=new wxChoice(Main,10000,wxDefaultPosition,wxDefaultSize,4,playopts);
-		playing->SetSelection(Options.GetInt("Play After Selection"));
-		ConOpt(playing,"Play After Selection");
-		MainSizer->Add(playing,0,wxALL,2);
 	
 		wxBoxSizer *MainSizer1=new wxBoxSizer(wxHORIZONTAL);
-		wxGridSizer *MainSizer2=new wxGridSizer(2,5,5);
-		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieæ inny id
+		wxFlexGridSizer *MainSizer2=new wxFlexGridSizer(6,2,wxSize(5,5));
+		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieÄ‡ inny id
 		NumCtrl *sc = new NumCtrl(Main, 20000, Options.GetString("Offset of start time"), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc1 = new NumCtrl(Main, 20000, Options.GetString("Offset of end time"), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		wxTextCtrl *sc2 = new wxTextCtrl(Main, 22001, Options.GetString("Grid tag changing char"), wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
@@ -110,46 +116,45 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		ConOpt(sc1,"Offset of end time");
 		ConOpt(sc2,"Grid tag changing char");
 		ConOpt(sc3,"Editbox tag buttons");
-		MainSizer2->Add(new wxStaticText(Main,-1,_("OpóŸnienie klatek pocz¹tkowych w ms:")),0,wxRIGHT | wxALIGN_CENTRE_VERTICAL,5);
-		MainSizer2->Add(sc,0,wxALL,2);
-		MainSizer2->Add(new wxStaticText(Main,-1,_("OpóŸnienie klatek koñcowych w ms:")),0,wxRIGHT | wxALIGN_CENTRE_VERTICAL,5);
-		MainSizer2->Add(sc1,0,wxALL,2);
-		MainSizer2->Add(new wxStaticText(Main,-1,_("Znak podmiany tagów ASS:")),0,wxRIGHT | wxALIGN_CENTRE_VERTICAL,5);
-		MainSizer2->Add(sc2,0,wxALL,2);
-		MainSizer2->Add(new wxStaticText(Main,-1,_("Iloœæ przycisków wstawiaj¹cych tagi ASS:")),0,wxRIGHT | wxALIGN_CENTRE_VERTICAL,5);
-		MainSizer2->Add(sc3,0,wxALL,2);
-		MainSizer->Add(MainSizer2,0,wxALL,2);
+		MainSizer2->Add(new wxStaticText(Main,-1,_("OpÃ³Åºnienie klatek poczÄ…tkowych w ms:")),0,wxALIGN_CENTRE_VERTICAL);
+		MainSizer2->Add(sc,0);
+		MainSizer2->Add(new wxStaticText(Main,-1,_("OpÃ³Åºnienie klatek koÅ„cowych w ms:")),0,wxALIGN_CENTRE_VERTICAL);
+		MainSizer2->Add(sc1,0);
+		MainSizer2->Add(new wxStaticText(Main,-1,_("Znak podmiany tagÃ³w ASS:")),0,wxALIGN_CENTRE_VERTICAL);
+		MainSizer2->Add(sc2,0);
+		MainSizer2->Add(new wxStaticText(Main,-1,_("IloÅ›Ä‡ przyciskÃ³w wstawiajÄ…cych tagi ASS:")),0,wxALIGN_CENTRE_VERTICAL);
+		MainSizer2->Add(sc3,0);
 	
+
+		for(int i=8;i<10;i++){
+			ColorButton *optc=new ColorButton(Main,-1,Options.GetString(opts[i]),wxDefaultPosition, wxSize(60,-1));
+			ConOpt(optc,opts[i]);
+			MainSizer2->Add(new wxStaticText(Main,-1,labels[i]+":"),0,wxALIGN_CENTRE_VERTICAL);
+			MainSizer2->Add(optc,0);
+		}
+		MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
+
 		wxFontPickerCtrl *optf=new wxFontPickerCtrl(Main,-1,wxFont(Options.GetInt("Grid Font Size"),wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,Options.GetString("Grid Font Name")));
 		ConOpt(optf,"Grid Font");
-		MainSizer1->Add(new wxStaticText(Main,-1,_("Czcionka ramki z napisami:")),0,wxRIGHT | wxALIGN_CENTRE_VERTICAL,5);
-		MainSizer1->Add(optf,0,wxALL,2);
+		MainSizer1->Add(new wxStaticText(Main,-1,_("Czcionka ramki z napisami:")),0,wxRIGHT| wxALIGN_CENTRE_VERTICAL,5);
+		MainSizer1->Add(optf,0);
 	
 		MainSizer->Add(MainSizer1,0,wxLEFT|wxTOP,2);
-
-		wxFlexGridSizer *GridColorsSizer=new wxFlexGridSizer(2,2,wxSize(5,5));
-		for(int i=8;i<10;i++){
-			ColorButton *optc=new ColorButton(Main,-1,Options.GetString(opts[i]));
-			ConOpt(optc,opts[i]);
-			GridColorsSizer->Add(new wxStaticText(Main,-1,labels[i]+":"),0,wxRIGHT | wxALIGN_CENTRE_VERTICAL,5);
-			GridColorsSizer->Add(optc,0,wxALL,2);
-		}
-		MainSizer->Add(GridColorsSizer,0,0,0);
 
 		Main->SetSizerAndFit(MainSizer);
 	}
 
 		//Grid colors
-	{//nale¿y uwa¿aæ by iloœæ linii w grid sizerze siê zgadza³a ile opcji tyle ma byæ linii
+	{//naleÅ¼y uwaÅ¼aÄ‡ by iloÅ›Ä‡ linii w grid sizerze siÄ™ zgadzaÅ‚a ile opcji tyle ma byÄ‡ linii
 		wxFlexGridSizer *GridColorsSizer=new wxFlexGridSizer(13,2,wxSize(5,5));
-		wxString labels[13]={_("Kolor t³a"),_("Kolor t³a dialogów"),_("Kolor t³a komentarzy"),_("Kolor zaznaczonych dialogów"),_("Kolor zaznaczonych komentarzy"),_("Kolor tekstu"),_("Kolor nachodz¹cych linii"),_("Kolor linii"),_("Kolor obramowania aktywnej linijki"),_("Kolor etykiety"),_("Kolor etykiety zmodyfikowanej linii"),_("Kolor etykiety zapisanej linii"),_("Kolor t³a b³êdów pisowni")};
+		wxString labels[13]={_("Kolor tÅ‚a"),_("Kolor tÅ‚a dialogÃ³w"),_("Kolor tÅ‚a komentarzy"),_("Kolor zaznaczonych dialogÃ³w"),_("Kolor zaznaczonych komentarzy"),_("Kolor tekstu"),_("Kolor nachodzÄ…cych linii"),_("Kolor linii"),_("Kolor obramowania aktywnej linijki"),_("Kolor etykiety"),_("Kolor etykiety zmodyfikowanej linii"),_("Kolor etykiety zapisanej linii"),_("Kolor tÅ‚a bÅ‚Ä™dÃ³w pisowni")};
 		wxString opts[13]={"Grid Background","Grid Dialogue","Grid Comment","Grid Selected Dialogue","Grid Selected Comment","Grid Text","Grid Collisions","Grid Lines","Grid Active Line","Grid Label Normal","Grid Label Modified","Grid Label Saved","Grid Spellchecker"};
 	
 		for(int i=0;i<13;i++)
 		{
 			ColorButton *optc=new ColorButton(GridColors,-1,Options.GetString(opts[i]));
 			ConOpt(optc,opts[i]);
-			GridColorsSizer->Add(new wxStaticText(GridColors,-1,labels[i]+":"),0,wxRIGHT | wxALIGN_CENTRE_VERTICAL,5);
+			GridColorsSizer->Add(new wxStaticText(GridColors,-1,labels[i]+":"),1,wxRIGHT | wxALIGN_CENTRE_VERTICAL, 5);
 			GridColorsSizer->Add(optc,0,wxALL,2);
 		}
 	
@@ -165,15 +170,15 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxStaticBoxSizer *obr=new wxStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Wybierz katalog"));
 		wxStaticBoxSizer *obr0=new wxStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Wybierz styl"));
 		wxStaticBoxSizer *obr1=new wxStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Wybierz FPS"));
-		wxStaticBoxSizer *obr2=new wxStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Czas w ms na jedn¹ literê"));
-		wxStaticBoxSizer *obr3=new wxStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Tagi wstawiane na pocz¹tku ka¿dej linijki ass"));
-		wxStaticBoxSizer *obr4=new wxStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Rozdzielczoœæ przy konwersji na ASS"));
+		wxStaticBoxSizer *obr2=new wxStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Czas w ms na jednÄ… literÄ™"));
+		wxStaticBoxSizer *obr3=new wxStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Tagi wstawiane na poczÄ…tku kaÅ¼dej linijki ass"));
+		wxStaticBoxSizer *obr4=new wxStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("RozdzielczoÅ›Ä‡ przy konwersji na ASS"));
 		wxArrayString styles;
 		wxArrayString fpsy;
 
 		
 
-		fpsy.Add(_T("23.976"));fpsy.Add(_T("24"));fpsy.Add(_T("25"));fpsy.Add(_T("29.97"));fpsy.Add(_T("30"));fpsy.Add(_T("60"));
+		fpsy.Add("23.976");fpsy.Add("24");fpsy.Add("25");fpsy.Add("29.97");fpsy.Add("30");fpsy.Add("60");
 
         for(int i = 0;i<2;i++){
 			wxString optname=(i==0)? Options.GetString("Default Style Catalog") : Options.GetString("Default Style");
@@ -190,12 +195,20 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			else{
 				if(i==0){sel=cmb->FindString(Options.acdir);}cmb->SetSelection(MAX(0,sel));
 				wxString co=(i==0)?_("katalog dla stylu") : _("styl"); 
-				wxMessageBox(wxString::Format(_("Wybrany %s konwersji nie istnieje,\nzostanie zmieniony na domyœlny"), co),_("Uwaga"));}
+				wxMessageBox(wxString::Format(_("Wybrany %s konwersji nie istnieje,\nzostanie zmieniony na domyÅ›lny"), co),_("Uwaga"));}
 
 			ConOpt(cmb,(i==0)? "Default Style Catalog" : "Default Style");
-			if(i==0){obr->Add(cmb,0,wxCENTER);ConvOptSizer1->Add(obr,0,wxLEFT);Katlist=cmb;
-			Connect(28888,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&OptionsDialog::OnChangeCatalog);}
-			else{obr0->Add(cmb,0,wxCENTER);ConvOptSizer1->Add(obr0,0,wxLEFT);Stylelist=cmb;}
+			if(i==0){
+				obr->Add(cmb,1,wxCENTER);
+				ConvOptSizer1->Add(obr,0,wxRIGHT|wxEXPAND,5);
+				Katlist=cmb;
+				Connect(28888,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&OptionsDialog::OnChangeCatalog);
+			}
+			else{
+				obr0->Add(cmb,1,wxCENTER);
+				ConvOptSizer1->Add(obr0,0,wxRIGHT|wxEXPAND,5);
+				Stylelist=cmb;
+			}
 		}
 
 		wxComboBox *cmb = new wxComboBox(ConvOpt, -1, Options.GetString("Default FPS"), wxDefaultPosition, wxSize(200,-1), fpsy, wxCB_DROPDOWN|wxSUNKEN_BORDER|wxVSCROLL|wxTE_PROCESS_ENTER);
@@ -204,46 +217,47 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		else{cmb->SetValue(Options.GetString("Default FPS"));}
 
 	    ConOpt(cmb,"Default FPS");
-		obr1->Add(cmb,0,wxCENTER);ConvOptSizer1->Add(obr1,0,wxLEFT);
+		obr1->Add(cmb,1,wxCENTER);
+		ConvOptSizer1->Add(obr1,0,wxRIGHT|wxEXPAND,5);
 		
 
 		for(int i=0;i<3;i++)
 		{
-		wxCheckBox *opt=new wxCheckBox(ConvOpt,-1,(i==0)?_("FPS z wideo"):(i==1)?_("Nowe czasy koñcowe"):_("Poka¿ okno przed konwersj¹"));
-		wxString optname=(i==0)?"FPS from video":(i==1)?"New end times":"Show settings window";
-		opt->SetValue(Options.GetBool(optname));
-		ConOpt(opt,optname);
-		ConvOptSizer1->Add(opt,0,wxALL,2);
+			wxCheckBox *opt=new wxCheckBox(ConvOpt,-1,(i==0)?_("FPS z wideo"):(i==1)?_("Nowe czasy koÅ„cowe"):_("PokaÅ¼ okno przed konwersjÄ…"));
+			wxString optname=(i==0)?"FPS from video":(i==1)?"New end times":"Show settings window";
+			opt->SetValue(Options.GetBool(optname));
+			ConOpt(opt,optname);
+			ConvOptSizer1->Add(opt,0,wxRIGHT|wxEXPAND,5);
 		}
 
 		NumCtrl *sc = new NumCtrl(ConvOpt, 20000, Options.GetString("Time show of letter"), 30, 1000, true, wxDefaultPosition, wxSize(250,-1), wxTE_PROCESS_ENTER);
 		ConOpt(sc,"Time show of letter");
-		obr2->Add(sc,0,wxALL|wxALIGN_CENTER,2);
-		ConvOptSizer1->Add(obr2,0,wxALL,2);
+		obr2->Add(sc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
+		ConvOptSizer1->Add(obr2,0,wxRIGHT|wxEXPAND,5);
 
 		sc = new NumCtrl(ConvOpt, 20000, Options.GetString("Convert Resolution W"), 1, 3000, true, wxDefaultPosition, wxSize(115,-1), wxTE_PROCESS_ENTER);
 		ConOpt(sc,"Convert Resolution W");
-		obr4->Add(sc,0,wxALL|wxALIGN_CENTER,2);
+		obr4->Add(sc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
 		
 		wxStaticText* txt= new wxStaticText(ConvOpt,-1," X ");
-		obr4->Add(txt,0,wxALL|wxALIGN_CENTER,2);
+		obr4->Add(txt,0,wxALL|wxALIGN_CENTER|wxALIGN_CENTER_VERTICAL|wxEXPAND,2);
 
 		sc = new NumCtrl(ConvOpt, 20000, Options.GetString("Convert Resolution H"), 1, 3000, true, wxDefaultPosition, wxSize(115,-1), wxTE_PROCESS_ENTER);
 		ConOpt(sc,"Convert Resolution H");
-		obr4->Add(sc,0,wxALL|wxALIGN_CENTER,2);
-		ConvOptSizer1->Add(obr4,0,wxALL,2);
+		obr4->Add(sc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
+		ConvOptSizer1->Add(obr4,0,wxRIGHT|wxEXPAND,5);
 		
 		wxTextCtrl *tc = new wxTextCtrl(ConvOpt, -1, Options.GetString("Ass Conversion Prefix"), wxDefaultPosition, wxSize(250,-1),wxTE_PROCESS_ENTER);
 		ConOpt(tc,"Ass Conversion Prefix");
-		obr3->Add(tc,0,wxALL|wxALIGN_CENTER,2);
-		ConvOptSizer1->Add(obr3,0,wxALL,2);
+		obr3->Add(tc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
+		ConvOptSizer1->Add(obr3,0,wxRIGHT|wxEXPAND,5);
 
 		ConvOpt->SetSizerAndFit(ConvOptSizer1);
 	}
 	//Video
 	{
-		wxString voptspl[]={_("Otwórz wideo z menu kontekstowego na pe³nym ekranie"),_("Lewy przycisk myszy pauzuje wideo"),
-			_("Otwieraj wideo z czasem aktywnej linii"),_("Preferowane œcie¿ki audio (oddzielone œrednikiem)")};
+		wxString voptspl[]={_("OtwÃ³rz wideo z menu kontekstowego na peÅ‚nym ekranie"),_("Lewy przycisk myszy pauzuje wideo"),
+			_("Otwieraj wideo z czasem aktywnej linii"),_("Preferowane Å›cieÅ¼ki audio (oddzielone Å›rednikiem)")};
 		wxString vopts[]={"Video Fullskreen on Start","Video Pause on Click","Open Video At Active Line","Accepted audio stream"};
 		wxBoxSizer *MainSizer=new wxBoxSizer(wxVERTICAL);
 		for(int i=0;i<3;i++)
@@ -256,8 +270,28 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxStaticBoxSizer *prefaudio=new wxStaticBoxSizer(wxHORIZONTAL,Video,voptspl[3]);
 		wxTextCtrl *tc = new wxTextCtrl(Video, -1, Options.GetString(vopts[3]), wxDefaultPosition, wxSize(250,-1),wxTE_PROCESS_ENTER);
 		ConOpt(tc,vopts[3]);
-		prefaudio->Add(tc,0,wxALL|wxALIGN_CENTER,2);
-		MainSizer->Add(prefaudio,0,wxALL,2);
+		prefaudio->Add(tc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
+		MainSizer->Add(prefaudio,0,wxRIGHT|wxEXPAND,5);
+
+		wxString movopts[6]={_("Dwukrotnym klikniÄ™ciu na liniÄ™ (zawsze wÅ‚Ä…czone)"),_("KlikniÄ™ciu na liniÄ™"),
+			_("KlikniÄ™ciu na liniÄ™ lub edycji na pauzie"),_("KlikniÄ™ciu na liniÄ™ lub edycji"),
+			_("Edycji na pauzie"),_("Edycji") 
+		};
+		wxStaticBoxSizer *moveVideo=new wxStaticBoxSizer(wxVERTICAL, Video, _("Przesuwaj wideo do aktualnej linii po:"));
+		wxChoice *movvid=new wxChoice(Video,10000,wxDefaultPosition,wxDefaultSize,6,movopts);
+		movvid->SetSelection(Options.GetInt("Move Video To Active Line"));
+		ConOpt(movvid,"Move Video To Active Line");
+		moveVideo->Add(movvid,0,wxALL|wxEXPAND,2);
+		MainSizer->Add(moveVideo,0,wxRIGHT|wxEXPAND,5);
+
+		wxStaticBoxSizer *playVideo=new wxStaticBoxSizer(wxVERTICAL, Video, _("Odtwarzaj po zmianie linii:"));
+		wxString playopts[4]={_("Nic"),_("Audio do koÅ„ca linii"),_("Wideo do koÅ„ca linii"),
+			_("Wideo do poczÄ…tku nastÄ™pnej linii")};
+		wxChoice *playing=new wxChoice(Video,10000,wxDefaultPosition,wxDefaultSize,4,playopts);
+		playing->SetSelection(Options.GetInt("Play After Selection"));
+		ConOpt(playing,"Play After Selection");
+		playVideo->Add(playing,0,wxALL|wxEXPAND,2);
+		MainSizer->Add(playVideo,0,wxRIGHT|wxEXPAND,5);
 
 		Video->SetSizerAndFit(MainSizer);
 	}
@@ -266,11 +300,11 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxBoxSizer *HkeysSizer=new wxBoxSizer(wxVERTICAL);
 		Shortcuts = new wxListCtrl(Hotkeyss,26667,wxDefaultPosition,wxDefaultSize,wxLC_REPORT | wxLC_SINGLE_SEL);
 		Shortcuts->InsertColumn(0,_("Funkcja"),wxLIST_FORMAT_LEFT,220);
-		Shortcuts->InsertColumn(1,_("Skrót"),wxLIST_FORMAT_LEFT,120);
+		Shortcuts->InsertColumn(1,_("SkrÃ³t"),wxLIST_FORMAT_LEFT,120);
 		Connect(26667,wxEVT_COMMAND_LIST_ITEM_ACTIVATED,(wxObjectEventFunction)&OptionsDialog::OnMapHkey);
 		Connect(26667,wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);		
 
-		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){wxMessageBox(_("Dupa blada, skróty klawiszowe nie wczyta³y siê, na audio nie podzia³asz"), _("B³êdny b³¹d"));}
+		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){wxMessageBox(_("Dupa blada, skrÃ³ty klawiszowe nie wczytaÅ‚y siÄ™, na audio nie podziaÅ‚asz"), _("BÅ‚Ä™dny bÅ‚Ä…d"));}
 		
 		long ii=0;
 		//std::map<wxString,wxString>::iterator cur;
@@ -293,9 +327,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	{
 		wxBoxSizer *audio=new wxBoxSizer(wxVERTICAL);
 
-		wxString names[]={_("Wyœwietlaj czas przy kursorze"),_("Wyœwietlaj znaczniki sekund"),_("Wyœwietlaj t³o zaznaczenia"),_("Wyœwietlaj pozycjê wideo"),
-			_("Wyœwietlaj klatki kluczowe"),_("Przewijaj wykres audio przy odtwarzaniu"), _("Aktywuj okno audio po najechaniu"), _("Przyklejaj do klatek kluczowych"),
-			_("Przyklejaj do pozosta³ych linii"),_("Scalaj wszystkie \"n\" z poprzedni¹ sylab¹"),_("Wczytuj audio do pamiêci RAM")};
+		wxString names[]={_("WyÅ›wietlaj czas przy kursorze"),_("WyÅ›wietlaj znaczniki sekund"),_("WyÅ›wietlaj tÅ‚o zaznaczenia"),_("WyÅ›wietlaj pozycjÄ™ wideo"),
+			_("WyÅ›wietlaj klatki kluczowe"),_("Przewijaj wykres audio przy odtwarzaniu"), _("Aktywuj okno audio po najechaniu"), _("Przyklejaj do klatek kluczowych"),
+			_("Przyklejaj do pozostaÅ‚ych linii"),_("Scalaj wszystkie \"n\" z poprzedniÄ… sylabÄ…"),_("Wczytuj audio do pamiÄ™ci RAM")};
 
 		wxString opts[]={"Audio Draw Cursor Time","Audio Draw Secondary Lines","Audio Draw Selection Background","Audio Draw Video Position",
 			"Audio Draw Keyframes","Audio Lock Scroll On Cursor","Audio Autofocus","Audio Snap To Keyframes","Audio Snap To Other Lines",
@@ -318,11 +352,11 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		ConOpt(sc,opts1[0]);
 		ConOpt(sc1,opts1[1]);
 		wxStaticBoxSizer *audiocols=new wxStaticBoxSizer(wxVERTICAL,AudioMain,_("Czas odtwarzania audio przed i po znaczniku w ms"));	
-		wxStaticBoxSizer *audiocols1=new wxStaticBoxSizer(wxVERTICAL,AudioMain,_("Sposób wyœwietlania nieaktywnych linijek"));	
-		audiocols->Add(sc,0,wxALL,2);
-		audiocols1->Add(sc1,0,wxALL,2);
-		audio->Add(audiocols,0,wxALL,2);
-		audio->Add(audiocols1,0,wxALL,2);
+		wxStaticBoxSizer *audiocols1=new wxStaticBoxSizer(wxVERTICAL,AudioMain,_("SposÃ³b wyÅ›wietlania nieaktywnych linijek"));	
+		audiocols->Add(sc,1,wxALL|wxEXPAND,2);
+		audiocols1->Add(sc1,1,wxALL|wxEXPAND,2);
+		audio->Add(audiocols,0,wxRIGHT|wxEXPAND,5);
+		audio->Add(audiocols1,0,wxRIGHT|wxEXPAND,5);
 		
 
 		AudioMain->SetSizerAndFit(audio);
@@ -332,8 +366,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	{
 
 		wxFlexGridSizer *AudioColorsSizer=new wxFlexGridSizer(13,2,wxSize(5,5));
-		wxString labels[]={_("Kolor t³a"),_("Kolor znacznika start"),_("Kolor znacznika koniec"),_("Kolor znacznika przesuwania czasów"),
-			_("Kolor znaczników nieaktywnej linijki"),_("Kolor kursora"),_("Kolor znaczników sekund"),_("Kolor zaznaczenia"),
+		wxString labels[]={_("Kolor tÅ‚a"),_("Kolor znacznika start"),_("Kolor znacznika koniec"),_("Kolor znacznika przesuwania czasÃ³w"),
+			_("Kolor znacznikÃ³w nieaktywnej linijki"),_("Kolor kursora"),_("Kolor znacznikÃ³w sekund"),_("Kolor zaznaczenia"),
 			_("Kolor zaznaczenia po modyfikacji"),_("Kolor wykresu audio"),_("Kolor nieaktywnego wykresu audio"),
 			_("Kolor zmodyfikowanego wykresu audio"),_("Kolor zaznaczonego wykresu audio")};
 		wxString opts[]={"Audio Background","Audio Line Boundary Start","Audio Line Boundary End","Audio Line Boundary Mark",
@@ -344,7 +378,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		{
 			ColorButton *optc=new ColorButton(AudioCols,-1,Options.GetString(opts[i]));
 			ConOpt(optc,opts[i]);
-			AudioColorsSizer->Add(new wxStaticText(AudioCols,-1,labels[i]+":"),0,wxRIGHT | wxALIGN_CENTRE_VERTICAL,5);
+			AudioColorsSizer->Add(new wxStaticText(AudioCols,-1,labels[i]+":"),1,wxRIGHT | wxALIGN_CENTRE_VERTICAL ,5);
 			AudioColorsSizer->Add(optc,0,wxALL,2);
 		}
 	
@@ -359,7 +393,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	OptionsTree->AddPage(Video,_("Wideo"),true);
 	OptionsTree->AddPage(AudioMain,_("Audio"),true);
 	OptionsTree->AddSubPage(AudioCols,_("Kolorystyka"),true);
-	OptionsTree->AddPage(Hotkeyss,_("Skróty klawiszowe"),true);
+	OptionsTree->AddPage(Hotkeyss,_("SkrÃ³ty klawiszowe"),true);
 	OptionsTree->Fit();
 		
 	//adding buttons
@@ -466,6 +500,11 @@ void OptionsDialog::SetOptions(bool saveall)
 				wxString kol=cbx->GetString(cbx->GetSelection());
 				if(Options.GetString(OB.option)!=kol){
 					Options.SetString(OB.option,kol);
+					if(cbx->GetId()==10001){
+						Kai->SpellcheckerOn();
+						colmod=true;
+						Kai->GetTab()->Grid1->SpellErrors.clear();
+					}
 				}
 			}else{
 				if(Options.GetInt(OB.option)!=cbx->GetSelection()){
@@ -474,7 +513,7 @@ void OptionsDialog::SetOptions(bool saveall)
 			}
 		}
 		else if(OB.ctrl->IsKindOf(CLASSINFO(wxTextCtrl))){
-			//wxLogStatus("txtctrl %i",OB.ctrl->GetId());
+			
 			if(OB.ctrl->GetId()!=20000){
 				wxTextCtrl *sc=(wxTextCtrl*)OB.ctrl;
 				wxString str=sc->GetValue();
@@ -500,8 +539,9 @@ void OptionsDialog::OnMapHkey(wxListEvent& event)
 {
 	int num=event.GetIndex();
 	wxListItem item=event.GetItem();
-	wxString shkey=item.GetText().AfterFirst(' ');
-	wxString type=item.GetText()[0];
+	wxString itemtext=item.GetText();
+	wxString shkey=itemtext.AfterFirst(' ');
+	wxString type=itemtext[0];
 	HkeysDialog hkd(this,shkey,shkey.StartsWith("Script"));
 	if(hkd.ShowModal()==0){
 	
@@ -516,13 +556,14 @@ void OptionsDialog::OnMapHkey(wxListEvent& event)
 		wxString keytxt=Hkeys.keys[hkd.hkey];
 		if(keytxt==""){keytxt=wchar_t(hkd.hkey);}
 		test<<keytxt;
-		wxLogStatus(test);
+		//wxLogStatus("name "+shkey+" key"+test);
 		int id=-1;
 		for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){//wxLogStatus(cur->first);
 			if(cur->second.Name == shkey){id=cur->first;}
+			//wxLogStatus(cur->second.Name);
 			if(cur->second.Accel == test && (cur->second.Type == type) ){
 			
-				if(wxMessageBox(wxString::Format(_("Ten skrót ju¿ istnieje i jest ustawiony jako skrót do \"%s\".\nWykasowaæ powtarzaj¹cy siê skrót?"), cur->second.Name), 
+				if(wxMessageBox(wxString::Format(_("Ten skrÃ³t juÅ¼ istnieje i jest ustawiony jako skrÃ³t do \"%s\".\nWykasowaÄ‡ powtarzajÄ…cy siÄ™ skrÃ³t?"), cur->second.Name), 
 					_("Uwaga"),wxYES_NO)==wxYES){
 					Hkeys.hkeys.erase(cur);
 					long nitem=Shortcuts->FindItem(-1,cur->first);
@@ -535,7 +576,7 @@ void OptionsDialog::OnMapHkey(wxListEvent& event)
 		}
 		
 		if(id<0){return;}
-		Hkeys.SetHKey(id, shkey, hkd.flag, hkd.hkey);
+		Hkeys.SetHKey(id, itemtext, hkd.flag, hkd.hkey);
 		//wxLogStatus("Setitem");
 		Shortcuts->SetItem(event.GetIndex(),1,Hkeys.GetMenuH(id));
 		//wxLogStatus("Setmodif");

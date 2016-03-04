@@ -1,4 +1,4 @@
-
+Ôªø
 #include "FontDialog.h"
 #include <wx/fontenum.h>
 #include <wx/regex.h>
@@ -17,7 +17,7 @@ FontList::FontList(wxWindow *parent,long id,wxArrayString fontarray,const wxPoin
 	wxClientDC dc(this);
 	dc.SetFont(font);
 	int fw,fh;
-	dc.GetTextExtent(_T("#TWFfGH"), &fw, &fh, NULL, NULL, &font);
+	dc.GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	Height=fh+4;
 
 	bmp=NULL;
@@ -237,7 +237,7 @@ BEGIN_EVENT_TABLE(FontList,wxWindow)
 	END_EVENT_TABLE()
 
 	FontDialog::FontDialog(wxWindow *parent, Styles *acst)
-	:wxDialog(parent,-1,_("Wybierz czcionkÍ"))
+	:wxDialog(parent,-1,_("Wybierz czcionkƒô"))
 {
 
 	wxAcceleratorEntry entries[4];
@@ -253,7 +253,7 @@ BEGIN_EVENT_TABLE(FontList,wxWindow)
 
 	wxBoxSizer *Main= new wxBoxSizer(wxVERTICAL);
 	wxStaticBoxSizer *Cfont= new wxStaticBoxSizer(wxHORIZONTAL,this,_("Czcionka"));
-	wxStaticBoxSizer *prev= new wxStaticBoxSizer(wxVERTICAL,this,_("Podglπd"));
+	wxStaticBoxSizer *prev= new wxStaticBoxSizer(wxVERTICAL,this,_("PodglƒÖd"));
 	wxBoxSizer *Fattr= new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *Bsizer= new wxBoxSizer(wxHORIZONTAL);
 
@@ -270,9 +270,9 @@ BEGIN_EVENT_TABLE(FontList,wxWindow)
 	Bold->SetValue(acst->Bold);
 	Italic= new wxCheckBox(this,ID_FONTATTR,_("Kursywa"));
 	Italic->SetValue(acst->Italic);
-	Underl= new wxCheckBox(this,ID_FONTATTR,_("Podkreúlenie"));
+	Underl= new wxCheckBox(this,ID_FONTATTR,_("Podkre≈õlenie"));
 	Underl->SetValue(acst->Underline);
-	Strike= new wxCheckBox(this,ID_FONTATTR,_("Przekreúlenie"));
+	Strike= new wxCheckBox(this,ID_FONTATTR,_("Przekre≈õlenie"));
 	Strike->SetValue(acst->StrikeOut);
 	Buttok= new wxButton(this,wxID_OK,"OK");
 	Buttcancel= new wxButton(this,wxID_CANCEL,_("Anuluj"));
@@ -348,6 +348,6 @@ void FontDialog::OnScrollList(wxCommandEvent& event)
 
 	int step=(event.GetId()==ID_SCROLLUP)? -1 : 1;
 	Fonts->Scroll(step);
-	//wxLogStatus("wesz≥o");
+	//wxLogStatus("wesz≈Ço");
 	UpdatePreview();
 }

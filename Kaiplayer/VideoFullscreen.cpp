@@ -1,4 +1,4 @@
-
+﻿
 #include "VideoFullscreen.h"
 #include "Videobox.h"
 #include "config.h"
@@ -32,5 +32,5 @@ Fullscreen::~Fullscreen()
 {
 	//PopEventHandler();
 	this->SetEventHandler(this);
-    //Zwolni� event handler
+    //Zwolnić event handler
 }

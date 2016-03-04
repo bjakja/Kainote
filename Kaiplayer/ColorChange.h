@@ -22,7 +22,6 @@ class ColorChange: public wxWindow
 		ColorChange(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~ColorChange();
 
-		//StylePreview* Stprev;
 		wxCheckBox* sob;
 		wxRadioButton* rb1;
 		wxRadioButton* rb2;
@@ -62,7 +61,6 @@ class ColorChange: public wxWindow
 		NumCtrl* smr;
 		NumCtrl* smv;
 		NumCtrl* sml;
-		//wxTextCtrl
 		StylePreview* Preview;
 
 		void UpdateValues(Styles *styl);

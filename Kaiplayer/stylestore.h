@@ -34,6 +34,7 @@ class stylestore: public wxDialog
 		wxButton* Button3;
 		wxButton* Button7;
 		wxButton* Button9;
+		wxButton* SClean;
 		StyleList* Store;
 		wxChoice* Choice1;
 		wxButton* Button8;
@@ -74,6 +75,7 @@ class stylestore: public wxDialog
 		void OnConfirm(wxCommandEvent& event);
 		void OnClose(wxCommandEvent& event);
 		void OnSwitchLines(wxCommandEvent& event);
+		void OnCleanStyles(wxCommandEvent& event);
 		bool stass;
 		bool dummy;
 		int selnum;
@@ -102,6 +104,7 @@ enum{
 	ID_ASSLOAD,
 	ID_ASSDEL,
 	ID_ASSSORT,
+	ID_ASSCLEAN,
 	ID_CONF,
 	ID_CLOSEE
 	};

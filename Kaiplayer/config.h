@@ -11,6 +11,7 @@
 #include <algorithm>
 #include "styles.h"
 #include <wx/utils.h> 
+#undef wxBITMAP_PNG
 
 
 

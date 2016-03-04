@@ -1,4 +1,4 @@
-
+ï»¿
 
 #include <wx/gdicmn.h>
 #include <wx/regex.h>
@@ -194,7 +194,7 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 
 	if(!isfullskreen&&!fulls){
 			int sx,sy;
-			//wy³¹czony edytor
+			//wyÅ‚Ä…czony edytor
 		if(!Kai->GetTab()->edytor){
 			if(!Kai->IsMaximized()){
 				//int ww,wh;
@@ -205,7 +205,7 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 				Kai->SetClientSize(sx+iconsize, sy+44+Kai->Tabs->GetHeight());
 				Kai->GetTab()->BoxSizer1->Layout();
 			}
-			//za³¹czony edytor
+			//zaÅ‚Ä…czony edytor
 		}else{
 			int kw,kh;
 			Options.GetCoords("Video Window Size",&kw,&kh);
@@ -234,7 +234,7 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 	
 	displaytime();
 	
-	int pos= (isfullskreen)? TD->volslider->GetValue() : volslider->GetValue();
+	int pos= Options.GetInt("Video Volume");
 	SetVolume(-(pos*pos));
 	SetFocus();
 	Kai->GetTab()->VideoPath=fileName;
@@ -486,7 +486,7 @@ void VideoCtrl::NextFile(bool next)
 		wxDir kat(pathwn);
 		if(kat.IsOpened()){
 			pliki.Clear();
-			kat.GetAllFiles(pathwn,&pliki,_T(""), wxDIR_FILES);
+			kat.GetAllFiles(pathwn,&pliki,"", wxDIR_FILES);
 		}
 		//oldpath=pathwn;
 	//}
@@ -503,7 +503,7 @@ void VideoCtrl::NextFile(bool next)
 			 
 		wxString ext=pliki[k].AfterLast('.').Lower();
 		if(ext=="avi"||ext=="mp4"||ext=="mkv"||ext=="ogm"||ext=="wmv"||
-			ext=="asf"||ext=="rmvb"||ext=="rm"||ext=="3gp"||//||ext=="avs" przynajmniej do momentu dodania otwierania avs przy w³¹czonym ffms2
+			ext=="asf"||ext=="rmvb"||ext=="rm"||ext=="3gp"||//||ext=="avs" przynajmniej do momentu dodania otwierania avs przy wÅ‚Ä…czonym ffms2
 			ext=="ts"||ext=="m2ts"||ext=="mpg"||ext=="mpeg"){
 				
 			
@@ -521,7 +521,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 	//wxMutexLocker lock(vbmutex);
 	isfullskreen = !isfullskreen;
 
-	//wyjœcie z fullskreena
+	//wyjÅ›cie z fullskreena
 	if(!isfullskreen){
 		if(GetState()==Playing){if(Kai->GetTab()->edytor){Pause();}else{vtime.Start(100);}}
 		
@@ -549,7 +549,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 		displaytime();
 		TD->Hide();
 	}
-	//przejœcie na fullskreena
+	//przejÅ›cie na fullskreena
 	else{
 		wxRect rt = GetMonitorRect(monitor);
 		if(!TD){
@@ -608,7 +608,7 @@ void VideoCtrl::OnPrew()
 {
 	wxMenuItem *index=Kai->MenuBar->FindItem(ID_OPVIDEOINDEX);
 	if(index->IsChecked()&&index->IsEnabled()){
-		if(wxMessageBox(_("Czy na pewno chcesz zindeksowaæ poprzednie wideo?"),_("Potwierdzenie"),wxYES_NO)==wxNO)return;}
+		if(wxMessageBox(_("Czy na pewno chcesz zindeksowaÄ‡ poprzednie wideo?"),_("Potwierdzenie"),wxYES_NO)==wxNO)return;}
 	NextFile(false);
 }
 
@@ -617,7 +617,7 @@ void VideoCtrl::OnNext()
 {
 	wxMenuItem *index=Kai->MenuBar->FindItem(ID_OPVIDEOINDEX);
 	if(index->IsChecked()&&index->IsEnabled()){
-		if(wxMessageBox(_("Czy na pewno chcesz zindeksowaæ nastêpne wideo?"),_("Potwierdzenie"),wxYES_NO)==wxNO)return;}
+		if(wxMessageBox(_("Czy na pewno chcesz zindeksowaÄ‡ nastÄ™pne wideo?"),_("Potwierdzenie"),wxYES_NO)==wxNO)return;}
 	NextFile();
 }
 
@@ -641,7 +641,7 @@ void VideoCtrl::OnVButton(wxCommandEvent& event)
 void VideoCtrl::OnVolume(wxScrollEvent& event)
 {
 	int pos=event.GetPosition();
-	
+	Options.SetInt("Video Volume",pos);
 	SetVolume(-(pos*pos));
 }
 
@@ -650,29 +650,29 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 	ismenu=true;
 	wxMenu* menu=new wxMenu();
 	wxString txt;
-	if(GetState()!=Playing){txt=_("Odtwórz\t")+Hkeys.GetMenuH(MENU_PLAYP);}
+	if(GetState()!=Playing){txt=_("OdtwÃ³rz\t")+Hkeys.GetMenuH(MENU_PLAYP);}
 	else if(GetState()==Playing){txt=_("Pauza\t")+Hkeys.GetMenuH(MENU_PLAYP);}
 	if(!isfullskreen && ((TabPanel*)GetParent())->edytor)
 	{
-		Hkeys.SetAccMenu(menu, MENU_CPYCOORDS,_("Kopiuj pozycjê na wideo"));
+		Hkeys.SetAccMenu(menu, MENU_CPYCOORDS,_("Kopiuj pozycjÄ™ na wideo"));
 	}
 	menu->Append(MENU_PLAYP,txt)->Enable(GetState()!=None);
 	Hkeys.SetAccMenu(menu, MENU_STOP,_("Stop"))->Enable(GetState()==Playing);
 	wxString txt1;
-	if(!isfullskreen){txt1=_("Pe³ny ekran\tF");}
-	else{txt1=_("Wy³¹cz pe³ny ekran\tEscape");}
+	if(!isfullskreen){txt1=_("PeÅ‚ny ekran\tF");}
+	else{txt1=_("WyÅ‚Ä…cz peÅ‚ny ekran\tEscape");}
 	Hkeys.SetAccMenu(menu, MENU_FULLS,txt1)->Enable(GetState()!=None);
 	
 	GetMonitorRect(-1);
 	for(size_t i=1; i<MonRects.size(); i++)
 	{
 		wxString txt2;
-		if(isfullskreen){txt2 = wxString::Format(_("Prze³¹cz pe³ny ekran na %i monitor"), (i+1));}
-		else{txt2 = wxString::Format(_("W³¹cz pe³ny ekran na %i monitorze"), (i+1));}
+		if(isfullskreen){txt2 = wxString::Format(_("PrzeÅ‚Ä…cz peÅ‚ny ekran na %i monitor"), (i+1));}
+		else{txt2 = wxString::Format(_("WÅ‚Ä…cz peÅ‚ny ekran na %i monitorze"), (i+1));}
 		Hkeys.SetAccMenu(menu, MENU_MONITORS+i,txt2)->Enable(GetState()!=None);
 	}
 
-	Hkeys.SetAccMenu(menu, MENU_OPEDITOR,_("Otwórz edytor\tCtrl-E"))->Enable(isfullskreen);
+	Hkeys.SetAccMenu(menu, MENU_OPEDITOR,_("OtwÃ³rz edytor\tCtrl-E"))->Enable(isfullskreen);
 	wxMenu* menu1=new wxMenu();
 	wxMenu* menu2=new wxMenu();
 	for(size_t i=0;i<20;i++)
@@ -689,25 +689,25 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 	}
 	menu->Append(ID_MRECSUBS, _("Ostatnio otwarte napisy"), menu1);
 	menu->Append(ID_MRECVIDEO, _("Ostatnio otwarte wideo"), menu2);
-	Hkeys.SetAccMenu(menu, MENU_OPVIDEO,_("Otwórz wideo\tCtrl-Shift-O"));
+	Hkeys.SetAccMenu(menu, MENU_OPVIDEO,_("OtwÃ³rz wideo\tCtrl-Shift-O"));
 		
-	Hkeys.SetAccMenu(menu, MENU_OPSUBS, _("&Otwórz napisy\tCtrl-O"));
-	Hkeys.SetAccMenu(menu, MENU_HIDEPB,_("Ukryj / poka¿ pasek postêpu"))->Enable(isfullskreen);
-	Hkeys.SetAccMenu(menu, MENU_AR,_("Zmieñ proporcje wideo"));
-	Hkeys.SetAccMenu(menu, MENU_SAVESPNG,_("Zapisz klatkê z napisami jako PNG"))->Enable(GetState()==Paused);
-	Hkeys.SetAccMenu(menu, MENU_SAVESCPBD,_("Kopiuj klatkê z napisami do schowka"))->Enable(GetState()==Paused);
-	Hkeys.SetAccMenu(menu, MENU_SAVEPNG,_("Zapisz klatkê jako PNG"))->Enable(GetState()==Paused && ((TabPanel*)GetParent())->edytor);
-	Hkeys.SetAccMenu(menu, MENU_SAVECPBD,_("Zapisz klatkê do schowka"))->Enable(GetState()==Paused && ((TabPanel*)GetParent())->edytor);
+	Hkeys.SetAccMenu(menu, MENU_OPSUBS, _("&OtwÃ³rz napisy\tCtrl-O"));
+	Hkeys.SetAccMenu(menu, MENU_HIDEPB,_("Ukryj / pokaÅ¼ pasek postÄ™pu"))->Enable(isfullskreen);
+	Hkeys.SetAccMenu(menu, MENU_AR,_("ZmieÅ„ proporcje wideo"));
+	Hkeys.SetAccMenu(menu, MENU_SAVESPNG,_("Zapisz klatkÄ™ z napisami jako PNG"))->Enable(GetState()==Paused);
+	Hkeys.SetAccMenu(menu, MENU_SAVESCPBD,_("Kopiuj klatkÄ™ z napisami do schowka"))->Enable(GetState()==Paused);
+	Hkeys.SetAccMenu(menu, MENU_SAVEPNG,_("Zapisz klatkÄ™ jako PNG"))->Enable(GetState()==Paused && ((TabPanel*)GetParent())->edytor);
+	Hkeys.SetAccMenu(menu, MENU_SAVECPBD,_("Zapisz klatkÄ™ do schowka"))->Enable(GetState()==Paused && ((TabPanel*)GetParent())->edytor);
 	menu->AppendSeparator();
 
-	Hkeys.SetAccMenu(menu, MENU_DELVIDEO,_("Usuñ plik wideo"))->Enable(GetState()!=None);
+	Hkeys.SetAccMenu(menu, MENU_DELVIDEO,_("UsuÅ„ plik wideo"))->Enable(GetState()!=None);
 	wxMenu* menu3=NULL;
 	int numfilters=0;
 	if(GetState()!=None && IsDshow){
 		menu3=new wxMenu();
 		EnumFilters(menu3);
 		numfilters=menu3->GetMenuItemCount();
-		menu->Append(23456,_("Filtry"),menu3,_("Wyœwietla u¿yte filtry"));
+		menu->Append(23456,_("Filtry"),menu3,_("WyÅ›wietla uÅ¼yte filtry"));
 	}
 	
 
@@ -740,7 +740,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 	else{id=GetPopupMenuSelectionFromUser(*menu, pos);}
 
 	byte state[256];
-	if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie mo¿na pobraæ stanu klawiszy"));}
+	if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie moÅ¼na pobraÄ‡ stanu klawiszy"));}
 	if((state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1)&& id<2100 && id>=2000){
 		wxMenuItem *item=menu->FindItem(id);
 		wxString wins[1]={"Wideo"};
@@ -790,7 +790,7 @@ void VideoCtrl::OnHidePB()
 
 void VideoCtrl::OnDeleteVideo()
 {
-	if(wxMessageBox(_("Czy na pewno chcesz przenieœæ wczytany plik wideo do kosza?"), _("Usuwanie"), wxYES_NO)==wxNO){return;}
+	if(wxMessageBox(_("Czy na pewno chcesz przenieÅ›Ä‡ wczytany plik wideo do kosza?"), _("Usuwanie"), wxYES_NO)==wxNO){return;}
 	wxString path=Kai->GetTab()->VideoPath;
 	NextFile();
 	CRecycleFile x;
@@ -801,8 +801,8 @@ void VideoCtrl::OnOpVideo()
 {
 	wxFileDialog* FileDialog2 = new wxFileDialog(this, _("Wybierz plik wideo"),
 		(Kai->videorec.size()>0)?Kai->videorec[Kai->videorec.size()-1].BeforeLast('\\'):"",
-		_T(""), _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"),
-		wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, _T("wxFileDialog"));
+		"", _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"),
+		wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, "wxFileDialog");
 	if (FileDialog2->ShowModal() == wxID_OK){
 		Kai->OpenFile(FileDialog2->GetPath());
 	}
@@ -812,10 +812,10 @@ void VideoCtrl::OnOpVideo()
 void VideoCtrl::OnOpSubs()
 {
 	if(Kai->SavePrompt(2)){return;}
-	wxFileDialog* FileDialog2 = new wxFileDialog(Kai, _("Wybierz plik napisów"), 
-		(Kai->subsrec.size()>0)?Kai->subsrec[Kai->subsrec.size()-1].BeforeLast('\\'):"", _T(""), 
-		_("Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"), 
-		wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, _T("wxFileDialog"));
+	wxFileDialog* FileDialog2 = new wxFileDialog(Kai, _("Wybierz plik napisÃ³w"), 
+		(Kai->subsrec.size()>0)?Kai->subsrec[Kai->subsrec.size()-1].BeforeLast('\\'):"", "", 
+		_("Pliki napisÃ³w (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"), 
+		wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, "wxFileDialog");
 	 
 	if (FileDialog2->ShowModal() == wxID_OK){
 		Kai->OpenFile(FileDialog2->GetPath());
@@ -1081,10 +1081,10 @@ BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor,HDC hdcMonitor,LPRECT lprcMonito
 	VideoCtrl *vb=(VideoCtrl *) dwData;
 	WinStruct<MONITORINFO> monitorinfo;
 	if(!GetMonitorInfo(hMonitor, &monitorinfo)){
-		wxLogStatus(_("Nie mo¿na pobraæ informacji o monitorze"));
+		wxLogStatus(_("Nie moÅ¼na pobraÄ‡ informacji o monitorze"));
 		return TRUE;
 	}
-	//podstawowy monitor ma byæ pierwszy w tablicy
+	//podstawowy monitor ma byÄ‡ pierwszy w tablicy
 	if(monitorinfo.dwFlags==MONITORINFOF_PRIMARY){
 		vb->MonRects.insert(vb->MonRects.begin(), monitorinfo.rcMonitor);
 		return TRUE;
@@ -1109,12 +1109,12 @@ wxRect VideoCtrl::GetMonitorRect(int wmonitor){
 			if(MonRects[i].left <= x && x < MonRects[i].right && MonRects[i].top <= y && y < MonRects[i].bottom)
 			{
 				
-				//wxLogStatus("znalaz³o %i monitor", i);
+				//wxLogStatus("znalazÅ‚o %i monitor", i);
 				return wxRect(MonRects[i].left, MonRects[i].top,  abs(MonRects[i].right - MonRects[i].left), abs(MonRects[wmonitor].bottom - MonRects[wmonitor].top));
 			}
 		}
 	}else{
-		//wxLogStatus("znalaz³o %i monitor", wmonitor);
+		//wxLogStatus("znalazÅ‚o %i monitor", wmonitor);
 		return wxRect(MonRects[wmonitor].left, MonRects[wmonitor].top, abs(MonRects[wmonitor].right - MonRects[wmonitor].left), abs(MonRects[wmonitor].bottom - MonRects[wmonitor].top));
 	}
 	return rt;

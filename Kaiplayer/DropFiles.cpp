@@ -1,4 +1,4 @@
-
+ï»¿
 #include "DropFiles.h"
 #include "kainoteMain.h"
 
@@ -50,17 +50,17 @@ bool DragScripts::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenam
 				}
 				catch (const wchar_t *e) {
 					error_count++;
-					wxLogError(_("B³¹d wczytywania skryptu Lua: %s\n%s"), filenames[i].c_str(), e);
+					wxLogError(_("BÅ‚Ä…d wczytywania skryptu Lua: %s\n%s"), filenames[i].c_str(), e);
 				}
 				catch (...) {
 					error_count++;
-					wxLogError(_("Nieznany b³¹d wczytywania skryptu Lua: %s."), filenames[i].c_str());
+					wxLogError(_("Nieznany bÅ‚Ä…d wczytywania skryptu Lua: %s."), filenames[i].c_str());
 				}
 		
 
 		}
 	if (error_count > 0) {
-			wxLogWarning(_("Co najmniej jeden skrypt z pliku napisów zawiera b³êdy.\nZobacz opisy skryptów, by uzyskaæ wiêcej informacji."));
+			wxLogWarning(_("Co najmniej jeden skrypt z pliku napisÃ³w zawiera bÅ‚Ä™dy.\nZobacz opisy skryptÃ³w, by uzyskaÄ‡ wiÄ™cej informacji."));
 		}
 	return true;
 	

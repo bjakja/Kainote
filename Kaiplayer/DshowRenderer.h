@@ -1,6 +1,6 @@
 //#pragma once
 
-#define UNICODE
+//#define UNICODE
 //#include <wxdebug.h>
 
 typedef wchar_t* PTCHAR;

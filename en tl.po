@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2016-01-19 10:36+0100\n"
-"PO-Revision-Date: 2016-01-20 10:00+0100\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2016-01-22 15:06+0100\n"
+"Last-Translator: Bakura, Areki, duplex\n"
 "Language-Team: \n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
@@ -998,7 +998,6 @@ msgid "Użytej w stylach:\r\n"
 msgstr "Used in styles:\n"
 
 #: FontCollector.cpp:179
-#, fuzzy
 msgid "Dupa blada freetype nie chce się zinitializować"
 msgstr "God dammit, freetype doesn't want to initialize"
 
@@ -1413,7 +1412,6 @@ msgid "Nie można zapisać do pliku."
 msgstr "Cannot save to file."
 
 #: OptionsDialog.cpp:64
-#, fuzzy
 msgid "Dupa blada, opcje się nie wczytały, audio nie skonfigurujesz"
 msgstr "God dammit, options couldn't be read, you won't configure the audio"
 
@@ -1662,7 +1660,6 @@ msgid "Funkcja"
 msgstr "Function"
 
 #: OptionsDialog.cpp:273
-#, fuzzy
 msgid "Dupa blada, skróty klawiszowe nie wczytały się, na audio nie podziałasz"
 msgstr "God dammit, hotkeys couldn't be read, you won't work with audio"
 
@@ -2149,7 +2146,6 @@ msgid "Wybierz ścieżkę"
 msgstr "Choose path"
 
 #: VideoFfmpeg.cpp:47 kainoteMain.cpp:1235
-#, fuzzy
 msgid "Dupa blada, opcje się nie wczytały, na audio nie podziałasz"
 msgstr "God dammit, option couldn't be read, you won't work with audio"
 
@@ -2176,22 +2172,18 @@ msgid "Nie można zapisać indeksu, wystąpił błąd %s"
 msgstr "Cannot save index, error %s occured"
 
 #: VideoFfmpeg.cpp:220
-#, fuzzy
 msgid "Dupa bada videosource nie utworzył się."
 msgstr "God dammit, videosource couldn't be created."
 
 #: VideoFfmpeg.cpp:260
-#, fuzzy
 msgid "Dupa bada nie można przekonwertować wideo na NV12"
 msgstr "God dammit, cannot convert video to NV12"
 
 #: VideoFfmpeg.cpp:266
-#, fuzzy
 msgid "Dupa bada nie można pobrać ścieżki z wideo"
 msgstr "God dammit, cannot load from video"
 
 #: VideoFfmpeg.cpp:270
-#, fuzzy
 msgid "Dupa bada nie można pobrać informacji o wideo"
 msgstr "God dammit, cannot load video info"
 
@@ -2230,9 +2222,8 @@ msgid "Nie można utworzyć urządzenia D3D9"
 msgstr "Cannot create D3D9"
 
 #: VideoRenderer.cpp:142
-#, fuzzy
 msgid "Zawiodło któreś z ustawień dx"
-msgstr "One of the DirectX settings caused a crash"
+msgstr "One of the DirectX failed"
 
 #: VideoRenderer.cpp:150 Visuals.cpp:596
 msgid "Nie można ustawić matrixa projection"

@@ -14,6 +14,7 @@ class SpellChecker
 	SpellChecker();
 	~SpellChecker();
 	bool Initialize();
+	void AvailableDics(wxArrayString &dics);
 	void Cleaning();
 	bool CheckWord(wxString word);
 	bool AddWord(wxString word);

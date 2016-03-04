@@ -1,4 +1,4 @@
-#include <wx/graphics.h>
+Ôªø#include <wx/graphics.h>
 #include "TabDialog.h"
 #include "TabPanel.h"
 #include "kainoteApp.h"
@@ -14,7 +14,7 @@ Notebook::Notebook(wxWindow *parent, int id)
 	block=split=onx=farr=rarr=plus=false;
 	TabHeight=25;
 	allvis=arrow=true;
-	font=wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,_T("Tahoma"),wxFONTENCODING_DEFAULT);
+	font=wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 	sthis=this;
 	
 	Pages.push_back(new TabPanel(this,(kainoteFrame*)parent));
@@ -200,7 +200,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	GetClientSize(&w,&h);
 	hh=h-25;
 	
-	//wy≥πczanie wszystkich aktywnoúci przy wyjúciu z zak≥adek
+	//wy≈ÇƒÖczanie wszystkich aktywno≈õci przy wyj≈õciu z zak≈Çadek
 	
 	if(event.Leaving()){
 		if(over!=-1 || onx ||farr||rarr||plus){
@@ -261,7 +261,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	int i = FindTab(x, &num);
 
 	
-	// klik, dwuklik i úrodkowy
+	// klik, dwuklik i ≈õrodkowy
 	if(click||dclick||mdown){
 
 		
@@ -310,7 +310,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	
 	
 	
-	//oøywienie zak≥adek
+	//o≈ºywienie zak≈Çadek
 	if(event.Moving()){
 		if(x>=start+17&&HasToolTips()){UnsetToolTip();}
 
@@ -327,7 +327,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			plus=true;rarr=false;
 			RefreshRect(wxRect(start,hh,start+17,25),false);
 			//if(oldtab!=i){
-				SetToolTip(_("OtwÛrz nowπ zak≥adkÍ"));
+				SetToolTip(_("Otw√≥rz nowƒÖ zak≈Çadkƒô"));
 				//oldtab=i;}
 			return;
 			}
@@ -358,7 +358,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			onx=true;
 			RefreshRect(wxRect(num+Tabsizes[i]-18,hh,15,25),false);
 		}else if(onx){
-			oldtab=-1;//trick aby po zejúciu z x powrÛci≥ tip z nazwπ napisÛw i wideo
+			oldtab=-1;//trick aby po zej≈õciu z x powr√≥ci≈Ç tip z nazwƒÖ napis√≥w i wideo
 			onx=false;
 			RefreshRect(wxRect(num+Tabsizes[i]-18,hh,15,25),false);
 		}
@@ -378,9 +378,9 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		menu1.AppendSeparator();
 		if(i>=0){menu1.Append(MENU_SAVE+i,_("Zapisz"),_("Zapisz"),wxITEM_NORMAL);}
 		menu1.Append(MENU_SAVE-1,_("Zapisz wszystko"),_("Zapisz wszystko"),wxITEM_NORMAL);
-		menu1.Append(MENU_CHOOSE-1,_("Zamknij wszystkie zak≥adki"),_("Zamknij wszystkie zak≥adki"),wxITEM_NORMAL);
+		menu1.Append(MENU_CHOOSE-1,_("Zamknij wszystkie zak≈Çadki"),_("Zamknij wszystkie zak≈Çadki"),wxITEM_NORMAL);
 		if((i!=iter && Size()>1 && i!=-1)||split){
-			wxString txt=(split)? _("Wyúwietl jednπ zak≥adkÍ") : _("Wyúwietl dwie zak≥adki");
+			wxString txt=(split)? _("Wy≈õwietl jednƒÖ zak≈Çadkƒô") : _("Wy≈õwietl dwie zak≈Çadki");
 			menu1.Append((MENU_CHOOSE-2)-i, txt, "",wxITEM_NORMAL);
 		}
 		int id=GetPopupMenuSelectionFromUser(menu1,event.GetPosition());
@@ -439,11 +439,11 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	
 
 	wxGraphicsContext *gc = wxGraphicsContext::Create(dc);
-	//pÍtla do rysowania zak≥adek
+	//pƒôtla do rysowania zak≈Çadek
 	for(size_t i=fvis;i<Tabsizes.size();i++){
-		//wybrana zak≥adka
+		//wybrana zak≈Çadka
 		if(i==iter){//wxSYS_COLOUR_INACTIVEBORDER
-			//rysowanie linii po obu stronach aktywnej zak≥adki
+			//rysowanie linii po obu stronach aktywnej zak≈Çadki
 			dc.SetPen(wxPen(wxColour("#696969"),1));
 			dc.DrawLine(0,0,start,0);
 			dc.DrawLine(start+Tabsizes[i],0,w,0);
@@ -454,7 +454,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.SetTextForeground("#505050");
 			dc.SetPen(wxPen("#000000"));
 
-			//najechany x na wybranej zak≥adce
+			//najechany x na wybranej zak≈Çadce
 			if(onx){
 				dc.SetBrush(wxBrush("#9BD7EE"));
 				dc.DrawRoundedRectangle(start+Tabsizes[i]-20,3,16,16,1.1);}
@@ -462,14 +462,14 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.SetTextForeground("#000000");
 			
 		}
-		//najechana nieaktywna zak≥adka
+		//najechana nieaktywna zak≈Çadka
 		if(i==(size_t)over){
 			dc.SetPen(*wxTRANSPARENT_PEN);
 			dc.SetBrush(wxBrush("#FFFFFF"));
 			dc.DrawRectangle(start+1,2,Tabsizes[i]-1,21);
 		}
 		
-		//rysowanie konturÛw zak≥adki
+		//rysowanie kontur√≥w zak≈Çadki
 		if(gc){
 			gc->SetPen( wxPen("#696969"));
 			gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
@@ -499,7 +499,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
-	//strza≥ki do przesuwania zak≥adek
+	//strza≈Çki do przesuwania zak≈Çadek
 	if(!allvis){
 		dc.DrawRectangle(w-16,0,16,25);
 		if(farr){dc.SetBrush(wxBrush("#9BD7EE"));}
@@ -521,7 +521,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		dc.DrawLine(w-4,12,w-11,19);
 	}
 	
-	//plus ktÛry jest zawsze widoczny
+	//plus kt√≥ry jest zawsze widoczny
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxBrush("#FFFFFF"));
 	if(plus){dc.DrawRectangle(start+1,1,18,23);}

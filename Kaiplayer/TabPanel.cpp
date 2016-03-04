@@ -1,4 +1,4 @@
-
+﻿
 #include "TabPanel.h"
 #include "config.h"
 #include "Hotkeys.h"
@@ -37,10 +37,10 @@ TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const
 	edytor=true;
 	holding=false;
 
-	SubsName=_("Bez tytu�u");
-	VideoName=_T("");
-	SubsPath=_T("");
-	VideoPath=_T("");
+	SubsName=_("Bez tytułu");
+	VideoName="";
+	SubsPath="";
+	VideoPath="";
 
 	sline=NULL;
 	SetAccels();
@@ -49,7 +49,6 @@ TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const
 
 TabPanel::~TabPanel(){
 }
-
 
 
 void TabPanel::SetAccels()

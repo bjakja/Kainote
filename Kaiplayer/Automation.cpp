@@ -1,4 +1,4 @@
-
+ï»¿
 #include "Automation.h"
 #include "config.h"
 #include "OpennWrite.h"
@@ -32,9 +32,9 @@ LuaScriptReader::LuaScriptReader(const wxString &filename)
 	{
 	//first=true;
 	//Scriptdata=ow.FileOpen(filename,true);
-	f = _tfopen(filename.c_str(), _T("rb"));
+	f = _tfopen(filename.c_str(), L"rb");
 		if (!f)
-			throw _("Nie mo¿na otworzyæ skryptu");
+			throw _("Nie moÅ¼na otworzyÄ‡ skryptu");
 		first = true;
 		databuf = new char[bufsize];
 	}
@@ -78,7 +78,7 @@ const char *LuaScriptReader::ReadScript(lua_State *L, void *data, size_t *size)
 						(b[0] == 0x2B && b[1] == 0x2F && b[2] == 0x76) || // utf7
 						(b[0] == 0x00 && b[2] == 0x00) || // looks like utf16be
 						(b[1] == 0x00 && b[3] == 0x00)) { // looks like utf16le
-							throw _T("The script file uses an unsupported character set. Only UTF-8 is supported.");
+							throw "The script file uses an unsupported character set. Only UTF-8 is supported.";
 					}
 					// assume utf8 without bom, and rewind file
 					fseek(f, 0, SEEK_SET);
@@ -176,7 +176,7 @@ LuaScript::LuaScript(const wxString &_filename)
 			lua_gettable(L, -3);
 			//wxLogStatus("globals");
 			
-				wxFileName path(Options.pathfull+_T("\\Include"));
+				wxFileName path(Options.pathfull+"\\Include");
 				//wxFileName path1(filename.BeforeLast('\\'));
 				if (path.IsOk() && !path.IsRelative() && path.DirExists()) {
 					include_path.Add(path.GetLongPath());
@@ -243,7 +243,7 @@ LuaScript::LuaScript(const wxString &_filename)
 			LuaScriptReader script_reader(filename);
 			if (lua_load(L, script_reader.ReadScript, &script_reader, name.mb_str(wxConvUTF8).data())) {
 				wxString err(lua_tostring(L, -1), wxConvUTF8);
-				err.Prepend(_("B³¹d wczytywania skryptu Lua \"") + filename + _T("\":\n\n"));
+				err.Prepend(_("BÅ‚Ä…d wczytywania skryptu Lua \"") + filename + "\":\n\n");
 				throw err;
 			}
 			//wxLogStatus("Readed");
@@ -255,7 +255,7 @@ LuaScript::LuaScript(const wxString &_filename)
 			if (lua_pcall(L, 0, 0, 0)) {
 				// error occurred, assumed to be on top of Lua stack
 				wxString err(lua_tostring(L, -1), wxConvUTF8);
-				err.Prepend(_("B³¹d inicjalizacji skryptu Lua \"") + filename + _T("\":\n\n"));
+				err.Prepend(_("BÅ‚Ä…d inicjalizacji skryptu Lua \"") + filename + "\":\n\n");
 				throw err;
 			}
 			_stackcheck.check_stack(0);
@@ -307,7 +307,7 @@ LuaScript::LuaScript(const wxString &_filename)
 			Destroy();
 			loaded = false;
 			name = filename;
-			description = _("Nieznany b³¹d ³adowania skryptu Lua");
+			description = _("Nieznany bÅ‚Ä…d Å‚adowania skryptu Lua");
 		}
 	}
 
@@ -438,7 +438,7 @@ LuaScript::LuaScript(const wxString &_filename)
 	{
 		int pretop = lua_gettop(L);
 		wxString module(lua_tostring(L, -1), wxConvUTF8);
-		module.Replace(L".", _T(LUA_DIRSEP));
+		module.Replace(L".", LUA_DIRSEP);
 
 		lua_getglobal(L, "package");
 		lua_pushstring(L, "path");
@@ -666,8 +666,8 @@ LuaScript::LuaScript(const wxString &_filename)
 		//wxThread::ExitCode code = call->Wait();
 		if(lua_pcall(L, 3, 1, 0)){
 			wxString errmsg(lua_tostring(L, -2), wxConvUTF8);
-				errmsg<<_T("\n\nWyst¹pi³ b³¹d podczas wykonywania skryptu Lua:\n");
-			wxMessageBox(errmsg,"B³¹d skryptu lua");
+				errmsg<<_("\n\nWystÄ…piÅ‚ bÅ‚Ä…d podczas wykonywania skryptu Lua:\n");
+			wxMessageBox(errmsg,_("BÅ‚Ä…d skryptu lua"));
 		}
 		
 		//(void) code;
@@ -775,7 +775,7 @@ LuaScript::LuaScript(const wxString &_filename)
 			if (result) {
 				// if the call failed, log the error here
 				wxString errmsg(lua_tostring(L, -1), wxConvUTF8);
-				errmsg.Prepend(_T("Wyst¹pi³ b³¹d podczas wykonywania skryptu Lua:\n"));
+				errmsg.Prepend(_("WystÄ…piÅ‚ bÅ‚Ä…d podczas wykonywania skryptu Lua:\n"));
 				ps->SafeQueue(Auto::EVT_MESSAGE,errmsg);
 				lua_pop(L, 1);
 			}
@@ -845,18 +845,18 @@ void Automation::ReloadScripts(bool first)
 	ALScripts=0;
 		int error_count = 0;
 
-		//wxStringTokenizer tok(path, _T("|"), wxTOKEN_STRTOK);
+		//wxStringTokenizer tok(path, "|", wxTOKEN_STRTOK);
 		//while (tok.HasMoreTokens()) {
 			wxDir dir;
 			//wxString dirname = StandardPaths::DecodePath(tok.GetNextToken());
 			if (!dir.Open(path)) {
-				//wxLogWarning(_T("Failed to open a directory in the Automation autoload path: %s"), dirname.c_str());
+				//wxLogWarning("Failed to open a directory in the Automation autoload path: %s", dirname.c_str());
 				return;
 			}
 	
 
 			wxString fn;
-			wxFileName script_path(path, _T(""));
+			wxFileName script_path(path, "");
 			bool more = dir.GetFirst(&fn, wxEmptyString, wxDIR_FILES);
 
 			while (more) {
@@ -873,19 +873,19 @@ void Automation::ReloadScripts(bool first)
 				}
 				catch (const wchar_t *e) {
 					error_count++;
-					wxLogError(_T("B³¹d wczytywania skryptu Lua: %s\n%s"), fn.c_str(), e);
+					wxLogError(_("BÅ‚Ä…d wczytywania skryptu Lua: %s\n%s"), fn.c_str(), e);
 				}
 				catch (...) {
 					error_count++;
-					wxLogError(_T("Nieznany b³¹d wczytywania skryptu Lua: %s."), fn.c_str());
+					wxLogError(_("Nieznany bÅ‚Ä…d wczytywania skryptu Lua: %s."), fn.c_str());
 				}
 				
 				more = dir.GetNext(&fn);
 			}
-		//}wxLogStatus("wesz³o");
-			//wxLogStatus("po pêtli");
+		//}wxLogStatus("weszÅ‚o");
+			//wxLogStatus("po pÄ™tli");
 		if (error_count > 0) {
-			wxLogWarning(_T("Jeden b¹dŸ wiêcej skryptów autoload zawiera b³êdy,\n obejrzyj opisy skryptów by uzyskaæ wiêcej informacji."));
+			wxLogWarning(_("Jeden bÄ…dÅº wiÄ™cej skryptÃ³w autoload zawiera bÅ‚Ä™dy,\n obejrzyj opisy skryptÃ³w by uzyskaÄ‡ wiÄ™cej informacji."));
 		}
 		
 	
