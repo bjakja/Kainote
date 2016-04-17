@@ -304,12 +304,18 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		Connect(26667,wxEVT_COMMAND_LIST_ITEM_ACTIVATED,(wxObjectEventFunction)&OptionsDialog::OnMapHkey);
 		Connect(26667,wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);		
 
-		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){wxMessageBox(_("Dupa blada, skróty klawiszowe nie wczytały się, na audio nie podziałasz"), _("Błędny błąd"));}
+		//if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){wxMessageBox(_("Dupa blada, skróty klawiszowe nie wczytały się, na audio nie podziałasz"), _("Błędny błąd"));}
 		
+		std::map<int, hdata> _hkeys;
+		Hkeys.LoadDefault(_hkeys);
+		Hkeys.LoadDefault(_hkeys,true);
+		Notebook::GetTab()->Video->ContextMenu(wxPoint(0,0),true);
+		Notebook::GetTab()->Grid1->ContextMenu(wxPoint(0,0),true);
+
 		long ii=0;
-		//std::map<wxString,wxString>::iterator cur;
 
 		for (auto cur = Hkeys.hkeys.begin();cur != Hkeys.hkeys.end();cur++) {
+			if(cur->second.Name==""){cur->second.Name = _hkeys[cur->first].Name;}
 			wxString name=wxString(cur->second.Type)<<" "<<cur->second.Name;
 			long pos = Shortcuts->InsertItem(ii,name);
 			Shortcuts->SetItem(pos,1,cur->second.Accel);
@@ -545,28 +551,17 @@ void OptionsDialog::OnMapHkey(wxListEvent& event)
 	HkeysDialog hkd(this,shkey,shkey.StartsWith("Script"));
 	if(hkd.ShowModal()==0){
 	
-		wxString test;
-		if(hkd.flag & 1){
-			test<<"Alt-";}
-		if(hkd.flag & 2){
-			test<<"Ctrl-";}
-		if(hkd.flag & 4){
-			test<<"Shift-";}
-    
-		wxString keytxt=Hkeys.keys[hkd.hkey];
-		if(keytxt==""){keytxt=wchar_t(hkd.hkey);}
-		test<<keytxt;
-		//wxLogStatus("name "+shkey+" key"+test);
 		int id=-1;
 		for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){//wxLogStatus(cur->first);
 			if(cur->second.Name == shkey){id=cur->first;}
 			//wxLogStatus(cur->second.Name);
-			if(cur->second.Accel == test && (cur->second.Type == type) ){
+			if(cur->second.Accel == hkd.hotkey && (cur->second.Type == type) ){
 			
 				if(wxMessageBox(wxString::Format(_("Ten skrót już istnieje i jest ustawiony jako skrót do \"%s\".\nWykasować powtarzający się skrót?"), cur->second.Name), 
 					_("Uwaga"),wxYES_NO)==wxYES){
-					Hkeys.hkeys.erase(cur);
-					long nitem=Shortcuts->FindItem(-1,cur->first);
+					cur->second.Accel="";
+					long nitem=Shortcuts->FindItem(-1, wxString(cur->second.Type) + " " + cur->second.Name);
+					//wxLogStatus("nitem %i", nitem);
 					if(nitem!=-1){
 						Shortcuts->SetItem(nitem,1,"");
 					}
@@ -576,7 +571,7 @@ void OptionsDialog::OnMapHkey(wxListEvent& event)
 		}
 		
 		if(id<0){return;}
-		Hkeys.SetHKey(id, itemtext, hkd.flag, hkd.hkey);
+		Hkeys.SetHKey(id, itemtext, hkd.hotkey);
 		//wxLogStatus("Setitem");
 		Shortcuts->SetItem(event.GetIndex(),1,Hkeys.GetMenuH(id));
 		//wxLogStatus("Setmodif");

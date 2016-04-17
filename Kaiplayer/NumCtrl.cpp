@@ -54,7 +54,6 @@ NumCtrl::NumCtrl(wxWindow *parent,long id,wxString text, int rangefrom, int rang
 	SetValidator(valid);
 
 	Connect(wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&NumCtrl::OnNumWrite);
-	//Connect(wxEVT_KEY_DOWN,(wxObjectEventFunction)&NumCtrl::OnKeyEvent);
 
 }
 
@@ -123,23 +122,19 @@ wxString NumCtrl::GetString()
 
 int NumCtrl::GetInt()
 {
-	wxString val=GetString();
-	val.ToCDouble(&value);
-	//if(value>(double)rto)
-	//	value=rto;
-	//if(value<(double)rfrom)
-	//	value=rfrom;
-	return (int)value;
+	return (int)GetDouble();
 }
 
 double NumCtrl::GetDouble()
 {
 	wxString val=GetString();
-	val.ToCDouble(&value);
-	//if(value>(double)rto)
-	//	value=(double)rto;
-	//if(value<(double)rfrom)
-	//	value=(double)rfrom;
+	if(!val.ToCDouble(&value)){
+		oldval.ToCDouble(&value);
+	}
+	if(value>(double)rto)
+		value=(double)rto;
+	if(value<(double)rfrom)
+		value=(double)rfrom;
 	return value;
 }
 
@@ -155,8 +150,9 @@ void NumCtrl::OnNumWrite(wxCommandEvent& event)
 	else if(val.EndsWith(".")){if(val.Replace(".","")>1){SetValue(oldval);wxBell();}}
 	else if(val.StartsWith(".")){if(val.Replace(".","")>1){SetValue(oldval);wxBell();}}
 	else if(!val.ToCDouble(&value)||value>(double)rto||value<(double)rfrom){
-		SetValue(oldval);wxBell();
-	}else{oldval=val;}
+		/*SetValue(oldval);wxBell();*/
+		//if(!isbad){SetForegroundColour(*wxRED);isbad=true;}
+	}else{oldval=val;/*if(isbad){SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));isbad=false;}*/}
 	if(IsModified()){wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);}
 	event.Skip();
 }

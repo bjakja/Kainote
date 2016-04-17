@@ -149,11 +149,34 @@ void Visuals::SetVisual(int _start,int _end)
 			if(res.BeforeFirst(',',&rest).ToDouble(&orx)){org.x=orx/wspw;}
 			if(rest.ToDouble(&ory)){org.y=ory/wsph;}
 		}else{org=from;}
-		//wxLogStatus("org %f %f %f %f", org.x, org.y, from.x, from.y);
 		firstmove=to;
 		angle=scale;
 		lastmove=org;
 
+	}else if(Visual==MOVEALL){
+		wxString res;
+		D3DXVECTOR2 coord(0,0);
+		if(pan->Edit->FindVal("org\\(([^\\)]+)", &res)){
+			wxString rest;
+			double orx,ory;
+			if(res.BeforeFirst(',',&rest).ToDouble(&orx)){coord.x=orx/wspw;}
+			if(rest.ToDouble(&ory)){coord.y=ory/wsph;}
+			angle=org;
+		}
+		if(pan->Edit->FindVal("(i?clip[^\\)]+)", &res)){
+			wxRegEx re("m ([0-9-]+) ([0-9-]+)", wxRE_ADVANCED);
+			if(re.Matches(res)){
+				double coordx,coordy;
+				re.GetMatch(res,1).ToDouble(&coordx);
+				re.GetMatch(res,2).ToDouble(&coordy);
+			}
+
+		}
+		if(pan->Edit->FindVal("p([0-9]+)", &res)){
+
+
+		}
+		
 	}
 	/*else if(Visual==MOVEONCURVE){
 		TabPanel* pan=(TabPanel*)parent->GetParent();
@@ -267,6 +290,12 @@ void Visuals::Move(int time)
 	DrawCircle(0, &to);
 	
 	
+}
+
+void Visuals::MoveAll()
+{
+
+
 }
 
 //int factk(int n)
@@ -508,7 +537,7 @@ void Visuals::RotateXY()
 	D3DXMATRIX matView;    // the view transform matrix
 
 	D3DXMatrixLookAtLH(&matView,
-					   &D3DXVECTOR3 (0.0f, 0.0f, -17.2f),    // the camera position
+					   &D3DXVECTOR3 (0.0f, 0.0f, -17.2f),    // the camera position default -17.2
 					   &D3DXVECTOR3 (0.0f, 0.0f, 0.0f),    // the look-at position
 					   &D3DXVECTOR3 (0.0f, 1.0f, 0.0f));    // the up direction
 	
@@ -517,7 +546,7 @@ void Visuals::RotateXY()
 	D3DXMATRIX matProjection;     // the projection transform matrix
 	
 	D3DXMatrixPerspectiveFovLH(&matProjection,
-								D3DXToRadian(120),    // the horizontal field of view
+								D3DXToRadian(120),    // the horizontal field of view default 120
 								ratio, // aspect ratio
 								1.0f,    // the near view-plane
 								100000.0f);    // the far view-plane
@@ -811,6 +840,9 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 	if(Visual>=VECTORCLIP){OnMouseEvent(evt);return;}//clipy wektorowe i rysunki
 	bool click = evt.LeftDown()||evt.RightDown()||evt.MiddleDown();
 	bool holding = (evt.LeftIsDown()||evt.RightIsDown()||evt.MiddleIsDown());
+	bool leftc = evt.LeftDown();
+	bool rightc = evt.RightDown();
+	bool middlec = evt.MiddleDown();
 	
 	TabPanel* pan=(TabPanel*)parent->GetParent();
 	
@@ -892,9 +924,9 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 			return;
 		}
 		else if(Visual==SCALE){
-			if(evt.LeftDown()){type=0;}
-			if(evt.RightDown()){type=1;}
-			if(evt.MiddleDown()){type=2;}
+			if(leftc){type=0;}
+			if(rightc){type=1;}
+			if(middlec){type=2;}
 			if(abs(lastmove.x-x)<8 && abs(from.y-y)<8){grabbed=0;type=0;}
 			else if(abs(lastmove.y-y)<8 && abs(from.x-x)<8){grabbed=1;type=1;}
 			else if(abs(lastmove.x-x)<8 && abs(lastmove.y-y)<8){grabbed=2;type=2;}
@@ -928,9 +960,9 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 		}
 		else if(Visual==ROTATEXY){
 			parent->CaptureMouse();
-			if(evt.LeftDown()){type=0;}
-			if(evt.RightDown()){type=1;}
-			if(evt.MiddleDown()){type=2;}
+			if(leftc){type=0;}
+			if(rightc){type=1;}
+			if(middlec){type=2;}
 			if(abs(org.x-x)<8 && abs(org.y-y)<8){grabbed=100;
 				diffs.x=org.x-x;
 				diffs.y=org.y-y;
@@ -944,19 +976,18 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 
 			parent->SetCursor(wxCURSOR_SIZING );
 			hasArrow=false;
-			if(evt.LeftDown()){type=0;}
-			if(evt.RightDown()){type=1;}
-			if(abs(from.x-x)<8 && abs(from.y-y)<8){
-				grabbed=0;type=0;
-				diffs.x=from.x-x;
-				diffs.y=from.y-y;
-			}
-			else if(abs(to.x-x)<8 && abs(to.y-y)<8){
+			if(leftc){type=0;}
+			if(rightc){type=1;}
+			
+			if(abs(to.x-x)<8 && abs(to.y-y)<8){
 				grabbed=1;type=1;
 				diffs.x=to.x-x;
 				diffs.y=to.y-y;
-			}
-			else{
+			}else if(abs(from.x-x)<8 && abs(from.y-y)<8){
+				grabbed=0;type=0;
+				diffs.x=from.x-x;
+				diffs.y=from.y-y;
+			}else{
 				grabbed= -1;
 				if(type==1){
 					to.x=x;
@@ -1014,21 +1045,17 @@ void Visuals::MouseEvent(wxMouseEvent &evt)
 		}else if(grabbed==100){// przenoszenie org dostało liczbę 100 by przypadkowo nie wbiło się na inny punkt.
 			org.x = x+diffs.x;
 			org.y = y+diffs.y;
-			//wxLogStatus("org %f, %f, %i %i %i %i", org.x,org.y, x, y, diffs.x, diffs.y);
 			
 			pan->Edit->SetVisual(GetVisual(true),true,grabbed);//type także ma liczbę 100 by było rozpoznawalne.
 			
 			return;
 		}else if(Visual==SCALE){
-			//wxLogStatus("type hold %i %i",type, grabbed);
-			//if(grabbed!= -1){
-				if(type!=1){
-					to.x=x+diffs.x;
-				}
-				if(type!=0){
-					to.y=y+diffs.y;
-				}
-				//wxLogStatus("hold %f %f",to.x, to.y);
+			if(type!=1){
+				to.x=x+diffs.x;
+			}
+			if(type!=0){
+				to.y=y+diffs.y;
+			}
 			goto done;
 		}else if(Visual==MOVE){
 			if(type==0){

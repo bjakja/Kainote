@@ -67,6 +67,7 @@ private:
 	bool vertical;
 	bool Clicked;
 	bool wasmoved;
+	int wh;
 	int oldelem;
 	int sel;
 	wxBitmap *bmp;

@@ -63,6 +63,7 @@ class findreplace: public wxDialog
         int postxt;
 		int findstart;
 		int findend;
+		wxString oldfind;
         bool fnext;
 		
 		bool fromstart;
@@ -71,7 +72,7 @@ class findreplace: public wxDialog
 		void OnReplaceAll(wxCommandEvent& event);
 		void OnButtonFind(wxCommandEvent& event);
 		void OnButtonRep(wxCommandEvent& event);
-		void OnTextUpdate(wxCommandEvent& event);
+		//void OnTextUpdate(wxCommandEvent& event);
 		void OnClose(wxCommandEvent& event);
 		void OnRecheck(wxCommandEvent& event);
 };

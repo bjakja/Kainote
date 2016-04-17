@@ -123,6 +123,9 @@ bool VideoRend::InitDX(bool reset)
 	hr = d3device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
 	hr = d3device->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);*/
 
+	hr = d3device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
+	hr = d3device->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
+
 	hr = d3device->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE);
     hr = d3device->SetRenderState( D3DRS_ZENABLE, D3DZB_FALSE);
     hr = d3device->SetRenderState( D3DRS_LIGHTING, FALSE);
@@ -492,7 +495,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 			Kaia->Frame->OnOpenAudio(evt);
 
 			player=Kaia->Frame->GetTab()->Edit->ABox->audioDisplay;
-		}else if(player){wxCommandEvent evt;evt.SetId(ID_CLOSEAUDIO);Kaia->Frame->OnOpenAudio(evt);}
+		}else if(player){wxCommandEvent evt;evt.SetId(CloseAudio);Kaia->Frame->OnOpenAudio(evt);}
 	}else{
 
 		if(!vplayer){vplayer= new DShowPlayer(this);}
@@ -511,7 +514,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 		d3dformat=(vformat==5)? D3DFORMAT('21VN') : (vformat==3)? D3DFORMAT('21VY') : (vformat==2)? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
 		if(player){
 			wxCommandEvent evt;
-			evt.SetId(ID_CLOSEAUDIO);
+			evt.SetId(CloseAudio);
 			Kaia->Frame->OnOpenAudio(evt);
 		}
 	}
@@ -546,6 +549,9 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	block=false;
 	vstate=Stopped;
 	if(IsDshow && vplayer){chaps = vplayer->GetChapters();}
+	if(Vclips){
+		Vclips->SizeChanged(wxSize(rt3.right, rt3.bottom),lines, m_font, d3device);
+	}
 	return true;
 }
 

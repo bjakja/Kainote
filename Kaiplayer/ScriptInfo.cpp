@@ -39,8 +39,8 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	wxStaticBoxSizer *StaticBox2 = new wxStaticBoxSizer(wxVERTICAL,this, _("Rozdzielczość"));
 	wxBoxSizer *boxsizer= new wxBoxSizer(wxHORIZONTAL);
 
-	width = new NumCtrl(this, -1,"",0,10000,true,wxDefaultPosition,wxSize(60,-1),wxTE_PROCESS_ENTER);
-	height = new NumCtrl(this, -1,"",0,10000,true,wxDefaultPosition,wxSize(60,-1),wxTE_PROCESS_ENTER);
+	width = new NumCtrl(this, -1,"",100,10000,true,wxDefaultPosition,wxSize(60,-1),wxTE_PROCESS_ENTER);
+	height = new NumCtrl(this, -1,"",100,10000,true,wxDefaultPosition,wxSize(60,-1),wxTE_PROCESS_ENTER);
 	Fvideo= new wxButton(this,25456,_("Z wideo"),wxDefaultPosition,wxSize(85,-1));
 	Fvideo->Enable(w>0);
 

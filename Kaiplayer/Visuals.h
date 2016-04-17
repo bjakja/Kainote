@@ -13,7 +13,7 @@
 enum{
 	CHANGEPOS=1,
 	MOVE,
-	//MOVEONCURVE,
+	MOVEALL,
 	SCALE,
 	ROTATEZ,
 	ROTATEXY,
@@ -83,7 +83,8 @@ public:
 	void SetVisual(int _start,int _end);
 	void Position();
 	void Move(int time);
-	void MoveOnCurve(int time);
+	//void MoveOnCurve(int time);
+	void MoveAll();
 	void Scale();
 	void RotateZ();
 	void RotateXY();

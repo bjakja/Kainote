@@ -116,7 +116,7 @@ wxArrayString FontCollectorDialog::GetAssFonts(std::vector<bool> &founded, bool 
 			{
 				wxString fn= part.Mid(flet+3).BeforeFirst('\\').BeforeFirst('}').Lower();
 				if(facenames.Index(fn,false)==-1){
-					notfindfonts[fn]<<i<<" ";
+					notfindfonts[fn]<<(i+1)<<" ";
 				}
 				else if(fonts.Index(fn,false)==-1)
 				{
@@ -125,9 +125,7 @@ wxArrayString FontCollectorDialog::GetAssFonts(std::vector<bool> &founded, bool 
 					reg.ReplaceAll(&txt,"");
 					PutChars(txt,ifont,i+1);
 					fonts.Add(fn);
-					wxString kkk;
-					kkk<<(i+1);
-					console->AppendText(wxString::Format(_("Znaleziono czcionkę o nazwie \"%s\" w linii nr %i.\n \n"), fn, kkk));
+					console->AppendText(wxString::Format(_("Znaleziono czcionkę o nazwie \"%s\" w linii nr %i.\n \n"), fn, (i+1)));
 					console->AppendText(wxString::Format(_("Czcionka \"%s\" jest zainstalowana.\n \n"), fn));
 					founded.push_back(check);
 				}
@@ -149,6 +147,7 @@ wxArrayString FontCollectorDialog::GetAssFonts(std::vector<bool> &founded, bool 
 	console->SetDefaultStyle(wxTextAttr(*wxRED));
 	for(auto cur=notfindfonts.begin(); cur!=notfindfonts.end(); cur++){
 		wxString list=cur->second;
+		wxLogStatus(list);
 		wxStringTokenizer token(list," ");
 		wxString result= _("Nie można znaleźć czcionki \"") + cur->first + "\".\r\n";
 		founded.push_back(false);
@@ -157,7 +156,8 @@ wxArrayString FontCollectorDialog::GetAssFonts(std::vector<bool> &founded, bool 
 		while(token.HasMoreTokens()){
 			wxString tkn=token.GetNextToken();
 			if(tkn.IsNumber()){
-				result+= _("Użytej w linijkach: ") + list.Mid(token.GetPosition() - tkn.Len());
+				wxLogStatus("Token %i %i",token.GetPosition(),tkn.Len());
+				result+= _("Użytej w linijkach: ") + list.Mid(token.GetPosition() - tkn.Len() - 1) + "\r\n";
 				break;
 			}else{
 				if(first){result += _("Użytej w stylach:\r\n"); first=false;}

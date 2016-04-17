@@ -27,18 +27,20 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	Preview=NULL;
 	tab=NULL;
 	block=true;
+	wxFont font(8,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
+	SetFont(font);
 	wxArrayString fontList = wxFontEnumerator::GetFacenames();
 	std::sort(fontList.begin(),fontList.end(),sortf);
 
 	wxBoxSizer *Main=new wxBoxSizer(wxVERTICAL);
 
-	wxStaticBoxSizer *stylename= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Nazwa stylu"));
+	wxStaticBoxSizer *stylename= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Nazwa stylu:"));
 	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	valid.SetCharExcludes(",");
 	sname = new wxTextCtrl(this, -1, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER,valid);
 	stylename->Add(sname,1,wxEXPAND|wxALL,2);
 
-	wxStaticBoxSizer *stylefont= new wxStaticBoxSizer(wxVERTICAL, this, _("Czcionka i rozmiar"));
+	wxStaticBoxSizer *stylefont= new wxStaticBoxSizer(wxVERTICAL, this, _("Czcionka i rozmiar:"));
 	wxBoxSizer *fntsizer=new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *biussizer=new wxBoxSizer(wxHORIZONTAL);
 	sfont = new wxComboBox(this, ID_FONTNAME,"", wxDefaultPosition, wxDefaultSize, fontList);
@@ -60,7 +62,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	stylefont->Add(fntsizer,0,wxEXPAND,0);
 	stylefont->Add(biussizer,0,wxEXPAND|wxALIGN_CENTER,0);
 
-	wxStaticBoxSizer *stylekol= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Kolory, przezroczystość"));
+	wxStaticBoxSizer *stylekol= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Kolory i przezroczystość:"));
 
 	wxGridSizer *kolgrid=new wxGridSizer(4,2,2);
 	
@@ -86,7 +88,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 	stylekol->Add(kolgrid,1,wxEXPAND|wxALL,2);
 
-	wxStaticBoxSizer *styleattr= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Obwódka, cień, skala"));
+	wxStaticBoxSizer *styleattr= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Obwódka:               Cień:                      Skala X:                 Skala Y:"));
 
 	sou = new NumCtrl(this, ID_TOUTLINE, "", 0,1000000,false,wxDefaultPosition, wxSize(83,-1), wxTE_PROCESS_ENTER);
 	ssh = new NumCtrl(this, ID_TOUTLINE, "", 0,1000000,false, wxDefaultPosition, wxSize(83,-1), wxTE_PROCESS_ENTER);
@@ -100,7 +102,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 	wxBoxSizer *sizer1 = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *sizer2 = new wxBoxSizer(wxHORIZONTAL);
-	wxStaticBoxSizer *styleattr1= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Kąt, odstępy, typ obwódki"));
+	wxStaticBoxSizer *styleattr1= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Kąt:                     Odstępy:              Typ obwódki:"));
 
 	san = new NumCtrl(this, ID_TOUTLINE, "",-1000000,1000000,false, wxDefaultPosition, wxSize(65,-1), wxTE_PROCESS_ENTER);
 	ssp = new NumCtrl(this, ID_TOUTLINE, "",-1000000,1000000,false, wxDefaultPosition, wxSize(65,-1), wxTE_PROCESS_ENTER);
@@ -110,7 +112,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	styleattr1->Add(ssp,1,wxEXPAND|wxALL,2);
 	styleattr1->Add(sob,1,wxEXPAND|wxALL,2);
 
-	wxStaticBoxSizer *stylemargs= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Margines lewy, prawy, pionowy"));
+	wxStaticBoxSizer *stylemargs= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Margines lewy:     Prawy:                Pionowy:"));
 
 	sml = new NumCtrl(this, ID_TOUTLINE, "", 0, 9999, true, wxDefaultPosition, wxSize(65,-1), wxTE_PROCESS_ENTER);
 	smr = new NumCtrl(this, ID_TOUTLINE, "", 0, 9999, true, wxDefaultPosition, wxSize(65,-1), wxTE_PROCESS_ENTER);
@@ -123,7 +125,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	sizer1->Add(styleattr1,0,wxEXPAND,0);
 	sizer1->Add(stylemargs,0,wxEXPAND,0);
 
-	wxStaticBoxSizer *stylean= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Położenie tekstu"));
+	wxStaticBoxSizer *stylean= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Położenie tekstu:"));
 
 	wxGridSizer *angrid=new wxGridSizer(3,5,2);
 
@@ -173,11 +175,11 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	encs.Add(_("238 - Europa Środkowa (Polski)"));
 	encs.Add(_("255 - OEM"));
 	
-	wxStaticBoxSizer *styleenc= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Kodowanie tekstu"));
+	wxStaticBoxSizer *styleenc= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Kodowanie tekstu:"));
 	senc = new wxChoice(this, ID_CENCODING, wxDefaultPosition, wxDefaultSize, encs);
 	styleenc->Add(senc,1,wxEXPAND|wxALL,2);
 
-	wxStaticBoxSizer *styleprev= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Podgląd stylu"));
+	wxStaticBoxSizer *styleprev= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Podgląd stylu:"));
 	//Preview= new wxTextCtrl(this, -1, Options.GetString("Preview Text"), wxDefaultPosition, wxSize(-1,100), wxTE_PROCESS_ENTER|wxTE_MULTILINE|wxTE_CENTRE);
 	Preview= new StylePreview(this, -1, wxDefaultPosition, wxSize(-1,100));
 	styleprev->Add(Preview,1,wxEXPAND|wxALL,2);

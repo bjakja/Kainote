@@ -315,6 +315,8 @@ void CTwindow::RefVals(CTwindow *from)
 void CTwindow::CollapsePane(wxCommandEvent &event)
 {
 	bool hos = (LeadIn==NULL);
+	int pe = Options.GetInt("Postprocessor enabling");
+	Options.SetInt("Postprocessor enabling", (hos)? pe | 16 : pe ^ 16);
 	if(hos){
 		liosizer=new wxStaticBoxSizer(wxHORIZONTAL,this,_("Wstęp i zakończenie"));
 
@@ -347,7 +349,7 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 	
 		consizer->Add(fgsizer1,0,wxEXPAND,0);
 
-		snapsizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Wyrównaj do klatek kl."));
+		snapsizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Wyrównaj do klatek kluczowych"));
 		SnapKF=new wxCheckBox(this, -1, _("Włącz"));
 		SnapKF->Enable(false);
 		snapsizer->Add(SnapKF,0,wxEXPAND|wxALL, 2);
@@ -404,8 +406,7 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		LeadIn=NULL;
 		((TabPanel*)GetParent())->BoxSizer3->Layout();
 	}
-	int pe = Options.GetInt("Postprocessor enabling");
-	Options.SetInt("Postprocessor enabling", (hos)? pe | 16 : pe ^ 16);
+	
 	
 }
 

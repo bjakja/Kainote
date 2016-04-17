@@ -58,9 +58,9 @@ void TabPanel::SetAccels()
    
 	std::vector<wxAcceleratorEntry> gentries;
 	gentries.resize(3);
-    gentries[0].Set(wxACCEL_CTRL, (int) 'X', MENU_CUT);
-    gentries[1].Set(wxACCEL_CTRL, (int) 'C', MENU_COPY);
-    gentries[2].Set(wxACCEL_CTRL, (int) 'V', MENU_PASTE);
+    gentries[0].Set(wxACCEL_CTRL, (int) 'X', Cut);
+    gentries[1].Set(wxACCEL_CTRL, (int) 'C', Copy);
+    gentries[2].Set(wxACCEL_CTRL, (int) 'V', Paste);
 
 	std::vector<wxAcceleratorEntry> eentries;
 	eentries.resize(4);
@@ -71,6 +71,7 @@ void TabPanel::SetAccels()
 	
 	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
 		int id=cur->first;
+		if(cur->second.Accel==""){continue;}
 		//wideo
 		if(id<2000){continue;
 		}else if(id<3990){
@@ -86,8 +87,9 @@ void TabPanel::SetAccels()
 		}else if(id>6000){break;}
 
 	}
-	for(int i=MENU_PLAYP; i<= MENU_M5SEC; i++){
+	for(int i=PlayPause; i<= Minus5Second; i++){
 		gentries.push_back(Hkeys.GetHKey(i));
+		Grid1->ConnectAcc(i);
 	}
 	wxAcceleratorTable accelg(gentries.size(), &gentries[0]);
     Grid1->SetAcceleratorTable(accelg);

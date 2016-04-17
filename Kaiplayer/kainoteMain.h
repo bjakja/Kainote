@@ -27,12 +27,13 @@
 #include "findreplace.h"
 #include "Automation.h"
 #include "Toolbar.h"
+#include "EnumFactory.h"
 
 class kainoteFrame: public wxFrame
 {
     public:
 
-        kainoteFrame(wxWindow* parents);
+        kainoteFrame(const wxPoint &pos, const wxSize &size);
         virtual ~kainoteFrame();
 
         wxString sftc();
@@ -89,7 +90,6 @@ class kainoteFrame: public wxFrame
 		void OnMenuOpened(wxMenuEvent& event);
 		void OnP5Sec(wxCommandEvent& event);
 		void OnM5Sec(wxCommandEvent& event);
-		void OnSelVid(wxCommandEvent& event);
 		void OnAudioSnap(wxCommandEvent& event);
 		void OnPageChanged(wxCommandEvent& event);
 		void OnPageChange(wxCommandEvent& event);
@@ -118,90 +118,157 @@ class kainoteFrame: public wxFrame
 		
 };
 
-enum{// nowe idy dodawaj na dole, bo ludzie bêd¹ mieli niespodziankê przy odpaleniu toolbara.
-	ID_SAVE=6677,//odt¹d disejblujemy
-	ID_SAVEALL,
-	ID_SAVEAS,
-	ID_SAVETL,
-	ID_UNSUBS,
-	ID_FIND,
-	ID_FINDREP,
-	ID_SELLIN,
-	ID_OPVIDEOINDEX,
-	ID_OPAUDIO,
-	ID_OPFROMVID,
-	ID_CLOSEAUDIO,
-	ID_ASSPROPS,
-	ID_STYLEMNGR,
-	ID_COLLECTOR,
-	ID_CROSS,
-	ID_POSITION,
-	ID_MOVEMENT,
-	//ID_MOVEONCURVE,
-	ID_SCALE,
-	ID_ROTATEZ,
-	ID_ROTATEXY,
-	ID_CLIPRECT,
-	//ID_FAXY,
-	ID_CLIPS,
-	ID_DRAWINGS,
-	ID_ASS,
-	ID_SRT,
-	ID_TMP,
-	ID_MDVD,
-	ID_MPL2,
-	ID_HIDETAGS,
-	ID_CHANGETIME,
-	ID_SORT,
-	ID_VALL,
-	ID_VAUDIO,
-	ID_VVIDEO,
-	ID_VSUBS,
-	ID_RECAUDIO,
-	ID_CONV,
-	ID_AUTO,//Dot¹d disejblujemy
-	ID_PAUSE,
-	ID_PREVFRAME,
-	ID_NEXTFRAME,
-	ID_SETSTIME,
-	ID_SETETIME,
-	ID_SETVIDATSTART,
-	ID_SETVIDATEND,
-	ID_REDO1,
-	ID_UNDO1,
-	ID_SORTSEL,//dodaj¹c tu nowe idy pamiêtaj by zmieniæ je w connect kainote main
-	
 
-	ID_OPENSUBS=6800,
-	ID_OPVIDEO,
-	ID_SETTINGS,
-	ID_QUIT,
-	ID_EDITOR,
-	ID_ABOUT,
-	ID_HELPERS,
-	ID_SELONVID,
-	ID_RECSUBS,
-	ID_RECVIDEO,
-	ID_HELP,
-	ID_ANSI,
-	
 
-	ID_PREV_LINE=6850,
-	ID_NEXT_LINE,
-	GRID_JOINWP,
-	GRID_JOINWN,
-	ID_NEXT_TAB,
-	ID_PREV_TAB,
-	ID_DELETE,
-	ID_DELETE_TEXT,
-	ID_SNAP_START,
-	ID_SNAP_END,
-	ID_P5SEC,
-	ID_M5SEC,
-	ID_ADDPAGE,
+
+enum{
+	ID_ADDPAGE=6900,
 	ID_CLOSEPAGE,
 	ID_TABS,
-	ID_STATUSBAR1
+	ID_STATUSBAR1,
+	ID_CONV
 };
+//Po zmianie PlayPause nale¿y go zmieniæ w dshowrenderer by pauzowanie po odtwarzaniu linii zadzia³a³o
+#define IDS(XX) \
+	XX( AudioCommitAlt,=620 ) \
+	XX( AudioPlayAlt, ) \
+	XX( AudioPreviousAlt, ) \
+	XX( AudioNextAlt, ) \
+	XX( AudioCommit,=1620 ) \
+	XX( AudioPlay, ) \
+	XX( AudioPrevious, ) \
+	XX( AudioNext, ) \
+	XX( AudioStop, ) \
+	XX( AudioPlayBeforeMark, ) \
+	XX( AudioPlayAfterMark, ) \
+	XX( AudioPlay500MSBefore, ) \
+	XX( AudioPlay500MSAfter, ) \
+	XX( AudioPlay500MSFirst, ) \
+	XX( AudioPlay500MSLast, ) \
+	XX( AudioPlayToEnd, ) \
+	XX( AudioGoto, ) \
+	XX( AudioLeadin, ) \
+	XX( AudioLeadout, ) \
+	XX( Stop,=2020) \
+	XX( PlayPause,)\
+	XX( Plus5Second,)\
+	XX( Minus5Second,)\
+	XX( MinusMinute, ) \
+	XX( PlusMinute, ) \
+	XX( VolumePlus, ) \
+	XX( VolumeMinus, ) \
+	XX( PreviousVideo, ) \
+	XX( NextVideo, ) \
+	XX( PreviousChapter, ) \
+	XX( NextChapter, ) \
+	XX( FullScreen, ) \
+	XX( HideProgressBar, ) \
+	XX( DeleteVideo, ) \
+	XX( AspectRatio, ) \
+	XX( CopyCoords, ) \
+	XX( FrameToPNG, ) \
+	XX( FrameToClipboard, ) \
+	XX( SubbedFrameToPNG, ) \
+	XX( SubbedFrameToClipboard, ) \
+	XX( PutBold,=4100) \
+	XX( PutItalic, ) \
+	XX( SplitLine, ) \
+	XX( StartDifference, ) \
+	XX( EndDifference, ) \
+	XX( InsertBefore,=5555 ) \
+	XX( InsertAfter, ) \
+	XX( InsertBeforeVideo, ) \
+	XX( InsertAfterVideo, ) \
+	XX( Swap, ) \
+	XX( Duplicate, ) \
+	XX( Join, ) \
+	XX( JoinToFirst, ) \
+	XX( JoinToLast, ) \
+	XX( Copy, ) \
+	XX( Paste, ) \
+	XX( Cut, ) \
+	XX( PasteTranslation, ) \
+	XX( TranslationDialog, ) \
+	XX( SubsFromMKV, ) \
+	XX( ContinousPrevious, ) \
+	XX( ContinousNext, ) \
+	XX( PasteCollumns, ) \
+	XX( CopyCollumns, ) \
+	XX( FPSFromVideo, ) \
+	XX( NewFPS, ) \
+	XX( SaveSubs,=6677)\
+	XX( SaveAllSubs,)\
+	XX( SaveSubsAs,)\
+	XX( SaveTranslation,)\
+	XX( RemoveSubs,)\
+	XX( Search,)\
+	XX( FindReplace,)\
+	XX( SelectLines,)\
+	XX( VideoIndexing,)\
+	XX( OpenAudio,)\
+	XX( AudioFromVideo,)\
+	XX( CloseAudio,)\
+	XX( ASSProperties,)\
+	XX( StyleManager,)\
+	XX( FontCollector,)\
+	XX( CrossPositioner,)\
+	XX( Positioner,)\
+	XX( Movement,)\
+	XX( Scalling,)\
+	XX( RotatingZ,)\
+	XX( RotatingXY,)\
+	XX( RectangleClips,)\
+	XX( VectorClips,)\
+	XX( VectorDrawings,)\
+	XX( ConvertToASS,)\
+	XX( ConvertToSRT,)\
+	XX( ConvertToTMP,)\
+	XX( ConvertToMDVD,)\
+	XX( ConvertToMPL2,)\
+	XX( HideTags,)\
+	XX( ChangeTime,)\
+	XX( ViewAll,)\
+	XX( ViewAudio,)\
+	XX( ViewVideo,)\
+	XX( ViewSubs,)\
+	XX( Automation,)\
+	XX( PlayPauseG,)\
+	XX( PreviousFrame,)\
+	XX( NextFrame,)\
+	XX( SetStartTime,)\
+	XX( SetEndTime,)\
+	XX( SetVideoAtStart,)\
+	XX( SetVideoAtEnd,)\
+	XX( Redo,)\
+	XX( Undo,)\
+	XX( OpenSubs,=6800)\
+	XX( OpenVideo,)\
+	XX( Settings,)\
+	XX( Quit,)\
+	XX( Editor,)\
+	XX( About,)\
+	XX( Helpers,)\
+	XX( Help,)\
+	XX( ANSI,)\
+	XX( PreviousLine,=6850)\
+	XX( NextLine,)\
+	XX( JoinWithPrevious,)\
+	XX( JoinWithNext,)\
+	XX( NextTab,)\
+	XX( PreviousTab,)\
+	XX( Remove, ) \
+	XX( RemoveText, ) \
+	XX( SnapWithStart,)\
+	XX( SnapWithEnd,)\
+	XX( Plus5SecondG,)\
+	XX( Minus5SecondG,)\
+	XX( SortLines,)\
+	XX( SortSelected,)\
+	XX( RecentAudio,)\
+	XX( RecentVideo,)\
+	XX( RecentSubs,)\
+	XX( SelectFromVideo,)\
+//
+DECLARE_ENUM(Id,IDS)
 
 #endif // KAINOTEMAIN_H

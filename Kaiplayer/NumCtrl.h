@@ -34,7 +34,7 @@ class NumCtrl : public wxTextCtrl
 		int oldpos;
 		int oldposx;
 		int curpos;
-
+		/*bool isbad;*/
 		DECLARE_EVENT_TABLE()
 	};
 

@@ -203,6 +203,7 @@
     <ClInclude Include="dshowplayer.h" />
     <ClInclude Include="DshowRenderer.h" />
     <ClInclude Include="EditBox.h" />
+    <ClInclude Include="EnumFactory.h" />
     <ClInclude Include="fft.h" />
     <ClInclude Include="findreplace.h" />
     <ClInclude Include="FontCollector.h" />

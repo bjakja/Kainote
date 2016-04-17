@@ -67,7 +67,7 @@ HRESULT CD2DVideoRender::Render(IMediaSample *pMediaSample)
 	Vrend->time=time+(start/10000.0);
 	if(!Vrend->block){
 		if(Vrend->playend && Vrend->time>=Vrend->playend){ 
-			wxCommandEvent *evt=new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED,23333);
+			wxCommandEvent *evt=new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,2021);
 			wxQueueEvent(Vrend, evt);
 		}
 		Vrend->DrawTexture(pBuffer);

@@ -16,6 +16,7 @@ class Fullscreen : public wxFrame
 	BitmapButton* bpause;
 	BitmapButton* bstop;
 	BitmapButton* bnext;
+	BitmapButton* bpline;
 	wxStaticText* Videolabel;
 	VideoSlider* vslider;
 	VolSlider* volslider;

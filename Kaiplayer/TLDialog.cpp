@@ -31,7 +31,7 @@ TLDialog::TLDialog(wxWindow *parent, Grid *subsgrid)
 	sizer1->Add(UpJoin,0,wxALL|wxEXPAND,5);
 	
 	sizer->Add(sizer1,0,wxEXPAND,0);
-	sizer->Add(new wxStaticText(this,-1,_("Objaśnienie:\noryginał - tekst napisów, do których przekładamy tekst innych\ntłumaczenie - tekst, który przekładamy do timingu wczytanych napisów")),0,wxEXPAND,0);
+	sizer->Add(new wxStaticText(this,-1,_("Objaśnienie:\nOryginał - tekst napisów z właściwnym timingiem służy\ndo porównania wklejanych dialogów, później zostaje usunięty.\nTłumaczenie - tekst wklejony do napisów z poprawnym timingiem.")),0,wxEXPAND,0);
 	//sizer->Add(sizer3,0,wxEXPAND,0);
 	SetSizerAndFit(sizer);
 	CenterOnParent();

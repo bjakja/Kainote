@@ -129,8 +129,17 @@ bool kainoteApp::OnInit()
 			}
 			
 			for (int i=1;i<argc;i++) { paths.Add(argv[i]); }
+
+			int posx,posy,sizex,sizey;
+			Options.GetCoords("Window Position",&posx,&posy);
+			//SetPosition(wxPoint(posx,posy));
+			Options.GetCoords("Window Size",&sizex,&sizey);
+			if(sizex<500 || sizey<350){
+				sizex=800;sizey=650;
+			}
+			//SetClientSize(wxSize(sizex,sizey));
 			Frame=NULL;
-    		Frame = new kainoteFrame(0);
+    		Frame = new kainoteFrame(wxPoint(posx,posy),wxSize(sizex,sizey));
 			bool opevent=false;
 			if(paths.GetCount()>0){
 				if(Options.GetBool("Video Fullskreen on Start")){

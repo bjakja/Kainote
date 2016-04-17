@@ -935,19 +935,19 @@ void MTextEditor::FindWord(int pos, int *start, int *end)
 			int res=wfind.Find(MText[i]);
 			if(res!=-1){lastres=res;}
 			if(res!=-1&&!hasres){
-				//wxLogStatus("ipos %i %i",i, pos);
 				if(i==pos){hasres=true;continue;}
-				*start=(MText[i]=='\\' && MText[i+1]=='N')?i+2 : i+1;// : i;
+				bool isen=(MText[i]=='\\' && MText[i+1]=='N');
+				*start=(isen && pos==i+1)? i : (isen)? i+2 : i+1;
 				break;
 			}else if(hasres&&res==-1){
-				//wxLogStatus("ipos1 %i %i",i, pos);
 				if(i+1==pos){continue;}
 				else if(lastres<1 && i+2==pos){hasres=false; continue;}
 				*start=(lastres>0 && (MText[pos]==' '||i+2<pos))?i+1 : i+2;
 				break;
 			}
 		}
-	}if(!end){return;}
+	}
+	if(!end){return;}
 	*end=(fromend && end==NULL)? 0 : len;
 	for(int i=pos; i<len; i++){
 		int res=wfind.Find(MText[i]);
@@ -958,7 +958,7 @@ void MTextEditor::FindWord(int pos, int *start, int *end)
 			break;
 		}else if(hasres&&res==-1){
 			//wxLogStatus("ipos3 %i %i",i, pos);
-			*end=i;
+			*end= (i>0 && MText[i-1]=='\\' && MText[i]=='N')? i+1 : i;
 			break;
 		}
 	}

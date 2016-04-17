@@ -30,8 +30,8 @@
 #endif
 //#define wxIMAGE_PNG(x) wxImage(wxS(#x),wxBITMAP_TYPE_PNG_RESOURCE)
 
-kainoteFrame::kainoteFrame(wxWindow* parent)
-	: wxFrame(parent, -1, _("Bez nazwy -- ")+Options.progname, wxDefaultPosition,wxDefaultSize, wxDEFAULT_FRAME_STYLE)
+kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
+	: wxFrame(0, -1, _("Bez nazwy -- ")+Options.progname, pos, size, wxDEFAULT_FRAME_STYLE)
 {
 
 #if logging
@@ -63,27 +63,25 @@ kainoteFrame::kainoteFrame(wxWindow* parent)
 	mains->Add(Toolbar,0,wxEXPAND,0);
 	mains->Add(Tabs,1,wxEXPAND,0);
 
-
 	FileMenu = new wxMenu();
-	AppendBitmap(FileMenu,ID_OPENSUBS, _("&Otwórz napisy"), _("Otwórz plik napisów"),wxBITMAP_PNG ("opensubs"));
-	AppendBitmap(FileMenu,ID_SAVE, _("&Zapisz"), _("Zapisz aktualny plik"),wxBITMAP_PNG("save"));
-	AppendBitmap(FileMenu,ID_SAVEALL, _("Zapisz wszystko"), _("Zapisz wszystkie napisy"),wxBITMAP_PNG("saveall"));
-	AppendBitmap(FileMenu,ID_SAVEAS, _("Zapisz &jako..."), _("Zapisz jako"),wxBITMAP_PNG("saveas"));
-	AppendBitmap(FileMenu,ID_SAVETL, _("Zapisz tłumaczenie"), _("Zapisz tłumaczenie"),wxBITMAP_PNG("savetl"),false);
-
+	AppendBitmap(FileMenu,OpenSubs, _("&Otwórz napisy"), _("Otwórz plik napisów"),wxBITMAP_PNG ("opensubs"));
+	AppendBitmap(FileMenu,SaveSubs, _("&Zapisz"), _("Zapisz aktualny plik"),wxBITMAP_PNG("save"));
+	AppendBitmap(FileMenu,SaveAllSubs, _("Zapisz wszystko"), _("Zapisz wszystkie napisy"),wxBITMAP_PNG("saveall"));
+	AppendBitmap(FileMenu,SaveSubsAs, _("Zapisz &jako..."), _("Zapisz jako"),wxBITMAP_PNG("saveas"));
+	AppendBitmap(FileMenu,SaveTranslation, _("Zapisz tłumaczenie"), _("Zapisz tłumaczenie"),wxBITMAP_PNG("savetl"),false);
 	SubsRecMenu = new wxMenu();
 	//AppendRecent();
-	AppendBitmap(FileMenu,ID_RECSUBS, _("Ostatnio otwarte napisy"), _("Ostatnio otwarte napisy"),wxBITMAP_PNG("recentsubs"),true, SubsRecMenu);
-	AppendBitmap(FileMenu,ID_UNSUBS, _("Usuń napisy z edytora"), _("Usuń napisy z edytora"),wxBITMAP_PNG("close"));
-	AppendBitmap(FileMenu,ID_SETTINGS, _("&Ustawienia"), _("Ustawienia programu"),wxBITMAP_PNG("SETTINGS"));
-	AppendBitmap(FileMenu,ID_QUIT, _("&Wyjście\tAlt-F4"), _("Zakończ działanie programu"),wxBITMAP_PNG("exit"));
+	AppendBitmap(FileMenu,RecentSubs, _("Ostatnio otwarte napisy"), _("Ostatnio otwarte napisy"),wxBITMAP_PNG("recentsubs"),true, SubsRecMenu);
+	AppendBitmap(FileMenu,RemoveSubs, _("Usuń napisy z edytora"), _("Usuń napisy z edytora"),wxBITMAP_PNG("close"));
+	AppendBitmap(FileMenu,Settings, _("&Ustawienia"), _("Ustawienia programu"),wxBITMAP_PNG("SETTINGS"));
+	AppendBitmap(FileMenu,Quit, _("&Wyjście\tAlt-F4"), _("Zakończ działanie programu"),wxBITMAP_PNG("exit"));
 	MenuBar->Append(FileMenu, _("&Plik"));
 
 	EditMenu = new wxMenu();
-	AppendBitmap(EditMenu, ID_UNDO1, _("&Cofnij"), _("Cofnij"),wxBITMAP_PNG("undo"),false);
-	AppendBitmap(EditMenu, ID_REDO1, _("&Ponów"), _("Ponów"),wxBITMAP_PNG("redo"),false);
-	AppendBitmap(EditMenu,ID_FINDREP, _("Znajdź i zamień"), _("Szuka i podmienia dane frazy tekstu"),wxBITMAP_PNG("findreplace"));
-	AppendBitmap(EditMenu,ID_FIND, _("Znajdź"), _("Szuka dane frazy tekstu"),wxBITMAP_PNG("search"));
+	AppendBitmap(EditMenu, Undo, _("&Cofnij"), _("Cofnij"),wxBITMAP_PNG("undo"),false);
+	AppendBitmap(EditMenu, Redo, _("&Ponów"), _("Ponów"),wxBITMAP_PNG("redo"),false);
+	AppendBitmap(EditMenu,FindReplace, _("Znajdź i zamień"), _("Szuka i podmienia dane frazy tekstu"),wxBITMAP_PNG("findreplace"));
+	AppendBitmap(EditMenu,Search, _("Znajdź"), _("Szuka dane frazy tekstu"),wxBITMAP_PNG("search"));
 	wxMenu *SortMenu[2];
 	for(int i=0; i<2; i++){
 		SortMenu[i]=new wxMenu();
@@ -95,79 +93,79 @@ kainoteFrame::kainoteFrame(wxWindow* parent)
 		SortMenu[i]->Append(7005+(6*i),_("Warstwa"),_("Sortuj według warstwy"));
 	}
 
-	AppendBitmap(EditMenu,ID_SORT, _("Sort&uj wszystkie linie"), _("Sortuje wszystkie linie napisów ASS"),wxBITMAP_PNG("sort"),true,SortMenu[0]);
-	AppendBitmap(EditMenu,ID_SORTSEL, _("Sort&uj zaznaczone linie"),_("Sortuje zaznaczone linie napisów ASS"),wxBITMAP_PNG("sortsel"),true, SortMenu[1]);
-	AppendBitmap(EditMenu,ID_SELLIN, _("Zaznacz linijki"), _("Zaznacza linijki wg danej frazy tekstu"),wxBITMAP_PNG("sellines"));
+	AppendBitmap(EditMenu,SortLines, _("Sort&uj wszystkie linie"), _("Sortuje wszystkie linie napisów ASS"),wxBITMAP_PNG("sort"),true,SortMenu[0]);
+	AppendBitmap(EditMenu,SortSelected, _("Sort&uj zaznaczone linie"),_("Sortuje zaznaczone linie napisów ASS"),wxBITMAP_PNG("sortsel"),true, SortMenu[1]);
+	AppendBitmap(EditMenu,SelectLines, _("Zaznacz linijki"), _("Zaznacza linijki wg danej frazy tekstu"),wxBITMAP_PNG("sellines"));
 	MenuBar->Append(EditMenu, _("&Edycja"));
 
 	VidMenu = new wxMenu();
-	AppendBitmap(VidMenu,ID_OPVIDEO, _("Otwórz wideo"), _("Otwiera wybrane wideo"),wxBITMAP_PNG("openvideo"));
+	AppendBitmap(VidMenu,OpenVideo, _("Otwórz wideo"), _("Otwiera wybrane wideo"),wxBITMAP_PNG("openvideo"));
 	VidsRecMenu = new wxMenu();
-	AppendBitmap(VidMenu, ID_RECVIDEO, _("Ostatnio otwarte wideo"), _("Ostatnio otwarte video"),wxBITMAP_PNG("recentvideo"),true, VidsRecMenu);
-	AppendBitmap(VidMenu, ID_SETSTIME, _("Wstaw czas początkowy z wideo"), _("Wstawia czas początkowy z wideo"),wxBITMAP_PNG("setstarttime"),false);
-	AppendBitmap(VidMenu, ID_SETETIME, _("Wstaw czas końcowy z wideo"), _("Wstawia czas końcowy z wideo"),wxBITMAP_PNG("setendtime"),false);
-	AppendBitmap(VidMenu, ID_PREVFRAME, _("Klatka w tył"), _("Przechodzi o jedną klatkę w tył"),wxBITMAP_PNG("prevframe"),false);
-	AppendBitmap(VidMenu, ID_NEXTFRAME, _("Klatka w przód"), _("Przechodzi o jedną klatkę w przód"),wxBITMAP_PNG("nextframe"),false);
-	AppendBitmap(VidMenu, ID_SETVIDATSTART,_("Przejdź do czasu początkowego linii"),_("Przechodzi wideo do czasu początkowego linii"),wxBITMAP_PNG("videoonstime"));
-	AppendBitmap(VidMenu, ID_SETVIDATEND,_("Przejdź do czasu końcowego linii"),_("Przechodzi wideo do czasu końcowego linii"),wxBITMAP_PNG("videoonetime"));
-	AppendBitmap(VidMenu, ID_PAUSE, _("Odtwarzaj / Pauza"), _("Odtwarza lub pauzuje wideo"),wxBITMAP_PNG("pausemenu"),false);
-	VidMenu->Append(ID_OPVIDEOINDEX, _("Otwieraj wideo przez FFMS2"), _("Otwiera wideo przez FFMS2, co daje dokładność klatkową"),wxITEM_CHECK)->Check(Options.GetBool("Index Video"));
+	AppendBitmap(VidMenu, RecentVideo, _("Ostatnio otwarte wideo"), _("Ostatnio otwarte video"),wxBITMAP_PNG("recentvideo"),true, VidsRecMenu);
+	AppendBitmap(VidMenu, SetStartTime, _("Wstaw czas początkowy z wideo"), _("Wstawia czas początkowy z wideo"),wxBITMAP_PNG("setstarttime"),false);
+	AppendBitmap(VidMenu, SetEndTime, _("Wstaw czas końcowy z wideo"), _("Wstawia czas końcowy z wideo"),wxBITMAP_PNG("setendtime"),false);
+	AppendBitmap(VidMenu, PreviousFrame, _("Klatka w tył"), _("Przechodzi o jedną klatkę w tył"),wxBITMAP_PNG("prevframe"),false);
+	AppendBitmap(VidMenu, NextFrame, _("Klatka w przód"), _("Przechodzi o jedną klatkę w przód"),wxBITMAP_PNG("nextframe"),false);
+	AppendBitmap(VidMenu, SetVideoAtStart,_("Przejdź do czasu początkowego linii"),_("Przechodzi wideo do czasu początkowego linii"),wxBITMAP_PNG("videoonstime"));
+	AppendBitmap(VidMenu, SetVideoAtEnd,_("Przejdź do czasu końcowego linii"),_("Przechodzi wideo do czasu końcowego linii"),wxBITMAP_PNG("videoonetime"));
+	AppendBitmap(VidMenu, PlayPauseG, _("Odtwarzaj / Pauza"), _("Odtwarza lub pauzuje wideo"),wxBITMAP_PNG("pausemenu"),false);
+	VidMenu->Append(VideoIndexing, _("Otwieraj wideo przez FFMS2"), _("Otwiera wideo przez FFMS2, co daje dokładność klatkową"),wxITEM_CHECK)->Check(Options.GetBool("Index Video"));
 
 	MenuBar->Append(VidMenu, _("&Wideo"));
 
 	AudMenu = new wxMenu();
-	AppendBitmap(AudMenu,ID_OPAUDIO, _("Otwórz audio"), _("Otwiera wybrane audio"),wxBITMAP_PNG("openaudio"));
+	AppendBitmap(AudMenu,OpenAudio, _("Otwórz audio"), _("Otwiera wybrane audio"),wxBITMAP_PNG("openaudio"));
 	AudsRecMenu = new wxMenu();
 
-	AppendBitmap(AudMenu,ID_RECAUDIO, _("Ostatnio otwarte audio"), _("Ostatnio otwarte audio"),wxBITMAP_PNG("recentaudio"),true , AudsRecMenu);
-	AppendBitmap(AudMenu,ID_OPFROMVID, _("Otwórz audio z wideo"), _("Otwiera audio z wideo"),wxBITMAP_PNG("audiofromvideo"));
-	AppendBitmap(AudMenu,ID_CLOSEAUDIO, _("Zamknij audio"), _("Zamyka audio"),wxBITMAP_PNG("closeaudio"));
+	AppendBitmap(AudMenu,RecentAudio, _("Ostatnio otwarte audio"), _("Ostatnio otwarte audio"),wxBITMAP_PNG("recentaudio"),true , AudsRecMenu);
+	AppendBitmap(AudMenu,AudioFromVideo, _("Otwórz audio z wideo"), _("Otwiera audio z wideo"),wxBITMAP_PNG("audiofromvideo"));
+	AppendBitmap(AudMenu,CloseAudio, _("Zamknij audio"), _("Zamyka audio"),wxBITMAP_PNG("closeaudio"));
 	MenuBar->Append(AudMenu, _("&Audio"));
 
 	ViewMenu = new wxMenu();
-	ViewMenu->Append(ID_VALL, _("Wszystko"), _("Wszystkie okna są widoczne"));
-	ViewMenu->Append(ID_VVIDEO, _("Wideo i napisy"), _("Widoczne tylko okno wideo i napisów"));
-	ViewMenu->Append(ID_VAUDIO, _("Audio i napisy"), _("Widoczne tylko okno audio i napisów"));
-	ViewMenu->Append(ID_VSUBS, _("Tylko napisy"), _("Widoczne tylko okno napisów"));
+	ViewMenu->Append(ViewAll, _("Wszystko"), _("Wszystkie okna są widoczne"));
+	ViewMenu->Append(ViewVideo, _("Wideo i napisy"), _("Widoczne tylko okno wideo i napisów"));
+	ViewMenu->Append(ViewAudio, _("Audio i napisy"), _("Widoczne tylko okno audio i napisów"));
+	ViewMenu->Append(ViewSubs, _("Tylko napisy"), _("Widoczne tylko okno napisów"));
 	MenuBar->Append(ViewMenu, _("Wido&k"));
 
 	SubsMenu = new wxMenu();
-	AppendBitmap(SubsMenu,ID_EDITOR, _("Włącz / Wyłącz edytor"), _("Włączanie bądź wyłączanie edytora"),wxBITMAP_PNG("editor"));
-	AppendBitmap(SubsMenu,ID_ASSPROPS, _("Właściwości ASS"), _("Właściwości napisów ASS"),wxBITMAP_PNG("ASSPROPS"));
-	AppendBitmap(SubsMenu,ID_STYLEMNGR, _("&Menedżer stylów"), _("Służy do zarządzania stylami ASS"),wxBITMAP_PNG("styles"));
+	AppendBitmap(SubsMenu,Editor, _("Włącz / Wyłącz edytor"), _("Włączanie bądź wyłączanie edytora"),wxBITMAP_PNG("editor"));
+	AppendBitmap(SubsMenu,ASSProperties, _("Właściwości ASS"), _("Właściwości napisów ASS"),wxBITMAP_PNG("ASSPROPS"));
+	AppendBitmap(SubsMenu,StyleManager, _("&Menedżer stylów"), _("Służy do zarządzania stylami ASS"),wxBITMAP_PNG("styles"));
 	ConvMenu = new wxMenu();
-	AppendBitmap(ConvMenu,ID_ASS, _("Konwertuj do ASS"), _("Konwertuje do formatu ASS"),wxBITMAP_PNG("convass"),false);
-	AppendBitmap(ConvMenu,ID_SRT, _("Konwertuj do SRT"), _("Konwertuje do formatu SRT"),wxBITMAP_PNG("convsrt"));
-	AppendBitmap(ConvMenu,ID_MDVD, _("Konwertuj do MDVD"), _("Konwertuje do formatu microDVD"),wxBITMAP_PNG("convmdvd"));
-	AppendBitmap(ConvMenu,ID_MPL2, _("Konwertuj do MPL2"), _("Konwertuje do formatu MPL2"),wxBITMAP_PNG("convmpl2"));
-	AppendBitmap(ConvMenu,ID_TMP, _("Konwertuj do TMP"), _("Konwertuje do formatu TMPlayer (niezalecene)"),wxBITMAP_PNG("convtmp"));
+	AppendBitmap(ConvMenu,ConvertToASS, _("Konwertuj do ASS"), _("Konwertuje do formatu ASS"),wxBITMAP_PNG("convass"),false);
+	AppendBitmap(ConvMenu,ConvertToSRT, _("Konwertuj do SRT"), _("Konwertuje do formatu SRT"),wxBITMAP_PNG("convsrt"));
+	AppendBitmap(ConvMenu,ConvertToMDVD, _("Konwertuj do MDVD"), _("Konwertuje do formatu microDVD"),wxBITMAP_PNG("convmdvd"));
+	AppendBitmap(ConvMenu,ConvertToMPL2, _("Konwertuj do MPL2"), _("Konwertuje do formatu MPL2"),wxBITMAP_PNG("convmpl2"));
+	AppendBitmap(ConvMenu,ConvertToTMP, _("Konwertuj do TMP"), _("Konwertuje do formatu TMPlayer (niezalecene)"),wxBITMAP_PNG("convtmp"));
 
 	AppendBitmap(SubsMenu,ID_CONV, _("Konwersja"), _("Konwersja z jednego formatu napisów na inny"),wxBITMAP_PNG("convert"),true, ConvMenu);
-	AppendBitmap(SubsMenu,ID_CHANGETIME, _("Okno zmiany &czasów\tCtrl-I"), _("Przesuwanie czasów napisów"),wxBITMAP_PNG("times"));
-	AppendBitmap(SubsMenu,ID_CROSS, _("Włącz wskaźnik pozycji"), _("Włącz przesuwanie tekstu"),wxBITMAP_PNG("cross"),false);
-	AppendBitmap(SubsMenu,ID_POSITION, _("Włącz przesuwanie"), _("Włącz przesuwanie tekstu"),wxBITMAP_PNG("position"),false);
-	AppendBitmap(SubsMenu,ID_MOVEMENT, _("Włącz ruch"), _("Włącz przesuwanie tekstu"),wxBITMAP_PNG("move"),false);
+	AppendBitmap(SubsMenu,ChangeTime, _("Okno zmiany &czasów\tCtrl-I"), _("Przesuwanie czasów napisów"),wxBITMAP_PNG("times"));
+	AppendBitmap(SubsMenu,CrossPositioner, _("Włącz wskaźnik pozycji"), _("Włącz przesuwanie tekstu"),wxBITMAP_PNG("cross"),false);
+	AppendBitmap(SubsMenu,Positioner, _("Włącz przesuwanie"), _("Włącz przesuwanie tekstu"),wxBITMAP_PNG("position"),false);
+	AppendBitmap(SubsMenu,Movement, _("Włącz ruch"), _("Włącz przesuwanie tekstu"),wxBITMAP_PNG("move"),false);
 	//AppendBitmap(SubsMenu,ID_MOVEONCURVE, _("Włącz ruch po krzywej"), _("Włącz / Wyłącz przesuwanie tekstu"),wxBITMAP_PNG("move"),false);
-	AppendBitmap(SubsMenu,ID_SCALE, _("Włącz skalowanie"), _("Włącz skalowanie tekstu"),wxBITMAP_PNG("scale"),false);
-	AppendBitmap(SubsMenu,ID_ROTATEZ, _("Włącz obracanie w osi Z"), _("Włącz obracanie tekstu w osi Z"),wxBITMAP_PNG("frz"),false);
-	AppendBitmap(SubsMenu,ID_ROTATEXY, _("Włącz obracanie w osi X / Y"), _("Włącz obracanie tekstu w osi X / Y"),wxBITMAP_PNG("frxy"),false);
+	AppendBitmap(SubsMenu,Scalling, _("Włącz skalowanie"), _("Włącz skalowanie tekstu"),wxBITMAP_PNG("scale"),false);
+	AppendBitmap(SubsMenu,RotatingZ, _("Włącz obracanie w osi Z"), _("Włącz obracanie tekstu w osi Z"),wxBITMAP_PNG("frz"),false);
+	AppendBitmap(SubsMenu,RotatingXY, _("Włącz obracanie w osi X / Y"), _("Włącz obracanie tekstu w osi X / Y"),wxBITMAP_PNG("frxy"),false);
 	//AppendBitmap(SubsMenu,ID_FAXY, _("Włącz / Wyłącz pochylanie tekstu"), _("Włącz / Wyłącz pochylanie tekstu"),wxBITMAP_PNG("clip"),false);
-	AppendBitmap(SubsMenu,ID_CLIPRECT, _("Włącz wycinki prostokątne"), _("Włącz tworzenie wycinków prostokątnych"),wxBITMAP_PNG("cliprect"),false);
-	AppendBitmap(SubsMenu,ID_CLIPS, _("Włącz wycinki wektorowe"), _("Włącz tworzenie wycinków wektorowych"),wxBITMAP_PNG("clip"),false);
-	AppendBitmap(SubsMenu,ID_DRAWINGS, _("Włącz rysunki wektorowe"), _("Włącz tworzenie rysunków"),wxBITMAP_PNG("drawing"),false);
-	AppendBitmap(SubsMenu,ID_COLLECTOR, _("Kolekcjoner czcionek"), _("Kolekcjoner czcionek"),wxBITMAP_PNG("fontcollector"));
-	AppendBitmap(SubsMenu,ID_HIDETAGS, _("Ukryj tagi w nawiasach"), _("Ukrywa tagi w nawiasach ASS i MDVD"),wxBITMAP_PNG("hidetags"));
+	AppendBitmap(SubsMenu,RectangleClips, _("Włącz wycinki prostokątne"), _("Włącz tworzenie wycinków prostokątnych"),wxBITMAP_PNG("cliprect"),false);
+	AppendBitmap(SubsMenu,VectorClips, _("Włącz wycinki wektorowe"), _("Włącz tworzenie wycinków wektorowych"),wxBITMAP_PNG("clip"),false);
+	AppendBitmap(SubsMenu,VectorDrawings, _("Włącz rysunki wektorowe"), _("Włącz tworzenie rysunków"),wxBITMAP_PNG("drawing"),false);
+	AppendBitmap(SubsMenu,FontCollector, _("Kolekcjoner czcionek"), _("Kolekcjoner czcionek"),wxBITMAP_PNG("fontcollector"));
+	AppendBitmap(SubsMenu,HideTags, _("Ukryj tagi w nawiasach"), _("Ukrywa tagi w nawiasach ASS i MDVD"),wxBITMAP_PNG("hidetags"));
 	MenuBar->Append(SubsMenu, _("&Napisy"));
 
 	AutoMenu = new wxMenu();
-	AppendBitmap(AutoMenu,ID_AUTO, _("Menedżer skryptów"), _("Menedżer skryptów"),wxBITMAP_PNG("automation"));
+	AppendBitmap(AutoMenu,Automation, _("Menedżer skryptów"), _("Menedżer skryptów"),wxBITMAP_PNG("automation"));
 	MenuBar->Append(AutoMenu, _("Automatyzacja"));
 
 	HelpMenu = new wxMenu();
-	AppendBitmap(HelpMenu,ID_HELP, _("&Pomoc (niekompletna, ale jednak)"), _("Otwiera pomoc w domyślnej przeglądarce"),wxBITMAP_PNG("help"));
-	AppendBitmap(HelpMenu,ID_ANSI, _("&Wątek programu na forum AnimeSub.info"), _("Otwiera wątek programu na forum AnimeSub.info"),wxBITMAP_PNG("ansi"));
-	AppendBitmap(HelpMenu,ID_ABOUT, _("&O programie\tF2"), _("Wyświetla informacje o programie"),wxBITMAP_PNG("about"));
-	AppendBitmap(HelpMenu,ID_HELPERS, _("&Lista osób pomocnych przy tworzeniu programu"), _("Wyświetla listę osób pomocnych przy tworzeniu programu"),wxBITMAP_PNG("helpers"));
+	AppendBitmap(HelpMenu,Help, _("&Pomoc (niekompletna, ale jednak)"), _("Otwiera pomoc w domyślnej przeglądarce"),wxBITMAP_PNG("help"));
+	AppendBitmap(HelpMenu,ANSI, _("&Wątek programu na forum AnimeSub.info"), _("Otwiera wątek programu na forum AnimeSub.info"),wxBITMAP_PNG("ansi"));
+	AppendBitmap(HelpMenu,About, _("&O programie"), _("Wyświetla informacje o programie"),wxBITMAP_PNG("about"));
+	AppendBitmap(HelpMenu,Helpers, _("&Lista osób pomocnych przy tworzeniu programu"), _("Wyświetla listę osób pomocnych przy tworzeniu programu"),wxBITMAP_PNG("helpers"));
 	MenuBar->Append(HelpMenu, _("Pomo&c"));
 
 	SetMenuBar(MenuBar);
@@ -188,34 +186,24 @@ kainoteFrame::kainoteFrame(wxWindow* parent)
 	Connect(ID_TABS,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnPageChanged,0,this);
 	Connect(ID_ADDPAGE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnPageAdd);
 	Connect(ID_CLOSEPAGE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnPageClose);
-	Connect(ID_NEXT_TAB,ID_PREV_TAB,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnPageChange);
+	Connect(NextTab,PreviousTab,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnPageChange);
 	//tutaj dodawaj nowe idy
-	Connect(ID_SAVE,ID_SORTSEL,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
+	Connect(SaveSubs,Undo,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
 	Connect(7000,7011,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
-	Connect(ID_OPENSUBS,ID_ANSI,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
-	Connect(ID_P5SEC,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnP5Sec);
-	Connect(ID_M5SEC,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnM5Sec);
-	Connect(ID_SELONVID,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnSelVid);
-	Connect(ID_PREV_LINE,GRID_JOINWN,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnChangeLine);
-	Connect(ID_DELETE,ID_DELETE_TEXT,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnDelete);
+	Connect(OpenSubs,ANSI,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
+	Connect(SelectFromVideo,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
+	Connect(Plus5SecondG,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnP5Sec);
+	Connect(Minus5SecondG,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnM5Sec);
+	Connect(PreviousLine,JoinWithNext,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnChangeLine);
+	Connect(Remove,RemoveText,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnDelete);
 	Connect(wxEVT_MENU_OPEN,(wxObjectEventFunction)&kainoteFrame::OnMenuOpened);
 	Connect(wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&kainoteFrame::OnClose1);
 	Connect(30000,30059,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnRecent);
 	Connect(30100,30199,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnRunScript);
-	Connect(ID_SNAP_START,ID_SNAP_END,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
+	Connect(SnapWithStart,SnapWithEnd,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
 	SetDropTarget(new DragnDrop(this));
 
-
-	//SetToolBar(Toolbar);
-
-	int posx,posy,sizex,sizey;
-	Options.GetCoords("Window Position",&posx,&posy);
-	SetPosition(wxPoint(posx,posy));
-	Options.GetCoords("Window Size",&sizex,&sizey);
-	if(sizex<500 || sizey<350){
-		sizex=800;sizey=650;
-	}
-	SetClientSize(wxSize(sizex,sizey));
+	
 	bool im=Options.GetBool("Window Maximize");
 	if(im){
 		Maximize(Options.GetBool("Window Maximize"));}
@@ -233,7 +221,7 @@ kainoteFrame::~kainoteFrame()
 		GetPosition(&posx,&posy);
 		if(posx<2000){
 			Options.SetCoords("Window Position",posx,posy);}
-		GetClientSize(&sizex,&sizey);
+		GetSize(&sizex,&sizey);
 		Options.SetCoords("Window Size",sizex,sizey);
 	}
 
@@ -267,7 +255,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	TabPanel *pan=GetTab();
 	byte state[256];
 	if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie można pobrać stanu klawiszy"));}
-	if((state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1) && (state[VK_LCONTROL]<1 && state[VK_RCONTROL]<1 && state[VK_LMENU]<1 && state[VK_RMENU]<1)){
+	if((state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1) /*&& (state[VK_LCONTROL]<1 && state[VK_RCONTROL]<1 && state[VK_LMENU]<1 && state[VK_RMENU]<1)*/){
 		wxMenuItem *item=MenuBar->FindItem(id);
 		wxString wins[1]={"Globalny"};
 		//upewnij się, że da się zmienić idy na nazwy, 
@@ -286,17 +274,17 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		return;
 	}
 	//wxLogStatus("%i", id);
-	if(id==ID_SAVE){
+	if(id==SaveSubs){
 		Save(false);
-	}else if(id==ID_SAVEAS){
+	}else if(id==SaveSubsAs){
 		Save(true);
-	}else if(id==ID_SAVEALL){
+	}else if(id==SaveAllSubs){
 		SaveAll();
-	}else if(id==ID_SAVETL){
+	}else if(id==SaveTranslation){
 		GetTab()->Grid1->AddSInfo("TLMode", "Translated",false);
 		Save(true);
 		GetTab()->Grid1->AddSInfo("TLMode", "Yes",false);
-	}else if(id==ID_UNSUBS){
+	}else if(id==RemoveSubs){
 		if(SavePrompt(3)){event.SetInt(-1);return;}
 		if(pan->SubsPath!=("")){
 			pan->SubsName=_("Bez tytułu");
@@ -310,25 +298,25 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 
 			if(pan->Video->GetState()!=None){pan->Video->OpenSubs(NULL);pan->Video->Render();}
 		}
-	}else if(id==ID_UNDO1){
+	}else if(id==Undo){
 		pan->Grid1->GetUndo(false);
-	}else if(id==ID_REDO1){
+	}else if(id==Redo){
 		pan->Grid1->GetUndo(true);
-	}else if(id==ID_FIND || id==ID_FINDREP){
-		if(FR && FR->IsShown() && FR->repl && id==ID_FINDREP){FR->Hide();return;}
-		FR= new findreplace(this, FR, id==ID_FINDREP);
+	}else if(id==Search || id==FindReplace){
+		if(FR && FR->IsShown() && FR->repl && id==FindReplace){FR->Hide();return;}
+		FR= new findreplace(this, FR, id==FindReplace);
 		FR->Show(true);
 		FR->ReloadStyle();
-	}else if(id==ID_SELLIN){
+	}else if(id==SelectLines){
 		SL= new findreplace(this,SL,false,true);
 		SL->Show(true);
-	}else if(id==ID_PAUSE){
+	}else if(id==PlayPauseG){
 		pan->Video->Pause();
-	}else if(id==ID_PREVFRAME||id==ID_NEXTFRAME){
-		pan->Video->MovePos((id==ID_PREVFRAME)? -1 : 1);
-	}else if(id==ID_SETSTIME||id==ID_SETETIME){
+	}else if(id==PreviousFrame||id==NextFrame){
+		pan->Video->MovePos((id==PreviousFrame)? -1 : 1);
+	}else if(id==SetStartTime||id==SetEndTime){
 		if(pan->Video->GetState()!=None){
-			if(id==ID_SETSTIME){
+			if(id==SetStartTime){
 				int time= pan->Video->Tell()-(pan->Video->avtpf/2.0f)+Options.GetInt("Offset of start time");
 				pan->Grid1->SetStartTime(ZEROIT(time));
 			}else{
@@ -336,14 +324,14 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 				pan->Grid1->SetEndTime(ZEROIT(time));
 			}
 		}
-	}else if(id==ID_OPVIDEOINDEX){
-		wxMenuItem *Item=MenuBar->FindItem(ID_OPVIDEOINDEX);
+	}else if(id==VideoIndexing){
+		wxMenuItem *Item=MenuBar->FindItem(VideoIndexing);
 		Options.SetBool("Index Video",Item->IsChecked());
-	}else if(id>=ID_OPAUDIO&&id<=ID_CLOSEAUDIO){
+	}else if(id>=OpenAudio&&id<=CloseAudio){
 		OnOpenAudio(event);
-	}else if(id==ID_ASSPROPS){
+	}else if(id==ASSProperties){
 		OnAssProps();
-	}else if(id==ID_STYLEMNGR){
+	}else if(id==StyleManager){
 		if(!ss){
 			ss=new stylestore(this);
 			int ww,hh;
@@ -356,12 +344,12 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		ss->Choice1->SetSelection(chc);
 		ss->LoadAssStyles();
 		ss->Show();
-	}else if(id==ID_COLLECTOR){
+	}else if(id==FontCollector){
 		FontCollectorDialog fcd(this);
-	}else if(id>=ID_CROSS && id<=ID_DRAWINGS){
+	}else if(id>=CrossPositioner && id<=VectorDrawings){
 		VideoCtrl *vb=pan->Video;
 		EditBox *eb = pan->Edit;
-		int vis = (id - ID_CROSS);
+		int vis = (id - CrossPositioner);
 
 		if(vis==pan->Edit->Visual){return;}
 		if(vb->Vclips && vis == 0){ 
@@ -372,11 +360,11 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			if(!vb->isarrow){vb->SetCursor(wxCURSOR_ARROW);vb->isarrow=true;}
 		}
 		UpdateToolbar();
-	}else if(id>=ID_ASS&&id<=ID_MPL2){
-		OnConversion(( id - ID_ASS ) + 1);
-	}else if(id==ID_HIDETAGS){
+	}else if(id>=ConvertToASS&&id<=ConvertToMPL2){
+		OnConversion(( id - ConvertToASS ) + 1);
+	}else if(id==HideTags){
 		pan->Grid1->HideOver();
-	}else if(id==ID_CHANGETIME){
+	}else if(id==ChangeTime){
 		bool show=!pan->CTime->IsShown();
 		Options.SetBool("Show Change Time",show);
 		pan->CTime->Show(show);
@@ -385,25 +373,25 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		bool all=id<7006;
 		int difid=(all)? 7000 : 7006;
 		pan->Grid1->SortIt(id-difid,all);
-	}else if(id>=ID_VALL&&id<=ID_VSUBS){
-		bool vidshow=( id==ID_VALL || id==ID_VVIDEO ) && pan->Video->GetState()!=None;
+	}else if(id>=ViewAll&&id<=ViewSubs){
+		bool vidshow=( id==ViewAll || id==ViewVideo ) && pan->Video->GetState()!=None;
 		bool vidvis=pan->Video->IsShown();
 		if(!vidshow && pan->Video->GetState()==Playing){pan->Video->Pause();}
 		pan->Video->Show(vidshow);
 		if(vidshow && !vidvis){pan->Video->OpenSubs(pan->Grid1->SaveText());}
 		if(pan->Edit->ABox){
-			pan->Edit->ABox->Show((id==ID_VALL||id==ID_VAUDIO));
-			if(id==ID_VAUDIO){pan->Edit->SetMinSize(wxSize(500,350));}
+			pan->Edit->ABox->Show((id==ViewAll||id==ViewAudio));
+			if(id==ViewAudio){pan->Edit->SetMinSize(wxSize(500,350));}
 		}	
 		pan->Layout();
-	}else if(id==ID_AUTO){
+	}else if(id==Automation){
 		if(!LSD){LSD = new ScriptsDialog(this);LSD->AddFromSubs();}
 		LSD->Show();
-	}else if(id==ID_SETVIDATSTART){
+	}else if(id==SetVideoAtStart){
 		int fsel=pan->Grid1->FirstSel();
 		if(fsel<0){return;}
 		pan->Video->Seek(MAX(0,pan->Grid1->GetDial(fsel)->Start.mstime),true);
-	}else if(id==ID_SETVIDATEND){
+	}else if(id==SetVideoAtEnd){
 		int fsel=pan->Grid1->FirstSel();
 		if(fsel<0){return;}
 		pan->Video->Seek(MAX(0,pan->Grid1->GetDial(fsel)->End.mstime),false);
@@ -418,7 +406,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	TabPanel *pan=GetTab();
 	byte state[256];
 	if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie można pobrać stanu klawiszy"));}
-	if(state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1 && (state[VK_LCONTROL]<1 && state[VK_RCONTROL]<1 && state[VK_LMENU]<1 && state[VK_RMENU]<1)){
+	if(state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1 /*&& (state[VK_LCONTROL]<1 && state[VK_RCONTROL]<1 && state[VK_LMENU]<1 && state[VK_RMENU]<1)*/){
 		wxMenuItem *item=MenuBar->FindItem(id);
 		wxString win[]={"Globalny"};
 		int ret=-1;
@@ -433,7 +421,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 
 		return;
 	}
-	if(id==ID_OPENSUBS){
+	if(id==OpenSubs){
 		if(SavePrompt(2)){return;}
 
 		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"), 
@@ -451,7 +439,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			}
 		}
 		FileDialog1->Destroy();
-	}else if(id==ID_OPVIDEO){
+	}else if(id==OpenVideo){
 		wxFileDialog* FileDialog2 = new wxFileDialog(this, _("Wybierz plik wideo"), 
 			(videorec.size()>0)?videorec[videorec.size()-1].BeforeLast('\\'):"", 
 			"", _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"), wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, "wxFileDialog");
@@ -459,15 +447,17 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			OpenFile(FileDialog2->GetPath());
 		}
 		FileDialog2->Destroy();
-	}else if(id==ID_SETTINGS){
+	}else if(id==Settings){
 		OptionsDialog od(this,this);
 		od.OptionsTree->ChangeSelection(0);
 		od.ShowModal();
-	}else if(id==ID_EDITOR){
+	}else if(id==SelectFromVideo){
+		GetTab()->Grid1->SelVideoLine();
+	}else if(id==Editor){
 		HideEditor();
-	}else if(id==ID_CLOSE){
+	}else if(id==Quit){
 		Close();
-	}else if(id==ID_ABOUT){
+	}else if(id==About){
 		wxMessageBox(_("Edytor napisów by Bjakja aka Bakura, wersja ") + Options.progname.AfterFirst(' ') + "\r\n\r\n"+
 			_("Ten program to jakby moje zaplecze do nauki C++, więc mogą zdarzyć się różne błędy.\r\n\r\n")+
 			_("Kainote zawiera w sobie części następujących projeków:\r\n")+
@@ -481,12 +471,12 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			L"FFMPEGSource2 - Copyright © Fredrik Mellbin;\r\n"\
 			L"FreeType - Copyright ©  David Turner, Robert Wilhelm, and Werner Lemberg;\r\n"\
 			L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.", "O Kainote");
-	}else if(id==ID_HELPERS){
+	}else if(id==Helpers){
 		wxString Testers=L"Ksenoform, Deadsoul, Zły los, Vessin, Xandros, Areki, Nyah2211, Waski_jestem.";
 		wxString Credits=_("Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\r\n")+
 			_("- Archer (pierwsze przyciski do wideo).\r\n")+
 			_("- Kostek00 (przyciski do audio).\r\n")+
-			_("- Xandros (nowe przyciski do wideo, obrazki do pomocy).\r\n")+
+			_("- Xandros (nowe przyciski do wideo).\r\n")+
 			_("- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\r\n")+
 			_("- Areki, duplex (tłumaczenie anglojęzyczne).\r\n \r\n")+
 			_("Testerzy: (mniej i bardziej wprawieni użytkownicy programu)\r\n")+
@@ -499,9 +489,9 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\r\n");
 		wxMessageBox(Credits+Testers,_("Lista osób pomocnych przy tworzeniu programu"));
 
-	}else if(id==ID_HELP||id==ID_ANSI){
+	}else if(id==Help||id==ANSI){
 		WinStruct<SHELLEXECUTEINFO> sei;
-		wxString url=(id==ID_HELP)? L"file://" + Options.pathfull + L"\\Help\\Kainote pomoc.html" : L"http://animesub.info/forum/viewtopic.php?id=258715";
+		wxString url=(id==Help)? L"file://" + Options.pathfull + L"\\Help\\Kainote pomoc.html" : L"http://animesub.info/forum/viewtopic.php?id=258715";
 		sei.lpFile = url.c_str();
 		sei.lpVerb = wxT("open");
 		sei.nShow = SW_RESTORE;
@@ -873,12 +863,6 @@ void kainoteFrame::OnM5Sec(wxCommandEvent& event)
 
 }
 
-
-void kainoteFrame::OnSelVid(wxCommandEvent& event)
-{
-	GetTab()->Grid1->SelVideoLine();
-}
-
 TabPanel* kainoteFrame::GetTab()
 {
 	return Tabs->GetPage();
@@ -906,29 +890,19 @@ void kainoteFrame::Label(int iter,bool video, int wtab)
 void kainoteFrame::SetAccels(bool _all)
 {
 	std::vector<wxAcceleratorEntry> entries;
-	entries.resize(3);
-	entries[0].Set(wxACCEL_NORMAL, WXK_F1, ID_SELONVID);
-	entries[1].Set(wxACCEL_CTRL, (int) 'T', ID_ADDPAGE);
-	entries[2].Set(wxACCEL_CTRL, (int) 'W', ID_CLOSEPAGE);
+	entries.resize(2);
+	entries[0].Set(wxACCEL_CTRL, (int) 'T', ID_ADDPAGE);
+	entries[1].Set(wxACCEL_CTRL, (int) 'W', ID_CLOSEPAGE);
 
 	for(auto cur=Hkeys.hkeys.rbegin(); cur!=Hkeys.hkeys.rend(); cur++){
 		int id=cur->first;
+		if(cur->second.Accel==""){continue;}
 		if(id>=6850){
 			entries.push_back(Hkeys.GetHKey(id));
 		}else if(id>6000){
 			wxMenuItem *item=MenuBar->FindItem(id);
 			if(!item){continue;}
-			/*if(item->GetItemLabelText() != cur->second.Name){
-
-			int cnt= MenuBar->GetMenuCount();
-			int ret;
-			for(int i=0; i<cnt; i++){
-			ret=MenuBar->FindMenuItem(MenuBar->GetMenu(i)->GetTitle(),cur->second.Name);
-			if(ret!=-1){break;}
-			}
-			item=MenuBar->FindItem(ret);
-			if(!item){continue;}
-			}*/
+			cur->second.Name=item->GetItemLabelText();
 			item->SetAccel(&Hkeys.GetHKey(id));
 		}else if(id<6001){break;}
 
@@ -1043,7 +1017,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 
 void kainoteFrame::OnPageChange(wxCommandEvent& event)
 {
-	int step=(event.GetId()==ID_NEXT_TAB)? Tabs->iter+1 : Tabs->iter-1;
+	int step=(event.GetId()==NextTab)? Tabs->iter+1 : Tabs->iter-1;
 	if(step<0){step=Tabs->Size()-1;}
 	else if(step>=(int)Tabs->Size()){step=0;}
 	Tabs->ChangePage(step);
@@ -1226,7 +1200,7 @@ void kainoteFrame::UpdateToolbar()
 void kainoteFrame::OnOpenAudio(wxCommandEvent& event)
 {
 	int id=event.GetId();
-	if(id==ID_CLOSEAUDIO && GetTab()->Edit->ABox){
+	if(id==CloseAudio && GetTab()->Edit->ABox){
 		GetTab()->Video->player=NULL; 
 		GetTab()->Edit->ABox->Destroy(); 
 		GetTab()->Edit->ABox=NULL; 
@@ -1237,7 +1211,7 @@ void kainoteFrame::OnOpenAudio(wxCommandEvent& event)
 		if(!Options.AudioOpts && !Options.LoadAudioOpts()){wxMessageBox(_("Dupa blada, opcje się nie wczytały, na audio nie podziałasz"), _("Błędny błąd"));return;}
 
 		wxString Path;
-		if(id==ID_OPAUDIO){
+		if(id==OpenAudio){
 			wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik audio"), 
 				(GetTab()->VideoPath!="")? GetTab()->VideoPath.BeforeLast('\\') : (videorec.size()>0)?subsrec[videorec.size()-1].BeforeLast('\\') : "", 
 				"", _("Pliki audio i wideo (*.wav),(*.w64),(*.aac),(*.mp3),(*.mp4),(*.mkv),(*.avi)|*.wav;*.w64;*.aac;*.mp3;*.mp4;*.mkv;*.avi|Wszystkie Pliki |*.*"), wxFD_OPEN);
@@ -1302,29 +1276,29 @@ void kainoteFrame::OnMenuOpened(wxMenuEvent& event)
 	TabPanel *pan = GetTab();
 	bool enable=(pan->Video->GetState()!=None);
 	bool edytor=pan->edytor;
-	for(int i = ID_PAUSE; i<=ID_SETVIDATEND; i++)
+	for(int i = PlayPauseG; i<=SetVideoAtEnd; i++)
 	{
-		MenuBar->Enable(i,(i<ID_SETSTIME)? enable : enable && edytor);
+		MenuBar->Enable(i,(i<SetStartTime)? enable : enable && edytor);
 	}
 	//kolejno numery id
 	bool forms;
 	char form = pan->Grid1->form;
 	bool tlmode = pan->Grid1->transl;
 	bool editor = pan->edytor;
-	for(int i=ID_SAVE;i<=ID_AUTO;i++){//po kolejne idy zajrzyj do enuma z pliku h, ostatni jest ID_AUTO
+	for(int i=SaveSubs;i<=Automation;i++){//po kolejne idy zajrzyj do enuma z pliku h, ostatni jest Automation
 		forms=true;
 
-		if(i>=ID_ASSPROPS&&i<ID_ASS){forms=form<SRT;}//menager stylów i sinfo
-		else if(i==ID_ASS){forms=form>ASS;}//konwersja na ass
-		else if(i==ID_SRT){forms=form!=SRT;}//konwersja na srt
-		else if(i==ID_MDVD){forms=form!=MDVD;}//konwersja na mdvd
-		else if(i==ID_MPL2){forms=form!=MPL2;}//konwersja na mpl2
-		else if(i==ID_TMP){forms=form!=TMP;}//konwersja na tmp
-		if((i>=ID_ASS && i<=ID_TMP) && tlmode){forms=false;}
-		if(i>=ID_CROSS && i<=ID_DRAWINGS){forms= pan->Video->IsShown() && form<SRT && ( i - ID_CROSS ) != pan->Edit->Visual;}
-		if(i==ID_VAUDIO || i==ID_CLOSEAUDIO){forms= pan->Edit->ABox!=0;}
-		if(i==ID_VVIDEO||i==ID_OPFROMVID){forms= pan->Video->GetState()!=None;}
-		if(i==ID_SAVETL){forms=tlmode;}
+		if(i>=ASSProperties&&i<ConvertToASS){forms=form<SRT;}//menager stylów i sinfo
+		else if(i==ConvertToASS){forms=form>ASS;}//konwersja na ass
+		else if(i==ConvertToSRT){forms=form!=SRT;}//konwersja na srt
+		else if(i==ConvertToMDVD){forms=form!=MDVD;}//konwersja na mdvd
+		else if(i==ConvertToMPL2){forms=form!=MPL2;}//konwersja na mpl2
+		else if(i==ConvertToTMP){forms=form!=TMP;}//konwersja na tmp
+		if((i>=ConvertToASS && i<=ConvertToTMP) && tlmode){forms=false;}
+		if(i>=CrossPositioner && i<=VectorDrawings){forms= pan->Video->IsShown() && form<SRT && ( i - CrossPositioner ) != pan->Edit->Visual;}
+		if(i==ViewAudio || i==CloseAudio){forms= pan->Edit->ABox!=0;}
+		if(i==ViewVideo||i==AudioFromVideo){forms= pan->Video->GetState()!=None;}
+		if(i==SaveTranslation){forms=tlmode;}
 		MenuBar->Enable(i, editor && forms);
 	}
 	//specjalna poprawka do zapisywania w trybie tłumaczenia, jeśli jest tlmode, to zawsze ma działać.
@@ -1372,8 +1346,8 @@ void kainoteFrame::OnChangeLine(wxCommandEvent& event)
 {
 
 	int idd=event.GetId();
-	if(idd<GRID_JOINWP){//zmiana linijki
-		GetTab()->Grid1->NextLine((idd==ID_PREV_LINE)?-1 : 1);}
+	if(idd<JoinWithPrevious){//zmiana linijki
+		GetTab()->Grid1->NextLine((idd==PreviousLine)?-1 : 1);}
 	else{//scalanie dwóch linijek
 		GetTab()->Grid1->OnJoin(event);
 	}
@@ -1382,7 +1356,7 @@ void kainoteFrame::OnChangeLine(wxCommandEvent& event)
 void kainoteFrame::OnDelete(wxCommandEvent& event)
 {
 	int idd=event.GetId();
-	if(idd==ID_DELETE){
+	if(idd==Remove){
 		GetTab()->Grid1->DeleteRows();
 	}
 	else{
@@ -1408,12 +1382,12 @@ void kainoteFrame::OnAudioSnap(wxCommandEvent& event)
 	TabPanel *pan=GetTab();
 	if(!pan->Edit->ABox){return;}
 	int id=event.GetId();
-	int time= (id==ID_SNAP_START)? pan->Edit->line->Start.mstime : pan->Edit->line->End.mstime;
-	int time2= (id==ID_SNAP_START)? pan->Edit->line->End.mstime : pan->Edit->line->Start.mstime;
-	int snaptime= pan->Edit->ABox->audioDisplay->GetBoundarySnap(time,1000,!Options.GetBool("Audio Snap To Keyframes"),(id==ID_SNAP_START),true);
+	int time= (id==SnapWithStart)? pan->Edit->line->Start.mstime : pan->Edit->line->End.mstime;
+	int time2= (id==SnapWithStart)? pan->Edit->line->End.mstime : pan->Edit->line->Start.mstime;
+	int snaptime= pan->Edit->ABox->audioDisplay->GetBoundarySnap(time,1000,!Options.GetBool("Audio Snap To Keyframes"),(id==SnapWithStart),true);
 	//wxLogStatus(" times %i %i", snaptime, time);
 	if(time!= snaptime){
-		if(id==ID_SNAP_START){
+		if(id==SnapWithStart){
 			if (snaptime>=time2){return;}
 			pan->Edit->StartEdit->SetTime(STime(snaptime));
 			pan->Edit->StartEdit->SetModified(true);
@@ -1456,3 +1430,6 @@ void kainoteFrame::OnOutofMemory()
 
 	std::exit(1);
 }
+
+
+DEFINE_ENUM(Id,IDS)

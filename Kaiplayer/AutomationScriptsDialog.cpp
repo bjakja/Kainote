@@ -38,9 +38,19 @@ MacrosDialog::MacrosDialog(wxWindow *parent, int _script)
 	{
 		names.Add(macros[i]->name);
 		wxString hkeyname;
-		std::map<int, hdata >::iterator it=Hkeys.hkeys.find(30100+i);
-		names.Add((it!=Hkeys.hkeys.end())?it->second.Accel : "Brak");
-		
+		std::map<int, hdata >::iterator it;
+		bool isaccel=false;
+		for(it=Hkeys.hkeys.find(30100); it!=Hkeys.hkeys.end(); it++){
+			wxString Rest;
+			wxString scriptnum= it->second.Name.Mid(6).BeforeFirst('-', &Rest);
+			if(wxAtoi(scriptnum)==script && wxAtoi(Rest)==i){
+				names.Add(it->second.Accel);
+				isaccel=true;
+				break;
+			}
+		}
+		if(!isaccel){names.Add(_("Brak"));}
+
 		if(!macros[i]->Validate(sels,Kai->GetTab()->Edit->ebrow, diff)){
 			actives.push_back(false);
 		}else{actives.push_back(true);}
@@ -49,14 +59,14 @@ MacrosDialog::MacrosDialog(wxWindow *parent, int _script)
 }
 
 MacrosDialog::~MacrosDialog()
-	{
+{
 	names.Clear();
 	actives.clear();
 	if(HasCapture()){ReleaseMouse();}
-	}
+}
 
 void MacrosDialog::OnPaint(wxPaintEvent &event)
-	{
+{
 	wxPaintDC dc(this);
 	int w,h,fw,fh;
 	GetClientSize(&w,&h);
@@ -69,7 +79,7 @@ void MacrosDialog::OnPaint(wxPaintEvent &event)
 	dc.DrawRectangle(0,0,w,fh+4);
 	dc.SetPen(wxPen("#555555"));
 	dc.DrawLine(0,fh+3,w,fh+3);
-	
+
 	int y=0;
 	for(size_t i=0; i<names.size(); i+=2)
 	{
@@ -99,12 +109,12 @@ void MacrosDialog::OnPaint(wxPaintEvent &event)
 }
 
 void MacrosDialog::OnMacro()
-	{
+{
 	//int x=0;
 	wxPoint mst=wxGetMousePosition();
 	wxPoint mpos=ScreenToClient(mst);
 	int col=(mpos.x<230)?0 : 1;
-	
+
 	ScriptsDialog *SD=(ScriptsDialog*)GetParent();
 	kainoteFrame *Kai=(kainoteFrame*)GetGrandParent();
 	block=true;
@@ -113,33 +123,35 @@ void MacrosDialog::OnMacro()
 
 		HkeysDialog hkd(this,names[seld*2],true);
 		//tu trzeba jeszcze okno wyboru skrótu klawiszowego
-		
+
 		if(hkd.ShowModal()==0){
-	
-			wxString test;
-			if(hkd.flag & 1){
-				test<<"Alt-";}
-			if(hkd.flag & 2){
-				test<<"Ctrl-";}
-			if(hkd.flag & 4){
-				test<<"Shift-";}
-    
-			test<<wchar_t(hkd.hkey);
-	
+
+
 			//wxLogStatus(test);
 			for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++)
 			{//wxLogStatus(cur->first);
-				if(cur->second.Accel==test){
+				if(cur->second.Accel==hkd.hotkey){
+					if(cur->second.Name==""){
+						std::map<int, hdata> _hkeys;
+						Hkeys.LoadDefault(_hkeys);
+						Hkeys.LoadDefault(_hkeys,true);
+						Notebook::GetTab()->Video->ContextMenu(wxPoint(0,0),true);
+						Notebook::GetTab()->Grid1->ContextMenu(wxPoint(0,0),true);
+						if(cur->second.Name==""){
+							cur->second.Name = _hkeys[cur->first].Name;
+						}
+					}
 					wxMessageBox(wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\"."), 
 						cur->second.Name), _("Uwaga"), wxOK);
+					CaptureMouse();
 					return;
 				}
 			}
-			//wxLogStatus("Setitem");
-			names[(seld*2)+1]=test;
-			//wxLogStatus("Setmodif");
+
+			names[(seld*2)+1]=hkd.hotkey;
+
 			wxString hkeyname;
-			hkeyname<<"Script "<<script<<"-"<<seld-1;
+			hkeyname<<"Script"<<script<<"-"<<seld-1;
 			bool strt=true;
 			int lastid=30099;
 			int curid=-1;
@@ -154,7 +166,7 @@ void MacrosDialog::OnMacro()
 
 			}
 
-			Hkeys.SetHKey((curid>-1)? curid : lastid+1,hkeyname, hkd.flag, hkd.hkey);
+			Hkeys.SetHKey((curid>-1)? curid : lastid+1,"G "+hkeyname, hkd.hotkey);
 			Hkeys.SaveHkeys();
 			Kai->SetAccels();
 			Refresh(false);
@@ -164,23 +176,23 @@ void MacrosDialog::OnMacro()
 	else//kolumna 0
 	{
 		TabPanel *pan=Kai->GetTab();
-		
+
 		wxArrayInt sels=pan->Grid1->GetSels(true);
 
-		
+
 		//specjalna różnica między pierwszą zaznaczoną linijką która jest zero a linijką w lua która jest większa o size sinfo + size styles
 		int diff=(pan->Grid1->SInfoSize() + pan->Grid1->StylesSize()+1);
 		Kai->Auto->Scripts[script]->Macros[seld-1]->Process(sels,pan->Edit->ebrow, diff, Kai);
 		for(size_t i=0; i<sels.size(); i++){
 			pan->Grid1->sel[sels[i]]=true;
 		}
-		
-		
-		
+
+
+
 		//Kai->Tabs->RefreshBar();
 		//if(HasCapture()){ReleaseMouse();}
 		EndModal(5);
-		
+
 	}
 	block=false;
 }
@@ -203,10 +215,10 @@ void MacrosDialog::OnMouseEvents(wxMouseEvent &event)
 		GetTextExtent("TEKST",&fw,&fh,0,0,&font);
 		int divy=y/(fh+4);
 		if(divy<(int)actives.size() && actives[divy] && divy!=0){seld=divy;
-			Refresh(false);
-			if(event.LeftDClick()){
-				OnMacro();
-			}
+		Refresh(false);
+		if(event.LeftDClick()){
+			OnMacro();
+		}
 		}
 	}
 }
@@ -216,7 +228,7 @@ void MacrosDialog::OnMouseEvents(wxMouseEvent &event)
 ScriptsDialog::ScriptsDialog(kainoteFrame *_Kai)
 	: wxDialog(_Kai,-1,_("Menedżer skryptów Lua"))
 {
-	
+
 	Kai=_Kai;
 	wxBoxSizer *main= new wxBoxSizer(wxVERTICAL);
 	ScriptsList=new wxListCtrl(this, ID_SLIST, wxDefaultPosition, wxDefaultSize,wxLC_REPORT | wxLC_SINGLE_SEL);
@@ -229,13 +241,13 @@ ScriptsDialog::ScriptsDialog(kainoteFrame *_Kai)
 	if(!Kai->Auto){Kai->Auto= new Auto::Automation(Kai);}
 	//wxLogStatus("po Kai->Auto");
 	for(size_t i=0; i<Kai->Auto->Scripts.size(); i++)
-		{
+	{
 		long pos = ScriptsList->InsertItem(i,wxString::Format("%i",(int)(i+1)));
 		ScriptsList->SetItem(pos,1,Kai->Auto->Scripts[i]->name);
 		ScriptsList->SetItem(pos,2,Kai->Auto->Scripts[i]->filename.AfterLast('\\'));
 		ScriptsList->SetItem(pos,3,Kai->Auto->Scripts[i]->description);
 		if(!Kai->Auto->Scripts[i]->loaded){ScriptsList->SetItemBackgroundColour(i, wxColour(255,128,128));}
-		}
+	}
 
 	Connect(ID_SLIST,wxEVT_COMMAND_LIST_ITEM_ACTIVATED,(wxObjectEventFunction)&ScriptsDialog::OnShowMacros);
 
@@ -297,7 +309,7 @@ void ScriptsDialog::OnAdd(wxCommandEvent &event)
 	//wxLogStatus(luarecent);
 	wxFileDialog *FD = new wxFileDialog(Kai, _("Wybierz plik Lua"), luarecent, 
 		"", _("Pliki Lua|*.lua"), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
-    if (FD->ShowModal() == wxID_OK){
+	if (FD->ShowModal() == wxID_OK){
 		if(Kai->Auto->Add(FD->GetPath())){
 			int i=Kai->Auto->Scripts.size()-1;
 			Options.SetString("Lua Recent Folder", Kai->Auto->Scripts[i]->filename.BeforeLast('\\'));
@@ -310,19 +322,19 @@ void ScriptsDialog::OnAdd(wxCommandEvent &event)
 			wxString scripts = grid->GetSInfo("Automation Scripts") += (Kai->Auto->Scripts[i]->filename+"|");
 			grid->AddSInfo("Automation Scripts", scripts);
 		}
-	
-    }
+
+	}
 	FD->Destroy();
-	
+
 }
 
 void ScriptsDialog::OnDelete(wxCommandEvent &event)
-	{
+{
 	int i = ScriptsList->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	if (i < 0) return;
 	Kai->Auto->Remove(i);
 	ScriptsList->DeleteItem(i);
-	}
+}
 
 void ScriptsDialog::OnEdit(wxCommandEvent &event)
 {
@@ -350,35 +362,35 @@ void ScriptsDialog::OnEdit(wxCommandEvent &event)
 }
 
 void ScriptsDialog::OnReload(wxCommandEvent &event)
-	{
+{
 	int i = ScriptsList->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	if (i < 0) return;
 	Kai->Auto->ReloadMacro(i);
-		ScriptsList->SetItem(i,0,wxString::Format("%i",(int)(i+1)));
-		ScriptsList->SetItem(i,1,Kai->Auto->Scripts[i]->name);
-		ScriptsList->SetItem(i,2,Kai->Auto->Scripts[i]->filename.AfterLast('\\'));
-		ScriptsList->SetItem(i,3,Kai->Auto->Scripts[i]->description);
-		if(!Kai->Auto->Scripts[i]->loaded){ScriptsList->SetItemBackgroundColour(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));}
-	}
+	ScriptsList->SetItem(i,0,wxString::Format("%i",(int)(i+1)));
+	ScriptsList->SetItem(i,1,Kai->Auto->Scripts[i]->name);
+	ScriptsList->SetItem(i,2,Kai->Auto->Scripts[i]->filename.AfterLast('\\'));
+	ScriptsList->SetItem(i,3,Kai->Auto->Scripts[i]->description);
+	if(!Kai->Auto->Scripts[i]->loaded){ScriptsList->SetItemBackgroundColour(i, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));}
+}
 
 void ScriptsDialog::OnRescan(wxCommandEvent &event)
-	{
-	
+{
+
 	Kai->Auto->ReloadScripts();
 	ScriptsList->DeleteAllItems();
 
 	for(size_t i=0; i<Kai->Auto->Scripts.size(); i++)
-		{
+	{
 		long pos = ScriptsList->InsertItem(i,wxString::Format("%i",(int)(i+1)));
 		ScriptsList->SetItem(pos,1,Kai->Auto->Scripts[i]->name);
 		ScriptsList->SetItem(pos,2,Kai->Auto->Scripts[i]->filename.AfterLast('\\'));
 		ScriptsList->SetItem(pos,3,Kai->Auto->Scripts[i]->description);
 		if(!Kai->Auto->Scripts[i]->loaded){ScriptsList->SetItemBackgroundColour(i, wxColour(255,128,128));}
-		}
 	}
+}
 
 void ScriptsDialog::AddFromSubs()
-	{
+{
 	//wxLogStatus("weszło");
 	wxString paths=Kai->GetTab()->Grid1->GetSInfo("Automation Scripts");
 	//wxLogStatus("m"+paths);
@@ -387,39 +399,39 @@ void ScriptsDialog::AddFromSubs()
 	wxStringTokenizer token(paths,"|~$",wxTOKEN_RET_EMPTY_ALL);
 	int error_count=0;
 	while(token.HasMoreTokens())
-		{
+	{
 		wxString onepath=token.GetNextToken();
 		onepath.Trim(false);
 		//wxLogStatus(onepath);
 		if(!wxFileExists(onepath)){continue;}
-		
+
 		try {
 			if(!Kai->Auto->Add(onepath)){continue;}
-					int last=Kai->Auto->Scripts.size()-1;
+			int last=Kai->Auto->Scripts.size()-1;
 
-					long pos = ScriptsList->InsertItem(last,wxString::Format("%i",(int)(last+1)));
-					ScriptsList->SetItem(pos,1,Kai->Auto->Scripts[last]->name);
-					ScriptsList->SetItem(pos,2,Kai->Auto->Scripts[last]->filename.AfterLast('\\'));
-					ScriptsList->SetItem(pos,3,Kai->Auto->Scripts[last]->description);
-					if(!Kai->Auto->Scripts[last]->loaded){ScriptsList->SetItemBackgroundColour(last, wxColour(255,128,128)); error_count++;}
-					
-				}
-				catch (const wchar_t *e) {
-					error_count++;
-					wxLogError(_("Błąd wczytywania skryptu Lua: %s\n%s"), onepath.c_str(), e);
-				}
-				catch (...) {
-					error_count++;
-					wxLogError(_("Nieznany błąd wczytywania skryptu Lua: %s."), onepath.c_str());
-				}
-		}
-		if (error_count > 0) {
-			wxLogWarning(_("Co najmniej jeden skrypt z pliku napisów zawiera błędy.\nZobacz opisy skryptów, by uzyskać więcej informacji."));
-		}
+			long pos = ScriptsList->InsertItem(last,wxString::Format("%i",(int)(last+1)));
+			ScriptsList->SetItem(pos,1,Kai->Auto->Scripts[last]->name);
+			ScriptsList->SetItem(pos,2,Kai->Auto->Scripts[last]->filename.AfterLast('\\'));
+			ScriptsList->SetItem(pos,3,Kai->Auto->Scripts[last]->description);
+			if(!Kai->Auto->Scripts[last]->loaded){ScriptsList->SetItemBackgroundColour(last, wxColour(255,128,128)); error_count++;}
 
+		}
+		catch (const wchar_t *e) {
+			error_count++;
+			wxLogError(_("Błąd wczytywania skryptu Lua: %s\n%s"), onepath.c_str(), e);
+		}
+		catch (...) {
+			error_count++;
+			wxLogError(_("Nieznany błąd wczytywania skryptu Lua: %s."), onepath.c_str());
+		}
 	}
+	if (error_count > 0) {
+		wxLogWarning(_("Co najmniej jeden skrypt z pliku napisów zawiera błędy.\nZobacz opisy skryptów, by uzyskać więcej informacji."));
+	}
+
+}
 
 BEGIN_EVENT_TABLE(MacrosDialog,wxDialog)
 	EVT_PAINT(MacrosDialog::OnPaint)
 	EVT_MOUSE_EVENTS(MacrosDialog::OnMouseEvents)
-END_EVENT_TABLE()
+	END_EVENT_TABLE()

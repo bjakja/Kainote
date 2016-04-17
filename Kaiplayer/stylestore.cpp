@@ -37,18 +37,19 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	wxBoxSizer *Mainsm= new wxBoxSizer(wxVERTICAL);
 	Mainall= new wxBoxSizer(wxHORIZONTAL);
 
-	wxStaticBoxSizer *katsbs=new wxStaticBoxSizer(wxHORIZONTAL, this, _("Katalog"));
+	wxStaticBoxSizer *katsbs=new wxStaticBoxSizer(wxHORIZONTAL, this, _("Katalog:"));
 	Choice1 = new wxChoice(this, ID_CATALOG, wxDefaultPosition, wxDefaultSize, Options.dirs);
 	int chc=Choice1->FindString(Options.acdir);
 	Choice1->SetSelection(chc);
 	Button7 = new wxButton(this, ID_NEWCAT, _("Nowy"));
 	wxButton *delcat = new wxButton(this, ID_DELCAT, _("Usuń"));
+	delcat->SetToolTip(_("Usuń wybrany katalog stylów"));
 	katsbs->Add(Choice1,4,wxEXPAND|wxALL,2);
 	katsbs->Add(Button7,0,wxEXPAND|wxLEFT,5);
 	katsbs->Add(delcat,0,wxEXPAND|wxLEFT,5);
 
 
-	wxStaticBoxSizer *katsbs1=new wxStaticBoxSizer(wxHORIZONTAL, this, _("Style katalogu"));
+	wxStaticBoxSizer *katsbs1=new wxStaticBoxSizer(wxHORIZONTAL, this, _("Style katalogu:"));
 	wxBoxSizer *katbutt=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *katall=new wxBoxSizer(wxHORIZONTAL);
 
@@ -79,7 +80,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	butts->Add(Button4,5,wxEXPAND|wxALL,5);
 	butts->AddStretchSpacer(3);
 
-	wxStaticBoxSizer *asssbs=new wxStaticBoxSizer(wxHORIZONTAL, this, _("Style pliku ASS"));
+	wxStaticBoxSizer *asssbs=new wxStaticBoxSizer(wxHORIZONTAL, this, _("Style pliku ASS:"));
 	wxBoxSizer *assbutt=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *assall=new wxBoxSizer(wxHORIZONTAL);
 
@@ -626,6 +627,7 @@ void stylestore::DoTooltips()
 	Button15->SetToolTip(_("Sortuj style w napisach"));
 	Button3->SetToolTip(_("Dodaj do magazynu styl z napisów"));
 	Button4->SetToolTip(_("Dodaj do napisów styl z magazynu"));
+	SClean->SetToolTip(_("Oczyść napisy z nieużywanych stylów"));
 }
 
 void stylestore::OnConfirm(wxCommandEvent& event)

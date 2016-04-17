@@ -134,9 +134,9 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	Bcol3->SetBitmap(wxBITMAP_PNG ("Kolor3"));
 	Bcol4 = new wxButton(this, ID_COL4, "", wxDefaultPosition, wxSize(26,26));
 	Bcol4->SetBitmap(wxBITMAP_PNG ("Kolor4"));
-	Bbold = new wxButton(this, ID_BOLD, "", wxDefaultPosition, wxSize(26,26));
+	Bbold = new wxButton(this, PutBold, "", wxDefaultPosition, wxSize(26,26));
 	Bbold->SetBitmap(wxBITMAP_PNG ("BOLD"));
-	Bital = new wxButton(this, ID_ITAL, "", wxDefaultPosition, wxSize(26,26));
+	Bital = new wxButton(this, PutItalic, "", wxDefaultPosition, wxSize(26,26));
 	Bital->SetBitmap(wxBITMAP_PNG ("ITALIC"));
 	Bund = new wxButton(this, ID_UND, "", wxDefaultPosition, wxSize(26,26));
 	Bund->SetBitmap(wxBITMAP_PNG ("UNDER"));
@@ -245,8 +245,8 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	Connect(ID_CHECKBOX1,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&EditBox::OnCommit);
 	Connect(ID_TLMODE,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&EditBox::OnTlMode); 
 	Connect(IDSTYLE,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);    
-	Connect(ID_BOLD,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnBoldClick);
-	Connect(ID_ITAL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnItalClick);
+	Connect(PutBold,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnBoldClick);
+	Connect(PutItalic,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnItalClick);
 	Connect(ID_UND,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnUndClick);
 	Connect(ID_STRIKE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnStrikeClick);
 	Connect(ID_AN,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&EditBox::OnAnChoice);
@@ -257,8 +257,8 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	Connect(ID_HIDE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnHideOrig);
 	Connect(MENU_ZATW,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);
 	Connect(MENU_NLINE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnNewline);
-	Connect(ID_SPLIT,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnSplit);
-	Connect(ID_STARTDIFF, ID_ENDDIFF,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnPasteDiff);
+	Connect(SplitLine,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnSplit);
+	Connect(StartDifference, EndDifference,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnPasteDiff);
 	Connect(wxEVT_SIZE,(wxObjectEventFunction)&EditBox::OnSize);
 	Connect(16668,NUMBER_CHANGED,(wxObjectEventFunction)&EditBox::OnEdit);
 	Connect(16667,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&EditBox::OnEdit);
@@ -694,7 +694,7 @@ acol : (grid->form<SRT)? AssColor("&"+iskol).GetWX() : wxColour("#FFFFFF"));
 
 void EditBox::OnColorClick(wxCommandEvent& event)
 {
-	AllColClick(event.GetId()-4000);
+	AllColClick(event.GetId()-ID_COL1+1);
 }
 
 void EditBox::OnCommit(wxCommandEvent& event)
@@ -1023,7 +1023,7 @@ void EditBox::OnPasteDiff(wxCommandEvent& event)
 	int idd=event.GetId();
 	int vidtime=Notebook::GetTab()->Video->Tell();
 	if(vidtime < line->Start.mstime || vidtime > line->End.mstime){wxBell(); return;}
-	int diff=(idd==ID_STARTDIFF)? vidtime - line->Start.mstime : abs(vidtime - line->End.mstime); 
+	int diff=(idd==StartDifference)? vidtime - line->Start.mstime : abs(vidtime - line->End.mstime); 
 	long poss, pose;
 	TextEdit->GetSelection(&poss,&pose);
 	wxString kkk;

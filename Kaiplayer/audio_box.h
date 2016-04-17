@@ -134,13 +134,6 @@ public:
 	DECLARE_EVENT_TABLE()
 };
 
-/*
-class FocusEvent : public wxEvtHandler {
-	
-private:
-	void OnSetFocus(wxFocusEvent &event);
-	DECLARE_EVENT_TABLE()
-};*/
 
 
 ///////
@@ -153,22 +146,6 @@ enum {
 	//Audio_Sash,
 	Audio_Vertical_Link,
 
-	Audio_Button_Play,
-	Audio_Button_Stop,
-	Audio_Button_Prev,
-	Audio_Button_Next,
-	Audio_Button_Play_Before_Mark,
-	Audio_Button_Play_After_Mark,
-	Audio_Button_Play_500ms_Before,
-	Audio_Button_Play_500ms_After,
-	Audio_Button_Play_500ms_First,
-	Audio_Button_Play_500ms_Last,
-	Audio_Button_Play_Row,
-	Audio_Button_Play_To_End,
-	Audio_Button_Commit,
-	Audio_Button_Goto,
-	Audio_Button_Leadin,
-	Audio_Button_Leadout,
 	Audio_Button_Split,
 	Audio_Button_Karaoke,
 	Audio_Check_AutoCommit,

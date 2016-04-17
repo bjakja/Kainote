@@ -59,6 +59,7 @@ public:
 	void PrevChap();
 	void ConnectAcc(int id);
 	wxRect GetMonitorRect(int wmonitor);
+	void ContextMenu(const wxPoint &pos, bool dummy=false);
 	float wspx,wspy;
 	Fullscreen *TD;
 	bool isarrow;
@@ -85,7 +86,6 @@ private:
 	void OnKeyPress(wxKeyEvent& event);
 	void OnPlaytime(wxTimerEvent& event);
 	void OnIdle(wxTimerEvent& event);
-	void ContextMenu(const wxPoint &pos);
 	void OnHidePB();
 	void OnDeleteVideo();
 	void OnOpVideo();
@@ -109,30 +109,6 @@ enum
 	ID_BPLINE,
 	ID_SLIDER,
 	ID_VOL,
-	MENU_STOP,
-	MENU_FULLS,
-	MENU_OPVIDEO,
-	MENU_OPEDITOR,
-	MENU_OPSUBS,
-	MENU_HIDEPB,
-	MENU_DELVIDEO,
-	MENU_PLAYP,
-	MENU_P5SEC,	
-	MENU_M5SEC,
-	MENU_MMIN,
-	MENU_PMIN,
-	MENU_SPLUS,
-	MENU_SMINUS,
-	MENU_PREV,
-	MENU_NEXT,
-	MENU_PREVCHAP,
-	MENU_NEXTCHAP,
-	MENU_AR,
-	MENU_CPYCOORDS,
-	MENU_SAVEPNG,
-	MENU_SAVECPBD,
-	MENU_SAVESPNG,
-	MENU_SAVESCPBD,
 	ID_MRECSUBS,
 	ID_MRECVIDEO,
 	ID_IDLE,

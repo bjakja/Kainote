@@ -104,7 +104,7 @@ public:
 	SubsGrid(wxWindow *parent, const long int id ,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=wxWANTS_CHARS, const wxString& name=wxPanelNameStr);
 	virtual ~SubsGrid();
 private:
-	virtual void ContextMenu(const wxPoint &pos){};
+	virtual void ContextMenu(const wxPoint &pos, bool dummy=false){};
 	
 
 	void CheckText(wxString text, wxArrayInt &errs);

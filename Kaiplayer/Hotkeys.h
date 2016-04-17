@@ -7,13 +7,11 @@
 
 class hdata{
 public:
-	hdata(char accType, wxString accName, wxString _Accel)
-	{
+	hdata(char accType, wxString accName, wxString _Accel){
 		Type=accType; Name=accName; Accel=_Accel;
 	}
-	hdata(wxString acc)
-	{
-		Type=acc[0]; Name=acc.Mid(2).BeforeLast('='); Accel=acc.AfterLast('=');
+	hdata(wxString acc){
+		Type=acc[0]; Accel=acc.AfterFirst('=');
 	}
 	hdata(){Type='\0';}
 	wxString Name;
@@ -26,7 +24,8 @@ class HkeysDialog : public wxDialog
 	public:
 	HkeysDialog(wxWindow *parent, wxString name, bool script=false, wxString *windows=0, int elems=0);
 	virtual ~HkeysDialog();
-	int flag, hkey;
+	//int flag, hkey;
+	wxString hotkey;
 	wxString hkname;
 
 
@@ -45,7 +44,7 @@ public:
 	int LoadHkeys(bool Audio=false);
 	void LoadDefault(std::map<int, hdata> &_hkeys, bool Audio=false);
 	void SaveHkeys(bool Audio=false);
-	void SetHKey(int id, wxString name, int flag, int key);
+	void SetHKey(int id, wxString name, wxString hotkey);
 	wxAcceleratorEntry GetHKey(int itemid);
 	wxString GetMenuH(int id);
 	void FillTable();
@@ -55,7 +54,6 @@ public:
 	std::map<int, hdata> hkeys;
 	std::map<int, wxString> keys;
 	bool AudioKeys;
-	wxArrayString lscripts;
 
 };
 

@@ -386,6 +386,9 @@
     <ClInclude Include="Visuals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EnumFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc">

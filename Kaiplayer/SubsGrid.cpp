@@ -212,16 +212,16 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 	Dialogue *Dial;
 
 	int panelrows=(h/(GridHeight+1))+1;
-	int scrows;
+	int scrows=scPos+panelrows;
 	//gdy widzimy koniec napisów
-	if((scPos+panelrows)>= size + 2){
-		scrows = size + 1;
+	if(scrows >= size + 3){
 		bg=true;
+		scrows = size + 1;
 		scPos=(scrows-panelrows)+2;// dojechanie do końca napisów
 		if(panelrows > size + 1){scPos=0;}// w przypadku gdy całe napisy są widoczne, wtedy nie skrollujemy i pozycja =0
 	}
-	else{
-		scrows=(scPos+panelrows);//w przypadku gdy nie widzimy końca napisów.
+	else if(scrows >= size + 2){
+		scrows--;//w przypadku gdy mamy linię przed końcem napisów musimy zaniżyć wynik bo przekroczy tablicę.
 	}
 	SetScrollbar(wxVERTICAL,scPos,panelrows, size + 3);
 	int fw,fh,bfw,bfh;
@@ -1091,10 +1091,7 @@ void SubsGrid::HideOver()
 {
 	hideover=!hideover;
 	Options.SetBool("Grid Hide Tags",hideover);
-	//for(int i=0;i<GetCount();i++)
-	//{
-	//file->subs->dials[i]->spells.clear();
-	//}
+	SpellErrors.clear();
 	Refresh(false);
 }
 
@@ -1289,7 +1286,7 @@ void SubsGrid::ChangeTime()
 			|| fromstyl)
 		{
 
-			dialc=file->CopyDial(i,false,true);
+			dialc=file->CopyDial(i,true,true);
 			if(tim!=0){
 				if(seb!=2){dialc->Start.Change(tim);}
 				if(seb!=1){dialc->End.Change(tim);}
@@ -1306,12 +1303,12 @@ void SubsGrid::ChangeTime()
 				if(pe & 1){dialc->Start.Change(-li);dialc->State=1;}
 				if(pe & 2){dialc->End.Change(lo);dialc->State=1;}
 				if(CT>0 || pe>19){
-					tmpmap[GetDial(i)]=i;
+					tmpmap[dialc]=i;
 					
 				}
 			}
 
-			file->subs->dials[i]=dialc;
+			//file->subs->dials[i]=dialc;
 		}// if przesuwana linia
 
 	}//pętla for
@@ -1323,10 +1320,10 @@ void SubsGrid::ChangeTime()
 		int Halfframe=vb->avtpf/2.f;
 		for(auto cur=tmpmap.begin(); cur != tmpmap.end(); cur++){
 			auto it = cur;
-			dialc = file->subs->dials[cur->second];
+			dialc = cur->first;//file->subs->dials[cur->second];
 			it++;
 			if(!(it!=tmpmap.end())){it=cur; hasend=true;}
-			if(CT>0 && dialc->End > it->first->Start){
+			if(CT>0 && dialc->End > it->first->Start && !hasend){
 				dialc->End = it->first->Start;
 				dialc->State=1;
 			}
@@ -1388,11 +1385,11 @@ void SubsGrid::ChangeTime()
 				}
 			}
 
-			file->subs->dials[cur->second]=dialc;
+			//file->subs->dials[cur->second]=dialc;
 		}
 
 	}
-
+	SpellErrors.clear();
 	SetModified();
 	if(form>TMP){RepaintWindow(START|END);}else{Refresh(false);}
 }
@@ -1497,11 +1494,11 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 			Edit->SetIt(next);
 			SelectRow(next);
 			int gridh=((h/(GridHeight+1))-1);
-			if(next==scPos&&(dir==1||dir==-1)){
-				ScrollTo(next-1);}
-			else if(next==scPos+gridh&&(dir==1||dir==-1)){
-				ScrollTo(next-gridh+1);}
-			else if(dir!=1&&dir!=-1){
+			if(dir==1||dir==-1){
+				bool above= (next<=scPos);
+				bool below= (next>=scPos+gridh);
+				if(above||below){ScrollTo(above? next-1 : next-gridh+1);}
+			}else{
 				ScrollTo(next);}
 
 			return;
@@ -1557,7 +1554,7 @@ void SubsGrid::DeleteRow(int rw, int len)
 	int rwlen=rw+len;
 	file->edited=true;
 	file->subs->dials.erase(file->subs->dials.begin()+rw, file->subs->dials.begin()+rwlen);
-	if(SpellErrors.size()>rwlen){ SpellErrors.erase(SpellErrors.begin()+rw, SpellErrors.begin()+rwlen);}
+	if((int)SpellErrors.size()>rwlen){ SpellErrors.erase(SpellErrors.begin()+rw, SpellErrors.begin()+rwlen);}
 	else{SpellErrors.clear();}
 }
 
@@ -1637,11 +1634,11 @@ void SubsGrid::UpdateUR(bool toolbar)
 {
 	bool undo=false, _redo=false;
 	file->GetURStatus(&undo, &_redo);
-	Kai->MenuBar->Enable(ID_UNDO1,undo);
-	Kai->MenuBar->Enable(ID_REDO1,_redo);
+	Kai->MenuBar->Enable(Undo,undo);
+	Kai->MenuBar->Enable(Redo,_redo);
 	if(toolbar){
-		Kai->Toolbar->UpdateId(ID_UNDO1,undo);
-		Kai->Toolbar->UpdateId(ID_REDO1,_redo);
+		Kai->Toolbar->UpdateId(Undo,undo);
+		Kai->Toolbar->UpdateId(Redo,_redo);
 	}
 }
 
@@ -1906,7 +1903,7 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 		if(transl&&!tlmode){
 			transl=false;
 			showtl=false;
-			Kai->MenuBar->Enable(ID_SAVETL,false);
+			Kai->MenuBar->Enable(SaveTranslation,false);
 			Edit->SetTl(false);
 		}
 		wxString tlstyle;
@@ -1942,7 +1939,7 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 		Edit->SetTl(true);
 		transl=true;
 		if(GetSInfo("TLMode Showtl")=="Yes"){showtl=true;}
-		Kai->MenuBar->Enable(ID_SAVETL,true);
+		Kai->MenuBar->Enable(SaveTranslation,true);
 	}
 
 
@@ -2038,7 +2035,7 @@ bool SubsGrid::SetTlMode(bool mode)
 		}
 		AddSInfo("TLMode", "Yes");
 		transl=true;
-		Kai->MenuBar->Enable(ID_SAVETL,true);
+		Kai->MenuBar->Enable(SaveTranslation,true);
 		SpellErrors.clear();
 		Refresh(false);
 
@@ -2074,7 +2071,7 @@ bool SubsGrid::SetTlMode(bool mode)
 
 		transl=false;
 		showtl=false;
-		Kai->MenuBar->Enable(ID_SAVETL,false);
+		Kai->MenuBar->Enable(SaveTranslation,false);
 	}
 	Refresh(false);
 	if(Notebook::GetTab()->Video->GetState()!=None){Notebook::GetTab()->Video->OpenSubs(SaveText());
@@ -2252,12 +2249,15 @@ wxString *SubsGrid::SaveText()
 		(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
 	}
 
+	bool tlmode=(GetSInfo("TLMode")=="Yes");
+	wxString tlstyle=GetSInfo("TLMode Style");
+
 	for(int i=0;i<GetCount();i++)
 	{
 		Dialogue *dial=GetDial(i);
 		if(i==Edit->ebrow){Edit->Send(false,true);dial=Edit->line;}
-		if(GetSInfo("TLMode")=="Yes" && dial->TextTl!=""){
-			(*txt)<<dial->GetRaw(false,GetSInfo("TLMode Style"));
+		if(tlmode && dial->TextTl!=""){
+			(*txt)<<dial->GetRaw(false,tlstyle);
 			(*txt)<<dial->GetRaw(true);
 
 		}else{

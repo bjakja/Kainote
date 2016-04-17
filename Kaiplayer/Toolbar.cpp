@@ -11,6 +11,7 @@ KaiToolbar::KaiToolbar(wxWindow *Parent, wxMenuBar *mainm, int id, bool _orient)
 	,vertical(_orient)
 	,Clicked(false)
 	,wasmoved(false)
+	,wh(iconsize)
 	,oldelem(-1)
 	,sel(-1)
 	,mb(mainm)
@@ -20,30 +21,41 @@ KaiToolbar::KaiToolbar(wxWindow *Parent, wxMenuBar *mainm, int id, bool _orient)
 
 KaiToolbar::~KaiToolbar()
 {
-	ids.clear();
+	wxArrayString names;
 	wxDELETE(bmp);
 	for(auto i = tools.begin(); i!=tools.end(); i++)
 	{
-		if((*i)->id!=34566){ids.Add((*i)->id);}
+		if((*i)->id!=34566){names.Add(GetString((Id)(*i)->id));}
 		delete (*i);
 	}
 	tools.clear();
-	Options.SetIntTable("Toolbar showing ids",ids);
+	Options.SetTable("Toolbar IDs",names);
 	ids.clear();
 }
 
 void KaiToolbar::InitToolbar()
 {
 	//int xy=0;
-	wxArrayInt IDS=Options.GetIntTable("Toolbar showing ids");
+	wxArrayInt IDS;
+	wxString idnames=Options.GetString("Toolbar IDs");
+
+	if(idnames!=""){
+		wxStringTokenizer cfgtable(idnames,"|",wxTOKEN_STRTOK);
+		while(cfgtable.HasMoreTokens()){
+			int val=GetIdValue(cfgtable.NextToken().data());
+			if(val>0){
+				IDS.Add(val);
+			}
+		}  
+	}
 	if(IDS.size()<1){
-		IDS.Add(ID_OPENSUBS);IDS.Add(ID_RECSUBS);IDS.Add(ID_OPVIDEO);IDS.Add(ID_RECVIDEO);
-		IDS.Add(ID_SAVE);IDS.Add(ID_SAVEAS);IDS.Add(ID_SAVEALL);
-		IDS.Add(ID_UNSUBS);IDS.Add(ID_EDITOR);IDS.Add(ID_FINDREP);
-		IDS.Add(ID_STYLEMNGR);IDS.Add(ID_ASSPROPS);IDS.Add(ID_CHANGETIME);
-		IDS.Add(ID_AUTO);IDS.Add(ID_ASS);IDS.Add(ID_SRT);IDS.Add(ID_CROSS);
-		IDS.Add(ID_MOVEMENT);IDS.Add(ID_SCALE);IDS.Add(ID_ROTATEZ);IDS.Add(ID_ROTATEXY);
-		IDS.Add(ID_CLIPRECT);IDS.Add(ID_CLIPS);IDS.Add(ID_DRAWINGS);IDS.Add(ID_SETTINGS);
+		IDS.Add(OpenSubs);IDS.Add(RecentSubs);IDS.Add(OpenVideo);IDS.Add(RecentVideo);
+		IDS.Add(SaveSubs);IDS.Add(SaveSubsAs);IDS.Add(SaveAllSubs);
+		IDS.Add(RemoveSubs);IDS.Add(Editor);IDS.Add(FindReplace);
+		IDS.Add(StyleManager);IDS.Add(ASSProperties);IDS.Add(ChangeTime);
+		IDS.Add(Automation);IDS.Add(ConvertToASS);IDS.Add(ConvertToSRT);IDS.Add(CrossPositioner);IDS.Add(Positioner);
+		IDS.Add(Movement);IDS.Add(Scalling);IDS.Add(RotatingZ);IDS.Add(RotatingXY);
+		IDS.Add(RectangleClips);IDS.Add(VectorClips);IDS.Add(VectorDrawings);IDS.Add(Settings);
 	}
 	for(size_t i=0; i<IDS.size();i++)
 	{
@@ -65,13 +77,16 @@ void KaiToolbar::InitToolbar()
 	int div =xy/wh;
 	if(div>0){SetMinSize(wxSize(iconsize*2,-1));wxLogStatus("div %i", div);}*/
 	//else{
-		Refresh(false);//}
+	Refresh(false);//}
 }
 
 	
 void KaiToolbar::AddItem(int id, const wxString &label, const wxBitmap &normal,bool enable, byte type)
 {
-	if(tools.size()>0 && tools[tools.size()-1]->GetType()==2){tools.insert(tools.begin()+tools.size()-2,new toolitem(normal,label,id,enable,type));return;}
+	if(tools.size()>0 && tools[tools.size()-1]->GetType()==2){
+		tools.insert(tools.begin()+tools.size()-2, new toolitem(normal,label,id,enable,type));
+		return;
+	}
 	tools.push_back(new toolitem(normal,label,id,enable,type));
 }
 	
@@ -116,7 +131,14 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 	wxPoint elems= FindElem(wxPoint(event.GetX(), event.GetY()));
 	int elem=elems.x;
 	
-	if(elem<0||event.Leaving()){/*if(HasCapture()){ReleaseMouse();}*/if(HasToolTips()){UnsetToolTip();}int tmpsel= sel; sel=-1;oldelem=-1;Clicked=false;if(tmpsel!=sel){Refresh(false);}return;}
+	if(elem<0||event.Leaving()){/*if(HasCapture()){ReleaseMouse();}*/if(HasToolTips()){UnsetToolTip();}
+	int tmpsel= sel; 
+	sel=-1;
+	oldelem=-1;
+	Clicked=false;
+	if(tmpsel!=sel){Refresh(false);}
+	return;
+	}
 	if(elem==tools.size()-1){
 		SetToolTip(_("Wybierz ikony paska narzędzi"));
 		sel=elem;oldelem=elem;
@@ -135,7 +157,7 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 	if((leftdown || (event.Entering() && event.LeftIsDown()))){// && tools[elem]->type<3
 		Clicked=true;Refresh(false);oldelem=elem;
 	}else if(event.LeftIsDown() && oldelem!=elem && oldelem>=0){
-		if(elem==tools.size()-1){return;}
+		if(elem==tools.size()-1 || oldelem==tools.size()-1){oldelem=elem;return;}
 		toolitem *tmpitem=tools[oldelem];
 		tools[oldelem]=tools[elem];
 		tools[elem]=tmpitem;
@@ -148,7 +170,7 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 				wxMenuItem *item=mb->FindItem(tools[elem]->id);
 				wxMenu * smenu=item->GetSubMenu();
 				wxMenu shmenu;
-				if(tools[elem]->id!=ID_SORT){
+				if(tools[elem]->id!=SortLines && tools[elem]->id!=SortSelected){
 					kainoteFrame *Kai=((kainoteApp*)wxTheApp)->Frame;
 					int what= (smenu==Kai->SubsRecMenu)? 0 : (smenu==Kai->VidsRecMenu)? 1 : 2;
 					Kai->AppendRecent(what, smenu);
@@ -237,17 +259,18 @@ void KaiToolbar::OnSize(wxSizeEvent &evt)
 	int h=0;
 	GetClientSize (&w, &h);
 	if(w==0||h==0){return;}
-	int wh=1;
-	int maxx=(vertical)? h : w;
-	int tmppos=0;
-	for(size_t i=0; i<tools.size(); i++)
-	{
-		tmppos += tools[i]->size;
-		if(tmppos>maxx){wh++;tmppos=0;}
-	}
-	wh*=iconsize;
+	
+	float maxx=(vertical)? h : w;
+	int toolbarrows=((tools.size()*iconsize)-8)/maxx;
+
+	wh=(toolbarrows+1)*iconsize;
 	int maxxwh=(vertical)? w : h;
-	if(maxxwh!=wh){SetMinSize(wxSize(wh,-1));}
+	if(maxxwh!=wh){
+		SetMinSize(wxSize(wh,-1));
+		//kainoteApp *Kai=((kainoteApp*)wxTheApp);
+		//Kai->Frame->Layout();
+	}
+	
 	Refresh(false);
 }
 

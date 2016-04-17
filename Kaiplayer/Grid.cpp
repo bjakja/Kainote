@@ -14,19 +14,7 @@
 #include <wx/regex.h>
 
 
-
-BEGIN_EVENT_TABLE(Grid,SubsGrid)
-	EVT_MENU(MENU_CUT,Grid::OnAccelerator)
-	EVT_MENU(MENU_COPY,Grid::OnAccelerator)
-	//EVT_MENU(MENU_DUPLICATE,Grid::OnAccelerator)
-	EVT_MENU(MENU_PASTE,Grid::OnAccelerator)
-	//EVT_MENU(MENU_PASTECOLS,Grid::OnAccelerator)
-	EVT_MENU_RANGE(MENU_PLAYP,MENU_M5SEC,Grid::OnAccelerator)
-	//EVT_MENU(MENU_PPSEC,Grid::OnAccelerator)
-	//EVT_MENU(MENU_MPSEC,Grid::OnAccelerator)
-	END_EVENT_TABLE()
-
-	Grid::Grid(wxWindow* parent, kainoteFrame* kfparent,wxWindowID id,const wxPoint& pos,const wxSize& size, long style, const wxString& name)
+Grid::Grid(wxWindow* parent, kainoteFrame* kfparent,wxWindowID id,const wxPoint& pos,const wxSize& size, long style, const wxString& name)
 	: SubsGrid(parent, id, pos, size, style, name)
 {
 	Kai=kfparent;
@@ -36,7 +24,7 @@ Grid::~Grid()
 {
 }
 
-void Grid::ContextMenu(const wxPoint &pos)
+void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 {
 	VideoCtrl *VB=((TabPanel*)GetParent())->Video;
 	VB->blockpaint=true;
@@ -49,7 +37,7 @@ void Grid::ContextMenu(const wxPoint &pos)
 	item->Enable(form<SRT);
 	item->Check((visible & LAYER)!=0);
 	Hkeys.SetAccMenu(hidemenu, 5000+START,_("Ukryj czas początkowy"),_("Ukryj czas początkowy"),wxITEM_CHECK)->Check((visible & START)!=0);
-	item = Hkeys.SetAccMenu(hidemenu, END,_("Ukryj czas końcowy"),_("Ukryj czas końcowy"),wxITEM_CHECK);
+	item = Hkeys.SetAccMenu(hidemenu, 5000+END,_("Ukryj czas końcowy"),_("Ukryj czas końcowy"),wxITEM_CHECK);
 	item->Enable(form!=TMP);
 	item->Check((visible & END)!=0);
 	item = Hkeys.SetAccMenu(hidemenu, 5000+ACTOR,_("Ukryj aktora"),_("Ukryj aktora"),wxITEM_CHECK);
@@ -74,48 +62,60 @@ void Grid::ContextMenu(const wxPoint &pos)
 
 	bool isen;
 	isen = (sels == 1);
-	Hkeys.SetAccMenu(menu, MENU_INSERT_BEFORE,_("Wstaw przed"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, MENU_INSERT_AFTER,_("Wstaw po"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, InsertBefore,_("Wstaw przed"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, InsertAfter,_("Wstaw po"))->Enable(isen);
 	isen = (isen&&Kai->GetTab()->Video->GetState()!=None);
-	Hkeys.SetAccMenu(menu, MENU_INSERT_BEFORE_VIDEO,_("Wstaw przed z czasem wideo"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, MENU_INSERT_AFTER_VIDEO,_("Wstaw po z czasem wideo"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, InsertBeforeVideo,_("Wstaw przed z czasem wideo"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, InsertAfterVideo,_("Wstaw po z czasem wideo"))->Enable(isen);
 	isen = (sels >0);
-	Hkeys.SetAccMenu(menu, MENU_DUPLICATE,_("Duplikuj linie"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, Duplicate,_("Duplikuj linie"))->Enable(isen);
 	isen = (sels == 2);
-	Hkeys.SetAccMenu(menu, MENU_SWAP,_("Zamień"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, Swap,_("Zamień"))->Enable(isen);
 	isen = (sels >= 2&&sels <= 5);
-	Hkeys.SetAccMenu(menu, MENU_JOIN,_("Złącz linijki"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, Join,_("Złącz linijki"))->Enable(isen);
 	isen = (sels >= 2&&sels <= 50);
-	Hkeys.SetAccMenu(menu, MENU_JOINF,_("Złącz linijki zostaw pierwszą"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, MENU_JOINL,_("Złącz linijki zostaw ostatnią"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, JoinToFirst,_("Złącz linijki zostaw pierwszą"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, JoinToLast,_("Złącz linijki zostaw ostatnią"))->Enable(isen);
 	isen = (sels >0);
-	Hkeys.SetAccMenu(menu, MENU_CONT_PREV,_("Ustaw czasy jako ciągłe (poprzednia linijka)"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, MENU_CONT_NEXT,_("Ustaw czasy jako ciągłe (następna linijka)"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, MENU_CUT,_("Wytnij\tCtrl-X"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, MENU_COPY,_("Kopiuj\tCtrl-C"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, MENU_PASTE,_("Wklej\tCtrl-V"));
-	Hkeys.SetAccMenu(menu, MENU_COPYCOLS,_("Kopiuj kolumny"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, MENU_PASTECOLS,_("Wklej kolumny"));
+	Hkeys.SetAccMenu(menu, ContinousPrevious,_("Ustaw czasy jako ciągłe (poprzednia linijka)"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, ContinousNext,_("Ustaw czasy jako ciągłe (następna linijka)"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, Cut,_("Wytnij\tCtrl-X"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, Copy,_("Kopiuj\tCtrl-C"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, Paste,_("Wklej\tCtrl-V"));
+	Hkeys.SetAccMenu(menu, CopyCollumns,_("Kopiuj kolumny"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, PasteCollumns,_("Wklej kolumny"));
 	menu->Append(4444,_("Ukryj kolumny"),hidemenu);
-	Hkeys.SetAccMenu(menu, MENU_NEWFPS,_("Ustaw nowy FPS"));
-	Hkeys.SetAccMenu(menu, MENU_FPSFROMVIDEO,_("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState()!=None && sels==2);
-	Hkeys.SetAccMenu(menu, MENU_PASTE_TEXTTL,_("Wklej tekst tłumaczenia"))->Enable(form<SRT && ((TabPanel*)GetParent())->SubsPath!="");
-	Hkeys.SetAccMenu(menu, MENU_TLDIAL,_("Okno przesuwania dialogów"))->Enable(showtl);
+	Hkeys.SetAccMenu(menu, NewFPS,_("Ustaw nowy FPS"));
+	Hkeys.SetAccMenu(menu, FPSFromVideo,_("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState()!=None && sels==2);
+	Hkeys.SetAccMenu(menu, PasteTranslation,_("Wklej tekst tłumaczenia"))->Enable(form<SRT && ((TabPanel*)GetParent())->SubsPath!="");
+	Hkeys.SetAccMenu(menu, TranslationDialog,_("Okno przesuwania dialogów"))->Enable(showtl);
 	menu->AppendSeparator();
 
-	Hkeys.SetAccMenu(menu, MENU_DELETE_TEXT,_("Usuń tekst"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, MENU_DELETE,_("Usuń"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, RemoveText,_("Usuń tekst"))->Enable(isen);
+	Hkeys.SetAccMenu(menu, Remove,_("Usuń"))->Enable(isen);
 	menu->AppendSeparator();
-	Hkeys.SetAccMenu(menu, ID_COLLECTOR,_("Kolekcjoner czcionek"))->Enable(form<SRT);
-	Hkeys.SetAccMenu(menu, MENU_MKV_SUBS,_("Wczytaj napisy z pliku MKV"))->Enable(Kai->GetTab()->VideoName.EndsWith(".mkv"));
+	Hkeys.SetAccMenu(menu, FontCollector,_("Kolekcjoner czcionek"))->Enable(form<SRT);
+	Hkeys.SetAccMenu(menu, SubsFromMKV,_("Wczytaj napisy z pliku MKV"))->Enable(Kai->GetTab()->VideoName.EndsWith(".mkv"));
 
+	if(dummy){
+		delete menu;
+		VB->blockpaint=false;
+		return;
+	}
 	ismenushown = true;	
 	int id=GetPopupMenuSelectionFromUser(*menu,pos);
 	ismenushown = false;
 
 	byte state[256];
+	/*state[VK_LSHIFT]=0;
+	state[VK_RSHIFT]=0;
+	state[VK_LCONTROL]=0;
+	state[VK_RCONTROL]=0;
+	state[VK_LMENU]=0;
+	state[VK_RMENU]=0;*/
+
 	if(GetKeyboardState(state)==FALSE){wxLogStatus(_("nie można pobrać stanu przycisków"));}
-	if((state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1)&&id>5000){
+	if((state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1)/* && (state[VK_LCONTROL]<1 && state[VK_RCONTROL]<1 && state[VK_LMENU]<1 && state[VK_RMENU]<1) */&&id>5000){
 		wxMenuItem *item=menu->FindItem(id);
 		wxString wins[1]={"Napisy"};
 		int ret=-1;
@@ -195,13 +195,13 @@ void Grid::OnJoin(wxCommandEvent &event)
 	wxString ntltext;
 	wxString en1;
 	int idd=event.GetId();
-	if(idd==GRID_JOINWP){
+	if(idd==JoinWithPrevious){
 		if(Edit->ebrow==0){return;}
 		selarr.Clear();
 		selarr.Add(Edit->ebrow-1);
 		selarr.Add(Edit->ebrow);
 		en1=" ";
-	}else if(idd==GRID_JOINWN){
+	}else if(idd==JoinWithNext){
 		if(Edit->ebrow>=GetCount()||GetCount()<2){return;}
 		selarr.Clear();
 		selarr.Add(Edit->ebrow);
@@ -235,14 +235,14 @@ void Grid::OnJoin(wxCommandEvent &event)
 	RepaintWindow();
 }
 
-void Grid::OnJoinF(int id)
+void Grid::OnJoinToFirst(int id)
 {
 
 	Dialogue *dialc = file->CopyDial(selarr[0]);
 	Dialogue *ldial = GetDial(selarr[selarr.size()-1]);
 	dialc->End = ldial->End;
 
-	if(id==MENU_JOINL){
+	if(id==JoinToLast){
 		dialc->Text = ldial->Text;
 		dialc->TextTl = ldial->TextTl;
 	}
@@ -262,7 +262,7 @@ void Grid::OnPaste(int id)
 
 	int rw=FirstSel();
 	if(rw < 0){wxBell();return;}
-	if(id==MENU_PASTECOLS){
+	if(id==PasteCollumns){
 		wxString arr[ ]={_("Warstwa"),_("Czas początkowy"),_("Czas końcowy"),_("Aktor"),_("Styl"),_("Margines lewy"),_("Margines prawy"),_("Margines pionowy"),_("Efekt"),_("Tekst")};
 		int vals[ ]={LAYER,START,END,ACTOR,STYLE,MARGINL,MARGINR,MARGINV,EFFECT,TXT};
 		Stylelistbox slx(this,false,arr,10);
@@ -295,7 +295,7 @@ void Grid::OnPaste(int id)
 	}
 	wxStringTokenizer wpaste(whatpaste,"\n", wxTOKEN_STRTOK);
 	int cttkns=wpaste.CountTokens();
-	int rws= (id==MENU_PASTECOLS)? 0 : rw;
+	int rws= (id==PasteCollumns)? 0 : rw;
 	std::vector<Dialogue*> tmpdial;
 	while(wpaste.HasMoreTokens())
 	{
@@ -305,7 +305,7 @@ void Grid::OnPaste(int id)
 		//wxLogMessage("newdialog %i", (int)newdial);
 		if(!newdial){continue;}
 		if(newdial->Form!=form){newdial->Conv(form);}
-		if(id==MENU_PASTE){
+		if(id==Paste){
 			tmpdial.push_back(newdial);
 			sel[rws]=true;
 		}else{
@@ -331,7 +331,7 @@ void Grid::OnPaste(int id)
 void Grid::CopyRows(int id)
 {
 	int cols=0;
-	if(id==MENU_COPYCOLS){
+	if(id==CopyCollumns){
 		wxString arr[ ]={_("Warstwa"),_("Czas początkowy"),_("Czas końcowy"),_("Aktor"),_("Styl"),_("Margines lewy"),_("Margines prawy"),_("Margines pionowy"),_("Efekt"),_("Tekst"),_("Tekst bez tagów")};
 		int vals[ ]={LAYER,START,END,ACTOR,STYLE,MARGINL,MARGINR,MARGINV,EFFECT,TXT,TXTTL};
 		Stylelistbox slx(this,false,arr,11);
@@ -351,7 +351,7 @@ void Grid::CopyRows(int id)
 	wxString whatcopy;
 	for(size_t i=0; i<selarr.GetCount();i++)
 	{	
-		if(id!=MENU_COPYCOLS){
+		if(id!=CopyCollumns){
 			//tłumaczenie ma pierwszeństwo w kopiowaniu
 			whatcopy<<GetDial(selarr[i])->GetRaw(transl && GetDial(selarr[i])->TextTl!="");
 		}else{
@@ -398,31 +398,31 @@ void Grid::OnAccelerator(wxCommandEvent &event)
 	int id=event.GetId();
 	VideoCtrl *vb=Kai->GetTab()->Video;
 	selarr = GetSels();
-	if(id==MENU_PLAYP && vb->IsShown()){vb->Pause();}
-	else if(id==MENU_P5SEC){vb->Seek(vb->Tell()+5000);}
-	else if(id==MENU_M5SEC){vb->Seek(vb->Tell()-5000);}
-	else if(id==MENU_INSERT_BEFORE){OnInsertBefore();}
-	else if(id==MENU_INSERT_AFTER){OnInsertAfter();}
-	else if(id==MENU_INSERT_BEFORE_VIDEO){OnInsertBeforeVideo();}
-	else if(id==MENU_INSERT_AFTER_VIDEO){OnInsertAfterVideo();}
-	else if(id==MENU_DUPLICATE){OnDuplicate();}
-	else if(id==MENU_SWAP){SwapRows(selarr[0],selarr[1],true);}
-	else if(id==MENU_JOIN){wxCommandEvent evt; evt.SetId(id); OnJoin(evt);}
-	else if(id==MENU_JOINF || id==MENU_JOINL){OnJoinF(id);}
-	else if(id==MENU_COPY||id==MENU_COPYCOLS){CopyRows(id);}
-	else if(id==MENU_CUT){CopyRows(id);DeleteRows();}
-	else if(id==MENU_PASTE || id==MENU_PASTECOLS){OnPaste(id);}
-	else if(id==MENU_DELETE){DeleteRows();}
-	else if(id==MENU_DELETE_TEXT){DeleteText();}
-	else if(id==MENU_PASTE_TEXTTL){OnPasteTextTl();}
-	else if(id==MENU_TLDIAL){
+	if(id==PlayPause && vb->IsShown()){vb->Pause();}
+	else if(id==Plus5Second){vb->Seek(vb->Tell()+5000);}
+	else if(id==Minus5Second){vb->Seek(vb->Tell()-5000);}
+	else if(id==InsertBefore){OnInsertBefore();}
+	else if(id==InsertAfter){OnInsertAfter();}
+	else if(id==InsertBeforeVideo){OnInsertBeforeVideo();}
+	else if(id==InsertAfterVideo){OnInsertAfterVideo();}
+	else if(id==Duplicate){OnDuplicate();}
+	else if(id==Swap){SwapRows(selarr[0],selarr[1],true);}
+	else if(id==Join){wxCommandEvent evt; evt.SetId(id); OnJoin(evt);}
+	else if(id==JoinToFirst || id==JoinToLast){OnJoinToFirst(id);}
+	else if(id==Copy||id==CopyCollumns){CopyRows(id);}
+	else if(id==Cut){CopyRows(id);DeleteRows();}
+	else if(id==Paste || id==PasteCollumns){OnPaste(id);}
+	else if(id==Remove){DeleteRows();}
+	else if(id==RemoveText){DeleteText();}
+	else if(id==PasteTranslation){OnPasteTextTl();}
+	else if(id==TranslationDialog){
 		static TLDialog *tld= new TLDialog(this,this);
 		tld->Show();
 	}
-	else if(id==MENU_MKV_SUBS){OnMkvSubs(event);}
-	else if(id==MENU_FPSFROMVIDEO){OnSetFPSFromVideo();}
-	else if(id==MENU_NEWFPS){OnSetNewFPS();}
-	else if(id==MENU_CONT_PREV||id==MENU_CONT_NEXT){OnMakeContinous(id);}
+	else if(id==SubsFromMKV){OnMkvSubs(event);}
+	else if(id==FPSFromVideo){OnSetFPSFromVideo();}
+	else if(id==NewFPS){OnSetNewFPS();}
+	else if(id==ContinousPrevious||id==ContinousNext){OnMakeContinous(id);}
 	else if(id>6000){
 		Kai->OnMenuSelected(event);
 	}
@@ -605,7 +605,7 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 		if (wbutton==wxYES){Kai->Save(false);}
 		else if(wbutton==wxCANCEL){return;}}
 	wxString mkvpath;
-	if(idd==MENU_MKV_SUBS)
+	if(idd==SubsFromMKV)
 	{
 		mkvpath=Kai->GetTab()->VideoPath;
 	}
@@ -619,7 +619,7 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 	}catch(...){return;}
 	bool isgood=mw.GetSubtitles(this);
 	if(isgood){
-		if(transl){Edit->SetTl(false); transl=false;showtl=false;Kai->MenuBar->Enable(ID_SAVETL,false);}
+		if(transl){Edit->SetTl(false); transl=false;showtl=false;Kai->MenuBar->Enable(SaveTranslation,false);}
 		SetSubsForm();
 		wxString ext=(form<SRT)?"ass" : "srt";
 		if(form<SRT){Edit->TlMode->Enable();}else{Edit->TlMode->Enable(false);}
@@ -882,7 +882,7 @@ void Grid::OnMakeContinous(int idd)
 {
 	int fs=FirstSel();
 	if(fs<0){wxBell();return;}
-	if(idd==MENU_CONT_PREV){
+	if(idd==ContinousPrevious){
 		if(fs<1){return;}
 		int diff=GetDial(fs)->End.mstime - GetDial(fs-1)->Start.mstime;
 		for(int i=0;i<fs;i++)
@@ -1001,3 +1001,8 @@ void Grid::OnSetNewFPS()
 	}
 }
 
+BEGIN_EVENT_TABLE(Grid,SubsGrid)
+	EVT_MENU(Cut,Grid::OnAccelerator)
+	EVT_MENU(Copy,Grid::OnAccelerator)
+	EVT_MENU(Paste,Grid::OnAccelerator)
+END_EVENT_TABLE()
