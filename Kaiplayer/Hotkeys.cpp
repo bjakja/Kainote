@@ -3,7 +3,7 @@
 #include "Hotkeys.h"
 #include "OpennWrite.h"
 #include "KainoteMain.h"
-#include "config.h"
+#include "Config.h"
 #include <wx/regex.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>
@@ -252,8 +252,8 @@ wxAcceleratorEntry Hotkeys::GetHKey(int itemid)
 		modif|=2;
 	}
 
-	//if(modif==0){accel.Prepend("-");}
-	wxString akey=accel.AfterLast('-');
+	
+	wxString akey= (accel.EndsWith("-"))? "-" : accel.AfterLast('-');
 	int key=0;
 	
 	std::map<int,wxString>::iterator cur;

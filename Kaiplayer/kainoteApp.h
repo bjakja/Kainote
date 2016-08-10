@@ -13,7 +13,7 @@
 #include <wx/app.h>
 #include <wx/snglinst.h>
 
-#include "kainoteMain.h"
+#include "KainoteMain.h"
 #if _DEBUG
 //#define _CRTDBG_MAP_ALLOC
 //#define _CRTDBG_MAP_ALLOC_NEW

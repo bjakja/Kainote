@@ -9,13 +9,13 @@
 
 
 
-#include "kainoteApp.h"
+#include "KainoteApp.h"
 #include <wx/image.h>
 #include <wx/ipc.h>
 #include <wx/utils.h>
 #include <locale.h>
 #include "OpennWrite.h"
-#include "config.h"
+#include "Config.h"
 #include "Hotkeys.h"
 #include <wx/intl.h>
 
@@ -108,6 +108,8 @@ bool kainoteApp::OnInit()
 		if ( wxsOK )
 		{
 		//wxHandleFatalExceptions(true);
+			SetAppDisplayName("KaiNote");
+
 			if(!Options.LoadOptions()){wxMessageBox(_("Nie udało się wczytać opcji.\nDziałanie programu zostanie zakończone."),_("Uwaga"));return false;}
 
 			locale=NULL;

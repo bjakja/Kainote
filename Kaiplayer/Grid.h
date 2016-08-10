@@ -20,6 +20,7 @@ public:
 	void OnAccelerator(wxCommandEvent &event);
 	void OnJoin(wxCommandEvent &event);
 	void ContextMenu(const wxPoint &pos, bool dummy=false);
+	
 protected:
 
     wxArrayInt selarr;

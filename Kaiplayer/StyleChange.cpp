@@ -1,12 +1,12 @@
 ﻿
 #include <wx/wx.h>
-#include "ColorChange.h"
+#include "StyleChange.h"
 #include <wx/intl.h>
 #include <wx/string.h>
 #include <wx/settings.h>
 #include <wx/fontenum.h>
 #include "config.h" 
-#include "dialog_colorpicker.h"
+#include "ColorPicker.h"
 
 
 wxColour Blackorwhite(wxColour kol)
@@ -38,6 +38,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	valid.SetCharExcludes(",");
 	sname = new wxTextCtrl(this, -1, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER,valid);
+	sname->SetMaxLength(500);
 	stylename->Add(sname,1,wxEXPAND|wxALL,2);
 
 	wxStaticBoxSizer *stylefont= new wxStaticBoxSizer(wxVERTICAL, this, _("Czcionka i rozmiar:"));
@@ -90,7 +91,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 	wxStaticBoxSizer *styleattr= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Obwódka:               Cień:                      Skala X:                 Skala Y:"));
 
-	sou = new NumCtrl(this, ID_TOUTLINE, "", 0,1000000,false,wxDefaultPosition, wxSize(83,-1), wxTE_PROCESS_ENTER);
+	sou = new NumCtrl(this, ID_TOUTLINE, "", 0,1000,false,wxDefaultPosition, wxSize(83,-1), wxTE_PROCESS_ENTER);
 	ssh = new NumCtrl(this, ID_TOUTLINE, "", 0,1000000,false, wxDefaultPosition, wxSize(83,-1), wxTE_PROCESS_ENTER);
 	ssx = new NumCtrl(this, ID_TOUTLINE, "", 1,10000000,false, wxDefaultPosition, wxSize(83,-1), wxTE_PROCESS_ENTER);
 	ssy = new NumCtrl(this, ID_TOUTLINE, "", 1,10000000,false, wxDefaultPosition, wxSize(83,-1), wxTE_PROCESS_ENTER);

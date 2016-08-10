@@ -37,24 +37,23 @@
 ///////////
 // Headers
 
-#include "config.h"
+#include "Config.h"
 
 //#include <wx/tglbtn.h>
 #include <wx/filename.h>
 #include <math.h>
 #include <vector>
-#include "audio_display.h"
+#include "AudioDisplay.h"
 #include "EditBox.h"
 
-#include "config.h"
-#include "audio_box.h"
+#include "Config.h"
+#include "AudioBox.h"
 
-#include "colorspace.h"
-#include "hotkeys.h"
+#include "ColorSpace.h"
+#include "Hotkeys.h"
 #include "Grid.h"
-//#include "TabPanel.h"
 #include "kainoteApp.h"
-//#include "TabDialog.h"
+
 
 int64_t abs64(int64_t input) {
 	if (input < 0) return -input;
@@ -67,7 +66,7 @@ int64_t abs64(int64_t input) {
 ///////////////
 // Constructor
 AudioDisplay::AudioDisplay(wxWindow *parent)
-: wxWindow (parent, -1, wxDefaultPosition, wxSize(100,100), wxSUNKEN_BORDER | wxWANTS_CHARS , _T("Audio Display"))
+	: wxWindow (parent, -1, wxDefaultPosition, wxSize(100,100), wxSUNKEN_BORDER | wxWANTS_CHARS , _T("Audio Display"))
 {
 	// Set variables
 	origImage = NULL;
@@ -121,7 +120,7 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	//wxCursor cursor(wxCURSOR_BLANK);
 	//SetCursor(cursor);
 
-	
+
 }
 
 
@@ -137,8 +136,8 @@ AudioDisplay::~AudioDisplay() {
 	if(spectrumDisplay){delete spectrumDisplaySelected;}
 	if(peak){delete[] peak;
 	delete[] min;}
-	//if(dialogue){delete dialogue;}
 	
+
 	player = NULL;
 	origImage = NULL;
 	karaoke = NULL;
@@ -147,7 +146,6 @@ AudioDisplay::~AudioDisplay() {
 	spectrumDisplaySelected = NULL;
 	peak = NULL;
 	min = NULL;
-	//dialogue=NULL;
 }
 
 
@@ -165,7 +163,7 @@ void AudioDisplay::Reset() {
 void AudioDisplay::UpdateImage(bool weak) {
 	// Update samples
 	UpdateSamples();
-	
+
 	// Set image as needing to be redrawn
 	needImageUpdate = true;
 	if (weak == false && needImageUpdateWeak == true) {
@@ -229,16 +227,16 @@ void AudioDisplay::DoUpdateImage() {
 	selEndCap = 0;
 	int64_t drawSelStart = 0;
 	int64_t drawSelEnd = 0;
-	
+
 	GetDialoguePos(lineStart,lineEnd,false);
 	hasSel = true;
-		
+
 	GetDialoguePos(selStartCap,selEndCap,true);
 	selStart = lineStart;
 	selEnd = lineEnd;
 	drawSelStart = lineStart;
 	drawSelEnd = lineEnd;
-		
+
 	// Draw selection bg
 	if (hasSel && drawSelStart < drawSelEnd && draw_selection_background) {
 		if (NeedCommit ) dc.SetBrush(wxBrush(Options.GetColour(_T("Audio Selection Background Modified"))));
@@ -250,7 +248,7 @@ void AudioDisplay::DoUpdateImage() {
 	if (spectrum) {
 		DrawSpectrum(dc,weak);
 	}
-	
+
 
 	// Waveform
 	else if (provider) {
@@ -280,46 +278,31 @@ void AudioDisplay::DoUpdateImage() {
 	// Draw previous line
 	DrawInactiveLines(dc);
 
-	// Draw current frame
-	if (Options.GetBool(_T("Audio Draw Video Position"))) {
-		VideoCtrl *Video= Notebook::GetTab()->Video;
-		if (Video->GetState()!=None) {
-			dc.SetPen(wxPen(Options.GetColour(_T("Audio Play Cursor")),2,wxLONG_DASH));
-			int x = GetXAtMS(Video->Tell());
-			//wxLogStatus("xpos %i", x);
-			dc.DrawLine(x,0,x,h);
-		}
-	}
 
-
-	// Draw keyframes
-	if (drawKeyframes && provider->KeyFrames.size()>0) {
-		DrawKeyframes(dc);
-	}
 
 	if (hasSel) {
 		// Draw boundaries
 		//if (true) {
-			// Draw start boundary
-			int selWidth = Options.GetInt(_T("Audio Line Boundaries Thickness"));
-			dc.SetPen(wxPen(Options.GetColour(_T("Audio Line Boundary Start"))));
-			dc.SetBrush(wxBrush(Options.GetColour(_T("Audio Line Boundary Start"))));
-			dc.DrawRectangle(lineStart-selWidth/2+1,0,selWidth,h);
-			wxPoint points1[3] = { wxPoint(lineStart,0), wxPoint(lineStart+10,0), wxPoint(lineStart,10) };
-			wxPoint points2[3] = { wxPoint(lineStart,h-1), wxPoint(lineStart+10,h-1), wxPoint(lineStart,h-11) };
-			dc.DrawPolygon(3,points1);
-			dc.DrawPolygon(3,points2);
+		// Draw start boundary
+		int selWidth = Options.GetInt(_T("Audio Line Boundaries Thickness"));
+		dc.SetPen(wxPen(Options.GetColour(_T("Audio Line Boundary Start"))));
+		dc.SetBrush(wxBrush(Options.GetColour(_T("Audio Line Boundary Start"))));
+		dc.DrawRectangle(lineStart-selWidth/2+1,0,selWidth,h);
+		wxPoint points1[3] = { wxPoint(lineStart,0), wxPoint(lineStart+10,0), wxPoint(lineStart,10) };
+		wxPoint points2[3] = { wxPoint(lineStart,h-1), wxPoint(lineStart+10,h-1), wxPoint(lineStart,h-11) };
+		dc.DrawPolygon(3,points1);
+		dc.DrawPolygon(3,points2);
 
-			// Draw end boundary
-			dc.SetPen(wxPen(Options.GetColour(_T("Audio Line Boundary End"))));
-			dc.SetBrush(wxBrush(Options.GetColour(_T("Audio Line Boundary End"))));
-			dc.DrawRectangle(lineEnd-selWidth/2+1,0,selWidth,h);
-			wxPoint points3[3] = { wxPoint(lineEnd,0), wxPoint(lineEnd-10,0), wxPoint(lineEnd,10) };
-			wxPoint points4[3] = { wxPoint(lineEnd,h-1), wxPoint(lineEnd-10,h-1), wxPoint(lineEnd,h-11) };
-			dc.DrawPolygon(3,points3);
-			dc.DrawPolygon(3,points4);
+		// Draw end boundary
+		dc.SetPen(wxPen(Options.GetColour(_T("Audio Line Boundary End"))));
+		dc.SetBrush(wxBrush(Options.GetColour(_T("Audio Line Boundary End"))));
+		dc.DrawRectangle(lineEnd-selWidth/2+1,0,selWidth,h);
+		wxPoint points3[3] = { wxPoint(lineEnd,0), wxPoint(lineEnd-10,0), wxPoint(lineEnd,10) };
+		wxPoint points4[3] = { wxPoint(lineEnd,h-1), wxPoint(lineEnd-10,h-1), wxPoint(lineEnd,h-11) };
+		dc.DrawPolygon(3,points3);
+		dc.DrawPolygon(3,points4);
 		//}
-		
+
 		// Draw karaoke
 		if (hasKara) {
 			dc.SetPen(wxPen(Options.GetColour("Audio Syllable Boundaries")));
@@ -344,11 +327,11 @@ void AudioDisplay::DoUpdateImage() {
 
 				//obramowanie aktywynej sylaby
 				if(i==whichsyl){
-				dc.SetPen(Options.GetColour("Audio Syllable Text"));
-				dc.SetBrush(*wxTRANSPARENT_BRUSH);
-				dc.DrawRectangle(karstart+2,1,XX-karstart-2,h-2);
+					dc.SetPen(Options.GetColour("Audio Syllable Text"));
+					dc.SetBrush(*wxTRANSPARENT_BRUSH);
+					dc.DrawRectangle(karstart+2,1,XX-karstart-2,h-2);
 					dc.SetPen(wxPen(Options.GetColour("Audio Syllable Boundaries")));
-					}
+				}
 
 				karstart=XX;
 			}
@@ -368,20 +351,12 @@ void AudioDisplay::DoUpdateImage() {
 		}
 	}
 
-		DrawTimescale(dc);
+	DrawTimescale(dc);
 
-
-	// Draw selection border
-	if (hasFocus) {
-		dc.SetPen(*wxGREEN_PEN);
-		dc.SetBrush(*wxTRANSPARENT_BRUSH);
-		dc.DrawRectangle(0,0,w,h);
-	}
 
 	if(hasMark){
 		selMark=GetXAtMS(curMarkMS);
-		if(selMark>=0&&selMark<w)
-			{
+		if(selMark>=0&&selMark<w){
 			wxColour kol=Options.GetColour(_T("Audio Line Boundary Mark"));
 			dc.SetPen(wxPen(kol));
 			dc.SetBrush(wxBrush(kol));
@@ -390,22 +365,42 @@ void AudioDisplay::DoUpdateImage() {
 			STime time(curMarkMS);
 			wxString text=time.raw();
 			wxFont font(10,wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Verdana"));
-				dc.SetFont(font);
-				int dx,dy;
+			dc.SetFont(font);
+			int dx,dy;
 			dc.GetTextExtent(text,&dx, &dy, 0, 0, &font);
 			dx=selMark-(dx/2);
 			dy=h-dy-2;
-				dc.DrawText(text,dx+1,dy-1);
-				dc.DrawText(text,dx+1,dy+1);
-				dc.DrawText(text,dx-1,dy-1);
-				dc.DrawText(text,dx-1,dy+1);
-				dc.SetTextForeground(wxColour(255,255,255));
-				dc.DrawText(text,dx,dy);
+			dc.DrawText(text,dx+1,dy-1);
+			dc.DrawText(text,dx+1,dy+1);
+			dc.DrawText(text,dx-1,dy-1);
+			dc.DrawText(text,dx-1,dy+1);
+			dc.SetTextForeground(wxColour(255,255,255));
+			dc.DrawText(text,dx,dy);
 
-			}
 		}
-	
+	}
 
+	// Draw current frame
+	if (Options.GetBool(_T("Audio Draw Video Position"))) {
+		VideoCtrl *Video= Notebook::GetTab()->Video;
+		if (Video->GetState()==Paused) {
+			dc.SetPen(wxPen(Options.GetColour(_T("Audio Play Cursor")),2,wxLONG_DASH));
+			int x = GetXAtMS(Video->Tell());
+			//wxLogStatus("xpos %i", x);
+			dc.DrawLine(x,0,x,h);
+		}
+	}
+
+	// Draw keyframes
+	if (drawKeyframes && provider->KeyFrames.size()>0) {
+		DrawKeyframes(dc);
+	}
+	// Draw focus border
+	if (hasFocus) {
+		dc.SetPen(*wxGREEN_PEN);
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.DrawRectangle(0,0,w,h);
+	}
 
 	// Done
 	needImageUpdate = false;
@@ -444,46 +439,46 @@ void AudioDisplay::DrawInactiveLines(wxDC &dc) {
 		shadeFrom = 0;
 		shadeTo = grid->GetCount();
 	}
-	
+
 	for (int j=shadeFrom;j<shadeTo;j++) {
 		if (j == line_n) continue;
 		if (j < 0 || j>= grid->GetCount() ) continue;
 		shade = grid->GetDial(j);
 
-		
-			// Get coordinates
-			shadeX1 = GetXAtMS(shade->Start.mstime);
-			shadeX2 = GetXAtMS(shade->End.mstime);
-			if (shadeX2 < 0 || shadeX1 > w) continue;
 
-			// Draw over waveform
-			if (!spectrum) {
-				// Selection
-				int selX1 = MAX(0,GetXAtMS(curStartMS));
-				int selX2 = MIN(w,GetXAtMS(curEndMS));
+		// Get coordinates
+		shadeX1 = GetXAtMS(shade->Start.mstime);
+		shadeX2 = GetXAtMS(shade->End.mstime);
+		if (shadeX2 < 0 || shadeX1 > w) continue;
 
-				// Get ranges (x1->x2, x3->x4).
-				int x1 = MAX(0,shadeX1);
-				int x2 = MIN(w,shadeX2);
-				int x3 = MAX(x1,selX2);
-				int x4 = MAX(x2,selX2);
+		// Draw over waveform
+		if (!spectrum) {
+			// Selection
+			int selX1 = MAX(0,GetXAtMS(curStartMS));
+			int selX2 = MIN(w,GetXAtMS(curEndMS));
 
-				// Clip first range
-				x1 = MIN(x1,selX1);
-				x2 = MIN(x2,selX1);
+			// Get ranges (x1->x2, x3->x4).
+			int x1 = MAX(0,shadeX1);
+			int x2 = MIN(w,shadeX2);
+			int x3 = MAX(x1,selX2);
+			int x4 = MAX(x2,selX2);
 
-				// Set pen and draw
-				dc.SetPen(wxPen(Options.GetColour(_T("Audio Waveform Inactive"))));
-				for (int i=x1;i<x2;i++) dc.DrawLine(i,peak[i],i,min[i]-1);
-				for (int i=x3;i<x4;i++) dc.DrawLine(i,peak[i],i,min[i]-1);
-		
-				}
-			// Draw boundaries
-			dc.SetPen(wxPen(Options.GetColour(_T("Audio Line Boundary Inactive Line"))));
-			dc.DrawRectangle(shadeX1-selWidth/2+1,0,selWidth,h);
-			dc.DrawRectangle(shadeX2-selWidth/2+1,0,selWidth,h);
+			// Clip first range
+			x1 = MIN(x1,selX1);
+			x2 = MIN(x2,selX1);
+
+			// Set pen and draw
+			dc.SetPen(wxPen(Options.GetColour(_T("Audio Waveform Inactive"))));
+			for (int i=x1;i<x2;i++) dc.DrawLine(i,peak[i],i,min[i]-1);
+			for (int i=x3;i<x4;i++) dc.DrawLine(i,peak[i],i,min[i]-1);
+
 		}
-	
+		// Draw boundaries
+		dc.SetPen(wxPen(Options.GetColour(_T("Audio Line Boundary Inactive Line"))));
+		dc.DrawRectangle(shadeX1-selWidth/2+1,0,selWidth,h);
+		dc.DrawRectangle(shadeX2-selWidth/2+1,0,selWidth,h);
+	}
+
 }
 
 
@@ -599,14 +594,14 @@ void AudioDisplay::DrawWaveform(wxDC &dc,bool weak) {
 
 //////////////////////////
 // Draw spectrum analyzer
-void AudioDisplay::DrawSpectrum(wxDC &finaldc,bool weak) {
+void AudioDisplay::DrawSpectrum(wxDC &finaldc, bool weak) {
 	if (!weak || !spectrumDisplay || spectrumDisplay->GetWidth() != w || spectrumDisplay->GetHeight() != h) {
 		if (spectrumDisplay) {
 			delete spectrumDisplay;
 			if(spectrumDisplaySelected){delete spectrumDisplaySelected;
 			spectrumDisplaySelected = 0;}
 			spectrumDisplay = 0;
-			
+
 		}
 		weak = false;
 	}
@@ -696,8 +691,8 @@ void AudioDisplay::MakeDialogueVisible(bool force) {
 	// Variables
 	int startShow=0, endShow=0;
 	// In karaoke mode the syllable and as much as possible towards the end of the line should be shown
-		
-		GetTimesSelection(startShow,endShow);
+
+	GetTimesSelection(startShow,endShow);
 
 	int startPos = GetSampleAtMS(startShow);
 	int endPos = GetSampleAtMS(endShow);
@@ -707,8 +702,8 @@ void AudioDisplay::MakeDialogueVisible(bool force) {
 		if (startX < 50 || endX > (w-200)) {
 			UpdatePosition((startPos+endPos-w*samples)/2,true);
 			//wxLogMessage("pos %i",endPos - 100*samples);
-			}
 		}
+	}
 	else if (force || (startX < 50 && endX < w) || (endX > w-50 && startX > 0 )) {
 		if ((startX < 50) || (endX >= w-50 )) {
 			// Make sure the left edge of the selection is at least 50 pixels from the edge of the display
@@ -772,7 +767,7 @@ void AudioDisplay::SetSamplesPercent(int percent,bool update,float pivot) {
 		//UpdateSamples();
 		UpdateImage();
 		UpdateScrollbar();
-		
+
 		//Refresh(false);
 	}
 }
@@ -827,7 +822,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 		if(ownProvider && provider){delete provider;provider = NULL;}
 		delete player;
 		if(spectrumRenderer){delete spectrumRenderer; spectrumRenderer = NULL;}
-		
+
 		player = NULL;
 		Reset();
 		loaded = false;
@@ -841,31 +836,32 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 	catch (...) {
 		wxLogError(_T("Unknown error unloading audio"));
 	}
-		}
+	}
 	// Load
 	if(!file.IsEmpty()) {
-		//SetFile(_T(""));
 		try {
 			// Get provider
-			//wxLogStatus("fromvideo %i"+file, (int)fromvideo);
+			TabPanel *pan=((TabPanel*)box->GetGrandParent());
+			VideoCtrl *vb=pan->Video;
 			bool success=true;
-			if(Notebook::GetTab()->Video->VFF && fromvideo){
-				provider=Notebook::GetTab()->Video->VFF;ownProvider=false;}
-			else{provider = new VideoFfmpeg(file, Notebook::GetTabs()->iter, &success);
+			if(vb->VFF && fromvideo){
+				provider = vb->VFF; ownProvider=false;
+			}else{
+				provider = new VideoFfmpeg(file, &success);
 				if (!success || provider->SampleRate < 0) {
 					delete provider; provider = 0; 
 					loaded= false; return;
 				}
-				Notebook::GetTab()->Video->player=this;ownProvider=true;
+				vb->player=this; ownProvider=true;
 			}
-			
+
 
 			// Get player
 			player = new DirectSoundPlayer2();
 			player->SetProvider(provider);
 			player->OpenStream();
 			loaded = true;
-			
+
 			UpdateImage();
 		}
 		catch (const wxChar *e) {
@@ -884,7 +880,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 			wxLogError(_T("Unknown error loading audio"));
 		}
 	}
-	
+
 	if (!loaded) return;
 
 	assert(loaded == (provider != NULL));
@@ -1009,11 +1005,11 @@ void AudioDisplay::GetTimesSelection(int &start,int &end) {
 	if(hasKara){
 		whichsyl = MID(0,whichsyl,(int)karaoke->syls.size()-1);
 		karaoke->GetSylTimes(whichsyl, start, end);
-		}else{
-			start = curStartMS;
-			end = curEndMS;
-		}
+	}else{
+		start = curStartMS;
+		end = curEndMS;
 	}
+}
 
 
 /////////////////////////////
@@ -1029,33 +1025,33 @@ void AudioDisplay::SetSelection(int start, int end) {
 // Set dialogue
 void AudioDisplay::SetDialogue(Dialogue *diag,int n) {
 	// Actual parameters
-		// Set variables
-		line_n = n;
-		//dialog jest tylko odczytywany, jest on własnością editboxa, usuwać go nie można.
-		dialogue = diag;
-		NeedCommit=false;
-		whichsyl=0;
-		// Set flags
-		// Set times
-		if (Options.GetBool(_T("Audio Grab Times On Select"))) {
-			int s = dialogue->Start.mstime;
-			int e = dialogue->End.mstime;
+	// Set variables
+	line_n = n;
+	//dialog jest tylko odczytywany, jest on własnością editboxa, usuwać go nie można.
+	dialogue = diag;
+	NeedCommit=false;
+	whichsyl=0;
+	// Set flags
+	// Set times
+	if (Options.GetBool(_T("Audio Grab Times On Select"))) {
+		curStartMS = dialogue->Start.mstime;
+		curEndMS = dialogue->End.mstime;
 
-			// Never do it for 0:00:00.00->0:00:00.00 lines
-			if (s != 0 || e != 0) {
-				curStartMS = s;
-				curEndMS = e;
-			}
-		}
-	
+		// Never do it for 0:00:00.00->0:00:00.00 lines
+		/*if (s != 0 || e != 0) {
+			curStartMS = s;
+			curEndMS = e;
+		}*/
+	}
 
-		// Reset karaoke pos
-		
-		if(hasKara){
-			//whichsyl=0;
-			karaoke->Split();
 
-		}
+	// Reset karaoke pos
+
+	if(hasKara){
+		//whichsyl=0;
+		karaoke->Split();
+
+	}
 
 	// Update	
 	Update();
@@ -1068,25 +1064,27 @@ void AudioDisplay::CommitChanges (bool nextLine) {
 	// Loaded?
 	if (!loaded) return;
 
-	
-		NeedCommit = false;
 
-		// Update dialogues
-		blockUpdate = true;
-		STime gtime;
-		gtime.NewTime(curStartMS);
-		Edit->StartEdit->SetTime(gtime);
-		gtime.NewTime(curEndMS);
-		Edit->EndEdit->SetTime(gtime);
-		Edit->StartEdit->SetModified(true);
-		Edit->EndEdit->SetModified(true);
-		Edit->Send(nextLine);
-		if(!nextLine){Edit->UpdateChars(Edit->TextEdit->GetValue());}
-		Edit->StartEdit->SetModified(false);
-		Edit->EndEdit->SetModified(false);
-		blockUpdate = false;
-	
-	
+	NeedCommit = false;
+
+	// Update dialogues
+	blockUpdate = true;
+	STime gtime;
+	gtime.NewTime(curStartMS);
+	Edit->StartEdit->SetTime(gtime);
+	gtime.NewTime(curEndMS);
+	Edit->EndEdit->SetTime(gtime);
+	gtime.NewTime(curEndMS - curStartMS);
+	Edit->DurEdit->SetTime(gtime);
+	Edit->StartEdit->SetModified(true);
+	Edit->EndEdit->SetModified(true);
+	Edit->Send(nextLine);
+	if(!nextLine){Edit->UpdateChars(Edit->TextEdit->GetValue());}
+	Edit->StartEdit->SetModified(false);
+	Edit->EndEdit->SetModified(false);
+	blockUpdate = false;
+
+
 
 	Update();
 }
@@ -1124,7 +1122,7 @@ void AudioDisplay::OnPaint(wxPaintEvent& event) {
 
 	wxPaintDC dc(this);
 	if (origImage) dc.DrawBitmap(*origImage,0,0);
-	
+
 }
 
 
@@ -1134,7 +1132,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	// Get x,y
 	int64_t x = event.GetX();
 	int64_t y = event.GetY();
-	//if(event.ButtonUp()){wxLogStatus("anybutton up");}
+
 	bool shiftDown = event.m_shiftDown;
 	int timelineHeight = 20;
 	if(box->arrows){box->SetCursor(wxCURSOR_ARROW); box->arrows=false;}
@@ -1149,7 +1147,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	}
 
 	// Is inside?
-	
+
 	bool onScale = false;
 	if (x >= 0 && y >= 0 && x < w) {
 		if (y < h) {
@@ -1160,7 +1158,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 		}
 		else if (y < h+timelineHeight) onScale = true;
 		if(inside && onScale){UpdateImage(true); inside=false;}
-		}else{inside = false;}
+	}else{inside = false;}
 
 	// Buttons
 	bool leftDown = event.LeftDown();
@@ -1177,7 +1175,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 		holding = false;
 		if (HasCapture()) ReleaseMouse();
 	}
-	
+
 
 	if(leftDown&&event.ControlDown()&&!event.AltDown()&&!onScale)
 	{
@@ -1186,7 +1184,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 		UpdateImage(true);
 
 	}
-	
+
 	if (buttonDown && !holding) {
 		holding = true;
 		CaptureMouse();
@@ -1216,7 +1214,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 			UpdateImage();
 		}
 	}
-	
+
 
 	// Scale dragging
 	if ((hold == 0 && onScale) || draggingScale) {
@@ -1251,57 +1249,59 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	// Outside
 	if (!inside && hold == 0) return;
 
-	// Left click
-	if (leftDown) {
+	// Left click - focos trzeba nadawać wszystkimi przyciskami
+	if (event.ButtonDown()) {
 		SetFocus();
 	}
 
-	
+
 	// Timing
 	if (hasSel && !(event.ControlDown() && !event.AltDown() && hold==0)) {
-		
+
 		letter=-1;
 		// znacznik
 		if (hold == 0) {
-				if (hasMark && abs64 (x - selMark) < 6 ) {
-					wxCursor cursor(wxCURSOR_SIZEWE);
-					SetCursor(cursor);
-					defCursor=false;
-					if (buttonDown) {
-						hold = 4;
-					}
+			if (hasMark && abs64 (x - selMark) < 6 ) {
+				wxCursor cursor(wxCURSOR_SIZEWE);
+				SetCursor(cursor);
+				defCursor=false;
+				if (buttonDown) {
+					hold = 4;
 				}
+			}
 
 
-				
-				
 
-				//start
-				else if (abs64 (x - selStart) < 6 ) {
-					wxCursor cursor(wxCURSOR_SIZEWE);
-					SetCursor(cursor);
-					defCursor=false;
-					if (buttonDown) {
-						hold = 1;
-					}
+
+
+			//start
+			else if (abs64 (x - selStart) < 6 ) {
+				wxCursor cursor(wxCURSOR_SIZEWE);
+				SetCursor(cursor);
+				defCursor=false;
+				if (buttonDown) {
+					hold = 1;
 				}
+			}
 
-				
-				//żółte linie karaoke
-				else if(hasKara && y>20)
-				{
-					if(!karaoke->CheckIfOver(x, &Grabbed)){
-						int tmpsyl=-1;
-						if(karaoke->GetSylAtX(x,&tmpsyl) && !(tmpsyl<whichsyl-1||tmpsyl>whichsyl+1) && (leftDown||rightDown) ){
-							Grabbed=(tmpsyl<whichsyl)? whichsyl-1 : whichsyl;
-							hold=5;
-						}
-						else if(leftDown && tmpsyl>=0){
-							whichsyl=tmpsyl;
-							updated=true;}
-						if(!defCursor){SetCursor(wxNullCursor);defCursor=true;}
-					}else{
-					
+
+			//żółte linie karaoke
+			else if(hasKara && y>20)
+			{
+				if(!karaoke->CheckIfOver(x, &Grabbed)){
+					int tmpsyl = -1;
+					bool hasSyl = karaoke->GetSylAtX(x,&tmpsyl);
+					if(Options.GetBool("Audio Karaoke Move On Click") && hasSyl && !(tmpsyl<whichsyl-1||tmpsyl>whichsyl+1) && (leftDown||rightDown)){
+						Grabbed=(tmpsyl<whichsyl)? whichsyl-1 : whichsyl;
+						hold=5;
+					}
+					else if(leftDown && tmpsyl>=0){
+						whichsyl=tmpsyl;
+						updated=true;
+					}
+					if(!defCursor){SetCursor(wxNullCursor);defCursor=true;}
+				}else{
+
 					wxCursor cursor(wxCURSOR_SIZEWE);
 					SetCursor(cursor);
 					defCursor=false;
@@ -1310,52 +1310,52 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 						Commit();
 						return;
 					}
-					
+
 					if(buttonDown){hold=5;}
-					}
-
-					
-					
-				}
-				// litery sylab
-				else if(hasKara && karaoke->GetLetterAtX(x,&syll,&letter))
-					{
-						if (leftDown){
-							karaoke->SplitSyl(syll, letter);
-							whichsyl=syll;
-							Commit();
-							}
-						
-						
-					if(!defCursor){SetCursor(wxNullCursor);defCursor=true;}
 				}
 
-				// Grab end
-				else if (abs64 (x - selEnd) < 6 ) {
-					wxCursor cursor(wxCURSOR_SIZEWE);
-					SetCursor(cursor);
-					defCursor=false;
-					if (buttonDown) {
-						hold = 2;
-					}
-				}
-				
-				// Dragging nothing, time from scratch
-				else if (buttonDown && !hasKara) {
-						if (leftDown) hold = 3;
-						else hold = 2;
-						lastX = x;
-						
+
+
+			}
+			// litery sylab
+			else if(hasKara && karaoke->GetLetterAtX(x,&syll,&letter))
+			{
+				if (leftDown){
+					karaoke->SplitSyl(syll, letter);
+					whichsyl=syll;
+					Commit();
 				}
 
-				// restoring cursor
-				else if(!defCursor){SetCursor(wxNullCursor);defCursor=true;}
-			
+
+				if(!defCursor){SetCursor(wxNullCursor);defCursor=true;}
+			}
+
+			// Grab end
+			else if (abs64 (x - selEnd) < 6 ) {
+				wxCursor cursor(wxCURSOR_SIZEWE);
+				SetCursor(cursor);
+				defCursor=false;
+				if (buttonDown) {
+					hold = 2;
+				}
+			}
+
+			// Dragging nothing, time from scratch
+			else if (buttonDown && !hasKara) {
+				if (leftDown) hold = 3;
+				else hold = 2;
+				lastX = x;
+
+			}
+
+			// restoring cursor
+			else if(!defCursor){SetCursor(wxNullCursor);defCursor=true;}
+
 		}
 
 		// Drag start/end
 		if(hold!=0){
-			
+
 			// Dragging
 			// Release
 			if(buttonUP) {
@@ -1380,8 +1380,8 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 						dialc->End.NewTime(curEndMS+5000);
 					}
 				}
-				
-				
+
+
 				if(hasKara && Grabbed!=-1)
 				{
 					int newpos=ZEROIT(GetMSAtX(x));
@@ -1394,34 +1394,34 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 					Commit();}
 
 				// Update stuff
-				
+
 				hold = 0;
-				
+
 				return;
 			}
 			else {
 				//drag timing change cursor
 				if (hold == 4) {
-					
-						curMarkMS = GetMSAtX(x);
-						updated = true;	
+
+					curMarkMS = GetMSAtX(x);
+					updated = true;	
 				}
 				// Drag from nothing or straight timing
 				if (hold == 3) {
-					
-						if (leftDown) curStartMS = GetBoundarySnap(GetMSAtX(x),16,event.ShiftDown(),true);
-						else curEndMS = GetMSAtX(x);
-						updated = true;
-						NeedCommit = true;
-						
-						if (leftDown && abs((long)(x-lastX)) > Options.GetInt(_T("Audio Start Drag Sensitivity"))) {
-							selStart = lastX;
-							selEnd = x;
-							curStartMS = GetBoundarySnap(GetMSAtX(lastX),16,event.ShiftDown(),true);
-							curEndMS = GetMSAtX(x);
-							hold = 2;
-						}
-					
+
+					if (leftDown) curStartMS = GetBoundarySnap(GetMSAtX(x),16,event.ShiftDown(),true);
+					else curEndMS = GetMSAtX(x);
+					updated = true;
+					NeedCommit = true;
+
+					if (leftDown && abs((long)(x-lastX)) > Options.GetInt(_T("Audio Start Drag Sensitivity"))) {
+						selStart = lastX;
+						selEnd = x;
+						curStartMS = GetBoundarySnap(GetMSAtX(lastX),16,event.ShiftDown(),true);
+						curEndMS = GetMSAtX(x);
+						hold = 2;
+					}
+
 				}
 
 				// Drag start
@@ -1431,25 +1431,25 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 						int snapped = GetBoundarySnap(GetMSAtX(x),16,event.ShiftDown(),true);
 						selStart = GetXAtMS(snapped);
 						/*if (selStart > selEnd) {
-							int temp = selStart;
-							selStart = selEnd;
-							selEnd = temp;
-							hold = 2;
-							curEndMS = snapped;
-							snapped = GetMSAtX(selStart);
+						int temp = selStart;
+						selStart = selEnd;
+						selEnd = temp;
+						hold = 2;
+						curEndMS = snapped;
+						snapped = GetMSAtX(selStart);
 						}*/
-						
+
 						if(hasKara && (event.RightIsDown()||rightDown)){
 							int sizes=karaoke->syls.size();
 							int addtime = snapped - curStartMS;
 							for(int i= 0; i<sizes; i++)
 							{
-							int time=karaoke->syltimes[i];
-							time+=addtime;
-							time=ZEROIT(time);
-							karaoke->syltimes[i]=time;
+								int time=karaoke->syltimes[i];
+								time+=addtime;
+								time=ZEROIT(time);
+								karaoke->syltimes[i]=time;
 							}
-						curEndMS=karaoke->syltimes[sizes-1];
+							curEndMS=karaoke->syltimes[sizes-1];
 						}
 						curStartMS = snapped;
 						updated = true;
@@ -1465,15 +1465,15 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 						selEnd = GetXAtMS(snapped);
 						//selEnd = GetBoundarySnap(x,event.ShiftDown()?0:10,false);
 						/*if (selStart > selEnd) {
-							int temp = selStart;
-							selStart = selEnd;
-							selEnd = temp;
-							hold = 1;
-							curStartMS = snapped;
-							snapped = GetMSAtX(selEnd);
+						int temp = selStart;
+						selStart = selEnd;
+						selEnd = temp;
+						hold = 1;
+						curStartMS = snapped;
+						snapped = GetMSAtX(selEnd);
 						}*/
 						curEndMS = snapped;
-						
+
 						updated = true;
 						NeedCommit = true;
 					}
@@ -1495,10 +1495,10 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 						//wxLogMessage("lines %i, addtimes %i", lines, addtime);
 						//lines+=10;
 						//if(addtime>0){addtime=lines;}else if(addtime<0){addtime= (-lines);}
-						
-					
+
+
 						for(int i= Grabbed+1;i<(int)karaoke->syls.size()-1;i++)
-							{
+						{
 							int time=karaoke->syltimes[i];
 							time+=addtime;
 							time=ZEROIT(time);
@@ -1507,35 +1507,35 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 								karaoke->syltimes[i]=karaoke->syltimes[i+1];}
 							//if(addtime==0){break;}
 							//if(addtime>0){addtime--;}else{addtime++;}
-							}
+						}
 
 						curEndMS=karaoke->syltimes[sizes];
-						}
-					updated=true;
-						//}
 					}
-
-				
+					updated=true;
+					//}
 				}
 
+
 			}
+
+		}
 		// Update stuff
 		if (updated) {
-			
-				if (!playingToEnd) {
-					int64_t slend;
-					if(hasKara && Grabbed>=0){slend=GetSampleAtMS(karaoke->syltimes[Grabbed]);
-					//wxLogStatus("cur %i end %i", (int)player->GetCurrentPosition(), (int)slend);
-					}else{
-						slend=GetSampleAtX(selEnd);}
-						player->SetEndPosition(slend);
+
+			if (!playingToEnd) {
+				int64_t slend;
+				if(hasKara && Grabbed>=0){slend=GetSampleAtMS(karaoke->syltimes[Grabbed]);
+				//wxLogStatus("cur %i end %i", (int)player->GetCurrentPosition(), (int)slend);
+				}else{
+					slend=GetSampleAtX(selEnd);}
+				player->SetEndPosition(slend);
 			}
-			
+
 			UpdateImage(true);
 
 			return;
 		}
-		
+
 	}
 
 	// Not holding
@@ -1553,89 +1553,89 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 			Play(start, end);
 			whichsyl=syl;	
 		}
-	
+
 	}
 
 	// Middle click
 	if (middleDown) {
 		SetFocus();
 		int start=0,end=0;
-			GetTimesSelection(start,end);
-			Play(start,end);
+		GetTimesSelection(start,end);
+		Play(start,end);
 	}
 
-		// Cursor drawing
+	// Cursor drawing
 	if (player && !player->IsPlaying() && event.Moving() && origImage) {
 		// Draw bg
 		wxClientDC cdc(this);
-		 wxMemoryDC dc;
-		 if(w > origImage->GetWidth() || h > origImage->GetHeight()){return;}
-		 dc.SelectObject(origImage->GetSubBitmap(wxRect(0,0,w,h)));
-		 
-		 if(inside){
-			 int fw, fh=18;
-			 if(hasKara && letter!=-1){
-				 int start,end;
+		wxMemoryDC dc;
+		if(w > origImage->GetWidth() || h > origImage->GetHeight()){return;}
+		dc.SelectObject(origImage->GetSubBitmap(wxRect(0,0,w,h)));
+
+		if(inside){
+			int fw, fh=18;
+			if(hasKara && letter!=-1){
+				int start,end;
 				//wxLogStatus("syll %i", syll);
-				 wxString syl=karaoke->syls[syll];
-				 //wxLogStatus(syl);
-				 wxFont karafont(11,wxDEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Verdana"));
-				 dc.SetFont(karafont);
-				 dc.GetTextExtent(syl,&fw, &fh, 0, 0, &karafont);
-				 //wxLogStatus("get syl times");
-				 karaoke->GetSylTimes(syll,start,end);
-				 //wxLogStatus("got syl times");
-				 start=GetXAtMS(start);
-				 end=GetXAtMS(end);
-				 int center=start+((end-start-fw)/2);
-					if(letter==0){fw=0;}
-					else{dc.GetTextExtent(syl.Mid(0,letter),&fw, &fh, 0, 0, &karafont);}
-					dc.SetPen(wxPen(wxColour("#FF0000")));
-					
-					dc.DrawLine(center+fw,0,center+fw,fh);
-				 
-					goto done;
-					}
-			 
+				wxString syl=karaoke->syls[syll];
+				//wxLogStatus(syl);
+				wxFont karafont(11,wxDEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Verdana"));
+				dc.SetFont(karafont);
+				dc.GetTextExtent(syl,&fw, &fh, 0, 0, &karafont);
+				//wxLogStatus("get syl times");
+				karaoke->GetSylTimes(syll,start,end);
+				//wxLogStatus("got syl times");
+				start=GetXAtMS(start);
+				end=GetXAtMS(end);
+				int center=start+((end-start-fw)/2);
+				if(letter==0){fw=0;}
+				else{dc.GetTextExtent(syl.Mid(0,letter),&fw, &fh, 0, 0, &karafont);}
+				dc.SetPen(wxPen(wxColour("#FF0000")));
+
+				dc.DrawLine(center+fw,0,center+fw,fh);
+
+				goto done;
+			}
+
 			// Draw cursor
 			dc.SetLogicalFunction(wxINVERT);
-			
+
 			dc.DrawLine(x,0,x,h);
-				
+
 
 			// Time
-				// Time string
-				STime time;
-				time.NewTime(GetMSAtX(x));
-				wxString text = time.GetFormatted(ASS);
+			// Time string
+			STime time;
+			time.NewTime(GetMSAtX(x));
+			wxString text = time.GetFormatted(ASS);
 
-				// Calculate metrics
-				// FIXME: Hardcoded font name
-				wxFont font(10,wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Verdana"));
-				dc.SetFont(font);
-				int tw,th;
-				GetTextExtent(text,&tw,&th,NULL,NULL,&font);
+			// Calculate metrics
+			// FIXME: Hardcoded font name
+			wxFont font(10,wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Verdana"));
+			dc.SetFont(font);
+			int tw,th;
+			GetTextExtent(text,&tw,&th,NULL,NULL,&font);
 
-				// Text coordinates
-				int dx;
-				dx = x - tw/2;
-				if (dx < 4) dx = 4;
-				int max = w - tw - 4;
-				if (dx > max) dx = max;
-				int dy = 4;
-				if (hasKara) dy += th;
+			// Text coordinates
+			int dx;
+			dx = x - tw/2;
+			if (dx < 4) dx = 4;
+			int max = w - tw - 4;
+			if (dx > max) dx = max;
+			int dy = 4;
+			if (hasKara) dy += th;
 
-				// Draw text
-				dc.SetTextForeground(wxColour(64,64,64));
-				dc.DrawText(text,dx+1,dy-1);
-				dc.DrawText(text,dx+1,dy+1);
-				dc.DrawText(text,dx-1,dy-1);
-				dc.DrawText(text,dx-1,dy+1);
-				dc.SetTextForeground(wxColour(255,255,255));
-				dc.DrawText(text,dx,dy);
-			}
-		 done:
-		
+			// Draw text
+			dc.SetTextForeground(wxColour(64,64,64));
+			dc.DrawText(text,dx+1,dy-1);
+			dc.DrawText(text,dx+1,dy+1);
+			dc.DrawText(text,dx-1,dy-1);
+			dc.DrawText(text,dx-1,dy+1);
+			dc.SetTextForeground(wxColour(255,255,255));
+			dc.DrawText(text,dx,dy);
+		}
+done:
+
 		cdc.Blit(0,0,w,h,&dc,0,0);
 	}
 }
@@ -1652,7 +1652,7 @@ int AudioDisplay::GetBoundarySnap(int ms,int rangeX,bool shiftHeld,bool start, b
 	int halfframe=Notebook::GetTab()->Video->avtpf/2;
 	// Keyframe boundaries
 	wxArrayInt boundaries;
-	
+
 	bool snapKey = Options.GetBool(_T("Audio Snap To Keyframes"));
 	if (shiftHeld) snapKey = !snapKey;
 	if (snapKey && provider->KeyFrames.size()>0 && Options.GetBool(_T("Audio Draw Keyframes"))) {
@@ -1664,7 +1664,7 @@ int AudioDisplay::GetBoundarySnap(int ms,int rangeX,bool shiftHeld,bool start, b
 			if (keyX >= 0 && keyX < w) {boundaries.Add(ZEROIT(keyMS-halfframe));}
 		}
 	}
-	
+
 	// Other subtitles' boundaries
 	int inactiveType = Options.GetInt(_T("Audio Inactive Lines Display Mode"));
 	bool snapLines = Options.GetBool(_T("Audio Snap To Other Lines"));
@@ -1688,13 +1688,13 @@ int AudioDisplay::GetBoundarySnap(int ms,int rangeX,bool shiftHeld,bool start, b
 			if (j == line_n) continue;
 			shade = grid->GetDial(j);
 
-			
-				// Get coordinates
-				shadeX1 = GetXAtMS(shade->Start.mstime);
-				shadeX2 = GetXAtMS(shade->End.mstime);
-				if (shadeX1 >= 0 && shadeX1 < w) boundaries.Add(shade->Start.mstime);
-				if (shadeX2 >= 0 && shadeX2 < w) boundaries.Add(shade->End.mstime);
-			
+
+			// Get coordinates
+			shadeX1 = GetXAtMS(shade->Start.mstime);
+			shadeX2 = GetXAtMS(shade->End.mstime);
+			if (shadeX1 >= 0 && shadeX1 < w) boundaries.Add(shade->Start.mstime);
+			if (shadeX2 >= 0 && shadeX2 < w) boundaries.Add(shade->End.mstime);
+
 		}
 	}
 
@@ -1732,7 +1732,7 @@ void AudioDisplay::OnSize(wxSizeEvent &event) {
 		UpdatePosition(PositionSample / samples);
 	}
 	UpdateImage();
-	
+
 	// Update scrollbar
 	UpdateScrollbar();
 }
@@ -1747,12 +1747,12 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 
 	//wxLogStatus("Isplaying %i", (int)player->IsPlaying());	
 	/*if (!player->IsPlaying()){
-		if(cursorPaint){
-			needImageUpdate=false;
-			Refresh(false);
-			cursorPaint=false;
-		}
-		return;
+	if(cursorPaint){
+	needImageUpdate=false;
+	Refresh(false);
+	cursorPaint=false;
+	}
+	return;
 	}*/
 	wxMutexLocker lock(mutex);
 
@@ -1798,7 +1798,7 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 			if (curpos >= 0 && curpos < GetClientSize().GetWidth()) {
 
 				dc.SetPen(wxPen(Options.GetColour(_T("Audio Play Cursor")),2));
-				
+
 				if (fullDraw) {
 					//dc.Blit(0,0,w,h,&src,0,0);
 					dc.DrawLine(curpos,0,curpos,h);
@@ -1810,7 +1810,7 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 					dc.Blit(oldCurPos-1,0,2,h,&src,oldCurPos-1,0);
 					dc.DrawLine(curpos,0,curpos,h);
 				}
-				
+
 			}
 		}
 		else {
@@ -1847,18 +1847,18 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 ///////////////
 // Change line
 void AudioDisplay::ChangeLine(int delta, bool block) {
-	
-		// Get next line number and make sure it's within bounds
-		
-	if (line_n==0 && delta<0 || line_n== grid->GetCount()-1 && delta>0 ) {return;}
-	    int next = line_n+delta;
-		// Set stuff
-		grid->SelectRow(next);
-		grid->ScrollTo(next-4);
-		Edit->SetIt(next);
 
-		
-	
+	// Get next line number and make sure it's within bounds
+
+	if (line_n==0 && delta<0 || line_n== grid->GetCount()-1 && delta>0 ) {return;}
+	int next = line_n+delta;
+	// Set stuff
+	grid->SelectRow(next);
+	grid->ScrollTo(next-4);
+	Edit->SetIt(next);
+
+
+
 }
 
 
@@ -1873,12 +1873,12 @@ void AudioDisplay::Next(bool play) {
 		//if(Notebook::GetTab()->Video->GetState()==Playing){Notebook::GetTab()->Video->Pause();}
 		ChangeLine(1);}
 
-		if (play){
+	if (play){
 		int start=0,end=0;
 		GetTimesSelection(start,end);
 		Play(start,end);}
-		
-		
+
+
 }
 
 
@@ -1889,12 +1889,12 @@ void AudioDisplay::Prev(bool play) {
 	if(hasKara&&play){
 		whichsyl--;
 		if(whichsyl<0){whichsyl=karaoke->syls.size()-1;ChangeLine(-1);}
-		
-		}else{
-			//if(Notebook::GetTab()->Video->GetState()==Playing){Notebook::GetTab()->Video->Pause();}
-			ChangeLine(-1);}
 
-		if (play) {
+	}else{
+		//if(Notebook::GetTab()->Video->GetState()==Playing){Notebook::GetTab()->Video->Pause();}
+		ChangeLine(-1);}
+
+	if (play) {
 		int start=0,end=0;
 		GetTimesSelection(start,end);
 		Play(start,end);}
@@ -1928,27 +1928,27 @@ bool AudioDisplay::UpdateTimeEditCtrls() {
 	// this is why binary OR instead of logical OR is used.
 	// All three time edits must always be updated.
 
-		Edit->StartEdit->SetTime(curStartMS);
-		Edit->EndEdit->SetTime(curEndMS);
-		return true;
+	Edit->StartEdit->SetTime(curStartMS);
+	Edit->EndEdit->SetTime(curEndMS);
+	return true;
 }
 
 void AudioDisplay::Commit()
-	{
+{
 	bool autocommit=Options.GetBool(_T("Audio Autocommit"));
 	if(hasKara) 
-		{Edit->TextEdit->SetTextS(karaoke->GetText(),true);}
+	{Edit->TextEdit->SetTextS(karaoke->GetText(),true);}
 
 	if (autocommit) 
-		{CommitChanges();}
+	{CommitChanges();}
 	else
-		{UpdateImage(true);}
-	}
+	{UpdateImage(true);}
+}
 
 //////////////////
 // Draw keyframes
 void AudioDisplay::DrawKeyframes(wxDC &dc) {
-	dc.SetPen(wxPen(wxColour(255,0,255),1));
+	dc.SetPen(wxPen(Options.GetColour("Audio Keyframes"),1));
 
 	// Get min and max frames to care about
 	int mintime = GetMSAtX(0);
@@ -1958,19 +1958,19 @@ void AudioDisplay::DrawKeyframes(wxDC &dc) {
 	for (size_t i=0;i<provider->KeyFrames.size();i++) {
 		int cur = ((provider->KeyFrames[i]-5)/10)*10;
 		if(cur>=mintime && cur<=maxtime)
-			{
+		{
 			int x = GetXAtMS(cur);
 			dc.DrawLine(x,0,x,h);
-			}
+		}
 		if(cur>maxtime){break;}
-		
+
 	}
 }
 /*
 void AudioDisplay::OnLostCapture(wxMouseCaptureLostEvent &event)
 {
-	wxLogStatus("lost capture");
-	ReleaseMouse();
+wxLogStatus("lost capture");
+ReleaseMouse();
 
 }
 */
@@ -1978,11 +1978,11 @@ void AudioDisplay::OnLostCapture(wxMouseCaptureLostEvent &event)
 ///////////////
 // Event table
 BEGIN_EVENT_TABLE(AudioDisplay, wxWindow)
-    EVT_MOUSE_EVENTS(AudioDisplay::OnMouseEvent)
-    EVT_PAINT(AudioDisplay::OnPaint)
+	EVT_MOUSE_EVENTS(AudioDisplay::OnMouseEvent)
+	EVT_PAINT(AudioDisplay::OnPaint)
 	EVT_SIZE(AudioDisplay::OnSize)
 	EVT_TIMER(Audio_Update_Timer,AudioDisplay::OnUpdateTimer)
 	EVT_SET_FOCUS(AudioDisplay::OnGetFocus)
 	EVT_KILL_FOCUS(AudioDisplay::OnLoseFocus)
 	//EVT_MOUSE_CAPTURE_LOST(AudioDisplay::OnLostCapture)
-END_EVENT_TABLE()
+	END_EVENT_TABLE()

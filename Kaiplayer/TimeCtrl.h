@@ -2,7 +2,7 @@
 #define TIMECTRL_H_INCLUDED
 
 #include <wx/wx.h>
-#include "timeconv.h"
+#include "SubsTime.h"
 
 
 class TimeCtrl : public wxTextCtrl

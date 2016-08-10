@@ -4,7 +4,7 @@
 #include <wx/wx.h>
 #include <wx/treebook.h>
 #include <wx/listctrl.h>
-#include "dialog_colorpicker.h"
+#include "ColorPicker.h"
 #include <vector>
 class kainoteFrame;
 

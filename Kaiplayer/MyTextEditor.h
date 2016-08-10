@@ -17,7 +17,7 @@ class MTextEditor : public wxWindow
 	void SetTextS(const wxString &text,bool modif=false, bool resetsel = true, bool noevent=false);
 	bool Modified();
 	void GetSelection(long *start, long* end);
-	void SetSelection(int start, int end);
+	void SetSelection(int start, int end, bool noEvent=false);
 	void Replace(int start, int end, wxString rep);
 	void Copy(bool cut=false);
 	void Paste();

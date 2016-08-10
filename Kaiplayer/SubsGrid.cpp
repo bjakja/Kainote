@@ -1,12 +1,12 @@
 ﻿
 #include "SubsGrid.h"
 #include "config.h"
-#include "timeconv.h"
+//#include "timeconv.h"
 #include "EditBox.h"
 #include "kainoteMain.h"
 #include "OpennWrite.h"
 #include "OptionsDialog.h"
-#include "TabDialog.h"
+#include "Tabs.h"
 #include <wx/tokenzr.h>
 #include <wx/event.h>
 #include <algorithm>
@@ -85,6 +85,7 @@ SubsGrid::SubsGrid(wxWindow *parent, const long int id,const wxPoint& pos,const 
 	transl=false;
 	showtl=false;
 	ismenushown=false;
+	Comparsion=NULL;
 	bmp=NULL;
 	numsave=0;
 	file=new SubsFile();
@@ -184,7 +185,14 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 	wxColour selcom=Options.GetColour("Grid Selected Comment");
 	wxColour textcol=Options.GetColour("Grid Text");
 	wxColour collcol=Options.GetColour("Grid Collisions");
+	wxColour SpelcheckerCol=Options.GetColour("Grid Spellchecker");
+	wxColour ComparsionCol=Options.GetColour("Grid comparsion");
+	wxColour ComparsionBGCol=Options.GetColour("Grid comparsion background");
+	wxColour ComparsionBGSelCol=Options.GetColour("Grid comparsion background selected");
+	wxColour ComparsionBGCmntCol=Options.GetColour("Grid comparsion comment background");
+	wxColour ComparsionBGCmntSelCol=Options.GetColour("Grid comparsion comment background selected");
 	wxString chtag=Options.GetString("Grid tag changing char");
+	bool SpellCheckerOn = Options.GetBool("Editbox Spellchecker");
 
 	//mdc.SetBackground(wxBrush(linesCol));
 	//tdc.SetBackground(wxBrush(linesCol));
@@ -221,6 +229,7 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 		if(panelrows > size + 1){scPos=0;}// w przypadku gdy całe napisy są widoczne, wtedy nie skrollujemy i pozycja =0
 	}
 	else if(scrows >= size + 2){
+		bg=true;
 		scrows--;//w przypadku gdy mamy linię przed końcem napisów musimy zaniżyć wynik bo przekroczy tablicę.
 	}
 	SetScrollbar(wxVERTICAL,scPos,panelrows, size + 3);
@@ -300,11 +309,10 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 			strings.Add((!showtl&&transl&&txttl!="")?txttl : txt);
 			if(showtl){strings.Add(txttl);}
 
-			if(Options.GetBool("Editbox Spellchecker") &&
-				(!transl && Dial->Text!="" || transl && Dial->TextTl!="")){
-					if(SpellErrors[i-1].size()<2){
-						CheckText(strings[strings.size()-1],SpellErrors[i-1]);
-					}
+			if(SpellCheckerOn && (!transl && Dial->Text!="" || transl && Dial->TextTl!="")){
+				if(SpellErrors[i-1].size()<2){
+					CheckText(strings[strings.size()-1],SpellErrors[i-1]);
+				}
 			} 
 		}
 
@@ -322,30 +330,32 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 				GridWidth[j]=podz;
 				GridWidth[j+1]=podz;}
 
-			if(!showtl&&j==ilcol-1){GridWidth[j]=w+scHor-posX-(GridWidth[0]+1);}
+			if(!showtl&&j==ilcol-1){GridWidth[j] = w + scHor - posX - (GridWidth[0] + 1);}
+			bool comparsion = (Comparsion && i!=scPos && Comparsion->at(i-1).size()>0);
 
 			if(GridWidth[j]>0){
 				dc.SetPen(*wxTRANSPARENT_PEN);
-				wxColour kol=subsBkCol;
+				wxColour kol= ( comparsion )? ComparsionBGCol :subsBkCol;
 				if(i==scPos||j==0&&states==0){kol=labelBkColN;}
 				else if(j==0&&states==2){kol=labelBkCol;}
 				else if(j==0&&states==1){kol=labelBkColM;}
-				else if(isd&&j!=0){kol=comm;}
+				else if(isd&&j!=0){ kol= ( comparsion )? ComparsionBGCmntCol : comm;}
 
 				if(i>scPos){
 					if(sel.find(i-1)!=sel.end()&&j!=0){
-						kol=seldial; 
-						if(isd&&j!=0){kol=selcom;}
+						if(isd){kol = ( comparsion )? ComparsionBGCmntSelCol : selcom;}
+						else{kol= ( comparsion )? ComparsionBGSelCol : seldial; }
 					}
 				}
 				dc.SetBrush(wxBrush(kol));
 				if(unkstyle && j==4 || shorttime && (j==10||(j==3 && form>ASS))){
-					dc.SetBrush(wxBrush(Options.GetColour("Grid Spellchecker")));
+					dc.SetBrush(wxBrush(SpelcheckerCol));
 				}
 
 				dc.DrawRectangle(posX,posY,GridWidth[j],GridHeight);
 
 				if(i!=scPos && j==ilcol-1 && SpellErrors[i-1].size()>2){
+					dc.SetBrush(wxBrush(SpelcheckerCol));
 					for(size_t k = 1; k < SpellErrors[i-1].size(); k+=2){
 
 						wxString err=strings[j].SubString(SpellErrors[i-1][k], SpellErrors[i-1][k+1]);
@@ -356,27 +366,56 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 						}else{bfw=0;}
 
 						dc.GetTextExtent(err, &fw, &fh, NULL, NULL, &font);
-						dc.SetBrush(wxBrush(Options.GetColour("Grid Spellchecker")));
 						dc.DrawRectangle(posX+bfw+4,posY,fw,GridHeight);
 					}
 
 				}
 
 				bool collis=(i!=scPos && i!=Edit->ebrow+1 && (Dial->Start >= acdial->Start && Dial->Start < acdial->End 
-					|| Dial->End > acdial->Start && Dial->Start <= acdial->End) ); 
-				dc.SetTextForeground( (collis)? collcol : textcol);
+													|| Dial->End > acdial->Start && Dial->Start <= acdial->End) ); 
+				
 
 
 
 				if(form<SRT){isCenter=!(j == 4 || j == 5 || j == 9 || j == 11 || j == 12);}
 				else if(form==TMP){isCenter=!(j == 2);}
 				else{isCenter=!(j == 4);}
+				
+				
+				
+
+				if(comparsion && j==ilcol-1){
+					dc.SetTextForeground(ComparsionCol);
+					
+					for(size_t k = 1; k < Comparsion->at(i-1).size(); k+=2){
+						//if(Comparsion->at(i-1)[k]==Comparsion->at(i-1)[k+1]){continue;}
+						wxString cmp=strings[j].SubString(Comparsion->at(i-1)[k], Comparsion->at(i-1)[k+1]);
+						//wxLogStatus("cmp "+cmp);
+						if(cmp==""){continue;}
+						if(cmp==" "){cmp="_";}
+						wxString bcmp;
+						if(Comparsion->at(i-1)[k]>0){
+							bcmp=strings[j].Mid(0, Comparsion->at(i-1)[k]);
+							dc.GetTextExtent(bcmp, &bfw, &bfh, NULL, NULL, &font);
+						}else{bfw=0;}
+						
+						dc.GetTextExtent(cmp, &fw, &fh, NULL, NULL, &font);
+						if((cmp.StartsWith("T") || cmp.StartsWith("Y") || cmp.StartsWith(L"Ł"))){bfw++;}
+						
+						dc.DrawText(cmp,posX+bfw+3,posY);
+						dc.DrawText(cmp,posX+bfw+5,posY);
+						dc.DrawText(cmp,posX+bfw+3,posY+2);
+						dc.DrawText(cmp,posX+bfw+5,posY+2);
+					}
+					
+				}
+				dc.SetTextForeground( (collis)? collcol : textcol);
 				if(j==ilcol-1 && (strings[j].StartsWith("T") || strings[j].StartsWith("Y") || strings[j].StartsWith(L"Ł"))){posX++;}
 				cur = wxRect(posX+4,posY,GridWidth[j]-7,GridHeight);
 				dc.SetClippingRegion(cur);
 				dc.DrawLabel(strings[j],cur,isCenter ? wxALIGN_CENTER : (wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT));
 				dc.DestroyClippingRegion();
-
+				
 				if(j!=0){posX+=GridWidth[j]+1;}
 			}
 		}
@@ -526,8 +565,8 @@ void SubsGrid::AdjustWidths(int cell)
 void SubsGrid::Clearing()
 {
 	sel.clear();
-
-	wxDELETE(file);
+	SAFE_DELETE(Comparsion);
+	SAFE_DELETE(file);
 	SpellErrors.clear();
 	Modified=false;
 	first=true;
@@ -711,7 +750,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 	int w,h;
 	GetClientSize (&w, &h);
 
-	//wxLogStatus("lines %i", event.GetLinesPerAction());
+
 
 	bool shift = event.ShiftDown();
 	bool alt = event.AltDown();
@@ -742,7 +781,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 		if(curX<=GridWidth[0]){
 			mtimerow=row;
 			Refresh(false);
-			//wxLogStatus("mark");
+
 		}else{
 			ContextMenu(event.GetPosition());
 		}
@@ -844,7 +883,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 						vczas=GetDial(row)->End.mstime; isstart=false;}
 					else{vczas=GetDial(row)->Start.mstime; isstart=true;}
 					if(ctrl){vczas-=1000;SelectRow(row);}
-					pan->Video->Seek(MAX(0,vczas),isstart);
+					pan->Video->Seek(MAX(0,vczas),isstart,true,false);
 					if(Edit->ABox){Edit->ABox->audioDisplay->UpdateImage(true);}
 				}
 			}
@@ -995,9 +1034,9 @@ wxString kkk=grid->GetSInfo("TLMode");
 //wxFFile file;
 //file.Open(grid->fn, "a+");
 //wxString tmppath="\\?\\"+grid->fn;
-//wxLogStatus("przed stworzeniem pliku");
+
 HANDLE ffile=CreateFile(grid->fn.fn_str(), GENERIC_WRITE, FILE_SHARE_WRITE,NULL, OPEN_EXISTING, 0, NULL);
-//wxLogStatus("stworzyło plik");
+
 //wxMutex mutex1;
 DWORD savesize=0;
 wxMutex mutex2;
@@ -1006,7 +1045,7 @@ while(1)
 if(grid->acline>=grid->GetCount()){break;}
 Dialogue *dial=grid->GetDial(grid->acline++);
 //grid->acline++;
-//wxLogStatus("acline %i", grid->acline);
+
 wxString wynik;
 if(kkk!=""){
 if(kkk!="Translated" && dial->TextTl!=""){
@@ -1217,12 +1256,7 @@ void SubsGrid::ChangeTime()
 
 
 	std::map<Dialogue *,int,compare> tmpmap;
-	/*if(CT>0||pe>19){
-		for (int i=0; i<GetCount(); i++)
-		{
-			tmpmap[GetDial(i)]=i;
-		}
-	}*/
+	
 
 	if(seb!=0){
 		int answer=wxMessageBox(wxString::Format(_("Czy naprawdę chcesz przesuwać tylko czasy %s?"), 
@@ -1259,7 +1293,7 @@ void SubsGrid::ChangeTime()
 			styl.Trim(false);
 			styl.Trim(true);
 			stcomp.Add(styl);
-			//wxLogStatus(styl);
+
 			g++;
 		}
 	}
@@ -1392,6 +1426,7 @@ void SubsGrid::ChangeTime()
 	SpellErrors.clear();
 	SetModified();
 	if(form>TMP){RepaintWindow(START|END);}else{Refresh(false);}
+	wxBell();
 }
 
 
@@ -1766,7 +1801,7 @@ void SubsGrid::AddSInfo(wxString SI, wxString val, bool save)
 	SInfo *oldinfo=NULL;
 	int ii= -1;
 	oldinfo = GetSInfoP(key,&ii);
-	//wxLogStatus("id oi %i" + key ,oldinfo); 
+
 	if(!oldinfo || save){
 		oldinfo=new SInfo(key,val);
 		if(ii<0){
@@ -1798,6 +1833,9 @@ void SubsGrid::SetModified(bool redit, bool dummy, bool refvid)
 	if(file->IsNotSaved()){
 		if(file->Iter()<1||!Modified){
 			Modified=true;
+		}
+		if(Comparsion){
+			Kai->Tabs->SubsComparsion();
 		}
 
 		Kai->Label(file->Iter()+1);
@@ -1892,7 +1930,7 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 				//żeby później źle tego nie zinterpretować
 				sinfoo=1;
 			}
-			else if(!token.StartsWith(";")&&sinfoo==0&&token.Find(':')!=wxNOT_FOUND){
+			else if(!token.StartsWith(";") && !token.StartsWith("[") && sinfoo==0 && token.Find(':')!=wxNOT_FOUND){
 				AddSInfo(token);
 			}
 		}
@@ -1977,12 +2015,9 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 	RepaintWindow();
 
 	Edit->SetIt(active,false,false);
-	//wxLogMessage("setit");
+	
 	Edit->HideControls();
-	//wxLogMessage("hide controls");
-	//wxLogMessage("repaint");
-	//AdjustWidths();
-	//wxLogMessage("all");
+	
 	file->EndLoad();
 	if(Kai->ss && form==ASS){Kai->ss->LoadAssStyles();}
 
@@ -1993,7 +2028,7 @@ void SubsGrid::SetStartTime(int stime)
 
 	wxArrayInt sels=GetSels();
 	for(size_t i=0;i<sels.size();i++){
-		Dialogue *dialc=file->CopyDial(sels[i]);
+		Dialogue *dialc=CopyDial(sels[i]);
 		dialc->Start.NewTime(stime);
 	}
 	if(sels.size()){
@@ -2006,7 +2041,7 @@ void SubsGrid::SetEndTime(int etime)
 {
 	wxArrayInt sels=GetSels();
 	for(size_t i=0;i<sels.size();i++){
-		Dialogue *dialc=file->CopyDial(sels[i]);
+		Dialogue *dialc=CopyDial(sels[i]);
 		dialc->End.NewTime(etime);
 	}
 	if(sels.size()){
@@ -2036,7 +2071,7 @@ bool SubsGrid::SetTlMode(bool mode)
 		AddSInfo("TLMode", "Yes");
 		transl=true;
 		Kai->MenuBar->Enable(SaveTranslation,true);
-		SpellErrors.clear();
+		
 		Refresh(false);
 
 	}else{
@@ -2073,6 +2108,7 @@ bool SubsGrid::SetTlMode(bool mode)
 		showtl=false;
 		Kai->MenuBar->Enable(SaveTranslation,false);
 	}
+	SpellErrors.clear();
 	Refresh(false);
 	if(Notebook::GetTab()->Video->GetState()!=None){Notebook::GetTab()->Video->OpenSubs(SaveText());
 	if(Notebook::GetTab()->Video->GetState()==Paused){Notebook::GetTab()->Video->Render();}}
@@ -2137,15 +2173,8 @@ void SubsGrid::CheckText(wxString text, wxArrayInt &errs)
 {
 	if(!Kai->SC){Options.SetBool("Editbox Spellchecker",Kai->SpellcheckerOn());}
 	if(Kai->SC){
-		//Dialogue *dial=GetDial(rw);
+		
 		wxString notchar="/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{}";
-		//wxString text=(transl)? dial->TextTl : dial->Text;
-
-		/*if (hideover){
-		wxRegEx reg("\\{[^\\{]*\\}",wxRE_ADVANCED);
-		reg.ReplaceAll(&text,"*");
-		}*/
-
 		text+=" ";
 		bool block=false;
 		wxString word="";
@@ -2287,7 +2316,7 @@ wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible)
 		*visible=false;
 	}
 
-	//wxLogStatus("lines %i %i %i", _time, file->dial[Edit->ebrow].Start.mstime, file->dial[Edit->ebrow].End.mstime);
+
 	for(int i=0; i<GetCount(); i++){
 		Dialogue *dial=GetDial(i);
 		if(_time >= dial->Start.mstime && _time <= dial->End.mstime){
@@ -2333,8 +2362,9 @@ wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible)
 		all-= (GetSInfo("TLMode")=="Yes" && dial->TextTl!="")? 
 			dial->TextTl.Len() : dial->Text.Len();
 		EBText->x=all-2;
+
 	}
-	//wxLogMessage(txt);
+
 	return txt;
 }
 
@@ -2392,7 +2422,7 @@ wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible)
 //	double fontsize = vals[3]*32;
 //	double spacing = vals[2]*32;
 //		
-//	//wxLogStatus(txt);
+
 //
 //	HDC thedc = CreateCompatibleDC(0);
 //	if (!thedc) return rc;
@@ -2450,7 +2480,7 @@ wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible)
 //	height = (vals[1] / 100.0) * (height/32);
 //	descent = (vals[1] / 100.0) * (descent/32);
 //	extlead = (vals[1] / 100.0) * (extlead/32);
-//	//wxLogStatus("vals %i %i %i %i", vals[0],vals[1], (int)width, an);
+
 //	
 //	int resx=0, resy=0;
 //	GetASSRes(&resx, &resy);
@@ -2488,7 +2518,7 @@ wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible)
 //	Notebook::GetTab()->Video->GetClientSize(&w,&h);
 //	float wspx=(float)(w-1)/(float)resx;
 //	float wspy=(float)(h-45)/(float)resy;
-//	//wxLogStatus("vidsize %f %f", wspx, wspy);
+
 //	height = height + (descent +extlead);
 //	rc.width= width;// *wspx;
 //	rc.height= height;// *wspy;
@@ -2503,7 +2533,7 @@ void SubsGrid::OnBcktimer(wxTimerEvent &event)
 	TabPanel *pan=(TabPanel*)GetParent();
 	wxLogStatus(_("Autozapis"));
 	wxString path;
-	wxString ext=(form<SRT)? "ass" : (form=SRT)? "srt" : "txt";
+	wxString ext=(form<SRT)? "ass" : (form==SRT)? "srt" : "txt";
 
 	path<<Options.pathfull<<"\\Subs\\"<<pan->SubsName.BeforeLast('.')
 		<<"_"<<Notebook::GetTabs()->FindPanel(pan)<<"_"<< numsave <<"."<<ext;
@@ -2562,7 +2592,7 @@ int SubsGrid::CalcChars(wxString txt, wxString *lines, bool *bad)
 		(*lines)<<linechars<<"/";
 	}
 
-	//wxLogStatus("%i", chars);
+
 	return chars;
 }
 

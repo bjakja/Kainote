@@ -8,7 +8,7 @@
 #include "SubsDialogue.h"
 #include "MyTextEditor.h"
 #include "NumCtrl.h"
-#include "audio_box.h"
+#include "AudioBox.h"
 #include <d3dx9math.h>
 
 class kainoteFrame;
@@ -72,7 +72,7 @@ public:
 	bool FindVal(wxString wval, wxString *returnval, wxString text="", bool *endsel=0);
 	void HideControls();
 	void UpdateChars(wxString text);
-	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *an, double *move, wxString* movetimes);
+	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *an, double *move, wxString* movetimes=NULL);
 
 	Grid *grid;
 	int ebrow;
@@ -106,6 +106,7 @@ public:
 	wxButton* Bcpall;
 	wxButton* Bcpsel;
 	wxButton* Bhide;
+	wxToggleButton* AutoMoveTags;
 	wxChoice* Ban;
 
 
@@ -122,18 +123,16 @@ public:
 
 	Dialogue *line;
 
-
+	bool splittedTags;
 	bool OnVideo;
 	int Visual;
 
 private:
-
-	wxString lasttag;
 	bool InBracket;
 	wxPoint Placed;
+	wxString lasttag;
 	wxPoint dumplaced;
 	int cursorpos;
-	bool splittedTags;
 
 	wxBoxSizer* BoxSizer2;
 	wxBoxSizer* BoxSizer3;
@@ -163,6 +162,7 @@ private:
 	void OnColorChange(wxCommandEvent& event);
 	void OnButtonTag(wxCommandEvent& event);
 	void OnCursorMoved(wxCommandEvent& event);
+	void OnAutoMoveTags(wxCommandEvent& event);
 	void DoTooltips();
 
 	bool isdetached;
@@ -188,7 +188,8 @@ enum{
 	ID_COL3,
 	ID_COL4,
 	MENU_ZATW,
-	MENU_NLINE
+	MENU_NLINE,
+	ID_AUTOMOVETAGS
 	
 };
 

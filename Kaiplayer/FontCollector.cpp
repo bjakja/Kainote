@@ -1,8 +1,8 @@
 ﻿
 #include "FontCollector.h"
-#include "kainoteApp.h"
-#include "config.h"
-#include "mkv_wrap.h"
+#include "KainoteApp.h"
+#include "Config.h"
+#include "MKVWrap.h"
 #include <wx/fontenum.h>
 #include <wx/wfstream.h>
 #include <wx/zipstrm.h>

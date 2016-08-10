@@ -1,7 +1,7 @@
 ﻿
 #include "ProgressDialog.h"
 #include "kainoteApp.h"
-#include "timeconv.h"
+//#include "timeconv.h"
 //#define UNICODE
 #include "ShObjIdl.h"
 

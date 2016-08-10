@@ -1,5 +1,5 @@
 #include "BitmapButton.h"
-#include "config.h"
+#include "Config.h"
 
 BitmapButton::BitmapButton(wxWindow* parent, wxBitmap bitmap,wxBitmap bitmap1, int id, const wxPoint& pos, const wxSize& size)
 	:  wxStaticBitmap(parent, id, bitmap,pos,size)

@@ -2,7 +2,7 @@
 #include "TimeCtrl.h"
 #include <wx/regex.h>
 #include <wx/clipbrd.h>
-#include "config.h"
+#include "Config.h"
 #include "NumCtrl.h"
 
 TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, const wxPoint& pos,const wxSize& size, long style,const wxValidator& validator, const wxString& name)

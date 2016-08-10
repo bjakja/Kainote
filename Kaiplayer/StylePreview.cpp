@@ -7,7 +7,7 @@
 
 StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const wxSize& size)
 	: wxWindow(parent, id, pos, size) 
-	{
+{
 	wxColour kol1=Options.GetColour("Style Preview Color1");
 	wxColour kol2=Options.GetColour("Style Preview Color2");
 	b=kol1.Blue();
@@ -17,14 +17,14 @@ StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const w
 	b1=kol2.Blue();
 	g1=kol2.Green();
 	r1=kol2.Red();
-	
+
 	bmpframe=NULL;
 	instance=NULL;
 	//VA=NULL;
-    PrevText=NULL;
+	PrevText=NULL;
 	vobsub=NULL;
 	styl=NULL;
-	}
+}
 StylePreview::~StylePreview()
 {
 	if (instance) csri_close(instance);
@@ -35,13 +35,13 @@ StylePreview::~StylePreview()
 }
 
 void StylePreview::DrawPreview(Styles *style)
-	{
+{
 	wxMutexLocker lock(mutex);
 	if(style){
 		wxDELETE(styl);
 		styl=style->Copy();}
 	if (instance) csri_close(instance);
-	 //wxMessageBox("bitmap filled");
+	//wxMessageBox("bitmap filled");
 	instance = NULL;
 	//wxDELETE(VA);
 	wxDELETE(bmpframe);
@@ -51,7 +51,7 @@ void StylePreview::DrawPreview(Styles *style)
 
 	// Select renderer
 	//if(!vobsub){
-		vobsub = csri_renderer_default();
+	vobsub = csri_renderer_default();
 	//}
 	if(!vobsub){wxLogStatus(_("CSRI odmówiło posłuszeństwa."));return;}
 
@@ -65,7 +65,7 @@ void StylePreview::DrawPreview(Styles *style)
 		wxLogStatus(_("Instancja VobSuba nie utworzyła się."));return;}
 
 	unsigned char *data= (unsigned char *)malloc(width * height * 4);
-		
+
 
 	bool ch=false;
 	bool ch1=false;
@@ -82,9 +82,9 @@ void StylePreview::DrawPreview(Styles *style)
 			data[k+2] = (ch)? r : r1;
 			data[k+3] = 255;
 		}
-			
+
 	}
-		
+
 	csri_frame frame;
 	frame.planes[0]=data;
 	frame.strides[0]=pitch;
@@ -112,18 +112,18 @@ void StylePreview::DrawPreview(Styles *style)
 	spd.pitch=pitch;
 	spd.vidrect=CRect(0,0,width,height);
 	if(!VA->RequestFormat(spd,25.0f)){wxMessageBox("Request format failed.");return;}
-	
+
 	VA->RenderFrame(data,0);*/
 
 	wxImage preview(width, height, true);
 	unsigned char *data1= (unsigned char *)malloc(width * height * 3);
 	//int bb,gg,rr;
 	for(int i=0;i<(width * height);i++)
-		{
+	{
 		data1[i*3]=data[(i*4)+2];
 		data1[(i*3)+1]=data[(i*4)+1];
 		data1[(i*3)+2]=data[i*4];
-		}
+	}
 	preview.SetData(data1);
 	//wxLogStatus("set data");
 	bmpframe=new wxBitmap(preview);
@@ -132,10 +132,10 @@ void StylePreview::DrawPreview(Styles *style)
 	//wxLogStatus("refresh");
 	free(data);
 	data=0;
-	}
+}
 
 void StylePreview::OnPaint(wxPaintEvent& event)
-	{
+{
 	if (!bmpframe) return;
 
 	wxPaintDC dc(this);
@@ -144,7 +144,7 @@ void StylePreview::OnPaint(wxPaintEvent& event)
 	memdc.SelectObject(*bmpframe);
 	dc.Blit(0, 0, bmpframe->GetWidth(), bmpframe->GetHeight(), &memdc, 0, 0);
 
-	}
+}
 
 void StylePreview::SubsText(std::vector<byte> &buf)
 {
@@ -154,15 +154,15 @@ void StylePreview::SubsText(std::vector<byte> &buf)
 	//styl.MarginV="0";
 	wxString subs((wchar_t)0xFEFF);
 	subs<<"[Script Info]\r\nPlayResX: "<<width<<"\r\nPlayResY: "<<height<<"\r\nScaledBorderAndShadow: Yes\r\nScriptType: v4.00+\r\nWrapStyle: 0"
-         <<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\r\n"
-		 <<styl->styletext()<<"\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,0:01:26.00,"<<styl->Name<<",,0000,0000,0000,,"<<Options.GetString("Preview Text");
+		<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\r\n"
+		<<styl->styletext()<<"\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,0:01:26.00,"<<styl->Name<<",,0000,0000,0000,,"<<Options.GetString("Preview Text");
 
-		wxScopedCharBuffer buffer= subs.mb_str(wxConvUTF8);
-		int size = strlen(buffer);
-        buf.clear();
-		buf.resize(size);
-		memcpy(&buf[0],buffer,size);
-		
+	wxScopedCharBuffer buffer= subs.mb_str(wxConvUTF8);
+	int size = strlen(buffer);
+	buf.clear();
+	buf.resize(size);
+	memcpy(&buf[0],buffer,size);
+
 }
 
 void StylePreview::OnMouseEvent(wxMouseEvent& event)
@@ -185,4 +185,4 @@ void StylePreview::OnMouseEvent(wxMouseEvent& event)
 BEGIN_EVENT_TABLE(StylePreview, wxWindow)
 	EVT_PAINT(StylePreview::OnPaint)
 	EVT_MOUSE_EVENTS(StylePreview::OnMouseEvent)
-END_EVENT_TABLE()
+	END_EVENT_TABLE()

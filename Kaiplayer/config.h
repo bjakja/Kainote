@@ -9,7 +9,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
-#include "styles.h"
+#include "Styles.h"
 #include <wx/utils.h> 
 #undef wxBITMAP_PNG
 

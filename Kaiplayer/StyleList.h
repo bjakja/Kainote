@@ -3,7 +3,7 @@
 
 #include <wx/wx.h>
 #include <vector>
-#include "styles.h"
+#include "Styles.h"
 
 
 class StyleList : public wxWindow

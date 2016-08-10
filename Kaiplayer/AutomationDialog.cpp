@@ -2,8 +2,8 @@
 #include <wx/clrpicker.h>
 #include <wx/gbsizer.h>
 #include "AutomationDialog.h"
-#include "dialog_colorpicker.h"
-#include "styles.h"
+#include "ColorPicker.h"
+#include "Styles.h"
 #include "NumCtrl.h"
 
 namespace Auto{

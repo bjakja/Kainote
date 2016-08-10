@@ -539,10 +539,14 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 		
 		DrawFld(bmpDC,w,bitmaph);
 		
-
 		
 		
 		dc.Blit(0,-scPos,w,h+scPos,&bmpDC,0,scPos);
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.SetPen(wxPen((HasFocus())? wxColour("#3D7BAD") : wxColour("#ABADB3")/*wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT)*/));
+		dc.DrawRectangle(0,0,w,h);
+		dc.SetPen(wxPen("#FFFFFF"));
+		dc.DrawRectangle(1,1,w-2,h-2);
 		
 	}
 	
@@ -556,11 +560,10 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h)
 	
 
 	//dc.SetPen(wxPen((HasFocus())? "#FFFFFF" : "#A4C9E3"));
-	dc.SetPen(wxPen((HasFocus())? wxColour("#3D7BAD") : wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT)));
+	//dc.SetPen(wxPen((HasFocus())? wxColour("#3D7BAD") : wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT)));
 	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
+	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.DrawRectangle(0,0,w,h);
-	dc.SetPen(wxPen("#FFFFFF"));
-	dc.DrawRectangle(1,1,w-2,h-2);
 	dc.SetPen(wxPen("#000000"));
 	
 	//if(MText==""){return;}
@@ -849,9 +852,9 @@ void MTextEditor::GetSelection(long *start, long *end)
 	*end=(iscur)? Cursor.x : Selend.x;
 }
 
-void MTextEditor::SetSelection(int start, int end)
+void MTextEditor::SetSelection(int start, int end, bool noEvent)
 {
-	if(Cursor.x!=end || Selend.x!=start){wxCommandEvent evt(CURSOR_MOVED,GetId());AddPendingEvent(evt);}
+	if((Cursor.x!=end || Selend.x!=start) && !noEvent){wxCommandEvent evt(CURSOR_MOVED,GetId());AddPendingEvent(evt);}
 	Cursor.x=end;
 	Selend.x=start;
 	Selend.y=FindY(Selend.x);

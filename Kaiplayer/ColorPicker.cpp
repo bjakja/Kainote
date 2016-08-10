@@ -1,5 +1,5 @@
 ﻿
-#include "config.h"
+#include "Config.h"
 
 #include <wx/image.h>
 #include <wx/statbox.h>
@@ -13,10 +13,10 @@
 #include <wx/dcscreen.h>
 #include <wx/settings.h>
 #include <wx/clipbrd.h>
-#include "dialog_colorpicker.h"
-#include "styles.h"
-#include "colorspace.h"
-#include "kainoteApp.h"
+#include "ColorPicker.h"
+#include "Styles.h"
+#include "ColorSpace.h"
+#include "KainoteApp.h"
 
 #include <stdio.h>
 
@@ -583,8 +583,16 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, wxColour initial_color)
 	screen_dropper_icon->Connect(wxEVT_MOTION, wxMouseEventHandler(DialogColorPicker::OnDropperMouse), 0, this);
 	screen_dropper_icon->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DialogColorPicker::OnDropperMouse), 0, this);
 	screen_dropper_icon->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(DialogColorPicker::OnDropperMouse), 0, this);
-
-	
+	Connect(SELECTOR_RGB_R, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeRGB);
+	Connect(SELECTOR_RGB_G, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeRGB);
+	Connect(SELECTOR_RGB_B, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeRGB);
+	Connect(SELECTOR_HSL_H, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeHSL);
+	Connect(SELECTOR_HSL_S, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeHSL);
+	Connect(SELECTOR_HSL_L, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeHSL);
+	Connect(SELECTOR_HSV_H, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeHSV);
+	Connect(SELECTOR_HSV_S, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeHSV);
+	Connect(SELECTOR_HSV_V, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeHSV);
+	Connect(SELECTOR_ALPHA_INPUT, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeAlpha);
 }
 
 
@@ -881,18 +889,8 @@ wxBitmap *DialogColorPicker::MakeAlphaSlider()
 
 
 BEGIN_EVENT_TABLE(DialogColorPicker, wxDialog)
-	EVT_BUTTON(SELECTOR_RGB_R, DialogColorPicker::OnChangeRGB)
-	EVT_BUTTON(SELECTOR_RGB_G, DialogColorPicker::OnChangeRGB)
-	EVT_BUTTON(SELECTOR_RGB_B, DialogColorPicker::OnChangeRGB)
-	EVT_BUTTON(SELECTOR_HSL_H, DialogColorPicker::OnChangeHSL)
-	EVT_BUTTON(SELECTOR_HSL_S, DialogColorPicker::OnChangeHSL)
-	EVT_BUTTON(SELECTOR_HSL_L, DialogColorPicker::OnChangeHSL)
-	EVT_BUTTON(SELECTOR_HSV_H, DialogColorPicker::OnChangeHSV)
-	EVT_BUTTON(SELECTOR_HSV_S, DialogColorPicker::OnChangeHSV)
-	EVT_BUTTON(SELECTOR_HSV_V, DialogColorPicker::OnChangeHSV)
 	EVT_TEXT(SELECTOR_ASS_INPUT, DialogColorPicker::OnChangeASS)
 	EVT_TEXT(SELECTOR_HTML_INPUT, DialogColorPicker::OnChangeHTML)
-	EVT_BUTTON(SELECTOR_ALPHA_INPUT, DialogColorPicker::OnChangeAlpha)
 	EVT_COMMAND(SELECTOR_SPECTRUM, wxSPECTRUM_CHANGE, DialogColorPicker::OnSpectrumChange)
 	EVT_COMMAND(SELECTOR_SLIDER, wxSPECTRUM_CHANGE, DialogColorPicker::OnSliderChange)
 	EVT_COMMAND(SELECTOR_ALPHA_SLIDER, wxSPECTRUM_CHANGE, DialogColorPicker::OnAlphaSliderChange)

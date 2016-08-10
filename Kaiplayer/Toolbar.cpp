@@ -1,8 +1,8 @@
 ﻿
 //#include "Toolbar.h"
-#include "config.h"
+#include "Config.h"
 #include "Hotkeys.h"
-#include "kainoteApp.h"
+#include "KainoteApp.h"
 #include "wx/utils.h"
 
 KaiToolbar::KaiToolbar(wxWindow *Parent, wxMenuBar *mainm, int id, bool _orient)

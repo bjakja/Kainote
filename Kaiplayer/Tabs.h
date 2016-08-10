@@ -19,7 +19,7 @@ class Notebook : public wxWindow
 		void AddPage(bool refresh=true);
 		void SetPageText(int page, wxString label);
 		void ChangePage(int page);
-		
+		TabPanel *GetSecondPage();
 		int GetSelection();
 		int GetOldSelection();
 		size_t Size();
@@ -31,6 +31,7 @@ class Notebook : public wxWindow
 		int GetHeight();
 		void ChangeActiv();
 		void RefreshBar();
+		void SubsComparsion();
 
 		size_t iter;
 		bool block;
@@ -50,6 +51,7 @@ class Notebook : public wxWindow
 		void OnEraseBackground(wxEraseEvent &event);
 		void OnCharHook(wxKeyEvent& event);
 		void CalcSizes();
+		void CompareTexts(wxString &first, wxString &second, wxArrayInt &firstCompare, wxArrayInt &secondCompare);
 		int TabHeight;
 		size_t olditer;
 		int over;
@@ -61,24 +63,29 @@ class Notebook : public wxWindow
 		bool plus;
 		bool allvis;
 		bool arrow;
+		bool hasCompare;
+		int compareFirstTab;
+		int compareSecondTab;
 		int splitline;
 		int splititer;
 		int oldtab;
+		int oldI;
 		wxDialog* sline;
 		wxFont font;
 		//wxFrame *TD;
 		std::vector<TabPanel*> Pages;
 		wxArrayInt Tabsizes;
 		wxArrayString Names;
-		static HHOOK g_SSHook;  
-		static LRESULT CALLBACK BlockSSaver( int code, WPARAM wParam, LPARAM lParam );
+		HHOOK Hook;  
+		static LRESULT CALLBACK PauseOnMinimalize( int code, WPARAM wParam, LPARAM lParam );
 
 		DECLARE_EVENT_TABLE()
 	};
 
 enum{
 	MENU_CHOOSE=12347,
-	MENU_SAVE=23677
+	MENU_SAVE=23677,
+	MENU_COMPARE=16888
 	};
 
 #endif

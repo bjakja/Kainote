@@ -1,6 +1,6 @@
 ﻿
 
-#include "dshowplayer.h"
+#include "DShowPlayer.h"
 #include "Videobox.h"
 
 #include <Dvdmedia.h>

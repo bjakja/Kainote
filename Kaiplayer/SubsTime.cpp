@@ -1,6 +1,6 @@
-#include "timeconv.h"
-#include "config.h"
-#include "KaraokeSplitting.h"
+#include "SubsTime.h"
+#include "Config.h"
+#include "KaraokeSplitting.h"//zeroit
 
 
 STime::STime(){

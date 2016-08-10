@@ -1,7 +1,7 @@
 #ifndef SUBSDIALOGUE_H_INCLUDED
 #define SUBSDIALOGUE_H_INCLUDED
 
-#include "timeconv.h"
+#include "SubsTime.h"
 #include <wx/colour.h>
 #include <vector>
 

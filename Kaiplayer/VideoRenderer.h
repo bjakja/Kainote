@@ -78,7 +78,7 @@ class VideoRend : public wxWindow
 		void PlayLine(int start, int end);
 		void Pause();
 		void Stop();
-        void SetPosition(int time, bool starttime=true, bool corect=true);
+        void SetPosition(int time, bool starttime=true, bool corect=true, bool reloadSubs=true);
 
        
 		int GetCurrentPosition();
@@ -100,9 +100,9 @@ class VideoRend : public wxWindow
 		void SetEvent(wxMouseEvent& event);
 		wxArrayString GetStreams();
 		void SetVisual(int start, int end, bool remove=false);
-		//void EndofStream();
+		void SetVisual();
 		byte *GetFramewithSubs(bool subs, bool *del);
-		void UpdateRects(bool bar);
+		bool UpdateRects(bool bar);
 		LPDIRECT3DSURFACE9 MainStream;
 		LPDIRECT3DDEVICE9 d3device;
 		D3DFORMAT d3dformat;

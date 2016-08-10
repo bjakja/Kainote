@@ -45,9 +45,9 @@
 #include <wx/bitmap.h>
 #include <stdint.h>
 
-#include "audio_spectrum.h"
+#include "AudioSpectrum.h"
 //#include "AVSAudio.h"
-#include "audio_player_dsound2.h"
+#include "AudioPlayerDSound.h"
 #include "SubsDialogue.h"
 #include "KaraokeSplitting.h"
 

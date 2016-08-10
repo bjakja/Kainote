@@ -1,8 +1,8 @@
 ﻿
 #include "ChangeTime.h"
-#include "config.h"
+#include "Config.h"
 #include "Stylelistbox.h"
-#include "kainoteMain.h"
+#include "KainoteMain.h"
 #include "EditBox.h"
 
 
@@ -135,7 +135,7 @@ CTwindow::~CTwindow()
 void CTwindow::Contents(bool addopts)
 {
 	bool state;
-	if(!addopts){
+	//if(addopts){
 		form=Kai->GetTab()->Grid1->form;
 		if(form<SRT){state=true;
 			if(WhichLines->GetCount()<5){
@@ -159,7 +159,7 @@ void CTwindow::Contents(bool addopts)
 		videotime->Enable(state);
 		state=(Kai->GetTab()->Edit->ABox && Kai->GetTab()->Edit->ABox->audioDisplay->hasMark);
 		audiotime->Enable(state);
-	}
+	//}
 	if(LeadIn){
 		state=(form!=TMP);
 		LeadIn->Enable(state);
@@ -167,7 +167,7 @@ void CTwindow::Contents(bool addopts)
 		Continous->Enable(state);
 		SnapKF->Enable(state && Kai->GetTab()->Video->VFF);
 	}
-	RefVals((addopts)? 0 : this);
+	if(addopts){RefVals();}
 	
 }
 
@@ -210,11 +210,11 @@ void CTwindow::OnOKClick(wxCommandEvent& event)
 	}//else{int pe = Options.GetInt("Postprocessor enabling"); if(pe>=16){Options.SetInt("Postprocessor enabling", pe^ 16);} }
 	int acid=event.GetId();
 	if (acid==ID_MOVE){
-	Kai->GetTab()->Grid1->ChangeTime();
-	wxBell();}
-	else if(acid==ID_CLOSE){
-	Hide();
-	Kai->GetTab()->BoxSizer1->Layout();}
+		Kai->GetTab()->Grid1->ChangeTime();
+	}else if(acid==ID_CLOSE){
+		Hide();
+		Kai->GetTab()->BoxSizer1->Layout();
+	}
 	Kai->GetTab()->Grid1->SetFocus();
 }
 
@@ -295,7 +295,7 @@ void CTwindow::RefVals(CTwindow *from)
 		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,22999); 
 		CollapsePane(evt);
 	}
-	if(LeadIn){
+	if(LeadIn && from && from->LeadIn){
 		LeadIn->SetValue((from)? from->LeadIn->GetValue() : (enables & 1)>0);
 		LeadOut->SetValue((from)? from->LeadOut->GetValue() : (enables & 2)>0);
 		Continous->SetValue((from)? from->Continous->GetValue() : (enables & 4)>0);
@@ -314,17 +314,20 @@ void CTwindow::RefVals(CTwindow *from)
 
 void CTwindow::CollapsePane(wxCommandEvent &event)
 {
-	bool hos = (LeadIn==NULL);
+	bool collapsed = (LeadIn==NULL);
 	int pe = Options.GetInt("Postprocessor enabling");
-	Options.SetInt("Postprocessor enabling", (hos)? pe | 16 : pe ^ 16);
-	if(hos){
+	Options.SetInt("Postprocessor enabling", (collapsed)? pe | 16 : pe ^ 16);
+	
+	if(collapsed){
 		liosizer=new wxStaticBoxSizer(wxHORIZONTAL,this,_("Wstęp i zakończenie"));
 
 		wxFlexGridSizer *fgsizer = new wxFlexGridSizer(2, 4, 4);
 		LeadIn=new wxCheckBox(this, -1, _("Wstęp"),wxDefaultPosition, wxSize(117,-1));
-		LITime=new NumCtrl(this,-1,"200",-10000,10000,true,wxDefaultPosition, wxSize(40,-1));
+		LeadIn->SetValue((pe & 1)>0);
+		LITime=new NumCtrl(this,-1,Options.GetString("Lead in"),-10000,10000,true,wxDefaultPosition, wxSize(40,-1));
 		LeadOut=new wxCheckBox(this, -1, _("Zakończenie"),wxDefaultPosition, wxSize(117,-1));
-		LOTime=new NumCtrl(this,-1,"300",-10000,10000,true,wxDefaultPosition, wxSize(40,-1));
+		LeadOut->SetValue((pe & 2)>0);
+		LOTime=new NumCtrl(this,-1,Options.GetString("Lead out"),-10000,10000,true,wxDefaultPosition, wxSize(40,-1));
 	
 		fgsizer->Add(LeadIn,wxEXPAND|wxLEFT,4);
 		fgsizer->Add(LITime,0);
@@ -335,12 +338,13 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 	
 		consizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Ustaw czasy jako ciągłe"));
 		Continous=new wxCheckBox(this, -1, _("Włącz"));
+		Continous->SetValue((pe & 4)>0);
 
 		consizer->Add(Continous,0,wxEXPAND|wxALL, 2);
 
 		wxFlexGridSizer *fgsizer1 = new wxFlexGridSizer(2, 4, 4);
-		ThresStart=new NumCtrl(this,-1,"0",0,10000,true,wxDefaultPosition, wxSize(40,-1));
-		ThresEnd=new NumCtrl(this,-1,"300",0,10000,true,wxDefaultPosition, wxSize(40,-1));
+		ThresStart=new NumCtrl(this,-1,Options.GetString("Threshold start"),0,10000,true,wxDefaultPosition, wxSize(40,-1));
+		ThresEnd=new NumCtrl(this,-1,Options.GetString("Threshold end"),0,10000,true,wxDefaultPosition, wxSize(40,-1));
 	
 		fgsizer1->Add(new EBStaticText(this,_("Próg czasu początku"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer1->Add(ThresStart,0);
@@ -352,13 +356,14 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		snapsizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Wyrównaj do klatek kluczowych"));
 		SnapKF=new wxCheckBox(this, -1, _("Włącz"));
 		SnapKF->Enable(false);
+		SnapKF->SetValue((pe & 8)>0);
 		snapsizer->Add(SnapKF,0,wxEXPAND|wxALL, 2);
 
 		wxFlexGridSizer *fgsizer2 = new wxFlexGridSizer(2, 4, 4);
-		BeforeStart=new NumCtrl(this,-1,"150",0,1000,true,wxDefaultPosition, wxSize(40,-1));
-		AfterStart=new NumCtrl(this,-1,"50",0,1000,true,wxDefaultPosition, wxSize(40,-1));
-		BeforeEnd=new NumCtrl(this,-1,"50",0,1000,true,wxDefaultPosition, wxSize(40,-1));
-		AfterEnd=new NumCtrl(this,-1,"150",0,1000,true,wxDefaultPosition, wxSize(40,-1));
+		BeforeStart=new NumCtrl(this,-1,Options.GetString("Keyframe before start"),0,1000,true,wxDefaultPosition, wxSize(40,-1));
+		AfterStart=new NumCtrl(this,-1,Options.GetString("Keyframe after start"),0,1000,true,wxDefaultPosition, wxSize(40,-1));
+		BeforeEnd=new NumCtrl(this,-1,Options.GetString("Keyframe before end"),0,1000,true,wxDefaultPosition, wxSize(40,-1));
+		AfterEnd=new NumCtrl(this,-1,Options.GetString("Keyframe after end"),0,1000,true,wxDefaultPosition, wxSize(40,-1));
 	
 		fgsizer2->Add(new EBStaticText(this,_("Przed czasem początku"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer2->Add(BeforeStart,0);
@@ -388,11 +393,22 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		Main->Add(snapsizer,0,wxEXPAND|wxLEFT|wxBOTTOM|wxRIGHT,4);
 	
 		if(event.GetId()==22999){
-			Contents(true);
+			Contents(false);
 			((TabPanel*)GetParent())->BoxSizer3->Layout();
 		}
 	
 	}else{
+		Options.SetInt("Lead in",LITime->GetInt());
+		Options.SetInt("Lead out",LOTime->GetInt());
+		Options.SetInt("Threshold start",ThresStart->GetInt());
+		Options.SetInt("Threshold end",ThresEnd->GetInt());
+		Options.SetInt("Keyframe before start",BeforeStart->GetInt());
+		Options.SetInt("Keyframe after start",AfterStart->GetInt());
+		Options.SetInt("Keyframe before end",BeforeEnd->GetInt());
+		Options.SetInt("Keyframe after end",AfterEnd->GetInt());
+		//1 Lead In, 2 Lead Out, 4 Make times continous, 8 Snap to keyframe;
+		//int peres= (LeadIn->GetValue())? 1 : 0
+		Options.SetInt("Postprocessor enabling",(int)LeadIn->GetValue()+((int)LeadOut->GetValue()*2)+((int)Continous->GetValue()*4)+((int)SnapKF->GetValue()*8));
 		int size=Main->GetItemCount();
 		for(int i=size-1; i>=size-3; i--){
 			Main->Detach(i);

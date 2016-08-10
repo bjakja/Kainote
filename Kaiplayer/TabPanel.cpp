@@ -1,8 +1,8 @@
 ﻿
 #include "TabPanel.h"
-#include "config.h"
+#include "Config.h"
 #include "Hotkeys.h"
-#include "kainoteMain.h"
+#include "KainoteMain.h"
 
 
 TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const wxSize &size)
@@ -48,6 +48,7 @@ TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const
 
 
 TabPanel::~TabPanel(){
+	if(Video->player){Video->player->Stop();} //fix kraszów powodowanych przez niszczenie editboxa na samym końcu i próbując pobrać audio na play kraszuje.
 }
 
 

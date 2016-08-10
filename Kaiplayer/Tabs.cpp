@@ -1,22 +1,23 @@
 ﻿#include <wx/graphics.h>
-#include "TabDialog.h"
+#include "Tabs.h"
 #include "TabPanel.h"
 #include "kainoteApp.h"
 
-HHOOK Notebook::g_SSHook = 0;
+
 
 Notebook::Notebook(wxWindow *parent, int id)
 	: wxWindow(parent,id)
 {
 	fvis=olditer=iter=0;
-	splitline=splititer=0;
-	oldtab=over=-1;
+	splitline=splititer=compareSecondTab=0;
+	oldtab=oldI=over=-1;
 	block=split=onx=farr=rarr=plus=false;
+	hasCompare=false;
 	TabHeight=25;
 	allvis=arrow=true;
 	font=wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 	sthis=this;
-	
+
 	Pages.push_back(new TabPanel(this,(kainoteFrame*)parent));
 
 	wxString name=Pages[0]->SubsName;
@@ -25,10 +26,8 @@ Notebook::Notebook(wxWindow *parent, int id)
 	Names.Add(name);
 
 	CalcSizes();
-	
-	g_SSHook = SetWindowsHookEx(WH_CBT, &BlockSSaver, NULL,GetCurrentThreadId());
-
-	SetThreadExecutionState(ES_DISPLAY_REQUIRED|ES_CONTINUOUS);
+	Hook = NULL;
+	Hook = SetWindowsHookEx(WH_CBT, &PauseOnMinimalize, NULL,GetCurrentThreadId());
 
 }
 
@@ -41,8 +40,7 @@ Notebook::~Notebook(){
 	Pages.clear();
 	Tabsizes.Clear();
 	Names.Clear();
-	UnhookWindowsHookEx( g_SSHook );
-	SetThreadExecutionState(ES_CONTINUOUS);
+	UnhookWindowsHookEx( Hook );
 }
 
 TabPanel *Notebook::GetPage()
@@ -66,17 +64,17 @@ void Notebook::AddPage(bool refresh)
 	wxString name=Pages[iter]->SubsName;
 	if(name.Len()>35){name=name.SubString(0,35)+"...";}
 	Names.Add(name);
-	
+
 	Pages[iter]->SetPosition(Pages[olditer]->GetPosition());
 	Pages[iter]->SetSize(Pages[olditer]->GetSize());
 	CalcSizes();
 	if(refresh){RefreshRect(wxRect(0,h-25,w,25),false);
-		if(!Options.GetBool("Show Editor")){kainoteFrame *kai=(kainoteFrame *)GetParent();kai->HideEditor();}
-		wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
-		AddPendingEvent(evt2);
+	if(!Options.GetBool("Show Editor")){kainoteFrame *kai=(kainoteFrame *)GetParent();kai->HideEditor();}
+	wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
+	AddPendingEvent(evt2);
 	}else{Pages[iter]->CTime->RefVals(Pages[olditer]->CTime);}
 }
-		
+
 int Notebook::GetSelection()
 {
 	return iter;
@@ -108,7 +106,7 @@ TabPanel *Notebook::Page(size_t i)
 
 void Notebook::DeletePage(size_t page)
 {
-	
+
 	kainoteFrame *Kai=(kainoteFrame*)GetParent();
 	block=true;
 	if(Kai->SavePrompt(1,page)){block=false; wxSize siz=GetClientSize();RefreshRect(wxRect(0,siz.y-25,siz.x,25),false); return;}
@@ -144,7 +142,7 @@ void Notebook::DeletePage(size_t page)
 		GetClientSize(&w,&h);
 		Pages[0]->SetPosition(wxPoint(0,0));
 		Pages[0]->SetSize(w,h-25);
-		
+
 	}
 
 	size_t rsize=Size()-1;
@@ -153,23 +151,23 @@ void Notebook::DeletePage(size_t page)
 	else if(page<iter){iter--;}
 	if(page>rsize){page=rsize;}
 	if(fvis>rsize){fvis=rsize;}
-	
+
 	CalcSizes();
 	if(page==iter){
 		Pages[iter]->Show();
 	}
 
-	
+
 	int w,h;
 	GetClientSize(&w,&h);
 	RefreshRect(wxRect(0,h-25,w,25),false);
-	
+
 }
 
 void Notebook::CalcSizes()
 {
 	wxClientDC dc(this);
-    dc.SetFont(font);
+	dc.SetFont(font);
 	int all=2;
 	int w,h;
 	GetClientSize(&w,&h);
@@ -199,9 +197,9 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	int w,h,hh;
 	GetClientSize(&w,&h);
 	hh=h-25;
-	
+
 	//wyłączanie wszystkich aktywności przy wyjściu z zakładek
-	
+
 	if(event.Leaving()){
 		if(over!=-1 || onx ||farr||rarr||plus){
 			over=-1;onx=farr=rarr=plus=false;
@@ -212,9 +210,9 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		if(!arrow){SetCursor(wxCURSOR_ARROW);arrow=true;}
 		return;
 	}
-	
+
 	if(y<hh){
-		
+
 		if(click){
 			CaptureMouse();
 			int px=x, py=2;
@@ -247,24 +245,25 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 				ClientToScreen(&px,&py);
 				if(sline){sline->SetPosition(wxPoint(px,py));}
 			}
-			
+
+
 		}
 		if(arrow && split){SetCursor(wxCURSOR_SIZEWE);arrow=false;}
 		return;
 	}
-		
+
 	if(!arrow){SetCursor(wxCURSOR_ARROW);arrow=true;}
-	
-	
+
+
 
 	int num;
 	int i = FindTab(x, &num);
 
-	
+
 	// klik, dwuklik i środkowy
 	if(click||dclick||mdown){
+		oldI=i;
 
-		
 		if(!allvis && (click || dclick) && x<20){
 			if(fvis>0){
 				fvis--;RefreshRect(wxRect(0,hh,w,25),false);
@@ -273,7 +272,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		}
 		else if(!allvis && (click || dclick) && x>w-17 && x<=w){
 			if(fvis<Size()-1){
-			fvis++;RefreshRect(wxRect(w-17,hh,17,25),false);
+				fvis++;RefreshRect(wxRect(w-17,hh,17,25),false);
 			}
 			return;
 		}
@@ -281,7 +280,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			AddPage(true);
 			return;
 		}
-		
+
 		wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 		if(i==-1){
 			if(dclick){
@@ -305,37 +304,56 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			DeletePage(i);
 			if(i==tmpiter){AddPendingEvent(evt2);}
 		}
-				
+
 	}	
+
 	
-	
-	
+		if(event.LeftIsDown() && i >= 0 && oldI >= 0 && i != oldI){
+			wxString tmpname = Names[i];
+			int tmpsize = Tabsizes[i];
+			Names[i] = Names[oldI];
+			Tabsizes[i] = Tabsizes[oldI];
+			Names[oldI] = tmpname;
+			Tabsizes[oldI] = tmpsize;
+			TabPanel *tmppage = Pages[i];
+			Pages[i] = Pages[oldI];
+			Pages[oldI] = tmppage;
+			iter=i;
+			RefreshRect(wxRect(0,hh,w,25),false);
+			oldI=i;
+			return;
+		}
+
 	//ożywienie zakładek
 	if(event.Moving()){
-		if(x>=start+17&&HasToolTips()){UnsetToolTip();}
-
 		
-		if(!allvis && x<20){if(farr) return;
+		if(x>=start+17 && HasToolTips()){UnsetToolTip();}
+
+
+		if(!allvis && x<20){
+			if(farr) return;
 			farr=true;
 			RefreshRect(wxRect(0,hh,20,25),false);return;
-			}
-		else if(!allvis && x>w-17 && x<=w){if(rarr) return;
+		}
+		else if(!allvis && x>w-17 && x<=w){
+			if(rarr) return;
 			rarr=true;plus=false;
 			RefreshRect(wxRect(w-17,hh,17,25),false);return;
-			}
-		else if(x>start && x<start+17){if(plus) return;
+		}
+		else if(x>start && x<start+17){
+			if(plus) return;
 			plus=true;rarr=false;
 			RefreshRect(wxRect(start,hh,start+17,25),false);
 			//if(oldtab!=i){
-				SetToolTip(_("Otwórz nową zakładkę"));
-				//oldtab=i;}
+			SetToolTip(_("Otwórz nową zakładkę"));
+			//oldtab=i;}
 			return;
-			}
+		}
 		else if(farr||rarr||plus){
 			farr=rarr=plus=false;
 			RefreshRect(wxRect(w-19,hh,19,25),false);return;
 		}
-			
+
 		if(i==-1){
 			if(over!=-1||onx){
 				over=-1;onx=false;
@@ -343,16 +361,16 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			}
 			return;
 		}
-		
+
 		if(i!=iter&&i!=over){
 			over=i;
 			RefreshRect(wxRect(0,hh,w,25),false);
-			
+
 		}else if(i==iter&&over!=-1){
 			over=-1;
 			RefreshRect(wxRect(0,hh,w,25),false);
-		}else if(i==iter){
-		}
+		}/*else if(i==iter){
+		}*/
 		if(i==iter && (x>num+Tabsizes[i]-18 && x<num+Tabsizes[i]-5)){
 			if(!onx){SetToolTip(_("Zamknij"));}
 			onx=true;
@@ -364,12 +382,12 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		}
 		if(i!=-1 && i!= oldtab){SetToolTip(Pages[i]->SubsName+"\n"+Pages[i]->VideoName); oldtab=i;}
 	}
-		
+
 	//menu kontekstowe		
 	if(event.RightUp()){
-		
+
 		wxMenu menu1;//=new wxMenu();
-	
+
 		for(size_t g=0;g<Size();g++)
 		{
 			menu1.Append(MENU_CHOOSE+g,Page(g)->SubsName,"",wxITEM_CHECK);
@@ -379,21 +397,43 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		if(i>=0){menu1.Append(MENU_SAVE+i,_("Zapisz"),_("Zapisz"),wxITEM_NORMAL);}
 		menu1.Append(MENU_SAVE-1,_("Zapisz wszystko"),_("Zapisz wszystko"),wxITEM_NORMAL);
 		menu1.Append(MENU_CHOOSE-1,_("Zamknij wszystkie zakładki"),_("Zamknij wszystkie zakładki"),wxITEM_NORMAL);
-		if((i!=iter && Size()>1 && i!=-1)||split){
+		if((i!=iter && Size()>1 && i!=-1) || split){
 			wxString txt=(split)? _("Wyświetl jedną zakładkę") : _("Wyświetl dwie zakładki");
 			menu1.Append((MENU_CHOOSE-2)-i, txt, "",wxITEM_NORMAL);
 		}
+		if((i!=iter && Size()>1 && i!=-1) || hasCompare){
+			wxString txt=(hasCompare)? _("Wyłącz porównanie plików") : _("Włącz porównanie plików");
+			menu1.Append(MENU_COMPARE, txt, "",wxITEM_NORMAL);
+		}
 		int id=GetPopupMenuSelectionFromUser(menu1,event.GetPosition());
+		if(id<0){return;}
 		if(id >= MENU_CHOOSE-101 && id <= MENU_CHOOSE+99){
 			OnTabSel(id);
+		}else if(MENU_COMPARE){
+			if(hasCompare){
+				delete Pages[compareFirstTab]->Grid1->Comparsion;
+				Pages[compareFirstTab]->Grid1->Comparsion = NULL;
+				Pages[compareFirstTab]->Grid1->Refresh(false);
+				delete Pages[compareSecondTab]->Grid1->Comparsion;
+				Pages[compareSecondTab]->Grid1->Comparsion = NULL;
+				Pages[compareSecondTab]->Grid1->Refresh(false);
+				compareFirstTab=0;
+				compareSecondTab=0;
+				hasCompare=false;
+				return;
+			}
+			compareFirstTab=iter;
+			compareSecondTab=i;
+			SubsComparsion();
+			hasCompare=true;
 		}else{
 			OnSave(id);
 		}
 
 		return;
 	}
-	
-	
+
+
 }
 
 void Notebook::OnSize(wxSizeEvent& event)
@@ -428,15 +468,15 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	wxClientDC cdc(this);
 	wxMemoryDC dc;
 	dc.SelectObject(wxBitmap(w,TabHeight));
-    dc.SetFont(font);
+	dc.SetFont(font);
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE)));
 	dc.GradientFillLinear(wxRect(0,0,w,TabHeight),
 		wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),
 		wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE),wxTOP);
-	
+
 	start=(allvis)?2 : 20;
-	
+
 
 	wxGraphicsContext *gc = wxGraphicsContext::Create(dc);
 	//pętla do rysowania zakładek
@@ -450,7 +490,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.SetPen(*wxTRANSPARENT_PEN);
 			dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 			dc.DrawRectangle(start+1,0,Tabsizes[i]-1,23);
-	
+
 			dc.SetTextForeground("#505050");
 			dc.SetPen(wxPen("#000000"));
 
@@ -460,7 +500,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 				dc.DrawRoundedRectangle(start+Tabsizes[i]-20,3,16,16,1.1);}
 			dc.DrawText("X",start+Tabsizes[i]-16,3);
 			dc.SetTextForeground("#000000");
-			
+
 		}
 		//najechana nieaktywna zakładka
 		if(i==(size_t)over){
@@ -468,7 +508,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.SetBrush(wxBrush("#FFFFFF"));
 			dc.DrawRectangle(start+1,2,Tabsizes[i]-1,21);
 		}
-		
+
 		//rysowanie konturów zakładki
 		if(gc){
 			gc->SetPen( wxPen("#696969"));
@@ -496,7 +536,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 
 		start+=Tabsizes[i]+2;
 	}
-	
+
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
 	//strzałki do przesuwania zakładek
@@ -520,23 +560,23 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		dc.DrawLine(w-11,5,w-4,12);
 		dc.DrawLine(w-4,12,w-11,19);
 	}
-	
+
 	//plus który jest zawsze widoczny
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxBrush("#FFFFFF"));
 	if(plus){dc.DrawRectangle(start+1,1,18,23);}
 
 	dc.SetPen(wxPen(wxColour("#505050")));
-		//dc.SetBrush(wxBrush("#FFFFFF"));
+	//dc.SetBrush(wxBrush("#FFFFFF"));
 	dc.DrawRectangle(start+4,11,12,2);
 	dc.DrawRectangle(start+9,6,2,12);
-		//dc.SetPen(wxPen("#000000"));
+	//dc.SetPen(wxPen("#000000"));
 
 	/*if(split){
-		dc.SetPen(wxPen("#FF0000",2));
-		wxSize siz= Pages[iter]->GetSize();
-		wxPoint pos= Pages[iter]->GetPosition();
-		dc.DrawLine(pos.x,1,pos.x+siz.x,1);
+	dc.SetPen(wxPen("#FF0000",2));
+	wxSize siz= Pages[iter]->GetSize();
+	wxPoint pos= Pages[iter]->GetPosition();
+	dc.DrawLine(pos.x,1,pos.x+siz.x,1);
 	}*/
 	if(gc){
 		gc->SetPen( wxPen("#696969"));
@@ -557,7 +597,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		dc.DrawLine(start+17,23,start+19,21);
 		dc.DrawLine(start+19,21,start+19,0);
 	}
-	
+
 
 	cdc.Blit(0,h-25,w,h,&dc,0,0);
 	if(split){
@@ -586,13 +626,13 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			cdc.DrawLine(splitline+1,h-26,w,h-26);
 		}
 	}
-	
+
 	if(gc){delete gc;}
 }
 
 
 void Notebook::OnTabSel(int id)
-	{
+{
 	int wtab=id - MENU_CHOOSE;
 	if(Pages[iter]->Video->GetState()==Playing){Pages[iter]->Video->Pause();}
 	//wxLogStatus("wtab %i", wtab);
@@ -630,7 +670,7 @@ void Notebook::OnTabSel(int id)
 		if(w<1){GetClientSize(&w,&h);}
 		RefreshRect(wxRect(0,h-25,w,25),false);
 		Pages[iter]->Show();
-			
+
 	}
 	else{
 		TabPanel *tmp=Page(fvis);
@@ -652,7 +692,7 @@ void Notebook::OnTabSel(int id)
 		RefreshBar();
 	}
 }
-	
+
 
 int Notebook::GetHeight()
 {
@@ -681,6 +721,7 @@ void Notebook::Split(size_t page)
 		Pages[splititer]->Hide();
 		Pages[iter]->SetPosition(wxPoint(0,0));
 		Pages[iter]->SetSize(w,h-TabHeight);
+		Pages[splititer]->SetPosition(wxPoint(0,0));
 		SetTimer(GetHWND(), 9876, 500, (TIMERPROC)OnResized);
 		return;
 	}
@@ -693,7 +734,7 @@ void Notebook::Split(size_t page)
 	Pages[splititer]->Show();
 	//Pages[iter]->SetWindowStyleFlag(wxBORDER_SUNKEN);
 	//Pages[iter]->Refresh();
-	
+
 	SetTimer(GetHWND(), 9876, 500, (TIMERPROC)OnResized);
 }
 
@@ -720,7 +761,7 @@ void Notebook::ChangeActiv()
 	Tabsizes[iter]+=18;
 	Tabsizes[splititer]-=18;
 	((kainoteFrame*)GetParent())->UpdateToolbar();
-	
+
 	RefreshBar();
 }
 
@@ -767,23 +808,18 @@ int Notebook::FindPanel(TabPanel* pan)
 }
 
 
-LRESULT CALLBACK Notebook::BlockSSaver( int code, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK Notebook::PauseOnMinimalize( int code, WPARAM wParam, LPARAM lParam )
 {
-	if (wParam == SC_SCREENSAVE || wParam == SC_MONITORPOWER){
-		if(sthis->GetTab()->Video->vstate==Playing){return 1;}
-		return 0;
-	}
 	if (wParam == SC_MINIMIZE){
 		if(sthis->GetTab()->Video->vstate==Playing){sthis->GetTab()->Video->Pause();}
 		return 0;
 	}
 	return CallNextHookEx( 0, code, wParam, lParam );
-
 }
 
 void Notebook::ChangePage(int i)
 {
-	
+
 	olditer=iter;
 	if(split && splititer==i){
 		ChangeActiv();return;
@@ -825,10 +861,144 @@ void Notebook::OnCharHook(wxKeyEvent& event)
 	event.Skip();
 }
 
+TabPanel *Notebook::GetSecondPage()
+{
+	return Pages[splititer];
+}
+
+void Notebook::SubsComparsion()
+{
+	Grid *G1 = Pages[compareFirstTab]->Grid1;
+	Grid *G2 = Pages[compareSecondTab]->Grid1;
+	
+	int firstSize= G1->GetCount(), secondSize= G2->GetCount();
+	if(G1->Comparsion){G1->Comparsion->clear();}else{G1->Comparsion=new std::vector<wxArrayInt>;}
+	if(G2->Comparsion){G2->Comparsion->clear();}else{G2->Comparsion=new std::vector<wxArrayInt>;}
+	wxArrayInt emptyarray;
+	G1->Comparsion->resize(firstSize, emptyarray);
+	G2->Comparsion->resize(secondSize, emptyarray);
+
+	int lastJ=0;
+
+	for(int i=0; i<firstSize; i++){
+		
+		int j=lastJ;
+		Dialogue *dial1=G1->GetDial(i);
+		while(j<secondSize){
+			
+			Dialogue *dial2=G2->GetDial(j);
+			if(dial1->Start == dial2->Start && dial1->End == dial2->End){
+				CompareTexts((G1->transl && dial1->TextTl != "")? dial1->TextTl : dial1->Text, (G2->transl && dial2->TextTl != "")? dial2->TextTl : dial2->Text, G1->Comparsion->at(i), G2->Comparsion->at(j));
+				lastJ=j+1;
+				break;
+			}
+			
+			j++;
+		}
+
+	}
+	
+	G1->Refresh(false);
+	G2->Refresh(false);
+}
+
+
+void Notebook::CompareTexts(wxString &first, wxString &second, wxArrayInt &firstCompare, wxArrayInt &secondCompare)
+{
+	
+	if(first==second){
+		return;
+	}
+	firstCompare.push_back(1);
+	secondCompare.push_back(1);
+
+	
+	size_t l1 = first.Len(), l2 = second.Len();
+	size_t sz = (l1 + 1) * (l2 + 1) * sizeof(size_t);
+	size_t w = l2 + 1;
+	size_t* dpt;
+	size_t i1, i2;
+	dpt = new size_t[sz];
+
+	if (//sz / (l1 + 1) / (l2 + 1) != sizeof(size_t) ||
+		//(
+		dpt == NULL)
+	{
+		wxLogStatus("memory allocation failed");
+		return ;
+	}
+
+	/*for (i1 = 0; i1 <= l1; i1++)
+		dpt[w * i1 + 0] = 0;
+	for (i2 = 0; i2 <= l2; i2++)
+		dpt[w * 0 + i2] = 0;*/
+	memset(dpt, 0, sz);
+
+	for (i1 = 1; i1 <= l1; i1++){
+		for (i2 = 1; i2 <= l2; i2++)
+		{
+			if (first[l1 - i1] == second[l2 - i2])
+			{
+				dpt[w * i1 + i2] = dpt[w * (i1 - 1) + (i2 - 1)] + 1;
+			}
+			else if (dpt[w * (i1 - 1) + i2] > dpt[w * i1 + (i2 - 1)])
+			{
+				dpt[w * i1 + i2] = dpt[w * (i1 - 1) + i2];
+			}
+			else
+			{
+				dpt[w * i1 + i2] = dpt[w * i1 + (i2 - 1)];
+			}
+		}
+	}
+
+	int sfirst=-1, ssecond=-1;
+	i1 = l1; i2 = l2;
+	for (;;){
+		if ((i1 > 0) && (i2 > 0) && (first[l1 - i1] == second[l2 - i2])){
+			if(sfirst>=0){
+				firstCompare.push_back(sfirst);
+				firstCompare.push_back((l1 - i1) -1);
+				sfirst=-1;
+			}
+			if(ssecond>=0){
+				secondCompare.push_back(ssecond);
+				secondCompare.push_back((l2 - i2) -1);
+				ssecond=-1;
+			}
+			i1--; i2--; continue;
+		}
+		else{
+			if (i1 > 0 && (i2 == 0 || dpt[w * (i1 - 1) + i2] >= dpt[w * i1 + (i2 - 1)])){
+				if(sfirst==-1){sfirst = l1 - i1;}
+				i1--; continue;
+			}
+			else if (i2 > 0 && (i1 == 0 || dpt[w * (i1 - 1) + i2] < dpt[w * i1 + (i2 - 1)])){
+				if(ssecond==-1){ssecond = l2 - i2;}
+				i2--; continue;
+			}
+		}
+
+		break;
+	}
+	if(sfirst>=0){
+		firstCompare.push_back(sfirst);
+		firstCompare.push_back((l1 - i1) -1);
+	}
+	if(ssecond>=0){
+		secondCompare.push_back(ssecond);
+		secondCompare.push_back((l2 - i2) -1);
+	}
+
+	//free(dpt);
+	delete dpt;
+}
+
+
 BEGIN_EVENT_TABLE(Notebook,wxWindow)
 	EVT_CHAR_HOOK(Notebook::OnCharHook)
 	EVT_ERASE_BACKGROUND(Notebook::OnEraseBackground)
 	EVT_MOUSE_EVENTS(Notebook::OnMouseEvent)
 	EVT_SIZE(Notebook::OnSize)
 	EVT_PAINT(Notebook::OnPaint)
-END_EVENT_TABLE()
+	END_EVENT_TABLE()

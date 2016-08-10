@@ -34,17 +34,17 @@
 // Contact: mailto:zeratul@cellosoft.com
 //
 
-#include "config.h"
+#include "Config.h"
 
 #include <assert.h>
 #include <vector>
 #include <list>
 #include <utility>
 #include <algorithm>
-#include "fft.h"
-#include "audio_spectrum.h"
+#include "FFT.h"
+#include "AudioSpectrum.h"
 
-#include "colorspace.h"
+#include "ColorSpace.h"
 #include <wx/log.h>
 
 

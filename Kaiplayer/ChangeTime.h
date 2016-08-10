@@ -1,7 +1,7 @@
 #ifndef CTwindow_H
 #define CTwindow_H
 #include "TimeCtrl.h"
-#include "timeconv.h"
+#include "SubsTime.h"
 #include "NumCtrl.h"
 #include <wx/wx.h>
 #include <wx/collpane.h>
@@ -46,7 +46,7 @@ class CTwindow: public wxScrolled<wxWindow>
 		wxStaticBoxSizer *consizer;
 		wxStaticBoxSizer *snapsizer;
 
-		void Contents(bool addopts=false);
+		void Contents(bool addopts=true);
 		void RefVals(CTwindow *from=NULL);
 
 		wxBoxSizer *Main;

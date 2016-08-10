@@ -1,9 +1,9 @@
 ﻿
 #include "Automation.h"
-#include "config.h"
+#include "Config.h"
 #include "OpennWrite.h"
-#include "kainoteMain.h"
-#include "kainoteApp.h"
+#include "KainoteMain.h"
+#include "KainoteApp.h"
 #include "AutomationToFile.h"
 #include "AutomationProgress.h"
 

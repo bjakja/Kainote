@@ -52,7 +52,7 @@
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
 #include <wx/tglbtn.h>
-#include "audio_display.h"
+#include "AudioDisplay.h"
 
 //////////////
 // Prototypes

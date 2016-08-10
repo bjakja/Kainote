@@ -117,6 +117,14 @@ wxString NumCtrl::GetString()
 	if(!val.ToCDouble(&value)){
 		val=oldval;
 	}
+	if(value>(double)rto){
+		value=(double)rto;
+		val=getdouble(value);
+	}
+	if(value<(double)rfrom){
+		value=(double)rfrom;
+		val=getdouble(value);
+	}
 	return val;
 }
 

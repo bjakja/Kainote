@@ -3,13 +3,13 @@
 
 #include <wx/intl.h>
 #include <wx/string.h>
-#include <wx/tokenzr.h>
+#include "Utils.h"
 #include <wx/clipbrd.h>
-#include "kainoteMain.h"
+#include "KainoteMain.h"
 #include "Hotkeys.h"
 #include "OpennWrite.h"
 #include "TLDialog.h"
-#include "mkv_wrap.h"
+#include "MKVWrap.h"
 #include "Stylelistbox.h"
 #include <wx/regex.h>
 
@@ -643,7 +643,9 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 
 		}
 		if(Kai->GetTab()->Video->GetState()!=None){Kai->GetTab()->Video->OpenSubs(SaveText());
-		if(!isgood){wxMessageBox(_("Otwieranie napisów nie powiodło się"), _("Uwaga"));}}
+			if(!isgood){wxMessageBox(_("Otwieranie napisów nie powiodło się"), _("Uwaga"));}
+			if(Kai->GetTab()->Video->GetState()==Paused){Kai->GetTab()->Video->Render();}
+		}
 
 		if(!Kai->GetTab()->edytor&&!Kai->GetTab()->Video->isfullskreen){Kai->HideEditor();}
 		Kai->GetTab()->CTime->Contents();
@@ -1000,6 +1002,8 @@ void Grid::OnSetNewFPS()
 		if(form>TMP){RepaintWindow(START|END);}else{Refresh(false);}
 	}
 }
+
+
 
 BEGIN_EVENT_TABLE(Grid,SubsGrid)
 	EVT_MENU(Cut,Grid::OnAccelerator)

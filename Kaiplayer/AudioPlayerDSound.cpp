@@ -45,11 +45,9 @@
 #include <mmsystem.h>
 #include <dsound.h>
 #include <process.h>
-//#include <wx/stopwatch.h>
 
-#include "kainoteApp.h"
-//#include "options.h"
-#include "audio_player_dsound2.h"
+#include "KainoteApp.h"
+#include "AudioPlayerDSound.h"
 
 struct COMInitialization {
 	bool inited;

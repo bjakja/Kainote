@@ -10,7 +10,7 @@
 #include "Styles.h"
 #include <wx/intl.h>
 #include <wx/string.h>
-#include "ColorChange.h"
+#include "StyleChange.h"
 #include <wx/fontenum.h>
 
 
@@ -439,6 +439,8 @@ void stylestore::LoadStylesS(bool isass)
 									Options.ChangeStyle(tmps[v],fsstyle);Store->SetSelection(fsstyle);}
 						}   
 					}
+				}else{
+					delete tmps[v];
 				}
 			}
 		}

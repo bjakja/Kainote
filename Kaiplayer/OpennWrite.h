@@ -14,6 +14,7 @@ class OpenWrite
     wxString FileOpen(wxString filename,bool test=true);
     void FileWrite(wxString filename, wxString alltext, bool utf=true);
     void PartFileWrite(wxString parttext);
+	bool IsUTF8withoutBOM(const char* buf, size_t size);
 	wxFile file;
     private:
 

@@ -2,11 +2,11 @@
 #include "Visuals.h"
 #include "Videobox.h"
 #include "VideoRenderer.h"
-#include "dshowplayer.h"
-#include "kainoteApp.h"
+#include "DShowPlayer.h"
+#include "KainoteApp.h"
 
 #include <Dvdmedia.h>
-#include "vsfilterapi.h"
+#include "Vsfilterapi.h"
 
 
 
@@ -92,7 +92,7 @@ bool VideoRend::InitDX(bool reset)
 	d3dpp.BackBufferCount	     = 1;
 	d3dpp.SwapEffect			 = D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_DISCARD;//D3DSWAPEFFECT_COPY;//
 	d3dpp.BackBufferFormat       = D3DFMT_X8R8G8B8;
-	d3dpp.Flags					 = 0;//|D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
+	d3dpp.Flags					 = D3DPRESENTFLAG_VIDEO;
 	//d3dpp.PresentationInterval   = D3DPRESENT_INTERVAL_DEFAULT;
 
 	if(reset){
@@ -191,11 +191,11 @@ bool VideoRend::InitDX(bool reset)
 #else
 	HR (d3device->GetBackBuffer(0,0, D3DBACKBUFFER_TYPE_MONO, &bars),_("Nie można stworzyć powierzchni"));
 
-	d3device->CreateOffscreenPlainSurface(vwidth,vheight,d3dformat, D3DPOOL_DEFAULT,&MainStream,0);//D3DPOOL_DEFAULT
+	HR (d3device->CreateOffscreenPlainSurface(vwidth,vheight,d3dformat, D3DPOOL_DEFAULT,&MainStream,0), _("Nie można stworzyć plain surface"));//D3DPOOL_DEFAULT
 #endif
 	//HR(d3device->ColorFill(MainStream, NULL, D3DCOLOR_ARGB(0xFF, 0xFF, 0xFF, 0xFF)),"Nie można wypełnić tekstury");
-	D3DXCreateLine(d3device, &lines);
-	D3DXCreateFont(d3device, 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &m_font );
+	HR (D3DXCreateLine(d3device, &lines), _("Nie można stworzyć linii D3DX"));
+	HR(D3DXCreateFont(d3device, 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &m_font ), _("Nie można stworzyć czcionki D3DX"));
 
 	return true;
 }
@@ -461,9 +461,9 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	IsDshow=Dshow;
 	if(!Dshow){
 		bool success;
-		tmpvff=new VideoFfmpeg(fname, Kaia->Frame->Tabs->GetSelection(),&success);
+		tmpvff=new VideoFfmpeg(fname,&success);
 		if(!success || !tmpvff){
-			SAFE_DELETE(tmpvff);return false;
+			SAFE_DELETE(tmpvff);block=false;return false;
 		}
 	}
 
@@ -486,21 +486,17 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 		vwidth=VFF->width;vheight=VFF->height;fps=VFF->fps;ax=VFF->arwidth;ay=VFF->arheight;
 		if(vwidth % 2 != 0 ){vwidth++;}
 		pitch=vwidth*1.5f;
-
+		
+		TabPanel *pan = ((TabPanel*)GetParent());
 		if(VFF->GetSampleRate()>0){
-			wxCommandEvent evt;
-			evt.SetId(40000);
-			evt.SetString(fname);
-			//wxLogStatus("przed audio");
-			Kaia->Frame->OnOpenAudio(evt);
-
-			player=Kaia->Frame->GetTab()->Edit->ABox->audioDisplay;
-		}else if(player){wxCommandEvent evt;evt.SetId(CloseAudio);Kaia->Frame->OnOpenAudio(evt);}
+			Kaia->Frame->OpenAudioInTab(pan,40000,fname);
+			player = pan->Edit->ABox->audioDisplay;
+		}else if(player){Kaia->Frame->OpenAudioInTab(pan,CloseAudio,"");}
 	}else{
 
 		if(!vplayer){vplayer= new DShowPlayer(this);}
 
-		if(!vplayer->OpenFile(fname, __vobsub)){return false;}
+		if(!vplayer->OpenFile(fname, __vobsub)){block=false;return false;}
 
 		wxSize siz=vplayer->GetVideoSize();
 		vwidth=siz.x;vheight=siz.y;
@@ -513,9 +509,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 		ay=vplayer->inf.ARatioY;
 		d3dformat=(vformat==5)? D3DFORMAT('21VN') : (vformat==3)? D3DFORMAT('21VY') : (vformat==2)? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
 		if(player){
-			wxCommandEvent evt;
-			evt.SetId(CloseAudio);
-			Kaia->Frame->OnOpenAudio(evt);
+			Kaia->Frame->OpenAudioInTab(((TabPanel*)GetParent()),CloseAudio,"");
 		}
 	}
 	diff=0;
@@ -557,6 +551,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 
 void VideoRend::Play(int end)
 {
+	SetThreadExecutionState(ES_DISPLAY_REQUIRED|ES_CONTINUOUS);
 	VideoCtrl *vb=((VideoCtrl*)this);
 	if( !(IsShown() || (vb->TD && vb->TD->IsShown())) ){return;}
 	TabPanel* pan=(TabPanel*)GetParent();
@@ -586,7 +581,7 @@ void VideoRend::Play(int end)
 		//}
 
 	}
-
+	
 }
 
 void VideoRend::PlayLine(int start, int eend)
@@ -601,6 +596,7 @@ void VideoRend::PlayLine(int start, int eend)
 void VideoRend::Pause()
 {
 	if(vstate==Playing){
+		SetThreadExecutionState(ES_CONTINUOUS);
 		vstate=Paused;
 		if(!IsDshow){
 			if(player){player->player->Stop();}
@@ -617,6 +613,7 @@ void VideoRend::Pause()
 void VideoRend::Stop()
 {
 	if(vstate==Playing){
+		SetThreadExecutionState(ES_CONTINUOUS);
 		vstate=Stopped;
 		if(IsDshow){vplayer->Stop();}
 
@@ -631,7 +628,7 @@ void VideoRend::Stop()
 
 }
 
-void VideoRend::SetPosition(int _time, bool starttime, bool corect)
+void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadSubs)
 {
 
 	if(IsDshow){
@@ -641,10 +638,16 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect)
 			if(starttime){time++;}
 			time*=avtpf;
 		}
-		if(VisEdit){TabPanel* pan=(TabPanel*)GetParent();
-		SAFE_DELETE(pan->Edit->dummytext);
-		SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);
-		VisEdit=false;
+		if(VisEdit){
+			TabPanel* pan=(TabPanel*)GetParent();
+			//if(reloadSubs){
+				wxString *txt=pan->Grid1->SaveText();
+				if(pan->Edit->Visual==VECTORCLIP){(*txt)<<pan->Edit->dummytext->Trim().AfterLast('\n');}
+				OpenSubs(txt);
+			//}
+			SAFE_DELETE(pan->Edit->dummytext);
+			//if(!reloadSubs){SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);}
+			VisEdit=false;
 		}	
 		playend=(IsDshow)? 0 : GetDuration();
 		seek=true; vplayer->SetPosition(time);
@@ -652,10 +655,16 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect)
 		lastframe=VFF->GetFramefromMS(_time,(time>_time)? 1 : lastframe);
 		if(!starttime){lastframe--;if(VFF->Timecodes[lastframe]>=_time){lastframe--;}}
 		time = VFF->Timecodes[lastframe];
-		if(VisEdit){TabPanel* pan=(TabPanel*)GetParent();
-		SAFE_DELETE(pan->Edit->dummytext);
-		SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);
-		VisEdit=false;
+		if(VisEdit){
+			TabPanel* pan=(TabPanel*)GetParent();
+			//if(reloadSubs){
+				wxString *txt=pan->Grid1->SaveText();
+				if(pan->Edit->Visual==VECTORCLIP){(*txt)<<pan->Edit->dummytext->Trim().AfterLast('\n');}
+				OpenSubs(txt);
+			//}
+			SAFE_DELETE(pan->Edit->dummytext);
+			//if(!reloadSubs){SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);}
+			VisEdit=false;
 		}	
 		if(vstate==Playing){
 			lasttime=timeGetTime()-time;
@@ -765,18 +774,19 @@ void VideoRend::playing()
 }
 
 //ustawia nowe recty po zmianie rozdzielczości wideo
-void VideoRend::UpdateRects(bool bar)
+bool VideoRend::UpdateRects(bool bar)
 {
 	VideoCtrl* Video=(VideoCtrl*) this;
 	wxRect rt;
 	TabPanel* tab=(TabPanel*)Video->GetParent();
 	if(bar){hwnd=GetHWND();rt=GetClientRect();rt.height-=44;}
 	else{hwnd=Video->TD->GetHWND();rt=Video->TD->GetClientRect();pbar=true;cross=false;}
-
+	if(!rt.height || !rt.width){return false;}
 	rt3.bottom=rt.height;
 	rt3.right=rt.width;
 	rt3.left=rt.x;
 	rt3.top=rt.y;
+	
 	if(tab->edytor&&!Video->isfullskreen){
 		rt4=rt3;
 	}
@@ -805,6 +815,7 @@ void VideoRend::UpdateRects(bool bar)
 			rt4=rt3;
 		}
 	}
+	return true;
 }
 
 //funkcja zmiany rozdziałki okna wideo
@@ -815,11 +826,11 @@ void VideoRend::UpdateVideoWindow(bool bar)
 	wxMutexLocker lock(mutexRender);
 	//if(blockDS){while(!blockDS){wxLogStatus("updatewindowsleep");Sleep(5);}}
 	block=true;
-	UpdateRects(bar);
+	if(!UpdateRects(bar)){block=false;return;}
 
-	if(!InitDX(true)){return;}
+	if(!InitDX(true)){block=false;return;}
 
-	if(IsDshow&& datas){
+	if(IsDshow && datas){
 
 		int all=vheight*pitch;
 		char *cpy=new char[all];
@@ -1030,13 +1041,28 @@ void VideoRend::SetVisual(int start, int end, bool remove)
 		Render();
 	}
 	else{
+		int vis=pan->Edit->Visual;
 		if(!Vclips){
-			Vclips=new Visuals(this);
-			Vclips->SizeChanged(wxSize(rt3.right, rt3.bottom),lines, m_font, d3device);
+			Vclips = Visuals::Get(vis,this);
+		}else if(Vclips->Visual != vis){
+			delete Vclips;
+			Vclips = Visuals::Get(vis,this);
 		}
+		Vclips->SizeChanged(wxSize(rt3.right, rt3.bottom),lines, m_font, d3device);
+		
 		Vclips->SetVisual(start, end);
 		VisEdit=true;
 	}
+}
+
+void VideoRend::SetVisual()
+{
+	
+	TabPanel* pan=(TabPanel*)GetParent();
+	SAFE_DELETE(pan->Edit->dummytext);
+	Vclips->SetCurVisual();
+	VisEdit=true;
+	Render();
 }
 
 bool VideoRend::EnumFilters(wxMenu *menu)
@@ -1077,5 +1103,5 @@ byte *VideoRend::GetFramewithSubs(bool subs, bool *del)
 
 void VideoRend::SetEvent(wxMouseEvent& event)
 {
-	Vclips->MouseEvent(event);
+	Vclips->OnMouseEvent(event);
 }

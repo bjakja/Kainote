@@ -1,7 +1,7 @@
 ﻿
 #include "VideoFullscreen.h"
 #include "Videobox.h"
-#include "config.h"
+#include "Config.h"
 
 
 Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)

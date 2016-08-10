@@ -7,7 +7,7 @@
 #include "SubsDialogue.h"
 #include <vector>
 #include <map>
-#include "styles.h"
+#include "Styles.h"
 #include "SubsFile.h"
 
 class EditBox;
@@ -100,6 +100,7 @@ public:
 	int mtimerow;
 	SubsFile* file;
 	std::vector<wxArrayInt> SpellErrors;
+	std::vector<wxArrayInt> *Comparsion;
 
 	SubsGrid(wxWindow *parent, const long int id ,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=wxWANTS_CHARS, const wxString& name=wxPanelNameStr);
 	virtual ~SubsGrid();

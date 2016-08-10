@@ -18,13 +18,13 @@
 #include <wx/filedlg.h>
 #include <wx/frame.h>
 #include <wx/statusbr.h>
-#include "TabDialog.h"
+#include "Tabs.h"
 #include <vector>
 #include "TabPanel.h"
 #include "SpellChecker.h"
 #include "AutomationScriptsDialog.h"
-#include "stylestore.h"
-#include "findreplace.h"
+#include "StyleStore.h"
+#include "FindReplace.h"
 #include "Automation.h"
 #include "Toolbar.h"
 #include "EnumFactory.h"
@@ -73,6 +73,7 @@ class kainoteFrame: public wxFrame
 		
 		void InsertTab(bool sel=true);
 		void OpenFiles(wxArrayString,bool intab=false, bool nofreeze=false, bool newtab=false);
+		void OpenAudioInTab(TabPanel *pan, int id, const wxString &path);
 		void HideEditor();
 		bool SavePrompt(char mode=1, int wtab=-1);
 		void UpdateToolbar();
@@ -220,6 +221,7 @@ enum{
 	XX( RectangleClips,)\
 	XX( VectorClips,)\
 	XX( VectorDrawings,)\
+	XX( MoveAll,)\
 	XX( ConvertToASS,)\
 	XX( ConvertToSRT,)\
 	XX( ConvertToTMP,)\

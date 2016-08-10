@@ -1,5 +1,5 @@
-﻿#include "findreplace.h"
-#include "kainoteMain.h"
+﻿#include "FindReplace.h"
+#include "KainoteMain.h"
 
 #include <wx/intl.h>
 #include <wx/string.h>
@@ -295,7 +295,7 @@ void findreplace::OnReplaceAll(wxCommandEvent& event)
 	bool onlysel=RadioButton4->GetValue();
 
 	TabPanel *pan=Kai->GetTab();
-	pan->Video->blockpaint=true;
+	//pan->Video->blockpaint=true;
 	int fsel=pan->Grid1->FirstSel();
 
 
@@ -393,7 +393,7 @@ void findreplace::OnReplaceAll(wxCommandEvent& event)
 
 	wxMessageBox(wxString::Format(_("Zmieniono %i razy."),allreps1),_("Szukaj Zamień"));
 	AddRecent();
-	pan->Video->blockpaint=false;
+	//pan->Video->blockpaint=false;
 }
 
 void findreplace::SelectLine()

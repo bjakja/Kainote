@@ -213,7 +213,7 @@ void Dialogue::Conv(char type,wxString pref)
 	if(!Form){Form=0;if(type==ASS){return;}}
 	Start.ChangeFormat(type);
 	End.ChangeFormat(type);
-	if (type<SRT){
+	if (type<=SRT){
 		Layer=0;
 		Style=Options.GetString(_T("Default Style"));
 		Actor=_T("");
@@ -238,7 +238,7 @@ void Dialogue::Conv(char type,wxString pref)
 			}
 			tmp.Replace(_T("|"),_T("\\N"));
 			size_t il=tmp.Replace(_T("/"),_T(""));
-			Text=pref;
+			if(type<SRT){Text= pref;}else{Text="";}
 			if(il>0){Text<<ital;}
 			Text<<tmp;
 			Text.Replace("}{","");

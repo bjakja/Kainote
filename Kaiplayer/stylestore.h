@@ -9,7 +9,7 @@
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include "StyleList.h"
-#include "styles.h"
+#include "Styles.h"
 
 class ColorChange;
 

@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "config.h"
-#include "styles.h"
+#include "Config.h"
+#include "Styles.h"
 #include "SubsDialogue.h"
 #include <vector>
 

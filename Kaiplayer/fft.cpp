@@ -44,7 +44,7 @@
 // Headers
 //#include "config.h"
 #include "VideoFfmpeg.h"
-#include "fft.h"
+#include "FFT.h"
 #include <math.h>
 #include <utility>
 

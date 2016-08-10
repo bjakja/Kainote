@@ -1,7 +1,7 @@
 #ifndef SPELLCHECK
 #define SPELLCHECK
 
-#include "config.h"
+#include "Config.h"
 #include <hunspell.hxx>
 #include <wx/string.h>
 

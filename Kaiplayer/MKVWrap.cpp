@@ -45,9 +45,9 @@
 #include <wx/choicdlg.h>
 #include <wx/filename.h>
 #include "ProgressDialog.h"
-#include "mkv_wrap.h"
+#include "MKVWrap.h"
 #include "Grid.h"
-#include "timeconv.h"
+#include "SubsTime.h"
 #include "KaraokeSplitting.h"
 #include "OpenNWrite.h"
 

@@ -140,9 +140,6 @@ private:
 	wxBitmap *MakeSVSpectrum();
 	wxBitmap *MakeAlphaSlider();
 
-	void OnSpinRGB(wxSpinEvent &evt);
-	void OnSpinHSL(wxSpinEvent &evt);
-	void OnSpinHSV(wxSpinEvent &evt);
 	void OnChangeRGB(wxCommandEvent &evt);
 	void OnChangeHSL(wxCommandEvent &evt);
 	void OnChangeHSV(wxCommandEvent &evt);

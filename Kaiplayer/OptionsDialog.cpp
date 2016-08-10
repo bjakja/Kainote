@@ -54,6 +54,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 	wxPanel *Main= new wxPanel(OptionsTree);
 	wxPanel *GridColors= new wxPanel(OptionsTree);
+	wxPanel *GridColors2= new wxPanel(OptionsTree);
 	wxPanel *ConvOpt= new wxPanel(OptionsTree);
 	wxPanel *Hotkeyss= new wxPanel(OptionsTree);
 	wxPanel *AudioMain= new wxPanel(OptionsTree);
@@ -66,14 +67,13 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	//Main
 	{
 		wxBoxSizer *MainSizer=new wxBoxSizer(wxVERTICAL);
-		wxString labels[10]={_("Wczytywanie posortowanych napisów"),_("Włącz sprawdzanie pisowni"),
+		wxString labels[9]={_("Wczytywanie posortowanych napisów"),_("Włącz sprawdzanie pisowni"),
 			_("Zaznaczaj linijkę z czasem aktywnej\nlinijki poprzedniej zakładki"),_("Zapisuj napisy z nazwą wideo"),
 			_("Pokaż sugestie po dwukrotnym klininięciu na błąd"),_("Otwieraj napisy zawsze w nowej karcie"),
 			_("Nie przechodź do następnej linii przy edycji czasów"),_("Zapisuj zmiany po przejściu na inną linię"),
-			_("Pierwszy kolor podglądu styli"),_("Drugi kolor podglądu styli")};
-		wxString opts[10]={"Grid Load Sorted","Editbox Spellchecker","Auto Select Lines","Subs Autonaming",
-			"Editbox Sugestions On Dclick","Open In New Card","Times Stop On line","Grid save without enter",
-			"Style Preview Color1","Style Preview Color2"};
+			_("Wyłącz pokazywanie edycji na wideo\n(wymaga ponownego otwarcia zakładek)")};
+		wxString opts[9]={"Grid Load Sorted","Editbox Spellchecker","Auto Select Lines","Subs Autonaming",
+			"Editbox Sugestions On Dclick","Open In New Card","Times Stop On line","Grid save without enter","Disable live editing"};
 
 		wxString langopts[2]={"Polski","English"};
 		wxStaticBoxSizer *langSizer=new wxStaticBoxSizer(wxVERTICAL, Main, _("Język (wymaga restartu programu)"));
@@ -96,7 +96,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		dicSizer->Add(dic,0,wxALL|wxEXPAND,2);
 		MainSizer->Add(dicSizer,0,wxRIGHT|wxEXPAND,5);
 	
-		for(int i=0;i<8;i++)
+		for(int i=0;i<9;i++)
 		{
 			wxCheckBox *opt=new wxCheckBox(Main,-1,labels[i]);
 			opt->SetValue(Options.GetBool(opts[i]));
@@ -106,7 +106,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 	
 		wxBoxSizer *MainSizer1=new wxBoxSizer(wxHORIZONTAL);
-		wxFlexGridSizer *MainSizer2=new wxFlexGridSizer(6,2,wxSize(5,5));
+		wxFlexGridSizer *MainSizer2=new wxFlexGridSizer(4,2,wxSize(5,5));
 		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieć inny id
 		NumCtrl *sc = new NumCtrl(Main, 20000, Options.GetString("Offset of start time"), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc1 = new NumCtrl(Main, 20000, Options.GetString("Offset of end time"), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
@@ -125,13 +125,6 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		MainSizer2->Add(new wxStaticText(Main,-1,_("Ilość przycisków wstawiających tagi ASS:")),0,wxALIGN_CENTRE_VERTICAL);
 		MainSizer2->Add(sc3,0);
 	
-
-		for(int i=8;i<10;i++){
-			ColorButton *optc=new ColorButton(Main,-1,Options.GetString(opts[i]),wxDefaultPosition, wxSize(60,-1));
-			ConOpt(optc,opts[i]);
-			MainSizer2->Add(new wxStaticText(Main,-1,labels[i]+":"),0,wxALIGN_CENTRE_VERTICAL);
-			MainSizer2->Add(optc,0);
-		}
 		MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
 
 		wxFontPickerCtrl *optf=new wxFontPickerCtrl(Main,-1,wxFont(Options.GetInt("Grid Font Size"),wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,Options.GetString("Grid Font Name")));
@@ -146,11 +139,16 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 		//Grid colors
 	{//należy uważać by ilość linii w grid sizerze się zgadzała ile opcji tyle ma być linii
-		wxFlexGridSizer *GridColorsSizer=new wxFlexGridSizer(13,2,wxSize(5,5));
-		wxString labels[13]={_("Kolor tła"),_("Kolor tła dialogów"),_("Kolor tła komentarzy"),_("Kolor zaznaczonych dialogów"),_("Kolor zaznaczonych komentarzy"),_("Kolor tekstu"),_("Kolor nachodzących linii"),_("Kolor linii"),_("Kolor obramowania aktywnej linijki"),_("Kolor etykiety"),_("Kolor etykiety zmodyfikowanej linii"),_("Kolor etykiety zapisanej linii"),_("Kolor tła błędów pisowni")};
-		wxString opts[13]={"Grid Background","Grid Dialogue","Grid Comment","Grid Selected Dialogue","Grid Selected Comment","Grid Text","Grid Collisions","Grid Lines","Grid Active Line","Grid Label Normal","Grid Label Modified","Grid Label Saved","Grid Spellchecker"};
+		wxFlexGridSizer *GridColorsSizer=new wxFlexGridSizer(12,2,wxSize(5,5));
+		wxString labels[12]={_("Kolor tła"),_("Kolor tła dialogów"),_("Kolor tła komentarzy"),_("Kolor zaznaczonych dialogów"),
+			_("Kolor zaznaczonych komentarzy"),_("Kolor tekstu"),_("Kolor nachodzących linii"),_("Kolor linii"),
+			_("Kolor obramowania aktywnej linijki"),_("Kolor etykiety"),_("Kolor etykiety zmodyfikowanej linii"),
+			_("Kolor etykiety zapisanej linii")};
+		wxString opts[12]={"Grid Background","Grid Dialogue","Grid Comment","Grid Selected Dialogue","Grid Selected Comment",
+			"Grid Text","Grid Collisions","Grid Lines","Grid Active Line","Grid Label Normal","Grid Label Modified",
+			"Grid Label Saved"};
 	
-		for(int i=0;i<13;i++)
+		for(int i=0;i<12;i++)
 		{
 			ColorButton *optc=new ColorButton(GridColors,-1,Options.GetString(opts[i]));
 			ConOpt(optc,opts[i]);
@@ -161,6 +159,28 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 		GridColors->SetSizerAndFit(GridColorsSizer);
 
+
+	}
+	//grid colours2
+	{
+
+		wxFlexGridSizer *GridColorsSizer2=new wxFlexGridSizer(8,2,wxSize(5,5));
+		wxString labels[8]={_("Kolor tła błędów pisowni"),_("Kolor porównania"),_("Kolor tła porównania"),
+			_("Kolor tła porównania zaznaczenia"),_("Kolor tła komentarza porównania"),_("Kolor tła komentarza zazn. porównania"),_("Pierwszy kolor podglądu styli"),_("Drugi kolor podglądu styli")};
+		wxString opts[8]={"Grid Spellchecker","Grid comparsion","Grid comparsion background",
+			"Grid comparsion background selected","Grid comparsion comment background","Grid comparsion comment background selected",
+			"Style Preview Color1","Style Preview Color2"};
+	
+		for(int i=0;i<8;i++)
+		{
+			ColorButton *optc=new ColorButton(GridColors2,-1,Options.GetString(opts[i]));
+			ConOpt(optc,opts[i]);
+			GridColorsSizer2->Add(new wxStaticText(GridColors2,-1,labels[i]+":"),1,wxRIGHT | wxALIGN_CENTRE_VERTICAL, 5);
+			GridColorsSizer2->Add(optc,0,wxALL,2);
+		}
+	
+
+		GridColors2->SetSizerAndFit(GridColorsSizer2);
 
 	}
 		//Ustawienia konwersji
@@ -304,7 +324,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		Connect(26667,wxEVT_COMMAND_LIST_ITEM_ACTIVATED,(wxObjectEventFunction)&OptionsDialog::OnMapHkey);
 		Connect(26667,wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);		
 
-		//if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){wxMessageBox(_("Dupa blada, skróty klawiszowe nie wczytały się, na audio nie podziałasz"), _("Błędny błąd"));}
+		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){wxMessageBox(_("Dupa blada, skróty klawiszowe nie wczytały się, na audio nie podziałasz"), _("Błędny błąd"));}
 		
 		std::map<int, hdata> _hkeys;
 		Hkeys.LoadDefault(_hkeys);
@@ -335,13 +355,13 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 		wxString names[]={_("Wyświetlaj czas przy kursorze"),_("Wyświetlaj znaczniki sekund"),_("Wyświetlaj tło zaznaczenia"),_("Wyświetlaj pozycję wideo"),
 			_("Wyświetlaj klatki kluczowe"),_("Przewijaj wykres audio przy odtwarzaniu"), _("Aktywuj okno audio po najechaniu"), _("Przyklejaj do klatek kluczowych"),
-			_("Przyklejaj do pozostałych linii"),_("Scalaj wszystkie \"n\" z poprzednią sylabą"),_("Wczytuj audio do pamięci RAM")};
+			_("Przyklejaj do pozostałych linii"),_("Scalaj wszystkie \"n\" z poprzednią sylabą"),_("Przenoś linie sylab po kliknięciu"),_("Wczytuj audio do pamięci RAM")};
 
 		wxString opts[]={"Audio Draw Cursor Time","Audio Draw Secondary Lines","Audio Draw Selection Background","Audio Draw Video Position",
 			"Audio Draw Keyframes","Audio Lock Scroll On Cursor","Audio Autofocus","Audio Snap To Keyframes","Audio Snap To Other Lines",
-			"Merge Every N With Syllable","Audio RAM Cache"};
+			"Merge Every N With Syllable","Audio Karaoke Move On Click","Audio RAM Cache"};
 
-		for(int i=0;i<11;i++)
+		for(int i=0;i<12;i++)
 		{
 			wxCheckBox *opt=new wxCheckBox(AudioMain,-1,names[i]);
 			opt->SetValue(Options.GetBool(opts[i]));
@@ -349,18 +369,22 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			audio->Add(opt,0,wxALL,2);
 		}
 
-		wxString opts1[]={"Audio Mark Play Time","Audio Inactive Lines Display Mode"};
-
-		NumCtrl *sc = new NumCtrl(AudioMain, 20000, Options.GetString(opts1[0]), 400, 5000, true, wxDefaultPosition, wxSize(300,-1), 0);
+		wxString opts1[3]={"Audio Delay", "Audio Mark Play Time", "Audio Inactive Lines Display Mode"};
+		NumCtrl *Delay = new NumCtrl(AudioMain, 20000, Options.GetString(opts1[0]), 0, 50000000, true, wxDefaultPosition, wxSize(300,-1), 0);
+		NumCtrl *sc = new NumCtrl(AudioMain, 20000, Options.GetString(opts1[1]), 400, 5000, true, wxDefaultPosition, wxSize(300,-1), 0);
 		wxString inact[3]={_("Brak"),_("Przed i po aktywnej"),_("Wszystkie widoczne")};
 		wxChoice *sc1 = new wxChoice(AudioMain, 10000, wxDefaultPosition, wxSize(300,-1), 3, inact);
-		sc1->SetSelection(Options.GetInt(opts1[1]));
-		ConOpt(sc,opts1[0]);
-		ConOpt(sc1,opts1[1]);
+		sc1->SetSelection(Options.GetInt(opts1[2]));
+		ConOpt(Delay,opts1[0]);
+		ConOpt(sc,opts1[1]);
+		ConOpt(sc1,opts1[2]);
+		wxStaticBoxSizer *DelaySizer=new wxStaticBoxSizer(wxVERTICAL,AudioMain,_("Opóźnienie audio w ms"));
 		wxStaticBoxSizer *audiocols=new wxStaticBoxSizer(wxVERTICAL,AudioMain,_("Czas odtwarzania audio przed i po znaczniku w ms"));	
 		wxStaticBoxSizer *audiocols1=new wxStaticBoxSizer(wxVERTICAL,AudioMain,_("Sposób wyświetlania nieaktywnych linijek"));	
+		DelaySizer->Add(Delay,1,wxALL|wxEXPAND,2);
 		audiocols->Add(sc,1,wxALL|wxEXPAND,2);
 		audiocols1->Add(sc1,1,wxALL|wxEXPAND,2);
+		audio->Add(DelaySizer,0,wxRIGHT|wxEXPAND,5);
 		audio->Add(audiocols,0,wxRIGHT|wxEXPAND,5);
 		audio->Add(audiocols1,0,wxRIGHT|wxEXPAND,5);
 		
@@ -371,16 +395,17 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		//Audio colours
 	{
 
-		wxFlexGridSizer *AudioColorsSizer=new wxFlexGridSizer(13,2,wxSize(5,5));
+		wxFlexGridSizer *AudioColorsSizer=new wxFlexGridSizer(14,2,wxSize(5,5));
 		wxString labels[]={_("Kolor tła"),_("Kolor znacznika start"),_("Kolor znacznika koniec"),_("Kolor znacznika przesuwania czasów"),
-			_("Kolor znaczników nieaktywnej linijki"),_("Kolor kursora"),_("Kolor znaczników sekund"),_("Kolor zaznaczenia"),
-			_("Kolor zaznaczenia po modyfikacji"),_("Kolor wykresu audio"),_("Kolor nieaktywnego wykresu audio"),
-			_("Kolor zmodyfikowanego wykresu audio"),_("Kolor zaznaczonego wykresu audio")};
+			_("Kolor znaczników nieaktywnej linijki"),_("Kolor kursora"),_("Kolor znaczników sekund"),_("Kolor klatek kluczowych"),
+			_("Kolor zaznaczenia"),_("Kolor zaznaczenia po modyfikacji"),_("Kolor wykresu audio"),
+			_("Kolor nieaktywnego wykresu audio"),_("Kolor zmodyfikowanego wykresu audio"),_("Kolor zaznaczonego wykresu audio")};
 		wxString opts[]={"Audio Background","Audio Line Boundary Start","Audio Line Boundary End","Audio Line Boundary Mark",
-			"Audio Line Boundary Inactive Line","Audio Play Cursor","Audio Seconds Boundaries","Audio Selection Background",
-			"Audio Selection Background Modified","Audio Waveform","Audio Waveform Inactive","Audio Waveform Modified","Audio Waveform Selected"};
+			"Audio Line Boundary Inactive Line","Audio Play Cursor","Audio Seconds Boundaries","Audio Keyframes",
+			"Audio Selection Background","Audio Selection Background Modified","Audio Waveform","Audio Waveform Inactive",
+			"Audio Waveform Modified","Audio Waveform Selected"};
 	
-		for(int i=0;i<13;i++)
+		for(int i=0;i<14;i++)
 		{
 			ColorButton *optc=new ColorButton(AudioCols,-1,Options.GetString(opts[i]));
 			ConOpt(optc,opts[i]);
@@ -395,6 +420,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	//Adding pages
 	OptionsTree->AddPage(Main,_("Edytor"),true);
 	OptionsTree->AddSubPage(GridColors,_("Kolorystyka"),true);
+	OptionsTree->AddSubPage(GridColors2,_("Kolorystyka2"),true);
 	OptionsTree->AddSubPage(ConvOpt,_("Konwersja"),true);
 	OptionsTree->AddPage(Video,_("Wideo"),true);
 	OptionsTree->AddPage(AudioMain,_("Audio"),true);
@@ -535,8 +561,22 @@ void OptionsDialog::SetOptions(bool saveall)
 			}
 		}
 	}
-	if(fontmod){Kai->GetTab()->Grid1->SetStyle();Kai->GetTab()->Grid1->RepaintWindow();}
-	if(colmod){Kai->GetTab()->Grid1->Refresh(false);}
+	if(fontmod){
+		Kai->GetTab()->Grid1->SetStyle();
+		Kai->GetTab()->Grid1->RepaintWindow();
+		if(Kai->Tabs->split){
+			Kai->Tabs->GetSecondPage()->Grid1->SetStyle();
+			Kai->Tabs->GetSecondPage()->Grid1->RepaintWindow();
+		}
+	}
+	if(colmod){
+		Kai->GetTab()->Grid1->Refresh(false);
+		if(Kai->GetTab()->Edit->ABox){Kai->GetTab()->Edit->ABox->audioDisplay->UpdateImage();}
+		if(Kai->Tabs->split){
+			Kai->Tabs->GetSecondPage()->Grid1->Refresh(false);
+			if(Kai->Tabs->GetSecondPage()->Edit->ABox){Kai->Tabs->GetSecondPage()->Edit->ABox->audioDisplay->UpdateImage();}
+		}
+	}
 	Options.SaveOptions();
 	Options.SaveAudioOpts();
 }

@@ -36,14 +36,11 @@
 
 ///////////
 // Headers
-#include "config.h"
-
+#include "AudioBox.h"
+#include "KainoteMain.h"
+#include "Config.h"
+#include "Hotkeys.h"
 #include <math.h>
-#include "audio_box.h"
-#include "kainoteMain.h"
-#include "config.h"
-#include "hotkeys.h"
-
 
 ///////////////
 // Constructor
@@ -425,7 +422,7 @@ void AudioBox::OnKaraoke(wxCommandEvent &event) {
 		HorizontalZoom->SetValue(50);
 	}
 
-
+	
 	audioDisplay->MakeDialogueVisible();
 
 	Options.SetBool("Audio Karaoke",audioDisplay->hasKara);

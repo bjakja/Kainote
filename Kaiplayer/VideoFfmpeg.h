@@ -14,7 +14,7 @@
 class VideoFfmpeg
 {
 public:
-	VideoFfmpeg(const wxString &filename, int tab, bool *success);
+	VideoFfmpeg(const wxString &filename, bool *success);
 	~VideoFfmpeg();
 	void GetFrame(int frame, byte* buff);
 	void GetBuffer(void *buf, int64_t start, int64_t count, double vol=1.0);
@@ -43,7 +43,7 @@ public:
 	std::vector<int> Timecodes;
 	int GetMSfromFrame(int frame);
 	int GetFramefromMS(int MS, int seekfrom=1);
-	int Init(const wxString &filename, int tab);
+	int Init(const wxString &filename);
 
 	//bool com_inited;
 	ProgresDialog *progress;
@@ -75,6 +75,7 @@ private:
 	char **Cache;
 	int blnum;
 	void GetAudio(void *buf, int64_t start, int64_t count);
+	void DeleteOldAudioCache();
 	
 };
 

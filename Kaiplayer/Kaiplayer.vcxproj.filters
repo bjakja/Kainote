@@ -15,28 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ColorChange.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="config.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DropFiles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EditBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="findreplace.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Grid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="kainoteApp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="kainoteMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NewCatalog.cpp">
@@ -51,19 +36,10 @@
     <ClCompile Include="Stylelistbox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="styles.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="stylestore.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SubsDialogue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SubsGrid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="timeconv.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TimeCtrl.cpp">
@@ -87,16 +63,7 @@
     <ClCompile Include="Hotkeys.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dialog_colorpicker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="colorspace.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TLDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mkv_wrap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MatroskaParser.c">
@@ -118,24 +85,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TabPanel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TabDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="audio_box.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="audio_display.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="audio_spectrum.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fft.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="audio_player_dsound2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="KaraokeSplitting.cpp">
@@ -163,9 +112,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VideoRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dshowplayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ProgressDialog.cpp">
@@ -198,30 +144,90 @@
     <ClCompile Include="Visuals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VisualPosition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualMove.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualScale.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualRotationZ.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualRotationXY.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualClipRect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioDisplay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioPlayerDSound.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioSpectrum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualMoveAll.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StyleChange.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorPicker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MKVWrap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KainoteMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KainoteApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FindReplace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FFT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DShowPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorSpace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StyleStore.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Styles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsTime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tabs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ColorChange.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DropFiles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EditBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="findreplace.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Grid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="kainoteApp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="kainoteMain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NewCatalog.h">
@@ -236,19 +242,10 @@
     <ClInclude Include="Stylelistbox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="styles.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stylestore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SubsDialogue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SubsGrid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="timeconv.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TimeCtrl.h">
@@ -272,12 +269,6 @@
     <ClInclude Include="Hotkeys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dialog_colorpicker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="colorspace.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -285,9 +276,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MatroskaParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mkv_wrap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StyleList.h">
@@ -306,24 +294,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TabPanel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TabDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="audio_box.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="audio_display.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="audio_spectrum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fft.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="audio_player_dsound2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KaraokeSplitting.h">
@@ -351,9 +321,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VideoRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="dshowplayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ProgressDialog.h">
@@ -387,6 +354,57 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EnumFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioDisplay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioPlayerDSound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSpectrum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StyleChange.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorPicker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MKVWrap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsTime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StyleStore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorSpace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FFT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Styles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KainoteMain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KainoteApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tabs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,6 @@
 
 #include "AutomationToFile.h"
-#include "kainoteApp.h"
+#include "KainoteApp.h"
 #include <wx/regex.h>
 
 namespace Auto{

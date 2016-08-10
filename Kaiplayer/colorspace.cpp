@@ -1,8 +1,8 @@
 
 
-#include "config.h"
+#include "Config.h"
 
-#include "colorspace.h"
+#include "ColorSpace.h"
 #include "SubsGrid.h"
 
 

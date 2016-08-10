@@ -4,7 +4,7 @@
 #include <wx/regex.h>
 #include <wx/dir.h>
 #include "Videobox.h"
-#include "kainoteMain.h"
+#include "KainoteMain.h"
 #include "Hotkeys.h"
 #include <shellapi.h>
 #include <wx/clipbrd.h>
@@ -98,7 +98,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	bnext = new BitmapButton(panel, CreateBitmapFromPngResource("forward"), CreateBitmapFromPngResource("forward1"),ID_BNEXT, wxPoint(145,16), wxSize(26,26));
 
 	volslider=new VolSlider(panel,ID_VOL,Options.GetInt("Video Volume"),wxPoint(size.x-110,17),wxSize(110,25));
-	mstimes=new wxTextCtrl(panel,-1,"",wxPoint(180,19),wxSize(360,-1));
+	mstimes=new wxTextCtrl(panel,-1,"",wxPoint(180,19),wxSize(360,-1),wxTE_READONLY);
 	//mstimes->SetForegroundColour(wxColour("#FFFFFF"));
 	//mstimes->SetBackgroundColour(wxColour("#808080"));
 	mstimes->SetWindowStyle(wxBORDER_NONE);
@@ -182,11 +182,15 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 	if(fulls){SetFullskreen();}
 	prevchap=-1;
 	wxMenuItem *index=Kai->MenuBar->FindItem(VideoIndexing);
-	if(!OpenFile(fileName, subsName,!(index->IsChecked()&&index->IsEnabled()&&!fulls&&!isfullskreen),!Kai->GetTab()->edytor,fulls)){
-		return false;
-	}
 	bool shown=true;
-	if( !(IsShown() || (TD && TD->IsShown())) ){shown=false; Show();}
+	
+	if(!OpenFile(fileName, subsName,!(index->IsChecked()&&index->IsEnabled()&&!fulls&&!isfullskreen),!Kai->GetTab()->edytor,fulls)){
+		delete subsName; return false;
+	}
+	if( !(IsShown() || (TD && TD->IsShown())) ){
+		shown=false; Show();
+	}
+	
 	eater=IsDshow;
 	
 	
@@ -264,11 +268,11 @@ PlaybackState VideoCtrl::GetState()
    return vstate; 
 }
 
-bool VideoCtrl::Seek(int whre,bool starttime, bool disp)
+bool VideoCtrl::Seek(int whre,bool starttime, bool disp, bool reloadSubs)
 {
 	wxMutexLocker lock(vbmutex);
 	if(GetState()==None){return false;}
-	SetPosition(whre, starttime);
+	SetPosition(whre, starttime, true, reloadSubs);
 	if(disp){displaytime();}
 	return true;
 }
@@ -541,7 +545,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 			SetMinSize(wxSize(sx,sy+44));
 			Kai->GetTab()->BoxSizer1->Layout();
 		}
-		volslider->SetValue(TD->volslider->GetValue());
+		volslider->SetValue(Options.GetInt("Video Volume"));
 		//wxLogStatus("głośność okno %i %i", volslider->GetValue(),Options.GetInt("Video Volume"));
 		if(!IsShown()){Show();GetParent()->Layout();}	
 		UpdateVideoWindow();
@@ -564,7 +568,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 			TD->SetPosition(rt.GetPosition());
 			TD->SetSize(rt.GetSize());
 		}
-		TD->volslider->SetValue(volslider->GetValue());
+		TD->volslider->SetValue(Options.GetInt("Video Volume"));
 		//wxLogStatus("głośność full %i %i", TD->volslider->GetValue(),Options.GetInt("Video Volume"));
 		TD->panel->Hide();
 		TD->Show();
@@ -1018,11 +1022,11 @@ void VideoCtrl::NextChap()
 		
 		int ntime= (j>=(int)chaps.size()-1)? INT_MAX : chaps[(j+1)].time;
 		if(ntime>=vrtime){
-			//wxLogStatus("j %i", j);
+			
 			int jj=(j>=(int)chaps.size()-1 || (j==0 && chaps[0].time>=vrtime))? 0 : j+1;
 			if(jj==prevchap){if(jj>=(int)chaps.size()-1){jj=0;}else{jj++;}}
 			Seek(chaps[jj].time,false);
-			//wxLogStatus("prevchap %i %i %i %i", prevchap, ntime, vrtime, jj);
+			
 			prevchap=jj;
 			break;
 		}

@@ -1,10 +1,11 @@
 #include "TabPanel.h"
 #include "Visuals.h"
 #include <wx/tokenzr.h>
+#include <wx/regex.h>
 #include <math.h> 
 
-
-
+float DrawingAndClip::_x=0;
+float DrawingAndClip::_y=0;
 
 ClipPoint::ClipPoint()
 {
@@ -29,26 +30,35 @@ bool ClipPoint::IsInPos(wxPoint pos, int diff)
 
 D3DXVECTOR2 ClipPoint::GetVector()
 {
-	D3DXVECTOR2 v = D3DXVECTOR2((x+Visuals::_x)/Visuals::wspw,(y+Visuals::_y)/Visuals::wsph);
+	D3DXVECTOR2 v = D3DXVECTOR2((x+DrawingAndClip::_x)/Visuals::wspw,(y+DrawingAndClip::_y)/Visuals::wsph);
 	return v;
 }
 
 int ClipPoint::wx()
 {
-	return (x+Visuals::_x)/Visuals::wspw;
+	return (x+DrawingAndClip::_x)/Visuals::wspw;
 }
 int ClipPoint::wy()
 {
-	return (y+Visuals::_y)/Visuals::wsph;
+	return (y+DrawingAndClip::_y)/Visuals::wsph;
 }
-float Visuals::_x=0;
-float Visuals::_y=0;
-float Visuals::wspw=0;
-float Visuals::wsph=0;
 
-//Rysuje clip jeœli dana linia jest widoczna na wideo
-//cur - aktualny czas wideo
-void Visuals::DrawClip()
+DrawingAndClip::DrawingAndClip()
+	:Visuals()
+	,newline(false)
+	,newmove(false)
+	,drawtxt(false)
+	,invClip(false)
+	,grabbed(-1)
+{
+}
+
+DrawingAndClip::~DrawingAndClip()
+{
+	Points.clear();
+}
+
+void DrawingAndClip::DrawVisual(int time)
 {
 	
 	
@@ -76,14 +86,15 @@ void Visuals::DrawClip()
 	
 
 	if(drawtxt){
-		coords=""; 
+		wxString coords=""; 
 		coords<<(acpoint.x)<<", "<<(acpoint.y);
-		wxSize wsize=parent->GetClientSize();
+		wxSize wsize=tab->Video->GetClientSize();
 		wsize.x/=2; wsize.y/=2;
 		int x=acpoint.wx(), y=acpoint.wy();
-		align=0;
+		DWORD align=0;
 		align |= (x>wsize.x)? DT_RIGHT : 0;
 		align |= (y>wsize.y)? DT_BOTTOM : 0;
+		RECT cpos;
 		cpos.left=(x>wsize.x)? x-150 : x+5;
 		cpos.top=(y>wsize.y)? y-50 : y+5;
 		cpos.right=(x>wsize.x)? x-5 : x+150;
@@ -93,9 +104,32 @@ void Visuals::DrawClip()
 }
 
 	
-void Visuals::SetClip(wxString clip)
+void DrawingAndClip::SetCurVisual()
 {
-	
+	wxString clip;
+	D3DXVECTOR2 linepos = tab->Edit->GetPosnScale(&scale, NULL, NULL);
+	if(Visual!=VECTORDRAW){
+		bool found =tab->Edit->FindVal("(i?clip[^\\)]+)", &clip);
+		if(found){int rres = clip.Replace(",",",");
+			if( rres >= 3) {clip = "";} 
+			else{clip = clip.AfterFirst('(');}
+		}
+		_x=0;
+		_y=0;
+	}else{
+		wxString txt=tab->Edit->TextEdit->GetValue();
+		wxRegEx re("}(m[^{]*){\\\\p0}", wxRE_ADVANCED);
+		if(re.Matches(txt)){
+			clip = re.GetMatch(txt,1);
+		}
+		
+
+		_x=linepos.x/scale.x;
+		_y=(linepos.y/scale.y);
+		wspw/=scale.x;
+		wsph/=scale.y;
+	}
+
 	Points.clear();
 	wxStringTokenizer tokens(clip," ");
 	int tmpx=0;
@@ -121,13 +155,12 @@ void Visuals::SetClip(wxString clip)
 	}
 	//wxLogStatus(clip);
 	if(Points.empty()){
-		AddMove(wxPoint(((subssize.x)/(wspw*scale.x))/2, ((subssize.y)/(wsph*scale.y))/2),0);
+		AddMove(wxPoint(((SubsSize.x)/(wspw*scale.x))/2, ((SubsSize.y)/(wsph*scale.y))/2),0);
 	}
 	acpoint=Points[0];
-	
 }
 	
-wxString Visuals::GetClip()
+wxString DrawingAndClip::GetVisual()
 {
 	wxString clip;
 	int cntb=0;
@@ -151,15 +184,14 @@ wxString Visuals::GetClip()
 	return clip.Trim();
 }
 
-void Visuals::SetPos(int x, int y)
+void DrawingAndClip::SetPos(int x, int y)
 {
 	_x= x;
 	_y= y;
-	//wxLogStatus("x y %i %i", _x, _y);
 }
 
 // pos in skreen position
-int Visuals::CheckPos(wxPoint pos, bool retlast, bool wsp)
+int DrawingAndClip::CheckPos(wxPoint pos, bool retlast, bool wsp)
 {
 	if(wsp){pos.x =(pos.x*wspw)-_x; pos.y =(pos.y*wsph)-_y;}
 	for(size_t i=0; i<Points.size(); i++)
@@ -170,13 +202,13 @@ int Visuals::CheckPos(wxPoint pos, bool retlast, bool wsp)
 }
 
 // pos in clip position
-void Visuals::MovePoint(wxPoint pos, int point)
+void DrawingAndClip::MovePoint(wxPoint pos, int point)
 {
 	Points[point].x=pos.x;
 	Points[point].y=pos.y;
 }
 // pos in skreen position	
-void Visuals::AddCurve(wxPoint pos, int whereis, wxString type)
+void DrawingAndClip::AddCurve(wxPoint pos, int whereis, wxString type)
 {
 	pos.x =(pos.x*wspw)-_x; pos.y =(pos.y*wsph)-_y;
 	wxPoint oldpos;
@@ -192,7 +224,7 @@ void Visuals::AddCurve(wxPoint pos, int whereis, wxString type)
 	acpoint=Points[whereis+2];
 }
 // pos in skreen position
-void Visuals::AddCurvePoint(wxPoint pos, int whereis)
+void DrawingAndClip::AddCurvePoint(wxPoint pos, int whereis)
 {
 	if(Points[whereis-1].type=="s"||((int)Points.size()>whereis && Points[whereis].type=="s"))
 	{
@@ -201,21 +233,21 @@ void Visuals::AddCurvePoint(wxPoint pos, int whereis)
 	else{wxBell();}
 }
 // pos in skreen position	
-void Visuals::AddLine(wxPoint pos, int whereis)
+void DrawingAndClip::AddLine(wxPoint pos, int whereis)
 {
 	Points.insert(Points.begin()+whereis, ClipPoint((pos.x*wspw)-_x, (pos.y*wsph)-_y,"l",true));
 	//wxLogStatus("line %i, %i, %f, %f, %f, %f", pos.x, pos.y, wspw, wsph, _x, _y);
 	acpoint=Points[whereis];
 }
 // pos in skreen position	
-void Visuals::AddMove(wxPoint pos, int whereis)
+void DrawingAndClip::AddMove(wxPoint pos, int whereis)
 {
 	//wxLogStatus(" wsps %i, %i, %f, %f, %f, %f", pos.x, pos.y, wspw, wsph, _x, _y);
 	Points.insert(Points.begin()+whereis, ClipPoint((pos.x*wspw)-_x, (pos.y*wsph)-_y,"m",true));
 	acpoint=Points[whereis];
 }
 	
-void Visuals::DrawLine(int i)
+void DrawingAndClip::DrawLine(int i)
 {
 	line->Begin();
 	int diff = (Points[i-1].type=="s")? 2 : 1;
@@ -223,17 +255,20 @@ void Visuals::DrawLine(int i)
 	line->Draw(v2, 2, 0xFFFF0000);
 	line->End();
 	DrawRect(i-1);
-	/*MYVERTEX v5[3];
-	CreateMYVERTEX(&v5[0], 0, 0, 0xAAFF0000);
-	CreateMYVERTEX(&v5[1], v2[0].x, v2[0].y, 0xAAFF0000);
-	CreateMYVERTEX(&v5[2], v2[1].x, v2[1].y, 0xAAFF0000);
-	HRN(device->SetFVF( D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1), "fvf failed");
-	HRN(device->SetTexture( 0, texture ),"texture failed");
-    HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLELIST, 1, v5, sizeof(MYVERTEX) ),"primitive failed");*/
 	
 }
+
+void DrawingAndClip::DrawRect(int coord)
+{
+	Visuals::DrawRect(Points[coord].GetVector());
+}
 	
-int Visuals::DrawCurve(int i, bool bspline)
+void DrawingAndClip::DrawCircle(int coord)
+{
+	Visuals::DrawCircle(Points[coord].GetVector());
+}
+	
+int DrawingAndClip::DrawCurve(int i, bool bspline)
 {
 	line->Begin();
 	std::vector<D3DXVECTOR2> v4;
@@ -279,54 +314,9 @@ int Visuals::DrawCurve(int i, bool bspline)
 	return pts;
 }
 
-void Visuals::DrawRect(int i, D3DXVECTOR2 *vector)
-{
-	//line->End();
-    D3DXVECTOR2 tmp = (vector)? (*vector) : Points[i].GetVector();
-	MYVERTEX v9[9];
-	CreateMYVERTEX(&v9[0], tmp.x-5.0f, tmp.y-5.0f, 0xAA121150);
-	CreateMYVERTEX(&v9[1], tmp.x+5.0f, tmp.y-5.0f, 0xAA121150);
-	CreateMYVERTEX(&v9[2], tmp.x-5.0f, tmp.y+5.0f, 0xAA121150);
-	CreateMYVERTEX(&v9[3], tmp.x+5.0f, tmp.y+5.0f, 0xAA121150);
-	CreateMYVERTEX(&v9[4], tmp.x-5.0f, tmp.y-5.0f, 0xFFFF0000);
-	CreateMYVERTEX(&v9[5], tmp.x+5.0f, tmp.y-5.0f, 0xFFFF0000);
-	CreateMYVERTEX(&v9[6], tmp.x+5.0f, tmp.y+5.0f, 0xFFFF0000);
-	CreateMYVERTEX(&v9[7], tmp.x-5.0f, tmp.y+5.0f, 0xFFFF0000);
-	CreateMYVERTEX(&v9[8], tmp.x-5.0f, tmp.y-5.0f, 0xFFFF0000);
-
-	HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v9, sizeof(MYVERTEX) ),"primitive failed");
-	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 4, &v9[4], sizeof(MYVERTEX) ),"primitive failed");
-	//line->Begin();
-}
-	
-void Visuals::DrawCircle(int i, D3DXVECTOR2 *vector)
-{
-	//line->End();
-	D3DXVECTOR2 tmp = (vector)? (*vector) : Points[i].GetVector();
-	MYVERTEX v5[41];
-	float rad =0.01745329251994329576923690768489f;
-	
-	float xx = tmp.x;
-	float yy = tmp.y;
-	CreateMYVERTEX(&v5[0], xx, yy, 0xAA121150);
-	for(int j=0; j<20; j++)
-	{
-		float xx1= tmp.x + (6.f * sin ( (j*20) * rad ));
-		float yy1= tmp.y + (6.f * cos ( (j*20) * rad ));
-		CreateMYVERTEX(&v5[j+1], xx1, yy1, 0xAA121150);
-		CreateMYVERTEX(&v5[j+21], xx1, yy1, 0xFFFF0000);
-		xx=xx1;
-		yy=yy1;
-		
-	}
-
-	HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLEFAN, 18, v5, sizeof(MYVERTEX) ),"primitive failed");
-	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 18, &v5[21], sizeof(MYVERTEX) ),"primitive failed");
-	//line->Begin();
-}
 
 	
-void Visuals::Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bspline, int spoints, int acpt)
+void DrawingAndClip::Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bspline, int spoints, int acpt)
 {
 	float a[4], b[4];
 	float x[4], y[4];
@@ -377,12 +367,12 @@ void Visuals::Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bspline, int 
 	table->push_back(D3DXVECTOR2(p_x,p_y));
 }
 
-void Visuals::OnMouseEvent(wxMouseEvent &event)
+void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 {
-	
-	int x=event.GetX();
-	int y=event.GetY();
-	wxPoint xy=event.GetPosition();
+	int x, y;
+	if(tab->Video->isfullskreen){wxGetMousePosition(&x,&y);}
+	else{event.GetPosition(&x,&y);}
+	wxPoint xy=wxPoint(x, y);
 	bool click=event.LeftDown();
 	bool right=event.RightDown();
 	bool ctrl=event.ControlDown();
@@ -393,19 +383,18 @@ void Visuals::OnMouseEvent(wxMouseEvent &event)
 		//wxLogStatus(" bdown %i", (int)event.ButtonDown());
 		int pos = CheckPos(xy);
 		if(pos!= -1 && hasArrow){
-			parent->SetCursor(wxCURSOR_SIZING);hasArrow=false;
-		}else if(pos== -1 && !hasArrow){parent->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
+			tab->Video->SetCursor(wxCURSOR_SIZING);hasArrow=false;
+		}else if(pos== -1 && !hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 	}
 	
 	if(event.ButtonUp()){
-		TabPanel* pan=(TabPanel*)parent->GetParent();
-		pan->Edit->SetClip(GetClip(),false);
+		tab->Edit->SetClip(GetVisual(),false);
 	}
 
 	if(event.LeftUp()){
 		
-		if(parent->HasCapture()){
-			parent->ReleaseMouse();}
+		if(tab->Video->HasCapture()){
+			tab->Video->ReleaseMouse();}
 		return;
 	}
 	if(right&&ctrl&&event.AltDown())
@@ -413,8 +402,7 @@ void Visuals::OnMouseEvent(wxMouseEvent &event)
 		//wxLogStatus("point");
 		if(Points.empty()){wxBell(); return;}
 		AddCurvePoint(xy,CheckPos(xy, true));
-		TabPanel* pan=(TabPanel*)parent->GetParent();
-		pan->Edit->SetClip(GetClip(),true);
+		tab->Edit->SetClip(GetVisual(),true);
 		return;
 	}
 	if(right&&ctrl)
@@ -422,24 +410,21 @@ void Visuals::OnMouseEvent(wxMouseEvent &event)
 		//wxLogStatus("curve");
 		if(Points.empty()){wxBell(); return;}
 		AddCurve(xy,CheckPos(xy, true),"s");
-		TabPanel* pan=(TabPanel*)parent->GetParent();
-		pan->Edit->SetClip(GetClip(),true);
+		tab->Edit->SetClip(GetVisual(),true);
 		return;
 	}
 	if(right)
 	{
 		if(Points.empty()){wxBell(); return;}
 		AddLine(xy,CheckPos(xy, true));
-		TabPanel* pan=(TabPanel*)parent->GetParent();
-		pan->Edit->SetClip(GetClip(),true);
+		tab->Edit->SetClip(GetVisual(),true);
 		return;
 	}
 	if(ctrl&&event.AltDown()&&click)
 	{
 		if(Points.empty()){wxBell(); return;}
 		AddCurve(xy,CheckPos(xy, true));
-		TabPanel* pan=(TabPanel*)parent->GetParent();
-		pan->Edit->SetClip(GetClip(),true);
+		tab->Edit->SetClip(GetVisual(),true);
 		return;
 	}
 	else if(ctrl&&click)
@@ -467,8 +452,7 @@ void Visuals::OnMouseEvent(wxMouseEvent &event)
 					}
 				}
 				drawtxt=false;
-				TabPanel* pan=(TabPanel*)parent->GetParent();
-				pan->Edit->SetClip(GetClip(),true);
+				tab->Edit->SetClip(GetVisual(),true);
 				break;
 			}
 		}
@@ -490,7 +474,7 @@ void Visuals::OnMouseEvent(wxMouseEvent &event)
 				grabbed=i;
 				diffs.x=pointx-x;
 				diffs.y=pointy-y;
-				parent->CaptureMouse();
+				tab->Video->CaptureMouse();
 				break;
 			}
 		}
@@ -498,8 +482,7 @@ void Visuals::OnMouseEvent(wxMouseEvent &event)
 		{
 			
 			AddMove(xy,CheckPos(xy, true));newmove=false;
-			TabPanel* pan=(TabPanel*)parent->GetParent();
-			pan->Edit->SetClip(GetClip(),true);
+			tab->Edit->SetClip(GetVisual(),true);
 			grabbed=Points.size()-1;
 		}
 
@@ -507,13 +490,12 @@ void Visuals::OnMouseEvent(wxMouseEvent &event)
 
 	if(event.LeftIsDown() && grabbed!=-1)
 	{
-		x=MID(0,x,widsize.x);
-		y=MID(0,y,widsize.y);
+		x=MID(0,x,VideoSize.x);
+		y=MID(0,y,VideoSize.y);
 		Points[grabbed].x=((x+diffs.x)*wspw)-_x;
 		Points[grabbed].y=((y+diffs.y)*wsph)-_y;
 		acpoint=Points[grabbed];
-		TabPanel* pan=(TabPanel*)parent->GetParent();
-		pan->Edit->SetClip(GetClip(),true);
+		tab->Edit->SetClip(GetVisual(),true);
 
 	}
 	
@@ -522,22 +504,22 @@ void Visuals::OnMouseEvent(wxMouseEvent &event)
 
 
 
-D3DXVECTOR2 Visuals::CalcWH()
-{
-	if (Points.size()<1){return D3DXVECTOR2(0,0);}
-	int minx=INT_MAX;
-	int miny=INT_MAX;
-	int maxx=-INT_MAX;
-	int maxy=-INT_MAX;
-	for(size_t i = 0; i<Points.size(); i++)
-	{
-		ClipPoint p=Points[i];
-		if(p.x<minx){minx=p.x;}
-		if(p.y<miny){miny=p.y;}
-		if(p.x>maxx){maxx=p.x;}
-		if(p.y>maxy){maxy=p.y;}
-	}
-	D3DXVECTOR2 sizes((maxx-minx)*wspw,(maxy-miny)*wsph);
-	return sizes;
-}
+//D3DXVECTOR2 DrawingAndClip::CalcWH()
+//{
+//	if (Points.size()<1){return D3DXVECTOR2(0,0);}
+//	int minx=INT_MAX;
+//	int miny=INT_MAX;
+//	int maxx=-INT_MAX;
+//	int maxy=-INT_MAX;
+//	for(size_t i = 0; i<Points.size(); i++)
+//	{
+//		ClipPoint p=Points[i];
+//		if(p.x<minx){minx=p.x;}
+//		if(p.y<miny){miny=p.y;}
+//		if(p.x>maxx){maxx=p.x;}
+//		if(p.y>maxy){maxy=p.y;}
+//	}
+//	D3DXVECTOR2 sizes((maxx-minx)*wspw,(maxy-miny)*wsph);
+//	return sizes;
+//}
 

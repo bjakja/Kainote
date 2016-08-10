@@ -1,4 +1,4 @@
-#include "config.h"
+#include "Config.h"
 #include "OpennWrite.h"
 #include <wx/stdpaths.h>
 #include <wx/dir.h>

@@ -3,7 +3,7 @@
 
 
 #include <wx/wx.h>
-#include "styles.h"
+#include "Styles.h"
 #include <vector>
 typedef void csri_inst;
 typedef void csri_rend;
