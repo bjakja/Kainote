@@ -1921,7 +1921,7 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 				AddStyle(new Styles(token,format));
 				sinfoo=2;
 			}
-			else if(token.StartsWith("Format:") && sinfoo==2){
+			else if(sinfoo==2 && !token.StartsWith("Style:")){
 				break;
 			}
 			else if(token.StartsWith("[V4")){
@@ -1950,7 +1950,7 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 		while ( tokenizer.HasMoreTokens() )
 		{
 			wxString token = tokenizer.GetNextToken();
-			if(token.StartsWith("[Font")||token.StartsWith("[Attach")){break;}
+			if(!token.StartsWith("Dial")){continue;}
 			Dialogue *dl= new Dialogue(token);
 			if(!tlmode){
 				AddLine(dl);

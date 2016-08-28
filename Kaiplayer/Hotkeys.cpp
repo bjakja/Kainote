@@ -7,7 +7,7 @@
 #include <wx/regex.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>
-
+#include <algorithm>
 
 Hotkeys::Hotkeys()
 {
@@ -303,6 +303,9 @@ int Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent, wxString *windows
 	int resitem=-1;
 	if(hkd.ShowModal()==0){
 
+		/*auto result = std::find_if(hkeys.begin(),hkeys.end(),[&](std::pair<int,hdata>& hkey){
+			return (hkey.second.Accel == hkd.hotkey && hkey.second.Type == hkd.hkname[0]);
+		});*/
 
 		for(std::map< int, hdata >::iterator cur=hkeys.begin(); cur!=hkeys.end(); cur++)
 		{
@@ -330,6 +333,21 @@ wxMenuItem *Hotkeys::SetAccMenu(wxMenu *menu, int id, const wxString &txt, const
 	return menu->Append(id,mtext,help,kind);
 }
 
+wxMenuItem *Hotkeys::SetAccMenu(wxMenu *menu, wxMenuItem *menuitem, const wxString &name)
+{
+	int id=0;
+	for(auto cur=hkeys.rbegin(); cur!=hkeys.rend(); cur++)
+	{
+		if(cur->first<30100){break;}
+		if(cur->second.Name == name ){
+			//hkey = cur->second.Accel;
+			id = cur->first;	
+		}
+	}
+
+	if(id){menuitem->SetAccel(&GetHKey(id));}
+	return menu->Append(menuitem);
+}
 
 //Okno dialogowe przechwytujące skróty klawiszowe
 //blokujące przy okazji dostęp do opcji

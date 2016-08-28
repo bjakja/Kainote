@@ -446,7 +446,7 @@ void FontCollectorDialog::CopyMKVFonts()
 	wxString mkvpath=Notebook::GetTab()->VideoPath;
 	MatroskaWrapper mw;
 	mw.Open(mkvpath);
-	wxArrayString names=mw.GetFontList();
+	std::map<int, wxString> names=mw.GetFontList();
 	if(names.size()<1){
 		console->SetDefaultStyle(wxTextAttr(*wxRED));
 		console->AppendText(_("Wczytany plik MKV nie ma żadnych czcionek."));
@@ -482,16 +482,16 @@ void FontCollectorDialog::CopyMKVFonts()
 		out =new wxFFileOutputStream(copypath);
 		zip = new wxZipOutputStream(*out);
 	}
-	for(size_t i=0; i<names.size(); i++){
-		if(mw.SaveFont(i, onlypath+names[i], zip))
+	for(auto fontI : names){
+		if(mw.SaveFont(fontI.first, onlypath + fontI.second, zip))
 		{
 			console->SetDefaultStyle(wxTextAttr(*wxBLACK));
-			console->AppendText(_("Zapisano czcionkę o nazwie \"")+names[i]+"\".\n \n");
+			console->AppendText(_("Zapisano czcionkę o nazwie \"")+ fontI.second +"\".\n \n");
 		}
 		else
 		{
 			console->SetDefaultStyle(wxTextAttr(*wxRED));
-			console->AppendText(_("Nie można zapisać czcionki o nazwie \"")+names[i]+"\".\n \n");
+			console->AppendText(_("Nie można zapisać czcionki o nazwie \"")+ fontI.second +"\".\n \n");
 			cpfonts--;
 		}
 	}

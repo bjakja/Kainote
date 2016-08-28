@@ -78,7 +78,7 @@ class kainoteFrame: public wxFrame
 		bool SavePrompt(char mode=1, int wtab=-1);
 		void UpdateToolbar();
 		void OnOpenAudio(wxCommandEvent& event);
-
+		void OnMenuClick(wxCommandEvent &event);
 		ScriptsDialog *LSD;
 		findreplace *FR;
 		findreplace *SL;
@@ -96,7 +96,8 @@ class kainoteFrame: public wxFrame
 		void OnPageChange(wxCommandEvent& event);
 		void OnPageAdd(wxCommandEvent& event);
 		void OnPageClose(wxCommandEvent& event);
-		void OnRunScript(wxCommandEvent& event);
+		//void OnRunScript(wxCommandEvent& event);
+		
 		void OnChangeLine(wxCommandEvent& event);
 		void OnDelete(wxCommandEvent& event);
 		void OnClose1(wxCloseEvent& event);
@@ -233,7 +234,8 @@ enum{
 	XX( ViewAudio,)\
 	XX( ViewVideo,)\
 	XX( ViewSubs,)\
-	XX( Automation,)\
+	XX( AutoLoadScript,)\
+	XX( AutoReloadAutoload,)\
 	XX( PlayPauseG,)\
 	XX( PreviousFrame,)\
 	XX( NextFrame,)\

@@ -36,6 +36,7 @@ public:
 	void SaveUndo();
 	void Redo();
 	void Undo();
+	void DummyUndo();
 	void EndLoad();
 	Dialogue *CopyDial(int i, bool push=true, bool keepstate=false);
 	Styles *CopyStyle(int i, bool push=true);

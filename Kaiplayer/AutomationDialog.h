@@ -2,123 +2,84 @@
 #define AUTODIALOG
 
 #include <wx/wx.h>
-
+#include <memory>
 #include <vector>
-//extern "C" {
-#include <lauxlib.h>
-	//}
+extern "C" {
+#include <lua.hpp>
+	}
 
 
 namespace Auto{
 
-class LuaConfigDialogCtrl
-	{
+class LuaDialogControl {
+	public:
+		/// Name of this control in the output table
+		wxString name;
 
-public:
-	LuaConfigDialogCtrl(lua_State *L);
-	virtual ~LuaConfigDialogCtrl() { if( cw ){delete cw;} };
-	virtual void LuaReadBack(lua_State *L) {};
-	virtual void ControlReadBack() {};
-	wxString name, hint;
-	int x, y, width, height;
-	wxControl *cw;
+		/// Tooltip of this control
+		wxString hint;
+
+		int x, y, width, height;
+
+		/// Create the associated wxControl
+		virtual wxControl *Create(wxWindow *parent) = 0;
+
+		/// Get the default flags to use when inserting this control into a sizer
+		virtual int GetSizerFlags() const { return wxEXPAND; }
+
+		/// Push the current value of the control onto the lua stack. Must not
+		/// touch the GUI as this may be called on a background thread.
+		virtual void LuaReadBack(lua_State *L) = 0;
+
+		/// Does this control have any user-changeable data that can be serialized?
+		virtual bool CanSerialiseValue() const { return false; }
+
+		/// Serialize the control's current value so that it can be stored
+		/// in the script
+		virtual wxString SerialiseValue() const { return ""; }
+
+		/// Restore the control's value from a saved value in the script
+		virtual void UnserialiseValue(const wxString &serialised) { }
+
+		LuaDialogControl(lua_State *L);
+
+		virtual ~LuaDialogControl(){};
 	};
 
-class Edit : public LuaConfigDialogCtrl
-	{
-public:
-	Edit(lua_State *L, wxWindow *parent, bool _state);
-	void ControlReadBack();
-	void LuaReadBack(lua_State *L);
-	virtual ~Edit() { };
-	wxString text;
-	float value, min, max;
-	bool state;
-	};
+	/// A lua-generated dialog or panel in the export options dialog
+	class LuaDialog {
+		/// Controls in this dialog
+		std::vector<LuaDialogControl*> controls;
+		/// The names and IDs of buttons in this dialog if non-default ones were used
+		std::vector<std::pair<int, wxString>> buttons;
 
+		/// Does the dialog contain any buttons
+		bool use_buttons;
 
-class NumEdit : public LuaConfigDialogCtrl
-	{
-public:
-	NumEdit(lua_State *L, wxWindow *parent, bool _state);
-	void ControlReadBack();
-	void LuaReadBack(lua_State *L);
-	virtual ~NumEdit() { };
-	wxString text;
-	float value, min, max;
-	bool state;
-	};
+		/// Id of the button pushed (once a button has been pushed)
+		int button_pushed;
 
-
-class DropDown : public LuaConfigDialogCtrl
-	{
-public:
-	DropDown(lua_State *L, wxWindow *parent);
-	void ControlReadBack();
-	void LuaReadBack(lua_State *L);
-	virtual ~DropDown() { };
-	wxString value;
-	wxArrayString items;
-	};
-
-class Label : public LuaConfigDialogCtrl
-	{
-public:
-	Label(lua_State *L, wxWindow *parent);
-	void ControlReadBack();
-	void LuaReadBack(lua_State *L);
-	virtual ~Label() { };
-	wxString label;
-	};
-
-class Checkbox : public LuaConfigDialogCtrl
-	{
-public:
-	Checkbox(lua_State *L, wxWindow *parent);
-	void ControlReadBack();
-	void LuaReadBack(lua_State *L);
-	virtual ~Checkbox() { };
-	bool value;
-	wxString label;
-	};
-
-class Color : public LuaConfigDialogCtrl
-	{
-public:
-	Color(lua_State *L, wxWindow *parent);
-	void ControlReadBack();
-	void LuaReadBack(lua_State *L);
-	virtual ~Color() { };
-	wxString text;
-	};
-
-class LuaConfigDialog : public wxDialog{
-	private:
-		std::vector<LuaConfigDialogCtrl*> controls;
-		wxArrayString buttons;
-
-		//class ButtonEventHandler : public wxEvtHandler {
-		//public:
-			//int *button_pushed;
-			void OnButtonPush(wxCommandEvent &evt);
-		//};
-
-		//ButtonEventHandler *button_event;
-		DECLARE_EVENT_TABLE()
+		wxDialog *window;
 
 	public:
-		LuaConfigDialog(lua_State *_L, wxWindow *parent, wxString name);
-		virtual ~LuaConfigDialog();
-		int LuaReadBack(lua_State *L); // read back internal structure to lua structures
+		LuaDialog(lua_State *L, bool include_buttons);
+		~LuaDialog(){ 
+			window->Destroy(); 
+			for (size_t i = 0; i < controls.size(); ++i)
+				delete controls[i];
+		
+		};
+		/// Push the values of the controls in this dialog onto the lua stack
+		/// in a single table
+		int LuaReadBack(lua_State *L);
+		bool IsCancelled(){return (button_pushed<0);};
 
-		//wxString Serialise();
-		//void Unserialise(const wxString &serialised);
-		void OnClose(wxCloseEvent &event);
-		volatile int button_pushed;
-
-		void ReadBack(); // from auto4 base
+		// ScriptDialog implementation
+		wxDialog* CreateWindow(wxWindow *parent);
+		wxString Serialise();
+		void Unserialise(const wxString &serialised);
 	};
 
-	};
+};
 
 #endif

@@ -1,445 +1,561 @@
 
-#include <wx/clrpicker.h>
-#include <wx/gbsizer.h>
-#include "AutomationDialog.h"
-#include "ColorPicker.h"
 #include "Styles.h"
 #include "NumCtrl.h"
+#include "ColorPicker.h"
+#include "AutomationDialog.h"
+#include "AutomationUtils.h"
+
+#include <wx/clrpicker.h>
+#include <wx/gbsizer.h>
+#include <wx/tokenzr.h>
+
+#include <cfloat>
+#include <map>
 
 namespace Auto{
 
-	LuaConfigDialogCtrl::LuaConfigDialogCtrl(lua_State *L)
-	{
-		// Assume top of stack is a control table (don't do checking)
-
-		lua_getfield(L, -1, "name");
-		if (lua_isstring(L, -1)) {
-			name = wxString(lua_tostring(L, -1), wxConvUTF8);
-		} else {
-			name = _T("");
+	wxString inline_string_encode(const wxString &input) {
+		wxString output;
+		output.reserve(input.size());
+		for (char c : input) {
+			if (c <= 0x1F || c == 0x23 || c == 0x2C || c == 0x3A || c == 0x7C)
+				output += printf("#%02X", (unsigned char)c);
+			else
+				output += c;
 		}
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "x");
-		if (lua_isnumber(L, -1)) {
-			x = lua_tointeger(L, -1);
-			if (x < 0) x = 0;
-		} else {
-			x = 0;
-		}
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "y");
-		if (lua_isnumber(L, -1)) {
-			y = lua_tointeger(L, -1);
-			if (y < 0) y = 0;
-		} else {
-			y = 0;
-		}
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "width");
-		if (lua_isnumber(L, -1)) {
-			width = lua_tointeger(L, -1);
-			if (width < 1) width = 1;
-		} else {
-			width = 1;
-		}
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "height");
-		if (lua_isnumber(L, -1)) {
-			height = lua_tointeger(L, -1);
-			if (height < 1) height = 1;
-		} else {
-			height = 1;
-		}
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "hint");
-		if (lua_isstring(L, -1)) {
-			hint = wxString(lua_tostring(L, -1), wxConvUTF8);
-		} else {
-			hint = _T("");
-		}
-		lua_pop(L, 1);
-		cw=NULL;
+		return output;
 	}
 
-	Edit::Edit(lua_State *L, wxWindow *parent, bool _state)
-		: LuaConfigDialogCtrl(L)
-		, state(_state)
-	{
-		lua_getfield(L, -1, "value");
-		if (lua_isnil(L, -1))
-		{
-			lua_pop(L, 1);
-			lua_getfield(L, -1, "text");
-		}
-		text = wxString(lua_tostring(L, -1), wxConvUTF8);
-		lua_pop(L, 1);
-
-		cw = new wxTextCtrl(parent, -1, text, wxDefaultPosition, wxDefaultSize, (state)? 0 : wxTE_MULTILINE);
-
-		cw->SetToolTip(hint);
-	}
-
-	void Edit::ControlReadBack()
-	{
-		text = ((wxTextCtrl*)cw)->GetValue();
-	}
-
-	void Edit::LuaReadBack(lua_State *L)
-	{
-		lua_pushfstring(L, text.mb_str(wxConvUTF8));	
-	}
-
-	NumEdit::NumEdit(lua_State *L, wxWindow *parent, bool _state)
-		: LuaConfigDialogCtrl(L)
-		, state(_state)
-	{
-
-		lua_getfield(L, -1, "value");
-		value = (state)? lua_tointeger(L, -1) : lua_tonumber(L, -1);
-		text = lua_tostring(L, -1);
-		lua_pop(L, 1);
-		bool nomin=false;
-		bool nomax=false;
-
-		lua_getfield(L, -1, "min");
-		if (lua_isnumber(L, -1)){
-			min = (state)? lua_tointeger(L, -1) : lua_tonumber(L, -1);}else{nomin=true;}
-			lua_pop(L, 1);
-
-			lua_getfield(L, -1, "max");
-			if (lua_isnumber(L, -1)){
-				max = (state)? lua_tointeger(L, -1) : lua_tonumber(L, -1);}else{nomax=true;}
-				lua_pop(L, 1);
-				//wxLogStatus("min %i, max %i",min,max);
-				if(nomin){min=-2000000000;}
-				if(nomax){max=2000000000;}
-
-				cw = new NumCtrl(parent, -1, text, min, max, (state), wxDefaultPosition, wxDefaultSize, 0);
-
-
-
-				cw->SetToolTip(hint);
-	}
-
-	void NumEdit::ControlReadBack()
-	{
-		if(state){
-			value=((NumCtrl*)cw)->GetInt();
-		}
-		else{
-			value=(float)((NumCtrl*)cw)->GetDouble();
-		}
-	}
-
-	void NumEdit::LuaReadBack(lua_State *L)
-	{
-
-		if(state){
-			lua_pushinteger(L, (int)value);
-		}
-		else
-		{
-			lua_pushnumber(L, value);
-		}
-	}
-
-
-	DropDown::DropDown(lua_State *L, wxWindow *parent)
-		: LuaConfigDialogCtrl(L)
-	{
-		lua_getfield(L, -1, "value");
-		value = wxString(lua_tostring(L, -1), wxConvUTF8);
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "items");
-		lua_pushnil(L);
-		while (lua_next(L, -2)) {
-			if (lua_isstring(L, -1)) {
-				items.Add(wxString(lua_tostring(L, -1), wxConvUTF8));
+	wxString inline_string_decode(const wxString &input) {
+		wxString output;
+		output.reserve(input.size());
+		for (size_t i = 0; i < input.size(); ++i) {
+			if (input[i] != '#' || i + 2 > input.size())
+				output += input[i];
+			else {
+				output += (char)strtol(input.substr(i + 1, 2).utf8_str().data(), nullptr, 16);
+				i += 2;
 			}
-			lua_pop(L, 1);
 		}
+		return output;
+	}
+
+	inline void get_if_right_type(lua_State *L, wxString &def) {
+		if (lua_isstring(L, -1))
+			def = wxString(lua_tostring(L, -1), wxConvUTF8);
+	}
+
+	inline void get_if_right_type(lua_State *L, double &def) {
+		if (lua_isnumber(L, -1))
+			def = lua_tonumber(L, -1);
+	}
+
+	inline void get_if_right_type(lua_State *L, int &def) {
+		if (lua_isnumber(L, -1))
+			def = lua_tointeger(L, -1);
+	}
+
+	inline void get_if_right_type(lua_State *L, bool &def) {
+		if (lua_isboolean(L, -1))
+			def = !!lua_toboolean(L, -1);
+	}
+
+	template<class T>
+	T get_field(lua_State *L, const char *name, T def) {
+		lua_getfield(L, -1, name);
+		get_if_right_type(L, def);
 		lua_pop(L, 1);
-
-		cw = new wxComboBox(parent, -1, value, wxDefaultPosition, wxDefaultSize, items, wxCB_READONLY);
-		cw->SetToolTip(hint);
+		return def;
 	}
 
-	void DropDown::ControlReadBack()
-	{
-		value = ((wxComboBox*)cw)->GetValue();
+	inline wxString get_field(lua_State *L, const char *name) {
+		return get_field(L, name, wxString());
 	}
 
-	void DropDown::LuaReadBack(lua_State *L)
-	{
-		lua_pushstring(L, value.mb_str(wxConvUTF8).data());
+	template<class T>
+	void read_string_array(lua_State *L, T &cont) {
+		lua_for_each(L, [&] {
+			if (lua_isstring(L, -1))
+				cont.push_back(lua_tostring(L, -1));
+		});
 	}
 
-	Label::Label(lua_State *L, wxWindow *parent)
-		: LuaConfigDialogCtrl(L)
-	{
-		lua_getfield(L, -1, "label");
-		label = wxString(lua_tostring(L, -1), wxConvUTF8);
-		lua_pop(L, 1);
-
-		cw = new wxStaticText(parent, -1, label);
+	int string_wxString_id(const wxString & str) {
+		std::map<wxString, int> ids;
+		if (ids.empty()) {
+			ids["ok"] = wxID_OK;
+			ids["yes"] = wxID_YES;
+			ids["save"] = wxID_SAVE;
+			ids["apply"] = wxID_APPLY;
+			ids["close"] = wxID_CLOSE;
+			ids["no"] = wxID_NO;
+			ids["cancel"] = wxID_CANCEL;
+			ids["help"] = wxID_HELP;
+			ids["context_help"] = wxID_CONTEXT_HELP;
+		}
+		auto it = ids.find(str);
+		return it == ids.end() ? -1 : it->second;
 	}
 
-	void Label::ControlReadBack()
+	// LuaDialogControl
+	LuaDialogControl::LuaDialogControl(lua_State *L)
+	// Assume top of stack is a control table (don't do checking)
+	: name(get_field(L, "name"))
+	, hint(get_field(L, "hint"))
+	, x(get_field(L, "x", 0))
+	, y(get_field(L, "y", 0))
+	, width(get_field(L, "width", 1))
+	, height(get_field(L, "height", 1))
 	{
+		//LOG_D("automation/lua/dialog") << "created control: '" << name << "', (" << x << "," << y << ")(" << width << "," << height << "), " << hint;
 	}
 
-	void Label::LuaReadBack(lua_State *L)
-	{
-		lua_pushnil(L);
-	}
+	//namespace LuaControl {
+		/// A static text label
+		class Label : public LuaDialogControl {
+			wxString label;
+		public:
+			Label(lua_State *L) : LuaDialogControl(L), label(get_field(L, "label")) { }
 
-
-	Checkbox::Checkbox(lua_State *L, wxWindow *parent)
-		: LuaConfigDialogCtrl(L)
-	{
-		lua_getfield(L, -1, "label");
-		label = wxString(lua_tostring(L, -1), wxConvUTF8);
-		lua_pop(L, 1);
-
-		lua_getfield(L, -1, "value");
-		value = lua_toboolean(L, -1) != 0;
-		lua_pop(L, 1);
-
-		cw = new wxCheckBox(parent, -1, label);
-		cw->SetToolTip(hint);
-		static_cast<wxCheckBox*>(cw)->SetValue(value);
-
-	}
-
-	void Checkbox::ControlReadBack()
-	{
-		value = ((wxCheckBox*)cw)->GetValue();
-	}
-
-	void Checkbox::LuaReadBack(lua_State *L)
-	{
-		lua_pushboolean(L, value);
-	}
-
-	Color::Color(lua_State *L, wxWindow *parent)
-		: LuaConfigDialogCtrl(L)
-	{
-		lua_getfield(L, -1, "value");
-		text = wxString(lua_tostring(L, -1), wxConvUTF8);
-		lua_pop(L, 1);
-		AssColor kol(text);
-		cw = new ButtonColorPicker(parent, kol.GetWX());
-		cw->SetToolTip(hint);
-	}
-
-	void Color::ControlReadBack()
-	{
-		text = ((ButtonColorPicker*)cw)->GetColor().GetAsString(wxC2S_HTML_SYNTAX);
-	}
-
-	void Color::LuaReadBack(lua_State *L)
-	{
-		lua_pushstring(L, text.mb_str(wxConvUTF8).data());
-	}
-
-	LuaConfigDialog::LuaConfigDialog(lua_State *L, wxWindow *_parent, wxString name)
-		: wxDialog(_parent,-1,name)
-	{
-		//wxLogStatus("config dialog");
-
-		button_pushed = 0;
-
-		if (!lua_istable(L, -1))
-			// Just to avoid deeper indentation...
-				goto skipbuttons;
-		// Iterate over items in table
-		lua_pushnil(L); // initial key
-		while (lua_next(L, -2)) {
-			// Simply skip invalid items... FIXME, warn here?
-			if (lua_isstring(L, -1)) {
-				wxString s(lua_tostring(L, -1), wxConvUTF8);
-				buttons.push_back(s);
+			wxControl *Create(wxWindow *parent) {
+				return new wxStaticText(parent, -1, wxString(label));
 			}
-			lua_pop(L, 1);
-		}
-skipbuttons:
-		lua_pop(L, 1);
+
+			int GetSizerFlags() const { return wxALIGN_CENTRE_VERTICAL | wxALIGN_LEFT; }
+
+			void LuaReadBack(lua_State *L) {
+				// Label doesn't produce output, so let it be nil
+				lua_pushnil(L);
+			}
+		};
+
+		/// A single-line text edit control
+		class Edit : public LuaDialogControl {
+		protected:
+			wxString text;
+			wxTextCtrl *cw;
+
+		public:
+			Edit(lua_State *L)
+			: LuaDialogControl(L)
+			, text(get_field(L, "value"))
+			{
+				// Undocumented behaviour, 'value' is also accepted as key for text,
+				// mostly so a text control can stand in for other things.
+				// This shouldn't be exploited and might change later.
+				text = get_field(L, "text", text);
+			}
+
+			bool CanSerialiseValue() const { return true; }
+			wxString SerialiseValue() const { return inline_string_encode(text); }
+			void UnserialiseValue(const wxString &serialised) { text = inline_string_decode(serialised); }
+
+			wxControl *Create(wxWindow *parent) {
+				cw = new wxTextCtrl(parent, -1, text);
+				cw->SetMaxLength(0);
+				cw->SetToolTip(wxString(hint));
+				return cw;
+			}
+
+			void LuaReadBack(lua_State *L) {
+				text = ((wxTextCtrl*)cw)->GetValue();
+				lua_pushstring(L, text.utf8_str().data());
+			}
+		};
+
+		/// A color-picker button
+		class Color : public LuaDialogControl {
+			AssColor color;
+			bool alpha;
+			ButtonColorPicker *cw;
+
+		public:
+			Color(lua_State *L, bool alpha)
+			: LuaDialogControl(L)
+			, color(get_field(L, "value"))
+			, alpha(alpha)
+			{
+			}
+
+			bool CanSerialiseValue() const { return true; }
+			wxString SerialiseValue() const { return inline_string_encode(color.GetHex(alpha)); }
+			void UnserialiseValue(const wxString &serialised) { color = wxColour(wxString(inline_string_decode(serialised))); }
+
+			wxControl *Create(wxWindow *parent) {
+				cw = new ButtonColorPicker(parent, color.GetWX(), wxSize(50*width,10*height));
+				cw->SetToolTip(wxString(hint));
+				return cw;
+			}
+
+			void LuaReadBack(lua_State *L) {
+				color = AssColor(((ButtonColorPicker*)cw)->GetColor());
+				lua_pushstring(L, color.GetHex(alpha).utf8_str().data());
+			}
+		};
+
+		/// A multiline text edit control
+		class Textbox : public Edit {
+		public:
+			Textbox(lua_State *L) : Edit(L) { }
+
+			// Same serialisation interface as single-line edit
+			wxControl *Create(wxWindow *parent) {
+				cw = new wxTextCtrl(parent, -1, text, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
+				cw->SetMinSize(wxSize(0, 30));
+				cw->SetToolTip(wxString(hint));
+				return cw;
+			}
+		};
+
+		/// Integer only edit
+		class IntEdit : public Edit {
+			NumCtrl *cw;
+			int value;
+			int min, max;
+
+		public:
+			IntEdit(lua_State *L)
+			: Edit(L)
+			, value(get_field(L, "value", 0))
+			, min(get_field(L, "min", INT_MIN))
+			, max(get_field(L, "max", INT_MAX))
+			{
+				if (min >= max) {
+					max = INT_MAX;
+					min = INT_MIN;
+				}
+			}
+
+			bool CanSerialiseValue() const  { return true; }
+			wxString SerialiseValue() const { return std::to_string(value); }
+			void UnserialiseValue(const wxString &serialised) { value = atoi(serialised.utf8_str().data()); }
+
+			wxControl *Create(wxWindow *parent) {
+				wxString tmpval;
+				tmpval<<value;
+				cw = new NumCtrl(parent, -1, tmpval, min, max, true, wxDefaultPosition, wxDefaultSize);
+				cw->SetToolTip(wxString(hint));
+				return cw;
+			}
+
+			void LuaReadBack(lua_State *L) {
+				value=((NumCtrl*)cw)->GetInt();
+				lua_pushinteger(L, value);
+			}
+		};
+
+		// Float only edit
+		class FloatEdit : public Edit {
+			double value;
+			double min;
+			double max;
+			double step;
+			NumCtrl *scd;
+
+		public:
+			FloatEdit(lua_State *L)
+			: Edit(L)
+			, value(get_field(L, "value", 0.0))
+			, min(get_field(L, "min", -DBL_MAX))
+			, max(get_field(L, "max", DBL_MAX))
+			, step(get_field(L, "step", 0.0))
+			{
+				if (min >= max) {
+					max = DBL_MAX;
+					min = -DBL_MAX;
+				}
+			}
+
+			bool CanSerialiseValue() const { return true; }
+			wxString SerialiseValue() const { return std::to_string(value); }
+			void UnserialiseValue(const wxString &serialised) { value = atof(serialised.utf8_str().data()); }
+
+			wxControl *Create(wxWindow *parent) {
+				wxString tmpval;
+				tmpval<<value;
+				scd = new NumCtrl(parent, -1, tmpval, min, max, false, wxDefaultPosition, wxDefaultSize);
+				scd->SetToolTip(wxString(hint));
+				return scd;
+
+
+			}
+
+			void LuaReadBack(lua_State *L) {
+				value=(float)((NumCtrl*)cw)->GetDouble();
+				lua_pushnumber(L, value);
+			}
+		};
+
+		/// A dropdown list
+		class Dropdown : public LuaDialogControl {
+			wxArrayString items;
+			wxString value;
+			wxComboBox *cw;
+
+		public:
+			Dropdown(lua_State *L)
+			: LuaDialogControl(L)
+			, value(get_field(L, "value"))
+			{
+				lua_getfield(L, -1, "items");
+				read_string_array(L, items);
+			}
+
+			bool CanSerialiseValue() const { return true; }
+			wxString SerialiseValue() const { return inline_string_encode(value); }
+			void UnserialiseValue(const wxString &serialised) { value = inline_string_decode(serialised); }
+
+			wxControl *Create(wxWindow *parent) {
+				cw = new wxComboBox(parent, -1, wxString(value), wxDefaultPosition, wxDefaultSize, items, wxCB_READONLY);
+				cw->SetToolTip(wxString(hint));
+				return cw;
+			}
+
+			void LuaReadBack(lua_State *L) {
+				value = ((wxComboBox*)cw)->GetValue();
+				lua_pushstring(L, value.utf8_str().data());
+			}
+		};
+
+		class Checkbox : public LuaDialogControl {
+			wxString label;
+			bool value;
+			wxCheckBox *cw;
+
+		public:
+			Checkbox(lua_State *L)
+			: LuaDialogControl(L)
+			, label(get_field(L, "label"))
+			, value(get_field(L, "value", false))
+			{
+			}
+
+			bool CanSerialiseValue() const { return true; }
+			wxString SerialiseValue() const { return value ? "1" : "0"; }
+			void UnserialiseValue(const wxString &serialised) { value = serialised != "0"; }
+
+			wxControl *Create(wxWindow *parent) {
+				cw = new wxCheckBox(parent, -1, wxString(label));
+				cw->SetToolTip(wxString(hint));
+				cw->SetValue(value);
+				return cw;
+			}
+
+			void LuaReadBack(lua_State *L) {
+				value = ((wxCheckBox*)cw)->GetValue();
+				lua_pushboolean(L, value);
+			}
+		};
+	//}
+
+	// LuaDialog
+	LuaDialog::LuaDialog(lua_State *L, bool include_buttons)
+	: use_buttons(include_buttons)
+	, button_pushed(-1)
+	{
+		//LOG_D("automation/lua/dialog") << "creating LuaDialoug, addr: " << this;
 
 		// assume top of stack now contains a dialog table
-		if (!lua_istable(L, -1)) {
-			lua_pushstring(L, "Nie mozna stworzyc dialogu konfiguracyjnego z czegos co nie jest tablica");
-			lua_error(L);
-			assert(false);
-		}
+		if (!lua_istable(L, 1))
+			error(L, "Cannot create config dialog from something non-table");
 
 		// Ok, so there is a table with controls
-		lua_pushnil(L); // initial key
-		while (lua_next(L, -2)) {
-			if (lua_istable(L, -1)) {
-				// Get control class
-				lua_getfield(L, -1, "class");
-				if (!lua_isstring(L, -1))
-					goto badcontrol;
-				wxString controlclass(lua_tostring(L, -1), wxConvUTF8);
-				controlclass.LowerCase();
-				lua_pop(L, 1);
+		lua_pushvalue(L, 1);
+		lua_for_each(L, [&] {
+			if (!lua_istable(L, -1))
+				error(L, "bad control table entry");
 
-				LuaConfigDialogCtrl *ctl;
+			wxString controlclass = get_field(L, "class");
+			controlclass.MakeLower();
 
-				// Check control class and create relevant control
-				if (controlclass == _T("label")) {
-					ctl = new Label(L,this);
-				} else if (controlclass == _T("edit")) {
-					ctl = new Edit(L,this,true);
-				} else if (controlclass == _T("intedit")) {
-					ctl = new NumEdit(L,this,true);
-				} else if (controlclass == _T("floatedit")) {
-					ctl = new NumEdit(L,this,false);
-				} else if (controlclass == _T("textbox")) {
-					ctl = new Edit(L,this,false);
-				} else if (controlclass == _T("dropdown")) {
-					ctl = new DropDown(L,this);
-				} else if (controlclass == _T("checkbox")) {
-					ctl = new Checkbox(L,this);
-				} else if (controlclass == _T("color")) {
-					ctl = new Color(L,this);
-				} else if (controlclass == _T("coloralpha")) {
-					// FIXME
-					ctl = new Edit(L,this,true);
-				} else if (controlclass == _T("alpha")) {
-					// FIXME
-					ctl = new Edit(L,this,true);
-				} else {
-					goto badcontrol;
+			LuaDialogControl* ctl;
+
+			// Check control class and create relevant control
+			if (controlclass == "label")
+				ctl = new Label(L);
+			else if (controlclass == "edit")
+				ctl = new Edit(L);
+			else if (controlclass == "intedit")
+				ctl = new IntEdit(L);
+			else if (controlclass == "floatedit")
+				ctl = new FloatEdit(L);
+			else if (controlclass == "textbox")
+				ctl = new Textbox(L);
+			else if (controlclass == "dropdown")
+				ctl = new Dropdown(L);
+			else if (controlclass == "checkbox")
+				ctl = new Checkbox(L);
+			else if (controlclass == "color")
+				ctl = new Color(L, false);
+			else if (controlclass == "coloralpha")
+				ctl = new Color(L, true);
+			else if (controlclass == "alpha")
+				// FIXME
+				ctl = new Edit(L);
+			else
+				error(L, "bad control table entry");
+
+			controls.emplace_back(ctl);
+		});
+		if (include_buttons && lua_istable(L, 2)) {
+			lua_pushvalue(L, 2);
+			lua_for_each(L, [&]{
+				wxString butt = check_string(L, -1);
+				wxLogStatus("button %s", butt);
+				buttons.emplace_back(-1, butt);
+			});
+		}
+
+		if (include_buttons && lua_istable(L, 3)) {
+			lua_pushvalue(L, 3);
+			lua_for_each(L, [&]{
+				wxString butt = check_string(L, -2);
+				int id = string_wxString_id(butt);
+				//if (id<0){id = idstart; idstart++;}
+				wxLogStatus("button %s %i", butt, id);
+				wxString label = check_string(L, -1);
+				auto btn = find_if(buttons.begin(),buttons.end(),
+					[&](std::pair<int, wxString>& btn) { return btn.second == label; } );
+				if (btn==buttons.end())
+					error(L, "Invalid button for id %s", lua_tostring(L, -2));
+				btn->first = id;
+			});
+		}
+	}
+
+	wxDialog* LuaDialog::CreateWindow(wxWindow *parent) {
+		window = new wxDialog(parent,-1,"");
+
+		auto s = new wxGridBagSizer(4, 4);
+		for (auto& c : controls)
+			s->Add(c->Create(window), wxGBPosition(c->y, c->x),
+				wxGBSpan(c->height, c->width), c->GetSizerFlags());
+
+		if (!use_buttons) {
+			window->SetSizerAndFit(s);
+			return window;
+		}
+
+		if (buttons.size() == 0) {
+			buttons.emplace_back(wxID_OK, "");
+			buttons.emplace_back(wxID_CANCEL, "");
+		}
+
+		//auto dialog = static_cast<wxDialog *>(parent);
+		auto bs = new wxBoxSizer(wxHORIZONTAL);
+
+		//auto make_button = [&](wxWindowID id, int button_pushed, wxString const& text) -> wxButton *{
+		//	auto button = new wxButton(window, id, text);
+		//	button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt) {
+		//		this->button_pushed = button_pushed;
+		//		//TransferDataFromWindow();
+		//		window->EndModal(0);
+		//	});
+
+		//	if (id == wxID_OK || id == wxID_YES || id == wxID_SAVE) {
+		//		//window->SetDefault();
+		//		button->SetFocus();
+		//		window->SetAffirmativeId(id);
+		//	}
+
+		//	if (id == wxID_CLOSE || id == wxID_NO)
+		//		window->SetEscapeId(id);
+
+		//	return button;
+		//};
+
+		//if (std::count(buttons.begin(), buttons.end(), -1) == 0) {
+		
+			for (size_t i = 0; i < buttons.size(); ++i){
+				int id = buttons[i].first;
+			
+				auto button = new wxButton(window, id, buttons[i].second);
+				bs->Add(button);
+
+				button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt) {
+					this->button_pushed = i;
+					//TransferDataFromWindow();
+					wxLogStatus("button pushed %i %s", button_pushed, buttons[i].second);
+					window->EndModal(0);
+				});
+
+				if (id == wxID_OK || id == wxID_YES || id == wxID_SAVE) {
+					//window->SetDefault();
+					button->SetFocus();
+					window->SetAffirmativeId(id);
 				}
 
-				controls.push_back(ctl);
-
-			} else {
-badcontrol:
-				// not a control...
-				// FIXME, better error reporting?
-				lua_pushstring(L, "Zla nazwa kontrolki");
-				lua_error(L);
+				if (id == wxID_CLOSE || id == wxID_NO)
+					window->SetEscapeId(id);
 			}
-			lua_pop(L, 1);
-		}
-		//wxLogStatus("pushed %i",(int)controls.size());
-		wxGridBagSizer *s = new wxGridBagSizer(4, 4);
+		
+			//bs->Realize();
+		/*}
+		else {
+			for (size_t i = 0; i < buttons.size(); ++i)
+				bs->Add(make_button(buttons[i].first, i, buttons[i].second));
+		}*/
 
-		for (size_t i = 0; i < controls.size(); ++i) {
-			LuaConfigDialogCtrl *c = controls[i];
-			if (dynamic_cast<Label*>(c)) {
-				s->Add(c->cw, wxGBPosition(c->y, c->x), wxGBSpan(c->height, c->width), wxALIGN_CENTRE_VERTICAL|wxALIGN_LEFT);
-			} else {
-				s->Add(c->cw, wxGBPosition(c->y, c->x), wxGBSpan(c->height, c->width), wxEXPAND);
-			}
-		}
-		//wxLogStatus("pushed controls");
-
-		wxStdDialogButtonSizer *bs = new wxStdDialogButtonSizer();
-		if (buttons.size() > 0) {
-			for (size_t i = 0; i < buttons.size(); ++i) {
-				bs->Add(new wxButton(this, 1001+(wxWindowID)i, buttons[i]));
-			}
-		} else {
-			bs->Add(new wxButton(this, wxID_OK));
-			bs->Add(new wxButton(this, wxID_CANCEL));
-		}
-		bs->Realize();
-		//wxLogStatus("Buttons");
-
-		// passing button_event as userdata because wx will then delete it
-		Connect(wxID_ANY, wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&LuaConfigDialog::OnButtonPush);
-
-		wxBoxSizer *ms = new wxBoxSizer(wxVERTICAL);
-		ms->Add(s, 0, wxALL, 10);
+		auto ms = new wxBoxSizer(wxVERTICAL);
+		ms->Add(s, 0, wxALL, 5);
 		ms->Add(bs, 0, wxALIGN_CENTER|wxLEFT|wxRIGHT|wxBOTTOM, 10);
-		SetSizerAndFit(ms);
-		//wxLogStatus("All");
+		window->SetSizerAndFit(ms);
 
+		return window;
 	}
 
-	LuaConfigDialog::~LuaConfigDialog()
-	{
-		button_pushed=1;
-		for (size_t i = 0; i < controls.size(); ++i)
-			delete controls[i];
-	}
-
-
-
-	int LuaConfigDialog::LuaReadBack(lua_State *L)
-	{
+	int LuaDialog::LuaReadBack(lua_State *L) {
 		// First read back which button was pressed, if any
-		ReadBack();
-		int btn = button_pushed;
-		if (btn == 0) {
-			// Always cancel/closed
-			lua_pushboolean(L, 0);
-		} else if (buttons.size() == 0 && btn == 1) {
-			lua_pushboolean(L, 1);
-		} else {
-			// button_pushed is index+1 to reserve 0 for Cancel
-			lua_pushstring(L, buttons[btn-1].mb_str(wxConvUTF8).data());
+		if (use_buttons) {
+			if (button_pushed < 0 || buttons[button_pushed].first == wxID_CANCEL){
+				lua_pushboolean(L, false);
+				wxLogStatus("cancelled %i", button_pushed);
+			}
+			else
+				lua_pushstring(L, buttons[button_pushed].second.utf8_str().data());
 		}
-
 
 		// Then read controls back
-		lua_newtable(L);
-		for (size_t i = 0; i < controls.size(); ++i) {
-			//wxLogStatus("pos %i", (int)i);
-			controls[i]->LuaReadBack(L);
-			lua_setfield(L, -2, controls[i]->name.mb_str(wxConvUTF8));
+		lua_createtable(L, 0, controls.size());
+		for (auto& control : controls) {
+			control->LuaReadBack(L);
+			lua_setfield(L, -2, control->name.utf8_str().data());
 		}
 
-		return 2;
+		return use_buttons ? 2 : 1;
 	}
 
-	void LuaConfigDialog::ReadBack()
-	{
-		for (size_t i = 0; i < controls.size(); ++i) {
-			controls[i]->ControlReadBack();
+	wxString LuaDialog::Serialise() {
+		wxString res;
+
+		// Format into "name1:value1|name2:value2|name3:value3"
+		for (auto& control : controls) {
+			if (control->CanSerialiseValue()) {
+				if (!res.empty())
+					res += "|";
+				res += inline_string_encode(control->name) + ":" + control->SerialiseValue();
+			}
+		}
+
+		return res;
+	}
+
+	void LuaDialog::Unserialise(const wxString &serialised) {
+		wxStringTokenizer tok(serialised, "|", wxTOKEN_STRTOK);
+		while (tok.HasMoreTokens()) {
+			wxString token=tok.GetNextToken();
+			int pos = token.Find(':');
+			if (pos == -1) continue;
+
+			wxString name = inline_string_decode(token.SubString(0,pos+1));
+			wxString value = token.Mid(pos+1);
+
+			// Hand value to all controls matching name
+			for (auto& control : controls) {
+				if (control->name == name && control->CanSerialiseValue())
+					control->UnserialiseValue(value);
+			}
 		}
 	}
-
-	void LuaConfigDialog::OnButtonPush(wxCommandEvent &evt)
-	{
-		// Let button_pushed == 0 mean "cancelled", such that pushing Cancel or closing the dialog
-		// will both result in button_pushed == 0
-		if (evt.GetId() == wxID_OK) {
-			button_pushed = 1;
-			//wxLogStatus("ok");
-		} else if (evt.GetId() == wxID_CANCEL) {
-			button_pushed = 0;
-			//wxLogStatus("can");
-		} else {
-			// Therefore, when buttons are numbered from 1001 to 1000+n, make sure to set it to i+1
-			button_pushed = evt.GetId() - 1000;
-
-			// hack to make sure the dialog will be closed
-			// only do this for non-colour buttons
-			wxColourPickerCtrl *button = dynamic_cast<wxColourPickerCtrl*> (evt.GetEventObject());
-			if (button) return;
-			evt.SetId(wxID_OK);
-
-		}
-		evt.Skip();
-	}
-
-	void LuaConfigDialog::OnClose(wxCloseEvent &event)
-	{
-		button_pushed=0;
-		EndModal(wxID_CANCEL);
-	}
-	BEGIN_EVENT_TABLE(LuaConfigDialog,wxDialog)
-		EVT_CLOSE(LuaConfigDialog::OnClose)
-		END_EVENT_TABLE()
 };
 

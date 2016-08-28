@@ -86,7 +86,7 @@ public:
 	
 	bool GetSubtitles(Grid *target);
 
-	wxArrayString GetFontList();
+	std::map<int, wxString> GetFontList();
 	bool SaveFont(int id, wxString path, wxZipOutputStream *zip=NULL);
 
 	static MatroskaWrapper wrapper;

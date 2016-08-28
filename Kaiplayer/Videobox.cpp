@@ -128,7 +128,7 @@ bool VideoCtrl::Play()
 {
 	wxMutexLocker lock(vbmutex);
 	if(time>=GetDuration()){return false;}
-	VideoRend::Play();
+	if(!VideoRend::Play()){return false;}
 	int ms=(isfullskreen)?1000:100;
 	vtime.Start(ms);
 	ChangeButtonBMP(false);
@@ -138,7 +138,7 @@ bool VideoCtrl::Play()
 void VideoCtrl::PlayLine(int start, int end)
 {
 	//wxMutexLocker lock(vbmutex);
-	VideoRend::PlayLine(start, end);
+	if(!VideoRend::PlayLine(start, end)){return;}
 	int ms=(isfullskreen)?1000:100;
 	vtime.Start(ms);
 	ChangeButtonBMP(false);
@@ -150,7 +150,7 @@ bool VideoCtrl::Pause(bool burstbl)
 	//vbmutex.Lock();
 	if(GetState()==None){Load(Kai->videorec[Kai->videorec.size()-1],NULL);return true;}
 	if(time>=GetDuration()&&burstbl){return false;}
-	VideoRend::Pause();
+	if(!VideoRend::Pause()){return false;}
 	if(GetState()==Paused){
 		vtime.Stop();displaytime();}
 	else if(GetState()==Playing){int ms=(isfullskreen)?1000:100;vtime.Start(ms);}
@@ -165,7 +165,7 @@ bool VideoCtrl::Stop()
 {
 	wxMutexLocker lock(vbmutex);
 	
-	VideoRend::Stop();
+	if(!VideoRend::Stop()){return false;}
 	vtime.Stop();
 	Seek(0);
 	displaytime();

@@ -356,17 +356,17 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 }
 
 
-wxArrayString MatroskaWrapper::GetFontList()
+std::map<int, wxString> MatroskaWrapper::GetFontList()
 {
-	wxArrayString attsname;
+	std::map<int, wxString> attsname;
 	mkv_GetAttachments(file, &atts, &count);
 	if(!atts || count==0){return attsname;}
 
 	for(size_t i=0; i<count; i++)
 	{
 		wxString mimetype(atts[i].MimeType,wxConvUTF8);
-		if(mimetype== "application/x-truetype-font" ){
-			attsname.Add(wxString(atts[i].Name,wxConvUTF8));}
+		if(mimetype== "application/x-truetype-font" || mimetype== "application/vnd.ms-opentype"){
+			attsname[i]=(wxString(atts[i].Name,wxConvUTF8));}
 	}
 	return attsname;
 }

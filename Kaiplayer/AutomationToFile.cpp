@@ -1,7 +1,14 @@
 
 #include "AutomationToFile.h"
+#include "AutomationUtils.h"
 #include "KainoteApp.h"
 #include <wx/regex.h>
+
+//template<int (AutoToFile::*closure)(lua_State *)>
+//	int closure_wrapper(lua_State *L)
+//	{
+//		return (AutoToFile::GetObjPointer(L, lua_upvalueindex(1), false)->*closure)(L);
+//	}
 
 namespace Auto{
 
@@ -40,7 +47,7 @@ void AutoToFile::CheckAllowModify()
 bool AutoToFile::LineToLua(lua_State *L, int i)
 	{
 		//AutoToFile *laf = GetObjPointer(L, 1);
-		File *Subs=laf->grid->file->GetSubs();
+		File *Subs=laf->file;
 
 		int sinfo=Subs->sinfo.size();
 		int styles=sinfo+Subs->styles.size();
@@ -365,7 +372,7 @@ SubsEntry *AutoToFile::LuaToLine(lua_State *L)
 
 int AutoToFile::ObjectIndexRead(lua_State *L)
 	{
-		File *Subs=laf->grid->file->GetSubs();
+		File *Subs=laf->file;
 		switch (lua_type(L, 2)) {
 
 			case LUA_TNUMBER:
@@ -451,7 +458,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 			return 0;
 		}
 
-		File *Subs=laf->grid->file->GetSubs();
+		File *Subs=laf->file;
 		laf->CheckAllowModify();
 
 		int n = lua_tointeger(L, 2);
@@ -509,7 +516,6 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 					Dialogue *dial=e->adial->Copy();
 					Subs->ddials.push_back(dial);
 					Subs->dials[i-styles]=dial;
-					laf->grid->SpellErrors[i-styles].clear();
 					//wxLogStatus(dial->GetRaw());
 					}
 				else
@@ -538,14 +544,14 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 
 	int AutoToFile::ObjectGetLen(lua_State *L)
 	{
-		File *Subs=laf->grid->file->GetSubs();
+		File *Subs=laf->file;
 		lua_pushnumber(L, Subs->dials.size()+Subs->sinfo.size()+Subs->styles.size());
 		return 1;
 	}
 
 	int AutoToFile::ObjectLens(lua_State *L)
 	{
-		File *Subs=laf->grid->file->GetSubs();
+		File *Subs=laf->file;
 		lua_pushinteger(L, (int)Subs->sinfo.size());
 		lua_pushinteger(L, (int)Subs->styles.size());
 		lua_pushinteger(L, (int)Subs->dials.size());
@@ -555,7 +561,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 
 	int AutoToFile::ObjectDelete(lua_State *L)
 	{
-		File *Subs=laf->grid->file->GetSubs();
+		File *Subs=laf->file;
 		laf->CheckAllowModify();
 		
 		// get number of items to delete
@@ -606,7 +612,6 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 			else if(ids[i]<dials){
 				//wxLogStatus("delete dial %i %i", ids[i]-styles, dials-styles);
 				Subs->dials.erase(Subs->dials.begin()+(ids[i]-styles));
-				laf->grid->SpellErrors.clear();
 			}
 		}
 		 
@@ -615,7 +620,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 
 	int AutoToFile::ObjectDeleteRange(lua_State *L)
 	{
-		File *Subs=laf->grid->file->GetSubs();
+		File *Subs=laf->file;
 
 		laf->CheckAllowModify();
 		
@@ -647,7 +652,6 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 			}else if(i<dials){
 				//wxLogStatus("deleterange dial %i %i", i, dials);
 				Subs->dials.erase(Subs->dials.begin()+i-styles);
-				laf->grid->SpellErrors.clear();
 			}
 		}	
 		return 0;
@@ -655,7 +659,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 
 	int AutoToFile::ObjectAppend(lua_State *L)
 	{
-		File *Subs=laf->grid->file->GetSubs();
+		File *Subs=laf->file;
 
 		laf->CheckAllowModify();
 		
@@ -678,7 +682,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 
 	int AutoToFile::ObjectInsert(lua_State *L)
 	{
-		File *Subs=laf->grid->file->GetSubs();
+		File *Subs=laf->file;
 
 		laf->CheckAllowModify();
 		
@@ -779,6 +783,14 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 		wxString rest;
 		//wxString deb;
 		wxRegEx reg(_T("\\{[^\\{]*\\}"),wxRE_ADVANCED);
+		lua_createtable(L, 0, 6);
+		set_field(L, "duration", 0);
+		set_field(L, "start_time", 0);
+		set_field(L, "end_time", 0);
+		set_field(L, "tag", "");
+		set_field(L, "text", "");
+		set_field(L, "text_stripped", "");
+		lua_rawseti(L, -2, kcount++);
    
 		while (ktok.HasMoreTokens()) {
 			wxString tekst = ktok.NextToken();
@@ -807,21 +819,14 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 					//wxLogMessage(ktext_stripped+", "+ktext);
 					//deb << ktext<<"@";
 					if(valid){
-					kcount++;
-						lua_newtable(L);
-						lua_pushnumber(L, kdur);
-						lua_setfield(L, -2, "duration");
-						lua_pushnumber(L, ktime);
-						lua_setfield(L, -2, "start_time");
-						lua_pushnumber(L, ktime+=kdur);
-						lua_setfield(L, -2, "end_time");
-						lua_pushstring(L, ktag.mb_str(wxConvUTF8).data());
-						lua_setfield(L, -2, "tag");
-						lua_pushstring(L, ktext.mb_str(wxConvUTF8).data());
-						lua_setfield(L, -2, "text");
-						lua_pushstring(L, ktext_stripped.mb_str(wxConvUTF8).data());
-						lua_setfield(L, -2, "text_stripped");
-						lua_rawseti(L, -2, kcount);
+						lua_createtable(L, 0, 6);
+						set_field(L, "duration", kdur);
+						set_field(L, "start_time", ktime);
+						set_field(L, "end_time", ktime+=kdur);
+						set_field(L, "tag", ktag.mb_str(wxConvUTF8).data());
+						set_field(L, "text", ktext.mb_str(wxConvUTF8).data());
+						set_field(L, "text_stripped", ktext_stripped.mb_str(wxConvUTF8).data());
+						lua_rawseti(L, -2, kcount++);
 						valid=false;
 					}
 					ktext_stripped="";
@@ -849,39 +854,70 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 		return 1;
 	}
 
+	int AutoToFile::ObjectIPairs(lua_State *L)
+	{
+		lua_pushvalue(L, lua_upvalueindex(1)); // push 'this' as userdata
+		lua_pushcclosure(L, &AutoToFile::IterNext, 1);
+		lua_pushnil(L);
+		push_value(L, 0);
+		return 3;
+	}
 
+	int AutoToFile::IterNext(lua_State *L)
+	{
+		size_t i = check_uint(L, 2);
+		if (i >= laf->file->dials.size()) {
+			lua_pushnil(L);
+			return 1;
+		}
 
-AutoToFile::AutoToFile(lua_State *_L, bool _can_modify)
-{
-	L=_L;
-	void *ud = lua_newuserdata(L, sizeof(AutoToFile*));
-	//*((AutoToFile**)ud) = this;
-	laf=this;
+		push_value(L, i + 1);
+		LineToLua(L, i);
+		return 2;
+	}
 
-	grid = Notebook::GetTab()->Grid1;
-	can_modify=_can_modify;
+	int AutoToFile::LuaGetScriptResolution(lua_State *L)
+	{
+		int w, h;
+		Notebook::GetTab()->Grid1->GetASSRes(&w, &h);
+		push_value(L, w);
+		push_value(L, h);
+		return 2;
+	}
 
+	AutoToFile::AutoToFile(lua_State *_L, File *subsfile, bool _can_modify)
+	{
+		L=_L;
+		can_modify=_can_modify;
+		file =subsfile;
+	// prepare userdata object
+		*static_cast<AutoToFile**>(lua_newuserdata(L, sizeof(AutoToFile*))) = this;
+		laf=this;
 
-	// make the metatable
-	lua_newtable(L);
-	lua_pushcfunction(L, ObjectIndexRead);
-	lua_setfield(L, -2, "__index");
-	lua_pushcfunction(L, ObjectIndexWrite);
-	lua_setfield(L, -2, "__newindex");
-	lua_pushcfunction(L, ObjectGetLen);
-	lua_setfield(L, -2, "__len");
-	lua_setmetatable(L, -2);
-	//wxLogStatus("Autotofile1");
-		
-	// assume the "kainote" global table exists
-	lua_getglobal(L, "kainote");
-	assert(lua_type(L, -2) == LUA_TUSERDATA);
-	//wxLogStatus("kainote %i", lua_type(L, -1));
-	lua_pushvalue(L, -2);
-	lua_pushcclosure(L, LuaParseKaraokeData, 1);
-	//lua_pushcfunction(L, LuaParseKaraokeData);
-	lua_setfield(L, -2, "parse_karaoke_data");
-	lua_pop(L, 1);
+		// make the metatable
+		lua_createtable(L, 0, 5);
+		set_field<&AutoToFile::ObjectIndexRead>(L, "__index");
+		set_field<&AutoToFile::ObjectIndexWrite>(L, "__newindex");
+		set_field<&AutoToFile::ObjectGetLen>(L, "__len");
+		set_field<&AutoToFile::ObjectGarbageCollect>(L, "__gc");
+		set_field<&AutoToFile::ObjectIPairs>(L, "__ipairs");
+		lua_setmetatable(L, -2);
+
+		// register misc functions
+		// assume the "aegisub" global table exists
+		lua_getglobal(L, "kainote");
+
+		set_field<&AutoToFile::LuaParseKaraokeData>(L, "parse_karaoke_data");
+		set_field<&AutoToFile::LuaSetUndoPoint>(L, "set_undo_point");
+
+		lua_pop(L, 1); // pop "aegisub" table
+
+		// Leaves userdata object on stack
+	}
+
+	void AutoToFile::Cancel()
+	{
+		delete this;
+	}
 }
 
-}

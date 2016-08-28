@@ -74,10 +74,10 @@ class VideoRend : public wxWindow
 
 		bool OpenFile(const wxString &fname, wxString *textsubs, bool Dshow=true, bool vobsub=false, bool fullscreen=false);
 		bool OpenSubs(wxString *textsubs, bool redraw=true);
-		void Play(int end=-1);
-		void PlayLine(int start, int end);
-		void Pause();
-		void Stop();
+		bool Play(int end=-1);
+		bool PlayLine(int start, int end);
+		bool Pause();
+		bool Stop();
         void SetPosition(int time, bool starttime=true, bool corect=true, bool reloadSubs=true);
 
        

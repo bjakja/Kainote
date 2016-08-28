@@ -108,6 +108,13 @@ void SubsFile::Undo()
 		subs=undo[iter]->Copy();
 	}
 }
+
+void SubsFile::DummyUndo()
+{
+	delete subs;
+	subs=undo[iter]->Copy();
+}
+
 bool SubsFile::IsNotSaved()
 {
     if(subs->ddials.size()==0 && subs->dstyles.size()==0 && subs->dsinfo.size()==0 && !edited){return false;}

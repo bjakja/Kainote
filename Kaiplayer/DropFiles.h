@@ -16,15 +16,15 @@ class DragnDrop : public wxFileDropTarget
 
 };
 
-class DragScripts : public wxFileDropTarget
-	{
-	private:
-		kainoteFrame* Kai;
-
-	public:
-		DragScripts(kainoteFrame* kfparent);
-		virtual ~DragScripts(){ };
-		bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
-	};
+//class DragScripts : public wxFileDropTarget
+//	{
+//	private:
+//		kainoteFrame* Kai;
+//
+//	public:
+//		DragScripts(kainoteFrame* kfparent);
+//		virtual ~DragScripts(){ };
+//		bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
+//	};
 
 #endif // DROPFILES_H_INCLUDED

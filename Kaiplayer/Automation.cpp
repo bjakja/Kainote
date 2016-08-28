@@ -1,349 +1,228 @@
-ï»¿
+// Copyright (c) 2006, 2007, Niels Martin Hansen
+// Copyright (c) 2016, Marcin Drob
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//   * Redistributions of source code must retain the above copyright notice,
+//     this list of conditions and the following disclaimer.
+//   * Redistributions in binary form must reproduce the above copyright notice,
+//     this list of conditions and the following disclaimer in the documentation
+//     and/or other materials provided with the distribution.
+//   * Neither the name of the Aegisub Group nor the names of its contributors
+//     may be used to endorse or promote products derived from this software
+//     without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+//
+// Aegisub Project http://www.aegisub.org/
+
+/// @file auto4_lua.cpp
+/// @brief Lua 5.1-based scripting engine
+/// @ingroup scripting
+///
+
 #include "Automation.h"
-#include "Config.h"
-#include "OpennWrite.h"
-#include "KainoteMain.h"
+#include "Hotkeys.h"
+
 #include "KainoteApp.h"
 #include "AutomationToFile.h"
 #include "AutomationProgress.h"
 
-#include <wx/filename.h>
-#include <wx/dir.h>
+#include "AutomationUtils.h"
+#include "AutomationScriptReader.h"
 
-#include <windows.h>
+#include <algorithm>
+#include <cassert>
+#include <mutex>
+#include <wx/clipbrd.h>
+#include <wx/wx.h>
+#include <wx/dir.h>
+#include <wx/filename.h>
+#include <thread>
+//#include <tuple>
+
 
 namespace Auto{
 
-struct LuaScriptReader{
-public:
-	LuaScriptReader(const wxString &filename);
-	~LuaScriptReader();
-	static const char *ReadScript(lua_State *L, void *data, size_t *size);
-private:
-	FILE *f;
-		bool first;
-		char *databuf;
-		static const size_t bufsize = 512;
-	//OpenWrite ow;
-	//wxString Scriptdata;
-	};
-
-LuaScriptReader::LuaScriptReader(const wxString &filename)
+	
+	wxString get_wxstring(lua_State *L, int idx)
 	{
-	//first=true;
-	//Scriptdata=ow.FileOpen(filename,true);
-	f = _tfopen(filename.c_str(), L"rb");
-		if (!f)
-			throw _("Nie moÅ¼na otworzyÄ‡ skryptu");
-		first = true;
-		databuf = new char[bufsize];
+		return wxString::FromUTF8(lua_tostring(L, idx));
 	}
 
-LuaScriptReader::~LuaScriptReader()
+	wxString check_wxstring(lua_State *L, int idx)
 	{
-	//wxLogStatus("destroy ");
-	if (databuf){
-		delete[] databuf;
-		fclose(f);}
+		return wxString(check_string(L, idx));
 	}
 
-const char *LuaScriptReader::ReadScript(lua_State *L, void *data, size_t *size)
+
+	int get_file_name(lua_State *L)
 	{
-	LuaScriptReader *self = (LuaScriptReader*)(data);
-	//if(self->Scriptdata.IsEmpty()){*size=0;return 0;}
-	//const char * buf= self->Scriptdata.utf8_str().data();
-	//*size=strlen(buf);
-	//return buf;
-	unsigned char *b = (unsigned char *)self->databuf;
-		FILE *f = self->f;
-
-		if (feof(f)) {
-			*size = 0;
-			return 0;
-		}
-		if (self->first) {
-			// check if file is sensible and maybe skip bom
-			if ((*size = fread(b, 1, 4, f)) == 4) {
-				if (b[0] == 0xEF && b[1] == 0xBB && b[2] == 0xBF) {
-					// got an utf8 file with bom
-					// nothing further to do, already skipped the bom
-					fseek(f, -1, SEEK_CUR);
-				} else {
-					// oops, not utf8 with bom
-					// check if there is some other BOM in place and complain if there is...
-					if ((b[0] == 0xFF && b[1] == 0xFE && b[2] == 0x00 && b[3] == 0x00) || // utf32be
-						(b[0] == 0x00 && b[1] == 0x00 && b[2] == 0xFE && b[3] == 0xFF) || // utf32le
-						(b[0] == 0xFF && b[1] == 0xFE) || // utf16be
-						(b[0] == 0xFE && b[1] == 0xFF) || // utf16le
-						(b[0] == 0x2B && b[1] == 0x2F && b[2] == 0x76) || // utf7
-						(b[0] == 0x00 && b[2] == 0x00) || // looks like utf16be
-						(b[1] == 0x00 && b[3] == 0x00)) { // looks like utf16le
-							throw "The script file uses an unsupported character set. Only UTF-8 is supported.";
-					}
-					// assume utf8 without bom, and rewind file
-					fseek(f, 0, SEEK_SET);
-				}
-			} else {
-				// hmm, rather short file this...
-				// doesn't have a bom, assume it's just ascii/utf8 without bom
-				return self->databuf; // *size is already set
-			}
-			self->first = false;
-		}
-
-		*size = fread(b, 1, bufsize, f);
-
-		return self->databuf;
-
-	}
-
-struct LuaStackcheck {
-		lua_State *L;
-		int startstack;
-		void check_stack(int additional)
-		{
-			int top = lua_gettop(L);
-			if (top - additional != startstack) {
-				dump();
-				//assert(top - additional == startstack);
-			}
-		}
-		void dump()
-		{
-			int top = lua_gettop(L);
-			
-			for (int i = top; i > 0; i--) {
-				lua_pushvalue(L, i);
-				lua_pop(L, 1);
-			}
-		}
-		LuaStackcheck(lua_State *_L) : L(_L) { startstack = lua_gettop(L); }
-		~LuaStackcheck() { check_stack(0); }
-	};
-
-
-LuaScript::LuaScript(const wxString &_filename)
-		: L(0)
-	{
-		filename=_filename;
-		Create();
-	}
-
-	LuaScript::~LuaScript()
-	{
-		if (L) Destroy();
-	}
-
-	void LuaScript::Create()
-	{
-	//wxLogStatus("Destroy");
-		Destroy();
-
-		loaded = true;
-
-		try {
-			// create lua environment
-			
-			L = luaL_newstate();
-			LuaStackcheck _stackcheck(L);
-
-			// register standard libs
-			lua_pushcfunction(L, luaopen_base); lua_call(L, 0, 0);
-			lua_pushcfunction(L, luaopen_package); lua_call(L, 0, 0);
-			lua_pushcfunction(L, luaopen_string); lua_call(L, 0, 0);
-			lua_pushcfunction(L, luaopen_table); lua_call(L, 0, 0);
-			lua_pushcfunction(L, luaopen_math); lua_call(L, 0, 0);
-			lua_pushcfunction(L, luaopen_io); lua_call(L, 0, 0);
-			lua_pushcfunction(L, luaopen_os); lua_call(L, 0, 0);
-			//lua_pushcfunction(L, luaopen_bit32); lua_call(L, 0, 0);
-			_stackcheck.check_stack(0);
-			//wxLogStatus("libs");
-			// dofile and loadfile are replaced with include
+		TabPanel *pan=Notebook::GetTab();
+		if (pan->SubsPath!="")
+			push_value(L, pan->SubsName);
+		else
 			lua_pushnil(L);
-			lua_setglobal(L, "dofile");
-			//wxLogStatus("dofile");
-			lua_pushnil(L);
-			lua_setglobal(L, "loadfile");
-			//wxLogStatus("loadfile");
-			lua_pushcfunction(L, LuaInclude);
-			lua_setglobal(L, "include");
-			//wxLogStatus("include");
-			// add include_path to the module load path
-			lua_getglobal(L, "package");
-			lua_pushstring(L, "path");
-			lua_pushstring(L, "path");
-			//wxLogStatus("set package");
-			lua_gettable(L, -3);
-			//wxLogStatus("globals");
-			
-				wxFileName path(Options.pathfull+"\\Include");
-				//wxFileName path1(filename.BeforeLast('\\'));
-				if (path.IsOk() && !path.IsRelative() && path.DirExists()) {
-					include_path.Add(path.GetLongPath());
-					include_path.Add(filename.BeforeLast('\\'));
-					wxCharBuffer p = path.GetLongPath().utf8_str();
-					//wxLogStatus("push string");
-					lua_pushfstring(L, ";%s?.lua;%s?/init.lua", p, p);
-					//wxLogStatus("concat");
-					lua_concat(L, 2);
-				}
-			
-			//wxLogStatus("settable");
-			lua_settable(L, -3);
-			//wxLogStatus("get field");
-			
-			// Replace the default lua module loader with our utf-8 compatible one
-			lua_getfield(L, -1, "loaders");
-			//wxLogStatus("loaders");
-			lua_pushcfunction(L, LuaModuleLoader);
-			//wxLogStatus("function");
-			lua_rawseti(L, -2, 2);
-			//wxLogStatus("rawseti");
-			lua_pop(L, 2);
-			//wxLogStatus("pop");
-			_stackcheck.check_stack(0);
-			//wxLogStatus("paths");
-			// prepare stuff in the registry
-			// reference to the script object
-			lua_pushlightuserdata(L, this);
-			lua_setfield(L, LUA_REGISTRYINDEX, "kainote");
-			//wxLogStatus("light userdata");
-			// the "feature" table
-			// integer indexed, using same indexes as "macros" vector in the base Script class
-			lua_newtable(L);
-			lua_setfield(L, LUA_REGISTRYINDEX, "macros");
-			_stackcheck.check_stack(0);
-			//wxLogStatus("macros");
-
-			// make "kainote" table
-			//lua_pushglobaltable(L);
-			lua_pushstring(L, "kainote");
-			lua_newtable(L);
-			// kainote.register_macro
-			lua_pushcfunction(L, LuaMacro::LuaRegister);
-			lua_setfield(L, -2, "register_macro");
-			// kainote.text_extents
-			lua_pushcfunction(L, LuaTextExtents);
-			lua_setfield(L, -2, "text_extents");
-			// VFR handling
-			lua_pushcfunction(L, LuaFrameFromMs);
-			lua_setfield(L, -2, "frame_from_ms");
-			lua_pushcfunction(L, LuaMsFromFrame);
-			lua_setfield(L, -2, "ms_from_frame");
-			lua_pushcfunction(L, LuaVideoSize);
-			lua_setfield(L, -2, "video_size");
-			//wxLogStatus("kainote global");
-			// store kainote table to globals
-			lua_settable(L, LUA_GLOBALSINDEX);
-			
-			_stackcheck.check_stack(0);
-			//wxLogStatus("Read Script");
-			// load user script
-			//wxLogStatus("Read");
-			LuaScriptReader script_reader(filename);
-			if (lua_load(L, script_reader.ReadScript, &script_reader, name.mb_str(wxConvUTF8).data())) {
-				wxString err(lua_tostring(L, -1), wxConvUTF8);
-				err.Prepend(_("BÅ‚Ä…d wczytywania skryptu Lua \"") + filename + "\":\n\n");
-				throw err;
-			}
-			//wxLogStatus("Readed");
-			_stackcheck.check_stack(1);
-			//wxLogStatus("Execute");
-			// and execute it
-			// this is where features are registered
-			// don't thread this, as there's no point in it and it seems to break on wx 2.8.3, for some reason
-			if (lua_pcall(L, 0, 0, 0)) {
-				// error occurred, assumed to be on top of Lua stack
-				wxString err(lua_tostring(L, -1), wxConvUTF8);
-				err.Prepend(_("BÅ‚Ä…d inicjalizacji skryptu Lua \"") + filename + "\":\n\n");
-				throw err;
-			}
-			_stackcheck.check_stack(0);
-			//wxLogStatus("get script props");
-			lua_getglobal(L, "script_name");
-			if (lua_isstring(L, -1)) {
-				name = wxString(lua_tostring(L, -1), wxConvUTF8);
-			} else {
-				name = filename;
-			}
-			lua_getglobal(L, "script_description");
-			if (lua_isstring(L, -1)) {
-				description = wxString(lua_tostring(L, -1), wxConvUTF8);
-			}
-			lua_getglobal(L, "script_author");
-			if (lua_isstring(L, -1)) {
-				author = wxString(lua_tostring(L, -1), wxConvUTF8);
-			}
-			lua_getglobal(L, "script_version");
-			if (lua_isstring(L, -1)) {
-				version = wxString(lua_tostring(L, -1), wxConvUTF8);
-			}
-			lua_pop(L, 5);
-			// if we got this far, the script should be ready
-			_stackcheck.check_stack(0);
-			//wxLogStatus("modif");
-			CheckLastModified(false);
-			//wxLogStatus("all");
-		}
-		catch (const char *e) {
-			Destroy();
-			loaded = false;
-			name = filename;
-			description = wxString(e, wxConvUTF8);
-		}
-		catch (const wchar_t *e) {
-			Destroy();
-			loaded = false;
-			name = filename;
-			description = e;
-		}
-		catch (const wxString& e) {
-			Destroy();
-			loaded = false;
-			name = filename;
-			description = e;
-		}
-		catch (...) {
-			Destroy();
-			loaded = false;
-			name = filename;
-			description = _("Nieznany bÅ‚Ä…d Å‚adowania skryptu Lua");
-		}
+		return 1;
 	}
 
-	void LuaScript::Destroy()
+	int get_translation(lua_State *L)
 	{
-		// Assume the script object is clean if there's no Lua state
-		if (!L) return;
+		wxString str(check_wxstring(L, 1));
+		push_value(L, wxGetTranslation(str));
+		return 1;
+	}
 
-		// remove macros
-		for (int i = 0; i < (int)Macros.size(); i++) {
-			LuaMacro *m = Macros[i];
-			delete m;
+	const char *clipboard_get()
+	{
+		wxString data;
+		wxClipboard *cb = wxClipboard::Get();
+		if (cb->Open()) {
+			if (cb->IsSupported(wxDF_TEXT) || cb->IsSupported(wxDF_UNICODETEXT)) {
+				wxTextDataObject raw_data;
+				cb->GetData(raw_data);
+				data = raw_data.GetText();
+			}
+			cb->Close();
 		}
-		Macros.clear();
-
-		// delete environment
-		lua_close(L);
-		L = 0;
-
-		loaded = false;
+		if (data.empty())
+			return nullptr;
+		return strndup(data.ToStdString());
 	}
 
-	void LuaScript::Reload()
+	bool clipboard_set(const char *str)
 	{
-		Create();
+		bool succeeded = false;
+
+		//#if wxUSE_OLE
+		//		// OLE needs to be initialized on each thread that wants to write to
+		//		// the clipboard, which wx does not handle automatically
+		//		wxClipboard cb;
+		//#else
+		wxClipboard &cb = *wxTheClipboard;
+		//#endif
+		if (cb.Open()) {
+			succeeded = cb.SetData(new wxTextDataObject(wxString::FromUTF8(str)));
+			cb.Close();
+			cb.Flush();
+		}
+
+		return succeeded;
 	}
 
-	LuaScript* LuaScript::GetScriptObject(lua_State *L)
+	int clipboard_init(lua_State *L)
 	{
-		lua_getfield(L, LUA_REGISTRYINDEX, "kainote");
-		void *ptr = lua_touserdata(L, -1);
+		do_register_lib_table(L, std::vector<const char *>());
+		lua_createtable(L, 0, 2);
+		do_register_lib_function(L, "get", "bool (*)()", clipboard_get);
+		do_register_lib_function(L, "set", "const char * (*)()", clipboard_set);
+		lua_remove(L, -2); // ffi.cast function
+		// Leaves lib table on the stack
+		//register_lib_table(L, std::vector<const char *>(), "get", clipboard_get, "set", clipboard_set);
+		return 1;
+	}
+
+	int frame_from_ms(lua_State *L)
+	{
+		int ms = (int)lua_tonumber(L, -1);
 		lua_pop(L, 1);
-		return (LuaScript*)ptr;
+		VideoCtrl *video=Notebook::GetTab()->Video;
+		if (video->GetState()!=None) {
+			int frame=(video->IsDshow)? ((float)ms/1000.0)*video->fps : video->VFF->GetFramefromMS(ms);
+			lua_pushnumber(L, frame);
+		} else {
+			lua_pushnil(L);
+		}
+
+		return 1;
 	}
 
-	int LuaScript::LuaTextExtents(lua_State *L)
+	int ms_from_frame(lua_State *L)
+	{
+		int frame = (int)lua_tonumber(L, -1);
+		lua_pop(L, 1);
+		VideoCtrl *video=Notebook::GetTab()->Video;
+		if (video->GetState()!=None) {
+			int ms=(video->IsDshow)? ((frame*1000)/video->fps) : video->VFF->GetMSfromFrame(frame);
+			//wxLogStatus("ms %i %i %i", ms , (int)((frame*1000)/video->fps), video->VFF->GetMSfromFrame(frame));
+			lua_pushnumber(L, ms);
+		} else {
+			lua_pushnil(L);
+		}
+		return 1;
+	}
+
+	int video_size(lua_State *L)
+	{
+		VideoCtrl *video=Notebook::GetTab()->Video;
+		if (video->GetState()!=None) {
+			wxSize sz= video->GetVideoSize();
+			float AR=(float)video->ax/video->ay;
+			lua_pushnumber(L, sz.x);
+			lua_pushnumber(L, sz.y);
+			lua_pushnumber(L, AR);
+			lua_pushnumber(L, (AR==1.0f)? 0: (AR<1.34f && AR>1.33f)? 1 : (AR<1.78f && AR>1.77f)? 2 : (AR<2.35f && AR>2.36f)? 3 : 4 );
+			return 4;
+		} else {
+			lua_pushnil(L);
+			return 1;
+		}
+	}
+
+	int get_keyframes(lua_State *L)
+	{
+		VideoCtrl *video=Notebook::GetTab()->Video;
+		if (video->GetState()!=None && video->VFF){
+			wxArrayInt & value = video->VFF->KeyFrames;
+			lua_createtable(L, value.size(), 0);
+			for (size_t i = 0; i < value.size(); ++i) {
+				push_value(L, value[i]);
+				lua_rawseti(L, -2, i + 1);
+			}
+		}else
+			lua_pushnil(L);
+		return 1;
+	}
+
+	int decode_path(lua_State *L)
+	{
+		wxString path = check_string(L, 1);
+		wxLogStatus("path before"+path);
+		TabPanel *pan=Notebook::GetTab();
+		if(path[0]=='?'){
+			if(path[1]=='a'&&path[4]=='i') path.replace(0,5,pan->VideoPath.BeforeLast('\\')+"\\");
+			else if(path[1]=='d' && path[4]=='a') path.replace(0,6,Options.pathfull+"\\");
+			else if(path[1]=='d' && path[4]=='t') path.replace(0,12,Options.pathfull+"\\Dictionary\\");
+			else if(path[1]=='l' && path[4]=='a') path.replace(0,7,Options.pathfull+"\\");
+			else if(path[1]=='s' && path[4]=='i') path.replace(0,8,Options.pathfull+"\\Include\\");
+			else if(path[1]=='t' && path[4]=='p') path.replace(0,6,pan->SubsPath.BeforeLast('\\')+"\\");
+			else if(path[1]=='u' && path[4]=='r') path.replace(0,6,Options.pathfull+"\\");
+			else if(path[1]=='v' && path[4]=='e') path.replace(0,7,pan->VideoPath.BeforeLast('\\')+"\\");
+		}
+		wxLogStatus("path after"+path);
+		push_value(L, path);
+		return 1;
+	}
+
+	int cancel_script(lua_State *L)
+	{
+		lua_pushnil(L);
+		throw error_tag();
+	}
+
+	int lua_text_textents(lua_State *L)
 	{
 		if (!lua_istable(L, 1)) {
 			lua_pushstring(L, "Pierwszy argument dla text_extents musi byc tablica");
@@ -359,16 +238,16 @@ LuaScript::LuaScript(const wxString &_filename)
 		if(!e){return 0;}
 		Styles *st= e->astyle;
 		lua_pop(L, 1);
-			//lua_pushstring(L, "Not a style entry");
-			//lua_error(L);
-		
+		//lua_pushstring(L, "Not a style entry");
+		//lua_error(L);
+
 
 		wxString text(lua_tostring(L, 2), wxConvUTF8);
 
 		double width = 0, height =0, descent =0, extlead=0;
 		double fontsize = wxAtoi( st->Fontsize ) * 32;
 		double spacing = wxAtoi( st->Spacing ) * 32;
-		
+
 
 
 		HDC thedc = CreateCompatibleDC(0);
@@ -392,7 +271,7 @@ LuaScript::LuaScript(const wxString &_filename)
 		HFONT thefont = CreateFontIndirect(&lf);
 		if (!thefont) return false;
 		SelectObject(thedc, thefont);
-		
+
 		SIZE sz;
 		size_t thetextlen = text.length();
 		const TCHAR *thetext = text.wc_str();
@@ -423,7 +302,7 @@ LuaScript::LuaScript(const wxString &_filename)
 		descent = (wxAtoi(st->ScaleY) / 100.0) * (descent / 32);
 		extlead = (wxAtoi(st->ScaleY) / 100.0) * (extlead / 32);
 		wxDELETE(e);
-		
+
 		lua_pushnumber(L, width);
 		lua_pushnumber(L, height);
 		lua_pushnumber(L, descent);
@@ -431,136 +310,249 @@ LuaScript::LuaScript(const wxString &_filename)
 		return 4;
 	}
 
-	/// @brief Module loader which uses our include rather than Lua's, for unicode file support
-	/// @param L The Lua state
-	/// @return Always 1 per loader_Lua?
-	int LuaScript::LuaModuleLoader(lua_State *L)
+	int project_properties(lua_State *L)
 	{
-		int pretop = lua_gettop(L);
-		wxString module(lua_tostring(L, -1), wxConvUTF8);
-		module.Replace(L".", LUA_DIRSEP);
-
-		lua_getglobal(L, "package");
-		lua_pushstring(L, "path");
-		lua_gettable(L, -2);
-		wxString package_paths(lua_tostring(L, -1), wxConvUTF8);
-		lua_pop(L, 2);
-
-		wxStringTokenizer toker(package_paths, L";", wxTOKEN_STRTOK);
-		while (toker.HasMoreTokens()) {
-			wxString filename = toker.GetNextToken();
-			filename.Replace(L"?", module);
-			if (wxFileName::FileExists(filename)) {
-				LuaScriptReader script_reader(filename);
-				if (lua_load(L, script_reader.ReadScript, &script_reader, filename.utf8_str().data())) {
-					lua_pushfstring(L, "Blad wczytywania modulu Lua \"%s\":\n\n%s", filename.utf8_str().data(), lua_tostring(L, -1));
-					lua_error(L);
-					return lua_gettop(L) - pretop;
-				}
-			}
+		const TabPanel *c=Notebook::GetTab();
+		if (!c)
+			lua_pushnil(L);
+		else {
+			lua_createtable(L, 0, 14);
+#define PUSH_FIELD(name, fieldname) set_field(L, #name, c->Grid1->GetSInfo(#name))
+			PUSH_FIELD(automation_scripts, "Automation Scripts");
+			PUSH_FIELD(export_filters, "");
+			PUSH_FIELD(export_encoding, "");
+			PUSH_FIELD(style_storage, "Last Style Storage");
+			PUSH_FIELD(video_zoom, "");
+			PUSH_FIELD(ar_value, "");
+			PUSH_FIELD(scroll_position, "Active Line");
+			PUSH_FIELD(active_row, "Active Line");
+			PUSH_FIELD(ar_mode, "");
+			PUSH_FIELD(video_position, "");
+#undef PUSH_FIELD
+			set_field(L, "audio_file", c->VideoPath);
+			set_field(L, "video_file", c->VideoPath);
+			set_field(L, "timecodes_file", "");
+			set_field(L, "keyframes_file", "");
 		}
-		return lua_gettop(L) - pretop;
+		return 1;
 	}
 
-	/// @brief DOCME
-	/// @param L 
-	/// @return 
-	///
+	int DummyFilter(lua_State *L)
+	{
+		return 0;
+	}
+
+	
+
+
+	LuaScript::LuaScript(wxString const& filename)
+		: filename(filename)
+		,L(NULL)
+	{
+		include_path.push_back(filename.BeforeLast('\\')+"\\");
+		include_path.push_back(Options.pathfull+"\\Include\\");
+		Create();
+	}
+
+	void LuaScript::Create()
+	{
+		Destroy();
+
+		name = GetPrettyFilename();
+
+		// create lua environment
+		L = luaL_newstate();
+		if (!L) {
+			description = "Could not initialize Lua state";
+			return;
+		}
+
+		bool loaded = false;
+		//BOOST_SCOPE_EXIT_ALL(&) { if (!loaded) Destroy(); };
+		LuaStackcheck stackcheck(L);
+
+		// register standard libs
+		preload_modules(L);
+		stackcheck.check_stack(0);
+
+		// dofile and loadfile are replaced with include
+		lua_pushnil(L);
+		lua_setglobal(L, "dofile");
+		lua_pushnil(L);
+		lua_setglobal(L, "loadfile");
+		push_value(L, exception_wrapper<LuaInclude>);
+		lua_setglobal(L, "include");
+
+		// Replace the default lua module loader with our unicode compatible
+		// one and set the module search path
+		if (!Install(L, include_path)) {
+			description = get_string_or_default(L, 1);
+			lua_pop(L, 1);
+			return;
+		}
+		stackcheck.check_stack(0);
+
+		// prepare stuff in the registry
+
+		// store the script's filename
+		push_value(L, GetFilename());
+		lua_setfield(L, LUA_REGISTRYINDEX, "filename");
+		stackcheck.check_stack(0);
+
+		// reference to the script object
+		push_value(L, this);
+		lua_setfield(L, LUA_REGISTRYINDEX, "kainote");
+		stackcheck.check_stack(0);
+
+		// make "kainote" table
+		lua_pushstring(L, "kainote");
+		lua_createtable(L, 0, 13);
+
+		set_field<LuaCommand::LuaRegister>(L, "register_macro");
+		set_field<DummyFilter>(L, "register_filter");//kainote nie ma exportu wiêc by skrypty siê nie sypa³y trzeba podes³aæ coœ fa³szywego.
+		set_field<lua_text_textents>(L, "text_extents");
+		set_field<frame_from_ms>(L, "frame_from_ms");
+		set_field<ms_from_frame>(L, "ms_from_frame");
+		set_field<video_size>(L, "video_size");
+		set_field<get_keyframes>(L, "keyframes");
+		set_field<decode_path>(L, "decode_path");
+		set_field<cancel_script>(L, "cancel");
+		set_field(L, "lua_automation_version", 4);
+		set_field<clipboard_init>(L, "__init_clipboard");
+		set_field<get_file_name>(L, "file_name");
+		set_field<get_translation>(L, "gettext");
+		set_field<project_properties>(L, "project_properties");
+
+		// store kainote table to globals
+		lua_settable(L, LUA_GLOBALSINDEX);
+		stackcheck.check_stack(0);
+
+		// load user script
+		if (!LoadFile(L, GetFilename())) {
+			description = get_string_or_default(L, 1);
+			lua_pop(L, 1);
+			return;
+		}
+		stackcheck.check_stack(1);
+
+		// Insert our error handler under the user's script
+		lua_pushcclosure(L, add_stack_trace, 0);
+		lua_insert(L, -2);
+
+		// and execute it
+		// this is where features are registered
+		if (lua_pcall(L, 0, 0, -2)) {
+			// error occurred, assumed to be on top of Lua stack
+			description = wxString::Format("B³¹d inicjalizacji skryptu Lua \"%s\":\n\n%s", GetPrettyFilename(), get_string_or_default(L, -1));
+			//lua_pop(L, 1);
+			lua_pop(L, 2); // error + error handler
+			return;
+		}
+		lua_pop(L, 1); // error handler
+		stackcheck.check_stack(0);
+
+		lua_getglobal(L, "version");
+		if (lua_isnumber(L, -1) && lua_tointeger(L, -1) == 3) {
+			lua_pop(L, 1); // just to avoid tripping the stackcheck in debug
+			description = "Attempted to load an Automation 3 script as an Automation 4 Lua script. Automation 3 is no longer supported.";
+			return;
+		}
+
+		name = get_global_string(L, "script_name");
+		description = get_global_string(L, "script_description");
+		author = get_global_string(L, "script_author");
+		version = get_global_string(L, "script_version");
+
+		if (name.empty())
+			name = GetPrettyFilename();
+
+		lua_pop(L, 1);
+		// if we got this far, the script should be ready
+		loaded = true;
+		//wxLogStatus("names "+name+" "+description+" "+author+" "+version);
+	}
+
+	void LuaScript::Destroy()
+	{
+		// Assume the script object is clean if there's no Lua state
+		if (!L) return;
+
+		// loops backwards because commands remove themselves from macros when
+		// they're unregistered
+		for (auto i = macros.begin(); i != macros.end(); i++)
+			delete (*i);
+
+
+		lua_close(L);
+		L = nullptr;
+	}
+
+
+	void LuaScript::RegisterCommand(LuaCommand *command)
+	{
+		for (auto macro : macros) {
+			if (macro->StrDisplay() == command->StrDisplay()) {
+				error(L, "A macro named '%s' is already defined in script '%s'",
+					command->StrDisplay().utf8_str().data(), name.utf8_str().data());
+			}
+		}
+		macros.push_back(command);
+	}
+
+	void LuaScript::UnregisterCommand(LuaCommand *command)
+	{
+		auto result = std::find(macros.begin(), macros.end(), command);
+		macros.erase(result);
+		delete (*result);
+	}
+
+	LuaScript* LuaScript::GetScriptObject(lua_State *L)
+	{
+		lua_getfield(L, LUA_REGISTRYINDEX, "kainote");
+		void *ptr = lua_touserdata(L, -1);
+		lua_pop(L, 1);
+		return (LuaScript*)ptr;
+	}
+
+
 	int LuaScript::LuaInclude(lua_State *L)
 	{
-		LuaScript *s = GetScriptObject(L);
+		const LuaScript *s = GetScriptObject(L);
 
-		if (!lua_isstring(L, 1)) {
-			lua_pushstring(L, "Argument dla include musi byc stringiem");
-			lua_error(L);
-			return 0;
+		const wxString filename(check_string(L, 1));
+		wxString filepath;
+		bool fullpath=false;
+		// Relative or absolute path
+		if (filename.find("\\")!=-1 || filename.find("/")!=-1){
+			filepath = filename;//s->GetFilename().BeforeLast('//') + filename;
+			fullpath=true;
 		}
-		wxString fnames(lua_tostring(L, 1), wxConvUTF8);
-
-		wxFileName fname(fnames);
-		if (fname.GetDirCount() == 0) {
-			// filename only
-			fname = s->include_path.FindAbsoluteValidPath(fnames);
-		} else if (fname.IsRelative()) {
-			// relative path
-			wxFileName sfname(s->name);
-			fname.MakeAbsolute(sfname.GetPath(true));
-		} else {
-			// absolute path, do nothing
-		}
-		if (!fname.IsOk() || !fname.FileExists()) {
-			lua_pushfstring(L, "Nie znaleziono Lua include: %s", fnames.mb_str(wxConvUTF8).data());
-			lua_error(L);
+		if (!wxFileExists(filepath)) { // Plain filename
+			if(fullpath){filepath=filepath.AfterLast('\\');}
+			for (auto const& dir : s->include_path) {
+				//wxLogStatus("dir: \""+dir+"\" name: \""+filename);
+				filepath = dir + filename;
+				if (wxFileExists(filepath))
+					break;
+			}
 		}
 
-		LuaScriptReader script_reader(fname.GetFullPath());
-		if (lua_load(L, script_reader.ReadScript, &script_reader, fname.GetFullName().mb_str(wxConvUTF8).data())) {
-			lua_pushfstring(L, "Blad wczytywania Lua include \"%s\":\n\n%s", fname.GetFullPath().mb_str(wxConvUTF8).data(), lua_tostring(L, -1));
-			lua_error(L);
-			return 0;
-		}
+		if (!wxFileExists(filepath))
+			return error(L, "Lua include not found: %s", filepath.mb_str(wxConvUTF8).data());
+
+		if (!LoadFile(L, filepath))
+			return error(L, "Error loading Lua include \"%s\":\n%s", filepath.mb_str(wxConvUTF8).data(), check_string(L, 1).mb_str(wxConvUTF8).data());
+
 		int pretop = lua_gettop(L) - 1; // don't count the function value itself
 		lua_call(L, 0, LUA_MULTRET);
 		return lua_gettop(L) - pretop;
-	}
-
-	int LuaScript::LuaFrameFromMs(lua_State *L)
-	{
-		int ms = (int)lua_tonumber(L, -1);
-		lua_pop(L, 1);
-		kainoteApp *Kaia = (kainoteApp*) wxTheApp;
-		VideoCtrl *video=Kaia->Frame->GetTab()->Video;
-		if (video->GetState()!=None) {
-			int frame=(video->IsDshow)? ((float)ms/1000.0)*video->fps : video->VFF->GetFramefromMS(ms);
-			//wxLogStatus("frame %i %i %i", frame , (int)(((float)ms/1000.0)*video->fps), video->VFF->GetFramefromMS(ms));
-			lua_pushnumber(L, frame);
-			return 1;
-		} else {
-			lua_pushnil(L);
-			return 1;
-		}
-	}
-
-	int LuaScript::LuaMsFromFrame(lua_State *L)
-	{
-		int frame = (int)lua_tonumber(L, -1);
-		lua_pop(L, 1);
-		kainoteApp *Kaia = (kainoteApp*) wxTheApp;
-		VideoCtrl *video=Kaia->Frame->GetTab()->Video;
-		if (video->GetState()!=None) {
-			int ms=(video->IsDshow)? ((frame*1000)/video->fps) : video->VFF->GetMSfromFrame(frame);
-			//wxLogStatus("ms %i %i %i", ms , (int)((frame*1000)/video->fps), video->VFF->GetMSfromFrame(frame));
-			lua_pushnumber(L, ms);
-			return 1;
-		} else {
-			lua_pushnil(L);
-			return 1;
-		}
-	}
-
-	int LuaScript::LuaVideoSize(lua_State *L)
-	{
-		kainoteApp *Kaia = (kainoteApp*) wxTheApp;
-		VideoCtrl *video=Kaia->Frame->GetTab()->Video;
-		if (video->GetState()!=None) {
-			wxSize sz= video->GetVideoSize();
-			float AR=(float)video->ax/video->ay;
-			lua_pushnumber(L, sz.x);
-			lua_pushnumber(L, sz.y);
-			lua_pushnumber(L, AR);
-			lua_pushnumber(L, (AR==1.0f)? 0: (AR<1.34f && AR>1.33f)? 1 : (AR<1.78f && AR>1.77f)? 2 : (AR<2.35f && AR>2.36f)? 3 : 4 );
-			return 4;
-		} else {
-			lua_pushnil(L);
-			return 1;
-		}
 	}
 
 	bool LuaScript::CheckLastModified(bool check)
 	{
 		FILETIME ft;
 
-		HANDLE ffile = CreateFile(filename.wc_str(), GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+		HANDLE ffile = CreateFile(GetFilename().wc_str(), GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 		GetFileTime(ffile,0,0,&ft);
 		CloseHandle(ffile);
@@ -578,175 +570,6 @@ LuaScript::LuaScript(const wxString &_filename)
 		return false;
 	}
 
-
-	// LuaFeatureMacro
-	void LuaMacro::RegisterMacro()
-	{
-		// get the LuaScript objects
-		lua_getfield(L, LUA_REGISTRYINDEX, "kainote");
-		LuaScript *s = (LuaScript*)lua_touserdata(L, -1);
-		lua_pop(L, 1);
-
-		// add the Feature object
-		s->Macros.push_back(this);
-
-		// get the index+1 it was pushed into
-		myid = (int)s->Macros.size()-1;
-
-		// create table with the functions
-		// get features table
-		lua_getfield(L, LUA_REGISTRYINDEX, "macros");
-		lua_pushvalue(L, -2);
-		lua_rawseti(L, -2, myid);
-		lua_pop(L, 1);
-	}
-
-	int LuaMacro::LuaRegister(lua_State *L)
-	{
-		wxString _name(lua_tostring(L, 1), wxConvUTF8);
-		wxString _description(lua_tostring(L, 2), wxConvUTF8);
-
-		LuaMacro *macro = new LuaMacro(_name, _description, L);
-		(void)macro;
-
-		return 0;
-	}
-
-	LuaMacro::LuaMacro(const wxString &_name, const wxString &_description, lua_State *_L)
-		:L(_L)
-		,name(_name)
-	{
-		// new table for containing the functions for this feature
-		lua_newtable(L);
-		// store processing function
-		if (!lua_isfunction(L, 3)) {
-			lua_pushstring(L, "Funkcja wykonawcza makra musi byc funkcja");
-			lua_error(L);
-		}
-		lua_pushvalue(L, 3);
-		lua_rawseti(L, -2, 1);
-		// and validation function
-		lua_pushvalue(L, 4);
-		no_validate = !lua_isfunction(L, -1);
-		lua_rawseti(L, -2, 2);
-		// make the macro known
-		RegisterMacro();
-		// and remove the macro function table again
-		lua_pop(L, 1);
-	}
-
-	bool LuaMacro::Validate( const wxArrayInt &selected, int active, int added)
-	{
-		if (no_validate)
-			return true;
-
-		lua_getfield(L, LUA_REGISTRYINDEX, "macros");
-		// get this feature's function pointers
-		lua_rawgeti(L, -1, myid);
-		// get pointer for validation function
-		lua_rawgeti(L, -1, 2);
-		lua_remove(L, -2);
-		lua_remove(L, -2);
-
-		// prepare function call
-		AutoToFile *subsobj = new AutoToFile(L, false);
-		//(void) subsobj;
-		
-		lua_newtable(L);
-		for (size_t i = 0; i < selected.size(); i++) {
-			// We use zero-based indexing but Lua wants one-based, so add one
-			lua_pushinteger(L, selected[i] + added);
-			lua_rawseti(L, -2, (int)i+1);
-		}
-
-		lua_pushinteger(L, active); // active line
-
-		// do call
-		//LuaThreadedCall *call= new LuaThreadedCall(L);
-		//wxThread::ExitCode code = call->Wait();
-		if(lua_pcall(L, 3, 1, 0)){
-			wxString errmsg(lua_tostring(L, -2), wxConvUTF8);
-				errmsg<<_("\n\nWystÄ…piÅ‚ bÅ‚Ä…d podczas wykonywania skryptu Lua:\n");
-			wxMessageBox(errmsg,_("BÅ‚Ä…d skryptu lua"));
-		}
-		
-		//(void) code;
-		// get result
-		bool result = !!lua_toboolean(L, -1);
-
-		// clean up stack
-		lua_pop(L, 1);
-		//delete call;
-		wxDELETE(subsobj);
-		return result;
-	}
-
-	void LuaMacro::Process(wxArrayInt &selected, int active, int added, wxWindow *progress_parent)
-	{
-
-		lua_getfield(L, LUA_REGISTRYINDEX, "macros");
-		// get this feature's function pointers
-		lua_rawgeti(L, -1, myid);
-		// get pointer for validation function
-		lua_rawgeti(L, -1, 1);
-		lua_remove(L, -2);
-		lua_remove(L, -2);
-		// prepare function call
-		AutoToFile *subsobj = new AutoToFile(L, true);
-		//(void) subsobj;
-		lua_newtable(L);
-		
-		for (size_t i = 0; i < selected.size(); i++) {
-			// We use zero-based indexing but Lua wants one-based, so add one
-			lua_pushinteger(L, (int)(selected[i] + added));
-			lua_rawseti(L, -2, (int)(i+1));
-		} // selected items
-		
-		lua_pushinteger(L, active); // active line
-		
-		LuaProgressSink *ps = new LuaProgressSink(L, progress_parent);
-		
-		
-		
-		//wxLogStatus("ps titled");
-		// do call
-		// 3 args: subtitles, selected lines, active line
-		// 1 result: new selected lines
-		LuaThreadedCall *call=new LuaThreadedCall(L);
-		ps->ShowDialog(name);
-		//wxLogStatus("wait");
-		wxThread::ExitCode code = call->Wait();
-		//wxLogStatus("get code %i", (int)code);
-		//(void) code; // ignore
-		//if (code) ThrowError();
-		if(ps->lpd->cancelled&&ps->lpd->IsModal()){ps->lpd->EndModal(0);}
-
-		// top of stack will be selected lines array, if any was returned
-		
-		if (lua_istable(L, -1)) {
-			selected.clear();
-			selected.reserve(lua_objlen(L, -1));
-			lua_pushnil(L);
-			while (lua_next(L, -2)) {
-				if (lua_isnumber(L, -1)) {
-					// Lua uses one-based indexing but we want zero-based, so subtract one
-					selected.Add(lua_tointeger(L, -1) - added);
-				}
-				lua_pop(L, 1);
-			}
-			std::sort(selected.begin(), selected.end());
-			lua_pop(L, 1);
-		}
-		// either way, there will be something on the stack
-		//wxLogStatus("result");
-		delete ps;
-		delete call;
-		wxDELETE(subsobj);
-		
-	}
-
-	// LuaThreadedCall
-
 	LuaThreadedCall::LuaThreadedCall(lua_State *_L)
 		: wxThread(wxTHREAD_JOINABLE)
 		, L(_L)
@@ -762,133 +585,637 @@ LuaScript::LuaScript(const wxString &_filename)
 
 	wxThread::ExitCode LuaThreadedCall::Entry()
 	{
-	//wxLogStatus("pcall");
-		int result = lua_pcall(L, 3, 1, 0);
-		//wxLogStatus("pcall end");
-		// see if there's a progress sink window to close
-		//lua_getfield(L, LUA_REGISTRYINDEX, "progress_sink");
+	
+		bool failed = false;
+		int nargs=3, nresults=2;
 		LuaProgressSink *ps = LuaProgressSink::ps;
-		if (ps) {
-			
-			//wxLogStatus("progress sink pointer");
-			//ps->AddDebugOutput(wxString::Format("result %i \n",result));
-			if (result) {
+		
+		// Insert our error handler under the function to call
+		lua_pushcclosure(L, add_stack_trace, 0);
+		lua_insert(L, -nargs - 2);
+
+		if (lua_pcall(L, nargs, nresults, -nargs - 2)) {
+			if (!lua_isnil(L, -1) && ps) {
 				// if the call failed, log the error here
-				wxString errmsg(lua_tostring(L, -1), wxConvUTF8);
-				errmsg.Prepend(_("WystÄ…piÅ‚ bÅ‚Ä…d podczas wykonywania skryptu Lua:\n"));
+				wxString errmsg(get_string_or_default(L, -1));
+				errmsg.Prepend(_("Wyst¹pi³ b³¹d podczas wykonywania skryptu Lua:\n"));
 				ps->SafeQueue(Auto::EVT_MESSAGE,errmsg);
-				lua_pop(L, 1);
 			}
-			//wxLogStatus("result");
-			// don't bother protecting this with a mutex, it should be safe enough like this
-			if(!result && ps->lpd->pending_debug_output==""){ps->lpd->cancelled=true;}else{ps->lpd->finished=true;}
-			// tell wx to run its idle-events now, just to make the progress window notice earlier that we're done
-			//ps->SetTask(wxString::Format("zrobione, rezultat %i \n",result));
-			//wxLogStatus("wakeup");
-			//wxWakeUpIdle();
+			lua_pop(L, 2);
+			failed = true;
 		}
-		if (result) return (wxThread::ExitCode) 1;
-		else return 0;
+		else
+			lua_remove(L, -nresults - 1);
+
+
+		//lua_gc(L, LUA_GCCOLLECT, 0);
+		if(!failed && ps->lpd->pending_debug_output==""){ps->lpd->closedialog=true;}else{ps->lpd->finished=true;}
+
+		//if (failed)
+			//throw "Script threw an error";
+		if (failed){ return (wxThread::ExitCode) 1;}
+		return 0;
 	}
 
-
-Automation::Automation(kainoteFrame *kai)
+	// LuaFeature
+	void LuaFeature::RegisterFeature()
 	{
-	Kai=kai;
-	path=Options.pathfull+"\\Autoload";
-	ReloadScripts(true);
+		myid = luaL_ref(L, LUA_REGISTRYINDEX);
 	}
 
-Automation::~Automation()
+	void LuaFeature::UnregisterFeature()
 	{
-	RemoveAll();
+		luaL_unref(L, LUA_REGISTRYINDEX, myid);
 	}
 
-bool Automation::Add(wxString filename)
+	void LuaFeature::GetFeatureFunction(const char *function) const
+	{
+		// get this feature's function pointers
+		lua_rawgeti(L, LUA_REGISTRYINDEX, myid);
+		// get pointer for validation function
+		push_value(L, function);
+		lua_rawget(L, -2);
+		// remove the function table
+		lua_remove(L, -2);
+		assert(lua_isfunction(L, -1));
+	}
+
+	// LuaFeatureMacro
+	int LuaCommand::LuaRegister(lua_State *L)
+	{
+		//static std::mutex mutex;
+		auto command = new LuaCommand(L);
+		//{
+			//std::lock_guard<std::mutex> lock(mutex);
+			//Command::reg(std::move(command));
+		//}
+
+		return 0;
+	}
+
+	LuaCommand::LuaCommand(lua_State *L)
+		: LuaFeature(L)
+		//, display(check_string(L, 1))
+		//, help(get_string(L, 2))
+		, cmd_type(COMMAND_NORMAL)
+		//, wxMenuItem(NULL,-1,display,help)
 	{
 		
-	LuaScript *ls= new LuaScript(filename);
-	for (size_t i = 0; i < Scripts.size(); i++) {
-		if (ls->name == Scripts[i]->name){delete ls; ls=NULL; return false;}
+		
+		display = check_string(L, 1);
+		
+		help=get_string(L, 2);
+		
+		lua_getfield(L, LUA_REGISTRYINDEX, "filename");
+		//cmd_name = wxString::Format("automation/lua/%s/%s", check_string(L, -1), check_string(L, 1));
+		//wxLogStatus(cmd_name);
+		if (!lua_isfunction(L, 3))
+			error(L, "The macro processing function must be a function");
+
+		if (lua_isfunction(L, 4))
+			cmd_type |= COMMAND_VALIDATE;
+
+		if (lua_isfunction(L, 5))
+			cmd_type |= COMMAND_TOGGLE;
+
+		// new table for containing the functions for this feature
+		lua_createtable(L, 0, 3);
+
+		// store processing function
+		push_value(L, "run");
+		lua_pushvalue(L, 3);
+		lua_rawset(L, -3);
+
+		// store validation function
+		push_value(L, "validate");
+		lua_pushvalue(L, 4);
+		lua_rawset(L, -3);
+
+		// store active function
+		push_value(L, "isactive");
+		lua_pushvalue(L, 5);
+		lua_rawset(L, -3);
+
+		// store the table in the registry
+		RegisterFeature();
+		
+		LuaScript::GetScriptObject(L)->RegisterCommand(this);
+		
+	}
+
+	LuaCommand::~LuaCommand()
+	{
+		UnregisterFeature();
+		//LuaScript::GetScriptObject(L)->UnregisterCommand(this);
+	}
+
+	static std::vector<int> selected_rows(const TabPanel *c)
+	{
+		auto const& sel = c->Grid1->GetSels();
+		int offset = c->Grid1->SInfoSize() + c->Grid1->StylesSize()+1;
+		std::vector<int> rows;
+		rows.reserve(sel.size());
+		for (auto line : sel)
+			rows.push_back(line + offset);
+		sort(rows.begin(), rows.end());
+		return rows;
+	}
+
+	bool LuaCommand::Validate(const TabPanel *c)
+	{
+		if (!(cmd_type & COMMAND_VALIDATE)) return true;
+
+		// Error handler goes under the function to call
+		lua_pushcclosure(L, add_stack_trace, 0);
+
+		GetFeatureFunction("validate");
+		auto subsobj = new AutoToFile(L, c->Grid1->file->GetSubs(), true);
+
+		push_value(L, selected_rows(c));
+		push_value(L, c->Edit->ebrow + c->Grid1->SInfoSize() + c->Grid1->StylesSize()+1);
+
+		int err = lua_pcall(L, 3, 2, -5 /* three args, function, error handler */);
+		SAFE_DELETE(subsobj);
+
+		if (err) {
+			wxLogWarning("Runtime error in Lua macro validation function:\n%s", get_wxstring(L, -1));
+			lua_pop(L, 2);
+			return false;
 		}
-	Scripts.push_back(ls);
-	return true;
-	}
 
-void Automation::Remove(int script)
-	{
-	std::vector<LuaScript*>::iterator i= Scripts.begin()+script;
-	delete *i;
-	Scripts.erase(i);
-	}
+		bool result = !!lua_toboolean(L, -2);
 
-void Automation::RemoveAll(bool autoload)
-	{
-	std::vector<LuaScript*>::iterator eend= (autoload)? Scripts.begin()+ALScripts : Scripts.end();
-	for (std::vector<LuaScript*>::iterator i = Scripts.begin(); i != eend; i++) {
-			delete *i;
+		wxString new_help_string(get_wxstring(L, -1));
+		if (new_help_string.size()) {
+			help = new_help_string;
+			cmd_type |= COMMAND_DYNAMIC_HELP;
 		}
-	if(autoload){Scripts.erase(Scripts.begin(),eend);}
-	if(!autoload){Scripts.clear();}
+
+		lua_pop(L, 3); // two return values and error handler
+
+		return result;
 	}
 
-void Automation::ReloadMacro(int script)
+	void LuaCommand::Run(TabPanel *c)
 	{
-	Scripts[script]->Reload();
+		LuaStackcheck stackcheck(L);
+
+		stackcheck.check_stack(0);
+
+		GetFeatureFunction("run");
+		auto subsobj = new AutoToFile(L, c->Grid1->file->GetSubs(), true);
+
+		int original_offset = c->Grid1->SInfoSize() + c->Grid1->StylesSize()+1;
+		auto original_sel = selected_rows(c);
+		int original_active = c->Edit->ebrow + original_offset;
+
+		push_value(L, original_sel);
+		push_value(L, original_active);
+		LuaProgressSink *ps = new LuaProgressSink(L, c);
+
+		
+		LuaThreadedCall call(L);
+		
+		ps->ShowDialog(StrDisplay());
+		wxThread::ExitCode code = call.Wait();
+		bool failed = (int)code == 1;
+		wxLogStatus("waited ");
+		
+		if(ps->lpd->cancelled || failed){
+			wxLogStatus("canceled ");
+			subsobj->Cancel();
+			c->Grid1->file->DummyUndo();
+			
+			delete ps;
+			return;
+		}
+			//wxLogStatus("modal & finished %i %i", (int)ps->lpd->IsModal(), (int)ps->lpd->finished);
+		//if(ps->lpd->IsModal() && ps->lpd->finished){ps->lpd->EndModal(0);}
+		c->Grid1->SpellErrors.clear();
+		c->Grid1->SetModified(false);
+		c->Grid1->RepaintWindow();	
+		//if(ps->lpd->cancelled && ps->lpd->IsModal()){ps->lpd->EndModal(0);}
+
+		//auto lines = subsobj->ProcessingComplete(StrDisplay(c));
+		wxLogStatus("select lines");
+		int active_idx = original_active;
+
+		// Check for a new active row
+		if (lua_isnumber(L, -1)) {
+			active_idx = lua_tointeger(L, -1);
+			if (active_idx < 1 || active_idx > c->Grid1->GetCount()) {
+				wxLogError("Active row %d is out of bounds (must be 1-%u)", active_idx, c->Grid1->GetCount());
+				active_idx = original_active;
+			}
+		}
+
+		//stackcheck.check_stack(2);
+		lua_pop(L, 1);
+
+		// top of stack will be selected lines array, if any was returned
+		if (lua_istable(L, -1)) {
+			lua_for_each(L, [&] {
+				if (!lua_isnumber(L, -1))
+					return;
+				int cur = lua_tointeger(L, -1);
+				if (cur < 1 || cur > c->Grid1->GetCount()) {
+					wxLogError("Selected row %d is out of bounds (must be 1-%u)", cur, c->Grid1->GetCount());
+					throw LuaForEachBreak();
+				}
+
+				c->Grid1->sel[cur - original_offset -1]=true;
+			});
+
+			/*AssDialogue *new_active = c->selectionController->GetActiveLine();
+			if (active_line && (active_idx > 0 || !sel.count(new_active)))
+			new_active = active_line;
+			if (sel.empty())
+			sel.insert(new_active);
+			c->selectionController->SetSelectionAndActive(std::move(sel), new_active);*/
+		}
+		else {
+			lua_pop(L, 1);
+
+			/*Selection new_sel;
+			AssDialogue *new_active = nullptr;
+
+			int prev = original_offset;
+			auto it = c->ass->Events.begin();
+			for (int row : original_sel) {
+			while (row > prev && it != c->ass->Events.end()) {
+			++prev;
+			++it;
+			}
+			if (it == c->ass->Events.end()) break;
+			new_sel.insert(&*it);
+			if (row == original_active)
+			new_active = &*it;
+			}
+
+			if (new_sel.empty() && !c->ass->Events.empty())
+			new_sel.insert(&c->ass->Events.front());
+			if (!new_sel.count(new_active))
+			new_active = *new_sel.begin();
+			c->selectionController->SetSelectionAndActive(std::move(new_sel), new_active);*/
+		}
+		SAFE_DELETE(subsobj);
+		SAFE_DELETE(ps);
+		//stackcheck.check_stack(0);
 	}
 
-void Automation::ReloadScripts(bool first)
+	bool LuaCommand::IsActive(const TabPanel *c)
 	{
+		if (!(cmd_type & COMMAND_TOGGLE)) return false;
+
+		LuaStackcheck stackcheck(L);
+
+		stackcheck.check_stack(0);
+
+		GetFeatureFunction("isactive");
+		auto subsobj = new AutoToFile(L, c->Grid1->file->GetSubs(), true);
+		push_value(L, selected_rows(c));
+		push_value(L, c->Edit->ebrow + c->Grid1->SInfoSize() + c->Grid1->StylesSize()+1);
+
+		int err = lua_pcall(L, 3, 1, 0);
+
+		bool result = false;
+		if (err)
+			wxLogWarning("Runtime error in Lua macro IsActive function:\n%s", get_wxstring(L, -1));
+		else
+			result = !!lua_toboolean(L, -1);
+
+		// clean up stack (result or error message)
+		stackcheck.check_stack(1);
+		lua_pop(L, 1);
+		SAFE_DELETE(subsobj);
+		return result;
+	}
+
+	void LuaCommand::RunScript()
+	{
+		LuaScript *script = LuaScript::GetScriptObject(L);
+		if(script->CheckLastModified(true)){script->Reload();}
 	
-	
-	if(!first){RemoveAll(true);}
-	ALScripts=0;
+		TabPanel *pan = Notebook::GetTab();
+		if(Validate(pan)){Run(pan);}
+		
+
+
+	}
+
+
+
+	Automation::Automation()
+	{
+		AutoloadPath=Options.pathfull+"\\Autoload";
+		ReloadScripts(true);
+	}
+
+	Automation::~Automation()
+	{
+		RemoveAll(true);
+	}
+
+	bool Automation::Add(wxString filename, bool autoload)
+	{
+		
+		std::vector<Auto::LuaScript*> &scripts = (autoload)? Scripts : ASSScripts;
+		Auto::LuaScript *ls= new Auto::LuaScript(filename);
+		for (size_t i = 0; i < scripts.size(); i++) {
+			if (ls->GetName() == scripts[i]->GetName()){delete ls; ls=NULL; return false;}
+		}
+		ls->CheckLastModified(false);
+		scripts.push_back(ls);
+		if(!autoload){
+			wxString scriptpaths = Notebook::GetTab()->Grid1->GetSInfo("Automation Scripts");
+			scriptpaths<<"|"<<filename;
+			Notebook::GetTab()->Grid1->AddSInfo("Automation Scripts", scriptpaths);
+		}
+		HasChanges=true;
+		//wxLogStatus("description: " + ls->GetDescription());
+		return true;
+	}
+
+	void Automation::Remove(int script)
+	{
+		HasChanges=true;
+		std::vector<Auto::LuaScript*>::iterator i= ASSScripts.begin()+script;
+		delete *i;
+		ASSScripts.erase(i);
+	}
+
+	void Automation::RemoveAll(bool autoload)
+	{
+		
+		if(autoload){
+			for (auto i = Scripts.begin(); i != Scripts.end(); i++) {
+				delete *i;
+			}
+			Scripts.clear();}
+		//if(!autoload){
+			for (auto i = ASSScripts.begin(); i != ASSScripts.end(); i++) {
+				delete *i;
+			}
+			ASSScripts.clear();
+		//}
+	}
+
+	void Automation::ReloadMacro(int script)
+	{
+		ASSScripts[script]->Reload();
+	}
+
+	/*void Automation::RunScript(int script, int macro)
+	{
+		if(Scripts[script]->CheckLastModified(true)){Scripts[script]->Reload();}
+		Auto::LuaCommand * macros = Scripts[script]->GetMacro(macro);
+		if(macro >= macros.size()){
+			wxMessageBox("Wybrane makro przekracza tablicê, co nie powinno siê zdarzyæ, jedynie w przypadku b³êdu w kodzie");
+		}
+		TabPanel *pan = Notebook::GetTab();
+		if(macros[macro]->Validate(pan)){macros[macro]->Run(pan);}
+
+
+	}*/
+
+	void Automation::ReloadScripts(bool first)
+	{
+
+
+		if(!first){RemoveAll(true);}
 		int error_count = 0;
 
 		//wxStringTokenizer tok(path, "|", wxTOKEN_STRTOK);
 		//while (tok.HasMoreTokens()) {
-			wxDir dir;
-			//wxString dirname = StandardPaths::DecodePath(tok.GetNextToken());
-			if (!dir.Open(path)) {
-				//wxLogWarning("Failed to open a directory in the Automation autoload path: %s", dirname.c_str());
-				return;
-			}
-	
-
-			wxString fn;
-			wxFileName script_path(path, "");
-			bool more = dir.GetFirst(&fn, wxEmptyString, wxDIR_FILES);
-
-			while (more) {
-				script_path.SetName(fn);
-				try {
-					wxString fullpath = script_path.GetFullPath();
-					
-					if(!fullpath.Lower().EndsWith("lua") || !Add(fullpath)){more = dir.GetNext(&fn);continue;}
-						
-					if (!Scripts[Scripts.size()-1]->loaded) {error_count++;}
-						
-						ALScripts++;
-					
-				}
-				catch (const wchar_t *e) {
-					error_count++;
-					wxLogError(_("BÅ‚Ä…d wczytywania skryptu Lua: %s\n%s"), fn.c_str(), e);
-				}
-				catch (...) {
-					error_count++;
-					wxLogError(_("Nieznany bÅ‚Ä…d wczytywania skryptu Lua: %s."), fn.c_str());
-				}
-				
-				more = dir.GetNext(&fn);
-			}
-		//}wxLogStatus("weszÅ‚o");
-			//wxLogStatus("po pÄ™tli");
-		if (error_count > 0) {
-			wxLogWarning(_("Jeden bÄ…dÅº wiÄ™cej skryptÃ³w autoload zawiera bÅ‚Ä™dy,\n obejrzyj opisy skryptÃ³w by uzyskaÄ‡ wiÄ™cej informacji."));
+		wxDir dir;
+		//wxString dirname = StandardPaths::DecodePath(tok.GetNextToken());
+		if (!dir.Open(AutoloadPath)) {
+			//wxLogWarning("Failed to open a directory in the Automation autoload path: %s", dirname.c_str());
+			return;
 		}
-		
-	
+
+
+		wxString fn;
+		wxFileName script_path(AutoloadPath, "");
+		bool more = dir.GetFirst(&fn, wxEmptyString, wxDIR_FILES);
+
+		while (more) {
+			script_path.SetName(fn);
+			try {
+				wxString fullpath = script_path.GetFullPath();
+				wxString ext = fullpath.AfterLast('.').Lower();
+
+				if((ext != "lua" && ext != "moon") || !Add(fullpath, true)){more = dir.GetNext(&fn);continue;}
+
+				if (!Scripts[Scripts.size()-1]->GetLoadedState()) {error_count++;}
+
+
+			}
+			catch (const wchar_t *e) {
+				error_count++;
+				wxLogError(_("B³¹d wczytywania skryptu Lua: %s\n%s"), fn.c_str(), e);
+			}
+			catch (...) {
+				error_count++;
+				wxLogError(_("Nieznany b³¹d wczytywania skryptu Lua: %s."), fn.c_str());
+			}
+
+			more = dir.GetNext(&fn);
+		}
+		//}wxLogStatus("wesz³o");
+		//wxLogStatus("po pêtli");
+		if (error_count > 0) {
+			wxLogWarning(_("Jeden b¹dŸ wiêcej skryptów autoload zawiera b³êdy,\n obejrzyj opisy skryptów by uzyskaæ wiêcej informacji."));
+		}
+
+
 	}
 
-};
+	void Automation::AddFromSubs()
+	{
+		//wxLogStatus("wesz³o");
+		wxString paths=Notebook::GetTab()->Grid1->GetSInfo("Automation Scripts");
+		//wxLogStatus("m"+paths);
+		if(paths==""){return;}
+		if(paths==scriptpaths && ASSScripts.size()>0){return;}
+		paths.Trim(false);
+		wxStringTokenizer token(paths,"|~$",wxTOKEN_RET_EMPTY_ALL);
+		int error_count=0;
+		while(token.HasMoreTokens())
+		{
+			wxString onepath=token.GetNextToken();
+			onepath.Trim(false);
+			//wxLogStatus(onepath);
+			if(!wxFileExists(onepath)){continue;}
+
+			try {
+				if(!Add(onepath)){continue;}
+				int last=Scripts.size()-1;
+
+			}
+			catch (const wchar_t *e) {
+				error_count++;
+				wxLogError(_("B³¹d wczytywania skryptu Lua: %s\n%s"), onepath.c_str(), e);
+			}
+			catch (...) {
+				error_count++;
+				wxLogError(_("Nieznany b³¹d wczytywania skryptu Lua: %s."), onepath.c_str());
+			}
+		}
+		if (error_count > 0) {
+			wxLogWarning(_("Co najmniej jeden skrypt z pliku napisów zawiera b³êdy.\nZobacz opisy skryptów, by uzyskaæ wiêcej informacji."));
+		}
+	}
+
+	void Automation::OnEdit(wxString &Filename)
+	{
+		wxString editor=Options.GetString("Script Editor");
+		if(editor=="" || wxGetKeyState(WXK_SHIFT)){
+			editor = wxFileSelector(_("Wybierz edytor skryptów"), "",
+				"C:\\Windows\\Notepad.exe", "exe", _("Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+			if(!wxFileExists(editor)){return;}
+			Options.SetString("Script Editor",editor);
+			Options.SaveOptions();
+		}
+		
+		wxWCharBuffer editorbuf = editor.c_str(), sfnamebuf = Filename.c_str();
+		wchar_t **cmdline = new wchar_t*[3];
+		cmdline[0] = editorbuf.data();
+		cmdline[1] = sfnamebuf.data();
+		cmdline[2] = 0;
+
+		long res = wxExecute(cmdline);
+		delete cmdline;
+
+		if (!res) {
+			wxMessageBox(_("Nie mo¿na uruchomiæ edytora."), _("B³¹d automatyzacji"), wxOK|wxICON_ERROR);
+		}
+	}
+
+	bool Automation::CheckChanges()
+	{
+		for(auto script : Scripts){
+			if(script->CheckLastModified()){HasChanges=true; break;}
+		}
+		return HasChanges;
+	}
+
+	VOID CALLBACK callbackfunc ( PVOID   lpParameter, BOOLEAN TimerOrWaitFired) {
+		Automation *auto_ = (Automation*)lpParameter;
+		auto_->BuildMenu(auto_->bar);
+		DeleteTimerQueueTimer(auto_->handle,0,0);
+	}
+
+	void Automation::BuildMenuWithDelay(wxMenu **_bar, int time)
+	{
+		bar=_bar;
+		CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,time,0,0);
+	}
+		
+	void Automation::BuildMenu(wxMenu **bar)
+	{
+		TabPanel* c = Notebook::GetTab();
+		//if(!CheckChanges()){return;}
+
+		for(int j=(*bar)->GetMenuItemCount()-1; j>=2; j--){
+			//wxLogStatus("deleted %i", j);
+			(*bar)->Destroy((*bar)->FindItemByPosition(j));
+		}
+		AddFromSubs();
+		int start=30100, i=0;
+		for(auto script : Scripts){
+			wxMenu *submenu=new wxMenu();
+			submenu->Append(start,_("Edytuj"),_("Edytuj"));
+			Actions[start]= RunFunction(start, -2, script);
+			start++;
+			submenu->Append(start,_("Odœwie¿"),_("Odœwie¿"));
+			Actions[start]= RunFunction(start, -1, script);
+			start++;
+			int j=0;
+			auto macros = script->GetMacros();
+			//wxLogStatus("size %i", macros.size());
+			for(auto macro : macros){
+				wxString text; text<<"Script"<<i<<"-"<<j;
+				macro->SetHotkey(text);
+				Hkeys.SetAccMenu(submenu, new wxMenuItem(0,start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
+				Actions[start]= RunFunction(start, j, script);
+				start++;
+				j++;
+			}
+			(*bar)->Append(-1, script->GetName(), submenu,script->GetDescription());
+			i++;
+		}
+		for(auto script : ASSScripts){
+			wxMenu *submenu=new wxMenu();
+			submenu->Append(start,_("Edytuj"),_("Edytuj"));
+			Actions[start]= RunFunction(start, -2, script);
+			start++;
+			submenu->Append(start,_("Odœwie¿"),_("Odœwie¿"));
+			Actions[start]= RunFunction(start, -1, script);
+			start++;
+			int j=0;
+			auto macros = script->GetMacros();
+			//wxLogStatus("size %i", macros.size());
+			for(auto macro : macros){
+				wxString text; text<<"Script"<<i<<"-"<<j;
+				macro->SetHotkey(text);
+				Hkeys.SetAccMenu(submenu, new wxMenuItem(0,start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
+				Actions[start]= RunFunction(start, j, script);
+				start++;
+				j++;
+			}
+			(*bar)->Append(-1, script->GetName(), submenu,script->GetDescription());
+			i++;
+		}
+		kainoteFrame *Kai=((kainoteApp*)wxTheApp)->Frame;
+		//wxLogStatus("start %i", start);
+		
+		HasChanges=false;
+	}
+
+
+//MyMenu::MyMenu(Auto::LuaScript *_script)
+//	:wxMenu()
+//	,script(_script)
+//{
+//}
+
+
+void Automation::OnMenuClick(wxCommandEvent &event)
+{
+	wxLogStatus("menu click %i", event.GetId());
+	auto action =  Actions.find(event.GetId());
+	if(action!=Actions.end()){
+		action->second.Run();
+	}
+}
+
+void RunFunction::Run(){
+		if(element==-2){
+			Automation::OnEdit(script->GetFilename());
+		}else if(element==-1){
+			script->Reload();
+		}else{
+			LuaCommand *macro=script->GetMacro(element);
+				if(wxGetKeyState(WXK_SHIFT)){
+				wxString wins[1]={"Globalny"};
+				//upewnij siê, ¿e da siê zmieniæ idy na nazwy, 
+				//mo¿e i trochê spowolni operacjê ale skoñczy siê ci¹g³e wywalanie hotkeysów
+				//mo¿e od razu funkcji onmaphotkey przekazaæ item by zrobi³a co trzeba
+				wxString name = macro->StrHotkey();
+				int ret=-1;
+				kainoteFrame *Kai = ((kainoteApp*)wxTheApp)->Frame;
+				ret=Hkeys.OnMapHkey( id, name, Kai, wins, 1);
+				if(ret==-1){Kai->MenuBar->FindItem(id)->SetAccel(&Hkeys.GetHKey(id));Hkeys.SaveHkeys();}
+				else if(ret>0){
+					wxMenuItem *item= Kai->MenuBar->FindItem(ret);
+					wxAcceleratorEntry entry;
+					item->SetAccel(&entry);
+				}
+				return;
+			}
+
+			macro->RunScript();
+		}
+	}
+}

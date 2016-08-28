@@ -72,6 +72,12 @@ wxColour AssColor::GetWX()
     return kol;
 }
 
+wxString AssColor::GetHex(bool alpha) const
+{
+	if (alpha)
+		return wxString::Format("#%02X%02X%02X%02X", r, g, b, a);
+	return wxString::Format("#%02X%02X%02X", r, g, b);
+}
 
 
 Styles::Styles()

@@ -1,7 +1,15 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Kaiplayer", "Kaiplayer\Kaiplayer.vcxproj", "{180DEA91-88AF-4FEB-8B82-7F3716E118BB}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KaiNote", "Kaiplayer\Kaiplayer.vcxproj", "{180DEA91-88AF-4FEB-8B82-7F3716E118BB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaBins", "Thirdparty\luabins\LuaBins\LuaBins.vcxproj", "{AF5CD8A9-C5DC-4780-BA28-5ED5EF9A3536}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaJit", "Thirdparty\luajit\LuaJit\LuaJit.vcxproj", "{BA804678-E98B-4026-8D33-A8C5263C669E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaJitBuild", "Thirdparty\luajit\LuaJitBuild\LuaJitBuild.vcxproj", "{F6C48ACA-C78D-450F-8059-010BBBA12137}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Minilua", "Thirdparty\luajit\Minilua\Minilua.vcxproj", "{325D093D-826B-4A7D-83C7-1CAD22911B9F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +21,22 @@ Global
 		{180DEA91-88AF-4FEB-8B82-7F3716E118BB}.Debug|Win32.Build.0 = Debug|Win32
 		{180DEA91-88AF-4FEB-8B82-7F3716E118BB}.Release|Win32.ActiveCfg = Release|Win32
 		{180DEA91-88AF-4FEB-8B82-7F3716E118BB}.Release|Win32.Build.0 = Release|Win32
+		{AF5CD8A9-C5DC-4780-BA28-5ED5EF9A3536}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AF5CD8A9-C5DC-4780-BA28-5ED5EF9A3536}.Debug|Win32.Build.0 = Debug|Win32
+		{AF5CD8A9-C5DC-4780-BA28-5ED5EF9A3536}.Release|Win32.ActiveCfg = Release|Win32
+		{AF5CD8A9-C5DC-4780-BA28-5ED5EF9A3536}.Release|Win32.Build.0 = Release|Win32
+		{BA804678-E98B-4026-8D33-A8C5263C669E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BA804678-E98B-4026-8D33-A8C5263C669E}.Debug|Win32.Build.0 = Debug|Win32
+		{BA804678-E98B-4026-8D33-A8C5263C669E}.Release|Win32.ActiveCfg = Release|Win32
+		{BA804678-E98B-4026-8D33-A8C5263C669E}.Release|Win32.Build.0 = Release|Win32
+		{F6C48ACA-C78D-450F-8059-010BBBA12137}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F6C48ACA-C78D-450F-8059-010BBBA12137}.Debug|Win32.Build.0 = Debug|Win32
+		{F6C48ACA-C78D-450F-8059-010BBBA12137}.Release|Win32.ActiveCfg = Release|Win32
+		{F6C48ACA-C78D-450F-8059-010BBBA12137}.Release|Win32.Build.0 = Release|Win32
+		{325D093D-826B-4A7D-83C7-1CAD22911B9F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{325D093D-826B-4A7D-83C7-1CAD22911B9F}.Debug|Win32.Build.0 = Debug|Win32
+		{325D093D-826B-4A7D-83C7-1CAD22911B9F}.Release|Win32.ActiveCfg = Release|Win32
+		{325D093D-826B-4A7D-83C7-1CAD22911B9F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

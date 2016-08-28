@@ -53,7 +53,7 @@ void KaiToolbar::InitToolbar()
 		IDS.Add(SaveSubs);IDS.Add(SaveSubsAs);IDS.Add(SaveAllSubs);
 		IDS.Add(RemoveSubs);IDS.Add(Editor);IDS.Add(FindReplace);
 		IDS.Add(StyleManager);IDS.Add(ASSProperties);IDS.Add(ChangeTime);
-		IDS.Add(Automation);IDS.Add(ConvertToASS);IDS.Add(ConvertToSRT);IDS.Add(CrossPositioner);IDS.Add(Positioner);
+		IDS.Add(ConvertToASS);IDS.Add(ConvertToSRT);IDS.Add(CrossPositioner);IDS.Add(Positioner);
 		IDS.Add(Movement);IDS.Add(Scalling);IDS.Add(RotatingZ);IDS.Add(RotatingXY);
 		IDS.Add(RectangleClips);IDS.Add(VectorClips);IDS.Add(VectorDrawings);IDS.Add(Settings);
 	}

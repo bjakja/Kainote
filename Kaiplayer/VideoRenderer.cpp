@@ -549,11 +549,11 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	return true;
 }
 
-void VideoRend::Play(int end)
+bool VideoRend::Play(int end)
 {
 	SetThreadExecutionState(ES_DISPLAY_REQUIRED|ES_CONTINUOUS);
 	VideoCtrl *vb=((VideoCtrl*)this);
-	if( !(IsShown() || (vb->TD && vb->TD->IsShown())) ){return;}
+	if( !(IsShown() || (vb->TD && vb->TD->IsShown())) ){return false;}
 	TabPanel* pan=(TabPanel*)GetParent();
 	if(VisEdit){
 		wxString *txt=pan->Grid1->SaveText();
@@ -581,19 +581,19 @@ void VideoRend::Play(int end)
 		//}
 
 	}
-	
+	return true;
 }
 
-void VideoRend::PlayLine(int start, int eend)
+bool VideoRend::PlayLine(int start, int eend)
 {
-	if(vstate==None || start>=eend){return;}
+	if(vstate==None || start>=eend || start >= GetDuration() ){return false;}
 
 	SetPosition(start);
 	Play(eend);
-
+	return true;
 }
 
-void VideoRend::Pause()
+bool VideoRend::Pause()
 {
 	if(vstate==Playing){
 		SetThreadExecutionState(ES_CONTINUOUS);
@@ -606,11 +606,11 @@ void VideoRend::Pause()
 	}
 	else if(vstate==Paused || vstate==Stopped){
 		Play();
-	}
-
+	}else{return false;}
+	return true;
 }
 
-void VideoRend::Stop()
+bool VideoRend::Stop()
 {
 	if(vstate==Playing){
 		SetThreadExecutionState(ES_CONTINUOUS);
@@ -623,9 +623,9 @@ void VideoRend::Stop()
 		time=0;
 		playend=(IsDshow)? 0 : GetDuration();
 
-
+		return true;
 	}
-
+	return false;
 }
 
 void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadSubs)

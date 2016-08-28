@@ -3,7 +3,6 @@
 
 
 #include <wx/dialog.h>
-#include <wx/spinctrl.h>
 #include <wx/colour.h>
 #include <wx/bitmap.h>
 #include <wx/textctrl.h>
@@ -171,11 +170,12 @@ public:
 class ButtonColorPicker : public wxButton
 {
 public:
-	ButtonColorPicker(wxWindow *parent, wxColour color);
+	ButtonColorPicker(wxWindow *parent, wxColour color, wxSize size=wxDefaultSize);
 	virtual ~ButtonColorPicker(){ };
 	wxColour GetColor();
 private:
 	void OnClick(wxCommandEvent &event);
+	wxColour color;
 };
 
 //Uwa¿aj aby nie stosowaæ idów

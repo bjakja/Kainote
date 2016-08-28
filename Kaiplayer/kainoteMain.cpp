@@ -159,7 +159,8 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	MenuBar->Append(SubsMenu, _("&Napisy"));
 
 	AutoMenu = new wxMenu();
-	AppendBitmap(AutoMenu,Automation, _("Menedżer skryptów"), _("Menedżer skryptów"),wxBITMAP_PNG("automation"));
+	AppendBitmap(AutoMenu,AutoLoadScript, _("Wczytaj skrypt"), _("Wczytaj skrypt"),wxBITMAP_PNG("automation"));
+	AppendBitmap(AutoMenu,AutoReloadAutoload, _("Odśwież skrypty autoload"), _("Odśwież skrypty autoload"),wxBITMAP_PNG("automation"));
 	MenuBar->Append(AutoMenu, _("Automatyzacja"));
 
 	HelpMenu = new wxMenu();
@@ -200,7 +201,8 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(wxEVT_MENU_OPEN,(wxObjectEventFunction)&kainoteFrame::OnMenuOpened);
 	Connect(wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&kainoteFrame::OnClose1);
 	Connect(30000,30059,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnRecent);
-	Connect(30100,30199,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnRunScript);
+	//Connect(30100,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnRunScript);
+	Connect(30100,30200,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuClick);
 	Connect(SnapWithStart,SnapWithEnd,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
 	SetDropTarget(new DragnDrop(this));
 
@@ -211,6 +213,8 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	if(!Options.GetBool("Show Editor")){HideEditor();}	
 	std::set_new_handler(OnOutofMemory);
+	Auto=new Auto::Automation();
+	Auto->BuildMenuWithDelay(&AutoMenu,1000);
 }
 
 kainoteFrame::~kainoteFrame()
@@ -385,9 +389,21 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			if(id==ViewAudio){pan->Edit->SetMinSize(wxSize(500,350));}
 		}	
 		pan->Layout();
-	}else if(id==Automation){
-		if(!LSD){LSD = new ScriptsDialog(this);LSD->AddFromSubs();}
-		LSD->Show();
+	}else if(id==AutoLoadScript){
+		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz sktypt"), 
+			Options.GetString("Lua Recent Folder"),
+			"", _("Pliki skryptów (*.lua),(*.moon)|*.lua;*.moon;"), wxFD_OPEN);
+		if (FileDialog1->ShowModal() == wxID_OK){
+			wxString file=FileDialog1->GetPath();
+			Options.SetString("Lua Recent Folder",file.AfterLast('\\'));
+			if(Auto->Add(file)){Auto->BuildMenu(&AutoMenu);}
+
+		}
+		FileDialog1->Destroy();
+		
+	}else if(id==AutoReloadAutoload){
+		Auto->ReloadScripts();
+		Auto->BuildMenu(&AutoMenu);
 	}else if(id==SetVideoAtStart){
 		int fsel=pan->Grid1->FirstSel();
 		if(fsel<0){return;}
@@ -649,6 +665,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 {
 	wxString ext=filename.Right(3).Lower();
 	if(ext=="exe"||ext=="zip"||ext=="rar"){return false;}
+	if(ext=="lua" || ext == "moon"){Auto->Add(filename);return true;}
 	TabPanel *pan=GetTab();
 	//pan->Freeze();
 	bool found=false;
@@ -1281,6 +1298,10 @@ void kainoteFrame::OnMenuOpened(wxMenuEvent& event)
 	{
 		AppendRecent(2);
 	}
+	else if(curMenu==AutoMenu)
+	{
+		Auto->BuildMenu(&AutoMenu);
+	}
 	TabPanel *pan = GetTab();
 	bool enable=(pan->Video->GetState()!=None);
 	bool edytor=pan->edytor;
@@ -1293,7 +1314,7 @@ void kainoteFrame::OnMenuOpened(wxMenuEvent& event)
 	char form = pan->Grid1->form;
 	bool tlmode = pan->Grid1->transl;
 	bool editor = pan->edytor;
-	for(int i=SaveSubs;i<=Automation;i++){//po kolejne idy zajrzyj do enuma z pliku h, ostatni jest Automation
+	for(int i=SaveSubs;i<=ViewSubs;i++){//po kolejne idy zajrzyj do enuma z pliku h, ostatni jest Automation
 		forms=true;
 
 		if(i>=ASSProperties&&i<ConvertToASS){forms=form<SRT;}//menager stylów i sinfo
@@ -1314,40 +1335,37 @@ void kainoteFrame::OnMenuOpened(wxMenuEvent& event)
 
 }
 
-
-void kainoteFrame::OnRunScript(wxCommandEvent& event)
+void kainoteFrame::OnMenuClick(wxCommandEvent &event)
 {
-
-	wxString wscript=Hkeys.hkeys[event.GetId()].Name;
-	int line, macro;
-	wscript=wscript.AfterFirst(' ');
-	line=wxAtoi(wscript.BeforeFirst('-'));
-	macro=wxAtoi(wscript.AfterFirst('-'));
-	if(!Auto){Auto = new Auto::Automation(this);}
-	if(line>=(int)Auto->Scripts.size()){wxMessageBox(wxString::Format(_("Brak wczytanego skryptu o numerze %i"),line));}
-	Auto::LuaScript *scr=Auto->Scripts[line];
-	if((int)scr->Macros.size()<=macro){
-		wxString msg;
-		if(scr->loaded){msg = wxString::Format(_("Skrypt o nazwie \"%s\" nie posiada makra %s."), scr->name, macro);}
-		else{msg=scr->description;}
-		wxMessageBox(msg); return;
+	wxLogStatus("menu click %i", event.GetId());
+	auto action =  Auto->Actions.find(event.GetId());
+	if(action!=Auto->Actions.end()){
+		action->second.Run();
 	}
-	TabPanel* pan=GetTab();
-	int diff=(pan->Grid1->SInfoSize() + pan->Grid1->StylesSize()+1);
-	wxArrayInt sels = pan->Grid1->GetSels(true);
-	if(scr->Macros[macro]->Validate(sels, pan->Edit->ebrow, diff)){
-		if(scr->CheckLastModified()){scr->Reload();}	
-		scr->Macros[macro]->Process(sels,GetTab()->Edit->ebrow,diff,this);
-
-		GetTab()->Grid1->SetModified(); 
-
-		for(size_t i=0; i<sels.size(); i++){
-			GetTab()->Grid1->sel[sels[i]]=true;
-		}
-		GetTab()->Grid1->RepaintWindow();
-	}
-
 }
+
+//void kainoteFrame::OnRunScript(wxCommandEvent& event)
+//{
+//	int id =event.GetId();
+//	
+//	wxString wscript=Hkeys.hkeys[id].Name;
+//	int line, macro;
+//	wscript=wscript.AfterFirst(' ');
+//	line=wxAtoi(wscript.BeforeFirst('-'));
+//	macro=wxAtoi(wscript.AfterFirst('-'));
+//	if(!Auto){Auto = new Auto::Automation();}
+//	if(line>=(int)Auto->Scripts.size()){wxMessageBox(wxString::Format(_("Brak wczytanego skryptu o numerze %i"),line));}
+//	Auto::LuaScript *scr=Auto->Scripts[line];
+//	auto macros=scr->GetMacros();
+//	if((int)macros.size()<=macro){
+//		wxString msg;
+//		if(scr->GetLoadedState()){msg = wxString::Format(_("Skrypt o nazwie \"%s\" nie posiada makra %s."), scr->GetName(), macro);}
+//		else{msg=scr->GetDescription();}
+//		wxMessageBox(msg); return;
+//	}
+//	Auto->RunScript(line, macro);
+//
+//}
 
 
 void kainoteFrame::OnChangeLine(wxCommandEvent& event)

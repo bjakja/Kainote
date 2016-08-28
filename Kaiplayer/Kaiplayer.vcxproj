@@ -25,7 +25,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v110_xp</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -57,8 +57,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>I:\Programy\zlib-1.2.8;I:\Programy\Spell\src\hunspell;I:\Programy\WX 2.9.4\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;H:\Programy\freetype-2.6\include;I:\Programy\lua51\src;I:\Programy\WX 2.9.4\lib\vc_lib\mswud;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_MBCS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>I:\Programy\zlib-1.2.8;I:\Programy\Spell\src\hunspell;I:\Programy\WX 2.9.4\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;H:\Programy\freetype-2.6\include;I:\Kainote\Thirdparty\luabins\include;I:\Kainote\Thirdparty\luajit\include;I:\Programy\WX 2.9.4\lib\vc_lib\mswud;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -72,8 +72,8 @@
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>wxmsw29ud_core.lib;wxbase29ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;strmbasd.lib;odbc32.lib;odbccp32.lib;ffms2D.lib;lua51_vc9.lib;freetype26MTd.lib;d3d9.lib;D3dx9d.lib;zlibwapid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>I:\Programy\zlib-1.2.8\contrib\vstudio\vc10\x86\ZlibDllDebug;C:\Program Files\Microsoft SDKs\Windows\v6.1\Lib;I:\Programy\Spell\src\win_api\Release_dll\libhunspell;I:\Programy\WX 2.9.4\lib\vc_lib;H:\Programy\freetype-2.6\objs\vc2010\Win32;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses\Debug;I:\Programy\lua51\Debug;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wxmsw29ud_core.lib;wxbase29ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;strmbasd.lib;odbc32.lib;odbccp32.lib;ffms2D.lib;LuaJit.lib;LuaBins.lib;freetype26MTd.lib;d3d9.lib;D3dx9d.lib;zlibwapid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>I:\Programy\zlib-1.2.8\contrib\vstudio\vc10\x86\ZlibDllDebug;C:\Program Files\Microsoft SDKs\Windows\v6.1\Lib;I:\Programy\Spell\src\win_api\Release_dll\libhunspell;I:\Programy\WX 2.9.4\lib\vc_lib;H:\Programy\freetype-2.6\objs\vc2010\Win32;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses\Debug;I:\Kainote\Thirdparty\luajit\LuaJit\Debug;I:\Kainote\Thirdparty\luabins\LuaBins\Debug;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -126,9 +126,11 @@
     <ClCompile Include="AudioSpectrum.cpp" />
     <ClCompile Include="Automation.cpp" />
     <ClCompile Include="AutomationDialog.cpp" />
+    <ClCompile Include="AutomationLPeg.c" />
     <ClCompile Include="AutomationProgress.cpp" />
-    <ClCompile Include="AutomationScriptsDialog.cpp" />
+    <ClCompile Include="AutomationScriptReader.cpp" />
     <ClCompile Include="AutomationToFile.cpp" />
+    <ClCompile Include="AutomationUtils.cpp" />
     <ClCompile Include="BitmapButton.cpp" />
     <ClCompile Include="ChangeTime.cpp" />
     <ClCompile Include="ColorSpace.cpp" />
@@ -196,9 +198,11 @@
     <ClInclude Include="AudioSpectrum.h" />
     <ClInclude Include="Automation.h" />
     <ClInclude Include="AutomationDialog.h" />
+    <ClInclude Include="AutomationLPeg.h" />
     <ClInclude Include="AutomationProgress.h" />
-    <ClInclude Include="AutomationScriptsDialog.h" />
+    <ClInclude Include="AutomationScriptReader.h" />
     <ClInclude Include="AutomationToFile.h" />
+    <ClInclude Include="AutomationUtils.h" />
     <ClInclude Include="BitmapButton.h" />
     <ClInclude Include="ChangeTime.h" />
     <ClInclude Include="ColorSpace.h" />
@@ -323,6 +327,11 @@
     <None Include="Bitmaps\time.bmp" />
     <None Include="Bitmaps\Under.bmp" />
     <None Include="kai.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Thirdparty\luajit\LuaJit\LuaJit.vcxproj">
+      <Project>{ba804678-e98b-4026-8d33-a8c5263c669e}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

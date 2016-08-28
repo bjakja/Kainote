@@ -9,10 +9,11 @@ class AssColor
 {
     public:
     long r,g,b,a;
-    wxString GetAss(bool alpha,bool style=false);
+    wxString GetAss(bool alpha, bool style=false);
     wxColour GetWX();
     void SetAss(wxString kolor);
     void SetWX(wxColour kolor, int alpha);
+	wxString GetHex(bool alpha) const;
 
     AssColor();
 	AssColor(wxString kol);

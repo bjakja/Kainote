@@ -3,9 +3,6 @@
 
 #include <wx/wx.h>
 
-
-#include <lualib.h>
-#include <lauxlib.h>
 #include "AutomationDialog.h"
 #include <utility>
 
@@ -31,7 +28,7 @@ namespace Auto{
 		volatile bool cancelled;
 		volatile bool finished;
 		//volatile bool data_updated;
-		//volatile bool cfgclosed;
+		volatile bool closedialog;
 	private:
 		wxTimer update_timer;
 		void SetTitle(wxThreadEvent &evt);
@@ -55,7 +52,8 @@ class LuaProgressSink : public wxEvtHandler{
 		static int LuaGetCancelled(lua_State *L);
 		
 		static int LuaDisplayDialog(lua_State *L);
-
+		static int LuaDisplayOpenDialog(lua_State *L);
+		static int LuaDisplaySaveDialog(lua_State *L);
 		
 		int trace_level;
 		wxWindow *_parent;
@@ -70,10 +68,10 @@ class LuaProgressSink : public wxEvtHandler{
 
 		
 		template<class T>
-	void SafeQueue(wxEventType type, T const& value);
-	static int LuaDebugOut(lua_State *L);
+		void SafeQueue(wxEventType type, T const& value);
+		static int LuaDebugOut(lua_State *L);
 		LuaProgressDialog *lpd;
-		
+		void Destroy();
 		
 	};
 
