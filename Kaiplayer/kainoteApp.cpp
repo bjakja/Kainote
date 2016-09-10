@@ -248,5 +248,20 @@ void kainoteApp::OnFatalException()
 }
 void kainoteApp::OnOpen(wxTimerEvent &evt)
 {
-	Frame->OpenFiles(paths,false);paths.clear();
+	if(!IsBusy()){
+		Frame->OpenFiles(paths,false);paths.clear();}
+}
+
+bool kainoteApp::IsBusy()
+{
+	wxWindowList children = Frame->GetChildren();
+	for (wxWindowList::Node *node=children.GetFirst(); node; node = node->GetNext()) {
+            wxWindow *current = (wxWindow *)node->GetData();
+            if (current->IsKindOf(CLASSINFO(wxDialog)) && ((wxDialog*)current)->IsModal())
+		{
+			return true;
+		}
+	
+	}
+	return false;
 }

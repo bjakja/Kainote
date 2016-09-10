@@ -40,7 +40,7 @@
 
 ///////////
 // Headers
-#include <wx/wxprec.h>
+#include <wx/wx.h>
 #include <wx/string.h>
 #include <wx/panel.h>
 #include <wx/menu.h>

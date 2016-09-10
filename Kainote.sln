@@ -11,6 +11,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaJitBuild", "Thirdparty\l
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Minilua", "Thirdparty\luajit\Minilua\Minilua.vcxproj", "{325D093D-826B-4A7D-83C7-1CAD22911B9F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Icu", "Thirdparty\icu\Icu\Icu.vcxproj", "{875E0BB7-06E8-4570-8E3C-AE9EF88F38BB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Boost", "Thirdparty\boost_1_61_0\boost\Boost.vcxproj", "{C91E1D87-614C-47E8-9587-393568D41738}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -37,6 +41,14 @@ Global
 		{325D093D-826B-4A7D-83C7-1CAD22911B9F}.Debug|Win32.Build.0 = Debug|Win32
 		{325D093D-826B-4A7D-83C7-1CAD22911B9F}.Release|Win32.ActiveCfg = Release|Win32
 		{325D093D-826B-4A7D-83C7-1CAD22911B9F}.Release|Win32.Build.0 = Release|Win32
+		{875E0BB7-06E8-4570-8E3C-AE9EF88F38BB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{875E0BB7-06E8-4570-8E3C-AE9EF88F38BB}.Debug|Win32.Build.0 = Debug|Win32
+		{875E0BB7-06E8-4570-8E3C-AE9EF88F38BB}.Release|Win32.ActiveCfg = Release|Win32
+		{875E0BB7-06E8-4570-8E3C-AE9EF88F38BB}.Release|Win32.Build.0 = Release|Win32
+		{C91E1D87-614C-47E8-9587-393568D41738}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C91E1D87-614C-47E8-9587-393568D41738}.Debug|Win32.Build.0 = Debug|Win32
+		{C91E1D87-614C-47E8-9587-393568D41738}.Release|Win32.ActiveCfg = Release|Win32
+		{C91E1D87-614C-47E8-9587-393568D41738}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

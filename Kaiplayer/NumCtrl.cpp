@@ -57,6 +57,47 @@ NumCtrl::NumCtrl(wxWindow *parent,long id,wxString text, int rangefrom, int rang
 
 }
 
+NumCtrl::NumCtrl(wxWindow *parent,long id,double _value, double rangefrom, double rangeto, bool intonly, const wxPoint &pos, const wxSize &size, long style)
+	:wxTextCtrl(parent, id, "", pos, size, style)
+{
+
+	rfrom=rangefrom;
+	rto=rangeto;
+	
+	if (rto<rfrom){rto=rangefrom;rfrom=rangeto;}
+	oint=intonly;
+	//wxLogStatus("from to double %f %f", rfrom, rto);
+	value=rfrom;
+	oldpos=rfrom;
+	holding=false;
+	SetDouble(_value);
+
+	wxTextValidator valid(wxFILTER_INCLUDE_CHAR_LIST);
+	wxArrayString includes;
+	includes.Add(_T("0"));
+	includes.Add(_T("1"));
+	includes.Add(_T("2"));
+	includes.Add(_T("3"));
+	includes.Add(_T("4"));
+	includes.Add(_T("5"));
+	includes.Add(_T("6"));
+	includes.Add(_T("7"));
+	includes.Add(_T("8"));
+	includes.Add(_T("9"));
+	if (rfrom<0){
+		includes.Add(_T("-"));
+	}
+	if (!oint){
+		includes.Add(_T("."));
+		includes.Add(_T(","));
+	}
+	valid.SetIncludes(includes);
+	SetValidator(valid);
+
+	Connect(wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&NumCtrl::OnNumWrite);
+
+}
+
 NumCtrl::~NumCtrl()
 {
 }
@@ -66,7 +107,6 @@ void NumCtrl::SetString(wxString val)
 {
 	if(!val.ToDouble(&value))
 	{val.ToCDouble(&value);}
-
 	if(oint){
 		int finds=val.Find('.',true);
 		if(finds!=-1){val=val.BeforeFirst('.');}
@@ -74,12 +114,12 @@ void NumCtrl::SetString(wxString val)
 		if(finds!=-1){val=val.BeforeFirst(',');}
 	}else{
 		val.Replace(",",".");}
-	if(value>(double)rto)
+	if(value>rto)
 	{
 		value=rto;
 		val = getdouble(value);
 	}
-	if(value<(double)rfrom)
+	if(value<rfrom)
 	{
 		value=rfrom;
 		val = getdouble(value);
@@ -90,8 +130,8 @@ void NumCtrl::SetString(wxString val)
 
 void NumCtrl::SetInt(int val)
 {
-	if(val>rto){val=rto;}
-	else if(val<rfrom){val=rfrom;}
+	if(val>(int)rto){val=(int)rto;}
+	else if(val<(int)rfrom){val=(int)rfrom;}
 	value=(double)val;
 	wxString kkk;
 	oldval=kkk<<val;
@@ -100,8 +140,8 @@ void NumCtrl::SetInt(int val)
 
 void NumCtrl::SetDouble(double val)
 {
-	if(val>(double)rto){val=rto;}
-	else if(val<(double)rfrom){val=rfrom;}
+	if(val>rto){val=rto;}
+	else if(val<rfrom){val=rfrom;}
 	value=val;
 	oldval=getdouble(val);
 	SetValue(oldval);
@@ -117,12 +157,12 @@ wxString NumCtrl::GetString()
 	if(!val.ToCDouble(&value)){
 		val=oldval;
 	}
-	if(value>(double)rto){
-		value=(double)rto;
+	if(value>rto){
+		value=rto;
 		val=getdouble(value);
 	}
-	if(value<(double)rfrom){
-		value=(double)rfrom;
+	if(value<rfrom){
+		value=rfrom;
 		val=getdouble(value);
 	}
 	return val;
@@ -139,10 +179,10 @@ double NumCtrl::GetDouble()
 	if(!val.ToCDouble(&value)){
 		oldval.ToCDouble(&value);
 	}
-	if(value>(double)rto)
-		value=(double)rto;
-	if(value<(double)rfrom)
-		value=(double)rfrom;
+	if(value>rto)
+		value=rto;
+	if(value<rfrom)
+		value=rfrom;
 	return value;
 }
 
@@ -157,7 +197,7 @@ void NumCtrl::OnNumWrite(wxCommandEvent& event)
 	if(val=="-"||val==""){}
 	else if(val.EndsWith(".")){if(val.Replace(".","")>1){SetValue(oldval);wxBell();}}
 	else if(val.StartsWith(".")){if(val.Replace(".","")>1){SetValue(oldval);wxBell();}}
-	else if(!val.ToCDouble(&value)||value>(double)rto||value<(double)rfrom){
+	else if(!val.ToCDouble(&value)||value>rto||value<rfrom){
 		/*SetValue(oldval);wxBell();*/
 		//if(!isbad){SetForegroundColour(*wxRED);isbad=true;}
 	}else{oldval=val;/*if(isbad){SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));isbad=false;}*/}
@@ -184,27 +224,27 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 	{
 		if((oldpos+5)<posy){
 			double nval=value-1;
-			if(value<=(double)rfrom){return;}
+			if(value<=rfrom){return;}
 			SetValue(getdouble(nval));MarkDirty();
 			oldpos=posy;value=nval;
 			SetSelection(curpos,curpos);
 		}else if((oldpos-5)>posy){
 			double nval=value+1;
-			if(value>=(double)rto){return;}
+			if(value>=rto){return;}
 			SetValue(getdouble(nval));MarkDirty();
 			oldpos=posy;value=nval;
 			SetSelection(curpos,curpos);
 		}else if((oldposx+10)<posx){
 			double nval=value-10;
-			if(value==(double)rfrom){return;}
-			if(nval<(double)rfrom){nval=rfrom;}
+			if(value==rfrom){return;}
+			if(nval<rfrom){nval=rfrom;}
 			SetValue(getdouble(nval));MarkDirty();oldposx=posx;value=nval;
 			SetSelection(curpos,curpos);
 		}
 		else if((oldposx-10)>posx){
 			double nval=value+10;
-			if(value==(double)rto){return;}
-			if(nval>(double)rto){nval=rto;}
+			if(value==rto){return;}
+			if(nval>rto){nval=rto;}
 			SetValue(getdouble(nval));MarkDirty();oldposx=posx;value=nval;
 			SetSelection(curpos,curpos);
 		}
@@ -228,7 +268,7 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 	if (event.GetWheelRotation() != 0) {
 		int step = event.GetWheelRotation() / event.GetWheelDelta();
 		value+=step;
-		if(value<(double)rfrom||value>(double)rto){return;}
+		if(value<rfrom||value>rto){return;}
 		SetValue(getdouble(value));MarkDirty();
 		return;}
 

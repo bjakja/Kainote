@@ -1064,6 +1064,7 @@ void MTextEditor::Copy(bool cut)
 	{
 		wxTheClipboard->SetData( new wxTextDataObject(whatcopy) );
 		wxTheClipboard->Close();
+		wxTheClipboard->Flush();
 	}
 	if(cut){
 		MText.Remove(curx,selx-curx);

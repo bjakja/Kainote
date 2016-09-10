@@ -106,14 +106,14 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 	
 		wxBoxSizer *MainSizer1=new wxBoxSizer(wxHORIZONTAL);
-		wxFlexGridSizer *MainSizer2=new wxFlexGridSizer(4,2,wxSize(5,5));
+		wxFlexGridSizer *MainSizer2=new wxFlexGridSizer(5,2,wxSize(5,5));
 		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieć inny id
-		NumCtrl *ltl = new NumCtrl(Main, 20000, Options.GetString(opts[10]), 0, 5,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
+		NumCtrl *ltl = new NumCtrl(Main, 20000, Options.GetString(opts[9]), 0, 5,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc = new NumCtrl(Main, 20000, Options.GetString("Offset of start time"), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc1 = new NumCtrl(Main, 20000, Options.GetString("Offset of end time"), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		wxTextCtrl *sc2 = new wxTextCtrl(Main, 22001, Options.GetString("Grid tag changing char"), wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc3 = new NumCtrl(Main, 20000, Options.GetString("Editbox tag buttons"), 0, 9,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
-		ConOpt(ltl, opts[10]);
+		ConOpt(ltl, opts[9]);
 		ConOpt(sc,"Offset of start time");
 		ConOpt(sc1,"Offset of end time");
 		ConOpt(sc2,"Grid tag changing char");
@@ -127,7 +127,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		MainSizer2->Add(sc2,0);
 		MainSizer2->Add(new wxStaticText(Main,-1,_("Ilość przycisków wstawiających tagi ASS:")),0,wxALIGN_CENTRE_VERTICAL);
 		MainSizer2->Add(sc3,0);
-		MainSizer2->Add(new wxStaticText(Main,-1,labels[10]),0,wxALIGN_CENTRE_VERTICAL);
+		MainSizer2->Add(new wxStaticText(Main,-1,labels[9]),0,wxALIGN_CENTRE_VERTICAL);
 		MainSizer2->Add(ltl,0);
 	
 		MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);

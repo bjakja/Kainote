@@ -67,7 +67,7 @@ public:
 	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy=true, bool Save=false);
 	void SetSubsForm(wxString ext="");
 	void AddSInfo(wxString SI, wxString val="", bool save=true);
-	void SetModified(bool redit=true, bool dummy=false, bool refvid=true);
+	void SetModified(bool redit=true, bool dummy=false, int SetEditBoxLine = -1);
 	void UpdateUR(bool tolbar=true);
 	wxString GetSInfos(bool tld=false);
 	wxString GetSInfo(wxString key, int *ii=0);

@@ -175,6 +175,9 @@ namespace Auto{
 			, color(get_field(L, "value"))
 			, alpha(alpha)
 			{
+				//wxString col = get_field(L, "value");
+				//wxLogStatus("col "+col);
+				//color = AssColor(col);
 			}
 
 			bool CanSerialiseValue() const { return true; }
@@ -182,6 +185,7 @@ namespace Auto{
 			void UnserialiseValue(const wxString &serialised) { color = wxColour(wxString(inline_string_decode(serialised))); }
 
 			wxControl *Create(wxWindow *parent) {
+				//wxLogStatus("color %i %i %i %i", color.r, color.g, color.b, color.a);
 				cw = new ButtonColorPicker(parent, color.GetWX(), wxSize(50*width,10*height));
 				cw->SetToolTip(wxString(hint));
 				return cw;
@@ -208,14 +212,14 @@ namespace Auto{
 		};
 
 		/// Integer only edit
-		class IntEdit : public Edit {
+		class IntEdit : public LuaDialogControl {
 			NumCtrl *cw;
 			int value;
 			int min, max;
 
 		public:
 			IntEdit(lua_State *L)
-			: Edit(L)
+			: LuaDialogControl(L)
 			, value(get_field(L, "value", 0))
 			, min(get_field(L, "min", INT_MIN))
 			, max(get_field(L, "max", INT_MAX))
@@ -245,7 +249,7 @@ namespace Auto{
 		};
 
 		// Float only edit
-		class FloatEdit : public Edit {
+		class FloatEdit : public LuaDialogControl {
 			double value;
 			double min;
 			double max;
@@ -254,7 +258,7 @@ namespace Auto{
 
 		public:
 			FloatEdit(lua_State *L)
-			: Edit(L)
+			: LuaDialogControl(L)
 			, value(get_field(L, "value", 0.0))
 			, min(get_field(L, "min", -DBL_MAX))
 			, max(get_field(L, "max", DBL_MAX))
@@ -271,9 +275,7 @@ namespace Auto{
 			void UnserialiseValue(const wxString &serialised) { value = atof(serialised.utf8_str().data()); }
 
 			wxControl *Create(wxWindow *parent) {
-				wxString tmpval;
-				tmpval<<value;
-				scd = new NumCtrl(parent, -1, tmpval, min, max, false, wxDefaultPosition, wxDefaultSize);
+				scd = new NumCtrl(parent, -1, value, min, max, false, wxDefaultPosition, wxDefaultSize);
 				scd->SetToolTip(wxString(hint));
 				return scd;
 
@@ -281,7 +283,7 @@ namespace Auto{
 			}
 
 			void LuaReadBack(lua_State *L) {
-				value=(float)((NumCtrl*)cw)->GetDouble();
+				value=(float)((NumCtrl*)scd)->GetDouble();
 				lua_pushnumber(L, value);
 			}
 		};
@@ -401,7 +403,7 @@ namespace Auto{
 			lua_pushvalue(L, 2);
 			lua_for_each(L, [&]{
 				wxString butt = check_string(L, -1);
-				wxLogStatus("button %s", butt);
+				//wxLogStatus("button %s", butt);
 				buttons.emplace_back(-1, butt);
 			});
 		}
@@ -412,7 +414,7 @@ namespace Auto{
 				wxString butt = check_string(L, -2);
 				int id = string_wxString_id(butt);
 				//if (id<0){id = idstart; idstart++;}
-				wxLogStatus("button %s %i", butt, id);
+				//wxLogStatus("button %s %i", butt, id);
 				wxString label = check_string(L, -1);
 				auto btn = find_if(buttons.begin(),buttons.end(),
 					[&](std::pair<int, wxString>& btn) { return btn.second == label; } );
@@ -475,7 +477,7 @@ namespace Auto{
 				button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt) {
 					this->button_pushed = i;
 					//TransferDataFromWindow();
-					wxLogStatus("button pushed %i %s", button_pushed, buttons[i].second);
+					//wxLogStatus("button pushed %i %s", button_pushed, buttons[i].second);
 					window->EndModal(0);
 				});
 
@@ -509,7 +511,7 @@ namespace Auto{
 		if (use_buttons) {
 			if (button_pushed < 0 || buttons[button_pushed].first == wxID_CANCEL){
 				lua_pushboolean(L, false);
-				wxLogStatus("cancelled %i", button_pushed);
+				//wxLogStatus("cancelled %i", button_pushed);
 			}
 			else
 				lua_pushstring(L, buttons[button_pushed].second.utf8_str().data());

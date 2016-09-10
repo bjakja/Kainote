@@ -225,6 +225,9 @@
     <ClCompile Include="AutomationLPeg.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AutomationFileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DropFiles.h">

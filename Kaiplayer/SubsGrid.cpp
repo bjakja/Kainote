@@ -1828,7 +1828,7 @@ wxString SubsGrid::GetSInfos(bool tld)
 	return TextSI;
 }
 
-void SubsGrid::SetModified(bool redit, bool dummy, bool refvid)
+void SubsGrid::SetModified(bool redit, bool dummy, int SetEditBoxLine)
 {
 	if(file->IsNotSaved()){
 		if(file->Iter()<1||!Modified){
@@ -1841,7 +1841,7 @@ void SubsGrid::SetModified(bool redit, bool dummy, bool refvid)
 		Kai->Label(file->Iter()+1);
 		if(redit)
 		{
-			int erow=Edit->ebrow;
+			int erow= (SetEditBoxLine >= 0)? SetEditBoxLine : Edit->ebrow;
 			if(erow>=GetCount()){erow=GetCount()-1;}
 			lastRow=erow;
 			if(scPos>erow){scPos=MAX(0,(erow-4));}
@@ -1909,11 +1909,11 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 
 		short sinfoo=0;
 		char format=ASS;
-
+		bool isASS= (ext=="ass"||ext=="ssa");
 		wxStringTokenizer tokenizer(str,"\n",wxTOKEN_STRTOK);
 
 
-		while ( tokenizer.HasMoreTokens() && (ext=="ass"||ext=="ssa")){
+		while ( tokenizer.HasMoreTokens() && isASS){
 			wxString token = tokenizer.GetNextToken().Trim(false);
 			if(token.StartsWith("Style: "))
 			{
@@ -1950,7 +1950,7 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 		while ( tokenizer.HasMoreTokens() )
 		{
 			wxString token = tokenizer.GetNextToken();
-			if(!token.StartsWith("Dial")){continue;}
+			if(!token.StartsWith("Dial") && isASS){continue;}
 			Dialogue *dl= new Dialogue(token);
 			if(!tlmode){
 				AddLine(dl);

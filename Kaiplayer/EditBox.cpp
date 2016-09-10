@@ -224,7 +224,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer2->Add(EndEdit,0,wxLEFT,2);
 	BoxSizer2->Add(DurEdit,0,wxLEFT,2);
 	BoxSizer2->Add(StyleChoice,4,wxLEFT|wxEXPAND,2);
-	BoxSizer2->Add(ActorEdit,3,wxEXPAND,0);
+	BoxSizer2->Add(ActorEdit,3,wxLEFT|wxEXPAND,2);
 	BoxSizer2->Add(MarginLEdit,0,wxLEFT,2);
 	BoxSizer2->Add(MarginREdit,0,wxLEFT,2);
 	BoxSizer2->Add(MarginVEdit,0,wxLEFT,2);

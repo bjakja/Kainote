@@ -202,19 +202,18 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&kainoteFrame::OnClose1);
 	Connect(30000,30059,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnRecent);
 	//Connect(30100,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnRunScript);
-	Connect(30100,30200,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuClick);
+	//Connect(30100,30200,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuClick);
 	Connect(SnapWithStart,SnapWithEnd,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
 	SetDropTarget(new DragnDrop(this));
 
 	
 	bool im=Options.GetBool("Window Maximize");
-	if(im){
-		Maximize(Options.GetBool("Window Maximize"));}
+	if(im){Maximize(Options.GetBool("Window Maximize"));}
 
 	if(!Options.GetBool("Show Editor")){HideEditor();}	
 	std::set_new_handler(OnOutofMemory);
-	Auto=new Auto::Automation();
-	Auto->BuildMenuWithDelay(&AutoMenu,1000);
+	//Auto=new Auto::Automation();
+	//Auto->BuildMenuWithDelay(&AutoMenu,1000);
 }
 
 kainoteFrame::~kainoteFrame()
@@ -390,6 +389,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		}	
 		pan->Layout();
 	}else if(id==AutoLoadScript){
+		if(!Auto){Auto=new Auto::Automation();}
 		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz sktypt"), 
 			Options.GetString("Lua Recent Folder"),
 			"", _("Pliki skryptów (*.lua),(*.moon)|*.lua;*.moon;"), wxFD_OPEN);
@@ -402,6 +402,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		FileDialog1->Destroy();
 		
 	}else if(id==AutoReloadAutoload){
+		if(!Auto){Auto=new Auto::Automation();}
 		Auto->ReloadScripts();
 		Auto->BuildMenu(&AutoMenu);
 	}else if(id==SetVideoAtStart){
@@ -664,8 +665,8 @@ void kainoteFrame::Save(bool dial, int wtab)
 bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 {
 	wxString ext=filename.Right(3).Lower();
-	if(ext=="exe"||ext=="zip"||ext=="rar"){return false;}
-	if(ext=="lua" || ext == "moon"){Auto->Add(filename);return true;}
+	if(ext=="exe"||ext=="zip"||ext=="rar"||ext=="7z"){return false;}
+	if(ext=="lua" || ext == "moon"){if(!Auto){Auto=new Auto::Automation();}Auto->Add(filename);return true;}
 	TabPanel *pan=GetTab();
 	//pan->Freeze();
 	bool found=false;
@@ -964,8 +965,11 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 		wxString ext=files[i].AfterLast('.').Lower();
 		if(ext=="ass"||ext=="ssa"||ext=="txt"||ext=="srt"||ext=="sub"){
 			subs.Add(files[i]);
+		}else if(ext=="lua" || ext=="moon"){
+			if(!Auto){Auto=new Auto::Automation();}
+			Auto->Add(files[i]);
 		}
-		else if(ext!="exe"){
+		else if(ext!="exe" && ext!="zip" && ext!="rar" && ext!="7z"){
 			videos.Add(files[i]);
 		}
 
@@ -1300,6 +1304,7 @@ void kainoteFrame::OnMenuOpened(wxMenuEvent& event)
 	}
 	else if(curMenu==AutoMenu)
 	{
+		if(!Auto){Auto=new Auto::Automation();}
 		Auto->BuildMenu(&AutoMenu);
 	}
 	TabPanel *pan = GetTab();
@@ -1335,14 +1340,14 @@ void kainoteFrame::OnMenuOpened(wxMenuEvent& event)
 
 }
 
-void kainoteFrame::OnMenuClick(wxCommandEvent &event)
-{
-	wxLogStatus("menu click %i", event.GetId());
-	auto action =  Auto->Actions.find(event.GetId());
-	if(action!=Auto->Actions.end()){
-		action->second.Run();
-	}
-}
+//void kainoteFrame::OnMenuClick(wxCommandEvent &event)
+//{
+//	wxLogStatus("menu click %i", event.GetId());
+//	auto action =  Auto->Actions.find(event.GetId());
+//	if(action!=Auto->Actions.end()){
+//		action->second.Run();
+//	}
+//}
 
 //void kainoteFrame::OnRunScript(wxCommandEvent& event)
 //{

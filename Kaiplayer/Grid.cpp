@@ -362,6 +362,7 @@ void Grid::CopyRows(int id)
 	{
 		wxTheClipboard->SetData( new wxTextDataObject(whatcopy) );
 		wxTheClipboard->Close();
+		wxTheClipboard->Flush();
 	}
 }
 

@@ -72,7 +72,7 @@ class LuaProgressSink : public wxEvtHandler{
 		static int LuaDebugOut(lua_State *L);
 		LuaProgressDialog *lpd;
 		void Destroy();
-		
+		wxString Log;
 	};
 
 	

@@ -197,6 +197,7 @@ LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
 		//wxLogStatus("msg");
 		// Top of stack is now a string to output
 		wxString msg(lua_tostring(L, 1), wxConvUTF8);
+		ps->Log<<msg;
 		ps->SafeQueue(EVT_MESSAGE,msg);
 		return 0;
 	}

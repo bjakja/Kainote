@@ -111,6 +111,7 @@ void SubsFile::Undo()
 
 void SubsFile::DummyUndo()
 {
+	subs->Clear();
 	delete subs;
 	subs=undo[iter]->Copy();
 }

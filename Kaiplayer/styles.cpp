@@ -21,6 +21,7 @@ AssColor::~AssColor()
 
 AssColor::AssColor(wxString kol)
 {
+	a=b=g=r=0;
 	SetAss(kol);
 }
 
@@ -37,10 +38,12 @@ void AssColor::SetAss(wxString kol)
 	}
 	else{
 		kol.Upper();
+		bool ishtml = kol.StartsWith("#");
 		wxString astr, rstr, gstr, bstr;
-		if(kol.Len()>9){astr=kol.SubString(2,3), rstr=kol.SubString(8,9), gstr=kol.SubString(6,7), bstr=kol.SubString(4,5);}
-		else if(kol.Len()>7){rstr=kol.SubString(6,7), gstr=kol.SubString(4,5), bstr=kol.SubString(2,3);}
-		if(kol.Len()>9){astr.ToLong(&a, 16);}else{a=0;}
+		kol.Replace("&","");kol.Replace("H","");kol.Replace("#","");
+		if(kol.Len()>7){astr=kol.SubString(0,1);astr.ToLong(&a, 16);kol=kol.Mid(2);}
+		rstr=kol.SubString(4,5), gstr=kol.SubString(2,3), bstr=kol.SubString(0,1);
+		if(ishtml){wxString tmp = rstr; rstr=bstr; bstr= tmp;}
 		rstr.ToLong(&r, 16);
 		gstr.ToLong(&g, 16);
 		bstr.ToLong(&b, 16);

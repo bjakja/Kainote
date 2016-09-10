@@ -4,10 +4,14 @@
 #include <wx/wx.h>
 wxDECLARE_EVENT(NUMBER_CHANGED, wxCommandEvent);
 
+wxString getdouble(double num);
+
 class NumCtrl : public wxTextCtrl
 	{
 	public:
 		NumCtrl(wxWindow *parent,long id,wxString text, int rangefrom, int rangeto, bool intonly,
+			const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=0);
+		NumCtrl(wxWindow *parent,long id,double value, double rangefrom, double rangeto, bool intonly,
 			const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=0);
 
 		virtual ~NumCtrl();
@@ -25,8 +29,8 @@ class NumCtrl : public wxTextCtrl
         void OnMouseEvent(wxMouseEvent &event);
         //void OnKeyEvent(wxKeyEvent& event);
 		void OnMouseLost(wxMouseCaptureLostEvent& event);
-		int rfrom;
-		int rto;
+		double rfrom;
+		double rto;
 		bool oint;
 		double value;
 		wxString oldval;

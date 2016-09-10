@@ -54,7 +54,7 @@ namespace Auto{
 		static int ObjectAppend(lua_State *L);
 		static int ObjectInsert(lua_State *L);
 		static int ObjectLens(lua_State *L);
-		static int ObjectGarbageCollect(lua_State *L){return 0;};
+		static int ObjectGarbageCollect(lua_State *L);
 		static int ObjectIPairs(lua_State *L);
 		static int IterNext(lua_State *L);
 

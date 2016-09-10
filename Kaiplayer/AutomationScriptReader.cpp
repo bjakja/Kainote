@@ -51,10 +51,11 @@ namespace Auto {
 		//}
 		//wxLogStatus("sizes %i", size);
 		//wxMessageBox(script);
+		wxString name = filename.AfterLast('\\');
 		if (!filename.EndsWith("moon")){
 			//wxLogStatus("file nie jest moonem");
 			//LuaScriptReader script_reader(filename);
-			bool ret = luaL_loadbuffer(L, buff, size, filename.utf8_str().data()) == 0;
+			bool ret = luaL_loadbuffer(L, buff, size, name.utf8_str().data()) == 0;
 
 			//delete[] b;
 			//wxLogStatus("file nie jest moonem %i", (int)ret);
@@ -71,9 +72,9 @@ namespace Auto {
 		// error handling
 		lua_pushlstring(L, buff, size);
 		lua_pushvalue(L, -1);
-		lua_setfield(L, LUA_REGISTRYINDEX, ("raw moonscript: " + filename).utf8_str().data());
+		lua_setfield(L, LUA_REGISTRYINDEX, ("raw moonscript: " + name).utf8_str().data());
 
-		push_value(L, filename);
+		push_value(L, name);
 		if (lua_pcall(L, 2, 2, 0))
 			return false; // Leaves error message on stack
 

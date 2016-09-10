@@ -91,15 +91,7 @@ namespace Auto {
 		LuaFeature(lua_State *L) : L(L) { }
 	};
 
-	/// Run a lua function on a background thread
-	/// @param L Lua state
-	/// @param nargs Number of arguments the function takes
-	/// @param nresults Number of values the function returns
-	/// @param title Title to use for the progress dialog
-	/// @param parent Parent window for the progress dialog
-	/// @param can_open_config Can the function open its own dialogs?
-	/// @throws agi::UserCancelException if the function fails to run to completion (either due to cancelling or errors)
-	//void LuaThreadedCall(lua_State *L, int nargs, int nresults, wxString const& title, wxWindow *parent, bool can_open_config);
+	
 
 	class LuaCommand : private LuaFeature {
 		//wxString cmd_name;
@@ -148,6 +140,7 @@ namespace Auto {
 		static int LuaInclude(lua_State *L);
 
 	public:
+		
 		LuaScript(wxString const& filename);
 		~LuaScript() { Destroy(); }
 
@@ -162,7 +155,7 @@ namespace Auto {
 		static LuaScript* GetScriptObject(lua_State *L);
 
 		// Script implementation
-		void Reload() { Create(); }
+		void Reload();// { Create(); }
 
 		wxString GetName() const { return name; }
 		wxString GetDescription() const { return description; }
@@ -174,33 +167,22 @@ namespace Auto {
 		std::vector<LuaCommand*> GetMacros() const{ return macros; }
 		bool CheckLastModified(bool check=true);
 	};
-	/// @class Automation
-	/// @brief manage lua scripts Lua
+	// @class Automation
+	// @brief manage lua scripts Lua
 
 
-class RunFunction{
-public:
-	RunFunction(){id=0; element=0; script=0;};
-	RunFunction(int _id, int elementToRun, Auto::LuaScript *_script){id=_id; element= elementToRun;script=_script;}
-	void Run();
-		
-private:
-	int id;
-	int element;
-	LuaScript *script;
-};
 
-	class Automation :public wxEvtHandler
+	class Automation
 	{
 
 	public:
 		Automation();
 		~Automation();
 
-		bool Add(wxString filename, bool autoload=false);
+		bool Add(wxString filename, bool addToSinfo= true, bool autoload=false);
 		void Remove(int script);
 		void RemoveAll(bool autoload=false);
-		void ReloadMacro(int script);
+		void ReloadMacro(int script, bool autoload=false);
 		void ReloadScripts(bool first=false);
 		//void RunScript(int script, int macro);
 		void AddFromSubs();
@@ -208,13 +190,13 @@ private:
 		bool CheckChanges();
 		void BuildMenu(wxMenu **bar);
 		void BuildMenuWithDelay(wxMenu **bar, int time);
-		/// Get all managed scripts (both loaded and invalid)
-		void OnMenuClick(wxCommandEvent &event);
+		// Get all managed scripts (both loaded and invalid)
+		//void OnMenuClick(wxCommandEvent &event);
 		
 
 		std::vector<Auto::LuaScript*> Scripts;
 		std::vector<Auto::LuaScript*> ASSScripts;
-		std::map<int, RunFunction > Actions;
+		//std::map<int, RunFunction > Actions;
 		wxMenu **bar;
 		HANDLE handle;
 	private:
@@ -224,6 +206,7 @@ private:
 		
 	};
 
+// Run a lua function on a background thread
 
 
 class LuaThreadedCall : public wxThread {
@@ -234,14 +217,5 @@ class LuaThreadedCall : public wxThread {
 		virtual ExitCode Entry();
 	};
 }
-//class MyMenu : public wxMenu{
-//public:
-//	MyMenu(Auto::LuaScript *script);
-//	virtual ~MyMenu(){}
-//
-//	bool SendEvent(int id, int checked);
-//private:
-//	Auto::LuaScript *script;
-//};
 
 #endif

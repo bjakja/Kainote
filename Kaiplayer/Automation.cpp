@@ -50,22 +50,12 @@
 #include <wx/wx.h>
 #include <wx/dir.h>
 #include <wx/filename.h>
-#include <thread>
+#include <wx/stdpaths.h>
+//#include <thread>
 //#include <tuple>
 
 
 namespace Auto{
-
-	
-	wxString get_wxstring(lua_State *L, int idx)
-	{
-		return wxString::FromUTF8(lua_tostring(L, idx));
-	}
-
-	wxString check_wxstring(lua_State *L, int idx)
-	{
-		return wxString(check_string(L, idx));
-	}
 
 
 	int get_file_name(lua_State *L)
@@ -80,26 +70,26 @@ namespace Auto{
 
 	int get_translation(lua_State *L)
 	{
-		wxString str(check_wxstring(L, 1));
+		wxString str(check_string(L, 1));
 		push_value(L, wxGetTranslation(str));
 		return 1;
 	}
 
-	const char *clipboard_get()
+	char *clipboard_get()
 	{
-		wxString data;
+		std::string data;
 		wxClipboard *cb = wxClipboard::Get();
 		if (cb->Open()) {
 			if (cb->IsSupported(wxDF_TEXT) || cb->IsSupported(wxDF_UNICODETEXT)) {
 				wxTextDataObject raw_data;
 				cb->GetData(raw_data);
-				data = raw_data.GetText();
+				data = raw_data.GetText().ToStdString();
 			}
 			cb->Close();
 		}
 		if (data.empty())
 			return nullptr;
-		return strndup(data.ToStdString());
+		return strndup(data);
 	}
 
 	bool clipboard_set(const char *str)
@@ -111,12 +101,12 @@ namespace Auto{
 		//		// the clipboard, which wx does not handle automatically
 		//		wxClipboard cb;
 		//#else
-		wxClipboard &cb = *wxTheClipboard;
+		//wxClipboard &cb = *wxTheClipboard;
 		//#endif
-		if (cb.Open()) {
-			succeeded = cb.SetData(new wxTextDataObject(wxString::FromUTF8(str)));
-			cb.Close();
-			cb.Flush();
+		if (wxTheClipboard->Open()) {
+			succeeded = wxTheClipboard->SetData(new wxTextDataObject(wxString::FromUTF8(str)));
+			wxTheClipboard->Close();
+			wxTheClipboard->Flush();
 		}
 
 		return succeeded;
@@ -126,8 +116,8 @@ namespace Auto{
 	{
 		do_register_lib_table(L, std::vector<const char *>());
 		lua_createtable(L, 0, 2);
-		do_register_lib_function(L, "get", "bool (*)()", clipboard_get);
-		do_register_lib_function(L, "set", "const char * (*)()", clipboard_set);
+		do_register_lib_function(L, "get", "char *(*)()", clipboard_get);
+		do_register_lib_function(L, "set", "bool (*)(const char *)", clipboard_set);
 		lua_remove(L, -2); // ffi.cast function
 		// Leaves lib table on the stack
 		//register_lib_table(L, std::vector<const char *>(), "get", clipboard_get, "set", clipboard_set);
@@ -199,19 +189,21 @@ namespace Auto{
 	int decode_path(lua_State *L)
 	{
 		wxString path = check_string(L, 1);
-		wxLogStatus("path before"+path);
+		//wxLogStatus("path before "+path);
 		TabPanel *pan=Notebook::GetTab();
+		path.Replace('/','\\');
+		wxString firstAutomation = Options.pathfull+"\\Automation";
 		if(path[0]=='?'){
-			if(path[1]=='a'&&path[4]=='i') path.replace(0,5,pan->VideoPath.BeforeLast('\\')+"\\");
-			else if(path[1]=='d' && path[4]=='a') path.replace(0,6,Options.pathfull+"\\");
-			else if(path[1]=='d' && path[4]=='t') path.replace(0,12,Options.pathfull+"\\Dictionary\\");
-			else if(path[1]=='l' && path[4]=='a') path.replace(0,7,Options.pathfull+"\\");
-			else if(path[1]=='s' && path[4]=='i') path.replace(0,8,Options.pathfull+"\\Include\\");
-			else if(path[1]=='t' && path[4]=='p') path.replace(0,6,pan->SubsPath.BeforeLast('\\')+"\\");
-			else if(path[1]=='u' && path[4]=='r') path.replace(0,6,Options.pathfull+"\\");
-			else if(path[1]=='v' && path[4]=='e') path.replace(0,7,pan->VideoPath.BeforeLast('\\')+"\\");
+			if(path[1]=='a'&&path[4]=='i') path.replace(0,6,pan->VideoPath.BeforeLast('\\'));
+			else if(path[1]=='d' && path[4]=='a') path.replace(0,5,firstAutomation);
+			else if(path[1]=='d' && path[4]=='t') path.replace(0,11,Options.pathfull+"\\Dictionary");
+			else if(path[1]=='l' && path[4]=='a') path.replace(0,6,firstAutomation);
+			else if(path[1]=='s' && path[4]=='i') path.replace(0,7,pan->SubsPath.BeforeLast('\\'));
+			else if(path[1]=='t' && path[4]=='p') path.replace(0,5,firstAutomation+"\\temp");
+			else if(path[1]=='u' && path[4]=='r') path.replace(0,5,firstAutomation);
+			else if(path[1]=='v' && path[4]=='e') path.replace(0,6,pan->VideoPath.BeforeLast('\\'));
 		}
-		wxLogStatus("path after"+path);
+		//wxLogStatus("path after "+path);
 		push_value(L, path);
 		return 1;
 	}
@@ -236,6 +228,7 @@ namespace Auto{
 		lua_pushvalue(L, 1);
 		SubsEntry *e = AutoToFile::LuaToLine(L);
 		if(!e){return 0;}
+		if(e->lclass!="style"){SAFE_DELETE(e);return 0;}
 		Styles *st= e->astyle;
 		lua_pop(L, 1);
 		//lua_pushstring(L, "Not a style entry");
@@ -243,6 +236,8 @@ namespace Auto{
 
 
 		wxString text(lua_tostring(L, 2), wxConvUTF8);
+		
+		//if(text==""){return 0;}
 
 		double width = 0, height =0, descent =0, extlead=0;
 		double fontsize = wxAtoi( st->Fontsize ) * 32;
@@ -301,7 +296,7 @@ namespace Auto{
 		height = (wxAtoi(st->ScaleY) / 100.0) * (height / 32);
 		descent = (wxAtoi(st->ScaleY) / 100.0) * (descent / 32);
 		extlead = (wxAtoi(st->ScaleY) / 100.0) * (extlead / 32);
-		wxDELETE(e);
+		SAFE_DELETE(e);
 
 		lua_pushnumber(L, width);
 		lua_pushnumber(L, height);
@@ -322,12 +317,12 @@ namespace Auto{
 			PUSH_FIELD(export_filters, "");
 			PUSH_FIELD(export_encoding, "");
 			PUSH_FIELD(style_storage, "Last Style Storage");
-			PUSH_FIELD(video_zoom, "");
+			set_field(L, "video_zoom", 1);
 			PUSH_FIELD(ar_value, "");
 			PUSH_FIELD(scroll_position, "Active Line");
 			PUSH_FIELD(active_row, "Active Line");
 			PUSH_FIELD(ar_mode, "");
-			PUSH_FIELD(video_position, "");
+			set_field(L, "video_position", (c->Video->VFF)? c->Video->VFF->GetFramefromMS(c->Video->Tell()) : NULL);
 #undef PUSH_FIELD
 			set_field(L, "audio_file", c->VideoPath);
 			set_field(L, "video_file", c->VideoPath);
@@ -350,7 +345,9 @@ namespace Auto{
 		,L(NULL)
 	{
 		include_path.push_back(filename.BeforeLast('\\')+"\\");
-		include_path.push_back(Options.pathfull+"\\Include\\");
+		include_path.push_back(Options.pathfull+"\\Automation\\automation\\Include\\");
+		include_path[0].Replace("\\","/");
+		include_path[1].Replace("\\","/");
 		Create();
 	}
 
@@ -359,7 +356,7 @@ namespace Auto{
 		Destroy();
 
 		name = GetPrettyFilename();
-
+		
 		// create lua environment
 		L = luaL_newstate();
 		if (!L) {
@@ -367,7 +364,7 @@ namespace Auto{
 			return;
 		}
 
-		bool loaded = false;
+		//bool loaded = false;
 		//BOOST_SCOPE_EXIT_ALL(&) { if (!loaded) Destroy(); };
 		LuaStackcheck stackcheck(L);
 
@@ -388,6 +385,7 @@ namespace Auto{
 		if (!Install(L, include_path)) {
 			description = get_string_or_default(L, 1);
 			lua_pop(L, 1);
+			lua_gc(L, LUA_GCCOLLECT, 0);
 			return;
 		}
 		stackcheck.check_stack(0);
@@ -431,6 +429,7 @@ namespace Auto{
 		if (!LoadFile(L, GetFilename())) {
 			description = get_string_or_default(L, 1);
 			lua_pop(L, 1);
+			lua_gc(L, LUA_GCCOLLECT, 0);
 			return;
 		}
 		stackcheck.check_stack(1);
@@ -446,6 +445,7 @@ namespace Auto{
 			description = wxString::Format("B³¹d inicjalizacji skryptu Lua \"%s\":\n\n%s", GetPrettyFilename(), get_string_or_default(L, -1));
 			//lua_pop(L, 1);
 			lua_pop(L, 2); // error + error handler
+			lua_gc(L, LUA_GCCOLLECT, 0);
 			return;
 		}
 		lua_pop(L, 1); // error handler
@@ -455,6 +455,7 @@ namespace Auto{
 		if (lua_isnumber(L, -1) && lua_tointeger(L, -1) == 3) {
 			lua_pop(L, 1); // just to avoid tripping the stackcheck in debug
 			description = "Attempted to load an Automation 3 script as an Automation 4 Lua script. Automation 3 is no longer supported.";
+			lua_gc(L, LUA_GCCOLLECT, 0);
 			return;
 		}
 
@@ -468,23 +469,27 @@ namespace Auto{
 
 		lua_pop(L, 1);
 		// if we got this far, the script should be ready
-		loaded = true;
-		//wxLogStatus("names "+name+" "+description+" "+author+" "+version);
+
+		//loaded = true;
+		lua_gc(L, LUA_GCCOLLECT, 0);
 	}
+
+	void LuaScript::Reload() { Create(); }
 
 	void LuaScript::Destroy()
 	{
 		// Assume the script object is clean if there's no Lua state
+		//wxLogStatus("L %i", (int)L);
 		if (!L) return;
 
 		// loops backwards because commands remove themselves from macros when
 		// they're unregistered
 		for (auto i = macros.begin(); i != macros.end(); i++)
 			delete (*i);
-
+		macros.clear();
 
 		lua_close(L);
-		L = nullptr;
+		L = NULL;
 	}
 
 
@@ -574,12 +579,10 @@ namespace Auto{
 		: wxThread(wxTHREAD_JOINABLE)
 		, L(_L)
 	{
-		
-		//wxLogStatus("create");
 		Create();
-		//wxLogStatus("priority");
+		
 		SetPriority(50);
-		//wxLogStatus("run");
+		
 		Run();
 	}
 
@@ -587,6 +590,7 @@ namespace Auto{
 	{
 	
 		bool failed = false;
+		bool hasMessage = false;
 		int nargs=3, nresults=2;
 		LuaProgressSink *ps = LuaProgressSink::ps;
 		
@@ -600,6 +604,7 @@ namespace Auto{
 				wxString errmsg(get_string_or_default(L, -1));
 				errmsg.Prepend(_("Wyst¹pi³ b³¹d podczas wykonywania skryptu Lua:\n"));
 				ps->SafeQueue(Auto::EVT_MESSAGE,errmsg);
+				hasMessage=true;
 			}
 			lua_pop(L, 2);
 			failed = true;
@@ -608,11 +613,11 @@ namespace Auto{
 			lua_remove(L, -nresults - 1);
 
 
-		//lua_gc(L, LUA_GCCOLLECT, 0);
-		if(!failed && ps->lpd->pending_debug_output==""){ps->lpd->closedialog=true;}else{ps->lpd->finished=true;}
+		lua_gc(L, LUA_GCCOLLECT, 0);
+		if(ps->Log=="" && !hasMessage){ps->lpd->closedialog=true;}else{ps->lpd->finished=true;}
 
-		//if (failed)
-			//throw "Script threw an error";
+		wxLogStatus("failed %i and debug out \'"+ps->Log+"\'", failed);
+		
 		if (failed){ return (wxThread::ExitCode) 1;}
 		return 0;
 	}
@@ -738,14 +743,14 @@ namespace Auto{
 		SAFE_DELETE(subsobj);
 
 		if (err) {
-			wxLogWarning("Runtime error in Lua macro validation function:\n%s", get_wxstring(L, -1));
+			wxLogWarning("Runtime error in Lua macro validation function:\n%s", get_string(L, -1));
 			lua_pop(L, 2);
 			return false;
 		}
 
 		bool result = !!lua_toboolean(L, -2);
 
-		wxString new_help_string(get_wxstring(L, -1));
+		wxString new_help_string(get_string(L, -1));
 		if (new_help_string.size()) {
 			help = new_help_string;
 			cmd_type |= COMMAND_DYNAMIC_HELP;
@@ -779,36 +784,35 @@ namespace Auto{
 		ps->ShowDialog(StrDisplay());
 		wxThread::ExitCode code = call.Wait();
 		bool failed = (int)code == 1;
-		wxLogStatus("waited ");
+		//wxLogStatus("waited ");
 		
 		if(ps->lpd->cancelled || failed){
 			wxLogStatus("canceled ");
-			subsobj->Cancel();
+			SAFE_DELETE(subsobj);
 			c->Grid1->file->DummyUndo();
 			
 			delete ps;
 			return;
 		}
-			//wxLogStatus("modal & finished %i %i", (int)ps->lpd->IsModal(), (int)ps->lpd->finished);
-		//if(ps->lpd->IsModal() && ps->lpd->finished){ps->lpd->EndModal(0);}
-		c->Grid1->SpellErrors.clear();
-		c->Grid1->SetModified(false);
-		c->Grid1->RepaintWindow();	
+		
+		
 		//if(ps->lpd->cancelled && ps->lpd->IsModal()){ps->lpd->EndModal(0);}
 
-		//auto lines = subsobj->ProcessingComplete(StrDisplay(c));
 		wxLogStatus("select lines");
-		int active_idx = original_active;
+		int active_idx = c->Edit->ebrow;
 
 		// Check for a new active row
 		if (lua_isnumber(L, -1)) {
-			active_idx = lua_tointeger(L, -1);
-			if (active_idx < 1 || active_idx > c->Grid1->GetCount()) {
+			active_idx = lua_tointeger(L, -1) - original_offset;
+			if (active_idx < 0 || active_idx >= c->Grid1->GetCount()) {
 				wxLogError("Active row %d is out of bounds (must be 1-%u)", active_idx, c->Grid1->GetCount());
 				active_idx = original_active;
 			}
 		}
-
+		wxLogStatus("idx %i, %i", active_idx, c->Edit->ebrow);
+		c->Grid1->SpellErrors.clear();
+		c->Grid1->SetModified(true, false, active_idx);
+		c->Grid1->RepaintWindow();	
 		//stackcheck.check_stack(2);
 		lua_pop(L, 1);
 
@@ -817,13 +821,13 @@ namespace Auto{
 			lua_for_each(L, [&] {
 				if (!lua_isnumber(L, -1))
 					return;
-				int cur = lua_tointeger(L, -1);
-				if (cur < 1 || cur > c->Grid1->GetCount()) {
+				int cur = lua_tointeger(L, -1)-original_offset;
+				if (cur < 0 || cur >= c->Grid1->GetCount()) {
 					wxLogError("Selected row %d is out of bounds (must be 1-%u)", cur, c->Grid1->GetCount());
 					throw LuaForEachBreak();
 				}
 
-				c->Grid1->sel[cur - original_offset -1]=true;
+				c->Grid1->sel[cur]=true;
 			});
 
 			/*AssDialogue *new_active = c->selectionController->GetActiveLine();
@@ -880,7 +884,7 @@ namespace Auto{
 
 		bool result = false;
 		if (err)
-			wxLogWarning("Runtime error in Lua macro IsActive function:\n%s", get_wxstring(L, -1));
+			wxLogWarning("Runtime error in Lua macro IsActive function:\n%s", get_string(L, -1));
 		else
 			result = !!lua_toboolean(L, -1);
 
@@ -893,8 +897,8 @@ namespace Auto{
 
 	void LuaCommand::RunScript()
 	{
-		LuaScript *script = LuaScript::GetScriptObject(L);
-		if(script->CheckLastModified(true)){script->Reload();}
+		//LuaScript *script = LuaScript::GetScriptObject(L);
+		
 	
 		TabPanel *pan = Notebook::GetTab();
 		if(Validate(pan)){Run(pan);}
@@ -907,7 +911,7 @@ namespace Auto{
 
 	Automation::Automation()
 	{
-		AutoloadPath=Options.pathfull+"\\Autoload";
+		AutoloadPath=Options.pathfull+"\\Automation\\automation\\Autoload";
 		ReloadScripts(true);
 	}
 
@@ -916,23 +920,23 @@ namespace Auto{
 		RemoveAll(true);
 	}
 
-	bool Automation::Add(wxString filename, bool autoload)
+	bool Automation::Add(wxString filename, bool addToSinfo, bool autoload)
 	{
 		
 		std::vector<Auto::LuaScript*> &scripts = (autoload)? Scripts : ASSScripts;
 		Auto::LuaScript *ls= new Auto::LuaScript(filename);
 		for (size_t i = 0; i < scripts.size(); i++) {
-			if (ls->GetName() == scripts[i]->GetName()){delete ls; ls=NULL; return false;}
+			if (ls->GetFilename() == scripts[i]->GetFilename()){delete ls; ls=NULL; return false;}
 		}
 		ls->CheckLastModified(false);
 		scripts.push_back(ls);
-		if(!autoload){
+		if(!autoload && addToSinfo){
 			wxString scriptpaths = Notebook::GetTab()->Grid1->GetSInfo("Automation Scripts");
 			scriptpaths<<"|"<<filename;
 			Notebook::GetTab()->Grid1->AddSInfo("Automation Scripts", scriptpaths);
 		}
 		HasChanges=true;
-		//wxLogStatus("description: " + ls->GetDescription());
+		wxLogStatus("description: " + ls->GetDescription());
 		return true;
 	}
 
@@ -960,9 +964,10 @@ namespace Auto{
 		//}
 	}
 
-	void Automation::ReloadMacro(int script)
+	void Automation::ReloadMacro(int script, bool autoload)
 	{
-		ASSScripts[script]->Reload();
+		if(autoload){Scripts[script]->Reload();}
+		else{ASSScripts[script]->Reload();}
 	}
 
 	/*void Automation::RunScript(int script, int macro)
@@ -1005,7 +1010,7 @@ namespace Auto{
 				wxString fullpath = script_path.GetFullPath();
 				wxString ext = fullpath.AfterLast('.').Lower();
 
-				if((ext != "lua" && ext != "moon") || !Add(fullpath, true)){more = dir.GetNext(&fn);continue;}
+				if((ext != "lua" && ext != "moon") || !Add(fullpath, false, true)){more = dir.GetNext(&fn);continue;}
 
 				if (!Scripts[Scripts.size()-1]->GetLoadedState()) {error_count++;}
 
@@ -1049,7 +1054,7 @@ namespace Auto{
 			if(!wxFileExists(onepath)){continue;}
 
 			try {
-				if(!Add(onepath)){continue;}
+				if(!Add(onepath, false)){continue;}
 				int last=Scripts.size()-1;
 
 			}
@@ -1065,6 +1070,7 @@ namespace Auto{
 		if (error_count > 0) {
 			wxLogWarning(_("Co najmniej jeden skrypt z pliku napisów zawiera b³êdy.\nZobacz opisy skryptów, by uzyskaæ wiêcej informacji."));
 		}
+		scriptpaths = paths;
 	}
 
 	void Automation::OnEdit(wxString &Filename)
@@ -1116,6 +1122,7 @@ namespace Auto{
 	{
 		TabPanel* c = Notebook::GetTab();
 		//if(!CheckChanges()){return;}
+		kainoteFrame *Kai=((kainoteApp*)wxTheApp)->Frame;
 
 		for(int j=(*bar)->GetMenuItemCount()-1; j>=2; j--){
 			//wxLogStatus("deleted %i", j);
@@ -1124,21 +1131,39 @@ namespace Auto{
 		AddFromSubs();
 		int start=30100, i=0;
 		for(auto script : Scripts){
+			if(script->CheckLastModified(true)){script->Reload();}
 			wxMenu *submenu=new wxMenu();
 			submenu->Append(start,_("Edytuj"),_("Edytuj"));
-			Actions[start]= RunFunction(start, -2, script);
+			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+				Automation::OnEdit(script->GetFilename());	
+			}, start);
 			start++;
 			submenu->Append(start,_("Odœwie¿"),_("Odœwie¿"));
-			Actions[start]= RunFunction(start, -1, script);
+			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+				script->Reload();
+			}, start);
 			start++;
 			int j=0;
 			auto macros = script->GetMacros();
 			//wxLogStatus("size %i", macros.size());
 			for(auto macro : macros){
 				wxString text; text<<"Script"<<i<<"-"<<j;
-				macro->SetHotkey(text);
 				Hkeys.SetAccMenu(submenu, new wxMenuItem(0,start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
-				Actions[start]= RunFunction(start, j, script);
+				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+					if(wxGetKeyState(WXK_SHIFT)){
+						wxString wins[1]={"Globalny"};
+						int ret=-1;
+						ret=Hkeys.OnMapHkey( start, text, Kai, wins, 1);
+						if(ret==-1){Kai->MenuBar->FindItem(start)->SetAccel(&Hkeys.GetHKey(start));Hkeys.SaveHkeys();}
+						else if(ret>0){
+							wxMenuItem *item= Kai->MenuBar->FindItem(ret);
+							wxAcceleratorEntry entry;
+							item->SetAccel(&entry);
+						}
+					}else{
+						macro->RunScript();
+					}	
+				}, start);
 				start++;
 				j++;
 			}
@@ -1146,76 +1171,76 @@ namespace Auto{
 			i++;
 		}
 		for(auto script : ASSScripts){
+			if(script->CheckLastModified(true)){script->Reload();}
 			wxMenu *submenu=new wxMenu();
 			submenu->Append(start,_("Edytuj"),_("Edytuj"));
-			Actions[start]= RunFunction(start, -2, script);
+			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+				Automation::OnEdit(script->GetFilename());	
+			}, start);
 			start++;
 			submenu->Append(start,_("Odœwie¿"),_("Odœwie¿"));
-			Actions[start]= RunFunction(start, -1, script);
+			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+				script->Reload();
+			}, start);
 			start++;
 			int j=0;
 			auto macros = script->GetMacros();
 			//wxLogStatus("size %i", macros.size());
 			for(auto macro : macros){
 				wxString text; text<<"Script"<<i<<"-"<<j;
-				macro->SetHotkey(text);
 				Hkeys.SetAccMenu(submenu, new wxMenuItem(0,start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
-				Actions[start]= RunFunction(start, j, script);
+				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+					if(wxGetKeyState(WXK_SHIFT)){
+						wxString wins[1]={"Globalny"};
+						int ret=-1;
+						ret=Hkeys.OnMapHkey( start, text, Kai, wins, 1);
+						if(ret==-1){Kai->MenuBar->FindItem(start)->SetAccel(&Hkeys.GetHKey(start));Hkeys.SaveHkeys();}
+						else if(ret>0){
+							wxMenuItem *item= Kai->MenuBar->FindItem(ret);
+							wxAcceleratorEntry entry;
+							item->SetAccel(&entry);
+						}
+					}else{macro->RunScript();}	
+				}, start);
 				start++;
 				j++;
 			}
 			(*bar)->Append(-1, script->GetName(), submenu,script->GetDescription());
 			i++;
 		}
-		kainoteFrame *Kai=((kainoteApp*)wxTheApp)->Frame;
-		//wxLogStatus("start %i", start);
+		
 		
 		HasChanges=false;
 	}
 
 
-//MyMenu::MyMenu(Auto::LuaScript *_script)
-//	:wxMenu()
-//	,script(_script)
-//{
-//}
 
-
-void Automation::OnMenuClick(wxCommandEvent &event)
-{
-	wxLogStatus("menu click %i", event.GetId());
-	auto action =  Actions.find(event.GetId());
-	if(action!=Actions.end()){
-		action->second.Run();
-	}
-}
-
-void RunFunction::Run(){
-		if(element==-2){
-			Automation::OnEdit(script->GetFilename());
-		}else if(element==-1){
-			script->Reload();
-		}else{
-			LuaCommand *macro=script->GetMacro(element);
-				if(wxGetKeyState(WXK_SHIFT)){
-				wxString wins[1]={"Globalny"};
-				//upewnij siê, ¿e da siê zmieniæ idy na nazwy, 
-				//mo¿e i trochê spowolni operacjê ale skoñczy siê ci¹g³e wywalanie hotkeysów
-				//mo¿e od razu funkcji onmaphotkey przekazaæ item by zrobi³a co trzeba
-				wxString name = macro->StrHotkey();
-				int ret=-1;
-				kainoteFrame *Kai = ((kainoteApp*)wxTheApp)->Frame;
-				ret=Hkeys.OnMapHkey( id, name, Kai, wins, 1);
-				if(ret==-1){Kai->MenuBar->FindItem(id)->SetAccel(&Hkeys.GetHKey(id));Hkeys.SaveHkeys();}
-				else if(ret>0){
-					wxMenuItem *item= Kai->MenuBar->FindItem(ret);
-					wxAcceleratorEntry entry;
-					item->SetAccel(&entry);
-				}
-				return;
-			}
-
-			macro->RunScript();
-		}
-	}
+//void RunFunction::Run(){
+//		if(element==-2){
+//			Automation::OnEdit(script->GetFilename());
+//		}else if(element==-1){
+//			script->Reload();
+//		}else{
+//			LuaCommand *macro=script->GetMacro(element);
+//				if(wxGetKeyState(WXK_SHIFT)){
+//				wxString wins[1]={"Globalny"};
+//				//upewnij siê, ¿e da siê zmieniæ idy na nazwy, 
+//				//mo¿e i trochê spowolni operacjê ale skoñczy siê ci¹g³e wywalanie hotkeysów
+//				//mo¿e od razu funkcji onmaphotkey przekazaæ item by zrobi³a co trzeba
+//				wxString name = macro->StrHotkey();
+//				int ret=-1;
+//				kainoteFrame *Kai = ((kainoteApp*)wxTheApp)->Frame;
+//				ret=Hkeys.OnMapHkey( id, name, Kai, wins, 1);
+//				if(ret==-1){Kai->MenuBar->FindItem(id)->SetAccel(&Hkeys.GetHKey(id));Hkeys.SaveHkeys();}
+//				else if(ret>0){
+//					wxMenuItem *item= Kai->MenuBar->FindItem(ret);
+//					wxAcceleratorEntry entry;
+//					item->SetAccel(&entry);
+//				}
+//				return;
+//			}
+//
+//			macro->RunScript();
+//		}
+//	}
 }

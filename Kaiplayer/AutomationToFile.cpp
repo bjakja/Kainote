@@ -20,9 +20,9 @@ namespace Auto{
 	}
 	SubsEntry::~SubsEntry()
 	{
-		wxDELETE(adial);
-		wxDELETE(astyle);
-		wxDELETE(info);
+		SAFE_DELETE(adial);
+		SAFE_DELETE(astyle);
+		SAFE_DELETE(info);
 	}
 
 
@@ -520,13 +520,13 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 					}
 				else
 					{
-					wxString fclass=(e->lclass=="info")? "info" : (e->lclass=="style")? "styli" : "dialogow";
-					wxString sclass=(i<sinfo)? "info" : (i<styles)? "styli" : "dialogow";
-					wxString all = _("Probujesz wstawic linie klasy ") + fclass + _(" w przedzial klasy ") + sclass;
+					wxString fclass=(e->lclass=="info")? "info" : (e->lclass=="style")? "styli" : "dialogów";
+					wxString sclass=(i<sinfo)? "info" : (i<styles)? "styli" : "dialogów";
+					wxString all = _("Próbujesz wstawiæ linie klasy ") + fclass + _(" w przedzia³ klasy ") + sclass;
 					lua_pushstring(L,all.mb_str(wxConvUTF8).data());
 					lua_error(L);
 					}
-				wxDELETE(e);
+				SAFE_DELETE(e);
 				return 0;
 
 			} else {
@@ -631,29 +631,32 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 		}
 
 		int a = lua_tointeger(L, 1), b = lua_tointeger(L, 2);
-
-		if (a < 1) a = 1;
-		if (b > (int)Subs->dials.size()) b = (int)Subs->dials.size();
-
-		if (b < a) return 0;
-		a--;b--;
 		int sinfo=Subs->sinfo.size();
 		int styles=sinfo+Subs->styles.size();
 		int dials=styles+Subs->dials.size();
+		int all = dials+1;
+
+		if (a < 1) a = 1;
+		if (b > all ) b = all;
+
+		if (b < a) return 0;
+		a--;b--;
+		
 
 
-		for(int i=b-1; i >= a; i--){
+		for(int i=b; i >= a; i--){
 			if(i<sinfo){
 				//wxLogStatus("deleterange si %i %i", i, sinfo); 
 				Subs->sinfo.erase(Subs->sinfo.begin()+i);
 			}else if(i<styles){
 				//wxLogStatus("deleterange st %i %i", i, styles);
-				Subs->styles.erase(Subs->styles.begin()+i-sinfo);
-			}else if(i<dials){
+				Subs->styles.erase(Subs->styles.begin()+(i-sinfo));
+			}else{
 				//wxLogStatus("deleterange dial %i %i", i, dials);
-				Subs->dials.erase(Subs->dials.begin()+i-styles);
+				Subs->dials.erase(Subs->dials.begin()+(i-styles));
 			}
 		}	
+		//wxLogStatus(" lengths %i %i %i %i %i", Subs->sinfo.size(), Subs->styles.size(),Subs->dials.size(),all, b);
 		return 0;
 	}
 
@@ -669,12 +672,25 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 			lua_pushvalue(L, i);
 			SubsEntry *e = LuaToLine(L);
 			if(!e){return 0;}
+			if(e->lclass=="info")
+			{
+				SInfo *inf=e->info->Copy();
+				Subs->sinfo.push_back(inf);
+				Subs->dsinfo.push_back(inf);
+			}
+			else if(e->lclass=="style")
+			{
+				//wxLogStatus("stylesstart %i %i", start-sinfo, stylsize);
+				Styles *styl=e->astyle->Copy();
+				Subs->styles.push_back(styl);
+				Subs->dstyles.push_back(styl);
+			}
 			if(e->lclass=="dialogue"){
 				Dialogue *dial=e->adial->Copy();
 				Subs->ddials.push_back(dial);
 				Subs->dials.push_back(dial);
 			}
-			wxDELETE(e);
+			SAFE_DELETE(e);
 		}
 
 		return 0;
@@ -745,7 +761,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 				lua_error(L);
 			}
 			start++;
-			wxDELETE(e);
+			SAFE_DELETE(e);
 		}
 		//wxLogStatus("inserted");
 		return 0;
@@ -775,14 +791,6 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 		wxString ktext = _T("");
 		wxString ktext_stripped = _T("");
 
-		lua_newtable(L);
-		wxStringTokenizer ktok(e->adial->Text,"\\",wxTOKEN_STRTOK);
-
-		bool inside=false;
-		bool valid=false;
-		wxString rest;
-		//wxString deb;
-		wxRegEx reg(_T("\\{[^\\{]*\\}"),wxRE_ADVANCED);
 		lua_createtable(L, 0, 6);
 		set_field(L, "duration", 0);
 		set_field(L, "start_time", 0);
@@ -791,7 +799,15 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 		set_field(L, "text", "");
 		set_field(L, "text_stripped", "");
 		lua_rawseti(L, -2, kcount++);
-   
+
+		wxStringTokenizer ktok(e->adial->Text,"\\",wxTOKEN_STRTOK);
+
+		bool inside=false;
+		bool valid=false;
+		wxString rest;
+		//wxString deb;
+		wxRegEx reg(_T("\\{[^\\{]*\\}"),wxRE_ADVANCED);
+		
 		while (ktok.HasMoreTokens()) {
 			wxString tekst = ktok.NextToken();
 			//deb<<tekst<<"@";
@@ -847,9 +863,24 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 				ktext_stripped=tekst;
 			}
 
+
 		}
+		if(kcount<2){
+			ktext_stripped = e->adial->Text;
+			reg.ReplaceAll(&ktext_stripped,_T(""));
+
+			lua_createtable(L, 0, 6);
+			set_field(L, "duration", (e->adial->End.mstime-e->adial->Start.mstime));
+			set_field(L, "start_time", e->adial->Start.mstime);
+			set_field(L, "end_time", e->adial->End.mstime);
+			set_field(L, "tag", "k");
+			set_field(L, "text", e->adial->Text.mb_str(wxConvUTF8).data());
+			set_field(L, "text_stripped", ktext_stripped.mb_str(wxConvUTF8).data());
+			lua_rawseti(L, -2, kcount++);
+		}
+		//wxLogStatus("text "+e->adial->Text+" stripped "+ktext_stripped+" %i", kcount-1);
 		//wxLogStatus(deb);
-		wxDELETE(e);
+		SAFE_DELETE(e);
 		
 		return 1;
 	}
@@ -865,8 +896,9 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 
 	int AutoToFile::IterNext(lua_State *L)
 	{
+		File *Subs=laf->file;
 		size_t i = check_uint(L, 2);
-		if (i >= laf->file->dials.size()) {
+		if (i >= Subs->dials.size()+Subs->sinfo.size()+Subs->styles.size()) {
 			lua_pushnil(L);
 			return 1;
 		}
@@ -919,5 +951,13 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 	{
 		delete this;
 	}
+	int AutoToFile::ObjectGarbageCollect(lua_State *L){
+		//assert(lua_type(L, idx) == LUA_TUSERDATA);
+		//auto ud = lua_touserdata(L, lua_upvalueindex(1));
+		//if(!ud){return 0;}
+		//auto laf = *static_cast<AutoToFile **>(ud);
+		//delete laf;
+		return 0;
+	};
 }
 

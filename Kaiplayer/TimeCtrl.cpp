@@ -134,6 +134,7 @@ bool astmp=(form<MDVD);
 				
 			}
 		wxTheClipboard->Close();
+		wxTheClipboard->Flush();
 		}
 			
 			//pastes=false;

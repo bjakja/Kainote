@@ -586,8 +586,9 @@ bool VideoRend::Play(int end)
 
 bool VideoRend::PlayLine(int start, int eend)
 {
-	if(vstate==None || start>=eend || start >= GetDuration() ){return false;}
-
+	int duration = GetDuration();
+	if(vstate==None || start>=eend || start >= duration ){return false;}
+	if( duration < eend){eend = duration;}
 	SetPosition(start);
 	Play(eend);
 	return true;
