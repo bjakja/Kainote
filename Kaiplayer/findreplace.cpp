@@ -9,6 +9,7 @@
 
 findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace, bool sellines)
 	: wxDialog(kfparent, -1,(sellines)?_("Zaznacz"): (replace)?_("Znajdź i zamień"):_("Znajdź"))
+	,hasFocus(false)
 {
 	Kai=kfparent;
 	reprow=posrow=0;
@@ -39,9 +40,6 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		//pionowy sizer kolumna 1
 		wxStaticBoxSizer* frsbsizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Znajdź"));
 		FindText = new wxComboBox(this, ID_FINDTEXT, (last)?last->FindText->GetValue() : ES, wxDefaultPosition, wxSize(342,-1),wfind);
-		long from, to;
-		Kai->GetTab()->Edit->TextEdit->GetSelection(&from,&to);
-		if(from<to){FindText->SetValue(Kai->GetTab()->Edit->TextEdit->GetValue().SubString(from,to-1));}
 		frsbsizer->Add(FindText,0,wxEXPAND,0);
 		mainfrbsizer1->Add(frsbsizer,0,wxEXPAND|wxALL,3);
 
@@ -155,6 +153,9 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		}
 
 		Connect(ID_BPLUS,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&findreplace::OnStylesWin);
+		Connect(wxEVT_ACTIVATE,(wxObjectEventFunction)&findreplace::OnSetFocus);
+		//Bind(wxEVT_KILL_FOCUS,[=](wxFocusEvent &evt){wxLogStatus("kill focus");hasFocus=false;});
+		
 	}
 
 	//Zaznaczenia
@@ -789,3 +790,14 @@ void findreplace::Reset()
 	fnext=false;
 }
 
+void findreplace::OnSetFocus(wxActivateEvent& event){
+	if(hasFocus){hasFocus=false; return;}
+	wxLogStatus("focus");
+	long from, to, fromO, toO;
+	EditBox *edit = Kai->GetTab()->Edit;
+	edit->TextEdit->GetSelection(&from,&to);
+	edit->TextEditTl->GetSelection(&fromO,&toO);
+	if(from<to){FindText->SetValue(edit->TextEdit->GetValue().SubString(from,to-1));}
+	else if(fromO<toO){FindText->SetValue(edit->TextEditTl->GetValue().SubString(fromO,toO-1));}
+	hasFocus=true;
+}

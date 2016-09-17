@@ -457,6 +457,11 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 			caret->SetSize(1,fh);
 			CalcWrap(false, false);
 			Refresh(false);
+		}else if(event.GetWheelRotation() != 0){
+			int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();
+			if(step>0 && scPos==0){return;}
+			scPos = MAX(scPos - step, 0);
+			Refresh(false);
 		}
 	}
 
@@ -1088,6 +1093,7 @@ void MTextEditor::Paste()
 		whatpaste.Replace("\n"," ");
 		whatpaste.Replace("\r","");
 		whatpaste.Replace("\f","");
+		whatpaste.Replace("\t"," ");
 		int curx=Cursor.x;
 		int selx=Selend.x;if(curx>selx){int tmp=curx;curx=selx;selx=tmp;}
 		if(Selend.x!=Cursor.x){

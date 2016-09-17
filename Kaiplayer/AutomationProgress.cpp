@@ -123,8 +123,6 @@ LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
 
 	void LuaProgressSink::ShowDialog(wxString Title)
 	{
-		
-		//lpd->title_display->SetLabelText(Title);
 		SafeQueue(EVT_SHOW_PRGS_DIAL,lpd);
 		SafeQueue(EVT_TITLE,Title);
 	}
@@ -366,13 +364,13 @@ void LuaProgressDialog::AddDebugOutput(wxThreadEvent &evt)
 void LuaProgressDialog::SetTitle(wxThreadEvent &evt)
 {
 		wxMutexLocker lock(data_mutex);
-		task_display->SetLabelText(evt.GetPayload<wxString>());
+		title_display->SetLabelText(evt.GetPayload<wxString>());
 }
 
 void LuaProgressDialog::SetTask(wxThreadEvent &evt)
 {
 		wxMutexLocker lock(data_mutex);
-		title_display->SetLabelText(evt.GetPayload<wxString>());
+		task_display->SetLabelText(evt.GetPayload<wxString>());
 }
 
 void LuaProgressDialog::SetProgress(wxThreadEvent &evt)
@@ -387,7 +385,7 @@ void LuaProgressDialog::SetProgress(wxThreadEvent &evt)
 void LuaProgressDialog::OnUpdate(wxTimerEvent &event)
 {
 	wxMutexLocker lock(data_mutex);
-	if(finished){update_timer.Stop();cancel_button->SetLabelText("Zamknij");}
+	if(finished){update_timer.Stop();cancel_button->SetLabelText(_("Zamknij"));}
 	if(cancelled||closedialog){update_timer.Stop();EndModal(0);}
 }
 void LuaProgressDialog::ShowConfigDialog(wxThreadEvent &evt)
@@ -395,7 +393,7 @@ void LuaProgressDialog::ShowConfigDialog(wxThreadEvent &evt)
 	//cfgclosed=false;
 		update_timer.Stop();
 		LuaDialog dlg(L,true); // magically creates the config dialog structure etc
-		wxDialog* window = dlg.CreateWindow(this);
+		wxDialog* window = dlg.CreateWindow(this,title_display->GetLabelText());
 		window->ShowModal();
 		
 		update_timer.Start();

@@ -186,7 +186,7 @@ namespace Auto{
 
 			wxControl *Create(wxWindow *parent) {
 				//wxLogStatus("color %i %i %i %i", color.r, color.g, color.b, color.a);
-				cw = new ButtonColorPicker(parent, color.GetWX(), wxSize(50*width,10*height));
+				cw = new ButtonColorPicker(parent, color.GetWX(), wxDefaultSize);
 				cw->SetToolTip(wxString(hint));
 				return cw;
 			}
@@ -425,8 +425,8 @@ namespace Auto{
 		}
 	}
 
-	wxDialog* LuaDialog::CreateWindow(wxWindow *parent) {
-		window = new wxDialog(parent,-1,"");
+	wxDialog* LuaDialog::CreateWindow(wxWindow *parent, wxString name) {
+		window = new wxDialog(parent,-1,name);
 
 		auto s = new wxGridBagSizer(4, 4);
 		for (auto& c : controls)

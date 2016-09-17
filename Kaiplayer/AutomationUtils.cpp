@@ -21,7 +21,7 @@
 #include <cstdlib>
 #include <iterator>
 #include <wx/wx.h>
-
+#include <wx/regex.h>
 
 #include <boost/regex/icu.hpp>
 #include <boost/locale/conversion.hpp>
@@ -33,7 +33,7 @@
 
 extern "C" int luaopen_luabins(lua_State *L);
 extern "C" int luaopen_re_impl(lua_State *L);
-//extern "C" int luaopen_unicode_impl(lua_State *L);
+extern "C" int luaopen_unicode_impl(lua_State *L);
 extern "C" int luaopen_lfs_impl(lua_State *L);    
 extern "C" int luaopen_lpeg(lua_State *L);
 
@@ -149,8 +149,8 @@ int add_stack_trace(lua_State *L) {
 
 	// Strip the location from the error message since it's redundant with
 	// the stack trace
-	//wxRegEx rx("(^\\[string (.*)\\]:[0-9]+: )");
-	//rx.ReplaceFirst(&message,"\\\\2");
+	wxRegEx rx("(^\\[string (.*)\\]:[0-9]+: )");
+	rx.Replace(&message,"");
 
 	wxString frames;
 
@@ -197,6 +197,7 @@ int error(lua_State *L, const char *fmt, ...) {
 	va_end(argp);
 	lua_concat(L, 2);
 	throw error_tag();
+	//return lua_error(L);
 }
 
 int argerror(lua_State *L, int narg, const char *extramsg) {
@@ -236,7 +237,8 @@ int exception_wrapper(lua_State *L, int (*func)(lua_State *L)) {
 		return lua_error(L);
 	}
 	catch (...) {
-		std::terminate();
+		push_value(L, "Lua fatal error");
+		return lua_error(L);
 	}
 }
 
@@ -277,7 +279,7 @@ void preload_modules(lua_State *L) {
 	lua_getfield(L, -1, "preload");
 
 	set_field(L, "kainote.__re_impl", luaopen_re_impl);
-	//set_field(L, "kainote.__unicode_impl", luaopen_unicode_impl);
+	set_field(L, "kainote.__unicode_impl", luaopen_unicode_impl);
 	set_field(L, "kainote.__lfs_impl", luaopen_lfs_impl);
 	set_field(L, "lpeg", luaopen_lpeg);
 	set_field(L, "luabins", luaopen_luabins);
@@ -313,45 +315,48 @@ void do_register_lib_table(lua_State *L, std::vector<const char *> types) {
 	// leaves ffi.cast on the stack
 }
 
-//template<std::string (*func)(const char *)>
-//char *wrapu(const char *str, char **err) {
-//	try {
-//		return strndup(boost::locale::to_upper<char>(str, std::locale()));
-//	} catch (std::exception const& e) {
-//		*err = _strdup(e.what());
-//		return nullptr;
-//	}
-//}
-//
-//char *wrapl(const char *str, char **err) {
-//	try {
-//		return strndup(boost::locale::to_lower<char>(str, std::locale()));
-//	} catch (std::exception const& e) {
-//		*err = _strdup(e.what());
-//		return nullptr;
-//	}
-//}
-//char *wrapf(const char *str, char **err) {
-//	try {
-//		return strndup(boost::locale::fold_case<char>(str, std::locale()));
-//	} catch (std::exception const& e) {
-//		*err = _strdup(e.what());
-//		return nullptr;
-//	}
-//}
-//
-//extern "C" int luaopen_unicode_impl(lua_State *L) {
-//	do_register_lib_table(L, std::vector<const char *>());
-//		lua_createtable(L, 0, 2);
-//		do_register_lib_function(L, "to_upper_case", "char * (*)(const char *, char **)", wrapu);
-//		do_register_lib_function(L, "to_lower_case", "char * (*)(const char *, char **)", wrapl);
-//		do_register_lib_function(L, "to_fold_case", "char * (*)(const char *, char **)", wrapf);
-//		lua_remove(L, -2); // ffi.cast function
-//
-//	return 1;
-//}
-//
-//
+
+char *wrapu(const char *str, char **err) {
+	try {
+		return strndup(boost::locale::to_upper(str));
+	} catch (std::exception const& e) {
+		wxLogStatus("uppercase error: " + wxString(e.what()));
+		*err = _strdup(e.what());
+		return nullptr;
+	}
+}
+
+char *wrapl(const char *str, char **err) {
+	try {
+		return strndup(boost::locale::to_lower(str));
+	} catch (std::exception const& e) {
+		wxLogStatus("lowercase error: " + wxString(e.what()));
+		*err = _strdup(e.what());
+		return nullptr;
+	}
+}
+char *wrapf(const char *str, char **err) {
+	try {
+		return strndup(boost::locale::fold_case(str));
+	} catch (std::exception const& e) {
+		wxLogStatus("foldcase error: " + wxString(e.what()));
+		*err = _strdup(e.what());
+		return nullptr;
+	}
+}
+
+extern "C" int luaopen_unicode_impl(lua_State *L) {
+	do_register_lib_table(L, std::vector<const char *>());
+	lua_createtable(L, 0, 3);
+	do_register_lib_function(L, "to_upper_case", "char * (*)(const char *, char **)", wrapu);
+	do_register_lib_function(L, "to_lower_case", "char * (*)(const char *, char **)", wrapl);
+	do_register_lib_function(L, "to_fold_case", "char * (*)(const char *, char **)", wrapf);
+	lua_remove(L, -2); // ffi.cast function
+
+	return 1;
+}
+
+
 
 using boost::u32regex;
 
@@ -466,16 +471,16 @@ extern "C" int luaopen_re_impl(lua_State *L) {
 	types.push_back("u32regex");
 
 	do_register_lib_table(L, types);
-		lua_createtable(L, 0, 8);
-		do_register_lib_function(L, "search", "int * (*)(u32regex&, const char *, size_t, size_t)", regex_search);
-		do_register_lib_function(L, "match", "agi_re_match * (*)(u32regex&, const char *, size_t, int)", regex_match);
-		do_register_lib_function(L, "get_match", "int * (*)(agi_re_match&, size_t)", regex_get_match);
-		do_register_lib_function(L, "replace", "char * (*)(u32regex&, const char *, const char *, size_t, int)", regex_replace);
-		do_register_lib_function(L, "compile", "u32regex * (*)(const char *, int, char **)", regex_compile);
-		do_register_lib_function(L, "get_flags", "const agi_re_flag * (*)()", get_regex_flags);
-		do_register_lib_function(L, "match_free", "void (*)(agi_re_match *)", match_free);
-		do_register_lib_function(L, "regex_free", "void (*)(u32regex *)", regex_free);
-		lua_remove(L, -2); // ffi.cast function
+	lua_createtable(L, 0, 8);
+	do_register_lib_function(L, "search", "int * (*)(u32regex&, const char *, size_t, size_t)", regex_search);
+	do_register_lib_function(L, "match", "agi_re_match * (*)(u32regex&, const char *, size_t, int)", regex_match);
+	do_register_lib_function(L, "get_match", "int * (*)(agi_re_match&, size_t)", regex_get_match);
+	do_register_lib_function(L, "replace", "char * (*)(u32regex&, const char *, const char *, size_t, int)", regex_replace);
+	do_register_lib_function(L, "compile", "u32regex * (*)(const char *, int, char **)", regex_compile);
+	do_register_lib_function(L, "get_flags", "const agi_re_flag * (*)()", get_regex_flags);
+	do_register_lib_function(L, "match_free", "void (*)(agi_re_match *)", match_free);
+	do_register_lib_function(L, "regex_free", "void (*)(u32regex *)", regex_free);
+	lua_remove(L, -2); // ffi.cast function
 	
 	return 1;
 }

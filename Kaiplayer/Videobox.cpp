@@ -100,7 +100,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	volslider=new VolSlider(panel,ID_VOL,Options.GetInt("Video Volume"),wxPoint(size.x-110,17),wxSize(110,25));
 	mstimes=new wxTextCtrl(panel,-1,"",wxPoint(180,19),wxSize(360,-1),wxTE_READONLY);
 	//mstimes->SetForegroundColour(wxColour("#FFFFFF"));
-	//mstimes->SetBackgroundColour(wxColour("#808080"));
+	mstimes->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	mstimes->SetWindowStyle(wxBORDER_NONE);
 	mstimes->SetCursor(wxCURSOR_ARROW);
 	
@@ -184,7 +184,7 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 	wxMenuItem *index=Kai->MenuBar->FindItem(VideoIndexing);
 	bool shown=true;
 	
-	if(!OpenFile(fileName, subsName,!(index->IsChecked()&&index->IsEnabled()&&!fulls&&!isfullskreen),!Kai->GetTab()->edytor,fulls)){
+	if(!OpenFile(fileName, subsName, !(index->IsChecked() && index->IsEnabled() && !fulls && !isfullskreen), !Kai->GetTab()->edytor, fulls)){
 		delete subsName; return false;
 	}
 	if( !(IsShown() || (TD && TD->IsShown())) ){

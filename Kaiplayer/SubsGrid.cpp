@@ -1,7 +1,6 @@
 ﻿
 #include "SubsGrid.h"
 #include "config.h"
-//#include "timeconv.h"
 #include "EditBox.h"
 #include "kainoteMain.h"
 #include "OpennWrite.h"
@@ -1950,7 +1949,7 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 		while ( tokenizer.HasMoreTokens() )
 		{
 			wxString token = tokenizer.GetNextToken();
-			if(!token.StartsWith("Dial") && isASS){continue;}
+			if(isASS && !(token.StartsWith("Dial") || token.StartsWith("Comm"))){continue;}
 			Dialogue *dl= new Dialogue(token);
 			if(!tlmode){
 				AddLine(dl);

@@ -399,35 +399,44 @@ void Grid::OnAccelerator(wxCommandEvent &event)
 	int id=event.GetId();
 	VideoCtrl *vb=Kai->GetTab()->Video;
 	selarr = GetSels();
+	int sels=selarr.GetCount();
+	bool hasVideo = vb->GetState() != None;
 	if(id==PlayPause && vb->IsShown()){vb->Pause();}
 	else if(id==Plus5Second){vb->Seek(vb->Tell()+5000);}
 	else if(id==Minus5Second){vb->Seek(vb->Tell()-5000);}
-	else if(id==InsertBefore){OnInsertBefore();}
-	else if(id==InsertAfter){OnInsertAfter();}
-	else if(id==InsertBeforeVideo){OnInsertBeforeVideo();}
-	else if(id==InsertAfterVideo){OnInsertAfterVideo();}
-	else if(id==Duplicate){OnDuplicate();}
-	else if(id==Swap){SwapRows(selarr[0],selarr[1],true);}
-	else if(id==Join){wxCommandEvent evt; evt.SetId(id); OnJoin(evt);}
-	else if(id==JoinToFirst || id==JoinToLast){OnJoinToFirst(id);}
-	else if(id==Copy||id==CopyCollumns){CopyRows(id);}
-	else if(id==Cut){CopyRows(id);DeleteRows();}
-	else if(id==Paste || id==PasteCollumns){OnPaste(id);}
-	else if(id==Remove){DeleteRows();}
-	else if(id==RemoveText){DeleteText();}
-	else if(id==PasteTranslation){OnPasteTextTl();}
-	else if(id==TranslationDialog){
+	else if(sels>0){
+		switch(id){
+		case InsertBeforeVideo: if (hasVideo) OnInsertBeforeVideo(); break;
+		case InsertAfterVideo: if (hasVideo) OnInsertAfterVideo(); break;
+		case InsertBefore: OnInsertBefore(); break;
+		case InsertAfter: OnInsertAfter(); break;
+		case Duplicate: OnDuplicate(); break;
+		case Copy: case CopyCollumns: CopyRows(id); break;
+		case Cut: CopyRows(id);DeleteRows(); break;
+		case Paste: case PasteCollumns: OnPaste(id); break;
+		case Remove: DeleteRows(); break;
+		case RemoveText: DeleteText(); break;
+		case ContinousPrevious: case ContinousNext: OnMakeContinous(id); break;
+		}
+	}else if(sels==2){
+		if(id==Swap){SwapRows(selarr[0],selarr[1],true);}
+		else if(id==FPSFromVideo && hasVideo){OnSetFPSFromVideo();}
+	}else if(sels>1){
+		if(id==Join){OnJoin(event);}
+		else if(id==JoinToFirst || id==JoinToLast){OnJoinToFirst(id);}
+	}
+	else if(id==PasteTranslation && form<SRT && ((TabPanel*)GetParent())->SubsPath!=""){OnPasteTextTl();}
+	else if(id==TranslationDialog && showtl){
 		static TLDialog *tld= new TLDialog(this,this);
 		tld->Show();
 	}
-	else if(id==SubsFromMKV){OnMkvSubs(event);}
-	else if(id==FPSFromVideo){OnSetFPSFromVideo();}
+	else if(id==SubsFromMKV && Kai->GetTab()->VideoName.EndsWith(".mkv")){OnMkvSubs(event);}
+	
 	else if(id==NewFPS){OnSetNewFPS();}
-	else if(id==ContinousPrevious||id==ContinousNext){OnMakeContinous(id);}
 	else if(id>6000){
 		Kai->OnMenuSelected(event);
 	}
-	else if(id>5000){
+	else if(id>5000 && id<5555){
 		int id5000=(id-5000);
 		if(visible & id5000){visible ^= id5000;}
 		else{visible |= id5000;}

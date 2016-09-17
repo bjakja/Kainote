@@ -26,14 +26,14 @@ namespace Auto{
 	}
 
 
-AutoToFile *AutoToFile::laf=NULL;
+	AutoToFile *AutoToFile::laf=NULL;
 
-AutoToFile::~AutoToFile()
+	AutoToFile::~AutoToFile()
 	{
 		////wxLogStatus("auto to file dest");
 	}
 
-void AutoToFile::CheckAllowModify()
+	void AutoToFile::CheckAllowModify()
 	{
 		if (can_modify)
 			return;
@@ -44,7 +44,7 @@ void AutoToFile::CheckAllowModify()
 
 
 
-bool AutoToFile::LineToLua(lua_State *L, int i)
+	bool AutoToFile::LineToLua(lua_State *L, int i)
 	{
 		//AutoToFile *laf = GetObjPointer(L, 1);
 		File *Subs=laf->file;
@@ -63,10 +63,13 @@ bool AutoToFile::LineToLua(lua_State *L, int i)
 			//to jest odczyt wiêc nie kopiujemy
 			SInfo *info=Subs->sinfo[i];
 
+			lua_pushstring(L, "[Script Info]");
+			lua_setfield(L, -2, "section");
+
 			wxString raw=info->Name+": "+info->Val;
 			lua_pushstring(L, raw.mb_str(wxConvUTF8).data());
 			lua_setfield(L, -2, "raw");
-				
+
 			lua_pushstring(L, info->Name.mb_str(wxConvUTF8).data());
 			lua_setfield(L, -2, "key");
 
@@ -81,7 +84,10 @@ bool AutoToFile::LineToLua(lua_State *L, int i)
 			//wxLogStatus("styles %i %i", i-sinfo, dials-sinfo );
 			//to jest odczyt wiêc nie kopiujemy
 			Styles *astyle=Subs->styles[i-sinfo];
-			
+
+			lua_pushstring(L, "[V4+ Styles]");
+			lua_setfield(L, -2, "section");
+
 			wxString raw=astyle->styletext();
 			lua_pushstring(L, raw.mb_str(wxConvUTF8).data());
 			lua_setfield(L, -2, "raw");
@@ -111,7 +117,7 @@ bool AutoToFile::LineToLua(lua_State *L, int i)
 			lua_setfield(L, -2, "underline");
 			lua_pushboolean(L, (int)astyle->StrikeOut);
 			lua_setfield(L, -2, "strikeout");
-			
+
 			lua_pushnumber(L, wxAtoi(astyle->ScaleX));
 			lua_setfield(L, -2, "scale_x");
 			lua_pushnumber(L, wxAtoi(astyle->ScaleY));
@@ -149,14 +155,19 @@ bool AutoToFile::LineToLua(lua_State *L, int i)
 			lua_pushnumber(L, wxAtoi(astyle->Encoding));
 			lua_setfield(L, -2, "encoding");
 
+			set_field(L, "relative_to", 2);
+
 			lua_pushstring(L, "style");
-			
+
 		}
 		else if(i<dials)
 		{
 			//wxLogStatus("dials %i %i", i-styles, dials-styles );
 			//to jest odczyt wiêc nie kopiujemy
 			Dialogue *adial=Subs->dials[i-styles];
+
+			lua_pushstring(L, "[Events]");
+			lua_setfield(L, -2, "section");
 
 			wxString raw(adial->GetRaw());
 
@@ -179,13 +190,13 @@ bool AutoToFile::LineToLua(lua_State *L, int i)
 			lua_pushstring(L, adial->Actor.mb_str(wxConvUTF8).data());
 			lua_setfield(L, -2, "actor");
 
-			lua_pushnumber(L, adial->MarginL);
+			lua_pushnumber(L, (int)adial->MarginL);
 			lua_setfield(L, -2, "margin_l");
-			lua_pushnumber(L, adial->MarginR);
+			lua_pushnumber(L, (int)adial->MarginR);
 			lua_setfield(L, -2, "margin_r");
-			lua_pushnumber(L, adial->MarginV);
+			lua_pushnumber(L, (int)adial->MarginV);
 			lua_setfield(L, -2, "margin_t");
-			lua_pushnumber(L, adial->MarginV);
+			lua_pushnumber(L, (int)adial->MarginV);
 			lua_setfield(L, -2, "margin_b");
 
 			lua_pushstring(L, adial->Effect.mb_str(wxConvUTF8).data());
@@ -193,6 +204,9 @@ bool AutoToFile::LineToLua(lua_State *L, int i)
 
 			lua_pushstring(L, adial->Text.mb_str(wxConvUTF8).data());
 			lua_setfield(L, -2, "text");
+
+			lua_newtable(L);
+			lua_setfield(L, -2, "extra");
 
 			lua_pushstring(L, "dialogue");
 		}
@@ -202,10 +216,10 @@ bool AutoToFile::LineToLua(lua_State *L, int i)
 		return true;
 	}
 
-SubsEntry *AutoToFile::LuaToLine(lua_State *L)
+	SubsEntry *AutoToFile::LuaToLine(lua_State *L)
 	{
 		SubsEntry *e=NULL;
-		
+
 		if (!lua_istable(L, -1)) {
 			lua_pushstring(L, "nie mozna przekonwertowac wartosci ktora nie jest tablica");//nie mo¿na przekonwertowaæ wartoœci która nie jest tablic¹");
 			lua_error(L);
@@ -226,54 +240,54 @@ SubsEntry *AutoToFile::LuaToLine(lua_State *L)
 #define GETSTRING(varname, fieldname, lineclass)		\
 	lua_getfield(L, -1, fieldname);						\
 	if (!lua_isstring(L, -1)) {							\
-		lua_pushstring(L, "Invalid string '" fieldname "' field in '" lineclass "' class subtitle line"); \
-		lua_error(L);									\
-		return e;										\
+	lua_pushstring(L, "Invalid string '" fieldname "' field in '" lineclass "' class subtitle line"); \
+	lua_error(L);									\
+	return e;										\
 	}													\
 	wxString varname (lua_tostring(L, -1), wxConvUTF8);	\
 	lua_pop(L, 1);
 #define GETFLOAT(varname, fieldname, lineclass)			\
 	lua_getfield(L, -1, fieldname);						\
 	if (!lua_isnumber(L, -1)) {							\
-		lua_pushstring(L, "Invalid number '" fieldname "' field in '" lineclass "' class subtitle line"); \
-		lua_error(L);									\
-		return e;										\
+	lua_pushstring(L, "Invalid number '" fieldname "' field in '" lineclass "' class subtitle line"); \
+	lua_error(L);									\
+	return e;										\
 	}													\
 	float varname = lua_tonumber(L, -1);				\
 	lua_pop(L, 1);
 #define GETINT(varname, fieldname, lineclass)			\
 	lua_getfield(L, -1, fieldname);						\
 	if (!lua_isnumber(L, -1)) {							\
-		lua_pushstring(L, "Invalid number '" fieldname "' field in '" lineclass "' class subtitle line"); \
-		lua_error(L);									\
-		return e;										\
+	lua_pushstring(L, "Invalid number '" fieldname "' field in '" lineclass "' class subtitle line"); \
+	lua_error(L);									\
+	return e;										\
 	}													\
 	int varname = lua_tointeger(L, -1);					\
 	lua_pop(L, 1);
 #define GETBOOL(varname, fieldname, lineclass)			\
 	lua_getfield(L, -1, fieldname);						\
 	if (!lua_isboolean(L, -1)) {						\
-		lua_pushstring(L, "Invalid boolean '" fieldname "' field in '" lineclass "' class subtitle line"); \
-		lua_error(L);									\
-		return e;										\
+	lua_pushstring(L, "Invalid boolean '" fieldname "' field in '" lineclass "' class subtitle line"); \
+	lua_error(L);									\
+	return e;										\
 	}													\
 	bool varname = !!lua_toboolean(L, -1);				\
 	lua_pop(L, 1);
 
 		if(e->lclass=="dialogue"){
 			GETBOOL(IsComment, "comment","dialogue")
-			GETINT(Layer, "layer", "dialogue")
-			GETINT(Start, "start_time", "dialogue")
-			GETINT(End, "end_time", "dialogue")
-			GETSTRING(Style, "style", "dialogue")
-			GETSTRING(Actor, "actor", "dialogue")
-			GETINT(MarginL, "margin_l", "dialogue")
-			GETINT(MarginR, "margin_r", "dialogue")
-			GETINT(margt, "margin_t", "dialogue")
-			GETINT(margb, "margin_b", "dialogue")
-			GETSTRING(Effect, "effect", "dialogue")
-			GETSTRING(Text , "text", "dialogue")
-			e->adial=new Dialogue();
+				GETINT(Layer, "layer", "dialogue")
+				GETINT(Start, "start_time", "dialogue")
+				GETINT(End, "end_time", "dialogue")
+				GETSTRING(Style, "style", "dialogue")
+				GETSTRING(Actor, "actor", "dialogue")
+				GETINT(MarginL, "margin_l", "dialogue")
+				GETINT(MarginR, "margin_r", "dialogue")
+				GETINT(margt, "margin_t", "dialogue")
+				//GETINT(margb, "margin_b", "dialogue")
+				GETSTRING(Effect, "effect", "dialogue")
+				GETSTRING(Text , "text", "dialogue")
+				e->adial=new Dialogue();
 			e->adial->IsComment=IsComment;
 			e->adial->Layer=Layer;
 			e->adial->Start=Start;
@@ -282,7 +296,7 @@ SubsEntry *AutoToFile::LuaToLine(lua_State *L)
 			e->adial->Actor=Actor;
 			e->adial->MarginL=MarginL;
 			e->adial->MarginR=MarginR;
-			e->adial->MarginV=(margt>margb)?margt : margb;
+			e->adial->MarginV=margt;
 			e->adial->Effect=Effect;
 			e->adial->Text=Text;
 			e->adial->State=1;
@@ -291,30 +305,30 @@ SubsEntry *AutoToFile::LuaToLine(lua_State *L)
 		else if(e->lclass=="style"){
 
 			GETSTRING(name, "name", "style")
-			GETSTRING(fontname, "fontname", "style")
-			GETFLOAT(fontsize, "fontsize", "style")
-			GETSTRING(color1, "color1", "style")
-			GETSTRING(color2, "color2", "style")
-			GETSTRING(color3, "color3", "style")
-			GETSTRING(color4, "color4", "style")
-			GETBOOL(bold, "bold", "style")
-			GETBOOL(italic, "italic", "style")
-			GETBOOL(underline, "underline", "style")
-			GETBOOL(strikeout, "strikeout", "style")
-			GETFLOAT(scale_x, "scale_x", "style")
-			GETFLOAT(scale_y, "scale_y", "style")
-			GETFLOAT(spacing, "spacing", "style")
-			GETFLOAT(angle, "angle", "style")
-			GETINT(borderstyle, "borderstyle", "style")
-			GETFLOAT(outline, "outline", "style")
-			GETFLOAT(shadow, "shadow", "style")
-			GETINT(align, "align", "style")
-			GETINT(margin_l, "margin_l", "style")
-			GETINT(margin_r, "margin_r", "style")
-			GETINT(margin_t, "margin_t", "style")
-			GETINT(margin_b, "margin_b", "style")
-			GETINT(encoding, "encoding", "style")
-			e->astyle=new Styles();
+				GETSTRING(fontname, "fontname", "style")
+				GETFLOAT(fontsize, "fontsize", "style")
+				GETSTRING(color1, "color1", "style")
+				GETSTRING(color2, "color2", "style")
+				GETSTRING(color3, "color3", "style")
+				GETSTRING(color4, "color4", "style")
+				GETBOOL(bold, "bold", "style")
+				GETBOOL(italic, "italic", "style")
+				GETBOOL(underline, "underline", "style")
+				GETBOOL(strikeout, "strikeout", "style")
+				GETFLOAT(scale_x, "scale_x", "style")
+				GETFLOAT(scale_y, "scale_y", "style")
+				GETFLOAT(spacing, "spacing", "style")
+				GETFLOAT(angle, "angle", "style")
+				GETINT(borderstyle, "borderstyle", "style")
+				GETFLOAT(outline, "outline", "style")
+				GETFLOAT(shadow, "shadow", "style")
+				GETINT(align, "align", "style")
+				GETINT(margin_l, "margin_l", "style")
+				GETINT(margin_r, "margin_r", "style")
+				GETINT(margin_t, "margin_t", "style")
+				GETINT(margin_b, "margin_b", "style")
+				GETINT(encoding, "encoding", "style")
+				e->astyle=new Styles();
 			e->astyle->Name = name;
 			e->astyle->Fontname = fontname;
 			e->astyle->Fontsize ="";
@@ -352,95 +366,99 @@ SubsEntry *AutoToFile::LuaToLine(lua_State *L)
 			e->astyle->Encoding = "";
 			e->astyle->Encoding<<encoding;
 
-			}else if(e->lclass=="info"){
+		}else if(e->lclass=="info"){
 
-				GETSTRING(key, "key","info");
-				GETSTRING(value, "value","info");
-				e->info=new SInfo();
-				e->info->Name=key;
-				e->info->Val=value;
-			}
-		#undef GETSTRING
-		#undef GETFLOAT
-		#undef GETINT
-		#undef GETBOOL
-		
+			GETSTRING(key, "key","info");
+			GETSTRING(value, "value","info");
+			e->info=new SInfo();
+			e->info->Name=key;
+			e->info->Val=value;
+		}
+#undef GETSTRING
+#undef GETFLOAT
+#undef GETINT
+#undef GETBOOL
+
 		return e;
 	}
 
-	
 
-int AutoToFile::ObjectIndexRead(lua_State *L)
+
+	int AutoToFile::ObjectIndexRead(lua_State *L)
 	{
 		File *Subs=laf->file;
 		switch (lua_type(L, 2)) {
 
-			case LUA_TNUMBER:
-				{
+		case LUA_TNUMBER:
+			{
 
-					// get requested index
-					int reqid = lua_tointeger(L, 2);
-					if(laf->LineToLua(L,reqid-1)){
-						return 1;}
-					else{
-						return 0;}
-				}
+				// get requested index
+				int reqid = lua_tointeger(L, 2);
+				if(laf->LineToLua(L,reqid-1)){
+					return 1;}
+				else{
+					return 0;}
+			}
 
-			case LUA_TSTRING:
-				{
-					// either return n or a function doing further stuff
-					const char *idx = lua_tostring(L, 2);
+		case LUA_TSTRING:
+			{
+				// either return n or a function doing further stuff
+				const char *idx = lua_tostring(L, 2);
 
-					if (strcmp(idx, "n") == 0) {
-						// get number of items
-						lua_pushnumber(L, Subs->dials.size()+Subs->sinfo.size()+Subs->styles.size());
-						return 1;
+				if (strcmp(idx, "n") == 0) {
+					// get number of items
+					lua_pushnumber(L, Subs->dials.size()+Subs->sinfo.size()+Subs->styles.size());
+					return 1;
 
-					} else if (strcmp(idx, "delete") == 0) {
-						// make a "delete" function
-						lua_pushvalue(L, 1);
-						lua_pushcclosure(L, ObjectDelete, 1);
-						return 1;
+				} else if (strcmp(idx, "delete") == 0) {
+					// make a "delete" function
+					lua_pushvalue(L, 1);
+					lua_pushcclosure(L, ObjectDelete, 1);
+					return 1;
 
-					} else if (strcmp(idx, "deleterange") == 0) {
-						// make a "deleterange" function
-						lua_pushvalue(L, 1);
-						lua_pushcclosure(L, ObjectDeleteRange, 1);
-						return 1;
+				} else if (strcmp(idx, "deleterange") == 0) {
+					// make a "deleterange" function
+					lua_pushvalue(L, 1);
+					lua_pushcclosure(L, ObjectDeleteRange, 1);
+					return 1;
 
-					} else if (strcmp(idx, "insert") == 0) {
-						// make an "insert" function
-						lua_pushvalue(L, 1);
-						lua_pushcclosure(L, ObjectInsert, 1);
-						return 1;
+				} else if (strcmp(idx, "insert") == 0) {
+					// make an "insert" function
+					lua_pushvalue(L, 1);
+					lua_pushcclosure(L, ObjectInsert, 1);
+					return 1;
 
-					} else if (strcmp(idx, "append") == 0) {
-						// make an "append" function
-						lua_pushvalue(L, 1);
-						lua_pushcclosure(L, ObjectAppend, 1);
-						return 1;
+				} else if (strcmp(idx, "append") == 0) {
+					// make an "append" function
+					lua_pushvalue(L, 1);
+					lua_pushcclosure(L, ObjectAppend, 1);
+					return 1;
 
-					} else if (strcmp(idx, "lengths") == 0) {
-						// make an "append" function
-						lua_pushvalue(L, 1);
-						lua_pushcclosure(L, ObjectLens, 1);
-						return 1;
+				} else if (strcmp(idx, "lengths") == 0) {
+					// make an "append" function
+					lua_pushvalue(L, 1);
+					lua_pushcclosure(L, ObjectLens, 1);
+					return 1;
 
-					} else {
-						// idiot
-						lua_pushfstring(L, "Nieodpowiedni obiekt indeksu napisow: '%s'", idx);
-						lua_error(L);
-						// should never return
-					}
-					assert(false);
-				}
-
-			default:
-				{
-					// crap, user is stupid!
-					lua_pushfstring(L, "Indeks napisow typu '%s'.", lua_typename(L, lua_type(L, 2)));
+				}else if (strcmp(idx, "script_resolution") == 0) {
+					lua_pushvalue(L, 1);
+					lua_pushcclosure(L, LuaGetScriptResolution, 1);
+					return 1;
+				} else {
+					// idiot
+					lua_pushfstring(L, "Nieodpowiedni obiekt indeksu napisow: '%s'", idx);
 					lua_error(L);
+					// should never return
 				}
+				assert(false);
+			}
+
+		default:
+			{
+				// crap, user is stupid!
+				lua_pushfstring(L, "Indeks napisow typu '%s'.", lua_typename(L, lua_type(L, 2)));
+				lua_error(L);
+			}
 		}
 
 		assert(false);
@@ -493,6 +511,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 				int styles=sinfo+Subs->styles.size();
 				int dials=styles+Subs->dials.size();
 				if(i<0 || i>=dials){
+					SAFE_DELETE(e);
 					lua_pushstring(L, "Out of range");//"Próbujesz zmodyfikowaæ linijkê o indeksie przekraczaj¹cym wielkoœæ napisów");
 					lua_error(L);
 					return 0;}
@@ -501,31 +520,32 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 					SInfo *inf=e->info->Copy();
 					Subs->dsinfo.push_back(inf);
 					Subs->sinfo[i]=inf;
-					}
+				}
 				else if(i<styles && e->lclass=="style")
-					{
+				{
 					//wxLogStatus("Styles nadpisanie %i, %i", i, styles);
 					Styles *styl = e->astyle->Copy();
 					Subs->dstyles.push_back(styl);
 					Subs->styles[i-sinfo]=styl;
 					//wxLogStatus("style");
-					}
+				}
 				else if(i<dials && e->lclass=="dialogue")
-					{
+				{
 					//wxLogStatus("Dials nadpisanie %i, %i", i, dials);
 					Dialogue *dial=e->adial->Copy();
 					Subs->ddials.push_back(dial);
 					Subs->dials[i-styles]=dial;
 					//wxLogStatus(dial->GetRaw());
-					}
+				}
 				else
-					{
+				{
 					wxString fclass=(e->lclass=="info")? "info" : (e->lclass=="style")? "styli" : "dialogów";
 					wxString sclass=(i<sinfo)? "info" : (i<styles)? "styli" : "dialogów";
 					wxString all = _("Próbujesz wstawiæ linie klasy ") + fclass + _(" w przedzia³ klasy ") + sclass;
+					SAFE_DELETE(e);
 					lua_pushstring(L,all.mb_str(wxConvUTF8).data());
 					lua_error(L);
-					}
+				}
 				SAFE_DELETE(e);
 				return 0;
 
@@ -563,41 +583,47 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 	{
 		File *Subs=laf->file;
 		laf->CheckAllowModify();
-		
+
 		// get number of items to delete
 		int itemcount = lua_gettop(L);
 		//wxLogStatus("itemcount %i", itemcount);
 		std::vector<int> ids;
 		//ids.reserve(itemcount);
-		
+
 		//dorobiæ wstawianie do tablic spellerrors i charspersec podczas rysowania
 		int sinfo=Subs->sinfo.size();
 		int styles=sinfo+Subs->styles.size();
 		int dials=styles+Subs->dials.size();
 		// sort the item id's so we can delete from last to first to preserve original numbering
-		while (itemcount > 0) {
-			if (!lua_isnumber(L, itemcount)) {
-				lua_pushstring(L, "Nonnumeric");//Próbujesz usun¹æ nienumeryczn¹ linijkê z indeksu napisów");
-				lua_error(L);
-				return 0;
+		if (itemcount == 1 && lua_istable(L, 1)) {
+			lua_pushvalue(L, 1);
+			lua_for_each(L, [&] {
+				int n = check_uint(L, -1);
+				argcheck(L, n > 0 && n <= dials, 1, "Out of range line index");
+				ids.push_back(n - 1);
+			});
+		}else{
+			while (itemcount > 0) {
+				if (!lua_isnumber(L, itemcount)) {
+					wxString err("Próbujesz usun¹æ nienumeryczn¹ linijkê z indeksu napisów");
+					lua_pushstring(L, err.ToUTF8().data());//Próbujesz usun¹æ nienumeryczn¹ linijkê z indeksu napisów");
+					lua_error(L);
+					return 0;
+				}
+				int n = lua_tointeger(L, itemcount);
+				argcheck(L, n > 0 && n <= dials, itemcount, "Out of range line index");
+				ids.push_back(n - 1); // make C-style line ids
+				--itemcount;
 			}
-			int n = lua_tointeger(L, itemcount);
-			if (n > dials || n < 1) {
-				lua_pushstring(L, "Out of range");//Próbujesz usun¹æ liniê która przekracza iloœæ linii napisów");
-				lua_error(L);
-				return 0;
-			}
-			ids.push_back(n-1); // make C-style line ids
-			--itemcount;
 		}
 		std::sort(ids.begin(), ids.end());
-		
+
 		//for(size_t i=0;i<ids.size();i++)
-			//{
-			//kkk<<ids[i]<<", ";
-			//}
+		//{
+		//kkk<<ids[i]<<", ";
+		//}
 		//wxLogStatus(kkk);
-		
+
 
 		for(int i= ids.size()-1 ; i>=0; i--)
 		{
@@ -614,7 +640,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 				Subs->dials.erase(Subs->dials.begin()+(ids[i]-styles));
 			}
 		}
-		 
+
 		return 0;
 	}
 
@@ -623,7 +649,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 		File *Subs=laf->file;
 
 		laf->CheckAllowModify();
-		
+
 		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2)) {
 			lua_pushstring(L, "Nienumeryczny argument uzyty w funkcji DeleteRange");
 			lua_error(L);
@@ -641,7 +667,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 
 		if (b < a) return 0;
 		a--;b--;
-		
+
 
 
 		for(int i=b; i >= a; i--){
@@ -665,7 +691,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 		File *Subs=laf->file;
 
 		laf->CheckAllowModify();
-		
+
 		int n = lua_gettop(L);
 
 		for (int i = 1; i <= n; i++) {
@@ -701,7 +727,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 		File *Subs=laf->file;
 
 		laf->CheckAllowModify();
-		
+
 		if (!lua_isnumber(L, 1)) {
 			lua_pushstring(L, "Nie mozna wstawic nienumerycznego indeksu");
 			lua_error(L);
@@ -711,7 +737,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 		int n = lua_gettop(L);
 
 		int start = int(lua_tonumber(L, 1)-1);
-		
+
 		if(start<0 || start>(int)(Subs->sinfo.size()+Subs->styles.size()+Subs->dials.size()))
 		{
 			lua_pushstring(L, "Indeks przekracza wielkosc tablicy z napiami");
@@ -729,7 +755,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 			int styles=sinfo+stylsize;
 			int dialsize=Subs->dials.size();
 			int dials=styles+dialsize;
-			
+
 			if(e->lclass=="info")
 			{
 				SInfo *inf=e->info->Copy();
@@ -755,7 +781,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 				Subs->ddials.push_back(dial);
 			}
 			else{
-				
+				SAFE_DELETE(e);
 				wxString sclass= "Probujesz wstawiæ linijkê nieznanej klasy";
 				lua_pushstring(L, sclass.mb_str(wxConvUTF8).data());
 				lua_error(L);
@@ -807,7 +833,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 		wxString rest;
 		//wxString deb;
 		wxRegEx reg(_T("\\{[^\\{]*\\}"),wxRE_ADVANCED);
-		
+
 		while (ktok.HasMoreTokens()) {
 			wxString tekst = ktok.NextToken();
 			//deb<<tekst<<"@";
@@ -819,17 +845,17 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 						kdur*=10;
 						valid=true;
 
-					}else{
-						ktext << "\\" << tekst.BeforeFirst('}') <<"}";
-						if(tekst.Find('}') != -1){tekst="}"+tekst.AfterFirst('}');}
-					}
+				}else{
+					ktext << "\\" << tekst.BeforeFirst('}') <<"}";
+					if(tekst.Find('}') != -1){tekst="}"+tekst.AfterFirst('}');}
+				}
 
 				if(tekst.Find('}') != -1){ 
 					if(tekst.Find('{',true) != -1){ tekst=tekst.BeforeLast('{');}else{inside=false;}
 					if(tekst.StartsWith("}")){tekst=tekst.Mid(1);}
 					ktext+=tekst;
 					if(ktext.StartsWith("\\")){ktext.Prepend("{");}
-					
+
 					ktext_stripped = ktext;
 					reg.ReplaceAll(&ktext_stripped,_T(""));
 					//wxLogMessage(ktext_stripped+", "+ktext);
@@ -849,7 +875,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 					ktext="";
 				}
 
-				
+
 			}
 
 			else if(tekst.Find('{') != -1){
@@ -881,7 +907,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 		//wxLogStatus("text "+e->adial->Text+" stripped "+ktext_stripped+" %i", kcount-1);
 		//wxLogStatus(deb);
 		SAFE_DELETE(e);
-		
+
 		return 1;
 	}
 
@@ -922,7 +948,7 @@ int AutoToFile::ObjectIndexRead(lua_State *L)
 		L=_L;
 		can_modify=_can_modify;
 		file =subsfile;
-	// prepare userdata object
+		// prepare userdata object
 		*static_cast<AutoToFile**>(lua_newuserdata(L, sizeof(AutoToFile*))) = this;
 		laf=this;
 

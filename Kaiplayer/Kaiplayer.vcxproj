@@ -89,7 +89,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>I:\Programy\zlib-1.2.8;H:\Programy\freetype-2.6\include;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses;I:\Programy\WX 2.9.4\include;I:\Programy\WX 2.9.4\lib\vc_lib\mswu;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;I:\Kainote\Thirdparty\luajit\include;I:\Kainote\Thirdparty\luabins\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;I:\Kainote\Thirdparty\icu\include;I:\Kainote\Thirdparty\boost_1_61_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>I:\Programy\zlib-1.2.8;H:\Programy\freetype-2.6\include;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses;I:\Programy\WX 2.9.4\include;I:\Programy\WX 2.9.4\lib\vc_lib\mswu;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;I:\Kainote\Thirdparty\luajit\include;I:\Kainote\Thirdparty\luabins\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;I:\Kainote\Thirdparty\icu\source\common;I:\Kainote\Thirdparty\boost_1_61_0;I:\Kainote\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -104,15 +104,15 @@
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>wxmsw29u_core.lib;wxbase29u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;odbc32.lib;odbccp32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;freetype26MT.lib;strmbase.lib;zlibwapi.lib;Icu.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>I:\Programy\zlib-1.2.8\contrib\vstudio\vc10\x86\ZlibDllRelease;H:\Programy\freetype-2.6\objs\vc2010\Win32;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses\Release;I:\Programy\WX 2.9.4\lib\vc_lib;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;I:\Kainote\Thirdparty\luabins\LuaBins\Release;I:\Kainote\Thirdparty\luajit\LuaJit\Release;C:\Program Files\Microsoft SDKs\Windows\v6.1\Lib;I:\Kainote\Thirdparty\boost_1_61_0\boost\Release;I:\Kainote\Thirdparty\icu\Icu\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wxmsw29u_core.lib;wxbase29u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;odbc32.lib;odbccp32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;freetype26MT.lib;strmbase.lib;zlibwapi.lib;Boost.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>I:\Programy\zlib-1.2.8\contrib\vstudio\vc10\x86\ZlibDllRelease;H:\Programy\freetype-2.6\objs\vc2010\Win32;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses\Release;I:\Programy\WX 2.9.4\lib\vc_lib;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;I:\Kainote\Thirdparty\luabins\LuaBins\Release;I:\Kainote\Thirdparty\luajit\LuaJit\Release;C:\Program Files\Microsoft SDKs\Windows\v6.1\Lib;I:\Kainote\Thirdparty\boost_1_61_0\boost\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc110-mt-1_61.lib;libboost_regex-vc110-mt-1_61.lib;libboost_filesystem-vc110-mt-1_61.lib;libboost_system-vc110-mt-1_61.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>

@@ -11,7 +11,12 @@
 
 #include "VideoFfmpeg.h"
 
+//#define byvertices 5
+#define DXVA 77
 
+#if DXVA
+#include <dxva2api.h>
+#endif
 
 
 #ifndef SAFE_DELETE
@@ -40,7 +45,7 @@
 #define HRN(what,err) if(FAILED(what)) {wxLogStatus(err); return;}
 #endif
 
-//#define byvertices 5
+
 
 typedef void csri_inst;
 typedef void csri_rend;
@@ -160,7 +165,12 @@ class VideoRend : public wxWindow
 		LPDIRECT3DVERTEXBUFFER9 vertex;
 		LPDIRECT3DTEXTURE9 texture;
 #endif
-
+#if DXVA
+		IDirectXVideoProcessorService *dxvaService;
+		IDirectXVideoProcessor *dxvaProcessor;
+		DXVA2_VideoDesc videoDesc;
+		GUID dxvaGuid;
+#endif
 		HWND hwnd;
 		bool devicelost;
 		bool playblock;

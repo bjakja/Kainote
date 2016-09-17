@@ -75,7 +75,7 @@ class LuaDialogControl {
 		bool IsCancelled(){return (button_pushed<0);};
 
 		// ScriptDialog implementation
-		wxDialog* CreateWindow(wxWindow *parent);
+		wxDialog* CreateWindow(wxWindow *parent, wxString name);
 		wxString Serialise();
 		void Unserialise(const wxString &serialised);
 	};

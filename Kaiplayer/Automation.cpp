@@ -103,10 +103,11 @@ namespace Auto{
 		//#else
 		//wxClipboard &cb = *wxTheClipboard;
 		//#endif
-		if (wxTheClipboard->Open()) {
-			succeeded = wxTheClipboard->SetData(new wxTextDataObject(wxString::FromUTF8(str)));
-			wxTheClipboard->Close();
-			wxTheClipboard->Flush();
+		wxClipboard *cb = wxClipboard::Get();
+		if (cb->Open()) {
+			succeeded = cb->SetData(new wxTextDataObject(wxString::FromUTF8(str)));
+			cb->Close();
+			cb->Flush();
 		}
 
 		return succeeded;
@@ -385,7 +386,7 @@ namespace Auto{
 		if (!Install(L, include_path)) {
 			description = get_string_or_default(L, 1);
 			lua_pop(L, 1);
-			lua_gc(L, LUA_GCCOLLECT, 0);
+			//lua_gc(L, LUA_GCCOLLECT, 0);
 			return;
 		}
 		stackcheck.check_stack(0);
@@ -429,7 +430,7 @@ namespace Auto{
 		if (!LoadFile(L, GetFilename())) {
 			description = get_string_or_default(L, 1);
 			lua_pop(L, 1);
-			lua_gc(L, LUA_GCCOLLECT, 0);
+			//lua_gc(L, LUA_GCCOLLECT, 0);
 			return;
 		}
 		stackcheck.check_stack(1);
@@ -445,7 +446,7 @@ namespace Auto{
 			description = wxString::Format("B³¹d inicjalizacji skryptu Lua \"%s\":\n\n%s", GetPrettyFilename(), get_string_or_default(L, -1));
 			//lua_pop(L, 1);
 			lua_pop(L, 2); // error + error handler
-			lua_gc(L, LUA_GCCOLLECT, 0);
+			//lua_gc(L, LUA_GCCOLLECT, 0);
 			return;
 		}
 		lua_pop(L, 1); // error handler
@@ -455,7 +456,7 @@ namespace Auto{
 		if (lua_isnumber(L, -1) && lua_tointeger(L, -1) == 3) {
 			lua_pop(L, 1); // just to avoid tripping the stackcheck in debug
 			description = "Attempted to load an Automation 3 script as an Automation 4 Lua script. Automation 3 is no longer supported.";
-			lua_gc(L, LUA_GCCOLLECT, 0);
+			//lua_gc(L, LUA_GCCOLLECT, 0);
 			return;
 		}
 
@@ -471,7 +472,7 @@ namespace Auto{
 		// if we got this far, the script should be ready
 
 		//loaded = true;
-		lua_gc(L, LUA_GCCOLLECT, 0);
+		//lua_gc(L, LUA_GCCOLLECT, 0);
 	}
 
 	void LuaScript::Reload() { Create(); }
@@ -523,31 +524,38 @@ namespace Auto{
 	int LuaScript::LuaInclude(lua_State *L)
 	{
 		const LuaScript *s = GetScriptObject(L);
-
-		const wxString filename(check_string(L, 1));
-		wxString filepath;
+		//no i trzeba wskaŸniki stringów, z powodu braku zwalniania owych stringów przy b³êdzie skryptu.
+		const wxString *filename(new wxString(check_string(L, 1)));
+		wxString *filepath=new wxString();
 		bool fullpath=false;
 		// Relative or absolute path
-		if (filename.find("\\")!=-1 || filename.find("/")!=-1){
-			filepath = filename;//s->GetFilename().BeforeLast('//') + filename;
+		if (filename->find("\\")!=-1 || filename->find("/")!=-1){
+			*filepath = *filename;//s->GetFilename().BeforeLast('//') + filename;
 			fullpath=true;
 		}
-		if (!wxFileExists(filepath)) { // Plain filename
-			if(fullpath){filepath=filepath.AfterLast('\\');}
+		if (!wxFileExists(*filepath)) { // Plain filename
+			if(fullpath){*filepath=filepath->AfterLast('\\');}
 			for (auto const& dir : s->include_path) {
 				//wxLogStatus("dir: \""+dir+"\" name: \""+filename);
-				filepath = dir + filename;
-				if (wxFileExists(filepath))
+				*filepath = dir + *filename;
+				if (wxFileExists(*filepath))
 					break;
 			}
 		}
 
-		if (!wxFileExists(filepath))
-			return error(L, "Lua include not found: %s", filepath.mb_str(wxConvUTF8).data());
-
-		if (!LoadFile(L, filepath))
-			return error(L, "Error loading Lua include \"%s\":\n%s", filepath.mb_str(wxConvUTF8).data(), check_string(L, 1).mb_str(wxConvUTF8).data());
-
+		if (!wxFileExists(*filepath)){
+			
+			lua_pushfstring(L, "Nie znaleziono Lua include: %s", filepath->mb_str(wxConvUTF8).data());
+			delete filename; delete filepath;
+			//int res = error(L, "Lua include not found");// error(L, "Lua include not found: %s", filepath->mb_str(wxConvUTF8).data());
+			return lua_error(L);
+		}
+		if (!LoadFile(L, *filepath)){
+			lua_pushfstring(L, "Error loading Lua include \"%s\":\n%s", filepath->mb_str(wxConvUTF8).data(), check_string(L, 1).mb_str(wxConvUTF8).data());
+			delete filename; delete filepath;
+			return lua_error(L);//error(L, "Error loading Lua include \"%s\":\n%s", filepath->mb_str(wxConvUTF8).data(), check_string(L, 1).mb_str(wxConvUTF8).data());
+		}
+		delete filename; delete filepath;
 		int pretop = lua_gettop(L) - 1; // don't count the function value itself
 		lua_call(L, 0, LUA_MULTRET);
 		return lua_gettop(L) - pretop;
@@ -616,7 +624,7 @@ namespace Auto{
 		lua_gc(L, LUA_GCCOLLECT, 0);
 		if(ps->Log=="" && !hasMessage){ps->lpd->closedialog=true;}else{ps->lpd->finished=true;}
 
-		wxLogStatus("failed %i and debug out \'"+ps->Log+"\'", failed);
+		//wxLogStatus("failed %i and debug out \'"+ps->Log+"\'", failed);
 		
 		if (failed){ return (wxThread::ExitCode) 1;}
 		return 0;
@@ -1133,21 +1141,11 @@ namespace Auto{
 		for(auto script : Scripts){
 			if(script->CheckLastModified(true)){script->Reload();}
 			wxMenu *submenu=new wxMenu();
-			submenu->Append(start,_("Edytuj"),_("Edytuj"));
-			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-				Automation::OnEdit(script->GetFilename());	
-			}, start);
-			start++;
-			submenu->Append(start,_("Odœwie¿"),_("Odœwie¿"));
-			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-				script->Reload();
-			}, start);
-			start++;
 			int j=0;
 			auto macros = script->GetMacros();
 			//wxLogStatus("size %i", macros.size());
 			for(auto macro : macros){
-				wxString text; text<<"Script"<<i<<"-"<<j;
+				wxString text; text<<"Script "<<script->GetFilename()<<"-"<<j;
 				Hkeys.SetAccMenu(submenu, new wxMenuItem(0,start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 					if(wxGetKeyState(WXK_SHIFT)){
@@ -1167,12 +1165,7 @@ namespace Auto{
 				start++;
 				j++;
 			}
-			(*bar)->Append(-1, script->GetName(), submenu,script->GetDescription());
-			i++;
-		}
-		for(auto script : ASSScripts){
-			if(script->CheckLastModified(true)){script->Reload();}
-			wxMenu *submenu=new wxMenu();
+			submenu->AppendSeparator();
 			submenu->Append(start,_("Edytuj"),_("Edytuj"));
 			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 				Automation::OnEdit(script->GetFilename());	
@@ -1183,11 +1176,18 @@ namespace Auto{
 				script->Reload();
 			}, start);
 			start++;
+			(*bar)->Append(-1, script->GetName(), submenu,script->GetDescription());
+			//if(i%20==19){(*bar)->Break();}
+			i++;
+		}
+		for(auto script : ASSScripts){
+			if(script->CheckLastModified(true)){script->Reload();}
+			wxMenu *submenu=new wxMenu();
 			int j=0;
 			auto macros = script->GetMacros();
 			//wxLogStatus("size %i", macros.size());
 			for(auto macro : macros){
-				wxString text; text<<"Script"<<i<<"-"<<j;
+				wxString text; text<<"Script "<<script->GetFilename()<<"-"<<j;
 				Hkeys.SetAccMenu(submenu, new wxMenuItem(0,start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 					if(wxGetKeyState(WXK_SHIFT)){
@@ -1200,12 +1200,24 @@ namespace Auto{
 							wxAcceleratorEntry entry;
 							item->SetAccel(&entry);
 						}
-					}else{macro->RunScript();}	
+					}else{if(script->CheckLastModified(true)){script->Reload();}macro->RunScript();}	
 				}, start);
 				start++;
 				j++;
 			}
+			submenu->AppendSeparator();
+			submenu->Append(start,_("Edytuj"),_("Edytuj"));
+			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+				Automation::OnEdit(script->GetFilename());	
+			}, start);
+			start++;
+			submenu->Append(start,_("Odœwie¿"),_("Odœwie¿"));
+			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+				script->Reload();
+			}, start);
+			start++;
 			(*bar)->Append(-1, script->GetName(), submenu,script->GetDescription());
+			//if(i%20==19){(*bar)->Break();}
 			i++;
 		}
 		

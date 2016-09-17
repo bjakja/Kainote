@@ -55,6 +55,7 @@ class findreplace: public wxDialog
 		void OnStylesWin(wxCommandEvent& event);
 		void OnSelections(wxCommandEvent& event);
 		void OnStylesWin1(wxCommandEvent& event);
+		void OnSetFocus(wxActivateEvent& event);
 		void Reset();
 		bool repl;
 	private:
@@ -67,6 +68,7 @@ class findreplace: public wxDialog
         bool fnext;
 		
 		bool fromstart;
+		bool hasFocus;
         void Find();
 		
 		void OnReplaceAll(wxCommandEvent& event);

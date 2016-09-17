@@ -16,6 +16,7 @@
 
 
 #include "AutomationUtils.h"
+//#include "Automation.h"
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
@@ -105,7 +106,7 @@ namespace Auto{
 		if (!CopyFile(from.wc_str(), to.wc_str(), false)) {
 			switch (GetLastError()) {
 			case ERROR_FILE_NOT_FOUND:
-				throw wxString("File not found: "+from+".");
+				throw wxString("File not found: "+ from +".");
 			case ERROR_ACCESS_DENIED:
 				throw wxString("Could not overwrite " + to+".");
 			default:
@@ -240,18 +241,15 @@ namespace Auto{
 	}
 
 	void dir_close(DirectoryIterator &it) {
-		wxLogStatus(" close iterator %s", it.value.c_str());
 		it = DirectoryIterator();
 	}
 
 	void dir_free(DirectoryIterator *it) {
-		wxLogStatus(" freed %s", it->value.c_str());
 		delete it;
 	}
 
 	DirectoryIterator *dir_new(const char *path, char **err) {
 		return wrap(err, [=]{
-			wxLogStatus(" new iterator %s", path);
 			return new DirectoryIterator(path, "");
 		});
 	}

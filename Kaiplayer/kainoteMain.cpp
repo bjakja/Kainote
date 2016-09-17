@@ -72,6 +72,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	//AppendRecent();
 	AppendBitmap(FileMenu,RecentSubs, _("Ostatnio otwarte napisy"), _("Ostatnio otwarte napisy"),wxBITMAP_PNG("recentsubs"),true, SubsRecMenu);
 	AppendBitmap(FileMenu,RemoveSubs, _("Usuń napisy z edytora"), _("Usuń napisy z edytora"),wxBITMAP_PNG("close"));
+	FileMenu->Append(9989,"Pokaż / Ukryj okno logów");
 	AppendBitmap(FileMenu,Settings, _("&Ustawienia"), _("Ustawienia programu"),wxBITMAP_PNG("SETTINGS"));
 	AppendBitmap(FileMenu,Quit, _("&Wyjście\tAlt-F4"), _("Zakończ działanie programu"),wxBITMAP_PNG("exit"));
 	MenuBar->Append(FileMenu, _("&Plik"));
@@ -201,6 +202,14 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(wxEVT_MENU_OPEN,(wxObjectEventFunction)&kainoteFrame::OnMenuOpened);
 	Connect(wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&kainoteFrame::OnClose1);
 	Connect(30000,30059,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnRecent);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
+		if(!mylog){
+			mylog=new wxLogWindow(this, "Logi",true, false);
+			mylog->PassMessages(true);
+		}else{
+			delete mylog; mylog=NULL;
+		}
+	},9989);
 	//Connect(30100,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnRunScript);
 	//Connect(30100,30200,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuClick);
 	Connect(SnapWithStart,SnapWithEnd,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
@@ -348,7 +357,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		ss->Choice1->SetSelection(chc);
 		ss->LoadAssStyles();
 		ss->Show();
-	}else if(id==FontCollector){
+	}else if(id==FontCollector && pan->Grid1->form<SRT){
 		FontCollectorDialog fcd(this);
 	}else if(id>=CrossPositioner && id<= MoveAll){
 		VideoCtrl *vb=pan->Video;
@@ -710,7 +719,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 			}
 		}
 
-		if(pan->Video->GetState()!=None&&!found){
+		if(pan->Video->GetState()!=None && !found){
 			bool isgood=pan->Video->OpenSubs((pan->edytor)? pan->Grid1->SaveText() : 0);
 			if(!isgood){wxMessageBox(_("Otwieranie napisów nie powiodło się"), "Uwaga");}
 		}
@@ -719,11 +728,11 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 
 		Label();
 
-		if(!pan->edytor&&!fulls&&!pan->Video->isfullskreen){HideEditor();}
+		if(!pan->edytor && !fulls && !pan->Video->isfullskreen){HideEditor();}
 		if(!found){pan->CTime->Contents();UpdateToolbar();return true;}
 	}
 
-	wxString fnname=(found&&issubs)?fntmp:filename;
+	wxString fnname=(found && issubs)?fntmp:filename;
 
 	bool isload=pan->Video->Load(fnname,pan->Grid1->SaveText(),fulls);
 

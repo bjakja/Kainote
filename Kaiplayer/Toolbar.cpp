@@ -267,8 +267,8 @@ void KaiToolbar::OnSize(wxSizeEvent &evt)
 	int maxxwh=(vertical)? w : h;
 	if(maxxwh!=wh){
 		SetMinSize(wxSize(wh,-1));
-		//kainoteApp *Kai=((kainoteApp*)wxTheApp);
-		//Kai->Frame->Layout();
+		kainoteFrame *Kai= (kainoteFrame*)GetParent();
+		Kai->Layout();
 	}
 	
 	Refresh(false);

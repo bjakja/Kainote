@@ -24,7 +24,7 @@ MacrosDialog::MacrosDialog(wxWindow *parent, int _script)
 
 	ScriptsDialog *SD=(ScriptsDialog*)parent;
 	kainoteFrame *Kai=(kainoteFrame*)GetGrandParent();
-	std::vector<Auto::LuaMacro *> macros=Kai->Auto->Scripts[script]->Macros;
+	std::vector<Auto::Command *> macros= Kai->Auto->Scripts[script]->GetMacros();
 	wxArrayInt sels=Kai->GetTab()->Grid1->GetSels();
 	height=(macros.size()+1)*fh;
 	SetClientSize(320,height);
@@ -273,6 +273,7 @@ ScriptsDialog::ScriptsDialog(kainoteFrame *_Kai)
 
 	SetSizerAndFit(main);
 	SetDropTarget(new DragScripts(Kai));
+	AddFromSubs();
 }
 
 ScriptsDialog::~ScriptsDialog()
