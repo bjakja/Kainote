@@ -2299,13 +2299,17 @@ wxString *SubsGrid::SaveText()
 	return txt;
 }
 
-wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible)
+wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible, bool Selections)
 {
 	TabPanel *pan=(TabPanel*)GetParent();
 	int _time=pan->Video->Tell();
 	wxString *txt=new wxString();
 
-	wxArrayInt Lines;
+	(*txt)<<"[Script Info]\r\n"<<GetSInfos(false);
+	(*txt)<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
+	(*txt)<<GetStyles(false);
+	(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
+
 
 	if(_time>=GetDial(Edit->ebrow)->Start.mstime&&_time <= GetDial(Edit->ebrow)->End.mstime)
 	{
@@ -2314,41 +2318,34 @@ wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible)
 	}else{
 		*visible=false;
 	}
-
-
+	wxArrayInt sels = GetSels();
+	int jj=0;
+	int size = sels.size();
+	bool hasLines=false;
 	for(int i=0; i<GetCount(); i++){
 		Dialogue *dial=GetDial(i);
 		if(_time >= dial->Start.mstime && _time <= dial->End.mstime){
-			Lines.Add(i);
+			if(!Selections && jj<size && i==sels[jj]){jj++; continue;}
+			if(i==Edit->ebrow){ dial = Edit->line;}
+			if(GetSInfo("TLMode")=="Yes" && dial->TextTl!=""){
+				(*txt)<<dial->GetRaw(false,GetSInfo("TLMode Style"));
+				(*txt)<<dial->GetRaw(true);
+
+			}else{
+				(*txt)<<dial->GetRaw();}
+			if(i==Edit->ebrow){
+				int all= txt->Len();EBText->y=all-2;
+				all-= (GetSInfo("TLMode")=="Yes" && dial->TextTl!="")? 
+					dial->TextTl.Len() : dial->Text.Len();
+				EBText->x=all-2;
+			}
+			hasLines=true;
 		}
 
 	}
 
 
-
-	(*txt)<<"[Script Info]\r\n"<<GetSInfos(false);
-	(*txt)<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
-	(*txt)<<GetStyles(false);
-	(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
-
-	for(size_t i=0;i<Lines.size();i++)
-	{
-		Dialogue *dial= (Lines[i]==Edit->ebrow)? Edit->line : GetDial(Lines[i]);
-		if(GetSInfo("TLMode")=="Yes" && dial->TextTl!=""){
-			(*txt)<<dial->GetRaw(false,GetSInfo("TLMode Style"));
-			(*txt)<<dial->GetRaw(true);
-
-		}else{
-			(*txt)<<dial->GetRaw();}
-		if(Lines[i]==Edit->ebrow){
-			int all= txt->Len();EBText->y=all-2;
-			all-= (GetSInfo("TLMode")=="Yes" && dial->TextTl!="")? 
-				dial->TextTl.Len() : dial->Text.Len();
-			EBText->x=all-2;
-		}
-
-	}
-	if(Lines.empty()){
+	if(!hasLines && Selections){
 		Dialogue *dial=Edit->line;
 		if(GetSInfo("TLMode")=="Yes" && dial->TextTl!=""){
 			(*txt)<<dial->GetRaw(false,GetSInfo("TLMode Style"));

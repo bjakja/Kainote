@@ -28,7 +28,7 @@ struct VERTEX
 	float fZ;
 	D3DCOLOR Color;	
 };
-
+class Dialogue;
 class TabPanel;
 
 class ClipPoint
@@ -68,11 +68,12 @@ public:
 	}
 
 	void SetVisual(int _start,int _end);
-	void Draw(int time);
+	virtual void Draw(int time);
 	virtual void DrawVisual(int time){};
 	virtual void SetCurVisual(){};
 	virtual void OnMouseEvent(wxMouseEvent &evt){};
 	virtual wxString GetVisual(){return "";};
+	D3DXVECTOR2 GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);
 	//D3DXVECTOR2 IsOnPoint(wxPoint pos);
 	D3DXVECTOR2 CalcMovePos();
 	D3DXVECTOR2 to;
@@ -103,15 +104,28 @@ public:
 	bool blockevents;
 };
 
+class PosData{
+public:
+	PosData(Dialogue *_dial, D3DXVECTOR2 _pos, wxPoint _TextPos, bool _putinBracket){dial = _dial; pos=_pos; lastpos=pos; TextPos=_TextPos; putinBracket= _putinBracket;}
+	D3DXVECTOR2 pos;
+	D3DXVECTOR2 lastpos;
+	wxPoint TextPos;
+	bool putinBracket;
+	Dialogue *dial;
+};
+
 class Position : public Visuals
 {
 public:
 	Position();
 	//~Position();
-	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual();
+	wxString GetVisual(int datapos);
+	void ChangeMultiline(bool all);
 	void SetCurVisual();
+	void Draw(int time);
+	std::vector<PosData> data;
 };
 
 class Move : public Visuals

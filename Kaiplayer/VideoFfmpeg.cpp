@@ -230,8 +230,7 @@ done:
 		//wxLogStatus("numframes");
 		NumFrames = videoprops->NumFrames;
 		Duration=videoprops->LastTime;
-		Delay = videoprops->FirstTime + (Options.GetInt("Audio Delay")/1000.0);
-		//wxLogStatus("Delay %f", Delay);
+		//Delay = videoprops->FirstTime + (Options.GetInt("Audio Delay")/1000);
 		fps=(float)videoprops->FPSNumerator/(float)videoprops->FPSDenominator;
 
 		const FFMS_Frame *propframe = FFMS_GetFrame(videosource, 0, &errinfo);
@@ -331,10 +330,13 @@ done:
 	SampleRate=audioprops->SampleRate;
 	//BytesPerSample=audioprops->BitsPerSample/8;
 	//Channels=audioprops->Channels;
-	Delay= audioprops->FirstTime + (Options.GetInt("Audio Delay")/1000.0);
+	Delay=(Options.GetInt("Audio Delay")/1000);
 	NumSamples=audioprops->NumSamples;
-	audioprops = FFMS_GetAudioProperties(audiosource);
-
+	//audioprops = FFMS_GetAudioProperties(audiosource);
+	if(Delay >= (SampleRate*NumSamples*BytesPerSample)){
+		wxMessageBox(_("Z opóźnienia nici, przekracza czas trwania audio"),_("Błąd głupoty użyszkodnika"),5,Kaia->Frame);
+		Delay=0;
+	}
 
 	if(disccache){
 		diskCacheFilename="";
@@ -412,7 +414,7 @@ void VideoFfmpeg::GetAudio(void *buf, int64_t start, int64_t count)
 void VideoFfmpeg::GetBuffer(void *buf, int64_t start, int64_t count, double volume)
 {
 	wxMutexLocker lock(blockaudio);
-	int bsr = GetBytesPerSample();
+
 	if (start+count > NumSamples) {
 		int64_t oldcount = count;
 		count = NumSamples-start;
@@ -428,16 +430,16 @@ void VideoFfmpeg::GetBuffer(void *buf, int64_t start, int64_t count, double volu
 	if (count) {
 		if(disccache){
 			if(file_cache.IsOpened()){
-				file_cache.Seek(start * bsr);
-				file_cache.Read((char*)buf,count * bsr);}
+				file_cache.Seek(start* BytesPerSample);
+				file_cache.Read((char*)buf,count* BytesPerSample);}
 		}
 		else{
 			if(!Cache){return;}
 			char *tmpbuf = (char *)buf;
-			int i = (start* bsr) >> 22;
+			int i = (start* BytesPerSample) >> 22;
 			int blsize=(1<<22);
-			int offset = (start * bsr) & (blsize-1);
-			int64_t remaining = count * bsr;
+			int offset = (start* BytesPerSample) & (blsize-1);
+			int64_t remaining = count* BytesPerSample;
 			int readsize=remaining;
 
 			while(remaining){
@@ -484,7 +486,7 @@ void VideoFfmpeg::GetWaveForm(int *min,int *peak,int64_t start,int w,int h,int s
 	int curvalue;
 
 	// Prepare buffers
-	int needLen = n* BytesPerSample;
+	int needLen = n * BytesPerSample;
 
 	void *raw;
 	raw = new char[needLen];
@@ -523,7 +525,7 @@ int VideoFfmpeg::GetBytesPerSample()
 
 int VideoFfmpeg::GetChannels()
 {
-	return Channels;
+	return 1;
 }
 
 int64_t VideoFfmpeg::GetNumSamples()
@@ -535,10 +537,7 @@ bool VideoFfmpeg::CacheIt()
 {
 	progress->Title(_("Zapisywanie do pamięci RAM"));
 	//progress->cancel->Enable(false);
-	
-	int bps = BytesPerSample;
-
-	int64_t end=NumSamples * bps;
+	int64_t end=NumSamples*BytesPerSample;
 
 	int blsize=(1<<22);
 	blnum=((float)end/(float)blsize)+1;
@@ -546,21 +545,21 @@ bool VideoFfmpeg::CacheIt()
 	Cache=new char*[blnum];
 	if(Cache==NULL){wxMessageBox(_("Za mało pamięci RAM"));return false;}
 
-	int64_t pos= (Delay<0)? -(SampleRate * Delay * bps) : 0;
+	//int64_t pos=0;
+	int64_t pos= (Delay<0)? -(SampleRate * Delay * BytesPerSample) : 0;
+	int halfsize=(blsize/BytesPerSample);
 	
-	int halfsize=(blsize / bps);
 	
 	for(int i = 0; i< blnum; i++)
 	{
-		if(i >= blnum-1){blsize=end-pos; }
-		Cache[i] = new char[blsize];
+		if(i >= blnum-1){blsize=end-pos; halfsize=(blsize/BytesPerSample);}
+		Cache[i]= new char[blsize];
 		//wxLogStatus("pos %i, size %i, end %i, pos+size %i",(int)pos, blsize, (int)end, ((int)pos+blsize));
 		if(Delay>0 && i == 0){
-			int delaysize=SampleRate * Delay * bps;
-			if(delaysize % 2 == 1){delaysize++;}
-			int halfdiff= (blsize - delaysize) / bps;
+			int delaysize=SampleRate*Delay*BytesPerSample;
+			if(delaysize%2==1){delaysize++;}
+			int halfdiff= halfsize - (delaysize/BytesPerSample);
 			memset(Cache[i],0,delaysize);
-
 			GetAudio(&Cache[i][delaysize], 0, halfdiff);
 			pos+=halfdiff;
 		}else{
@@ -571,7 +570,7 @@ bool VideoFfmpeg::CacheIt()
 		progress->Progress(((float)i/(float)(blnum-1))*100);
 		if(progress->WasCancelled()){blnum=i+1;Clearcache();return false;}
 	}
-	if(Delay<0){NumSamples += (SampleRate * Delay * bps);}
+	if(Delay<0){NumSamples += (SampleRate * Delay * BytesPerSample);}
 	return true;
 }
 
@@ -627,7 +626,7 @@ bool VideoFfmpeg::DiskCache()
 	progress->Title(_("Zapisywanie na dysk twardy"));
 	
 	progress->Progress(0);
-	int bps =BytesPerSample;
+	
 	bool good=true;
 	wxFileName fname;
 	fname.Assign(diskCacheFilename);
@@ -644,7 +643,7 @@ bool VideoFfmpeg::DiskCache()
 	//int block2=block*2
 	if(Delay>0){
 		
-		int size=(SampleRate*Delay*bps);
+		int size=(SampleRate*Delay*BytesPerSample);
 		if(size%2==1){size++;}
 		char *silence=new char[size];
 		memset(silence,0,size);
@@ -652,15 +651,16 @@ bool VideoFfmpeg::DiskCache()
 		delete[] silence;
 	}
 	try {
-		char *data= new char[332768*bps];
+		char *data= new char[332768*BytesPerSample];
 		int all=(NumSamples/block)+1;
-		int64_t pos= (Delay<0)? -(SampleRate * Delay * bps) : 0;
+		//int64_t pos=0;
+		int64_t pos= (Delay<0)? -(SampleRate * Delay * BytesPerSample) : 0;
 		for (int i=0;i<all; i++) {
 			if (block+pos > NumSamples) block = NumSamples - pos;
 			//wxLogStatus("i %i block %i nums %i", (int)pos, block, (int)NumSamples);
 			GetAudio(&data,pos,block);
 			//wxLogStatus("write");
-			file_cache.Write(data,block*bps);
+			file_cache.Write(data,block*BytesPerSample);
 			//wxLogStatus("Progress");
 			pos+=block;
 			progress->Progress(((float)pos/(float)(NumSamples))*100);
@@ -674,7 +674,7 @@ bool VideoFfmpeg::DiskCache()
 		}
 		delete[] data;
 		file_cache.Seek(0);
-		if(Delay<0){NumSamples += (SampleRate * Delay * bps);}
+		if(Delay<0){NumSamples += (SampleRate * Delay * BytesPerSample);}
 	}
 	catch (...) {
 		good=false;

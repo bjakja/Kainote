@@ -225,6 +225,63 @@ D3DXVECTOR2 Visuals::CalcMovePos()
 	return ppos;
 }
 
+D3DXVECTOR2 Visuals::GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos){
+	//no i zadanie na jutro, napisać tę funkcję i najlepiej jeszcze getmove i getscale, 
+	//ładnie to ogarnąć w samych visualach a z editboxa wszystko wywalić, łącznie z clipami.
+	*putinBracket=false;
+	D3DXVECTOR2 result;
+	Styles *acstyl=tab->Grid1->GetStyle(0,Dial->Style);
+	bool istxttl = (tab->Grid1->transl && Dial->TextTl!="");
+	wxString txt = (istxttl)? Dial->TextTl : Dial->Text;
+	bool foundpos=false;
+	wxRegEx pos("\\\\(pos|move)\\(([^\\)]+)\\)",wxRE_ADVANCED);
+	if(pos.Matches(txt)){
+		wxString txtpos = pos.GetMatch(txt,2);
+		double posx=0, posy=0;
+		wxString rest, rest1;
+		bool res1 = txtpos.BeforeFirst(',', &rest).ToCDouble(&posx);
+		bool res2 = rest.BeforeFirst(',', &rest1).ToCDouble(&posy);
+		size_t startMatch,lenMatch;
+		if(pos.GetMatch(&startMatch, &lenMatch, 0)){
+			TextPos->x=startMatch;
+			TextPos->y=lenMatch;
+		}
+		result = D3DXVECTOR2(posx,posy);
+		if(res1&&res2){return result;}
+	}
+
+	if(txt[0]=='{'){
+		TextPos->x= 1;
+	}else{
+		TextPos->x= 0;
+		*putinBracket=true;
+	}
+	int tmpan;
+	tmpan=wxAtoi(acstyl->Alignment);
+	wxRegEx an("\\\\an([0-9]+)",wxRE_ADVANCED);
+	if(an.Matches(txt)){
+		tmpan=wxAtoi(an.GetMatch(txt,1));
+	}
+	//D3DXVECTOR2 dsize = Notebook::GetTab()->Video->Vclips->CalcWH();
+	int x, y;
+	tab->Grid1->GetASSRes(&x, &y);
+	if(tmpan % 3==2){
+		result.x = (x/2);
+	}
+	else if(tmpan % 3==0){
+		result.x = (Dial->MarginR!=0)? Dial->MarginR : wxAtoi(acstyl->MarginR);
+		result.x = x - result.y;
+	}
+	if(tmpan < 4){
+		result.y = (Dial->MarginV!=0)? Dial->MarginV : wxAtoi(acstyl->MarginV);
+		result.y =  y - result.y;
+	}else if(tmpan < 7){
+		result.y = (y/2);
+	}
+
+	return result;
+}
+
 //BEGIN_EVENT_TABLE(Visuals, wxEvtHandler)
 //	EVT_MOUSE_EVENTS(Visuals::OnMouseEvent)
 //END_EVENT_TABLE()

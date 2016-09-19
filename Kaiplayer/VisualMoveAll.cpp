@@ -69,7 +69,6 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 		elems[numElem].elem.x = x + diffs.x;
 		elems[numElem].elem.y = y + diffs.y;
 		ChangeInLines(false);
-		lastmove = elems[numElem].elem;
 	}
 
 }
@@ -148,16 +147,14 @@ wxString MoveAll::GetVisual()
 void MoveAll::ChangeInLines(bool all)
 {
 	D3DXVECTOR2 moving;
-	if(all){
-		moving = elems[numElem].elem - beforeMove;
-	}else{
-		moving = elems[numElem].elem - lastmove;
-	}
+	moving = elems[numElem].elem - beforeMove;
+	
 
 	char type = elems[numElem].type;
 	bool vector= type==TAGCLIP||type==TAGP;
 	wxString delimiter= (vector)? " " : ",";
 	wxString tmp;
+	wxString origText=tab->Edit->TextEdit->GetValue();
 	wxString tagpattern = (type==TAGPOS)? "pos\\(([^\\)]+)" : (type==TAGORG)? "org\\(([^\\)]+)" : (type==TAGCLIP)? "i?clip\\(([^\\)]+)" : (type==TAGP)? "p[0-9-]+[^}]*} ?m ([^{]+)" : "move\\(([^\\)]+)"; 
 	wxArrayInt sels= tab->Grid1->GetSels();
 	for(size_t i = 0; i< sels.size(); i++){
@@ -167,7 +164,7 @@ void MoveAll::ChangeInLines(bool all)
 			Dialogue *Dial = tab->Grid1->GetDial(sels[i]);
 			txt = (tab->Grid1->transl && Dial->TextTl!="")? Dial->TextTl : Dial->Text;
 		}else{
-			txt = tab->Edit->TextEdit->GetValue();
+			txt = origText;
 		}
 
 		wxRegEx re(tagpattern, wxRE_ADVANCED);
