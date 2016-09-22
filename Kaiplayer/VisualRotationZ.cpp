@@ -119,7 +119,7 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 
 	if(evt.ButtonUp()){
 		if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}
-		tab->Edit->SetVisual(GetVisual(),false,(isOrg)?100:0);
+		SetVisual(GetVisual(),false,(isOrg)?100:0);
 		to=org;
 		if(isOrg){
 			lastmove.x = atan2((org.y-y), (org.x-x)) * (180.f / 3.1415926536f);
@@ -148,11 +148,11 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 			org.x = x+diffs.x;
 			org.y = y+diffs.y;
 			
-			tab->Edit->SetVisual(GetVisual(),true,100);//type tak¿e ma liczbê 100 by by³o rozpoznawalne.
+			SetVisual(GetVisual(),true,100);//type tak¿e ma liczbê 100 by by³o rozpoznawalne.
 			return;
 		}
 		to.x=x;to.y=y;
-		tab->Edit->SetVisual(GetVisual(),true,0);
+		SetVisual(GetVisual(),true,0);
 
 	}
 
@@ -160,7 +160,7 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 
 void RotationZ::SetCurVisual()
 {
-	D3DXVECTOR2 linepos = tab->Edit->GetPosnScale(NULL, NULL, tbl);
+	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, tbl);
 	if(tbl[6]>3){linepos=CalcMovePos();}
 	from = D3DXVECTOR2(linepos.x/wspw,linepos.y/wsph);
 	lastmove = D3DXVECTOR2(0, 0);

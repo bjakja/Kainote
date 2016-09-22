@@ -75,7 +75,7 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 
 void MoveAll::SetCurVisual()
 {
-	D3DXVECTOR2 linepos = tab->Edit->GetPosnScale(NULL, NULL, tbl);
+	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, tbl);
 	if(tbl[6]>3){linepos=CalcMovePos();}
 	from = to = D3DXVECTOR2(linepos.x/wspw,linepos.y/wsph);
 	elems.clear();
@@ -198,17 +198,17 @@ void MoveAll::ChangeInLines(bool all)
 				if(all){
 					tab->Grid1->CopyDial(sels[i])->Text=txt;
 				}else{
-					if(!tab->Edit->dummytext){
+					if(!dummytext){
 						bool vis=false;
-						tab->Edit->dummytext= tab->Grid1->GetVisible(&dumplaced,&vis);
-						if(!vis){SAFE_DELETE(tab->Edit->dummytext); return;}
+						dummytext= tab->Grid1->GetVisible(&vis,&dumplaced);
+						if(!vis){SAFE_DELETE(dummytext); return;}
 					}else{
 						tab->Edit->TextEdit->SetTextS(txt, false, false);
 					}
-					tab->Edit->dummytext->replace(dumplaced.x,dumplaced.y-dumplaced.x,txt);
-					dumplaced.y = txt.Len()+dumplaced.x;
+					dummytext->replace(dumplaced.x,dumplaced.y,txt);
+					dumplaced.y = txt.Len();
 
-					wxString *dtxt=new wxString(*tab->Edit->dummytext);
+					wxString *dtxt=new wxString(*dummytext);
 					if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie mo¿na otworzyæ napisów"));}
 					tab->Video->VisEdit=true;
 					tab->Video->Render();

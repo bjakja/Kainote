@@ -719,8 +719,9 @@ bool VideoRend::Play(int end)
 	TabPanel* pan=(TabPanel*)GetParent();
 	if(VisEdit){
 		wxString *txt=pan->Grid1->SaveText();
-		if(pan->Edit->Visual==VECTORCLIP){(*txt)<<pan->Edit->dummytext->Trim().AfterLast('\n');}
-		OpenSubs(txt);VisEdit=false;
+		OpenSubs(txt);
+		SAFE_DELETE(Vclips->dummytext);
+		VisEdit=false;
 	}else if(pan->Edit->OnVideo){OpenSubs(pan->Grid1->SaveText());pan->Edit->OnVideo=false;}
 
 	if(end>0){playend=end;}else if(IsDshow){playend=0;}else{playend=GetDuration();}
@@ -805,10 +806,9 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			TabPanel* pan=(TabPanel*)GetParent();
 			//if(reloadSubs){
 				wxString *txt=pan->Grid1->SaveText();
-				if(pan->Edit->Visual==VECTORCLIP){(*txt)<<pan->Edit->dummytext->Trim().AfterLast('\n');}
 				OpenSubs(txt);
 			//}
-			SAFE_DELETE(pan->Edit->dummytext);
+			SAFE_DELETE(Vclips->dummytext);
 			//if(!reloadSubs){SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);}
 			VisEdit=false;
 		}	
@@ -822,10 +822,9 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			TabPanel* pan=(TabPanel*)GetParent();
 			//if(reloadSubs){
 				wxString *txt=pan->Grid1->SaveText();
-				if(pan->Edit->Visual==VECTORCLIP){(*txt)<<pan->Edit->dummytext->Trim().AfterLast('\n');}
 				OpenSubs(txt);
 			//}
-			SAFE_DELETE(pan->Edit->dummytext);
+			SAFE_DELETE(Vclips->dummytext);
 			//if(!reloadSubs){SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);}
 			VisEdit=false;
 		}	
@@ -846,19 +845,20 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 
 	if(!textsubs) {if (vobsub) {csri_close_renderer(vobsub);}return false;}
 	//const char *buffer= textsubs.mb_str(wxConvUTF8).data();
+	if(VisEdit && Vclips->Visual==VECTORCLIP){
+		(*textsubs)<<Vclips->dummytext->Trim().AfterLast('\n');
+	}
 	wxScopedCharBuffer buffer= textsubs->mb_str(wxConvUTF8);
 	int size = strlen(buffer);
 
 
 	// Select renderer
-	//if(!vobsub){
 	vobsub = csri_renderer_default();
-	//}
-	PTR(vobsub,_("CSRI odmówiło posłuszeństwa."));
+	if(!vobsub){wxLogStatus(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false;}
 
 
 	instance = csri_open_mem(vobsub,buffer,size,NULL);
-	PTR(instance,_("Instancja VobSuba nie utworzyła się."));
+	if(!instance){wxLogStatus(_("Instancja VobSuba nie utworzyła się.")); delete textsubs; return false;}
 
 	if(csri_request_fmt(instance,format)){wxLogStatus(_("CSRI nie obsługuje tego formatu."));}
 
@@ -1143,7 +1143,6 @@ void VideoRend::MovePos(int cpos)
 		TabPanel* pan=(TabPanel*)GetParent();
 		if(VisEdit){
 			wxString *txt=pan->Grid1->SaveText();
-			(*txt)<<pan->Edit->dummytext->Trim().AfterLast('\n');
 			OpenSubs(txt);VisEdit=false;
 		}else if(pan->Edit->OnVideo){OpenSubs(pan->Grid1->SaveText());pan->Edit->OnVideo=false;}
 		Render();
@@ -1196,7 +1195,7 @@ void VideoRend::ChangeVobsub(bool vobsub)
 void VideoRend::SetVisual(int start, int end, bool remove)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
-	SAFE_DELETE(pan->Edit->dummytext);
+	
 	if(remove){
 		SAFE_DELETE(Vclips); pan->Edit->Visual=0;
 		VisEdit=false;
@@ -1210,7 +1209,7 @@ void VideoRend::SetVisual(int start, int end, bool remove)
 		}else if(Vclips->Visual != vis){
 			delete Vclips;
 			Vclips = Visuals::Get(vis,this);
-		}
+		}else{SAFE_DELETE(Vclips->dummytext);}
 		Vclips->SizeChanged(wxSize(rt3.right, rt3.bottom),lines, m_font, d3device);
 		
 		Vclips->SetVisual(start, end);
@@ -1222,7 +1221,7 @@ void VideoRend::SetVisual()
 {
 	
 	TabPanel* pan=(TabPanel*)GetParent();
-	SAFE_DELETE(pan->Edit->dummytext);
+	SAFE_DELETE(Vclips->dummytext);
 	Vclips->SetCurVisual();
 	VisEdit=true;
 	Render();

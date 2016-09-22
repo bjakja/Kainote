@@ -20,7 +20,7 @@ void Move::DrawVisual(int time)
 	//drawarrow od razu przesuwa punkt tak by linia koñczy³a siê przed strza³k¹
 	DrawArrow(from, &v4[1], 6);
 
-	
+
 	float tmpt=time-moveStart;
 	float tmpt1=moveEnd-moveStart;
 	float actime= tmpt/tmpt1;
@@ -31,7 +31,7 @@ void Move::DrawVisual(int time)
 		dist.x= from.x -((from.x-to.x)*actime); 
 		dist.y = from.y -((from.y-to.y)*actime);
 	}
-	
+
 	line->Begin();
 	line->Draw(v4,2,0xFFFF0000);
 	DrawCross(dist, 0xFFFF0000, false);
@@ -39,13 +39,15 @@ void Move::DrawVisual(int time)
 
 	DrawRect(from);
 	DrawCircle(to);
-	
-	
+
+
 }
 
 wxString Move::GetVisual()
 {
-	return "\\move("+getfloat(from.x*wspw)+","+getfloat(from.y*wsph)+","+getfloat(to.x*wspw)+","+getfloat(to.y*wsph)+times+")";
+	return "\\move("+getfloat(from.x*wspw)+","+getfloat(from.y*wsph)+","+
+		getfloat(to.x*wspw)+","+getfloat(to.y*wsph)+","+
+		getfloat(tbl[4]-tab->Edit->line->Start.mstime)+","+getfloat(tbl[5]-tab->Edit->line->Start.mstime)+")";
 }
 
 void Move::OnMouseEvent(wxMouseEvent &evt)
@@ -62,7 +64,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 
 	if(evt.ButtonUp()){
 		if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}
-		tab->Edit->SetVisual(GetVisual(),false,type);
+		SetVisual(GetVisual(),false,type);
 		if(!hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 		grabbed = -1;
 	}
@@ -73,7 +75,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 		hasArrow=false;
 		if(leftc){type=0;}
 		if(rightc){type=1;}
-			
+
 		if(abs(to.x-x)<8 && abs(to.y-y)<8){
 			grabbed=1;type=1;
 			diffs.x=to.x-x;
@@ -93,8 +95,9 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 			}
 			diffs=wxPoint(0,0);
 		}
-			
-		tab->Edit->SetVisual(GetVisual(),true,type);
+		lastmove = to;
+		firstmove = from;
+		SetVisual(GetVisual(),true,type);
 
 	}else if(holding){
 		if(type==0){
@@ -104,22 +107,36 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 			to.x=x+diffs.x;
 			to.y=y+diffs.y;
 		}
-		tab->Edit->SetVisual(GetVisual(),true,type);
+		if(evt.ShiftDown()){
+			if(type==0){
+				if(abs(from.x - firstmove.x)<15){
+					from.x = firstmove.x;
+				}
+				if(abs(from.y - firstmove.y)<15){
+					from.y = firstmove.y;
+				}
+			}else{
+				if(abs(to.x - lastmove.x)<15){
+					to.x = lastmove.x;
+				}
+				if(abs(to.y - lastmove.y)<15){
+					to.y = lastmove.y;
+				}
+			}
+		}
+		SetVisual(GetVisual(),true,type);
 	}
 
 }
 
 void Move::SetCurVisual()
 {
-	D3DXVECTOR2 linepos = tab->Edit->GetPosnScale(NULL, NULL, tbl);
-	if(tbl[6]>3){linepos=CalcMovePos();}
+	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, tbl);
 	from = to = D3DXVECTOR2(linepos.x/wspw,linepos.y/wsph);
 
 	if(tbl[6]>3){to.x=tbl[2]/wspw, to.y=tbl[3]/wsph;}
-	if(tbl[6]>5){
-		moveStart=(int)tbl[4];
-		if(tbl[4]>tbl[5]){tbl[5]=end;}
-		moveEnd=(int)tbl[5];
-	}else{moveStart=start; moveEnd=end;}
+	moveStart=(int)tbl[4];
+	if(tbl[4]>tbl[5]){tbl[5]=end;}
+	moveEnd=(int)tbl[5];
 
 }

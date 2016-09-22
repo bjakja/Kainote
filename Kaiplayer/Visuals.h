@@ -6,11 +6,11 @@
 #include <vector>
 #include <d3d9.h>
 #include <d3dx9.h>
-
+#include <map>
 
 
 enum{
-	CHANGEPOS=1,
+	CHANGEPOS=1,//w przypadku zmiany, zmieniæ w subsgridzie w selectrow;
 	MOVE,
 	SCALE,
 	ROTATEZ,
@@ -67,14 +67,16 @@ public:
 		v->Color = Color;	
 	}
 
-	void SetVisual(int _start,int _end);
+	virtual void SetVisual(int _start,int _end);
 	virtual void Draw(int time);
 	virtual void DrawVisual(int time){};
 	virtual void SetCurVisual(){};
 	virtual void OnMouseEvent(wxMouseEvent &evt){};
 	virtual wxString GetVisual(){return "";};
 	D3DXVECTOR2 GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);
-	//D3DXVECTOR2 IsOnPoint(wxPoint pos);
+	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
+	void SetClip(wxString clip,bool dummy);
+	void SetVisual(wxString visual,bool dummy,int type);
 	D3DXVECTOR2 CalcMovePos();
 	D3DXVECTOR2 to;
 	D3DXVECTOR2 lastmove;
@@ -102,15 +104,20 @@ public:
 	TabPanel *tab;
 	bool hasArrow;
 	bool blockevents;
+	wxString *dummytext;
+	wxPoint dumplaced;
 };
 
 class PosData{
 public:
-	PosData(Dialogue *_dial, D3DXVECTOR2 _pos, wxPoint _TextPos, bool _putinBracket){dial = _dial; pos=_pos; lastpos=pos; TextPos=_TextPos; putinBracket= _putinBracket;}
+	PosData(Dialogue *_dial, D3DXVECTOR2 _pos, wxPoint _TextPos, bool _putinBracket){
+		dial = _dial; pos=_pos; lastpos=pos; TextPos=_TextPos; putinBracket= _putinBracket;
+	}
 	D3DXVECTOR2 pos;
 	D3DXVECTOR2 lastpos;
 	wxPoint TextPos;
 	bool putinBracket;
+	bool visible;
 	Dialogue *dial;
 };
 
@@ -120,11 +127,12 @@ public:
 	Position();
 	//~Position();
 	void OnMouseEvent(wxMouseEvent &event);
-	wxString GetVisual();
+	//wxString GetVisual();
 	wxString GetVisual(int datapos);
 	void ChangeMultiline(bool all);
 	void SetCurVisual();
 	void Draw(int time);
+	//void SetVisual(int _start,int _end);
 	std::vector<PosData> data;
 };
 
@@ -141,7 +149,6 @@ public:
 	byte type;
 	int grabbed;
 	wxPoint diffs;
-	wxString times;
 };
 
 struct moveElems

@@ -91,7 +91,7 @@ public:
 	bool IsNum(wxString txt);
 	Dialogue *CopyDial(int i, bool push=true);
 	Dialogue *GetDial(int i);
-	wxString *GetVisible(wxPoint *EBText, bool *visible, bool Selections = true);
+	wxString *GetVisible(bool *visible, wxPoint *point=0, bool trimSels=false);
 	wxRect GetMetrics(int line);
 
 	int lastRow;

@@ -90,7 +90,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 
 	if(evt.ButtonUp()){
 		if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}
-		tab->Edit->SetVisual(GetVisual(),false,type);
+		SetVisual(GetVisual(),false,type);
 		if(!hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 	}
 
@@ -126,13 +126,13 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 		if(type!=0){
 			to.y=y+diffs.y;
 		}
-		tab->Edit->SetVisual(GetVisual(),true,type);
+		SetVisual(GetVisual(),true,type);
 	}
 }
 
 void Scale::SetCurVisual()
 {
-	D3DXVECTOR2 linepos = tab->Edit->GetPosnScale(&scale, &AN, tbl);
+	D3DXVECTOR2 linepos = GetPosnScale(&scale, &AN, tbl);
 	if(tbl[6]>3){linepos=CalcMovePos();}
 	from = D3DXVECTOR2(linepos.x/wspw,linepos.y/wsph);
 

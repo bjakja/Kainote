@@ -588,7 +588,6 @@ void findreplace::Find()
 	if(endline && regex){
 		find1<<"$";
 	}
-	//if(find1==""){return;}
 	TabPanel *pan =Kai->GetTab(); 
 	//Kai->Freeze();
 	
@@ -598,7 +597,6 @@ void findreplace::Find()
 	size_t mlen=0;
 	bool foundsome=false;
 	if(fromstart){int fsel=pan->Grid1->FirstSel();posrow=(RadioButton4->GetValue()&&fsel>=0)?fsel:0;postxt=0;}
-
 	wxString styll=tcstyle->GetValue();
 	bool notstyles=false;
 	if(styll==""){notstyles=true;}else{styll=";"+styll+";";}
@@ -618,8 +616,7 @@ void findreplace::Find()
 					txt=Dial->Actor;}
 				else if(wrep==EFFECT){
 					txt=Dial->Effect;}
-
-
+				
 				//no to szukamy
 				if(!(startline || endline) && (find1.empty()||txt.empty()))
 				{
@@ -628,6 +625,7 @@ void findreplace::Find()
 						mwhere=0; mlen=0;
 					}
 					else{postxt=0;posrow++;continue;}
+					
 				}
 				else if(regex){
 					int rxflags=wxRE_ADVANCED;
@@ -642,6 +640,7 @@ void findreplace::Find()
 								mwhere=cuttext.Find(reslt)+postxt;
 								mlen=reslt.Len();}
 						}else{postxt=0;posrow++;continue;}
+					
 					}
 
 				}
@@ -653,14 +652,13 @@ void findreplace::Find()
 					else{mwhere= ltext.find(lfind,postxt);}
 					mlen=lfind.Len();
 				}
-
+				
 				if (mwhere!=-1){
 					postxt=mwhere+mlen;
 					findstart=mwhere;
 					findend=postxt;
 					reprow=posrow;
 
-					//wxLogStatus("pt %i %i %i",postxt, mwhere, reprow);
 					pan->Grid1->SelectRow(posrow,false,true);
 					pan->Grid1->ScrollTo(posrow,true);
 					pan->Edit->SetIt(posrow);
@@ -686,8 +684,8 @@ void findreplace::Find()
 					if((size_t)postxt>=txt.Len()||startline){posrow++;postxt=0;}
 					break;
 				}
-				else{postxt=0;posrow++;}
-				if(!foundsome&&posrow>pan->Grid1->GetCount()-1){
+				else{postxt=0; posrow++;}
+				if(!foundsome && posrow> pan->Grid1->GetCount()-1){
 					if (wxMessageBox(_("Wyszukiwanie zakończone, rozpocząć od początku?"), _("Potwierdzenie"),
 						wxICON_QUESTION | wxYES_NO, this) == wxYES ){
 							posrow=0;foundsome=true;
@@ -697,7 +695,6 @@ void findreplace::Find()
 	}
 	if(!foundsome){wxMessageBox(_("Nie znaleziono podanej frazy \"")+FindText->GetValue()+"\".", _("Potwierdzenie")); fromstart=true;}
 	if(fromstart){AddRecent();fromstart=false;}
-
 	//Kai->Thaw();
 }
 
@@ -792,12 +789,18 @@ void findreplace::Reset()
 
 void findreplace::OnSetFocus(wxActivateEvent& event){
 	if(hasFocus){hasFocus=false; return;}
-	wxLogStatus("focus");
+	//wxLogStatus("focus");
 	long from, to, fromO, toO;
 	EditBox *edit = Kai->GetTab()->Edit;
 	edit->TextEdit->GetSelection(&from,&to);
 	edit->TextEditTl->GetSelection(&fromO,&toO);
-	if(from<to){FindText->SetValue(edit->TextEdit->GetValue().SubString(from,to-1));}
-	else if(fromO<toO){FindText->SetValue(edit->TextEditTl->GetValue().SubString(fromO,toO-1));}
+	if(from<to){
+		wxString selected = edit->TextEdit->GetValue().SubString(from,to-1);
+		if(selected.Lower() != FindText->GetValue().Lower()){FindText->SetValue(selected);}
+	}
+	else if(fromO<toO){
+		wxString selected = edit->TextEditTl->GetValue().SubString(fromO,toO-1);
+		if(selected.Lower() != FindText->GetValue().Lower()){FindText->SetValue(selected);}
+	}
 	hasFocus=true;
 }

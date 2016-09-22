@@ -185,7 +185,7 @@ void RotationXY::OnMouseEvent(wxMouseEvent &evt)
 
 	if(evt.ButtonUp()){
 		if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}
-		tab->Edit->SetVisual(GetVisual(),false,type);
+		SetVisual(GetVisual(),false,type);
 		oldAngle=angle;
 		if(!hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 		isOrg=false;
@@ -210,18 +210,18 @@ void RotationXY::OnMouseEvent(wxMouseEvent &evt)
 		if(isOrg){
 			org.x = x+diffs.x;
 			org.y = y+diffs.y;
-			tab->Edit->SetVisual(GetVisual(),true,100);//type tak¿e ma liczbê 100 by by³o rozpoznawalne.
+			SetVisual(GetVisual(),true,100);//type tak¿e ma liczbê 100 by by³o rozpoznawalne.
 			return;
 		}
 		to.x=x;to.y=y;
-		tab->Edit->SetVisual(GetVisual(),true,type);
+		SetVisual(GetVisual(),true,type);
 	}
 
 }
 
 void RotationXY::SetCurVisual()
 {
-	D3DXVECTOR2 linepos = tab->Edit->GetPosnScale(NULL, &AN, tbl);
+	D3DXVECTOR2 linepos = GetPosnScale(NULL, &AN, tbl);
 	if(tbl[6]>3){linepos=CalcMovePos();}
 	from = to = D3DXVECTOR2(linepos.x/wspw,linepos.y/wsph);
 

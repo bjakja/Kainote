@@ -107,7 +107,7 @@ void DrawingAndClip::DrawVisual(int time)
 void DrawingAndClip::SetCurVisual()
 {
 	wxString clip;
-	D3DXVECTOR2 linepos = tab->Edit->GetPosnScale(&scale, NULL, NULL);
+	D3DXVECTOR2 linepos = GetPosnScale(&scale, NULL, NULL);
 	if(Visual!=VECTORDRAW){
 		bool found =tab->Edit->FindVal("(i?clip[^\\)]+)", &clip);
 		if(found){int rres = clip.Replace(",",",");
@@ -388,7 +388,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	}
 	
 	if(event.ButtonUp()){
-		tab->Edit->SetClip(GetVisual(),false);
+		SetClip(GetVisual(),false);
 	}
 
 	if(event.LeftUp()){
@@ -402,7 +402,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		//wxLogStatus("point");
 		if(Points.empty()){wxBell(); return;}
 		AddCurvePoint(xy,CheckPos(xy, true));
-		tab->Edit->SetClip(GetVisual(),true);
+		SetClip(GetVisual(),true);
 		return;
 	}
 	if(right&&ctrl)
@@ -410,21 +410,21 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		//wxLogStatus("curve");
 		if(Points.empty()){wxBell(); return;}
 		AddCurve(xy,CheckPos(xy, true),"s");
-		tab->Edit->SetClip(GetVisual(),true);
+		SetClip(GetVisual(),true);
 		return;
 	}
 	if(right)
 	{
 		if(Points.empty()){wxBell(); return;}
 		AddLine(xy,CheckPos(xy, true));
-		tab->Edit->SetClip(GetVisual(),true);
+		SetClip(GetVisual(),true);
 		return;
 	}
 	if(ctrl&&event.AltDown()&&click)
 	{
 		if(Points.empty()){wxBell(); return;}
 		AddCurve(xy,CheckPos(xy, true));
-		tab->Edit->SetClip(GetVisual(),true);
+		SetClip(GetVisual(),true);
 		return;
 	}
 	else if(ctrl&&click)
@@ -452,7 +452,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 					}
 				}
 				drawtxt=false;
-				tab->Edit->SetClip(GetVisual(),true);
+				SetClip(GetVisual(),true);
 				break;
 			}
 		}
@@ -482,7 +482,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		{
 			
 			AddMove(xy,CheckPos(xy, true));newmove=false;
-			tab->Edit->SetClip(GetVisual(),true);
+			SetClip(GetVisual(),true);
 			grabbed=Points.size()-1;
 		}
 
@@ -495,7 +495,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		Points[grabbed].x=((x+diffs.x)*wspw)-_x;
 		Points[grabbed].y=((y+diffs.y)*wsph)-_y;
 		acpoint=Points[grabbed];
-		tab->Edit->SetClip(GetVisual(),true);
+		SetClip(GetVisual(),true);
 
 	}
 	

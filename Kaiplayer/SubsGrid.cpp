@@ -729,6 +729,11 @@ void SubsGrid::SelectRow(int row, bool addToSelected, bool select, bool norefres
 		if(norefresh){return;}
 		Refresh(false);
 	}
+//done:
+	if(Edit->Visual==1){
+		Kai->GetTab()->Video->SetVisual(Edit->line->Start.mstime,Edit->line->End.mstime);
+		Kai->GetTab()->Video->Render();
+	}
 }
 
 void SubsGrid::ScrollTo(int y, bool center){
@@ -947,6 +952,10 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 			}
 			lastsel=row;
 			Refresh(false);
+			if(Edit->Visual==1){
+				Kai->GetTab()->Video->SetVisual(Edit->line->Start.mstime,Edit->line->End.mstime);
+				Kai->GetTab()->Video->Render();
+			}
 		}
 	}
 
@@ -2299,7 +2308,7 @@ wxString *SubsGrid::SaveText()
 	return txt;
 }
 
-wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible, bool Selections)
+wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, bool trimSels)
 {
 	TabPanel *pan=(TabPanel*)GetParent();
 	int _time=pan->Video->Tell();
@@ -2318,34 +2327,33 @@ wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible, bool Selections)
 	}else{
 		*visible=false;
 	}
-	wxArrayInt sels = GetSels();
-	int jj=0;
-	int size = sels.size();
-	bool hasLines=false;
+	
+	bool isTlmode = GetSInfo("TLMode")=="Yes";
 	for(int i=0; i<GetCount(); i++){
 		Dialogue *dial=GetDial(i);
 		if(_time >= dial->Start.mstime && _time <= dial->End.mstime){
-			if(!Selections && jj<size && i==sels[jj]){jj++; continue;}
-			if(i==Edit->ebrow){ dial = Edit->line;}
-			if(GetSInfo("TLMode")=="Yes" && dial->TextTl!=""){
+			if(trimSels && sel.find(i)!=sel.end()){continue;}
+			if(i==Edit->ebrow){ 
+				dial = Edit->line;
+			}
+			if( isTlmode && dial->TextTl!=""){
 				(*txt)<<dial->GetRaw(false,GetSInfo("TLMode Style"));
 				(*txt)<<dial->GetRaw(true);
-
 			}else{
 				(*txt)<<dial->GetRaw();}
-			if(i==Edit->ebrow){
-				int all= txt->Len();EBText->y=all-2;
-				all-= (GetSInfo("TLMode")=="Yes" && dial->TextTl!="")? 
+			if( point && i==Edit->ebrow ){
+				int all= txt->Len();point->x=all-2;
+				int len = (GetSInfo("TLMode")=="Yes" && dial->TextTl!="")? 
 					dial->TextTl.Len() : dial->Text.Len();
-				EBText->x=all-2;
+				point->y = len;
+				point->x -= len;
 			}
-			hasLines=true;
 		}
 
 	}
 
 
-	if(!hasLines && Selections){
+	/*if(!hasLines && selections ){
 		Dialogue *dial=Edit->line;
 		if(GetSInfo("TLMode")=="Yes" && dial->TextTl!=""){
 			(*txt)<<dial->GetRaw(false,GetSInfo("TLMode Style"));
@@ -2359,169 +2367,11 @@ wxString *SubsGrid::GetVisible(wxPoint *EBText, bool *visible, bool Selections)
 			dial->TextTl.Len() : dial->Text.Len();
 		EBText->x=all-2;
 
-	}
+	}*/
 
 	return txt;
 }
 
-
-//wxRect SubsGrid::GetMetrics(int line)
-//{
-//	Dialogue *dial = GetDial(Edit->ebrow);
-//	Styles *styl=GetStyle(0,dial->Style);
-//	wxString tags[]={"fscx","fscy","fsp","fs"};
-//	int vals[]={wxAtoi(styl->ScaleX),wxAtoi(styl->ScaleY),wxAtoi(styl->Spacing),wxAtoi(styl->Fontsize)};
-//	wxString tag, rest;
-//	
-//	wxStringTokenizer ktok(dial->Text,"\\}",wxTOKEN_STRTOK);
-//	while(ktok.HasMoreTokens()){
-//		wxString text=ktok.NextToken();
-//		for(int i=0;i<4;i++){
-//			if(text.StartsWith(tags[i],&rest)){
-//				vals[i]=wxAtoi(rest);
-//				break;
-//			}
-//		}
-//	}
-//	wxString txt=(!showtl && transl && dial->TextTl!="")? dial->TextTl : dial->Text;
-//	double posx=0, posy=0, posx1=-1, posy1=-1, t1=-1, t2=-1;
-//	int an=2;
-//	bool haspos=false;
-//	wxRegEx regan("\\\\an([0-9]"),wxRE_ADVANCED|wxRE_ICASE);
-//	wxRegEx reg("\\\\pos\\(([^,]*\\,([^\\)]*)"),wxRE_ADVANCED|wxRE_ICASE);
-//	wxRegEx regm("\\\\move\\(([^,]*\\,([^,]*)\\,([^,]*)\\,([^\\)]*)"),wxRE_ADVANCED|wxRE_ICASE);
-//	if(regan.Matches(txt)){
-//		an = wxAtoi(regan.GetMatch(txt,1));
-//	}else{an = wxAtoi(styl->Alignment);}
-//
-//	if(reg.Matches(txt)){
-//		if(reg.GetMatch(txt,1).ToDouble(&posx) && reg.GetMatch(txt,2).ToDouble(&posy)){haspos=true;}
-//	}else if(regm.Matches(txt)){
-//		if(reg.GetMatch(txt,1).ToDouble(&posx) && reg.GetMatch(txt,2).ToDouble(&posy) 
-//			&& reg.GetMatch(txt,3).ToDouble(&posx1) ){haspos=true;}
-//		wxString lastmatch=reg.GetMatch(txt,4);
-//		if(lastmatch.Find(',')==-1){
-//			if(!lastmatch.ToDouble(&posy1)){haspos=false;}
-//		}else{
-//			wxString rest1, rest2;
-//			wxString posy1s = lastmatch.BeforeFirst(',',&rest1);
-//			wxString t1s = rest1.BeforeFirst(',',&rest2);
-//			wxString t2s = rest2;
-//			if(!posy1s.ToDouble(&posy1) || !t1s.ToDouble(&t1) || !t2s.ToDouble(&t2)){haspos=false;}
-//		}
-//	}
-//
-//	wxRegEx regst("\\{[^\\{]*\\}",wxRE_ADVANCED);
-//	regst.ReplaceAll(&txt,"");
-//	wxRect rc(-1,-1,-1,-1);
-//	double width = 0, height =0, descent =0, extlead=0;
-//	double fontsize = vals[3]*32;
-//	double spacing = vals[2]*32;
-//		
-
-//
-//	HDC thedc = CreateCompatibleDC(0);
-//	if (!thedc) return rc;
-//	SetMapMode(thedc, MM_TEXT);
-//
-//	LOGFONTW lf;
-//	ZeroMemory(&lf, sizeof(lf));
-//	lf.lfHeight = (LONG)fontsize;
-//	lf.lfWeight = styl->Bold ? FW_BOLD : FW_NORMAL;
-//	lf.lfItalic = styl->Italic;
-//	lf.lfUnderline = styl->Underline;
-//	lf.lfStrikeOut = styl->StrikeOut;
-//	lf.lfCharSet = wxAtoi(styl->Encoding);
-//	lf.lfOutPrecision = OUT_TT_PRECIS;
-//	lf.lfClipPrecision = CLIP_DEFAULT_PRECIS;
-//	lf.lfQuality = ANTIALIASED_QUALITY;
-//	lf.lfPitchAndFamily = DEFAULT_PITCH|FF_DONTCARE;
-//	_tcsncpy(lf.lfFaceName, styl->Fontname.c_str(), 32);
-//
-//	HFONT thefont = CreateFontIndirect(&lf);
-//	if (!thefont) return rc;
-//	SelectObject(thedc, thefont);
-//		
-//	SIZE sz;
-//	wxString text;
-//	while(1){
-//		int find = txt.find("\\N");
-//		if(find!=-1){text=txt.substr(0,find).Trim();txt=txt.Mid(find+2).Trim(false);}
-//		else{text=txt;}
-//		size_t thetextlen = text.length();
-//		const TCHAR *thetext = text.wc_str();
-//	
-//		GetTextExtentPoint32(thedc, thetext, (int)thetextlen, &sz);
-//		
-//		if(spacing){
-//			sz.cx+=(spacing*thetextlen);
-//		}
-//		if((double)sz.cx>width){
-//			width = sz.cx;
-//		}
-//		height += sz.cy;
-//		if(find==-1){break;}
-//	}
-//
-//
-//	TEXTMETRIC tm;
-//	GetTextMetrics(thedc, &tm);
-//	descent = tm.tmDescent;
-//	extlead= tm.tmExternalLeading;
-//
-//	DeleteObject(thedc);
-//	DeleteObject(thefont);
-//	
-//	width = (vals[0] / 100.0) * (width/32);
-//	height = (vals[1] / 100.0) * (height/32);
-//	descent = (vals[1] / 100.0) * (descent/32);
-//	extlead = (vals[1] / 100.0) * (extlead/32);
-
-//	
-//	int resx=0, resy=0;
-//	GetASSRes(&resx, &resy);
-//	
-//	
-//	if(!haspos){
-//		
-//		posy= (dial->MarginV>0)? dial->MarginV : wxAtoi(styl->MarginV);
-//		if(an<4){
-//			posy= resy-posy-height;
-//		}else if(an<7){
-//			posy= (resy/2)-(height/2);
-//		}
-//		if(an % 3 == 1){
-//			posx= (dial->MarginL>0)? dial->MarginL : wxAtoi(styl->MarginL);
-//		}else if(an % 3 == 2){
-//			posx= (resx/2)-(width/2);
-//		}else{
-//			posx= (dial->MarginR>0)? dial->MarginR : wxAtoi(styl->MarginR);
-//			posx= resx-posx-width;
-//		}
-//	}else{
-//		if(an<4){
-//			posy -= height;
-//		}else if(an<7){
-//			posy -= (height/2);
-//		}
-//		if(an % 3 == 0){
-//			posx -= width;
-//		}else if(an % 3 == 2){
-//			posx -= (width/2);
-//		}
-//	}
-//	int w,h;
-//	Notebook::GetTab()->Video->GetClientSize(&w,&h);
-//	float wspx=(float)(w-1)/(float)resx;
-//	float wspy=(float)(h-45)/(float)resy;
-
-//	height = height + (descent +extlead);
-//	rc.width= width;// *wspx;
-//	rc.height= height;// *wspy;
-//	rc.x=posx;//*wspx;
-//	rc.y=posy;//*wspy;
-//	return rc;
-//}
 
 
 void SubsGrid::OnBcktimer(wxTimerEvent &event)

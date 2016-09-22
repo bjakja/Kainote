@@ -72,7 +72,6 @@ public:
 	bool FindVal(wxString wval, wxString *returnval, wxString text="", bool *endsel=0);
 	void HideControls();
 	void UpdateChars(wxString text);
-	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *an, double *move, wxString* movetimes=NULL);
 
 	Grid *grid;
 	int ebrow;
@@ -110,28 +109,26 @@ public:
 	wxChoice* Ban;
 
 
-	void PutinText(wxString text, bool focus=true, bool onlysel=false);
+	void PutinText(wxString text, bool focus=true, bool onlysel=false, wxString *texttoPutin=0);
 	void PutinNonass(wxString text, wxString tag);
 	//ustawia tekst i gdy trzeba wstawia tagi z orygina³u ustawiaj¹c w³aœciw¹ pozycjê kursora.
 	void SetTextWithTags();
 	void ClearErrs();
-	void SetClip(wxString clip,bool dummy);
-	void SetVisual(wxString visual,bool dummy,int type);
-	wxString *dummytext;
+	
 
 	wxBoxSizer* BoxSizer1;
 
 	Dialogue *line;
-
+	wxPoint Placed;
+	bool InBracket;
 	bool splittedTags;
 	bool OnVideo;
 	int Visual;
 
 private:
-	bool InBracket;
-	wxPoint Placed;
+	
+	
 	wxString lasttag;
-	wxPoint dumplaced;
 	int cursorpos;
 
 	wxBoxSizer* BoxSizer2;

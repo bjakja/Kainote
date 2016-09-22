@@ -651,14 +651,14 @@ bool VideoFfmpeg::DiskCache()
 		delete[] silence;
 	}
 	try {
-		char *data= new char[332768*BytesPerSample];
+		char *data= new char[block*BytesPerSample];
 		int all=(NumSamples/block)+1;
 		//int64_t pos=0;
 		int64_t pos= (Delay<0)? -(SampleRate * Delay * BytesPerSample) : 0;
 		for (int i=0;i<all; i++) {
 			if (block+pos > NumSamples) block = NumSamples - pos;
 			//wxLogStatus("i %i block %i nums %i", (int)pos, block, (int)NumSamples);
-			GetAudio(&data,pos,block);
+			GetAudio(data,pos,block);
 			//wxLogStatus("write");
 			file_cache.Write(data,block*BytesPerSample);
 			//wxLogStatus("Progress");

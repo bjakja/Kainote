@@ -112,7 +112,6 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	Visual=0;
 	ABox=NULL;
 	line=NULL;
-	dummytext=NULL;
 
 	wxArrayString ans;
 	ans.Add("an1");
@@ -276,7 +275,6 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 EditBox::~EditBox()
 {
 	wxDELETE(line);
-	wxDELETE(dummytext);
 }
 
 void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
@@ -312,15 +310,15 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 	//ustawia znaki na sekundę i ilość linii
 	UpdateChars((TextEditTl->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
 	//ustawia clip/inny visual gdy jest włączony
-	if(Visual){
-		TabPanel* pan=(TabPanel*)GetParent();
+	if(Visual>1){
 		pan->Video->SetVisual(line->Start.mstime, line->End.mstime);
 		pan->Video->Render();
 	}
 	//resetuje edycję na wideo
 	if(OnVideo){
-		if(pan->Video->IsShown()){pan->Video->OpenSubs(grid->SaveText()); 
-		if(pan->Video->GetState()==Paused){pan->Video->Render();}
+		if(pan->Video->IsShown()){
+			pan->Video->OpenSubs(grid->SaveText()); 
+			if(pan->Video->GetState()==Paused){pan->Video->Render();}
 		}
 		OnVideo=false;
 	}
@@ -470,7 +468,7 @@ void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 }
 
 
-void EditBox::PutinText(wxString text, bool focus, bool onlysel)
+void EditBox::PutinText(wxString text, bool focus, bool onlysel, wxString *texttoPutin)
 {
 	bool oneline=(grid->sel.size()<2);
 	if(oneline && !onlysel){
@@ -491,6 +489,10 @@ void EditBox::PutinText(wxString text, bool focus, bool onlysel)
 			}
 			else{whre=(focus)? cursorpos+1+text.Len() : Placed.x;}
 			txt.insert(Placed.x,text);
+		}
+		if(texttoPutin){
+			*texttoPutin=txt;
+			return;
 		}
 		Editor->SetTextS(txt,true);
 		if(focus){Editor->SetFocus();}
@@ -1171,283 +1173,11 @@ bool EditBox::FindVal(wxString tag, wxString *Finded, wxString text, bool *endse
 	return false;
 }
 
-void EditBox::SetClip(wxString clip,bool dummy)
-{
-	TabPanel* pan=(TabPanel*)GetParent();
-	bool isOriginal=(grid->transl && TextEdit->GetValue()=="");
-	//Editor
-	MTextEditor *Editor=(isOriginal)? TextEditTl : TextEdit;
-
-	if(dummy){
-		bool vis=false;
-		if(Visual==VECTORCLIP){
-			if(!dummytext){
-				wxPoint pos;
-				wxString tmp="clip(";
-				wxString txt=Editor->GetValue();
-				bool fv=FindVal("(i?clip.)[^\\\\}]*", &tmp,txt);
-				//wxString tmp1=(tmp.StartsWith("clip"))? "\\iclip(" : "\\clip(";
-				wxString tclip= tmp+clip+")";
-				if(!InBracket){
-					txt.insert(0,"{"+tclip+"}");
-					Placed.x=tmp.Len()+2, Placed.y=Placed.x+clip.Len();
-				}
-				else{
-					if(Placed.x<Placed.y){txt.erase(txt.begin()+Placed.x, txt.begin()+Placed.y+1);}
-					txt.insert(Placed.x,tclip);
-					Placed.x+=tmp.Len()+1;// \clip(
-					Placed.y=Placed.x+clip.Len();
-				}
-				Dialogue *visdl=line->Copy();
-				visdl->Text="";
-				dummytext= grid->GetVisible(&pos,&vis);
-				dummytext->replace(pos.x,pos.y-pos.x,txt);
-				int nx=0, ny=0;
-				grid->GetASSRes(&nx, &ny);
-
-				visdl->Text<<"{\\p1\\bord0\\shad0\\fscx100\\fscy100\\1c&H000000&\\1a&H77&\\pos(0,0)\\an7\\"<<tmp<<clip<<")}m 0 0 l "<<
-					nx<<" 0 "<<nx<<" "<<ny<<" 0 "<<ny;
-				(*dummytext)<<visdl->GetRaw();
-				dumplaced.x=Placed.x + pos.x; dumplaced.y=Placed.y + pos.x;
-				delete visdl;
-
-			}else{
-
-				if(dumplaced.x<dumplaced.y){dummytext->erase(dummytext->begin()+dumplaced.x, dummytext->begin()+dumplaced.y);}
-				dummytext->insert(dumplaced.x,clip);
-				dumplaced.y=dumplaced.x+clip.Len();
-				int endclip=dummytext->Find(')',true);
-				int startclip=dummytext->Find('(',true);
-				dummytext->replace(startclip+1, endclip-(startclip+1), clip);
-			}
-		}else{
-			if(!dummytext){
-				wxPoint pos;
-				wxString tmp="";
-				bool isf;
-				Editor->SetSelection(0,0);
-				isf=FindVal("an([0-9])", &tmp);
-				if(tmp!="7"){PutinText("\\an7", false);}
-				isf=FindVal("p([0-9]+)", &tmp);
-				if(!isf){PutinText("\\p1", false);}
-				wxString txt=Editor->GetValue();
-				//txt.Prepend("{\\p1}");
-				txt.Replace("}{","");
-				dummytext=grid->GetVisible(&pos,&vis);
-
-				wxRegEx rx("(}m[^{]*{\\\\p0})",wxRE_ADVANCED);
-				if(!rx.ReplaceFirst(&txt,"}"+clip+"{\\\\p0}")){
-					txt.Replace("}","}"+clip+"{\\p0}",false);
-				}
-				dummytext->replace(pos.x,pos.y-pos.x,txt);
-				//dumplaced.x=dummytext.find('}',pos.x)+1;
-				//dumplaced.y=dummytext.find("{\\p0}",dumplaced.x);
-				Editor->SetTextS(txt,true);
-				//Send(false,false,true);
-			}else{
-				wxRegEx rx("(}m[^{]*{\\\\p0})",wxRE_ADVANCED);
-				rx.ReplaceFirst(dummytext,"}"+clip+"{\\\\p0}");
-			}
-
-		}
-		wxString *dtxt=new wxString(*dummytext);
-		if(!pan->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
-		pan->Video->VisEdit=true;
-		pan->Video->Render();
-
-	}
-	else{
-		wxString tmp="clip(";
-		Editor->SetSelection(0,0);
-		if(Visual==VECTORCLIP){
-			FindVal("(i?clip.)[^\\\\}]*", &tmp);
-			PutinText("\\"+tmp+clip+")",false);
-		}else{
-			wxString txt=Editor->GetValue();
-			size_t pos=txt.find('}')+1;
-			int pos1=txt.find("{\\p0}");
-			if(pos1>0){txt.erase(txt.begin()+pos,txt.begin()+pos1);}
-			else{clip+="{\\p0}";}
-			txt.insert(pos,clip);
-			Editor->SetTextS(txt,true,true,true);
-
-		}
-		pan->Video->VisEdit=true;
-		if(splittedTags){TextEditTl->modified=true;}
-		Send(false,false,true);
-	}
-}
-
-//Wstawianie visuali do tekstu linijki
-void EditBox::SetVisual(wxString visual,bool dummy, int type)
-{
-	//wstawianie wisuali ale najpierw muszę sobie dać ich rozróżnianie
-
-	TabPanel* pan=(TabPanel*)GetParent();
-
-	bool isOriginal=(grid->transl && TextEdit->GetValue()=="");
-	//Editor
-	MTextEditor *Editor=(isOriginal)? TextEditTl : TextEdit;
-
-	if(dummy){
-		wxString txt=Editor->GetValue();
-		
-		wxString tmp;
-		if(Visual==MOVE||Visual==CHANGEPOS||Visual==CLIPRECT){Editor->SetSelection(0,0);}
-
-		wxString xytype= (type==0)? "x" : "y";
-		wxString frxytype= (type==1)? "x" : "y";
-
-		wxString tagpattern= (type==100)? "(org).+" : (Visual==MOVE||Visual==CHANGEPOS)? "(move|pos).+" : (Visual==SCALE)? "(fsc"+xytype+").+" : (Visual==ROTATEZ)? "(frz?)[0-9-]+" : (Visual==ROTATEXY)? "(fr"+frxytype+").+" : (Visual==CLIPRECT)? "(i?clip).+" : "(fa"+xytype+").+";
-		FindVal(tagpattern, &tmp);
-		if(type==2 && Visual>0){
-			if(Placed.x<Placed.y){txt.erase(txt.begin()+Placed.x, txt.begin()+Placed.y+1);}
-			wxString xytype= (type==0)? "x" : "y";
-			wxString tagpattern= (Visual==SCALE)? "(fscx).+" : (Visual==ROTATEZ)? "(frz?)[0-9-]+" : (Visual==ROTATEXY)? "(frx).+" : "(fax).+";
-			FindVal(tagpattern, &tmp, txt);
-		}
-		if(!InBracket){
-
-			txt.insert(Placed.x,"{"+visual+"}");
-		}
-		else{
-			if(Placed.x<Placed.y){txt.erase(txt.begin()+Placed.x, txt.begin()+Placed.y+1);}
-			txt.insert(Placed.x,visual);
-			Editor->SetSelection(Placed.x,Placed.x, true);
-		}
-		
-		if(!dummytext){
-			bool vis=false;
-			dummytext= grid->GetVisible(&dumplaced,&vis);
-			if(!vis){SAFE_DELETE(dummytext); return;}
-		}else{
-			Editor->SetTextS(txt,false,false);
-		}
-		dummytext->replace(dumplaced.x,dumplaced.y-dumplaced.x,txt);
-		dumplaced.y=txt.Len()+dumplaced.x;
-
-
-		wxString *dtxt=new wxString(*dummytext);
-		if(!pan->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
-		pan->Video->VisEdit=true;
-		pan->Video->Render();
-	}else{
-		Editor->Refresh(false);
-		Editor->modified=true;
-		pan->Video->VisEdit=true;
-		if(splittedTags){TextEditTl->modified=true;}
-		Send(false,false,true);
-
-	}
-}
-
-//pobieranie pozycji i skali, trzeba tu zrobić rozróznienie na tagi działające na całą linię i tagi miejscowe.
-//W przypadku rysowania wektorowego, należy podać scale, w reszcie przypadków mozna olać wszystko bądź jedną wartość.
-D3DXVECTOR2 EditBox::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl, wxString* movetimes)
-{
-	bool beforeCursor=!(Visual>=VECTORCLIP || Visual== MOVE || Visual== CHANGEPOS);
-	bool draw=(Visual == VECTORCLIP || Visual == VECTORDRAW);
-	D3DXVECTOR2 ppos(0.0f,0.0f);
-	wxString txt = TextEdit->GetValue();
-	MTextEditor *Editor = TextEdit;
-	if(grid->transl && txt==""){ txt = TextEditTl->GetValue(); Editor = TextEditTl;}
-	
-	
-	Styles *acstyl=grid->GetStyle(0,line->Style);
-	bool foundpos=false;
-	wxRegEx pos("\\\\(pos|move)\\(([^\\)]+)\\)",wxRE_ADVANCED);
-	if(pos.Matches(txt) && tbl){
-		wxString type=pos.GetMatch(txt,1);
-		wxString txtpos = pos.GetMatch(txt,2);
-		wxStringTokenizer tkz(txtpos,",");
-		int ipos=0;
-		while(tkz.HasMoreTokens()&& ipos<6){
-			wxString token=tkz.GetNextToken();
-			token.ToDouble(&tbl[ipos]);
-			if(ipos>3 && movetimes){
-				(*movetimes)<<","<<token;
-			}
-			ipos++;
-		}
-		tbl[4]+=line->Start.mstime; tbl[5]+=line->Start.mstime;
-		tbl[6]=ipos;
-		if(ipos>1){ppos.x=tbl[0];ppos.y=tbl[1];foundpos=true;}
-
-	}else{
-		if(tbl){tbl[6]=0;}
-		ppos.x= (line->MarginL!=0)? line->MarginL : wxAtoi(acstyl->MarginL);
-		ppos.y= (line->MarginV!=0)? line->MarginV : wxAtoi(acstyl->MarginV);
-	}
-	if(!beforeCursor){Editor->SetSelection(0,0);}
-
-	wxString sxfd, syfd;
-	bool scx=FindVal("fscx([.0-9-]+)", &sxfd);
-	bool scy=FindVal("fscy([.0-9-]+)", &syfd);
-	double fscx=100.0, fscy=100.0;
-	if(scx){
-		sxfd.ToDouble(&fscx);
-	}else{
-		acstyl->ScaleX.ToDouble(&fscx);
-	}
-	if(scy){
-		syfd.ToDouble(&fscy);
-	}else{
-		acstyl->ScaleY.ToDouble(&fscy);
-	}
-	if(scale){
-		scale->x=fscx/100;
-		scale->y=fscy/100;
-	}
-	if(draw){
-		wxRegEx drawscale;
-		if(Visual==VECTORCLIP){
-			*scale = D3DXVECTOR2(1,1);
-			drawscale.Compile("\\\\i?clip\\(([0-9]+),", wxRE_ADVANCED);
-		}else{
-			drawscale.Compile("\\\\p([0-9]+)", wxRE_ADVANCED);
-		}
-		int dscale=1;
-		if(drawscale.Matches(txt)){
-			dscale = wxAtoi(drawscale.GetMatch(txt,1));
-		}
-		dscale= pow(2.f,(dscale-1.f));
-		scale->x /= dscale;
-		scale->y /= dscale;
-	}else{
-		int tmpan;
-		tmpan=wxAtoi(acstyl->Alignment);
-		wxRegEx an("\\\\an([0-9]+)",wxRE_ADVANCED);
-		if(an.Matches(txt)){
-			tmpan=wxAtoi(an.GetMatch(txt,1));
-		}
-		if(AN){*AN = tmpan;}
-		if(foundpos){return ppos;}
-		//D3DXVECTOR2 dsize = Notebook::GetTab()->Video->Vclips->CalcWH();
-		int x, y;
-		grid->GetASSRes(&x, &y);
-		if(tmpan % 3==2){
-			ppos.x = (x/2);
-		}
-		else if(tmpan % 3==0){
-			ppos.x = (line->MarginR!=0)? line->MarginR : wxAtoi(acstyl->MarginR);
-			ppos.x = x - ppos.y;
-		}
-		if(tmpan < 4){
-			ppos.y = (line->MarginV!=0)? line->MarginV : wxAtoi(acstyl->MarginV);
-			ppos.y =  y - ppos.y;
-		}else if(tmpan < 7){
-			ppos.y = (y/2);
-		}
-	}
-
-
-	return ppos;
-}
 
 void EditBox::OnEdit(wxCommandEvent& event)
 {
 	TabPanel* panel= (TabPanel*)GetParent();
-	wxPoint pos;bool visible=false;
+	bool visible=false;
 	if(StartEdit->HasFocus()||EndEdit->HasFocus()){
 		line->End=EndEdit->GetTime();
 		line->Start=StartEdit->GetTime();
@@ -1465,16 +1195,13 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		//panel->Video->SetClip(GetClip(),line->Start.mstime,line->End.mstime);
 		//return;
 		//}else{
-		text=grid->GetVisible(&pos,&visible);
+		text=grid->GetVisible(&visible);
 		//}
 	}
 	else if(panel->Video->GetState()==Playing){
 		visible=true;
 		text=grid->SaveText();
 
-	}
-	if(panel->Video->VisEdit && Visual==VECTORCLIP){
-		(*text)<<panel->Edit->dummytext->Trim().AfterLast('\n');
 	}
 
 	if(visible && panel->Video->IsShown()){
