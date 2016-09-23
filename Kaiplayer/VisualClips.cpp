@@ -107,7 +107,7 @@ void DrawingAndClip::DrawVisual(int time)
 void DrawingAndClip::SetCurVisual()
 {
 	wxString clip;
-	D3DXVECTOR2 linepos = GetPosnScale(&scale, NULL, NULL);
+	D3DXVECTOR2 linepos = GetPosnScale(&scale, &alignment, (Visual==VECTORDRAW)? tbl : NULL);
 	if(Visual!=VECTORDRAW){
 		bool found =tab->Edit->FindVal("(i?clip[^\\)]+)", &clip);
 		if(found){int rres = clip.Replace(",",",");
@@ -132,7 +132,7 @@ void DrawingAndClip::SetCurVisual()
 
 	Points.clear();
 	wxStringTokenizer tokens(clip," ");
-	int tmpx=0;
+	double tmpx=0;
 	bool gotx=false;
 	bool start=false;
 	wxString type;
@@ -142,13 +142,14 @@ void DrawingAndClip::SetCurVisual()
 		if(token=="m"||token=="l"||token=="b"||token=="s"){type=token;start=true;}
 		else if(token=="c"){continue;}
 		else if(gotx){
-			int tmpy=wxAtoi(token);
+			double tmpy=0;
+			token.ToCDouble(&tmpy);
 			Points.push_back(ClipPoint(tmpx, tmpy,type,start));
 			gotx=false;
 			start=false;
 		}
 		else{
-			tmpx=wxAtoi(token);
+			token.ToCDouble(&tmpx);
 			gotx=true;
 		}
 	
@@ -156,27 +157,35 @@ void DrawingAndClip::SetCurVisual()
 	//wxLogStatus(clip);
 	if(Points.empty()){
 		AddMove(wxPoint(((SubsSize.x)/(wspw*scale.x))/2, ((SubsSize.y)/(wsph*scale.y))/2),0);
+	}else if(Visual == VECTORDRAW){
+		D3DXVECTOR2 xyoffset = CalcWH();
+		for(size_t i = 0; i<Points.size(); i++){
+			Points[i].x -= xyoffset.x;
+			Points[i].y -= xyoffset.y;
+		}
 	}
 	acpoint=Points[0];
 }
 	
 wxString DrawingAndClip::GetVisual()
 {
+	wxString format = (Visual==VECTORDRAW)? "6.2f" : "6.0f";
 	wxString clip;
 	int cntb=0;
 	bool spline=false;
+	D3DXVECTOR2 xyoffset = (Visual==VECTORDRAW)? CalcWH() : D3DXVECTOR2(0,0);
 	for(size_t i=0; i<Points.size(); i++)
 	{
 		ClipPoint pos=Points[i];
-		int x= pos.x;
-		int y= pos.y;
+		float x= pos.x + xyoffset.x;
+		float y= pos.y + xyoffset.y;
 		if(cntb && !pos.start){
-			clip<<x<<" "<<y<<" ";
+			clip<<getfloat(x,format)<<" "<<getfloat(y,format)<<" ";
 			cntb++;
 			//if(cntb>2 && pos.type=="b"){cntb=0;}
 		}else{
 			if(spline){clip<<"c ";spline=false;}
-			clip<<pos.type<<" "<<x<<" "<<y<<" ";
+			clip<<pos.type<<" "<<getfloat(x,format)<<" "<<getfloat(y,format)<<" ";
 			if(pos.type=="b"||pos.type=="s"){cntb=1;if(pos.type=="s"){spline=true;}}
 		}
 	}
@@ -378,7 +387,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	bool ctrl=event.ControlDown();
 	//bool click=event.LeftDown();
 	drawtxt=(event.MiddleUp())?false : true;
-
+	//if(Visual==VECTORDRAW){CalcWH();}
 	if(!event.ButtonDown() && !event.LeftIsDown()){
 		//wxLogStatus(" bdown %i", (int)event.ButtonDown());
 		int pos = CheckPos(xy);
@@ -504,22 +513,35 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 
 
 
-//D3DXVECTOR2 DrawingAndClip::CalcWH()
-//{
-//	if (Points.size()<1){return D3DXVECTOR2(0,0);}
-//	int minx=INT_MAX;
-//	int miny=INT_MAX;
-//	int maxx=-INT_MAX;
-//	int maxy=-INT_MAX;
-//	for(size_t i = 0; i<Points.size(); i++)
-//	{
-//		ClipPoint p=Points[i];
-//		if(p.x<minx){minx=p.x;}
-//		if(p.y<miny){miny=p.y;}
-//		if(p.x>maxx){maxx=p.x;}
-//		if(p.y>maxy){maxy=p.y;}
-//	}
-//	D3DXVECTOR2 sizes((maxx-minx)*wspw,(maxy-miny)*wsph);
-//	return sizes;
-//}
+D3DXVECTOR2 DrawingAndClip::CalcWH()
+{
+	if (alignment==7 || Points.size()<1){return D3DXVECTOR2(0,0);}
+	int minx=INT_MAX;
+	int miny=INT_MAX;
+	int maxx=-INT_MAX;
+	int maxy=-INT_MAX;
+	for(size_t i = 0; i<Points.size(); i++)
+	{
+		ClipPoint p=Points[i];
+		if(p.x<minx){minx=p.x;}
+		if(p.y<miny){miny=p.y;}
+		if(p.x>maxx){maxx=p.x;}
+		if(p.y>maxy){maxy=p.y;}
+	}
+	D3DXVECTOR2 sizes((maxx-minx),(maxy-miny));
+	//wxLogStatus("sizes %f, %f, %i", sizes.x, sizes.y, (int)alignment);
+	D3DXVECTOR2 result = D3DXVECTOR2(0,0);
+	if(alignment % 3==2){
+		result.x = sizes.x/2.0;
+	}else if(alignment % 3==0){
+		result.x = sizes.x;
+	}
+	if(alignment < 4){
+		result.y = sizes.y;
+	}else if(alignment < 7){
+		result.y = sizes.y/2.0;
+	}
+	//wxLogStatus("sizes2 %f, %f", result.x, result.y);
+	return result;
+}
 

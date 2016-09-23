@@ -34,14 +34,14 @@ class TabPanel;
 class ClipPoint
 {
 public:
-	ClipPoint(int x, int y, wxString type, bool isstart);
+	ClipPoint(float x, float y, wxString type, bool isstart);
 	ClipPoint();
 	bool IsInPos(wxPoint pos, int diff);
 	D3DXVECTOR2 GetVector();
 	int wx();
 	int wy();
-	int x;
-	int y;
+	float x;
+	float y;
 	wxString type;
 	bool start;
 };
@@ -255,6 +255,7 @@ public:
 	void DrawCircle(int coord);
 	int DrawCurve(int i,bool bspline=false);
 	void Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bspline, int spoints=4, int acpt=0);
+	D3DXVECTOR2 CalcWH();
 
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
@@ -263,6 +264,7 @@ public:
 	bool newline;
 	bool newmove;
 	int grabbed;
+	byte alignment;
 	wxPoint diffs;
 	D3DXVECTOR2 scale;
 	// _x i _y to punkt przemieszczenia w przypadku rysunków.

@@ -314,6 +314,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 		pan->Video->SetVisual(line->Start.mstime, line->End.mstime);
 		pan->Video->Render();
 	}
+	
 	//resetuje edycję na wideo
 	if(OnVideo){
 		if(pan->Video->IsShown()){
@@ -1012,7 +1013,11 @@ void EditBox::HideControls()
 
 void EditBox::ClearErrs()
 {
-	grid->SpellErrors.clear();
+	Notebook *nb= Notebook::GetTabs();
+	for(size_t i = 0; i < nb->Size(); i++)
+	{
+		nb->Page(i)->Grid1->SpellErrors.clear();
+	}
 	grid->Refresh(false);
 }
 
@@ -1191,12 +1196,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 
 	wxString *text=NULL;
 	if(panel->Video->GetState()==Paused){
-		//if(panel->Video->VisEdit){
-		//panel->Video->SetClip(GetClip(),line->Start.mstime,line->End.mstime);
-		//return;
-		//}else{
 		text=grid->GetVisible(&visible);
-		//}
 	}
 	else if(panel->Video->GetState()==Playing){
 		visible=true;
@@ -1204,8 +1204,9 @@ void EditBox::OnEdit(wxCommandEvent& event)
 
 	}
 
+	OnVideo=true;
 	if(visible && panel->Video->IsShown()){
-		panel->Video->OpenSubs(text);OnVideo=true;
+		panel->Video->OpenSubs(text);
 		if(panel->Video->GetState()==Paused){panel->Video->Render();}
 	}else if(text){delete text;}
 }

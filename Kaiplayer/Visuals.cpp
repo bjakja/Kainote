@@ -370,7 +370,8 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 		dscale= pow(2.f,(dscale-1.f));
 		scale->x /= dscale;
 		scale->y /= dscale;
-	}else{
+	}
+	if(Visual!=VECTORCLIP){
 		int tmpan;
 		tmpan=wxAtoi(acstyl->Alignment);
 		wxRegEx an("\\\\an([0-9]+)",wxRE_ADVANCED);
@@ -387,7 +388,7 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 		}
 		else if(tmpan % 3==0){
 			ppos.x = (edit->line->MarginR!=0)? edit->line->MarginR : wxAtoi(acstyl->MarginR);
-			ppos.x = x - ppos.y;
+			ppos.x = x - ppos.x;
 		}
 		if(tmpan < 4){
 			ppos.y = (edit->line->MarginV!=0)? edit->line->MarginV : wxAtoi(acstyl->MarginV);
@@ -456,12 +457,9 @@ void Visuals::SetClip(wxString clip,bool dummy)
 				wxPoint pos;
 				bool isf;
 				Editor->SetSelection(0,0);
-				isf=edit->FindVal("an([0-9])", &tmp);
-				if(tmp!="7"){edit->PutinText("\\an7", false);}
 				isf=edit->FindVal("p([0-9]+)", &tmp);
 				if(!isf){edit->PutinText("\\p1", false);}
 				wxString txt=Editor->GetValue();
-				//txt.Prepend("{\\p1}");
 				txt.Replace("}{","");
 				dummytext=grid->GetVisible(&vis, &pos);
 

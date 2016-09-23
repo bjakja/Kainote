@@ -114,7 +114,7 @@ public:
 	//ustawia tekst i gdy trzeba wstawia tagi z orygina³u ustawiaj¹c w³aœciw¹ pozycjê kursora.
 	void SetTextWithTags();
 	void ClearErrs();
-	
+	void OnEdit(wxCommandEvent& event);
 
 	wxBoxSizer* BoxSizer1;
 
@@ -155,7 +155,6 @@ private:
 	void OnSplit(wxCommandEvent& event);
 	void OnHideOrig(wxCommandEvent& event);
 	void OnPasteDiff(wxCommandEvent& event);
-	void OnEdit(wxCommandEvent& event);
 	void OnColorChange(wxCommandEvent& event);
 	void OnButtonTag(wxCommandEvent& event);
 	void OnCursorMoved(wxCommandEvent& event);
