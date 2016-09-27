@@ -65,8 +65,6 @@ class kainoteFrame: public wxFrame
 		void OnMenuSelected(wxCommandEvent& event);
 		void OnMenuSelected1(wxCommandEvent& event);
 		void OnRecent(wxCommandEvent& event);
-		bool SpellcheckerOn();
-		SpellChecker *SC;
 		stylestore *ss;
 
 		TabPanel* GetTab();

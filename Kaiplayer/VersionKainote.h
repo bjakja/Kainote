@@ -1,2 +1,2 @@
-#define VersionKainote "0.7.4 Build534"
-#define NumVersionKainote 0,7,4,534
+#define VersionKainote "0.8.0 Build537"
+#define NumVersionKainote 0,8,0,537

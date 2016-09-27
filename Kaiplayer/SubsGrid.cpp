@@ -192,9 +192,7 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 	wxColour ComparsionBGCmntSelCol=Options.GetColour("Grid comparsion comment background selected");
 	wxString chtag=Options.GetString("Grid tag changing char");
 	bool SpellCheckerOn = Options.GetBool("Editbox Spellchecker");
-
-	//mdc.SetBackground(wxBrush(linesCol));
-	//tdc.SetBackground(wxBrush(linesCol));
+	
 	mdc.SetPen(*wxTRANSPARENT_PEN);
 	mdc.SetBrush(wxBrush(linesCol));
 	mdc.DrawRectangle(0,0,GridWidth[0]+1,h);
@@ -1694,13 +1692,6 @@ void SubsGrid::GetUndo(bool redo)
 
 	UpdateUR();
 
-	/*if(!redo){Kai->MenuBar->Enable(ID_REDO1,true);Kai->Toolbar->UpdateId(ID_REDO1,true);}
-	if(file->Iter()==file->maxx()){Kai->MenuBar->Enable(ID_REDO1,false);Kai->Toolbar->UpdateId(ID_REDO1,false);}
-
-
-	if(file->Iter()){
-	if(redo){Modified=true;Kai->MenuBar->Enable(ID_UNDO1,true);Kai->Toolbar->UpdateId(ID_UNDO1,true);}
-	}else{Modified=false;Kai->MenuBar->Enable(ID_UNDO1,false);Kai->Toolbar->UpdateId(ID_UNDO1,false);}*/
 	Kai->Label(file->Iter());
 
 
@@ -1710,10 +1701,15 @@ void SubsGrid::GetUndo(bool redo)
 		pan->Edit->HideControls();
 		Kai->UpdateToolbar();
 	}
-	sel.clear();
-	int erow=Edit->ebrow;if(erow>=GetCount()){erow=GetCount()-1;}
-	sel[erow]=true;
-	lastRow=erow;
+	
+	int erow=Edit->ebrow;
+	if(erow>=GetCount()){
+		erow=GetCount()-1;
+		sel.clear();
+		sel[erow]=true;
+		lastRow=erow;
+	}
+	
 	Thaw();
 
 	if(Kai->ss){Kai->ss->ASS->SetArray(&file->subs->styles);Kai->ss->ASS->Refresh(false);}
@@ -2179,38 +2175,36 @@ void SubsGrid::NextLine(int dir)
 
 void SubsGrid::CheckText(wxString text, wxArrayInt &errs)
 {
-	if(!Kai->SC){Options.SetBool("Editbox Spellchecker",Kai->SpellcheckerOn());}
-	if(Kai->SC){
 		
-		wxString notchar="/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{}";
-		text+=" ";
-		bool block=false;
-		wxString word="";
-		//wxString deb;
-		bool slash=false;
-		int lasti=0;
-		int firsti=0;
-		for(size_t i = 0; i<text.Len();i++)
-		{
-			wxUniChar ch=text.GetChar(i);
-			if(notchar.Find(ch)!=-1&&!block){if(word.Len()>1){
-				if(word.StartsWith("'")){word=word.Remove(0,1);}
-				if(word.EndsWith("'")){word=word.RemoveLast(1);}
-				word.Trim(false);
-				word.Trim(true);
-				bool isgood=Kai->SC->CheckWord(word);
-				if (!isgood){errs.push_back(firsti);errs.push_back(lasti);}
-				//wxMessageBox(word);
-			}word="";firsti=i+1;}
-			if(ch=='{'){block=true;}
-			else if(ch=='}'){block=false;firsti=i+1;word="";}
+	wxString notchar="/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{}";
+	text+=" ";
+	bool block=false;
+	wxString word="";
+	//wxString deb;
+	bool slash=false;
+	int lasti=0;
+	int firsti=0;
+	for(size_t i = 0; i<text.Len();i++)
+	{
+		wxUniChar ch=text.GetChar(i);
+		if(notchar.Find(ch)!=-1&&!block){if(word.Len()>1){
+			if(word.StartsWith("'")){word=word.Remove(0,1);}
+			if(word.EndsWith("'")){word=word.RemoveLast(1);}
+			word.Trim(false);
+			word.Trim(true);
+			bool isgood=SpellChecker::Get()->CheckWord(word);
+			if (!isgood){errs.push_back(firsti);errs.push_back(lasti);}
+			//wxMessageBox(word);
+		}word="";firsti=i+1;}
+		if(ch=='{'){block=true;}
+		else if(ch=='}'){block=false;firsti=i+1;word="";}
 
 
-			if(notchar.Find(ch)==-1&&text.GetChar((i==0)? 0 : i-1)!='\\'&&!block){word<<ch;lasti=i;}
-			else if(!block&&text.GetChar((i==0)? 0 : i-1)=='\\'){firsti=i+1;word="";}
-		}
-		if(errs.size()<2){errs.push_back(0);}
+		if(notchar.Find(ch)==-1&&text.GetChar((i==0)? 0 : i-1)!='\\'&&!block){word<<ch;lasti=i;}
+		else if(!block&&text.GetChar((i==0)? 0 : i-1)=='\\'){firsti=i+1;word="";}
 	}
+	if(errs.size()<2){errs.push_back(0);}
+	
 }
 
 

@@ -407,7 +407,7 @@ void config::SaveAudioOpts()
 wxString getfloat(float num, wxString format)
 {
 	wxString strnum=wxString::Format(_T("%"+format),num);
-	//strnum.Replace(",",".");
+	//if(strnum.find('.')!= -1){return strnum.Trim(false);}
 	int rmv=0;
 	bool trim=false;
 	for(int i=strnum.Len()-1;i>0;i--)
@@ -418,7 +418,7 @@ wxString getfloat(float num, wxString format)
 		else{/*if(trim){int tmpc=static_cast < int >(strnum.GetChar(i));tmpc++;strnum[i]=(wxUniChar)tmpc;}*/break;}
 	}
 	if(rmv){strnum.RemoveLast(rmv);}
-	return strnum;
+	return strnum.Trim(false);
 }
 
 

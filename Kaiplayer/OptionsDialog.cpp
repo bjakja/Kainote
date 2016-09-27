@@ -83,9 +83,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		langSizer->Add(lang,0,wxALL|wxEXPAND,2);
 		MainSizer->Add(langSizer,0,wxRIGHT|wxEXPAND,5);
 
-		if(!Kai->SC){Kai->SC=new SpellChecker();}
 		wxArrayString dics;
-		Kai->SC->AvailableDics(dics);
+		SpellChecker::AvailableDics(dics);
 		if(dics.size()==0){dics.Add(_("Umieść pliki .dic i .aff do folderu \"Dictionary\""));}
 		wxStaticBoxSizer *dicSizer=new wxStaticBoxSizer(wxVERTICAL, Main, _("Język sprawdzania pisowni (folder \"Dictionary\")"));
 		
@@ -503,6 +502,13 @@ void OptionsDialog::SetOptions(bool saveall)
 			wxCheckBox *cb=(wxCheckBox*)OB.ctrl;
 			if(Options.GetBool(OB.option)!=cb->GetValue()){
 				Options.SetBool(OB.option,cb->GetValue());
+				if(OB.option=="Editbox Spellchecker"){
+					for(size_t i = 0; i< Kai->Tabs->Size();i++){
+						Kai->Tabs->Page(i)->Grid1->SpellErrors.clear();
+					}
+					Kai->Tabs->GetTab()->Grid1->Refresh(false);
+					Kai->Tabs->GetTab()->Edit->TextEdit->SpellcheckerOnOff();
+				}
 			}
 		}
 		else if(OB.ctrl->IsKindOf(CLASSINFO(wxButton))){
@@ -538,7 +544,7 @@ void OptionsDialog::SetOptions(bool saveall)
 				if(Options.GetString(OB.option)!=kol){
 					Options.SetString(OB.option,kol);
 					if(cbx->GetId()==10001){
-						Kai->SpellcheckerOn();
+						SpellChecker::Destroy();
 						colmod=true;
 						Kai->GetTab()->Grid1->SpellErrors.clear();
 					}

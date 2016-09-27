@@ -39,7 +39,6 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 #else
 	mylog=NULL;
 #endif
-	SC=NULL;
 	LSD=NULL;
 	ss=NULL;
 	FR=NULL;
@@ -255,8 +254,7 @@ kainoteFrame::~kainoteFrame()
 	if(Auto){delete Auto; Auto=NULL;}
 	Tabs->Destroy();
 	Tabs=NULL;
-
-	if(SC){delete SC;SC=NULL;}
+	SpellChecker::Destroy();
 
 }
 
@@ -945,12 +943,6 @@ void kainoteFrame::SetAccels(bool _all)
 	{
 		Tabs->Page(i)->SetAccels();
 	}
-}
-
-bool kainoteFrame::SpellcheckerOn()
-{
-	if(!SC){SC=new SpellChecker();}
-	return SC->Initialize();
 }
 
 

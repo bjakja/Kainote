@@ -11,7 +11,6 @@ Position::Position()
 
 void Position::Draw(int time)
 {
-	//if(!(time>=start && time<=end)){blockevents = true; return;}else if(blockevents){blockevents=false;}
 	wxMutexLocker lock(clipmutex);
 	line->SetAntialias(TRUE);
 	line->SetWidth(2.0);
@@ -50,6 +49,24 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 			data[i].lastpos = data[i].pos;
 		}
 		if(!hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
+	}
+	if(evt.LeftDClick()){
+		for(size_t i = 0; i < data.size(); i++){
+			if(data[i].numpos == tab->Edit->ebrow){
+				data[i].pos.x = x;
+				data[i].pos.y = y;
+				D3DXVECTOR2 diff(data[i].pos.x - data[i].lastpos.x, data[i].pos.y - data[i].lastpos.y);
+
+				for(size_t j = 0; j < data.size(); j++){
+					if(j==i){continue;}
+					data[j].pos += diff;
+				}
+				ChangeMultiline(true);
+				break;
+			}
+
+		}
+		return;
 	}
 
 	if(click){
@@ -96,16 +113,13 @@ void Position::SetCurVisual()
 	for(size_t i = 0; i < sels.size(); i++){
 		Dialogue *dial = tab->Grid1->GetDial(sels[i]);
 		D3DXVECTOR2 pos = GetPos(dial,&pib,&tp);
-		//if(sels[i]==tab->Edit->ebrow){from = D3DXVECTOR2(pos.x/wspw, pos.y/wsph);}
-		//wxLogStatus("Getpos %f %f %i %i %i", pos.x, pos.y, tp.x, tp.y, (int)pib);
-		data.push_back(PosData(dial, D3DXVECTOR2(pos.x/wspw, pos.y/wsph), tp, pib));
+		data.push_back(PosData(dial, sels[i], D3DXVECTOR2(pos.x/wspw, pos.y/wsph), tp, pib));
 	}
 }
 
 void Position::ChangeMultiline(bool all)
 {
-	//wxLogStatus("Changemultiline");
-	wxArrayInt sels= tab->Grid1->GetSels();
+	//wxArrayInt sels= tab->Grid1->GetSels();
 	wxString *dtxt;
 	if(!all && !dummytext){
 		bool visible=false; 
@@ -114,10 +128,8 @@ void Position::ChangeMultiline(bool all)
 	}
 	if(!all){ dtxt=new wxString(*dummytext);}
 	int _time = tab->Video->Tell();
-	for(size_t i = 0; i< sels.size(); i++){
+	for(size_t i = 0; i< data.size(); i++){
 		
-		//if(!all && !( result != textReps.end())){ continue; }
-		//wxLogStatus("posfirst %i %i %i",result->second.x,result->second.y,dummytext->Len());
 		Dialogue *Dial = data[i].dial;
 		if(!all && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){continue;}
 		wxString visual = GetVisual(i);
@@ -130,9 +142,9 @@ void Position::ChangeMultiline(bool all)
 		//wxLogStatus("text "+txt);
 		if(all){
 			if(istxttl){
-				tab->Grid1->CopyDial(sels[i])->TextTl=txt;
+				tab->Grid1->CopyDial(data[i].numpos)->TextTl=txt;
 			}else{
-				tab->Grid1->CopyDial(sels[i])->Text=txt;
+				tab->Grid1->CopyDial(data[i].numpos)->Text=txt;
 			}
 		}else{
 			Dialogue Cpy=Dialogue(*Dial);

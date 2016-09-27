@@ -191,13 +191,11 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer6->Add(AutoMoveTags,0,wxALIGN_CENTER|wxLEFT|wxTOP|wxBOTTOM,2);
 
 
-	TextEdit = new MTextEditor(this, 16667, true, wxDefaultPosition, wxSize(-1,30));
+	TextEdit = new MTextEditor(this, 16667, Options.GetBool("Editbox Spellchecker"), wxDefaultPosition, wxSize(-1,30));
 	TextEdit->EB=this;
-	TextEdit->Kai=kaif;
 
 	TextEditTl = new MTextEditor(this, 16667, false, wxDefaultPosition, wxSize(-1,30));
 	TextEditTl->EB=this;
-	TextEditTl->Kai=kaif;
 	TextEditTl->Hide();
 	Comment = new wxCheckBox(this, ID_CHECKBOX1, _("Komentarz"), wxDefaultPosition, wxSize(82,-1));
 	Comment->SetValue(false);

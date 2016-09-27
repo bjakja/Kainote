@@ -8,24 +8,26 @@
 
 
 class SpellChecker
-	{
-	public:
+{
+public:
 
 	SpellChecker();
 	~SpellChecker();
 	bool Initialize();
-	void AvailableDics(wxArrayString &dics);
+	static void AvailableDics(wxArrayString &dics);
 	void Cleaning();
 	bool CheckWord(wxString word);
 	bool AddWord(wxString word);
 	wxArrayString Suggestions(wxString word);
+	static SpellChecker *Get();
+	static void Destroy();
 
-	private:
+private:
 	Hunspell *hunspell;
 	wxCSConv *conv;
+	static SpellChecker *SC;
 
-
-	};
+};
 
 
 

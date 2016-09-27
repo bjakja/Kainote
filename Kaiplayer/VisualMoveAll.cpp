@@ -182,7 +182,7 @@ void MoveAll::ChangeInLines(bool all)
 					if(count % 2 == 0){val += (moving.x * wspw);}else{val += (moving.y * wsph);}
 					if(type==TAGMOVES && count > 1){visual+=token+delimiter; continue;}
 					else if(type==TAGMOVEE && count != 2 && count != 3){visual+=token+delimiter; count++; continue;}
-					if(vector){visual<<(int)(val+0.5)<<delimiter;}
+					if(vector){visual<<getfloat(val,"6.2f")<<delimiter;}
 					else{visual += getfloat(val) + delimiter;}
 					count++;
 				}else{
@@ -202,9 +202,9 @@ void MoveAll::ChangeInLines(bool all)
 						bool vis=false;
 						dummytext= tab->Grid1->GetVisible(&vis,&dumplaced);
 						if(!vis){SAFE_DELETE(dummytext); return;}
-					}else{
-						tab->Edit->TextEdit->SetTextS(txt, false, false);
-					}
+					}//else{
+						
+					//}
 					dummytext->replace(dumplaced.x,dumplaced.y,txt);
 					dumplaced.y = txt.Len();
 
@@ -220,11 +220,11 @@ void MoveAll::ChangeInLines(bool all)
 
 	}
 	if(all){
-		tab->Edit->TextEdit->Refresh(false);
-		tab->Edit->TextEdit->modified=true;
+		//tab->Edit->TextEdit->Refresh(false);
+		//tab->Edit->TextEdit->modified=true;tab->Edit->TextEdit->SetTextS(txt, true);
 		tab->Video->VisEdit=true;
 		if(tab->Edit->splittedTags){tab->Edit->TextEditTl->modified=true;}
-		tab->Grid1->SetModified(false);
+		tab->Grid1->SetModified(true);
 		tab->Grid1->Refresh();
 	}
 

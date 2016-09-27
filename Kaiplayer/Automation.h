@@ -185,19 +185,15 @@ namespace Auto {
 		void ReloadMacro(int script, bool autoload=false);
 		void ReloadScripts(bool first=false);
 		//void RunScript(int script, int macro);
-		void AddFromSubs();
+		bool AddFromSubs();
 		static void OnEdit(wxString &Filename);
 		bool CheckChanges();
-		void BuildMenu(wxMenu **bar);
-		void BuildMenuWithDelay(wxMenu **bar, int time);
+		void BuildMenu(wxMenu **bar, bool all=false);
 		// Get all managed scripts (both loaded and invalid)
 		//void OnMenuClick(wxCommandEvent &event);
-		
 
 		std::vector<Auto::LuaScript*> Scripts;
 		std::vector<Auto::LuaScript*> ASSScripts;
-		//std::map<int, RunFunction > Actions;
-		wxMenu **bar;
 		HANDLE handle;
 	private:
 		wxString AutoloadPath;

@@ -409,7 +409,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		if(id<0){return;}
 		if(id >= MENU_CHOOSE-101 && id <= MENU_CHOOSE+99){
 			OnTabSel(id);
-		}else if(MENU_COMPARE){
+		}else if(id == MENU_COMPARE){
 			if(hasCompare){
 				delete Pages[compareFirstTab]->Grid1->Comparsion;
 				Pages[compareFirstTab]->Grid1->Comparsion = NULL;

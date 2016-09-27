@@ -192,7 +192,7 @@ bool VideoRend::InitDX(bool reset)
 	//}
 #elif DXVA
 	HR (d3device->GetBackBuffer(0,0, D3DBACKBUFFER_TYPE_MONO, &bars),L"Nie można stworzyć powierzchni");
-	HR (DXVA2CreateVideoService(d3device, IID_IDirectXVideoProcessorService, (VOID**)&dxvaService),L"Nie mo?na stworzy? DXVA processor service");
+	HR (DXVA2CreateVideoService(d3device, IID_IDirectXVideoProcessorService, (VOID**)&dxvaService),L"Nie można stworzyć DXVA processor service");
 	//wxLogStatus("wymiary");
 
 	//wxLogStatus("pobrane");
@@ -215,7 +215,7 @@ bool VideoRend::InitDX(bool reset)
 	GUID* guids = NULL;
 	//wxLogStatus("desc");
 
-	HR(dxvaService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids),L"Nie mo?na pobra? GUIDów DXVA");
+	HR(dxvaService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids),L"Nie moźna pobrać GUIDów DXVA");
 	D3DFORMAT* formats = NULL;
 	//D3DFORMAT* formats2 = NULL;
 	bool isgood=false;
@@ -223,7 +223,7 @@ bool VideoRend::InitDX(bool reset)
 	for(UINT i=0; i<count;i++){
 		//wxLogMessage("guid: %i",(int)i);
 		hr=dxvaService->GetVideoProcessorRenderTargets(guids[i], &videoDesc, &count1, &formats);
-		if(FAILED(hr)){wxLogStatus(L"Nie mo?na uzyska? formatów DXVA");continue;}
+		if(FAILED(hr)){wxLogStatus(L"Nie można uzyskać formatów DXVA");continue;}
 		for (UINT j = 0; j < count1; j++)
 		{
 			if (formats[j] == D3DFMT_X8R8G8B8)
@@ -234,7 +234,7 @@ bool VideoRend::InitDX(bool reset)
 		}
 
 		CoTaskMemFree(formats);
-		if(!isgood){ wxLogStatus(L"Format ten nie jest obs?ugiwany przez DXVA");continue;}
+		if(!isgood){ wxLogStatus(L"Format ten nie jest obsługiwany przez DXVA");continue;}
 		isgood=false;
 		//formats = NULL;
 		/*hr=dxvaService->GetVideoProcessorSubStreamFormats(guids[i], &videoDesc, D3DFMT_YUY2, &count2, &formats2);
@@ -255,12 +255,12 @@ bool VideoRend::InitDX(bool reset)
 		if(FAILED(hr)){wxLogStatus(L"GetVideoProcessorCaps zawiodło");continue;}
 		if (DXVAcaps.NumForwardRefSamples > 0 || DXVAcaps.NumBackwardRefSamples > 0)
 		{
-			wxLogStatus(L"NumForwardRefSamples albo NumBackwardRefSample jest wi?ksze od zera");continue;
+			wxLogStatus(L"NumForwardRefSamples albo NumBackwardRefSample jest większe od zera");continue;
 		}
 
 		//if(DXVAcaps.DeviceCaps!=4){continue;}//DXVAcaps.InputPool
 		hr = dxvaService->CreateSurface(vwidth,vheight, 0, d3dformat, D3DPOOL_DEFAULT, 0, DXVA2_VideoSoftwareRenderTarget, &MainStream, NULL);
-		if(FAILED(hr)){wxLogStatus(L"Nie mo?na stworzy? powierzchni dxva %i", (int)i);continue;}
+		if(FAILED(hr)){wxLogStatus(L"Nie można stworzyć powierzchni dxva %i", (int)i);continue;}
 		//hr = dxvaService->CreateSurface(rt3.right, rt3.bottom, 0, SUBS_FORMAT, DXVAcaps.InputPool, 0, DXVA2_VideoSoftwareRenderTarget, &SubsStream, NULL);
 		//if(FAILED(hr)){wxLogStatus(L"Nie mo?na stworzy? powierzchni napisów dxva %i", (int)i);continue;}
 

@@ -253,7 +253,7 @@ D3DXVECTOR2 Visuals::GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos
 		if(res1&&res2){return result;}
 	}
 
-	if(txt[0]=='{'){
+	if(txt!="" && txt[0]=='{'){
 		TextPos->x= 1;
 	}else{
 		TextPos->x= 0;

@@ -14,7 +14,7 @@ public:
 	//types 0 - normal icon, 1 -icon with submenu 2 - clickable element, 3 - spacer 
 	toolitem(byte _type, int _size, int _id=-1, bool enable=false)
 	{
-		type = _type, size=_size; enabled=enable; id=_id;
+		type = _type; size=_size; enabled=enable; id=_id;
 	}
 	bool Enable(bool enable)
 	{

@@ -915,12 +915,16 @@ namespace Auto{
 
 	}
 
-
+	VOID CALLBACK callbackfunc ( PVOID   lpParameter, BOOLEAN TimerOrWaitFired) {
+		Automation *auto_ = (Automation*)lpParameter;
+		auto_->ReloadScripts(true);
+		DeleteTimerQueueTimer(auto_->handle,0,0);
+	}
 
 	Automation::Automation()
 	{
 		AutoloadPath=Options.pathfull+"\\Automation\\automation\\Autoload";
-		ReloadScripts(true);
+		CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
 	}
 
 	Automation::~Automation()
@@ -978,18 +982,6 @@ namespace Auto{
 		else{ASSScripts[script]->Reload();}
 	}
 
-	/*void Automation::RunScript(int script, int macro)
-	{
-		if(Scripts[script]->CheckLastModified(true)){Scripts[script]->Reload();}
-		Auto::LuaCommand * macros = Scripts[script]->GetMacro(macro);
-		if(macro >= macros.size()){
-			wxMessageBox("Wybrane makro przekracza tablicê, co nie powinno siê zdarzyæ, jedynie w przypadku b³êdu w kodzie");
-		}
-		TabPanel *pan = Notebook::GetTab();
-		if(macros[macro]->Validate(pan)){macros[macro]->Run(pan);}
-
-
-	}*/
 
 	void Automation::ReloadScripts(bool first)
 	{
@@ -1044,13 +1036,13 @@ namespace Auto{
 
 	}
 
-	void Automation::AddFromSubs()
+	bool Automation::AddFromSubs()
 	{
 		//wxLogStatus("wesz³o");
 		wxString paths=Notebook::GetTab()->Grid1->GetSInfo("Automation Scripts");
 		//wxLogStatus("m"+paths);
-		if(paths==""){return;}
-		if(paths==scriptpaths && ASSScripts.size()>0){return;}
+		if(paths==""){return false;}
+		if(paths==scriptpaths && ASSScripts.size()>0){return false;}
 		paths.Trim(false);
 		wxStringTokenizer token(paths,"|~$",wxTOKEN_RET_EMPTY_ALL);
 		int error_count=0;
@@ -1079,6 +1071,7 @@ namespace Auto{
 			wxLogWarning(_("Co najmniej jeden skrypt z pliku napisów zawiera b³êdy.\nZobacz opisy skryptów, by uzyskaæ wiêcej informacji."));
 		}
 		scriptpaths = paths;
+		return true;
 	}
 
 	void Automation::OnEdit(wxString &Filename)
@@ -1114,72 +1107,70 @@ namespace Auto{
 		return HasChanges;
 	}
 
-	VOID CALLBACK callbackfunc ( PVOID   lpParameter, BOOLEAN TimerOrWaitFired) {
-		Automation *auto_ = (Automation*)lpParameter;
-		auto_->BuildMenu(auto_->bar);
-		DeleteTimerQueueTimer(auto_->handle,0,0);
-	}
-
-	void Automation::BuildMenuWithDelay(wxMenu **_bar, int time)
-	{
-		bar=_bar;
-		CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,time,0,0);
-	}
 		
-	void Automation::BuildMenu(wxMenu **bar)
+	void Automation::BuildMenu(wxMenu **bar, bool all)
 	{
 		TabPanel* c = Notebook::GetTab();
-		//if(!CheckChanges()){return;}
-		kainoteFrame *Kai=((kainoteApp*)wxTheApp)->Frame;
+		kainoteFrame *Kai = (kainoteFrame*)c->GetGrandParent();
+		bool changes = AddFromSubs();
 
+		/*if(!changes){
+			for(int j=0; j < (*bar)->GetMenuItemCount(); j++){
+				(*bar)->FindItemByPosition(j)->Enable();
+			}
+
+		}
+
+		int (all)? 2 : Scripts.size()+2;*/
 		for(int j=(*bar)->GetMenuItemCount()-1; j>=2; j--){
-			//wxLogStatus("deleted %i", j);
 			(*bar)->Destroy((*bar)->FindItemByPosition(j));
 		}
-		AddFromSubs();
 		int start=30100, i=0;
-		for(auto script : Scripts){
-			if(script->CheckLastModified(true)){script->Reload();}
-			wxMenu *submenu=new wxMenu();
-			int j=0;
-			auto macros = script->GetMacros();
-			//wxLogStatus("size %i", macros.size());
-			for(auto macro : macros){
-				wxString text; text<<"Script "<<script->GetFilename()<<"-"<<j;
-				Hkeys.SetAccMenu(submenu, new wxMenuItem(0,start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
+		//if(all){
+			for(auto script : Scripts){
+				if(script->CheckLastModified(true)){script->Reload();}
+				wxMenu *submenu=new wxMenu();
+				int j=0;
+				auto macros = script->GetMacros();
+				//wxLogStatus("size %i", macros.size());
+				for(auto macro : macros){
+					wxString text; text<<"Script "<<script->GetFilename()<<"-"<<j;
+					Hkeys.SetAccMenu(submenu, new wxMenuItem(0,start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
+					Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+						if(wxGetKeyState(WXK_SHIFT)){
+							wxString wins[1]={"Globalny"};
+							int ret=-1;
+							ret=Hkeys.OnMapHkey( start, text, Kai, wins, 1);
+							if(ret==-1){Kai->MenuBar->FindItem(start)->SetAccel(&Hkeys.GetHKey(start));Hkeys.SaveHkeys();}
+							else if(ret>0){
+								wxMenuItem *item= Kai->MenuBar->FindItem(ret);
+								wxAcceleratorEntry entry;
+								item->SetAccel(&entry);
+							}
+						}else{
+							macro->RunScript();
+						}	
+					}, start);
+					start++;
+					j++;
+				}
+				submenu->AppendSeparator();
+				submenu->Append(start,_("Edytuj"),_("Edytuj"));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-					if(wxGetKeyState(WXK_SHIFT)){
-						wxString wins[1]={"Globalny"};
-						int ret=-1;
-						ret=Hkeys.OnMapHkey( start, text, Kai, wins, 1);
-						if(ret==-1){Kai->MenuBar->FindItem(start)->SetAccel(&Hkeys.GetHKey(start));Hkeys.SaveHkeys();}
-						else if(ret>0){
-							wxMenuItem *item= Kai->MenuBar->FindItem(ret);
-							wxAcceleratorEntry entry;
-							item->SetAccel(&entry);
-						}
-					}else{
-						macro->RunScript();
-					}	
+					Automation::OnEdit(script->GetFilename());	
 				}, start);
 				start++;
-				j++;
+				submenu->Append(start,_("Odœwie¿"),_("Odœwie¿"));
+				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+					script->Reload();
+				}, start);
+				start++;
+				(*bar)->Append(-1, script->GetName(), submenu,script->GetDescription());
+				//if(i%20==19){(*bar)->Break();}
+				i++;
 			}
-			submenu->AppendSeparator();
-			submenu->Append(start,_("Edytuj"),_("Edytuj"));
-			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-				Automation::OnEdit(script->GetFilename());	
-			}, start);
-			start++;
-			submenu->Append(start,_("Odœwie¿"),_("Odœwie¿"));
-			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-				script->Reload();
-			}, start);
-			start++;
-			(*bar)->Append(-1, script->GetName(), submenu,script->GetDescription());
-			//if(i%20==19){(*bar)->Break();}
-			i++;
-		}
+		//}
+
 		for(auto script : ASSScripts){
 			if(script->CheckLastModified(true)){script->Reload();}
 			wxMenu *submenu=new wxMenu();
@@ -1217,7 +1208,6 @@ namespace Auto{
 			}, start);
 			start++;
 			(*bar)->Append(-1, script->GetName(), submenu,script->GetDescription());
-			//if(i%20==19){(*bar)->Break();}
 			i++;
 		}
 		
@@ -1227,32 +1217,5 @@ namespace Auto{
 
 
 
-//void RunFunction::Run(){
-//		if(element==-2){
-//			Automation::OnEdit(script->GetFilename());
-//		}else if(element==-1){
-//			script->Reload();
-//		}else{
-//			LuaCommand *macro=script->GetMacro(element);
-//				if(wxGetKeyState(WXK_SHIFT)){
-//				wxString wins[1]={"Globalny"};
-//				//upewnij siê, ¿e da siê zmieniæ idy na nazwy, 
-//				//mo¿e i trochê spowolni operacjê ale skoñczy siê ci¹g³e wywalanie hotkeysów
-//				//mo¿e od razu funkcji onmaphotkey przekazaæ item by zrobi³a co trzeba
-//				wxString name = macro->StrHotkey();
-//				int ret=-1;
-//				kainoteFrame *Kai = ((kainoteApp*)wxTheApp)->Frame;
-//				ret=Hkeys.OnMapHkey( id, name, Kai, wins, 1);
-//				if(ret==-1){Kai->MenuBar->FindItem(id)->SetAccel(&Hkeys.GetHKey(id));Hkeys.SaveHkeys();}
-//				else if(ret>0){
-//					wxMenuItem *item= Kai->MenuBar->FindItem(ret);
-//					wxAcceleratorEntry entry;
-//					item->SetAccel(&entry);
-//				}
-//				return;
-//			}
-//
-//			macro->RunScript();
-//		}
-//	}
+
 }

@@ -425,13 +425,12 @@ void Grid::OnAccelerator(wxCommandEvent &event)
 		if(id==Join){OnJoin(event);}
 		else if(id==JoinToFirst || id==JoinToLast){OnJoinToFirst(id);}
 	}
-	else if(id==PasteTranslation && form<SRT && ((TabPanel*)GetParent())->SubsPath!=""){OnPasteTextTl();}
+	if(id==PasteTranslation && form<SRT && ((TabPanel*)GetParent())->SubsPath!=""){OnPasteTextTl();}
 	else if(id==TranslationDialog && showtl){
 		static TLDialog *tld= new TLDialog(this,this);
 		tld->Show();
 	}
 	else if(id==SubsFromMKV && Kai->GetTab()->VideoName.EndsWith(".mkv")){OnMkvSubs(event);}
-	
 	else if(id==NewFPS){OnSetNewFPS();}
 	else if(id>6000){
 		Kai->OnMenuSelected(event);

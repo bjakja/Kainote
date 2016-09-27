@@ -22,8 +22,8 @@ class MTextEditor : public wxWindow
 	void Copy(bool cut=false);
 	void Paste();
 	wxString GetValue() const;
+	void SpellcheckerOnOff();
 	EditBox* EB;
-	kainoteFrame* Kai;
 	bool modified;
 	protected:
 	void CheckText();

@@ -5,14 +5,30 @@
 #include <wx/filename.h>
 #include <wx/dir.h>
 #include <wx/msgdlg.h>
+#include <wx/log.h>
 #include "OpennWrite.h"
 
+SpellChecker *SpellChecker::SC = NULL;
 
 SpellChecker::SpellChecker()
 {
 	hunspell = NULL;
 	conv = NULL;
+	SC=NULL;
+}
 
+SpellChecker *SpellChecker::Get()
+{
+	if(!SC){
+		SC = new SpellChecker();
+		bool isgood = SC->Initialize();
+		if(!isgood){Options.SetBool("Editbox Spellchecker", false);}
+	}
+	return SC;
+}
+void SpellChecker::Destroy()
+{
+	if(SC){delete SC; SC=NULL;}
 }
 
 SpellChecker::~SpellChecker()

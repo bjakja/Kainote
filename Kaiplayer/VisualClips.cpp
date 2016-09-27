@@ -15,7 +15,7 @@ ClipPoint::ClipPoint()
 	start=true;
 }
 
-ClipPoint::ClipPoint(int _x, int _y, wxString _type, bool isstart)
+ClipPoint::ClipPoint(float _x, float _y, wxString _type, bool isstart)
 {
 	x=_x;
 	y=_y;
@@ -60,8 +60,7 @@ DrawingAndClip::~DrawingAndClip()
 
 void DrawingAndClip::DrawVisual(int time)
 {
-	
-	
+	if(Visual==VECTORDRAW && tbl[6]>2){D3DXVECTOR2 movePos = CalcMovePos(); _x = movePos.x; _y = movePos.y;}
 	//wxLogStatus("Create line %i %i", Points[0].x, Points[0].y);
 	size_t g=1;
 	size_t size = Points.size();
@@ -73,7 +72,8 @@ void DrawingAndClip::DrawVisual(int time)
 			g++;
 		}else{
 			DrawRect(g-1);
-			g++;}
+			g++;
+		}
 
 	}
 	if(size>2){
@@ -83,11 +83,12 @@ void DrawingAndClip::DrawVisual(int time)
 		line->End();
 	}
 	DrawRect(size-1);
-	
+	DrawRect(0);
 
 	if(drawtxt){
 		wxString coords=""; 
-		coords<<(acpoint.x)<<", "<<(acpoint.y);
+		coords<<wxString::Format(_T("%6.2f"),acpoint.x + offsetxy.x).Trim(false)<<", "<<
+			wxString::Format(_T("%6.2f"),acpoint.y + offsetxy.y).Trim(false);
 		wxSize wsize=tab->Video->GetClientSize();
 		wsize.x/=2; wsize.y/=2;
 		int x=acpoint.wx(), y=acpoint.wy();
@@ -99,7 +100,7 @@ void DrawingAndClip::DrawVisual(int time)
 		cpos.top=(y>wsize.y)? y-50 : y+5;
 		cpos.right=(x>wsize.x)? x-5 : x+150;
 		cpos.bottom=(y>wsize.y)? y-5 : y+50;
-		DRAWOUTTEXT(font,coords,cpos,align,0xFFFF0000)
+		DRAWOUTTEXT(font,coords,cpos,align,0xFFFFFFFF)
 	}
 }
 
@@ -118,9 +119,23 @@ void DrawingAndClip::SetCurVisual()
 		_y=0;
 	}else{
 		wxString txt=tab->Edit->TextEdit->GetValue();
-		wxRegEx re("}(m[^{]*){\\\\p0}", wxRE_ADVANCED);
+		wxRegEx re("(.*){[^}]*}(m[^{]+){[^}]*\\\\p0[^}]*}(.*)", wxRE_ADVANCED);
 		if(re.Matches(txt)){
-			clip = re.GetMatch(txt,1);
+			clip = re.GetMatch(txt,2);
+			textwithclip = re.GetMatch(txt,1).AfterLast('}') + re.GetMatch(txt,3).BeforeFirst('{');
+			wxLogStatus("clip "+ clip + " text "+textwithclip);
+		}else{
+			wxRegEx re("(.*){[^}]*}(m[^{]+)", wxRE_ADVANCED);
+			if(re.Matches(txt)){
+				clip = re.GetMatch(txt,2);
+				textwithclip = re.GetMatch(txt,1).AfterLast('}');
+				wxLogStatus("clip "+ clip + " text "+textwithclip);
+			}else{
+				wxRegEx re("{[^}]*}", wxRE_ADVANCED);
+				re.ReplaceAll(&txt,"");
+				textwithclip = txt;
+				wxLogStatus("text "+textwithclip);
+			}
 		}
 		
 
@@ -169,16 +184,16 @@ void DrawingAndClip::SetCurVisual()
 	
 wxString DrawingAndClip::GetVisual()
 {
-	wxString format = (Visual==VECTORDRAW)? "6.2f" : "6.0f";
+	wxString format = "6.2f"; //: "6.2f";
 	wxString clip;
 	int cntb=0;
 	bool spline=false;
-	D3DXVECTOR2 xyoffset = (Visual==VECTORDRAW)? CalcWH() : D3DXVECTOR2(0,0);
+	offsetxy = (Visual==VECTORDRAW)? CalcWH() : D3DXVECTOR2(0,0);
 	for(size_t i=0; i<Points.size(); i++)
 	{
 		ClipPoint pos=Points[i];
-		float x= pos.x + xyoffset.x;
-		float y= pos.y + xyoffset.y;
+		float x= pos.x + offsetxy.x;
+		float y= pos.y + offsetxy.y;
 		if(cntb && !pos.start){
 			clip<<getfloat(x,format)<<" "<<getfloat(y,format)<<" ";
 			cntb++;
@@ -263,7 +278,7 @@ void DrawingAndClip::DrawLine(int i)
 	D3DXVECTOR2 v2[2]={Points[i-diff].GetVector(),Points[i].GetVector()};
 	line->Draw(v2, 2, 0xFFFF0000);
 	line->End();
-	DrawRect(i-1);
+	if(i>1){DrawRect(i-1);}
 	
 }
 
@@ -307,8 +322,12 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 		}
 		v2[bssize]=Points[i-1].GetVector();
 		line->Draw(v2, pts+2, 0xFFAA33AA);
+		int iplus1= (i+bssize < (int)Points.size()-1)? i+bssize+1 : 0;
+		if(i-1 != 0 || iplus1 != 0){
+			D3DXVECTOR2 v3[3]={Points[i-1].GetVector(), v4[0], Points[iplus1].GetVector()};
+			line->Draw(v3, 3, 0xFFFF0000);
+		}
 		delete[] v2;
-		
 	}else{
 		Curve(i-1, &v4,false);
 		if(tmp.type=="s"){Points[i-1]=tmp;}
@@ -318,7 +337,7 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 	}
 	line->Draw(&v4[0], v4.size(), 0xFFFF0000);
 	line->End();
-	DrawRect(i-1);
+	if(i>1){DrawRect(i-1);}
 	for(int j=1; j<pts; j++){DrawCircle(i+j-1);}
 	return pts;
 }
@@ -370,6 +389,7 @@ void DrawingAndClip::Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bsplin
 		p_x = a[0] + t*(a[1] + t*(a[2] + t*a[3]));
         p_y = b[0] + t*(b[1] + t*(b[2] + t*b[3]));
 		table->push_back(D3DXVECTOR2(p_x,p_y));
+		//if(bspline && t==0){Visuals::DrawRect((*table)[table->size()-1]);}
 	}
 	p_x = a[0] + a[1] + a[2] + a[3];
     p_y = b[0] + b[1] + b[2] + b[3];
@@ -479,11 +499,12 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			float pointx=(Points[i].x+_x)/wspw, pointy=(Points[i].y+_y)/wsph;
 			if(abs(pointx-x)<5 && abs(pointy-y)<5)
 			{
-				acpoint=Points[i];
+				lastpoint = acpoint = Points[i];
 				grabbed=i;
 				diffs.x=pointx-x;
 				diffs.y=pointy-y;
 				tab->Video->CaptureMouse();
+				snapYminus=false;snapYplus=false;snapXminus=false;snapXplus=false;
 				break;
 			}
 		}
@@ -503,6 +524,22 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		y=MID(0,y,VideoSize.y);
 		Points[grabbed].x=((x+diffs.x)*wspw)-_x;
 		Points[grabbed].y=((y+diffs.y)*wsph)-_y;
+		if(event.ShiftDown()){
+			int grabbedPlus1 = (grabbed >= (int)Points.size()-1)? 0 : grabbed+1;
+			int grabbedMinus1 = (grabbed < 1)? Points.size()-1 : grabbed-1;
+			if(Points[grabbed].y == Points[grabbedMinus1].y || snapYminus){snapYminus=true;Points[grabbedMinus1].y = Points[grabbed].y;}
+			if(Points[grabbed].y == Points[grabbedPlus1].y || snapYplus){snapYplus=true;Points[grabbedPlus1].y = Points[grabbed].y;}
+			if(Points[grabbed].x == Points[grabbedMinus1].x || snapXminus){snapXminus=true;Points[grabbedMinus1].x = Points[grabbed].x;}
+			if(Points[grabbed].x == Points[grabbedPlus1].x || snapXplus){snapXplus=true;Points[grabbedPlus1].x = Points[grabbed].x;}
+			if(!(snapYminus||snapYplus||snapXminus||snapXminus)){
+				if(abs(Points[grabbed].x - lastpoint.x)<10){
+					Points[grabbed].x = lastpoint.x;
+				}
+				if(abs(Points[grabbed].y - lastpoint.y)<10){
+					Points[grabbed].y = lastpoint.y;
+				}
+			}
+		}
 		acpoint=Points[grabbed];
 		SetClip(GetVisual(),true);
 
@@ -516,10 +553,23 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 D3DXVECTOR2 DrawingAndClip::CalcWH()
 {
 	if (alignment==7 || Points.size()<1){return D3DXVECTOR2(0,0);}
-	int minx=INT_MAX;
-	int miny=INT_MAX;
-	int maxx=-INT_MAX;
-	int maxy=-INT_MAX;
+	float offx=0, offy=0;
+	if(textwithclip!=""){
+		Styles *textstyle= tab->Grid1->GetStyle(0,tab->Edit->line->Style);
+		wxFont stylefont(wxAtoi(textstyle->Fontsize),wxSWISS,(textstyle->Italic)? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
+			(textstyle->Bold)? wxBOLD : wxNORMAL, textstyle->Underline, textstyle->Fontname);//, textstyle->Encoding
+		int ex=0, ey=0, eb=0, et=0;
+		wxClientDC dc(tab);
+		dc.GetTextExtent(textwithclip, &ex, &ey, &eb, &et, &stylefont);
+		offx = ex / wspw;
+		offy = eb / wsph;
+		//wxLogStatus("textextent %i %i %i %i", ex, ey, eb, et);
+	}
+	//no i tutaj jeszcze zosta³o dopisaæ obliczanie rozmiaru
+	float minx = FLT_MAX;
+	float miny = FLT_MAX;
+	float maxx = -FLT_MAX;
+	float maxy = -FLT_MAX;
 	for(size_t i = 0; i<Points.size(); i++)
 	{
 		ClipPoint p=Points[i];
@@ -528,7 +578,7 @@ D3DXVECTOR2 DrawingAndClip::CalcWH()
 		if(p.x>maxx){maxx=p.x;}
 		if(p.y>maxy){maxy=p.y;}
 	}
-	D3DXVECTOR2 sizes((maxx-minx),(maxy-miny));
+	D3DXVECTOR2 sizes((maxx-minx)+offx,(maxy-miny)+offy);
 	//wxLogStatus("sizes %f, %f, %i", sizes.x, sizes.y, (int)alignment);
 	D3DXVECTOR2 result = D3DXVECTOR2(0,0);
 	if(alignment % 3==2){

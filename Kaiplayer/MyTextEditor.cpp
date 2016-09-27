@@ -1,10 +1,12 @@
 ﻿#include "MyTextEditor.h"
 #include "EditBox.h"
-#include "kainoteMain.h"
+#include "Spellchecker.h"
 #include "config.h"
 #include <wx/regex.h>
 #include <wx/clipbrd.h>
 //#include <wx/graphics.h>
+#undef DrawText
+
 wxDEFINE_EVENT(CURSOR_MOVED, wxCommandEvent);
 
 class listwindow : public wxDialog
@@ -364,7 +366,7 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 			if(Options.GetBool("Editbox Sugestions On Dclick") && errn>=0){
 				wxString err=errs[errn];
 	
-				wxArrayString suggs= Kai->SC->Suggestions(err);
+				wxArrayString suggs= SpellChecker::Get()->Suggestions(err);
 				wxPoint mst=wxGetMousePosition();
 				mst.x-=50;mst.y+=15;
 	
@@ -886,38 +888,37 @@ void MTextEditor::Replace(int start, int end, wxString rep)
 void MTextEditor::CheckText()
 {
 	if(MText==""){return;}
-	if(!Kai->SC){spell=Kai->SpellcheckerOn();}
-	if(Kai->SC){
-		wxString notchar="/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{}";
-		wxString text=MText;
-		errors.clear();
-		errs.Clear();
-		text+=" ";
-		bool block=false;
-		wxString word="";
-		bool slash=false;
-		int lasti=0;
-		int firsti=0;
-		for(size_t i = 0; i<text.Len();i++)
-		{
-			wxUniChar ch=text.GetChar(i);
-			if(notchar.Find(ch)!=-1&&!block){
-				if(word.Len()>1){
-					if(word.StartsWith("'")){word=word.Remove(0,1);}
-					if(word.EndsWith("'")){word=word.RemoveLast(1);}
-					word.Trim(false);word.Trim(true);bool isgood=Kai->SC->CheckWord(word);
-					if (!isgood){errs.Add(word);errors.push_back(firsti);errors.push_back(lasti+1);}
-				}
-				word="";firsti=i+1;
+	wxString notchar="/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{}";
+	wxString text=MText;
+	errors.clear();
+	errs.Clear();
+	text+=" ";
+	bool block=false;
+	wxString word="";
+	bool slash=false;
+	int lasti=0;
+	int firsti=0;
+	for(size_t i = 0; i<text.Len();i++)
+	{
+		wxUniChar ch=text.GetChar(i);
+		if(notchar.Find(ch)!=-1&&!block){
+			if(word.Len()>1){
+				if(word.StartsWith("'")){word=word.Remove(0,1);}
+				if(word.EndsWith("'")){word=word.RemoveLast(1);}
+				word.Trim(false);word.Trim(true);
+				bool isgood=SpellChecker::Get()->CheckWord(word);
+				if (!isgood){errs.Add(word);errors.push_back(firsti);errors.push_back(lasti+1);}
 			}
-			if(ch=='{'){block=true;}
-			else if(ch=='}'){block=false;firsti=i+1;word="";}
-			
-			if(notchar.Find(ch)==-1&&text.GetChar((i==0)? 0 : i-1)!='\\'&&!block){word<<ch;lasti=i;}
-			else if(!block&&text.GetChar((i==0)? 0 : i-1)=='\\'&& (ch=='N'||ch=='h')){firsti=i+1;word="";}
+			word="";firsti=i+1;
 		}
-		//Refresh(false);
+		if(ch=='{'){block=true;}
+		else if(ch=='}'){block=false;firsti=i+1;word="";}
+			
+		if(notchar.Find(ch)==-1&&text.GetChar((i==0)? 0 : i-1)!='\\'&&!block){word<<ch;lasti=i;}
+		else if(!block&&text.GetChar((i==0)? 0 : i-1)=='\\'&& (ch=='N'||ch=='h')){firsti=i+1;word="";}
 	}
+	//Refresh(false);
+
 }
 
 void MTextEditor::OnKillFocus(wxFocusEvent& event)
@@ -981,7 +982,7 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 	wxArrayString suggs;
 	if(error>=0){err=errs[error];}
 	if(!err.IsEmpty()){
-		suggs= Kai->SC->Suggestions(err);
+		suggs= SpellChecker::Get()->Suggestions(err);
 		for(size_t i=0; i<suggs.size(); i++){
 			menut.Append(i+30200,suggs[i]);
 		}
@@ -1033,7 +1034,7 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 		CalcWrap();
 		SetSelection(from,from);modified=true;}
 	else if(id==TEXTM_ADD){
-		bool succ=Kai->SC->AddWord(err);
+		bool succ = SpellChecker::Get()->AddWord(err);
 		if(!succ){wxMessageBox(_("Błąd, słowo \"")+err+_("\" nie zostało dodane."));}
 		else{CheckText();EB->ClearErrs();Refresh(false);}
 	}else if(id>=TEXTM_SEEKWORDL && id<=TEXTM_SEEKWORDG){
@@ -1169,6 +1170,12 @@ int MTextEditor::FindBracket(wxUniChar sbrkt, wxUniChar ebrkt, int pos, bool fro
 		if(fromback){i--;}else{i++;}
 	}
 	return -1;
+}
+
+void MTextEditor::SpellcheckerOnOff()
+{
+	spell = !spell;
+	Refresh(false);
 }
 
 //void MTextEditor::OnEraseBackground(wxEraseEvent& event){}
