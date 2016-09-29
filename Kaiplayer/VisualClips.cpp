@@ -113,7 +113,7 @@ void DrawingAndClip::SetCurVisual()
 		bool found =tab->Edit->FindVal("(i?clip[^\\)]+)", &clip);
 		if(found){int rres = clip.Replace(",",",");
 			if( rres >= 3) {clip = "";} 
-			else{clip = clip.AfterFirst('(');}
+			else{clip = clip.AfterFirst((rres>0)? ',' : '(');}
 		}
 		_x=0;
 		_y=0;

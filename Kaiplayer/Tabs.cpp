@@ -15,7 +15,7 @@ Notebook::Notebook(wxWindow *parent, int id)
 	hasCompare=false;
 	TabHeight=25;
 	allvis=arrow=true;
-	font=wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
+	font=wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 	sthis=this;
 
 	Pages.push_back(new TabPanel(this,(kainoteFrame*)parent));

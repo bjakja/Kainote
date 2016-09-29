@@ -319,10 +319,8 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 	}
 
 	if(event.LeftDClick()){
-	
-		
 		SetFullskreen();
-		if(!isfullskreen && Kai->GetTab()->SubsPath!=""){
+		if(!isfullskreen && Kai->GetTab()->SubsPath!="" && Options.GetBool("Seek For Visible Lines")){
 			Kai->GetTab()->Edit->Send(false);
 			Kai->GetTab()->Grid1->SelVideoLine();
 		}

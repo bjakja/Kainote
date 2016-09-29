@@ -214,7 +214,7 @@ done:
 		//wxLogStatus("num of cores %i", (int)std::thread::hardware_concurrency());
 		SYSTEM_INFO sysinfo;
 		GetSystemInfo( &sysinfo );
-		videosource = FFMS_CreateVideoSource(filename.utf8_str(), videotrack, index, sysinfo.dwNumberOfProcessors, FFMS_SEEK_UNSAFE, &errinfo);
+		videosource = FFMS_CreateVideoSource(filename.utf8_str(), videotrack, index, sysinfo.dwNumberOfProcessors,FFMS_SEEK_AGGRESSIVE, &errinfo);// FFMS_SEEK_UNSAFE
 		//Since the index is copied into the video source object upon its creation,
 		//we can and should now destroy the index object. 
 

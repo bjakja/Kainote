@@ -59,6 +59,7 @@ NumCtrl::NumCtrl(wxWindow *parent,long id,wxString text, int rangefrom, int rang
 
 NumCtrl::NumCtrl(wxWindow *parent,long id,double _value, double rangefrom, double rangeto, bool intonly, const wxPoint &pos, const wxSize &size, long style)
 	:wxTextCtrl(parent, id, "", pos, size, style)
+	,value(0)
 {
 
 	rfrom=rangefrom;

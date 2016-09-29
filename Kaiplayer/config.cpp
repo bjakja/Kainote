@@ -212,10 +212,45 @@ int config::LoadOptions()
 	wxString txt=ow.FileOpen(path,false);
 	bool checkVer=true;
 	if(txt==_T("")){
-		txt<<_T("[Main]\r\nChange Time=2000\r\nChange mode=0\r\nDefault FPS=23.976\r\nDefault Style=Default\r\nEditbox Spellchecker=true\r\nFrames=false\r\nGrid Active Line=#CA0065\r\nGrid Background=#C0C0C0\r\nGrid Comment=#D8DEF5\r\nGrid Dialogue=#C0C0C0\r\nGrid Collisions=#FF0000\r\nGrid Font Name=Tahoma")
-			<<_T("\r\nGrid Font Size=10\r\nGrid Label Normal=#19B3EC\r\nGrid Label Modified=#FBF804\r\nGrid Label Saved=#C4ECC9\r\nGrid Lines=#808080\r\nGrid Selected Comment=#D3EEEE\r\nGrid Selected Dialogue=#CEFFE7\r\nGrid Text=#000000\r\nMove time forward=true\r\nNew end times=false")
-			<<_T("\r\nShow settings window=false\r\nStart end times=0\r\nStyles of time change=\r\nTime show of letter=110\r\nGrid Spellchecker=#FA9292\r\nVideo Prog Bar=true\r\nShow Editor=true\r\nWindow Size=800,600\r\nVideo Window Size=500,350\r\nPreview Text=Podgl¹d\r\nOffset of start time=0")
-			<<_T("\r\nOffset of end time=0\r\nConvert Resolution W=1280\r\nConvert Resolution H=720\r\nMove Video To Active Line=0\r\nPlay Afrer Selection=0\r\nGrid tag changing char=*");
+		txt = "["+progname+"]\r\nChange Time=2000\r\n"\
+			"Change mode=0\r\n"\
+			"Default FPS=23.976\r\n"\
+			"Default Style=Default\r\n"\
+			"Editbox Spellchecker=true\r\n"\
+			"Frames=false\r\n"\
+			"Grid Active Line=#CA0065\r\n"\
+			"Grid Background=#C0C0C0\r\n"\
+			"Grid Comment=#D8DEF5\r\n"\
+			"Grid Dialogue=#C0C0C0\r\n"\
+			"Grid Collisions=#FF0000\r\n"\
+			"Grid Font Name=Tahoma\r\n"\
+			"Grid Font Size=10\r\n"\
+			"Grid Label Normal=#19B3EC\r\n"\
+			"Grid Label Modified=#FBF804\r\n"\
+			"Grid Label Saved=#C4ECC9\r\n"\
+			"Grid Lines=#808080\r\n"\
+			"Grid Selected Comment=#D3EEEE\r\n"\
+			"Grid Selected Dialogue=#CEFFE7\r\n"\
+			"Grid Text=#000000\r\n"\
+			"Move time forward=true\r\n"\
+			"New end times=false\r\n"\
+			"Show settings window=false\r\n"\
+			"Start end times=0\r\n"\
+			"Styles of time change=\r\n"\
+			"Time show of letter=110\r\n"\
+			"Grid Spellchecker=#FA9292\r\n"\
+			"Video Prog Bar=true\r\n"\
+			"Show Editor=true\r\n"\
+			"Window Size=800,600\r\n"\
+			"Video Window Size=500,350\r\n"\
+			"Preview Text=Podgl¹d\r\n"\
+			"Offset of start time=0\r\n"\
+			"Offset of end time=0\r\n"\
+			"Convert Resolution W=1280\r\n"\
+			"Convert Resolution H=720\r\n"\
+			"Move Video To Active Line=0\r\n"\
+			"Play Afrer Selection=0\r\n"\
+			"Grid tag changing char = *";
 	}else{
 		wxString ver= txt.BeforeFirst(']').Mid(1);
 		if(ver!=progname){checkVer=false;}
@@ -350,10 +385,9 @@ bool config::LoadAudioOpts()
 
 	if(txt==_T("")){
 		txt="Audio Autocommit=true\r\n"\
-			"Audio Autofocus=0\r\n"\
+			"Audio Autofocus=true\r\n"\
 			"Audio Autoscroll=true\r\n"\
 			"Audio Background=#000000\r\n"\
-			"Audio Cache=0\r\n"\
 			"Audio Box Height=169\r\n"\
 			"Audio Draw Cursor Time=true\r\n"\
 			"Audio Draw Keyframes=true\r\n"\
@@ -362,6 +396,7 @@ bool config::LoadAudioOpts()
 			"Audio Draw video Position=true\r\n"\
 			"Audio Grab Times On Select=true\r\n"\
 			"Audio Inactive Lines Display Mode=1\r\n"\
+			"Audio Keyframes=#C200FF\r\n"\
 			"Audio Lead In=200\r\n"\
 			"Audio Lead Out=300\r\n"\
 			"Audio Line Boundaries Thickness=2\r\n"\
@@ -370,7 +405,7 @@ bool config::LoadAudioOpts()
 			"Audio Line Boundary Start=#D80000\r\n"\
 			"Audio Line Boundary Mark=#FF00FF\r\n"\
 			"Audio Link=false\r\n"\
-			"Audio Lock Scroll On Cursor=0\r\n"\
+			"Audio Lock Scroll On Cursor=false\r\n"\
 			"Audio Mark Play Time=1000\r\n"\
 			"Audio Next Line On Commit=true\r\n"\
 			"Audio Play Cursor=#FFFFFF\r\n"\
@@ -382,9 +417,6 @@ bool config::LoadAudioOpts()
 			"Audio Snap To Keyframes=false\r\n"\
 			"Audio Snap To Other Lines=false\r\n"\
 			"Audio Spectrum=false\r\n"\
-			"Audio Spectrum Cutoff=0\r\n"\
-			"Audio Spectrum Memory Max=128\r\n"\
-			"Audio Spectrum Quality=1\r\n"\
 			"Audio Start Drag Sensitivity=2\r\n"\
 			"Audio Syllable Boundaries=#FFFF00\r\n"\
 			"Audio Syllable Text=#FF0000\r\n"\
@@ -392,7 +424,7 @@ bool config::LoadAudioOpts()
 			"Audio Waveform Inactive=#005000\r\n"\
 			"Audio Waveform Modified=#FFE6E6\r\n"\
 			"Audio Waveform Selected=#FFFFFF\r\n"\
-			"Audio Wheel Default To Zoom=0";
+			"Audio Wheel Default To Zoom=false";
 	}
 	return (AudioOpts=SetRawOptions(txt.AfterFirst('\n')));
 }

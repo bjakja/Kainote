@@ -67,13 +67,15 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	//Main
 	{
 		wxBoxSizer *MainSizer=new wxBoxSizer(wxVERTICAL);
-		wxString labels[10]={_("Wczytywanie posortowanych napisów"),_("Włącz sprawdzanie pisowni"),
+		wxString labels[11]={_("Wczytywanie posortowanych napisów"),_("Włącz sprawdzanie pisowni"),
 			_("Zaznaczaj linijkę z czasem aktywnej\nlinijki poprzedniej zakładki"),_("Zapisuj napisy z nazwą wideo"),
 			_("Pokaż sugestie po dwukrotnym klininięciu na błąd"),_("Otwieraj napisy zawsze w nowej karcie"),
 			_("Nie przechodź do następnej linii przy edycji czasów"),_("Zapisuj zmiany po przejściu na inną linię"),
-			_("Wyłącz pokazywanie edycji na wideo\n(wymaga ponownego otwarcia zakładek)"),_("poziom śledzenia logów skryptów LUA")};
-		wxString opts[10]={"Grid Load Sorted","Editbox Spellchecker","Auto Select Lines","Subs Autonaming",
-			"Editbox Sugestions On Dclick","Open In New Card","Times Stop On line","Grid save without enter","Disable live editing","Automation Trace Level"};
+			_("Wyłącz pokazywanie edycji na wideo\n(wymaga ponownego otwarcia zakładek)"),
+			_("Włącz szukanie widocznej linii\npo wyjściu z pełnego ekranu"),_("Poziom śledzenia logów skryptów LUA")};
+		wxString opts[11]={"Grid Load Sorted","Editbox Spellchecker","Auto Select Lines","Subs Autonaming",
+			"Editbox Sugestions On Dclick","Open In New Card","Times Stop On line","Grid save without enter",
+			"Disable live editing","Seek For Visible Lines","Automation Trace Level"};
 
 		wxString langopts[2]={"Polski","English"};
 		wxStaticBoxSizer *langSizer=new wxStaticBoxSizer(wxVERTICAL, Main, _("Język (wymaga restartu programu)"));
@@ -95,7 +97,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		dicSizer->Add(dic,0,wxALL|wxEXPAND,2);
 		MainSizer->Add(dicSizer,0,wxRIGHT|wxEXPAND,5);
 	
-		for(int i=0;i<9;i++)
+		for(int i=0;i<10;i++)
 		{
 			wxCheckBox *opt=new wxCheckBox(Main,-1,labels[i]);
 			opt->SetValue(Options.GetBool(opts[i]));
@@ -107,12 +109,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxBoxSizer *MainSizer1=new wxBoxSizer(wxHORIZONTAL);
 		wxFlexGridSizer *MainSizer2=new wxFlexGridSizer(5,2,wxSize(5,5));
 		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieć inny id
-		NumCtrl *ltl = new NumCtrl(Main, 20000, Options.GetString(opts[9]), 0, 5,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
+		NumCtrl *ltl = new NumCtrl(Main, 20000, Options.GetString(opts[10]), 0, 5,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc = new NumCtrl(Main, 20000, Options.GetString("Offset of start time"), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc1 = new NumCtrl(Main, 20000, Options.GetString("Offset of end time"), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		wxTextCtrl *sc2 = new wxTextCtrl(Main, 22001, Options.GetString("Grid tag changing char"), wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc3 = new NumCtrl(Main, 20000, Options.GetString("Editbox tag buttons"), 0, 9,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
-		ConOpt(ltl, opts[9]);
+		ConOpt(ltl, opts[10]);
 		ConOpt(sc,"Offset of start time");
 		ConOpt(sc1,"Offset of end time");
 		ConOpt(sc2,"Grid tag changing char");
@@ -126,7 +128,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		MainSizer2->Add(sc2,0);
 		MainSizer2->Add(new wxStaticText(Main,-1,_("Ilość przycisków wstawiających tagi ASS:")),0,wxALIGN_CENTRE_VERTICAL);
 		MainSizer2->Add(sc3,0);
-		MainSizer2->Add(new wxStaticText(Main,-1,labels[9]),0,wxALIGN_CENTRE_VERTICAL);
+		MainSizer2->Add(new wxStaticText(Main,-1,labels[10]),0,wxALIGN_CENTRE_VERTICAL);
 		MainSizer2->Add(ltl,0);
 	
 		MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
