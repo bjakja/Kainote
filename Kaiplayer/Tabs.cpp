@@ -472,7 +472,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE)));
 	dc.GradientFillLinear(wxRect(0,0,w,TabHeight),
-		wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),
+		wxSystemSettings::GetColour(wxSYS_COLOUR_MENU),
 		wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE),wxTOP);
 
 	start=(allvis)?2 : 20;
@@ -488,7 +488,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.DrawLine(0,0,start,0);
 			dc.DrawLine(start+Tabsizes[i],0,w,0);
 			dc.SetPen(*wxTRANSPARENT_PEN);
-			dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+			dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU));
 			dc.DrawRectangle(start+1,0,Tabsizes[i]-1,23);
 
 			dc.SetTextForeground("#505050");
@@ -538,7 +538,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	}
 
 	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
+	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU)));
 	//strzałki do przesuwania zakładek
 	if(!allvis){
 		dc.DrawRectangle(w-16,0,16,25);
@@ -604,7 +604,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		cdc.SetPen(*wxTRANSPARENT_PEN);
 		cdc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE));
 		cdc.DrawRectangle(splitline-2,0,4,h-25);
-		cdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
+		cdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU)));
 		bool aciter=(Pages[iter]->GetPosition().x==1);
 		if(aciter){
 			cdc.DrawLine(splitline+1,0,w,0);

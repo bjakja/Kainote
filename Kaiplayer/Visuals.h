@@ -44,6 +44,7 @@ public:
 	float y;
 	wxString type;
 	bool start;
+	bool isSelected;
 };
 
 class Visuals /* : public wxEvtHandler*/
@@ -53,11 +54,11 @@ public:
 	virtual ~Visuals();
 	static Visuals *Get(int Visual, wxWindow *_parent);
 	void SizeChanged(wxSize wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device);
-	void DrawRect(D3DXVECTOR2 vector);
-	void DrawCircle(D3DXVECTOR2 vector);
+	void DrawRect(D3DXVECTOR2 vector, bool sel=false);
+	void DrawCircle(D3DXVECTOR2 vector, bool sel=false);
 	void DrawCross(D3DXVECTOR2 position, D3DCOLOR color = 0xFFFF0000, bool useBegin=true);
 	void DrawArrow(D3DXVECTOR2 vector, D3DXVECTOR2 *vector1, int diff=0);
-	
+	void DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen = 4);
 	//D3DXVECTOR2 CalcWH();
 	void CreateVERTEX (VERTEX *v, float X, float Y, D3DCOLOR Color, float Z=0.0f)
 	{	
@@ -256,6 +257,7 @@ public:
 	int DrawCurve(int i,bool bspline=false);
 	void Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bspline, int spoints=4, int acpt=0);
 	D3DXVECTOR2 CalcWH();
+	void SelectPoints();
 
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
@@ -268,9 +270,11 @@ public:
 	bool snapYminus;
 	bool snapXplus;
 	bool snapYplus;
+	bool drawSelection;
 	int grabbed;
 	byte alignment;
 	wxPoint diffs;
+	wxRect selection;
 	D3DXVECTOR2 scale;
 	// _x i _y to punkt przemieszczenia w przypadku rysunków.
 	static float _x, _y;

@@ -214,8 +214,12 @@ int config::LoadOptions()
 	if(txt==_T("")){
 		txt = "["+progname+"]\r\nChange Time=2000\r\n"\
 			"Change mode=0\r\n"\
+			"Convert Resolution W=1280\r\n"\
+			"Convert Resolution H=720\r\n"\
 			"Default FPS=23.976\r\n"\
 			"Default Style=Default\r\n"\
+			"Default Style Catalog=Default\r\n"\
+			"Dictionary Name=pl\r\n"\
 			"Editbox Spellchecker=true\r\n"\
 			"Frames=false\r\n"\
 			"Grid Active Line=#CA0065\r\n"\
@@ -231,26 +235,25 @@ int config::LoadOptions()
 			"Grid Lines=#808080\r\n"\
 			"Grid Selected Comment=#D3EEEE\r\n"\
 			"Grid Selected Dialogue=#CEFFE7\r\n"\
+			"Grid Spellchecker=#FA9292\r\n"\
+			"Grid tag changing char=*\r\n"\
 			"Grid Text=#000000\r\n"\
 			"Move time forward=true\r\n"\
+			"Move Video To Active Line=0\r\n"\
 			"New end times=false\r\n"\
+			"Offset of start time=0\r\n"\
+			"Offset of end time=0\r\n"\
+			"Play Afrer Selection=0\r\n"\
+			"Preview Text=Podgl¹d\r\n"\
+			"Show Editor=true\r\n"\
 			"Show settings window=false\r\n"\
 			"Start end times=0\r\n"\
 			"Styles of time change=\r\n"\
 			"Time show of letter=110\r\n"\
-			"Grid Spellchecker=#FA9292\r\n"\
 			"Video Prog Bar=true\r\n"\
-			"Show Editor=true\r\n"\
-			"Window Size=800,600\r\n"\
 			"Video Window Size=500,350\r\n"\
-			"Preview Text=Podgl¹d\r\n"\
-			"Offset of start time=0\r\n"\
-			"Offset of end time=0\r\n"\
-			"Convert Resolution W=1280\r\n"\
-			"Convert Resolution H=720\r\n"\
-			"Move Video To Active Line=0\r\n"\
-			"Play Afrer Selection=0\r\n"\
-			"Grid tag changing char = *";
+			"Window Size=800,600";
+			
 	}else{
 		wxString ver= txt.BeforeFirst(']').Mid(1);
 		if(ver!=progname){checkVer=false;}

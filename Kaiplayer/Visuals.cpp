@@ -147,15 +147,15 @@ void Visuals::DrawCross(D3DXVECTOR2 position, D3DCOLOR color, bool useBegin)
 
 }
 
-void Visuals::DrawRect(D3DXVECTOR2 pos)
+void Visuals::DrawRect(D3DXVECTOR2 pos, bool sel)
 {
 	//line->End();
-    
+    D3DCOLOR fill = (sel)? 0xAAFCE6B1 : 0xAA121150;
 	VERTEX v9[9];
-	CreateVERTEX(&v9[0], pos.x-5.0f, pos.y-5.0f, 0xAA121150);
-	CreateVERTEX(&v9[1], pos.x+5.0f, pos.y-5.0f, 0xAA121150);
-	CreateVERTEX(&v9[2], pos.x-5.0f, pos.y+5.0f, 0xAA121150);
-	CreateVERTEX(&v9[3], pos.x+5.0f, pos.y+5.0f, 0xAA121150);
+	CreateVERTEX(&v9[0], pos.x-5.0f, pos.y-5.0f, fill);
+	CreateVERTEX(&v9[1], pos.x+5.0f, pos.y-5.0f, fill);
+	CreateVERTEX(&v9[2], pos.x-5.0f, pos.y+5.0f, fill);
+	CreateVERTEX(&v9[3], pos.x+5.0f, pos.y+5.0f, fill);
 	CreateVERTEX(&v9[4], pos.x-5.0f, pos.y-5.0f, 0xFFFF0000);
 	CreateVERTEX(&v9[5], pos.x+5.0f, pos.y-5.0f, 0xFFFF0000);
 	CreateVERTEX(&v9[6], pos.x+5.0f, pos.y+5.0f, 0xFFFF0000);
@@ -166,22 +166,24 @@ void Visuals::DrawRect(D3DXVECTOR2 pos)
 	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 4, &v9[4], sizeof(VERTEX) ),"primitive failed");
 	//line->Begin();
 }
+
+
 	
-void Visuals::DrawCircle(D3DXVECTOR2 pos)
+void Visuals::DrawCircle(D3DXVECTOR2 pos, bool sel)
 {
 	//line->End();
-	
+	D3DCOLOR fill = (sel)? 0xAAFCE6B1 : 0xAA121150;
 	VERTEX v5[41];
 	float rad =0.01745329251994329576923690768489f;
 	
 	float xx = pos.x;
 	float yy = pos.y;
-	CreateVERTEX(&v5[0], xx, yy, 0xAA121150);
+	CreateVERTEX(&v5[0], xx, yy, fill);
 	for(int j=0; j<20; j++)
 	{
 		float xx1= pos.x + (6.f * sin ( (j*20) * rad ));
 		float yy1= pos.y + (6.f * cos ( (j*20) * rad ));
-		CreateVERTEX(&v5[j+1], xx1, yy1, 0xAA121150);
+		CreateVERTEX(&v5[j+1], xx1, yy1, fill);
 		CreateVERTEX(&v5[j+21], xx1, yy1, 0xFFFF0000);
 		xx=xx1;
 		yy=yy1;
@@ -191,6 +193,30 @@ void Visuals::DrawCircle(D3DXVECTOR2 pos)
 	HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLEFAN, 18, v5, sizeof(VERTEX) ),"primitive failed");
 	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 18, &v5[21], sizeof(VERTEX) ),"primitive failed");
 	//line->Begin();
+}
+
+void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen)
+{
+	
+	D3DXVECTOR2 actualPoint[2];
+	for(size_t i = 0; i < vectorSize; i++){
+		size_t iPlus1 = (i < (vectorSize-1))? i+1 : 0;
+		D3DXVECTOR2 pdiff= vector[i] - vector[iPlus1];
+		float len= sqrt((pdiff.x * pdiff.x) + (pdiff.y * pdiff.y));
+		if(len==0){return;}
+		D3DXVECTOR2 diffUnits = pdiff / len;
+		float singleMovement = 1/(len/(dashLen*2));
+		actualPoint[0] = vector[i];//(vector[i] < vector[iPlus1])? vector[i] : vector[iPlus1];
+		actualPoint[1] = actualPoint[0];
+		for(float j = 0; j <= 1; j += singleMovement){
+			actualPoint[1] -= diffUnits * dashLen;
+			if(j+singleMovement>=1){actualPoint[1] = vector[iPlus1];}
+			//wxLogStatus("ap %f, %f, %f, %f, %f", actualPoint[0].x, actualPoint[0].y, actualPoint[1].x, actualPoint[1].y, j);
+			line->Draw(actualPoint,2,0xFFFF0000);
+			actualPoint[1] -= diffUnits * dashLen;
+			actualPoint[0] -= (diffUnits * dashLen)*2;
+		}
+	}
 }
 
 	

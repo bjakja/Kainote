@@ -13,6 +13,7 @@ ClipPoint::ClipPoint()
 	y=0;
 	type="m";
 	start=true;
+	isSelected=false;
 }
 
 ClipPoint::ClipPoint(float _x, float _y, wxString _type, bool isstart)
@@ -21,6 +22,7 @@ ClipPoint::ClipPoint(float _x, float _y, wxString _type, bool isstart)
 	y=_y;
 	type=_type;
 	start=isstart;
+	isSelected=false;
 }
 	
 bool ClipPoint::IsInPos(wxPoint pos, int diff)
@@ -49,6 +51,7 @@ DrawingAndClip::DrawingAndClip()
 	,newmove(false)
 	,drawtxt(false)
 	,invClip(false)
+	,drawSelection(false)
 	,grabbed(-1)
 {
 }
@@ -101,6 +104,13 @@ void DrawingAndClip::DrawVisual(int time)
 		cpos.right=(x>wsize.x)? x-5 : x+150;
 		cpos.bottom=(y>wsize.y)? y-5 : y+50;
 		DRAWOUTTEXT(font,coords,cpos,align,0xFFFFFFFF)
+	}
+
+	if(drawSelection){
+		D3DXVECTOR2 v5[5] = { D3DXVECTOR2(selection.x, selection.y), D3DXVECTOR2(selection.width, selection.y), D3DXVECTOR2(selection.width, selection.height), D3DXVECTOR2(selection.x, selection.height), D3DXVECTOR2(selection.x, selection.y)};
+		line->Begin();
+		DrawDashedLine(v5, 5);
+		line->End();
 	}
 }
 
@@ -284,12 +294,12 @@ void DrawingAndClip::DrawLine(int i)
 
 void DrawingAndClip::DrawRect(int coord)
 {
-	Visuals::DrawRect(Points[coord].GetVector());
+	Visuals::DrawRect(Points[coord].GetVector(), Points[coord].isSelected);
 }
 	
 void DrawingAndClip::DrawCircle(int coord)
 {
-	Visuals::DrawCircle(Points[coord].GetVector());
+	Visuals::DrawCircle(Points[coord].GetVector(), Points[coord].isSelected);
 }
 	
 int DrawingAndClip::DrawCurve(int i, bool bspline)
@@ -406,7 +416,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	bool right=event.RightDown();
 	bool ctrl=event.ControlDown();
 	//bool click=event.LeftDown();
-	drawtxt=(event.MiddleUp())?false : true;
+	drawtxt=(event.MiddleUp() || drawSelection)?false : true;
 	//if(Visual==VECTORDRAW){CalcWH();}
 	if(!event.ButtonDown() && !event.LeftIsDown()){
 		//wxLogStatus(" bdown %i", (int)event.ButtonDown());
@@ -417,7 +427,12 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	}
 	
 	if(event.ButtonUp()){
-		SetClip(GetVisual(),false);
+		if(!drawSelection){
+			SetClip(GetVisual(),false);
+		}else{
+			drawSelection=false;
+			tab->Video->Render();
+		}
 	}
 
 	if(event.LeftUp()){
@@ -515,7 +530,10 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			SetClip(GetVisual(),true);
 			grabbed=Points.size()-1;
 		}
-
+		else if(grabbed== -1){
+			drawSelection=true;
+			selection = wxRect(x,y,x,y);
+		}
 	}
 
 	if(event.LeftIsDown() && grabbed!=-1)
@@ -524,6 +542,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		y=MID(0,y,VideoSize.y);
 		Points[grabbed].x=((x+diffs.x)*wspw)-_x;
 		Points[grabbed].y=((y+diffs.y)*wsph)-_y;
+
 		if(event.ShiftDown()){
 			int grabbedPlus1 = (grabbed >= (int)Points.size()-1)? 0 : grabbed+1;
 			int grabbedMinus1 = (grabbed < 1)? Points.size()-1 : grabbed-1;
@@ -540,9 +559,26 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 				}
 			}
 		}
+		if(Points[grabbed].isSelected){
+			float movementx = acpoint.x - Points[grabbed].x;
+			float movementy = acpoint.y - Points[grabbed].y;
+			for( size_t i = 0; i < Points.size(); i++){
+				if(Points[i].isSelected && i != grabbed){
+					Points[i].x = Points[i].x - movementx;
+					Points[i].y = Points[i].y - movementy;
+				}
+			}
+		}
 		acpoint=Points[grabbed];
 		SetClip(GetVisual(),true);
 
+	}
+	if(drawSelection){
+		selection.width = x;
+		selection.height = y;
+		SelectPoints();
+		//wxLogStatus("selection points %i, %i, %i, %i)", selection.x, selection.y, selection.width, selection.height);
+		tab->Video->Render();
 	}
 	
 
@@ -593,5 +629,19 @@ D3DXVECTOR2 DrawingAndClip::CalcWH()
 	}
 	//wxLogStatus("sizes2 %f, %f", result.x, result.y);
 	return result;
+}
+
+void DrawingAndClip::SelectPoints(){
+	for( size_t i = 0; i < Points.size(); i++){
+		D3DXVECTOR2 point = Points[i].GetVector();
+		if(point.x >= selection.x && point.x <= selection.width && 
+			point.y >= selection.y && point.y <= selection.height){
+				Points[i].isSelected = true;
+		}else{
+			Points[i].isSelected = false;
+		}
+
+	}
+
 }
 
