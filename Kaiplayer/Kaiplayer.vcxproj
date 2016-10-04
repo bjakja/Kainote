@@ -141,6 +141,7 @@
     <ClCompile Include="FindReplace.cpp" />
     <ClCompile Include="KainoteApp.cpp" />
     <ClCompile Include="KainoteMain.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Styles.cpp" />
     <ClCompile Include="StyleStore.cpp" />
     <ClCompile Include="VisualMoveAll.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="FindReplace.h" />
     <ClInclude Include="KainoteApp.h" />
     <ClInclude Include="KainoteMain.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="StyleChange.h" />
     <ClInclude Include="ColorSpaceConverter.h" />
     <ClInclude Include="ColorPicker.h" />

@@ -67,8 +67,9 @@ class config
     void DelStyle(int i);
     int StoreSize();
     void CatchValsLabs(wxString rawoptions);
-    bool SetRawOptions(wxString textconfig);
+    bool SetRawOptions(const wxString &textconfig);
     int LoadOptions();
+	wxString LoadDefaultConfig();
 	bool LoadAudioOpts();
 	void SaveAudioOpts();
     void SaveOptions(bool cfg=true, bool style=true);

@@ -87,6 +87,7 @@ void StyleList::DrawFld(wxDC &dc,int w, int h)
 	int fw=0,fh=0,posX=1,posY=1;
 	dc.Clear();
 	dc.SetFont(font);
+	//dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 	dc.SetPen(wxPen(wxColour("#808080")));
 	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
 	dc.DrawRectangle(0,0,w,h);
@@ -108,13 +109,13 @@ void StyleList::DrawFld(wxDC &dc,int w, int h)
 	{
 		if(sels.Index(i)!=-1){
 			dc.SetPen(*wxTRANSPARENT_PEN);
-			dc.SetBrush(wxBrush(wxColour("#359AFF")));
+			dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT))); //wxColour("#359AFF")
 			dc.DrawRectangle(posX,posY,w-2,Height);
 			}else{dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));}
 		if(fontseeker->FindString(stylenames->at(i)->Fontname)==-1){
 			dc.SetTextForeground("#FF0000");
 		}else{
-			dc.SetTextForeground("#000000");
+			dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 		}
 		
 

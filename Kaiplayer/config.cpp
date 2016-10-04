@@ -1,5 +1,6 @@
 #include "Config.h"
 #include "OpennWrite.h"
+#include <wx/settings.h>
 #include <wx/stdpaths.h>
 #include <wx/dir.h>
 #include <wx/string.h>
@@ -32,7 +33,7 @@ config::~config()
 
 
 
-bool config::SetRawOptions(wxString textconfig)
+bool config::SetRawOptions(const wxString &textconfig)
 {
 	wxStringTokenizer cfg(textconfig,_T("\n"));
 	int g=0;
@@ -49,16 +50,15 @@ bool config::SetRawOptions(wxString textconfig)
 
 wxString config::GetString(wxString lopt)
 {
-	//std::map<wxString,wxString>::iterator it = rawcfg.find(lopt);
-	//if(it!=rawcfg.end()){return it->second;}
 	return rawcfg[lopt];
 }
 
 
 bool config::GetBool(wxString lopt)
-{   wxString opt=rawcfg[lopt];
-if(opt==_T("true")){return true;}
-return false;
+{   
+	wxString opt=rawcfg[lopt];
+	if(opt==_T("true")){return true;}
+	return false;
 }
 
 wxColour config::GetColour(wxString lopt)
@@ -68,16 +68,14 @@ wxColour config::GetColour(wxString lopt)
 
 int config::GetInt(wxString lopt)
 {
-	//wxString intopt=rawcfg[lopt];
-	//if(intopt=="")return 0;
 	return wxAtoi(rawcfg[lopt]);
 }
 float config::GetFloat(wxString lopt)
-{   double fl;
-wxString rawfloat=rawcfg[lopt];
-//if(rawfloat=="")return 0.0;
-if(!rawfloat.ToDouble(&fl)){return 0.0;}
-return fl;
+{   
+	double fl;
+	wxString rawfloat=rawcfg[lopt];
+	if(!rawfloat.ToDouble(&fl)){return 0.0;}
+	return fl;
 }
 
 void config::SetString(wxString lopt, wxString sopt)
@@ -202,17 +200,9 @@ void config::SaveOptions(bool cfg, bool style)
 	}
 }
 
-int config::LoadOptions()
+inline wxString config::LoadDefaultConfig()
 {
-	wxStandardPathsBase &paths = wxStandardPaths::Get();
-	pathfull=paths.GetExecutablePath().BeforeLast('\\');
-	wxString path;
-	path<<pathfull<<_T("\\Config.txt");
-	OpenWrite ow;
-	wxString txt=ow.FileOpen(path,false);
-	bool checkVer=true;
-	if(txt==_T("")){
-		txt = "["+progname+"]\r\nChange Time=2000\r\n"\
+	return "["+progname+"]\r\nChange Time=2000\r\n"\
 			"Change mode=0\r\n"\
 			"Convert Resolution W=1280\r\n"\
 			"Convert Resolution H=720\r\n"\
@@ -221,6 +211,15 @@ int config::LoadOptions()
 			"Default Style Catalog=Default\r\n"\
 			"Dictionary Name=pl\r\n"\
 			"Editbox Spellchecker=true\r\n"\
+			"Editor normal text="+wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).GetAsString(4)+"\r\n"\
+			"Editor tag names=#850085\r\n"\
+			"Editor tag values=#6600FF\r\n"\
+			"Editor curly braces=#0000FF\r\n"\
+			"Editor tag operators=#FF0000\r\n"\
+			"Editor background="+wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString(4)+"\r\n"\
+			"Editor selection=#00CCFF\r\n"\
+			"Editor selection no focus=#CCCCFF\r\n"\
+			"Editor spellchecker=#FA9292\r\n"\
 			"Frames=false\r\n"\
 			"Grid Active Line=#CA0065\r\n"\
 			"Grid Background=#C0C0C0\r\n"\
@@ -253,18 +252,32 @@ int config::LoadOptions()
 			"Video Prog Bar=true\r\n"\
 			"Video Window Size=500,350\r\n"\
 			"Window Size=800,600";
-			
+}
+
+int config::LoadOptions()
+{
+	wxStandardPathsBase &paths = wxStandardPaths::Get();
+	pathfull=paths.GetExecutablePath().BeforeLast('\\');
+	wxString path;
+	path<<pathfull<<_T("\\Config.txt");
+	OpenWrite ow;
+	wxString txt=ow.FileOpen(path,false);
+	bool checkVer=true;
+	if(txt==""){
+		txt = LoadDefaultConfig();
 	}else{
 		wxString ver= txt.BeforeFirst(']').Mid(1);
 		if(ver!=progname){checkVer=false;}
 	}
+	if(!checkVer){SetRawOptions(LoadDefaultConfig().AfterFirst('\n'));}
 	bool isgood=SetRawOptions(txt.AfterFirst('\n'));
 	acdir = _T("Default");
 	path=_T("");
 	path<<pathfull<<_T("\\Catalog\\");
 	wxDir kat(path);
-	if(!kat.IsOpened()){ow.FileWrite(path<<acdir<<_T(".sty"),_T("Style: Default,Garamond,30,&H00FFFFFF,&H000000FF,&H00FF0000,&H00000000,0,0,0,0,100,100,0,0,0,2,2,2,10,10,10,1"));
-	AddStyle(new Styles());dirs.Add(acdir);
+	if(!kat.IsOpened()){
+		ow.FileWrite(path<<acdir<<_T(".sty"),_T("Style: Default,Garamond,30,&H00FFFFFF,&H000000FF,&H00FF0000,&H00000000,0,0,0,0,100,100,0,0,0,2,2,2,10,10,10,1"));
+		AddStyle(new Styles());dirs.Add(acdir);
 	}
 	else{
 		wxArrayString tmp;kat.GetAllFiles(path,&tmp,_T(""), wxDIR_FILES);

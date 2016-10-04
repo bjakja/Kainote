@@ -297,11 +297,11 @@ LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
 		,closedialog(false)
 		,L(_L)
 	{
-		progress_display = new wxGauge(this, -1, 100, wxDefaultPosition, wxSize(300, 20));
+		progress_display = new wxGauge(this, -1, 100, wxDefaultPosition, wxSize(600, 20));
 		title_display = new wxStaticText(this, -1, _T(""), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE|wxST_NO_AUTORESIZE);
 		task_display = new wxStaticText(this, -1, _T(""), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE|wxST_NO_AUTORESIZE);
 		cancel_button = new wxButton(this, wxID_CANCEL, "Anuluj");
-		debug_output = new wxTextCtrl(this, -1, _T(""), wxDefaultPosition, wxSize(300, 120), wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH2);
+		debug_output = new wxTextCtrl(this, -1, _T(""), wxDefaultPosition, wxSize(600, 220), wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH2);
 		//debug_output->Hide();
 		// put it in a sizer
 		sizer = new wxBoxSizer(wxVERTICAL);

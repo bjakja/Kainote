@@ -84,6 +84,7 @@ SubsGrid::SubsGrid(wxWindow *parent, const long int id,const wxPoint& pos,const 
 	transl=false;
 	showtl=false;
 	ismenushown=false;
+	showFrames=false;
 	Comparsion=NULL;
 	bmp=NULL;
 	numsave=0;
@@ -134,9 +135,6 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	int sw=0;
 	int sh=0;
 	GetClientSize(&w,&h);
-	//scrollBar->GetSize(&sw,&sh);
-	//scrollBar->SetSize(w-sw,0,sw,h);
-	// w -= 18;
 	bool direct = false;
 
 	if (direct) {
@@ -144,8 +142,6 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	}
 
 	else {
-		// Get size and pos
-		//scrollBar->GetSize().GetWidth();
 
 		// Prepare bitmap
 		if (bmp) {
@@ -266,9 +262,19 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 			if (form<SRT){
 				strings.Add(wxString::Format("%i",Dial->Layer));
 			}
-			strings.Add(Dial->Start.raw());
-			if (form!=TMP){
-				strings.Add(Dial->End.raw());
+			if(showFrames && Kai->GetTab()->Video->VFF){
+				VideoFfmpeg *VFF = Kai->GetTab()->Video->VFF;
+				wxString frame;
+				frame << VFF->GetFramefromMS(Dial->Start.mstime);
+				strings.Add(frame);
+				if (form!=TMP){
+					frame="";
+					frame << VFF->GetFramefromMS(Dial->End.mstime)-1;
+					strings.Add(frame);
+				}
+			}else{
+				strings.Add(Dial->Start.raw());
+				if (form!=TMP){strings.Add(Dial->End.raw());}
 			}
 			if (form<SRT){
 				if(FindStyle(Dial->Style)==-1){unkstyle=true;}else{unkstyle=false;}
@@ -644,14 +650,11 @@ void SubsGrid::ChangeCell(long wcell, int wline, Dialogue *what)
 	if(wcell & EFFECT){
 		dial->Effect=what->Effect;}
 	if(wcell & TXT){
-		dial->Text=what->Text;
-		//if(!transl){SpellErrors[wline].clear();CharsPerSec[wline]=-1;}
-	}
+		dial->Text=what->Text;}
 	if(wcell & COMMENT){
 		dial->IsComment=what->IsComment;}
 	if(wcell & TXTTL){
 		dial->TextTl=what->TextTl;
-		//if(!transl){SpellErrors[wline].clear();CharsPerSec[wline]=-1;}
 	}
 }
 
@@ -1718,6 +1721,9 @@ void SubsGrid::GetUndo(bool redo)
 	Edit->SetIt(erow);
 	Edit->RefreshStyle();
 	VideoCtrl *vb=pan->Video;
+	if(Edit->Visual>0){
+		vb->SetVisual(Edit->line->Start.mstime, Edit->line->End.mstime);
+	}
 	if(vb->IsShown()){vb->OpenSubs(SaveText());}
 	int opt=Options.GetInt("Move Video To Active Line");
 	if(opt>1){

@@ -30,7 +30,7 @@
 //#define wxIMAGE_PNG(x) wxImage(wxS(#x),wxBITMAP_TYPE_PNG_RESOURCE)
 
 kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
-	: wxFrame(0, -1, _("Bez nazwy -- ")+Options.progname, pos, size, wxDEFAULT_FRAME_STYLE)
+	: wxFrame(0, -1, _("Bez nazwy - ")+Options.progname, pos, size, wxDEFAULT_FRAME_STYLE)
 {
 
 #if logging
@@ -39,7 +39,6 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 #else
 	mylog=NULL;
 #endif
-	LSD=NULL;
 	ss=NULL;
 	FR=NULL;
 	SL=NULL;
@@ -249,7 +248,6 @@ kainoteFrame::~kainoteFrame()
 
 
 	if(ss){ss->Destroy();ss=NULL;}
-	if(LSD){LSD->Destroy();LSD=NULL;}
 	if(FR){FR->Destroy();FR=NULL;}
 	if(Auto){delete Auto; Auto=NULL;}
 	Tabs->Destroy();
@@ -740,6 +738,8 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 	else{
 		pan->CTime->Contents();
 		pan->Video->seekfiles=true;
+		pan->Edit->Frames->Enable(!pan->Video->IsDshow);
+		pan->Edit->Times->Enable(!pan->Video->IsDshow);
 		UpdateToolbar();
 	}
 
@@ -909,7 +909,7 @@ void kainoteFrame::Label(int iter,bool video, int wtab)
 	int totalmem=statex.ullTotalVirtual/div;
 	wxString memtxt= wxString::Format(" RAM: %i KB / %i KB", totalmem-availmem, totalmem);*/
 	wxString name=(video)?atab->VideoName : atab->SubsName;
-	SetLabel(whiter+name+" -- "+Options.progname /*+ memtxt*/);
+	SetLabel(whiter+name+" - "+Options.progname /*+ memtxt*/);
 	if(name.Len()>35){name=name.SubString(0,35)+"...";}
 	Tabs->SetPageText((wtab<0)? Tabs->GetSelection() : wtab, whiter+name);
 }
@@ -1005,9 +1005,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 			if(!pan->edytor){HideEditor();}
 			SetRecent();
 
-			//if(i==maxx-1){UpdateToolbar();}
 			Label();
-			//wxLogStatus("Subs %i", i);
 		}
 		if(i<videos.size()){
 			//wxLogStatus("Video bload %i", i);
@@ -1019,7 +1017,9 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 				if(pan->Video->IsDshow){wxMessageBox(_("Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\r\nbądź brakuje kodeków czy też splittera"), _("Uwaga"));}
 				break;
 			}
-			
+			pan->Edit->Frames->Enable(!pan->Video->IsDshow);
+			pan->Edit->Times->Enable(!pan->Video->IsDshow);
+
 			pan->Video->seekfiles=true;
 
 		}
@@ -1057,7 +1057,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 	int iter=cur->Grid1->file->Iter();
 	if(iter>0 && cur->Grid1->Modified){whiter<<iter<<"*";}
 	wxString name=(!cur->edytor)? cur->VideoName : cur->SubsName;
-	SetLabel(whiter+name+" -- "+Options.progname);
+	SetLabel(whiter+name+" - "+Options.progname);
 
 	if(cur->Video->GetState()!=None){
 		SetStatusText(getfloat(cur->Video->fps)+" FPS",2);

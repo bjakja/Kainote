@@ -83,6 +83,7 @@ void FontList::DrawFld(wxDC &dc,int w, int h)
 
 	dc.SetPen(wxPen(wxColour("#808080")));
 	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
+	dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 	dc.DrawRectangle(0,0,w,h);
 
 

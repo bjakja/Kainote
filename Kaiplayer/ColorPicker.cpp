@@ -1084,28 +1084,29 @@ void DialogColorPicker::OnColourCanged(wxTimerEvent &event)
 
 ButtonColorPicker::ButtonColorPicker(wxWindow *parent, wxColour _color, wxSize size)
 	: wxButton(parent,-1,"",wxDefaultPosition, size)
-	, color(_color)
 {
-	SetBackgroundColour(color);
+	SetBackgroundColour(_color);
 	Connect(wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ButtonColorPicker::OnClick);
 }
 
 wxColour ButtonColorPicker::GetColor()
 {
-	return color;
+	return GetBackgroundColour();
 }
 
 void ButtonColorPicker::OnClick(wxCommandEvent &event)
 {
+	DialogColorPicker *dcp = DialogColorPicker::Get(this,GetBackgroundColour().GetAsString(wxC2S_HTML_SYNTAX));
 	wxPoint mst=wxGetMousePosition();
-	mst.x-=300;
+	int dw, dh;
+	wxSize siz=dcp->GetSize();
+	siz.x;
+	wxDisplaySize (&dw, &dh);
+	mst.x-=(siz.x/2);
+	mst.x=MID(0,mst.x, dw-siz.x);
 	mst.y+=15;
-	DialogColorPicker *ColourDialog1 = DialogColorPicker::Get(GetParent(), GetBackgroundColour());
-
-	ColourDialog1->Move(mst);
-    if ( ColourDialog1->ShowModal() == wxID_OK) {
-		color=ColourDialog1->GetColor();
-		SetBackgroundColour(color);
-
-   }
+	dcp->Move(mst);
+	if (dcp->ShowModal() == wxID_OK) {
+		SetBackgroundColour(dcp->GetColor());
+	}
 }

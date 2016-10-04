@@ -231,8 +231,8 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 		}
 		pos+=tools[i]->size;
 	}
-	tdc.SetPen(wxPen("#000000"));
-	tdc.SetBrush(wxBrush("#000000"));
+	tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT)));
+	tdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT)));
 	wxPoint points[3];
 	if(vertical){tdc.DrawLine(pos1+14,pos-15,pos1+20,pos-15);
 		points[0]=wxPoint(pos1+14,pos-12);

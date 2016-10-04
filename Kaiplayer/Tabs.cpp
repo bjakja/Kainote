@@ -2,7 +2,7 @@
 #include "Tabs.h"
 #include "TabPanel.h"
 #include "kainoteApp.h"
-
+#include "Menu.h"
 
 
 Notebook::Notebook(wxWindow *parent, int id)
@@ -386,27 +386,29 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	//menu kontekstowe		
 	if(event.RightUp()){
 
-		wxMenu menu1;//=new wxMenu();
+		Menu menu1;//=new wxMenu();
 
 		for(size_t g=0;g<Size();g++)
 		{
-			menu1.Append(MENU_CHOOSE+g,Page(g)->SubsName,"",wxITEM_CHECK);
+			menu1.Append(MENU_CHOOSE+g,Page(g)->SubsName,"",true,0,0,ITEM_CHECK);
 		}
 		menu1.Check(MENU_CHOOSE+iter,true);
 		menu1.AppendSeparator();
-		if(i>=0){menu1.Append(MENU_SAVE+i,_("Zapisz"),_("Zapisz"),wxITEM_NORMAL);}
-		menu1.Append(MENU_SAVE-1,_("Zapisz wszystko"),_("Zapisz wszystko"),wxITEM_NORMAL);
-		menu1.Append(MENU_CHOOSE-1,_("Zamknij wszystkie zakładki"),_("Zamknij wszystkie zakładki"),wxITEM_NORMAL);
+		if(i>=0){menu1.Append(MENU_SAVE+i,_("Zapisz"),_("Zapisz"));}
+		menu1.Append(MENU_SAVE-1,_("Zapisz wszystko"),_("Zapisz wszystko"));
+		menu1.Append(MENU_CHOOSE-1,_("Zamknij wszystkie zakładki"),_("Zamknij wszystkie zakładki"));
 		if((i!=iter && Size()>1 && i!=-1) || split){
 			wxString txt=(split)? _("Wyświetl jedną zakładkę") : _("Wyświetl dwie zakładki");
-			menu1.Append((MENU_CHOOSE-2)-i, txt, "",wxITEM_NORMAL);
+			menu1.Append((MENU_CHOOSE-2)-i, txt, "");
 		}
 		if((i!=iter && Size()>1 && i!=-1) || hasCompare){
 			wxString txt=(hasCompare)? _("Wyłącz porównanie plików") : _("Włącz porównanie plików");
 			menu1.Append(MENU_COMPARE, txt, "",wxITEM_NORMAL);
 		}
-		int id=GetPopupMenuSelectionFromUser(menu1,event.GetPosition());
-		if(id<0){return;}
+		int id=menu1.GetPopupMenuSelection(event.GetPosition(),this);
+		wxLogStatus("id %i", id);
+		return;
+		//if(id<0){return;}
 		if(id >= MENU_CHOOSE-101 && id <= MENU_CHOOSE+99){
 			OnTabSel(id);
 		}else if(id == MENU_COMPARE){
@@ -469,11 +471,12 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	wxMemoryDC dc;
 	dc.SelectObject(wxBitmap(w,TabHeight));
 	dc.SetFont(font);
+	dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE)));
 	dc.GradientFillLinear(wxRect(0,0,w,TabHeight),
-		wxSystemSettings::GetColour(wxSYS_COLOUR_MENU),
-		wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE),wxTOP);
+		wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW),
+		wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE),wxTOP);//wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT)
 
 	start=(allvis)?2 : 20;
 
@@ -491,15 +494,16 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU));
 			dc.DrawRectangle(start+1,0,Tabsizes[i]-1,23);
 
-			dc.SetTextForeground("#505050");
 			dc.SetPen(wxPen("#000000"));
 
 			//najechany x na wybranej zakładce
 			if(onx){
 				dc.SetBrush(wxBrush("#9BD7EE"));
-				dc.DrawRoundedRectangle(start+Tabsizes[i]-20,3,16,16,1.1);}
+				dc.DrawRoundedRectangle(start+Tabsizes[i]-20,3,16,16,1.1);
+			}
+			dc.SetTextForeground("#505050");
 			dc.DrawText("X",start+Tabsizes[i]-16,3);
-			dc.SetTextForeground("#000000");
+			dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 
 		}
 		//najechana nieaktywna zakładka
@@ -562,22 +566,18 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	}
 
 	//plus który jest zawsze widoczny
-	dc.SetPen(*wxTRANSPARENT_PEN);
+	
 	dc.SetBrush(wxBrush("#FFFFFF"));
-	if(plus){dc.DrawRectangle(start+1,1,18,23);}
+	if(plus){
+		dc.SetPen(*wxTRANSPARENT_PEN);
+		dc.DrawRectangle(start+1,1,18,22);
+	}
 
 	dc.SetPen(wxPen(wxColour("#505050")));
 	//dc.SetBrush(wxBrush("#FFFFFF"));
 	dc.DrawRectangle(start+4,11,12,2);
 	dc.DrawRectangle(start+9,6,2,12);
-	//dc.SetPen(wxPen("#000000"));
-
-	/*if(split){
-	dc.SetPen(wxPen("#FF0000",2));
-	wxSize siz= Pages[iter]->GetSize();
-	wxPoint pos= Pages[iter]->GetPosition();
-	dc.DrawLine(pos.x,1,pos.x+siz.x,1);
-	}*/
+	
 	if(gc){
 		gc->SetPen( wxPen("#696969"));
 		gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
@@ -997,8 +997,8 @@ void Notebook::CompareTexts(wxString &first, wxString &second, wxArrayInt &first
 
 BEGIN_EVENT_TABLE(Notebook,wxWindow)
 	EVT_CHAR_HOOK(Notebook::OnCharHook)
-	EVT_ERASE_BACKGROUND(Notebook::OnEraseBackground)
+	//EVT_ERASE_BACKGROUND(Notebook::OnEraseBackground)
 	EVT_MOUSE_EVENTS(Notebook::OnMouseEvent)
 	EVT_SIZE(Notebook::OnSize)
 	EVT_PAINT(Notebook::OnPaint)
-	END_EVENT_TABLE()
+END_EVENT_TABLE()

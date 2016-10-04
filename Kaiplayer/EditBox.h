@@ -80,6 +80,8 @@ public:
 	MTextEditor* TextEdit;
 	MTextEditor* TextEditTl;
 	wxCheckBox* TlMode;
+	wxRadioButton* Times;
+	wxRadioButton* Frames;
 	wxCheckBox* Comment;
 	NumCtrl* LayerEdit;
 	TimeCtrl* StartEdit;
@@ -159,6 +161,7 @@ private:
 	void OnButtonTag(wxCommandEvent& event);
 	void OnCursorMoved(wxCommandEvent& event);
 	void OnAutoMoveTags(wxCommandEvent& event);
+	void OnChangeTimeDisplay(wxCommandEvent& event);
 	void DoTooltips();
 
 	bool isdetached;
@@ -185,7 +188,8 @@ enum{
 	ID_COL4,
 	MENU_ZATW,
 	MENU_NLINE,
-	ID_AUTOMOVETAGS
+	ID_AUTOMOVETAGS,
+	ID_TIMES_FRAMES,
 	
 };
 

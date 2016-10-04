@@ -40,7 +40,6 @@ private:
 	void OnSetNewFPS();
 	void OnMakeContinous(int id);
 
-	wxMenu *hidemenu;
 
 	DECLARE_EVENT_TABLE()
 };

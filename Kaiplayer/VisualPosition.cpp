@@ -34,14 +34,35 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 {
 	
 	if(blockevents){return;}
-	bool click = evt.LeftDown()||evt.RightDown()||evt.MiddleDown();
-	bool holding = (evt.LeftIsDown()||evt.RightIsDown()||evt.MiddleIsDown());
+	bool click = evt.LeftDown();
+	bool holding = evt.LeftIsDown();
 	
 	int x, y;
 	if(tab->Video->isfullskreen){wxGetMousePosition(&x,&y);}
 	else{evt.GetPosition(&x,&y);}
 	
-	if(evt.ButtonUp()){
+	if(evt.RightDown() || evt.LeftDClick()){
+		for(size_t i = 0; i < data.size(); i++){
+			if(data[i].numpos == tab->Edit->ebrow){
+				data[i].pos.x = x;
+				data[i].pos.y = y;
+				data[i].lastpos = data[i].pos;
+				D3DXVECTOR2 diff(data[i].pos.x - data[i].lastpos.x, data[i].pos.y - data[i].lastpos.y);
+
+				for(size_t j = 0; j < data.size(); j++){
+					if(j==i){continue;}
+					data[j].pos += diff;
+					data[j].lastpos = data[j].pos;
+				}
+				ChangeMultiline(evt.RightDown());
+				break;
+			}
+
+		}
+		return;
+	}
+
+	if(evt.LeftUp()){
 		if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}
 		//tab->Edit->SetVisual(GetVisual(),false,0);
 		ChangeMultiline(true);
@@ -49,24 +70,6 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 			data[i].lastpos = data[i].pos;
 		}
 		if(!hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
-	}
-	if(evt.LeftDClick()){
-		for(size_t i = 0; i < data.size(); i++){
-			if(data[i].numpos == tab->Edit->ebrow){
-				data[i].pos.x = x;
-				data[i].pos.y = y;
-				D3DXVECTOR2 diff(data[i].pos.x - data[i].lastpos.x, data[i].pos.y - data[i].lastpos.y);
-
-				for(size_t j = 0; j < data.size(); j++){
-					if(j==i){continue;}
-					data[j].pos += diff;
-				}
-				ChangeMultiline(true);
-				break;
-			}
-
-		}
-		return;
 	}
 
 	if(click){
@@ -103,9 +106,6 @@ wxString Position::GetVisual(int datapos)
 	
 void Position::SetCurVisual()
 {
-
-	//D3DXVECTOR2 linepos = tab->Edit->GetPosnScale(NULL, NULL, tbl);
-	//from = D3DXVECTOR2(linepos.x/wspw,linepos.y/wsph);
 	data.clear();
 	wxArrayInt sels= tab->Grid1->GetSels();
 	//wxLogStatus("Getpos size %i", sels.size());

@@ -175,9 +175,8 @@ public:
 	wxColour GetColor();
 private:
 	void OnClick(wxCommandEvent &event);
-	wxColour color;
 };
-
+typedef ButtonColorPicker ColorButton;
 //Uwa¿aj aby nie stosowaæ idów
 enum {
 	SELECTOR_SPECTRUM = 14000,

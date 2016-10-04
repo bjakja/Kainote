@@ -133,18 +133,18 @@ void DrawingAndClip::SetCurVisual()
 		if(re.Matches(txt)){
 			clip = re.GetMatch(txt,2);
 			textwithclip = re.GetMatch(txt,1).AfterLast('}') + re.GetMatch(txt,3).BeforeFirst('{');
-			wxLogStatus("clip "+ clip + " text "+textwithclip);
+			//wxLogStatus("clip "+ clip + " text "+textwithclip);
 		}else{
 			wxRegEx re("(.*){[^}]*}(m[^{]+)", wxRE_ADVANCED);
 			if(re.Matches(txt)){
 				clip = re.GetMatch(txt,2);
 				textwithclip = re.GetMatch(txt,1).AfterLast('}');
-				wxLogStatus("clip "+ clip + " text "+textwithclip);
+				//wxLogStatus("clip "+ clip + " text "+textwithclip);
 			}else{
 				wxRegEx re("{[^}]*}", wxRE_ADVANCED);
 				re.ReplaceAll(&txt,"");
 				textwithclip = txt;
-				wxLogStatus("text "+textwithclip);
+				//wxLogStatus("text "+textwithclip);
 			}
 		}
 		
@@ -196,6 +196,7 @@ wxString DrawingAndClip::GetVisual()
 {
 	wxString format = "6.2f"; //: "6.2f";
 	wxString clip;
+	wxString lasttype;
 	int cntb=0;
 	bool spline=false;
 	offsetxy = (Visual==VECTORDRAW)? CalcWH() : D3DXVECTOR2(0,0);
@@ -210,7 +211,8 @@ wxString DrawingAndClip::GetVisual()
 			//if(cntb>2 && pos.type=="b"){cntb=0;}
 		}else{
 			if(spline){clip<<"c ";spline=false;}
-			clip<<pos.type<<" "<<getfloat(x,format)<<" "<<getfloat(y,format)<<" ";
+			if(lasttype != pos.type){clip<<pos.type<<" "; lasttype = pos.type;}
+			clip<<getfloat(x,format)<<" "<<getfloat(y,format)<<" ";
 			if(pos.type=="b"||pos.type=="s"){cntb=1;if(pos.type=="s"){spline=true;}}
 		}
 	}
@@ -632,10 +634,14 @@ D3DXVECTOR2 DrawingAndClip::CalcWH()
 }
 
 void DrawingAndClip::SelectPoints(){
+	int x = (selection.x < selection.width)? selection.x : selection.width,
+		y = (selection.y < selection.height)? selection.y : selection.height,
+		r = (selection.x > selection.width)? selection.x : selection.width,
+		b = (selection.y > selection.height)? selection.y : selection.height;
 	for( size_t i = 0; i < Points.size(); i++){
 		D3DXVECTOR2 point = Points[i].GetVector();
-		if(point.x >= selection.x && point.x <= selection.width && 
-			point.y >= selection.y && point.y <= selection.height){
+		if(point.x >= x && point.x <= r && 
+			point.y >= y && point.y <= b){
 				Points[i].isSelected = true;
 		}else{
 			Points[i].isSelected = false;

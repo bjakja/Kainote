@@ -1,14 +1,15 @@
 
 #include "Menu.h"
 #include "Config.h"
-//#include "Tabs.h"
+#include "Hotkeys.h"
 
 static wxFont font = wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma");
+static int height = 18;
 
-MenuItem::MenuItem(const wxString& _label, const wxString& _help, int _id, bool _enable, wxBitmap *_icon, Menu *Submenu, byte _type)
+MenuItem::MenuItem(int _id, const wxString& _label, const wxString& _help, bool _enable, wxBitmap *_icon, Menu *Submenu, byte _type)
 {
 	icon=_icon; label=_label; id=_id; 
-	enabled=_enable;type=_type;submenu=Submenu;
+	enabled=_enable;type=_type;submenu=Submenu; check=false;
 }
 MenuItem::~MenuItem()
 {
@@ -21,6 +22,7 @@ bool MenuItem::Enable(bool enable)
 }
 wxBitmap MenuItem::GetBitmap()
 {
+	if(!icon){return wxBitmap();}
 	if(!enabled){
 		return wxBitmap(icon->ConvertToImage().ConvertToGreyscale());
 	}
@@ -32,33 +34,38 @@ Menu::Menu()
 {
 }
 
-int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent)
+int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, bool clientPos)
 {
 	wxPoint npos= pos;
 	wxSize size;
-	CalcPosAndSize(parent, &npos, &size);
-	dialog = new MenuDialog(this, parent, npos, size);
+	CalcPosAndSize(parent, &npos, &size, clientPos);
+	wxLogStatus("Pos & size %i, %i %i %i %i %i", npos.x, npos.y, size.x, size.y, pos.x, pos.y);
+	//if(dialog){dialog->Destroy();}
+	dialog = new MenuDialog(this, parent, npos, size, false);
 	return dialog->ShowModal();
 }
 
-void Menu::PopupMenu(const wxPoint &pos, wxWindow *parent)
+void Menu::PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos)
 {
 	wxPoint npos= pos;
 	wxSize size;
-	CalcPosAndSize(parent, &npos, &size);
-	dialog = new MenuDialog(this, parent, npos, size, false);
-	dialog->ShowModal();
+	CalcPosAndSize(parent, &npos, &size, clientPos);
+	wxLogStatus("Pos & size %i, %i %i %i %i %i", npos.x, npos.y, size.x, size.y, pos.x, pos.y);
+	//if(dialog){dialog->Destroy();}
+	dialog = new MenuDialog(this, parent, npos, size);
+	dialog->Show();
 }
 
-void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size)
+void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool clientPos)
 {
 	int tx=0, ty=0;
+	if(clientPos){*pos = parent->ClientToScreen(*pos);}
 	for(size_t i = 0; i < items.size(); i++){
 		parent->GetTextExtent(items[i]->label, &tx, &ty, 0, 0, &font);
 		if(tx > size->x){size->x = tx;}
 	}
-	size->x += 20;
-	size->y = ty * items.size() + 2;
+	size->x += 50;
+	size->y = height * items.size() + 2;
 	int w,h;
 	wxRect workArea = wxGetClientDisplayRect();
 	w = workArea.width - workArea.x;
@@ -71,9 +78,15 @@ void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size)
 	}
 }
 
-MenuItem *Menu::Append(const wxString& _label, const wxString& _help, int _id, bool _enable, wxBitmap *_icon, Menu* Submenu, byte _type)
+MenuItem *Menu::Append(int _id, const wxString& _label, const wxString& _help, bool _enable, wxBitmap *_icon, Menu* Submenu, byte _type)
 {
-	MenuItem *item = new MenuItem(_label, _help, _id, _enable, _icon, Submenu, _type);
+	MenuItem *item = new MenuItem(_id, _label, _help, _enable, _icon, Submenu, _type);
+	items.push_back(item);
+	return item;
+}
+MenuItem *Menu::Append(int _id,const wxString& _label, Menu* Submenu, const wxString& _help, byte _type, bool _enable, wxBitmap *_icon)
+{
+	MenuItem *item = new MenuItem(_id, _label, _help, _enable, _icon, Submenu, _type);
 	items.push_back(item);
 	return item;
 }
@@ -84,9 +97,9 @@ MenuItem *Menu::Append(MenuItem *item)
 	return item;
 }
 	
-MenuItem *Menu::Prepend(const wxString& _label, const wxString& _help, int _id, bool _enable, wxBitmap *_icon, Menu* Submenu, byte _type)
+MenuItem *Menu::Prepend(int _id, const wxString& _label, const wxString& _help, bool _enable, wxBitmap *_icon, Menu* Submenu, byte _type)
 {
-	MenuItem *item = new MenuItem(_label, _help, _id, _enable, _icon, Submenu, _type);
+	MenuItem *item = new MenuItem(_id, _label, _help, _enable, _icon, Submenu, _type);
 	items.insert(items.begin(),item);
 	return item;
 }
@@ -97,9 +110,9 @@ MenuItem *Menu::Prepend(MenuItem *item)
 	return item;
 }
 	
-MenuItem *Menu::Insert(int position, const wxString& _label, const wxString& _help, int _id, bool _enable, wxBitmap *_icon, Menu* Submenu, byte _type)
+MenuItem *Menu::Insert(int position, int _id, const wxString& _label, const wxString& _help, bool _enable, wxBitmap *_icon, Menu* Submenu, byte _type)
 {
-	MenuItem *item = new MenuItem(_label, _help, _id, _enable, _icon, Submenu, _type);
+	MenuItem *item = new MenuItem(_id, _label, _help, _enable, _icon, Submenu, _type);
 	items.insert(items.begin() + position,item);
 	return item;
 }
@@ -155,12 +168,44 @@ MenuItem *Menu::FindItemByPosition(int pos)
 	return items[pos];
 }
 
+void Menu::Check(int id, bool check)
+{
+	MenuItem * item = FindItem(id);
+	if(item){
+		item->check = check;
+	}
+}
+	
+void Menu::AppendSeparator()
+{
+	MenuItem *item = new MenuItem(-2, "", "", false, 0, 0, ITEM_SEPARATOR);
+	items.push_back(item);
+}
+
+void Menu::DestroyDialog()
+{
+	if(dialog){dialog->Destroy();}//if(dialog->IsModal()){dialog->EndModal(-3);}else{}
+}
+
+MenuItem *Menu::SetAccMenu(int id, const wxString &txt, const wxString &help, bool enable, int kind)
+{
+	wxString hkey=Hkeys.GetMenuH(id);
+	wxString mtext=(hkey!="")? txt.BeforeFirst('\t')+"\t"+hkey : txt;
+	if(hkey!="" && Hkeys.hkeys[id].Name==""){Hkeys.hkeys[id].Name=txt.BeforeFirst('\t');}
+	return Append(id,mtext,help,true,0,0,kind);
+}
+
+wxDEFINE_EVENT(EVT_SHOW_DIAL, wxThreadEvent);
 MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos, const wxSize &size, bool sendEvent)
-	:wxDialog(DialogParent,-1,"",pos, size)
+	:wxDialog(DialogParent,-1,"",pos, size, 0)
 	,parent(_parent)
 	,sel(-1)
 	,scPos(0)
 	,withEvent(sendEvent)
+	,blockHideDialog(false)
+	,submenuShown(-1)
+	,bmp(NULL)
+	,id(-3)
 {
 }
 
@@ -172,28 +217,77 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 	int w=0;
 	int h=0;
 	GetSize (&w, &h);
-
-	int elem = y/fh;
-	elem+=scPos;
-	if(elem>=(int)parent->items.size()){return;}
-	if(elem!=sel){
-		sel=elem;
-		Refresh(false);
+	int elem = y/height;
+	
+	if(evt.Leaving()){
+		wxLogStatus("leaving");
+		//if(!HasCapture()){CaptureMouse();}
+		//else if(evt.RightDown()){SetPosition(wxGetMousePosition());}
+		sel=-1; Refresh(false);return;
+	}else if(evt.Entering()){
+		wxLogStatus("entering");
+		
+		//if(HasCapture()){ReleaseMouse();}
+		sel=elem; Refresh(false);return;
 	}
-	if (evt.GetWheelRotation() != 0) {
+	//if(evt.ButtonDown() && HasCapture()){
+		//ReleaseMouse();if(IsModal()){EndModal(-3);}else{id=-3;Hide();}
+	//}
+	//if(evt.Leaving()){sel=-1; Refresh(false);return;}
+	
+	//elem+=scPos;
+	if(elem>=(int)parent->items.size() || elem < 0){return;}
+	if(elem!=sel){
+		
+			
+			if(submenuShown!=-1){
+				MenuItem *olditem=parent->items[submenuShown];
+				blockHideDialog=false;
+				olditem->submenu->DestroyDialog();
+				SetFocus();
+				submenuShown=-1;
+				//if(IsModal() && !HasCapture()){CaptureMouse();}
+			}
+			
+		
+		MenuItem *item=parent->items[elem];
+		sel=elem;
+		if(item->submenu){
+			blockHideDialog=true;
+			//if(IsModal() && HasCapture()){ReleaseMouse();}
+			wxPoint pos = GetPosition();
+			pos.x += w;
+			pos.y += elem * height;
+			//if(IsModal()){item->submenu->GetPopupMenuSelection(pos, this->GetParent(), false);}
+			//else{
+			item->submenu->PopupMenu(pos, this->GetParent(), false);//}
+			submenuShown=elem;
+		}
+		
+		Refresh(false);
+		//wxLogStatus(item->help);
+	}
+	/*if (evt.GetWheelRotation() != 0) {
 		int step = 3 * evt.GetWheelRotation() / evt.GetWheelDelta();
 		scPos -=step;
 		Refresh(false);
 		return;
-	}
+	}*/
 	if(leftdown){
 		MenuItem *item=parent->items[elem];
+		if(!item->enabled){return;}
+		if(item->type == ITEM_CHECK){
+			item->check = !item->check;
+			Refresh(false);
+			return;
+		}
 		if(withEvent){
 			wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, item->id);
 			evt.SetClientData(item);
 			AddPendingEvent(evt);
 		}
-		EndModal(item->id);
+		id = item->id;
+		if(IsModal()){EndModal(id);}
 	}
 }
 	
@@ -211,47 +305,71 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
 	wxBitmap checkbmp = wxBITMAP_PNG("check");
-	tdc.SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma"));
+	wxColour highlight = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+	wxColour text = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT);
+	wxColour graytext = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
+	tdc.SetFont(font);
 	tdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU)));
 	tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU)));
 	tdc.DrawRectangle(0,0,w,h);
-	int visible=25;//500/fh fh=20;
+	tdc.SetTextForeground(text);
+	//wxLogStatus("refresh");
+	//int visible=25;//500/fh fh=20;
 	int itemsize = parent->items.size();
-	if(scPos>=itemsize-visible){scPos=itemsize-visible;}
+	/*if(scPos>=itemsize-visible){scPos=itemsize-visible;}
 	else if(scPos<0){scPos=0;}
 	int maxsize=MAX(itemsize,scPos+visible);
-	SetScrollbar(wxVERTICAL,scPos,visible,itemsize);
-	for(int i=0;i<visible; i++)
+	SetScrollbar(wxVERTICAL,scPos,visible,itemsize);*/
+	for(int i=0;i<itemsize; i++)
 	{
-		MenuItem *item=parent->items[i+scPos];
-		
-		if(i+scPos==sel){
+		MenuItem *item=parent->items[i];//+scPos
+		if(item->type==ITEM_SEPARATOR){
+			tdc.SetPen(wxPen("#FFFFFF"));
+			tdc.SetBrush(wxBrush("#000000"));
+			tdc.DrawRectangle(24,height*i+10,w-4,1);
+			continue;
+		}
+		if(i/*+scPos*/==sel){
 			tdc.SetPen(wxPen("#000000"));
-			tdc.SetBrush(wxBrush("#9BD7EE"));
-			tdc.DrawRectangle(0, fh*i,w,fh);
+			tdc.SetBrush(wxBrush(highlight));
+			tdc.DrawRectangle(0, height*i,w,height);
 		}
 		tdc.SetPen(wxPen("#497CB0",2));
 		tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 		
 		
 		if(item->check){
-			tdc.DrawBitmap(checkbmp,4,(fh*i)+2);
-		}else{
-			tdc.DrawBitmap(item->GetBitmap(),4,(fh*i)+2);
+			tdc.DrawBitmap(checkbmp,4,(height*i)+2);
+		}else if(item->icon){
+			tdc.DrawBitmap(item->GetBitmap(),4,(height*i)+2);
 		}
 		wxString desc=item->GetLabel();
+		tdc.SetTextForeground((item->enabled)? text : graytext);
 		desc.Replace("&","");
 		int find=desc.find("\t");
 		tdc.SetPen(wxPen("#497CB0"));
 		if (find!= -1 ){
 			int fw, fhh;
 			wxString accel=desc.AfterLast('\t');
+			//wxLogStatus("accel "+accel);
 			tdc.GetTextExtent(accel, &fw, &fhh);
-			tdc.DrawText(accel,w-fw-8,(fh*i)+2);
+			tdc.DrawText(accel,w-fw-20,(height*i)+2);
+			desc=desc.BeforeLast('\t');
 		}
-		wxString label=desc.BeforeLast('\t');
-		tdc.DrawText(label,(fh*2),(fh*i)+2);
+		//wxLogStatus("desc1 "+label);
+		tdc.DrawText(desc,24,(height*i)+2);
 		
+		if(item->submenu){
+			wxPoint points[3];
+			int pos = w-10;
+			int pos1= (height*i)+12;
+			points[0]=wxPoint(pos,pos1-6);
+			points[1]=wxPoint(pos,pos1);
+			points[2]=wxPoint(pos+4,pos1-3);
+			tdc.SetBrush(wxBrush(text));
+			tdc.SetPen(wxPen(graytext));
+			tdc.DrawPolygon(3,points);
+		}
 
 	}
 	wxPaintDC dc(this);
@@ -276,14 +394,14 @@ void MenuDialog::OnScroll(wxScrollWinEvent& event)
 	{
 		wxSize size=GetClientSize();
 		newPos=scPos;
-		newPos-=(size.y/fh - 1);
+		newPos-=(size.y/height - 1);
 		newPos=MAX(0,newPos);
 	}
 	else if(event.GetEventType()==wxEVT_SCROLLWIN_PAGEDOWN)
 	{
 		wxSize size=GetClientSize();
 		newPos=scPos;
-		newPos+=(size.y/fh - 1);
+		newPos+=(size.y/height - 1);
 		newPos=MIN(newPos,tsize-1);
 	}
 	else{newPos = event.GetPosition();}
@@ -292,17 +410,19 @@ void MenuDialog::OnScroll(wxScrollWinEvent& event)
 		Refresh(false);
 	}
 }
-	
-void MenuDialog::OnLostCapture(wxFocusEvent &evt)
+void MenuDialog::OnLostCapture(wxMouseCaptureLostEvent &evt)
 {
-	EndModal(-3);
+	if(HasCapture()){ReleaseCapture();}
+	//if(IsModal()){}EndModal(-3);}
+	//else{Hide(); id=-3;}
 }
+
 
 BEGIN_EVENT_TABLE(MenuDialog, wxDialog)
 	EVT_MOUSE_EVENTS(MenuDialog::OnMouseEvent)
 	EVT_PAINT(MenuDialog::OnPaint)
-	EVT_KILL_FOCUS(MenuDialog::OnLostCapture)
-	EVT_SCROLLWIN(MenuDialog::OnScroll)
+	EVT_MOUSE_CAPTURE_LOST(MenuDialog::OnLostCapture)
+	//EVT_SCROLLWIN(MenuDialog::OnScroll)
 END_EVENT_TABLE()
 
 MenuBar::MenuBar(wxWindow *_parent)

@@ -11,6 +11,7 @@
 #include "TLDialog.h"
 #include "MKVWrap.h"
 #include "Stylelistbox.h"
+#include "Menu.h"
 #include <wx/regex.h>
 
 
@@ -30,72 +31,72 @@ void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 	VB->blockpaint=true;
 	selarr = GetSels();
 	int sels=selarr.GetCount();
-	wxMenu *menu=new wxMenu;
-	hidemenu=new wxMenu;
-	wxMenuItem *item;
-	item = Hkeys.SetAccMenu(hidemenu, 5000+LAYER,_("Ukryj warstwę"),_("Ukryj warstwę"),wxITEM_CHECK);
+	Menu *menu=new Menu;
+	Menu *hidemenu=new Menu;
+	MenuItem *item;
+	item = hidemenu->SetAccMenu(5000+LAYER,_("Ukryj warstwę"),_("Ukryj warstwę"),true, ITEM_CHECK);
 	item->Enable(form<SRT);
 	item->Check((visible & LAYER)!=0);
-	Hkeys.SetAccMenu(hidemenu, 5000+START,_("Ukryj czas początkowy"),_("Ukryj czas początkowy"),wxITEM_CHECK)->Check((visible & START)!=0);
-	item = Hkeys.SetAccMenu(hidemenu, 5000+END,_("Ukryj czas końcowy"),_("Ukryj czas końcowy"),wxITEM_CHECK);
+	hidemenu->SetAccMenu(5000+START,_("Ukryj czas początkowy"),_("Ukryj czas początkowy"),true, ITEM_CHECK)->Check((visible & START)!=0);
+	item = hidemenu->SetAccMenu(5000+END,_("Ukryj czas końcowy"),_("Ukryj czas końcowy"),true, ITEM_CHECK);
 	item->Enable(form!=TMP);
 	item->Check((visible & END)!=0);
-	item = Hkeys.SetAccMenu(hidemenu, 5000+ACTOR,_("Ukryj aktora"),_("Ukryj aktora"),wxITEM_CHECK);
+	item = hidemenu->SetAccMenu(5000+ACTOR,_("Ukryj aktora"),_("Ukryj aktora"),true, ITEM_CHECK);
 	item->Enable(form<SRT);
 	item->Check((visible & ACTOR)!=0);
-	item = Hkeys.SetAccMenu(hidemenu, 5000+STYLE,_("Ukryj styl"),_("Ukryj styl"),wxITEM_CHECK);
+	item = hidemenu->SetAccMenu(5000+STYLE,_("Ukryj styl"),_("Ukryj styl"),true, ITEM_CHECK);
 	item->Enable(form<SRT);
 	item->Check((visible & STYLE)!=0);
-	item = Hkeys.SetAccMenu(hidemenu, 5000+MARGINL,_("Ukryj lewy margines"),_("Ukryj lewy margines"),wxITEM_CHECK);
+	item = hidemenu->SetAccMenu(5000+MARGINL,_("Ukryj lewy margines"),_("Ukryj lewy margines"),true, ITEM_CHECK);
 	item->Enable(form<SRT);
 	item->Check((visible & MARGINL)!=0);
-	item = Hkeys.SetAccMenu(hidemenu, 5000+MARGINR,_("Ukryj prawy margines"),_("Ukryj prawy margines"),wxITEM_CHECK);
+	item = hidemenu->SetAccMenu(5000+MARGINR,_("Ukryj prawy margines"),_("Ukryj prawy margines"),true, ITEM_CHECK);
 	item->Enable(form<SRT);
 	item->Check((visible & MARGINR)!=0);
-	item = Hkeys.SetAccMenu(hidemenu, 5000+MARGINV,_("Ukryj pionowy margines"),_("Ukryj pionowy margines"),wxITEM_CHECK);
+	item = hidemenu->SetAccMenu(5000+MARGINV,_("Ukryj pionowy margines"),_("Ukryj pionowy margines"),true, ITEM_CHECK);
 	item->Enable(form<SRT);
 	item->Check((visible & MARGINV)!=0);
-	item = Hkeys.SetAccMenu(hidemenu, 5000+EFFECT,_("Ukryj efekt"),_("Ukryj efekt"),wxITEM_CHECK);
+	item = hidemenu->SetAccMenu(5000+EFFECT,_("Ukryj efekt"),_("Ukryj efekt"),true, ITEM_CHECK);
 	item->Enable(form<SRT);
 	item->Check((visible & EFFECT)!=0);
-	Hkeys.SetAccMenu(hidemenu, 5000+CNZ,_("Ukryj znaki na sekundę"),_("Ukryj znaki na sekundę"),wxITEM_CHECK)->Check((visible & CNZ)!=0);
+	hidemenu->SetAccMenu(5000+CNZ,_("Ukryj znaki na sekundę"),_("Ukryj znaki na sekundę"),true, ITEM_CHECK)->Check((visible & CNZ)!=0);
 
 	bool isen;
 	isen = (sels == 1);
-	Hkeys.SetAccMenu(menu, InsertBefore,_("Wstaw przed"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, InsertAfter,_("Wstaw po"))->Enable(isen);
+	menu->SetAccMenu( InsertBefore,_("Wstaw przed"))->Enable(isen);
+	menu->SetAccMenu( InsertAfter,_("Wstaw po"))->Enable(isen);
 	isen = (isen&&Kai->GetTab()->Video->GetState()!=None);
-	Hkeys.SetAccMenu(menu, InsertBeforeVideo,_("Wstaw przed z czasem wideo"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, InsertAfterVideo,_("Wstaw po z czasem wideo"))->Enable(isen);
+	menu->SetAccMenu( InsertBeforeVideo,_("Wstaw przed z czasem wideo"))->Enable(isen);
+	menu->SetAccMenu( InsertAfterVideo,_("Wstaw po z czasem wideo"))->Enable(isen);
 	isen = (sels >0);
-	Hkeys.SetAccMenu(menu, Duplicate,_("Duplikuj linie"))->Enable(isen);
+	menu->SetAccMenu( Duplicate,_("Duplikuj linie"))->Enable(isen);
 	isen = (sels == 2);
-	Hkeys.SetAccMenu(menu, Swap,_("Zamień"))->Enable(isen);
+	menu->SetAccMenu( Swap,_("Zamień"))->Enable(isen);
 	isen = (sels >= 2&&sels <= 5);
-	Hkeys.SetAccMenu(menu, Join,_("Złącz linijki"))->Enable(isen);
+	menu->SetAccMenu( Join,_("Złącz linijki"))->Enable(isen);
 	isen = (sels >= 2&&sels <= 50);
-	Hkeys.SetAccMenu(menu, JoinToFirst,_("Złącz linijki zostaw pierwszą"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, JoinToLast,_("Złącz linijki zostaw ostatnią"))->Enable(isen);
+	menu->SetAccMenu( JoinToFirst,_("Złącz linijki zostaw pierwszą"))->Enable(isen);
+	menu->SetAccMenu( JoinToLast,_("Złącz linijki zostaw ostatnią"))->Enable(isen);
 	isen = (sels >0);
-	Hkeys.SetAccMenu(menu, ContinousPrevious,_("Ustaw czasy jako ciągłe (poprzednia linijka)"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, ContinousNext,_("Ustaw czasy jako ciągłe (następna linijka)"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, Cut,_("Wytnij\tCtrl-X"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, Copy,_("Kopiuj\tCtrl-C"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, Paste,_("Wklej\tCtrl-V"));
-	Hkeys.SetAccMenu(menu, CopyCollumns,_("Kopiuj kolumny"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, PasteCollumns,_("Wklej kolumny"));
+	menu->SetAccMenu( ContinousPrevious,_("Ustaw czasy jako ciągłe (poprzednia linijka)"))->Enable(isen);
+	menu->SetAccMenu( ContinousNext,_("Ustaw czasy jako ciągłe (następna linijka)"))->Enable(isen);
+	menu->SetAccMenu( Cut,_("Wytnij\tCtrl-X"))->Enable(isen);
+	menu->SetAccMenu( Copy,_("Kopiuj\tCtrl-C"))->Enable(isen);
+	menu->SetAccMenu( Paste,_("Wklej\tCtrl-V"));
+	menu->SetAccMenu( CopyCollumns,_("Kopiuj kolumny"))->Enable(isen);
+	menu->SetAccMenu( PasteCollumns,_("Wklej kolumny"));
 	menu->Append(4444,_("Ukryj kolumny"),hidemenu);
-	Hkeys.SetAccMenu(menu, NewFPS,_("Ustaw nowy FPS"));
-	Hkeys.SetAccMenu(menu, FPSFromVideo,_("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState()!=None && sels==2);
-	Hkeys.SetAccMenu(menu, PasteTranslation,_("Wklej tekst tłumaczenia"))->Enable(form<SRT && ((TabPanel*)GetParent())->SubsPath!="");
-	Hkeys.SetAccMenu(menu, TranslationDialog,_("Okno przesuwania dialogów"))->Enable(showtl);
+	menu->SetAccMenu( NewFPS,_("Ustaw nowy FPS"));
+	menu->SetAccMenu( FPSFromVideo,_("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState()!=None && sels==2);
+	menu->SetAccMenu( PasteTranslation,_("Wklej tekst tłumaczenia"))->Enable(form<SRT && ((TabPanel*)GetParent())->SubsPath!="");
+	menu->SetAccMenu( TranslationDialog,_("Okno przesuwania dialogów"))->Enable(showtl);
 	menu->AppendSeparator();
 
-	Hkeys.SetAccMenu(menu, RemoveText,_("Usuń tekst"))->Enable(isen);
-	Hkeys.SetAccMenu(menu, Remove,_("Usuń"))->Enable(isen);
+	menu->SetAccMenu( RemoveText,_("Usuń tekst"))->Enable(isen);
+	menu->SetAccMenu( Remove,_("Usuń"))->Enable(isen);
 	menu->AppendSeparator();
-	Hkeys.SetAccMenu(menu, FontCollector,_("Kolekcjoner czcionek"))->Enable(form<SRT);
-	Hkeys.SetAccMenu(menu, SubsFromMKV,_("Wczytaj napisy z pliku MKV"))->Enable(Kai->GetTab()->VideoName.EndsWith(".mkv"));
+	menu->SetAccMenu( FontCollector,_("Kolekcjoner czcionek"))->Enable(form<SRT);
+	menu->SetAccMenu( SubsFromMKV,_("Wczytaj napisy z pliku MKV"))->Enable(Kai->GetTab()->VideoName.EndsWith(".mkv"));
 
 	if(dummy){
 		delete menu;
@@ -103,23 +104,17 @@ void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 		return;
 	}
 	ismenushown = true;	
-	int id=GetPopupMenuSelectionFromUser(*menu,pos);
+	int id=menu->GetPopupMenuSelection(pos, this);
 	ismenushown = false;
 
 	byte state[256];
-	/*state[VK_LSHIFT]=0;
-	state[VK_RSHIFT]=0;
-	state[VK_LCONTROL]=0;
-	state[VK_RCONTROL]=0;
-	state[VK_LMENU]=0;
-	state[VK_RMENU]=0;*/
 
 	if(GetKeyboardState(state)==FALSE){wxLogStatus(_("nie można pobrać stanu przycisków"));}
 	if((state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1)/* && (state[VK_LCONTROL]<1 && state[VK_RCONTROL]<1 && state[VK_LMENU]<1 && state[VK_RMENU]<1) */&&id>5000){
-		wxMenuItem *item=menu->FindItem(id);
+		MenuItem *item=menu->FindItem(id);
 		wxString wins[1]={"Napisy"};
 		int ret=-1;
-		wxString name=item->GetItemLabelText();
+		wxString name=item->GetLabel();
 		ret=Hkeys.OnMapHkey(id, name, this, wins, 1);
 		if(ret==-1){Notebook::GetTab()->SetAccels();
 		Hkeys.SaveHkeys();}

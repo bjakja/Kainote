@@ -40,7 +40,7 @@ class MTextEditor : public wxWindow
 	void OnKillFocus(wxFocusEvent& event);
 	void OnEraseBackground(wxEraseEvent& event){};
 	void OnScroll(wxScrollEvent& event);
-	void DrawFld(wxDC &dc,int w, int h);
+	void DrawFld(wxDC &dc,int w, int h, int windowh);
 	bool HitTest(wxPoint pos, wxPoint *cur);
 	void CalcWrap(bool updatechars=true, bool sendevent=true);
 	void FindWord(int pos,int *start, int *end);

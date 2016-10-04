@@ -92,10 +92,10 @@ public:
 	Dialogue *CopyDial(int i, bool push=true);
 	Dialogue *GetDial(int i);
 	wxString *GetVisible(bool *visible, wxPoint *point=0, bool trimSels=false);
-	wxRect GetMetrics(int line);
 
-	int lastRow;
 	bool makebkp;
+	bool showFrames;
+	int lastRow;
 	int visible;
 	int mtimerow;
 	SubsFile* file;
@@ -118,15 +118,15 @@ protected:
 	int posX;
 	int row;
 	int scPos;
+	int extendRow;
+	int lastsel;
+	int scHor;
+	int oldX;
 	short numsave;
+	bool first;
 	bool holding;
 	bool hideover;
 	bool ismenushown;
-	int extendRow;
-	int lastsel;
-	bool first;
-	int scHor;
-	int oldX;
 	kainoteFrame* Kai;
 
 	void OnSize(wxSizeEvent& event);

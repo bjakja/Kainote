@@ -22,7 +22,6 @@
 #include <vector>
 #include "TabPanel.h"
 #include "SpellChecker.h"
-#include "AutomationScriptsDialog.h"
 #include "StyleStore.h"
 #include "FindReplace.h"
 #include "Automation.h"
@@ -77,7 +76,6 @@ class kainoteFrame: public wxFrame
 		void UpdateToolbar();
 		void OnOpenAudio(wxCommandEvent& event);
 		void OnMenuClick(wxCommandEvent &event);
-		ScriptsDialog *LSD;
 		findreplace *FR;
 		findreplace *SL;
 		Auto::Automation *Auto;

@@ -28,13 +28,19 @@ DescTxtCtrl::DescTxtCtrl(wxWindow *parent, const wxSize &size, const wxString &d
 }
 void DescTxtCtrl::ChangeValue(wxString &val)
 {
-	if(val=="" && !HasFocus()){SetForegroundColour("#A0A0A0"); wxTextCtrl::SetValue(description);}
-	else{SetForegroundColour("#000000");wxTextCtrl::ChangeValue(val);}
+	if(val=="" && !HasFocus()){
+		SetForegroundColour("#A0A0A0"); 
+		wxTextCtrl::SetValue(description);
+	}
+	else{
+		SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+		wxTextCtrl::ChangeValue(val);
+	}
 }
 
 void DescTxtCtrl::OnFocus(wxFocusEvent &evt)
 {
-	if(GetForegroundColour()=="#A0A0A0"){SetValue("");SetForegroundColour("#000000");}
+	if(GetForegroundColour()=="#A0A0A0"){SetValue("");SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));}
 	evt.Skip();
 }
 void DescTxtCtrl::OnKillFocus(wxFocusEvent &evt)
@@ -168,11 +174,19 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	TlMode->Enable(false);
 	Chars = new EBStaticText(this,_("Linie: 0/86"));
 	Chtime = new EBStaticText(this,_("Znaki na sekundę: 0<=15"));
+	Times = new wxRadioButton(this,ID_TIMES_FRAMES,_("Czas"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP); 
+	Times->SetValue(true);
+	Times->Enable(false);
+	Frames = new wxRadioButton(this,ID_TIMES_FRAMES,_("Klatki")); 
+	Frames->Enable(false);
+	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, &EditBox::OnChangeTimeDisplay, this, ID_TIMES_FRAMES);
 
 	BoxSizer5 = new wxBoxSizer(wxHORIZONTAL);
 	BoxSizer5->Add(Chars,0,wxALIGN_CENTER|wxLEFT|wxEXPAND,2);
 	BoxSizer5->Add(Chtime,0,wxALIGN_CENTER|wxLEFT|wxEXPAND,6);
 	BoxSizer5->Add(TlMode,0,wxALIGN_CENTER|wxLEFT,6);
+	BoxSizer5->Add(Times,0,wxALIGN_CENTER|wxLEFT,2);
+	BoxSizer5->Add(Frames,0,wxALIGN_CENTER|wxLEFT,2);
 
 
 	Bcpall = new wxButton(this, ID_CPALL, _("Wklej wszystko"));
@@ -369,6 +383,8 @@ void EditBox::UpdateChars(wxString text)
 	Chtime->SetLabelText(wxString::Format(_("Znaki na sekundę: %i<=15"),chtime));
 	Chtime->SetForegroundColour((chtime>15)? *wxRED : textcolour);
 	BoxSizer5->Layout();
+	Frames->Refresh(false);
+	Times->Refresh(false);
 }
 
 //Pobieranie danych z kontrolek editboxa
@@ -831,6 +847,8 @@ void EditBox::SetTl(bool tl)
 	AutoMoveTags->SetValue(Options.GetBool("Auto Move Tags"));
 	BoxSizer1->Layout();
 	if(TlMode->GetValue()!=tl){TlMode->SetValue(tl);}
+	kainoteFrame *Kai = (kainoteFrame*)Notebook::GetTabs()->GetParent();
+	Kai->Toolbar->UpdateId(SaveTranslation, tl);
 }
 
 void EditBox::OnCpAll(wxCommandEvent& event)
@@ -1310,4 +1328,10 @@ void EditBox::OnCursorMoved(wxCommandEvent& event)
 		TabPanel* pan=(TabPanel*)GetParent();
 		pan->Video->SetVisual();
 	}
+}
+
+void EditBox::OnChangeTimeDisplay(wxCommandEvent& event)
+{
+	grid->showFrames=Frames->GetValue();
+	grid->RepaintWindow(START|END);
 }

@@ -6,37 +6,7 @@
 #include "Hotkeys.h"
 #include <wx/fontpicker.h>
 #include "NumCtrl.h"
-
-ColorButton::ColorButton(wxWindow *parent, int id, const wxColour &col, const wxPoint &pos, const wxSize &size)
-	: wxButton(parent, id, "", pos, size)
-{
-	SetBackgroundColour(col);
-	Connect(id,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ColorButton::OnClick);
-}
-
-	
-wxColour ColorButton::GetColour()
-{
-	return GetBackgroundColour();
-}
-	
-void ColorButton::OnClick(wxCommandEvent &evt)
-{
-	wxPoint pos=wxGetMousePosition();
-	dcp = DialogColorPicker::Get(this,GetBackgroundColour().GetAsString(wxC2S_HTML_SYNTAX));
-	wxPoint mst=wxGetMousePosition();
-	int dw, dh;
-	wxSize siz=dcp->GetSize();
-	siz.x;
-	wxDisplaySize (&dw, &dh);
-	mst.x-=(siz.x/2);
-	mst.x=MID(0,mst.x, dw-siz.x);
-	mst.y+=15;
-	dcp->Move(mst);
-	if (dcp->ShowModal() == wxID_OK) {
-		SetBackgroundColour(dcp->GetColor());
-	}
-}
+#include "ColorPicker.h"
 
 OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	: wxDialog(parent,-1,_("Opcje"),wxDefaultPosition,wxDefaultSize,wxDEFAULT_DIALOG_STYLE,"Options")
@@ -55,6 +25,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	wxPanel *Main= new wxPanel(OptionsTree);
 	wxPanel *GridColors= new wxPanel(OptionsTree);
 	wxPanel *GridColors2= new wxPanel(OptionsTree);
+	wxPanel *EditColors= new wxPanel(OptionsTree);
 	wxPanel *ConvOpt= new wxPanel(OptionsTree);
 	wxPanel *Hotkeyss= new wxPanel(OptionsTree);
 	wxPanel *AudioMain= new wxPanel(OptionsTree);
@@ -135,7 +106,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 		wxFontPickerCtrl *optf=new wxFontPickerCtrl(Main,-1,wxFont(Options.GetInt("Grid Font Size"),wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,Options.GetString("Grid Font Name")));
 		ConOpt(optf,"Grid Font");
-		MainSizer1->Add(new wxStaticText(Main,-1,_("Czcionka ramki z napisami:")),0,wxRIGHT| wxALIGN_CENTRE_VERTICAL,5);
+		MainSizer1->Add(new wxStaticText(Main,-1,_("Czcionka pola napisów:")),0,wxRIGHT| wxALIGN_CENTRE_VERTICAL,5);
 		MainSizer1->Add(optf,0);
 	
 		MainSizer->Add(MainSizer1,0,wxLEFT|wxTOP,2);
@@ -156,7 +127,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	
 		for(int i=0;i<12;i++)
 		{
-			ColorButton *optc=new ColorButton(GridColors,-1,Options.GetString(opts[i]));
+			ColorButton *optc=new ColorButton(GridColors,Options.GetString(opts[i]));
 			ConOpt(optc,opts[i]);
 			GridColorsSizer->Add(new wxStaticText(GridColors,-1,labels[i]+":"),1,wxRIGHT | wxALIGN_CENTRE_VERTICAL, 5);
 			GridColorsSizer->Add(optc,0,wxALL,2);
@@ -179,7 +150,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	
 		for(int i=0;i<8;i++)
 		{
-			ColorButton *optc=new ColorButton(GridColors2,-1,Options.GetString(opts[i]));
+			ColorButton *optc=new ColorButton(GridColors2,Options.GetString(opts[i]));
 			ConOpt(optc,opts[i]);
 			GridColorsSizer2->Add(new wxStaticText(GridColors2,-1,labels[i]+":"),1,wxRIGHT | wxALIGN_CENTRE_VERTICAL, 5);
 			GridColorsSizer2->Add(optc,0,wxALL,2);
@@ -187,6 +158,29 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	
 
 		GridColors2->SetSizerAndFit(GridColorsSizer2);
+
+	}
+	//editor colours
+	{
+		//Pamiętaj by flex sizerowi przypisywać ilość kolorów, bo bez tego lubi się sypać
+		wxFlexGridSizer *EditColorsSizer=new wxFlexGridSizer(9,2,wxSize(5,5));
+		wxString labels[9]={_("Kolor tekstu"),_("Kolor nazw tagów"),_("Kolor wartości tagów"),
+			_("Kolor nawiasów klamrowych"),_("Kolor operatorów tagów"),_("Kolor tła"),
+			_("Kolor zaznaczenia"),_("Kolor zaznaczenia nieaktywnego okna"),_("Kolor błędów pisowni"),};
+		wxString opts[9]={"Editor normal text","Editor tag names","Editor tag values",
+			"Editor curly braces","Editor tag operators","Editor background",
+			"Editor selection","Editor selection no focus","Editor spellchecker"};
+	
+		for(int i=0;i<9;i++)
+		{
+			ColorButton *optc=new ColorButton(EditColors,Options.GetString(opts[i]));
+			ConOpt(optc,opts[i]);
+			EditColorsSizer->Add(new wxStaticText(EditColors,-1,labels[i]+":"),1,wxRIGHT | wxALIGN_CENTRE_VERTICAL, 5);
+			EditColorsSizer->Add(optc,0,wxALL,2);
+		}
+	
+
+		EditColors->SetSizerAndFit(EditColorsSizer);
 
 	}
 		//Ustawienia konwersji
@@ -413,7 +407,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	
 		for(int i=0;i<14;i++)
 		{
-			ColorButton *optc=new ColorButton(AudioCols,-1,Options.GetString(opts[i]));
+			ColorButton *optc=new ColorButton(AudioCols,Options.GetString(opts[i]));
 			ConOpt(optc,opts[i]);
 			AudioColorsSizer->Add(new wxStaticText(AudioCols,-1,labels[i]+":"),1,wxRIGHT | wxALIGN_CENTRE_VERTICAL ,5);
 			AudioColorsSizer->Add(optc,0,wxALL,2);
@@ -427,6 +421,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	OptionsTree->AddPage(Main,_("Edytor"),true);
 	OptionsTree->AddSubPage(GridColors,_("Kolorystyka"),true);
 	OptionsTree->AddSubPage(GridColors2,_("Kolorystyka2"),true);
+	OptionsTree->AddSubPage(EditColors,_("Pole tekstowe"),true);
 	OptionsTree->AddSubPage(ConvOpt,_("Konwersja"),true);
 	OptionsTree->AddPage(Video,_("Wideo"),true);
 	OptionsTree->AddPage(AudioMain,_("Audio"),true);
@@ -515,7 +510,7 @@ void OptionsDialog::SetOptions(bool saveall)
 		}
 		else if(OB.ctrl->IsKindOf(CLASSINFO(wxButton))){
 			ColorButton *cpc=(ColorButton*)OB.ctrl;
-			wxColour kol=cpc->GetColour();
+			wxColour kol=cpc->GetColor();
 			if(Options.GetColour(OB.option)!=kol){
 				Options.SetColour(OB.option,kol);colmod=true;
 			}

@@ -3,6 +3,7 @@
 #include "Visuals.h"
 #include "TabPanel.h"
 #include <wx/regex.h>
+//#include <regex>
 
 
 Visuals *Visuals::Get(int Visual, wxWindow *_parent)
@@ -281,8 +282,10 @@ D3DXVECTOR2 Visuals::GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos
 
 	if(txt!="" && txt[0]=='{'){
 		TextPos->x= 1;
+		TextPos->y= 1;
 	}else{
 		TextPos->x= 0;
+		TextPos->y= 0;
 		*putinBracket=true;
 	}
 	int tmpan;
@@ -482,6 +485,7 @@ void Visuals::SetClip(wxString clip,bool dummy)
 				wxString tmp="";
 				wxPoint pos;
 				bool isf;
+				size_t cliplen = clip.Len();
 				Editor->SetSelection(0,0);
 				isf=edit->FindVal("p([0-9]+)", &tmp);
 				if(!isf){edit->PutinText("\\p1", false);}
@@ -489,15 +493,29 @@ void Visuals::SetClip(wxString clip,bool dummy)
 				txt.Replace("}{","");
 				dummytext=grid->GetVisible(&vis, &pos);
 
-				wxRegEx rx("(}m[^{]*{\\\\p0})",wxRE_ADVANCED);
-				if(!rx.ReplaceFirst(&txt,"}"+clip+"{\\\\p0}")){
-					txt.Replace("}","}"+clip+"{\\p0}",false);
-				}
+				edit->FindVal("p([0-9]+)", &tmp);
+				wxString afterP1 = txt.Mid(edit->Placed.y);
+				//wxLogStatus("afterp1 "+ afterP1);
+				int Mpos = -1;
+				if(isf){Mpos = afterP1.find("m ");}
+				if(Mpos== -1){Mpos = afterP1.find("}")+1;}
+				wxString startM = afterP1.Mid(Mpos);
+				//wxLogStatus("startm "+ startM);
+				int endClip = startM.find("{");
+				if(endClip == -1 && isf){endClip=startM.Len();clip+="{\\p0}";}
+				else if(endClip == -1){endClip=0;clip+="{\\p0}";}
+				//wxLogStatus("endclip %i", endClip);
+				txt.replace(Mpos + edit->Placed.y, endClip, clip);
+				//wxLogStatus("Text init "+ txt);
 				dummytext->replace(pos.x,pos.y,txt);
+				dumplaced.x=edit->Placed.y + Mpos + pos.x; dumplaced.y= dumplaced.x + cliplen;
+				//wxLogStatus("txt %i %i"+ txt, dumplaced.x, dumplaced.y);
 				Editor->SetTextS(txt,true);
 			}else{
-				wxRegEx rx("(}m[^{]*{\\\\p0})",wxRE_ADVANCED);
-				rx.ReplaceFirst(dummytext,"}"+clip+"{\\\\p0}");
+				if(dumplaced.x<dumplaced.y){dummytext->erase(dummytext->begin()+dumplaced.x, dummytext->begin()+dumplaced.y);}
+				dummytext->insert(dumplaced.x,clip);
+				dumplaced.y=dumplaced.x+clip.Len();
+				//wxLogStatus("txt %i %i"+ *dummytext, dumplaced.x, dumplaced.y);
 			}
 
 		}
