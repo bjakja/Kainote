@@ -10,6 +10,7 @@
 #undef DrawText
 
 #include "VideoFfmpeg.h"
+#include "Menu.h"
 
 //#define byvertices 5
 #define DXVA 77
@@ -148,7 +149,7 @@ class VideoRend : public wxWindow
 		static DWORD playingProc(void* cls);
 		void playing();
 		std::vector<chapter> chaps;
-		bool EnumFilters(wxMenu *menu);
+		bool EnumFilters(Menu *menu);
 		bool FilterConfig(wxString name, int idx, wxPoint pos);
 		
 	private:

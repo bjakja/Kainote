@@ -9,6 +9,7 @@
 #include <shellapi.h>
 #include <wx/clipbrd.h>
 #include "ColorSpaceConverter.h"
+#include "Menu.h"
 #pragma warning ( disable: 4482 )
 
 class CRecycleFile : public SHFILEOPSTRUCT {
@@ -181,7 +182,7 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 	//if(vstate==Playing){Pause(false);}
 	if(fulls){SetFullskreen();}
 	prevchap=-1;
-	wxMenuItem *index=Kai->MenuBar->FindItem(VideoIndexing);
+	MenuItem *index=Kai->Menubar->FindItem(VideoIndexing);
 	bool shown=true;
 	
 	if(!OpenFile(fileName, subsName, !(index->IsChecked() && index->IsEnabled() && !fulls && !isfullskreen), !Kai->GetTab()->edytor, fulls)){
@@ -612,7 +613,7 @@ bool VideoCtrl::CalcSize(int *width, int *height,int wwidth,int wheight,bool set
 
 void VideoCtrl::OnPrew()
 {
-	wxMenuItem *index=Kai->MenuBar->FindItem(VideoIndexing);
+	MenuItem *index=Kai->Menubar->FindItem(VideoIndexing);
 	if(index->IsChecked()&&index->IsEnabled()){
 		if(wxMessageBox(_("Czy na pewno chcesz zindeksować poprzednie wideo?"),_("Potwierdzenie"),wxYES_NO)==wxNO)return;}
 	NextFile(false);
@@ -621,7 +622,7 @@ void VideoCtrl::OnPrew()
 
 void VideoCtrl::OnNext()
 {
-	wxMenuItem *index=Kai->MenuBar->FindItem(VideoIndexing);
+	MenuItem *index=Kai->Menubar->FindItem(VideoIndexing);
 	if(index->IsChecked()&&index->IsEnabled()){
 		if(wxMessageBox(_("Czy na pewno chcesz zindeksować następne wideo?"),_("Potwierdzenie"),wxYES_NO)==wxNO)return;}
 	NextFile();
@@ -654,20 +655,20 @@ void VideoCtrl::OnVolume(wxScrollEvent& event)
 void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 {
 	ismenu=true;
-	wxMenu* menu=new wxMenu();
+	Menu* menu=new Menu();
 	wxString txt;
 	if(GetState()!=Playing){txt=_("Odtwórz\t")+Hkeys.GetMenuH(PlayPause);}
 	else if(GetState()==Playing){txt=_("Pauza\t")+Hkeys.GetMenuH(PlayPause);}
 	if(!isfullskreen && ((TabPanel*)GetParent())->edytor)
 	{
-		Hkeys.SetAccMenu(menu, CopyCoords,_("Kopiuj pozycję na wideo"));
+		menu->SetAccMenu(CopyCoords,_("Kopiuj pozycję na wideo"));
 	}
 	menu->Append(PlayPause,txt)->Enable(GetState()!=None);
-	Hkeys.SetAccMenu(menu, Id::Stop,_("Stop"))->Enable(GetState()==Playing);
+	menu->SetAccMenu(Id::Stop,_("Stop"))->Enable(GetState()==Playing);
 	wxString txt1;
 	if(!isfullskreen){txt1=_("Pełny ekran\tF");}
 	else{txt1=_("Wyłącz pełny ekran\tEscape");}
-	Hkeys.SetAccMenu(menu, FullScreen,txt1)->Enable(GetState()!=None);
+	menu->SetAccMenu(FullScreen,txt1)->Enable(GetState()!=None);
 	
 	GetMonitorRect(-1);
 	for(size_t i=1; i<MonRects.size(); i++)
@@ -675,12 +676,12 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 		wxString txt2;
 		if(isfullskreen){txt2 = wxString::Format(_("Przełącz pełny ekran na %i monitor"), (i+1));}
 		else{txt2 = wxString::Format(_("Włącz pełny ekran na %i monitorze"), (i+1));}
-		Hkeys.SetAccMenu(menu, MENU_MONITORS+i,txt2)->Enable(GetState()!=None);
+		menu->SetAccMenu(MENU_MONITORS+i,txt2)->Enable(GetState()!=None);
 	}
 
-	Hkeys.SetAccMenu(menu, Editor,_("Otwórz edytor"))->Enable(isfullskreen);
-	wxMenu* menu1=new wxMenu();
-	wxMenu* menu2=new wxMenu();
+	menu->SetAccMenu(Editor,_("Otwórz edytor"))->Enable(isfullskreen);
+	Menu* menu1=new Menu();
+	Menu* menu2=new Menu();
 	for(size_t i=0;i<20;i++)
 	{
 		if(i<Kai->subsrec.size()){
@@ -695,28 +696,28 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 	}
 	menu->Append(ID_MRECSUBS, _("Ostatnio otwarte napisy"), menu1);
 	menu->Append(ID_MRECVIDEO, _("Ostatnio otwarte wideo"), menu2);
-	Hkeys.SetAccMenu(menu, OpenVideo,_("Otwórz wideo"));
+	menu->SetAccMenu(OpenVideo,_("Otwórz wideo"));
 		
-	Hkeys.SetAccMenu(menu, Id::OpenSubs, _("Otwórz napisy"));
-	Hkeys.SetAccMenu(menu, HideProgressBar,_("Ukryj / pokaż pasek postępu"))->Enable(isfullskreen);
-	Hkeys.SetAccMenu(menu, AspectRatio,_("Zmień proporcje wideo"));
-	Hkeys.SetAccMenu(menu, SubbedFrameToPNG,_("Zapisz klatkę z napisami jako PNG"))->Enable(GetState()==Paused);
-	Hkeys.SetAccMenu(menu, SubbedFrameToClipboard,_("Kopiuj klatkę z napisami do schowka"))->Enable(GetState()==Paused);
-	Hkeys.SetAccMenu(menu, FrameToPNG,_("Zapisz klatkę jako PNG"))->Enable(GetState()==Paused && ((TabPanel*)GetParent())->edytor);
-	Hkeys.SetAccMenu(menu, FrameToClipboard,_("Zapisz klatkę do schowka"))->Enable(GetState()==Paused && ((TabPanel*)GetParent())->edytor);
+	menu->SetAccMenu(Id::OpenSubs, _("Otwórz napisy"));
+	menu->SetAccMenu(HideProgressBar,_("Ukryj / pokaż pasek postępu"))->Enable(isfullskreen);
+	menu->SetAccMenu(AspectRatio,_("Zmień proporcje wideo"));
+	menu->SetAccMenu(SubbedFrameToPNG,_("Zapisz klatkę z napisami jako PNG"))->Enable(GetState()==Paused);
+	menu->SetAccMenu(SubbedFrameToClipboard,_("Kopiuj klatkę z napisami do schowka"))->Enable(GetState()==Paused);
+	menu->SetAccMenu(FrameToPNG,_("Zapisz klatkę jako PNG"))->Enable(GetState()==Paused && ((TabPanel*)GetParent())->edytor);
+	menu->SetAccMenu(FrameToClipboard,_("Zapisz klatkę do schowka"))->Enable(GetState()==Paused && ((TabPanel*)GetParent())->edytor);
 	menu->AppendSeparator();
 
-	Hkeys.SetAccMenu(menu, DeleteVideo,_("Usuń plik wideo"))->Enable(GetState()!=None);
+	menu->SetAccMenu(DeleteVideo,_("Usuń plik wideo"))->Enable(GetState()!=None);
 	if(dummy){
 		delete menu;
 		ismenu=false;
 		return;
 	}
 
-	wxMenu* menu3=NULL;
+	Menu* menu3=NULL;
 	int numfilters=0;
 	if(GetState()!=None && IsDshow){
-		menu3=new wxMenu();
+		menu3=new Menu();
 		EnumFilters(menu3);
 		numfilters=menu3->GetMenuItemCount();
 		menu->Append(23456,_("Filtry"),menu3,_("Wyświetla użyte filtry"));
@@ -730,7 +731,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 		wxString ident= streams[i].BeforeFirst(':');
 		name=streams[i].BeforeLast(' ', &enable);
 		if(ident!=prev){menu->AppendSeparator();}
-		menu->Append(MENU_STREAMS+i,name,"",wxITEM_CHECK)->Check(enable=="1");
+		menu->Append(MENU_STREAMS+i,name,"",true,0,0,(enable=="1")?ITEM_RADIO : ITEM_NORMAL);//->Check(enable=="1");
 		prev=ident;
 	}
 	STime timee;
@@ -738,28 +739,29 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 		if(j==0){menu->AppendSeparator();}
 		timee.NewTime(chaps[j].time);
 		int ntime= (j>=chaps.size()-1)? INT_MAX : chaps[(j+1)].time;
-		menu->Append(MENU_CHAPTERS+j,chaps[j].name+"\t["+timee.raw()+"]","",(ntime>=time)?wxITEM_RADIO : wxITEM_NORMAL);
+		menu->Append(MENU_CHAPTERS+j,chaps[j].name+"\t["+timee.raw()+"]","",true,0,0,(ntime>=time)?ITEM_RADIO : ITEM_NORMAL);
 	}
 	id=0;
+	int Modifiers=0;
 	if(isfullskreen){
-		Connect(wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(VideoCtrl::InternalOnPopupMenu));
-		Connect(wxEVT_UPDATE_UI,wxUpdateUIEventHandler(VideoCtrl::InternalOnPopupMenuUpdate));
-		TD->PopupMenu(menu, pos);
-		Disconnect(wxEVT_UPDATE_UI,wxUpdateUIEventHandler(VideoCtrl::InternalOnPopupMenuUpdate));
-		Disconnect(wxEVT_COMMAND_MENU_SELECTED,wxCommandEventHandler(VideoCtrl::InternalOnPopupMenu));
+		id=menu->GetPopupMenuSelection(pos, TD, &Modifiers);
+	}else{
+		id=menu->GetPopupMenuSelection(pos, this, &Modifiers);
 	}
-	else{id=GetPopupMenuSelectionFromUser(*menu, pos);}
 
-	byte state[256];
-	if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie można pobrać stanu klawiszy"));}
-	if((state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1) /*&& (state[VK_LCONTROL]<1 && state[VK_RCONTROL]<1 && state[VK_LMENU]<1 && state[VK_RMENU]<1)*/&& id<2100 && id>=2000){
-		wxMenuItem *item=menu->FindItem(id);
+	if((Modifiers == wxMOD_SHIFT) && id<2100 && id>=2000){
+		MenuItem *item=menu->FindItem(id);
 		wxString wins[1]={"Wideo"};
 		int ret=-1;
-		wxString name=item->GetItemLabelText();
+		wxString name=item->GetLabelText();
 		ret=Hkeys.OnMapHkey(id, name, this, wins, 1);
-		if(ret==-1){Notebook::GetTab()->SetAccels();
-		Hkeys.SaveHkeys();}
+		if(ret==-1){
+			Notebook *Tabs = Notebook::GetTabs();
+			for(size_t i=0;i<Tabs->Size();i++){
+				Tabs->Page(i)->SetAccels();
+			}
+			Hkeys.SaveHkeys();
+		}
 		delete menu;
 		ismenu=false;
 		return;
@@ -780,8 +782,8 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 		Seek(chaps[id-MENU_CHAPTERS].time);
 	}
 	else if(id>=13000 && id<13000+numfilters && menu3){
-		wxMenuItem *item = menu3->FindChildItem(id);
-		FilterConfig(item->GetItemLabel(), id-13000,pos);
+		MenuItem *item = menu3->FindItem(id);
+		FilterConfig(item->GetLabel(), id-13000,pos);
 	}else if(id>15000 && id<15000+(int)MonRects.size()){
 		isfullskreen=false;
 		SetFullskreen(id - 15000);

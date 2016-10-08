@@ -99,31 +99,38 @@ void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 	menu->SetAccMenu( SubsFromMKV,_("Wczytaj napisy z pliku MKV"))->Enable(Kai->GetTab()->VideoName.EndsWith(".mkv"));
 
 	if(dummy){
-		delete menu;
+		/*delete menu;
 		VB->blockpaint=false;
-		return;
+		return;*/
+		goto done;
 	}
-	ismenushown = true;	
-	int id=menu->GetPopupMenuSelection(pos, this);
-	ismenushown = false;
-
-	byte state[256];
-
-	if(GetKeyboardState(state)==FALSE){wxLogStatus(_("nie można pobrać stanu przycisków"));}
-	if((state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1)/* && (state[VK_LCONTROL]<1 && state[VK_RCONTROL]<1 && state[VK_LMENU]<1 && state[VK_RMENU]<1) */&&id>5000){
+	//ismenushown = true;	
+	int Modifiers=0;
+	int id=menu->GetPopupMenuSelection(pos, this, &Modifiers);
+	//ismenushown = false;
+	if(id<0){/*delete menu;VB->blockpaint=false;return;*/goto done;}
+	
+	if(Modifiers == wxMOD_SHIFT && id>5000){
 		MenuItem *item=menu->FindItem(id);
 		wxString wins[1]={"Napisy"};
 		int ret=-1;
-		wxString name=item->GetLabel();
+		wxString name=item->GetLabelText();
 		ret=Hkeys.OnMapHkey(id, name, this, wins, 1);
-		if(ret==-1){Notebook::GetTab()->SetAccels();
-		Hkeys.SaveHkeys();}
-		delete menu;
-		VB->blockpaint=false;
-		return;
+		if(ret==-1){
+			Notebook *Tabs = Notebook::GetTabs();
+			for(size_t i=0;i<Tabs->Size();i++){
+				Tabs->Page(i)->SetAccels();
+			}
+			Hkeys.SaveHkeys();
+		}
+		//delete menu;
+		//VB->blockpaint=false;
+		//return;
+		goto done;
 	}
-	wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED,id);
-	OnAccelerator(evt);
+	//wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED,id);
+	OnAccelerator(wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,id));
+done:
 	delete menu;
 	VB->blockpaint=false;
 	//wxLogMessage("all deleted");
@@ -401,22 +408,21 @@ void Grid::OnAccelerator(wxCommandEvent &event)
 	else if(id==Minus5Second){vb->Seek(vb->Tell()-5000);}
 	else if(sels>0){
 		switch(id){
-		case InsertBeforeVideo: if (hasVideo) OnInsertBeforeVideo(); break;
-		case InsertAfterVideo: if (hasVideo) OnInsertAfterVideo(); break;
-		case InsertBefore: OnInsertBefore(); break;
-		case InsertAfter: OnInsertAfter(); break;
-		case Duplicate: OnDuplicate(); break;
-		case Copy: case CopyCollumns: CopyRows(id); break;
-		case Cut: CopyRows(id);DeleteRows(); break;
-		case Paste: case PasteCollumns: OnPaste(id); break;
-		case Remove: DeleteRows(); break;
-		case RemoveText: DeleteText(); break;
-		case ContinousPrevious: case ContinousNext: OnMakeContinous(id); break;
+			case InsertBeforeVideo: if (hasVideo) OnInsertBeforeVideo(); break;
+			case InsertAfterVideo: if (hasVideo) OnInsertAfterVideo(); break;
+			case InsertBefore: OnInsertBefore(); break;
+			case InsertAfter: OnInsertAfter(); break;
+			case Duplicate: OnDuplicate(); break;
+			case Copy: case CopyCollumns: CopyRows(id); break;
+			case Cut: CopyRows(id);DeleteRows(); break;
+			case Paste: case PasteCollumns: OnPaste(id); break;
+			case Remove: DeleteRows(); break;
+			case RemoveText: DeleteText(); break;
+			case ContinousPrevious: case ContinousNext: OnMakeContinous(id); break;
 		}
-	}else if(sels==2){
-		if(id==Swap){SwapRows(selarr[0],selarr[1],true);}
-		else if(id==FPSFromVideo && hasVideo){OnSetFPSFromVideo();}
 	}else if(sels>1){
+		if(id==Swap && sels==2){SwapRows(selarr[0],selarr[1],true);}
+		else if(id==FPSFromVideo && hasVideo && sels==2){OnSetFPSFromVideo();}
 		if(id==Join){OnJoin(event);}
 		else if(id==JoinToFirst || id==JoinToLast){OnJoinToFirst(id);}
 	}
@@ -623,7 +629,7 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 	}catch(...){return;}
 	bool isgood=mw.GetSubtitles(this);
 	if(isgood){
-		if(transl){Edit->SetTl(false); transl=false;showtl=false;Kai->MenuBar->Enable(SaveTranslation,false);}
+		if(transl){Edit->SetTl(false); transl=false;showtl=false;Kai->Menubar->Enable(SaveTranslation,false);}
 		SetSubsForm();
 		wxString ext=(form<SRT)?"ass" : "srt";
 		if(form<SRT){Edit->TlMode->Enable();}else{Edit->TlMode->Enable(false);}

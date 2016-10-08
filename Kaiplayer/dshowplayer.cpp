@@ -509,7 +509,7 @@ std::vector<chapter> DShowPlayer::GetChapters()
 	return chaps;
 }
 
-bool DShowPlayer::EnumFilters(wxMenu *menu)
+bool DShowPlayer::EnumFilters(Menu *menu)
 {
 	Selfdest<IEnumFilters> efilters;
 	IBaseFilter *bfilter=0;

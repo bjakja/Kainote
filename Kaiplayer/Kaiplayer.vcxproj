@@ -209,6 +209,7 @@
     <ClInclude Include="ChangeTime.h" />
     <ClInclude Include="ColorSpace.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="DShowPlayer.h" />
     <ClInclude Include="FFT.h" />
     <ClInclude Include="FindReplace.h" />
     <ClInclude Include="KainoteApp.h" />

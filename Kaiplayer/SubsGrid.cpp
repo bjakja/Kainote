@@ -1678,8 +1678,8 @@ void SubsGrid::UpdateUR(bool toolbar)
 {
 	bool undo=false, _redo=false;
 	file->GetURStatus(&undo, &_redo);
-	Kai->MenuBar->Enable(Undo,undo);
-	Kai->MenuBar->Enable(Redo,_redo);
+	Kai->Menubar->Enable(Undo,undo);
+	Kai->Menubar->Enable(Redo,_redo);
 	if(toolbar){
 		Kai->Toolbar->UpdateId(Undo,undo);
 		Kai->Toolbar->UpdateId(Redo,_redo);
@@ -1951,7 +1951,7 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 		if(transl&&!tlmode){
 			transl=false;
 			showtl=false;
-			Kai->MenuBar->Enable(SaveTranslation,false);
+			Kai->Menubar->Enable(SaveTranslation,false);
 			Edit->SetTl(false);
 		}
 		wxString tlstyle;
@@ -1987,7 +1987,7 @@ void SubsGrid::Loadfile(wxString str,wxString ext){
 		Edit->SetTl(true);
 		transl=true;
 		if(GetSInfo("TLMode Showtl")=="Yes"){showtl=true;}
-		Kai->MenuBar->Enable(SaveTranslation,true);
+		Kai->Menubar->Enable(SaveTranslation,true);
 	}
 
 
@@ -2080,7 +2080,7 @@ bool SubsGrid::SetTlMode(bool mode)
 		}
 		AddSInfo("TLMode", "Yes");
 		transl=true;
-		Kai->MenuBar->Enable(SaveTranslation,true);
+		Kai->Menubar->Enable(SaveTranslation,true);
 		
 		Refresh(false);
 
@@ -2116,7 +2116,7 @@ bool SubsGrid::SetTlMode(bool mode)
 
 		transl=false;
 		showtl=false;
-		Kai->MenuBar->Enable(SaveTranslation,false);
+		Kai->Menubar->Enable(SaveTranslation,false);
 	}
 	SpellErrors.clear();
 	Refresh(false);

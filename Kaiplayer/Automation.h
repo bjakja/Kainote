@@ -41,7 +41,7 @@ class TabPanel;
 struct lua_State;
 
 
-	
+class Menu;
 
 
 namespace Auto {
@@ -170,7 +170,7 @@ namespace Auto {
 	// @class Automation
 	// @brief manage lua scripts Lua
 
-
+	
 
 	class Automation
 	{
@@ -188,7 +188,7 @@ namespace Auto {
 		bool AddFromSubs();
 		static void OnEdit(wxString &Filename);
 		bool CheckChanges();
-		void BuildMenu(wxMenu **bar, bool all=false);
+		void BuildMenu(Menu **bar, bool all=false);
 		// Get all managed scripts (both loaded and invalid)
 		//void OnMenuClick(wxCommandEvent &event);
 

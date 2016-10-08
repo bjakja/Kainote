@@ -1,5 +1,6 @@
 
 #include <wx/wx.h>
+#include "Menu.h"
 #include <vector>
 
 static int iconsize=24;
@@ -7,7 +8,7 @@ static int iconsize=24;
 class toolitem
 {
 public:
-	toolitem(wxBitmap _icon, const wxString& _label, int _id, bool _enable, byte _type)
+	toolitem(wxBitmap *_icon, const wxString& _label, int _id, bool _enable, byte _type)
 	{
 		icon=_icon; label=_label; id=_id; enabled=_enable;type=_type;size=iconsize;
 	}
@@ -23,15 +24,16 @@ public:
 	}
 	wxBitmap GetBitmap()
 	{
+		if(!icon){return wxBitmap();}
 		if(!enabled){
-			return wxBitmap(icon.ConvertToImage().ConvertToGreyscale());
+			return wxBitmap(icon->ConvertToImage().ConvertToGreyscale());
 		}
-		return icon;
+		return *icon;
 	}
 	int GetType(){
 		return type;
 	}
-	wxBitmap icon;
+	wxBitmap *icon;
 	wxString label;
 	int id;
 	int size;
@@ -43,11 +45,11 @@ class KaiToolbar :public wxWindow
 {
 	friend class ToolbarMenu;
 public:
-	KaiToolbar(wxWindow *Parent, wxMenuBar *mainm, int id, bool vertical);
+	KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id, bool vertical);
 	virtual ~KaiToolbar();
 
-	void AddItem(int id, const wxString &label, const wxBitmap &normal,bool enable, byte type=0);
-	void InsertItem(int id, int index, const wxString &label, const wxBitmap &normal,bool enable, byte type=0);
+	void AddItem(int id, const wxString &label, wxBitmap *normal,bool enable, byte type=0);
+	void InsertItem(int id, int index, const wxString &label, wxBitmap *normal,bool enable, byte type=0);
 	void AddSpacer();
 	void InsertSpacer(int index);
 	void UpdateId(int id, bool enable);
@@ -71,7 +73,7 @@ private:
 	int oldelem;
 	int sel;
 	wxBitmap *bmp;
-	wxMenuBar *mb;
+	MenuBar *mb;
 	DECLARE_EVENT_TABLE()
 };
 

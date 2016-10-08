@@ -12,7 +12,7 @@
 
 
 class DShowPlayer
-	{
+{
 public:
 
 	DShowPlayer(wxWindow*_parent);
@@ -30,7 +30,7 @@ public:
 	long GetVolume();
 
 	void GetFpsnRatio(float *fps, long *arx, long *ary);
-	bool EnumFilters(wxMenu *menu);
+	bool EnumFilters(Menu *menu);
 	bool FilterConfig(wxString name, int idx, wxPoint pos);
 	std::vector<chapter> GetChapters();
 	wxSize GetVideoSize();
@@ -44,16 +44,16 @@ public:
 private:
 	bool InitializeGraph();
 	HWND hwndVid;			
-	
-    IGraphBuilder	*m_pGraph;
+
+	IGraphBuilder	*m_pGraph;
 	IMediaSeeking	*m_pSeek;
 	IBasicAudio		*m_pBA;
 	//IBaseFilter		*frend;
-	
-	
+
+
 
 	wxWindow *parent;
-	
+
 };
 
 #endif

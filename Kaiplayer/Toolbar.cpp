@@ -5,7 +5,7 @@
 #include "KainoteApp.h"
 #include "wx/utils.h"
 
-KaiToolbar::KaiToolbar(wxWindow *Parent, wxMenuBar *mainm, int id, bool _orient)
+KaiToolbar::KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id, bool _orient)
 	:wxWindow(Parent,-1,wxDefaultPosition,wxSize(iconsize,-1))
 	,bmp(NULL)
 	,vertical(_orient)
@@ -60,12 +60,12 @@ void KaiToolbar::InitToolbar()
 	for(size_t i=0; i<IDS.size();i++)
 	{
 		/*if(IDS[i]==-1){AddSpacer();xy+=12; continue;}*/
-		wxMenuItem *item=mb->FindItem(IDS[i]);
+		MenuItem *item=mb->FindItem(IDS[i]);
 		if(!item){wxLogStatus(_("Nie można znaleźć elementu o id %i"), IDS[i]);continue;}
-		wxString desc=item->GetItemLabelText();
+		wxString desc=item->GetLabelText();
 		//desc.Replace("&","");
 		//size_t reps=desc.Replace("\t"," (");
-		AddItem(IDS[i],desc,item->GetBitmap(),item->IsEnabled(),(item->GetSubMenu()!=NULL)? 1 : 0);
+		AddItem(IDS[i],desc,item->icon,item->IsEnabled(),(item->GetSubMenu()!=NULL)? 1 : 0);
 		//xy+=24;
 	}
 	tools.push_back(new toolitem(2,16,34566,true));
@@ -81,7 +81,7 @@ void KaiToolbar::InitToolbar()
 }
 
 	
-void KaiToolbar::AddItem(int id, const wxString &label, const wxBitmap &normal,bool enable, byte type)
+void KaiToolbar::AddItem(int id, const wxString &label, wxBitmap *normal,bool enable, byte type)
 {
 	if(tools.size()>0 && tools[tools.size()-1]->GetType()==2){
 		tools.insert(tools.begin()+tools.size()-2, new toolitem(normal,label,id,enable,type));
@@ -90,7 +90,7 @@ void KaiToolbar::AddItem(int id, const wxString &label, const wxBitmap &normal,b
 	tools.push_back(new toolitem(normal,label,id,enable,type));
 }
 	
-void KaiToolbar::InsertItem(int id, int index, const wxString &label,const wxBitmap &normal,bool enable, byte type)
+void KaiToolbar::InsertItem(int id, int index, const wxString &label,wxBitmap *normal,bool enable, byte type)
 {
 	tools.insert(tools.begin()+index,new toolitem(normal,label,id,enable,type));
 }
@@ -167,21 +167,21 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 	}else if(event.LeftUp()){
 		if(!wasmoved && tools[elem]->enabled){
 			if(tools[elem]->type==1){
-				wxMenuItem *item=mb->FindItem(tools[elem]->id);
-				wxMenu * smenu=item->GetSubMenu();
-				wxMenu shmenu;
+				MenuItem *item=mb->FindItem(tools[elem]->id);
+				Menu * smenu=item->GetSubMenu();
+				//Menu * shmenu;
 				if(tools[elem]->id!=SortLines && tools[elem]->id!=SortSelected){
-					kainoteFrame *Kai=((kainoteApp*)wxTheApp)->Frame;
+					kainoteFrame *Kai = (kainoteFrame*) GetParent();
 					int what= (smenu==Kai->SubsRecMenu)? 0 : (smenu==Kai->VidsRecMenu)? 1 : 2;
 					Kai->AppendRecent(what, smenu);
 				}
-				for(int i=0; i<(int)smenu->GetMenuItemCount(); i++)
+				/*for(int i=0; i<(int)smenu->GetMenuItemCount(); i++)
 				{
-					wxMenuItem *itm=smenu->FindItemByPosition(i);
-					shmenu.Append(itm->GetId(),itm->GetItemLabel(),itm->GetHelp())->Enable(itm->IsEnabled());
-				}
+					MenuItem *itm=smenu->FindItemByPosition(i);
+					shmenu.Append(itm->GetId(),itm->GetLabel(),itm->GetHelp())->Enable(itm->IsEnabled());
+				}*/
 			
-				PopupMenu(&shmenu,event.GetX(), event.GetY());
+				smenu->PopupMenu(event.GetPosition(), this);
 			}else{
 				wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED,tools[elem]->id);
 				ProcessEvent(evt);
@@ -378,12 +378,12 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 			if(parent->tools[j]->id==parent->ids[elem]){result=j; break;}
 		}
 		if(result==-1){
-			wxMenuItem *item=parent->mb->FindItem(parent->ids[elem]);
-			wxString desc=item->GetItemLabel();
+			MenuItem *item=parent->mb->FindItem(parent->ids[elem]);
+			wxString desc=item->GetLabel();
 			desc.Replace("&","");
 			size_t reps=desc.Replace("\t"," (");
 			if (reps){desc.Append(")");}
-			parent->AddItem(parent->ids[elem], desc, item->GetBitmap(),item->IsEnabled(), (item->GetSubMenu()!=NULL)? 1 : 0);
+			parent->AddItem(parent->ids[elem], desc, item->icon,item->IsEnabled(), (item->GetSubMenu()!=NULL)? 1 : 0);
 		}else{
 			parent->tools.erase(parent->tools.begin()+result);
 
@@ -420,7 +420,7 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	SetScrollbar(wxVERTICAL,scPos,visible,idssize);
 	for(int i=0;i<visible; i++)
 	{
-		wxMenuItem *item=parent->mb->FindItem(parent->ids[i+scPos]);
+		MenuItem *item=parent->mb->FindItem(parent->ids[i+scPos]);
 		bool check=false;
 		for(size_t j=0; j<parent->tools.size();j++)
 		{
@@ -440,7 +440,7 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 		}
 
 		tdc.DrawBitmap(item->GetBitmap(),fh+8,(fh*i)+2);
-		wxString desc=item->GetItemLabel();
+		wxString desc=item->GetLabel();
 		desc.Replace("&","");
 		size_t reps=desc.Replace("\t"," (");
 		wxString accel;

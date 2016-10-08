@@ -168,9 +168,10 @@ int Hotkeys::LoadHkeys(bool Audio)
 	bool checkVer=false;
 	if(acctxt.StartsWith("[")){
 		wxString token=hk.NextToken();
-		int first = token.find(L"Build");
+		int first = token.find(L".");//0.8.0.build
 		if(first> -1){
 			wxString ver = token.Mid(first+5).BeforeFirst(' ');
+			//wxMessageBox(ver);
 			int version=wxAtoi(ver);
 			checkVer=(version>487);
 		}
@@ -179,6 +180,7 @@ int Hotkeys::LoadHkeys(bool Audio)
 		wxMessageBox(_("Plik skrótów jest przestarzały zostanie zamieniony domyślnym"));
 		LoadDefault(hkeys,Audio);
 		SaveHkeys(Audio);
+		return 1;
 	}
 
 	int g=0;

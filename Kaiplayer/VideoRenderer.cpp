@@ -1227,7 +1227,7 @@ void VideoRend::SetVisual()
 	Render();
 }
 
-bool VideoRend::EnumFilters(wxMenu *menu)
+bool VideoRend::EnumFilters(Menu *menu)
 {
 	if(vplayer){return vplayer->EnumFilters(menu);}
 	return false;

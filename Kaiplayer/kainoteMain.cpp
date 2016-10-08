@@ -18,6 +18,7 @@
 #include "OpennWrite.h"
 #include "Hotkeys.h"
 #include "FontCollector.h"
+#include "Menu.h"
 #include <wx/accel.h>
 #include <wx/dir.h>
 #include <wx/sysopt.h>
@@ -52,37 +53,40 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	wxIcon kaiicon("aaaa",wxBITMAP_TYPE_ICO_RESOURCE); 
 	SetIcon(kaiicon);
 	SetMinSize(wxSize(600,400));
-	MenuBar = new wxMenuBar();
+	Menubar = new MenuBar(this);
 
+	wxBoxSizer *mains1= new wxBoxSizer(wxVERTICAL);
 	mains=new wxBoxSizer(wxHORIZONTAL);
 	Tabs=new Notebook (this,ID_TABS);
-	Toolbar=new KaiToolbar(this,MenuBar,-1,true);
+	Toolbar=new KaiToolbar(this,Menubar,-1,true);
 	mains->Add(Toolbar,0,wxEXPAND,0);
 	mains->Add(Tabs,1,wxEXPAND,0);
+	mains1->Add(Menubar,0,wxEXPAND,0);
+	mains1->Add(mains,1,wxEXPAND,0);
 
-	FileMenu = new wxMenu();
+	FileMenu = new Menu();
 	AppendBitmap(FileMenu,OpenSubs, _("&Otwórz napisy"), _("Otwórz plik napisów"),wxBITMAP_PNG ("opensubs"));
 	AppendBitmap(FileMenu,SaveSubs, _("&Zapisz"), _("Zapisz aktualny plik"),wxBITMAP_PNG("save"));
 	AppendBitmap(FileMenu,SaveAllSubs, _("Zapisz wszystko"), _("Zapisz wszystkie napisy"),wxBITMAP_PNG("saveall"));
 	AppendBitmap(FileMenu,SaveSubsAs, _("Zapisz &jako..."), _("Zapisz jako"),wxBITMAP_PNG("saveas"));
 	AppendBitmap(FileMenu,SaveTranslation, _("Zapisz tłumaczenie"), _("Zapisz tłumaczenie"),wxBITMAP_PNG("savetl"),false);
-	SubsRecMenu = new wxMenu();
+	SubsRecMenu = new Menu();
 	//AppendRecent();
 	AppendBitmap(FileMenu,RecentSubs, _("Ostatnio otwarte napisy"), _("Ostatnio otwarte napisy"),wxBITMAP_PNG("recentsubs"),true, SubsRecMenu);
 	AppendBitmap(FileMenu,RemoveSubs, _("Usuń napisy z edytora"), _("Usuń napisy z edytora"),wxBITMAP_PNG("close"));
 	FileMenu->Append(9989,"Pokaż / Ukryj okno logów");
 	AppendBitmap(FileMenu,Settings, _("&Ustawienia"), _("Ustawienia programu"),wxBITMAP_PNG("SETTINGS"));
 	AppendBitmap(FileMenu,Quit, _("&Wyjście\tAlt-F4"), _("Zakończ działanie programu"),wxBITMAP_PNG("exit"));
-	MenuBar->Append(FileMenu, _("&Plik"));
+	Menubar->Append(FileMenu, _("&Plik"));
 
-	EditMenu = new wxMenu();
+	EditMenu = new Menu();
 	AppendBitmap(EditMenu, Undo, _("&Cofnij"), _("Cofnij"),wxBITMAP_PNG("undo"),false);
 	AppendBitmap(EditMenu, Redo, _("&Ponów"), _("Ponów"),wxBITMAP_PNG("redo"),false);
 	AppendBitmap(EditMenu,FindReplace, _("Znajdź i zamień"), _("Szuka i podmienia dane frazy tekstu"),wxBITMAP_PNG("findreplace"));
 	AppendBitmap(EditMenu,Search, _("Znajdź"), _("Szuka dane frazy tekstu"),wxBITMAP_PNG("search"));
-	wxMenu *SortMenu[2];
+	Menu *SortMenu[2];
 	for(int i=0; i<2; i++){
-		SortMenu[i]=new wxMenu();
+		SortMenu[i]=new Menu();
 		SortMenu[i]->Append(7000+(6*i),_("Czas początkowy"),_("Sortuj według czasu początkowego"));
 		SortMenu[i]->Append(7001+(6*i),_("Czas końcowy"),_("Sortuj według czasu końcowego"));
 		SortMenu[i]->Append(7002+(6*i),_("Style"),_("Sortuj według styli"));
@@ -94,11 +98,11 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	AppendBitmap(EditMenu,SortLines, _("Sort&uj wszystkie linie"), _("Sortuje wszystkie linie napisów ASS"),wxBITMAP_PNG("sort"),true,SortMenu[0]);
 	AppendBitmap(EditMenu,SortSelected, _("Sort&uj zaznaczone linie"),_("Sortuje zaznaczone linie napisów ASS"),wxBITMAP_PNG("sortsel"),true, SortMenu[1]);
 	AppendBitmap(EditMenu,SelectLines, _("Zaznacz linijki"), _("Zaznacza linijki wg danej frazy tekstu"),wxBITMAP_PNG("sellines"));
-	MenuBar->Append(EditMenu, _("&Edycja"));
+	Menubar->Append(EditMenu, _("&Edycja"));
 
-	VidMenu = new wxMenu();
+	VidMenu = new Menu();
 	AppendBitmap(VidMenu,OpenVideo, _("Otwórz wideo"), _("Otwiera wybrane wideo"),wxBITMAP_PNG("openvideo"));
-	VidsRecMenu = new wxMenu();
+	VidsRecMenu = new Menu();
 	AppendBitmap(VidMenu, RecentVideo, _("Ostatnio otwarte wideo"), _("Ostatnio otwarte video"),wxBITMAP_PNG("recentvideo"),true, VidsRecMenu);
 	AppendBitmap(VidMenu, SetStartTime, _("Wstaw czas początkowy z wideo"), _("Wstawia czas początkowy z wideo"),wxBITMAP_PNG("setstarttime"),false);
 	AppendBitmap(VidMenu, SetEndTime, _("Wstaw czas końcowy z wideo"), _("Wstawia czas końcowy z wideo"),wxBITMAP_PNG("setendtime"),false);
@@ -107,31 +111,31 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	AppendBitmap(VidMenu, SetVideoAtStart,_("Przejdź do czasu początkowego linii"),_("Przechodzi wideo do czasu początkowego linii"),wxBITMAP_PNG("videoonstime"));
 	AppendBitmap(VidMenu, SetVideoAtEnd,_("Przejdź do czasu końcowego linii"),_("Przechodzi wideo do czasu końcowego linii"),wxBITMAP_PNG("videoonetime"));
 	AppendBitmap(VidMenu, PlayPauseG, _("Odtwarzaj / Pauza"), _("Odtwarza lub pauzuje wideo"),wxBITMAP_PNG("pausemenu"),false);
-	VidMenu->Append(VideoIndexing, _("Otwieraj wideo przez FFMS2"), _("Otwiera wideo przez FFMS2, co daje dokładność klatkową"),wxITEM_CHECK)->Check(Options.GetBool("Index Video"));
+	VidMenu->Append(VideoIndexing, _("Otwieraj wideo przez FFMS2"), _("Otwiera wideo przez FFMS2, co daje dokładność klatkową"),true,0,0,ITEM_CHECK)->Check(Options.GetBool("Index Video"));
 
-	MenuBar->Append(VidMenu, _("&Wideo"));
+	Menubar->Append(VidMenu, _("&Wideo"));
 
-	AudMenu = new wxMenu();
+	AudMenu = new Menu();
 	AppendBitmap(AudMenu,OpenAudio, _("Otwórz audio"), _("Otwiera wybrane audio"),wxBITMAP_PNG("openaudio"));
-	AudsRecMenu = new wxMenu();
+	AudsRecMenu = new Menu();
 
 	AppendBitmap(AudMenu,RecentAudio, _("Ostatnio otwarte audio"), _("Ostatnio otwarte audio"),wxBITMAP_PNG("recentaudio"),true , AudsRecMenu);
 	AppendBitmap(AudMenu,AudioFromVideo, _("Otwórz audio z wideo"), _("Otwiera audio z wideo"),wxBITMAP_PNG("audiofromvideo"));
 	AppendBitmap(AudMenu,CloseAudio, _("Zamknij audio"), _("Zamyka audio"),wxBITMAP_PNG("closeaudio"));
-	MenuBar->Append(AudMenu, _("&Audio"));
+	Menubar->Append(AudMenu, _("&Audio"));
 
-	ViewMenu = new wxMenu();
+	ViewMenu = new Menu();
 	ViewMenu->Append(ViewAll, _("Wszystko"), _("Wszystkie okna są widoczne"));
 	ViewMenu->Append(ViewVideo, _("Wideo i napisy"), _("Widoczne tylko okno wideo i napisów"));
 	ViewMenu->Append(ViewAudio, _("Audio i napisy"), _("Widoczne tylko okno audio i napisów"));
 	ViewMenu->Append(ViewSubs, _("Tylko napisy"), _("Widoczne tylko okno napisów"));
-	MenuBar->Append(ViewMenu, _("Wido&k"));
+	Menubar->Append(ViewMenu, _("Wido&k"));
 
-	SubsMenu = new wxMenu();
+	SubsMenu = new Menu();
 	AppendBitmap(SubsMenu,Editor, _("Włącz / Wyłącz edytor"), _("Włączanie bądź wyłączanie edytora"),wxBITMAP_PNG("editor"));
 	AppendBitmap(SubsMenu,ASSProperties, _("Właściwości ASS"), _("Właściwości napisów ASS"),wxBITMAP_PNG("ASSPROPS"));
 	AppendBitmap(SubsMenu,StyleManager, _("&Menedżer stylów"), _("Służy do zarządzania stylami ASS"),wxBITMAP_PNG("styles"));
-	ConvMenu = new wxMenu();
+	ConvMenu = new Menu();
 	AppendBitmap(ConvMenu,ConvertToASS, _("Konwertuj do ASS"), _("Konwertuje do formatu ASS"),wxBITMAP_PNG("convass"),false);
 	AppendBitmap(ConvMenu,ConvertToSRT, _("Konwertuj do SRT"), _("Konwertuje do formatu SRT"),wxBITMAP_PNG("convsrt"));
 	AppendBitmap(ConvMenu,ConvertToMDVD, _("Konwertuj do MDVD"), _("Konwertuje do formatu microDVD"),wxBITMAP_PNG("convmdvd"));
@@ -155,24 +159,24 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	SubsMenu->Append(MoveAll, _("Włącz przesuwanie wielu tagów"), _("Włącz przesuwanie wielu tagów"))->Enable(false);
 	AppendBitmap(SubsMenu,FontCollector, _("Kolekcjoner czcionek"), _("Kolekcjoner czcionek"),wxBITMAP_PNG("fontcollector"));
 	AppendBitmap(SubsMenu,HideTags, _("Ukryj tagi w nawiasach"), _("Ukrywa tagi w nawiasach ASS i MDVD"),wxBITMAP_PNG("hidetags"));
-	MenuBar->Append(SubsMenu, _("&Napisy"));
+	Menubar->Append(SubsMenu, _("&Napisy"));
 
-	AutoMenu = new wxMenu();
+	AutoMenu = new Menu();
 	AppendBitmap(AutoMenu,AutoLoadScript, _("Wczytaj skrypt"), _("Wczytaj skrypt"),wxBITMAP_PNG("automation"));
 	AppendBitmap(AutoMenu,AutoReloadAutoload, _("Odśwież skrypty autoload"), _("Odśwież skrypty autoload"),wxBITMAP_PNG("automation"));
-	MenuBar->Append(AutoMenu, _("Automatyzacja"));
+	Menubar->Append(AutoMenu, _("Automatyzacja"));
 
-	HelpMenu = new wxMenu();
+	HelpMenu = new Menu();
 	AppendBitmap(HelpMenu,Help, _("&Pomoc (niekompletna, ale jednak)"), _("Otwiera pomoc w domyślnej przeglądarce"),wxBITMAP_PNG("help"));
 	AppendBitmap(HelpMenu,ANSI, _("&Wątek programu na forum AnimeSub.info"), _("Otwiera wątek programu na forum AnimeSub.info"),wxBITMAP_PNG("ansi"));
 	AppendBitmap(HelpMenu,About, _("&O programie"), _("Wyświetla informacje o programie"),wxBITMAP_PNG("about"));
 	AppendBitmap(HelpMenu,Helpers, _("&Lista osób pomocnych przy tworzeniu programu"), _("Wyświetla listę osób pomocnych przy tworzeniu programu"),wxBITMAP_PNG("helpers"));
-	MenuBar->Append(HelpMenu, _("Pomo&c"));
+	Menubar->Append(HelpMenu, _("Pomo&c"));
 
-	SetMenuBar(MenuBar);
+	//SetMenuBar(Menubar);
 	Toolbar->InitToolbar();
 
-	SetSizer(mains);
+	SetSizer(mains1);
 
 	SetAccels(false);
 
@@ -197,7 +201,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(Minus5SecondG,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnM5Sec);
 	Connect(PreviousLine,JoinWithNext,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnChangeLine);
 	Connect(Remove,RemoveText,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnDelete);
-	Connect(wxEVT_MENU_OPEN,(wxObjectEventFunction)&kainoteFrame::OnMenuOpened);
+	Menubar->Connect(EVT_MENU_OPENED,(wxObjectEventFunction)&kainoteFrame::OnMenuOpened,0,this);
 	Connect(wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&kainoteFrame::OnClose1);
 	Connect(30000,30059,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnRecent);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
@@ -261,23 +265,26 @@ kainoteFrame::~kainoteFrame()
 void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 {
 	int id=event.GetId();
+	int Modif = event.GetInt();
 	TabPanel *pan=GetTab();
-	byte state[256];
-	if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie można pobrać stanu klawiszy"));}
-	if((state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1) /*&& (state[VK_LCONTROL]<1 && state[VK_RCONTROL]<1 && state[VK_LMENU]<1 && state[VK_RMENU]<1)*/){
-		wxMenuItem *item=MenuBar->FindItem(id);
+	wxLogStatus("selected %i %i", id, Modif); 
+	//byte state[256];
+	//if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie można pobrać stanu klawiszy"));}
+	if(Modif==wxMOD_SHIFT/*(state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1) *//*&& (state[VK_LCONTROL]<1 && state[VK_RCONTROL]<1 && state[VK_LMENU]<1 && state[VK_RMENU]<1)*/){
+		MenuItem *item=Menubar->FindItem(id);
 		wxString wins[1]={"Globalny"};
 		//upewnij się, że da się zmienić idy na nazwy, 
 		//może i trochę spowolni operację ale skończy się ciągłe wywalanie hotkeysów
 		//może od razu funkcji onmaphotkey przekazać item by zrobiła co trzeba
 		int ret=-1;
-		wxString name=item->GetItemLabelText();
+		wxString name=item->GetLabelText();
 		ret=Hkeys.OnMapHkey( id, name, this, wins, 1);
-		if(ret==-1){item->SetAccel(&Hkeys.GetHKey(id));Hkeys.SaveHkeys();}
+		if(ret==-1){item->SetAccel(&Hkeys.GetHKey(id));Hkeys.SaveHkeys();SetAccels(false);}
 		else if(ret>0){
-			wxMenuItem *item=MenuBar->FindItem(ret);
+			MenuItem *item=Menubar->FindItem(ret);
 			wxAcceleratorEntry entry;
 			item->SetAccel(&entry);
+			SetAccels(false);
 		}
 
 		return;
@@ -334,7 +341,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			}
 		}
 	}else if(id==VideoIndexing){
-		wxMenuItem *Item=MenuBar->FindItem(VideoIndexing);
+		MenuItem *Item=Menubar->FindItem(VideoIndexing);
 		Options.SetBool("Index Video",Item->IsChecked());
 	}else if(id>=OpenAudio&&id<=CloseAudio){
 		OnOpenAudio(event);
@@ -426,20 +433,22 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 {
 	int id=event.GetId();
+	int Modif = event.GetInt();
 	TabPanel *pan=GetTab();
-	byte state[256];
-	if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie można pobrać stanu klawiszy"));}
-	if(state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1 /*&& (state[VK_LCONTROL]<1 && state[VK_RCONTROL]<1 && state[VK_LMENU]<1 && state[VK_RMENU]<1)*/){
-		wxMenuItem *item=MenuBar->FindItem(id);
+	//byte state[256];
+	//if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie można pobrać stanu klawiszy"));}
+	if(Modif==wxMOD_SHIFT/*state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1 *//*&& (state[VK_LCONTROL]<1 && state[VK_RCONTROL]<1 && state[VK_LMENU]<1 && state[VK_RMENU]<1)*/){
+		MenuItem *item=Menubar->FindItem(id);
 		wxString win[]={"Globalny"};
 		int ret=-1;
-		wxString name=item->GetItemLabelText();
+		wxString name=item->GetLabelText();
 		ret=Hkeys.OnMapHkey( id, name, this, win, 1);
-		if(ret==-1){item->SetAccel(&Hkeys.GetHKey(id));Hkeys.SaveHkeys();}
+		if(ret==-1){item->SetAccel(&Hkeys.GetHKey(id));Hkeys.SaveHkeys();SetAccels(false);}
 		else if(ret>0){
-			wxMenuItem *item=MenuBar->FindItem(id);
+			MenuItem *item=Menubar->FindItem(id);
 			wxAcceleratorEntry entry;
 			item->SetAccel(&entry);
+			SetAccels(false);
 		}
 
 		return;
@@ -756,7 +765,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 void kainoteFrame::SetRecent(short what)
 {
 	int idd=30000+(20*what);
-	wxMenu *wmenu=(what==0)?SubsRecMenu : (what==1)? VidsRecMenu : AudsRecMenu;
+	Menu *wmenu=(what==0)?SubsRecMenu : (what==1)? VidsRecMenu : AudsRecMenu;
 	int size= (what==0)?subsrec.size() : (what==1)? videorec.size() : audsrec.size();
 	wxArrayString recs=(what==0)?subsrec : (what==1)? videorec : audsrec;
 	wxString path=(what==0)?GetTab()->SubsPath : (what==1)? GetTab()->VideoPath : GetTab()->Edit->ABox->audioName;
@@ -775,11 +784,11 @@ void kainoteFrame::SetRecent(short what)
 }
 
 //0 - subs, 1 - vids, 2 - auds
-void kainoteFrame::AppendRecent(short what,wxMenu *Menu)
+void kainoteFrame::AppendRecent(short what,Menu *_Menu)
 {
-	wxMenu *wmenu;
-	if(Menu){
-		wmenu=Menu;
+	Menu *wmenu;
+	if(_Menu){
+		wmenu=_Menu;
 	}else{
 		wmenu=(what==0)?SubsRecMenu : (what==1)? VidsRecMenu : AudsRecMenu;
 	}
@@ -796,12 +805,12 @@ void kainoteFrame::AppendRecent(short what,wxMenu *Menu)
 	for(int i=0;i<size;i++)
 	{
 		if(!wxFileExists(recs[i])){continue;}
-		wxMenuItem* MI= new wxMenuItem(wmenu, idd+i, recs[i].AfterLast('\\'), _("Otwórz ")+recs[i], wxITEM_NORMAL);
+		MenuItem* MI= new MenuItem(idd+i, recs[i].AfterLast('\\'), _("Otwórz ")+recs[i]);
 		wmenu->Append(MI);
 	}
 
 	if(!wmenu->GetMenuItemCount()){
-		wxMenuItem* MI= new wxMenuItem(wmenu, idd, _("Brak"),"", wxITEM_NORMAL);
+		MenuItem* MI= new MenuItem(idd, _("Brak"));
 		MI->Enable(false);
 		wmenu->Append(MI);
 	}
@@ -810,7 +819,8 @@ void kainoteFrame::AppendRecent(short what,wxMenu *Menu)
 void kainoteFrame::OnRecent(wxCommandEvent& event)
 {
 	int id=event.GetId();
-	wxMenuItem* MI=0;
+	int Modif=event.GetInt();
+	MenuItem* MI=0;
 	if(id<30020){
 		MI=SubsRecMenu->FindItem(id);
 	}else if(id<30040){
@@ -819,9 +829,11 @@ void kainoteFrame::OnRecent(wxCommandEvent& event)
 		MI=AudsRecMenu->FindItem(id);
 	}
 	wxString filename=MI->GetHelp().AfterFirst(' ');
-	byte state[256];
-	if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie można pobrać stanu klawiszy"));}
-	if(state[VK_LCONTROL]>1 || state[VK_RCONTROL]>1){
+	//wxLogStatus("onrecent %i %i" + MI->GetHelp() + MI->GetLabel(), MI->GetId(), Modif);
+	//return;
+	//byte state[256];
+	//if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie można pobrać stanu klawiszy"));}
+	if(Modif==wxMOD_CONTROL/*state[VK_LCONTROL]>1 || state[VK_RCONTROL]>1*/){
 		wxWCharBuffer buf=filename.BeforeLast('\\').c_str();
 		/*wchar_t **cmdline = new wchar_t*[3];
 		cmdline[0] = L"explorer";
@@ -837,7 +849,8 @@ void kainoteFrame::OnRecent(wxCommandEvent& event)
 
 
 		if(!ShellExecuteEx(&sei)){wxLogStatus(_("Nie można otworzyć folderu"));}
-		return;}
+		return;
+	}
 	if(id<30040){
 		OpenFile(filename);
 	}else{
@@ -927,14 +940,16 @@ void kainoteFrame::SetAccels(bool _all)
 		if(id>=6850){
 			entries.push_back(Hkeys.GetHKey(id));
 		}else if(id>6000){
-			wxMenuItem *item=MenuBar->FindItem(id);
+			MenuItem *item=Menubar->FindItem(id);
 			if(!item){continue;}
-			cur->second.Name=item->GetItemLabelText();
-			item->SetAccel(&Hkeys.GetHKey(id));
+			cur->second.Name=item->GetLabelText();
+			wxAcceleratorEntry accel = Hkeys.GetHKey(id);
+			item->SetAccel(&accel);
+			entries.push_back(accel);
 		}else if(id<6001){break;}
 
 	}
-
+	//Menubar->SetAccelerators();
 	wxAcceleratorTable accel(entries.size(), &entries[0]);
 	Tabs->SetAcceleratorTable(accel);
 
@@ -1173,13 +1188,11 @@ void kainoteFrame::OnPageClose(wxCommandEvent& event)
 	OnPageChanged(event);
 }
 
-void kainoteFrame::AppendBitmap(wxMenu *menu, int id, wxString text, wxString help, wxBitmap bitmap, bool enable, wxMenu *SubMenu)
+void kainoteFrame::AppendBitmap(Menu *menu, int id, wxString text, wxString help, wxBitmap bitmap, bool enable, Menu *SubMenu)
 {
-
-	wxMenuItem *item=new wxMenuItem(0, id, text, help, wxITEM_NORMAL, SubMenu);
-	if(bitmap.IsOk()){item->SetBitmap(bitmap);if(id!=ID_CONV){Toolbar->AddID(id);}}
-	if(!enable){item->Enable(false);}
-	menu->Append(item);
+	wxBitmap *bmp = NULL;
+	if(bitmap.IsOk()){bmp = new wxBitmap(bitmap); if(id!=ID_CONV){Toolbar->AddID(id);}}
+	menu->Append(id, text, help, enable, bmp, SubMenu);
 }
 
 void kainoteFrame::SaveAll()
@@ -1216,7 +1229,7 @@ bool kainoteFrame::SavePrompt(char mode, int wtab)
 
 void kainoteFrame::UpdateToolbar()
 {//disejblowanie rzeczy niepotrzebnych przy wyłączonym edytorze
-	wxMenuEvent evt;
+	MenuEvent evt;
 	OnMenuOpened(evt);
 	Toolbar->Updatetoolbar();
 }
@@ -1286,10 +1299,10 @@ void kainoteFrame::OpenAudioInTab(TabPanel *pan, int id, const wxString &path)
 
 
 //uses before menu is shown
-void kainoteFrame::OnMenuOpened(wxMenuEvent& event)
+void kainoteFrame::OnMenuOpened(MenuEvent& event)
 {
-	wxMenu *curMenu = event.GetMenu();
-
+	Menu *curMenu = event.GetMenu();
+	//wxLogStatus("opened " + curMenu->GetTitle());
 
 	if(curMenu==FileMenu)
 	{
@@ -1307,13 +1320,14 @@ void kainoteFrame::OnMenuOpened(wxMenuEvent& event)
 	{
 		if(!Auto){Auto=new Auto::Automation();}
 		Auto->BuildMenu(&AutoMenu);
+		SetAccels();
 	}
 	TabPanel *pan = GetTab();
 	bool enable=(pan->Video->GetState()!=None);
 	bool edytor=pan->edytor;
 	for(int i = PlayPauseG; i<=SetVideoAtEnd; i++)
 	{
-		MenuBar->Enable(i,(i<SetStartTime)? enable : enable && edytor);
+		Menubar->Enable(i,(i<SetStartTime)? enable : enable && edytor);
 	}
 	//kolejno numery id
 	bool forms;
@@ -1334,11 +1348,12 @@ void kainoteFrame::OnMenuOpened(wxMenuEvent& event)
 		if(i==ViewAudio || i==CloseAudio){forms= pan->Edit->ABox!=0;}
 		if(i==ViewVideo||i==AudioFromVideo){forms= pan->Video->GetState()!=None;}
 		if(i==SaveTranslation){forms=tlmode;}
-		MenuBar->Enable(i, editor && forms);
+		Menubar->Enable(i, editor && forms);
 	}
 	//specjalna poprawka do zapisywania w trybie tłumaczenia, jeśli jest tlmode, to zawsze ma działać.
 	pan->Edit->TlMode->Enable((editor && form==ASS && pan->SubsPath!=""));
-
+	//wxLogStatus("opened end " + curMenu->GetTitle());
+	//if(curMenu){Menubar->ShowMenu();}
 }
 
 //void kainoteFrame::OnMenuClick(wxCommandEvent &event)

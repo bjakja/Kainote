@@ -47,14 +47,14 @@ class kainoteFrame: public wxFrame
 		void Label(int iter=0,bool video=false, int wtab=-1);
 		
 		void SetRecent(short what=0);
-		void AppendRecent(short what=0,wxMenu *Menu=0);
+		void AppendRecent(short what=0,Menu *Menu=0);
 		void SetAccels(bool all=true);
 		wxString FindFile(wxString fn,bool video,bool prompt=true);
 
-		wxMenu* VidsRecMenu;
-		wxMenu* SubsRecMenu;
-		wxMenu* AudsRecMenu;
-		wxMenuBar* MenuBar;
+		Menu* VidsRecMenu;
+		Menu* SubsRecMenu;
+		Menu* AudsRecMenu;
+		MenuBar* Menubar;
 
 		wxStatusBar* StatusBar1;
 		KaiToolbar *Toolbar;
@@ -84,7 +84,7 @@ class kainoteFrame: public wxFrame
 		
         void OnConversion(char form);
         void OnAssProps();
-		void OnMenuOpened(wxMenuEvent& event);
+		void OnMenuOpened(MenuEvent& event);
 		void OnP5Sec(wxCommandEvent& event);
 		void OnM5Sec(wxCommandEvent& event);
 		void OnAudioSnap(wxCommandEvent& event);
@@ -97,18 +97,18 @@ class kainoteFrame: public wxFrame
 		void OnChangeLine(wxCommandEvent& event);
 		void OnDelete(wxCommandEvent& event);
 		void OnClose1(wxCloseEvent& event);
-		void AppendBitmap(wxMenu *menu, int id, wxString text, wxString help, wxBitmap bitmap,bool enable=true, wxMenu *SubMenu=0);
+		void AppendBitmap(Menu *menu, int id, wxString text, wxString help, wxBitmap bitmap,bool enable=true, Menu *SubMenu=0);
 		static void OnOutofMemory();
        
-        wxMenu* ConvMenu;
-        wxMenu* FileMenu;
-		wxMenu* HelpMenu;
-        wxMenu* SubsMenu;
-		wxMenu* EditMenu;
-		wxMenu* VidMenu;
-		wxMenu* AudMenu;
-		wxMenu* ViewMenu;
-		wxMenu* AutoMenu;
+        Menu* ConvMenu;
+        Menu* FileMenu;
+		Menu* HelpMenu;
+        Menu* SubsMenu;
+		Menu* EditMenu;
+		Menu* VidMenu;
+		Menu* AudMenu;
+		Menu* ViewMenu;
+		Menu* AutoMenu;
 		
 		wxLogWindow *mylog;
 		/*int fontlastmodif;

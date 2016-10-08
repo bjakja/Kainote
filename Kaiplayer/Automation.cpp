@@ -925,6 +925,7 @@ namespace Auto{
 	{
 		AutoloadPath=Options.pathfull+"\\Automation\\automation\\Autoload";
 		CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
+		//ReloadScripts(true);
 	}
 
 	Automation::~Automation()
@@ -1108,7 +1109,7 @@ namespace Auto{
 	}
 
 		
-	void Automation::BuildMenu(wxMenu **bar, bool all)
+	void Automation::BuildMenu(Menu **bar, bool all)
 	{
 		TabPanel* c = Notebook::GetTab();
 		kainoteFrame *Kai = (kainoteFrame*)c->GetGrandParent();
@@ -1123,27 +1124,27 @@ namespace Auto{
 
 		int (all)? 2 : Scripts.size()+2;*/
 		for(int j=(*bar)->GetMenuItemCount()-1; j>=2; j--){
-			(*bar)->Destroy((*bar)->FindItemByPosition(j));
+			(*bar)->Delete(j);
 		}
 		int start=30100, i=0;
 		//if(all){
 			for(auto script : Scripts){
 				if(script->CheckLastModified(true)){script->Reload();}
-				wxMenu *submenu=new wxMenu();
+				Menu *submenu=new Menu();
 				int j=0;
 				auto macros = script->GetMacros();
 				//wxLogStatus("size %i", macros.size());
 				for(auto macro : macros){
 					wxString text; text<<"Script "<<script->GetFilename()<<"-"<<j;
-					Hkeys.SetAccMenu(submenu, new wxMenuItem(0,start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
+					submenu->SetAccMenu(new MenuItem(start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
 					Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 						if(wxGetKeyState(WXK_SHIFT)){
 							wxString wins[1]={"Globalny"};
 							int ret=-1;
 							ret=Hkeys.OnMapHkey( start, text, Kai, wins, 1);
-							if(ret==-1){Kai->MenuBar->FindItem(start)->SetAccel(&Hkeys.GetHKey(start));Hkeys.SaveHkeys();}
+							if(ret==-1){Kai->Menubar->FindItem(start)->SetAccel(&Hkeys.GetHKey(start));Hkeys.SaveHkeys();}
 							else if(ret>0){
-								wxMenuItem *item= Kai->MenuBar->FindItem(ret);
+								MenuItem *item= Kai->Menubar->FindItem(ret);
 								wxAcceleratorEntry entry;
 								item->SetAccel(&entry);
 							}
@@ -1173,21 +1174,21 @@ namespace Auto{
 
 		for(auto script : ASSScripts){
 			if(script->CheckLastModified(true)){script->Reload();}
-			wxMenu *submenu=new wxMenu();
+			Menu *submenu=new Menu();
 			int j=0;
 			auto macros = script->GetMacros();
 			//wxLogStatus("size %i", macros.size());
 			for(auto macro : macros){
 				wxString text; text<<"Script "<<script->GetFilename()<<"-"<<j;
-				Hkeys.SetAccMenu(submenu, new wxMenuItem(0,start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
+				submenu->SetAccMenu(new MenuItem(start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 					if(wxGetKeyState(WXK_SHIFT)){
 						wxString wins[1]={"Globalny"};
 						int ret=-1;
 						ret=Hkeys.OnMapHkey( start, text, Kai, wins, 1);
-						if(ret==-1){Kai->MenuBar->FindItem(start)->SetAccel(&Hkeys.GetHKey(start));Hkeys.SaveHkeys();}
+						if(ret==-1){Kai->Menubar->FindItem(start)->SetAccel(&Hkeys.GetHKey(start));Hkeys.SaveHkeys();}
 						else if(ret>0){
-							wxMenuItem *item= Kai->MenuBar->FindItem(ret);
+							MenuItem *item= Kai->Menubar->FindItem(ret);
 							wxAcceleratorEntry entry;
 							item->SetAccel(&entry);
 						}
