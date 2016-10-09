@@ -659,9 +659,10 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 
 		if(!Kai->GetTab()->edytor&&!Kai->GetTab()->Video->isfullskreen){Kai->HideEditor();}
 		Kai->GetTab()->CTime->Contents();
-
+		sel[Edit->ebrow]=true;
 		RepaintWindow();
 		Edit->HideControls();
+		
 	}
 	mw.Close();
 	if(Kai->ss && form==ASS){Kai->ss->LoadAssStyles();}
@@ -892,27 +893,24 @@ void Grid::ResizeSubs(float xnsize, float ynsize)
 
 void Grid::OnMakeContinous(int idd)
 {
-	int fs=FirstSel();
-	if(fs<0){wxBell();return;}
+	wxArrayInt sels=GetSels();
+	if(sels.size()<0){wxBell();return;}
 	if(idd==ContinousPrevious){
-		if(fs<1){return;}
-		int diff=GetDial(fs)->End.mstime - GetDial(fs-1)->Start.mstime;
-		for(int i=0;i<fs;i++)
+		
+		/*int diff=GetDial(fs)->End.mstime - GetDial(fs-1)->Start.mstime;*/
+		for(size_t i=0; i < sels.size(); i++)
 		{
-			Dialogue *dialc=CopyDial(i);
-			dialc->Start.Change(diff);
-			dialc->End.Change(diff);
+			if(sels[i]<1){continue;}
+			CopyDial(sels[i])->Start = GetDial(sels[i]-1)->End;
 		}
 	}
 	else
 	{
-		if(fs>=GetCount()-1){return;}
-		int diff=GetDial(fs)->End.mstime - GetDial(fs+1)->Start.mstime;
-		for(int i=fs+1;i<GetCount();i++)
+		int dialsize = GetCount()-1;
+		for(size_t i=0; i < sels.size(); i++)
 		{
-			Dialogue *dialc=CopyDial(i);
-			dialc->Start.Change(diff);
-			dialc->End.Change(diff);
+			if(sels[i]>=dialsize){continue;}
+			CopyDial(sels[i])->End = GetDial(sels[i]+1)->Start;
 		}
 	}
 	SetModified();

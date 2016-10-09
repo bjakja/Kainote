@@ -7,7 +7,7 @@ TLDialog::TLDialog(wxWindow *parent, Grid *subsgrid)
 
 	wxStaticBoxSizer *sizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Przesuwanie tekstu tłumaczenia"));
 	wxGridSizer *sizer1 = new wxGridSizer(2,2,2);
-
+	//uwaga nazewnictwo tutaj jest totalnie fuckuped patrz na opisy co dany efekt robi.
 	Up=new wxButton(this,29995,_("Usuń linię"));
 	Up->SetToolTip(_("Usuwa zaznaczoną linijkę.\nTłumaczenie idzie do góry."));
 	Down=new wxButton(this,29997,_("Dodaj linię"));
@@ -21,14 +21,15 @@ TLDialog::TLDialog(wxWindow *parent, Grid *subsgrid)
 	UpExt=new wxButton(this,29993,_("Dodaj linię"));
 	UpExt->SetToolTip(_("Dodaje pustą linijkę przed zaznaczoną.\nOryginał idzie w dół.\nDodanej linii należy ustawić czasy."));
 	
-	sizer1->Add(new wxStaticText(this,-1,_("Tekst oryginału")),0,wxALL|wxEXPAND,5);
-	sizer1->Add(new wxStaticText(this,-1,_("Tekst tłumaczenia")),0,wxALL|wxEXPAND,5);
-	sizer1->Add(DownJoin,0,wxALL|wxEXPAND,5);
-	sizer1->Add(Up,0,wxALL|wxEXPAND,5);
-	sizer1->Add(DownDel,0,wxALL|wxEXPAND,5);
+	sizer1->Add(new wxStaticText(this,-1,_("Tekst oryginału")),0,wxLEFT|wxRIGHT|wxEXPAND,5);
+	sizer1->Add(new wxStaticText(this,-1,_("Tekst tłumaczenia")),0,wxLEFT|wxRIGHT|wxEXPAND,5);
+	
+	sizer1->Add(UpExt,0,wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND,5);
 	sizer1->Add(Down,0,wxALL|wxEXPAND,5);
-	sizer1->Add(UpExt,0,wxALL|wxEXPAND,5);
+	sizer1->Add(DownJoin,0,wxALL|wxEXPAND,5);
 	sizer1->Add(UpJoin,0,wxALL|wxEXPAND,5);
+	sizer1->Add(DownDel,0,wxALL|wxEXPAND,5);
+	sizer1->Add(Up,0,wxALL|wxEXPAND,5);
 	
 	sizer->Add(sizer1,0,wxEXPAND,0);
 	sizer->Add(new wxStaticText(this,-1,_("Objaśnienie:\nOryginał - tekst napisów z właściwnym timingiem służy\ndo porównania wklejanych dialogów, później zostaje usunięty.\nTłumaczenie - tekst wklejony do napisów z poprawnym timingiem.")),0,wxEXPAND,0);

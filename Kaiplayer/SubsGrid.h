@@ -91,7 +91,7 @@ public:
 	bool IsNum(wxString txt);
 	Dialogue *CopyDial(int i, bool push=true);
 	Dialogue *GetDial(int i);
-	wxString *GetVisible(bool *visible, wxPoint *point=0, bool trimSels=false);
+	wxString *GetVisible(bool *visible=0, wxPoint *point=0, bool trimSels=false);
 
 	bool makebkp;
 	bool showFrames;

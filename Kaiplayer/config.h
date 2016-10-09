@@ -83,7 +83,7 @@ class config
 bool sortfunc(Styles *styl1,Styles *styl2);
 //formatowanie w tym przypadku wygl¹da tak, 
 //liczba która mówi ile cyfr przed przecinkiem i ile po, np 5.3f;
-wxString getfloat(float num, wxString format="5.3f");
+wxString getfloat(float num, wxString format="5.3f", bool Truncate=true);
 wxBitmap CreateBitmapFromPngResource(const wxString& t_name);
 wxImage CreateImageFromPngResource(const wxString& t_name);
 #define wxBITMAP_PNG(x) CreateBitmapFromPngResource(x)

@@ -247,6 +247,8 @@ inline wxString config::LoadDefaultConfig()
 			"Show Editor=true\r\n"\
 			"Show settings window=false\r\n"\
 			"Start end times=0\r\n"\
+			"Style Preview Color1=#9A9A9A\r\n"\
+			"Style Preview Color2=#686868\r\n"\
 			"Styles of time change=\r\n"\
 			"Time show of letter=110\r\n"\
 			"Video Prog Bar=true\r\n"\
@@ -452,10 +454,11 @@ void config::SaveAudioOpts()
 }
 
 
-wxString getfloat(float num, wxString format)
+wxString getfloat(float num, wxString format, bool Truncate)
 {
 	wxString strnum=wxString::Format(_T("%"+format),num);
 	//if(strnum.find('.')!= -1){return strnum.Trim(false);}
+	if(!Truncate || format.EndsWith(".0f")){return strnum.Trim(false);}
 	int rmv=0;
 	bool trim=false;
 	for(int i=strnum.Len()-1;i>0;i--)

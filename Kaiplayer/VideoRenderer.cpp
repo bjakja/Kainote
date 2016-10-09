@@ -1207,13 +1207,15 @@ void VideoRend::SetVisual(int start, int end, bool remove)
 		if(!Vclips){
 			Vclips = Visuals::Get(vis,this);
 		}else if(Vclips->Visual != vis){
+			bool vectorclip = Vclips->Visual == VECTORCLIP;
 			delete Vclips;
 			Vclips = Visuals::Get(vis,this);
+			if(vectorclip){OpenSubs(pan->Grid1->GetVisible());}
 		}else{SAFE_DELETE(Vclips->dummytext);}
 		Vclips->SizeChanged(wxSize(rt3.right, rt3.bottom),lines, m_font, d3device);
 
 		Vclips->SetVisual(start, end);
-		VisEdit=true;
+		//VisEdit=true;
 	}
 }
 
@@ -1223,8 +1225,8 @@ void VideoRend::SetVisual()
 	TabPanel* pan=(TabPanel*)GetParent();
 	SAFE_DELETE(Vclips->dummytext);
 	Vclips->SetCurVisual();
-	VisEdit=true;
-	Render();
+	//VisEdit=true;
+	//Render();
 }
 
 bool VideoRend::EnumFilters(Menu *menu)

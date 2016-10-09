@@ -703,13 +703,18 @@ void EditBox::AllColClick(int kol)
 		Editor = TextEditTl;
 	}
 	wxString tag=(kol==1)? "?c&(.*)" : "c&(.*)";
+	wxString taga=(kol==1)? "?a&(.*)" : "a&(.*)";
+	wxString tagal= "alpha(.*)";
 	Styles *style=grid->GetStyle(0,line->Style);
-	wxColour acol=(kol==1)? style->PrimaryColour.GetWX() :
-		(kol==2)? style->SecondaryColour.GetWX() :
-		(kol==3)? style->OutlineColour.GetWX() :
-		style->BackColour.GetWX();
-	DialogColorPicker *ColourDialog = DialogColorPicker::Get(this, (!FindVal(num+tag, &iskol))?
-		acol : (grid->form<SRT)? AssColor("&"+iskol).GetWX() : wxColour("#FFFFFF"));
+	AssColor acol=(kol==1)? style->PrimaryColour :
+		(kol==2)? style->SecondaryColour :
+		(kol==3)? style->OutlineColour :
+		style->BackColour;
+	
+	acol = (!FindVal(num+tag, &iskol))? acol : (grid->form<SRT)? AssColor("&"+iskol) : AssColor(wxString("#FFFFFF"));
+	if(FindVal(num+taga, &iskol)){acol.SetAlphaString(iskol);}
+	else if(FindVal(tagal, &iskol)){acol.SetAlphaString(iskol);}
+	DialogColorPicker *ColourDialog = DialogColorPicker::Get(this, acol.GetWX());
 
 	wxPoint mst=wxGetMousePosition();
 	int dw, dh;

@@ -50,6 +50,13 @@ void AssColor::SetAss(wxString kol)
 	
 	}
 }
+
+void AssColor::SetAlphaString(wxString alpha)
+{
+	alpha.Replace("&","");
+	alpha.Replace("H","");
+	alpha.ToLong(&a, 16);
+}
 void AssColor::SetWX(wxColour kol1, int alpha)
 {
     a=alpha;

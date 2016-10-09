@@ -1484,14 +1484,8 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 	if (key == WXK_MENU || key == WXK_WINDOWS_MENU) {
 		wxPoint pos;
 		pos.x = w/2;
-		//if (shift) {
-		//pos.y = lineHeight/2;
-		//OnPopupMenu(true, pos);
-		//}
-		//else {
 		pos.y = (Edit->ebrow+1-scPos) * GridHeight + GridHeight/2;
 		ContextMenu(pos);
-		//}
 		return;
 	}
 
@@ -1503,7 +1497,7 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 		}
 		Refresh(false);
 	}
-
+	
 	// Up/down
 	int dir = 0;
 	if (key == WXK_UP) dir = -1;
@@ -1522,7 +1516,7 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 	}
 	if (key == WXK_RETURN){
 		Edit->TextEdit->SetFocus();}
-
+	
 	// Moving
 	if (dir) {
 		// Move selection
@@ -1544,7 +1538,7 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 				if(above||below){ScrollTo(above? next-1 : next-gridh+1);}
 			}else{
 				ScrollTo(next);}
-
+			lastRow=next;
 			return;
 		}
 
@@ -1559,8 +1553,7 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 		if (shift && !ctrl && !alt) {
 			// Find end
 			if (extendRow == -1) extendRow = Edit->ebrow;
-			extendRow = MID(0,extendRow+dir,GetCount()-1);
-
+			extendRow = lastRow = MID(0,extendRow+dir,GetCount()-1);
 			// Set range
 			int i1 = Edit->ebrow;
 			int i2 = extendRow;
@@ -2323,8 +2316,8 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, bool trimSels)
 	if(_time>=GetDial(Edit->ebrow)->Start.mstime&&_time <= GetDial(Edit->ebrow)->End.mstime)
 	{
 		Edit->Send(false,true);
-		*visible=true;
-	}else{
+		if(visible){*visible=true;}
+	}else if(visible){
 		*visible=false;
 	}
 	

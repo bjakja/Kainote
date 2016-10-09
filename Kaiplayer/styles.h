@@ -14,7 +14,7 @@ class AssColor
     void SetAss(wxString kolor);
     void SetWX(wxColour kolor, int alpha);
 	wxString GetHex(bool alpha) const;
-
+	void SetAlphaString(wxString alpha);
     AssColor();
 	AssColor(wxString kol);
 	AssColor(wxColour kol);

@@ -267,10 +267,8 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	int id=event.GetId();
 	int Modif = event.GetInt();
 	TabPanel *pan=GetTab();
-	wxLogStatus("selected %i %i", id, Modif); 
-	//byte state[256];
-	//if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie można pobrać stanu klawiszy"));}
-	if(Modif==wxMOD_SHIFT/*(state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1) *//*&& (state[VK_LCONTROL]<1 && state[VK_RCONTROL]<1 && state[VK_LMENU]<1 && state[VK_RMENU]<1)*/){
+
+	if(Modif==wxMOD_SHIFT){
 		MenuItem *item=Menubar->FindItem(id);
 		wxString wins[1]={"Globalny"};
 		//upewnij się, że da się zmienić idy na nazwy, 
@@ -376,7 +374,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			if(!vb->isarrow){vb->SetCursor(wxCURSOR_ARROW);vb->isarrow=true;}
 		}
 		UpdateToolbar();
-	}else if(id>=ConvertToASS&&id<=ConvertToMPL2){
+	}else if(id>=ConvertToASS && id<=ConvertToMPL2){
 		OnConversion(( id - ConvertToASS ) + 1);
 	}else if(id==HideTags){
 		pan->Grid1->HideOver();
@@ -684,9 +682,14 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 	TabPanel *pan=GetTab();
 	//pan->Freeze();
 	bool found=false;
+	bool nonewtab = true;
 	wxString fntmp="";
 	bool issubs=(ext=="ass"||ext=="txt"||ext=="sub"||ext=="srt"||ext=="ssa");
-	if(Options.GetBool("Open In New Card")&&pan->SubsPath!=""&&!pan->Video->isfullskreen&&issubs){Tabs->AddPage(true);pan=Tabs->Page(Tabs->Size()-1);}
+	if(Options.GetBool("Open In New Card")&&pan->SubsPath!=""&&
+		!pan->Video->isfullskreen&&issubs){
+			Tabs->AddPage(true);pan=Tabs->Page(Tabs->Size()-1);
+			nonewtab = false;
+	}
 	if(pan->edytor && !(issubs&&pan->VideoPath.BeforeLast('.')==filename.BeforeLast('.'))
 		&&!(!issubs&&pan->SubsPath.BeforeLast('.')==filename.BeforeLast('.'))){
 			fntmp= FindFile(filename,issubs,!(fulls || pan->Video->isfullskreen) );
@@ -696,7 +699,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 
 	if(issubs||found){  
 		wxString fname=(found&&!issubs)?fntmp:filename;
-		if(SavePrompt(2)){return true;}
+		if(nonewtab){if(SavePrompt(2)){return true;}}
 		OpenWrite ow; 
 		wxString s=ow.FileOpen(fname);
 		if(s==""){return false;}

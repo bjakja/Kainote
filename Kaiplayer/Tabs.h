@@ -77,6 +77,8 @@ class Notebook : public wxWindow
 		wxArrayInt Tabsizes;
 		wxArrayString Names;
 		HHOOK Hook;  
+		//HHOOK Hooktest; 
+		//static LRESULT CALLBACK testhook( int code, WPARAM wParam, LPARAM lParam );
 		static LRESULT CALLBACK PauseOnMinimalize( int code, WPARAM wParam, LPARAM lParam );
 
 		DECLARE_EVENT_TABLE()

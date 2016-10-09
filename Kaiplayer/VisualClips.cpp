@@ -90,8 +90,9 @@ void DrawingAndClip::DrawVisual(int time)
 
 	if(drawtxt){
 		wxString coords=""; 
-		coords<<wxString::Format(_T("%6.2f"),acpoint.x + offsetxy.x).Trim(false)<<", "<<
-			wxString::Format(_T("%6.2f"),acpoint.y + offsetxy.y).Trim(false);
+		wxString format = (Visual==VECTORDRAW)? "6.2f" : "6.0f";
+		coords<<getfloat(acpoint.x + offsetxy.x, format, false)<<", "<<
+			getfloat(acpoint.y + offsetxy.y, format, false);
 		wxSize wsize=tab->Video->GetClientSize();
 		wsize.x/=2; wsize.y/=2;
 		int x=acpoint.wx(), y=acpoint.wy();
@@ -194,7 +195,7 @@ void DrawingAndClip::SetCurVisual()
 	
 wxString DrawingAndClip::GetVisual()
 {
-	wxString format = "6.2f"; //: "6.2f";
+	wxString format = (Visual==VECTORDRAW)? "6.2f" : "6.0f";
 	wxString clip;
 	wxString lasttype;
 	int cntb=0;

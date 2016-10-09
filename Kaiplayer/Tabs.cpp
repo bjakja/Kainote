@@ -27,8 +27,7 @@ Notebook::Notebook(wxWindow *parent, int id)
 
 	CalcSizes();
 	Hook = NULL;
-	Hook = SetWindowsHookEx(WH_CBT, &PauseOnMinimalize, NULL,GetCurrentThreadId());
-
+	Hook = SetWindowsHookEx(WH_CBT, &PauseOnMinimalize, NULL,GetCurrentThreadId());//WH_MOUSE
 }
 
 
@@ -810,12 +809,23 @@ int Notebook::FindPanel(TabPanel* pan)
 
 LRESULT CALLBACK Notebook::PauseOnMinimalize( int code, WPARAM wParam, LPARAM lParam )
 {
+	/*if(code == HCBT_ACTIVATE){
+		wxLogStatus("Czyżby aktywacja okna?");
+		return 0;
+	}
+	if(wParam == SC_PREVWINDOW || wParam == SC_NEXTWINDOW){
+		wxLogStatus("następne/poprzednie okno?");
+		return 0;
+	}*/
 	if (wParam == SC_MINIMIZE){
 		if(sthis->GetTab()->Video->vstate==Playing){sthis->GetTab()->Video->Pause();}
 		return 0;
 	}
+	//wxLogStatus("jakiś event %i %i", code, (int)wParam);
 	return CallNextHookEx( 0, code, wParam, lParam );
 }
+	
+
 
 void Notebook::ChangePage(int i)
 {

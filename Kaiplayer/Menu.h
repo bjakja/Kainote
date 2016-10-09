@@ -104,7 +104,7 @@ private:
 	int ShowPartialModal();
 	void EndPartialModal(int ReturnId);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt);
-	//Destroy();}};
+	void HideMenus();
 	int submenuShown;
 	int sel;
 	int scPos;
@@ -114,6 +114,8 @@ protected:
 	Menu *parent;
 	bool subMenuIsShown;
 	static MenuDialog* ParentMenu;
+	static HHOOK Hook;
+	static LRESULT CALLBACK OnMouseClick( int code, WPARAM wParam, LPARAM lParam );
 	bool isPartialModal;
 	int accel;
 
