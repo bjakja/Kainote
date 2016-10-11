@@ -91,6 +91,7 @@ public:
 
 class MenuDialog : public wxDialog, wxGUIEventLoop{
 	friend class Menu;
+	friend class MenuBar;
 public:
 	MenuDialog(Menu *parent, wxWindow *DialogParent, const wxPoint &pos, const wxSize &size, bool sendEvent = true);
 	~MenuDialog();
@@ -106,9 +107,10 @@ private:
 	void OnLostCapture(wxMouseCaptureLostEvent &evt);
 	void HideMenus();
 	int submenuShown;
+	int submenuToHide;
 	int sel;
 	int scPos;
-	volatile int id;
+	static volatile int id;
 protected:
 	wxBitmap *bmp;
 	Menu *parent;
@@ -176,7 +178,7 @@ protected:
 class MenuBar : public wxWindow
 {
 	friend class Menu;
-	//friend class MenuItem;
+	friend class MenuDialog;
 public:
 	MenuBar(wxWindow *parent);
 	~MenuBar(){
@@ -214,7 +216,8 @@ enum{
 	ITEM_NORMAL=0,
 	ITEM_CHECK,
 	ITEM_RADIO,
-	ITEM_SEPARATOR
+	ITEM_SEPARATOR,
+	ID_CHECK_EVENT=29595
 };
 
 #endif

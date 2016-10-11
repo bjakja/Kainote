@@ -257,7 +257,8 @@ bool kainoteApp::IsBusy()
 	wxWindowList children = Frame->GetChildren();
 	for (wxWindowList::Node *node=children.GetFirst(); node; node = node->GetNext()) {
             wxWindow *current = (wxWindow *)node->GetData();
-            if (current->IsKindOf(CLASSINFO(wxDialog)) && ((wxDialog*)current)->IsModal())
+            if (current->IsKindOf(CLASSINFO(wxDialog)) 
+				&& (((wxDialog*)current)->IsModal() || ((wxDialog*)current)->GetId() == 31555 ))
 		{
 			return true;
 		}

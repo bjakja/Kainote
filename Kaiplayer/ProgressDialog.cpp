@@ -7,7 +7,7 @@
 
 
 ProgresDialog::ProgresDialog(wxWindow *_parent, wxString title, wxPoint pos, wxSize size, int style)
-	: wxDialog(_parent,-1,"",pos,size,style)
+	: wxDialog(_parent,31555,"",pos,size,style)
 {
 	RegisterWindowMessage ( L"TaskbarButtonCreated" );
 	taskbar=NULL;

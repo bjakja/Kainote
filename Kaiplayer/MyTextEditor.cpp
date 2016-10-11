@@ -933,6 +933,7 @@ void MTextEditor::FindWord(int pos, int *start, int *end)
 {
 	wxString wfind=" }])-—'`\"\\;:,.({[><?!*~@#$%^&/+=";
 	int len=MText.Len();
+	if(len<1){Cursor.x = Cursor.y = 0; *start=0; *end=0; return;}
 	bool fromend=(start!=NULL);
 	
 	if(!fromend){pos--;}

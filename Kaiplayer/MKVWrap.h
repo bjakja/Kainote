@@ -81,7 +81,7 @@ public:
 	~MatroskaWrapper();
 
 	bool IsOpen() { return file != NULL; }
-	void Open(wxString filename,bool parse=true);
+	bool Open(wxString filename,bool parse=true);
 	void Close();
 	
 	bool GetSubtitles(Grid *target);

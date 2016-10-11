@@ -24,7 +24,7 @@ TLDialog::TLDialog(wxWindow *parent, Grid *subsgrid)
 	sizer1->Add(new wxStaticText(this,-1,_("Tekst oryginału")),0,wxLEFT|wxRIGHT|wxEXPAND,5);
 	sizer1->Add(new wxStaticText(this,-1,_("Tekst tłumaczenia")),0,wxLEFT|wxRIGHT|wxEXPAND,5);
 	
-	sizer1->Add(UpExt,0,wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND,5);
+	sizer1->Add(UpExt,0,wxALL|wxEXPAND,5);
 	sizer1->Add(Down,0,wxALL|wxEXPAND,5);
 	sizer1->Add(DownJoin,0,wxALL|wxEXPAND,5);
 	sizer1->Add(UpJoin,0,wxALL|wxEXPAND,5);

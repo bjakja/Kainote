@@ -77,7 +77,7 @@ MatroskaWrapper::~MatroskaWrapper() {
 
 /////////////
 // Open file
-void MatroskaWrapper::Open(wxString filename,bool parse) {
+bool MatroskaWrapper::Open(wxString filename,bool parse) {
 	// Make sure it's closed first
 	Close();
 	atts=NULL;
@@ -95,6 +95,7 @@ void MatroskaWrapper::Open(wxString filename,bool parse) {
 			delete input;
 			//throw wxString("MatroskaParser error: " + wxString(err,wxConvUTF8)).c_str();
 			wxLogStatus(_("Błąd MatroskaParsera: ") + wxString(err,wxConvUTF8));
+			return false;
 		}
 
 		// Parse
@@ -106,7 +107,9 @@ void MatroskaWrapper::Open(wxString filename,bool parse) {
 		delete input;
 		//throw "Unable to open Matroska file for parsing.";
 		wxLogStatus(_("Nie można otworzyć pliku Matroska."));
+		return false;
 	}
+	return true;
 }
 
 

@@ -329,7 +329,7 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 		for (int j=0; j<ilcol; j++){
 			wxDC &dc=(j==0)? mdc : tdc;
 			if(showtl&&j==ilcol-2){
-				int podz=(w+scHor-posX-1)/2;
+				int podz=(w + scHor - posX - (GridWidth[0] + 1)) / 2;
 				GridWidth[j]=podz;
 				GridWidth[j+1]=podz;}
 

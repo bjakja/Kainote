@@ -266,8 +266,10 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 {
 	int id=event.GetId();
 	int Modif = event.GetInt();
+	//MenuItem *item = (MenuItem*)event.GetClientData();
+	
 	TabPanel *pan=GetTab();
-
+	//wxLogStatus("menu %i %i %i", id, Modif, item->id);
 	if(Modif==wxMOD_SHIFT){
 		MenuItem *item=Menubar->FindItem(id);
 		wxString wins[1]={"Globalny"};
@@ -831,12 +833,13 @@ void kainoteFrame::OnRecent(wxCommandEvent& event)
 	}else{
 		MI=AudsRecMenu->FindItem(id);
 	}
+	if(!MI){wxLogStatus("Item Menu Przepadł");return;}
 	wxString filename=MI->GetHelp().AfterFirst(' ');
 	//wxLogStatus("onrecent %i %i" + MI->GetHelp() + MI->GetLabel(), MI->GetId(), Modif);
 	//return;
 	//byte state[256];
 	//if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie można pobrać stanu klawiszy"));}
-	if(Modif==wxMOD_CONTROL/*state[VK_LCONTROL]>1 || state[VK_RCONTROL]>1*/){
+	if(Modif==wxMOD_CONTROL){
 		wxWCharBuffer buf=filename.BeforeLast('\\').c_str();
 		/*wchar_t **cmdline = new wchar_t*[3];
 		cmdline[0] = L"explorer";
@@ -944,7 +947,7 @@ void kainoteFrame::SetAccels(bool _all)
 			entries.push_back(Hkeys.GetHKey(id));
 		}else if(id>6000){
 			MenuItem *item=Menubar->FindItem(id);
-			if(!item){continue;}
+			if(!item){wxLogStatus("no id %i", id); continue;}
 			cur->second.Name=item->GetLabelText();
 			wxAcceleratorEntry accel = Hkeys.GetHKey(id);
 			item->SetAccel(&accel);
@@ -979,7 +982,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 	std::sort(files.begin(),files.end(),comp);
 	wxArrayString subs;
 	wxArrayString videos;
-	Tabs->Freeze();
+	//Freeze();
 	for(size_t i=0;i<files.size();i++){
 		wxString ext=files[i].AfterLast('.').Lower();
 		if(ext=="ass"||ext=="ssa"||ext=="txt"||ext=="srt"||ext=="sub"){
@@ -996,7 +999,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 
 	if(files.size()==1){OpenFile(files[0],(videos.size()==1&&Options.GetBool("Video Fullskreen on Start")));
 	videos.Clear();subs.Clear();files.Clear();
-	Tabs->Thaw();
+	//Thaw();
 	return;}
 
 
@@ -1045,7 +1048,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 
 	}
 
-	Tabs->Thaw();
+	//Thaw();
 	GetTab()->Show();
 	int w,h;
 	Tabs->GetClientSize(&w,&h);

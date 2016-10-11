@@ -19,6 +19,17 @@ Grid::Grid(wxWindow* parent, kainoteFrame* kfparent,wxWindowID id,const wxPoint&
 	: SubsGrid(parent, id, pos, size, style, name)
 {
 	Kai=kfparent;
+	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
+		int id = ((MenuItem*)evt.GetClientData())->id;
+		if(id>5000 && id<5555){
+			int id5000=(id-5000);
+			if(visible & id5000){visible ^= id5000;}
+			else{visible |= id5000;}
+			SpellErrors.clear();
+			Options.SetInt("Grid Hide Collums", visible);
+			RepaintWindow();
+		}
+	},ID_CHECK_EVENT);
 }
 
 Grid::~Grid()
@@ -221,8 +232,10 @@ void Grid::OnJoin(wxCommandEvent &event)
 		Dialogue *dial=GetDial(selarr[i]);
 		if(dial->Start.mstime < start){ start = dial->Start.mstime;}
 		if(dial->End.mstime > end){	end = dial->End.mstime;}
-		if(dial->Text!=""){ntext<<en<<dial->Text;}
-		if(dial->TextTl!=""){ntltext<<en<<dial->TextTl;}
+		if(ntext==""){ntext=dial->Text;}
+		else if(dial->Text!=""){ntext<<en<<dial->Text;}
+		if(ntltext==""){ntltext=dial->TextTl;}
+		else if(dial->TextTl!=""){ntltext<<en<<dial->TextTl;}
 	}
 
 	DeleteRow(selarr[1], selarr[selarr.size()-1]-selarr[1]+1);
@@ -403,47 +416,51 @@ void Grid::OnAccelerator(wxCommandEvent &event)
 	selarr = GetSels();
 	int sels=selarr.GetCount();
 	bool hasVideo = vb->GetState() != None;
-	if(id==PlayPause && vb->IsShown()){vb->Pause();}
-	else if(id==Plus5Second){vb->Seek(vb->Tell()+5000);}
-	else if(id==Minus5Second){vb->Seek(vb->Tell()-5000);}
-	else if(sels>0){
-		switch(id){
-			case InsertBeforeVideo: if (hasVideo) OnInsertBeforeVideo(); break;
-			case InsertAfterVideo: if (hasVideo) OnInsertAfterVideo(); break;
-			case InsertBefore: OnInsertBefore(); break;
-			case InsertAfter: OnInsertAfter(); break;
-			case Duplicate: OnDuplicate(); break;
-			case Copy: case CopyCollumns: CopyRows(id); break;
-			case Cut: CopyRows(id);DeleteRows(); break;
-			case Paste: case PasteCollumns: OnPaste(id); break;
-			case Remove: DeleteRows(); break;
-			case RemoveText: DeleteText(); break;
-			case ContinousPrevious: case ContinousNext: OnMakeContinous(id); break;
-		}
-	}else if(sels>1){
-		if(id==Swap && sels==2){SwapRows(selarr[0],selarr[1],true);}
-		else if(id==FPSFromVideo && hasVideo && sels==2){OnSetFPSFromVideo();}
-		if(id==Join){OnJoin(event);}
-		else if(id==JoinToFirst || id==JoinToLast){OnJoinToFirst(id);}
+	switch(id){
+		case PlayPause: if(vb->IsShown()){vb->Pause();} break;
+		case Plus5Second: vb->Seek(vb->Tell()+5000); break;
+		case Minus5Second: vb->Seek(vb->Tell()-5000); break;
+		case InsertBeforeVideo: if(sels>0 && hasVideo) OnInsertBeforeVideo(); break;
+		case InsertAfterVideo: if(sels>0 && hasVideo) OnInsertAfterVideo(); break;
+		case InsertBefore: if(sels>0) OnInsertBefore(); break;
+		case InsertAfter: if(sels>0) OnInsertAfter(); break;
+		case Duplicate: if(sels>0) OnDuplicate(); break;
+		case Copy: 
+		case CopyCollumns: if(sels>0) CopyRows(id); break;
+		case Cut: if(sels>0) CopyRows(id);DeleteRows(); break;
+		case Paste: 
+		case PasteCollumns: if(sels>0) OnPaste(id); break;
+		case Remove: if(sels>0) DeleteRows(); break;
+		case RemoveText: if(sels>0) DeleteText(); break;
+		case ContinousPrevious: 
+		case ContinousNext: if(sels>0) OnMakeContinous(id); break;
+		case Swap: if(sels==2){SwapRows(selarr[0],selarr[1],true);} break;
+		case FPSFromVideo: if( hasVideo && sels==2){OnSetFPSFromVideo();} break;
+		case Join: if(sels>1){OnJoin(event);} break;
+		case JoinToFirst:
+		case JoinToLast: if(sels>1){OnJoinToFirst(id);} break;
+		case PasteTranslation: if(form<SRT && ((TabPanel*)GetParent())->SubsPath!=""){OnPasteTextTl();} break;
+		case SubsFromMKV: if( Kai->GetTab()->VideoName.EndsWith(".mkv")){OnMkvSubs(event);} break;
+		case NewFPS: OnSetNewFPS(); break;
+		default:
+			break;
 	}
-	if(id==PasteTranslation && form<SRT && ((TabPanel*)GetParent())->SubsPath!=""){OnPasteTextTl();}
-	else if(id==TranslationDialog && showtl){
+	
+	if(id==TranslationDialog && showtl){
 		static TLDialog *tld= new TLDialog(this,this);
 		tld->Show();
 	}
-	else if(id==SubsFromMKV && Kai->GetTab()->VideoName.EndsWith(".mkv")){OnMkvSubs(event);}
-	else if(id==NewFPS){OnSetNewFPS();}
 	else if(id>6000){
 		Kai->OnMenuSelected(event);
 	}
-	else if(id>5000 && id<5555){
+	/*else if(id>5000 && id<5555){
 		int id5000=(id-5000);
 		if(visible & id5000){visible ^= id5000;}
 		else{visible |= id5000;}
 		SpellErrors.clear();
 		Options.SetInt("Grid Hide Collums", visible);
 		RepaintWindow();
-	}
+	}*/
 }
 
 
@@ -531,6 +548,7 @@ void Grid::MoveTextTL(char mode)
 	wxArrayInt selecs=GetSels(true);
 	//wxString kkk1;
 	//wxMessageBox(kkk1<<selecs[0]);
+
 	if(selecs.GetCount()<1||!showtl||!transl)return;
 	int first=selecs[0];
 	int mrow=1;
@@ -551,20 +569,26 @@ void Grid::MoveTextTL(char mode)
 		{
 			if(i<first+mrow){
 				//tryb1 gdzie łączy wszystkie nachodzące linijki w jedną
-				if(mode==1){wxString mid=(GetDial(first)->TextTl!="" && GetDial(i+1)->TextTl!="")?"\\N":"";
-				CopyDial(first)->TextTl << mid << GetDial(i+1)->TextTl;
-				if(i!=first){CopyDial(i)->TextTl = GetDial(i+mrow)->TextTl;}}
-				else{CopyDial(i)->TextTl = GetDial(i+mrow)->TextTl;}
+				if(mode==1){
+					wxString mid=(GetDial(first)->TextTl!="" && GetDial(i+1)->TextTl!="")?"\\N":"";
+					CopyDial(first)->TextTl << mid << GetDial(i+1)->TextTl;
+					if(i!=first){CopyDial(i)->TextTl = GetDial(i+mrow)->TextTl;}
+				}else if(i+mrow<GetCount()){
+					//wxLogStatus("onlytl mode0");
+					CopyDial(i)->TextTl = GetDial(i+mrow)->TextTl;
+				}
 			}
 			else if(i<GetCount()-mrow){
+				//wxLogStatus("onlytl i<GetCount()-mrow");
 				CopyDial(i)->TextTl = GetDial(i+mrow)->TextTl;}
-			else if(GetDial(i)->Text!=""){mrow--;}
+			else if(GetDial(i)->Text!=""){/*wxLogStatus("onlytl mrow--");*/mrow--;}
 
 		}
 		//wxString kkk1;
 		//wxMessageBox(kkk1<<dial.size()<<" "<<sel.size());
 
 		if(mrow>0){
+			//wxLogStatus("onlytl DeleteRow");
 			DeleteRow(GetCount()-mrow, mrow);
 		}
 
@@ -624,9 +648,7 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 	}
 
 	MatroskaWrapper mw;
-	try{
-		mw.Open(mkvpath,false);
-	}catch(...){return;}
+	if(!mw.Open(mkvpath,false)){return;}
 	bool isgood=mw.GetSubtitles(this);
 	if(isgood){
 		if(transl){Edit->SetTl(false); transl=false;showtl=false;Kai->Menubar->Enable(SaveTranslation,false);}
