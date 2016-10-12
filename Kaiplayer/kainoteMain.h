@@ -99,7 +99,6 @@ class kainoteFrame: public wxFrame
 		void OnClose1(wxCloseEvent& event);
 		void AppendBitmap(Menu *menu, int id, wxString text, wxString help, wxBitmap bitmap,bool enable=true, Menu *SubMenu=0);
 		static void OnOutofMemory();
-       
         Menu* ConvMenu;
         Menu* FileMenu;
 		Menu* HelpMenu;

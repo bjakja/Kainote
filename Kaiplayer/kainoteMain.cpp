@@ -47,7 +47,6 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	subsrec=Options.GetTable("Subs Recent");
 	videorec=Options.GetTable("Video Recent");
 	audsrec=Options.GetTable("Recent Audio");
-	//Create(parent, -1, _("Bez tytułu") + L" -- " + Options.progname, wxDefaultPosition,wxDefaultSize, wxDEFAULT_FRAME_STYLE);
 	wxFont thisFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 	SetFont(thisFont);
 	wxIcon kaiicon("aaaa",wxBITMAP_TYPE_ICO_RESOURCE); 
@@ -173,7 +172,6 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	AppendBitmap(HelpMenu,Helpers, _("&Lista osób pomocnych przy tworzeniu programu"), _("Wyświetla listę osób pomocnych przy tworzeniu programu"),wxBITMAP_PNG("helpers"));
 	Menubar->Append(HelpMenu, _("Pomo&c"));
 
-	//SetMenuBar(Menubar);
 	Toolbar->InitToolbar();
 
 	SetSizer(mains1);
@@ -289,7 +287,6 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 
 		return;
 	}
-	//wxLogStatus("%i", id);
 	if(id==SaveSubs){
 		Save(false);
 	}else if(id==SaveSubsAs){
@@ -755,6 +752,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 		pan->Edit->Frames->Enable(!pan->Video->IsDshow);
 		pan->Edit->Times->Enable(!pan->Video->IsDshow);
 		UpdateToolbar();
+		//pan->Grid1->SetFocus();
 	}
 
 

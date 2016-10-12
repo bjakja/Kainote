@@ -89,7 +89,7 @@ public:
 	wxAcceleratorEntry *accel;
 };
 
-class MenuDialog : public wxDialog, wxGUIEventLoop{
+class MenuDialog : public wxFrame, wxGUIEventLoop{
 	friend class Menu;
 	friend class MenuBar;
 public:
@@ -118,6 +118,7 @@ protected:
 	static MenuDialog* ParentMenu;
 	static HHOOK Hook;
 	static LRESULT CALLBACK OnMouseClick( int code, WPARAM wParam, LPARAM lParam );
+	virtual WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
 	bool isPartialModal;
 	int accel;
 

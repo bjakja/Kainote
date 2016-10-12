@@ -266,3 +266,4 @@ bool kainoteApp::IsBusy()
 	}
 	return false;
 }
+
