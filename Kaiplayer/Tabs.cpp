@@ -52,6 +52,7 @@ void Notebook::AddPage(bool refresh)
 	if(Pages[iter]->Video->GetState()==Playing){Pages[iter]->Video->Pause();}
 	int w,h;
 	GetClientSize(&w,&h);
+	//if(refresh){Freeze();}
 	Pages.push_back(new TabPanel(this,(kainoteFrame*)GetParent(),wxPoint(0,0), wxSize(0,0)));
 	olditer=iter;
 	iter=Size()-1;
@@ -67,10 +68,12 @@ void Notebook::AddPage(bool refresh)
 	Pages[iter]->SetPosition(Pages[olditer]->GetPosition());
 	Pages[iter]->SetSize(Pages[olditer]->GetSize());
 	CalcSizes();
-	if(refresh){RefreshRect(wxRect(0,h-25,w,25),false);
-	if(!Options.GetBool("Show Editor")){kainoteFrame *kai=(kainoteFrame *)GetParent();kai->HideEditor();}
-	wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
-	AddPendingEvent(evt2);
+	if(refresh){
+		if(!Options.GetBool("Show Editor")){kainoteFrame *kai=(kainoteFrame *)GetParent();kai->HideEditor();}
+		wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
+		AddPendingEvent(evt2);
+		//Thaw();
+		RefreshRect(wxRect(0,h-25,w,25),false);
 	}else{Pages[iter]->CTime->RefVals(Pages[olditer]->CTime);}
 }
 
@@ -306,26 +309,26 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 
 	}	
 
-	
-		if(event.LeftIsDown() && i >= 0 && oldI >= 0 && i != oldI){
-			wxString tmpname = Names[i];
-			int tmpsize = Tabsizes[i];
-			Names[i] = Names[oldI];
-			Tabsizes[i] = Tabsizes[oldI];
-			Names[oldI] = tmpname;
-			Tabsizes[oldI] = tmpsize;
-			TabPanel *tmppage = Pages[i];
-			Pages[i] = Pages[oldI];
-			Pages[oldI] = tmppage;
-			iter=i;
-			RefreshRect(wxRect(0,hh,w,25),false);
-			oldI=i;
-			return;
-		}
+
+	if(event.LeftIsDown() && i >= 0 && oldI >= 0 && i != oldI){
+		wxString tmpname = Names[i];
+		int tmpsize = Tabsizes[i];
+		Names[i] = Names[oldI];
+		Tabsizes[i] = Tabsizes[oldI];
+		Names[oldI] = tmpname;
+		Tabsizes[oldI] = tmpsize;
+		TabPanel *tmppage = Pages[i];
+		Pages[i] = Pages[oldI];
+		Pages[oldI] = tmppage;
+		iter=i;
+		RefreshRect(wxRect(0,hh,w,25),false);
+		oldI=i;
+		return;
+	}
 
 	//ożywienie zakładek
 	if(event.Moving()){
-		
+
 		if(x>=start+17 && HasToolTips()){UnsetToolTip();}
 
 
@@ -369,7 +372,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			over=-1;
 			RefreshRect(wxRect(0,hh,w,25),false);
 		}/*else if(i==iter){
-		}*/
+		 }*/
 		if(i==iter && (x>num+Tabsizes[i]-18 && x<num+Tabsizes[i]-5)){
 			if(!onx){SetToolTip(_("Zamknij"));}
 			onx=true;
@@ -385,29 +388,29 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	//menu kontekstowe		
 	if(event.RightUp()){
 
-		Menu menu1;//=new wxMenu();
+		Menu menu1;
 
 		for(size_t g=0;g<Size();g++)
 		{
-			menu1.Append(MENU_CHOOSE+g,Page(g)->SubsName,"",true,0,0,ITEM_CHECK);
+			menu1.Append(MENU_CHOOSE+g,Page(g)->SubsName,"",true,0,0,(g==iter)? ITEM_RADIO : ITEM_NORMAL);
 		}
-		menu1.Check(MENU_CHOOSE+iter,true);
+		//menu1.Check(MENU_CHOOSE+iter,true);
+		//może to jednak przerobić na checki, tak by pokazywało nam jednak dwie wyświetlone zakładki
 		menu1.AppendSeparator();
 		if(i>=0){menu1.Append(MENU_SAVE+i,_("Zapisz"),_("Zapisz"));}
 		menu1.Append(MENU_SAVE-1,_("Zapisz wszystko"),_("Zapisz wszystko"));
 		menu1.Append(MENU_CHOOSE-1,_("Zamknij wszystkie zakładki"),_("Zamknij wszystkie zakładki"));
 		if((i!=iter && Size()>1 && i!=-1) || split){
 			wxString txt=(split)? _("Wyświetl jedną zakładkę") : _("Wyświetl dwie zakładki");
-			menu1.Append((MENU_CHOOSE-2)-i, txt, "");
+			menu1.Append((MENU_CHOOSE-2)-i, txt);
 		}
 		if((i!=iter && Size()>1 && i!=-1) || hasCompare){
 			wxString txt=(hasCompare)? _("Wyłącz porównanie plików") : _("Włącz porównanie plików");
-			menu1.Append(MENU_COMPARE, txt, "",wxITEM_NORMAL);
+			menu1.Append(MENU_COMPARE, txt);
 		}
 		int id=menu1.GetPopupMenuSelection(event.GetPosition(),this);
-		wxLogStatus("id %i", id);
-		return;
-		//if(id<0){return;}
+		//wxLogStatus("id %i", id);
+		if(id<0){return;}
 		if(id >= MENU_CHOOSE-101 && id <= MENU_CHOOSE+99){
 			OnTabSel(id);
 		}else if(id == MENU_COMPARE){
@@ -474,8 +477,8 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE)));
 	dc.GradientFillLinear(wxRect(0,0,w,TabHeight),
-		wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW),
-		wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE),wxTOP);//wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT)
+		wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),
+		wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE),wxTOP);
 
 	start=(allvis)?2 : 20;
 
@@ -565,7 +568,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	}
 
 	//plus który jest zawsze widoczny
-	
+
 	dc.SetBrush(wxBrush("#FFFFFF"));
 	if(plus){
 		dc.SetPen(*wxTRANSPARENT_PEN);
@@ -576,7 +579,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	//dc.SetBrush(wxBrush("#FFFFFF"));
 	dc.DrawRectangle(start+4,11,12,2);
 	dc.DrawRectangle(start+9,6,2,12);
-	
+
 	if(gc){
 		gc->SetPen( wxPen("#696969"));
 		gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
@@ -810,12 +813,12 @@ int Notebook::FindPanel(TabPanel* pan)
 LRESULT CALLBACK Notebook::PauseOnMinimalize( int code, WPARAM wParam, LPARAM lParam )
 {
 	/*if(code == HCBT_ACTIVATE){
-		wxLogStatus("Czyżby aktywacja okna?");
-		return 0;
+	wxLogStatus("Czyżby aktywacja okna?");
+	return 0;
 	}
 	if(wParam == SC_PREVWINDOW || wParam == SC_NEXTWINDOW){
-		wxLogStatus("następne/poprzednie okno?");
-		return 0;
+	wxLogStatus("następne/poprzednie okno?");
+	return 0;
 	}*/
 	if (wParam == SC_MINIMIZE){
 		if(sthis->GetTab()->Video->vstate==Playing){sthis->GetTab()->Video->Pause();}
@@ -824,7 +827,7 @@ LRESULT CALLBACK Notebook::PauseOnMinimalize( int code, WPARAM wParam, LPARAM lP
 	//wxLogStatus("jakiś event %i %i", code, (int)wParam);
 	return CallNextHookEx( 0, code, wParam, lParam );
 }
-	
+
 
 
 void Notebook::ChangePage(int i)
@@ -880,7 +883,7 @@ void Notebook::SubsComparsion()
 {
 	Grid *G1 = Pages[compareFirstTab]->Grid1;
 	Grid *G2 = Pages[compareSecondTab]->Grid1;
-	
+
 	int firstSize= G1->GetCount(), secondSize= G2->GetCount();
 	if(G1->Comparsion){G1->Comparsion->clear();}else{G1->Comparsion=new std::vector<wxArrayInt>;}
 	if(G2->Comparsion){G2->Comparsion->clear();}else{G2->Comparsion=new std::vector<wxArrayInt>;}
@@ -891,23 +894,23 @@ void Notebook::SubsComparsion()
 	int lastJ=0;
 
 	for(int i=0; i<firstSize; i++){
-		
+
 		int j=lastJ;
 		Dialogue *dial1=G1->GetDial(i);
 		while(j<secondSize){
-			
+
 			Dialogue *dial2=G2->GetDial(j);
 			if(dial1->Start == dial2->Start && dial1->End == dial2->End){
 				CompareTexts((G1->transl && dial1->TextTl != "")? dial1->TextTl : dial1->Text, (G2->transl && dial2->TextTl != "")? dial2->TextTl : dial2->Text, G1->Comparsion->at(i), G2->Comparsion->at(j));
 				lastJ=j+1;
 				break;
 			}
-			
+
 			j++;
 		}
 
 	}
-	
+
 	G1->Refresh(false);
 	G2->Refresh(false);
 }
@@ -915,14 +918,14 @@ void Notebook::SubsComparsion()
 
 void Notebook::CompareTexts(wxString &first, wxString &second, wxArrayInt &firstCompare, wxArrayInt &secondCompare)
 {
-	
+
 	if(first==second){
 		return;
 	}
 	firstCompare.push_back(1);
 	secondCompare.push_back(1);
 
-	
+
 	size_t l1 = first.Len(), l2 = second.Len();
 	size_t sz = (l1 + 1) * (l2 + 1) * sizeof(size_t);
 	size_t w = l2 + 1;
@@ -932,16 +935,16 @@ void Notebook::CompareTexts(wxString &first, wxString &second, wxArrayInt &first
 
 	if (//sz / (l1 + 1) / (l2 + 1) != sizeof(size_t) ||
 		//(
-		dpt == NULL)
+			dpt == NULL)
 	{
 		wxLogStatus("memory allocation failed");
 		return ;
 	}
 
 	/*for (i1 = 0; i1 <= l1; i1++)
-		dpt[w * i1 + 0] = 0;
+	dpt[w * i1 + 0] = 0;
 	for (i2 = 0; i2 <= l2; i2++)
-		dpt[w * 0 + i2] = 0;*/
+	dpt[w * 0 + i2] = 0;*/
 	memset(dpt, 0, sz);
 
 	for (i1 = 1; i1 <= l1; i1++){
@@ -1011,4 +1014,4 @@ BEGIN_EVENT_TABLE(Notebook,wxWindow)
 	EVT_MOUSE_EVENTS(Notebook::OnMouseEvent)
 	EVT_SIZE(Notebook::OnSize)
 	EVT_PAINT(Notebook::OnPaint)
-END_EVENT_TABLE()
+	END_EVENT_TABLE()

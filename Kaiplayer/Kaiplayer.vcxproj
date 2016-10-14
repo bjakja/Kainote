@@ -144,6 +144,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Styles.cpp" />
     <ClCompile Include="StyleStore.cpp" />
+    <ClCompile Include="VideoToolbar.cpp" />
     <ClCompile Include="VisualMoveAll.cpp" />
     <ClCompile Include="VisualClipRect.cpp" />
     <ClCompile Include="StyleChange.cpp" />
@@ -258,6 +259,7 @@
     <ClInclude Include="VideoFullscreen.h" />
     <ClInclude Include="VideoRenderer.h" />
     <ClInclude Include="VideoSlider.h" />
+    <ClInclude Include="VideoToolbar.h" />
     <ClInclude Include="Visuals.h" />
     <ClInclude Include="Vsfilterapi.h" />
   </ItemGroup>

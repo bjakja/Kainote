@@ -74,7 +74,7 @@ public:
 	SInfo *GetSInfoP(wxString key, int *ii=0);
 	wxArrayInt GetSels(bool deselect=false);
 	void SwapRows(int frst, int scnd, bool sav=false);
-	void Loadfile(wxString str,wxString ext);
+	void Loadfile(const wxString &str,const wxString &ext);
 	void MoveRows(int step, bool sav=false);
 	void SetStartTime(int stime);
 	void SetEndTime(int etime);
@@ -136,6 +136,7 @@ protected:
 	void OnKeyPress(wxKeyEvent &event);
 	void DrawGrid(wxDC &dc,int w, int h);
 	void OnBcktimer(wxTimerEvent &event);
+	void OnEraseBackground(wxEraseEvent &event){};
 	wxTimer timer;
 	//HANDLE qtimer;
 

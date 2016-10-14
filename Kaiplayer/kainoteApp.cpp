@@ -249,7 +249,8 @@ void kainoteApp::OnFatalException()
 void kainoteApp::OnOpen(wxTimerEvent &evt)
 {
 	if(!IsBusy()){
-		Frame->OpenFiles(paths,false);paths.clear();}
+		Frame->OpenFiles(paths,false);paths.clear();
+	}
 }
 
 bool kainoteApp::IsBusy()

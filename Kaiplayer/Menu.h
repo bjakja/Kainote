@@ -5,6 +5,7 @@
 #include <wx/wx.h>
 #include <vector>
 #include <wx/evtloop.h>
+#include <map>
 class MenuEvent;
 class Menu;
 
@@ -115,6 +116,7 @@ protected:
 	wxBitmap *bmp;
 	Menu *parent;
 	bool subMenuIsShown;
+	bool showMnemonics;
 	static MenuDialog* ParentMenu;
 	static HHOOK Hook;
 	static LRESULT CALLBACK OnMouseClick( int code, WPARAM wParam, LPARAM lParam );
@@ -187,6 +189,7 @@ public:
 			delete (*cur);
 		}
 		wxDELETE(bmp);
+		UnhookWindowsHookEx( Hook );
 		Menubar=NULL;
 	}
 	void Append(Menu *menu, const wxString &title);
@@ -206,10 +209,14 @@ private:
 	wxBitmap *bmp;
 	int sel;
 	bool clicked;
+	bool showMnemonics;
 	wxTimer showMenuTimer;
 	int shownMenu;
 	int oldelem;
+	std::map<char, int> mnemonics;
 	static MenuBar *Menubar;
+	static HHOOK Hook;
+	static LRESULT CALLBACK OnKey( int code, WPARAM wParam, LPARAM lParam );
 	DECLARE_EVENT_TABLE()
 };
 

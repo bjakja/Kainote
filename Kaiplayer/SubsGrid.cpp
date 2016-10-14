@@ -1887,7 +1887,7 @@ void SubsGrid::SwapRows(int frst, int scnd, bool sav)
 	if(sav){SetModified();}
 }
 
-void SubsGrid::Loadfile(wxString str,wxString ext){
+void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 
 	Clearing();
 	int active=0;
@@ -2442,5 +2442,6 @@ BEGIN_EVENT_TABLE(SubsGrid,wxWindow)
 	EVT_MOUSE_EVENTS(SubsGrid::OnMouseEvent)
 	EVT_KEY_DOWN(SubsGrid::OnKeyPress)
 	EVT_TIMER(ID_AUTIMER,SubsGrid::OnBcktimer)
-	END_EVENT_TABLE()
+	EVT_ERASE_BACKGROUND(SubsGrid::OnEraseBackground)
+END_EVENT_TABLE()
 
