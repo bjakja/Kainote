@@ -72,6 +72,7 @@ public:
 	virtual void Draw(int time);
 	virtual void DrawVisual(int time){};
 	virtual void SetCurVisual(){};
+	virtual void ChangeTool(int tool){};
 	virtual void OnMouseEvent(wxMouseEvent &evt){};
 	virtual wxString GetVisual(){return "";};
 	D3DXVECTOR2 GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);

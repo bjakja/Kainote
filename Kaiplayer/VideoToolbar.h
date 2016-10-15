@@ -2,26 +2,48 @@
 #include <wx/wx.h>
 #include <vector>
 
+const static int toolsSize = 9;
+const static int clipToolsSize = 5;
+
+class itemdata{
+public:
+	itemdata(wxBitmap *_icon, const wxString& _help){icon=_icon; help=_help;}
+	~itemdata(){delete icon;}
+
+	wxBitmap *icon;
+	wxString help;
+};
+
 class VideoToolbar: public wxWindow {
 public:
-	VideoToolbar (wxWindow *parent, const wxPoint &pos, const wxSize &size);
+	VideoToolbar (wxWindow *parent, const wxPoint &pos);
 	virtual ~VideoToolbar(){
-		for(auto cur = icons.begin(); cur != icons.end(); cur++){
-			delete (*cur);
-		}
 		if(bmp)delete bmp; bmp=NULL;
 	};
 
 	int GetToggled();
+	int GetClipToggled(){return clipToggled-Toggled;};
+	void ShowClipTools(){showClipTools=true;}
+	static void DestroyIcons(){
+		for(auto cur = icons.begin(); cur != icons.end(); cur++){
+			delete (*cur);
+		}
+	}
 private:
 	
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent &evt);
 	void OnSize(wxSizeEvent &evt);
 	int Toggled;
-	//int sel;
+	int clipToggled;
+	int sel;
 	bool clicked;
 	bool showClipTools;
 	wxBitmap *bmp;
-	static std::vector< wxBitmap*> icons;
+	static std::vector< itemdata*> icons;
+};
+
+enum{
+	ID_VIDEO_TOOLBAR_EVENT=21909,
+	ID_AUX_TOOLBAR_EVENT
 };

@@ -26,6 +26,7 @@ const IID IID_IDirectXVideoProcessorService ={ 0xfc51a552,0xd5e7,0x11d9,{0xaf,0x
 
 VideoRend::VideoRend(wxWindow *_parent, const wxSize &size)
 	:wxWindow(_parent,-1,wxDefaultPosition, size)//wxFULL_REPAINT_ON_RESIZE
+	,panelHeight(66)
 {
 	hwnd=GetHWND();
 
@@ -942,7 +943,7 @@ bool VideoRend::UpdateRects(bool bar)
 	VideoCtrl* Video=(VideoCtrl*) this;
 	wxRect rt;
 	TabPanel* tab=(TabPanel*)Video->GetParent();
-	if(bar){hwnd=GetHWND();rt=GetClientRect();rt.height-=44;}
+	if(bar){hwnd=GetHWND();rt=GetClientRect();rt.height-=panelHeight;}
 	else{hwnd=Video->TD->GetHWND();rt=Video->TD->GetClientRect();pbar=true;cross=false;}
 	if(!rt.height || !rt.width){return false;}
 	rt3.bottom=rt.height;
@@ -1268,4 +1269,9 @@ byte *VideoRend::GetFramewithSubs(bool subs, bool *del)
 void VideoRend::SetEvent(wxMouseEvent& event)
 {
 	Vclips->OnMouseEvent(event);
+}
+
+void VideoRend::ChangeVisualTool(int tool)
+{
+	Vclips->ChangeTool(tool);
 }

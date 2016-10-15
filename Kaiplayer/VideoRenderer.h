@@ -124,6 +124,7 @@ class VideoRend : public wxWindow
 		int pitch;
 		int time;
 		int lastframe;
+		const int panelHeight;
 		long ax,ay;
 		float AR, fps;
 		char *datas;
@@ -151,7 +152,7 @@ class VideoRend : public wxWindow
 		std::vector<chapter> chaps;
 		bool EnumFilters(Menu *menu);
 		bool FilterConfig(wxString name, int idx, wxPoint pos);
-		
+		void ChangeVisualTool(int tool);
 	private:
 		bool InitDX(bool reset=false);
 		

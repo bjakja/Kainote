@@ -208,16 +208,6 @@ enum{
 	XX( ASSProperties,)\
 	XX( StyleManager,)\
 	XX( FontCollector,)\
-	XX( CrossPositioner,)\
-	XX( Positioner,)\
-	XX( Movement,)\
-	XX( Scalling,)\
-	XX( RotatingZ,)\
-	XX( RotatingXY,)\
-	XX( RectangleClips,)\
-	XX( VectorClips,)\
-	XX( VectorDrawings,)\
-	XX( MoveAll,)\
 	XX( ConvertToASS,)\
 	XX( ConvertToSRT,)\
 	XX( ConvertToTMP,)\
@@ -270,4 +260,14 @@ enum{
 //
 DECLARE_ENUM(Id,IDS)
 
+	/*XX( CrossPositioner,)\
+	XX( Positioner,)\
+	XX( Movement,)\
+	XX( Scalling,)\
+	XX( RotatingZ,)\
+	XX( RotatingXY,)\
+	XX( RectangleClips,)\
+	XX( VectorClips,)\
+	XX( VectorDrawings,)\
+	XX( MoveAll,)\*/
 #endif // KAINOTEMAIN_H

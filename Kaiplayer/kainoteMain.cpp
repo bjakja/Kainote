@@ -143,19 +143,19 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	AppendBitmap(SubsMenu,ID_CONV, _("Konwersja"), _("Konwersja z jednego formatu napisów na inny"),wxBITMAP_PNG("convert"),true, ConvMenu);
 	AppendBitmap(SubsMenu,ChangeTime, _("Okno zmiany &czasów\tCtrl-I"), _("Przesuwanie czasów napisów"),wxBITMAP_PNG("times"));
-	AppendBitmap(SubsMenu,CrossPositioner, _("Włącz wskaźnik pozycji"), _("Włącz przesuwanie tekstu"),wxBITMAP_PNG("cross"),false);
-	AppendBitmap(SubsMenu,Positioner, _("Włącz przesuwanie"), _("Włącz przesuwanie tekstu"),wxBITMAP_PNG("position"),false);
-	AppendBitmap(SubsMenu,Movement, _("Włącz ruch"), _("Włącz przesuwanie tekstu"),wxBITMAP_PNG("move"),false);
-	//AppendBitmap(SubsMenu,ID_MOVEONCURVE, _("Włącz ruch po krzywej"), _("Włącz / Wyłącz przesuwanie tekstu"),wxBITMAP_PNG("move"),false);
-	AppendBitmap(SubsMenu,Scalling, _("Włącz skalowanie"), _("Włącz skalowanie tekstu"),wxBITMAP_PNG("scale"),false);
-	AppendBitmap(SubsMenu,RotatingZ, _("Włącz obracanie w osi Z"), _("Włącz obracanie tekstu w osi Z"),wxBITMAP_PNG("frz"),false);
-	AppendBitmap(SubsMenu,RotatingXY, _("Włącz obracanie w osi X / Y"), _("Włącz obracanie tekstu w osi X / Y"),wxBITMAP_PNG("frxy"),false);
-	//AppendBitmap(SubsMenu,ID_FAXY, _("Włącz / Wyłącz pochylanie tekstu"), _("Włącz / Wyłącz pochylanie tekstu"),wxBITMAP_PNG("clip"),false);
-	AppendBitmap(SubsMenu,RectangleClips, _("Włącz wycinki prostokątne"), _("Włącz tworzenie wycinków prostokątnych"),wxBITMAP_PNG("cliprect"),false);
-	AppendBitmap(SubsMenu,VectorClips, _("Włącz wycinki wektorowe"), _("Włącz tworzenie wycinków wektorowych"),wxBITMAP_PNG("clip"),false);
-	AppendBitmap(SubsMenu,VectorDrawings, _("Włącz rysunki wektorowe"), _("Włącz tworzenie rysunków"),wxBITMAP_PNG("drawing"),false);
-	//AppendBitmap(SubsMenu,MoveAll, _("Włącz rysunki wektorowe"), _("Włącz tworzenie rysunków"),wxBITMAP_PNG("drawing"),false);
-	SubsMenu->Append(MoveAll, _("Włącz przesuwanie wielu tagów"), _("Włącz przesuwanie wielu tagów"))->Enable(false);
+	//AppendBitmap(SubsMenu,CrossPositioner, _("Włącz wskaźnik pozycji"), _("Włącz przesuwanie tekstu"),wxBITMAP_PNG("cross"),false);
+	//AppendBitmap(SubsMenu,Positioner, _("Włącz przesuwanie"), _("Włącz przesuwanie tekstu"),wxBITMAP_PNG("position"),false);
+	//AppendBitmap(SubsMenu,Movement, _("Włącz ruch"), _("Włącz przesuwanie tekstu"),wxBITMAP_PNG("move"),false);
+	////AppendBitmap(SubsMenu,ID_MOVEONCURVE, _("Włącz ruch po krzywej"), _("Włącz / Wyłącz przesuwanie tekstu"),wxBITMAP_PNG("move"),false);
+	//AppendBitmap(SubsMenu,Scalling, _("Włącz skalowanie"), _("Włącz skalowanie tekstu"),wxBITMAP_PNG("scale"),false);
+	//AppendBitmap(SubsMenu,RotatingZ, _("Włącz obracanie w osi Z"), _("Włącz obracanie tekstu w osi Z"),wxBITMAP_PNG("frz"),false);
+	//AppendBitmap(SubsMenu,RotatingXY, _("Włącz obracanie w osi X / Y"), _("Włącz obracanie tekstu w osi X / Y"),wxBITMAP_PNG("frxy"),false);
+	////AppendBitmap(SubsMenu,ID_FAXY, _("Włącz / Wyłącz pochylanie tekstu"), _("Włącz / Wyłącz pochylanie tekstu"),wxBITMAP_PNG("clip"),false);
+	//AppendBitmap(SubsMenu,RectangleClips, _("Włącz wycinki prostokątne"), _("Włącz tworzenie wycinków prostokątnych"),wxBITMAP_PNG("cliprect"),false);
+	//AppendBitmap(SubsMenu,VectorClips, _("Włącz wycinki wektorowe"), _("Włącz tworzenie wycinków wektorowych"),wxBITMAP_PNG("clip"),false);
+	//AppendBitmap(SubsMenu,VectorDrawings, _("Włącz rysunki wektorowe"), _("Włącz tworzenie rysunków"),wxBITMAP_PNG("drawing"),false);
+	////AppendBitmap(SubsMenu,MoveAll, _("Włącz rysunki wektorowe"), _("Włącz tworzenie rysunków"),wxBITMAP_PNG("drawing"),false);
+	//SubsMenu->Append(MoveAll, _("Włącz przesuwanie wielu tagów"), _("Włącz przesuwanie wielu tagów"))->Enable(false);
 	AppendBitmap(SubsMenu,FontCollector, _("Kolekcjoner czcionek"), _("Kolekcjoner czcionek"),wxBITMAP_PNG("fontcollector"));
 	AppendBitmap(SubsMenu,HideTags, _("Ukryj tagi w nawiasach"), _("Ukrywa tagi w nawiasach ASS i MDVD"),wxBITMAP_PNG("hidetags"));
 	Menubar->Append(SubsMenu, _("&Napisy"));
@@ -255,7 +255,7 @@ kainoteFrame::~kainoteFrame()
 	Tabs->Destroy();
 	Tabs=NULL;
 	SpellChecker::Destroy();
-
+	VideoToolbar::DestroyIcons();
 }
 
 
@@ -359,20 +359,6 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		ss->Show();
 	}else if(id==FontCollector && pan->Grid1->form<SRT){
 		FontCollectorDialog fcd(this);
-	}else if(id>=CrossPositioner && id<= MoveAll){
-		VideoCtrl *vb=pan->Video;
-		EditBox *eb = pan->Edit;
-		int vis = (id - CrossPositioner);
-
-		if(vis==pan->Edit->Visual){return;}
-		if(vb->Vclips && vis == 0){ 
-			vb->SetVisual(0,0,true); 
-		}else if( vis != pan->Edit->Visual ){
-			eb->Visual = vis;
-			vb->SetVisual(eb->line->Start.mstime, eb->line->End.mstime);
-			if(!vb->isarrow){vb->SetCursor(wxCURSOR_ARROW);vb->isarrow=true;}
-		}
-		UpdateToolbar();
 	}else if(id>=ConvertToASS && id<=ConvertToMPL2){
 		OnConversion(( id - ConvertToASS ) + 1);
 	}else if(id==HideTags){
@@ -1147,7 +1133,7 @@ void kainoteFrame::HideEditor()
 			Options.GetCoords("Video Window Size",&vw,&vh);
 			if(vh<350){vh=350,vw=500;}
 			cur->Video->CalcSize(&sx,&sy,vw,vh);
-			cur->Video->SetMinSize(wxSize(sx,sy+44));
+			cur->Video->SetMinSize(wxSize(sx,sy + cur->Video->panelHeight));
 		}else{cur->Video->Hide();}
 		if(Options.GetBool("Show Change Time")){
 			cur->CTime->Show();}
@@ -1173,7 +1159,7 @@ void kainoteFrame::HideEditor()
 
 			cur->Video->CalcSize(&sx,&sy,sizex,sizey);
 
-			SetClientSize(sx+iconsize,sy+44+Tabs->GetHeight());
+			SetClientSize(sx+iconsize,sy + cur->Video->panelHeight + Tabs->GetHeight());
 
 		}
 		cur->Video->SetFocus();
@@ -1353,7 +1339,7 @@ void kainoteFrame::OnMenuOpened(MenuEvent& event)
 		else if(i==ConvertToMPL2){forms=form!=MPL2;}//konwersja na mpl2
 		else if(i==ConvertToTMP){forms=form!=TMP;}//konwersja na tmp
 		if((i>=ConvertToASS && i<=ConvertToTMP) && tlmode){forms=false;}
-		if(i>=CrossPositioner && i<=MoveAll){forms= pan->Video->IsShown() && form<SRT && ( i - CrossPositioner ) != pan->Edit->Visual;}
+		//if(i>=CrossPositioner && i<=MoveAll){forms= pan->Video->IsShown() && form<SRT && ( i - CrossPositioner ) != pan->Edit->Visual;}
 		if(i==ViewAudio || i==CloseAudio){forms= pan->Edit->ABox!=0;}
 		if(i==ViewVideo||i==AudioFromVideo){forms= pan->Video->GetState()!=None;}
 		if(i==SaveTranslation){forms=tlmode;}

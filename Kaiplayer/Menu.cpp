@@ -97,7 +97,7 @@ void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool cli
 		if(tx > size->x){size->x = tx;}
 	}
 	
-	size->x += 54;
+	size->x += 58;
 	if(isize > maxVisible) {size->x += 20; isize=maxVisible;}
 	size->y = height * isize + 4;
 	int w,h;
@@ -882,11 +882,15 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
 	tdc.SetFont(font);
-	tdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR)));
+	/*tdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR)));
 	tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR)));
-	tdc.DrawRectangle(0,0,w,h);
+	tdc.DrawRectangle(0,0,w,h);*/
+	tdc.GradientFillLinear(wxRect(0,0,w,h),
+		wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE),
+		wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR),wxTOP);
 	tdc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT));
 	tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT)));
+	tdc.DrawLine(0,h-1,w,h-1);
 	int posX=halfIndent;
 	wxSize mnbefsize;
 	wxSize linesize;

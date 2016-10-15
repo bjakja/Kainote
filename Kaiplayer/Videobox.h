@@ -8,6 +8,7 @@
 #include "BitmapButton.h"
 #include "VideoRenderer.h"
 #include "VideoFullscreen.h"
+#include "VideoToolbar.h"
 
 class kainoteFrame;
 
@@ -44,6 +45,7 @@ public:
 	wxTimer vtime;
 	wxTextCtrl* mstimes;
 	VolSlider* volslider;
+	VideoToolbar *vToolbar;
 	void OpenEditor(bool esc=true);
 	void OnEndFile(wxCommandEvent& event);
 	void OnPrew();
@@ -92,8 +94,8 @@ private:
 	void OnOpSubs();
 	void OnPaint(wxPaintEvent& event);
 	void OnCopyCoords(const wxPoint &pos);
-	void InternalOnPopupMenu(wxCommandEvent& event){id = event.GetId();};
-	void InternalOnPopupMenuUpdate(wxUpdateUIEvent& WXUNUSED(event)){};
+	//void InternalOnPopupMenu(wxCommandEvent& event){id = event.GetId();};
+	//void InternalOnPopupMenuUpdate(wxUpdateUIEvent& WXUNUSED(event)){};
 	void ChangeButtonBMP(bool play=false);
 	wxTimer idletime;
 	DECLARE_EVENT_TABLE()

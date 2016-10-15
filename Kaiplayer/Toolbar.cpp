@@ -35,7 +35,6 @@ KaiToolbar::~KaiToolbar()
 
 void KaiToolbar::InitToolbar()
 {
-	//int xy=0;
 	wxArrayInt IDS;
 	wxString idnames=Options.GetString("Toolbar IDs");
 
@@ -53,31 +52,18 @@ void KaiToolbar::InitToolbar()
 		IDS.Add(SaveSubs);IDS.Add(SaveSubsAs);IDS.Add(SaveAllSubs);
 		IDS.Add(RemoveSubs);IDS.Add(Editor);IDS.Add(FindReplace);
 		IDS.Add(StyleManager);IDS.Add(ASSProperties);IDS.Add(ChangeTime);
-		IDS.Add(ConvertToASS);IDS.Add(ConvertToSRT);IDS.Add(CrossPositioner);IDS.Add(Positioner);
-		IDS.Add(Movement);IDS.Add(Scalling);IDS.Add(RotatingZ);IDS.Add(RotatingXY);
-		IDS.Add(RectangleClips);IDS.Add(VectorClips);IDS.Add(VectorDrawings);IDS.Add(Settings);
+		IDS.Add(ConvertToASS);IDS.Add(ConvertToSRT);IDS.Add(Settings);
 	}
 	for(size_t i=0; i<IDS.size();i++)
 	{
-		/*if(IDS[i]==-1){AddSpacer();xy+=12; continue;}*/
 		MenuItem *item=mb->FindItem(IDS[i]);
 		if(!item){wxLogStatus(_("Nie można znaleźć elementu o id %i"), IDS[i]);continue;}
 		wxString desc=item->GetLabelText();
-		//desc.Replace("&","");
-		//size_t reps=desc.Replace("\t"," (");
 		AddItem(IDS[i],desc,item->icon,item->IsEnabled(),(item->GetSubMenu()!=NULL)? 1 : 0);
-		//xy+=24;
 	}
 	tools.push_back(new toolitem(2,16,34566,true));
-	/*xy+=16;
-	int w=0;
-	int h=0;
-	GetClientSize (&w, &h);
-	int wh=(vertical)? h:w;
-	int div =xy/wh;
-	if(div>0){SetMinSize(wxSize(iconsize*2,-1));wxLogStatus("div %i", div);}*/
-	//else{
-	Refresh(false);//}
+	
+	Refresh(false);
 }
 
 	
@@ -128,7 +114,7 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 {
 	bool leftdown = event.LeftDown();
 	
-	wxPoint elems= FindElem(wxPoint(event.GetX(), event.GetY()));
+	wxPoint elems= FindElem(event.GetPosition());
 	int elem=elems.x;
 	
 	if(elem<0||event.Leaving()){/*if(HasCapture()){ReleaseMouse();}*/if(HasToolTips()){UnsetToolTip();}
