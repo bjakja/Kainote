@@ -12,6 +12,7 @@ VideoToolbar::VideoToolbar (wxWindow *parent, const wxPoint &pos)
 	,sel(-1)
 	,clicked(false)
 	,showClipTools(false)
+	,blockScroll(false)
 	,bmp(NULL)
 {
 	if(icons.size()==0){
@@ -26,18 +27,20 @@ VideoToolbar::VideoToolbar (wxWindow *parent, const wxPoint &pos)
 		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("drawing")),_("Rysunki wektorowe")));
 		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("position")),_("Przesuwanie wielu tagów")));
 		//tutaj doklej nowe ikony
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("frz")),_("Obrót wokó³ osi Z")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("frxy")),_("Obrót wokó³ osi X / Y")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("cliprect")),_("Wycinki prostok¹tne")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("clip")),_("Wycinki wektorowe")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("drawing")),_("Rysunki wektorowe")));
+		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VectorDrag")),_("Przesuñ punkty")));
+		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VectorLine")),_("Dodaj liniê")));
+		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VectorBezier")),_("Dodaj krzyw¹ Beziera")));
+		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VECTORBSPLINE")),_("Dodaj krzyw¹ B-sklejan¹")));
+		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VECTORBSPLINEPOINT")),_("Dodaj punkt krzywej B-sklejanej")));
+		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VectorMove")),_("Dodaj punkt przemieszczenia")));
+		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VectorDelete")),_("Usuñ element")));
 	}
 	Connect(wxEVT_PAINT, (wxObjectEventFunction)&VideoToolbar::OnPaint);
 	Connect(wxEVT_LEFT_DOWN, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
 	Connect(wxEVT_LEFT_UP, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
 	Connect(wxEVT_MOTION, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
 	Connect(wxEVT_LEAVE_WINDOW, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
-	//Connect(wxEVT_ENTER_WINDOW, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
+	Connect(wxEVT_MOUSEWHEEL, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
 }
 
 int VideoToolbar::GetToggled()
@@ -47,19 +50,28 @@ int VideoToolbar::GetToggled()
 
 void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
 {
+	if (evt.GetWheelRotation() != 0 && !blockScroll) {
+		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
+		clipToggled-=step;
+		if(clipToggled < toolsSize){clipToggled=toolsSize+clipToolsSize-1;}
+		else if(clipToggled >= toolsSize+clipToolsSize){clipToggled=toolsSize;}
+		Refresh(false);
+		return;
+	}
 	int x=evt.GetX();
 	int w=0;
 	int h=0;
 	GetClientSize (&w, &h);
 	bool noelem=false;
-	int elem = (startDrawPos + x) / h;
+	int elem = (x - startDrawPos) / h;//startDrawPos +
 	if(elem<0){noelem=true;}
 	else if(elem>=toolsSize){
-		elem = ((x - (w - (h * clipToolsSize))) / h); 
-		if(elem <0 || elem >= clipToolsSize || !showClipTools){
+		int toolbarlen = h * clipToolsSize;
+		int posx = (x - (w - toolbarlen));
+		if(posx < 0 || posx > toolbarlen || !showClipTools){
 			noelem=true;
 		}
-		else{ elem += toolsSize;}
+		else{ elem = ( posx / h) + toolsSize;}
 	}
 	if(evt.Leaving() || noelem){sel = -1; Refresh(false); if(HasToolTips()){UnsetToolTip();} return;}
 	
@@ -78,7 +90,7 @@ void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
 		clicked=false;
 		Refresh(false);
 		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, (elem<toolsSize)? ID_VIDEO_TOOLBAR_EVENT : ID_AUX_TOOLBAR_EVENT);
-		evt.SetInt((elem>=toolsSize)? clipToggled : Toggled);
+		evt.SetInt((elem>=toolsSize)? clipToggled - toolsSize : Toggled);
 		ProcessEvent(evt);
 	}
 

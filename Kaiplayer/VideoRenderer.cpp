@@ -846,7 +846,7 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 
 	if(!textsubs) {if (vobsub) {csri_close_renderer(vobsub);}return false;}
 	//const char *buffer= textsubs.mb_str(wxConvUTF8).data();
-	if(VisEdit && Vclips->Visual==VECTORCLIP){
+	if(VisEdit && Vclips->Visual==VECTORCLIP && Vclips->dummytext){
 		(*textsubs)<<Vclips->dummytext->Trim().AfterLast('\n');
 	}
 	wxScopedCharBuffer buffer= textsubs->mb_str(wxConvUTF8);
@@ -1223,7 +1223,7 @@ void VideoRend::SetVisual(int start, int end, bool remove)
 void VideoRend::SetVisual()
 {
 
-	TabPanel* pan=(TabPanel*)GetParent();
+	//TabPanel* pan=(TabPanel*)GetParent();
 	SAFE_DELETE(Vclips->dummytext);
 	Vclips->SetCurVisual();
 	//VisEdit=true;
@@ -1264,14 +1264,4 @@ byte *VideoRend::GetFramewithSubs(bool subs, bool *del)
 		csri_render(instance,framee,(time/1000.0));
 	}
 	return (dssubs||ffnsubs)? cpy1 : (byte*)datas;
-}
-
-void VideoRend::SetEvent(wxMouseEvent& event)
-{
-	Vclips->OnMouseEvent(event);
-}
-
-void VideoRend::ChangeVisualTool(int tool)
-{
-	Vclips->ChangeTool(tool);
 }

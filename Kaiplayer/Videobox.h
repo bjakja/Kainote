@@ -94,7 +94,7 @@ private:
 	void OnOpSubs();
 	void OnPaint(wxPaintEvent& event);
 	void OnCopyCoords(const wxPoint &pos);
-	//void InternalOnPopupMenu(wxCommandEvent& event){id = event.GetId();};
+	void OnErase(wxEraseEvent& event){};
 	//void InternalOnPopupMenuUpdate(wxUpdateUIEvent& WXUNUSED(event)){};
 	void ChangeButtonBMP(bool play=false);
 	wxTimer idletime;

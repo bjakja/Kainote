@@ -676,13 +676,15 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 			fntmp= FindFile(filename,issubs,!(fulls || pan->Video->isfullskreen) );
 			if(fntmp!=""){found=true;if(!issubs){ext=fntmp.AfterLast('.');}}
 	}
-	pan->Freeze();
-	if(Options.GetBool("Open In New Card")&&pan->SubsPath!=""&&
+	
+	if(Options.GetBool("Open In New Card") && pan->SubsPath!="" &&
 		!pan->Video->isfullskreen&&issubs){
+			//pan->Thaw();
 			Tabs->AddPage(true);pan=Tabs->Page(Tabs->Size()-1);
+			//pan->Freeze();
 			nonewtab = false;
 	}
-
+	pan->Freeze();
 	if(issubs||found){  
 		wxString fname=(found&&!issubs)?fntmp:filename;
 		if(nonewtab){if(SavePrompt(2)){pan->Thaw();return true;}}

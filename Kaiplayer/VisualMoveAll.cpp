@@ -182,7 +182,7 @@ void MoveAll::ChangeInLines(bool all)
 					if(count % 2 == 0){val += (moving.x * wspw);}else{val += (moving.y * wsph);}
 					if(type==TAGMOVES && count > 1){visual+=token+delimiter; continue;}
 					else if(type==TAGMOVEE && count != 2 && count != 3){visual+=token+delimiter; count++; continue;}
-					if(vector){visual<<getfloat(val,"6.2f")<<delimiter;}
+					if(vector){visual<<getfloat(val,(type==TAGCLIP)? "6.0f" : "6.2f")<<delimiter;}
 					else{visual += getfloat(val) + delimiter;}
 					count++;
 				}else{

@@ -79,11 +79,9 @@ void Visuals::SetVisual(int _start,int _end)
 	tab->Video->VisEdit=true;
 	
 	SetCurVisual();
-	//if(Visual==MOVEALL){tab->Video->Render(); return;}
-	if(Visual==VECTORCLIP){//||Visual==VECTORDRAW
+	if(Visual==VECTORCLIP){
 		SetClip(GetVisual(),true); return;
 	}
-	//SetVisual(GetVisual(),true,0);
 	tab->Video->Render();
 }
 
@@ -207,12 +205,11 @@ void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen
 		if(len==0){return;}
 		D3DXVECTOR2 diffUnits = pdiff / len;
 		float singleMovement = 1/(len/(dashLen*2));
-		actualPoint[0] = vector[i];//(vector[i] < vector[iPlus1])? vector[i] : vector[iPlus1];
+		actualPoint[0] = vector[i];
 		actualPoint[1] = actualPoint[0];
 		for(float j = 0; j <= 1; j += singleMovement){
 			actualPoint[1] -= diffUnits * dashLen;
 			if(j+singleMovement>=1){actualPoint[1] = vector[iPlus1];}
-			//wxLogStatus("ap %f, %f, %f, %f, %f", actualPoint[0].x, actualPoint[0].y, actualPoint[1].x, actualPoint[1].y, j);
 			line->Draw(actualPoint,2,0xFFFF0000);
 			actualPoint[1] -= diffUnits * dashLen;
 			actualPoint[0] -= (diffUnits * dashLen)*2;
@@ -519,6 +516,7 @@ void Visuals::SetClip(wxString clip,bool dummy)
 			}
 
 		}
+		tab->Video->VisEdit=false;
 		wxString *dtxt=new wxString(*dummytext);
 		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
 		tab->Video->VisEdit=true;
@@ -588,6 +586,7 @@ void Visuals::SetVisual(wxString visual,bool dummy, int type)
 			if(!vis){SAFE_DELETE(dummytext); return;}
 		}else{
 			Editor->SetTextS(txt,false,false);
+			Editor->Refresh(false);
 		}
 		
 		dummytext->replace(dumplaced.x,dumplaced.y,txt);

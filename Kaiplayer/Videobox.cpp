@@ -112,7 +112,9 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 		if(vis==eb->Visual){return;}
 		if(Vclips && vis == 0){ 
 			SetVisual(0,0,true); 
+			if(vToolbar->ClipToolsShown()){vToolbar->ShowClipTools(false);}
 		}else if( vis != eb->Visual ){
+			if(vis==VECTORCLIP || vis==VECTORDRAW || eb->Visual==VECTORCLIP || eb->Visual==VECTORDRAW){vToolbar->ShowClipTools(vis==VECTORCLIP || vis==VECTORDRAW);}
 			eb->Visual = vis;
 			SetVisual(eb->line->Start.mstime, eb->line->End.mstime);
 			if(!isarrow){SetCursor(wxCURSOR_ARROW);isarrow=true;}
@@ -120,7 +122,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	},ID_VIDEO_TOOLBAR_EVENT);
 
 	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
-		ChangeVisualTool(evt.GetInt());
+		Vclips->ChangeTool(evt.GetInt());
 	},ID_AUX_TOOLBAR_EVENT);
 
 	Connect(ID_BPREV,ID_BPLINE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&VideoCtrl::OnVButton);
@@ -324,7 +326,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 
 
 	if(Vclips){
-		SetEvent(event);if(!isarrow){SetCursor(wxCURSOR_ARROW);isarrow=true;}
+		Vclips->OnMouseEvent(event);if(!isarrow){SetCursor(wxCURSOR_ARROW);isarrow=true;}
 		return;
 	}//jak na razie 
 
@@ -1157,6 +1159,6 @@ BEGIN_EVENT_TABLE(VideoCtrl,wxWindow)
 	EVT_PAINT(VideoCtrl::OnPaint)
 	EVT_TIMER(idvtime, VideoCtrl::OnPlaytime)
 	EVT_TIMER(ID_IDLE, VideoCtrl::OnIdle)
-	//EVT_THREAD(23334,VideoCtrl::OnGetFrame)
+	EVT_ERASE_BACKGROUND(VideoCtrl::OnErase)
 	EVT_BUTTON(23333,VideoCtrl::OnEndFile)
-	END_EVENT_TABLE()
+END_EVENT_TABLE()

@@ -72,7 +72,7 @@ public:
 	virtual void Draw(int time);
 	virtual void DrawVisual(int time){};
 	virtual void SetCurVisual(){};
-	virtual void ChangeTool(int tool){};
+	virtual void ChangeTool(int _tool){};
 	virtual void OnMouseEvent(wxMouseEvent &evt){};
 	virtual wxString GetVisual(){return "";};
 	D3DXVECTOR2 GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);
@@ -259,20 +259,20 @@ public:
 	void Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bspline, int spoints=4, int acpt=0);
 	D3DXVECTOR2 CalcWH();
 	void SelectPoints();
-
+	void ChangeTool(int _tool){tool = _tool;};
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
 	ClipPoint lastpoint;
 	bool invClip;
 	bool drawtxt;
-	bool newline;
-	bool newmove;
+	//bool blockToolChange;
 	bool snapXminus;
 	bool snapYminus;
 	bool snapXplus;
 	bool snapYplus;
 	bool drawSelection;
 	int grabbed;
+	int tool;
 	byte alignment;
 	wxPoint diffs;
 	wxRect selection;

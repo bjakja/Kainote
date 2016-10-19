@@ -11,6 +11,7 @@
 
 #include "VideoFfmpeg.h"
 #include "Menu.h"
+#include "Visuals.h"
 
 //#define byvertices 5
 #define DXVA 77
@@ -67,7 +68,6 @@ struct chapter
 
 class AudioDisplay;
 class DShowPlayer;
-class Visuals;
 struct csri_fmt;
 struct csri_frame;
 
@@ -103,7 +103,6 @@ class VideoRend : public wxWindow
 		void EnableStream(long index);
 		void MovePos(int cpos);
 		void ChangeVobsub(bool vobsub=false);
-		void SetEvent(wxMouseEvent& event);
 		wxArrayString GetStreams();
 		void SetVisual(int start, int end, bool remove=false);
 		void SetVisual();
@@ -152,7 +151,6 @@ class VideoRend : public wxWindow
 		std::vector<chapter> chaps;
 		bool EnumFilters(Menu *menu);
 		bool FilterConfig(wxString name, int idx, wxPoint pos);
-		void ChangeVisualTool(int tool);
 	private:
 		bool InitDX(bool reset=false);
 		
@@ -197,8 +195,6 @@ class VideoRend : public wxWindow
 		csri_fmt *format;
 		HANDLE thread;
 		
-
-	//DECLARE_EVENT_TABLE()
 };
 
 #ifndef DRAWOUTTEXT

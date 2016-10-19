@@ -116,7 +116,6 @@ protected:
 	wxBitmap *bmp;
 	Menu *parent;
 	bool subMenuIsShown;
-	bool showMnemonics;
 	static MenuDialog* ParentMenu;
 	static HHOOK Hook;
 	static LRESULT CALLBACK OnMouseClick( int code, WPARAM wParam, LPARAM lParam );
@@ -129,18 +128,24 @@ protected:
 	DECLARE_EVENT_TABLE()
 };
 
-class Menu //: public wxEvtHandler
+class Mnemonics{
+public:
+	Mnemonics(){}
+	virtual ~Mnemonics(){}
+	std::map<char, int> mnemonics;
+};
+
+class Menu : public Mnemonics
 {
 	friend class MenuDialog;
 	friend class MenuBar;
 	public:
-	Menu();
+	Menu(int maxVisible=30);
 	//Menu(const wxString& title);
 	virtual ~Menu(){
 		for(auto cur = items.begin(); cur!= items.end(); cur++){
 			delete (*cur);
 		}
-		//if(dialog){dialog->Destroy(); dialog=NULL;}
 	};
 	MenuItem *Append(int _id,const wxString& _label, const wxString& _help="", bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
 	MenuItem *Append(int _id,const wxString& _label, Menu* Submenu, const wxString& _help="", byte _type = 0, bool _enable = true, wxBitmap *_icon = NULL);
@@ -177,8 +182,7 @@ protected:
 };
 
 
-
-class MenuBar : public wxWindow
+class MenuBar : public wxWindow, Mnemonics
 {
 	friend class Menu;
 	friend class MenuDialog;
@@ -203,17 +207,14 @@ private:
 	void OnPaint(wxPaintEvent &event);
 	int CalcMousePos(wxPoint *pos);
 	
-
 	std::vector< Menu* > Menus;
-	wxWindow *parent;
 	wxBitmap *bmp;
 	int sel;
 	bool clicked;
-	bool showMnemonics;
 	wxTimer showMenuTimer;
 	int shownMenu;
 	int oldelem;
-	std::map<char, int> mnemonics;
+	Menu *md;
 	static MenuBar *Menubar;
 	static HHOOK Hook;
 	static LRESULT CALLBACK OnKey( int code, WPARAM wParam, LPARAM lParam );

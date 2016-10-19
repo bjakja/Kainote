@@ -464,10 +464,12 @@ void Notebook::OnSize(wxSizeEvent& event)
 
 void Notebook::OnPaint(wxPaintEvent& event)
 {
+	//wxLogStatus("paint %i", (int)block);
 	if(block){return;}
 	//wxLogStatus("paint iter %i splititer %i", (int)iter, splititer);
 	int w,h;
 	GetClientSize(&w,&h);
+	//wxLogStatus("paint %i %i", w, h);
 	//h-=TabHeight;
 	wxClientDC cdc(this);
 	wxMemoryDC dc;
@@ -601,7 +603,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	}
 
 
-	cdc.Blit(0,h-25,w,h,&dc,0,0);
+	cdc.Blit(0,h-25,w,TabHeight,&dc,0,0);
 	if(split){
 		cdc.SetPen(*wxTRANSPARENT_PEN);
 		cdc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE));
@@ -1014,4 +1016,4 @@ BEGIN_EVENT_TABLE(Notebook,wxWindow)
 	EVT_MOUSE_EVENTS(Notebook::OnMouseEvent)
 	EVT_SIZE(Notebook::OnSize)
 	EVT_PAINT(Notebook::OnPaint)
-	END_EVENT_TABLE()
+END_EVENT_TABLE()

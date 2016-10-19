@@ -110,16 +110,13 @@ void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 	menu->SetAccMenu( SubsFromMKV,_("Wczytaj napisy z pliku MKV"))->Enable(Kai->GetTab()->VideoName.EndsWith(".mkv"));
 
 	if(dummy){
-		/*delete menu;
-		VB->blockpaint=false;
-		return;*/
 		goto done;
 	}
-	//ismenushown = true;	
+		
 	int Modifiers=0;
 	int id=menu->GetPopupMenuSelection(pos, this, &Modifiers);
-	//ismenushown = false;
-	if(id<0){/*delete menu;VB->blockpaint=false;return;*/goto done;}
+	
+	if(id<0){goto done;}
 	
 	if(Modifiers == wxMOD_SHIFT && id>5000){
 		MenuItem *item=menu->FindItem(id);
@@ -134,9 +131,6 @@ void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 			}
 			Hkeys.SaveHkeys();
 		}
-		//delete menu;
-		//VB->blockpaint=false;
-		//return;
 		goto done;
 	}
 	//wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED,id);
@@ -144,7 +138,6 @@ void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 done:
 	delete menu;
 	VB->blockpaint=false;
-	//wxLogMessage("all deleted");
 }
 
 

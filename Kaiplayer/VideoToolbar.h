@@ -2,8 +2,8 @@
 #include <wx/wx.h>
 #include <vector>
 
-const static int toolsSize = 9;
-const static int clipToolsSize = 5;
+const static int toolsSize = 10;
+const static int clipToolsSize = 7;
 
 class itemdata{
 public:
@@ -23,7 +23,9 @@ public:
 
 	int GetToggled();
 	int GetClipToggled(){return clipToggled-Toggled;};
-	void ShowClipTools(){showClipTools=true;}
+	void SetClipToggled(int newtool){ clipToggled = toolsSize + newtool; Refresh(false);};
+	void ShowClipTools(bool show){showClipTools=show; Refresh(false);}
+	bool ClipToolsShown(){return showClipTools;}
 	static void DestroyIcons(){
 		for(auto cur = icons.begin(); cur != icons.end(); cur++){
 			delete (*cur);
@@ -39,6 +41,7 @@ private:
 	int sel;
 	bool clicked;
 	bool showClipTools;
+	bool blockScroll;
 	wxBitmap *bmp;
 	static std::vector< itemdata*> icons;
 };

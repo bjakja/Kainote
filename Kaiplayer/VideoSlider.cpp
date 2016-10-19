@@ -35,11 +35,6 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 	GetClientSize (&w, &h);
 	if(w==0||h==0){return;}
 	wxMemoryDC tdc;
-	/*if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
-		delete bmp;
-		bmp = NULL;
-		}
-	if(!bmp){bmp=new wxBitmap(w,h);}*/
 	tdc.SelectObject(wxBitmap(w,h));
 	tdc.SetFont(wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma"));
  
@@ -117,7 +112,7 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 	}
 
 	if(VB->GetState()!=None){
-		//if(event.Leaving()&&!holding){showlabel=false;Refresh(false);return;}
+		
 		//najazd na uchwyt suwaka
 		if(!onslider && curX>position+4&&curX<position+25){
 			wxImage img=prbh.ConvertToImage();
@@ -219,7 +214,6 @@ void VideoSlider::OnSize(wxSizeEvent& event)
 VolSlider::VolSlider(wxWindow *parent, const long int id, int apos ,const wxPoint& pos,const wxSize& size, long style, const wxString& name)
 	: wxWindow(parent,id,pos, size, style, name)
 {
-	//SetBackgroundColour(wxColor("#808080"));
 	holding=block=false;
 	position=apos+86;
 	wxBitmap prb=CreateBitmapFromPngResource("pbar");
