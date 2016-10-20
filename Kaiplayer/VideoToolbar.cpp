@@ -25,7 +25,7 @@ VideoToolbar::VideoToolbar (wxWindow *parent, const wxPoint &pos)
 		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("cliprect")),_("Wycinki prostok¹tne")));
 		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("clip")),_("Wycinki wektorowe")));
 		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("drawing")),_("Rysunki wektorowe")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("position")),_("Przesuwanie wielu tagów")));
+		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("MOVEAll")),_("Przesuwanie wielu tagów")));
 		//tutaj doklej nowe ikony
 		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VectorDrag")),_("Przesuñ punkty")));
 		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VectorLine")),_("Dodaj liniê")));

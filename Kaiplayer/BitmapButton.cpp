@@ -43,34 +43,18 @@ void BitmapButton::OnLeftDown(wxMouseEvent& event)
 		img=bmp.ConvertToImage();
 		int size=bmp.GetWidth()*bmp.GetHeight()*3;
 		byte *data=img.GetData();
-		//for(int g=0; g<5;g++)
-		//{
 			
-			for(int i=0; i<size; i++)
-			{
-				if(data[i]<226){data[i]+=30;}
-			}
+		for(int i=0; i<size; i++)
+		{
+			if(data[i]<226){data[i]+=30;}
+		}
 		SetBitmap(wxBitmap(img));
-		//Sleep(10);
-		//}
+		
 		return;
 	}
 	if(event.Leaving()&&enter){
-		//SetBitmap(bmp);
-		//wxImage img=bmp.ConvertToImage();
 		enter=false;
-		//int size=bmp.GetWidth()*bmp.GetHeight()*3;
-		//byte *data=img.GetData();
-		//for(int g=0; g<5;g++)
-		//{
-			
-			//for(int i=0; i<size; i++)
-			//{
-				//if(data[i]>19){data[i]-=20;}
-			//}
 		SetBitmap(bmp);
-		//Sleep(30);
-		//}
 		return;
 	}
 			
@@ -81,6 +65,10 @@ void BitmapButton::OnLeftDown(wxMouseEvent& event)
 		
 		SetBitmap(wxBitmap(img));
 		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,idd);this->ProcessEvent(evt);
+	}
+	if(event.GetWheelRotation()!=0){
+
+		wxQueueEvent(GetParent(), event.Clone());
 	}
 }
 	

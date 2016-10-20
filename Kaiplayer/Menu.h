@@ -101,11 +101,12 @@ private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent &event);
 	void OnScroll(wxScrollWinEvent& event);
-	void OnKillFocus(wxFocusEvent &evt);
-	void OnActivate(wxFocusEvent &evt);
+	//void OnKillFocus(wxFocusEvent &evt);
+	//void OnActivate(wxFocusEvent &evt);
 	int ShowPartialModal();
 	void EndPartialModal(int ReturnId);
-	void OnLostCapture(wxMouseCaptureLostEvent &evt);
+	void SendEvent(MenuItem *item, int accel);
+	//void OnLostCapture(wxMouseCaptureLostEvent &evt);
 	void HideMenus();
 	int submenuShown;
 	int submenuToHide;
@@ -117,8 +118,6 @@ protected:
 	Menu *parent;
 	bool subMenuIsShown;
 	static MenuDialog* ParentMenu;
-	static HHOOK Hook;
-	static LRESULT CALLBACK OnMouseClick( int code, WPARAM wParam, LPARAM lParam );
 	virtual WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
 	bool isPartialModal;
 	int accel;
@@ -132,6 +131,7 @@ class Mnemonics{
 public:
 	Mnemonics(){}
 	virtual ~Mnemonics(){}
+	void findMnemonics(const wxString &label, int position);
 	std::map<char, int> mnemonics;
 };
 
@@ -193,7 +193,8 @@ public:
 			delete (*cur);
 		}
 		wxDELETE(bmp);
-		UnhookWindowsHookEx( Hook );
+		UnhookWindowsHookEx( HookKey );
+		UnhookWindowsHookEx( HookMouse );
 		Menubar=NULL;
 	}
 	void Append(Menu *menu, const wxString &title);
@@ -206,6 +207,7 @@ private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent &event);
 	int CalcMousePos(wxPoint *pos);
+	void HideMnemonics();
 	
 	std::vector< Menu* > Menus;
 	wxBitmap *bmp;
@@ -216,8 +218,11 @@ private:
 	int oldelem;
 	Menu *md;
 	static MenuBar *Menubar;
-	static HHOOK Hook;
+	HHOOK HookKey;
 	static LRESULT CALLBACK OnKey( int code, WPARAM wParam, LPARAM lParam );
+	HHOOK HookMouse;
+	static LRESULT CALLBACK OnMouseClick( int code, WPARAM wParam, LPARAM lParam );
+	virtual WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
 	DECLARE_EVENT_TABLE()
 };
 

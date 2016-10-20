@@ -140,6 +140,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	AR=fps=wspx=wspy=0.0f;
 	TD=NULL;
 	blockpaint=false;
+	panel->SetFocusIgnoringChildren();
 }
 VideoCtrl::~VideoCtrl()
 {
@@ -354,6 +355,11 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 
 
 	if (event.GetWheelRotation() != 0 ) {
+		if(!event.ControlDown() || isfullskreen){ 
+			if(isfullskreen){TD->volslider->OnMouseEvent(event);}
+			else{volslider->OnMouseEvent(event);}
+			return;
+		}
 		int step = event.GetWheelRotation() / event.GetWheelDelta();
 
 		int w,h, mw, mh;
@@ -361,19 +367,13 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		GetParent()->GetClientSize(&mw,&mh);
 		int incr=h-(step*20);
 		if(incr>=mh){incr=mh-3;}
-		if((((TabPanel*)GetParent())->edytor && !isfullskreen) && y<h-panelHeight){
+		if( y < h-panelHeight){
 			if(h<=350 && step>0 || h == incr){return;}
 			int ww,hh;
 			CalcSize(&ww,&hh,w,incr,false,true);
 			SetMinSize(wxSize(ww,hh+panelHeight));
 			Options.SetCoords("Video Window Size",ww,hh+panelHeight);
 			Kai->GetTab()->BoxSizer1->Layout();
-		}else{
-			int pos=volslider->GetValue()+(step*3);
-			pos=MID(-86,pos+(step*3),0);
-			SetVolume(-(pos*pos));
-			volslider->SetValue(pos);
-			if(TD){TD->volslider->SetValue(pos);}
 		}
 		return;
 	}
@@ -760,12 +760,14 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 	}
 	id=0;
 	int Modifiers=0;
+	//ismenu=true;
 	if(isfullskreen){
-		id=menu->GetPopupMenuSelection(pos, TD, &Modifiers);
+		id=menu->GetPopupMenuSelection(wxGetMousePosition(), TD, &Modifiers);
+		wxLogStatus("fulscreen menu %i", id);
 	}else{
 		id=menu->GetPopupMenuSelection(pos, this, &Modifiers);
 	}
-
+	//ismenu=false;
 	if((Modifiers == wxMOD_SHIFT) && id<2100 && id>=2000){
 		MenuItem *item=menu->FindItem(id);
 		wxString wins[1]={"Wideo"};
