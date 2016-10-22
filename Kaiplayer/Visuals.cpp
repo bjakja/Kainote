@@ -40,7 +40,7 @@ Visuals *Visuals::Get(int Visual, wxWindow *_parent)
 		visual=new Position();
 		break;
 	}
-	
+
 	visual->tab = (TabPanel*)_parent->GetParent();
 	visual->Visual= Visual;
 	return visual;
@@ -60,12 +60,12 @@ Visuals::Visuals()
 	blockevents=false;
 	dummytext=NULL;
 }
-	
+
 Visuals::~Visuals()
 {
 	SAFE_DELETE(dummytext);
 }
-	
+
 void Visuals::SetVisual(int _start,int _end)
 {
 	int nx=0, ny=0;
@@ -73,11 +73,11 @@ void Visuals::SetVisual(int _start,int _end)
 	SubsSize=wxSize(nx,ny);
 	start=_start;
 	end=_end;
-	
+
 	wspw=((float)SubsSize.x/(float)VideoSize.x);
 	wsph=((float)SubsSize.y/(float)VideoSize.y);
 	tab->Video->VisEdit=true;
-	
+
 	SetCurVisual();
 	if(Visual==VECTORCLIP){
 		SetClip(GetVisual(),true); return;
@@ -108,7 +108,7 @@ void Visuals::DrawArrow(D3DXVECTOR2 from, D3DXVECTOR2 *to, int diff)
 	// długość może przyjmnować wartości ujemne, dlatego dajemy + strzałka nie była odwrotnie
 	D3DXVECTOR2 pend=(*to) + (diffUnits * (12+diff));
 	D3DXVECTOR2 halfbase = D3DXVECTOR2(-diffUnits.y, diffUnits.x) * 5.f;
-	
+
 	VERTEX v4[7];
 	D3DXVECTOR2 v3[3];
 	v3[0]= pend - diffUnits * 12;
@@ -122,7 +122,7 @@ void Visuals::DrawArrow(D3DXVECTOR2 from, D3DXVECTOR2 *to, int diff)
 	CreateVERTEX(&v4[4],v3[1].x,v3[1].y,0xFFFF0000);
 	CreateVERTEX(&v4[5],v3[2].x,v3[2].y,0xFFFF0000);
 	CreateVERTEX(&v4[6],v3[0].x,v3[0].y,0xFFFF0000);
-	
+
 	HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 1, v4, sizeof(VERTEX) ),"primitive failed");
 	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 3, &v4[3], sizeof(VERTEX) ),"primitive failed");
 	*to = pend;
@@ -149,17 +149,17 @@ void Visuals::DrawCross(D3DXVECTOR2 position, D3DCOLOR color, bool useBegin)
 void Visuals::DrawRect(D3DXVECTOR2 pos, bool sel)
 {
 	//line->End();
-    D3DCOLOR fill = (sel)? 0xAAFCE6B1 : 0xAA121150;
+	D3DCOLOR fill = (sel)? 0xAAFCE6B1 : 0xAA121150;
 	VERTEX v9[9];
-	CreateVERTEX(&v9[0], pos.x-5.0f, pos.y-5.0f, fill);
-	CreateVERTEX(&v9[1], pos.x+5.0f, pos.y-5.0f, fill);
-	CreateVERTEX(&v9[2], pos.x-5.0f, pos.y+5.0f, fill);
-	CreateVERTEX(&v9[3], pos.x+5.0f, pos.y+5.0f, fill);
-	CreateVERTEX(&v9[4], pos.x-5.0f, pos.y-5.0f, 0xFFFF0000);
-	CreateVERTEX(&v9[5], pos.x+5.0f, pos.y-5.0f, 0xFFFF0000);
-	CreateVERTEX(&v9[6], pos.x+5.0f, pos.y+5.0f, 0xFFFF0000);
-	CreateVERTEX(&v9[7], pos.x-5.0f, pos.y+5.0f, 0xFFFF0000);
-	CreateVERTEX(&v9[8], pos.x-5.0f, pos.y-5.0f, 0xFFFF0000);
+	CreateVERTEX(&v9[0], pos.x-3.0f, pos.y-3.0f, fill);
+	CreateVERTEX(&v9[1], pos.x+3.0f, pos.y-3.0f, fill);
+	CreateVERTEX(&v9[2], pos.x-3.0f, pos.y+3.0f, fill);
+	CreateVERTEX(&v9[3], pos.x+3.0f, pos.y+3.0f, fill);
+	CreateVERTEX(&v9[4], pos.x-3.0f, pos.y-3.0f, 0xFFFF0000);
+	CreateVERTEX(&v9[5], pos.x+3.0f, pos.y-3.0f, 0xFFFF0000);
+	CreateVERTEX(&v9[6], pos.x+3.0f, pos.y+3.0f, 0xFFFF0000);
+	CreateVERTEX(&v9[7], pos.x-3.0f, pos.y+3.0f, 0xFFFF0000);
+	CreateVERTEX(&v9[8], pos.x-3.0f, pos.y-3.0f, 0xFFFF0000);
 
 	HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX) ),"primitive failed");
 	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 4, &v9[4], sizeof(VERTEX) ),"primitive failed");
@@ -167,26 +167,26 @@ void Visuals::DrawRect(D3DXVECTOR2 pos, bool sel)
 }
 
 
-	
+
 void Visuals::DrawCircle(D3DXVECTOR2 pos, bool sel)
 {
 	//line->End();
 	D3DCOLOR fill = (sel)? 0xAAFCE6B1 : 0xAA121150;
 	VERTEX v5[41];
 	float rad =0.01745329251994329576923690768489f;
-	
+
 	float xx = pos.x;
 	float yy = pos.y;
 	CreateVERTEX(&v5[0], xx, yy, fill);
 	for(int j=0; j<20; j++)
 	{
-		float xx1= pos.x + (6.f * sin ( (j*20) * rad ));
-		float yy1= pos.y + (6.f * cos ( (j*20) * rad ));
+		float xx1= pos.x + (3.f * sin ( (j*20) * rad ));
+		float yy1= pos.y + (3.f * cos ( (j*20) * rad ));
 		CreateVERTEX(&v5[j+1], xx1, yy1, fill);
 		CreateVERTEX(&v5[j+21], xx1, yy1, 0xFFFF0000);
 		xx=xx1;
 		yy=yy1;
-		
+
 	}
 
 	HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLEFAN, 18, v5, sizeof(VERTEX) ),"primitive failed");
@@ -196,7 +196,7 @@ void Visuals::DrawCircle(D3DXVECTOR2 pos, bool sel)
 
 void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen)
 {
-	
+
 	D3DXVECTOR2 actualPoint[2];
 	for(size_t i = 0; i < vectorSize; i++){
 		size_t iPlus1 = (i < (vectorSize-1))? i+1 : 0;
@@ -217,16 +217,16 @@ void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen
 	}
 }
 
-	
+
 void Visuals::Draw(int time)
 {
 	if(!(time>=start && time<=end)){blockevents = true; return;}else if(blockevents){blockevents=false;}
 	wxMutexLocker lock(clipmutex);
 	line->SetAntialias(TRUE);
 	line->SetWidth(2.0);
-	
+
 	DrawVisual(time);
-	
+
 	line->SetAntialias(FALSE);
 	oldtime=time;
 }
@@ -275,6 +275,9 @@ D3DXVECTOR2 Visuals::GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos
 		}
 		result = D3DXVECTOR2(posx,posy);
 		if(res1&&res2){return result;}
+	}else{
+		result.x= (tab->Edit->line->MarginL!=0)? tab->Edit->line->MarginL : wxAtoi(acstyl->MarginL);
+		result.y= (tab->Edit->line->MarginV!=0)? tab->Edit->line->MarginV : wxAtoi(acstyl->MarginV);
 	}
 
 	if(txt!="" && txt[0]=='{'){
@@ -299,7 +302,7 @@ D3DXVECTOR2 Visuals::GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos
 	}
 	else if(tmpan % 3==0){
 		result.x = (Dial->MarginR!=0)? Dial->MarginR : wxAtoi(acstyl->MarginR);
-		result.x = x - result.y;
+		result.x = x - result.x;
 	}
 	if(tmpan < 4){
 		result.y = (Dial->MarginV!=0)? Dial->MarginV : wxAtoi(acstyl->MarginV);
@@ -323,8 +326,8 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	wxString txt = edit->TextEdit->GetValue();
 	MTextEditor *Editor = edit->TextEdit;
 	if(grid->transl && txt==""){ txt = edit->TextEditTl->GetValue(); Editor = edit->TextEditTl;}
-	
-	
+
+
 	Styles *acstyl=grid->GetStyle(0,edit->line->Style);
 	bool foundpos=false;
 	wxRegEx pos("\\\\(pos|move)\\(([^\\)]+)\\)",wxRE_ADVANCED);
@@ -427,8 +430,19 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 
 	return ppos;
 }
+//funkcja zwraca 1 gdy mamy przesunięcie o nawias, 0 w przeciwhnym przypadku
+int ChangeText(wxString *txt, const wxString &what, bool notinbracket, const wxPoint &pos)
+{
+	if(!notinbracket){
+		txt->insert(0,"{"+what+"}");
+		return 1;
+	}
+	if(pos.x<pos.y){txt->erase(txt->begin() + pos.x, txt->begin() + pos.y+1);}
+	txt->insert(pos.x,what);
+	return 0;
+}
 
-void Visuals::SetClip(wxString clip,bool dummy)
+void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 {
 	EditBox *edit = tab->Edit;
 	Grid *grid = tab->Grid1;
@@ -438,58 +452,46 @@ void Visuals::SetClip(wxString clip,bool dummy)
 
 	if(dummy){
 		bool vis=false;
-		if(Visual==VECTORCLIP){
-			if(!dummytext){
-				wxPoint pos;
+		//wxLogStatus("dummytext %i", (int)dummytext);
+		if(!dummytext){
+			if(Visual==VECTORCLIP){
+				//wxPoint pos;
 				wxString tmp="clip(";
 				wxString txt=Editor->GetValue();
 				bool fv=edit->FindVal("(i?clip.)[^\\\\}]*", &tmp,txt);
 				wxString tmp1=(tmp[0]=='c')? "iclip(" : "clip(";
 				wxString tclip= "\\"+tmp+clip+")";
-				if(!edit->InBracket){
-					txt.insert(0,"{"+tclip+"}");
-					edit->Placed.x=tmp.Len()+2, edit->Placed.y=edit->Placed.x+clip.Len();
-				}
-				else{
-					if(edit->Placed.x<edit->Placed.y){txt.erase(txt.begin() + edit->Placed.x, txt.begin() + edit->Placed.y+1);}
-					txt.insert(edit->Placed.x,tclip);
-					edit->Placed.x += tmp.Len()+1;
-					edit->Placed.y = edit->Placed.x+clip.Len();
-				}
-				Dialogue *visdl=edit->line->Copy();
-				visdl->Text="";
-				dummytext= grid->GetVisible(&vis, &pos);
-				dummytext->replace(pos.x,pos.y,txt);
+				edit->Placed.x += tmp.Len()+ 1 + ChangeText(&txt,tclip,edit->InBracket,edit->Placed);
+				edit->Placed.y=edit->Placed.x+clip.Len();
+				dummytext= grid->GetVisible(&vis, &textplaced);
+				if(!vis){SAFE_DELETE(dummytext);return;}
+				dummytext->replace(textplaced.x,textplaced.y,txt);
+				textplaced.y=txt.Len();
 				int nx=0, ny=0;
 				grid->GetASSRes(&nx, &ny);
+				Dialogue *visdl=edit->line->Copy();
+				visdl->Text="";
 				visdl->Text<<"{\\p1\\bord0\\shad0\\fscx100\\fscy100\\1c&H000000&\\1a&H77&\\pos(0,0)\\an7\\"<<tmp1<<clip<<")}m 0 0 l "<<
 					nx<<" 0 "<<nx<<" "<<ny<<" 0 "<<ny;
 				(*dummytext)<<visdl->GetRaw();
-				dumplaced.x=edit->Placed.x + pos.x; dumplaced.y=edit->Placed.y + pos.x;
+				dumplaced.x=edit->Placed.x + textplaced.x; dumplaced.y=edit->Placed.y + textplaced.x;
 				delete visdl;
-
+				Editor->SetTextS(txt,false);
+				//wxLogStatus("dummytext "+ *dummytext);
 			}else{
-
-				if(dumplaced.x<dumplaced.y){dummytext->erase(dummytext->begin()+dumplaced.x, dummytext->begin()+dumplaced.y);}
-				dummytext->insert(dumplaced.x,clip);
-				dumplaced.y=dumplaced.x+clip.Len();
-				int endclip=dummytext->Find(')',true);
-				int startclip=dummytext->Find('(',true);
-				dummytext->replace(startclip+1, endclip-(startclip+1), clip);
-			}
-		}else{
-			if(!dummytext){
 				wxString tmp="";
-				wxPoint pos;
 				bool isf;
 				size_t cliplen = clip.Len();
 				Editor->SetSelection(0,0);
 				isf=edit->FindVal("p([0-9]+)", &tmp);
-				if(!isf){edit->PutinText("\\p1", false);}
 				wxString txt=Editor->GetValue();
+				if(!isf){
+					ChangeText(&txt, "\\p1", edit->InBracket, edit->Placed);
+				}
+				
 				txt.Replace("}{","");
-				dummytext=grid->GetVisible(&vis, &pos);
-
+				dummytext=grid->GetVisible(&vis, &textplaced);
+				if(!vis){SAFE_DELETE(dummytext);return;}
 				edit->FindVal("p([0-9]+)", &tmp);
 				wxString afterP1 = txt.Mid(edit->Placed.y);
 				//wxLogStatus("afterp1 "+ afterP1);
@@ -501,44 +503,42 @@ void Visuals::SetClip(wxString clip,bool dummy)
 				int endClip = startM.find("{");
 				if(endClip == -1 && isf){endClip=startM.Len();clip+="{\\p0}";}
 				else if(endClip == -1){endClip=0;clip+="{\\p0}";}
-				//wxLogStatus("endclip %i", endClip);
 				txt.replace(Mpos + edit->Placed.y, endClip, clip);
-				//wxLogStatus("Text init "+ txt);
-				dummytext->replace(pos.x,pos.y,txt);
-				dumplaced.x=edit->Placed.y + Mpos + pos.x; dumplaced.y= dumplaced.x + cliplen;
-				//wxLogStatus("txt %i %i"+ txt, dumplaced.x, dumplaced.y);
-				Editor->SetTextS(txt,true);
-			}else{
-				if(dumplaced.x<dumplaced.y){dummytext->erase(dummytext->begin()+dumplaced.x, dummytext->begin()+dumplaced.y);}
-				dummytext->insert(dumplaced.x,clip);
-				dumplaced.y=dumplaced.x+clip.Len();
-				//wxLogStatus("txt %i %i"+ *dummytext, dumplaced.x, dumplaced.y);
-			}
+				dummytext->replace(textplaced.x,textplaced.y,txt);
+				textplaced.y=txt.Len();
+				dumplaced.x=edit->Placed.y + Mpos + textplaced.x; dumplaced.y= dumplaced.x + cliplen;
+				Editor->SetTextS(txt,false);
 
+			}
+		}else{
+			//if(dumplaced.x<dumplaced.y){dummytext->erase(dummytext->begin()+dumplaced.x, dummytext->begin()+dumplaced.y);}
+			dummytext->replace(dumplaced.x,dumplaced.y-dumplaced.x,clip);
+			//ChangeText(dummytext,clip,true,dumplaced);
+			//wxLogStatus(*dummytext);
+			int oldy=dumplaced.y;
+			dumplaced.y=dumplaced.x+clip.Len();
+			textplaced.y += (dumplaced.y - oldy);
+			if(Visual==VECTORCLIP){
+				int endclip=dummytext->Find(')',true);
+				int startclip=dummytext->Find('(',true);
+				dummytext->replace(startclip+1, endclip-(startclip+1), clip);
+			}
+			wxString txt = dummytext->Mid(textplaced.x,textplaced.y);
+			Editor->SetTextS(txt,false);//,false,true
+			Editor->Refresh();
 		}
 		tab->Video->VisEdit=false;
+		
 		wxString *dtxt=new wxString(*dummytext);
 		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
 		tab->Video->VisEdit=true;
-		tab->Video->Render();
+		if(redraw){tab->Video->Render();}
 
 	}
 	else{
-		wxString tmp="clip(";
-		Editor->SetSelection(0,0);
-		if(Visual==VECTORCLIP){
-			edit->FindVal("(i?clip.)[^\\\\}]*", &tmp);
-			edit->PutinText("\\"+tmp+clip+")",false);
-		}else{
-			wxString txt=Editor->GetValue();
-			size_t pos=txt.find('}')+1;
-			int pos1=txt.find("{\\p0}");
-			if(pos1>0){txt.erase(txt.begin()+pos,txt.begin()+pos1);}
-			else{clip+="{\\p0}";}
-			txt.insert(pos,clip);
-			Editor->SetTextS(txt,true,true,true);
 
-		}
+		Editor->modified=true;
+		edit->UpdateChars(Editor->GetValue());
 		tab->Video->VisEdit=true;
 		if(edit->splittedTags){edit->TextEditTl->modified=true;}
 		edit->Send(false,false,true);
@@ -555,10 +555,10 @@ void Visuals::SetVisual(wxString visual,bool dummy, int type)
 	bool isOriginal=(grid->transl && edit->TextEdit->GetValue()=="");
 	//Editor
 	MTextEditor *Editor=(isOriginal)? edit->TextEditTl : edit->TextEdit;
-	
+
 	if(dummy){
 		wxString txt=Editor->GetValue();
-		
+
 		if(Visual==MOVE||Visual==CHANGEPOS||Visual==CLIPRECT){Editor->SetSelection(0,0);}
 		wxString tmp;
 		wxString xytype= (type==0)? "x" : "y";
@@ -572,14 +572,15 @@ void Visuals::SetVisual(wxString visual,bool dummy, int type)
 			wxString tagpattern= (Visual==SCALE)? "(fscx).+" : (Visual==ROTATEZ)? "(frz?)[0-9-]+" : (Visual==ROTATEXY)? "(frx).+" : "(fax).+";
 			edit->FindVal(tagpattern, &tmp, txt);
 		}
-		if(!edit->InBracket){
+		/*if(!edit->InBracket){
 			txt.insert(edit->Placed.x,"{"+visual+"}");
 		}
 		else{
 			if(edit->Placed.x<edit->Placed.y){txt.erase(txt.begin() + edit->Placed.x, txt.begin() + edit->Placed.y+1);}
 			txt.insert(edit->Placed.x, visual);
 			Editor->SetSelection(edit->Placed.x, edit->Placed.x, true);
-		}
+		}*/
+		ChangeText(&txt,visual,edit->InBracket,edit->Placed);
 		if(!dummytext){
 			bool vis=false;
 			dummytext= grid->GetVisible(&vis, &dumplaced);
@@ -588,7 +589,7 @@ void Visuals::SetVisual(wxString visual,bool dummy, int type)
 			Editor->SetTextS(txt,false,false);
 			Editor->Refresh(false);
 		}
-		
+
 		dummytext->replace(dumplaced.x,dumplaced.y,txt);
 		dumplaced.y=txt.Len();
 
@@ -597,7 +598,7 @@ void Visuals::SetVisual(wxString visual,bool dummy, int type)
 		tab->Video->VisEdit=true;
 		tab->Video->Render();
 	}else{
-		Editor->Refresh(false);
+		//Editor->Refresh(false);
 		Editor->modified=true;
 		tab->Video->VisEdit=true;
 		if(edit->splittedTags){edit->TextEditTl->modified=true;}

@@ -325,19 +325,19 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 {
 	int x=event.GetX(), y= event.GetY();
 
-
-	if(Vclips){
-		Vclips->OnMouseEvent(event);if(!isarrow){SetCursor(wxCURSOR_ARROW);isarrow=true;}
-		return;
-	}//jak na razie 
-
 	if(event.ButtonDown())
 	{
 		SetFocus();
 		if(ismenu){ismenu=false;}
 	}
 
-	if(event.LeftDClick()){
+	if(Vclips){
+		Vclips->OnMouseEvent(event);if(!isarrow){SetCursor(wxCURSOR_ARROW);isarrow=true;}
+		return;
+	}//jak na razie 
+
+
+	if(event.LeftDClick() && event.GetModifiers()==0){
 		SetFullskreen();
 		if(!isfullskreen && Kai->GetTab()->SubsPath!="" && Options.GetBool("Seek For Visible Lines")){
 			Kai->GetTab()->Edit->Send(false);
@@ -672,7 +672,7 @@ void VideoCtrl::OnVolume(wxScrollEvent& event)
 void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 {
 	ismenu=true;
-	Menu* menu=new Menu();
+	Menu* menu=new Menu(50);
 	wxString txt;
 	if(GetState()!=Playing){txt=_("Odtwórz\t")+Hkeys.GetMenuH(PlayPause);}
 	else if(GetState()==Playing){txt=_("Pauza\t")+Hkeys.GetMenuH(PlayPause);}

@@ -2,6 +2,7 @@
 #include "EditBox.h"
 #include "Spellchecker.h"
 #include "config.h"
+#include "Menu.h"
 #include <wx/regex.h>
 #include <wx/clipbrd.h>
 //#include <wx/graphics.h>
@@ -981,7 +982,7 @@ void MTextEditor::FindWord(int pos, int *start, int *end)
 
 void MTextEditor::ContextMenu(wxPoint mpos, int error)
 {
-	wxMenu menut;
+	Menu menut;
 	wxString err;
 	wxArrayString suggs;
 	if(error>=0){err=errs[error];}
@@ -1011,7 +1012,7 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 	menut.Append(TEXTM_DEL,_("&Usuń"))->Enable(Selend.x!=Cursor.x);
 			
 	int id=-1;
-	id=GetPopupMenuSelectionFromUser(menut,mpos);
+	id=menut.GetPopupMenuSelection(mpos, this);
 			
 	if(id>=30200){
 		int from=errors[error*2];

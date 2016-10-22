@@ -50,7 +50,7 @@ DrawingAndClip::DrawingAndClip()
 	,drawtxt(false)
 	,invClip(false)
 	,drawSelection(false)
-	//,blockToolChange(false)
+	,drawToolLines(false)
 	,grabbed(-1)
 	,tool(0)
 {
@@ -63,6 +63,13 @@ DrawingAndClip::~DrawingAndClip()
 
 void DrawingAndClip::DrawVisual(int time)
 {
+	line->SetWidth(1.0f);
+	if(drawToolLines){
+		D3DXVECTOR2 v3[3] = {Points[0].GetVector(), D3DXVECTOR2(x,y), Points[Points.size()-1].GetVector()};
+		line->Begin();
+		DrawDashedLine(v3, 3);
+		line->End();
+	}
 	if(Visual==VECTORDRAW && tbl[6]>2){D3DXVECTOR2 movePos = CalcMovePos(); _x = movePos.x; _y = movePos.y;}
 	//wxLogStatus("Create line %i %i", Points[0].x, Points[0].y);
 	size_t g=0;
@@ -95,7 +102,7 @@ void DrawingAndClip::DrawVisual(int time)
 
 	}
 
-	if(drawtxt){
+	/*if(drawtxt){
 		wxString coords=""; 
 		wxString format = (Visual==VECTORDRAW)? "6.2f" : "6.0f";
 		coords<<getfloat(acpoint.x + offsetxy.x, format, false)<<", "<<
@@ -112,7 +119,7 @@ void DrawingAndClip::DrawVisual(int time)
 		cpos.right=(x>wsize.x)? x-5 : x+150;
 		cpos.bottom=(y>wsize.y)? y-5 : y+50;
 		DRAWOUTTEXT(font,coords,cpos,align,0xFFFFFFFF)
-	}
+	}*/
 
 	if(drawSelection){
 		D3DXVECTOR2 v5[5] = { D3DXVECTOR2(selection.x, selection.y), D3DXVECTOR2(selection.width, selection.y), D3DXVECTOR2(selection.width, selection.height), D3DXVECTOR2(selection.x, selection.height), D3DXVECTOR2(selection.x, selection.y)};
@@ -198,6 +205,7 @@ void DrawingAndClip::SetCurVisual()
 		}
 	}
 	acpoint=Points[0];
+	wxLogStatus("set cur visual");
 }
 	
 wxString DrawingAndClip::GetVisual()
@@ -424,7 +432,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		tab->Video->vToolbar->SetClipToggled(tool);
 		return;
 	}
-	int x, y;
+	//int x, y;
 	if(tab->Video->isfullskreen){wxGetMousePosition(&x,&y);}
 	else{event.GetPosition(&x,&y);}
 	wxPoint xy=wxPoint(x, y);
@@ -434,29 +442,52 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	bool ctrl=event.ControlDown();
 	
 	//bool click=event.LeftDown();
-	drawtxt=(event.MiddleUp() || drawSelection)?false : true;
+	//drawtxt=(event.MiddleUp() || drawSelection)?false : true;
 	//if(Visual==VECTORDRAW){CalcWH();}
-	if(!event.ButtonDown() && !leftisdown && !ctrl){
+	if(!event.ButtonDown() && !leftisdown){
 		//wxLogStatus(" bdown %i", (int)event.ButtonDown());
 		int pos = CheckPos(xy);
-		if(pos!= -1 && hasArrow){
-			tab->Video->SetCursor(wxCURSOR_SIZING);hasArrow=false;
-		}else if(pos== -1 && !hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
+		if(pos!= -1 && hasArrow && !ctrl){
+			//tab->Video->SetCursor(wxCURSOR_SIZING);
+			//drawtxt=true;
+			//acpoint=Points[pos];
+			hasArrow=false;
+			Points[pos].isSelected=true;
+			lastpos=pos;
+			tab->Video->Render();
+		}else if(pos== -1 && !hasArrow && !ctrl){
+			hasArrow=true;
+			if(lastpos!=-1){
+				Points[lastpos].isSelected=false;
+			//tab->Video->SetCursor(wxCURSOR_ARROW);
+			//drawtxt=false;
+				tab->Video->Render();
+			}
+		}
+		if(tool>=1 && tool<=4 && pos == -1 && !event.Leaving()){
+			drawToolLines=true;
+			tab->Video->Render();
+		}else if(drawToolLines){
+			drawToolLines=false;
+			tab->Video->Render();
+		}
 	}
 	
-	if(event.ButtonUp()){
+	
+
+	if(event.LeftUp()){
 		if(!drawSelection){
 			SetClip(GetVisual(),false);
 		}else{
 			drawSelection=false;
 			tab->Video->Render();
 		}
-	}
-
-	if(event.LeftUp()){
-		
 		if(tab->Video->HasCapture()){
-			tab->Video->ReleaseMouse();}
+			tab->Video->ReleaseMouse();
+		}
+		return;
+	}
+	if(event.ButtonUp()){
 		return;
 	}
 
@@ -490,13 +521,16 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 
 	if(click){
 		//wxLogStatus("tool %i", tool);
+		//drawtxt=true;
 		grabbed=-1;
 		for(size_t i=0; i<Points.size(); i++)
 		{
 			float pointx=(Points[i].x+_x)/wspw, pointy=(Points[i].y+_y)/wsph;
 			if(abs(pointx-x)<5 && abs(pointy-y)<5)
 			{
+				DeselectPoints();
 				lastpoint = acpoint = Points[i];
+				Points[i].isSelected=true;
 				grabbed=i;
 				diffs.x=pointx-x;
 				diffs.y=pointy-y;
@@ -538,6 +572,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 
 	if(leftisdown && grabbed!=-1 && !ctrl)
 	{
+		//drawtxt=true;
 		x=MID(0,x,VideoSize.x);
 		y=MID(0,y,VideoSize.y);
 		Points[grabbed].x=((x+diffs.x)*wspw)-_x;
@@ -571,7 +606,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		}
 		acpoint=Points[grabbed];
 		SetClip(GetVisual(),true);
-
+		lastpos=-1;
 	}
 	if(drawSelection){
 		selection.width = x;
@@ -649,3 +684,9 @@ void DrawingAndClip::SelectPoints(){
 
 }
 
+void DrawingAndClip::DeselectPoints()
+{
+	for( size_t i = 0; i < Points.size(); i++){
+		Points[i].isSelected = false;
+	}
+}

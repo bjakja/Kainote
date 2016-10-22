@@ -30,7 +30,7 @@ public:
     bool OnInit();
 	int OnExit();
 	bool OnSecondInstance(wxString _paths);
-	void OnUnhandledException();
+	//void OnUnhandledException();
 	void OnFatalException();
 	void OnOpen(wxTimerEvent &evt);
 	bool IsBusy();

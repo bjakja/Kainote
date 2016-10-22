@@ -104,7 +104,7 @@ class VideoRend : public wxWindow
 		void MovePos(int cpos);
 		void ChangeVobsub(bool vobsub=false);
 		wxArrayString GetStreams();
-		void SetVisual(int start, int end, bool remove=false);
+		void SetVisual(int start, int end, bool remove=false, bool settext=false);
 		void SetVisual();
 		byte *GetFramewithSubs(bool subs, bool *del);
 		bool UpdateRects(bool bar);

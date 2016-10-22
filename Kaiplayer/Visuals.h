@@ -77,7 +77,7 @@ public:
 	virtual wxString GetVisual(){return "";};
 	D3DXVECTOR2 GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);
 	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
-	void SetClip(wxString clip,bool dummy);
+	void SetClip(wxString clip,bool dummy, bool redraw=true);
 	void SetVisual(wxString visual,bool dummy,int type);
 	D3DXVECTOR2 CalcMovePos();
 	D3DXVECTOR2 to;
@@ -108,6 +108,7 @@ public:
 	bool blockevents;
 	wxString *dummytext;
 	wxPoint dumplaced;
+	wxPoint textplaced;
 };
 
 class PosData{
@@ -259,6 +260,7 @@ public:
 	void Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bspline, int spoints=4, int acpt=0);
 	D3DXVECTOR2 CalcWH();
 	void SelectPoints();
+	void DeselectPoints();
 	void ChangeTool(int _tool){tool = _tool;};
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
@@ -271,8 +273,12 @@ public:
 	bool snapXplus;
 	bool snapYplus;
 	bool drawSelection;
+	bool drawToolLines;
 	int grabbed;
 	int tool;
+	int x;
+	int y;
+	int lastpos;
 	byte alignment;
 	wxPoint diffs;
 	wxRect selection;

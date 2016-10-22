@@ -8,6 +8,7 @@
 #include <map>
 class MenuEvent;
 class Menu;
+class KaiToolbar;
 
 wxDECLARE_EVENT(EVT_MENU_OPENED, MenuEvent);
 
@@ -101,11 +102,13 @@ private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent &event);
 	void OnScroll(wxScrollWinEvent& event);
-	//void OnKillFocus(wxFocusEvent &evt);
+	virtual bool AcceptsFocus() const {return false;};
+	virtual bool AcceptsFocusRecursively() const {return false;};
+	virtual bool AcceptsFocusFromKeyboard() const {return false;};
 	//void OnActivate(wxFocusEvent &evt);
 	int ShowPartialModal();
 	void EndPartialModal(int ReturnId);
-	void SendEvent(MenuItem *item, int accel);
+	bool SendEvent(MenuItem *item, int accel);
 	//void OnLostCapture(wxMouseCaptureLostEvent &evt);
 	void HideMenus();
 	int submenuShown;
@@ -147,6 +150,7 @@ class Menu : public Mnemonics
 			delete (*cur);
 		}
 	};
+	MenuItem *AppendTool(KaiToolbar *ktb, int id, wxString text, wxString help, wxBitmap *bitmap, bool enable=true, Menu *SubMenu=0);
 	MenuItem *Append(int _id,const wxString& _label, const wxString& _help="", bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
 	MenuItem *Append(int _id,const wxString& _label, Menu* Submenu, const wxString& _help="", byte _type = 0, bool _enable = true, wxBitmap *_icon = NULL);
 	MenuItem *Append(MenuItem *item);
@@ -222,7 +226,7 @@ private:
 	static LRESULT CALLBACK OnKey( int code, WPARAM wParam, LPARAM lParam );
 	HHOOK HookMouse;
 	static LRESULT CALLBACK OnMouseClick( int code, WPARAM wParam, LPARAM lParam );
-	virtual WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
+	//virtual WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
 	DECLARE_EVENT_TABLE()
 };
 

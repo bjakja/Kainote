@@ -517,6 +517,22 @@ wxBitmap CreateBitmapFromPngResource(const wxString& t_name)
 	return r_bitmapPtr;
 }
 
+wxBitmap *CreateBitmapPointerFromPngResource(const wxString& t_name)
+{
+	wxBitmap  *r_bitmapPtr = NULL;
+
+	char*       a_data      = 0;
+	DWORD       a_dataSize  = 0;
+
+	if(LoadDataFromResource(a_data, a_dataSize, t_name))
+	{
+		wxMemoryInputStream a_is(a_data, a_dataSize);
+	    r_bitmapPtr = new wxBitmap(wxImage(a_is, wxBITMAP_TYPE_PNG, -1), -1);
+	}
+
+	return r_bitmapPtr;
+}
+
 wxImage CreateImageFromPngResource(const wxString& t_name)
 {
 	wxImage   image;

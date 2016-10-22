@@ -137,6 +137,7 @@ protected:
 	void DrawGrid(wxDC &dc,int w, int h);
 	void OnBcktimer(wxTimerEvent &event);
 	void OnEraseBackground(wxEraseEvent &event){};
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
 	wxTimer timer;
 	//HANDLE qtimer;
 

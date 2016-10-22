@@ -170,7 +170,7 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 		holding = true;
 		CaptureMouse();
 	}
-
+	if(event.GetWheelRotation()!=0){event.Skip();}
 
 
 }

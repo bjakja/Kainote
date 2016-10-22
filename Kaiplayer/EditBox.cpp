@@ -324,7 +324,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 	//ustawia clip/inny visual gdy jest włączony
 	if(Visual>1){
 		pan->Video->SetVisual(line->Start.mstime, line->End.mstime);
-		pan->Video->Render();
+		//pan->Video->Render();
 	}
 	
 	//resetuje edycję na wideo
@@ -1214,7 +1214,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		line->End.mstime=line->Start.mstime + DurEdit->GetTime().mstime;
 		EndEdit->SetTime(line->End);
 	}
-
+	
 	wxString *text=NULL;
 	if(panel->Video->GetState()==Paused){
 		text=grid->GetVisible(&visible);
@@ -1228,6 +1228,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	OnVideo=true;
 	if(visible && panel->Video->IsShown()){
 		panel->Video->OpenSubs(text);
+		if(Visual>0){panel->Video->SetVisual(); return;}
 		if(panel->Video->GetState()==Paused){panel->Video->Render();}
 	}else if(text){delete text;}
 }

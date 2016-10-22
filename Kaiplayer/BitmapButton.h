@@ -21,7 +21,7 @@ private:
 	void OnLeftDown(wxMouseEvent& event);
 	
 
-	DECLARE_EVENT_TABLE()
+	//DECLARE_EVENT_TABLE()
 };
 
 #endif

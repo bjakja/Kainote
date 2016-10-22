@@ -215,21 +215,21 @@ int kainoteApp::OnExit()
     return 0;
 }
 
-void kainoteApp::OnUnhandledException()
-{
-	//wxString recover;
-	//for(size_t i=0;i<Frame->Tabs->Size();i++)
-		//{
-		//recover<<"Sub"<<i<<": "<<Frame->Tabs->Page(i)->SubsPath<<"\r\n"
-			//<<"Vid"<<i<<": "<<Frame->Tabs->Page(i)->VideoPath<<"\r\n";
-		//}
-	//recover<<Options.GetString("Subs Recent")<<Options.GetString("Video Recent");
-	//OpenWrite op;
-	//op.FileWrite(Options.pathfull+"\\recover.txt",Options.pathfull+"\\recover.txt");
-	//Options.SaveOptions();
-
-	wxLogStatus(_T("Ups, Kainote się skraszował w przyszłości będzie można wznowić sesję po tym kraszu"), "Krasz", wxOK | wxICON_ERROR);
-}
+//void kainoteApp::OnUnhandledException()
+//{
+//	//wxString recover;
+//	//for(size_t i=0;i<Frame->Tabs->Size();i++)
+//		//{
+//		//recover<<"Sub"<<i<<": "<<Frame->Tabs->Page(i)->SubsPath<<"\r\n"
+//			//<<"Vid"<<i<<": "<<Frame->Tabs->Page(i)->VideoPath<<"\r\n";
+//		//}
+//	//recover<<Options.GetString("Subs Recent")<<Options.GetString("Video Recent");
+//	//OpenWrite op;
+//	//op.FileWrite(Options.pathfull+"\\recover.txt",Options.pathfull+"\\recover.txt");
+//	//Options.SaveOptions();
+//
+//	wxLogStatus(_T("Ups, Kainote się skraszował w przyszłości będzie można wznowić sesję po tym kraszu"), "Krasz", wxOK | wxICON_ERROR);
+//}
 
 void kainoteApp::OnFatalException()
 {

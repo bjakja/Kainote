@@ -8,6 +8,10 @@ BitmapButton::BitmapButton(wxWindow* parent, wxBitmap bitmap,wxBitmap bitmap1, i
 	enter=false;
 	bmp=bitmap;
 	bmp1=bitmap1;
+	Bind(wxEVT_LEFT_DOWN, &BitmapButton::OnLeftDown, this);
+	Bind(wxEVT_LEFT_UP, &BitmapButton::OnLeftDown, this);
+	Bind(wxEVT_LEAVE_WINDOW, &BitmapButton::OnLeftDown, this);
+	Bind(wxEVT_ENTER_WINDOW, &BitmapButton::OnLeftDown, this);
 }
     
 BitmapButton::~BitmapButton()
@@ -66,13 +70,12 @@ void BitmapButton::OnLeftDown(wxMouseEvent& event)
 		SetBitmap(wxBitmap(img));
 		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,idd);this->ProcessEvent(evt);
 	}
-	if(event.GetWheelRotation()!=0){
-
-		wxQueueEvent(GetParent(), event.Clone());
-	}
+	/*if(event.GetWheelRotation()!=0){
+		event.Skip();
+	}*/
 }
 	
 
-BEGIN_EVENT_TABLE(BitmapButton,wxStaticBitmap)
-	EVT_MOUSE_EVENTS(BitmapButton::OnLeftDown)
-END_EVENT_TABLE()
+//BEGIN_EVENT_TABLE(BitmapButton,wxStaticBitmap)
+//	EVT_MOUSE_EVENTS(BitmapButton::OnLeftDown)
+//END_EVENT_TABLE()

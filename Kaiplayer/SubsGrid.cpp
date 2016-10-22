@@ -1714,16 +1714,15 @@ void SubsGrid::GetUndo(bool redo)
 	Edit->SetIt(erow);
 	Edit->RefreshStyle();
 	VideoCtrl *vb=pan->Video;
-	if(Edit->Visual>0){
-		vb->SetVisual(Edit->line->Start.mstime, Edit->line->End.mstime);
-	}
-	if(vb->IsShown()){vb->OpenSubs(SaveText());}
-	int opt=Options.GetInt("Move Video To Active Line");
-	if(opt>1){
-		if(vb->GetState()==Paused || (vb->GetState()==Playing && (opt==3 || opt==5))){
-			vb->Seek(Edit->line->Start.mstime);}
-	}else{
-		if(vb->GetState()==Paused){vb->Render();}
+	if(Edit->Visual<1){
+		if(vb->IsShown()){vb->OpenSubs(SaveText());}
+		int opt=Options.GetInt("Move Video To Active Line");
+		if(opt>1){
+			if(vb->GetState()==Paused || (vb->GetState()==Playing && (opt==3 || opt==5))){
+				vb->Seek(Edit->line->Start.mstime);}
+		}else{
+			if(vb->GetState()==Paused){vb->Render();}
+		}
 	}
 
 
@@ -1854,14 +1853,18 @@ void SubsGrid::SetModified(bool redit, bool dummy, int SetEditBoxLine)
 		file->SaveUndo();
 		if(!dummy){
 			VideoCtrl *vb=Kai->GetTab()->Video;
-			if(vb->IsShown()){vb->OpenSubs(SaveText());}
-
-			int opt=Options.GetInt("Move Video To Active Line");
-			if(opt>1){
-				if(vb->GetState()==Paused || (vb->GetState()==Playing && (opt==3 || opt==5))){
-					vb->Seek(Edit->line->Start.mstime);}
+			if(Edit->Visual>0){
+				vb->SetVisual(Edit->line->Start.mstime, Edit->line->End.mstime, false, true);
 			}else{
-				if(vb->GetState()==Paused){vb->Render();}
+				if(vb->IsShown()){vb->OpenSubs(SaveText());}
+
+				int opt=Options.GetInt("Move Video To Active Line");
+				if(opt>1){
+					if(vb->GetState()==Paused || (vb->GetState()==Playing && (opt==3 || opt==5))){
+						vb->Seek(Edit->line->Start.mstime);}
+				}else{
+					if(vb->GetState()==Paused){vb->Render();}
+				}
 			}
 		}
 
@@ -2312,10 +2315,9 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, bool trimSels)
 	(*txt)<<GetStyles(false);
 	(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
 
-
+	Edit->Send(false,true);
 	if(_time>=GetDial(Edit->ebrow)->Start.mstime&&_time <= GetDial(Edit->ebrow)->End.mstime)
 	{
-		Edit->Send(false,true);
 		if(visible){*visible=true;}
 	}else if(visible){
 		*visible=false;
@@ -2443,5 +2445,6 @@ BEGIN_EVENT_TABLE(SubsGrid,wxWindow)
 	EVT_KEY_DOWN(SubsGrid::OnKeyPress)
 	EVT_TIMER(ID_AUTIMER,SubsGrid::OnBcktimer)
 	EVT_ERASE_BACKGROUND(SubsGrid::OnEraseBackground)
+	EVT_MOUSE_CAPTURE_LOST(SubsGrid::OnLostCapture)
 END_EVENT_TABLE()
 

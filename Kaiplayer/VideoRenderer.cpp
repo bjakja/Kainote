@@ -804,8 +804,14 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			time*=avtpf;
 		}
 		if(VisEdit){
-			OpenSubs(pan->Grid1->SaveText());
 			SAFE_DELETE(Vclips->dummytext);
+			if(Vclips->Visual==VECTORCLIP && vstate!=Playing){
+				Vclips->SetClip(Vclips->GetVisual(),true, false); //return;
+			}else{
+				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
+			}
+			
+			
 			VisEdit=false;
 		}else if(pan->Edit->OnVideo){
 			if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
@@ -820,8 +826,11 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		if(!starttime){lastframe--;if(VFF->Timecodes[lastframe]>=_time){lastframe--;}}
 		time = VFF->Timecodes[lastframe];
 		if(VisEdit){
-			OpenSubs(pan->Grid1->SaveText());
-			SAFE_DELETE(Vclips->dummytext);
+			if(Vclips->Visual==VECTORCLIP && vstate!=Playing){
+				Vclips->SetClip(Vclips->GetVisual(),true, false);
+			}else{
+				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
+			}
 			VisEdit=false;
 		}else if(pan->Edit->OnVideo){
 			if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
@@ -847,6 +856,7 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 	if(!textsubs) {if (vobsub) {csri_close_renderer(vobsub);}return false;}
 	//const char *buffer= textsubs.mb_str(wxConvUTF8).data();
 	if(VisEdit && Vclips->Visual==VECTORCLIP && Vclips->dummytext){
+		//wxLogStatus("clip background");
 		(*textsubs)<<Vclips->dummytext->Trim().AfterLast('\n');
 	}
 	wxScopedCharBuffer buffer= textsubs->mb_str(wxConvUTF8);
@@ -1193,7 +1203,7 @@ void VideoRend::ChangeVobsub(bool vobsub)
 	pan->Video->ChangeStream();
 }
 
-void VideoRend::SetVisual(int start, int end, bool remove)
+void VideoRend::SetVisual(int start, int end, bool remove, bool settext)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
 
@@ -1204,6 +1214,7 @@ void VideoRend::SetVisual(int start, int end, bool remove)
 		Render();
 	}
 	else{
+
 		int vis=pan->Edit->Visual;
 		if(!Vclips){
 			Vclips = Visuals::Get(vis,this);
@@ -1211,8 +1222,9 @@ void VideoRend::SetVisual(int start, int end, bool remove)
 			bool vectorclip = Vclips->Visual == VECTORCLIP;
 			delete Vclips;
 			Vclips = Visuals::Get(vis,this);
-			if(vectorclip){OpenSubs(pan->Grid1->GetVisible());}
+			if(vectorclip && !settext){OpenSubs(pan->Grid1->GetVisible());}
 		}else{SAFE_DELETE(Vclips->dummytext);}
+		if(settext){OpenSubs(pan->Grid1->GetVisible());}
 		Vclips->SizeChanged(wxSize(rt3.right, rt3.bottom),lines, m_font, d3device);
 
 		Vclips->SetVisual(start, end);
@@ -1226,8 +1238,8 @@ void VideoRend::SetVisual()
 	//TabPanel* pan=(TabPanel*)GetParent();
 	SAFE_DELETE(Vclips->dummytext);
 	Vclips->SetCurVisual();
-	//VisEdit=true;
-	//Render();
+	VisEdit=true;
+	Render();
 }
 
 bool VideoRend::EnumFilters(Menu *menu)

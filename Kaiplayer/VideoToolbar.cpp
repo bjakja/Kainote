@@ -16,24 +16,24 @@ VideoToolbar::VideoToolbar (wxWindow *parent, const wxPoint &pos)
 	,bmp(NULL)
 {
 	if(icons.size()==0){
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("cross")),_("WskaŸnik pozycji")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("position")),_("Przesuwanie tekstu")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("move")),_("Ruch")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("scale")),_("Skalowanie")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("frz")),_("Obrót wokó³ osi Z")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("frxy")),_("Obrót wokó³ osi X / Y")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("cliprect")),_("Wycinki prostok¹tne")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("clip")),_("Wycinki wektorowe")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("drawing")),_("Rysunki wektorowe")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("MOVEAll")),_("Przesuwanie wielu tagów")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("cross"),_("WskaŸnik pozycji")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("position"),_("Przesuwanie tekstu")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("move"),_("Ruch")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("scale"),_("Skalowanie")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("frz"),_("Obrót wokó³ osi Z")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("frxy"),_("Obrót wokó³ osi X / Y")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("cliprect"),_("Wycinki prostok¹tne")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("clip"),_("Wycinki wektorowe")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("drawing"),_("Rysunki wektorowe")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEAll"),_("Przesuwanie wielu tagów")));
 		//tutaj doklej nowe ikony
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VectorDrag")),_("Przesuñ punkty")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VectorLine")),_("Dodaj liniê")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VectorBezier")),_("Dodaj krzyw¹ Beziera")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VECTORBSPLINE")),_("Dodaj krzyw¹ B-sklejan¹")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VECTORBSPLINEPOINT")),_("Dodaj punkt krzywej B-sklejanej")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VectorMove")),_("Dodaj punkt przemieszczenia")));
-		icons.push_back(new itemdata(new wxBitmap(wxBITMAP_PNG("VectorDelete")),_("Usuñ element")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorDrag"),_("Przesuñ punkty")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorLine"),_("Dodaj liniê")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorBezier"),_("Dodaj krzyw¹ Beziera")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("VECTORBSPLINE"),_("Dodaj krzyw¹ B-sklejan¹")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("VECTORBSPLINEPOINT"),_("Dodaj punkt krzywej B-sklejanej")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorMove"),_("Dodaj nowy oddzielny punkt")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorDelete"),_("Usuñ element")));
 	}
 	Connect(wxEVT_PAINT, (wxObjectEventFunction)&VideoToolbar::OnPaint);
 	Connect(wxEVT_LEFT_DOWN, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
@@ -50,7 +50,8 @@ int VideoToolbar::GetToggled()
 
 void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
 {
-	if (evt.GetWheelRotation() != 0 && !blockScroll) {
+	if (evt.GetWheelRotation() != 0) {
+		if(blockScroll || !showClipTools){evt.Skip(); return;}
 		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
 		clipToggled-=step;
 		if(clipToggled < toolsSize){clipToggled=toolsSize+clipToolsSize-1;}
