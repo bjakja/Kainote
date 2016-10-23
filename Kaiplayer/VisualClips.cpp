@@ -63,18 +63,25 @@ DrawingAndClip::~DrawingAndClip()
 
 void DrawingAndClip::DrawVisual(int time)
 {
+	if(drawSelection){
+		D3DXVECTOR2 v5[5] = { D3DXVECTOR2(selection.x, selection.y), D3DXVECTOR2(selection.width, selection.y), D3DXVECTOR2(selection.width, selection.height), D3DXVECTOR2(selection.x, selection.height), D3DXVECTOR2(selection.x, selection.y)};
+		line->Begin();
+		DrawDashedLine(v5, 5);
+		line->End();
+	}
+	size_t size = Points.size();
+	if(!size){return;}
 	line->SetWidth(1.0f);
 	if(drawToolLines){
-		D3DXVECTOR2 v3[3] = {Points[0].GetVector(), D3DXVECTOR2(x,y), Points[Points.size()-1].GetVector()};
+		D3DXVECTOR2 v3[3] = {Points[0].GetVector(), D3DXVECTOR2(x,y), Points[size-1].GetVector()};
 		line->Begin();
-		DrawDashedLine(v3, 3);
+		DrawDashedLine(v3, (size>1)? 3 : 2);
 		line->End();
 	}
 	if(Visual==VECTORDRAW && tbl[6]>2){D3DXVECTOR2 movePos = CalcMovePos(); _x = movePos.x; _y = movePos.y;}
 	//wxLogStatus("Create line %i %i", Points[0].x, Points[0].y);
 	size_t g=0;
 	size_t lastM=0;
-	size_t size = Points.size();
 	bool minusminus=false;
 	while(g < size){
 		if(Points[g].type=="l"){
@@ -91,7 +98,7 @@ void DrawingAndClip::DrawVisual(int time)
 			if(g > 1){
 				line->Begin();
 				D3DXVECTOR2 v2[2]={Points[g-1].GetVector(), Points[lastM].GetVector()};
-				line->Draw(v2, 2, 0xFFFF0000);
+				line->Draw(v2, 2, 0xFFBB0000);
 				line->End();
 				DrawRect(lastM);
 				DrawRect(g-1);
@@ -102,31 +109,7 @@ void DrawingAndClip::DrawVisual(int time)
 
 	}
 
-	/*if(drawtxt){
-		wxString coords=""; 
-		wxString format = (Visual==VECTORDRAW)? "6.2f" : "6.0f";
-		coords<<getfloat(acpoint.x + offsetxy.x, format, false)<<", "<<
-			getfloat(acpoint.y + offsetxy.y, format, false);
-		wxSize wsize=tab->Video->GetClientSize();
-		wsize.x/=2; wsize.y/=2;
-		int x=acpoint.wx(), y=acpoint.wy();
-		DWORD align=0;
-		align |= (x>wsize.x)? DT_RIGHT : 0;
-		align |= (y>wsize.y)? DT_BOTTOM : 0;
-		RECT cpos;
-		cpos.left=(x>wsize.x)? x-150 : x+5;
-		cpos.top=(y>wsize.y)? y-50 : y+5;
-		cpos.right=(x>wsize.x)? x-5 : x+150;
-		cpos.bottom=(y>wsize.y)? y-5 : y+50;
-		DRAWOUTTEXT(font,coords,cpos,align,0xFFFFFFFF)
-	}*/
 
-	if(drawSelection){
-		D3DXVECTOR2 v5[5] = { D3DXVECTOR2(selection.x, selection.y), D3DXVECTOR2(selection.width, selection.y), D3DXVECTOR2(selection.width, selection.height), D3DXVECTOR2(selection.x, selection.height), D3DXVECTOR2(selection.x, selection.y)};
-		line->Begin();
-		DrawDashedLine(v5, 5);
-		line->End();
-	}
 }
 
 	
@@ -195,16 +178,13 @@ void DrawingAndClip::SetCurVisual()
 	
 	}
 	//wxLogStatus(clip);
-	if(Points.empty()){
-		AddMove(wxPoint(((SubsSize.x)/(wspw*scale.x))/2, ((SubsSize.y)/(wsph*scale.y))/2),0);
-	}else if(Visual == VECTORDRAW){
+	if(!Points.empty() && Visual == VECTORDRAW){
 		D3DXVECTOR2 xyoffset = CalcWH();
 		for(size_t i = 0; i<Points.size(); i++){
 			Points[i].x -= xyoffset.x;
 			Points[i].y -= xyoffset.y;
 		}
 	}
-	acpoint=Points[0];
 	wxLogStatus("set cur visual");
 }
 	
@@ -302,7 +282,7 @@ void DrawingAndClip::DrawLine(int i)
 	line->Begin();
 	int diff = (Points[i-1].type=="s")? 2 : 1;
 	D3DXVECTOR2 v2[2]={Points[i-diff].GetVector(),Points[i].GetVector()};
-	line->Draw(v2, 2, 0xFFFF0000);
+	line->Draw(v2, 2, 0xFFBB0000);
 	line->End();
 	if(i>1){DrawRect(i-1);}
 	
@@ -310,12 +290,12 @@ void DrawingAndClip::DrawLine(int i)
 
 void DrawingAndClip::DrawRect(int coord)
 {
-	Visuals::DrawRect(Points[coord].GetVector(), Points[coord].isSelected);
+	Visuals::DrawRect(Points[coord].GetVector(), Points[coord].isSelected, 3.0f);
 }
 	
 void DrawingAndClip::DrawCircle(int coord)
 {
-	Visuals::DrawCircle(Points[coord].GetVector(), Points[coord].isSelected);
+	Visuals::DrawCircle(Points[coord].GetVector(), Points[coord].isSelected, 3.0f);
 }
 	
 int DrawingAndClip::DrawCurve(int i, bool bspline)
@@ -351,7 +331,7 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 		int iplus1= (i+bssize < (int)Points.size()-1)? i+bssize+1 : 0;
 		if(i-1 != 0 || iplus1 != 0){
 			D3DXVECTOR2 v3[3]={Points[i-1].GetVector(), v4[0], Points[iplus1].GetVector()};
-			line->Draw(v3, 3, 0xFFFF0000);
+			line->Draw(v3, 3, 0xFFBB0000);
 		}
 		delete[] v2;
 	}else{
@@ -361,7 +341,7 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 		line->Draw(v2, 2, 0xFF0000FF);
 		line->Draw(&v2[2], 2, 0xFF0000FF);
 	}
-	line->Draw(&v4[0], v4.size(), 0xFFFF0000);
+	line->Draw(&v4[0], v4.size(), 0xFFBB0000);
 	line->End();
 	if(i>1){DrawRect(i-1);}
 	for(int j=1; j<pts; j++){DrawCircle(i+j-1);}
@@ -432,7 +412,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		tab->Video->vToolbar->SetClipToggled(tool);
 		return;
 	}
-	//int x, y;
+	if(blockevents){return;}
 	if(tab->Video->isfullskreen){wxGetMousePosition(&x,&y);}
 	else{event.GetPosition(&x,&y);}
 	wxPoint xy=wxPoint(x, y);
@@ -477,7 +457,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 
 	if(event.LeftUp()){
 		if(!drawSelection){
-			SetClip(GetVisual(),false);
+			if(Points.size()>0){SetClip(GetVisual(),false);}
 		}else{
 			drawSelection=false;
 			tab->Video->Render();
@@ -492,6 +472,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	}
 
 	if(event.MiddleDown() || (tool==6 && click)){
+		if(Points.size()<1){return;}
 		for(size_t i=1; i<Points.size(); i++)
 		{
 			float pointx=(Points[i].x+_x)/wspw, pointy=(Points[i].y+_y)/wsph;
@@ -543,12 +524,18 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		if(tool>=1 && tool<=4 && (grabbed==-1 || ctrl))
 		{
 			//wxLogStatus("point");
-			if(Points.empty()){wxBell(); return;}
+			if(Points.empty()){AddMove(xy,0); SetClip(GetVisual(),true); return;}
+			int pos = CheckPos(xy, true);
+			int size = Points.size();
 			switch(tool){
-				case 1: AddLine(xy,CheckPos(xy, true)); break;
-				case 2: AddCurve(xy,CheckPos(xy, true)); break;
-				case 3: AddCurve(xy,CheckPos(xy, true),"s"); break;//bspline
-				case 4: AddCurvePoint(xy,CheckPos(xy, true)); break;//bspline point
+				case 1: AddLine(xy, pos); break;
+				case 2: AddCurve(xy, pos); break;
+				case 3: 
+					if(Points[(pos == size )? size - 1 : pos].type=="s"){
+						AddCurvePoint(xy,pos); break;//bspline point
+					}
+					AddCurve(xy,pos,"s"); break;//bspline
+				case 4: AddCurvePoint(xy,pos); break;//bspline point
 			}
 			SetClip(GetVisual(),true);
 			return;

@@ -672,7 +672,7 @@ void VideoCtrl::OnVolume(wxScrollEvent& event)
 void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 {
 	ismenu=true;
-	Menu* menu=new Menu(50);
+	Menu* menu=new Menu();
 	wxString txt;
 	if(GetState()!=Playing){txt=_("Odtwórz\t")+Hkeys.GetMenuH(PlayPause);}
 	else if(GetState()==Playing){txt=_("Pauza\t")+Hkeys.GetMenuH(PlayPause);}
@@ -762,10 +762,10 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 	int Modifiers=0;
 	//ismenu=true;
 	if(isfullskreen){
-		id=menu->GetPopupMenuSelection(wxGetMousePosition(), TD, &Modifiers);
-		wxLogStatus("fulscreen menu %i", id);
+		id=menu->GetPopupMenuSelection(wxGetMousePosition(), TD, &Modifiers, true, 50);
+		//wxLogStatus("fulscreen menu %i", id);
 	}else{
-		id=menu->GetPopupMenuSelection(pos, this, &Modifiers);
+		id=menu->GetPopupMenuSelection(pos, this, &Modifiers, true, 50);
 	}
 	//ismenu=false;
 	if((Modifiers == wxMOD_SHIFT) && id<2100 && id>=2000){

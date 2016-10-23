@@ -8,6 +8,7 @@
 #include "SubsDialogue.h"
 #include "MyTextEditor.h"
 #include "NumCtrl.h"
+#include "ListControls.h"
 #include "AudioBox.h"
 #include <d3dx9math.h>
 
@@ -108,7 +109,7 @@ public:
 	wxButton* Bcpsel;
 	wxButton* Bhide;
 	wxToggleButton* AutoMoveTags;
-	wxChoice* Ban;
+	KaiChoice* Ban;
 
 
 	void PutinText(wxString text, bool focus=true, bool onlysel=false, wxString *texttoPutin=0);

@@ -55,16 +55,16 @@ void ClipRect::DrawVisual(int time)
 	}
 
 	line->Begin();
-	line->Draw(v2,5,0xFFFF0000);
+	line->Draw(v2,5,0xFFBB0000);
 	line->End();
 	/*line->Begin();
-	line->Draw(&v2[2],2,0xFFFF0000);
+	line->Draw(&v2[2],2,0xFFBB0000);
 	line->End();
 	line->Begin();
-	line->Draw(&v2[4],2,0xFFFF0000);
+	line->Draw(&v2[4],2,0xFFBB0000);
 	line->End();
 	line->Begin();
-	line->Draw(&v2[6],2,0xFFFF0000);
+	line->Draw(&v2[6],2,0xFFBB0000);
 	line->End();*/
 }
 

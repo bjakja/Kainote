@@ -70,12 +70,5 @@ void BitmapButton::OnLeftDown(wxMouseEvent& event)
 		SetBitmap(wxBitmap(img));
 		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,idd);this->ProcessEvent(evt);
 	}
-	/*if(event.GetWheelRotation()!=0){
-		event.Skip();
-	}*/
 }
 	
-
-//BEGIN_EVENT_TABLE(BitmapButton,wxStaticBitmap)
-//	EVT_MOUSE_EVENTS(BitmapButton::OnLeftDown)
-//END_EVENT_TABLE()

@@ -79,9 +79,9 @@ void Visuals::SetVisual(int _start,int _end)
 	tab->Video->VisEdit=true;
 
 	SetCurVisual();
-	if(Visual==VECTORCLIP){
+	/*if(Visual==VECTORCLIP){
 		SetClip(GetVisual(),true); return;
-	}
+	}*/
 	tab->Video->Render();
 }
 
@@ -118,10 +118,10 @@ void Visuals::DrawArrow(D3DXVECTOR2 from, D3DXVECTOR2 *to, int diff)
 	CreateVERTEX(&v4[0],v3[0].x,v3[0].y,0xAA121150);
 	CreateVERTEX(&v4[1],v3[1].x,v3[1].y,0xAA121150);
 	CreateVERTEX(&v4[2],v3[2].x,v3[2].y,0xAA121150);
-	CreateVERTEX(&v4[3],v3[0].x,v3[0].y,0xFFFF0000);
-	CreateVERTEX(&v4[4],v3[1].x,v3[1].y,0xFFFF0000);
-	CreateVERTEX(&v4[5],v3[2].x,v3[2].y,0xFFFF0000);
-	CreateVERTEX(&v4[6],v3[0].x,v3[0].y,0xFFFF0000);
+	CreateVERTEX(&v4[3],v3[0].x,v3[0].y,0xFFBB0000);
+	CreateVERTEX(&v4[4],v3[1].x,v3[1].y,0xFFBB0000);
+	CreateVERTEX(&v4[5],v3[2].x,v3[2].y,0xFFBB0000);
+	CreateVERTEX(&v4[6],v3[0].x,v3[0].y,0xFFBB0000);
 
 	HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 1, v4, sizeof(VERTEX) ),"primitive failed");
 	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 3, &v4[3], sizeof(VERTEX) ),"primitive failed");
@@ -146,20 +146,20 @@ void Visuals::DrawCross(D3DXVECTOR2 position, D3DCOLOR color, bool useBegin)
 
 }
 
-void Visuals::DrawRect(D3DXVECTOR2 pos, bool sel)
+void Visuals::DrawRect(D3DXVECTOR2 pos, bool sel, float rcsize)
 {
 	//line->End();
 	D3DCOLOR fill = (sel)? 0xAAFCE6B1 : 0xAA121150;
 	VERTEX v9[9];
-	CreateVERTEX(&v9[0], pos.x-3.0f, pos.y-3.0f, fill);
-	CreateVERTEX(&v9[1], pos.x+3.0f, pos.y-3.0f, fill);
-	CreateVERTEX(&v9[2], pos.x-3.0f, pos.y+3.0f, fill);
-	CreateVERTEX(&v9[3], pos.x+3.0f, pos.y+3.0f, fill);
-	CreateVERTEX(&v9[4], pos.x-3.0f, pos.y-3.0f, 0xFFFF0000);
-	CreateVERTEX(&v9[5], pos.x+3.0f, pos.y-3.0f, 0xFFFF0000);
-	CreateVERTEX(&v9[6], pos.x+3.0f, pos.y+3.0f, 0xFFFF0000);
-	CreateVERTEX(&v9[7], pos.x-3.0f, pos.y+3.0f, 0xFFFF0000);
-	CreateVERTEX(&v9[8], pos.x-3.0f, pos.y-3.0f, 0xFFFF0000);
+	CreateVERTEX(&v9[0], pos.x-rcsize, pos.y-rcsize, fill);
+	CreateVERTEX(&v9[1], pos.x+rcsize, pos.y-rcsize, fill);
+	CreateVERTEX(&v9[2], pos.x-rcsize, pos.y+rcsize, fill);
+	CreateVERTEX(&v9[3], pos.x+rcsize, pos.y+rcsize, fill);
+	CreateVERTEX(&v9[4], pos.x-rcsize, pos.y-rcsize, 0xFFBB0000);
+	CreateVERTEX(&v9[5], pos.x+rcsize, pos.y-rcsize, 0xFFBB0000);
+	CreateVERTEX(&v9[6], pos.x+rcsize, pos.y+rcsize, 0xFFBB0000);
+	CreateVERTEX(&v9[7], pos.x-rcsize, pos.y+rcsize, 0xFFBB0000);
+	CreateVERTEX(&v9[8], pos.x-rcsize, pos.y-rcsize, 0xFFBB0000);
 
 	HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX) ),"primitive failed");
 	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 4, &v9[4], sizeof(VERTEX) ),"primitive failed");
@@ -168,7 +168,7 @@ void Visuals::DrawRect(D3DXVECTOR2 pos, bool sel)
 
 
 
-void Visuals::DrawCircle(D3DXVECTOR2 pos, bool sel)
+void Visuals::DrawCircle(D3DXVECTOR2 pos, bool sel, float crsize)
 {
 	//line->End();
 	D3DCOLOR fill = (sel)? 0xAAFCE6B1 : 0xAA121150;
@@ -180,10 +180,10 @@ void Visuals::DrawCircle(D3DXVECTOR2 pos, bool sel)
 	CreateVERTEX(&v5[0], xx, yy, fill);
 	for(int j=0; j<20; j++)
 	{
-		float xx1= pos.x + (3.f * sin ( (j*20) * rad ));
-		float yy1= pos.y + (3.f * cos ( (j*20) * rad ));
+		float xx1= pos.x + (crsize * sin ( (j*20) * rad ));
+		float yy1= pos.y + (crsize * cos ( (j*20) * rad ));
 		CreateVERTEX(&v5[j+1], xx1, yy1, fill);
-		CreateVERTEX(&v5[j+21], xx1, yy1, 0xFFFF0000);
+		CreateVERTEX(&v5[j+21], xx1, yy1, 0xFFBB0000);
 		xx=xx1;
 		yy=yy1;
 
@@ -210,7 +210,7 @@ void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen
 		for(float j = 0; j <= 1; j += singleMovement){
 			actualPoint[1] -= diffUnits * dashLen;
 			if(j+singleMovement>=1){actualPoint[1] = vector[iPlus1];}
-			line->Draw(actualPoint,2,0xFFFF0000);
+			line->Draw(actualPoint,2,0xFFBB0000);
 			actualPoint[1] -= diffUnits * dashLen;
 			actualPoint[0] -= (diffUnits * dashLen)*2;
 		}
@@ -444,6 +444,13 @@ int ChangeText(wxString *txt, const wxString &what, bool notinbracket, const wxP
 
 void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 {
+	if(clip==""){
+		tab->Video->VisEdit=false;
+		if(!tab->Video->OpenSubs(tab->Grid1->GetVisible())){wxLogStatus(_("Nie można otworzyć napisów"));}
+		tab->Video->VisEdit=true;
+		if(redraw){tab->Video->Render();}
+		return;
+	}
 	EditBox *edit = tab->Edit;
 	Grid *grid = tab->Grid1;
 	bool isOriginal=(grid->transl && edit->TextEdit->GetValue()=="");
@@ -527,8 +534,8 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 			Editor->SetTextS(txt,false);//,false,true
 			Editor->Refresh();
 		}
-		tab->Video->VisEdit=false;
 		
+		tab->Video->VisEdit=false;
 		wxString *dtxt=new wxString(*dummytext);
 		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
 		tab->Video->VisEdit=true;

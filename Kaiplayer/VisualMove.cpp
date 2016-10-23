@@ -33,8 +33,8 @@ void Move::DrawVisual(int time)
 	}
 
 	line->Begin();
-	line->Draw(v4,2,0xFFFF0000);
-	DrawCross(dist, 0xFFFF0000, false);
+	line->Draw(v4,2,0xFFBB0000);
+	DrawCross(dist, 0xFFBB0000, false);
 	line->End();
 
 	DrawRect(from);

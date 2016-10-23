@@ -61,8 +61,8 @@ void RotationZ::DrawVisual(int time)
 		line->End();
 		line->SetWidth(2.f);
 		line->Begin();
-		line->Draw(&v2[2],2,0xFFFF0000);
-		line->Draw(&v2[4],2,0xFFFF0000);
+		line->Draw(&v2[2],2,0xFFBB0000);
+		line->Draw(&v2[4],2,0xFFBB0000);
 		line->End();
 	}
 	v2[0]=org;
@@ -82,13 +82,13 @@ void RotationZ::DrawVisual(int time)
 	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 180, &v5[545], sizeof(VERTEX) ),"primitive failed");
 	line->SetWidth(2.f);
 	line->Begin();
-	line->Draw(&v2[2],2,0xFFFF0000);
+	line->Draw(&v2[2],2,0xFFBB0000);
 	line->End();
 	line->Begin();
-	line->Draw(&v2[4],2,0xFFFF0000);
+	line->Draw(&v2[4],2,0xFFBB0000);
 	line->End();
 	line->Begin();
-	line->Draw(&v2[0],2,0xFFFF0000);
+	line->Draw(&v2[0],2,0xFFBB0000);
 	line->End();
 
 	

@@ -805,11 +805,11 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		}
 		if(VisEdit){
 			SAFE_DELETE(Vclips->dummytext);
-			if(Vclips->Visual==VECTORCLIP && vstate!=Playing){
-				Vclips->SetClip(Vclips->GetVisual(),true, false); //return;
-			}else{
+			//if(Vclips->Visual==VECTORCLIP && vstate!=Playing){
+			//	Vclips->SetClip(Vclips->GetVisual(),true, false); //return;
+			//}else{
 				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
-			}
+			//}
 			
 			
 			VisEdit=false;
@@ -826,11 +826,11 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		if(!starttime){lastframe--;if(VFF->Timecodes[lastframe]>=_time){lastframe--;}}
 		time = VFF->Timecodes[lastframe];
 		if(VisEdit){
-			if(Vclips->Visual==VECTORCLIP && vstate!=Playing){
+			/*if(Vclips->Visual==VECTORCLIP && vstate!=Playing){
 				Vclips->SetClip(Vclips->GetVisual(),true, false);
-			}else{
+			}else{*/
 				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
-			}
+			//}
 			VisEdit=false;
 		}else if(pan->Edit->OnVideo){
 			if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){

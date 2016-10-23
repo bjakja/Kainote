@@ -1723,6 +1723,12 @@ void SubsGrid::GetUndo(bool redo)
 		}else{
 			if(vb->GetState()==Paused){vb->Render();}
 		}
+	}else{
+		if(Edit->Visual==VECTORCLIP){
+			SAFE_DELETE(vb->Vclips->dummytext);
+			vb->Vclips->SetCurVisual();
+			vb->Vclips->SetClip(vb->Vclips->GetVisual(),true);
+		}
 	}
 
 

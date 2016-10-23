@@ -94,29 +94,29 @@ void RotationXY::DrawVisual(int time)
 	device->DrawPrimitiveUP(D3DPT_LINELIST, 44, vertices, sizeof(VERTEX));
 	float addy=(AN<4)?9.f : -9.f, addx= (AN % 3 == 0)?-9.f : 9.f;
 	float add1y=(AN<4)?10.f : -10.f, add1x= (AN % 3 == 0)?-10.f : 10.f;
-	CreateVERTEX(&vertices[176],0.f,addy,0xFFFF0000);//linia y
-	CreateVERTEX(&vertices[177],0.f,0.f,0xFFFF0000);
-	CreateVERTEX(&vertices[178],addx,0.f,0xFFFF0000); //linia x
-	CreateVERTEX(&vertices[179],0.f,0.f,0xFFFF0000); //linia z
-	CreateVERTEX(&vertices[180],0.f,0.f,0xFFFF0000,9.f);
-	CreateVERTEX(&vertices[181],0.f,add1y,0xFFFF0000); //strza³ka y
-	CreateVERTEX(&vertices[182],0.f,addy,0xFFFF0000,-0.6f);
-	CreateVERTEX(&vertices[183],-0.6f,addy,0xFFFF0000);
-	CreateVERTEX(&vertices[184],0.f,addy,0xFFFF0000, 0.6f);
-	CreateVERTEX(&vertices[185],0.6f,addy,0xFFFF0000);
-	CreateVERTEX(&vertices[186],0.f,addy,0xFFFF0000, -0.6f);
-	CreateVERTEX(&vertices[187],add1x,0.f,0xFFFF0000);//strza³ka x
-	CreateVERTEX(&vertices[188],addx,0.f,0xFFFF0000, -0.6f);
-	CreateVERTEX(&vertices[189],addx,-0.6f,0xFFFF0000);
-	CreateVERTEX(&vertices[190],addx,0.f,0xFFFF0000, 0.6f);
-	CreateVERTEX(&vertices[191],addx,0.6f,0xFFFF0000, 0.f);
-	CreateVERTEX(&vertices[192],addx,0.f,0xFFFF0000, -0.6f);
-	CreateVERTEX(&vertices[193],0.f,0.f,0xFFFF0000,10.f); //strza³ka z
-	CreateVERTEX(&vertices[194],-0.6f,0.f,0xFFFF0000,9.f);
-	CreateVERTEX(&vertices[195],0.f,0.6f,0xFFFF0000,9.f);
-	CreateVERTEX(&vertices[196],0.6f,0.f,0xFFFF0000,9.f);
-	CreateVERTEX(&vertices[197],0.f,-0.6f,0xFFFF0000,9.f);
-	CreateVERTEX(&vertices[198],-0.6f,0.f,0xFFFF0000,9.f);
+	CreateVERTEX(&vertices[176],0.f,addy,0xFFBB0000);//linia y
+	CreateVERTEX(&vertices[177],0.f,0.f,0xFFBB0000);
+	CreateVERTEX(&vertices[178],addx,0.f,0xFFBB0000); //linia x
+	CreateVERTEX(&vertices[179],0.f,0.f,0xFFBB0000); //linia z
+	CreateVERTEX(&vertices[180],0.f,0.f,0xFFBB0000,9.f);
+	CreateVERTEX(&vertices[181],0.f,add1y,0xFFBB0000); //strza³ka y
+	CreateVERTEX(&vertices[182],0.f,addy,0xFFBB0000,-0.6f);
+	CreateVERTEX(&vertices[183],-0.6f,addy,0xFFBB0000);
+	CreateVERTEX(&vertices[184],0.f,addy,0xFFBB0000, 0.6f);
+	CreateVERTEX(&vertices[185],0.6f,addy,0xFFBB0000);
+	CreateVERTEX(&vertices[186],0.f,addy,0xFFBB0000, -0.6f);
+	CreateVERTEX(&vertices[187],add1x,0.f,0xFFBB0000);//strza³ka x
+	CreateVERTEX(&vertices[188],addx,0.f,0xFFBB0000, -0.6f);
+	CreateVERTEX(&vertices[189],addx,-0.6f,0xFFBB0000);
+	CreateVERTEX(&vertices[190],addx,0.f,0xFFBB0000, 0.6f);
+	CreateVERTEX(&vertices[191],addx,0.6f,0xFFBB0000, 0.f);
+	CreateVERTEX(&vertices[192],addx,0.f,0xFFBB0000, -0.6f);
+	CreateVERTEX(&vertices[193],0.f,0.f,0xFFBB0000,10.f); //strza³ka z
+	CreateVERTEX(&vertices[194],-0.6f,0.f,0xFFBB0000,9.f);
+	CreateVERTEX(&vertices[195],0.f,0.6f,0xFFBB0000,9.f);
+	CreateVERTEX(&vertices[196],0.6f,0.f,0xFFBB0000,9.f);
+	CreateVERTEX(&vertices[197],0.f,-0.6f,0xFFBB0000,9.f);
+	CreateVERTEX(&vertices[198],-0.6f,0.f,0xFFBB0000,9.f);
 	device->DrawPrimitiveUP(D3DPT_LINESTRIP, 2, &vertices[176], sizeof(VERTEX));
 	device->DrawPrimitiveUP(D3DPT_LINELIST, 1, &vertices[179], sizeof(VERTEX));
 	device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &vertices[181], sizeof(VERTEX));
@@ -141,10 +141,10 @@ void RotationXY::DrawVisual(int time)
 	v2[3].x=org.x;
 	v2[3].y=org.y+10.0f;
 	line->Begin();
-	line->Draw(&v2[0],2,0xFFFF0000);
+	line->Draw(&v2[0],2,0xFFBB0000);
 	line->End();
 	line->Begin();
-	line->Draw(&v2[2],2,0xFFFF0000);
+	line->Draw(&v2[2],2,0xFFBB0000);
 	line->End();
 }
 

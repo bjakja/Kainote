@@ -60,22 +60,21 @@ void MenuItem::SetAccel(wxAcceleratorEntry *entry)
 	//if(MenuBar::Menubar){MenuBar::Menubar->SetAccelerators();}
 }
 
-Menu::Menu(int _maxVisible)
+Menu::Menu()
 	:Mnemonics()
 	,dialog(NULL)
 	,parentMenu(NULL)
 {
-	maxVisible = _maxVisible;
 }
 
 
-int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels, bool clientPos)
+int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels, bool clientPos, int _maxVisible)
 {
 	wxPoint npos= pos;
 	wxSize size;
+	maxVisible = _maxVisible;
 	CalcPosAndSize(parent, &npos, &size, clientPos);
-	//wxLogStatus("Pos & size %i, %i %i %i %i %i", npos.x, npos.y, size.x, size.y, pos.x, pos.y);
-	//if(dialog){dialog->Destroy();}
+	
 	dialog = new MenuDialog(this, parent, npos, size, false);
 	int ret = dialog->ShowPartialModal();
 	if(accels){*accels = dialog->accel;}
@@ -84,11 +83,11 @@ int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accel
 	return ret;
 }
 
-void Menu::PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos)
+void Menu::PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos, int _maxVisible)
 {
 	wxPoint npos= pos;
 	wxSize size;
-
+	maxVisible = _maxVisible;
 	CalcPosAndSize(parent, &npos, &size, clientPos);
 	//wxLogStatus("Mn size %i", mnemonics.size());
 	
@@ -99,7 +98,6 @@ void Menu::PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos)
 	//if((size_t)maxVisible < items.size()){dialog->SetFocus();}
 	//dialog->Refresh(false);
 	dialog->Show();
-	
 }
 
 void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool clientPos)

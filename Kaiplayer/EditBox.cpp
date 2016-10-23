@@ -148,7 +148,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	Bund->SetBitmap(wxBITMAP_PNG ("UNDER"));
 	Bstrike = new wxButton(this, ID_STRIKE, "", wxDefaultPosition, wxSize(26,26));
 	Bstrike->SetBitmap(wxBITMAP_PNG ("STRIKE"));
-	Ban = new wxChoice(this, ID_AN, wxDefaultPosition, wxSize(48,24),ans, wxNO_FULL_REPAINT_ON_RESIZE);
+	Ban = new KaiChoice(this, ID_AN, wxDefaultPosition, wxSize(48,24),ans);
 	Ban->Select(1);
 
 	BoxSizer4 = new wxBoxSizer(wxHORIZONTAL);
@@ -1241,10 +1241,10 @@ void EditBox::OnColorChange(wxCommandEvent& event)
 		FindVal(num+tag, &iskol);
 
 		PutinText("\\"+num+"c"+event.GetString()+"&", false);
-		if(event.GetInt()){
-			FindVal(num+"a&(.*)", &iskol);
-			PutinText("\\"+num+wxString::Format("a&H%02X&",event.GetInt()), false);
-		}
+		//if(event.GetInt()){
+		FindVal(num+"a&(.*)", &iskol);
+		PutinText("\\"+num+wxString::Format("a&H%02X&",event.GetInt()), false);
+		//}
 	}
 	else{PutinNonass("C:"+event.GetString().Mid(2),"C:([^}]*)");}
 	OnEdit(event);

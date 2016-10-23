@@ -128,8 +128,8 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 				tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT)));
 				tdc.DrawRoundedRectangle(posX, 1, h-2, h-2, 2.0);
 			}else if(i==Toggled || i==clipToggled){
-				tdc.SetBrush(wxBrush(wxSystemSettings::GetColour(clicked? wxSYS_COLOUR_BTNFACE : wxSYS_COLOUR_HIGHLIGHT)));
-				tdc.SetPen(wxPen(wxSystemSettings::GetColour(clicked? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_HIGHLIGHT)));
+				tdc.SetBrush(wxBrush(wxSystemSettings::GetColour((clicked && i==sel)? wxSYS_COLOUR_BTNFACE : wxSYS_COLOUR_HIGHLIGHT)));
+				tdc.SetPen(wxPen(wxSystemSettings::GetColour((clicked && i==sel)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_HIGHLIGHT)));
 				tdc.DrawRoundedRectangle(posX, 1, h-2, h-2, 2.0);
 			}
 			

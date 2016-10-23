@@ -143,12 +143,10 @@ class Menu : public Mnemonics
 	friend class MenuDialog;
 	friend class MenuBar;
 	public:
-	Menu(int maxVisible=30);
+	Menu();
 	//Menu(const wxString& title);
 	virtual ~Menu(){
-		for(auto cur = items.begin(); cur!= items.end(); cur++){
-			delete (*cur);
-		}
+		Clear();
 	};
 	MenuItem *AppendTool(KaiToolbar *ktb, int id, wxString text, wxString help, wxBitmap *bitmap, bool enable=true, Menu *SubMenu=0);
 	MenuItem *Append(int _id,const wxString& _label, const wxString& _help="", bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
@@ -161,6 +159,12 @@ class Menu : public Mnemonics
 	MenuItem *SetAccMenu(int id, const wxString &txt, const wxString &help="", bool enable=true, int kind=0);
 	MenuItem *SetAccMenu(MenuItem *menuitem, const wxString &name);
 	void Delete(int position);
+	void Clear(){
+		for(auto cur = items.begin(); cur!= items.end(); cur++){
+			delete (*cur);
+		}
+		items.clear();
+	}
 	bool Destroy(MenuItem *item);
 	int GetMenuItemCount();
 	MenuItem *FindItem(int id);
@@ -168,11 +172,11 @@ class Menu : public Mnemonics
 	MenuItem *FindItemByPosition(int pos);
 	void Check(int id, bool check);
 	void AppendSeparator();
-	int GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels = 0, bool clientPos=true);
-	void PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos=true);
+	int GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels = 0, bool clientPos=true, int maxVisible=30);
+	void PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos=true, int maxVisible=30);
 	void SetTitle(const wxString &_title){title = _title;};
 	wxString GetTitle() const {return title;};
-	//SendEvent()
+	void HideMenu(){dialog->HideMenus();}
 private:
 	void CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool clientPos);
 	void DestroyDialog();

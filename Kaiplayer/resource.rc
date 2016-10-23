@@ -134,6 +134,8 @@ BUTTON_AUTO_SPLIT       RCDATA                  "Bitmaps/button_auto_split.png"
 BUTTON_NEXT_A_COMMIT    RCDATA                  "Bitmaps/button_go_next_after_commit.png"
 BUTTON_KARAOKE          RCDATA                  "Bitmaps/button_karaoke.png"
 BUTTON_SPECTRUM         RCDATA                  "Bitmaps/button_spectrum.png"
+BUTTON_NORMAL           RCDATA                  "Bitmaps/Custombutton.png"
+BUTTON_PUSHED           RCDATA                  "Bitmaps/CustombuttonPushed.png"
 BUTTON_LINK             BITMAP                  "Bitmaps/button_link.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
