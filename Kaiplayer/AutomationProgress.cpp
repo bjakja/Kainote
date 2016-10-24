@@ -217,13 +217,9 @@ LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
 		wxSemaphore sema(0,1);
 		ps->SafeQueue(EVT_SHOW_CFG_DIAL,&sema);
 		
-		//ps->SafeQueue(EVT_MESSAGE,kkk);
-		
 		// more magic: puts two values on stack: button pushed and table with control results
 		sema.Wait();
-		//while(!ps->lpd->cfgclosed){Sleep(10);}
-		//wxLogStatus("Returned");
-		//wxLogStatus("endmodal config waited");
+		
 		return 2;
 	}
 

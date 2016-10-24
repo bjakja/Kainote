@@ -611,7 +611,7 @@ void VideoRend::Clear()
 bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, bool __vobsub, bool fullscreen)
 {
 	wxMutexLocker lock(mutexOpenFile);
-	block=true;
+	//block=true;
 	kainoteApp *Kaia=(kainoteApp*)wxTheApp;
 	VideoFfmpeg *tmpvff=NULL;
 	//wxLogStatus("stop");
@@ -622,7 +622,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 		bool success;
 		tmpvff=new VideoFfmpeg(fname,&success);
 		if(!success || !tmpvff){
-			SAFE_DELETE(tmpvff);block=false;return false;
+			SAFE_DELETE(tmpvff);/*block=false;*/return false;
 		}
 	}
 
@@ -655,7 +655,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 
 		if(!vplayer){vplayer= new DShowPlayer(this);}
 
-		if(!vplayer->OpenFile(fname, __vobsub)){block=false;return false;}
+		if(!vplayer->OpenFile(fname, __vobsub)){/*block=false;*/return false;}
 
 		wxSize siz=vplayer->GetVideoSize();
 		vwidth=siz.x;vheight=siz.y;
@@ -682,7 +682,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	if(datas){delete[] datas;datas=NULL;}
 	datas=new char[vheight*pitch];
 
-	if(!InitDX()){block=false;return false;}
+	if(!InitDX()){/*block=false;*/return false;}
 	UpdateRects(!fullscreen);
 	if(!__vobsub){
 		if(!framee){framee=new csri_frame;}
@@ -703,7 +703,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 		SAFE_DELETE(textsubs);
 		OpenSubs(0,false);
 	}
-	block=false;
+	/*block=false;*/
 	vstate=Stopped;
 	if(IsDshow && vplayer){chaps = vplayer->GetChapters();}
 	if(Vclips){
@@ -736,7 +736,7 @@ bool VideoRend::Play(int end)
 		}
 		lasttime=timeGetTime()-time;
 		if(player){player->Play(time,-1,false);}
-		lastframe++;
+		//lastframe++;
 		time=VFF->Timecodes[lastframe];
 		DWORD kkk;
 		thread = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)playingProc, this, 0, &kkk);
@@ -805,13 +805,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		}
 		if(VisEdit){
 			SAFE_DELETE(Vclips->dummytext);
-			//if(Vclips->Visual==VECTORCLIP && vstate!=Playing){
-			//	Vclips->SetClip(Vclips->GetVisual(),true, false); //return;
-			//}else{
-				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
-			//}
-			
-			
+			OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
 			VisEdit=false;
 		}else if(pan->Edit->OnVideo){
 			if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
@@ -822,15 +816,13 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		playend=(IsDshow)? 0 : GetDuration();
 		seek=true; vplayer->SetPosition(time);
 	}else{
-		lastframe=VFF->GetFramefromMS(_time,(time>_time)? 1 : lastframe);
+		int decr= (vstate==Playing)? 1 : 0;
+		lastframe = VFF->GetFramefromMS(_time,(time>_time)? 0 : lastframe) - decr;
 		if(!starttime){lastframe--;if(VFF->Timecodes[lastframe]>=_time){lastframe--;}}
 		time = VFF->Timecodes[lastframe];
 		if(VisEdit){
-			/*if(Vclips->Visual==VECTORCLIP && vstate!=Playing){
-				Vclips->SetClip(Vclips->GetVisual(),true, false);
-			}else{*/
-				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
-			//}
+			SAFE_DELETE(Vclips->dummytext);
+			OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
 			VisEdit=false;
 		}else if(pan->Edit->OnVideo){
 			if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
@@ -842,6 +834,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			lasttime=timeGetTime()-time;
 			if(player){
 				player->player->SetCurrentPosition(player->GetSampleAtMS(time));}
+			//Play();
 		}
 		else{Render();}
 	}

@@ -7,8 +7,10 @@
 
 TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const wxSize &size)
 	: wxWindow(parent,-1, pos, size)
+	,sline(NULL)
+	,edytor(true)
+	,holding(false)
 {
-	//SetBackgroundColour(wxColour("#808080"));
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
 	int vw,vh;
 	Options.GetCoords("Video Window Size",&vw,&vh);
@@ -32,17 +34,13 @@ TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const
 	BoxSizer1->AddSpacer(3);
     BoxSizer1->Add(BoxSizer3, 1, wxEXPAND, 0);
     SetSizerAndFit(BoxSizer1);
-	
-	
-	edytor=true;
-	holding=false;
 
 	SubsName=_("Bez tytułu");
-	VideoName="";
+	/*VideoName="";
 	SubsPath="";
 	VideoPath="";
-
-	sline=NULL;
+*/
+	
 	SetAccels();
 }
 
@@ -115,8 +113,13 @@ void TabPanel::OnMouseEvent(wxMouseEvent& event)
 	if (left_up && holding) {
 		holding = false;
 		int npos=event.GetY();
-		if(sline){int x; sline->GetPosition(&x,&npos);ScreenToClient(&x,&npos);
-			sline->Destroy();sline=NULL;}
+		if(sline){
+			int x; 
+			sline->GetPosition(&x,&npos);
+			ScreenToClient(&x,&npos);
+			sline->Destroy();
+			sline=NULL;
+		}
 		int w,h, mw, mh;
 		Video->GetClientSize(&w,&h);
 		GetClientSize(&mw,&mh);

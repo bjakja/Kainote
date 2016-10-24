@@ -81,8 +81,15 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 	tdc.DrawRectangle(0,0,w,h);
 	if(actualBmp.IsOk()){
 		wxImage img=actualBmp.ConvertToImage();
-		img = img.Scale(w, h, wxIMAGE_QUALITY_BICUBIC);
-		tdc.DrawBitmap(wxBitmap(img), 0, 0);
+		img = img.Scale(h, h, wxIMAGE_QUALITY_BILINEAR);
+		int half = h/2;
+		wxImage middle = img.GetSubImage(wxRect(half-1,0,1,h));
+		wxImage first = img.GetSubImage(wxRect(0,0,half-1,h));
+		wxImage last = img.GetSubImage(wxRect(half,0,half,h));
+		middle = middle.Scale(w-(h-1), h, wxIMAGE_QUALITY_NORMAL);
+		tdc.DrawBitmap(wxBitmap(first), 0, 0);
+		tdc.DrawBitmap(wxBitmap(middle), half-1, 0);
+		tdc.DrawBitmap(wxBitmap(last), w - half, 0);
 	}
 	//wxBitmap end=normal.GetSubBitmap(wxRect(86-diff,0,diff,5));
 	wxPoint points[3];
@@ -150,11 +157,7 @@ void KaiChoice::OnMouseEvent(wxMouseEvent &event)
 	if(event.LeftUp()){
 		
 		SetBitmap(tmpbmp);
-		if(choiceChanged){
-			wxCommandEvent evt(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
-			this->ProcessEvent(evt);
-			choiceChanged=false;
-		}
+		
 	}
 	if (event.GetWheelRotation() != 0) {
 		if(!HasFocus()){event.Skip(); return;}
@@ -182,7 +185,11 @@ void KaiChoice::ShowList()
 {
 	listIsShown = true;
 	int elem = listMenu->GetPopupMenuSelection(wxPoint(0, GetSize().GetY()), this)-8000;
-	if(elem>=0){choice = elem; choiceChanged=true; Refresh(false);}
+	if(elem>=0){
+		choice = elem; Refresh(false);
+		wxCommandEvent evt(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
+		this->ProcessEvent(evt);
+	}
 	listIsShown=false; 
 }
 

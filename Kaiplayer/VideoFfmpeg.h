@@ -42,7 +42,7 @@ public:
 	wxArrayInt KeyFrames;
 	std::vector<int> Timecodes;
 	int GetMSfromFrame(int frame);
-	int GetFramefromMS(int MS, int seekfrom=1);
+	int GetFramefromMS(int MS, int seekfrom=0);
 	int Init(const wxString &filename);
 
 	//bool com_inited;

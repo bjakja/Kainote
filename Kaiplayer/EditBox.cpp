@@ -323,7 +323,14 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 	UpdateChars((TextEditTl->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
 	//ustawia clip/inny visual gdy jest włączony
 	if(Visual>1){
-		pan->Video->SetVisual(line->Start.mstime, line->End.mstime);
+		if(Visual==VECTORCLIP){
+			//SAFE_DELETE(pan->Video->Vclips->dummytext);
+			//pan->Video->Vclips->SetCurVisual();
+			pan->Video->SetVisual(line->Start.mstime, line->End.mstime);
+			//pan->Video->Vclips->SetClip(pan->Video->Vclips->GetVisual(),true);
+		}else{
+			pan->Video->SetVisual(line->Start.mstime, line->End.mstime);
+		}
 		//pan->Video->Render();
 	}
 	

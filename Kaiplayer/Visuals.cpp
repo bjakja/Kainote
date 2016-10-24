@@ -79,9 +79,9 @@ void Visuals::SetVisual(int _start,int _end)
 	tab->Video->VisEdit=true;
 
 	SetCurVisual();
-	/*if(Visual==VECTORCLIP){
+	if(Visual==VECTORCLIP){
 		SetClip(GetVisual(),true); return;
-	}*/
+	}
 	tab->Video->Render();
 }
 
@@ -198,7 +198,7 @@ void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen
 {
 
 	D3DXVECTOR2 actualPoint[2];
-	for(size_t i = 0; i < vectorSize; i++){
+	for(size_t i = 0; i < vectorSize - 1; i++){
 		size_t iPlus1 = (i < (vectorSize-1))? i+1 : 0;
 		D3DXVECTOR2 pdiff= vector[i] - vector[iPlus1];
 		float len= sqrt((pdiff.x * pdiff.x) + (pdiff.y * pdiff.y));

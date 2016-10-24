@@ -254,8 +254,8 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	//MenuItem *item = (MenuItem*)event.GetClientData();
 
 	TabPanel *pan=GetTab();
-	//wxLogStatus("menu %i %i %i", id, Modif, item->id);
-	if(Modif==wxMOD_SHIFT){
+	//wxLogStatus("menu %i %i", id, Modif);
+	if(Modif == wxMOD_SHIFT){
 		MenuItem *item=Menubar->FindItem(id);
 		wxString wins[1]={"Globalny"};
 		//upewnij się, że da się zmienić idy na nazwy, 
@@ -274,6 +274,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 
 		return;
 	}
+
 	if(id==SaveSubs){
 		Save(false);
 	}else if(id==SaveSubsAs){

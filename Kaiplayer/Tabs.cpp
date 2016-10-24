@@ -15,6 +15,7 @@ Notebook::Notebook(wxWindow *parent, int id)
 	hasCompare=false;
 	TabHeight=25;
 	allvis=arrow=true;
+	sline=NULL;
 	font=wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 	sthis=this;
 
@@ -226,8 +227,13 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		else if(event.LeftUp())
 		{
 			int npos=x;
-			if(sline){int yy; sline->GetPosition(&npos,&yy);ScreenToClient(&npos,&yy);
-			sline->Destroy();}
+			if(sline){
+				int yy; 
+				sline->GetPosition(&npos,&yy);
+				ScreenToClient(&npos,&yy);
+				sline->Destroy();
+				sline = NULL;
+			}
 			if(HasCapture()){ReleaseMouse();}
 			splitline=npos;
 			bool aciter=(Pages[iter]->GetPosition().x==1);

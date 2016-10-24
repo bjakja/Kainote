@@ -199,15 +199,13 @@ bool VideoCtrl::Stop()
 
 bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 {   
-	//wxMutexLocker lock(vbmutex);
-	//if(vstate==Playing){Pause(false);}
 	if(fulls){SetFullskreen();}
 	prevchap=-1;
 	MenuItem *index=Kai->Menubar->FindItem(VideoIndexing);
 	bool shown=true;
-
+	block=true;
 	if(!OpenFile(fileName, subsName, !(index->IsChecked() && index->IsEnabled() && !fulls && !isfullskreen), !Kai->GetTab()->edytor, fulls)){
-		delete subsName; return false;
+		delete subsName; block=false;return false;
 	}
 	if( !(IsShown() || (TD && TD->IsShown())) ){
 		shown=false; Show();
@@ -241,7 +239,7 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 				SetMinSize(wxSize(sx,sy+panelHeight));
 				Kai->GetTab()->BoxSizer1->Layout();
 			}else{
-				Render();
+				//Render();
 			}
 			Options.SetCoords("Video Window Size",sx,sy+panelHeight);
 		}
@@ -255,9 +253,9 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 		wxString res;
 		Kai->SetStatusText(res<<size.x<<" x "<<size.y,3);
 	}
-
+	block=false;
 	Play();
-	if(Kai->GetTab()->edytor&&!isfullskreen){Pause();}
+	if(Kai->GetTab()->edytor && !isfullskreen){Pause();Render();}
 
 	displaytime();
 

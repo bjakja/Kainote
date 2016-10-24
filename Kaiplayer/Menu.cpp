@@ -368,7 +368,7 @@ MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos
 			wxRect rc1 = GetScreenRect();
 			if(!rc1.Contains(pos)){sel=-1; Refresh(false);}
 			else if (sel == submenuToHide){subMenuIsShown=true; return;}
-			olditem->submenu->dialog->HideWithEffect(wxSHOW_EFFECT_BLEND,1);
+			//olditem->submenu->dialog->HideWithEffect(wxSHOW_EFFECT_BLEND,1);
 			olditem->submenu->DestroyDialog();
 			MenuBar::Menubar->md = parent;
 		}
@@ -481,10 +481,10 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 		}
 	}
 	
-	if(leftdown && parent->items[elem]->submenu == NULL){
+	if(evt.LeftUp()){
 		MenuItem *item=parent->items[elem];
 		SendEvent(item, evt.GetModifiers());
-	}else if(leftdown && submenuShown != elem){
+	}else if(leftdown && parent->items[elem]->submenu && submenuShown != elem){
 		submenuShown=elem;
 		showSubmenuTimer.Start(1,true);
 	}
@@ -672,11 +672,11 @@ void MenuDialog::HideMenus()
 		//wxLogStatus("menu %i, %i", subMenu, (int)menu);
 		if(menu->dialog){subMenu = menu->dialog->submenuToHide;}
 		else{subMenu = -1;break;}
-		menu->dialog->HideWithEffect(wxSHOW_EFFECT_BLEND,1);
+		//menu->dialog->HideWithEffect(wxSHOW_EFFECT_BLEND,1);
 		menu->DestroyDialog();
 	}
 	if(ParentMenu->isPartialModal){ParentMenu->EndPartialModal(0);}
-	else{ParentMenu->HideWithEffect(wxSHOW_EFFECT_BLEND,1); ParentMenu->parent->DestroyDialog();}
+	else{/*ParentMenu->HideWithEffect(wxSHOW_EFFECT_BLEND,1);*/ ParentMenu->parent->DestroyDialog();}
 	ParentMenu=NULL;
 	MenuBar::Menubar->md=NULL;
 }
@@ -706,7 +706,8 @@ int MenuDialog::ShowPartialModal()
 void MenuDialog::EndPartialModal(int ReturnId)
 {
 	Exit(ReturnId);
-	HideWithEffect(wxSHOW_EFFECT_BLEND ,1);
+	/*HideWithEffect(wxSHOW_EFFECT_BLEND ,1);*/
+	Hide();
 }
 
 WXLRESULT MenuDialog::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam) {
@@ -756,7 +757,7 @@ MenuBar::MenuBar(wxWindow *_parent)
 			posX += te.x + menuIndent;
 		}
 		wxPoint pos1(posX, rc.y); 
-		Menus[shownMenu]->PopupMenu(pos1, this);
+		Menus[shownMenu]->PopupMenu(pos1, this->GetParent());
 	},56432);
 	showMenuTimer.SetOwner(this, 56432);
 	Menubar=this;
@@ -969,9 +970,7 @@ LRESULT CALLBACK MenuBar::OnKey( int code, WPARAM wParam, LPARAM lParam ){
 						if(Menubar->md->dialog->submenuToHide == -1){Menubar->md->dialog->showSubmenuTimer.Start(1,true);}
 						//wxLogStatus("md submenu");
 					}else{
-						//wxLogStatus("md wybór");
 						MenuItem *item=Menubar->md->items[foundmnemonics->second];
-						//wxLogStatus("md item %i", (int)item);
 						if(!Menubar->md->dialog->SendEvent(item, 0)){return 1;}
 						Menubar->HideMnemonics();
 					}
@@ -991,7 +990,7 @@ LRESULT CALLBACK MenuBar::OnKey( int code, WPARAM wParam, LPARAM lParam ){
 			if (Menubar->md){
 				if(wParam == VK_LEFT && Menubar->md->dialog != MenuDialog::ParentMenu){
 					//wxLogStatus("md submenu strza³ka left right");
-					Menubar->md->dialog->HideWithEffect(wxSHOW_EFFECT_BLEND,1);
+					//Menubar->md->dialog->HideWithEffect(wxSHOW_EFFECT_BLEND,1);
 					Menubar->md->DestroyDialog();
 					MenuBar::Menubar->md = Menubar->md->parentMenu;
 					Menubar->md->dialog->submenuToHide = -1;
@@ -1078,8 +1077,7 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 	}
 	if(showMnemonics || Menubar->md){
 		if( msg->message == WM_LBUTTONDOWN || msg->message == WM_NCLBUTTONDOWN || 
-			msg->message == WM_RBUTTONDOWN || msg->message == WM_NCRBUTTONDOWN){// || msg->message == WM_MBUTTONDOWN || msg->message == WM_NCMBUTTONDOWN
-			//wxLogStatus("Mouse zamykanie");
+			msg->message == WM_RBUTTONDOWN || msg->message == WM_NCRBUTTONDOWN){
 			MenuDialog::id=-3;
 			Menubar->HideMnemonics();
 			if(!MenuDialog::ParentMenu){return 0;}
@@ -1105,7 +1103,7 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 			MenuDialog::ParentMenu->HideMenus();
 			return 1;
 		}
-		if(msg->message == WM_MBUTTONDOWN || msg->message == WM_NCMBUTTONDOWN)
+		if(msg->message == WM_MBUTTONUP || msg->message == WM_NCMBUTTONUP)
 		{
 			Menubar->HideMnemonics();
 		}

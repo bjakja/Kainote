@@ -179,10 +179,11 @@ done:
 	}
 
 	if(!index){
-		//FFMS_TrackTypeIndexSettings(Indexer, FFMS_TYPE_AUDIO, 1, 0);
-		//FFMS_TrackIndexSettings(Indexer, audiotrack, 1, 0);
-		//FFMS_SetProgressCallback(Indexer, UpdateProgress, (void*)progress);
-		index =FFMS_DoIndexing(Indexer, (1<<audiotrack), 0, NULL, NULL, FFMS_IEH_IGNORE, UpdateProgress, (void*)progress, &errinfo);
+		FFMS_TrackIndexSettings(Indexer, audiotrack, 1, 0);
+		FFMS_SetProgressCallback(Indexer, UpdateProgress, (void*)progress);
+		//FFMS_SetAudioNameCallback(Indexer, UpdateProgress, (void*)progress);
+		//index =FFMS_DoIndexing(Indexer, (1<<audiotrack), 0, NULL, NULL, FFMS_IEH_IGNORE, UpdateProgress, (void*)progress, &errinfo);
+		index =FFMS_DoIndexing2(Indexer, FFMS_IEH_IGNORE, &errinfo);
 		//index =FFMS_MakeIndex(filen.utf8_str(), /*(1<<audiotrack)*/0, 0, NULL,NULL, FFMS_IEH_ABORT, NULL, NULL, &errinfo);
 		//wxLogStatus("vidtrack %i, audtrack %i 2",videotrack,audiotrack);
 		if (index == NULL) {
@@ -214,7 +215,13 @@ done:
 		//wxLogStatus("num of cores %i", (int)std::thread::hardware_concurrency());
 		SYSTEM_INFO sysinfo;
 		GetSystemInfo( &sysinfo );
-		videosource = FFMS_CreateVideoSource(filename.utf8_str(), videotrack, index, sysinfo.dwNumberOfProcessors,FFMS_SEEK_AGGRESSIVE, &errinfo);// FFMS_SEEK_UNSAFE
+		videosource = FFMS_CreateVideoSource(
+			filename.utf8_str(), 
+			videotrack, 
+			index, 
+			sysinfo.dwNumberOfProcessors,
+			FFMS_SEEK_AGGRESSIVE, 
+			&errinfo);// FFMS_SEEK_UNSAFE
 		//Since the index is copied into the video source object upon its creation,
 		//we can and should now destroy the index object. 
 
@@ -253,7 +260,7 @@ done:
 
 
 		int pixfmt[2];
-		pixfmt[0] =PIX_FMT_NV12; //PIX_FMT_YUVJ420P;//PIX_FMT_YUV411P;//PIX_FMT_YUV420P; //PIX_FMT_YUYV422;//PIX_FMT_NV12;//FFMS_GetPixFmt("bgra");PIX_FMT_YUYV422;//
+		pixfmt[0] = 25; //PIX_FMT_NV12 == 25  PIX_FMT_YUVJ420P;//PIX_FMT_YUV411P;//PIX_FMT_YUV420P; //PIX_FMT_YUYV422;//PIX_FMT_NV12;//FFMS_GetPixFmt("bgra");PIX_FMT_YUYV422;//
 		pixfmt[1] = -1;
 
 		//wxLogStatus("Set format %i %i",width, height);

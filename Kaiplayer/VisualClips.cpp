@@ -185,7 +185,7 @@ void DrawingAndClip::SetCurVisual()
 			Points[i].y -= xyoffset.y;
 		}
 	}
-	wxLogStatus("set cur visual");
+	//wxLogStatus("set cur visual");
 }
 	
 wxString DrawingAndClip::GetVisual()
@@ -280,7 +280,16 @@ void DrawingAndClip::AddMove(wxPoint pos, int whereis)
 void DrawingAndClip::DrawLine(int i)
 {
 	line->Begin();
-	int diff = (Points[i-1].type=="s")? 2 : 1;
+	int diff = 1;
+	if(Points[i-1].type=="s"){
+		int j=i-2;
+		while(j>=0){
+			if(Points[j].type!="s"){break;}
+			j--;
+		}
+		diff = (i-j) - 2;
+		//wxLogStatus("diff %i", diff);
+	}
 	D3DXVECTOR2 v2[2]={Points[i-diff].GetVector(),Points[i].GetVector()};
 	line->Draw(v2, 2, 0xFFBB0000);
 	line->End();
@@ -304,8 +313,8 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 	std::vector<D3DXVECTOR2> v4;
 	
 	int pts=3;
-	ClipPoint tmp(0,0,"r",true);
-	if(Points[i-1].type=="s"){tmp=Points[i-1];Points[i-1]=Points[i-2];}
+	//ClipPoint tmp(0,0,"r",true);
+	//if(Points[i-1].type=="s"){tmp=Points[i-1];Points[i-1]=Points[i-2];}
 	if(bspline){
 		
 		int acpos=i-1;
@@ -321,25 +330,38 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 			Curve(acpos, &v4, true, bssize, k);
 		}
 		D3DXVECTOR2 *v2=new D3DXVECTOR2[pts+2];
-		if(tmp.type=="s"){Points.insert(Points.begin()+i-1,tmp);}
+		//if(tmp.type=="s"){Points.insert(Points.begin()+i-1,tmp);}
 		for(int j=0, g=i-1; j<bssize; j++, g++)
 		{
 			v2[j]=Points[g].GetVector();
 		}
 		v2[bssize]=Points[i-1].GetVector();
 		line->Draw(v2, pts+2, 0xFFAA33AA);
-		int iplus1= (i+bssize < (int)Points.size()-1)? i+bssize+1 : 0;
+		int iplus1= (i+bssize-2 < (int)Points.size()-1)? i+1 : 0;
 		if(i-1 != 0 || iplus1 != 0){
+			//wxLogStatus("line %i, %i", i-1, iplus1);
 			D3DXVECTOR2 v3[3]={Points[i-1].GetVector(), v4[0], Points[iplus1].GetVector()};
 			line->Draw(v3, 3, 0xFFBB0000);
 		}
 		delete[] v2;
 	}else{
+		ClipPoint tmp = Points[i-1];
+		if(Points[i-1].type=="s"){
+			int diff = 2;
+			int j=i-2;
+			while(j>=0){
+				if(Points[j].type!="s"){break;}
+				j--;
+			}
+			diff = (i-j) - 2;
+			Points[i-1] = Points[i-diff];
+		}
 		Curve(i-1, &v4,false);
-		if(tmp.type=="s"){Points[i-1]=tmp;}
+		//if(tmp.type=="s"){Points[i-1]=tmp;}
 		D3DXVECTOR2 v2[4]={Points[i-1].GetVector(),Points[i].GetVector(),Points[i+1].GetVector(),Points[i+2].GetVector()};
 		line->Draw(v2, 2, 0xFF0000FF);
 		line->Draw(&v2[2], 2, 0xFF0000FF);
+		Points[i-1]=tmp;
 	}
 	line->Draw(&v4[0], v4.size(), 0xFFBB0000);
 	line->End();
@@ -420,10 +442,9 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	bool leftisdown = event.LeftIsDown();
 	bool right=event.RightDown();
 	bool ctrl=event.ControlDown();
+	//if(click){wxLogStatus("click");}
+	size_t psize = Points.size();
 	
-	//bool click=event.LeftDown();
-	//drawtxt=(event.MiddleUp() || drawSelection)?false : true;
-	//if(Visual==VECTORDRAW){CalcWH();}
 	if(!event.ButtonDown() && !leftisdown){
 		//wxLogStatus(" bdown %i", (int)event.ButtonDown());
 		int pos = CheckPos(xy);
@@ -437,7 +458,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			tab->Video->Render();
 		}else if(pos== -1 && !hasArrow && !ctrl){
 			hasArrow=true;
-			if(lastpos!=-1){
+			if(lastpos>=0 && lastpos < (int)psize){
 				Points[lastpos].isSelected=false;
 			//tab->Video->SetCursor(wxCURSOR_ARROW);
 			//drawtxt=false;
@@ -472,27 +493,25 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	}
 
 	if(event.MiddleDown() || (tool==6 && click)){
-		if(Points.size()<1){return;}
-		for(size_t i=1; i<Points.size(); i++)
+		//if(psize<1){return;}
+		size_t i= (psize > 1)? 1 : 0;
+		for(; i < psize; i++)
 		{
 			float pointx=(Points[i].x+_x)/wspw, pointy=(Points[i].y+_y)/wsph;
 			if(abs(pointx-x)<5 && abs(pointy-y)<5)
 			{
-				if(Points[i].start || Points[i].type=="s"){
-					int er=(Points[i].type=="b")? 3 : 1;
-					Points.erase(Points.begin()+i,Points.begin()+i+er);
-				}
-				else{
-					for(int j=i-1; j>=0; j--)
+				int j = i;
+				if(!(Points[j].start || Points[j].type=="s")){
+					for(j=i-1; j>=0; j--)
 					{
-						if(Points[j].start){
-							int er=(Points[j].type=="b")? 3 : 1;
-							Points.erase(Points.begin()+j,Points.begin()+j+er);
-							break;
-						}
+						if(Points[j].start){break;}
 					}
 				}
-				drawtxt=false;
+				//wxLogStatus("ij %i %i", i, j);
+				int er=1;
+				if (Points[j].type=="b"){er=2; Points[j+2].type="l"; Points[j+2].start=true;}
+				Points.erase(Points.begin()+j,Points.begin()+j+er);
+				
 				SetClip(GetVisual(),true);
 				break;
 			}
@@ -504,7 +523,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		//wxLogStatus("tool %i", tool);
 		//drawtxt=true;
 		grabbed=-1;
-		for(size_t i=0; i<Points.size(); i++)
+		for(size_t i=0; i < psize; i++)
 		{
 			float pointx=(Points[i].x+_x)/wspw, pointy=(Points[i].y+_y)/wsph;
 			if(abs(pointx-x)<5 && abs(pointy-y)<5)
@@ -526,12 +545,11 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			//wxLogStatus("point");
 			if(Points.empty()){AddMove(xy,0); SetClip(GetVisual(),true); return;}
 			int pos = CheckPos(xy, true);
-			int size = Points.size();
 			switch(tool){
 				case 1: AddLine(xy, pos); break;
 				case 2: AddCurve(xy, pos); break;
 				case 3: 
-					if(Points[(pos == size )? size - 1 : pos].type=="s"){
+					if(Points[(pos == (int)psize )? psize - 1 : pos].type=="s"){
 						AddCurvePoint(xy,pos); break;//bspline point
 					}
 					AddCurve(xy,pos,"s"); break;//bspline
@@ -547,7 +565,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			
 			AddMove(xy,CheckPos(xy, true));
 			SetClip(GetVisual(),true);
-			grabbed=Points.size()-1;
+			grabbed= psize-1;
 		}
 		else if( grabbed == -1 ){
 			drawSelection=true;
@@ -566,8 +584,8 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		Points[grabbed].y=((y+diffs.y)*wsph)-_y;
 
 		if(event.ShiftDown()){
-			int grabbedPlus1 = (grabbed >= (int)Points.size()-1)? 0 : grabbed+1;
-			int grabbedMinus1 = (grabbed < 1)? Points.size()-1 : grabbed-1;
+			int grabbedPlus1 = (grabbed >= (int)psize-1)? 0 : grabbed+1;
+			int grabbedMinus1 = (grabbed < 1)? psize-1 : grabbed-1;
 			if(Points[grabbed].y == Points[grabbedMinus1].y || snapYminus){snapYminus=true;Points[grabbedMinus1].y = Points[grabbed].y;}
 			if(Points[grabbed].y == Points[grabbedPlus1].y || snapYplus){snapYplus=true;Points[grabbedPlus1].y = Points[grabbed].y;}
 			if(Points[grabbed].x == Points[grabbedMinus1].x || snapXminus){snapXminus=true;Points[grabbedMinus1].x = Points[grabbed].x;}
@@ -584,7 +602,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		if(Points[grabbed].isSelected){
 			float movementx = acpoint.x - Points[grabbed].x;
 			float movementy = acpoint.y - Points[grabbed].y;
-			for( size_t i = 0; i < Points.size(); i++){
+			for( size_t i = 0; i < psize; i++){
 				if(Points[i].isSelected && i != grabbed){
 					Points[i].x = Points[i].x - movementx;
 					Points[i].y = Points[i].y - movementy;
