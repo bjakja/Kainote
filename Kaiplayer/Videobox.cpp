@@ -305,17 +305,17 @@ int VideoCtrl::Tell()
 
 void VideoCtrl::OnSize(wxSizeEvent& event)
 {
-	int h,w;
-	GetClientSize(&w,&h);
-	panel->SetSize(0,h-panelHeight,w,panelHeight);
-	vslider->SetSize(wxSize(w,14));
-	volslider->SetPosition(wxPoint(w-110,17));
-	mstimes->SetSize(w-300,-1);
-	vToolbar->SetSize(w, 22);
+	wxSize asize = GetClientSize();
+	if(lastSize == asize){return;}
+	lastSize=asize;
+	panel->SetSize(0, asize.y-panelHeight, asize.x, panelHeight);
+	vslider->SetSize(wxSize(asize.x,14));
+	volslider->SetPosition(wxPoint(asize.x-110,17));
+	mstimes->SetSize(asize.x-300,-1);
+	vToolbar->SetSize(asize.x, 22);
 	if(GetState()!=None){
 		UpdateVideoWindow(!isfullskreen);
 	}
-
 }
 
 

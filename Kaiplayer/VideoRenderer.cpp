@@ -237,21 +237,7 @@ bool VideoRend::InitDX(bool reset)
 		CoTaskMemFree(formats);
 		if(!isgood){ wxLogStatus(L"Format ten nie jest obsługiwany przez DXVA");continue;}
 		isgood=false;
-		//formats = NULL;
-		/*hr=dxvaService->GetVideoProcessorSubStreamFormats(guids[i], &videoDesc, D3DFMT_YUY2, &count2, &formats2);
-		if(FAILED(hr)){wxLogStatus(L"Nie mo?na uzyska? sub formatów DXVA %x",hr);continue;}
-		for (UINT k = 0; k < count2; k++)
-		{
-		if (formats2[k] == SUBS_FORMAT)
-		{
-		isgood=true; break;
-		}
-		}
-		CoTaskMemFree(formats2);
-		if(!isgood){ wxLogStatus(L"Format sub nie jest obs?ugiwany przez DXVA");continue;}
-		isgood=false;*/
-
-
+		
 		hr=dxvaService->GetVideoProcessorCaps(guids[i], &videoDesc, D3DFMT_X8R8G8B8, &DXVAcaps);
 		if(FAILED(hr)){wxLogStatus(L"GetVideoProcessorCaps zawiodło");continue;}
 		if (DXVAcaps.NumForwardRefSamples > 0 || DXVAcaps.NumBackwardRefSamples > 0)
@@ -262,8 +248,6 @@ bool VideoRend::InitDX(bool reset)
 		//if(DXVAcaps.DeviceCaps!=4){continue;}//DXVAcaps.InputPool
 		hr = dxvaService->CreateSurface(vwidth,vheight, 0, d3dformat, D3DPOOL_DEFAULT, 0, DXVA2_VideoSoftwareRenderTarget, &MainStream, NULL);
 		if(FAILED(hr)){wxLogStatus(L"Nie można stworzyć powierzchni dxva %i", (int)i);continue;}
-		//hr = dxvaService->CreateSurface(rt3.right, rt3.bottom, 0, SUBS_FORMAT, DXVAcaps.InputPool, 0, DXVA2_VideoSoftwareRenderTarget, &SubsStream, NULL);
-		//if(FAILED(hr)){wxLogStatus(L"Nie mo?na stworzy? powierzchni napisów dxva %i", (int)i);continue;}
 
 		hr = dxvaService->CreateVideoProcessor(guids[i], &videoDesc,D3DFMT_X8R8G8B8,0,&dxvaProcessor);
 		if(FAILED(hr)){wxLogStatus(L"Nie można stworzyć dxva processora");continue;}
@@ -280,8 +264,7 @@ bool VideoRend::InitDX(bool reset)
 
 	HR (d3device->CreateOffscreenPlainSurface(vwidth,vheight,d3dformat, D3DPOOL_DEFAULT,&MainStream,0), _("Nie można stworzyć plain surface"));//D3DPOOL_DEFAULT
 #endif
-	//HR(d3device->ColorFill(MainStream, NULL, D3DCOLOR_ARGB(0xFF, 0xFF, 0xFF, 0xFF)),"Nie można wypełnić tekstury");
-	HR (D3DXCreateLine(d3device, &lines), _("Nie można stworzyć linii D3DX"));
+	HR(D3DXCreateLine(d3device, &lines), _("Nie można stworzyć linii D3DX"));
 	HR(D3DXCreateFont(d3device, 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &m_font ), _("Nie można stworzyć czcionki D3DX"));
 
 	return true;
@@ -290,7 +273,7 @@ bool VideoRend::InitDX(bool reset)
 void VideoRend::Render(bool Frame)
 {
 	//wxLogStatus("render");
-	if(Frame&&!IsDshow){if(!DrawTexture()){return;}resized=false;}
+	if(Frame && !IsDshow){VFF->Refresh();/*if(!DrawTexture()){return;}*/resized=false; return;}
 	wxMutexLocker lock(mutexRender);
 	HRESULT hr = S_OK;
 
@@ -468,13 +451,13 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 	D3DLOCKED_RECT d3dlr;
 	//wxLogStatus("kopiowanie");
 	if(nframe){	
-		fdata=(byte*)nframe;
+		fdata= nframe;
 		if(copy){byte *cpy = (byte*) datas; memcpy(cpy,fdata,vheight*pitch);}
 	}
-	else if(!IsDshow){
+	/*else if(!IsDshow){
 		fdata=(byte*)datas;
 		VFF->GetFrame(lastframe,fdata);
-	}
+	}*/
 	else{
 		wxLogStatus(_("Nie ma wskaźnika bufora klatki"));return false;
 	}
@@ -554,13 +537,12 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 
 VideoRend::~VideoRend()
 {
-	//wxLogStatus(wxString(__FILE__));
-	//wxLogStatus("Stop");
-	//if(IsDshow){Stop();}
 	Stop();
-	//wxLogStatus("Clear");
+
 	vstate=None;
-	if(thread){WaitForSingleObject(thread,2000);}
+
+	SAFE_DELETE(VFF);
+	//if(thread){WaitForSingleObject(thread,2000);}
 	Clear();
 	//wxLogStatus("Vclips");
 	SAFE_DELETE(Vclips);
@@ -571,9 +553,8 @@ VideoRend::~VideoRend()
 	SAFE_DELETE(format);
 	if (instance) {csri_close(instance);}
 	if (vobsub) {csri_close_renderer(vobsub);}
-	//SAFE_DELETE(VA);
+	
 	//wxLogStatus("VFF");
-	SAFE_DELETE(VFF);
 
 	//wxLogStatus("datas");
 	if(datas){delete[] datas;datas=NULL;}
@@ -620,7 +601,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	IsDshow=Dshow;
 	if(!Dshow){
 		bool success;
-		tmpvff=new VideoFfmpeg(fname,&success);
+		tmpvff=new VideoFfmpeg(fname, this, &success);
 		if(!success || !tmpvff){
 			SAFE_DELETE(tmpvff);/*block=false;*/return false;
 		}
@@ -731,15 +712,16 @@ bool VideoRend::Play(int end)
 	vstate=Playing;
 
 	if(!IsDshow){
-		if(thread){
+		/*if(thread){
 			WaitForSingleObject(thread,2000);CloseHandle(thread);thread=NULL;
-		}
+		}*/
 		lasttime=timeGetTime()-time;
 		if(player){player->Play(time,-1,false);}
 		//lastframe++;
 		time=VFF->Timecodes[lastframe];
-		DWORD kkk;
-		thread = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)playingProc, this, 0, &kkk);
+		VFF->Play();
+		//DWORD kkk;
+		//thread = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)playingProc, this, 0, &kkk);
 		//if(thread){
 		//SetThreadPriority(thread, THREAD_PRIORITY_TIME_CRITICAL);
 		//}
@@ -816,13 +798,15 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		playend=(IsDshow)? 0 : GetDuration();
 		seek=true; vplayer->SetPosition(time);
 	}else{
+		auto oldvstate = vstate;
+		vstate=Paused;
 		int decr= (vstate==Playing)? 1 : 0;
-		lastframe = VFF->GetFramefromMS(_time,(time>_time)? 0 : lastframe) - decr;
+		lastframe = VFF->GetFramefromMS(_time,(time>_time)? 0 : lastframe); //- decr;
 		if(!starttime){lastframe--;if(VFF->Timecodes[lastframe]>=_time){lastframe--;}}
 		time = VFF->Timecodes[lastframe];
 		if(VisEdit){
 			SAFE_DELETE(Vclips->dummytext);
-			OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
+			OpenSubs((oldvstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
 			VisEdit=false;
 		}else if(pan->Edit->OnVideo){
 			if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
@@ -830,11 +814,12 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 				//pan->Edit->OnVideo=false;
 			}
 		}	
-		if(vstate==Playing){
+		if(oldvstate==Playing){
+			vstate=Playing;
 			lasttime=timeGetTime()-time;
 			if(player){
 				player->player->SetCurrentPosition(player->GetSampleAtMS(time));}
-			//Play();
+			VFF->Play();
 		}
 		else{Render();}
 	}

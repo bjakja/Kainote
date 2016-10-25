@@ -148,7 +148,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	Bund->SetBitmap(wxBITMAP_PNG ("UNDER"));
 	Bstrike = new wxButton(this, ID_STRIKE, "", wxDefaultPosition, wxSize(26,26));
 	Bstrike->SetBitmap(wxBITMAP_PNG ("STRIKE"));
-	Ban = new KaiChoice(this, ID_AN, wxDefaultPosition, wxSize(48,24),ans);
+	Ban = new wxChoice(this, ID_AN, wxDefaultPosition, wxSize(48,24),ans);
 	Ban->Select(1);
 
 	BoxSizer4 = new wxBoxSizer(wxHORIZONTAL);

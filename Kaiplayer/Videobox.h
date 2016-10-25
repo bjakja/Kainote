@@ -63,6 +63,7 @@ public:
 	wxRect GetMonitorRect(int wmonitor);
 	void ContextMenu(const wxPoint &pos, bool dummy=false);
 	float wspx,wspy;
+	wxSize lastSize;
 	Fullscreen *TD;
 	bool isarrow;
 	wxString oldpath;

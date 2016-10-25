@@ -74,6 +74,8 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	FileMenu->AppendTool(Toolbar,RecentSubs, _("Ostatnio otwa&rte napisy"), _("Ostatnio otwarte napisy"),PTR_BITMAP_PNG("recentsubs"),true, SubsRecMenu);
 	FileMenu->AppendTool(Toolbar,RemoveSubs, _("Usuń napisy z e&dytora"), _("Usuń napisy z edytora"),PTR_BITMAP_PNG("close"));
 	FileMenu->Append(9989,"Pokaż / Ukryj okno &logów");
+	/*FileMenu->Append(7890,"Testuj thread ffms2");
+	FileMenu->Append(7891,"Koniec testów threada")->Enable(false);*/
 	FileMenu->AppendTool(Toolbar,Settings, _("&Ustawienia"), _("Ustawienia programu"),PTR_BITMAP_PNG("SETTINGS"));
 	FileMenu->AppendTool(Toolbar,Quit, _("Wyjści&e\tAlt-F4"), _("Zakończ działanie programu"),PTR_BITMAP_PNG("exit"));
 	Menubar->Append(FileMenu, _("&Plik"));
@@ -197,7 +199,15 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 			delete mylog; mylog=NULL;
 		}
 	},9989);
-	//Connect(30100,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnRunScript);
+	//test=NULL;
+	//Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &event){
+	//	//test = new VideoFfmpeg(GetTab()->VideoPath);
+	//	//Menubar->Enable(7891);
+	//},7890);
+	//Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &event){
+	//	//test->BreakProcessing();
+	//	//delete test; test=NULL;
+	//},7891);
 	//Connect(30100,30200,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuClick);
 	Connect(SnapWithStart,SnapWithEnd,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
 	SetDropTarget(new DragnDrop(this));

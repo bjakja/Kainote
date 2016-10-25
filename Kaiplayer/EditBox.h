@@ -109,7 +109,7 @@ public:
 	wxButton* Bcpsel;
 	wxButton* Bhide;
 	wxToggleButton* AutoMoveTags;
-	KaiChoice* Ban;
+	wxChoice* Ban;
 
 
 	void PutinText(wxString text, bool focus=true, bool onlysel=false, wxString *texttoPutin=0);

@@ -31,7 +31,7 @@
 class kainoteFrame: public wxFrame
 {
     public:
-
+		VideoFfmpeg *test;
         kainoteFrame(const wxPoint &pos, const wxSize &size);
         virtual ~kainoteFrame();
 
