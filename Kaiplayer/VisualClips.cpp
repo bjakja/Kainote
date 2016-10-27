@@ -73,9 +73,9 @@ void DrawingAndClip::DrawVisual(int time)
 	if(!size){return;}
 	line->SetWidth(1.0f);
 	if(drawToolLines){
-		D3DXVECTOR2 v3[3] = {Points[0].GetVector(), D3DXVECTOR2(x,y), Points[size-1].GetVector()};
+		D3DXVECTOR2 v3[3] = {Points[FindPoint(size-1,"m",false,true)].GetVector(), D3DXVECTOR2(x,y), Points[size-1].GetVector()};
 		line->Begin();
-		DrawDashedLine(v3, (size>1)? 3 : 2);
+		DrawDashedLine(v3, (Points[size-1].type!="m")? 3 : 2);
 		line->End();
 	}
 	if(Visual==VECTORDRAW && tbl[6]>2){D3DXVECTOR2 movePos = CalcMovePos(); _x = movePos.x; _y = movePos.y;}
@@ -196,9 +196,11 @@ wxString DrawingAndClip::GetVisual()
 	int cntb=0;
 	bool spline=false;
 	offsetxy = (Visual==VECTORDRAW)? CalcWH() : D3DXVECTOR2(0,0);
-	for(size_t i=0; i<Points.size(); i++)
+	size_t psize = Points.size();
+	for(size_t i=0; i<psize; i++)
 	{
 		ClipPoint pos=Points[i];
+		if(pos.type=="m" && i>= psize-1 && psize>1 ){break;}
 		float x= pos.x + offsetxy.x;
 		float y= pos.y + offsetxy.y;
 		if(cntb && !pos.start){
@@ -455,33 +457,36 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			hasArrow=false;
 			Points[pos].isSelected=true;
 			lastpos=pos;
-			tab->Video->Render();
+			tab->Video->Render(false);
 		}else if(pos== -1 && !hasArrow && !ctrl){
 			hasArrow=true;
 			if(lastpos>=0 && lastpos < (int)psize){
 				Points[lastpos].isSelected=false;
-			//tab->Video->SetCursor(wxCURSOR_ARROW);
-			//drawtxt=false;
-				tab->Video->Render();
+				//wxLogStatus("znikanie podœwietlenia");
+				tab->Video->Render(false);
 			}
 		}
-		if(tool>=1 && tool<=4 && pos == -1 && !event.Leaving()){
+		if(tool>=1 && tool<=3 && pos == -1 && !event.Leaving()){
+			if(psize<1){return;}
 			drawToolLines=true;
-			tab->Video->Render();
+			//wxLogStatus("guidelines");
+			tab->Video->Render(false);
 		}else if(drawToolLines){
 			drawToolLines=false;
-			tab->Video->Render();
+			tab->Video->Render(false);
 		}
 	}
 	
 	
 
-	if(event.LeftUp()){
+	if(event.LeftUp()||event.MiddleUp()){
 		if(!drawSelection){
-			if(Points.size()>0){SetClip(GetVisual(),false);}
+			//if(Points.size()>0){
+				SetClip(GetVisual(),false);
+			//}
 		}else{
 			drawSelection=false;
-			tab->Video->Render();
+			tab->Video->Render(false);
 		}
 		if(tab->Video->HasCapture()){
 			tab->Video->ReleaseMouse();
@@ -492,26 +497,65 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		return;
 	}
 
-	if(event.MiddleDown() || (tool==6 && click)){
-		//if(psize<1){return;}
+	if(event.MiddleDown() || (tool==5 && click)){
+		grabbed = -1;
 		size_t i= (psize > 1)? 1 : 0;
-		for(; i < psize; i++)
+		for(size_t i = 0; i < psize; i++)
 		{
 			float pointx=(Points[i].x+_x)/wspw, pointy=(Points[i].y+_y)/wsph;
 			if(abs(pointx-x)<5 && abs(pointy-y)<5)
 			{
 				int j = i;
-				if(!(Points[j].start || Points[j].type=="s")){
-					for(j=i-1; j>=0; j--)
-					{
+				int er = 1;
+				bool isM = (Points[i].type == "m");
+				if(isM){
+					Points.erase(Points.begin()+i,Points.begin()+i+1);
+					if(i >= Points.size()){
+						SetClip(GetVisual(),true);
+						return;
+					}
+					psize--;
+				}
+				
+				if(!(Points[j].start)){
+					for(j=i-1; j>=0; j--){
 						if(Points[j].start){break;}
 					}
+					if(j==0 && !Points[j].start){Points[j].start=true;}
 				}
-				//wxLogStatus("ij %i %i", i, j);
-				int er=1;
-				if (Points[j].type=="b"){er=2; Points[j+2].type="l"; Points[j+2].start=true;}
-				Points.erase(Points.begin()+j,Points.begin()+j+er);
+				if(Points[j].type=="s"){
+					size_t k;
+					for(k=j+1; k<psize; k++){
+						if(Points[k].start){break;}
+					}
+					if(k - j < 4){er=2;}
+					else {j=i;}
+				}
 				
+				if (Points[j].type=="b"|| er==2){
+					er=2; 
+					//wxLogStatus("ij %i %i %i", i, j, er);
+					if(j+2 == i || isM){
+						er=3;
+
+					}else{
+						Points[j+2].type="l"; 
+						Points[j+2].start=true;
+					}
+				}
+
+				
+				
+				if(isM){
+					if(er>1){
+						Points.erase(Points.begin()+j,Points.begin()+j+er-1);
+					}
+					Points[i].type = "m";
+					Points[i].start = true;
+					if(i+1 < Points.size()){Points[i+1].start = true;}
+				}else{
+					Points.erase(Points.begin()+j,Points.begin()+j+er);
+				}
 				SetClip(GetVisual(),true);
 				break;
 			}
@@ -540,7 +584,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			}
 		}
 
-		if(tool>=1 && tool<=4 && (grabbed==-1 || ctrl))
+		if(tool>=1 && tool<=3 && (grabbed==-1 || ctrl))
 		{
 			//wxLogStatus("point");
 			if(Points.empty()){AddMove(xy,0); SetClip(GetVisual(),true); return;}
@@ -553,19 +597,24 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 						AddCurvePoint(xy,pos); break;//bspline point
 					}
 					AddCurve(xy,pos,"s"); break;//bspline
-				case 4: AddCurvePoint(xy,pos); break;//bspline point
 			}
 			SetClip(GetVisual(),true);
 			return;
 		}
 
 		
-		if(tool==5 && grabbed==-1)
+		if(tool==4 && grabbed==-1)
 		{
-			
-			AddMove(xy,CheckPos(xy, true));
+			int pos = CheckPos(xy, true);
+			if(Points[(pos == (int)psize )? psize - 1 : pos].type=="m"){
+				wxMessageBox(_("Ze wzglêdu na b³êdy Vsfiltra zablokowa³em mo¿liwoœæ wstawiania dwóch \"m\" po sobie"), _("Uwaga"));
+				return;
+			}
+			AddMove(xy,pos);
 			SetClip(GetVisual(),true);
 			grabbed= psize-1;
+			tool=0;
+			tab->Video->vToolbar->SetClipToggled(tool);
 		}
 		else if( grabbed == -1 ){
 			drawSelection=true;
@@ -617,8 +666,8 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		selection.width = x;
 		selection.height = y;
 		SelectPoints();
-		//wxLogStatus("selection points %i, %i, %i, %i)", selection.x, selection.y, selection.width, selection.height);
-		tab->Video->Render();
+		wxLogStatus("selection points %i, %i, %i, %i)", selection.x, selection.y, selection.width, selection.height);
+		tab->Video->Render(false);
 	}
 	
 
@@ -694,4 +743,21 @@ void DrawingAndClip::DeselectPoints()
 	for( size_t i = 0; i < Points.size(); i++){
 		Points[i].isSelected = false;
 	}
+}
+
+int DrawingAndClip::FindPoint(int pos, wxString type, bool nextStart, bool fromEnd)
+{
+	int j=pos;
+	if(nextStart){
+		while( (fromEnd)? j>=0 : j < (int)Points.size()){
+			if(Points[j].start){break;}
+			if(fromEnd){ j--; }else{ j++; }
+		}
+	}else{
+		while( (fromEnd)? j>=0 : j < (int)Points.size()){
+			if(Points[j].type == type){break;}
+			if(fromEnd){ j--; }else{ j++; }
+		}
+	}
+	return j;
 }

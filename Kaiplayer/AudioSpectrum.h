@@ -72,10 +72,11 @@ private:
 	int subcachelen;
 	FFT *fft;
 	wxCriticalSection CritSec;
-
+	void SetupSpectrun(int overlaps = 1, int length = (1<<7));
 public:
 	AudioSpectrum(VideoFfmpeg *_provider);
 	~AudioSpectrum();
+	
 
 	void RenderRange(int64_t range_start, int64_t range_end, bool selected, unsigned char *img, int imgwidth, int imgheight, int percent);
 

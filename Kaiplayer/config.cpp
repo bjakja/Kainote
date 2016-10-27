@@ -1,3 +1,5 @@
+
+#include "VersionKainote.h"
 #include "Config.h"
 #include "OpennWrite.h"
 #include <wx/settings.h>
@@ -5,7 +7,6 @@
 #include <wx/dir.h>
 #include <wx/string.h>
 #include <wx/log.h>
-#include "VersionKainote.h"
 #include <wx/mstream.h>
 #include <wx/bitmap.h>
 #include <windows.h>

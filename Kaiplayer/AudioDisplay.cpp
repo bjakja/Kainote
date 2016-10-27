@@ -847,7 +847,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 			if(vb->VFF && fromvideo){
 				provider = vb->VFF; ownProvider=false;
 			}else{
-				provider = new VideoFfmpeg(file, &success);
+				provider = new VideoFfmpeg(file, 0, &success);
 				if (!success || provider->SampleRate < 0) {
 					delete provider; provider = 0; 
 					loaded= false; return;

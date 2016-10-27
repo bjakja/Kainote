@@ -82,7 +82,7 @@ void Visuals::SetVisual(int _start,int _end)
 	if(Visual==VECTORCLIP){
 		SetClip(GetVisual(),true); return;
 	}
-	tab->Video->Render();
+	tab->Video->Render(false);
 }
 
 void Visuals::SizeChanged(wxSize wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device)
@@ -444,19 +444,33 @@ int ChangeText(wxString *txt, const wxString &what, bool notinbracket, const wxP
 
 void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 {
-	if(clip==""){
-		tab->Video->VisEdit=false;
-		if(!tab->Video->OpenSubs(tab->Grid1->GetVisible())){wxLogStatus(_("Nie można otworzyć napisów"));}
-		tab->Video->VisEdit=true;
-		if(redraw){tab->Video->Render();}
-		return;
-	}
+	
 	EditBox *edit = tab->Edit;
 	Grid *grid = tab->Grid1;
 	bool isOriginal=(grid->transl && edit->TextEdit->GetValue()=="");
 	//Editor
 	MTextEditor *Editor=(isOriginal)? edit->TextEditTl : edit->TextEdit;
-
+	if(clip==""){
+		//
+		wxString tmp;
+		wxString txt = Editor->GetValue();
+		if(edit->FindVal("(i?clip.)[^\\\\}]*", &tmp, txt)){
+			//wxLogStatus("find");
+			ChangeText(&txt,"",edit->InBracket,edit->Placed);
+			txt.Replace("{}", "");
+			Editor->SetTextS(txt, false);
+			Editor->modified = true;
+			//wxLogStatus("find");
+			edit->Send(false);
+			return;
+		}
+		tab->Video->VisEdit=false;
+		if(!tab->Video->OpenSubs(tab->Grid1->GetVisible())){wxLogStatus(_("Nie można otworzyć napisów"));}
+		tab->Video->VisEdit=true;
+		if(redraw){tab->Video->Render();}
+		
+		return;
+	}
 	if(dummy){
 		bool vis=false;
 		//wxLogStatus("dummytext %i", (int)dummytext);
@@ -536,10 +550,13 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 		}
 		
 		tab->Video->VisEdit=false;
+		//wxLogStatus(*dummytext);
 		wxString *dtxt=new wxString(*dummytext);
 		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
 		tab->Video->VisEdit=true;
-		if(redraw){tab->Video->Render();}
+		//if(redraw){
+			tab->Video->Render();
+		//}
 
 	}
 	else{

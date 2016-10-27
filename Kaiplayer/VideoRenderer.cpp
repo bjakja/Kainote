@@ -269,11 +269,13 @@ bool VideoRend::InitDX(bool reset)
 
 	return true;
 }
+//w stosuj false tylko w przypadku gdy odświeżasz coś namalowanego na wideo, 
+//w reszcie przypadków ma być pełne odświeżanie klatki
 
 void VideoRend::Render(bool Frame)
 {
 	//wxLogStatus("render");
-	if(Frame && !IsDshow){VFF->Refresh();/*if(!DrawTexture()){return;}*/resized=false; return;}
+	if(Frame && !IsDshow){VFF->Refresh();resized=false; return;}
 	wxMutexLocker lock(mutexRender);
 	HRESULT hr = S_OK;
 
@@ -787,7 +789,12 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		}
 		if(VisEdit){
 			SAFE_DELETE(Vclips->dummytext);
-			OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
+			if(Vclips->Visual==VECTORDRAW){
+				//Vclips->SetClip(Vclips->GetVisual(),true, false);
+				SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime,false, false);
+			}else{
+				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
+			}
 			VisEdit=false;
 		}else if(pan->Edit->OnVideo){
 			if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
@@ -806,7 +813,11 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		time = VFF->Timecodes[lastframe];
 		if(VisEdit){
 			SAFE_DELETE(Vclips->dummytext);
-			OpenSubs((oldvstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
+			if(Vclips->Visual==VECTORDRAW){
+				SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime,false, false);
+			}else{
+				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
+			}
 			VisEdit=false;
 		}else if(pan->Edit->OnVideo){
 			if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
@@ -821,7 +832,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 				player->player->SetCurrentPosition(player->GetSampleAtMS(time));}
 			VFF->Play();
 		}
-		else{Render();}
+		else{Render(true);}
 	}
 }
 
@@ -1050,7 +1061,7 @@ void VideoRend::DrawLines(wxPoint point)
 	vectors[3].x = rt4.right;
 	vectors[3].y = point.y;
 	cross=true;	
-	if(vstate==Paused && !block){Render(resized);}
+	if(vstate==Paused && !block){Render(/*false*/resized);}      
 }
 
 void VideoRend::DrawProgBar()
@@ -1134,7 +1145,7 @@ void VideoRend::MovePos(int cpos)
 			wxString *txt=pan->Grid1->SaveText();
 			OpenSubs(txt);VisEdit=false;
 		}else if(pan->Edit->OnVideo){OpenSubs(pan->Grid1->SaveText());pan->Edit->OnVideo=false;}
-		Render();
+		Render(true);
 	}
 	else{
 		//for(int i = 1; i<100; i++){

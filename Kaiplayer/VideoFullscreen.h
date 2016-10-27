@@ -9,7 +9,7 @@
 
 class Fullscreen : public wxFrame
 {
-    public:
+public:
     Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size);
     virtual ~Fullscreen();
 	BitmapButton* bprev;
@@ -22,10 +22,11 @@ class Fullscreen : public wxFrame
 	VolSlider* volslider;
 	wxPanel* panel;
     
-
-    private:
+	void OnSize(wxSizeEvent &evt);	
+private:
+	
     wxWindow *vb;
-};
 
+};
 
 #endif // VIDEOPROGBAR_H_INCLUDED

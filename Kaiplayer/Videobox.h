@@ -62,6 +62,7 @@ public:
 	void ConnectAcc(int id);
 	wxRect GetMonitorRect(int wmonitor);
 	void ContextMenu(const wxPoint &pos, bool dummy=false);
+	void OnMouseEvent(wxMouseEvent& event);
 	float wspx,wspy;
 	wxSize lastSize;
 	Fullscreen *TD;
@@ -85,7 +86,6 @@ private:
 	bool ismenu;
 
 	void OnSize(wxSizeEvent& event);
-	void OnMouseEvent(wxMouseEvent& event);
 	void OnKeyPress(wxKeyEvent& event);
 	void OnPlaytime(wxTimerEvent& event);
 	void OnIdle(wxTimerEvent& event);

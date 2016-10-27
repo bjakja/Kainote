@@ -261,6 +261,7 @@ public:
 	void SelectPoints();
 	void DeselectPoints();
 	void ChangeTool(int _tool){tool = _tool;};
+	int FindPoint(int pos, wxString type, bool nextStart =false, bool fromEnd=false);
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
 	ClipPoint lastpoint;

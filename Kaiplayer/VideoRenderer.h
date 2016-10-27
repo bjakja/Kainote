@@ -96,7 +96,7 @@ class VideoRend : public wxWindow
 		void UpdateVideoWindow(bool bars=true);
 		void SetVolume(int vol);
 		
-		void Render(bool Frame=true);
+		void Render(bool RecreateFrame=true);
 		void DrawLines(wxPoint point);
 		void DrawProgBar();
 		bool DrawTexture(byte *nframe=NULL, bool copy=false);

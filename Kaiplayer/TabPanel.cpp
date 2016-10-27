@@ -111,6 +111,7 @@ void TabPanel::OnMouseEvent(wxMouseEvent& event)
 	
 
 	if (left_up && holding) {
+		ReleaseMouse();
 		holding = false;
 		int npos=event.GetY();
 		if(sline){
@@ -129,12 +130,12 @@ void TabPanel::OnMouseEvent(wxMouseEvent& event)
 			
 			int ww,hh;
 			Video->CalcSize(&ww,&hh,w,npos,false,true);
-			Video->SetMinSize(wxSize(ww,hh+44));
-			Options.SetCoords("Video Window Size",ww,hh+44);
+			Video->SetMinSize(wxSize(ww,hh+Video->panelHeight));
+			Options.SetCoords("Video Window Size",ww,hh+Video->panelHeight);
 		}else{Edit->SetMinSize(wxSize(w+(npos-h),npos));}
 		BoxSizer1->Layout();
 		//if(Video->GetState()==Paused){Video->Render();}
-		ReleaseMouse();
+		
 	}
 
 	if (left_up && !holding) {

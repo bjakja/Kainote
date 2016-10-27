@@ -377,11 +377,11 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 	}
 
 	if(isfullskreen){
-		if(eater&&event.Moving()&&!event.ButtonDown()){Sleep(200);eater=false;return;}
+		if(eater && event.Moving() && !event.ButtonDown()){Sleep(200);eater=false;return;}
 		if(!fullarrow){TD->SetCursor(wxCURSOR_ARROW);fullarrow=true;}
 
 		int w,h;
-		wxDisplaySize (&w, &h);
+		TD->GetClientSize(&w, &h);
 		if(y >= h - 44 && !TD->panel->IsShown()){TD->panel->Show();}
 		else if(y < h - 44 && TD->panel->IsShown()){TD->panel->Show(false);SetFocus();}
 		if(!TD->panel->IsShown()&&!ismenu){idletime.Start(1000, true);}
@@ -576,11 +576,15 @@ void VideoCtrl::SetFullskreen(int monitor)
 		if(!TD){
 			//int w,h;
 			//wxDisplaySize (&w, &h);
-			TD=new Fullscreen(this,rt.GetPosition(), rt.GetSize());
+			TD=new Fullscreen(this,rt.GetPosition(),wxSize(800,600)/*rt.GetSize()*/);
 			TD->Videolabel->SetLabelText(Kai->GetTab()->VideoName);
+			wxSizeEvent evt;
+			TD->OnSize(evt);
 		}else{
 			TD->SetPosition(rt.GetPosition());
-			TD->SetSize(rt.GetSize());
+			TD->SetSize(wxSize(1000,700)/*rt.GetSize()*/);
+			wxSizeEvent evt;
+			TD->OnSize(evt);
 		}
 		TD->volslider->SetValue(Options.GetInt("Video Volume"));
 		//wxLogStatus("głośność full %i %i", TD->volslider->GetValue(),Options.GetInt("Video Volume"));
@@ -952,7 +956,7 @@ void VideoCtrl::OnSPlus()
 
 void VideoCtrl::OnPaint(wxPaintEvent& event)
 {
-	if(!IsDshow && GetState()==Playing|| !blockpaint && GetState()==Paused){if(!block){Render();}}
+	if( !block && !blockpaint && GetState()==Paused ){Render(true);}
 }
 
 void VideoCtrl::OnEndFile(wxCommandEvent &event)

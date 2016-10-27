@@ -3,7 +3,7 @@
 #include <vector>
 
 const static int toolsSize = 10;
-const static int clipToolsSize = 7;
+const static int clipToolsSize = 6;
 
 class itemdata{
 public:

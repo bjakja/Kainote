@@ -1,12 +1,15 @@
 ﻿
 #include "ProgressDialog.h"
 #include "kainoteApp.h"
-//#include "timeconv.h"
-//#define UNICODE
 #include "ShObjIdl.h"
 
+wxDEFINE_EVENT(EVT_SHOW_DIALOG, wxThreadEvent);
+wxDEFINE_EVENT(EVT_SET_TITLE, wxThreadEvent);
+wxDEFINE_EVENT(EVT_SET_PROGRESS, wxThreadEvent);
+wxDEFINE_EVENT(EVT_CREATE_SECONDARY_DIALOG, wxThreadEvent);
+wxDEFINE_EVENT(EVT_END_MODAL, wxThreadEvent);
 
-ProgresDialog::ProgresDialog(wxWindow *_parent, wxString title, wxPoint pos, wxSize size, int style)
+ProgresDialog::ProgresDialog(wxWindow *_parent, const wxString &title, const wxPoint &pos, const wxSize &size, int style)
 	: wxDialog(_parent,31555,"",pos,size,style)
 {
 	RegisterWindowMessage ( L"TaskbarButtonCreated" );
@@ -22,6 +25,19 @@ ProgresDialog::ProgresDialog(wxWindow *_parent, wxString title, wxPoint pos, wxS
 	sizer->Add(cancel,0,wxALIGN_CENTER|wxALL, 3);
 	
 	Connect(23333,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ProgresDialog::OnCancel);
+	Bind(EVT_SHOW_DIALOG,&ProgresDialog::OnShow, this);
+	Bind(EVT_SET_PROGRESS,&ProgresDialog::OnProgress, this);
+	Bind(EVT_SET_TITLE, &ProgresDialog::OnTitle, this);
+	Bind(EVT_CREATE_SECONDARY_DIALOG, [=](wxThreadEvent &evt){
+		std::pair<std::function<int()>,wxSemaphore*> pair = evt.GetPayload<std::pair<std::function<int()>,wxSemaphore*>>(); 
+		wxSemaphore* sema = pair.second;
+		std::function<int()> showDial = pair.first;
+		result = showDial();
+		sema->Post();
+	});
+	Bind(EVT_END_MODAL, [=](wxThreadEvent &evt){
+		EndModal(wxID_OK);
+	});
 	firsttime=timeGetTime();
 	canceled=false;
 	SetSizerAndFit(sizer);
@@ -36,10 +52,9 @@ ProgresDialog::ProgresDialog(wxWindow *_parent, wxString title, wxPoint pos, wxS
 		kainoteApp * Kaia = (kainoteApp *)wxTheApp;
 		if(taskbar){taskbar->SetProgressState(Kaia->Frame->GetHWND(),TBPF_NORMAL);taskbar->SetProgressValue(Kaia->Frame->GetHWND(),0,100);}
     }
-	Show();
-	//bool main =wxThread::IsMain();
+
 	//if(!main){
-	wxSafeYield(this);
+	//wxSafeYield(this);
 	//}
 }
 
@@ -68,7 +83,7 @@ void ProgresDialog::Progress(int num)
 	}
 	//bool main =wxThread::IsMain();
 	//if(!main){
-	wxSafeYield(this);
+	//wxSafeYield(this);
 	//}
 	oldtime=newtime;
 	
@@ -79,7 +94,7 @@ void ProgresDialog::Title(wxString title)
 	text->SetLabelText(title);
 	//bool main =wxThread::IsMain();
 	//if(!main){
-	wxSafeYield(this);
+	//wxSafeYield(this);
 	//}
 }
 
@@ -95,4 +110,84 @@ void ProgresDialog::OnCancel(wxCommandEvent& event)
 		kainoteApp * Kaia = (kainoteApp *)wxTheApp;
 		taskbar->SetProgressState(Kaia->Frame->GetHWND(),TBPF_NOPROGRESS);}
 	Hide();
+}
+
+void ProgresDialog::OnShow(wxThreadEvent& evt)
+{
+	bool main =wxThread::IsMain();
+	CenterOnParent();
+	ShowModal();
+}
+
+void ProgresDialog::OnProgress(wxThreadEvent& evt)
+{
+	Progress(evt.GetPayload<int>());
+}
+	
+void ProgresDialog::OnTitle(wxThreadEvent& evt)
+{
+
+	Title(evt.GetPayload<wxString>());
+}
+
+//lepiej wygonać w main thread
+//resztę funkcji można wykonyać w innym watku
+ProgressSink::ProgressSink(wxWindow *parent, const wxString &title, const wxPoint &pos, const wxSize &size, int style)
+	:wxThread(wxTHREAD_JOINABLE)
+{
+	dlg = new ProgresDialog(parent, title, pos, size, style);
+}
+	
+ProgressSink::~ProgressSink()
+{
+	dlg->Destroy();
+}
+//pokazuje nasz dialog, nie pokazywać z innego wątku niż głowny
+void ProgressSink::ShowDialog()
+{
+	//wxThreadEvent *evt = new wxThreadEvent(EVT_SET_TITLE, dlg->GetId());
+	//wxQueueEvent(dlg, evt);
+	dlg->ShowModal();
+}
+
+// ustawia nazwę obecnego zadania
+void ProgressSink::Title(wxString title)
+{
+	wxThreadEvent *evt = new wxThreadEvent(EVT_SET_TITLE, dlg->GetId());
+	evt->SetPayload(title);
+	wxQueueEvent(dlg, evt);
+}
+	
+bool ProgressSink::WasCancelled()
+{
+	return dlg->WasCancelled();
+}
+	
+void ProgressSink::Progress(int num)
+{
+	wxThreadEvent *evt = new wxThreadEvent(EVT_SET_PROGRESS, dlg->GetId());
+	evt->SetPayload(num);
+	wxQueueEvent(dlg,evt);
+}
+void ProgressSink::EndModal()
+{
+	wxThreadEvent *evt = new wxThreadEvent(EVT_END_MODAL, dlg->GetId());
+	wxQueueEvent(dlg,evt);
+}
+
+wxThread::ExitCode ProgressSink::Entry()
+{
+	int result = task();
+	EndModal();
+	return (wxThread::ExitCode)result;
+}
+
+int ProgressSink::ShowSecondaryDialog(std::function<int()> dialfunction){
+	wxThreadEvent *evt = new wxThreadEvent(EVT_CREATE_SECONDARY_DIALOG, dlg->GetId());
+	wxSemaphore sema(0,1);
+	std::pair<std::function<int()>,wxSemaphore*> pair(dialfunction, &sema);
+	evt->SetPayload(pair);
+	wxQueueEvent(dlg, evt);
+	sema.Wait();
+	return dlg->result;
 }

@@ -141,25 +141,17 @@ CacheLine FinalSpectrumCache::null_line;
 unsigned long FinalSpectrumCache::line_length;
 
 // AudioSpectrum
-
 AudioSpectrum::AudioSpectrum(VideoFfmpeg *_provider)
 {
 	provider = _provider;
-
-	
-	line_length = 1<<9;
-	fft_overlaps = 1;
 	subcachelen=16;
+	power_scale = 1;
+	line_length = 1<<7;
 	size_t doublelen=line_length*2;
 	int64_t _num_lines = provider->GetNumSamples()+doublelen / doublelen;
 	num_lines = (unsigned long)_num_lines;
-
-	FinalSpectrumCache::SetLineLength(line_length);
-	cache = new SpectrumThread(this,(num_lines + subcachelen)/subcachelen, fft_overlaps);
-
-	power_scale = 1;
-	minband = 0;//Options.GetInt(_T("Audio Spectrum Cutoff"));
-	maxband = line_length - minband * 2/3; // TODO: make this customisable?
+	SetupSpectrun();
+	
 
 	// Generate colour maps
 	unsigned char *palptr = colours_normal;
@@ -176,7 +168,11 @@ AudioSpectrum::AudioSpectrum(VideoFfmpeg *_provider)
 		//hsl_to_rgb(174, 255-i, (i*0.875f)+32, palptr+0, palptr+1, palptr+2);
 		palptr += 3;
 	}
+
+	minband = 0;//Options.GetInt(_T("Audio Spectrum Cutoff"));
+	maxband = line_length - minband * 2/3; // TODO: make this customisable?
 	fft = new FFT(doublelen, provider);
+	
 }
 
 
@@ -186,14 +182,29 @@ AudioSpectrum::~AudioSpectrum()
 	delete fft;
 }
 
+void AudioSpectrum::SetupSpectrun(int overlaps, int length)
+{
+	
+	fft_overlaps = overlaps;
+
+	FinalSpectrumCache::SetLineLength(line_length);
+	cache = new SpectrumThread(this,(num_lines + subcachelen)/subcachelen, fft_overlaps);
+
+}
+
 void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool selected, unsigned char *img, int imgwidth, int imgheight, int percent)
 {
     wxCriticalSectionLocker locker(CritSec);
     int parc = pow((150-percent)/100.0f, 8);
-	if(parc<1){parc=1;}
-    //wxLogStatus("line len %i, %i",parc, fft_overlaps);
-	if(parc!=fft_overlaps){fft_overlaps = parc; delete cache, 
-		cache=new SpectrumThread(this,(num_lines + subcachelen)/subcachelen, fft_overlaps);//new AudioSpectrumCacheManager(provider, line_length, num_lines, fft_overlaps);
+	if(parc<2){parc=2;}
+	//int newlen = 7.f/pow((150-percent)/100.0f, 8);
+	//newlen = MID(7,newlen,12);
+    //wxLogStatus("line len %i",parc);
+	if(parc!=fft_overlaps){ 
+		delete cache;
+		//delete fft;
+		//cache=new SpectrumThread(this,(num_lines + subcachelen)/subcachelen, fft_overlaps);//new AudioSpectrumCacheManager(provider, line_length, num_lines, fft_overlaps);
+		SetupSpectrun(parc);
 	}
 	
 	unsigned long first_line = (unsigned long)(fft_overlaps * range_start / line_length / 2);

@@ -16,6 +16,7 @@ VideoToolbar::VideoToolbar (wxWindow *parent, const wxPoint &pos)
 	,bmp(NULL)
 {
 	if(icons.size()==0){
+		//pamiêtaj, dodaj¹c tutaj elementy, zmieñ ich wartoœæ w pliku h!!
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("cross"),_("WskaŸnik pozycji")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("position"),_("Przesuwanie tekstu")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("move"),_("Ruch")));
@@ -26,12 +27,12 @@ VideoToolbar::VideoToolbar (wxWindow *parent, const wxPoint &pos)
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("clip"),_("Wycinki wektorowe")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("drawing"),_("Rysunki wektorowe")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEAll"),_("Przesuwanie wielu tagów")));
-		//tutaj doklej nowe ikony
+		//tutaj mamy ikony dla clipa
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorDrag"),_("Przesuñ punkty")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorLine"),_("Dodaj liniê")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorBezier"),_("Dodaj krzyw¹ Beziera")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VECTORBSPLINE"),_("Dodaj krzyw¹ B-sklejan¹")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("VECTORBSPLINEPOINT"),_("Dodaj punkt krzywej B-sklejanej")));
+		//icons.push_back(new itemdata(PTR_BITMAP_PNG("VECTORBSPLINEPOINT"),_("Dodaj punkt krzywej B-sklejanej")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorMove"),_("Dodaj nowy oddzielny punkt")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorDelete"),_("Usuñ element")));
 	}

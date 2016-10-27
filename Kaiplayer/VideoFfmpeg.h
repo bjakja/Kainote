@@ -15,12 +15,12 @@ class VideoRend;
 class VideoFfmpeg
 {
 public:
-	VideoFfmpeg(const wxString &filename, bool *success);
+	//VideoFfmpeg(const wxString &filename, bool *success);
 	//test
 	VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *success);
-	static DWORD FFMS2Proc(void* cls);
+	static unsigned int __stdcall FFMS2Proc(void* cls);
 	void Processing();
-	void Refresh(){SetEvent(eventRefresh);};
+	void Refresh();
 	void Play(){SetEvent(eventStartPlayback);};
 	volatile bool success;
 	wxString fname;
@@ -29,7 +29,7 @@ public:
 	HANDLE eventStartPlayback,
 		eventRefresh,
 		eventKillSelf,
-		eventEndInit;
+		eventComplete;
 	//endtest
 	~VideoFfmpeg();
 	void GetFrame(int frame, byte* buff);
@@ -59,10 +59,10 @@ public:
 	std::vector<int> Timecodes;
 	int GetMSfromFrame(int frame);
 	int GetFramefromMS(int MS, int seekfrom=0);
-	int Init(const wxString &filename);
+	int Init();
 
 	//bool com_inited;
-	ProgresDialog *progress;
+	ProgressSink *progress;
 	static int __stdcall UpdateProgress(int64_t Current, int64_t Total, void *ICPrivate);
 	void Clearcache();
 	FFMS_VideoSource *videosource;
