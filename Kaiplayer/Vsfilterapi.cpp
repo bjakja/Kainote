@@ -32,10 +32,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <mutex>
 #include "Vsfilterapi.h"
 //enumerate
 static void csrilib_enum_dir(const wchar_t *dir);
+
+std::mutex mtx;
 
 static const char *get_errstr()
 {
@@ -313,6 +315,7 @@ csri_rend *csri_renderer_byext(unsigned n_ext, csri_ext_id *ext)
 
 int *csri_close_renderer(csri_rend *renderer)
 {
+	std::unique_lock<std::mutex> lck (mtx);
 	if(wraprends){free(wraprends);wraprends=NULL;}
 	return 0;
 }
@@ -320,6 +323,7 @@ int *csri_close_renderer(csri_rend *renderer)
 csri_inst *csri_open_file(csri_rend *rend,
 	const char *filename, struct csri_openflag *flags)
 {
+	std::unique_lock<std::mutex> lck (mtx);
 	struct csri_wrap_rend *wrend = csrilib_rend_lookup(rend);
 	if (!wrend)
 		return NULL;
@@ -331,6 +335,7 @@ csri_inst *csri_open_file(csri_rend *rend,
 csri_inst *wrapname(csri_rend *rend, \
 	const void *data, size_t length, struct csri_openflag *flags) \
 { \
+	std::unique_lock<std::mutex> lck (mtx);\
 	struct csri_wrap_rend *wrend = csrilib_rend_lookup(rend); \
 	if (!wrend) \
 		return NULL; \
@@ -381,6 +386,7 @@ struct csri_info *csri_renderer_info(csri_rend *rend)
 
 void csri_close(csri_inst *inst)
 {
+	std::unique_lock<std::mutex> lck (mtx);
 	struct csri_wrap_inst *winst = csrilib_inst_lookup(inst);
 	if (!winst)
 		return;
@@ -390,8 +396,9 @@ void csri_close(csri_inst *inst)
 
 int csri_request_fmt(csri_inst *inst, const struct csri_fmt *fmt)
 {
+	std::unique_lock<std::mutex> lck (mtx);
 	struct csri_wrap_inst *winst = csrilib_inst_lookup(inst);
-	if (!winst)
+	if (!winst || !inst)
 		return 0;
 	return winst->request_fmt(inst, fmt);
 }
@@ -399,8 +406,9 @@ int csri_request_fmt(csri_inst *inst, const struct csri_fmt *fmt)
 void csri_render(csri_inst *inst, struct csri_frame *frame,
 	double time)
 {
+	std::unique_lock<std::mutex> lck (mtx);
 	struct csri_wrap_inst *winst = csrilib_inst_lookup(inst);
-	if (!winst)
+	if (!winst || !inst)
 		return;
 	winst->render(inst, frame, time);
 }

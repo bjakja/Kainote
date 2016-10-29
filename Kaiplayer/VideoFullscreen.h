@@ -22,7 +22,7 @@ public:
 	VolSlider* volslider;
 	wxPanel* panel;
     
-	void OnSize(wxSizeEvent &evt);	
+	void OnSize();	
 private:
 	
     wxWindow *vb;

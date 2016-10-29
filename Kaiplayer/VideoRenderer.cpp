@@ -27,6 +27,8 @@ const IID IID_IDirectXVideoProcessorService ={ 0xfc51a552,0xd5e7,0x11d9,{0xaf,0x
 VideoRend::VideoRend(wxWindow *_parent, const wxSize &size)
 	:wxWindow(_parent,-1,wxDefaultPosition, size)//wxFULL_REPAINT_ON_RESIZE
 	,panelHeight(66)
+	,AR(0.0)
+	,fps(0.0)
 {
 	hwnd=GetHWND();
 
@@ -394,7 +396,7 @@ void VideoRend::Render(bool Frame)
 
 	if(cross){
 		DRAWOUTTEXT(m_font,coords,rt1, (rt1.left < vectors[0].x)? 10 : 8 ,0xFFFFFFFF)
-			lines->SetWidth(3);
+		lines->SetWidth(3);
 		hr=lines->Begin();
 		hr=lines->Draw(&vectors[0], 2, 0xFF000000);
 		hr=lines->Draw(&vectors[2], 2, 0xFF000000);
@@ -417,7 +419,7 @@ void VideoRend::Render(bool Frame)
 
 	if(pbar){
 		DRAWOUTTEXT(m_font,pbtime,rt2,DT_LEFT|DT_TOP,0xFFFFFFFF)
-			hr=lines->SetWidth(1);
+		hr=lines->SetWidth(1);
 		hr=lines->Begin();
 		hr=lines->Draw(&vectors[4], 5, 0xFF000000);
 		hr=lines->Draw(&vectors[9], 5, 0xFFFFFFFF);
@@ -456,10 +458,6 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 		fdata= nframe;
 		if(copy){byte *cpy = (byte*) datas; memcpy(cpy,fdata,vheight*pitch);}
 	}
-	/*else if(!IsDshow){
-		fdata=(byte*)datas;
-		VFF->GetFrame(lastframe,fdata);
-	}*/
 	else{
 		wxLogStatus(_("Nie ma wskaźnika bufora klatki"));return false;
 	}
@@ -789,9 +787,10 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		}
 		if(VisEdit){
 			SAFE_DELETE(Vclips->dummytext);
-			if(Vclips->Visual==VECTORDRAW){
-				//Vclips->SetClip(Vclips->GetVisual(),true, false);
-				SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime,false, false);
+			if(Vclips->Visual==VECTORCLIP){
+				Vclips->SetClip(Vclips->GetVisual(),true, false);
+				//SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime,false, false);
+				//OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
 			}else{
 				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
 			}
@@ -813,8 +812,10 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		time = VFF->Timecodes[lastframe];
 		if(VisEdit){
 			SAFE_DELETE(Vclips->dummytext);
-			if(Vclips->Visual==VECTORDRAW){
-				SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime,false, false);
+			if(Vclips->Visual==VECTORCLIP){
+				Vclips->SetClip(Vclips->GetVisual(),true, false);
+				//SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime,false, false);
+				//OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
 			}else{
 				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
 			}
@@ -832,7 +833,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 				player->player->SetCurrentPosition(player->GetSampleAtMS(time));}
 			VFF->Play();
 		}
-		else{Render(true);}
+		else{Render();}
 	}
 }
 
@@ -853,9 +854,10 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 
 
 	// Select renderer
-	vobsub = csri_renderer_default();
-	if(!vobsub){wxLogStatus(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false;}
-
+	//if(!vobsub){
+		vobsub = csri_renderer_default();
+		if(!vobsub){wxLogStatus(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false;}
+	//}
 
 	instance = csri_open_mem(vobsub,buffer,size,NULL);
 	if(!instance){wxLogStatus(_("Instancja VobSuba nie utworzyła się.")); delete textsubs; return false;}
@@ -937,12 +939,12 @@ void VideoRend::playing()
 }
 
 //ustawia nowe recty po zmianie rozdzielczości wideo
-bool VideoRend::UpdateRects(bool bar)
+bool VideoRend::UpdateRects(bool VideoPanel)
 {
 	VideoCtrl* Video=(VideoCtrl*) this;
 	wxRect rt;
 	TabPanel* tab=(TabPanel*)Video->GetParent();
-	if(bar){hwnd=GetHWND();rt=GetClientRect();rt.height-=panelHeight;}
+	if(VideoPanel){hwnd=GetHWND();rt=GetClientRect();rt.height-=panelHeight;pbar=false;}
 	else{hwnd=Video->TD->GetHWND();rt=Video->TD->GetClientRect();pbar=true;cross=false;}
 	if(!rt.height || !rt.width){return false;}
 	rt3.bottom=rt.height;
@@ -955,8 +957,8 @@ bool VideoRend::UpdateRects(bool bar)
 	}
 	else
 	{
-		int arwidth=rt.height/Video->AR;
-		int arheight=rt.width*Video->AR;
+		int arwidth=rt.height / AR;
+		int arheight=rt.width * AR;
 		if(arwidth > rt.width)
 		{
 			int onebar=(rt.height-arheight)/2;
@@ -987,7 +989,6 @@ void VideoRend::UpdateVideoWindow(bool bar)
 
 
 	wxMutexLocker lock(mutexRender);
-	//if(blockDS){while(!blockDS){wxLogStatus("updatewindowsleep");Sleep(5);}}
 	block=true;
 	if(!UpdateRects(bar)){block=false;return;}
 

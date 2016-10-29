@@ -52,6 +52,7 @@ public:
 	wxMenuItem *SetAccMenu(wxMenu *menu, int id, const wxString &txt="", const wxString &help="", wxItemKind kind=wxITEM_NORMAL);
 	wxMenuItem *SetAccMenu(wxMenu *menu, wxMenuItem *menuitem, const wxString &name);
 	int OnMapHkey(int id, wxString name,wxWindow *parent,wxString *windows, int elems);
+	void SetAccels(bool all=false);
 	std::map<int, hdata> hkeys;
 	std::map<int, wxString> keys;
 	bool AudioKeys;

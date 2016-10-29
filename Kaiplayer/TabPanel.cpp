@@ -63,10 +63,10 @@ void TabPanel::SetAccels()
 
 	std::vector<wxAcceleratorEntry> eentries;
 	eentries.resize(4);
-    eentries[0].Set(wxACCEL_CTRL, WXK_RETURN, MENU_ZATW);
-    eentries[1].Set(wxACCEL_NORMAL, WXK_RETURN, MENU_NLINE);
-	eentries[2].Set(wxACCEL_CTRL, WXK_NUMPAD_ENTER, MENU_ZATW);
-    eentries[3].Set(wxACCEL_NORMAL, WXK_NUMPAD_ENTER, MENU_NLINE);
+    //eentries[0].Set(wxACCEL_CTRL, WXK_RETURN, MENU_ZATW);
+    //eentries[1].Set(wxACCEL_NORMAL, WXK_RETURN, MENU_NLINE);
+	eentries[0].Set(wxACCEL_CTRL, WXK_NUMPAD_ENTER, MENU_ZATW);
+    eentries[1].Set(wxACCEL_NORMAL, WXK_NUMPAD_ENTER, MENU_NLINE);
 	
 	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
 		int id=cur->first;

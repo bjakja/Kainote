@@ -142,6 +142,7 @@
     <ClCompile Include="KainoteApp.cpp" />
     <ClCompile Include="KainoteMain.cpp" />
     <ClCompile Include="ListControls.cpp" />
+    <ClCompile Include="MappedButton.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Styles.cpp" />
     <ClCompile Include="StyleStore.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="KainoteApp.h" />
     <ClInclude Include="KainoteMain.h" />
     <ClInclude Include="ListControls.h" />
+    <ClInclude Include="MappedButton.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="StyleChange.h" />
     <ClInclude Include="ColorSpaceConverter.h" />

@@ -3,6 +3,7 @@
 #include "TimeCtrl.h"
 #include "SubsTime.h"
 #include "NumCtrl.h"
+#include "MappedButton.h"
 #include <wx/wx.h>
 #include <wx/collpane.h>
 
@@ -24,7 +25,7 @@ class CTwindow: public wxScrolled<wxWindow>
 		wxRadioButton* Backward;
 		
 		wxButton* AddStyles;
-		wxButton* MoveTime;
+		MappedButton* MoveTime;
 		TimeCtrl* TimeText;
 		wxTextCtrl* Stylestext;
 		wxCheckBox* videotime;

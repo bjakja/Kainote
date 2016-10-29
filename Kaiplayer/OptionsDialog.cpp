@@ -597,7 +597,7 @@ void OptionsDialog::OnMapHkey(wxListEvent& event)
 	wxString shkey=itemtext.AfterFirst(' ');
 	wxString type=itemtext[0];
 	HkeysDialog hkd(this,shkey,shkey.StartsWith("Script"));
-	if(hkd.ShowModal()==0){
+	if(hkd.ShowModal()==wxID_OK){
 	
 		int id=-1;
 		for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){//wxLogStatus(cur->first);

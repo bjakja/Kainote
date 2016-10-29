@@ -125,10 +125,11 @@ void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 		wxString name=item->GetLabelText();
 		ret=Hkeys.OnMapHkey(id, name, this, wins, 1);
 		if(ret==-1){
-			Notebook *Tabs = Notebook::GetTabs();
+			/*Notebook *Tabs = Notebook::GetTabs();
 			for(size_t i=0;i<Tabs->Size();i++){
 				Tabs->Page(i)->SetAccels();
-			}
+			}*/
+			Hkeys.SetAccels();
 			Hkeys.SaveHkeys();
 		}
 		goto done;

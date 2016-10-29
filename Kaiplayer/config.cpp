@@ -252,6 +252,7 @@ inline wxString config::LoadDefaultConfig()
 			"Style Preview Color2=#686868\r\n"\
 			"Styles of time change=\r\n"\
 			"Time show of letter=110\r\n"\
+			"Index Video=true\r\n"\
 			"Video Prog Bar=true\r\n"\
 			"Video Window Size=500,350\r\n"\
 			"Window Size=800,600";
@@ -408,6 +409,7 @@ bool config::LoadAudioOpts()
 			"Audio Autoscroll=true\r\n"\
 			"Audio Background=#000000\r\n"\
 			"Audio Box Height=169\r\n"\
+			"Audio Delay=0\r\n"\
 			"Audio Draw Cursor Time=true\r\n"\
 			"Audio Draw Keyframes=true\r\n"\
 			"Audio Draw Secondary Lines=true\r\n"\

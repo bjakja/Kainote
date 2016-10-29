@@ -69,6 +69,7 @@ public:
 	bool isarrow;
 	wxString oldpath;
 	std::vector<RECT> MonRects;
+	bool isOnAnotherMonitor;
 private:
     BitmapButton* bprev;
 	BitmapButton* bpause;
@@ -84,7 +85,7 @@ private:
 	int prevchap;
 	wxArrayString pliki;
 	bool ismenu;
-
+	
 	void OnSize(wxSizeEvent& event);
 	void OnKeyPress(wxKeyEvent& event);
 	void OnPlaytime(wxTimerEvent& event);
@@ -96,7 +97,6 @@ private:
 	void OnPaint(wxPaintEvent& event);
 	void OnCopyCoords(const wxPoint &pos);
 	void OnErase(wxEraseEvent& event){};
-	//void InternalOnPopupMenuUpdate(wxUpdateUIEvent& WXUNUSED(event)){};
 	void ChangeButtonBMP(bool play=false);
 	wxTimer idletime;
 	DECLARE_EVENT_TABLE()

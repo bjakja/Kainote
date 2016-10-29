@@ -123,6 +123,8 @@ void Hotkeys::LoadDefault(std::map<int, hdata> &_hkeys, bool Audio)
 		_hkeys[SplitLine]=hdata('E', _("Wstaw znak podziału"), "Ctrl-N");
 		_hkeys[StartDifference]=hdata('E', _("Wstaw różnicę początkową"), "Ctrl-,");
 		_hkeys[EndDifference]=hdata('E', _("Wstaw różnicę końcową"), "Ctrl-.");
+		_hkeys[MENU_ZATW]=hdata('E', _("Zatwierdź zmiany"), "Ctrl-Enter");
+		_hkeys[MENU_NLINE]=hdata('E', _("Zatwierdź zmiany idź do następnej linii"), "Enter");
 	}else{
 		_hkeys[AudioCommit]=hdata('A', _("Zatwierdź"), "Enter");
 		_hkeys[AudioCommitAlt]=hdata('A', _("Zatwierdź zastępcze"), "G");
@@ -168,6 +170,10 @@ int Hotkeys::LoadHkeys(bool Audio)
 	bool checkVer=false;
 	if(acctxt.StartsWith("[")){
 		wxString token=hk.NextToken();
+		wxString ver= token.BeforeFirst(']').Mid(1);
+		if(ver != Options.progname){
+			LoadDefault(hkeys,Audio);
+		}
 		int first = token.find(L".");//0.8.0.build
 		if(first> -1){
 			wxString ver = token.Mid(first+5).BeforeFirst(' ');
@@ -303,7 +309,7 @@ int Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent, wxString *windows
 {
 	HkeysDialog hkd(parent,name,false,windows,elems);
 	int resitem=-1;
-	if(hkd.ShowModal()==0){
+	if(hkd.ShowModal()==wxID_OK){
 
 		/*auto result = std::find_if(hkeys.begin(),hkeys.end(),[&](std::pair<int,hdata>& hkey){
 			return (hkey.second.Accel == hkd.hotkey && hkey.second.Type == hkd.hkname[0]);
@@ -321,6 +327,7 @@ int Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent, wxString *windows
 			}
 		}
 		//wxLogStatus("Sethkey");
+		//wxLogStatus("Sethotkey",);
 		Hkeys.SetHKey(id, hkd.hkname, hkd.hotkey);
 		//wxLogStatus("Setitem");
 	}
@@ -349,6 +356,18 @@ wxMenuItem *Hotkeys::SetAccMenu(wxMenu *menu, wxMenuItem *menuitem, const wxStri
 
 	if(id){menuitem->SetAccel(&GetHKey(id));}
 	return menu->Append(menuitem);
+}
+
+void Hotkeys::SetAccels(bool all){
+	Notebook *Tabs=Notebook::GetTabs();
+	if(all){
+		kainoteFrame * frame = (kainoteFrame *)Tabs->GetParent();
+		frame->SetAccels();
+		return;
+	}
+	for(size_t i=0;i<Tabs->Size();i++){
+		Tabs->Page(i)->SetAccels();
+	}
 }
 
 //Okno dialogowe przechwytujące skróty klawiszowe
@@ -400,7 +419,7 @@ void HkeysDialog::OnKeyPress(wxKeyEvent& event)
 		if(keytxt==""){keytxt=wchar_t(key);}
 		hotkey<<keytxt;
 
-		EndModal(0);
+		EndModal(wxID_OK);
 	}
 }
 

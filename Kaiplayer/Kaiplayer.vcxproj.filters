@@ -237,6 +237,9 @@
     <ClCompile Include="ListControls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MappedButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DropFiles.h">
@@ -441,6 +444,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ListControls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MappedButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

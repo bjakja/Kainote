@@ -805,7 +805,9 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 	if (left_up && holding) {
 		holding = false;
 		if(file->IsNotSaved()&&lastsel!=-1){SetModified();}
+#if !_DEBUG
 		ReleaseMouse();
+#endif
 		if(oldX!=-1){return;}
 	}
 
@@ -816,7 +818,9 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 		if (!shift) lastRow = row;
 		lastsel=row;
 		oldX=(curY<GridHeight)?curX : -1;
+#if !_DEBUG
 		CaptureMouse();
+#endif
 	}
 	if(holding && oldX!=-1){
 		int diff=(oldX-curX);
@@ -1715,7 +1719,7 @@ void SubsGrid::GetUndo(bool redo)
 	Edit->RefreshStyle();
 	VideoCtrl *vb=pan->Video;
 	if(Edit->Visual<1){
-		if(vb->IsShown()){vb->OpenSubs(SaveText());}
+		if(vb->IsShown() || vb->isfullskreen){vb->OpenSubs(SaveText());}
 		int opt=Options.GetInt("Move Video To Active Line");
 		if(opt>1){
 			if(vb->GetState()==Paused || (vb->GetState()==Playing && (opt==3 || opt==5))){
@@ -1862,7 +1866,7 @@ void SubsGrid::SetModified(bool redit, bool dummy, int SetEditBoxLine)
 			if(Edit->Visual>0){
 				vb->SetVisual(Edit->line->Start.mstime, Edit->line->End.mstime, false, true);
 			}else{
-				if(vb->IsShown()){vb->OpenSubs(SaveText());}
+				if(vb->IsShown() || vb->isfullskreen){vb->OpenSubs(SaveText());}
 
 				int opt=Options.GetInt("Move Video To Active Line");
 				if(opt>1){

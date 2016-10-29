@@ -37,7 +37,7 @@ Fullscreen::~Fullscreen()
     //Zwolnić event handler
 }
 
-void Fullscreen::OnSize(wxSizeEvent &evt)
+void Fullscreen::OnSize()
 {
 	wxSize asize = GetClientSize();
 	VideoCtrl *vc = (VideoCtrl*)vb;

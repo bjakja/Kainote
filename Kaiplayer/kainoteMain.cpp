@@ -475,7 +475,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_("Ten program to jakby moje zaplecze do nauki C++, więc mogą zdarzyć się różne błędy.\r\n\r\n")+
 			_("Kainote zawiera w sobie części następujących projeków:\r\n")+
 			L"wxWidgets - Copyright © Julian Smart, Robert Roebling et al;\r\n"\
-			L"Color picker, wymuxowywanie napsów z mkv, audiobox, audio player, część funkcji do lua\r\ni kilka innych pojedynczych funkcji wzięte z Aegisuba -\r\n"\
+			L"Color picker, wymuxowywanie napsów z mkv, audiobox, audio player, automation\r\ni kilka innych pojedynczych funkcji wzięte z Aegisuba -\r\n"\
 			L"Copyright © Rodrigo Braz Monteiro;\r\n"\
 			L"Hunspell - Copyright © Kevin Hendricks;\r\n"\
 			L"Matroska Parser - Copyright © Mike Matsnev;\r\n"\
@@ -483,12 +483,15 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			L"Vsfilter - Copyright © Gabest;\r\n"\
 			L"FFMPEGSource2 - Copyright © Fredrik Mellbin;\r\n"\
 			L"FreeType - Copyright ©  David Turner, Robert Wilhelm, and Werner Lemberg;\r\n"\
-			L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.", "O Kainote");
+			L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al."\
+			L"ICU - Copyright © 1995-2016 International Business Machines Corporation and others"\
+			L"Boost - Copyright © Joe Coder 2004 - 2006.",
+			"O Kainote");
 	}else if(id==Helpers){
-		wxString Testers=L"Ksenoform, Deadsoul, Zły los, Vessin, Xandros, Areki, Nyah2211, Waski_jestem.";
+		wxString Testers=L"Wincenty271, mas1904, Ksenoform, Deadsoul, Zły los,\r\nVessin, Xandros, Areki, Nyah2211, Waski_jestem.";
 		wxString Credits=_("Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\r\n")+
 			_("- Archer (pierwsze przyciski do wideo).\r\n")+
-			_("- Kostek00 (przyciski do audio).\r\n")+
+			_("- Kostek00 (przyciski do audio i narzędzi wizualnych).\r\n")+
 			_("- Xandros (nowe przyciski do wideo).\r\n")+
 			_("- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\r\n")+
 			_("- Areki, duplex (tłumaczenie anglojęzyczne).\r\n \r\n")+
@@ -497,8 +500,9 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_("i najbardziej narzekający na wszystko).\r\n")+
 			_("- Sacredus (chyba pierwszy tłumacz używający trybu tłumaczenia,\r\n nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\r\n")+
 			_("- Kostek00 (prawdziwy wynajdywacz błędów,\r\n")+
-			_("miał duży wpływ na rozwój wykresu audio i głównego pola tekstowego).\r\n")+
+			_("miał duży wpływ na rozwój spektrum audio i głównego pola tekstowego).\r\n")+
 			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy).\r\n \r\n")+
+			_("- MatiasMovie (wyłapał parę kraszy i zaproponował różne usprawnienia).\r\n");
 			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\r\n");
 		wxMessageBox(Credits+Testers,_("Lista osób pomocnych przy tworzeniu programu"));
 
@@ -676,7 +680,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 	}
 	
 	if(Options.GetBool("Open In New Card") && pan->SubsPath!="" &&
-		!pan->Video->isfullskreen&&issubs){
+		!pan->Video->isfullskreen && issubs){
 			//pan->Thaw();
 			Tabs->AddPage(true);pan=Tabs->Page(Tabs->Size()-1);
 			//pan->Freeze();
@@ -929,6 +933,7 @@ void kainoteFrame::SetAccels(bool _all)
 		int id=cur->first;
 		if(cur->second.Accel==""){continue;}
 		if(id>=6850){
+			//if(id>7000){Connect(id,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);}
 			entries.push_back(Hkeys.GetHKey(id));
 		}else if(id>6000){
 			MenuItem *item=Menubar->FindItem(id);
@@ -1319,31 +1324,31 @@ void kainoteFrame::OnMenuOpened(MenuEvent& event)
 	}
 	TabPanel *pan = GetTab();
 	bool enable=(pan->Video->GetState()!=None);
-	bool edytor=pan->edytor;
+	bool editor=pan->edytor;
 	for(int i = PlayPauseG; i<=SetVideoAtEnd; i++)
 	{
-		Menubar->Enable(i,(i<SetStartTime)? enable : enable && edytor);
+		Menubar->Enable(i,(i<SetStartTime)? enable : enable && editor);
 	}
 	//kolejno numery id
-	bool forms;
 	char form = pan->Grid1->form;
 	bool tlmode = pan->Grid1->transl;
-	bool editor = pan->edytor;
 	for(int i=SaveSubs;i<=ViewSubs;i++){//po kolejne idy zajrzyj do enuma z pliku h, ostatni jest Automation
-		forms=true;
+		enable=true;
 
-		if(i>=ASSProperties&&i<ConvertToASS){forms=form<SRT;}//menager stylów i sinfo
-		else if(i==ConvertToASS){forms=form>ASS;}//konwersja na ass
-		else if(i==ConvertToSRT){forms=form!=SRT;}//konwersja na srt
-		else if(i==ConvertToMDVD){forms=form!=MDVD;}//konwersja na mdvd
-		else if(i==ConvertToMPL2){forms=form!=MPL2;}//konwersja na mpl2
-		else if(i==ConvertToTMP){forms=form!=TMP;}//konwersja na tmp
-		if((i>=ConvertToASS && i<=ConvertToTMP) && tlmode){forms=false;}
-		//if(i>=CrossPositioner && i<=MoveAll){forms= pan->Video->IsShown() && form<SRT && ( i - CrossPositioner ) != pan->Edit->Visual;}
-		if(i==ViewAudio || i==CloseAudio){forms= pan->Edit->ABox!=0;}
-		if(i==ViewVideo||i==AudioFromVideo){forms= pan->Video->GetState()!=None;}
-		if(i==SaveTranslation){forms=tlmode;}
-		Menubar->Enable(i, editor && forms);
+		if(i>=ASSProperties&&i<ConvertToASS){enable=form<SRT;}//menager stylów i sinfo
+		else if(i==ConvertToASS){enable=form>ASS;}//konwersja na ass
+		else if(i==ConvertToSRT){enable=form!=SRT;}//konwersja na srt
+		else if(i==ConvertToMDVD){enable=form!=MDVD;}//konwersja na mdvd
+		else if(i==ConvertToMPL2){enable=form!=MPL2;}//konwersja na mpl2
+		else if(i==ConvertToTMP){enable=form!=TMP;}//konwersja na tmp
+		if((i>=ConvertToASS && i<=ConvertToTMP) && tlmode){enable=false;}
+		if(i==ViewAudio || i==CloseAudio){enable= pan->Edit->ABox!=0;}
+		if((i==ViewVideo || i==ViewAll )||i==AudioFromVideo){
+			enable= pan->Video->GetState()!=None;
+			if(i!=AudioFromVideo){enable = (enable && !pan->Video->isOnAnotherMonitor);}
+		}
+		if(i==SaveTranslation){enable=tlmode;}
+		Menubar->Enable(i, editor && enable);
 	}
 	//specjalna poprawka do zapisywania w trybie tłumaczenia, jeśli jest tlmode, to zawsze ma działać.
 	pan->Edit->TlMode->Enable((editor && form==ASS && pan->SubsPath!=""));

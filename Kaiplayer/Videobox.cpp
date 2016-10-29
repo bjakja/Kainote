@@ -82,9 +82,22 @@ void bars1::OnSlider(wxCommandEvent &event)
 
 VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	: VideoRend(parent, size)
+	,Kai(kfpar)
+	,isfullskreen(false)
+	,isarrow(true)
+	,seekfiles(true)
+	,fullarrow(true)
+	,ismenu(false)
+	,eater(false)
+	,actfile(0)
+	,prevchap(-1)
+	,wspx(0.0f)
+	,wspy(0.0f)
+	,TD(NULL)
+	,blockpaint(false)
+	,isOnAnotherMonitor(false)
 {
 
-	Kai=kfpar;
 	SetBackgroundColour("#000000");
 
 	panel=new wxPanel(this,-1,wxPoint(0,size.y-panelHeight),wxSize(size.x,panelHeight));
@@ -130,17 +143,8 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 
 	vtime.SetOwner(this,idvtime);
 	idletime.SetOwner(this,ID_IDLE);
-	isfullskreen=false;
-	isarrow=true;
-	seekfiles=true;
-	fullarrow=true;
-	ismenu=eater=false;
-	actfile=0;
-	prevchap=-1;
-	AR=fps=wspx=wspy=0.0f;
-	TD=NULL;
-	blockpaint=false;
-	panel->SetFocusIgnoringChildren();
+	
+	//panel->SetFocusIgnoringChildren();
 }
 VideoCtrl::~VideoCtrl()
 {
@@ -275,8 +279,10 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 	kkk1.mstime=GetDuration();
 	Kai->SetStatusText(kkk1.raw(SRT),1);
 	Kai->SetRecent(1);
-	if(Kai->GetTab()->edytor && !isfullskreen && Kai->GetTab()->SubsPath!="" && Options.GetBool("Open Video At Active Line")){
-		Seek(Kai->GetTab()->Edit->line->Start.mstime);}
+	if(Kai->GetTab()->edytor && (!isfullskreen && IsDshow) && 
+		Kai->GetTab()->SubsPath!="" && Options.GetBool("Open Video At Active Line")){
+		Seek(Kai->GetTab()->Edit->line->Start.mstime);
+	}
 
 	ChangeStream();
 	return true;
@@ -485,7 +491,7 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 
 void VideoCtrl::OnIdle(wxTimerEvent& event)
 {
-	if(isfullskreen&&!TD->panel->IsShown()&&!ismenu){
+	if(isfullskreen && !TD->panel->IsShown()&&!ismenu){
 		TD->SetCursor(wxCURSOR_BLANK);eater=IsDshow;fullarrow=false;
 	}
 }
@@ -543,6 +549,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 
 	//wyjście z fullskreena
 	if(!isfullskreen){
+		
 		if(GetState()==Playing){if(Kai->GetTab()->edytor){Pause();}else{vtime.Start(100);}}
 
 
@@ -552,8 +559,9 @@ void VideoCtrl::SetFullskreen(int monitor)
 			if(!Kai->IsMaximized()){
 				Kai->GetClientSize(&sizex,&sizey);
 				CalcSize(&sx,&sy,sizex,sizey);
-				Kai->SetClientSize(sx + iconsize,sy + panelHeight + Kai->Tabs->GetHeight());}}
-		else{
+				Kai->SetClientSize(sx + iconsize,sy + panelHeight + Kai->Tabs->GetHeight());
+			}
+		}else{
 			Options.GetCoords("Video Window Size",&sizex,&sizey);
 			CalcSize(&sx,&sy,sizex,sizey);
 			SetMinSize(wxSize(sx,sy+panelHeight));
@@ -561,7 +569,10 @@ void VideoCtrl::SetFullskreen(int monitor)
 		}
 		volslider->SetValue(Options.GetInt("Video Volume"));
 		//wxLogStatus("głośność okno %i %i", volslider->GetValue(),Options.GetInt("Video Volume"));
-		if(!IsShown()){Show();GetParent()->Layout();}	
+		if(!IsShown()){
+			isOnAnotherMonitor=false;
+			Show();GetParent()->Layout();
+		}
 		UpdateVideoWindow();
 		block=true;
 		Render();
@@ -576,15 +587,14 @@ void VideoCtrl::SetFullskreen(int monitor)
 		if(!TD){
 			//int w,h;
 			//wxDisplaySize (&w, &h);
-			TD=new Fullscreen(this,rt.GetPosition(),wxSize(800,600)/*rt.GetSize()*/);
+			TD=new Fullscreen(this,rt.GetPosition(),/*wxSize(800,600)*/rt.GetSize());
 			TD->Videolabel->SetLabelText(Kai->GetTab()->VideoName);
-			wxSizeEvent evt;
-			TD->OnSize(evt);
+			TD->OnSize();
 		}else{
 			TD->SetPosition(rt.GetPosition());
-			TD->SetSize(wxSize(1000,700)/*rt.GetSize()*/);
+			TD->SetSize(rt.GetSize());
 			wxSizeEvent evt;
-			TD->OnSize(evt);
+			TD->OnSize();
 		}
 		TD->volslider->SetValue(Options.GetInt("Video Volume"));
 		//wxLogStatus("głośność full %i %i", TD->volslider->GetValue(),Options.GetInt("Video Volume"));
@@ -594,9 +604,10 @@ void VideoCtrl::SetFullskreen(int monitor)
 		displaytime();
 		if(GetState()==Playing){vtime.Start(1000);}
 		//if(GetState()==Paused){Kp->Render();}
-		if(monitor){
+		if(monitor && Kai->GetTab()->edytor){
 			Hide();
 			GetParent()->Layout();
+			isOnAnotherMonitor=true;
 		}else{
 			SetFocus();
 		}
@@ -764,7 +775,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 	int Modifiers=0;
 	//ismenu=true;
 	if(isfullskreen){
-		id=menu->GetPopupMenuSelection(wxGetMousePosition(), TD, &Modifiers, true, 50);
+		id=menu->GetPopupMenuSelection(pos, TD, &Modifiers, true, 50);
 		//wxLogStatus("fulscreen menu %i", id);
 	}else{
 		id=menu->GetPopupMenuSelection(pos, this, &Modifiers, true, 50);
@@ -777,10 +788,11 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 		wxString name=item->GetLabelText();
 		ret=Hkeys.OnMapHkey(id, name, this, wins, 1);
 		if(ret==-1){
-			Notebook *Tabs = Notebook::GetTabs();
+			/*Notebook *Tabs = Notebook::GetTabs();
 			for(size_t i=0;i<Tabs->Size();i++){
 				Tabs->Page(i)->SetAccels();
-			}
+			}*/
+			Hkeys.SetAccels();
 			Hkeys.SaveHkeys();
 		}
 		delete menu;

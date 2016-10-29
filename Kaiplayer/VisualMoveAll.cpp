@@ -81,7 +81,7 @@ void MoveAll::SetCurVisual()
 	elems.clear();
 
 	wxString res;
-	if(tab->Edit->FindVal("org\\(([^\\)]+)", &res)){
+	if(tab->Edit->FindVal("org\\(([^\\)]+)", &res, "", 0, true)){
 		wxString rest;
 		double orx,ory;
 		
@@ -91,7 +91,7 @@ void MoveAll::SetCurVisual()
 		elem.type=TAGORG;
 		elems.push_back(elem);
 	}
-	if(tab->Edit->FindVal("(i?clip[^\\)]+)", &res)){
+	if(tab->Edit->FindVal("(i?clip[^\\)]+)", &res, "", 0, true)){
 		wxRegEx re("m ([0-9.-]+) ([0-9.-]+)", wxRE_ADVANCED);
 		moveElems elem;
 		if(re.Matches(res)){
@@ -109,7 +109,7 @@ void MoveAll::SetCurVisual()
 		elem.type=TAGCLIP;
 		elems.push_back(elem);
 	}
-	if(tab->Edit->FindVal("p([0-9]+)", &res)){
+	if(tab->Edit->FindVal("p([0-9]+)", &res, "", 0, true)){
 		res=tab->Edit->TextEdit->GetValue();
 		wxRegEx re("} ?m ([.0-9-]+) ([.0-9-]+)", wxRE_ADVANCED);
 		if(re.Matches(res)){

@@ -118,7 +118,7 @@ void DrawingAndClip::SetCurVisual()
 	wxString clip;
 	D3DXVECTOR2 linepos = GetPosnScale(&scale, &alignment, (Visual==VECTORDRAW)? tbl : NULL);
 	if(Visual!=VECTORDRAW){
-		bool found =tab->Edit->FindVal("(i?clip[^\\)]+)", &clip);
+		bool found =tab->Edit->FindVal("(i?clip[^\\)]+)", &clip, "", 0, true);
 		if(found){int rres = clip.Replace(",",",");
 			if( rres >= 3) {clip = "";} 
 			else{clip = clip.AfterFirst((rres>0)? ',' : '(');}
@@ -126,26 +126,25 @@ void DrawingAndClip::SetCurVisual()
 		_x=0;
 		_y=0;
 	}else{
+		bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()=="");
+		//Editor
+		MTextEditor *Editor=(isOriginal)? tab->Edit->TextEditTl : tab->Edit->TextEdit;
 		wxString txt=tab->Edit->TextEdit->GetValue();
 		wxRegEx re("(.*){[^}]*}(m[^{]+){[^}]*\\\\p0[^}]*}(.*)", wxRE_ADVANCED);
 		if(re.Matches(txt)){
 			clip = re.GetMatch(txt,2);
-			textwithclip = re.GetMatch(txt,1).AfterLast('}') + re.GetMatch(txt,3).BeforeFirst('{');
-			//wxLogStatus("clip "+ clip + " text "+textwithclip);
+			
 		}else{
 			wxRegEx re("(.*){[^}]*}(m[^{]+)", wxRE_ADVANCED);
 			if(re.Matches(txt)){
 				clip = re.GetMatch(txt,2);
-				textwithclip = re.GetMatch(txt,1).AfterLast('}');
-				//wxLogStatus("clip "+ clip + " text "+textwithclip);
-			}else{
-				wxRegEx re("{[^}]*}", wxRE_ADVANCED);
-				re.ReplaceAll(&txt,"");
-				textwithclip = txt;
-				//wxLogStatus("text "+textwithclip);
+				
 			}
 		}
 		
+		//wxLogStatus("text "+textwithclip);
+		Editor->SetTextS(txt,false);
+		Editor->modified=true;
 
 		_x=linepos.x/scale.x;
 		_y=(linepos.y/scale.y);
@@ -200,7 +199,7 @@ wxString DrawingAndClip::GetVisual()
 	for(size_t i=0; i<psize; i++)
 	{
 		ClipPoint pos=Points[i];
-		if(pos.type=="m" && i>= psize-1 && psize>1 ){break;}
+		//if(pos.type=="m" && i>= psize-1 && psize>1 ){break;}
 		float x= pos.x + offsetxy.x;
 		float y= pos.y + offsetxy.y;
 		if(cntb && !pos.start){
@@ -606,15 +605,15 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		if(tool==4 && grabbed==-1)
 		{
 			int pos = CheckPos(xy, true);
-			if(Points[(pos == (int)psize )? psize - 1 : pos].type=="m"){
+			/*if(psize > 0 && Points[(pos == (int)psize )? psize - 1 : pos].type=="m"){
 				wxMessageBox(_("Ze wzglêdu na b³êdy Vsfiltra zablokowa³em mo¿liwoœæ wstawiania dwóch \"m\" po sobie"), _("Uwaga"));
 				return;
-			}
+			}*/
 			AddMove(xy,pos);
 			SetClip(GetVisual(),true);
 			grabbed= psize-1;
-			tool=0;
-			tab->Video->vToolbar->SetClipToggled(tool);
+			//tool=0;
+			//tab->Video->vToolbar->SetClipToggled(tool);
 		}
 		else if( grabbed == -1 ){
 			drawSelection=true;

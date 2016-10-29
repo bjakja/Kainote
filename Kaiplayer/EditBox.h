@@ -10,7 +10,8 @@
 #include "NumCtrl.h"
 #include "ListControls.h"
 #include "AudioBox.h"
-#include <d3dx9math.h>
+#include "MappedButton.h"
+//#include <d3dx9math.h>
 
 class kainoteFrame;
 class Grid;
@@ -46,10 +47,10 @@ public:
 	virtual ~txtdialog(){};
 };
 
-class TagButton :public wxButton
+class TagButton :public MappedButton
 {
 public:
-	TagButton(wxWindow *parent, int id, const wxString &name, const wxSize &size);
+	TagButton(wxWindow *parent, int id, const wxString &name, wxString tooltip, const wxSize &size);
 	virtual ~TagButton(){};
 	
 private:
@@ -70,7 +71,7 @@ public:
 	void SetTl(bool tl);
 	void Send(bool selline=true, bool dummy=false, bool visualdummy=false);
 	void RefreshStyle(bool resetline=false);
-	bool FindVal(wxString wval, wxString *returnval, wxString text="", bool *endsel=0);
+	bool FindVal(wxString wval, wxString *returnval, wxString text="", bool *endsel=0, bool fromstart=false);
 	void HideControls();
 	void UpdateChars(wxString text);
 
@@ -96,18 +97,18 @@ public:
 	DescTxtCtrl* EffectEdit;
 	EBStaticText *Chars;
 	EBStaticText *Chtime;
-	wxButton* Bfont;
-	wxButton* Bcol1;
-	wxButton* Bcol2;
-	wxButton* Bcol3;
-	wxButton* Bcol4;
-	wxButton* Bbold;
-	wxButton* Bital;
-	wxButton* Bund;
-	wxButton* Bstrike;
-	wxButton* Bcpall;
-	wxButton* Bcpsel;
-	wxButton* Bhide;
+	MappedButton* Bfont;
+	MappedButton* Bcol1;
+	MappedButton* Bcol2;
+	MappedButton* Bcol3;
+	MappedButton* Bcol4;
+	MappedButton* Bbold;
+	MappedButton* Bital;
+	MappedButton* Bund;
+	MappedButton* Bstrike;
+	MappedButton* Bcpall;
+	MappedButton* Bcpsel;
+	MappedButton* Bhide;
 	wxToggleButton* AutoMoveTags;
 	wxChoice* Ban;
 

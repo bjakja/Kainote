@@ -82,7 +82,7 @@ void Visuals::SetVisual(int _start,int _end)
 	if(Visual==VECTORCLIP){
 		SetClip(GetVisual(),true); return;
 	}
-	tab->Video->Render(false);
+	tab->Video->Render();
 }
 
 void Visuals::SizeChanged(wxSize wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device)
@@ -364,11 +364,10 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 		tbl[5]=diff - abs(edit->line->End.mstime - msend);
 		tbl[4]+=edit->line->Start.mstime; tbl[5]+=edit->line->Start.mstime;
 	}
-	if(!beforeCursor){Editor->SetSelection(0,0);}
 
 	wxString sxfd, syfd;
-	bool scx=edit->FindVal("fscx([.0-9-]+)", &sxfd);
-	bool scy=edit->FindVal("fscy([.0-9-]+)", &syfd);
+	bool scx=edit->FindVal("fscx([.0-9-]+)", &sxfd, "", 0, !beforeCursor);
+	bool scy=edit->FindVal("fscy([.0-9-]+)", &syfd, "", 0, !beforeCursor);
 	double fscx=100.0, fscy=100.0;
 	if(scx){
 		sxfd.ToDouble(&fscx);
@@ -454,7 +453,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 		//
 		wxString tmp;
 		wxString txt = Editor->GetValue();
-		if(edit->FindVal("(i?clip.)[^\\\\}]*", &tmp, txt)){
+		if(edit->FindVal("(i?clip.)[^\\\\}]*", &tmp, txt, 0, true)){
 			//wxLogStatus("find");
 			ChangeText(&txt,"",edit->InBracket,edit->Placed);
 			txt.Replace("{}", "");
@@ -479,7 +478,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 				//wxPoint pos;
 				wxString tmp="clip(";
 				wxString txt=Editor->GetValue();
-				bool fv=edit->FindVal("(i?clip.)[^\\\\}]*", &tmp,txt);
+				bool fv=edit->FindVal("(i?clip.)[^\\\\}]*", &tmp,txt, 0, true);
 				wxString tmp1=(tmp[0]=='c')? "iclip(" : "clip(";
 				wxString tclip= "\\"+tmp+clip+")";
 				edit->Placed.x += tmp.Len()+ 1 + ChangeText(&txt,tclip,edit->InBracket,edit->Placed);
@@ -498,37 +497,46 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 				dumplaced.x=edit->Placed.x + textplaced.x; dumplaced.y=edit->Placed.y + textplaced.x;
 				delete visdl;
 				Editor->SetTextS(txt,false);
-				//wxLogStatus("dummytext "+ *dummytext);
-			}else{
+				
+			}else{//rysunki wektorowe
 				wxString tmp="";
 				bool isf;
 				size_t cliplen = clip.Len();
-				Editor->SetSelection(0,0);
-				isf=edit->FindVal("p([0-9]+)", &tmp);
+				isf=edit->FindVal("p([0-9]+)", &tmp, "", 0, true);
 				wxString txt=Editor->GetValue();
 				if(!isf){
 					ChangeText(&txt, "\\p1", edit->InBracket, edit->Placed);
 				}
-				
 				txt.Replace("}{","");
 				dummytext=grid->GetVisible(&vis, &textplaced);
 				if(!vis){SAFE_DELETE(dummytext);return;}
-				edit->FindVal("p([0-9]+)", &tmp);
+				edit->FindVal("p([0-9]+)", &tmp, "", 0, true);
+				txt += "{";
+				txt = "}" + txt;
+				wxRegEx re1("}([^{]+){", wxRE_ADVANCED);
+				re1.ReplaceAll(&txt,"}{\\1}{");
+				txt.RemoveLast();
+				txt.Remove(0,1);
 				wxString afterP1 = txt.Mid(edit->Placed.y);
-				//wxLogStatus("afterp1 "+ afterP1);
 				int Mpos = -1;
+				//do poprawki usuwanie pierwszego nawiasu
+
 				if(isf){Mpos = afterP1.find("m ");}
 				if(Mpos== -1){Mpos = afterP1.find("}")+1;}
 				wxString startM = afterP1.Mid(Mpos);
-				//wxLogStatus("startm "+ startM);
+				if(Mpos>0 && isf){Mpos--; txt.Remove(Mpos + edit->Placed.y,1);}
 				int endClip = startM.find("{");
-				if(endClip == -1 && isf){endClip=startM.Len();clip+="{\\p0}";}
+				if(endClip > 0){endClip--; txt.Remove(endClip + edit->Placed.y,1);}else if(isf){txt.RemoveLast();}
+				if(endClip == -1 && isf){endClip=startM.Len()-1;clip+="{\\p0}";}
 				else if(endClip == -1){endClip=0;clip+="{\\p0}";}
 				txt.replace(Mpos + edit->Placed.y, endClip, clip);
+
+				Editor->SetTextS(txt,false);
+
 				dummytext->replace(textplaced.x,textplaced.y,txt);
 				textplaced.y=txt.Len();
 				dumplaced.x=edit->Placed.y + Mpos + textplaced.x; dumplaced.y= dumplaced.x + cliplen;
-				Editor->SetTextS(txt,false);
+				
 
 			}
 		}else{
@@ -554,9 +562,9 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 		wxString *dtxt=new wxString(*dummytext);
 		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
 		tab->Video->VisEdit=true;
-		//if(redraw){
+		if(redraw){
 			tab->Video->Render();
-		//}
+		}
 
 	}
 	else{
@@ -582,19 +590,19 @@ void Visuals::SetVisual(wxString visual,bool dummy, int type)
 
 	if(dummy){
 		wxString txt=Editor->GetValue();
-
-		if(Visual==MOVE||Visual==CHANGEPOS||Visual==CLIPRECT){Editor->SetSelection(0,0);}
+		bool fromStart=false;
+		if(Visual==MOVE||Visual==CHANGEPOS||Visual==CLIPRECT){fromStart = true;}
 		wxString tmp;
 		wxString xytype= (type==0)? "x" : "y";
 		wxString frxytype= (type==1)? "x" : "y";
 
 		wxString tagpattern= (type==100)? "(org).+" : (Visual==MOVE||Visual==CHANGEPOS)? "(move|pos).+" : (Visual==SCALE)? "(fsc"+xytype+").+" : (Visual==ROTATEZ)? "(frz?)[0-9-]+" : (Visual==ROTATEXY)? "(fr"+frxytype+").+" : (Visual==CLIPRECT)? "(i?clip).+" : "(fa"+xytype+").+";
-		edit->FindVal(tagpattern, &tmp);
+		edit->FindVal(tagpattern, &tmp, "", 0, fromStart);
 
 		if(type==2 && Visual>0){
 			if(edit->Placed.x < edit->Placed.y){txt.erase(txt.begin() + edit->Placed.x, txt.begin() + edit->Placed.y+1);}
 			wxString tagpattern= (Visual==SCALE)? "(fscx).+" : (Visual==ROTATEZ)? "(frz?)[0-9-]+" : (Visual==ROTATEXY)? "(frx).+" : "(fax).+";
-			edit->FindVal(tagpattern, &tmp, txt);
+			edit->FindVal(tagpattern, &tmp, txt, 0, fromStart);
 		}
 		/*if(!edit->InBracket){
 			txt.insert(edit->Placed.x,"{"+visual+"}");

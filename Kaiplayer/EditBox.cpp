@@ -54,7 +54,7 @@ BEGIN_EVENT_TABLE(DescTxtCtrl,wxTextCtrl)
 	EVT_KILL_FOCUS(DescTxtCtrl::OnKillFocus)
 END_EVENT_TABLE()
 
-BEGIN_EVENT_TABLE(TagButton, wxButton)
+BEGIN_EVENT_TABLE(TagButton, MappedButton)
 	EVT_MOUSE_EVENTS(TagButton::OnMouseEvent)
 END_EVENT_TABLE()
 
@@ -70,18 +70,18 @@ END_EVENT_TABLE()
 	txt->SetSelection(0,txtt.Len()-1);
 	siz->Add(type,0,wxEXPAND|wxALL,4);
 	siz->Add(txt,0,wxEXPAND|wxLEFT|wxRIGHT,4);
-	siz1->Add(new wxButton(this, wxID_OK,_("Zapisz tag")),0,wxEXPAND|wxALL,4);
-	siz1->Add(new wxButton(this, wxID_CANCEL,_("Anuluj")),0,wxEXPAND|wxALL,4);
+	siz1->Add(new MappedButton(this, wxID_OK,_("Zapisz tag")),0,wxEXPAND|wxALL,4);
+	siz1->Add(new MappedButton(this, wxID_CANCEL,_("Anuluj")),0,wxEXPAND|wxALL,4);
 	siz->Add(siz1,0,wxEXPAND,0);
 	SetSizerAndFit(siz);
 }
 
-TagButton::TagButton(wxWindow *parent, int id, const wxString &name, const wxSize &size)
-	: wxButton(parent,id,name,wxDefaultPosition,size)
+TagButton::TagButton(wxWindow *parent, int id, const wxString &name, wxString tooltip, const wxSize &size)
+	: MappedButton(parent,id,name,"", wxDefaultPosition,size)
 {
 	wxString rest;
 	type=0;
-	tag=Options.GetString(wxString::Format("Editbox tag button%i",GetId()-15000)).BeforeFirst('\f', &rest);
+	tag= tooltip.BeforeFirst('\f', &rest);
 	if(tag!=""){SetToolTip(tag);type=wxAtoi(rest);}
 }
 
@@ -130,23 +130,24 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	ans.Add("an8");
 	ans.Add("an9");
 
-	Bfont = new wxButton(this, ID_FONT, "", wxDefaultPosition, wxSize(26,26));
+
+	Bfont = new MappedButton(this, ID_FONT, "", _("Wybór czcionki"), wxDefaultPosition, wxSize(26,26));
 	Bfont->SetBitmap(wxBITMAP_PNG ("FONTS"));
-	Bcol1 = new wxButton(this, ID_COL1, "", wxDefaultPosition, wxSize(26,26));
+	Bcol1 = new MappedButton(this, ID_COL1, "", _("Kolor podstawowy"), wxDefaultPosition, wxSize(26,26));
 	Bcol1->SetBitmap(wxBITMAP_PNG ("Kolor1"));
-	Bcol2 = new wxButton(this, ID_COL2, "", wxDefaultPosition, wxSize(26,26));
+	Bcol2 = new MappedButton(this, ID_COL2, "", _("Kolor zastępczy do karaoke"), wxDefaultPosition, wxSize(26,26));
 	Bcol2->SetBitmap(wxBITMAP_PNG ("Kolor2"));
-	Bcol3 = new wxButton(this, ID_COL3, "", wxDefaultPosition, wxSize(26,26));
+	Bcol3 = new MappedButton(this, ID_COL3, "", _("Kolor obwódki"), wxDefaultPosition, wxSize(26,26));
 	Bcol3->SetBitmap(wxBITMAP_PNG ("Kolor3"));
-	Bcol4 = new wxButton(this, ID_COL4, "", wxDefaultPosition, wxSize(26,26));
+	Bcol4 = new MappedButton(this, ID_COL4, "", _("Kolor cienia"), wxDefaultPosition, wxSize(26,26));
 	Bcol4->SetBitmap(wxBITMAP_PNG ("Kolor4"));
-	Bbold = new wxButton(this, PutBold, "", wxDefaultPosition, wxSize(26,26));
+	Bbold = new MappedButton(this, PutBold, "", _("Pogrubienie"), wxDefaultPosition, wxSize(26,26));
 	Bbold->SetBitmap(wxBITMAP_PNG ("BOLD"));
-	Bital = new wxButton(this, PutItalic, "", wxDefaultPosition, wxSize(26,26));
+	Bital = new MappedButton(this, PutItalic, "", _("Pochylenie"), wxDefaultPosition, wxSize(26,26));
 	Bital->SetBitmap(wxBITMAP_PNG ("ITALIC"));
-	Bund = new wxButton(this, ID_UND, "", wxDefaultPosition, wxSize(26,26));
+	Bund = new MappedButton(this, ID_UND, "", _("Podkreślenie"), wxDefaultPosition, wxSize(26,26));
 	Bund->SetBitmap(wxBITMAP_PNG ("UNDER"));
-	Bstrike = new wxButton(this, ID_STRIKE, "", wxDefaultPosition, wxSize(26,26));
+	Bstrike = new MappedButton(this, ID_STRIKE, "", _("Przekreślenie"), wxDefaultPosition, wxSize(26,26));
 	Bstrike->SetBitmap(wxBITMAP_PNG ("STRIKE"));
 	Ban = new wxChoice(this, ID_AN, wxDefaultPosition, wxSize(48,24),ans);
 	Ban->Select(1);
@@ -164,7 +165,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer4->Add(Ban,0,wxTOP,1);
 	for(int i=0; i<Options.GetInt("Editbox tag buttons"); i++)
 	{
-		BoxSizer4->Add(new TagButton(this,15000+i,wxString::Format("T%i",i+1),wxSize(26,26)),0,wxLEFT|wxBOTTOM,2);
+		BoxSizer4->Add(new TagButton(this, 15000+i, wxString::Format("T%i",i+1), Options.GetString(wxString::Format("Editbox tag button%i", i)),wxSize(26,26)),0,wxLEFT|wxBOTTOM,2);
 		Connect(15000+i,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnButtonTag);
 	}
 
@@ -189,11 +190,11 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer5->Add(Frames,0,wxALIGN_CENTER|wxLEFT,2);
 
 
-	Bcpall = new wxButton(this, ID_CPALL, _("Wklej wszystko"));
+	Bcpall = new MappedButton(this, ID_CPALL, _("Wklej wszystko"));
 	Bcpall->Hide();
-	Bcpsel = new wxButton(this, ID_CPSEL, _("Wklej zaznaczone"));
+	Bcpsel = new MappedButton(this, ID_CPSEL, _("Wklej zaznaczone"));
 	Bcpsel->Hide();
-	Bhide = new wxButton(this, ID_HIDE, _("Ukryj oryginał"));
+	Bhide = new MappedButton(this, ID_HIDE, _("Ukryj oryginał"));
 	Bhide->Hide();
 	AutoMoveTags = new wxToggleButton(this, ID_AUTOMOVETAGS, _("Przenoszenie tagów"));
 	AutoMoveTags->Hide();
@@ -331,7 +332,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 	
 	//resetuje edycję na wideo
 	if(OnVideo){
-		if(pan->Video->IsShown()){
+		if(pan->Video->IsShown() || pan->Video->isfullskreen){
 			pan->Video->OpenSubs(grid->SaveText()); 
 			if(pan->Video->GetState()==Paused){pan->Video->Render();}
 		}
@@ -347,7 +348,7 @@ done:
 				focused->SetFocus();
 			}
 		}else{
-			if(pan->Video->IsShown()){
+			if(pan->Video->IsShown() || pan->Video->isfullskreen){
 				Dialogue *next=grid->GetDial(MIN(ebrow+1, grid->GetCount()-1));
 				int ed=line->End.mstime, nst=next->Start.mstime;
 				int htpf= pan->Video->avtpf/2;
@@ -901,17 +902,7 @@ void EditBox::RefreshStyle(bool resetline)
 
 void EditBox::DoTooltips()
 {
-	Bfont->SetToolTip(_("Wybór czcionki"));
-	Bcol1->SetToolTip(_("Kolor podstawowy"));
-	Bcol2->SetToolTip(_("Kolor zastępczy do karaoke"));
-	Bcol3->SetToolTip(_("Kolor obwódki"));
-	Bcol4->SetToolTip(_("Kolor cienia"));
 	Ban->SetToolTip(_("Położenie tekstu"));
-	//Global->SetToolTip(_("Wstawia wszystkie tagi na początku zaznaczonych linijek."));
-	Bbold->SetToolTip(_("Pogrubienie"));
-	Bital->SetToolTip(_("Pochylenie"));
-	Bund->SetToolTip(_("Podkreślenie"));
-	Bstrike->SetToolTip(_("Przekreślenie"));
 	TlMode->SetToolTip(_("Tryb tłumaczenia wyświetla i zapisuje zarówno tekst obcojęzyczny, jak i tekst tłumaczenia"));
 	Bcpall->SetToolTip(_("Kopiuje cały tekst obcojęzyczny do pola z tłumaczeniem"));
 	Bcpsel->SetToolTip(_("Kopiuje zaznaczony tekst obcojęzyczny do pola z tłumaczeniem"));
@@ -1054,7 +1045,7 @@ void EditBox::OnSplit(wxCommandEvent& event)
 	long strt, ennd;
 	tedit->GetSelection(&strt,&ennd);
 	if(strt>0 && txt[strt-1]==' '){strt--;}
-	if(txt[ennd]==' '){ennd++;}
+	if(ennd < (int)txt.Len() && txt[ennd]==' '){ennd++;}
 
 	if(strt!=ennd){txt.Remove(strt,ennd-strt);}
 	txt.insert(strt,Splitchar);
@@ -1088,7 +1079,7 @@ void EditBox::OnPasteDiff(wxCommandEvent& event)
 }
 //znajduje tagi w polu tekstowym
 //w wyszukiwaniu nie używać // a także szukać tylko do końca taga, nie do następnego taga
-bool EditBox::FindVal(wxString tag, wxString *Finded, wxString text, bool *endsel)
+bool EditBox::FindVal(wxString tag, wxString *Finded, wxString text, bool *endsel, bool fromStart)
 {
 	lasttag=tag;
 	long from=0, to=0;
@@ -1106,7 +1097,7 @@ bool EditBox::FindVal(wxString tag, wxString *Finded, wxString text, bool *endse
 	if(txt==""){Placed.x=0;Placed.y=0; InBracket=false; cursorpos=0; if(endsel){*endsel=false;} return false;}
 	if(grid->sel.size()<2){
 		MTextEditor *Editor = (fromOriginal)? TextEditTl : TextEdit;
-		Editor->GetSelection(&from,&to);
+		if(!fromStart){Editor->GetSelection(&from,&to);}
 	}
 
 	if(endsel && from == to){ *endsel=false;}
@@ -1228,7 +1219,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	}
 
 	OnVideo=true;
-	if(visible && panel->Video->IsShown()){
+	if(visible && (panel->Video->IsShown() || panel->Video->isfullskreen)){
 		panel->Video->OpenSubs(text);
 		if(Visual>0){panel->Video->SetVisual(); return;}
 		if(panel->Video->GetState()==Paused){panel->Video->Render();}

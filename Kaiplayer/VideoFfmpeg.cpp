@@ -324,7 +324,7 @@ done:
 		}
 
 	}
-
+	bool newIndex=false;
 	if(!index){
 		FFMS_TrackIndexSettings(Indexer, audiotrack, 1, 0);
 		FFMS_SetProgressCallback(Indexer, UpdateProgress, (void*)progress);
@@ -354,7 +354,7 @@ done:
 			FFMS_DestroyIndex(index);
 			return 0;
 		}
-
+		newIndex=true;
 	}
 
 
@@ -485,7 +485,7 @@ done:
 	if(disccache){
 		diskCacheFilename="";
 		diskCacheFilename << Options.pathfull << "\\AudioCache\\" << fname.AfterLast('\\').BeforeLast('.')<< "_track" << audiotrack << ".w64";
-		
+		if(newIndex && wxFileExists(diskCacheFilename)){wxRemoveFile(diskCacheFilename);}
 		if(!DiskCache()){return 0;}
 	}else{
 		if(!CacheIt()){return 0;}

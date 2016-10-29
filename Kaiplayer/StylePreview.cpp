@@ -20,7 +20,6 @@ StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const w
 
 	bmpframe=NULL;
 	instance=NULL;
-	//VA=NULL;
 	PrevText=NULL;
 	vobsub=NULL;
 	styl=NULL;
@@ -29,7 +28,7 @@ StylePreview::~StylePreview()
 {
 	if (instance) csri_close(instance);
 	if (vobsub) csri_close_renderer(vobsub);//csri_renderer_byname(0,0);
-	//wxDELETE(VA);
+
 	wxDELETE(styl);
 	wxDELETE(bmpframe);
 }
@@ -41,25 +40,20 @@ void StylePreview::DrawPreview(Styles *style)
 		wxDELETE(styl);
 		styl=style->Copy();}
 	if (instance) csri_close(instance);
-	//wxMessageBox("bitmap filled");
 	instance = NULL;
-	//wxDELETE(VA);
-	wxDELETE(bmpframe);
-	//VA=new VobsubApi();
 
-	//csri_rend *renderer=NULL;
+	wxDELETE(bmpframe);
 
 	// Select renderer
 	//if(!vobsub){
 	vobsub = csri_renderer_default();
-	//}
 	if(!vobsub){wxLogStatus(_("CSRI odmówiło posłuszeństwa."));return;}
-
+	//}
+	
 	GetClientSize(&width,&height);
 	pitch=width*4;
 	std::vector<byte> dat;
 	SubsText(dat);
-	//if(!VA->OpenMemory( &dat[0], dat.size())){wxMessageBox("Instancja vobsuba nie utworzyła się.");return;}
 	instance = csri_open_mem(vobsub,&dat[0],dat.size(),NULL);
 	if(!instance){
 		wxLogStatus(_("Instancja VobSuba nie utworzyła się."));return;}
@@ -103,17 +97,6 @@ void StylePreview::DrawPreview(Styles *style)
 
 	// Render
 	csri_render(instance,&frame,0);
-	/*
-	SubPicDesc spd;
-	spd.w=width;
-	spd.h=height;
-	spd.type=MSP_RGB32;
-	spd.bpp=32;
-	spd.pitch=pitch;
-	spd.vidrect=CRect(0,0,width,height);
-	if(!VA->RequestFormat(spd,25.0f)){wxMessageBox("Request format failed.");return;}
-
-	VA->RenderFrame(data,0);*/
 
 	wxImage preview(width, height, true);
 	unsigned char *data1= (unsigned char *)malloc(width * height * 3);
@@ -125,11 +108,9 @@ void StylePreview::DrawPreview(Styles *style)
 		data1[(i*3)+2]=data[i*4];
 	}
 	preview.SetData(data1);
-	//wxLogStatus("set data");
+	
 	bmpframe=new wxBitmap(preview);
-	//wxLogStatus("make bitmap");
 	Refresh(false);
-	//wxLogStatus("refresh");
 	free(data);
 	data=0;
 }
@@ -185,4 +166,4 @@ void StylePreview::OnMouseEvent(wxMouseEvent& event)
 BEGIN_EVENT_TABLE(StylePreview, wxWindow)
 	EVT_PAINT(StylePreview::OnPaint)
 	EVT_MOUSE_EVENTS(StylePreview::OnMouseEvent)
-	END_EVENT_TABLE()
+END_EVENT_TABLE()

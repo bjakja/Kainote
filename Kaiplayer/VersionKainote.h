@@ -1,2 +1,2 @@
-#define VersionKainote "0.8.1.560"
-#define NumVersionKainote 0,8,1,560
+#define VersionKainote "0.8.1.568"
+#define NumVersionKainote 0,8,1,568
