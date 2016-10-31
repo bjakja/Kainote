@@ -326,7 +326,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){wxMessageBox(_("Dupa blada, skróty klawiszowe nie wczytały się, na audio nie podziałasz"), _("Błędny błąd"));}
 		
-		std::map<int, hdata> _hkeys;
+		std::map<idAndType, hdata> _hkeys;
 		Hkeys.LoadDefault(_hkeys);
 		Hkeys.LoadDefault(_hkeys,true);
 		Notebook::GetTab()->Video->ContextMenu(wxPoint(0,0),true);
@@ -335,8 +335,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		long ii=0;
 
 		for (auto cur = Hkeys.hkeys.begin();cur != Hkeys.hkeys.end();cur++) {
-			if(cur->second.Name==""){cur->second.Name = _hkeys[cur->first].Name;}
-			wxString name=wxString(cur->second.Type)<<" "<<cur->second.Name;
+			auto tmpkey = _hkeys.find(cur->first);
+			if(tmpkey!=_hkeys.end()){
+				cur->second.Name = _hkeys.find(cur->first)->second.Name;
+			}
+
+			wxString name=wxString(cur->first.Type)<<" "<<cur->second.Name;
 			long pos = Shortcuts->InsertItem(ii,name);
 			Shortcuts->SetItem(pos,1,cur->second.Accel);
 			ii++;
@@ -595,20 +599,19 @@ void OptionsDialog::OnMapHkey(wxListEvent& event)
 	wxListItem item=event.GetItem();
 	wxString itemtext=item.GetText();
 	wxString shkey=itemtext.AfterFirst(' ');
-	wxString type=itemtext[0];
-	HkeysDialog hkd(this,shkey,shkey.StartsWith("Script"));
+	HkeysDialog hkd(this,shkey, itemtext[0], !shkey.StartsWith("Script") );
 	if(hkd.ShowModal()==wxID_OK){
 	
-		int id=-1;
-		for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){//wxLogStatus(cur->first);
-			if(cur->second.Name == shkey){id=cur->first;}
+		const idAndType *itype=NULL;
+		for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
+			if(cur->second.Name == shkey){itype= new idAndType(cur->first.id, hkd.type);}
 			//wxLogStatus(cur->second.Name);
-			if(cur->second.Accel == hkd.hotkey && (cur->second.Type == type) ){
+			if(cur->second.Accel == hkd.hotkey && (cur->first.Type == hkd.type) ){
 			
 				if(wxMessageBox(wxString::Format(_("Ten skrót już istnieje i jest ustawiony jako skrót do \"%s\".\nWykasować powtarzający się skrót?"), cur->second.Name), 
 					_("Uwaga"),wxYES_NO)==wxYES){
 					cur->second.Accel="";
-					long nitem=Shortcuts->FindItem(-1, wxString(cur->second.Type) + " " + cur->second.Name);
+					long nitem=Shortcuts->FindItem(-1, wxString(cur->first.Type) + " " + cur->second.Name);
 					//wxLogStatus("nitem %i", nitem);
 					if(nitem!=-1){
 						Shortcuts->SetItem(nitem,1,"");
@@ -618,14 +621,20 @@ void OptionsDialog::OnMapHkey(wxListEvent& event)
 			}
 		}
 		
-		if(id<0){return;}
-		Hkeys.SetHKey(id, itemtext, hkd.hotkey);
-		//wxLogStatus("Setitem");
-		Shortcuts->SetItem(event.GetIndex(),1,Hkeys.GetMenuH(id));
-		//wxLogStatus("Setmodif");
-		if(item.GetText().StartsWith("A")){hkeymodif=2;}
+		if(!itype){return;};
+		Hkeys.SetHKey(*itype, shkey, hkd.hotkey);
+		if(itemtext[0] != hkd.type){
+			long pos = Shortcuts->InsertItem(Shortcuts->GetItemCount(),itemtext.replace(0,1,hkd.type));
+			Shortcuts->SetItem(pos,1,Hkeys.GetMenuH(*itype));
+			Shortcuts->SetItemState(event.GetIndex(), wxLIST_STATE_INUSE, wxLIST_STATE_INUSE);
+			Shortcuts->SetItemState(pos, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+		}else{
+			Shortcuts->SetItem(event.GetIndex(),1,Hkeys.GetMenuH(*itype));
+		}
+		
+		if(hkd.type=='A'){hkeymodif=2;}
 		else{hkeymodif=1;}
-	
+		delete itype;
 	}
 }
 
@@ -633,13 +642,13 @@ void OptionsDialog::OnResetHkey(wxListEvent& event)
 {
 	
 	wxListItem item=event.GetItem();
-	int id=-1;
+	const idAndType *itype=NULL;
 	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){//wxLogStatus(cur->first);
-		if(cur->second.Name == item.GetText().AfterFirst(' ')){id=cur->first;}
+		if(cur->second.Name == item.GetText().AfterFirst(' ')){itype= &cur->first; }
 	}
-	if(id<0){return;};
-	Hkeys.ResetKey(id);
-	Shortcuts->SetItem(event.GetIndex(),1,Hkeys.GetMenuH(id));
+	if(!itype){return;};
+	Hkeys.ResetKey(itype);
+	Shortcuts->SetItem(event.GetIndex(),1,Hkeys.GetMenuH(*itype));
 	if(item.GetText().StartsWith("A")){hkeymodif=2;}
 	else{hkeymodif=1;}
 }

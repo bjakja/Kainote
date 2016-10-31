@@ -42,8 +42,8 @@ void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 	VB->blockpaint=true;
 	selarr = GetSels();
 	int sels=selarr.GetCount();
-	Menu *menu=new Menu;
-	Menu *hidemenu=new Menu;
+	Menu *menu=new Menu('N');
+	Menu *hidemenu=new Menu('N');
 	MenuItem *item;
 	item = hidemenu->SetAccMenu(5000+LAYER,_("Ukryj warstwę"),_("Ukryj warstwę"),true, ITEM_CHECK);
 	item->Enable(form<SRT);
@@ -120,21 +120,15 @@ void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 	
 	if(Modifiers == wxMOD_SHIFT && id>5000){
 		MenuItem *item=menu->FindItem(id);
-		wxString wins[1]={"Napisy"};
 		int ret=-1;
 		wxString name=item->GetLabelText();
-		ret=Hkeys.OnMapHkey(id, name, this, wins, 1);
+		ret=Hkeys.OnMapHkey(id, name, this, GRID_HOTKEY);
 		if(ret==-1){
-			/*Notebook *Tabs = Notebook::GetTabs();
-			for(size_t i=0;i<Tabs->Size();i++){
-				Tabs->Page(i)->SetAccels();
-			}*/
 			Hkeys.SetAccels();
 			Hkeys.SaveHkeys();
 		}
 		goto done;
 	}
-	//wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED,id);
 	OnAccelerator(wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,id));
 done:
 	delete menu;

@@ -1,7 +1,6 @@
 
 #include "Menu.h"
 #include "Config.h"
-#include "Hotkeys.h"
 #include "Toolbar.h"
 
 static wxFont font = wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma");
@@ -60,10 +59,11 @@ void MenuItem::SetAccel(wxAcceleratorEntry *entry)
 	//if(MenuBar::Menubar){MenuBar::Menubar->SetAccelerators();}
 }
 
-Menu::Menu()
+Menu::Menu(char window)
 	:Mnemonics()
 	,dialog(NULL)
 	,parentMenu(NULL)
+	,wnd(window)
 {
 }
 
@@ -285,9 +285,9 @@ void Menu::DestroyDialog()
 
 MenuItem *Menu::SetAccMenu(int id, const wxString &txt, const wxString &help, bool enable, int kind)
 {
-	wxString hkey=Hkeys.GetMenuH(id);
+	idAndType itype(id, wnd);
+	wxString hkey=Hkeys.GetMenuH(itype, txt);
 	wxString mtext=(hkey!="")? txt.BeforeFirst('\t')+"\t"+hkey : txt;
-	if(hkey!="" && Hkeys.hkeys[id].Name==""){Hkeys.hkeys[id].Name=txt.BeforeFirst('\t');}
 	return Append(id,mtext,help,true,0,0,kind);
 }
 
@@ -296,10 +296,10 @@ MenuItem *Menu::SetAccMenu(MenuItem *menuitem, const wxString &name)
 	int id=0;
 	for(auto cur=Hkeys.hkeys.rbegin(); cur!=Hkeys.hkeys.rend(); cur++)
 	{
-		if(cur->first<30100){break;}
+		if(cur->first < 30100){break;}
 		if(cur->second.Name == name ){
 			//hkey = cur->second.Accel;
-			id = cur->first;	
+			id = cur->first.id;	
 		}
 	}
 

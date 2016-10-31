@@ -1139,15 +1139,17 @@ namespace Auto{
 					submenu->SetAccMenu(new MenuItem(start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
 					Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 						if(wxGetKeyState(WXK_SHIFT)){
-							wxString wins[1]={"Globalny"};
 							int ret=-1;
-							ret=Hkeys.OnMapHkey( start, text, Kai, wins, 1);
-							if(ret==-1){Kai->Menubar->FindItem(start)->SetAccel(&Hkeys.GetHKey(start));Hkeys.SaveHkeys();}
+							ret=Hkeys.OnMapHkey( start, text, Kai, GLOBAL_HOTKEY, false);
+							if(ret==-1){
+								Kai->Menubar->FindItem(start)->SetAccel(&Hkeys.GetHKey(start));
+							}
 							else if(ret>0){
 								MenuItem *item= Kai->Menubar->FindItem(ret);
 								wxAcceleratorEntry entry;
 								item->SetAccel(&entry);
 							}
+							if(ret>-2){Hkeys.SetAccels(true); Hkeys.SaveHkeys();}
 						}else{
 							macro->RunScript();
 						}	
@@ -1183,15 +1185,17 @@ namespace Auto{
 				submenu->SetAccMenu(new MenuItem(start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 					if(wxGetKeyState(WXK_SHIFT)){
-						wxString wins[1]={"Globalny"};
 						int ret=-1;
-						ret=Hkeys.OnMapHkey( start, text, Kai, wins, 1);
-						if(ret==-1){Kai->Menubar->FindItem(start)->SetAccel(&Hkeys.GetHKey(start));Hkeys.SaveHkeys();}
+						ret=Hkeys.OnMapHkey( start, text, Kai, GLOBAL_HOTKEY, false);
+						if(ret==-1){
+							Kai->Menubar->FindItem(start)->SetAccel(&Hkeys.GetHKey(start));
+						}
 						else if(ret>0){
 							MenuItem *item= Kai->Menubar->FindItem(ret);
 							wxAcceleratorEntry entry;
 							item->SetAccel(&entry);
 						}
+						if(ret>-2){Hkeys.SetAccels(true); Hkeys.SaveHkeys();}
 					}else{if(script->CheckLastModified(true)){script->Reload();}macro->RunScript();}	
 				}, start);
 				start++;

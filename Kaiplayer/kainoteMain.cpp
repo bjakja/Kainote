@@ -267,21 +267,22 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	//wxLogStatus("menu %i %i", id, Modif);
 	if(Modif == wxMOD_SHIFT){
 		MenuItem *item=Menubar->FindItem(id);
-		wxString wins[1]={"Globalny"};
 		//upewnij się, że da się zmienić idy na nazwy, 
 		//może i trochę spowolni operację ale skończy się ciągłe wywalanie hotkeysów
 		//może od razu funkcji onmaphotkey przekazać item by zrobiła co trzeba
 		int ret=-1;
 		wxString name=item->GetLabelText();
-		ret=Hkeys.OnMapHkey( id, name, this, wins, 1);
-		if(ret==-1){item->SetAccel(&Hkeys.GetHKey(id));Hkeys.SaveHkeys();SetAccels(false);}
+		ret=Hkeys.OnMapHkey( id, name, this, GLOBAL_HOTKEY);
+		if(ret==-1){
+			idAndType itype(id);
+			item->SetAccel(&Hkeys.GetHKey(itype));
+		}
 		else if(ret>0){
 			MenuItem *item=Menubar->FindItem(ret);
 			wxAcceleratorEntry entry;
 			item->SetAccel(&entry);
-			SetAccels(false);
 		}
-
+		if(ret>-2){SetAccels(false); Hkeys.SaveHkeys();}
 		return;
 	}
 
@@ -420,17 +421,18 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	//if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie można pobrać stanu klawiszy"));}
 	if(Modif==wxMOD_SHIFT/*state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1 *//*&& (state[VK_LCONTROL]<1 && state[VK_RCONTROL]<1 && state[VK_LMENU]<1 && state[VK_RMENU]<1)*/){
 		MenuItem *item=Menubar->FindItem(id);
-		wxString win[]={"Globalny"};
 		int ret=-1;
 		wxString name=item->GetLabelText();
-		ret=Hkeys.OnMapHkey( id, name, this, win, 1);
-		if(ret==-1){item->SetAccel(&Hkeys.GetHKey(id));Hkeys.SaveHkeys();SetAccels(false);}
+		ret=Hkeys.OnMapHkey( id, name, this, GLOBAL_HOTKEY);
+		if(ret==-1){
+			item->SetAccel(&Hkeys.GetHKey(id));
+		}
 		else if(ret>0){
-			MenuItem *item=Menubar->FindItem(id);
+			MenuItem *item=Menubar->FindItem(ret);
 			wxAcceleratorEntry entry;
 			item->SetAccel(&entry);
-			SetAccels(false);
 		}
+		if(ret>-2){SetAccels(false); Hkeys.SaveHkeys();}
 
 		return;
 	}
@@ -501,8 +503,8 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_("- Sacredus (chyba pierwszy tłumacz używający trybu tłumaczenia,\r\n nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\r\n")+
 			_("- Kostek00 (prawdziwy wynajdywacz błędów,\r\n")+
 			_("miał duży wpływ na rozwój spektrum audio i głównego pola tekstowego).\r\n")+
-			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy).\r\n \r\n")+
-			_("- MatiasMovie (wyłapał parę kraszy i zaproponował różne usprawnienia).\r\n");
+			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy).\r\n")+
+			_("- MatiasMovie (wyłapał parę kraszy i zaproponował różne usprawnienia).\r\n \r\n")+
 			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\r\n");
 		wxMessageBox(Credits+Testers,_("Lista osób pomocnych przy tworzeniu programu"));
 
@@ -930,20 +932,22 @@ void kainoteFrame::SetAccels(bool _all)
 	entries[1].Set(wxACCEL_CTRL, (int) 'W', ID_CLOSEPAGE);
 
 	for(auto cur=Hkeys.hkeys.rbegin(); cur!=Hkeys.hkeys.rend(); cur++){
-		int id=cur->first;
-		if(cur->second.Accel==""){continue;}
+		if(cur->second.Accel=="" || cur->first.Type!='G'){continue;}
+		int id=cur->first.id;
 		if(id>=6850){
 			//if(id>7000){Connect(id,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);}
-			entries.push_back(Hkeys.GetHKey(id));
+			entries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 		}else if(id>6000){
 			MenuItem *item=Menubar->FindItem(id);
 			if(!item){wxLogStatus("no id %i", id); continue;}
 			cur->second.Name=item->GetLabelText();
-			wxAcceleratorEntry accel = Hkeys.GetHKey(id);
+			wxAcceleratorEntry accel = Hkeys.GetHKey(cur->first, &cur->second);
 			item->SetAccel(&accel);
 			entries.push_back(accel);
-		}else if(id<6001){break;}
-
+		}//else if(id<6001){break;}
+		if(!entries[entries.size()-1].IsOk()){
+			entries.pop_back();
+		}
 	}
 	//Menubar->SetAccelerators();
 	wxAcceleratorTable accel(entries.size(), &entries[0]);

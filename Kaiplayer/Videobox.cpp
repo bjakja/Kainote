@@ -98,7 +98,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	,isOnAnotherMonitor(false)
 {
 
-	SetBackgroundColour("#000000");
+	//SetBackgroundColour("#000000");
 
 	panel=new wxPanel(this,-1,wxPoint(0,size.y-panelHeight),wxSize(size.x,panelHeight));
 	panel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
@@ -313,34 +313,35 @@ void VideoCtrl::OnSize(wxSizeEvent& event)
 {
 	wxSize asize = GetClientSize();
 	if(lastSize == asize){return;}
-	lastSize=asize;
+	lastSize = asize;
 	panel->SetSize(0, asize.y-panelHeight, asize.x, panelHeight);
 	vslider->SetSize(wxSize(asize.x,14));
 	volslider->SetPosition(wxPoint(asize.x-110,17));
 	mstimes->SetSize(asize.x-300,-1);
 	vToolbar->SetSize(asize.x, 22);
-	if(GetState()!=None){
+	if(vstate != None){
 		UpdateVideoWindow(!isfullskreen);
+	}else{
+		Refresh(false);
 	}
 }
 
 
 void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 {
-	int x=event.GetX(), y= event.GetY();
 
 	if(event.ButtonDown())
 	{
 		SetFocus();
 		if(ismenu){ismenu=false;}
 	}
-
+	if(vstate==None){return;}
 	if(Vclips){
 		Vclips->OnMouseEvent(event);if(!isarrow){SetCursor(wxCURSOR_ARROW);isarrow=true;}
 		return;
 	}//jak na razie 
 
-
+	int x=event.GetX(), y= event.GetY();
 	if(event.LeftDClick() && event.GetModifiers()==0){
 		SetFullskreen();
 		if(!isfullskreen && Kai->GetTab()->SubsPath!="" && Options.GetBool("Seek For Visible Lines")){
@@ -783,15 +784,10 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 	//ismenu=false;
 	if((Modifiers == wxMOD_SHIFT) && id<2100 && id>=2000){
 		MenuItem *item=menu->FindItem(id);
-		wxString wins[1]={"Wideo"};
 		int ret=-1;
 		wxString name=item->GetLabelText();
-		ret=Hkeys.OnMapHkey(id, name, this, wins, 1);
+		ret=Hkeys.OnMapHkey(id, name, this, VIDEO_HOTKEY);
 		if(ret==-1){
-			/*Notebook *Tabs = Notebook::GetTabs();
-			for(size_t i=0;i<Tabs->Size();i++){
-				Tabs->Page(i)->SetAccels();
-			}*/
 			Hkeys.SetAccels();
 			Hkeys.SaveHkeys();
 		}
@@ -968,7 +964,21 @@ void VideoCtrl::OnSPlus()
 
 void VideoCtrl::OnPaint(wxPaintEvent& event)
 {
-	if( !block && !blockpaint && GetState()==Paused ){Render(true);}
+	if( !block && !blockpaint && vstate==Paused ){Render(true);}
+	else if(vstate==None){
+		int x, y;
+		GetClientSize(&x,&y);
+		wxPaintDC dc(this);
+		dc.SetBrush(wxBrush("#000000"));
+		dc.SetPen(wxPen("#000000"));
+		dc.DrawRectangle(0,0,x,y);
+		wxFont font1(72,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma");
+		dc.SetFont(font1);
+		wxSize size = dc.GetTextExtent("KaiNote");
+		dc.SetTextForeground("#2EA6E2");
+		dc.DrawText("KaiNote", (x-size.x)/2, (y - size.y - panelHeight)/2);
+	}
+
 }
 
 void VideoCtrl::OnEndFile(wxCommandEvent &event)

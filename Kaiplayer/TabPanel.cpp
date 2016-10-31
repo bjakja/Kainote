@@ -54,6 +54,7 @@ void TabPanel::SetAccels()
 {
 
 	std::vector<wxAcceleratorEntry> ventries;
+	ventries.resize(1);
    
 	std::vector<wxAcceleratorEntry> gentries;
 	gentries.resize(3);
@@ -62,34 +63,34 @@ void TabPanel::SetAccels()
     gentries[2].Set(wxACCEL_CTRL, (int) 'V', Paste);
 
 	std::vector<wxAcceleratorEntry> eentries;
-	eentries.resize(4);
-    //eentries[0].Set(wxACCEL_CTRL, WXK_RETURN, MENU_ZATW);
-    //eentries[1].Set(wxACCEL_NORMAL, WXK_RETURN, MENU_NLINE);
+	eentries.resize(2);
 	eentries[0].Set(wxACCEL_CTRL, WXK_NUMPAD_ENTER, MENU_ZATW);
     eentries[1].Set(wxACCEL_NORMAL, WXK_NUMPAD_ENTER, MENU_NLINE);
 	
 	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
-		int id=cur->first;
-		if(cur->second.Accel==""){continue;}
-		//wideo
-		if(id<2000){continue;
-		}else if(id<3990){
-			ventries.push_back(Hkeys.GetHKey(id));
-			Video->ConnectAcc(id);
-			//edytor
-		}else if(id<5000){
-			eentries.push_back(Hkeys.GetHKey(id));
-			//grid
-		}else if(id<=6000){
-			gentries.push_back(Hkeys.GetHKey(id));
-			Grid1->ConnectAcc(id);
-		}else if(id>6000){break;}
+		int id=cur->first.id;
+		if(cur->second.Accel=="" || cur->first.Type == 'A' || cur->first.Type == 'G'){continue;}
+		//editor
+		if(cur->first.Type == 'E'){
+			eentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
+		}else if(cur->first.Type == 'N'){//grid
+			gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
+			if(id>2000 && id<3990){Grid1->ConnectAcc(id);}
+		}else if(cur->first.Type == 'W'){//video
+			ventries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
+			if(id>5000 &&id<=6000){Video->ConnectAcc(id);}
+			if(id>=PlayPause && id<= Minus5Second){
+				gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
+				Grid1->ConnectAcc(id);
+			}
+		} 
 
 	}
-	for(int i=PlayPause; i<= Minus5Second; i++){
-		gentries.push_back(Hkeys.GetHKey(i));
+	/*for(int i=PlayPause; i<= Minus5Second; i++){
+		idAndType itype(i, 'N');
+		gentries.push_back(Hkeys.GetHKey(&itype));
 		Grid1->ConnectAcc(i);
-	}
+	}*/
 	wxAcceleratorTable accelg(gentries.size(), &gentries[0]);
     Grid1->SetAcceleratorTable(accelg);
 	wxAcceleratorTable accelv(ventries.size(), &ventries[0]);

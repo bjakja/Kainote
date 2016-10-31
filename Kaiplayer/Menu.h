@@ -6,6 +6,7 @@
 #include <vector>
 #include <wx/evtloop.h>
 #include <map>
+#include "Hotkeys.h"
 class MenuEvent;
 class Menu;
 class KaiToolbar;
@@ -143,7 +144,7 @@ class Menu : public Mnemonics
 	friend class MenuDialog;
 	friend class MenuBar;
 	public:
-	Menu();
+	Menu(char window='G');
 	//Menu(const wxString& title);
 	virtual ~Menu(){
 		Clear();
@@ -186,6 +187,7 @@ private:
 	Menu *parentMenu;
 
 protected:
+	char wnd;
 	MenuDialog *dialog;
 };
 

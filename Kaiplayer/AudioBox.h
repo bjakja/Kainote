@@ -53,7 +53,7 @@
 #include <wx/textctrl.h>
 #include <wx/tglbtn.h>
 #include "AudioDisplay.h"
-
+//#include "Hotkeys.h"
 //////////////
 // Prototypes
 

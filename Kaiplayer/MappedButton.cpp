@@ -1,23 +1,39 @@
 
 #include "MappedButton.h"
-#include "Hotkeys.h"
+
 
 //w tooltipach nie nale¿y ustawiaæ () bo zostan¹ usuniête
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, const wxString& toolTip,
-             const wxPoint& pos, const wxSize& size, long style)
+             const wxPoint& pos, const wxSize& size, int window, long style)
 			 :wxButton(parent, id, label, pos, size, style)
+			 ,Window(window)
 {
 	Bind(wxEVT_LEFT_UP, &MappedButton::OnLeftClick, this);
 	SetToolTip(toolTip);
+}
+
+MappedButton::MappedButton(wxWindow *parent, int id, const wxBitmap& bitmap, const wxPoint& pos,
+            const wxSize& size, int window, long style)
+			:wxButton(parent, id, "", pos, size, style)
+			,Window(window)
+{
+	Bind(wxEVT_LEFT_UP, &MappedButton::OnLeftClick, this);
+	SetBitmap(bitmap);
 }
 
 MappedButton::~MappedButton()
 {
 }
 
-void MappedButton::SetToolTip(const wxString &_toolTip)
+void MappedButton::SetToolTip(const wxString &_toolTip, bool twoHotkeys)
 {
-	wxString key = Hkeys.GetMenuH(GetId());
+	idAndType itype(GetId(), Window);
+	wxString key = Hkeys.GetMenuH(itype);
+	if(twoHotkeys){
+		idAndType itype(GetId()-1000, Window);
+		key += _(" lub ") + Hkeys.GetMenuH(itype);
+	}
+
 	wxString toolTip = (_toolTip=="")? GetToolTipText().BeforeFirst('(').Trim() : _toolTip;
 	if(key!="")
 	{
@@ -29,12 +45,11 @@ void MappedButton::SetToolTip(const wxString &_toolTip)
 void MappedButton::OnLeftClick(wxMouseEvent &evt)
 {
 	if(evt.ShiftDown()){
-		wxString wins[1]={"Globalny"};
 		//upewnij siê, ¿e da siê zmieniæ idy na nazwy, 
 		//mo¿e i trochê spowolni operacjê ale skoñczy siê ci¹g³e wywalanie hotkeysów
 		//mo¿e od razu funkcji onmaphotkey przekazaæ item by zrobi³a co trzeba
 		wxString buttonName = (GetLabelText()!="")? GetLabelText() : GetToolTipText().BeforeFirst('(').Trim();
-		Hkeys.OnMapHkey( GetId(), _("Przycisk ") + GetLabelText(), this, wins, 1);
+		Hkeys.OnMapHkey( GetId(), buttonName, this, Window, false);
 		SetToolTip();
 		Hkeys.SetAccels(true);
 		Hkeys.SaveHkeys();
