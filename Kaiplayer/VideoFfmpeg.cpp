@@ -145,12 +145,6 @@ void VideoFfmpeg::Processing()
 			byte *buff = (byte*)rend->datas;
 			while(1){
 
-				if(rend->time>=rend->playend){
-					wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED,23333);
-					wxQueueEvent(rend, evt);
-					break;
-				}
-				else if(rend->vstate!=Playing){break;}	
 				if(rend->lastframe != lastframe){
 					fframe=FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
 					lastframe = rend->lastframe;
@@ -176,6 +170,13 @@ void VideoFfmpeg::Processing()
 				tdiff = Timecodes[rend->lastframe] - rend->time;
 				rend->time = Timecodes[rend->lastframe];
 
+				
+				if(rend->time>=rend->playend){
+					wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED,23333);
+					wxQueueEvent(rend, evt);
+					break;
+				}
+				else if(rend->vstate!=Playing){break;}	
 				Sleep(tdiff);
 
 			}

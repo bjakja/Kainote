@@ -335,9 +335,26 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		long ii=0;
 
 		for (auto cur = Hkeys.hkeys.begin();cur != Hkeys.hkeys.end();cur++) {
-			auto tmpkey = _hkeys.find(cur->first);
-			if(tmpkey!=_hkeys.end()){
-				cur->second.Name = _hkeys.find(cur->first)->second.Name;
+			if(cur->second.Name==""){
+				auto tmpkey = _hkeys.find(cur->first);
+				if(tmpkey!=_hkeys.end()){
+					cur->second.Name = tmpkey->second.Name;
+				}else{
+					wxString gnewa = "GNEWA";
+					for(int i=0; i<5; i++){
+						char window = gnewa[i];
+						if(window == cur->first.Type){
+							continue;
+						}else{
+							auto tmpkey = _hkeys.find(idAndType(cur->first.id, window));
+							if(tmpkey!=_hkeys.end()){// && tmpkey->second.Name!=""
+								cur->second.Name = tmpkey->second.Name;
+								break;
+							}
+						}
+					}
+				}
+				
 			}
 
 			wxString name=wxString(cur->first.Type)<<" "<<cur->second.Name;
@@ -595,9 +612,10 @@ void OptionsDialog::SetOptions(bool saveall)
 
 void OptionsDialog::OnMapHkey(wxListEvent& event)
 {
-	int num=event.GetIndex();
-	wxListItem item=event.GetItem();
-	wxString itemtext=item.GetText();
+	int inum=event.GetIndex();
+	//wxListItem item=event.GetItem();
+	wxString itemtext=Shortcuts->GetItemText(inum,0);
+	wxString hotkey=Shortcuts->GetItemText(inum,1);
 	wxString shkey=itemtext.AfterFirst(' ');
 	HkeysDialog hkd(this,shkey, itemtext[0], !shkey.StartsWith("Script") );
 	if(hkd.ShowModal()==wxID_OK){
@@ -607,17 +625,20 @@ void OptionsDialog::OnMapHkey(wxListEvent& event)
 			if(cur->second.Name == shkey){itype= new idAndType(cur->first.id, hkd.type);}
 			//wxLogStatus(cur->second.Name);
 			if(cur->second.Accel == hkd.hotkey && (cur->first.Type == hkd.type) ){
-			
-				if(wxMessageBox(wxString::Format(_("Ten skrót już istnieje i jest ustawiony jako skrót do \"%s\".\nWykasować powtarzający się skrót?"), cur->second.Name), 
-					_("Uwaga"),wxYES_NO)==wxYES){
-					cur->second.Accel="";
+				wxMessageDialog msg(this, 
+					wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
+					cur->second.Name), _("Uwaga"), wxYES_NO|wxCANCEL);
+				msg.SetYesNoLabels (_("Zamień skróty"), _("Usuń skrót"));
+				int result = msg.ShowModal();
+				if(result!=wxCANCEL)
+				{
+					if(result==wxNO){hotkey="";}
+					cur->second.Accel=hotkey;
 					long nitem=Shortcuts->FindItem(-1, wxString(cur->first.Type) + " " + cur->second.Name);
-					//wxLogStatus("nitem %i", nitem);
 					if(nitem!=-1){
-						Shortcuts->SetItem(nitem,1,"");
+						Shortcuts->SetItem(nitem,1,hotkey);
 					}
-				
-				}else{return;}
+				}else{ return;}
 			}
 		}
 		
@@ -626,10 +647,13 @@ void OptionsDialog::OnMapHkey(wxListEvent& event)
 		if(itemtext[0] != hkd.type){
 			long pos = Shortcuts->InsertItem(Shortcuts->GetItemCount(),itemtext.replace(0,1,hkd.type));
 			Shortcuts->SetItem(pos,1,Hkeys.GetMenuH(*itype));
-			Shortcuts->SetItemState(event.GetIndex(), wxLIST_STATE_INUSE, wxLIST_STATE_INUSE);
+			Shortcuts->SetItemState(inum, wxLIST_STATE_INUSE, wxLIST_STATE_INUSE);
 			Shortcuts->SetItemState(pos, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+			wxRect rc;
+			Shortcuts->GetItemRect (pos,rc);
+			Shortcuts->ScrollList(0,(pos- inum) * rc.height);
 		}else{
-			Shortcuts->SetItem(event.GetIndex(),1,Hkeys.GetMenuH(*itype));
+			Shortcuts->SetItem(inum,1,Hkeys.GetMenuH(*itype));
 		}
 		
 		if(hkd.type=='A'){hkeymodif=2;}

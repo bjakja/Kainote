@@ -273,16 +273,12 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		int ret=-1;
 		wxString name=item->GetLabelText();
 		ret=Hkeys.OnMapHkey( id, name, this, GLOBAL_HOTKEY);
-		if(ret==-1){
+		if(ret>-2){
 			idAndType itype(id);
 			item->SetAccel(&Hkeys.GetHKey(itype));
+			SetAccels(false); 
+			Hkeys.SaveHkeys();
 		}
-		else if(ret>0){
-			MenuItem *item=Menubar->FindItem(ret);
-			wxAcceleratorEntry entry;
-			item->SetAccel(&entry);
-		}
-		if(ret>-2){SetAccels(false); Hkeys.SaveHkeys();}
 		return;
 	}
 
@@ -424,16 +420,12 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		int ret=-1;
 		wxString name=item->GetLabelText();
 		ret=Hkeys.OnMapHkey( id, name, this, GLOBAL_HOTKEY);
-		if(ret==-1){
-			item->SetAccel(&Hkeys.GetHKey(id));
+		if(ret>-2){
+			idAndType itype(id);
+			item->SetAccel(&Hkeys.GetHKey(itype));
+			SetAccels(false); 
+			Hkeys.SaveHkeys();
 		}
-		else if(ret>0){
-			MenuItem *item=Menubar->FindItem(ret);
-			wxAcceleratorEntry entry;
-			item->SetAccel(&entry);
-		}
-		if(ret>-2){SetAccels(false); Hkeys.SaveHkeys();}
-
 		return;
 	}
 	if(id==OpenSubs){
@@ -659,8 +651,9 @@ void kainoteFrame::Save(bool dial, int wtab)
 	atab->Grid1->Modified=false;
 	atab->Grid1->origform=atab->Grid1->form;
 	Label(0,false,wtab);
-
+#if _DEBUG
 	wxBell();
+#endif
 }
 
 bool kainoteFrame::OpenFile(wxString filename,bool fulls)
@@ -1119,12 +1112,6 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 void kainoteFrame::HideEditor()
 {
 	TabPanel *cur=GetTab();
-	//if(cur->edytor){
-	//wxCommandEvent evt;
-	//evt.SetInt(5);
-	//OnUnSubs(evt);
-	//if(evt.GetInt()==-1){return;}
-	//}
 
 	cur->edytor = !cur->edytor;
 
@@ -1137,6 +1124,8 @@ void kainoteFrame::HideEditor()
 		cur->BoxSizer1->Detach(cur->Video);
 		cur->BoxSizer2->Prepend(cur->Video, 0, wxEXPAND|wxALIGN_TOP, 0);
 		cur->BoxSizer1->InsertSpacer(1,3);
+		cur->Video->panelHeight = 66;
+		cur->Video->vToolbar->Show();
 		if(cur->Video->GetState()!=None&&!cur->Video->isfullskreen){
 			int sx,sy,vw,vh;
 			Options.GetCoords("Video Window Size",&vw,&vh);
@@ -1145,10 +1134,12 @@ void kainoteFrame::HideEditor()
 			cur->Video->SetMinSize(wxSize(sx,sy + cur->Video->panelHeight));
 		}else{cur->Video->Hide();}
 		if(Options.GetBool("Show Change Time")){
-			cur->CTime->Show();}
+			cur->CTime->Show();
+		}
 		cur->BoxSizer1->Layout();
 		Label();
 		if(cur->Video->GetState()!=None){cur->Video->ChangeVobsub();}
+		
 	}
 	else{//Wyłączanie edytora
 
@@ -1161,14 +1152,15 @@ void kainoteFrame::HideEditor()
 		cur->BoxSizer2->Detach(cur->Video);
 
 		cur->BoxSizer1->Add(cur->Video, 1, wxEXPAND|wxALIGN_TOP, 0);
-
+		cur->Video->panelHeight = 44;
+		cur->Video->vToolbar->Hide();
 		if(cur->Video->GetState()!=None&&!cur->Video->isfullskreen&&!IsMaximized()){
 			int sx,sy,sizex,sizey;
 			GetClientSize(&sizex,&sizey);
 
 			cur->Video->CalcSize(&sx,&sy,sizex,sizey);
 
-			SetClientSize(sx+iconsize,sy + cur->Video->panelHeight + Tabs->GetHeight());
+			SetClientSize(sx+iconsize,sy + cur->Video->panelHeight+ Tabs->GetHeight() +Menubar->GetSize().y);
 
 		}
 		cur->Video->SetFocus();
@@ -1177,6 +1169,7 @@ void kainoteFrame::HideEditor()
 
 		if(cur->VideoName!=""){Label(0,true);}
 		if(cur->Video->GetState()!=None){cur->Video->ChangeVobsub(true);}
+		//cur->Video->vToolbar->Enable(false);
 	}
 	UpdateToolbar();
 }

@@ -665,20 +665,22 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 
 	if(!InitDX()){/*block=false;*/return false;}
 	UpdateRects(!fullscreen);
+	
+	if(!framee){framee=new csri_frame;}
+	if(!format){format=new csri_fmt;}
+	for(int i=1;i<4;i++){
+		framee->planes[i]=NULL;
+		framee->strides[i]=NULL;
+	}
+
+	framee->pixfmt=(vformat==5)? CSRI_F_YV12A : (vformat==3)? CSRI_F_YV12 : (vformat==2)? CSRI_F_YUY2 : CSRI_F_BGR_;
+
+	format->width = vwidth;
+	format->height = vheight;
+	format->pixfmt = framee->pixfmt;
+	format->fps=(!IsDshow)? 25.0f : fps;
+
 	if(!__vobsub){
-		if(!framee){framee=new csri_frame;}
-		if(!format){format=new csri_fmt;}
-		for(int i=1;i<4;i++){
-			framee->planes[i]=NULL;
-			framee->strides[i]=NULL;
-		}
-
-		framee->pixfmt=(vformat==5)? CSRI_F_YV12A : (vformat==3)? CSRI_F_YV12 : (vformat==2)? CSRI_F_YUY2 : CSRI_F_BGR_;
-
-		format->width = vwidth;
-		format->height = vheight;
-		format->pixfmt = framee->pixfmt;
-		format->fps=fps;
 		OpenSubs(textsubs,false);
 	}else{
 		SAFE_DELETE(textsubs);
@@ -862,7 +864,12 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 	instance = csri_open_mem(vobsub,buffer,size,NULL);
 	if(!instance){wxLogStatus(_("Instancja VobSuba nie utworzyła się.")); delete textsubs; return false;}
 
-	if(csri_request_fmt(instance,format)){wxLogStatus(_("CSRI nie obsługuje tego formatu."));}
+	if(!format || csri_request_fmt(instance,format)){
+		wxLogStatus(_("CSRI nie obsługuje tego formatu."));
+		csri_close(instance);
+		instance = NULL;
+		delete textsubs; return false;
+	}
 
 	if(redraw && vstate!=None && IsDshow && datas){
 		int all=vheight*pitch;

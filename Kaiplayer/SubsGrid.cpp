@@ -52,7 +52,7 @@ bool sortlayer(Dialogue *i,Dialogue *j){
 
 bool SubsGrid::IsNum(wxString test) {
 	bool isnumber=true;
-	wxString testchars="0123456789 ";
+	wxString testchars="0123456789";
 	for(size_t i=0;i<test.Len();i++){
 		wxUniChar ch=test.GetChar(i);
 		if(testchars.Find(ch)==-1){isnumber=false;break;}
@@ -879,6 +879,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 			//3-kliknięcie lewym i edycja na pauzie i odtwarzaniu
 
 			if (dclick||(left_up && mvtal < 4 && mvtal > 0 )){
+				//
 				TabPanel *pan=(TabPanel*)GetParent();
 				if(pan->Video->GetState()!=None){
 					if(pan->Video->GetState()==Stopped){pan->Video->Play();pan->Video->Pause();}
@@ -1439,7 +1440,9 @@ void SubsGrid::ChangeTime()
 	SpellErrors.clear();
 	SetModified();
 	if(form>TMP){RepaintWindow(START|END);}else{Refresh(false);}
+#if _DEBUG
 	wxBell();
+#endif
 }
 
 

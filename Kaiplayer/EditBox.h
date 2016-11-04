@@ -128,6 +128,7 @@ public:
 	bool splittedTags;
 	bool OnVideo;
 	int Visual;
+	int EditCounter;
 
 private:
 	

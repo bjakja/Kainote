@@ -6,6 +6,7 @@
 #include <wx/wx.h>
 #include "VideoSlider.h"
 #include "BitmapButton.h"
+class VideoToolbar;
 
 class Fullscreen : public wxFrame
 {
@@ -21,12 +22,12 @@ public:
 	VideoSlider* vslider;
 	VolSlider* volslider;
 	wxPanel* panel;
-    
+    VideoToolbar *vToolbar;
 	void OnSize();	
 private:
 	
     wxWindow *vb;
-
+	int panelsize;
 };
 
 #endif // VIDEOPROGBAR_H_INCLUDED

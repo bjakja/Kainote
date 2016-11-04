@@ -50,6 +50,8 @@
 #include "AudioPlayerDSound.h"
 #include "SubsDialogue.h"
 #include "KaraokeSplitting.h"
+#include <d3d9.h>
+#include <d3dx9.h>
 
 //////////////
 // Prototypes
@@ -57,6 +59,14 @@
 class Grid;
 class AudioBox;
 class EditBox;
+
+struct MVERTEX
+{	
+	float fX;	
+	float fY;	
+	float fZ;
+	D3DCOLOR Color;	
+};
 
 /////////////////
 // Display class
@@ -69,10 +79,11 @@ private:
 	
 
 	AudioSpectrum *spectrumRenderer;
-
-	wxBitmap *origImage;
+	wxSize LastSize;
+	int curpos;
+	/*wxBitmap *origImage;
 	wxBitmap *spectrumDisplay;
-	wxBitmap *spectrumDisplaySelected;
+	wxBitmap *spectrumDisplaySelected;*/
 	int64_t PositionSample;
 	float scale;
 	int samples;
@@ -119,6 +130,15 @@ private:
 	wxMutex mutex;
 	int whichsyl;
 	int letter;
+	LPDIRECT3D9 d3dObject;
+	LPDIRECT3DDEVICE9 d3dDevice;
+	LPDIRECT3DSURFACE9 backBuffer;
+	LPDIRECT3DSURFACE9 spectrumSurface;
+	ID3DXLine *d3dLine;
+	LPD3DXFONT d3dFont;
+	LPD3DXFONT d3dFont8;
+	LPD3DXFONT d3dFont9;
+	bool deviceLost;
 
 	void OnPaint(wxPaintEvent &event);
 	void OnMouseEvent(wxMouseEvent &event);
@@ -128,13 +148,17 @@ private:
 	void OnLoseFocus(wxFocusEvent &event);
 	//void OnLostCapture(wxMouseCaptureLostEvent &event);
 
+	bool InitDX(const wxSize &size);
+	void ClearDX();
+	void CVERTEX (MVERTEX *v, float X, float Y, D3DCOLOR Color, float Z=0.0f);
+	void DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen = 3);
 	void UpdateSamples();
 	void Reset();
-	void DrawTimescale(wxDC &dc);
-	void DrawKeyframes(wxDC &dc);
-	void DrawInactiveLines(wxDC &dc);
-	void DrawWaveform(wxDC &dc,bool weak);
-	void DrawSpectrum(wxDC &dc,bool weak);
+	void DrawTimescale();
+	void DrawKeyframes();
+	void DrawInactiveLines();
+	void DrawWaveform(bool weak);
+	void DrawSpectrum(bool weak);
 	void GetDialoguePos(int64_t &start,int64_t &end,bool cap);
 	void GetKaraokePos(int64_t &start,int64_t &end,bool cap);
 	void UpdatePosition(int pos,bool IsSample=false);

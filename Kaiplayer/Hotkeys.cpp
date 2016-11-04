@@ -322,7 +322,7 @@ wxAcceleratorEntry Hotkeys::GetHKey(const idAndType itype, const hdata *data)
 	}
 
 	if(key==0 && akey.Len()<2){key=static_cast<int>(akey[0]);}else if(key==0){wxLogStatus(_("Key \"%s\" nie jest prawidłowy"),akey);}
-	accelkey.Set(modif,key,itype.id);
+	accelkey.Set(modif,key,(itype.id<1000)? itype.id+1000 : itype.id);
 
 	return accelkey;
 }
@@ -358,12 +358,25 @@ int Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow,
 	HkeysDialog hkd(parent, name, hotkeyWindow, showWindowSelection);
 	int resitem=-2;
 	if(hkd.ShowModal()==wxID_OK){
-
+		
 		for(auto cur=hkeys.begin(); cur!=hkeys.end(); cur++)
 		{
 			if(cur->second.Accel == hkd.hotkey && (cur->first.Type == hkd.type) ){
 
-				if(wxMessageBox(wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\"\n.Usunąć powtarzający się skrót?"), cur->second.Name), _("Uwaga"),wxYES_NO)==wxYES)
+				wxMessageDialog msg(parent, 
+					wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
+					cur->second.Name), _("Uwaga"), wxYES_NO|wxCANCEL);
+				msg.SetYesNoLabels (_("Zamień skróty"), _("Usuń skrót"));
+				int result = msg.ShowModal();
+				if(result==wxNO)
+				{
+					auto finditer = hkeys.find(idAndType(id,hkd.type));
+					cur->second.Accel="";
+					if(finditer!=hkeys.end()){
+						cur->second.Accel = finditer->second.Accel;
+					}
+					resitem = cur->first.id;
+				}else if(result==wxNO)
 				{
 					hkeys.erase(cur->first);
 					resitem = cur->first.id;

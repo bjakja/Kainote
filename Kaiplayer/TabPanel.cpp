@@ -54,7 +54,6 @@ void TabPanel::SetAccels()
 {
 
 	std::vector<wxAcceleratorEntry> ventries;
-	ventries.resize(1);
    
 	std::vector<wxAcceleratorEntry> gentries;
 	gentries.resize(3);
@@ -75,10 +74,10 @@ void TabPanel::SetAccels()
 			eentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 		}else if(cur->first.Type == 'N'){//grid
 			gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
-			if(id>2000 && id<3990){Grid1->ConnectAcc(id);}
+			if(id>5000 &&id<=6000){Grid1->ConnectAcc(id);}
 		}else if(cur->first.Type == 'W'){//video
 			ventries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
-			if(id>5000 &&id<=6000){Video->ConnectAcc(id);}
+			if(id>2000 && id<3990){Video->ConnectAcc(id);}
 			if(id>=PlayPause && id<= Minus5Second){
 				gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				Grid1->ConnectAcc(id);

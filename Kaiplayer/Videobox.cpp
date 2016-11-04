@@ -127,7 +127,10 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 			SetVisual(0,0,true); 
 			if(vToolbar->ClipToolsShown()){vToolbar->ShowClipTools(false);}
 		}else if( vis != eb->Visual ){
-			if(vis==VECTORCLIP || vis==VECTORDRAW || eb->Visual==VECTORCLIP || eb->Visual==VECTORDRAW){vToolbar->ShowClipTools(vis==VECTORCLIP || vis==VECTORDRAW);}
+			if(vis==VECTORCLIP || vis==VECTORDRAW || eb->Visual==VECTORCLIP || eb->Visual==VECTORDRAW){
+				if(isfullskreen && TD){TD->vToolbar->ShowClipTools(vis==VECTORCLIP || vis==VECTORDRAW);}
+				else{vToolbar->ShowClipTools(vis==VECTORCLIP || vis==VECTORDRAW);}
+			}
 			eb->Visual = vis;
 			SetVisual(eb->line->Start.mstime, eb->line->End.mstime);
 			if(!isarrow){SetCursor(wxCURSOR_ARROW);isarrow=true;}
@@ -231,7 +234,7 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 				//wh-=Kai->Tabs->GetHeight();
 				//wxLogStatus("wh %i",wh);
 				CalcSize(&sx,&sy,0,0,true,true);
-				Kai->SetClientSize(sx+iconsize, sy+panelHeight+Kai->Tabs->GetHeight());
+				Kai->SetClientSize(sx+iconsize, sy+panelHeight + Kai->Tabs->GetHeight() + Kai->Menubar->GetSize().y);
 				Kai->GetTab()->BoxSizer1->Layout();
 			}
 			//załączony edytor
@@ -279,7 +282,7 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 	kkk1.mstime=GetDuration();
 	Kai->SetStatusText(kkk1.raw(SRT),1);
 	Kai->SetRecent(1);
-	if(Kai->GetTab()->edytor && (!isfullskreen && IsDshow) && 
+	if(Kai->GetTab()->edytor && (!isfullskreen || IsShown()) && 
 		Kai->GetTab()->SubsPath!="" && Options.GetBool("Open Video At Active Line")){
 		Seek(Kai->GetTab()->Edit->line->Start.mstime);
 	}
@@ -389,8 +392,8 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 
 		int w,h;
 		TD->GetClientSize(&w, &h);
-		if(y >= h - 44 && !TD->panel->IsShown()){TD->panel->Show();}
-		else if(y < h - 44 && TD->panel->IsShown()){TD->panel->Show(false);SetFocus();}
+		if(y >= h - panelHeight && !TD->panel->IsShown()){TD->panel->Show();}
+		else if(y < h - panelHeight && TD->panel->IsShown()){TD->panel->Show(false);SetFocus();}
 		if(!TD->panel->IsShown()&&!ismenu){idletime.Start(1000, true);}
 	}
 	else if(Kai->GetTab()->edytor){
@@ -476,7 +479,8 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 	int key = event.GetKeyCode();
 	if(key=='F'){SetFullskreen();}
 	else if(key >= WXK_WINDOWS_LEFT && key <= WXK_WINDOWS_MENU){
-		wxPoint poss=ScreenToClient(wxGetMousePosition());
+		wxWindow *owner = (isfullskreen && TD)? (wxWindow *)TD : this;
+		wxPoint poss= owner->ScreenToClient(wxGetMousePosition());
 		ContextMenu(poss);}
 	else if((key=='B'||key==WXK_ESCAPE) && isfullskreen){
 		//OpenEditor((key==WXK_ESCAPE));
@@ -486,7 +490,7 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 		if(key=='B'){if(GetState()==Playing){Pause();}ShowWindow(Kai->GetHWND(),SW_SHOWMINNOACTIVE);}
 	}
 	else if(key=='S'&&event.m_controlDown){Kai->Save(false);}
-
+	else if(key==WXK_RETURN && isfullskreen && TD){bool panelIsShown = TD->panel->IsShown(); TD->panel->Show(!panelIsShown);}
 }
 
 
@@ -560,7 +564,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 			if(!Kai->IsMaximized()){
 				Kai->GetClientSize(&sizex,&sizey);
 				CalcSize(&sx,&sy,sizex,sizey);
-				Kai->SetClientSize(sx + iconsize,sy + panelHeight + Kai->Tabs->GetHeight());
+				Kai->SetClientSize(sx + iconsize,sy + panelHeight + Kai->Tabs->GetHeight() + Kai->Menubar->GetSize().y);
 			}
 		}else{
 			Options.GetCoords("Video Window Size",&sizex,&sizey);

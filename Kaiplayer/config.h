@@ -70,6 +70,7 @@ class config
     bool SetRawOptions(const wxString &textconfig);
     int LoadOptions();
 	wxString LoadDefaultConfig();
+	wxString LoadDefaultAudioConfig();
 	bool LoadAudioOpts();
 	void SaveAudioOpts();
     void SaveOptions(bool cfg=true, bool style=true);

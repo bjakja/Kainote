@@ -12,6 +12,40 @@
 #include <wx/string.h>
 #include "StyleChange.h"
 #include <wx/fontenum.h>
+ class MyMessageDialog : public wxDialog
+ {
+ public:
+	 MyMessageDialog(wxWindow *parent, const wxString& msg, const wxString &caption)
+	 : wxDialog(parent, -1, caption)
+	 {
+		 wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
+		 wxBoxSizer *sizer2 = new wxBoxSizer(wxVERTICAL);
+		 wxStaticText *txt = new wxStaticText(this,-1,msg);
+		 wxButton *btn=NULL;
+		 btn = new wxButton(this,wxID_YES,"Tak");
+		 Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxID_YES);},wxID_YES);
+		 sizer1->Add(btn,0,wxALL,3);
+		 btn = new wxButton(this,wxID_OK,"Tak dla wszystkich");
+		 sizer1->Add(btn,0,wxALL,3);
+		 btn = new wxButton(this,wxID_NO,"Nie");
+		 Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxID_NO);},wxID_NO);
+		 sizer1->Add(btn,0,wxALL,3);
+		 btn = new wxButton(this,wxID_CANCEL,"Anuluj");
+		 sizer1->Add(btn,0,wxALL,3);
+		 sizer2->Add(txt,0,wxTOP|wxLEFT|wxRIGHT|wxALIGN_CENTER_HORIZONTAL,6);
+		 sizer2->Add(sizer1,0,wxALL,3);
+		 SetSizerAndFit(sizer2);
+		 CenterOnParent();
+	 }
+
+ };
+
+
+int ShowMessage(wxWindow *parent, const wxString& msg, const wxString &caption){
+	MyMessageDialog dlgmsg(parent, msg, caption);
+	return dlgmsg.ShowModal();
+
+}
 
 
 stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
@@ -196,13 +230,19 @@ void stylestore::OnAddToStore(wxCommandEvent& event)
 	int kkk=ASS->GetSelections(sels);
 	if(kkk<1){wxBell();return;}
 	Store->SetSelection(wxNOT_FOUND);
+	prompt=0;
 	for(size_t i=0;i<sels.GetCount();i++){
 		Styles *stylc = grid->GetStyle(sels[i])->Copy();
 		int found=Options.FindStyle(stylc->Name);
 		if(found!=-1){
-			if(wxMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"),
-				stylc->Name), _("Potwierdzenie"),wxICON_QUESTION | wxYES_NO, this) == wxYES ){
-					Options.ChangeStyle(stylc,found);Store->SetSelection(found);}
+			if(prompt != wxID_OK && prompt != wxID_CANCEL){
+				prompt = ShowMessage(this, wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"), 
+				stylc->Name), _("Potwierdzenie"));
+				//if(prompt == wxID_CANCEL){return;}
+			}
+			if( prompt == wxID_YES || prompt == wxID_OK){
+				Options.ChangeStyle(stylc,found);Store->SetSelection(found);
+			}else{delete stylc;}
 		}else{Options.AddStyle(stylc);Store->SetSelection(Options.StoreSize()-1);}
 	}
 
@@ -217,13 +257,19 @@ void stylestore::OnAddToAss(wxCommandEvent& event)
 	int kkk=Store->GetSelections(sels);
 	if(kkk<1){wxBell();return;}
 	ASS->SetSelection(wxNOT_FOUND);
+	prompt=0;
 	for(int i=0;i<kkk;i++)
 	{
 		Styles *stylc = Options.GetStyle(sels[i])->Copy();
 		int found=grid->FindStyle(stylc->Name);
-		if(found!=-1){if (wxMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"),
-			stylc->Name), _("Potwierdzenie"),wxICON_QUESTION | wxYES_NO, this) == wxYES ){
-				grid->ChangeStyle(stylc,found);ASS->SetSelection(found);}
+		if(found!=-1){
+			if(prompt != wxID_OK && prompt != wxID_CANCEL){
+				prompt = ShowMessage(this, wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"), 
+				stylc->Name), _("Potwierdzenie"));
+			}
+			if( prompt == wxID_YES || prompt == wxID_OK){
+				grid->ChangeStyle(stylc,found);ASS->SetSelection(found);
+			}else{delete stylc;}
 		}else{grid->AddStyle(stylc);ASS->SetSelection(grid->StylesSize()-1);}
 	}
 	modif();
@@ -402,7 +448,7 @@ void stylestore::LoadStylesS(bool isass)
 		if(end<=start){return;}
 		std::vector<Styles*> tmps;
 		wxString styless=ass.SubString(start,end);
-		//wxMessageBox(styless);
+		prompt=0;
 		wxStringTokenizer styletkn(styless,"\n");
 		while(styletkn.HasMoreTokens())
 		{
@@ -421,24 +467,24 @@ void stylestore::LoadStylesS(bool isass)
 			for (size_t v=0;v<stl.CheckListBox1->GetCount();v++)
 			{
 				if(stl.CheckListBox1->IsChecked(v)){
-					if(isass){
-						int fstyle=grid->FindStyle(stl.CheckListBox1->GetString(v));
-						if(fstyle==-1){grid->AddStyle(tmps[v]);ASS->Refresh(false);}
-						else{
-							if(wxMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"),
-								stl.CheckListBox1->GetString(v)), _("Potwierdzenie"),wxICON_QUESTION | wxYES_NO, this) == wxYES ){
-									grid->ChangeStyle(tmps[v],fstyle);ASS->SetSelection(fstyle);
-							}
-						}
-					}else{
-						int fsstyle=Options.FindStyle(stl.CheckListBox1->GetString(v));
-						if(fsstyle==-1){Options.AddStyle(tmps[v]);Store->Refresh(false);}
-						else{
-							if(wxMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"),
-								stl.CheckListBox1->GetString(v)), _("Potwierdzenie"),wxICON_QUESTION | wxYES_NO, this) == wxYES ){
-									Options.ChangeStyle(tmps[v],fsstyle);Store->SetSelection(fsstyle);}
-						}   
+					
+					int fstyle= (isass)? grid->FindStyle(stl.CheckListBox1->GetString(v)) : Options.FindStyle(stl.CheckListBox1->GetString(v));
+					if(fstyle==-1){
+						if(isass){grid->AddStyle(tmps[v]);ASS->Refresh(false);}
+						else{Options.AddStyle(tmps[v]);Store->Refresh(false);}
 					}
+					else{
+						if(prompt != wxID_OK && prompt != wxID_CANCEL){
+							prompt = ShowMessage(this, wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"), 
+							stl.CheckListBox1->GetString(v)), _("Potwierdzenie"));
+							//if(prompt == wxID_CANCEL){return;}
+						}
+						if( prompt == wxID_YES || prompt == wxID_OK  ){
+							if(isass){grid->ChangeStyle(tmps[v],fstyle);ASS->SetSelection(fstyle);}
+							else{Options.ChangeStyle(tmps[v],fstyle);Store->SetSelection(fstyle);}
+						}else{delete tmps[v];}
+					}
+					
 				}else{
 					delete tmps[v];
 				}
@@ -605,8 +651,9 @@ void stylestore::StyleonVideo(Styles *styl, bool fullskreen)
 	if(wl>=0){
 		pan->Video->Seek(grid->GetDial(wl)->Start.mstime+5);
 	}else{
-		pan->Video->Render();}
-
+		pan->Video->Render();
+	}
+	pan->Edit->OnVideo=true;
 }
 
 

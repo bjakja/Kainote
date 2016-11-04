@@ -266,14 +266,12 @@ int config::LoadOptions()
 	path<<pathfull<<_T("\\Config.txt");
 	OpenWrite ow;
 	wxString txt=ow.FileOpen(path,false);
-	bool checkVer=true;
 	if(txt==""){
 		txt = LoadDefaultConfig();
 	}else{
 		wxString ver= txt.BeforeFirst(']').Mid(1);
-		if(ver!=progname){checkVer=false;}
+		if(ver!=progname){SetRawOptions(LoadDefaultConfig().AfterFirst('\n'));}
 	}
-	if(!checkVer){SetRawOptions(LoadDefaultConfig().AfterFirst('\n'));}
 	bool isgood=SetRawOptions(txt.AfterFirst('\n'));
 	acdir = _T("Default");
 	path=_T("");
@@ -398,13 +396,9 @@ void config::Sortstyles()
 	std::sort(assstore.begin(),assstore.end(),sortfunc);
 }
 
-bool config::LoadAudioOpts()
+wxString config::LoadDefaultAudioConfig()
 {
-	OpenWrite ow;
-	wxString txt=ow.FileOpen(pathfull+_T("\\AudioConfig.txt"),false);
-
-	if(txt==_T("")){
-		txt="Audio Autocommit=true\r\n"\
+	return "Audio Autocommit=true\r\n"\
 			"Audio Autofocus=true\r\n"\
 			"Audio Autoscroll=true\r\n"\
 			"Audio Background=#000000\r\n"\
@@ -416,6 +410,7 @@ bool config::LoadAudioOpts()
 			"Audio Draw Selection Background=true\r\n"\
 			"Audio Draw video Position=true\r\n"\
 			"Audio Grab Times On Select=true\r\n"\
+			"Audio Horizontal Zoom=50\r\n"\
 			"Audio Inactive Lines Display Mode=1\r\n"\
 			"Audio Keyframes=#C200FF\r\n"\
 			"Audio Lead In=200\r\n"\
@@ -441,11 +436,25 @@ bool config::LoadAudioOpts()
 			"Audio Start Drag Sensitivity=2\r\n"\
 			"Audio Syllable Boundaries=#FFFF00\r\n"\
 			"Audio Syllable Text=#FF0000\r\n"\
+			"Audio Vertical Zoom=50\r\n"\
+			"Audio Volume=50\r\n"\
 			"Audio Waveform=#00C800\r\n"\
 			"Audio Waveform Inactive=#005000\r\n"\
 			"Audio Waveform Modified=#FFE6E6\r\n"\
 			"Audio Waveform Selected=#FFFFFF\r\n"\
 			"Audio Wheel Default To Zoom=false";
+
+}
+
+bool config::LoadAudioOpts()
+{
+	OpenWrite ow;
+	wxString txt=ow.FileOpen(pathfull+_T("\\AudioConfig.txt"),false);
+	if(txt==_T("")){
+		txt=LoadDefaultAudioConfig();
+	}else{
+		wxString ver= txt.BeforeFirst(']').Mid(1);
+		if(ver!=progname){SetRawOptions(LoadDefaultAudioConfig().AfterFirst('\n'));}
 	}
 	return (AudioOpts=SetRawOptions(txt.AfterFirst('\n')));
 }

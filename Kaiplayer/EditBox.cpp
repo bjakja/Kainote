@@ -108,6 +108,7 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 
 EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	: wxWindow(parent, idd, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxCLIP_CHILDREN)
+	, EditCounter(0)
 {
 
 	SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
@@ -294,7 +295,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
 	if(nochangeline&&ebrow==Row){goto done;}
-	if(Options.GetBool("Grid save without enter")&&ebrow!=Row&&save){
+	if(Options.GetBool("Grid save without enter") && ebrow!=Row&&save){
 
 		Send(false);
 	}
@@ -1210,20 +1211,26 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	
 	wxString *text=NULL;
 	if(panel->Video->GetState()==Paused){
-		text=grid->GetVisible(&visible);
+		visible=true;
+		text=grid->GetVisible();
 	}
 	else if(panel->Video->GetState()==Playing){
 		visible=true;
-		text=grid->SaveText();
+		text=grid->GetVisible();//grid->SaveText();
 
 	}
 
 	OnVideo=true;
 	if(visible && (panel->Video->IsShown() || panel->Video->isfullskreen)){
 		panel->Video->OpenSubs(text);
-		if(Visual>0){panel->Video->SetVisual(); return;}
-		if(panel->Video->GetState()==Paused){panel->Video->Render();}
+		if(Visual>0){panel->Video->SetVisual();}
+		else if(panel->Video->GetState()==Paused){panel->Video->Render();}
 	}else if(text){delete text;}
+	if(!Options.GetBool("Grid save without enter")){return;}
+	if(EditCounter>=6){
+		Send(false,false,true);
+		EditCounter=0;
+	}else{EditCounter++;}
 }
 
 void EditBox::OnColorChange(wxCommandEvent& event)

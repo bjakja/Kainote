@@ -79,6 +79,7 @@ class stylestore: public wxDialog
 		bool stass;
 		bool dummy;
 		int selnum;
+		int prompt;
 		wxString oldname;
 		void modif();
 		volatile bool stopcheck;

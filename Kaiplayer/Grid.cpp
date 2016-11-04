@@ -300,10 +300,22 @@ void Grid::OnPaste(int id)
 	int cttkns=wpaste.CountTokens();
 	int rws= (id==PasteCollumns)? 0 : rw;
 	std::vector<Dialogue*> tmpdial;
+	wxString token;
+	wxString tmptoken;
 	while(wpaste.HasMoreTokens())
 	{
 		Dialogue *newdial=NULL;
-		newdial= new Dialogue(wpaste.NextToken());
+		token = (tmptoken.empty())? wpaste.NextToken().Trim(false).Trim() : tmptoken;
+		if(IsNum(token)){
+			token.Empty();
+			while(wpaste.HasMoreTokens()){
+				tmptoken = wpaste.NextToken().Trim(false).Trim();
+				if(IsNum(tmptoken)){break;}
+				token += "\r\n" + tmptoken;
+			}
+
+		}
+		newdial= new Dialogue(token);
 		newdial->State=1;
 		//wxLogMessage("newdialog %i", (int)newdial);
 		if(!newdial){continue;}

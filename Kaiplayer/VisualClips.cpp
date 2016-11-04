@@ -432,7 +432,12 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		tool-=step;
 		if(tool < 0){tool = clipToolsSize-1;}
 		else if(tool >= clipToolsSize){tool = 0;}
-		tab->Video->vToolbar->SetClipToggled(tool);
+		VideoCtrl *vc= tab->Video;
+		if(vc->isfullskreen && vc->TD){
+			vc->TD->vToolbar->SetClipToggled(tool);
+		}else{
+			vc->vToolbar->SetClipToggled(tool);
+		}
 		return;
 	}
 	if(blockevents){return;}
@@ -665,7 +670,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		selection.width = x;
 		selection.height = y;
 		SelectPoints();
-		wxLogStatus("selection points %i, %i, %i, %i)", selection.x, selection.y, selection.width, selection.height);
+		//wxLogStatus("selection points %i, %i, %i, %i)", selection.x, selection.y, selection.width, selection.height);
 		tab->Video->Render(false);
 	}
 	

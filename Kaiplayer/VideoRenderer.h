@@ -123,7 +123,7 @@ class VideoRend : public wxWindow
 		int pitch;
 		int time;
 		int lastframe;
-		const int panelHeight;
+		/*const */int panelHeight;
 		long ax,ay;
 		float AR, fps;
 		char *datas;

@@ -211,6 +211,7 @@ wxString Dialogue::GetCols(int cols, bool tl, wxString style)
 void Dialogue::Conv(char type,wxString pref)
 {
 	if(!Form){Form=0;if(type==ASS){return;}}
+	if(Form == TMP && End.mstime==0){End=Start;End.mstime+=2000;}
 	Start.ChangeFormat(type);
 	End.ChangeFormat(type);
 	if (type<=SRT){

@@ -45,7 +45,7 @@
 // Constructor
 //
 AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
-wxPanel(parent,-1,wxDefaultPosition,wxSize(0,0),wxBORDER_RAISED)
+	wxPanel(parent,-1,wxDefaultPosition,wxSize(0,0),wxBORDER_RAISED)
 {
 	// Setup
 	loaded = false;
@@ -56,23 +56,27 @@ wxPanel(parent,-1,wxDefaultPosition,wxSize(0,0),wxBORDER_RAISED)
 	audioScroll = new wxScrollBar(this,Audio_Scrollbar);
 	//audioScroll->PushEventHandler(new FocusEvent());
 	audioScroll->SetToolTip(_("Pasek szukania"));
-	
+
 	audioDisplay = new AudioDisplay(this);
-	
+
 	audioDisplay->ScrollBar = audioScroll;
 	audioDisplay->box = this;
 	audioDisplay->Edit=(EditBox*)parent;
 	audioDisplay->grid=(Grid*)Wgrid;
-	
-	// Zoom
 
-	HorizontalZoom = new wxSlider(this,Audio_Horizontal_Zoom,(audioDisplay->hasKara)?30 : 50,0,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH);
+	// Zoom
+	int zoom = Options.GetInt("Audio Horizontal Zoom");
+	audioDisplay->SetSamplesPercent(zoom,false);
+	HorizontalZoom = new wxSlider(this,Audio_Horizontal_Zoom,zoom,0,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH);
 	//HorizontalZoom->PushEventHandler(new FocusEvent());
 	HorizontalZoom->SetToolTip(_("Rozciągnięcie w poziomie"));
-	VerticalZoom = new wxSlider(this,Audio_Vertical_Zoom,50,0,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH|wxSL_INVERSE);
+	int pos = Options.GetInt("Audio Vertical Zoom");
+	float value = pow(float(pos)/50.0f,3);
+	audioDisplay->SetScale(value);
+	VerticalZoom = new wxSlider(this,Audio_Vertical_Zoom,pos,0,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH|wxSL_INVERSE);
 	//VerticalZoom->PushEventHandler(new FocusEvent());
 	VerticalZoom->SetToolTip(_("Rozciągnięcie w pionie"));
-	VolumeBar = new wxSlider(this,Audio_Volume,50,0,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH|wxSL_INVERSE);
+	VolumeBar = new wxSlider(this,Audio_Volume,Options.GetInt("Audio Volume"),0,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH|wxSL_INVERSE);
 	//VolumeBar->PushEventHandler(new FocusEvent());
 	VolumeBar->SetToolTip(_("Głośność"));
 	bool link = Options.GetBool("Audio Link");
@@ -109,12 +113,15 @@ wxPanel(parent,-1,wxDefaultPosition,wxSize(0,0),wxBORDER_RAISED)
 	wxSizer *ButtonSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton *temp;
 	temp = new MappedButton(this,AudioPrevious,wxBITMAP_PNG("button_prev"),wxDefaultPosition,wxSize(26,26), 'A');
+	temp->SetTwoHotkeys();
 	temp->SetToolTip(_("Odtwórz poprzednią linijkę"));
 	ButtonSizer->Add(temp,0,0,0);
 	temp = new MappedButton(this,AudioNext,wxBITMAP_PNG("button_next"),wxDefaultPosition,wxSize(26,26), 'A');
+	temp->SetTwoHotkeys();
 	temp->SetToolTip(_("Odtwórz następną linijkę"));
 	ButtonSizer->Add(temp,0,0,0);
 	temp = new MappedButton(this,AudioPlay,wxBITMAP_PNG("button_playsel"),wxDefaultPosition,wxSize(26,26), 'A');
+	temp->SetTwoHotkeys();
 	temp->SetToolTip(_("Odtwórz aktualną linijkę"));
 	ButtonSizer->Add(temp,0,0,0);
 	temp = new MappedButton(this,AudioStop,wxBITMAP_PNG("button_stop"),wxDefaultPosition,wxSize(26,26), 'A');
@@ -152,6 +159,7 @@ wxPanel(parent,-1,wxDefaultPosition,wxSize(0,0),wxBORDER_RAISED)
 	ButtonSizer->Add(temp,0,wxRIGHT,5);
 
 	temp = new MappedButton(this,AudioCommit,wxBITMAP_PNG("button_audio_commit"),wxDefaultPosition,wxSize(26,26), 'A');
+	temp->SetTwoHotkeys();
 	temp->SetToolTip(_("Zatwierdź zmiany"));
 	ButtonSizer->Add(temp,0,0,0);
 	temp = new MappedButton(this,AudioGoto,wxBITMAP_PNG("button_audio_goto"),wxDefaultPosition,wxSize(26,26), 'A');
@@ -207,11 +215,12 @@ wxPanel(parent,-1,wxDefaultPosition,wxSize(0,0),wxBORDER_RAISED)
 //////////////
 // Destructor
 AudioBox::~AudioBox() {
-	
+
 	//audioScroll->PopEventHandler(true);
 	//HorizontalZoom->PopEventHandler(true);
 	//VerticalZoom->PopEventHandler(true);
 	//VolumeBar->PopEventHandler(true);
+	Hkeys.SaveHkeys(true);
 }
 
 
@@ -237,6 +246,7 @@ void AudioBox::OnScrollbar(wxScrollEvent &event) {
 // Horizontal zoom bar changed
 void AudioBox::OnHorizontalZoom(wxScrollEvent &event) {
 	audioDisplay->SetSamplesPercent(event.GetPosition());
+	Options.SetInt("Audio Horizontal Zoom",event.GetPosition());
 }
 
 
@@ -252,6 +262,7 @@ void AudioBox::OnVerticalZoom(wxScrollEvent &event) {
 		audioDisplay->player->SetVolume(value);
 		VolumeBar->SetValue(pos);
 	}
+	Options.SetInt("Audio Vertical Zoom",pos);
 }
 
 
@@ -263,6 +274,7 @@ void AudioBox::OnVolume(wxScrollEvent &event) {
 		if (pos < 1) pos = 1;
 		if (pos > 100) pos = 100;
 		audioDisplay->player->SetVolume(pow(float(pos)/50.0f,3));
+		Options.SetInt("Audio Volume",pos);
 	}
 }
 
@@ -411,17 +423,20 @@ void AudioBox::OnCommit(wxCommandEvent &event) {
 void AudioBox::OnKaraoke(wxCommandEvent &event) {
 	audioDisplay->SetFocus();
 	audioDisplay->hasKara = !audioDisplay->hasKara;
+	int value=50;
 	if(audioDisplay->hasKara){
-	if(!audioDisplay->karaoke){audioDisplay->karaoke=new Karaoke(audioDisplay);}
+		if(!audioDisplay->karaoke){audioDisplay->karaoke=new Karaoke(audioDisplay);}
 		audioDisplay->karaoke->Split();
-		audioDisplay->SetSamplesPercent(30);
-		HorizontalZoom->SetValue(30);
+		value = MAX(HorizontalZoom->GetValue()-20,30);
+		audioDisplay->SetSamplesPercent(value);
+		HorizontalZoom->SetValue(value);
 	}else{
-		audioDisplay->SetSamplesPercent(50);
-		HorizontalZoom->SetValue(50);
+		value = MIN(HorizontalZoom->GetValue()+20,60);
+		audioDisplay->SetSamplesPercent(value);
+		HorizontalZoom->SetValue(value);
 	}
+	Options.SetInt("Audio Vertical Zoom",value);
 
-	
 	audioDisplay->MakeDialogueVisible();
 
 	Options.SetBool("Audio Karaoke",audioDisplay->hasKara);
@@ -435,8 +450,8 @@ void AudioBox::OnSplitMode(wxCommandEvent &event) {
 	audioDisplay->SetFocus();
 	audioDisplay->karaAuto=!audioDisplay->karaAuto;
 	if(audioDisplay->hasKara){
-	audioDisplay->karaoke->Split();
-	audioDisplay->UpdateImage(true);}
+		audioDisplay->karaoke->Split();
+		audioDisplay->UpdateImage(true);}
 	Options.SetBool("Audio Karaoke Split Mode",audioDisplay->karaAuto);
 	Options.SaveAudioOpts();
 }
@@ -501,7 +516,7 @@ void AudioBox::OnLeadOut(wxCommandEvent &event) {
 }
 
 void AudioBox::OnMouseEvents(wxMouseEvent &event)
-	{
+{
 	bool click = event.LeftDown();
 	bool left_up = event.LeftUp();
 	int npos=event.GetY();
@@ -512,7 +527,7 @@ void AudioBox::OnMouseEvents(wxMouseEvent &event)
 		SetCursor(wxCURSOR_ARROW); arrows=false;}
 	else if(!arrows && npos>h-4){
 		SetCursor(wxCURSOR_SIZENS); arrows= true;}
-	
+
 
 	if (left_up && holding) {
 		holding = false;
@@ -529,7 +544,7 @@ void AudioBox::OnMouseEvents(wxMouseEvent &event)
 		ReleaseMouse();
 		Options.SetInt("Audio Box Height",npos);
 		Options.SaveAudioOpts();
-		
+
 	}
 
 	if (left_up && !holding) {
@@ -548,16 +563,16 @@ void AudioBox::OnMouseEvents(wxMouseEvent &event)
 	}
 
 	if (holding){
-		
+
 		int npos=event.GetY();
-		
+
 		if(npos!=oldy&&npos>150){
 			int px=-5, py=npos;
 			ClientToScreen(&px,&py);
 			sline->SetPosition(wxPoint(px,py));
 		}
 		oldy=npos;
-		
+
 	}
 
 }
@@ -569,8 +584,6 @@ void AudioBox::SetAccels()
 	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
 		if(cur->first.Type!='A'){continue;}
 		idAndType itype = cur->first;
-		//wxLogStatus("id %i", id);
-		if(itype.id<1000){itype.id+=1000;}
 		entries.push_back(Hkeys.GetHKey(itype));
 
 	}
@@ -583,12 +596,12 @@ void AudioBox::SetAccels()
 //////////////////////////////////////////
 // Focus event handling for the scrollbar
 BEGIN_EVENT_TABLE(FocusEvent,wxEvtHandler)
-	EVT_SET_FOCUS(FocusEvent::OnSetFocus)
+EVT_SET_FOCUS(FocusEvent::OnSetFocus)
 END_EVENT_TABLE()
 
 void FocusEvent::OnSetFocus(wxFocusEvent &event) {
-	wxWindow *previous = event.GetWindow();
-	if (previous) previous->SetFocus();
+wxWindow *previous = event.GetWindow();
+if (previous) previous->SetFocus();
 }
 
 */
@@ -625,5 +638,5 @@ BEGIN_EVENT_TABLE(AudioBox,wxPanel)
 	EVT_TOGGLEBUTTON(Audio_Check_AutoCommit,AudioBox::OnAutoCommit)
 	EVT_TOGGLEBUTTON(Audio_Check_NextCommit,AudioBox::OnNextLineCommit)
 	EVT_MOUSE_EVENTS(AudioBox::OnMouseEvents)
-END_EVENT_TABLE()
+	END_EVENT_TABLE()
 
