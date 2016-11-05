@@ -21,13 +21,6 @@ enum{
 	MOVEALL
 };
 
-struct VERTEX
-{	
-	float fX;	
-	float fY;	
-	float fZ;
-	D3DCOLOR Color;	
-};
 class Dialogue;
 class TabPanel;
 
@@ -59,13 +52,6 @@ public:
 	void DrawCross(D3DXVECTOR2 position, D3DCOLOR color = 0xFFFF0000, bool useBegin=true);
 	void DrawArrow(D3DXVECTOR2 vector, D3DXVECTOR2 *vector1, int diff=0);
 	void DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen = 4);
-	void CreateVERTEX (VERTEX *v, float X, float Y, D3DCOLOR Color, float Z=0.0f)
-	{	
-		v->fX = X;	
-		v->fY = Y;	
-		v->fZ = Z;		
-		v->Color = Color;	
-	}
 
 	virtual void SetVisual(int _start,int _end);
 	virtual void Draw(int time);

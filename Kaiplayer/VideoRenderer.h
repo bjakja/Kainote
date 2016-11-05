@@ -65,6 +65,16 @@ struct chapter
 	int time;
 };
 
+struct VERTEX
+{	
+	float fX;	
+	float fY;	
+	float fZ;
+	D3DCOLOR Color;	
+};
+
+void CreateVERTEX (VERTEX *v, float X, float Y, D3DCOLOR Color, float Z=0.0f);
+
 
 class AudioDisplay;
 class DShowPlayer;

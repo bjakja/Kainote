@@ -23,6 +23,13 @@ struct CUSTOMVERTEX
 const IID IID_IDirectXVideoProcessorService ={ 0xfc51a552,0xd5e7,0x11d9,{0xaf,0x55,0x00,0x05,0x4e,0x43,0xff,0x02}};
 #endif
 
+void CreateVERTEX (VERTEX *v, float X, float Y, D3DCOLOR Color, float Z)
+{	
+	v->fX = X;	
+	v->fY = Y;	
+	v->fZ = Z;		
+	v->Color = Color;	
+}
 
 VideoRend::VideoRend(wxWindow *_parent, const wxSize &size)
 	:wxWindow(_parent,-1,wxDefaultPosition, size)//wxFULL_REPAINT_ON_RESIZE

@@ -220,7 +220,7 @@ AudioBox::~AudioBox() {
 	//HorizontalZoom->PopEventHandler(true);
 	//VerticalZoom->PopEventHandler(true);
 	//VolumeBar->PopEventHandler(true);
-	Hkeys.SaveHkeys(true);
+
 }
 
 
@@ -247,6 +247,7 @@ void AudioBox::OnScrollbar(wxScrollEvent &event) {
 void AudioBox::OnHorizontalZoom(wxScrollEvent &event) {
 	audioDisplay->SetSamplesPercent(event.GetPosition());
 	Options.SetInt("Audio Horizontal Zoom",event.GetPosition());
+	Options.SaveAudioOpts();
 }
 
 
@@ -263,6 +264,7 @@ void AudioBox::OnVerticalZoom(wxScrollEvent &event) {
 		VolumeBar->SetValue(pos);
 	}
 	Options.SetInt("Audio Vertical Zoom",pos);
+	Options.SaveAudioOpts();
 }
 
 
@@ -275,6 +277,7 @@ void AudioBox::OnVolume(wxScrollEvent &event) {
 		if (pos > 100) pos = 100;
 		audioDisplay->player->SetVolume(pow(float(pos)/50.0f,3));
 		Options.SetInt("Audio Volume",pos);
+		Options.SaveAudioOpts();
 	}
 }
 

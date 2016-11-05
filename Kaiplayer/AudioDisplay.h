@@ -60,13 +60,6 @@ class Grid;
 class AudioBox;
 class EditBox;
 
-struct MVERTEX
-{	
-	float fX;	
-	float fY;	
-	float fZ;
-	D3DCOLOR Color;	
-};
 
 /////////////////
 // Display class
@@ -80,7 +73,7 @@ private:
 
 	AudioSpectrum *spectrumRenderer;
 	wxSize LastSize;
-	int curpos;
+	float curpos;
 	/*wxBitmap *origImage;
 	wxBitmap *spectrumDisplay;
 	wxBitmap *spectrumDisplaySelected;*/
@@ -130,10 +123,12 @@ private:
 	wxMutex mutex;
 	int whichsyl;
 	int letter;
+	int syll;
 	LPDIRECT3D9 d3dObject;
 	LPDIRECT3DDEVICE9 d3dDevice;
 	LPDIRECT3DSURFACE9 backBuffer;
 	LPDIRECT3DSURFACE9 spectrumSurface;
+	//LPDIRECT3DTEXTURE9 texture;
 	ID3DXLine *d3dLine;
 	LPD3DXFONT d3dFont;
 	LPD3DXFONT d3dFont8;
@@ -150,8 +145,7 @@ private:
 
 	bool InitDX(const wxSize &size);
 	void ClearDX();
-	void CVERTEX (MVERTEX *v, float X, float Y, D3DCOLOR Color, float Z=0.0f);
-	void DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen = 3);
+	void DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, D3DCOLOR fill, int dashLen = 3);
 	void UpdateSamples();
 	void Reset();
 	void DrawTimescale();
@@ -215,12 +209,12 @@ public:
 	void Stop();
 
 	int64_t GetSampleAtX(int x);
-	int GetXAtSample(int64_t n);
+	float GetXAtSample(int64_t n);
 	int GetMSAtX(int64_t x);
-	int GetXAtMS(int64_t ms);
+	float GetXAtMS(int64_t ms);
 	int GetMSAtSample(int64_t x);
 	int64_t GetSampleAtMS(int64_t ms);
-	int GetSyllableAtX(int x);
+	//float GetSyllableAtX(int x);
 
 	void GetTimesDialogue(int &start,int &end);
 	void GetTimesSelection(int &start,int &end);
