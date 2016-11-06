@@ -87,7 +87,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>I:\Programy\zlib-1.2.8;H:\Programy\freetype-2.6\include;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses;I:\Programy\WX 2.9.4\include;I:\Programy\WX 2.9.4\lib\vc_lib\mswu;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;I:\Kainote\Thirdparty\luajit\include;I:\Kainote\Thirdparty\luabins\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;I:\Kainote\Thirdparty\icu\source\common;I:\Kainote\Thirdparty\boost_1_61_0;I:\Kainote\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -98,6 +98,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <MinimalRebuild>false</MinimalRebuild>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>

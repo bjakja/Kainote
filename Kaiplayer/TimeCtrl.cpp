@@ -6,9 +6,9 @@
 #include "NumCtrl.h"
 
 TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, const wxPoint& pos,const wxSize& size, long style,const wxValidator& validator, const wxString& name)
-         : wxTextCtrl(parent, id, val, pos, size, style, validator, name)
+	: wxTextCtrl(parent, id, val, pos, size, style, validator, name)
 {
- wxTextValidator valid(wxFILTER_INCLUDE_CHAR_LIST);
+	wxTextValidator valid(wxFILTER_INCLUDE_CHAR_LIST);
 	wxArrayString includes;
 	includes.Add(_T("0"));
 	includes.Add(_T("1"));
@@ -25,16 +25,18 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 
 
 
-form=ASS;
-pastes=false;
-holding=false;
-oldpos=0;
-oldposx=0;
-curpos=0;
-grad=10;
+	form=ASS;
+	pastes=false;
+	holding=false;
+	changedBackGround=false;
+	oldpos=0;
+	oldposx=0;
+	curpos=0;
+	grad=10;
 
- Connect(wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&TimeCtrl::OnTimeWrite);
- Connect(wxEVT_KEY_DOWN,(wxObjectEventFunction)&TimeCtrl::OnKeyEvent);
+	Connect(wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&TimeCtrl::OnTimeWrite);
+	Connect(wxEVT_KEY_DOWN,(wxObjectEventFunction)&TimeCtrl::OnKeyEvent);
+
 
 }
 
@@ -57,8 +59,8 @@ void TimeCtrl::OnTimeWrite(wxCommandEvent& event)
 		wxString nChar = txt.Mid(selst,1);
 		//wxString aChar = txt.Mid(selst-1,1);
 
-		
-		
+
+
 
 		if (nChar == _(":")||nChar == _(".")||nChar == _(",")) {
 			wxString tmp = txt;
@@ -73,7 +75,7 @@ void TimeCtrl::OnTimeWrite(wxCommandEvent& event)
 		else if(nChar.IsEmpty()) {txt.Remove(selst-1,1);}
 		else{txt.Remove(selst,1);}
 		if(selst>1 && txt[selst-2]==':' &&  wxAtoi(wxString(txt[selst-1])) > 5){txt=txt.replace(selst-1,1,"5");}
-		
+
 
 		ChangeValue(txt);
 		SetModified(true);
@@ -86,9 +88,9 @@ void TimeCtrl::OnTimeWrite(wxCommandEvent& event)
 
 void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
 {
- int key = event.GetKeyCode();
-bool astmp=(form<MDVD);
-//wxLogStatus("key %i", key);
+	int key = event.GetKeyCode();
+	bool astmp=(form<MDVD);
+	//wxLogStatus("key %i", key);
 	if (astmp){
 
 		long from=0,to=0;
@@ -114,65 +116,70 @@ bool astmp=(form<MDVD);
 
 		if (key == 'C' || key == 'X') {
 
-		    //SetSelection(0,GetValue().Length());
+			//SetSelection(0,GetValue().Length());
 			Copy();//CopyTime();
 		}
 		if (key == 'V') {
 			pastes=true;
-		    SetSelection(0,GetValue().Length());
+			SetSelection(0,GetValue().Length());
 			//Paste();
 			if (wxTheClipboard->Open())
-		{
-		if (wxTheClipboard->IsSupported( wxDF_TEXT ))
 			{
-			wxTextDataObject data;
-			wxTheClipboard->GetData( data );
-			wxString whatpaste = data.GetText();
-			ChangeValue(whatpaste);
-			SetSelection(0,whatpaste.Length());
-			SetModified(true);
-				
+				if (wxTheClipboard->IsSupported( wxDF_TEXT ))
+				{
+					wxTextDataObject data;
+					wxTheClipboard->GetData( data );
+					wxString whatpaste = data.GetText();
+					ChangeValue(whatpaste);
+					SetSelection(0,whatpaste.Length());
+					SetModified(true);
+
+				}
+				wxTheClipboard->Close();
+				wxTheClipboard->Flush();
 			}
-		wxTheClipboard->Close();
-		wxTheClipboard->Flush();
-		}
-			
+
 			//pastes=false;
 		}
 	}
 }
 
 
-void TimeCtrl::SetTime(STime newtime)
+void TimeCtrl::SetTime(STime newtime, bool stillModified)
 {
-    mTime=newtime;
-    form=mTime.GetFormat();
-    ChangeValue(newtime.raw());
-	SetModified(false);
-
+	if(mTime==newtime){return;}
+	mTime=newtime;
+	form=mTime.GetFormat();
+	ChangeValue(newtime.raw());
+	if(!stillModified){
+		SetModified(false);
+	}else{
+		SetForegroundColour("#FF0000");
+		changedBackGround=true;
+	}
 }
 
 STime TimeCtrl::GetTime()
 {
-    mTime.ParseMS(GetValue());
-    return mTime;
+	mTime.ParseMS(GetValue());
+	return mTime;
 }
 
 void TimeCtrl::ChangeFormat(char frm, float fps)
 {
 	mTime.ChangeFormat(frm,fps);
-    form=frm;
-    ChangeValue(mTime.raw());
+	form=frm;
+	ChangeValue(mTime.raw());
 }
 
 void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 	/*if (event.RightUp()) {
 
-			wxMenu menu;
-			menu.Append(Time_Copy,_("&Kopiuj"));
-			menu.Append(Time_Paste,_("&Wklej"));
-			PopupMenu(&menu);
-			return;
+	wxMenu menu;
+	menu.Append(Time_Copy,_("&Kopiuj"));
+	menu.Append(Time_Paste,_("&Wklej"));
+	PopupMenu(&menu);
+	return;
 
 	}
 	*/
@@ -182,47 +189,49 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 	int posx=event.GetX();
 
 	if(holding&&right_up)
-		{
+	{
 		holding=false;
 		SetFocus();
 		ReleaseMouse();
 		return;
-		}
+	}
 	if(holding)
-		{
-		if((oldpos+5)<posy)
-			{value.mstime-=grad;
-		if(value.mstime==(-grad)){value.mstime=0;return;}
-		if(value.mstime<0){value.mstime=0;}
-			SetValue(value.GetFormatted(form));MarkDirty();oldpos=posy;
-			SetSelection(curpos,curpos);
-			}
-		else if((oldpos-5)>posy)
-			{value.mstime+=grad;
-		if(value.mstime==(35999999+grad)){value.mstime=35999999;return;}
-		if(value.mstime>35999999){value.mstime=35999999;}
+	{
+		if((oldpos+5)<posy){
+			value.mstime-=grad;
+			if(value.mstime==(-grad)){value.mstime=0;return;}
+			if(value.mstime<0){value.mstime=0;}
 			SetValue(value.GetFormatted(form));MarkDirty();oldpos=posy;
 			SetSelection(curpos,curpos);
 		}
-		if((oldposx+10)<posx)
-			{value.mstime-=(grad*10);
-		if(value.mstime==(-(grad*10))){value.mstime=0;return;}
-		if(value.mstime<0){value.mstime=0;}
+		else if((oldpos-5)>posy){
+			value.mstime+=grad;
+			if(value.mstime==(35999999+grad)){value.mstime=35999999;return;}
+			if(value.mstime>35999999){value.mstime=35999999;}
+			SetValue(value.GetFormatted(form));MarkDirty();oldpos=posy;
+			SetSelection(curpos,curpos);
+		}
+		if((oldposx+10)<posx){
+			value.mstime-=(grad*10);
+			if(value.mstime==(-(grad*10))){value.mstime=0;return;}
+			if(value.mstime<0){value.mstime=0;}
+			SetValue(value.GetFormatted(form));MarkDirty();oldposx=posx;
+			SetSelection(curpos,curpos);
+
+		}else if((oldposx-10)>posx){
+			value.mstime+=(grad*10);
+			if(value.mstime==35999999+(grad*10)){value.mstime=35999999;return;}
+			if(value.mstime>35999999){value.mstime=35999999;}
 			SetValue(value.GetFormatted(form));MarkDirty();oldposx=posx;
 			SetSelection(curpos,curpos);
 		}
-		else if((oldposx-10)>posx)
-			{value.mstime+=(grad*10);
-		if(value.mstime==35999999+(grad*10)){value.mstime=35999999;return;}
-		if(value.mstime>35999999){value.mstime=35999999;}
-			SetValue(value.GetFormatted(form));MarkDirty();oldposx=posx;
-			SetSelection(curpos,curpos);
+		if(IsModified()){
+			wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);
 		}
-		if(IsModified()){wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);}
-		}
+	}
 
 	if(rclick)
-		{
+	{
 		holding=true;
 		oldpos=posy;
 		oldposx=posx;
@@ -241,7 +250,7 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 		SetSelection(cpos,cpos);
 		SetFocus();
 		CaptureMouse();
-		}
+	}
 
 	if (event.GetWheelRotation() != 0) {
 		long pos;
@@ -266,7 +275,7 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 
 void TimeCtrl::OnCopy(wxCommandEvent &event)
 {
-    SetFocus();
+	SetFocus();
 	SetSelection(0,GetValue().Length());
 	Copy();
 }
@@ -274,15 +283,27 @@ void TimeCtrl::OnCopy(wxCommandEvent &event)
 void TimeCtrl::OnPaste(wxCommandEvent &event)
 {
 	pastes=true;
-    SetFocus();
+	SetFocus();
 	SetSelection(0,GetValue().Length());
 	Paste();
 	SetSelection(0,GetValue().Length());
 	pastes=false;
 }
 
+//void TimeCtrl::SetModified(bool modified)
+//{
+//	if(modified)
+//	{
+//		SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
+//	}else{
+//		SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+//
+//	}
+//	wxTextCtrl::SetModified(modified);
+//}
+
 BEGIN_EVENT_TABLE(TimeCtrl, wxTextCtrl)
 	EVT_MOUSE_EVENTS(TimeCtrl::OnMouseEvent)
 	EVT_MENU(Time_Copy,TimeCtrl::OnCopy)
 	EVT_MENU(Time_Paste,TimeCtrl::OnPaste)
-END_EVENT_TABLE()
+	END_EVENT_TABLE()

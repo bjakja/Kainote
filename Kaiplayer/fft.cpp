@@ -43,34 +43,70 @@
 ///////////
 // Headers
 //#include "config.h"
-
-#include "fft.h"
+#include "VideoFfmpeg.h"
+#include "FFT.h"
 #include <math.h>
+#include <utility>
 
-/////////////
-// Transform
-void FFT::DoTransform (size_t n_samples,float *input,float *output_r,float *output_i,bool inverse) {
-	// Check if it's power of two
+
+FFT::FFT(size_t nsamples, VideoFfmpeg *_prov)
+	:n_samples(nsamples)
+	,allsamples(0)
+	,diff(-1)
+	,prov(_prov)
+{
 	if (!IsPowerOfTwo(n_samples)) {
 		throw L"FFT requires power of two input.";
 	}
+	angle_num = 2.0f * 3.1415926535897932384626433832795f;
+	NumBits = NumberOfBitsNeeded(n_samples);
+	input=new short[n_samples];//0
+	output_i=new float[n_samples*4];
+	output_r=new float[n_samples*4];
+}
+FFT::~FFT()
+{
+	if(input){delete[] input;}
+	delete[] output_i;
+	delete[] output_r;
+}
 
-	// Inverse transform
-	float angle_num = 2.0f * 3.1415926535897932384626433832795f;
-	if (inverse) angle_num = -angle_num;
+//void FFT::RecreateTable(size_t asamples)
+//{
+//	if(allsamples<asamples){
+//		if(input){delete[] input;}
+//		input = new short[asamples];
+//	}
+//	allsamples=asamples;
+//	diff=-1;
+//}
+//
+//void FFT::SetDiff(size_t whre)
+//{
+//	diff=whre;
+//	prov->GetBuffer(input,whre,allsamples);
+//}
+/////////////
+// Transform
+void FFT::Transform (size_t whre, size_t wthread, bool inverse) {
+	
+	//whre -= diff;
+	prov->GetBuffer(input,whre,n_samples);
+		
+	
+	int th=wthread * n_samples;
+	//if(whre>=allsamples-n_samples){wxLogStatus("przekroczenie %i %i",whre, allsamples-n_samples);return;}
+	//assert(whre<allsamples-n_samples);
 
 	// Variables
 	unsigned int i, j, k, n;
 	float tr, ti;
 
 	// Calculate needed bits
-	unsigned int NumBits;
-	NumBits = NumberOfBitsNeeded(n_samples);
-
 	// Copy samples to output buffers
-	for (i=0;i<n_samples;i++) {
-		j = ReverseBits (i,NumBits);
-		output_r[j] = input[i];
+	for (i=0; i<n_samples; i++) {
+		j = ReverseBits (i,NumBits)+th;
+		output_r[j] = (float)input[i/*+whre*/];
 		output_i[j] = 0.0f;
 	}
 
@@ -103,14 +139,14 @@ void FFT::DoTransform (size_t n_samples,float *input,float *output_r,float *outp
 				ar1 = ar0;
 				ai1 = ai0;
 
-				tr = ar0*output_r[k] - ai0*output_i[k];
-				ti = ar0*output_i[k] + ai0*output_r[k];
+				tr = ar0*output_r[k+th] - ai0*output_i[k+th];
+				ti = ar0*output_i[k+th] + ai0*output_r[k+th];
 
-				output_r[k] = output_r[j] - tr;
-				output_i[k] = output_i[j] - ti;
+				output_r[k+th] = output_r[j+th] - tr;
+				output_i[k+th] = output_i[j+th] - ti;
 
-				output_r[j] += tr;
-				output_i[j] += ti;
+				output_r[j+th] += tr;
+				output_i[j+th] += ti;
 			}
 		}
 
@@ -118,26 +154,8 @@ void FFT::DoTransform (size_t n_samples,float *input,float *output_r,float *outp
 		BlockEnd = BlockSize;
 	}
 
-	// Divide everything by number of samples if it's an inverse transform
-	if (inverse) {
-		float denom = 1.0f/(float)n_samples;
-		for (i=0;i<n_samples;i++) {
-			output_r[i] *= denom;
-			output_i[i] *= denom;
-		}
-	}
 }
 
-
-//////////////////////
-// Transform wrappers
-void FFT::Transform(size_t n_samples,float *input,float *output_r,float *output_i) {
-	DoTransform(n_samples,input,output_r,output_i,false);
-}
-
-void FFT::InverseTransform(size_t n_samples,float *input,float *output_r,float *output_i) {
-	DoTransform(n_samples,input,output_r,output_i,true);
-}
 
 
 //////////////////////////////////////

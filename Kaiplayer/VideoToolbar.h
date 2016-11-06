@@ -24,7 +24,7 @@ public:
 	int GetToggled();
 	int GetClipToggled(){return clipToggled-Toggled;};
 	void SetClipToggled(int newtool){ clipToggled = toolsSize + newtool; Refresh(false);};
-	void ShowClipTools(bool show){clipToggled = toolsSize; showClipTools=show; Refresh(false);}
+	void ShowClipTools(bool show){clipToggled = toolsSize+1; showClipTools=show; Refresh(false);}
 	bool ClipToolsShown(){return showClipTools;}
 	static void DestroyIcons(){
 		for(auto cur = icons.begin(); cur != icons.end(); cur++){

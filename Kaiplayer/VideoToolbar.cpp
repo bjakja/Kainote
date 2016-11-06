@@ -8,7 +8,7 @@ std::vector< itemdata *> VideoToolbar::icons;
 VideoToolbar::VideoToolbar (wxWindow *parent, const wxPoint &pos)
 	:wxWindow(parent, -1, pos, wxSize(-1, 22))
 	,Toggled(0)
-	,clipToggled(toolsSize)
+	,clipToggled(toolsSize+1)
 	,sel(-1)
 	,clicked(false)
 	,showClipTools(false)

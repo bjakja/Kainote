@@ -41,20 +41,27 @@
 #include <stdint.h>
 #include "VideoFfmpeg.h"
 
-
+class FFT;
 // Specified and implemented in cpp file, interface is private to spectrum code
-class AudioSpectrumCacheManager;
-
+//class AudioSpectrumCacheManager;
+//class SpectrumThread;
+class FinalSpectrumCache;
 
 class AudioSpectrum {
+	friend class SpectrumThread;
 private:
 	// Data provider
-	AudioSpectrumCacheManager *cache;
+	//AudioSpectrumCacheManager *cache;
+	SpectrumThread *cache;
 
 	// Colour pallettes
 	unsigned char colours_normal[256*3];
+	unsigned char colours_selected[256*3];
+
+	
 
 	VideoFfmpeg *provider;
+	
 
 	unsigned long line_length; // number of frequency components per line (half of number of samples)
 	unsigned long num_lines; // number of lines needed for the audio
@@ -62,16 +69,51 @@ private:
 	float power_scale; // amplification of displayed power
 	int minband; // smallest frequency band displayed
 	int maxband; // largest frequency band displayed
-	//wxCriticalSection CritSec;
-
+	int subcachelen;
+	FFT *fft;
+	wxCriticalSection CritSec;
+	void SetupSpectrun(int overlaps = 1, int length = (1<<7));
 public:
 	AudioSpectrum(VideoFfmpeg *_provider);
 	~AudioSpectrum();
+	
 
-	void RenderRange(int64_t range_start, int64_t range_end, unsigned char *img, int imgleft, int imgwidth, int imgpitch, int imgheight, int parcent);
+	void RenderRange(int64_t range_start, int64_t range_end, bool selected, unsigned char *img, int imgwidth, int imgheight, int percent);
 
 	void SetScaling(float _power_scale);
 };
 
+typedef std::vector<float> CacheLine;
+class SpectrumThread
+{
+	friend class AudioSpectrum;
+public:
+	SpectrumThread(AudioSpectrum *spc, size_t numsubcaches, size_t overlaps);
+	~SpectrumThread();
+	void MakeSubCaches(size_t start, size_t bufstart, size_t len, size_t buflen, unsigned char *img, int imgwidth, int imgheight, unsigned char *palette);
+	CacheLine &GetLine(unsigned long i, unsigned int overlap);
+	//void Age();
+	void Wait();
+private:
+	static DWORD proc(void *cls);
+	void procincls(int numthread);
+	HANDLE thread;
+	HANDLE eventDraw;
+	HANDLE eventKillSelf;
+	HANDLE eventComplete;
+	AudioSpectrum *spc;
+	size_t start;
+	size_t first_line;
+	size_t last_line;
+	size_t length;
+	size_t numsubcaches;
+	size_t overlaps;
+	int imgwidth;
+	int imgheight;
+	unsigned char *palette;
+	unsigned char *img;
+	std::vector<FinalSpectrumCache*> sub_caches;
+	
+};
 
 #endif

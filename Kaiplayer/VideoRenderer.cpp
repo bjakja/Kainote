@@ -71,7 +71,6 @@ VideoRend::VideoRend(wxWindow *_parent, const wxSize &size)
 	lastframe=0;
 	diff=0;
 	avframetime=42;
-	thread=NULL;
 #if byvertices
 	vertex=NULL;
 	texture=NULL;
@@ -549,7 +548,6 @@ VideoRend::~VideoRend()
 	vstate=None;
 
 	SAFE_DELETE(VFF);
-	//if(thread){WaitForSingleObject(thread,2000);}
 	Clear();
 	//wxLogStatus("Vclips");
 	SAFE_DELETE(Vclips);
@@ -561,11 +559,8 @@ VideoRend::~VideoRend()
 	if (instance) {csri_close(instance);}
 	if (vobsub) {csri_close_renderer(vobsub);}
 	
-	//wxLogStatus("VFF");
-
-	//wxLogStatus("datas");
 	if(datas){delete[] datas;datas=NULL;}
-	//wxLogStatus("all");
+	
 }
 
 void VideoRend::Clear()
@@ -585,13 +580,9 @@ void VideoRend::Clear()
 	SAFE_RELEASE(dxvaService);
 #endif
 	SAFE_RELEASE(d3device);
-	//wxLogStatus("d3dobject");
 	SAFE_RELEASE(d3dobject);
-	//wxLogStatus("lines");
 	SAFE_RELEASE(lines);
-	//wxLogStatus("font");
 	SAFE_RELEASE(m_font);
-	if(thread){CloseHandle(thread);thread=NULL;}
 }
 
 
@@ -903,54 +894,6 @@ int VideoRend::GetDuration()
 	return VFF->Duration*1000.0;
 }
 
-
-DWORD VideoRend::playingProc(void* cls)
-{
-	((VideoRend*)cls)->playing();
-	return 0;
-}
-
-//funkcja odtwarzania przez ffms2 automatycznie wywoływana timerem
-void VideoRend::playing()
-{
-	int tdiff=0;
-	wxRect rt(0,0,1,1);
-	while(1){
-		Refresh(false,&rt);
-		//DrawTexture();
-		//Render();
-
-		if(time>=playend){
-			wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED,23333);
-			wxQueueEvent(this, evt);
-			break;
-		}
-		else if(vstate!=Playing){
-			break;}	
-
-
-
-
-		time= timeGetTime() - lasttime;
-
-		lastframe++;
-
-		while(true)
-		{
-			if(VFF->Timecodes[lastframe]>=time)
-			{
-				break;
-			}
-			else{lastframe++;}
-		}
-		//wxThreadEvent *evt = new wxThreadEvent(wxEVT_THREAD,23334);
-		tdiff=VFF->Timecodes[lastframe] - time;
-		time = VFF->Timecodes[lastframe];
-
-		//wxQueueEvent(parent, evt);
-		Sleep(tdiff);
-	}
-}
 
 //ustawia nowe recty po zmianie rozdzielczości wideo
 bool VideoRend::UpdateRects(bool VideoPanel)

@@ -51,8 +51,9 @@ DrawingAndClip::DrawingAndClip()
 	,invClip(false)
 	,drawSelection(false)
 	,drawToolLines(false)
+	,pointWasSelected(false)
 	,grabbed(-1)
-	,tool(0)
+	,tool(1)
 {
 }
 
@@ -455,19 +456,24 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		//wxLogStatus(" bdown %i", (int)event.ButtonDown());
 		int pos = CheckPos(xy);
 		if(pos!= -1 && hasArrow && !ctrl){
-			//tab->Video->SetCursor(wxCURSOR_SIZING);
-			//drawtxt=true;
-			//acpoint=Points[pos];
-			hasArrow=false;
-			Points[pos].isSelected=true;
-			lastpos=pos;
-			tab->Video->Render(false);
+			
+			if(!Points[pos].isSelected){
+				acpoint=Points[pos];
+				hasArrow=false;
+				Points[pos].isSelected=true;
+				lastpos=pos;
+				tab->Video->Render(false);
+				Points[pos]=acpoint;
+			}
+			
 		}else if(pos== -1 && !hasArrow && !ctrl){
 			hasArrow=true;
 			if(lastpos>=0 && lastpos < (int)psize){
+				//acpoint=Points[lastpos];
 				Points[lastpos].isSelected=false;
 				//wxLogStatus("znikanie podœwietlenia");
 				tab->Video->Render(false);
+				//Points[lastpos]=acpoint;
 			}
 		}
 		if(tool>=1 && tool<=3 && pos == -1 && !event.Leaving()){
@@ -576,8 +582,8 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			float pointx=(Points[i].x+_x)/wspw, pointy=(Points[i].y+_y)/wsph;
 			if(abs(pointx-x)<5 && abs(pointy-y)<5)
 			{
-				DeselectPoints();
 				lastpoint = acpoint = Points[i];
+				if(!acpoint.isSelected){DeselectPoints();}
 				Points[i].isSelected=true;
 				grabbed=i;
 				diffs.x=pointx-x;
@@ -610,15 +616,15 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		if(tool==4 && grabbed==-1)
 		{
 			int pos = CheckPos(xy, true);
-			/*if(psize > 0 && Points[(pos == (int)psize )? psize - 1 : pos].type=="m"){
+			if(psize > 0 && Points[(pos == (int)psize )? psize - 1 : pos].type=="m"){
 				wxMessageBox(_("Ze wzglêdu na b³êdy Vsfiltra zablokowa³em mo¿liwoœæ wstawiania dwóch \"m\" po sobie"), _("Uwaga"));
 				return;
-			}*/
+			}
 			AddMove(xy,pos);
 			SetClip(GetVisual(),true);
 			grabbed= psize-1;
-			//tool=0;
-			//tab->Video->vToolbar->SetClipToggled(tool);
+			tool=1;
+			tab->Video->vToolbar->SetClipToggled(tool);
 		}
 		else if( grabbed == -1 ){
 			drawSelection=true;

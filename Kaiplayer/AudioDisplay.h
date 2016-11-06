@@ -198,7 +198,7 @@ public:
 	void Prev(bool play=true);
 
 	bool UpdateTimeEditCtrls();
-	void CommitChanges(bool nextLine=false);
+	void CommitChanges(bool nextLine=false, bool Save=true);
 	void Commit();
 	void AddLead(bool in,bool out);
 

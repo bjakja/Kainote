@@ -259,6 +259,7 @@ public:
 	bool snapYplus;
 	bool drawSelection;
 	bool drawToolLines;
+	bool pointWasSelected;
 	int grabbed;
 	int tool;
 	int x;

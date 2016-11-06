@@ -293,7 +293,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	
 	HR(D3DXCreateLine(d3dDevice, &d3dLine), _("Nie można stworzyć linii D3DX"));
 	HR(D3DXCreateFontW(d3dDevice, 18, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFont ), _("Nie można stworzyć czcionki D3DX"));
-	HR(D3DXCreateFontW(d3dDevice, 12, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFont8 ), _("Nie można stworzyć czcionki D3DX"));
+	HR(D3DXCreateFontW(d3dDevice, 12, 0, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFont8 ), _("Nie można stworzyć czcionki D3DX"));
 	HR(D3DXCreateFontW(d3dDevice, 16, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Verdana"), &d3dFont9 ), _("Nie można stworzyć czcionki D3DX"));
 	HR(d3dLine->SetAntialias(TRUE), _("Linia nie ustawi AA"));
 	HR (d3dDevice->CreateOffscreenPlainSurface(size.x,size.y,D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &spectrumSurface , 0), _("Nie można stworzyć plain surface"));
@@ -933,19 +933,13 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 		HRN(spectrumSurface->LockRect( &d3dlr,0, D3DLOCK_NOSYSLOCK), _("Nie można zablokować bufora tekstury"));
 		byte *img = static_cast<byte *>(d3dlr.pBits);
 		int dxw=d3dlr.Pitch/4;
-	//if(diff){wxLogStatus("ooo, będzie chujnia %i", diff);}
-		//unsigned char *img = (unsigned char *)malloc(h*w*3); // wxImage requires using malloc
 		
 		// Use a slightly slower, but simple way
 		// Always draw the spectrum for the entire width
 		// Hack: without those divs by 2 the display is horizontally compressed
 		//spectrumRenderer->RenderRange(Position*samples, (Position+w)*samples, false, img, dxw, h, samplesPercent);
-		spectrumRenderer->RenderRange(Position*samples, (Position+w)*samples, img, 0, dxw, dxw, h, samplesPercent);
+		spectrumRenderer->RenderRange(Position*samples, (Position+w)*samples, false, img, dxw, h, samplesPercent);
 
-		
-		// The spectrum bitmap will have been deleted above already, so just make a new one
-		//wxImage imgobj(w, h, img, false);
-		
 		spectrumSurface->UnlockRect();
 	
 	}
@@ -1381,28 +1375,31 @@ void AudioDisplay::SetDialogue(Dialogue *diag,int n) {
 
 //////////////////
 // Commit changes
-void AudioDisplay::CommitChanges (bool nextLine) {
+void AudioDisplay::CommitChanges (bool nextLine, bool Save) {
 	// Loaded?
 	if (!loaded) return;
 
 
-	NeedCommit = false;
+	if(Save){NeedCommit = false;}
 
 	// Update dialogues
 	blockUpdate = true;
 	STime gtime;
 	gtime.NewTime(curStartMS);
-	Edit->StartEdit->SetTime(gtime);
+	Edit->StartEdit->SetTime(gtime,true);
 	gtime.NewTime(curEndMS);
-	Edit->EndEdit->SetTime(gtime);
+	Edit->EndEdit->SetTime(gtime,true);
 	gtime.NewTime(curEndMS - curStartMS);
-	Edit->DurEdit->SetTime(gtime);
-	Edit->StartEdit->SetModified(true);
-	Edit->EndEdit->SetModified(true);
-	Edit->Send(nextLine);
-	if(!nextLine){Edit->UpdateChars(Edit->TextEdit->GetValue());}
-	Edit->StartEdit->SetModified(false);
-	Edit->EndEdit->SetModified(false);
+	Edit->DurEdit->SetTime(gtime,true);
+	//Edit->StartEdit->SetModified(true);
+	//Edit->EndEdit->SetModified(true);
+	if(Save){
+		Edit->Send(nextLine);
+		if(!nextLine){Edit->UpdateChars(Edit->TextEdit->GetValue());}
+		Edit->StartEdit->SetModified(false);
+		Edit->EndEdit->SetModified(false);
+		Edit->DurEdit->SetModified(false);
+	}
 	blockUpdate = false;
 
 
@@ -2188,13 +2185,15 @@ bool AudioDisplay::UpdateTimeEditCtrls() {
 void AudioDisplay::Commit()
 {
 	bool autocommit=Options.GetBool(_T("Audio Autocommit"));
-	if(hasKara) 
-	{Edit->TextEdit->SetTextS(karaoke->GetText(),true);}
+	if(hasKara){
+		Edit->TextEdit->SetTextS(karaoke->GetText(),true);
+	}
 
-	if (autocommit) 
-	{CommitChanges();}
-	else
-	{UpdateImage(true);}
+	if (autocommit) {
+		CommitChanges();
+	}else{
+		CommitChanges(false,false);UpdateImage(true);
+	}
 }
 
 //////////////////

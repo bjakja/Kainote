@@ -398,7 +398,9 @@ void EditBox::UpdateChars(wxString text)
 void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 {
 	long cellm=0;
-
+	if(!dummy && StartEdit->changedBackGround){StartEdit->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT ));StartEdit->Refresh(false);}
+	if(!dummy && EndEdit->changedBackGround ){EndEdit->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT ));EndEdit->Refresh(false);}
+	if(!dummy && DurEdit->changedBackGround ){DurEdit->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT ));DurEdit->Refresh(false);}
 	if(line->IsComment != Comment->GetValue()){
 		line->IsComment= !line->IsComment;
 		cellm |= COMMENT;

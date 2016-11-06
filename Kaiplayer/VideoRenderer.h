@@ -156,8 +156,6 @@ class VideoRend : public wxWindow
 		Visuals *Vclips;
 		int playend;
 		size_t lasttime;
-		static DWORD playingProc(void* cls);
-		void playing();
 		std::vector<chapter> chaps;
 		bool EnumFilters(Menu *menu);
 		bool FilterConfig(wxString name, int idx, wxPoint pos);
@@ -203,7 +201,6 @@ class VideoRend : public wxWindow
 		
 		csri_frame *framee;
 		csri_fmt *format;
-		HANDLE thread;
 		
 };
 

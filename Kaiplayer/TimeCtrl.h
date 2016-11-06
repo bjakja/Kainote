@@ -11,11 +11,11 @@ class TimeCtrl : public wxTextCtrl
 	TimeCtrl(wxWindow* parent, const long int id, const wxString& val=_("0:00:00.00"), const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=wxWANTS_CHARS,const wxValidator& validator=wxDefaultValidator, const wxString& name=wxTextCtrlNameStr);
 	virtual ~TimeCtrl();
 
-	void SetTime(STime newtime);
+	void SetTime(STime newtime, bool stillModified=false);
 	STime GetTime();
 	void ChangeFormat(char frm, float fps=0);
-
-
+	//void SetModified(bool modified);
+	bool changedBackGround;
 	private:
 	char form;
 	STime mTime;

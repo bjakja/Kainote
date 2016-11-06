@@ -40,19 +40,31 @@
 
 #include <stdlib.h> // size_t
 
+class VideoFfmpeg;
 /////////////
 // FFT class
 class FFT {
 private:
-	void DoTransform(size_t n_samples,float *input,float *output_r,float *output_i,bool inverse);
-
+	
+	float angle_num;
+	unsigned int NumBits;
+	size_t n_samples;
+	size_t allsamples;
+	int diff;
+	VideoFfmpeg *prov;
 public:
-	void Transform(size_t n_samples,float *input,float *output_r,float *output_i);
-	void InverseTransform(size_t n_samples,float *input,float *output_r,float *output_i);
+	FFT(size_t n_samples, VideoFfmpeg *prov);
+	~FFT();
+	void Transform(size_t whre,size_t wthread,bool inverse=false);
 	bool IsPowerOfTwo(unsigned int x);
 	unsigned int NumberOfBitsNeeded(unsigned int n_samples);
 	unsigned int ReverseBits(unsigned int index, unsigned int bits);
 	float FrequencyAtIndex(unsigned int baseFreq, unsigned int n_samples, unsigned int index);
+	void RecreateTable(size_t asamples);
+	void SetDiff(size_t whre);
+	short *input;
+	float *output_r;
+	float *output_i;
 };
 
 
