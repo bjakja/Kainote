@@ -156,6 +156,7 @@ void TimeCtrl::SetTime(STime newtime, bool stillModified)
 	}else{
 		SetForegroundColour("#FF0000");
 		changedBackGround=true;
+		SetModified(true);
 	}
 }
 

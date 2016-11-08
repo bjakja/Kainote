@@ -156,6 +156,7 @@ public:
 	void ChangeInLines(bool all);
 	std::vector<moveElems> elems;
 	int numElem;
+	int elemsToMove;
 	byte selectedTags;
 	wxPoint diffs;
 	wxPoint dumplaced;
@@ -259,7 +260,6 @@ public:
 	bool snapYplus;
 	bool drawSelection;
 	bool drawToolLines;
-	bool pointWasSelected;
 	int grabbed;
 	int tool;
 	int x;

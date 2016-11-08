@@ -228,6 +228,8 @@ enum{
 	XX( SetEndTime,)\
 	XX( SetVideoAtStart,)\
 	XX( SetVideoAtEnd,)\
+	XX( GoToNextKeyframe,)\
+	XX( GoToPrewKeyframe,)\
 	XX( Redo,)\
 	XX( Undo,)\
 	XX( OpenSubs,=6800)\

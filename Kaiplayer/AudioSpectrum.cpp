@@ -235,8 +235,6 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 	cache->MakeSubCaches(baseline / subcachelen, first_line, (cpsl+fft_overlaps / fft_overlaps), last_line, img, imgwidth, imgheight, palette);
 	
 
-	//cache->Wait();
-	//cache->Age();
 	
 }
 
@@ -251,10 +249,6 @@ SpectrumThread::SpectrumThread(AudioSpectrum *_spc, size_t _numsubcaches, size_t
 	:spc(_spc)
 	,overlaps(_overlaps)
 	,numsubcaches(_numsubcaches)
-	, eventDraw (CreateEvent(0, FALSE, FALSE, 0))
-	, eventKillSelf (CreateEvent(0, FALSE, FALSE, 0))
-	, eventComplete (CreateEvent(0, FALSE, FALSE, 0))
-	, thread(NULL)
 {
 	sub_caches.resize(numsubcaches,0);
 	//thread = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)proc, (void*)new std::pair<int,SpectrumThread*>(0,this), 0, 0);
@@ -262,17 +256,9 @@ SpectrumThread::SpectrumThread(AudioSpectrum *_spc, size_t _numsubcaches, size_t
 
  SpectrumThread::~SpectrumThread(){
 
-	if(thread){
-		SetEvent(eventKillSelf);
-		WaitForSingleObject(eventComplete,2000);
-		CloseHandle(thread);
-	}
 	for (size_t i = 0; i < numsubcaches; ++i){
 		if (sub_caches[i]) delete sub_caches[i];
 	}
-
-	
-	//for(int t=0; t<4; t++){CloseHandle(thread[t]);}
 }
 
 CacheLine &SpectrumThread::GetLine(unsigned long i, unsigned int overlap)
@@ -300,33 +286,11 @@ void SpectrumThread::MakeSubCaches(size_t _start, size_t _bufstart, size_t _len,
 	imgheight=_imgheight;
 	palette=_palette;
 	
-	/*for(int t=0; t<4; t++){
-		thread[t] = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)proc, (void*)new std::pair<int,SpectrumThread*>(t,this), 0, 0);
-	}*/
 	procincls(0);
 	
-	//SetEvent(eventDraw);
-	//WaitForSingleObject(eventComplete,INFINITE);
+	
 }
 
-DWORD SpectrumThread::proc(void *cls)
-{
-	std::pair<int,SpectrumThread*> *stt = (std::pair<int,SpectrumThread*> *)cls;
-	HANDLE events[2]={stt->second->eventDraw, stt->second->eventKillSelf};
-	while(1){
-		DWORD wait_result = WaitForMultipleObjects(2, events, FALSE, INFINITE);
-		if(wait_result == WAIT_OBJECT_0+0)
-		{
-			stt->second->procincls(0);
-			SetEvent(stt->second->eventComplete);
-		}else{
-			break;
-		}
-	}
-	SetEvent(stt->second->eventComplete);
-	delete stt;
-	return 0;
-}
 
 void SpectrumThread::procincls(int numthread)
 {

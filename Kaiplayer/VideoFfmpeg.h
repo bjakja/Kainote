@@ -20,7 +20,7 @@ public:
 	VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *success);
 	static unsigned int __stdcall FFMS2Proc(void* cls);
 	void Processing();
-	void Refresh();
+	void Refresh(bool wait=true);
 	void Play(){SetEvent(eventStartPlayback);};
 	volatile bool success;
 	wxString fname;

@@ -139,7 +139,10 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 
 	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
 		Vclips->ChangeTool(evt.GetInt());
-	},ID_AUX_TOOLBAR_EVENT);
+	},ID_VECTOR_TOOLBAR_EVENT);
+	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
+		Vclips->ChangeTool(evt.GetInt());
+	},ID_MOVE_TOOLBAR_EVENT);
 
 	Connect(ID_BPREV,ID_BPLINE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&VideoCtrl::OnVButton);
 	Connect(ID_VOL,wxEVT_COMMAND_SLIDER_UPDATED,(wxObjectEventFunction)&VideoCtrl::OnVolume);

@@ -95,8 +95,8 @@ class VideoRend : public wxWindow
 		bool Pause();
 		bool Stop();
         void SetPosition(int time, bool starttime=true, bool corect=true, bool reloadSubs=true);
-
-       
+		void GoToNextKeyframe();
+        void GoToPrevKeyframe();
 		int GetCurrentPosition();
 		int GetDuration();
 		int GetVolume();

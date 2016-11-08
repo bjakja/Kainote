@@ -51,7 +51,6 @@ DrawingAndClip::DrawingAndClip()
 	,invClip(false)
 	,drawSelection(false)
 	,drawToolLines(false)
-	,pointWasSelected(false)
 	,grabbed(-1)
 	,tool(1)
 {
@@ -453,7 +452,6 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	size_t psize = Points.size();
 	
 	if(!event.ButtonDown() && !leftisdown){
-		//wxLogStatus(" bdown %i", (int)event.ButtonDown());
 		int pos = CheckPos(xy);
 		if(pos!= -1 && hasArrow && !ctrl){
 			
@@ -491,9 +489,11 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 
 	if(event.LeftUp()||event.MiddleUp()){
 		if(!drawSelection){
-			//if(Points.size()>0){
-				SetClip(GetVisual(),false);
-			//}
+			
+
+
+			SetClip(GetVisual(),false);
+			
 		}else{
 			drawSelection=false;
 			tab->Video->Render(false);
@@ -622,7 +622,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			}
 			AddMove(xy,pos);
 			SetClip(GetVisual(),true);
-			grabbed= psize-1;
+			//grabbed= psize-1;
 			tool=1;
 			tab->Video->vToolbar->SetClipToggled(tool);
 		}

@@ -894,10 +894,10 @@ void VideoFfmpeg::DeleteOldAudioCache()
 
 }
 
-void VideoFfmpeg::Refresh(){
+void VideoFfmpeg::Refresh(bool wait){
 	SetEvent(eventRefresh);
-	if(rend->vstate==Paused){
-		WaitForSingleObject(eventComplete, INFINITE);
+	if(rend->vstate==Paused && wait){
+		WaitForSingleObject(eventComplete, 60000);
 		ResetEvent(eventComplete);
 	}
 };

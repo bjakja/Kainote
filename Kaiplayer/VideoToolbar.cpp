@@ -32,9 +32,16 @@ VideoToolbar::VideoToolbar (wxWindow *parent, const wxPoint &pos)
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorLine"),_("Dodaj liniê")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorBezier"),_("Dodaj krzyw¹ Beziera")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VECTORBSPLINE"),_("Dodaj krzyw¹ B-sklejan¹")));
-		//icons.push_back(new itemdata(PTR_BITMAP_PNG("VECTORBSPLINEPOINT"),_("Dodaj punkt krzywej B-sklejanej")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorMove"),_("Dodaj nowy oddzielny punkt")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorDelete"),_("Usuñ element")));
+		//ikony move all
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEPOS"),_("Przenieœ punkty pozycjonowania")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEMOVESTART"),_("Przenieœ startowe punkty ruchu")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVE"),_("Przenieœ koñcowe punkty ruchu")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVECLIPS"),_("Przenieœ wycinki")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEDRAWINGS"),_("Przenieœ rysunki")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEORGS"),_("Przenieœ punkty org")));
+
 	}
 	Connect(wxEVT_PAINT, (wxObjectEventFunction)&VideoToolbar::OnPaint);
 	Connect(wxEVT_LEFT_DOWN, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
@@ -42,6 +49,10 @@ VideoToolbar::VideoToolbar (wxWindow *parent, const wxPoint &pos)
 	Connect(wxEVT_MOTION, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
 	Connect(wxEVT_LEAVE_WINDOW, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
 	Connect(wxEVT_MOUSEWHEEL, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
+	MoveToggled[i]=true;
+	for (int i = 1; i < moveToolsSize; i++){
+		MoveToggled[i]=false;
+	}
 }
 
 int VideoToolbar::GetToggled()
@@ -70,10 +81,11 @@ void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
 	else if(elem>=toolsSize){
 		int toolbarlen = h * clipToolsSize;
 		int posx = (x - (w - toolbarlen));
-		if(posx < 0 || posx > toolbarlen || !showClipTools){
+		if(posx < 0 || posx > toolbarlen || !showClipTools || !showMoveTools){
 			noelem=true;
 		}
 		else{ elem = ( posx / h) + toolsSize;}
+		if(showMoveTools){elem+=clipToolsSize;}
 	}
 	if(evt.Leaving() || noelem){sel = -1; Refresh(false); if(HasToolTips()){UnsetToolTip();} return;}
 	
@@ -83,6 +95,7 @@ void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
 		Refresh(false);
 	}
 	if(evt.LeftDown()){
+		if(elem>=moveToolsStart){MoveToggled[elem-moveToolsStart] = !MoveToggled[elem-moveToolsStart];}
 		if(elem>=toolsSize){clipToggled=elem;}
 		else{Toggled=elem;}
 		clicked=true;
@@ -91,7 +104,7 @@ void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
 	if(evt.LeftUp()){
 		clicked=false;
 		Refresh(false);
-		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, (elem<toolsSize)? ID_VIDEO_TOOLBAR_EVENT : ID_AUX_TOOLBAR_EVENT);
+		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, (elem<toolsSize)? ID_VIDEO_TOOLBAR_EVENT : (elem< moveToolsStart)? ID_VECTOR_TOOLBAR_EVENT : ID_MOVE_TOOLBAR_EVENT);
 		evt.SetInt((elem>=toolsSize)? clipToggled - toolsSize : Toggled);
 		ProcessEvent(evt);
 	}
@@ -116,9 +129,11 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 	tdc.DrawRectangle(0,0,w,h);
 	//wxLogStatus("Paint");
 	int posX = startDrawPos;
-	for(int i = 0; i < toolsSize + clipToolsSize; i++){
+	int i = 0;
+	while(i < toolsSize + clipToolsSize + moveToolsSize){
 		if(i == toolsSize){
-			if(!showClipTools){break;}
+			if(showMoveTools){i=moveToolsStart; posX = w - (h * moveToolsSize);}
+			else if(!showClipTools){break;}
 			else{
 				posX = w - (h * clipToolsSize);
 			}
@@ -128,7 +143,7 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 				tdc.SetBrush(wxBrush(wxSystemSettings::GetColour((i==Toggled || i==clipToggled)? wxSYS_COLOUR_MENUHILIGHT : wxSYS_COLOUR_MENUBAR)));
 				tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT)));
 				tdc.DrawRoundedRectangle(posX, 1, h-2, h-2, 2.0);
-			}else if(i==Toggled || i==clipToggled){
+			}else if(i==Toggled || i==clipToggled || (i >= moveToolsStart && MoveToggled[i-moveToolsStart])){
 				tdc.SetBrush(wxBrush(wxSystemSettings::GetColour((clicked && i==sel)? wxSYS_COLOUR_BTNFACE : wxSYS_COLOUR_HIGHLIGHT)));
 				tdc.SetPen(wxPen(wxSystemSettings::GetColour((clicked && i==sel)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_HIGHLIGHT)));
 				tdc.DrawRoundedRectangle(posX, 1, h-2, h-2, 2.0);
@@ -137,6 +152,7 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 			tdc.DrawBitmap(*(icons[i]->icon),posX+2,3);
 			posX+=h;
 		}
+		i++;
 	}
 
 	wxPaintDC dc(this);

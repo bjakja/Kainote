@@ -74,8 +74,6 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	FileMenu->AppendTool(Toolbar,RecentSubs, _("Ostatnio otwa&rte napisy"), _("Ostatnio otwarte napisy"),PTR_BITMAP_PNG("recentsubs"),true, SubsRecMenu);
 	FileMenu->AppendTool(Toolbar,RemoveSubs, _("Usuń napisy z e&dytora"), _("Usuń napisy z edytora"),PTR_BITMAP_PNG("close"));
 	FileMenu->Append(9989,"Pokaż / Ukryj okno &logów");
-	/*FileMenu->Append(7890,"Testuj thread ffms2");
-	FileMenu->Append(7891,"Koniec testów threada")->Enable(false);*/
 	FileMenu->AppendTool(Toolbar,Settings, _("&Ustawienia"), _("Ustawienia programu"),PTR_BITMAP_PNG("SETTINGS"));
 	FileMenu->AppendTool(Toolbar,Quit, _("Wyjści&e\tAlt-F4"), _("Zakończ działanie programu"),PTR_BITMAP_PNG("exit"));
 	Menubar->Append(FileMenu, _("&Plik"));
@@ -112,6 +110,8 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	VidMenu->AppendTool(Toolbar, SetVideoAtStart,_("Przejdź do czasu początkowego linii"),_("Przechodzi wideo do czasu początkowego linii"),PTR_BITMAP_PNG("videoonstime"));
 	VidMenu->AppendTool(Toolbar, SetVideoAtEnd,_("Przejdź do czasu końcowego linii"),_("Przechodzi wideo do czasu końcowego linii"),PTR_BITMAP_PNG("videoonetime"));
 	VidMenu->AppendTool(Toolbar, PlayPauseG, _("Odtwarzaj / Pauza"), _("Odtwarza lub pauzuje wideo"),PTR_BITMAP_PNG("pausemenu"),false);
+	VidMenu->Append(GoToPrewKeyframe,_("Przejdź do poprzedniej klatki kluczowej"));
+	VidMenu->Append(GoToNextKeyframe,_("Przejdź do następnej klatki kluczowej"));
 	VidMenu->Append(VideoIndexing, _("Otwieraj wideo przez FFMS2"), _("Otwiera wideo przez FFMS2, co daje dokładność klatkową"),true,0,0,ITEM_CHECK)->Check(Options.GetBool("Index Video"));
 
 	Menubar->Append(VidMenu, _("&Wideo"));
@@ -199,16 +199,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 			delete mylog; mylog=NULL;
 		}
 	},9989);
-	//test=NULL;
-	//Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &event){
-	//	//test = new VideoFfmpeg(GetTab()->VideoPath);
-	//	//Menubar->Enable(7891);
-	//},7890);
-	//Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &event){
-	//	//test->BreakProcessing();
-	//	//delete test; test=NULL;
-	//},7891);
-	//Connect(30100,30200,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuClick);
+	
 	Connect(SnapWithStart,SnapWithEnd,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
 	SetDropTarget(new DragnDrop(this));
 
@@ -395,6 +386,10 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if(!Auto){Auto=new Auto::Automation();}
 		Auto->ReloadScripts();
 		Auto->BuildMenu(&AutoMenu);
+	}else if(id==GoToPrewKeyframe){
+		pan->Video->GoToPrevKeyframe();
+	}else if(id==GoToNextKeyframe){
+		pan->Video->GoToNextKeyframe();
 	}else if(id==SetVideoAtStart){
 		int fsel=pan->Grid1->FirstSel();
 		if(fsel<0){return;}
@@ -1326,6 +1321,9 @@ void kainoteFrame::OnMenuOpened(MenuEvent& event)
 	{
 		Menubar->Enable(i,(i<SetStartTime)? enable : enable && editor);
 	}
+	enable = (pan->Video->VFF!=NULL);
+	Menubar->Enable(GoToPrewKeyframe, enable);
+	Menubar->Enable(GoToNextKeyframe, enable);
 	//kolejno numery id
 	char form = pan->Grid1->form;
 	bool tlmode = pan->Grid1->transl;

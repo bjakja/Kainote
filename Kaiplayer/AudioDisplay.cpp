@@ -390,7 +390,7 @@ void AudioDisplay::DoUpdateImage() {
 	// Draw selection bg
 	if (hasSel && drawSelStart < drawSelEnd && draw_selection_background) {
 		D3DCOLOR fill;
-		if (NeedCommit ) fill = (spectrum)? 0x60FF0000 : D3DCOLOR_FROM_WX(Options.GetColour(_T("Audio Selection Background Modified")));
+		if (NeedCommit ) fill = (spectrum)? 0x40FF6060 : D3DCOLOR_FROM_WX(Options.GetColour(_T("Audio Selection Background Modified")));
 		else fill = (spectrum)? 0x60FFFFFF : D3DCOLOR_FROM_WX(Options.GetColour(_T("Audio Selection Background")));
 		VERTEX v9[4];
 		CreateVERTEX(&v9[0], drawSelStart, 0, fill);
@@ -582,7 +582,7 @@ void AudioDisplay::DoUpdateImage() {
 			D3DCOLOR lineBondaryMark= D3DCOLOR_FROM_WX(Options.GetColour(_T("Audio Line Boundary Mark")));
 			d3dLine->SetWidth(2.f);
 			d3dLine->Begin();
-			D3DXVECTOR2 v2[2]={D3DXVECTOR2(selMark,0),D3DXVECTOR2(2,h)};
+			D3DXVECTOR2 v2[2]={D3DXVECTOR2(selMark,0),D3DXVECTOR2(selMark,h)};
 			d3dLine->Draw(v2,2,lineBondaryMark);
 			d3dLine->End();
 			d3dLine->SetWidth(1.f);
@@ -592,14 +592,14 @@ void AudioDisplay::DoUpdateImage() {
 			wxFont font(9,wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Verdana"));
 			int dx,dy;
 			GetTextExtent(text,&dx, &dy, 0, 0, &font);
-			dx=selMark-(dx/2);
+			//dx=selMark-(dx/2);
 			dy=h-dy-2;
 			RECT rect;
-			rect.left = dx;
+			rect.left = selMark-150;
 			rect.top = dy;
 			rect.right = rect.left + 300;
 			rect.bottom = rect.top + 100;
-			DRAWOUTTEXT(d3dFont9,text,rect,DT_LEFT|DT_TOP, 0xFFFFFFFF);
+			DRAWOUTTEXT(d3dFont9,text,rect,DT_CENTER, 0xFFFFFFFF);
 		}
 	}
 	D3DCOLOR AudioCursor= D3DCOLOR_FROM_WX(Options.GetColour(_T("Audio Play Cursor")));
@@ -1396,9 +1396,9 @@ void AudioDisplay::CommitChanges (bool nextLine, bool Save) {
 	if(Save){
 		Edit->Send(nextLine);
 		if(!nextLine){Edit->UpdateChars(Edit->TextEdit->GetValue());}
-		Edit->StartEdit->SetModified(false);
-		Edit->EndEdit->SetModified(false);
-		Edit->DurEdit->SetModified(false);
+		//Edit->StartEdit->SetModified(false);
+		//Edit->EndEdit->SetModified(false);
+		//Edit->DurEdit->SetModified(false);
 	}
 	blockUpdate = false;
 

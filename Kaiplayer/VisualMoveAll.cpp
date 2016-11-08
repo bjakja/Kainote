@@ -7,22 +7,22 @@ enum {
 	TAGPOS=1,
 	TAGMOVES,
 	TAGMOVEE=4,
-	TAGORG=8,
-	TAGCLIP=16,
-	TAGP=32
+	TAGCLIP=8,
+	TAGP=16,
+	TAGORG=32
 };
 
 MoveAll::MoveAll()
 	: Visuals()
 	, numElem(-1)
-	, selectedTags(0)
+	, selectedTags(1)
 {
 }
 
 void MoveAll::DrawVisual(int time)
 {
 	for(size_t i = 0; i <elems.size(); i++){
-		//if(!(selectedTags & elems[i].type)){continue;}
+		if(!(selectedTags & elems[i].type)){continue;}
 		if( elems[i].type == TAGPOS || elems[i].type == TAGMOVES){
 			DrawRect(elems[i].elem);
 		}else if( elems[i].type == TAGMOVEE ){
@@ -149,13 +149,11 @@ void MoveAll::ChangeInLines(bool all)
 	D3DXVECTOR2 moving;
 	moving = elems[numElem].elem - beforeMove;
 	
-
-	char type = elems[numElem].type;
-	bool vector= type==TAGCLIP||type==TAGP;
-	wxString delimiter= (vector)? " " : ",";
 	wxString tmp;
-	wxString origText=tab->Edit->TextEdit->GetValue();
-	wxString tagpattern = (type==TAGPOS)? "pos\\(([^\\)]+)" : (type==TAGORG)? "org\\(([^\\)]+)" : (type==TAGCLIP)? "i?clip\\(([^\\)]+)" : (type==TAGP)? "p[0-9-]+[^}]*} ?m ([^{]+)" : "move\\(([^\\)]+)"; 
+	bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()=="");
+	MTextEditor *Editor=(isOriginal)? tab->Edit->TextEditTl : tab->Edit->TextEdit;
+	wxString origText=Editor->GetValue();
+	
 	wxArrayInt sels= tab->Grid1->GetSels();
 	for(size_t i = 0; i< sels.size(); i++){
 		wxString visual;
@@ -166,53 +164,59 @@ void MoveAll::ChangeInLines(bool all)
 		}else{
 			txt = origText;
 		}
-
-		wxRegEx re(tagpattern, wxRE_ADVANCED);
-		size_t startMatch=0, lenMatch=0;
-		if(re.Matches(txt)){
-			//wxString tag=re.GetMatch(txt, 1); tag te¿ nigdzie nie jest potrzebny, bo wycinamy tylko jego wartoœæ.
-			tmp= re.GetMatch(txt, 1);
-			//re.GetMatch(&startMatch, &lenMatch, 2); niepotrzebny drugi raz u¿ycie tego samego
-			wxStringTokenizer tkn(tmp, delimiter,wxTOKEN_STRTOK);
-			int count=0;
-			while(tkn.HasMoreTokens()){
-				wxString token=tkn.GetNextToken().Trim().Trim(false);
-				double val;
-				if(token.ToDouble(&val)){
-					if(count % 2 == 0){val += (moving.x * wspw);}else{val += (moving.y * wsph);}
-					if(type==TAGMOVES && count > 1){visual+=token+delimiter; continue;}
-					else if(type==TAGMOVEE && count != 2 && count != 3){visual+=token+delimiter; count++; continue;}
-					if(vector){visual<<getfloat(val,(type==TAGCLIP)? "6.0f" : "6.2f")<<delimiter;}
-					else{visual += getfloat(val) + delimiter;}
-					count++;
-				}else{
-					visual+=token+delimiter;
-					if(!vector){count++;}
+		for(int k = 0; k < 6; k++){
+			byte type = selectedTags & (1 << k);
+			if(!type){continue;}
+			bool vector= type==TAGCLIP||type==TAGP;
+			wxString delimiter= (vector)? " " : ",";
+			wxString tagpattern = (type==TAGPOS)? "pos\\(([^\\)]+)" : (type==TAGORG)? "org\\(([^\\)]+)" : (type==TAGCLIP)? "i?clip\\(([^\\)]+)" : (type==TAGP)? "p[0-9-]+[^}]*} ?m ([^{]+)" : "move\\(([^\\)]+)"; 
+			wxRegEx re(tagpattern, wxRE_ADVANCED);
+			size_t startMatch=0, lenMatch=0;
+			if(re.Matches(txt)){
+				//wxString tag=re.GetMatch(txt, 1); tag te¿ nigdzie nie jest potrzebny, bo wycinamy tylko jego wartoœæ.
+				tmp= re.GetMatch(txt, 1);
+				//re.GetMatch(&startMatch, &lenMatch, 2); niepotrzebny drugi raz u¿ycie tego samego
+				wxStringTokenizer tkn(tmp, delimiter,wxTOKEN_STRTOK);
+				int count=0;
+				while(tkn.HasMoreTokens()){
+					wxString token=tkn.GetNextToken().Trim().Trim(false);
+					double val;
+					if(token.ToDouble(&val)){
+						if(count % 2 == 0){val += (moving.x * wspw);}else{val += (moving.y * wsph);}
+						if(type==TAGMOVES && count > 1){visual+=token+delimiter; continue;}
+						else if(type==TAGMOVEE && count != 2 && count != 3){visual+=token+delimiter; count++; continue;}
+						if(vector){visual<<getfloat(val,(type==TAGCLIP)? "6.0f" : "6.2f")<<delimiter;}
+						else{visual += getfloat(val) + delimiter;}
+						count++;
+					}else{
+						visual+=token+delimiter;
+						if(!vector){count++;}
+					}
 				}
-			}
-			if(re.GetMatch(&startMatch, &lenMatch, 1)){
-				visual.RemoveLast();
-				if(lenMatch){txt.erase(txt.begin()+startMatch, txt.begin()+startMatch+lenMatch);}
-				txt.insert(startMatch,visual);
+				if(re.GetMatch(&startMatch, &lenMatch, 1)){
+					visual.RemoveLast();
+					if(lenMatch){txt.erase(txt.begin()+startMatch, txt.begin()+startMatch+lenMatch);}
+					txt.insert(startMatch,visual);
 
-				if(all){
-					tab->Grid1->CopyDial(sels[i])->Text=txt;
-				}else{
-					if(!dummytext){
-						bool vis=false;
-						dummytext= tab->Grid1->GetVisible(&vis,&dumplaced);
-						if(!vis){SAFE_DELETE(dummytext); return;}
-					}//else{
+					if(all){
+						tab->Grid1->CopyDial(sels[i])->Text=txt;
+					}else{
+						if(!dummytext){
+							bool vis=false;
+							dummytext= tab->Grid1->GetVisible(&vis,&dumplaced);
+							if(!vis){SAFE_DELETE(dummytext); return;}
+						}//else{
 						
-					//}
-					dummytext->replace(dumplaced.x,dumplaced.y,txt);
-					dumplaced.y = txt.Len();
+						//}
+						dummytext->replace(dumplaced.x,dumplaced.y,txt);
+						dumplaced.y = txt.Len();
 
-					wxString *dtxt=new wxString(*dummytext);
-					if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie mo¿na otworzyæ napisów"));}
-					tab->Video->VisEdit=true;
-					tab->Video->Render();
-					break;
+						wxString *dtxt=new wxString(*dummytext);
+						if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie mo¿na otworzyæ napisów"));}
+						tab->Video->VisEdit=true;
+						tab->Video->Render();
+						break;
+					}
 				}
 			}
 		

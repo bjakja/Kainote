@@ -95,12 +95,7 @@ public:
 	//void Age();
 	void Wait();
 private:
-	static DWORD proc(void *cls);
 	void procincls(int numthread);
-	HANDLE thread;
-	HANDLE eventDraw;
-	HANDLE eventKillSelf;
-	HANDLE eventComplete;
 	AudioSpectrum *spc;
 	size_t start;
 	size_t first_line;

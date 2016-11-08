@@ -1224,3 +1224,26 @@ byte *VideoRend::GetFramewithSubs(bool subs, bool *del)
 	}
 	return (dssubs||ffnsubs)? cpy1 : (byte*)datas;
 }
+
+void VideoRend::GoToNextKeyframe()
+{
+	if(!VFF){return;}
+	for(size_t i=0; i<VFF->KeyFrames.size(); i++){
+		if(VFF->KeyFrames[i]>time){
+			SetPosition(VFF->KeyFrames[i]);
+			break;
+		}
+	}
+
+}
+void VideoRend::GoToPrevKeyframe()
+{
+	if(!VFF){return;}
+	for(int i=VFF->KeyFrames.size()-1; i>=0 ; i--){
+		if(VFF->KeyFrames[i]<time){
+			SetPosition(VFF->KeyFrames[i]);
+			break;
+		}
+	}
+
+}

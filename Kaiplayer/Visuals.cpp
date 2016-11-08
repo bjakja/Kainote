@@ -82,7 +82,7 @@ void Visuals::SetVisual(int _start,int _end)
 	if(Visual==VECTORCLIP){
 		SetClip(GetVisual(),true); return;
 	}
-	tab->Video->Render();
+	tab->Video->VFF->Refresh(false);tab->Video->resized=false;
 }
 
 void Visuals::SizeChanged(wxSize wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device)
