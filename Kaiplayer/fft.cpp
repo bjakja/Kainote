@@ -61,8 +61,8 @@ FFT::FFT(size_t nsamples, VideoFfmpeg *_prov)
 	angle_num = 2.0f * 3.1415926535897932384626433832795f;
 	NumBits = NumberOfBitsNeeded(n_samples);
 	input=new short[n_samples];//0
-	output_i=new float[n_samples*4];
-	output_r=new float[n_samples*4];
+	output_i=new float[n_samples];
+	output_r=new float[n_samples];
 }
 FFT::~FFT()
 {
@@ -88,13 +88,13 @@ FFT::~FFT()
 //}
 /////////////
 // Transform
-void FFT::Transform (size_t whre, size_t wthread, bool inverse) {
+void FFT::Transform (size_t whre, bool inverse) {
 	
 	//whre -= diff;
 	prov->GetBuffer(input,whre,n_samples);
 		
 	
-	int th=wthread * n_samples;
+	//int th=wthread * n_samples;
 	//if(whre>=allsamples-n_samples){wxLogStatus("przekroczenie %i %i",whre, allsamples-n_samples);return;}
 	//assert(whre<allsamples-n_samples);
 
@@ -105,7 +105,7 @@ void FFT::Transform (size_t whre, size_t wthread, bool inverse) {
 	// Calculate needed bits
 	// Copy samples to output buffers
 	for (i=0; i<n_samples; i++) {
-		j = ReverseBits (i,NumBits)+th;
+		j = ReverseBits (i,NumBits);
 		output_r[j] = (float)input[i/*+whre*/];
 		output_i[j] = 0.0f;
 	}
@@ -139,14 +139,14 @@ void FFT::Transform (size_t whre, size_t wthread, bool inverse) {
 				ar1 = ar0;
 				ai1 = ai0;
 
-				tr = ar0*output_r[k+th] - ai0*output_i[k+th];
-				ti = ar0*output_i[k+th] + ai0*output_r[k+th];
+				tr = ar0*output_r[k] - ai0*output_i[k];
+				ti = ar0*output_i[k] + ai0*output_r[k];
 
-				output_r[k+th] = output_r[j+th] - tr;
-				output_i[k+th] = output_i[j+th] - ti;
+				output_r[k] = output_r[j] - tr;
+				output_i[k] = output_i[j] - ti;
 
-				output_r[j+th] += tr;
-				output_i[j+th] += ti;
+				output_r[j] += tr;
+				output_i[j] += ti;
 			}
 		}
 

@@ -144,8 +144,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxFlexGridSizer *GridColorsSizer2=new wxFlexGridSizer(8,2,wxSize(5,5));
 		wxString labels[8]={_("Kolor tła błędów pisowni"),_("Kolor porównania"),_("Kolor tła porównania"),
 			_("Kolor tła porównania zaznaczenia"),_("Kolor tła komentarza porównania"),_("Kolor tła komentarza zazn. porównania"),_("Pierwszy kolor podglądu styli"),_("Drugi kolor podglądu styli")};
-		wxString opts[8]={"Grid Spellchecker","Grid comparsion","Grid comparsion background",
-			"Grid comparsion background selected","Grid comparsion comment background","Grid comparsion comment background selected",
+		wxString opts[8]={"Grid Spellchecker","Grid comparison","Grid comparison background",
+			"Grid comparison background selected","Grid comparison comment background","Grid comparison comment background selected",
 			"Style Preview Color1","Style Preview Color2"};
 	
 		for(int i=0;i<8;i++)
@@ -416,17 +416,18 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		//Audio colours
 	{
 
-		wxFlexGridSizer *AudioColorsSizer=new wxFlexGridSizer(14,2,wxSize(5,5));
+		wxFlexGridSizer *AudioColorsSizer=new wxFlexGridSizer(17,2,wxSize(5,5));
 		wxString labels[]={_("Kolor tła"),_("Kolor znacznika start"),_("Kolor znacznika koniec"),_("Kolor znacznika przesuwania czasów"),
 			_("Kolor znaczników nieaktywnej linijki"),_("Kolor kursora"),_("Kolor znaczników sekund"),_("Kolor klatek kluczowych"),
 			_("Kolor zaznaczenia"),_("Kolor zaznaczenia po modyfikacji"),_("Kolor wykresu audio"),
-			_("Kolor nieaktywnego wykresu audio"),_("Kolor zmodyfikowanego wykresu audio"),_("Kolor zaznaczonego wykresu audio")};
+			_("Kolor nieaktywnego wykresu audio"),_("Kolor zmodyfikowanego wykresu audio"),_("Kolor zaznaczonego wykresu audio"),
+			_("Pierwszy kolor spektrum"), _("Drugi kolor spektrum"), _("Trzeci kolor spektrum")};
 		wxString opts[]={"Audio Background","Audio Line Boundary Start","Audio Line Boundary End","Audio Line Boundary Mark",
 			"Audio Line Boundary Inactive Line","Audio Play Cursor","Audio Seconds Boundaries","Audio Keyframes",
 			"Audio Selection Background","Audio Selection Background Modified","Audio Waveform","Audio Waveform Inactive",
-			"Audio Waveform Modified","Audio Waveform Selected"};
+			"Audio Waveform Modified","Audio Waveform Selected","Spectrum First Color","Spectrum Second Color","Spectrum Third Color"};
 	
-		for(int i=0;i<14;i++)
+		for(int i=0;i<17;i++)
 		{
 			ColorButton *optc=new ColorButton(AudioCols,Options.GetString(opts[i]));
 			ConOpt(optc,opts[i]);
@@ -600,10 +601,10 @@ void OptionsDialog::SetOptions(bool saveall)
 	}
 	if(colmod){
 		Kai->GetTab()->Grid1->Refresh(false);
-		if(Kai->GetTab()->Edit->ABox){Kai->GetTab()->Edit->ABox->audioDisplay->UpdateImage();}
+		if(Kai->GetTab()->Edit->ABox){Kai->GetTab()->Edit->ABox->audioDisplay->ChangeColours();}
 		if(Kai->Tabs->split){
 			Kai->Tabs->GetSecondPage()->Grid1->Refresh(false);
-			if(Kai->Tabs->GetSecondPage()->Edit->ABox){Kai->Tabs->GetSecondPage()->Edit->ABox->audioDisplay->UpdateImage();}
+			if(Kai->Tabs->GetSecondPage()->Edit->ABox){Kai->Tabs->GetSecondPage()->Edit->ABox->audioDisplay->ChangeColours();}
 		}
 	}
 	Options.SaveOptions();

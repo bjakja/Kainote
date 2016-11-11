@@ -1,4 +1,4 @@
-#include "VideoToolbar.h"
+ï»¿#include "VideoToolbar.h"
 #include "Config.h"
 
 
@@ -12,35 +12,36 @@ VideoToolbar::VideoToolbar (wxWindow *parent, const wxPoint &pos)
 	,sel(-1)
 	,clicked(false)
 	,showClipTools(false)
+	,showMoveTools(false)
 	,blockScroll(false)
 	,bmp(NULL)
 {
 	if(icons.size()==0){
-		//pamiêtaj, dodaj¹c tutaj elementy, zmieñ ich wartoœæ w pliku h!!
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("cross"),_("WskaŸnik pozycji")));
+		//pamiÄ™taj, dodajÄ…c tutaj elementy, zmieÅ„ ich wartoÅ›Ä‡ w pliku h!!
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("cross"),_("WskaÅºnik pozycji")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("position"),_("Przesuwanie tekstu")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("move"),_("Ruch")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("scale"),_("Skalowanie")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("frz"),_("Obrót wokó³ osi Z")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("frxy"),_("Obrót wokó³ osi X / Y")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("cliprect"),_("Wycinki prostok¹tne")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("frz"),_("ObrÃ³t wokÃ³Å‚ osi Z")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("frxy"),_("ObrÃ³t wokÃ³Å‚ osi X / Y")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("cliprect"),_("Wycinki prostokÄ…tne")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("clip"),_("Wycinki wektorowe")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("drawing"),_("Rysunki wektorowe")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEAll"),_("Przesuwanie wielu tagów")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEAll"),_("Zmieniacz pozycji")));
 		//tutaj mamy ikony dla clipa
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorDrag"),_("Przesuñ punkty")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorLine"),_("Dodaj liniê")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorBezier"),_("Dodaj krzyw¹ Beziera")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("VECTORBSPLINE"),_("Dodaj krzyw¹ B-sklejan¹")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorDrag"),_("PrzesuÅ„ punkty")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorLine"),_("Dodaj liniÄ™")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorBezier"),_("Dodaj krzywÄ… Beziera")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("VECTORBSPLINE"),_("Dodaj krzywÄ… B-sklejanÄ…")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorMove"),_("Dodaj nowy oddzielny punkt")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorDelete"),_("Usuñ element")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorDelete"),_("UsuÅ„ element")));
 		//ikony move all
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEPOS"),_("Przenieœ punkty pozycjonowania")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEMOVESTART"),_("Przenieœ startowe punkty ruchu")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVE"),_("Przenieœ koñcowe punkty ruchu")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVECLIPS"),_("Przenieœ wycinki")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEDRAWINGS"),_("Przenieœ rysunki")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEORGS"),_("Przenieœ punkty org")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEPOS"),_("PrzenieÅ› punkty pozycjonowania")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEMOVESTART"),_("PrzenieÅ› startowe punkty ruchu")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVE"),_("PrzenieÅ› koÅ„cowe punkty ruchu")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVECLIPS"),_("PrzenieÅ› wycinki")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEDRAWINGS"),_("PrzenieÅ› rysunki,\nuÅ¼ywaÄ‡ tylko w przypadku,\ngdy chcemy przesunÄ…Ä‡ punkty rysunku,\nnie Å‚Ä…czyÄ‡ z trzema pierwszymi opcjami")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEORGS"),_("PrzenieÅ› punkty org")));
 
 	}
 	Connect(wxEVT_PAINT, (wxObjectEventFunction)&VideoToolbar::OnPaint);
@@ -49,7 +50,7 @@ VideoToolbar::VideoToolbar (wxWindow *parent, const wxPoint &pos)
 	Connect(wxEVT_MOTION, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
 	Connect(wxEVT_LEAVE_WINDOW, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
 	Connect(wxEVT_MOUSEWHEEL, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
-	MoveToggled[i]=true;
+	MoveToggled[0]=true;
 	for (int i = 1; i < moveToolsSize; i++){
 		MoveToggled[i]=false;
 	}
@@ -81,11 +82,15 @@ void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
 	else if(elem>=toolsSize){
 		int toolbarlen = h * clipToolsSize;
 		int posx = (x - (w - toolbarlen));
-		if(posx < 0 || posx > toolbarlen || !showClipTools || !showMoveTools){
+		if(posx < 0 || posx > toolbarlen || (!showClipTools && !showMoveTools)){
 			noelem=true;
 		}
-		else{ elem = ( posx / h) + toolsSize;}
-		if(showMoveTools){elem+=clipToolsSize;}
+		else{ 
+			elem = ( posx / h) + toolsSize;
+		}
+		if(showMoveTools){
+			elem+=clipToolsSize;
+		}
 	}
 	if(evt.Leaving() || noelem){sel = -1; Refresh(false); if(HasToolTips()){UnsetToolTip();} return;}
 	
@@ -95,8 +100,10 @@ void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
 		Refresh(false);
 	}
 	if(evt.LeftDown()){
-		if(elem>=moveToolsStart){MoveToggled[elem-moveToolsStart] = !MoveToggled[elem-moveToolsStart];}
-		if(elem>=toolsSize){clipToggled=elem;}
+		if(elem>=moveToolsStart){
+			int newi = elem-moveToolsStart; MoveToggled[newi] = !MoveToggled[newi];
+		}
+		else if(elem>=toolsSize){clipToggled=elem;}
 		else{Toggled=elem;}
 		clicked=true;
 		Refresh(false);
@@ -105,7 +112,7 @@ void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
 		clicked=false;
 		Refresh(false);
 		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, (elem<toolsSize)? ID_VIDEO_TOOLBAR_EVENT : (elem< moveToolsStart)? ID_VECTOR_TOOLBAR_EVENT : ID_MOVE_TOOLBAR_EVENT);
-		evt.SetInt((elem>=toolsSize)? clipToggled - toolsSize : Toggled);
+		evt.SetInt((elem>=moveToolsStart)? GetMoveToggled() : (elem>=toolsSize)? clipToggled - toolsSize : Toggled);
 		ProcessEvent(evt);
 	}
 
@@ -139,11 +146,12 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 			}
 		}
 		if(icons[i]->icon->IsOk()){
+			bool toggled = i==Toggled || i==clipToggled || (i >= moveToolsStart && MoveToggled[i-moveToolsStart]);
 			if(i==sel){
-				tdc.SetBrush(wxBrush(wxSystemSettings::GetColour((i==Toggled || i==clipToggled)? wxSYS_COLOUR_MENUHILIGHT : wxSYS_COLOUR_MENUBAR)));
+				tdc.SetBrush(wxBrush(wxSystemSettings::GetColour( (toggled)? wxSYS_COLOUR_MENUHILIGHT : wxSYS_COLOUR_MENUBAR)));
 				tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT)));
 				tdc.DrawRoundedRectangle(posX, 1, h-2, h-2, 2.0);
-			}else if(i==Toggled || i==clipToggled || (i >= moveToolsStart && MoveToggled[i-moveToolsStart])){
+			}else if(toggled){
 				tdc.SetBrush(wxBrush(wxSystemSettings::GetColour((clicked && i==sel)? wxSYS_COLOUR_BTNFACE : wxSYS_COLOUR_HIGHLIGHT)));
 				tdc.SetPen(wxPen(wxSystemSettings::GetColour((clicked && i==sel)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_HIGHLIGHT)));
 				tdc.DrawRoundedRectangle(posX, 1, h-2, h-2, 2.0);
@@ -162,4 +170,18 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 void VideoToolbar::OnSize(wxSizeEvent &evt)
 {
 	Refresh(false);
+}
+
+void VideoToolbar::Synchronize(VideoToolbar *vtoolbar){
+	Toggled = vtoolbar->Toggled;
+	clipToggled = vtoolbar->clipToggled;
+	for(int i = 0; i < moveToolsSize; i++){
+		MoveToggled[i] = vtoolbar->MoveToggled[i];
+	}
+	sel = vtoolbar->sel;
+	clicked = vtoolbar->clicked;
+	showClipTools = vtoolbar->showClipTools;
+	showMoveTools = vtoolbar->showMoveTools;
+	blockScroll = vtoolbar->blockScroll;
+	if(IsShown()){Refresh(false);}
 }

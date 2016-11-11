@@ -55,7 +55,7 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 	if(click){
 
 		for(size_t i = 0; i <elems.size(); i++){
-			//if(!(selectedTags & elems[i].type)){continue;}
+			if(!(selectedTags & elems[i].type)){continue;}
 			if(abs(elems[i].elem.x - x) < 8 && abs(elems[i].elem.y - y) < 8){
 				numElem=i;
 				beforeMove = lastmove = elems[i].elem;
@@ -66,8 +66,16 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 		}
 
 	}else if(holding && numElem >= 0 ){
+		lastmove = elems[numElem].elem;
 		elems[numElem].elem.x = x + diffs.x;
 		elems[numElem].elem.y = y + diffs.y;
+
+		D3DXVECTOR2 moving = elems[numElem].elem - lastmove;
+		for(size_t j = 0; j < elems.size(); j++){
+			if(j == numElem || !(selectedTags & elems[j].type)){continue;}
+			elems[j].elem.x += moving.x;
+			elems[j].elem.y += moving.y;
+		}
 		ChangeInLines(false);
 	}
 
@@ -146,24 +154,32 @@ wxString MoveAll::GetVisual()
 
 void MoveAll::ChangeInLines(bool all)
 {
-	D3DXVECTOR2 moving;
-	moving = elems[numElem].elem - beforeMove;
-	
+	//D3DXVECTOR2 moving;
+	D3DXVECTOR2 moving = elems[numElem].elem - beforeMove;
+	int _time = tab->Video->Tell();
+	wxString *dtxt;
+	if(!all){
+		if(!dummytext){
+			bool visible=false; 
+			dummytext = tab->Grid1->GetVisible(&visible,0,true);
+		}
+		dtxt=new wxString(*dummytext);
+	}
+
 	wxString tmp;
-	bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()=="");
-	MTextEditor *Editor=(isOriginal)? tab->Edit->TextEditTl : tab->Edit->TextEdit;
-	wxString origText=Editor->GetValue();
+	//bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()=="");
+	//MTextEditor *Editor=(isOriginal)? tab->Edit->TextEditTl : tab->Edit->TextEdit;
+	//wxString origText=Editor->GetValue();
 	
 	wxArrayInt sels= tab->Grid1->GetSels();
 	for(size_t i = 0; i< sels.size(); i++){
-		wxString visual;
 		wxString txt;
-		if(all){
-			Dialogue *Dial = tab->Grid1->GetDial(sels[i]);
-			txt = (tab->Grid1->transl && Dial->TextTl!="")? Dial->TextTl : Dial->Text;
-		}else{
-			txt = origText;
-		}
+		Dialogue *Dial = tab->Grid1->GetDial(sels[i]);
+
+		if(!all && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){continue;}
+		bool istexttl=(tab->Grid1->transl && Dial->TextTl!="");
+		txt = (istexttl)? Dial->TextTl : Dial->Text;
+
 		for(int k = 0; k < 6; k++){
 			byte type = selectedTags & (1 << k);
 			if(!type){continue;}
@@ -173,6 +189,7 @@ void MoveAll::ChangeInLines(bool all)
 			wxRegEx re(tagpattern, wxRE_ADVANCED);
 			size_t startMatch=0, lenMatch=0;
 			if(re.Matches(txt)){
+				wxString visual;
 				//wxString tag=re.GetMatch(txt, 1); tag te¿ nigdzie nie jest potrzebny, bo wycinamy tylko jego wartoœæ.
 				tmp= re.GetMatch(txt, 1);
 				//re.GetMatch(&startMatch, &lenMatch, 2); niepotrzebny drugi raz u¿ycie tego samego
@@ -183,7 +200,7 @@ void MoveAll::ChangeInLines(bool all)
 					double val;
 					if(token.ToDouble(&val)){
 						if(count % 2 == 0){val += (moving.x * wspw);}else{val += (moving.y * wsph);}
-						if(type==TAGMOVES && count > 1){visual+=token+delimiter; continue;}
+						if(type==TAGMOVES && count > 1 ){visual+=token+delimiter; continue;}
 						else if(type==TAGMOVEE && count != 2 && count != 3){visual+=token+delimiter; count++; continue;}
 						if(vector){visual<<getfloat(val,(type==TAGCLIP)? "6.0f" : "6.2f")<<delimiter;}
 						else{visual += getfloat(val) + delimiter;}
@@ -198,39 +215,42 @@ void MoveAll::ChangeInLines(bool all)
 					if(lenMatch){txt.erase(txt.begin()+startMatch, txt.begin()+startMatch+lenMatch);}
 					txt.insert(startMatch,visual);
 
-					if(all){
-						tab->Grid1->CopyDial(sels[i])->Text=txt;
-					}else{
-						if(!dummytext){
-							bool vis=false;
-							dummytext= tab->Grid1->GetVisible(&vis,&dumplaced);
-							if(!vis){SAFE_DELETE(dummytext); return;}
-						}//else{
-						
-						//}
-						dummytext->replace(dumplaced.x,dumplaced.y,txt);
-						dumplaced.y = txt.Len();
-
-						wxString *dtxt=new wxString(*dummytext);
-						if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie mo¿na otworzyæ napisów"));}
-						tab->Video->VisEdit=true;
-						tab->Video->Render();
-						break;
-					}
 				}
 			}
 		
 		}
+		if(all){
+			tab->Grid1->CopyDial(sels[i])->Text=txt;
+		}else{
+			Dialogue Cpy=Dialogue(*Dial);
+			if(istexttl) {
+				Cpy.TextTl = txt;
+				(*dtxt)<<Cpy.GetRaw(true);
+				(*dtxt)<<Cpy.GetRaw(false,tab->Grid1->GetSInfo("TLMode Style"));
+			}else{
+				Cpy.Text = txt;
+				(*dtxt)<<Cpy.GetRaw();
+			}
 
+			
+		}
 	}
 	if(all){
-		//tab->Edit->TextEdit->Refresh(false);
-		//tab->Edit->TextEdit->modified=true;tab->Edit->TextEdit->SetTextS(txt, true);
 		tab->Video->VisEdit=true;
 		if(tab->Edit->splittedTags){tab->Edit->TextEditTl->modified=true;}
 		tab->Grid1->SetModified(true);
 		tab->Grid1->Refresh();
+	}else{
+		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie mo¿na otworzyæ napisów"));}
+		tab->Video->VisEdit=true;
+		tab->Video->Render();
+
 	}
 
 }
 
+void MoveAll::ChangeTool(int _tool)
+{
+	selectedTags = _tool;
+	tab->Video->Render(false);
+}

@@ -225,6 +225,11 @@ inline wxString config::LoadDefaultConfig()
 			"Grid Active Line=#CA0065\r\n"\
 			"Grid Background=#C0C0C0\r\n"\
 			"Grid Comment=#D8DEF5\r\n"\
+			"Grid comparison=#DFDADA\r\n"\
+			"Grid comparison background=#C0A073\r\n"\
+			"Grid comparison background selected=#909F3A\r\n"\
+			"Grid comparison comment background=#BBBCCA\r\n"\
+			"Grid comparison comment background selected=#8A99A2\r\n"\
 			"Grid Dialogue=#C0C0C0\r\n"\
 			"Grid Collisions=#FF0000\r\n"\
 			"Grid Font Name=Tahoma\r\n"\

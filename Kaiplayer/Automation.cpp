@@ -1,4 +1,4 @@
-// Copyright (c) 2006, 2007, Niels Martin Hansen
+ï»¿// Copyright (c) 2006, 2007, Niels Martin Hansen
 // Copyright (c) 2016, Marcin Drob
 // All rights reserved.
 //
@@ -408,7 +408,7 @@ namespace Auto{
 		lua_createtable(L, 0, 13);
 
 		set_field<LuaCommand::LuaRegister>(L, "register_macro");
-		set_field<DummyFilter>(L, "register_filter");//kainote nie ma exportu wiêc by skrypty siê nie sypa³y trzeba podes³aæ coœ fa³szywego.
+		set_field<DummyFilter>(L, "register_filter");//kainote nie ma exportu wiÄ™c by skrypty siÄ™ nie sypaÅ‚y trzeba podesÅ‚aÄ‡ coÅ› faÅ‚szywego.
 		set_field<lua_text_textents>(L, "text_extents");
 		set_field<frame_from_ms>(L, "frame_from_ms");
 		set_field<ms_from_frame>(L, "ms_from_frame");
@@ -443,7 +443,7 @@ namespace Auto{
 		// this is where features are registered
 		if (lua_pcall(L, 0, 0, -2)) {
 			// error occurred, assumed to be on top of Lua stack
-			description = wxString::Format("B³¹d inicjalizacji skryptu Lua \"%s\":\n\n%s", GetPrettyFilename(), get_string_or_default(L, -1));
+			description = wxString::Format("BÅ‚Ä…d inicjalizacji skryptu Lua \"%s\":\n\n%s", GetPrettyFilename(), get_string_or_default(L, -1));
 			//lua_pop(L, 1);
 			lua_pop(L, 2); // error + error handler
 			//lua_gc(L, LUA_GCCOLLECT, 0);
@@ -524,7 +524,7 @@ namespace Auto{
 	int LuaScript::LuaInclude(lua_State *L)
 	{
 		const LuaScript *s = GetScriptObject(L);
-		//no i trzeba wskaŸniki stringów, z powodu braku zwalniania owych stringów przy b³êdzie skryptu.
+		//no i trzeba wskaÅºniki stringÃ³w, z powodu braku zwalniania owych stringÃ³w przy bÅ‚Ä™dzie skryptu.
 		const wxString *filename(new wxString(check_string(L, 1)));
 		wxString *filepath=new wxString();
 		bool fullpath=false;
@@ -610,7 +610,7 @@ namespace Auto{
 			if (!lua_isnil(L, -1) && ps) {
 				// if the call failed, log the error here
 				wxString errmsg(get_string_or_default(L, -1));
-				errmsg.Prepend(_("Wyst¹pi³ b³¹d podczas wykonywania skryptu Lua:\n"));
+				errmsg.Prepend(_("WystÄ…piÅ‚ bÅ‚Ä…d podczas wykonywania skryptu Lua:\n"));
 				ps->SafeQueue(Auto::EVT_MESSAGE,errmsg);
 				hasMessage=true;
 			}
@@ -1019,19 +1019,19 @@ namespace Auto{
 			}
 			catch (const wchar_t *e) {
 				error_count++;
-				wxLogError(_("B³¹d wczytywania skryptu Lua: %s\n%s"), fn.c_str(), e);
+				wxLogError(_("BÅ‚Ä…d wczytywania skryptu Lua: %s\n%s"), fn.c_str(), e);
 			}
 			catch (...) {
 				error_count++;
-				wxLogError(_("Nieznany b³¹d wczytywania skryptu Lua: %s."), fn.c_str());
+				wxLogError(_("Nieznany bÅ‚Ä…d wczytywania skryptu Lua: %s."), fn.c_str());
 			}
 
 			more = dir.GetNext(&fn);
 		}
-		//}wxLogStatus("wesz³o");
-		//wxLogStatus("po pêtli");
+		//}wxLogStatus("weszÅ‚o");
+		//wxLogStatus("po pÄ™tli");
 		if (error_count > 0) {
-			wxLogWarning(_("Jeden b¹dŸ wiêcej skryptów autoload zawiera b³êdy,\n obejrzyj opisy skryptów by uzyskaæ wiêcej informacji."));
+			wxLogWarning(_("Jeden bÄ…dÅº wiÄ™cej skryptÃ³w autoload zawiera bÅ‚Ä™dy,\n obejrzyj opisy skryptÃ³w by uzyskaÄ‡ wiÄ™cej informacji."));
 		}
 
 
@@ -1039,7 +1039,7 @@ namespace Auto{
 
 	bool Automation::AddFromSubs()
 	{
-		//wxLogStatus("wesz³o");
+		//wxLogStatus("weszÅ‚o");
 		wxString paths=Notebook::GetTab()->Grid1->GetSInfo("Automation Scripts");
 		//wxLogStatus("m"+paths);
 		if(paths==""){return false;}
@@ -1061,15 +1061,15 @@ namespace Auto{
 			}
 			catch (const wchar_t *e) {
 				error_count++;
-				wxLogError(_("B³¹d wczytywania skryptu Lua: %s\n%s"), onepath.c_str(), e);
+				wxLogError(_("BÅ‚Ä…d wczytywania skryptu Lua: %s\n%s"), onepath.c_str(), e);
 			}
 			catch (...) {
 				error_count++;
-				wxLogError(_("Nieznany b³¹d wczytywania skryptu Lua: %s."), onepath.c_str());
+				wxLogError(_("Nieznany bÅ‚Ä…d wczytywania skryptu Lua: %s."), onepath.c_str());
 			}
 		}
 		if (error_count > 0) {
-			wxLogWarning(_("Co najmniej jeden skrypt z pliku napisów zawiera b³êdy.\nZobacz opisy skryptów, by uzyskaæ wiêcej informacji."));
+			wxLogWarning(_("Co najmniej jeden skrypt z pliku napisÃ³w zawiera bÅ‚Ä™dy.\nZobacz opisy skryptÃ³w, by uzyskaÄ‡ wiÄ™cej informacji."));
 		}
 		scriptpaths = paths;
 		return true;
@@ -1079,7 +1079,7 @@ namespace Auto{
 	{
 		wxString editor=Options.GetString("Script Editor");
 		if(editor=="" || wxGetKeyState(WXK_SHIFT)){
-			editor = wxFileSelector(_("Wybierz edytor skryptów"), "",
+			editor = wxFileSelector(_("Wybierz edytor skryptÃ³w"), "",
 				"C:\\Windows\\Notepad.exe", "exe", _("Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
 			if(!wxFileExists(editor)){return;}
 			Options.SetString("Script Editor",editor);
@@ -1096,7 +1096,7 @@ namespace Auto{
 		delete cmdline;
 
 		if (!res) {
-			wxMessageBox(_("Nie mo¿na uruchomiæ edytora."), _("B³¹d automatyzacji"), wxOK|wxICON_ERROR);
+			wxMessageBox(_("Nie moÅ¼na uruchomiÄ‡ edytora."), _("BÅ‚Ä…d automatyzacji"), wxOK|wxICON_ERROR);
 		}
 	}
 
@@ -1163,7 +1163,7 @@ namespace Auto{
 					Automation::OnEdit(script->GetFilename());	
 				}, start);
 				start++;
-				submenu->Append(start,_("Odœwie¿"),_("Odœwie¿"));
+				submenu->Append(start,_("OdÅ›wieÅ¼"),_("OdÅ›wieÅ¼"));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 					script->Reload();
 				}, start);
@@ -1207,7 +1207,7 @@ namespace Auto{
 				Automation::OnEdit(script->GetFilename());	
 			}, start);
 			start++;
-			submenu->Append(start,_("Odœwie¿"),_("Odœwie¿"));
+			submenu->Append(start,_("OdÅ›wieÅ¼"),_("OdÅ›wieÅ¼"));
 			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 				script->Reload();
 			}, start);

@@ -56,8 +56,8 @@ private:
 
 	// Colour pallettes
 	unsigned char colours_normal[256*3];
-	unsigned char colours_selected[256*3];
-
+	//unsigned char colours_selected[256*3];
+	
 	
 
 	VideoFfmpeg *provider;
@@ -72,7 +72,7 @@ private:
 	int subcachelen;
 	FFT *fft;
 	wxCriticalSection CritSec;
-	void SetupSpectrun(int overlaps = 1, int length = (1<<7));
+	void SetupSpectrum(int overlaps = 1, int length = (1<<9));
 public:
 	AudioSpectrum(VideoFfmpeg *_provider);
 	~AudioSpectrum();
@@ -81,6 +81,7 @@ public:
 	void RenderRange(int64_t range_start, int64_t range_end, bool selected, unsigned char *img, int imgwidth, int imgheight, int percent);
 
 	void SetScaling(float _power_scale);
+	void ChangeColours();
 };
 
 typedef std::vector<float> CacheLine;

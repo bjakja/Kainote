@@ -181,11 +181,11 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 	wxColour textcol=Options.GetColour("Grid Text");
 	wxColour collcol=Options.GetColour("Grid Collisions");
 	wxColour SpelcheckerCol=Options.GetColour("Grid Spellchecker");
-	wxColour ComparsionCol=Options.GetColour("Grid comparsion");
-	wxColour ComparsionBGCol=Options.GetColour("Grid comparsion background");
-	wxColour ComparsionBGSelCol=Options.GetColour("Grid comparsion background selected");
-	wxColour ComparsionBGCmntCol=Options.GetColour("Grid comparsion comment background");
-	wxColour ComparsionBGCmntSelCol=Options.GetColour("Grid comparsion comment background selected");
+	wxColour ComparsionCol=Options.GetColour("Grid comparison");
+	wxColour ComparsionBGCol=Options.GetColour("Grid comparison background");
+	wxColour ComparsionBGSelCol=Options.GetColour("Grid comparison background selected");
+	wxColour ComparsionBGCmntCol=Options.GetColour("Grid comparison comment background");
+	wxColour ComparsionBGCmntSelCol=Options.GetColour("Grid comparison comment background selected");
 	wxString chtag=Options.GetString("Grid tag changing char");
 	bool SpellCheckerOn = Options.GetBool("Editbox Spellchecker");
 	
@@ -731,7 +731,7 @@ void SubsGrid::SelectRow(int row, bool addToSelected, bool select, bool norefres
 		Refresh(false);
 	}
 //done:
-	if(Edit->Visual==1){
+	if(Edit->Visual==CHANGEPOS/* || Edit->Visual==MOVEALL*/){
 		Kai->GetTab()->Video->SetVisual(Edit->line->Start.mstime,Edit->line->End.mstime);
 		Kai->GetTab()->Video->Render();
 	}
@@ -958,7 +958,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 			}
 			lastsel=row;
 			Refresh(false);
-			if(Edit->Visual==1){
+			if(Edit->Visual==CHANGEPOS/* || Edit->Visual==MOVEALL*/){
 				Kai->GetTab()->Video->SetVisual(Edit->line->Start.mstime,Edit->line->End.mstime);
 				Kai->GetTab()->Video->Render();
 			}
@@ -1721,7 +1721,7 @@ void SubsGrid::GetUndo(bool redo)
 	Edit->SetIt(erow);
 	Edit->RefreshStyle();
 	VideoCtrl *vb=pan->Video;
-	if(Edit->Visual<1){
+	if(Edit->Visual < CHANGEPOS || Edit->Visual == MOVEALL){
 		if(vb->IsShown() || vb->isfullskreen){vb->OpenSubs(SaveText());}
 		int opt=Options.GetInt("Move Video To Active Line");
 		if(opt>1){
@@ -1730,12 +1730,8 @@ void SubsGrid::GetUndo(bool redo)
 		}else{
 			if(vb->GetState()==Paused){vb->Render();}
 		}
-	}else{
-		/*if(Edit->Visual==VECTORCLIP){
-			SAFE_DELETE(vb->Vclips->dummytext);
-			vb->Vclips->SetCurVisual();
-			vb->Vclips->SetClip(vb->Vclips->GetVisual(),true);
-		}*/
+	}else if(Edit->Visual==CHANGEPOS){
+		vb->SetVisual(Edit->line->Start.mstime, Edit->line->End.mstime, false, true);
 	}
 
 
@@ -1866,7 +1862,7 @@ void SubsGrid::SetModified(bool redit, bool dummy, int SetEditBoxLine)
 		file->SaveUndo();
 		if(!dummy){
 			VideoCtrl *vb=Kai->GetTab()->Video;
-			if(Edit->Visual>0){
+			if(Edit->Visual >= CHANGEPOS){
 				vb->SetVisual(Edit->line->Start.mstime, Edit->line->End.mstime, false, true);
 			}else{
 				if(vb->IsShown() || vb->isfullskreen){vb->OpenSubs(SaveText());}

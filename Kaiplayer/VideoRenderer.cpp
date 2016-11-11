@@ -1231,10 +1231,10 @@ void VideoRend::GoToNextKeyframe()
 	for(size_t i=0; i<VFF->KeyFrames.size(); i++){
 		if(VFF->KeyFrames[i]>time){
 			SetPosition(VFF->KeyFrames[i]);
-			break;
+			return;
 		}
 	}
-
+	SetPosition(VFF->KeyFrames[0]);
 }
 void VideoRend::GoToPrevKeyframe()
 {
@@ -1242,8 +1242,8 @@ void VideoRend::GoToPrevKeyframe()
 	for(int i=VFF->KeyFrames.size()-1; i>=0 ; i--){
 		if(VFF->KeyFrames[i]<time){
 			SetPosition(VFF->KeyFrames[i]);
-			break;
+			return;
 		}
 	}
-
+	SetPosition(VFF->KeyFrames[VFF->KeyFrames.size()-1]);
 }

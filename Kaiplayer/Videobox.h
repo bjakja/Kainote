@@ -97,6 +97,7 @@ private:
 	void OnPaint(wxPaintEvent& event);
 	void OnCopyCoords(const wxPoint &pos);
 	void OnErase(wxEraseEvent& event){};
+	void OnChangeVisual(wxCommandEvent &evt);
 	void ChangeButtonBMP(bool play=false);
 	wxTimer idletime;
 	DECLARE_EVENT_TABLE()

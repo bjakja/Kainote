@@ -110,8 +110,8 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	VidMenu->AppendTool(Toolbar, SetVideoAtStart,_("Przejdź do czasu początkowego linii"),_("Przechodzi wideo do czasu początkowego linii"),PTR_BITMAP_PNG("videoonstime"));
 	VidMenu->AppendTool(Toolbar, SetVideoAtEnd,_("Przejdź do czasu końcowego linii"),_("Przechodzi wideo do czasu końcowego linii"),PTR_BITMAP_PNG("videoonetime"));
 	VidMenu->AppendTool(Toolbar, PlayPauseG, _("Odtwarzaj / Pauza"), _("Odtwarza lub pauzuje wideo"),PTR_BITMAP_PNG("pausemenu"),false);
-	VidMenu->Append(GoToPrewKeyframe,_("Przejdź do poprzedniej klatki kluczowej"));
-	VidMenu->Append(GoToNextKeyframe,_("Przejdź do następnej klatki kluczowej"));
+	VidMenu->AppendTool(Toolbar, GoToPrewKeyframe,_("Przejdź do poprzedniej klatki kluczowej"),"",PTR_BITMAP_PNG("prevkeyframe"));
+	VidMenu->AppendTool(Toolbar, GoToNextKeyframe,_("Przejdź do następnej klatki kluczowej"),"",PTR_BITMAP_PNG("nextkeyframe"));
 	VidMenu->Append(VideoIndexing, _("Otwieraj wideo przez FFMS2"), _("Otwiera wideo przez FFMS2, co daje dokładność klatkową"),true,0,0,ITEM_CHECK)->Check(Options.GetBool("Index Video"));
 
 	Menubar->Append(VidMenu, _("&Wideo"));

@@ -141,6 +141,7 @@ private:
 	void OnUpdateTimer(wxTimerEvent &event);
 	void OnGetFocus(wxFocusEvent &event);
 	void OnLoseFocus(wxFocusEvent &event);
+	void OnEraseBackground(wxEraseEvent &event){};
 	//void OnLostCapture(wxMouseCaptureLostEvent &event);
 
 	bool InitDX(const wxSize &size);
@@ -214,7 +215,12 @@ public:
 	float GetXAtMS(int64_t ms);
 	int GetMSAtSample(int64_t x);
 	int64_t GetSampleAtMS(int64_t ms);
-	//float GetSyllableAtX(int x);
+	void ChangeColours(){
+		if(spectrumRenderer){
+			spectrumRenderer->ChangeColours();
+		}
+		UpdateImage();
+	}
 
 	void GetTimesDialogue(int &start,int &end);
 	void GetTimesSelection(int &start,int &end);

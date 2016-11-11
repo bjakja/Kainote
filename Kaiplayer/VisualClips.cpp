@@ -199,7 +199,6 @@ wxString DrawingAndClip::GetVisual()
 	for(size_t i=0; i<psize; i++)
 	{
 		ClipPoint pos=Points[i];
-		//if(pos.type=="m" && i>= psize-1 && psize>1 ){break;}
 		float x= pos.x + offsetxy.x;
 		float y= pos.y + offsetxy.y;
 		if(cntb && !pos.start){
@@ -212,6 +211,7 @@ wxString DrawingAndClip::GetVisual()
 			clip<<getfloat(x,format)<<" "<<getfloat(y,format)<<" ";
 			if(pos.type=="b"||pos.type=="s"){cntb=1;if(pos.type=="s"){spline=true;}}
 		}
+		if(pos.type=="m" && i>= psize-1 && psize>1 ){clip<<"l "<<getfloat(x,format)<<" "<<getfloat(y,format)<<" ";}
 	}
 	if(spline){clip<<"c ";}
 	return clip.Trim();
@@ -461,7 +461,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 				Points[pos].isSelected=true;
 				lastpos=pos;
 				tab->Video->Render(false);
-				Points[pos]=acpoint;
+				//Points[pos]=acpoint;
 			}
 			
 		}else if(pos== -1 && !hasArrow && !ctrl){
@@ -574,16 +574,14 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	}
 
 	if(click){
-		//wxLogStatus("tool %i", tool);
-		//drawtxt=true;
 		grabbed=-1;
 		for(size_t i=0; i < psize; i++)
 		{
 			float pointx=(Points[i].x+_x)/wspw, pointy=(Points[i].y+_y)/wsph;
 			if(abs(pointx-x)<5 && abs(pointy-y)<5)
 			{
+				if(!acpoint.isSelected){ChangeSelection();}
 				lastpoint = acpoint = Points[i];
-				if(!acpoint.isSelected){DeselectPoints();}
 				Points[i].isSelected=true;
 				grabbed=i;
 				diffs.x=pointx-x;
@@ -748,10 +746,10 @@ void DrawingAndClip::SelectPoints(){
 
 }
 
-void DrawingAndClip::DeselectPoints()
+void DrawingAndClip::ChangeSelection(bool select)
 {
 	for( size_t i = 0; i < Points.size(); i++){
-		Points[i].isSelected = false;
+		Points[i].isSelected = select;
 	}
 }
 

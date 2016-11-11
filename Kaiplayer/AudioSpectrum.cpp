@@ -73,7 +73,7 @@ public:
 	}
 
 
-	FinalSpectrumCache(FFT *fft, unsigned long _start, unsigned long _length, unsigned int _overlaps, size_t numthread)
+	FinalSpectrumCache(FFT *fft, unsigned long _start, unsigned long _length, unsigned int _overlaps)
 	{
 		start = _start;
 		length = _length;
@@ -89,7 +89,6 @@ public:
 		unsigned int overlap_offset = line_length / overlaps * 2; // FIXME: the result seems weird/wrong without this factor 2, but why?
 
 		int doublelen=line_length*2;
-		int th=numthread * doublelen;
 		int64_t sample=start;
 
 		for (unsigned long i = 0; i < length; ++i) {
@@ -106,13 +105,13 @@ public:
 				// Initialize
 				sample = (start * doublelen) + (overlap*overlap_offset) + (i*doublelen);
 				
-				fft->Transform(sample,numthread);
+				fft->Transform(sample);
 				
 				CacheLine &line = data[i + length*overlap];
 				
 				for (size_t j = 0; j < line_length; ++j) {
-					line[j] = sqrt(fft->output_r[j+th]*fft->output_r[j+th] +
-						fft->output_i[j+th]*fft->output_i[j+th]);
+					line[j] = sqrt(fft->output_r[j]*fft->output_r[j] +
+						fft->output_i[j]*fft->output_i[j]);
 				}
 					
 			}
@@ -150,24 +149,9 @@ AudioSpectrum::AudioSpectrum(VideoFfmpeg *_provider)
 	size_t doublelen=line_length*2;
 	int64_t _num_lines = provider->GetNumSamples()+doublelen / doublelen;
 	num_lines = (unsigned long)_num_lines;
-	SetupSpectrun();
+	SetupSpectrum();
+	ChangeColours();
 	
-
-	// Generate colour maps
-	unsigned char *palptr = colours_normal;
-	for (int i = 0; i < 256; i++) {
-		//hsl_to_rgb(170 + i * 2/3, 128 + i/2, i, palptr+0, palptr+1, palptr+2);	// Previous
-		hsl_to_rgb((255+128-i)/2, 128 + i/2, MIN(255,2*i), palptr+0, palptr+1, palptr+2);	// Icy blue
-		//hsl_to_rgb(174, 255-i, i, palptr+0, palptr+1, palptr+2);
-		palptr += 3;
-	}
-	palptr = colours_selected;
-	for (int i = 0; i < 256; i++) {
-		//hsl_to_rgb(170 + i * 2/3, 128 + i/2, i*3/4+64, palptr+0, palptr+1, palptr+2);
-		hsl_to_rgb((255+128-i)/2, 128 + i/2, MIN(255,3*i/2+64), palptr+0, palptr+1, palptr+2);	// Icy blue
-		//hsl_to_rgb(174, 255-i, (i*0.875f)+32, palptr+0, palptr+1, palptr+2);
-		palptr += 3;
-	}
 
 	minband = 0;//Options.GetInt(_T("Audio Spectrum Cutoff"));
 	maxband = line_length - minband * 2/3; // TODO: make this customisable?
@@ -182,7 +166,7 @@ AudioSpectrum::~AudioSpectrum()
 	delete fft;
 }
 
-void AudioSpectrum::SetupSpectrun(int overlaps, int length)
+void AudioSpectrum::SetupSpectrum(int overlaps, int length)
 {
 	
 	fft_overlaps = overlaps;
@@ -204,7 +188,7 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 		delete cache;
 		//delete fft;
 		//cache=new SpectrumThread(this,(num_lines + subcachelen)/subcachelen, fft_overlaps);//new AudioSpectrumCacheManager(provider, line_length, num_lines, fft_overlaps);
-		SetupSpectrun(parc);
+		SetupSpectrum(parc);
 	}
 	
 	unsigned long first_line = (unsigned long)(fft_overlaps * range_start / line_length / 2);
@@ -223,11 +207,11 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 	
 	//int last_imgcol_rendered = -1;
 
-	unsigned char *palette;
-	if (selected)
-		palette = colours_selected;
-	else
-		palette = colours_normal;
+	unsigned char *palette = colours_normal;
+	//if (selected)
+		//palette = colours_selected;
+	//else
+	//palette = colours_normal;
 
 	// Note that here "lines" are actually bands of power data
 	unsigned long baseline = first_line / fft_overlaps;
@@ -243,7 +227,39 @@ void AudioSpectrum::SetScaling(float _power_scale)
 {
 	power_scale = _power_scale;
 }
-//SpectrumThread *SpectrumThread::st=NULL;
+
+void AudioSpectrum::ChangeColours()
+{
+	wxColour firstcolor = Options.GetColour("Spectrum First Color"); 
+	wxColour secondcolor = Options.GetColour("Spectrum Second Color"); 
+	wxColour thirdcolor = Options.GetColour("Spectrum Third Color"); 
+	float r2=thirdcolor.Red(), r1= secondcolor.Red(), r= firstcolor.Red(), 
+		g2=thirdcolor.Green(), g1=secondcolor.Green(), g=firstcolor.Green(), 
+		b2=thirdcolor.Blue(), b1=secondcolor.Blue(), b=firstcolor.Blue();
+	
+	// Generate colour maps
+	unsigned char *palptr = colours_normal;
+	float div = (1.f/65.f);
+	float i = 0;
+	int j = 0;
+	while (i < 2) {
+		//hsl_to_rgb(170 + i * 2/3, 128 + i/2, i, palptr+0, palptr+1, palptr+2);	// Previous
+		//hsl_to_rgb((255+128-i)/2, 128 + i/2, MIN(255,2*i), palptr+0, palptr+1, palptr+2);	// Icy blue
+		//hsl_to_rgb(174, 255, i, palptr+0, palptr+1, palptr+2);
+		int pointr = (i<1.f)? (r - (( r - r1) * i)) : (r1 - (( r1 - r2) * (i-1.f)));
+		int pointg = (i<1.f)? (g - (( g - g1) * i)) : (g1 - (( g1 - g2) * (i-1.f)));
+		int pointb = (i<1.f)? (b - (( b - b1) * i)) : (b1 - (( b1 - b2) * (i-1.f)));
+		if(i<1.f){div = (1.f/65.f);}else{div = (1.f/190.f);}
+		wxLogStatus("point%i %i %i %i",j,pointr, pointg, pointb);
+		*palptr = (unsigned char)pointr;//r - ( r1/ 255.f) * (float)i;
+		*(palptr+1) = (unsigned char)pointg;//g - ( g1/ 255.f) * (float)i;
+		*(palptr+2) = (unsigned char)pointb;
+		palptr += 3;
+		i += div;
+		j++;
+	}
+
+}
 
 SpectrumThread::SpectrumThread(AudioSpectrum *_spc, size_t _numsubcaches, size_t _overlaps)
 	:spc(_spc)
@@ -302,14 +318,14 @@ void SpectrumThread::procincls(int numthread)
 	unsigned int overlap = first_line % spc->fft_overlaps;
 	ULONG bufstart = (start * spc->subcachelen);
 
-	for(size_t j = numthread; j < length; j++)
+	for(size_t j = 0; j < length; j++)
 	{
 		size_t subcache = (j+start);
 		
 		if(!sub_caches[subcache])
 		{
 			//wxLogStatus("subcachemake %i %i %i", start, i, (start+i)*spc->subcachelen);
-			sub_caches[subcache] = new FinalSpectrumCache(spc->fft,(start+j)*spc->subcachelen,spc->subcachelen,spc->fft_overlaps,numthread);
+			sub_caches[subcache] = new FinalSpectrumCache(spc->fft,(start+j)*spc->subcachelen,spc->subcachelen,spc->fft_overlaps);
 		}
 		ULONG len=(j+1==length)? last_line : ((subcache+1)  * spc->subcachelen)-1;
 		ULONG strt=(j==0)? first_line : bufstart + (j * spc->subcachelen);

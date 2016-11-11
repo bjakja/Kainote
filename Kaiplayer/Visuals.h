@@ -154,6 +154,7 @@ public:
 	wxString GetVisual();
 	void SetCurVisual();
 	void ChangeInLines(bool all);
+	void ChangeTool(int _tool);
 	std::vector<moveElems> elems;
 	int numElem;
 	int elemsToMove;
@@ -246,7 +247,7 @@ public:
 	void Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bspline, int spoints=4, int acpt=0);
 	D3DXVECTOR2 CalcWH();
 	void SelectPoints();
-	void DeselectPoints();
+	void ChangeSelection(bool select = false);
 	void ChangeTool(int _tool){tool = _tool;};
 	int FindPoint(int pos, wxString type, bool nextStart =false, bool fromEnd=false);
 	std::vector<ClipPoint> Points;

@@ -324,11 +324,8 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 	//ustawia znaki na sekundę i ilość linii
 	UpdateChars((TextEditTl->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
 	//ustawia clip/inny visual gdy jest włączony
-	if(Visual>1){
-		
+	if(Visual > CHANGEPOS/* && Visual < MOVEALL*/){
 		pan->Video->SetVisual(line->Start.mstime, line->End.mstime);
-		
-		//pan->Video->Render();
 	}
 	
 	//resetuje edycję na wideo

@@ -118,24 +118,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	mstimes->SetCursor(wxCURSOR_ARROW);
 
 	vToolbar = new VideoToolbar(panel,wxPoint(0, panelHeight - 22));
-	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
-		EditBox *eb = Kai->GetTab()->Edit;
-		int vis = evt.GetInt();
-
-		if(vis==eb->Visual){return;}
-		if(Vclips && vis == 0){ 
-			SetVisual(0,0,true); 
-			if(vToolbar->ClipToolsShown()){vToolbar->ShowClipTools(false);}
-		}else if( vis != eb->Visual ){
-			if(vis==VECTORCLIP || vis==VECTORDRAW || eb->Visual==VECTORCLIP || eb->Visual==VECTORDRAW){
-				if(isfullskreen && TD){TD->vToolbar->ShowClipTools(vis==VECTORCLIP || vis==VECTORDRAW);}
-				else{vToolbar->ShowClipTools(vis==VECTORCLIP || vis==VECTORDRAW);}
-			}
-			eb->Visual = vis;
-			SetVisual(eb->line->Start.mstime, eb->line->End.mstime);
-			if(!isarrow){SetCursor(wxCURSOR_ARROW);isarrow=true;}
-		}
-	},ID_VIDEO_TOOLBAR_EVENT);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnChangeVisual, this, ID_VIDEO_TOOLBAR_EVENT);
 
 	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
 		Vclips->ChangeTool(evt.GetInt());
@@ -494,6 +477,10 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 	}
 	else if(key=='S'&&event.m_controlDown){Kai->Save(false);}
 	else if(key==WXK_RETURN && isfullskreen && TD){bool panelIsShown = TD->panel->IsShown(); TD->panel->Show(!panelIsShown);}
+	else if(event.ControlDown() && key=='A' && Vclips && (Vclips->Visual == VECTORCLIP || Vclips->Visual == VECTORDRAW)){
+		((DrawingAndClip*)Vclips)->ChangeSelection(true);
+		Render(false);
+	}
 }
 
 
@@ -586,6 +573,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 		Render();
 		block=false;
 
+		vToolbar->Synchronize(TD->vToolbar);
 		displaytime();
 		TD->Hide();
 	}
@@ -606,6 +594,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 		}
 		TD->volslider->SetValue(Options.GetInt("Video Volume"));
 		//wxLogStatus("głośność full %i %i", TD->volslider->GetValue(),Options.GetInt("Video Volume"));
+		TD->vToolbar->Synchronize(vToolbar);
 		TD->panel->Hide();
 		TD->Show();
 		UpdateVideoWindow(false);
@@ -1183,6 +1172,31 @@ wxRect VideoCtrl::GetMonitorRect(int wmonitor){
 		return wxRect(MonRects[wmonitor].left, MonRects[wmonitor].top, abs(MonRects[wmonitor].right - MonRects[wmonitor].left), abs(MonRects[wmonitor].bottom - MonRects[wmonitor].top));
 	}
 	return rt;
+}
+
+void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
+{
+	EditBox *eb = Kai->GetTab()->Edit;
+	int vis = evt.GetInt();
+
+	if(vis==eb->Visual){return;}
+	if(Vclips && vis == 0){ 
+		SetVisual(0,0,true); 
+		if(vToolbar->ClipToolsShown()||vToolbar->MoveToolsShown()){vToolbar->ShowTools(false,vToolbar->ClipToolsShown());}
+	}else if( vis != eb->Visual ){
+		if(vis==VECTORCLIP || vis==VECTORDRAW || eb->Visual==VECTORCLIP 
+			|| eb->Visual==VECTORDRAW || vis==MOVEALL || eb->Visual==MOVEALL){
+				bool vector = (vis==VECTORCLIP || vis==VECTORDRAW || vis==MOVEALL);
+				bool isMove =  (vis==MOVEALL || (eb->Visual==MOVEALL && vis!=VECTORCLIP && vis!=VECTORDRAW));
+				if(isfullskreen && TD){TD->vToolbar->ShowTools(vector, !isMove);}
+				else{vToolbar->ShowTools(vector, !isMove) ;}
+		}
+		eb->Visual = vis;
+		SetVisual(eb->line->Start.mstime, eb->line->End.mstime);
+		if(vis==MOVEALL){Vclips->ChangeTool(vToolbar->GetMoveToggled());}
+		if(!isarrow){SetCursor(wxCURSOR_ARROW);isarrow=true;}
+	}
+
 }
 
 BEGIN_EVENT_TABLE(VideoCtrl,wxWindow)

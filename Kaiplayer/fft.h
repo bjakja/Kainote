@@ -55,7 +55,7 @@ private:
 public:
 	FFT(size_t n_samples, VideoFfmpeg *prov);
 	~FFT();
-	void Transform(size_t whre,size_t wthread,bool inverse=false);
+	void Transform(size_t whre,bool inverse=false);
 	bool IsPowerOfTwo(unsigned int x);
 	unsigned int NumberOfBitsNeeded(unsigned int n_samples);
 	unsigned int ReverseBits(unsigned int index, unsigned int bits);

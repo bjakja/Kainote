@@ -33,8 +33,13 @@ public:
 		return result;
 	};
 	void SetClipToggled(int newtool){ clipToggled = toolsSize + newtool; Refresh(false);};
-	void ShowClipTools(bool show){clipToggled = toolsSize+1; showClipTools=show; Refresh(false);}
-	void ShowMoveTools(bool show){showMoveTools=show; Refresh(false);}
+	void Synchronize(VideoToolbar *vtoolbar);
+	void ShowTools(bool show, bool IsClip){
+		if(IsClip){clipToggled = toolsSize+1; showClipTools=show; showMoveTools=false;}
+		else {showMoveTools=show; showClipTools=false;}
+		Refresh(false);
+	}
+	//void ShowMoveTools(bool show){showMoveTools=show; Refresh(false);}
 	bool ClipToolsShown(){return showClipTools;}
 	bool MoveToolsShown(){return showMoveTools;}
 	static void DestroyIcons(){
