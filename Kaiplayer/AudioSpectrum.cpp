@@ -230,32 +230,35 @@ void AudioSpectrum::SetScaling(float _power_scale)
 
 void AudioSpectrum::ChangeColours()
 {
-	wxColour firstcolor = Options.GetColour("Spectrum First Color"); 
-	wxColour secondcolor = Options.GetColour("Spectrum Second Color"); 
-	wxColour thirdcolor = Options.GetColour("Spectrum Third Color"); 
+	//hsl_to_rgb(170 + i * 2/3, 128 + i/2, i, palptr+0, palptr+1, palptr+2);	// Previous
+		//hsl_to_rgb((255+128-i)/2, 128 + i/2, MIN(255,2*i), palptr+0, palptr+1, palptr+2);	// Icy blue
+		//wxLogStatus("point%i %i %i %i",i,(int)(*palptr), (int)(*(palptr+1)), (int)(*(palptr+2)));
+		//hsl_to_rgb(174, 255, i, palptr+0, palptr+1, palptr+2);
+	wxColour firstcolor = Options.GetColour("Audio Spectrum First Color"); 
+	wxColour secondcolor = Options.GetColour("Audio Spectrum Second Color"); 
+	wxColour thirdcolor = Options.GetColour("Audio Spectrum Third Color"); 
 	float r2=thirdcolor.Red(), r1= secondcolor.Red(), r= firstcolor.Red(), 
 		g2=thirdcolor.Green(), g1=secondcolor.Green(), g=firstcolor.Green(), 
 		b2=thirdcolor.Blue(), b1=secondcolor.Blue(), b=firstcolor.Blue();
 	
 	// Generate colour maps
 	unsigned char *palptr = colours_normal;
-	float div = (1.f/65.f);
+	float div = (1.f/128.f);
 	float i = 0;
 	int j = 0;
-	while (i < 2) {
-		//hsl_to_rgb(170 + i * 2/3, 128 + i/2, i, palptr+0, palptr+1, palptr+2);	// Previous
-		//hsl_to_rgb((255+128-i)/2, 128 + i/2, MIN(255,2*i), palptr+0, palptr+1, palptr+2);	// Icy blue
-		//hsl_to_rgb(174, 255, i, palptr+0, palptr+1, palptr+2);
-		int pointr = (i<1.f)? (r - (( r - r1) * i)) : (r1 - (( r1 - r2) * (i-1.f)));
-		int pointg = (i<1.f)? (g - (( g - g1) * i)) : (g1 - (( g1 - g2) * (i-1.f)));
-		int pointb = (i<1.f)? (b - (( b - b1) * i)) : (b1 - (( b1 - b2) * (i-1.f)));
-		if(i<1.f){div = (1.f/65.f);}else{div = (1.f/190.f);}
-		wxLogStatus("point%i %i %i %i",j,pointr, pointg, pointb);
-		*palptr = (unsigned char)pointr;//r - ( r1/ 255.f) * (float)i;
-		*(palptr+1) = (unsigned char)pointg;//g - ( g1/ 255.f) * (float)i;
+	while (j < 256) {
+		int pointr = (i<0.5f)? (r - (( r - r1) * (i*2))) : (r1 - (( r1 - r2) * ((i*2)-1.f)));
+		int pointg = (i<0.5f)? (g - (( g - g1) * (i*2))) : (g1 - (( g1 - g2) * ((i*2)-1.f)));
+		int pointb = (i<0.5f)? (b - (( b - b1) * (i*2))) : (b1 - (( b1 - b2) * ((i*2)-1.f)));
+
+		//wxLogStatus("point %i %f %i %i %i",j, i, pointr, pointg, pointb);
+		*palptr = (unsigned char)pointr;
+		*(palptr+1) = (unsigned char)pointg;
 		*(palptr+2) = (unsigned char)pointb;
+		
+		if(j<128){i += div;}
+		
 		palptr += 3;
-		i += div;
 		j++;
 	}
 

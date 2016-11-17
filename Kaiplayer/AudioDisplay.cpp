@@ -390,13 +390,13 @@ void AudioDisplay::DoUpdateImage() {
 	// Draw selection bg
 	if (hasSel && drawSelStart < drawSelEnd && draw_selection_background) {
 		D3DCOLOR fill;
-		if (NeedCommit ) fill = (spectrum)? 0x40FF6060 : D3DCOLOR_FROM_WX(Options.GetColour(_T("Audio Selection Background Modified")));
-		else fill = (spectrum)? 0x60FFFFFF : D3DCOLOR_FROM_WX(Options.GetColour(_T("Audio Selection Background")));
+		if (NeedCommit ) fill = D3DCOLOR_FROM_WX(Options.GetColour(_T("Audio Selection Background Modified")));
+		else fill = D3DCOLOR_FROM_WX(Options.GetColour(_T("Audio Selection Background")));
 		VERTEX v9[4];
 		CreateVERTEX(&v9[0], drawSelStart, 0, fill);
-		CreateVERTEX(&v9[1], drawSelEnd, 0, fill);
+		CreateVERTEX(&v9[1], drawSelEnd+1, 0, fill);
 		CreateVERTEX(&v9[2], drawSelStart, h, fill);
-		CreateVERTEX(&v9[3], drawSelEnd, h, fill);
+		CreateVERTEX(&v9[3], drawSelEnd+1, h, fill);
 		HRN(hr = d3dDevice->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX) ),"primitive failed");
 	
 	}
@@ -451,7 +451,7 @@ void AudioDisplay::DoUpdateImage() {
 		// Draw start boundary
 		int selWidth = Options.GetInt(_T("Audio Line Boundaries Thickness"));
 		D3DCOLOR lineStartBondaryColor= D3DCOLOR_FROM_WX(Options.GetColour(_T("Audio Line Boundary Start")));
-		int startDraw = lineStart-selWidth/2+1;
+		int startDraw = lineStart+(selWidth/2);
 		D3DXVECTOR2 v2[2]={D3DXVECTOR2(startDraw,0),D3DXVECTOR2(startDraw,h)};
 		d3dLine->SetWidth(selWidth);
 		d3dLine->Begin();
@@ -472,7 +472,7 @@ void AudioDisplay::DoUpdateImage() {
 
 		// Draw end boundary
 		D3DCOLOR lineEndBondaryColor= D3DCOLOR_FROM_WX(Options.GetColour(_T("Audio Line Boundary End")));
-		startDraw = lineEnd-selWidth/2+1;
+		startDraw = lineEnd+(selWidth/2);
 		v2[0]=D3DXVECTOR2(startDraw,0);
 		v2[1]=D3DXVECTOR2(startDraw,h);
 		d3dLine->Begin();
@@ -612,7 +612,7 @@ void AudioDisplay::DoUpdateImage() {
 			float x = GetXAtMS(Video->Tell());
 			//wxLogStatus("xpos %i", x);
 			d3dLine->Begin();
-			D3DXVECTOR2 v2[2]={D3DXVECTOR2(x,0),D3DXVECTOR2(x,h)};
+			D3DXVECTOR2 v2[2]={D3DXVECTOR2(x-1,0),D3DXVECTOR2(x-1,h)};
 			DrawDashedLine(v2,2,AudioCursor);
 			d3dLine->End();
 			d3dLine->SetWidth(1.f);
@@ -646,7 +646,7 @@ void AudioDisplay::DoUpdateImage() {
 	
 	// Draw focus border
 	if (hasFocus) {
-		D3DXVECTOR2 v5[5]={D3DXVECTOR2(0,0),D3DXVECTOR2(w,0),D3DXVECTOR2(w,h),D3DXVECTOR2(0,h),D3DXVECTOR2(0,0)};
+		D3DXVECTOR2 v5[5]={D3DXVECTOR2(0,0),D3DXVECTOR2(w-1,0),D3DXVECTOR2(w-1,h-1),D3DXVECTOR2(0,h-1),D3DXVECTOR2(0,0)};
 		d3dLine->Begin();
 		d3dLine->Draw(v5,5,waveformColor);
 		d3dLine->End();
@@ -700,6 +700,9 @@ void AudioDisplay::DrawInactiveLines() {
 		shadeTo = grid->GetCount();
 	}
 	D3DXVECTOR2 v2[2];
+	Dialogue *ADial = grid->GetDial(line_n);
+	int aS = GetXAtMS(ADial->Start.mstime);
+	int aE = GetXAtMS(ADial->End.mstime);
 
 	for (int j=shadeFrom;j<shadeTo;j++) {
 		if (j == line_n) continue;
@@ -714,6 +717,18 @@ void AudioDisplay::DrawInactiveLines() {
 
 		
 		// Draw over waveform
+		if(shadeX1>= aS && shadeX2 <= aE){continue;}
+		else if(shadeX1 < aE && shadeX2 >= aE){shadeX1=aE;}
+		else if(shadeX2 > aS && shadeX1 <= aE){shadeX1=aS;}
+		//wxLogStatus("shady xy %i %i ase %i %i", shadeX1, shadeX2, aS, aE);
+		D3DCOLOR fill = D3DCOLOR_FROM_WX(Options.GetColour(_T("Audio Inactive Lines Background")));;
+		VERTEX v9[4];
+		CreateVERTEX(&v9[0], shadeX1, 0, fill);
+		CreateVERTEX(&v9[1], shadeX2+1, 0, fill);
+		CreateVERTEX(&v9[2], shadeX1, h, fill);
+		CreateVERTEX(&v9[3], shadeX2+1, h, fill);
+		HRN(d3dDevice->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX) ),"inactive lines primitive failed");
+
 		if (!spectrum) {
 			d3dLine->Begin();
 			// Selection
@@ -730,44 +745,31 @@ void AudioDisplay::DrawInactiveLines() {
 			x1 = MIN(x1,selX1);
 			x2 = MIN(x2,selX1);
 
-			// Set pen and draw
-			//dc.SetPen(wxPen(Options.GetColour(_T("Audio Waveform Inactive"))));
+			// draw lines of inactive waveform
 			for (int i=x1;i<x2;i++){
 				v2[0]=D3DXVECTOR2(i,peak[i]);
 				v2[1]=D3DXVECTOR2(i,min[i]-1);
 				d3dLine->Draw(v2,2,waveformInactive);
-				//dc.DrawLine(i,peak[i],i,min[i]-1);
 			}
 			for (int i=x3;i<x4;i++){ 
 				v2[0]=D3DXVECTOR2(i,peak[i]);
 				v2[1]=D3DXVECTOR2(i,min[i]-1);
 				d3dLine->Draw(v2,2,waveformInactive);
-				//dc.DrawLine(i,peak[i],i,min[i]-1);
 			}
 
 			
 			d3dLine->End();
-		}
-		else{
-			D3DCOLOR fill = 0x55000000;
-			VERTEX v9[4];
-			CreateVERTEX(&v9[0], shadeX1, 0, fill);
-			CreateVERTEX(&v9[1], shadeX2, 0, fill);
-			CreateVERTEX(&v9[2], shadeX1, h, fill);
-			CreateVERTEX(&v9[3], shadeX2, h, fill);
-			HRN(d3dDevice->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX) ),"primitive failed");
-
 		}
 		
 		// Draw boundaries
 		//dc.SetPen(wxPen(Options.GetColour(_T("Audio Line Boundary Inactive Line"))));
 		d3dLine->SetWidth(selWidth);
 		d3dLine->Begin();
-		v2[0]=D3DXVECTOR2(shadeX1-selWidth/2+1,0);
-		v2[1]=D3DXVECTOR2(shadeX1-selWidth/2+1,h);
+		v2[0]=D3DXVECTOR2(shadeX1+(selWidth/2),0);
+		v2[1]=D3DXVECTOR2(shadeX1+(selWidth/2),h);
 		d3dLine->Draw(v2,2,boundaryInactiveLine);
-		v2[0]=D3DXVECTOR2(shadeX2-selWidth/2+1,0);
-		v2[1]=D3DXVECTOR2(shadeX2-selWidth/2+1,h);
+		v2[0]=D3DXVECTOR2(shadeX2+(selWidth/2),0);
+		v2[1]=D3DXVECTOR2(shadeX2+(selWidth/2),h);
 		d3dLine->Draw(v2,2,boundaryInactiveLine);
 		d3dLine->End();
 		d3dLine->SetWidth(1.f);

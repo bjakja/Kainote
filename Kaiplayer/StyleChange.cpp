@@ -1,4 +1,19 @@
-﻿
+﻿//  Copyright (c) 2016, Marcin Drob
+
+//  Kainote is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  Kainote is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
+
+
 #include <wx/wx.h>
 #include "StyleChange.h"
 #include <wx/intl.h>
@@ -247,10 +262,10 @@ void ColorChange::OnAllCols(int kol)
 	mst.y+=15;
 	ColourDialog->Move(mst);
 	if ( ColourDialog->ShowModal() == wxID_OK) {
-		wxColour kol=ColourDialog->GetColor();
-		kolor->SetBackgroundColour(kol);
-		kolor->SetForegroundColour(Blackorwhite(kol));
-		alpha->SetInt(kol.Alpha());
+		AssColor kol=ColourDialog->GetColor();
+		kolor->SetBackgroundColour(kol.GetWX());
+		kolor->SetForegroundColour(Blackorwhite(kol.GetWX()));
+		alpha->SetInt(kol.a);
 		UpdatePreview();
 	}
 }

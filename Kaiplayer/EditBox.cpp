@@ -1,4 +1,19 @@
-﻿
+﻿//  Copyright (c) 2016, Marcin Drob
+
+//  Kainote is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  Kainote is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
+
+
 #include "EditBox.h"
 #include "Grid.h"
 #include "KainoteApp.h"
@@ -324,7 +339,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 	//ustawia znaki na sekundę i ilość linii
 	UpdateChars((TextEditTl->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
 	//ustawia clip/inny visual gdy jest włączony
-	if(Visual > CHANGEPOS/* && Visual < MOVEALL*/){
+	if(Visual > CHANGEPOS){
 		pan->Video->SetVisual(line->Start.mstime, line->End.mstime);
 	}
 	
@@ -1309,16 +1324,37 @@ void EditBox::OnAutoMoveTags(wxCommandEvent& event)
 
 void EditBox::SetTextWithTags()
 {
-	if(grid->transl && line->TextTl=="" && line->Text.StartsWith("{") && AutoMoveTags->GetValue()){
+	if(grid->transl && line->TextTl=="" && AutoMoveTags->GetValue()){
 		int getr=line->Text.Find('}');
 		if(getr>1){
-			wxString null;
-			wxString txt=line->Text.substr(0,getr+1);
-			TextEdit->SetTextS(txt, false);
-			TextEditTl->SetTextS(((int)line->Text.Len()>getr+1)? line->Text.Mid(getr+1): null, false);
+			int brackets = line->Text.find("{");
+			wxString restText; 
+			if(line->Text.Len()>(size_t)getr+1){restText = line->Text.Mid(getr+1);}
+			wxString txtTl=line->Text.substr(0,getr+1);
+			int pos=txtTl.Len();
+			wxString txtOrg;
+			while(1){
+				brackets = restText.find("{");
+				getr = restText.Find('}');
+				if(brackets != -1 && getr != -1){
+					txtOrg += restText.substr(0, brackets);
+					txtTl += restText.SubString(brackets, getr);
+					if(restText.Len()>(size_t)getr+1){restText = restText.Mid(getr+1);}
+					else{break;}
+				}else{
+					txtOrg += restText;
+					break;
+				}
+			}
+
+
+
+			TextEdit->SetTextS(txtTl, false);
+			TextEditTl->SetTextS(txtOrg, false);
 			splittedTags=true;
-			int pos=txt.Len();
+			
 			TextEdit->SetSelection(pos,pos);
+			TextEdit->SetFocus();
 			return;
 		}
 	}

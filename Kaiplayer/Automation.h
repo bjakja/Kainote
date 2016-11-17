@@ -27,8 +27,10 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 // Aegisub Project http://www.aegisub.org/
+
 #ifndef AUTOMATION_H
 #define AUTOMATION_H
+
 #include <deque>
 #include <vector>
 #include <map>

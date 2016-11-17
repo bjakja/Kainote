@@ -42,8 +42,7 @@
 #include <wx/wxprec.h>
 #include <wx/zipstrm.h>
 #include <stdio.h>
-#include <vector>
-#include <list>
+#include <map>
 #include <stdint.h>
 #include "MatroskaParser.h"
 //#include "vfr.h"

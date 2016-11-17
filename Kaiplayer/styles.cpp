@@ -1,3 +1,18 @@
+//  Copyright (c) 2016, Marcin Drob
+
+//  Kainote is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  Kainote is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
+
 
 #include "styles.h"
 #include <wx/tokenzr.h>
@@ -78,14 +93,14 @@ wxString AssColor::GetAss(bool alpha,bool style) {
 wxColour AssColor::GetWX()
 {
     wxColour kol;
-    kol.Set(r,g,b,a);
+    kol.Set(r,g,b,0xFF-a);
     return kol;
 }
 
 wxString AssColor::GetHex(bool alpha) const
 {
 	if (alpha)
-		return wxString::Format("#%02X%02X%02X%02X", r, g, b, a);
+		return wxString::Format("#%02X%02X%02X%02X", a, r, g, b);
 	return wxString::Format("#%02X%02X%02X", r, g, b);
 }
 

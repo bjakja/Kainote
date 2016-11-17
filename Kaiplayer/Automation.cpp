@@ -218,11 +218,11 @@ namespace Auto{
 	int lua_text_textents(lua_State *L)
 	{
 		if (!lua_istable(L, 1)) {
-			lua_pushstring(L, "Pierwszy argument dla text_extents musi byc tablica");
+			lua_pushstring(L, "First argument of text_extents must be a table");
 			lua_error(L);
 		}
 		if (!lua_isstring(L, 2)) {
-			lua_pushfstring(L, "Drugi argument dla text_extents musi byc stringiem a jest typu %s", lua_typename(L, lua_type(L, 2)));
+			lua_pushfstring(L, "Second argument of text_extents must be a stringiem but is of type %s", lua_typename(L, lua_type(L, 2)));
 			lua_error(L);
 		}
 
@@ -443,7 +443,7 @@ namespace Auto{
 		// this is where features are registered
 		if (lua_pcall(L, 0, 0, -2)) {
 			// error occurred, assumed to be on top of Lua stack
-			description = wxString::Format("Błąd inicjalizacji skryptu Lua \"%s\":\n\n%s", GetPrettyFilename(), get_string_or_default(L, -1));
+			description = wxString::Format(_("Błąd inicjalizacji skryptu Lua \"%s\":\n\n%s."), GetPrettyFilename(), get_string_or_default(L, -1));
 			//lua_pop(L, 1);
 			lua_pop(L, 2); // error + error handler
 			//lua_gc(L, LUA_GCCOLLECT, 0);
@@ -455,8 +455,7 @@ namespace Auto{
 		lua_getglobal(L, "version");
 		if (lua_isnumber(L, -1) && lua_tointeger(L, -1) == 3) {
 			lua_pop(L, 1); // just to avoid tripping the stackcheck in debug
-			description = "Attempted to load an Automation 3 script as an Automation 4 Lua script. Automation 3 is no longer supported.";
-			//lua_gc(L, LUA_GCCOLLECT, 0);
+			description = _("Próbujesz wczytać skrypt Automatyzacji 3 jako skrypt Automatyzacji 4. Automatyzacja 3 nie jest już wspierana.");
 			return;
 		}
 
@@ -498,8 +497,8 @@ namespace Auto{
 	{
 		for (auto macro : macros) {
 			if (macro->StrDisplay() == command->StrDisplay()) {
-				error(L, "A macro named '%s' is already defined in script '%s'",
-					command->StrDisplay().utf8_str().data(), name.utf8_str().data());
+				error(L, wxString::Format(_("Makro o nazwie '%s' jest już zedefiniowane w skrypcie '%s'"),
+					command->StrDisplay().utf8_str().data(), name.utf8_str().data()).mb_str(wxConvUTF8).data());
 			}
 		}
 		macros.push_back(command);
@@ -545,7 +544,7 @@ namespace Auto{
 
 		if (!wxFileExists(*filepath)){
 			
-			lua_pushfstring(L, "Nie znaleziono Lua include: %s", filepath->mb_str(wxConvUTF8).data());
+			lua_pushfstring(L, "Lua include not found: %s", filepath->mb_str(wxConvUTF8).data());
 			delete filename; delete filepath;
 			//int res = error(L, "Lua include not found");// error(L, "Lua include not found: %s", filepath->mb_str(wxConvUTF8).data());
 			return lua_error(L);
@@ -806,7 +805,7 @@ namespace Auto{
 		
 		//if(ps->lpd->cancelled && ps->lpd->IsModal()){ps->lpd->EndModal(0);}
 
-		wxLogStatus("select lines");
+		//wxLogStatus("select lines");
 		int active_idx = c->Edit->ebrow;
 
 		// Check for a new active row
@@ -817,7 +816,7 @@ namespace Auto{
 				active_idx = original_active;
 			}
 		}
-		wxLogStatus("idx %i, %i", active_idx, c->Edit->ebrow);
+		//wxLogStatus("idx %i, %i", active_idx, c->Edit->ebrow);
 		c->Grid1->SpellErrors.clear();
 		c->Grid1->SetModified(true, false, active_idx);
 		c->Grid1->RepaintWindow();	
@@ -949,7 +948,7 @@ namespace Auto{
 			Notebook::GetTab()->Grid1->AddSInfo("Automation Scripts", scriptpaths);
 		}
 		HasChanges=true;
-		wxLogStatus("description: " + ls->GetDescription());
+		//wxLogStatus("description: " + ls->GetDescription());
 		return true;
 	}
 

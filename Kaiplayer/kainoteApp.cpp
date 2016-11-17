@@ -108,7 +108,7 @@ bool kainoteApp::OnInit()
 		if ( wxsOK )
 		{
 		//wxHandleFatalExceptions(true);
-			SetAppDisplayName("KaiNote");
+			//SetAppDisplayName("KaiNote");
 
 			if(!Options.LoadOptions()){wxMessageBox(_("Nie udało się wczytać opcji.\nDziałanie programu zostanie zakończone."),_("Uwaga"));return false;}
 

@@ -1,3 +1,18 @@
+//  Copyright (c) 2016, Marcin Drob
+
+//  Kainote is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  Kainote is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
+
 #include "TabPanel.h"
 #include "Visuals.h"
 #include <wx/tokenzr.h>
@@ -102,8 +117,9 @@ void DrawingAndClip::DrawVisual(int time)
 				line->End();
 				DrawRect(lastM);
 				DrawRect(g-1);
-				lastM = g;
+				
 			}
+			lastM = g;
 			g++;
 		}
 
@@ -207,11 +223,15 @@ wxString DrawingAndClip::GetVisual()
 			//if(cntb>2 && pos.type=="b"){cntb=0;}
 		}else{
 			if(spline){clip<<"c ";spline=false;}
-			if(lasttype != pos.type){clip<<pos.type<<" "; lasttype = pos.type;}
+			if(lasttype != pos.type || pos.type=="m"){clip<<pos.type<<" "; lasttype = pos.type;}
 			clip<<getfloat(x,format)<<" "<<getfloat(y,format)<<" ";
-			if(pos.type=="b"||pos.type=="s"){cntb=1;if(pos.type=="s"){spline=true;}}
+			if(pos.type=="b" || pos.type=="s"){cntb=1;if(pos.type=="s"){spline=true;}}
 		}
-		if(pos.type=="m" && i>= psize-1 && psize>1 ){clip<<"l "<<getfloat(x,format)<<" "<<getfloat(y,format)<<" ";}
+		//fix for m one after another
+		if(pos.type=="m" && psize>1 && ((i >= psize-1) ||
+			(i < psize-1 && Points[i+1].type=="m"))){
+				clip<<"l "<<getfloat(x,format)<<" "<<getfloat(y,format)<<" ";
+		}
 	}
 	if(spline){clip<<"c ";}
 	return clip.Trim();

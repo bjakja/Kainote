@@ -37,7 +37,7 @@
 ///////////
 // Headers
 #include "config.h"
-
+#include <vector>
 #include <algorithm>
 #include <errno.h>
 #include <stdint.h>
@@ -117,8 +117,8 @@ bool MatroskaWrapper::Open(wxString filename,bool parse) {
 // Close file
 void MatroskaWrapper::Close() {
 	//if (atts){
-		//delete[] atts;
-		//atts=NULL;
+	//delete[] atts;
+	//atts=NULL;
 	//}
 	if (file) {
 		mkv_Close(file);
@@ -133,17 +133,14 @@ void MatroskaWrapper::Close() {
 // Get subtitles
 bool MatroskaWrapper::GetSubtitles(Grid *target) {
 	// Get info
-	
+
 	int tracks = mkv_GetNumTracks(file);
 	TrackInfo *trackInfo;
 	//SegmentInfo *segInfo = mkv_GetFileInfo(file);
 	wxArrayInt tracksFound;
 	wxArrayString tracksNames;
 	int trackToRead = -1;
-	char form=1;
-	// Haali's library variables
-	ulonglong startTime, endTime, filePos;
-	unsigned int rt, frameSize, frameFlags;
+
 
 	// Find tracks
 	for (int track=0;track<tracks;track++) {
@@ -154,7 +151,7 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 			wxString CodecID = wxString(trackInfo->CodecID,*wxConvCurrent);
 			wxString TrackName = wxString(trackInfo->Name,*wxConvCurrent);
 			wxString TrackLanguage = wxString(trackInfo->Language,*wxConvCurrent);
-			
+
 			// Known subtitle format
 			if (CodecID == "S_TEXT/SSA" || CodecID == "S_TEXT/ASS" || CodecID == "S_TEXT/UTF8") {
 				tracksFound.Add(track);
@@ -162,7 +159,7 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 			}
 		}
 	}
-	
+
 
 	// No tracks found
 	if (tracksFound.Count() == 0) {
@@ -170,7 +167,7 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 		wxMessageBox(_("Plik nie ma żadnej ścieżki z napisami."));
 		return false;
 	}
-	
+
 	// Only one track found
 	else if (tracksFound.Count() == 1) {
 		trackToRead = tracksFound[0];
@@ -182,14 +179,14 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 		if (choice == -1) {
 			Close();
 			wxMessageBox(_("Anulowano."));
-		return false;
+			return false;
 		}
 		trackToRead = tracksFound[choice];
 	}
-	
+
 	// Picked track
 	if (trackToRead != -1) {
-		
+
 		// Get codec type (0 = ASS/SSA, 1 = SRT)
 		trackInfo = mkv_GetTrackInfo(file,trackToRead);
 		//wxLogStatus("track infos %i %i", (int)trackInfo->CompEnabled, trackInfo->CompMethod);
@@ -204,154 +201,159 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 		int codecType = 0;
 		if (CodecID == "S_TEXT/UTF8") codecType = 1;
 
-		
+
 
 		// Read timecode scale
 		SegmentInfo *segInfo = mkv_GetFileInfo(file);
 
 		longlong timecodeScale = mkv_TruncFloat(trackInfo->TimecodeScale) * segInfo->TimecodeScale;
 
-		// Prepare STD vector to get lines inserted
-		std::vector<wxString> subList;
-		long int order = -1;
 
-		// Progress bar
-		int totalTime = int(double(segInfo->Duration) / timecodeScale);
+		ProgressSink *progress = new ProgressSink(target,_("Odczyt napisów z pliku Matroska."));
+		progress->SetAndRunTask([=](){
 
-		ProgresDialog *progress = new ProgresDialog(NULL,_("Odczyt napisów z pliku Matroska."));
+			char form=1;
+			// Haali's library variables
+			ulonglong startTime, endTime, filePos;
+			unsigned int rt, frameSize, frameFlags;
+			// Prepare STD vector to get lines inserted
+			std::vector<wxString> subList;
+			long int order = -1;
+
+			// Progress bar
+			int totalTime = int(double(segInfo->Duration) / timecodeScale);
+
+			// Load blocks
+			mkv_SetTrackMask(file, ~(1 << trackToRead));
+			while (mkv_ReadFrame(file,0,&rt,&startTime,&endTime,&filePos,&frameSize,&frameFlags) != EOF) {
+				// Canceled			
+				if (progress->WasCancelled()) {
+					subList.clear();
+					Close();
+					return 0;
+				}
 
 
-		// Load blocks
-		mkv_SetTrackMask(file, ~(1 << trackToRead));
-		while (mkv_ReadFrame(file,0,&rt,&startTime,&endTime,&filePos,&frameSize,&frameFlags) != EOF) {
-			// Canceled			
-			if (progress->WasCancelled()) {
-				subList.clear();
-				Close();
-				progress->Destroy();
-				progress=0;
-				return false;
-			}
-			
-			
-			// Read to temp
-			char *tmp;
-			if(cs){
-				int oscfs=frameSize*10;
-				tmp=new char[oscfs+1];
-				cs_NextFrame(cs,filePos,frameSize);
-				int rdata= cs_ReadData(cs,tmp,oscfs);
-				//wxLogStatus("pos %i, %i, %i", (int)filePos, oscfs, rdata);
-				tmp[rdata] = 0;
-			}else{
-				tmp=new char[frameSize+1];
-				_fseeki64(input->fp, filePos, SEEK_SET);
-				fread(tmp,1,frameSize,input->fp);
-				tmp[frameSize] = 0;
-			}
-			
-			wxString blockString(tmp,wxConvUTF8);
-			delete[] tmp;
+				// Read to temp
+				char *tmp;
+				if(cs){
+					int oscfs=frameSize*10;
+					tmp=new char[oscfs+1];
+					cs_NextFrame(cs,filePos,frameSize);
+					int rdata= cs_ReadData(cs,tmp,oscfs);
+					//wxLogStatus("pos %i, %i, %i", (int)filePos, oscfs, rdata);
+					tmp[rdata] = 0;
+				}else{
+					tmp=new char[frameSize+1];
+					_fseeki64(input->fp, filePos, SEEK_SET);
+					fread(tmp,1,frameSize,input->fp);
+					tmp[frameSize] = 0;
+				}
 
-			// Get start and end times
-			//longlong timecodeScaleLow = timecodeScale / 100;
-			longlong timecodeScaleLow = 1000000;
-			STime subStart,subEnd;
-			startTime /=timecodeScaleLow;
-			endTime /=timecodeScaleLow;
-			if (codecType == 0) { startTime=ZEROIT(startTime); endTime=ZEROIT(endTime);}
-			subStart.NewTime(startTime);
-			subEnd.NewTime(endTime);
-			//wxLogMessage(subStart.GetASSFormated() + "-" + subEnd.GetASSFormated() + ": " + blockString);
+				wxString blockString(tmp,wxConvUTF8);
+				delete[] tmp;
 
-			// Process SSA/ASS
-			if (codecType == 0) {
-				// Get order number
-				int pos = blockString.Find(",");
-				wxString orderString = blockString.Left(pos);
-				orderString.ToLong(&order);
-				blockString = blockString.Mid(pos+1);
+				// Get start and end times
+				//longlong timecodeScaleLow = timecodeScale / 100;
+				longlong timecodeScaleLow = 1000000;
+				STime subStart,subEnd;
+				startTime /=timecodeScaleLow;
+				endTime /=timecodeScaleLow;
+				if (codecType == 0) { startTime=ZEROIT(startTime); endTime=ZEROIT(endTime);}
+				subStart.NewTime(startTime);
+				subEnd.NewTime(endTime);
+				//wxLogMessage(subStart.GetASSFormated() + "-" + subEnd.GetASSFormated() + ": " + blockString);
 
-				// Get layer number
-				pos = blockString.Find(",");
-				long int layer = 0;
-				if (pos) {
-					wxString layerString = blockString.Left(pos);
-					layerString.ToLong(&layer);
+				// Process SSA/ASS
+				if (codecType == 0) {
+					// Get order number
+					int pos = blockString.Find(",");
+					wxString orderString = blockString.Left(pos);
+					orderString.ToLong(&order);
 					blockString = blockString.Mid(pos+1);
+
+					// Get layer number
+					pos = blockString.Find(",");
+					long int layer = 0;
+					if (pos) {
+						wxString layerString = blockString.Left(pos);
+						layerString.ToLong(&layer);
+						blockString = blockString.Mid(pos+1);
 					}
-				if(blockString==""){blockString<<"Default,,0000,0000,0000,,";}
-				// Assemble final
-				blockString = wxString::Format("Dialogue: %li,",layer) + subStart.raw() + "," + subEnd.raw() + "," + blockString;
-					
-			}
+					if(blockString==""){blockString<<"Default,,0000,0000,0000,,";}
+					// Assemble final
+					blockString = wxString::Format("Dialogue: %li,",layer) + subStart.raw() + "," + subEnd.raw() + "," + blockString;
 
-			// Process SRT
-			else {
-				
-				blockString = subStart.raw(SRT) + " --> " + subEnd.raw(SRT) + "\r\n" + blockString;
-				
-				order++;
-			}
+				}
 
-			// Insert into vector
-			subList.push_back(blockString);
-			//if (subList.size() == (unsigned int)order) subList.push_back(blockString);
-			//else {
+				// Process SRT
+				else {
+
+					blockString = subStart.raw(SRT) + " --> " + subEnd.raw(SRT) + "\r\n" + blockString;
+
+					order++;
+				}
+
+				// Insert into vector
+				subList.push_back(blockString);
+				//if (subList.size() == (unsigned int)order) subList.push_back(blockString);
+				//else {
 				//if ((signed)(subList.size()) < order+1) subList.resize(order+1);
 				//subList[order] = blockString;
-			//}
+				//}
 
-			// Update progress bar
-			//progress->SetProgress(int(double(startTime) / 1000000.0),totalTime);
-			int prog=((double(startTime))/double(totalTime))*100;
-			progress->Progress(prog);
-		}
-
-		target->Clearing();
-		target->file=new SubsFile();
-
-		// Read private data if it's ASS/SSA
-		if (codecType == 0) {
-			// Read raw data
-			trackInfo = mkv_GetTrackInfo(file,trackToRead);
-			unsigned int privSize = trackInfo->CodecPrivateSize;
-			char *privData = new char[privSize+1];
-			memcpy(privData,trackInfo->CodecPrivate,privSize);
-			privData[privSize] = 0;
-			wxString privString(privData,wxConvUTF8);
-			delete[] privData;
-
-			// Load into file
-			wxString group = "[Script Info]";
-			if (CodecID == "S_TEXT/SSA") form = 2;
-			wxStringTokenizer token(privString,"\r\n",wxTOKEN_STRTOK);
-			while (token.HasMoreTokens()) {
-				wxString next = token.GetNextToken();
-				if (next[0] == '[') group = next;
-				if(group=="[Script Info]"&&!next.StartsWith(";")){
-					target->AddSInfo(next);
-				}
-				else if(next.StartsWith("Style:")){
-					target->AddStyle(new Styles(next,form));}
-				else if(next.StartsWith("Comment")){
-					target->AddLine(new Dialogue(next));}
+				// Update progress bar
+				//progress->SetProgress(int(double(startTime) / 1000000.0),totalTime);
+				int prog=((double(startTime))/double(totalTime))*100;
+				progress->Progress(prog);
 			}
 
+			target->Clearing();
+			target->file=new SubsFile();
 
-		}
-		
-		//progress->Update(99,"Wstawianie napisów do okna");
-		for (unsigned int i=0;i<subList.size();i++) {
-			target->AddLine(new Dialogue(subList[i]));
-		}
-		target->file->EndLoad();
-		subList.clear();
+			// Read private data if it's ASS/SSA
+			if (codecType == 0) {
+				// Read raw data
+				TrackInfo *trackInfo = mkv_GetTrackInfo(file,trackToRead);
+				unsigned int privSize = trackInfo->CodecPrivateSize;
+				char *privData = new char[privSize+1];
+				memcpy(privData,trackInfo->CodecPrivate,privSize);
+				privData[privSize] = 0;
+				wxString privString(privData,wxConvUTF8);
+				delete[] privData;
 
-		//progress->Update(100,"Napisy wstawione");
-		progress->Destroy();
+				// Load into file
+				wxString group = "[Script Info]";
+				if (CodecID == "S_TEXT/SSA") form = 2;
+				wxStringTokenizer token(privString,"\r\n",wxTOKEN_STRTOK);
+				while (token.HasMoreTokens()) {
+					wxString next = token.GetNextToken();
+					if (next[0] == '[') group = next;
+					if(group=="[Script Info]"&&!next.StartsWith(";")){
+						target->AddSInfo(next);
+					}
+					else if(next.StartsWith("Style:")){
+						target->AddStyle(new Styles(next,form));}
+					else if(next.StartsWith("Comment")){
+						target->AddLine(new Dialogue(next));}
+				}
+
+
+			}
+
+			//progress->Update(99,"Wstawianie napisów do okna");
+			for (unsigned int i=0;i<subList.size();i++) {
+				target->AddLine(new Dialogue(subList[i]));
+			}
+			target->file->EndLoad();
+			subList.clear();
+			return 1;
+		});
+		progress->ShowDialog();
+		bool isgood =((int)progress->Wait() == 1 );
+		delete progress; progress=0;
 		if(cs){cs_Destroy(cs);}
-		return true;
+		return isgood;
 	}
 
 	// No track to load
@@ -373,7 +375,7 @@ std::map<int, wxString> MatroskaWrapper::GetFontList()
 	}
 	return attsname;
 }
-	
+
 bool MatroskaWrapper::SaveFont(int id, wxString path, wxZipOutputStream *zip)
 {
 
@@ -381,11 +383,11 @@ bool MatroskaWrapper::SaveFont(int id, wxString path, wxZipOutputStream *zip)
 	_fseeki64(input->fp, atts[id].Position, SEEK_SET);
 	fread(tmp,1,atts[id].Length,input->fp);
 	bool isgood=true;
-	
+
 	if(zip){
 		try{
-		isgood=zip->PutNextEntry(path);
-		zip->Write((void*)tmp,atts[id].Length);
+			isgood=zip->PutNextEntry(path);
+			zip->Write((void*)tmp,atts[id].Length);
 		}
 		catch(...)
 		{
@@ -394,12 +396,12 @@ bool MatroskaWrapper::SaveFont(int id, wxString path, wxZipOutputStream *zip)
 	}
 	else
 	{
-	wxFile file;
-    file.Create(path,true,wxS_DEFAULT);
-    if (file.IsOpened()){
-		file.Write(tmp, atts[id].Length);
-		file.Close();
-	}else{isgood=false;}
+		wxFile file;
+		file.Create(path,true,wxS_DEFAULT);
+		if (file.IsOpened()){
+			file.Write(tmp, atts[id].Length);
+			file.Close();
+		}else{isgood=false;}
 
 	}
 	delete[] tmp;
@@ -423,69 +425,69 @@ bool MatroskaWrapper::SaveFont(int id, wxString path, wxZipOutputStream *zip)
 ///////////////
 // STDIO class
 int StdIoRead(InputStream *_st, ulonglong pos, void *buffer, int count) {
-  MkvStdIO *st = (MkvStdIO *) _st;
-  size_t  rd;
-  if (std_fseek(st->fp, pos, SEEK_SET)) {
-    st->error = errno;
-    return -1;
-  }
-  rd = std_fread(buffer, 1, count, st->fp);
-  if (rd == 0) {
-    if (feof(st->fp))
-      return 0;
-    st->error = errno;
-    return -1;
-  }
-  return rd;
+	MkvStdIO *st = (MkvStdIO *) _st;
+	size_t  rd;
+	if (std_fseek(st->fp, pos, SEEK_SET)) {
+		st->error = errno;
+		return -1;
+	}
+	rd = std_fread(buffer, 1, count, st->fp);
+	if (rd == 0) {
+		if (feof(st->fp))
+			return 0;
+		st->error = errno;
+		return -1;
+	}
+	return rd;
 }
 
 /* scan for a signature sig(big-endian) starting at file position pos
- * return position of the first byte of signature or -1 if error/not found
- */
+* return position of the first byte of signature or -1 if error/not found
+*/
 longlong StdIoScan(InputStream *_st, ulonglong start, unsigned signature) {
-  MkvStdIO *st = (MkvStdIO *) _st;
-  int	      c;
-  unsigned    cmp = 0;
-  FILE	      *fp = st->fp;
+	MkvStdIO *st = (MkvStdIO *) _st;
+	int	      c;
+	unsigned    cmp = 0;
+	FILE	      *fp = st->fp;
 
-  if (std_fseek(fp, start, SEEK_SET))
-    return -1;
+	if (std_fseek(fp, start, SEEK_SET))
+		return -1;
 
-  while ((c = getc(fp)) != EOF) {
-    cmp = ((cmp << 8) | c) & 0xffffffff;
-    if (cmp == signature)
-      return std_ftell(fp) - 4;
-  }
+	while ((c = getc(fp)) != EOF) {
+		cmp = ((cmp << 8) | c) & 0xffffffff;
+		if (cmp == signature)
+			return std_ftell(fp) - 4;
+	}
 
-  return -1;
+	return -1;
 }
 
 /* return cache size, this is used to limit readahead */
 unsigned StdIoGetCacheSize(InputStream *_st) {
-  return CACHESIZE;
+	return CACHESIZE;
 }
 
 /* return last error message */
 const char *StdIoGetLastError(InputStream *_st) {
-  MkvStdIO *st = (MkvStdIO *) _st;
-  return strerror(st->error);
+	MkvStdIO *st = (MkvStdIO *) _st;
+	return strerror(st->error);
 }
 
 /* memory allocation, this is done via stdlib */
 void  *StdIoMalloc(InputStream *_st, size_t size) {
-  return malloc(size);
+	return malloc(size);
 }
 
 void  *StdIoRealloc(InputStream *_st, void *mem, size_t size) {
-  return realloc(mem,size);
+	return realloc(mem,size);
 }
 
 void  StdIoFree(InputStream *_st, void *mem) {
-  free(mem);
+	free(mem);
 }
 
 int   StdIoProgress(InputStream *_st, ulonglong cur, ulonglong max) {
-  return 1;
+	return 1;
 }
 
 longlong StdIoGetFileSize(InputStream *_st) {

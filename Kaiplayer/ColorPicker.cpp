@@ -1,4 +1,34 @@
-﻿
+﻿// Copyright (c) 2006, 2007, Niels Martin Hansen
+// Copyright (c) 2016, Marcin Drob
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//   * Redistributions of source code must retain the above copyright notice,
+//     this list of conditions and the following disclaimer.
+//   * Redistributions in binary form must reproduce the above copyright notice,
+//     this list of conditions and the following disclaimer in the documentation
+//     and/or other materials provided with the distribution.
+//   * Neither the name of the Aegisub Group nor the names of its contributors
+//     may be used to endorse or promote products derived from this software
+//     without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+//
+// Aegisub Project http://www.aegisub.org/
+
+
 #include "Config.h"
 
 #include <wx/image.h>
@@ -14,7 +44,6 @@
 #include <wx/settings.h>
 #include <wx/clipbrd.h>
 #include "ColorPicker.h"
-#include "Styles.h"
 #include "ColorSpace.h"
 #include "KainoteApp.h"
 
@@ -397,7 +426,7 @@ void ColorPickerScreenDropper::DropFromScreenXY(int x, int y)
 
 
 
-wxColour GetColorFromUser(wxWindow *parent, wxColour original)
+AssColor GetColorFromUser(wxWindow *parent, AssColor original)
 {
 	DialogColorPicker dialog(parent, original);
 	if (dialog.ShowModal() == wxID_OK) {
@@ -409,7 +438,7 @@ wxColour GetColorFromUser(wxWindow *parent, wxColour original)
 
 
 // Constructor
-DialogColorPicker::DialogColorPicker(wxWindow *parent, wxColour initial_color)
+DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color)
 : wxDialog(parent, 11111, _("Wybierz kolor"), wxDefaultPosition, wxDefaultSize)
 {
 	wxAcceleratorEntry centries[2];
@@ -610,13 +639,13 @@ DialogColorPicker::~DialogColorPicker()
 
 
 // Sets the currently selected color, and updates all controls
-void DialogColorPicker::SetColor(wxColour new_color)
+void DialogColorPicker::SetColor(AssColor new_color)
 {
-	cur_color = new_color;
-	rgb_input[0]->SetInt(new_color.Red());
-	rgb_input[1]->SetInt(new_color.Green());
-	rgb_input[2]->SetInt(new_color.Blue());
-	alpha_input->SetInt(new_color.Alpha());
+	cur_color = new_color.GetWX();
+	rgb_input[0]->SetInt(new_color.r);
+	rgb_input[1]->SetInt(new_color.g);
+	rgb_input[2]->SetInt(new_color.b);
+	alpha_input->SetInt(new_color.a);
 	updating_controls=false;
 	spectrum_dirty=true;
 	UpdateFromRGB();
@@ -624,7 +653,7 @@ void DialogColorPicker::SetColor(wxColour new_color)
 
 
 // Get the currently selected color
-wxColour DialogColorPicker::GetColor()
+AssColor DialogColorPicker::GetColor()
 {
 	recent_box->AddColor(cur_color);
 	Options.SetString("Color Picker Recent", recent_box->StoreToString());
@@ -650,7 +679,7 @@ void DialogColorPicker::UpdateFromRGB()
 	hsv_input[0]->SetInt(h2);
 	hsv_input[1]->SetInt(s2);
 	hsv_input[2]->SetInt(v2);
-	cur_color = wxColour(r, g, b, alpha_input->GetInt());
+	cur_color = wxColour(r, g, b, 0xFF - alpha_input->GetInt());
 	ass_input->SetValue(AssColor(cur_color).GetAss(false, false));
 	html_input->SetValue(color_to_html(cur_color));
 	UpdateSpectrumDisplay();
@@ -677,7 +706,7 @@ void DialogColorPicker::UpdateFromHSL()
 	hsv_input[0]->SetInt(h2);
 	hsv_input[1]->SetInt(s2);
 	hsv_input[2]->SetInt(v2);
-	cur_color = wxColour(r, g, b, alpha_input->GetInt());
+	cur_color = wxColour(r, g, b, 0xFF - alpha_input->GetInt());
 	ass_input->SetValue(AssColor(cur_color).GetAss(false, false));
 	html_input->SetValue(color_to_html(cur_color));
 	UpdateSpectrumDisplay();
@@ -704,7 +733,7 @@ void DialogColorPicker::UpdateFromHSV()
 	hsl_input[0]->SetInt(h);
 	hsl_input[1]->SetInt(s);
 	hsl_input[2]->SetInt(l);
-	cur_color = wxColour(r, g, b, alpha_input->GetInt());
+	cur_color = wxColour(r, g, b, 0xFF - alpha_input->GetInt());
 	ass_input->SetValue(AssColor(cur_color).GetAss(false, false));
 	html_input->SetValue(color_to_html(cur_color));
 	UpdateSpectrumDisplay();
@@ -736,7 +765,7 @@ void DialogColorPicker::UpdateFromASS()
 	hsv_input[0]->SetInt(h2);
 	hsv_input[1]->SetInt(s2);
 	hsv_input[2]->SetInt(v2);
-	cur_color = wxColour(r, g, b, alpha_input->GetInt());
+	cur_color = wxColour(r, g, b, 0xFF - alpha_input->GetInt());
 	html_input->SetValue(color_to_html(cur_color));
 	UpdateSpectrumDisplay();
 
@@ -765,7 +794,7 @@ void DialogColorPicker::UpdateFromHTML()
 	hsv_input[0]->SetInt(h2);
 	hsv_input[1]->SetInt(s2);
 	hsv_input[2]->SetInt(v2);
-	cur_color = wxColour(r, g, b, alpha_input->GetInt());
+	cur_color = wxColour(r, g, b, 0xFF - alpha_input->GetInt());
 	ass_input->SetValue(AssColor(cur_color).GetAss(false, false));
 	UpdateSpectrumDisplay();
 
@@ -945,7 +974,7 @@ void DialogColorPicker::OnChangeAlpha(wxCommandEvent &evt)
 	if (!updating_controls)
 	{	//spectrum_dirty = true;
 
-		cur_color=wxColour(cur_color.Red(),cur_color.Green(),cur_color.Blue(),alpha_input->GetInt());
+		cur_color=wxColour(cur_color.Red(),cur_color.Green(),cur_color.Blue(),0xFF-alpha_input->GetInt());
 		alphaslider->SetBackground(MakeAlphaSlider());
 		alphaslider->SetXY(0, alpha_input->GetInt());
 		//spectrum_dirty=false;
@@ -984,7 +1013,7 @@ void DialogColorPicker::OnAlphaSliderChange(wxCommandEvent &evt)
 	alphaslider->GetXY(x, y);
 	
 	alpha_input->SetInt(y);
-	cur_color=wxColour(cur_color.Red(),cur_color.Green(),cur_color.Blue(),alpha_input->GetInt());
+	cur_color=wxColour(cur_color.Red(),cur_color.Green(),cur_color.Blue(),0xFF-alpha_input->GetInt());
 	if(IsShown()){
 		updatecols.Start(100,true);
 	}
@@ -1056,7 +1085,7 @@ void DialogColorPicker::OnMouse(wxMouseEvent &evt)
 
 DialogColorPicker *DialogColorPicker::DCP=NULL;
 
-DialogColorPicker *DialogColorPicker::Get(wxWindow *parent, wxColour color)
+DialogColorPicker *DialogColorPicker::Get(wxWindow *parent, AssColor color)
 {
 	int x=-1, y=-1;
 	if(DCP && parent != DCP->GetParent()){
@@ -1082,31 +1111,33 @@ void DialogColorPicker::OnColourCanged(wxTimerEvent &event)
 }
 
 
-ButtonColorPicker::ButtonColorPicker(wxWindow *parent, wxColour _color, wxSize size)
+ButtonColorPicker::ButtonColorPicker(wxWindow *parent, AssColor _color, wxSize size)
 	: wxButton(parent,-1,"",wxDefaultPosition, size)
+	,ActualColor(_color)
 {
-	SetBackgroundColour(_color);
+	SetBackgroundColour(_color.GetWX());
 	Connect(wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ButtonColorPicker::OnClick);
 }
 
-wxColour ButtonColorPicker::GetColor()
+AssColor ButtonColorPicker::GetColor()
 {
-	return GetBackgroundColour();
+	return ActualColor;
 }
 
 void ButtonColorPicker::OnClick(wxCommandEvent &event)
 {
-	DialogColorPicker *dcp = DialogColorPicker::Get(this,GetBackgroundColour().GetAsString(wxC2S_HTML_SYNTAX));
+	DialogColorPicker *dcp = DialogColorPicker::Get(this,ActualColor);
 	wxPoint mst=wxGetMousePosition();
-	int dw, dh;
 	wxSize siz=dcp->GetSize();
 	siz.x;
-	wxDisplaySize (&dw, &dh);
+	wxRect rc = wxGetClientDisplayRect();
 	mst.x-=(siz.x/2);
-	mst.x=MID(0,mst.x, dw-siz.x);
+	mst.x=MID(rc.x, mst.x, rc.width-siz.x);
 	mst.y+=15;
+	mst.y=MID(rc.y, mst.y , rc.height-siz.y);
 	dcp->Move(mst);
 	if (dcp->ShowModal() == wxID_OK) {
-		SetBackgroundColour(dcp->GetColor());
+		ActualColor = dcp->GetColor();
+		SetBackgroundColour(ActualColor.GetWX());
 	}
 }

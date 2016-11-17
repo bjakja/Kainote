@@ -1,3 +1,18 @@
+//  Copyright (c) 2016, Marcin Drob
+
+//  Kainote is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  Kainote is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
+
 
 #include "VersionKainote.h"
 #include "Config.h"
@@ -64,7 +79,13 @@ bool config::GetBool(wxString lopt)
 
 wxColour config::GetColour(wxString lopt)
 {
-	return wxString(rawcfg[lopt]);
+	AssColor col(rawcfg[lopt]);
+	return col.GetWX();
+}
+
+AssColor config::GetColor(wxString lopt)
+{
+	return rawcfg[lopt];
 }
 
 int config::GetInt(wxString lopt)
@@ -93,6 +114,13 @@ void config::SetBool(wxString lopt, bool bopt)
 void config::SetColour(wxString lopt, wxColour copt)
 {
 	wxString copt1 = copt.GetAsString(wxC2S_HTML_SYNTAX);
+	rawcfg[lopt]=copt1;
+}
+
+void config::SetColor(wxString lopt, AssColor copt)
+{
+	wxString copt1 = copt.GetHex(true);
+	wxLogStatus(copt1);
 	rawcfg[lopt]=copt1;
 }
 
@@ -416,6 +444,7 @@ wxString config::LoadDefaultAudioConfig()
 			"Audio Draw video Position=true\r\n"\
 			"Audio Grab Times On Select=true\r\n"\
 			"Audio Horizontal Zoom=50\r\n"\
+			"Audio Inactive Lines Background=#60000050\r\n"\
 			"Audio Inactive Lines Display Mode=1\r\n"\
 			"Audio Keyframes=#C200FF\r\n"\
 			"Audio Lead In=200\r\n"\
@@ -438,6 +467,9 @@ wxString config::LoadDefaultAudioConfig()
 			"Audio Snap To Keyframes=false\r\n"\
 			"Audio Snap To Other Lines=false\r\n"\
 			"Audio Spectrum=false\r\n"\
+			"Audio Spectrum First Color=#000000\r\n"\
+			"Audio Spectrum Second Color=#2D4DC2\r\n"\
+			"Audio Spectrum Third Color=#FFFFFF\r\n"\
 			"Audio Start Drag Sensitivity=2\r\n"\
 			"Audio Syllable Boundaries=#FFFF00\r\n"\
 			"Audio Syllable Text=#FF0000\r\n"\

@@ -1,4 +1,34 @@
 
+// Copyright (c) 2006, 2007, Niels Martin Hansen
+// Copyright (c) 2016, Marcin Drob
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//   * Redistributions of source code must retain the above copyright notice,
+//     this list of conditions and the following disclaimer.
+//   * Redistributions in binary form must reproduce the above copyright notice,
+//     this list of conditions and the following disclaimer in the documentation
+//     and/or other materials provided with the distribution.
+//   * Neither the name of the Aegisub Group nor the names of its contributors
+//     may be used to endorse or promote products derived from this software
+//     without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+//
+// Aegisub Project http://www.aegisub.org/
+
 #include "AutomationToFile.h"
 #include "AutomationUtils.h"
 #include "KainoteApp.h"
@@ -37,7 +67,7 @@ namespace Auto{
 	{
 		if (can_modify)
 			return;
-		lua_pushstring(L, "Probujesz zmodyfikowac napisy tylko do odczytu.");
+		lua_pushstring(L, "You cannot modify read-only subtitles");
 		lua_error(L);
 	}
 
@@ -221,14 +251,14 @@ namespace Auto{
 		SubsEntry *e=NULL;
 
 		if (!lua_istable(L, -1)) {
-			lua_pushstring(L, "nie mozna przekonwertowac wartosci ktora nie jest tablica");//nie mo¿na przekonwertowaæ wartoœci która nie jest tablic¹");
+			lua_pushstring(L, "Cannot convert non table value");//nie mo¿na przekonwertowaæ wartoœci która nie jest tablic¹");
 			lua_error(L);
 			return e;
 		}
 
 		lua_getfield(L, -1, "class");
 		if (!lua_isstring(L, -1)) {
-			lua_pushstring(L, "Tablicy brakuje pola class");
+			lua_pushstring(L, "Table do not have class field");
 			lua_error(L);
 			return e;
 		}
@@ -446,7 +476,7 @@ namespace Auto{
 					return 1;
 				} else {
 					// idiot
-					lua_pushfstring(L, "Nieodpowiedni obiekt indeksu napisow: '%s'", idx);
+					lua_pushfstring(L, "Subtitles object do not have index: '%s'", idx);
 					lua_error(L);
 					// should never return
 				}
@@ -456,7 +486,7 @@ namespace Auto{
 		default:
 			{
 				// crap, user is stupid!
-				lua_pushfstring(L, "Indeks napisow typu '%s'.", lua_typename(L, lua_type(L, 2)));
+				lua_pushfstring(L, "Subtitles object do not have index type: '%s'.", lua_typename(L, lua_type(L, 2)));
 				lua_error(L);
 			}
 		}
@@ -471,7 +501,7 @@ namespace Auto{
 		// after modifying the stack to match their expectations
 
 		if (!lua_isnumber(L, 2)) {
-			lua_pushstring(L, "Probujesz zapisac nieliczbowy indeks do indeksu napisow");
+			lua_pushstring(L, "You cannot write usnig non number index");
 			lua_error(L);
 			return 0;
 		}
@@ -512,7 +542,7 @@ namespace Auto{
 				int dials=styles+Subs->dials.size();
 				if(i<0 || i>=dials){
 					SAFE_DELETE(e);
-					lua_pushstring(L, "Out of range");//"Próbujesz zmodyfikowaæ linijkê o indeksie przekraczaj¹cym wielkoœæ napisów");
+					lua_pushstring(L, "Line index is out of range");
 					lua_error(L);
 					return 0;}
 				if(i<sinfo && e->lclass=="info"){
@@ -541,7 +571,7 @@ namespace Auto{
 				{
 					wxString fclass=(e->lclass=="info")? "info" : (e->lclass=="style")? "styli" : "dialogów";
 					wxString sclass=(i<sinfo)? "info" : (i<styles)? "styli" : "dialogów";
-					wxString all = _("Próbujesz wstawiæ linie klasy ") + fclass + _(" w przedzia³ klasy ") + sclass;
+					wxString all = _T("You try put line of class: ") + fclass + _T(" in section of class: ") + sclass;
 					SAFE_DELETE(e);
 					lua_pushstring(L,all.mb_str(wxConvUTF8).data());
 					lua_error(L);
@@ -599,14 +629,14 @@ namespace Auto{
 			lua_pushvalue(L, 1);
 			lua_for_each(L, [&] {
 				int n = check_uint(L, -1);
-				argcheck(L, n > 0 && n <= dials, 1, "Out of range line index");
+				argcheck(L, n > 0 && n <= dials, 1, "Line index is out of range");
 				ids.push_back(n - 1);
 			});
 		}else{
 			while (itemcount > 0) {
 				if (!lua_isnumber(L, itemcount)) {
-					wxString err("Próbujesz usun¹æ nienumeryczn¹ linijkê z indeksu napisów");
-					lua_pushstring(L, err.ToUTF8().data());//Próbujesz usun¹æ nienumeryczn¹ linijkê z indeksu napisów");
+					wxString err("You trying to delete non number line");
+					lua_pushstring(L, err.ToUTF8().data());
 					lua_error(L);
 					return 0;
 				}
@@ -651,7 +681,7 @@ namespace Auto{
 		laf->CheckAllowModify();
 
 		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2)) {
-			lua_pushstring(L, "Nienumeryczny argument uzyty w funkcji DeleteRange");
+			lua_pushstring(L, "Non number argument of function DeleteRange");
 			lua_error(L);
 			return 0;
 		}
@@ -729,7 +759,7 @@ namespace Auto{
 		laf->CheckAllowModify();
 
 		if (!lua_isnumber(L, 1)) {
-			lua_pushstring(L, "Nie mozna wstawic nienumerycznego indeksu");
+			lua_pushstring(L, "Cannot put non numeric index");
 			lua_error(L);
 			return 0;
 		}
@@ -740,7 +770,7 @@ namespace Auto{
 
 		if(start<0 || start>(int)(Subs->sinfo.size()+Subs->styles.size()+Subs->dials.size()))
 		{
-			lua_pushstring(L, "Indeks przekracza wielkosc tablicy z napiami");
+			lua_pushstring(L, "Out of range line index");
 			lua_error(L);
 			return 0;
 		}
@@ -782,7 +812,7 @@ namespace Auto{
 			}
 			else{
 				SAFE_DELETE(e);
-				wxString sclass= "Probujesz wstawiæ linijkê nieznanej klasy";
+				wxString sclass= "You trying to put line of unknown class";
 				lua_pushstring(L, sclass.mb_str(wxConvUTF8).data());
 				lua_error(L);
 			}
@@ -805,7 +835,7 @@ namespace Auto{
 		SubsEntry *e = LuaToLine(L);
 		if(!e){return 0;}
 		else if(e->lclass!="dialogue"){
-			lua_pushstring(L, "Probujesz podzielic na sylaby linie ktora nie jest dialogiem");//"Próbujesz podzieliæ na sylaby liniê która nie jest dialogiem");
+			lua_pushstring(L, "You try to parse karaoke from non dialogue line");
 			lua_error(L);
 			return 0;
 		}

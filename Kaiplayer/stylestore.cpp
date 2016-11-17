@@ -1,4 +1,19 @@
-﻿#include "stylestore.h"
+﻿//  Copyright (c) 2016, Marcin Drob
+
+//  Kainote is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  Kainote is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
+
+#include "stylestore.h"
 #include "kainoteMain.h"
 
 #include "config.h"
@@ -22,15 +37,15 @@
 		 wxBoxSizer *sizer2 = new wxBoxSizer(wxVERTICAL);
 		 wxStaticText *txt = new wxStaticText(this,-1,msg);
 		 wxButton *btn=NULL;
-		 btn = new wxButton(this,wxID_YES,"Tak");
+		 btn = new wxButton(this,wxID_YES,_("Tak"));
 		 Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxID_YES);},wxID_YES);
 		 sizer1->Add(btn,0,wxALL,3);
-		 btn = new wxButton(this,wxID_OK,"Tak dla wszystkich");
+		 btn = new wxButton(this,wxID_OK,_("Tak dla wszystkich"));
 		 sizer1->Add(btn,0,wxALL,3);
-		 btn = new wxButton(this,wxID_NO,"Nie");
+		 btn = new wxButton(this,wxID_NO,_("Nie"));
 		 Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxID_NO);},wxID_NO);
 		 sizer1->Add(btn,0,wxALL,3);
-		 btn = new wxButton(this,wxID_CANCEL,"Anuluj");
+		 btn = new wxButton(this,wxID_CANCEL,_("Anuluj"));
 		 sizer1->Add(btn,0,wxALL,3);
 		 sizer2->Add(txt,0,wxTOP|wxLEFT|wxRIGHT|wxALIGN_CENTER_HORIZONTAL,6);
 		 sizer2->Add(sizer1,0,wxALL,3);
@@ -395,7 +410,7 @@ void stylestore::OnDelCatalog(wxCommandEvent& event)
 	int cat=Choice1->GetSelection();
 	if(cat==-1){return;}
 	wxString Cat = Choice1->GetString(cat);
-	if(Cat=="Podstawowy"){wxBell();return;}
+	if(Cat=="Default"){wxBell();return;}
 	Choice1->Delete(cat);
 	Options.dirs.RemoveAt(cat);
 	Options.acdir=Options.dirs[MAX(0,cat-1)];
@@ -731,20 +746,20 @@ void stylestore::ReloadFonts()
 	cc->sfont->Append(fontList);
 	int wfont=MAX(0,cc->sfont->FindString(oldfname));
 	cc->sfont->SetSelection(wfont);
-	wxLogStatus("Czcionki zaczytane ponownie.");
+	wxLogStatus(_("Czcionki zaczytane ponownie."));
 }
 
 DWORD stylestore::CheckFontProc(void* cls)
 {
 	stylestore *ss=(stylestore*)cls;
-	if(!ss){wxLogStatus(_("Brak wskaźnika klasy magazynu stylów."));return 0;}
+	if(!ss){wxLogStatus(_("Brak wskaźnika klasy magazynu stylów.")); return 0;}
 
 	HANDLE hDir  = NULL; 
 	wxString fontrealpath=wxGetOSDirectory() + "\\fonts\\";
 
 	hDir = FindFirstChangeNotification( fontrealpath.wc_str(), TRUE, FILE_NOTIFY_CHANGE_FILE_NAME);// | FILE_NOTIFY_CHANGE_LAST_WRITE
 
-	if(hDir== INVALID_HANDLE_VALUE ){wxLogStatus(_("Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek.")); return 0;}
+	if(hDir == INVALID_HANDLE_VALUE ){wxLogStatus(_("Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek.")); return 0;}
 	while(1){
 		while( WaitForSingleObject( hDir, WAIT_TIMEOUT ) != WAIT_OBJECT_0 ){
 			if( ss->stopcheck ){

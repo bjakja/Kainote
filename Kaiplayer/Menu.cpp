@@ -1,3 +1,18 @@
+//  Copyright (c) 2016, Marcin Drob
+
+//  Kainote is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  Kainote is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
+
 
 #include "Menu.h"
 #include "Config.h"
@@ -320,6 +335,7 @@ void Menu::GetAccelerators(std::vector <wxAcceleratorEntry> *entries)
 }
 
 MenuDialog* MenuDialog::ParentMenu=NULL;
+MenuDialog* MenuDialog::lastActiveMenu=NULL;
 volatile int MenuDialog::id=-3;
 
 MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos, const wxSize &size, bool sendEvent)
@@ -362,9 +378,10 @@ MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos
 		//wxLogStatus("Hidesubmenu timer %i",submenuToHide);
 		MenuItem *olditem=parent->items[submenuToHide];
 		if(olditem->submenu->dialog){
-			wxRect rc = olditem->submenu->dialog->GetScreenRect();
-			wxPoint pos = wxGetMousePosition();
-			if(rc.Contains(pos)){return;}
+			//wxRect rc = olditem->submenu->dialog->GetScreenRect();
+			//wxPoint pos = wxGetMousePosition();
+			//if(rc.Contains(pos)){return;}
+			if(lastActiveMenu==olditem->submenu->dialog){return;}
 			wxRect rc1 = GetScreenRect();
 			if(!rc1.Contains(pos)){sel=-1; Refresh(false);}
 			else if (sel == submenuToHide){subMenuIsShown=true; return;}
@@ -395,17 +412,7 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 	bool leftdown=evt.LeftDown();
 	int x=evt.GetX();
 	int y=evt.GetY();
-	//int w=0;
-	//int h=0;
-	//wxRect rc = GetClientRect();
-	//bool contains = rc.Contains(evt.GetPosition());
-	//if(!contains && evt.ButtonDown()){
-	//	//if(HasCapture()){ReleaseMouse();}
-	//	if(ParentMenu){HideMenus();}
-	//	//if(!leftdown){evt.Skip();}
-	//	wxLogStatus("mamy event myszowy");
-	//	return;
-	//}
+	
 	int elem = y/height;
 
 	if(evt.Leaving()){
@@ -414,44 +421,15 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 			subMenuIsShown=false;
 		}
 		if(sel!=submenuToHide){sel=-1; Refresh(false);}
-		//if(!ParentMenu){return;}
-		//int subMenu=ParentMenu->submenuShown;
-		////wxLogStatus("submenu");
-		//Menu *menu= ParentMenu->parent;
-		////wxLogStatus("submenu1");
-		//wxPoint posOnScreen = wxGetMousePosition();
-		//while(menu){
-		//	//wxLogStatus("menu %i, %i", subMenu, (int)menu);
-		//	if(menu->dialog){
-		//		if(menu->dialog != this){
-		//			wxRect rc = menu->dialog->GetRect();
-		//			//menu->dialog->GetPosition(&rc.x, &rc.y);
-		//			//wxLogStatus("pos and rect %i %i %i %i %i %i", posOnScreen.x,posOnScreen.y,rc.x,rc.y, rc.GetRight(), rc.GetBottom());
-		//			if(rc.Contains(posOnScreen)){
-		//				wxLogStatus("contains");
-		//				//if(HasCapture()){ReleaseMouse();}
-		//				if(!menu->dialog->HasCapture()){menu->dialog->CaptureMouse();}
-		//			}
-		//		}
-		//		subMenu = menu->dialog->submenuShown;
-		//		menu = (subMenu != -1)? menu->items[subMenu]->submenu : NULL;
-		//	}
-		//	else{menu=NULL;subMenu = -1;}
-		//	
-		//}
+		
 		return;
-	}//else{
-	else if(evt.Entering()){
+	}else if(evt.Entering()){
 		if(submenuShown != -1 ){
-			//if(submenuShown != elem){submenuToHide=submenuShown; hideSubmenuTimer.Start((parent->items[elem]->submenu)? 10 : 400,true);subMenuIsShown=false;}
 			subMenuIsShown=true;
 		}
-		/*if( !((elem < (int)parent->items.size() && elem > 0 ) && 
-			parent->items[elem]->submenu && submenuShown==-1)){
-				sel=elem; Refresh(false);return;
-		}*/
+		lastActiveMenu = this;
 	}
-	//}
+	
 	if (evt.GetWheelRotation() != 0) {
 		int step = 3 * evt.GetWheelRotation() / evt.GetWheelDelta();
 		scPos -=step;

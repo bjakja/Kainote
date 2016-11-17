@@ -1,4 +1,5 @@
 ﻿// Copyright (c) 2005, Rodrigo Braz Monteiro, Niels Martin Hansen
+// Copyright (c) 2016, Drob Marcin
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without

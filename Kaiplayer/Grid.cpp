@@ -1,4 +1,19 @@
-﻿#include "Grid.h"
+﻿//  Copyright (c) 2016, Marcin Drob
+
+//  Kainote is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  Kainote is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
+
+#include "Grid.h"
 
 
 #include <wx/intl.h>
@@ -647,9 +662,13 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 		mkvpath=event.GetString();
 	}
 
+	
 	MatroskaWrapper mw;
 	if(!mw.Open(mkvpath,false)){return;}
-	bool isgood=mw.GetSubtitles(this);
+	int isgood = (int)mw.GetSubtitles(this);
+	mw.Close();
+	
+
 	if(isgood){
 		if(transl){Edit->SetTl(false); transl=false;showtl=false;Kai->Menubar->Enable(SaveTranslation,false);}
 		SetSubsForm();
@@ -686,7 +705,6 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 		Edit->HideControls();
 		
 	}
-	mw.Close();
 	if(Kai->ss && form==ASS){Kai->ss->LoadAssStyles();}
 }
 

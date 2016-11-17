@@ -1,4 +1,19 @@
-﻿
+﻿//  Copyright (c) 2016, Marcin Drob
+
+//  Kainote is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  Kainote is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
+
+
 
 #include "OptionsDialog.h"
 #include "config.h"
@@ -416,20 +431,21 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		//Audio colours
 	{
 
-		wxFlexGridSizer *AudioColorsSizer=new wxFlexGridSizer(17,2,wxSize(5,5));
+		wxFlexGridSizer *AudioColorsSizer=new wxFlexGridSizer(18,2,wxSize(5,2));
 		wxString labels[]={_("Kolor tła"),_("Kolor znacznika start"),_("Kolor znacznika koniec"),_("Kolor znacznika przesuwania czasów"),
 			_("Kolor znaczników nieaktywnej linijki"),_("Kolor kursora"),_("Kolor znaczników sekund"),_("Kolor klatek kluczowych"),
 			_("Kolor zaznaczenia"),_("Kolor zaznaczenia po modyfikacji"),_("Kolor wykresu audio"),
 			_("Kolor nieaktywnego wykresu audio"),_("Kolor zmodyfikowanego wykresu audio"),_("Kolor zaznaczonego wykresu audio"),
-			_("Pierwszy kolor spektrum"), _("Drugi kolor spektrum"), _("Trzeci kolor spektrum")};
+			_("Kolor tła nieaktywnych linijek"),_("Pierwszy kolor spektrum"), _("Drugi kolor spektrum"), _("Trzeci kolor spektrum")};
 		wxString opts[]={"Audio Background","Audio Line Boundary Start","Audio Line Boundary End","Audio Line Boundary Mark",
 			"Audio Line Boundary Inactive Line","Audio Play Cursor","Audio Seconds Boundaries","Audio Keyframes",
 			"Audio Selection Background","Audio Selection Background Modified","Audio Waveform","Audio Waveform Inactive",
-			"Audio Waveform Modified","Audio Waveform Selected","Spectrum First Color","Spectrum Second Color","Spectrum Third Color"};
+			"Audio Waveform Modified","Audio Waveform Selected","Audio Inactive Lines Background","Audio Spectrum First Color",
+			"Audio Spectrum Second Color","Audio Spectrum Third Color"};
 	
-		for(int i=0;i<17;i++)
+		for(int i=0;i<18;i++)
 		{
-			ColorButton *optc=new ColorButton(AudioCols,Options.GetString(opts[i]));
+			ColorButton *optc=new ColorButton(AudioCols,Options.GetString(opts[i]),wxSize(60,24));
 			ConOpt(optc,opts[i]);
 			AudioColorsSizer->Add(new wxStaticText(AudioCols,-1,labels[i]+":"),1,wxRIGHT | wxALIGN_CENTRE_VERTICAL ,5);
 			AudioColorsSizer->Add(optc,0,wxALL,2);
@@ -441,13 +457,13 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		
 	//Adding pages
 	OptionsTree->AddPage(Main,_("Edytor"),true);
-	OptionsTree->AddSubPage(GridColors,_("Kolorystyka"),true);
-	OptionsTree->AddSubPage(GridColors2,_("Kolorystyka2"),true);
-	OptionsTree->AddSubPage(EditColors,_("Pole tekstowe"),true);
 	OptionsTree->AddSubPage(ConvOpt,_("Konwersja"),true);
 	OptionsTree->AddPage(Video,_("Wideo"),true);
 	OptionsTree->AddPage(AudioMain,_("Audio"),true);
-	OptionsTree->AddSubPage(AudioCols,_("Kolorystyka"),true);
+	OptionsTree->AddPage(GridColors,_("Kolorystyka"),true);
+	OptionsTree->AddSubPage(GridColors2,_("Pole napisów"),true);
+	OptionsTree->AddSubPage(EditColors,_("Pole tekstowe"),true);
+	OptionsTree->AddSubPage(AudioCols,_("Audio"),true);
 	OptionsTree->AddPage(Hotkeyss,_("Skróty klawiszowe"),true);
 	OptionsTree->Fit();
 		
@@ -470,14 +486,16 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	CenterOnParent();
 
     Connect(ID_BCOMMIT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&OptionsDialog::OnSaveClick);
-        
+    Bind(wxEVT_CLOSE_WINDOW, [=](wxCloseEvent &evt){Hide();});
+
 	wxAcceleratorEntry entries[1];
 	entries[0].Set(wxACCEL_NORMAL, WXK_RETURN, wxID_OK);
 	wxAcceleratorTable accel(1, entries);
 	this->SetAcceleratorTable(accel);
-
+	
 		
 }
+
 OptionsDialog::~OptionsDialog()
 {
 	if(GetReturnCode ()==wxID_OK){
@@ -532,9 +550,9 @@ void OptionsDialog::SetOptions(bool saveall)
 		}
 		else if(OB.ctrl->IsKindOf(CLASSINFO(wxButton))){
 			ColorButton *cpc=(ColorButton*)OB.ctrl;
-			wxColour kol=cpc->GetColor();
-			if(Options.GetColour(OB.option)!=kol){
-				Options.SetColour(OB.option,kol);colmod=true;
+			AssColor kol=cpc->GetColor();
+			if(Options.GetColor(OB.option)!=kol){
+				Options.SetColor(OB.option,kol);colmod=true;
 			}
 		}
 		else if(OB.ctrl->IsKindOf(CLASSINFO(wxFontPickerCtrl))){
