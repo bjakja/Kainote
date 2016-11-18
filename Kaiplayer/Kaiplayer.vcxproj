@@ -57,7 +57,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>I:\Programy\zlib-1.2.8;I:\Programy\Spell\src\hunspell;I:\Programy\WX 2.9.4\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;H:\Programy\freetype-2.6\include;I:\Kainote\Thirdparty\luabins\include;I:\Kainote\Thirdparty\luajit\include;I:\Programy\WX 2.9.4\lib\vc_lib\mswud;I:\Kainote\Thirdparty\boost_1_61_0;I:\Kainote\Thirdparty\icu\source\i18n;I:\Kainote\Thirdparty\icu\source\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Thirdparty\zlib-1.2.8;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;..\Thirdparty\freetype-2.6\include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\include;..\Thirdparty\wxWidgets\lib\vc_lib\mswud;..\Thirdparty\boost_1_61_0;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -73,7 +73,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>wxmsw29ud_core.lib;wxbase29ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;strmbasd.lib;odbc32.lib;odbccp32.lib;ffms2D.lib;LuaJit.lib;LuaBins.lib;freetype26MTd.lib;d3d9.lib;D3dx9d.lib;zlibwapid.lib;Boost.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>I:\Programy\zlib-1.2.8\contrib\vstudio\vc10\x86\ZlibDllDebug;C:\Program Files\Microsoft SDKs\Windows\v6.1\Lib;I:\Programy\Spell\src\win_api\Release_dll\libhunspell;I:\Programy\WX 2.9.4\lib\vc_lib;H:\Programy\freetype-2.6\objs\vc2010\Win32;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses\Debug;I:\Kainote\Thirdparty\luajit\LuaJit\Debug;I:\Kainote\Thirdparty\luabins\LuaBins\Debug;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;I:\Kainote\Thirdparty\boost_1_61_0\boost\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib;..\Thirdparty\BaseClasses\Debug;..\Thirdparty\zlib-1.2.8\contrib\vstudio\vc10\x86\ZlibDllDebug;..\Thirdparty\Hunspell\src\win_api\Release_dll\libhunspell;..\Thirdparty\wxWidgets\lib\vc_lib;..\Thirdparty\freetype-2.6\objs\vc2010\Win32;..\Thirdparty\luajit\LuaJit\Debug;..\Thirdparty\luabins\LuaBins\Debug;..\Thirdparty\boost_1_61_0\boost\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>

@@ -1,3 +1,5 @@
+Kainote setup.*
+
 *.zip
 *.rar
 *.7z
@@ -27,6 +29,7 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
+Cert/
 
 # Visual Studio 2015 cache/options directory
 .vs/

@@ -107,11 +107,6 @@ void Menu::PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos, int _
 	//wxLogStatus("Mn size %i", mnemonics.size());
 	
 	dialog = new MenuDialog(this, parent, npos, size);
-
-	
-	//dialog->ShowWithEffect(wxSHOW_EFFECT_BLEND ,1);//wxSHOW_EFFECT_BLEND
-	//if((size_t)maxVisible < items.size()){dialog->SetFocus();}
-	//dialog->Refresh(false);
 	dialog->Show();
 }
 
@@ -516,6 +511,8 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	tdc.SelectObject(*bmp);
 	wxBitmap checkbmp = wxBITMAP_PNG("check");
 	wxBitmap dot = wxBITMAP_PNG("dot");
+	wxBitmap separator = wxBITMAP_PNG("separator");
+	wxBitmap arrow = wxBITMAP_PNG("arrow");
 	wxColour highlight = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
 	wxColour text = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT);
 	wxColour graytext = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
@@ -534,16 +531,19 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 		int scrollPos=i+scPos;
 		MenuItem *item=parent->items[scrollPos];//+scPos
 		if(item->type==ITEM_SEPARATOR){
-			tdc.SetPen(wxPen("#FFFFFF"));
-			tdc.SetBrush(wxBrush("#000000"));
-			tdc.DrawRectangle(30,height*i+10,w-36,1);
+			//tdc.SetPen(wxPen("#FFFFFF"));
+			//tdc.SetBrush(wxBrush("#000000"));
+			//tdc.DrawRectangle(30,height*i+10,w-36,1);
+			wxImage img=separator.ConvertToImage();
+			img = img.Scale(w-36, 4, wxIMAGE_QUALITY_BILINEAR);
+			tdc.DrawBitmap(wxBitmap(img),30,(height*i)+8);
 			noRadio=true;
 			continue;
 		}
 		if(scrollPos==sel){
-			tdc.SetPen(wxPen("#000000"));
-			tdc.SetBrush(wxBrush(highlight));
-			tdc.DrawRectangle(0, height*i,w,height);
+			tdc.SetPen(wxPen(highlight,2));
+			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
+			tdc.DrawRectangle(1, height*i,w-1,height);
 		}
 		//tdc.SetPen(wxPen("#497CB0",2));
 		//tdc.SetBrush(*wxTRANSPARENT_BRUSH);
@@ -584,7 +584,8 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 			tdc.DrawLine(28+mnbefsize.x, (height*(i+1))-4, 28+mnbefsize.x+linesize.x, (height*(i+1))-4);
 		}
 		if(item->submenu){
-			wxPoint points[3];
+			
+			/*wxPoint points[3];
 			int pos = w-10;
 			int pos1= (height*i)+12;
 			points[0]=wxPoint(pos,pos1-6);
@@ -592,7 +593,8 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 			points[2]=wxPoint(pos+4,pos1-3);
 			tdc.SetBrush(wxBrush(text));
 			tdc.SetPen(wxPen(graytext));
-			tdc.DrawPolygon(3,points);
+			tdc.DrawPolygon(3,points);*/
+			tdc.DrawBitmap(arrow,w-18,(height*i)+2);
 		}
 
 	}
@@ -853,9 +855,9 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 		wxSize te = tdc.GetTextExtent(desc);
 		
 		if(i == sel){
-			tdc.SetBrush(wxBrush(wxSystemSettings::GetColour(clicked? wxSYS_COLOUR_BTNFACE : wxSYS_COLOUR_HIGHLIGHT)));
-			tdc.SetPen(wxPen(wxSystemSettings::GetColour(clicked? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_HIGHLIGHT)));
-			tdc.DrawRoundedRectangle(posX-2, 2, te.x+4, h-4, 2.0);
+			tdc.SetBrush(clicked? wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW)) : *wxTRANSPARENT_BRUSH);
+			tdc.SetPen(wxPen(wxSystemSettings::GetColour(clicked? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_GRAYTEXT)));
+			tdc.DrawRoundedRectangle(posX-4, 1, te.x+8, h-3, 3.0);
 			tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT)));
 		}
 		tdc.DrawText(desc,posX,2);//(h-te.y)/2.0
