@@ -14,16 +14,14 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 //#pragma once
-
-//#define UNICODE
-//#include <wxdebug.h>
+#ifndef __DSHOW_RENDERER__
+#define __DSHOW_RENDERER__
 
 typedef wchar_t* PTCHAR;
 
 #include "VideoRenderer.h"
-#include <streams.h>
 #include <Dvdmedia.h>
-
+#include <streams.h>
 
 enum {    
 	RGB32,
@@ -76,3 +74,5 @@ private:
 	bool block;
 	
 };
+
+#endif

@@ -7,4 +7,4 @@ LuaJIT1/
 SubInspector-0.5.1/
 Video rendering/
 objs/
-!.gitignore
+*.gz

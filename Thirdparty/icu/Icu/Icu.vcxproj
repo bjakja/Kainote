@@ -919,7 +919,7 @@ BOOST_SYSTEM_NO_DEPRECATED;
 BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
 WIN32;
 _WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>I:\Kainote\Thirdparty\icu\source\common\unicode;I:\Kainote\Thirdparty\icu\source\common;I:\Kainote\Thirdparty\icu\source\i18n\unicode;I:\Kainote\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

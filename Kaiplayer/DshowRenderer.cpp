@@ -19,7 +19,7 @@
 #include "DshowRenderer.h"
 //#include <Dvdmedia.h>
 #include <wmsdkidl.h>
-//#include <thread>
+//#include <streams.h>
 
 
 static const GUID CLSID_KVideoRenderer = 

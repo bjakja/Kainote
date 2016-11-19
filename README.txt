@@ -21,3 +21,7 @@ Check in project properties if paths of installed windows SDK's are correct
 or change it to yours paths.
 
 Before open program solution, build wxWidgets, Hunspell, BaseClasses, Freetype, xy-Vsfilter
+
+Number of build increases automatically after release build.
+It will be greater of one than in exe.
+Version is stored in versionKainote.h.
