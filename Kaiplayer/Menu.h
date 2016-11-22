@@ -189,8 +189,10 @@ class Menu : public Mnemonics
 	MenuItem *FindItemByPosition(int pos);
 	void Check(int id, bool check);
 	void AppendSeparator();
-	int GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels = 0, bool clientPos=true, int maxVisible=30);
-	void PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos=true, int maxVisible=30);
+	int GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels = 0, bool clientPos=true);
+	void PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos=true);
+	void SetMaxVisible(int maxVisible);
+	void SetShowIcons(bool showIcons);
 	void SetTitle(const wxString &_title){title = _title;};
 	wxString GetTitle() const {return title;};
 	void HideMenu(){dialog->HideMenus();}

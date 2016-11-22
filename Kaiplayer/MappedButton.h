@@ -19,7 +19,7 @@
 #include "wx/button.h"
 #include "Hotkeys.h"
 
-class MappedButton :public wxButton
+class MappedButton :public wxWindow
 {
 public:
 	MappedButton(wxWindow *parent, int id, const wxString& label = wxEmptyString, const wxString& tooltip = wxEmptyString,
@@ -29,10 +29,20 @@ public:
 	void SetTwoHotkeys(){twoHotkeys=true;}
 	virtual ~MappedButton();
 	void SetToolTip(const wxString &toolTip="");
+	void SetBitmap(const wxBitmap & bitmap){icon = bitmap; Refresh(false);};
 private:
-	void OnLeftClick(wxMouseEvent &evt);
+	void OnSize(wxSizeEvent& evt);
+	void OnPaint(wxPaintEvent& evt);
+	void OnMouseEvent(wxMouseEvent &evt);
+	void OnKeyPress(wxKeyEvent &event);
 	int Window;
 	bool twoHotkeys;
+	bool enter;
+	bool clicked;
+	wxBitmap *bmp;
+	wxBitmap icon;
+	wxString name;
 };
+
 
 #endif

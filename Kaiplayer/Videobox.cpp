@@ -785,12 +785,13 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 	}
 	id=0;
 	int Modifiers=0;
+	menu->SetMaxVisible(50);
 	//ismenu=true;
 	if(isfullskreen){
-		id=menu->GetPopupMenuSelection(pos, TD, &Modifiers, true, 50);
+		id=menu->GetPopupMenuSelection(pos, TD, &Modifiers, true);
 		//wxLogStatus("fulscreen menu %i", id);
 	}else{
-		id=menu->GetPopupMenuSelection(pos, this, &Modifiers, true, 50);
+		id=menu->GetPopupMenuSelection(pos, this, &Modifiers, true);
 	}
 	//ismenu=false;
 	if((Modifiers == wxMOD_SHIFT) && id<2100 && id>=2000){

@@ -73,7 +73,7 @@ private:
 	txtdialog *tagtxt;
 	wxString tag;
 	int type;
-	DECLARE_EVENT_TABLE()
+	//DECLARE_EVENT_TABLE()
 };
 
 
@@ -125,7 +125,7 @@ public:
 	MappedButton* Bcpsel;
 	MappedButton* Bhide;
 	wxToggleButton* AutoMoveTags;
-	wxChoice* Ban;
+	KaiChoice* Ban;
 
 
 	void PutinText(wxString text, bool focus=true, bool onlysel=false, wxString *texttoPutin=0);

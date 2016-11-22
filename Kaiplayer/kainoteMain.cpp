@@ -86,7 +86,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	//AppendRecent();
 	FileMenu->AppendTool(Toolbar,RecentSubs, _("Ostatnio otwa&rte napisy"), _("Ostatnio otwarte napisy"),PTR_BITMAP_PNG("recentsubs"),true, SubsRecMenu);
 	FileMenu->AppendTool(Toolbar,RemoveSubs, _("Usuń napisy z e&dytora"), _("Usuń napisy z edytora"),PTR_BITMAP_PNG("close"));
-	FileMenu->Append(9989,"Pokaż / Ukryj okno &logów");
+	FileMenu->Append(9989,_("Pokaż / Ukryj okno logów"));
 	FileMenu->AppendTool(Toolbar,Settings, _("&Ustawienia"), _("Ustawienia programu"),PTR_BITMAP_PNG("SETTINGS"));
 	FileMenu->AppendTool(Toolbar,Quit, _("Wyjści&e\tAlt-F4"), _("Zakończ działanie programu"),PTR_BITMAP_PNG("exit"));
 	Menubar->Append(FileMenu, _("&Plik"));

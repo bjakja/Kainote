@@ -69,9 +69,9 @@ BEGIN_EVENT_TABLE(DescTxtCtrl,wxTextCtrl)
 	EVT_KILL_FOCUS(DescTxtCtrl::OnKillFocus)
 END_EVENT_TABLE()
 
-BEGIN_EVENT_TABLE(TagButton, MappedButton)
-	EVT_MOUSE_EVENTS(TagButton::OnMouseEvent)
-END_EVENT_TABLE()
+//BEGIN_EVENT_TABLE(TagButton, MappedButton)
+//	EVT_MOUSE_EVENTS(TagButton::OnMouseEvent)
+//END_EVENT_TABLE()
 
 	txtdialog::txtdialog(wxWindow *parent, int id, const wxString &txtt, int _type, const wxPoint &position)
 	:wxDialog(parent,id,_("Wpisz tag ASS"),position)
@@ -89,19 +89,24 @@ END_EVENT_TABLE()
 	siz1->Add(new MappedButton(this, wxID_CANCEL,_("Anuluj")),0,wxEXPAND|wxALL,4);
 	siz->Add(siz1,0,wxEXPAND,0);
 	SetSizerAndFit(siz);
+	
+	
 }
 
 TagButton::TagButton(wxWindow *parent, int id, const wxString &name, wxString tooltip, const wxSize &size)
-	: MappedButton(parent,id,name,"", wxDefaultPosition,size)
+	: MappedButton(parent,id,name,"", wxDefaultPosition,size,0)
 {
 	wxString rest;
 	type=0;
 	tag= tooltip.BeforeFirst('\f', &rest);
 	if(tag!=""){SetToolTip(tag);type=wxAtoi(rest);}
+	Bind(wxEVT_LEFT_DOWN, &TagButton::OnMouseEvent, this);
+	Bind(wxEVT_RIGHT_UP, &TagButton::OnMouseEvent, this);
 }
 
 void TagButton::OnMouseEvent(wxMouseEvent& event)
 {
+	//wxLogStatus("events %i %i %i %i", (int)event.Leaving(), (int)event.Entering(), (int)event.LeftDown(), (int)event.LeftUp());
 	if(event.RightUp()||(tag=="" && event.LeftDown())){
 		tagtxt=new txtdialog(this,-1,tag,0,ClientToScreen(event.GetPosition()));
 		if(tagtxt->ShowModal()==wxID_OK){
@@ -165,7 +170,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	Bund->SetBitmap(wxBITMAP_PNG ("UNDER"));
 	Bstrike = new MappedButton(this, ID_STRIKE, "", _("Przekreślenie"), wxDefaultPosition, wxSize(26,26));
 	Bstrike->SetBitmap(wxBITMAP_PNG ("STRIKE"));
-	Ban = new wxChoice(this, ID_AN, wxDefaultPosition, wxSize(48,24),ans);
+	Ban = new KaiChoice(this, ID_AN, wxDefaultPosition, wxSize(48,26),ans);
 	Ban->Select(1);
 
 	BoxSizer4 = new wxBoxSizer(wxHORIZONTAL);
@@ -177,8 +182,8 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer4->Add(Bcol1,0,wxLEFT|wxBOTTOM,2);
 	BoxSizer4->Add(Bcol2,0,wxLEFT|wxBOTTOM,2);
 	BoxSizer4->Add(Bcol3,0,wxLEFT|wxBOTTOM,2);
-	BoxSizer4->Add(Bcol4,0,wxLEFT|wxBOTTOM|wxRIGHT,2);
-	BoxSizer4->Add(Ban,0,wxTOP,1);
+	BoxSizer4->Add(Bcol4,0,wxLEFT|wxBOTTOM,2);
+	BoxSizer4->Add(Ban,0,wxLEFT|wxBOTTOM,2);
 	for(int i=0; i<Options.GetInt("Editbox tag buttons"); i++)
 	{
 		BoxSizer4->Add(new TagButton(this, 15000+i, wxString::Format("T%i",i+1), Options.GetString(wxString::Format("Editbox tag button%i", i)),wxSize(26,26)),0,wxLEFT|wxBOTTOM,2);

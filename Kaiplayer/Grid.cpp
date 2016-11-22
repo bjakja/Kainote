@@ -89,17 +89,17 @@ void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 
 	bool isen;
 	isen = (sels == 1);
-	menu->SetAccMenu( InsertBefore,_("Wstaw przed"))->Enable(isen);
-	menu->SetAccMenu( InsertAfter,_("Wstaw po"))->Enable(isen);
+	menu->SetAccMenu( InsertBefore,_("Wstaw &przed"))->Enable(isen);
+	menu->SetAccMenu( InsertAfter,_("Wstaw p&o"))->Enable(isen);
 	isen = (isen&&Kai->GetTab()->Video->GetState()!=None);
-	menu->SetAccMenu( InsertBeforeVideo,_("Wstaw przed z czasem wideo"))->Enable(isen);
-	menu->SetAccMenu( InsertAfterVideo,_("Wstaw po z czasem wideo"))->Enable(isen);
+	menu->SetAccMenu( InsertBeforeVideo,_("Wstaw przed z &czasem wideo"))->Enable(isen);
+	menu->SetAccMenu( InsertAfterVideo,_("Wstaw po z c&zasem wideo"))->Enable(isen);
 	isen = (sels >0);
-	menu->SetAccMenu( Duplicate,_("Duplikuj linie"))->Enable(isen);
+	menu->SetAccMenu( Duplicate,_("&Duplikuj linie"))->Enable(isen);
 	isen = (sels == 2);
-	menu->SetAccMenu( Swap,_("Zamień"))->Enable(isen);
+	menu->SetAccMenu( Swap,_("Za&mień"))->Enable(isen);
 	isen = (sels >= 2&&sels <= 5);
-	menu->SetAccMenu( Join,_("Złącz linijki"))->Enable(isen);
+	menu->SetAccMenu( Join,_("Złącz &linijki"))->Enable(isen);
 	isen = (sels >= 2&&sels <= 50);
 	menu->SetAccMenu( JoinToFirst,_("Złącz linijki zostaw pierwszą"))->Enable(isen);
 	menu->SetAccMenu( JoinToLast,_("Złącz linijki zostaw ostatnią"))->Enable(isen);

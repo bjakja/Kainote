@@ -230,10 +230,6 @@ void AudioSpectrum::SetScaling(float _power_scale)
 
 void AudioSpectrum::ChangeColours()
 {
-	//hsl_to_rgb(170 + i * 2/3, 128 + i/2, i, palptr+0, palptr+1, palptr+2);	// Previous
-		//hsl_to_rgb((255+128-i)/2, 128 + i/2, MIN(255,2*i), palptr+0, palptr+1, palptr+2);	// Icy blue
-		//wxLogStatus("point%i %i %i %i",i,(int)(*palptr), (int)(*(palptr+1)), (int)(*(palptr+2)));
-		//hsl_to_rgb(174, 255, i, palptr+0, palptr+1, palptr+2);
 	wxColour firstcolor = Options.GetColour("Audio Spectrum First Color"); 
 	wxColour secondcolor = Options.GetColour("Audio Spectrum Second Color"); 
 	wxColour thirdcolor = Options.GetColour("Audio Spectrum Third Color"); 
@@ -251,7 +247,6 @@ void AudioSpectrum::ChangeColours()
 		int pointg = (i<0.5f)? (g - (( g - g1) * (i*2))) : (g1 - (( g1 - g2) * ((i*2)-1.f)));
 		int pointb = (i<0.5f)? (b - (( b - b1) * (i*2))) : (b1 - (( b1 - b2) * ((i*2)-1.f)));
 
-		//wxLogStatus("point %i %f %i %i %i",j, i, pointr, pointg, pointb);
 		*palptr = (unsigned char)pointr;
 		*(palptr+1) = (unsigned char)pointg;
 		*(palptr+2) = (unsigned char)pointb;

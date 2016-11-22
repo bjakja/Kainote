@@ -14,12 +14,8 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-//#include "VideoRenderer.h"
-//#include "Videobox.h"
 #include "DshowRenderer.h"
-//#include <Dvdmedia.h>
 #include <wmsdkidl.h>
-//#include <streams.h>
 
 
 static const GUID CLSID_KVideoRenderer = 
