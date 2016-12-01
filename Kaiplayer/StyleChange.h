@@ -21,9 +21,9 @@
 	#include <wx/checkbox.h>
 	#include <wx/radiobut.h>
 	#include <wx/statbox.h>
-	#include <wx/choice.h>
-	#include <wx/button.h>
 	#include <wx/dialog.h>
+	#include "ListControls.h"
+	#include "MappedButton.h"
     #include "StylePreview.h"
     #include "stylestore.h"
     #include "NumCtrl.h"
@@ -48,14 +48,14 @@ class ColorChange: public wxWindow
 		wxRadioButton* rb8;
 		wxRadioButton* rb9;
 		wxCheckBox* si;
-		wxButton* Button1;
+		MappedButton* btnOk;
 		wxTextCtrl* sname;
-		wxButton* s2;
-		wxButton* s3;
+		MappedButton* s2;
+		MappedButton* s3;
 		NumCtrl* ssize;
-		wxButton* Button2;
-		wxButton* Button3;
-		wxButton* Button4;
+		MappedButton* btnCommit;
+		MappedButton* btnCancel;
+		MappedButton* btnFullscreen;
 		wxComboBox* sfont;
 		NumCtrl* alpha1;
 		NumCtrl* alpha2;
@@ -67,12 +67,12 @@ class ColorChange: public wxWindow
 		NumCtrl* ssh;
 		NumCtrl* san;
 		NumCtrl* ssp;
-		wxButton* s4;
-		wxButton* s1;
+		MappedButton* s4;
+		MappedButton* s1;
 		wxCheckBox* ss;
 		wxCheckBox* su;
 		wxCheckBox* sb;
-		wxChoice* senc;
+		KaiChoice* senc;
 		NumCtrl* smr;
 		NumCtrl* smv;
 		NumCtrl* sml;

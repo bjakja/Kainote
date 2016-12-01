@@ -46,9 +46,9 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	
 	
 	//ramka czasu
-	wxStaticBoxSizer *timesizer=new wxStaticBoxSizer(wxVERTICAL,this,"Czas");
+	wxStaticBoxSizer *timesizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Czas"));
 	wxGridSizer *timegrid=new wxGridSizer(2, 0, 0);
-	MoveTime = new MappedButton(this, ID_MOVE, _("Przesuń"), _("Przesuń czas napisów"), wxDefaultPosition, wxSize(60,22), GLOBAL_HOTKEY);
+	MoveTime = new MappedButton(this, ID_MOVE, _("Przesuń"), _("Przesuń czas napisów"), wxDefaultPosition, wxSize(60,24), GLOBAL_HOTKEY);
 	TimeText = new TimeCtrl(this, -1, "0:00:00.00", wxDefaultPosition, wxSize(60,22), wxTE_PROCESS_ENTER);
 	Forward = new wxRadioButton(this, -1, _("W przód"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
 	Backward = new wxRadioButton(this, -1, _("W tył"));
@@ -91,10 +91,10 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	choices.Add(_("Od zaznaczonej linijki"));
 	choices.Add(_("Czasy wyższe i równe"));
 	choices.Add(_("Według wybranych stylów"));
-	WhichLines= new wxChoice(this,-1,wxDefaultPosition,wxDefaultSize,choices);
+	WhichLines= new KaiChoice(this,-1,wxDefaultPosition,wxDefaultSize,choices);
 
 	wxBoxSizer *stylesizer= new wxBoxSizer(wxHORIZONTAL);
-	AddStyles = new wxButton(this, ID_BSTYLE, "+",wxDefaultPosition, wxSize(22,22));
+	AddStyles = new MappedButton(this, ID_BSTYLE, "+", "", wxDefaultPosition, wxSize(24,24), 0);
 	Stylestext = new wxTextCtrl(this, -1, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	stylesizer->Add(AddStyles,0,wxALL,2);
 	stylesizer->Add(Stylestext,1,wxEXPAND|wxBOTTOM|wxTOP|wxRIGHT,2);
@@ -108,17 +108,20 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	choices.Add(_("Czas początkowy"));
 	choices.Add(_("Czas końcowy"));
 	
-	WhichTimes= new wxChoice(this,-1,wxDefaultPosition,wxDefaultSize,choices);
+	WhichTimes= new KaiChoice(this,-1,wxDefaultPosition,wxDefaultSize,choices);
 	WhichTimes->Enable(form!=TMP);
 	
 	timessizer->Add(WhichTimes,0,wxEXPAND|wxRIGHT|wxTOP|wxLEFT,2);
 
 	wxStaticBoxSizer *cesizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Korekcja czasów końcowych"));
-	wxString ctchoices[3]={_("Zostaw bez zmian"), _("Skoryguj nachodzące czasy"), _("Nowe czasy")};
-	CorTime = new wxChoice(this, -1, wxDefaultPosition, wxSize(120,-1), 3, ctchoices);
+	choices.clear();
+	choices.Add(_("Zostaw bez zmian"));
+	choices.Add(_("Skoryguj nachodzące czasy"));
+	choices.Add(_("Nowe czasy"));
+	CorTime = new KaiChoice(this, -1, wxDefaultPosition, wxSize(140,-1), choices);
 	CorTime->SetSelection(0);
 	cesizer->Add(CorTime,0,wxEXPAND|wxLEFT|wxRIGHT,2);
-	coll = new wxButton(this,22999,_("Opcje dodatkowe"),wxDefaultPosition, wxSize(-1,24));
+	coll = new MappedButton(this,22999,_("Opcje dodatkowe"),"",wxDefaultPosition, wxSize(-1,-1), 0);
 	LeadIn=NULL;
 	
 	Main->Add(timesizer,0,wxEXPAND|wxRIGHT|wxTOP|wxLEFT,4);
@@ -150,31 +153,24 @@ CTwindow::~CTwindow()
 void CTwindow::Contents(bool addopts)
 {
 	bool state;
-	//if(addopts){
-		form=Kai->GetTab()->Grid1->form;
-		if(form<SRT){state=true;
-			if(WhichLines->GetCount()<5){
-				WhichLines->Append(_("Czasy wyższe i równe"));
-				WhichLines->Append(_("Według wybranych stylów"));
-			}
-		}else{
-			if(WhichLines->GetCount()>3){
-				WhichLines->Delete(4);
-				WhichLines->Delete(3);
-				if(WhichLines->GetSelection()<0){WhichLines->SetSelection(0);}
-
-			}
-			state=false;
-		}
-		Main->Layout();
-		AddStyles->Enable(state);
-		Stylestext->Enable(state);
-		WhichTimes->Enable(form!=TMP);
-		if(Kai->GetTab()->Video->GetState()!=None){state=true;}else{state=false;}
-		videotime->Enable(state);
-		state=(Kai->GetTab()->Edit->ABox && Kai->GetTab()->Edit->ABox->audioDisplay->hasMark);
-		audiotime->Enable(state);
-	//}
+	form=Kai->GetTab()->Grid1->form;
+	if(form<SRT){
+		state=true;
+		WhichLines->EnableItem(3);
+		WhichLines->EnableItem(4);
+	}else{
+		WhichLines->EnableItem(3,false);
+		WhichLines->EnableItem(4,false);
+		state=false;
+	}
+	Main->Layout();
+	AddStyles->Enable(state);
+	Stylestext->Enable(state);
+	WhichTimes->Enable(form!=TMP);
+	if(Kai->GetTab()->Video->GetState()!=None){state=true;}else{state=false;}
+	videotime->Enable(state);
+	state=(Kai->GetTab()->Edit->ABox && Kai->GetTab()->Edit->ABox->audioDisplay->hasMark);
+	audiotime->Enable(state);
 	if(LeadIn){
 		state=(form!=TMP);
 		LeadIn->Enable(state);
@@ -244,13 +240,13 @@ void CTwindow::OnSize(wxSizeEvent& event)
 	if(isscrollbar&&h==0)
 	{
 		isscrollbar=false;
-		SetMinSize(wxSize(bestsize+20,-1));
+		SetMinSize(wxSize(bestsize+40,-1));
 		cur->BoxSizer3->Layout();
 	}
 	else if(!isscrollbar&&h>0)
 	{
 		isscrollbar=true;
-		SetMinSize(wxSize(bestsize+40,-1));
+		SetMinSize(wxSize(bestsize+60,-1));
 		cur->BoxSizer3->Layout();
 	}
 	event.Skip();

@@ -19,6 +19,7 @@
 #include "SubsTime.h"
 #include "NumCtrl.h"
 #include "MappedButton.h"
+#include "ListControls.h"
 #include <wx/wx.h>
 #include <wx/collpane.h>
 
@@ -34,18 +35,18 @@ class CTwindow: public wxScrolled<wxWindow>
 		virtual ~CTwindow();
 		wxRadioButton* StartVAtime;
 		wxRadioButton* EndVAtime;
-		wxChoice *WhichLines;
-		wxChoice *WhichTimes;
+		KaiChoice *WhichLines;
+		KaiChoice *WhichTimes;
 		wxRadioButton* Forward;
 		wxRadioButton* Backward;
 		
-		wxButton* AddStyles;
+		MappedButton* AddStyles;
 		MappedButton* MoveTime;
 		TimeCtrl* TimeText;
 		wxTextCtrl* Stylestext;
 		wxCheckBox* videotime;
 		wxCheckBox* audiotime;
-		wxChoice* CorTime;
+		KaiChoice* CorTime;
 		wxCheckBox* LeadIn;
 		wxCheckBox* LeadOut;
 		wxCheckBox* Continous;
@@ -74,7 +75,7 @@ class CTwindow: public wxScrolled<wxWindow>
 		kainoteFrame* Kai;
 		bool isscrollbar;
 		int bestsize;
-		wxButton *coll;
+		MappedButton *coll;
 		
 		void OnOKClick(wxCommandEvent& event);
 		void OnAddStyles(wxCommandEvent& event);

@@ -109,6 +109,10 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	SetSizerAndFit(mainsizer);
 
 	Connect(25456,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ScriptInfo::OnVideoRes);
+	wxAcceleratorEntry centries[1];
+	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, wxID_OK);
+	wxAcceleratorTable caccel(1, centries);
+	this->SetAcceleratorTable(caccel);
 
 	DoTooltips();
 	CenterOnParent();

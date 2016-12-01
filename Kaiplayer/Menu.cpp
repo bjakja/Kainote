@@ -17,6 +17,7 @@
 #include "Menu.h"
 #include "Config.h"
 #include "Toolbar.h"
+//#include "wx/msw/private.h"
 
 static wxFont font = wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma");
 const static int height = 22;
@@ -25,6 +26,7 @@ static bool showMnemonics=false;
 static bool secondAlt=false;
 static bool showIcons=true;
 static int selectOnStart=-1;
+static int minWidth=0;
 
 wxDEFINE_EVENT(EVT_MENU_OPENED, MenuEvent);
 
@@ -107,7 +109,7 @@ void Menu::PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos)
 	//wxLogStatus("Mn size %i", mnemonics.size());
 	
 	dialog = new MenuDialog(this, parent, npos, size, showIcons);
-	dialog->Show();
+	dialog->Show();//Show();
 }
 
 void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool clientPos)
@@ -121,6 +123,7 @@ void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool cli
 	}
 	
 	size->x += (showIcons)? 58 : 20;
+	if(minWidth && minWidth > size->x){size->x = minWidth;}
 	if(isize > (size_t)maxVisible) {size->x += 20; isize=maxVisible;}
 	size->y = height * isize + 4;
 	int w,h;
@@ -155,6 +158,15 @@ void Menu::SetShowIcons(bool _showIcons)
 	showIcons=_showIcons;
 }
 
+void Menu::SelectOnStart(int numitem)
+{
+	selectOnStart=numitem;
+}
+
+void Menu::SetMinWidth(int width)
+{
+	minWidth=width;
+}
 
 MenuItem *Menu::AppendTool(KaiToolbar *ktb, int id, wxString text, wxString help, wxBitmap *bitmap, bool enable, Menu *SubMenu)
 {
@@ -342,10 +354,10 @@ void Menu::GetAccelerators(std::vector <wxAcceleratorEntry> *entries)
 
 MenuDialog* MenuDialog::ParentMenu=NULL;
 MenuDialog* MenuDialog::lastActiveMenu=NULL;
-volatile int MenuDialog::id=-3;
+int MenuDialog::id=-3;
 
 MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos, const wxSize &size, bool sendEvent)
-	:wxFrame(DialogParent,-1,"",pos, size, wxFRAME_NO_TASKBAR|wxSTAY_ON_TOP|wxWS_EX_TRANSIENT)
+	:wxPopupWindow(DialogParent)/*wxFrame(DialogParent,-1,"",pos, size, wxFRAME_NO_TASKBAR|wxSTAY_ON_TOP|wxWS_EX_TRANSIENT)*/
 	,wxGUIEventLoop()
 	,parent(_parent)
 	,sel(selectOnStart)
@@ -363,46 +375,24 @@ MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos
 	}
 	//show
 	showSubmenuTimer.SetOwner(this, 13475);
-	Bind(wxEVT_TIMER,[=](wxTimerEvent &evt){
-		//wxLogStatus("show %i %i",submenuShown,sel);
-		if(submenuShown == -1 || sel == -1){return;}//|| sel != submenuShown
-		//if(submenuToHide != -1){hideSubmenuTimer.Start(200,true);}
-		int scrollPos = submenuShown-scPos;
-		wxSize size = GetSize();
-		wxPoint pos = GetPosition();
-		pos.x += size.x;
-		pos.y += scrollPos * height;
-		parent->items[submenuShown]->submenu->PopupMenu(pos, this, false);
-		submenuToHide=submenuShown;
-		subMenuIsShown=true;
-		selectOnStart=-1;
-	},13475);
+	Bind(wxEVT_TIMER,&MenuDialog::OnShowSubmenu,this,13475);
 	//hide
 	hideSubmenuTimer.SetOwner(this, 13476);
-	Bind(wxEVT_TIMER,[=](wxTimerEvent &evt){
-		if(submenuToHide == -1){return;}
-		//if(sel == submenuToHide){subMenuIsShown=true; return;}
-		//wxLogStatus("Hidesubmenu timer %i",submenuToHide);
-		MenuItem *olditem=parent->items[submenuToHide];
-		if(olditem->submenu->dialog){
-			//wxRect rc = olditem->submenu->dialog->GetScreenRect();
-			//wxPoint pos = wxGetMousePosition();
-			//if(rc.Contains(pos)){return;}
-			if(lastActiveMenu==olditem->submenu->dialog){return;}
-			wxRect rc1 = GetScreenRect();
-			if(!rc1.Contains(pos)){sel=-1; Refresh(false);}
-			else if (sel == submenuToHide){subMenuIsShown=true; return;}
-			//olditem->submenu->dialog->HideWithEffect(wxSHOW_EFFECT_BLEND,1);
-			olditem->submenu->DestroyDialog();
-			MenuBar::Menubar->md = parent;
-		}
-		if(submenuShown != submenuToHide){showSubmenuTimer.Start(1,true);}
-		submenuToHide=-1;
-	},13476);
+	Bind(wxEVT_TIMER,&MenuDialog::OnHideSubmenu,this,13476);
 	//if(!ParentMenu->HasCapture()){CaptureMouse();}
 	//this->AcceptFocus(false);
 	//MenuBar::Menubar->activChild = this->parent;
 	MenuBar::Menubar->md = parent;
+	Bind(wxEVT_LEFT_DOWN, &MenuDialog::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_UP, &MenuDialog::OnMouseEvent, this);
+	Bind(wxEVT_LEAVE_WINDOW, &MenuDialog::OnMouseEvent, this);
+	Bind(wxEVT_ENTER_WINDOW, &MenuDialog::OnMouseEvent, this);
+	Bind(wxEVT_MOTION, &MenuDialog::OnMouseEvent, this);
+	Bind(wxEVT_MOUSEWHEEL, &MenuDialog::OnMouseEvent, this);
+	//Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &evt){evt.}, this);
+	//BringWindowToTop(GetHWND());
+	SetSize(size);
+	SetPosition(pos);
 }
 
 MenuDialog::~MenuDialog()
@@ -414,12 +404,116 @@ MenuDialog::~MenuDialog()
 	wxDELETE(bmp);
 }
 
+void MenuDialog::OnShowSubmenu(wxTimerEvent &evt)
+{
+	//wxLogStatus("show %i %i",submenuShown,sel);
+	if(submenuShown == -1 || sel == -1){return;}//|| sel != submenuShown
+	//if(submenuToHide != -1){hideSubmenuTimer.Start(200,true);}
+	int scrollPos = submenuShown-scPos;
+	wxSize size = GetSize();
+	int x, y;
+	wxPopupWindowBase::DoGetPosition(&x, &y);
+	//pos = ScreenToClient(pos);
+	//pos.x += size.x;
+	//pos.y += scrollPos * height;
+	x += size.x;
+	y += scrollPos * height;
+	parent->items[submenuShown]->submenu->PopupMenu(wxPoint(x,y)/*pos*/, this, false);
+	submenuToHide=submenuShown;
+	subMenuIsShown=true;
+	selectOnStart=-1;
+
+	
+}
+	
+void MenuDialog::OnHideSubmenu(wxTimerEvent &evt)
+{
+	if(submenuToHide == -1){return;}
+	//if(sel == submenuToHide){subMenuIsShown=true; return;}
+	//wxLogStatus("Hidesubmenu timer %i",submenuToHide);
+	MenuItem *olditem=parent->items[submenuToHide];
+	if(olditem->submenu->dialog){
+		//wxRect rc = olditem->submenu->dialog->GetScreenRect();
+		wxPoint pos = wxGetMousePosition();
+		//if(rc.Contains(pos)){return;}
+		if(lastActiveMenu==olditem->submenu->dialog){return;}
+		wxRect rc1 = GetScreenRect();
+		if(!rc1.Contains(pos)){sel=-1; Refresh(false);}
+		else if (sel == submenuToHide){subMenuIsShown=true; return;}
+		//olditem->submenu->dialog->HideWithEffect(wxSHOW_EFFECT_BLEND,1);
+		olditem->submenu->DestroyDialog();
+		MenuBar::Menubar->md = parent;
+	}
+	if(submenuShown != submenuToHide){showSubmenuTimer.Start(1,true);}
+	submenuToHide=-1;
+}
+//WXHWND MenuDialog::MSWGetParent() const
+//{
+//    // we must be a child of the desktop to be able to extend beyond the parent
+//    // window client area (like the comboboxes drop downs do)
+//    //
+//    // NB: alternative implementation would be to use WS_POPUP instead of
+//    //     WS_CHILD but then showing a popup would deactivate the parent which
+//    //     is ugly and working around this, although possible, is even more
+//    //     ugly
+//    // GetDesktopWindow() is not always supported on WinCE, and if
+//    // it is, it often returns NULL.
+//#ifdef __WXWINCE__
+//    return 0;
+//#else
+//    return (WXHWND)::GetDesktopWindow();
+//#endif
+//}
+//
+//bool MenuDialog::Show(bool show)
+//{
+//    if ( !wxWindowMSW::Show(show) )
+//        return false;
+//
+//    if ( show )
+//    {
+//        // raise to top of z order
+//        if (!::SetWindowPos(GetHWND(), HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE))
+//        {
+//            wxLogLastError(wxT("SetWindowPos"));
+//        }
+//
+//        // and set it as the foreground window so the mouse can be captured
+//        ::SetForegroundWindow(GetHWND());
+//    }
+//
+//    return true;
+//}
+//
+//WXDWORD MenuDialog::MSWGetStyle(long flags, WXDWORD *exstyle) const
+//{
+//    // we only honour the border flags, the others don't make sense for us
+//    WXDWORD style = wxWindow::MSWGetStyle(flags & wxBORDER_MASK, exstyle);
+//
+//    if ( exstyle )
+//    {
+//        // a popup window floats on top of everything
+//        *exstyle |= WS_EX_TOPMOST | WS_EX_TOOLWINDOW;
+//    }
+//
+//    return style;
+//}
+//
+//void MenuDialog::DoGetPosition(int *x, int *y) const
+//{
+//    // the position of a "top level" window such as this should be in
+//    // screen coordinates, not in the client ones which MSW gives us
+//    // (because we are a child window)
+//    wxWindow::DoGetPosition(x, y);
+//
+//    GetParent()->ClientToScreen(x, y);
+//}
+
 void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 {
 	bool leftdown=evt.LeftDown();
 	int x=evt.GetX();
 	int y=evt.GetY();
-	
 	int elem = y/height;
 
 	if(evt.Leaving()){
@@ -495,8 +589,8 @@ bool MenuDialog::SendEvent(MenuItem *item, int accel)
 		evt->SetInt(accel);
 		wxQueueEvent(ParentMenu->GetParent(),evt);
 	}
-		
-	HideMenus();
+	HideMenus();	
+	
 	return true;
 }
 	
@@ -543,7 +637,7 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	wxColour menuhighlight(fr,fg,fb);
 	tdc.SetFont(font);
 	tdc.SetBrush(wxBrush(background));
-	tdc.SetPen(wxPen(background));
+	tdc.SetPen(wxPen(text));
 	tdc.DrawRectangle(0,0,w,h);
 	tdc.SetTextForeground(text);
 	wxSize mnbefsize;
@@ -552,15 +646,12 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 
 	bool noRadio=true;
 
-	int textStart = (showIcons)? 28 : 4;
+	int textStart = (showIcons)? 29 : 5;
 	for(int i=0;i<maxsize; i++)
 	{
 		int scrollPos=i+scPos;
 		MenuItem *item=parent->items[scrollPos];//+scPos
 		if(item->type==ITEM_SEPARATOR){
-			//tdc.SetPen(wxPen("#FFFFFF"));
-			//tdc.SetBrush(wxBrush("#000000"));
-			//tdc.DrawRectangle(30,height*i+10,w-36,1);
 			wxImage img=separator.ConvertToImage();
 			img = img.Scale(w-36, 4, wxIMAGE_QUALITY_BILINEAR);
 			tdc.DrawBitmap(wxBitmap(img),30,(height*i)+8);
@@ -570,19 +661,19 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 		if(scrollPos==sel){
 			tdc.SetPen(wxPen(highlight));
 			tdc.SetBrush(wxBrush(menuhighlight));
-			tdc.DrawRectangle(1, (height*i)+1,w-2,height-2);
+			tdc.DrawRectangle(2, (height*i)+1,w-4,height);
 		}
 		//tdc.SetPen(wxPen("#497CB0",2));
 		//tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 		
 		if(showIcons){
 			if(item->type==ITEM_CHECK && item->check){
-				tdc.DrawBitmap(checkbmp,4,(height*i)+2);
+				tdc.DrawBitmap(checkbmp,5,(height*i)+3);
 			}else if(item->type==ITEM_RADIO && noRadio){
-				tdc.DrawBitmap(dot,4,(height*i)+2);
+				tdc.DrawBitmap(dot,5,(height*i)+4);
 				noRadio=false;
 			}else if(item->icon){
-				tdc.DrawBitmap(item->GetBitmap(),4,(height*i)+2);
+				tdc.DrawBitmap(item->GetBitmap(),5,(height*i)+4);
 			}
 		}
 		wxString desc=item->GetLabel();
@@ -603,16 +694,16 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 			int fw, fhh;
 			wxString accel=desc.AfterLast('\t');
 			tdc.GetTextExtent(accel, &fw, &fhh);
-			tdc.DrawText(accel,w-fw-20,(height*i)+2);
+			tdc.DrawText(accel,w-fw-20,(height*i)+3);
 			desc=desc.BeforeLast('\t');
 		}
-		tdc.DrawText(desc,textStart,(height*i)+2);
+		tdc.DrawText(desc,textStart,(height*i)+3);
 		if(hasMnemonics){
 			tdc.SetPen(wxPen((item->enabled)? text : graytext));
-			tdc.DrawLine(textStart+mnbefsize.x, (height*(i+1))-4, textStart+mnbefsize.x+linesize.x, (height*(i+1))-4);
+			tdc.DrawLine(textStart+mnbefsize.x, (height*(i+1))-3, textStart+mnbefsize.x+linesize.x, (height*(i+1))-4);
 		}
 		if(item->submenu){
-			tdc.DrawBitmap(arrow,w-18,(height*i)+2);
+			tdc.DrawBitmap(arrow,w-18,(height*i)+3);
 		}
 
 	}
@@ -658,24 +749,34 @@ void MenuDialog::OnScroll(wxScrollWinEvent& event)
 void MenuDialog::HideMenus()
 {
 	if(!ParentMenu){return;}
-	
+	//wxLogStatus("Hidemenus");
 	int subMenu=ParentMenu->submenuToHide;
 	//wxLogStatus("submenu");
 	Menu *menu=ParentMenu->parent;
+	ParentMenu->submenuToHide=-1;
+	ParentMenu->submenuShown=-1;
+	
 	while(subMenu!= -1 && menu->items[subMenu]->submenu){
 		menu = menu->items[subMenu]->submenu;
 		//wxLogStatus("menu %i, %i", subMenu, (int)menu);
-		if(menu->dialog){subMenu = menu->dialog->submenuToHide;}
+		if(menu->dialog){
+			subMenu = menu->dialog->submenuToHide;
+			menu->dialog->submenuToHide=-1;
+			menu->dialog->submenuShown=-1;
+			
+		}
 		else{subMenu = -1;break;}
 		//menu->dialog->HideWithEffect(wxSHOW_EFFECT_BLEND,1);
 		menu->DestroyDialog();
 	}
 	if(ParentMenu->isPartialModal){ParentMenu->EndPartialModal(0);}
-	else{/*ParentMenu->HideWithEffect(wxSHOW_EFFECT_BLEND,1);*/ ParentMenu->parent->DestroyDialog();}
-	ParentMenu=NULL;
+	else{ParentMenu->parent->DestroyDialog();}
 	MenuBar::Menubar->md=NULL;
+	ParentMenu=NULL;
 	showIcons=true;
 	maxVisible=30;
+	minWidth = 0; 
+	//wxLogStatus("Hidemenus complete");
 }
 
 //void MenuDialog::OnLostCapture(wxMouseCaptureLostEvent &evt){
@@ -687,23 +788,17 @@ void MenuDialog::HideMenus()
 int MenuDialog::ShowPartialModal()
 {
 	isPartialModal=true;
-	//ShowWithEffect(wxSHOW_EFFECT_BLEND ,1);
-	//Refresh(false);
+	//Show();
 	Show();
-	//if((size_t)maxVisible < parent->items.size()){SetFocus();}
-	//MenuBar::Menubar->md=parent;
-	//wxLogStatus("partial show");
 	if(IsShown()){
 		Run();
 	}
-	//wxLogStatus("partial end");
 	return id;
 }
 //Odwo³uje pêtlê czekaj¹c¹
 void MenuDialog::EndPartialModal(int ReturnId)
 {
 	Exit(ReturnId);
-	/*HideWithEffect(wxSHOW_EFFECT_BLEND ,1);*/
 	Hide();
 }
 
@@ -713,13 +808,13 @@ WXLRESULT MenuDialog::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lP
 		ParentMenu->HideMenus();
 		MenuBar::Menubar->HideMnemonics();
     }
-    return wxFrame::MSWWindowProc(message, wParam, lParam);
+    return /*wxFrame*/wxPopupWindow::MSWWindowProc(message, wParam, lParam);
 }
 
 
-BEGIN_EVENT_TABLE(MenuDialog, wxFrame)
-	EVT_MOUSE_EVENTS(MenuDialog::OnMouseEvent)
+BEGIN_EVENT_TABLE(MenuDialog, wxPopupWindow/*wxFrame*/)
 	EVT_PAINT(MenuDialog::OnPaint)
+	//EVT_MOUSE_EVENTS(MenuDialog::OnMouseEvent)
 	//EVT_MOUSE_CAPTURE_LOST(MenuDialog::OnLostCapture)
 	EVT_SCROLLWIN(MenuDialog::OnScroll)
 END_EVENT_TABLE()
@@ -1040,6 +1135,7 @@ LRESULT CALLBACK MenuBar::OnKey( int code, WPARAM wParam, LPARAM lParam ){
 		}
 			
 	}else if(wParam == VK_ESCAPE && Menubar->md){
+		Menubar->md->dialog->id = -3;
 		MenuDialog::ParentMenu->HideMenus();
 		Menubar->HideMnemonics();
 		return 1;
@@ -1064,6 +1160,7 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 		return 0;
 	}
 	LPMSG msg = (LPMSG)lParam;
+	
 	if( msg->message == WM_MOUSEWHEEL ){
 		POINT mouse;
 		GetCursorPos (&mouse);
@@ -1085,7 +1182,10 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 			bool contains=false;
 			while(menu){
 				if(menu->dialog){
+					int x, y;
+					menu->dialog->wxPopupWindowBase::DoGetPosition(&x, &y);
 					wxRect rc = menu->dialog->GetRect();
+					rc.x=x; rc.y=y;
 					//wxLogStatus("contains %i, %i %i %i %i %i", posOnScreen.x, posOnScreen.y, rc.x, rc.y, rc.GetRight(), rc.GetBottom());
 					if(rc.Contains(posOnScreen)){
 						contains=true;
@@ -1106,7 +1206,11 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 			Menubar->HideMnemonics();
 		}
 	}
-
+	/*if((msg->message != WM_MOUSEMOVE ) && Menubar->md){
+		wxLogStatus("Message %i", msg->message);
+		return 1;
+	}*/
+	
 	return CallNextHookEx( 0, code, wParam, lParam );
 }
 

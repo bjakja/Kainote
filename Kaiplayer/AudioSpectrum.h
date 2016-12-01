@@ -47,12 +47,13 @@ class FFT;
 //class SpectrumThread;
 class FinalSpectrumCache;
 
+typedef std::vector<float> CacheLine;
+
 class AudioSpectrum {
 	friend class SpectrumThread;
 private:
 	// Data provider
 	//AudioSpectrumCacheManager *cache;
-	SpectrumThread *cache;
 
 	// Colour pallettes
 	unsigned char colours_normal[256*3];
@@ -70,46 +71,23 @@ private:
 	int minband; // smallest frequency band displayed
 	int maxband; // largest frequency band displayed
 	int subcachelen;
+	size_t numsubcaches;
 	FFT *fft;
 	wxCriticalSection CritSec;
 	void SetupSpectrum(int overlaps = 1, int length = (1<<9));
+	CacheLine &GetLine(unsigned long i, unsigned int overlap);
+	std::vector<FinalSpectrumCache*> sub_caches;
 public:
 	AudioSpectrum(VideoFfmpeg *_provider);
 	~AudioSpectrum();
 	
 
-	void RenderRange(int64_t range_start, int64_t range_end, bool selected, unsigned char *img, int imgwidth, int imgheight, int percent);
+	void RenderRange(int64_t range_start, int64_t range_end, bool selected, unsigned char *img, int imgleft, int imgwidth, int imgpitch, int imgheight, int percent);
 
 	void SetScaling(float _power_scale);
 	void ChangeColours();
 };
 
-typedef std::vector<float> CacheLine;
-class SpectrumThread
-{
-	friend class AudioSpectrum;
-public:
-	SpectrumThread(AudioSpectrum *spc, size_t numsubcaches, size_t overlaps);
-	~SpectrumThread();
-	void MakeSubCaches(size_t start, size_t bufstart, size_t len, size_t buflen, unsigned char *img, int imgwidth, int imgheight, unsigned char *palette);
-	CacheLine &GetLine(unsigned long i, unsigned int overlap);
-	//void Age();
-	void Wait();
-private:
-	void procincls(int numthread);
-	AudioSpectrum *spc;
-	size_t start;
-	size_t first_line;
-	size_t last_line;
-	size_t length;
-	size_t numsubcaches;
-	size_t overlaps;
-	int imgwidth;
-	int imgheight;
-	unsigned char *palette;
-	unsigned char *img;
-	std::vector<FinalSpectrumCache*> sub_caches;
-	
-};
+
 
 #endif

@@ -1053,7 +1053,7 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 		MText.Remove(from,to-from);
 		CalcWrap();
 		SetSelection(from,from);modified=true;}
-	else if(id==TEXTM_ADD){
+	else if(id==TEXTM_ADD && !err.IsEmpty()){
 		bool succ = SpellChecker::Get()->AddWord(err);
 		if(!succ){wxMessageBox(_("Błąd, słowo \"")+err+_("\" nie zostało dodane."));}
 		else{CheckText();EB->ClearErrs();Refresh(false);}

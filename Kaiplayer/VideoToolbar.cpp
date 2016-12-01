@@ -17,7 +17,7 @@
 #include "Config.h"
 
 
-static int startDrawPos = 5;
+static int startDrawPos = 146;
 std::vector< itemdata *> VideoToolbar::icons;
 
 VideoToolbar::VideoToolbar (wxWindow *parent, const wxPoint &pos)
@@ -65,6 +65,25 @@ VideoToolbar::VideoToolbar (wxWindow *parent, const wxPoint &pos)
 	Connect(wxEVT_MOTION, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
 	Connect(wxEVT_LEAVE_WINDOW, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
 	Connect(wxEVT_MOUSEWHEEL, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
+	wxString movopts[6]={_("Dwukrotnym kliknięciu na linię (zawsze włączone)"),_("Kliknięciu na linię"),
+		_("Kliknięciu na linię lub edycji na pauzie"),_("Kliknięciu na linię lub edycji"),
+		_("Edycji na pauzie"),_("Edycji")};
+	wxString playopts[4]={_("Nic"),_("Audio do końca linii"),_("Wideo do końca linii"),
+		_("Wideo do początku następnej linii")};
+	videoSeekAfter = new KaiChoice(this, ID_SEEK_AFTER, wxPoint(2,0), wxSize(70,22),6,movopts);
+	videoSeekAfter->SetSelection(Options.GetInt("Move Video To Active Line"));
+	videoSeekAfter->SetToolTip(_("Przesuwaj wideo do aktualnej linii po:"));
+	videoPlayAfter = new KaiChoice(this, ID_PLAY_AFTER, wxPoint(72,0), wxSize(70,22),4,playopts);
+	videoPlayAfter->SetSelection(Options.GetInt("Play After Selection"));
+	videoPlayAfter->SetToolTip(_("Odtwarzaj po zmianie linii:"));
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED,[=](wxCommandEvent &evt){ 
+		Options.SetInt("Move Video To Active Line",videoSeekAfter->GetSelection());
+		Options.SaveOptions(true,false);
+	},ID_SEEK_AFTER);
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED,[=](wxCommandEvent &evt){
+		Options.SetInt("Play After Selection",videoPlayAfter->GetSelection());
+		Options.SaveOptions(true,false);
+	},ID_PLAY_AFTER);
 	MoveToggled[0]=true;
 	for (int i = 1; i < moveToolsSize; i++){
 		MoveToggled[i]=false;

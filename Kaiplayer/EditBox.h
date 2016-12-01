@@ -104,7 +104,7 @@ public:
 	TimeCtrl* StartEdit;
 	TimeCtrl* EndEdit;
 	TimeCtrl* DurEdit;
-	wxChoice* StyleChoice;
+	KaiChoice* StyleChoice;
 	DescTxtCtrl* ActorEdit;
 	NumCtrl* MarginLEdit;
 	NumCtrl* MarginREdit;
@@ -124,7 +124,7 @@ public:
 	MappedButton* Bcpall;
 	MappedButton* Bcpsel;
 	MappedButton* Bhide;
-	wxToggleButton* AutoMoveTags;
+	ToggleButton* AutoMoveTags;
 	KaiChoice* Ban;
 
 

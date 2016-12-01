@@ -52,13 +52,12 @@
 #include <wx/slider.h>
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
-#include <wx/tglbtn.h>
 #include "AudioDisplay.h"
 //#include "Hotkeys.h"
 //////////////
 // Prototypes
 
-//class kainoteFrame;
+class ToggleButton;
 
 
 
@@ -76,13 +75,13 @@ private:
 	wxSizer *TopSizer;
 	wxSizer *sashSizer;
 	wxSizer *DisplaySizer;
-	wxToggleButton *VerticalLink;
-	wxToggleButton *AutoScroll;
-	wxToggleButton *NextCommit;
-	wxToggleButton *AutoCommit;
-	wxToggleButton *SpectrumMode;
-	wxToggleButton *KaraSwitch;
-	wxToggleButton *KaraMode;
+	ToggleButton *VerticalLink;
+	ToggleButton *AutoScroll;
+	ToggleButton *NextCommit;
+	ToggleButton *AutoCommit;
+	ToggleButton *SpectrumMode;
+	ToggleButton *KaraSwitch;
+	ToggleButton *KaraMode;
 
 	void OnScrollbar(wxScrollEvent &event);
 	void OnHorizontalZoom(wxScrollEvent &event);

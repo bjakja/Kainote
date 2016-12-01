@@ -16,7 +16,16 @@
 
 #include "MappedButton.h"
 
-static const wxFont font = wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma");
+static const wxFont font = wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma");
+
+wxColour WhiteUp(const wxColour &color)
+{
+	int r = color.Red() + 45, g = color.Green() + 45, b = color.Blue() + 45;
+	r = (r<0xFF)? r : 0xFF;
+	g = (g<0xFF)? g : 0xFF;
+	b = (b<0xFF)? b : 0xFF;
+	return wxColour(r,g,b);
+}
 
 //w tooltipach nie nale¿y ustawiaæ () bo zostan¹ usuniête
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, const wxString& toolTip,
@@ -27,22 +36,22 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 			 ,bmp(0)
 			 ,enter(false)
 			 ,clicked(false)
+			 ,isColorButton(false)
 {
 	name = label;
-	bool changeSize=false;
 	wxSize newSize=size;
 	if(size.x <1){
 		int fw, fh;
 		GetTextExtent(name, &fw, &fh, 0, 0, &font);
 		newSize.x = fw+10;
-		if(newSize.x<80){newSize.x=80;}
-		changeSize=true;
+		if(newSize.x<60){newSize.x=60;}
 	}
 	if(size.y <1){
 		newSize.y = 26;
-		changeSize=true;
 	}
-	if(changeSize){SetMinSize(newSize);}
+	SetMinSize(newSize);
+	//SetBestSize(newSize);
+	//wxLogStatus("size %i %i", newSize.x, newSize.y);
 	Bind(wxEVT_LEFT_DOWN, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_ENTER_WINDOW, &MappedButton::OnMouseEvent, this);
@@ -50,31 +59,33 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
-	SetToolTip(toolTip);
+	if(toolTip!=""){SetToolTip(toolTip);}
 }
 
-MappedButton::MappedButton(wxWindow *parent, int id, const wxBitmap& bitmap, const wxPoint& pos,
-            const wxSize& size, int window, long style)
+MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int window,
+            const wxPoint& pos, const wxSize& size, long style)
 			:wxWindow(parent, id, pos, size, style)
-			,Window(window)
-			,twoHotkeys(false)
-			,bmp(0)
-			,enter(false)
-			,clicked(false)
+			 ,Window(window)
+			 ,twoHotkeys(false)
+			 ,bmp(0)
+			 ,enter(false)
+			 ,clicked(false)
+			 ,isColorButton(false)
 {
-	bool changeSize=false;
+	name = label;
 	wxSize newSize=size;
 	if(size.x <1){
 		int fw, fh;
 		GetTextExtent(name, &fw, &fh, 0, 0, &font);
-		newSize.x = bitmap.GetWidth()+10;
-		changeSize=true;
+		newSize.x = fw+16;
+		if(newSize.x<60){newSize.x=60;}
 	}
 	if(size.y <1){
-		newSize.y = bitmap.GetHeight()+10;
-		changeSize=true;
+		newSize.y = 26;
 	}
-	if(changeSize){SetMinSize(newSize);}
+	SetMinSize(newSize);
+	//SetBestSize(newSize);
+	//wxLogStatus("size %i %i", newSize.x, newSize.y);
 	Bind(wxEVT_LEFT_DOWN, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_ENTER_WINDOW, &MappedButton::OnMouseEvent, this);
@@ -82,7 +93,42 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxBitmap& bitmap, con
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
+	//MappedButton(parent,id,label,"",pos,size,window,style);
+}
+
+MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, const wxBitmap& bitmap, const wxPoint& pos,
+            const wxSize& size, int window, long style)
+			 :wxWindow(parent, id, pos, size, style)
+			 ,Window(window)
+			 ,twoHotkeys(false)
+			 ,bmp(0)
+			 ,enter(false)
+			 ,clicked(false)
+			 ,isColorButton(false)
+{
 	icon = bitmap;
+	wxSize newSize=size;
+	if(size.x <1){
+		int fw = icon.GetWidth();
+		newSize.x = fw+10;
+	}
+	if(size.y <1){
+		newSize.y = 26;
+	}
+	SetMinSize(newSize);
+	//SetBestSize(newSize);
+	//wxLogStatus("size %i %i", newSize.x, newSize.y);
+	Bind(wxEVT_LEFT_DOWN, &MappedButton::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_UP, &MappedButton::OnMouseEvent, this);
+	Bind(wxEVT_ENTER_WINDOW, &MappedButton::OnMouseEvent, this);
+	Bind(wxEVT_LEAVE_WINDOW, &MappedButton::OnMouseEvent, this);
+	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
+	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
+	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
+	//MappedButton(parent,id,"","",pos,size,window,style);
+	if(tooltip!=""){SetToolTip(tooltip);}
+	//Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt){ wxLogStatus("clicked %i", GetId());}, GetId());
+	//Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent& evt){ wxLogStatus("clicked menu %i", GetId());}, GetId());
 }
 
 MappedButton::~MappedButton()
@@ -140,17 +186,22 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
-	tdc.SetBrush(wxBrush(wxSystemSettings::GetColour((clicked)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_BTNFACE)));
-	tdc.SetPen(wxPen(wxSystemSettings::GetColour((enter)? wxSYS_COLOUR_MENUHILIGHT : wxSYS_COLOUR_BTNSHADOW)));
+	bool enabled = IsThisEnabled();
+	tdc.SetBrush(wxBrush(wxSystemSettings::GetColour((clicked)? wxSYS_COLOUR_BTNSHADOW : (enabled)? wxSYS_COLOUR_BTNFACE : wxSYS_COLOUR_INACTIVECAPTION )));
+	tdc.SetPen(wxPen(wxSystemSettings::GetColour((enter)? wxSYS_COLOUR_MENUHILIGHT : (enabled)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_GRAYTEXT)));
 	tdc.DrawRectangle(1,1,w-2,h-2);
 	
 	if(w>10){
 		int fw, fh;
 		if(icon.IsOk()){
 			fw=icon.GetWidth(); fh=icon.GetHeight();
-			tdc.DrawBitmap(icon, (w - fw)/2, (h - fh)/2);
+			tdc.DrawBitmap((enabled)? icon : icon.ConvertToDisabled(), (w - fw)/2, (h - fh)/2);
+		}else if(isColorButton){
+			tdc.SetBrush(wxBrush(buttonColor));
+			tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW)));
+			tdc.DrawRectangle(4,4,w-8,h-8);
 		}else{
-			tdc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+			tdc.SetTextForeground(wxSystemSettings::GetColour((enabled)? wxSYS_COLOUR_WINDOWTEXT : wxSYS_COLOUR_GRAYTEXT));
 			tdc.GetTextExtent(name, &fw, &fh, 0, 0, &font);
 			wxRect cur(5, (h-fh)/2, w - 10, fh);
 			tdc.SetClippingRegion(cur);
@@ -172,6 +223,7 @@ void MappedButton::OnMouseEvent(wxMouseEvent &event)
 	}
 	if(event.Leaving()&&enter){
 		enter=false;
+		clicked=false;
 		Refresh(false);
 		return;
 	}
@@ -189,19 +241,18 @@ void MappedButton::OnMouseEvent(wxMouseEvent &event)
 		
 		return;
 	}		
-	if(event.LeftDown()){
+	if(event.LeftDown() || event.LeftIsDown() && !clicked){
 		clicked=true;
 		Refresh(false);
 		//event
-		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
-		this->ProcessEvent(evt);
 	}
 	if(event.LeftUp()){
 		clicked=false;
 		Refresh(false);
-		
+		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
+		this->ProcessEvent(evt);
 	}
-	event.Skip();
+	//event.Skip();
 }
 
 void MappedButton::OnKeyPress(wxKeyEvent &event)
@@ -211,3 +262,137 @@ void MappedButton::OnKeyPress(wxKeyEvent &event)
 		this->ProcessEvent(evt);
 	}
 }
+
+
+ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, const wxString& tooltip,
+             const wxPoint& pos, const wxSize& size, long style)
+			 :wxWindow(parent, id, pos, size, style)
+			 ,bmp(0)
+			 ,enter(false)
+			 ,toggled(false)
+			 ,clicked(false)
+{
+	name = label;
+	wxSize newSize=size;
+	if(size.x <1){
+		int fw, fh;
+		GetTextExtent(name, &fw, &fh, 0, 0, &font);
+		newSize.x = fw+10;
+		if(newSize.x<80){newSize.x=80;}
+	}
+	if(size.y <1){
+		newSize.y = 26;
+	}
+	SetMinSize(newSize);
+	Bind(wxEVT_LEFT_DOWN, &ToggleButton::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_UP, &ToggleButton::OnMouseEvent, this);
+	Bind(wxEVT_ENTER_WINDOW, &ToggleButton::OnMouseEvent, this);
+	Bind(wxEVT_LEAVE_WINDOW, &ToggleButton::OnMouseEvent, this);
+	Bind(wxEVT_SIZE, &ToggleButton::OnSize, this);
+	Bind(wxEVT_PAINT, &ToggleButton::OnPaint, this);
+	Bind(wxEVT_KEY_DOWN, &ToggleButton::OnKeyPress, this);
+	if(tooltip!=""){SetToolTip(tooltip);}
+
+}
+
+void ToggleButton::OnSize(wxSizeEvent& event)
+{
+	Refresh(false);
+}
+
+void ToggleButton::OnPaint(wxPaintEvent& event)
+{
+	
+	int w=0;
+	int h=0;
+	GetClientSize (&w, &h);
+	if(w==0||h==0){return;}
+	wxMemoryDC tdc;
+	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
+		delete bmp;
+		bmp = NULL;
+	}
+	if(!bmp){bmp=new wxBitmap(w,h);}
+	tdc.SelectObject(*bmp);
+	tdc.SetFont(font);
+	wxColour background = GetParent()->GetBackgroundColour();
+	tdc.SetBrush(wxBrush(background));
+	tdc.SetPen(wxPen(background));
+	tdc.DrawRectangle(0,0,w,h);
+	wxColour btnBackground = wxSystemSettings::GetColour((clicked)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_BTNFACE);
+	wxColour btnToggled = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUHILIGHT);
+	wxColour frame = wxSystemSettings::GetColour((enter || toggled)? wxSYS_COLOUR_MENUHILIGHT : wxSYS_COLOUR_BTNSHADOW);
+	if(toggled){
+		int r2 = btnToggled.Red(), g2 = btnToggled.Green(), b2 = btnToggled.Blue();
+		int r = btnBackground.Red(), g = btnBackground.Green(), b = btnBackground.Blue();
+		int inv_a = 65;
+		int fr = (r2* inv_a / 0xFF) + (r - inv_a * r / 0xFF);
+		int fg = (g2* inv_a / 0xFF) + (g - inv_a * g / 0xFF);
+		int fb = (b2* inv_a / 0xFF) + (b - inv_a * b / 0xFF);
+		btnBackground = wxColour(fr,fg,fb);
+	}
+	if(enter){
+		btnBackground = WhiteUp(btnBackground);
+		frame = WhiteUp(frame);
+	}
+	tdc.SetBrush(wxBrush(btnBackground));
+	tdc.SetPen(wxPen(frame));
+	tdc.DrawRectangle(1,1,w-2,h-2);
+	
+	if(w>10){
+		int fw, fh;
+		if(icon.IsOk()){
+			fw=icon.GetWidth(); fh=icon.GetHeight();
+			tdc.DrawBitmap(icon, (w - fw)/2, (h - fh)/2);
+		}else{
+			tdc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+			tdc.GetTextExtent(name, &fw, &fh, 0, 0, &font);
+			wxRect cur(5, (h-fh)/2, w - 10, fh);
+			tdc.SetClippingRegion(cur);
+			tdc.DrawLabel(name,cur,wxALIGN_CENTER);
+			tdc.DestroyClippingRegion();
+		}
+		
+	}
+	wxPaintDC dc(this);
+	dc.Blit(0,0,w,h,&tdc,0,0);
+}
+
+void ToggleButton::OnMouseEvent(wxMouseEvent &event)
+{
+	if(event.Entering()){
+		enter=true;
+		Refresh(false);
+		return;
+	}
+	if(event.Leaving()&&enter){
+		enter=false;
+		Refresh(false);
+		return;
+	}
+	if(event.LeftDown()){
+		clicked=true;
+		toggled = !toggled;
+		Refresh(false);
+		//event
+	}
+	if(event.LeftUp()){
+		clicked=false;
+		Refresh(false);
+		wxCommandEvent evt(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, GetId());
+		this->ProcessEvent(evt);
+	}
+	//event.Skip();
+}
+
+void ToggleButton::OnKeyPress(wxKeyEvent &event)
+{
+	if(event.GetKeyCode() == WXK_RETURN){
+		toggled = !toggled;
+		Refresh(false);
+		wxCommandEvent evt(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, GetId());
+		this->ProcessEvent(evt);
+	}
+}
+
+wxIMPLEMENT_ABSTRACT_CLASS(MappedButton, wxWindow);

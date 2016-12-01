@@ -52,7 +52,7 @@ class LuaDialogControl {
 		int x, y, width, height;
 
 		/// Create the associated wxControl
-		virtual wxControl *Create(wxWindow *parent) = 0;
+		virtual wxWindow *Create(wxWindow *parent) = 0;
 
 		/// Get the default flags to use when inserting this control into a sizer
 		virtual int GetSizerFlags() const { return wxEXPAND; }

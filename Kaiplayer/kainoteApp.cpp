@@ -19,7 +19,7 @@
 #include "Hotkeys.h"
 #include <wx/intl.h>
 
-wxDEFINE_EVENT(EVT_OPEN, wxThreadEvent);
+//wxDEFINE_EVENT(EVT_OPEN, wxThreadEvent);
 
 IMPLEMENT_APP(kainoteApp);
 

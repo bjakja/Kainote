@@ -68,7 +68,7 @@ public:
 		if (i >= start && i-start < length)
 			return data[(i-start) + overlap*length];
 		else{
-			//wxLogStatus("Getline null %i %i %i",i, start, (i-start));
+			wxLogStatus("Getline null %i %i %i",i, start, (i-start));
 			return null_line;}
 	}
 
@@ -149,6 +149,7 @@ AudioSpectrum::AudioSpectrum(VideoFfmpeg *_provider)
 	size_t doublelen=line_length*2;
 	int64_t _num_lines = provider->GetNumSamples()+doublelen / doublelen;
 	num_lines = (unsigned long)_num_lines;
+	numsubcaches = (num_lines + subcachelen)/subcachelen;
 	SetupSpectrum();
 	ChangeColours();
 	
@@ -156,14 +157,16 @@ AudioSpectrum::AudioSpectrum(VideoFfmpeg *_provider)
 	minband = 0;//Options.GetInt(_T("Audio Spectrum Cutoff"));
 	maxband = line_length - minband * 2/3; // TODO: make this customisable?
 	fft = new FFT(doublelen, provider);
-	
+	sub_caches.resize(numsubcaches,0);
 }
 
 
 AudioSpectrum::~AudioSpectrum()
 {
-	delete cache;
 	delete fft;
+	for (size_t i = 0; i < numsubcaches; ++i){
+		if (sub_caches[i]) delete sub_caches[i];
+	}
 }
 
 void AudioSpectrum::SetupSpectrum(int overlaps, int length)
@@ -172,20 +175,25 @@ void AudioSpectrum::SetupSpectrum(int overlaps, int length)
 	fft_overlaps = overlaps;
 
 	FinalSpectrumCache::SetLineLength(line_length);
-	cache = new SpectrumThread(this,(num_lines + subcachelen)/subcachelen, fft_overlaps);
 
 }
 
-void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool selected, unsigned char *img, int imgwidth, int imgheight, int percent)
+void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool selected, unsigned char *img, int imgleft, int imgwidth, int imgpitch, int imgheight, int parcent)
 {
     wxCriticalSectionLocker locker(CritSec);
-    int parc = pow((150-percent)/100.0f, 8);
+	
+    float parcPow = pow((150-parcent)/100.0f, 8);
+	int parc = parcPow * (imgwidth/500.f);
 	if(parc<1){parc=1;}
+	if(parc>24){parc=24;}
+	//wxLogStatus("parc %i %i %f %f %i", parcent, imgwidth, parcPow, (imgwidth/500.f), parc); 
 	//int newlen = 7.f/pow((150-percent)/100.0f, 8);
 	//newlen = MID(7,newlen,12);
     //wxLogStatus("line len %i",parc);
 	if(parc!=fft_overlaps){ 
-		delete cache;
+		for (size_t i = 0; i < numsubcaches; ++i){
+			if (sub_caches[i]) delete sub_caches[i]; sub_caches[i]=NULL;
+		}
 		//delete fft;
 		//cache=new SpectrumThread(this,(num_lines + subcachelen)/subcachelen, fft_overlaps);//new AudioSpectrumCacheManager(provider, line_length, num_lines, fft_overlaps);
 		SetupSpectrum(parc);
@@ -193,32 +201,120 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 	
 	unsigned long first_line = (unsigned long)(fft_overlaps * range_start / line_length / 2);
 	unsigned long last_line = (unsigned long)(fft_overlaps * range_end / line_length / 2);
-	//wxLogStatus("line len %i",(int)(last_line-first_line));
-	//unsigned int overlap_offset = (line_length * 2);
-	size_t copysamples;// = ((range_end - range_start))*fft_overlaps;
-	
-	
-	//fft->RecreateTable(copysamples + (overlap_offset*36));//724672 -> 752640
-	//wxLogStatus("line len %i %i", copysamples + (overlap_offset*36), 752640);
-	
-	copysamples = (last_line - first_line);
-	unsigned int cpsl = (copysamples+ subcachelen) / subcachelen;
-	
-	
-	//int last_imgcol_rendered = -1;
 
-	unsigned char *palette = colours_normal;
-	//if (selected)
-		//palette = colours_selected;
-	//else
-	//palette = colours_normal;
+	//float *power = new float[line_length];
+
+	int last_imgcol_rendered = -1;
+
+	unsigned char *palette=colours_normal;
+	
+
+	// Some scaling constants
+	const int maxpower = (1 << (16 - 1))*256;
+
+	const double upscale = power_scale * 16384 / line_length;
+	//const double onethirdmaxpower = maxpower / 3, twothirdmaxpower = maxpower * 2/3;
+	//const double logoverscale = log(maxpower*upscale - twothirdmaxpower);
 
 	// Note that here "lines" are actually bands of power data
 	unsigned long baseline = first_line / fft_overlaps;
-	//wxLogStatus("len %i %i ",(int)last_line, (int)((cpsl+fft_overlaps / fft_overlaps)*subcachelen + first_line));
-	cache->MakeSubCaches(baseline / subcachelen, first_line, (cpsl+fft_overlaps / fft_overlaps), last_line, img, imgwidth, imgheight, palette);
-	
+	unsigned int overlap = first_line % fft_overlaps;
+	unsigned int j = 0;
+	unsigned int start = baseline / subcachelen;
+	for (unsigned long i = first_line; i <= last_line; ++i) {
+		// Handle horizontal compression and don't unneededly re-render columns
+		int imgcol = imgleft + imgwidth * (i - first_line) / (last_line - first_line + 1);
+		if (imgcol <= last_imgcol_rendered)
+			continue;
+		size_t subcache = i / subcachelen;
+		baseline = i / fft_overlaps;
+		overlap = i % fft_overlaps;
+		
+		if(!sub_caches[subcache])
+		{
+			//wxLogStatus("subcachemake %i %i %i", start, i, (start+i)*spc->subcachelen);
+			sub_caches[subcache] = new FinalSpectrumCache(fft,(baseline/subcachelen) * subcachelen,subcachelen,fft_overlaps);
+		}
+			
+		CacheLine &line=sub_caches[subcache]->GetLine(baseline, overlap);
+		j++;
+		//wxLogStatus("Befor cache");
+		//wxLogStatus("bef cache i %i , last line %i", i, last_line);
+		//AudioSpectrumCache::CacheLine &line = GetLine(baseline, overlap);
+		//wxLogStatus("aft cache i %i , last line %i", i, last_line);
+		/*++overlap;
+		if (overlap >= fft_overlaps) {
+			overlap = 0;
+			++baseline;
+		}*/
 
+		// Apply a "compressed" scaling to the signal power
+		//wxLogStatus("bef power i %i , last line %i", i, last_line);
+		//for (unsigned int j = 0; j < line_length; j++) {
+			// First do a simple linear scale power calculation -- 8 gives a reasonable default scaling
+			//power[j] = line[j] * upscale;
+			/*if (power[j] > maxpower * 2/3) {
+				double p = power[j] - twothirdmaxpower;
+				p = log(p) * onethirdmaxpower / logoverscale;
+				power[j] = p + twothirdmaxpower;
+			}*/
+		//}
+		//wxLogStatus("aft power i %i , last line %i", i, last_line);
+
+#define WRITE_PIXEL \
+	if (intensity < 0) intensity = 0; \
+	if (intensity > 255) intensity = 255; \
+	img[((imgheight-y-1)*imgpitch+x)*4 + 2] = palette[intensity*3+0]; \
+	img[((imgheight-y-1)*imgpitch+x)*4 + 1] = palette[intensity*3+1]; \
+	img[((imgheight-y-1)*imgpitch+x)*4 + 0] = palette[intensity*3+2];
+	/*img[((imgheight-y-1)*imgpitch+x)*3 + 0] = palette[intensity*3+0]; \
+	img[((imgheight-y-1)*imgpitch+x)*3 + 1] = palette[intensity*3+1]; \
+	img[((imgheight-y-1)*imgpitch+x)*3 + 2] = palette[intensity*3+2];*/
+
+		// Handle horizontal expansion
+		int next_line_imgcol = imgleft + imgwidth * (i - first_line + 1) / (last_line - first_line + 1);
+		if (next_line_imgcol >= imgpitch)
+			next_line_imgcol = imgpitch-1;
+
+		for (int x = imgcol; x <= next_line_imgcol; ++x) {
+
+			// Decide which rendering algo to use
+			if (maxband - minband > imgheight) {
+				// more than one frequency sample per pixel (vertically compress data)
+				// pick the largest value per pixel for display
+			//wxLogStatus("bef last loop i %i , last line %i", x, next_line_imgcol);
+				// Iterate over pixels, picking a range of samples for each
+				for (int y = 0; y < imgheight; ++y) {
+					int sample1 = MAX(0,maxband * y/imgheight + minband);
+					int sample2 = MIN(signed(line_length-1),maxband * (y+1)/imgheight + minband);
+					float maxval = 0;
+					for (int samp = sample1; samp <= sample2; samp++) {
+						if (line[samp] > maxval) maxval = line[samp];
+					}
+					int intensity = int(256 * (maxval * upscale) / maxpower);
+					WRITE_PIXEL
+				}
+			}
+			else {
+				// less than one frequency sample per pixel (vertically expand data)
+				// interpolate between pixels
+				// can also happen with exactly one sample per pixel, but how often is that?
+
+				// Iterate over pixels, picking the nearest power values
+				for (int y = 0; y < imgheight; ++y) {
+					float ideal = (float)(y+1.)/imgheight * maxband;
+					float sample1 = line[(int)floor(ideal)+minband] * upscale;
+					float sample2 = line[(int)ceil(ideal)+minband] * upscale;
+					float frac = ideal - floor(ideal);
+					int intensity = int(((1-frac)*sample1 + frac*sample2) / maxpower * 256);
+					WRITE_PIXEL
+				}
+			}
+		}
+
+#undef WRITE_PIXEL
+
+	}
 	
 }
 
@@ -259,138 +355,5 @@ void AudioSpectrum::ChangeColours()
 
 }
 
-SpectrumThread::SpectrumThread(AudioSpectrum *_spc, size_t _numsubcaches, size_t _overlaps)
-	:spc(_spc)
-	,overlaps(_overlaps)
-	,numsubcaches(_numsubcaches)
-{
-	sub_caches.resize(numsubcaches,0);
-	//thread = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)proc, (void*)new std::pair<int,SpectrumThread*>(0,this), 0, 0);
-}
 
- SpectrumThread::~SpectrumThread(){
-
-	for (size_t i = 0; i < numsubcaches; ++i){
-		if (sub_caches[i]) delete sub_caches[i];
-	}
-}
-
-CacheLine &SpectrumThread::GetLine(unsigned long i, unsigned int overlap)
-{
-	// Determine which sub-cache this line resides in
-	size_t subcache = i / spc->subcachelen;
-			
-	if(!sub_caches[subcache]){
-		//wxLogStatus("nullsubcache %i", subcache);
-		return FinalSpectrumCache::null_line;
-	}
-	return sub_caches[subcache]->GetLine(i, overlap);
-}
-
-
-
-void SpectrumThread::MakeSubCaches(size_t _start, size_t _bufstart, size_t _len, size_t lastbuf, unsigned char *_img, int _imgwidth, int _imgheight, unsigned char *_palette)
-{
-	start=_start;
-	length=_len;
-	first_line=_bufstart;
-	last_line=lastbuf;
-	img=_img;
-	imgwidth=_imgwidth;
-	imgheight=_imgheight;
-	palette=_palette;
-	
-	procincls(0);
-	
-	
-}
-
-
-void SpectrumThread::procincls(int numthread)
-{
-	const int maxpower = (1 << (16 - 1))*256;
-
-	const double upscale = spc->power_scale * 16384 / spc->line_length;
-	int last_imgcol_rendered = -1;
-	unsigned long baseline = first_line / spc->fft_overlaps;
-	unsigned int overlap = first_line % spc->fft_overlaps;
-	ULONG bufstart = (start * spc->subcachelen);
-
-	for(size_t j = 0; j < length; j++)
-	{
-		size_t subcache = (j+start);
-		
-		if(!sub_caches[subcache])
-		{
-			//wxLogStatus("subcachemake %i %i %i", start, i, (start+i)*spc->subcachelen);
-			sub_caches[subcache] = new FinalSpectrumCache(spc->fft,(start+j)*spc->subcachelen,spc->subcachelen,spc->fft_overlaps);
-		}
-		ULONG len=(j+1==length)? last_line : ((subcache+1)  * spc->subcachelen)-1;
-		ULONG strt=(j==0)? first_line : bufstart + (j * spc->subcachelen);
-		for (unsigned long i = strt; i <= len; ++i) {
-			// Handle horizontal compression and don't unneededly re-render columns
-			int imgcol = imgwidth * (i - first_line) / (last_line - first_line + 1);
-			if (imgcol <= last_imgcol_rendered)
-				continue;
-
-			baseline = i / spc->fft_overlaps;
-			overlap = i % spc->fft_overlaps;
-		
-			CacheLine &power = GetLine(baseline, overlap);
-		
-
-	#define WRITE_PIXEL \
-		if (intensity < 0) intensity = 0; \
-		if (intensity > 255) intensity = 255; \
-		img[((imgheight-y-1)*imgwidth+x)*4 + 2] = palette[intensity*3+0]; \
-		img[((imgheight-y-1)*imgwidth+x)*4 + 1] = palette[intensity*3+1]; \
-		img[((imgheight-y-1)*imgwidth+x)*4 + 0] = palette[intensity*3+2];
-
-			// Handle horizontal expansion
-			int next_line_imgcol = imgwidth * (i - first_line + 1) / (last_line - first_line + 1);
-			if (next_line_imgcol >= imgwidth)
-				next_line_imgcol = imgwidth-1;
-
-			for (int x = imgcol; x <= next_line_imgcol; ++x) {
-
-				// Decide which rendering algo to use
-				if (spc->maxband - spc->minband > imgheight) {
-					// more than one frequency sample per pixel (vertically compress data)
-					// pick the largest value per pixel for display
-					// Iterate over pixels, picking a range of samples for each
-					for (int y = 0; y < imgheight; ++y) {
-						int sample1 = MAX(0,spc->maxband * y/imgheight + spc->minband);
-						int sample2 = MIN(signed(spc->line_length-1),spc->maxband * (y+1)/imgheight + spc->minband);
-						float maxval = 0;
-						for (int samp = sample1; samp <= sample2; samp++) {
-							if (power[samp] > maxval) maxval = power[samp];
-						}
-						int intensity = int(256 * (maxval* upscale) / maxpower);
-						WRITE_PIXEL
-					}
-				}
-				else {
-					// less than one frequency sample per pixel (vertically expand data)
-					// interpolate between pixels
-					// can also happen with exactly one sample per pixel, but how often is that?
-
-					// Iterate over pixels, picking the nearest power values
-					for (int y = 0; y < imgheight; ++y) {
-						float ideal = (float)(y+1.)/imgheight * spc->maxband;
-						float sample1 = power[(int)floor(ideal)+spc->minband]* upscale;
-						float sample2 = power[(int)ceil(ideal)+spc->minband]* upscale;
-						float frac = ideal - floor(ideal);
-						int intensity = int(((1-frac)*sample1 + frac*sample2) / maxpower * 256);
-						WRITE_PIXEL
-					}
-				}
-			}
-
-	#undef WRITE_PIXEL
-
-		}
-
-	}
-
-}
 

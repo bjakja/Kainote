@@ -169,6 +169,13 @@ void VideoFfmpeg::Processing()
 				memcpy(&buff[fplane],fframe->Data[1],uvplane);
 				rend->DrawTexture(buff);
 				rend->Render(false);
+				
+				if(rend->time>=rend->playend){
+					wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED,23333);
+					wxQueueEvent(rend, evt);
+					break;
+				}
+				else if(rend->vstate!=Playing){break;}	
 				rend->time= timeGetTime() - rend->lasttime;
 
 				rend->lastframe++;
@@ -186,12 +193,6 @@ void VideoFfmpeg::Processing()
 				rend->time = Timecodes[rend->lastframe];
 
 				
-				if(rend->time>=rend->playend){
-					wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED,23333);
-					wxQueueEvent(rend, evt);
-					break;
-				}
-				else if(rend->vstate!=Playing){break;}	
 				Sleep(tdiff);
 
 			}

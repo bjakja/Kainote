@@ -41,6 +41,7 @@ DescTxtCtrl::DescTxtCtrl(wxWindow *parent, const wxSize &size, const wxString &d
 {
 	description =desc;
 }
+
 void DescTxtCtrl::ChangeValue(wxString &val)
 {
 	if(val=="" && !HasFocus()){
@@ -69,9 +70,6 @@ BEGIN_EVENT_TABLE(DescTxtCtrl,wxTextCtrl)
 	EVT_KILL_FOCUS(DescTxtCtrl::OnKillFocus)
 END_EVENT_TABLE()
 
-//BEGIN_EVENT_TABLE(TagButton, MappedButton)
-//	EVT_MOUSE_EVENTS(TagButton::OnMouseEvent)
-//END_EVENT_TABLE()
 
 	txtdialog::txtdialog(wxWindow *parent, int id, const wxString &txtt, int _type, const wxPoint &position)
 	:wxDialog(parent,id,_("Wpisz tag ASS"),position)
@@ -100,14 +98,13 @@ TagButton::TagButton(wxWindow *parent, int id, const wxString &name, wxString to
 	type=0;
 	tag= tooltip.BeforeFirst('\f', &rest);
 	if(tag!=""){SetToolTip(tag);type=wxAtoi(rest);}
-	Bind(wxEVT_LEFT_DOWN, &TagButton::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_UP, &TagButton::OnMouseEvent, this);
 	Bind(wxEVT_RIGHT_UP, &TagButton::OnMouseEvent, this);
 }
 
 void TagButton::OnMouseEvent(wxMouseEvent& event)
 {
-	//wxLogStatus("events %i %i %i %i", (int)event.Leaving(), (int)event.Entering(), (int)event.LeftDown(), (int)event.LeftUp());
-	if(event.RightUp()||(tag=="" && event.LeftDown())){
+	if(event.RightUp()||(tag=="" && event.LeftUp())){
 		tagtxt=new txtdialog(this,-1,tag,0,ClientToScreen(event.GetPosition()));
 		if(tagtxt->ShowModal()==wxID_OK){
 			tag=tagtxt->txt->GetValue();
@@ -118,6 +115,7 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 			if(tag!=""){SetToolTip(tag);}
 		}
 		tagtxt->Destroy();
+		//clicked=false; Refresh(false);
 		return;
 	}
 
@@ -211,13 +209,13 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer5->Add(Frames,0,wxALIGN_CENTER|wxLEFT,2);
 
 
-	Bcpall = new MappedButton(this, ID_CPALL, _("Wklej wszystko"));
+	Bcpall = new MappedButton(this, ID_CPALL, _("Wklej wszystko"),EDITBOX_HOTKEY);
 	Bcpall->Hide();
-	Bcpsel = new MappedButton(this, ID_CPSEL, _("Wklej zaznaczone"));
+	Bcpsel = new MappedButton(this, ID_CPSEL, _("Wklej zaznaczone"),EDITBOX_HOTKEY);
 	Bcpsel->Hide();
-	Bhide = new MappedButton(this, ID_HIDE, _("Ukryj oryginał"));
+	Bhide = new MappedButton(this, ID_HIDE, _("Ukryj oryginał"),EDITBOX_HOTKEY);
 	Bhide->Hide();
-	AutoMoveTags = new wxToggleButton(this, ID_AUTOMOVETAGS, _("Przenoszenie tagów"));
+	AutoMoveTags = new ToggleButton(this, ID_AUTOMOVETAGS, _("Przenoszenie tagów"));
 	AutoMoveTags->Hide();
 
 	BoxSizer6 = new wxBoxSizer(wxHORIZONTAL);
@@ -241,7 +239,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	DurEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(87,-1),wxTE_CENTRE);
 	wxArrayString styles;
 	styles.Add("Default");
-	StyleChoice = new wxChoice(this, IDSTYLE, wxDefaultPosition, wxSize(100,-1),styles);//wxSize(145,-1)
+	StyleChoice = new KaiChoice(this, IDSTYLE, wxDefaultPosition, wxSize(100,-1),styles);//wxSize(145,-1)
 	//druga linia
 
 	ActorEdit = new DescTxtCtrl(this, wxSize(90,-1), _("Aktor"));
@@ -780,7 +778,9 @@ void EditBox::OnNewline(wxCommandEvent& event)
 {
 	if(Visual){TextEdit->modified=true;}
 	if(splittedTags&&(TextEdit->modified || TextEditTl->modified)){TextEdit->modified=true; TextEditTl->modified=true;}
-	Send(!(StartEdit->HasFocus() || EndEdit->HasFocus()) || !Options.GetBool("Times Stop On line"));
+	bool noNewLine = !(StartEdit->HasFocus() || EndEdit->HasFocus() || DurEdit->HasFocus()) || !Options.GetBool("Times Stop On line");
+	if(!noNewLine && ABox){ABox->audioDisplay->SetDialogue(line,ebrow);}
+	Send(noNewLine);
 }
 
 void EditBox::OnBoldClick(wxCommandEvent& event)

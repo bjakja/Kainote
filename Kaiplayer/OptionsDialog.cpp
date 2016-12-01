@@ -65,7 +65,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 		wxString langopts[2]={"Polski","English"};
 		wxStaticBoxSizer *langSizer=new wxStaticBoxSizer(wxVERTICAL, Main, _("Język (wymaga restartu programu)"));
-		wxChoice *lang=new wxChoice(Main,10000,wxDefaultPosition,wxDefaultSize,2,langopts);
+		KaiChoice *lang=new KaiChoice(Main,10000,wxDefaultPosition,wxDefaultSize,2,langopts);
 		lang->SetSelection(Options.GetInt("Program Language"));
 		ConOpt(lang,"Program Language");
 		langSizer->Add(lang,0,wxALL|wxEXPAND,2);
@@ -76,7 +76,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		if(dics.size()==0){dics.Add(_("Umieść pliki .dic i .aff do folderu \"Dictionary\""));}
 		wxStaticBoxSizer *dicSizer=new wxStaticBoxSizer(wxVERTICAL, Main, _("Język sprawdzania pisowni (folder \"Dictionary\")"));
 		
-		wxChoice *dic=new wxChoice(Main,10001,wxDefaultPosition,wxDefaultSize,dics);
+		KaiChoice *dic=new KaiChoice(Main,10001,wxDefaultPosition,wxDefaultSize,dics);
 
 		dic->SetSelection(dic->FindString(Options.GetString("Dictionary Name")));
 		ConOpt(dic,"Dictionary Name");
@@ -222,7 +222,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 					styles.Add(Options.GetStyle(i)->Name);
 				}
 			}
-			wxChoice *cmb = new wxChoice(ConvOpt, (i==0)?28888 : 28889, wxDefaultPosition, wxSize(200,-1), (i==0)?Options.dirs : styles, wxVSCROLL|wxTE_PROCESS_ENTER);
+			KaiChoice *cmb = new KaiChoice(ConvOpt, (i==0)?28888 : 28889, wxDefaultPosition, wxSize(200,-1), (i==0)?Options.dirs : styles, wxTE_PROCESS_ENTER);
 		
 			int sel=cmb->FindString(optname);
 			
@@ -308,12 +308,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		prefaudio->Add(tc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
 		MainSizer->Add(prefaudio,0,wxRIGHT|wxEXPAND,5);
 
-		wxString movopts[6]={_("Dwukrotnym kliknięciu na linię (zawsze włączone)"),_("Kliknięciu na linię"),
+		/*wxString movopts[6]={_("Dwukrotnym kliknięciu na linię (zawsze włączone)"),_("Kliknięciu na linię"),
 			_("Kliknięciu na linię lub edycji na pauzie"),_("Kliknięciu na linię lub edycji"),
 			_("Edycji na pauzie"),_("Edycji") 
 		};
 		wxStaticBoxSizer *moveVideo=new wxStaticBoxSizer(wxVERTICAL, Video, _("Przesuwaj wideo do aktualnej linii po:"));
-		wxChoice *movvid=new wxChoice(Video,10000,wxDefaultPosition,wxDefaultSize,6,movopts);
+		KaiChoice *movvid=new KaiChoice(Video,10000,wxDefaultPosition,wxDefaultSize,6,movopts);
 		movvid->SetSelection(Options.GetInt("Move Video To Active Line"));
 		ConOpt(movvid,"Move Video To Active Line");
 		moveVideo->Add(movvid,0,wxALL|wxEXPAND,2);
@@ -322,11 +322,11 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxStaticBoxSizer *playVideo=new wxStaticBoxSizer(wxVERTICAL, Video, _("Odtwarzaj po zmianie linii:"));
 		wxString playopts[4]={_("Nic"),_("Audio do końca linii"),_("Wideo do końca linii"),
 			_("Wideo do początku następnej linii")};
-		wxChoice *playing=new wxChoice(Video,10000,wxDefaultPosition,wxDefaultSize,4,playopts);
+		KaiChoice *playing=new KaiChoice(Video,10000,wxDefaultPosition,wxDefaultSize,4,playopts);
 		playing->SetSelection(Options.GetInt("Play After Selection"));
 		ConOpt(playing,"Play After Selection");
 		playVideo->Add(playing,0,wxALL|wxEXPAND,2);
-		MainSizer->Add(playVideo,0,wxRIGHT|wxEXPAND,5);
+		MainSizer->Add(playVideo,0,wxRIGHT|wxEXPAND,5);*/
 
 		Video->SetSizerAndFit(MainSizer);
 	}
@@ -409,7 +409,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		NumCtrl *Delay = new NumCtrl(AudioMain, 20000, Options.GetString(opts1[0]), -50000000, 50000000, true, wxDefaultPosition, wxSize(300,-1), 0);
 		NumCtrl *sc = new NumCtrl(AudioMain, 20000, Options.GetString(opts1[1]), 400, 5000, true, wxDefaultPosition, wxSize(300,-1), 0);
 		wxString inact[3]={_("Brak"),_("Przed i po aktywnej"),_("Wszystkie widoczne")};
-		wxChoice *sc1 = new wxChoice(AudioMain, 10000, wxDefaultPosition, wxSize(300,-1), 3, inact);
+		KaiChoice *sc1 = new KaiChoice(AudioMain, 10000, wxDefaultPosition, wxSize(300,-1), 3, inact);
 		sc1->SetSelection(Options.GetInt(opts1[2]));
 		ConOpt(Delay,opts1[0]);
 		ConOpt(sc,opts1[1]);
@@ -509,7 +509,7 @@ OptionsDialog::~OptionsDialog()
 	handles.clear();
 }
 
-void OptionsDialog::ConOpt(wxControl *ctrl,wxString option)
+void OptionsDialog::ConOpt(wxWindow *ctrl,wxString option)
 {
 	OptionsBind Obind;
 	Obind.ctrl=ctrl;
@@ -548,13 +548,6 @@ void OptionsDialog::SetOptions(bool saveall)
 				}
 			}
 		}
-		else if(OB.ctrl->IsKindOf(CLASSINFO(wxButton))){
-			ColorButton *cpc=(ColorButton*)OB.ctrl;
-			AssColor kol=cpc->GetColor();
-			if(Options.GetColor(OB.option)!=kol){
-				Options.SetColor(OB.option,kol);colmod=true;
-			}
-		}
 		else if(OB.ctrl->IsKindOf(CLASSINFO(wxFontPickerCtrl))){
 			wxFontPickerCtrl *fpc=(wxFontPickerCtrl*)OB.ctrl;
 			wxFont font=fpc->GetSelectedFont();
@@ -574,8 +567,8 @@ void OptionsDialog::SetOptions(bool saveall)
 				Options.SetString(OB.option,kol);
 			}
 		}
-		else if(OB.ctrl->IsKindOf(CLASSINFO(wxChoice))){
-			wxChoice *cbx=(wxChoice*)OB.ctrl;
+		else if(OB.ctrl->IsKindOf(CLASSINFO(KaiChoice))){
+			KaiChoice *cbx=(KaiChoice*)OB.ctrl;
 			if(cbx->GetId()!=10000){
 				wxString kol=cbx->GetString(cbx->GetSelection());
 				if(Options.GetString(OB.option)!=kol){
@@ -606,6 +599,12 @@ void OptionsDialog::SetOptions(bool saveall)
 				if(Options.GetInt(OB.option)!=num){
 					Options.SetInt(OB.option,num);
 				}
+			}
+		}else if(OB.ctrl->IsKindOf(CLASSINFO(MappedButton))){
+			ColorButton *cpc=(ColorButton*)OB.ctrl;
+			AssColor kol=cpc->GetColor();
+			if(Options.GetColor(OB.option)!=kol){
+				Options.SetColor(OB.option,kol);colmod=true;
 			}
 		}
 	}

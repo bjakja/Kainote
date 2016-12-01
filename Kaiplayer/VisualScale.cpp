@@ -135,12 +135,31 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 		}
 		to.x=x;to.y=y;
 	}else if(holding){
-		if(type!=1){
-			to.x=x+diffs.x;
+		if(evt.ShiftDown()&&type==2){
+			int diffx = abs(to.x-x);
+			int diffy = abs(to.y-y);
+			int move = (diffx>diffy)? diffx : diffy;
+			//int move, diff;
+			//if(diffx>diffy){
+				to.x=x+diffs.x;
+				float diff = abs(to.x-from.x);
+				to.y=(y<from.y)? from.y-diff : from.y+diff;
+				wxLogStatus("diffs %f, %f", to.x-from.x, to.y-from.y);
+			/*}
+			else{
+				to.y=y+diffs.y; 
+				int diff = abs(to.y-from.y);
+				to.x= (x<from.x)? from.x-diff: from.x+diff;
+			}*/
+		}else{
+			if(type!=1){
+				to.x=x+diffs.x;
+			}
+			if(type!=0){
+				to.y=y+diffs.y;
+			}
 		}
-		if(type!=0){
-			to.y=y+diffs.y;
-		}
+
 		SetVisual(GetVisual(),true,type);
 	}
 }

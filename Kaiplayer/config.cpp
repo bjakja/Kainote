@@ -462,8 +462,8 @@ wxString config::LoadDefaultAudioConfig()
 			"Audio RAM Cache=false\r\n"\
 			"Audio Sample Rate=0\r\n"\
 			"Audio Seconds Boundaries=#0064FF\r\n"\
-			"Audio Selection Background=#404040\r\n"\
-			"Audio Selection Background Modified=#5C0000\r\n"\
+			"Audio Selection Background=#BDFFFFFF\r\n"\
+			"Audio Selection Background Modified=#A4BD0302\r\n"\
 			"Audio Snap To Keyframes=false\r\n"\
 			"Audio Snap To Other Lines=false\r\n"\
 			"Audio Spectrum=false\r\n"\

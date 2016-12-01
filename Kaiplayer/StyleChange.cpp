@@ -82,10 +82,10 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 	wxGridSizer *kolgrid=new wxGridSizer(4,2,2);
 	
-	s1 = new wxButton(this, ID_BCOLOR1, _("Pierwszy"));
-	s2 = new wxButton(this, ID_BCOLOR2, _("Drugi"));
-	s3 = new wxButton(this, ID_BCOLOR3, _("Obwódka"));
-	s4 = new wxButton(this, ID_BCOLOR4, _("Cień"));
+	s1 = new MappedButton(this, ID_BCOLOR1, _("Pierwszy"));
+	s2 = new MappedButton(this, ID_BCOLOR2, _("Drugi"));
+	s3 = new MappedButton(this, ID_BCOLOR3, _("Obwódka"));
+	s4 = new MappedButton(this, ID_BCOLOR4, _("Cień"));
 
 	alpha1 = new NumCtrl(this, ID_TOUTLINE, "0",0,255,true, wxDefaultPosition, wxSize(80,-1),wxTE_PROCESS_ENTER);
 	alpha2 = new NumCtrl(this, ID_TOUTLINE, "0",0,255,true, wxDefaultPosition, wxSize(80,-1),wxTE_PROCESS_ENTER);
@@ -192,7 +192,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	encs.Add(_("255 - OEM"));
 	
 	wxStaticBoxSizer *styleenc= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Kodowanie tekstu:"));
-	senc = new wxChoice(this, ID_CENCODING, wxDefaultPosition, wxDefaultSize, encs);
+	senc = new KaiChoice(this, ID_CENCODING, wxDefaultPosition, wxDefaultSize, encs);
 	styleenc->Add(senc,1,wxEXPAND|wxALL,2);
 
 	wxStaticBoxSizer *styleprev= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Podgląd stylu:"));
@@ -201,14 +201,14 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	styleprev->Add(Preview,1,wxEXPAND|wxALL,2);
 
 	wxBoxSizer *buttons=new wxBoxSizer(wxHORIZONTAL);
-	Button1 = new wxButton(this, ID_BOK, "Ok", wxDefaultPosition, wxSize(50,-1));
-	Button3 = new wxButton(this, ID_BCANCEL, _("Anuluj"));
-	Button2 = new wxButton(this, ID_BONVID, _("Zastosuj"));
-	Button4 = new wxButton(this, ID_BONFULL, _("Zobacz na pełnym ekranie"));
-	buttons->Add(Button1,0,wxEXPAND|wxALL,2);
-	buttons->Add(Button2,0,wxEXPAND|wxALL,2);
-	buttons->Add(Button3,0,wxEXPAND|wxALL,2);
-	buttons->Add(Button4,0,wxEXPAND|wxALL,2);
+	btnOk = new MappedButton(this, ID_BOK, "Ok", "", wxDefaultPosition, wxSize(50,-1));
+	btnCancel = new MappedButton(this, ID_BCANCEL, _("Anuluj"));
+	btnCommit = new MappedButton(this, ID_BONVID, _("Zastosuj"));
+	btnFullscreen = new MappedButton(this, ID_BONFULL, _("Zobacz na pełnym ekranie"));
+	buttons->Add(btnOk,0,wxEXPAND|wxALL,2);
+	buttons->Add(btnCommit,0,wxEXPAND|wxALL,2);
+	buttons->Add(btnCancel,0,wxEXPAND|wxALL,2);
+	buttons->Add(btnFullscreen,0,wxEXPAND|wxALL,2);
 
 	//Main sizer
 	Main->Add(stylename,0,wxEXPAND|wxALL,2);
@@ -247,7 +247,7 @@ ColorChange::~ColorChange()
 
 void ColorChange::OnAllCols(int kol)
 {
-	wxButton *kolor=(kol==1)? s1 : (kol==2)? s2 : (kol==3)? s3 : s4;
+	MappedButton *kolor=(kol==1)? s1 : (kol==2)? s2 : (kol==3)? s3 : s4;
 	NumCtrl *alpha=(kol==1)? alpha1 : (kol==2)? alpha2 : (kol==3)? alpha3 : alpha4;
 	wxColour koll= kolor->GetBackgroundColour();
 

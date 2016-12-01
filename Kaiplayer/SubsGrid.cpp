@@ -922,7 +922,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 		if (middle){
 			VideoCtrl *video=Kai->GetTab()->Video;
 			if(video->GetState()!=None){//
-				video->PlayLine(GetDial(row)->Start.mstime, GetDial(row)->End.mstime- video->avtpf-10);
+				video->PlayLine(GetDial(row)->Start.mstime, GetDial(row)->End.mstime - video->avtpf/*-10*/);
 			}
 
 		}

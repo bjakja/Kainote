@@ -50,6 +50,7 @@ StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray
 	lastRow=0;
 	holding=Switchlines=false;
 	sels.Add(0);
+	SetMinSize(wxSize(150,150));
 	Refresh();
 
 }

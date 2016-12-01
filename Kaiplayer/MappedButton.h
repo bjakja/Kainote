@@ -16,20 +16,25 @@
 #ifndef _MAPPED_BUTTON_
 #define _MAPPED_BUTTON_
 
-#include "wx/button.h"
+#include "wx/tglbtn.h"
 #include "Hotkeys.h"
 
 class MappedButton :public wxWindow
 {
 public:
-	MappedButton(wxWindow *parent, int id, const wxString& label = wxEmptyString, const wxString& tooltip = wxEmptyString,
+	MappedButton(wxWindow *parent, int id, const wxString& label, int window = 0,
+             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+	MappedButton(wxWindow *parent, int id, const wxString& label, const wxString& tooltip,
              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, int window = EDITBOX_HOTKEY, long style = 0);
-	MappedButton(wxWindow *parent, int id, const wxBitmap& bitmap, const wxPoint& pos = wxDefaultPosition,
+	MappedButton(wxWindow *parent, int id, const wxString& tooltip, const wxBitmap& bitmap, const wxPoint& pos,
                    const wxSize& size = wxDefaultSize, int window = AUDIO_HOTKEY, long style = 0);
 	void SetTwoHotkeys(){twoHotkeys=true;}
 	virtual ~MappedButton();
 	void SetToolTip(const wxString &toolTip="");
 	void SetBitmap(const wxBitmap & bitmap){icon = bitmap; Refresh(false);};
+	void SetBackgroundColour(wxColour color){isColorButton = true; buttonColor = color; Refresh(false);}
+	wxColour GetBackgroundColour(){return buttonColor;}
+	bool clicked;
 private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);
@@ -38,11 +43,34 @@ private:
 	int Window;
 	bool twoHotkeys;
 	bool enter;
-	bool clicked;
+	bool isColorButton;
+	wxColour buttonColor;
 	wxBitmap *bmp;
 	wxBitmap icon;
 	wxString name;
+	wxDECLARE_ABSTRACT_CLASS(MappedButton);
 };
 
+class ToggleButton :public wxWindow
+{
+public:
+	ToggleButton(wxWindow *parent, int id, const wxString& label, const wxString& tooltip = wxEmptyString,
+             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+	~ToggleButton(){if(bmp){delete bmp;}}
+	void SetBitmap(const wxBitmap &bmp){icon = bmp; Refresh(false);}
+	bool GetValue(){return toggled;}
+	void SetValue(bool toggle){toggled = toggle; Refresh(false);}
+	bool clicked;
+private:
+	void OnSize(wxSizeEvent& evt);
+	void OnPaint(wxPaintEvent& evt);
+	void OnMouseEvent(wxMouseEvent &evt);
+	void OnKeyPress(wxKeyEvent &event);
+	wxBitmap *bmp;
+	wxBitmap icon;
+	wxString name;
+	bool enter;
+	bool toggled;
+};
 
 #endif

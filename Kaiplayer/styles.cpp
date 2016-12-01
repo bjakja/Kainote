@@ -99,7 +99,7 @@ wxColour AssColor::GetWX()
 
 wxString AssColor::GetHex(bool alpha) const
 {
-	if (alpha)
+	if (alpha && a)
 		return wxString::Format("#%02X%02X%02X%02X", a, r, g, b);
 	return wxString::Format("#%02X%02X%02X", r, g, b);
 }

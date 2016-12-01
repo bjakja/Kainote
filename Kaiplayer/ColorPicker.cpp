@@ -1106,14 +1106,14 @@ void DialogColorPicker::OnColourCanged(wxTimerEvent &event)
 	AssColor akol;
 	akol.SetWX(cur_color,0);
 	evt.SetString(akol.GetAss(false,true));
-	evt.SetInt(cur_color.Alpha());
+	evt.SetInt(0xFF - cur_color.Alpha());
 	AddPendingEvent(evt);
 }
 
 
 ButtonColorPicker::ButtonColorPicker(wxWindow *parent, AssColor _color, wxSize size)
-	: wxButton(parent,-1,"",wxDefaultPosition, size)
-	,ActualColor(_color)
+	: MappedButton(parent,-1,"","",wxDefaultPosition, size, 0)
+	, ActualColor(_color)
 {
 	SetBackgroundColour(_color.GetWX());
 	Connect(wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ButtonColorPicker::OnClick);

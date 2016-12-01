@@ -20,6 +20,8 @@
 #include <wx/wx.h>
 #include <vector>
 #include <wx/evtloop.h>
+#include <wx/popupwin.h>
+#include <wx/msw/popupwin.h>
 #include <map>
 #include "Hotkeys.h"
 class MenuEvent;
@@ -107,7 +109,7 @@ public:
 	wxAcceleratorEntry *accel;
 };
 
-class MenuDialog : public wxFrame, wxGUIEventLoop{
+class MenuDialog : public wxPopupWindow/*wxFrame*/, wxGUIEventLoop{
 	friend class Menu;
 	friend class MenuBar;
 public:
@@ -118,10 +120,18 @@ private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent &event);
 	void OnScroll(wxScrollWinEvent& event);
-	virtual bool AcceptsFocus() const {return false;};
-	virtual bool AcceptsFocusRecursively() const {return false;};
-	virtual bool AcceptsFocusFromKeyboard() const {return false;};
-	//void OnActivate(wxFocusEvent &evt);
+	bool AcceptsFocus() const {return false;};
+	bool AcceptsFocusRecursively() const {return false;};
+	bool AcceptsFocusFromKeyboard() const {return false;};
+	void OnShowSubmenu(wxTimerEvent &evt);
+	void OnHideSubmenu(wxTimerEvent &evt);
+	//virtual bool Show(bool show = true);
+	//// return the style to be used for the popup windows
+ //   virtual WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle) const;
+	//// get the HWND to be used as parent of this window with CreateWindow()
+ //   virtual WXHWND MSWGetParent() const;
+ //   // popups handle the position like wxTopLevelWindow, not wxWindow
+ //   virtual void DoGetPosition(int *x, int *y) const;
 	int ShowPartialModal();
 	void EndPartialModal(int ReturnId);
 	bool SendEvent(MenuItem *item, int accel);
@@ -131,7 +141,7 @@ private:
 	int submenuToHide;
 	int sel;
 	int scPos;
-	static volatile int id;
+	static int id;
 protected:
 	wxBitmap *bmp;
 	Menu *parent;
@@ -193,9 +203,11 @@ class Menu : public Mnemonics
 	void PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos=true);
 	void SetMaxVisible(int maxVisible);
 	void SetShowIcons(bool showIcons);
+	void SetMinWidth(int width);
 	void SetTitle(const wxString &_title){title = _title;};
 	wxString GetTitle() const {return title;};
 	void HideMenu(){dialog->HideMenus();}
+	void SelectOnStart(int numitem);
 private:
 	void CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool clientPos);
 	void DestroyDialog();

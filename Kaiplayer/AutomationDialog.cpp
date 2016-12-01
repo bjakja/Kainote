@@ -147,7 +147,7 @@ namespace Auto{
 		public:
 			Label(lua_State *L) : LuaDialogControl(L), label(get_field(L, "label")) { }
 
-			wxControl *Create(wxWindow *parent) {
+			wxWindow *Create(wxWindow *parent) {
 				return new wxStaticText(parent, -1, wxString(label));
 			}
 
@@ -180,7 +180,7 @@ namespace Auto{
 			wxString SerialiseValue() const { return inline_string_encode(text); }
 			void UnserialiseValue(const wxString &serialised) { text = inline_string_decode(serialised); }
 
-			wxControl *Create(wxWindow *parent) {
+			wxWindow *Create(wxWindow *parent) {
 				cw = new wxTextCtrl(parent, -1, text);
 				cw->SetMaxLength(0);
 				cw->SetToolTip(wxString(hint));
@@ -214,7 +214,7 @@ namespace Auto{
 			wxString SerialiseValue() const { return inline_string_encode(color.GetHex(alpha)); }
 			void UnserialiseValue(const wxString &serialised) { color = wxColour(wxString(inline_string_decode(serialised))); }
 
-			wxControl *Create(wxWindow *parent) {
+			wxWindow *Create(wxWindow *parent) {
 				//wxLogStatus("color %i %i %i %i", color.r, color.g, color.b, color.a);
 				cw = new ButtonColorPicker(parent, color.GetWX(), wxDefaultSize);
 				cw->SetToolTip(wxString(hint));
@@ -233,7 +233,7 @@ namespace Auto{
 			Textbox(lua_State *L) : Edit(L) { }
 
 			// Same serialisation interface as single-line edit
-			wxControl *Create(wxWindow *parent) {
+			wxWindow *Create(wxWindow *parent) {
 				cw = new wxTextCtrl(parent, -1, text, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
 				cw->SetMinSize(wxSize(0, 30));
 				cw->SetToolTip(wxString(hint));
@@ -264,7 +264,7 @@ namespace Auto{
 			wxString SerialiseValue() const { return std::to_string(value); }
 			void UnserialiseValue(const wxString &serialised) { value = atoi(serialised.utf8_str().data()); }
 
-			wxControl *Create(wxWindow *parent) {
+			wxWindow *Create(wxWindow *parent) {
 				wxString tmpval;
 				tmpval<<value;
 				cw = new NumCtrl(parent, -1, tmpval, min, max, true, wxDefaultPosition, wxDefaultSize);
@@ -304,7 +304,7 @@ namespace Auto{
 			wxString SerialiseValue() const { return std::to_string(value); }
 			void UnserialiseValue(const wxString &serialised) { value = atof(serialised.utf8_str().data()); }
 
-			wxControl *Create(wxWindow *parent) {
+			wxWindow *Create(wxWindow *parent) {
 				scd = new NumCtrl(parent, -1, value, min, max, false, wxDefaultPosition, wxDefaultSize);
 				scd->SetToolTip(wxString(hint));
 				return scd;
@@ -337,7 +337,7 @@ namespace Auto{
 			wxString SerialiseValue() const { return inline_string_encode(value); }
 			void UnserialiseValue(const wxString &serialised) { value = inline_string_decode(serialised); }
 
-			wxControl *Create(wxWindow *parent) {
+			wxWindow *Create(wxWindow *parent) {
 				cw = new wxComboBox(parent, -1, wxString(value), wxDefaultPosition, wxDefaultSize, items, wxCB_READONLY);
 				cw->SetToolTip(wxString(hint));
 				return cw;
@@ -366,7 +366,7 @@ namespace Auto{
 			wxString SerialiseValue() const { return value ? "1" : "0"; }
 			void UnserialiseValue(const wxString &serialised) { value = serialised != "0"; }
 
-			wxControl *Create(wxWindow *parent) {
+			wxWindow *Create(wxWindow *parent) {
 				cw = new wxCheckBox(parent, -1, wxString(label));
 				cw->SetToolTip(wxString(hint));
 				cw->SetValue(value);

@@ -19,12 +19,13 @@
 #include <wx/wx.h>
 #include <wx/treebook.h>
 #include <wx/listctrl.h>
+#include "ListControls.h"
 #include <vector>
 class kainoteFrame;
 
 class OptionsBind {
 public:
-	wxControl *ctrl;
+	wxWindow *ctrl;
 	wxString option;
 };
 
@@ -36,14 +37,14 @@ public:
 	virtual ~OptionsDialog();
 	wxTreebook *OptionsTree;
 	wxListCtrl *Shortcuts;
-	wxChoice* Stylelist;
-	wxChoice* Katlist;
+	KaiChoice* Stylelist;
+	KaiChoice* Katlist;
 	wxButton *okok;
 
 private:
 	std::vector<OptionsBind> handles;
 
-	void ConOpt(wxControl *ctrl,wxString option);
+	void ConOpt(wxWindow *ctrl,wxString option);
 	void OnSaveClick(wxCommandEvent& event);
 	void SetOptions(bool saveall=true);
 	void OnMapHkey(wxListEvent& event);

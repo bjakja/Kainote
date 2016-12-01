@@ -16,6 +16,7 @@
 
 #include <wx/wx.h>
 #include <vector>
+#include "ListControls.h"
 
 const static int toolsSize = 10;
 const static int clipToolsSize = 6;
@@ -62,6 +63,8 @@ public:
 			delete (*cur);
 		}
 	}
+	KaiChoice *videoSeekAfter;
+	KaiChoice *videoPlayAfter;
 private:
 	
 	void OnMouseEvent(wxMouseEvent &evt);
@@ -88,5 +91,7 @@ enum{
 	BUTTON_ORG=32,
 	ID_VIDEO_TOOLBAR_EVENT=21909,
 	ID_VECTOR_TOOLBAR_EVENT,
-	ID_MOVE_TOOLBAR_EVENT
+	ID_MOVE_TOOLBAR_EVENT,
+	ID_SEEK_AFTER=22222,
+	ID_PLAY_AFTER
 };

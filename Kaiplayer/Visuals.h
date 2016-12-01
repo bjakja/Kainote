@@ -130,11 +130,12 @@ public:
 	Position();
 	//~Position();
 	void OnMouseEvent(wxMouseEvent &event);
-	//wxString GetVisual();
+	wxString GetVisual(){return "";};
 	wxString GetVisual(int datapos);
 	void ChangeMultiline(bool all);
 	void SetCurVisual();
 	void Draw(int time);
+	void ChangeTool(int _tool){};
 	//void SetVisual(int _start,int _end);
 	std::vector<PosData> data;
 };
@@ -147,6 +148,7 @@ public:
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual();
 	void SetCurVisual();
+	void ChangeTool(int _tool){};
 	int moveStart;
 	int moveEnd;
 	byte type;
@@ -187,6 +189,7 @@ public:
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual();
 	void SetCurVisual();
+	void ChangeTool(int _tool){};
 	byte type;
 	int grabbed;
 	byte AN;
@@ -203,6 +206,7 @@ public:
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual();
 	void SetCurVisual();
+	void ChangeTool(int _tool){};
 	bool isOrg;
 	D3DXVECTOR2 org;
 	wxPoint diffs;
@@ -216,6 +220,7 @@ public:
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual();
 	void SetCurVisual();
+	void ChangeTool(int _tool){};
 	bool isOrg;
 	D3DXVECTOR2 angle;
 	D3DXVECTOR2 oldAngle;
@@ -233,6 +238,7 @@ public:
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual();
 	void SetCurVisual();
+	void ChangeTool(int _tool){};
 	wxPoint Corner[2];
 	bool invClip;
 	int grabbed;

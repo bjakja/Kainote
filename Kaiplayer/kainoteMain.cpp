@@ -352,8 +352,8 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			ss->SetPosition(wxPoint(ww,hh));
 		}
 		ss->Store->Refresh(false);
-		int chc=ss->Choice1->FindString(Options.acdir);
-		ss->Choice1->SetSelection(chc);
+		int chc=ss->catalogList->FindString(Options.acdir);
+		ss->catalogList->SetSelection(chc);
 		ss->LoadAssStyles();
 		ss->Show();
 	}else if(id==FontCollector && pan->Grid1->form<SRT){
@@ -712,8 +712,8 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 					if(katal==Options.dirs[i]){
 						Options.LoadStyles(katal);
 						if(ss){ss->Store->SetSelection(0,true);
-						int chc=ss->Choice1->FindString(Options.acdir);
-						ss->Choice1->SetSelection(chc);
+						int chc=ss->catalogList->FindString(Options.acdir);
+						ss->catalogList->SetSelection(chc);
 						}
 					}
 				}
@@ -738,19 +738,18 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 	bool isload=pan->Video->Load(fnname,pan->Grid1->SaveText(),fulls);
 
 
-	if(!isload){
-		pan->Thaw();return isload;
-	}else{
-		pan->CTime->Contents();
-		pan->Video->seekfiles=true;
-		pan->Edit->Frames->Enable(!pan->Video->IsDshow);
-		pan->Edit->Times->Enable(!pan->Video->IsDshow);
-		UpdateToolbar();
-		//pan->Grid1->SetFocus();
-	}
 	pan->Thaw();
-
+	pan->CTime->Contents();
+	UpdateToolbar();
 	Options.SaveOptions(true, false);
+	if(!isload){return isload;}
+	pan->Video->seekfiles=true;
+	pan->Edit->Frames->Enable(!pan->Video->IsDshow);
+	pan->Edit->Times->Enable(!pan->Video->IsDshow);
+		
+		//pan->Grid1->SetFocus();
+
+	
 
 
 	return true;  

@@ -20,11 +20,11 @@
 
 #include <wx/stattext.h>
 #include <wx/filedlg.h>
-#include <wx/choice.h>
-#include <wx/button.h>
 #include <wx/dialog.h>
 #include "StyleList.h"
 #include "Styles.h"
+#include "MappedButton.h"
+#include "ListControls.h"
 
 class ColorChange;
 
@@ -35,24 +35,23 @@ class stylestore: public wxDialog
 
 		stylestore(wxWindow* parent ,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~stylestore();
-		wxButton* Button4;
-		wxButton* Button1;
-		wxButton* Button2;
-		wxButton* Button6;
-		wxButton* Button10;
-		wxButton* Button11;
-		wxButton* Button12;
-		wxButton* Button13;
-		wxButton* Button14;
-		wxButton* Button15;
-		wxButton* Button5;
-		wxButton* Button3;
-		wxButton* Button7;
-		wxButton* Button9;
-		wxButton* SClean;
+		MappedButton* addToAss;
+		MappedButton* close;
+		MappedButton* assNew;
+		MappedButton* assCopy;
+		MappedButton* assLoad;
+		MappedButton* storeSort;
+		MappedButton* assDelete;
+		MappedButton* assSort;
+		MappedButton* addToStore;
+		MappedButton* newCatalog;
+		MappedButton* storeNew;
+		MappedButton* storeCopy;
+		MappedButton* storeLoad;
+		MappedButton* storeDelete;
+		MappedButton* SClean;
 		StyleList* Store;
-		wxChoice* Choice1;
-		wxButton* Button8;
+		KaiChoice* catalogList;
 		StyleList* ASS;
 		wxBoxSizer *Mainall;
 		ColorChange* cc;
@@ -64,15 +63,11 @@ class stylestore: public wxDialog
 		void LoadAssStyles();
 		void ReloadFonts();
 
-		
 	private:
-
 
 		void OnAssStyleChange(wxCommandEvent& event);
 		void OnAddToStore(wxCommandEvent& event);
 		void OnAddToAss(wxCommandEvent& event);
-		void OnButton5Click(wxCommandEvent& event);
-		void OnButton6Click(wxCommandEvent& event);
 		void OnStoreStyleChange(wxCommandEvent& event);
 		void OnChangeCatalog(wxCommandEvent& event);
 		void OnNewCatalog(wxCommandEvent& event);

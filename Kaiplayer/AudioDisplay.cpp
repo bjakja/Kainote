@@ -177,7 +177,7 @@ void AudioDisplay::UpdateImage(bool weak) {
 
 	// Set image as needing to be redrawn
 	needImageUpdate = true;
-	if (weak == false && needImageUpdateWeak == true) {
+	if (weak == false) {// && needImageUpdateWeak == true
 		needImageUpdateWeak = false;
 	}
 	Refresh(false);
@@ -295,7 +295,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	HR(D3DXCreateFontW(d3dDevice, 18, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFont ), _("Nie można stworzyć czcionki D3DX"));
 	HR(D3DXCreateFontW(d3dDevice, 12, 0, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFont8 ), _("Nie można stworzyć czcionki D3DX"));
 	HR(D3DXCreateFontW(d3dDevice, 16, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Verdana"), &d3dFont9 ), _("Nie można stworzyć czcionki D3DX"));
-	HR(d3dLine->SetAntialias(TRUE), _("Linia nie ustawi AA"));
+	//HR(d3dLine->SetAntialias(TRUE), _("Linia nie ustawi AA"));
 	HR (d3dDevice->CreateOffscreenPlainSurface(size.x,size.y,D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &spectrumSurface , 0), _("Nie można stworzyć plain surface"));
 	//HR(d3dDevice->CreateTexture(size.x, size.y, 1, D3DUSAGE_RENDERTARGET,
 		//D3DFMT_R8G8B8,D3DPOOL_DEFAULT,&texture, NULL), "Nie można utworzyć tekstury" );
@@ -307,7 +307,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 void AudioDisplay::DoUpdateImage() {
 	// Loaded?
 	if (!loaded || !provider) return;
-
+	wxMutexLocker lock(mutex);
 	// Needs updating?
 	//if (!needImageUpdate) return;
 	bool weak = needImageUpdateWeak;
@@ -612,7 +612,7 @@ void AudioDisplay::DoUpdateImage() {
 			float x = GetXAtMS(Video->Tell());
 			//wxLogStatus("xpos %i", x);
 			d3dLine->Begin();
-			D3DXVECTOR2 v2[2]={D3DXVECTOR2(x-1,0),D3DXVECTOR2(x-1,h)};
+			D3DXVECTOR2 v2[2]={D3DXVECTOR2(x,0),D3DXVECTOR2(x,h)};
 			DrawDashedLine(v2,2,AudioCursor);
 			d3dLine->End();
 			d3dLine->SetWidth(1.f);
@@ -626,11 +626,12 @@ void AudioDisplay::DoUpdateImage() {
 
 	if(cursorPaint){
 		D3DXVECTOR2 v2[2]={D3DXVECTOR2(curpos,0),D3DXVECTOR2(curpos,h)};
-		d3dLine->SetWidth(2);
+		d3dLine->SetAntialias(TRUE);
 		d3dLine->Begin();
 		d3dLine->Draw(v2,2,AudioCursor);
 		d3dLine->End();
-		d3dLine->SetWidth(1);
+		d3dLine->SetAntialias(FALSE);
+		//d3dLine->SetWidth(1);
 		if(!player->IsPlaying()){
 			STime time;
 			time.NewTime(GetMSAtX(curpos));
@@ -717,34 +718,36 @@ void AudioDisplay::DrawInactiveLines() {
 
 		
 		// Draw over waveform
-		if(shadeX1>= aS && shadeX2 <= aE){continue;}
-		else if(shadeX1 < aE && shadeX2 >= aE){shadeX1=aE;}
-		else if(shadeX2 > aS && shadeX1 <= aE){shadeX1=aS;}
-		//wxLogStatus("shady xy %i %i ase %i %i", shadeX1, shadeX2, aS, aE);
-		D3DCOLOR fill = D3DCOLOR_FROM_WX(Options.GetColour(_T("Audio Inactive Lines Background")));;
+			
+		// Selection
+		int selX1 = MAX(0,GetXAtMS(curStartMS));
+		int selX2 = MIN(w,GetXAtMS(curEndMS));
+
+		// Get ranges (x1->x2, x3->x4).
+		int x1 = MAX(0,shadeX1);
+		int x2 = MIN(w,shadeX2);
+		int x3 = MAX(x1,selX2);
+		int x4 = MAX(x2,selX2);
+
+		// Clip first range
+		x1 = MIN(x1,selX1);
+		x2 = MIN(x2,selX1);
+
+		D3DCOLOR fill = D3DCOLOR_FROM_WX(Options.GetColour(_T("Audio Inactive Lines Background")));
 		VERTEX v9[4];
-		CreateVERTEX(&v9[0], shadeX1, 0, fill);
-		CreateVERTEX(&v9[1], shadeX2+1, 0, fill);
-		CreateVERTEX(&v9[2], shadeX1, h, fill);
-		CreateVERTEX(&v9[3], shadeX2+1, h, fill);
+		CreateVERTEX(&v9[0], x1, 0, fill);
+		CreateVERTEX(&v9[1], x2+1, 0, fill);
+		CreateVERTEX(&v9[2], x1, h, fill);
+		CreateVERTEX(&v9[3], x2+1, h, fill);
+		HRN(d3dDevice->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX) ),"inactive lines primitive failed");
+		CreateVERTEX(&v9[0], x3, 0, fill);
+		CreateVERTEX(&v9[1], x4+1, 0, fill);
+		CreateVERTEX(&v9[2], x3, h, fill);
+		CreateVERTEX(&v9[3], x4+1, h, fill);
 		HRN(d3dDevice->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX) ),"inactive lines primitive failed");
 
 		if (!spectrum) {
 			d3dLine->Begin();
-			// Selection
-			int selX1 = MAX(0,GetXAtMS(curStartMS));
-			int selX2 = MIN(w,GetXAtMS(curEndMS));
-
-			// Get ranges (x1->x2, x3->x4).
-			int x1 = MAX(0,shadeX1);
-			int x2 = MIN(w,shadeX2);
-			int x3 = MAX(x1,selX2);
-			int x4 = MAX(x2,selX2);
-
-			// Clip first range
-			x1 = MIN(x1,selX1);
-			x2 = MIN(x2,selX1);
-
 			// draw lines of inactive waveform
 			for (int i=x1;i<x2;i++){
 				v2[0]=D3DXVECTOR2(i,peak[i]);
@@ -940,12 +943,14 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 		// Always draw the spectrum for the entire width
 		// Hack: without those divs by 2 the display is horizontally compressed
 		//spectrumRenderer->RenderRange(Position*samples, (Position+w)*samples, false, img, dxw, h, samplesPercent);
-		spectrumRenderer->RenderRange(Position*samples, (Position+w)*samples, false, img, dxw, h, samplesPercent);
-
+		//spectrumRenderer->RenderRange(Position*samples, (Position+w)*samples, false, img, dxw, h, samplesPercent);
+		spectrumRenderer->RenderRange(Position*samples, (Position+w)*samples, false, img, 0, w, dxw, h, samplesPercent);
 		spectrumSurface->UnlockRect();
 	
 	}
-	if(FAILED(d3dDevice->StretchRect(spectrumSurface,0,backBuffer,0,D3DTEXF_LINEAR))){
+	wxRect crc = GetClientRect();
+	RECT rc = {crc.x,crc.y,crc.width-crc.x,crc.height-crc.y};
+	if(FAILED(d3dDevice->StretchRect(spectrumSurface,&rc,backBuffer,&rc,D3DTEXF_LINEAR))){
 		wxLogStatus(_("Nie można nałożyć powierzchni spectrum na siebie"));
 	}
 	//if (hasSel && selStartCap < selEndCap) {
@@ -1561,7 +1566,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 			lastDragX = x;
 			UpdatePosition(Position + delta);
 			UpdateImage();
-			Refresh(false);
+			//Refresh(false);
 			return;
 		}
 		else draggingScale = false;
@@ -1902,11 +1907,11 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 			}
 
 			// Draw cursor
-			needImageUpdateWeak = true;
-			needImageUpdate=true;
+			//needImageUpdateWeak = true;
+			//needImageUpdate=true;
 			curpos = x;
-			Refresh(false);
-			
+			//Refresh(false);
+			UpdateImage(true);
 		}
 
 		
@@ -2017,7 +2022,7 @@ void AudioDisplay::OnSize(wxSizeEvent &event) {
 void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 
 	
-	wxMutexLocker lock(mutex);
+	//wxMutexLocker lock(mutex);
 
 	
 	// Draw cursor
@@ -2167,7 +2172,7 @@ void AudioDisplay::OnLoseFocus(wxFocusEvent &event) {
 	if (hasFocus && loaded) {
 		hasFocus = false;
 		UpdateImage(true);
-		Refresh(false);
+		//Refresh(false);
 	}
 }
 
@@ -2242,6 +2247,6 @@ BEGIN_EVENT_TABLE(AudioDisplay, wxWindow)
 	EVT_TIMER(Audio_Update_Timer,AudioDisplay::OnUpdateTimer)
 	EVT_SET_FOCUS(AudioDisplay::OnGetFocus)
 	EVT_KILL_FOCUS(AudioDisplay::OnLoseFocus)
-	//EVT_MOUSE_CAPTURE_LOST(AudioDisplay::OnLostCapture)
+	EVT_MOUSE_CAPTURE_LOST(AudioDisplay::OnLostCapture)
 	EVT_ERASE_BACKGROUND(AudioDisplay::OnEraseBackground)
 END_EVENT_TABLE()

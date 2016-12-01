@@ -36,16 +36,16 @@
 		 wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
 		 wxBoxSizer *sizer2 = new wxBoxSizer(wxVERTICAL);
 		 wxStaticText *txt = new wxStaticText(this,-1,msg);
-		 wxButton *btn=NULL;
-		 btn = new wxButton(this,wxID_YES,_("Tak"));
+		 MappedButton *btn=NULL;
+		 btn = new MappedButton(this,wxID_YES,_("Tak"));
 		 Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxID_YES);},wxID_YES);
 		 sizer1->Add(btn,0,wxALL,3);
-		 btn = new wxButton(this,wxID_OK,_("Tak dla wszystkich"));
+		 btn = new MappedButton(this,wxID_OK,_("Tak dla wszystkich"));
 		 sizer1->Add(btn,0,wxALL,3);
-		 btn = new wxButton(this,wxID_NO,_("Nie"));
+		 btn = new MappedButton(this,wxID_NO,_("Nie"));
 		 Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxID_NO);},wxID_NO);
 		 sizer1->Add(btn,0,wxALL,3);
-		 btn = new wxButton(this,wxID_CANCEL,_("Anuluj"));
+		 btn = new MappedButton(this,wxID_CANCEL,_("Anuluj"));
 		 sizer1->Add(btn,0,wxALL,3);
 		 sizer2->Add(txt,0,wxTOP|wxLEFT|wxRIGHT|wxALIGN_CENTER_HORIZONTAL,6);
 		 sizer2->Add(sizer1,0,wxALL,3);
@@ -64,7 +64,7 @@ int ShowMessage(wxWindow *parent, const wxString& msg, const wxString &caption){
 
 
 stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
-	: wxDialog(parent,id,_("Menedżer stylów"),pos,size,wxDEFAULT_DIALOG_STYLE)
+	: wxDialog(parent,id,_("Menedżer stylów"),pos,wxSize(400,-1),wxDEFAULT_DIALOG_STYLE)
 {
 
 	wxAcceleratorEntry centries[1];
@@ -72,8 +72,8 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	wxAcceleratorTable caccel(1, centries);
 	this->SetAcceleratorTable(caccel);
 
-	wxFont thisFont(8,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
-	SetFont(thisFont);
+	//wxFont thisFont(8,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
+	//SetFont(thisFont);
 
 	wxIcon icn;
 	icn.CopyFromBitmap(wxBITMAP_PNG("styles"));
@@ -87,81 +87,81 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	Mainall= new wxBoxSizer(wxHORIZONTAL);
 
 	wxStaticBoxSizer *katsbs=new wxStaticBoxSizer(wxHORIZONTAL, this, _("Katalog:"));
-	Choice1 = new wxChoice(this, ID_CATALOG, wxDefaultPosition, wxDefaultSize, Options.dirs);
-	int chc=Choice1->FindString(Options.acdir);
-	Choice1->SetSelection(chc);
-	Button7 = new wxButton(this, ID_NEWCAT, _("Nowy"));
-	wxButton *delcat = new wxButton(this, ID_DELCAT, _("Usuń"));
+	catalogList = new KaiChoice(this, ID_CATALOG, wxDefaultPosition, wxDefaultSize, Options.dirs);
+	int chc=catalogList->FindString(Options.acdir);
+	catalogList->SetSelection(chc);
+	newCatalog = new MappedButton(this, ID_NEWCAT, _("Nowy"));
+	MappedButton *delcat = new MappedButton(this, ID_DELCAT, _("Usuń"));
 	delcat->SetToolTip(_("Usuń wybrany katalog stylów"));
-	katsbs->Add(Choice1,4,wxEXPAND|wxALL,2);
-	katsbs->Add(Button7,0,wxEXPAND|wxLEFT,5);
-	katsbs->Add(delcat,0,wxEXPAND|wxLEFT,5);
+	katsbs->Add(catalogList,1,wxEXPAND|wxALL,2);
+	katsbs->Add(newCatalog,0,wxEXPAND|wxALL,2);
+	katsbs->Add(delcat,0,wxEXPAND|wxALL,2);
 
 
 	wxStaticBoxSizer *katsbs1=new wxStaticBoxSizer(wxHORIZONTAL, this, _("Style katalogu:"));
 	wxBoxSizer *katbutt=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *katall=new wxBoxSizer(wxHORIZONTAL);
 
-	Store = new StyleList(this, ID_STORESTYLES, &Options.assstore, cc->sfont, wxDefaultPosition, wxSize(-1,200));
+	Store = new StyleList(this, ID_STORESTYLES, &Options.assstore, cc->sfont, wxDefaultPosition, wxSize(-1,350));
 
-	Button5 = new wxButton(this, ID_STORENEW, _("Nowy"),wxDefaultPosition, wxSize(50,-1));
-	Button8 = new wxButton(this, ID_STORECOPY, _("Kopiuj"));
-	Button9 = new wxButton(this, ID_STORELOAD, _("Wczytaj"));
-	Button12 = new wxButton(this, ID_STOREDEL, _("Usuń"));
-	Button13 = new wxButton(this, ID_STORESORT, _("Sortuj"));
+	storeNew = new MappedButton(this, ID_STORENEW, _("Nowy")/*, 0, wxDefaultPosition, wxSize(50,-1)*/);
+	storeCopy = new MappedButton(this, ID_STORECOPY, _("Kopiuj"));
+	storeLoad = new MappedButton(this, ID_STORELOAD, _("Wczytaj"));
+	storeDelete = new MappedButton(this, ID_STOREDEL, _("Usuń"));
+	storeSort = new MappedButton(this, ID_STORESORT, _("Sortuj"));
 
-	katbutt->Add(Button5,1,wxEXPAND|wxALL,5);
-	katbutt->Add(Button8,1,wxEXPAND|wxALL,5);
-	katbutt->Add(Button9,1,wxEXPAND|wxALL,5);
-	katbutt->Add(Button12,1,wxEXPAND|wxALL,5);
-	katbutt->Add(Button13,1,wxEXPAND|wxALL,5);
+	katbutt->Add(storeNew,0,wxEXPAND|wxTOP|wxLEFT,5);
+	katbutt->Add(storeCopy,0,wxEXPAND|wxTOP|wxLEFT,5);
+	katbutt->Add(storeLoad,0,wxEXPAND|wxTOP|wxLEFT,5);
+	katbutt->Add(storeDelete,0,wxEXPAND|wxTOP|wxLEFT,5);
+	katbutt->Add(storeSort,0,wxEXPAND|wxTOP|wxLEFT,5);
 
 	katall->Add(Store,3,wxEXPAND,0);
 	katall->Add(katbutt,1,wxEXPAND,0);
 
-	katsbs1->Add(katall,0,wxEXPAND|wxALL,2);
+	katsbs1->Add(katall,1,wxEXPAND|wxALL,2);
 
 	wxBoxSizer *butts=new wxBoxSizer(wxHORIZONTAL);
 
-	Button3 = new wxButton(this, ID_ADDTOSTORE, _("^ Dodaj do magazynu"));
-	Button4 = new wxButton(this, ID_ADDTOASS, _("v Dodaj do ASS"));
-	butts->Add(Button3,5,wxEXPAND|wxALL,5);
-	butts->Add(Button4,5,wxEXPAND|wxALL,5);
-	butts->AddStretchSpacer(3);
+	addToStore = new MappedButton(this, ID_ADDTOSTORE, _("^ Dodaj do magazynu"));
+	addToAss = new MappedButton(this, ID_ADDTOASS, _("v Dodaj do ASS"));
+	butts->Add(addToStore,1,wxEXPAND|wxALL,5);
+	butts->Add(addToAss,1,wxEXPAND|wxALL,5);
+	//butts->AddStretchSpacer(3);
 
 	wxStaticBoxSizer *asssbs=new wxStaticBoxSizer(wxHORIZONTAL, this, _("Style pliku ASS:"));
 	wxBoxSizer *assbutt=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *assall=new wxBoxSizer(wxHORIZONTAL);
 
-	ASS = new StyleList(this, ID_ASSSTYLES, Notebook::GetTab()->Grid1->GetStyleTable(), cc->sfont, wxDefaultPosition, wxSize(-1,200));
+	ASS = new StyleList(this, ID_ASSSTYLES, Notebook::GetTab()->Grid1->GetStyleTable(), cc->sfont, wxDefaultPosition, wxSize(-1,350));
 
 
-	Button6 = new wxButton(this, ID_ASSNEW, _("Nowy"),wxDefaultPosition, wxSize(50,-1));
-	Button10 = new wxButton(this, ID_ASSCOPY, _("Kopiuj"));
-	Button11 = new wxButton(this, ID_ASSLOAD, _("Wczytaj"));
-	Button14 = new wxButton(this, ID_ASSDEL, _("Usuń"));
-	Button15 = new wxButton(this, ID_ASSSORT, _("Sortuj"));
-	SClean = new wxButton(this, ID_ASSCLEAN, _("Oczyść"));
+	assNew = new MappedButton(this, ID_ASSNEW, _("Nowy")/*,0 ,wxDefaultPosition, wxSize(50,-1)*/);
+	assCopy = new MappedButton(this, ID_ASSCOPY, _("Kopiuj"));
+	assLoad = new MappedButton(this, ID_ASSLOAD, _("Wczytaj"));
+	assDelete = new MappedButton(this, ID_ASSDEL, _("Usuń"));
+	assSort = new MappedButton(this, ID_ASSSORT, _("Sortuj"));
+	SClean = new MappedButton(this, ID_ASSCLEAN, _("Oczyść"));
 
-	assbutt->Add(Button6,1,wxEXPAND|wxTOP|wxRIGHT|wxLEFT,5);
-	assbutt->Add(Button10,1,wxEXPAND|wxTOP|wxRIGHT|wxLEFT,5);
-	assbutt->Add(Button11,1,wxEXPAND|wxTOP|wxRIGHT|wxLEFT,5);
-	assbutt->Add(Button14,1,wxEXPAND|wxTOP|wxRIGHT|wxLEFT,5);
-	assbutt->Add(Button15,1,wxEXPAND|wxTOP|wxRIGHT|wxLEFT,5);
-	assbutt->Add(SClean,1,wxEXPAND|wxTOP|wxRIGHT|wxLEFT,5);
+	assbutt->Add(assNew,0,wxEXPAND|wxTOP|wxLEFT,5);
+	assbutt->Add(assCopy,0,wxEXPAND|wxTOP|wxLEFT,5);
+	assbutt->Add(assLoad,0,wxEXPAND|wxTOP|wxLEFT,5);
+	assbutt->Add(assDelete,0,wxEXPAND|wxTOP|wxLEFT,5);
+	assbutt->Add(assSort,0,wxEXPAND|wxTOP|wxLEFT,5);
+	assbutt->Add(SClean,0,wxEXPAND|wxTOP|wxLEFT,5);
 
 	assall->Add(ASS,3,wxEXPAND,0);
 	assall->Add(assbutt,1,wxEXPAND|wxBOTTOM,5);
 
-	asssbs->Add(assall,0,wxEXPAND|wxALL,2);
+	asssbs->Add(assall,1,wxEXPAND|wxALL,2);
 
-	Button2 = new wxButton(this, ID_CLOSE, _("Zamknij"));
+	close = new MappedButton(this, ID_CLOSE, _("Zamknij"));
 
 	Mainsm->Add(katsbs,0,wxEXPAND|wxALL,2);
 	Mainsm->Add(katsbs1,0,wxEXPAND|wxALL,2);
 	Mainsm->Add(butts,0,wxEXPAND|wxALL,2);
 	Mainsm->Add(asssbs,0,wxEXPAND|wxALL,2);
-	Mainsm->Add(Button2,0,wxALIGN_CENTER|wxALL,2);
+	Mainsm->Add(close,0,wxALIGN_CENTER|wxALL,2);
 
 
 
@@ -200,6 +200,9 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	thread = NULL;
 	thread = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)CheckFontProc, this, 0, 0);
 	SetThreadPriority(thread,THREAD_PRIORITY_LOWEST);
+	
+	//SetMinSize(wxSize(200,-1));
+	SetMaxSize(wxSize(500,-1));
 }
 
 stylestore::~stylestore()
@@ -387,7 +390,7 @@ void stylestore::changestyle(Styles *cstyl)
 void stylestore::OnChangeCatalog(wxCommandEvent& event)
 {
 	Options.SaveOptions(false);
-	Options.LoadStyles(Choice1->GetString(Choice1->GetSelection()));
+	Options.LoadStyles(catalogList->GetString(catalogList->GetSelection()));
 
 	Store->SetSelection(0,true);
 }
@@ -397,7 +400,7 @@ void stylestore::OnNewCatalog(wxCommandEvent& event)
 	NewCatalog nc(this);
 	if(nc.ShowModal()==wxID_OK){
 		wxString nkat=nc.TextCtrl1->GetValue();
-		Choice1->SetSelection(Choice1->Append(nkat));
+		catalogList->SetSelection(catalogList->Append(nkat));
 		Options.dirs.Add(nkat);
 		Options.acdir=nkat;
 		Options.clearstyles();
@@ -407,14 +410,14 @@ void stylestore::OnNewCatalog(wxCommandEvent& event)
 
 void stylestore::OnDelCatalog(wxCommandEvent& event)
 {
-	int cat=Choice1->GetSelection();
+	int cat=catalogList->GetSelection();
 	if(cat==-1){return;}
-	wxString Cat = Choice1->GetString(cat);
+	wxString Cat = catalogList->GetString(cat);
 	if(Cat=="Default"){wxBell();return;}
-	Choice1->Delete(cat);
+	catalogList->Delete(cat);
 	Options.dirs.RemoveAt(cat);
 	Options.acdir=Options.dirs[MAX(0,cat-1)];
-	Choice1->SetSelection(MAX(0,cat-1));
+	catalogList->SetSelection(MAX(0,cat-1));
 	wxString path;
 	path<<Options.pathfull<<"\\Catalog\\"<<Cat<<".sty";
 	wxRemoveFile(path);
@@ -675,22 +678,22 @@ void stylestore::StyleonVideo(Styles *styl, bool fullskreen)
 
 void stylestore::DoTooltips()
 {
-	Choice1->SetToolTip(_("Katalog styli"));
-	Button7->SetToolTip(_("Nowy katalog styli"));
+	catalogList->SetToolTip(_("Katalog styli"));
+	newCatalog->SetToolTip(_("Nowy katalog styli"));
 	//ASS->SetToolTip(_("Style napisów"));
 	//Store->SetToolTip(_("Style magazynu"));
-	Button5->SetToolTip(_("Utwórz nowy styl magazynu"));
-	Button8->SetToolTip(_("Kopiuj styl magazynu"));
-	Button9->SetToolTip(_("Wczytaj do magazynu styl z pliku ass"));
-	Button12->SetToolTip(_("Usuń styl z magazynu"));
-	Button13->SetToolTip(_("Sortuj style w magazynie"));
-	Button6->SetToolTip(_("Utwórz nowy styl napisów"));
-	Button10->SetToolTip(_("Kopiuj styl napisów"));
-	Button11->SetToolTip(_("Wczytaj do napisów styl z pliku ass"));
-	Button14->SetToolTip(_("Usuń styl z napisów"));
-	Button15->SetToolTip(_("Sortuj style w napisach"));
-	Button3->SetToolTip(_("Dodaj do magazynu styl z napisów"));
-	Button4->SetToolTip(_("Dodaj do napisów styl z magazynu"));
+	storeNew->SetToolTip(_("Utwórz nowy styl magazynu"));
+	storeCopy->SetToolTip(_("Kopiuj styl magazynu"));
+	storeLoad->SetToolTip(_("Wczytaj do magazynu styl z pliku ass"));
+	storeDelete->SetToolTip(_("Usuń styl z magazynu"));
+	storeSort->SetToolTip(_("Sortuj style w magazynie"));
+	assNew->SetToolTip(_("Utwórz nowy styl napisów"));
+	assCopy->SetToolTip(_("Kopiuj styl napisów"));
+	assLoad->SetToolTip(_("Wczytaj do napisów styl z pliku ass"));
+	assDelete->SetToolTip(_("Usuń styl z napisów"));
+	assSort->SetToolTip(_("Sortuj style w napisach"));
+	addToStore->SetToolTip(_("Dodaj do magazynu styl z napisów"));
+	addToAss->SetToolTip(_("Dodaj do napisów styl z magazynu"));
 	SClean->SetToolTip(_("Oczyść napisy z nieużywanych stylów"));
 }
 
