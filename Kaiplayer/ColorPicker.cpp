@@ -494,8 +494,8 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color)
 	hsv_input[1] = new NumCtrl(this, SELECTOR_HSV_S, "", 0, 255,true, wxDefaultPosition, colorinput_size);
 	hsv_input[2] = new NumCtrl(this, SELECTOR_HSV_V, "", 0, 255,true, wxDefaultPosition, colorinput_size);
 
-	ass_input = new wxTextCtrl(this, SELECTOR_ASS_INPUT, "", wxDefaultPosition, textinput_size);
-	html_input = new wxTextCtrl(this, SELECTOR_HTML_INPUT, "", wxDefaultPosition, textinput_size);
+	ass_input = new KaiTextCtrl(this, SELECTOR_ASS_INPUT, "", wxDefaultPosition, textinput_size);
+	html_input = new KaiTextCtrl(this, SELECTOR_HTML_INPUT, "", wxDefaultPosition, textinput_size);
 	alpha_input = new NumCtrl(this, SELECTOR_ALPHA_INPUT, "", 0, 255,true, wxDefaultPosition, textinput_size);
 
 	preview_bitmap = wxBitmap(40, 40, 24);
@@ -1122,6 +1122,18 @@ ButtonColorPicker::ButtonColorPicker(wxWindow *parent, AssColor _color, wxSize s
 AssColor ButtonColorPicker::GetColor()
 {
 	return ActualColor;
+}
+
+void ButtonColorPicker::SetColor(const AssColor& color)
+{
+	ActualColor = color;
+}
+
+bool ButtonColorPicker::SetBackgroundColour(const wxColour& color)
+{
+	ActualColor = AssColor(color);
+	MappedButton::SetBackgroundColour(color);
+	return true;
 }
 
 void ButtonColorPicker::OnClick(wxCommandEvent &event)

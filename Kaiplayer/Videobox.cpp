@@ -127,7 +127,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	bnext = new BitmapButton(panel, CreateBitmapFromPngResource("forward"), CreateBitmapFromPngResource("forward1"),ID_BNEXT, wxPoint(145,16), wxSize(26,26));
 
 	volslider=new VolSlider(panel,ID_VOL,Options.GetInt("Video Volume"),wxPoint(size.x-110,17),wxSize(110,25));
-	mstimes=new wxTextCtrl(panel,-1,"",wxPoint(180,19),wxSize(360,-1),wxTE_READONLY);
+	mstimes=new KaiTextCtrl(panel,-1,"",wxPoint(180,19),wxSize(360,-1),wxTE_READONLY);
 	mstimes->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
 	mstimes->SetWindowStyle(wxBORDER_NONE);
 	mstimes->SetCursor(wxCURSOR_ARROW);
@@ -1224,4 +1224,5 @@ BEGIN_EVENT_TABLE(VideoCtrl,wxWindow)
 	EVT_TIMER(ID_IDLE, VideoCtrl::OnIdle)
 	EVT_ERASE_BACKGROUND(VideoCtrl::OnErase)
 	EVT_BUTTON(23333,VideoCtrl::OnEndFile)
+	EVT_MOUSE_CAPTURE_LOST(VideoCtrl::OnLostCapture)
 END_EVENT_TABLE()

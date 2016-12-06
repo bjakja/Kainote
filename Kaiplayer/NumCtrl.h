@@ -17,11 +17,12 @@
 #define NUMCTRL
 
 #include <wx/wx.h>
+#include "KaiTextCtrl.h"
 wxDECLARE_EVENT(NUMBER_CHANGED, wxCommandEvent);
 
 wxString getdouble(double num);
 
-class NumCtrl : public wxTextCtrl
+class NumCtrl : public KaiTextCtrl
 	{
 	public:
 		NumCtrl(wxWindow *parent,long id,wxString text, int rangefrom, int rangeto, bool intonly,

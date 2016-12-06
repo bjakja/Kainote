@@ -804,18 +804,16 @@ void MenuDialog::EndPartialModal(int ReturnId)
 
 WXLRESULT MenuDialog::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam) {
 	
-    if (message == 28 ) {
+    if (message == 28 && ParentMenu) {
 		ParentMenu->HideMenus();
 		MenuBar::Menubar->HideMnemonics();
     }
-    return /*wxFrame*/wxPopupWindow::MSWWindowProc(message, wParam, lParam);
+    return wxPopupWindow::MSWWindowProc(message, wParam, lParam);
 }
 
 
 BEGIN_EVENT_TABLE(MenuDialog, wxPopupWindow/*wxFrame*/)
 	EVT_PAINT(MenuDialog::OnPaint)
-	//EVT_MOUSE_EVENTS(MenuDialog::OnMouseEvent)
-	//EVT_MOUSE_CAPTURE_LOST(MenuDialog::OnLostCapture)
 	EVT_SCROLLWIN(MenuDialog::OnScroll)
 END_EVENT_TABLE()
 
@@ -1165,7 +1163,10 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 		POINT mouse;
 		GetCursorPos (&mouse);
 		HWND hWndPointed = WindowFromPoint(mouse);
-		if (hWndPointed != NULL && msg->hwnd != hWndPointed){
+		DWORD threadid;
+		GetWindowThreadProcessId(hWndPointed, &threadid);
+		DWORD currentthreadid = GetCurrentProcessId();
+		if (currentthreadid == threadid && hWndPointed != NULL && msg->hwnd != hWndPointed){
 			msg->hwnd=hWndPointed;
 		}
 		return 1;

@@ -37,7 +37,7 @@ void EBStaticText::OnEraseBackground(wxEraseEvent &event)
 }
 
 DescTxtCtrl::DescTxtCtrl(wxWindow *parent, const wxSize &size, const wxString &desc)
-	:wxTextCtrl(parent,-1,"",wxDefaultPosition, size)
+	:KaiTextCtrl(parent,-1,"",wxDefaultPosition, size)
 {
 	description =desc;
 }
@@ -46,26 +46,31 @@ void DescTxtCtrl::ChangeValue(wxString &val)
 {
 	if(val=="" && !HasFocus()){
 		SetForegroundColour("#A0A0A0"); 
-		wxTextCtrl::SetValue(description);
+		SetValue(description);
 	}
 	else{
 		SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-		wxTextCtrl::ChangeValue(val);
+		SetValue(val);
 	}
 }
 
 void DescTxtCtrl::OnFocus(wxFocusEvent &evt)
 {
-	if(GetForegroundColour()=="#A0A0A0"){SetValue("");SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));}
+	if(GetForegroundColour()=="#A0A0A0"){
+		SetValue("");
+		SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));}
 	evt.Skip();
 }
 void DescTxtCtrl::OnKillFocus(wxFocusEvent &evt)
 {
-	if(GetValue()==""){SetForegroundColour("#A0A0A0"); SetValue(description);}
+	if(GetValue()==""){
+		SetForegroundColour("#A0A0A0"); 
+		SetValue(description);
+	}
 	evt.Skip();
 }
 
-BEGIN_EVENT_TABLE(DescTxtCtrl,wxTextCtrl)
+BEGIN_EVENT_TABLE(DescTxtCtrl,KaiTextCtrl)
 	EVT_SET_FOCUS(DescTxtCtrl::OnFocus)
 	EVT_KILL_FOCUS(DescTxtCtrl::OnKillFocus)
 END_EVENT_TABLE()
@@ -79,7 +84,7 @@ END_EVENT_TABLE()
 	wxString types[3]={_("Tag wstawiany w miejse kursora"), _("Tag wstawiany na początku tekstu"), _("Zwykły tekst")};
 	type=new wxChoice(this,-1,wxDefaultPosition, wxDefaultSize,3,types);
 	type->SetSelection(_type);
-	txt=new wxTextCtrl(this,-1,txtt,wxDefaultPosition,wxSize(150,25), wxTE_PROCESS_ENTER);
+	txt=new KaiTextCtrl(this,-1,txtt,wxDefaultPosition,wxSize(150,25), wxTE_PROCESS_ENTER);
 	txt->SetSelection(0,txtt.Len()-1);
 	siz->Add(type,0,wxEXPAND|wxALL,4);
 	siz->Add(txt,0,wxEXPAND|wxLEFT|wxRIGHT,4);
@@ -130,6 +135,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 {
 
 	SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma"));
 	ebrow=0;
 	grid=grid1;
 	grid->Edit=this;
@@ -150,41 +156,41 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	ans.Add("an9");
 
 
-	Bfont = new MappedButton(this, ID_FONT, "", _("Wybór czcionki"), wxDefaultPosition, wxSize(26,26));
+	Bfont = new MappedButton(this, ID_FONT, "", _("Wybór czcionki"), wxDefaultPosition, wxSize(24,24));
 	Bfont->SetBitmap(wxBITMAP_PNG ("FONTS"));
-	Bcol1 = new MappedButton(this, ID_COL1, "", _("Kolor podstawowy"), wxDefaultPosition, wxSize(26,26));
+	Bcol1 = new MappedButton(this, ID_COL1, "", _("Kolor podstawowy"), wxDefaultPosition, wxSize(24,24));
 	Bcol1->SetBitmap(wxBITMAP_PNG ("Kolor1"));
-	Bcol2 = new MappedButton(this, ID_COL2, "", _("Kolor zastępczy do karaoke"), wxDefaultPosition, wxSize(26,26));
+	Bcol2 = new MappedButton(this, ID_COL2, "", _("Kolor zastępczy do karaoke"), wxDefaultPosition, wxSize(24,24));
 	Bcol2->SetBitmap(wxBITMAP_PNG ("Kolor2"));
-	Bcol3 = new MappedButton(this, ID_COL3, "", _("Kolor obwódki"), wxDefaultPosition, wxSize(26,26));
+	Bcol3 = new MappedButton(this, ID_COL3, "", _("Kolor obwódki"), wxDefaultPosition, wxSize(24,24));
 	Bcol3->SetBitmap(wxBITMAP_PNG ("Kolor3"));
-	Bcol4 = new MappedButton(this, ID_COL4, "", _("Kolor cienia"), wxDefaultPosition, wxSize(26,26));
+	Bcol4 = new MappedButton(this, ID_COL4, "", _("Kolor cienia"), wxDefaultPosition, wxSize(24,24));
 	Bcol4->SetBitmap(wxBITMAP_PNG ("Kolor4"));
-	Bbold = new MappedButton(this, PutBold, "", _("Pogrubienie"), wxDefaultPosition, wxSize(26,26));
+	Bbold = new MappedButton(this, PutBold, "", _("Pogrubienie"), wxDefaultPosition, wxSize(24,24));
 	Bbold->SetBitmap(wxBITMAP_PNG ("BOLD"));
-	Bital = new MappedButton(this, PutItalic, "", _("Pochylenie"), wxDefaultPosition, wxSize(26,26));
+	Bital = new MappedButton(this, PutItalic, "", _("Pochylenie"), wxDefaultPosition, wxSize(24,24));
 	Bital->SetBitmap(wxBITMAP_PNG ("ITALIC"));
-	Bund = new MappedButton(this, ID_UND, "", _("Podkreślenie"), wxDefaultPosition, wxSize(26,26));
+	Bund = new MappedButton(this, ID_UND, "", _("Podkreślenie"), wxDefaultPosition, wxSize(24,24));
 	Bund->SetBitmap(wxBITMAP_PNG ("UNDER"));
-	Bstrike = new MappedButton(this, ID_STRIKE, "", _("Przekreślenie"), wxDefaultPosition, wxSize(26,26));
+	Bstrike = new MappedButton(this, ID_STRIKE, "", _("Przekreślenie"), wxDefaultPosition, wxSize(24,24));
 	Bstrike->SetBitmap(wxBITMAP_PNG ("STRIKE"));
-	Ban = new KaiChoice(this, ID_AN, wxDefaultPosition, wxSize(48,26),ans);
+	Ban = new KaiChoice(this, ID_AN, wxDefaultPosition, wxSize(48,24),ans);
 	Ban->Select(1);
 
 	BoxSizer4 = new wxBoxSizer(wxHORIZONTAL);
-	BoxSizer4->Add(Bfont,0,wxLEFT|wxBOTTOM,2);
-	BoxSizer4->Add(Bbold,0,wxLEFT|wxBOTTOM,2);
-	BoxSizer4->Add(Bital,0,wxLEFT|wxBOTTOM,2);
-	BoxSizer4->Add(Bund,0,wxLEFT|wxBOTTOM,2);
-	BoxSizer4->Add(Bstrike,0,wxLEFT|wxBOTTOM,2);
-	BoxSizer4->Add(Bcol1,0,wxLEFT|wxBOTTOM,2);
-	BoxSizer4->Add(Bcol2,0,wxLEFT|wxBOTTOM,2);
-	BoxSizer4->Add(Bcol3,0,wxLEFT|wxBOTTOM,2);
-	BoxSizer4->Add(Bcol4,0,wxLEFT|wxBOTTOM,2);
-	BoxSizer4->Add(Ban,0,wxLEFT|wxBOTTOM,2);
+	BoxSizer4->Add(Bfont,0,wxALL,2);
+	BoxSizer4->Add(Bbold,0,wxALL,2);
+	BoxSizer4->Add(Bital,0,wxALL,2);
+	BoxSizer4->Add(Bund,0,wxALL,2);
+	BoxSizer4->Add(Bstrike,0,wxALL,2);
+	BoxSizer4->Add(Bcol1,0,wxALL,2);
+	BoxSizer4->Add(Bcol2,0,wxALL,2);
+	BoxSizer4->Add(Bcol3,0,wxALL,2);
+	BoxSizer4->Add(Bcol4,0,wxALL,2);
+	BoxSizer4->Add(Ban,0,wxALL,2);
 	for(int i=0; i<Options.GetInt("Editbox tag buttons"); i++)
 	{
-		BoxSizer4->Add(new TagButton(this, 15000+i, wxString::Format("T%i",i+1), Options.GetString(wxString::Format("Editbox tag button%i", i)),wxSize(26,26)),0,wxLEFT|wxBOTTOM,2);
+		BoxSizer4->Add(new TagButton(this, 15000+i, wxString::Format("T%i",i+1), Options.GetString(wxString::Format("Editbox tag button%i", i)),wxSize(24,24)),0,wxALL,2);
 		Connect(15000+i,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnButtonTag);
 	}
 
@@ -1226,8 +1232,12 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	else if(DurEdit->HasFocus()){
 		line->End.mstime=line->Start.mstime + DurEdit->GetTime().mstime;
 		EndEdit->SetTime(line->End);
+		EndEdit->MarkDirty();
 	}
-	
+	if(Visual > 0){
+		panel->Video->SetVisual(line->Start.mstime, line->End.mstime, false, true);
+		return;
+	}
 	wxString *text=NULL;
 	if(panel->Video->GetState()==Paused){
 		visible=true;

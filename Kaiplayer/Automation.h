@@ -201,7 +201,7 @@ namespace Auto {
 		wxString AutoloadPath;
 		bool HasChanges;
 		wxString scriptpaths;
-		
+		bool initialized;
 	};
 
 // Run a lua function on a background thread

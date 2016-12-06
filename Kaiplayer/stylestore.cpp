@@ -102,21 +102,21 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	wxBoxSizer *katbutt=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *katall=new wxBoxSizer(wxHORIZONTAL);
 
-	Store = new StyleList(this, ID_STORESTYLES, &Options.assstore, cc->sfont, wxDefaultPosition, wxSize(-1,350));
+	Store = new StyleList(this, ID_STORESTYLES, &Options.assstore, cc->sfont, wxDefaultPosition, wxSize(-1,400));
 
-	storeNew = new MappedButton(this, ID_STORENEW, _("Nowy")/*, 0, wxDefaultPosition, wxSize(50,-1)*/);
+	storeNew = new MappedButton(this, ID_STORENEW, _("Nowy")/*, 0, wxDefaultPosition, wxSize(-1,34)*/);
 	storeCopy = new MappedButton(this, ID_STORECOPY, _("Kopiuj"));
 	storeLoad = new MappedButton(this, ID_STORELOAD, _("Wczytaj"));
 	storeDelete = new MappedButton(this, ID_STOREDEL, _("Usuń"));
 	storeSort = new MappedButton(this, ID_STORESORT, _("Sortuj"));
 
-	katbutt->Add(storeNew,0,wxEXPAND|wxTOP|wxLEFT,5);
-	katbutt->Add(storeCopy,0,wxEXPAND|wxTOP|wxLEFT,5);
-	katbutt->Add(storeLoad,0,wxEXPAND|wxTOP|wxLEFT,5);
-	katbutt->Add(storeDelete,0,wxEXPAND|wxTOP|wxLEFT,5);
-	katbutt->Add(storeSort,0,wxEXPAND|wxTOP|wxLEFT,5);
+	katbutt->Add(storeNew,1,wxEXPAND|wxTOP|wxLEFT,5);
+	katbutt->Add(storeCopy,1,wxEXPAND|wxTOP|wxLEFT,5);
+	katbutt->Add(storeLoad,1,wxEXPAND|wxTOP|wxLEFT,5);
+	katbutt->Add(storeDelete,1,wxEXPAND|wxTOP|wxLEFT,5);
+	katbutt->Add(storeSort,1,wxEXPAND|wxTOP|wxLEFT,5);
 
-	katall->Add(Store,3,wxEXPAND,0);
+	katall->Add(Store,4,wxEXPAND,0);
 	katall->Add(katbutt,1,wxEXPAND,0);
 
 	katsbs1->Add(katall,1,wxEXPAND|wxALL,2);
@@ -133,7 +133,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	wxBoxSizer *assbutt=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *assall=new wxBoxSizer(wxHORIZONTAL);
 
-	ASS = new StyleList(this, ID_ASSSTYLES, Notebook::GetTab()->Grid1->GetStyleTable(), cc->sfont, wxDefaultPosition, wxSize(-1,350));
+	ASS = new StyleList(this, ID_ASSSTYLES, Notebook::GetTab()->Grid1->GetStyleTable(), cc->sfont, wxDefaultPosition, wxSize(-1,400));
 
 
 	assNew = new MappedButton(this, ID_ASSNEW, _("Nowy")/*,0 ,wxDefaultPosition, wxSize(50,-1)*/);
@@ -150,7 +150,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	assbutt->Add(assSort,0,wxEXPAND|wxTOP|wxLEFT,5);
 	assbutt->Add(SClean,0,wxEXPAND|wxTOP|wxLEFT,5);
 
-	assall->Add(ASS,3,wxEXPAND,0);
+	assall->Add(ASS,4,wxEXPAND,0);
 	assall->Add(assbutt,1,wxEXPAND|wxBOTTOM,5);
 
 	asssbs->Add(assall,1,wxEXPAND|wxALL,2);
@@ -158,9 +158,9 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	close = new MappedButton(this, ID_CLOSE, _("Zamknij"));
 
 	Mainsm->Add(katsbs,0,wxEXPAND|wxALL,2);
-	Mainsm->Add(katsbs1,0,wxEXPAND|wxALL,2);
+	Mainsm->Add(katsbs1,1,wxEXPAND|wxALL,2);
 	Mainsm->Add(butts,0,wxEXPAND|wxALL,2);
-	Mainsm->Add(asssbs,0,wxEXPAND|wxALL,2);
+	Mainsm->Add(asssbs,1,wxEXPAND|wxALL,2);
 	Mainsm->Add(close,0,wxALIGN_CENTER|wxALL,2);
 
 

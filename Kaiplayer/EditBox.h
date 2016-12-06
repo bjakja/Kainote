@@ -40,7 +40,7 @@ public:
 	DECLARE_EVENT_TABLE()
 };
 
-class DescTxtCtrl : public wxTextCtrl
+class DescTxtCtrl : public KaiTextCtrl
 {
 public:
 	DescTxtCtrl(wxWindow *parent, const wxSize &size, const wxString &desc);
@@ -56,7 +56,7 @@ private:
 class txtdialog :public wxDialog
 {
 public:
-	wxTextCtrl *txt;
+	KaiTextCtrl *txt;
 	wxChoice *type;
 	txtdialog(wxWindow *parent, int id, const wxString &txtt, int type, const wxPoint &position);
 	virtual ~txtdialog(){};

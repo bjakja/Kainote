@@ -33,7 +33,7 @@ wxString getdouble(double num)
 }
 
 NumCtrl::NumCtrl(wxWindow *parent,long id,wxString text, int rangefrom, int rangeto, bool intonly, const wxPoint &pos, const wxSize &size, long style)
-	:wxTextCtrl(parent, id, text, pos, size, style)
+	:KaiTextCtrl(parent, id, text, pos, size, style)
 {
 
 	rfrom=rangefrom;
@@ -73,7 +73,7 @@ NumCtrl::NumCtrl(wxWindow *parent,long id,wxString text, int rangefrom, int rang
 }
 
 NumCtrl::NumCtrl(wxWindow *parent,long id,double _value, double rangefrom, double rangeto, bool intonly, const wxPoint &pos, const wxSize &size, long style)
-	:wxTextCtrl(parent, id, "", pos, size, style)
+	:KaiTextCtrl(parent, id, "", pos, size, style)
 	,value(0)
 {
 
@@ -111,7 +111,7 @@ NumCtrl::NumCtrl(wxWindow *parent,long id,double _value, double rangefrom, doubl
 	SetValidator(valid);
 
 	Connect(wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&NumCtrl::OnNumWrite);
-
+	SetMaxLength(20);
 }
 
 NumCtrl::~NumCtrl()
@@ -141,7 +141,7 @@ void NumCtrl::SetString(wxString val)
 		val = getdouble(value);
 	}
 	oldval=val;
-	SetValue(val);
+	SetValue(val, false, false);
 }
 
 void NumCtrl::SetInt(int val)
@@ -151,7 +151,7 @@ void NumCtrl::SetInt(int val)
 	value=(double)val;
 	wxString kkk;
 	oldval=kkk<<val;
-	SetValue(kkk);
+	SetValue(kkk,false, false);
 }
 
 void NumCtrl::SetDouble(double val)
@@ -160,7 +160,7 @@ void NumCtrl::SetDouble(double val)
 	else if(val<rfrom){val=rfrom;}
 	value=val;
 	oldval=getdouble(val);
-	SetValue(oldval);
+	SetValue(oldval,false,false);
 }
 
 wxString NumCtrl::GetString()
@@ -241,28 +241,30 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 		if((oldpos+5)<posy){
 			double nval=value-1;
 			if(value<=rfrom){return;}
-			SetValue(getdouble(nval));MarkDirty();
+			SetValue(getdouble(nval),true,false);
 			oldpos=posy;value=nval;
-			SetSelection(curpos,curpos);
+			//SetSelection(curpos,curpos);
 		}else if((oldpos-5)>posy){
 			double nval=value+1;
 			if(value>=rto){return;}
-			SetValue(getdouble(nval));MarkDirty();
+			SetValue(getdouble(nval),true,false);
 			oldpos=posy;value=nval;
-			SetSelection(curpos,curpos);
+			//SetSelection(curpos,curpos);
 		}else if((oldposx+10)<posx){
 			double nval=value-10;
 			if(value==rfrom){return;}
 			if(nval<rfrom){nval=rfrom;}
-			SetValue(getdouble(nval));MarkDirty();oldposx=posx;value=nval;
-			SetSelection(curpos,curpos);
+			SetValue(getdouble(nval),true,false);
+			oldposx=posx;value=nval;
+			//SetSelection(curpos,curpos);
 		}
 		else if((oldposx-10)>posx){
 			double nval=value+10;
 			if(value==rto){return;}
 			if(nval>rto){nval=rto;}
-			SetValue(getdouble(nval));MarkDirty();oldposx=posx;value=nval;
-			SetSelection(curpos,curpos);
+			SetValue(getdouble(nval),true,false);
+			oldposx=posx;value=nval;
+			//SetSelection(curpos,curpos);
 		}
 		if(IsModified()){wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);}
 	}
@@ -272,10 +274,10 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 		holding=true;
 		oldpos=posy;
 		oldposx=posx;
-		long cpos;
-		HitTest(wxPoint(posx,posy),&cpos);
-		curpos=cpos;
-		SetSelection(cpos,cpos);
+		wxPoint cpos;
+		//HitTest(wxPoint(posx,posy),&cpos);
+		//curpos=cpos.x;
+		//SetSelection(cpos.x,cpos.x);
 		SetFocus();
 		CaptureMouse();
 	}
@@ -285,7 +287,7 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 		int step = event.GetWheelRotation() / event.GetWheelDelta();
 		value+=step;
 		if(value<rfrom||value>rto){return;}
-		SetValue(getdouble(value));MarkDirty();
+		SetValue(getdouble(value), true, false);//MarkDirty();
 		return;}
 
 	event.Skip();
@@ -297,8 +299,8 @@ void NumCtrl::OnMouseLost(wxMouseCaptureLostEvent& event)
 }
 
 
-BEGIN_EVENT_TABLE(NumCtrl, wxTextCtrl)
+BEGIN_EVENT_TABLE(NumCtrl, KaiTextCtrl)
 	EVT_MOUSE_EVENTS(NumCtrl::OnMouseEvent)
 	EVT_MOUSE_CAPTURE_LOST(NumCtrl::OnMouseLost)
-	END_EVENT_TABLE()
+END_EVENT_TABLE()
 

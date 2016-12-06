@@ -22,6 +22,7 @@
 #include <wx/fontpicker.h>
 #include "NumCtrl.h"
 #include "ColorPicker.h"
+#include "KaiTextCtrl.h"
 
 OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	: wxDialog(parent,-1,_("Opcje"),wxDefaultPosition,wxDefaultSize,wxDEFAULT_DIALOG_STYLE,"Options")
@@ -67,6 +68,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxStaticBoxSizer *langSizer=new wxStaticBoxSizer(wxVERTICAL, Main, _("Język (wymaga restartu programu)"));
 		KaiChoice *lang=new KaiChoice(Main,10000,wxDefaultPosition,wxDefaultSize,2,langopts);
 		lang->SetSelection(Options.GetInt("Program Language"));
+		lang->SetFocus();
 		ConOpt(lang,"Program Language");
 		langSizer->Add(lang,0,wxALL|wxEXPAND,2);
 		MainSizer->Add(langSizer,0,wxRIGHT|wxEXPAND,5);
@@ -98,7 +100,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		NumCtrl *ltl = new NumCtrl(Main, 20000, Options.GetString(opts[10]), 0, 5,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc = new NumCtrl(Main, 20000, Options.GetString("Offset of start time"), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc1 = new NumCtrl(Main, 20000, Options.GetString("Offset of end time"), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
-		wxTextCtrl *sc2 = new wxTextCtrl(Main, 22001, Options.GetString("Grid tag changing char"), wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
+		KaiTextCtrl *sc2 = new KaiTextCtrl(Main, 22001, Options.GetString("Grid tag changing char"), wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc3 = new NumCtrl(Main, 20000, Options.GetString("Editbox tag buttons"), 0, 9,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		ConOpt(ltl, opts[10]);
 		ConOpt(sc,"Offset of start time");
@@ -282,7 +284,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		obr4->Add(sc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
 		ConvOptSizer1->Add(obr4,0,wxRIGHT|wxEXPAND,5);
 		
-		wxTextCtrl *tc = new wxTextCtrl(ConvOpt, -1, Options.GetString("Ass Conversion Prefix"), wxDefaultPosition, wxSize(250,-1),wxTE_PROCESS_ENTER);
+		KaiTextCtrl *tc = new KaiTextCtrl(ConvOpt, -1, Options.GetString("Ass Conversion Prefix"), wxDefaultPosition, wxSize(250,-1),wxTE_PROCESS_ENTER);
 		ConOpt(tc,"Ass Conversion Prefix");
 		obr3->Add(tc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
 		ConvOptSizer1->Add(obr3,0,wxRIGHT|wxEXPAND,5);
@@ -303,7 +305,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			MainSizer->Add(opt,0,wxALL,2);
 		}
 		wxStaticBoxSizer *prefaudio=new wxStaticBoxSizer(wxHORIZONTAL,Video,voptspl[3]);
-		wxTextCtrl *tc = new wxTextCtrl(Video, -1, Options.GetString(vopts[3]), wxDefaultPosition, wxSize(250,-1),wxTE_PROCESS_ENTER);
+		KaiTextCtrl *tc = new KaiTextCtrl(Video, -1, Options.GetString(vopts[3]), wxDefaultPosition, wxSize(250,-1),wxTE_PROCESS_ENTER);
 		ConOpt(tc,vopts[3]);
 		prefaudio->Add(tc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
 		MainSizer->Add(prefaudio,0,wxRIGHT|wxEXPAND,5);
@@ -585,10 +587,10 @@ void OptionsDialog::SetOptions(bool saveall)
 				}
 			}
 		}
-		else if(OB.ctrl->IsKindOf(CLASSINFO(wxTextCtrl))){
+		else if(OB.ctrl->IsKindOf(CLASSINFO(KaiTextCtrl))){
 			
 			if(OB.ctrl->GetId()!=20000){
-				wxTextCtrl *sc=(wxTextCtrl*)OB.ctrl;
+				KaiTextCtrl *sc=(KaiTextCtrl*)OB.ctrl;
 				wxString str=sc->GetValue();
 				if(Options.GetString(OB.option)!=str){
 					Options.SetString(OB.option,str);

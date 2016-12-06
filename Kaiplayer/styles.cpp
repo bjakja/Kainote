@@ -23,9 +23,9 @@ AssColor::AssColor()
     r=g=b=a=0;
 
 }
-AssColor::AssColor(wxColour kol)
+AssColor::AssColor(wxColour kol, int alpha)
 {
-    a=0xFF - kol.Alpha();
+    a= (alpha != -1)? alpha : 0xFF - kol.Alpha();
 	b=kol.Blue();
     g=kol.Green();
     r=kol.Red();

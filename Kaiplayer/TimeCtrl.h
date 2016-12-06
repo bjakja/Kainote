@@ -18,12 +18,12 @@
 
 #include <wx/wx.h>
 #include "SubsTime.h"
+#include "KaiTextCtrl.h"
 
-
-class TimeCtrl : public wxTextCtrl
+class TimeCtrl : public KaiTextCtrl
 {
     public:
-	TimeCtrl(wxWindow* parent, const long int id, const wxString& val=_("0:00:00.00"), const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=wxWANTS_CHARS,const wxValidator& validator=wxDefaultValidator, const wxString& name=wxTextCtrlNameStr);
+	TimeCtrl(wxWindow* parent, const long int id, const wxString& val=_("0:00:00.00"), const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=0,const wxValidator& validator=wxDefaultValidator, const wxString& name=wxTextCtrlNameStr);
 	virtual ~TimeCtrl();
 
 	void SetTime(STime newtime, bool stillModified=false);

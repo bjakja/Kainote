@@ -550,7 +550,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 				else if(endClip == -1){endClip=0;clip+="{\\p0}";}
 				txt.replace(Mpos + edit->Placed.y, endClip, clip);
 
-				Editor->SetTextS(txt,false);
+				Editor->SetTextS(txt,false,false);
 
 				dummytext->replace(textplaced.x,textplaced.y,txt);
 				textplaced.y=txt.Len();
@@ -572,7 +572,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 				dummytext->replace(startclip+1, endclip-(startclip+1), clip);
 			}
 			wxString txt = dummytext->Mid(textplaced.x,textplaced.y);
-			Editor->SetTextS(txt,false);//,false,true
+			Editor->SetTextS(txt,false,false);//,false,true
 			Editor->Refresh();
 		}
 		
@@ -585,8 +585,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 			tab->Video->Render();
 		}
 
-	}
-	else{
+	}else{
 
 		Editor->modified=true;
 		edit->UpdateChars(Editor->GetValue());

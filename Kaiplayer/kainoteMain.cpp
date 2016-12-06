@@ -35,13 +35,49 @@
 #include <wx/accel.h>
 #include <wx/dir.h>
 #include <wx/sysopt.h>
-
+#include "KaiTextCtrl.h"
 
 #undef IsMaximized
 #if _DEBUG
 #define logging 5
 #endif
 //#define wxIMAGE_PNG(x) wxImage(wxS(#x),wxBITMAP_TYPE_PNG_RESOURCE)
+class test : public wxDialog
+{
+public:
+	test(wxWindow *parent):wxDialog(parent,-1,"test", wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER|wxCAPTION|wxCLOSE_BOX){
+		//SetMinSize(wxSize(400,400));
+		wxALIGN_BOTTOM;
+		wxArrayString ans;
+		ans.Add("0: lewy górny róg");
+		ans.Add("256: wypośrodkowany u góry");
+		ans.Add("512: prawy górny róg");
+		ans.Add("2048: wypośrodkowany po lewej");
+		ans.Add("2304: wypośrodkowany");
+		ans.Add("2560: wypośrodkowany po prawej");
+		ans.Add("1024: lewy dolny róg");
+		ans.Add("1280: wypośrodkowany na dole");
+		ans.Add("1536: prawy dolny róg");
+		txt = new KaiTextCtrl(this,-1,"Jakiśtam tekst",wxDefaultPosition, wxSize(300,400),wxTE_MULTILINE);	
+		txtsingle = new KaiTextCtrl(this,-1,"Jakiśtam tekst Jakiśtam tekst Jakiśtam tekst",wxDefaultPosition, wxSize(300,26));	
+		KaiChoice *choice = new KaiChoice(this, 2557, wxDefaultPosition, wxDefaultSize,ans);
+		choice->SetSelection(0);
+		Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent & evt){
+			txt->SetWindowStyle(wxTE_MULTILINE|wxAtoi(choice->GetString(choice->GetSelection()).BeforeFirst(':')));
+			txtsingle->SetWindowStyle(wxAtoi(choice->GetString(choice->GetSelection()).BeforeFirst(':')));
+		},2557);
+		wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+		sizer->Add(choice,0,wxEXPAND|wxALL,2);
+		sizer->Add(txt,1,wxEXPAND|wxALL,2);
+		sizer->Add(txtsingle,0,wxEXPAND|wxALL,2);
+		SetSizerAndFit(sizer);
+	};
+	virtual ~test(){}
+
+
+	KaiTextCtrl *txt;
+	KaiTextCtrl *txtsingle;
+};
 
 kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	: wxFrame(0, -1, _("Bez nazwy - ")+Options.progname, pos, size, wxDEFAULT_FRAME_STYLE)
@@ -205,12 +241,15 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&kainoteFrame::OnClose1);
 	Connect(30000,30059,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnRecent);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
-		if(!mylog){
+		/*if(!mylog){
 			mylog=new wxLogWindow(this, "Logi",true, false);
 			mylog->PassMessages(true);
 		}else{
 			delete mylog; mylog=NULL;
-		}
+		}*/
+		test * testw = new test(this);
+		testw->ShowModal();
+		testw->Destroy();
 	},9989);
 	
 	Connect(SnapWithStart,SnapWithEnd,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnAudioSnap);

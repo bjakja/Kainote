@@ -54,6 +54,7 @@ class MTextEditor : public wxWindow
 	void OnPaint(wxPaintEvent& event);
 	void OnKillFocus(wxFocusEvent& event);
 	void OnEraseBackground(wxEraseEvent& event){};
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
 	void OnScroll(wxScrollEvent& event);
 	void DrawFld(wxDC &dc,int w, int h, int windowh);
 	bool HitTest(wxPoint pos, wxPoint *cur);

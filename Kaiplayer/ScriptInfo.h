@@ -35,19 +35,19 @@ class ScriptInfo: public wxDialog
 		virtual ~ScriptInfo();
 
 		NumCtrl* height;
-		wxTextCtrl* script;
+		KaiTextCtrl* script;
 		NumCtrl* width;
-		wxTextCtrl* update;
+		KaiTextCtrl* update;
 		wxButton* Button1;
 		wxChoice* wrapstyle;
 		wxCheckBox* CheckBox2;
 		wxChoice* collision;
-		wxTextCtrl* editing;
-		wxTextCtrl* title;
+		KaiTextCtrl* editing;
+		KaiTextCtrl* title;
 		wxButton* Button2;
 		wxCheckBox* CheckBox1;
-		wxTextCtrl* timing;
-		wxTextCtrl* translation;
+		KaiTextCtrl* timing;
+		KaiTextCtrl* translation;
 		wxButton* Fvideo;
 
 		void DoTooltips();

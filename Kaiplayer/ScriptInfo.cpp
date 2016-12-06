@@ -29,12 +29,12 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	wxBoxSizer *mainsizer=new wxBoxSizer(wxVERTICAL);
 	wxStaticBoxSizer *StaticBox1 = new wxStaticBoxSizer(wxVERTICAL,this, _("Informacje o napisach"));
 	wxGridSizer *GridSizer=new wxGridSizer(2,5,5);
-	title = new wxTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
-	script = new wxTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
-	translation = new wxTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
-	editing = new wxTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
-	timing = new wxTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
-	update = new wxTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
+	title = new KaiTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
+	script = new KaiTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
+	translation = new KaiTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
+	editing = new KaiTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
+	timing = new KaiTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
+	update = new KaiTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
 
 	GridSizer->Add(new wxStaticText(this, -1, _("Tytuł")),0,wxEXPAND);
 	GridSizer->Add(title,0,wxEXPAND);

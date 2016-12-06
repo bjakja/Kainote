@@ -43,7 +43,7 @@ class CTwindow: public wxScrolled<wxWindow>
 		MappedButton* AddStyles;
 		MappedButton* MoveTime;
 		TimeCtrl* TimeText;
-		wxTextCtrl* Stylestext;
+		KaiTextCtrl* Stylestext;
 		wxCheckBox* videotime;
 		wxCheckBox* audiotime;
 		KaiChoice* CorTime;

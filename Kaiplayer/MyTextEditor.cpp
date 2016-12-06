@@ -131,7 +131,11 @@ void MTextEditor::SetTextS(const wxString &text, bool modif, bool resetsel,bool 
 	MText=text;
 	CalcWrap(modif,(noevent)? false : modif);
 	if(spell){CheckText();}
-	if(resetsel){SetSelection(0,0);}//else{Refresh(false);}
+	if(resetsel){SetSelection(0,0);}
+	else{
+		if(Cursor.x>MText.Len()){Cursor.x = MText.Len();Cursor.y = FindY(Cursor.x);}
+	}
+	//else{Refresh(false);}
 }
 
 void MTextEditor::CalcWrap(bool updatechars, bool sendevent)
@@ -370,13 +374,13 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 		
 		if(leftup && (holding||dholding)){
 			holding=dholding=false;
-			ReleaseMouse();
+			if(HasCapture()){ReleaseMouse();}
 			return;
 		}
 
 		
 
-		if(event.LeftDClick()){
+		if(event.LeftDClick() && MText!=""){
 			wxPoint mpos=event.GetPosition();
 			int errn=FindError(mpos);
 			if(Options.GetBool("Editbox Sugestions On Dclick") && errn>=0){
@@ -1134,6 +1138,7 @@ void MTextEditor::Paste()
 int MTextEditor::FindError(wxPoint mpos,bool mouse)
 {
 	wxPoint cpos;
+	
 	if(!mouse){
 		cpos=mpos;
 	}else if(mouse && !HitTest(mpos, &cpos)){return-1;}
@@ -1208,4 +1213,5 @@ BEGIN_EVENT_TABLE(MTextEditor,wxWindow)
 	EVT_KEY_DOWN(MTextEditor::OnKeyPress)
 	EVT_KILL_FOCUS(MTextEditor::OnKillFocus)
 	EVT_COMMAND_SCROLL(3333,MTextEditor::OnScroll)
+	EVT_MOUSE_CAPTURE_LOST(MTextEditor::OnLostCapture)
 END_EVENT_TABLE()

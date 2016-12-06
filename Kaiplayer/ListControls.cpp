@@ -29,7 +29,9 @@
 //	return wxBitmap(img);
 //}
 
-static const wxFont font = wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma");
+static wxFont font;
+static int height = 18;
+
 
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
     const wxSize& size, int n, const wxString choices[],
@@ -47,10 +49,11 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	list = new wxArrayString(n,choices);
 	disabled = new std::map<int, bool>();
 	
-	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? 26 : size.y);
+	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? 24 : size.y);
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
 	//SetMaxSize(wxSize(1000, 50));
+	font = parent->GetFont();
 }
 
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
@@ -69,10 +72,11 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	list = new wxArrayString(choices);
 	disabled = new std::map<int, bool>();
 	
-	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? 26 : size.y);
+	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? 24 : size.y);
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
 	//SetMaxSize(wxSize(1000, 50));
+	font = parent->GetFont();
 }
 
 KaiChoice::~KaiChoice()
@@ -96,7 +100,7 @@ void KaiChoice::OnSize(wxSizeEvent& event)
 
 void KaiChoice::OnPaint(wxPaintEvent& event)
 {
-	wxColour background = GetParent()->GetBackgroundColour();
+	//wxColour background = GetParent()->GetBackgroundColour();
 	int w=0;
 	int h=0;
 	GetClientSize (&w, &h);
@@ -109,13 +113,13 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
 	tdc.SetFont(font);
-	tdc.SetBrush(wxBrush(background));
-	tdc.SetPen(wxPen(background));
-	tdc.DrawRectangle(0,0,w,h);
+	//tdc.SetBrush(wxBrush(background));
+	//tdc.SetPen(wxPen(background));
+	//tdc.DrawRectangle(0,0,w,h);
 	bool enabled = IsThisEnabled();
 	tdc.SetBrush(wxBrush(wxSystemSettings::GetColour((clicked)? wxSYS_COLOUR_BTNSHADOW : (enabled)? wxSYS_COLOUR_BTNFACE : wxSYS_COLOUR_INACTIVECAPTION )));
 	tdc.SetPen(wxPen(wxSystemSettings::GetColour((enter)? wxSYS_COLOUR_MENUHILIGHT : (enabled)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_GRAYTEXT)));
-	tdc.DrawRectangle(1,1,w-2,h-2);
+	tdc.DrawRectangle(0,0,w,h);
 	
 	if(w>15){
 		wxBitmap arrow = wxBITMAP_PNG("arrow_list");
@@ -292,7 +296,6 @@ BEGIN_EVENT_TABLE(KaiChoice, wxWindow)
 	EVT_KEY_UP(KaiChoice::OnKeyPress)
 END_EVENT_TABLE()
 
-const static int height = 18;
 static int maxVisible = 20;
 
 PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, bool> *disabled)
@@ -305,7 +308,9 @@ PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, 
 	,itemsList(list)
 	,disabledItems(disabled)
 {
-	
+	int fw=0;
+	GetTextExtent("#TWFfGH", &fw, &height, 0, 0, &font);
+	height+=4;
 }
 
 PopupList::~PopupList()
@@ -338,7 +343,7 @@ void PopupList::CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &control
 	size->x += 18;
 	if(size->x < controlSize.x){size->x = controlSize.x;}
 	if(isize > (size_t)maxVisible) {size->x += 20; isize=maxVisible;}
-	size->y = height * isize + 3;
+	size->y = height * isize + 2;
 	int w, h;
 	wxRect workArea = wxGetClientDisplayRect();
 	w = workArea.width - workArea.x;

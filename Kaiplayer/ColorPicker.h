@@ -148,8 +148,8 @@ private:
 	wxPoint eyedropper_grab_point;
 	bool eyedropper_is_grabbed;
 
-	wxTextCtrl *ass_input;		// ASS hex format input
-	wxTextCtrl *html_input;		// HTML hex format input
+	KaiTextCtrl *ass_input;		// ASS hex format input
+	KaiTextCtrl *html_input;		// HTML hex format input
 	NumCtrl *alpha_input;
 
 	//wxWindow *preview_box;
@@ -203,6 +203,8 @@ public:
 	ButtonColorPicker(wxWindow *parent, AssColor color, wxSize size=wxDefaultSize);
 	virtual ~ButtonColorPicker(){ };
 	AssColor GetColor();
+	void SetColor(const AssColor& color);
+	bool SetBackgroundColour(const wxColour& color);
 private:
 	void OnClick(wxCommandEvent &event);
 	AssColor ActualColor;

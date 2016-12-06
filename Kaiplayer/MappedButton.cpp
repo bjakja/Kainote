@@ -16,7 +16,7 @@
 
 #include "MappedButton.h"
 
-static const wxFont font = wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma");
+static wxFont font;
 
 wxColour WhiteUp(const wxColour &color)
 {
@@ -47,11 +47,10 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 		if(newSize.x<60){newSize.x=60;}
 	}
 	if(size.y <1){
-		newSize.y = 26;
+		newSize.y = 24;
 	}
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
-	//wxLogStatus("size %i %i", newSize.x, newSize.y);
 	Bind(wxEVT_LEFT_DOWN, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_ENTER_WINDOW, &MappedButton::OnMouseEvent, this);
@@ -60,6 +59,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
 	if(toolTip!=""){SetToolTip(toolTip);}
+	font = parent->GetFont();
 }
 
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int window,
@@ -81,11 +81,10 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 		if(newSize.x<60){newSize.x=60;}
 	}
 	if(size.y <1){
-		newSize.y = 26;
+		newSize.y = 24;
 	}
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
-	//wxLogStatus("size %i %i", newSize.x, newSize.y);
 	Bind(wxEVT_LEFT_DOWN, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_ENTER_WINDOW, &MappedButton::OnMouseEvent, this);
@@ -93,7 +92,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
-	//MappedButton(parent,id,label,"",pos,size,window,style);
+	font = parent->GetFont();
 }
 
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, const wxBitmap& bitmap, const wxPoint& pos,
@@ -113,11 +112,10 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 		newSize.x = fw+10;
 	}
 	if(size.y <1){
-		newSize.y = 26;
+		newSize.y = 24;
 	}
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
-	//wxLogStatus("size %i %i", newSize.x, newSize.y);
 	Bind(wxEVT_LEFT_DOWN, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_ENTER_WINDOW, &MappedButton::OnMouseEvent, this);
@@ -125,10 +123,8 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
-	//MappedButton(parent,id,"","",pos,size,window,style);
 	if(tooltip!=""){SetToolTip(tooltip);}
-	//Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt){ wxLogStatus("clicked %i", GetId());}, GetId());
-	//Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent& evt){ wxLogStatus("clicked menu %i", GetId());}, GetId());
+	font = parent->GetFont();
 }
 
 MappedButton::~MappedButton()
@@ -182,14 +178,14 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
 	tdc.SetFont(font);
-	wxColour background = GetParent()->GetBackgroundColour();
+	/*wxColour background = GetParent()->GetBackgroundColour();
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
-	tdc.DrawRectangle(0,0,w,h);
+	tdc.DrawRectangle(0,0,w,h);*/
 	bool enabled = IsThisEnabled();
 	tdc.SetBrush(wxBrush(wxSystemSettings::GetColour((clicked)? wxSYS_COLOUR_BTNSHADOW : (enabled)? wxSYS_COLOUR_BTNFACE : wxSYS_COLOUR_INACTIVECAPTION )));
 	tdc.SetPen(wxPen(wxSystemSettings::GetColour((enter)? wxSYS_COLOUR_MENUHILIGHT : (enabled)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_GRAYTEXT)));
-	tdc.DrawRectangle(1,1,w-2,h-2);
+	tdc.DrawRectangle(0,0,w,h);
 	
 	if(w>10){
 		int fw, fh;
@@ -244,6 +240,7 @@ void MappedButton::OnMouseEvent(wxMouseEvent &event)
 	if(event.LeftDown() || event.LeftIsDown() && !clicked){
 		clicked=true;
 		Refresh(false);
+		SetFocus();
 		//event
 	}
 	if(event.LeftUp()){

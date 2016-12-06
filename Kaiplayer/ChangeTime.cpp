@@ -48,8 +48,8 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	//ramka czasu
 	wxStaticBoxSizer *timesizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Czas"));
 	wxGridSizer *timegrid=new wxGridSizer(2, 0, 0);
-	MoveTime = new MappedButton(this, ID_MOVE, _("Przesuń"), _("Przesuń czas napisów"), wxDefaultPosition, wxSize(60,24), GLOBAL_HOTKEY);
-	TimeText = new TimeCtrl(this, -1, "0:00:00.00", wxDefaultPosition, wxSize(60,22), wxTE_PROCESS_ENTER);
+	MoveTime = new MappedButton(this, ID_MOVE, _("Przesuń"), _("Przesuń czas napisów"), wxDefaultPosition, wxSize(60,22), GLOBAL_HOTKEY);
+	TimeText = new TimeCtrl(this, -1, "0:00:00.00", wxDefaultPosition, wxSize(60,20), wxALIGN_CENTER|wxTE_PROCESS_ENTER);
 	Forward = new wxRadioButton(this, -1, _("W przód"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
 	Backward = new wxRadioButton(this, -1, _("W tył"));
 
@@ -94,8 +94,8 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	WhichLines= new KaiChoice(this,-1,wxDefaultPosition,wxDefaultSize,choices);
 
 	wxBoxSizer *stylesizer= new wxBoxSizer(wxHORIZONTAL);
-	AddStyles = new MappedButton(this, ID_BSTYLE, "+", "", wxDefaultPosition, wxSize(24,24), 0);
-	Stylestext = new wxTextCtrl(this, -1, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	AddStyles = new MappedButton(this, ID_BSTYLE, "+", "", wxDefaultPosition, wxSize(22,22), 0);
+	Stylestext = new KaiTextCtrl(this, -1, "", wxDefaultPosition, wxSize(22,22), wxTE_PROCESS_ENTER);
 	stylesizer->Add(AddStyles,0,wxALL,2);
 	stylesizer->Add(Stylestext,1,wxEXPAND|wxBOTTOM|wxTOP|wxRIGHT,2);
 
@@ -118,7 +118,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	choices.Add(_("Zostaw bez zmian"));
 	choices.Add(_("Skoryguj nachodzące czasy"));
 	choices.Add(_("Nowe czasy"));
-	CorTime = new KaiChoice(this, -1, wxDefaultPosition, wxSize(140,-1), choices);
+	CorTime = new KaiChoice(this, -1, wxDefaultPosition, wxSize(130,-1), choices);
 	CorTime->SetSelection(0);
 	cesizer->Add(CorTime,0,wxEXPAND|wxLEFT|wxRIGHT,2);
 	coll = new MappedButton(this,22999,_("Opcje dodatkowe"),"",wxDefaultPosition, wxSize(-1,-1), 0);

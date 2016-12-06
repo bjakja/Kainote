@@ -49,7 +49,7 @@ class ColorChange: public wxWindow
 		wxRadioButton* rb9;
 		wxCheckBox* si;
 		MappedButton* btnOk;
-		wxTextCtrl* sname;
+		KaiTextCtrl* sname;
 		MappedButton* s2;
 		MappedButton* s3;
 		NumCtrl* ssize;

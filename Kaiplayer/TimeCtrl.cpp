@@ -21,7 +21,7 @@
 #include "NumCtrl.h"
 
 TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, const wxPoint& pos,const wxSize& size, long style,const wxValidator& validator, const wxString& name)
-	: wxTextCtrl(parent, id, val, pos, size, style, validator, name)
+	: KaiTextCtrl(parent, id, val, pos, size, style)
 {
 	wxTextValidator valid(wxFILTER_INCLUDE_CHAR_LIST);
 	wxArrayString includes;
@@ -52,7 +52,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 	Connect(wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&TimeCtrl::OnTimeWrite);
 	Connect(wxEVT_KEY_DOWN,(wxObjectEventFunction)&TimeCtrl::OnKeyEvent);
 
-
+	SetMaxLength(20);
 }
 
 
@@ -92,8 +92,7 @@ void TimeCtrl::OnTimeWrite(wxCommandEvent& event)
 		if(selst>1 && txt[selst-2]==':' &&  wxAtoi(wxString(txt[selst-1])) > 5){txt=txt.replace(selst-1,1,"5");}
 
 
-		ChangeValue(txt);
-		SetModified(true);
+		SetValue(txt, true,false);
 		SetSelection(selst,seled);
 
 	}
@@ -119,9 +118,8 @@ void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
 			wxString all=txt.Left(from);
 			all+=seltxt;
 			all+=txt.Mid(to);
-			ChangeValue(all);
+			SetValue(all, true, false);
 			SetSelection(from,from);
-			SetModified(true);
 		}
 
 
@@ -145,9 +143,8 @@ void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
 					wxTextDataObject data;
 					wxTheClipboard->GetData( data );
 					wxString whatpaste = data.GetText();
-					ChangeValue(whatpaste);
+					SetValue(whatpaste, true, false);
 					SetSelection(0,whatpaste.Length());
-					SetModified(true);
 
 				}
 				wxTheClipboard->Close();
@@ -165,13 +162,10 @@ void TimeCtrl::SetTime(STime newtime, bool stillModified)
 	if(mTime==newtime && stillModified){return;}
 	mTime=newtime;
 	form=mTime.GetFormat();
-	ChangeValue(newtime.raw());
-	if(!stillModified){
-		SetModified(false);
-	}else{
+	SetValue(newtime.raw(),stillModified);
+	if(stillModified){
 		SetForegroundColour("#FF0000");
 		changedBackGround=true;
-		SetModified(true);
 	}
 }
 
@@ -185,7 +179,7 @@ void TimeCtrl::ChangeFormat(char frm, float fps)
 {
 	mTime.ChangeFormat(frm,fps);
 	form=frm;
-	ChangeValue(mTime.raw());
+	SetValue(mTime.raw(),false, false);
 }
 
 void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
@@ -217,28 +211,28 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 			value.mstime-=grad;
 			if(value.mstime==(-grad)){value.mstime=0;return;}
 			if(value.mstime<0){value.mstime=0;}
-			SetValue(value.GetFormatted(form));MarkDirty();oldpos=posy;
+			SetValue(value.GetFormatted(form),true, false);oldpos=posy;
 			SetSelection(curpos,curpos);
 		}
 		else if((oldpos-5)>posy){
 			value.mstime+=grad;
 			if(value.mstime==(35999999+grad)){value.mstime=35999999;return;}
 			if(value.mstime>35999999){value.mstime=35999999;}
-			SetValue(value.GetFormatted(form));MarkDirty();oldpos=posy;
+			SetValue(value.GetFormatted(form),true, false);oldpos=posy;
 			SetSelection(curpos,curpos);
 		}
 		if((oldposx+10)<posx){
 			value.mstime-=(grad*10);
 			if(value.mstime==(-(grad*10))){value.mstime=0;return;}
 			if(value.mstime<0){value.mstime=0;}
-			SetValue(value.GetFormatted(form));MarkDirty();oldposx=posx;
+			SetValue(value.GetFormatted(form),true, false);oldposx=posx;
 			SetSelection(curpos,curpos);
 
 		}else if((oldposx-10)>posx){
 			value.mstime+=(grad*10);
 			if(value.mstime==35999999+(grad*10)){value.mstime=35999999;return;}
 			if(value.mstime>35999999){value.mstime=35999999;}
-			SetValue(value.GetFormatted(form));MarkDirty();oldposx=posx;
+			SetValue(value.GetFormatted(form),true, false);oldposx=posx;
 			SetSelection(curpos,curpos);
 		}
 		if(IsModified()){
@@ -251,40 +245,41 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 		holding=true;
 		oldpos=posy;
 		oldposx=posx;
-		long pos;
+		wxPoint pos;
 		HitTest (wxPoint(posx, posy), &pos);
 		//wxString kkk;
 		//wxMessageBox(kkk<<pos);
-		if(pos<2){grad=3600000;}
-		else if(pos<5){grad=60000;}
-		else if(pos<8){grad=1000;}
+		if(pos.x<2){grad=3600000;}
+		else if(pos.x<5){grad=60000;}
+		else if(pos.x<8){grad=1000;}
 		else{grad=10;}
 		value.SetRaw(GetValue(),form);
-		long cpos;
-		HitTest(wxPoint(posx,posy),&cpos);
-		curpos=cpos;
-		SetSelection(cpos,cpos);
+		//long cpos;
+		//HitTest(wxPoint(posx,posy),&cpos);
+		curpos=pos.x;
+		//SetSelection(cpos,cpos);
 		SetFocus();
 		CaptureMouse();
 	}
 
 	if (event.GetWheelRotation() != 0) {
-		long pos;
+		wxPoint pos;
 		HitTest (wxPoint(posx, posy), &pos);
 		//wxString kkk;
 		//wxMessageBox(kkk<<pos);
-		if(pos<2){grad=3600000;}
-		else if(pos<5){grad=60000;}
-		else if(pos<8){grad=1000;}
+		if(pos.x<2){grad=3600000;}
+		else if(pos.x<5){grad=60000;}
+		else if(pos.x<8){grad=1000;}
 		else{grad=10;}
 		value.SetRaw(GetValue(),form);
 		int step = event.GetWheelRotation() / event.GetWheelDelta();
 		value.mstime+=(step*grad);
 		if(value.mstime<0||value.mstime>35999999){return;}
-		SetValue(value.GetFormatted(form));MarkDirty();
+		SetValue(value.GetFormatted(form),true, false);
 
 		wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);
-		return;}
+		return;
+	}
 
 	event.Skip();
 }
@@ -318,8 +313,8 @@ void TimeCtrl::OnPaste(wxCommandEvent &event)
 //	wxTextCtrl::SetModified(modified);
 //}
 
-BEGIN_EVENT_TABLE(TimeCtrl, wxTextCtrl)
+BEGIN_EVENT_TABLE(TimeCtrl, KaiTextCtrl)
 	EVT_MOUSE_EVENTS(TimeCtrl::OnMouseEvent)
 	EVT_MENU(Time_Copy,TimeCtrl::OnCopy)
 	EVT_MENU(Time_Paste,TimeCtrl::OnPaste)
-	END_EVENT_TABLE()
+END_EVENT_TABLE()

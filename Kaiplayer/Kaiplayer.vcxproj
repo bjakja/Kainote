@@ -142,6 +142,7 @@
     <ClCompile Include="FindReplace.cpp" />
     <ClCompile Include="KainoteApp.cpp" />
     <ClCompile Include="KainoteMain.cpp" />
+    <ClCompile Include="KaiTextCtrl.cpp" />
     <ClCompile Include="ListControls.cpp" />
     <ClCompile Include="MappedButton.cpp" />
     <ClCompile Include="Menu.cpp" />
@@ -218,6 +219,7 @@
     <ClInclude Include="FindReplace.h" />
     <ClInclude Include="KainoteApp.h" />
     <ClInclude Include="KainoteMain.h" />
+    <ClInclude Include="KaiTextCtrl.h" />
     <ClInclude Include="ListControls.h" />
     <ClInclude Include="MappedButton.h" />
     <ClInclude Include="Menu.h" />

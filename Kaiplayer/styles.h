@@ -32,7 +32,7 @@ class AssColor
 	void SetAlphaString(wxString alpha);
     AssColor();
 	AssColor(wxString kol);
-	AssColor(wxColour kol);
+	AssColor(wxColour kol, int alpha = -1);
     ~AssColor();
 	bool operator == (const AssColor &col){return (a==col.a && r==col.r && g==col.g && b==col.b);}
 	bool operator != (const AssColor &col){return (a!=col.a || r!=col.r || g!=col.g || b!=col.b);}

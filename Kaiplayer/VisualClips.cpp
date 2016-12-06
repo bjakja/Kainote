@@ -509,9 +509,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 
 	if(event.LeftUp()||event.MiddleUp()){
 		if(!drawSelection){
-			
-
-
+			if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}
 			SetClip(GetVisual(),false);
 			
 		}else{
@@ -645,6 +643,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			tab->Video->vToolbar->SetClipToggled(tool);
 		}
 		else if( grabbed == -1 ){
+			tab->Video->CaptureMouse();
 			drawSelection=true;
 			selection = wxRect(x,y,x,y);
 			SelectPoints();

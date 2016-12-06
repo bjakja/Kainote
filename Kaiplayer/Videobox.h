@@ -24,6 +24,7 @@
 #include "VideoRenderer.h"
 #include "VideoFullscreen.h"
 #include "VideoToolbar.h"
+#include "KaiTextCtrl.h"
 
 class kainoteFrame;
 
@@ -58,7 +59,7 @@ public:
 	wxMutex vbmutex;
 	wxMutex nextmutex;
 	wxTimer vtime;
-	wxTextCtrl* mstimes;
+	KaiTextCtrl* mstimes;
 	VolSlider* volslider;
 	VideoToolbar *vToolbar;
 	void OpenEditor(bool esc=true);
@@ -113,6 +114,7 @@ private:
 	void OnCopyCoords(const wxPoint &pos);
 	void OnErase(wxEraseEvent& event){};
 	void OnChangeVisual(wxCommandEvent &evt);
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
 	void ChangeButtonBMP(bool play=false);
 	wxTimer idletime;
 	DECLARE_EVENT_TABLE()

@@ -52,7 +52,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	wxStaticBoxSizer *stylename= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Nazwa stylu:"));
 	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	valid.SetCharExcludes(",");
-	sname = new wxTextCtrl(this, -1, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER,valid);
+	sname = new KaiTextCtrl(this, -1, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER,valid);
 	sname->SetMaxLength(500);
 	stylename->Add(sname,1,wxEXPAND|wxALL,2);
 
@@ -196,7 +196,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	styleenc->Add(senc,1,wxEXPAND|wxALL,2);
 
 	wxStaticBoxSizer *styleprev= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Podgląd stylu:"));
-	//Preview= new wxTextCtrl(this, -1, Options.GetString("Preview Text"), wxDefaultPosition, wxSize(-1,100), wxTE_PROCESS_ENTER|wxTE_MULTILINE|wxTE_CENTRE);
+	//Preview= new KaiTextCtrl(this, -1, Options.GetString("Preview Text"), wxDefaultPosition, wxSize(-1,100), wxTE_PROCESS_ENTER|wxTE_MULTILINE|wxTE_CENTRE);
 	Preview= new StylePreview(this, -1, wxDefaultPosition, wxSize(-1,100));
 	styleprev->Add(Preview,1,wxEXPAND|wxALL,2);
 
@@ -251,7 +251,7 @@ void ColorChange::OnAllCols(int kol)
 	NumCtrl *alpha=(kol==1)? alpha1 : (kol==2)? alpha2 : (kol==3)? alpha3 : alpha4;
 	wxColour koll= kolor->GetBackgroundColour();
 
-	DialogColorPicker *ColourDialog = DialogColorPicker::Get(this,wxColour(koll.Red(),koll.Green(),koll.Blue(),alpha->GetInt()));
+	DialogColorPicker *ColourDialog = DialogColorPicker::Get(this,AssColor(koll,alpha->GetInt()));
 	wxPoint mst=wxGetMousePosition();
 	int dw, dh;
 	wxSize siz=ColourDialog->GetSize();

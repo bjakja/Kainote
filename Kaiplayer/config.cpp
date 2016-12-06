@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+﻿//  Copyright (c) 2016, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -231,64 +231,64 @@ void config::SaveOptions(bool cfg, bool style)
 
 inline wxString config::LoadDefaultConfig()
 {
-	return "["+progname+"]\r\nChange Time=2000\r\n"\
-			"Change mode=0\r\n"\
-			"Convert Resolution W=1280\r\n"\
-			"Convert Resolution H=720\r\n"\
-			"Default FPS=23.976\r\n"\
-			"Default Style=Default\r\n"\
-			"Default Style Catalog=Default\r\n"\
-			"Dictionary Name=pl\r\n"\
-			"Editbox Spellchecker=true\r\n"\
-			"Editor normal text="+wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).GetAsString(4)+"\r\n"\
-			"Editor tag names=#850085\r\n"\
-			"Editor tag values=#6600FF\r\n"\
-			"Editor curly braces=#0000FF\r\n"\
-			"Editor tag operators=#FF0000\r\n"\
-			"Editor background="+wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString(4)+"\r\n"\
-			"Editor selection=#00CCFF\r\n"\
-			"Editor selection no focus=#CCCCFF\r\n"\
-			"Editor spellchecker=#FA9292\r\n"\
-			"Frames=false\r\n"\
-			"Grid Active Line=#CA0065\r\n"\
-			"Grid Background=#C0C0C0\r\n"\
-			"Grid Comment=#D8DEF5\r\n"\
-			"Grid comparison=#DFDADA\r\n"\
-			"Grid comparison background=#C0A073\r\n"\
-			"Grid comparison background selected=#909F3A\r\n"\
-			"Grid comparison comment background=#BBBCCA\r\n"\
-			"Grid comparison comment background selected=#8A99A2\r\n"\
-			"Grid Dialogue=#C0C0C0\r\n"\
-			"Grid Collisions=#FF0000\r\n"\
-			"Grid Font Name=Tahoma\r\n"\
-			"Grid Font Size=10\r\n"\
-			"Grid Label Normal=#19B3EC\r\n"\
-			"Grid Label Modified=#FBF804\r\n"\
-			"Grid Label Saved=#C4ECC9\r\n"\
-			"Grid Lines=#808080\r\n"\
-			"Grid Selected Comment=#D3EEEE\r\n"\
-			"Grid Selected Dialogue=#CEFFE7\r\n"\
-			"Grid Spellchecker=#FA9292\r\n"\
-			"Grid tag changing char=*\r\n"\
-			"Grid Text=#000000\r\n"\
-			"Move time forward=true\r\n"\
-			"Move Video To Active Line=0\r\n"\
-			"New end times=false\r\n"\
-			"Offset of start time=0\r\n"\
-			"Offset of end time=0\r\n"\
-			"Play Afrer Selection=0\r\n"\
-			"Preview Text=Podgl�d\r\n"\
-			"Show Editor=true\r\n"\
-			"Show settings window=false\r\n"\
-			"Start end times=0\r\n"\
-			"Style Preview Color1=#9A9A9A\r\n"\
-			"Style Preview Color2=#686868\r\n"\
-			"Styles of time change=\r\n"\
-			"Time show of letter=110\r\n"\
-			"Index Video=true\r\n"\
-			"Video Prog Bar=true\r\n"\
-			"Video Window Size=500,350\r\n"\
-			"Window Size=800,600";
+	return L"["+progname+L"]\r\nChange Time=2000\r\n"\
+			L"Change mode=0\r\n"\
+			L"Convert Resolution W=1280\r\n"\
+			L"Convert Resolution H=720\r\n"\
+			L"Default FPS=23.976\r\n"\
+			L"Default Style=Default\r\n"\
+			L"Default Style Catalog=Default\r\n"\
+			L"Dictionary Name=pl\r\n"\
+			L"Editbox Spellchecker=true\r\n"\
+			L"Editor normal text="+wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).GetAsString(4)+L"\r\n"\
+			L"Editor tag names=#850085\r\n"\
+			L"Editor tag values=#6600FF\r\n"\
+			L"Editor curly braces=#0000FF\r\n"\
+			L"Editor tag operators=#FF0000\r\n"\
+			L"Editor background="+wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString(4)+L"\r\n"\
+			L"Editor selection=#00CCFF\r\n"\
+			L"Editor selection no focus=#CCCCFF\r\n"\
+			L"Editor spellchecker=#FA9292\r\n"\
+			L"Frames=false\r\n"\
+			L"Grid Active Line=#CA0065\r\n"\
+			L"Grid Background=#C0C0C0\r\n"\
+			L"Grid Comment=#D8DEF5\r\n"\
+			L"Grid comparison=#DFDADA\r\n"\
+			L"Grid comparison background=#C0A073\r\n"\
+			L"Grid comparison background selected=#909F3A\r\n"\
+			L"Grid comparison comment background=#BBBCCA\r\n"\
+			L"Grid comparison comment background selected=#8A99A2\r\n"\
+			L"Grid Dialogue=#C0C0C0\r\n"\
+			L"Grid Collisions=#FF0000\r\n"\
+			L"Grid Font Name=Tahoma\r\n"\
+			L"Grid Font Size=10\r\n"\
+			L"Grid Label Normal=#19B3EC\r\n"\
+			L"Grid Label Modified=#FBF804\r\n"\
+			L"Grid Label Saved=#C4ECC9\r\n"\
+			L"Grid Lines=#808080\r\n"\
+			L"Grid Selected Comment=#D3EEEE\r\n"\
+			L"Grid Selected Dialogue=#CEFFE7\r\n"\
+			L"Grid Spellchecker=#FA9292\r\n"\
+			L"Grid tag changing char=☀\r\n"\
+			L"Grid Text=#000000\r\n"\
+			L"Move time forward=true\r\n"\
+			L"Move Video To Active Line=0\r\n"\
+			L"New end times=false\r\n"\
+			L"Offset of start time=0\r\n"\
+			L"Offset of end time=0\r\n"\
+			L"Play Afrer Selection=0\r\n"\
+			L"Preview Text=Podgląd\r\n"\
+			L"Show Editor=true\r\n"\
+			L"Show settings window=false\r\n"\
+			L"Start end times=0\r\n"\
+			L"Style Preview Color1=#9A9A9A\r\n"\
+			L"Style Preview Color2=#686868\r\n"\
+			L"Styles of time change=\r\n"\
+			L"Time show of letter=110\r\n"\
+			L"Index Video=true\r\n"\
+			L"Video Prog Bar=true\r\n"\
+			L"Video Window Size=500,350\r\n"\
+			L"Window Size=800,600";
 }
 
 int config::LoadOptions()

@@ -64,6 +64,7 @@ class Notebook : public wxWindow
 		void OnSize(wxSizeEvent& event);
 		static void OnResized();
 		void OnEraseBackground(wxEraseEvent &event);
+		void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
 		void OnCharHook(wxKeyEvent& event);
 		void CalcSizes();
 		void CompareTexts(wxString &first, wxString &second, wxArrayInt &firstCompare, wxArrayInt &secondCompare);

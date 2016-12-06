@@ -986,7 +986,7 @@ namespace Auto{
 	void Automation::ReloadScripts(bool first)
 	{
 
-
+		initialized =false;
 		if(!first){RemoveAll(true);}
 		int error_count = 0;
 
@@ -1033,7 +1033,7 @@ namespace Auto{
 			wxLogWarning(_("Jeden bądź więcej skryptów autoload zawiera błędy,\n obejrzyj opisy skryptów by uzyskać więcej informacji."));
 		}
 
-
+		initialized = true;
 	}
 
 	bool Automation::AddFromSubs()
@@ -1112,6 +1112,13 @@ namespace Auto{
 	{
 		TabPanel* c = Notebook::GetTab();
 		kainoteFrame *Kai = (kainoteFrame*)c->GetGrandParent();
+		for(int j=(*bar)->GetMenuItemCount()-1; j>=2; j--){
+			(*bar)->Delete(j);
+		}
+		if(!initialized){
+			(*bar)->Append(30100,_("Wczytywanie skryptów..."))->Enable(false);
+			return;
+		}
 		bool changes = AddFromSubs();
 
 		/*if(!changes){
@@ -1122,9 +1129,7 @@ namespace Auto{
 		}
 
 		int (all)? 2 : Scripts.size()+2;*/
-		for(int j=(*bar)->GetMenuItemCount()-1; j>=2; j--){
-			(*bar)->Delete(j);
-		}
+		
 		int start=30100, i=0;
 		//if(all){
 			for(auto script : Scripts){

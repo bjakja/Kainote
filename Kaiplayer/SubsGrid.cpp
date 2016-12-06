@@ -546,8 +546,8 @@ void SubsGrid::AdjustWidths(int cell)
 
 		if(224 & cell){
 			dc.GetTextExtent(_("M.Pi."), &fw, &fh, NULL, NULL, &font);
-			if(MARGINL & cell){GridWidth[6]=(!shml)?0:fw+4;}
-			if(MARGINR & cell){GridWidth[7]=(!shmr)?0:fw+4;}
+			if(MARGINL & cell){GridWidth[6]=(!shml)?0:fw+10;}
+			if(MARGINR & cell){GridWidth[7]=(!shmr)?0:fw+10;}
 			if(MARGINV & cell){GridWidth[8]=(!shmv)?0:fw+10;}
 		}
 
