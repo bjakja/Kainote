@@ -21,7 +21,7 @@
 
 bool sortf(int i,int j){ return (i < j);}
 
-StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, wxComboBox *_fontseeker, const wxPoint &pos, const wxSize &size, long style)
+StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, KaiChoice *_fontseeker, const wxPoint &pos, const wxSize &size, long style)
 	      :wxWindow(parent,id,pos,size)
 {
 	//scrollBar = new wxScrollBar(this,27776,wxDefaultPosition,wxDefaultSize,wxSB_VERTICAL);
@@ -435,4 +435,5 @@ BEGIN_EVENT_TABLE(StyleList,wxWindow)
 	EVT_SCROLLWIN(StyleList::OnScroll)
 	EVT_MOUSE_EVENTS(StyleList::OnMouseEvent)
 	EVT_MENU_RANGE(15555,15558,StyleList::OnArrow)
+	EVT_MOUSE_CAPTURE_LOST(StyleList::OnLostCapture)
 END_EVENT_TABLE()

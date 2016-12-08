@@ -18,6 +18,7 @@
 
 #include <wx/wx.h>
 #include <wx/caret.h>
+#include "KaiTextValidator.h"
 
 class KaiTextCtrl : public wxWindow
 {
@@ -43,6 +44,7 @@ public:
 	wxColour GetBackgroundColour() const {return background;}
 	void SetModified(bool modif){modified = modif;}
 	void SetMaxLength(int maxLen){maxSize = maxLen;}
+	//void SetValidator(const wxValidator &validator){};
 protected:
 	void ContextMenu(wxPoint mpos);
 	inline int FindY(int x);
@@ -89,6 +91,17 @@ protected:
 	DECLARE_EVENT_TABLE()
 
 };
+
+//class KaiTextValidator : public wxValidator
+//{
+//public:
+//	KaiTextValidator(long style=wxFILTER_NONE, wxString *valPtr=NULL) :wxTextValidator(style, valPtr){};
+//	virtual ~KaiTextValidator(){}
+//	virtual bool Validate(wxWindow *parent);
+//    virtual bool TransferToWindow();
+//    virtual bool TransferFromWindow();
+//	KaiTextCtrl *GetKaiTextCtrl();
+//};
 
 enum{
 	TEXT_COPY=16545,

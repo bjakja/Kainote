@@ -15,6 +15,7 @@
 
 #include "ListControls.h"
 #include "Config.h"
+#include "KaiTextCtrl.h"
 
 //wxBitmap toDisable(const wxBitmap &bmp)
 //{
@@ -29,17 +30,17 @@
 //	return wxBitmap(img);
 //}
 
-static wxFont font;
 static int height = 18;
 
 
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
     const wxSize& size, int n, const wxString choices[],
     long style, const wxValidator& validator)
-	:wxWindow(parent, id, pos, size, style|wxWANTS_CHARS)
+	:wxWindow(parent, id, pos, size, style)
 	,bmp(NULL)
 	,list(NULL)
 	,itemList(NULL)
+	,choiceText(NULL)
 	,listIsShown(false)
 	,enter(false)
 	,clicked(false)
@@ -49,20 +50,32 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	list = new wxArrayString(n,choices);
 	disabled = new std::map<int, bool>();
 	
-	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? 24 : size.y);
-	SetMinSize(newSize);
+	
 	//SetBestSize(newSize);
 	//SetMaxSize(wxSize(1000, 50));
-	font = parent->GetFont();
+	SetFont(parent->GetFont());
+	int fw, fh;
+	if(size.y<1){
+		GetTextExtent("#TWFfGH", &fw, &fh);
+	}
+	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? fh+10 : size.y);
+	SetMinSize(newSize);
+	if(style & KAI_COMBO_BOX){
+		choiceText = new KaiTextCtrl(this, 27789, "", wxPoint(1,1), wxSize(newSize.x-22, newSize.y-2));
+		Bind(wxEVT_COMMAND_TEXT_UPDATED, [=](wxCommandEvent &evt){
+			SetSelectionByPartialName(choiceText->GetValue());
+		}, 27789);
+	}
 }
 
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
     const wxSize& size, const wxArrayString &choices,
     long style, const wxValidator& validator)
-	:wxWindow(parent, id, pos, size, style|wxWANTS_CHARS)
+	:wxWindow(parent, id, pos, size, style)
 	,bmp(NULL)
 	,list(NULL)
 	,itemList(NULL)
+	,choiceText(NULL)
 	,listIsShown(false)
 	,enter(false)
 	,clicked(false)
@@ -72,11 +85,51 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	list = new wxArrayString(choices);
 	disabled = new std::map<int, bool>();
 	
-	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? 24 : size.y);
+	
+	SetFont(parent->GetFont());
+	int fw, fh;
+	if(size.y<1){
+		GetTextExtent("#TWFfGH", &fw, &fh);
+	}
+	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? fh+10 : size.y);
 	SetMinSize(newSize);
-	//SetBestSize(newSize);
-	//SetMaxSize(wxSize(1000, 50));
-	font = parent->GetFont();
+	if(style & KAI_COMBO_BOX){
+		choiceText = new KaiTextCtrl(this, 27789, "", wxPoint(1,1), wxSize(newSize.x-22, newSize.y-2), wxBORDER_NONE);
+		Bind(wxEVT_COMMAND_TEXT_UPDATED, [=](wxCommandEvent &evt){
+			SetSelectionByPartialName(choiceText->GetValue());
+		}, 27789);
+	}
+}
+
+KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, const wxPoint& pos,
+    const wxSize& size, const wxArrayString &choices,
+    long style, const wxValidator& validator)
+	:wxWindow(parent, id, pos, size, style)
+	,bmp(NULL)
+	,list(NULL)
+	,itemList(NULL)
+	,choiceText(NULL)
+	,listIsShown(false)
+	,enter(false)
+	,clicked(false)
+	,choiceChanged(false)
+	,choice(-1)
+{
+	list = new wxArrayString(choices);
+	disabled = new std::map<int, bool>();
+	
+	
+	SetFont(parent->GetFont());
+	int fw, fh;
+	if(size.y<1){
+		GetTextExtent("#TWFfGH", &fw, &fh);
+	}
+	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? fh+10 : size.y);
+	SetMinSize(newSize);
+	choiceText = new KaiTextCtrl(this, 27789, comboBoxText, wxPoint(1,1), wxSize(newSize.x-22, newSize.y-2), wxBORDER_NONE);
+	Bind(wxEVT_COMMAND_TEXT_UPDATED, [=](wxCommandEvent &evt){
+		SetSelectionByPartialName(choiceText->GetValue());
+	}, 27789);
 }
 
 KaiChoice::~KaiChoice()
@@ -95,6 +148,10 @@ void KaiChoice::SetToolTip(const wxString &tooltip)
 
 void KaiChoice::OnSize(wxSizeEvent& event)
 {
+	if(choiceText){
+		wxSize newSize = GetClientSize();
+		choiceText->SetSize(wxSize(newSize.x-22, newSize.y-2));
+	}
 	Refresh(false);
 }
 
@@ -112,7 +169,9 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 	}
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
-	tdc.SetFont(font);
+	tdc.SetFont(GetFont());
+	//int fsize = font.GetPointSize();
+	//wxLogStatus("fs paint %i",fsize);
 	//tdc.SetBrush(wxBrush(background));
 	//tdc.SetPen(wxPen(background));
 	//tdc.DrawRectangle(0,0,w,h);
@@ -130,7 +189,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 			wxString txt = (*list)[choice];
 			int removed=0;
 			while(fw > w - 22){
-				tdc.GetTextExtent(txt, &fw, &fh, &ex, &et, &font);
+				tdc.GetTextExtent(txt, &fw, &fh, &ex, &et/*, &font*/);
 				txt = txt.RemoveLast();
 				removed++;
 			}
@@ -139,12 +198,17 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 			}else{
 				txt = txt.RemoveLast(2)+"...";
 			}
-			tdc.SetTextForeground(wxSystemSettings::GetColour((enabled)? wxSYS_COLOUR_WINDOWTEXT : wxSYS_COLOUR_GRAYTEXT));
-			//tdc.DrawText(txt, 4, (h-fh));
-			wxRect cur(5, (h-fh)/2, w - 19, fh);
-			tdc.SetClippingRegion(cur);
-			tdc.DrawLabel(txt,cur,wxALIGN_LEFT);
-			tdc.DestroyClippingRegion();
+			/*if(choiceText){
+				choiceText->SetValue(txt);
+			}else*/
+			if(!choiceText){
+				tdc.SetTextForeground(wxSystemSettings::GetColour((enabled)? wxSYS_COLOUR_WINDOWTEXT : wxSYS_COLOUR_GRAYTEXT));
+				//tdc.DrawText(txt, 4, (h-fh));
+				wxRect cur(5, (h-fh)/2, w - 19, fh);
+				tdc.SetClippingRegion(cur);
+				tdc.DrawLabel(txt,cur,wxALIGN_LEFT);
+				tdc.DestroyClippingRegion();
+			}
 		}
 	}
 	
@@ -185,6 +249,10 @@ void KaiChoice::OnMouseEvent(wxMouseEvent &event)
 		return;
 	}
 	if(event.Leaving()&&enter){
+		if(choiceText){
+			wxPoint pos = ScreenToClient(wxGetMousePosition());
+			if(GetClientRect().Contains(pos)) return;
+		}
 		enter=false;
 		clicked=false;
 		Refresh(false);
@@ -206,7 +274,14 @@ void KaiChoice::OnMouseEvent(wxMouseEvent &event)
 }
 
 void KaiChoice::OnKillFocus(wxFocusEvent &evt){
-	if(!itemList || wxGetActiveWindow() == itemList) return;
+	//wxWindow *awindow = wxGetActiveWindow();
+	
+	//if(!itemList || wxGetActiveWindow() == itemList) return;
+	//if(choiceText && HitTest(wxGetMousePosition()) == wxHT_WINDOW_INSIDE ) return;
+	wxPoint pos = ScreenToClient(wxGetMousePosition());
+	wxRect rc = GetClientRect();
+	bool contains = rc.Contains(pos);
+	if(!itemList || contains){return;}
 	itemList->EndPartialModal(-3);listIsShown=false;
 };
 
@@ -224,15 +299,26 @@ void KaiChoice::ShowList()
 	listIsShown = true;
 	wxSize listSize = GetSize();
 	if(!itemList){itemList = new PopupList(this, list, disabled);}
+	if(choiceText){SetSelectionByPartialName(choiceText->GetValue());}
 	itemList->Popup(wxPoint(0, listSize.GetY()-1), listSize, choice);
 	
 }
 
 
-void KaiChoice::SetSelection(int sel)
+void KaiChoice::SetSelection(int sel, bool changeText)
 {
 	if(sel >= (int)list->size()){return;}
-	choice=sel; Refresh(false);
+	choice=sel; 
+	
+	if(itemList && itemList->IsShown()){
+		itemList->SetSelection(choice);
+	}
+	if(choiceText && changeText){
+		wxString txt = (sel < 0)? wxEmptyString : (*list)[sel];
+		choiceText->SetValue(txt);
+	}
+		Refresh(false);
+	//}
 	if(sel >=0 ){SetToolTip();}
 	else{SetToolTip(toolTip);}
 }
@@ -246,6 +332,11 @@ int KaiChoice::Append(const wxString &what)
 {
 	list->Add(what);
 	return list->size()-1;
+}
+
+void KaiChoice::Append(const wxArrayString &itemsArray)
+{
+	list->insert(list->end(), itemsArray.begin(), itemsArray.end());
 }
 	
 int KaiChoice::GetCount()
@@ -277,13 +368,44 @@ void KaiChoice::Delete(int num)
 void KaiChoice::SendEvent(int _choice)
 {
 	if(_choice>=0){
-		choice = _choice; Refresh(false);
+		//choice = _choice; //Refresh(false);
+		SetSelection(_choice);
 		wxCommandEvent evt(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 		this->ProcessEvent(evt);
 	}
 	SetToolTip();
 	listIsShown=false;
 
+}
+
+void KaiChoice::SetSelectionByPartialName(const wxString &PartialName)
+{
+	if(PartialName==""){SetSelection(0, false);return;}
+	int sell=-1;
+	wxString PrtName = PartialName.Lower();
+	
+	for(size_t i=0; i<list->size(); i++){
+		wxString fontname = (*list)[i].Lower();
+		if(fontname.StartsWith(PrtName)){
+			sell=i;
+			break;
+		}
+	}
+
+	if(sell!=-1){
+		SetSelection(sell, false);
+	}
+}
+
+void KaiChoice::SetValue(const wxString &text){
+	if(choiceText){choiceText->SetValue(text);}
+}
+	
+wxString KaiChoice::GetValue(){
+	if(choiceText){
+		return choiceText->GetValue();
+	} 
+	return "";
 }
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiChoice, wxWindow);
@@ -309,8 +431,9 @@ PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, 
 	,disabledItems(disabled)
 {
 	int fw=0;
-	GetTextExtent("#TWFfGH", &fw, &height, 0, 0, &font);
-	height+=4;
+	SetFont(DialogParent->GetFont());
+	GetTextExtent("#TWFfGH", &fw, &height, 0, 0/*, &font*/);
+	height+=6;
 }
 
 PopupList::~PopupList()
@@ -321,7 +444,7 @@ PopupList::~PopupList()
 
 void PopupList::Popup(const wxPoint &pos, const wxSize &controlSize, int selectedItem)
 {
-	sel = selectedItem;
+	SetSelection(selectedItem);
 	wxPoint npos = pos;//Parent->ClientToScreen(pos);
 	wxSize size;
 	CalcPosAndSize(&npos, &size, controlSize);
@@ -336,13 +459,13 @@ void PopupList::CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &control
 	int tx=0, ty=0;
 	size_t isize = itemsList->size();
 	for(size_t i = 0; i < isize; i++){
-		GetTextExtent((*itemsList)[i], &tx, &ty, 0, 0, &font);
+		GetTextExtent((*itemsList)[i], &tx, &ty, 0, 0/*, &font*/);
 		if(tx > size->x){size->x = tx;}
 	}
 	
 	size->x += 18;
-	if(size->x < controlSize.x){size->x = controlSize.x;}
 	if(isize > (size_t)maxVisible) {size->x += 20; isize=maxVisible;}
+	if(size->x < controlSize.x){size->x = controlSize.x;}
 	size->y = height * isize + 2;
 	int w, h;
 	wxRect workArea = wxGetClientDisplayRect();
@@ -388,8 +511,6 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	if(scPos>=itemsize-maxVisible){scPos=itemsize-maxVisible;}
 	if(scPos<0){scPos=0;}
 	int maxsize=itemsize;
-	if(sel<scPos && sel!=-1){scPos=sel;}
-	else if(sel>= scPos + maxVisible && (sel-maxVisible+1) >= 0){scPos=sel-maxVisible+1;}
 	if(itemsize>maxVisible){
 		maxsize=maxVisible;
 		SetScrollbar(wxVERTICAL, scPos, maxVisible, itemsize);
@@ -418,7 +539,7 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	int fb = (b2* inv_a / 0xFF) + (b - inv_a * b / 0xFF);
 	wxColour menuhighlight(fr,fg,fb);
 
-	tdc.SetFont(font);
+	tdc.SetFont(GetFont());
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(text));
 	tdc.DrawRectangle(0,0,w,h);
@@ -440,6 +561,14 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	wxPaintDC dc(this);
 	dc.Blit(0,0,w,h,&tdc,0,0);
 }
+
+void PopupList::SetSelection(int pos){
+	sel = pos; 
+	scPos = pos; 
+	if(sel<scPos && sel!=-1){scPos=sel;}
+	else if(sel>= scPos + maxVisible && (sel-maxVisible+1) >= 0){scPos=sel-maxVisible+1;}
+	Refresh(false);
+};
 
 void PopupList::OnScroll(wxScrollWinEvent& event)
 {
@@ -506,6 +635,16 @@ void PopupList::OnKeyPress(wxKeyEvent &event)
 void PopupList::OnKillFocus(wxFocusEvent &evt){
 	EndPartialModal(-3);
 };
+
+WXLRESULT PopupList::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam) {
+	
+    if (message == 28) {
+		EndPartialModal(-3);
+		return 0;
+    }
+    return wxPopupWindow::MSWWindowProc(message, wParam, lParam);
+}
+
 
 BEGIN_EVENT_TABLE(PopupList,/* wxFrame*/wxPopupWindow)
 	EVT_MOUSE_EVENTS(PopupList::OnMouseEvent)

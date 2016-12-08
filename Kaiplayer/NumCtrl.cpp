@@ -15,6 +15,7 @@
 
 
 #include "NumCtrl.h"
+
 wxDEFINE_EVENT(NUMBER_CHANGED, wxCommandEvent);
 
 wxString getdouble(double num)
@@ -46,7 +47,7 @@ NumCtrl::NumCtrl(wxWindow *parent,long id,wxString text, int rangefrom, int rang
 	holding=false;
 	SetString(text);
 
-	wxTextValidator valid(wxFILTER_INCLUDE_CHAR_LIST);
+	KaiTextValidator valid(wxFILTER_INCLUDE_CHAR_LIST);
 	wxArrayString includes;
 	includes.Add(_T("0"));
 	includes.Add(_T("1"));
@@ -69,7 +70,10 @@ NumCtrl::NumCtrl(wxWindow *parent,long id,wxString text, int rangefrom, int rang
 	SetValidator(valid);
 
 	Connect(wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&NumCtrl::OnNumWrite);
-
+	Bind(wxEVT_RIGHT_DOWN, &NumCtrl::OnMouseEvent, this);
+	Bind(wxEVT_RIGHT_UP, &NumCtrl::OnMouseEvent, this);
+	Bind(wxEVT_MOTION, &NumCtrl::OnMouseEvent, this);
+	Bind(wxEVT_MOUSEWHEEL, &NumCtrl::OnMouseEvent, this);
 }
 
 NumCtrl::NumCtrl(wxWindow *parent,long id,double _value, double rangefrom, double rangeto, bool intonly, const wxPoint &pos, const wxSize &size, long style)
@@ -88,7 +92,7 @@ NumCtrl::NumCtrl(wxWindow *parent,long id,double _value, double rangefrom, doubl
 	holding=false;
 	SetDouble(_value);
 
-	wxTextValidator valid(wxFILTER_INCLUDE_CHAR_LIST);
+	KaiTextValidator valid(wxFILTER_INCLUDE_CHAR_LIST);
 	wxArrayString includes;
 	includes.Add(_T("0"));
 	includes.Add(_T("1"));
@@ -108,7 +112,7 @@ NumCtrl::NumCtrl(wxWindow *parent,long id,double _value, double rangefrom, doubl
 		includes.Add(_T(","));
 	}
 	valid.SetIncludes(includes);
-	SetValidator(valid);
+	//SetValidator(valid);
 
 	Connect(wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&NumCtrl::OnNumWrite);
 	SetMaxLength(20);
@@ -288,7 +292,9 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 		value+=step;
 		if(value<rfrom||value>rto){return;}
 		SetValue(getdouble(value), true, false);//MarkDirty();
-		return;}
+		if(IsModified()){wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);}
+		return;
+	}
 
 	event.Skip();
 }
@@ -296,11 +302,12 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 void NumCtrl::OnMouseLost(wxMouseCaptureLostEvent& event)
 {
 	if(HasCapture()){ReleaseMouse();}
+	holding = false;
 }
 
 
 BEGIN_EVENT_TABLE(NumCtrl, KaiTextCtrl)
-	EVT_MOUSE_EVENTS(NumCtrl::OnMouseEvent)
+	//EVT_MOUSE_EVENTS(NumCtrl::OnMouseEvent)
 	EVT_MOUSE_CAPTURE_LOST(NumCtrl::OnMouseLost)
 END_EVENT_TABLE()
 

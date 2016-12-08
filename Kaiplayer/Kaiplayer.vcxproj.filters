@@ -243,6 +243,9 @@
     <ClCompile Include="KaiTextCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="KaiTextValidator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DropFiles.h">
@@ -453,6 +456,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KaiTextCtrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiTextValidator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

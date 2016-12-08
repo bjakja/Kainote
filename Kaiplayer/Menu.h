@@ -262,7 +262,6 @@ private:
 	static LRESULT CALLBACK OnKey( int code, WPARAM wParam, LPARAM lParam );
 	HHOOK HookMouse;
 	static LRESULT CALLBACK OnMouseClick( int code, WPARAM wParam, LPARAM lParam );
-	//virtual WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
 	DECLARE_EVENT_TABLE()
 };
 

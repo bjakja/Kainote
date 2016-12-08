@@ -547,7 +547,7 @@ void EditBox::PutinText(wxString text, bool focus, bool onlysel, wxString *textt
 			wxString txt=(grid->transl && dialc->TextTl!="")? dialc->TextTl : dialc->Text;
 			FindVal(lasttag,&tmp,txt);
 
-			if(InBracket){
+			if(InBracket && txt!=""){
 				//wxLogMessage("placed %i, %i: \r\n",Placed.x,Placed.y);
 				if(Placed.x<Placed.y){txt.erase(txt.begin()+Placed.x, txt.begin()+Placed.y+1);}
 				txt.insert(Placed.x,text);
@@ -860,7 +860,9 @@ void EditBox::OnAnChoice(wxCommandEvent& event)
 	TextEdit->SetSelection(0,0);
 	if(grid->transl){TextEditTl->SetSelection(0,0);}
 	lasttag="an([0-9])";
-	PutinText("\\"+Ban->GetString(Ban->GetSelection()),true, true);
+	wxString tag;
+	FindVal("an([0-9])",&tag);
+	PutinText("\\"+Ban->GetString(Ban->GetSelection()),true);
 }
 
 void EditBox::OnTlMode(wxCommandEvent& event)

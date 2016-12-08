@@ -19,12 +19,13 @@
 #include <wx/wx.h>
 #include <vector>
 #include "Styles.h"
+#include "ListControls.h"
 
 
 class StyleList : public wxWindow
 {
 	public:
-		StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, wxComboBox *_fontseeker, const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=wxWANTS_CHARS);
+		StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, KaiChoice *_fontseeker, const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=wxWANTS_CHARS);
 		virtual ~StyleList();
 
 		void SetSelection(int sel,bool reset=false);
@@ -40,6 +41,7 @@ class StyleList : public wxWindow
 		void OnScroll(wxScrollWinEvent& event);
 		void OnMouseEvent(wxMouseEvent& event);
 		void OnArrow(wxCommandEvent& event);
+		void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();};holding = false;};
 
 		int lastsel;
 		int lastRow;
@@ -49,7 +51,7 @@ class StyleList : public wxWindow
 		int Height;
 		bool holding;
 		std::vector<Styles*> *stylenames;
-		wxComboBox *fontseeker;
+		KaiChoice *fontseeker;
 
 		//wxScrollBar *scrollBar;
 		wxBitmap *bmp;

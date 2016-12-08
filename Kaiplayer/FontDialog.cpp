@@ -104,6 +104,7 @@ void FontList::DrawFld(wxDC &dc,int w, int h)
 
 	int panelrows=(h/Height)+1;
 	int scrows;
+	if(scPos<0){scPos=0;}
 	if((scPos+panelrows)>=(int)fonts.size()+1){scrows=fonts.size();scPos=(scrows-panelrows)+1;
 	if(panelrows>(int)fonts.size()){scPos=0;scrollBar->Enable(false);}else{scrollBar->SetScrollbar(scPos,panelrows,fonts.size()+1,panelrows-1);}}
 	else{scrows=(scPos+panelrows);scrollBar->Enable(true);scrollBar->SetScrollbar(scPos,panelrows,fonts.size()+1,panelrows-1);}

@@ -23,7 +23,7 @@
 TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, const wxPoint& pos,const wxSize& size, long style,const wxValidator& validator, const wxString& name)
 	: KaiTextCtrl(parent, id, val, pos, size, style)
 {
-	wxTextValidator valid(wxFILTER_INCLUDE_CHAR_LIST);
+	KaiTextValidator valid(wxFILTER_INCLUDE_CHAR_LIST);
 	wxArrayString includes;
 	includes.Add(_T("0"));
 	includes.Add(_T("1"));
@@ -53,6 +53,11 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 	Connect(wxEVT_KEY_DOWN,(wxObjectEventFunction)&TimeCtrl::OnKeyEvent);
 
 	SetMaxLength(20);
+
+	Bind(wxEVT_RIGHT_DOWN, &TimeCtrl::OnMouseEvent, this);
+	Bind(wxEVT_RIGHT_UP, &TimeCtrl::OnMouseEvent, this);
+	Bind(wxEVT_MOTION, &TimeCtrl::OnMouseEvent, this);
+	Bind(wxEVT_MOUSEWHEEL, &TimeCtrl::OnMouseEvent, this);
 }
 
 
@@ -242,6 +247,7 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 
 	if(rclick)
 	{
+		//wxLogStatus("tc right");
 		holding=true;
 		oldpos=posy;
 		oldposx=posx;
@@ -254,12 +260,13 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 		else if(pos.x<8){grad=1000;}
 		else{grad=10;}
 		value.SetRaw(GetValue(),form);
-		//long cpos;
+		//wxPoint cpos;
 		//HitTest(wxPoint(posx,posy),&cpos);
 		curpos=pos.x;
-		//SetSelection(cpos,cpos);
+		SetSelection(pos.x,pos.x);
 		SetFocus();
 		CaptureMouse();
+		//return;
 	}
 
 	if (event.GetWheelRotation() != 0) {
@@ -314,7 +321,8 @@ void TimeCtrl::OnPaste(wxCommandEvent &event)
 //}
 
 BEGIN_EVENT_TABLE(TimeCtrl, KaiTextCtrl)
-	EVT_MOUSE_EVENTS(TimeCtrl::OnMouseEvent)
+	//EVT_MOUSE_EVENTS(TimeCtrl::OnMouseEvent)
 	EVT_MENU(Time_Copy,TimeCtrl::OnCopy)
 	EVT_MENU(Time_Paste,TimeCtrl::OnPaste)
+	EVT_MOUSE_CAPTURE_LOST(TimeCtrl::OnMouseLost)
 END_EVENT_TABLE()

@@ -133,7 +133,7 @@ void MTextEditor::SetTextS(const wxString &text, bool modif, bool resetsel,bool 
 	if(spell){CheckText();}
 	if(resetsel){SetSelection(0,0);}
 	else{
-		if(Cursor.x>MText.Len()){Cursor.x = MText.Len();Cursor.y = FindY(Cursor.x);}
+		if((size_t)Cursor.x>MText.Len()){Cursor.x = MText.Len();Cursor.y = FindY(Cursor.x);}
 	}
 	//else{Refresh(false);}
 }
@@ -884,12 +884,15 @@ void MTextEditor::GetSelection(long *start, long *end)
 
 void MTextEditor::SetSelection(int start, int end, bool noEvent)
 {
-	if((Cursor.x!=end || Selend.x!=start) && !noEvent){wxCommandEvent evt(CURSOR_MOVED,GetId());AddPendingEvent(evt);}
+	int len = MText.Len();
+	end=MID(0, end, len);
+	start=MID(0, start, len);
+	if((Cursor.x!=end || Selend.x!=start) && !noEvent){wxCommandEvent evt(CURSOR_MOVED,GetId());AddPendingEvent(evt);}	
 	Cursor.x=end;
 	Selend.x=start;
 	Selend.y=FindY(Selend.x);
 	Cursor.y=FindY(Cursor.x);
-		
+	
 	Refresh(false);
 }
 

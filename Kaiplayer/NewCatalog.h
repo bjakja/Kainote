@@ -17,7 +17,7 @@
 #define NEWCATALOG_H
 
 //(*Headers(NewCatalog)
-#include <wx/textctrl.h>
+#include "KaiTextCtrl.h"
 #include <wx/statbox.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -34,7 +34,7 @@ class NewCatalog: public wxDialog
 		wxButton* Button1;
 		wxStaticBox* StaticBox1;
 		wxButton* Button2;
-		wxTextCtrl* TextCtrl1;
+		KaiTextCtrl* TextCtrl1;
 		
 
 	protected:

@@ -21,6 +21,8 @@
 #include <wx/popupwin.h>
 #include <wx/msw/popupwin.h>
 
+class KaiTextCtrl;
+
 class PopupList : public wxPopupWindow/*wxFrame*/{
 	friend class KaiChoice;
 public:
@@ -30,6 +32,7 @@ public:
 	void Popup(const wxPoint &pos, const wxSize &controlSize, int selectedItem);
 	void CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &controlSize);
 	void EndPartialModal(int ReturnId);
+	void SetSelection(int pos);
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnKeyPress(wxKeyEvent &event);
@@ -39,7 +42,7 @@ private:
 	bool AcceptsFocusRecursively() const {return false;};
 	bool AcceptsFocusFromKeyboard() const {return false;};
 	void OnKillFocus(wxFocusEvent &evt);
-
+	virtual WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
 	int sel;
 	int scPos;
 protected:
@@ -62,8 +65,12 @@ public:
         const wxSize& size, const wxArrayString &choices,
         long style = 0, const wxValidator& validator = wxDefaultValidator);
 
+	KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, const wxPoint& pos,
+        const wxSize& size, const wxArrayString &choices,
+        long style = 0, const wxValidator& validator = wxDefaultValidator);
+
 	virtual ~KaiChoice();
-	void SetSelection(int sel);
+	void SetSelection(int sel, bool changeText=true);
 	void Clear();
 	/*void Prepend(wxString what);
 	void Insert(wxString what, int position);*/
@@ -74,11 +81,14 @@ public:
 		return (*list)[pos];
 	}
 	int GetSelection(){return choice;};
+	void SetValue(const wxString &text);
+	wxString GetValue();
 	void Select(int sel){choice=sel;}
 	int GetCount();
 	int FindString(const wxString &text, bool caseSensitive = false);
 	void EnableItem(int numItem, bool enable=true);
 	int Append(const wxString &item);
+	void Append(const wxArrayString &itemsArray);
 	void Delete(int num);
 	void SetToolTip(const wxString &tooltip="");
 private:
@@ -89,7 +99,7 @@ private:
 	void ShowList();
 	void OnKillFocus(wxFocusEvent &evt);
 	void SendEvent(int choice);
-
+	void SetSelectionByPartialName(const wxString &PartialName);
 	bool enter;
 	bool clicked;
 	wxArrayString *list;
@@ -101,10 +111,13 @@ private:
 	wxString toolTip;
 	PopupList *itemList;
 	wxMutex mutex;
+	KaiTextCtrl *choiceText;
 	wxDECLARE_ABSTRACT_CLASS(KaiChoice);
 	DECLARE_EVENT_TABLE()
 };
 
-
+enum{
+	KAI_COMBO_BOX = 1
+};
 
 #endif

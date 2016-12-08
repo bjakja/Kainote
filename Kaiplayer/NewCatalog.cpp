@@ -28,7 +28,7 @@ const long NewCatalog::ID_STATICBOX1 = wxNewId();
 
 NewCatalog::NewCatalog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 {
-	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
+	KaiTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	wxArrayString excludes;
 	excludes.Add("\\");
 	excludes.Add("/");
@@ -44,7 +44,7 @@ NewCatalog::NewCatalog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	Create(parent, id, _("Wybór nazwy katalogu"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE, "id");
 	SetClientSize(wxSize(290,112));
 	Move(wxDefaultPosition);
-	TextCtrl1 = new wxTextCtrl(this, ID_TEXTCTRL1, wxEmptyString, wxPoint(24,35), wxSize(244,21), wxTE_PROCESS_ENTER, valid, "ID_TEXTCTRL1");
+	TextCtrl1 = new KaiTextCtrl(this, ID_TEXTCTRL1, wxEmptyString, wxPoint(24,35), wxSize(244,21), wxTE_PROCESS_ENTER, valid, "ID_TEXTCTRL1");
 	StaticBox1 = new wxStaticBox(this, ID_STATICBOX1, _("Podaj nazwę nowego katalogu"), wxPoint(8,8), wxSize(274,64), 0, "ID_STATICBOX1");
 	Button1 = new wxButton(this, wxID_OK, _("Utwórz"), wxPoint(24,83), wxDefaultSize, 0, wxDefaultValidator, "wxID_OK");
 	Button2 = new wxButton(this, wxID_CANCEL, _("Anuluj"), wxPoint(112,83), wxDefaultSize, 0, wxDefaultValidator, "wxID_CANCEL");

@@ -749,13 +749,11 @@ void MenuDialog::OnScroll(wxScrollWinEvent& event)
 void MenuDialog::HideMenus()
 {
 	if(!ParentMenu){return;}
-	//wxLogStatus("Hidemenus");
+	MenuBar::Menubar->md=NULL;
 	int subMenu=ParentMenu->submenuToHide;
-	//wxLogStatus("submenu");
 	Menu *menu=ParentMenu->parent;
 	ParentMenu->submenuToHide=-1;
 	ParentMenu->submenuShown=-1;
-	
 	while(subMenu!= -1 && menu->items[subMenu]->submenu){
 		menu = menu->items[subMenu]->submenu;
 		//wxLogStatus("menu %i, %i", subMenu, (int)menu);
@@ -771,12 +769,11 @@ void MenuDialog::HideMenus()
 	}
 	if(ParentMenu->isPartialModal){ParentMenu->EndPartialModal(0);}
 	else{ParentMenu->parent->DestroyDialog();}
-	MenuBar::Menubar->md=NULL;
 	ParentMenu=NULL;
 	showIcons=true;
 	maxVisible=30;
 	minWidth = 0; 
-	//wxLogStatus("Hidemenus complete");
+
 }
 
 //void MenuDialog::OnLostCapture(wxMouseCaptureLostEvent &evt){
@@ -807,6 +804,7 @@ WXLRESULT MenuDialog::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lP
     if (message == 28 && ParentMenu) {
 		ParentMenu->HideMenus();
 		MenuBar::Menubar->HideMnemonics();
+		return 0;
     }
     return wxPopupWindow::MSWWindowProc(message, wParam, lParam);
 }
@@ -834,6 +832,7 @@ MenuBar::MenuBar(wxWindow *_parent)
 	SetFont(font);
 	Refresh(false);
 	Bind(wxEVT_TIMER,[=](wxTimerEvent &event){
+
 		if(shownMenu == -1){return;}
 		MenuEvent evt(EVT_MENU_OPENED, GetId(), Menus[shownMenu]);
 		ProcessEvent(evt);
@@ -901,7 +900,6 @@ void MenuBar::OnMouseEvent(wxMouseEvent &evt)
 		sel=elem;
 		Refresh(false);
 		if(shownMenu!=-1){
-			
 			if(Menus[shownMenu]->dialog){Menus[shownMenu]->dialog->HideMenus();}
 			shownMenu=elem;
 			showMenuTimer.Start(200,true);
@@ -1049,7 +1047,6 @@ LRESULT CALLBACK MenuBar::OnKey( int code, WPARAM wParam, LPARAM lParam ){
 			auto foundmnemonics = mn.find(wParam);
 			
 			if(foundmnemonics != mn.end()){
-				
 				if (Menubar->md){
 					if(Menubar->md->items[foundmnemonics->second]->submenu){
 						Menubar->md->dialog->sel = Menubar->md->dialog->submenuShown = foundmnemonics->second;
@@ -1159,6 +1156,7 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 	}
 	LPMSG msg = (LPMSG)lParam;
 	
+	
 	if( msg->message == WM_MOUSEWHEEL ){
 		POINT mouse;
 		GetCursorPos (&mouse);
@@ -1174,9 +1172,9 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 	if(showMnemonics || Menubar->md){
 		if( msg->message == WM_LBUTTONDOWN || msg->message == WM_NCLBUTTONDOWN || 
 			msg->message == WM_RBUTTONDOWN || msg->message == WM_NCRBUTTONDOWN){
-			MenuDialog::id=-3;
 			Menubar->HideMnemonics();
 			if(!MenuDialog::ParentMenu){return 0;}
+			MenuDialog::id=-3;
 			int subMenu=MenuDialog::ParentMenu->submenuShown;
 			Menu *menu= MenuDialog::ParentMenu->parent;
 			wxPoint posOnScreen = wxGetMousePosition();
@@ -1215,18 +1213,8 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 	return CallNextHookEx( 0, code, wParam, lParam );
 }
 
-//WXLRESULT MenuBar::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam) {
-//	
-//    if (message == 28 ) {
-//		wxLogStatus("message 28");
-//		Menubar->HideMnemonics();
-//    }
-//    return wxWindow::MSWWindowProc(message, wParam, lParam);
-//}
-
 void MenuBar::HideMnemonics()
 {
-	//wxLogStatus("hide mnemonics");
 	showMnemonics=false;
 	sel=-1;
 	Refresh(false);

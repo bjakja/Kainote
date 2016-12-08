@@ -16,7 +16,7 @@
 
 #include "MappedButton.h"
 
-static wxFont font;
+//static wxFont font;
 
 wxColour WhiteUp(const wxColour &color)
 {
@@ -40,14 +40,15 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 {
 	name = label;
 	wxSize newSize=size;
+	SetFont(parent->GetFont());
+	int fw, fh;
+	GetTextExtent(name, &fw, &fh, 0, 0);
 	if(size.x <1){
-		int fw, fh;
-		GetTextExtent(name, &fw, &fh, 0, 0, &font);
 		newSize.x = fw+10;
 		if(newSize.x<60){newSize.x=60;}
 	}
 	if(size.y <1){
-		newSize.y = 24;
+		newSize.y = fh+10;
 	}
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
@@ -59,7 +60,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
 	if(toolTip!=""){SetToolTip(toolTip);}
-	font = parent->GetFont();
+	
 }
 
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int window,
@@ -74,14 +75,15 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 {
 	name = label;
 	wxSize newSize=size;
+	SetFont(parent->GetFont());
+	int fw, fh;
+	GetTextExtent(name, &fw, &fh, 0, 0);
 	if(size.x <1){
-		int fw, fh;
-		GetTextExtent(name, &fw, &fh, 0, 0, &font);
 		newSize.x = fw+16;
 		if(newSize.x<60){newSize.x=60;}
 	}
 	if(size.y <1){
-		newSize.y = 24;
+		newSize.y = fh+10;
 	}
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
@@ -92,7 +94,6 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
-	font = parent->GetFont();
 }
 
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, const wxBitmap& bitmap, const wxPoint& pos,
@@ -112,7 +113,8 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 		newSize.x = fw+10;
 	}
 	if(size.y <1){
-		newSize.y = 24;
+		int fh = icon.GetHeight();
+		newSize.y = fh+10;
 	}
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
@@ -124,7 +126,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
 	if(tooltip!=""){SetToolTip(tooltip);}
-	font = parent->GetFont();
+	SetFont(parent->GetFont());
 }
 
 MappedButton::~MappedButton()
@@ -177,7 +179,7 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	}
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
-	tdc.SetFont(font);
+	tdc.SetFont(GetFont());
 	/*wxColour background = GetParent()->GetBackgroundColour();
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
@@ -198,7 +200,7 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 			tdc.DrawRectangle(4,4,w-8,h-8);
 		}else{
 			tdc.SetTextForeground(wxSystemSettings::GetColour((enabled)? wxSYS_COLOUR_WINDOWTEXT : wxSYS_COLOUR_GRAYTEXT));
-			tdc.GetTextExtent(name, &fw, &fh, 0, 0, &font);
+			tdc.GetTextExtent(name, &fw, &fh, 0, 0/*, &font*/);
 			wxRect cur(5, (h-fh)/2, w - 10, fh);
 			tdc.SetClippingRegion(cur);
 			tdc.DrawLabel(name,cur,wxALIGN_CENTER);
@@ -271,9 +273,10 @@ ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, cons
 {
 	name = label;
 	wxSize newSize=size;
+	SetFont(parent->GetFont());
 	if(size.x <1){
 		int fw, fh;
-		GetTextExtent(name, &fw, &fh, 0, 0, &font);
+		GetTextExtent(name, &fw, &fh, 0, 0/*, &font*/);
 		newSize.x = fw+10;
 		if(newSize.x<80){newSize.x=80;}
 	}
@@ -311,7 +314,7 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 	}
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
-	tdc.SetFont(font);
+	tdc.SetFont(GetFont());
 	wxColour background = GetParent()->GetBackgroundColour();
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
@@ -343,7 +346,7 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 			tdc.DrawBitmap(icon, (w - fw)/2, (h - fh)/2);
 		}else{
 			tdc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-			tdc.GetTextExtent(name, &fw, &fh, 0, 0, &font);
+			tdc.GetTextExtent(name, &fw, &fh, 0, 0/*, &font*/);
 			wxRect cur(5, (h-fh)/2, w - 10, fh);
 			tdc.SetClippingRegion(cur);
 			tdc.DrawLabel(name,cur,wxALIGN_CENTER);

@@ -59,7 +59,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	wxStaticBoxSizer *stylefont= new wxStaticBoxSizer(wxVERTICAL, this, _("Czcionka i rozmiar:"));
 	wxBoxSizer *fntsizer=new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *biussizer=new wxBoxSizer(wxHORIZONTAL);
-	sfont = new wxComboBox(this, ID_FONTNAME,"", wxDefaultPosition, wxDefaultSize, fontList);
+	sfont = new KaiChoice(this, ID_FONTNAME, "", wxDefaultPosition, wxDefaultSize, fontList);
 	ssize = new NumCtrl(this, ID_TOUTLINE, "32",1,10000,false, wxDefaultPosition, wxSize(66,-1), wxTE_PROCESS_ENTER);
 
 	sb = new wxCheckBox(this, ID_CBOLD, _("Pogrubienie"), wxDefaultPosition, wxSize(73,15));

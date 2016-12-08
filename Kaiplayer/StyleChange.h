@@ -56,7 +56,7 @@ class ColorChange: public wxWindow
 		MappedButton* btnCommit;
 		MappedButton* btnCancel;
 		MappedButton* btnFullscreen;
-		wxComboBox* sfont;
+		KaiChoice* sfont;
 		NumCtrl* alpha1;
 		NumCtrl* alpha2;
 		NumCtrl* alpha3;

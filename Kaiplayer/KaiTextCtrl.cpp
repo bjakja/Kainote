@@ -83,11 +83,20 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	caret->Move(3,2);
 	caret->Show();
 	//Refresh(false);
-	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? 26 : size.y);
+	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? fh+10 : size.y);
 	SetMinSize(newSize);
 	foreground = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 	background = parent->GetBackgroundColour();
 	SetValidator(validator);
+
+	Bind(wxEVT_LEFT_DOWN, &KaiTextCtrl::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_UP, &KaiTextCtrl::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_DCLICK, &KaiTextCtrl::OnMouseEvent, this);
+	Bind(wxEVT_RIGHT_DOWN, &KaiTextCtrl::OnMouseEvent, this);
+	Bind(wxEVT_MOTION, &KaiTextCtrl::OnMouseEvent, this);
+	Bind(wxEVT_ENTER_WINDOW, &KaiTextCtrl::OnMouseEvent, this);
+	Bind(wxEVT_LEAVE_WINDOW, &KaiTextCtrl::OnMouseEvent, this);
+	Bind(wxEVT_MOUSEWHEEL, &KaiTextCtrl::OnMouseEvent, this);
 }
 
 KaiTextCtrl::~KaiTextCtrl()
@@ -105,7 +114,7 @@ void KaiTextCtrl::SetValue(const wxString &text, bool modif, bool newSel)
 	
 	if(newSel){SetSelection(0,0);}
 	else{
-		if(Cursor.x>KText.Len()){Cursor.x = KText.Len();Cursor.y = FindY(Cursor.x);}
+		if((size_t)Cursor.x>KText.Len()){Cursor.x = KText.Len();Cursor.y = FindY(Cursor.x);}
 		Refresh(false);
 	}
 	modified=modif;
@@ -442,8 +451,9 @@ void KaiTextCtrl::OnMouseEvent(wxMouseEvent& event)
 		MakeCursorVisible();
 	}
 
-	if(event.RightDown())
+	if(event.RightUp())
 	{
+		wxLogStatus("right");
 		wxPoint pos=event.GetPosition();
 		ContextMenu(pos);
 	}
@@ -729,8 +739,9 @@ void KaiTextCtrl::GetSelection(long *start, long *end)
 void KaiTextCtrl::SetSelection(int start, int end, bool noEvent)
 {
 	//if((Cursor.x!=end || Selend.x!=start) && !noEvent){wxCommandEvent evt(CURSOR_MOVED,GetId());AddPendingEvent(evt);}
-	Cursor.x=end;
-	Selend.x=start;
+	int len = KText.Len();
+	Cursor.x=MID(0, end, len);
+	Selend.x=MID(0, start, len);
 	Selend.y=FindY(Selend.x);
 	Cursor.y=FindY(Cursor.x);
 
@@ -923,6 +934,7 @@ void KaiTextCtrl::Paste()
 wxPoint KaiTextCtrl::PosFromCursor(wxPoint cur, bool correctToScroll)
 {
 	int fw, fh;
+	if(cur.x<0||cur.y<0){return wxPoint(-scPos+2, (Fheight-scPos));}
 	if(wraps.size()<2 || wraps[cur.y]==cur.x){fw=0;}
 	else{
 		wxString beforeCursor = KText.SubString(wraps[cur.y],cur.x-1);
@@ -1043,10 +1055,89 @@ BEGIN_EVENT_TABLE(KaiTextCtrl,wxWindow)
 	EVT_PAINT(KaiTextCtrl::OnPaint)
 	EVT_SIZE(KaiTextCtrl::OnSize)
 	EVT_ERASE_BACKGROUND(KaiTextCtrl::OnEraseBackground)
-	EVT_MOUSE_EVENTS(KaiTextCtrl::OnMouseEvent)
+	//EVT_MOUSE_EVENTS(KaiTextCtrl::OnMouseEvent)
 	EVT_CHAR(KaiTextCtrl::OnCharPress)
 	EVT_KEY_DOWN(KaiTextCtrl::OnKeyPress)
 	EVT_KILL_FOCUS(KaiTextCtrl::OnKillFocus)
 	EVT_SCROLLWIN(KaiTextCtrl::OnScroll)
 	EVT_MOUSE_CAPTURE_LOST(KaiTextCtrl::OnLostCapture)
 END_EVENT_TABLE()
+
+//bool KaiTextValidator::Validate(wxWindow *parent)
+//{
+//	// If window is disabled, simply return
+//    if ( !m_validatorWindow->IsEnabled() )
+//        return true;
+//
+//    KaiTextCtrl * const text = GetKaiTextCtrl();
+//    if ( !text )
+//        return false;
+//
+//    wxString val(text->GetValue());
+//
+//    wxString errormsg;
+//    if ( HasFlag(wxFILTER_EMPTY) && val.empty() )
+//    {
+//        errormsg = _("Required information entry is empty.");
+//    }
+//    else if ( !(errormsg = IsValid(val)).empty() )
+//    {
+//        // NB: this format string should always contain exactly one '%s'
+//        wxString buf;
+//        buf.Printf(errormsg, val.c_str());
+//        errormsg = buf;
+//    }
+//
+//    if ( !errormsg.empty() )
+//    {
+//        m_validatorWindow->SetFocus();
+//        wxMessageBox(errormsg, _("Validation conflict"),
+//                     wxOK | wxICON_EXCLAMATION, parent);
+//
+//        return false;
+//    }
+//
+//    return true;
+//}
+//    
+//bool KaiTextValidator::TransferToWindow()
+//{
+//	 if ( m_stringValue )
+//    {
+//        KaiTextCtrl * const text = GetKaiTextCtrl();
+//        if ( !text )
+//            return false;
+//
+//        text->SetValue(*m_stringValue);
+//    }
+//
+//    return true;
+//}
+//    
+//bool KaiTextValidator::TransferFromWindow()
+//{
+//	if ( m_stringValue )
+//    {
+//        KaiTextCtrl * const text = GetKaiTextCtrl();
+//        if ( !text )
+//            return false;
+//
+//        *m_stringValue = text->GetValue();
+//    }
+//
+//    return true;
+//}
+//
+//KaiTextCtrl *KaiTextValidator::GetKaiTextCtrl()
+//{
+//	if (m_validatorWindow->IsKindOf(CLASSINFO(KaiTextCtrl)))
+//    {
+//        return (KaiTextCtrl*)m_validatorWindow;
+//    }
+//
+//	wxFAIL_MSG(
+//        "KaiTextValidator can only be used with KaiTextCtrl"
+//    );
+//
+//    return NULL;
+//}

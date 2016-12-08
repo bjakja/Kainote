@@ -29,9 +29,11 @@ class TimeCtrl : public KaiTextCtrl
 	void SetTime(STime newtime, bool stillModified=false);
 	STime GetTime();
 	void ChangeFormat(char frm, float fps=0);
+
 	//void SetModified(bool modified);
 	bool changedBackGround;
 	private:
+	void OnMouseLost(wxMouseCaptureLostEvent& event){if(HasCapture()){ReleaseMouse();}; holding = false;};
 	char form;
 	STime mTime;
 	bool pastes;
