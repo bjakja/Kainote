@@ -140,8 +140,10 @@
     <ClCompile Include="DShowPlayer.cpp" />
     <ClCompile Include="FFT.cpp" />
     <ClCompile Include="FindReplace.cpp" />
+    <ClCompile Include="KaiCheckBox.cpp" />
     <ClCompile Include="KainoteApp.cpp" />
     <ClCompile Include="KainoteMain.cpp" />
+    <ClCompile Include="KaiRadioButton.cpp" />
     <ClCompile Include="KaiTextCtrl.cpp" />
     <ClCompile Include="KaiTextValidator.cpp" />
     <ClCompile Include="ListControls.cpp" />
@@ -218,8 +220,10 @@
     <ClInclude Include="DShowPlayer.h" />
     <ClInclude Include="FFT.h" />
     <ClInclude Include="FindReplace.h" />
+    <ClInclude Include="KaiCheckBox.h" />
     <ClInclude Include="KainoteApp.h" />
     <ClInclude Include="KainoteMain.h" />
+    <ClInclude Include="KaiRadioButton.h" />
     <ClInclude Include="KaiTextCtrl.h" />
     <ClInclude Include="KaiTextValidator.h" />
     <ClInclude Include="ListControls.h" />

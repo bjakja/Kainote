@@ -27,12 +27,12 @@ wxDEFINE_EVENT(CURSOR_MOVED, wxCommandEvent);
 
 class listwindow : public wxDialog
 {
-	public:
-		listwindow(wxWindow *parent, wxArrayString suggest, const wxPoint& pos, wxString name="Sugestie");
-		virtual ~listwindow();
+public:
+	listwindow(wxWindow *parent, wxArrayString suggest, const wxPoint& pos, wxString name="Sugestie");
+	virtual ~listwindow();
 
-		wxListBox *disperrs;
-		void OnDoubleClick(wxCommandEvent& event);
+	wxListBox *disperrs;
+	void OnDoubleClick(wxCommandEvent& event);
 };
 
 listwindow::listwindow(wxWindow *parent, wxArrayString suggest, const wxPoint& pos, wxString name)
@@ -96,14 +96,14 @@ MTextEditor::MTextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& p
 	entries[26].Set(wxACCEL_NORMAL, WXK_PAGEDOWN,ID_PDOWN);
 	entries[27].Set(wxACCEL_NORMAL, WXK_PAGEUP,ID_PUP);
 	entries[28].Set(wxACCEL_SHIFT|wxACCEL_CTRL, WXK_END,ID_CSEND);
-    wxAcceleratorTable accel(29, entries);
-    SetAcceleratorTable(accel);
+	wxAcceleratorTable accel(29, entries);
+	SetAcceleratorTable(accel);
 	Connect(ID_DEL,ID_PUP,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&MTextEditor::OnAccelerator);
 
 
 	Cursor.x=Cursor.y=Selend.x=Selend.y = oldstart = oldend=0;
-	
-	holding = dholding = firstdhold = modified = false;
+
+	holding = dholding = firstdhold = modified = wasDoubleClick = false;
 
 	font= wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 	wxClientDC dc(this);
@@ -151,10 +151,6 @@ void MTextEditor::CalcWrap(bool updatechars, bool sendevent)
 			scroll->GetSize(&sw,&sh);
 			w-=sw;
 		}
-		if(!bmp){bmp = new wxBitmap(w,h);}
-		wxMemoryDC dc;
-		dc.SelectObject(*bmp);
-		dc.SetFont(font);
 		int podz=0;
 		wxString wrapchars=" \\,;:}{()";
 		size_t i = 0;
@@ -163,7 +159,7 @@ void MTextEditor::CalcWrap(bool updatechars, bool sendevent)
 		while(i<MText.Len())
 		{
 			wxString wrap=MText.SubString(podz,i);
-			dc.GetTextExtent(wrap, &fw, &fh, NULL, NULL, &font);
+			GetTextExtent(wrap, &fw, &fh, NULL, NULL, &font);
 			//wxLogStatus("wrap %s fw %i w %i\r\n", wrap.data(), fw, w);
 			if(fw<w-7){
 				allwrap=i;
@@ -222,270 +218,284 @@ void MTextEditor::OnAccelerator(wxCommandEvent& event)
 	int len;
 	int ID=event.GetId();
 	switch(ID){
-		case ID_CBACK:
-			if(Cursor.x==0){return;}
-			Selend.x=Cursor.x;
-			FindWord((Cursor.x<2)? 0 : Cursor.x-1 ,&Cursor.x,&len);
-			if(Cursor.x==1 && MText[0]==' '){Cursor.x--;}
-		case ID_DEL:
-		case ID_BACK:
-			if(Cursor!=Selend){
-				int curx=Cursor.x;
-				int selx=Selend.x;
-				if(curx>selx){int tmp=curx;curx=selx;selx=tmp;}
-				MText.Remove(curx,selx-curx);
-				Selend=Cursor;
-				CalcWrap();
-				if(spell){CheckText();}
-				SetSelection(curx,curx);
-			}else
-			{
-				if(ID==ID_BACK){if(Cursor.x<1){return;} 
-				Cursor.x--;
-				}
-				if(ID==ID_DEL && Cursor.x >= (int)MText.Len()){return;}
-				MText.Remove(Cursor.x,1);
-			}
-			len=wraps.size();
-			CalcWrap();
-			//wxLogStatus("cursorx %i wraps %i",Cursor.x, wraps[Cursor.y]);
-			if(Cursor.x<wraps[Cursor.y] || (Cursor.x==wraps[Cursor.y] && len != wraps.size())){Cursor.y--;}
-			else if(Cursor.x>wraps[Cursor.y+1]){Cursor.y++;}
+	case ID_CBACK:
+		if(Cursor.x==0){return;}
+		Selend.x=Cursor.x;
+		FindWord((Cursor.x<2)? 0 : Cursor.x-1 ,&Cursor.x,&len);
+		if(Cursor.x==1 && MText[0]==' '){Cursor.x--;}
+	case ID_DEL:
+	case ID_BACK:
+		if(Cursor!=Selend){
+			int curx=Cursor.x;
+			int selx=Selend.x;
+			if(curx>selx){int tmp=curx;curx=selx;selx=tmp;}
+			MText.Remove(curx,selx-curx);
 			Selend=Cursor;
+			CalcWrap();
 			if(spell){CheckText();}
-			Refresh(false);
-			modified=true;
-			break;
-
-		case ID_LEFT:
-		case ID_CLEFT:
-		case ID_SLEFT:
-		case ID_CSLEFT:
-			if(ID==ID_LEFT && Selend.x<Cursor.x){Cursor=Selend;Refresh(false);return;}
-			if(Cursor.x<1){return;}
-			if(ID==ID_CLEFT||ID==ID_CSLEFT){
-				FindWord(Cursor.x-1,&Cursor.x,0);
+			SetSelection(curx,curx);
+		}else
+		{
+			if(ID==ID_BACK){if(Cursor.x<1){return;} 
+			Cursor.x--;
 			}
-			if(Cursor.x-1<wraps[Cursor.y] && Cursor.x!=0){Cursor.y--;}
-			else if(ID!=ID_CLEFT&&ID!=ID_CSLEFT){Cursor.x--;}
-				
-				
-			if(ID<ID_SLEFT){Selend=Cursor;}
-			Refresh(false);
-			break;
+			if(ID==ID_DEL && Cursor.x >= (int)MText.Len()){return;}
+			MText.Remove(Cursor.x,1);
+		}
+		len=wraps.size();
+		CalcWrap();
+		//wxLogStatus("cursorx %i wraps %i",Cursor.x, wraps[Cursor.y]);
+		if(Cursor.x<wraps[Cursor.y] || (Cursor.x==wraps[Cursor.y] && len != wraps.size())){Cursor.y--;}
+		else if(Cursor.x>wraps[Cursor.y+1]){Cursor.y++;}
+		Selend=Cursor;
+		if(spell){CheckText();}
+		Refresh(false);
+		modified=true;
+		break;
 
-		case ID_RIGHT:
-		case ID_CRIGHT:
-		case ID_SRIGHT:
-		case ID_CSRIGHT:
-			if(ID==ID_RIGHT && Selend.x>Cursor.x){Cursor=Selend;Refresh(false);return;}
-			if(Cursor.x>=(int)MText.Len()){return;}
-			if(ID==ID_CRIGHT||ID==ID_CSRIGHT){
-				if(Cursor.x==MText.Len()-1){
-					Cursor.x++;
-				}else{
-					FindWord(Cursor.x+1,0,&Cursor.x);}
-			}
-			if(Cursor.x+1>wraps[Cursor.y+1] && Cursor.y<(int)wraps.size()-2){Cursor.y++;}
-			else if(ID!=ID_CRIGHT&&ID!=ID_CSRIGHT){Cursor.x++;}
+	case ID_LEFT:
+	case ID_CLEFT:
+	case ID_SLEFT:
+	case ID_CSLEFT:
+		if(ID==ID_LEFT && Selend.x<Cursor.x){Cursor=Selend;Refresh(false);return;}
+		if(Cursor.x<1){return;}
+		if(ID==ID_CLEFT||ID==ID_CSLEFT){
+			FindWord(Cursor.x-1,&Cursor.x,0);
+		}
+		if(Cursor.x-1<wraps[Cursor.y] && Cursor.x!=0){Cursor.y--;}
+		else if(ID!=ID_CLEFT&&ID!=ID_CSLEFT){Cursor.x--;}
 
-			if(ID<ID_SRIGHT){Selend=Cursor;}
-			Refresh(false);
-			break;
 
-		case ID_DOWN:
-		case ID_SDOWN:
-			len=MText.Len();
-			if(Cursor.y>=(int)wraps.size()-2){Cursor.y=wraps.size()-2; Cursor.x=len;}
-			else{
-				Cursor.x-=wraps[Cursor.y];
-				Cursor.y++;
-				Cursor.x+=wraps[Cursor.y];
-				if(Cursor.x>len){Cursor.x=len;}
-			}
-			//wxLogStatus("%i %i",Cursor.x, Cursor.y);
+		if(ID<ID_SLEFT){Selend=Cursor;}
+		Refresh(false);
+		break;
 
-			
-			if(ID<ID_SDOWN){Selend=Cursor;}
-			Refresh(false);
-			break;
+	case ID_RIGHT:
+	case ID_CRIGHT:
+	case ID_SRIGHT:
+	case ID_CSRIGHT:
+		if(ID==ID_RIGHT && Selend.x>Cursor.x){Cursor=Selend;Refresh(false);return;}
+		if(Cursor.x>=(int)MText.Len()){return;}
+		if(ID==ID_CRIGHT||ID==ID_CSRIGHT){
+			if(Cursor.x==MText.Len()-1){
+				Cursor.x++;
+			}else{
+				FindWord(Cursor.x+1,0,&Cursor.x);}
+		}
+		if(Cursor.x+1>wraps[Cursor.y+1] && Cursor.y<(int)wraps.size()-2){Cursor.y++;}
+		else if(ID!=ID_CRIGHT&&ID!=ID_CSRIGHT){Cursor.x++;}
 
-		case ID_UP:
-		case ID_SUP:
-			
-			//if(Cursor.y<1){return;}
+		if(ID<ID_SRIGHT){Selend=Cursor;}
+		Refresh(false);
+		break;
+
+	case ID_DOWN:
+	case ID_SDOWN:
+		len=MText.Len();
+		if(Cursor.y>=(int)wraps.size()-2){Cursor.y=wraps.size()-2; Cursor.x=len;}
+		else{
 			Cursor.x-=wraps[Cursor.y];
-			Cursor.y--;
-			if(Cursor.y<1){Cursor.y=0;Cursor.x=0;}
-			else{Cursor.x+=wraps[Cursor.y];}
-			
-			//wxLogStatus("%i %i",Cursor.x, Cursor.y);
-			if(ID<ID_SUP){Selend=Cursor;}
-			Refresh(false);
+			Cursor.y++;
+			Cursor.x+=wraps[Cursor.y];
+			if(Cursor.x>len){Cursor.x=len;}
+		}
+		//wxLogStatus("%i %i",Cursor.x, Cursor.y);
 
-			break;
-		case ID_HOME:
-		case ID_END:
-		case ID_SHOME:
-		case ID_SEND:
-		case ID_CSEND:
-			Cursor.x=wraps[(ID==ID_END||ID==ID_SEND) ? Cursor.y+1 : Cursor.y];
-			if(ID==ID_CSEND){Cursor.x=MText.Len(); Cursor.y=wraps.size()-2;}
-			if(ID<ID_SHOME){Selend=Cursor;}
-			Refresh(false);
-			break;
-		case ID_CTLA:
-				
-				Cursor.x=Cursor.y=0;
-				Selend.x=MText.Len(); Selend.y=wraps.size()-2;
-				Refresh(false);
-			break;
-		case ID_CTLV:
-			Paste();
-			break;
-		case ID_CTLC:
-		case ID_CTLX:
-				
-			Copy(ID>ID_CTLC);
-				
-			break;
-		case ID_WMENU:
-			//Selend=Cursor;
-			ContextMenu(PosFromCursor(Cursor),FindError(Cursor,false));
-			break;
 
-		case ID_PDOWN:
-		case ID_PUP:
-			
-			break;
+		if(ID<ID_SDOWN){Selend=Cursor;}
+		Refresh(false);
+		break;
+
+	case ID_UP:
+	case ID_SUP:
+
+		//if(Cursor.y<1){return;}
+		Cursor.x-=wraps[Cursor.y];
+		Cursor.y--;
+		if(Cursor.y<1){Cursor.y=0;Cursor.x=0;}
+		else{Cursor.x+=wraps[Cursor.y];}
+
+		//wxLogStatus("%i %i",Cursor.x, Cursor.y);
+		if(ID<ID_SUP){Selend=Cursor;}
+		Refresh(false);
+
+		break;
+	case ID_HOME:
+	case ID_END:
+	case ID_SHOME:
+	case ID_SEND:
+	case ID_CSEND:
+		Cursor.x=wraps[(ID==ID_END||ID==ID_SEND) ? Cursor.y+1 : Cursor.y];
+		if(ID==ID_CSEND){Cursor.x=MText.Len(); Cursor.y=wraps.size()-2;}
+		if(ID<ID_SHOME){Selend=Cursor;}
+		Refresh(false);
+		break;
+	case ID_CTLA:
+
+		Cursor.x=Cursor.y=0;
+		Selend.x=MText.Len(); Selend.y=wraps.size()-2;
+		Refresh(false);
+		break;
+	case ID_CTLV:
+		Paste();
+		break;
+	case ID_CTLC:
+	case ID_CTLX:
+
+		Copy(ID>ID_CTLC);
+
+		break;
+	case ID_WMENU:
+		//Selend=Cursor;
+		ContextMenu(PosFromCursor(Cursor),FindError(Cursor,false));
+		break;
+
+	case ID_PDOWN:
+	case ID_PUP:
+
+		break;
 
 	default:
-			
+
 		break;
 	}
 	if(ID!=ID_CTLV||ID!=ID_WMENU){wxCommandEvent evt(CURSOR_MOVED,GetId());AddPendingEvent(evt);}
 }
 
 void MTextEditor::OnMouseEvent(wxMouseEvent& event)
-	{
-		bool click=event.LeftDown();
-		bool leftup=event.LeftUp();
-		if(event.ButtonDown()){SetFocus();if(!click){Refresh(false);}}
-		
-		if(leftup && (holding||dholding)){
-			holding=dholding=false;
-			if(HasCapture()){ReleaseMouse();}
+{
+	bool click=event.LeftDown();
+	bool leftup=event.LeftUp();
+	if(event.ButtonDown()){SetFocus();if(!click){Refresh(false);}}
+
+	if(leftup && (holding||dholding)){
+		holding=dholding=false;
+		if(HasCapture()){ReleaseMouse();}
+		return;
+	}
+
+
+
+	if(event.LeftDClick() && MText!=""){
+		wasDoubleClick=true;
+		time = timeGetTime();
+		wxPoint mpos=event.GetPosition();
+		int errn=FindError(mpos);
+		if(Options.GetBool("Editbox Sugestions On Dclick") && errn>=0){
+			wxString err=errs[errn];
+
+			wxArrayString suggs= SpellChecker::Get()->Suggestions(err);
+			wxPoint mst=wxGetMousePosition();
+			mst.x-=50;mst.y+=15;
+
+			listwindow lw(NULL,suggs,mst);
+			if(lw.ShowModal()==wxID_OK)
+			{
+				int from=errors[errn*2];
+				int to=errors[(errn*2)+1];
+				wxString txt=lw.disperrs->GetString(lw.disperrs->GetSelection());
+				MText.replace(from,to-from,txt);
+				modified=true;
+				CalcWrap();
+				if(spell){CheckText();}
+				int newto=from+txt.Len();
+				SetSelection(newto,newto);
+				EB->Send(false);
+				modified=false;
+			}
 			return;
 		}
+		int start,end;
+		wxPoint ht;
+		if(Cursor.x<Selend.x){Selend=Cursor;}else{Cursor=Selend;}
+		HitTest(mpos,&ht);
+		FindWord(ht.x,&start,&end);
+		oldend=tmpend=end;
+		oldstart=tmpstart=start;
+		SetSelection(start,end);
+		firstdhold = dholding = true;
+		CaptureMouse();
+		return;
+	}
 
-		
-
-		if(event.LeftDClick() && MText!=""){
-			wxPoint mpos=event.GetPosition();
-			int errn=FindError(mpos);
-			if(Options.GetBool("Editbox Sugestions On Dclick") && errn>=0){
-				wxString err=errs[errn];
-	
-				wxArrayString suggs= SpellChecker::Get()->Suggestions(err);
-				wxPoint mst=wxGetMousePosition();
-				mst.x-=50;mst.y+=15;
-	
-				listwindow lw(NULL,suggs,mst);
-				if(lw.ShowModal()==wxID_OK)
-				{
-					int from=errors[errn*2];
-					int to=errors[(errn*2)+1];
-					wxString txt=lw.disperrs->GetString(lw.disperrs->GetSelection());
-					MText.replace(from,to-from,txt);
-					modified=true;
-					CalcWrap();
-					if(spell){CheckText();}
-					int newto=from+txt.Len();
-					SetSelection(newto,newto);
-					EB->Send(false);
-					modified=false;
-				}
+	if(click){
+		wxPoint cur;
+		HitTest(event.GetPosition(),&cur);
+		if(cur!=Cursor){wxCommandEvent evt(CURSOR_MOVED,GetId());AddPendingEvent(evt);}
+		Cursor=cur;
+		if(!event.ShiftDown()){Selend=Cursor;}
+		if(wasDoubleClick){
+			wasDoubleClick=false;
+			if(timeGetTime()-time < 800){
+				//wxLogStatus("trójklik");
+				Cursor.x=0;
+				Cursor.y=0;
+				Selend.x=MText.Len();
+				Selend.y=FindY(Selend.x);
+				Refresh(false);
 				return;
 			}
-			int start,end;
-			wxPoint ht;
-			if(Cursor.x<Selend.x){Selend=Cursor;}else{Cursor=Selend;}
-			HitTest(mpos,&ht);
-			FindWord(ht.x,&start,&end);
-			oldend=tmpend=end;
-			oldstart=tmpstart=start;
-			SetSelection(start,end);
-			firstdhold = dholding = true;
-			CaptureMouse();
-			return;
 		}
-
-		if(click){
-			wxPoint cur;
-			HitTest(event.GetPosition(),&cur);
-			if(cur!=Cursor){wxCommandEvent evt(CURSOR_MOVED,GetId());AddPendingEvent(evt);}
-			Cursor=cur;
-			if(!event.ShiftDown()){Selend=Cursor;}
-			Refresh(false);
-			holding=true;
-			CaptureMouse();
-		}
-
-		if(holding){
-			wxPoint cur;
-			HitTest(event.GetPosition(),&cur);
-			Cursor=cur;
-			Refresh(false);
-		}
-		if(dholding){
-			wxPoint cur;
-			int start, end;
-			HitTest(event.GetPosition(),&cur);
-			FindWord(cur.x,&start,&end);
-			if((start==tmpstart && end==tmpend)){return;}
-			tmpstart=start;tmpend=end;
-			//wxLogStatus("pos %i %i %i %i", start, end, oldstart, oldend);
-			
-			if(start<oldstart){
-				if(end==oldstart){Selend.x=oldend;Selend.y=FindY(oldend);}
-				//wxLogStatus("mn%i %i", Selend.x, start);
-				Cursor.x=start;
-				Cursor.y=FindY(start);
-			}else{
-				if(oldstart==start){Selend.x=oldstart;Selend.y=FindY(oldstart);}
-				//wxLogStatus("wi%i %i", Selend.x, end);
-				Cursor.x=end;
-				Cursor.y=FindY(end);
-			}
-			Refresh(false);
-			
-		}
-
-		if(event.RightDown())
-		{
-			wxPoint pos=event.GetPosition();
-			ContextMenu(pos,FindError(pos));
-		}
-
-		if (event.GetWheelRotation() != 0 && event.ControlDown()) {
-			fsize += event.GetWheelRotation() / event.GetWheelDelta();
-			if(fsize<7||fsize>70){fsize = MID(7,fsize,70); return;}
-			font.SetPointSize(fsize);
-			wxClientDC dc(this);
-			dc.SetFont(font);
-			int fw,fh;
-			dc.GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
-			Fheight=fh;
-			caret->SetSize(1,fh);
-			CalcWrap(false, false);
-			Refresh(false);
-		}else if(event.GetWheelRotation() != 0){
-			int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();
-			if(step>0 && scPos==0){return;}
-			scPos = MAX(scPos - step, 0);
-			Refresh(false);
-		}
+		Refresh(false);
+		holding=true;
+		CaptureMouse();
 	}
+
+	if(holding){
+		wxPoint cur;
+		HitTest(event.GetPosition(),&cur);
+		Cursor=cur;
+		Refresh(false);
+	}
+	if(dholding){
+		wxPoint cur;
+		int start, end;
+		HitTest(event.GetPosition(),&cur);
+		FindWord(cur.x,&start,&end);
+		if((start==tmpstart && end==tmpend)){return;}
+		tmpstart=start;tmpend=end;
+		//wxLogStatus("pos %i %i %i %i", start, end, oldstart, oldend);
+
+		if(start<oldstart){
+			if(end==oldstart){Selend.x=oldend;Selend.y=FindY(oldend);}
+			//wxLogStatus("mn%i %i", Selend.x, start);
+			Cursor.x=start;
+			Cursor.y=FindY(start);
+		}else{
+			if(oldstart==start){Selend.x=oldstart;Selend.y=FindY(oldstart);}
+			//wxLogStatus("wi%i %i", Selend.x, end);
+			Cursor.x=end;
+			Cursor.y=FindY(end);
+		}
+		Refresh(false);
+
+	}
+
+	if(event.RightDown())
+	{
+		wxPoint pos=event.GetPosition();
+		ContextMenu(pos,FindError(pos));
+	}
+
+	if (event.GetWheelRotation() != 0 && event.ControlDown()) {
+		fsize += event.GetWheelRotation() / event.GetWheelDelta();
+		if(fsize<7||fsize>70){fsize = MID(7,fsize,70); return;}
+		font.SetPointSize(fsize);
+		wxClientDC dc(this);
+		dc.SetFont(font);
+		int fw,fh;
+		dc.GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
+		Fheight=fh;
+		caret->SetSize(1,fh);
+		CalcWrap(false, false);
+		Refresh(false);
+	}else if(event.GetWheelRotation() != 0){
+		int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();
+		if(step>0 && scPos==0){return;}
+		scPos = MAX(scPos - step, 0);
+		Refresh(false);
+	}
+}
 
 void MTextEditor::OnSize(wxSizeEvent& event)
 {
@@ -493,7 +503,7 @@ void MTextEditor::OnSize(wxSizeEvent& event)
 	Cursor.x=0;
 	Cursor.y=0;
 	Selend=Cursor;
-		
+
 	Refresh(false);
 }
 
@@ -520,12 +530,12 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 		}
 		int sw=0,sh=0;
 		scroll->GetSize(&sw,&sh);
-        scroll->SetSize(w-sw,0,sw,h);
+		scroll->SetSize(w-sw,0,sw,h);
 		int diff= h/2;
 		int diff2= bitmaph/2;
 		if(scPos>diff2-diff){scPos=diff2-diff;}
 		scroll->SetScrollbar(scPos,diff,diff2,diff-1);
-        w -= sw;
+		w -= sw;
 	}else{
 		if(scroll->IsShown()){
 			scroll->Hide();
@@ -535,9 +545,9 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 		scPos=0;
 	}
 	//wxLogStatus("%i %i %i",scPos,h,bitmaph);
-	
-	
-		
+
+
+
 	bool direct = false;
 
 	if (direct) {
@@ -547,7 +557,7 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 	else {
 		// Get size and pos
 		//scrollBar->GetSize().GetWidth();
-		
+
 		// Prepare bitmap
 		if (bmp) {
 			if (bmp->GetWidth() < w || bmp->GetHeight() < bitmaph) {
@@ -555,29 +565,29 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 				bmp = NULL;
 			}
 		}
-		
+
 		if (!bmp) bmp = new wxBitmap(w,bitmaph);
 
 		// Draw bitmap
 		wxMemoryDC bmpDC;
-		
+
 		bmpDC.SelectObject(*bmp);
-		
+
 		DrawFld(bmpDC,w,bitmaph,h);
-		
-		
-		
+
+
+
 		dc.Blit(0,-scPos,w,h+scPos,&bmpDC,0,scPos);
-		
+
 	}
-	
+
 	//block=false;
 }
 
 void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
-	{
+{
 	int fw=0,fh=0;
-	
+
 	wxColour ctext = Options.GetColour("Editor normal text");
 	wxColour ccurlybraces = Options.GetColour("Editor curly braces");//wxBLUE
 	wxColour coperators = Options.GetColour("Editor tag operators");//"#FF0000"
@@ -591,7 +601,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.DrawRectangle(0,0,w,h);
 	//dc.SetPen(wxPen("#000000"));
-	
+
 	//if(MText==""){return;}
 
 	bool tagi=false;
@@ -602,7 +612,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	wxString tagtest="";
 	wxString parttext="";
 	wxString mestext="";
-	
+
 	//Contsel=false;
 	posY=2;
 	bool isfirst=true;
@@ -630,13 +640,13 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 		Brackets.y=Cursor.x;
 		Brackets.x=FindBracket(')','(',Cursor.x-1,true);//MText.SubString(0,Cursor.x).Find('(',true);
 	}else{Brackets.x=-1;Brackets.y=-1;}
-	
+
 	int fww, fwww;
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	//rysowanie spellcheckera
 	if(spell){
 		int spelllen=errors.size();
-	
+
 		dc.SetBrush(cspellerrors);
 		for(int g=0;g<spelllen; g+=2)
 		{
@@ -655,7 +665,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				dc.GetTextExtent(btext, &fwww, &fh, NULL, NULL, &font);
 				dc.DrawRectangle(3,(q*Fheight)+1,fwww,Fheight);
 			}
-				dc.DrawRectangle(fw+3,(fsty*Fheight)+1,fww,Fheight);
+			dc.DrawRectangle(fw+3,(fsty*Fheight)+1,fww,Fheight);
 		}
 	}
 
@@ -664,20 +674,20 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 		wxPoint fst, scd;
 		if((Cursor.x + Cursor.y) > (Selend.x + Selend.y)){fst=Selend;scd=Cursor;}
 		else{fst=Cursor, scd=Selend;}
-	
+
 		dc.SetBrush(wxBrush(wxColour((HasFocus())? cselection: cselnofocus)));
 		fww=0;
 		//rysowanie zaznaczenia
 		for(int j=fst.y; j<=scd.y; j++){
-		
+
 			if(j==fst.y){
 				wxString ftext=MText.SubString(wraps[j],fst.x-1);
 				if(wraps[j]>fst.x-1){fw=0;}
 				else{dc.GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font);}
 				wxString stext=MText.SubString(fst.x,(fst.y==scd.y)? scd.x-1 : wraps[j+1]-1);
-			dc.GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
-			//wxLogMessage("fww %i, %i", fww, fw);
-			//wxLogStatus("%i %i"+stext+" "+ftext, scd.x+wraps[j]-1, wraps[j+1]);
+				dc.GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
+				//wxLogMessage("fww %i, %i", fww, fw);
+				//wxLogStatus("%i %i"+stext+" "+ftext, scd.x+wraps[j]-1, wraps[j+1]);
 			}
 			else if(j==scd.y){
 				fw=0;
@@ -695,8 +705,8 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	for(int i=0;i<len;i++){
 		wxUniChar ch=alltext.GetChar(i);
 
-		
-		
+
+
 		if(i==wraps[wline+1]){
 			//if(i==MText.Len()-1){parttext<<ch;}
 			if(Cursor.x+Cursor.y==wchar){
@@ -705,7 +715,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				caret->Move(fww+3,posY-(scPos*2));
 
 			}
-			
+
 			if(parttext!=""){
 				dc.GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				wxColour kol=(val)? cvalues : (slash)? cnames : ctext;
@@ -714,7 +724,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				mestext<<parttext;
 				dc.DrawText(parttext,fw+3,posY);
 			}
-			
+
 			//posX=4;
 			posY+=Fheight;
 			wline++;
@@ -729,12 +739,12 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			else{dc.GetTextExtent(mestext+parttext, &fw, &fh, NULL, NULL, &font);}
 			//wxLogStatus("cursor %i %i %i",posY-(scPos*2), scPos, Fheight);
 			caret->Move(fw+3,posY-(scPos*2));
-		
+
 		}
 		parttext<<ch;
 		//mestext<<ch;
-		
-		
+
+
 
 		if(ch=='{'||ch=='}'){
 			if(ch=='{'){
@@ -770,7 +780,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			val=false;
 			isfirst=false;
 		}
-		
+
 		if(slash){
 			tagtest +=ch;
 			if((znaki.Find(ch)!=-1&&tagtest!="1"&&tagtest!="2"&&tagtest!="3"&&tagtest!="4")||tagtest=="fn"||ch=='('){
@@ -799,7 +809,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				mestext<<tmp;
 				parttext=ch;
 				if(ch!=','){val=false;}
-		
+
 			}
 			if(ch=='('){val=true;slash=false;}
 			dc.GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
@@ -826,50 +836,45 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			dc.SetFont(font);
 			//wxLogStatus("br x i y %i, %i", Brackets.x,Brackets.y);
 		}
-		
+
 		wchar++;
 	}
-	
+
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
-	dc.SetPen(wxPen((HasFocus())? wxColour("#3D7BAD") : wxColour("#ABADB3")/*wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT)*/));
+	dc.SetPen(wxPen(wxSystemSettings::GetColour((HasFocus())? wxSYS_COLOUR_MENUHILIGHT : wxSYS_COLOUR_BTNSHADOW)));
 	dc.DrawRectangle(0,scPos*2,w,windowh);
-	dc.SetPen(wxPen("#FFFFFF"));
-	dc.DrawRectangle(1,scPos*2+1,w-2,windowh-2);	
 }
 
 bool MTextEditor::HitTest(wxPoint pos, wxPoint *cur)
-	{//~~~~
-		int w,h,fw=0,fh=0;
+{
+	int w,h,fw=0,fh=0;
 	GetClientSize(&w,&h);
-	wxMemoryDC dc;
-	dc.SelectObject(*bmp);
-	dc.SetFont(font);
 	pos.y+=(scPos*2);
 	pos.x-=2;
-	
+
 	cur->y=(pos.y/Fheight);
 	if(cur->y<0||wraps.size()<2){cur->y=0;cur->x=0;return false;}
 	if(cur->y>=(int)wraps.size()-1)
 	{cur->y=wraps.size()-2;cur->x=wraps[wraps.size()-2];}//wxLogMessage("line %i %i",cur->y, cur->x);
 	else{cur->x=wraps[cur->y];}
-	
+
 	bool find=false;
 	wxString txt=MText+" ";
 
 	int wlen=MText.Len();
 	int fww;
-		for(int i = cur->x;i<wraps[cur->y+1]+1;i++)
-		{
-			
-			dc.GetTextExtent(txt.SubString(cur->x,i), &fw, &fh, NULL, NULL, &font);
-			dc.GetTextExtent(txt[i], &fww, &fh, NULL, NULL, &font);
-			if(fw+1-(fww/2)>pos.x){cur->x=i; find=true;break;}
-			//apos+=fw;wxLogStatus("%i, %i", cur->x, cur->y);
-		}
-		if(!find){cur->x = wraps[cur->y+1];}
-		//wxLogStatus("%i %i", cur->x, cur->y);
-		return find;
+	for(int i = cur->x;i<wraps[cur->y+1]+1;i++)
+	{
+
+		GetTextExtent(txt.SubString(cur->x,i), &fw, &fh, NULL, NULL, &font);
+		GetTextExtent(txt[i], &fww, &fh, NULL, NULL, &font);
+		if(fw+1-(fww/2)>pos.x){cur->x=i; find=true;break;}
+		//apos+=fw;wxLogStatus("%i, %i", cur->x, cur->y);
 	}
+	if(!find){cur->x = wraps[cur->y+1];}
+	//wxLogStatus("%i %i", cur->x, cur->y);
+	return find;
+}
 
 bool MTextEditor::Modified()
 {
@@ -892,7 +897,7 @@ void MTextEditor::SetSelection(int start, int end, bool noEvent)
 	Selend.x=start;
 	Selend.y=FindY(Selend.x);
 	Cursor.y=FindY(Cursor.x);
-	
+
 	Refresh(false);
 }
 
@@ -939,7 +944,7 @@ void MTextEditor::CheckText()
 		}
 		if(ch=='{'){block=true;}
 		else if(ch=='}'){block=false;firsti=i+1;word="";}
-			
+
 		if(notchar.Find(ch)==-1&&text.GetChar((i==0)? 0 : i-1)!='\\'&&!block){word<<ch;lasti=i;}
 		else if(!block&&text.GetChar((i==0)? 0 : i-1)=='\\'&& (ch=='N'||ch=='h')){firsti=i+1;word="";}
 	}
@@ -958,7 +963,7 @@ void MTextEditor::FindWord(int pos, int *start, int *end)
 	int len=MText.Len();
 	if(len<1){Cursor.x = Cursor.y = 0; *start=0; *end=0; return;}
 	bool fromend=(start!=NULL);
-	
+
 	if(!fromend){pos--;}
 	pos=MID(0,pos,len-1);
 	//wxString ttt="tekst:";
@@ -998,8 +1003,8 @@ void MTextEditor::FindWord(int pos, int *start, int *end)
 			break;
 		}
 	}
-	
-	
+
+
 }
 
 void MTextEditor::ContextMenu(wxPoint mpos, int error)
@@ -1021,7 +1026,7 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 	menut.Append(TEXTM_COPY,_("&Kopiuj"))->Enable(Selend.x!=Cursor.x);
 	menut.Append(TEXTM_CUT,_("Wy&tnij"))->Enable(Selend.x!=Cursor.x);
 	menut.Append(TEXTM_PASTE,_("&Wklej"));
-			
+
 	menut.AppendSeparator();
 	menut.Append(TEXTM_SEEKWORDL,_("Szukaj tłumaczenia słowa na ling.pl"))->Enable(Selend.x!=Cursor.x);
 	menut.Append(TEXTM_SEEKWORDB,_("Szukaj tłumaczenia słowa na pl.ba.bla"))->Enable(Selend.x!=Cursor.x);
@@ -1030,12 +1035,12 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 	if(!err.IsEmpty()){
 		menut.Append(TEXTM_ADD,_("&Dodaj słowo \"")+err+_("\" do słownika"));
 	}
-						
+
 	menut.Append(TEXTM_DEL,_("&Usuń"))->Enable(Selend.x!=Cursor.x);
-			
+
 	int id=-1;
 	id=menut.GetPopupMenuSelection(mpos, this);
-			
+	if(id<0)return;
 	if(id>=30200){
 		int from=errors[error*2];
 		int to=errors[(error*2)+1];
@@ -1083,7 +1088,7 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 		//}
 
 	}
-			
+
 
 }
 
@@ -1091,7 +1096,7 @@ void MTextEditor::Copy(bool cut)
 {
 	if(Selend.x==Cursor.x){return;}
 	int curx=Cursor.x;int selx=Selend.x;if(curx>selx){int tmp=curx;curx=selx;selx=tmp;}
-				
+
 	wxString whatcopy=MText.SubString(curx,selx-1);
 	if (wxTheClipboard->Open())
 	{
@@ -1108,45 +1113,45 @@ void MTextEditor::Copy(bool cut)
 	}
 }
 
-	
+
 void MTextEditor::Paste()
 {
 	if (wxTheClipboard->Open())
 	{
 		if (wxTheClipboard->IsSupported( wxDF_TEXT ))
 		{
-		wxTextDataObject data;
-		wxTheClipboard->GetData( data );
-		wxString whatpaste = data.GetText();
-		whatpaste.Replace("\n"," ");
-		whatpaste.Replace("\r","");
-		whatpaste.Replace("\f","");
-		whatpaste.Replace("\t"," ");
-		int curx=Cursor.x;
-		int selx=Selend.x;if(curx>selx){int tmp=curx;curx=selx;selx=tmp;}
-		if(Selend.x!=Cursor.x){
-			MText.Remove(curx,selx-curx);}
-		MText.insert(curx,whatpaste);
-		modified=true;
-		CalcWrap();
-		if(spell){CheckText();}
-		int whre=curx+whatpaste.Len();
-		SetSelection(whre, whre);
-				
+			wxTextDataObject data;
+			wxTheClipboard->GetData( data );
+			wxString whatpaste = data.GetText();
+			whatpaste.Replace("\n"," ");
+			whatpaste.Replace("\r","");
+			whatpaste.Replace("\f","");
+			whatpaste.Replace("\t"," ");
+			int curx=Cursor.x;
+			int selx=Selend.x;if(curx>selx){int tmp=curx;curx=selx;selx=tmp;}
+			if(Selend.x!=Cursor.x){
+				MText.Remove(curx,selx-curx);}
+			MText.insert(curx,whatpaste);
+			modified=true;
+			CalcWrap();
+			if(spell){CheckText();}
+			int whre=curx+whatpaste.Len();
+			SetSelection(whre, whre);
+
 		}
-	wxTheClipboard->Close();
+		wxTheClipboard->Close();
 	}
 }
 
 int MTextEditor::FindError(wxPoint mpos,bool mouse)
 {
 	wxPoint cpos;
-	
+
 	if(!mouse){
 		cpos=mpos;
 	}else if(mouse && !HitTest(mpos, &cpos)){return-1;}
 
-		//wxLogStatus("ht");
+	//wxLogStatus("ht");
 	for(size_t i=0; i<errors.size(); i+=2){
 		//wxLogStatus("not found yet%i %i %i",EB->line.spells[i],EB->line.spells[i+1],cpos.x);
 		if(cpos.x >= errors[i] && cpos.x <= errors[i+1]){
@@ -1155,7 +1160,7 @@ int MTextEditor::FindError(wxPoint mpos,bool mouse)
 		}
 	}
 
-	
+
 	return -1;
 }
 
@@ -1217,4 +1222,4 @@ BEGIN_EVENT_TABLE(MTextEditor,wxWindow)
 	EVT_KILL_FOCUS(MTextEditor::OnKillFocus)
 	EVT_COMMAND_SCROLL(3333,MTextEditor::OnScroll)
 	EVT_MOUSE_CAPTURE_LOST(MTextEditor::OnLostCapture)
-END_EVENT_TABLE()
+	END_EVENT_TABLE()

@@ -13,8 +13,25 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-//  This file is for automatic version change
-//  Autoversioning.exe change it after build using commandline
+#ifndef __KAIRADIOBUTTON__
+#define __KAIRADIOBUTTON__
 
-#define VersionKainote "0.8.3.630"
-#define NumVersionKainote 0,8,3,630
+#include "KaiCheckBox.h"
+
+class KaiRadioButton : public KaiCheckBox
+{
+public:
+	KaiRadioButton(wxWindow *parent, int id, const wxString& label,
+             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+	virtual ~KaiRadioButton(){};
+	void SetValue(bool value);
+private:
+	
+	void OnMouseLeft(wxMouseEvent &evt);
+	void DeselectRest();
+	//bool hasGroup;
+
+	wxDECLARE_ABSTRACT_CLASS(KaiRadioButton);
+};
+
+#endif

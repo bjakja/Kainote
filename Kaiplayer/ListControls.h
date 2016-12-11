@@ -38,18 +38,24 @@ private:
 	void OnKeyPress(wxKeyEvent &event);
 	void OnPaint(wxPaintEvent &event);
 	void OnScroll(wxScrollWinEvent& event);
-	bool AcceptsFocus() const {return false;};
-	bool AcceptsFocusRecursively() const {return false;};
-	bool AcceptsFocusFromKeyboard() const {return false;};
-	void OnKillFocus(wxFocusEvent &evt);
-	virtual WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
+	void OnIdle(wxIdleEvent& event);
+	//bool AcceptsFocus() const {return false;};
+	//bool AcceptsFocusRecursively() const {return false;};
+	//bool AcceptsFocusFromKeyboard() const {return false;};
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
+	//virtual WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
+	//HHOOK HookMouse;
+	//static LRESULT CALLBACK OnMouseClick( int code, WPARAM wParam, LPARAM lParam );
+	//static PopupList *thislist;
 	int sel;
 	int scPos;
+	
 protected:
 	wxBitmap *bmp;
 	wxArrayString *itemsList;
 	std::map<int, bool> *disabledItems;
 	wxWindow *Parent;
+	int orgY;
 	DECLARE_EVENT_TABLE()
 };
 
@@ -72,8 +78,8 @@ public:
 	virtual ~KaiChoice();
 	void SetSelection(int sel, bool changeText=true);
 	void Clear();
-	/*void Prepend(wxString what);
-	void Insert(wxString what, int position);*/
+	/*void Prepend(wxString what);*/
+	void Insert(const wxString &what, int position);
 	wxString GetString(int pos){
 		if(pos<0 || pos >= (int)list->size()){
 			return "";
@@ -97,9 +103,9 @@ private:
 	void OnMouseEvent(wxMouseEvent &event);
 	void OnKeyPress(wxKeyEvent &event);
 	void ShowList();
-	void OnKillFocus(wxFocusEvent &evt);
 	void SendEvent(int choice);
 	void SetSelectionByPartialName(const wxString &PartialName);
+	void SelectChoice(int sel);
 	bool enter;
 	bool clicked;
 	wxArrayString *list;
@@ -112,6 +118,7 @@ private:
 	PopupList *itemList;
 	wxMutex mutex;
 	KaiTextCtrl *choiceText;
+
 	wxDECLARE_ABSTRACT_CLASS(KaiChoice);
 	DECLARE_EVENT_TABLE()
 };

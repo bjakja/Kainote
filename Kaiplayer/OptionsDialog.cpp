@@ -87,7 +87,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	
 		for(int i=0;i<10;i++)
 		{
-			wxCheckBox *opt=new wxCheckBox(Main,-1,labels[i]);
+			KaiCheckBox *opt=new KaiCheckBox(Main,-1,labels[i]);
 			opt->SetValue(Options.GetBool(opts[i]));
 			ConOpt(opt,opts[i]);
 			MainSizer->Add(opt,0,wxALL,2);
@@ -248,7 +248,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			}
 		}
 
-		wxComboBox *cmb = new wxComboBox(ConvOpt, -1, Options.GetString("Default FPS"), wxDefaultPosition, wxSize(200,-1), fpsy, wxCB_DROPDOWN|wxSUNKEN_BORDER|wxVSCROLL|wxTE_PROCESS_ENTER);
+		KaiChoice *cmb = new KaiChoice(ConvOpt, -1, Options.GetString("Default FPS"), wxDefaultPosition, wxSize(200,-1), fpsy, wxTE_PROCESS_ENTER);
 		int sel=cmb->FindString(Options.GetString("Default FPS"));
 		if(sel>=0){cmb->SetSelection(sel);}
 		else{cmb->SetValue(Options.GetString("Default FPS"));}
@@ -260,7 +260,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 		for(int i=0;i<3;i++)
 		{
-			wxCheckBox *opt=new wxCheckBox(ConvOpt,-1,(i==0)?_("FPS z wideo"):(i==1)?_("Nowe czasy końcowe"):_("Pokaż okno przed konwersją"));
+			KaiCheckBox *opt=new KaiCheckBox(ConvOpt,-1,(i==0)?_("FPS z wideo"):(i==1)?_("Nowe czasy końcowe"):_("Pokaż okno przed konwersją"));
 			wxString optname=(i==0)?"FPS from video":(i==1)?"New end times":"Show settings window";
 			opt->SetValue(Options.GetBool(optname));
 			ConOpt(opt,optname);
@@ -299,7 +299,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxBoxSizer *MainSizer=new wxBoxSizer(wxVERTICAL);
 		for(int i=0;i<3;i++)
 		{
-			wxCheckBox *opt=new wxCheckBox(Video,-1,voptspl[i]);
+			KaiCheckBox *opt=new KaiCheckBox(Video,-1,voptspl[i]);
 			opt->SetValue(Options.GetBool(vopts[i]));
 			ConOpt(opt,vopts[i]);
 			MainSizer->Add(opt,0,wxALL,2);
@@ -401,7 +401,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 		for(int i=0;i<12;i++)
 		{
-			wxCheckBox *opt=new wxCheckBox(AudioMain,-1,names[i]);
+			KaiCheckBox *opt=new KaiCheckBox(AudioMain,-1,names[i]);
 			opt->SetValue(Options.GetBool(opts[i]));
 			ConOpt(opt,opts[i]);
 			audio->Add(opt,0,wxALL,2);
@@ -537,8 +537,8 @@ void OptionsDialog::SetOptions(bool saveall)
 	{
 		OptionsBind OB=handles[i];
 
-		if(OB.ctrl->IsKindOf(CLASSINFO(wxCheckBox))){
-			wxCheckBox *cb=(wxCheckBox*)OB.ctrl;
+		if(OB.ctrl->IsKindOf(CLASSINFO(KaiCheckBox))){
+			KaiCheckBox *cb=(KaiCheckBox*)OB.ctrl;
 			if(Options.GetBool(OB.option)!=cb->GetValue()){
 				Options.SetBool(OB.option,cb->GetValue());
 				if(OB.option=="Editbox Spellchecker"){
@@ -562,16 +562,21 @@ void OptionsDialog::SetOptions(bool saveall)
 				Options.SetInt(OB.option+" Size",fontsize);fontmod=true;
 			}
 		}
-		else if(OB.ctrl->IsKindOf(CLASSINFO(wxComboBox))){
-			wxComboBox *cbx=(wxComboBox*)OB.ctrl;
+		/*else if(OB.ctrl->IsKindOf(CLASSINFO(KaiChoice))){
+			KaiChoice *cbx=(KaiChoice*)OB.ctrl;
 			wxString kol=cbx->GetValue();
 			if(Options.GetString(OB.option)!=kol){
 				Options.SetString(OB.option,kol);
 			}
-		}
+		}*/
 		else if(OB.ctrl->IsKindOf(CLASSINFO(KaiChoice))){
 			KaiChoice *cbx=(KaiChoice*)OB.ctrl;
-			if(cbx->GetId()!=10000){
+			if(cbx->GetWindowStyle()&KAI_COMBO_BOX){
+				wxString kol=cbx->GetValue();
+				if(Options.GetString(OB.option)!=kol){
+					Options.SetString(OB.option,kol);
+				}
+			}else if(cbx->GetId()!=10000){
 				wxString kol=cbx->GetString(cbx->GetSelection());
 				if(Options.GetString(OB.option)!=kol){
 					Options.SetString(OB.option,kol);
@@ -586,8 +591,7 @@ void OptionsDialog::SetOptions(bool saveall)
 					Options.SetInt(OB.option,cbx->GetSelection());
 				}
 			}
-		}
-		else if(OB.ctrl->IsKindOf(CLASSINFO(KaiTextCtrl))){
+		}else if(OB.ctrl->IsKindOf(CLASSINFO(KaiTextCtrl))){
 			
 			if(OB.ctrl->GetId()!=20000){
 				KaiTextCtrl *sc=(KaiTextCtrl*)OB.ctrl;

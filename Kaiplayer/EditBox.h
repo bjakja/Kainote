@@ -26,7 +26,7 @@
 #include "ListControls.h"
 #include "AudioBox.h"
 #include "MappedButton.h"
-//#include <d3dx9math.h>
+#include "KaiCheckBox.h"
 
 class kainoteFrame;
 class Grid;
@@ -96,10 +96,10 @@ public:
 	AudioBox* ABox;
 	MTextEditor* TextEdit;
 	MTextEditor* TextEditTl;
-	wxCheckBox* TlMode;
+	KaiCheckBox* TlMode;
 	wxRadioButton* Times;
 	wxRadioButton* Frames;
-	wxCheckBox* Comment;
+	KaiCheckBox* Comment;
 	NumCtrl* LayerEdit;
 	TimeCtrl* StartEdit;
 	TimeCtrl* EndEdit;

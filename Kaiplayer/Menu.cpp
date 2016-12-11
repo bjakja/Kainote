@@ -354,7 +354,7 @@ void Menu::GetAccelerators(std::vector <wxAcceleratorEntry> *entries)
 
 MenuDialog* MenuDialog::ParentMenu=NULL;
 MenuDialog* MenuDialog::lastActiveMenu=NULL;
-int MenuDialog::id=-3;
+
 
 MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos, const wxSize &size, bool sendEvent)
 	:wxPopupWindow(DialogParent)/*wxFrame(DialogParent,-1,"",pos, size, wxFRAME_NO_TASKBAR|wxSTAY_ON_TOP|wxWS_EX_TRANSIENT)*/
@@ -582,14 +582,14 @@ bool MenuDialog::SendEvent(MenuItem *item, int accel)
 		wxQueueEvent(ParentMenu->GetParent(),evt);
 		return true;
 	}
-	id = item->id;
+	//id = item->id;
 	if(!ParentMenu->isPartialModal){
 		wxCommandEvent *evt= new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, item->id);
 		evt->SetClientData(item);
 		evt->SetInt(accel);
 		wxQueueEvent(ParentMenu->GetParent(),evt);
 	}
-	HideMenus();	
+	HideMenus(item->id);	
 	
 	return true;
 }
@@ -746,7 +746,7 @@ void MenuDialog::OnScroll(wxScrollWinEvent& event)
 	}
 }
 
-void MenuDialog::HideMenus()
+void MenuDialog::HideMenus(int id)
 {
 	if(!ParentMenu){return;}
 	MenuBar::Menubar->md=NULL;
@@ -767,7 +767,7 @@ void MenuDialog::HideMenus()
 		//menu->dialog->HideWithEffect(wxSHOW_EFFECT_BLEND,1);
 		menu->DestroyDialog();
 	}
-	if(ParentMenu->isPartialModal){ParentMenu->EndPartialModal(0);}
+	if(ParentMenu->isPartialModal){ParentMenu->EndPartialModal(id);}
 	else{ParentMenu->parent->DestroyDialog();}
 	ParentMenu=NULL;
 	showIcons=true;
@@ -786,11 +786,12 @@ int MenuDialog::ShowPartialModal()
 {
 	isPartialModal=true;
 	//Show();
+	//int id=-3;
 	Show();
 	if(IsShown()){
-		Run();
+		return Run();
 	}
-	return id;
+	return -3;
 }
 //Odwo³uje pêtlê czekaj¹c¹
 void MenuDialog::EndPartialModal(int ReturnId)
@@ -1130,7 +1131,6 @@ LRESULT CALLBACK MenuBar::OnKey( int code, WPARAM wParam, LPARAM lParam ){
 		}
 			
 	}else if(wParam == VK_ESCAPE && Menubar->md){
-		Menubar->md->dialog->id = -3;
 		MenuDialog::ParentMenu->HideMenus();
 		Menubar->HideMnemonics();
 		return 1;
@@ -1174,7 +1174,6 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 			msg->message == WM_RBUTTONDOWN || msg->message == WM_NCRBUTTONDOWN){
 			Menubar->HideMnemonics();
 			if(!MenuDialog::ParentMenu){return 0;}
-			MenuDialog::id=-3;
 			int subMenu=MenuDialog::ParentMenu->submenuShown;
 			Menu *menu= MenuDialog::ParentMenu->parent;
 			wxPoint posOnScreen = wxGetMousePosition();
@@ -1203,7 +1202,10 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 		if(msg->message == WM_MBUTTONUP || msg->message == WM_NCMBUTTONUP)
 		{
 			Menubar->HideMnemonics();
+		}else{
+			return 1;
 		}
+
 	}
 	/*if((msg->message != WM_MOUSEMOVE ) && Menubar->md){
 		wxLogStatus("Message %i", msg->message);

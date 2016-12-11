@@ -79,6 +79,8 @@ class MTextEditor : public wxWindow
 	bool holding;
 	bool dholding;
 	bool firstdhold;
+	bool wasDoubleClick;
+	int time;
 	int Fheight;
 	int scPos;
 	int fsize;

@@ -845,10 +845,14 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			vstate=Playing;
 			lasttime=timeGetTime()-time;
 			if(player){
-				player->player->SetCurrentPosition(player->GetSampleAtMS(time));}
+				player->player->SetCurrentPosition(player->GetSampleAtMS(time));
+			}
 			VFF->Play();
 		}
-		else{Render();}
+		else{
+			if(player){player->UpdateImage(true);}
+			Render();
+		}
 	}
 }
 
@@ -1118,6 +1122,7 @@ void VideoRend::MovePos(int cpos)
 			wxString *txt=pan->Grid1->SaveText();
 			OpenSubs(txt);VisEdit=false;
 		}else if(pan->Edit->OnVideo){OpenSubs(pan->Grid1->SaveText());pan->Edit->OnVideo=false;}
+		if(player){player->UpdateImage(true);}
 		Render(true);
 	}
 	else{

@@ -136,12 +136,12 @@ private:
 	void EndPartialModal(int ReturnId);
 	bool SendEvent(MenuItem *item, int accel);
 	//void OnLostCapture(wxMouseCaptureLostEvent &evt);
-	void HideMenus();
+	void HideMenus(int id = -3);
 	int submenuShown;
 	int submenuToHide;
 	int sel;
 	int scPos;
-	static int id;
+	//static int id;
 protected:
 	wxBitmap *bmp;
 	Menu *parent;

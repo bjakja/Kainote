@@ -42,7 +42,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	wxSize newSize=size;
 	SetFont(parent->GetFont());
 	int fw, fh;
-	GetTextExtent(name, &fw, &fh, 0, 0);
+	GetTextExtent((name=="")? "TEXT" : name, &fw, &fh, 0, 0);
 	if(size.x <1){
 		newSize.x = fw+10;
 		if(newSize.x<60){newSize.x=60;}
@@ -77,7 +77,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	wxSize newSize=size;
 	SetFont(parent->GetFont());
 	int fw, fh;
-	GetTextExtent(name, &fw, &fh, 0, 0);
+	GetTextExtent((name=="")? "TEXT" : name, &fw, &fh, 0, 0);
 	if(size.x <1){
 		newSize.x = fw+16;
 		if(newSize.x<60){newSize.x=60;}
@@ -240,16 +240,19 @@ void MappedButton::OnMouseEvent(wxMouseEvent &event)
 		return;
 	}		
 	if(event.LeftDown() || event.LeftIsDown() && !clicked){
-		clicked=true;
+		if(event.LeftDown()){clicked=true;}
 		Refresh(false);
 		SetFocus();
 		//event
 	}
 	if(event.LeftUp()){
+		bool oldclicked = clicked;
 		clicked=false;
 		Refresh(false);
-		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
-		this->ProcessEvent(evt);
+		if(oldclicked){
+			wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
+			this->ProcessEvent(evt);
+		}
 	}
 	//event.Skip();
 }

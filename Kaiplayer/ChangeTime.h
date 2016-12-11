@@ -20,6 +20,7 @@
 #include "NumCtrl.h"
 #include "MappedButton.h"
 #include "ListControls.h"
+#include "KaiRadioButton.h"
 #include <wx/wx.h>
 #include <wx/collpane.h>
 
@@ -33,24 +34,24 @@ class CTwindow: public wxScrolled<wxWindow>
 
 		CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id=-1,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize,long style=0);
 		virtual ~CTwindow();
-		wxRadioButton* StartVAtime;
-		wxRadioButton* EndVAtime;
+		KaiRadioButton* StartVAtime;
+		KaiRadioButton* EndVAtime;
 		KaiChoice *WhichLines;
 		KaiChoice *WhichTimes;
-		wxRadioButton* Forward;
-		wxRadioButton* Backward;
+		KaiRadioButton* Forward;
+		KaiRadioButton* Backward;
 		
 		MappedButton* AddStyles;
 		MappedButton* MoveTime;
 		TimeCtrl* TimeText;
 		KaiTextCtrl* Stylestext;
-		wxCheckBox* videotime;
-		wxCheckBox* audiotime;
+		KaiCheckBox* videotime;
+		KaiCheckBox* audiotime;
 		KaiChoice* CorTime;
-		wxCheckBox* LeadIn;
-		wxCheckBox* LeadOut;
-		wxCheckBox* Continous;
-		wxCheckBox* SnapKF;
+		KaiCheckBox* LeadIn;
+		KaiCheckBox* LeadOut;
+		KaiCheckBox* Continous;
+		KaiCheckBox* SnapKF;
 		NumCtrl* LITime;
 		NumCtrl* LOTime;
 		NumCtrl* ThresStart;

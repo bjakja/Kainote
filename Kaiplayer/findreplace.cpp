@@ -54,7 +54,7 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 
 		//pionowy sizer kolumna 1
 		wxStaticBoxSizer* frsbsizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Znajdź"));
-		FindText = new wxComboBox(this, ID_FINDTEXT, (last)?last->FindText->GetValue() : ES, wxDefaultPosition, wxSize(342,-1),wfind);
+		FindText = new KaiChoice(this, ID_FINDTEXT, (last)?last->FindText->GetValue() : ES, wxDefaultPosition, wxSize(342,-1),wfind);
 		frsbsizer->Add(FindText,0,wxEXPAND,0);
 		mainfrbsizer1->Add(frsbsizer,0,wxEXPAND|wxALL,3);
 
@@ -62,19 +62,19 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 			wxArrayString wrepl=Options.GetTable("Replace Recent","\f");
 			if(wrepl.size()>20){wrepl.RemoveAt(19,wrepl.size()-20);}
 			wxStaticBoxSizer* frsbsizer1=new wxStaticBoxSizer(wxVERTICAL,this,_("Zamień"));
-			RepText = new wxComboBox(this, ID_REPTEXT, (last && last->RepText)?last->RepText->GetValue() : ES, wxDefaultPosition, wxSize(342,-1),wrepl);
+			RepText = new KaiChoice(this, ID_REPTEXT, (last && last->RepText)?last->RepText->GetValue() : ES, wxDefaultPosition, wxSize(342,-1),wrepl);
 			frsbsizer1->Add(RepText,0,wxEXPAND,0);
 			mainfrbsizer1->Add(frsbsizer1,0,wxEXPAND|wxALL,3);
 		}
 
 		wxBoxSizer* frbsizer1=new wxBoxSizer(wxVERTICAL);
-		MatchCase = new wxCheckBox(this, -1, _("Uwzględniaj wielkość liter"));
+		MatchCase = new KaiCheckBox(this, -1, _("Uwzględniaj wielkość liter"));
 		MatchCase->SetValue((last)?last->MatchCase->GetValue():false);
-		RegEx = new wxCheckBox(this, -1, _("Wyrażenia regularne"));
+		RegEx = new KaiCheckBox(this, -1, _("Wyrażenia regularne"));
 		RegEx->SetValue((last)?last->RegEx->GetValue():false);
-		StartLine = new wxCheckBox(this, ID_SLINE, _("Początek tekstu"));
+		StartLine = new KaiCheckBox(this, ID_SLINE, _("Początek tekstu"));
 		StartLine->SetValue((last&&last->StartLine)?last->StartLine->GetValue():false);
-		EndLine = new wxCheckBox(this, ID_ELINE, _("Koniec tekstu"));
+		EndLine = new KaiCheckBox(this, ID_ELINE, _("Koniec tekstu"));
 		EndLine->SetValue((last&&last->EndLine)?last->EndLine->GetValue():false);
 		frbsizer1->Add(MatchCase,0,wxEXPAND|wxTOP|wxBOTTOM,2);
 		frbsizer1->Add(RegEx,0,wxEXPAND|wxTOP|wxBOTTOM,2);
@@ -84,16 +84,16 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 
 		wxStaticBoxSizer* frsbsizer2=new wxStaticBoxSizer(wxVERTICAL,this,_("W polu"));
 		wxBoxSizer* frbsizer2=new wxBoxSizer(wxHORIZONTAL);
-		RadioButton1 = new wxRadioButton(this, -1, _("Tekst"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-		RadioButton2 = new wxRadioButton(this, -1, _("Styl"));
+		RadioButton1 = new KaiRadioButton(this, -1, _("Tekst"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+		RadioButton2 = new KaiRadioButton(this, -1, _("Styl"));
 		RadioButton1->SetValue((last)?last->RadioButton1->GetValue():true);
 		RadioButton2->SetValue((last)?last->RadioButton2->GetValue():false);
 		frbsizer2->Add(RadioButton1,1,wxALL|wxLEFT,1);
 		frbsizer2->Add(RadioButton2,1,wxALL|wxLEFT,1);
 
 		wxBoxSizer* frbsizer3=new wxBoxSizer(wxHORIZONTAL);
-		RadioButton5 = new wxRadioButton(this, -1, _("Aktor"));
-		RadioButton6 = new wxRadioButton(this, -1, _("Efekt"));
+		RadioButton5 = new KaiRadioButton(this, -1, _("Aktor"));
+		RadioButton6 = new KaiRadioButton(this, -1, _("Efekt"));
 		RadioButton5->SetValue((last)?last->RadioButton5->GetValue():false);
 		RadioButton6->SetValue((last)?last->RadioButton6->GetValue():false);
 		frbsizer3->Add(RadioButton5,1,wxEXPAND|wxLEFT,1);
@@ -114,16 +114,16 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 
 		//pionowy sizer kolumna 2
 		wxBoxSizer* frbsizer=new wxBoxSizer(wxVERTICAL);
-		Button1 = new wxButton(this, ID_BFIND, _("Znajdź"), wxDefaultPosition, wxSize(124,-1));
+		Button1 = new MappedButton(this, ID_BFIND, _("Znajdź"), 0, wxDefaultPosition, wxSize(124,-1));
 		frbsizer->Add(Button1,1,wxEXPAND|wxTOP|wxBOTTOM,6);
 
 		if(repl){
-			Button2 = new wxButton(this, ID_BREP, _("Zamień"));
-			Button3 = new wxButton(this, ID_BREPALL, _("Zamień wszystko"));
+			Button2 = new MappedButton(this, ID_BREP, _("Zamień"));
+			Button3 = new MappedButton(this, ID_BREPALL, _("Zamień wszystko"));
 			frbsizer->Add(Button2,1,wxEXPAND|wxTOP|wxBOTTOM,6);
 			frbsizer->Add(Button3,1,wxEXPAND|wxTOP|wxBOTTOM,6);
 		}
-		Button4 = new wxButton(this, ID_BCLOSE, _("Zamknij"));
+		Button4 = new MappedButton(this, ID_BCLOSE, _("Zamknij"));
 		frbsizer->Add(Button4,1,wxEXPAND|wxTOP|wxBOTTOM,6);
 
 		//łączenie całości znajdowania i opcji z przyciskami
@@ -133,18 +133,18 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		//poziomy sizer spód
 		wxStaticBoxSizer* frsbsizer3=new wxStaticBoxSizer(wxHORIZONTAL,this,_("Linijki"));
 
-		RadioButton3 = new wxRadioButton(this, -1, _("Wszystkie linijki"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-		RadioButton4 = new wxRadioButton(this, -1, _("Zaznaczone linijki"));
-		RadioButton7 = new wxRadioButton(this, -1, _("Od zaznaczonej"));
+		RadioButton3 = new KaiRadioButton(this, -1, _("Wszystkie linijki"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+		RadioButton4 = new KaiRadioButton(this, -1, _("Zaznaczone linijki"));
+		RadioButton7 = new KaiRadioButton(this, -1, _("Od zaznaczonej"));
 		RadioButton3->SetValue((last)?last->RadioButton3->GetValue():true);
 		RadioButton4->SetValue((last)?last->RadioButton4->GetValue():false);
 		RadioButton7->SetValue((last&&last->RadioButton7)?last->RadioButton7->GetValue():false);
 
 		wxBoxSizer* frbsizer4=new wxBoxSizer(wxHORIZONTAL);
-		Bplus = new wxButton(this, ID_BPLUS, "+", wxDefaultPosition, wxSize(22,24));
-		tcstyle = new wxTextCtrl(this, ID_TCSTYLE,(last&&last->tcstyle)?last->tcstyle->GetValue():ES);
+		Bplus = new MappedButton(this, ID_BPLUS, "+", 0, wxDefaultPosition, wxSize(22,24));
+		tcstyle = new KaiTextCtrl(this, ID_TCSTYLE,(last&&last->tcstyle)?last->tcstyle->GetValue():ES);
 		frbsizer4->Add(Bplus,0,0,0);
-		frbsizer4->Add(tcstyle,0,0,0);
+		frbsizer4->Add(tcstyle,0,wxLEFT,3);
 
 		frsbsizer3->Add(RadioButton3,0,wxALL,2);
 		frsbsizer3->Add(RadioButton4,0,wxALL,2);
@@ -178,8 +178,8 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 
 		wxBoxSizer *slsizer= new wxBoxSizer(wxVERTICAL);
 		wxBoxSizer *slrbsizer= new wxBoxSizer(wxHORIZONTAL);
-		RadioButton3 = new wxRadioButton(this, -1, _("Zawiera"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-		RadioButton4 = new wxRadioButton(this, -1, _("Nie zawiera"));
+		RadioButton3 = new KaiRadioButton(this, -1, _("Zawiera"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+		RadioButton4 = new KaiRadioButton(this, -1, _("Nie zawiera"));
 		RadioButton3->SetValue((last)?last->RadioButton3->GetValue():true);
 		RadioButton4->SetValue((last)?last->RadioButton4->GetValue():false);
 		slrbsizer->Add(RadioButton3,1,wxALL,3);
@@ -187,14 +187,14 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 
 		wxStaticBoxSizer* slsbsizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Znajdź"));
 		wxBoxSizer *sltpsizer= new wxBoxSizer(wxHORIZONTAL);
-		FindText = new wxComboBox(this, ID_FINDTEXT, (last)?last->FindText->GetValue():ES, wxDefaultPosition, wxSize(180,-1),wfind);
-		Bplus = new wxButton(this, ID_BPLUS, "+", wxDefaultPosition, wxSize(24,24));
+		FindText = new KaiChoice(this, ID_FINDTEXT, (last)?last->FindText->GetValue():ES, wxDefaultPosition, wxSize(180,-1),wfind);
+		Bplus = new MappedButton(this, ID_BPLUS, "+", 0, wxDefaultPosition, wxSize(24,24));
 		sltpsizer->Add(FindText,0,wxALL,3);
 		sltpsizer->Add(Bplus,0,wxALL,3);
 
-		MatchCase = new wxCheckBox(this, -1, _("Uwzględniaj wielkość liter"));
+		MatchCase = new KaiCheckBox(this, -1, _("Uwzględniaj wielkość liter"));
 		MatchCase->SetValue((last)?last->MatchCase->GetValue():false);
-		RegEx = new wxCheckBox(this, -1, _("Wyrażenia regularne"));
+		RegEx = new KaiCheckBox(this, -1, _("Wyrażenia regularne"));
 		RegEx->SetValue((last)?last->RegEx->GetValue():false);
 
 		slsbsizer->Add(slrbsizer,0,wxALL,0);
@@ -203,10 +203,10 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		slsbsizer->Add(RegEx,0,wxALL,3);
 
 		wxStaticBoxSizer* slsbsizer1=new wxStaticBoxSizer(wxHORIZONTAL,this,_("W polu"));
-		RadioButton1 = new wxRadioButton(this, -1, _("Tekst"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-		RadioButton2 = new wxRadioButton(this, -1, _("Styl"));
-		RadioButton5 = new wxRadioButton(this, -1, _("Aktor"));
-		RadioButton6 = new wxRadioButton(this, -1, _("Efekt"));
+		RadioButton1 = new KaiRadioButton(this, -1, _("Tekst"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+		RadioButton2 = new KaiRadioButton(this, -1, _("Styl"));
+		RadioButton5 = new KaiRadioButton(this, -1, _("Aktor"));
+		RadioButton6 = new KaiRadioButton(this, -1, _("Efekt"));
 		RadioButton1->SetValue((last)?last->RadioButton1->GetValue():true);
 		RadioButton2->SetValue((last)?last->RadioButton2->GetValue():false);
 		RadioButton5->SetValue((last)?last->RadioButton5->GetValue():false);
@@ -218,8 +218,8 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 
 		wxStaticBoxSizer* slsbsizer2=new wxStaticBoxSizer(wxHORIZONTAL,this,_("Dialogi / komentarze"));
 
-		Fdial = new wxCheckBox(this, -1, _("Dialogi"));
-		Fcomm = new wxCheckBox(this, -1, _("Komentarze"));
+		Fdial = new KaiCheckBox(this, -1, _("Dialogi"));
+		Fcomm = new KaiCheckBox(this, -1, _("Komentarze"));
 		Fdial->SetValue(true);
 		slsbsizer2->Add(Fdial,0,wxALL,3);
 		slsbsizer2->Add(Fcomm,0,wxALL,3);
@@ -243,8 +243,8 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		Actions = new wxRadioBox(this,-1,_("Akcja"),wxDefaultPosition,wxDefaultSize,action,1);
 
 		wxBoxSizer *slbtsizer=new wxBoxSizer(wxHORIZONTAL);
-		Button1 = new wxButton(this, ID_BFIND, _("Zaznacz"));
-		Button4 = new wxButton(this, ID_BCLOSE, _("Zamknij"));
+		Button1 = new MappedButton(this, ID_BFIND, _("Zaznacz"));
+		Button4 = new MappedButton(this, ID_BCLOSE, _("Zamknij"));
 		slbtsizer->Add(Button1,1,wxALL,5);
 		slbtsizer->Add(Button4,1,wxALL,5);
 

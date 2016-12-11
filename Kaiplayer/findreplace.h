@@ -19,11 +19,10 @@
 #pragma once
 
 
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
-#include <wx/checkbox.h>
-#include <wx/radiobut.h>
-#include <wx/button.h>
+#include "ListControls.h"
+#include "KaiTextCtrl.h"
+#include "KaiRadioButton.h"
+#include "MappedButton.h"
 #include <wx/dialog.h>
 #include <wx/wx.h>
 class kainoteFrame;
@@ -39,28 +38,28 @@ class findreplace: public wxDialog
         kainoteFrame* Kai;
 		
 		
-		wxButton* Button4;
-		wxRadioButton* RadioButton1;
-		wxRadioButton* RadioButton2;
-		wxRadioButton* RadioButton3;
-		wxRadioButton* RadioButton4;
-		wxRadioButton* RadioButton5;
-		wxRadioButton* RadioButton6;
-		wxRadioButton* RadioButton7;
-		wxButton* Button1;
-		wxButton* Bplus;
+		MappedButton* Button4;
+		KaiRadioButton* RadioButton1;
+		KaiRadioButton* RadioButton2;
+		KaiRadioButton* RadioButton3;
+		KaiRadioButton* RadioButton4;
+		KaiRadioButton* RadioButton5;
+		KaiRadioButton* RadioButton6;
+		KaiRadioButton* RadioButton7;
+		MappedButton* Button1;
+		MappedButton* Bplus;
 		
-		wxCheckBox* MatchCase;
-		wxCheckBox* RegEx;
-		wxCheckBox* StartLine;
-		wxCheckBox* EndLine;
-		wxButton* Button2;
-		wxButton* Button3;
-		wxComboBox* FindText;
-		wxComboBox* RepText;
-		wxTextCtrl* tcstyle;
-		wxCheckBox *Fdial;
-		wxCheckBox *Fcomm;
+		KaiCheckBox* MatchCase;
+		KaiCheckBox* RegEx;
+		KaiCheckBox* StartLine;
+		KaiCheckBox* EndLine;
+		MappedButton* Button2;
+		MappedButton* Button3;
+		KaiChoice* FindText;
+		KaiChoice* RepText;
+		KaiTextCtrl* tcstyle;
+		KaiCheckBox *Fdial;
+		KaiCheckBox *Fcomm;
 		wxRadioBox *Actions;
 		wxRadioBox *Selections;
 	

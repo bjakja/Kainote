@@ -195,7 +195,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	}
 
 
-	TlMode= new wxCheckBox(this,ID_TLMODE,_("Tryb tłumaczenia"));
+	TlMode= new KaiCheckBox(this,ID_TLMODE,_("Tryb tłumaczenia"));
 	TlMode->SetValue(false);
 	TlMode->Enable(false);
 	Chars = new EBStaticText(this,_("Linie: 0/86"));
@@ -237,7 +237,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	TextEditTl = new MTextEditor(this, 16667, false, wxDefaultPosition, wxSize(-1,30));
 	TextEditTl->EB=this;
 	TextEditTl->Hide();
-	Comment = new wxCheckBox(this, ID_CHECKBOX1, _("Komentarz"), wxDefaultPosition, wxSize(82,-1));
+	Comment = new KaiCheckBox(this, ID_CHECKBOX1, _("Komentarz"), wxDefaultPosition, wxSize(82,-1));
 	Comment->SetValue(false);
 	LayerEdit = new NumCtrl(this, 16668, "",-10000000,10000000,true, wxDefaultPosition, wxSize(50,-1));
 	StartEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(87,-1),wxTE_CENTRE);

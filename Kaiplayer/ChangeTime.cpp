@@ -50,8 +50,8 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	wxGridSizer *timegrid=new wxGridSizer(2, 0, 0);
 	MoveTime = new MappedButton(this, ID_MOVE, _("Przesuń"), _("Przesuń czas napisów"), wxDefaultPosition, wxSize(60,22), GLOBAL_HOTKEY);
 	TimeText = new TimeCtrl(this, -1, "0:00:00.00", wxDefaultPosition, wxSize(60,20), wxALIGN_CENTER|wxTE_PROCESS_ENTER);
-	Forward = new wxRadioButton(this, -1, _("W przód"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	Backward = new wxRadioButton(this, -1, _("W tył"));
+	Forward = new KaiRadioButton(this, -1, _("W przód"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	Backward = new KaiRadioButton(this, -1, _("W tył"));
 
 	timegrid->Add(TimeText,0,wxEXPAND|wxLEFT|wxRIGHT,2);
 	timegrid->Add(MoveTime,0,wxEXPAND|wxRIGHT,2);
@@ -64,17 +64,17 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	wxStaticBoxSizer *VAtiming=new wxStaticBoxSizer(wxVERTICAL,this,_("Przesuwanie wg wideo / audio"));
 
 	wxBoxSizer *SE=new wxBoxSizer(wxHORIZONTAL);
-	StartVAtime = new wxRadioButton(this, -1, _("Początek"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	EndVAtime = new wxRadioButton(this, -1, _("Koniec"));
+	StartVAtime = new KaiRadioButton(this, -1, _("Początek"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	EndVAtime = new KaiRadioButton(this, -1, _("Koniec"));
 
 	SE->Add(StartVAtime,0,wxEXPAND|wxLEFT|wxRIGHT,2);
 	SE->Add(EndVAtime,0,wxEXPAND|wxRIGHT,2);
 
-	videotime = new wxCheckBox(this, ID_VIDEO, _("Przesuń znacznik\ndo czasu wideo"));
+	videotime = new KaiCheckBox(this, ID_VIDEO, _("Przesuń znacznik\ndo czasu wideo"));
 	videotime->SetForegroundColour(*wxRED);
 	videotime->Enable(false);
 
-	audiotime = new wxCheckBox(this, ID_AUDIO, _("Przesuń znacznik\ndo czasu audio"));
+	audiotime = new KaiCheckBox(this, ID_AUDIO, _("Przesuń znacznik\ndo czasu audio"));
 	audiotime->SetForegroundColour(*wxRED);
 	audiotime->Enable(false);
 
@@ -272,10 +272,12 @@ void CTwindow::DoTooltips()
 void CTwindow::AudioVideoTime(wxCommandEvent &event)
 {
 	int id=event.GetId();
-	if (id==ID_VIDEO && videotime->GetValue() && audiotime->IsEnabled()){
-		audiotime->SetValue(false);}
-	else if (id==ID_AUDIO && audiotime->GetValue() && videotime->IsEnabled()){
-		videotime->SetValue(false);}
+	if (id==ID_VIDEO && videotime->GetValue()){
+		audiotime->SetValue(false);
+	}
+	else if (id==ID_AUDIO && audiotime->GetValue()){
+		videotime->SetValue(false);
+	}
 }
 
 void CTwindow::RefVals(CTwindow *from)
@@ -333,10 +335,10 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		liosizer=new wxStaticBoxSizer(wxHORIZONTAL,this,_("Wstęp i zakończenie"));
 
 		wxFlexGridSizer *fgsizer = new wxFlexGridSizer(2, 4, 4);
-		LeadIn=new wxCheckBox(this, -1, _("Wstęp"),wxDefaultPosition, wxSize(117,-1));
+		LeadIn=new KaiCheckBox(this, -1, _("Wstęp"),wxDefaultPosition, wxSize(117,-1));
 		LeadIn->SetValue((pe & 1)>0);
 		LITime=new NumCtrl(this,-1,Options.GetString("Lead in"),-10000,10000,true,wxDefaultPosition, wxSize(40,-1));
-		LeadOut=new wxCheckBox(this, -1, _("Zakończenie"),wxDefaultPosition, wxSize(117,-1));
+		LeadOut=new KaiCheckBox(this, -1, _("Zakończenie"),wxDefaultPosition, wxSize(117,-1));
 		LeadOut->SetValue((pe & 2)>0);
 		LOTime=new NumCtrl(this,-1,Options.GetString("Lead out"),-10000,10000,true,wxDefaultPosition, wxSize(40,-1));
 	
@@ -348,7 +350,7 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		liosizer->Add(fgsizer,0,wxEXPAND|wxLEFT|wxRIGHT,2);
 	
 		consizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Ustaw czasy jako ciągłe"));
-		Continous=new wxCheckBox(this, -1, _("Włącz"));
+		Continous=new KaiCheckBox(this, -1, _("Włącz"));
 		Continous->SetValue((pe & 4)>0);
 
 		consizer->Add(Continous,0,wxEXPAND|wxALL, 2);
@@ -365,7 +367,7 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		consizer->Add(fgsizer1,0,wxEXPAND,0);
 
 		snapsizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Wyrównaj do klatek kluczowych"));
-		SnapKF=new wxCheckBox(this, -1, _("Włącz"));
+		SnapKF=new KaiCheckBox(this, -1, _("Włącz"));
 		SnapKF->Enable(false);
 		SnapKF->SetValue((pe & 8)>0);
 		snapsizer->Add(SnapKF,0,wxEXPAND|wxALL, 2);

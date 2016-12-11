@@ -158,7 +158,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent)
 			wrap.Replace("\n","");
 			GetTextExtent(wrap, &fw, &fh, &font);
 			int pos = (style & wxALIGN_CENTER_HORIZONTAL)? ((w - fw)/2) : 
-				(style & wxALIGN_RIGHT)? (w - fw)-3 : 3;
+				(style & wxALIGN_RIGHT)? (w - fw)-5 : 5;
 			positioning.Add(pos);
 			wraps.Add((wwrap<len)? wwrap : len-1);
 			podz=wwrap;
@@ -173,9 +173,9 @@ void KaiTextCtrl::CalcWrap(bool sendevent)
 		GetTextExtent(KText, &fw, &fh, &font);
 		int rightPos = (w - fw);
 		int pos = (style & wxALIGN_CENTER_HORIZONTAL)? (rightPos/2) : 
-			(style & wxALIGN_RIGHT)? rightPos-3 : 3;
+			(style & wxALIGN_RIGHT)? rightPos-5 : 5;
 
-		if(pos<3){pos=3;}
+		if(pos<5){pos=5;}
 		positioning.Add(pos);
 	}
 	int rightPos = h - Fheight;
@@ -220,6 +220,7 @@ void KaiTextCtrl::OnKeyPress(wxKeyEvent& event)
 
 void KaiTextCtrl::OnAccelerator(wxCommandEvent& event)
 {
+	//bool shouldpropagate = event.ShouldPropagate();
 	int step=0;
 	int len;
 	int ID=event.GetId();
@@ -397,6 +398,7 @@ void KaiTextCtrl::OnMouseEvent(wxMouseEvent& event)
 	if(leftup && (holding||dholding)){
 		holding=dholding=false;
 		if(HasCapture()){ReleaseMouse();}
+		//event.Skip();
 		return;
 	}
 	if(event.LeftDClick()){
@@ -411,6 +413,7 @@ void KaiTextCtrl::OnMouseEvent(wxMouseEvent& event)
 		SetSelection(start,end);
 		firstdhold = dholding = true;
 		if(!HasCapture()){CaptureMouse();}
+		//event.Skip();
 		return;
 	}
 	if(click){
@@ -464,6 +467,7 @@ void KaiTextCtrl::OnMouseEvent(wxMouseEvent& event)
 		scPos = MAX(scPos - step, 0);
 		Refresh(false);
 	}
+	//event.Skip();
 }
 
 
@@ -582,7 +586,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 	dc.SetBrush(wxBrush((enabled)? background : wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTION )));
 	dc.SetPen(wxPen((style & wxBORDER_NONE)? background : wxSystemSettings::GetColour((HasFocus())? wxSYS_COLOUR_MENUHILIGHT : (enabled)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_GRAYTEXT)));
 	dc.DrawRectangle(0,0,w,h);
-
+	if(wraps.size()<2 || positioning.size()<2){return;}
 	wxColour cselection = wxSystemSettings::GetColour((HasFocus())? wxSYS_COLOUR_HIGHLIGHT : wxSYS_COLOUR_GRAYTEXT );
 
 
@@ -637,6 +641,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 	}
 	int cursorPos = Cursor.x;
 	int cursorI = Cursor.y;
+	//if(cursorI<0){Cursor.y=0; cursorI=0;}
 	if(HasFocus() && (cursorPos>=wraps[cursorI] && cursorPos<=wraps[cursorI+1])){
 		int fww=-1;
 		if(cursorPos!=wraps[cursorI]){
@@ -696,9 +701,6 @@ bool KaiTextCtrl::HitTest(wxPoint pos, wxPoint *cur)
 {//~~~~
 	int w,h,fw=0,fh=0;
 	GetClientSize(&w,&h);
-	wxMemoryDC dc;
-	dc.SelectObject(*bmp);
-	dc.SetFont(font);
 	if(style & wxTE_MULTILINE){pos.y+=(scPos);}
 	if(!(style & wxTE_MULTILINE)){pos.x+=(scPos);}
 
@@ -934,7 +936,7 @@ void KaiTextCtrl::Paste()
 wxPoint KaiTextCtrl::PosFromCursor(wxPoint cur, bool correctToScroll)
 {
 	int fw, fh;
-	if(cur.x<0||cur.y<0){return wxPoint(-scPos+2, (Fheight-scPos));}
+	if(cur.x<=0||cur.y<=0){return wxPoint(-scPos+2, (Fheight-scPos));}
 	if(wraps.size()<2 || wraps[cur.y]==cur.x){fw=0;}
 	else{
 		wxString beforeCursor = KText.SubString(wraps[cur.y],cur.x-1);
