@@ -113,7 +113,7 @@ private:
 	wxBitmap *bmp;
 	int choice;
 	bool listIsShown;
-	bool choiceChanged;
+	bool focusSet;
 	wxString toolTip;
 	PopupList *itemList;
 	wxMutex mutex;

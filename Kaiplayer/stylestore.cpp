@@ -86,7 +86,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	wxBoxSizer *Mainsm= new wxBoxSizer(wxVERTICAL);
 	Mainall= new wxBoxSizer(wxHORIZONTAL);
 
-	wxStaticBoxSizer *katsbs=new wxStaticBoxSizer(wxHORIZONTAL, this, _("Katalog:"));
+	KaiStaticBoxSizer *katsbs=new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Katalog:"));
 	catalogList = new KaiChoice(this, ID_CATALOG, wxDefaultPosition, wxDefaultSize, Options.dirs);
 	int chc=catalogList->FindString(Options.acdir);
 	catalogList->SetSelection(chc);
@@ -98,7 +98,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	katsbs->Add(delcat,0,wxEXPAND|wxALL,2);
 
 
-	wxStaticBoxSizer *katsbs1=new wxStaticBoxSizer(wxHORIZONTAL, this, _("Style katalogu:"));
+	KaiStaticBoxSizer *katsbs1=new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Style katalogu:"));
 	wxBoxSizer *katbutt=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *katall=new wxBoxSizer(wxHORIZONTAL);
 
@@ -129,7 +129,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	butts->Add(addToAss,1,wxEXPAND|wxALL,5);
 	//butts->AddStretchSpacer(3);
 
-	wxStaticBoxSizer *asssbs=new wxStaticBoxSizer(wxHORIZONTAL, this, _("Style pliku ASS:"));
+	KaiStaticBoxSizer *asssbs=new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Style pliku ASS:"));
 	wxBoxSizer *assbutt=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *assall=new wxBoxSizer(wxHORIZONTAL);
 

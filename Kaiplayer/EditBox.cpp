@@ -200,10 +200,10 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	TlMode->Enable(false);
 	Chars = new EBStaticText(this,_("Linie: 0/86"));
 	Chtime = new EBStaticText(this,_("Znaki na sekundę: 0<=15"));
-	Times = new wxRadioButton(this,ID_TIMES_FRAMES,_("Czas"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP); 
+	Times = new KaiRadioButton(this,ID_TIMES_FRAMES,_("Czas"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP); 
 	Times->SetValue(true);
 	Times->Enable(false);
-	Frames = new wxRadioButton(this,ID_TIMES_FRAMES,_("Klatki")); 
+	Frames = new KaiRadioButton(this,ID_TIMES_FRAMES,_("Klatki")); 
 	Frames->Enable(false);
 	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, &EditBox::OnChangeTimeDisplay, this, ID_TIMES_FRAMES);
 

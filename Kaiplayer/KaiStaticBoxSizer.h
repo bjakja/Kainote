@@ -13,30 +13,36 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __KAIRADIOBUTTON__
-#define __KAIRADIOBUTTON__
+#ifndef _STATICBOXSIZER_
+#define _STATICBOXSIZER_
 
-#include "KaiCheckBox.h"
+#include <wx/wx.h>
 
-class KaiRadioButton : public KaiCheckBox
+class KaiStaticBox : public wxStaticBox
 {
 public:
-	KaiRadioButton(wxWindow *parent, int id, const wxString& label,
-             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
-	virtual ~KaiRadioButton(){};
-	void SetValue(bool value);
+	KaiStaticBox(wxWindow *parent, const wxString& label);
+	virtual ~KaiStaticBox(){};
+	wxSize CalcBorders();
 private:
-	
-	void OnMouseLeft(wxMouseEvent &evt);
-	void DeselectRest();
-	//bool hasGroup;
-
-	wxDECLARE_ABSTRACT_CLASS(KaiRadioButton);
+	//void OnSize(wxSizeEvent& event);
+	//void OnPaint(wxPaintEvent& event);
+	void PaintForeground(wxDC& dc, const struct tagRECT& rc);
+	wxString label;
+	int heightText;
 };
 
-//class RadioBox{
-//	RadioBox(
-//
-//}
+class KaiStaticBoxSizer : public wxBoxSizer
+{
+public:
+	KaiStaticBoxSizer(int orient, wxWindow *parent, const wxString& _label);
+	virtual ~KaiStaticBoxSizer();
+private:
+	void RecalcSizes();
+	wxSize CalcMin();
+	void ShowItems( bool show );
+	bool Detach( wxWindow *window );
+	KaiStaticBox *box;
+};
 
 #endif

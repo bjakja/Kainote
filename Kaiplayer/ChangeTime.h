@@ -23,6 +23,7 @@
 #include "KaiRadioButton.h"
 #include <wx/wx.h>
 #include <wx/collpane.h>
+#include "KaiStaticBoxSizer.h"
 
 class kainoteFrame;
 
@@ -60,9 +61,9 @@ class CTwindow: public wxScrolled<wxWindow>
 		NumCtrl* AfterStart;
 		NumCtrl* BeforeEnd;
 		NumCtrl* AfterEnd;
-		wxStaticBoxSizer *liosizer;
-		wxStaticBoxSizer *consizer;
-		wxStaticBoxSizer *snapsizer;
+		KaiStaticBoxSizer *liosizer;
+		KaiStaticBoxSizer *consizer;
+		KaiStaticBoxSizer *snapsizer;
 
 		void Contents(bool addopts=true);
 		void RefVals(CTwindow *from=NULL);

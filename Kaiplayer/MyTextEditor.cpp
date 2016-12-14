@@ -111,7 +111,7 @@ MTextEditor::MTextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& p
 	int fw,fh;
 	dc.GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	Fheight=fh;
-	scroll=new wxScrollBar(this,3333,wxDefaultPosition,wxDefaultSize, wxSB_VERTICAL);
+	scroll=new KaiScrollbar(this,3333,wxDefaultPosition,wxDefaultSize, wxSB_VERTICAL);
 	scroll->SetCursor(wxCURSOR_DEFAULT);
 	caret= new wxCaret(this, 1, Fheight);
 	SetCaret(caret);
@@ -499,7 +499,7 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 
 void MTextEditor::OnSize(wxSizeEvent& event)
 {
-	CalcWrap(true,false);
+	CalcWrap(false,false);
 	Cursor.x=0;
 	Cursor.y=0;
 	Selend=Cursor;
@@ -534,7 +534,7 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 		int diff= h/2;
 		int diff2= bitmaph/2;
 		if(scPos>diff2-diff){scPos=diff2-diff;}
-		scroll->SetScrollbar(scPos,diff,diff2,diff-1);
+		scroll->SetScrollbar(scPos,diff,diff2);
 		w -= sw;
 	}else{
 		if(scroll->IsShown()){

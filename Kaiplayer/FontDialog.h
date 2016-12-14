@@ -18,6 +18,9 @@
 
 
 #include "NumCtrl.h"
+#include "KaiCheckBox.h"
+#include "MappedButton.h"
+//#include "KaiTextCtrl.h"
 #include <wx/wx.h>
 #include "StylePreview.h"
 
@@ -70,13 +73,13 @@ private:
 	FontList *Fonts;
 	StylePreview *Preview;
 	NumCtrl *FontSize;
-	wxCheckBox *Bold;
-	wxCheckBox *Italic;
-	wxCheckBox *Underl;
-	wxCheckBox *Strike;
-	wxButton *Buttok;
-	wxButton *Buttcancel;
-	wxTextCtrl *FontName;
+	KaiCheckBox *Bold;
+	KaiCheckBox *Italic;
+	KaiCheckBox *Underl;
+	KaiCheckBox *Strike;
+	MappedButton *Buttok;
+	MappedButton *Buttcancel;
+	KaiTextCtrl *FontName;
 
 	void OnUpdatePreview(wxCommandEvent& event);
 	void OnFontChanged(wxCommandEvent& event);
@@ -86,6 +89,19 @@ private:
 
 
 };
+
+class FontPickerButton : public MappedButton{
+public:
+	FontPickerButton(wxWindow *parent, int id, const wxFont& font,
+             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+	virtual ~FontPickerButton(){};
+	wxFont GetSelectedFont();
+	void OnClick(wxCommandEvent &evt);
+private:
+	void ChangeFont(const wxFont &font);
+	wxDECLARE_ABSTRACT_CLASS(FontPickerButton);
+};
+
 
 enum{
 	ID_FONTLIST=14567,

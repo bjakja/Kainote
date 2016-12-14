@@ -22,6 +22,7 @@
 #include <wx/fontenum.h>
 #include "config.h" 
 #include "ColorPicker.h"
+#include "KaiStaticBoxSizer.h"
 
 
 wxColour Blackorwhite(wxColour kol)
@@ -49,23 +50,23 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 	wxBoxSizer *Main=new wxBoxSizer(wxVERTICAL);
 
-	wxStaticBoxSizer *stylename= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Nazwa stylu:"));
+	KaiStaticBoxSizer *stylename= new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Nazwa stylu:"));
 	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	valid.SetCharExcludes(",");
 	sname = new KaiTextCtrl(this, -1, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER,valid);
 	sname->SetMaxLength(500);
 	stylename->Add(sname,1,wxEXPAND|wxALL,2);
 
-	wxStaticBoxSizer *stylefont= new wxStaticBoxSizer(wxVERTICAL, this, _("Czcionka i rozmiar:"));
+	KaiStaticBoxSizer *stylefont= new KaiStaticBoxSizer(wxVERTICAL, this, _("Czcionka i rozmiar:"));
 	wxBoxSizer *fntsizer=new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *biussizer=new wxBoxSizer(wxHORIZONTAL);
 	sfont = new KaiChoice(this, ID_FONTNAME, "", wxDefaultPosition, wxDefaultSize, fontList);
 	ssize = new NumCtrl(this, ID_TOUTLINE, "32",1,10000,false, wxDefaultPosition, wxSize(66,-1), wxTE_PROCESS_ENTER);
 
-	sb = new wxCheckBox(this, ID_CBOLD, _("Pogrubienie"), wxDefaultPosition, wxSize(73,15));
-	si = new wxCheckBox(this, ID_CBOLD, _("Kursywa"), wxDefaultPosition, wxSize(73,15));
-	su = new wxCheckBox(this, ID_CBOLD, _("Podkreślenie"), wxDefaultPosition, wxSize(73,15));
-	ss = new wxCheckBox(this, ID_CBOLD, _("Przekreślenie"), wxDefaultPosition, wxSize(73,15));
+	sb = new KaiCheckBox(this, ID_CBOLD, _("Pogrubienie"), wxDefaultPosition, wxSize(73,15));
+	si = new KaiCheckBox(this, ID_CBOLD, _("Kursywa"), wxDefaultPosition, wxSize(73,15));
+	su = new KaiCheckBox(this, ID_CBOLD, _("Podkreślenie"), wxDefaultPosition, wxSize(73,15));
+	ss = new KaiCheckBox(this, ID_CBOLD, _("Przekreślenie"), wxDefaultPosition, wxSize(73,15));
 
 	fntsizer->Add(sfont,4,wxEXPAND|wxALL,2);
 	fntsizer->Add(ssize,1,wxEXPAND|wxALL,2);
@@ -78,7 +79,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	stylefont->Add(fntsizer,0,wxEXPAND,0);
 	stylefont->Add(biussizer,0,wxEXPAND|wxALIGN_CENTER,0);
 
-	wxStaticBoxSizer *stylekol= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Kolory i przezroczystość:"));
+	KaiStaticBoxSizer *stylekol= new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Kolory i przezroczystość:"));
 
 	wxGridSizer *kolgrid=new wxGridSizer(4,2,2);
 	
@@ -104,7 +105,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 	stylekol->Add(kolgrid,1,wxEXPAND|wxALL,2);
 
-	wxStaticBoxSizer *styleattr= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Obwódka:               Cień:                      Skala X:                 Skala Y:"));
+	KaiStaticBoxSizer *styleattr= new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Obwódka:               Cień:                      Skala X:                 Skala Y:"));
 
 	sou = new NumCtrl(this, ID_TOUTLINE, "", 0,1000,false,wxDefaultPosition, wxSize(83,-1), wxTE_PROCESS_ENTER);
 	ssh = new NumCtrl(this, ID_TOUTLINE, "", 0,1000000,false, wxDefaultPosition, wxSize(83,-1), wxTE_PROCESS_ENTER);
@@ -118,17 +119,17 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 	wxBoxSizer *sizer1 = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *sizer2 = new wxBoxSizer(wxHORIZONTAL);
-	wxStaticBoxSizer *styleattr1= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Kąt:                     Odstępy:              Typ obwódki:"));
+	KaiStaticBoxSizer *styleattr1= new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Kąt:                     Odstępy:              Typ obwódki:"));
 
 	san = new NumCtrl(this, ID_TOUTLINE, "",-1000000,1000000,false, wxDefaultPosition, wxSize(65,-1), wxTE_PROCESS_ENTER);
 	ssp = new NumCtrl(this, ID_TOUTLINE, "",-1000000,1000000,false, wxDefaultPosition, wxSize(65,-1), wxTE_PROCESS_ENTER);
-	sob = new wxCheckBox(this, ID_CBOLD, _("Prost. obw."));
+	sob = new KaiCheckBox(this, ID_CBOLD, _("Prost. obw."));
 
 	styleattr1->Add(san,1,wxEXPAND|wxALL,2);
 	styleattr1->Add(ssp,1,wxEXPAND|wxALL,2);
 	styleattr1->Add(sob,1,wxEXPAND|wxALL,2);
 
-	wxStaticBoxSizer *stylemargs= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Margines lewy:     Prawy:                Pionowy:"));
+	KaiStaticBoxSizer *stylemargs= new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Margines lewy:     Prawy:                Pionowy:"));
 
 	sml = new NumCtrl(this, ID_TOUTLINE, "", 0, 9999, true, wxDefaultPosition, wxSize(65,-1), wxTE_PROCESS_ENTER);
 	smr = new NumCtrl(this, ID_TOUTLINE, "", 0, 9999, true, wxDefaultPosition, wxSize(65,-1), wxTE_PROCESS_ENTER);
@@ -141,19 +142,19 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	sizer1->Add(styleattr1,0,wxEXPAND,0);
 	sizer1->Add(stylemargs,0,wxEXPAND,0);
 
-	wxStaticBoxSizer *stylean= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Położenie tekstu:"));
+	KaiStaticBoxSizer *stylean= new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Położenie tekstu:"));
 
 	wxGridSizer *angrid=new wxGridSizer(3,5,2);
 
-	rb7 = new wxRadioButton(this, ID_RAN7, "7", wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	rb8 = new wxRadioButton(this, ID_RAN8, "8");
-	rb9 = new wxRadioButton(this, ID_RAN9, "9");
-	rb4 = new wxRadioButton(this, ID_RAN4, "4");
-	rb5 = new wxRadioButton(this, ID_RAN5, "5");
-	rb6 = new wxRadioButton(this, ID_RAN6, "6");
-	rb1 = new wxRadioButton(this, ID_RAN1, "1");
-	rb2 = new wxRadioButton(this, ID_RAN2, "2");
-	rb3 = new wxRadioButton(this, ID_RAN3, "3");
+	rb7 = new KaiRadioButton(this, ID_RAN7, "7", wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	rb8 = new KaiRadioButton(this, ID_RAN8, "8");
+	rb9 = new KaiRadioButton(this, ID_RAN9, "9");
+	rb4 = new KaiRadioButton(this, ID_RAN4, "4");
+	rb5 = new KaiRadioButton(this, ID_RAN5, "5");
+	rb6 = new KaiRadioButton(this, ID_RAN6, "6");
+	rb1 = new KaiRadioButton(this, ID_RAN1, "1");
+	rb2 = new KaiRadioButton(this, ID_RAN2, "2");
+	rb3 = new KaiRadioButton(this, ID_RAN3, "3");
 	
 	angrid->Add(rb7,1,wxEXPAND|wxALL,2);
 	angrid->Add(rb8,1,wxEXPAND|wxALL,2);
@@ -191,11 +192,11 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	encs.Add(_("238 - Europa Środkowa (Polski)"));
 	encs.Add(_("255 - OEM"));
 	
-	wxStaticBoxSizer *styleenc= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Kodowanie tekstu:"));
+	KaiStaticBoxSizer *styleenc= new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Kodowanie tekstu:"));
 	senc = new KaiChoice(this, ID_CENCODING, wxDefaultPosition, wxDefaultSize, encs);
 	styleenc->Add(senc,1,wxEXPAND|wxALL,2);
 
-	wxStaticBoxSizer *styleprev= new wxStaticBoxSizer(wxHORIZONTAL, this, _("Podgląd stylu:"));
+	KaiStaticBoxSizer *styleprev= new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Podgląd stylu:"));
 	//Preview= new KaiTextCtrl(this, -1, Options.GetString("Preview Text"), wxDefaultPosition, wxSize(-1,100), wxTE_PROCESS_ENTER|wxTE_MULTILINE|wxTE_CENTRE);
 	Preview= new StylePreview(this, -1, wxDefaultPosition, wxSize(-1,100));
 	styleprev->Add(Preview,1,wxEXPAND|wxALL,2);
@@ -232,10 +233,10 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	Connect(ID_BONVID,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ColorChange::OnStyleVideo);
 	Connect(ID_BONFULL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ColorChange::OnStyleFull);
 	Connect(ID_FONTNAME,wxEVT_COMMAND_COMBOBOX_SELECTED,(wxObjectEventFunction)&ColorChange::OnUpdatePreview);
-	Connect(ID_TOUTLINE,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&ColorChange::OnUpdatePreview);
+	Connect(ID_TOUTLINE,NUMBER_CHANGED,(wxObjectEventFunction)&ColorChange::OnUpdatePreview);
 	Connect(ID_CBOLD,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&ColorChange::OnUpdatePreview);
 	Connect(ID_CENCODING,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&ColorChange::OnUpdatePreview);
-	
+	//Connect(ID_RAN1, ID_RAN9,wxEVT_COMMAND_RADIOBUTTON_SELECTED,(wxObjectEventFunction)&ColorChange::OnUpdatePreview);
 	DoTooltips();
 	block=false;
 }

@@ -27,6 +27,7 @@
     #include "StylePreview.h"
     #include "stylestore.h"
     #include "NumCtrl.h"
+	#include "KaiRadioButton.h"
 
 bool sortf(wxString name1,wxString name2);
 
@@ -37,17 +38,17 @@ class ColorChange: public wxWindow
 		ColorChange(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 		virtual ~ColorChange();
 
-		wxCheckBox* sob;
-		wxRadioButton* rb1;
-		wxRadioButton* rb2;
-		wxRadioButton* rb3;
-		wxRadioButton* rb4;
-        wxRadioButton* rb5;
-		wxRadioButton* rb6;
-		wxRadioButton* rb7;
-		wxRadioButton* rb8;
-		wxRadioButton* rb9;
-		wxCheckBox* si;
+		KaiCheckBox* sob;
+		KaiRadioButton* rb1;
+		KaiRadioButton* rb2;
+		KaiRadioButton* rb3;
+		KaiRadioButton* rb4;
+        KaiRadioButton* rb5;
+		KaiRadioButton* rb6;
+		KaiRadioButton* rb7;
+		KaiRadioButton* rb8;
+		KaiRadioButton* rb9;
+		KaiCheckBox* si;
 		MappedButton* btnOk;
 		KaiTextCtrl* sname;
 		MappedButton* s2;
@@ -69,9 +70,9 @@ class ColorChange: public wxWindow
 		NumCtrl* ssp;
 		MappedButton* s4;
 		MappedButton* s1;
-		wxCheckBox* ss;
-		wxCheckBox* su;
-		wxCheckBox* sb;
+		KaiCheckBox* ss;
+		KaiCheckBox* su;
+		KaiCheckBox* sb;
 		KaiChoice* senc;
 		NumCtrl* smr;
 		NumCtrl* smv;

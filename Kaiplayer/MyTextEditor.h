@@ -19,6 +19,7 @@
 
 #include <wx/wx.h>
 #include <wx/caret.h>
+#include "KaiScrollbar.h"
 
 class EditBox;
 class kainoteFrame;
@@ -64,7 +65,7 @@ class MTextEditor : public wxWindow
 	bool spell;
     wxString MText;
 	wxBitmap* bmp;
-	wxScrollBar *scroll;
+	KaiScrollbar *scroll;
 	wxFont font;
 	wxArrayString errs;
 	wxCaret *caret;

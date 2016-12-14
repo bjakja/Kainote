@@ -308,7 +308,7 @@ END_EVENT_TABLE()
 	wxBoxSizer *Fattr= new wxBoxSizer(wxVERTICAL);
 	//wxBoxSizer *Flist= new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *Bsizer= new wxBoxSizer(wxHORIZONTAL);
-	FontName = new wxTextCtrl(this,ID_FONTNAME,acst->Fontname,wxDefaultPosition,wxSize(150,-1),wxTE_PROCESS_ENTER);
+	FontName = new KaiTextCtrl(this,ID_FONTNAME,acst->Fontname,wxDefaultPosition,wxSize(150,-1),wxTE_PROCESS_ENTER);
 
 	Fonts= new FontList(this,ID_FONTLIST,wxDefaultPosition,wxSize(180,-1));
 	Fonts->SetSelectionByName(acst->Fontname);
@@ -318,16 +318,16 @@ END_EVENT_TABLE()
 	Preview = new StylePreview(this,-1,wxDefaultPosition, wxSize(-1,110));
 	Preview->DrawPreview(acst);
 	FontSize= new NumCtrl(this,ID_FONTSIZE1,acst->Fontsize,1,10000,false,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
-	Bold= new wxCheckBox(this,ID_FONTATTR,_("Pogrubienie"));
+	Bold= new KaiCheckBox(this,ID_FONTATTR,_("Pogrubienie"));
 	Bold->SetValue(acst->Bold);
-	Italic= new wxCheckBox(this,ID_FONTATTR,_("Kursywa"));
+	Italic= new KaiCheckBox(this,ID_FONTATTR,_("Kursywa"));
 	Italic->SetValue(acst->Italic);
-	Underl= new wxCheckBox(this,ID_FONTATTR,_("Podkreślenie"));
+	Underl= new KaiCheckBox(this,ID_FONTATTR,_("Podkreślenie"));
 	Underl->SetValue(acst->Underline);
-	Strike= new wxCheckBox(this,ID_FONTATTR,_("Przekreślenie"));
+	Strike= new KaiCheckBox(this,ID_FONTATTR,_("Przekreślenie"));
 	Strike->SetValue(acst->StrikeOut);
-	Buttok= new wxButton(this,wxID_OK,"OK");
-	Buttcancel= new wxButton(this,wxID_CANCEL,_("Anuluj"));
+	Buttok= new MappedButton(this,wxID_OK,"OK");
+	Buttcancel= new MappedButton(this,wxID_CANCEL,_("Anuluj"));
 	Fattr->Add(FontName,0,wxEXPAND|wxLEFT|wxRIGHT,5);
 	Fattr->Add(FontSize,0,wxEXPAND|wxALL,5);
 	Fattr->Add(Bold,1,wxEXPAND|wxALL,5);
@@ -381,7 +381,7 @@ Styles *FontDialog::GetFont()
 
 void FontDialog::OnFontChanged(wxCommandEvent& event)
 {
-	FontName->ChangeValue(Fonts->GetString(Fonts->GetSelection()));
+	FontName->SetValue(Fonts->GetString(Fonts->GetSelection()));
 	UpdatePreview();
 }
 
@@ -408,6 +408,56 @@ void FontDialog::OnScrollList(wxCommandEvent& event)
 	int step=(event.GetId()==ID_SCROLLUP)? -1 : 1;
 	Fonts->Scroll(step);
 	//wxLogStatus("weszło");
-	FontName->ChangeValue(Fonts->GetString(Fonts->GetSelection()));
+	FontName->SetValue(Fonts->GetString(Fonts->GetSelection()));
 	UpdatePreview();
 }
+
+FontPickerButton::FontPickerButton(wxWindow *parent, int id, const wxFont& font,
+             const wxPoint& pos, const wxSize& size, long style)
+			 : MappedButton(parent, id, font.GetFaceName() + " " + std::to_string(font.GetPointSize()), 0, pos, size, style)
+{
+	ChangeFont(font);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FontPickerButton::OnClick, this, GetId());
+}
+
+void FontPickerButton::ChangeFont(const wxFont &font)
+{
+	SetLabelText(font.GetFaceName() + " " + std::to_string(font.GetPointSize()));
+	SetFont(font);
+	int fw, fh;
+	GetTextExtent(GetLabelText(), &fw, &fh);
+	wxSize newSize = GetMinSize();
+	bool isChanged = false;
+	if(newSize.x < fw+16){
+		newSize.x = fw+16;
+		isChanged = true;
+	}
+	if(newSize.y < fh+10){
+		newSize.y = fh+10;
+		isChanged = true;
+	}
+	if(isChanged){SetMinSize(newSize);}
+	GetParent()->Layout();
+}
+
+wxFont FontPickerButton::GetSelectedFont(){
+	return GetFont();
+}
+
+void FontPickerButton::OnClick(wxCommandEvent &evt)
+{
+	wxFont font = GetFont();
+	Styles mstyle;
+	mstyle.Fontname = font.GetFaceName();
+	mstyle.Fontsize = std::to_string(font.GetPointSize());
+	FontDialog FD(this, &mstyle);
+	if(FD.ShowModal()==wxID_OK){
+		Styles *retstyle = FD.GetFont();
+		font.SetFaceName(retstyle->Fontname);
+		font.SetPointSize(wxAtoi(retstyle->Fontsize));
+		ChangeFont(font);
+		delete retstyle;
+	}
+}
+
+wxIMPLEMENT_ABSTRACT_CLASS(FontPickerButton, MappedButton);

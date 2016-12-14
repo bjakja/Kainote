@@ -34,6 +34,8 @@ public:
 	void SetBitmap(const wxBitmap & bitmap){icon = bitmap; Refresh(false);};
 	void SetBackgroundColour(wxColour color){isColorButton = true; buttonColor = color; Refresh(false);}
 	wxColour GetBackgroundColour(){return buttonColor;}
+	wxString GetLabelText() const {return name;}
+	void SetLabelText(const wxString &label) {name = label; Refresh(false);}
 	bool clicked;
 private:
 	void OnSize(wxSizeEvent& evt);

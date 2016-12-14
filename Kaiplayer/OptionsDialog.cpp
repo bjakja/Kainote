@@ -23,6 +23,7 @@
 #include "NumCtrl.h"
 #include "ColorPicker.h"
 #include "KaiTextCtrl.h"
+#include "FontDialog.h"
 
 OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	: wxDialog(parent,-1,_("Opcje"),wxDefaultPosition,wxDefaultSize,wxDEFAULT_DIALOG_STYLE,"Options")
@@ -121,7 +122,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	
 		MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
 
-		wxFontPickerCtrl *optf=new wxFontPickerCtrl(Main,-1,wxFont(Options.GetInt("Grid Font Size"),wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,Options.GetString("Grid Font Name")));
+		FontPickerButton *optf=new FontPickerButton(Main,-1,wxFont(Options.GetInt("Grid Font Size"),wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,Options.GetString("Grid Font Name")));
 		ConOpt(optf,"Grid Font");
 		MainSizer1->Add(new wxStaticText(Main,-1,_("Czcionka pola napisów:")),0,wxRIGHT| wxALIGN_CENTRE_VERTICAL,5);
 		MainSizer1->Add(optf,0);
@@ -550,8 +551,8 @@ void OptionsDialog::SetOptions(bool saveall)
 				}
 			}
 		}
-		else if(OB.ctrl->IsKindOf(CLASSINFO(wxFontPickerCtrl))){
-			wxFontPickerCtrl *fpc=(wxFontPickerCtrl*)OB.ctrl;
+		else if(OB.ctrl->IsKindOf(CLASSINFO(FontPickerButton))){
+			FontPickerButton *fpc=(FontPickerButton*)OB.ctrl;
 			wxFont font=fpc->GetSelectedFont();
 			wxString fontname=font.GetFaceName();
 			int fontsize=font.GetPointSize();

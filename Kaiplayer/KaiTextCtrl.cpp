@@ -106,7 +106,7 @@ KaiTextCtrl::~KaiTextCtrl()
 
 void KaiTextCtrl::SetValue(const wxString &text, bool modif, bool newSel)
 {
-	modified=modif;
+	if(modif){modified=modif;}
 	KText=text;
 	KText.Replace("\r","");
 	KText.Replace("\n","");
@@ -117,7 +117,6 @@ void KaiTextCtrl::SetValue(const wxString &text, bool modif, bool newSel)
 		if((size_t)Cursor.x>KText.Len()){Cursor.x = KText.Len();Cursor.y = FindY(Cursor.x);}
 		Refresh(false);
 	}
-	modified=modif;
 }
 
 void KaiTextCtrl::CalcWrap(bool sendevent)
@@ -461,7 +460,7 @@ void KaiTextCtrl::OnMouseEvent(wxMouseEvent& event)
 		ContextMenu(pos);
 	}
 
-	if(event.GetWheelRotation() != 0){
+	if(event.GetWheelRotation() != 0 && (style & wxTE_MULTILINE)){
 		int step = 10 * event.GetWheelRotation() / event.GetWheelDelta();
 		if(step>0 && scPos==0){return;}
 		scPos = MAX(scPos - step, 0);

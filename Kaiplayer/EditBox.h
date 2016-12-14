@@ -26,7 +26,7 @@
 #include "ListControls.h"
 #include "AudioBox.h"
 #include "MappedButton.h"
-#include "KaiCheckBox.h"
+#include "KaiRadioButton.h"
 
 class kainoteFrame;
 class Grid;
@@ -97,8 +97,8 @@ public:
 	MTextEditor* TextEdit;
 	MTextEditor* TextEditTl;
 	KaiCheckBox* TlMode;
-	wxRadioButton* Times;
-	wxRadioButton* Frames;
+	KaiRadioButton* Times;
+	KaiRadioButton* Frames;
 	KaiCheckBox* Comment;
 	NumCtrl* LayerEdit;
 	TimeCtrl* StartEdit;

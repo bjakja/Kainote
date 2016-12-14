@@ -21,6 +21,7 @@
 #include "EditBox.h"
 
 
+
 CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const wxPoint& pos,const wxSize& size,long style)
 	: wxScrolled<wxWindow>(parent, id, pos, size, style|wxVERTICAL)
 {
@@ -43,10 +44,10 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 
 	SetFont(thisFont);
 	Main=new wxBoxSizer(wxVERTICAL);
-	
+	//SetBackgroundColour("#999999");
 	
 	//ramka czasu
-	wxStaticBoxSizer *timesizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Czas"));
+	KaiStaticBoxSizer *timesizer=new KaiStaticBoxSizer(wxVERTICAL,this,_("Czas"));
 	wxGridSizer *timegrid=new wxGridSizer(2, 0, 0);
 	MoveTime = new MappedButton(this, ID_MOVE, _("Przesuń"), _("Przesuń czas napisów"), wxDefaultPosition, wxSize(60,22), GLOBAL_HOTKEY);
 	TimeText = new TimeCtrl(this, -1, "0:00:00.00", wxDefaultPosition, wxSize(60,20), wxALIGN_CENTER|wxTE_PROCESS_ENTER);
@@ -61,14 +62,14 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	timesizer->Add(timegrid,0,wxEXPAND,0);
 
 	//ramka przesuwania wg audio / wideo
-	wxStaticBoxSizer *VAtiming=new wxStaticBoxSizer(wxVERTICAL,this,_("Przesuwanie wg wideo / audio"));
+	KaiStaticBoxSizer *VAtiming=new KaiStaticBoxSizer(wxVERTICAL,this,_("Przesuwanie wg wideo / audio"));
 
 	wxBoxSizer *SE=new wxBoxSizer(wxHORIZONTAL);
 	StartVAtime = new KaiRadioButton(this, -1, _("Początek"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
 	EndVAtime = new KaiRadioButton(this, -1, _("Koniec"));
 
-	SE->Add(StartVAtime,0,wxEXPAND|wxLEFT|wxRIGHT,2);
-	SE->Add(EndVAtime,0,wxEXPAND|wxRIGHT,2);
+	SE->Add(StartVAtime,1,wxEXPAND|wxLEFT|wxRIGHT,2);
+	SE->Add(EndVAtime,1,wxEXPAND|wxRIGHT,2);
 
 	videotime = new KaiCheckBox(this, ID_VIDEO, _("Przesuń znacznik\ndo czasu wideo"));
 	videotime->SetForegroundColour(*wxRED);
@@ -81,11 +82,11 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	Connect(ID_VIDEO,ID_AUDIO,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&CTwindow::AudioVideoTime);
 	
 	VAtiming->Add(SE,0,wxEXPAND|wxTOP,2);
-	VAtiming->Add(videotime,0,wxEXPAND);
-	VAtiming->Add(audiotime,0,wxEXPAND);
+	VAtiming->Add(videotime,1,wxEXPAND|wxLEFT,2);
+	VAtiming->Add(audiotime,1,wxEXPAND|wxLEFT,2);
 
 	wxArrayString choices;
-	wxStaticBoxSizer *linesizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Które linijki"));
+	KaiStaticBoxSizer *linesizer=new KaiStaticBoxSizer(wxVERTICAL,this,_("Które linijki"));
 	choices.Add(_("Wszystkie linijki"));
 	choices.Add(_("Zaznaczone linijki"));
 	choices.Add(_("Od zaznaczonej linijki"));
@@ -102,7 +103,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	linesizer->Add(WhichLines,0,wxEXPAND|wxRIGHT|wxTOP|wxLEFT,2);
 	linesizer->Add(stylesizer,1,wxEXPAND);
 
-	wxStaticBoxSizer *timessizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Sposób przesuwania czasów"));
+	KaiStaticBoxSizer *timessizer=new KaiStaticBoxSizer(wxVERTICAL,this,_("Sposób przesuwania czasów"));
 	choices.clear();
 	choices.Add(_("Obydwa czasy"));
 	choices.Add(_("Czas początkowy"));
@@ -113,7 +114,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	
 	timessizer->Add(WhichTimes,0,wxEXPAND|wxRIGHT|wxTOP|wxLEFT,2);
 
-	wxStaticBoxSizer *cesizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Korekcja czasów końcowych"));
+	KaiStaticBoxSizer *cesizer=new KaiStaticBoxSizer(wxVERTICAL,this,_("Korekcja czasów końcowych"));
 	choices.clear();
 	choices.Add(_("Zostaw bez zmian"));
 	choices.Add(_("Skoryguj nachodzące czasy"));
@@ -332,7 +333,7 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 	Options.SetInt("Postprocessor enabling", (collapsed)? pe | 16 : pe ^ 16);
 	
 	if(collapsed){
-		liosizer=new wxStaticBoxSizer(wxHORIZONTAL,this,_("Wstęp i zakończenie"));
+		liosizer=new KaiStaticBoxSizer(wxHORIZONTAL,this,_("Wstęp i zakończenie"));
 
 		wxFlexGridSizer *fgsizer = new wxFlexGridSizer(2, 4, 4);
 		LeadIn=new KaiCheckBox(this, -1, _("Wstęp"),wxDefaultPosition, wxSize(117,-1));
@@ -349,7 +350,7 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 
 		liosizer->Add(fgsizer,0,wxEXPAND|wxLEFT|wxRIGHT,2);
 	
-		consizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Ustaw czasy jako ciągłe"));
+		consizer=new KaiStaticBoxSizer(wxVERTICAL,this,_("Ustaw czasy jako ciągłe"));
 		Continous=new KaiCheckBox(this, -1, _("Włącz"));
 		Continous->SetValue((pe & 4)>0);
 
@@ -366,7 +367,7 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 	
 		consizer->Add(fgsizer1,0,wxEXPAND,0);
 
-		snapsizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Wyrównaj do klatek kluczowych"));
+		snapsizer=new KaiStaticBoxSizer(wxVERTICAL,this,_("Wyrównaj do klatek kluczowych"));
 		SnapKF=new KaiCheckBox(this, -1, _("Włącz"));
 		SnapKF->Enable(false);
 		SnapKF->SetValue((pe & 8)>0);
@@ -401,9 +402,9 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		BeforeEnd->SetToolTip(_("Maksymalne przesunięcie do klatki kluczowej\nprzed czasem końcowym w milisekundach"));
 		AfterEnd->SetToolTip(_("Maksymalne przesunięcie do klatki kluczowej\npo czasie końcowym w milisekundach"));
 
-		Main->Add(liosizer,0,wxEXPAND|wxLEFT|wxBOTTOM|wxRIGHT,4);
-		Main->Add(consizer,0,wxEXPAND|wxLEFT|wxBOTTOM|wxRIGHT,4);
-		Main->Add(snapsizer,0,wxEXPAND|wxLEFT|wxBOTTOM|wxRIGHT,4);
+		Main->Add((wxSizer*)liosizer,0,wxEXPAND|wxLEFT|wxBOTTOM|wxRIGHT,4);
+		Main->Add((wxSizer*)consizer,0,wxEXPAND|wxLEFT|wxBOTTOM|wxRIGHT,4);
+		Main->Add((wxSizer*)snapsizer,0,wxEXPAND|wxLEFT|wxBOTTOM|wxRIGHT,4);
 	
 		if(event.GetId()==22999){
 			Contents(false);

@@ -25,6 +25,9 @@
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include "NumCtrl.h"
+#include "MappedButton.h"
+#include "ListControls.h"
+#include "KaiCheckBox.h"
 
 
 class ScriptInfo: public wxDialog
@@ -38,17 +41,17 @@ class ScriptInfo: public wxDialog
 		KaiTextCtrl* script;
 		NumCtrl* width;
 		KaiTextCtrl* update;
-		wxButton* Button1;
-		wxChoice* wrapstyle;
-		wxCheckBox* CheckBox2;
-		wxChoice* collision;
+		MappedButton* Button1;
+		KaiChoice* wrapstyle;
+		KaiCheckBox* CheckBox2;
+		KaiChoice* collision;
 		KaiTextCtrl* editing;
 		KaiTextCtrl* title;
-		wxButton* Button2;
-		wxCheckBox* CheckBox1;
+		MappedButton* Button2;
+		KaiCheckBox* CheckBox1;
 		KaiTextCtrl* timing;
 		KaiTextCtrl* translation;
-		wxButton* Fvideo;
+		MappedButton* Fvideo;
 
 		void DoTooltips();
 private:
