@@ -264,8 +264,8 @@ void ColorChange::OnAllCols(int kol)
 	ColourDialog->Move(mst);
 	if ( ColourDialog->ShowModal() == wxID_OK) {
 		AssColor kol=ColourDialog->GetColor();
-		kolor->SetBackgroundColour(kol.GetWX());
 		kolor->SetForegroundColour(Blackorwhite(kol.GetWX()));
+		kolor->SetBackgroundColour(kol.GetWX());
 		alpha->SetInt(kol.a);
 		UpdatePreview();
 	}

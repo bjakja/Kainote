@@ -22,7 +22,7 @@
 bool sortf(int i,int j){ return (i < j);}
 
 StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, KaiChoice *_fontseeker, const wxPoint &pos, const wxSize &size, long style)
-	      :wxWindow(parent,id,pos,size)
+	      :KaiScrolledWindow(parent,id,pos,size, style|wxVERTICAL)
 {
 	//scrollBar = new wxScrollBar(this,27776,wxDefaultPosition,wxDefaultSize,wxSB_VERTICAL);
 	//scrollBar->SetScrollbar(0,10,100,10);
@@ -63,52 +63,10 @@ StyleList::~StyleList(){
 
 void StyleList::OnPaint(wxPaintEvent& event)
 {
-	wxPaintDC dc(this);
-	    int w = 0;
-		int h = 0;
-		int sw=0;
-        int sh=0;
-		GetClientSize(&w,&h);
-		//scrollBar->GetSize(&sw,&sh);
-        //scrollBar->SetSize(w-sw,0,sw,h);
-        //w -= sw;
-		
-	bool direct = false;
-
-	if (direct) {
-		DrawFld(dc,w,h);
-	}
-
-	else {
-		
-		if (bmp) {
-			if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
-				delete bmp;
-				bmp = NULL;
-			}
-		}
-		if (!bmp) bmp = new wxBitmap(w,h);
-
-		// Draw bitmap
-		wxMemoryDC bmpDC;
-		bmpDC.SelectObject(*bmp);
-		DrawFld(bmpDC,w,h);
-		dc.Blit(0,0,w,h,&bmpDC,0,0);
-	}
-
-}
-
-void StyleList::DrawFld(wxDC &dc,int w, int h)
-{
-	int fw=0,fh=0,posX=1,posY=1;
-	dc.Clear();
-	dc.SetFont(font);
-	//dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-	dc.SetPen(wxPen(wxColour("#808080")));
-	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
-	dc.DrawRectangle(0,0,w,h);
-
-
+	int w = 0;
+	int h = 0;
+	GetClientSize(&w,&h);
+	if(w==0||h==0){return;}
 	int panelrows=(h/Height)+1;
 	int scrows;
 	if((scPos+panelrows)>=(int)stylenames->size()+1){
@@ -117,32 +75,56 @@ void StyleList::DrawFld(wxDC &dc,int w, int h)
 	}else{
 		scrows=(scPos+panelrows);
 	}
-	SetScrollbar(wxVERTICAL,scPos,panelrows,stylenames->size()+1);
+	if(SetScrollBar(wxVERTICAL,scPos,panelrows,stylenames->size()+1)){
+		GetClientSize(&w,&h);
+	}
 
-	dc.SetPen(wxPen(wxColour("#000000")));
+	if (bmp) {
+		if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
+			delete bmp;
+			bmp = NULL;
+		}
+	}
+	if (!bmp) bmp = new wxBitmap(w,h);
+
+	// Draw bitmap
+	wxMemoryDC bdc;
+	bdc.SelectObject(*bmp);
+
+	int fw=0,fh=0,posX=1,posY=1;
+	bdc.Clear();
+	bdc.SetFont(font);
+	//dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+	bdc.SetPen(wxPen(wxColour("#808080")));
+	bdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
+	bdc.DrawRectangle(0,0,w,h);
+
+	bdc.SetPen(wxPen(wxColour("#000000")));
 
 	for(int i=scPos; i<scrows; i++)
 	{
 		if(sels.Index(i)!=-1){
-			dc.SetPen(*wxTRANSPARENT_PEN);
-			dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT))); //wxColour("#359AFF")
-			dc.DrawRectangle(posX,posY,w-2,Height);
-			}else{dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));}
+			bdc.SetPen(*wxTRANSPARENT_PEN);
+			bdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT))); //wxColour("#359AFF")
+			bdc.DrawRectangle(posX,posY,w-2,Height);
+			}else{bdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));}
 		if(fontseeker->FindString(stylenames->at(i)->Fontname)==-1){
-			dc.SetTextForeground("#FF0000");
+			bdc.SetTextForeground("#FF0000");
 		}else{
-			dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+			bdc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 		}
 		
 
 		wxRect cur(posX+4,posY,w-8,Height);	
-		dc.SetClippingRegion(cur);
-		dc.DrawLabel(stylenames->at(i)->Name,cur,wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
-		dc.DestroyClippingRegion();
+		bdc.SetClippingRegion(cur);
+		bdc.DrawLabel(stylenames->at(i)->Name,cur,wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
+		bdc.DestroyClippingRegion();
 
 		posY+=Height;
 	}
 
+	wxPaintDC dc(this);
+	dc.Blit(0,0,w,h,&bdc,0,0);
 }
 
 void StyleList::OnSize(wxSizeEvent& event)
@@ -429,7 +411,7 @@ void StyleList::OnArrow(wxCommandEvent& event)
 	Refresh(false);
 }
 
-BEGIN_EVENT_TABLE(StyleList,wxWindow)
+BEGIN_EVENT_TABLE(StyleList, KaiScrolledWindow)
 	EVT_PAINT(StyleList::OnPaint)
 	EVT_SIZE(StyleList::OnSize)
 	EVT_SCROLLWIN(StyleList::OnScroll)

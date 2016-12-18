@@ -73,7 +73,7 @@ void DescTxtCtrl::OnKillFocus(wxFocusEvent &evt)
 BEGIN_EVENT_TABLE(DescTxtCtrl,KaiTextCtrl)
 	EVT_SET_FOCUS(DescTxtCtrl::OnFocus)
 	EVT_KILL_FOCUS(DescTxtCtrl::OnKillFocus)
-END_EVENT_TABLE()
+	END_EVENT_TABLE()
 
 
 	txtdialog::txtdialog(wxWindow *parent, int id, const wxString &txtt, int _type, const wxPoint &position)
@@ -92,8 +92,8 @@ END_EVENT_TABLE()
 	siz1->Add(new MappedButton(this, wxID_CANCEL,_("Anuluj")),0,wxEXPAND|wxALL,4);
 	siz->Add(siz1,0,wxEXPAND,0);
 	SetSizerAndFit(siz);
-	
-	
+
+
 }
 
 TagButton::TagButton(wxWindow *parent, int id, const wxString &name, wxString tooltip, const wxSize &size)
@@ -351,7 +351,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 	if(Visual > CHANGEPOS){
 		pan->Video->SetVisual(line->Start.mstime, line->End.mstime);
 	}
-	
+
 	//resetuje edycję na wideo
 	if(OnVideo){
 		if(pan->Video->IsShown() || pan->Video->isfullskreen){
@@ -532,6 +532,7 @@ void EditBox::PutinText(wxString text, bool focus, bool onlysel, wxString *textt
 			else{whre=(focus)? cursorpos+1+text.Len() : Placed.x;}
 			txt.insert(Placed.x,text);
 		}
+		if(text==""){txt.Replace("{}","");}
 		if(texttoPutin){
 			*texttoPutin=txt;
 			return;
@@ -737,7 +738,7 @@ void EditBox::AllColClick(int kol)
 		(kol==2)? style->SecondaryColour :
 		(kol==3)? style->OutlineColour :
 		style->BackColour;
-	
+
 	acol = (!FindVal(num+tag, &iskol))? acol : (grid->form<SRT)? AssColor("&"+iskol) : AssColor(wxString("#FFFFFF"));
 	if(FindVal(num+taga, &iskol)){acol.SetAlphaString(iskol);}
 	else if(FindVal(tagal, &iskol)){acol.SetAlphaString(iskol);}
@@ -1268,14 +1269,38 @@ void EditBox::OnColorChange(wxCommandEvent& event)
 {
 	if(grid->form<SRT){
 		wxString iskol;
+		int alpha = -1;
 		wxString tag=(num=="1")? "?c&(.*)" : "c&(.*)";
+		Styles *style = grid->GetStyle(0,line->Style);
+		AssColor col= (num=="1")? style->PrimaryColour :
+			(num=="2")? style->SecondaryColour :
+			(num=="3")? style->OutlineColour :
+			style->BackColour;
+		
+		int stylealpha = col.a;
+		wxString strcol = col.GetAss(false,true);
+		wxString chooseColor = event.GetString();
 		FindVal(num+tag, &iskol);
+		if(chooseColor == strcol){
+			if(iskol!=""){PutinText("", false);}
+		}else if(iskol != chooseColor){
+			PutinText("\\"+num+"c"+event.GetString()+"&", false);
+		}
+		
+		if(FindVal(num+"a&(.*)", &iskol)){
+			iskol.Replace("H","");
+			iskol.Replace("&","");
+			alpha = wxAtoi(iskol);
+		}
+		if(alpha != -1 && stylealpha == event.GetInt()){
+			PutinText("", false);
 
-		PutinText("\\"+num+"c"+event.GetString()+"&", false);
-		//if(event.GetInt()){
-		FindVal(num+"a&(.*)", &iskol);
-		PutinText("\\"+num+wxString::Format("a&H%02X&",event.GetInt()), false);
-		//}
+		}else if(alpha != event.GetInt() && stylealpha != event.GetInt()){
+			PutinText("\\"+num+wxString::Format("a&H%02X&",event.GetInt()), false);
+
+		} 
+
+
 	}
 	else{PutinNonass("C:"+event.GetString().Mid(2),"C:([^}]*)");}
 	OnEdit(event);
@@ -1314,7 +1339,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		MTextEditor *Editor = TextEdit;
 		if(grid->transl && txt==""){ txt = TextEditTl->GetValue(); Editor = TextEditTl;}
 		Editor->GetSelection(&from, &to);
-		
+
 		if(from!=to){
 			txt.erase(txt.begin()+from, txt.begin()+to);
 		}
@@ -1369,7 +1394,7 @@ void EditBox::SetTextWithTags()
 			TextEdit->SetTextS(txtTl, false);
 			TextEditTl->SetTextS(txtOrg, false);
 			splittedTags=true;
-			
+
 			TextEdit->SetSelection(pos,pos);
 			TextEdit->SetFocus();
 			return;

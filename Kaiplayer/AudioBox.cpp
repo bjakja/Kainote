@@ -54,7 +54,7 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	oldy=-1;
 	SetMinSize(wxSize(-1,Options.GetInt("Audio Box Height")));
 	// Display
-	audioScroll = new wxScrollBar(this,Audio_Scrollbar);
+	audioScroll = new KaiScrollbar(this,Audio_Scrollbar);
 	//audioScroll->PushEventHandler(new FocusEvent());
 	audioScroll->SetToolTip(_("Pasek szukania"));
 

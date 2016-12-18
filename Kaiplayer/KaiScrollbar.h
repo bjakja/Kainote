@@ -20,30 +20,66 @@
 
 class KaiScrollbar : public wxWindow
 {
+	friend class KaiScrolledWindow;
 public:
-	KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int style = wxSB_VERTICAL);
+	KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int style = wxSB_HORIZONTAL);
 	virtual ~KaiScrollbar(){if(bmp){delete bmp;}};
-	void SetScrollbar(int pos, int visible, int range);
+	void SetScrollbar(int pos, int visible, int range, bool refresh = true);
+	int unitPos;
+	int visibleSize;
+	int allSize;
 private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnMouseLost(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();} holding=false; }
 	void OnErase(wxEraseEvent &evt){};
+	void SendEvent();
 	int thumbPos;
-	int unitPos;
-	int visibleSize;
-	int allSize;
 	int thumbSize;
 	int diff;
 	int thumbRange;
+	int allVisibleSize;
 	bool isVertical;
 	bool holding;
+	bool enter;
+	//bool clicked;
+	bool integrated;
 	byte element;
-	wxSize oldSize;
+	//wxSize oldSize;
 	wxTimer sendEvent;
+	wxTimer arrowLoop;
 	wxBitmap *bmp;
 	DECLARE_EVENT_TABLE()
+};
+
+class KaiScrolledWindow : public wxWindow
+{
+	friend class KaiScrollbar;
+public:
+	KaiScrolledWindow(wxWindow *parent, int id, const wxPoint& pos = wxDefaultPosition, 
+		const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxEmptyString);
+	virtual ~KaiScrolledWindow(){};
+	bool SetScrollBar(int orientation, int pos, int maxVisible, int allItems, bool refresh = true);
+	void SetScrollbar(int orientation, int pos, int maxVisible, int allItems, bool refresh = true){
+		SetScrollBar(orientation, pos, maxVisible, allItems, refresh);
+	}
+	void SetScrollPos (int orientation, int pos, bool refresh=true);
+	void GetSize(int *x, int *y);
+	void GetClientSize(int *x, int *y);
+	wxSize GetSize();
+	wxSize GetClientSize();
+	void AlwaysShowScrollbars (bool hflag=true, bool vflag=true){};
+	int GetScrollPos (int orientation) const {return (orientation == wxHORIZONTAL)? horizontal->unitPos : vertical->unitPos;}
+ 	int GetScrollRange (int orientation) const{return (orientation == wxHORIZONTAL)? horizontal->allSize : vertical->allSize;}
+ 	int GetScrollThumb (int orientation) const{return (orientation == wxHORIZONTAL)? horizontal->visibleSize : vertical->visibleSize;}
+	bool HasScrollbar (int orient) const {return (orient == wxHORIZONTAL)? horizontal->IsShown() : vertical->IsShown();};
+	bool IsScrollbarAlwaysShown (int orient) const{return false;};
+ 	bool ScrollLines (int lines);
+ 	bool ScrollPages (int pages);
+private:
+	KaiScrollbar *horizontal;
+	KaiScrollbar *vertical;
 };
 
 enum{

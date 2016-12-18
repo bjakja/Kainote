@@ -20,9 +20,9 @@
 #include <vector>
 #include "Styles.h"
 #include "ListControls.h"
+#include "KaiScrollbar.h"
 
-
-class StyleList : public wxWindow
+class StyleList : public KaiScrolledWindow
 {
 	public:
 		StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, KaiChoice *_fontseeker, const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=wxWANTS_CHARS);

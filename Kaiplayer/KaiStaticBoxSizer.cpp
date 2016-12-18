@@ -59,7 +59,7 @@ void KaiStaticBox::PaintForeground(wxDC& tdc, const struct tagRECT& rc)
 
 wxSize KaiStaticBox::CalcBorders()
 {
-	return wxSize(8, heightText+2);
+	return wxSize(8, heightText+5);
 }
 
 KaiStaticBoxSizer::KaiStaticBoxSizer(int orient, wxWindow *parent, const wxString& _label)

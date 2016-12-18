@@ -15,6 +15,8 @@
 
 
 #include "KaiRadioButton.h"
+#include "KaiStaticBoxSizer.h"
+#include "config.h"
 
 KaiRadioButton::KaiRadioButton(wxWindow *parent, int id, const wxString& label,
              const wxPoint& pos, const wxSize& size, long style)
@@ -123,3 +125,33 @@ void KaiRadioButton::DeselectRest()
 }
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiRadioButton, wxWindow);
+
+KaiRadioBox::KaiRadioBox(wxWindow *parent, int id, const wxString& label,
+             const wxPoint& pos, const wxSize& size, const wxArrayString &names, int spacing, long style)
+			 :wxWindow(parent, id, pos, size)
+{
+	KaiStaticBoxSizer *box = new KaiStaticBoxSizer(style,this,label);
+	selected = 0;
+	for (size_t i = 0; i < names.size(); i++){
+		buttons.push_back(new KaiRadioButton(this,9876+i,names[i],wxDefaultPosition, wxDefaultSize, (i==0)? wxRB_GROUP : 0));
+		box->Add(buttons[i], 1, wxALL, spacing);
+	}
+	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, [=](wxCommandEvent &evt){
+		selected = evt.GetId() - 9876;
+	}, 9876, 9876 + names.size()-1);
+	SetSizerAndFit(box);
+}
+
+
+int KaiRadioBox::GetSelection()
+{
+	return selected;
+}
+	
+void KaiRadioBox::SetSelection(int sel)
+{
+	selected=MID(0, (size_t)sel, buttons.size()-1);
+	buttons[selected]->SetValue(true);
+}
+
+wxIMPLEMENT_ABSTRACT_CLASS(KaiRadioBox, wxWindow);

@@ -85,7 +85,8 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	spectrumDisplaySelected = NULL;*/
 	deviceLost=false;
 	spectrumRenderer = NULL;
-	ScrollBar = NULL;
+	ScrollBar = NULL; //new KaiScrollbar(this, 2435, wxDefaultPosition, wxDefaultSize, wxHORIZONTAL);
+	//Bind(wxEVT_SCROLL_CHANGED, [=](
 	karaoke = NULL;
 	peak = NULL;
 	min = NULL;
@@ -1059,7 +1060,6 @@ void AudioDisplay::UpdatePosition (int pos,bool IsSample) {
 	int len = provider->GetNumSamples() / samples;
 	if (pos < 0) pos = 0;
 	if (pos >= len) pos = len-1;
-
 	// Set
 	Position = pos;
 	PositionSample = pos*samples;
@@ -1221,7 +1221,7 @@ void AudioDisplay::UpdateScrollbar() {
 	int page = w/12;
 	int len = provider->GetNumSamples() / samples / 12;
 	Position = PositionSample / samples;
-	ScrollBar->SetScrollbar(Position/12,page,len,int(page*0.7),true);
+	ScrollBar->SetScrollbar(Position/12,page,len/*,int(page*0.7),true*/);
 }
 
 

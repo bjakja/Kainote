@@ -466,7 +466,7 @@ void KaiTextCtrl::OnMouseEvent(wxMouseEvent& event)
 		scPos = MAX(scPos - step, 0);
 		Refresh(false);
 	}
-	//event.Skip();
+	event.Skip();
 }
 
 

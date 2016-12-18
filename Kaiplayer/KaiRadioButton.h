@@ -17,6 +17,7 @@
 #define __KAIRADIOBUTTON__
 
 #include "KaiCheckBox.h"
+#include <vector>
 
 class KaiRadioButton : public KaiCheckBox
 {
@@ -34,9 +35,19 @@ private:
 	wxDECLARE_ABSTRACT_CLASS(KaiRadioButton);
 };
 
-//class RadioBox{
-//	RadioBox(
-//
-//}
+class KaiRadioBox : public wxWindow
+{
+public:
+	KaiRadioBox(wxWindow *parent, int id, const wxString& label,
+             const wxPoint& pos, const wxSize& size, const wxArrayString &names, int spacing=1, long style = wxVERTICAL);
+	virtual ~KaiRadioBox(){};
+	int GetSelection();
+	void SetSelection(int sel);
+private:
+	int selected;
+	std::vector< KaiRadioButton*> buttons;
+	wxDECLARE_ABSTRACT_CLASS(KaiRadioBox);
+};
+
 
 #endif

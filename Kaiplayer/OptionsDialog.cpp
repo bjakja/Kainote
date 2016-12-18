@@ -24,6 +24,7 @@
 #include "ColorPicker.h"
 #include "KaiTextCtrl.h"
 #include "FontDialog.h"
+#include "KaiListCtrl.h"
 
 OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	: wxDialog(parent,-1,_("Opcje"),wxDefaultPosition,wxDefaultSize,wxDEFAULT_DIALOG_STYLE,"Options")
@@ -311,25 +312,6 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		prefaudio->Add(tc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
 		MainSizer->Add(prefaudio,0,wxRIGHT|wxEXPAND,5);
 
-		/*wxString movopts[6]={_("Dwukrotnym kliknięciu na linię (zawsze włączone)"),_("Kliknięciu na linię"),
-			_("Kliknięciu na linię lub edycji na pauzie"),_("Kliknięciu na linię lub edycji"),
-			_("Edycji na pauzie"),_("Edycji") 
-		};
-		wxStaticBoxSizer *moveVideo=new wxStaticBoxSizer(wxVERTICAL, Video, _("Przesuwaj wideo do aktualnej linii po:"));
-		KaiChoice *movvid=new KaiChoice(Video,10000,wxDefaultPosition,wxDefaultSize,6,movopts);
-		movvid->SetSelection(Options.GetInt("Move Video To Active Line"));
-		ConOpt(movvid,"Move Video To Active Line");
-		moveVideo->Add(movvid,0,wxALL|wxEXPAND,2);
-		MainSizer->Add(moveVideo,0,wxRIGHT|wxEXPAND,5);
-
-		wxStaticBoxSizer *playVideo=new wxStaticBoxSizer(wxVERTICAL, Video, _("Odtwarzaj po zmianie linii:"));
-		wxString playopts[4]={_("Nic"),_("Audio do końca linii"),_("Wideo do końca linii"),
-			_("Wideo do początku następnej linii")};
-		KaiChoice *playing=new KaiChoice(Video,10000,wxDefaultPosition,wxDefaultSize,4,playopts);
-		playing->SetSelection(Options.GetInt("Play After Selection"));
-		ConOpt(playing,"Play After Selection");
-		playVideo->Add(playing,0,wxALL|wxEXPAND,2);
-		MainSizer->Add(playVideo,0,wxRIGHT|wxEXPAND,5);*/
 
 		Video->SetSizerAndFit(MainSizer);
 	}
@@ -434,19 +416,42 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		//Audio colours
 	{
 
-		wxFlexGridSizer *AudioColorsSizer=new wxFlexGridSizer(18,2,wxSize(5,2));
-		wxString labels[]={_("Kolor tła"),_("Kolor znacznika start"),_("Kolor znacznika koniec"),_("Kolor znacznika przesuwania czasów"),
-			_("Kolor znaczników nieaktywnej linijki"),_("Kolor kursora"),_("Kolor znaczników sekund"),_("Kolor klatek kluczowych"),
-			_("Kolor zaznaczenia"),_("Kolor zaznaczenia po modyfikacji"),_("Kolor wykresu audio"),
-			_("Kolor nieaktywnego wykresu audio"),_("Kolor zmodyfikowanego wykresu audio"),_("Kolor zaznaczonego wykresu audio"),
-			_("Kolor tła nieaktywnych linijek"),_("Pierwszy kolor spektrum"), _("Drugi kolor spektrum"), _("Trzeci kolor spektrum")};
-		wxString opts[]={"Audio Background","Audio Line Boundary Start","Audio Line Boundary End","Audio Line Boundary Mark",
+		//wxFlexGridSizer *AudioColorsSizer=new wxFlexGridSizer(18,2,wxSize(5,2));
+		//18+29=47
+		wxString labels[47]={_("Audio tło"),_("Audio znacznik start"),_("Audio znacznik koniec"),_("Audio znacznik przesuwania czasów"),
+			_("Audio znaczniki nieaktywnej linijki"),_("Audio kursor"),_("Audio znaczniki sekund"),_("Audio klatki kluczowe"),
+			_("Audio zaznaczenie"),_("Audio zaznaczenie po modyfikacji"),_("Audio wykres audio"),
+			_("Audio nieaktywny wykres falowy"),_("Audio zmodyfikowany wykres falkowy"),_("Audio zaznaczony wykres falowy"),
+			_("Audio tło nieaktywnych linijek"),_("Audio tło spektrum"), _("Audio spektrum"), _("Audio echo spektrum"),
+			_("Edytor tekst"),_("Edytor nazwy tagów"),_("Edytor wartości tagów"),
+			_("Edytor nawiasy klamrowe"),_("Edytor operatory tagów"),_("Edytor tło"),
+			_("Edytor zaznaczenie"),_("Edytor zaznaczenie nieaktywnego okna"),_("Edytor błędy pisowni"),
+			_("Napisy tekst"),_("Napisy tło"),_("Napisy tło dialogów"),_("Napisy tło komentarzy"),
+			_("Napisy zaznaczone dialogi"),_("Napisy zaznaczone komentarze"),
+			_("Napisy nachodzące linie"),_("Napisy linie"),_("Napisy obramowanie aktywnej linijki"),
+			_("Napisy etykieta"),_("Napisy etykieta zmodyfikowanej linii"),_("Napisy etykieta zapisanej linii"),
+			_("Napisy tło błędów pisowni"),_("Napisy porównanie"),_("Napisy tło porównania"),
+			_("Napisy tło porównania zaznaczenia"),_("Napisy tło komentarza porównania"),
+			_("Napisy tło komentarza zazn. porównania"),_("Pierwszy kolor podglądu styli"),
+			_("Drugi kolor podglądu styli")
+		};
+		wxString opts[47]={"Audio Background","Audio Line Boundary Start","Audio Line Boundary End","Audio Line Boundary Mark",
 			"Audio Line Boundary Inactive Line","Audio Play Cursor","Audio Seconds Boundaries","Audio Keyframes",
 			"Audio Selection Background","Audio Selection Background Modified","Audio Waveform","Audio Waveform Inactive",
 			"Audio Waveform Modified","Audio Waveform Selected","Audio Inactive Lines Background","Audio Spectrum First Color",
-			"Audio Spectrum Second Color","Audio Spectrum Third Color"};
+			"Audio Spectrum Second Color","Audio Spectrum Third Color",
+			"Editor normal text","Editor tag names","Editor tag values",
+			"Editor curly braces","Editor tag operators","Editor background",
+			"Editor selection","Editor selection no focus","Editor spellchecker",
+			"Grid Text","Grid Background","Grid Dialogue","Grid Comment","Grid Selected Dialogue","Grid Selected Comment",
+			"Grid Collisions","Grid Active Line","Grid Lines","Grid Label Normal","Grid Label Modified",
+			"Grid Label Saved","Grid Spellchecker","Grid comparison","Grid comparison background",
+			"Grid comparison background selected","Grid comparison comment background",
+			"Grid comparison comment background selected","Style Preview Color1","Style Preview Color2"
+		};
+		
 	
-		for(int i=0;i<18;i++)
+		/*for(int i=0;i<18;i++)
 		{
 			ColorButton *optc=new ColorButton(AudioCols,Options.GetString(opts[i]),wxSize(60,24));
 			ConOpt(optc,opts[i]);
@@ -455,7 +460,19 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		}
 	
 
-		AudioCols->SetSizerAndFit(AudioColorsSizer);
+		AudioCols->SetSizerAndFit(AudioColorsSizer);*/
+		wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+		KaiListCtrl *List = new KaiListCtrl(AudioCols, -1, wxDefaultPosition, wxSize(300, -1));
+		List->InsertCollumn(0, "Nazwa", TYPE_TEXT, 220);
+		List->InsertCollumn(1, "Kolor", TYPE_COLOR, 150);
+		for(int i=0;i<47;i++)
+		{
+			int row = List->AppendItem(new ItemText(labels[i]));
+			AssColor col = Options.GetColor(opts[i]);
+			List->SetItem(row, 1, new ItemColor(col));
+		}
+		sizer->Add(List, 1, wxALL|wxEXPAND, 2);
+		AudioCols->SetSizerAndFit(sizer);
 	}
 		
 	//Adding pages

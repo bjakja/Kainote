@@ -19,7 +19,7 @@
 #include "Stylelistbox.h"
 #include "KainoteMain.h"
 #include "EditBox.h"
-
+//#include "ColorPicker.h"
 
 
 CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const wxPoint& pos,const wxSize& size,long style)
@@ -53,7 +53,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	TimeText = new TimeCtrl(this, -1, "0:00:00.00", wxDefaultPosition, wxSize(60,20), wxALIGN_CENTER|wxTE_PROCESS_ENTER);
 	Forward = new KaiRadioButton(this, -1, _("W przód"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
 	Backward = new KaiRadioButton(this, -1, _("W tył"));
-
+	
 	timegrid->Add(TimeText,0,wxEXPAND|wxLEFT|wxRIGHT,2);
 	timegrid->Add(MoveTime,0,wxEXPAND|wxRIGHT,2);
 	timegrid->Add(Forward,1,wxEXPAND|wxLEFT|wxRIGHT,2);
@@ -80,11 +80,11 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	audiotime->Enable(false);
 
 	Connect(ID_VIDEO,ID_AUDIO,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&CTwindow::AudioVideoTime);
-	
+	//TextColorPicker *picker = new TextColorPicker(this, AssColor(wxString("#AABBCC")));
 	VAtiming->Add(SE,0,wxEXPAND|wxTOP,2);
 	VAtiming->Add(videotime,1,wxEXPAND|wxLEFT,2);
 	VAtiming->Add(audiotime,1,wxEXPAND|wxLEFT,2);
-
+	//VAtiming->Add(picker,0,wxEXPAND|wxLEFT,2);
 	wxArrayString choices;
 	KaiStaticBoxSizer *linesizer=new KaiStaticBoxSizer(wxVERTICAL,this,_("Które linijki"));
 	choices.Add(_("Wszystkie linijki"));

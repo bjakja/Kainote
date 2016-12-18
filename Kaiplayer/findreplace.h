@@ -46,6 +46,7 @@ class findreplace: public wxDialog
 		KaiRadioButton* RadioButton5;
 		KaiRadioButton* RadioButton6;
 		KaiRadioButton* RadioButton7;
+		KaiRadioButton* RadioButton8;
 		MappedButton* Button1;
 		MappedButton* Bplus;
 		
@@ -60,8 +61,8 @@ class findreplace: public wxDialog
 		KaiTextCtrl* tcstyle;
 		KaiCheckBox *Fdial;
 		KaiCheckBox *Fcomm;
-		wxRadioBox *Actions;
-		wxRadioBox *Selections;
+		KaiRadioBox *Actions;
+		KaiRadioBox *Selections;
 	
 		void ReloadStyle();
 		void SelectLine();

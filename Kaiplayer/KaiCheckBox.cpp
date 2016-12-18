@@ -141,7 +141,7 @@ void KaiCheckBox::OnMouseEvent(wxMouseEvent &event)
 		Refresh(false);
 		if(oldclicked){
 			value = !value;
-			wxCommandEvent evt(wxEVT_COMMAND_CHECKBOX_CLICKED, GetId());
+			wxCommandEvent evt((isCheckBox)? wxEVT_COMMAND_CHECKBOX_CLICKED : wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
 			this->ProcessEvent(evt);
 		}
 	}
@@ -150,12 +150,12 @@ void KaiCheckBox::OnMouseEvent(wxMouseEvent &event)
 
 void KaiCheckBox::OnKeyPress(wxKeyEvent &event)
 {
-	if(event.GetKeyCode() == WXK_RETURN){
+	/*if(event.GetKeyCode() == WXK_RETURN && GetWindowStyle() & wx){
 		value = !value;
 		Refresh(false);
-		wxCommandEvent evt(wxEVT_COMMAND_CHECKBOX_CLICKED, GetId());
+		wxCommandEvent evt((isCheckBox)? wxEVT_COMMAND_CHECKBOX_CLICKED : wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
 		this->ProcessEvent(evt);
-	}
+	}*/
 }
 
 void KaiCheckBox::OnSize(wxSizeEvent& event)

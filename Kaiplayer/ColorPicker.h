@@ -210,6 +210,22 @@ private:
 	AssColor ActualColor;
 };
 typedef ButtonColorPicker ColorButton;
+
+class TextColorPicker : public wxWindow
+{
+public:
+	TextColorPicker(wxWindow *parent, int id, const AssColor &color, const wxPoint &pos = wxDefaultPosition, const wxSize &size=wxDefaultSize, int style = 0);
+	virtual ~TextColorPicker(){};
+	AssColor GetColor();
+	void SetColor(const AssColor& color);
+private:
+	void OnDoubleClick(wxMouseEvent &evt);
+	void OnPaint(wxPaintEvent &evt);
+	void OnSize(wxSizeEvent &evt);
+	void OnErase(wxEraseEvent &evt){};
+	AssColor color;
+};
+
 //Uwa¿aj aby nie stosowaæ idów
 enum {
 	SELECTOR_SPECTRUM = 14000,

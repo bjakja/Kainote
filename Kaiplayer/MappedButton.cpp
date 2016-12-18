@@ -198,14 +198,14 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 			tdc.SetBrush(wxBrush(buttonColor));
 			tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW)));
 			tdc.DrawRectangle(4,4,w-8,h-8);
-		}else{
-			tdc.SetTextForeground(wxSystemSettings::GetColour((enabled)? wxSYS_COLOUR_WINDOWTEXT : wxSYS_COLOUR_GRAYTEXT));
-			tdc.GetTextExtent(name, &fw, &fh, 0, 0/*, &font*/);
-			wxRect cur(5, (h-fh)/2, w - 10, fh);
-			tdc.SetClippingRegion(cur);
-			tdc.DrawLabel(name,cur,wxALIGN_CENTER);
-			tdc.DestroyClippingRegion();
 		}
+		tdc.SetTextForeground((enabled)? GetForegroundColour() : wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+		tdc.GetTextExtent(name, &fw, &fh);
+		wxRect cur(5, (h-fh)/2, w - 10, fh);
+		tdc.SetClippingRegion(cur);
+		tdc.DrawLabel(name,cur,wxALIGN_CENTER);
+		tdc.DestroyClippingRegion();
+		
 		
 	}
 	wxPaintDC dc(this);
@@ -319,6 +319,7 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 	tdc.SelectObject(*bmp);
 	tdc.SetFont(GetFont());
 	wxColour background = GetParent()->GetBackgroundColour();
+	bool enabled = IsThisEnabled();
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
@@ -348,8 +349,8 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 			fw=icon.GetWidth(); fh=icon.GetHeight();
 			tdc.DrawBitmap(icon, (w - fw)/2, (h - fh)/2);
 		}else{
-			tdc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-			tdc.GetTextExtent(name, &fw, &fh, 0, 0/*, &font*/);
+			tdc.SetTextForeground((enabled)? GetForegroundColour() : wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+			tdc.GetTextExtent(name, &fw, &fh);
 			wxRect cur(5, (h-fh)/2, w - 10, fh);
 			tdc.SetClippingRegion(cur);
 			tdc.DrawLabel(name,cur,wxALIGN_CENTER);

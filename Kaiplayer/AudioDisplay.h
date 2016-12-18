@@ -50,6 +50,7 @@
 #include "AudioPlayerDSound.h"
 #include "SubsDialogue.h"
 #include "KaraokeSplitting.h"
+#include "KaiScrollbar.h"
 #include <d3d9.h>
 #include <d3dx9.h>
 
@@ -178,7 +179,7 @@ public:
 
 	int w,h;
 	AudioBox *box;
-	wxScrollBar *ScrollBar;
+	KaiScrollbar *ScrollBar;
 	wxTimer UpdateTimer;
 	bool cursorPaint;
 

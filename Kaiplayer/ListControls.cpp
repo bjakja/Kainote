@@ -162,11 +162,15 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 	choiceText->Bind(wxEVT_LEAVE_WINDOW,&KaiChoice::OnMouseEvent,this,27789);
 	choiceText->Bind(wxEVT_MOUSEWHEEL, &KaiChoice::OnMouseEvent, this,27789);
 	choiceText->Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &evt){
-		focusSet=true;
+		focusSet=true;/* choiceText->GetSelection(&sels, &sele);*/
 	},27789);
 	choiceText->Bind(wxEVT_LEFT_UP, [=](wxMouseEvent &evt){
 		if(focusSet){
-			choiceText->SetSelection(0,choiceText->GetValue().Len(),true);
+			long sels, sele;
+			choiceText->GetSelection(&sels, &sele);
+			if(sels == sele){
+				choiceText->SetSelection(0,choiceText->GetValue().Len(),true);
+			}
 			focusSet=false;
 		}
 		evt.Skip();
@@ -247,7 +251,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 			int fh=0, fw=w, ex=0, et=0;
 			wxString txt = (*list)[choice];
 			int removed=0;
-			while(fw > w - 22){
+			while(fw > w - 22 && txt!=""){
 				tdc.GetTextExtent(txt, &fw, &fh, &ex, &et/*, &font*/);
 				txt = txt.RemoveLast();
 				removed++;
@@ -311,7 +315,9 @@ void KaiChoice::OnMouseEvent(wxMouseEvent &event)
 		}
 	}
 	if (event.GetWheelRotation() != 0) {
-		if(!HasFocus() && (choiceText && !choiceText->HasFocus())){event.Skip(); return;}
+		if(!HasFocus() || (choiceText && !choiceText->HasFocus())){
+			event.Skip(); return;
+		}
 		if( itemList && itemList->IsShown()){
 			itemList->OnMouseEvent(event);
 			return;

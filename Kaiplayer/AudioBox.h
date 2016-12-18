@@ -67,7 +67,7 @@ class AudioBox : public wxPanel {
 	friend class AudioDisplay;
 
 private:
-	wxScrollBar *audioScroll;
+	KaiScrollbar *audioScroll;
 	wxSlider *HorizontalZoom;
 	wxSlider *VerticalZoom;
 	wxSlider *VolumeBar;

@@ -78,7 +78,7 @@ bool SubsGrid::IsNum(wxString test) {
 
 
 SubsGrid::SubsGrid(wxWindow *parent, const long int id,const wxPoint& pos,const wxSize& size, long style, const wxString& name)
-	: wxWindow(parent, id, pos, size, style, name)
+	: KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL, name)
 {
 
 	posY=0;
@@ -147,8 +147,6 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	wxPaintDC dc(this);
 	int w = 0;
 	int h = 0;
-	int sw=0;
-	int sh=0;
 	GetClientSize(&w,&h);
 	bool direct = false;
 
@@ -820,9 +818,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 	if (left_up && holding) {
 		holding = false;
 		if(file->IsNotSaved()&&lastsel!=-1){SetModified();}
-#if !_DEBUG
 		ReleaseMouse();
-#endif
 		if(oldX!=-1){return;}
 	}
 
@@ -833,9 +829,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 		if (!shift) lastRow = row;
 		lastsel=row;
 		oldX=(curY<GridHeight)?curX : -1;
-#if !_DEBUG
 		CaptureMouse();
-#endif
 	}
 	if(holding && oldX!=-1){
 		int diff=(oldX-curX);
@@ -2461,7 +2455,7 @@ int SubsGrid::CalcChars(wxString txt, wxString *lines, bool *bad)
 	return chars;
 }
 
-BEGIN_EVENT_TABLE(SubsGrid,wxWindow)
+BEGIN_EVENT_TABLE(SubsGrid,KaiScrolledWindow)
 	EVT_PAINT(SubsGrid::OnPaint)
 	EVT_SIZE(SubsGrid::OnSize)
 	EVT_SCROLLWIN(SubsGrid::OnScroll)

@@ -44,5 +44,6 @@ private:
 	wxDECLARE_ABSTRACT_CLASS(KaiCheckBox);
 };
 
+void BlueUp(wxBitmap *bmp);
 
 #endif

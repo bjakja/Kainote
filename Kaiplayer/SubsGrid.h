@@ -24,11 +24,12 @@
 #include <map>
 #include "Styles.h"
 #include "SubsFile.h"
+#include "KaiScrollbar.h"
 
 class EditBox;
 class kainoteFrame;
 
-class SubsGrid : public wxWindow
+class SubsGrid : public KaiScrolledWindow
 {
 	friend class SubsFile;
 public:

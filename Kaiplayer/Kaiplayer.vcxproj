@@ -141,6 +141,7 @@
     <ClCompile Include="FFT.cpp" />
     <ClCompile Include="FindReplace.cpp" />
     <ClCompile Include="KaiCheckBox.cpp" />
+    <ClCompile Include="KaiListCtrl.cpp" />
     <ClCompile Include="KainoteApp.cpp" />
     <ClCompile Include="KainoteMain.cpp" />
     <ClCompile Include="KaiRadioButton.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="FFT.h" />
     <ClInclude Include="FindReplace.h" />
     <ClInclude Include="KaiCheckBox.h" />
+    <ClInclude Include="KaiListCtrl.h" />
     <ClInclude Include="KainoteApp.h" />
     <ClInclude Include="KainoteMain.h" />
     <ClInclude Include="KaiRadioButton.h" />

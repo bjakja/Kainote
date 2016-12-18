@@ -1153,3 +1153,114 @@ void ButtonColorPicker::OnClick(wxCommandEvent &event)
 		SetBackgroundColour(ActualColor.GetWX());
 	}
 }
+
+TextColorPicker::TextColorPicker(wxWindow *parent, int id, const AssColor &_color, const wxPoint &pos, const wxSize &size, int style)
+	:wxWindow(parent,id, pos, size, style)
+{
+	color = _color;
+	wxSize newSize=size;
+	SetFont(parent->GetFont());
+	int fw, fh;
+	GetTextExtent(color.GetHex(true), &fw, &fh);
+	if(size.x <1){
+		newSize.x = fw+16;
+		if(newSize.x<60){newSize.x=60;}
+	}
+	if(size.y <1){
+		newSize.y = fh+6;
+	}
+	SetMinSize(newSize);
+	//SetBestSize(newSize);
+	Bind(wxEVT_LEFT_DCLICK, &TextColorPicker::OnDoubleClick, this);
+	Bind(wxEVT_SIZE, &TextColorPicker::OnSize, this);
+	Bind(wxEVT_PAINT, &TextColorPicker::OnPaint, this);
+	Bind(wxEVT_ERASE_BACKGROUND, &TextColorPicker::OnErase, this);
+	SetFont(parent->GetFont());
+	SetBackgroundColour(parent->GetBackgroundColour());
+}
+	
+AssColor TextColorPicker::GetColor()
+{
+	return color;
+}
+
+void TextColorPicker::SetColor(const AssColor& _color)
+{
+	color=_color;
+}
+
+	
+void TextColorPicker::OnDoubleClick(wxMouseEvent &evt)
+{
+	DialogColorPicker *dcp = DialogColorPicker::Get(this,color);
+	wxPoint mst=wxGetMousePosition();
+	wxSize siz=dcp->GetSize();
+	siz.x;
+	wxRect rc = wxGetClientDisplayRect();
+	mst.x-=(siz.x/2);
+	mst.x=MID(rc.x, mst.x, rc.width-siz.x);
+	mst.y+=15;
+	mst.y=MID(rc.y, mst.y , rc.height-siz.y);
+	dcp->Move(mst);
+	if (dcp->ShowModal() == wxID_OK) {
+		color = dcp->GetColor();
+		Refresh(false);
+	}
+}
+	
+void TextColorPicker::OnPaint(wxPaintEvent &evt)
+{
+	int w=0;
+	int h=0;
+	GetClientSize (&w, &h);
+	if(w==0||h==0){return;}
+	wxMemoryDC tdc;
+	tdc.SelectObject(wxBitmap(w,h));
+	tdc.SetFont(GetFont());
+	wxColour background = GetBackgroundColour();
+	tdc.SetBrush(wxBrush(background));
+	tdc.SetPen(wxPen(background));
+	tdc.DrawRectangle(0,0,w,h);
+	
+	if(color.a){
+		wxColour col1=Options.GetColour("Style Preview Color1");
+		wxColour col2=Options.GetColour("Style Preview Color2");
+		int r2 = color.r, g2 = color.g, b2 = color.b;
+		int r = col1.Red(), g = col1.Green(), b = col1.Blue();
+		int r1 = col2.Red(), g1 = col2.Green(), b1 = col2.Blue();
+		int inv_a = 0xFF - color.a;
+		int fr = (r2* inv_a / 0xFF) + (r - inv_a * r / 0xFF);
+		int fg = (g2* inv_a / 0xFF) + (g - inv_a * g / 0xFF);
+		int fb = (b2* inv_a / 0xFF) + (b - inv_a * b / 0xFF);
+		wxColour firstMask(fr,fg,fb);
+		fr = (r2* inv_a / 0xFF) + (r1 - inv_a * r1 / 0xFF);
+		fg = (g2* inv_a / 0xFF) + (g1 - inv_a * g1 / 0xFF);
+		fb = (b2* inv_a / 0xFF) + (b1 - inv_a * b1 / 0xFF);
+		wxColour secondMask(fr,fg,fb);
+		int squareSize = (h-3)/4;
+		for(int i = 0; i< 4; i++){
+			for(int j = 0; j< 4; j++){
+				tdc.SetBrush(((i+j) % 2 == 0)? firstMask : secondMask);
+				tdc.SetPen(*wxTRANSPARENT_PEN);
+				tdc.DrawRectangle(2+(i*squareSize),2+(j*squareSize),squareSize,squareSize);
+			}
+		}
+	}
+	tdc.SetBrush(wxBrush(color.a? *wxTRANSPARENT_BRUSH : color.GetWX()));
+	tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT)));
+	tdc.DrawRectangle(1,1,h-3,h-3);
+	
+	int fw, fh;
+	wxString hextext = color.GetHex(true);
+	GetTextExtent(hextext, &fw, &fh);
+	tdc.SetTextForeground(GetForegroundColour());
+	tdc.DrawText(hextext, h+2, (h - fh)/2);
+
+	wxPaintDC dc(this);
+	dc.Blit(0,0,w,h,&tdc,0,0);
+}
+
+void TextColorPicker::OnSize(wxSizeEvent &evt)
+{
+	Refresh(false);
+}
