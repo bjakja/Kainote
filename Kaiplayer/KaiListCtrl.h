@@ -32,8 +32,8 @@ public:
 	Item(byte _type=TYPE_TEXT){type=_type;modified=false;}
 	virtual ~Item(){	
 	}
-	virtual void OnMouseEvent(wxMouseEvent &event){};
-	virtual void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, bool isSel){};
+	virtual void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList){};
+	virtual void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList){};
 	bool modified;
 	byte type;
 };
@@ -43,8 +43,8 @@ public:
 	ItemText(const wxString &txt) : Item(){name = txt;}
 	virtual ~ItemText(){		
 	}
-	void OnMouseEvent(wxMouseEvent &event){};
-	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, bool isSel);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList){};
+	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList);
 	wxString GetName(){return name;}
 	wxString name;
 };
@@ -54,8 +54,8 @@ public:
 	ItemColor(const AssColor &color) : Item(TYPE_COLOR){col = color;}
 	virtual ~ItemColor(){	
 	}
-	void OnMouseEvent(wxMouseEvent &event){};
-	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, bool isSel);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList);
+	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList);
 	AssColor col;
 };
 
@@ -63,8 +63,8 @@ class ItemCheckBox : public Item{
 public:
 	ItemCheckBox(bool check, const wxString &_label) : Item(TYPE_CHECKBOX){check = checked; enter=false; label = _label;}
 	virtual ~ItemCheckBox(){}
-	void OnMouseEvent(wxMouseEvent &event){};
-	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, bool isSel);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList){};
+	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList);
 	bool checked;
 	bool enter;
 	wxString label;
@@ -120,10 +120,12 @@ private:
 	wxArrayInt widths;
 	wxBitmap *bmp;
 	int sel;
-	int lastSel;
+	int lastSelX;
+	int lastSelY;
 	int scPosV;
 	int scPosH;
 	int lineHeight;
+	int headerHeight;
 
 	DECLARE_EVENT_TABLE()
 };

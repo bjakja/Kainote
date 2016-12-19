@@ -30,7 +30,8 @@ namespace Auto {
 
 	bool LoadFile(lua_State *L, wxString const& filename) {
 		OpenWrite ow;
-		wxString script = ow.FileOpen(filename);
+		wxString script; 
+		if(!ow.FileOpen(filename, &script)){return false;}
 		script.Replace("aegisub","kainote");
 		//script.Replace("\\","\\\\");
 		

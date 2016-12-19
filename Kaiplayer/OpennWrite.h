@@ -26,7 +26,7 @@ class OpenWrite
     OpenWrite(wxString filename, bool clear=true);
     ~OpenWrite();
     void CloseFile();
-    wxString FileOpen(wxString filename,bool test=true);
+    bool FileOpen(wxString filename, wxString *riddenText,bool test=true);
     void FileWrite(wxString filename, wxString alltext, bool utf=true);
     void PartFileWrite(wxString parttext);
 	bool IsUTF8withoutBOM(const char* buf, size_t size);

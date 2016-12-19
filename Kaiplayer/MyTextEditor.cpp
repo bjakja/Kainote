@@ -841,7 +841,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	}
 
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
-	dc.SetPen(wxPen(wxSystemSettings::GetColour((HasFocus())? wxSYS_COLOUR_MENUHILIGHT : wxSYS_COLOUR_BTNSHADOW)));
+	dc.SetPen(wxPen((HasFocus())? Options.GetColour("Editor Border Focus") : Options.GetColour("Editor Border")));
 	dc.DrawRectangle(0,scPos*2,w,windowh);
 }
 

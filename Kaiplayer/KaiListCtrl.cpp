@@ -15,16 +15,11 @@
 
 #include "KaiListCtrl.h"
 #include "KaiCheckBox.h"
+#include "ColorPicker.h"
 #include "config.h"
 
-void ItemText::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, bool isSel)
+void ItemText::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList)
 {
-	if(isSel){
-		wxColour highlight = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-		dc->SetPen(wxPen(highlight));
-		dc->SetBrush(wxBrush(highlight));
-		dc->DrawRectangle(x, y, width, height);
-	}
 	wxSize ex = dc->GetTextExtent(name);
 	//dc->DrawText(name, x, y + ((height - ex.y)/2));
 	wxRect cur(x+2, y, width - 4, height);
@@ -33,14 +28,8 @@ void ItemText::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, bool
 	dc->DestroyClippingRegion();
 }
 
-void ItemColor::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, bool isSel)
+void ItemColor::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList)
 {
-	if(isSel){
-		wxColour highlight = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-		dc->SetPen(wxPen(highlight));
-		dc->SetBrush(wxBrush(highlight));
-		dc->DrawRectangle(x, y, width, height);
-	}
 	if(col.a){
 		wxColour col1=Options.GetColour("Style Preview Color1");
 		wxColour col2=Options.GetColour("Style Preview Color2");
@@ -79,14 +68,31 @@ void ItemColor::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, boo
 	dc->DestroyClippingRegion();
 }
 
-void ItemCheckBox::OnPaint(wxMemoryDC *dc, int x, int y, int w, int h, bool isSel)
+void ItemColor::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList)
 {
-	if(isSel){
-		wxColour highlight = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-		dc->SetPen(wxPen(highlight));
-		dc->SetBrush(wxBrush(highlight));
-		dc->DrawRectangle(x, y, w, h);
+	//wxLogStatus("evt myszowy %i %i %i %i", (int)event.LeftDown(), (int)event.LeftUp(), event.GetX(), event.GetY());
+	if(event.LeftDClick()){
+		//wxLogStatus("doubleclick");
+		DialogColorPicker *dcp = DialogColorPicker::Get(theList,col);
+		wxPoint mst=wxGetMousePosition();
+		wxSize siz=dcp->GetSize();
+		siz.x;
+		wxRect rc = wxGetClientDisplayRect();
+		mst.x-=(siz.x/2);
+		mst.x=MID(rc.x, mst.x, rc.width-siz.x);
+		mst.y+=15;
+		mst.y=MID(rc.y, mst.y , rc.height-siz.y);
+		dcp->Move(mst);
+		if (dcp->ShowModal() == wxID_OK) {
+			col = dcp->GetColor();
+			theList->Refresh(false);
+		}
 	}
+
+};
+
+void ItemCheckBox::OnPaint(wxMemoryDC *dc, int x, int y, int w, int h, wxWindow *theList)
+{
 	wxString bitmapName = (checked)? "checkbox_selected" :  "checkbox" ;
 	wxBitmap checkboxBmp = wxBITMAP_PNG(bitmapName);
 	if(enter){BlueUp(&checkboxBmp);}
@@ -108,10 +114,12 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 	:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL|wxHORIZONTAL)
 	,bmp(NULL)
 	,sel(-1)
-	,lastSel(-1)
+	,lastSelX(-1)
+	,lastSelY(-1)
 	,scPosV(0)
 	,scPosH(0)
 	,lineHeight(17)
+	,headerHeight(25)
 {
 	SetBackgroundColour(parent->GetBackgroundColour());
 	SetMinSize(size);
@@ -164,13 +172,13 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	int h=0;
 	GetClientSize (&w, &h);
 	if(w==0||h==0){return;}
-	size_t maxVisible = (h/lineHeight)+1;
-	size_t itemsize = itemList.size();
+	size_t maxVisible = ((h-headerHeight)/lineHeight)+1;
+	size_t itemsize = itemList.size()+1;
 	if((size_t)scPosV>=itemsize-maxVisible){scPosV=itemsize-maxVisible;}
 	if(scPosV<0){scPosV=0;}
-	size_t maxsize=itemsize;
+	size_t maxsize=itemsize-1;
 	if(itemsize>maxVisible){
-		maxsize=maxVisible+scPosV;
+		maxsize=MIN(maxVisible+scPosV, itemsize-1);
 		if(SetScrollBar(wxVERTICAL, scPosV, maxVisible, itemsize)){
 			GetClientSize (&w, &h);
 		}
@@ -204,7 +212,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 		posX += widths[j];
 	}
 	posX=scPosH+5;
-	int posY=25;
+	int posY=headerHeight;
 	for(size_t i = scPosV; i < maxsize; i++){
 		auto row = itemList[i]->row;
 		for(size_t j = 0; j < widths.size(); j++){
@@ -212,7 +220,13 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 				continue;
 			}
 			//drawing
-			row[j]->OnPaint(&tdc, posX, posY, widths[j], lineHeight, i==sel);
+			if(i==sel){
+				wxColour highlight = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+				tdc.SetPen(wxPen(highlight));
+				tdc.SetBrush(wxBrush(highlight));
+				tdc.DrawRectangle(posX, posY, widths[j], lineHeight);
+			}
+			row[j]->OnPaint(&tdc, posX, posY, widths[j], lineHeight, this);
 			posX += widths[j];
 			
 		}
@@ -233,16 +247,41 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 		GetClientSize (&w, &h);
 		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
 		scPosV -=step;
-		size_t maxVisible = ((h-25)/lineHeight)+1;
+		size_t maxVisible = ((h-headerHeight)/lineHeight)+1;
 		if(scPosV<0){scPosV=0;}
-		else if((size_t)scPosV > itemList.size()-maxVisible){scPosV = itemList.size()-maxVisible;}
+		else if((size_t)scPosV > itemList.size()+1-maxVisible){scPosV = itemList.size()+1-maxVisible;}
 		Refresh(false);
 		return;
 	}
 	wxPoint cursor = evt.GetPosition();
-	lastSel=sel;
-	sel = ((cursor.y-20)/lineHeight) + scPosV;
-	Refresh(false);
+
+	int elemY = ((cursor.y-headerHeight)/lineHeight) + scPosV;
+	if(elemY<0){
+		//tu napisz chwytanie headera
+		return;
+	}
+	int elemX = -1;
+	int startX = 0; 
+	for(size_t i = 0; i < widths.size(); i++){
+		if(cursor.x > startX && cursor.x <= startX + widths[i]){
+			elemX=i;
+			bool enter = (elemX != lastSelX || elemY != lastSelY);
+			if(enter && lastSelX != -1 && lastSelY !=-1){
+				itemList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this);
+			}
+			itemList[elemY]->row[elemX]->OnMouseEvent(evt, enter, false, this);
+			break;
+		}
+		startX += widths[i];
+	}
+	if(evt.LeftDown()){
+		
+		sel = elemY;
+
+		Refresh(false);
+	}
+	lastSelY = elemY;
+	lastSelX = elemX;
 }
 
 void KaiListCtrl::OnScroll(wxScrollWinEvent& event)
@@ -298,7 +337,6 @@ BEGIN_EVENT_TABLE(KaiListCtrl,KaiScrolledWindow)
 	EVT_PAINT(KaiListCtrl::OnPaint)
 	EVT_SIZE(KaiListCtrl::OnSize)
 	EVT_SCROLLWIN(KaiListCtrl::OnScroll)
-	EVT_LEFT_DOWN(KaiListCtrl::OnMouseEvent)
-	EVT_MOUSEWHEEL(KaiListCtrl::OnMouseEvent)
+	EVT_MOUSE_EVENTS(KaiListCtrl::OnMouseEvent)
 	EVT_ERASE_BACKGROUND(KaiListCtrl::OnEraseBackground)
 END_EVENT_TABLE()

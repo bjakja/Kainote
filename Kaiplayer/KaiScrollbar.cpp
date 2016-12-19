@@ -63,12 +63,12 @@ void KaiScrollbar::SetScrollbar(int pos, int visible, int range, bool refresh)
 {
 	wxSize oldSize = GetClientSize();
 	allVisibleSize = range-visible;
-	if(holding || (unitPos >= allVisibleSize-1 && pos >= unitPos)){return;}
+	if(holding || (unitPos >= allVisibleSize && pos >= unitPos)){return;}
 	unitPos = pos;
 	visibleSize = visible;
 	allSize = range;
 	float divScroll = (float)visibleSize / (float)allSize;
-	if(pos >= allVisibleSize-1){unitPos=allVisibleSize;}
+	if(pos >= allVisibleSize){unitPos=allVisibleSize;}
 	int paneSize = (isVertical)? (oldSize.y-34) : (oldSize.x-34);
 	thumbSize = paneSize * divScroll;
 	if(thumbSize < 20){thumbSize=20;}
@@ -116,11 +116,11 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 	}
 	if(!bmp){bmp=new wxBitmap(w, h);}
 	tdc.SelectObject(*bmp);
-	wxColour highlight = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUHILIGHT);
-	wxColour normal = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-	wxColour pushed = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW);
-	wxColour background = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
-	tdc.SetPen(wxPen(pushed));
+	wxColour background = Options.GetColour("Scrollbar Background");
+	wxColour scroll = (enter)? Options.GetColour("Scrollbar Scroll Hover") : 
+		(holding && element & ELEMENT_THUMB)? Options.GetColour("Scrollbar Scroll Pushed") :
+		Options.GetColour("Scrollbar Scroll");
+	tdc.SetPen(wxPen(background));
 	tdc.SetBrush(wxBrush(background));
 	tdc.DrawRectangle(0, 0, w, h);
 	wxBitmap scrollArrow = wxBITMAP_PNG("arrow_list");
@@ -130,8 +130,8 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 		img = img.Rotate180();
 		tdc.DrawBitmap(wxBitmap(img), 3, 3);
 		tdc.DrawBitmap((holding && element & ELEMENT_BUTTON_BOTTOM)? scrollArrowPushed : scrollArrow, 3, h-13);
-		tdc.SetPen(wxPen((enter)? highlight : normal));
-		tdc.SetBrush(wxBrush((holding && element & ELEMENT_THUMB)? pushed : normal));
+		tdc.SetPen(wxPen(scroll));
+		tdc.SetBrush(wxBrush(scroll));
 		tdc.DrawRectangle(2, thumbPos, 13, thumbSize);
 	}else{
 		wxImage img = (holding && element & ELEMENT_BUTTON_TOP)? scrollArrowPushed.ConvertToImage() : scrollArrow.ConvertToImage();
@@ -140,8 +140,8 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 		img = (holding && element & ELEMENT_BUTTON_BOTTOM)? scrollArrowPushed.ConvertToImage() : scrollArrow.ConvertToImage();
 		img = img.Rotate180().Rotate90();
 		tdc.DrawBitmap(wxBitmap(img), w-13, 3);
-		tdc.SetPen(wxPen((enter)? highlight : normal));
-		tdc.SetBrush(wxBrush((holding && element & ELEMENT_THUMB)? pushed : normal));
+		tdc.SetPen(wxPen(scroll));
+		tdc.SetBrush(wxBrush(scroll));
 		tdc.DrawRectangle(thumbPos, 2, thumbSize, 13);
 	}
 	wxPaintDC dc(this);

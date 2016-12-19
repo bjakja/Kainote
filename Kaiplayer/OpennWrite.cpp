@@ -45,10 +45,9 @@ OpenWrite::~OpenWrite()
 	CloseFile();
 }
 
-wxString OpenWrite::FileOpen(wxString filename, bool test)
+bool OpenWrite::FileOpen(wxString filename, wxString *riddenText, bool test)
 {
 
-	wxString s;
 	bool utf8=true;
 	wxFile filetest;
 	wxFileName fname;
@@ -67,19 +66,20 @@ wxString OpenWrite::FileOpen(wxString filename, bool test)
 			utf8=IsUTF8withoutBOM(buff, size);
 			delete[] buff;
 		}
-		//wxString kkk;
 		filetest.Close();
-		// wxMessageBox(kkk<<"pierwszy znak "<< static_cast < int >(b[0])<<", drugi znak "<<static_cast < int >(b[1])<<"trzeci znak "<<static_cast < int >(b[2]));
 	}
 	wxFFile fileo;
 	fileo.Open(filename, wxT("r"));
 	if (fileo.IsOpened()){
 		if(utf8){
-			fileo.ReadAll(&s);
-		}else{fileo.ReadAll(&s, wxConvLocal);}
-		fileo.Close();}
+			fileo.ReadAll(riddenText);
+		}else{fileo.ReadAll(riddenText, wxConvLocal);}
+		fileo.Close();
+		if(riddenText->IsEmpty()) return false;
+		return true;
+	}
 
-	return s;
+	return false;
 }
 
 void OpenWrite::FileWrite(wxString fileName, wxString textfile, bool utf)

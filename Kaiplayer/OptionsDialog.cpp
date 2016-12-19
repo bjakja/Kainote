@@ -41,14 +41,11 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	SetIcon(icn);
 
 	wxPanel *Main= new wxPanel(OptionsTree);
-	wxPanel *GridColors= new wxPanel(OptionsTree);
-	wxPanel *GridColors2= new wxPanel(OptionsTree);
-	wxPanel *EditColors= new wxPanel(OptionsTree);
 	wxPanel *ConvOpt= new wxPanel(OptionsTree);
 	wxPanel *Hotkeyss= new wxPanel(OptionsTree);
 	wxPanel *AudioMain= new wxPanel(OptionsTree);
 	wxPanel *Video= new wxPanel(OptionsTree);
-	wxPanel *AudioCols= new wxPanel(OptionsTree);
+	wxPanel *Themes= new wxPanel(OptionsTree);
 
 	hkeymodif=0;
 	if(!Options.AudioOpts && !Options.LoadAudioOpts()){wxMessageBox(_("Dupa blada, opcje się nie wczytały, audio nie skonfigurujesz"), _("Błędny błąd"));}
@@ -133,75 +130,6 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		Main->SetSizerAndFit(MainSizer);
 	}
 
-		//Grid colors
-	{//należy uważać by ilość linii w grid sizerze się zgadzała ile opcji tyle ma być linii
-		wxFlexGridSizer *GridColorsSizer=new wxFlexGridSizer(12,2,wxSize(5,5));
-		wxString labels[12]={_("Kolor tła"),_("Kolor tła dialogów"),_("Kolor tła komentarzy"),_("Kolor zaznaczonych dialogów"),
-			_("Kolor zaznaczonych komentarzy"),_("Kolor tekstu"),_("Kolor nachodzących linii"),_("Kolor linii"),
-			_("Kolor obramowania aktywnej linijki"),_("Kolor etykiety"),_("Kolor etykiety zmodyfikowanej linii"),
-			_("Kolor etykiety zapisanej linii")};
-		wxString opts[12]={"Grid Background","Grid Dialogue","Grid Comment","Grid Selected Dialogue","Grid Selected Comment",
-			"Grid Text","Grid Collisions","Grid Lines","Grid Active Line","Grid Label Normal","Grid Label Modified",
-			"Grid Label Saved"};
-	
-		for(int i=0;i<12;i++)
-		{
-			ColorButton *optc=new ColorButton(GridColors,Options.GetString(opts[i]));
-			ConOpt(optc,opts[i]);
-			GridColorsSizer->Add(new wxStaticText(GridColors,-1,labels[i]+":"),1,wxRIGHT | wxALIGN_CENTRE_VERTICAL, 5);
-			GridColorsSizer->Add(optc,0,wxALL,2);
-		}
-	
-
-		GridColors->SetSizerAndFit(GridColorsSizer);
-
-
-	}
-	//grid colours2
-	{
-
-		wxFlexGridSizer *GridColorsSizer2=new wxFlexGridSizer(8,2,wxSize(5,5));
-		wxString labels[8]={_("Kolor tła błędów pisowni"),_("Kolor porównania"),_("Kolor tła porównania"),
-			_("Kolor tła porównania zaznaczenia"),_("Kolor tła komentarza porównania"),_("Kolor tła komentarza zazn. porównania"),_("Pierwszy kolor podglądu styli"),_("Drugi kolor podglądu styli")};
-		wxString opts[8]={"Grid Spellchecker","Grid comparison","Grid comparison background",
-			"Grid comparison background selected","Grid comparison comment background","Grid comparison comment background selected",
-			"Style Preview Color1","Style Preview Color2"};
-	
-		for(int i=0;i<8;i++)
-		{
-			ColorButton *optc=new ColorButton(GridColors2,Options.GetString(opts[i]));
-			ConOpt(optc,opts[i]);
-			GridColorsSizer2->Add(new wxStaticText(GridColors2,-1,labels[i]+":"),1,wxRIGHT | wxALIGN_CENTRE_VERTICAL, 5);
-			GridColorsSizer2->Add(optc,0,wxALL,2);
-		}
-	
-
-		GridColors2->SetSizerAndFit(GridColorsSizer2);
-
-	}
-	//editor colours
-	{
-		//Pamiętaj by flex sizerowi przypisywać ilość kolorów, bo bez tego lubi się sypać
-		wxFlexGridSizer *EditColorsSizer=new wxFlexGridSizer(9,2,wxSize(5,5));
-		wxString labels[9]={_("Kolor tekstu"),_("Kolor nazw tagów"),_("Kolor wartości tagów"),
-			_("Kolor nawiasów klamrowych"),_("Kolor operatorów tagów"),_("Kolor tła"),
-			_("Kolor zaznaczenia"),_("Kolor zaznaczenia nieaktywnego okna"),_("Kolor błędów pisowni"),};
-		wxString opts[9]={"Editor normal text","Editor tag names","Editor tag values",
-			"Editor curly braces","Editor tag operators","Editor background",
-			"Editor selection","Editor selection no focus","Editor spellchecker"};
-	
-		for(int i=0;i<9;i++)
-		{
-			ColorButton *optc=new ColorButton(EditColors,Options.GetString(opts[i]));
-			ConOpt(optc,opts[i]);
-			EditColorsSizer->Add(new wxStaticText(EditColors,-1,labels[i]+":"),1,wxRIGHT | wxALIGN_CENTRE_VERTICAL, 5);
-			EditColorsSizer->Add(optc,0,wxALL,2);
-		}
-	
-
-		EditColors->SetSizerAndFit(EditColorsSizer);
-
-	}
 		//Ustawienia konwersji
 	{
 		wxBoxSizer *ConvOptSizer1=new wxBoxSizer(wxVERTICAL);
@@ -413,66 +341,88 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		AudioMain->SetSizerAndFit(audio);
 	}
 
-		//Audio colours
+		//Themes
 	{
-
-		//wxFlexGridSizer *AudioColorsSizer=new wxFlexGridSizer(18,2,wxSize(5,2));
-		//18+29=47
-		wxString labels[47]={_("Audio tło"),_("Audio znacznik start"),_("Audio znacznik koniec"),_("Audio znacznik przesuwania czasów"),
-			_("Audio znaczniki nieaktywnej linijki"),_("Audio kursor"),_("Audio znaczniki sekund"),_("Audio klatki kluczowe"),
-			_("Audio zaznaczenie"),_("Audio zaznaczenie po modyfikacji"),_("Audio wykres audio"),
-			_("Audio nieaktywny wykres falowy"),_("Audio zmodyfikowany wykres falkowy"),_("Audio zaznaczony wykres falowy"),
-			_("Audio tło nieaktywnych linijek"),_("Audio tło spektrum"), _("Audio spektrum"), _("Audio echo spektrum"),
-			_("Edytor tekst"),_("Edytor nazwy tagów"),_("Edytor wartości tagów"),
-			_("Edytor nawiasy klamrowe"),_("Edytor operatory tagów"),_("Edytor tło"),
-			_("Edytor zaznaczenie"),_("Edytor zaznaczenie nieaktywnego okna"),_("Edytor błędy pisowni"),
+		//18+29=47+17+2 = 66 + 7 = 73
+		wxString labels[74]={
+			//okno
+			_("Okno tło"),_("Okno nieaktywne tło"),_("Okno tekst"),_("Okno nieaktywny tekst"),
+			//napisy
 			_("Napisy tekst"),_("Napisy tło"),_("Napisy tło dialogów"),_("Napisy tło komentarzy"),
 			_("Napisy zaznaczone dialogi"),_("Napisy zaznaczone komentarze"),
-			_("Napisy nachodzące linie"),_("Napisy linie"),_("Napisy obramowanie aktywnej linijki"),
+			_("Napisy kolidujące linie"),_("Napisy linie"),_("Napisy obramowanie aktywnej linijki"),
 			_("Napisy etykieta"),_("Napisy etykieta zmodyfikowanej linii"),_("Napisy etykieta zapisanej linii"),
 			_("Napisy tło błędów pisowni"),_("Napisy porównanie"),_("Napisy tło porównania"),
 			_("Napisy tło porównania zaznaczenia"),_("Napisy tło komentarza porównania"),
-			_("Napisy tło komentarza zazn. porównania"),_("Pierwszy kolor podglądu styli"),
-			_("Drugi kolor podglądu styli")
+			_("Napisy tło komentarza zazn. porównania"),
+			//edytor
+			_("Edytor tekst"),_("Edytor nazwy tagów"),_("Edytor wartości tagów"),
+			_("Edytor nawiasy klamrowe"),_("Edytor operatory tagów"),_("Edytor tło"),
+			_("Edytor zaznaczenie"),_("Edytor zaznaczenie nieaktywnego okna"),
+			_("Edytor obramowanie"),_("Edytor obramowanie aktywnego okna"),_("Edytor błędy pisowni"),
+			//audio
+			_("Audio tło"),_("Audio znacznik start"),_("Audio znacznik koniec"),_("Audio znacznik przesuwania czasów"),
+			_("Audio znaczniki nieaktywnej linijki"),_("Audio kursor"),_("Audio znaczniki sekund"),_("Audio klatki kluczowe"),
+			_("Audio zaznaczenie"),_("Audio zaznaczenie po modyfikacji"),_("Audio wykres audio"),
+			_("Audio nieaktywny wykres falowy"),_("Audio zmodyfikowany wykres falowy"),_("Audio zaznaczony wykres falowy"),
+			_("Audio tło nieaktywnych linijek"),_("Audio tło spektrum"), _("Audio spektrum"), _("Audio echo spektrum"),
+			//kontrolki
+			_("Przycisk i lista tło"), _("Przycisk i lista tło po najechaniu"), 
+			_("Przycisk i lista tło po wciśnięciu"), _("Przycisk i lista obramowanie"),
+			_("Przycisk i lista obramowanie nieaktywne"),_("Przycisk i lista obramowanie po najechaniu"),
+			_("Przycisk i lista obramowanie po wciśnięciu"),_("Przełącznik tło włączonego"),
+			_("Przełącznik obramowanie włączonego"),_("Pasek przewijania tło"),_("Pasek przewijania suwak"),
+			_("Pasek przewijania suwak po wciśnięciu"),_("Pasek przewijania suwak po najechaniu"),
+			_("Ramka z opisem obramowanie"),
+			//pasek menu
+			_("Pasek menu tło 1"),_("Pasek menu tło 2"),_("Pasek menu obramowanie zaznaczenia"),
+			_("Pasek menu tło zaznaczenia"),_("Menu obramowanie"),_("Menu obramowanie zaznaczenia"),
+			_("Menu tło zaznaczenia"),
+			_("Pierwszy kolor podglądu styli"),_("Drugi kolor podglądu styli")
 		};
-		wxString opts[47]={"Audio Background","Audio Line Boundary Start","Audio Line Boundary End","Audio Line Boundary Mark",
+		wxString opts[74]={
+			//window
+			"Window Background", "Window Inactive Background", "Window Text", "Window Inactive Text",
+			//grid
+			"Grid Text","Grid Background","Grid Dialogue","Grid Comment","Grid Selected Dialogue","Grid Selected Comment",
+			"Grid Collisions","Grid Active Line","Grid Lines","Grid Label Normal","Grid Label Modified",
+			"Grid Label Saved","Grid Spellchecker","Grid Comparison","Grid Comparison Background",
+			"Grid Comparison Background selected","Grid Comparison Comment Background",
+			"Grid Comparison Comment Background Selected",
+			//text field
+			"Editor Text","Editor Tag Names","Editor Tag Values",
+			"Editor Curly Braces","Editor Tag Operators","Editor Background",
+			"Editor Selection","Editor Selection No Focus","Editor Border",
+			"Editor Border Focus","Editor Spellchecker",
+			//audio
+			"Audio Background","Audio Line Boundary Start","Audio Line Boundary End","Audio Line Boundary Mark",
 			"Audio Line Boundary Inactive Line","Audio Play Cursor","Audio Seconds Boundaries","Audio Keyframes",
 			"Audio Selection Background","Audio Selection Background Modified","Audio Waveform","Audio Waveform Inactive",
 			"Audio Waveform Modified","Audio Waveform Selected","Audio Inactive Lines Background","Audio Spectrum First Color",
 			"Audio Spectrum Second Color","Audio Spectrum Third Color",
-			"Editor normal text","Editor tag names","Editor tag values",
-			"Editor curly braces","Editor tag operators","Editor background",
-			"Editor selection","Editor selection no focus","Editor spellchecker",
-			"Grid Text","Grid Background","Grid Dialogue","Grid Comment","Grid Selected Dialogue","Grid Selected Comment",
-			"Grid Collisions","Grid Active Line","Grid Lines","Grid Label Normal","Grid Label Modified",
-			"Grid Label Saved","Grid Spellchecker","Grid comparison","Grid comparison background",
-			"Grid comparison background selected","Grid comparison comment background",
-			"Grid comparison comment background selected","Style Preview Color1","Style Preview Color2"
+			//controls
+			"Button Background", "Button Background Hover", "Button Background Pushed", "Button Border",
+			"Button Inactive Border", "Button Border Hover", "Button Border Pushed","Togglebutton Background Toggled",
+			"Togglebutton Border Toggled","Scrollbar Background","Scrollbar Scroll","Scrollbar Scroll Pushed",
+			"Scrollbar Scroll Hover","Staticbox Border",
+			//menu bar 
+			"Menu Bar Background 1","Menu Bar Background 2","Menu Bar Border Selection",
+			"Menu Bar Background Selection","Menu Border","Menu Border Selection","Menu Background Selection",
+			"Style Preview Color1","Style Preview Color2"
 		};
 		
-	
-		/*for(int i=0;i<18;i++)
-		{
-			ColorButton *optc=new ColorButton(AudioCols,Options.GetString(opts[i]),wxSize(60,24));
-			ConOpt(optc,opts[i]);
-			AudioColorsSizer->Add(new wxStaticText(AudioCols,-1,labels[i]+":"),1,wxRIGHT | wxALIGN_CENTRE_VERTICAL ,5);
-			AudioColorsSizer->Add(optc,0,wxALL,2);
-		}
-	
-
-		AudioCols->SetSizerAndFit(AudioColorsSizer);*/
 		wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-		KaiListCtrl *List = new KaiListCtrl(AudioCols, -1, wxDefaultPosition, wxSize(300, -1));
+		KaiListCtrl *List = new KaiListCtrl(Themes, -1, wxDefaultPosition, wxSize(300, -1));
 		List->InsertCollumn(0, "Nazwa", TYPE_TEXT, 220);
 		List->InsertCollumn(1, "Kolor", TYPE_COLOR, 150);
-		for(int i=0;i<47;i++)
+		for(int i=0;i<74;i++)
 		{
 			int row = List->AppendItem(new ItemText(labels[i]));
 			AssColor col = Options.GetColor(opts[i]);
 			List->SetItem(row, 1, new ItemColor(col));
 		}
 		sizer->Add(List, 1, wxALL|wxEXPAND, 2);
-		AudioCols->SetSizerAndFit(sizer);
+		Themes->SetSizerAndFit(sizer);
 	}
 		
 	//Adding pages
@@ -480,10 +430,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	OptionsTree->AddSubPage(ConvOpt,_("Konwersja"),true);
 	OptionsTree->AddPage(Video,_("Wideo"),true);
 	OptionsTree->AddPage(AudioMain,_("Audio"),true);
-	OptionsTree->AddPage(GridColors,_("Kolorystyka"),true);
-	OptionsTree->AddSubPage(GridColors2,_("Pole napisów"),true);
-	OptionsTree->AddSubPage(EditColors,_("Pole tekstowe"),true);
-	OptionsTree->AddSubPage(AudioCols,_("Audio"),true);
+	OptionsTree->AddPage(Themes,_("Motywy"),true);
 	OptionsTree->AddPage(Hotkeyss,_("Skróty klawiszowe"),true);
 	OptionsTree->Fit();
 		

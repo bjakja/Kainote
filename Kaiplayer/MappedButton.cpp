@@ -15,6 +15,7 @@
 
 
 #include "MappedButton.h"
+#include "Config.h"
 
 //static wxFont font;
 
@@ -185,8 +186,14 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);*/
 	bool enabled = IsThisEnabled();
-	tdc.SetBrush(wxBrush(wxSystemSettings::GetColour((clicked)? wxSYS_COLOUR_BTNSHADOW : (enabled)? wxSYS_COLOUR_BTNFACE : wxSYS_COLOUR_INACTIVECAPTION )));
-	tdc.SetPen(wxPen(wxSystemSettings::GetColour((enter)? wxSYS_COLOUR_MENUHILIGHT : (enabled)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_GRAYTEXT)));
+	tdc.SetBrush(wxBrush((enter)? Options.GetColour("Button Background Hover") :
+		(clicked)? Options.GetColour("Button Background Pushed") : 
+		(enabled)? Options.GetColour("Button Background") : 
+		Options.GetColour("Window Inactive Background")));
+	tdc.SetPen(wxPen((enter)? Options.GetColour("Button Border") : 
+		(clicked)? Options.GetColour("Button Border Pushed") : 
+		(enabled)? Options.GetColour("Button Border Hover") : 
+		Options.GetColour("Button Inactive Border")));
 	tdc.DrawRectangle(0,0,w,h);
 	
 	if(w>10){
@@ -196,10 +203,10 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 			tdc.DrawBitmap((enabled)? icon : icon.ConvertToDisabled(), (w - fw)/2, (h - fh)/2);
 		}else if(isColorButton){
 			tdc.SetBrush(wxBrush(buttonColor));
-			tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW)));
+			tdc.SetPen(wxPen(Options.GetColour("Button Border")));
 			tdc.DrawRectangle(4,4,w-8,h-8);
 		}
-		tdc.SetTextForeground((enabled)? GetForegroundColour() : wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+		tdc.SetTextForeground((enabled)? GetForegroundColour() : Options.GetColour("Window Inactive Text"));
 		tdc.GetTextExtent(name, &fw, &fh);
 		wxRect cur(5, (h-fh)/2, w - 10, fh);
 		tdc.SetClippingRegion(cur);
@@ -323,6 +330,8 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
+
+	//zmieniæ kolory
 	wxColour btnBackground = wxSystemSettings::GetColour((clicked)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_BTNFACE);
 	wxColour btnToggled = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUHILIGHT);
 	wxColour frame = wxSystemSettings::GetColour((enter || toggled)? wxSYS_COLOUR_MENUHILIGHT : wxSYS_COLOUR_BTNSHADOW);

@@ -103,7 +103,7 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 			tdc.DestroyClippingRegion();*/
 			//tdc.DrawText(label,18, ((h-fontHeight)/2)+1);
 		//}
-		tdc.SetTextForeground((enabled)? GetForegroundColour() : wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+		tdc.SetTextForeground((enabled)? GetForegroundColour() : Options.GetColour("Window Inactive Text"));
 		//wxRect cur(18, (h-fh)/2, w - 20, fh);
 		//tdc.SetClippingRegion(cur);
 		tdc.DrawText(label,18, (h-fontHeight)/2);

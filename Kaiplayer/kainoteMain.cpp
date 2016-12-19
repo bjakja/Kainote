@@ -695,8 +695,8 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 		wxString fname=(found&&!issubs)?fntmp:filename;
 		if(nonewtab){if(SavePrompt(2)){pan->Thaw();return true;}}
 		OpenWrite ow; 
-		wxString s=ow.FileOpen(fname);
-		if(s==""){pan->Thaw();return false;}
+		wxString s;
+		if(!ow.FileOpen(fname, &s)){pan->Thaw();return false;}
 		pan->Grid1->Loadfile(s,ext);
 
 		if(ext=="ssa"){ext="ass";fname=fname.BeforeLast('.')+".ass";}
@@ -1012,8 +1012,9 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 		if(i<subs.size()){
 			wxString ext=subs[i].AfterLast('.').Lower();
 			OpenWrite ow;
-			wxString s=ow.FileOpen(subs[i]);
-			if(s==""){break;
+			wxString s;
+			if(!ow.FileOpen(subs[i], &s)){
+				break;
 			}else{
 				pan->Grid1->Loadfile(s,ext);
 			}

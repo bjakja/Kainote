@@ -24,6 +24,7 @@
 #include <wx/log.h>
 #include <wx/mstream.h>
 #include <wx/bitmap.h>
+#include <wx/msgdlg.h>
 #include <windows.h>
 
 
@@ -45,6 +46,11 @@ config::~config()
 		delete (*it);
 	}
 	assstore.clear();
+	for(std::map<wxString, wxColour*>::iterator it = colors.begin(); it != colors.end(); it++)
+	{
+		delete it->second;
+	}
+	colors.clear();
 }
 
 
@@ -77,15 +83,14 @@ bool config::GetBool(wxString lopt)
 	return false;
 }
 
-wxColour config::GetColour(wxString lopt)
+wxColour &config::GetColour(wxString lopt)
 {
-	AssColor col(rawcfg[lopt]);
-	return col.GetWX();
+	return *colors[lopt];
 }
 
 AssColor config::GetColor(wxString lopt)
 {
-	return rawcfg[lopt];
+	return AssColor(*colors[lopt]);
 }
 
 int config::GetInt(wxString lopt)
@@ -113,15 +118,12 @@ void config::SetBool(wxString lopt, bool bopt)
 
 void config::SetColour(wxString lopt, wxColour copt)
 {
-	wxString copt1 = copt.GetAsString(wxC2S_HTML_SYNTAX);
-	rawcfg[lopt]=copt1;
+	colors[lopt]=new wxColour(copt);
 }
 
 void config::SetColor(wxString lopt, AssColor copt)
 {
-	wxString copt1 = copt.GetHex(true);
-	wxLogStatus(copt1);
-	rawcfg[lopt]=copt1;
+	colors[lopt]=new wxColour(copt.GetWX());
 }
 
 void config::SetInt(wxString lopt, int iopt)
@@ -148,7 +150,7 @@ wxString config::GetRawOptions(bool Audio)
 	return TextOpt;
 }
 
-void config::CatchValsLabs(wxString line)
+void config::CatchValsLabs(const wxString &line)
 {
 	wxString Values=line.AfterFirst('=');
 	Values.Trim(false);
@@ -232,63 +234,115 @@ void config::SaveOptions(bool cfg, bool style)
 inline wxString config::LoadDefaultConfig()
 {
 	return L"["+progname+L"]\r\nChange Time=2000\r\n"\
-			L"Change mode=0\r\n"\
-			L"Convert Resolution W=1280\r\n"\
-			L"Convert Resolution H=720\r\n"\
-			L"Default FPS=23.976\r\n"\
-			L"Default Style=Default\r\n"\
-			L"Default Style Catalog=Default\r\n"\
-			L"Dictionary Name=pl\r\n"\
-			L"Editbox Spellchecker=true\r\n"\
-			L"Editor normal text="+wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).GetAsString(4)+L"\r\n"\
-			L"Editor tag names=#850085\r\n"\
-			L"Editor tag values=#6600FF\r\n"\
-			L"Editor curly braces=#0000FF\r\n"\
-			L"Editor tag operators=#FF0000\r\n"\
-			L"Editor background="+wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString(4)+L"\r\n"\
-			L"Editor selection=#00CCFF\r\n"\
-			L"Editor selection no focus=#CCCCFF\r\n"\
-			L"Editor spellchecker=#FA9292\r\n"\
-			L"Frames=false\r\n"\
-			L"Grid Active Line=#CA0065\r\n"\
-			L"Grid Background=#C0C0C0\r\n"\
-			L"Grid Comment=#D8DEF5\r\n"\
-			L"Grid comparison=#DFDADA\r\n"\
-			L"Grid comparison background=#C0A073\r\n"\
-			L"Grid comparison background selected=#909F3A\r\n"\
-			L"Grid comparison comment background=#BBBCCA\r\n"\
-			L"Grid comparison comment background selected=#8A99A2\r\n"\
-			L"Grid Dialogue=#C0C0C0\r\n"\
-			L"Grid Collisions=#FF0000\r\n"\
-			L"Grid Font Name=Tahoma\r\n"\
-			L"Grid Font Size=10\r\n"\
-			L"Grid Label Normal=#19B3EC\r\n"\
-			L"Grid Label Modified=#FBF804\r\n"\
-			L"Grid Label Saved=#C4ECC9\r\n"\
-			L"Grid Lines=#808080\r\n"\
-			L"Grid Selected Comment=#D3EEEE\r\n"\
-			L"Grid Selected Dialogue=#CEFFE7\r\n"\
-			L"Grid Spellchecker=#FA9292\r\n"\
-			L"Grid tag changing char=☀\r\n"\
-			L"Grid Text=#000000\r\n"\
-			L"Move time forward=true\r\n"\
-			L"Move Video To Active Line=0\r\n"\
-			L"New end times=false\r\n"\
-			L"Offset of start time=0\r\n"\
-			L"Offset of end time=0\r\n"\
-			L"Play Afrer Selection=0\r\n"\
-			L"Preview Text=Podgląd\r\n"\
-			L"Show Editor=true\r\n"\
-			L"Show settings window=false\r\n"\
-			L"Start end times=0\r\n"\
-			L"Style Preview Color1=#9A9A9A\r\n"\
-			L"Style Preview Color2=#686868\r\n"\
-			L"Styles of time change=\r\n"\
-			L"Time show of letter=110\r\n"\
-			L"Index Video=true\r\n"\
-			L"Video Prog Bar=true\r\n"\
-			L"Video Window Size=500,350\r\n"\
-			L"Window Size=800,600";
+		L"Change mode=0\r\n"\
+		L"Convert Resolution W=1280\r\n"\
+		L"Convert Resolution H=720\r\n"\
+		L"Default FPS=23.976\r\n"\
+		L"Default Style=Default\r\n"\
+		L"Default Style Catalog=Default\r\n"\
+		L"Dictionary Name=pl\r\n"\
+		L"Editbox Spellchecker=true\r\n"\
+		L"Frames=false\r\n"\
+		L"Grid Font Name=Tahoma\r\n"\
+		L"Grid Font Size=10\r\n"\
+		L"Grid tag changing char=☀\r\n"\
+		L"Move time forward=true\r\n"\
+		L"Move Video To Active Line=0\r\n"\
+		L"New end times=false\r\n"\
+		L"Offset of start time=0\r\n"\
+		L"Offset of end time=0\r\n"\
+		L"Play Afrer Selection=0\r\n"\
+		L"Preview Text=Podgląd\r\n"\
+		L"Program Theme=Default\r\n"\
+		L"Show Editor=true\r\n"\
+		L"Show settings window=false\r\n"\
+		L"Start end times=0\r\n"\
+		L"Styles of time change=\r\n"\
+		L"Time show of letter=110\r\n"\
+		L"Index Video=true\r\n"\
+		L"Video Prog Bar=true\r\n"\
+		L"Video Window Size=500,350\r\n"\
+		L"Window Size=800,600";
+}
+
+void config::LoadDefaultColors()
+{
+	colors[L"Audio Background"] = new wxColour("#000000");
+	colors[L"Audio Inactive Lines Background"] = new wxColour(0x00,0x00,0x50,0x60);//"#60000050"
+	colors[L"Audio Keyframes"] = new wxColour("#C200FF");
+	colors[L"Audio Line Boundary End"] = new wxColour("#E67D00");
+	colors[L"Audio Line Boundary Inactive Line"] = new wxColour("#808080");
+	colors[L"Audio Line Boundary Start"] = new wxColour("#D80000");
+	colors[L"Audio Line Boundary Mark"] = new wxColour("#FF00FF");
+	colors[L"Audio Play Cursor"] = new wxColour("#FFFFFF");
+	colors[L"Audio Seconds Boundaries"] = new wxColour("#0064FF");
+	colors[L"Audio Selection Background"] = new wxColour(0xFF,0xFF,0xFF,0x70);//"#BDFFFFFF"
+	colors[L"Audio Selection Background Modified"] = new wxColour(0xBD,0x03,0x02,0x60);//"#A4BD0302"
+	colors[L"Audio Spectrum First Color"] = new wxColour("#000000");
+	colors[L"Audio Spectrum Second Color"] = new wxColour("#2D4DC2");
+	colors[L"Audio Spectrum Third Color"] = new wxColour("#FFFFFF");
+	colors[L"Audio Syllable Boundaries"] = new wxColour("#FFFF00");
+	colors[L"Audio Syllable Text"] = new wxColour("#FF0000");
+	colors[L"Audio Waveform"] = new wxColour("#00C800");
+	colors[L"Audio Waveform Inactive"] = new wxColour("#005000");
+	colors[L"Audio Waveform Modified"] = new wxColour("#FFE6E6");
+	colors[L"Audio Waveform Selected"] = new wxColour("#FFFFFF");
+	colors[L"Editor Text"] = new wxColour("#BEBEBE");
+	colors[L"Editor Tag Names"] = new wxColour("#850085");
+	colors[L"Editor Tag Values"] = new wxColour("#6600FF");
+	colors[L"Editor Curly Braces"] = new wxColour("#0000FF");
+	colors[L"Editor Tag Operators"] = new wxColour("#FF0000");
+	colors[L"Editor Background"] = new wxColour("#323232");
+	colors[L"Editor Selection"] = new wxColour("#00CCFF");
+	colors[L"Editor Selection No Focus"] = new wxColour("#CCCCFF");
+	colors[L"Editor Border"] = new wxColour("#BEBEBE");
+	colors[L"Editor Border Focus"] = new wxColour("#908FBF");
+	colors[L"Editor Spellchecker"] = new wxColour("#FA9292");
+	colors[L"Grid Active Line"] = new wxColour("#CA0065");
+	colors[L"Grid Background"] = new wxColour("#C0C0C0");
+	colors[L"Grid Comment"] = new wxColour("#D8DEF5");
+	colors[L"Grid Comparison"] = new wxColour("#DFDADA");
+	colors[L"Grid Comparison Background"] = new wxColour("#C0A073");
+	colors[L"Grid Comparison Background Selected"] = new wxColour("#909F3A");
+	colors[L"Grid Comparison Comment Background"] = new wxColour("#BBBCCA");
+	colors[L"Grid Comparison Comment Background Selected"] = new wxColour("#8A99A2");
+	colors[L"Grid Dialogue"] = new wxColour("#C0C0C0");
+	colors[L"Grid Collisions"] = new wxColour("#FF0000");
+	colors[L"Grid Label Normal"] = new wxColour("#19B3EC");
+	colors[L"Grid Label Modified"] = new wxColour("#FBF804");
+	colors[L"Grid Label Saved"] = new wxColour("#C4ECC9");
+	colors[L"Grid Lines"] = new wxColour("#808080");
+	colors[L"Grid Selected Comment"] = new wxColour("#D3EEEE");
+	colors[L"Grid Selected Dialogue"] = new wxColour("#CEFFE7");
+	colors[L"Grid Spellchecker"] = new wxColour("#FA9292");
+	colors[L"Grid Text"] = new wxColour("#000000");
+	colors[L"Style Preview Color1"] = new wxColour("#9A9A9A");
+	colors[L"Style Preview Color2"] = new wxColour("#686868");
+	colors[L"Button Background"] = new wxColour("#282727");
+	colors[L"Button Background Hover"] = new wxColour("#464545");
+	colors[L"Button Background Pushed"] = new wxColour("#000000");
+	colors[L"Button Border"] = new wxColour("#BEBEBE");
+	colors[L"Button Inactive Border"] = new wxColour("#8C8C8C");
+	colors[L"Button Border Hover"] = new wxColour("#991919");
+	colors[L"Button Border Pushed"] = new wxColour("#741D1D");
+	colors[L"Menu Bar Background 1"] = new wxColour("#BEBEBE");
+	colors[L"Menu Bar Background 2"] = new wxColour("#323232");
+	colors[L"Menu Bar Border Selection"] = new wxColour("#991919");
+	colors[L"Menu Bar Background Selection"] = new wxColour("#6E4444");
+	colors[L"Menu Border"] = new wxColour("#BEBEBE");
+	colors[L"Menu Border Selection"] = new wxColour("#991919");
+	colors[L"Menu Background Selection"] = new wxColour("#6E4444");
+	colors[L"Togglebutton Background Toggled"] = new wxColour("#6E4444");
+	colors[L"Togglebutton Border Toggled"] = new wxColour("#741D1D");
+	colors[L"Scrollbar Background"] = new wxColour("#3F3F46");
+	colors[L"Scrollbar Scroll"] = new wxColour("#686868");
+	colors[L"Scrollbar Scroll Pushed"] = new wxColour("#ABAAAA");
+	colors[L"Scrollbar Scroll Hover"] = new wxColour("#E1DFDF");
+	colors[L"Staticbox Border"] = new wxColour("#565555");
+	colors[L"Window Background"] = new wxColour("#323232");
+	colors[L"Window Inactive Background"] = new wxColour("#727171");
+	colors[L"Window Text"] = new wxColour("#BEBEBE");
+	colors[L"Window Inactive Text"] = new wxColour("#828282");
 }
 
 int config::LoadOptions()
@@ -298,8 +352,8 @@ int config::LoadOptions()
 	wxString path;
 	path<<pathfull<<_T("\\Config.txt");
 	OpenWrite ow;
-	wxString txt=ow.FileOpen(path,false);
-	if(txt==""){
+	wxString txt;
+	if(!ow.FileOpen(path,&txt,false)){
 		txt = LoadDefaultConfig();
 	}else{
 		wxString ver= txt.BeforeFirst(']').Mid(1);
@@ -325,6 +379,30 @@ int config::LoadOptions()
 	return isgood;
 }
 
+void config::LoadColors(){
+	wxString themeName = Options.GetString(L"Program Theme");
+	if(themeName!="Default"){
+		wxString path = pathfull + L"\\Themes\\"+ themeName + L".txt";
+		OpenWrite ow;
+		wxString txtColors;
+		if(ow.FileOpen(path, &txtColors, false)){
+			wxStringTokenizer cfg(txtColors,_T("\n"));
+			int g=0;
+			while(cfg.HasMoreTokens())
+			{
+				wxString token=cfg.NextToken();
+				token.Trim(false);
+				token.Trim(true);
+				if (token.Len()>0){CatchValsLabs(token);g++;}
+			}
+			return;
+		}
+		wxMessageBox(_("Nie można zaczytać motywu, zostanie przywrócony domyśny"));
+	}
+	LoadDefaultColors();	
+}
+
+
 void config::LoadStyles(wxString katalog)
 {
 	acdir=katalog;
@@ -335,8 +413,8 @@ void config::LoadStyles(wxString katalog)
 		delete (*it);
 	}
 	assstore.clear();
-	wxString stylee=ow.FileOpen(path,false);
-	if(stylee!=_T("")){
+	wxString stylee;
+	if(ow.FileOpen(path, &stylee,false)){
 		wxStringTokenizer cfg(stylee,_T("\n"));
 		while(cfg.HasMoreTokens()){
 			wxString token=cfg.NextToken();
@@ -432,62 +510,42 @@ void config::Sortstyles()
 wxString config::LoadDefaultAudioConfig()
 {
 	return "Audio Autocommit=true\r\n"\
-			"Audio Autofocus=true\r\n"\
-			"Audio Autoscroll=true\r\n"\
-			"Audio Background=#000000\r\n"\
-			"Audio Box Height=169\r\n"\
-			"Audio Delay=0\r\n"\
-			"Audio Draw Cursor Time=true\r\n"\
-			"Audio Draw Keyframes=true\r\n"\
-			"Audio Draw Secondary Lines=true\r\n"\
-			"Audio Draw Selection Background=true\r\n"\
-			"Audio Draw video Position=true\r\n"\
-			"Audio Grab Times On Select=true\r\n"\
-			"Audio Horizontal Zoom=50\r\n"\
-			"Audio Inactive Lines Background=#60000050\r\n"\
-			"Audio Inactive Lines Display Mode=1\r\n"\
-			"Audio Keyframes=#C200FF\r\n"\
-			"Audio Lead In=200\r\n"\
-			"Audio Lead Out=300\r\n"\
-			"Audio Line Boundaries Thickness=2\r\n"\
-			"Audio Line Boundary End=#E67D00\r\n"\
-			"Audio Line Boundary Inactive Line=#808080\r\n"\
-			"Audio Line Boundary Start=#D80000\r\n"\
-			"Audio Line Boundary Mark=#FF00FF\r\n"\
-			"Audio Link=false\r\n"\
-			"Audio Lock Scroll On Cursor=false\r\n"\
-			"Audio Mark Play Time=1000\r\n"\
-			"Audio Next Line On Commit=true\r\n"\
-			"Audio Play Cursor=#FFFFFF\r\n"\
-			"Audio RAM Cache=false\r\n"\
-			"Audio Sample Rate=0\r\n"\
-			"Audio Seconds Boundaries=#0064FF\r\n"\
-			"Audio Selection Background=#BDFFFFFF\r\n"\
-			"Audio Selection Background Modified=#A4BD0302\r\n"\
-			"Audio Snap To Keyframes=false\r\n"\
-			"Audio Snap To Other Lines=false\r\n"\
-			"Audio Spectrum=false\r\n"\
-			"Audio Spectrum First Color=#000000\r\n"\
-			"Audio Spectrum Second Color=#2D4DC2\r\n"\
-			"Audio Spectrum Third Color=#FFFFFF\r\n"\
-			"Audio Start Drag Sensitivity=2\r\n"\
-			"Audio Syllable Boundaries=#FFFF00\r\n"\
-			"Audio Syllable Text=#FF0000\r\n"\
-			"Audio Vertical Zoom=50\r\n"\
-			"Audio Volume=50\r\n"\
-			"Audio Waveform=#00C800\r\n"\
-			"Audio Waveform Inactive=#005000\r\n"\
-			"Audio Waveform Modified=#FFE6E6\r\n"\
-			"Audio Waveform Selected=#FFFFFF\r\n"\
-			"Audio Wheel Default To Zoom=false";
+		"Audio Autofocus=true\r\n"\
+		"Audio Autoscroll=true\r\n"\
+		"Audio Box Height=169\r\n"\
+		"Audio Delay=0\r\n"\
+		"Audio Draw Cursor Time=true\r\n"\
+		"Audio Draw Keyframes=true\r\n"\
+		"Audio Draw Secondary Lines=true\r\n"\
+		"Audio Draw Selection Background=true\r\n"\
+		"Audio Draw video Position=true\r\n"\
+		"Audio Grab Times On Select=true\r\n"\
+		"Audio Horizontal Zoom=50\r\n"\
+		"Audio Inactive Lines Display Mode=1\r\n"\
+		"Audio Lead In=200\r\n"\
+		"Audio Lead Out=300\r\n"\
+		"Audio Line Boundaries Thickness=2\r\n"\
+		"Audio Link=false\r\n"\
+		"Audio Lock Scroll On Cursor=false\r\n"\
+		"Audio Mark Play Time=1000\r\n"\
+		"Audio Next Line On Commit=true\r\n"\
+		"Audio RAM Cache=false\r\n"\
+		"Audio Sample Rate=0\r\n"\
+		"Audio Snap To Keyframes=false\r\n"\
+		"Audio Snap To Other Lines=false\r\n"\
+		"Audio Spectrum=false\r\n"\
+		"Audio Start Drag Sensitivity=2\r\n"\
+		"Audio Vertical Zoom=50\r\n"\
+		"Audio Volume=50\r\n"\
+		"Audio Wheel Default To Zoom=false";
 
 }
 
 bool config::LoadAudioOpts()
 {
 	OpenWrite ow;
-	wxString txt=ow.FileOpen(pathfull+_T("\\AudioConfig.txt"),false);
-	if(txt==_T("")){
+	wxString txt;
+	if(!ow.FileOpen(pathfull+_T("\\AudioConfig.txt"), &txt ,false)){
 		txt=LoadDefaultAudioConfig();
 	}else{
 		wxString ver= txt.BeforeFirst(']').Mid(1);
@@ -502,6 +560,40 @@ void config::SaveAudioOpts()
 	ow.FileWrite(pathfull+_T("\\AudioConfig.txt"), GetRawOptions(true));
 }
 
+void config::SetHexColor(const wxString &nameAndColor)
+{
+	wxString kol=nameAndColor.AfterFirst('=');
+	kol.Trim(false);
+	kol.Trim(true);
+	wxString name=nameAndColor.BeforeFirst('=');
+	name.Trim(false);
+	name.Trim(true);
+	long a=0xFF, r, g, b;
+	int diff = 0;
+	if(kol.Len()>=9){
+		kol.SubString(1,2).ToLong(&a, 16);
+		diff=2;
+	}
+	kol.SubString(diff+1,diff+2).ToLong(&r, 16);
+	kol.SubString(diff+3,diff+4).ToLong(&g, 16);
+	kol.SubString(diff+5,diff+6).ToLong(&b, 16);
+	colors[name]=new wxColour(r, g, b, a);
+}
+
+wxString config::GetStringColor(std::map<wxString, wxColour*>::iterator it)
+{
+	wxColour *col = it->second;
+	if (col->Alpha() < 0xFF)
+		return wxString::Format("#%02X%02X%02X%02X", 0xFF - col->Alpha(), col->Red(), col->Green(), col->Blue());
+	return wxString::Format("#%02X%02X%02X", col->Red(), col->Green(), col->Blue());
+}
+wxString config::GetStringColor(const wxString &optionName)
+{
+	wxColour *col = colors[optionName];
+	if (col->Alpha() < 0xFF)
+		return wxString::Format("#%02X%02X%02X%02X", 0xFF - col->Alpha(), col->Red(), col->Green(), col->Blue());
+	return wxString::Format("#%02X%02X%02X", col->Red(), col->Green(), col->Blue());
+}
 
 wxString getfloat(float num, wxString format, bool Truncate)
 {
@@ -576,7 +668,7 @@ wxBitmap *CreateBitmapPointerFromPngResource(const wxString& t_name)
 	if(LoadDataFromResource(a_data, a_dataSize, t_name))
 	{
 		wxMemoryInputStream a_is(a_data, a_dataSize);
-	    r_bitmapPtr = new wxBitmap(wxImage(a_is, wxBITMAP_TYPE_PNG, -1), -1);
+		r_bitmapPtr = new wxBitmap(wxImage(a_is, wxBITMAP_TYPE_PNG, -1), -1);
 	}
 
 	return r_bitmapPtr;

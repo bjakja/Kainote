@@ -582,11 +582,14 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 	int fw=0,fh=0;
 	bool enabled = IsThisEnabled();
 	dc.SetFont(font);
-	dc.SetBrush(wxBrush((enabled)? background : wxSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTION )));
-	dc.SetPen(wxPen((style & wxBORDER_NONE)? background : wxSystemSettings::GetColour((HasFocus())? wxSYS_COLOUR_MENUHILIGHT : (enabled)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_GRAYTEXT)));
+	dc.SetBrush(wxBrush((enabled)? background : Options.GetColour("Window Inactive Background")));
+	dc.SetPen(wxPen((style & wxBORDER_NONE)? background : 
+		(HasFocus())? Options.GetColour("Editor Border Focus") : 
+		(enabled)? Options.GetColour("Editor Border") : Options.GetColour("Button Inactive Border")));
 	dc.DrawRectangle(0,0,w,h);
 	if(wraps.size()<2 || positioning.size()<2){return;}
-	wxColour cselection = wxSystemSettings::GetColour((HasFocus())? wxSYS_COLOUR_HIGHLIGHT : wxSYS_COLOUR_GRAYTEXT );
+	wxColour cselection = (HasFocus())? Options.GetColour("Editor Selection") : 
+		Options.GetColour("Editor Selection No Focus");
 
 
 	//Contsel=false;
@@ -676,7 +679,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 		dc.DrawText(subline,positioning[i]+fww,posY);
 
 		}*/
-		dc.SetTextForeground((enabled)? foreground : wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+		dc.SetTextForeground((enabled)? foreground : Options.GetColour("Editor Text"));
 		dc.DrawText(line,positioning[i]+tmpPosX,tmpPosY);
 
 		tmpPosY+=Fheight;

@@ -212,10 +212,10 @@ int Hotkeys::LoadHkeys(bool Audio)
 	if(keys.empty()){FillTable();}
 	OpenWrite ow;
 	wxString hkpath = (Audio)? "\\AudioHotkeys.txt" : "\\Hotkeys.txt";
-	wxString acctxt = ow.FileOpen(Options.pathfull + hkpath,true);
+	wxString acctxt;
 	//failedowało z tak błachego powodu jak brak ścieżki
 	//trzeba uważać na kolejność, opcje mają zdecydowane pierwszeństwo
-	if(acctxt==""){LoadDefault(hkeys,Audio);return 1;}
+	if(!ow.FileOpen(Options.pathfull + hkpath, &acctxt, true)){LoadDefault(hkeys,Audio);return 1;}
 
 	wxStringTokenizer hk(acctxt,"\n",wxTOKEN_STRTOK);
 

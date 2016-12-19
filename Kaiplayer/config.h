@@ -45,7 +45,8 @@
 class config
 {
     private:
-    std::map<wxString,wxString> rawcfg;
+    std::map<wxString, wxString> rawcfg;
+	std::map<wxString, wxColour*> colors;
    
 
     public:
@@ -59,7 +60,7 @@ class config
 
     wxString GetString(wxString lopt);
     bool GetBool(wxString lopt);
-    wxColour GetColour(wxString lopt);
+    wxColour &GetColour(wxString lopt);
 	AssColor GetColor(wxString lopt);
     int GetInt(wxString lopt);
     float GetFloat(wxString lopt);
@@ -83,10 +84,12 @@ class config
     int FindStyle(wxString name, int *multiplication=NULL);
     void DelStyle(int i);
     int StoreSize();
-    void CatchValsLabs(wxString rawoptions);
+    void CatchValsLabs(const wxString &rawoptions);
     bool SetRawOptions(const wxString &textconfig);
     int LoadOptions();
+	void LoadColors();
 	wxString LoadDefaultConfig();
+	void LoadDefaultColors();
 	wxString LoadDefaultAudioConfig();
 	bool LoadAudioOpts();
 	void SaveAudioOpts();
@@ -94,6 +97,9 @@ class config
     void LoadStyles(wxString katalog);
     void clearstyles();
 	void Sortstyles();
+	void SetHexColor(const wxString &nameAndColor);
+	wxString GetStringColor(std::map<wxString, wxColour*>::iterator it);
+	wxString GetStringColor(const wxString &optionName);
     config();
     ~config();
 
