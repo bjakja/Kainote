@@ -85,7 +85,7 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	//Refresh(false);
 	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? fh+10 : size.y);
 	SetMinSize(newSize);
-	foreground = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+	foreground = parent->GetForegroundColour();
 	background = parent->GetBackgroundColour();
 	SetValidator(validator);
 
@@ -679,7 +679,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 		dc.DrawText(subline,positioning[i]+fww,posY);
 
 		}*/
-		dc.SetTextForeground((enabled)? foreground : Options.GetColour("Editor Text"));
+		dc.SetTextForeground((enabled)? foreground : Options.GetColour("Okno nieaktywny tekst"));
 		dc.DrawText(line,positioning[i]+tmpPosX,tmpPosY);
 
 		tmpPosY+=Fheight;

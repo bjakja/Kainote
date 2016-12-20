@@ -496,12 +496,12 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	wxMemoryDC dc;
 	dc.SelectObject(wxBitmap(w,TabHeight));
 	dc.SetFont(font);
-	dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE)));
+	dc.SetTextForeground(Options.GetColour("Window Text"));
+	//dc.SetPen(*wxTRANSPARENT_PEN);
+	//dc.SetBrush(wxBrush(Options.GetColour("Menu Bar Background 2")));
 	dc.GradientFillLinear(wxRect(0,0,w,TabHeight),
-		wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),
-		wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE),wxTOP);
+		Options.GetColour("Menu Bar Background 2"),
+		Options.GetColour("Menu Bar Background 1"),wxTOP);
 
 	start=(allvis)?2 : 20;
 
@@ -516,7 +516,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.DrawLine(0,0,start,0);
 			dc.DrawLine(start+Tabsizes[i],0,w,0);
 			dc.SetPen(*wxTRANSPARENT_PEN);
-			dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU));
+			dc.SetBrush(Options.GetColour("Menu Background"));
 			dc.DrawRectangle(start+1,0,Tabsizes[i]-1,23);
 
 			dc.SetPen(wxPen("#000000"));
@@ -528,7 +528,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			}
 			dc.SetTextForeground("#505050");
 			dc.DrawText("X",start+Tabsizes[i]-16,3);
-			dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+			dc.SetTextForeground(Options.GetColour("Window Text"));
 
 		}
 		//najechana nieaktywna zakładka
@@ -567,7 +567,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	}
 
 	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU)));
+	dc.SetBrush(wxBrush(Options.GetColour("Menu Background")));
 	//strzałki do przesuwania zakładek
 	if(!allvis){
 		dc.DrawRectangle(w-16,0,16,25);
@@ -627,9 +627,9 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	cdc.Blit(0,h-25,w,TabHeight,&dc,0,0);
 	if(split){
 		cdc.SetPen(*wxTRANSPARENT_PEN);
-		cdc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE));
+		cdc.SetBrush(Options.GetColour("Menu Bar Background 2"));
 		cdc.DrawRectangle(splitline-2,0,4,h-25);
-		cdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU)));
+		cdc.SetPen(wxPen(Options.GetColour("Menu Background")));
 		bool aciter=(Pages[iter]->GetPosition().x==1);
 		if(aciter){
 			cdc.DrawLine(splitline+1,0,w,0);

@@ -94,9 +94,9 @@ void StyleList::OnPaint(wxPaintEvent& event)
 	int fw=0,fh=0,posX=1,posY=1;
 	bdc.Clear();
 	bdc.SetFont(font);
-	//dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+	wxColour background = GetParent()->GetBackgroundColour();
 	bdc.SetPen(wxPen(wxColour("#808080")));
-	bdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
+	bdc.SetBrush(wxBrush(background));
 	bdc.DrawRectangle(0,0,w,h);
 
 	bdc.SetPen(wxPen(wxColour("#000000")));
@@ -105,13 +105,13 @@ void StyleList::OnPaint(wxPaintEvent& event)
 	{
 		if(sels.Index(i)!=-1){
 			bdc.SetPen(*wxTRANSPARENT_PEN);
-			bdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT))); //wxColour("#359AFF")
+			bdc.SetBrush(wxBrush(Options.GetColour("Menu Border Selection"))); //wxColour("#359AFF")
 			bdc.DrawRectangle(posX,posY,w-2,Height);
-			}else{bdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));}
+			}else{bdc.SetBrush(wxBrush(background));}
 		if(fontseeker->FindString(stylenames->at(i)->Fontname)==-1){
 			bdc.SetTextForeground("#FF0000");
 		}else{
-			bdc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+			bdc.SetTextForeground(Options.GetColour("Window Text"));
 		}
 		
 

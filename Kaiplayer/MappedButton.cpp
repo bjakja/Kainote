@@ -61,6 +61,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
 	if(toolTip!=""){SetToolTip(toolTip);}
+	SetForegroundColour(parent->GetForegroundColour());
 	
 }
 
@@ -95,6 +96,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
+	SetForegroundColour(parent->GetForegroundColour());
 }
 
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, const wxBitmap& bitmap, const wxPoint& pos,
@@ -128,6 +130,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
 	if(tooltip!=""){SetToolTip(tooltip);}
 	SetFont(parent->GetFont());
+	SetForegroundColour(parent->GetForegroundColour());
 }
 
 MappedButton::~MappedButton()
@@ -190,9 +193,9 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 		(clicked)? Options.GetColour("Button Background Pushed") : 
 		(enabled)? Options.GetColour("Button Background") : 
 		Options.GetColour("Window Inactive Background")));
-	tdc.SetPen(wxPen((enter)? Options.GetColour("Button Border") : 
+	tdc.SetPen(wxPen((enter)? Options.GetColour("Button Border Hover") : 
 		(clicked)? Options.GetColour("Button Border Pushed") : 
-		(enabled)? Options.GetColour("Button Border Hover") : 
+		(enabled)? Options.GetColour("Button Border") : 
 		Options.GetColour("Button Inactive Border")));
 	tdc.DrawRectangle(0,0,w,h);
 	
@@ -302,7 +305,7 @@ ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, cons
 	Bind(wxEVT_PAINT, &ToggleButton::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &ToggleButton::OnKeyPress, this);
 	if(tooltip!=""){SetToolTip(tooltip);}
-
+	SetForegroundColour(parent->GetForegroundColour());
 }
 
 void ToggleButton::OnSize(wxSizeEvent& event)
@@ -327,12 +330,22 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 	tdc.SetFont(GetFont());
 	wxColour background = GetParent()->GetBackgroundColour();
 	bool enabled = IsThisEnabled();
-	tdc.SetBrush(wxBrush(background));
-	tdc.SetPen(wxPen(background));
+	tdc.SetBrush(wxBrush((enter)? Options.GetColour("Button Background Hover") :
+		(toggled)? Options.GetColour("Togglebutton Background Toggled") :
+		(clicked)? Options.GetColour("Button Background Pushed") : 
+		(enabled)? Options.GetColour("Button Background") : 
+		Options.GetColour("Window Inactive Background")));
+	tdc.SetPen(wxPen((enter)? Options.GetColour("Button Border Hover") : 
+		(toggled)? Options.GetColour("Togglebutton Border Toggled") :
+		(clicked)? Options.GetColour("Button Border Pushed") : 
+		(enabled)? Options.GetColour("Button Border") : 
+		Options.GetColour("Button Inactive Border")));
+	//tdc.SetBrush(wxBrush(background));
+	//tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
 
 	//zmieniæ kolory
-	wxColour btnBackground = wxSystemSettings::GetColour((clicked)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_BTNFACE);
+	/*wxColour btnBackground = wxSystemSettings::GetColour((clicked)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_BTNFACE);
 	wxColour btnToggled = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUHILIGHT);
 	wxColour frame = wxSystemSettings::GetColour((enter || toggled)? wxSYS_COLOUR_MENUHILIGHT : wxSYS_COLOUR_BTNSHADOW);
 	if(toggled){
@@ -350,7 +363,7 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 	}
 	tdc.SetBrush(wxBrush(btnBackground));
 	tdc.SetPen(wxPen(frame));
-	tdc.DrawRectangle(1,1,w-2,h-2);
+	tdc.DrawRectangle(1,1,w-2,h-2);*/
 	
 	if(w>10){
 		int fw, fh;
@@ -358,7 +371,7 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 			fw=icon.GetWidth(); fh=icon.GetHeight();
 			tdc.DrawBitmap(icon, (w - fw)/2, (h - fh)/2);
 		}else{
-			tdc.SetTextForeground((enabled)? GetForegroundColour() : wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+			tdc.SetTextForeground((enabled)? GetForegroundColour() : Options.GetColour("Window Inactive Text"));
 			tdc.GetTextExtent(name, &fw, &fh);
 			wxRect cur(5, (h-fh)/2, w - 10, fh);
 			tdc.SetClippingRegion(cur);

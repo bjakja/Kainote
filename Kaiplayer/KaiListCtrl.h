@@ -34,6 +34,7 @@ public:
 	}
 	virtual void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList){};
 	virtual void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList){};
+	virtual void Save(){};
 	bool modified;
 	byte type;
 };
@@ -46,17 +47,20 @@ public:
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList){};
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList);
 	wxString GetName(){return name;}
+	void Save(){};
 	wxString name;
 };
 
 class ItemColor : public Item{
 public:
-	ItemColor(const AssColor &color) : Item(TYPE_COLOR){col = color;}
+	ItemColor(const AssColor &color, const wxString &_name) : Item(TYPE_COLOR){col = color; name = _name;}
 	virtual ~ItemColor(){	
 	}
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList);
+	void Save();
 	AssColor col;
+	wxString name;
 };
 
 class ItemCheckBox : public Item{
@@ -65,6 +69,7 @@ public:
 	virtual ~ItemCheckBox(){}
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList){};
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList);
+	void Save(){};
 	bool checked;
 	bool enter;
 	wxString label;
@@ -107,6 +112,9 @@ public:
 	int AppendItem(Item *item); 
 	int SetItem(size_t row, size_t col, Item *item); 
 	Item *GetItem(size_t row, size_t col) const;
+	void SaveAll(int col);
+	void SetModified(bool modif){modified = modif;}
+	bool GetModified(){return modified;}
 private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);
@@ -126,8 +134,10 @@ private:
 	int scPosH;
 	int lineHeight;
 	int headerHeight;
+	bool modified;
 
 	DECLARE_EVENT_TABLE()
+	wxDECLARE_ABSTRACT_CLASS(KaiListCtrl);
 };
 
 

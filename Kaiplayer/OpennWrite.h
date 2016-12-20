@@ -23,12 +23,12 @@ class OpenWrite
 {
     public:
     OpenWrite();
-    OpenWrite(wxString filename, bool clear=true);
+    OpenWrite(const wxString &filename, bool clear=true);
     ~OpenWrite();
     void CloseFile();
-    bool FileOpen(wxString filename, wxString *riddenText,bool test=true);
-    void FileWrite(wxString filename, wxString alltext, bool utf=true);
-    void PartFileWrite(wxString parttext);
+    bool FileOpen(const wxString &filename, wxString *riddenText,bool test=true);
+    void FileWrite(const wxString &filename, const wxString &alltext, bool utf=true);
+    void PartFileWrite(const wxString &parttext);
 	bool IsUTF8withoutBOM(const char* buf, size_t size);
 	wxFile file;
     private:

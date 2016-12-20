@@ -83,14 +83,22 @@ bool config::GetBool(wxString lopt)
 	return false;
 }
 
-wxColour &config::GetColour(wxString lopt)
+wxColour config::GetColour(wxString lopt)
 {
-	return *colors[lopt];
+	auto it = colors.find(lopt);
+	if(it!=colors.end()){
+		return *it->second;
+	}
+	return wxColour("#000000");
 }
 
 AssColor config::GetColor(wxString lopt)
 {
-	return AssColor(*colors[lopt]);
+	auto it = colors.find(lopt);
+	if(it!=colors.end()){
+		return AssColor(*it->second);
+	}
+	return AssColor();
 }
 
 int config::GetInt(wxString lopt)
@@ -118,11 +126,23 @@ void config::SetBool(wxString lopt, bool bopt)
 
 void config::SetColour(wxString lopt, wxColour copt)
 {
+	auto it = colors.find(lopt);
+	if(it!=colors.end()){
+		delete it->second;
+		it->second = new wxColour(copt);
+		return;
+	}
 	colors[lopt]=new wxColour(copt);
 }
 
 void config::SetColor(wxString lopt, AssColor copt)
 {
+	auto it = colors.find(lopt);
+	if(it!=colors.end()){
+		delete it->second;
+		it->second = new wxColour(copt.GetWX());
+		return;
+	}
 	colors[lopt]=new wxColour(copt.GetWX());
 }
 
@@ -288,16 +308,16 @@ void config::LoadDefaultColors()
 	colors[L"Audio Waveform Modified"] = new wxColour("#FFE6E6");
 	colors[L"Audio Waveform Selected"] = new wxColour("#FFFFFF");
 	colors[L"Editor Text"] = new wxColour("#BEBEBE");
-	colors[L"Editor Tag Names"] = new wxColour("#850085");
-	colors[L"Editor Tag Values"] = new wxColour("#6600FF");
-	colors[L"Editor Curly Braces"] = new wxColour("#0000FF");
-	colors[L"Editor Tag Operators"] = new wxColour("#FF0000");
+	colors[L"Editor Tag Names"] = new wxColour("#D09404");
+	colors[L"Editor Tag Values"] = new wxColour("#EC62FB");
+	colors[L"Editor Curly Braces"] = new wxColour("#7378FE");
+	colors[L"Editor Tag Operators"] = new wxColour("#FA7676");
 	colors[L"Editor Background"] = new wxColour("#323232");
-	colors[L"Editor Selection"] = new wxColour("#00CCFF");
-	colors[L"Editor Selection No Focus"] = new wxColour("#CCCCFF");
+	colors[L"Editor Selection"] = new wxColour("#1013DA");
+	colors[L"Editor Selection No Focus"] = new wxColour("#42434F");
 	colors[L"Editor Border"] = new wxColour("#BEBEBE");
 	colors[L"Editor Border Focus"] = new wxColour("#908FBF");
-	colors[L"Editor Spellchecker"] = new wxColour("#FA9292");
+	colors[L"Editor Spellchecker"] = new wxColour("#7B0D27");
 	colors[L"Grid Active Line"] = new wxColour("#CA0065");
 	colors[L"Grid Background"] = new wxColour("#C0C0C0");
 	colors[L"Grid Comment"] = new wxColour("#D8DEF5");
@@ -325,11 +345,11 @@ void config::LoadDefaultColors()
 	colors[L"Button Inactive Border"] = new wxColour("#8C8C8C");
 	colors[L"Button Border Hover"] = new wxColour("#991919");
 	colors[L"Button Border Pushed"] = new wxColour("#741D1D");
-	colors[L"Menu Bar Background 1"] = new wxColour("#BEBEBE");
-	colors[L"Menu Bar Background 2"] = new wxColour("#323232");
+	colors[L"Menu Bar Background 1"] = new wxColour("#323232");
+	colors[L"Menu Bar Background 2"] = new wxColour("#BEBEBE");
 	colors[L"Menu Bar Border Selection"] = new wxColour("#991919");
 	colors[L"Menu Bar Background Selection"] = new wxColour("#6E4444");
-	colors[L"Menu Border"] = new wxColour("#BEBEBE");
+	colors[L"Menu Background"] = new wxColour("#323232");
 	colors[L"Menu Border Selection"] = new wxColour("#991919");
 	colors[L"Menu Background Selection"] = new wxColour("#6E4444");
 	colors[L"Togglebutton Background Toggled"] = new wxColour("#6E4444");
@@ -376,11 +396,18 @@ int config::LoadOptions()
 		}
 	}
 	LoadStyles(acdir);
+	LoadColors();
 	return isgood;
 }
 
-void config::LoadColors(){
-	wxString themeName = Options.GetString(L"Program Theme");
+void config::LoadColors(const wxString &_themeName){
+	wxString themeName;
+	if(_themeName.IsEmpty()){
+		themeName = Options.GetString("Program Theme");
+	}else{
+		themeName = _themeName;
+		Options.SetString("Program Theme", _themeName);
+	}
 	if(themeName!="Default"){
 		wxString path = pathfull + L"\\Themes\\"+ themeName + L".txt";
 		OpenWrite ow;
@@ -393,9 +420,9 @@ void config::LoadColors(){
 				wxString token=cfg.NextToken();
 				token.Trim(false);
 				token.Trim(true);
-				if (token.Len()>0){CatchValsLabs(token);g++;}
+				if (token.Len()>0){SetHexColor(token);g++;}
 			}
-			return;
+			if(colors.size()>10){return;}
 		}
 		wxMessageBox(_("Nie można zaczytać motywu, zostanie przywrócony domyśny"));
 	}
@@ -593,6 +620,17 @@ wxString config::GetStringColor(const wxString &optionName)
 	if (col->Alpha() < 0xFF)
 		return wxString::Format("#%02X%02X%02X%02X", 0xFF - col->Alpha(), col->Red(), col->Green(), col->Blue());
 	return wxString::Format("#%02X%02X%02X", col->Red(), col->Green(), col->Blue());
+}
+
+void config::SaveColors(const wxString &path){
+	wxString finalpath = path;
+	if(path.IsEmpty()){
+		finalpath = pathfull + "\\Themes\\" + GetString("Program Theme") + ".txt";
+	}
+	OpenWrite ow(finalpath,true);
+	for(auto it = colors.begin(); it != colors.end(); it++){
+		ow.PartFileWrite(it->first + "=" + GetStringColor(it) + "\r\n");
+	}
 }
 
 wxString getfloat(float num, wxString format, bool Truncate)

@@ -80,7 +80,6 @@ bool SubsGrid::IsNum(wxString test) {
 SubsGrid::SubsGrid(wxWindow *parent, const long int id,const wxPoint& pos,const wxSize& size, long style, const wxString& name)
 	: KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL, name)
 {
-
 	posY=0;
 	posX=0;
 	row=mtimerow=0;
@@ -194,11 +193,11 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 	wxColour textcol=Options.GetColour("Grid Text");
 	wxColour collcol=Options.GetColour("Grid Collisions");
 	wxColour SpelcheckerCol=Options.GetColour("Grid Spellchecker");
-	wxColour ComparsionCol=Options.GetColour("Grid comparison");
-	wxColour ComparsionBGCol=Options.GetColour("Grid comparison background");
-	wxColour ComparsionBGSelCol=Options.GetColour("Grid comparison background selected");
-	wxColour ComparsionBGCmntCol=Options.GetColour("Grid comparison comment background");
-	wxColour ComparsionBGCmntSelCol=Options.GetColour("Grid comparison comment background selected");
+	wxColour ComparsionCol=Options.GetColour("Grid Comparison");
+	wxColour ComparsionBGCol=Options.GetColour("Grid Comparison Background");
+	wxColour ComparsionBGSelCol=Options.GetColour("Grid Comparison Background Selected");
+	wxColour ComparsionBGCmntCol=Options.GetColour("Grid Comparison Comment Background");
+	wxColour ComparsionBGCmntSelCol=Options.GetColour("Grid Comparison Comment Background Selected");
 	wxString chtag=Options.GetString("Grid tag changing char");
 	bool SpellCheckerOn = Options.GetBool("Editbox Spellchecker");
 	

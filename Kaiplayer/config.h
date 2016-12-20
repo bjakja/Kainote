@@ -60,7 +60,7 @@ class config
 
     wxString GetString(wxString lopt);
     bool GetBool(wxString lopt);
-    wxColour &GetColour(wxString lopt);
+    wxColour GetColour(wxString lopt);
 	AssColor GetColor(wxString lopt);
     int GetInt(wxString lopt);
     float GetFloat(wxString lopt);
@@ -87,13 +87,14 @@ class config
     void CatchValsLabs(const wxString &rawoptions);
     bool SetRawOptions(const wxString &textconfig);
     int LoadOptions();
-	void LoadColors();
+	void LoadColors(const wxString &themeName="");
 	wxString LoadDefaultConfig();
 	void LoadDefaultColors();
 	wxString LoadDefaultAudioConfig();
 	bool LoadAudioOpts();
 	void SaveAudioOpts();
     void SaveOptions(bool cfg=true, bool style=true);
+	void SaveColors(const wxString &path="");
     void LoadStyles(wxString katalog);
     void clearstyles();
 	void Sortstyles();

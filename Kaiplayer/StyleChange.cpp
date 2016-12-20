@@ -40,6 +40,8 @@ bool sortf(wxString name1,wxString name2){
 ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 	: wxWindow(parent,id,pos,size)
 {
+	SetForegroundColour(Options.GetColour("Window Text"));
+	SetBackgroundColour(Options.GetColour("Window Background"));
 	Preview=NULL;
 	tab=NULL;
 	block=true;

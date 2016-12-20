@@ -20,6 +20,7 @@
 #include <wx/treebook.h>
 #include <wx/listctrl.h>
 #include "ListControls.h"
+#include "MappedButton.h"
 #include <vector>
 class kainoteFrame;
 
@@ -39,7 +40,7 @@ public:
 	wxListCtrl *Shortcuts;
 	KaiChoice* Stylelist;
 	KaiChoice* Katlist;
-	wxButton *okok;
+	MappedButton *okok;
 
 private:
 	std::vector<OptionsBind> handles;

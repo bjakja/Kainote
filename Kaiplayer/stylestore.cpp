@@ -27,33 +27,35 @@
 #include <wx/string.h>
 #include "StyleChange.h"
 #include <wx/fontenum.h>
- class MyMessageDialog : public wxDialog
- {
- public:
-	 MyMessageDialog(wxWindow *parent, const wxString& msg, const wxString &caption)
-	 : wxDialog(parent, -1, caption)
-	 {
-		 wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
-		 wxBoxSizer *sizer2 = new wxBoxSizer(wxVERTICAL);
-		 wxStaticText *txt = new wxStaticText(this,-1,msg);
-		 MappedButton *btn=NULL;
-		 btn = new MappedButton(this,wxID_YES,_("Tak"));
-		 Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxID_YES);},wxID_YES);
-		 sizer1->Add(btn,0,wxALL,3);
-		 btn = new MappedButton(this,wxID_OK,_("Tak dla wszystkich"));
-		 sizer1->Add(btn,0,wxALL,3);
-		 btn = new MappedButton(this,wxID_NO,_("Nie"));
-		 Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxID_NO);},wxID_NO);
-		 sizer1->Add(btn,0,wxALL,3);
-		 btn = new MappedButton(this,wxID_CANCEL,_("Anuluj"));
-		 sizer1->Add(btn,0,wxALL,3);
-		 sizer2->Add(txt,0,wxTOP|wxLEFT|wxRIGHT|wxALIGN_CENTER_HORIZONTAL,6);
-		 sizer2->Add(sizer1,0,wxALL,3);
-		 SetSizerAndFit(sizer2);
-		 CenterOnParent();
-	 }
+class MyMessageDialog : public wxDialog
+{
+public:
+	MyMessageDialog(wxWindow *parent, const wxString& msg, const wxString &caption)
+		: wxDialog(parent, -1, caption)
+	{
+		SetForegroundColour(Options.GetColour("Window Text"));
+		SetBackgroundColour(Options.GetColour("Window Background"));
+		wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
+		wxBoxSizer *sizer2 = new wxBoxSizer(wxVERTICAL);
+		wxStaticText *txt = new wxStaticText(this,-1,msg);
+		MappedButton *btn=NULL;
+		btn = new MappedButton(this,wxID_YES,_("Tak"));
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxID_YES);},wxID_YES);
+		sizer1->Add(btn,0,wxALL,3);
+		btn = new MappedButton(this,wxID_OK,_("Tak dla wszystkich"));
+		sizer1->Add(btn,0,wxALL,3);
+		btn = new MappedButton(this,wxID_NO,_("Nie"));
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxID_NO);},wxID_NO);
+		sizer1->Add(btn,0,wxALL,3);
+		btn = new MappedButton(this,wxID_CANCEL,_("Anuluj"));
+		sizer1->Add(btn,0,wxALL,3);
+		sizer2->Add(txt,0,wxTOP|wxLEFT|wxRIGHT|wxALIGN_CENTER_HORIZONTAL,6);
+		sizer2->Add(sizer1,0,wxALL,3);
+		SetSizerAndFit(sizer2);
+		CenterOnParent();
+	}
 
- };
+};
 
 
 int ShowMessage(wxWindow *parent, const wxString& msg, const wxString &caption){
@@ -66,7 +68,8 @@ int ShowMessage(wxWindow *parent, const wxString& msg, const wxString &caption){
 stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 	: wxDialog(parent,id,_("Menedżer stylów"),pos,wxSize(400,-1),wxDEFAULT_DIALOG_STYLE)
 {
-
+	SetForegroundColour(Options.GetColour("Window Text"));
+	SetBackgroundColour(Options.GetColour("Window Background"));
 	wxAcceleratorEntry centries[1];
 	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, ID_CONF);
 	wxAcceleratorTable caccel(1, centries);
@@ -200,7 +203,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	thread = NULL;
 	thread = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)CheckFontProc, this, 0, 0);
 	SetThreadPriority(thread,THREAD_PRIORITY_LOWEST);
-	
+
 	//SetMinSize(wxSize(200,-1));
 	SetMaxSize(wxSize(500,-1));
 }
@@ -255,7 +258,7 @@ void stylestore::OnAddToStore(wxCommandEvent& event)
 		if(found!=-1){
 			if(prompt != wxID_OK && prompt != wxID_CANCEL){
 				prompt = ShowMessage(this, wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"), 
-				stylc->Name), _("Potwierdzenie"));
+					stylc->Name), _("Potwierdzenie"));
 				//if(prompt == wxID_CANCEL){return;}
 			}
 			if( prompt == wxID_YES || prompt == wxID_OK){
@@ -283,7 +286,7 @@ void stylestore::OnAddToAss(wxCommandEvent& event)
 		if(found!=-1){
 			if(prompt != wxID_OK && prompt != wxID_CANCEL){
 				prompt = ShowMessage(this, wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"), 
-				stylc->Name), _("Potwierdzenie"));
+					stylc->Name), _("Potwierdzenie"));
 			}
 			if( prompt == wxID_YES || prompt == wxID_OK){
 				grid->ChangeStyle(stylc,found);ASS->SetSelection(found);
@@ -460,7 +463,8 @@ void stylestore::LoadStylesS(bool isass)
 		wxFD_OPEN|wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "wxFileDialog");
 	if (openFileDialog->ShowModal() == wxID_OK){
 		OpenWrite op;
-		wxString ass= op.FileOpen(openFileDialog->GetPath());
+		wxString ass;
+		op.FileOpen(openFileDialog->GetPath(), &ass);
 		size_t start=ass.find("\nStyle: ");
 		size_t end=ass.find("[Events]");
 		if(end<=start){return;}
@@ -485,7 +489,7 @@ void stylestore::LoadStylesS(bool isass)
 			for (size_t v=0;v<stl.CheckListBox1->GetCount();v++)
 			{
 				if(stl.CheckListBox1->IsChecked(v)){
-					
+
 					int fstyle= (isass)? grid->FindStyle(stl.CheckListBox1->GetString(v)) : Options.FindStyle(stl.CheckListBox1->GetString(v));
 					if(fstyle==-1){
 						if(isass){grid->AddStyle(tmps[v]);ASS->Refresh(false);}
@@ -494,7 +498,7 @@ void stylestore::LoadStylesS(bool isass)
 					else{
 						if(prompt != wxID_OK && prompt != wxID_CANCEL){
 							prompt = ShowMessage(this, wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"), 
-							stl.CheckListBox1->GetString(v)), _("Potwierdzenie"));
+								stl.CheckListBox1->GetString(v)), _("Potwierdzenie"));
 							//if(prompt == wxID_CANCEL){return;}
 						}
 						if( prompt == wxID_YES || prompt == wxID_OK  ){
@@ -502,7 +506,7 @@ void stylestore::LoadStylesS(bool isass)
 							else{Options.ChangeStyle(tmps[v],fstyle);Store->SetSelection(fstyle);}
 						}else{delete tmps[v];}
 					}
-					
+
 				}else{
 					delete tmps[v];
 				}
@@ -579,7 +583,7 @@ void stylestore::OnCleanStyles(wxCommandEvent& event)
 	wxString existsStyles;
 	Grid *grid=Notebook::GetTab()->Grid1;
 	wxString tlStyle=grid->GetSInfo("TLMode Style");
-	
+
 	for(int i = 0; i < grid->GetCount(); i++){
 		lineStyles[grid->GetDial(i)->Style]=true;
 	}

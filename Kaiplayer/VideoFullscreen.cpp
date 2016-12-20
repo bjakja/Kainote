@@ -27,7 +27,8 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	this->SetEventHandler(parent);
 	if(!vc->IsDshow){panelsize = 66;}else{panelsize = 44;}
 	panel=new wxPanel(this,-1,wxPoint(0,size.y - panelsize),wxSize(size.x,panelsize));
-	panel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
+	panel->SetForegroundColour(Options.GetColour("Window Text"));
+	panel->SetBackgroundColour(Options.GetColour("Window Background"));
 	vslider= new VideoSlider(panel, ID_SLIDER,wxPoint(0,1),wxSize(size.x,14));
 	vslider->VB= vc;
 	bprev = new BitmapButton(panel,CreateBitmapFromPngResource("backward"),CreateBitmapFromPngResource("backward1"), ID_BPREV, wxPoint(5,16), wxSize(26,26));
@@ -39,7 +40,6 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	wxCheckBox *showToolbar = new wxCheckBox(panel,7777,_("Pokaż pasek narzędzi"), wxPoint(180,21));
 	showToolbar->SetValue(!vc->IsDshow);
 	Videolabel=new wxStaticText(panel,-1,"",wxPoint(340,21));
-	panel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
 	vToolbar = new VideoToolbar(panel,wxPoint(0, 44));
 	vToolbar->SetSize(wxSize(size.x, 22));
 	vToolbar->Show(!vc->IsDshow);

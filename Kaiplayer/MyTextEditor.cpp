@@ -588,15 +588,15 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 {
 	int fw=0,fh=0;
 
-	wxColour ctext = Options.GetColour("Editor normal text");
-	wxColour ccurlybraces = Options.GetColour("Editor curly braces");//wxBLUE
-	wxColour coperators = Options.GetColour("Editor tag operators");//"#FF0000"
-	wxColour cnames = Options.GetColour("Editor tag names");//"#850085"
-	wxColour cvalues = Options.GetColour("Editor tag values");//"#6600FF"
-	wxColour cbackground = Options.GetColour("Editor background");
-	wxColour cselection = Options.GetColour("Editor selection");
-	wxColour cselnofocus = Options.GetColour("Editor selection no focus");
-	wxColour cspellerrors = Options.GetColour("Editor spellchecker");
+	wxColour ctext = Options.GetColour("Editor Text");
+	wxColour ccurlybraces = Options.GetColour("Editor Curly Braces");//wxBLUE
+	wxColour coperators = Options.GetColour("Editor Tag Operators");//"#FF0000"
+	wxColour cnames = Options.GetColour("Editor Tag Names");//"#850085"
+	wxColour cvalues = Options.GetColour("Editor Tag Values");//"#6600FF"
+	wxColour cbackground = Options.GetColour("Editor Background");
+	wxColour cselection = Options.GetColour("Editor Selection");
+	wxColour cselnofocus = Options.GetColour("Editor Selection No Focus");
+	wxColour cspellerrors = Options.GetColour("Editor Spellchecker");
 	dc.SetBrush(cbackground);
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.DrawRectangle(0,0,w,h);

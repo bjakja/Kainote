@@ -23,6 +23,8 @@
 ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	:wxDialog(parent, -1, _("Właściwości napisów ASS"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
 {
+	SetForegroundColour(Options.GetColour("Window Text"));
+	SetBackgroundColour(Options.GetColour("Window Background"));
 	res=wxSize(w,h);
 	wxIcon icn;
 	icn.CopyFromBitmap(CreateBitmapFromPngResource("ASSPROPS"));

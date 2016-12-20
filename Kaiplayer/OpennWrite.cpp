@@ -25,7 +25,7 @@ OpenWrite::OpenWrite()
 
 }
 
-OpenWrite::OpenWrite(wxString fileName, bool clear)
+OpenWrite::OpenWrite(const wxString &fileName, bool clear)
 {
 	wxFileName fname;
 	fname.Assign(fileName);
@@ -45,7 +45,7 @@ OpenWrite::~OpenWrite()
 	CloseFile();
 }
 
-bool OpenWrite::FileOpen(wxString filename, wxString *riddenText, bool test)
+bool OpenWrite::FileOpen(const wxString &filename, wxString *riddenText, bool test)
 {
 
 	bool utf8=true;
@@ -82,15 +82,14 @@ bool OpenWrite::FileOpen(wxString filename, wxString *riddenText, bool test)
 	return false;
 }
 
-void OpenWrite::FileWrite(wxString fileName, wxString textfile, bool utf)
+void OpenWrite::FileWrite(const wxString &fileName, const wxString &textfile, bool utf)
 {
 
 	wxFileName fname;
 	fname.Assign(fileName);
 	if(!fname.DirExists()){wxMkdir(fileName.BeforeLast('\\'));}
 	if(fname.FileExists()&&!fname.IsFileReadable()){wxLogStatus(_("Pliku nie można odczytać."));return;}
-	if(utf){wchar_t bom = 0xFEFF;
-	textfile = wxString(bom) + textfile;}
+	
 	wxFile file;
 	if(!file.Exists(fileName)){
 		file.Create(fileName,false,wxS_DEFAULT);
@@ -98,17 +97,22 @@ void OpenWrite::FileWrite(wxString fileName, wxString textfile, bool utf)
 	else{
 		file.Open(fileName,wxFile::write,wxS_DEFAULT);}
 	if (file.IsOpened()){
-		if(utf){file.Write(textfile,wxConvUTF8);}else{file.Write(textfile,wxConvLocal);}
+		if(utf){
+			wchar_t bom = 0xFEFF;
+			file.Write(wxString(bom) + textfile,wxConvUTF8);
+		}
+		else{file.Write(textfile,wxConvLocal);}
 		file.Close();}
 
 }
-void OpenWrite::PartFileWrite(wxString parttext)
+void OpenWrite::PartFileWrite(const wxString &parttext)
 {
 	if(!file.IsOpened()){wxLogStatus(_("Plik nie został otwarty."));return;}
 	if(isfirst){
 		wchar_t bom = 0xFEFF;
-		parttext = wxString(bom) + parttext;
+		if(!file.Write(wxString(bom) + parttext,wxConvUTF8)){wxLogStatus(_("Nie można zapisać do pliku."));};
 		isfirst=false;
+		return;
 	}
 	if(!file.Write(parttext,wxConvUTF8)){wxLogStatus(_("Nie można zapisać do pliku."));};
 }

@@ -31,7 +31,8 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	bestsize=-1;
 	isscrollbar=false;
 	SetScrollRate(0,5);
-	SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	SetForegroundColour(Options.GetColour("Window Text"));
+	SetBackgroundColour(Options.GetColour("Window Background"));
 	
 	wxAcceleratorEntry ctentries[1];
     ctentries[0].Set(wxACCEL_NORMAL, WXK_RETURN, ID_MOVE);

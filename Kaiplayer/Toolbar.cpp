@@ -207,8 +207,9 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 	}
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
-	tdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR)));
-	tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR)));
+	wxColour background = Options.GetColour("Menu Background");
+	tdc.SetBrush(wxBrush(background));
+	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
 	int pos=4;
 	int pos1=0;
@@ -410,8 +411,9 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	tdc.SelectObject(*bmp);
 	wxBitmap checkbmp = wxBITMAP_PNG("check");
 	tdc.SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma"));
-	tdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU)));
-	tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU)));
+	wxColour background = Options.GetColour("Menu Background");
+	tdc.SetBrush(wxBrush(background));
+	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
 	int visible=25;//500/fh fh=20;
 	int idssize=parent->ids.size();

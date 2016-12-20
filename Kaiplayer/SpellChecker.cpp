@@ -118,8 +118,8 @@ bool SpellChecker::Initialize()
 		wxString userpath=pathhh+"UserDic.udic";
 		if (wxFileExists(userpath)) {
 			OpenWrite op;
-			wxString txt=op.FileOpen(userpath,false);
-			if (txt=="") {return true;}
+			wxString txt;
+			if (!op.FileOpen(userpath, &txt,false)) {return true;}
 			wxStringTokenizer textIn(txt,"\n");
 			while (textIn.HasMoreTokens()) {
 				// Read line
@@ -178,8 +178,8 @@ bool SpellChecker::AddWord(wxString word)
 	hunspell->add(word.mb_str(*conv));
 	wxString pathhh=Options.pathfull+"\\Dictionary\\UserDic.udic";
 	OpenWrite ow;
-	wxString txt=ow.FileOpen(pathhh,false);
-	if(txt==""){txt=word;}
+	wxString txt;
+	if(!ow.FileOpen(pathhh,false)){txt=word;}
 	else{txt+="\n"+word;}
 	ow.FileWrite(pathhh,txt);
 

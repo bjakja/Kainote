@@ -19,18 +19,23 @@
 #include "config.h"
 #include "kainoteMain.h"
 #include "Hotkeys.h"
-#include <wx/fontpicker.h>
+#include <wx/dir.h>
 #include "NumCtrl.h"
 #include "ColorPicker.h"
 #include "KaiTextCtrl.h"
 #include "FontDialog.h"
 #include "KaiListCtrl.h"
+#include "OpennWrite.h"
 
 OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	: wxDialog(parent,-1,_("Opcje"),wxDefaultPosition,wxDefaultSize,wxDEFAULT_DIALOG_STYLE,"Options")
-	{
+{
+	SetForegroundColour(Options.GetColour("Window Text"));
+	SetBackgroundColour(Options.GetColour("Window Background"));
 
 	OptionsTree= new wxTreebook(this,-1);
+	OptionsTree->SetForegroundColour(Options.GetColour("Window Text"));
+	OptionsTree->SetBackgroundColour(Options.GetColour("Window Background"));
 	
 	Kai=kaiparent;
 	Stylelist=NULL;
@@ -41,11 +46,23 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	SetIcon(icn);
 
 	wxPanel *Main= new wxPanel(OptionsTree);
+	Main->SetForegroundColour(Options.GetColour("Window Text"));
+	Main->SetBackgroundColour(Options.GetColour("Window Background"));
 	wxPanel *ConvOpt= new wxPanel(OptionsTree);
+	ConvOpt->SetForegroundColour(Options.GetColour("Window Text"));
+	ConvOpt->SetBackgroundColour(Options.GetColour("Window Background"));
 	wxPanel *Hotkeyss= new wxPanel(OptionsTree);
+	Hotkeyss->SetForegroundColour(Options.GetColour("Window Text"));
+	Hotkeyss->SetBackgroundColour(Options.GetColour("Window Background"));
 	wxPanel *AudioMain= new wxPanel(OptionsTree);
+	AudioMain->SetForegroundColour(Options.GetColour("Window Text"));
+	AudioMain->SetBackgroundColour(Options.GetColour("Window Background"));
 	wxPanel *Video= new wxPanel(OptionsTree);
+	Video->SetForegroundColour(Options.GetColour("Window Text"));
+	Video->SetBackgroundColour(Options.GetColour("Window Background"));
 	wxPanel *Themes= new wxPanel(OptionsTree);
+	Themes->SetForegroundColour(Options.GetColour("Window Text"));
+	Themes->SetBackgroundColour(Options.GetColour("Window Background"));
 
 	hkeymodif=0;
 	if(!Options.AudioOpts && !Options.LoadAudioOpts()){wxMessageBox(_("Dupa blada, opcje się nie wczytały, audio nie skonfigurujesz"), _("Błędny błąd"));}
@@ -64,7 +81,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			"Disable live editing","Seek For Visible Lines","Automation Trace Level"};
 
 		wxString langopts[2]={"Polski","English"};
-		wxStaticBoxSizer *langSizer=new wxStaticBoxSizer(wxVERTICAL, Main, _("Język (wymaga restartu programu)"));
+		KaiStaticBoxSizer *langSizer=new KaiStaticBoxSizer(wxVERTICAL, Main, _("Język (wymaga restartu programu)"));
 		KaiChoice *lang=new KaiChoice(Main,10000,wxDefaultPosition,wxDefaultSize,2,langopts);
 		lang->SetSelection(Options.GetInt("Program Language"));
 		lang->SetFocus();
@@ -75,7 +92,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxArrayString dics;
 		SpellChecker::AvailableDics(dics);
 		if(dics.size()==0){dics.Add(_("Umieść pliki .dic i .aff do folderu \"Dictionary\""));}
-		wxStaticBoxSizer *dicSizer=new wxStaticBoxSizer(wxVERTICAL, Main, _("Język sprawdzania pisowni (folder \"Dictionary\")"));
+		KaiStaticBoxSizer *dicSizer=new KaiStaticBoxSizer(wxVERTICAL, Main, _("Język sprawdzania pisowni (folder \"Dictionary\")"));
 		
 		KaiChoice *dic=new KaiChoice(Main,10001,wxDefaultPosition,wxDefaultSize,dics);
 
@@ -134,12 +151,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	{
 		wxBoxSizer *ConvOptSizer1=new wxBoxSizer(wxVERTICAL);
 
-		wxStaticBoxSizer *obr=new wxStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Wybierz katalog"));
-		wxStaticBoxSizer *obr0=new wxStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Wybierz styl"));
-		wxStaticBoxSizer *obr1=new wxStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Wybierz FPS"));
-		wxStaticBoxSizer *obr2=new wxStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Czas w ms na jedną literę"));
-		wxStaticBoxSizer *obr3=new wxStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Tagi wstawiane na początku każdej linijki ass"));
-		wxStaticBoxSizer *obr4=new wxStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Rozdzielczość przy konwersji na ASS"));
+		KaiStaticBoxSizer *obr=new KaiStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Wybierz katalog"));
+		KaiStaticBoxSizer *obr0=new KaiStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Wybierz styl"));
+		KaiStaticBoxSizer *obr1=new KaiStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Wybierz FPS"));
+		KaiStaticBoxSizer *obr2=new KaiStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Czas w ms na jedną literę"));
+		KaiStaticBoxSizer *obr3=new KaiStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Tagi wstawiane na początku każdej linijki ass"));
+		KaiStaticBoxSizer *obr4=new KaiStaticBoxSizer(wxHORIZONTAL,ConvOpt,_("Rozdzielczość przy konwersji na ASS"));
 		wxArrayString styles;
 		wxArrayString fpsy;
 
@@ -234,7 +251,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			ConOpt(opt,vopts[i]);
 			MainSizer->Add(opt,0,wxALL,2);
 		}
-		wxStaticBoxSizer *prefaudio=new wxStaticBoxSizer(wxHORIZONTAL,Video,voptspl[3]);
+		KaiStaticBoxSizer *prefaudio=new KaiStaticBoxSizer(wxHORIZONTAL,Video,voptspl[3]);
 		KaiTextCtrl *tc = new KaiTextCtrl(Video, -1, Options.GetString(vopts[3]), wxDefaultPosition, wxSize(250,-1),wxTE_PROCESS_ENTER);
 		ConOpt(tc,vopts[3]);
 		prefaudio->Add(tc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
@@ -327,9 +344,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		ConOpt(Delay,opts1[0]);
 		ConOpt(sc,opts1[1]);
 		ConOpt(sc1,opts1[2]);
-		wxStaticBoxSizer *DelaySizer=new wxStaticBoxSizer(wxVERTICAL,AudioMain,_("Opóźnienie audio w ms"));
-		wxStaticBoxSizer *audiocols=new wxStaticBoxSizer(wxVERTICAL,AudioMain,_("Czas odtwarzania audio przed i po znaczniku w ms"));	
-		wxStaticBoxSizer *audiocols1=new wxStaticBoxSizer(wxVERTICAL,AudioMain,_("Sposób wyświetlania nieaktywnych linijek"));	
+		KaiStaticBoxSizer *DelaySizer=new KaiStaticBoxSizer(wxVERTICAL,AudioMain,_("Opóźnienie audio w ms"));
+		KaiStaticBoxSizer *audiocols=new KaiStaticBoxSizer(wxVERTICAL,AudioMain,_("Czas odtwarzania audio przed i po znaczniku w ms"));	
+		KaiStaticBoxSizer *audiocols1=new KaiStaticBoxSizer(wxVERTICAL,AudioMain,_("Sposób wyświetlania nieaktywnych linijek"));	
 		DelaySizer->Add(Delay,1,wxALL|wxEXPAND,2);
 		audiocols->Add(sc,1,wxALL|wxEXPAND,2);
 		audiocols1->Add(sc1,1,wxALL|wxEXPAND,2);
@@ -376,7 +393,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Ramka z opisem obramowanie"),
 			//pasek menu
 			_("Pasek menu tło 1"),_("Pasek menu tło 2"),_("Pasek menu obramowanie zaznaczenia"),
-			_("Pasek menu tło zaznaczenia"),_("Menu obramowanie"),_("Menu obramowanie zaznaczenia"),
+			_("Pasek menu tło zaznaczenia"),_("Menu tło"),_("Menu obramowanie zaznaczenia"),
 			_("Menu tło zaznaczenia"),
 			_("Pierwszy kolor podglądu styli"),_("Drugi kolor podglądu styli")
 		};
@@ -385,7 +402,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			"Window Background", "Window Inactive Background", "Window Text", "Window Inactive Text",
 			//grid
 			"Grid Text","Grid Background","Grid Dialogue","Grid Comment","Grid Selected Dialogue","Grid Selected Comment",
-			"Grid Collisions","Grid Active Line","Grid Lines","Grid Label Normal","Grid Label Modified",
+			"Grid Collisions","Grid Lines","Grid Active Line","Grid Label Normal","Grid Label Modified",
 			"Grid Label Saved","Grid Spellchecker","Grid Comparison","Grid Comparison Background",
 			"Grid Comparison Background selected","Grid Comparison Comment Background",
 			"Grid Comparison Comment Background Selected",
@@ -407,11 +424,37 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			"Scrollbar Scroll Hover","Staticbox Border",
 			//menu bar 
 			"Menu Bar Background 1","Menu Bar Background 2","Menu Bar Border Selection",
-			"Menu Bar Background Selection","Menu Border","Menu Border Selection","Menu Background Selection",
+			"Menu Bar Background Selection","Menu Background","Menu Border Selection","Menu Background Selection",
 			"Style Preview Color1","Style Preview Color2"
 		};
 		
 		wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+		wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
+		wxArrayString choices;
+		choices.Add("Default");
+		wxArrayString files;
+		wxString pathwn = Options.pathfull + "\\Themes\\";
+		wxString programTheme = Options.GetString("Program Theme");
+		wxDir kat(pathwn);
+		if(kat.IsOpened()){
+			kat.GetAllFiles(pathwn,&files,"*.txt", wxDIR_FILES);
+		}
+		for (size_t i = 0; i < files.size(); i++){
+			choices.Add(files[i].AfterLast('\\').BeforeLast('.'));
+		}
+		KaiChoice *themeList = new KaiChoice(Themes,14567,wxDefaultPosition, wxDefaultSize, choices);
+		themeList->SetSelection(themeList->FindString(programTheme));
+		
+		KaiTextCtrl *newTheme = new KaiTextCtrl(Themes,-1,"");
+		MappedButton *copyTheme = new MappedButton(Themes,14566,_("Kopiuj"));
+		
+		
+		
+		sizer->Add(themeList, 0, wxALL|wxEXPAND, 2);
+		sizer1->Add(newTheme, 1, wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 2);
+		sizer1->Add(copyTheme, 0, wxLEFT|wxTOP|wxBOTTOM, 2);
+		sizer->Add(sizer1, 0, wxALL|wxEXPAND, 2);
+
 		KaiListCtrl *List = new KaiListCtrl(Themes, -1, wxDefaultPosition, wxSize(300, -1));
 		List->InsertCollumn(0, "Nazwa", TYPE_TEXT, 220);
 		List->InsertCollumn(1, "Kolor", TYPE_COLOR, 150);
@@ -419,10 +462,43 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		{
 			int row = List->AppendItem(new ItemText(labels[i]));
 			AssColor col = Options.GetColor(opts[i]);
-			List->SetItem(row, 1, new ItemColor(col));
+			List->SetItem(row, 1, new ItemColor(col, opts[i]));
 		}
 		sizer->Add(List, 1, wxALL|wxEXPAND, 2);
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED,[=](wxCommandEvent &evt){
+			wxString themeName = newTheme->GetValue();
+			if(themeName.IsEmpty() || choices.Index(themeName, false) != -1){wxBell(); return;}
+			wxString originalName = themeList->GetString(themeList->GetSelection());
+			wxString dir = Options.pathfull + "\\Themes\\";
+			wxString copyPath = dir + themeName + ".txt";
+			if(originalName== "Default"){
+				Options.SaveColors(copyPath);
+				
+			}else{
+				
+				if(!wxDirExists(dir)){
+					wxBell(); return;
+				}
+				wxString originalPath = dir + originalName + ".txt";
+				wxCopyFile(originalPath, copyPath, false);
+			}
+			Options.SetString("Program Theme", themeName);
+			if(!List->IsEnabled()){List->Enable(false);}
+		},14566);
+		Bind(wxEVT_COMMAND_CHOICE_SELECTED,[=](wxCommandEvent &evt){
+			wxString themeName = themeList->GetString(themeList->GetSelection());
+			if(themeName.IsEmpty()){return;}
+			Options.LoadColors(themeName);
+			for(int i=0;i<74;i++)
+			{
+				ItemColor *item = (ItemColor*)List->GetItem(i, 1);
+				item->col = Options.GetColor(item->name);
+			}
+			List->Refresh(false);
+		},14567);
+		if(programTheme == "Default"){List->Enable(false);}
 		Themes->SetSizerAndFit(sizer);
+		ConOpt(List,"Colors");
 	}
 		
 	//Adding pages
@@ -437,9 +513,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	//adding buttons
 	wxBoxSizer *ButtonsSizer=new wxBoxSizer(wxHORIZONTAL);
 
-	okok=new wxButton(this,wxID_OK,"OK");
-	wxButton *oknow=new wxButton(this,ID_BCOMMIT,_("Zastosuj"));
-	wxButton *cancel=new wxButton(this,wxID_CANCEL,_("Anuluj"));
+	okok=new MappedButton(this,wxID_OK,"OK");
+	MappedButton *oknow=new MappedButton(this,ID_BCOMMIT,_("Zastosuj"));
+	MappedButton *cancel=new MappedButton(this,wxID_CANCEL,_("Anuluj"));
 
 	ButtonsSizer->Add(okok,0,wxRIGHT,2);
 	ButtonsSizer->Add(oknow,0,wxRIGHT,2);
@@ -576,6 +652,13 @@ void OptionsDialog::SetOptions(bool saveall)
 			AssColor kol=cpc->GetColor();
 			if(Options.GetColor(OB.option)!=kol){
 				Options.SetColor(OB.option,kol);colmod=true;
+			}
+		}else if(OB.ctrl->IsKindOf(CLASSINFO(KaiListCtrl))){
+			KaiListCtrl *list = (KaiListCtrl*)OB.ctrl;
+			if(list->GetModified()){
+				list->SaveAll(1);
+				Options.SaveColors();
+				GetParent()->Refresh(false);
 			}
 		}
 	}

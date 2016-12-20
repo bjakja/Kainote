@@ -52,9 +52,9 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 	wxMemoryDC tdc;
 	tdc.SelectObject(wxBitmap(w,h));
 	tdc.SetFont(wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma"));
- 
-	tdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR)));
-	tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR)));
+	wxColour background = GetParent()->GetBackgroundColour();
+	tdc.SetBrush(wxBrush(background));
+	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
 	
 	wxBitmap start=prb.GetSubBitmap(wxRect(0,0,10,5));
@@ -259,9 +259,9 @@ void VolSlider::OnPaint(wxPaintEvent& event)
 	}
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
-	//dc.Clear();
-	tdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR)));
-	tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR)));
+	wxColour background = GetParent()->GetBackgroundColour();
+	tdc.SetBrush(wxBrush(background));
+	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
 	
 	tdc.DrawBitmap(start,10,10);

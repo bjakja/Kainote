@@ -165,8 +165,9 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 	}
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
-	tdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR)));
-	tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR)));
+	wxColour background = GetParent()->GetBackgroundColour();
+	tdc.SetBrush(wxBrush(background));
+	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
 	//wxLogStatus("Paint");
 	int posX = startDrawPos;
@@ -182,12 +183,14 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 		if(icons[i]->icon->IsOk()){
 			bool toggled = i==Toggled || i==clipToggled || (i >= moveToolsStart && MoveToggled[i-moveToolsStart]);
 			if(i==sel){
-				tdc.SetBrush(wxBrush(wxSystemSettings::GetColour( (toggled)? wxSYS_COLOUR_MENUHILIGHT : wxSYS_COLOUR_MENUBAR)));
-				tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT)));
+				tdc.SetBrush(wxBrush((toggled)? Options.GetColour("Togglebutton Background Toggled") : Options.GetColour("Menu Background Selection") ));
+				tdc.SetPen(wxPen(Options.GetColour("Menu Border Selection")));
 				tdc.DrawRoundedRectangle(posX, 1, h-2, h-2, 2.0);
 			}else if(toggled){
-				tdc.SetBrush(wxBrush(wxSystemSettings::GetColour((clicked && i==sel)? wxSYS_COLOUR_BTNFACE : wxSYS_COLOUR_HIGHLIGHT)));
-				tdc.SetPen(wxPen(wxSystemSettings::GetColour((clicked && i==sel)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_HIGHLIGHT)));
+				tdc.SetBrush(wxBrush((clicked && i==sel)? Options.GetColour("Button Background Pushed") : 
+					Options.GetColour("Togglebutton Background Toggled")));
+				tdc.SetPen(wxPen((clicked && i==sel)? Options.GetColour("Button Border Pushed") : 
+					Options.GetColour("Togglebutton Border Toggled")));
 				tdc.DrawRoundedRectangle(posX, 1, h-2, h-2, 2.0);
 			}
 			

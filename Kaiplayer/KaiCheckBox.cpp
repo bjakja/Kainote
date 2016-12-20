@@ -69,6 +69,7 @@ KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
 	Bind(wxEVT_PAINT, &KaiCheckBox::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &KaiCheckBox::OnKeyPress, this);
 	SetBackgroundColour(parent->GetBackgroundColour());
+	SetForegroundColour(parent->GetForegroundColour());
 }
 
 void KaiCheckBox::OnPaint(wxPaintEvent& event)

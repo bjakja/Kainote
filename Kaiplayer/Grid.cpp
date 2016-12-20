@@ -485,7 +485,8 @@ void Grid::OnPasteTextTl()
 	if (FileDialog1->ShowModal() == wxID_OK){
 		OpenWrite op;
 		wxString pathh=FileDialog1->GetPath();
-		wxString txt= op.FileOpen(pathh);
+		wxString txt;
+		if(!op.FileOpen(pathh, &txt)){return;}
 		wxString ext=pathh.AfterLast('.');
 		int iline=0;
 

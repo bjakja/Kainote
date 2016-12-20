@@ -86,10 +86,19 @@ void ItemColor::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWind
 		if (dcp->ShowModal() == wxID_OK) {
 			col = dcp->GetColor();
 			theList->Refresh(false);
+			((KaiListCtrl*)theList)->SetModified(true);
+			modified = true;
 		}
 	}
 
 };
+
+void ItemColor::Save(){
+	if(modified){
+		Options.SetColor(name, col);
+		modified=false;
+	}
+}
 
 void ItemCheckBox::OnPaint(wxMemoryDC *dc, int x, int y, int w, int h, wxWindow *theList)
 {
@@ -120,8 +129,10 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 	,scPosH(0)
 	,lineHeight(17)
 	,headerHeight(25)
+	,modified(false)
 {
 	SetBackgroundColour(parent->GetBackgroundColour());
+	SetForegroundColour(parent->GetForegroundColour());
 	SetMinSize(size);
 	SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT));
 }
@@ -259,6 +270,9 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 	if(elemY<0){
 		//tu napisz chwytanie headera
 		return;
+	}else if((size_t)elemY>=itemList.size()){
+		//tu ju¿ nic nie zrobimy, jesteœmy poza elemetami na samym dole
+		return;
 	}
 	int elemX = -1;
 	int startX = 0; 
@@ -333,6 +347,16 @@ int KaiListCtrl::GetMaxWidth()
 	return maxWidth;
 }
 
+void KaiListCtrl::SaveAll(int col)
+{
+	if(!modified){return;}
+	for(size_t i = 0; i<itemList.size(); i++){
+		if(itemList[i]->row.size()<=(size_t)col){continue;}
+		itemList[i]->row[col]->Save();
+	}
+	modified = false;
+}
+
 BEGIN_EVENT_TABLE(KaiListCtrl,KaiScrolledWindow)
 	EVT_PAINT(KaiListCtrl::OnPaint)
 	EVT_SIZE(KaiListCtrl::OnSize)
@@ -340,3 +364,5 @@ BEGIN_EVENT_TABLE(KaiListCtrl,KaiScrolledWindow)
 	EVT_MOUSE_EVENTS(KaiListCtrl::OnMouseEvent)
 	EVT_ERASE_BACKGROUND(KaiListCtrl::OnEraseBackground)
 END_EVENT_TABLE()
+
+wxIMPLEMENT_ABSTRACT_CLASS(KaiListCtrl, wxWindow);

@@ -14,6 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "KaiStaticBoxSizer.h"
+#include "config.h"
 
 KaiStaticBox::KaiStaticBox(wxWindow *parent, const wxString& _label)
 	: wxStaticBox(parent,-1,_label)
@@ -49,11 +50,11 @@ void KaiStaticBox::PaintForeground(wxDC& tdc, const struct tagRECT& rc)
 	tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 	wxSize fsize = tdc.GetTextExtent(label);
 	int halfY = fsize.y/2;
-	tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT)));
+	tdc.SetPen(wxPen(Options.GetColour("Staticbox Border")));
 	tdc.DrawRectangle(4, halfY, w-8, h - halfY - 2);
 	tdc.SetBackgroundMode(wxPENSTYLE_SOLID);
 	tdc.SetTextBackground(background);
-	tdc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+	tdc.SetTextForeground(GetParent()->GetForegroundColour());
 	tdc.DrawText(" "+label+" ", 8, 0);
 }
 

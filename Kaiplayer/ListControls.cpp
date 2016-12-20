@@ -61,6 +61,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	}
 	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? fh+10 : size.y);
 	SetMinSize(newSize);
+	SetForegroundColour(parent->GetForegroundColour());
 	//Bind(wxEVT_KILL_FOCUS, &KaiChoice::OnKillFocus, this);
 	//if(style & KAI_COMBO_BOX){
 	//	choiceText = new KaiTextCtrl(this, 27789, "", wxPoint(1,1), wxSize(newSize.x-22, newSize.y-2));
@@ -130,6 +131,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	//		else{evt.Skip();}
 	//	},ID_TDOWN);
 	//}
+	SetForegroundColour(parent->GetForegroundColour());
 }
 
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, const wxPoint& pos,
@@ -193,6 +195,9 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 		if(itemList&&itemList->IsShown()){itemList->OnKeyPress(kevt);}
 		else{evt.Skip();}
 	},ID_TDOWN);
+	SetForegroundColour(parent->GetForegroundColour());
+	choiceText->SetBackgroundColour(parent->GetBackgroundColour());
+	choiceText->SetForegroundColour(parent->GetForegroundColour());
 }
 
 KaiChoice::~KaiChoice()
@@ -239,8 +244,16 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 	//tdc.SetPen(wxPen(background));
 	//tdc.DrawRectangle(0,0,w,h);
 	bool enabled = IsThisEnabled();
-	tdc.SetBrush(wxBrush(wxSystemSettings::GetColour((clicked)? wxSYS_COLOUR_BTNSHADOW : (enabled)? wxSYS_COLOUR_BTNFACE : wxSYS_COLOUR_INACTIVECAPTION )));
-	tdc.SetPen(wxPen(wxSystemSettings::GetColour((enter)? wxSYS_COLOUR_MENUHILIGHT : (enabled)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_GRAYTEXT)));
+	/*tdc.SetBrush(wxBrush(wxSystemSettings::GetColour((clicked)? wxSYS_COLOUR_BTNSHADOW : (enabled)? wxSYS_COLOUR_BTNFACE : wxSYS_COLOUR_INACTIVECAPTION )));
+	tdc.SetPen(wxPen(wxSystemSettings::GetColour((enter)? wxSYS_COLOUR_MENUHILIGHT : (enabled)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_GRAYTEXT)));*/
+	tdc.SetBrush(wxBrush((enter)? Options.GetColour("Button Background Hover") :
+		(clicked)? Options.GetColour("Button Background Pushed") : 
+		(enabled)? Options.GetColour("Button Background") : 
+		Options.GetColour("Window Inactive Background")));
+	tdc.SetPen(wxPen((enter)? Options.GetColour("Button Border Hover") : 
+		(clicked)? Options.GetColour("Button Border Pushed") : 
+		(enabled)? Options.GetColour("Button Border") : 
+		Options.GetColour("Button Inactive Border")));
 	tdc.DrawRectangle(0,0,w,h);
 
 	if(w>15){
@@ -262,7 +275,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 				txt = txt.RemoveLast(2)+"...";
 			}
 			if(!choiceText){
-				tdc.SetTextForeground(wxSystemSettings::GetColour((enabled)? wxSYS_COLOUR_WINDOWTEXT : wxSYS_COLOUR_GRAYTEXT));
+				tdc.SetTextForeground((enabled)? GetForegroundColour() : Options.GetColour("Window Inactive Text"));
 				//tdc.DrawText(txt, 4, (h-fh));
 				wxRect cur(5, (h-fh)/2, w - 19, fh);
 				tdc.SetClippingRegion(cur);
@@ -622,34 +635,25 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	}
 	if(!bmp){bmp=new wxBitmap(bitmapw, h);}
 	tdc.SelectObject(*bmp);
-	wxColour highlight = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-	wxColour text = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT);
-	wxColour graytext = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
-	wxColour background = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
-	int r2 = highlight.Red(), g2 = highlight.Green(), b2 = highlight.Blue();
-	int r = background.Red(), g = background.Green(), b = background.Blue();
-	int inv_a = 65;
-	int fr = (r2* inv_a / 0xFF) + (r - inv_a * r / 0xFF);
-	int fg = (g2* inv_a / 0xFF) + (g - inv_a * g / 0xFF);
-	int fb = (b2* inv_a / 0xFF) + (b - inv_a * b / 0xFF);
-	wxColour menuhighlight(fr,fg,fb);
-
+	wxColour text = Options.GetColour("Window Text");
+	wxColour graytext = Options.GetColour("Window Inactive Text");
+	
 	tdc.SetFont(GetFont());
-	tdc.SetBrush(wxBrush(background));
+	tdc.SetBrush(wxBrush(Options.GetColour("Menu Background")));
 	tdc.SetPen(wxPen(text));
 	tdc.DrawRectangle(0,0,bitmapw,h);
-	tdc.SetTextForeground(text);
+	//tdc.SetTextForeground(Options.GetColour("Menu Bar Border Selection"));
 	for(int i=0;i<maxsize; i++)
 	{
 		int scrollPos=i+scPos;
 
 		if(scrollPos==sel){
-			tdc.SetPen(wxPen(highlight));
-			tdc.SetBrush(wxBrush(menuhighlight));
+			tdc.SetPen(wxPen(Options.GetColour("Menu Border Selection")));
+			tdc.SetBrush(wxBrush(Options.GetColour("Menu Background Selection")));
 			tdc.DrawRectangle(2, (height*i)+2,w-4,height-2);
 		}
 		wxString desc=(*itemsList)[scrollPos];
-		tdc.SetTextForeground((disabledItems->find(scrollPos) != disabledItems->end())? graytext : text);
+		tdc.SetTextForeground((disabledItems->find(scrollPos) != disabledItems->end())? text : graytext);
 		tdc.DrawText(desc,4,(height*i)+3);
 	}
 
