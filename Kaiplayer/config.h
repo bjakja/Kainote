@@ -97,6 +97,7 @@ class config
 	void SaveColors(const wxString &path="");
     void LoadStyles(wxString katalog);
     void clearstyles();
+	void ClearColors();
 	void Sortstyles();
 	void SetHexColor(const wxString &nameAndColor);
 	wxString GetStringColor(std::map<wxString, wxColour*>::iterator it);

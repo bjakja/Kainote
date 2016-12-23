@@ -367,7 +367,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			//napisy
 			_("Napisy tekst"),_("Napisy tło"),_("Napisy tło dialogów"),_("Napisy tło komentarzy"),
 			_("Napisy zaznaczone dialogi"),_("Napisy zaznaczone komentarze"),
-			_("Napisy kolidujące linie"),_("Napisy linie"),_("Napisy obramowanie aktywnej linijki"),
+			_("Napisy kolidujące linie"),_("Napisy obramowanie linijki"),_("Napisy obramowanie aktywnej linijki"),
 			_("Napisy etykieta"),_("Napisy etykieta zmodyfikowanej linii"),_("Napisy etykieta zapisanej linii"),
 			_("Napisy tło błędów pisowni"),_("Napisy porównanie"),_("Napisy tło porównania"),
 			_("Napisy tło porównania zaznaczenia"),_("Napisy tło komentarza porównania"),
@@ -375,14 +375,14 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			//edytor
 			_("Edytor tekst"),_("Edytor nazwy tagów"),_("Edytor wartości tagów"),
 			_("Edytor nawiasy klamrowe"),_("Edytor operatory tagów"),_("Edytor tło"),
-			_("Edytor zaznaczenie"),_("Edytor zaznaczenie nieaktywnego okna"),
+			_("Edytor zaznaczenie"),_("Edytor zaznaczenie w nieaktywnym oknie"),
 			_("Edytor obramowanie"),_("Edytor obramowanie aktywnego okna"),_("Edytor błędy pisowni"),
 			//audio
 			_("Audio tło"),_("Audio znacznik start"),_("Audio znacznik koniec"),_("Audio znacznik przesuwania czasów"),
 			_("Audio znaczniki nieaktywnej linijki"),_("Audio kursor"),_("Audio znaczniki sekund"),_("Audio klatki kluczowe"),
 			_("Audio zaznaczenie"),_("Audio zaznaczenie po modyfikacji"),_("Audio wykres audio"),
 			_("Audio nieaktywny wykres falowy"),_("Audio zmodyfikowany wykres falowy"),_("Audio zaznaczony wykres falowy"),
-			_("Audio tło nieaktywnych linijek"),_("Audio tło spektrum"), _("Audio spektrum"), _("Audio echo spektrum"),
+			_("Audio tło nieaktywnych linijek"),_("Audio tło spektrum"), _("Audio echo spektrum"), _("Audio spektrum"),
 			//kontrolki
 			_("Przycisk i lista tło"), _("Przycisk i lista tło po najechaniu"), 
 			_("Przycisk i lista tło po wciśnięciu"), _("Przycisk i lista obramowanie"),
@@ -456,8 +456,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		sizer->Add(sizer1, 0, wxALL|wxEXPAND, 2);
 
 		KaiListCtrl *List = new KaiListCtrl(Themes, -1, wxDefaultPosition, wxSize(300, -1));
-		List->InsertCollumn(0, "Nazwa", TYPE_TEXT, 220);
-		List->InsertCollumn(1, "Kolor", TYPE_COLOR, 150);
+		List->InsertCollumn(0, _("Nazwa"), TYPE_TEXT, 240);
+		List->InsertCollumn(1, _("Kolor"), TYPE_COLOR, 150);
 		for(int i=0;i<74;i++)
 		{
 			int row = List->AppendItem(new ItemText(labels[i]));
@@ -484,6 +484,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			}
 			Options.SetString("Program Theme", themeName);
 			if(!List->IsEnabled()){List->Enable(false);}
+			newTheme->SetValue("");
+			int size = themeList->Append(themeName);
+			themeList->SetSelection(size);
 		},14566);
 		Bind(wxEVT_COMMAND_CHOICE_SELECTED,[=](wxCommandEvent &evt){
 			wxString themeName = themeList->GetString(themeList->GetSelection());
@@ -495,6 +498,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 				item->col = Options.GetColor(item->name);
 			}
 			List->Refresh(false);
+			this->Refresh(false);
+			parent->Refresh(false);
+			List->Enable(themeName != "Default");
 		},14567);
 		if(programTheme == "Default"){List->Enable(false);}
 		Themes->SetSizerAndFit(sizer);

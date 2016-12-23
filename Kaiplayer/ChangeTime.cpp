@@ -93,7 +93,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	choices.Add(_("Od zaznaczonej linijki"));
 	choices.Add(_("Czasy wyższe i równe"));
 	choices.Add(_("Według wybranych stylów"));
-	WhichLines= new KaiChoice(this,-1,wxDefaultPosition,wxDefaultSize,choices);
+	WhichLines= new KaiChoice(this,-1,wxDefaultPosition,wxDefaultSize,choices,KAI_SCROLL_ON_FOCUS);
 
 	wxBoxSizer *stylesizer= new wxBoxSizer(wxHORIZONTAL);
 	AddStyles = new MappedButton(this, ID_BSTYLE, "+", "", wxDefaultPosition, wxSize(22,22), 0);
@@ -110,7 +110,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	choices.Add(_("Czas początkowy"));
 	choices.Add(_("Czas końcowy"));
 	
-	WhichTimes= new KaiChoice(this,-1,wxDefaultPosition,wxDefaultSize,choices);
+	WhichTimes= new KaiChoice(this,-1,wxDefaultPosition,wxDefaultSize,choices,KAI_SCROLL_ON_FOCUS);
 	WhichTimes->Enable(form!=TMP);
 	
 	timessizer->Add(WhichTimes,0,wxEXPAND|wxRIGHT|wxTOP|wxLEFT,2);
@@ -120,7 +120,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	choices.Add(_("Zostaw bez zmian"));
 	choices.Add(_("Skoryguj nachodzące czasy"));
 	choices.Add(_("Nowe czasy"));
-	CorTime = new KaiChoice(this, -1, wxDefaultPosition, wxSize(130,-1), choices);
+	CorTime = new KaiChoice(this, -1, wxDefaultPosition, wxSize(130,-1), choices, KAI_SCROLL_ON_FOCUS);
 	CorTime->SetSelection(0);
 	cesizer->Add(CorTime,0,wxEXPAND|wxLEFT|wxRIGHT,2);
 	coll = new MappedButton(this,22999,_("Opcje dodatkowe"),"",wxDefaultPosition, wxSize(-1,-1), 0);

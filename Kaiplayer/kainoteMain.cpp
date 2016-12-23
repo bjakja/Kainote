@@ -166,6 +166,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	AutoMenu = new Menu();
 	AutoMenu->AppendTool(Toolbar,AutoLoadScript, _("Wczytaj skrypt"), _("Wczytaj skrypt"),PTR_BITMAP_PNG("automation"));
 	AutoMenu->AppendTool(Toolbar,AutoReloadAutoload, _("Odśwież skrypty autoload"), _("Odśwież skrypty autoload"),PTR_BITMAP_PNG("automation"));
+	AutoMenu->Append(LoadLastScript, _("Uruchom ostatnio zaczytany skrypt"), _("Otwórz ostatnio zaczytany skrypt"));
 	Menubar->Append(AutoMenu, _("Au&tomatyzacja"));
 
 	HelpMenu = new Menu();
@@ -391,15 +392,30 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if (FileDialog1->ShowModal() == wxID_OK){
 			wxString file=FileDialog1->GetPath();
 			Options.SetString("Lua Recent Folder",file.AfterLast('\\'));
-			if(Auto->Add(file)){Auto->BuildMenu(&AutoMenu);}
-
+			//if(Auto->Add(file)){Auto->BuildMenu(&AutoMenu);}
+			Auto->Add(file);
 		}
 		FileDialog1->Destroy();
 
 	}else if(id==AutoReloadAutoload){
 		if(!Auto){Auto=new Auto::Automation();}
-		Auto->ReloadScripts();
-		Auto->BuildMenu(&AutoMenu);
+		else{Auto->ReloadScripts();}
+		//Auto->BuildMenu(&AutoMenu);
+	}else if(id ==LoadLastScript){
+		if(!Auto){Auto=new Auto::Automation(true);}
+		else{Auto->AddFromSubs();}
+		int size = Auto->ASSScripts.size();
+		if(!size){wxMessageBox(_("Ten plik napisów nie ma dodanych żadnych skryptów"));return;}
+		auto script = Auto->ASSScripts[size-1];
+		if(script->CheckLastModified(true)){script->Reload();}
+		auto macro = script->GetMacro(0);
+		if(macro){
+			macro->Run(GetTab());
+		}else{
+			
+			wxMessageBox(wxString::Format(_("Błąd wczytywania skryptu Lua: %s\n%s"), script->GetPrettyFilename(), script->GetDescription()),_("Błąd"));
+			Auto->OnEdit(script->GetFilename());	
+		}
 	}else if(id==GoToPrewKeyframe){
 		pan->Video->GoToPrevKeyframe();
 	}else if(id==GoToNextKeyframe){
@@ -669,7 +685,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 {
 	wxString ext=filename.Right(3).Lower();
 	if(ext=="exe"||ext=="zip"||ext=="rar"||ext=="7z"){return false;}
-	if(ext=="lua" || ext == "moon"){if(!Auto){Auto=new Auto::Automation();}Auto->Add(filename);return true;}
+	if(ext=="lua" || ext == "moon"){if(!Auto){Auto=new Auto::Automation(false);}Auto->Add(filename);return true;}
 	TabPanel *pan=GetTab();
 	
 	bool found=false;
@@ -982,7 +998,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 		if(ext=="ass"||ext=="ssa"||ext=="txt"||ext=="srt"||ext=="sub"){
 			subs.Add(files[i]);
 		}else if(ext=="lua" || ext=="moon"){
-			if(!Auto){Auto=new Auto::Automation();}
+			if(!Auto){Auto=new Auto::Automation(false);}
 			Auto->Add(files[i]);
 		}
 		else if(ext!="exe" && ext!="zip" && ext!="rar" && ext!="7z"){

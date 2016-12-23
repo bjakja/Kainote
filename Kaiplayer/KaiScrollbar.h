@@ -24,7 +24,7 @@ class KaiScrollbar : public wxWindow
 public:
 	KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int style = wxSB_HORIZONTAL);
 	virtual ~KaiScrollbar(){if(bmp){delete bmp;}};
-	void SetScrollbar(int pos, int visible, int range, bool refresh = true);
+	void SetScrollbar(int pos, int visible, int range, int pageSize, bool refresh = true);
 	int unitPos;
 	int visibleSize;
 	int allSize;
@@ -39,15 +39,15 @@ private:
 	int thumbSize;
 	int diff;
 	int thumbRange;
+	int pageSize;
 	int allVisibleSize;
 	bool isVertical;
 	bool holding;
+	bool rholding;
 	bool enter;
-	//bool clicked;
 	bool integrated;
 	byte element;
-	//wxSize oldSize;
-	wxTimer sendEvent;
+	wxTimer pageLoop;
 	wxTimer arrowLoop;
 	wxBitmap *bmp;
 	DECLARE_EVENT_TABLE()

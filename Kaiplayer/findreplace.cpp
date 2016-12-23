@@ -26,6 +26,8 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 	: wxDialog(kfparent, -1,(sellines)?_("Zaznacz"): (replace)?_("Znajdź i zamień"):_("Znajdź"))
 	,hasFocus(false)
 {
+	SetForegroundColour(Options.GetColour("Window Text"));
+	SetBackgroundColour(Options.GetColour("Window Background"));
 	Kai=kfparent;
 	reprow=posrow=0;
 	postxt=0;

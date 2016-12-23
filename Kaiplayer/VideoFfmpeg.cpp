@@ -66,14 +66,14 @@ void listw::OnDoubleClick(wxCommandEvent& evt)
 	EndModal(wxID_OK);
 }
 
-	void listw::OnShowDialog(wxThreadEvent &evt)
-	{
-		wxSemaphore *sema = evt.GetPayload<wxSemaphore*>();
+void listw::OnShowDialog(wxThreadEvent &evt)
+{
+	wxSemaphore *sema = evt.GetPayload<wxSemaphore*>();
 
-		//Show();
-		wxMessageBox("dupa blada");
-		sema->Post();
-	}
+	//Show();
+	wxMessageBox("dupa blada");
+	sema->Post();
+}
 
 //int ShowDialog(wxWindow *parent, const wxArrayString &suggest){
 //	/*wxSemaphore sema(0,1);
@@ -103,7 +103,7 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *_s
 {
 	if(!Options.AudioOpts && !Options.LoadAudioOpts()){wxMessageBox(_("Dupa blada, opcje się nie wczytały, na audio nie podziałasz"), _("Błędny błąd"));}
 	disccache = !Options.GetBool("Audio RAM Cache");
-	
+
 	success=false;
 	fname = filename;
 	kainoteApp *Kaia=(kainoteApp*)wxTheApp;
@@ -122,10 +122,10 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *_s
 		*_success=((int)progress->Wait() == 1 );
 	}
 	SAFE_DELETE(progress);
-	
+
 	if(audiosource){FFMS_DestroyAudioSource(audiosource);audiosource=0;}
 }
-	
+
 unsigned int __stdcall VideoFfmpeg::FFMS2Proc(void* cls)
 {
 	((VideoFfmpeg*)cls)->Processing();
@@ -142,11 +142,11 @@ void VideoFfmpeg::Processing()
 
 	success=(Init()==1);
 	progress->EndModal();
-	
+
 	int pitch = width*1.5f;
 	int fplane=height * width;
 	int uvplane=fplane/2;
-	
+
 	int tdiff=0;
 
 	SetEvent(eventComplete);
@@ -169,7 +169,7 @@ void VideoFfmpeg::Processing()
 				memcpy(&buff[fplane],fframe->Data[1],uvplane);
 				rend->DrawTexture(buff);
 				rend->Render(false);
-				
+
 				if(rend->time>=rend->playend){
 					wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED,23333);
 					wxQueueEvent(rend, evt);
@@ -188,11 +188,11 @@ void VideoFfmpeg::Processing()
 					}
 					else{rend->lastframe++;}
 				}
-				
+
 				tdiff = Timecodes[rend->lastframe] - rend->time;
 				rend->time = Timecodes[rend->lastframe];
 
-				
+
 				Sleep(tdiff);
 
 			}
@@ -276,30 +276,32 @@ int VideoFfmpeg::Init()
 		wxArrayString tracks;
 
 		if(ismkv){
-			MatroskaWrapper mw;mw.Open(fname,false);
-			if(audiotable.size()>1){
-				for (size_t j=0;j<audiotable.size();j++){
-					TrackInfo* ti=mkv_GetTrackInfo(mw.file,audiotable[j]);
+			MatroskaWrapper mw;
+			if(mw.Open(fname,false)){
+				if(audiotable.size()>1){
+					for (size_t j=0;j<audiotable.size();j++){
+						TrackInfo* ti=mkv_GetTrackInfo(mw.file,audiotable[j]);
 
-					wxString all;
-					char *opis = (ti->Name)? ti->Name : ti->Language;
-					all<<audiotable[j]<<": "<<opis;
-					tracks.Add(all);
+						wxString all;
+						char *opis = (ti->Name)? ti->Name : ti->Language;
+						all<<audiotable[j]<<": "<<opis;
+						tracks.Add(all);
+					}
 				}
-			}
-			Chapter *chap=NULL;
-			UINT nchap=0;
-			mkv_GetChapters(mw.file,&chap,&nchap);
-			//wxLogStatus("chap %i, %i", (int)chap, (int)nchap);
-			if(chap && nchap && rend){
-				for(int i=0; i<(int)chap->nChildren; i++){
-					chapter ch;
-					ch.name=wxString(chap->Children[i].Display->String);
-					ch.time=(int)(chap->Children[i].Start/1000000.0);
-					rend->chaps.push_back(ch);
+				Chapter *chap=NULL;
+				UINT nchap=0;
+				mkv_GetChapters(mw.file,&chap,&nchap);
+				//wxLogStatus("chap %i, %i", (int)chap, (int)nchap);
+				if(chap && nchap && rend){
+					for(int i=0; i<(int)chap->nChildren; i++){
+						chapter ch;
+						ch.name=wxString(chap->Children[i].Display->String);
+						ch.time=(int)(chap->Children[i].Start/1000000.0);
+						rend->chaps.push_back(ch);
+					}
 				}
+				mw.Close();
 			}
-			mw.Close();
 			if(audiotable.size()<2){audiotrack= (audiotable.size()>0)? audiotable[0] : -1; goto done;}
 		}else{
 			for (size_t j=0;j<audiotable.size();j++){
@@ -347,8 +349,8 @@ done:
 		FFMS_SetProgressCallback(Indexer, UpdateProgress, (void*)progress);
 		index =FFMS_DoIndexing2(Indexer, FFMS_IEH_IGNORE, &errinfo);
 		//index =FFMS_DoIndexing(Indexer, (1<<audiotrack), 0, NULL, NULL, FFMS_IEH_IGNORE,
-			//UpdateProgress, (void*)progress, &errinfo);
-		
+		//UpdateProgress, (void*)progress, &errinfo);
+
 		if (index == NULL) {
 			if(wxString(errinfo.Buffer).StartsWith("Cancelled")){
 				wxLogStatus(_("Indeksowanie anulowane przez użytkownika"));
@@ -712,8 +714,8 @@ bool VideoFfmpeg::CacheIt()
 	//int64_t pos=0;
 	int64_t pos= (Delay<0)? -(SampleRate * Delay * BytesPerSample) : 0;
 	int halfsize=(blsize/BytesPerSample);
-	
-	
+
+
 	for(int i = 0; i< blnum; i++)
 	{
 		if(i >= blnum-1){blsize=end-pos; halfsize=(blsize/BytesPerSample);}
@@ -730,7 +732,7 @@ bool VideoFfmpeg::CacheIt()
 			GetAudio(Cache[i], pos, halfsize);
 			pos+=halfsize;
 		}
-		
+
 		progress->Progress(((float)i/(float)(blnum-1))*100);
 		if(progress->WasCancelled()){blnum=i+1;Clearcache();return false;}
 	}
@@ -788,9 +790,9 @@ int VideoFfmpeg::FramefromTime(int time)
 bool VideoFfmpeg::DiskCache()
 {
 	progress->Title(_("Zapisywanie na dysk twardy"));
-	
+
 	progress->Progress(0);
-	
+
 	bool good=true;
 	wxFileName fname;
 	fname.Assign(diskCacheFilename);
@@ -806,7 +808,7 @@ bool VideoFfmpeg::DiskCache()
 	int block = 332768;
 	//int block2=block*2
 	if(Delay>0){
-		
+
 		int size=(SampleRate*Delay*BytesPerSample);
 		if(size%2==1){size++;}
 		char *silence=new char[size];
@@ -896,11 +898,11 @@ void VideoFfmpeg::DeleteOldAudioCache()
 		GetFileTime(ffile,0,&ft,0);
 		CloseHandle(ffile);
 		FileTimeToSystemTime(&ft, &st);
-		
+
 		datetime= (st.wYear *360000000000000) + (st.wMonth *36000000000) + (st.wDay *360000000) + (st.wHour*3600000)+(st.wMinute*60000)+(st.wSecond*1000)+st.wMilliseconds;
 		//wxLogStatus("date %llu %i, %i, %i, %i, %i, %i, %i, %s", datetime, (int)st.wYear, (int)st.wMonth, (int)st.wDay, (int)st.wHour, (int)st.wMinute, (int)st.wSecond, (int)st.wMilliseconds, audioCaches[i]);
 		dates[datetime]=i;
-		
+
 	}
 	std::map<unsigned __int64, int>::iterator cur = dates.begin();
 	for(size_t i = 0; i <= audioCaches.size()-10; i++){

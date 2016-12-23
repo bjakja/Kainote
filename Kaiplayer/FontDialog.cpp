@@ -19,6 +19,7 @@
 #include <wx/regex.h>
 #include "Config.h"
 #include "SubsGrid.h"
+#include "KaiStaticBoxSizer.h"
 
 bool compare(wxString first, wxString second)
 {
@@ -28,7 +29,7 @@ bool compare(wxString first, wxString second)
 FontList::FontList(wxWindow *parent,long id,const wxPoint &pos, const wxSize &size)
 	:wxWindow(parent,id,pos,size)
 {
-	scrollBar = new wxScrollBar(this,ID_SCROLL1,wxDefaultPosition,wxDefaultSize,wxSB_VERTICAL);
+	scrollBar = new KaiScrollbar(this,ID_SCROLL1,wxDefaultPosition,wxDefaultSize,wxSB_VERTICAL);
 	scrollBar->SetScrollbar(0,10,100,10);
 	fonts = wxFontEnumerator::GetFacenames();
 	std::sort(fonts.begin(),fonts.end(),compare);
@@ -96,9 +97,9 @@ void FontList::DrawFld(wxDC &dc,int w, int h)
 {
 	int fw=0,fh=0,posX=1,posY=1;
 
-	dc.SetPen(wxPen(wxColour("#808080")));
-	dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
-	dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+	dc.SetPen(wxPen(Options.GetColour("Window Text")));
+	dc.SetBrush(wxBrush(Options.GetColour("Window Background")));
+	dc.SetTextForeground(Options.GetColour("Window Text"));
 	dc.DrawRectangle(0,0,w,h);
 
 
@@ -109,14 +110,14 @@ void FontList::DrawFld(wxDC &dc,int w, int h)
 	if(panelrows>(int)fonts.size()){scPos=0;scrollBar->Enable(false);}else{scrollBar->SetScrollbar(scPos,panelrows,fonts.size()+1,panelrows-1);}}
 	else{scrows=(scPos+panelrows);scrollBar->Enable(true);scrollBar->SetScrollbar(scPos,panelrows,fonts.size()+1,panelrows-1);}
 
-	dc.SetPen(wxPen(wxColour("#000000")));
-
+	
 	for(int i=scPos; i<scrows; i++)
 	{
 		if(i==sel){
-			dc.SetBrush(wxBrush(wxColour("#359AFF")));
+			dc.SetPen(wxPen(Options.GetColour("Menu Border Selection")));
+			dc.SetBrush(wxBrush(Options.GetColour("Menu Border Selection")));
 			dc.DrawRectangle(posX,posY,w-2,Height);
-		}else{dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));}
+		}//else{dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));}
 
 		font.SetFaceName(fonts[i]);
 		dc.SetFont(font);
@@ -292,7 +293,8 @@ END_EVENT_TABLE()
 	FontDialog::FontDialog(wxWindow *parent, Styles *acst)
 	:wxDialog(parent,-1,_("Wybierz czcionkę"))
 {
-
+	SetForegroundColour(Options.GetColour("Window Text"));
+	SetBackgroundColour(Options.GetColour("Window Background"));
 	wxAcceleratorEntry entries[4];
 	entries[0].Set(wxACCEL_NORMAL, WXK_RETURN, wxID_OK);
 	entries[1].Set(wxACCEL_NORMAL, WXK_ESCAPE, wxID_CANCEL);
@@ -303,8 +305,8 @@ END_EVENT_TABLE()
 
 
 	wxBoxSizer *Main= new wxBoxSizer(wxVERTICAL);
-	wxStaticBoxSizer *Cfont= new wxStaticBoxSizer(wxHORIZONTAL,this,_("Czcionka"));
-	wxStaticBoxSizer *prev= new wxStaticBoxSizer(wxVERTICAL,this,_("Podgląd"));
+	KaiStaticBoxSizer *Cfont= new KaiStaticBoxSizer(wxHORIZONTAL,this,_("Czcionka"));
+	KaiStaticBoxSizer *prev= new KaiStaticBoxSizer(wxVERTICAL,this,_("Podgląd"));
 	wxBoxSizer *Fattr= new wxBoxSizer(wxVERTICAL);
 	//wxBoxSizer *Flist= new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *Bsizer= new wxBoxSizer(wxHORIZONTAL);

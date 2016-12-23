@@ -32,14 +32,16 @@
 FontCollectorDialog::FontCollectorDialog(wxWindow *parent)
 	: wxDialog(parent,-1,_("Kolekcjoner czcionek"),wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER)
 {
+	SetForegroundColour(Options.GetColour("Window Text"));
+	SetBackgroundColour(Options.GetColour("Window Background"));
 	wxBoxSizer *Main = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *Pathc = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *Buttons = new wxBoxSizer(wxHORIZONTAL);
 
-	path=new wxTextCtrl(this,-1,Options.GetString("Font Collect Directory"),wxDefaultPosition, wxSize(150,-1));
+	path=new KaiTextCtrl(this,-1,Options.GetString("Font Collect Directory"),wxDefaultPosition, wxSize(150,-1));
 	path->Enable(Options.GetInt("Font Collect Action")!=0);
 	//path->SetToolTip("Można też wybrać folder napisów wpisując <subs dir>.");
-	choosepath=new wxButton(this,8799,_("Wybierz folder"));
+	choosepath=new MappedButton(this,8799,_("Wybierz folder"));
 	choosepath->Enable(Options.GetInt("Font Collect Action")!=0);
 	Connect(8799,wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&FontCollectorDialog::OnButtonPath);
 
@@ -51,23 +53,25 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent)
 	choices.Add(_("Skopiuj do wybranego folderu"));
 	choices.Add(_("Spakuj zipem"));
 	choices.Add(_("Wmuxuj napisy w wideo (wymagany MKVToolnix)"));
-	opts=new wxRadioBox(this,9987,_("Opcje"),wxDefaultPosition,wxDefaultSize,choices,0,wxRA_SPECIFY_ROWS);
+	opts=new KaiRadioBox(this,9987,_("Opcje"),wxDefaultPosition,wxDefaultSize,choices,0,wxRA_SPECIFY_ROWS);
 	opts->SetSelection(Options.GetInt("Font Collect Action"));
 	Connect(9987,wxEVT_COMMAND_RADIOBOX_SELECTED, (wxObjectEventFunction)&FontCollectorDialog::OnChangeOpt);
 
-	subsdir=new wxCheckBox(this,7998,_("Zapisuj do folderu z napisami"));
+	subsdir=new KaiCheckBox(this,7998,_("Zapisuj do folderu z napisami"));
 	subsdir->Enable(Options.GetInt("Font Collect Action")!=0);
 	subsdir->SetValue(Options.GetBool("Collector Subs Directory"));
 
 
-	fromMKV=new wxCheckBox(this,7991,_("Wyciągnij czcionki z wczytanego pliku MKV"));
+	fromMKV=new KaiCheckBox(this,7991,_("Wyciągnij czcionki z wczytanego pliku MKV"));
 	fromMKV->Enable(Notebook::GetTab()->VideoPath.Lower().EndsWith(".mkv"));
 	fromMKV->SetValue(Options.GetBool("Collect From MKV"));
 
 	Connect(7998,wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&FontCollectorDialog::OnChangeOpt);
 	console=new wxTextCtrl(this,-1,"",wxDefaultPosition,wxSize(300,200),wxTE_RICH2|wxTE_MULTILINE|wxTE_READONLY);
-	bok=new wxButton(this,9879,_("Rozpocznij"));
-	bcancel=new wxButton(this,wxID_CANCEL,_("Zamknij"));
+	console->SetForegroundColour(Options.GetColour("Window Text"));
+	console->SetBackgroundColour(Options.GetColour("Window Background"));
+	bok=new MappedButton(this,9879,_("Rozpocznij"));
+	bcancel=new MappedButton(this,wxID_CANCEL,_("Zamknij"));
 	Connect(9879,wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&FontCollectorDialog::OnButtonStart);
 	Buttons->Add(bok,0,wxLEFT|wxTOP|wxRIGHT,3);
 	Buttons->Add(bcancel,0,wxBOTTOM|wxTOP|wxRIGHT,3);

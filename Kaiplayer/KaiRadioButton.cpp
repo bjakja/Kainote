@@ -130,6 +130,8 @@ KaiRadioBox::KaiRadioBox(wxWindow *parent, int id, const wxString& label,
              const wxPoint& pos, const wxSize& size, const wxArrayString &names, int spacing, long style)
 			 :wxWindow(parent, id, pos, size)
 {
+	SetBackgroundColour(parent->GetBackgroundColour());
+	SetForegroundColour(parent->GetForegroundColour());
 	KaiStaticBoxSizer *box = new KaiStaticBoxSizer(style,this,label);
 	selected = 0;
 	for (size_t i = 0; i < names.size(); i++){
@@ -140,6 +142,7 @@ KaiRadioBox::KaiRadioBox(wxWindow *parent, int id, const wxString& label,
 		selected = evt.GetId() - 9876;
 	}, 9876, 9876 + names.size()-1);
 	SetSizerAndFit(box);
+	
 }
 
 

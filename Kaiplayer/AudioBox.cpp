@@ -46,7 +46,7 @@
 // Constructor
 //
 AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
-	wxPanel(parent,-1,wxDefaultPosition,wxSize(0,0),wxBORDER_RAISED)
+	wxPanel(parent,-1,wxDefaultPosition,wxSize(0,0),wxBORDER_SIMPLE)
 {
 	SetForegroundColour(Options.GetColour("Window Text"));
 	SetBackgroundColour(Options.GetColour("Window Background"));

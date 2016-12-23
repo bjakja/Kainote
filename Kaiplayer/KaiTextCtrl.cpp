@@ -97,6 +97,8 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	Bind(wxEVT_ENTER_WINDOW, &KaiTextCtrl::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &KaiTextCtrl::OnMouseEvent, this);
 	Bind(wxEVT_MOUSEWHEEL, &KaiTextCtrl::OnMouseEvent, this);
+	Bind(wxEVT_KEY_DOWN, &KaiTextCtrl::OnKeyPress, this);
+	
 }
 
 KaiTextCtrl::~KaiTextCtrl()
@@ -343,7 +345,7 @@ void KaiTextCtrl::OnAccelerator(wxCommandEvent& event)
 	case ID_TCSEND:
 		Cursor.x=wraps[(ID==ID_TEND||ID==ID_TSEND) ? Cursor.y+1 : Cursor.y];
 		if(ID==ID_TCSEND){Cursor.x=KText.Len(); Cursor.y=wraps.size()-2;}
-		//if(ID<ID_TSHOME){Selend=Cursor;}
+		if(ID<ID_TSHOME){Selend=Cursor;}
 		//Refresh(false);
 		MakeCursorVisible(true);
 		break;
@@ -1061,7 +1063,7 @@ BEGIN_EVENT_TABLE(KaiTextCtrl,wxWindow)
 	EVT_ERASE_BACKGROUND(KaiTextCtrl::OnEraseBackground)
 	//EVT_MOUSE_EVENTS(KaiTextCtrl::OnMouseEvent)
 	EVT_CHAR(KaiTextCtrl::OnCharPress)
-	EVT_KEY_DOWN(KaiTextCtrl::OnKeyPress)
+	//EVT_KEY_DOWN(KaiTextCtrl::OnKeyPress)
 	EVT_KILL_FOCUS(KaiTextCtrl::OnKillFocus)
 	EVT_SCROLLWIN(KaiTextCtrl::OnScroll)
 	EVT_MOUSE_CAPTURE_LOST(KaiTextCtrl::OnLostCapture)

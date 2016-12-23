@@ -534,7 +534,7 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 		int diff= h/2;
 		int diff2= bitmaph/2;
 		if(scPos>diff2-diff){scPos=diff2-diff;}
-		scroll->SetScrollbar(scPos,diff,diff2);
+		scroll->SetScrollbar(scPos,diff,diff2,diff-1);
 		w -= sw;
 	}else{
 		if(scroll->IsShown()){

@@ -219,8 +219,8 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 	{
 		if(pos+tools[i]->size>maxx){pos1+=iconsize;pos=4;}
 		if(i==sel){
-			tdc.SetPen(wxPen((Clicked)?"#000000" : "#80BFFF"));
-			tdc.SetBrush(wxBrush((Clicked)?"#80BFFF" : "#C3E8F5"));
+			tdc.SetPen(wxPen((Clicked)?Options.GetColour("Button Border Pushed") : Options.GetColour("Button Border Hover")));
+			tdc.SetBrush(wxBrush((Clicked)?Options.GetColour("Button Background Hover") : Options.GetColour("Button Background Pushed")));
 			tdc.DrawRoundedRectangle((vertical)?pos1+2 :pos-2, (vertical)?pos-2 : pos1+2,iconsize-4,tools[i]->size-4,1.1);
 		}
 		if(tools[i]->type<2){
@@ -228,15 +228,17 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 			//img=img.Rescale(20,20,wxIMAGE_QUALITY_HIGH);
 
 			tdc.DrawBitmap(tools[i]->GetBitmap(),(vertical)?pos1+4 : pos,(vertical)?pos : pos1+4);}
-		else if(tools[i]->type==3){tdc.SetPen(wxPen("#606060")); 
+		else if(tools[i]->type==3){
+			tdc.SetPen(wxPen("#606060")); 
 			tdc.DrawLine((vertical)?pos1+2 : pos+2, (vertical)?pos+2 : pos1+2, (vertical)? iconsize-2 : pos+2, (vertical)?pos+2 : iconsize-2);
 		}
 		pos+=tools[i]->size;
 	}
-	tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT)));
-	tdc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT)));
+	tdc.SetPen(wxPen(Options.GetColour("Window Text")));
+	tdc.SetBrush(wxBrush(Options.GetColour("Window Text")));
 	wxPoint points[3];
-	if(vertical){tdc.DrawLine(pos1+14,pos-15,pos1+20,pos-15);
+	if(vertical){
+		tdc.DrawLine(pos1+14,pos-15,pos1+20,pos-15);
 		points[0]=wxPoint(pos1+14,pos-12);
 		points[1]=wxPoint(pos1+20,pos-12);
 		points[2]=wxPoint(pos1+17,pos-8);
@@ -421,6 +423,7 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	else if(scPos<0){scPos=0;}
 	int maxsize=MAX(idssize,scPos+visible);
 	SetScrollbar(wxVERTICAL,scPos,visible,idssize);
+	tdc.SetTextForeground(Options.GetColour("Window Text"));
 	for(int i=0;i<visible; i++)
 	{
 		MenuItem *item=parent->mb->FindItem(parent->ids[i+scPos]);
@@ -430,12 +433,12 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 			if(parent->tools[j]->id==parent->ids[i+scPos]){check=true; break;}
 		}
 		if(i+scPos==sel){
-			tdc.SetPen(wxPen("#000000"));
-			tdc.SetBrush(wxBrush("#9BD7EE"));
+			tdc.SetPen(wxPen(Options.GetColour("Menu Border Selection")));
+			tdc.SetBrush(wxBrush(Options.GetColour("Menu Background Selection")));
 			tdc.DrawRectangle(0, fh*i,w,fh);
 		}
-		tdc.SetPen(wxPen("#497CB0",2));
-		tdc.SetBrush(*wxTRANSPARENT_BRUSH);
+		//tdc.SetPen(wxPen("#497CB0",2));
+		//tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 		
 		
 		if(check){
@@ -448,7 +451,7 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 		size_t reps=desc.Replace("\t"," (");
 		wxString accel;
 		wxString label=desc;
-		tdc.SetPen(wxPen("#497CB0"));
+		//tdc.SetPen(wxPen("#497CB0"));
 		if (reps){
 			desc.Append(")");
 			label=desc.BeforeFirst('(',&accel);

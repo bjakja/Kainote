@@ -21,6 +21,9 @@
 #include <vector>
 #include <map>
 #include <ft2build.h>
+#include "KaiRadioButton.h"
+#include "MappedButton.h"
+#include "KaiTextCtrl.h"
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_SFNT_NAMES_H
@@ -32,14 +35,14 @@ public:
 	virtual ~FontCollectorDialog(){};
 	typedef std::map<wxUniChar,wxString> CharMap;
 	std::map<wxString,CharMap> FontMap;
-	wxTextCtrl *path;
-	wxButton *choosepath;
-	wxRadioBox *opts;
+	KaiTextCtrl *path;
+	MappedButton *choosepath;
+	KaiRadioBox *opts;
 	wxTextCtrl *console;
-	wxButton *bok;
-	wxButton *bcancel;
-	wxCheckBox *fromMKV;
-	wxCheckBox *subsdir;
+	MappedButton *bok;
+	MappedButton *bcancel;
+	KaiCheckBox *fromMKV;
+	KaiCheckBox *subsdir;
 	void PutChars(wxString txt, wxString fn, int move);
 	wxString CheckChars(FT_Face face, std::map<wxUniChar, wxString> *chars);
 	wxArrayString GetAssFonts(std::vector<bool> &founded, bool check=false);

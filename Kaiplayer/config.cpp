@@ -402,6 +402,7 @@ int config::LoadOptions()
 
 void config::LoadColors(const wxString &_themeName){
 	wxString themeName;
+	ClearColors();
 	if(_themeName.IsEmpty()){
 		themeName = Options.GetString("Program Theme");
 	}else{
@@ -458,6 +459,15 @@ void config::clearstyles()
 		delete (*it);
 	}
 	assstore.clear();
+}
+
+void config::ClearColors()
+{
+	for(std::map<wxString, wxColour*>::iterator it = colors.begin(); it != colors.end(); it++)
+	{
+		delete it->second;
+	}
+	colors.clear();
 }
 
 void config::SetCoords(wxString lopt, int coordx, int coordy)
@@ -611,14 +621,14 @@ wxString config::GetStringColor(std::map<wxString, wxColour*>::iterator it)
 {
 	wxColour *col = it->second;
 	if (col->Alpha() < 0xFF)
-		return wxString::Format("#%02X%02X%02X%02X", 0xFF - col->Alpha(), col->Red(), col->Green(), col->Blue());
+		return wxString::Format("#%02X%02X%02X%02X", col->Alpha(), col->Red(), col->Green(), col->Blue());
 	return wxString::Format("#%02X%02X%02X", col->Red(), col->Green(), col->Blue());
 }
 wxString config::GetStringColor(const wxString &optionName)
 {
 	wxColour *col = colors[optionName];
 	if (col->Alpha() < 0xFF)
-		return wxString::Format("#%02X%02X%02X%02X", 0xFF - col->Alpha(), col->Red(), col->Green(), col->Blue());
+		return wxString::Format("#%02X%02X%02X%02X", col->Alpha(), col->Red(), col->Green(), col->Blue());
 	return wxString::Format("#%02X%02X%02X", col->Red(), col->Green(), col->Blue());
 }
 

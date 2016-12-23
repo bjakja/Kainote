@@ -920,10 +920,14 @@ namespace Auto{
 		DeleteTimerQueueTimer(auto_->handle,0,0);
 	}
 
-	Automation::Automation()
+	Automation::Automation(bool loadSubsScripts)
 	{
 		AutoloadPath=Options.pathfull+"\\Automation\\automation\\Autoload";
-		CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
+		if(loadSubsScripts){
+			AddFromSubs();
+		}else{
+			CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
+		}
 		//ReloadScripts(true);
 	}
 
@@ -1112,7 +1116,7 @@ namespace Auto{
 	{
 		TabPanel* c = Notebook::GetTab();
 		kainoteFrame *Kai = (kainoteFrame*)c->GetGrandParent();
-		for(int j=(*bar)->GetMenuItemCount()-1; j>=2; j--){
+		for(int j=(*bar)->GetMenuItemCount()-1; j>=3; j--){
 			(*bar)->Delete(j);
 		}
 		if(!initialized){
@@ -1161,6 +1165,13 @@ namespace Auto{
 					start++;
 					j++;
 				}
+				if( macros.size()<1){
+					submenu->Append(start,script->GetDescription(),_("Błąd"));
+					//Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+						
+					//}, start);
+					start++;
+				}
 				submenu->AppendSeparator();
 				submenu->Append(start,_("Edytuj"),_("Edytuj"));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
@@ -1204,6 +1215,13 @@ namespace Auto{
 				}, start);
 				start++;
 				j++;
+			}
+			if( macros.size()<1){
+				submenu->Append(start,script->GetDescription(),_("Błąd"));
+				//Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+						
+				//}, start);
+				start++;
 			}
 			submenu->AppendSeparator();
 			submenu->Append(start,_("Edytuj"),_("Edytuj"));

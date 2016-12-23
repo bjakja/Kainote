@@ -111,7 +111,7 @@ void ColorPickerSpectrum::OnPaint(wxPaintEvent &evt)
 
 	wxPen invpen(*wxWHITE, 3);
 	invpen.SetCap(wxCAP_BUTT);
-	wxPen blkpen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT), 1);
+	wxPen blkpen(Options.GetColour("Window Text"), 1);
 	blkpen.SetCap(wxCAP_BUTT);
 
 	wxPoint arrow[3];
@@ -136,9 +136,9 @@ void ColorPickerSpectrum::OnPaint(wxPaintEvent &evt)
 		arrow[1] = wxPoint(background->GetWidth()+2+spectrum_horz_vert_arrow_size, y+1-spectrum_horz_vert_arrow_size);
 		arrow[2] = wxPoint(background->GetWidth()+2+spectrum_horz_vert_arrow_size, y+1+spectrum_horz_vert_arrow_size);
 		dc.SetPen(*wxTRANSPARENT_PEN);
-		dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
+		dc.SetBrush(wxBrush(Options.GetColour("Window Background")));
 		dc.DrawRectangle(background->GetWidth()+2,0,siz.x-(background->GetWidth()+2),siz.y);
-		dc.SetBrush(*wxBLACK_BRUSH);
+		dc.SetBrush(Options.GetColour("Window Text"));
 		dc.DrawPolygon(3, arrow);
 	}
 	

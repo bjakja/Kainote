@@ -124,10 +124,16 @@ TabPanel *Notebook::Page(size_t i)
 
 void Notebook::DeletePage(size_t page)
 {
-
+	Freeze();
 	kainoteFrame *Kai=(kainoteFrame*)GetParent();
 	block=true;
-	if(Kai->SavePrompt(1,page)){block=false; wxSize siz=GetClientSize();RefreshRect(wxRect(0,siz.y-25,siz.x,25),false); return;}
+	if(Kai->SavePrompt(1,page)){
+		block=false; 
+		wxSize siz=GetClientSize();
+		RefreshRect(wxRect(0,siz.y-25,siz.x,25),false); 
+		Thaw();
+		return;
+	}
 	block=false;
 	if(split && Size()>2){
 		int i = 0;
@@ -174,12 +180,12 @@ void Notebook::DeletePage(size_t page)
 	if(page==iter){
 		Pages[iter]->Show();
 	}
+	Thaw();
 
-
-	int w,h;
-	GetClientSize(&w,&h);
-	RefreshRect(wxRect(0,h-25,w,25),false);
-
+	//int w,h;
+	//GetClientSize(&w,&h);
+	//RefreshRect(wxRect(0,h-25,w,25),false);
+	Refresh(false);
 }
 
 void Notebook::CalcSizes()
@@ -1033,7 +1039,7 @@ void Notebook::CompareTexts(wxString &first, wxString &second, wxArrayInt &first
 
 BEGIN_EVENT_TABLE(Notebook,wxWindow)
 	EVT_CHAR_HOOK(Notebook::OnCharHook)
-	//EVT_ERASE_BACKGROUND(Notebook::OnEraseBackground)
+	EVT_ERASE_BACKGROUND(Notebook::OnEraseBackground)
 	EVT_MOUSE_EVENTS(Notebook::OnMouseEvent)
 	EVT_SIZE(Notebook::OnSize)
 	EVT_PAINT(Notebook::OnPaint)

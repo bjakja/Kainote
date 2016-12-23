@@ -178,7 +178,7 @@ namespace Auto {
 	{
 
 	public:
-		Automation();
+		Automation(bool loadSubsScripts=false);
 		~Automation();
 
 		bool Add(wxString filename, bool addToSinfo= true, bool autoload=false);

@@ -102,10 +102,11 @@ private:
 	void OnPaint(wxPaintEvent& event);
 	void OnMouseEvent(wxMouseEvent &event);
 	void OnKeyPress(wxKeyEvent &event);
+	void OnEraseBackground(wxEraseEvent &event){}
 	void ShowList();
 	void SendEvent(int choice);
 	void SetSelectionByPartialName(const wxString &PartialName);
-	void SelectChoice(int sel);
+	void SelectChoice(int sel, bool select = true);
 	bool enter;
 	bool clicked;
 	wxArrayString *list;
@@ -124,7 +125,8 @@ private:
 };
 
 enum{
-	KAI_COMBO_BOX = 1
+	KAI_COMBO_BOX = 1,
+	KAI_SCROLL_ON_FOCUS
 };
 
 #endif

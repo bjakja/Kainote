@@ -157,30 +157,32 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 
 		// Prepare bitmap
 		if (bmp) {
-			if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
+			if (bmp->GetWidth() < w+scHor || bmp->GetHeight() < h) {
 				delete bmp;
 				bmp = NULL;
 			}
 		}
-		if (!bmp) bmp = new wxBitmap(w,h);
+		if (!bmp) bmp = new wxBitmap(w+scHor,h);
 
 		// Draw bitmap
 		wxMemoryDC bmpDC;
 		bmpDC.SelectObject(*bmp);
 		DrawGrid(bmpDC,w,h);
-		dc.Blit(0,0,w,h,&bmpDC,0,0);
+		int firstCol = GridWidth[0]+1;
+		dc.Blit(0,0,firstCol,h,&bmpDC,0,0);
+		dc.Blit(firstCol,0,w+scHor,h,&bmpDC,scHor+firstCol,0);
 	}
 
 }
 
-void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
+void SubsGrid::DrawGrid(wxDC &tdc,int w, int h)
 {
 
-	mdc.SetFont(font);
-	wxMemoryDC tdc;
-	wxBitmap tbmp(w+scHor,h);
-	tdc.SelectObject(tbmp);
 	tdc.SetFont(font);
+	//wxMemoryDC tdc;
+	//wxBitmap tbmp(w+scHor,h);
+	//tdc.SelectObject(tbmp);
+	//tdc.SetFont(font);
 
 	wxColour labelBkCol=Options.GetColour("Grid Label Saved");
 	wxColour labelBkColN=Options.GetColour("Grid Label Normal");
@@ -201,12 +203,12 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 	wxString chtag=Options.GetString("Grid tag changing char");
 	bool SpellCheckerOn = Options.GetBool("Editbox Spellchecker");
 	
-	mdc.SetPen(*wxTRANSPARENT_PEN);
-	mdc.SetBrush(wxBrush(linesCol));
-	mdc.DrawRectangle(0,0,GridWidth[0]+1,h);
+	/*tdc.SetPen(*wxTRANSPARENT_PEN);
+	tdc.SetBrush(wxBrush(linesCol));
+	tdc.DrawRectangle(0,0,GridWidth[0]+1,h);*/
 	tdc.SetPen(*wxTRANSPARENT_PEN);
 	tdc.SetBrush(wxBrush(linesCol));
-	tdc.DrawRectangle(0,0,w+scHor-(GridWidth[0]+1),h);
+	tdc.DrawRectangle(0,0,w+scHor/*-(GridWidth[0]+1)*/,h);
 
 	int ilcol;
 	posY=0;
@@ -339,13 +341,14 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 		wxRect cur;
 		bool isCenter;
 		for (int j=0; j<ilcol; j++){
-			wxDC &dc=(j==0)? mdc : tdc;
+			wxDC &dc=/*(j==0)? mdc : */tdc;
 			if(showtl&&j==ilcol-2){
-				int podz=(w + scHor - posX - (GridWidth[0] + 1)) / 2;
+				int podz=(w + scHor - posX /*- (GridWidth[0] + 1)*/) / 2;
 				GridWidth[j]=podz;
-				GridWidth[j+1]=podz;}
+				GridWidth[j+1]=podz;
+			}
 
-			if(!showtl&&j==ilcol-1){GridWidth[j] = w + scHor - posX - (GridWidth[0] + 1);}
+			if(!showtl&&j==ilcol-1){GridWidth[j] = w + scHor - posX/* - (GridWidth[0] + 1)*/;}
 			bool comparsion = (Comparsion && i!=scPos && Comparsion->at(i-1).size()>0);
 
 			if(GridWidth[j]>0){
@@ -431,7 +434,9 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 				dc.DrawLabel(strings[j],cur,isCenter ? wxALIGN_CENTER : (wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT));
 				dc.DestroyClippingRegion();
 				
-				if(j!=0){posX+=GridWidth[j]+1;}
+				//if(j!=0){
+					posX+=GridWidth[j]+1;
+				//}
 			}
 		}
 
@@ -441,26 +446,26 @@ void SubsGrid::DrawGrid(wxDC &mdc,int w, int h)
 
 
 	if(bg){
-		mdc.SetPen(*wxTRANSPARENT_PEN);
-		mdc.SetBrush(wxBrush(labelBkColN));
-		mdc.DrawRectangle(0,posY,GridWidth[0],h);
+		/*tdc.SetPen(*wxTRANSPARENT_PEN);
+		tdc.SetBrush(wxBrush(labelBkColN));
+		tdc.DrawRectangle(0,posY,GridWidth[0],h);*/
 		tdc.SetPen(*wxTRANSPARENT_PEN);
 		tdc.SetBrush(wxBrush(Options.GetColour("Grid Background")));
-		tdc.DrawRectangle(0,posY,w+scHor-GridWidth[0]+1,h);
+		tdc.DrawRectangle(0,posY,w+scHor/*-GridWidth[0]+1*/,h);
 	}
 	if(mtimerow>=scPos&&mtimerow<=scrows){
-		mdc.SetBrush(*wxTRANSPARENT_BRUSH);
-		mdc.SetPen(wxPen(Options.GetColour("Grid Active Line"),3));
-		mdc.DrawRectangle(1,((mtimerow-scPos+1)*(GridHeight+1))-1,(GridWidth[0]-1),GridHeight+2);
+		tdc.SetBrush(*wxTRANSPARENT_BRUSH);
+		tdc.SetPen(wxPen(Options.GetColour("Grid Active Line"),3));
+		tdc.DrawRectangle(1,((mtimerow-scPos+1)*(GridHeight+1))-1,(GridWidth[0]-1),GridHeight+2);
 	}
 
 	if(Edit->ebrow>=scPos&&Edit->ebrow<=scrows){
 		tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 		tdc.SetPen(wxPen(Options.GetColour("Grid Active Line")));
-		tdc.DrawRectangle(scHor,((Edit->ebrow-scPos+1)*(GridHeight+1))-1,w+scHor-(GridWidth[0]+1),GridHeight+2);
+		tdc.DrawRectangle(scHor,((Edit->ebrow-scPos+1)*(GridHeight+1))-1,w+scHor/*-(GridWidth[0]+1)*/,GridHeight+2);
 	}
 
-	mdc.Blit(GridWidth[0]+1,0,w+scHor-(GridWidth[0]+1),h,&tdc,scHor,0);
+	//mdc.Blit(GridWidth[0]+1,0,w+scHor-(GridWidth[0]+1),h,&tdc,scHor,0);
 }
 
 void SubsGrid::AdjustWidths(int cell)

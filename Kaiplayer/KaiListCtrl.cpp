@@ -17,12 +17,14 @@
 #include "KaiCheckBox.h"
 #include "ColorPicker.h"
 #include "config.h"
+#include "Menu.h"
+#include "wx/clipbrd.h"
 
 void ItemText::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList)
 {
 	wxSize ex = dc->GetTextExtent(name);
 	//dc->DrawText(name, x, y + ((height - ex.y)/2));
-	wxRect cur(x+2, y, width - 4, height);
+	wxRect cur(x, y, width - 8, height);
 	dc->SetClippingRegion(cur);
 	dc->DrawLabel(name,cur,wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
@@ -62,7 +64,7 @@ void ItemColor::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxW
 	wxString hextext = col.GetHex(true);
 	dc->GetTextExtent(hextext, &fw, &fh);
 	//dc->DrawText(hextext, height+2, (height - fh)/2);
-	wxRect cur(x+height+2, y, width - (height+4), height);
+	wxRect cur(x+height+2, y, width - (height+8), height);
 	dc->SetClippingRegion(cur);
 	dc->DrawLabel(hextext,cur,wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
@@ -88,6 +90,30 @@ void ItemColor::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWind
 			theList->Refresh(false);
 			((KaiListCtrl*)theList)->SetModified(true);
 			modified = true;
+		}
+	}else if(event.RightUp()){
+		Menu menut;
+		menut.Append(7786,_("&Kopiuj"));
+		menut.Append(7787,_("&Wklej"));
+		int id = menut.GetPopupMenuSelection(event.GetPosition(), theList);
+		if(id == 7786){
+			wxString whatcopy = col.GetHex(true);
+			if (wxTheClipboard->Open())
+			{
+				wxTheClipboard->SetData( new wxTextDataObject(whatcopy) );
+				wxTheClipboard->Close();
+				wxTheClipboard->Flush();
+			}
+		}else if(id == 7787){
+			if (wxTheClipboard->Open()){
+				if (wxTheClipboard->IsSupported( wxDF_TEXT )){
+					wxTextDataObject data;
+					wxTheClipboard->GetData( data );
+					col.SetAss(data.GetText());
+					theList->Refresh(false);
+				}
+				wxTheClipboard->Close();
+			}
 		}
 	}
 
@@ -208,21 +234,16 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	}
 	if(!bmp){bmp=new wxBitmap(bitmapw, h);}
 	tdc.SelectObject(*bmp);
-	wxColour highlight = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+	bool enabled = IsThisEnabled();
+	wxColour highlight = Options.GetColour("Menu Border Selection");
 	tdc.SetPen(wxPen("#000000"));
-	tdc.SetBrush(wxBrush(GetBackgroundColour()));
+	tdc.SetBrush(wxBrush(enabled? GetBackgroundColour() : Options.GetColour("Window Inactive Background")));
 	tdc.DrawRectangle(0,0,w,h);
-	tdc.SetTextForeground(GetForegroundColour());
+	tdc.SetTextForeground(enabled? GetForegroundColour() : Options.GetColour("Window Inactive Text"));
 	tdc.SetFont(GetFont());
 	//header
+	
 	int posX=scPosH+5;
-	for(size_t j = 0; j < widths.size(); j++){
-		wxString headerTxt = ((ItemText*)header.row[j])->GetName();
-		wxSize ex = tdc.GetTextExtent(headerTxt);
-		tdc.DrawText(headerTxt, posX, ((25 - ex.y)/2) );
-		posX += widths[j];
-	}
-	posX=scPosH+5;
 	int posY=headerHeight;
 	for(size_t i = scPosV; i < maxsize; i++){
 		auto row = itemList[i]->row;
@@ -232,7 +253,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 			}
 			//drawing
 			if(i==sel){
-				wxColour highlight = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+				//wxColour highlight = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
 				tdc.SetPen(wxPen(highlight));
 				tdc.SetBrush(wxBrush(highlight));
 				tdc.DrawRectangle(posX, posY, widths[j], lineHeight);
@@ -245,6 +266,21 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 		posX = posX=scPosH+5;
 		
 	}
+	posX=scPosH+5;
+	tdc.SetPen(wxPen("#000000"));
+	for(size_t j = 0; j < widths.size(); j++){
+		wxString headerTxt = ((ItemText*)header.row[j])->GetName();
+		wxSize ex = tdc.GetTextExtent(headerTxt);
+		tdc.DrawText(headerTxt, posX, ((headerHeight - ex.y)/2) );
+
+		posX += widths[j];
+		tdc.DrawLine(posX-3, 0, posX-3, h);
+	}
+	tdc.DrawLine(0, headerHeight-2, w, headerHeight-2);
+	//tdc.SetPen(wxPen("#000000"));
+	tdc.SetBrush(*wxTRANSPARENT_BRUSH);
+	tdc.DrawRectangle(0,0,w,h);
+
 	wxPaintDC dc(this);
 	dc.Blit(-scPosH,0,w+scPosH,h,&tdc,0,0);
 }

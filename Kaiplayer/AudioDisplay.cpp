@@ -70,7 +70,7 @@ int64_t abs64(int64_t input) {
 ///////////////
 // Constructor
 AudioDisplay::AudioDisplay(wxWindow *parent)
-	: wxWindow (parent, -1, wxDefaultPosition, wxSize(100,100), wxSUNKEN_BORDER | wxWANTS_CHARS , _T("Audio Display"))
+	: wxWindow (parent, -1, wxDefaultPosition, wxSize(100,100), wxBORDER_SIMPLE | wxWANTS_CHARS , _T("Audio Display"))
 	,spectrumSurface(NULL)
 	,d3dDevice(NULL)
 	,d3dObject(NULL)
@@ -422,6 +422,10 @@ void AudioDisplay::DoUpdateImage() {
 			d3dLine->End();
 		}
 	}
+
+	//// Draw previous line
+	DrawInactiveLines();
+
 	// Draw seconds boundaries
 	if (draw_boundary_lines) {
 		d3dLine->Begin();
@@ -442,8 +446,6 @@ void AudioDisplay::DoUpdateImage() {
 		d3dLine->End();
 	}
 
-	//// Draw previous line
-	DrawInactiveLines();
 
 
 
@@ -790,7 +792,7 @@ void AudioDisplay::DrawTimescale() {
 	int timelineHeight = 20;
 
 	// Set colours
-	D3DCOLOR timescaleBackground = D3DCOLOR_FROM_WX(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+	D3DCOLOR timescaleBackground = D3DCOLOR_FROM_WX(Options.GetColour("Window Background"));
 	VERTEX v9[4];
 	D3DXVECTOR2 v2[2];
 	CreateVERTEX(&v9[0], 0, h, timescaleBackground);
@@ -805,11 +807,11 @@ void AudioDisplay::DrawTimescale() {
 	v2[0]=D3DXVECTOR2(0,h);
 	v2[1]=D3DXVECTOR2(w,h);
 	d3dLine->Draw(v2,2,timescale3dLight);
-	D3DCOLOR timescale3dHighLight = D3DCOLOR_FROM_WX(wxSystemSettings::GetColour(wxSYS_COLOUR_3DHIGHLIGHT));
+	/*D3DCOLOR timescale3dHighLight = D3DCOLOR_FROM_WX(wxSystemSettings::GetColour(wxSYS_COLOUR_3DHIGHLIGHT));
 	v2[0]=D3DXVECTOR2(0,h+1);
 	v2[1]=D3DXVECTOR2(w,h+1);
-	d3dLine->Draw(v2,2,timescale3dHighLight);
-	D3DCOLOR timescaleText = D3DCOLOR_FROM_WX(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
+	d3dLine->Draw(v2,2,timescale3dHighLight);*/
+	D3DCOLOR timescaleText = D3DCOLOR_FROM_WX(Options.GetColour("Window Text"));
 
 	wxFont scaleFont;
 	scaleFont.SetFaceName(_T("Tahoma")); // FIXME: hardcoded font name
@@ -1221,7 +1223,7 @@ void AudioDisplay::UpdateScrollbar() {
 	int page = w/12;
 	int len = provider->GetNumSamples() / samples / 12;
 	Position = PositionSample / samples;
-	ScrollBar->SetScrollbar(Position/12,page,len/*,int(page*0.7),true*/);
+	ScrollBar->SetScrollbar(Position/12,page,len,int(page*0.7),true);
 }
 
 

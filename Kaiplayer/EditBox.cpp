@@ -130,7 +130,7 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 
 
 EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
-	: wxWindow(parent, idd, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxCLIP_CHILDREN)
+	: wxWindow(parent, idd, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE|wxCLIP_CHILDREN)
 	, EditCounter(0)
 {
 
@@ -401,7 +401,7 @@ void EditBox::UpdateChars(wxString text)
 	wxString result;
 	bool isbad=false;
 	int ilzn=grid->CalcChars(text,&result,&isbad);
-	wxColour textcolour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT); 
+	wxColour textcolour = Options.GetColour("Window Text"); 
 	Chars->SetLabelText(_("Linie: ")+result+"43");
 	Chars->SetForegroundColour((isbad)? *wxRED : textcolour);
 	int chtime= ilzn / ((line->End.mstime-line->Start.mstime) / 1000.0f);

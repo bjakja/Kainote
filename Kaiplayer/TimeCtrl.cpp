@@ -58,6 +58,25 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 	Bind(wxEVT_RIGHT_UP, &TimeCtrl::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &TimeCtrl::OnMouseEvent, this);
 	Bind(wxEVT_MOUSEWHEEL, &TimeCtrl::OnMouseEvent, this);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		pastes=true;
+		//SetSelection(0,GetValue().Length());
+		//Paste();
+		if (wxTheClipboard->Open())
+		{
+			if (wxTheClipboard->IsSupported( wxDF_TEXT ))
+			{
+				wxTextDataObject data;
+				wxTheClipboard->GetData( data );
+				wxString whatpaste = data.GetText();
+				SetValue(whatpaste, true, false);
+				SetSelection(0,whatpaste.Length());
+
+			}
+			wxTheClipboard->Close();
+			//wxTheClipboard->Flush();
+		}
+	}, ID_TCTLV);
 }
 
 
@@ -132,11 +151,11 @@ void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
 	if(!astmp||(key != WXK_BACK && key != WXK_DELETE)){event.Skip();}
 	if (event.ControlDown()) {
 
-		if (key == 'C' || key == 'X') {
+		//if (key == 'C' || key == 'X') {
 
 			//SetSelection(0,GetValue().Length());
-			Copy();//CopyTime();
-		}
+			//Copy();//CopyTime();
+		//}
 		if (key == 'V') {
 			pastes=true;
 			SetSelection(0,GetValue().Length());
@@ -153,7 +172,7 @@ void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
 
 				}
 				wxTheClipboard->Close();
-				wxTheClipboard->Flush();
+				//wxTheClipboard->Flush();
 			}
 
 			//pastes=false;

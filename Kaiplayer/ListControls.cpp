@@ -246,11 +246,11 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 	bool enabled = IsThisEnabled();
 	/*tdc.SetBrush(wxBrush(wxSystemSettings::GetColour((clicked)? wxSYS_COLOUR_BTNSHADOW : (enabled)? wxSYS_COLOUR_BTNFACE : wxSYS_COLOUR_INACTIVECAPTION )));
 	tdc.SetPen(wxPen(wxSystemSettings::GetColour((enter)? wxSYS_COLOUR_MENUHILIGHT : (enabled)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_GRAYTEXT)));*/
-	tdc.SetBrush(wxBrush((enter)? Options.GetColour("Button Background Hover") :
+	tdc.SetBrush(wxBrush((enter && !clicked)? Options.GetColour("Button Background Hover") :
 		(clicked)? Options.GetColour("Button Background Pushed") : 
 		(enabled)? Options.GetColour("Button Background") : 
 		Options.GetColour("Window Inactive Background")));
-	tdc.SetPen(wxPen((enter)? Options.GetColour("Button Border Hover") : 
+	tdc.SetPen(wxPen((enter && !clicked)? Options.GetColour("Button Border Hover") : 
 		(clicked)? Options.GetColour("Button Border Pushed") : 
 		(enabled)? Options.GetColour("Button Border") : 
 		Options.GetColour("Button Inactive Border")));
@@ -328,7 +328,7 @@ void KaiChoice::OnMouseEvent(wxMouseEvent &event)
 		}
 	}
 	if (event.GetWheelRotation() != 0) {
-		if(!HasFocus() || (choiceText && !choiceText->HasFocus())){
+		if(HasFlag(KAI_SCROLL_ON_FOCUS) && !HasFocus() && !(choiceText && choiceText->HasFocus())){
 			event.Skip(); return;
 		}
 		if( itemList && itemList->IsShown()){
@@ -339,7 +339,7 @@ void KaiChoice::OnMouseEvent(wxMouseEvent &event)
 		choice -=step;
 		if(choice<0){choice=list->size()-1;}
 		else if(choice >= (int)list->size()){choice = 0;}
-		SelectChoice(choice);
+		SelectChoice(choice,false);
 	}
 }
 
@@ -471,12 +471,14 @@ wxString KaiChoice::GetValue(){
 	return "";
 }
 
-void KaiChoice::SelectChoice(int _choice){
+void KaiChoice::SelectChoice(int _choice, bool select){
 	choice = _choice;
 	if(choiceText){
 		choiceText->SetValue((*list)[choice]);
-		choiceText->SetFocus();
-		choiceText->SetSelection(0,choiceText->GetValue().Len(),true);
+		if(select){
+			choiceText->SetFocus();
+			choiceText->SetSelection(0,choiceText->GetValue().Len(),true);
+		}
 	}else{Refresh(false);}
 	wxCommandEvent evt((HasFlag(KAI_COMBO_BOX))? wxEVT_COMMAND_COMBOBOX_SELECTED : wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 	this->ProcessEvent(evt);
@@ -495,9 +497,9 @@ BEGIN_EVENT_TABLE(KaiChoice, wxWindow)
 	EVT_MOUSE_EVENTS(KaiChoice::OnMouseEvent)
 	EVT_PAINT(KaiChoice::OnPaint)
 	EVT_SIZE(KaiChoice::OnSize)
-	//EVT_KILL_FOCUS(KaiChoice::OnKillFocus)
+	EVT_ERASE_BACKGROUND(KaiChoice::OnEraseBackground)
 	EVT_KEY_UP(KaiChoice::OnKeyPress)
-	END_EVENT_TABLE()
+END_EVENT_TABLE()
 
 	static int maxVisible = 20;
 
@@ -548,7 +550,7 @@ void PopupList::CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &control
 
 	size->x += 18;
 	if(isize > (size_t)maxVisible) {size->x += 20; isize=maxVisible;}
-	if(size->x > 200){size->x=200;}
+	if(size->x > 400){size->x=400;}
 	if(size->x < controlSize.x){size->x = controlSize.x;}
 	size->y = height * isize + 2;
 	int w, h;
@@ -653,7 +655,7 @@ void PopupList::OnPaint(wxPaintEvent &event)
 			tdc.DrawRectangle(2, (height*i)+2,w-4,height-2);
 		}
 		wxString desc=(*itemsList)[scrollPos];
-		tdc.SetTextForeground((disabledItems->find(scrollPos) != disabledItems->end())? text : graytext);
+		tdc.SetTextForeground((disabledItems->find(scrollPos) != disabledItems->end())? graytext : text);
 		tdc.DrawText(desc,4,(height*i)+3);
 	}
 

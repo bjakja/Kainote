@@ -20,7 +20,7 @@
 #include "NumCtrl.h"
 #include "KaiCheckBox.h"
 #include "MappedButton.h"
-//#include "KaiTextCtrl.h"
+#include "KaiScrollBar.h"
 #include <wx/wx.h>
 #include "StylePreview.h"
 
@@ -54,7 +54,7 @@ private:
 	bool holding;
 	wxArrayString fonts;
 
-	wxScrollBar *scrollBar;
+	KaiScrollbar *scrollBar;
 	wxBitmap *bmp;
 	wxFont font;
 

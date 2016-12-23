@@ -234,6 +234,7 @@ enum{
 	XX( ViewSubs,)\
 	XX( AutoLoadScript,)\
 	XX( AutoReloadAutoload,)\
+	XX( LoadLastScript,)\
 	XX( PlayPauseG,)\
 	XX( PreviousFrame,)\
 	XX( NextFrame,)\

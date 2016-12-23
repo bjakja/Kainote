@@ -247,7 +247,7 @@ int exception_wrapper(lua_State *L, int (*func)(lua_State *L)) {
 void LuaStackcheck::check_stack(int additional) {
 	int top = lua_gettop(L);
 	if (top - additional != startstack) {
-		wxLogStatus("automation/lua: lua stack size mismatch." );
+		//wxLogStatus("automation/lua: lua stack size mismatch." );
 		dump();
 		//assert(top - additional == startstack); 
 	}
@@ -255,17 +255,17 @@ void LuaStackcheck::check_stack(int additional) {
 
 void LuaStackcheck::dump() {
 	int top = lua_gettop(L);
-	wxLogStatus("automation/lua/stackdump: dumping lua stack...");
+	//wxLogStatus("automation/lua/stackdump: dumping lua stack...");
 	for (int i = top; i > 0; i--) {
 		lua_pushvalue(L, i);
 		wxString type(lua_typename(L, lua_type(L, -1)));
-		if (lua_isstring(L, i))
-			wxLogStatus("automation/lua/stackdump %s: %s",type, lua_tostring(L, -1));
-		else
-			wxLogStatus("automation/lua/stackdump: %s", type);
+		//if (lua_isstring(L, i))
+			//wxLogStatus("automation/lua/stackdump %s: %s",type, lua_tostring(L, -1));
+		//else
+			//wxLogStatus("automation/lua/stackdump: %s", type);
 		lua_pop(L, 1);
 	}
-	wxLogStatus("automation/lua: --- end dump");
+	//wxLogStatus("automation/lua: --- end dump");
 }
 
 #endif
