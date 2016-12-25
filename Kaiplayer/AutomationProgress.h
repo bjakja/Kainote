@@ -34,6 +34,8 @@
 #include <wx/wx.h>
 
 #include "AutomationDialog.h"
+#include "MappedButton.h"
+#include "KaiTextCtrl.h"
 #include <utility>
 
 namespace Auto{
@@ -47,8 +49,8 @@ namespace Auto{
 		wxGauge *progress_display;
 		wxStaticText *title_display;
 		wxStaticText *task_display;
-		wxTextCtrl *debug_output;
-		wxButton *cancel_button;
+		KaiTextCtrl *debug_output;
+		MappedButton *cancel_button;
 		wxMutex data_mutex;
 		//float progress;
 		//wxString task;

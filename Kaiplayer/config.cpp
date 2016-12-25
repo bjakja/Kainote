@@ -251,38 +251,38 @@ void config::SaveOptions(bool cfg, bool style)
 	}
 }
 
-inline wxString config::LoadDefaultConfig()
+void config::LoadDefaultConfig()
 {
-	return L"["+progname+L"]\r\nChange Time=2000\r\n"\
-		L"Change mode=0\r\n"\
-		L"Convert Resolution W=1280\r\n"\
-		L"Convert Resolution H=720\r\n"\
-		L"Default FPS=23.976\r\n"\
-		L"Default Style=Default\r\n"\
-		L"Default Style Catalog=Default\r\n"\
-		L"Dictionary Name=pl\r\n"\
-		L"Editbox Spellchecker=true\r\n"\
-		L"Frames=false\r\n"\
-		L"Grid Font Name=Tahoma\r\n"\
-		L"Grid Font Size=10\r\n"\
-		L"Grid tag changing char=☀\r\n"\
-		L"Move time forward=true\r\n"\
-		L"Move Video To Active Line=0\r\n"\
-		L"New end times=false\r\n"\
-		L"Offset of start time=0\r\n"\
-		L"Offset of end time=0\r\n"\
-		L"Play Afrer Selection=0\r\n"\
-		L"Preview Text=Podgląd\r\n"\
-		L"Program Theme=Default\r\n"\
-		L"Show Editor=true\r\n"\
-		L"Show settings window=false\r\n"\
-		L"Start end times=0\r\n"\
-		L"Styles of time change=\r\n"\
-		L"Time show of letter=110\r\n"\
-		L"Index Video=true\r\n"\
-		L"Video Prog Bar=true\r\n"\
-		L"Video Window Size=500,350\r\n"\
-		L"Window Size=800,600";
+	rawcfg[L"Change Time"] = "2000";
+	rawcfg[L"Change mode"] = "0";
+	rawcfg[L"Convert Resolution W"] = "1280";
+	rawcfg[L"Convert Resolution H"] = "720";
+	rawcfg[L"Default FPS"] = "23.976";
+	rawcfg[L"Default Style"] = "Default";
+	rawcfg[L"Default Style Catalog"] = "Default";
+	rawcfg[L"Dictionary Name"] = "pl";
+	rawcfg[L"Editbox Spellchecker"] = "true";
+	rawcfg[L"Frames"] = "false";
+	rawcfg[L"Grid Font Name"] = "Tahoma";
+	rawcfg[L"Grid Font Size"] = "10";
+	rawcfg[L"Grid tag changing char"] = L"☀";
+	rawcfg[L"Move time forward"] = "true";
+	rawcfg[L"Move Video To Active Line"] = "0";
+	rawcfg[L"New end times"] = "false";
+	rawcfg[L"Offset of start time"] = "0";
+	rawcfg[L"Offset of end time"] = "0";
+	rawcfg[L"Play Afrer Selection"] = "0";
+	rawcfg[L"Preview Text"] = "Podgląd";
+	rawcfg[L"Program Theme"] = "Default";
+	rawcfg[L"Show Editor"] = "true";
+	rawcfg[L"Show settings window"] = "false";
+	rawcfg[L"Start end times"] = "0";
+	rawcfg[L"Styles of time change"] = "";
+	rawcfg[L"Time show of letter"] = "110";
+	rawcfg[L"Index Video"] = "true";
+	rawcfg[L"Video Prog Bar"] = "true";
+	rawcfg[L"Video Window Size"] = "500,350";
+	rawcfg[L"Window Size"] = "800,600";
 }
 
 void config::LoadDefaultColors()
@@ -373,13 +373,16 @@ int config::LoadOptions()
 	path<<pathfull<<_T("\\Config.txt");
 	OpenWrite ow;
 	wxString txt;
+	bool isgood=false;
 	if(!ow.FileOpen(path,&txt,false)){
-		txt = LoadDefaultConfig();
+		LoadDefaultConfig();
+		isgood = true;
 	}else{
 		wxString ver= txt.BeforeFirst(']').Mid(1);
-		if(ver!=progname){SetRawOptions(LoadDefaultConfig().AfterFirst('\n'));}
+		if(ver!=progname){LoadDefaultConfig();}
+		isgood = SetRawOptions(txt.AfterFirst('\n'));
 	}
-	bool isgood=SetRawOptions(txt.AfterFirst('\n'));
+
 	acdir = _T("Default");
 	path=_T("");
 	path<<pathfull<<_T("\\Catalog\\");
@@ -544,37 +547,37 @@ void config::Sortstyles()
 	std::sort(assstore.begin(),assstore.end(),sortfunc);
 }
 
-wxString config::LoadDefaultAudioConfig()
+void config::LoadDefaultAudioConfig()
 {
-	return "Audio Autocommit=true\r\n"\
-		"Audio Autofocus=true\r\n"\
-		"Audio Autoscroll=true\r\n"\
-		"Audio Box Height=169\r\n"\
-		"Audio Delay=0\r\n"\
-		"Audio Draw Cursor Time=true\r\n"\
-		"Audio Draw Keyframes=true\r\n"\
-		"Audio Draw Secondary Lines=true\r\n"\
-		"Audio Draw Selection Background=true\r\n"\
-		"Audio Draw video Position=true\r\n"\
-		"Audio Grab Times On Select=true\r\n"\
-		"Audio Horizontal Zoom=50\r\n"\
-		"Audio Inactive Lines Display Mode=1\r\n"\
-		"Audio Lead In=200\r\n"\
-		"Audio Lead Out=300\r\n"\
-		"Audio Line Boundaries Thickness=2\r\n"\
-		"Audio Link=false\r\n"\
-		"Audio Lock Scroll On Cursor=false\r\n"\
-		"Audio Mark Play Time=1000\r\n"\
-		"Audio Next Line On Commit=true\r\n"\
-		"Audio RAM Cache=false\r\n"\
-		"Audio Sample Rate=0\r\n"\
-		"Audio Snap To Keyframes=false\r\n"\
-		"Audio Snap To Other Lines=false\r\n"\
-		"Audio Spectrum=false\r\n"\
-		"Audio Start Drag Sensitivity=2\r\n"\
-		"Audio Vertical Zoom=50\r\n"\
-		"Audio Volume=50\r\n"\
-		"Audio Wheel Default To Zoom=false";
+	rawcfg[L"Audio Autocommit"] = "true";
+	rawcfg[L"Audio Autofocus"] = "true";
+	rawcfg[L"Audio Autoscroll"] = "true";
+	rawcfg[L"Audio Box Height"] = "169";
+	rawcfg[L"Audio Delay"] = "0";
+	rawcfg[L"Audio Draw Cursor Time"] = "true";
+	rawcfg[L"Audio Draw Keyframes"] = "true";
+	rawcfg[L"Audio Draw Secondary Lines"] = "true";
+	rawcfg[L"Audio Draw Selection Background"] = "true";
+	rawcfg[L"Audio Draw video Position"] = "true";
+	rawcfg[L"Audio Grab Times On Select"] = "true";
+	rawcfg[L"Audio Horizontal Zoom"] = "50";
+	rawcfg[L"Audio Inactive Lines Display Mode"] = "1";
+	rawcfg[L"Audio Lead In"] = "200";
+	rawcfg[L"Audio Lead Out"] = "300";
+	rawcfg[L"Audio Line Boundaries Thickness"] = "2";
+	rawcfg[L"Audio Link"] = "false";
+	rawcfg[L"Audio Lock Scroll On Cursor"] = "false";
+	rawcfg[L"Audio Mark Play Time"] = "1000";
+	rawcfg[L"Audio Next Line On Commit"] = "true";
+	rawcfg[L"Audio RAM Cache"] = "false";
+	rawcfg[L"Audio Sample Rate"] = "0";
+	rawcfg[L"Audio Snap To Keyframes"] = "false";
+	rawcfg[L"Audio Snap To Other Lines"] = "false";
+	rawcfg[L"Audio Spectrum"] = "false";
+	rawcfg[L"Audio Start Drag Sensitivity"] = "2";
+	rawcfg[L"Audio Vertical Zoom"] = "50";
+	rawcfg[L"Audio Volume"] = "50";
+	rawcfg[L"Audio Wheel Default To Zoom"] = "false";
 
 }
 
@@ -583,10 +586,11 @@ bool config::LoadAudioOpts()
 	OpenWrite ow;
 	wxString txt;
 	if(!ow.FileOpen(pathfull+_T("\\AudioConfig.txt"), &txt ,false)){
-		txt=LoadDefaultAudioConfig();
+		LoadDefaultAudioConfig();
+		return true;
 	}else{
 		wxString ver= txt.BeforeFirst(']').Mid(1);
-		if(ver!=progname){SetRawOptions(LoadDefaultAudioConfig().AfterFirst('\n'));}
+		if(ver!=progname){LoadDefaultAudioConfig();}
 	}
 	return (AudioOpts=SetRawOptions(txt.AfterFirst('\n')));
 }

@@ -544,7 +544,12 @@ void VideoCtrl::NextFile(bool next)
 
 
 				bool isload=Kai->OpenFile(pliki[k]);
-				if(isload){actfile=k; seekfiles=false;return;}
+				if(isload){
+					actfile=k; 
+					seekfiles=false;
+					if(isfullskreen){SetFocus();}
+					return;
+				}
 				else if(!IsDshow){return;}
 		}
 		if(next){k++;}else{k--;}

@@ -45,7 +45,7 @@
 #include <wx/string.h>
 #include <wx/panel.h>
 #include <wx/menu.h>
-#include <wx/scrolbar.h>
+#include "KaiSlider.h"
 #include <wx/button.h>
 #include <wx/bmpbuttn.h>
 //#include <wx/sashwin.h>
@@ -68,9 +68,9 @@ class AudioBox : public wxPanel {
 
 private:
 	KaiScrollbar *audioScroll;
-	wxSlider *HorizontalZoom;
-	wxSlider *VerticalZoom;
-	wxSlider *VolumeBar;
+	KaiSlider *HorizontalZoom;
+	KaiSlider *VerticalZoom;
+	KaiSlider *VolumeBar;
 	wxSizer *MainSizer;
 	wxSizer *TopSizer;
 	wxSizer *sashSizer;

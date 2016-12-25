@@ -968,16 +968,16 @@ void Grid::OnSetFPSFromVideo()
 	if(selarr.size()!=2){return;}
 	Dialogue *first=GetDial(selarr[0]);
 	Dialogue *second=GetDial(selarr[1]);
-	int ftime=first->Start.mstime;
-	int stime=second->Start.mstime;
-	int vtime=Notebook::GetTab()->Video->Tell();
-	float diffv=(vtime-stime);
-	float diffg=(stime-ftime);
+	int firstTime=first->Start.mstime;
+	int secondTime=second->Start.mstime;
+	int videoTime=Notebook::GetTab()->Video->Tell();
+	float diffVideo = (videoTime-secondTime);
+	float diffLines = (secondTime-firstTime);
 
 	for (int i=0;i<GetCount();i++){
 		Dialogue *dialc=CopyDial(i);
-		dialc->Start.Change(diffv *((dialc->Start.mstime-ftime)/diffg));
-		dialc->End.Change(diffv *((dialc->End.mstime-ftime)/diffg));
+		dialc->Start.Change(diffVideo *((dialc->Start.mstime - firstTime) / diffLines));
+		dialc->End.Change(diffVideo *((dialc->End.mstime - firstTime) / diffLines));
 	}
 	SetModified();
 	if(form>TMP){RepaintWindow(START|END);}else{Refresh(false);}

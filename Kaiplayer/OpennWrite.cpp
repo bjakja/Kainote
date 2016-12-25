@@ -52,7 +52,7 @@ bool OpenWrite::FileOpen(const wxString &filename, wxString *riddenText, bool te
 	wxFile filetest;
 	wxFileName fname;
 	fname.Assign(filename);
-	if(!fname.IsFileReadable()){/*wxMessageBox("nie można odczytać pliku o ścieżce \""+filename+"\".");*/return "";}
+	if(!fname.IsFileReadable()){return false;}
 	if (test){
 		wchar_t b[4];
 		filetest.Open(filename,wxFile::read,wxS_DEFAULT);

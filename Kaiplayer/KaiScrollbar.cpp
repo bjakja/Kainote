@@ -26,19 +26,21 @@ KaiScrollbar::KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos, const w
 	,bmp(NULL)
 	,enter(false)
 	,integrated(false)
+	,pushed(false)
 	,unitPos(0)
 	,element(0)
 {
 	pageLoop.SetOwner(this, 2345);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
 		if(unitPos == 0 || unitPos == allVisibleSize){pageLoop.Stop();return;}
-		if(diff<thumbPos){unitPos -= pageSize;}
-		else if(diff>thumbPos+thumbSize){unitPos += pageSize;}
-		else{pageLoop.Stop();return;}
+		if(diff<=thumbPos){unitPos -= pageSize;}
+		else if(diff>=thumbPos+thumbSize){unitPos += pageSize;}
+		else{pageLoop.Stop();pushed = true;Refresh(false);return;}
 		if(unitPos<0){unitPos = 0;}
 		if(unitPos> allVisibleSize){unitPos = allVisibleSize;}
 		thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) +17;
 		SendEvent();
+		if(pageLoop.GetInterval()==500){pageLoop.Start(100);}
 	}, 2345);
 	arrowLoop.SetOwner(this, 2346);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
@@ -130,7 +132,6 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 	if(!bmp){bmp=new wxBitmap(w, h);}
 	tdc.SelectObject(*bmp);
 	wxColour background = Options.GetColour("Scrollbar Background");
-	bool pushed = holding && (element & ELEMENT_THUMB);
 	wxColour scroll = (enter && !pushed)? Options.GetColour("Scrollbar Scroll Hover") : 
 		(pushed)? Options.GetColour("Scrollbar Scroll Pushed") :
 		Options.GetColour("Scrollbar Scroll");
@@ -174,68 +175,76 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 			return;
 		}
 	}
-	if (evt.GetWheelRotation() != 0) {
-		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
-		unitPos -= step;
-		if(unitPos<0){unitPos = 0; SendEvent();return;}
-		if(unitPos> allVisibleSize){unitPos = allVisibleSize;  SendEvent(); return;}
-		thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) +17;
-		SendEvent();
-		return;
-	}
+	
 	int x = evt.GetX();
 	int y = evt.GetY();
 	int w=0;
 	int h=0;
 	GetClientSize (&w, &h);
 	int coord = (isVertical)? y : x;
+	int coord2 = (isVertical)? x : y;
 	int size = (isVertical)? h : w;
-	if(evt.ButtonUp() && pageLoop.IsRunning()){
-		pageLoop.Stop();
-		if(HasCapture()){ReleaseMouse();}
-		holding = false;
-		Refresh(false);
+	int size2 = (isVertical)? w : h;
+	if (evt.GetWheelRotation() != 0) {
+		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
+		unitPos -= step;
+		if(unitPos<0){unitPos = 0; SendEvent();return;}
+		if(unitPos> allVisibleSize){unitPos = allVisibleSize;  SendEvent(); return;}
+		thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) +17;
+		if(coord >= thumbPos && coord <= thumbPos+thumbSize){
+			enter=true;
+		}else if(enter){enter=false;}
+		SendEvent();
+		return;
 	}
-	if(evt.RightDown() || evt.RightIsDown() || (evt.ShiftDown() && (evt.LeftDown() || evt.LeftIsDown()))){
+	if(evt.ButtonUp()){
+		if(pageLoop.IsRunning()){pageLoop.Stop();}
+		if(arrowLoop.IsRunning()){arrowLoop.Stop();}
+		if(HasCapture()){ReleaseMouse();}
+		element = 0;
+		enter = false;
+		holding = false;
+		pushed = false;
+		Refresh(false);
+		//return;
+	}
+	if((evt.RightDown() || evt.RightIsDown() || //prawy przycisk
+		(evt.ShiftDown() && (evt.LeftDown() || evt.LeftIsDown()))) && //lewy + shift
+		(coord < size - 17 && coord > 17)){ //blokada by nie dzia³a³o na przyciskach
 		thumbPos = coord-(thumbSize/2);
 		thumbPos = MID(17, thumbPos, thumbRange+17);
 		unitPos = ((thumbPos-17) / (float)thumbRange) * allVisibleSize;
 		enter = true;
+		pushed = true;
 		holding = true;
 		SendEvent();
 		if(!HasCapture()){CaptureMouse();}
 		return;
 	}
 	
-	if(!evt.LeftDown() && !holding){
-		if(!enter && coord >= thumbPos && coord <= thumbPos+thumbSize){
+	if(!holding){
+		if(!enter && coord >= thumbPos && coord <= thumbPos+thumbSize && coord2 >= 0 && coord2 <= size2 ){
 			enter = true;
 			Refresh(false);
-		}else if(enter && (coord < thumbPos || coord > thumbPos+thumbSize)){
+		}else if(enter && (coord < thumbPos || coord > thumbPos+thumbSize || coord2 < 0 || coord2 > size2)){
 			enter = false;
 			Refresh(false);
 		}
 	}
-	if(evt.LeftUp()){
-		element = 0;
-		holding = enter = false;
-		Refresh(false);
-		if(arrowLoop.IsRunning()){arrowLoop.Stop();}
-		if(HasCapture()){ReleaseMouse();}
-	}
-
+	
 	if(evt.LeftDown() || (!holding && evt.LeftIsDown())){
 		holding = true;
 		if(coord >= thumbPos && coord <= thumbPos+thumbSize){
 			element = ELEMENT_THUMB;
-		}else if(coord >= size - 20 && coord <= size && unitPos != allVisibleSize){
+			pushed = true;
+		}else if(coord >= size - 18 && coord <= size && unitPos != allVisibleSize){
 			unitPos+=1;
 			if(unitPos> allVisibleSize){unitPos = allVisibleSize;}
 			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) +17;
 			element = ELEMENT_BUTTON_BOTTOM;
 			SendEvent();
 			arrowLoop.Start(500);
-		}else if(coord>=0 && coord < 20 && unitPos != 0){
+		}else if(coord>=0 && coord < 18 && unitPos != 0){
 			unitPos-=1;
 			if(unitPos<0){unitPos = 0;}
 			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) +17;
@@ -243,7 +252,7 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 			//Refresh(false);
 			SendEvent();
 			arrowLoop.Start(500);
-		}else/* if(unitPos != 0 && unitPos != allVisibleSize)*/{
+		}else{
 			unitPos+= (coord<thumbPos)? -pageSize : pageSize;
 			if(unitPos<0){unitPos = 0;}
 			if(unitPos> allVisibleSize){unitPos = allVisibleSize;}
@@ -252,7 +261,7 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 			element = ELEMENT_BETWEEN_THUMB;
 			diff = coord;
 			SendEvent();
-			pageLoop.Start(100);
+			pageLoop.Start(500);
 			return;
 		}
 		diff = coord - thumbPos;
@@ -260,11 +269,10 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 	}
 
 	if(holding && element & ELEMENT_THUMB){
-		//if(isVertical){
 		thumbPos = coord - diff;
 		thumbPos = MID(17, thumbPos, thumbRange+17);
-		//unitPos = (thumbPos-17) / unitToPixel;
 		unitPos = ((thumbPos-17) / (float)thumbRange) * allVisibleSize;
+		//wxLogStatus("unitpos %i %i", unitPos, allVisibleSize);
 		SendEvent();
 	}
 }
@@ -281,43 +289,54 @@ KaiScrolledWindow::KaiScrolledWindow(wxWindow *parent, int id, const wxPoint& po
 {
 	if(style & wxHORIZONTAL){
 		style ^= wxHORIZONTAL;
-		horizontal = new KaiScrollbar(this,-1);
-		horizontal->integrated=true;
-		horizontal->Hide();
 	}
 	if(style & wxVERTICAL){
 		style ^= wxVERTICAL;
-		vertical = new KaiScrollbar(this,-1, wxDefaultPosition, wxDefaultSize, wxVERTICAL);
-		vertical->integrated=true;
-		vertical->Hide();
 	}
 	SetWindowStyle(style);
 }
 
-bool KaiScrolledWindow::SetScrollBar(int orientation, int pos, int maxVisible, int allItems, bool refresh)
+bool KaiScrolledWindow::SetScrollBar(int orientation, int pos, int maxVisible, int allItems, int pageSize, bool refresh)
 {
-	bool changeVisibility = false;
-	if(orientation & wxHORIZONTAL && horizontal){
-		if(horizontal->IsShown() && maxVisible >= allItems){horizontal->Hide();changeVisibility=true;}
-		else if(!horizontal->IsShown() && maxVisible < allItems){horizontal->Show();changeVisibility=true;}
-		if(horizontal->IsShown()){
+	if(orientation & wxHORIZONTAL){
+		if(horizontal && maxVisible >= allItems){
+			horizontal->Destroy();
+			horizontal=NULL;
+			return true;
+		}else if(!horizontal && maxVisible < allItems){
+			wxSize size = wxWindow::GetClientSize();
+			horizontal = new KaiScrollbar(this,-1, wxPoint(0, size.y-17), wxSize(size.x, 17));
+			horizontal->integrated=true;
+			horizontal->SetScrollbar(pos, maxVisible, allItems, pageSize, refresh);
+			return true;
+		}
+		if(horizontal){
 			wxSize size = wxWindow::GetClientSize();
 			horizontal->SetPosition(wxPoint(0, size.y-17));
 			horizontal->SetSize(wxSize(size.x, 17));
-			horizontal->SetScrollbar(pos, maxVisible, allItems, maxVisible-1, refresh);
+			horizontal->SetScrollbar(pos, maxVisible, allItems, pageSize, refresh);
 		}
 	}
-	if(orientation & wxVERTICAL && vertical){
-		if(vertical->IsShown() && maxVisible >= allItems){vertical->Hide();changeVisibility=true;}
-		else if(!vertical->IsShown() && maxVisible < allItems){vertical->Show();changeVisibility=true;}
-		if(vertical->IsShown()){
+	if(orientation & wxVERTICAL){
+		if(vertical && maxVisible >= allItems){
+			vertical->Destroy();
+			vertical=NULL;
+			return true;
+		}else if(!vertical && maxVisible < allItems){
+			wxSize size = wxWindow::GetClientSize();
+			vertical = new KaiScrollbar(this,-1, wxPoint(size.x-17, 0), wxSize(17, size.y), wxVERTICAL);
+			vertical->SetScrollbar(pos, maxVisible, allItems, pageSize, refresh);
+			vertical->integrated=true;
+			return true;
+		}
+		if(vertical){
 			wxSize size = wxWindow::GetClientSize();
 			vertical->SetPosition(wxPoint(size.x-17, 0));
 			vertical->SetSize(wxSize(17, size.y));
-			vertical->SetScrollbar(pos, maxVisible, allItems, maxVisible-1, refresh);
+			vertical->SetScrollbar(pos, maxVisible, allItems, pageSize, refresh);
 		}
 	}
-	return changeVisibility;
+	return false;
 }
 
 void KaiScrolledWindow::SetScrollPos (int orientation, int pos, bool refresh)

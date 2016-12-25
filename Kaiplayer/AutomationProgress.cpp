@@ -36,15 +36,15 @@
 
 namespace Auto{
 
-wxDEFINE_EVENT(EVT_TITLE, wxThreadEvent);
-wxDEFINE_EVENT(EVT_TASK, wxThreadEvent);
-wxDEFINE_EVENT(EVT_PROGRESS, wxThreadEvent);
-wxDEFINE_EVENT(EVT_MESSAGE, wxThreadEvent);
-wxDEFINE_EVENT(EVT_SHOW_PRGS_DIAL, wxThreadEvent);
-wxDEFINE_EVENT(EVT_SHOW_CFG_DIAL, wxThreadEvent);
-LuaProgressSink *LuaProgressSink::ps=NULL;
+	wxDEFINE_EVENT(EVT_TITLE, wxThreadEvent);
+	wxDEFINE_EVENT(EVT_TASK, wxThreadEvent);
+	wxDEFINE_EVENT(EVT_PROGRESS, wxThreadEvent);
+	wxDEFINE_EVENT(EVT_MESSAGE, wxThreadEvent);
+	wxDEFINE_EVENT(EVT_SHOW_PRGS_DIAL, wxThreadEvent);
+	wxDEFINE_EVENT(EVT_SHOW_CFG_DIAL, wxThreadEvent);
+	LuaProgressSink *LuaProgressSink::ps=NULL;
 
-LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
+	LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
 		: wxEvtHandler()
 		,L(_L)
 		,lpd(NULL)
@@ -55,7 +55,7 @@ LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
 		trace_level = Options.GetInt("Automation Trace Level");
 
 		//LuaProgressSink **ud = (LuaProgressSink**)lua_newuserdata(L, sizeof(LuaProgressSink*));
-		
+
 
 		// register progress reporting stuff
 		lua_getglobal(L, "kainote");
@@ -89,17 +89,17 @@ LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
 		lua_setfield(L, -2, "log");
 
 		//if (allow_config_dialog) {
-			lua_createtable(L,0,3);
-			lua_pushvalue(L, -3);
-			lua_pushcclosure(L, LuaDisplayDialog, 1);
-			lua_setfield(L, -2, "display");
-			lua_pushvalue(L, -3);
-			lua_pushcclosure(L, LuaDisplayOpenDialog, 1);
-			lua_setfield(L, -2, "open");
-			lua_pushvalue(L, -3);
-			lua_pushcclosure(L, LuaDisplaySaveDialog, 1);
-			lua_setfield(L, -2, "save");
-			lua_setfield(L, -2, "dialog");
+		lua_createtable(L,0,3);
+		lua_pushvalue(L, -3);
+		lua_pushcclosure(L, LuaDisplayDialog, 1);
+		lua_setfield(L, -2, "display");
+		lua_pushvalue(L, -3);
+		lua_pushcclosure(L, LuaDisplayOpenDialog, 1);
+		lua_setfield(L, -2, "open");
+		lua_pushvalue(L, -3);
+		lua_pushcclosure(L, LuaDisplaySaveDialog, 1);
+		lua_setfield(L, -2, "save");
+		lua_setfield(L, -2, "dialog");
 		//}
 
 		// reference so other objects can also find the progress sink
@@ -142,12 +142,12 @@ LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
 
 	/*LuaProgressSink* LuaProgressSink::GetObjPointer(lua_State *L, int idx)
 	{
-		if(lua_type(L, idx) != LUA_TUSERDATA){
-			lua_pushstring(L, "Nieznany blad skryptu lua.");
-			lua_error(L);
-		}
-		void *ud = lua_touserdata(L, idx);
-		return *((LuaProgressSink**)ud);
+	if(lua_type(L, idx) != LUA_TUSERDATA){
+	lua_pushstring(L, "Nieznany blad skryptu lua.");
+	lua_error(L);
+	}
+	void *ud = lua_touserdata(L, idx);
+	return *((LuaProgressSink**)ud);
 	}*/
 
 	void LuaProgressSink::ShowDialog(wxString Title)
@@ -155,7 +155,7 @@ LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
 		SafeQueue(EVT_SHOW_PRGS_DIAL,lpd);
 		SafeQueue(EVT_TITLE,Title);
 	}
-	
+
 
 	int LuaProgressSink::LuaSetProgress(lua_State *L)
 	{
@@ -242,13 +242,13 @@ LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
 			lua_settop(L, 2);
 		}
 
-		
+
 		wxSemaphore sema(0,1);
 		ps->SafeQueue(EVT_SHOW_CFG_DIAL,&sema);
-		
+
 		// more magic: puts two values on stack: button pushed and table with control results
 		sema.Wait();
-		
+
 		return 2;
 	}
 
@@ -322,11 +322,13 @@ LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
 		,closedialog(false)
 		,L(_L)
 	{
+		SetForegroundColour(Options.GetColour("Window Text"));
+		SetBackgroundColour(Options.GetColour("Window Background"));
 		progress_display = new wxGauge(this, -1, 100, wxDefaultPosition, wxSize(600, 20));
 		title_display = new wxStaticText(this, -1, _T(""), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE|wxST_NO_AUTORESIZE);
 		task_display = new wxStaticText(this, -1, _T(""), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE|wxST_NO_AUTORESIZE);
-		cancel_button = new wxButton(this, wxID_CANCEL, _("Anuluj"));
-		debug_output = new wxTextCtrl(this, -1, _T(""), wxDefaultPosition, wxSize(600, 220), wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH2);
+		cancel_button = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+		debug_output = new KaiTextCtrl(this, -1, _T(""), wxDefaultPosition, wxSize(600, 220), wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH2);
 		//debug_output->Hide();
 		// put it in a sizer
 		sizer = new wxBoxSizer(wxVERTICAL);
@@ -354,7 +356,7 @@ LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
 		//sizer->SetSizeHints(this);
 		SetSizerAndFit(sizer);
 		Center();
-		
+
 		//Bind(wxEVT_TIMER, &LuaProgressDialog::OnUpdate, this);
 
 
@@ -365,18 +367,18 @@ LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
 		Bind(EVT_SHOW_CFG_DIAL, &LuaProgressDialog::ShowConfigDialog, this);
 		Bind(EVT_SHOW_PRGS_DIAL, &LuaProgressDialog::ShowProgressDialog, this);
 	}
-LuaProgressDialog::~LuaProgressDialog(){
-	update_timer.Stop();
-}
-void LuaProgressDialog::ShowProgressDialog(wxThreadEvent &evt)
-{
-	LuaProgressDialog *dlg=evt.GetPayload<LuaProgressDialog*>();
-	dlg->ShowModal();
-}
+	LuaProgressDialog::~LuaProgressDialog(){
+		update_timer.Stop();
+	}
+	void LuaProgressDialog::ShowProgressDialog(wxThreadEvent &evt)
+	{
+		LuaProgressDialog *dlg=evt.GetPayload<LuaProgressDialog*>();
+		dlg->ShowModal();
+	}
 
 
-void LuaProgressDialog::AddDebugOutput(wxThreadEvent &evt)
-{
+	void LuaProgressDialog::AddDebugOutput(wxThreadEvent &evt)
+	{
 		wxMutexLocker lock(data_mutex);
 		pending_debug_output = evt.GetPayload<wxString>();
 		debug_output->AppendText(pending_debug_output);
@@ -384,56 +386,56 @@ void LuaProgressDialog::AddDebugOutput(wxThreadEvent &evt)
 		//sizer->Show(debug_output, true);
 		//sizer->Layout();}
 		//data_updated=true;
-}
+	}
 
-void LuaProgressDialog::SetTitle(wxThreadEvent &evt)
-{
+	void LuaProgressDialog::SetTitle(wxThreadEvent &evt)
+	{
 		wxMutexLocker lock(data_mutex);
 		title_display->SetLabelText(evt.GetPayload<wxString>());
-}
+	}
 
-void LuaProgressDialog::SetTask(wxThreadEvent &evt)
-{
+	void LuaProgressDialog::SetTask(wxThreadEvent &evt)
+	{
 		wxMutexLocker lock(data_mutex);
 		task_display->SetLabelText(evt.GetPayload<wxString>());
-}
+	}
 
-void LuaProgressDialog::SetProgress(wxThreadEvent &evt)
-{
+	void LuaProgressDialog::SetProgress(wxThreadEvent &evt)
+	{
 		wxMutexLocker lock(data_mutex);
 		int prg=evt.GetPayload<int>();
 		//wxLogStatus("prg %i", prg);
 		progress_display->SetValue(prg);
 		//progress_display->Pulse();
-}
+	}
 
-void LuaProgressDialog::OnUpdate(wxTimerEvent &event)
-{
-	wxMutexLocker lock(data_mutex);
-	if(finished){update_timer.Stop();cancel_button->SetLabelText(_("Zamknij"));}
-	if(cancelled||closedialog){update_timer.Stop();EndModal(0);}
-}
-void LuaProgressDialog::ShowConfigDialog(wxThreadEvent &evt)
-{
-	//cfgclosed=false;
+	void LuaProgressDialog::OnUpdate(wxTimerEvent &event)
+	{
+		wxMutexLocker lock(data_mutex);
+		if(finished){update_timer.Stop();cancel_button->SetLabelText(_("Zamknij"));}
+		if(cancelled||closedialog){update_timer.Stop();EndModal(0);}
+	}
+	void LuaProgressDialog::ShowConfigDialog(wxThreadEvent &evt)
+	{
+		//cfgclosed=false;
 		update_timer.Stop();
 		LuaDialog dlg(L,true); // magically creates the config dialog structure etc
 		wxDialog* window = dlg.CreateWindow(this,title_display->GetLabelText());
 		window->ShowModal();
-		
+
 		update_timer.Start();
-		
+
 		// more magic: puts two values on stack: button pushed and table with control results
-		
+
 		dlg.LuaReadBack(L);
 		evt.GetPayload<wxSemaphore*>()->Post();
 		if(dlg.IsCancelled()){cancelled=true;}
-}
+	}
 
-void LuaProgressDialog::OnCancel(wxCommandEvent &evt)
-{
-	cancelled=true;
-}
+	void LuaProgressDialog::OnCancel(wxCommandEvent &evt)
+	{
+		cancelled=true;
+	}
 
 
 };

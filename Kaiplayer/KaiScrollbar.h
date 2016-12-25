@@ -46,6 +46,7 @@ private:
 	bool rholding;
 	bool enter;
 	bool integrated;
+	bool pushed;
 	byte element;
 	wxTimer pageLoop;
 	wxTimer arrowLoop;
@@ -60,9 +61,9 @@ public:
 	KaiScrolledWindow(wxWindow *parent, int id, const wxPoint& pos = wxDefaultPosition, 
 		const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxEmptyString);
 	virtual ~KaiScrolledWindow(){};
-	bool SetScrollBar(int orientation, int pos, int maxVisible, int allItems, bool refresh = true);
-	void SetScrollbar(int orientation, int pos, int maxVisible, int allItems, bool refresh = true){
-		SetScrollBar(orientation, pos, maxVisible, allItems, refresh);
+	bool SetScrollBar(int orientation, int pos, int maxVisible, int allItems, int pageSize, bool refresh = true);
+	void SetScrollbar(int orientation, int pos, int maxVisible, int allItems, int pageSize, bool refresh = true){
+		SetScrollBar(orientation, pos, maxVisible, allItems, pageSize, refresh);
 	}
 	void SetScrollPos (int orientation, int pos, bool refresh=true);
 	void GetSize(int *x, int *y);
@@ -70,10 +71,10 @@ public:
 	wxSize GetSize();
 	wxSize GetClientSize();
 	void AlwaysShowScrollbars (bool hflag=true, bool vflag=true){};
-	int GetScrollPos (int orientation) const {return (orientation == wxHORIZONTAL)? horizontal->unitPos : vertical->unitPos;}
- 	int GetScrollRange (int orientation) const{return (orientation == wxHORIZONTAL)? horizontal->allSize : vertical->allSize;}
- 	int GetScrollThumb (int orientation) const{return (orientation == wxHORIZONTAL)? horizontal->visibleSize : vertical->visibleSize;}
-	bool HasScrollbar (int orient) const {return (orient == wxHORIZONTAL)? horizontal->IsShown() : vertical->IsShown();};
+	int GetScrollPos (int orientation) const {return (orientation == wxHORIZONTAL && horizontal)? horizontal->unitPos : (orientation == wxVERTICAL && vertical)? vertical->unitPos : 0;}
+ 	int GetScrollRange (int orientation) const{return (orientation == wxHORIZONTAL && horizontal)? horizontal->allSize : (orientation == wxVERTICAL && vertical)?vertical->allSize : 0;}
+ 	int GetScrollThumb (int orientation) const{return (orientation == wxHORIZONTAL && horizontal)? horizontal->visibleSize : (orientation == wxVERTICAL && vertical)?vertical->visibleSize : 0;}
+	bool HasScrollbar (int orient) const {return (orient == wxHORIZONTAL)? (horizontal!=NULL) : (vertical!=NULL);};
 	bool IsScrollbarAlwaysShown (int orient) const{return false;};
  	bool ScrollLines (int lines);
  	bool ScrollPages (int pages);

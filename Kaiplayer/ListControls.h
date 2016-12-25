@@ -107,6 +107,7 @@ private:
 	void SendEvent(int choice);
 	void SetSelectionByPartialName(const wxString &PartialName);
 	void SelectChoice(int sel, bool select = true);
+	inline void CalcMaxWidth(wxSize *result, bool changex, bool changey);
 	bool enter;
 	bool clicked;
 	wxArrayString *list;

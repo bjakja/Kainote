@@ -31,9 +31,9 @@
 //#define byvertices 5
 #define DXVA 77
 
-#if DXVA
+//#if DXVA
 #include <dxva2api.h>
-#endif
+//#endif
 
 
 #ifndef SAFE_DELETE

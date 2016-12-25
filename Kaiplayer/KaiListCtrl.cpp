@@ -216,7 +216,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	size_t maxsize=itemsize-1;
 	if(itemsize>maxVisible){
 		maxsize=MIN(maxVisible+scPosV, itemsize-1);
-		if(SetScrollBar(wxVERTICAL, scPosV, maxVisible, itemsize)){
+		if(SetScrollBar(wxVERTICAL, scPosV, maxVisible, itemsize, maxVisible-2)){
 			GetClientSize (&w, &h);
 		}
 	}

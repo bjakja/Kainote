@@ -150,7 +150,6 @@ protected:
 	void OnScroll(wxScrollWinEvent& event);
 	void OnMouseEvent(wxMouseEvent &event);
 	void OnKeyPress(wxKeyEvent &event);
-	void DrawGrid(wxDC &dc,int w, int h);
 	void OnBcktimer(wxTimerEvent &event);
 	void OnEraseBackground(wxEraseEvent &event){};
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();} holding=false;};

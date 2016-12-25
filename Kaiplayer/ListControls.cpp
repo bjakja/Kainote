@@ -33,6 +33,18 @@
 
 static int height = 18;
 
+inline void KaiChoice::CalcMaxWidth(wxSize *result, bool changex, bool changey){
+	int tx=0, ty=0;
+	size_t isize = list->size();
+	for(size_t i = 0; i < isize; i++){
+		GetTextExtent((*list)[i], &tx, &ty);
+		if(tx > result->x && changex){result->x = tx;}
+		else if(!changex){break;}
+	}
+	if(changex){result->x += 20;}
+	if(changey){result->y = ty+10;}
+}
+
 
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 					 const wxSize& size, int n, const wxString choices[],
@@ -55,11 +67,11 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	//SetBestSize(newSize);
 	//SetMaxSize(wxSize(1000, 50));
 	SetFont(parent->GetFont());
-	int fw, fh;
-	if(size.y<1){
-		GetTextExtent("#TWFfGH", &fw, &fh);
+	wxSize newSize = size;
+	if(size.x < 1 || size.y<1){
+		CalcMaxWidth(&newSize, size.x < 1, size.y<1);
 	}
-	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? fh+10 : size.y);
+	//wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? fh+10 : size.y);
 	SetMinSize(newSize);
 	SetForegroundColour(parent->GetForegroundColour());
 	//Bind(wxEVT_KILL_FOCUS, &KaiChoice::OnKillFocus, this);
@@ -104,11 +116,10 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 
 
 	SetFont(parent->GetFont());
-	int fw, fh;
-	if(size.y<1){
-		GetTextExtent("#TWFfGH", &fw, &fh);
+	wxSize newSize = size;
+	if(size.x < 1 || size.y<1){
+		CalcMaxWidth(&newSize, size.x < 1, size.y<1);
 	}
-	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? fh+10 : size.y);
 	SetMinSize(newSize);
 	//Bind(wxEVT_KILL_FOCUS, &KaiChoice::OnKillFocus, this);
 	//if(style & KAI_COMBO_BOX){
@@ -153,13 +164,13 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 
 
 	SetFont(parent->GetFont());
-	int fw, fh;
-	if(size.y<1){
-		GetTextExtent("#TWFfGH", &fw, &fh);
+	wxSize newSize = size;
+	if(size.x < 1 || size.y<1){
+		CalcMaxWidth(&newSize, size.x < 1, size.y<1);
 	}
-	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? fh+10 : size.y);
 	SetMinSize(newSize);
-	choiceText = new KaiTextCtrl(this, 27789, comboBoxText, wxPoint(1,1), wxSize(newSize.x-22, newSize.y-2), wxBORDER_NONE);
+	long txtstyle = style & wxCB_READONLY;
+	choiceText = new KaiTextCtrl(this, 27789, comboBoxText, wxPoint(1,1), wxSize(newSize.x-22, newSize.y-2), wxBORDER_NONE|txtstyle);
 	choiceText->Bind(wxEVT_ENTER_WINDOW,&KaiChoice::OnMouseEvent,this,27789);
 	choiceText->Bind(wxEVT_LEAVE_WINDOW,&KaiChoice::OnMouseEvent,this,27789);
 	choiceText->Bind(wxEVT_MOUSEWHEEL, &KaiChoice::OnMouseEvent, this,27789);
@@ -544,7 +555,7 @@ void PopupList::CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &control
 	int tx=0, ty=0;
 	size_t isize = itemsList->size();
 	for(size_t i = 0; i < isize; i++){
-		GetTextExtent((*itemsList)[i], &tx, &ty, 0, 0/*, &font*/);
+		GetTextExtent((*itemsList)[i], &tx, &ty);
 		if(tx > size->x){size->x = tx;}
 	}
 

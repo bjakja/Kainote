@@ -70,22 +70,22 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	// Zoom
 	int zoom = Options.GetInt("Audio Horizontal Zoom");
 	audioDisplay->SetSamplesPercent(zoom,false);
-	HorizontalZoom = new wxSlider(this,Audio_Horizontal_Zoom,zoom,0,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH);
+	HorizontalZoom = new KaiSlider(this,Audio_Horizontal_Zoom,zoom,0,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH);
 	//HorizontalZoom->PushEventHandler(new FocusEvent());
 	HorizontalZoom->SetToolTip(_("Rozciągnięcie w poziomie"));
 	int pos = Options.GetInt("Audio Vertical Zoom");
 	float value = pow(float(pos)/50.0f,3);
 	audioDisplay->SetScale(value);
-	VerticalZoom = new wxSlider(this,Audio_Vertical_Zoom,pos,0,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH|wxSL_INVERSE);
+	VerticalZoom = new KaiSlider(this,Audio_Vertical_Zoom,pos,1,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH|wxSL_INVERSE);
 	//VerticalZoom->PushEventHandler(new FocusEvent());
 	VerticalZoom->SetToolTip(_("Rozciągnięcie w pionie"));
-	VolumeBar = new wxSlider(this,Audio_Volume,Options.GetInt("Audio Volume"),0,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH|wxSL_INVERSE);
+	VolumeBar = new KaiSlider(this,Audio_Volume,Options.GetInt("Audio Volume"),1,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH|wxSL_INVERSE);
 	//VolumeBar->PushEventHandler(new FocusEvent());
 	VolumeBar->SetToolTip(_("Głośność"));
 	bool link = Options.GetBool("Audio Link");
 	if (link) {
 		VolumeBar->SetValue(VerticalZoom->GetValue());
-		VolumeBar->Enable(false);
+		//VolumeBar->Enable(false);
 	}
 	VerticalLink = new ToggleButton(this,Audio_Vertical_Link,"","", wxDefaultPosition, wxSize(40,24));
 	VerticalLink->SetBitmap(wxBITMAP_PNG("button_link"));
@@ -233,7 +233,9 @@ void AudioBox::OnScrollbar(wxScrollEvent &event) {
 void AudioBox::OnHorizontalZoom(wxScrollEvent &event) {
 	audioDisplay->SetSamplesPercent(event.GetPosition());
 	Options.SetInt("Audio Horizontal Zoom",event.GetPosition());
-	Options.SaveAudioOpts();
+	if(event.GetEventType()==wxEVT_SCROLL_THUMBRELEASE){
+		Options.SaveAudioOpts();
+	}
 }
 
 
@@ -241,29 +243,32 @@ void AudioBox::OnHorizontalZoom(wxScrollEvent &event) {
 // Vertical zoom bar changed
 void AudioBox::OnVerticalZoom(wxScrollEvent &event) {
 	int pos = event.GetPosition();
-	if (pos < 1) pos = 1;
-	if (pos > 100) pos = 100;
 	float value = pow(float(pos)/50.0f,3);
 	audioDisplay->SetScale(value);
 	if (VerticalLink->GetValue()) {
 		audioDisplay->player->SetVolume(value);
-		VolumeBar->SetValue(pos);
+		VolumeBar->SetThumbPosition(VerticalZoom->GetThumbPosition());
 	}
 	Options.SetInt("Audio Vertical Zoom",pos);
-	Options.SaveAudioOpts();
+	if(event.GetEventType()==wxEVT_SCROLL_THUMBRELEASE){
+		Options.SaveAudioOpts();
+	}
 }
 
 
 //////////////////////
 // Volume bar changed
 void AudioBox::OnVolume(wxScrollEvent &event) {
-	if (!VerticalLink->GetValue()) {
-		int pos = event.GetPosition();
-		if (pos < 1) pos = 1;
-		if (pos > 100) pos = 100;
-		audioDisplay->player->SetVolume(pow(float(pos)/50.0f,3));
-		Options.SetInt("Audio Volume",pos);
+	int pos = event.GetPosition();
+	float value = pow(float(pos)/50.0f,3);
+	audioDisplay->player->SetVolume(value);
+	Options.SetInt("Audio Volume",pos);
+	if(event.GetEventType()==wxEVT_SCROLL_THUMBRELEASE){
 		Options.SaveAudioOpts();
+	}
+	if (VerticalLink->GetValue()) {
+		VerticalZoom->SetThumbPosition(VolumeBar->GetThumbPosition());
+		audioDisplay->SetScale(value);
 	}
 }
 
@@ -279,7 +284,6 @@ void AudioBox::OnVerticalLink(wxCommandEvent &event) {
 		audioDisplay->player->SetVolume(value);
 		VolumeBar->SetValue(pos);
 	}
-	VolumeBar->Enable(!VerticalLink->GetValue());
 
 	Options.SetBool("Audio Link",VerticalLink->GetValue());
 	Options.SaveAudioOpts();

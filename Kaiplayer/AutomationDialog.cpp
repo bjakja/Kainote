@@ -34,8 +34,11 @@
 #include "ColorPicker.h"
 #include "AutomationDialog.h"
 #include "AutomationUtils.h"
+#include "ListControls.h"
+#include "KaiCheckBox.h"
+#include "config.h"
 
-#include <wx/clrpicker.h>
+//#include <wx/clrpicker.h>
 #include <wx/gbsizer.h>
 #include <wx/tokenzr.h>
 
@@ -163,7 +166,7 @@ namespace Auto{
 		class Edit : public LuaDialogControl {
 		protected:
 			wxString text;
-			wxTextCtrl *cw;
+			KaiTextCtrl *cw;
 
 		public:
 			Edit(lua_State *L)
@@ -181,14 +184,14 @@ namespace Auto{
 			void UnserialiseValue(const wxString &serialised) { text = inline_string_decode(serialised); }
 
 			wxWindow *Create(wxWindow *parent) {
-				cw = new wxTextCtrl(parent, -1, text);
+				cw = new KaiTextCtrl(parent, -1, text);
 				cw->SetMaxLength(0);
 				cw->SetToolTip(wxString(hint));
 				return cw;
 			}
 
 			void LuaReadBack(lua_State *L) {
-				text = ((wxTextCtrl*)cw)->GetValue();
+				text = ((KaiTextCtrl*)cw)->GetValue();
 				lua_pushstring(L, text.utf8_str().data());
 			}
 		};
@@ -234,7 +237,7 @@ namespace Auto{
 
 			// Same serialisation interface as single-line edit
 			wxWindow *Create(wxWindow *parent) {
-				cw = new wxTextCtrl(parent, -1, text, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
+				cw = new KaiTextCtrl(parent, -1, text, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
 				cw->SetMinSize(wxSize(0, 30));
 				cw->SetToolTip(wxString(hint));
 				return cw;
@@ -322,7 +325,7 @@ namespace Auto{
 		class Dropdown : public LuaDialogControl {
 			wxArrayString items;
 			wxString value;
-			wxComboBox *cw;
+			KaiChoice *cw;
 
 		public:
 			Dropdown(lua_State *L)
@@ -338,13 +341,13 @@ namespace Auto{
 			void UnserialiseValue(const wxString &serialised) { value = inline_string_decode(serialised); }
 
 			wxWindow *Create(wxWindow *parent) {
-				cw = new wxComboBox(parent, -1, wxString(value), wxDefaultPosition, wxDefaultSize, items, wxCB_READONLY);
+				cw = new KaiChoice(parent, -1, wxString(value), wxDefaultPosition, wxDefaultSize, items, wxCB_READONLY);
 				cw->SetToolTip(wxString(hint));
 				return cw;
 			}
 
 			void LuaReadBack(lua_State *L) {
-				value = ((wxComboBox*)cw)->GetValue();
+				value = ((KaiChoice*)cw)->GetValue();
 				lua_pushstring(L, value.utf8_str().data());
 			}
 		};
@@ -352,7 +355,7 @@ namespace Auto{
 		class Checkbox : public LuaDialogControl {
 			wxString label;
 			bool value;
-			wxCheckBox *cw;
+			KaiCheckBox *cw;
 
 		public:
 			Checkbox(lua_State *L)
@@ -367,14 +370,14 @@ namespace Auto{
 			void UnserialiseValue(const wxString &serialised) { value = serialised != "0"; }
 
 			wxWindow *Create(wxWindow *parent) {
-				cw = new wxCheckBox(parent, -1, wxString(label));
+				cw = new KaiCheckBox(parent, -1, wxString(label));
 				cw->SetToolTip(wxString(hint));
 				cw->SetValue(value);
 				return cw;
 			}
 
 			void LuaReadBack(lua_State *L) {
-				value = ((wxCheckBox*)cw)->GetValue();
+				value = ((KaiCheckBox*)cw)->GetValue();
 				lua_pushboolean(L, value);
 			}
 		};
@@ -457,7 +460,8 @@ namespace Auto{
 
 	wxDialog* LuaDialog::CreateWindow(wxWindow *parent, wxString name) {
 		window = new wxDialog(parent,-1,name);
-
+		window->SetForegroundColour(Options.GetColour("Window Text"));
+		window->SetBackgroundColour(Options.GetColour("Window Background"));
 		auto s = new wxGridBagSizer(4, 4);
 		for (auto& c : controls)
 			s->Add(c->Create(window), wxGBPosition(c->y, c->x),
@@ -501,8 +505,8 @@ namespace Auto{
 			for (size_t i = 0; i < buttons.size(); ++i){
 				int id = buttons[i].first;
 			
-				auto button = new wxButton(window, id, buttons[i].second);
-				bs->Add(button);
+				auto button = new MappedButton(window, id, buttons[i].second);
+				bs->Add(button,0, wxLEFT|wxRIGHT, 2);
 
 				button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt) {
 					this->button_pushed = i;

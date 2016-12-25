@@ -143,40 +143,44 @@ void SubsGrid::SetStyle()
 
 void SubsGrid::OnPaint(wxPaintEvent& event)
 {
-	wxPaintDC dc(this);
+	
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w,&h);
-	bool direct = false;
-
-	if (direct) {
-		DrawGrid(dc,w,h);
+	bool bg=false;
+	int size=GetCount();
+	int panelrows=(h/(GridHeight+1))+1;
+	int scrows=scPos+panelrows;
+	//gdy widzimy koniec napisów
+	if(scrows >= size + 3){
+		bg=true;
+		scrows = size + 1;
+		scPos=(scrows-panelrows)+2;// dojechanie do końca napisów
+		if(panelrows > size + 3){scPos=0;}// w przypadku gdy całe napisy są widoczne, wtedy nie skrollujemy i pozycja =0
 	}
-
-	else {
-
-		// Prepare bitmap
-		if (bmp) {
-			if (bmp->GetWidth() < w+scHor || bmp->GetHeight() < h) {
-				delete bmp;
-				bmp = NULL;
-			}
+	else if(scrows >= size + 2){
+		bg=true;
+		scrows--;//w przypadku gdy mamy linię przed końcem napisów musimy zaniżyć wynik bo przekroczy tablicę.
+	}
+	if(SetScrollBar(wxVERTICAL,scPos,panelrows, size + 3, panelrows-3)){
+		GetClientSize(&w,&h);
+	}
+	
+	// Prepare bitmap
+	if (bmp) {
+		if (bmp->GetWidth() < w+scHor || bmp->GetHeight() < h) {
+			delete bmp;
+			bmp = NULL;
 		}
-		if (!bmp) bmp = new wxBitmap(w+scHor,h);
-
-		// Draw bitmap
-		wxMemoryDC bmpDC;
-		bmpDC.SelectObject(*bmp);
-		DrawGrid(bmpDC,w,h);
-		int firstCol = GridWidth[0]+1;
-		dc.Blit(0,0,firstCol,h,&bmpDC,0,0);
-		dc.Blit(firstCol,0,w+scHor,h,&bmpDC,scHor+firstCol,0);
 	}
+	if (!bmp) bmp = new wxBitmap(w+scHor,h);
 
-}
-
-void SubsGrid::DrawGrid(wxDC &tdc,int w, int h)
-{
+	// Draw bitmap
+	wxMemoryDC tdc;
+	tdc.SelectObject(*bmp);
+	int firstCol = GridWidth[0]+1;
+	
+	
 
 	tdc.SetFont(font);
 	//wxMemoryDC tdc;
@@ -214,11 +218,10 @@ void SubsGrid::DrawGrid(wxDC &tdc,int w, int h)
 	posY=0;
 
 	bool isd=false;
-	bool bg=false;
 	bool unkstyle=false;
 	bool shorttime=false;
 	int states=2;
-	int size=GetCount();
+	
 	if(SpellErrors.size()<(size_t)size){
 		SpellErrors.resize(size);
 	}
@@ -226,20 +229,7 @@ void SubsGrid::DrawGrid(wxDC &tdc,int w, int h)
 	Dialogue *acdial=GetDial(MID(0,Edit->ebrow,size));
 	Dialogue *Dial;
 
-	int panelrows=(h/(GridHeight+1))+1;
-	int scrows=scPos+panelrows;
-	//gdy widzimy koniec napisów
-	if(scrows >= size + 3){
-		bg=true;
-		scrows = size + 1;
-		scPos=(scrows-panelrows)+2;// dojechanie do końca napisów
-		if(panelrows > size + 1){scPos=0;}// w przypadku gdy całe napisy są widoczne, wtedy nie skrollujemy i pozycja =0
-	}
-	else if(scrows >= size + 2){
-		bg=true;
-		scrows--;//w przypadku gdy mamy linię przed końcem napisów musimy zaniżyć wynik bo przekroczy tablicę.
-	}
-	SetScrollbar(wxVERTICAL,scPos,panelrows, size + 3);
+	
 	int fw,fh,bfw,bfh;
 
 	for(int i=scPos;i<scrows;i++){
@@ -341,7 +331,6 @@ void SubsGrid::DrawGrid(wxDC &tdc,int w, int h)
 		wxRect cur;
 		bool isCenter;
 		for (int j=0; j<ilcol; j++){
-			wxDC &dc=/*(j==0)? mdc : */tdc;
 			if(showtl&&j==ilcol-2){
 				int podz=(w + scHor - posX /*- (GridWidth[0] + 1)*/) / 2;
 				GridWidth[j]=podz;
@@ -352,7 +341,7 @@ void SubsGrid::DrawGrid(wxDC &tdc,int w, int h)
 			bool comparsion = (Comparsion && i!=scPos && Comparsion->at(i-1).size()>0);
 
 			if(GridWidth[j]>0){
-				dc.SetPen(*wxTRANSPARENT_PEN);
+				tdc.SetPen(*wxTRANSPARENT_PEN);
 				wxColour kol= ( comparsion )? ComparsionBGCol :subsBkCol;
 				if(i==scPos||j==0&&states==0){kol=labelBkColN;}
 				else if(j==0&&states==2){kol=labelBkCol;}
@@ -365,26 +354,26 @@ void SubsGrid::DrawGrid(wxDC &tdc,int w, int h)
 						else{kol= ( comparsion )? ComparsionBGSelCol : seldial; }
 					}
 				}
-				dc.SetBrush(wxBrush(kol));
+				tdc.SetBrush(wxBrush(kol));
 				if(unkstyle && j==4 || shorttime && (j==10||(j==3 && form>ASS))){
-					dc.SetBrush(wxBrush(SpelcheckerCol));
+					tdc.SetBrush(wxBrush(SpelcheckerCol));
 				}
 
-				dc.DrawRectangle(posX,posY,GridWidth[j],GridHeight);
+				tdc.DrawRectangle(posX,posY,GridWidth[j],GridHeight);
 
 				if(i!=scPos && j==ilcol-1 && SpellErrors[i-1].size()>2){
-					dc.SetBrush(wxBrush(SpelcheckerCol));
+					tdc.SetBrush(wxBrush(SpelcheckerCol));
 					for(size_t k = 1; k < SpellErrors[i-1].size(); k+=2){
 
 						wxString err=strings[j].SubString(SpellErrors[i-1][k], SpellErrors[i-1][k+1]);
 						err.Trim();
 						if(SpellErrors[i-1][k]>0){
 							wxString berr=strings[j].Mid(0, SpellErrors[i-1][k]);
-							dc.GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &font);
+							tdc.GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &font);
 						}else{bfw=0;}
 
-						dc.GetTextExtent(err, &fw, &fh, NULL, NULL, &font);
-						dc.DrawRectangle(posX+bfw+4,posY,fw,GridHeight);
+						tdc.GetTextExtent(err, &fw, &fh, NULL, NULL, &font);
+						tdc.DrawRectangle(posX+bfw+4,posY,fw,GridHeight);
 					}
 
 				}
@@ -403,7 +392,7 @@ void SubsGrid::DrawGrid(wxDC &tdc,int w, int h)
 				
 
 				if(comparsion && j==ilcol-1){
-					dc.SetTextForeground(ComparsionCol);
+					tdc.SetTextForeground(ComparsionCol);
 					
 					for(size_t k = 1; k < Comparsion->at(i-1).size(); k+=2){
 						//if(Comparsion->at(i-1)[k]==Comparsion->at(i-1)[k+1]){continue;}
@@ -414,25 +403,25 @@ void SubsGrid::DrawGrid(wxDC &tdc,int w, int h)
 						wxString bcmp;
 						if(Comparsion->at(i-1)[k]>0){
 							bcmp=strings[j].Mid(0, Comparsion->at(i-1)[k]);
-							dc.GetTextExtent(bcmp, &bfw, &bfh, NULL, NULL, &font);
+							tdc.GetTextExtent(bcmp, &bfw, &bfh, NULL, NULL, &font);
 						}else{bfw=0;}
 						
-						dc.GetTextExtent(cmp, &fw, &fh, NULL, NULL, &font);
+						tdc.GetTextExtent(cmp, &fw, &fh, NULL, NULL, &font);
 						if((cmp.StartsWith("T") || cmp.StartsWith("Y") || cmp.StartsWith(L"Ł"))){bfw++;}
 						
-						dc.DrawText(cmp,posX+bfw+3,posY);
-						dc.DrawText(cmp,posX+bfw+5,posY);
-						dc.DrawText(cmp,posX+bfw+3,posY+2);
-						dc.DrawText(cmp,posX+bfw+5,posY+2);
+						tdc.DrawText(cmp,posX+bfw+3,posY);
+						tdc.DrawText(cmp,posX+bfw+5,posY);
+						tdc.DrawText(cmp,posX+bfw+3,posY+2);
+						tdc.DrawText(cmp,posX+bfw+5,posY+2);
 					}
 					
 				}
-				dc.SetTextForeground( (collis)? collcol : textcol);
+				tdc.SetTextForeground( (collis)? collcol : textcol);
 				if(j==ilcol-1 && (strings[j].StartsWith("T") || strings[j].StartsWith("Y") || strings[j].StartsWith(L"Ł"))){posX++;}
 				cur = wxRect(posX+4,posY,GridWidth[j]-7,GridHeight);
-				dc.SetClippingRegion(cur);
-				dc.DrawLabel(strings[j],cur,isCenter ? wxALIGN_CENTER : (wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT));
-				dc.DestroyClippingRegion();
+				tdc.SetClippingRegion(cur);
+				tdc.DrawLabel(strings[j],cur,isCenter ? wxALIGN_CENTER : (wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT));
+				tdc.DestroyClippingRegion();
 				
 				//if(j!=0){
 					posX+=GridWidth[j]+1;
@@ -466,6 +455,9 @@ void SubsGrid::DrawGrid(wxDC &tdc,int w, int h)
 	}
 
 	//mdc.Blit(GridWidth[0]+1,0,w+scHor-(GridWidth[0]+1),h,&tdc,scHor,0);
+	wxPaintDC dc(this);
+	dc.Blit(0,0,firstCol,h,&tdc,0,0);
+	dc.Blit(firstCol,0,w+scHor,h,&tdc,scHor+firstCol,0);
 }
 
 void SubsGrid::AdjustWidths(int cell)
@@ -714,7 +706,10 @@ void SubsGrid::OnScroll(wxScrollWinEvent& event)
 		newPos+=(size.y/GridHeight - 1);
 		newPos=MIN(newPos,GetCount()-1);
 	}
-	else{newPos = event.GetPosition();}
+	else{
+		newPos = event.GetPosition();
+	}
+	//wxLogStatus("scroll %i %i", newPos, scPos);
 	if (scPos != newPos) {
 		scPos = newPos;
 		Refresh(false);

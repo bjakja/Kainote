@@ -88,9 +88,9 @@ class config
     bool SetRawOptions(const wxString &textconfig);
     int LoadOptions();
 	void LoadColors(const wxString &themeName="");
-	wxString LoadDefaultConfig();
+	void LoadDefaultConfig();
 	void LoadDefaultColors();
-	wxString LoadDefaultAudioConfig();
+	void LoadDefaultAudioConfig();
 	bool LoadAudioOpts();
 	void SaveAudioOpts();
     void SaveOptions(bool cfg=true, bool style=true);

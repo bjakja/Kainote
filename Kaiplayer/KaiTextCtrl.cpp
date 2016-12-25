@@ -21,7 +21,7 @@
 
 
 KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const wxPoint& pos,const wxSize& size, long _style, const wxValidator & validator, const wxString & name)
-	:wxWindow(parent,id,pos,size,_style,name)
+	:KaiScrolledWindow(parent,id,pos,size,_style,name)
 {
 	KText=text;
 	KText.Replace("\r","");
@@ -85,6 +85,9 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	//Refresh(false);
 	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? fh+10 : size.y);
 	SetMinSize(newSize);
+
+	CalcWrap(false);
+
 	foreground = parent->GetForegroundColour();
 	background = parent->GetBackgroundColour();
 	SetValidator(validator);
@@ -110,8 +113,10 @@ void KaiTextCtrl::SetValue(const wxString &text, bool modif, bool newSel)
 {
 	if(modif){modified=modif;}
 	KText=text;
-	KText.Replace("\r","");
-	KText.Replace("\n","");
+	if(!(style & wxTE_MULTILINE)){
+		KText.Replace("\r","");
+		KText.Replace("\n","");
+	}
 	CalcWrap(false);
 	
 	if(newSel){SetSelection(0,0);}
@@ -119,6 +124,24 @@ void KaiTextCtrl::SetValue(const wxString &text, bool modif, bool newSel)
 		if((size_t)Cursor.x>KText.Len()){Cursor.x = KText.Len();Cursor.y = FindY(Cursor.x);}
 		Refresh(false);
 	}
+}
+void KaiTextCtrl::AppendText(const wxString &text)
+{
+	if(KText.Len() >= maxSize){
+		return;
+	}
+	if(KText.Len() + text.Len()> maxSize){
+		KText<<text.SubString(0, maxSize - KText.Len());
+	}else{
+		KText<<text;
+	}
+	if(!(style & wxTE_MULTILINE)){
+		KText.Replace("\r","");
+		KText.Replace("\n","");
+	}
+	
+	CalcWrap(false);
+	Refresh(false);
 }
 
 void KaiTextCtrl::CalcWrap(bool sendevent)
@@ -515,30 +538,19 @@ void KaiTextCtrl::OnPaint(wxPaintEvent& event)
 			int diff= h;
 			int diff2= bitmaph;
 			if(scPos>diff2-diff){scPos=diff2-diff;}
-			SetScrollbar(wxVERTICAL, scPos,diff,diff2);
-			
-			GetClientSize(&w,&h);
+			if(SetScrollBar(wxVERTICAL, scPos,diff,diff2 ,diff-2)){
+				GetClientSize(&w,&h);
+			}
 		}else{
 			
 			bitmaph=h;
 			scPos=0;
-			//if(HasScrollbar(wxVERTICAL)){
-				//CalcWrap(false);
-				
-			//}
-			SetScrollbar(wxVERTICAL, scPos,h,0);
-			GetClientSize(&w,&h);
+			if(SetScrollBar(wxVERTICAL, scPos,h,0,h)){
+				GetClientSize(&w,&h);
+			}
 		}
-	}/*else{
-		bitmaph=h;
-		int fh, fw;
-		GetTextExtent(KText, &fw, &fh, &font);
-		fw+=10;
-		bitmapw = (fw < w)? w : fw;
-	}*/
-
-
-
+		
+	}
 	bool direct = false;
 
 	if (direct) {
@@ -567,11 +579,6 @@ void KaiTextCtrl::OnPaint(wxPaintEvent& event)
 		DrawFld(bmpDC,w,h,w,h);
 
 
-		//if(multiline){
-		//	dc.Blit(0,-scPos,w,h+scPos,&bmpDC,0,0/*scPos*/);
-		//}else{
-		//	dc.Blit(-scPos,0,w+scPos,h,&bmpDC,/*scPos*/0,0);
-		//}
 		dc.Blit(0,0,w,h,&bmpDC,0,0);
 
 	}
@@ -656,9 +663,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 			beforeCursor.Replace("\n", "");
 			GetTextExtent(beforeCursor, &fww, &fh, &font);
 		}
-		//int scPosx = (style & wxTE_MULTILINE) ? 0 : (scPos);
-		//int scPosy = (style & wxTE_MULTILINE) ? (scPos) : 0;
-		caret->Move(positioning[cursorI+1] + fww + tmpPosX, tmpPosY + (Fheight * cursorI)/* - scPosy*/);
+		caret->Move(positioning[cursorI+1] + fww + tmpPosX, tmpPosY + (Fheight * cursorI));
 
 	}
 	
@@ -681,7 +686,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 		dc.DrawText(subline,positioning[i]+fww,posY);
 
 		}*/
-		dc.SetTextForeground((enabled)? foreground : Options.GetColour("Okno nieaktywny tekst"));
+		dc.SetTextForeground((enabled)? foreground : Options.GetColour("Window Inactive Text"));
 		dc.DrawText(line,positioning[i]+tmpPosX,tmpPosY);
 
 		tmpPosY+=Fheight;
@@ -689,16 +694,6 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 	}
 
 
-	//if(!(style & wxBORDER_NONE)){
-	//	dc.SetBrush(*wxTRANSPARENT_BRUSH);
-	//	dc.SetPen(wxPen(wxSystemSettings::GetColour((HasFocus())? wxSYS_COLOUR_MENUHILIGHT : (enabled)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_GRAYTEXT)));
-	//	/*if(style & wxTE_MULTILINE){
-	//		dc.DrawRectangle(0,scPos,windoww,windowh);
-	//	}else{
-	//		dc.DrawRectangle(scPos,0,windoww,windowh);
-	//	}*/
-	//	dc.DrawRectangle(0,0,windoww,windowh);
-	//}
 }
 
 bool KaiTextCtrl::HitTest(wxPoint pos, wxPoint *cur)

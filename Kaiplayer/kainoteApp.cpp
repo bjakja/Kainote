@@ -86,18 +86,12 @@ bool kainoteApp::OnInit()
 	//isfirst=true;
 
 	wxString server="4242";
-
-	if ( !m_checker->IsAnotherRunning() )
+	bool running = m_checker->IsAnotherRunning();
+	delete m_checker;
+    m_checker = NULL;
+	if (!running)
     {
-		MyServer=new KaiServer();
-		if(!MyServer){
-			wxLogStatus(_("Nie można utworzyć serwera DDE"));
-		}
-		else if (!(MyServer->Create(server))){
-			delete MyServer;
-			MyServer = NULL;
-		}
-
+		
 		setlocale(LC_NUMERIC, "C");
 		setlocale(LC_CTYPE, "C");
 
@@ -128,6 +122,15 @@ bool kainoteApp::OnInit()
 			if(!Hkeys.LoadHkeys()){
 				wxMessageBox(_("Nie udało się wczytać skrótów.\nDziałanie programu zostanie zakończone."),_("Uwaga"));
 				wxDELETE(locale);return false;
+			}
+
+			MyServer=new KaiServer();
+			if(!MyServer){
+				wxLogStatus(_("Nie można utworzyć serwera DDE"));
+			}
+			else if (!(MyServer->Create(server))){
+				delete MyServer;
+				MyServer = NULL;
 			}
 			
 			for (int i=1;i<argc;i++) { paths.Add(argv[i]); }

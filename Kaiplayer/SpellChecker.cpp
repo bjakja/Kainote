@@ -179,7 +179,7 @@ bool SpellChecker::AddWord(wxString word)
 	wxString pathhh=Options.pathfull+"\\Dictionary\\UserDic.udic";
 	OpenWrite ow;
 	wxString txt;
-	if(!ow.FileOpen(pathhh,false)){txt=word;}
+	if(!ow.FileOpen(pathhh,&txt,false)){txt=word;}
 	else{txt+="\n"+word;}
 	ow.FileWrite(pathhh,txt);
 

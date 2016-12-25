@@ -19,8 +19,9 @@
 #include <wx/wx.h>
 #include <wx/caret.h>
 #include "KaiTextValidator.h"
+#include "KaiScrollbar.h"
 
-class KaiTextCtrl : public wxWindow
+class KaiTextCtrl : public KaiScrolledWindow
 {
 public:
 	KaiTextCtrl(wxWindow *parent, int id, const wxString &text="", const wxPoint& pos=wxDefaultPosition,
@@ -44,6 +45,7 @@ public:
 	wxColour GetBackgroundColour() const {return background;}
 	void SetModified(bool modif){modified = modif;}
 	void SetMaxLength(int maxLen){maxSize = maxLen;}
+	void AppendText(const wxString &text);
 	//void SetValidator(const wxValidator &validator){};
 protected:
 	void ContextMenu(wxPoint mpos);

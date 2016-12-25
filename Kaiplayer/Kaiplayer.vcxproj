@@ -146,6 +146,7 @@
     <ClCompile Include="KainoteMain.cpp" />
     <ClCompile Include="KaiRadioButton.cpp" />
     <ClCompile Include="KaiScrollbar.cpp" />
+    <ClCompile Include="KaiSlider.cpp" />
     <ClCompile Include="KaiStaticBoxSizer.cpp" />
     <ClCompile Include="KaiTextCtrl.cpp" />
     <ClCompile Include="KaiTextValidator.cpp" />
@@ -229,6 +230,7 @@
     <ClInclude Include="KainoteMain.h" />
     <ClInclude Include="KaiRadioButton.h" />
     <ClInclude Include="KaiScrollbar.h" />
+    <ClInclude Include="KaiSlider.h" />
     <ClInclude Include="KaiStaticBoxSizer.h" />
     <ClInclude Include="KaiTextCtrl.h" />
     <ClInclude Include="KaiTextValidator.h" />

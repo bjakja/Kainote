@@ -75,7 +75,7 @@ void StyleList::OnPaint(wxPaintEvent& event)
 	}else{
 		scrows=(scPos+panelrows);
 	}
-	if(SetScrollBar(wxVERTICAL,scPos,panelrows,stylenames->size()+1)){
+	if(SetScrollBar(wxVERTICAL,scPos,panelrows,stylenames->size()+1, panelrows-2)){
 		GetClientSize(&w,&h);
 	}
 

@@ -265,7 +265,7 @@ bool VideoRend::InitDX(bool reset)
 		if(FAILED(hr)){wxLogStatus(L"GetVideoProcessorCaps zawiodło");continue;}
 		if (DXVAcaps.NumForwardRefSamples > 0 || DXVAcaps.NumBackwardRefSamples > 0)
 		{
-			wxLogStatus(L"NumForwardRefSamples albo NumBackwardRefSample jest większe od zera");continue;
+			/*wxLogStatus(L"NumForwardRefSamples albo NumBackwardRefSample jest większe od zera");*/continue;
 		}
 
 		//if(DXVAcaps.DeviceCaps!=4){continue;}//DXVAcaps.InputPool
@@ -389,16 +389,10 @@ void VideoRend::Render(bool Frame)
 
 #endif
 
-#ifndef byvertices
-#ifndef DXVA
+
 	hr = d3device->StretchRect(MainStream,&rt5,bars,&rt4,D3DTEXF_LINEAR);
 	if(FAILED(hr)){wxLogStatus(_("Nie można nałożyć powierzchni na siebie"));}
-#endif
-#endif
-#if byvertices
-	hr = d3device->StretchRect(MainStream,&rt5,bars,&rt4,D3DTEXF_LINEAR);
-	if(FAILED(hr)){wxLogStatus("cannot stretch main stream");}
-#endif
+
 
 	hr = d3device->BeginScene();
 

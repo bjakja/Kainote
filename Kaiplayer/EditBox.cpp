@@ -130,7 +130,7 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 
 
 EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
-	: wxWindow(parent, idd, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE|wxCLIP_CHILDREN)
+	: wxWindow(parent, idd, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE)//|wxCLIP_CHILDREN
 	, EditCounter(0)
 {
 
@@ -997,7 +997,6 @@ void EditBox::OnSize(wxSizeEvent& event)
 
 void EditBox::HideControls()
 {
-	bool state1=Bcol2->IsShown();
 	bool state=grid->form<SRT;
 
 	Ban->Enable(state);
@@ -1028,31 +1027,7 @@ void EditBox::HideControls()
 	EndEdit->Enable(state);
 	DurEdit->Enable(state);
 	Bital->Enable(state);
-	/*
-	state=grid->form<SRT;
-
-	if(!state1 && state)
-	{//przejście na ass
-	BoxSizer4->Detach(StartEdit);
-	BoxSizer4->Detach(EndEdit);
-	BoxSizer4->Detach(DurEdit);
-	BoxSizer2->Insert(2,StartEdit,0,wxLEFT,2);
-	BoxSizer2->Insert(3,EndEdit,0,wxLEFT,2);
-	BoxSizer2->Insert(4,DurEdit,0,wxLEFT,2);
-	wxSizeEvent evt2;
-	OnSize(evt2);
-
-	}
-	else if(state1 && !state)
-	{//przejście na inne formaty
-	BoxSizer2->Detach(StartEdit);
-	BoxSizer2->Detach(EndEdit);
-	BoxSizer2->Detach(DurEdit);
-	BoxSizer4->Prepend(DurEdit,0,wxLEFT|wxALIGN_CENTER,2);
-	BoxSizer4->Prepend(EndEdit,0,wxLEFT|wxALIGN_CENTER,2);
-	BoxSizer4->Prepend(StartEdit,0,wxLEFT|wxALIGN_CENTER,2);
-	}
-	Layout();*/
+	if(state){BoxSizer4->Layout();}
 }
 
 void EditBox::ClearErrs()
