@@ -28,6 +28,7 @@ KaiScrollbar::KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos, const w
 	,integrated(false)
 	,pushed(false)
 	,unitPos(0)
+	,scrollRate(1)
 	,element(0)
 {
 	pageLoop.SetOwner(this, 2345);
@@ -46,13 +47,13 @@ KaiScrollbar::KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos, const w
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
 		//float unitToPixel = (float)thumbSize / (float)thumbRange;
 		if(element & ELEMENT_BUTTON_BOTTOM && unitPos < allVisibleSize){
-			unitPos+=1;
+			unitPos+=scrollRate;
 			if(unitPos> allVisibleSize){unitPos = allVisibleSize;}
 			//thumbPos = (unitPos * unitToPixel)+17;
 			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) +17;
 			SendEvent();
 		}else if(element & ELEMENT_BUTTON_TOP && unitPos > 0){
-			unitPos-=1;
+			unitPos-=scrollRate;
 			if(unitPos<0){unitPos = 0;}
 			//thumbPos = (unitPos * unitToPixel)+17;
 			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) +17;
@@ -74,7 +75,7 @@ KaiScrollbar::KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos, const w
 void KaiScrollbar::SetScrollbar(int pos, int visible, int range, int _pageSize, bool refresh)
 {
 	wxSize oldSize = GetClientSize();
-	if(holding /*|| (element & ELEMENT_BETWEEN_THUMB)*/ || (unitPos >= range-visible && pos >= unitPos)){return;}
+	if(holding /*|| (unitPos >= range-visible && pos >= unitPos)*/){return;}
 	allVisibleSize = range-visible;
 	unitPos = pos;
 	visibleSize = visible;
@@ -84,11 +85,20 @@ void KaiScrollbar::SetScrollbar(int pos, int visible, int range, int _pageSize, 
 	if(pos >= allVisibleSize){unitPos=allVisibleSize;}
 	int paneSize = (isVertical)? (oldSize.y-34) : (oldSize.x-34);
 	thumbSize = paneSize * divScroll;
-	if(thumbSize < 20){thumbSize=20;}
+	if(thumbSize < 16){thumbSize=16;}
 	thumbRange = paneSize - thumbSize;
 	thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) +17;
 	Refresh(false);
 	Update();
+}
+
+int KaiScrollbar::SetScrollPos(int pos)
+{
+	unitPos = MID(0, pos, allVisibleSize);
+	thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) +17;
+	Refresh(false);
+	Update();
+	return unitPos;
 }
 
 void KaiScrollbar::SendEvent()
@@ -111,7 +121,7 @@ void KaiScrollbar::OnSize(wxSizeEvent& evt)
 	int paneSize = (isVertical)? (oldSize.y-34) : (oldSize.x-34);
 	float divScroll = (float)visibleSize / (float)allSize;
 	thumbSize = paneSize * divScroll;
-	if(thumbSize < 20){thumbSize=20;}
+	if(thumbSize < 16){thumbSize=16;}
 	thumbRange = paneSize - thumbSize;
 	thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) +17;
 	Refresh(false);
@@ -186,7 +196,7 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 	int size = (isVertical)? h : w;
 	int size2 = (isVertical)? w : h;
 	if (evt.GetWheelRotation() != 0) {
-		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
+		int step = (evt.GetWheelRotation() / evt.GetWheelDelta()) * scrollRate;
 		unitPos -= step;
 		if(unitPos<0){unitPos = 0; SendEvent();return;}
 		if(unitPos> allVisibleSize){unitPos = allVisibleSize;  SendEvent(); return;}
@@ -238,14 +248,14 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 			element = ELEMENT_THUMB;
 			pushed = true;
 		}else if(coord >= size - 18 && coord <= size && unitPos != allVisibleSize){
-			unitPos+=1;
+			unitPos+=scrollRate;
 			if(unitPos> allVisibleSize){unitPos = allVisibleSize;}
 			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) +17;
 			element = ELEMENT_BUTTON_BOTTOM;
 			SendEvent();
 			arrowLoop.Start(500);
 		}else if(coord>=0 && coord < 18 && unitPos != 0){
-			unitPos-=1;
+			unitPos-=scrollRate;
 			if(unitPos<0){unitPos = 0;}
 			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) +17;
 			element = ELEMENT_BUTTON_TOP;
@@ -339,16 +349,15 @@ bool KaiScrolledWindow::SetScrollBar(int orientation, int pos, int maxVisible, i
 	return false;
 }
 
-void KaiScrolledWindow::SetScrollPos (int orientation, int pos, bool refresh)
+int KaiScrolledWindow::SetScrollpos (int orientation, int pos, bool refresh)
 {
 	if(orientation & wxHORIZONTAL && horizontal){
-		horizontal->unitPos = pos;
-		if(refresh){Refresh(false);}
+		return horizontal->SetScrollPos(pos);
 	}
 	if(orientation & wxVERTICAL && vertical){
-		vertical->unitPos = pos;
-		if(refresh){Refresh(false);}
+		return vertical->SetScrollPos(pos);
 	}
+	return -1;
 }
 
 bool KaiScrolledWindow::ScrollLines (int lines)

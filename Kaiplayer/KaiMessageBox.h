@@ -13,38 +13,21 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NEWCATALOG_H
-#define NEWCATALOG_H
+#ifndef __KAI_MESSAGEBOX__
+#define __KAI_MESSAGEBOX__
 
-//(*Headers(NewCatalog)
-#include "KaiTextCtrl.h"
-#include "MappedButton.h"
 #include <wx/dialog.h>
-//*)
 
-class NewCatalog: public wxDialog
+class KaiMessageDialog : public wxDialog
 {
-	public:
-
-		NewCatalog(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
-		virtual ~NewCatalog();
-
-		
-		MappedButton* Button1;
-		MappedButton* Button2;
-		KaiTextCtrl* TextCtrl1;
-		
-
-	protected:
-
-		
-		static const long ID_TEXTCTRL1;
-		static const long ID_STATICBOX1;
-		void OnCatalogCommit(wxCommandEvent& event);
-
-	private:
-
-		
+public:
+	KaiMessageDialog(wxWindow *parent, const wxString& msg, const wxString &caption, long elems = wxOK);
+	virtual ~KaiMessageDialog(){}	
 };
+
+
+int KaiMessageBox(const wxString& msg, const wxString &caption="", long elems = wxOK, wxWindow *parent=0 );
+
+#define wxYES_TO_ALL 64
 
 #endif

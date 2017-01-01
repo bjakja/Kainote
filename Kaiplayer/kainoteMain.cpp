@@ -23,7 +23,6 @@
 
 #include "KainoteMain.h"
 #include "SubsTime.h"
-#include "Stylelistbox.h"
 #include "ScriptInfo.h"
 #include "Config.h"
 #include "OptionsDialog.h"
@@ -36,6 +35,8 @@
 #include <wx/dir.h>
 #include <wx/sysopt.h>
 #include "KaiTextCtrl.h"
+#include "KaiMessageBox.h"
+
 
 #undef IsMaximized
 #if _DEBUG
@@ -72,10 +73,18 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	mains=new wxBoxSizer(wxHORIZONTAL);
 	Tabs=new Notebook (this,ID_TABS);
 	Toolbar=new KaiToolbar(this,Menubar,-1,true);
+
+	StatusBar = new KaiStatusBar(this, ID_STATUSBAR1);
+	int StatusBarWidths[6] = { -12, 0, 0, 0, 0, -22};
+	StatusBar->SetFieldsCount(6,StatusBarWidths);
+	//StatusBar->SetLabelBackgroundColour(2,"#FF0000");
+	//StatusBar->SetLabelTextColour(2,"#000000");
+
 	mains->Add(Toolbar,0,wxEXPAND,0);
 	mains->Add(Tabs,1,wxEXPAND,0);
 	mains1->Add(Menubar,0,wxEXPAND,0);
 	mains1->Add(mains,1,wxEXPAND,0);
+	mains1->Add(StatusBar,0,wxEXPAND,0);
 
 	FileMenu = new Menu();
 	FileMenu->AppendTool(Toolbar,OpenSubs, _("&Otwórz napisy"), _("Otwórz plik napisów"),PTR_BITMAP_PNG("opensubs"));
@@ -183,13 +192,6 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	SetAccels(false);
 
 
-	StatusBar1 = new wxStatusBar(this, ID_STATUSBAR1);
-	int StatusBarWidths[6] = { -12, 78, 65, 70, 76, -22};
-	int StatusBarStyles[6] = { wxSB_NORMAL, wxSB_NORMAL, wxSB_NORMAL, wxSB_NORMAL, wxSB_NORMAL, wxSB_NORMAL };
-	StatusBar1->SetFieldsCount(6,StatusBarWidths);
-	StatusBar1->SetStatusStyles(6,StatusBarStyles);
-	SetStatusBar(StatusBar1);
-
 	Connect(ID_TABS,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnPageChanged,0,this);
 	Connect(ID_ADDPAGE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnPageAdd);
 	Connect(ID_CLOSEPAGE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnPageClose);
@@ -214,7 +216,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 			delete mylog; mylog=NULL;
 		}
 	},9989);
-	
+
 	Connect(SnapWithStart,SnapWithEnd,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
 	SetDropTarget(new DragnDrop(this));
 
@@ -405,15 +407,15 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if(!Auto){Auto=new Auto::Automation(true);}
 		else{Auto->AddFromSubs();}
 		int size = Auto->ASSScripts.size();
-		if(!size){wxMessageBox(_("Ten plik napisów nie ma dodanych żadnych skryptów"));return;}
+		if(!size){KaiMessageBox(_("Ten plik napisów nie ma dodanych żadnych skryptów"));return;}
 		auto script = Auto->ASSScripts[size-1];
 		if(script->CheckLastModified(true)){script->Reload();}
 		auto macro = script->GetMacro(0);
 		if(macro){
 			macro->Run(GetTab());
 		}else{
-			
-			wxMessageBox(wxString::Format(_("Błąd wczytywania skryptu Lua: %s\n%s"), script->GetPrettyFilename(), script->GetDescription()),_("Błąd"));
+
+			KaiMessageBox(wxString::Format(_("Błąd wczytywania skryptu Lua: %s\n%s"), script->GetPrettyFilename(), script->GetDescription()),_("Błąd"));
 			Auto->OnEdit(script->GetFilename());	
 		}
 	}else if(id==GoToPrewKeyframe){
@@ -490,7 +492,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	}else if(id==Quit){
 		Close();
 	}else if(id==About){
-		wxMessageBox(_("Edytor napisów by Bjakja aka Bakura, wersja ") + Options.progname.AfterFirst(' ') + "\r\n\r\n"+
+		KaiMessageBox(_("Edytor napisów by Bjakja aka Bakura, wersja ") + Options.progname.AfterFirst(' ') + "\r\n\r\n"+
 			_("Ten program to jakby moje zaplecze do nauki C++, więc mogą zdarzyć się różne błędy.\r\n\r\n")+
 			_("Kainote zawiera w sobie części następujących projeków:\r\n")+
 			L"wxWidgets - Copyright © Julian Smart, Robert Roebling et al;\r\n"\
@@ -523,7 +525,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy).\r\n")+
 			_("- MatiasMovie (wyłapał parę kraszy i zaproponował różne usprawnienia).\r\n \r\n")+
 			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\r\n");
-		wxMessageBox(Credits+Testers,_("Lista osób pomocnych przy tworzeniu programu"));
+		KaiMessageBox(Credits+Testers,_("Lista osób pomocnych przy tworzeniu programu"));
 
 	}else if(id==Help||id==ANSI){
 		WinStruct<SHELLEXECUTEINFO> sei;
@@ -538,31 +540,6 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 
 }
 
-
-wxString kainoteFrame::sftc()
-{
-
-	Stylelistbox slx(this);
-
-	wxString styletext="";
-	for (int j=0;j<GetTab()->Grid1->StylesSize();j++){
-		Styles *acstyl=GetTab()->Grid1->GetStyle(j);
-		slx.CheckListBox1->Append(acstyl->Name);
-
-	}
-	if(slx.ShowModal()==wxID_OK){
-
-		for (size_t v=0;v<slx.CheckListBox1->GetCount();v++)
-		{
-
-			if(slx.CheckListBox1->IsChecked(v)){
-				styletext<<slx.CheckListBox1->GetString(v)<<";";
-			}
-		}
-	}
-
-	return styletext.BeforeLast(';');
-}
 
 void kainoteFrame::OnConversion(char form)
 {
@@ -687,18 +664,18 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 	if(ext=="exe"||ext=="zip"||ext=="rar"||ext=="7z"){return false;}
 	if(ext=="lua" || ext == "moon"){if(!Auto){Auto=new Auto::Automation(false);}Auto->Add(filename);return true;}
 	TabPanel *pan=GetTab();
-	
+
 	bool found=false;
 	bool nonewtab = true;
 	wxString fntmp="";
 	bool issubs=(ext=="ass"||ext=="txt"||ext=="sub"||ext=="srt"||ext=="ssa");
-	
+
 	if(pan->edytor && !(issubs&&pan->VideoPath.BeforeLast('.')==filename.BeforeLast('.'))
 		&&!(!issubs&&pan->SubsPath.BeforeLast('.')==filename.BeforeLast('.'))){
 			fntmp= FindFile(filename,issubs,!(fulls || pan->Video->isfullskreen) );
 			if(fntmp!=""){found=true;if(!issubs){ext=fntmp.AfterLast('.');}}
 	}
-	
+
 	if(Options.GetBool("Open In New Card") && pan->SubsPath!="" &&
 		!pan->Video->isfullskreen && issubs){
 			//pan->Thaw();
@@ -739,7 +716,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 
 		if(pan->Video->GetState()!=None && !found){
 			bool isgood=pan->Video->OpenSubs((pan->edytor)? pan->Grid1->SaveText() : 0);
-			if(!isgood){wxMessageBox(_("Otwieranie napisów nie powiodło się"), "Uwaga");}
+			if(!isgood){KaiMessageBox(_("Otwieranie napisów nie powiodło się"), "Uwaga");}
 		}
 		SetRecent();
 
@@ -763,10 +740,10 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 	pan->Video->seekfiles=true;
 	pan->Edit->Frames->Enable(!pan->Video->IsDshow);
 	pan->Edit->Times->Enable(!pan->Video->IsDshow);
-		
-		//pan->Grid1->SetFocus();
 
-	
+	//pan->Grid1->SetFocus();
+
+
 
 
 	return true;  
@@ -897,7 +874,7 @@ wxString kainoteFrame::FindFile(wxString fn,bool video,bool prompt)
 			){ }else{plik=pliki[i];break;}
 	}
 	if(plik!=""&&prompt){
-		if (wxMessageBox(wxString::Format(_("Wczytać %s o nazwie %s?"), 
+		if (KaiMessageBox(wxString::Format(_("Wczytać %s o nazwie %s?"), 
 			(video)? _("wideo") :_("napisy"), plik.AfterLast('\\')),
 			_("Potwierdzenie"), wxICON_QUESTION | wxYES_NO, this) == wxNO ){plik="";} 
 	}
@@ -1022,7 +999,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 
 		if((i>=Tabs->Size() || Tabs->Page(Tabs->iter)->SubsPath!="" ||
 			Tabs->Page(Tabs->iter)->VideoPath!="") && !intab){
-			InsertTab(false);
+				InsertTab(false);
 		}
 		TabPanel *pan=GetTab();
 		if(i<subs.size()){
@@ -1050,7 +1027,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 
 
 			if(!isload){
-				if(pan->Video->IsDshow){wxMessageBox(_("Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\r\nbądź brakuje kodeków czy też splittera"), _("Uwaga"));}
+				if(pan->Video->IsDshow){KaiMessageBox(_("Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\r\nbądź brakuje kodeków czy też splittera"), _("Uwaga"));}
 				break;
 			}
 			pan->Edit->Frames->Enable(!pan->Video->IsDshow);
@@ -1168,7 +1145,7 @@ void kainoteFrame::HideEditor()
 		cur->BoxSizer1->Layout();
 		Label();
 		if(cur->Video->GetState()!=None){cur->Video->ChangeVobsub();}
-		
+
 	}
 	else{//Wyłączanie edytora
 
@@ -1238,7 +1215,7 @@ bool kainoteFrame::SavePrompt(char mode, int wtab)
 	TabPanel* atab=(wtab<0)? GetTab() : Tabs->Page(wtab);	
 	if(atab->Grid1->file->Iter()>0 && atab->Grid1->Modified){
 		wxWindow *_parent=(atab->Video->isfullskreen)? (wxWindow*)atab->Video->TD : this;
-		int answer = wxMessageBox(wxString::Format(_("Zapisać napisy o nazwie \"%s\" przed %s?"), 
+		int answer = KaiMessageBox(wxString::Format(_("Zapisać napisy o nazwie \"%s\" przed %s?"), 
 			atab->SubsName, (mode==0)? _("zamknięciem programu") :
 			(mode==1)? _("zamknięciem zakładki") : 
 			(mode==2)? _("wczytaniem nowych napisów") : 
@@ -1275,8 +1252,8 @@ void kainoteFrame::OpenAudioInTab(TabPanel *pan, int id, const wxString &path)
 		pan->Edit->Layout();}
 	else{
 
-		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){wxMessageBox(_("Dupa blada, skróty klawiszowe się nie wczytały, na audio nie podziałasz"), _("Błędny błąd"));return;}
-		if(!Options.AudioOpts && !Options.LoadAudioOpts()){wxMessageBox(_("Dupa blada, opcje się nie wczytały, na audio nie podziałasz"), _("Błędny błąd"));return;}
+		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){KaiMessageBox(_("Dupa blada, skróty klawiszowe się nie wczytały, na audio nie podziałasz"), _("Błędny błąd"));return;}
+		if(!Options.AudioOpts && !Options.LoadAudioOpts()){KaiMessageBox(_("Dupa blada, opcje się nie wczytały, na audio nie podziałasz"), _("Błędny błąd"));return;}
 
 		wxString Path;
 		if(id==OpenAudio){
@@ -1295,11 +1272,12 @@ void kainoteFrame::OpenAudioInTab(TabPanel *pan, int id, const wxString &path)
 		if(Path.IsEmpty()){return;}
 
 
-		if(pan->Edit->ABox){pan->Edit->ABox->SetFile(Path,(id==40000));
-		if(!pan->Edit->ABox->audioDisplay->loaded){
-			pan->Edit->ABox->Destroy(); 
-			pan->Edit->ABox=NULL;
-		}else{SetRecent(2);}
+		if(pan->Edit->ABox){
+			pan->Edit->ABox->SetFile(Path,(id==40000));
+			if(!pan->Edit->ABox->audioDisplay->loaded){
+				pan->Edit->ABox->Destroy(); 
+				pan->Edit->ABox=NULL;
+			}else{SetRecent(2);}
 		}
 		else{
 			pan->Edit->ABox=new AudioBox(pan->Edit, pan->Grid1);
@@ -1316,8 +1294,7 @@ void kainoteFrame::OpenAudioInTab(TabPanel *pan, int id, const wxString &path)
 				Tabs->Refresh(false);
 				pan->Edit->ABox->audioDisplay->SetFocus();
 				SetRecent(2);
-			}
-			else{pan->Edit->ABox->Destroy(); pan->Edit->ABox=NULL;}
+			}else{pan->Edit->ABox->Destroy(); pan->Edit->ABox=NULL;}
 		}
 	}
 }
@@ -1404,14 +1381,14 @@ void kainoteFrame::OnMenuOpened(MenuEvent& event)
 //	line=wxAtoi(wscript.BeforeFirst('-'));
 //	macro=wxAtoi(wscript.AfterFirst('-'));
 //	if(!Auto){Auto = new Auto::Automation();}
-//	if(line>=(int)Auto->Scripts.size()){wxMessageBox(wxString::Format(_("Brak wczytanego skryptu o numerze %i"),line));}
+//	if(line>=(int)Auto->Scripts.size()){KaiMessageBox(wxString::Format(_("Brak wczytanego skryptu o numerze %i"),line));}
 //	Auto::LuaScript *scr=Auto->Scripts[line];
 //	auto macros=scr->GetMacros();
 //	if((int)macros.size()<=macro){
 //		wxString msg;
 //		if(scr->GetLoadedState()){msg = wxString::Format(_("Skrypt o nazwie \"%s\" nie posiada makra %s."), scr->GetName(), macro);}
 //		else{msg=scr->GetDescription();}
-//		wxMessageBox(msg); return;
+//		KaiMessageBox(msg); return;
 //	}
 //	Auto->RunScript(line, macro);
 //

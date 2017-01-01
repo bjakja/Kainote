@@ -17,9 +17,9 @@
 #define STYLELISTBOX_H
 
 //(*Headers(Stylelistbox)
-#include <wx/stattext.h>
-#include <wx/checklst.h>
-#include <wx/button.h>
+#include <wx/string.h>
+#include "KaiListCtrl.h"
+#include "MappedButton.h"
 #include <wx/dialog.h>
 //*)
 
@@ -27,15 +27,17 @@ class Stylelistbox: public wxDialog
 {
 	public:
 
-		Stylelistbox(wxWindow* parent, bool styles=true, wxString arr[ ]=0, int count=0, const wxPoint& pos=wxDefaultPosition, int style=0);
+		Stylelistbox(wxWindow* parent, bool styles=true, int numelem = 0, wxString *arr=0, const wxPoint& pos=wxDefaultPosition, int style=0, int type = TYPE_CHECKBOX);
 		virtual ~Stylelistbox();
 
 		
-		wxButton* Button1;
-		wxCheckListBox* CheckListBox1;
-		wxStaticText* StaticText1;
-		wxButton* Button2;
+		MappedButton* Button1;
+		KaiListCtrl* CheckListBox1;
+		MappedButton* Button2;
 		
 };
+
+wxString GetCheckedElements(wxWindow *parent);
+
 
 #endif

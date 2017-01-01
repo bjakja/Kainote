@@ -29,78 +29,82 @@ class kainoteFrame;
 
 
 
-class CTwindow: public wxScrolled<wxWindow>
+class CTwindow: public wxWindow//wxScrolled<wxWindow>
 {
-	public:
+public:
 
-		CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id=-1,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize,long style=0);
-		virtual ~CTwindow();
-		KaiRadioButton* StartVAtime;
-		KaiRadioButton* EndVAtime;
-		KaiChoice *WhichLines;
-		KaiChoice *WhichTimes;
-		KaiRadioButton* Forward;
-		KaiRadioButton* Backward;
-		
-		MappedButton* AddStyles;
-		MappedButton* MoveTime;
-		TimeCtrl* TimeText;
-		KaiTextCtrl* Stylestext;
-		KaiCheckBox* videotime;
-		KaiCheckBox* audiotime;
-		KaiChoice* CorTime;
-		KaiCheckBox* LeadIn;
-		KaiCheckBox* LeadOut;
-		KaiCheckBox* Continous;
-		KaiCheckBox* SnapKF;
-		NumCtrl* LITime;
-		NumCtrl* LOTime;
-		NumCtrl* ThresStart;
-		NumCtrl* ThresEnd;
-		NumCtrl* BeforeStart;
-		NumCtrl* AfterStart;
-		NumCtrl* BeforeEnd;
-		NumCtrl* AfterEnd;
-		KaiStaticBoxSizer *liosizer;
-		KaiStaticBoxSizer *consizer;
-		KaiStaticBoxSizer *snapsizer;
+	CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id=-1,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize,long style=0);
+	virtual ~CTwindow();
+	KaiRadioButton* StartVAtime;
+	KaiRadioButton* EndVAtime;
+	KaiChoice *WhichLines;
+	KaiChoice *WhichTimes;
+	KaiRadioButton* Forward;
+	KaiRadioButton* Backward;
 
-		void Contents(bool addopts=true);
-		void RefVals(CTwindow *from=NULL);
+	MappedButton* AddStyles;
+	MappedButton* MoveTime;
+	TimeCtrl* TimeText;
+	KaiTextCtrl* Stylestext;
+	KaiCheckBox* videotime;
+	KaiCheckBox* audiotime;
+	KaiChoice* CorTime;
+	KaiCheckBox* LeadIn;
+	KaiCheckBox* LeadOut;
+	KaiCheckBox* Continous;
+	KaiCheckBox* SnapKF;
+	NumCtrl* LITime;
+	NumCtrl* LOTime;
+	NumCtrl* ThresStart;
+	NumCtrl* ThresEnd;
+	NumCtrl* BeforeStart;
+	NumCtrl* AfterStart;
+	NumCtrl* BeforeEnd;
+	NumCtrl* AfterEnd;
+	KaiStaticBoxSizer *liosizer;
+	KaiStaticBoxSizer *consizer;
+	KaiStaticBoxSizer *snapsizer;
+	KaiScrollbar *scroll;
+	wxWindow *panel; 
 
-		wxBoxSizer *Main;
+	void Contents(bool addopts=true);
+	void RefVals(CTwindow *from=NULL);
 
-		
-	private:
+	wxBoxSizer *Main;
 
-        char form;
-		kainoteFrame* Kai;
-		bool isscrollbar;
-		int bestsize;
-		MappedButton *coll;
-		
-		void OnOKClick(wxCommandEvent& event);
-		void OnAddStyles(wxCommandEvent& event);
-		void OnSize(wxSizeEvent& event);
-		void AudioVideoTime(wxCommandEvent &event);
-        void CollapsePane(wxCommandEvent &event);
-		void DoTooltips();
-		
-	
-DECLARE_EVENT_TABLE()
+
+private:
+
+	char form;
+	kainoteFrame* Kai;
+	bool isscrollbar;
+	int scPos;
+	MappedButton *coll;
+
+	void OnOKClick(wxCommandEvent& event);
+	void OnAddStyles(wxCommandEvent& event);
+	void OnSize(wxSizeEvent& event);
+	void OnScroll(wxScrollEvent& event);
+	void OnMouseScroll(wxMouseEvent& event);
+	void AudioVideoTime(wxCommandEvent &event);
+	void CollapsePane(wxCommandEvent &event);
+	void DoTooltips();
+
+
+	DECLARE_EVENT_TABLE()
 };
 /*
 class mypanel: public wxPanel
 {
 public:
-	mypanel(wxWindow* parent);
-	virtual ~mypanel();
+mypanel(wxWindow* parent);
+virtual ~mypanel();
 private:
-	void OnMouseEvent(wxMouseEvent& event);
+void OnMouseEvent(wxMouseEvent& event);
 
-	CTwindow *CTwin;
-	wxWindow *focused;
-	DECLARE_EVENT_TABLE()
+CTwindow *CTwin;
+wxWindow *focused;
+DECLARE_EVENT_TABLE()
 };
 */
 

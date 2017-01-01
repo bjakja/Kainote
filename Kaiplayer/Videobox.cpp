@@ -25,6 +25,7 @@
 #include <wx/clipbrd.h>
 #include "ColorSpaceConverter.h"
 #include "Menu.h"
+#include "KaiMessageBox.h"
 #pragma warning ( disable: 4482 )
 
 class CRecycleFile : public SHFILEOPSTRUCT {
@@ -179,7 +180,20 @@ bool VideoCtrl::Pause(bool burstbl)
 {
 	wxMutexLocker lock(vbmutex);
 	//vbmutex.Lock();
-	if(GetState()==None){Load(Kai->videorec[Kai->videorec.size()-1],NULL);return true;}
+
+	if(GetState()==None){
+		MenuItem *index=Kai->Menubar->FindItem(VideoIndexing);
+		if(index->IsChecked() && index->IsEnabled()){
+			EditBox *eb = Kai->GetTab()->Edit;
+			if(eb->ABox){
+				eb->ABox->audioDisplay->Play(eb->line->Start.mstime, eb->line->End.mstime);
+				return true;
+			}
+			return false;
+		}
+		Load(Kai->videorec[Kai->videorec.size()-1],NULL);
+		return true;
+	}
 	if(time>=GetDuration()&&burstbl){return false;}
 	if(!VideoRend::Pause()){return false;}
 	if(GetState()==Paused){
@@ -480,7 +494,7 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 {
 	int key = event.GetKeyCode();
 	if(key=='F'){SetFullskreen();}
-	else if(key >= WXK_WINDOWS_LEFT && key <= WXK_WINDOWS_MENU){
+	else if(key == WXK_WINDOWS_MENU){
 		wxWindow *owner = (isfullskreen && TD)? (wxWindow *)TD : this;
 		wxPoint poss= owner->ScreenToClient(wxGetMousePosition());
 		ContextMenu(poss);}
@@ -570,7 +584,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 
 
 		int sx,sy,sizex,sizey;
-		//wxMessageBox("set size");
+		//KaiMessageBox("set size");
 		if(!Kai->GetTab()->edytor){
 			if(!Kai->IsMaximized()){
 				Kai->GetClientSize(&sizex,&sizey);
@@ -663,7 +677,7 @@ void VideoCtrl::OnPrew()
 {
 	MenuItem *index=Kai->Menubar->FindItem(VideoIndexing);
 	if(index->IsChecked()&&index->IsEnabled()){
-		if(wxMessageBox(_("Czy na pewno chcesz zindeksować poprzednie wideo?"),_("Potwierdzenie"),wxYES_NO)==wxNO)return;}
+		if(KaiMessageBox(_("Czy na pewno chcesz zindeksować poprzednie wideo?"),_("Potwierdzenie"),wxYES_NO)==wxNO)return;}
 	NextFile(false);
 }
 
@@ -672,7 +686,7 @@ void VideoCtrl::OnNext()
 {
 	MenuItem *index=Kai->Menubar->FindItem(VideoIndexing);
 	if(index->IsChecked()&&index->IsEnabled()){
-		if(wxMessageBox(_("Czy na pewno chcesz zindeksować następne wideo?"),_("Potwierdzenie"),wxYES_NO)==wxNO)return;}
+		if(KaiMessageBox(_("Czy na pewno chcesz zindeksować następne wideo?"),_("Potwierdzenie"),wxYES_NO)==wxNO)return;}
 	NextFile();
 }
 
@@ -850,7 +864,7 @@ void VideoCtrl::OnHidePB()
 
 void VideoCtrl::OnDeleteVideo()
 {
-	if(wxMessageBox(_("Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"), _("Usuwanie"), wxYES_NO)==wxNO){return;}
+	if(KaiMessageBox(_("Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"), _("Usuwanie"), wxYES_NO)==wxNO){return;}
 	wxString path=Kai->GetTab()->VideoPath;
 	NextFile();
 	CRecycleFile x;

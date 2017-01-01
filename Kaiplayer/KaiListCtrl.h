@@ -21,6 +21,9 @@
 #include "KaiScrollbar.h"
 #include "Styles.h"
 
+wxDECLARE_EVENT(LIST_ITEM_DOUBLECLICKED, wxCommandEvent);
+wxDECLARE_EVENT(LIST_ITEM_RIGHT_CLICK, wxCommandEvent);
+
 enum{
 	TYPE_TEXT,
 	TYPE_CHECKBOX,
@@ -37,6 +40,7 @@ public:
 	virtual void Save(){};
 	bool modified;
 	byte type;
+	wxString name;
 };
 
 class ItemText : public Item{
@@ -48,7 +52,6 @@ public:
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList);
 	wxString GetName(){return name;}
 	void Save(){};
-	wxString name;
 };
 
 class ItemColor : public Item{
@@ -60,19 +63,16 @@ public:
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList);
 	void Save();
 	AssColor col;
-	wxString name;
 };
 
 class ItemCheckBox : public Item{
 public:
-	ItemCheckBox(bool check, const wxString &_label) : Item(TYPE_CHECKBOX){check = checked; enter=false; label = _label;}
+	ItemCheckBox(bool check, const wxString &_label) : Item(TYPE_CHECKBOX){modified = check; enter=false; name = _label;}
 	virtual ~ItemCheckBox(){}
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList){};
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList);
 	void Save(){};
-	bool checked;
 	bool enter;
-	wxString label;
 };
 
 class ItemRow {
@@ -101,6 +101,8 @@ class KaiListCtrl : public KaiScrolledWindow
 {
 public:
 	KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int style = 0);
+	KaiListCtrl(wxWindow *parent, int id, int numelem = 0, wxString *list = 0, int type = TYPE_CHECKBOX, const wxPoint &pos = wxDefaultPosition, 
+		const wxSize &size = wxDefaultSize, int style = 0);
 	virtual ~KaiListCtrl(){
 		for(auto it = itemList.begin(); it != itemList.end(); it++){
 			delete *it;
@@ -108,13 +110,16 @@ public:
 		itemList.clear();
 		if(bmp){delete bmp;}
 	};
-	int InsertCollumn(size_t col, const wxString &name, byte type, int width);
+	int InsertColumn(size_t col, const wxString &name, byte type, int width);
 	int AppendItem(Item *item); 
 	int SetItem(size_t row, size_t col, Item *item); 
 	Item *GetItem(size_t row, size_t col) const;
 	void SaveAll(int col);
 	void SetModified(bool modif){modified = modif;}
 	bool GetModified(){return modified;}
+	Item *FindItem(int column, const wxString &textItem);
+	void ScrollTo(int row);
+	size_t GetCount(){return itemList.size();}
 private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);

@@ -41,6 +41,7 @@
 #include "Automation.h"
 #include "Toolbar.h"
 #include "EnumFactory.h"
+#include "KaiStatusBar.h"
 
 class kainoteFrame: public wxFrame
 {
@@ -48,8 +49,6 @@ class kainoteFrame: public wxFrame
         kainoteFrame(const wxPoint &pos, const wxSize &size);
         virtual ~kainoteFrame();
 
-        wxString sftc();
-        
 		Notebook* Tabs;
 
 		wxBoxSizer *mains;
@@ -69,7 +68,7 @@ class kainoteFrame: public wxFrame
 		Menu* AudsRecMenu;
 		MenuBar* Menubar;
 
-		wxStatusBar* StatusBar1;
+		KaiStatusBar* StatusBar;
 		KaiToolbar *Toolbar;
 		wxArrayString subsrec;
 		wxArrayString videorec;
@@ -89,6 +88,8 @@ class kainoteFrame: public wxFrame
 		void UpdateToolbar();
 		void OnOpenAudio(wxCommandEvent& event);
 		void OnMenuClick(wxCommandEvent &event);
+		void SetStatusText(const wxString &label, int field){StatusBar->SetLabelText(field, label);}
+		wxString GetStatusText(int field){return StatusBar->GetStatusText(field);}
 		findreplace *FR;
 		findreplace *SL;
 		Auto::Automation *Auto;

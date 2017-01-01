@@ -82,7 +82,7 @@ BEGIN_EVENT_TABLE(DescTxtCtrl,KaiTextCtrl)
 	wxBoxSizer *siz=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *siz1=new wxBoxSizer(wxHORIZONTAL);
 	wxString types[3]={_("Tag wstawiany w miejse kursora"), _("Tag wstawiany na początku tekstu"), _("Zwykły tekst")};
-	type=new wxChoice(this,-1,wxDefaultPosition, wxDefaultSize,3,types);
+	type=new KaiChoice(this,-1,wxDefaultPosition, wxDefaultSize,3,types);
 	type->SetSelection(_type);
 	txt=new KaiTextCtrl(this,-1,txtt,wxDefaultPosition,wxSize(150,25), wxTE_PROCESS_ENTER);
 	txt->SetSelection(0,txtt.Len()-1);
@@ -409,8 +409,8 @@ void EditBox::UpdateChars(wxString text)
 	Chtime->SetLabelText(wxString::Format(_("Znaki na sekundę: %i<=15"),chtime));
 	Chtime->SetForegroundColour((chtime>15)? *wxRED : textcolour);
 	BoxSizer5->Layout();
-	Frames->Refresh(false);
-	Times->Refresh(false);
+	//Frames->Update();
+	//Times->Update();
 }
 
 //Pobieranie danych z kontrolek editboxa
@@ -420,9 +420,9 @@ void EditBox::UpdateChars(wxString text)
 void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 {
 	long cellm=0;
-	if(!dummy && StartEdit->changedBackGround){StartEdit->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT ));StartEdit->Refresh(false);}
-	if(!dummy && EndEdit->changedBackGround ){EndEdit->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT ));EndEdit->Refresh(false);}
-	if(!dummy && DurEdit->changedBackGround ){DurEdit->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT ));DurEdit->Refresh(false);}
+	if(!dummy && StartEdit->changedBackGround){StartEdit->SetForegroundColour(Options.GetColour("Window Text"));StartEdit->Refresh(false);}
+	if(!dummy && EndEdit->changedBackGround ){EndEdit->SetForegroundColour(Options.GetColour("Window Text"));EndEdit->Refresh(false);}
+	if(!dummy && DurEdit->changedBackGround ){DurEdit->SetForegroundColour(Options.GetColour("Window Text"));DurEdit->Refresh(false);}
 	if(line->IsComment != Comment->GetValue()){
 		line->IsComment= !line->IsComment;
 		cellm |= COMMENT;
@@ -1248,18 +1248,18 @@ void EditBox::OnColorChange(wxCommandEvent& event)
 		int alpha = -1;
 		wxString tag=(num=="1")? "?c&(.*)" : "c&(.*)";
 		Styles *style = grid->GetStyle(0,line->Style);
-		AssColor col= (num=="1")? style->PrimaryColour :
+		/*AssColor col= (num=="1")? style->PrimaryColour :
 			(num=="2")? style->SecondaryColour :
 			(num=="3")? style->OutlineColour :
 			style->BackColour;
 		
 		int stylealpha = col.a;
-		wxString strcol = col.GetAss(false,true);
+		wxString strcol = col.GetAss(false,true);*/
 		wxString chooseColor = event.GetString();
 		FindVal(num+tag, &iskol);
-		if(chooseColor == strcol){
-			if(iskol!=""){PutinText("", false);}
-		}else if(iskol != chooseColor){
+		//if(chooseColor == strcol){
+			//if(iskol!=""){PutinText("", false);}
+		/*}else */if(iskol != chooseColor){
 			PutinText("\\"+num+"c"+event.GetString()+"&", false);
 		}
 		
@@ -1268,10 +1268,10 @@ void EditBox::OnColorChange(wxCommandEvent& event)
 			iskol.Replace("&","");
 			alpha = wxAtoi(iskol);
 		}
-		if(alpha != -1 && stylealpha == event.GetInt()){
-			PutinText("", false);
+		//if(alpha != -1 && stylealpha == event.GetInt()){
+			//PutinText("", false);
 
-		}else if(alpha != event.GetInt() && stylealpha != event.GetInt()){
+		/*}else */if(alpha != event.GetInt() /*&& stylealpha != event.GetInt()*/){
 			PutinText("\\"+num+wxString::Format("a&H%02X&",event.GetInt()), false);
 
 		} 

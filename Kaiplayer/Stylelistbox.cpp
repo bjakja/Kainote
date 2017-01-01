@@ -14,23 +14,55 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Stylelistbox.h"
+#include "config.h"
+#include "KainoteMain.h"
 
-#include <wx/intl.h>
-#include <wx/string.h>
 
-
-Stylelistbox::Stylelistbox(wxWindow* parent, bool styles, wxString arr[ ], int count,const wxPoint& pos, int style)
+Stylelistbox::Stylelistbox(wxWindow* parent, bool styles, int numelem, wxString *arr,const wxPoint& pos, int style, int type)
 	: wxDialog(parent, -1, (styles)?_("Wybór styli") : _("Wybór kolumn"))
 {
-	SetClientSize(wxSize(302,282));
-	CheckListBox1 = new wxCheckListBox(this, -1, wxPoint(24,27), wxSize(248,208), count, arr, style);
-	Button1 = new wxButton(this, wxID_OK, "Ok", wxPoint(24,248));
-	Button2 = new wxButton(this, wxID_CANCEL, _("Anuluj"), wxPoint(112,248));
-	StaticText1 = new wxStaticText(this, -1, (styles)?_("Wybierz style") : _("Wybierz kolumny"), wxPoint(24,8));
-	CenterOnParent();
+	SetForegroundColour(Options.GetColour("Window Text"));
+	SetBackgroundColour(Options.GetColour("Window Background"));
+	wxStaticBoxSizer *sizer1 = new wxStaticBoxSizer(wxVERTICAL, this, (styles)?_("Wybierz style") : _("Wybierz kolumny"));
+	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
+	CheckListBox1 = new KaiListCtrl(this, -1,numelem, arr, type, wxDefaultPosition, wxSize(200,300), style);
+	Button1 = new MappedButton(this, wxID_OK, "Ok");
+	Button2 = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	sizer->Add(Button1, 0, wxALL, 2);
+	sizer->Add(Button2, 0, wxALL, 2);
+	sizer1->Add(CheckListBox1,0, wxEXPAND);
+	sizer1->Add(sizer,0, wxEXPAND);
+	SetSizerAndFit(sizer1);
+	wxPoint mousepos = wxGetMousePosition();
+	SetPosition(mousepos);
 }
 
 Stylelistbox::~Stylelistbox()
 {
 }
 
+wxString GetCheckedElements(wxWindow *parent)
+{
+
+	wxString styletext="";
+	wxString *elems;
+	const std::vector<Styles*> styles = Notebook::GetTab()->Grid1->file->GetSubs()->styles;
+	elems = new wxString[styles.size()];
+	for (size_t j=0;j<styles.size();j++){
+		Styles *acstyl=styles[j];
+		elems[j] = acstyl->Name;
+	}
+	Stylelistbox slx(parent, true, styles.size(), elems);
+	if(slx.ShowModal()==wxID_OK){
+
+		for (size_t v=0;v<slx.CheckListBox1->GetCount();v++)
+		{
+
+			if(slx.CheckListBox1->GetItem(v, 0)->modified){
+				styletext<<slx.CheckListBox1->GetItem(v, 0)->name<<";";
+			}
+		}
+	}
+	delete [] elems;
+	return styletext.BeforeLast(';');
+}

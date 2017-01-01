@@ -38,6 +38,8 @@ KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
 			 ,clicked(false)
 			 ,value(false)
 			 ,isCheckBox(true)
+			 ,changedBackground(false)
+			 ,changedForeground(false)
 			 ,fontHeight(0)
 {
 	label = _label;
@@ -68,8 +70,14 @@ KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
 	Bind(wxEVT_SIZE, &KaiCheckBox::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiCheckBox::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &KaiCheckBox::OnKeyPress, this);
-	SetBackgroundColour(parent->GetBackgroundColour());
-	SetForegroundColour(parent->GetForegroundColour());
+	Bind(wxEVT_ERASE_BACKGROUND, &KaiCheckBox::OnEraseBackground, this);
+	//SetBackgroundColour(parent->GetBackgroundColour());
+	//SetForegroundColour(parent->GetForegroundColour());
+	/*Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
+		SetForegroundColour(GetParent()->GetForegroundColour());
+		SetBackgroundColour(GetParent()->GetBackgroundColour());
+
+	});*/
 }
 
 void KaiCheckBox::OnPaint(wxPaintEvent& event)
@@ -82,7 +90,7 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 	wxMemoryDC tdc;
 	tdc.SelectObject(wxBitmap(w,h));
 	tdc.SetFont(GetFont());
-	wxColour background = GetBackgroundColour();
+	wxColour background = (changedBackground)? GetBackgroundColour() : Options.GetColour("Window Background");
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
@@ -104,7 +112,8 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 			tdc.DestroyClippingRegion();*/
 			//tdc.DrawText(label,18, ((h-fontHeight)/2)+1);
 		//}
-		tdc.SetTextForeground((enabled)? GetForegroundColour() : Options.GetColour("Window Inactive Text"));
+		tdc.SetTextForeground((enabled && changedForeground)? GetForegroundColour() : 
+			(enabled)? Options.GetColour("Window Text") : Options.GetColour("Window Inactive Text"));
 		//wxRect cur(18, (h-fh)/2, w - 20, fh);
 		//tdc.SetClippingRegion(cur);
 		tdc.DrawText(label,18, (h-fontHeight)/2);

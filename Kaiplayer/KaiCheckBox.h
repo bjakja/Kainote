@@ -26,8 +26,16 @@ public:
 	virtual ~KaiCheckBox(){};
 	bool GetValue(){return value;}
 	void SetValue(bool _value){value = _value; Refresh(false);}
-	//void SetBackgroundColour(const wxColour &bgcolor);
-	//void SetForegroundColour(const wxColour &fgcolor);
+	bool SetBackgroundColour(const wxColour &bgcolor){
+		changedBackground = true;
+		wxWindow::SetBackgroundColour(bgcolor); return true;
+	}
+	bool SetForegroundColour(const wxColour &fgcolor){
+		changedForeground = true;
+		wxWindow::SetForegroundColour(fgcolor); return true;
+	}
+	bool changedBackground;
+	bool changedForeground;
 	bool isCheckBox;
 	bool value;
 	bool enter;
@@ -37,6 +45,7 @@ private:
 	void OnPaint(wxPaintEvent& evt);
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnKeyPress(wxKeyEvent &evt);
+	void OnEraseBackground(wxEraseEvent &event){}
 	wxString label;
 	int fontHeight;
 	//wxColour background;

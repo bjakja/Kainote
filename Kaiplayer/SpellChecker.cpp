@@ -34,9 +34,9 @@
 
 #include <wx/filename.h>
 #include <wx/dir.h>
-#include <wx/msgdlg.h>
 #include <wx/log.h>
 #include "OpennWrite.h"
+#include "KaiMessageBox.h"
 
 SpellChecker *SpellChecker::SC = NULL;
 
@@ -105,7 +105,7 @@ bool SpellChecker::Initialize()
 	if(!wxFileExists(dic) || !wxFileExists(aff)) 
 	{
 		Options.SetBool("Editbox Spellchecker",false);
-		wxMessageBox(wxString::Format(_("Brak plików słownika w folderze \"%s\\Dictionary\".\r\nSprawdzanie pisowni zostanie wyłączone"), Options.pathfull)); 
+		KaiMessageBox(wxString::Format(_("Brak plików słownika w folderze \"%s\\Dictionary\".\r\nSprawdzanie pisowni zostanie wyłączone"), Options.pathfull)); 
 		return false;
 	}
 	// Load
@@ -113,7 +113,7 @@ bool SpellChecker::Initialize()
 	
 	if (hunspell) {
 		conv = new wxCSConv(wxString(hunspell->get_dic_encoding(),wxConvUTF8));
-		if(!conv){wxMessageBox(_("Nie można poprać formatu konwersji słownika."));}
+		if(!conv){KaiMessageBox(_("Nie można poprać formatu konwersji słownika."));}
 		// Load user dictionary
 		wxString userpath=pathhh+"UserDic.udic";
 		if (wxFileExists(userpath)) {
@@ -134,7 +134,7 @@ bool SpellChecker::Initialize()
 		}
 
 		return true;
-	}else{wxMessageBox(_("Nie można zainicjalizować sprawdzania pisowni."));}
+	}else{KaiMessageBox(_("Nie można zainicjalizować sprawdzania pisowni."));}
 	return false;
 }
 

@@ -20,6 +20,7 @@
 #include <stdlib.h>
 
 #include "KaiTextCtrl.h"
+#include "KaiMessageBox.h"
 
 // ----------------------------------------------------------------------------
 // global helpers
@@ -125,7 +126,7 @@ bool KaiTextValidator::Validate(wxWindow *parent)
     if ( !errormsg.empty() )
     {
         m_validatorWindow->SetFocus();
-        wxMessageBox(errormsg, _("Validation conflict"),
+        KaiMessageBox(errormsg, _("B³¹d sprawdzania tekstu"),
                      wxOK | wxICON_EXCLAMATION, parent);
 
         return false;

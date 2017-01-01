@@ -18,6 +18,7 @@
 #include "Config.h"
 #include "Hotkeys.h"
 #include <wx/intl.h>
+#include "KaiMessageBox.h"
 
 //wxDEFINE_EVENT(EVT_OPEN, wxThreadEvent);
 
@@ -83,13 +84,10 @@ bool kainoteApp::OnInit()
 	m_checker = new wxSingleInstanceChecker();
         
     bool wxsOK = true;
-	//isfirst=true;
 
 	wxString server="4242";
-	bool running = m_checker->IsAnotherRunning();
-	delete m_checker;
-    m_checker = NULL;
-	if (!running)
+
+	if (!m_checker->IsAnotherRunning())
     {
 		
 		setlocale(LC_NUMERIC, "C");
@@ -102,25 +100,25 @@ bool kainoteApp::OnInit()
 		if ( wxsOK )
 		{
 		//wxHandleFatalExceptions(true);
-			//SetAppDisplayName("KaiNote");
+			
 
-			if(!Options.LoadOptions()){wxMessageBox(_("Nie udało się wczytać opcji.\nDziałanie programu zostanie zakończone."),_("Uwaga"));return false;}
+			if(!Options.LoadOptions()){KaiMessageBox(_("Nie udało się wczytać opcji.\nDziałanie programu zostanie zakończone."),_("Uwaga"));return false;}
 
 			locale=NULL;
 			if(Options.GetInt(L"Program Language") != 0){
 				locale=new wxLocale();
 				if(!locale->Init(wxLANGUAGE_ENGLISH, wxLOCALE_DONT_LOAD_DEFAULT)){
-					wxMessageBox("wxLocale cannot initialize, language change failed");
+					KaiMessageBox("wxLocale cannot initialize, language change failed");
 				}
 				locale->AddCatalogLookupPathPrefix(Options.pathfull+L"\\Locale\\");
 				if(!locale->AddCatalog(L"en",wxLANGUAGE_POLISH,L"UTF-8")){//
-					wxMessageBox("Cannot find translation, language change failed");
+					KaiMessageBox("Cannot find translation, language change failed");
 				}
-				//wxMessageBox(wxString::Format("isload%i", locale->IsLoaded(L"en")));
+				//KaiMessageBox(wxString::Format("isload%i", locale->IsLoaded(L"en")));
 			}
 
 			if(!Hkeys.LoadHkeys()){
-				wxMessageBox(_("Nie udało się wczytać skrótów.\nDziałanie programu zostanie zakończone."),_("Uwaga"));
+				KaiMessageBox(_("Nie udało się wczytać skrótów.\nDziałanie programu zostanie zakończone."),_("Uwaga"));
 				wxDELETE(locale);return false;
 			}
 
@@ -137,12 +135,11 @@ bool kainoteApp::OnInit()
 
 			int posx,posy,sizex,sizey;
 			Options.GetCoords("Window Position",&posx,&posy);
-			//SetPosition(wxPoint(posx,posy));
 			Options.GetCoords("Window Size",&sizex,&sizey);
 			if(sizex<500 || sizey<350){
 				sizex=800;sizey=650;
 			}
-			//SetClientSize(wxSize(sizex,sizey));
+
 			Frame=NULL;
     		Frame = new kainoteFrame(wxPoint(posx,posy),wxSize(sizex,sizey));
 			bool opevent=false;
@@ -177,9 +174,7 @@ bool kainoteApp::OnInit()
 			}
 		
 		}
-		
-    }
-	else{
+    }else{
 		wxString subs;
 		for (int i=1;i<argc;i++) {
 			subs.Append(argv[i]);
@@ -247,7 +242,7 @@ void kainoteApp::OnFatalException()
 	//op.FileWrite(Options.pathfull+"\\recover.txt",recover);
 	//Options.SaveOptions();
 
-	wxLogStatus(_T("Ups, Kainote się skraszował w przyszłości będzie można wznowić sesję po tym kraszu"), "Krasz", wxOK | wxICON_ERROR);
+	KaiMessageBox(_T("Ups, Kainote się skraszował w przyszłości będzie można wznowić sesję po tym kraszu"), "Krasz", wxOK | wxICON_ERROR);
 }
 void kainoteApp::OnOpen(wxTimerEvent &evt)
 {

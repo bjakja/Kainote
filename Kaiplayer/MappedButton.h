@@ -32,8 +32,13 @@ public:
 	virtual ~MappedButton();
 	void SetToolTip(const wxString &toolTip="");
 	void SetBitmap(const wxBitmap & bitmap){icon = bitmap; Refresh(false);};
-	void SetBackgroundColour(wxColour color){isColorButton = true; buttonColor = color; Refresh(false);}
+	bool SetBackgroundColour(const wxColour &color){isColorButton = true; buttonColor = color; Refresh(false);return true;}
 	wxColour GetBackgroundColour(){return buttonColor;}
+	bool SetForegroundColour(const wxColour &fgcolor){
+		changedForeground = true;
+		wxWindow::SetForegroundColour(fgcolor); return true;
+	}
+	bool changedForeground;
 	wxString GetLabelText() const {return name;}
 	void SetLabelText(const wxString &label) {name = label; Refresh(false);}
 	bool clicked;

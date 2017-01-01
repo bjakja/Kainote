@@ -25,6 +25,9 @@ public:
 	KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int style = wxSB_HORIZONTAL);
 	virtual ~KaiScrollbar(){if(bmp){delete bmp;}};
 	void SetScrollbar(int pos, int visible, int range, int pageSize, bool refresh = true);
+	void SetScrollRate(int rate){scrollRate = rate;};
+	int SetScrollPos(int pos);
+	int GetScrollPos(){return unitPos;}
 	int unitPos;
 	int visibleSize;
 	int allSize;
@@ -41,6 +44,7 @@ private:
 	int thumbRange;
 	int pageSize;
 	int allVisibleSize;
+	int scrollRate;
 	bool isVertical;
 	bool holding;
 	bool rholding;
@@ -65,7 +69,8 @@ public:
 	void SetScrollbar(int orientation, int pos, int maxVisible, int allItems, int pageSize, bool refresh = true){
 		SetScrollBar(orientation, pos, maxVisible, allItems, pageSize, refresh);
 	}
-	void SetScrollPos (int orientation, int pos, bool refresh=true);
+	void SetScrollPos (int orientation, int pos, bool refresh=true){SetScrollpos(orientation, pos, refresh);}
+	int SetScrollpos (int orientation, int pos, bool refresh=true);
 	void GetSize(int *x, int *y);
 	void GetClientSize(int *x, int *y);
 	wxSize GetSize();

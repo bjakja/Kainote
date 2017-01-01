@@ -20,6 +20,7 @@
 #include <wx/wx.h>
 #include <wx/gauge.h>
 #include <functional>
+#include "MappedButton.h"
 
 struct ITaskbarList3;
 class ProgresDialog : public wxDialog
@@ -44,7 +45,7 @@ public:
 	void Progress(int num);
 	void Title(wxString title);
 	bool WasCancelled();
-	wxButton *cancel;
+	MappedButton *cancel;
 	ITaskbarList3 *taskbar;
 	int result;
 };

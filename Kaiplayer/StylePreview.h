@@ -19,6 +19,7 @@
 
 #include <wx/wx.h>
 #include "Styles.h"
+#include "KaiTextCtrl.h"
 #include <vector>
 typedef void csri_inst;
 typedef void csri_rend;
@@ -43,7 +44,7 @@ class StylePreview : public wxWindow
 		
 
 		wxBitmap *bmpframe;
-		wxTextCtrl *PrevText;
+		KaiTextCtrl *PrevText;
 		Styles *styl;
 
 		void OnPaint(wxPaintEvent& event);

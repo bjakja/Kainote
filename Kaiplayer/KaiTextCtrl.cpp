@@ -57,8 +57,8 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	entries[20].Set(wxACCEL_CTRL, 'V',ID_TCTLV);
 	entries[21].Set(wxACCEL_CTRL, 'C',ID_TCTLC);
 	entries[22].Set(wxACCEL_CTRL, 'X',ID_TCTLX);
-	entries[23].Set(wxACCEL_NORMAL, 393,ID_TWMENU);
-	entries[24].Set(wxACCEL_NORMAL, 394,ID_TWMENU);
+	//entries[23].Set(wxACCEL_NORMAL, 393,ID_TWMENU);
+	//entries[24].Set(wxACCEL_NORMAL, 394,ID_TWMENU);
 	entries[25].Set(wxACCEL_NORMAL, 395,ID_TWMENU);
 	entries[26].Set(wxACCEL_NORMAL, WXK_PAGEDOWN,ID_TPDOWN);
 	entries[27].Set(wxACCEL_NORMAL, WXK_PAGEUP,ID_TPUP);
@@ -88,19 +88,24 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 
 	CalcWrap(false);
 
-	foreground = parent->GetForegroundColour();
-	background = parent->GetBackgroundColour();
+	//foreground = parent->GetForegroundColour();
+	//background = parent->GetBackgroundColour();
 	SetValidator(validator);
 
 	Bind(wxEVT_LEFT_DOWN, &KaiTextCtrl::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &KaiTextCtrl::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_DCLICK, &KaiTextCtrl::OnMouseEvent, this);
-	Bind(wxEVT_RIGHT_DOWN, &KaiTextCtrl::OnMouseEvent, this);
+	Bind(wxEVT_RIGHT_UP, &KaiTextCtrl::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiTextCtrl::OnMouseEvent, this);
 	Bind(wxEVT_ENTER_WINDOW, &KaiTextCtrl::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &KaiTextCtrl::OnMouseEvent, this);
 	Bind(wxEVT_MOUSEWHEEL, &KaiTextCtrl::OnMouseEvent, this);
 	Bind(wxEVT_KEY_DOWN, &KaiTextCtrl::OnKeyPress, this);
+	/*Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
+		foreground = GetParent()->GetForegroundColour();
+		background = GetParent()->GetBackgroundColour();
+
+	});*/
 	
 }
 
@@ -291,7 +296,7 @@ void KaiTextCtrl::OnAccelerator(wxCommandEvent& event)
 	case ID_TCLEFT:
 	case ID_TSLEFT:
 	case ID_TCSLEFT:
-		if(ID==ID_TLEFT && Selend.x<Cursor.x){Cursor=Selend;Refresh(false);return;}
+		if(ID==ID_TLEFT && Selend.x<Cursor.x){Cursor=Selend; MakeCursorVisible();return;}
 		if(Cursor.x<1){return;}
 		if(ID==ID_TCLEFT||ID==ID_TCSLEFT){
 			FindWord(Cursor.x-1,&Cursor.x,0);
@@ -309,7 +314,7 @@ void KaiTextCtrl::OnAccelerator(wxCommandEvent& event)
 	case ID_TCRIGHT:
 	case ID_TSRIGHT:
 	case ID_TCSRIGHT:
-		if(ID==ID_TRIGHT && Selend.x>Cursor.x){Cursor=Selend;Refresh(false);return;}
+		if(ID==ID_TRIGHT && Selend.x>Cursor.x){Cursor=Selend;MakeCursorVisible();return;}
 		if(Cursor.x>=(int)KText.Len()){return;}
 		if(ID==ID_TCRIGHT||ID==ID_TCSRIGHT){
 			if(Cursor.x==KText.Len()-1){
@@ -321,7 +326,7 @@ void KaiTextCtrl::OnAccelerator(wxCommandEvent& event)
 		else if(ID!=ID_TCRIGHT && ID!=ID_TCSRIGHT){Cursor.x++;}
 
 		if(ID<ID_TSRIGHT){Selend=Cursor;}
-		MakeCursorVisible(true);
+		MakeCursorVisible();
 		break;
 
 	case ID_TDOWN:
@@ -480,12 +485,12 @@ void KaiTextCtrl::OnMouseEvent(wxMouseEvent& event)
 
 	if(event.RightUp())
 	{
-		wxLogStatus("right");
 		wxPoint pos=event.GetPosition();
 		ContextMenu(pos);
 	}
 
 	if(event.GetWheelRotation() != 0 && (style & wxTE_MULTILINE)){
+		if(style & SCROLL_ON_FOCUS && !HasFocus()){event.Skip(); return;}
 		int step = 10 * event.GetWheelRotation() / event.GetWheelDelta();
 		if(step>0 && scPos==0){return;}
 		scPos = MAX(scPos - step, 0);
@@ -590,9 +595,12 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 {
 	int fw=0,fh=0;
 	bool enabled = IsThisEnabled();
+	wxColour bg = (background.IsOk())? background : Options.GetColour("Window Background");
+	wxColour fg = (foreground.IsOk())? foreground : Options.GetColour("Window Text");
 	dc.SetFont(font);
-	dc.SetBrush(wxBrush((enabled)? background : Options.GetColour("Window Inactive Background")));
-	dc.SetPen(wxPen((style & wxBORDER_NONE)? background : 
+	dc.SetBrush(wxBrush((enabled)? bg : 
+		Options.GetColour("Window Inactive Background")));
+	dc.SetPen(wxPen((style & wxBORDER_NONE)? bg : 
 		(HasFocus())? Options.GetColour("Editor Border Focus") : 
 		(enabled)? Options.GetColour("Editor Border") : Options.GetColour("Button Inactive Border")));
 	dc.DrawRectangle(0,0,w,h);
@@ -686,7 +694,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 		dc.DrawText(subline,positioning[i]+fww,posY);
 
 		}*/
-		dc.SetTextForeground((enabled)? foreground : Options.GetColour("Window Inactive Text"));
+		dc.SetTextForeground((enabled)? fg : Options.GetColour("Window Inactive Text"));
 		dc.DrawText(line,positioning[i]+tmpPosX,tmpPosY);
 
 		tmpPosY+=Fheight;
@@ -935,7 +943,7 @@ void KaiTextCtrl::Paste()
 wxPoint KaiTextCtrl::PosFromCursor(wxPoint cur, bool correctToScroll)
 {
 	int fw, fh;
-	if(cur.x<=0||cur.y<=0){return wxPoint(-scPos+2, (Fheight-scPos));}
+	if(cur.x<=0||cur.y<0){return wxPoint(-scPos+2, (Fheight-scPos));}
 	if(wraps.size()<2 || wraps[cur.y]==cur.x){fw=0;}
 	else{
 		wxString beforeCursor = KText.SubString(wraps[cur.y],cur.x-1);
@@ -1014,6 +1022,7 @@ void KaiTextCtrl::MakeCursorVisible(bool refreshit)
 {
 	wxSize size = GetClientSize();
 	wxPoint pixelPos = PosFromCursor(Cursor);
+	//wxLogStatus("cursor %i, %i", Cursor.x, Cursor.y);
 	long multiline = style & wxTE_MULTILINE; 
 	if(!multiline){
 		int moveFactor = size.x/5;
@@ -1064,81 +1073,3 @@ BEGIN_EVENT_TABLE(KaiTextCtrl,wxWindow)
 	EVT_MOUSE_CAPTURE_LOST(KaiTextCtrl::OnLostCapture)
 END_EVENT_TABLE()
 
-//bool KaiTextValidator::Validate(wxWindow *parent)
-//{
-//	// If window is disabled, simply return
-//    if ( !m_validatorWindow->IsEnabled() )
-//        return true;
-//
-//    KaiTextCtrl * const text = GetKaiTextCtrl();
-//    if ( !text )
-//        return false;
-//
-//    wxString val(text->GetValue());
-//
-//    wxString errormsg;
-//    if ( HasFlag(wxFILTER_EMPTY) && val.empty() )
-//    {
-//        errormsg = _("Required information entry is empty.");
-//    }
-//    else if ( !(errormsg = IsValid(val)).empty() )
-//    {
-//        // NB: this format string should always contain exactly one '%s'
-//        wxString buf;
-//        buf.Printf(errormsg, val.c_str());
-//        errormsg = buf;
-//    }
-//
-//    if ( !errormsg.empty() )
-//    {
-//        m_validatorWindow->SetFocus();
-//        wxMessageBox(errormsg, _("Validation conflict"),
-//                     wxOK | wxICON_EXCLAMATION, parent);
-//
-//        return false;
-//    }
-//
-//    return true;
-//}
-//    
-//bool KaiTextValidator::TransferToWindow()
-//{
-//	 if ( m_stringValue )
-//    {
-//        KaiTextCtrl * const text = GetKaiTextCtrl();
-//        if ( !text )
-//            return false;
-//
-//        text->SetValue(*m_stringValue);
-//    }
-//
-//    return true;
-//}
-//    
-//bool KaiTextValidator::TransferFromWindow()
-//{
-//	if ( m_stringValue )
-//    {
-//        KaiTextCtrl * const text = GetKaiTextCtrl();
-//        if ( !text )
-//            return false;
-//
-//        *m_stringValue = text->GetValue();
-//    }
-//
-//    return true;
-//}
-//
-//KaiTextCtrl *KaiTextValidator::GetKaiTextCtrl()
-//{
-//	if (m_validatorWindow->IsKindOf(CLASSINFO(KaiTextCtrl)))
-//    {
-//        return (KaiTextCtrl*)m_validatorWindow;
-//    }
-//
-//	wxFAIL_MSG(
-//        "KaiTextValidator can only be used with KaiTextCtrl"
-//    );
-//
-//    return NULL;
-//}

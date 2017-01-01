@@ -62,12 +62,6 @@ KaiSlider::KaiSlider(wxWindow *parent, int id, int _value, int _minRange, int _m
 		if(pageLoop.GetInterval()==500){pageLoop.Start(100);}
 	}, 2345);
 
-	//Bind(wxEVT_LEFT_DOWN, &KaiSlider::OnMouseEvent, this);
-	//Bind(wxEVT_LEFT_UP, &KaiSlider::OnMouseEvent, this);
-	////Bind(wxEVT_ENTER_WINDOW, &KaiCheckBox::OnMouseEvent, this);
-	//Bind(wxEVT_LEAVE_WINDOW, &KaiSlider::OnMouseEvent, this);
-	//Bind(wxEVT_SIZE, &KaiSlider::OnSize, this);
-	//Bind(wxEVT_PAINT, &KaiSlider::OnPaint, this);
 }
 	
 void KaiSlider::OnSize(wxSizeEvent& evt)

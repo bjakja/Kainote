@@ -19,6 +19,7 @@
 #include "OpennWrite.h"
 #include "KainoteMain.h"
 #include "Config.h"
+#include "KaiMessageBox.h"
 #include <wx/regex.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>
@@ -229,13 +230,13 @@ int Hotkeys::LoadHkeys(bool Audio)
 		int first = token.find(L".");//0.8.0.build
 		if(first> -1){
 			wxString ver = token.Mid(first+5).BeforeFirst(' ');
-			//wxMessageBox(ver);
+			//KaiMessageBox(ver);
 			int version=wxAtoi(ver);
 			checkVer=(version>487);
 		}
 	}
 	if(!checkVer){
-		wxMessageBox(_("Plik skrótów jest przestarzały zostanie zamieniony domyślnym"));
+		KaiMessageBox(_("Plik skrótów jest przestarzały zostanie zamieniony domyślnym"));
 		LoadDefault(hkeys,Audio);
 		SaveHkeys(Audio);
 		return 1;
@@ -428,7 +429,7 @@ HkeysDialog::HkeysDialog( wxWindow *parent, wxString name, char hotkeyWindow, bo
 	wxString windows[elems] = {_("Skrót globalny"),_("Skrót pola napisów"), _("Skrót pola edycji"), _("Skrót wideo"), _("Skrót audio")};
 	wxString scwins = "GNEWA";
 	if(showWindowSelection){
-		global=new wxChoice(this,-1,wxDefaultPosition,wxDefaultSize,elems, windows,wxWANTS_CHARS);
+		global=new KaiChoice(this,-1,wxDefaultPosition,wxDefaultSize,elems, windows,wxWANTS_CHARS);
 		global->SetSelection(scwins.find(hotkeyWindow));
 		global->Connect(wxEVT_KEY_DOWN, (wxObjectEventFunction)&HkeysDialog::OnKeyPress,0,this);
 	}
@@ -468,9 +469,9 @@ void HkeysDialog::OnKeyPress(wxKeyEvent& event)
 
 		if(hotkey=="" && (type == 'G' || type == 'E') && (key>30 && key<127 || key>313 && key<318))//
 		{
-			wxMessageBox(_("Skróty globalne i edytora muszą zawierać modyfikatory (np. Shift, Ctrl, Alt)."));return;
+			KaiMessageBox(_("Skróty globalne i edytora muszą zawierać modyfikatory (np. Shift, Ctrl, Alt)."));return;
 		}else if( event.GetModifiers() == wxMOD_CONTROL && (key == 'V' || key == 'C' || key == 'X')){
-			wxMessageBox(_("Nie możesz użyć skrótów do kopiowania, wycinania i wklejania.")); return;
+			KaiMessageBox(_("Nie możesz użyć skrótów do kopiowania, wycinania i wklejania.")); return;
 		}
 
 		wxString keytxt=Hkeys.keys[key];

@@ -28,7 +28,7 @@
 #include "Stylelistbox.h"
 #include "Menu.h"
 #include <wx/regex.h>
-
+#include "KaiMessageBox.h"
 
 Grid::Grid(wxWindow* parent, kainoteFrame* kfparent,wxWindowID id,const wxPoint& pos,const wxSize& size, long style, const wxString& name)
 	: SubsGrid(parent, id, pos, size, style, name)
@@ -283,14 +283,14 @@ void Grid::OnPaste(int id)
 	if(id==PasteCollumns){
 		wxString arr[ ]={_("Warstwa"),_("Czas początkowy"),_("Czas końcowy"),_("Aktor"),_("Styl"),_("Margines lewy"),_("Margines prawy"),_("Margines pionowy"),_("Efekt"),_("Tekst")};
 		int vals[ ]={LAYER,START,END,ACTOR,STYLE,MARGINL,MARGINR,MARGINV,EFFECT,TXT};
-		Stylelistbox slx(this,false,arr,10);
+		Stylelistbox slx(this,false,10,arr);
 		if(slx.ShowModal()==wxID_OK)
 		{
 			rw=0;
 			for (size_t v=0;v<slx.CheckListBox1->GetCount();v++)
 			{
 
-				if(slx.CheckListBox1->IsChecked(v)){
+				if(slx.CheckListBox1->GetItem(v,0)->modified){
 					rw|= vals[v];
 				}
 			}
@@ -364,13 +364,13 @@ void Grid::CopyRows(int id)
 	if(id==CopyCollumns){
 		wxString arr[ ]={_("Warstwa"),_("Czas początkowy"),_("Czas końcowy"),_("Aktor"),_("Styl"),_("Margines lewy"),_("Margines prawy"),_("Margines pionowy"),_("Efekt"),_("Tekst"),_("Tekst bez tagów")};
 		int vals[ ]={LAYER,START,END,ACTOR,STYLE,MARGINL,MARGINR,MARGINV,EFFECT,TXT,TXTTL};
-		Stylelistbox slx(this,false,arr,11);
+		Stylelistbox slx(this,false,11,arr);
 		if(slx.ShowModal()==wxID_OK)
 		{
 			for (size_t v=0;v<slx.CheckListBox1->GetCount();v++)
 			{
 
-				if(slx.CheckListBox1->IsChecked(v)){
+				if(slx.CheckListBox1->GetItem(v,0)->modified){
 					cols|= vals[v];
 				}
 			}
@@ -562,17 +562,14 @@ void Grid::MoveTextTL(char mode)
 {
 
 	wxArrayInt selecs=GetSels(true);
-	//wxString kkk1;
-	//wxMessageBox(kkk1<<selecs[0]);
-
+	
 	if(selecs.GetCount()<1||!showtl||!transl)return;
 	int first=selecs[0];
 	int mrow=1;
 	if(selecs.GetCount()>1){
 		mrow=selecs[1]-first;
 	}
-	//wxString kkk;
-	//wxMessageBox(kkk<<first<<" "<<mrow);
+	
 	if(mode<3){// w górę ^
 		//tryb 2 gdzie dodaje puste linijki a tekst pl pozostaje bez zmian
 		if(mode==2){
@@ -590,26 +587,19 @@ void Grid::MoveTextTL(char mode)
 					CopyDial(first)->TextTl << mid << GetDial(i+1)->TextTl;
 					if(i!=first){CopyDial(i)->TextTl = GetDial(i+mrow)->TextTl;}
 				}else if(i+mrow<GetCount()){
-					//wxLogStatus("onlytl mode0");
 					CopyDial(i)->TextTl = GetDial(i+mrow)->TextTl;
 				}
 			}
 			else if(i<GetCount()-mrow){
-				//wxLogStatus("onlytl i<GetCount()-mrow");
 				CopyDial(i)->TextTl = GetDial(i+mrow)->TextTl;}
 			else if(GetDial(i)->Text!=""){/*wxLogStatus("onlytl mrow--");*/mrow--;}
 
 		}
-		//wxString kkk1;
-		//wxMessageBox(kkk1<<dial.size()<<" "<<sel.size());
-
+		
 		if(mrow>0){
-			//wxLogStatus("onlytl DeleteRow");
 			DeleteRow(GetCount()-mrow, mrow);
 		}
 
-		//wxString kkk;
-		//wxMessageBox(kkk<<dial.size()<<" "<<sel.size());
 	}else{//w dół v
 		int oldgc=GetCount();
 		Dialogue diall;
@@ -650,7 +640,7 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 {
 	int idd=event.GetId();
 	if(Modified){
-		int wbutton=wxMessageBox(_("Zapisać plik przed wczytaniem napisów z MKV?"), 
+		int wbutton=KaiMessageBox(_("Zapisać plik przed wczytaniem napisów z MKV?"), 
 			_("Potwierdzenie"),wxICON_QUESTION | wxYES_NO |wxCANCEL, this);
 		if (wbutton==wxYES){Kai->Save(false);}
 		else if(wbutton==wxCANCEL){return;}}
@@ -695,7 +685,7 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 
 		}
 		if(Kai->GetTab()->Video->GetState()!=None){Kai->GetTab()->Video->OpenSubs(SaveText());
-			if(!isgood){wxMessageBox(_("Otwieranie napisów nie powiodło się"), _("Uwaga"));}
+			if(!isgood){KaiMessageBox(_("Otwieranie napisów nie powiodło się"), _("Uwaga"));}
 			if(Kai->GetTab()->Video->GetState()==Paused){Kai->GetTab()->Video->Render();}
 		}
 
@@ -1007,17 +997,17 @@ public:
 		valid.SetIncludes(includes);
 
 		fpsy.Add("23.976");fpsy.Add("24");fpsy.Add("25");fpsy.Add("29.97");fpsy.Add("30");fpsy.Add("60");
-		oldfps=new wxComboBox(this,-1,"",wxDefaultPosition,wxDefaultSize,fpsy,0,valid);
+		oldfps=new KaiChoice(this,-1,"",wxDefaultPosition,wxDefaultSize,fpsy,0,valid);
 		oldfps->SetSelection(0);
-		newfps=new wxComboBox(this,-1,"",wxDefaultPosition,wxDefaultSize,fpsy,0,valid);
+		newfps=new KaiChoice(this,-1,"",wxDefaultPosition,wxDefaultSize,fpsy,0,valid);
 		newfps->SetSelection(2);
 		sizer->Add(new wxStaticText(this,-1,_("FPS napisów")),0,wxALIGN_CENTER_VERTICAL|wxALL,4);
 		sizer->Add(oldfps,0,wxEXPAND|wxALL,4);
 		sizer->Add(new wxStaticText(this,-1,_("Nowy FPS napisów")),0,wxALIGN_CENTER_VERTICAL|wxALL,4);
 		sizer->Add(newfps,0,wxEXPAND|wxALL,4);
-		wxButton *ok=new wxButton(this,15555,_("Zmień fps"));
+		MappedButton *ok=new MappedButton(this,15555,_("Zmień fps"));
 		Connect(15555,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&fpsdial::OkClick);
-		wxButton *cancel=new wxButton(this,wxID_CANCEL,_("Anuluj"));
+		MappedButton *cancel=new MappedButton(this,wxID_CANCEL,_("Anuluj"));
 		sizer->Add(ok,0,wxEXPAND|wxALL,4);
 		sizer->Add(cancel,0,wxEXPAND|wxALL,4);
 		SetSizerAndFit(sizer);
@@ -1029,11 +1019,11 @@ public:
 
 		if(oldfps->GetValue().ToDouble(&ofps) && newfps->GetValue().ToDouble(&nfps)){
 			EndModal(1);
-		}else{wxMessageBox(_("Niewłaściwy fps"));}
+		}else{KaiMessageBox(_("Niewłaściwy fps"));}
 	}
 	double ofps,nfps;
-	wxComboBox *oldfps;
-	wxComboBox *newfps;
+	KaiChoice *oldfps;
+	KaiChoice *newfps;
 };
 
 void Grid::OnSetNewFPS()

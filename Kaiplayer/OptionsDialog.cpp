@@ -24,19 +24,22 @@
 #include "ColorPicker.h"
 #include "KaiTextCtrl.h"
 #include "FontDialog.h"
-#include "KaiListCtrl.h"
 #include "OpennWrite.h"
+#include "KaiMessageBox.h"
+
 
 OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	: wxDialog(parent,-1,_("Opcje"),wxDefaultPosition,wxDefaultSize,wxDEFAULT_DIALOG_STYLE,"Options")
 {
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
+	wxColour text = Options.GetColour("Window Text");
+	wxColour window = Options.GetColour("Window Background");
+	SetForegroundColour(text);
+	SetBackgroundColour(window);
 
-	OptionsTree= new wxTreebook(this,-1);
-	OptionsTree->SetForegroundColour(Options.GetColour("Window Text"));
-	OptionsTree->SetBackgroundColour(Options.GetColour("Window Background"));
-	
+	OptionsTree= new KaiTreebook(this,-1);
+	OptionsTree->SetForegroundColour(text);
+	OptionsTree->SetBackgroundColour(window);
+
 	Kai=kaiparent;
 	Stylelist=NULL;
 	Katlist=NULL;
@@ -46,26 +49,47 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	SetIcon(icn);
 
 	wxPanel *Main= new wxPanel(OptionsTree);
-	Main->SetForegroundColour(Options.GetColour("Window Text"));
-	Main->SetBackgroundColour(Options.GetColour("Window Background"));
+	Main->SetForegroundColour(text);
+	Main->SetBackgroundColour(window);
 	wxPanel *ConvOpt= new wxPanel(OptionsTree);
-	ConvOpt->SetForegroundColour(Options.GetColour("Window Text"));
-	ConvOpt->SetBackgroundColour(Options.GetColour("Window Background"));
+	ConvOpt->SetForegroundColour(text);
+	ConvOpt->SetBackgroundColour(window);
 	wxPanel *Hotkeyss= new wxPanel(OptionsTree);
-	Hotkeyss->SetForegroundColour(Options.GetColour("Window Text"));
-	Hotkeyss->SetBackgroundColour(Options.GetColour("Window Background"));
+	Hotkeyss->SetForegroundColour(text);
+	Hotkeyss->SetBackgroundColour(window);
 	wxPanel *AudioMain= new wxPanel(OptionsTree);
-	AudioMain->SetForegroundColour(Options.GetColour("Window Text"));
-	AudioMain->SetBackgroundColour(Options.GetColour("Window Background"));
+	AudioMain->SetForegroundColour(text);
+	AudioMain->SetBackgroundColour(window);
 	wxPanel *Video= new wxPanel(OptionsTree);
-	Video->SetForegroundColour(Options.GetColour("Window Text"));
-	Video->SetBackgroundColour(Options.GetColour("Window Background"));
+	Video->SetForegroundColour(text);
+	Video->SetBackgroundColour(window);
 	wxPanel *Themes= new wxPanel(OptionsTree);
-	Themes->SetForegroundColour(Options.GetColour("Window Text"));
-	Themes->SetBackgroundColour(Options.GetColour("Window Background"));
+	Themes->SetForegroundColour(text);
+	Themes->SetBackgroundColour(window);
+
+	Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
+		wxColour text = Options.GetColour("Window Text");
+		wxColour window = Options.GetColour("Window Background");
+		SetForegroundColour(text);
+		SetBackgroundColour(window);
+		OptionsTree->SetForegroundColour(text);
+		OptionsTree->SetBackgroundColour(window);
+		Main->SetForegroundColour(text);
+		Main->SetBackgroundColour(window);
+		ConvOpt->SetForegroundColour(text);
+		ConvOpt->SetBackgroundColour(window);
+		Hotkeyss->SetForegroundColour(text);
+		Hotkeyss->SetBackgroundColour(window);
+		AudioMain->SetForegroundColour(text);
+		AudioMain->SetBackgroundColour(window);
+		Video->SetForegroundColour(text);
+		Video->SetBackgroundColour(window);
+		Themes->SetForegroundColour(text);
+		Themes->SetBackgroundColour(window);
+	});
 
 	hkeymodif=0;
-	if(!Options.AudioOpts && !Options.LoadAudioOpts()){wxMessageBox(_("Dupa blada, opcje się nie wczytały, audio nie skonfigurujesz"), _("Błędny błąd"));}
+	if(!Options.AudioOpts && !Options.LoadAudioOpts()){KaiMessageBox(_("Dupa blada, opcje się nie wczytały, audio nie skonfigurujesz"), _("Błędny błąd"));}
 
 	//Main
 	{
@@ -93,14 +117,14 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		SpellChecker::AvailableDics(dics);
 		if(dics.size()==0){dics.Add(_("Umieść pliki .dic i .aff do folderu \"Dictionary\""));}
 		KaiStaticBoxSizer *dicSizer=new KaiStaticBoxSizer(wxVERTICAL, Main, _("Język sprawdzania pisowni (folder \"Dictionary\")"));
-		
+
 		KaiChoice *dic=new KaiChoice(Main,10001,wxDefaultPosition,wxDefaultSize,dics);
 
 		dic->SetSelection(dic->FindString(Options.GetString("Dictionary Name")));
 		ConOpt(dic,"Dictionary Name");
 		dicSizer->Add(dic,0,wxALL|wxEXPAND,2);
 		MainSizer->Add(dicSizer,0,wxRIGHT|wxEXPAND,5);
-	
+
 		for(int i=0;i<10;i++)
 		{
 			KaiCheckBox *opt=new KaiCheckBox(Main,-1,labels[i]);
@@ -109,7 +133,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			MainSizer->Add(opt,0,wxALL,2);
 		}
 
-	
+
 		wxBoxSizer *MainSizer1=new wxBoxSizer(wxHORIZONTAL);
 		wxFlexGridSizer *MainSizer2=new wxFlexGridSizer(5,2,wxSize(5,5));
 		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieć inny id
@@ -123,7 +147,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		ConOpt(sc1,"Offset of end time");
 		ConOpt(sc2,"Grid tag changing char");
 		ConOpt(sc3,"Editbox tag buttons");
-		
+
 		MainSizer2->Add(new wxStaticText(Main,-1,_("Opóźnienie klatek początkowych w ms:")),0,wxALIGN_CENTRE_VERTICAL);
 		MainSizer2->Add(sc,0);
 		MainSizer2->Add(new wxStaticText(Main,-1,_("Opóźnienie klatek końcowych w ms:")),0,wxALIGN_CENTRE_VERTICAL);
@@ -134,20 +158,20 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		MainSizer2->Add(sc3,0);
 		MainSizer2->Add(new wxStaticText(Main,-1,labels[10]),0,wxALIGN_CENTRE_VERTICAL);
 		MainSizer2->Add(ltl,0);
-	
+
 		MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
 
 		FontPickerButton *optf=new FontPickerButton(Main,-1,wxFont(Options.GetInt("Grid Font Size"),wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,Options.GetString("Grid Font Name")));
 		ConOpt(optf,"Grid Font");
 		MainSizer1->Add(new wxStaticText(Main,-1,_("Czcionka pola napisów:")),0,wxRIGHT| wxALIGN_CENTRE_VERTICAL,5);
 		MainSizer1->Add(optf,0);
-	
+
 		MainSizer->Add(MainSizer1,0,wxLEFT|wxTOP,2);
 
 		Main->SetSizerAndFit(MainSizer);
 	}
 
-		//Ustawienia konwersji
+	//Ustawienia konwersji
 	{
 		wxBoxSizer *ConvOptSizer1=new wxBoxSizer(wxVERTICAL);
 
@@ -160,11 +184,11 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxArrayString styles;
 		wxArrayString fpsy;
 
-		
+
 
 		fpsy.Add("23.976");fpsy.Add("24");fpsy.Add("25");fpsy.Add("29.97");fpsy.Add("30");fpsy.Add("60");
 
-        for(int i = 0;i<2;i++){
+		for(int i = 0;i<2;i++){
 			wxString optname=(i==0)? Options.GetString("Default Style Catalog") : Options.GetString("Default Style");
 			if(i!=0){
 				for(int i = 0; i<Options.StoreSize();i++){
@@ -172,14 +196,14 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 				}
 			}
 			KaiChoice *cmb = new KaiChoice(ConvOpt, (i==0)?28888 : 28889, wxDefaultPosition, wxSize(200,-1), (i==0)?Options.dirs : styles, wxTE_PROCESS_ENTER);
-		
+
 			int sel=cmb->FindString(optname);
-			
+
 			if(sel>=0){cmb->SetSelection(sel);if(i==0 && Options.acdir!=optname){Options.LoadStyles(optname);}}
 			else{
 				if(i==0){sel=cmb->FindString(Options.acdir);}cmb->SetSelection(MAX(0,sel));
 				wxString co=(i==0)?_("katalog dla stylu") : _("styl"); 
-				wxMessageBox(wxString::Format(_("Wybrany %s konwersji nie istnieje,\nzostanie zmieniony na domyślny"), co),_("Uwaga"));}
+				KaiMessageBox(wxString::Format(_("Wybrany %s konwersji nie istnieje,\nzostanie zmieniony na domyślny"), co),_("Uwaga"));}
 
 			ConOpt(cmb,(i==0)? "Default Style Catalog" : "Default Style");
 			if(i==0){
@@ -200,10 +224,10 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		if(sel>=0){cmb->SetSelection(sel);}
 		else{cmb->SetValue(Options.GetString("Default FPS"));}
 
-	    ConOpt(cmb,"Default FPS");
+		ConOpt(cmb,"Default FPS");
 		obr1->Add(cmb,1,wxCENTER);
 		ConvOptSizer1->Add(obr1,0,wxRIGHT|wxEXPAND,5);
-		
+
 
 		for(int i=0;i<3;i++)
 		{
@@ -222,7 +246,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		sc = new NumCtrl(ConvOpt, 20000, Options.GetString("Convert Resolution W"), 1, 3000, true, wxDefaultPosition, wxSize(115,-1), wxTE_PROCESS_ENTER);
 		ConOpt(sc,"Convert Resolution W");
 		obr4->Add(sc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
-		
+
 		wxStaticText* txt= new wxStaticText(ConvOpt,-1," X ");
 		obr4->Add(txt,0,wxALL|wxALIGN_CENTER|wxALIGN_CENTER_VERTICAL|wxEXPAND,2);
 
@@ -230,7 +254,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		ConOpt(sc,"Convert Resolution H");
 		obr4->Add(sc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
 		ConvOptSizer1->Add(obr4,0,wxRIGHT|wxEXPAND,5);
-		
+
 		KaiTextCtrl *tc = new KaiTextCtrl(ConvOpt, -1, Options.GetString("Ass Conversion Prefix"), wxDefaultPosition, wxSize(250,-1),wxTE_PROCESS_ENTER);
 		ConOpt(tc,"Ass Conversion Prefix");
 		obr3->Add(tc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
@@ -260,17 +284,17 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 		Video->SetSizerAndFit(MainSizer);
 	}
-		//Hotkeys
+	//Hotkeys
 	{
 		wxBoxSizer *HkeysSizer=new wxBoxSizer(wxVERTICAL);
-		Shortcuts = new wxListCtrl(Hotkeyss,26667,wxDefaultPosition,wxDefaultSize,wxLC_REPORT | wxLC_SINGLE_SEL);
-		Shortcuts->InsertColumn(0,_("Funkcja"),wxLIST_FORMAT_LEFT,220);
-		Shortcuts->InsertColumn(1,_("Skrót"),wxLIST_FORMAT_LEFT,120);
-		Connect(26667,wxEVT_COMMAND_LIST_ITEM_ACTIVATED,(wxObjectEventFunction)&OptionsDialog::OnMapHkey);
-		Connect(26667,wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);		
+		Shortcuts = new KaiListCtrl(Hotkeyss,26667,wxDefaultPosition,wxDefaultSize,wxLC_REPORT | wxLC_SINGLE_SEL);
+		Shortcuts->InsertColumn(0,_("Funkcja"),TYPE_TEXT,220);
+		Shortcuts->InsertColumn(1,_("Skrót"),TYPE_TEXT,120);
+		Connect(26667,LIST_ITEM_DOUBLECLICKED,(wxObjectEventFunction)&OptionsDialog::OnMapHkey);
+		Connect(26667,LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);		
 
-		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){wxMessageBox(_("Dupa blada, skróty klawiszowe nie wczytały się, na audio nie podziałasz"), _("Błędny błąd"));}
-		
+		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){KaiMessageBox(_("Dupa blada, skróty klawiszowe nie wczytały się, na audio nie podziałasz"), _("Błędny błąd"));}
+
 		std::map<idAndType, hdata> _hkeys;
 		Hkeys.LoadDefault(_hkeys);
 		Hkeys.LoadDefault(_hkeys,true);
@@ -299,22 +323,22 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 						}
 					}
 				}
-				
+
 			}
 
 			wxString name=wxString(cur->first.Type)<<" "<<cur->second.Name;
-			long pos = Shortcuts->InsertItem(ii,name);
-			Shortcuts->SetItem(pos,1,cur->second.Accel);
+			long pos = Shortcuts->AppendItem(new ItemText(name));
+			Shortcuts->SetItem(pos,1,new ItemText(cur->second.Accel));
 			ii++;
 		}
 
-		
+
 		HkeysSizer->Add(Shortcuts,1,wxALL|wxEXPAND,2);
 		Hotkeyss->SetSizerAndFit(HkeysSizer);
-		
+
 	}
 
-		//Audio main
+	//Audio main
 
 	{
 		wxBoxSizer *audio=new wxBoxSizer(wxVERTICAL);
@@ -353,12 +377,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		audio->Add(DelaySizer,0,wxRIGHT|wxEXPAND,5);
 		audio->Add(audiocols,0,wxRIGHT|wxEXPAND,5);
 		audio->Add(audiocols1,0,wxRIGHT|wxEXPAND,5);
-		
+
 
 		AudioMain->SetSizerAndFit(audio);
 	}
 
-		//Themes
+	//Themes
 	{
 		//18+29=47+17+2 = 66 + 7 = 73
 		wxString labels[74]={
@@ -427,7 +451,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			"Menu Bar Background Selection","Menu Background","Menu Border Selection","Menu Background Selection",
 			"Style Preview Color1","Style Preview Color2"
 		};
-		
+
 		wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 		wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
 		wxArrayString choices;
@@ -444,20 +468,20 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		}
 		KaiChoice *themeList = new KaiChoice(Themes,14567,wxDefaultPosition, wxDefaultSize, choices);
 		themeList->SetSelection(themeList->FindString(programTheme));
-		
+
 		KaiTextCtrl *newTheme = new KaiTextCtrl(Themes,-1,"");
 		MappedButton *copyTheme = new MappedButton(Themes,14566,_("Kopiuj"));
-		
-		
-		
+
+
+
 		sizer->Add(themeList, 0, wxALL|wxEXPAND, 2);
 		sizer1->Add(newTheme, 1, wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 2);
 		sizer1->Add(copyTheme, 0, wxLEFT|wxTOP|wxBOTTOM, 2);
 		sizer->Add(sizer1, 0, wxALL|wxEXPAND, 2);
 
 		KaiListCtrl *List = new KaiListCtrl(Themes, -1, wxDefaultPosition, wxSize(300, -1));
-		List->InsertCollumn(0, _("Nazwa"), TYPE_TEXT, 240);
-		List->InsertCollumn(1, _("Kolor"), TYPE_COLOR, 150);
+		List->InsertColumn(0, _("Nazwa"), TYPE_TEXT, 240);
+		List->InsertColumn(1, _("Kolor"), TYPE_COLOR, 150);
 		for(int i=0;i<74;i++)
 		{
 			int row = List->AppendItem(new ItemText(labels[i]));
@@ -473,9 +497,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			wxString copyPath = dir + themeName + ".txt";
 			if(originalName== "Default"){
 				Options.SaveColors(copyPath);
-				
+
 			}else{
-				
+
 				if(!wxDirExists(dir)){
 					wxBell(); return;
 				}
@@ -497,7 +521,20 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 				ItemColor *item = (ItemColor*)List->GetItem(i, 1);
 				item->col = Options.GetColor(item->name);
 			}
-			List->Refresh(false);
+			wxColour windowColor = Options.GetColour("Window Background");
+			wxColour textColor = Options.GetColour("Window Text");
+			wxWindow *tab = Notebook::GetTab();
+			tab->SetBackgroundColour(windowColor);
+			tab->SetForegroundColour(textColor);
+			const wxWindowList& siblings = tab->GetChildren();
+			for(auto it = siblings.begin(); it != siblings.end(); it++){
+				(*it)->SetBackgroundColour(windowColor);
+				(*it)->SetForegroundColour(textColor);
+
+			}
+			wxSysColourChangedEvent evt;
+			wxQueueEvent(GetParent(), evt.Clone());
+			ProcessEvent(evt);
 			this->Refresh(false);
 			parent->Refresh(false);
 			List->Enable(themeName != "Default");
@@ -506,16 +543,16 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		Themes->SetSizerAndFit(sizer);
 		ConOpt(List,"Colors");
 	}
-		
+
 	//Adding pages
-	OptionsTree->AddPage(Main,_("Edytor"),true);
-	OptionsTree->AddSubPage(ConvOpt,_("Konwersja"),true);
-	OptionsTree->AddPage(Video,_("Wideo"),true);
-	OptionsTree->AddPage(AudioMain,_("Audio"),true);
-	OptionsTree->AddPage(Themes,_("Motywy"),true);
-	OptionsTree->AddPage(Hotkeyss,_("Skróty klawiszowe"),true);
+	OptionsTree->AddPage(Main,_("Edytor"));
+	OptionsTree->AddSubPage(ConvOpt,_("Konwersja"));
+	OptionsTree->AddPage(Video,_("Wideo"));
+	OptionsTree->AddPage(AudioMain,_("Audio"));
+	OptionsTree->AddPage(Themes,_("Motywy"));
+	OptionsTree->AddPage(Hotkeyss,_("Skróty klawiszowe"));
 	OptionsTree->Fit();
-		
+
 	//adding buttons
 	wxBoxSizer *ButtonsSizer=new wxBoxSizer(wxHORIZONTAL);
 
@@ -534,15 +571,16 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 	CenterOnParent();
 
-    Connect(ID_BCOMMIT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&OptionsDialog::OnSaveClick);
-    Bind(wxEVT_CLOSE_WINDOW, [=](wxCloseEvent &evt){Hide();});
+	Connect(wxID_OK,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&OptionsDialog::OnSaveClick);
+	Connect(ID_BCOMMIT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&OptionsDialog::OnSaveClick);
+	Bind(wxEVT_CLOSE_WINDOW, [=](wxCloseEvent &evt){Hide();});
 
 	wxAcceleratorEntry entries[1];
 	entries[0].Set(wxACCEL_NORMAL, WXK_RETURN, wxID_OK);
 	wxAcceleratorTable accel(1, entries);
 	this->SetAcceleratorTable(accel);
-	
-		
+
+
 }
 
 OptionsDialog::~OptionsDialog()
@@ -574,6 +612,7 @@ void OptionsDialog::OnSaveClick(wxCommandEvent& event)
 		Hkeys.SaveHkeys(true);
 		if(Kai->GetTab()->Edit->ABox){Kai->GetTab()->Edit->ABox->SetAccels();}
 	}
+	if(event.GetId()==wxID_OK){Hide();}
 }
 
 void OptionsDialog::SetOptions(bool saveall)
@@ -609,13 +648,6 @@ void OptionsDialog::SetOptions(bool saveall)
 				Options.SetInt(OB.option+" Size",fontsize);fontmod=true;
 			}
 		}
-		/*else if(OB.ctrl->IsKindOf(CLASSINFO(KaiChoice))){
-			KaiChoice *cbx=(KaiChoice*)OB.ctrl;
-			wxString kol=cbx->GetValue();
-			if(Options.GetString(OB.option)!=kol){
-				Options.SetString(OB.option,kol);
-			}
-		}*/
 		else if(OB.ctrl->IsKindOf(CLASSINFO(KaiChoice))){
 			KaiChoice *cbx=(KaiChoice*)OB.ctrl;
 			if(cbx->GetWindowStyle()&KAI_COMBO_BOX){
@@ -639,7 +671,7 @@ void OptionsDialog::SetOptions(bool saveall)
 				}
 			}
 		}else if(OB.ctrl->IsKindOf(CLASSINFO(KaiTextCtrl))){
-			
+
 			if(OB.ctrl->GetId()!=20000){
 				KaiTextCtrl *sc=(KaiTextCtrl*)OB.ctrl;
 				wxString str=sc->GetValue();
@@ -661,10 +693,26 @@ void OptionsDialog::SetOptions(bool saveall)
 			}
 		}else if(OB.ctrl->IsKindOf(CLASSINFO(KaiListCtrl))){
 			KaiListCtrl *list = (KaiListCtrl*)OB.ctrl;
-			if(list->GetModified()){
+			if(OB.option == "colors" && list->GetModified()){
 				list->SaveAll(1);
 				Options.SaveColors();
+				wxColour windowColor = Options.GetColour("Window Background");
+				wxColour textColor = Options.GetColour("Window Text");
+
+				wxWindow *tab = Notebook::GetTab();
+				tab->SetBackgroundColour(windowColor);
+				tab->SetForegroundColour(textColor);
+				const wxWindowList& siblings = tab->GetChildren();
+				for(auto it = siblings.begin(); it != siblings.end(); it++){
+					(*it)->SetBackgroundColour(windowColor);
+					(*it)->SetForegroundColour(textColor);
+
+				}
+				wxSysColourChangedEvent evt;
+				wxQueueEvent(GetParent(), evt.Clone());
+				ProcessEvent(evt);
 				GetParent()->Refresh(false);
+				this->Refresh();
 			}
 		}
 	}
@@ -676,28 +724,27 @@ void OptionsDialog::SetOptions(bool saveall)
 			Kai->Tabs->GetSecondPage()->Grid1->RepaintWindow();
 		}
 	}
-	if(colmod){
+	/*if(colmod){
 		Kai->GetTab()->Grid1->Refresh(false);
 		if(Kai->GetTab()->Edit->ABox){Kai->GetTab()->Edit->ABox->audioDisplay->ChangeColours();}
 		if(Kai->Tabs->split){
 			Kai->Tabs->GetSecondPage()->Grid1->Refresh(false);
 			if(Kai->Tabs->GetSecondPage()->Edit->ABox){Kai->Tabs->GetSecondPage()->Edit->ABox->audioDisplay->ChangeColours();}
 		}
-	}
+	}*/
 	Options.SaveOptions();
 	Options.SaveAudioOpts();
 }
 
-void OptionsDialog::OnMapHkey(wxListEvent& event)
+void OptionsDialog::OnMapHkey(wxCommandEvent& event)
 {
-	int inum=event.GetIndex();
-	//wxListItem item=event.GetItem();
-	wxString itemtext=Shortcuts->GetItemText(inum,0);
-	wxString hotkey=Shortcuts->GetItemText(inum,1);
+	int inum=event.GetInt();
+	wxString itemtext=Shortcuts->GetItem(inum,0)->name;
+	wxString hotkey=Shortcuts->GetItem(inum,1)->name;
 	wxString shkey=itemtext.AfterFirst(' ');
 	HkeysDialog hkd(this,shkey, itemtext[0], !shkey.StartsWith("Script") );
 	if(hkd.ShowModal()==wxID_OK){
-	
+
 		const idAndType *itype=NULL;
 		for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
 			if(cur->second.Name == shkey){itype= new idAndType(cur->first.id, hkd.type);}
@@ -712,53 +759,52 @@ void OptionsDialog::OnMapHkey(wxListEvent& event)
 				{
 					if(result==wxNO){hotkey="";}
 					cur->second.Accel=hotkey;
-					long nitem=Shortcuts->FindItem(-1, wxString(cur->first.Type) + " " + cur->second.Name);
-					if(nitem!=-1){
-						Shortcuts->SetItem(nitem,1,hotkey);
+					Item *nitem=Shortcuts->FindItem(-1, wxString(cur->first.Type) + " " + cur->second.Name);
+					if(nitem){
+						Shortcuts->GetItem(inum,1)->name = hotkey;
+						Shortcuts->Refresh(false);
 					}
 				}else{ return;}
 			}
 		}
-		
+
 		if(!itype){return;};
 		Hkeys.SetHKey(*itype, shkey, hkd.hotkey);
 		if(itemtext[0] != hkd.type){
-			long pos = Shortcuts->InsertItem(Shortcuts->GetItemCount(),itemtext.replace(0,1,hkd.type));
-			Shortcuts->SetItem(pos,1,Hkeys.GetMenuH(*itype));
-			Shortcuts->SetItemState(inum, wxLIST_STATE_INUSE, wxLIST_STATE_INUSE);
-			Shortcuts->SetItemState(pos, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-			wxRect rc;
-			Shortcuts->GetItemRect (pos,rc);
-			Shortcuts->ScrollList(0,(pos- inum) * rc.height);
+			long pos = Shortcuts->AppendItem(new ItemText(itemtext.replace(0,1,hkd.type)));
+			Shortcuts->GetItem(pos,1)->name = Hkeys.GetMenuH(*itype);
+			Shortcuts->ScrollTo(pos);
 		}else{
-			Shortcuts->SetItem(inum,1,Hkeys.GetMenuH(*itype));
+			Shortcuts->GetItem(inum,1)->name = Hkeys.GetMenuH(*itype);
+			Shortcuts->Refresh(false);
 		}
-		
+
 		if(hkd.type=='A'){hkeymodif=2;}
 		else{hkeymodif=1;}
 		delete itype;
 	}
 }
 
-void OptionsDialog::OnResetHkey(wxListEvent& event)
+void OptionsDialog::OnResetHkey(wxCommandEvent& event)
 {
-	
-	wxListItem item=event.GetItem();
+	int inum=event.GetInt();
+	wxString itemtext=((ItemText*)Shortcuts->GetItem(inum,0))->name;
 	const idAndType *itype=NULL;
 	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){//wxLogStatus(cur->first);
-		if(cur->second.Name == item.GetText().AfterFirst(' ')){itype= &cur->first; }
+		if(cur->second.Name == itemtext.AfterFirst(' ')){itype= &cur->first; }
 	}
 	if(!itype){return;};
 	Hkeys.ResetKey(itype);
-	Shortcuts->SetItem(event.GetIndex(),1,Hkeys.GetMenuH(*itype));
-	if(item.GetText().StartsWith("A")){hkeymodif=2;}
+	//Shortcuts->SetItem(event.GetIndex(),1,Hkeys.GetMenuH(*itype));
+	((ItemText*)Shortcuts->GetItem(inum,1))->name = Hkeys.GetMenuH(*itype);
+	if(itemtext.StartsWith("A")){hkeymodif=2;}
 	else{hkeymodif=1;}
 }
 
 void OptionsDialog::OnChangeCatalog(wxCommandEvent& event)
 {
 	Options.SaveOptions(false);
-    Options.LoadStyles(Katlist->GetString(Katlist->GetSelection()));
+	Options.LoadStyles(Katlist->GetString(Katlist->GetSelection()));
 	Stylelist->Clear();
 	for(int i = 0; i<Options.StoreSize();i++){
 		Stylelist->Append(Options.GetStyle(i)->Name);

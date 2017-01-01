@@ -106,6 +106,7 @@ protected:
 //};
 
 enum{
+	SCROLL_ON_FOCUS=2,
 	TEXT_COPY=16545,
 	TEXT_PASTE,
 	TEXT_CUT,

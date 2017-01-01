@@ -1196,9 +1196,9 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 		if(msg->message == WM_MBUTTONUP || msg->message == WM_NCMBUTTONUP)
 		{
 			Menubar->HideMnemonics();
-		}else{
-			return 1;
-		}
+		}//else{
+			//return 0;
+		//}
 
 	}
 	/*if((msg->message != WM_MOUSEMOVE ) && Menubar->md){

@@ -18,6 +18,7 @@
 #include "KainoteApp.h"
 #include "Config.h"
 #include "MKVWrap.h"
+#include "KaiMessageBox.h"
 #include <objbase.h>
 #include <algorithm>
 #include <process.h>
@@ -71,7 +72,7 @@ void listw::OnShowDialog(wxThreadEvent &evt)
 	wxSemaphore *sema = evt.GetPayload<wxSemaphore*>();
 
 	//Show();
-	wxMessageBox("dupa blada");
+	//wxMessageBox("dupa blada");
 	sema->Post();
 }
 
@@ -100,8 +101,9 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *_s
 	,progress(0)
 	,thread(0)
 	,lastframe(-1)
+	,width(-1)
 {
-	if(!Options.AudioOpts && !Options.LoadAudioOpts()){wxMessageBox(_("Dupa blada, opcje się nie wczytały, na audio nie podziałasz"), _("Błędny błąd"));}
+	if(!Options.AudioOpts && !Options.LoadAudioOpts()){KaiMessageBox(_("Dupa blada, opcje się nie wczytały, na audio nie podziałasz"), _("Błędny błąd"));}
 	disccache = !Options.GetBool("Audio RAM Cache");
 
 	success=false;
@@ -150,7 +152,7 @@ void VideoFfmpeg::Processing()
 	int tdiff=0;
 
 	SetEvent(eventComplete);
-
+	if(width < 0){return;}
 
 	while(1){
 		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait)/sizeof(HANDLE), events_to_wait, FALSE, INFINITE);
@@ -709,7 +711,7 @@ bool VideoFfmpeg::CacheIt()
 	blnum=((float)end/(float)blsize)+1;
 	Cache=NULL;
 	Cache=new char*[blnum];
-	if(Cache==NULL){wxMessageBox(_("Za mało pamięci RAM"));return false;}
+	if(Cache==NULL){KaiMessageBox(_("Za mało pamięci RAM"));return false;}
 
 	//int64_t pos=0;
 	int64_t pos= (Delay<0)? -(SampleRate * Delay * BytesPerSample) : 0;

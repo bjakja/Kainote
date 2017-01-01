@@ -16,6 +16,8 @@
 #include "FindReplace.h"
 #include "KainoteMain.h"
 #include "KaiStaticBoxSizer.h"
+#include "KaiMessageBox.h"
+#include "Stylelistbox.h"
 #include <wx/intl.h>
 #include <wx/string.h>
 #include <wx/regex.h>
@@ -418,7 +420,7 @@ void findreplace::OnReplaceAll(wxCommandEvent& event)
 	pan->Grid1->SetModified();
 	pan->Grid1->Refresh(false);
 
-	wxMessageBox(wxString::Format(_("Zmieniono %i razy."),allreps1),_("Szukaj Zamień"));
+	KaiMessageBox(wxString::Format(_("Zmieniono %i razy."),allreps1),_("Szukaj Zamień"));
 	AddRecent();
 	//pan->Video->blockpaint=false;
 }
@@ -544,7 +546,7 @@ void findreplace::SelectLine()
 	wxString messagetxt= (sopt==0)? wxString::Format(_("Zaznaczono %i linijek."), allreps) :
 		(sopt==1)? wxString::Format(_("Dodano do zaznaczenia %i linijek."), allreps) : 
 		wxString::Format(_("Odznaczono %i linijek."), allreps);
-	wxMessageBox(messagetxt, _("Zaznacz"));
+	KaiMessageBox(messagetxt, _("Zaznacz"));
 }
 
 
@@ -718,14 +720,14 @@ void findreplace::Find()
 				}
 				else{postxt=0; posrow++;}
 				if(!foundsome && posrow> pan->Grid1->GetCount()-1){
-					if (wxMessageBox(_("Wyszukiwanie zakończone, rozpocząć od początku?"), _("Potwierdzenie"),
+					if (KaiMessageBox(_("Wyszukiwanie zakończone, rozpocząć od początku?"), _("Potwierdzenie"),
 						wxICON_QUESTION | wxYES_NO, this) == wxYES ){
 							posrow=0;foundsome=true;
 					}else{posrow=0;foundsome=true;break;}
 				}
 		}else{postxt=0;posrow++;}
 	}
-	if(!foundsome){wxMessageBox(_("Nie znaleziono podanej frazy \"")+FindText->GetValue()+"\".", _("Potwierdzenie")); fromstart=true;}
+	if(!foundsome){KaiMessageBox(_("Nie znaleziono podanej frazy \"")+FindText->GetValue()+"\".", _("Potwierdzenie")); fromstart=true;}
 	if(fromstart){AddRecent();fromstart=false;}
 	//Kai->Thaw();
 }
@@ -744,8 +746,7 @@ void findreplace::ReloadStyle()
 
 void findreplace::OnStylesWin(wxCommandEvent& event)
 {
-	wxString kkk=Kai->sftc();
-	tcstyle->SetValue(kkk);
+	tcstyle->SetValue(GetCheckedElements(Kai));
 }
 
 void findreplace::OnSelections(wxCommandEvent& event)
@@ -756,7 +757,7 @@ void findreplace::OnSelections(wxCommandEvent& event)
 
 void findreplace::OnStylesWin1(wxCommandEvent& event)
 {
-	wxString kkk=Kai->sftc();
+	wxString kkk=GetCheckedElements(Kai);
 	kkk.Replace(";","|");
 	RadioButton2->SetValue(true);
 	RegEx->SetValue(true);

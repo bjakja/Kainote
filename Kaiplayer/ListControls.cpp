@@ -41,7 +41,7 @@ inline void KaiChoice::CalcMaxWidth(wxSize *result, bool changex, bool changey){
 		if(tx > result->x && changex){result->x = tx;}
 		else if(!changex){break;}
 	}
-	if(changex){result->x += 20;}
+	if(changex){result->x += 26;}
 	if(changey){result->y = ty+10;}
 }
 
@@ -63,38 +63,12 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	list = new wxArrayString(n,choices);
 	disabled = new std::map<int, bool>();
 
-
-	//SetBestSize(newSize);
-	//SetMaxSize(wxSize(1000, 50));
 	SetFont(parent->GetFont());
 	wxSize newSize = size;
 	if(size.x < 1 || size.y<1){
 		CalcMaxWidth(&newSize, size.x < 1, size.y<1);
 	}
-	//wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? fh+10 : size.y);
 	SetMinSize(newSize);
-	SetForegroundColour(parent->GetForegroundColour());
-	//Bind(wxEVT_KILL_FOCUS, &KaiChoice::OnKillFocus, this);
-	//if(style & KAI_COMBO_BOX){
-	//	choiceText = new KaiTextCtrl(this, 27789, "", wxPoint(1,1), wxSize(newSize.x-22, newSize.y-2));
-	//	Bind(wxEVT_COMMAND_TEXT_UPDATED, [=](wxCommandEvent &evt){
-	//		SetSelectionByPartialName(choiceText->GetValue());
-	//	}, 27789);
-	//	choiceText->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-	//		//wxLogStatus("on accelerator up");
-	//		wxKeyEvent kevt;
-	//		kevt.m_keyCode = WXK_UP;
-	//		if(itemList&&itemList->IsShown()){itemList->OnKeyPress(kevt);}
-	//		else{evt.Skip();}
-	//	},ID_TUP);
-	//	choiceText->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-	//		//wxLogStatus("on accelerator down");
-	//		wxKeyEvent kevt;
-	//		kevt.m_keyCode = WXK_DOWN;
-	//		if(itemList&&itemList->IsShown()){itemList->OnKeyPress(kevt);}
-	//		else{evt.Skip();}
-	//	},ID_TDOWN);
-	//}
 }
 
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
@@ -121,28 +95,6 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 		CalcMaxWidth(&newSize, size.x < 1, size.y<1);
 	}
 	SetMinSize(newSize);
-	//Bind(wxEVT_KILL_FOCUS, &KaiChoice::OnKillFocus, this);
-	//if(style & KAI_COMBO_BOX){
-	//	choiceText = new KaiTextCtrl(this, 27789, "", wxPoint(1,1), wxSize(newSize.x-22, newSize.y-2), wxBORDER_NONE);
-	//	Bind(wxEVT_COMMAND_TEXT_UPDATED, [=](wxCommandEvent &evt){
-	//		SetSelectionByPartialName(choiceText->GetValue());
-	//	}, 27789);
-	//	choiceText->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-	//		//wxLogStatus("on accelerator up");
-	//		wxKeyEvent kevt;
-	//		kevt.m_keyCode = WXK_UP;
-	//		if(itemList&&itemList->IsShown()){itemList->OnKeyPress(kevt);}
-	//		else{evt.Skip();}
-	//	},ID_TUP);
-	//	choiceText->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-	//		//wxLogStatus("on accelerator down");
-	//		wxKeyEvent kevt;
-	//		kevt.m_keyCode = WXK_DOWN;
-	//		if(itemList&&itemList->IsShown()){itemList->OnKeyPress(kevt);}
-	//		else{evt.Skip();}
-	//	},ID_TDOWN);
-	//}
-	SetForegroundColour(parent->GetForegroundColour());
 }
 
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, const wxPoint& pos,
@@ -206,9 +158,9 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 		if(itemList&&itemList->IsShown()){itemList->OnKeyPress(kevt);}
 		else{evt.Skip();}
 	},ID_TDOWN);
-	SetForegroundColour(parent->GetForegroundColour());
-	choiceText->SetBackgroundColour(parent->GetBackgroundColour());
-	choiceText->SetForegroundColour(parent->GetForegroundColour());
+	//SetForegroundColour(parent->GetForegroundColour());
+	//choiceText->SetBackgroundColour(parent->GetBackgroundColour());
+	//choiceText->SetForegroundColour(parent->GetForegroundColour());
 }
 
 KaiChoice::~KaiChoice()
@@ -286,7 +238,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 				txt = txt.RemoveLast(2)+"...";
 			}
 			if(!choiceText){
-				tdc.SetTextForeground((enabled)? GetForegroundColour() : Options.GetColour("Window Inactive Text"));
+				tdc.SetTextForeground((enabled)? Options.GetColour("Window Text") : Options.GetColour("Window Inactive Text"));
 				//tdc.DrawText(txt, 4, (h-fh));
 				wxRect cur(5, (h-fh)/2, w - 19, fh);
 				tdc.SetClippingRegion(cur);

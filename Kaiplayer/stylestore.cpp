@@ -26,43 +26,8 @@
 #include <wx/intl.h>
 #include <wx/string.h>
 #include "StyleChange.h"
+#include "KaiMessageBox.h"
 #include <wx/fontenum.h>
-class MyMessageDialog : public wxDialog
-{
-public:
-	MyMessageDialog(wxWindow *parent, const wxString& msg, const wxString &caption)
-		: wxDialog(parent, -1, caption)
-	{
-		SetForegroundColour(Options.GetColour("Window Text"));
-		SetBackgroundColour(Options.GetColour("Window Background"));
-		wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
-		wxBoxSizer *sizer2 = new wxBoxSizer(wxVERTICAL);
-		wxStaticText *txt = new wxStaticText(this,-1,msg);
-		MappedButton *btn=NULL;
-		btn = new MappedButton(this,wxID_YES,_("Tak"));
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxID_YES);},wxID_YES);
-		sizer1->Add(btn,0,wxALL,3);
-		btn = new MappedButton(this,wxID_OK,_("Tak dla wszystkich"));
-		sizer1->Add(btn,0,wxALL,3);
-		btn = new MappedButton(this,wxID_NO,_("Nie"));
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxID_NO);},wxID_NO);
-		sizer1->Add(btn,0,wxALL,3);
-		btn = new MappedButton(this,wxID_CANCEL,_("Anuluj"));
-		sizer1->Add(btn,0,wxALL,3);
-		sizer2->Add(txt,0,wxTOP|wxLEFT|wxRIGHT|wxALIGN_CENTER_HORIZONTAL,6);
-		sizer2->Add(sizer1,0,wxALL,3);
-		SetSizerAndFit(sizer2);
-		CenterOnParent();
-	}
-
-};
-
-
-int ShowMessage(wxWindow *parent, const wxString& msg, const wxString &caption){
-	MyMessageDialog dlgmsg(parent, msg, caption);
-	return dlgmsg.ShowModal();
-
-}
 
 
 stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
@@ -256,12 +221,12 @@ void stylestore::OnAddToStore(wxCommandEvent& event)
 		Styles *stylc = grid->GetStyle(sels[i])->Copy();
 		int found=Options.FindStyle(stylc->Name);
 		if(found!=-1){
-			if(prompt != wxID_OK && prompt != wxID_CANCEL){
-				prompt = ShowMessage(this, wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"), 
-					stylc->Name), _("Potwierdzenie"));
+			if(prompt != wxYES_TO_ALL && prompt != wxCANCEL){
+				prompt = KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"), 
+					stylc->Name), _("Potwierdzenie"),wxYES_TO_ALL|wxYES|wxNO|wxCANCEL, this);
 				//if(prompt == wxID_CANCEL){return;}
 			}
-			if( prompt == wxID_YES || prompt == wxID_OK){
+			if( prompt == wxYES || prompt == wxYES_TO_ALL){
 				Options.ChangeStyle(stylc,found);Store->SetSelection(found);
 			}else{delete stylc;}
 		}else{Options.AddStyle(stylc);Store->SetSelection(Options.StoreSize()-1);}
@@ -284,11 +249,11 @@ void stylestore::OnAddToAss(wxCommandEvent& event)
 		Styles *stylc = Options.GetStyle(sels[i])->Copy();
 		int found=grid->FindStyle(stylc->Name);
 		if(found!=-1){
-			if(prompt != wxID_OK && prompt != wxID_CANCEL){
-				prompt = ShowMessage(this, wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"), 
-					stylc->Name), _("Potwierdzenie"));
+			if(prompt != wxYES_TO_ALL && prompt != wxCANCEL){
+				prompt = KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"), 
+					stylc->Name), _("Potwierdzenie"),wxYES_TO_ALL|wxYES|wxNO|wxCANCEL, this);
 			}
-			if( prompt == wxID_YES || prompt == wxID_OK){
+			if( prompt == wxYES || prompt == wxYES_TO_ALL){
 				grid->ChangeStyle(stylc,found);ASS->SetSelection(found);
 			}else{delete stylc;}
 		}else{grid->AddStyle(stylc);ASS->SetSelection(grid->StylesSize()-1);}
@@ -353,7 +318,7 @@ void stylestore::changestyle(Styles *cstyl)
 	if(fres!=-1 && dummy || (mult>1 || mult==1 && oldname!=cstyl->Name) && !dummy)
 	{
 		Mainall->Fit(this);
-		wxMessageBox(wxString::Format(_("Styl o nazwie \"%s\" jest już na liście."), cstyl->Name));
+		KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" jest już na liście."), cstyl->Name));
 		return;
 	}
 	if(fres!=-1){selnum=fres;}
@@ -374,7 +339,7 @@ void stylestore::changestyle(Styles *cstyl)
 	}
 	Mainall->Fit(this);
 	if(oldname!=cstyl->Name && stass && !dummy){
-		int res=wxMessageBox(_("Nazwa stylu została zmieniona, czy chcesz zmienić ją także w napisach?"), _("Potwierdzenie"), wxYES_NO);
+		int res=KaiMessageBox(_("Nazwa stylu została zmieniona, czy chcesz zmienić ją także w napisach?"), _("Potwierdzenie"), wxYES_NO);
 		if(res==wxYES){
 			for(int i=0; i<grid->GetCount(); i++){
 				if(grid->GetDial(i)->Style==oldname)
@@ -482,26 +447,26 @@ void stylestore::LoadStylesS(bool isass)
 		Stylelistbox stl(this);
 		for(size_t i=0;i<tmps.size();i++){
 
-			stl.CheckListBox1->Append(tmps[i]->Name);
+			stl.CheckListBox1->AppendItem(new ItemCheckBox(false, tmps[i]->Name));
 		}
 		if(isass){ASS->SetSelection(wxNOT_FOUND);}else{Store->SetSelection(wxNOT_FOUND);}
 		if(stl.ShowModal()== wxID_OK){
 			for (size_t v=0;v<stl.CheckListBox1->GetCount();v++)
 			{
-				if(stl.CheckListBox1->IsChecked(v)){
+				if(stl.CheckListBox1->GetItem(v, 0)->modified){
 
-					int fstyle= (isass)? grid->FindStyle(stl.CheckListBox1->GetString(v)) : Options.FindStyle(stl.CheckListBox1->GetString(v));
+					int fstyle= (isass)? grid->FindStyle(stl.CheckListBox1->GetItem(v, 0)->name) : Options.FindStyle(stl.CheckListBox1->GetItem(v, 0)->name);
 					if(fstyle==-1){
 						if(isass){grid->AddStyle(tmps[v]);ASS->Refresh(false);}
 						else{Options.AddStyle(tmps[v]);Store->Refresh(false);}
 					}
 					else{
-						if(prompt != wxID_OK && prompt != wxID_CANCEL){
-							prompt = ShowMessage(this, wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"), 
-								stl.CheckListBox1->GetString(v)), _("Potwierdzenie"));
+						if(prompt != wxYES_TO_ALL && prompt != wxCANCEL){
+							prompt = KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"), 
+								stl.CheckListBox1->GetItem(v, 0)->name), _("Potwierdzenie"),wxYES_TO_ALL|wxYES|wxNO|wxCANCEL, this);
 							//if(prompt == wxID_CANCEL){return;}
 						}
-						if( prompt == wxID_YES || prompt == wxID_OK  ){
+						if( prompt == wxYES || prompt == wxYES_TO_ALL  ){
 							if(isass){grid->ChangeStyle(tmps[v],fstyle);ASS->SetSelection(fstyle);}
 							else{Options.ChangeStyle(tmps[v],fstyle);Store->SetSelection(fstyle);}
 						}else{delete tmps[v];}
@@ -606,7 +571,7 @@ void stylestore::OnCleanStyles(wxCommandEvent& event)
 	if(!delStyles.empty()){
 		modif();
 	}
-	wxMessageBox(wxString::Format(_("Używane style:\n%s\nUsunięte style:\n%s"), existsStyles, delStyles), _("Status usuniętych stylów"));
+	KaiMessageBox(wxString::Format(_("Używane style:\n%s\nUsunięte style:\n%s"), existsStyles, delStyles), _("Status usuniętych stylów"));
 }
 
 void stylestore::StyleonVideo(Styles *styl, bool fullskreen)
@@ -643,7 +608,7 @@ void stylestore::StyleonVideo(Styles *styl, bool fullskreen)
 		else if(idr>=0){pan->Edit->SetIt(idr);grid->SelectRow(idr);grid->ScrollTo(idr-4);wl=idr;}
 
 		//wxString kkk;
-		//wxMessageBox(kkk<<"ip "<<ip<<"idr "<<idr);
+		//KaiMessageBox(kkk<<"ip "<<ip<<"idr "<<idr);
 
 	}
 

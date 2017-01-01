@@ -17,6 +17,7 @@
 #include "VersionKainote.h"
 #include "Config.h"
 #include "OpennWrite.h"
+#include "KaiMessageBox.h"
 #include <wx/settings.h>
 #include <wx/stdpaths.h>
 #include <wx/dir.h>
@@ -428,7 +429,7 @@ void config::LoadColors(const wxString &_themeName){
 			}
 			if(colors.size()>10){return;}
 		}
-		wxMessageBox(_("Nie można zaczytać motywu, zostanie przywrócony domyśny"));
+		KaiMessageBox(_("Nie można zaczytać motywu, zostanie przywrócony domyśny"));
 	}
 	LoadDefaultColors();	
 }

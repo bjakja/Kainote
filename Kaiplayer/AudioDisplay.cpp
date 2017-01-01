@@ -39,7 +39,7 @@
 
 #include "Config.h"
 
-//#include <wx/tglbtn.h>
+#include "KaiMessageBox.h"
 #include <wx/filename.h>
 #include <math.h>
 #include <vector>
@@ -1196,7 +1196,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 		catch (wxString &err) {
 			if (player) { delete player; player = 0; }
 			if (provider) { delete provider; provider = 0; }
-			wxMessageBox(err,_T("Error loading audio"),wxICON_ERROR | wxOK);
+			KaiMessageBox(err,_T("Error loading audio"),wxICON_ERROR | wxOK);
 		}
 		catch (...) {
 			if (player) { delete player; player = 0; }

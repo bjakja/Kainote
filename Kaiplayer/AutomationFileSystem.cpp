@@ -109,7 +109,7 @@ namespace Auto{
 			case ERROR_FILE_NOT_FOUND:
 				throw wxString("File not found: "+ from +".");
 			case ERROR_ACCESS_DENIED:
-				throw wxString("Could not overwrite " + to+".");
+				throw wxString("Could not overwrite " + to +".");
 			default:
 				throw wxString("Could not copy: " + ErrorString(GetLastError()));
 			}
@@ -177,7 +177,7 @@ namespace Auto{
 		if (FindNextFile(privdata->h, &data))
 			value = wxString(data.cFileName).ToStdString();
 		else {
-			privdata.reset();
+			if(privdata){privdata.reset();}
 			value.clear();
 		}
 		return *this;

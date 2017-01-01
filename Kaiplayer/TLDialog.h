@@ -16,8 +16,8 @@
 #ifndef TLDIALOG
 #define TLDIALOG
 
-#include <wx/wx.h>
-#include <wx/spinctrl.h>
+#include <wx/dialog.h>
+#include "MappedButton.h"
 
 #include "Grid.h"
 
@@ -29,12 +29,12 @@ public:
 
 	
 	
-	wxButton *Down;
-	wxButton *Up;
-	wxButton *UpJoin;
-	wxButton *DownJoin;
-	wxButton *DownDel;
-	wxButton *UpExt;
+	MappedButton *Down;
+	MappedButton *Up;
+	MappedButton *UpJoin;
+	MappedButton *DownJoin;
+	MappedButton *DownDel;
+	MappedButton *UpExt;
 
 private:
 	void OnUp(wxCommandEvent& event);

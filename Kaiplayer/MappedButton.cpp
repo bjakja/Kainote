@@ -28,6 +28,18 @@ wxColour WhiteUp(const wxColour &color)
 	return wxColour(r,g,b);
 }
 
+wxString AddText(int id)
+{
+	wxString label;
+	if(id == wxID_OK){label = "OK";}
+	else if(id==wxID_CANCEL){label=_("Anuluj");}
+	else if(id == wxID_APPLY){label = _("Zastosuj");}
+	else if(id==wxID_YES){label=_("Tak");}
+	else if(id==wxID_NO){label=_("Nie");}
+	//else jeszcze pewnie tego w chuj jest;
+	return label;
+}
+
 //w tooltipach nie nale¿y ustawiaæ () bo zostan¹ usuniête
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, const wxString& toolTip,
              const wxPoint& pos, const wxSize& size, int window, long style)
@@ -38,8 +50,11 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 			 ,enter(false)
 			 ,clicked(false)
 			 ,isColorButton(false)
+			 ,changedForeground(false)
 {
 	name = label;
+	if(name.IsEmpty()){name = AddText(id);}
+	name.Replace("&","");
 	wxSize newSize=size;
 	SetFont(parent->GetFont());
 	int fw, fh;
@@ -61,7 +76,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
 	if(toolTip!=""){SetToolTip(toolTip);}
-	SetForegroundColour(parent->GetForegroundColour());
+	//SetForegroundColour(parent->GetForegroundColour());
 	
 }
 
@@ -74,8 +89,11 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 			 ,enter(false)
 			 ,clicked(false)
 			 ,isColorButton(false)
+			 ,changedForeground(false)
 {
 	name = label;
+	if(name.IsEmpty()){name = AddText(id);}
+	name.Replace("&","");
 	wxSize newSize=size;
 	SetFont(parent->GetFont());
 	int fw, fh;
@@ -96,7 +114,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
-	SetForegroundColour(parent->GetForegroundColour());
+	//SetForegroundColour(parent->GetForegroundColour());
 }
 
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, const wxBitmap& bitmap, const wxPoint& pos,
@@ -108,6 +126,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 			 ,enter(false)
 			 ,clicked(false)
 			 ,isColorButton(false)
+			 ,changedForeground(false)
 {
 	icon = bitmap;
 	wxSize newSize=size;
@@ -130,7 +149,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
 	if(tooltip!=""){SetToolTip(tooltip);}
 	SetFont(parent->GetFont());
-	SetForegroundColour(parent->GetForegroundColour());
+	//SetForegroundColour(parent->GetForegroundColour());
 }
 
 MappedButton::~MappedButton()
@@ -184,10 +203,6 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
 	tdc.SetFont(GetFont());
-	/*wxColour background = GetParent()->GetBackgroundColour();
-	tdc.SetBrush(wxBrush(background));
-	tdc.SetPen(wxPen(background));
-	tdc.DrawRectangle(0,0,w,h);*/
 	bool enabled = IsThisEnabled();
 	tdc.SetBrush(wxBrush((enter && !clicked)? Options.GetColour("Button Background Hover") :
 		(clicked)? Options.GetColour("Button Background Pushed") : 
@@ -209,7 +224,9 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 			tdc.SetPen(wxPen(Options.GetColour("Button Border")));
 			tdc.DrawRectangle(4,4,w-8,h-8);
 		}
-		tdc.SetTextForeground((enabled)? GetForegroundColour() : Options.GetColour("Window Inactive Text"));
+		tdc.SetTextForeground((enabled && changedForeground)? GetForegroundColour() : 
+			(enabled)? Options.GetColour("Window Text") : 
+			Options.GetColour("Window Inactive Text"));
 		tdc.GetTextExtent(name, &fw, &fh);
 		wxRect cur(5, (h-fh)/2, w - 10, fh);
 		tdc.SetClippingRegion(cur);
@@ -305,7 +322,7 @@ ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, cons
 	Bind(wxEVT_PAINT, &ToggleButton::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, &ToggleButton::OnKeyPress, this);
 	if(tooltip!=""){SetToolTip(tooltip);}
-	SetForegroundColour(parent->GetForegroundColour());
+	//SetForegroundColour(parent->GetForegroundColour());
 }
 
 void ToggleButton::OnSize(wxSizeEvent& event)
@@ -399,5 +416,6 @@ void ToggleButton::OnKeyPress(wxKeyEvent &event)
 		this->ProcessEvent(evt);
 	}
 }
+
 
 wxIMPLEMENT_ABSTRACT_CLASS(MappedButton, wxWindow);

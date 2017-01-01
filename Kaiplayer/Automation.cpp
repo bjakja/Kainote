@@ -42,6 +42,7 @@
 
 #include "AutomationUtils.h"
 #include "AutomationScriptReader.h"
+#include "KaiMessageBox.h"
 
 #include <algorithm>
 #include <cassert>
@@ -1099,7 +1100,7 @@ namespace Auto{
 		delete cmdline;
 
 		if (!res) {
-			wxMessageBox(_("Nie można uruchomić edytora."), _("Błąd automatyzacji"), wxOK|wxICON_ERROR);
+			KaiMessageBox(_("Nie można uruchomić edytora."), _("Błąd automatyzacji"), wxOK|wxICON_ERROR);
 		}
 	}
 

@@ -171,7 +171,7 @@ void StylePreview::OnMouseEvent(wxMouseEvent& event)
 			PrevText->Destroy();PrevText=NULL;
 		}else{
 			wxSize siz=GetClientSize();
-			PrevText=new wxTextCtrl(this,-1,Options.GetString("Preview Text"),wxPoint(0,0),wxSize(siz.x,-1));
+			PrevText=new KaiTextCtrl(this,-1,Options.GetString("Preview Text"),wxPoint(0,0),wxSize(siz.x,-1));
 			PrevText->Show();
 		}
 

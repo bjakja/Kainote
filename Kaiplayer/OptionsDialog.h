@@ -21,6 +21,8 @@
 #include <wx/listctrl.h>
 #include "ListControls.h"
 #include "MappedButton.h"
+#include "KaiTreebook.h"
+#include "KaiListCtrl.h"
 #include <vector>
 class kainoteFrame;
 
@@ -36,8 +38,8 @@ class OptionsDialog : public wxDialog
 public:
 	OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent);
 	virtual ~OptionsDialog();
-	wxTreebook *OptionsTree;
-	wxListCtrl *Shortcuts;
+	KaiTreebook *OptionsTree;
+	KaiListCtrl *Shortcuts;
 	KaiChoice* Stylelist;
 	KaiChoice* Katlist;
 	MappedButton *okok;
@@ -48,8 +50,8 @@ private:
 	void ConOpt(wxWindow *ctrl,wxString option);
 	void OnSaveClick(wxCommandEvent& event);
 	void SetOptions(bool saveall=true);
-	void OnMapHkey(wxListEvent& event);
-	void OnResetHkey(wxListEvent& event);
+	void OnMapHkey(wxCommandEvent& event);
+	void OnResetHkey(wxCommandEvent& event);
 	//void OnKeyPress(wxKeyEvent& event);
 	void OnChangeCatalog(wxCommandEvent& event);
 

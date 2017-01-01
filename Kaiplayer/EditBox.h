@@ -57,7 +57,7 @@ class txtdialog :public wxDialog
 {
 public:
 	KaiTextCtrl *txt;
-	wxChoice *type;
+	KaiChoice *type;
 	txtdialog(wxWindow *parent, int id, const wxString &txtt, int type, const wxPoint &position);
 	virtual ~txtdialog(){};
 };

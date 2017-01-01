@@ -28,12 +28,14 @@ ProgresDialog::ProgresDialog(wxWindow *_parent, const wxString &title, const wxP
 	: wxDialog(_parent,31555,"",pos,size,style)
 {
 	RegisterWindowMessage ( L"TaskbarButtonCreated" );
+	SetForegroundColour(Options.GetColour("Window Text"));
+	SetBackgroundColour(Options.GetColour("Window Background"));
 	taskbar=NULL;
 	wxBoxSizer* sizer= new wxBoxSizer(wxVERTICAL);
 	text=new wxStaticText(this,-1,title);
 	gauge=new wxGauge(this, -1, 100, wxDefaultPosition, wxSize(300,20), wxGA_HORIZONTAL);
 	text1=new wxStaticText(this,-1,_("Upłynęło 00:00:00.00 sekund"));
-	cancel= new wxButton(this,23333,_("Anuluj"));
+	cancel= new MappedButton(this,23333,_("Anuluj"));
 	sizer->Add(text,0,wxALIGN_CENTER|wxALL, 3);//wxALIGN_CENTER|
 	sizer->Add(gauge,0,wxALIGN_CENTER|wxALL, 3);
 	sizer->Add(text1,0,wxALIGN_CENTER|wxALL, 3);

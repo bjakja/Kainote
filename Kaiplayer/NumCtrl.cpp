@@ -42,7 +42,7 @@ NumCtrl::NumCtrl(wxWindow *parent,long id,wxString text, int rangefrom, int rang
 	if (rto<rfrom){rto=rangefrom;rfrom=rangeto;}
 	oint=intonly;
 
-	value=rfrom;
+	value=0;
 	oldpos=rfrom;
 	holding=false;
 	SetString(text);
@@ -86,8 +86,6 @@ NumCtrl::NumCtrl(wxWindow *parent,long id,double _value, double rangefrom, doubl
 	
 	if (rto<rfrom){rto=rangefrom;rfrom=rangeto;}
 	oint=intonly;
-	//wxLogStatus("from to double %f %f", rfrom, rto);
-	value=rfrom;
 	oldpos=rfrom;
 	holding=false;
 	SetDouble(_value);
@@ -112,7 +110,7 @@ NumCtrl::NumCtrl(wxWindow *parent,long id,double _value, double rangefrom, doubl
 		includes.Add(_T(","));
 	}
 	valid.SetIncludes(includes);
-	//SetValidator(valid);
+	SetValidator(valid);
 
 	Connect(wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&NumCtrl::OnNumWrite);
 	SetMaxLength(20);
@@ -144,6 +142,7 @@ void NumCtrl::SetString(wxString val)
 		value=rfrom;
 		val = getdouble(value);
 	}
+	if(val.IsEmpty()){val = getdouble(value);}
 	oldval=val;
 	SetValue(val, false, false);
 }
@@ -288,6 +287,7 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 
 
 	if (event.GetWheelRotation() != 0) {
+		if(style & SCROLL_ON_FOCUS && !HasFocus()){event.Skip(); return;}
 		int step = event.GetWheelRotation() / event.GetWheelDelta();
 		value+=step;
 		if(value<rfrom||value>rto){return;}

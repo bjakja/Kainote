@@ -50,6 +50,7 @@
 #include "SubsTime.h"
 #include "KaraokeSplitting.h"
 #include "OpenNWrite.h"
+#include "KaiMessageBox.h"
 
 ////////////
 // Instance
@@ -164,7 +165,7 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 	// No tracks found
 	if (tracksFound.Count() == 0) {
 		Close();
-		wxMessageBox(_("Plik nie ma żadnej ścieżki z napisami."));
+		KaiMessageBox(_("Plik nie ma żadnej ścieżki z napisami."));
 		return false;
 	}
 
@@ -178,7 +179,7 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 		int choice = wxGetSingleChoiceIndex(_("Wybierz ścieżkę do wczytania:"), _("Znaleziono kilka ścieżek z napisami"), tracksNames);
 		if (choice == -1) {
 			Close();
-			wxMessageBox(_("Anulowano."));
+			KaiMessageBox(_("Anulowano."));
 			return false;
 		}
 		trackToRead = tracksFound[choice];
@@ -209,7 +210,7 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 		longlong timecodeScale = mkv_TruncFloat(trackInfo->TimecodeScale) * segInfo->TimecodeScale;
 
 
-		ProgressSink *progress = new ProgressSink(target,_("Odczyt napisów z pliku Matroska."));
+		ProgressSink *progress = new ProgressSink(target->GetParent(),_("Odczyt napisów z pliku Matroska."));
 		progress->SetAndRunTask([=](){
 
 			char form=1;

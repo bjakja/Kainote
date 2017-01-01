@@ -616,16 +616,15 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 
 	if(vstate!=None){
 		resized=seek=cross=pbar=false;
-		vstate=None;Clear();SAFE_DELETE(VFF);
+		vstate=None;Clear();
 	}
 
 	time=0;
 	lastframe=0;
 
-
+	SAFE_DELETE(VFF);
 	if(!Dshow){
 		SAFE_DELETE(vplayer);
-
 		//VFF=new VideoFfmpeg(fname, Kaia->Frame->Tabs->GetSelection(),&success);
 		VFF=tmpvff;
 		d3dformat=D3DFORMAT('21VN');
@@ -639,6 +638,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 			Kaia->Frame->OpenAudioInTab(pan,40000,fname);
 			player = pan->Edit->ABox->audioDisplay;
 		}else if(player){Kaia->Frame->OpenAudioInTab(pan,CloseAudio,"");}
+		if(VFF->width<0){return false;}
 	}else{
 
 		if(!vplayer){vplayer= new DShowPlayer(this);}

@@ -20,6 +20,9 @@
 #include "Menu.h"
 #include "wx/clipbrd.h"
 
+wxDEFINE_EVENT(LIST_ITEM_DOUBLECLICKED, wxCommandEvent);
+wxDEFINE_EVENT(LIST_ITEM_RIGHT_CLICK, wxCommandEvent);
+
 void ItemText::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList)
 {
 	wxSize ex = dc->GetTextExtent(name);
@@ -128,22 +131,29 @@ void ItemColor::Save(){
 
 void ItemCheckBox::OnPaint(wxMemoryDC *dc, int x, int y, int w, int h, wxWindow *theList)
 {
-	wxString bitmapName = (checked)? "checkbox_selected" :  "checkbox" ;
+	wxString bitmapName = (modified)? "checkbox_selected" :  "checkbox" ;
 	wxBitmap checkboxBmp = wxBITMAP_PNG(bitmapName);
 	if(enter){BlueUp(&checkboxBmp);}
 	dc->DrawBitmap(checkboxBmp, x+1, y + (h-13)/2);
 
 	if(w>18){
 		int fw, fh;
-		dc->GetTextExtent(label, &fw, &fh);
+		dc->GetTextExtent(name, &fw, &fh);
 		wxRect cur(x+18, y, w - 20, h);
 		dc->SetClippingRegion(cur);
-		dc->DrawLabel(label,cur,wxALIGN_CENTER_VERTICAL);
+		dc->DrawLabel(name,cur,wxALIGN_CENTER_VERTICAL);
 		dc->DestroyClippingRegion();
 		
 		
 	}
 }
+
+void ItemCheckBox::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList){
+	if(event.LeftDown()){
+		modified = !modified;
+		theList->Refresh(false);
+	}
+};
 
 KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxSize &size, int style)
 	:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL|wxHORIZONTAL)
@@ -163,7 +173,30 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 	SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT));
 }
 
-int KaiListCtrl::InsertCollumn(size_t col, const wxString &name, byte type, int width)
+KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, int type, const wxPoint &pos, 
+		const wxSize &size, int style)
+	:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL)
+	,bmp(NULL)
+	,sel(-1)
+	,lastSelX(-1)
+	,lastSelY(-1)
+	,scPosV(0)
+	,scPosH(0)
+	,lineHeight(17)
+	,headerHeight(3)
+	,modified(false)
+{
+	SetBackgroundColour(parent->GetBackgroundColour());
+	SetForegroundColour(parent->GetForegroundColour());
+	SetMinSize(size);
+	SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT));
+	InsertColumn(0, "", type, -1);
+	for(int i = 0; i < numelem; i++){
+		AppendItem(new ItemCheckBox(false, list[i]));
+	}
+}
+
+int KaiListCtrl::InsertColumn(size_t col, const wxString &name, byte type, int width)
 {
 	if(col>= widths.size()){
 		header.Insert(col, new ItemText(name));
@@ -236,10 +269,11 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	tdc.SelectObject(*bmp);
 	bool enabled = IsThisEnabled();
 	wxColour highlight = Options.GetColour("Menu Border Selection");
-	tdc.SetPen(wxPen("#000000"));
-	tdc.SetBrush(wxBrush(enabled? GetBackgroundColour() : Options.GetColour("Window Inactive Background")));
+	wxColour txt = Options.GetColour("Window Text");
+	tdc.SetPen(wxPen(txt));
+	tdc.SetBrush(wxBrush(enabled? Options.GetColour("Window Background") : Options.GetColour("Window Inactive Background")));
 	tdc.DrawRectangle(0,0,w,h);
-	tdc.SetTextForeground(enabled? GetForegroundColour() : Options.GetColour("Window Inactive Text"));
+	tdc.SetTextForeground(enabled? txt : Options.GetColour("Window Inactive Text"));
 	tdc.SetFont(GetFont());
 	//header
 	
@@ -251,6 +285,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 			if(j>=row.size()){
 				continue;
 			}
+			if(widths[j] == -1){widths[j] = w-1;}
 			//drawing
 			if(i==sel){
 				//wxColour highlight = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
@@ -267,16 +302,18 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 		
 	}
 	posX=scPosH+5;
-	tdc.SetPen(wxPen("#000000"));
-	for(size_t j = 0; j < widths.size(); j++){
-		wxString headerTxt = ((ItemText*)header.row[j])->GetName();
-		wxSize ex = tdc.GetTextExtent(headerTxt);
-		tdc.DrawText(headerTxt, posX, ((headerHeight - ex.y)/2) );
+	tdc.SetPen(wxPen(txt));
+	if(headerHeight>4){
+		for(size_t j = 0; j < widths.size(); j++){
+			wxString headerTxt = ((ItemText*)header.row[j])->GetName();
+			wxSize ex = tdc.GetTextExtent(headerTxt);
+			tdc.DrawText(headerTxt, posX, ((headerHeight - ex.y)/2) );
 
-		posX += widths[j];
-		tdc.DrawLine(posX-3, 0, posX-3, h);
+			posX += widths[j];
+			tdc.DrawLine(posX-3, 0, posX-3, h);
+		}
+		tdc.DrawLine(0, headerHeight-2, w, headerHeight-2);
 	}
-	tdc.DrawLine(0, headerHeight-2, w, headerHeight-2);
 	//tdc.SetPen(wxPen("#000000"));
 	tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 	tdc.DrawRectangle(0,0,w,h);
@@ -305,6 +342,7 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 	int elemY = ((cursor.y-headerHeight)/lineHeight) + scPosV;
 	if(elemY<0){
 		//tu napisz chwytanie headera
+		//if header < 5 wtedy nic nie robimy
 		return;
 	}else if((size_t)elemY>=itemList.size()){
 		//tu ju¿ nic nie zrobimy, jesteœmy poza elemetami na samym dole
@@ -329,6 +367,16 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 		sel = elemY;
 
 		Refresh(false);
+	}
+	if(evt.LeftDClick()){
+		wxCommandEvent evt2(LIST_ITEM_DOUBLECLICKED, GetId()); 
+		evt2.SetInt(elemY);
+		AddPendingEvent(evt2);
+	}
+	if(evt.RightDown()){
+		wxCommandEvent evt2(LIST_ITEM_RIGHT_CLICK, GetId()); 
+		evt2.SetInt(elemY);
+		AddPendingEvent(evt2);
 	}
 	lastSelY = elemY;
 	lastSelX = elemX;
@@ -391,6 +439,29 @@ void KaiListCtrl::SaveAll(int col)
 		itemList[i]->row[col]->Save();
 	}
 	modified = false;
+}
+
+Item *KaiListCtrl::FindItem(int column, const wxString &textItem)
+{
+	for(size_t i = 0; i<itemList.size(); i++){
+		if(column < 0){
+			for(size_t j = 0; j < itemList[i]->row.size(); j++){
+				if(itemList[i]->row[j]->name == textItem){
+					return itemList[i]->row[j];
+				}
+			}
+		}
+		else if(itemList[i]->row.size()<=(size_t)column){continue;}
+		else if(itemList[i]->row[column]->name == textItem){
+			return itemList[i]->row[column];
+		}
+	}
+	return NULL;
+}
+
+void KaiListCtrl::ScrollTo(int row){
+	scPosV = SetScrollpos(wxVERTICAL,row);
+	Refresh(false);
 }
 
 BEGIN_EVENT_TABLE(KaiListCtrl,KaiScrolledWindow)

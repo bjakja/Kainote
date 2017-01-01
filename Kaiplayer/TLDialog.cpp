@@ -23,17 +23,17 @@ TLDialog::TLDialog(wxWindow *parent, Grid *subsgrid)
 	wxStaticBoxSizer *sizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Przesuwanie tekstu tłumaczenia"));
 	wxGridSizer *sizer1 = new wxGridSizer(2,2,2);
 	//uwaga nazewnictwo tutaj jest totalnie fuckuped patrz na opisy co dany efekt robi.
-	Up=new wxButton(this,29995,_("Usuń linię"));
+	Up=new MappedButton(this,29995,_("Usuń linię"));
 	Up->SetToolTip(_("Usuwa zaznaczoną linijkę.\nTłumaczenie idzie do góry."));
-	Down=new wxButton(this,29997,_("Dodaj linię"));
+	Down=new MappedButton(this,29997,_("Dodaj linię"));
 	Down->SetToolTip(_("Dodaje pustą linijkę przed zaznaczoną.\nTłumaczenie idzie w dół."));
-	UpJoin=new wxButton(this,29998,_("Złącz linie"));
+	UpJoin=new MappedButton(this,29998,_("Złącz linie"));
 	UpJoin->SetToolTip(_("Złącza następną linijkę z zaznaczoną.\nTłumaczenie idzie do góry."));
-	DownJoin=new wxButton(this,29996,_("Złącz linie"));
+	DownJoin=new MappedButton(this,29996,_("Złącz linie"));
 	DownJoin->SetToolTip(_("Złącza następną linijkę z zaznaczoną.\nOryginał idzie w górę."));
-	DownDel=new wxButton(this,29994,_("Usuń linię"));
+	DownDel=new MappedButton(this,29994,_("Usuń linię"));
 	DownDel->SetToolTip(_("Usuwa zaznaczoną linijkę.\nOryginał idzie do góry."));
-	UpExt=new wxButton(this,29993,_("Dodaj linię"));
+	UpExt=new MappedButton(this,29993,_("Dodaj linię"));
 	UpExt->SetToolTip(_("Dodaje pustą linijkę przed zaznaczoną.\nOryginał idzie w dół.\nDodanej linii należy ustawić czasy."));
 	
 	sizer1->Add(new wxStaticText(this,-1,_("Tekst oryginału")),0,wxLEFT|wxRIGHT|wxEXPAND,5);

@@ -23,7 +23,7 @@
 #include <wx/zipstrm.h>
 #include <wx/dir.h>
 #include <wx/regex.h>
-//#include <wx/msw/registry.h>
+#include "KaiMessageBox.h"
 
 //#include <algorithm>
 
@@ -394,7 +394,7 @@ done:
 			wxDir::Make(copypath.BeforeLast('\\'));
 		}
 		else if(wxFileExists(copypath)){
-			if(wxMessageBox(_("Plik zip już istnieje, usunąć go?"),_("Potwierdzenie"),wxYES_NO,this)==wxYES){
+			if(KaiMessageBox(_("Plik zip już istnieje, usunąć go?"),_("Potwierdzenie"),wxYES_NO,this)==wxYES){
 				wxRemoveFile(copypath);
 			}
 		}
@@ -497,7 +497,7 @@ void FontCollectorDialog::CopyMKVFonts()
 	{
 		if(!wxDir::Exists(copypath.BeforeLast('\\'))){wxDir::Make(copypath.BeforeLast('\\'));}
 		else if(wxFileExists(copypath)){
-			if(wxMessageBox(_("Plik zip już istnieje, usunąć go?"),_("Potwierdzenie"),wxYES_NO,this)==wxYES){wxRemoveFile(copypath);}}
+			if(KaiMessageBox(_("Plik zip już istnieje, usunąć go?"),_("Potwierdzenie"),wxYES_NO,this)==wxYES){wxRemoveFile(copypath);}}
 		out =new wxFFileOutputStream(copypath);
 		zip = new wxZipOutputStream(*out);
 	}
@@ -547,13 +547,13 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 	}
 	else
 	{
-		if(opts->GetSelection()==3 && ( Notebook::GetTab()->VideoPath=="" || Notebook::GetTab()->SubsPath=="" )){wxMessageBox(_("Brak zaczytanego wideo bądź napisów"));return;}
+		if(opts->GetSelection()==3 && ( Notebook::GetTab()->VideoPath=="" || Notebook::GetTab()->SubsPath=="" )){KaiMessageBox(_("Brak zaczytanego wideo bądź napisów"));return;}
 		if(path->GetValue()==""&& !subsdir->GetValue()){
-			wxMessageBox(_("Wybierz folder, gdzie mają zostać skopiowane czcionki"));
+			KaiMessageBox(_("Wybierz folder, gdzie mają zostać skopiowane czcionki"));
 			goto done;
 		}
 		if(opts->GetSelection()==2 && !path->GetValue().EndsWith(".zip") && !subsdir->GetValue()){
-			wxMessageBox(_("Wybierz nazwę dla archiwum"));
+			KaiMessageBox(_("Wybierz nazwę dla archiwum"));
 			goto done;
 		}
 		if(fromMKV->GetValue() && fromMKV->IsEnabled()){CopyMKVFonts();}
@@ -629,7 +629,7 @@ void FontCollectorDialog::MuxVideoWithSubs()
 	if(!wxFileExists(muxerpath)){
 		wxFileDialog *fd = new wxFileDialog(this,_("Wybierz plik mkvmerge.exe"), L"C:\\Program Files",L"mkvmerge.exe",_("Programy (.exe)|*.exe"),wxFD_OPEN|wxFD_FILE_MUST_EXIST);
 		if(fd->ShowModal()!=wxID_OK){
-			wxMessageBox(_("Muxowanie zostało anulowane, bo nie wybrano mkvmerge.exe"));fd->Destroy();return;
+			KaiMessageBox(_("Muxowanie zostało anulowane, bo nie wybrano mkvmerge.exe"));fd->Destroy();return;
 		}
 		muxerpath=fd->GetPath();
 		fd->Destroy();
@@ -643,7 +643,7 @@ void FontCollectorDialog::MuxVideoWithSubs()
 	for(size_t i=0; i< fontnames.size(); i++){
 		wxString ext= fontnames[i].AfterLast('.').Lower();
 		/*if(ext!="ttf" && ext!="ttc" && ext!="otf"){
-			wxMessageBox(wxString::Format(_("Rozszerzenie czcionki \"%s\" nie jest obsługiwane"),ext));
+			KaiMessageBox(wxString::Format(_("Rozszerzenie czcionki \"%s\" nie jest obsługiwane"),ext));
 			continue;
 		}*/
 		command << L"\"--attachment-name\" \"";

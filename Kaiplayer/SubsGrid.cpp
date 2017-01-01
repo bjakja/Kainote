@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <wx/regex.h>
 #include <wx/ffile.h>
+#include "KaiMessageBox.h"
 //#include <thread>
 
 bool sortstart(Dialogue *i,Dialogue *j){ 
@@ -985,14 +986,14 @@ void SubsGrid::Convert(char type)
 		if(od.ShowModal()==wxID_CANCEL){return;}
 	}
 	if(Options.GetBool("FPS from video")&&Kai->GetTab()->VideoPath!=""){
-		Options.SetString("Default FPS",Kai->StatusBar1->GetStatusText(2).BeforeFirst(' '));}
-	if(Options.GetFloat("Default FPS")<1){wxMessageBox(_("Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."));return;}
+		Options.SetString("Default FPS",Kai->GetStatusText(2).BeforeFirst(' '));}
+	if(Options.GetFloat("Default FPS")<1){KaiMessageBox(_("Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."));return;}
 
 	bool newendtimes=Options.GetBool("New end times");
 	wxString stname=Options.GetString("Default Style");
 	int endt=Options.GetInt("Time show of letter");
 	wxString prefix=Options.GetString("Ass Conversion Prefix");
-	//wxMessageBox("pętla");
+	//KaiMessageBox("pętla");
 	int i=0;
 	while(i<GetCount())
 	{
@@ -1281,7 +1282,7 @@ void SubsGrid::ChangeTime()
 	
 
 	if(seb!=0){
-		int answer=wxMessageBox(wxString::Format(_("Czy naprawdę chcesz przesuwać tylko czasy %s?"), 
+		int answer=KaiMessageBox(wxString::Format(_("Czy naprawdę chcesz przesuwać tylko czasy %s?"), 
 			(seb==1)? _("początkowe") : _("końcowe")),_("Potwierdzenie"),wxYES_NO);
 		if(answer==wxNO){return;}
 	}
@@ -1292,7 +1293,7 @@ void SubsGrid::ChangeTime()
 
 	int fs=FirstSel();
 	if (fs==-1&&lmd!=0&&lmd!=4){
-		wxMessageBox(_("Nie zaznaczono linii do przesunięcia"),_("Uwaga"));return;}
+		KaiMessageBox(_("Nie zaznaczono linii do przesunięcia"),_("Uwaga"));return;}
 
 	int difftime=(VAS)? file->subs->dials[mtimerow]->Start.mstime : file->subs->dials[mtimerow]->End.mstime;
 	int halfframe= (VAS)? -(vb->avtpf/2) : (vb->avtpf/2);
@@ -1496,7 +1497,7 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 	bool shift = event.m_shiftDown;
 
 	// The "menu" key, simulate a right-click
-	if (key == WXK_MENU || key == WXK_WINDOWS_MENU) {
+	if (key == WXK_WINDOWS_MENU) {
 		wxPoint pos;
 		pos.x = w/2;
 		pos.y = (Edit->ebrow+1-scPos) * GridHeight + GridHeight/2;
@@ -1957,7 +1958,7 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 				AddSInfo(token);
 			}
 		}
-
+		if(ext == "ssa"){AddSInfo("ScriptType", "4.00+");}
 
 		bool tlmode=(GetSInfo("TLMode")=="Yes");
 		if(GetSInfo("Active Line")!="" &&(ext=="ass"||ext=="ssa")){active=wxAtoi(GetSInfo("Active Line"));}
@@ -1992,7 +1993,7 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 
 	}
 
-	if(GetCount()<1){LoadDefault();wxMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera błędy)"));form=ASS;}
+	if(GetCount()<1){LoadDefault();KaiMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera błędy)"));form=ASS;}
 	else{SetSubsForm();}
 	origform=form;
 
@@ -2098,7 +2099,7 @@ bool SubsGrid::SetTlMode(bool mode)
 		Refresh(false);
 
 	}else{
-		if(wxMessageBox(_("Czy na pewno chcesz wyłączyć tryb tłumaczenia?\nObcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."),_("Potwierdzenie"),wxYES_NO)==wxNO)
+		if(KaiMessageBox(_("Czy na pewno chcesz wyłączyć tryb tłumaczenia?\nObcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."),_("Potwierdzenie"),wxYES_NO)==wxNO)
 		{
 			return true;
 		}
@@ -2213,7 +2214,7 @@ void SubsGrid::CheckText(wxString text, wxArrayInt &errs)
 			word.Trim(true);
 			bool isgood=SpellChecker::Get()->CheckWord(word);
 			if (!isgood){errs.push_back(firsti);errs.push_back(lasti);}
-			//wxMessageBox(word);
+			//KaiMessageBox(word);
 		}word="";firsti=i+1;}
 		if(ch=='{'){block=true;}
 		else if(ch=='}'){block=false;firsti=i+1;word="";}

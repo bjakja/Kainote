@@ -20,6 +20,7 @@
 #include "Menu.h"
 #include <wx/regex.h>
 #include <wx/clipbrd.h>
+#include "KaiMessageBox.h"
 //#include <wx/graphics.h>
 #undef DrawText
 
@@ -1067,7 +1068,7 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 		SetSelection(from,from);modified=true;}
 	else if(id==TEXTM_ADD && !err.IsEmpty()){
 		bool succ = SpellChecker::Get()->AddWord(err);
-		if(!succ){wxMessageBox(_("Błąd, słowo \"")+err+_("\" nie zostało dodane."));}
+		if(!succ){KaiMessageBox(_("Błąd, słowo \"")+err+_("\" nie zostało dodane."));}
 		else{CheckText();EB->ClearErrs();Refresh(false);}
 	}else if(id>=TEXTM_SEEKWORDL && id<=TEXTM_SEEKWORDG){
 		wxString page=(id==TEXTM_SEEKWORDL)? L"http://ling.pl/" : 

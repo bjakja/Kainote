@@ -20,7 +20,7 @@
 //#include <wx/arrstr.h>
 #include <wx/wx.h>
 #include <map>
-
+#include "ListControls.h"
 
 enum{
 	GLOBAL_HOTKEY='G',
@@ -81,7 +81,7 @@ class HkeysDialog : public wxDialog
 	virtual ~HkeysDialog();
 	wxString hotkey;
 	wxString hkname;
-	wxChoice *global;
+	KaiChoice *global;
 	char type;
 
 	private:
