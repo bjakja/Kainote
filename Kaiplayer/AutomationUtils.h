@@ -131,6 +131,7 @@ namespace Auto{
 
 	struct error_tag {};
 
+	
 	// Below are functionally equivalent to the luaL_ functions, but using a C++
 	// exception for stack unwinding
 	int error(lua_State *L, const char *fmt, ...);

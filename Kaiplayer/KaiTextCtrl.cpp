@@ -21,7 +21,7 @@
 
 
 KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const wxPoint& pos,const wxSize& size, long _style, const wxValidator & validator, const wxString & name)
-	:KaiScrolledWindow(parent,id,pos,size,_style,name)
+	:KaiScrolledWindow(parent,id,pos,size,_style|wxWANTS_CHARS,name)
 {
 	KText=text;
 	KText.Replace("\r","");
@@ -216,6 +216,10 @@ void KaiTextCtrl::CalcWrap(bool sendevent)
 
 void KaiTextCtrl::OnCharPress(wxKeyEvent& event)
 {
+	int key=event.GetKeyCode();
+	if(!(!(event.ControlDown() && !event.AltDown()) && (key>30 || key == 0))){
+		event.Skip();return;
+	}
 	wxUniChar wkey=event.GetUnicodeKey();
 	if(wkey=='\t' || (style & wxTE_READONLY)){return;}
 	if(wkey){
@@ -243,8 +247,7 @@ void KaiTextCtrl::OnCharPress(wxKeyEvent& event)
 
 void KaiTextCtrl::OnKeyPress(wxKeyEvent& event)
 {
-	int key=event.GetKeyCode();
-	if(!(event.ControlDown() && !event.AltDown()) && (key>30 || key == 0)){event.Skip();}
+	event.Skip();
 }
 
 void KaiTextCtrl::OnAccelerator(wxCommandEvent& event)

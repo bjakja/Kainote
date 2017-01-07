@@ -337,7 +337,7 @@ BEGIN_EVENT_TABLE(KaiToolbar, wxWindow)
 END_EVENT_TABLE()
 
 ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos)
-	:wxDialog(_parent,-1,"",pos, wxSize(350,500), 0)
+	:wxDialog(_parent,-1,"",pos, wxSize(350,500), wxBORDER_NONE)
 	,sel(-1)
 	,scPos(0)
 	,parent(_parent)
@@ -345,10 +345,9 @@ ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos)
 {
 	fh=20;
 	int ysize = parent->ids.size();
-	SetScrollbar(wxVERTICAL,0,25,ysize);
-	//SetSize(350,ysize);
-	//wxLogStatus("constructor %i",ysize);
-	//CaptureMouse();
+	//uważaj gdy kiedyś zechcesz zmienić rozmiar tego okna, to ustaw odpowiednio scrollbar
+	scroll = new KaiScrollbar(this, -1, wxDefaultPosition, wxDefaultSize, wxVERTICAL);
+	Bind(wxEVT_IDLE,&ToolbarMenu::OnIdle, this);
 }
 
 void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
@@ -359,7 +358,7 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 	int w=0;
 	int h=0;
 	GetSize (&w, &h);
-	//if((x<0||y<0||x>w||y>h)&&leftdown){if(HasCapture()){ReleaseMouse();}Destroy();return;}
+	if((x<0||y<0||x>w||y>h)&&leftdown){if(HasCapture()){ReleaseMouse();}Destroy();return;}
 	//if(x>w-20){}
 
 	int elem = y/fh;
@@ -404,26 +403,30 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	int h=0;
 	GetClientSize (&w, &h);
 	if(w==0||h==0){return;}
+	int ow = w;
+	w-=18;
 	wxMemoryDC tdc;
-	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
+	if (bmp && (bmp->GetWidth() < ow || bmp->GetHeight() < h)) {
 		delete bmp;
 		bmp = NULL;
 	}
-	if(!bmp){bmp=new wxBitmap(w,h);}
+	if(!bmp){bmp=new wxBitmap(ow,h);}
 	tdc.SelectObject(*bmp);
 	wxBitmap checkbmp = wxBITMAP_PNG("check");
 	tdc.SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma"));
 	wxColour background = Options.GetColour("Menu Background");
+	wxColour txt = Options.GetColour("Window Text");
 	tdc.SetBrush(wxBrush(background));
-	tdc.SetPen(wxPen(background));
-	tdc.DrawRectangle(0,0,w,h);
+	tdc.SetPen(wxPen(txt));
+	tdc.DrawRectangle(0,0,ow,h);
 	int visible=25;//500/fh fh=20;
 	int idssize=parent->ids.size();
 	if(scPos>=idssize-visible){scPos=idssize-visible;}
 	else if(scPos<0){scPos=0;}
 	int maxsize=MAX(idssize,scPos+visible);
-	SetScrollbar(wxVERTICAL,scPos,visible,idssize);
-	tdc.SetTextForeground(Options.GetColour("Window Text"));
+	scroll->SetScrollbar(scPos,visible,idssize,visible-1);
+	scroll->SetSize(w,1,17,h-2);
+	tdc.SetTextForeground(txt);
 	for(int i=0;i<visible; i++)
 	{
 		MenuItem *item=parent->mb->FindItem(parent->ids[i+scPos]);
@@ -435,7 +438,7 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 		if(i+scPos==sel){
 			tdc.SetPen(wxPen(Options.GetColour("Menu Border Selection")));
 			tdc.SetBrush(wxBrush(Options.GetColour("Menu Background Selection")));
-			tdc.DrawRectangle(0, fh*i,w,fh);
+			tdc.DrawRectangle(1, (fh*i)+1,w-1,fh-2);
 		}
 		//tdc.SetPen(wxPen("#497CB0",2));
 		//tdc.SetBrush(*wxTRANSPARENT_BRUSH);
@@ -465,51 +468,51 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 
 	}
 	wxPaintDC dc(this);
-	dc.Blit(0,0,w,h,&tdc,0,0);
+	dc.Blit(0,0,ow,h,&tdc,0,0);
 }
 
-void ToolbarMenu::OnLostCapture(wxFocusEvent &evt)
+void ToolbarMenu::OnIdle(wxIdleEvent& event)
 {
-	Destroy();
+    event.Skip();
+
+	if(!parent->IsShownOnScreen()){
+		Destroy();
+	}
+
+    if (IsShown())
+    {
+        wxPoint pos = ScreenToClient(wxGetMousePosition());
+        wxRect rect(GetSize());
+
+        if ( rect.Contains(pos) )
+        {
+            if ( HasCapture() )
+            {
+                ReleaseMouse();
+            }
+        }
+        else
+        {
+            if ( !HasCapture() && !scroll->HasCapture())
+            {
+                CaptureMouse();
+            }
+        }
+    }
 }
 
-void ToolbarMenu::OnScroll(wxScrollWinEvent& event)
+void ToolbarMenu::OnScroll(wxScrollEvent& event)
 {
-	int newPos=0;
-	int tsize=parent->tools.size();
-	if(event.GetEventType()==wxEVT_SCROLLWIN_LINEUP)
-	{
-		newPos=scPos-1;
-		if(newPos<0){newPos=0;return;}
-	}
-	else if(event.GetEventType()==wxEVT_SCROLLWIN_LINEDOWN)
-	{
-		newPos=scPos+1;
-		//if(newPos>=tsize){newPos=tsize-1;return;}
-	}
-	else if(event.GetEventType()==wxEVT_SCROLLWIN_PAGEUP)
-	{
-		wxSize size=GetClientSize();
-		newPos=scPos;
-		newPos-=(size.y/fh - 1);
-		newPos=MAX(0,newPos);
-	}
-	else if(event.GetEventType()==wxEVT_SCROLLWIN_PAGEDOWN)
-	{
-		wxSize size=GetClientSize();
-		newPos=scPos;
-		newPos+=(size.y/fh - 1);
-		newPos=MIN(newPos,tsize-1);
-	}
-	else{newPos = event.GetPosition();}
+	int newPos = event.GetPosition();
 	if (scPos != newPos) {
 		scPos = newPos;
 		Refresh(false);
 	}
 }
+
 BEGIN_EVENT_TABLE(ToolbarMenu, wxDialog)
 	EVT_MOUSE_EVENTS(ToolbarMenu::OnMouseEvent)
 	EVT_PAINT(ToolbarMenu::OnPaint)
-	EVT_KILL_FOCUS(ToolbarMenu::OnLostCapture)
-	EVT_SCROLLWIN(ToolbarMenu::OnScroll)
+	EVT_MOUSE_CAPTURE_LOST(ToolbarMenu::OnLostCapture)
+	EVT_SCROLL(ToolbarMenu::OnScroll)
 END_EVENT_TABLE()

@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup>
-    <MiniLuaCommand>$(SolutionDir)thirdparty\luajit\minilua\$(Configuration)minilua</MiniLuaCommand>
+    <MiniLuaCommand>$(SolutionDir)thirdparty\luajit\minilua\$(Configuration)\minilua</MiniLuaCommand>
     <PackCommand>$(MSBuildThisFileDirectory)pack-dt.lua</PackCommand>
     <IcuDt>icudt57l</IcuDt>
     <CharacterSet>MultiByte</CharacterSet>
@@ -20,7 +20,7 @@
     <Exec Command="$(MiniLuaCommand) $(PackCommand) &quot;..\source&quot; &quot;$(IcuDt).c&quot;" />
   </Target>
   <ItemGroup>
-    <ClCompile Include="\icudt57l.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)icudt57l.c" />
     <ClCompile Include="..\source\common\appendable.cpp" />
     <ClCompile Include="..\source\common\bmpset.cpp" />
     <ClCompile Include="..\source\common\brkeng.cpp" />
@@ -874,7 +874,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Thirdparty\icu\source\common\unicode;..\Thirdparty\icu\source\common;.\Thirdparty\icu\source\i18n\unicode;..\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Thirdparty\icu\source\common\unicode;I:\Kainote\Thirdparty\icu\source\common;..\Thirdparty\icu\source\i18n\unicode;..\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>U_STATIC_IMPLEMENTATION;U_ENABLE_DYLOAD=0;
         U_CHECK_DYLOAD=0;
         UCONFIG_NO_FILE_IO=1;

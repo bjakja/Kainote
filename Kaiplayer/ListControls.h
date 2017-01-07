@@ -22,8 +22,9 @@
 #include <wx/msw/popupwin.h>
 
 class KaiTextCtrl;
+class KaiScrollbar;
 
-class PopupList : public wxPopupWindow/*wxFrame*/{
+class PopupList : public wxPopupWindow{
 	friend class KaiChoice;
 public:
 
@@ -37,16 +38,9 @@ private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnKeyPress(wxKeyEvent &event);
 	void OnPaint(wxPaintEvent &event);
-	void OnScroll(wxScrollWinEvent& event);
+	void OnScroll(wxScrollEvent& event);
 	void OnIdle(wxIdleEvent& event);
-	//bool AcceptsFocus() const {return false;};
-	//bool AcceptsFocusRecursively() const {return false;};
-	//bool AcceptsFocusFromKeyboard() const {return false;};
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
-	//virtual WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
-	//HHOOK HookMouse;
-	//static LRESULT CALLBACK OnMouseClick( int code, WPARAM wParam, LPARAM lParam );
-	//static PopupList *thislist;
 	int sel;
 	int scPos;
 	
@@ -56,6 +50,7 @@ protected:
 	std::map<int, bool> *disabledItems;
 	wxWindow *Parent;
 	int orgY;
+	KaiScrollbar *scroll;
 	DECLARE_EVENT_TABLE()
 };
 

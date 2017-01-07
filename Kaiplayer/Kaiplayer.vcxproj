@@ -72,8 +72,8 @@
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>wxmsw29ud_core.lib;wxbase29ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;strmbasd.lib;odbc32.lib;odbccp32.lib;ffms2D.lib;LuaJit.lib;LuaBins.lib;freetype26MTd.lib;d3d9.lib;D3dx9d.lib;zlibwapid.lib;Boost.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib;..\Thirdparty\BaseClasses\Debug;..\Thirdparty\zlib-1.2.8\contrib\vstudio\vc10\x86\ZlibDllDebug;..\Thirdparty\Hunspell\src\win_api\Release_dll\libhunspell;..\Thirdparty\wxWidgets\lib\vc_lib;..\Thirdparty\freetype-2.6\objs\vc2010\Win32;..\Thirdparty\luajit\LuaJit\Debug;..\Thirdparty\luabins\LuaBins\Debug;..\Thirdparty\boost_1_61_0\boost\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wxmsw29ud_core.lib;wxbase29ud.lib;wxpngd.lib;wxregexud.lib;wxzlibd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;strmbasd.lib;odbc32.lib;odbccp32.lib;ffms2D.lib;LuaJit.lib;LuaBins.lib;freetype26MTd.lib;d3d9.lib;D3dx9d.lib;Boost.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib;..\Thirdparty\BaseClasses\Debug;..\Thirdparty\Hunspell\src\win_api\Release_dll\libhunspell;..\Thirdparty\wxWidgets\lib\vc_lib;..\Thirdparty\freetype-2.6\objs\vc2010\Win32;..\Thirdparty\luajit\LuaJit\Debug;..\Thirdparty\luabins\LuaBins\Debug;..\Thirdparty\boost_1_61_0\boost\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -141,6 +141,7 @@
     <ClCompile Include="FFT.cpp" />
     <ClCompile Include="FindReplace.cpp" />
     <ClCompile Include="KaiCheckBox.cpp" />
+    <ClCompile Include="KaiDialog.cpp" />
     <ClCompile Include="KaiListCtrl.cpp" />
     <ClCompile Include="KaiMessageBox.cpp" />
     <ClCompile Include="KainoteApp.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="FFT.h" />
     <ClInclude Include="FindReplace.h" />
     <ClInclude Include="KaiCheckBox.h" />
+    <ClInclude Include="KaiDialog.h" />
     <ClInclude Include="KaiListCtrl.h" />
     <ClInclude Include="KaiMessageBox.h" />
     <ClInclude Include="KainoteApp.h" />

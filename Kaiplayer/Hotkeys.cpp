@@ -249,21 +249,20 @@ int Hotkeys::LoadHkeys(bool Audio)
 		wxString token=hk.NextToken();
 		token.Trim(false);
 		token.Trim(true);
-
-
-		wxString Values=token.AfterFirst(' ');
-		Values.Trim(false);
-		Values.Trim(true);
-		char type=Values[0];
-		Values = Values.Remove(0,2);
-		wxString Labels=token.BeforeFirst(' ');
-		Labels.Trim(false);
-		Labels.Trim(true);
-		if(Labels.StartsWith("Script")){
-			hkeys[idAndType(scripts,'G')] = hdata(Labels,Values) ;
+		if(token.StartsWith("Script")){
+			hkeys[idAndType(scripts,'G')] = 
+				hdata(token.BeforeFirst('=').Trim(false).Trim(true),
+				token.AfterFirst('=').Trim(false).Trim(true)) ;
 			scripts++;
 			g++;
-		}else if(Values!=""){
+			continue;
+		} 
+
+		wxString Values=token.AfterFirst(' ').Trim(false).Trim(true);
+		char type=Values[0];
+		Values = Values.Remove(0,2);
+		wxString Labels=token.BeforeFirst(' ').Trim(false).Trim(true);
+		if(Values!=""){
 			if(Labels.IsNumber()){
 				hkeys[idAndType(wxAtoi(Labels), type)] = Values;
 			}else{
@@ -284,7 +283,7 @@ void Hotkeys::SaveHkeys(bool Audio)
 	wxString Texthk="["+Options.progname+"]\r\n";
 	for (std::map<idAndType, hdata>::iterator cur = hkeys.begin();cur != hkeys.end();cur++) {
 		if((!Audio && cur->first.Type=='A') || (Audio && !(cur->first.Type=='A')) ) {continue;}
-		if(cur->first >= 30100){Texthk << cur->second.Name << " " << cur->second.Accel << "\r\n";}
+		if(cur->first >= 30100){Texthk << cur->second.Name << "=" << cur->second.Accel << "\r\n";}
 		else{
 			wxString idstring = GetString((Id)cur->first.id);
 			if(idstring==""){idstring<<cur->first.id;}
@@ -379,10 +378,11 @@ int Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow,
 		{
 			if(cur->second.Accel == hkd.hotkey && (cur->first.Type == hkd.type) ){
 
-				wxMessageDialog msg(parent, 
+				KaiMessageDialog msg(parent, 
 					wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
 					cur->second.Name), _("Uwaga"), wxYES_NO|wxCANCEL);
-				msg.SetYesNoLabels (_("Zamień skróty"), _("Usuń skrót"));
+				msg.SetYesLabel (_("Zamień skróty"));
+				msg.SetNoLabel (_("Usuń skrót"));
 				int result = msg.ShowModal();
 				if(result==wxNO)
 				{
@@ -424,6 +424,8 @@ void Hotkeys::SetAccels(bool all){
 HkeysDialog::HkeysDialog( wxWindow *parent, wxString name, char hotkeyWindow, bool showWindowSelection)
 	: wxDialog(parent,-1,_("Mapowanie przycisków"),wxDefaultPosition,wxDefaultSize,wxCAPTION|wxWANTS_CHARS|wxCLOSE_BOX)
 {
+	SetForegroundColour(Options.GetColour("Window Text"));
+	SetBackgroundColour(Options.GetColour("Window Background"));
 	global=NULL;
 	const int elems = 5;
 	wxString windows[elems] = {_("Skrót globalny"),_("Skrót pola napisów"), _("Skrót pola edycji"), _("Skrót wideo"), _("Skrót audio")};

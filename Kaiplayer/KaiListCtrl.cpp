@@ -441,22 +441,22 @@ void KaiListCtrl::SaveAll(int col)
 	modified = false;
 }
 
-Item *KaiListCtrl::FindItem(int column, const wxString &textItem)
+int KaiListCtrl::FindItem(int column, const wxString &textItem)
 {
 	for(size_t i = 0; i<itemList.size(); i++){
 		if(column < 0){
 			for(size_t j = 0; j < itemList[i]->row.size(); j++){
 				if(itemList[i]->row[j]->name == textItem){
-					return itemList[i]->row[j];
+					return i;
 				}
 			}
 		}
 		else if(itemList[i]->row.size()<=(size_t)column){continue;}
 		else if(itemList[i]->row[column]->name == textItem){
-			return itemList[i]->row[column];
+			return i;
 		}
 	}
-	return NULL;
+	return -1;
 }
 
 void KaiListCtrl::ScrollTo(int row){

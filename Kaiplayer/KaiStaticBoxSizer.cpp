@@ -22,6 +22,7 @@ KaiStaticBox::KaiStaticBox(wxWindow *parent, const wxString& _label)
 {
 	//Bind(wxEVT_SIZE, &KaiStaticBox::OnSize, this);
 	//Bind(wxEVT_PAINT, &KaiStaticBox::OnPaint, this);
+	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
 	SetFont(parent->GetFont());
 	wxSize fsize = GetTextExtent(label);
 	SetInitialSize(wxSize(fsize.x+16, fsize.y+10));

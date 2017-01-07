@@ -27,6 +27,7 @@
 class MenuEvent;
 class Menu;
 class KaiToolbar;
+class KaiScrollbar;
 
 wxDECLARE_EVENT(EVT_MENU_OPENED, MenuEvent);
 
@@ -119,19 +120,12 @@ public:
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent &event);
-	void OnScroll(wxScrollWinEvent& event);
+	void OnScroll(wxScrollEvent& event);
 	bool AcceptsFocus() const {return false;};
 	bool AcceptsFocusRecursively() const {return false;};
 	bool AcceptsFocusFromKeyboard() const {return false;};
 	void OnShowSubmenu(wxTimerEvent &evt);
 	void OnHideSubmenu(wxTimerEvent &evt);
-	//virtual bool Show(bool show = true);
-	//// return the style to be used for the popup windows
- //   virtual WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle) const;
-	//// get the HWND to be used as parent of this window with CreateWindow()
- //   virtual WXHWND MSWGetParent() const;
- //   // popups handle the position like wxTopLevelWindow, not wxWindow
- //   virtual void DoGetPosition(int *x, int *y) const;
 	int ShowPartialModal();
 	void EndPartialModal(int ReturnId);
 	bool SendEvent(MenuItem *item, int accel);
@@ -141,10 +135,10 @@ private:
 	int submenuToHide;
 	int sel;
 	int scPos;
-	//static int id;
 protected:
 	wxBitmap *bmp;
 	Menu *parent;
+	KaiScrollbar *scroll;
 	bool subMenuIsShown;
 	static MenuDialog* ParentMenu;
 	static MenuDialog* lastActiveMenu;

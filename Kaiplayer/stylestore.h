@@ -25,11 +25,12 @@
 #include "Styles.h"
 #include "MappedButton.h"
 #include "ListControls.h"
+#include "KaiDialog.h"
 
 class ColorChange;
 
 
-class stylestore: public wxDialog
+class stylestore: public KaiDialog
 {
 	public:
 
@@ -53,7 +54,7 @@ class stylestore: public wxDialog
 		StyleList* Store;
 		KaiChoice* catalogList;
 		StyleList* ASS;
-		wxBoxSizer *Mainall;
+		DialogSizer *Mainall;
 		ColorChange* cc;
         void changestyle(Styles *cstyl);
 		void StylesWindow(wxString newname="");

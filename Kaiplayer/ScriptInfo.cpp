@@ -100,7 +100,8 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	wxBoxSizer *boxsizer1= new wxBoxSizer(wxHORIZONTAL);
 	Button1 = new MappedButton(this, wxID_OK, _("Zapisz"));
 	Button2 = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
-
+	Button1->SetFocus();
+	SetTmpDefaultItem(Button1);
 	boxsizer1->Add(Button1,0,wxALL,5);
 	boxsizer1->Add(Button2,0,wxALL,5);
 
@@ -112,11 +113,15 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	SetSizerAndFit(mainsizer);
 
 	Connect(25456,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ScriptInfo::OnVideoRes);
-	wxAcceleratorEntry centries[1];
-	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, wxID_OK);
-	wxAcceleratorTable caccel(1, centries);
-	this->SetAcceleratorTable(caccel);
-
+	Bind(wxEVT_CHAR_HOOK, [=](wxKeyEvent &evt){
+		int key = evt.GetKeyCode();
+		if(key == WXK_ESCAPE || key == WXK_RETURN){
+			wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, (key == WXK_ESCAPE)? wxID_CANCEL : wxID_OK);
+			ProcessEvent(evt);
+			return;
+		}
+		evt.Skip();
+	});
 	DoTooltips();
 	CenterOnParent();
 }

@@ -30,11 +30,11 @@
 
 
 FontCollectorDialog::FontCollectorDialog(wxWindow *parent)
-	: wxDialog(parent,-1,_("Kolekcjoner czcionek"),wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER)
+	: KaiDialog(parent,-1,_("Kolekcjoner czcionek"),wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER)
 {
 	SetForegroundColour(Options.GetColour("Window Text"));
 	SetBackgroundColour(Options.GetColour("Window Background"));
-	wxBoxSizer *Main = new wxBoxSizer(wxVERTICAL);
+	DialogSizer *Main = new DialogSizer(wxVERTICAL);
 	wxBoxSizer *Pathc = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *Buttons = new wxBoxSizer(wxHORIZONTAL);
 

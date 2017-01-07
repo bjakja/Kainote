@@ -34,7 +34,9 @@ private:
 	void OnSize(wxSizeEvent& event);
 	void OnPaint(wxPaintEvent& event);
 	void CalcWidths(wxArrayInt *widths);
-
+	bool AcceptsFocus( ) const{return false;}
+	bool AcceptsFocusFromKeyboard () const {return false;}
+	bool AcceptsFocusRecursively () const{return false;}
 	wxBitmap *bmp;
 	wxArrayInt sizes;
 	wxArrayString labels;

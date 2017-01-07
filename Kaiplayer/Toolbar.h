@@ -102,10 +102,12 @@ public:
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent &event);
-	void OnScroll(wxScrollWinEvent& event);
-	void OnLostCapture(wxFocusEvent &evt);
+	void OnScroll(wxScrollEvent& event);
+	void OnIdle(wxIdleEvent& event);
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
 	KaiToolbar*parent;
 	wxBitmap *bmp;
+	KaiScrollbar *scroll;
 	int sel;
 	int fh;
 	int scPos;

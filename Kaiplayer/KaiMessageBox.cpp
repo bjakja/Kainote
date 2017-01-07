@@ -21,14 +21,15 @@
 
 
 KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const wxString &caption, long elems)
-	: wxDialog(parent, -1, caption)
+	: KaiDialog(parent, -1, caption)
 {
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
+	//SetForegroundColour(Options.GetColour("Window Text"));
+	//SetBackgroundColour(Options.GetColour("Window Background"));
 	wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
-	wxBoxSizer *sizer2 = new wxBoxSizer(wxVERTICAL);
+	DialogSizer *sizer2 = new DialogSizer(wxVERTICAL);
 	wxStaticText *txt = new wxStaticText(this,-1,msg);
 	MappedButton *btn=NULL;
+	int whichFocus=0;
 	if(elems & wxOK){
 		btn = new MappedButton(this,9009,"OK");
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxOK);},9009);
@@ -63,8 +64,44 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 	sizer2->Add(sizer1,0,wxALL|wxALIGN_RIGHT,3);
 	SetSizerAndFit(sizer2);
 	CenterOnParent();
+	Bind(wxEVT_CLOSE_WINDOW,[=](wxCloseEvent &evt){EndModal((elems & wxCANCEL)? wxCANCEL : wxNO);});
+	SetEscapeId((elems & wxCANCEL)? 9010 : (elems & wxNO)? wxID_NO : 9009);
+	
+	/*Bind(wxEVT_CHAR_HOOK, [=](wxKeyEvent &evt){
+		int key = evt.GetKeyCode();
+		if(key == WXK_ESCAPE){
+			int id = (elems & wxCANCEL)? 9010 : (elems & wxNO)? wxID_NO : 9009;
+			wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, id);
+			ProcessEvent(evt);
+			return;
+		}
+		evt.Skip();
+	});*/
 }
 
+void KaiMessageDialog::SetOkLabel(const wxString &label)
+{
+	MappedButton *btn = wxDynamicCast(FindWindowById(9009, this), MappedButton);
+	if(btn) btn->SetLabelText(label);
+}
+	
+void KaiMessageDialog::SetYesLabel(const wxString &label)
+{
+	MappedButton *btn = wxDynamicCast(FindWindowById(wxID_YES, this), MappedButton);
+	if(btn) btn->SetLabelText(label);
+}
+	
+void KaiMessageDialog::SetNoLabel(const wxString &label)
+{
+	MappedButton *btn = wxDynamicCast(FindWindowById(wxID_NO, this), MappedButton);
+	if(btn) btn->SetLabelText(label);
+}
+	
+void KaiMessageDialog::SetHelpLabel(const wxString &label)
+{
+	MappedButton *btn = wxDynamicCast(FindWindowById(9011, this), MappedButton);
+	if(btn) btn->SetLabelText(label);
+}
 
 
 

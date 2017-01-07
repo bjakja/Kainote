@@ -17,9 +17,7 @@
 #include "config.h"
 
 KaiScrollbar::KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos, const wxSize &size, int style)
-	: wxWindow(parent, id,
-	(style & wxHORIZONTAL)? wxPoint(0, parent->GetClientSize().y-17) : wxPoint(parent->GetClientSize().x-17, 0), 
-	(style & wxHORIZONTAL)? wxSize(parent->GetClientSize().x, 17) : wxSize(17, parent->GetClientSize().y)) 
+	: wxWindow(parent, id, pos, size)
 	,isVertical((style & wxVERTICAL) != 0)
 	,holding(false)
 	,rholding(false)
@@ -31,6 +29,12 @@ KaiScrollbar::KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos, const w
 	,scrollRate(1)
 	,element(0)
 {
+	if(pos == wxDefaultPosition){
+		SetPosition((style & wxHORIZONTAL)? wxPoint(0, parent->GetClientSize().y-17) : wxPoint(parent->GetClientSize().x-17, 0));
+	}
+	if(size == wxDefaultSize){
+		SetSize((style & wxHORIZONTAL)? wxSize(parent->GetClientSize().x, 17) : wxSize(17, parent->GetClientSize().y)); 
+	}
 	pageLoop.SetOwner(this, 2345);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
 		if(unitPos == 0 || unitPos == allVisibleSize){pageLoop.Stop();return;}

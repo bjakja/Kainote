@@ -16,13 +16,18 @@
 #ifndef __KAI_MESSAGEBOX__
 #define __KAI_MESSAGEBOX__
 
-#include <wx/dialog.h>
+#include "KaiDialog.h"
 
-class KaiMessageDialog : public wxDialog
+class KaiMessageDialog : public KaiDialog
 {
 public:
 	KaiMessageDialog(wxWindow *parent, const wxString& msg, const wxString &caption, long elems = wxOK);
-	virtual ~KaiMessageDialog(){}	
+	virtual ~KaiMessageDialog(){}
+	void SetOkLabel(const wxString &label);
+	void SetYesLabel(const wxString &label);
+	void SetNoLabel(const wxString &label);
+	void SetHelpLabel(const wxString &label);
+
 };
 
 

@@ -117,7 +117,7 @@ public:
 	void SaveAll(int col);
 	void SetModified(bool modif){modified = modif;}
 	bool GetModified(){return modified;}
-	Item *FindItem(int column, const wxString &textItem);
+	int FindItem(int column, const wxString &textItem);
 	void ScrollTo(int row);
 	size_t GetCount(){return itemList.size();}
 private:

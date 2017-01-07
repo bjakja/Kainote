@@ -17,6 +17,7 @@
 #include "config.h"
 #include <wx\dcmemory.h>
 #include <wx\dcclient.h>
+#include <wx\log.h>
 
 KaiStatusBar::KaiStatusBar(wxWindow *parent, int id, int style)
 	:wxWindow(parent, id, wxDefaultPosition, wxSize(-1, 26))
@@ -24,6 +25,9 @@ KaiStatusBar::KaiStatusBar(wxWindow *parent, int id, int style)
 {
 	Bind(wxEVT_SIZE, &KaiStatusBar::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiStatusBar::OnPaint, this);
+	/*Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &evt){
+		wxLogStatus("focus");
+	});*/
 	SetMinSize(wxSize(200,26));
 }
 

@@ -117,9 +117,10 @@ namespace Auto{
 	}
 
 	class DirectoryIterator {
-		struct PrivData;
-		std::shared_ptr<PrivData> privdata;
-		
+		//struct PrivData;
+		//std::shared_ptr<PrivData> privdata;
+		//PrivData *privdata;
+		HANDLE handle;
 	public:
 		std::string value;
 		typedef path value_type;
@@ -148,18 +149,21 @@ namespace Auto{
 		copy(*this, end(*this), std::back_inserter(cont));
 	}
 
-	struct DirectoryIterator::PrivData {
-		scoped_holder<HANDLE, BOOL (__stdcall *)(HANDLE)> h;//{INVALID_HANDLE_VALUE, FindClose};
-	};
+	//struct DirectoryIterator::PrivData {
+	//	scoped_holder<HANDLE, BOOL (__stdcall *)(HANDLE)> h;//{INVALID_HANDLE_VALUE, FindClose};
+	//};
 
-	DirectoryIterator::DirectoryIterator() { }
+	DirectoryIterator::DirectoryIterator() {handle = NULL; }
 	DirectoryIterator::DirectoryIterator(path const& p, std::string const& filter)
-	: privdata(new PrivData)
+	//: privdata(new PrivData)
 	{
+		handle = NULL;
 		WIN32_FIND_DATA data;
-		privdata->h = FindFirstFileEx((p/(filter.empty() ? "*.*" : filter)).c_str(), find_info_level(), &data, FindExSearchNameMatch, nullptr, 0);
-		if (privdata->h == INVALID_HANDLE_VALUE) {
-			privdata.reset();
+		handle = FindFirstFileEx((p/(filter.empty() ? "*.*" : filter)).c_str(), find_info_level(), &data, FindExSearchNameMatch, nullptr, 0);
+		if (handle == INVALID_HANDLE_VALUE) {
+			//privdata.reset();
+			//if(privdata){delete privdata; privdata=NULL;}
+			handle = NULL;
 			return;
 		}
 
@@ -169,21 +173,23 @@ namespace Auto{
 	}
 
 	bool DirectoryIterator::operator==(DirectoryIterator const& rhs) const {
-		return privdata.get() == rhs.privdata.get();
+		return handle == rhs.handle;
 	}
 
 	DirectoryIterator& DirectoryIterator::operator++() {
 		WIN32_FIND_DATA data;
-		if (FindNextFile(privdata->h, &data))
+		if (handle && FindNextFile(handle, &data))
 			value = wxString(data.cFileName).ToStdString();
 		else {
-			if(privdata){privdata.reset();}
+			//if(privdata){privdata.reset();}
+			//if(privdata){delete privdata; privdata=NULL;}
+			handle = NULL;
 			value.clear();
 		}
 		return *this;
 	}
 
-	DirectoryIterator::~DirectoryIterator() { }
+	DirectoryIterator::~DirectoryIterator() { if(handle){FindClose(handle); handle=NULL;}}
 
 	template<typename Func>
 	auto wrap(char **err, Func f) -> decltype(f()) {

@@ -123,7 +123,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Menubar->Append(EditMenu, _("&Edycja"));
 
 	VidMenu = new Menu();
-	VidMenu->AppendTool(Toolbar,OpenVideo, _("Otwórz wideo"), _("Otwiera wybrane wideo"),PTR_BITMAP_PNG("openvideo"));
+	VidMenu->AppendTool(Toolbar,OpenVideo, _("Otwórz wideo"), _("Otwiera wybrane wideo"), PTR_BITMAP_PNG("openvideo"));
 	VidsRecMenu = new Menu();
 	VidMenu->AppendTool(Toolbar, RecentVideo, _("Ostatnio otwarte wideo"), _("Ostatnio otwarte video"),PTR_BITMAP_PNG("recentvideo"),true, VidsRecMenu);
 	VidMenu->AppendTool(Toolbar, SetStartTime, _("Wstaw czas początkowy z wideo"), _("Wstawia czas początkowy z wideo"),PTR_BITMAP_PNG("setstarttime"),false);
@@ -216,7 +216,6 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 			delete mylog; mylog=NULL;
 		}
 	},9989);
-
 	Connect(SnapWithStart,SnapWithEnd,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
 	SetDropTarget(new DragnDrop(this));
 
@@ -226,8 +225,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	if(!Options.GetBool("Show Editor")){HideEditor();}	
 	std::set_new_handler(OnOutofMemory);
-	//Auto=new Auto::Automation();
-	//Auto->BuildMenuWithDelay(&AutoMenu,1000);
+	
 }
 
 kainoteFrame::~kainoteFrame()

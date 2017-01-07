@@ -1120,10 +1120,10 @@ namespace Auto{
 		for(int j=(*bar)->GetMenuItemCount()-1; j>=3; j--){
 			(*bar)->Delete(j);
 		}
-		if(!initialized){
+		/*if(!initialized){
 			(*bar)->Append(30100,_("Wczytywanie skryptów..."))->Enable(false);
 			return;
-		}
+		}*/
 		bool changes = AddFromSubs();
 
 		/*if(!changes){
@@ -1137,14 +1137,15 @@ namespace Auto{
 		
 		int start=30100, i=0;
 		//if(all){
-			for(auto script : Scripts){
+			for(size_t g = 0; g < Scripts.size(); g++){
+				auto script = Scripts[g];
 				if(script->CheckLastModified(true)){script->Reload();}
 				Menu *submenu=new Menu();
-				int j=0;
 				auto macros = script->GetMacros();
 				//wxLogStatus("size %i", macros.size());
-				for(auto macro : macros){
-					wxString text; text<<"Script "<<script->GetFilename()<<"-"<<j;
+				for(size_t p = 0; p < macros.size(); p++){
+					auto macro = macros[p];
+					wxString text; text<<"Script "<<script->GetFilename()<<"-"<<p;
 					submenu->SetAccMenu(new MenuItem(start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
 					Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 						if(wxGetKeyState(WXK_SHIFT)){
@@ -1164,7 +1165,6 @@ namespace Auto{
 						}	
 					}, start);
 					start++;
-					j++;
 				}
 				if( macros.size()<1){
 					submenu->Append(start,script->GetDescription(),_("Błąd"));
@@ -1190,14 +1190,15 @@ namespace Auto{
 			}
 		//}
 
-		for(auto script : ASSScripts){
+		for(size_t g = 0; g < ASSScripts.size(); g++){
+			auto script = ASSScripts[g];
 			if(script->CheckLastModified(true)){script->Reload();}
 			Menu *submenu=new Menu();
-			int j=0;
 			auto macros = script->GetMacros();
 			//wxLogStatus("size %i", macros.size());
-			for(auto macro : macros){
-				wxString text; text<<"Script "<<script->GetFilename()<<"-"<<j;
+			for(size_t p = 0; p < macros.size(); p++){
+				auto macro = macros[p];
+				wxString text; text<<"Script "<<script->GetFilename()<<"-"<<p;
 				submenu->SetAccMenu(new MenuItem(start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 					if(wxGetKeyState(WXK_SHIFT)){
@@ -1215,7 +1216,6 @@ namespace Auto{
 					}else{if(script->CheckLastModified(true)){script->Reload();}macro->RunScript();}	
 				}, start);
 				start++;
-				j++;
 			}
 			if( macros.size()<1){
 				submenu->Append(start,script->GetDescription(),_("Błąd"));

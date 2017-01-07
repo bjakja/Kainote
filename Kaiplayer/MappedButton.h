@@ -40,13 +40,13 @@ public:
 	}
 	bool changedForeground;
 	wxString GetLabelText() const {return name;}
-	void SetLabelText(const wxString &label) {name = label; Refresh(false);}
+	void SetLabelText(const wxString &label);
 	bool clicked;
 private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);
 	void OnMouseEvent(wxMouseEvent &evt);
-	void OnKeyPress(wxKeyEvent &event);
+	void SendEvent();
 	int Window;
 	bool twoHotkeys;
 	bool enter;
@@ -72,7 +72,7 @@ private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);
 	void OnMouseEvent(wxMouseEvent &evt);
-	void OnKeyPress(wxKeyEvent &event);
+	void SendEvent();
 	wxBitmap *bmp;
 	wxBitmap icon;
 	wxString name;

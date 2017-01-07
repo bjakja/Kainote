@@ -31,6 +31,7 @@
 // Disable warnings for noreturn functions having return types
 #pragma warning(disable: 4645 4646)
 #endif
+//struct error_tag {};
 
 extern "C" int luaopen_luabins(lua_State *L);
 extern "C" int luaopen_re_impl(lua_State *L);

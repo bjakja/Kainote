@@ -16,7 +16,7 @@
 //#define UNICODE
 
 
-#include <wx/wx.h>
+//#include <wx/wx.h>
 #include <Windows.h>
 #include <vector>
 #include <map>
@@ -24,11 +24,12 @@
 #include "KaiRadioButton.h"
 #include "MappedButton.h"
 #include "KaiTextCtrl.h"
+#include "KaiDialog.h"
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_SFNT_NAMES_H
 
-class FontCollectorDialog : public wxDialog
+class FontCollectorDialog : public KaiDialog
 {
 public:
 	FontCollectorDialog(wxWindow *parent);

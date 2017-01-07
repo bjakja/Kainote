@@ -471,7 +471,7 @@ PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, 
 	: wxPopupWindow(DialogParent)
 	,sel(0)
 	,scPos(0)
-	//,fullScPos(20)
+	,scroll(NULL)
 	,orgY(0)
 	,bmp(NULL)
 	,Parent(DialogParent)
@@ -480,7 +480,7 @@ PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, 
 {
 	int fw=0;
 	SetFont(DialogParent->GetFont());
-	GetTextExtent("#TWFfGH", &fw, &height, 0, 0/*, &font*/);
+	GetTextExtent("#TWFfGH", &fw, &height);
 	height+=6;
 }
 
@@ -579,26 +579,31 @@ void PopupList::OnMouseEvent(wxMouseEvent &evt)
 
 void PopupList::OnPaint(wxPaintEvent &event)
 {
-	
-	int itemsize = itemsList->size();
-	if(scPos>=itemsize-maxVisible){scPos=itemsize-maxVisible;}
-	if(scPos<0){scPos=0;}
-	int maxsize=itemsize;
-	if(itemsize>maxVisible){
-		maxsize=maxVisible;
-		SetScrollbar(wxVERTICAL, scPos, maxVisible, itemsize);
-	}
 	int w=0;
 	int h=0;
 	GetClientSize (&w, &h);
 	if(w==0||h==0){return;}
-	int bitmapw=w;
+	int itemsize = itemsList->size();
+	if(scPos>=itemsize-maxVisible){scPos=itemsize-maxVisible;}
+	if(scPos<0){scPos=0;}
+	int maxsize=itemsize;
+	int ow = w;
+	if(itemsize>maxVisible){
+		maxsize=maxVisible;
+		if(!scroll){
+			scroll = new KaiScrollbar(this,-1,wxPoint(w-18,1),wxSize(17, h-2), wxVERTICAL);
+			scroll->SetScrollRate(3);
+		}
+		scroll->SetScrollbar(scPos, maxVisible, itemsize, maxVisible-1);
+		w-=18;
+	}
+	
 	wxMemoryDC tdc;
-	if (bmp && (bmp->GetWidth() < bitmapw || bmp->GetHeight() < h)) {
+	if (bmp && (bmp->GetWidth() < ow || bmp->GetHeight() < h)) {
 		delete bmp;
 		bmp = NULL;
 	}
-	if(!bmp){bmp=new wxBitmap(bitmapw, h);}
+	if(!bmp){bmp=new wxBitmap(ow, h);}
 	tdc.SelectObject(*bmp);
 	wxColour text = Options.GetColour("Window Text");
 	wxColour graytext = Options.GetColour("Window Inactive Text");
@@ -606,7 +611,7 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	tdc.SetFont(GetFont());
 	tdc.SetBrush(wxBrush(Options.GetColour("Menu Background")));
 	tdc.SetPen(wxPen(text));
-	tdc.DrawRectangle(0,0,bitmapw,h);
+	tdc.DrawRectangle(0,0,ow,h);
 	//tdc.SetTextForeground(Options.GetColour("Menu Bar Border Selection"));
 	for(int i=0;i<maxsize; i++)
 	{
@@ -623,7 +628,7 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	}
 
 	wxPaintDC dc(this);
-	dc.Blit(0,0,bitmapw,h,&tdc,0,0);
+	dc.Blit(0,0,ow,h,&tdc,0,0);
 }
 
 void PopupList::SetSelection(int pos){
@@ -634,34 +639,9 @@ void PopupList::SetSelection(int pos){
 	Refresh(false);
 };
 
-void PopupList::OnScroll(wxScrollWinEvent& event)
+void PopupList::OnScroll(wxScrollEvent& event)
 {
-	int newPos=0;
-	int tsize= itemsList->size();
-	if(event.GetEventType()==wxEVT_SCROLLWIN_LINEUP)
-	{
-		newPos=scPos-1;
-		if(newPos<0){newPos=0;return;}
-	}
-	else if(event.GetEventType()==wxEVT_SCROLLWIN_LINEDOWN)
-	{
-		newPos=scPos+1;
-	}
-	else if(event.GetEventType()==wxEVT_SCROLLWIN_PAGEUP)
-	{
-		wxSize size=GetClientSize();
-		newPos=scPos;
-		newPos-=(size.y/height - 1);
-		newPos=MAX(0,newPos);
-	}
-	else if(event.GetEventType()==wxEVT_SCROLLWIN_PAGEDOWN)
-	{
-		wxSize size=GetClientSize();
-		newPos=scPos;
-		newPos+=(size.y/height - 1);
-		newPos=MIN(newPos,tsize-1);
-	}
-	else{newPos = event.GetPosition();}
+	int newPos = event.GetPosition();
 	if (scPos != newPos) {
 		scPos = newPos;
 		Refresh(false);
@@ -722,15 +702,13 @@ void PopupList::OnIdle(wxIdleEvent& event)
             if ( HasCapture() )
             {
                 ReleaseMouse();
-				//wxLogStatus("parent %i %i", (int)GetGrandParent()->IsShown(), (int)((KaiChoice*)Parent)->itemList);
             }
         }
         else
         {
-            if ( !HasCapture() )
+            if ( !HasCapture() && !(scroll && scroll->HasCapture()))
             {
                 CaptureMouse();
-				//wxLogStatus("parent %i %i", (int)GetGrandParent()->IsShown(), (int)((KaiChoice*)Parent)->itemList);
             }
         }
     }
@@ -739,7 +717,7 @@ void PopupList::OnIdle(wxIdleEvent& event)
 BEGIN_EVENT_TABLE(PopupList,/* wxFrame*/wxPopupWindow)
 	EVT_MOUSE_EVENTS(PopupList::OnMouseEvent)
 	EVT_PAINT(PopupList::OnPaint)
-	EVT_SCROLLWIN(PopupList::OnScroll)
+	EVT_SCROLL(PopupList::OnScroll)
 	EVT_MOUSE_CAPTURE_LOST(PopupList::OnLostCapture)
 END_EVENT_TABLE()
 

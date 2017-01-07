@@ -381,7 +381,7 @@
     <ClCompile Include="..\source\common\uvectr32.cpp" />
     <ClCompile Include="..\source\common\uvectr64.cpp" />
     <ClCompile Include="..\source\common\wintz.c" />
-    <ClCompile Include="\icudt57l.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)icudt57l.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\i18n\affixpatternparser.h" />

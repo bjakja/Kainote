@@ -43,7 +43,7 @@ wxString AddText(int id)
 //w tooltipach nie nale¿y ustawiaæ () bo zostan¹ usuniête
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, const wxString& toolTip,
              const wxPoint& pos, const wxSize& size, int window, long style)
-			 :wxWindow(parent, id, pos, size, style)
+			 :wxWindow(parent, id, pos, size, style|wxWANTS_CHARS)
 			 ,Window(window)
 			 ,twoHotkeys(false)
 			 ,bmp(0)
@@ -74,7 +74,14 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	Bind(wxEVT_LEAVE_WINDOW, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
-	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		SendEvent();
+	});
+	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
+	wxAcceleratorEntry centries[1];
+	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
+	wxAcceleratorTable caccel(1, centries);
+	SetAcceleratorTable(caccel);
 	if(toolTip!=""){SetToolTip(toolTip);}
 	//SetForegroundColour(parent->GetForegroundColour());
 	
@@ -82,7 +89,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int window,
             const wxPoint& pos, const wxSize& size, long style)
-			:wxWindow(parent, id, pos, size, style)
+			:wxWindow(parent, id, pos, size, style|wxWANTS_CHARS)
 			 ,Window(window)
 			 ,twoHotkeys(false)
 			 ,bmp(0)
@@ -113,13 +120,20 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	Bind(wxEVT_LEAVE_WINDOW, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
-	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		SendEvent();
+	});
+	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
+	wxAcceleratorEntry centries[1];
+	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
+	wxAcceleratorTable caccel(1, centries);
+	SetAcceleratorTable(caccel);
 	//SetForegroundColour(parent->GetForegroundColour());
 }
 
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, const wxBitmap& bitmap, const wxPoint& pos,
             const wxSize& size, int window, long style)
-			 :wxWindow(parent, id, pos, size, style)
+			 :wxWindow(parent, id, pos, size, style|wxWANTS_CHARS)
 			 ,Window(window)
 			 ,twoHotkeys(false)
 			 ,bmp(0)
@@ -146,7 +160,14 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 	Bind(wxEVT_LEAVE_WINDOW, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
-	Bind(wxEVT_KEY_DOWN, &MappedButton::OnKeyPress, this);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		SendEvent();
+	});
+	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
+	wxAcceleratorEntry centries[1];
+	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
+	wxAcceleratorTable caccel(1, centries);
+	SetAcceleratorTable(caccel);
 	if(tooltip!=""){SetToolTip(tooltip);}
 	SetFont(parent->GetFont());
 	//SetForegroundColour(parent->GetForegroundColour());
@@ -277,25 +298,34 @@ void MappedButton::OnMouseEvent(wxMouseEvent &event)
 		clicked=false;
 		Refresh(false);
 		if(oldclicked){
-			wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
-			this->ProcessEvent(evt);
+			SendEvent();
 		}
 	}
 	//event.Skip();
 }
 
-void MappedButton::OnKeyPress(wxKeyEvent &event)
+void MappedButton::SendEvent()
 {
-	if(event.GetKeyCode() == WXK_RETURN){
-		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
-		this->ProcessEvent(evt);
-	}
+	wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
+	ProcessEvent(evt);
 }
 
+void MappedButton::SetLabelText(const wxString &label) 
+{
+	name = label; 
+	int fw, fh;
+	GetTextExtent((name=="")? "TEXT" : name, &fw, &fh);
+	wxSize minSize = GetMinSize();
+	if(minSize.x < fw + 16){
+		minSize.x = fw+16;
+		SetMinSize(minSize);
+	}
+	Refresh(false);
+}
 
 ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, const wxString& tooltip,
              const wxPoint& pos, const wxSize& size, long style)
-			 :wxWindow(parent, id, pos, size, style)
+			 :wxWindow(parent, id, pos, size, style|wxWANTS_CHARS)
 			 ,bmp(0)
 			 ,enter(false)
 			 ,toggled(false)
@@ -320,7 +350,15 @@ ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, cons
 	Bind(wxEVT_LEAVE_WINDOW, &ToggleButton::OnMouseEvent, this);
 	Bind(wxEVT_SIZE, &ToggleButton::OnSize, this);
 	Bind(wxEVT_PAINT, &ToggleButton::OnPaint, this);
-	Bind(wxEVT_KEY_DOWN, &ToggleButton::OnKeyPress, this);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		toggled = !toggled;
+		Refresh(false);
+		SendEvent();
+	});
+	wxAcceleratorEntry centries[1];
+	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
+	wxAcceleratorTable caccel(1, centries);
+	SetAcceleratorTable(caccel);
 	if(tooltip!=""){SetToolTip(tooltip);}
 	//SetForegroundColour(parent->GetForegroundColour());
 }
@@ -401,21 +439,41 @@ void ToggleButton::OnMouseEvent(wxMouseEvent &event)
 	if(event.LeftUp()){
 		clicked=false;
 		Refresh(false);
-		wxCommandEvent evt(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, GetId());
-		this->ProcessEvent(evt);
+		SendEvent();
 	}
 	//event.Skip();
 }
 
-void ToggleButton::OnKeyPress(wxKeyEvent &event)
+void ToggleButton::SendEvent()
 {
-	if(event.GetKeyCode() == WXK_RETURN){
-		toggled = !toggled;
-		Refresh(false);
-		wxCommandEvent evt(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, GetId());
-		this->ProcessEvent(evt);
-	}
+	wxCommandEvent evt(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, GetId());
+	this->ProcessEvent(evt);
 }
 
+//static wxTopLevelWindow *GetTLWParentIfNotBeingDeleted(wxWindow *win)
+//{
+//    for ( ;; )
+//    {
+//        // IsTopLevel() will return false for a wxTLW being deleted, so we also
+//        // need the parent test for this case
+//        wxWindow * const parent = win->GetParent();
+//        if ( !parent || win->IsTopLevel() )
+//        {
+//            if ( win->IsBeingDeleted() )
+//                return NULL;
+//
+//            break;
+//        }
+//
+//        win = parent;
+//    }
+//
+//    wxASSERT_MSG( win, wxT("button without top level parent?") );
+//
+//    wxTopLevelWindow * const tlw = wxDynamicCast(win, wxTopLevelWindow);
+//    wxASSERT_MSG( tlw, wxT("logic error in GetTLWParentIfNotBeingDeleted()") );
+//
+//    return tlw;
+//}
 
 wxIMPLEMENT_ABSTRACT_CLASS(MappedButton, wxWindow);

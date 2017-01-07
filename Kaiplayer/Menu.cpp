@@ -17,6 +17,7 @@
 #include "Menu.h"
 #include "Config.h"
 #include "Toolbar.h"
+#include "KaiScrollbar.h"
 //#include "wx/msw/private.h"
 
 static wxFont font = wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma");
@@ -327,11 +328,10 @@ MenuItem *Menu::SetAccMenu(int id, const wxString &txt, const wxString &help, bo
 MenuItem *Menu::SetAccMenu(MenuItem *menuitem, const wxString &name)
 {
 	int id=0;
-	for(auto cur=Hkeys.hkeys.rbegin(); cur!=Hkeys.hkeys.rend(); cur++)
+	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++)
 	{
-		if(cur->first < 30100){break;}
+		if(cur->first < 30100){continue;}
 		if(cur->second.Name == name ){
-			//hkey = cur->second.Accel;
 			id = cur->first.id;	
 		}
 	}
@@ -367,6 +367,7 @@ MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos
 	,submenuShown(-1)
 	,submenuToHide(-1)
 	,bmp(NULL)
+	,scroll(NULL)
 	,accel(0)
 {
 	if(!ParentMenu){
@@ -447,67 +448,7 @@ void MenuDialog::OnHideSubmenu(wxTimerEvent &evt)
 	if(submenuShown != submenuToHide){showSubmenuTimer.Start(1,true);}
 	submenuToHide=-1;
 }
-//WXHWND MenuDialog::MSWGetParent() const
-//{
-//    // we must be a child of the desktop to be able to extend beyond the parent
-//    // window client area (like the comboboxes drop downs do)
-//    //
-//    // NB: alternative implementation would be to use WS_POPUP instead of
-//    //     WS_CHILD but then showing a popup would deactivate the parent which
-//    //     is ugly and working around this, although possible, is even more
-//    //     ugly
-//    // GetDesktopWindow() is not always supported on WinCE, and if
-//    // it is, it often returns NULL.
-//#ifdef __WXWINCE__
-//    return 0;
-//#else
-//    return (WXHWND)::GetDesktopWindow();
-//#endif
-//}
-//
-//bool MenuDialog::Show(bool show)
-//{
-//    if ( !wxWindowMSW::Show(show) )
-//        return false;
-//
-//    if ( show )
-//    {
-//        // raise to top of z order
-//        if (!::SetWindowPos(GetHWND(), HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE))
-//        {
-//            wxLogLastError(wxT("SetWindowPos"));
-//        }
-//
-//        // and set it as the foreground window so the mouse can be captured
-//        ::SetForegroundWindow(GetHWND());
-//    }
-//
-//    return true;
-//}
-//
-//WXDWORD MenuDialog::MSWGetStyle(long flags, WXDWORD *exstyle) const
-//{
-//    // we only honour the border flags, the others don't make sense for us
-//    WXDWORD style = wxWindow::MSWGetStyle(flags & wxBORDER_MASK, exstyle);
-//
-//    if ( exstyle )
-//    {
-//        // a popup window floats on top of everything
-//        *exstyle |= WS_EX_TOPMOST | WS_EX_TOOLWINDOW;
-//    }
-//
-//    return style;
-//}
-//
-//void MenuDialog::DoGetPosition(int *x, int *y) const
-//{
-//    // the position of a "top level" window such as this should be in
-//    // screen coordinates, not in the client ones which MSW gives us
-//    // (because we are a child window)
-//    wxWindow::DoGetPosition(x, y);
-//
-//    GetParent()->ClientToScreen(x, y);
-//}
+
 
 void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 {
@@ -597,7 +538,11 @@ bool MenuDialog::SendEvent(MenuItem *item, int accel)
 void MenuDialog::OnPaint(wxPaintEvent &event)
 {
 	
-
+	int w=0;
+	int h=0;
+	GetClientSize (&w, &h);
+	if(w==0||h==0){return;}
+	int ow = w;
 	int itemsize = parent->items.size();
 	if(scPos>=itemsize-maxVisible){scPos=itemsize-maxVisible;}
 	if(scPos<0){scPos=0;}
@@ -606,19 +551,21 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	else if(sel>= scPos + maxVisible && (sel-maxVisible+1) >= 0){scPos=sel-maxVisible+1;}
 	if(itemsize>maxVisible){
 		maxsize=maxVisible;
-		SetScrollbar(wxVERTICAL, scPos, maxVisible, itemsize);
+		if(!scroll){
+			scroll = new KaiScrollbar(this,-1,wxPoint(w-18,1),wxSize(17, h-2), wxVERTICAL);
+			scroll->SetScrollRate(3);
+		}
+		scroll->SetScrollbar(scPos, maxVisible, itemsize, maxVisible-1);
+		w-=18;
 	}
-	int w=0;
-	int h=0;
-	GetClientSize (&w, &h);
-	if(w==0||h==0){return;}
+	
 	
 	wxMemoryDC tdc;
-	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
+	if (bmp && (bmp->GetWidth() < ow || bmp->GetHeight() < h)) {
 		delete bmp;
 		bmp = NULL;
 	}
-	if(!bmp){bmp=new wxBitmap(w,h);}
+	if(!bmp){bmp=new wxBitmap(ow,h);}
 	tdc.SelectObject(*bmp);
 	wxBitmap checkbmp = wxBITMAP_PNG("check");
 	wxBitmap dot = wxBITMAP_PNG("dot");
@@ -632,7 +579,7 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	tdc.SetFont(font);
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(text));
-	tdc.DrawRectangle(0,0,w,h);
+	tdc.DrawRectangle(0,0,ow,h);
 	tdc.SetTextForeground(text);
 	wxSize mnbefsize;
 	wxSize linesize;
@@ -655,19 +602,19 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 		if(scrollPos==sel){
 			tdc.SetPen(wxPen(highlight));
 			tdc.SetBrush(wxBrush(menuhighlight));
-			tdc.DrawRectangle(2, (height*i)+1,w-4,height);
+			tdc.DrawRectangle(2, (height*i)+2,w-4,height);
 		}
 		//tdc.SetPen(wxPen("#497CB0",2));
 		//tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 		
 		if(showIcons){
 			if(item->type==ITEM_CHECK && item->check){
-				tdc.DrawBitmap(checkbmp,5,(height*i)+3);
+				tdc.DrawBitmap(checkbmp,5,(height*i)+5);
 			}else if(item->type==ITEM_RADIO && noRadio){
 				tdc.DrawBitmap(dot,5,(height*i)+4);
 				noRadio=false;
 			}else if(item->icon){
-				tdc.DrawBitmap(item->GetBitmap(),5,(height*i)+4);
+				tdc.DrawBitmap(item->GetBitmap(),5,(height*i)+5);
 			}
 		}
 		wxString desc=item->GetLabel();
@@ -688,52 +635,27 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 			int fw, fhh;
 			wxString accel=desc.AfterLast('\t');
 			tdc.GetTextExtent(accel, &fw, &fhh);
-			tdc.DrawText(accel,w-fw-20,(height*i)+3);
+			tdc.DrawText(accel,w-fw-20,(height*i)+4);
 			desc=desc.BeforeLast('\t');
 		}
-		tdc.DrawText(desc,textStart,(height*i)+3);
+		tdc.DrawText(desc,textStart,(height*i)+4);
 		if(hasMnemonics){
 			tdc.SetPen(wxPen((item->enabled)? text : graytext));
-			tdc.DrawLine(textStart+mnbefsize.x, (height*(i+1))-3, textStart+mnbefsize.x+linesize.x, (height*(i+1))-4);
+			tdc.DrawLine(textStart+mnbefsize.x, (height*(i+1))-3, textStart+mnbefsize.x+linesize.x, (height*(i+1))-3);
 		}
 		if(item->submenu){
-			tdc.DrawBitmap(arrow,w-18,(height*i)+3);
+			tdc.DrawBitmap(arrow,w-18,(height*i)+5);
 		}
 
 	}
 
 	wxPaintDC dc(this);
-	dc.Blit(0,0,w,h,&tdc,0,0);
+	dc.Blit(0,0,ow,h,&tdc,0,0);
 }
 	
-void MenuDialog::OnScroll(wxScrollWinEvent& event)
+void MenuDialog::OnScroll(wxScrollEvent& event)
 {
-	int newPos=0;
-	int tsize=parent->items.size();
-	if(event.GetEventType()==wxEVT_SCROLLWIN_LINEUP)
-	{
-		newPos=scPos-1;
-		if(newPos<0){newPos=0;return;}
-	}
-	else if(event.GetEventType()==wxEVT_SCROLLWIN_LINEDOWN)
-	{
-		newPos=scPos+1;
-	}
-	else if(event.GetEventType()==wxEVT_SCROLLWIN_PAGEUP)
-	{
-		wxSize size=GetClientSize();
-		newPos=scPos;
-		newPos-=(size.y/height - 1);
-		newPos=MAX(0,newPos);
-	}
-	else if(event.GetEventType()==wxEVT_SCROLLWIN_PAGEDOWN)
-	{
-		wxSize size=GetClientSize();
-		newPos=scPos;
-		newPos+=(size.y/height - 1);
-		newPos=MIN(newPos,tsize-1);
-	}
-	else{newPos = event.GetPosition();}
+	int newPos = event.GetPosition();
 	if (scPos != newPos) {
 		scPos = newPos;
 		Refresh(false);
@@ -807,7 +729,7 @@ WXLRESULT MenuDialog::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lP
 
 BEGIN_EVENT_TABLE(MenuDialog, wxPopupWindow/*wxFrame*/)
 	EVT_PAINT(MenuDialog::OnPaint)
-	EVT_SCROLLWIN(MenuDialog::OnScroll)
+	EVT_SCROLL(MenuDialog::OnScroll)
 END_EVENT_TABLE()
 
 static int menuIndent = 20;

@@ -273,6 +273,9 @@
     <ClCompile Include="KaiMessageBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="KaiDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DropFiles.h">
@@ -513,6 +516,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KaiMessageBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

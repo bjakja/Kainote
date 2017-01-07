@@ -31,14 +31,14 @@
 
 
 stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
-	: wxDialog(parent,id,_("Menedżer stylów"),pos,wxSize(400,-1),wxDEFAULT_DIALOG_STYLE)
+	: KaiDialog(parent,id,_("Menedżer stylów"),pos,wxSize(400,-1),wxDEFAULT_DIALOG_STYLE)
 {
 	SetForegroundColour(Options.GetColour("Window Text"));
 	SetBackgroundColour(Options.GetColour("Window Background"));
-	wxAcceleratorEntry centries[1];
-	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, ID_CONF);
-	wxAcceleratorTable caccel(1, centries);
-	this->SetAcceleratorTable(caccel);
+	//wxAcceleratorEntry centries[1];
+	//centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, ID_CONF);
+	//wxAcceleratorTable caccel(1, centries);
+	//this->SetAcceleratorTable(caccel);
 
 	//wxFont thisFont(8,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 	//SetFont(thisFont);
@@ -52,7 +52,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	cc->Hide();
 
 	wxBoxSizer *Mainsm= new wxBoxSizer(wxVERTICAL);
-	Mainall= new wxBoxSizer(wxHORIZONTAL);
+	Mainall= new DialogSizer(wxHORIZONTAL);
 
 	KaiStaticBoxSizer *katsbs=new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Katalog:"));
 	catalogList = new KaiChoice(this, ID_CATALOG, wxDefaultPosition, wxDefaultSize, Options.dirs);
@@ -135,7 +135,6 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 
 	Mainall->Add(Mainsm,0,wxEXPAND);
 	Mainall->Add(cc,0,wxEXPAND|wxLEFT,5);
-	SetEscapeId(ID_CLOSE);
 	SetSizerAndFit(Mainall);
 
 	Connect(ID_ASSSTYLES,wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,(wxObjectEventFunction)&stylestore::OnAssStyleChange);
@@ -157,7 +156,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	Connect(ID_ASSDEL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnAssDelete);
 	Connect(ID_ASSSORT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnAssSort);
 	Connect(ID_ASSCLEAN,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnCleanStyles);
-	Connect(ID_CONF,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&stylestore::OnConfirm);
+	Connect(ID_CONF,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnConfirm);
 	Connect(ID_CLOSE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnClose);
 	Connect(wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&stylestore::OnClose);
 
@@ -171,6 +170,15 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 
 	//SetMinSize(wxSize(200,-1));
 	SetMaxSize(wxSize(500,-1));
+	/*Bind(wxEVT_CHAR_HOOK, [=](wxKeyEvent &evt){
+		int key = evt.GetKeyCode();
+		if(key == WXK_ESCAPE || key == WXK_RETURN){
+			wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, (key == WXK_ESCAPE)? ID_CLOSE : ID_CONF);
+			ProcessEvent(evt);
+			return;
+		}
+		evt.Skip();
+	});*/
 }
 
 stylestore::~stylestore()

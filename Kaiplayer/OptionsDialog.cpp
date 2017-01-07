@@ -678,6 +678,9 @@ void OptionsDialog::SetOptions(bool saveall)
 				if(Options.GetString(OB.option)!=str){
 					Options.SetString(OB.option,str);
 				}
+				if(sc->GetId() == 22001){
+					colmod=true;
+				}
 			}else{
 				NumCtrl *sc=(NumCtrl*)OB.ctrl;
 				int num=sc->GetInt();
@@ -693,7 +696,7 @@ void OptionsDialog::SetOptions(bool saveall)
 			}
 		}else if(OB.ctrl->IsKindOf(CLASSINFO(KaiListCtrl))){
 			KaiListCtrl *list = (KaiListCtrl*)OB.ctrl;
-			if(OB.option == "colors" && list->GetModified()){
+			if(OB.option == "Colors" && list->GetModified()){
 				list->SaveAll(1);
 				Options.SaveColors();
 				wxColour windowColor = Options.GetColour("Window Background");
@@ -724,14 +727,14 @@ void OptionsDialog::SetOptions(bool saveall)
 			Kai->Tabs->GetSecondPage()->Grid1->RepaintWindow();
 		}
 	}
-	/*if(colmod){
+	if(colmod){
 		Kai->GetTab()->Grid1->Refresh(false);
 		if(Kai->GetTab()->Edit->ABox){Kai->GetTab()->Edit->ABox->audioDisplay->ChangeColours();}
 		if(Kai->Tabs->split){
 			Kai->Tabs->GetSecondPage()->Grid1->Refresh(false);
 			if(Kai->Tabs->GetSecondPage()->Edit->ABox){Kai->Tabs->GetSecondPage()->Edit->ABox->audioDisplay->ChangeColours();}
 		}
-	}*/
+	}
 	Options.SaveOptions();
 	Options.SaveAudioOpts();
 }
@@ -747,24 +750,27 @@ void OptionsDialog::OnMapHkey(wxCommandEvent& event)
 
 		const idAndType *itype=NULL;
 		for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
-			if(cur->second.Name == shkey){itype= new idAndType(cur->first.id, hkd.type);}
-			//wxLogStatus(cur->second.Name);
+			if(cur->second.Name == shkey){
+				if(itype){delete itype;}
+				itype= new idAndType(cur->first.id, hkd.type);
+			}
+
 			if(cur->second.Accel == hkd.hotkey && (cur->first.Type == hkd.type) ){
-				wxMessageDialog msg(this, 
+				KaiMessageDialog msg(this, 
 					wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
 					cur->second.Name), _("Uwaga"), wxYES_NO|wxCANCEL);
-				msg.SetYesNoLabels (_("Zamień skróty"), _("Usuń skrót"));
+				msg.SetYesLabel (_("Zamień skróty"));
+				msg.SetNoLabel (_("Usuń skrót"));
 				int result = msg.ShowModal();
-				if(result!=wxCANCEL)
-				{
+				if(result!=wxCANCEL){
 					if(result==wxNO){hotkey="";}
 					cur->second.Accel=hotkey;
-					Item *nitem=Shortcuts->FindItem(-1, wxString(cur->first.Type) + " " + cur->second.Name);
-					if(nitem){
-						Shortcuts->GetItem(inum,1)->name = hotkey;
+					int nitem =Shortcuts->FindItem(0, wxString(cur->first.Type) + " " + cur->second.Name);
+					if(nitem>=0){
+						Shortcuts->GetItem(nitem, 1)->name = hotkey;
 						Shortcuts->Refresh(false);
 					}
-				}else{ return;}
+				}else{ if(itype){delete itype; itype = NULL;} return;}
 			}
 		}
 
