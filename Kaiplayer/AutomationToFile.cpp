@@ -306,18 +306,17 @@ namespace Auto{
 
 		if(e->lclass=="dialogue"){
 			GETBOOL(IsComment, "comment","dialogue")
-				GETINT(Layer, "layer", "dialogue")
-				GETINT(Start, "start_time", "dialogue")
-				GETINT(End, "end_time", "dialogue")
-				GETSTRING(Style, "style", "dialogue")
-				GETSTRING(Actor, "actor", "dialogue")
-				GETINT(MarginL, "margin_l", "dialogue")
-				GETINT(MarginR, "margin_r", "dialogue")
-				GETINT(margt, "margin_t", "dialogue")
-				//GETINT(margb, "margin_b", "dialogue")
-				GETSTRING(Effect, "effect", "dialogue")
-				GETSTRING(Text , "text", "dialogue")
-				e->adial=new Dialogue();
+			GETINT(Layer, "layer", "dialogue")
+			GETINT(Start, "start_time", "dialogue")
+			GETINT(End, "end_time", "dialogue")
+			GETSTRING(Style, "style", "dialogue")
+			GETSTRING(Actor, "actor", "dialogue")
+			GETINT(MarginL, "margin_l", "dialogue")
+			GETINT(MarginR, "margin_r", "dialogue")
+			GETINT(margt, "margin_t", "dialogue")
+			GETSTRING(Effect, "effect", "dialogue")
+			GETSTRING(Text , "text", "dialogue")
+			e->adial=new Dialogue();
 			e->adial->IsComment=IsComment;
 			e->adial->Layer=Layer;
 			e->adial->Start=Start;

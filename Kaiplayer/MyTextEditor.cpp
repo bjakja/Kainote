@@ -21,39 +21,40 @@
 #include <wx/regex.h>
 #include <wx/clipbrd.h>
 #include "KaiMessageBox.h"
+#include "Stylelistbox.h"
 //#include <wx/graphics.h>
 #undef DrawText
 
 wxDEFINE_EVENT(CURSOR_MOVED, wxCommandEvent);
 
-class listwindow : public wxDialog
-{
-public:
-	listwindow(wxWindow *parent, wxArrayString suggest, const wxPoint& pos, wxString name="Sugestie");
-	virtual ~listwindow();
-
-	wxListBox *disperrs;
-	void OnDoubleClick(wxCommandEvent& event);
-};
-
-listwindow::listwindow(wxWindow *parent, wxArrayString suggest, const wxPoint& pos, wxString name)
-	: wxDialog(parent,-1,name,pos)
-{
-	wxBoxSizer *sizer=new wxBoxSizer(wxHORIZONTAL);
-	disperrs=new wxListBox(this,19887,wxDefaultPosition,wxDefaultSize,suggest);
-	Connect(19887,wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,(wxObjectEventFunction)&listwindow::OnDoubleClick);
-	sizer->Add(disperrs,1,wxEXPAND|wxALL,2);
-	sizer->SetMinSize(100,100);
-	SetSizerAndFit(sizer);
-}
-listwindow::~listwindow()
-{
-}
-
-void listwindow::OnDoubleClick(wxCommandEvent& event)
-{
-	EndModal(wxID_OK);
-}
+//class listwindow : public wxDialog
+//{
+//public:
+//	listwindow(wxWindow *parent, wxArrayString suggest, const wxPoint& pos, wxString name="Sugestie");
+//	virtual ~listwindow();
+//
+//	wxListBox *disperrs;
+//	void OnDoubleClick(wxCommandEvent& event);
+//};
+//
+//listwindow::listwindow(wxWindow *parent, wxArrayString suggest, const wxPoint& pos, wxString name)
+//	: wxDialog(parent,-1,name,pos)
+//{
+//	wxBoxSizer *sizer=new wxBoxSizer(wxHORIZONTAL);
+//	disperrs=new wxListBox(this,19887,wxDefaultPosition,wxDefaultSize,suggest);
+//	Connect(19887,wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,(wxObjectEventFunction)&listwindow::OnDoubleClick);
+//	sizer->Add(disperrs,1,wxEXPAND|wxALL,2);
+//	sizer->SetMinSize(100,100);
+//	SetSizerAndFit(sizer);
+//}
+//listwindow::~listwindow()
+//{
+//}
+//
+//void listwindow::OnDoubleClick(wxCommandEvent& event)
+//{
+//	EndModal(wxID_OK);
+//}
 
 
 MTextEditor::MTextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos,const wxSize& size, long style)
@@ -386,15 +387,13 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 			wxString err=errs[errn];
 
 			wxArrayString suggs= SpellChecker::Get()->Suggestions(err);
-			wxPoint mst=wxGetMousePosition();
-			mst.x-=50;mst.y+=15;
 
-			listwindow lw(NULL,suggs,mst);
+			KaiListBox lw(this,suggs,_("Sugestie poprawy"));
 			if(lw.ShowModal()==wxID_OK)
 			{
 				int from=errors[errn*2];
 				int to=errors[(errn*2)+1];
-				wxString txt=lw.disperrs->GetString(lw.disperrs->GetSelection());
+				wxString txt=lw.GetSelection();
 				MText.replace(from,to-from,txt);
 				modified=true;
 				CalcWrap();
@@ -1032,6 +1031,7 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 	menut.Append(TEXTM_SEEKWORDL,_("Szukaj tłumaczenia słowa na ling.pl"))->Enable(Selend.x!=Cursor.x);
 	menut.Append(TEXTM_SEEKWORDB,_("Szukaj tłumaczenia słowa na pl.ba.bla"))->Enable(Selend.x!=Cursor.x);
 	menut.Append(TEXTM_SEEKWORDG,_("Szukaj tłumaczenia słowa w google"))->Enable(Selend.x!=Cursor.x);
+	menut.Append(TEXTM_SEEKWORDS,_("Szukaj synonimu na synonimy.net"))->Enable(Selend.x!=Cursor.x);
 
 	if(!err.IsEmpty()){
 		menut.Append(TEXTM_ADD,_("&Dodaj słowo \"")+err+_("\" do słownika"));
@@ -1070,13 +1070,15 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 		bool succ = SpellChecker::Get()->AddWord(err);
 		if(!succ){KaiMessageBox(_("Błąd, słowo \"")+err+_("\" nie zostało dodane."));}
 		else{CheckText();EB->ClearErrs();Refresh(false);}
-	}else if(id>=TEXTM_SEEKWORDL && id<=TEXTM_SEEKWORDG){
+	}else if(id>=TEXTM_SEEKWORDL && id<=TEXTM_SEEKWORDS){
 		wxString page=(id==TEXTM_SEEKWORDL)? L"http://ling.pl/" : 
-			(id==TEXTM_SEEKWORDB)? L"http://pl.bab.la/slownik/angielski-polski/" : L"https://www.google.com/search?q=";
+			(id==TEXTM_SEEKWORDB)? L"http://pl.bab.la/slownik/angielski-polski/" : 
+			(id==TEXTM_SEEKWORDG)? L"https://www.google.com/search?q=" :
+			L"http://synonim.net/synonim/";
 		long from, to;
 		GetSelection(&from, &to);
 		wxString word= MText.SubString(from, to-1).Trim();
-		//if(word.IsWord()){
+		
 		word.Replace(" ", "+");
 		wxString url=page+word;
 		WinStruct<SHELLEXECUTEINFO> sei;
@@ -1086,7 +1088,6 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 		sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
 
 		ShellExecuteEx(&sei);
-		//}
 
 	}
 

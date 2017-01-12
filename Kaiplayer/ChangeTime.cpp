@@ -27,11 +27,9 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 {
     Kai=kfparent;
     form=ASS;
+    panel = new wxWindow(this,1);
 	SetForegroundColour(Options.GetColour("Window Text"));
 	SetBackgroundColour(Options.GetColour("Window Background"));
-    panel = new wxWindow(this,1);
-	panel->SetForegroundColour(Options.GetColour("Window Text"));
-	panel->SetBackgroundColour(Options.GetColour("Window Background"));
 	scroll=new KaiScrollbar(this,5558,wxDefaultPosition, wxDefaultSize, wxVERTICAL);
 	scroll->Hide();
 	scroll->SetScrollRate(5);
@@ -147,15 +145,26 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	DoTooltips();
 	if(Options.GetInt("Postprocessor enabling")>15){wxCommandEvent evt; evt.SetId(122); CollapsePane(evt);}
 	RefVals();
-	//wxSize bsize=GetBestSize();
-	//bestsize=bsize.x;
 	
 	panel->SetSizerAndFit(Main);
-	//Layout();
 }
 
 CTwindow::~CTwindow()
 {
+}
+
+bool CTwindow::SetBackgroundColour(const wxColour &col)
+{
+	wxWindow::SetBackgroundColour(Options.GetColour("Window Background"));
+	panel->SetBackgroundColour(Options.GetColour("Window Background"));
+	return true;
+}
+
+bool CTwindow::SetForegroundColour(const wxColour &col)
+{
+	wxWindow::SetForegroundColour(Options.GetColour("Window Text"));
+	panel->SetForegroundColour(Options.GetColour("Window Text"));
+	return true;
 }
 
 void CTwindow::Contents(bool addopts)

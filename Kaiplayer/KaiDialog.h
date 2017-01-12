@@ -40,7 +40,8 @@ public:
              const wxSize& size = wxDefaultSize,
              long _style = wxDEFAULT_DIALOG_STYLE);
 	virtual ~KaiDialog();
-
+	bool Show(bool show=true);
+	bool Hide();
 	int ShowModal();
     void EndModal(int retCode);
     bool IsModal() const;
@@ -48,15 +49,16 @@ public:
     int GetEscapeId() const { return escapeId; }
 	void SetEnterId(int _enterId){enterId = _enterId;}
     int GetEnterId() const { return enterId; }
+	void SetSizerAndFit1(wxSizer *sizer, bool deleteOld = true);
+private:
 	bool IsButtonFocused();
 	void OnCharHook(wxKeyEvent &evt);
 	void OnPaint(wxPaintEvent &evt);
-	void OnMouseEvent(wxMouseEvent &evt);
 	void OnSize(wxSizeEvent &evt);
+	void OnMouseEvent(wxMouseEvent &evt);
 	void OnActivate(wxActivateEvent &evt);
 	WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
 
-private:
 	int escapeId;
 	int enterId;
 	long style;
@@ -65,6 +67,7 @@ private:
 	bool pushed;
 	bool isActive;
 	wxModalEventLoop *loop;
+	wxDECLARE_ABSTRACT_CLASS(KaiDialog);
 };
 
 #endif

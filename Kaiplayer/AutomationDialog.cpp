@@ -458,17 +458,19 @@ namespace Auto{
 		}
 	}
 
-	wxDialog* LuaDialog::CreateWindow(wxWindow *parent, wxString name) {
-		window = new wxDialog(parent,-1,name);
+	KaiDialog* LuaDialog::CreateWindow(wxWindow *parent, wxString name) {
+		window = new KaiDialog(parent,-1,name);
 		window->SetForegroundColour(Options.GetColour("Window Text"));
 		window->SetBackgroundColour(Options.GetColour("Window Background"));
+		auto ms = new DialogSizer(wxVERTICAL);
 		auto s = new wxGridBagSizer(4, 4);
 		for (auto& c : controls)
 			s->Add(c->Create(window), wxGBPosition(c->y, c->x),
 				wxGBSpan(c->height, c->width), c->GetSizerFlags());
 
 		if (!use_buttons) {
-			window->SetSizerAndFit(s);
+			ms->Add(s, 0, wxALL, 2);
+			window->SetSizerAndFit(ms);
 			return window;
 		}
 
@@ -477,30 +479,8 @@ namespace Auto{
 			buttons.emplace_back(wxID_CANCEL, "");
 		}
 
-		//auto dialog = static_cast<wxDialog *>(parent);
 		auto bs = new wxBoxSizer(wxHORIZONTAL);
 
-		//auto make_button = [&](wxWindowID id, int button_pushed, wxString const& text) -> wxButton *{
-		//	auto button = new wxButton(window, id, text);
-		//	button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt) {
-		//		this->button_pushed = button_pushed;
-		//		//TransferDataFromWindow();
-		//		window->EndModal(0);
-		//	});
-
-		//	if (id == wxID_OK || id == wxID_YES || id == wxID_SAVE) {
-		//		//window->SetDefault();
-		//		button->SetFocus();
-		//		window->SetAffirmativeId(id);
-		//	}
-
-		//	if (id == wxID_CLOSE || id == wxID_NO)
-		//		window->SetEscapeId(id);
-
-		//	return button;
-		//};
-
-		//if (std::count(buttons.begin(), buttons.end(), -1) == 0) {
 		
 			for (size_t i = 0; i < buttons.size(); ++i){
 				int id = buttons[i].first;
@@ -518,23 +498,17 @@ namespace Auto{
 				if (id == wxID_OK || id == wxID_YES || id == wxID_SAVE) {
 					//window->SetDefault();
 					button->SetFocus();
-					window->SetAffirmativeId(id);
+					window->SetEnterId(id);
 				}
 
 				if (id == wxID_CLOSE || id == wxID_NO)
 					window->SetEscapeId(id);
 			}
 		
-			//bs->Realize();
-		/*}
-		else {
-			for (size_t i = 0; i < buttons.size(); ++i)
-				bs->Add(make_button(buttons[i].first, i, buttons[i].second));
-		}*/
 
-		auto ms = new wxBoxSizer(wxVERTICAL);
+		
 		ms->Add(s, 0, wxALL, 5);
-		ms->Add(bs, 0, wxALIGN_CENTER|wxLEFT|wxRIGHT|wxBOTTOM, 10);
+		ms->Add(bs, 0, wxALIGN_CENTER|wxLEFT|wxRIGHT|wxBOTTOM, 5);
 		window->SetSizerAndFit(ms);
 
 		return window;

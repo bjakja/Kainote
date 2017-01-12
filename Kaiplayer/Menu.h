@@ -110,7 +110,7 @@ public:
 	wxAcceleratorEntry *accel;
 };
 
-class MenuDialog : public wxPopupWindow/*wxFrame*/, wxGUIEventLoop{
+class MenuDialog : public wxPopupWindow{
 	friend class Menu;
 	friend class MenuBar;
 public:
@@ -129,7 +129,10 @@ private:
 	int ShowPartialModal();
 	void EndPartialModal(int ReturnId);
 	bool SendEvent(MenuItem *item, int accel);
-	//void OnLostCapture(wxMouseCaptureLostEvent &evt);
+	//void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
+	//bool CheckMouse();
+	//void OnIdle(wxIdleEvent &evt);
+	virtual void DoGetPosition(int *x, int *y) const;
 	void HideMenus(int id = -3);
 	int submenuShown;
 	int submenuToHide;
@@ -148,6 +151,7 @@ protected:
 
 	wxTimer showSubmenuTimer;
 	wxTimer hideSubmenuTimer;
+	wxGUIEventLoop *loop;
 	DECLARE_EVENT_TABLE()
 };
 
@@ -222,15 +226,7 @@ class MenuBar : public wxWindow, Mnemonics
 	friend class MenuDialog;
 public:
 	MenuBar(wxWindow *parent);
-	~MenuBar(){
-		for(auto cur = Menus.begin(); cur!= Menus.end(); cur++){
-			delete (*cur);
-		}
-		wxDELETE(bmp);
-		UnhookWindowsHookEx( HookKey );
-		UnhookWindowsHookEx( HookMouse );
-		Menubar=NULL;
-	}
+	virtual ~MenuBar();
 	void Append(Menu *menu, const wxString &title);
 	void Prepend(Menu *menu, const wxString &title);
 	void Insert(int position, Menu *menu, const wxString &title);
@@ -239,7 +235,10 @@ public:
 	void AppendAccelerators(std::vector <wxAcceleratorEntry> *entries);
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
+	void OnCharHook(wxKeyEvent &evt);
 	void OnPaint(wxPaintEvent &event);
+	//void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
+	//bool CheckMouse();
 	int CalcMousePos(wxPoint *pos);
 	void HideMnemonics();
 	
@@ -247,6 +246,7 @@ private:
 	wxBitmap *bmp;
 	int sel;
 	bool clicked;
+	bool altDown;
 	wxTimer showMenuTimer;
 	int shownMenu;
 	int oldelem;

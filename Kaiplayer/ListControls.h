@@ -101,7 +101,7 @@ private:
 	void ShowList();
 	void SendEvent(int choice);
 	void SetSelectionByPartialName(const wxString &PartialName);
-	void SelectChoice(int sel, bool select = true);
+	void SelectChoice(int sel, bool select = true, bool sendEvent=true);
 	inline void CalcMaxWidth(wxSize *result, bool changex, bool changey);
 	bool enter;
 	bool clicked;
@@ -113,7 +113,7 @@ private:
 	bool focusSet;
 	wxString toolTip;
 	PopupList *itemList;
-	wxMutex mutex;
+	wxString txtchoice;
 	KaiTextCtrl *choiceText;
 
 	wxDECLARE_ABSTRACT_CLASS(KaiChoice);

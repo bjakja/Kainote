@@ -543,7 +543,7 @@ void AudioDisplay::DoUpdateImage() {
 					d3dLine->End();
 				}
 				if(j==whichsyl){
-					D3DXVECTOR2 v5[5]={D3DXVECTOR2(karstart+2,1),D3DXVECTOR2(karstart+2,h-1),D3DXVECTOR2(XX-2,h-1),D3DXVECTOR2(XX-2,1),D3DXVECTOR2(karstart+2,1)};
+					D3DXVECTOR2 v5[5]={D3DXVECTOR2(karstart+2,1),D3DXVECTOR2(karstart+2,h-2),D3DXVECTOR2(XX-2,h-2),D3DXVECTOR2(XX-2,1),D3DXVECTOR2(karstart+2,1)};
 					d3dLine->Begin();
 					d3dLine->Draw(v5,5,syllableTextColor);
 					d3dLine->End();

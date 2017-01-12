@@ -23,12 +23,12 @@
 #include "KaiTextCtrl.h"
 #include "KaiRadioButton.h"
 #include "MappedButton.h"
-#include <wx/dialog.h>
+#include "KaiDialog.h"
 #include <wx/wx.h>
 class kainoteFrame;
 
 
-class findreplace: public wxDialog
+class findreplace: public KaiDialog
 {
 	public:
 

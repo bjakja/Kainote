@@ -64,6 +64,7 @@ KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
 	SetMinSize(newSize);
 	
 	Bind(wxEVT_LEFT_DOWN, &KaiCheckBox::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_DCLICK, &KaiCheckBox::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &KaiCheckBox::OnMouseEvent, this);
 	Bind(wxEVT_ENTER_WINDOW, &KaiCheckBox::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &KaiCheckBox::OnMouseEvent, this);
@@ -139,7 +140,7 @@ void KaiCheckBox::OnMouseEvent(wxMouseEvent &event)
 		return;
 	}
 	
-	if(event.LeftDown() || event.LeftIsDown() && !clicked){
+	if(event.LeftDown() || event.LeftDClick()){
 		if(event.LeftDown()){clicked=true;}
 		Refresh(false);
 		SetFocus();

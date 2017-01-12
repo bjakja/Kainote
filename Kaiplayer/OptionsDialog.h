@@ -23,6 +23,7 @@
 #include "MappedButton.h"
 #include "KaiTreebook.h"
 #include "KaiListCtrl.h"
+#include "KaiDialog.h"
 #include <vector>
 class kainoteFrame;
 
@@ -33,7 +34,7 @@ public:
 };
 
 
-class OptionsDialog : public wxDialog
+class OptionsDialog : public KaiDialog
 {
 public:
 	OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent);

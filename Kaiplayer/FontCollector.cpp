@@ -32,11 +32,12 @@
 FontCollectorDialog::FontCollectorDialog(wxWindow *parent)
 	: KaiDialog(parent,-1,_("Kolekcjoner czcionek"),wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER)
 {
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
 	DialogSizer *Main = new DialogSizer(wxVERTICAL);
 	wxBoxSizer *Pathc = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *Buttons = new wxBoxSizer(wxHORIZONTAL);
+	wxIcon icn;
+	icn.CopyFromBitmap(CreateBitmapFromPngResource("fontcollector"));
+	SetIcon(icn);
 
 	path=new KaiTextCtrl(this,-1,Options.GetString("Font Collect Directory"),wxDefaultPosition, wxSize(150,-1));
 	path->Enable(Options.GetInt("Font Collect Action")!=0);

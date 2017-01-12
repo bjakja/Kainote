@@ -32,7 +32,7 @@ class kainoteFrame;
 class CTwindow: public wxWindow//wxScrolled<wxWindow>
 {
 public:
-
+	
 	CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id=-1,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize,long style=0);
 	virtual ~CTwindow();
 	KaiRadioButton* StartVAtime;
@@ -89,8 +89,8 @@ private:
 	void AudioVideoTime(wxCommandEvent &event);
 	void CollapsePane(wxCommandEvent &event);
 	void DoTooltips();
-
-
+	bool SetBackgroundColour(const wxColour &col);
+	bool SetForegroundColour(const wxColour &col);
 	DECLARE_EVENT_TABLE()
 };
 /*

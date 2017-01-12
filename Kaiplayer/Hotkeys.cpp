@@ -352,7 +352,7 @@ void Hotkeys::SetHKey(const idAndType &itype, wxString name, wxString hotkey)
 wxString Hotkeys::GetMenuH(const idAndType &itype, const wxString &name)
 {
 	auto it=hkeys.find(itype);
-	if(it!=hkeys.end()){it->second.Name = name; return it->second.Accel;}
+	if(it!=hkeys.end()){if(name!=""){it->second.Name = name;} return it->second.Accel;}
 	return "";
 }
 
@@ -422,7 +422,7 @@ void Hotkeys::SetAccels(bool all){
 //Okno dialogowe przechwytujące skróty klawiszowe
 //blokujące przy okazji dostęp do opcji
 HkeysDialog::HkeysDialog( wxWindow *parent, wxString name, char hotkeyWindow, bool showWindowSelection)
-	: wxDialog(parent,-1,_("Mapowanie przycisków"),wxDefaultPosition,wxDefaultSize,wxCAPTION|wxWANTS_CHARS|wxCLOSE_BOX)
+	: KaiDialog(parent,-1,_("Mapowanie przycisków"),wxDefaultPosition,wxDefaultSize,wxCAPTION|wxWANTS_CHARS|wxCLOSE_BOX)
 {
 	SetForegroundColour(Options.GetColour("Window Text"));
 	SetBackgroundColour(Options.GetColour("Window Background"));
@@ -438,11 +438,11 @@ HkeysDialog::HkeysDialog( wxWindow *parent, wxString name, char hotkeyWindow, bo
 	wxStaticText *txt=new wxStaticText(this,-1,wxString::Format(_("Proszę wcisnąć klawisze skrótu dla \"%s\"."), name),wxDefaultPosition,wxDefaultSize,wxWANTS_CHARS);
 	txt->Connect(wxEVT_KEY_DOWN, (wxObjectEventFunction)&HkeysDialog::OnKeyPress,0,this);
 
-	wxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
+	DialogSizer *MainSizer = new DialogSizer(wxVERTICAL);
 	if(global){MainSizer->Add(global, 0, wxTOP|wxLEFT|wxRIGHT|wxEXPAND, 12);}
 	MainSizer->Add(txt, 0, wxALL, 12);
-	MainSizer->SetSizeHints(this);
-	SetSizer(MainSizer);
+	//MainSizer->SetSizeHints(this);
+	SetSizerAndFit(MainSizer);
 	//CenterOnParent();
 	SetPosition(wxGetMousePosition());
 	type = hotkeyWindow;

@@ -32,7 +32,7 @@
 #define DIALOG_COLORPICKER_H
 
 
-#include <wx/dialog.h>
+#include "KaiDialog.h"
 #include <wx/colour.h>
 #include <wx/bitmap.h>
 #include <wx/textctrl.h>
@@ -120,7 +120,7 @@ DECLARE_EVENT_TYPE(wxDROPPER_SELECT, -1)
 
 AssColor GetColorFromUser(wxWindow *parent, AssColor original);
 
-class DialogColorPicker : public wxDialog {
+class DialogColorPicker : public KaiDialog {
 private:
 	wxColour cur_color;
 	bool updating_controls;

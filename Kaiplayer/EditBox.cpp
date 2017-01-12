@@ -77,22 +77,22 @@ BEGIN_EVENT_TABLE(DescTxtCtrl,KaiTextCtrl)
 
 
 	txtdialog::txtdialog(wxWindow *parent, int id, const wxString &txtt, int _type, const wxPoint &position)
-	:wxDialog(parent,id,_("Wpisz tag ASS"),position)
+	:KaiDialog(parent,id,_("Wpisz tag ASS"),position)
 {
-	wxBoxSizer *siz=new wxBoxSizer(wxVERTICAL);
+	DialogSizer *siz=new DialogSizer(wxVERTICAL);
 	wxBoxSizer *siz1=new wxBoxSizer(wxHORIZONTAL);
 	wxString types[3]={_("Tag wstawiany w miejse kursora"), _("Tag wstawiany na początku tekstu"), _("Zwykły tekst")};
 	type=new KaiChoice(this,-1,wxDefaultPosition, wxDefaultSize,3,types);
 	type->SetSelection(_type);
 	txt=new KaiTextCtrl(this,-1,txtt,wxDefaultPosition,wxSize(150,25), wxTE_PROCESS_ENTER);
-	txt->SetSelection(0,txtt.Len()-1);
+	txt->SetSelection(0,txtt.Len());
+	txt->SetFocus();
 	siz->Add(type,0,wxEXPAND|wxALL,4);
 	siz->Add(txt,0,wxEXPAND|wxLEFT|wxRIGHT,4);
 	siz1->Add(new MappedButton(this, wxID_OK,_("Zapisz tag")),0,wxEXPAND|wxALL,4);
 	siz1->Add(new MappedButton(this, wxID_CANCEL,_("Anuluj")),0,wxEXPAND|wxALL,4);
 	siz->Add(siz1,0,wxEXPAND,0);
 	SetSizerAndFit(siz);
-
 
 }
 
@@ -375,7 +375,13 @@ done:
 				Dialogue *next=grid->GetDial(MIN(ebrow+1, grid->GetCount()-1));
 				int ed=line->End.mstime, nst=next->Start.mstime;
 				int htpf= pan->Video->avtpf/2;
-				pan->Video->PlayLine(line->Start.mstime,(nst>ed && pas>2)? nst-htpf : ed-htpf);
+				int playend = (nst>ed && pas>2)? nst-htpf : ed-htpf;
+				if(pan->Video->VFF){
+					int frame = pan->Video->VFF->GetFramefromMS((nst>ed && pas>2)? nst : ed);
+					frame--;
+					playend = pan->Video->VFF->GetMSfromFrame(frame);
+				}
+				pan->Video->PlayLine(line->Start.mstime,playend);
 			}
 		}
 	}
@@ -1220,15 +1226,20 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	wxString *text=NULL;
 	if(panel->Video->GetState()==Paused){
 		visible=true;
-		text=grid->GetVisible();
+		text=grid->GetVisible(&visible);
+		OnVideo=true;
 	}
 	else if(panel->Video->GetState()==Playing){
 		visible=true;
-		text=grid->GetVisible();//grid->SaveText();
-
+		int vpos = panel->Video->Tell();
+		bool vis = (vpos > line->Start.mstime && vpos < line->End.mstime);
+		if(vis){text = grid->SaveText();}
+		else{visible = false;}
+		//else{if(!vis){return;}text=grid->GetVisible(&vis);OnVideo=true;}*/
+		OnVideo = false;
 	}
 
-	OnVideo=true;
+	
 	if(visible && (panel->Video->IsShown() || panel->Video->isfullskreen)){
 		panel->Video->OpenSubs(text);
 		if(Visual>0){panel->Video->SetVisual();}
@@ -1236,7 +1247,9 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	}else if(text){delete text;}
 	if(!Options.GetBool("Grid save without enter")){return;}
 	if(EditCounter>=6){
+		bool tmpOnVideo = OnVideo;
 		Send(false,false,true);
+		OnVideo = tmpOnVideo;
 		EditCounter=0;
 	}else{EditCounter++;}
 }

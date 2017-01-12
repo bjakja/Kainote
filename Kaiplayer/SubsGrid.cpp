@@ -898,7 +898,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 					whh-=scHor;
 					bool isstart;
 					int vczas;
-					if(event.GetX()>=whh&&event.GetX()<whh+GridWidth[wh+1]&&form!=TMP){ 
+					if(event.GetX()>=whh && event.GetX()<whh+GridWidth[wh+1] && form!=TMP){ 
 						vczas=GetDial(row)->End.mstime; isstart=false;}
 					else{vczas=GetDial(row)->Start.mstime; isstart=true;}
 					if(ctrl){vczas-=1000;SelectRow(row);}
@@ -2189,7 +2189,7 @@ void SubsGrid::NextLine(int dir)
 	AdjustWidths(0);
 	Refresh(false);Edit->SetIt(nebrow);
 	if(Edit->ABox){Edit->ABox->audioDisplay->SetDialogue(Edit->line,nebrow);}
-	if(Kai->GetTab()->Video->GetState()!=None&&Options.GetBool("Editbox Video Time")){
+	if(Kai->GetTab()->Video->GetState() != None && Options.GetBool("Editbox Video Time")){
 		Kai->GetTab()->Video->Seek(GetDial(nebrow)->Start.mstime-5);}
 }
 

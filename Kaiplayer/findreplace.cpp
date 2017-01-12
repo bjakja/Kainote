@@ -25,7 +25,7 @@
 
 
 findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace, bool sellines)
-	: wxDialog(kfparent, -1,(sellines)?_("Zaznacz"): (replace)?_("Znajdź i zamień"):_("Znajdź"))
+	: KaiDialog(kfparent, -1,(sellines)?_("Zaznacz"): (replace)?_("Znajdź i zamień"):_("Znajdź"))
 	,hasFocus(false)
 {
 	SetForegroundColour(Options.GetColour("Window Text"));
@@ -51,7 +51,7 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		icn.CopyFromBitmap(CreateBitmapFromPngResource("SEARCH"));
 		SetIcon(icn);
 
-		wxBoxSizer* mainfrbsizer=new wxBoxSizer(wxVERTICAL);
+		DialogSizer* mainfrbsizer=new DialogSizer(wxVERTICAL);
 		wxBoxSizer* mainfrbsizer1=new wxBoxSizer(wxVERTICAL);
 		wxBoxSizer* mainfrbsizer2=new wxBoxSizer(wxHORIZONTAL);
 		wxBoxSizer* mainfrbsizer3=new wxBoxSizer(wxHORIZONTAL);
@@ -180,7 +180,7 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 	//Zaznaczenia
 	else{
 
-		wxBoxSizer *slsizer= new wxBoxSizer(wxVERTICAL);
+		DialogSizer *slsizer= new DialogSizer(wxVERTICAL);
 		wxBoxSizer *slrbsizer= new wxBoxSizer(wxHORIZONTAL);
 		RadioButton3 = new KaiRadioButton(this, -1, _("Zawiera"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
 		RadioButton4 = new KaiRadioButton(this, -1, _("Nie zawiera"));
@@ -821,7 +821,7 @@ void findreplace::Reset()
 }
 
 void findreplace::OnSetFocus(wxActivateEvent& event){
-	if(hasFocus){hasFocus=false; return;}
+	if(hasFocus){hasFocus=false; event.Skip(); return;}
 	//wxLogStatus("focus");
 	long from, to, fromO, toO;
 	EditBox *edit = Kai->GetTab()->Edit;
@@ -836,4 +836,5 @@ void findreplace::OnSetFocus(wxActivateEvent& event){
 		if(selected.Lower() != FindText->GetValue().Lower()){FindText->SetValue(selected);}
 	}
 	hasFocus=true;
+	event.Skip();
 }

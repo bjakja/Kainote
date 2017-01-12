@@ -17,6 +17,8 @@
 #include "MappedButton.h"
 #include "config.h"
 #include "wx/msw/private.h"
+#include <Dwmapi.h>
+#pragma comment(lib, "Dwmapi.lib")
 int border = 5;
 int topBorder = 24;
 
@@ -63,15 +65,15 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 					 ,enter(false)
 					 ,pushed(false)
 					 ,isActive(true)
+					 ,style(_style)
 {
 	SetExtraStyle(GetExtraStyle() | wxTOPLEVEL_EX_DIALOG | wxWS_EX_BLOCK_EVENTS | wxCLIP_CHILDREN);
 	Create(parent,id, title, pos, size, wxBORDER_NONE|wxTAB_TRAVERSAL);
 	if ( !m_hasFont )
 		SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-	//::SystemParametersInfo(SPI_SETDRAGFULLWINDOWS,TRUE,NULL,0);
 	SetForegroundColour(Options.GetColour("Window Text"));
 	SetBackgroundColour(Options.GetColour("Window Background"));
-	//Bind(wxEVT_SIZE, &KaiDialog::OnSize, this);
+	Bind(wxEVT_SIZE, &KaiDialog::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiDialog::OnPaint, this);
 	Bind(wxEVT_CHAR_HOOK, &KaiDialog::OnCharHook, this);
 	Bind(wxEVT_LEFT_DOWN, &KaiDialog::OnMouseEvent, this);
@@ -79,8 +81,12 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	Bind(wxEVT_LEFT_DCLICK, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_ACTIVATE, &KaiDialog::OnActivate, this);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(escapeId);},wxID_CANCEL);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(enterId);},wxID_OK);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(escapeId);evt.Skip();},wxID_CANCEL);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(enterId);evt.Skip();},wxID_OK);
+	Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
+		SetForegroundColour(Options.GetColour("Window Text"));
+		SetBackgroundColour(Options.GetColour("Window Background"));
+	});
 }
 
 KaiDialog::~KaiDialog()
@@ -105,12 +111,32 @@ int KaiDialog::ShowModal()
 void KaiDialog::EndModal(int retCode)
 {
 	if(loop)loop->Exit(retCode);
-	Hide();
+	wxTopLevelWindow::Show(false);
 }
 
 bool KaiDialog::IsModal() const
 {
 	return (loop != NULL);
+}
+
+bool KaiDialog::Show(bool show)
+{
+	if(IsShown() == show){
+		return false;
+	}
+	if(!show){
+		return Hide();
+	}else{
+		return wxTopLevelWindow::Show();
+	}
+}
+
+bool KaiDialog::Hide()
+{
+	if(IsShown() || loop){
+		EndModal(escapeId);return true;
+	}
+	return false;
 }
 
 bool KaiDialog::IsButtonFocused()
@@ -121,11 +147,32 @@ bool KaiDialog::IsButtonFocused()
 
 void KaiDialog::OnCharHook(wxKeyEvent &evt)
 {
-	int key = evt.GetKeyCode();
+	const int key = evt.GetKeyCode();
 	if(key == WXK_ESCAPE || key == WXK_RETURN){
 		if(key == WXK_RETURN && IsButtonFocused()){evt.Skip(); return;}
 		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, (key == WXK_ESCAPE)? escapeId : enterId);
 		ProcessEvent(evt);
+		return;
+	}else if(key == WXK_TAB){
+		const wxWindowList list = GetChildren();
+		auto result = list.Find(FindFocus());
+		if(result){
+			auto nextWindow = result->GetNext();
+			while(1){
+				if(!nextWindow){
+					wxObject *data = list.GetFirst()->GetData();
+					if(data){
+						wxWindow *win = wxDynamicCast(data,wxWindow);
+						if(win){win->SetFocus();}
+					}
+					return;
+				}else if(nextWindow->GetData()->CanBeFocused()){
+					nextWindow->GetData()->SetFocus();
+					return;
+				}
+				nextWindow = nextWindow->GetNext();
+			}
+		}
 		return;
 	}
 	evt.Skip();
@@ -150,7 +197,7 @@ void KaiDialog::OnPaint(wxPaintEvent &evt)
 		mdc.DrawIcon(icon.GetIconByIndex(0), 4, 4);
 	}
 	if(GetTitle()!=""){
-		mdc.DrawText(GetTitle(), 26, 4);
+		mdc.DrawText(GetTitle(), icon.GetIconCount()? 26 : 6, 4);
 	}
 	if(enter || pushed){
 		wxColour buttonxbg = (enter && !pushed)? Options.GetColour("Button Background Hover") : Options.GetColour("Button Background Pushed");
@@ -168,11 +215,11 @@ void KaiDialog::OnPaint(wxPaintEvent &evt)
 	dc.Blit(0,h-border,w,border, &mdc, 0, h-border);
 }
 
-//void KaiDialog::OnSize(wxSizeEvent &evt)
-//{
-//	Refresh(false);
-//	evt.Skip();
-//}
+void KaiDialog::OnSize(wxSizeEvent &evt)
+{
+	Refresh(false);
+	evt.Skip();
+}
 
 void KaiDialog::OnMouseEvent(wxMouseEvent &evt)
 {
@@ -205,6 +252,14 @@ void KaiDialog::OnMouseEvent(wxMouseEvent &evt)
 	evt.Skip();
 }
 
+void KaiDialog::SetSizerAndFit1(wxSizer *sizer, bool deleteOld)
+{
+	SetSizer(sizer, deleteOld);
+	wxSize siz = sizer->GetMinSize();
+	sizer->SetDimension(border, topBorder, siz.x+(2*border), siz.y+border+topBorder);
+	//sizer->SetSizeHints(this);
+}
+
 void KaiDialog::OnActivate(wxActivateEvent &evt)
 {
 	isActive = evt.GetActive();
@@ -223,9 +278,9 @@ void KaiDialog::OnActivate(wxActivateEvent &evt)
 
 WXLRESULT KaiDialog::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
-	if(uMsg == WM_SIZING){ // I use this message to redraw window on sizing (o rly?)
-		RedrawWindow(m_hWnd, NULL, NULL, RDW_INVALIDATE | RDW_NOERASE | RDW_INTERNALPAINT);
-	}
+	//if(uMsg == WM_SIZING){
+	//	RedrawWindow(m_hWnd, NULL, NULL, RDW_INVALIDATE | RDW_INTERNALPAINT);//| RDW_NOERASE
+	//}
 	if(uMsg == WM_NCHITTEST){
 		RECT WindowRect;
 		int x, y;
@@ -262,3 +317,5 @@ WXLRESULT KaiDialog::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam
 
 	return wxTopLevelWindow::MSWWindowProc(uMsg, wParam, lParam);
 }
+
+wxIMPLEMENT_ABSTRACT_CLASS(KaiDialog, wxTopLevelWindow);

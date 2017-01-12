@@ -18,7 +18,8 @@
 
 #pragma once
 
-#include <wx/wx.h>
+#include <wx/window.h>
+#include <wx/stattext.h>
 #include "TimeCtrl.h"
 #include "SubsDialogue.h"
 #include "MyTextEditor.h"
@@ -27,6 +28,7 @@
 #include "AudioBox.h"
 #include "MappedButton.h"
 #include "KaiRadioButton.h"
+#include "KaiDialog.h"
 
 class kainoteFrame;
 class Grid;
@@ -53,7 +55,7 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
-class txtdialog :public wxDialog
+class txtdialog :public KaiDialog
 {
 public:
 	KaiTextCtrl *txt;

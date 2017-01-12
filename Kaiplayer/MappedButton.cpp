@@ -69,6 +69,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
 	Bind(wxEVT_LEFT_DOWN, &MappedButton::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_DCLICK, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_ENTER_WINDOW, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &MappedButton::OnMouseEvent, this);
@@ -115,6 +116,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
 	Bind(wxEVT_LEFT_DOWN, &MappedButton::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_DCLICK, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_ENTER_WINDOW, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &MappedButton::OnMouseEvent, this);
@@ -155,6 +157,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
 	Bind(wxEVT_LEFT_DOWN, &MappedButton::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_DCLICK, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_ENTER_WINDOW, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &MappedButton::OnMouseEvent, this);
@@ -287,11 +290,10 @@ void MappedButton::OnMouseEvent(wxMouseEvent &event)
 		
 		return;
 	}		
-	if(event.LeftDown() || event.LeftIsDown() && !clicked){
-		if(event.LeftDown()){clicked=true;}
+	if(event.LeftDown() || event.LeftDClick()){
+		clicked=true;
 		Refresh(false);
 		SetFocus();
-		//event
 	}
 	if(event.LeftUp()){
 		bool oldclicked = clicked;
@@ -345,6 +347,7 @@ ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, cons
 	}
 	SetMinSize(newSize);
 	Bind(wxEVT_LEFT_DOWN, &ToggleButton::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_DCLICK, &ToggleButton::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &ToggleButton::OnMouseEvent, this);
 	Bind(wxEVT_ENTER_WINDOW, &ToggleButton::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &ToggleButton::OnMouseEvent, this);
@@ -430,7 +433,7 @@ void ToggleButton::OnMouseEvent(wxMouseEvent &event)
 		Refresh(false);
 		return;
 	}
-	if(event.LeftDown()){
+	if(event.LeftDown()||event.LeftDClick()){
 		clicked=true;
 		toggled = !toggled;
 		Refresh(false);
@@ -450,30 +453,5 @@ void ToggleButton::SendEvent()
 	this->ProcessEvent(evt);
 }
 
-//static wxTopLevelWindow *GetTLWParentIfNotBeingDeleted(wxWindow *win)
-//{
-//    for ( ;; )
-//    {
-//        // IsTopLevel() will return false for a wxTLW being deleted, so we also
-//        // need the parent test for this case
-//        wxWindow * const parent = win->GetParent();
-//        if ( !parent || win->IsTopLevel() )
-//        {
-//            if ( win->IsBeingDeleted() )
-//                return NULL;
-//
-//            break;
-//        }
-//
-//        win = parent;
-//    }
-//
-//    wxASSERT_MSG( win, wxT("button without top level parent?") );
-//
-//    wxTopLevelWindow * const tlw = wxDynamicCast(win, wxTopLevelWindow);
-//    wxASSERT_MSG( tlw, wxT("logic error in GetTLWParentIfNotBeingDeleted()") );
-//
-//    return tlw;
-//}
 
 wxIMPLEMENT_ABSTRACT_CLASS(MappedButton, wxWindow);

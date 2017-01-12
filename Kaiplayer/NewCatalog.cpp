@@ -22,13 +22,9 @@
 #include <wx/wx.h>
 //*)
 
-//(*IdInit(NewCatalog)
-const long NewCatalog::ID_TEXTCTRL1 = wxNewId();
-const long NewCatalog::ID_STATICBOX1 = wxNewId();
-//*)
 
 NewCatalog::NewCatalog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
-	:wxDialog(parent, id, _("Wybór nazwy katalogu"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
+	:KaiDialog(parent, id, _("Wybór nazwy katalogu"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
 {
 	KaiTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	wxArrayString excludes;
@@ -42,18 +38,18 @@ NewCatalog::NewCatalog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	excludes.Add(">");
 	excludes.Add("|");
 	valid.SetExcludes(excludes);
-	TextCtrl1 = new KaiTextCtrl(this, ID_TEXTCTRL1, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, valid);
+	TextCtrl1 = new KaiTextCtrl(this, -1, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, valid);
 	KaiStaticBoxSizer *StaticBox1 = new KaiStaticBoxSizer(wxVERTICAL, this, _("Podaj nazwę nowego katalogu"));
 	StaticBox1->Add(TextCtrl1, 0, wxEXPAND|wxALL, 2);
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
-	wxBoxSizer *sizer1 = new wxBoxSizer(wxVERTICAL);
+	DialogSizer *sizer1 = new DialogSizer(wxVERTICAL);
 	Button1 = new MappedButton(this, wxID_OK, _("Utwórz"), 0);
 	Button2 = new MappedButton(this, wxID_CANCEL, _("Anuluj"), 0);
 	sizer->Add(Button1, 0, wxALL, 2);
 	sizer->Add(Button2, 0, wxALL, 2);
 	sizer1->Add(StaticBox1);
 	sizer1->Add(sizer);
-	Connect(ID_TEXTCTRL1,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&NewCatalog::OnCatalogCommit);
+	//Connect(8765,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&NewCatalog::OnCatalogCommit);
 	SetSizerAndFit(sizer1);
 }
 
@@ -63,7 +59,7 @@ NewCatalog::~NewCatalog()
 	//*)
 }
 
-void NewCatalog::OnCatalogCommit(wxCommandEvent& event)
-{
-	EndModal(wxID_OK);
-}
+//void NewCatalog::OnCatalogCommit(wxCommandEvent& event)
+//{
+//	EndModal(wxID_OK);
+//}

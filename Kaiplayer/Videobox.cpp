@@ -64,25 +64,25 @@ int CRecycleFile::Recycle(const wchar_t *pszPath, BOOL bDelete)
 
 }
 
-class bars1 : public wxDialog
+class bars1 : public KaiDialog
 {
 public:
 	bars1(VideoCtrl *parent);
 	virtual ~bars1(){};
 
-	wxSlider *slider;
+	KaiSlider *slider;
 	wxStaticText *actual;
 	void OnSlider(wxCommandEvent &event);
 	VideoCtrl *_parent;
 };
 
 bars1::bars1(VideoCtrl *parent)
-	: wxDialog(parent, -1, "", wxDefaultPosition, wxDefaultSize)
+	: KaiDialog(parent, -1, "", wxDefaultPosition, wxDefaultSize)
 {
 	_parent=parent;
-	wxBoxSizer *sizer= new wxBoxSizer(wxVERTICAL);
+	DialogSizer *sizer= new DialogSizer(wxVERTICAL);
 	actual= new wxStaticText(this,-1,wxString::Format(_("Proporcje ekranu: %5.3f"), parent->AR));
-	slider= new wxSlider(this, 7767, 1000, parent->AR*1000, 2500);
+	slider= new KaiSlider(this, 7767, 1000, parent->AR*1000, 2500);
 	Connect(7767,wxEVT_SCROLL_THUMBTRACK,(wxObjectEventFunction)&bars1::OnSlider);
 	sizer->Add(actual, 0, wxALL, 3);
 	sizer->Add(slider, 1, wxEXPAND|wxALL, 3);
@@ -117,7 +117,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	//SetBackgroundColour("#000000");
 
 	panel=new wxPanel(this,-1,wxPoint(0,size.y-panelHeight),wxSize(size.x,panelHeight));
-	panel->SetForegroundColour(Options.GetColour("Window Text"));
+	//panel->SetForegroundColour(Options.GetColour("Window Text"));
 	panel->SetBackgroundColour(Options.GetColour("Window Background"));
 
 	vslider= new VideoSlider(panel, ID_SLIDER,wxPoint(0,1),wxSize(size.x,14));
@@ -151,6 +151,10 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	idletime.SetOwner(this,ID_IDLE);
 	
 	//panel->SetFocusIgnoringChildren();
+	Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
+		//panel->SetForegroundColour(Options.GetColour("Window Text"));
+		panel->SetBackgroundColour(Options.GetColour("Window Background"));
+	});
 }
 VideoCtrl::~VideoCtrl()
 {

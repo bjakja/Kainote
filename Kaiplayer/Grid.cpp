@@ -973,12 +973,13 @@ void Grid::OnSetFPSFromVideo()
 	if(form>TMP){RepaintWindow(START|END);}else{Refresh(false);}
 }
 
-class fpsdial : public wxDialog
+class fpsdial : public KaiDialog
 {
 public:
 	fpsdial(wxWindow *parent)
-		:wxDialog(parent,-1,_("Wybierz nowy FPS"))
+		:KaiDialog(parent,-1,_("Wybierz nowy FPS"))
 	{
+		DialogSizer* siz = new DialogSizer(wxHORIZONTAL);
 		wxFlexGridSizer *sizer=new wxFlexGridSizer(2,2,2);
 		wxArrayString fpsy;
 		wxTextValidator valid(wxFILTER_INCLUDE_CHAR_LIST);
@@ -999,7 +1000,7 @@ public:
 		fpsy.Add("23.976");fpsy.Add("24");fpsy.Add("25");fpsy.Add("29.97");fpsy.Add("30");fpsy.Add("60");
 		oldfps=new KaiChoice(this,-1,"",wxDefaultPosition,wxDefaultSize,fpsy,0,valid);
 		oldfps->SetSelection(0);
-		newfps=new KaiChoice(this,-1,"",wxDefaultPosition,wxDefaultSize,fpsy,0,valid);
+		newfps=new KaiChoice(this,-1,"",wxDefaultPosition,wxSize(80,-1),fpsy,0,valid);
 		newfps->SetSelection(2);
 		sizer->Add(new wxStaticText(this,-1,_("FPS napisów")),0,wxALIGN_CENTER_VERTICAL|wxALL,4);
 		sizer->Add(oldfps,0,wxEXPAND|wxALL,4);
@@ -1010,7 +1011,8 @@ public:
 		MappedButton *cancel=new MappedButton(this,wxID_CANCEL,_("Anuluj"));
 		sizer->Add(ok,0,wxEXPAND|wxALL,4);
 		sizer->Add(cancel,0,wxEXPAND|wxALL,4);
-		SetSizerAndFit(sizer);
+		siz->Add(sizer, 0, wxEXPAND);
+		SetSizerAndFit(siz);
 		CenterOnParent();
 	}
 	virtual ~fpsdial(){};

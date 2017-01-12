@@ -148,10 +148,16 @@ void ItemCheckBox::OnPaint(wxMemoryDC *dc, int x, int y, int w, int h, wxWindow 
 	}
 }
 
-void ItemCheckBox::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList){
+void ItemCheckBox::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, wxWindow *theList){
 	if(event.LeftDown()){
 		modified = !modified;
 		theList->Refresh(false);
+	}
+	if(!enter && _enter){
+		enter = _enter; theList->Refresh(false);
+	}
+	if(enter && leave){
+		enter = false; theList->Refresh(false);
 	}
 };
 
@@ -173,7 +179,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 	SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT));
 }
 
-KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, int type, const wxPoint &pos, 
+KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, const wxPoint &pos, 
 		const wxSize &size, int style)
 	:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL)
 	,bmp(NULL)
@@ -190,9 +196,32 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, 
 	SetForegroundColour(parent->GetForegroundColour());
 	SetMinSize(size);
 	SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT));
-	InsertColumn(0, "", type, -1);
+	InsertColumn(0, "", TYPE_CHECKBOX, -1);
 	for(int i = 0; i < numelem; i++){
 		AppendItem(new ItemCheckBox(false, list[i]));
+	}
+}
+
+KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, const wxPoint &pos, 
+		const wxSize &size, int style)
+		:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL)
+	,bmp(NULL)
+	,sel(-1)
+	,lastSelX(-1)
+	,lastSelY(-1)
+	,scPosV(0)
+	,scPosH(0)
+	,lineHeight(17)
+	,headerHeight(3)
+	,modified(false)
+{
+	SetBackgroundColour(parent->GetBackgroundColour());
+	SetForegroundColour(parent->GetForegroundColour());
+	SetMinSize(size);
+	SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT));
+	InsertColumn(0, "", TYPE_TEXT, -1);
+	for(size_t i = 0; i < list.size(); i++){
+		AppendItem(new ItemText(list[i]));
 	}
 }
 
@@ -324,7 +353,10 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	
 void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 {
-	
+	/*if(evt.Leaving() && lastSelY >=0 || lastSelX>=0){
+		itemList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this);
+		return;
+	}*/
 	if (evt.GetWheelRotation() != 0) {
 		int w=0;
 		int h=0;
@@ -346,6 +378,10 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 		return;
 	}else if((size_t)elemY>=itemList.size()){
 		//tu ju¿ nic nie zrobimy, jesteœmy poza elemetami na samym dole
+		if(lastSelX != -1 && lastSelY !=-1){
+			itemList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this);
+			lastSelX=-1;lastSelY=-1;
+		}
 		return;
 	}
 	int elemX = -1;
@@ -353,14 +389,14 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 	for(size_t i = 0; i < widths.size(); i++){
 		if(cursor.x > startX && cursor.x <= startX + widths[i]){
 			elemX=i;
-			bool enter = (elemX != lastSelX || elemY != lastSelY);
-			if(enter && lastSelX != -1 && lastSelY !=-1){
-				itemList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this);
-			}
+			bool enter = (elemX != lastSelX || elemY != lastSelY) || evt.Entering();
 			itemList[elemY]->row[elemX]->OnMouseEvent(evt, enter, false, this);
 			break;
 		}
 		startX += widths[i];
+	}
+	if((elemX != lastSelX || elemY != lastSelY || evt.Leaving()) && lastSelX != -1 && lastSelY !=-1){
+		itemList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this);
 	}
 	if(evt.LeftDown()){
 		
@@ -387,31 +423,7 @@ void KaiListCtrl::OnScroll(wxScrollWinEvent& event)
 	size_t newPos=0;
 	int orient = event.GetOrientation();
 	size_t scPos = (orient = wxVERTICAL)? scPosV : scPosH;
-	if(event.GetEventType()==wxEVT_SCROLLWIN_LINEUP)
-	{
-		newPos=scPos-1;
-		if(newPos<0){newPos=0;return;}
-	}
-	else if(event.GetEventType()==wxEVT_SCROLLWIN_LINEDOWN)
-	{
-		newPos=scPos+1;
-		if(newPos>=itemList.size()){newPos=itemList.size()-1;return;}
-	}
-	else if(event.GetEventType()==wxEVT_SCROLLWIN_PAGEUP)
-	{
-		wxSize size=GetClientSize();
-		newPos=scPos;
-		newPos-=(size.y/lineHeight) - 1;
-		newPos=MAX(0,newPos);
-	}
-	else if(event.GetEventType()==wxEVT_SCROLLWIN_PAGEDOWN)
-	{
-		wxSize size=GetClientSize();
-		newPos=scPos;
-		newPos+=(size.y/lineHeight) - 1;
-		newPos=MIN(newPos,itemList.size()-1);
-	}
-	else{newPos = event.GetPosition();}
+	newPos = event.GetPosition();
 	if (scPos != newPos) {
 		if(orient == wxVERTICAL){
 			scPosV = newPos;

@@ -14,13 +14,14 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "TLDialog.h"
+#include "KaiStaticBoxSizer.h"
 
 TLDialog::TLDialog(wxWindow *parent, Grid *subsgrid)
-	: wxDialog(parent,-1,_("Opcje dopasowywania tłumaczenia"), wxDefaultPosition, wxDefaultSize,wxDEFAULT_DIALOG_STYLE)
+	: KaiDialog(parent,-1,_("Opcje dopasowywania tłumaczenia"), wxDefaultPosition, wxDefaultSize,wxDEFAULT_DIALOG_STYLE)
 {
 	Sbsgrid=subsgrid;
-
-	wxStaticBoxSizer *sizer=new wxStaticBoxSizer(wxVERTICAL,this,_("Przesuwanie tekstu tłumaczenia"));
+	DialogSizer *sizer = new DialogSizer(wxVERTICAL);
+	wxBoxSizer *sizer2 = new wxBoxSizer(wxHORIZONTAL);
 	wxGridSizer *sizer1 = new wxGridSizer(2,2,2);
 	//uwaga nazewnictwo tutaj jest totalnie fuckuped patrz na opisy co dany efekt robi.
 	Up=new MappedButton(this,29995,_("Usuń linię"));
@@ -36,8 +37,8 @@ TLDialog::TLDialog(wxWindow *parent, Grid *subsgrid)
 	UpExt=new MappedButton(this,29993,_("Dodaj linię"));
 	UpExt->SetToolTip(_("Dodaje pustą linijkę przed zaznaczoną.\nOryginał idzie w dół.\nDodanej linii należy ustawić czasy."));
 	
-	sizer1->Add(new wxStaticText(this,-1,_("Tekst oryginału")),0,wxLEFT|wxRIGHT|wxEXPAND,5);
-	sizer1->Add(new wxStaticText(this,-1,_("Tekst tłumaczenia")),0,wxLEFT|wxRIGHT|wxEXPAND,5);
+	sizer2->Add(new wxStaticText(this,-1,_("Tekst oryginału")),1,wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_VERTICAL,5);
+	sizer2->Add(new wxStaticText(this,-1,_("Tekst tłumaczenia")),1,wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_VERTICAL,5);
 	
 	sizer1->Add(UpExt,0,wxALL|wxEXPAND,5);
 	sizer1->Add(Down,0,wxALL|wxEXPAND,5);
@@ -45,10 +46,10 @@ TLDialog::TLDialog(wxWindow *parent, Grid *subsgrid)
 	sizer1->Add(UpJoin,0,wxALL|wxEXPAND,5);
 	sizer1->Add(DownDel,0,wxALL|wxEXPAND,5);
 	sizer1->Add(Up,0,wxALL|wxEXPAND,5);
-	
-	sizer->Add(sizer1,0,wxEXPAND,0);
-	sizer->Add(new wxStaticText(this,-1,_("Objaśnienie:\nOryginał - tekst napisów z właściwnym timingiem służy\ndo porównania wklejanych dialogów, później zostaje usunięty.\nTłumaczenie - tekst wklejony do napisów z poprawnym timingiem.")),0,wxEXPAND,0);
-	//sizer->Add(sizer3,0,wxEXPAND,0);
+
+	sizer->Add(sizer2,0,wxEXPAND|wxTOP,5);
+	sizer->Add(sizer1,0,wxEXPAND);
+	sizer->Add(new wxStaticText(this,-1,_("Objaśnienie:\nOryginał - tekst napisów z właściwnym timingiem służy\ndo porównania wklejanych dialogów, później zostaje usunięty.\nTłumaczenie - tekst wklejony do napisów z poprawnym timingiem.")),0,wxEXPAND|wxALL,5);
 	SetSizerAndFit(sizer);
 	CenterOnParent();
 

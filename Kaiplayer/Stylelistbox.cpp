@@ -19,20 +19,20 @@
 
 
 Stylelistbox::Stylelistbox(wxWindow* parent, bool styles, int numelem, wxString *arr,const wxPoint& pos, int style, int type)
-	: wxDialog(parent, -1, (styles)?_("Wybór styli") : _("Wybór kolumn"))
+	: KaiDialog(parent, -1, (styles)?_("Wybór styli") : _("Wybór kolumn"))
 {
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
-	wxStaticBoxSizer *sizer1 = new wxStaticBoxSizer(wxVERTICAL, this, (styles)?_("Wybierz style") : _("Wybierz kolumny"));
+	DialogSizer *Main = new DialogSizer(wxVERTICAL);
+	KaiStaticBoxSizer *sizer1 = new KaiStaticBoxSizer(wxVERTICAL, this, (styles)?_("Wybierz style") : _("Wybierz kolumny"));
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
-	CheckListBox1 = new KaiListCtrl(this, -1,numelem, arr, type, wxDefaultPosition, wxSize(200,300), style);
+	CheckListBox1 = new KaiListCtrl(this, -1,numelem, arr, wxDefaultPosition, wxSize(200,300), style);
 	Button1 = new MappedButton(this, wxID_OK, "Ok");
 	Button2 = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	sizer->Add(Button1, 0, wxALL, 2);
 	sizer->Add(Button2, 0, wxALL, 2);
 	sizer1->Add(CheckListBox1,0, wxEXPAND);
-	sizer1->Add(sizer,0, wxEXPAND);
-	SetSizerAndFit(sizer1);
+	Main->Add(sizer1,0, wxEXPAND);
+	Main->Add(sizer,0, wxEXPAND);
+	SetSizerAndFit(Main);
 	wxPoint mousepos = wxGetMousePosition();
 	SetPosition(mousepos);
 }
@@ -65,4 +65,27 @@ wxString GetCheckedElements(wxWindow *parent)
 	}
 	delete [] elems;
 	return styletext.BeforeLast(';');
+}
+
+
+KaiListBox::KaiListBox(wxWindow *parent, wxArrayString suggest, const wxString &title, bool centerOnParent)
+	: KaiDialog(parent,-1,title,wxDefaultPosition)
+{
+	DialogSizer *sizer=new DialogSizer(wxHORIZONTAL);
+	list=new KaiListCtrl(this,29886,suggest, wxDefaultPosition, wxSize(120,160));
+	sizer->Add(list,1,wxEXPAND|wxALL,2);
+	SetSizerAndFit(sizer);
+	//
+	Connect(29886,LIST_ITEM_DOUBLECLICKED,(wxObjectEventFunction)&KaiListBox::OnDoubleClick);
+	if(centerOnParent){CenterOnParent();parent->Raise();}
+	else{
+		wxPoint mousepos = wxGetMousePosition();
+		SetPosition(mousepos);
+	}
+}
+
+void KaiListBox::OnDoubleClick(wxCommandEvent& evt)
+{
+	result=list->GetItem(evt.GetInt(),0)->name;
+	EndModal(wxID_OK);
 }

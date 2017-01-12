@@ -32,11 +32,12 @@
 #define AUTODIALOG
 
 #include <wx/wx.h>
+#include "KaiDialog.h"
 #include <memory>
 #include <vector>
 extern "C" {
 #include <lua.hpp>
-	}
+}
 
 
 namespace Auto{
@@ -89,7 +90,7 @@ class LuaDialogControl {
 		/// Id of the button pushed (once a button has been pushed)
 		int button_pushed;
 
-		wxDialog *window;
+		KaiDialog *window;
 
 	public:
 		LuaDialog(lua_State *L, bool include_buttons);
@@ -105,7 +106,7 @@ class LuaDialogControl {
 		bool IsCancelled(){return (button_pushed<0);};
 
 		// ScriptDialog implementation
-		wxDialog* CreateWindow(wxWindow *parent, wxString name);
+		KaiDialog* CreateWindow(wxWindow *parent, wxString name);
 		wxString Serialise();
 		void Unserialise(const wxString &serialised);
 	};

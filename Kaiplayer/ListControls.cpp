@@ -121,8 +121,12 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 		CalcMaxWidth(&newSize, size.x < 1, size.y<1);
 	}
 	SetMinSize(newSize);
-	long txtstyle = style & wxCB_READONLY;
-	choiceText = new KaiTextCtrl(this, 27789, comboBoxText, wxPoint(1,1), wxSize(newSize.x-22, newSize.y-2), wxBORDER_NONE|txtstyle);
+	if(style & wxCB_READONLY){
+		txtchoice = comboBoxText;
+		choice = FindString(comboBoxText);
+		return;
+	}
+	choiceText = new KaiTextCtrl(this, 27789, comboBoxText, wxPoint(1,1), wxSize(newSize.x-22, newSize.y-2), wxBORDER_NONE);
 	choiceText->Bind(wxEVT_ENTER_WINDOW,&KaiChoice::OnMouseEvent,this,27789);
 	choiceText->Bind(wxEVT_LEAVE_WINDOW,&KaiChoice::OnMouseEvent,this,27789);
 	choiceText->Bind(wxEVT_MOUSEWHEEL, &KaiChoice::OnMouseEvent, this,27789);
@@ -223,7 +227,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 		wxBitmap arrow = wxBITMAP_PNG("arrow_list");
 		tdc.DrawBitmap((enabled)? arrow : arrow.ConvertToDisabled(), w - 17, (h-10)/2);
 
-		if(choice>=0){
+		if(choice>=0 || !txtchoice.IsEmpty()){
 			int fh=0, fw=w, ex=0, et=0;
 			wxString txt = (*list)[choice];
 			int removed=0;
@@ -233,7 +237,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 				removed++;
 			}
 			if(removed<2){
-				txt = (*list)[choice];
+				txt = (txtchoice.IsEmpty())? (*list)[choice] : txtchoice;
 			}else{
 				txt = txt.RemoveLast(2)+"...";
 			}
@@ -255,7 +259,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 void KaiChoice::OnMouseEvent(wxMouseEvent &event)
 {	
 	if(!listIsShown){
-		if(event.LeftDown()/*||event.LeftIsDown() && !clicked*/){
+		if(event.LeftDown()){
 			clicked=true;
 			Refresh(false);
 			SetFocus();
@@ -330,7 +334,8 @@ void KaiChoice::ShowList()
 void KaiChoice::SetSelection(int sel, bool changeText)
 {
 	if(sel >= (int)list->size()){return;}
-	choice=sel; 
+	choice=sel;
+	txtchoice = (sel<0)? "" : (*list)[sel];
 
 	if(itemList && itemList->IsShown()){
 		itemList->SetSelection(choice);
@@ -340,7 +345,7 @@ void KaiChoice::SetSelection(int sel, bool changeText)
 		choiceText->SetValue(txt);
 	}
 	Refresh(false);
-	//}
+
 	if(sel >=0 ){SetToolTip();}
 	else{SetToolTip(toolTip);}
 }
@@ -425,17 +430,19 @@ void KaiChoice::SetSelectionByPartialName(const wxString &PartialName)
 
 void KaiChoice::SetValue(const wxString &text){
 	if(choiceText){choiceText->SetValue(text);}
+	else{txtchoice=text;}
 }
 
 wxString KaiChoice::GetValue(){
 	if(choiceText){
 		return choiceText->GetValue();
 	} 
-	return "";
+	return txtchoice;
 }
 
-void KaiChoice::SelectChoice(int _choice, bool select){
+void KaiChoice::SelectChoice(int _choice, bool select, bool sendEvent){
 	choice = _choice;
+	txtchoice = (*list)[choice];
 	if(choiceText){
 		choiceText->SetValue((*list)[choice]);
 		if(select){
@@ -443,8 +450,10 @@ void KaiChoice::SelectChoice(int _choice, bool select){
 			choiceText->SetSelection(0,choiceText->GetValue().Len(),true);
 		}
 	}else{Refresh(false);}
-	wxCommandEvent evt((HasFlag(KAI_COMBO_BOX))? wxEVT_COMMAND_COMBOBOX_SELECTED : wxEVT_COMMAND_CHOICE_SELECTED, GetId());
-	this->ProcessEvent(evt);
+	if(sendEvent){
+		wxCommandEvent evt((HasFlag(KAI_COMBO_BOX))? wxEVT_COMMAND_COMBOBOX_SELECTED : wxEVT_COMMAND_CHOICE_SELECTED, GetId());
+		this->ProcessEvent(evt);
+	}
 }
 
 void KaiChoice::Insert(const wxString &what, int position){
@@ -520,8 +529,8 @@ void PopupList::CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &control
 	wxRect workArea = wxGetClientDisplayRect();
 	w = workArea.width - workArea.x;
 	h = workArea.height - workArea.y;
-
-	if((pos->y + size->y) > h){
+	wxPoint ScreenPos = Parent->ClientToScreen(*pos);
+	if((ScreenPos.y + size->y) > h){
 		pos->y -= (size->y + controlSize.y);
 	}
 }
@@ -547,10 +556,6 @@ void PopupList::OnMouseEvent(wxMouseEvent &evt)
 		}
 		return;
 	}
-	/*if((x < 0 || x > orgY || y <0 || y > sz.y)){
-		
-		return;
-	}*/
 
 	if (evt.GetWheelRotation() != 0) {
 		int step = 3 * evt.GetWheelRotation() / evt.GetWheelDelta();
@@ -653,7 +658,6 @@ void PopupList::EndPartialModal(int ReturnId)
 {
 	((KaiChoice*)Parent)->SendEvent(ReturnId);
 	if(HasCapture()){ReleaseMouse();}
-	//UnhookWindowsHookEx( HookMouse );
 	Unbind(wxEVT_IDLE,&PopupList::OnIdle, this);
 	Hide();
 }
@@ -678,7 +682,7 @@ void PopupList::OnKeyPress(wxKeyEvent &event)
 			sel = itemsList->size()-1;
 			scPos=sel;
 		}
-		((KaiChoice*)Parent)->SelectChoice(sel);		
+		((KaiChoice*)Parent)->SelectChoice(sel,true,false);		
 		Refresh(false);
 	}
 }

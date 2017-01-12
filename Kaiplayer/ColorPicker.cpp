@@ -439,7 +439,7 @@ AssColor GetColorFromUser(wxWindow *parent, AssColor original)
 
 // Constructor
 DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color)
-: wxDialog(parent, 11111, _("Wybierz kolor"), wxDefaultPosition, wxDefaultSize)
+: KaiDialog(parent, 11111, _("Wybierz kolor"), wxDefaultPosition, wxDefaultSize)
 {
 	SetForegroundColour(Options.GetColour("Window Text"));
 	SetBackgroundColour(Options.GetColour("Window Background"));
@@ -574,11 +574,11 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color)
 
 	wxSizer *picker_sizer = new wxBoxSizer(wxHORIZONTAL);
 	picker_sizer->AddStretchSpacer();
-	picker_sizer->Add(screen_dropper_icon, 0, wxALIGN_CENTER|wxRIGHT, 5);
+	picker_sizer->Add(screen_dropper_icon, 0, wxALIGN_CENTER|wxRIGHT, 10);
 	picker_sizer->Add(screen_dropper, 0, wxALIGN_CENTER);
 	picker_sizer->AddStretchSpacer();
-	picker_sizer->Add(recent_sizer, 0, wxALIGN_CENTER);
-	picker_sizer->AddStretchSpacer();
+	picker_sizer->Add(recent_sizer, 0, wxALIGN_RIGHT|wxRIGHT,6);
+	//picker_sizer->AddStretchSpacer();
 
 	wxSizer *button_sizer = new wxBoxSizer(wxHORIZONTAL);
 	button_sizer->Add(new MappedButton(this,wxID_OK,"OK"),0,wxALL,4);
@@ -593,12 +593,12 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color)
 	input_sizer->AddStretchSpacer(2);
 	input_sizer->Add(button_sizer, 0, wxALIGN_RIGHT|wxALIGN_BOTTOM);
 
-	wxSizer *main_sizer = new wxBoxSizer(wxHORIZONTAL);
+	DialogSizer *main_sizer = new DialogSizer(wxHORIZONTAL);
 	main_sizer->Add(spectrum_box, 1, wxALL | wxEXPAND, 5);
 	main_sizer->Add(input_sizer, 0, (wxALL&~wxLEFT)|wxEXPAND, 5);
 
-	SetSizer(main_sizer);
-	main_sizer->SetSizeHints(this);
+	SetSizerAndFit(main_sizer);
+	//main_sizer->SetSizeHints(this);
 
 	ass_input->SetFocus();
 
@@ -918,7 +918,7 @@ wxBitmap *DialogColorPicker::MakeAlphaSlider()
 
 
 
-BEGIN_EVENT_TABLE(DialogColorPicker, wxDialog)
+BEGIN_EVENT_TABLE(DialogColorPicker, KaiDialog)
 	EVT_TEXT(SELECTOR_ASS_INPUT, DialogColorPicker::OnChangeASS)
 	EVT_TEXT(SELECTOR_HTML_INPUT, DialogColorPicker::OnChangeHTML)
 	EVT_COMMAND(SELECTOR_SPECTRUM, wxSPECTRUM_CHANGE, DialogColorPicker::OnSpectrumChange)

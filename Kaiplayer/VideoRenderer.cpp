@@ -721,19 +721,10 @@ bool VideoRend::Play(int end)
 	vstate=Playing;
 
 	if(!IsDshow){
-		/*if(thread){
-			WaitForSingleObject(thread,2000);CloseHandle(thread);thread=NULL;
-		}*/
 		lasttime=timeGetTime()-time;
 		if(player){player->Play(time,-1,false);}
-		//lastframe++;
 		time=VFF->Timecodes[lastframe];
 		VFF->Play();
-		//DWORD kkk;
-		//thread = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)playingProc, this, 0, &kkk);
-		//if(thread){
-		//SetThreadPriority(thread, THREAD_PRIORITY_TIME_CRITICAL);
-		//}
 
 	}
 	return true;
@@ -798,12 +789,10 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			SAFE_DELETE(Vclips->dummytext);
 			if(Vclips->Visual==VECTORCLIP){
 				Vclips->SetClip(Vclips->GetVisual(),true, false);
-				//SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime,false, false);
-				//OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
 			}else{
 				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
+				if(vstate==Playing)VisEdit=false;
 			}
-			VisEdit=false;
 		}else if(pan->Edit->OnVideo){
 			if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
 				wxCommandEvent evt;pan->Edit->OnEdit(evt);
@@ -815,7 +804,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 	}else{
 		auto oldvstate = vstate;
 		vstate=Paused;
-		int decr= (vstate==Playing)? 1 : 0;
+		//int decr= (vstate==Playing)? 1 : 0;
 		lastframe = VFF->GetFramefromMS(_time,(time>_time)? 0 : lastframe); //- decr;
 		if(!starttime){lastframe--;if(VFF->Timecodes[lastframe]>=_time){lastframe--;}}
 		time = VFF->Timecodes[lastframe];
@@ -855,8 +844,8 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 	wxMutexLocker lock(mutexRender);
 	if (instance) csri_close(instance);
 	instance = NULL;
-
-	if(!textsubs) {if (vobsub) {csri_close_renderer(vobsub);}return false;}
+	//wxLogStatus(*textsubs);
+	//if(!textsubs) {if (vobsub) {csri_close_renderer(vobsub);}return false;}
 	//const char *buffer= textsubs.mb_str(wxConvUTF8).data();
 	if(VisEdit && Vclips->Visual==VECTORCLIP && Vclips->dummytext){
 		//wxLogStatus("clip background");
@@ -1189,7 +1178,7 @@ void VideoRend::SetVisual(int start, int end, bool remove, bool settext)
 		Vclips->SizeChanged(wxSize(rt3.right, rt3.bottom),lines, m_font, d3device);
 
 		Vclips->SetVisual(start, end);
-		//VisEdit=true;
+		VisEdit=true;
 	}
 }
 

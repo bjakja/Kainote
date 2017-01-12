@@ -155,23 +155,23 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 	wxBitmap scrollArrow = wxBITMAP_PNG("arrow_list");
 	wxBitmap scrollArrowPushed = wxBITMAP_PNG("arrow_list_pushed");
 	if(isVertical){
+		tdc.SetPen(wxPen(scroll));
+		tdc.SetBrush(wxBrush(scroll));
+		tdc.DrawRectangle(2, thumbPos, 13, thumbSize);
 		wxImage img = (holding && element & ELEMENT_BUTTON_TOP)? scrollArrowPushed.ConvertToImage() : scrollArrow.ConvertToImage();
 		img = img.Rotate180();
 		tdc.DrawBitmap(wxBitmap(img), 3, 3);
 		tdc.DrawBitmap((holding && element & ELEMENT_BUTTON_BOTTOM)? scrollArrowPushed : scrollArrow, 3, h-13);
+	}else{
 		tdc.SetPen(wxPen(scroll));
 		tdc.SetBrush(wxBrush(scroll));
-		tdc.DrawRectangle(2, thumbPos, 13, thumbSize);
-	}else{
+		tdc.DrawRectangle(thumbPos, 2, thumbSize, 13);
 		wxImage img = (holding && element & ELEMENT_BUTTON_TOP)? scrollArrowPushed.ConvertToImage() : scrollArrow.ConvertToImage();
 		img = img.Rotate90();
 		tdc.DrawBitmap(wxBitmap(img), 3, 3);
 		img = (holding && element & ELEMENT_BUTTON_BOTTOM)? scrollArrowPushed.ConvertToImage() : scrollArrow.ConvertToImage();
 		img = img.Rotate180().Rotate90();
 		tdc.DrawBitmap(wxBitmap(img), w-13, 3);
-		tdc.SetPen(wxPen(scroll));
-		tdc.SetBrush(wxBrush(scroll));
-		tdc.DrawRectangle(thumbPos, 2, thumbSize, 13);
 	}
 	wxPaintDC dc(this);
 	dc.Blit(0,0,w,h,&tdc,0,0);
@@ -222,8 +222,8 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 		Refresh(false);
 		//return;
 	}
-	if((evt.RightDown() || evt.RightIsDown() || //prawy przycisk
-		(evt.ShiftDown() && (evt.LeftDown() || evt.LeftIsDown()))) && //lewy + shift
+	if((evt.RightDown() || evt.RightDClick() || //prawy przycisk
+		(evt.ShiftDown() && (evt.LeftDown() || evt.LeftDClick()))) && //lewy + shift
 		(coord < size - 17 && coord > 17)){ //blokada by nie dzia³a³o na przyciskach
 		thumbPos = coord-(thumbSize/2);
 		thumbPos = MID(17, thumbPos, thumbRange+17);
@@ -246,7 +246,7 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 		}
 	}
 	
-	if(evt.LeftDown() || (!holding && evt.LeftIsDown())){
+	if(evt.LeftDown() || evt.LeftDClick()){
 		holding = true;
 		if(coord >= thumbPos && coord <= thumbPos+thumbSize){
 			element = ELEMENT_THUMB;

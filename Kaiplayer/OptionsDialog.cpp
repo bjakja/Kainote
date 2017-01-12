@@ -29,12 +29,10 @@
 
 
 OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
-	: wxDialog(parent,-1,_("Opcje"),wxDefaultPosition,wxDefaultSize,wxDEFAULT_DIALOG_STYLE,"Options")
+	: KaiDialog(parent,-1,_("Opcje"))
 {
 	wxColour text = Options.GetColour("Window Text");
 	wxColour window = Options.GetColour("Window Background");
-	SetForegroundColour(text);
-	SetBackgroundColour(window);
 
 	OptionsTree= new KaiTreebook(this,-1);
 	OptionsTree->SetForegroundColour(text);
@@ -70,8 +68,6 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
 		wxColour text = Options.GetColour("Window Text");
 		wxColour window = Options.GetColour("Window Background");
-		SetForegroundColour(text);
-		SetBackgroundColour(window);
 		OptionsTree->SetForegroundColour(text);
 		OptionsTree->SetBackgroundColour(window);
 		Main->SetForegroundColour(text);
@@ -521,9 +517,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 				ItemColor *item = (ItemColor*)List->GetItem(i, 1);
 				item->col = Options.GetColor(item->name);
 			}
-			wxColour windowColor = Options.GetColour("Window Background");
-			wxColour textColor = Options.GetColour("Window Text");
-			wxWindow *tab = Notebook::GetTab();
+			//wxColour windowColor = Options.GetColour("Window Background");
+			//wxColour textColor = Options.GetColour("Window Text");
+			/*wxWindow *tab = Notebook::GetTab();
 			tab->SetBackgroundColour(windowColor);
 			tab->SetForegroundColour(textColor);
 			const wxWindowList& siblings = tab->GetChildren();
@@ -531,10 +527,10 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 				(*it)->SetBackgroundColour(windowColor);
 				(*it)->SetForegroundColour(textColor);
 
-			}
-			wxSysColourChangedEvent evt;
-			wxQueueEvent(GetParent(), evt.Clone());
-			ProcessEvent(evt);
+			}*/
+			wxSysColourChangedEvent evt1;
+			wxQueueEvent(GetParent(), evt1.Clone());
+			ProcessEvent(evt1);
 			this->Refresh(false);
 			parent->Refresh(false);
 			List->Enable(themeName != "Default");
@@ -564,35 +560,28 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	ButtonsSizer->Add(oknow,0,wxRIGHT,2);
 	ButtonsSizer->Add(cancel,0,wxRIGHT,2);
 
-	wxBoxSizer *TreeSizer=new wxBoxSizer(wxVERTICAL);
-	TreeSizer->Add(OptionsTree,0,wxTOP|wxLEFT,2);
-	TreeSizer->Add(ButtonsSizer,0,wxBOTTOM|wxALIGN_CENTER,2);
+	DialogSizer *TreeSizer=new DialogSizer(wxVERTICAL);
+	TreeSizer->Add(OptionsTree,0,wxALL,2);
+	TreeSizer->Add(ButtonsSizer,0,wxBOTTOM|wxALIGN_CENTER,4);
 	SetSizerAndFit(TreeSizer);
 
 	CenterOnParent();
 
 	Connect(wxID_OK,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&OptionsDialog::OnSaveClick);
 	Connect(ID_BCOMMIT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&OptionsDialog::OnSaveClick);
-	Bind(wxEVT_CLOSE_WINDOW, [=](wxCloseEvent &evt){Hide();});
-
-	wxAcceleratorEntry entries[1];
-	entries[0].Set(wxACCEL_NORMAL, WXK_RETURN, wxID_OK);
-	wxAcceleratorTable accel(1, entries);
-	this->SetAcceleratorTable(accel);
-
 
 }
 
 OptionsDialog::~OptionsDialog()
 {
-	if(GetReturnCode ()==wxID_OK){
+	/*if(GetReturnCode ()==wxID_OK){
 		SetOptions();
 		if(hkeymodif==1){Hkeys.SaveHkeys();Kai->SetAccels();}
 		else if(hkeymodif==2){
 			Hkeys.SaveHkeys(true);
 			if(Kai->GetTab()->Edit->ABox){Kai->GetTab()->Edit->ABox->SetAccels();}
 		}
-	}
+	}*/
 	handles.clear();
 }
 
@@ -709,7 +698,6 @@ void OptionsDialog::SetOptions(bool saveall)
 				for(auto it = siblings.begin(); it != siblings.end(); it++){
 					(*it)->SetBackgroundColour(windowColor);
 					(*it)->SetForegroundColour(textColor);
-
 				}
 				wxSysColourChangedEvent evt;
 				wxQueueEvent(GetParent(), evt.Clone());

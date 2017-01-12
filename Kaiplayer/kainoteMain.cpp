@@ -67,6 +67,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	wxIcon kaiicon("aaaa",wxBITMAP_TYPE_ICO_RESOURCE); 
 	SetIcon(kaiicon);
 	SetMinSize(wxSize(600,400));
+	//height 22 zmieniając jedną z tych wartości popraw je też dropfiles
 	Menubar = new MenuBar(this);
 
 	wxBoxSizer *mains1= new wxBoxSizer(wxVERTICAL);
@@ -74,6 +75,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Tabs=new Notebook (this,ID_TABS);
 	Toolbar=new KaiToolbar(this,Menubar,-1,true);
 
+	//height 26 zmieniając jedną z tych wartości popraw je też dropfiles
 	StatusBar = new KaiStatusBar(this, ID_STATUSBAR1);
 	int StatusBarWidths[6] = { -12, 0, 0, 0, 0, -22};
 	StatusBar->SetFieldsCount(6,StatusBarWidths);
@@ -1098,9 +1100,9 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 	cur->Grid1->SetFocus();
 	if(Tabs->iter!=Tabs->GetOldSelection()){
 		cur->CTime->RefVals(Tabs->Page( Tabs->GetOldSelection() )->CTime);
-		if(Options.GetBool("Grid save without enter")){
-			Tabs->Page( Tabs->GetOldSelection() )->Edit->Send(false);
-		}
+		//if(Options.GetBool("Grid save without enter")){
+			//Tabs->Page( Tabs->GetOldSelection() )->Edit->Send(false);
+		//}
 	}
 
 	if(Options.GetBool("Auto Select Lines")){

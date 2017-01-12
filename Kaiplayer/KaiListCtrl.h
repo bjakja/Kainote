@@ -101,7 +101,11 @@ class KaiListCtrl : public KaiScrolledWindow
 {
 public:
 	KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int style = 0);
-	KaiListCtrl(wxWindow *parent, int id, int numelem = 0, wxString *list = 0, int type = TYPE_CHECKBOX, const wxPoint &pos = wxDefaultPosition, 
+	//CheckboxList
+	KaiListCtrl(wxWindow *parent, int id, int numelem = 0, wxString *list = 0, const wxPoint &pos = wxDefaultPosition, 
+		const wxSize &size = wxDefaultSize, int style = 0);
+	//nomralList
+	KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, const wxPoint &pos = wxDefaultPosition, 
 		const wxSize &size = wxDefaultSize, int style = 0);
 	virtual ~KaiListCtrl(){
 		for(auto it = itemList.begin(); it != itemList.end(); it++){

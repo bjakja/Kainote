@@ -17,20 +17,15 @@
 #define SCRIPTINFO_H
 
 
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
-#include <wx/checkbox.h>
-#include <wx/statbox.h>
-#include <wx/choice.h>
-#include <wx/button.h>
-#include <wx/dialog.h>
+
+#include "KaiDialog.h"
 #include "NumCtrl.h"
 #include "MappedButton.h"
 #include "ListControls.h"
 #include "KaiCheckBox.h"
 
 
-class ScriptInfo: public wxDialog
+class ScriptInfo: public KaiDialog
 {
 	public:
 

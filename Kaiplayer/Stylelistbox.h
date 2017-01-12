@@ -20,10 +20,10 @@
 #include <wx/string.h>
 #include "KaiListCtrl.h"
 #include "MappedButton.h"
-#include <wx/dialog.h>
+#include "KaiDialog.h"
 //*)
 
-class Stylelistbox: public wxDialog
+class Stylelistbox: public KaiDialog
 {
 	public:
 
@@ -39,5 +39,16 @@ class Stylelistbox: public wxDialog
 
 wxString GetCheckedElements(wxWindow *parent);
 
+class KaiListBox : public KaiDialog
+{
+public:
+	KaiListBox(wxWindow *parent, wxArrayString suggest, const wxString &title, bool centerOnParent=false);
+	virtual ~KaiListBox(){};
+	KaiListCtrl *list;
+	wxString GetSelection() const{return result;};
+private:
+	void OnDoubleClick(wxCommandEvent& evt);
+	wxString result;
+};
 
 #endif

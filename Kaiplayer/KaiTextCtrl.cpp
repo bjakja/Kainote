@@ -33,7 +33,7 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	style = _style/*|wxWANTS_CHARS*//*|wxTE_MULTILINE|wxALIGN_CENTER*/;
 	if(style & wxTE_MULTILINE){maxSize=MAXINT;}else{style|=wxALIGN_CENTER_VERTICAL; maxSize=1000;}
 	SetCursor(wxCURSOR_IBEAM);
-	wxAcceleratorEntry entries[30];
+	wxAcceleratorEntry entries[28];
 	entries[0].Set(wxACCEL_NORMAL, WXK_DELETE,ID_TDEL);
 	entries[1].Set(wxACCEL_NORMAL, WXK_BACK,ID_TBACK);
 	entries[2].Set(wxACCEL_CTRL, WXK_BACK,ID_TCBACK);
@@ -57,15 +57,13 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	entries[20].Set(wxACCEL_CTRL, 'V',ID_TCTLV);
 	entries[21].Set(wxACCEL_CTRL, 'C',ID_TCTLC);
 	entries[22].Set(wxACCEL_CTRL, 'X',ID_TCTLX);
-	//entries[23].Set(wxACCEL_NORMAL, 393,ID_TWMENU);
-	//entries[24].Set(wxACCEL_NORMAL, 394,ID_TWMENU);
-	entries[25].Set(wxACCEL_NORMAL, 395,ID_TWMENU);
-	entries[26].Set(wxACCEL_NORMAL, WXK_PAGEDOWN,ID_TPDOWN);
-	entries[27].Set(wxACCEL_NORMAL, WXK_PAGEUP,ID_TPUP);
-	entries[28].Set(wxACCEL_SHIFT|wxACCEL_CTRL, WXK_END,ID_TCSEND);
+	entries[23].Set(wxACCEL_NORMAL, 395,ID_TWMENU);
+	entries[24].Set(wxACCEL_NORMAL, WXK_PAGEDOWN,ID_TPDOWN);
+	entries[25].Set(wxACCEL_NORMAL, WXK_PAGEUP,ID_TPUP);
+	entries[26].Set(wxACCEL_SHIFT|wxACCEL_CTRL, WXK_END,ID_TCSEND);
 	bool processEnter = !(style & wxTE_PROCESS_ENTER) && (style & wxTE_MULTILINE);
-	if(processEnter){entries[29].Set(wxACCEL_NORMAL, WXK_RETURN,ID_TRETURN);}
-	wxAcceleratorTable accel((processEnter)? 30 : 29, entries);
+	if(processEnter){entries[27].Set(wxACCEL_NORMAL, WXK_RETURN,ID_TRETURN);}
+	wxAcceleratorTable accel((processEnter)? 28 : 27, entries);
 	SetAcceleratorTable(accel);
 	Connect(ID_TDEL,ID_TRETURN,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&KaiTextCtrl::OnAccelerator);
 

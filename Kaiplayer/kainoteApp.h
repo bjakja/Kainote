@@ -19,7 +19,7 @@
 //#define _CRTDBG_MAP_ALLOC_NEW
 //#include <cstdlib>
 //#include <crtdbg.h>
-#include <vld.h> 
+//#include <vld.h> 
 #endif
 
 class KaiServer;

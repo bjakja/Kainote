@@ -16,12 +16,11 @@
 #include "ScriptInfo.h"
 #include "config.h"
 #include "KaiStaticBoxSizer.h"
-
-#include <wx/string.h>
+#include <wx/stattext.h>
 #include <wx/sizer.h>
 
 ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
-	:wxDialog(parent, -1, _("Właściwości napisów ASS"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
+	:KaiDialog(parent, -1, _("Właściwości napisów ASS"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
 {
 	SetForegroundColour(Options.GetColour("Window Text"));
 	SetBackgroundColour(Options.GetColour("Window Background"));
@@ -29,7 +28,7 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	wxIcon icn;
 	icn.CopyFromBitmap(CreateBitmapFromPngResource("ASSPROPS"));
 	SetIcon(icn);
-	wxBoxSizer *mainsizer=new wxBoxSizer(wxVERTICAL);
+	DialogSizer *mainsizer=new DialogSizer(wxVERTICAL);
 	KaiStaticBoxSizer *StaticBox1 = new KaiStaticBoxSizer(wxVERTICAL,this, _("Informacje o napisach"));
 	wxGridSizer *GridSizer=new wxGridSizer(2,5,5);
 	title = new KaiTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
@@ -113,15 +112,6 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	SetSizerAndFit(mainsizer);
 
 	Connect(25456,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ScriptInfo::OnVideoRes);
-	Bind(wxEVT_CHAR_HOOK, [=](wxKeyEvent &evt){
-		int key = evt.GetKeyCode();
-		if(key == WXK_ESCAPE || key == WXK_RETURN){
-			wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, (key == WXK_ESCAPE)? wxID_CANCEL : wxID_OK);
-			ProcessEvent(evt);
-			return;
-		}
-		evt.Skip();
-	});
 	DoTooltips();
 	CenterOnParent();
 }

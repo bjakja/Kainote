@@ -23,69 +23,50 @@
 #include <algorithm>
 #include <process.h>
 #include "include\ffmscompat.h"
-
+#include "Stylelistbox.h"
 
 //wxDEFINE_EVENT(EVT_SHOW_DIALOG, wxThreadEvent);
 
 
 
-class listw : public wxDialog
-{
-public:
-	listw(wxWindow *parent, wxArrayString suggest);
-	virtual ~listw();
-	wxListBox *disperrs;
-	int GetSelection(){return result;};
-private:
-	void OnShowDialog(wxThreadEvent& evt);
-	void OnDoubleClick(wxCommandEvent& evt);
-	int result;
-};
-
-listw::listw(wxWindow *parent, wxArrayString suggest)
-	: wxDialog(parent,-1,_("Wybierz ścieżkę"))
-	, result(-1)
-{
-	wxBoxSizer *sizer=new wxBoxSizer(wxHORIZONTAL);
-	disperrs=new wxListBox(this,29886,wxDefaultPosition,wxDefaultSize,suggest);
-	sizer->Add(disperrs,1,wxEXPAND|wxALL,2);
-	sizer->SetMinSize(100,100);
-	SetSizerAndFit(sizer);
-	CenterOnParent();
-	Connect(29886,wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,(wxObjectEventFunction)&listw::OnDoubleClick);
-	//Bind(EVT_SHOW_DIALOG,&listw::OnShowDialog, this);
-}
-listw::~listw()
-{
-}
-
-
-void listw::OnDoubleClick(wxCommandEvent& evt)
-{
-	wxString resultstr=disperrs->GetString(disperrs->GetSelection());
-	result=wxAtoi(resultstr.BeforeFirst(':'));
-	EndModal(wxID_OK);
-}
-
-void listw::OnShowDialog(wxThreadEvent &evt)
-{
-	wxSemaphore *sema = evt.GetPayload<wxSemaphore*>();
-
-	//Show();
-	//wxMessageBox("dupa blada");
-	sema->Post();
-}
-
-//int ShowDialog(wxWindow *parent, const wxArrayString &suggest){
-//	/*wxSemaphore sema(0,1);
-//	wxThreadEvent *evt = new wxThreadEvent(EVT_SHOW_DIALOG, 12121);
-//	evt->SetPayload(&sema);
-//	wxQueueEvent(&tracks, evt);
-//	sema.Wait();*/
-//	listw tracks(parent, suggest);
-//	if(tracks.ShowModal()==wxID_OK){return tracks.GetSelection();}
-//	return -1;//wxAtoi(suggest[0][0]);
+//class listw : public wxDialog
+//{
+//public:
+//	listw(wxWindow *parent, wxArrayString suggest);
+//	virtual ~listw();
+//	wxListBox *disperrs;
+//	int GetSelection(){return result;};
+//private:
+//	void OnDoubleClick(wxCommandEvent& evt);
+//	int result;
+//};
+//
+//listw::listw(wxWindow *parent, wxArrayString suggest)
+//	: wxDialog(parent,-1,_("Wybierz ścieżkę"))
+//	, result(-1)
+//{
+//	wxBoxSizer *sizer=new wxBoxSizer(wxHORIZONTAL);
+//	disperrs=new wxListBox(this,29886,wxDefaultPosition,wxDefaultSize,suggest);
+//	sizer->Add(disperrs,1,wxEXPAND|wxALL,2);
+//	sizer->SetMinSize(100,100);
+//	SetSizerAndFit(sizer);
+//	CenterOnParent();
+//	Connect(29886,wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,(wxObjectEventFunction)&listw::OnDoubleClick);
+//	//Bind(EVT_SHOW_DIALOG,&listw::OnShowDialog, this);
 //}
+//listw::~listw()
+//{
+//}
+//
+//
+//void listw::OnDoubleClick(wxCommandEvent& evt)
+//{
+//	wxString resultstr=disperrs->GetString(disperrs->GetSelection());
+//	result=wxAtoi(resultstr.BeforeFirst(':'));
+//	EndModal(wxID_OK);
+//}
+
+
 
 VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *_success)
 	: rend(renderer)
@@ -219,30 +200,6 @@ void VideoFfmpeg::Processing()
 }
 
 
-//VideoFfmpeg::VideoFfmpeg(const wxString &filename, bool *success)
-//{
-//	if(!Options.AudioOpts && !Options.LoadAudioOpts()){wxMessageBox(_("Dupa blada, opcje się nie wczytały, na audio nie podziałasz"), _("Błędny błąd"));}
-//	disccache = !Options.GetBool("Audio RAM Cache");
-//	blnum=0;
-//	Cache=0;
-//	lastframe=-1;
-//	lasttime=-1;
-//	Delay=0;
-//	audiosource=0;
-//	videosource=0;
-//	progress=0;
-//	thread=0;
-//	rend=0;
-//	
-//	kainoteApp *Kaia=(kainoteApp*)wxTheApp;
-//	progress = new ProgressSink(Kaia->Frame,_("Indeksowanie pliku wideo"));
-//	progress->SetAndRunTask(VideoFfmpeg::Init);
-//	*success=((int)progress->Wait() == 1 );
-//	SAFE_DELETE(progress);
-//	if(audiosource){FFMS_DestroyAudioSource(audiosource);audiosource=0;}
-//}
-
-
 int VideoFfmpeg::Init()
 {
 
@@ -315,8 +272,12 @@ int VideoFfmpeg::Init()
 		}
 		audiotrack = progress->ShowSecondaryDialog([=](){
 			kainoteApp *Kaia=(kainoteApp*)wxTheApp;
-			listw tracks(Kaia->Frame, tracks);
-			if(tracks.ShowModal()==wxID_OK){return tracks.GetSelection();}
+
+			KaiListBox tracks(Kaia->Frame, tracks, _("Wybierz ścieżkę"),true);
+			if(tracks.ShowModal()==wxID_OK){
+				int result=wxAtoi(tracks.GetSelection().BeforeFirst(':'));
+				return result;
+			}
 			return -1;
 		});
 
@@ -433,6 +394,11 @@ done:
 			wxLogStatus(_("Dupa bada, nie można przekonwertować wideo na NV12"));
 			return 0;
 		}
+
+		/*if (FFMS_SetInputFormatV(videosource, FFMS_CS_BT709, FFMS_CR_MPEG, -1, &errinfo)){
+			wxLogStatus(_("Ni chuja zmiana colorspace dała dupy"));
+
+		}*/
 
 		FFMS_Track *FrameData = FFMS_GetTrackFromVideo(videosource);
 		if (FrameData == NULL){

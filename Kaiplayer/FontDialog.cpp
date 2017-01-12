@@ -291,7 +291,7 @@ BEGIN_EVENT_TABLE(FontList,wxWindow)
 END_EVENT_TABLE()
 
 	FontDialog::FontDialog(wxWindow *parent, Styles *acst)
-	:wxDialog(parent,-1,_("Wybierz czcionkę"))
+	:KaiDialog(parent,-1,_("Wybierz czcionkę"))
 {
 	SetForegroundColour(Options.GetColour("Window Text"));
 	SetBackgroundColour(Options.GetColour("Window Background"));
@@ -304,7 +304,7 @@ END_EVENT_TABLE()
 	SetAcceleratorTable(accel);
 
 
-	wxBoxSizer *Main= new wxBoxSizer(wxVERTICAL);
+	DialogSizer *Main= new DialogSizer(wxVERTICAL);
 	KaiStaticBoxSizer *Cfont= new KaiStaticBoxSizer(wxHORIZONTAL,this,_("Czcionka"));
 	KaiStaticBoxSizer *prev= new KaiStaticBoxSizer(wxVERTICAL,this,_("Podgląd"));
 	wxBoxSizer *Fattr= new wxBoxSizer(wxVERTICAL);

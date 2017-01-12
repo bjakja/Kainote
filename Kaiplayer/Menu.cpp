@@ -18,7 +18,7 @@
 #include "Config.h"
 #include "Toolbar.h"
 #include "KaiScrollbar.h"
-//#include "wx/msw/private.h"
+#include "wx/msw/private.h"
 
 static wxFont font = wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma");
 const static int height = 22;
@@ -358,7 +358,6 @@ MenuDialog* MenuDialog::lastActiveMenu=NULL;
 
 MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos, const wxSize &size, bool sendEvent)
 	:wxPopupWindow(DialogParent)/*wxFrame(DialogParent,-1,"",pos, size, wxFRAME_NO_TASKBAR|wxSTAY_ON_TOP|wxWS_EX_TRANSIENT)*/
-	,wxGUIEventLoop()
 	,parent(_parent)
 	,sel(selectOnStart)
 	,scPos(0)
@@ -369,6 +368,7 @@ MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos
 	,bmp(NULL)
 	,scroll(NULL)
 	,accel(0)
+	,loop(NULL)
 {
 	if(!ParentMenu){
 		ParentMenu=this;
@@ -398,9 +398,8 @@ MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos
 
 MenuDialog::~MenuDialog()
 {
-	//if(HasCapture()){ReleaseMouse();}
-	if(IsRunning()){
-		Exit(0);
+	if(loop){
+		loop -> Exit(0);
 	}
 	wxDELETE(bmp);
 }
@@ -419,7 +418,7 @@ void MenuDialog::OnShowSubmenu(wxTimerEvent &evt)
 	//pos.y += scrollPos * height;
 	x += size.x;
 	y += scrollPos * height;
-	parent->items[submenuShown]->submenu->PopupMenu(wxPoint(x,y)/*pos*/, this, false);
+	parent->items[submenuShown]->submenu->PopupMenu(wxPoint(x,y)/*pos*/, GetParent(), false);
 	submenuToHide=submenuShown;
 	subMenuIsShown=true;
 	selectOnStart=-1;
@@ -447,6 +446,11 @@ void MenuDialog::OnHideSubmenu(wxTimerEvent &evt)
 	}
 	if(submenuShown != submenuToHide){showSubmenuTimer.Start(1,true);}
 	submenuToHide=-1;
+}
+
+void MenuDialog::DoGetPosition(int *x, int *y) const
+{
+	wxWindow::DoGetPosition(x, y);
 }
 
 
@@ -702,22 +706,25 @@ int MenuDialog::ShowPartialModal()
 {
 	isPartialModal=true;
 	//Show();
-	//int id=-3;
+	int resid=-3;
 	Show();
 	if(IsShown()){
-		return Run();
+		loop = new wxGUIEventLoop();
+		resid = loop->Run();
+		delete loop; loop=NULL;
 	}
-	return -3;
+	return resid;
 }
 //Odwo³uje pêtlê czekaj¹c¹
 void MenuDialog::EndPartialModal(int ReturnId)
 {
-	Exit(ReturnId);
+	if(loop) loop -> Exit(ReturnId);
 	Hide();
 }
 
 WXLRESULT MenuDialog::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam) {
 	
+	//wxLogStatus("md message %i", (int)message);
     if (message == 28 && ParentMenu) {
 		ParentMenu->HideMenus();
 		MenuBar::Menubar->HideMnemonics();
@@ -745,6 +752,7 @@ MenuBar::MenuBar(wxWindow *_parent)
 	,md(NULL)
 	,oldelem(-1)
 	,shownMenu(-1)
+	,altDown(false)
 {
 	SetFont(font);
 	Refresh(false);
@@ -772,9 +780,137 @@ MenuBar::MenuBar(wxWindow *_parent)
 	HookKey = SetWindowsHookEx(WH_KEYBOARD, &OnKey, NULL,GetCurrentThreadId());
 	HookMouse = NULL;
 	HookMouse = SetWindowsHookEx(WH_GETMESSAGE, &OnMouseClick, NULL,GetCurrentThreadId());
+	//_parent->Bind(wxEVT_CHAR_HOOK,&MenuBar::OnCharHook,this);
 }
 
+MenuBar::~MenuBar(){
+	for(auto cur = Menus.begin(); cur!= Menus.end(); cur++){
+		delete (*cur);
+	}
+	wxDELETE(bmp);
+	UnhookWindowsHookEx( HookKey );
+	UnhookWindowsHookEx( HookMouse );
+	Menubar=NULL;
+}
 
+//void MenuBar::OnCharHook(wxKeyEvent &event)
+//{
+//	int key = event.GetKeyCode();
+//	if(event.GetEventType()== wxEVT_KEY_UP){wxLogStatus("key up");}
+//	if(event.GetModifiers() == wxMOD_ALT){//536870912 1073741824 lparam mówi nam o altup, który ma specjalny bajt 
+//		if(Menubar->md && showMnemonics){Menubar->md->HideMenu();/*return 1;*/}
+//		showMnemonics = !showMnemonics;
+//		if(Menubar->md){
+//			Menubar->md->dialog->Refresh(false);
+//			if(Menubar->shownMenu==-1){return;}
+//		}
+//		if(Menubar->sel==-1 || !showMnemonics){
+//			Menubar->sel = (showMnemonics)? 0 : -1;
+//		}
+//		Menubar->Refresh(false);
+//		return;
+//	}else if(showMnemonics){
+//		if( (key >= 0x41 && key <= 0x5A) ){//lparam mówi o keyup
+//			auto mn = (Menubar->md)? Menubar->md->mnemonics : Menubar->mnemonics;
+//			auto foundmnemonics = mn.find(key);
+//			
+//			if(foundmnemonics != mn.end()){
+//				if (Menubar->md){
+//					if(Menubar->md->items[foundmnemonics->second]->submenu){
+//						Menubar->md->dialog->sel = Menubar->md->dialog->submenuShown = foundmnemonics->second;
+//						if(Menubar->md->dialog->submenuToHide == -1){
+//							selectOnStart=0;
+//							Menubar->md->dialog->showSubmenuTimer.Start(1,true);
+//						}
+//					}else{
+//						MenuItem *item=Menubar->md->items[foundmnemonics->second];
+//						if(!Menubar->md->dialog->SendEvent(item, 0)){return;}
+//						Menubar->HideMnemonics();
+//					}
+//				}else{
+//					if(Menubar->shownMenu != -1 && Menubar->Menus[Menubar->shownMenu]->dialog){
+//						Menubar->Menus[Menubar->shownMenu]->dialog->HideMenus();
+//					}
+//					Menubar->sel = Menubar->shownMenu = foundmnemonics->second;
+//					Menubar->Refresh(false);
+//					selectOnStart=0;
+//					Menubar->showMenuTimer.Start(10,true);
+//				}
+//				return;
+//			}
+//			
+//		}
+//	}
+//	if((key == WXK_DOWN || key == WXK_UP || key == WXK_LEFT || key == WXK_RIGHT)){
+//		if(Menubar->md){
+//			if(key == WXK_LEFT && Menubar->md->dialog != MenuDialog::ParentMenu){
+//				Menubar->md->DestroyDialog();
+//				MenuBar::Menubar->md = Menubar->md->parentMenu;
+//				Menubar->md->dialog->submenuToHide = -1;
+//				Menubar->md->dialog->subMenuIsShown = false;
+//				return ;
+//			}else if(key == WXK_LEFT && Menubar->md->dialog->sel>=0 
+//				&& Menubar->md->items[Menubar->md->dialog->sel]->submenu){
+//				Menubar->md->dialog->submenuShown = Menubar->md->dialog->sel;
+//				if(Menubar->md->dialog->submenuToHide == -1){
+//					selectOnStart=0;
+//					Menubar->md->dialog->showSubmenuTimer.Start(1,true);
+//					return ;
+//				}
+//			}
+//			if(key == WXK_DOWN || key == WXK_UP){
+//				int step = (key == WXK_DOWN)? 1 : -1;
+//				do{
+//					Menubar->md->dialog->sel += step;
+//					if(Menubar->md->dialog->sel >= (int)Menubar->md->items.size()){
+//						Menubar->md->dialog->sel=0;
+//					}else if(Menubar->md->dialog->sel<0){
+//						Menubar->md->dialog->sel = Menubar->md->items.size()-1;
+//					}
+//				}while(Menubar->md->items[Menubar->md->dialog->sel]->type == ITEM_SEPARATOR);
+//				Menubar->md->dialog->Refresh(false);
+//				return ;
+//			}
+//		}
+//			
+//		if (Menubar->sel!=-1){
+//			if(key == WXK_RIGHT || key == WXK_LEFT){
+//				int step = (key == WXK_RIGHT)? 1 : -1;
+//				Menubar->sel += step;
+//				//wxLogStatus("menubar strza³ka left right %i", Menubar->sel);
+//				if(Menubar->sel >= (int)Menubar->Menus.size()){
+//					Menubar->sel=0;
+//				}else if(Menubar->sel<0){
+//					Menubar->sel = Menubar->Menus.size()-1;
+//				}
+//				Menubar->Refresh(false);
+//				if(!Menubar->md){return;}
+//					
+//			}
+//			if(Menubar->shownMenu != -1 && Menubar->Menus[Menubar->shownMenu]->dialog){
+//				Menubar->Menus[Menubar->shownMenu]->dialog->HideMenus();
+//			}
+//			Menubar->shownMenu = Menubar->sel;
+//			selectOnStart=0;
+//			Menubar->showMenuTimer.Start(1,true);
+//			return ;
+//		}
+//			
+//	}else if(key == WXK_ESCAPE && Menubar->md){
+//		MenuDialog::ParentMenu->HideMenus();
+//		Menubar->HideMnemonics();
+//		return ;
+//	}else if(key == WXK_RETURN && Menubar->md){
+//		if(Menubar->md->dialog->sel>=0){
+//			MenuItem *item = Menubar->md->items[Menubar->md->dialog->sel];
+//			if(!Menubar->md->dialog->SendEvent(item, 0)){event.Skip();return;}
+//			Menubar->HideMnemonics();
+//			return;
+//		}
+//	}
+//	if(showMnemonics && key != WXK_ALT){Menubar->HideMnemonics();}
+//	event.Skip();
+//}
 
 void MenuBar::Append(Menu *menu, const wxString &title)
 {
@@ -884,10 +1020,12 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 			tdc.SetBrush(clicked? wxBrush(Options.GetColour("Menu Bar Background Selection")) : *wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(clicked? Options.GetColour("Menu Bar Border Selection") : Options.GetColour("Menu Bar Border Selection")));
 			tdc.DrawRoundedRectangle(posX-4, 1, te.x+8, h-3, 3.0);
-			tdc.SetPen(wxPen(Options.GetColour("Window Text")));
 		}
 		tdc.DrawText(desc,posX,2);//(h-te.y)/2.0
-		if(hasMnemonics){tdc.DrawLine(posX+mnbefsize.x, h-4, posX+mnbefsize.x+linesize.x, h-4);}
+		if(hasMnemonics){
+			tdc.SetPen(wxPen(Options.GetColour("Window Text")));
+			tdc.DrawLine(posX+mnbefsize.x, h-4, posX+mnbefsize.x+linesize.x, h-4);
+		}
 		posX += te.x + menuIndent;
 	}
 
@@ -949,15 +1087,21 @@ LRESULT CALLBACK MenuBar::OnKey( int code, WPARAM wParam, LPARAM lParam ){
 		if(!(state[VK_LMENU]>1 && state[VK_LSHIFT]<2 && state[VK_RSHIFT]<2 && state[VK_LCONTROL]<2 && state[VK_RCONTROL]<2)){return 0;}
 		if(Menubar->md && showMnemonics){Menubar->md->HideMenu();/*return 1;*/}
 		showMnemonics = !showMnemonics;
+		Menubar->altDown=true;
 		if(Menubar->md){
 			Menubar->md->dialog->Refresh(false);
 			if(Menubar->shownMenu==-1){return 1;}
 		}
-		if(Menubar->sel==-1 || !showMnemonics){
-			Menubar->sel = (showMnemonics)? 0 : -1;
-		}
+		Menubar->sel=-1;
 		Menubar->Refresh(false);
 		return 1;
+	}else if(wParam == VK_MENU && !(lParam & 536870912)){
+		if(!Menubar->altDown){showMnemonics=false;}
+		if(Menubar->sel==-1 || !showMnemonics){
+			Menubar->sel = (showMnemonics)? 0 : -1;
+			Menubar->Refresh(false);
+		}
+		Menubar->altDown=false;
 	}else if(showMnemonics){
 		if( (wParam >= 0x41 && wParam <= 0x5A) && !(lParam & 2147483648)){//lparam mówi o keyup
 			auto mn = (Menubar->md)? Menubar->md->mnemonics : Menubar->mnemonics;
@@ -989,6 +1133,7 @@ LRESULT CALLBACK MenuBar::OnKey( int code, WPARAM wParam, LPARAM lParam ){
 			}
 			
 		}
+		if(wParam != VK_MENU){Menubar -> altDown=false;}
 	}
 	
 	if((wParam == VK_DOWN || wParam == VK_UP || wParam == VK_LEFT || wParam == VK_RIGHT) && !(lParam & 2147483648)){
@@ -1058,7 +1203,7 @@ LRESULT CALLBACK MenuBar::OnKey( int code, WPARAM wParam, LPARAM lParam ){
 			return 1;
 		}
 	}
-
+	//if(showMnemonics && wParam != VK_MENU){Menubar->HideMnemonics();}
 
 	return (Menubar->md)? 1 : CallNextHookEx(Menubar->HookKey, code, wParam, lParam);
 }
@@ -1082,37 +1227,26 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 		DWORD currentthreadid = GetCurrentProcessId();
 		if (currentthreadid == threadid && hWndPointed != NULL && msg->hwnd != hWndPointed){
 			msg->hwnd=hWndPointed;
+		}else if(currentthreadid != threadid){
+			msg->hwnd=0;
 		}
 		return 1;
 	}
 	if(showMnemonics || Menubar->md){
+		//wxLogStatus("event %i", (int)msg->message);
 		if( msg->message == WM_LBUTTONDOWN || msg->message == WM_NCLBUTTONDOWN || 
 			msg->message == WM_RBUTTONDOWN || msg->message == WM_NCRBUTTONDOWN){
 			Menubar->HideMnemonics();
 			if(!MenuDialog::ParentMenu){return 0;}
-			int subMenu=MenuDialog::ParentMenu->submenuShown;
-			Menu *menu= MenuDialog::ParentMenu->parent;
-			wxPoint posOnScreen = wxGetMousePosition();
-			bool contains=false;
-			while(menu){
-				if(menu->dialog){
-					int x, y;
-					menu->dialog->wxPopupWindowBase::DoGetPosition(&x, &y);
-					wxRect rc = menu->dialog->GetRect();
-					rc.x=x; rc.y=y;
-					//wxLogStatus("contains %i, %i %i %i %i %i", posOnScreen.x, posOnScreen.y, rc.x, rc.y, rc.GetRight(), rc.GetBottom());
-					if(rc.Contains(posOnScreen)){
-						contains=true;
-					}
-				
-					subMenu = menu->dialog->submenuShown;
-					menu = (subMenu != -1)? menu->items[subMenu]->submenu : NULL;
-				}
-				else{menu=NULL; subMenu = -1;}
-			}
-			//wxLogStatus("hide contains %i", (int)contains);
+			POINT mouse;
+			GetCursorPos (&mouse);
+			HWND hWndPointed = WindowFromPoint(mouse);
+			wxWindow *win = wxGetWindowFromHWND(hWndPointed);
+			bool contains = (win && (win->IsKindOf(wxCLASSINFO(wxPopupWindow)) || 
+				win->GetParent() && win->GetParent()->IsKindOf(wxCLASSINFO(wxPopupWindow))));
 			if(contains) {return 0;}
 			MenuDialog::ParentMenu->HideMenus();
+			msg->hwnd = 0;
 			return 1;
 		}
 		if(msg->message == WM_MBUTTONUP || msg->message == WM_NCMBUTTONUP)
@@ -1123,10 +1257,6 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 		//}
 
 	}
-	/*if((msg->message != WM_MOUSEMOVE ) && Menubar->md){
-		wxLogStatus("Message %i", msg->message);
-		return 1;
-	}*/
 	
 	return CallNextHookEx( 0, code, wParam, lParam );
 }
@@ -1135,6 +1265,7 @@ void MenuBar::HideMnemonics()
 {
 	showMnemonics=false;
 	sel=-1;
+	altDown=false;
 	Refresh(false);
 }
 

@@ -18,9 +18,10 @@
 //#include <wx/string.h>
 //#include <wx/accel.h>
 //#include <wx/arrstr.h>
-#include <wx/wx.h>
+
 #include <map>
 #include "ListControls.h"
+#include "KaiDialog.h"
 
 enum{
 	GLOBAL_HOTKEY='G',
@@ -74,7 +75,7 @@ public:
 	wxString Accel;
 };
 
-class HkeysDialog : public wxDialog
+class HkeysDialog : public KaiDialog
 {
 	public:
 	HkeysDialog(wxWindow *parent, wxString name, char hotkeyWindow = GLOBAL_HOTKEY, bool showWindowSelection=true);

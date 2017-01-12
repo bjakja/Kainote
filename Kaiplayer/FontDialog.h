@@ -23,7 +23,7 @@
 #include "KaiScrollBar.h"
 #include <wx/wx.h>
 #include "StylePreview.h"
-
+#include "KaiDialog.h"
 
 class FontList : public wxWindow
 {
@@ -61,7 +61,7 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
-class FontDialog : public wxDialog
+class FontDialog : public KaiDialog
 {
 public:
 	FontDialog(wxWindow *parent, Styles *acstyl);

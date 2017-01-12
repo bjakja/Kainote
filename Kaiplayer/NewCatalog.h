@@ -19,10 +19,10 @@
 //(*Headers(NewCatalog)
 #include "KaiTextCtrl.h"
 #include "MappedButton.h"
-#include <wx/dialog.h>
+#include "KaiDialog.h"
 //*)
 
-class NewCatalog: public wxDialog
+class NewCatalog: public KaiDialog
 {
 	public:
 
@@ -33,17 +33,6 @@ class NewCatalog: public wxDialog
 		MappedButton* Button1;
 		MappedButton* Button2;
 		KaiTextCtrl* TextCtrl1;
-		
-
-	protected:
-
-		
-		static const long ID_TEXTCTRL1;
-		static const long ID_STATICBOX1;
-		void OnCatalogCommit(wxCommandEvent& event);
-
-	private:
-
 		
 };
 

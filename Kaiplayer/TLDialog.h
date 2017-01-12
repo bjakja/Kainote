@@ -16,12 +16,12 @@
 #ifndef TLDIALOG
 #define TLDIALOG
 
-#include <wx/dialog.h>
+#include "KaiDialog.h"
 #include "MappedButton.h"
 
 #include "Grid.h"
 
-class TLDialog  : public wxDialog
+class TLDialog  : public KaiDialog
 {
 public:
 	TLDialog(wxWindow *parent, Grid *subsgrid);

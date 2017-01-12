@@ -52,10 +52,6 @@ TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const
     SetSizerAndFit(BoxSizer1);
 
 	SubsName=_("Bez tytułu");
-	/*VideoName="";
-	SubsPath="";
-	VideoPath="";
-*/
 	
 	SetAccels();
 }
