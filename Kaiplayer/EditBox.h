@@ -42,17 +42,17 @@ public:
 	DECLARE_EVENT_TABLE()
 };
 
-class DescTxtCtrl : public KaiTextCtrl
+class DescTxtCtrl : public KaiChoice
 {
 public:
-	DescTxtCtrl(wxWindow *parent, const wxSize &size, const wxString &desc);
+	DescTxtCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc);
 	virtual ~DescTxtCtrl(){};
 	void ChangeValue(wxString &val);
 private:
 	void OnFocus(wxFocusEvent &evt);
 	void OnKillFocus(wxFocusEvent &evt);
 	wxString description;
-	DECLARE_EVENT_TABLE()
+
 };
 
 class txtdialog :public KaiDialog

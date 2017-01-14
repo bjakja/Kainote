@@ -41,8 +41,11 @@ inline void KaiChoice::CalcMaxWidth(wxSize *result, bool changex, bool changey){
 		if(tx > result->x && changex){result->x = tx;}
 		else if(!changex){break;}
 	}
-	if(changex){result->x += 26;}
-	if(changey){result->y = ty+10;}
+	if(changex){result->x += 26;if(result->x>400){result->x=400;}}
+	if(changey){
+		GetTextExtent("TEX{}", &tx, &ty);
+		result->y = ty+10;
+	}
 }
 
 
@@ -59,6 +62,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 					 ,clicked(false)
 					 ,focusSet(false)
 					 ,choice(-1)
+					 ,useFgCol(false)
 {
 	list = new wxArrayString(n,choices);
 	disabled = new std::map<int, bool>();
@@ -84,6 +88,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 					 ,clicked(false)
 					 ,focusSet(false)
 					 ,choice(-1)
+					 ,useFgCol(false)
 {
 	list = new wxArrayString(choices);
 	disabled = new std::map<int, bool>();
@@ -110,6 +115,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 					 ,clicked(false)
 					 ,focusSet(false)
 					 ,choice(-1)
+					 ,useFgCol(false)
 {
 	list = new wxArrayString(choices);
 	disabled = new std::map<int, bool>();
@@ -180,6 +186,19 @@ void KaiChoice::SetToolTip(const wxString &tooltip)
 	wxWindow::SetToolTip((choice>=0)? toolTip + "\n" + GetString(choice) : tooltip);
 }
 
+bool KaiChoice::SetBackgroundColour(const wxColour &col)
+{
+	if(choiceText){choiceText->SetBackgroundColour(col);}
+	return true;
+}
+
+bool KaiChoice::SetForegroundColour(const wxColour &col)
+{
+	wxWindow::SetForegroundColour(col);
+	if(choiceText){choiceText->SetForegroundColour(col);}
+	useFgCol=true;
+	return true;
+}
 
 void KaiChoice::OnSize(wxSizeEvent& event)
 {
@@ -227,7 +246,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 		wxBitmap arrow = wxBITMAP_PNG("arrow_list");
 		tdc.DrawBitmap((enabled)? arrow : arrow.ConvertToDisabled(), w - 17, (h-10)/2);
 
-		if(choice>=0 || !txtchoice.IsEmpty()){
+		if((choice>=0 || !txtchoice.IsEmpty()) && choice< list->size()){
 			int fh=0, fw=w, ex=0, et=0;
 			wxString txt = (*list)[choice];
 			int removed=0;
@@ -242,7 +261,8 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 				txt = txt.RemoveLast(2)+"...";
 			}
 			if(!choiceText){
-				tdc.SetTextForeground((enabled)? Options.GetColour("Window Text") : Options.GetColour("Window Inactive Text"));
+				tdc.SetTextForeground((useFgCol && enabled)? GetForegroundColour() : (enabled)?
+					Options.GetColour("Window Text") : Options.GetColour("Window Inactive Text"));
 				//tdc.DrawText(txt, 4, (h-fh));
 				wxRect cur(5, (h-fh)/2, w - 19, fh);
 				tdc.SetClippingRegion(cur);
@@ -259,7 +279,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 void KaiChoice::OnMouseEvent(wxMouseEvent &event)
 {	
 	if(!listIsShown){
-		if(event.LeftDown()){
+		if(event.LeftDown() && list->size()>0){
 			clicked=true;
 			Refresh(false);
 			SetFocus();
@@ -278,7 +298,7 @@ void KaiChoice::OnMouseEvent(wxMouseEvent &event)
 			clicked=false;
 			Refresh(false);
 		}
-		if(event.Entering()){
+		if(event.Entering() && list->size()>0){
 			enter=true;
 			Refresh(false);
 			return;
@@ -298,6 +318,7 @@ void KaiChoice::OnMouseEvent(wxMouseEvent &event)
 		if(HasFlag(KAI_SCROLL_ON_FOCUS) && !HasFocus() && !(choiceText && choiceText->HasFocus())){
 			event.Skip(); return;
 		}
+		if(list->size()<1){event.Skip(); return;}
 		if( itemList && itemList->IsShown()){
 			itemList->OnMouseEvent(event);
 			return;
@@ -398,6 +419,7 @@ void KaiChoice::SendEvent(int _choice)
 	clicked=false;
 	if(_choice>=0){
 		//choice = _choice; //Refresh(false);
+		if(choiceText){choiceText->SetModified(true);}
 		SetSelection(_choice);
 		wxCommandEvent evt((HasFlag(KAI_COMBO_BOX))? wxEVT_COMMAND_COMBOBOX_SELECTED : wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 		this->ProcessEvent(evt);
@@ -444,7 +466,7 @@ void KaiChoice::SelectChoice(int _choice, bool select, bool sendEvent){
 	choice = _choice;
 	txtchoice = (*list)[choice];
 	if(choiceText){
-		choiceText->SetValue((*list)[choice]);
+		choiceText->SetValue((*list)[choice], true);
 		if(select){
 			choiceText->SetFocus();
 			choiceText->SetSelection(0,choiceText->GetValue().Len(),true);
@@ -461,6 +483,10 @@ void KaiChoice::Insert(const wxString &what, int position){
 	list->Insert(what, pos);	
 }
 
+void KaiChoice::Sort()
+{
+	list->Sort([](const wxString &first, const wxString &second){return first.CmpNoCase(second);});
+}
 
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiChoice, wxWindow);

@@ -36,29 +36,34 @@ void EBStaticText::OnEraseBackground(wxEraseEvent &event)
 {
 }
 
-DescTxtCtrl::DescTxtCtrl(wxWindow *parent, const wxSize &size, const wxString &desc)
-	:KaiTextCtrl(parent,-1,"",wxDefaultPosition, size)
+DescTxtCtrl::DescTxtCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc)
+	:KaiChoice(parent,id,"",wxDefaultPosition, size, wxArrayString())
 {
 	description =desc;
+	choiceText->Bind(wxEVT_SET_FOCUS, &DescTxtCtrl::OnFocus,this);
+	choiceText->Bind(wxEVT_KILL_FOCUS, &DescTxtCtrl::OnKillFocus,this);
 }
 
 void DescTxtCtrl::ChangeValue(wxString &val)
 {
-	if(val=="" && !HasFocus()){
+	if(val=="" && !choiceText->HasFocus()){
 		SetForegroundColour("#A0A0A0"); 
 		SetValue(description);
+		Refresh(false);
 	}
 	else{
-		SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+		SetForegroundColour(Options.GetColour("Window Text"));
 		SetValue(val);
+		Refresh(false);
 	}
 }
 
 void DescTxtCtrl::OnFocus(wxFocusEvent &evt)
 {
-	if(GetForegroundColour()=="#A0A0A0"){
+	if(choiceText->GetForegroundColour()=="#A0A0A0"){
 		SetValue("");
-		SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));}
+		SetForegroundColour(Options.GetColour("Window Text"));
+	}
 	evt.Skip();
 }
 void DescTxtCtrl::OnKillFocus(wxFocusEvent &evt)
@@ -70,10 +75,7 @@ void DescTxtCtrl::OnKillFocus(wxFocusEvent &evt)
 	evt.Skip();
 }
 
-BEGIN_EVENT_TABLE(DescTxtCtrl,KaiTextCtrl)
-	EVT_SET_FOCUS(DescTxtCtrl::OnFocus)
-	EVT_KILL_FOCUS(DescTxtCtrl::OnKillFocus)
-	END_EVENT_TABLE()
+
 
 
 	txtdialog::txtdialog(wxWindow *parent, int id, const wxString &txtt, int _type, const wxPoint &position)
@@ -249,11 +251,11 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	StyleChoice = new KaiChoice(this, IDSTYLE, wxDefaultPosition, wxSize(100,-1),styles);//wxSize(145,-1)
 	//druga linia
 
-	ActorEdit = new DescTxtCtrl(this, wxSize(90,-1), _("Aktor"));
+	ActorEdit = new DescTxtCtrl(this, 16658, wxSize(90,-1), _("Aktor"));
 	MarginLEdit = new NumCtrl(this, 16668, "",0,9999,true, wxDefaultPosition, wxSize(42,-1),wxTE_CENTRE);
 	MarginREdit = new NumCtrl(this, 16668, "",0,9999,true, wxDefaultPosition, wxSize(42,-1),wxTE_CENTRE);
 	MarginVEdit = new NumCtrl(this, 16668, "",0,9999,true, wxDefaultPosition, wxSize(42,-1),wxTE_CENTRE);
-	EffectEdit = new DescTxtCtrl(this, wxSize(90,-1), _("Efekt"));
+	EffectEdit = new DescTxtCtrl(this, 16658, wxSize(90,-1), _("Efekt"));
 
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
 	BoxSizer2->Add(Comment,0,wxLEFT|wxALIGN_CENTER,4);
@@ -285,7 +287,8 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 
 
 	Connect(ID_CHECKBOX1,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&EditBox::OnCommit);
-	Connect(ID_TLMODE,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&EditBox::OnTlMode); 
+	Connect(ID_TLMODE,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&EditBox::OnTlMode); //16658
+	Connect(16658,wxEVT_COMMAND_COMBOBOX_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);    
 	Connect(IDSTYLE,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);    
 	Connect(PutBold,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnBoldClick);
 	Connect(PutItalic,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnItalClick);
@@ -355,7 +358,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 
 	//resetuje edycję na wideo
 	if(OnVideo){
-		if(pan->Video->IsShown() || pan->Video->isfullskreen){
+		if(pan->Video->IsShown() || pan->Video->isFullscreen){
 			pan->Video->OpenSubs(grid->SaveText()); 
 			if(pan->Video->GetState()==Paused){pan->Video->Render();}
 		}
@@ -371,7 +374,7 @@ done:
 				focused->SetFocus();
 			}
 		}else{
-			if(pan->Video->IsShown() || pan->Video->isfullskreen){
+			if(pan->Video->IsShown() || pan->Video->isFullscreen){
 				Dialogue *next=grid->GetDial(MIN(ebrow+1, grid->GetCount()-1));
 				int ed=line->End.mstime, nst=next->Start.mstime;
 				int htpf= pan->Video->avtpf/2;
@@ -464,10 +467,10 @@ void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 		line->Style=checkstyle; 
 		cellm |= STYLE;
 	}
-	if(ActorEdit->IsModified()){
+	if(ActorEdit->choiceText->IsModified()){
 		line->Actor=ActorEdit->GetValue();
 		cellm |= ACTOR;
-		ActorEdit->SetModified(dummy);
+		ActorEdit->choiceText->SetModified(dummy);
 	}
 	if(MarginLEdit->IsModified()){
 		line->MarginL=MarginLEdit->GetInt();
@@ -484,10 +487,10 @@ void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 		cellm |= MARGINV;
 		MarginVEdit->SetModified(dummy);
 	}
-	if(EffectEdit->IsModified()){
+	if(EffectEdit->choiceText->IsModified()){
 		line->Effect=EffectEdit->GetValue();
 		cellm |= EFFECT;
-		EffectEdit->SetModified(dummy);
+		EffectEdit->choiceText->SetModified(dummy);
 	}
 
 	if(TextEdit->Modified()){
@@ -511,6 +514,9 @@ void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 		if(ebrow<grid->GetCount() && !dummy){
 			OnVideo=false;
 			grid->ChangeLine(line, ebrow, cellm, selline, visualdummy);
+			if(cellm & ACTOR || cellm & EFFECT){
+				grid->RebuildActorEffectLists();
+			}
 		}
 	}
 	else if(selline){grid->NextLine();}
@@ -1240,7 +1246,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	}
 
 	
-	if(visible && (panel->Video->IsShown() || panel->Video->isfullskreen)){
+	if(visible && (panel->Video->IsShown() || panel->Video->isFullscreen)){
 		panel->Video->OpenSubs(text);
 		if(Visual>0){panel->Video->SetVisual();}
 		else if(panel->Video->GetState()==Paused){panel->Video->Render();}

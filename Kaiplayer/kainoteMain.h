@@ -90,6 +90,9 @@ class kainoteFrame: public wxFrame
 		void OnMenuClick(wxCommandEvent &event);
 		void SetStatusText(const wxString &label, int field){StatusBar->SetLabelText(field, label);}
 		wxString GetStatusText(int field){return StatusBar->GetStatusText(field);}
+		void SetSubsResolution(bool dialog=false);
+		void SetVideoResolution(int w, int h, bool dialog=false);
+		void ShowBadResolutionDialog(const wxString &videoRes, const wxString &subsRes);
 		findreplace *FR;
 		findreplace *SL;
 		Auto::Automation *Auto;
@@ -124,6 +127,7 @@ class kainoteFrame: public wxFrame
 		Menu* AutoMenu;
 		
 		wxLogWindow *mylog;
+		bool badResolution;
 		/*int fontlastmodif;
 		int fontlastmodifl;*/
 		

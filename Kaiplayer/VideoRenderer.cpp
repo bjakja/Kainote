@@ -51,6 +51,7 @@ VideoRend::VideoRend(wxWindow *_parent, const wxSize &size)
 	,panelHeight(66)
 	,AR(0.0)
 	,fps(0.0)
+	,isFullscreen(false)
 {
 	hwnd=GetHWND();
 
@@ -74,6 +75,7 @@ VideoRend::VideoRend(wxWindow *_parent, const wxSize &size)
 	resized=seek=block=cross=pbar=VisEdit=false;
 	IsDshow=true;
 	devicelost=false;
+	panelOnFullscreen=false;
 	MainStream=NULL;
 	datas=NULL;
 	player=NULL;
@@ -671,7 +673,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	datas=new char[vheight*pitch];
 
 	if(!InitDX()){/*block=false;*/return false;}
-	UpdateRects(!fullscreen);
+	UpdateRects();
 	
 	if(!framee){framee=new csri_frame;}
 	if(!format){format=new csri_fmt;}
@@ -845,7 +847,7 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 	if (instance) csri_close(instance);
 	instance = NULL;
 	//wxLogStatus(*textsubs);
-	//if(!textsubs) {if (vobsub) {csri_close_renderer(vobsub);}return false;}
+	if(!textsubs) {/*if (vobsub) {csri_close_renderer(vobsub);}*/return false;}
 	//const char *buffer= textsubs.mb_str(wxConvUTF8).data();
 	if(VisEdit && Vclips->Visual==VECTORCLIP && Vclips->dummytext){
 		//wxLogStatus("clip background");
@@ -898,20 +900,30 @@ int VideoRend::GetDuration()
 
 
 //ustawia nowe recty po zmianie rozdzielczości wideo
-bool VideoRend::UpdateRects(bool VideoPanel)
+bool VideoRend::UpdateRects()
 {
 	VideoCtrl* Video=(VideoCtrl*) this;
 	wxRect rt;
 	TabPanel* tab=(TabPanel*)Video->GetParent();
-	if(VideoPanel){hwnd=GetHWND();rt=GetClientRect();rt.height-=panelHeight;pbar=false;}
-	else{hwnd=Video->TD->GetHWND();rt=Video->TD->GetClientRect();pbar=true;cross=false;}
+	if(isFullscreen){
+		hwnd=Video->TD->GetHWND();
+		rt=Video->TD->GetClientRect();
+		if(panelOnFullscreen){rt.height-=panelHeight;}
+		pbar=true;
+		cross=false;
+	}else{
+		hwnd=GetHWND();
+		rt=GetClientRect();
+		rt.height-=panelHeight;
+		pbar=false;
+	}
 	if(!rt.height || !rt.width){return false;}
 	rt3.bottom=rt.height;
 	rt3.right=rt.width;
 	rt3.left=rt.x;
 	rt3.top=rt.y;
 
-	if(tab->edytor&&!Video->isfullskreen){
+	if(tab->edytor&&!isFullscreen){
 		rt4=rt3;
 	}
 	else
@@ -943,13 +955,13 @@ bool VideoRend::UpdateRects(bool VideoPanel)
 }
 
 //funkcja zmiany rozdziałki okna wideo
-void VideoRend::UpdateVideoWindow(bool bar)
+void VideoRend::UpdateVideoWindow()
 {
 
 
 	wxMutexLocker lock(mutexRender);
 	block=true;
-	if(!UpdateRects(bar)){block=false;return;}
+	if(!UpdateRects()){block=false;return;}
 
 	if(!InitDX(true)){block=false;return;}
 

@@ -546,7 +546,13 @@ void findreplace::SelectLine()
 	wxString messagetxt= (sopt==0)? wxString::Format(_("Zaznaczono %i linijek."), allreps) :
 		(sopt==1)? wxString::Format(_("Dodano do zaznaczenia %i linijek."), allreps) : 
 		wxString::Format(_("Odznaczono %i linijek."), allreps);
-	KaiMessageBox(messagetxt, _("Zaznacz"));
+	KaiMessageDialog dlg(this, messagetxt, _("Zaznacz"), wxYES_NO);
+	dlg.SetYesLabel("Zamknij");
+	dlg.SetNoLabel("Ok");
+	int result = dlg.ShowModal();
+	if(result == wxYES){
+		Hide();
+	}
 }
 
 
@@ -586,12 +592,12 @@ void findreplace::OnButtonRep(wxCommandEvent& event)
 	}
 	else if(wrep==ACTOR){
 		Kai->GetTab()->Edit->ActorEdit->SetFocus();
-		Kai->GetTab()->Edit->ActorEdit->Replace (findstart, findend, rep);
+		Kai->GetTab()->Edit->ActorEdit->choiceText->Replace (findstart, findend, rep);
 		grid->CopyDial(reprow)->Actor=Kai->GetTab()->Edit->ActorEdit->GetValue();
 	}
 	else if(wrep==EFFECT){
 		Kai->GetTab()->Edit->EffectEdit->SetFocus();
-		Kai->GetTab()->Edit->EffectEdit->Replace (findstart, findend, rep);
+		Kai->GetTab()->Edit->EffectEdit->choiceText->Replace (findstart, findend, rep);
 		grid->CopyDial(reprow)->Effect=Kai->GetTab()->Edit->EffectEdit->GetValue();
 	}
 
@@ -707,11 +713,11 @@ void findreplace::Find()
 					}
 					if(wrep==ACTOR){
 						pan->Edit->ActorEdit->SetFocus();
-						pan->Edit->ActorEdit->SetSelection(mwhere,findend);
+						pan->Edit->ActorEdit->choiceText->SetSelection(mwhere,findend);
 					}
 					if(wrep==EFFECT){
 						pan->Edit->EffectEdit->SetFocus();
-						pan->Edit->EffectEdit->SetSelection(mwhere,findend);
+						pan->Edit->EffectEdit->choiceText->SetSelection(mwhere,findend);
 					}
 
 					foundsome=true;

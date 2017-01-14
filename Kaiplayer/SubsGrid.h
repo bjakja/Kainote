@@ -108,6 +108,7 @@ public:
 	Dialogue *CopyDial(int i, bool push=true);
 	Dialogue *GetDial(int i);
 	wxString *GetVisible(bool *visible=0, wxPoint *point=0, bool trimSels=false);
+	void RebuildActorEffectLists();
 
 	bool makebkp;
 	bool showFrames;
@@ -117,7 +118,7 @@ public:
 	SubsFile* file;
 	std::vector<wxArrayInt> SpellErrors;
 	std::vector<wxArrayInt> *Comparsion;
-
+	
 	SubsGrid(wxWindow *parent, const long int id ,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=wxWANTS_CHARS, const wxString& name=wxPanelNameStr);
 	virtual ~SubsGrid();
 private:

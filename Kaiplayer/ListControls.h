@@ -92,6 +92,10 @@ public:
 	void Append(const wxArrayString &itemsArray);
 	void Delete(int num);
 	void SetToolTip(const wxString &tooltip="");
+	void Sort();
+	bool SetBackgroundColour(const wxColour &col);
+	bool SetForegroundColour(const wxColour &col);
+	KaiTextCtrl *choiceText;
 private:
 	void OnSize(wxSizeEvent& event);
 	void OnPaint(wxPaintEvent& event);
@@ -114,7 +118,7 @@ private:
 	wxString toolTip;
 	PopupList *itemList;
 	wxString txtchoice;
-	KaiTextCtrl *choiceText;
+	bool useFgCol;
 
 	wxDECLARE_ABSTRACT_CLASS(KaiChoice);
 	DECLARE_EVENT_TABLE()

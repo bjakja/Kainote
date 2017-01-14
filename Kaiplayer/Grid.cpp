@@ -689,7 +689,7 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 			if(Kai->GetTab()->Video->GetState()==Paused){Kai->GetTab()->Video->Render();}
 		}
 
-		if(!Kai->GetTab()->edytor&&!Kai->GetTab()->Video->isfullskreen){Kai->HideEditor();}
+		if(!Kai->GetTab()->edytor&&!Kai->GetTab()->Video->isFullscreen){Kai->HideEditor();}
 		Kai->GetTab()->CTime->Contents();
 		sel[Edit->ebrow]=true;
 		RepaintWindow();
@@ -906,7 +906,7 @@ void Grid::ResizeSubs(float xnsize, float ynsize)
 			
 
 			if(tdone){
-				SpellErrors[i].clear();
+				if(SpellErrors.size() >= (size_t)i) SpellErrors[i].clear();
 				diall->Text=txt; sdone=true;
 			}
 			if(sdone){

@@ -118,7 +118,7 @@ class VideoRend : public wxWindow
 		void GetVideoSize(int *width, int *height);
 		wxSize GetVideoSize();
 		void GetFpsnRatio(float *fps, long *arx, long *ary);
-		void UpdateVideoWindow(bool bars=true);
+		void UpdateVideoWindow();
 		void SetVolume(int vol);
 		
 		void Render(bool RecreateFrame=true);
@@ -132,7 +132,7 @@ class VideoRend : public wxWindow
 		void SetVisual(int start, int end, bool remove=false, bool settext=false);
 		void SetVisual();
 		byte *GetFramewithSubs(bool subs, bool *del);
-		bool UpdateRects(bool bar);
+		bool UpdateRects();
 		LPDIRECT3DSURFACE9 MainStream;
 		LPDIRECT3DDEVICE9 d3device;
 		D3DFORMAT d3dformat;
@@ -143,12 +143,14 @@ class VideoRend : public wxWindow
 		bool cross;
 		bool pbar;
 		bool resized;
+		bool isFullscreen;
+		bool panelOnFullscreen;
 		int vwidth;
 		int vheight;
 		int pitch;
 		int time;
 		int lastframe;
-		/*const */int panelHeight;
+		int panelHeight;
 		long ax,ay;
 		float AR, fps;
 		char *datas;
@@ -160,13 +162,10 @@ class VideoRend : public wxWindow
 		LPD3DXFONT m_font;
 		VideoFfmpeg *VFF;
 		AudioDisplay *player;
-		//wxMutex mutexSizing;
 		wxMutex mutexRender;
-		//wxMutex mutexDrawing;
 		wxMutex mutexLines;
 		wxMutex mutexProgBar;
 		wxMutex mutexOpenFile;
-		//wxMutex mutexOpenSubs;
 		PlaybackState vstate;
 		Visuals *Vclips;
 		int playend;

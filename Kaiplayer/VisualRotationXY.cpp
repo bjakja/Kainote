@@ -195,7 +195,7 @@ void RotationXY::OnMouseEvent(wxMouseEvent &evt)
 	bool middlec = evt.MiddleDown();
 	
 	int x, y;
-	if(tab->Video->isfullskreen){wxGetMousePosition(&x,&y);}
+	if(tab->Video->isFullscreen){wxGetMousePosition(&x,&y);}
 	else{evt.GetPosition(&x,&y);}
 
 	if(evt.ButtonUp()){

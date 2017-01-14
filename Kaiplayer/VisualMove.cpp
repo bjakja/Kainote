@@ -74,7 +74,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 	bool rightc = evt.RightDown();
 
 	int x, y;
-	if(tab->Video->isfullskreen){wxGetMousePosition(&x,&y);}
+	if(tab->Video->isFullscreen){wxGetMousePosition(&x,&y);}
 	else{evt.GetPosition(&x,&y);}
 
 	if(evt.ButtonUp()){

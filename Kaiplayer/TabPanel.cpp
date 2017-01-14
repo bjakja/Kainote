@@ -58,7 +58,7 @@ TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const
 
 
 TabPanel::~TabPanel(){
-	if(Video->player){Video->player->Stop();} //fix kraszów powodowanych przez niszczenie editboxa na samym końcu i próbując pobrać audio na play kraszuje.
+	if(Video->player){Video->player->Stop(false);} //fix kraszów powodowanych przez niszczenie editboxa na samym końcu i próbując pobrać audio na play kraszuje.
 }
 
 

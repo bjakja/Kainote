@@ -349,6 +349,12 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		Pages[oldI] = tmppage;
 		iter=i;
 		RefreshRect(wxRect(0,hh,w,25),false);
+		if(oldI==splititer){
+			splititer = i;
+		}
+		if(i==splititer){
+			splititer = oldI;
+		}
 		oldI=i;
 		return;
 	}

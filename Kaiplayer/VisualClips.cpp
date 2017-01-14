@@ -453,7 +453,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		if(tool < 0){tool = clipToolsSize-1;}
 		else if(tool >= clipToolsSize){tool = 0;}
 		VideoCtrl *vc= tab->Video;
-		if(vc->isfullskreen && vc->TD){
+		if(vc->isFullscreen && vc->TD){
 			vc->TD->vToolbar->SetClipToggled(tool);
 		}else{
 			vc->vToolbar->SetClipToggled(tool);
@@ -461,7 +461,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		return;
 	}
 	if(blockevents){return;}
-	if(tab->Video->isfullskreen){wxGetMousePosition(&x,&y);}
+	if(tab->Video->isFullscreen){wxGetMousePosition(&x,&y);}
 	else{event.GetPosition(&x,&y);}
 	wxPoint xy=wxPoint(x, y);
 	bool click=event.LeftDown();

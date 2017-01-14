@@ -321,6 +321,8 @@ void MappedButton::SetLabelText(const wxString &label)
 	if(minSize.x < fw + 16){
 		minSize.x = fw+16;
 		SetMinSize(minSize);
+		GetParent()->Layout();
+		return;
 	}
 	Refresh(false);
 }

@@ -78,15 +78,12 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	,d3dFont(NULL)
 	,d3dFont8(NULL)
 	,d3dFont9(NULL)
+	,backBuffer(NULL)
 {
 	// Set variables
-	/*origImage = NULL;
-	spectrumDisplay = NULL;
-	spectrumDisplaySelected = NULL;*/
 	deviceLost=false;
 	spectrumRenderer = NULL;
-	ScrollBar = NULL; //new KaiScrollbar(this, 2435, wxDefaultPosition, wxDefaultSize, wxHORIZONTAL);
-	//Bind(wxEVT_SCROLL_CHANGED, [=](
+	ScrollBar = NULL; 
 	karaoke = NULL;
 	peak = NULL;
 	min = NULL;
@@ -142,21 +139,15 @@ AudioDisplay::~AudioDisplay() {
 	if (player) {player->CloseStream();delete player;}
 	if (ownProvider && provider) {delete provider;provider = NULL;}
 	ClearDX();
-	//if (origImage) {delete origImage;}
 	if (karaoke){delete karaoke;}
 	if(spectrumRenderer){delete spectrumRenderer;};
-	//if(spectrumDisplay){delete spectrumDisplay;}
-	//if(spectrumDisplay){delete spectrumDisplaySelected;}
 	if(peak){delete[] peak;
 	delete[] min;}
 	
 
 	player = NULL;
-	//origImage = NULL;
 	karaoke = NULL;
 	spectrumRenderer = NULL;
-	//spectrumDisplay = NULL;
-	//spectrumDisplaySelected = NULL;
 	peak = NULL;
 	min = NULL;
 }
@@ -1305,8 +1296,8 @@ void AudioDisplay::Play(int start,int end,bool pause) {
 
 ////////
 // Stop
-void AudioDisplay::Stop() {
-	if(Notebook::GetTab()->Video->GetState()==Playing){Notebook::GetTab()->Video->Pause();}
+void AudioDisplay::Stop(bool stopVideo) {
+	if(stopVideo && Notebook::GetTab()->Video->GetState()==Playing){Notebook::GetTab()->Video->Pause();}
 	else if (player) {
 		player->Stop();
 		if (UpdateTimer.IsRunning()) UpdateTimer.Stop();

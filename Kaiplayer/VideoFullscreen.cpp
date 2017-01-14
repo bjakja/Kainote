@@ -16,6 +16,7 @@
 #include "VideoFullscreen.h"
 #include "Videobox.h"
 #include "Config.h"
+#include "KaiCheckBox.h"
 
 
 Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
@@ -25,7 +26,7 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	VideoCtrl *vc = (VideoCtrl*)parent;
 	SetBackgroundColour("#000000");
 	this->SetEventHandler(parent);
-	if(!vc->IsDshow){panelsize = 66;}else{panelsize = 44;}
+	if(!vc->IsDshow){panelsize = 66;vc->panelOnFullscreen=true;}else{panelsize = 44;}
 	panel=new wxPanel(this,-1,wxPoint(0,size.y - panelsize),wxSize(size.x,panelsize));
 	panel->SetForegroundColour(Options.GetColour("Window Text"));
 	panel->SetBackgroundColour(Options.GetColour("Window Background"));
@@ -37,7 +38,7 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	bstop = new BitmapButton(panel, CreateBitmapFromPngResource("stop"),CreateBitmapFromPngResource("stop1"),ID_BSTOP, wxPoint(110,16), wxSize(26,26));
 	bnext = new BitmapButton(panel, CreateBitmapFromPngResource("forward"), CreateBitmapFromPngResource("forward1"),ID_BNEXT, wxPoint(145,16), wxSize(26,26));
 	volslider=new VolSlider(panel,ID_VOL,Options.GetInt("Video Volume"),wxPoint(size.x-110,17),wxSize(110,25));
-	wxCheckBox *showToolbar = new wxCheckBox(panel,7777,_("Pokaż pasek narzędzi"), wxPoint(180,21));
+	KaiCheckBox *showToolbar = new KaiCheckBox(panel,7777,_("Pokaż pasek narzędzi"), wxPoint(180,21),wxSize(150,-1));
 	showToolbar->SetValue(!vc->IsDshow);
 	Videolabel=new wxStaticText(panel,-1,"",wxPoint(340,21));
 	vToolbar = new VideoToolbar(panel,wxPoint(0, 44));
@@ -46,8 +47,9 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	showToolbar->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, [=](wxCommandEvent &evt){
 		bool show = showToolbar->GetValue();
 		vToolbar->Show(show); 
-		if(show){panelsize = 66;}else{panelsize = 44;}
+		if(show){panelsize = 66;vc->panelOnFullscreen=true;}else{panelsize = 44;vc->panelOnFullscreen=false;}
 		OnSize();
+		vc->UpdateVideoWindow();
 	},7777);
 	Connect(ID_BPREV,ID_BNEXT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&VideoCtrl::OnVButton);
 	Connect(ID_VOL,wxEVT_COMMAND_SLIDER_UPDATED,(wxObjectEventFunction)&VideoCtrl::OnVolume);

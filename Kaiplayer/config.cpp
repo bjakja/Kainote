@@ -364,6 +364,7 @@ void config::LoadDefaultColors()
 	colors[L"Window Inactive Background"] = new wxColour("#727171");
 	colors[L"Window Text"] = new wxColour("#BEBEBE");
 	colors[L"Window Inactive Text"] = new wxColour("#828282");
+	colors[L"Window Warning Elements"] = new wxColour("#FF0000");
 }
 
 int config::LoadOptions()

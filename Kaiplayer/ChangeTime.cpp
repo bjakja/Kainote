@@ -74,13 +74,14 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 
 	SE->Add(StartVAtime,1,wxEXPAND|wxLEFT|wxRIGHT,2);
 	SE->Add(EndVAtime,1,wxEXPAND|wxRIGHT,2);
+	wxColour warning = Options.GetColour("Window Warning Elements");
 
 	videotime = new KaiCheckBox(panel, ID_VIDEO, _("Przesuń znacznik\ndo czasu wideo"));
-	videotime->SetForegroundColour(*wxRED);
+	videotime->SetForegroundColour(warning);
 	videotime->Enable(false);
 
 	audiotime = new KaiCheckBox(panel, ID_AUDIO, _("Przesuń znacznik\ndo czasu audio"));
-	audiotime->SetForegroundColour(*wxRED);
+	audiotime->SetForegroundColour(warning);
 	audiotime->Enable(false);
 
 	Connect(ID_VIDEO,ID_AUDIO,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&CTwindow::AudioVideoTime);

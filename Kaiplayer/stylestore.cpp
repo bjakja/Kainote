@@ -641,8 +641,8 @@ void stylestore::StyleonVideo(Styles *styl, bool fullskreen)
 	}
 	//grid->SaveFile(Kai->GetTab()->tnppath,false);
 	pan->Video->OpenSubs(txt);
-	if(fullskreen&&!pan->Video->isfullskreen){pan->Video->SetFullskreen();this->SetWindowStyle(wxSTAY_ON_TOP|wxDEFAULT_DIALOG_STYLE);}
-	if(!fullskreen&&pan->Video->isfullskreen){pan->Video->SetFullskreen();this->SetWindowStyle(wxDEFAULT_DIALOG_STYLE);}
+	if(fullskreen&&!pan->Video->isFullscreen){pan->Video->SetFullskreen();this->SetWindowStyle(wxSTAY_ON_TOP|wxDEFAULT_DIALOG_STYLE);}
+	if(!fullskreen&&pan->Video->isFullscreen){pan->Video->SetFullskreen();this->SetWindowStyle(wxDEFAULT_DIALOG_STYLE);}
 	if(wl>=0){
 		pan->Video->Seek(grid->GetDial(wl)->Start.mstime+5);
 	}else{

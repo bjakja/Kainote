@@ -47,6 +47,7 @@
 
 kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	: wxFrame(0, -1, _("Bez nazwy - ")+Options.progname, pos, size, wxDEFAULT_FRAME_STYLE)
+	,badResolution(false)
 {
 
 #if logging
@@ -77,8 +78,8 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	//height 26 zmieniając jedną z tych wartości popraw je też dropfiles
 	StatusBar = new KaiStatusBar(this, ID_STATUSBAR1);
-	int StatusBarWidths[6] = { -12, 0, 0, 0, 0, -22};
-	StatusBar->SetFieldsCount(6,StatusBarWidths);
+	int StatusBarWidths[7] = { -12, 0, 0, 0, 0, 0, -22};
+	StatusBar->SetFieldsCount(7,StatusBarWidths);
 	//StatusBar->SetLabelBackgroundColour(2,"#FF0000");
 	//StatusBar->SetLabelTextColour(2,"#000000");
 
@@ -614,8 +615,10 @@ void kainoteFrame::OnAssProps()
 		if(save){
 			int ox=wxAtoi(oldx);
 			int oy=wxAtoi(oldy);
-			ngrid->ResizeSubs((float)newx/(float)ox,(float)newy/(float)oy);}
+			ngrid->ResizeSubs((float)newx/(float)ox,(float)newy/(float)oy);
+		}
 		ngrid->SetModified(save);
+		SetSubsResolution();
 	}
 }
 
@@ -636,7 +639,7 @@ void kainoteFrame::Save(bool dial, int wtab)
 		wxString name=path.BeforeLast('.');
 		path=path.BeforeLast('\\');
 
-		wxWindow *_parent=(atab->Video->isfullskreen)? (wxWindow*)atab->Video->TD : this;
+		wxWindow *_parent=(atab->Video->isFullscreen)? (wxWindow*)atab->Video->TD : this;
 		wxFileDialog saveFileDialog(_parent, _("Zapisz plik napisów"), 
 			path, name ,extens, wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
 
@@ -672,12 +675,12 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 
 	if(pan->edytor && !(issubs&&pan->VideoPath.BeforeLast('.')==filename.BeforeLast('.'))
 		&&!(!issubs&&pan->SubsPath.BeforeLast('.')==filename.BeforeLast('.'))){
-			fntmp= FindFile(filename,issubs,!(fulls || pan->Video->isfullskreen) );
+			fntmp= FindFile(filename,issubs,!(fulls || pan->Video->isFullscreen) );
 			if(fntmp!=""){found=true;if(!issubs){ext=fntmp.AfterLast('.');}}
 	}
 
 	if(Options.GetBool("Open In New Card") && pan->SubsPath!="" &&
-		!pan->Video->isfullskreen && issubs){
+		!pan->Video->isFullscreen && issubs){
 			//pan->Thaw();
 			Tabs->AddPage(true);pan=Tabs->Page(Tabs->Size()-1);
 			//pan->Freeze();
@@ -722,8 +725,8 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 
 
 		Label();
-
-		if(!pan->edytor && !fulls && !pan->Video->isfullskreen){HideEditor();}
+		SetSubsResolution(!Options.GetBool("Dont Ask For Bad Resolution"));
+		if(!pan->edytor && !fulls && !pan->Video->isFullscreen){HideEditor();}
 		if(!found){pan->CTime->Contents();UpdateToolbar(); pan->Thaw();return true;}
 	}
 
@@ -749,7 +752,98 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 	return true;  
 }
 
+void kainoteFrame::SetSubsResolution(bool showDialog)
+{
+	TabPanel *cur = GetTab();
+	wxString resolution = cur->Grid1->GetSInfo("PlayResX") +" x "+ cur->Grid1->GetSInfo("PlayResY");
+	SetStatusText(resolution, 5);
+	wxSize vsize;
+	
+	if(cur->Video->GetState()!=None){
+		vsize = cur->Video->GetVideoSize();
+		wxString vres;
+		vres<<vsize.x<<" x "<<vsize.y;
+		if(vres!=resolution){
+			wxColour warning = Options.GetColour("Window Warning Elements");
+			StatusBar->SetLabelTextColour(3, warning);
+			StatusBar->SetLabelTextColour(5, warning);
+			badResolution=true;
+			if(showDialog){
+				ShowBadResolutionDialog(vres, resolution);
+			}
+			return;
+		}
+	}
+	if(badResolution){
+		wxColour nullcol;
+		StatusBar->SetLabelTextColour(3, nullcol);
+		StatusBar->SetLabelTextColour(5, nullcol);
+		badResolution=false;
+	}
 
+}
+
+void kainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
+{
+	TabPanel *cur = GetTab();
+	wxString resolution;
+	resolution<<w<<" x "<<h;
+	SetStatusText(resolution, 3);
+	wxString sres = cur->Grid1->GetSInfo("PlayResX") +" x "+ cur->Grid1->GetSInfo("PlayResY");
+	if(resolution != sres && sres.Len()>3){
+		wxColour warning = Options.GetColour("Window Warning Elements");
+		StatusBar->SetLabelTextColour(3, warning);
+		StatusBar->SetLabelTextColour(5, warning);
+		badResolution=true;
+		if(showDialog){
+			ShowBadResolutionDialog(resolution, sres);
+		}
+	}else if(badResolution){
+		wxColour nullcol;
+		StatusBar->SetLabelTextColour(3, nullcol);
+		StatusBar->SetLabelTextColour(5, nullcol);
+		badResolution=false;
+	}
+}
+
+void kainoteFrame::ShowBadResolutionDialog(const wxString &videoRes, const wxString &subsRes)
+{
+	wxString info= wxString::Format(_("Rozdzielczości wideo i napisów różnią się."
+		L"\nMożesz zmienić je teraz lub skorzystać z opcji we właściwościach ASS.\n\n"
+		L"Rozdzielczość wideo: %s\nRozdzielczość napisów: %s\n\n"
+		L"Dopasować rozdzielczość do wideo?\n\n"
+		L"1. Dopasuj skrypt napisów do rozdzielczości wideo.\n"
+		L"2. Zmień wyłącznie rozdzielczość napisów.\n"
+		L"3. Pozostaw bez zmian.\n4. Wyłącz ostrzeżenie o niezgodności na stałe."),videoRes, subsRes);
+
+	KaiMessageDialog dlg(this, info, _("Niezgodna rozdzielczość"), wxOK|wxYES_NO|wxHELP);
+	dlg.SetHelpLabel(_("Wyłącz ostrzeżenie"));
+	dlg.SetOkLabel(_("Dopasuj"));
+	dlg.SetYesLabel(_("Zmień"));
+	dlg.SetNoLabel(_("Zamknij"));
+	int result = dlg.ShowModal();
+	wxString vx = videoRes.BeforeFirst(' ');
+	wxString sx = subsRes.BeforeFirst(' ');
+	wxString vy = videoRes.AfterLast(' ');
+	wxString sy = subsRes.AfterLast(' ');
+	Grid *grid = GetTab()->Grid1;
+	if(result == wxOK || result == wxYES){
+		grid->AddSInfo("PlayResX",vx);
+		grid->AddSInfo("PlayResY",vy);
+		if(result  == wxOK){
+			int ox=wxAtoi(sx);
+			int oy=wxAtoi(sy);
+			int newx=wxAtoi(vx);
+			int newy=wxAtoi(vy);
+			grid->ResizeSubs((float)newx/(float)ox,(float)newy/(float)oy);
+		}
+		grid->SetModified();
+		SetSubsResolution();
+	}else if(result == wxHELP){
+		Options.SetBool("Dont Ask For Bad Resolution",true);
+		Options.SaveOptions(true,false);
+	}
+}
 
 //0 - subs, 1 - vids, 2 - auds
 void kainoteFrame::SetRecent(short what)
@@ -989,7 +1083,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 		videos.Clear();subs.Clear();files.Clear();
 		return;
 	}
-
+	bool askForRes = !Options.GetBool("Dont Ask For Bad Resolution");
 	Freeze();
 	GetTab()->Hide();
 	size_t maxx=(subs.size()>videos.size())?subs.size() : videos.size();
@@ -1019,6 +1113,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 			SetRecent();
 
 			Label();
+			SetSubsResolution(askForRes);
 		}
 		if(i<videos.size()){
 			//wxLogStatus("Video bload %i", i);
@@ -1072,7 +1167,6 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 	if(iter>0 && cur->Grid1->Modified){whiter<<iter<<"*";}
 	wxString name=(!cur->edytor)? cur->VideoName : cur->SubsName;
 	SetLabel(whiter+name+" - "+Options.progname);
-
 	if(cur->Video->GetState()!=None){
 		SetStatusText(getfloat(cur->Video->fps)+" FPS",2);
 		wxString tar;
@@ -1088,10 +1182,16 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 		STime kkk1;
 		kkk1.mstime=cur->Video->GetDuration();
 		SetStatusText(kkk1.raw(SRT),1);
-		if(cur->edytor){SetStatusText(cur->VideoName,5);}
-		else{SetStatusText("",5);}
-	}else{SetStatusText("",5);SetStatusText("",4);SetStatusText("",3);SetStatusText("",2);SetStatusText("",1);}
-
+		if(cur->edytor){
+			SetStatusText(cur->VideoName,6);
+		}
+		else{SetStatusText("",6);}
+	}else{SetStatusText("",6);SetStatusText("",4);SetStatusText("",3);SetStatusText("",2);SetStatusText("",1);}
+	if(cur->SubsPath!="" && cur->Grid1->form == ASS){
+		SetSubsResolution();
+	}else{
+		SetStatusText("",5);
+	}
 	if(cur->edytor){cur->Grid1->SetFocus();}else{cur->Video->SetFocus();}
 	cur->Grid1->UpdateUR(false);
 
@@ -1132,7 +1232,7 @@ void kainoteFrame::HideEditor()
 		cur->BoxSizer1->InsertSpacer(1,3);
 		cur->Video->panelHeight = 66;
 		cur->Video->vToolbar->Show();
-		if(cur->Video->GetState()!=None&&!cur->Video->isfullskreen){
+		if(cur->Video->GetState()!=None&&!cur->Video->isFullscreen){
 			int sx,sy,vw,vh;
 			Options.GetCoords("Video Window Size",&vw,&vh);
 			if(vh<350){vh=350,vw=500;}
@@ -1160,13 +1260,13 @@ void kainoteFrame::HideEditor()
 		cur->BoxSizer1->Add(cur->Video, 1, wxEXPAND|wxALIGN_TOP, 0);
 		cur->Video->panelHeight = 44;
 		cur->Video->vToolbar->Hide();
-		if(cur->Video->GetState()!=None&&!cur->Video->isfullskreen&&!IsMaximized()){
+		if(cur->Video->GetState()!=None && !cur->Video->isFullscreen && !IsMaximized()){
 			int sx,sy,sizex,sizey;
 			GetClientSize(&sizex,&sizey);
 
 			cur->Video->CalcSize(&sx,&sy,sizex,sizey);
 
-			SetClientSize(sx+iconsize,sy + cur->Video->panelHeight+ Tabs->GetHeight() +Menubar->GetSize().y);
+			SetClientSize(sx+iconsize,sy + cur->Video->panelHeight+ Tabs->GetHeight() + Menubar->GetSize().y + StatusBar->GetSize().y);
 
 		}
 		cur->Video->SetFocus();
@@ -1214,7 +1314,7 @@ bool kainoteFrame::SavePrompt(char mode, int wtab)
 {
 	TabPanel* atab=(wtab<0)? GetTab() : Tabs->Page(wtab);	
 	if(atab->Grid1->file->Iter()>0 && atab->Grid1->Modified){
-		wxWindow *_parent=(atab->Video->isfullskreen)? (wxWindow*)atab->Video->TD : this;
+		wxWindow *_parent=(atab->Video->isFullscreen)? (wxWindow*)atab->Video->TD : this;
 		int answer = KaiMessageBox(wxString::Format(_("Zapisać napisy o nazwie \"%s\" przed %s?"), 
 			atab->SubsName, (mode==0)? _("zamknięciem programu") :
 			(mode==1)? _("zamknięciem zakładki") : 

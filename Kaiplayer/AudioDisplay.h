@@ -208,7 +208,7 @@ public:
 	void Reload();
 
 	void Play(int start,int end,bool pause=true);
-	void Stop();
+	void Stop(bool stopVideo = true);
 
 	int64_t GetSampleAtX(int x);
 	float GetXAtSample(int64_t n);

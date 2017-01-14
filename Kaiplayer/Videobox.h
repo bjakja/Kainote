@@ -51,7 +51,6 @@ public:
 	void SetAspectRatio(float AR);
 	VideoSlider* vslider;
 	wxPanel* panel;
-	bool isfullskreen;
 	bool seekfiles;
 	bool eater;
 	bool fullarrow;

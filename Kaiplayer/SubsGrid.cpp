@@ -1099,7 +1099,9 @@ return 0;
 void SubsGrid::SaveFile(wxString filename, bool cstat)
 {
 	if(Options.GetBool("Grid save without enter")){
-		Edit->Send(false);
+		bool oldOnVideo = Edit->OnVideo;
+		Edit->Send(false,false,true);
+		Edit->OnVideo = oldOnVideo;
 	}
 	wxString txt;
 	wxString kkk;
@@ -1546,6 +1548,17 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 
 			int next = MID(0,curLine+dir,GetCount()-1);
 			Edit->SetIt(next);
+			int mvtal= Options.GetInt("Move Video To Active Line");
+			int pasel= Options.GetInt("Play After Selection");
+			//1-kliknięcie lewym
+			//2-kliknięcie lewym i edycja na pauzie
+			//3-kliknięcie lewym i edycja na pauzie i odtwarzaniu
+			if ( mvtal < 4 && mvtal > 0 && pasel==0){
+				TabPanel *pan = (TabPanel*)GetParent();
+				if(pan->Video->GetState()==Stopped){pan->Video->Play();pan->Video->Pause();}
+				int vczas=GetDial(next)->Start.mstime;
+				pan->Video->Seek(MAX(0,vczas),true,true,false);
+			}
 			SelectRow(next);
 			int gridh=((h/(GridHeight+1))-1);
 			if(dir==1||dir==-1){
@@ -1699,6 +1712,7 @@ void SubsGrid::GetUndo(bool redo)
 {
 	TabPanel *pan =Kai->GetTab();
 	Freeze();
+	wxString resolution = GetSInfo("PlayResX") +" x "+ GetSInfo("PlayResY");
 	if(redo){file->Redo();}else{file->Undo();}
 
 
@@ -1731,7 +1745,7 @@ void SubsGrid::GetUndo(bool redo)
 	Edit->RefreshStyle();
 	VideoCtrl *vb=pan->Video;
 	if(Edit->Visual < CHANGEPOS || Edit->Visual == MOVEALL){
-		if(vb->IsShown() || vb->isfullskreen){vb->OpenSubs(SaveText());}
+		if(vb->IsShown() || vb->isFullscreen){vb->OpenSubs(SaveText());}
 		int opt=Options.GetInt("Move Video To Active Line");
 		if(opt>1){
 			if(vb->GetState()==Paused || (vb->GetState()==Playing && (opt==3 || opt==5))){
@@ -1742,8 +1756,8 @@ void SubsGrid::GetUndo(bool redo)
 	}else if(Edit->Visual==CHANGEPOS){
 		vb->SetVisual(Edit->line->Start.mstime, Edit->line->End.mstime, false, true);
 	}
-
-
+	wxString newResolution = GetSInfo("PlayResX") +" x "+ GetSInfo("PlayResY");
+	if(resolution != newResolution){Kai->SetSubsResolution();}
 	if(makebkp){
 		timer.Start(20000,true);
 		//CreateTimerQueueTimer(&qtimer,0,WAITORTIMERCALLBACK(OnBcktimer),this,20000,0,WT_EXECUTEONLYONCE);
@@ -1874,7 +1888,7 @@ void SubsGrid::SetModified(bool redit, bool dummy, int SetEditBoxLine)
 			if(Edit->Visual >= CHANGEPOS){
 				vb->SetVisual(Edit->line->Start.mstime, Edit->line->End.mstime, false, true);
 			}else{
-				if(vb->IsShown() || vb->isfullskreen){vb->OpenSubs(SaveText());}
+				if(vb->IsShown() || vb->isFullscreen){vb->OpenSubs(SaveText());}
 
 				int opt=Options.GetInt("Move Video To Active Line");
 				if(opt>1){
@@ -2044,7 +2058,7 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 	
 	file->EndLoad();
 	if(Kai->ss && form==ASS){Kai->ss->LoadAssStyles();}
-
+	if(form == ASS){RebuildActorEffectLists();}
 }
 
 void SubsGrid::SetStartTime(int stime)
@@ -2453,6 +2467,23 @@ int SubsGrid::CalcChars(wxString txt, wxString *lines, bool *bad)
 
 
 	return chars;
+}
+
+void SubsGrid::RebuildActorEffectLists()
+{
+	Edit->ActorEdit->Clear();
+	Edit->EffectEdit->Clear();
+	for(int i = 0; i<GetCount(); i++){
+		Dialogue *dial = GetDial(i);
+		if(!dial->Actor.IsEmpty() && Edit->ActorEdit->FindString(dial->Actor, true) <0 ){
+			Edit->ActorEdit->Append(dial->Actor);
+		}
+		if(!dial->Effect.IsEmpty() && Edit->EffectEdit->FindString(dial->Effect, true) <0 ){
+			Edit->EffectEdit->Append(dial->Effect);
+		}
+	}
+	Edit->ActorEdit->Sort();
+	Edit->EffectEdit->Sort();
 }
 
 BEGIN_EVENT_TABLE(SubsGrid,KaiScrolledWindow)

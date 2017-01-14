@@ -109,7 +109,7 @@ void StyleList::OnPaint(wxPaintEvent& event)
 			bdc.DrawRectangle(posX,posY,w-2,Height);
 			}else{bdc.SetBrush(wxBrush(background));}
 		if(fontseeker->FindString(stylenames->at(i)->Fontname)==-1){
-			bdc.SetTextForeground("#FF0000");
+			bdc.SetTextForeground(Options.GetColour("Window Warning Elements"));
 		}else{
 			bdc.SetTextForeground(Options.GetColour("Window Text"));
 		}

@@ -30,35 +30,42 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 	wxStaticText *txt = new wxStaticText(this,-1,msg);
 	MappedButton *btn=NULL;
 	int whichFocus=0;
+	bool setFocus = true;
 	if(elems & wxOK){
 		btn = new MappedButton(this,9009,"OK");
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxOK);},9009);
 		sizer1->Add(btn,0,wxALL,3);
+		btn -> SetFocus(); setFocus = false;
 	}
 	if(elems & wxYES_TO_ALL){
 		btn = new MappedButton(this,wxYES_TO_ALL,_("Tak dla wszystkich"));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxYES_TO_ALL);},wxYES_TO_ALL);
 		sizer1->Add(btn,0,wxALL,3);
+		if(setFocus){btn -> SetFocus(); setFocus = false;}
 	}
 	if(elems & wxYES){
 		btn = new MappedButton(this,wxID_YES,_("Tak"));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxYES);},wxID_YES);
 		sizer1->Add(btn,0,wxALL,3);
+		if(setFocus){btn -> SetFocus(); setFocus = false;}
 	}
 	if(elems & wxNO){
 		btn = new MappedButton(this,wxID_NO,_("Nie"));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxNO);},wxID_NO);
 		sizer1->Add(btn,0,wxALL,3);
+		if(setFocus){btn -> SetFocus(); setFocus = false;}
 	}
 	if(elems & wxCANCEL){
 		btn = new MappedButton(this,9010,_("Anuluj"));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxCANCEL);},9010);
 		sizer1->Add(btn,0,wxALL,3);
+		if(setFocus){btn -> SetFocus(); setFocus = false;}
 	}
 	if(elems & wxHELP){
 		btn = new MappedButton(this,9011,_("Pomoc"));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxHELP);},9011);
 		sizer1->Add(btn,0,wxALL,3);
+		if(setFocus){btn -> SetFocus(); setFocus = false;}
 	}
 	sizer2->Add(txt,0,wxALL|wxALIGN_CENTER_HORIZONTAL,16);
 	sizer2->Add(sizer1,0,wxALL|wxALIGN_RIGHT,3);
@@ -67,16 +74,6 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 	Bind(wxEVT_CLOSE_WINDOW,[=](wxCloseEvent &evt){EndModal((elems & wxCANCEL)? wxCANCEL : wxNO);});
 	SetEscapeId((elems & wxCANCEL)? 9010 : (elems & wxNO)? wxID_NO : 9009);
 	
-	/*Bind(wxEVT_CHAR_HOOK, [=](wxKeyEvent &evt){
-		int key = evt.GetKeyCode();
-		if(key == WXK_ESCAPE){
-			int id = (elems & wxCANCEL)? 9010 : (elems & wxNO)? wxID_NO : 9009;
-			wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, id);
-			ProcessEvent(evt);
-			return;
-		}
-		evt.Skip();
-	});*/
 }
 
 void KaiMessageDialog::SetOkLabel(const wxString &label)

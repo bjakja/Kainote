@@ -90,15 +90,16 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	//Main
 	{
 		wxBoxSizer *MainSizer=new wxBoxSizer(wxVERTICAL);
-		wxString labels[11]={_("Wczytywanie posortowanych napisów"),_("Włącz sprawdzanie pisowni"),
+		wxString labels[12]={_("Wczytywanie posortowanych napisów"),_("Włącz sprawdzanie pisowni"),
 			_("Zaznaczaj linijkę z czasem aktywnej\nlinijki poprzedniej zakładki"),_("Zapisuj napisy z nazwą wideo"),
 			_("Pokaż sugestie po dwukrotnym klininięciu na błąd"),_("Otwieraj napisy zawsze w nowej karcie"),
 			_("Nie przechodź do następnej linii przy edycji czasów"),_("Zapisuj zmiany po przejściu na inną linię"),
 			_("Wyłącz pokazywanie edycji na wideo\n(wymaga ponownego otwarcia zakładek)"),
-			_("Włącz szukanie widocznej linii\npo wyjściu z pełnego ekranu"),_("Poziom śledzenia logów skryptów LUA")};
-		wxString opts[11]={"Grid Load Sorted","Editbox Spellchecker","Auto Select Lines","Subs Autonaming",
+			_("Włącz szukanie widocznej linii\npo wyjściu z pełnego ekranu"),_("Nie ostrzegaj o niezgodności rozdzielczości"),
+			_("Poziom śledzenia logów skryptów LUA")};
+		wxString opts[12]={"Grid Load Sorted","Editbox Spellchecker","Auto Select Lines","Subs Autonaming",
 			"Editbox Sugestions On Dclick","Open In New Card","Times Stop On line","Grid save without enter",
-			"Disable live editing","Seek For Visible Lines","Automation Trace Level"};
+			"Disable live editing","Seek For Visible Lines","Dont Ask For Bad Resolution","Automation Trace Level"};
 
 		wxString langopts[2]={"Polski","English"};
 		KaiStaticBoxSizer *langSizer=new KaiStaticBoxSizer(wxVERTICAL, Main, _("Język (wymaga restartu programu)"));
@@ -121,7 +122,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		dicSizer->Add(dic,0,wxALL|wxEXPAND,2);
 		MainSizer->Add(dicSizer,0,wxRIGHT|wxEXPAND,5);
 
-		for(int i=0;i<10;i++)
+		for(int i=0;i<11;i++)
 		{
 			KaiCheckBox *opt=new KaiCheckBox(Main,-1,labels[i]);
 			opt->SetValue(Options.GetBool(opts[i]));
@@ -133,12 +134,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxBoxSizer *MainSizer1=new wxBoxSizer(wxHORIZONTAL);
 		wxFlexGridSizer *MainSizer2=new wxFlexGridSizer(5,2,wxSize(5,5));
 		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieć inny id
-		NumCtrl *ltl = new NumCtrl(Main, 20000, Options.GetString(opts[10]), 0, 5,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
+		NumCtrl *ltl = new NumCtrl(Main, 20000, Options.GetString(opts[11]), 0, 5,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc = new NumCtrl(Main, 20000, Options.GetString("Offset of start time"), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc1 = new NumCtrl(Main, 20000, Options.GetString("Offset of end time"), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		KaiTextCtrl *sc2 = new KaiTextCtrl(Main, 22001, Options.GetString("Grid tag changing char"), wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc3 = new NumCtrl(Main, 20000, Options.GetString("Editbox tag buttons"), 0, 9,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
-		ConOpt(ltl, opts[10]);
+		ConOpt(ltl, opts[11]);
 		ConOpt(sc,"Offset of start time");
 		ConOpt(sc1,"Offset of end time");
 		ConOpt(sc2,"Grid tag changing char");
@@ -152,7 +153,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		MainSizer2->Add(sc2,0);
 		MainSizer2->Add(new wxStaticText(Main,-1,_("Ilość przycisków wstawiających tagi ASS:")),0,wxALIGN_CENTRE_VERTICAL);
 		MainSizer2->Add(sc3,0);
-		MainSizer2->Add(new wxStaticText(Main,-1,labels[10]),0,wxALIGN_CENTRE_VERTICAL);
+		MainSizer2->Add(new wxStaticText(Main,-1,labels[11]),0,wxALIGN_CENTRE_VERTICAL);
 		MainSizer2->Add(ltl,0);
 
 		MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
@@ -381,9 +382,10 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	//Themes
 	{
 		//18+29=47+17+2 = 66 + 7 = 73
-		wxString labels[74]={
+		wxString labels[75]={
 			//okno
 			_("Okno tło"),_("Okno nieaktywne tło"),_("Okno tekst"),_("Okno nieaktywny tekst"),
+			_("Okno elementy ostrzegające"),
 			//napisy
 			_("Napisy tekst"),_("Napisy tło"),_("Napisy tło dialogów"),_("Napisy tło komentarzy"),
 			_("Napisy zaznaczone dialogi"),_("Napisy zaznaczone komentarze"),
@@ -417,9 +419,10 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Menu tło zaznaczenia"),
 			_("Pierwszy kolor podglądu styli"),_("Drugi kolor podglądu styli")
 		};
-		wxString opts[74]={
+		wxString opts[75]={
 			//window
-			"Window Background", "Window Inactive Background", "Window Text", "Window Inactive Text",
+			"Window Background", "Window Inactive Background", "Window Text", "Window Inactive Text"
+			,"Window Warning Elements",
 			//grid
 			"Grid Text","Grid Background","Grid Dialogue","Grid Comment","Grid Selected Dialogue","Grid Selected Comment",
 			"Grid Collisions","Grid Lines","Grid Active Line","Grid Label Normal","Grid Label Modified",
@@ -478,7 +481,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		KaiListCtrl *List = new KaiListCtrl(Themes, -1, wxDefaultPosition, wxSize(300, -1));
 		List->InsertColumn(0, _("Nazwa"), TYPE_TEXT, 240);
 		List->InsertColumn(1, _("Kolor"), TYPE_COLOR, 150);
-		for(int i=0;i<74;i++)
+		for(int i=0;i<75;i++)
 		{
 			int row = List->AppendItem(new ItemText(labels[i]));
 			AssColor col = Options.GetColor(opts[i]);
@@ -517,17 +520,24 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 				ItemColor *item = (ItemColor*)List->GetItem(i, 1);
 				item->col = Options.GetColor(item->name);
 			}
-			//wxColour windowColor = Options.GetColour("Window Background");
-			//wxColour textColor = Options.GetColour("Window Text");
-			/*wxWindow *tab = Notebook::GetTab();
-			tab->SetBackgroundColour(windowColor);
-			tab->SetForegroundColour(textColor);
-			const wxWindowList& siblings = tab->GetChildren();
-			for(auto it = siblings.begin(); it != siblings.end(); it++){
-				(*it)->SetBackgroundColour(windowColor);
-				(*it)->SetForegroundColour(textColor);
+			wxColour windowColor = Options.GetColour("Window Background");
+			wxColour textColor = Options.GetColour("Window Text");
+			Notebook *nb = Notebook::GetTabs();
+			
+			for(size_t i = 0; i < nb->Size(); i++){
+				TabPanel *tab = nb->Page(i);
+				tab->SetBackgroundColour(windowColor);
+				tab->SetForegroundColour(textColor);
+				if(tab->Edit->ABox){
+					tab->Edit->ABox->audioDisplay->ChangeColours();
+				}
+				const wxWindowList& siblings = tab->GetChildren();
+				for(auto it = siblings.begin(); it != siblings.end(); it++){
+					(*it)->SetBackgroundColour(windowColor);
+					(*it)->SetForegroundColour(textColor);
+				}
 
-			}*/
+			}
 			wxSysColourChangedEvent evt1;
 			wxQueueEvent(GetParent(), evt1.Clone());
 			ProcessEvent(evt1);
@@ -691,13 +701,21 @@ void OptionsDialog::SetOptions(bool saveall)
 				wxColour windowColor = Options.GetColour("Window Background");
 				wxColour textColor = Options.GetColour("Window Text");
 
-				wxWindow *tab = Notebook::GetTab();
-				tab->SetBackgroundColour(windowColor);
-				tab->SetForegroundColour(textColor);
-				const wxWindowList& siblings = tab->GetChildren();
-				for(auto it = siblings.begin(); it != siblings.end(); it++){
-					(*it)->SetBackgroundColour(windowColor);
-					(*it)->SetForegroundColour(textColor);
+				Notebook *nb = Notebook::GetTabs();
+			
+				for(size_t i = 0; i < nb->Size(); i++){
+					TabPanel *tab = nb->Page(i);
+					tab->SetBackgroundColour(windowColor);
+					tab->SetForegroundColour(textColor);
+					if(tab->Edit->ABox){
+						tab->Edit->ABox->audioDisplay->ChangeColours();
+					}
+					const wxWindowList& siblings = tab->GetChildren();
+					for(auto it = siblings.begin(); it != siblings.end(); it++){
+						(*it)->SetBackgroundColour(windowColor);
+						(*it)->SetForegroundColour(textColor);
+					}
+
 				}
 				wxSysColourChangedEvent evt;
 				wxQueueEvent(GetParent(), evt.Clone());
