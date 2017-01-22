@@ -414,6 +414,7 @@ void config::LoadColors(const wxString &_themeName){
 		themeName = _themeName;
 		Options.SetString("Program Theme", _themeName);
 	}
+	bool failed = false;
 	if(themeName!="Default"){
 		wxString path = pathfull + L"\\Themes\\"+ themeName + L".txt";
 		OpenWrite ow;
@@ -430,9 +431,13 @@ void config::LoadColors(const wxString &_themeName){
 			}
 			if(colors.size()>10){return;}
 		}
-		KaiMessageBox(_("Nie można zaczytać motywu, zostanie przywrócony domyśny"));
+		failed = true;
 	}
 	LoadDefaultColors();	
+	if(failed){
+		Options.SetString("Program Theme", "Default");
+		KaiMessageBox(_("Nie można zaczytać motywu, zostanie przywrócony domyśny"));
+	}
 }
 
 

@@ -186,7 +186,7 @@ public:
 	AudioDisplay(wxWindow *parent);
 	virtual ~AudioDisplay();
 
-	void UpdateImage(bool weak=false);
+	void UpdateImage(bool weak=false, bool updateImmediately=false);
 	void Update();
 	void RecreateImage();
 	void SetPosition(int pos);

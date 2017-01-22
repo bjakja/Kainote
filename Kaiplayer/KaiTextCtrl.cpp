@@ -76,12 +76,13 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	int fw,fh;
 	GetTextExtent("#TWFfGH", &fw, &fh, &font);
 	Fheight=fh;
+	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? fh+10 : size.y);
 	caret= new wxCaret(this, 1, Fheight);
 	SetCaret(caret);
-	caret->Move(3,2);
+	caret->Move(3,(newSize.y-fh)/2);
 	caret->Show();
 	//Refresh(false);
-	wxSize newSize((size.x<1)? 100 : size.x, (size.y<1)? fh+10 : size.y);
+	
 	SetMinSize(newSize);
 
 	CalcWrap(false);

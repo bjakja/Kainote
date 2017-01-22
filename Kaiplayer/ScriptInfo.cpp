@@ -73,6 +73,21 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	StaticBox2->Add(boxsizer,0,wxEXPAND);
 	StaticBox2->Add(CheckBox1,0,wxEXPAND|wxALL,5);
 
+	matrix = new KaiChoice(this, -1 , wxDefaultPosition, wxSize(160,-1) );
+	matrix->SetSelection( matrix->Append(_("Brak")) );
+	matrix->Append("TV.601");
+	matrix->Append("PC.601");
+	matrix->Append("TV.709");
+	matrix->Append("PC.709");
+	matrix->Append("TV.FCC");
+	matrix->Append("PC.FCC");
+	matrix->Append("TV.240M");
+	matrix->Append("PC.240M");
+	wxBoxSizer *boxsizer2= new wxBoxSizer(wxHORIZONTAL);
+	boxsizer2->Add(new wxStaticText(this, -1, _("Macierz YCbCr"),wxDefaultPosition),0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	boxsizer2->Add(matrix,1,wxEXPAND|wxALL,5);
+	StaticBox2->Add(boxsizer2,0,wxEXPAND);
+
 	KaiStaticBoxSizer *StaticBox3 = new KaiStaticBoxSizer(wxVERTICAL,this, _("Opcje"));
 	wxGridSizer *GridSizer1=new wxGridSizer(2,5,5);
 

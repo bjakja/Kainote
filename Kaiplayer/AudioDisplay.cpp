@@ -163,7 +163,7 @@ void AudioDisplay::Reset() {
 
 ////////////////
 // Update image
-void AudioDisplay::UpdateImage(bool weak) {
+void AudioDisplay::UpdateImage(bool weak, bool updateImmediately) {
 	// Update samples
 	UpdateSamples();
 
@@ -172,7 +172,11 @@ void AudioDisplay::UpdateImage(bool weak) {
 	if (weak == false) {// && needImageUpdateWeak == true
 		needImageUpdateWeak = false;
 	}
-	Refresh(false);
+	if(updateImmediately){
+		DoUpdateImage();
+	}else{
+		Refresh(false);
+	}
 }
 
 void AudioDisplay::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, D3DCOLOR fill, int dashLen)
@@ -321,7 +325,7 @@ void AudioDisplay::DoUpdateImage() {
 
 	// Invalid dimensions
 	if (w == 0 || displayH == 0) return;
-
+	
 	// Is spectrum?
 	bool spectrum = false;
 	if (provider && Options.GetBool(_T("Audio Spectrum"))) {
@@ -626,17 +630,18 @@ void AudioDisplay::DoUpdateImage() {
 		d3dLine->End();
 		d3dLine->SetAntialias(FALSE);
 		//d3dLine->SetWidth(1);
-		if(!player->IsPlaying()){
-			STime time;
-			time.NewTime(GetMSAtX(curpos));
-			wxString text = time.GetFormatted(ASS);
-			RECT rect;
-			rect.left = curpos-150;
-			rect.top = 5;
-			rect.right = rect.left + 300;
-			rect.bottom = rect.top + 100;
-			DRAWOUTTEXT(d3dFont,text,rect,DT_CENTER, 0xFFFFFFFF);
-		}
+		
+	}
+	if(!player->IsPlaying()){
+		STime time;
+		time.NewTime(GetMSAtX(curpos));
+		wxString text = time.GetFormatted(ASS);
+		RECT rect;
+		rect.left = curpos-150;
+		rect.top = 5;
+		rect.right = rect.left + 300;
+		rect.bottom = rect.top + 100;
+		DRAWOUTTEXT(d3dFont,text,rect,DT_CENTER, 0xFFFFFFFF);
 	}
 	
 	// Draw focus border

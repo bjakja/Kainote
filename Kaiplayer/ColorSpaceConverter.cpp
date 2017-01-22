@@ -244,6 +244,17 @@ BYTE* CColorSpaceConverter::convert_to_rgb24(BYTE* frameBuffer)
 	{
 		yuy2_to_rgb32(frameBuffer, m_pRgbaBuffer, m_width * m_height);
 	}
+	else{
+		size_t fplane=m_height*m_width*4;
+		int rgb24size=m_height*m_width*3;
+		BYTE *buff = m_pRgbaBuffer;//[rgb24size-1];
+		for(size_t i = 0; i < fplane; i+=4){
+			*buff++ = frameBuffer[i+2];
+			*buff++ = frameBuffer[i+1];
+			*buff++ = frameBuffer[i+0];
+		}
+
+	}
 
 	return m_pRgbaBuffer;
 }

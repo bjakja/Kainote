@@ -30,36 +30,15 @@ class VideoRend;
 class VideoFfmpeg
 {
 public:
-	//VideoFfmpeg(const wxString &filename, bool *success);
-	//test
 	VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *success);
 	static unsigned int __stdcall FFMS2Proc(void* cls);
 	void Processing();
 	void Refresh(bool wait=true);
 	void Play(){SetEvent(eventStartPlayback);};
-	volatile bool success;
-	wxString fname;
-	VideoRend *rend;
-	HANDLE thread;
-	HANDLE eventStartPlayback,
-		eventRefresh,
-		eventKillSelf,
-		eventComplete;
-	//endtest
 	~VideoFfmpeg();
 	void GetFrame(int frame, byte* buff);
 	void GetBuffer(void *buf, int64_t start, int64_t count, double vol=1.0);
 	void GetWaveForm(int *min,int *peak,int64_t start,int w,int h,int samples,float scale);
-	
-	
-	int width;
-	int height;
-	int arwidth;
-	int arheight;
-	int NumFrames;
-	double Duration;
-	double Delay;
-	float fps;
 	
 	int GetSampleRate();
 	int GetBytesPerSample();
@@ -68,10 +47,6 @@ public:
 	bool CacheIt();
 	int TimefromFrame(int nframe);
 	int FramefromTime(int time);
-	int lasttime;
-	int lastframe;
-	wxArrayInt KeyFrames;
-	std::vector<int> Timecodes;
 	int GetMSfromFrame(int frame);
 	int GetFramefromMS(int MS, int seekfrom=0);
 	int Init();
@@ -84,29 +59,51 @@ public:
 	FFMS_AudioSource *audiosource;
 	FFMS_ErrorInfo errinfo;
 	const FFMS_Frame *fframe;
+	
+	bool DiskCache();
+	void Cleardiskc();
+	void DeleteOldAudioCache();
+	wxString ColorCatrixDescription(int cs, int cr);
+	void SetColorSpace(const wxString& matrix);
+	bool disccache;
+	volatile bool success;
+	int width;
+	int height;
+	int arwidth;
+	int arheight;
+	int NumFrames;
+	int CR;
+	int CS;
 	int SampleRate;
 	int BytesPerSample;
 	int Channels;
-
-	
+	int lasttime;
+	int lastframe;
+	double Duration;
+	double Delay;
+	float fps;
 	int64_t NumSamples;
-	
-	
-	
-	wxString diskCacheFilename;
-	wxFile file_cache;
-	bool DiskCache();
-	void Cleardiskc();
-	bool disccache;
 	wxMutex blockaudio;
 	wxMutex blockvideo;
-	
+	HANDLE thread;
+	HANDLE eventStartPlayback,
+		eventRefresh,
+		eventKillSelf,
+		eventComplete;
+	wxString diskCacheFilename;
+	wxString ColorSpace;
+	wxString RealColorSpace;
+	wxString fname;
+	VideoRend *rend;
+	wxFile file_cache;
+	wxArrayInt KeyFrames;
+	std::vector<int> Timecodes;
 private:
 	
 	char **Cache;
 	int blnum;
 	void GetAudio(void *buf, int64_t start, int64_t count);
-	void DeleteOldAudioCache();
+	
 	
 };
 

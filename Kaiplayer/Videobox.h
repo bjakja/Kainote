@@ -81,7 +81,7 @@ public:
 	float wspx,wspy;
 	wxSize lastSize;
 	Fullscreen *TD;
-	bool isarrow;
+	bool hasArrow;
 	wxString oldpath;
 	std::vector<RECT> MonRects;
 	bool isOnAnotherMonitor;

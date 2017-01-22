@@ -38,6 +38,7 @@ class ScriptInfo: public KaiDialog
 		KaiTextCtrl* update;
 		MappedButton* Button1;
 		KaiChoice* wrapstyle;
+		KaiChoice* matrix;
 		KaiCheckBox* CheckBox2;
 		KaiChoice* collision;
 		KaiTextCtrl* editing;

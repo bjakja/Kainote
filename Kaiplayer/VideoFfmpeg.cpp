@@ -25,47 +25,6 @@
 #include "include\ffmscompat.h"
 #include "Stylelistbox.h"
 
-//wxDEFINE_EVENT(EVT_SHOW_DIALOG, wxThreadEvent);
-
-
-
-//class listw : public wxDialog
-//{
-//public:
-//	listw(wxWindow *parent, wxArrayString suggest);
-//	virtual ~listw();
-//	wxListBox *disperrs;
-//	int GetSelection(){return result;};
-//private:
-//	void OnDoubleClick(wxCommandEvent& evt);
-//	int result;
-//};
-//
-//listw::listw(wxWindow *parent, wxArrayString suggest)
-//	: wxDialog(parent,-1,_("Wybierz ścieżkę"))
-//	, result(-1)
-//{
-//	wxBoxSizer *sizer=new wxBoxSizer(wxHORIZONTAL);
-//	disperrs=new wxListBox(this,29886,wxDefaultPosition,wxDefaultSize,suggest);
-//	sizer->Add(disperrs,1,wxEXPAND|wxALL,2);
-//	sizer->SetMinSize(100,100);
-//	SetSizerAndFit(sizer);
-//	CenterOnParent();
-//	Connect(29886,wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,(wxObjectEventFunction)&listw::OnDoubleClick);
-//	//Bind(EVT_SHOW_DIALOG,&listw::OnShowDialog, this);
-//}
-//listw::~listw()
-//{
-//}
-//
-//
-//void listw::OnDoubleClick(wxCommandEvent& evt)
-//{
-//	wxString resultstr=disperrs->GetString(disperrs->GetSelection());
-//	result=wxAtoi(resultstr.BeforeFirst(':'));
-//	EndModal(wxID_OK);
-//}
-
 
 
 VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *_success)
@@ -126,10 +85,7 @@ void VideoFfmpeg::Processing()
 	success=(Init()==1);
 	progress->EndModal();
 
-	int pitch = width*1.5f;
-	int fplane=height * width;
-	int uvplane=fplane/2;
-
+	int fplane=height * width * 4;
 	int tdiff=0;
 
 	SetEvent(eventComplete);
@@ -141,45 +97,53 @@ void VideoFfmpeg::Processing()
 		if(wait_result == WAIT_OBJECT_0+0)
 		{
 			byte *buff = (byte*)rend->datas;
+			int acttime;
 			while(1){
 
+				//rend->lastframe = GetFramefromMS(timeGetTime() - rend->lasttime, rend->lastframe);
 				if(rend->lastframe != lastframe){
-					fframe=FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
+					rend->time = Timecodes[rend->lastframe];
 					lastframe = rend->lastframe;
 				}
+				
+				fframe=FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
 				if(!fframe){continue;}
 				memcpy(&buff[0],fframe->Data[0],fplane);
-				memcpy(&buff[fplane],fframe->Data[1],uvplane);
+
 				rend->DrawTexture(buff);
 				rend->Render(false);
-
+				
 				if(rend->time>=rend->playend){
 					wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED,23333);
 					wxQueueEvent(rend, evt);
 					break;
 				}
-				else if(rend->vstate!=Playing){break;}	
-				rend->time= timeGetTime() - rend->lasttime;
+				else if(rend->vstate!=Playing){
+					break;
+				}	
+				acttime = timeGetTime() - rend->lasttime;
 
 				rend->lastframe++;
-
-				while(true)
-				{
-					if(Timecodes[rend->lastframe]>=rend->time)
-					{
-						break;
-					}
-					else{rend->lastframe++;}
-				}
-
-				tdiff = Timecodes[rend->lastframe] - rend->time;
 				rend->time = Timecodes[rend->lastframe];
 
-
-				Sleep(tdiff);
+				tdiff = rend->time - acttime;
+				
+				if(tdiff>0){Sleep(tdiff);}
+				else{
+					while(1){
+						if(Timecodes[rend->lastframe]>=acttime || rend->lastframe>=NumFrames){
+							if(rend->lastframe>=NumFrames){rend->lastframe = NumFrames-1; rend->time = rend->playend;}
+							break;
+						}else{
+							rend->lastframe++;
+						}
+					}
+					
+				}
 
 			}
 		}else if(wait_result == WAIT_OBJECT_0+1){
+			//wxMutexLocker lock(blockvideo);
 			byte *buff = (byte*)rend->datas;
 			if(rend->lastframe != lastframe){
 				fframe=FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
@@ -187,7 +151,6 @@ void VideoFfmpeg::Processing()
 			}
 			if(!fframe){continue;}
 			memcpy(&buff[0],fframe->Data[0],fplane);
-			memcpy(&buff[fplane],fframe->Data[1],uvplane);
 			rend->DrawTexture(buff);
 			rend->Render(false);
 			SetEvent(eventComplete);
@@ -350,7 +313,7 @@ done:
 			videotrack, 
 			index, 
 			sysinfo.dwNumberOfProcessors,
-			FFMS_SEEK_AGGRESSIVE, 
+			FFMS_SEEK_NORMAL, 
 			&errinfo);// FFMS_SEEK_UNSAFE
 		//Since the index is copied into the video source object upon its creation,
 		//we can and should now destroy the index object. 
@@ -387,18 +350,29 @@ done:
 
 
 		int pixfmt[2];
-		pixfmt[0] = 25; //PIX_FMT_NV12 == 25  PIX_FMT_YUVJ420P;//PIX_FMT_YUV411P;//PIX_FMT_YUV420P; //PIX_FMT_YUYV422;//PIX_FMT_NV12;//FFMS_GetPixFmt("bgra");PIX_FMT_YUYV422;//
+		pixfmt[0] = FFMS_GetPixFmt("bgra");//PIX_FMT_YUYV422; //PIX_FMT_NV12 == 25  PIX_FMT_YUVJ420P;//PIX_FMT_YUV411P;//PIX_FMT_YUV420P; //PIX_FMT_YUYV422;//PIX_FMT_NV12;//FFMS_GetPixFmt("bgra");PIX_FMT_YUYV422;//
 		pixfmt[1] = -1;
 
 		if (FFMS_SetOutputFormatV2(videosource, pixfmt, width, height, FFMS_RESIZER_BILINEAR, &errinfo)) {
-			wxLogStatus(_("Dupa bada, nie można przekonwertować wideo na NV12"));
+			wxLogStatus(_("Dupa bada, nie można przekonwertować wideo na RGBA"));
 			return 0;
 		}
 
-		/*if (FFMS_SetInputFormatV(videosource, FFMS_CS_BT709, FFMS_CR_MPEG, -1, &errinfo)){
-			wxLogStatus(_("Ni chuja zmiana colorspace dała dupy"));
+		CS = propframe->ColorSpace;
+		CR = propframe->ColorRange;
 
-		}*/
+		if (CS == FFMS_CS_UNSPECIFIED)
+			CS = width > 1024 || height >= 600 ? FFMS_CS_BT709 : FFMS_CS_BT470BG;
+		ColorSpace = RealColorSpace = ColorCatrixDescription(CS, CR);
+		Grid *grid = ((TabPanel*)rend->GetParent())->Grid1;
+		wxString colormatrix = grid->GetSInfo("YCbCr Matrix");
+		if(colormatrix.IsEmpty()){colormatrix=_("Brak");}
+		if (CS != FFMS_CS_RGB && CS != FFMS_CS_BT470BG && ColorSpace != colormatrix && colormatrix == "TV.601") {
+			if (FFMS_SetInputFormatV(videosource, FFMS_CS_BT470BG, CR, FFMS_GetPixFmt(""), &errinfo)){
+				wxLogStatus(_("Dupa bada, macierz YCbCr się nie znieniła"));
+			}
+			ColorSpace = ColorCatrixDescription(FFMS_CS_BT470BG, CR);
+		}
 
 		FFMS_Track *FrameData = FFMS_GetTrackFromVideo(videosource);
 		if (FrameData == NULL){
@@ -513,12 +487,9 @@ void VideoFfmpeg::GetFrame(int ttime, byte *buff)
 {
 	//if(lastframe!=ttime){fframe=FFMS_GetFrame(videosource, ttime, &errinfo);}//fframe=FFMS_GetFrameByTime(videosource, (double)ttime/1000.0, &errinfo);}
 	//lastframe=ttime;
-	int fplane=height*width;
 	byte* cpy= (byte *)fframe->Data[0];
-	memcpy(&buff[0],cpy,fplane);
-	cpy= (byte *)fframe->Data[1];
-	int uvplane=fplane/2;
-	memcpy(&buff[fplane],cpy,uvplane);
+	memcpy(&buff[0],cpy,height*width*4);
+	
 }
 
 void VideoFfmpeg::GetAudio(void *buf, int64_t start, int64_t count)
@@ -769,7 +740,6 @@ bool VideoFfmpeg::DiskCache()
 		file_cache.Open(diskCacheFilename,wxFile::read);
 		return true;
 	}else{
-		DeleteOldAudioCache();
 		file_cache.Create(diskCacheFilename,true,wxS_DEFAULT);
 		file_cache.Open(diskCacheFilename,wxFile::read_write);
 	}
@@ -850,12 +820,14 @@ int VideoFfmpeg::GetFramefromMS(int MS, int seekfrom)
 void VideoFfmpeg::DeleteOldAudioCache()
 {
 	wxString path = Options.pathfull + "\\AudioCache";
+	size_t tabsSize = Notebook::GetTabs()->Size();
+	size_t maxAudio = (tabsSize < 10)? 10 : tabsSize;
 	wxDir kat(path);
 	wxArrayString audioCaches;
 	if(kat.IsOpened()){
 		kat.GetAllFiles(path, &audioCaches, "*.w64", wxDIR_FILES);
 	}
-	if(audioCaches.size()<=10){return;}
+	if(audioCaches.size()<=maxAudio){return;}
 	FILETIME ft;
 	SYSTEMTIME st;
 	std::map<unsigned __int64, int> dates;
@@ -866,16 +838,19 @@ void VideoFfmpeg::DeleteOldAudioCache()
 		GetFileTime(ffile,0,&ft,0);
 		CloseHandle(ffile);
 		FileTimeToSystemTime(&ft, &st);
-
+		if(st.wYear>3000){st.wYear=3000;}
 		datetime= (st.wYear *360000000000000) + (st.wMonth *36000000000) + (st.wDay *360000000) + (st.wHour*3600000)+(st.wMinute*60000)+(st.wSecond*1000)+st.wMilliseconds;
 		//wxLogStatus("date %llu %i, %i, %i, %i, %i, %i, %i, %s", datetime, (int)st.wYear, (int)st.wMonth, (int)st.wDay, (int)st.wHour, (int)st.wMinute, (int)st.wSecond, (int)st.wMilliseconds, audioCaches[i]);
 		dates[datetime]=i;
 
 	}
-	std::map<unsigned __int64, int>::iterator cur = dates.begin();
-	for(size_t i = 0; i <= audioCaches.size()-10; i++){
-		wxRemoveFile(audioCaches[cur->second]);
-		cur++;
+	int count = 0;
+	int diff = audioCaches.size() - maxAudio;
+	for(auto cur = dates.begin(); cur != dates.end(); cur++){
+		if(count >= diff){break;}
+		int isgood = _wremove(audioCaches[cur->second].wchar_str());
+		//wxLogStatus("usuwa plik %i "+audioCaches[cur->second], isgood);
+		count++;
 	}
 
 }
@@ -887,3 +862,37 @@ void VideoFfmpeg::Refresh(bool wait){
 		WaitForSingleObject(eventComplete, 4000);
 	}
 };
+
+wxString VideoFfmpeg::ColorCatrixDescription(int cs, int cr) {
+	// Assuming TV for unspecified
+	std::string str = cr == FFMS_CR_JPEG ? "PC" : "TV";
+
+	switch (cs) {
+		case FFMS_CS_RGB:
+			return "None";
+		case FFMS_CS_BT709:
+			return str + ".709";
+		case FFMS_CS_FCC:
+			return str + ".FCC";
+		case FFMS_CS_BT470BG:
+		case FFMS_CS_SMPTE170M:
+			return str + ".601";
+		case FFMS_CS_SMPTE240M:
+			return str + ".240M";
+		default:
+			return _("Brak");
+	}
+}
+
+void VideoFfmpeg::SetColorSpace(const wxString& matrix){
+
+		if (matrix == ColorSpace) return;
+		if (matrix == RealColorSpace || matrix == _("Brak"))
+			FFMS_SetInputFormatV(videosource, CS, CR, FFMS_GetPixFmt(""), nullptr);
+		else if (matrix == "TV.601")
+			FFMS_SetInputFormatV(videosource, FFMS_CS_BT470BG, CR, FFMS_GetPixFmt(""), nullptr);
+		else
+			return;
+		ColorSpace = matrix;
+
+}

@@ -246,7 +246,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 		wxBitmap arrow = wxBITMAP_PNG("arrow_list");
 		tdc.DrawBitmap((enabled)? arrow : arrow.ConvertToDisabled(), w - 17, (h-10)/2);
 
-		if((choice>=0 || !txtchoice.IsEmpty()) && choice< list->size()){
+		if((choice>=0 || !txtchoice.IsEmpty()) && choice< (int)list->size()){
 			int fh=0, fw=w, ex=0, et=0;
 			wxString txt = (*list)[choice];
 			int removed=0;

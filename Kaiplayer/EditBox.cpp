@@ -1264,16 +1264,15 @@ void EditBox::OnColorChange(wxCommandEvent& event)
 {
 	if(grid->form<SRT){
 		wxString iskol;
-		int alpha = -1;
 		wxString tag=(num=="1")? "?c&(.*)" : "c&(.*)";
 		Styles *style = grid->GetStyle(0,line->Style);
-		/*AssColor col= (num=="1")? style->PrimaryColour :
+		AssColor col= (num=="1")? style->PrimaryColour :
 			(num=="2")? style->SecondaryColour :
 			(num=="3")? style->OutlineColour :
 			style->BackColour;
 		
-		int stylealpha = col.a;
-		wxString strcol = col.GetAss(false,true);*/
+		int alpha = col.a;
+		//wxString strcol = col.GetAss(false,true);
 		wxString chooseColor = event.GetString();
 		FindVal(num+tag, &iskol);
 		//if(chooseColor == strcol){
@@ -1285,12 +1284,11 @@ void EditBox::OnColorChange(wxCommandEvent& event)
 		if(FindVal(num+"a&(.*)", &iskol)){
 			iskol.Replace("H","");
 			iskol.Replace("&","");
-			alpha = wxAtoi(iskol);
+			alpha = wcstol(iskol.wc_str(), NULL, 16);//wxAtoi(iskol);
 		}
-		//if(alpha != -1 && stylealpha == event.GetInt()){
-			//PutinText("", false);
-
-		/*}else */if(alpha != event.GetInt() /*&& stylealpha != event.GetInt()*/){
+		/*if(alpha != -1 && stylealpha == event.GetInt()){
+			PutinText("", false);
+		}else */if(alpha != event.GetInt()/* && stylealpha != event.GetInt()*/){
 			PutinText("\\"+num+wxString::Format("a&H%02X&",event.GetInt()), false);
 
 		} 

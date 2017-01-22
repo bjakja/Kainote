@@ -99,7 +99,7 @@ void bars1::OnSlider(wxCommandEvent &event)
 VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	: VideoRend(parent, size)
 	,Kai(kfpar)
-	,isarrow(true)
+	,hasArrow(true)
 	,seekfiles(true)
 	,fullarrow(true)
 	,ismenu(false)
@@ -271,14 +271,19 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 		Kai->SetVideoResolution(size.x, size.y, !Options.GetBool("Dont Ask For Bad Resolution"));
 	}
 	block=false;
-	Play();
-	if(Kai->GetTab()->edytor && !isFullscreen){Pause();Render();}
+	if(IsDshow){
+		Play();
+		if(Kai->GetTab()->edytor && !isFullscreen){Pause();Render();}
+	}else{
+		vstate = Paused;
+		Render();
+	}
 
 	displaytime();
 
 	int pos= Options.GetInt("Video Volume");
 	SetVolume(-(pos*pos));
-	SetFocus();
+	//SetFocus();
 	Kai->GetTab()->VideoPath=fileName;
 	Kai->GetTab()->VideoName=Kai->GetTab()->VideoPath.AfterLast('\\');
 	Kai->SetStatusText(Kai->GetTab()->VideoName,6);
@@ -349,8 +354,12 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		if(ismenu){ismenu=false;}
 	}
 	if(vstate==None){return;}
+	if(hasZoom){
+		ZoomMouseHandle(event);
+		return;
+	}
 	if(Vclips){
-		Vclips->OnMouseEvent(event);if(!isarrow){SetCursor(wxCURSOR_ARROW);isarrow=true;}
+		Vclips->OnMouseEvent(event);if(!hasArrow){SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 		return;
 	}//jak na razie 
 
@@ -364,9 +373,9 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		int w,h;
 		GetClientSize(&w,&h);
 
-		if(y>=h-panelHeight && !isarrow){
-			//wxLogStatus("y %i, h %i, isarrow %i", y ,h-45, isarrow);
-			SetCursor(wxCURSOR_ARROW);isarrow=true;
+		if(y>=h-panelHeight && !hasArrow){
+			//wxLogStatus("y %i, h %i, hasArrow %i", y ,h-45, hasArrow);
+			SetCursor(wxCURSOR_ARROW);hasArrow=true;
 		}
 		return;
 	}
@@ -409,12 +418,13 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 	else if(Kai->GetTab()->edytor){
 		int w,h;
 		GetClientSize(&w,&h);
-		if(isarrow && y<(h-panelHeight)){SetCursor(wxCURSOR_BLANK);isarrow=false;}
+		if(hasArrow && y<(h-panelHeight)){SetCursor(wxCURSOR_BLANK);hasArrow=false;}
 
 		if(event.Leaving()){
-			if(cross){cross=false;
-			if(!isarrow){SetCursor(wxCURSOR_ARROW);isarrow=true;}
-			if(GetState()==Paused){Render(false);}
+			if(cross){
+				cross=false;
+				if(!hasArrow){SetCursor(wxCURSOR_ARROW);hasArrow=true;}
+				if(GetState()==Paused){Render(false);}
 			}
 			return;
 		}
@@ -435,7 +445,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		DrawLines(wxPoint(curX,curY));
 
 
-	}else if(!isarrow){SetCursor(wxCURSOR_ARROW);isarrow=true;}
+	}else if(!hasArrow){SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 
 
 
@@ -636,6 +646,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 		}
 	}
 	ChangeButtonBMP(!(GetState()==Playing));
+	
 
 }
 
@@ -1041,6 +1052,7 @@ void VideoCtrl::displaytime()
 	}
 	else{
 		vslider->SetValue(val);
+		vslider->Update();
 		wxString dane;
 		dane<<kkk.raw(SRT)<<";  ";
 		TabPanel *pan=(TabPanel*)GetParent();
@@ -1050,6 +1062,7 @@ void VideoCtrl::displaytime()
 		int ediff=kkk.mstime - line->End.mstime;
 		dane<<sdiff<<" ms, "<<ediff<<" ms";}
 		mstimes->SetValue(dane);
+		mstimes->Update();
 	}
 
 }
@@ -1220,7 +1233,7 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 		eb->Visual = vis;
 		SetVisual(eb->line->Start.mstime, eb->line->End.mstime);
 		if(vis==MOVEALL){Vclips->ChangeTool(vToolbar->GetMoveToggled());}
-		if(!isarrow){SetCursor(wxCURSOR_ARROW);isarrow=true;}
+		if(!hasArrow){SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 	}
 
 }

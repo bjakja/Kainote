@@ -27,7 +27,7 @@ end
 
 local icu_root, out_path = ...
 
-local infile = try_open(string.format('I:/Kainote/Thirdparty/icu/source/data/in/%sl.dat', ICU_VERSION), 'rb')
+local infile = try_open(string.format('%s/data/in/%sl.dat', icu_root, ICU_VERSION), 'rb')
 local outfile = try_open(out_path, 'w')
 
 outfile:write("const unsigned char " .. ICU_VERSION .. "_dat[] = {")

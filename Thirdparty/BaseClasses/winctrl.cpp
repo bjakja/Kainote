@@ -6,9 +6,8 @@
 // Copyright (c) 1992-2001 Microsoft Corporation.  All rights reserved.
 //------------------------------------------------------------------------------
 
-
-#include <streams.h>
 #include <intsafe.h>
+#include <streams.h>
 #include <checkbmi.h>
 
 // The control interface methods require us to be connected

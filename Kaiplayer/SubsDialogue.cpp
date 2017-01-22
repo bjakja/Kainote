@@ -31,13 +31,10 @@ Dialogue::Dialogue()
 	State=0;
 	NonDial=false;
 	IsComment=false;
-	//iterator++;
 }
 
 Dialogue::~Dialogue()
 {
-	//spells.clear();
-	//iterator--;
 }
 
 
@@ -45,7 +42,6 @@ Dialogue::Dialogue(wxString ldial,wxString txttl)
 {
 	TextTl=txttl;
 	SetRaw(ldial);
-	//iterator++;
 }
 void Dialogue::SetRaw(wxString ldial)
 {
@@ -229,7 +225,7 @@ void Dialogue::Conv(char type,wxString pref)
 	if(Form == TMP && End.mstime==0){End=Start;End.mstime+=2000;}
 	Start.ChangeFormat(type);
 	End.ChangeFormat(type);
-	if (type<=SRT){
+	if (type<SRT){
 		Layer=0;
 		Style=Options.GetString(_T("Default Style"));
 		Actor=_T("");
@@ -270,17 +266,20 @@ void Dialogue::Conv(char type,wxString pref)
 	}else if(Form<SRT){
 		wxString tmp=Text;
 		tmp.Replace(_T("\\h"),_T(" "));
+		wxRegEx regp(_T("\\\\p[0-9]+"),wxRE_ADVANCED);
+		if(regp.Matches(tmp)){Text="";Form=type; return;}
 		if(type==SRT){
-			wxRegEx regibu(_T("\\{\\\\([ibu])\\1}"),wxRE_ADVANCED);
-			wxRegEx regibu0(_T("\\{\\\\([ibu])\\0}"),wxRE_ADVANCED);
-			regibu.ReplaceAll(&tmp,_T("<\\1>"));
-			regibu0.ReplaceAll(&tmp,_T("</\\1>"));
+			wxRegEx regibu(_T("\\\\([ibu])1"),wxRE_ADVANCED);
+			wxRegEx regibu0(_T("\\\\([ibu])0"),wxRE_ADVANCED);
+			regibu.ReplaceAll(&tmp,_T("}<\\1>{"));
+			regibu0.ReplaceAll(&tmp,_T("}</\\1>{"));
 		}
 		wxRegEx reg(_T("\\{[^}]*\\}"),wxRE_ADVANCED);
 		reg.ReplaceAll(&tmp,_T(""));
 		if(type!=SRT){
 			tmp.Replace(_T("\\N"),_T("|"));}
 		Text=tmp;
+		
 	}
 
 	Form=type;

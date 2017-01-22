@@ -138,6 +138,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	VidMenu->AppendTool(Toolbar, PlayPauseG, _("Odtwarzaj / Pauza"), _("Odtwarza lub pauzuje wideo"),PTR_BITMAP_PNG("pausemenu"),false);
 	VidMenu->AppendTool(Toolbar, GoToPrewKeyframe,_("Przejdź do poprzedniej klatki kluczowej"),"",PTR_BITMAP_PNG("prevkeyframe"));
 	VidMenu->AppendTool(Toolbar, GoToNextKeyframe,_("Przejdź do następnej klatki kluczowej"),"",PTR_BITMAP_PNG("nextkeyframe"));
+	VidMenu->Append(7789, _("Powiększ wideo"), "");
 	VidMenu->Append(VideoIndexing, _("Otwieraj wideo przez FFMS2"), _("Otwiera wideo przez FFMS2, co daje dokładność klatkową"),true,0,0,ITEM_CHECK)->Check(Options.GetBool("Index Video"));
 
 	Menubar->Append(VidMenu, _("&Wideo"));
@@ -219,6 +220,10 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 			delete mylog; mylog=NULL;
 		}
 	},9989);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
+		TabPanel *tab = GetTab();
+		tab->Video->SetZoom();
+	},7789);
 	Connect(SnapWithStart,SnapWithEnd,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
 	SetDropTarget(new DragnDrop(this));
 
@@ -505,10 +510,10 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			L"Vsfilter - Copyright © Gabest;\r\n"\
 			L"FFMPEGSource2 - Copyright © Fredrik Mellbin;\r\n"\
 			L"FreeType - Copyright ©  David Turner, Robert Wilhelm, and Werner Lemberg;\r\n"\
-			L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al."\
-			L"ICU - Copyright © 1995-2016 International Business Machines Corporation and others"\
+			L"ICU - Copyright © 1995-2016 International Business Machines Corporation and others\r\n"\
 			L"Boost - Copyright © Joe Coder 2004 - 2006.",
 			"O Kainote");
+		//L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.\r\n"
 	}else if(id==Helpers){
 		wxString Testers=L"Wincenty271, mas1904, Ksenoform, Deadsoul, Zły los,\r\nVessin, Xandros, Areki, Nyah2211, Waski_jestem.";
 		wxString Credits=_("Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\r\n")+
@@ -575,6 +580,14 @@ void kainoteFrame::OnAssProps()
 	else if(ny<1){ny=(float)nx*(3.0/4.0);if(nx==1280){ny=1024;}}
 	sci.width->SetInt(nx);
 	sci.height->SetInt(ny);
+	wxString matrix = ngrid->GetSInfo("YCbCr Matrix");
+	int result = sci.matrix->FindString(matrix);
+	if(matrix.IsEmpty() || result < 0){
+		sci.matrix->SetSelection(0);
+		result = 0;
+	}else{
+		sci.matrix->SetSelection(result);
+	}
 	wxString wraps=ngrid->GetSInfo("WrapStyle");
 	int ws = wxAtoi(wraps);
 	sci.wrapstyle->SetSelection(ws);
@@ -603,7 +616,12 @@ void kainoteFrame::OnAssProps()
 
 		if(sci.width->IsModified()){ngrid->AddSInfo("PlayResX",wxString::Format("%i",newx));}
 		if(sci.height->IsModified()){ngrid->AddSInfo("PlayResY",wxString::Format("%i",newy));}
-
+		int newMatrix = sci.matrix->GetSelection();
+		if(newMatrix != result){
+			wxString val = sci.matrix->GetString(sci.matrix->GetSelection());
+			ngrid->AddSInfo("YCbCr Matrix",val);
+			GetTab()->Video->SetColorSpace(val);
+		}
 
 		if(ws != sci.wrapstyle->GetSelection()){ngrid->AddSInfo("WrapStyle",wxString::Format("%i",sci.wrapstyle->GetSelection()));}
 		wxString collis=(sci.collision->GetSelection()==0)?"Normal":"Reverse";
@@ -727,7 +745,15 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 		Label();
 		SetSubsResolution(!Options.GetBool("Dont Ask For Bad Resolution"));
 		if(!pan->edytor && !fulls && !pan->Video->isFullscreen){HideEditor();}
-		if(!found){pan->CTime->Contents();UpdateToolbar(); pan->Thaw();return true;}
+		if(!found){
+			if(pan->Video->VFF && pan->Video->vstate != None && pan->Grid1->form == ASS){
+				pan->Video->SetColorSpace(pan->Grid1->GetSInfo("YCbCr Matrix"));
+			}
+			pan->CTime->Contents();
+			UpdateToolbar(); 
+			pan->Thaw();
+			return true;
+		}
 	}
 
 	wxString fnname=(found && issubs)?fntmp:filename;
@@ -748,13 +774,14 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 
 
 
-
+	Tabs->GetTab()->Video->DeleteAudioCache();
 	return true;  
 }
 
 void kainoteFrame::SetSubsResolution(bool showDialog)
 {
 	TabPanel *cur = GetTab();
+	if(cur->Grid1->form != ASS){return;}
 	wxString resolution = cur->Grid1->GetSInfo("PlayResX") +" x "+ cur->Grid1->GetSInfo("PlayResY");
 	SetStatusText(resolution, 5);
 	wxSize vsize;
@@ -1116,10 +1143,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 			SetSubsResolution(askForRes);
 		}
 		if(i<videos.size()){
-			//wxLogStatus("Video bload %i", i);
 			bool isload=pan->Video->Load(videos[i],(pan->edytor)? pan->Grid1->SaveText() : 0);
-			//wxLogStatus("Video aload %i %i", i, (int)isload);
-
 
 			if(!isload){
 				if(pan->Video->IsDshow){KaiMessageBox(_("Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\r\nbądź brakuje kodeków czy też splittera"), _("Uwaga"));}
@@ -1146,7 +1170,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 	files.Clear();
 	subs.Clear();
 	videos.Clear();
-
+	Tabs->GetTab()->Video->DeleteAudioCache();
 	Options.SaveOptions(true, false);
 }
 
@@ -1197,7 +1221,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 
 	UpdateToolbar();
 
-	cur->Grid1->SetFocus();
+	//cur->Grid1->SetFocus();
 	if(Tabs->iter!=Tabs->GetOldSelection()){
 		cur->CTime->RefVals(Tabs->Page( Tabs->GetOldSelection() )->CTime);
 		//if(Options.GetBool("Grid save without enter")){

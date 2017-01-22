@@ -29,7 +29,7 @@
 #include "Visuals.h"
 
 //#define byvertices 5
-#define DXVA 77
+//#define DXVA 77
 
 //#if DXVA
 #include <dxva2api.h>
@@ -88,6 +88,19 @@ struct VERTEX
 	D3DCOLOR Color;	
 };
 
+class FloatRect
+{
+public:
+	FloatRect(float _x, float _y, float _width, float _height){x=_x; y=_y; width = _width; height = _height;};
+	FloatRect(){x=0; y=0; width = 0; height = 0;}
+	float GetBottom() const { return y - height - 1; }
+    float GetRight()  const { return x - width - 1; }
+	float x;
+	float y;
+	float width;
+	float height;
+};
+
 void CreateVERTEX (VERTEX *v, float X, float Y, D3DCOLOR Color, float Z=0.0f);
 
 
@@ -133,6 +146,14 @@ class VideoRend : public wxWindow
 		void SetVisual();
 		byte *GetFramewithSubs(bool subs, bool *del);
 		bool UpdateRects();
+		void Zoom(const wxSize &size);
+		void DrawZoom();
+		void ZoomMouseHandle(wxMouseEvent &evt);
+		void SetZoom();
+		void DeleteAudioCache(){if(VFF){VFF->DeleteOldAudioCache();}}
+		void SetColorSpace(const wxString& matrix, bool render=true){
+			if(VFF){VFF->SetColorSpace(matrix);Render(false);}
+		}
 		LPDIRECT3DSURFACE9 MainStream;
 		LPDIRECT3DDEVICE9 d3device;
 		D3DFORMAT d3dformat;
@@ -145,6 +166,7 @@ class VideoRend : public wxWindow
 		bool resized;
 		bool isFullscreen;
 		bool panelOnFullscreen;
+		bool hasZoom;
 		int vwidth;
 		int vheight;
 		int pitch;
@@ -187,26 +209,25 @@ class VideoRend : public wxWindow
 		LPDIRECT3DVERTEXBUFFER9 vertex;
 		LPDIRECT3DTEXTURE9 texture;
 #endif
-#if DXVA
 		IDirectXVideoProcessorService *dxvaService;
 		IDirectXVideoProcessor *dxvaProcessor;
-		DXVA2_VideoDesc videoDesc;
-		GUID dxvaGuid;
-#endif
+		
 		HWND hwnd;
 		bool devicelost;
 		bool playblock;
 		
 		int diff;
+		char grabbed;
 		
 		csri_inst *instance;
 		csri_rend *vobsub;
-		RECT rt1;
-		RECT rt2;
-		RECT rt3;
-		RECT rt4;
-		RECT rt5;
-		
+		RECT crossRect;
+		RECT progressBarRect;
+		RECT windowRect;
+		RECT backBufferRect;
+		RECT mainStreamRect;
+		FloatRect zoomRect;
+		wxPoint zoomDiff;
 		
 		int avframetime;
 		

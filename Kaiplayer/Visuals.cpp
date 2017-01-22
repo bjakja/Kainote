@@ -167,7 +167,6 @@ void Visuals::DrawCross(D3DXVECTOR2 position, D3DCOLOR color, bool useBegin)
 
 void Visuals::DrawRect(D3DXVECTOR2 pos, bool sel, float rcsize)
 {
-	//line->End();
 	D3DCOLOR fill = (sel)? 0xAAFCE6B1 : 0xAA121150;
 	VERTEX v9[9];
 	CreateVERTEX(&v9[0], pos.x-rcsize, pos.y-rcsize, fill);
@@ -182,14 +181,11 @@ void Visuals::DrawRect(D3DXVECTOR2 pos, bool sel, float rcsize)
 
 	HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX) ),"primitive failed");
 	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 4, &v9[4], sizeof(VERTEX) ),"primitive failed");
-	//line->Begin();
 }
-
 
 
 void Visuals::DrawCircle(D3DXVECTOR2 pos, bool sel, float crsize)
 {
-	//line->End();
 	D3DCOLOR fill = (sel)? 0xAAFCE6B1 : 0xAA121150;
 	VERTEX v5[41];
 	float rad =0.01745329251994329576923690768489f;
@@ -210,7 +206,6 @@ void Visuals::DrawCircle(D3DXVECTOR2 pos, bool sel, float crsize)
 
 	HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLEFAN, 18, v5, sizeof(VERTEX) ),"primitive failed");
 	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 18, &v5[21], sizeof(VERTEX) ),"primitive failed");
-	//line->Begin();
 }
 
 void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen)
@@ -476,7 +471,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 			//wxLogStatus("find");
 			ChangeText(&txt,"",edit->InBracket,edit->Placed);
 			txt.Replace("{}", "");
-			Editor->SetTextS(txt, false);
+			Editor->SetTextS(txt, false, false);
 			Editor->modified = true;
 			//wxLogStatus("find");
 			edit->Send(false);
@@ -515,7 +510,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 				(*dummytext)<<visdl->GetRaw();
 				dumplaced.x=edit->Placed.x + textplaced.x; dumplaced.y=edit->Placed.y + textplaced.x;
 				delete visdl;
-				Editor->SetTextS(txt,false);
+				Editor->SetTextS(txt,false,false);
 				
 			}else{//rysunki wektorowe
 				wxString tmp="";

@@ -118,7 +118,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 	if(click){
 		if(leftc){type=0;}
 		if(rightc){type=1;}
-		if(middlec){type=2;}
+		if(middlec || leftc && evt.ShiftDown()){type=2;}
 		if(abs(lastmove.x-x)<8 && abs(from.y-y)<8){grabbed=0;type=0;}
 		else if(abs(lastmove.y-y)<8 && abs(from.x-x)<8){grabbed=1;type=1;}
 		else if(abs(lastmove.x-x)<8 && abs(lastmove.y-y)<8){grabbed=2;type=2;}
@@ -128,29 +128,35 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 		if(type==1){tab->Video->SetCursor(wxCURSOR_SIZENS);}
 		if(type==2){tab->Video->SetCursor(wxCURSOR_SIZING);}
 		hasArrow=false;
+		int addy=(AN>3)?60 : -60, addx= (AN % 3 == 0)?-60 : 60;
+		if(leftc && evt.ShiftDown()){
+			diffs.x = x;
+			diffs.y = y;
+			to.x=from.x;to.y=from.y;
+			to.x+=(addx*scale.x);
+			to.y+=(addy*scale.y);
+			return;
+		}
 		if(grabbed==-1){
-			int addy=(AN>3)?60 : -60, addx= (AN % 3 == 0)?-60 : 60;
+			
 			diffs.x=(from.x-x)+(addx*scale.x);
 			diffs.y=(from.y-y)+(addy*scale.y);
 		}
 		to.x=x;to.y=y;
+		
 	}else if(holding){
 		if(evt.ShiftDown()&&type==2){
-			int diffx = abs(to.x-x);
-			int diffy = abs(to.y-y);
-			int move = (diffx>diffy)? diffx : diffy;
-			//int move, diff;
-			//if(diffx>diffy){
-				to.x=x+diffs.x;
-				float diff = abs(to.x-from.x);
-				to.y=(y<from.y)? from.y-diff : from.y+diff;
-				wxLogStatus("diffs %f, %f", to.x-from.x, to.y-from.y);
-			/*}
-			else{
-				to.y=y+diffs.y; 
-				int diff = abs(to.y-from.y);
-				to.x= (x<from.x)? from.x-diff: from.x+diff;
-			}*/
+			int diffx = abs(diffs.x-x);
+			int diffy = abs(diffs.y-y);
+			int move = (diffx>diffy)? diffs.x-x : diffs.y-y;
+			int addy=(AN>3)? move : -move, addx= (AN % 3 == 0)?-move : move;
+			D3DXVECTOR2 copyto = to;
+			wxPoint copydiffs = diffs;
+			to.x+=addx;
+			to.y+=addy;
+			diffs.x=x;
+			diffs.y=y;
+			if(to.x-from.x<10){diffs=copydiffs; to = copyto;}
 		}else{
 			if(type!=1){
 				to.x=x+diffs.x;

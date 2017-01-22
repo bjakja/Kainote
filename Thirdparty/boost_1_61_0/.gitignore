@@ -1,2 +1,4 @@
 *
 !.gitignore
+!boost\Boost.*
+!locale_stubs.cpp

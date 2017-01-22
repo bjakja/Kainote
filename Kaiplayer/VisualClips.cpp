@@ -474,9 +474,8 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	if(!event.ButtonDown() && !leftisdown){
 		int pos = CheckPos(xy);
 		if(pos!= -1 && hasArrow && !ctrl){
-			
+			acpoint=Points[pos];
 			if(!Points[pos].isSelected){
-				acpoint=Points[pos];
 				hasArrow=false;
 				Points[pos].isSelected=true;
 				lastpos=pos;

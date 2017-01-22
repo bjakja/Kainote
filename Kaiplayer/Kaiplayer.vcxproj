@@ -57,7 +57,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\Thirdparty\zlib-1.2.8;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;C:\Program Files\Microsoft SDKs\Windows\v6.1\Samples\Multimedia\DirectShow\BaseClasses;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;..\Thirdparty\freetype-2.6\include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\include;..\Thirdparty\wxWidgets\lib\vc_lib\mswud;..\Thirdparty\boost_1_61_0;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Thirdparty\zlib-1.2.8;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;..\Thirdparty\freetype-2.6\include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\include;..\Thirdparty\wxWidgets\lib\vc_lib\mswud;..\Thirdparty\boost_1_61_0;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

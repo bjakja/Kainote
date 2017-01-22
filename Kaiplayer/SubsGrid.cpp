@@ -602,7 +602,7 @@ void SubsGrid::ChangeLine(Dialogue *line1, int wline, long cells, bool selline, 
 {
 	lastRow=wline;
 	wxArrayInt sels=GetSels();
-	if(sels.size()<2 || cells & TXT || cells & TXTTL){
+	if(sels.size()<2){
 		ChangeCell(cells,wline,line1);
 	}else{
 		for(size_t i=0;i<sels.size();i++){
@@ -1039,9 +1039,43 @@ void SubsGrid::Convert(char type)
 		else{AddStyle(Options.GetStyle(stind)->Copy());}
 		Edit->RefreshStyle();
 	}
-	if(form==ASS){std::sort(file->subs->dials.begin(),file->subs->dials.end(),sortstart);}
+	if(form==ASS){
+		std::sort(file->subs->dials.begin(),file->subs->dials.end(),[](Dialogue *i, Dialogue *j){
+			if(i->Start.mstime!=j->Start.mstime){
+				return (i->Start.mstime<j->Start.mstime);
+			}
+			if(i->End.mstime!=j->End.mstime){
+				return (i->End.mstime<j->End.mstime);
+			}
+			//if(i->Style!=j->Style){
+				//return (i->Style.CmpNoCase(j->Style)<0);
+			//}
+			return (i->Text.CmpNoCase(j->Text)<0);
+		});
+		Dialogue *lastDialogue = GetDial(0);
+		int i = 1; 
+		while(i < GetCount()){
+			Dialogue *actualDialogue = GetDial(i);
+			if(lastDialogue->Start == actualDialogue->Start && 
+				lastDialogue->End == actualDialogue->End && 
+				lastDialogue->Text == actualDialogue->Text){
+					DeleteRow(i-1);
+					lastDialogue = actualDialogue;
+					continue;
+			}else if(actualDialogue->Text==""){
+				DeleteRow(i);
+				continue;
+			}
+			lastDialogue = actualDialogue;
+			i++;
+		}
+		Kai->SetStatusText("",5);
+	}else{
+		Kai->SetSubsResolution();
+	}
+	
 	form=type;
-	Edit->SetIt(Edit->ebrow);
+	Edit->SetIt((Edit->ebrow < GetCount())? Edit->ebrow : 0);
 	SetModified();
 	RepaintWindow();
 }
@@ -1141,7 +1175,7 @@ void SubsGrid::SaveFile(wxString filename, bool cstat)
 			if(form==SRT){wynik<<i+1<<"\r\n";}
 			ow.PartFileWrite(wynik+dial->GetRaw());
 		}
-		if(dial->State==1&&cstat){dial->State=2;}
+		if(dial->State==1 && cstat){dial->State=2;}
 
 		//worker[i] = CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)saveproc,this,0, NULL);
 
