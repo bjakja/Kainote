@@ -73,6 +73,12 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 		CalcMaxWidth(&newSize, size.x < 1, size.y<1);
 	}
 	SetMinSize(newSize);
+	wxAcceleratorEntry entries[2];
+	entries[0].Set(wxACCEL_NORMAL, WXK_UP,7865);
+	entries[1].Set(wxACCEL_NORMAL, WXK_DOWN,7866);
+	wxAcceleratorTable accel(2, entries);
+	SetAcceleratorTable(accel);
+
 }
 
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
@@ -100,6 +106,11 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 		CalcMaxWidth(&newSize, size.x < 1, size.y<1);
 	}
 	SetMinSize(newSize);
+	wxAcceleratorEntry entries[2];
+	entries[0].Set(wxACCEL_NORMAL, WXK_UP,7865);
+	entries[1].Set(wxACCEL_NORMAL, WXK_DOWN,7866);
+	wxAcceleratorTable accel(2, entries);
+	SetAcceleratorTable(accel);
 }
 
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, const wxPoint& pos,
@@ -132,7 +143,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 		choice = FindString(comboBoxText);
 		return;
 	}
-	choiceText = new KaiTextCtrl(this, 27789, comboBoxText, wxPoint(1,1), wxSize(newSize.x-22, newSize.y-2), wxBORDER_NONE);
+	choiceText = new KaiTextCtrl(this, 27789, comboBoxText, wxPoint(1,1), wxSize(newSize.x-22, newSize.y-2), wxBORDER_NONE, validator);
 	choiceText->Bind(wxEVT_ENTER_WINDOW,&KaiChoice::OnMouseEvent,this,27789);
 	choiceText->Bind(wxEVT_LEAVE_WINDOW,&KaiChoice::OnMouseEvent,this,27789);
 	choiceText->Bind(wxEVT_MOUSEWHEEL, &KaiChoice::OnMouseEvent, this,27789);
@@ -159,18 +170,20 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 		wxKeyEvent kevt;
 		kevt.m_keyCode = WXK_UP;
 		if(itemList&&itemList->IsShown()){itemList->OnKeyPress(kevt);}
-		else{evt.Skip();}
+		else{evt.SetId(7865); OnArrow(evt);}
 	},ID_TUP);
 	choiceText->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		//wxLogStatus("on accelerator down");
 		wxKeyEvent kevt;
 		kevt.m_keyCode = WXK_DOWN;
 		if(itemList&&itemList->IsShown()){itemList->OnKeyPress(kevt);}
-		else{evt.Skip();}
+		else{evt.SetId(7866); OnArrow(evt);}
 	},ID_TDOWN);
-	//SetForegroundColour(parent->GetForegroundColour());
-	//choiceText->SetBackgroundColour(parent->GetBackgroundColour());
-	//choiceText->SetForegroundColour(parent->GetForegroundColour());
+	wxAcceleratorEntry entries[2];
+	entries[0].Set(wxACCEL_NORMAL, WXK_UP,7865);
+	entries[1].Set(wxACCEL_NORMAL, WXK_DOWN,7866);
+	wxAcceleratorTable accel(2, entries);
+	SetAcceleratorTable(accel);
 }
 
 KaiChoice::~KaiChoice()
@@ -224,14 +237,10 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
 	tdc.SetFont(GetFont());
-	//int fsize = font.GetPointSize();
-	//wxLogStatus("fs paint %i",fsize);
-	//tdc.SetBrush(wxBrush(background));
-	//tdc.SetPen(wxPen(background));
-	//tdc.DrawRectangle(0,0,w,h);
 	bool enabled = IsThisEnabled();
-	/*tdc.SetBrush(wxBrush(wxSystemSettings::GetColour((clicked)? wxSYS_COLOUR_BTNSHADOW : (enabled)? wxSYS_COLOUR_BTNFACE : wxSYS_COLOUR_INACTIVECAPTION )));
-	tdc.SetPen(wxPen(wxSystemSettings::GetColour((enter)? wxSYS_COLOUR_MENUHILIGHT : (enabled)? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_GRAYTEXT)));*/
+	if(choiceText && choiceText->IsThisEnabled() != enabled){
+		choiceText->Enable(enabled);
+	}
 	tdc.SetBrush(wxBrush((enter && !clicked)? Options.GetColour("Button Background Hover") :
 		(clicked)? Options.GetColour("Button Background Pushed") : 
 		(enabled)? Options.GetColour("Button Background") : 
@@ -248,7 +257,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 
 		if((choice>=0 || !txtchoice.IsEmpty()) && choice< (int)list->size()){
 			int fh=0, fw=w, ex=0, et=0;
-			wxString txt = (*list)[choice];
+			wxString txt = (txtchoice.IsEmpty())? (*list)[choice] : txtchoice;
 			int removed=0;
 			while(fw > w - 22 && txt!=""){
 				tdc.GetTextExtent(txt, &fw, &fh, &ex, &et/*, &font*/);
@@ -334,11 +343,27 @@ void KaiChoice::OnMouseEvent(wxMouseEvent &event)
 
 void KaiChoice::OnKeyPress(wxKeyEvent &event)
 {
+	int key = event.GetKeyCode();
 	if(itemList && itemList->IsShown()){
 		itemList->OnKeyPress(event);
-	}else if(event.GetKeyCode() == WXK_RETURN && !(GetWindowStyle() & wxTE_PROCESS_ENTER)){
+	}else if(key == WXK_RETURN && !(GetWindowStyle() & wxTE_PROCESS_ENTER)){
 		ShowList();
 	}
+}
+
+void KaiChoice::OnArrow(wxCommandEvent &evt)
+{
+	bool up = evt.GetId()==7865;
+	if(choice<=0 && up || choice>=(int)list->size()-1 && !up)return;
+		if(choiceText){
+			int result = FindString(choiceText->GetValue(),true);
+			if (result<0){
+				SetSelectionByPartialName(choiceText->GetValue(),true);
+				return;
+			}
+		}
+		choice += (up)? -1 : 1;
+		SelectChoice(choice,false);
 }
 
 void KaiChoice::ShowList()
@@ -431,7 +456,7 @@ void KaiChoice::SendEvent(int _choice)
 
 }
 
-void KaiChoice::SetSelectionByPartialName(const wxString &PartialName)
+void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool changeText)
 {
 	if(PartialName==""){SetSelection(0, false);return;}
 	int sell=-1;
@@ -446,7 +471,7 @@ void KaiChoice::SetSelectionByPartialName(const wxString &PartialName)
 	}
 
 	if(sell!=-1){
-		SetSelection(sell, false);
+		SetSelection(sell, changeText);
 	}
 }
 
@@ -471,7 +496,9 @@ void KaiChoice::SelectChoice(int _choice, bool select, bool sendEvent){
 			choiceText->SetFocus();
 			choiceText->SetSelection(0,choiceText->GetValue().Len(),true);
 		}
-	}else{Refresh(false);}
+	}else{
+		Refresh(false);
+	}
 	if(sendEvent){
 		wxCommandEvent evt((HasFlag(KAI_COMBO_BOX))? wxEVT_COMMAND_COMBOBOX_SELECTED : wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 		this->ProcessEvent(evt);
@@ -497,6 +524,7 @@ BEGIN_EVENT_TABLE(KaiChoice, wxWindow)
 	EVT_SIZE(KaiChoice::OnSize)
 	EVT_ERASE_BACKGROUND(KaiChoice::OnEraseBackground)
 	EVT_KEY_UP(KaiChoice::OnKeyPress)
+	EVT_MENU_RANGE(7865,7866,KaiChoice::OnArrow)
 END_EVENT_TABLE()
 
 	static int maxVisible = 20;
@@ -686,6 +714,7 @@ void PopupList::EndPartialModal(int ReturnId)
 	if(HasCapture()){ReleaseMouse();}
 	Unbind(wxEVT_IDLE,&PopupList::OnIdle, this);
 	Hide();
+	((KaiChoice*)Parent)->SetFocus();
 }
 
 void PopupList::OnKeyPress(wxKeyEvent &event)

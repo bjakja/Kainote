@@ -36,8 +36,8 @@ void EBStaticText::OnEraseBackground(wxEraseEvent &event)
 {
 }
 
-DescTxtCtrl::DescTxtCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc)
-	:KaiChoice(parent,id,"",wxDefaultPosition, size, wxArrayString())
+DescTxtCtrl::DescTxtCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc, const wxValidator &validator)
+	:KaiChoice(parent,id,"",wxDefaultPosition, size, wxArrayString(),0,validator)
 {
 	description =desc;
 	choiceText->Bind(wxEVT_SET_FOCUS, &DescTxtCtrl::OnFocus,this);
@@ -250,12 +250,13 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	styles.Add("Default");
 	StyleChoice = new KaiChoice(this, IDSTYLE, wxDefaultPosition, wxSize(100,-1),styles);//wxSize(145,-1)
 	//druga linia
-
-	ActorEdit = new DescTxtCtrl(this, 16658, wxSize(90,-1), _("Aktor"));
+	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
+	valid.SetCharExcludes(",");
+	ActorEdit = new DescTxtCtrl(this, 16658, wxSize(90,-1), _("Aktor"),valid);
 	MarginLEdit = new NumCtrl(this, 16668, "",0,9999,true, wxDefaultPosition, wxSize(42,-1),wxTE_CENTRE);
 	MarginREdit = new NumCtrl(this, 16668, "",0,9999,true, wxDefaultPosition, wxSize(42,-1),wxTE_CENTRE);
 	MarginVEdit = new NumCtrl(this, 16668, "",0,9999,true, wxDefaultPosition, wxSize(42,-1),wxTE_CENTRE);
-	EffectEdit = new DescTxtCtrl(this, 16658, wxSize(90,-1), _("Efekt"));
+	EffectEdit = new DescTxtCtrl(this, 16658, wxSize(90,-1), _("Efekt"),valid);
 
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
 	BoxSizer2->Add(Comment,0,wxLEFT|wxALIGN_CENTER,4);
@@ -353,7 +354,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 	UpdateChars((TextEditTl->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
 	//ustawia clip/inny visual gdy jest włączony
 	if(Visual > CHANGEPOS){
-		pan->Video->SetVisual(line->Start.mstime, line->End.mstime);
+		pan->Video->SetVisual();
 	}
 
 	//resetuje edycję na wideo
@@ -787,7 +788,7 @@ void EditBox::OnCommit(wxCommandEvent& event)
 	if(splittedTags&&(TextEdit->modified || TextEditTl->modified)){TextEdit->modified=true; TextEditTl->modified=true;}
 	Send(false, false, Visual!=0);
 	if(Visual){
-		pan->Video->SetVisual(line->Start.mstime,line->End.mstime);
+		pan->Video->SetVisual();
 	}
 	if(StyleChoice->HasFocus()||Comment->HasFocus()){grid->SetFocus();}
 	if(ABox){ABox->audioDisplay->SetDialogue(line,ebrow);}
@@ -1226,7 +1227,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		EndEdit->MarkDirty();
 	}
 	if(Visual > 0){
-		panel->Video->SetVisual(line->Start.mstime, line->End.mstime, false, true);
+		panel->Video->SetVisual(false, true);
 		return;
 	}
 	wxString *text=NULL;
@@ -1248,7 +1249,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	
 	if(visible && (panel->Video->IsShown() || panel->Video->isFullscreen)){
 		panel->Video->OpenSubs(text);
-		if(Visual>0){panel->Video->SetVisual();}
+		if(Visual>0){panel->Video->ResetVisual();}
 		else if(panel->Video->GetState()==Paused){panel->Video->Render();}
 	}else if(text){delete text;}
 	if(!Options.GetBool("Grid save without enter")){return;}
@@ -1402,7 +1403,7 @@ void EditBox::OnCursorMoved(wxCommandEvent& event)
 {
 	if(Visual==SCALE||Visual==ROTATEZ||Visual==ROTATEXY){
 		TabPanel* pan=(TabPanel*)GetParent();
-		pan->Video->SetVisual();
+		pan->Video->ResetVisual();
 	}
 }
 

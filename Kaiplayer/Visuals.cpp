@@ -62,17 +62,17 @@ Visuals *Visuals::Get(int Visual, wxWindow *_parent)
 }
 
 
-float Visuals::wspw=0;
-float Visuals::wsph=0;
-
 Visuals::Visuals()
 {
-	from = lastmove = to = D3DXVECTOR2(0,0);
+	from = lastmove = to = zoomMove = D3DXVECTOR2(0,0);
+	wspw=1;
+	wsph=1;
 	line=0;
 	font=0;
 	device=0;
 	start=end=oldtime=0;
 	blockevents=false;
+	zoomScale=D3DXVECTOR2(1.0f,1.0f);
 	dummytext=NULL;
 }
 
@@ -240,7 +240,6 @@ void Visuals::Draw(int time)
 	line->SetWidth(2.0);
 
 	DrawVisual(time);
-
 	line->SetAntialias(FALSE);
 	oldtime=time;
 }
@@ -520,6 +519,18 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 				wxString txt=Editor->GetValue();
 				if(!isf){
 					ChangeText(&txt, "\\p1", edit->InBracket, edit->Placed);
+				}
+				isf=edit->FindVal("pos\\(([0-9,]+)\\)", &tmp, "", 0, true);
+				if(!isf){
+					DrawingAndClip *drawing = (DrawingAndClip*)this;
+					float xx = drawing->_x * drawing->scale.x;
+					float yy = drawing->_y * drawing->scale.y;
+					ChangeText(&txt, "\\pos("+getfloat(xx)+","+getfloat(yy)+")", edit->InBracket, edit->Placed);
+				}
+				isf=edit->FindVal("an([0-9])", &tmp, "", 0, true);
+				if(!isf){
+					DrawingAndClip *drawing = (DrawingAndClip*)this;
+					ChangeText(&txt, "\\an"+getfloat(drawing->alignment,"1.0f"), edit->InBracket, edit->Placed);
 				}
 				txt.Replace("}{","");
 				dummytext=grid->GetVisible(&vis, &textplaced);

@@ -19,8 +19,6 @@
 #include <wx/regex.h>
 #include <math.h> 
 
-float DrawingAndClip::_x=0;
-float DrawingAndClip::_y=0;
 
 ClipPoint::ClipPoint()
 {
@@ -45,19 +43,24 @@ bool ClipPoint::IsInPos(wxPoint pos, int diff)
 	return (abs(pos.x-x) <= diff && abs(pos.y-y) <= diff);
 }
 
-D3DXVECTOR2 ClipPoint::GetVector()
+D3DXVECTOR2 ClipPoint::GetVector(DrawingAndClip *parent)
 {
-	D3DXVECTOR2 v = D3DXVECTOR2((x+DrawingAndClip::_x)/Visuals::wspw,(y+DrawingAndClip::_y)/Visuals::wsph);
+	D3DXVECTOR2 v = D3DXVECTOR2((((x + parent->_x) / parent->wspw) - parent->zoomMove.x) * parent->zoomScale.x,
+		(((y + parent->_y)/parent->wsph) - parent->zoomMove.y) * parent->zoomScale.y);
 	return v;
 }
 
-int ClipPoint::wx()
+float ClipPoint::wx(DrawingAndClip *parent, bool zoomConversion)
 {
-	return (x+DrawingAndClip::_x)/Visuals::wspw;
+	float wx = ((x + parent->_x ) / parent->wspw);
+	if(zoomConversion){wx = (wx - parent->zoomMove.x) * parent->zoomScale.x;}
+	return wx;
 }
-int ClipPoint::wy()
+float ClipPoint::wy(DrawingAndClip *parent, bool zoomConversion)
 {
-	return (y+DrawingAndClip::_y)/Visuals::wsph;
+	float wy = ((y + parent->_y )/parent->wsph);
+	if(zoomConversion){wy = (wy - parent->zoomMove.y) * parent->zoomScale.y;}
+	return wy;
 }
 
 DrawingAndClip::DrawingAndClip()
@@ -88,7 +91,7 @@ void DrawingAndClip::DrawVisual(int time)
 	if(!size){return;}
 	line->SetWidth(1.0f);
 	if(drawToolLines){
-		D3DXVECTOR2 v3[3] = {Points[FindPoint(size-1,"m",false,true)].GetVector(), D3DXVECTOR2(x,y), Points[size-1].GetVector()};
+		D3DXVECTOR2 v3[3] = {Points[FindPoint(size-1,"m",false,true)].GetVector(this), D3DXVECTOR2(x,y), Points[size-1].GetVector(this)};
 		line->Begin();
 		DrawDashedLine(v3, (Points[size-1].type!="m")? 3 : 2);
 		line->End();
@@ -112,7 +115,7 @@ void DrawingAndClip::DrawVisual(int time)
 
 			if(g > 1){
 				line->Begin();
-				D3DXVECTOR2 v2[2]={Points[g-1].GetVector(), Points[lastM].GetVector()};
+				D3DXVECTOR2 v2[2]={Points[g-1].GetVector(this), Points[lastM].GetVector(this)};
 				line->Draw(v2, 2, 0xFFBB0000);
 				line->End();
 				DrawRect(lastM);
@@ -159,7 +162,7 @@ void DrawingAndClip::SetCurVisual()
 		}
 		
 		//wxLogStatus("text "+textwithclip);
-		Editor->SetTextS(txt,false);
+		Editor->SetTextS(txt,false,false);
 		Editor->modified=true;
 
 		_x=linepos.x/scale.x;
@@ -311,7 +314,7 @@ void DrawingAndClip::DrawLine(int i)
 		diff = (i-j) - 2;
 		//wxLogStatus("diff %i", diff);
 	}
-	D3DXVECTOR2 v2[2]={Points[i-diff].GetVector(),Points[i].GetVector()};
+	D3DXVECTOR2 v2[2]={Points[i-diff].GetVector(this),Points[i].GetVector(this)};
 	line->Draw(v2, 2, 0xFFBB0000);
 	line->End();
 	if(i>1){DrawRect(i-1);}
@@ -320,12 +323,12 @@ void DrawingAndClip::DrawLine(int i)
 
 void DrawingAndClip::DrawRect(int coord)
 {
-	Visuals::DrawRect(Points[coord].GetVector(), Points[coord].isSelected, 3.0f);
+	Visuals::DrawRect(Points[coord].GetVector(this), Points[coord].isSelected, 3.0f);
 }
 	
 void DrawingAndClip::DrawCircle(int coord)
 {
-	Visuals::DrawCircle(Points[coord].GetVector(), Points[coord].isSelected, 3.0f);
+	Visuals::DrawCircle(Points[coord].GetVector(this), Points[coord].isSelected, 3.0f);
 }
 	
 int DrawingAndClip::DrawCurve(int i, bool bspline)
@@ -354,14 +357,14 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 		//if(tmp.type=="s"){Points.insert(Points.begin()+i-1,tmp);}
 		for(int j=0, g=i-1; j<bssize; j++, g++)
 		{
-			v2[j]=Points[g].GetVector();
+			v2[j]=Points[g].GetVector(this);
 		}
-		v2[bssize]=Points[i-1].GetVector();
+		v2[bssize]=Points[i-1].GetVector(this);
 		line->Draw(v2, pts+2, 0xFFAA33AA);
 		int iplus1= (i+bssize-2 < (int)Points.size()-1)? i+1 : 0;
 		if(i-1 != 0 || iplus1 != 0){
 			//wxLogStatus("line %i, %i", i-1, iplus1);
-			D3DXVECTOR2 v3[3]={Points[i-1].GetVector(), v4[0], Points[iplus1].GetVector()};
+			D3DXVECTOR2 v3[3]={Points[i-1].GetVector(this), v4[0], Points[iplus1].GetVector(this)};
 			line->Draw(v3, 3, 0xFFBB0000);
 		}
 		delete[] v2;
@@ -379,7 +382,7 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 		}
 		Curve(i-1, &v4,false);
 		//if(tmp.type=="s"){Points[i-1]=tmp;}
-		D3DXVECTOR2 v2[4]={Points[i-1].GetVector(),Points[i].GetVector(),Points[i+1].GetVector(),Points[i+2].GetVector()};
+		D3DXVECTOR2 v2[4]={Points[i-1].GetVector(this),Points[i].GetVector(this),Points[i+1].GetVector(this),Points[i+2].GetVector(this)};
 		line->Draw(v2, 2, 0xFF0000FF);
 		line->Draw(&v2[2], 2, 0xFF0000FF);
 		Points[i-1]=tmp;
@@ -401,8 +404,8 @@ void DrawingAndClip::Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bsplin
 	{
 		if(acpt>(spoints-1)){acpt=0;}
 		//if(g==0 && Points[pos].type=="s" ){acpt--;}
-		x[g]=(Points[pos+acpt].x+_x)/wspw;
-		y[g]=(Points[pos+acpt].y+_y)/wsph;
+		x[g]=Points[pos+acpt].wx(this, true);
+		y[g]=Points[pos+acpt].wy(this, true);
 		//if(g==0 && Points[pos].type=="s" ){acpt++;}
 		acpt++;
 	}
@@ -463,7 +466,9 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	if(blockevents){return;}
 	if(tab->Video->isFullscreen){wxGetMousePosition(&x,&y);}
 	else{event.GetPosition(&x,&y);}
-	wxPoint xy=wxPoint(x, y);
+	int zx = (x/zoomScale.x) + zoomMove.x;
+	int zy = (y/zoomScale.y) + zoomMove.y;
+	wxPoint xy=wxPoint(zx, zy);
 	bool click=event.LeftDown();
 	bool leftisdown = event.LeftIsDown();
 	bool right=event.RightDown();
@@ -529,8 +534,8 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		size_t i= (psize > 1)? 1 : 0;
 		for(size_t i = 0; i < psize; i++)
 		{
-			float pointx=(Points[i].x+_x)/wspw, pointy=(Points[i].y+_y)/wsph;
-			if(abs(pointx-x)<5 && abs(pointy-y)<5)
+			float pointx=Points[i].wx(this), pointy=Points[i].wy(this);
+			if(abs(pointx-zx)<5 && abs(pointy-zy)<5)
 			{
 				int j = i;
 				int er = 1;
@@ -594,15 +599,15 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		grabbed=-1;
 		for(size_t i=0; i < psize; i++)
 		{
-			float pointx=(Points[i].x+_x)/wspw, pointy=(Points[i].y+_y)/wsph;
-			if(abs(pointx-x)<5 && abs(pointy-y)<5)
+			float pointx=Points[i].wx(this), pointy=Points[i].wy(this);
+			if(abs(pointx-zx)<5 && abs(pointy-zy)<5)
 			{
 				if(!acpoint.isSelected){ChangeSelection();}
 				lastpoint = acpoint = Points[i];
 				Points[i].isSelected=true;
 				grabbed=i;
-				diffs.x=pointx-x;
-				diffs.y=pointy-y;
+				diffs.x=pointx-zx;
+				diffs.y=pointy-zy;
 				tab->Video->CaptureMouse();
 				snapYminus=false;snapYplus=false;snapXminus=false;snapXplus=false;
 				break;
@@ -653,10 +658,10 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	if(leftisdown && grabbed!=-1 && !ctrl)
 	{
 		//drawtxt=true;
-		x=MID(0,x,VideoSize.x);
-		y=MID(0,y,VideoSize.y);
-		Points[grabbed].x=((x+diffs.x)*wspw)-_x;
-		Points[grabbed].y=((y+diffs.y)*wsph)-_y;
+		zx=MID(0,zx,VideoSize.x);
+		zy=MID(0,zy,VideoSize.y);
+		Points[grabbed].x=((zx+diffs.x)*wspw)-_x;
+		Points[grabbed].y=((zy+diffs.y)*wsph)-_y;
 
 		if(event.ShiftDown()){
 			int grabbedPlus1 = (grabbed >= (int)psize-1)? 0 : grabbed+1;
@@ -752,7 +757,7 @@ void DrawingAndClip::SelectPoints(){
 		r = (selection.x > selection.width)? selection.x : selection.width,
 		b = (selection.y > selection.height)? selection.y : selection.height;
 	for( size_t i = 0; i < Points.size(); i++){
-		D3DXVECTOR2 point = Points[i].GetVector();
+		D3DXVECTOR2 point = Points[i].GetVector(this);
 		if(point.x >= x && point.x <= r && 
 			point.y >= y && point.y <= b){
 				Points[i].isSelected = true;

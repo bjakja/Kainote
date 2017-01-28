@@ -45,7 +45,7 @@ public:
 class DescTxtCtrl : public KaiChoice
 {
 public:
-	DescTxtCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc);
+	DescTxtCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc, const wxValidator &validator = wxDefaultValidator);
 	virtual ~DescTxtCtrl(){};
 	void ChangeValue(wxString &val);
 private:

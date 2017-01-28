@@ -745,7 +745,7 @@ void SubsGrid::SelectRow(int row, bool addToSelected, bool select, bool norefres
 	}
 //done:
 	if(Edit->Visual==CHANGEPOS/* || Edit->Visual==MOVEALL*/){
-		Kai->GetTab()->Video->SetVisual(Edit->line->Start.mstime,Edit->line->End.mstime);
+		Kai->GetTab()->Video->SetVisual();
 		Kai->GetTab()->Video->Render();
 	}
 }
@@ -968,7 +968,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 			lastsel=row;
 			Refresh(false);
 			if(Edit->Visual==CHANGEPOS/* || Edit->Visual==MOVEALL*/){
-				Kai->GetTab()->Video->SetVisual(Edit->line->Start.mstime,Edit->line->End.mstime);
+				Kai->GetTab()->Video->SetVisual();
 				Kai->GetTab()->Video->Render();
 			}
 		}
@@ -1788,7 +1788,7 @@ void SubsGrid::GetUndo(bool redo)
 			if(vb->GetState()==Paused){vb->Render();}
 		}
 	}else if(Edit->Visual==CHANGEPOS){
-		vb->SetVisual(Edit->line->Start.mstime, Edit->line->End.mstime, false, true);
+		vb->SetVisual(false, true);
 	}
 	wxString newResolution = GetSInfo("PlayResX") +" x "+ GetSInfo("PlayResY");
 	if(resolution != newResolution){Kai->SetSubsResolution();}
@@ -1920,7 +1920,7 @@ void SubsGrid::SetModified(bool redit, bool dummy, int SetEditBoxLine)
 		if(!dummy){
 			VideoCtrl *vb=Kai->GetTab()->Video;
 			if(Edit->Visual >= CHANGEPOS){
-				vb->SetVisual(Edit->line->Start.mstime, Edit->line->End.mstime, false, true);
+				vb->SetVisual(false, true);
 			}else{
 				if(vb->IsShown() || vb->isFullscreen){vb->OpenSubs(SaveText());}
 

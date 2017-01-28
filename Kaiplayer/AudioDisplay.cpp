@@ -288,9 +288,9 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	HR (d3dDevice->GetBackBuffer(0,0, D3DBACKBUFFER_TYPE_MONO, &backBuffer),_("Nie można stworzyć powierzchni"));
 	
 	HR(D3DXCreateLine(d3dDevice, &d3dLine), _("Nie można stworzyć linii D3DX"));
-	HR(D3DXCreateFontW(d3dDevice, 18, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFont ), _("Nie można stworzyć czcionki D3DX"));
-	HR(D3DXCreateFontW(d3dDevice, 12, 0, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFont8 ), _("Nie można stworzyć czcionki D3DX"));
-	HR(D3DXCreateFontW(d3dDevice, 16, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Verdana"), &d3dFont9 ), _("Nie można stworzyć czcionki D3DX"));
+	HR(D3DXCreateFontW(d3dDevice, 18, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFont ), _("Nie można stworzyć czcionki D3DX"));
+	HR(D3DXCreateFontW(d3dDevice, 12, 0, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFont8 ), _("Nie można stworzyć czcionki D3DX"));
+	HR(D3DXCreateFontW(d3dDevice, 16, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Verdana"), &d3dFont9 ), _("Nie można stworzyć czcionki D3DX"));
 	//HR(d3dLine->SetAntialias(TRUE), _("Linia nie ustawi AA"));
 	HR (d3dDevice->CreateOffscreenPlainSurface(size.x,size.y,D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &spectrumSurface , 0), _("Nie można stworzyć plain surface"));
 	//HR(d3dDevice->CreateTexture(size.x, size.y, 1, D3DUSAGE_RENDERTARGET,
@@ -502,7 +502,7 @@ void AudioDisplay::DoUpdateImage() {
 			for(size_t j=0; j<karaoke->syls.size(); j++)
 			{
 				acsyl=karaoke->syls[j];
-				acsyl.Replace(" ", "_");
+				//acsyl.Replace(" ", "_");
 				int fw, fh;
 				GetTextExtent(acsyl,&fw, &fh, 0, 0, &karafont);
 
@@ -516,9 +516,15 @@ void AudioDisplay::DoUpdateImage() {
 				}
 				int center=((XX-karstart)-fw)/2;
 				//dc.DrawText(acsyl,center+karstart,0);
-				RECT rect={center+karstart-fw,0,center+karstart+(fw*2),fh};
-				//d3dFont->DrawTextW(NULL, acsyl.wchar_str(), -1, &rect, DT_CENTER, syllableTextColor );
-				DRAWOUTTEXT(d3dFont9, acsyl, rect, DT_CENTER, syllableTextColor );
+				D3DXVECTOR2 v5[2]={D3DXVECTOR2(center+karstart-1,(fh/2)+1), D3DXVECTOR2(center+karstart+fw+2,(fh/2+1))};
+				d3dLine->SetWidth(fh);
+				d3dLine->Begin();
+				d3dLine->Draw(v5,2,syllableBondaresColor);
+				d3dLine->End();
+				d3dLine->SetWidth(1);
+				RECT rect={center+karstart,0,center+karstart+(fw*2),fh};
+				d3dFont9->DrawTextW(NULL, acsyl.wchar_str(), -1, &rect, DT_LEFT, syllableTextColor );
+				//DRAWOUTTEXT(d3dFont9, acsyl, rect, DT_CENTER, syllableTextColor );
 				//obramowanie aktywynej sylaby
 				if(letter>=0 && syll >=0 && syll==j){
 					int start,end;
@@ -532,9 +538,9 @@ void AudioDisplay::DoUpdateImage() {
 					end=GetXAtMS(end);
 
 					int center=start+((end-start-fw)/2);
-					D3DXVECTOR2 v3[2]={D3DXVECTOR2(center+fwl,0),D3DXVECTOR2(center+fwl,fh)};
+					D3DXVECTOR2 v3[2]={D3DXVECTOR2(center+fwl,1),D3DXVECTOR2(center+fwl,fh)};
 					d3dLine->Begin();
-					d3dLine->Draw(v3,2,syllableBondaresColor);
+					d3dLine->Draw(v3,2,syllableTextColor);
 					d3dLine->End();
 				}
 				if(j==whichsyl){
@@ -630,19 +636,19 @@ void AudioDisplay::DoUpdateImage() {
 		d3dLine->End();
 		d3dLine->SetAntialias(FALSE);
 		//d3dLine->SetWidth(1);
-		
+		if(!player->IsPlaying()){
+			STime time;
+			time.NewTime(GetMSAtX(curpos));
+			wxString text = time.GetFormatted(ASS);
+			RECT rect;
+			rect.left = curpos-150;
+			rect.top = 5;
+			rect.right = rect.left + 300;
+			rect.bottom = rect.top + 100;
+			DRAWOUTTEXT(d3dFont,text,rect,DT_CENTER, 0xFFFFFFFF);
+		}
 	}
-	if(!player->IsPlaying()){
-		STime time;
-		time.NewTime(GetMSAtX(curpos));
-		wxString text = time.GetFormatted(ASS);
-		RECT rect;
-		rect.left = curpos-150;
-		rect.top = 5;
-		rect.right = rect.left + 300;
-		rect.bottom = rect.top + 100;
-		DRAWOUTTEXT(d3dFont,text,rect,DT_CENTER, 0xFFFFFFFF);
-	}
+	
 	
 	// Draw focus border
 	if (hasFocus) {
@@ -796,8 +802,7 @@ void AudioDisplay::DrawTimescale() {
 	CreateVERTEX(&v9[2], 0, h+timelineHeight, timescaleBackground);
 	CreateVERTEX(&v9[3], w, h+timelineHeight, timescaleBackground);
 
-	//HRN(
-		d3dDevice->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX) );//,"primitive failed");
+	HRN(d3dDevice->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX) ),"primitive failed");
 	D3DCOLOR timescale3dLight = D3DCOLOR_FROM_WX(wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT));
 	d3dLine->Begin();
 	v2[0]=D3DXVECTOR2(0,h);

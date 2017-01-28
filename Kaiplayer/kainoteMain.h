@@ -243,6 +243,7 @@ enum{
 	XX( PlayPauseG,)\
 	XX( PreviousFrame,)\
 	XX( NextFrame,)\
+	XX( VideoZoom,)\
 	XX( SetStartTime,)\
 	XX( SetEndTime,)\
 	XX( SetVideoAtStart,)\

@@ -13,8 +13,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-//  This file is for automatic version change
+//  This file is for automatic build change
 //  Autoversioning.exe change it after build using commandline
 
-#define VersionKainote "0.8.4.673"
-#define NumVersionKainote 0,8,4,673
+#define VersionKainote "0.9.0.676"
+#define NumVersionKainote 0,9,0,676

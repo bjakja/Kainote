@@ -104,9 +104,10 @@ private:
 	void OnEraseBackground(wxEraseEvent &event){}
 	void ShowList();
 	void SendEvent(int choice);
-	void SetSelectionByPartialName(const wxString &PartialName);
+	void SetSelectionByPartialName(const wxString &PartialName, bool changeText=false);
 	void SelectChoice(int sel, bool select = true, bool sendEvent=true);
 	inline void CalcMaxWidth(wxSize *result, bool changex, bool changey);
+	void OnArrow(wxCommandEvent &evt);
 	bool enter;
 	bool clicked;
 	wxArrayString *list;

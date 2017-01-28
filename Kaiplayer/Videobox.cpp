@@ -1220,7 +1220,7 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 
 	if(vis==eb->Visual){return;}
 	if(Vclips && vis == 0){ 
-		SetVisual(0,0,true); 
+		SetVisual(true); 
 		if(vToolbar->ClipToolsShown()||vToolbar->MoveToolsShown()){vToolbar->ShowTools(false,vToolbar->ClipToolsShown());}
 	}else if( vis != eb->Visual ){
 		if(vis==VECTORCLIP || vis==VECTORDRAW || eb->Visual==VECTORCLIP 
@@ -1231,7 +1231,7 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 				else{vToolbar->ShowTools(vector, !isMove) ;}
 		}
 		eb->Visual = vis;
-		SetVisual(eb->line->Start.mstime, eb->line->End.mstime);
+		SetVisual();
 		if(vis==MOVEALL){Vclips->ChangeTool(vToolbar->GetMoveToggled());}
 		if(!hasArrow){SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 	}

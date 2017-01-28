@@ -906,19 +906,29 @@ bool VideoRend::UpdateRects()
 		pbar=false;
 	}
 	if(!rt.height || !rt.width){return false;}
-
+	
 	windowRect.bottom=rt.height;
 	windowRect.right=rt.width;
 	windowRect.left=rt.x;
 	windowRect.top=rt.y;
 
-	if(tab->edytor && !isFullscreen || hasZoom){
+	if(tab->edytor && !isFullscreen){
 		backBufferRect=windowRect;
 	}
 	else
 	{
 		int arwidth=rt.height / AR;
 		int arheight=rt.width * AR;
+		if(hasZoom){
+			if(arwidth > rt.width){
+				int zoomARHeight = (zoomRect.width - zoomRect.x + 1) * AR;
+				arheight = (zoomARHeight > rt.height)? zoomARHeight : rt.height;
+			}
+			if(arheight > rt.height){
+				int zoomARWidth = (zoomRect.height - zoomRect.y + 1) / AR;
+				arwidth = (zoomARWidth > rt.width)? zoomARWidth : rt.height;
+			}
+		}
 		if(arwidth > rt.width)
 		{
 			int onebar=(rt.height-arheight)/2;
@@ -942,15 +952,15 @@ bool VideoRend::UpdateRects()
 	}
 	if(hasZoom){
 		wxSize s(backBufferRect.right-1, backBufferRect.bottom-1);
-		//wxSize mains((mainStreamRect.right), (mainStreamRect.bottom));
-		//float videoToScreenX = mains.x / vwidth; 
-		//float videoToScreenY = mains.y / vheight; 
 		float videoToScreenX = (float)s.x / (float)vwidth; 
 		float videoToScreenY = (float)s.y / (float)vheight; 
 		zoomRect.x = mainStreamRect.left * videoToScreenX;
 		zoomRect.y = mainStreamRect.top * videoToScreenY;
 		zoomRect.height = (mainStreamRect.bottom * videoToScreenY);
 		zoomRect.width = (mainStreamRect.right * videoToScreenX);
+		if(Vclips){
+			SetVisualZoom();
+		}
 	}
 	return true;
 }
@@ -981,8 +991,7 @@ void VideoRend::UpdateVideoWindow()
 	resized=true;
 	if(Vclips){
 		Vclips->SizeChanged(wxSize(windowRect.right, windowRect.bottom),lines, m_font, d3device);
-		TabPanel* tab=(TabPanel*)GetParent();
-		SetVisual(tab->Edit->line->Start.mstime, tab->Edit->line->End.mstime);
+		SetVisual();
 	}
 	block=false;
 }
@@ -1002,20 +1011,39 @@ void VideoRend::Zoom(const wxSize &size)
 	mainStreamRect.top = zoomRect.y / videoToScreenYY;
 	mainStreamRect.right = (zoomRect.width/ videoToScreenXX);
 	mainStreamRect.bottom = (zoomRect.height/ videoToScreenYY);
+	if(Vclips){
+		SetVisualZoom();
+		if(Vclips && (Vclips->Visual < CLIPRECT || Vclips->Visual > VECTORDRAW)){
+			//SetVisual();
+			SAFE_DELETE(Vclips->dummytext);
+			Vclips->SetCurVisual();
+			VisEdit=true;
+		}
+		//else{SetVisualZoom();}
+	}
 	Render(false);
+}
+
+void VideoRend::SetVisualZoom()
+{
+	float videoToScreenX = (float)(backBufferRect.right) / (float)(vwidth); 
+	float videoToScreenY = (float)(backBufferRect.bottom) / (float)(vheight); 
+	float zoomX = mainStreamRect.left * videoToScreenX;
+	float zoomY = mainStreamRect.top * videoToScreenY;
+	Vclips->SetZoom(D3DXVECTOR2(zoomX, zoomY), 
+		D3DXVECTOR2((float)vwidth / (float)(mainStreamRect.right - mainStreamRect.left),
+		(float)vheight / (float)(mainStreamRect.bottom - mainStreamRect.top)));
 }
 
 void VideoRend::DrawZoom()
 {
 	D3DXVECTOR2 v2[5];
 	wxSize s(backBufferRect.right, backBufferRect.bottom);
-	//float videoToScreenX = zoomRect.width / vwidth; 
-	//float videoToScreenY = zoomRect.height / vheight; 
-	v2[0].x = zoomRect.x;//mainStreamRect.left * videoToScreenX;//
-	v2[0].y = zoomRect.y;//mainStreamRect.top * videoToScreenY;//
+	v2[0].x = zoomRect.x;
+	v2[0].y = zoomRect.y;
 	v2[1].x = v2[0].x;
-	v2[1].y = zoomRect.height;//((mainStreamRect.bottom - mainStreamRect.top) * videoToScreenY)-1;//
-	v2[2].x = zoomRect.width;//((mainStreamRect.right - mainStreamRect.left) * videoToScreenX)-1;//
+	v2[1].y = zoomRect.height;
+	v2[2].x = zoomRect.width;
 	v2[2].y = v2[1].y;
 	v2[3].x = v2[2].x;
 	v2[3].y = v2[0].y;
@@ -1065,7 +1093,7 @@ void VideoRend::ZoomMouseHandle(wxMouseEvent &evt)
 	}
 	
 	
-	if(!evt.LeftDown()){
+	if(!(evt.LeftDown()||evt.LeftIsDown())){
 		bool setarrow=false;
 		if(abs(x-zoomRect.x)<5){
 			setarrow=true;
@@ -1190,9 +1218,6 @@ void VideoRend::ZoomMouseHandle(wxMouseEvent &evt)
 		if(zoomRect.width - zoomRect.x < 100){
 			zoomRect = tmp;
 		}
-		
-		//wxLogStatus("zoom %f %f %f %f", zoomRect.x, zoomRect.y, zoomRect.width, zoomRect.height);
-		//Render(false);
 		Zoom(s);
 	}
 
@@ -1374,7 +1399,7 @@ void VideoRend::ChangeVobsub(bool vobsub)
 	pan->Video->ChangeStream();
 }
 
-void VideoRend::SetVisual(int start, int end, bool remove, bool settext)
+void VideoRend::SetVisual(bool remove, bool settext)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
 
@@ -1397,16 +1422,14 @@ void VideoRend::SetVisual(int start, int end, bool remove, bool settext)
 		}else{SAFE_DELETE(Vclips->dummytext);}
 		if(settext){OpenSubs(pan->Grid1->GetVisible());}
 		Vclips->SizeChanged(wxSize(windowRect.right, windowRect.bottom),lines, m_font, d3device);
-
-		Vclips->SetVisual(start, end);
+		SetVisualZoom();
+		Vclips->SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);
 		VisEdit=true;
 	}
 }
 
-void VideoRend::SetVisual()
+void VideoRend::ResetVisual()
 {
-
-	//TabPanel* pan=(TabPanel*)GetParent();
 	SAFE_DELETE(Vclips->dummytext);
 	Vclips->SetCurVisual();
 	VisEdit=true;

@@ -142,14 +142,15 @@ class VideoRend : public wxWindow
 		void MovePos(int cpos);
 		void ChangeVobsub(bool vobsub=false);
 		wxArrayString GetStreams();
-		void SetVisual(int start, int end, bool remove=false, bool settext=false);
-		void SetVisual();
+		void SetVisual(bool remove=false, bool settext=false);
+		void ResetVisual();
 		byte *GetFramewithSubs(bool subs, bool *del);
 		bool UpdateRects();
 		void Zoom(const wxSize &size);
 		void DrawZoom();
 		void ZoomMouseHandle(wxMouseEvent &evt);
 		void SetZoom();
+		void SetVisualZoom();
 		void DeleteAudioCache(){if(VFF){VFF->DeleteOldAudioCache();}}
 		void SetColorSpace(const wxString& matrix, bool render=true){
 			if(VFF){VFF->SetColorSpace(matrix);Render(false);}
@@ -193,6 +194,7 @@ class VideoRend : public wxWindow
 		int playend;
 		size_t lasttime;
 		std::vector<chapter> chaps;
+		FloatRect zoomRect;
 		bool EnumFilters(Menu *menu);
 		bool FilterConfig(wxString name, int idx, wxPoint pos);
 	private:
@@ -226,7 +228,6 @@ class VideoRend : public wxWindow
 		RECT windowRect;
 		RECT backBufferRect;
 		RECT mainStreamRect;
-		FloatRect zoomRect;
 		wxPoint zoomDiff;
 		
 		int avframetime;

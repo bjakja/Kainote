@@ -60,9 +60,12 @@ void Move::DrawVisual(int time)
 
 wxString Move::GetVisual()
 {
-	return "\\move("+getfloat(from.x*wspw)+","+getfloat(from.y*wsph)+","+
-		getfloat(to.x*wspw)+","+getfloat(to.y*wsph)+","+
-		getfloat(tbl[4]-tab->Edit->line->Start.mstime)+","+getfloat(tbl[5]-tab->Edit->line->Start.mstime)+")";
+	return "\\move("+getfloat(((from.x/zoomScale.x)+zoomMove.x)*wspw)+","+
+		getfloat(((from.y/zoomScale.y)+zoomMove.y)*wsph)+","+
+		getfloat(((to.x/zoomScale.x)+zoomMove.x)*wspw)+","+
+		getfloat(((to.y/zoomScale.y)+zoomMove.y)*wsph)+","+
+		getfloat(tbl[4]-tab->Edit->line->Start.mstime)+","+
+		getfloat(tbl[5]-tab->Edit->line->Start.mstime)+")";
 }
 
 void Move::OnMouseEvent(wxMouseEvent &evt)
@@ -147,9 +150,13 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 void Move::SetCurVisual()
 {
 	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, tbl);
-	from = to = D3DXVECTOR2(linepos.x/wspw,linepos.y/wsph);
+	from = to = D3DXVECTOR2(((linepos.x/wspw)-zoomMove.x)*zoomScale.x,
+		((linepos.y/wsph)-zoomMove.y)*zoomScale.y);
 
-	if(tbl[6]>3){to.x=tbl[2]/wspw, to.y=tbl[3]/wsph;}
+	if(tbl[6]>3){
+		to.x=((tbl[2]/wspw)-zoomMove.x)*zoomScale.x; 
+		to.y=((tbl[3]/wsph)-zoomMove.y)*zoomScale.y;
+	}
 	moveStart=(int)tbl[4];
 	if(tbl[4]>tbl[5]){tbl[5]=end;}
 	moveEnd=(int)tbl[5];

@@ -27,7 +27,8 @@ void RotationZ::DrawVisual(int time)
 {
 	if(time != oldtime && tbl[6]>3){
 		from=CalcMovePos();
-		from.x/=wspw; from.y/=wsph;
+		from.x = ((from.x/wspw)-zoomMove.x)*zoomScale.x; 
+		from.y = ((from.y/wsph)-zoomMove.y)*zoomScale.y;
 		to=from;
 		if(org==from){org=from;}
 		else{
@@ -112,7 +113,8 @@ void RotationZ::DrawVisual(int time)
 wxString RotationZ::GetVisual()
 {
 	if(isOrg){
-		return "\\org("+getfloat(org.x*wspw)+","+getfloat(org.y*wsph)+")";
+		return "\\org("+getfloat(((org.x/zoomScale.x)+zoomMove.x)*wspw)+","+
+			getfloat(((org.y/zoomScale.y)+zoomMove.y)*wsph)+")";
 	}
 
 	float angle = lastmove.x - atan2((org.y-to.y), (org.x-to.x)) * (180.f / 3.1415926536f);
@@ -177,7 +179,8 @@ void RotationZ::SetCurVisual()
 {
 	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, tbl);
 	if(tbl[6]>3){linepos=CalcMovePos();}
-	from = D3DXVECTOR2(linepos.x/wspw,linepos.y/wsph);
+	from = D3DXVECTOR2(((linepos.x/wspw)-zoomMove.x)*zoomScale.x,
+		((linepos.y/wsph)-zoomMove.y)*zoomScale.y);
 	lastmove = D3DXVECTOR2(0, 0);
 	wxString res;
 	if(tab->Edit->FindVal("frz?([^\\\\}]+)", &res)){
@@ -188,8 +191,8 @@ void RotationZ::SetCurVisual()
 	if(tab->Edit->FindVal("org\\(([^\\)]+)", &res)){
 		wxString rest;
 		double orx,ory;
-		if(res.BeforeFirst(',',&rest).ToDouble(&orx)){org.x=orx/wspw;}
-		if(rest.ToDouble(&ory)){org.y=ory/wspw;}
+		if(res.BeforeFirst(',',&rest).ToDouble(&orx)){org.x=((orx/wspw)-zoomMove.x)*zoomScale.x;}
+		if(rest.ToDouble(&ory)){org.y=((ory/wsph)-zoomMove.y)*zoomScale.y;}
 	//wxLogStatus("%f %f", orx,ory);
 	}else{org=from;}
 	to=org;

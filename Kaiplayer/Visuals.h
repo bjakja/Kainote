@@ -38,6 +38,7 @@ enum{
 
 class Dialogue;
 class TabPanel;
+class DrawingAndClip;
 
 class ClipPoint
 {
@@ -45,9 +46,9 @@ public:
 	ClipPoint(float x, float y, wxString type, bool isstart);
 	ClipPoint();
 	bool IsInPos(wxPoint pos, int diff);
-	D3DXVECTOR2 GetVector();
-	int wx();
-	int wy();
+	D3DXVECTOR2 GetVector(DrawingAndClip *parent);
+	float wx(DrawingAndClip *parent, bool zoomConversion = false);
+	float wy(DrawingAndClip *parent, bool zoomConversion = false);
 	float x;
 	float y;
 	wxString type;
@@ -67,6 +68,10 @@ public:
 	void DrawCross(D3DXVECTOR2 position, D3DCOLOR color = 0xFFFF0000, bool useBegin=true);
 	void DrawArrow(D3DXVECTOR2 vector, D3DXVECTOR2 *vector1, int diff=0);
 	void DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen = 4);
+	void SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 scale){
+		zoomMove = move;
+		zoomScale = scale;
+	};
 
 	virtual void SetVisual(int _start,int _end);
 	virtual void Draw(int time);
@@ -88,7 +93,7 @@ public:
 	
 	double tbl[7];
 	// wspw i h - potrzebne s¹ do przejœcia z rozdzielczoœci napisów i do niej
-	static float wspw, wsph;
+	float wspw, wsph;
 
 	LPD3DXLINE line;
 	LPD3DXFONT font;
@@ -109,6 +114,8 @@ public:
 	wxString *dummytext;
 	wxPoint dumplaced;
 	wxPoint textplaced;
+	D3DXVECTOR2 zoomMove;
+	D3DXVECTOR2 zoomScale;
 };
 
 class PosData{
@@ -239,10 +246,12 @@ public:
 	wxString GetVisual();
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
-	wxPoint Corner[2];
+	int HitTest(D3DXVECTOR2 pos, bool diff = true);
+	D3DXVECTOR2 Corner[2];
 	bool invClip;
+	bool showClip;
 	int grabbed;
-	wxPoint diffs;
+	D3DXVECTOR2 diffs;
 };
 
 class DrawingAndClip : public Visuals
@@ -292,7 +301,7 @@ public:
 	wxRect selection;
 	D3DXVECTOR2 scale;
 	// _x i _y to punkt przemieszczenia w przypadku rysunków.
-	static float _x, _y;
+	float _x, _y;
 	D3DXVECTOR2 offsetxy;
 	wxString textwithclip;
 };

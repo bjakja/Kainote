@@ -30,14 +30,16 @@ void RotationXY::DrawVisual(int time)
 {
 	if(time != oldtime && tbl[6]>3){
 		from=CalcMovePos();
-		from.x/=wspw; from.y/=wsph;
+		from.x = ((from.x/wspw)-zoomMove.x)*zoomScale.x; 
+		from.y = ((from.y/wsph)-zoomMove.y)*zoomScale.y;
 		to=from;
-		if(org==from){org=from;}
-		else{
+		if(org==from){
+			org=from;
+		}else{
 			to=org;
 		}
 	}
-
+	//FloatRect rc1 = tab->Video->zoomRect;
 	wxSize s = VideoSize;
 	float ratio= (float)s.x/(float)s.y;
 	float xxx=((org.x/s.x)*2)-1;
@@ -70,7 +72,7 @@ void RotationXY::DrawVisual(int time)
 								D3DXToRadian(120),    // the horizontal field of view default 120
 								ratio, // aspect ratio
 								1.0f,    // the near view-plane
-								100000.0f);    // the far view-plane
+								10000.0f);    // the far view-plane
 
 	D3DXMatrixTranslation(&matTramsate,xxx,-yyy,0.0f);
 	device->SetTransform(D3DTS_PROJECTION, &(matProjection*matTramsate));    // set the projection
@@ -166,7 +168,9 @@ void RotationXY::DrawVisual(int time)
 wxString RotationXY::GetVisual()
 {
 	if(isOrg){
-		return "\\org("+getfloat(org.x*wspw)+","+getfloat(org.y*wsph)+")";
+		//return "\\org("+getfloat(org.x*wspw)+","+getfloat(org.y*wsph)+")";
+		return "\\org("+getfloat(((org.x/zoomScale.x)+zoomMove.x)*wspw)+","+
+			getfloat(((org.y/zoomScale.y)+zoomMove.y)*wsph)+")";
 	}
 
 	wxString result;
@@ -238,7 +242,8 @@ void RotationXY::SetCurVisual()
 {
 	D3DXVECTOR2 linepos = GetPosnScale(NULL, &AN, tbl);
 	if(tbl[6]>3){linepos=CalcMovePos();}
-	from = to = D3DXVECTOR2(linepos.x/wspw,linepos.y/wsph);
+	from = to = D3DXVECTOR2(((linepos.x/wspw)-zoomMove.x)*zoomScale.x,
+		((linepos.y/wsph)-zoomMove.y)*zoomScale.y);
 
 	wxString res;
 	oldAngle=D3DXVECTOR2(0,0);
@@ -254,8 +259,8 @@ void RotationXY::SetCurVisual()
 	if(tab->Edit->FindVal("org\\(([^\\)]+)", &res)){
 		wxString rest;
 		double orx,ory;
-		if(res.BeforeFirst(',',&rest).ToDouble(&orx)){org.x=orx/wspw;}
-		if(rest.ToDouble(&ory)){org.y=ory/wsph;}
+		if(res.BeforeFirst(',',&rest).ToDouble(&orx)){org.x=((orx/wspw)-zoomMove.x)*zoomScale.x;}
+		if(rest.ToDouble(&ory)){org.y=((ory/wsph)-zoomMove.y)*zoomScale.y;}
 	}else{org=from;}
 	firstmove=to;
 	angle=oldAngle;

@@ -138,7 +138,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	VidMenu->AppendTool(Toolbar, PlayPauseG, _("Odtwarzaj / Pauza"), _("Odtwarza lub pauzuje wideo"),PTR_BITMAP_PNG("pausemenu"),false);
 	VidMenu->AppendTool(Toolbar, GoToPrewKeyframe,_("Przejdź do poprzedniej klatki kluczowej"),"",PTR_BITMAP_PNG("prevkeyframe"));
 	VidMenu->AppendTool(Toolbar, GoToNextKeyframe,_("Przejdź do następnej klatki kluczowej"),"",PTR_BITMAP_PNG("nextkeyframe"));
-	VidMenu->Append(7789, _("Powiększ wideo"), "");
+	VidMenu->AppendTool(Toolbar, VideoZoom, _("Powiększ wideo"), "", PTR_BITMAP_PNG("zoom"));
 	VidMenu->Append(VideoIndexing, _("Otwieraj wideo przez FFMS2"), _("Otwiera wideo przez FFMS2, co daje dokładność klatkową"),true,0,0,ITEM_CHECK)->Check(Options.GetBool("Index Video"));
 
 	Menubar->Append(VidMenu, _("&Wideo"));
@@ -220,10 +220,10 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 			delete mylog; mylog=NULL;
 		}
 	},9989);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
+	/*Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
 		TabPanel *tab = GetTab();
 		tab->Video->SetZoom();
-	},7789);
+	},7789);*/
 	Connect(SnapWithStart,SnapWithEnd,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
 	SetDropTarget(new DragnDrop(this));
 
@@ -349,6 +349,8 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}else if(id==VideoIndexing){
 		MenuItem *Item=Menubar->FindItem(VideoIndexing);
 		Options.SetBool("Index Video",Item->IsChecked());
+	}else if(id==VideoZoom){
+		pan->Video->SetZoom();
 	}else if(id>=OpenAudio&&id<=CloseAudio){
 		OnOpenAudio(event);
 	}else if(id==ASSProperties){

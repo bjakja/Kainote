@@ -313,7 +313,7 @@ done:
 			videotrack, 
 			index, 
 			sysinfo.dwNumberOfProcessors,
-			FFMS_SEEK_NORMAL, 
+			FFMS_SEEK_UNSAFE,//FFMS_SEEK_NORMAL, 
 			&errinfo);// FFMS_SEEK_UNSAFE
 		//Since the index is copied into the video source object upon its creation,
 		//we can and should now destroy the index object. 
