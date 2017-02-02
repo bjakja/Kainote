@@ -102,6 +102,7 @@ class config
 	void SetHexColor(const wxString &nameAndColor);
 	wxString GetStringColor(std::map<wxString, wxColour*>::iterator it);
 	wxString GetStringColor(const wxString &optionName);
+	wxString GetReleaseDate();
     config();
     ~config();
 

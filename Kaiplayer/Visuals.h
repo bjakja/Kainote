@@ -62,7 +62,7 @@ public:
 	Visuals();
 	virtual ~Visuals();
 	static Visuals *Get(int Visual, wxWindow *_parent);
-	void SizeChanged(wxSize wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device);
+	void SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device);
 	void DrawRect(D3DXVECTOR2 vector, bool sel=false, float size=5.0f);
 	void DrawCircle(D3DXVECTOR2 vector, bool sel=false, float size=6.0f);
 	void DrawCross(D3DXVECTOR2 position, D3DCOLOR color = 0xFFFF0000, bool useBegin=true);
@@ -107,7 +107,7 @@ public:
 	unsigned char Visual;
 	
 	wxSize SubsSize;
-	wxSize VideoSize;
+	wxRect VideoSize;
 	TabPanel *tab;
 	bool hasArrow;
 	bool blockevents;

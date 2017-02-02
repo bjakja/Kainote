@@ -143,13 +143,12 @@ void VideoFfmpeg::Processing()
 
 			}
 		}else if(wait_result == WAIT_OBJECT_0+1){
-			//wxMutexLocker lock(blockvideo);
 			byte *buff = (byte*)rend->datas;
 			if(rend->lastframe != lastframe){
 				fframe=FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
 				lastframe = rend->lastframe;
 			}
-			if(!fframe){continue;}
+			if(!fframe){SetEvent(eventComplete);continue;}
 			memcpy(&buff[0],fframe->Data[0],fplane);
 			rend->DrawTexture(buff);
 			rend->Render(false);
@@ -856,11 +855,14 @@ void VideoFfmpeg::DeleteOldAudioCache()
 }
 
 void VideoFfmpeg::Refresh(bool wait){
+	//wxMutexLocker lock(blockvideo);
 	ResetEvent(eventComplete);
 	SetEvent(eventRefresh);
+	//wxLogStatus("set event");
 	if(rend->vstate==Paused && wait){
 		WaitForSingleObject(eventComplete, 4000);
 	}
+
 };
 
 wxString VideoFfmpeg::ColorCatrixDescription(int cs, int cr) {

@@ -102,8 +102,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 	bool middlec = evt.MiddleDown();
 
 	int x, y;
-	if(tab->Video->isFullscreen){wxGetMousePosition(&x,&y);}
-	else{evt.GetPosition(&x,&y);}
+	evt.GetPosition(&x,&y);
 
 	if(evt.ButtonUp()){
 		if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}

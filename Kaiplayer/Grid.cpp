@@ -339,7 +339,7 @@ void Grid::OnPaste(int id)
 			tmpdial.push_back(newdial);
 			sel[rws]=true;
 		}else{
-			if(rws<(int)selarr.GetCount()){
+			if(rws<(int)selarr.GetCount() && selarr[rws] < GetCount()){
 				ChangeCell(rw, selarr[rws],newdial);
 			}
 			delete newdial;

@@ -464,8 +464,8 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		return;
 	}
 	if(blockevents){return;}
-	if(tab->Video->isFullscreen){wxGetMousePosition(&x,&y);}
-	else{event.GetPosition(&x,&y);}
+	event.GetPosition(&x,&y);
+
 	int zx = (x/zoomScale.x) + zoomMove.x;
 	int zy = (y/zoomScale.y) + zoomMove.y;
 	wxPoint xy=wxPoint(zx, zy);
@@ -658,8 +658,8 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	if(leftisdown && grabbed!=-1 && !ctrl)
 	{
 		//drawtxt=true;
-		zx=MID(0,zx,VideoSize.x);
-		zy=MID(0,zy,VideoSize.y);
+		zx=MID(VideoSize.x,zx,VideoSize.width);
+		zy=MID(VideoSize.y,zy,VideoSize.height);
 		Points[grabbed].x=((zx+diffs.x)*wspw)-_x;
 		Points[grabbed].y=((zy+diffs.y)*wsph)-_y;
 

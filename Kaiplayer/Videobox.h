@@ -49,6 +49,7 @@ public:
 	void NextFile(bool next=true);
 	void SetFullskreen(int wmonitor=0);
 	void SetAspectRatio(float AR);
+	void SetScaleAndZoom();
 	VideoSlider* vslider;
 	wxPanel* panel;
 	bool seekfiles;
@@ -78,6 +79,10 @@ public:
 	wxRect GetMonitorRect(int wmonitor);
 	void ContextMenu(const wxPoint &pos, bool dummy=false);
 	void OnMouseEvent(wxMouseEvent& event);
+	void CaptureMouse(){if(isFullscreen && TD){TD->CaptureMouse();}else{wxWindow::CaptureMouse();}}
+	void ReleaseMouse(){if(isFullscreen && TD){TD->ReleaseMouse();}else{wxWindow::ReleaseMouse();}}
+	bool HasCapture(){if(isFullscreen && TD){return TD->HasCapture();}else{return wxWindow::HasCapture();}}
+	bool SetCursor(const wxCursor &cursor){if(isFullscreen && TD){return TD->SetCursor(cursor);}else{return wxWindow::SetCursor(cursor);}};
 	float wspx,wspy;
 	wxSize lastSize;
 	Fullscreen *TD;

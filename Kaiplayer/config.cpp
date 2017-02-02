@@ -31,7 +31,7 @@
 
 config::config()
 {
-	progname=_T("Kainote v")+wxString(VersionKainote)+"  "+wxString(__DATE__)+"  "+wxString(__TIME__);
+	progname=_T("Kainote v")+wxString(VersionKainote);
 #if _DEBUG
 	progname+= " DEBUG";
 #endif
@@ -54,6 +54,10 @@ config::~config()
 	colors.clear();
 }
 
+wxString config::GetReleaseDate()
+{
+	return wxString(__DATE__)+"  "+wxString(__TIME__);
+}
 
 
 bool config::SetRawOptions(const wxString &textconfig)

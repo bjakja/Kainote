@@ -89,29 +89,30 @@ void Visuals::SetVisual(int _start,int _end)
 	start=_start;
 	end=_end;
 
-	wspw=((float)SubsSize.x/(float)VideoSize.x);
-	wsph=((float)SubsSize.y/(float)VideoSize.y);
+	wspw=((float)SubsSize.x/(float)(VideoSize.width - VideoSize.x));
+	wsph=((float)SubsSize.y/(float)(VideoSize.height - VideoSize.y));
 	tab->Video->VisEdit=true;
 
 	SetCurVisual();
 	if(Visual==VECTORCLIP){
 		SetClip(GetVisual(),true); return;
 	}
-	if(tab->Video->IsDshow){
-		tab->Video->Refresh();
+	/*if(tab->Video->IsDshow){
+		tab->Video->Refresh(false);
 	}else{
 		tab->Video->VFF->Refresh(false);tab->Video->resized=false;
-	}
+	}*/
+	tab->Video->Render(true,false);
 }
 
-void Visuals::SizeChanged(wxSize wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device)
+void Visuals::SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device)
 {
 	line=_line;
 	font=_font;
 	device=_device;
 	VideoSize=wsize;
-	wspw=((float)SubsSize.x/(float)wsize.x);
-	wsph=((float)SubsSize.y/(float)wsize.y);
+	wspw=((float)SubsSize.x/(float)(wsize.width - wsize.x));
+	wsph=((float)SubsSize.y/(float)(wsize.height - wsize.y));
 
 	HRN(device->SetFVF( D3DFVF_XYZ|D3DFVF_DIFFUSE), "fvf failed");
 }

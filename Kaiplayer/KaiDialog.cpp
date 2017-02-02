@@ -75,7 +75,7 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	SetBackgroundColour(Options.GetColour("Window Background"));
 	Bind(wxEVT_SIZE, &KaiDialog::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiDialog::OnPaint, this);
-	Bind(wxEVT_CHAR_HOOK, &KaiDialog::OnCharHook, this);
+	if(!(_style & wxWANTS_CHARS)){Bind(wxEVT_CHAR_HOOK, &KaiDialog::OnCharHook, this);}
 	Bind(wxEVT_LEFT_DOWN, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_DCLICK, &KaiDialog::OnMouseEvent, this);

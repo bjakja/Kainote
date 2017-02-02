@@ -286,22 +286,22 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 	//SetFocus();
 	Kai->GetTab()->VideoPath=fileName;
 	Kai->GetTab()->VideoName=Kai->GetTab()->VideoPath.AfterLast('\\');
-	Kai->SetStatusText(Kai->GetTab()->VideoName,6);
+	Kai->SetStatusText(Kai->GetTab()->VideoName,8);
 	if(TD){TD->Videolabel->SetLabelText(Kai->GetTab()->VideoName);}
 	if(!Kai->GetTab()->edytor){Kai->Label(0,true);}
-	Kai->SetStatusText(getfloat(fps)+" FPS",2);
+	Kai->SetStatusText(getfloat(fps)+" FPS",4);
 	wxString tar;
 	tar<<ax<<" : "<<ay;
-	Kai->SetStatusText(tar,4);
+	Kai->SetStatusText(tar,6);
 	STime kkk1;
 	kkk1.mstime=GetDuration();
-	Kai->SetStatusText(kkk1.raw(SRT),1);
+	Kai->SetStatusText(kkk1.raw(SRT),3);
 	Kai->SetRecent(1);
 	if(Kai->GetTab()->edytor && (!isFullscreen || IsShown()) && 
 		Kai->GetTab()->SubsPath!="" && Options.GetBool("Open Video At Active Line")){
 		Seek(Kai->GetTab()->Edit->line->Start.mstime);
 	}
-
+	SetScaleAndZoom();
 	ChangeStream();
 	return true;
 }
@@ -585,15 +585,16 @@ void VideoCtrl::SetFullskreen(int monitor)
 	if(!isFullscreen){
 		
 		if(GetState()==Playing){if(Kai->GetTab()->edytor){Pause();}else{vtime.Start(100);}}
-
+		if(TD->HasCapture()){TD->ReleaseMouse();}
 
 		int sx,sy,sizex,sizey;
 		//KaiMessageBox("set size");
 		if(!Kai->GetTab()->edytor){
 			if(!Kai->IsMaximized()){
 				Kai->GetClientSize(&sizex,&sizey);
-				CalcSize(&sx,&sy,sizex,sizey);
-				Kai->SetClientSize(sx + iconsize,sy + panelHeight + Kai->Tabs->GetHeight() + Kai->Menubar->GetSize().y);
+				int yDiff = panelHeight + Kai->Tabs->GetHeight() + Kai->Menubar->GetSize().y + Kai->StatusBar->GetSize().y;
+				CalcSize(&sx,&sy,sizex - iconsize,sizey - yDiff);
+				Kai->SetClientSize(sx + iconsize, sy + yDiff);
 			}
 		}else{
 			Options.GetCoords("Video Window Size",&sizex,&sizey);
@@ -615,14 +616,14 @@ void VideoCtrl::SetFullskreen(int monitor)
 		vToolbar->Synchronize(TD->vToolbar);
 		displaytime();
 		TD->Hide();
+		SetCursor(wxCURSOR_ARROW); hasArrow=true;
 	}
 	//przejście na fullskreena
 	else{
+		if(wxWindow::HasCapture()){wxWindow::ReleaseMouse();}
 		wxRect rt = GetMonitorRect(monitor);
 		if(!TD){
-			//int w,h;
-			//wxDisplaySize (&w, &h);
-			TD=new Fullscreen(this,rt.GetPosition(),/*wxSize(800,600)*/rt.GetSize());
+			TD=new Fullscreen(this,rt.GetPosition(),rt.GetSize());
 			TD->Videolabel->SetLabelText(Kai->GetTab()->VideoName);
 		}else{
 			TD->SetPosition(rt.GetPosition());
@@ -859,7 +860,7 @@ void VideoCtrl::OnHidePB()
 {
 	bool pb=!Options.GetBool("Video Prog Bar");
 	Options.SetBool("Video Prog Bar",pb);
-	if(pb){displaytime();}else{pbar=false;}
+	if(pb){pbar=true;displaytime();}else{pbar=false;}
 	if(GetState()==Paused){Render(false);}
 }
 
@@ -1027,6 +1028,17 @@ void VideoCtrl::SetAspectRatio(float _AR)
 	if(GetState()==Paused){Render(false);}
 }
 
+void VideoCtrl::SetScaleAndZoom()
+{
+	wxString scale;
+	wxSize wsize = GetSize();
+	scale<<(int)((wsize.x/(float)vwidth)*100)<<"%";
+	Kai->SetStatusText(scale,1);
+	wxString zoom;
+	zoom<<(int)(zoomParcent*100)<<"%";
+	Kai->SetStatusText(zoom,2);
+}
+
 //void VideoCtrl::SendEvent()
 //{
 //	wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,23333);
@@ -1043,25 +1055,25 @@ void VideoCtrl::displaytime()
 
 
 	if(isFullscreen){
-		if(!Options.GetBool("Video Prog Bar")){return;}
+		TD->vslider->SetValue(val);
+		if(!pbar){return;}
 		STime kkk1;
 		kkk1.mstime=dur;
 		pbtime=kkk.raw(TMP)+" / "+kkk1.raw(TMP);
 		DrawProgBar();
-		TD->vslider->SetValue(val);
 	}
 	else{
 		vslider->SetValue(val);
 		vslider->Update();
-		wxString dane;
-		dane<<kkk.raw(SRT)<<";  ";
+		wxString times;
+		times<<kkk.raw(SRT)<<";  ";
 		TabPanel *pan=(TabPanel*)GetParent();
-		if(!IsDshow){dane<<lastframe<<";  ";}
+		if(!IsDshow){times<<lastframe<<";  ";}
 		if(pan->edytor){Dialogue *line=pan->Edit->line;
 		int sdiff=kkk.mstime - line->Start.mstime;
 		int ediff=kkk.mstime - line->End.mstime;
-		dane<<sdiff<<" ms, "<<ediff<<" ms";}
-		mstimes->SetValue(dane);
+		times<<sdiff<<" ms, "<<ediff<<" ms";}
+		mstimes->SetValue(times);
 		mstimes->Update();
 	}
 

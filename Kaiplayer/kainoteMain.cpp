@@ -78,8 +78,8 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	//height 26 zmieniając jedną z tych wartości popraw je też dropfiles
 	StatusBar = new KaiStatusBar(this, ID_STATUSBAR1);
-	int StatusBarWidths[7] = { -12, 0, 0, 0, 0, 0, -22};
-	StatusBar->SetFieldsCount(7,StatusBarWidths);
+	int StatusBarWidths[9] = { -12, 0, 0, 0, 0, 0, 0, 0, -22};
+	StatusBar->SetFieldsCount(9,StatusBarWidths);
 	//StatusBar->SetLabelBackgroundColour(2,"#FF0000");
 	//StatusBar->SetLabelTextColour(2,"#000000");
 
@@ -500,15 +500,16 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	}else if(id==Quit){
 		Close();
 	}else if(id==About){
-		KaiMessageBox(_("Edytor napisów by Bjakja aka Bakura, wersja ") + Options.progname.AfterFirst(' ') + "\r\n\r\n"+
+		KaiMessageBox(_("Edytor napisów by Bjakja aka Bakura, wersja ") + 
+			Options.progname.AfterFirst(' ') + " z dnia " + Options.GetReleaseDate() + " \r\n\r\n"+
 			_("Ten program to jakby moje zaplecze do nauki C++, więc mogą zdarzyć się różne błędy.\r\n\r\n")+
 			_("Kainote zawiera w sobie części następujących projeków:\r\n")+
-			L"wxWidgets - Copyright © Julian Smart, Robert Roebling et al;\r\n"\
-			L"Color picker, wymuxowywanie napsów z mkv, audiobox, audio player, automation\r\ni kilka innych pojedynczych funkcji wzięte z Aegisuba -\r\n"\
+			L"wxWidgets - Copyright © Julian Smart, Robert Roebling et al;\r\n"+
+			_("Color picker, wymuxowywanie napsów z mkv, audiobox, audio player, automation\r\ni kilka innych pojedynczych funkcji wzięte z Aegisuba -\r\n")+
 			L"Copyright © Rodrigo Braz Monteiro;\r\n"\
 			L"Hunspell - Copyright © Kevin Hendricks;\r\n"\
 			L"Matroska Parser - Copyright © Mike Matsnev;\r\n"\
-			L"Interfejs CSRI - Copyright © David Lamparter;\r\n"\
+			L"CSRI - Copyright © David Lamparter;\r\n"\
 			L"Vsfilter - Copyright © Gabest;\r\n"\
 			L"FFMPEGSource2 - Copyright © Fredrik Mellbin;\r\n"\
 			L"FreeType - Copyright ©  David Turner, Robert Wilhelm, and Werner Lemberg;\r\n"\
@@ -517,7 +518,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			"O Kainote");
 		//L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.\r\n"
 	}else if(id==Helpers){
-		wxString Testers=L"Wincenty271, mas1904, Ksenoform, Deadsoul, Zły los,\r\nVessin, Xandros, Areki, Nyah2211, Waski_jestem.";
+		wxString Testers=L"Zły los, Nyah2211, Wincenty271, Ksenoform, Deadsoul,\r\nVessin, Xandros, Areki, Waski_jestem.";
 		wxString Credits=_("Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\r\n")+
 			_("- Archer (pierwsze przyciski do wideo).\r\n")+
 			_("- Kostek00 (przyciski do audio i narzędzi wizualnych).\r\n")+
@@ -531,7 +532,8 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_("- Kostek00 (prawdziwy wynajdywacz błędów,\r\n")+
 			_("miał duży wpływ na rozwój spektrum audio i głównego pola tekstowego).\r\n")+
 			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy).\r\n")+
-			_("- MatiasMovie (wyłapał parę kraszy i zaproponował różne usprawnienia).\r\n \r\n")+
+			_("- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w debugowaniu crashy).\r\n")+
+			_("- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\r\n \r\n")+
 			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\r\n");
 		KaiMessageBox(Credits+Testers,_("Lista osób pomocnych przy tworzeniu programu"));
 
@@ -785,7 +787,7 @@ void kainoteFrame::SetSubsResolution(bool showDialog)
 	TabPanel *cur = GetTab();
 	if(cur->Grid1->form != ASS){return;}
 	wxString resolution = cur->Grid1->GetSInfo("PlayResX") +" x "+ cur->Grid1->GetSInfo("PlayResY");
-	SetStatusText(resolution, 5);
+	SetStatusText(resolution, 7);
 	wxSize vsize;
 	
 	if(cur->Video->GetState()!=None){
@@ -794,8 +796,8 @@ void kainoteFrame::SetSubsResolution(bool showDialog)
 		vres<<vsize.x<<" x "<<vsize.y;
 		if(vres!=resolution){
 			wxColour warning = Options.GetColour("Window Warning Elements");
-			StatusBar->SetLabelTextColour(3, warning);
 			StatusBar->SetLabelTextColour(5, warning);
+			StatusBar->SetLabelTextColour(7, warning);
 			badResolution=true;
 			if(showDialog){
 				ShowBadResolutionDialog(vres, resolution);
@@ -805,8 +807,8 @@ void kainoteFrame::SetSubsResolution(bool showDialog)
 	}
 	if(badResolution){
 		wxColour nullcol;
-		StatusBar->SetLabelTextColour(3, nullcol);
-		StatusBar->SetLabelTextColour(5, nullcol);
+		StatusBar->SetLabelTextColour(7, nullcol);
+		StatusBar->SetLabelTextColour(7, nullcol);
 		badResolution=false;
 	}
 
@@ -817,20 +819,20 @@ void kainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
 	TabPanel *cur = GetTab();
 	wxString resolution;
 	resolution<<w<<" x "<<h;
-	SetStatusText(resolution, 3);
+	SetStatusText(resolution, 5);
 	wxString sres = cur->Grid1->GetSInfo("PlayResX") +" x "+ cur->Grid1->GetSInfo("PlayResY");
 	if(resolution != sres && sres.Len()>3){
 		wxColour warning = Options.GetColour("Window Warning Elements");
-		StatusBar->SetLabelTextColour(3, warning);
 		StatusBar->SetLabelTextColour(5, warning);
+		StatusBar->SetLabelTextColour(7, warning);
 		badResolution=true;
 		if(showDialog){
 			ShowBadResolutionDialog(resolution, sres);
 		}
 	}else if(badResolution){
 		wxColour nullcol;
-		StatusBar->SetLabelTextColour(3, nullcol);
 		StatusBar->SetLabelTextColour(5, nullcol);
+		StatusBar->SetLabelTextColour(7, nullcol);
 		badResolution=false;
 	}
 }
@@ -1178,6 +1180,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 
 void kainoteFrame::OnPageChange(wxCommandEvent& event)
 {
+	if(Tabs->Size()<2){return;}
 	int step=(event.GetId()==NextTab)? Tabs->iter+1 : Tabs->iter-1;
 	if(step<0){step=Tabs->Size()-1;}
 	else if(step>=(int)Tabs->Size()){step=0;}
@@ -1194,29 +1197,38 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 	wxString name=(!cur->edytor)? cur->VideoName : cur->SubsName;
 	SetLabel(whiter+name+" - "+Options.progname);
 	if(cur->Video->GetState()!=None){
-		SetStatusText(getfloat(cur->Video->fps)+" FPS",2);
+		SetStatusText(getfloat(cur->Video->fps)+" FPS",4);
 		wxString tar;
 		tar<<cur->Video->ax<<" : "<<cur->Video->ay;
-		SetStatusText(tar,4);
+		SetStatusText(tar,6);
 		int x, y;
 		cur->Video->GetVideoSize(&x, &y);
 		tar.Empty();
 		tar<<x<<" x "<<y;
-		SetStatusText(tar,3);
+		SetStatusText(tar,5);
 		cur->Video->displaytime();
 
 		STime kkk1;
 		kkk1.mstime=cur->Video->GetDuration();
-		SetStatusText(kkk1.raw(SRT),1);
+		SetStatusText(kkk1.raw(SRT),3);
 		if(cur->edytor){
-			SetStatusText(cur->VideoName,6);
+			SetStatusText(cur->VideoName,8);
 		}
-		else{SetStatusText("",6);}
-	}else{SetStatusText("",6);SetStatusText("",4);SetStatusText("",3);SetStatusText("",2);SetStatusText("",1);}
+		else{SetStatusText("",8);}
+		cur->Video->SetScaleAndZoom();
+	}else{
+		SetStatusText("",8);
+		SetStatusText("",6);
+		SetStatusText("",5);
+		SetStatusText("",4);
+		SetStatusText("",3);
+		SetStatusText("",2);
+		SetStatusText("",1);
+	}
 	if(cur->SubsPath!="" && cur->Grid1->form == ASS){
 		SetSubsResolution();
 	}else{
-		SetStatusText("",5);
+		SetStatusText("",7);
 	}
 	if(cur->edytor){cur->Grid1->SetFocus();}else{cur->Video->SetFocus();}
 	cur->Grid1->UpdateUR(false);

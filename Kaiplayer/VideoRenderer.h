@@ -134,7 +134,7 @@ class VideoRend : public wxWindow
 		void UpdateVideoWindow();
 		void SetVolume(int vol);
 		
-		void Render(bool RecreateFrame=true);
+		void Render(bool RecreateFrame=true, bool wait = true);
 		void DrawLines(wxPoint point);
 		void DrawProgBar();
 		bool DrawTexture(byte *nframe=NULL, bool copy=false);
@@ -145,7 +145,7 @@ class VideoRend : public wxWindow
 		void SetVisual(bool remove=false, bool settext=false);
 		void ResetVisual();
 		byte *GetFramewithSubs(bool subs, bool *del);
-		bool UpdateRects();
+		bool UpdateRects(bool changeZoom=true);
 		void Zoom(const wxSize &size);
 		void DrawZoom();
 		void ZoomMouseHandle(wxMouseEvent &evt);
@@ -155,6 +155,10 @@ class VideoRend : public wxWindow
 		void SetColorSpace(const wxString& matrix, bool render=true){
 			if(VFF){VFF->SetColorSpace(matrix);Render(false);}
 		}
+		virtual void CaptureMouse(){};
+		virtual void ReleaseMouse(){};
+		virtual bool HasCapture(){return true;};
+		virtual bool SetCursor(const wxCursor &cursor){return true;};
 		LPDIRECT3DSURFACE9 MainStream;
 		LPDIRECT3DDEVICE9 d3device;
 		D3DFORMAT d3dformat;
@@ -179,6 +183,7 @@ class VideoRend : public wxWindow
 		char *datas;
 		byte vformat;
 		float avtpf;
+		float zoomParcent;
 		wxString coords;
 		wxString pbtime;
 		ID3DXLine *lines;
@@ -197,6 +202,8 @@ class VideoRend : public wxWindow
 		FloatRect zoomRect;
 		bool EnumFilters(Menu *menu);
 		bool FilterConfig(wxString name, int idx, wxPoint pos);
+	protected:
+		virtual void SetScaleAndZoom(){}
 	private:
 		bool InitDX(bool reset=false);
 		

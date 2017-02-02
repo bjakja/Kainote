@@ -52,10 +52,10 @@ void ClipRect::DrawVisual(int time)
 		y1 = Corner[1].y;
 		y2 = Corner[0].y;
 	}
-	
+
 
 	D3DXVECTOR2 v2[5];
-	wxSize s = VideoSize;
+	wxSize s = VideoSize.GetSize();
 	v2[0].x=((x1/wspw)-zoomMove.x)*zoomScale.x;
 	v2[0].y=((y1/wsph)-zoomMove.y)*zoomScale.y;
 	v2[1].x=v2[0].x;
@@ -132,8 +132,7 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 	bool holding = (evt.LeftIsDown());
 
 	int x, y;
-	if(tab->Video->isFullscreen){wxGetMousePosition(&x,&y);}
-	else{evt.GetPosition(&x,&y);}
+	evt.GetPosition(&x,&y);
 
 	if(evt.ButtonUp()){
 		if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}
@@ -179,13 +178,13 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 
 		if(grabbed<16){
 			if(grabbed & LEFT || grabbed & RIGHT){
-				x=MID(0,x,VideoSize.x);
+				x=MID(VideoSize.x, x, VideoSize.width);
 				Corner[(grabbed & RIGHT)? 1 : 0].x=((((x+diffs.x)/zoomScale.x)+zoomMove.x) *wspw);
 				if(grabbed & LEFT && Corner[0].x > Corner[1].x){Corner[0].x = Corner[1].x;}
 				if(grabbed & RIGHT && Corner[1].x < Corner[0].x){Corner[1].x = Corner[0].x;}	
 			}
 			if(grabbed & TOP || grabbed & BOTTOM){
-				y=MID(0,y,VideoSize.y);
+				y=MID(VideoSize.y, y, VideoSize.height);
 				Corner[(grabbed & BOTTOM)? 1 : 0].y=((((y+diffs.y)/zoomScale.y)+zoomMove.y) *wsph);
 				if(grabbed & TOP && Corner[0].y > Corner[1].y){Corner[0].y = Corner[1].y;}
 				if(grabbed & BOTTOM && Corner[1].y < Corner[0].y){Corner[1].y = Corner[0].y;}	
@@ -202,6 +201,7 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 		}else if(grabbed == 1000){
 			int pointx = ((x/zoomScale.x)+zoomMove.x) *wspw, 
 				pointy = ((y/zoomScale.y)+zoomMove.y) *wsph;
+			//if(Corner[0].x == pointx || Corner[0].y == pointy){return;}
 			Corner[1].x = pointx;
 			Corner[1].y = pointy;
 		}
@@ -216,23 +216,26 @@ void ClipRect::SetCurVisual()
 	int x1=0,x2=SubsSize.x,y1=0,y2=SubsSize.y;
 	wxString clip;
 	bool found =tab->Edit->FindVal("(i?clip[^\\)]+)", &clip);
-	if(found){int rres = clip.Replace(",",",");
-	if( rres >= 3){
-		int match=1;
-		wxRegEx re;
-		if(rres>3){
-			re.Compile("\\(([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)", wxRE_ADVANCED);
-			match=2;
-		}else{
-			re.Compile("\\(([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)", wxRE_ADVANCED);
+	if(found){
+		int rres = clip.Replace(",",",");
+		if( rres >= 3){
+			int match=1;
+			wxRegEx re;
+			if(rres>3){
+				re.Compile("\\(([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)", wxRE_ADVANCED);
+				match=2;
+			}else{
+				re.Compile("\\(([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)", wxRE_ADVANCED);
+			}
+			if(re.Matches(clip)){
+				x1=wxAtoi(re.GetMatch(clip,match));
+				y1=wxAtoi(re.GetMatch(clip,match+1));
+				x2=wxAtoi(re.GetMatch(clip,match+2));
+				y2=wxAtoi(re.GetMatch(clip,match+3));
+				showClip=true;
+			}
 		}
-		if(re.Matches(clip)){
-			x1=wxAtoi(re.GetMatch(clip,match));
-			y1=wxAtoi(re.GetMatch(clip,match+1));
-			x2=wxAtoi(re.GetMatch(clip,match+2));
-			y2=wxAtoi(re.GetMatch(clip,match+3));
-		}
-	}
+		
 	}
 
 	Corner[0] = D3DXVECTOR2(x1, y1);

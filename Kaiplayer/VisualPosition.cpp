@@ -52,8 +52,7 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 	bool holding = evt.LeftIsDown();
 	
 	int x, y;
-	if(tab->Video->isFullscreen){wxGetMousePosition(&x,&y);}
-	else{evt.GetPosition(&x,&y);}
+	evt.GetPosition(&x,&y);
 	
 	if(evt.RightDown() || evt.LeftDClick()){
 		for(size_t i = 0; i < data.size(); i++){

@@ -391,16 +391,20 @@ done:
 	}
 	//ustawia czas i msy na polu tekstowym wideo
 	if(pan->Video->IsShown()){
-		STime kkk;
-		kkk.mstime=pan->Video->Tell();
-		wxString dane;
-		dane<<kkk.raw(SRT)<<";  ";
-		if(!pan->Video->IsDshow){dane<<pan->Video->lastframe<<";  ";}
-		int sdiff=kkk.mstime - line->Start.mstime;
-		int ediff=kkk.mstime - line->End.mstime;
-		dane<<sdiff<<" ms, "<<ediff<<" ms";
-		pan->Video->mstimes->SetValue(dane);
-		//wxRect rc=grid->GetMetrics(ebrow);
+		//STime kkk;
+		//kkk.mstime=pan->Video->Tell();
+		//wxString times;
+		//times<<kkk.raw(SRT)<<";  ";
+		//if(!pan->Video->IsDshow){times<<pan->Video->lastframe<<";  ";}
+		//int sdiff=kkk.mstime - line->Start.mstime;
+		//int ediff=kkk.mstime - line->End.mstime;
+		//times<<sdiff<<" ms, "<<ediff<<" ms; wideo ";
+		//wxSize vsize = pan->Video->GetVideoSize();
+		//wxSize wsize = pan->Video->GetSize();
+		//times<<(int)((wsize.x/(float)vsize.x)*100)<<"%; zoom "<<(int)(pan->Video->zoomParcent*100)<<"%";
+		//pan->Video->mstimes->SetValue(times);
+		////wxRect rc=grid->GetMetrics(ebrow);
+		pan->Video->displaytime();
 
 	}
 
