@@ -397,15 +397,13 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			return;
 		}
 
-		if(i!=iter&&i!=over){
+		if(i!=iter && i!=over){
 			over=i;
 			RefreshRect(wxRect(0,hh,w,25),false);
-
-		}else if(i==iter&&over!=-1){
+		}else if(i==iter && over!=-1){
 			over=-1;
 			RefreshRect(wxRect(0,hh,w,25),false);
-		}/*else if(i==iter){
-		 }*/
+		}
 		if(i==iter && (x>num+Tabsizes[i]-18 && x<num+Tabsizes[i]-5)){
 			if(!onx){SetToolTip(_("Zamknij"));}
 			onx=true;
@@ -508,13 +506,16 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	wxMemoryDC dc;
 	dc.SelectObject(wxBitmap(w,TabHeight));
 	dc.SetFont(font);
-	dc.SetTextForeground(Options.GetColour("Window Text"));
 	//dc.SetPen(*wxTRANSPARENT_PEN);
 	//dc.SetBrush(wxBrush(Options.GetColour("Menu Bar Background 2")));
 	dc.GradientFillLinear(wxRect(0,0,w,TabHeight),
-		Options.GetColour("Menu Bar Background 2"),
-		Options.GetColour("Menu Bar Background 1"),wxTOP);
+		Options.GetColour("Tabs Bar Background 2"),
+		Options.GetColour("Tabs Bar Background 1"),wxTOP);
+	wxColour activeLines = Options.GetColour("Tabs Border Active");
+	wxColour activeText = Options.GetColour("Tabs Text Active");
+	wxColour inactiveText = Options.GetColour("Tabs Text Inactive");
 
+	
 	start=(allvis)?2 : 20;
 
 
@@ -524,35 +525,35 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		//wybrana zakładka
 		if(i==iter){//wxSYS_COLOUR_INACTIVEBORDER
 			//rysowanie linii po obu stronach aktywnej zakładki
-			dc.SetPen(wxPen(wxColour("#696969"),1));
+			dc.SetPen(wxPen(activeLines,1));
 			dc.DrawLine(0,0,start,0);
 			dc.DrawLine(start+Tabsizes[i],0,w,0);
 			dc.SetPen(*wxTRANSPARENT_PEN);
-			dc.SetBrush(Options.GetColour("Menu Background"));
+			dc.SetBrush(Options.GetColour((i==(size_t)over)? "Tabs Background Active Hover" : "Tabs Background Active"));
 			dc.DrawRectangle(start+1,0,Tabsizes[i]-1,23);
 
-			dc.SetPen(wxPen("#000000"));
 
 			//najechany x na wybranej zakładce
 			if(onx){
-				dc.SetBrush(wxBrush("#9BD7EE"));
-				dc.DrawRoundedRectangle(start+Tabsizes[i]-20,3,16,16,1.1);
+				dc.SetBrush(Options.GetColour("Tabs Close Hover"));
+				dc.DrawRectangle(start+Tabsizes[i]-20,3,16,16);
 			}
-			dc.SetTextForeground("#505050");
-			dc.DrawText("X",start+Tabsizes[i]-16,3);
-			dc.SetTextForeground(Options.GetColour("Window Text"));
+			//dc.SetTextForeground(Options.GetColour("Tabs Close Hover"));
+			dc.SetTextForeground(activeText);
+			dc.DrawText("X",start+Tabsizes[i]-14,4);
+			
 
-		}
-		//najechana nieaktywna zakładka
-		if(i==(size_t)over){
+		}else{
+			//najechana nieaktywna zakładka
+			dc.SetTextForeground(inactiveText);
 			dc.SetPen(*wxTRANSPARENT_PEN);
-			dc.SetBrush(wxBrush("#FFFFFF"));
+			dc.SetBrush(wxBrush(Options.GetColour((i==(size_t)over)? "Tabs Background Inactive Hover" : "Tabs Background Inactive")));
 			dc.DrawRectangle(start+1,2,Tabsizes[i]-1,21);
 		}
 
 		//rysowanie konturów zakładki
 		if(gc){
-			gc->SetPen( wxPen("#696969"));
+			gc->SetPen( wxPen(Options.GetColour((i==iter)? "Tabs Border Active" : "Tabs Border inactive")));
 			gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
 			wxGraphicsPath path = gc->CreatePath();
 			path.MoveToPoint(start,0.0);
@@ -566,7 +567,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			gc->StrokePath(path);
 		}
 		else{
-			dc.SetPen(wxPen("#696969"));
+			dc.SetPen(wxPen(Options.GetColour((i==iter)? "Tabs Border Active" : "Tabs Border inactive")));
 			dc.DrawLine(start,0,start,21);
 			dc.DrawLine(start,21,start+2,23);
 			dc.DrawLine(start+2,23,start+Tabsizes[i]-2,23);
@@ -579,19 +580,21 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	}
 
 	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(wxBrush(Options.GetColour("Menu Background")));
+	dc.SetBrush(wxBrush(Options.GetColour("Tabs Bar Arrow Background")));
 	//strzałki do przesuwania zakładek
 	if(!allvis){
+		wxColour backgroundHover = Options.GetColour("Tabs Bar Arrow Background Hover");
+		wxColour arrow = Options.GetColour("Tabs Bar Arrow");
 		dc.DrawRectangle(w-16,0,16,25);
-		if(farr){dc.SetBrush(wxBrush("#9BD7EE"));}
+		if(farr){dc.SetBrush(wxBrush(backgroundHover));}
 		dc.DrawRectangle(0,0,16,25);
 
 		if(rarr){
-			dc.SetBrush(wxBrush("#9BD7EE"));
+			dc.SetBrush(wxBrush(backgroundHover));
 			dc.DrawRectangle(w-16,0,16,25);
 		}
 
-		dc.SetPen(wxPen(wxColour("#696969"),2));
+		dc.SetPen(wxPen(arrow,2));
 
 		dc.DrawLine(17,0,17,25);
 		dc.DrawLine(11,5,4,12);
@@ -604,19 +607,19 @@ void Notebook::OnPaint(wxPaintEvent& event)
 
 	//plus który jest zawsze widoczny
 
-	dc.SetBrush(wxBrush("#FFFFFF"));
-	if(plus){
+	dc.SetBrush(wxBrush(Options.GetColour((plus)? "Tabs Background Inactive Hover" : "Tabs Background Inactive")));
+	//if(plus){
 		dc.SetPen(*wxTRANSPARENT_PEN);
 		dc.DrawRectangle(start+1,1,18,22);
-	}
+	//}
 
-	dc.SetPen(wxPen(wxColour("#505050")));
-	//dc.SetBrush(wxBrush("#FFFFFF"));
+	//dc.SetPen(wxPen(inactiveText));
+	dc.SetBrush(wxBrush(inactiveText));
 	dc.DrawRectangle(start+4,11,12,2);
 	dc.DrawRectangle(start+9,6,2,12);
 
 	if(gc){
-		gc->SetPen( wxPen("#696969"));
+		gc->SetPen( wxPen(Options.GetColour("Tabs Border inactive")));
 		gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
 		wxGraphicsPath path = gc->CreatePath();
 		path.MoveToPoint(start,0.0);
@@ -628,6 +631,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		path.AddLineToPoint(strt+19,0);
 		gc->StrokePath(path);
 	}else{
+		dc.SetPen( wxPen(Options.GetColour("Tabs Border inactive")));
 		dc.DrawLine(start,0,start,21);
 		dc.DrawLine(start,21,start+2,23);
 		dc.DrawLine(start+2,23,start+17,23);

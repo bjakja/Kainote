@@ -147,11 +147,20 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 			Refresh(false);
 		}
 		//przesuwanie suwaka chwytaj¹c go mysz¹
-		if(holding&&curX>position+4&&curX<position+30||(holding&&block)){block=true;position=MID(0,curX-16,w-30);Refresh(false);}
+		if(holding&&curX>position+4&&curX<position+30||(holding&&block)){
+			block=true;
+			position=MID(0,curX-16,w-30);
+			if(!VB->IsDshow){SendTime(position/calc);}
+			Refresh(false);
+		}
 			//przesuwanie suwaka klikniêciem
 		else if(click&&curX>4&&curX<w-6&&curY>h-12&&curY<h-2&&(curX<position+6||curX>position+31)){
 			block=true;position=MID(0,curX-16,w-30);
-			SendTime(position/calc);Refresh(false);block=false;return;}
+			SendTime(position/calc);
+			Refresh(false);
+			block=false;
+			return;
+		}
 			//ukrywanie etykiety czasu
 		if(((curX<5||curX>w-6)||(curY<2||curY>14)||event.Leaving())&&!holding){
 			showlabel=false;
@@ -176,8 +185,6 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 	// Get focus
 	if (event.ButtonDown()) {
 		SetFocus();}
-	
-	
 
 
 	// Click type

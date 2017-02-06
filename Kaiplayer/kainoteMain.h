@@ -28,10 +28,8 @@
 
 #include <wx/timer.h>
 #include <wx/sizer.h>
-#include <wx/menu.h>
 #include <wx/filedlg.h>
-#include <wx/frame.h>
-#include <wx/statusbr.h>
+#include "KaiFrame.h"
 #include "Tabs.h"
 #include <vector>
 #include "TabPanel.h"
@@ -43,7 +41,7 @@
 #include "EnumFactory.h"
 #include "KaiStatusBar.h"
 
-class kainoteFrame: public wxFrame
+class kainoteFrame: public KaiFrame
 {
     public:
         kainoteFrame(const wxPoint &pos, const wxSize &size);
@@ -109,7 +107,7 @@ class kainoteFrame: public wxFrame
 		void OnPageChange(wxCommandEvent& event);
 		void OnPageAdd(wxCommandEvent& event);
 		void OnPageClose(wxCommandEvent& event);
-		//void OnRunScript(wxCommandEvent& event);
+		void OnSize(wxSizeEvent& event);
 		
 		void OnChangeLine(wxCommandEvent& event);
 		void OnDelete(wxCommandEvent& event);

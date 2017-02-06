@@ -593,10 +593,12 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	wxColour coperators = Options.GetColour("Editor Tag Operators");//"#FF0000"
 	wxColour cnames = Options.GetColour("Editor Tag Names");//"#850085"
 	wxColour cvalues = Options.GetColour("Editor Tag Values");//"#6600FF"
+	wxColour bgbraces = Options.GetColour("Editor Braces Background");
 	wxColour cbackground = Options.GetColour("Editor Background");
 	wxColour cselection = Options.GetColour("Editor Selection");
 	wxColour cselnofocus = Options.GetColour("Editor Selection No Focus");
 	wxColour cspellerrors = Options.GetColour("Editor Spellchecker");
+
 	dc.SetBrush(cbackground);
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.DrawRectangle(0,0,w,h);
@@ -822,7 +824,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 		}
 		if(HasFocus()&&(i==Brackets.x||i==Brackets.y)){
 			int bry=FindY(i);
-			wxColour col("#FFFF00");
+			wxColour col=bgbraces;
 			if(Brackets.x==-1||Brackets.y==-1){col=cspellerrors;}
 			dc.SetBrush(wxBrush(col));
 			//dc.SetPen(wxPen(col));

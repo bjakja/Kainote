@@ -38,6 +38,7 @@ private:
 	void OnMouseLost(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();} holding=false; }
 	void OnErase(wxEraseEvent &evt){};
 	void SendEvent();
+	void SetTwoscrolbars(bool twoScrollbars = true);
 	int thumbPos;
 	int thumbSize;
 	int diff;
@@ -50,6 +51,7 @@ private:
 	bool rholding;
 	bool enter;
 	bool integrated;
+	bool twoScrollbars;
 	bool pushed;
 	byte element;
 	wxTimer pageLoop;
@@ -83,6 +85,8 @@ public:
 	bool IsScrollbarAlwaysShown (int orient) const{return false;};
  	bool ScrollLines (int lines);
  	bool ScrollPages (int pages);
+	void Refresh(bool eraseBackground=true, const wxRect *rect=0);
+	
 private:
 	KaiScrollbar *horizontal;
 	KaiScrollbar *vertical;

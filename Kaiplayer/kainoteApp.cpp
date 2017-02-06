@@ -155,9 +155,8 @@ bool kainoteApp::OnInit()
 				}
 			}
 			
-
+			
 			Frame->Show();
-
     		SetTopWindow(Frame);
 			timer.SetOwner(this,1199);
 			Connect(1199,wxEVT_TIMER,(wxObjectEventFunction)&kainoteApp::OnOpen);
@@ -172,7 +171,6 @@ bool kainoteApp::OnInit()
 				timer.Start(500,true);
 				//opthread *ot=new opthread(this,pathss);
 			}
-		
 		}
     }else{
 		wxString subs;

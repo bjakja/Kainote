@@ -67,6 +67,11 @@ public:
 	void SetBitmap(const wxBitmap &bmp){icon = bmp; Refresh(false);}
 	bool GetValue(){return toggled;}
 	void SetValue(bool toggle){toggled = toggle; Refresh(false);}
+	bool SetForegroundColour(const wxColour &fgcolor){
+		changedForeground = true;
+		wxWindow::SetForegroundColour(fgcolor); return true;
+	}
+	bool changedForeground;
 	bool clicked;
 private:
 	void OnSize(wxSizeEvent& evt);

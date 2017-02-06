@@ -334,18 +334,21 @@ ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, cons
 			 ,enter(false)
 			 ,toggled(false)
 			 ,clicked(false)
+			 ,changedForeground(false)
 {
 	name = label;
+	if(name.IsEmpty()){name = AddText(id);}
+	name.Replace("&","");
 	wxSize newSize=size;
 	SetFont(parent->GetFont());
+	int fw, fh;
+	GetTextExtent((name=="")? "TEXT" : name, &fw, &fh, 0, 0);
 	if(size.x <1){
-		int fw, fh;
-		GetTextExtent(name, &fw, &fh, 0, 0/*, &font*/);
 		newSize.x = fw+10;
-		if(newSize.x<80){newSize.x=80;}
+		if(newSize.x<60){newSize.x=60;}
 	}
 	if(size.y <1){
-		newSize.y = 26;
+		newSize.y = fh+10;
 	}
 	SetMinSize(newSize);
 	Bind(wxEVT_LEFT_DOWN, &ToggleButton::OnMouseEvent, this);
@@ -410,7 +413,9 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 			fw=icon.GetWidth(); fh=icon.GetHeight();
 			tdc.DrawBitmap(icon, (w - fw)/2, (h - fh)/2);
 		}else{
-			tdc.SetTextForeground((enabled)? GetForegroundColour() : Options.GetColour("Window Inactive Text"));
+			tdc.SetTextForeground((enabled && changedForeground)? GetForegroundColour() : 
+			(enabled)? Options.GetColour("Window Text") : 
+			Options.GetColour("Window Inactive Text"));
 			tdc.GetTextExtent(name, &fw, &fh);
 			wxRect cur(5, (h-fh)/2, w - 10, fh);
 			tdc.SetClippingRegion(cur);

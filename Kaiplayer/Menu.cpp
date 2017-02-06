@@ -764,6 +764,7 @@ MenuBar::MenuBar(wxWindow *_parent)
 		MenuEvent evt(EVT_MENU_OPENED, GetId(), Menus[shownMenu]);
 		ProcessEvent(evt);
 		wxSize rc= GetClientSize();
+		wxPoint pos= GetPosition();
 		int posX=halfIndent;
 		for(int i = 0; i < shownMenu; i++){
 			Menu *menu = Menus[i];
@@ -772,7 +773,7 @@ MenuBar::MenuBar(wxWindow *_parent)
 			wxSize te = GetTextExtent(desc);
 			posX += te.x + menuIndent;
 		}
-		wxPoint pos1(posX, rc.y); 
+		wxPoint pos1(posX+pos.x, rc.y+pos.y); 
 		Menus[shownMenu]->PopupMenu(pos1, this->GetParent());
 		selectOnStart=-1;
 	},56432);
@@ -992,11 +993,11 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 	tdc.SelectObject(*bmp);
 	tdc.SetFont(font);
 	tdc.GradientFillLinear(wxRect(0,0,w,h),
-		Options.GetColour("Menu Bar Background 1"),
-		Options.GetColour("Menu Bar Background 2"),wxTOP);
+		Options.GetColour("Menu Bar Background 2"),
+		Options.GetColour("Menu Bar Background 1"),wxTOP);
 	tdc.SetTextForeground(Options.GetColour("Window Text"));
-	tdc.SetPen(wxPen(Options.GetColour("Menu Bar Background 1")));
-	tdc.DrawLine(0,h-1,w,h-1);
+	//tdc.SetPen(wxPen(Options.GetColour("Menu Bar Background 1")));
+	//tdc.DrawLine(0,h-1,w,h-1);
 	int posX=halfIndent;
 	wxSize mnbefsize;
 	wxSize linesize;

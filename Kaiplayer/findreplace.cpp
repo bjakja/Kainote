@@ -122,7 +122,7 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		frbsizer->Add(Button1,1,wxEXPAND|wxTOP|wxBOTTOM,6);
 
 		if(repl){
-			Button2 = new MappedButton(this, ID_BREP, _("Zamień"));
+			Button2 = new MappedButton(this, ID_BREP, _("Zamień następne"));
 			Button3 = new MappedButton(this, ID_BREPALL, _("Zamień wszystko"));
 			frbsizer->Add(Button2,1,wxEXPAND|wxTOP|wxBOTTOM,6);
 			frbsizer->Add(Button3,1,wxEXPAND|wxTOP|wxBOTTOM,6);

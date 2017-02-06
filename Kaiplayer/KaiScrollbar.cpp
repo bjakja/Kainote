@@ -25,6 +25,7 @@ KaiScrollbar::KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos, const w
 	,enter(false)
 	,integrated(false)
 	,pushed(false)
+	,twoScrollbars(false)
 	,unitPos(0)
 	,scrollRate(1)
 	,element(0)
@@ -79,6 +80,9 @@ KaiScrollbar::KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos, const w
 void KaiScrollbar::SetScrollbar(int pos, int visible, int range, int _pageSize, bool refresh)
 {
 	wxSize oldSize = GetClientSize();
+	if(twoScrollbars){
+		if(isVertical){oldSize.y-=17;}else{oldSize.x-=17;}
+	}
 	if(holding /*|| (unitPos >= range-visible && pos >= unitPos)*/){return;}
 	allVisibleSize = range-visible;
 	unitPos = pos;
@@ -86,7 +90,28 @@ void KaiScrollbar::SetScrollbar(int pos, int visible, int range, int _pageSize, 
 	allSize = range;
 	pageSize = _pageSize;
 	float divScroll = (float)visibleSize / (float)allSize;
-	if(pos >= allVisibleSize){unitPos=allVisibleSize;}
+	if(pos >= allVisibleSize){unitPos = allVisibleSize;}
+	int paneSize = (isVertical)? (oldSize.y-34) : (oldSize.x-34);
+	thumbSize = paneSize * divScroll;
+	if(thumbSize < 16){thumbSize=16;}
+	thumbRange = paneSize - thumbSize;
+	thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) +17;
+	Refresh(false);
+	Update();
+}
+
+void KaiScrollbar::SetTwoscrolbars(bool _twoScrollbars)
+{
+	twoScrollbars = _twoScrollbars;
+	wxSize oldSize = GetClientSize();
+	if(twoScrollbars){
+		float div=1;
+		if(isVertical){div = (float)oldSize.y / (float)(oldSize.y-17); oldSize.y-=17;}
+		else{div = (float)oldSize.x / (float)(oldSize.x-17);oldSize.x-=17;}
+		allVisibleSize *= div;
+		visibleSize /= div;
+	}
+	float divScroll = (float)visibleSize / (float)allSize;
 	int paneSize = (isVertical)? (oldSize.y-34) : (oldSize.x-34);
 	thumbSize = paneSize * divScroll;
 	if(thumbSize < 16){thumbSize=16;}
@@ -122,6 +147,9 @@ void KaiScrollbar::SendEvent()
 void KaiScrollbar::OnSize(wxSizeEvent& evt)
 {
 	wxSize oldSize = GetClientSize();
+	if(twoScrollbars){
+		if(isVertical){oldSize.y-=17;}else{oldSize.x-=17;}
+	}
 	int paneSize = (isVertical)? (oldSize.y-34) : (oldSize.x-34);
 	float divScroll = (float)visibleSize / (float)allSize;
 	thumbSize = paneSize * divScroll;
@@ -136,14 +164,18 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 {
 	int w=0;
 	int h=0;
-	GetClientSize (&w, &h);
-	if(w==0||h==0){return;}
+	int ow, oh;
+	GetClientSize (&ow, &oh);
+	if(ow==0||oh==0){return;}
+	if(twoScrollbars){
+		if(isVertical){h = oh-17;w=ow;}else{w=ow-17;h=oh;}
+	}else{w=ow; h=oh;}
 	wxMemoryDC tdc;
-	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
+	if (bmp && (bmp->GetWidth() < ow || bmp->GetHeight() < oh)) {
 		delete bmp;
 		bmp = NULL;
 	}
-	if(!bmp){bmp=new wxBitmap(w, h);}
+	if(!bmp){bmp=new wxBitmap(ow, oh);}
 	tdc.SelectObject(*bmp);
 	wxColour background = Options.GetColour("Scrollbar Background");
 	wxColour scroll = (enter && !pushed)? Options.GetColour("Scrollbar Scroll Hover") : 
@@ -151,7 +183,7 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 		Options.GetColour("Scrollbar Scroll");
 	tdc.SetPen(wxPen(background));
 	tdc.SetBrush(wxBrush(background));
-	tdc.DrawRectangle(0, 0, w, h);
+	tdc.DrawRectangle(0, 0, ow, oh);
 	wxBitmap scrollArrow = wxBITMAP_PNG("arrow_list");
 	wxBitmap scrollArrowPushed = wxBITMAP_PNG("arrow_list_pushed");
 	if(isVertical){
@@ -174,7 +206,7 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 		tdc.DrawBitmap(wxBitmap(img), w-13, 3);
 	}
 	wxPaintDC dc(this);
-	dc.Blit(0,0,w,h,&tdc,0,0);
+	dc.Blit(0,0,ow,oh,&tdc,0,0);
 }
 
 void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
@@ -195,6 +227,9 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 	int w=0;
 	int h=0;
 	GetClientSize (&w, &h);
+	if(twoScrollbars){
+		if(isVertical){h-=17;}else{w-=17;}
+	}
 	int coord = (isVertical)? y : x;
 	int coord2 = (isVertical)? x : y;
 	int size = (isVertical)? h : w;
@@ -310,24 +345,40 @@ KaiScrolledWindow::KaiScrolledWindow(wxWindow *parent, int id, const wxPoint& po
 	SetWindowStyle(style);
 }
 
+void KaiScrolledWindow::Refresh(bool eraseBackground, const wxRect *rect){
+	wxSize sz = wxWindow::GetClientSize();
+	wxRect rc(0,0,(vertical)? sz.x-17 : sz.x, (horizontal)? sz.y-17 : sz.y);
+	if(rect){
+		rc.x=rect->x;
+		rc.y=rect->y;
+		rc.width = MIN(rect->width, rc.width);
+		rc.height = MIN(rect->height, rc.height);
+	}
+	wxWindow::Refresh(eraseBackground,&rc);
+}
+
 bool KaiScrolledWindow::SetScrollBar(int orientation, int pos, int maxVisible, int allItems, int pageSize, bool refresh)
 {
 	if(orientation & wxHORIZONTAL){
 		if(horizontal && maxVisible >= allItems){
 			horizontal->Destroy();
 			horizontal=NULL;
+			if(vertical){vertical->SetTwoscrolbars(false);}
 			return true;
 		}else if(!horizontal && maxVisible < allItems){
 			wxSize size = wxWindow::GetClientSize();
-			horizontal = new KaiScrollbar(this,-1, wxPoint(0, size.y-17), wxSize(size.x, 17));
+			horizontal = new KaiScrollbar(this,-1, wxPoint(0, size.y-17), wxSize((vertical)? size.x - 17 : size.x, 17));
 			horizontal->integrated=true;
+			if(vertical){
+				vertical->SetTwoscrolbars(true);
+			}
 			horizontal->SetScrollbar(pos, maxVisible, allItems, pageSize, refresh);
 			return true;
 		}
 		if(horizontal){
 			wxSize size = wxWindow::GetClientSize();
 			horizontal->SetPosition(wxPoint(0, size.y-17));
-			horizontal->SetSize(wxSize(size.x, 17));
+			horizontal->SetSize(wxSize((vertical && !horizontal->twoScrollbars)? size.x - 17 : size.x, 17));
 			horizontal->SetScrollbar(pos, maxVisible, allItems, pageSize, refresh);
 		}
 	}
@@ -335,18 +386,22 @@ bool KaiScrolledWindow::SetScrollBar(int orientation, int pos, int maxVisible, i
 		if(vertical && maxVisible >= allItems){
 			vertical->Destroy();
 			vertical=NULL;
+			if(horizontal){horizontal->SetTwoscrolbars(false);}
 			return true;
 		}else if(!vertical && maxVisible < allItems){
 			wxSize size = wxWindow::GetClientSize();
-			vertical = new KaiScrollbar(this,-1, wxPoint(size.x-17, 0), wxSize(17, size.y), wxVERTICAL);
-			vertical->SetScrollbar(pos, maxVisible, allItems, pageSize, refresh);
+			vertical = new KaiScrollbar(this,-1, wxPoint(size.x-17, 0), wxSize(17, (horizontal)? size.y - 17 : size.y), wxVERTICAL);
 			vertical->integrated=true;
+			if(horizontal){
+				horizontal->SetTwoscrolbars(true);
+			}
+			vertical->SetScrollbar(pos, maxVisible, allItems, pageSize, refresh);
 			return true;
 		}
 		if(vertical){
 			wxSize size = wxWindow::GetClientSize();
 			vertical->SetPosition(wxPoint(size.x-17, 0));
-			vertical->SetSize(wxSize(17, size.y));
+			vertical->SetSize(wxSize(17, (horizontal && !vertical->twoScrollbars)? size.y - 17 : size.y));
 			vertical->SetScrollbar(pos, maxVisible, allItems, pageSize, refresh);
 		}
 	}

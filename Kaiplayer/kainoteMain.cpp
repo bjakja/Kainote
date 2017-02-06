@@ -46,7 +46,7 @@
 
 
 kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
-	: wxFrame(0, -1, _("Bez nazwy - ")+Options.progname, pos, size, wxDEFAULT_FRAME_STYLE)
+	: KaiFrame(0, -1, _("Bez nazwy - ")+Options.progname, pos, size, wxDEFAULT_FRAME_STYLE)
 	,badResolution(false)
 {
 
@@ -67,13 +67,15 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	SetFont(thisFont);
 	wxIcon kaiicon("aaaa",wxBITMAP_TYPE_ICO_RESOURCE); 
 	SetIcon(kaiicon);
-	SetMinSize(wxSize(600,400));
+	
 	//height 22 zmieniając jedną z tych wartości popraw je też dropfiles
 	Menubar = new MenuBar(this);
 
-	wxBoxSizer *mains1= new wxBoxSizer(wxVERTICAL);
-	mains=new wxBoxSizer(wxHORIZONTAL);
+	//FrameSizer *mains1= new FrameSizer(wxVERTICAL);
+	//wxBoxSizer *mains1= new wxBoxSizer(wxVERTICAL);
+	//mains=new wxBoxSizer(wxHORIZONTAL);
 	Tabs=new Notebook (this,ID_TABS);
+	//Tabs->SetMinSize(wxSize(500,300));
 	Toolbar=new KaiToolbar(this,Menubar,-1,true);
 
 	//height 26 zmieniając jedną z tych wartości popraw je też dropfiles
@@ -83,11 +85,11 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	//StatusBar->SetLabelBackgroundColour(2,"#FF0000");
 	//StatusBar->SetLabelTextColour(2,"#000000");
 
-	mains->Add(Toolbar,0,wxEXPAND,0);
+	/*mains->Add(Toolbar,0,wxEXPAND,0);
 	mains->Add(Tabs,1,wxEXPAND,0);
 	mains1->Add(Menubar,0,wxEXPAND,0);
 	mains1->Add(mains,1,wxEXPAND,0);
-	mains1->Add(StatusBar,0,wxEXPAND,0);
+	mains1->Add(StatusBar,0,wxEXPAND,0);*/
 
 	FileMenu = new Menu();
 	FileMenu->AppendTool(Toolbar,OpenSubs, _("&Otwórz napisy"), _("Otwórz plik napisów"),PTR_BITMAP_PNG("opensubs"));
@@ -191,7 +193,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	Toolbar->InitToolbar();
 
-	SetSizer(mains1);
+	//SetSizer(mains1);
 
 	SetAccels(false);
 
@@ -226,6 +228,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	},7789);*/
 	Connect(SnapWithStart,SnapWithEnd,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
 	SetDropTarget(new DragnDrop(this));
+	Bind(wxEVT_SIZE,&kainoteFrame::OnSize,this);
 
 
 	bool im=Options.GetBool("Window Maximize");
@@ -233,7 +236,6 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	if(!Options.GetBool("Show Editor")){HideEditor();}	
 	std::set_new_handler(OnOutofMemory);
-	
 }
 
 kainoteFrame::~kainoteFrame()
@@ -529,9 +531,10 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_("- Funki27 (pierwszy tester mający spory wpływ na obecne działanie programu\r\n")+
 			_("i najbardziej narzekający na wszystko).\r\n")+
 			_("- Sacredus (chyba pierwszy tłumacz używający trybu tłumaczenia,\r\n nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\r\n")+
-			_("- Kostek00 (prawdziwy wynajdywacz błędów,\r\n")+
-			_("miał duży wpływ na rozwój spektrum audio i głównego pola tekstowego).\r\n")+
-			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy).\r\n")+
+			_("- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój spektrum audio \r\n")+
+			_("i głównego pola tekstowego, stworzył ciemny motyw i część ikon).\r\n")+
+			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy,\r\n")+
+			_("pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych ustprawnień).\r\n")+
 			_("- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w debugowaniu crashy).\r\n")+
 			_("- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\r\n \r\n")+
 			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\r\n");
@@ -976,6 +979,22 @@ void kainoteFrame::OnRecent(wxCommandEvent& event)
 }
 
 
+void kainoteFrame::OnSize(wxSizeEvent& event)
+{
+	wxSize size = GetSize();
+	int fborder = 7;//(IsMaximized())? 0 : 5;
+	int ftopBorder = 26;
+	int menuHeight = Menubar->GetSize().GetHeight();
+	int toolbarWidth = Toolbar->GetSize().GetWidth();
+	int statusbarHeight = StatusBar->GetSize().GetHeight();
+	Menubar->SetSize(fborder,ftopBorder,size.x-(fborder*2), menuHeight);
+	Toolbar->SetSize(fborder,ftopBorder+menuHeight,toolbarWidth, size.y-menuHeight-statusbarHeight-ftopBorder-fborder);
+	Tabs->SetSize(fborder+toolbarWidth,ftopBorder+menuHeight,size.x-toolbarWidth-(fborder*2), size.y-menuHeight-statusbarHeight-ftopBorder-fborder);
+	StatusBar->SetSize(fborder,size.y - statusbarHeight - fborder,size.x-(fborder*2), statusbarHeight);
+	
+	event.Skip();
+}
+
 
 wxString kainoteFrame::FindFile(wxString fn,bool video,bool prompt)
 {
@@ -1235,7 +1254,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 
 	UpdateToolbar();
 
-	//cur->Grid1->SetFocus();
+	cur->Grid1->SetFocus();
 	if(Tabs->iter!=Tabs->GetOldSelection()){
 		cur->CTime->RefVals(Tabs->Page( Tabs->GetOldSelection() )->CTime);
 		//if(Options.GetBool("Grid save without enter")){

@@ -381,11 +381,13 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 	//Themes
 	{
-		//18+29=47+17+2 = 66 + 7 = 73
-		wxString labels[75]={
+		const int numColors = 103;
+		wxString labels[numColors]={
 			//okno
 			_("Okno tło"),_("Okno nieaktywne tło"),_("Okno tekst"),_("Okno nieaktywny tekst"),
-			_("Okno elementy ostrzegające"),
+			_("Okno elementy ostrzegające"),_("Okno obramowanie"), _("Okno obramowanie nieaktywne"), _("Okno tło obramowania"), 
+			_("Okno tło obramowania nieaktywne"), _("Okno tekst nagłówka"), _("Okno tekst nagłówka nieaktywny"), 
+			_("Okno najechany element nagłówka"),_("Okno wciśnięty element nagłówka"),
 			//napisy
 			_("Napisy tekst"),_("Napisy tło"),_("Napisy tło dialogów"),_("Napisy tło komentarzy"),
 			_("Napisy zaznaczone dialogi"),_("Napisy zaznaczone komentarze"),
@@ -396,7 +398,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Napisy tło komentarza zazn. porównania"),
 			//edytor
 			_("Edytor tekst"),_("Edytor nazwy tagów"),_("Edytor wartości tagów"),
-			_("Edytor nawiasy klamrowe"),_("Edytor operatory tagów"),_("Edytor tło"),
+			_("Edytor nawiasy klamrowe"),_("Edytor operatory tagów"),_("Edytor tło nawiasów"),_("Edytor tło"),
 			_("Edytor zaznaczenie"),_("Edytor zaznaczenie w nieaktywnym oknie"),
 			_("Edytor obramowanie"),_("Edytor obramowanie aktywnego okna"),_("Edytor błędy pisowni"),
 			//audio
@@ -417,12 +419,25 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Pasek menu tło 1"),_("Pasek menu tło 2"),_("Pasek menu obramowanie zaznaczenia"),
 			_("Pasek menu tło zaznaczenia"),_("Menu tło"),_("Menu obramowanie zaznaczenia"),
 			_("Menu tło zaznaczenia"),
+			//zakładki
+			_("Pasek zakładek tło 1"), _("Pasek zakładek tło 2"), _("Zakładki obramowanie aktywnej"), 
+			_("Zakładki obramowanie nieaktywnej"),_("Zakładki tło aktywnej"), _("Zakładki tło nieaktywnej"), 
+			_("Zakładki tło nieaktywnej po najechaniu"),
+			_("Zakładki tekst aktywnej"), _("Zakładki tekst nieaktywnej"), _("Zakładki zamknięcie po najechaniu"), 
+			_("Pasek zakładek strzałka"), _("Pasek zakładek strzałka tło"), 
+			_("Pasek zakładek strzałka tło po najechaniu"),
+			//suwak
+			_("Suwak ścieżka tło"), _("Suwak ścieżka obramowanie"), _("Suwak obramowanie"), 
+			_("Suwak tło"), _("Suwak tło po najechaniu"), _("Suwak tło po wciśnięciu"),
+			//podgląd styli
 			_("Pierwszy kolor podglądu styli"),_("Drugi kolor podglądu styli")
 		};
-		wxString opts[75]={
+		wxString opts[numColors]={
 			//window
-			"Window Background", "Window Inactive Background", "Window Text", "Window Inactive Text"
-			,"Window Warning Elements",
+			"Window Background", "Window Inactive Background", "Window Text", "Window Inactive Text",
+			"Window Warning Elements", "Window Border", "Window Border Inactive", "Window Border Background", 
+			"Window Border Background Inactive", "Window Header Text", "Window Header Inactive Text", 
+			"Window Hover Header Element","Window Pushed Header Element",
 			//grid
 			"Grid Text","Grid Background","Grid Dialogue","Grid Comment","Grid Selected Dialogue","Grid Selected Comment",
 			"Grid Collisions","Grid Lines","Grid Active Line","Grid Label Normal","Grid Label Modified",
@@ -431,7 +446,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			"Grid Comparison Comment Background Selected",
 			//text field
 			"Editor Text","Editor Tag Names","Editor Tag Values",
-			"Editor Curly Braces","Editor Tag Operators","Editor Background",
+			"Editor Curly Braces","Editor Tag Operators","Editor Braces Background","Editor Background",
 			"Editor Selection","Editor Selection No Focus","Editor Border",
 			"Editor Border Focus","Editor Spellchecker",
 			//audio
@@ -448,6 +463,17 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			//menu bar 
 			"Menu Bar Background 1","Menu Bar Background 2","Menu Bar Border Selection",
 			"Menu Bar Background Selection","Menu Background","Menu Border Selection","Menu Background Selection",
+			//tabs
+			"Tabs Bar Background 1","Tabs Bar Background 2","Tabs Border Active", 
+			"Tabs Border inactive", "Tabs Background Active", "Tabs Background Inactive", 
+			"Tabs Background Inactive Hover",
+			"Tabs Text Active", "Tabs Text Inactive", "Tabs Close Hover", 
+			"Tabs Bar Arrow", "Tabs Bar Arrow Background", 
+			"Tabs Bar Arrow Background Hover",
+			//slider
+			"Slider Path Background", "Slider Path Border", "Slider Border", 
+			"Slider Background", "Slider Background Hover", "Slider Background Pushed",
+			//style preview
 			"Style Preview Color1","Style Preview Color2"
 		};
 
@@ -481,7 +507,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		KaiListCtrl *List = new KaiListCtrl(Themes, -1, wxDefaultPosition, wxSize(300, -1));
 		List->InsertColumn(0, _("Nazwa"), TYPE_TEXT, 240);
 		List->InsertColumn(1, _("Kolor"), TYPE_COLOR, 150);
-		for(int i=0;i<75;i++)
+		for(int i=0;i<numColors;i++)
 		{
 			int row = List->AppendItem(new ItemText(labels[i]));
 			AssColor col = Options.GetColor(opts[i]);
@@ -496,7 +522,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			wxString copyPath = dir + themeName + ".txt";
 			if(originalName== "Default"){
 				Options.SaveColors(copyPath);
-
+				List->Enable(true);
+				List->Refresh(false);
 			}else{
 
 				if(!wxDirExists(dir)){
@@ -515,7 +542,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			wxString themeName = themeList->GetString(themeList->GetSelection());
 			if(themeName.IsEmpty()){return;}
 			Options.LoadColors(themeName);
-			for(int i=0;i<74;i++)
+			for(int i=0;i<numColors;i++)
 			{
 				ItemColor *item = (ItemColor*)List->GetItem(i, 1);
 				item->col = Options.GetColor(item->name);

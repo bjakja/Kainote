@@ -332,14 +332,13 @@ void Grid::OnPaste(int id)
 		}
 		newdial= new Dialogue(token);
 		newdial->State=1;
-		//wxLogMessage("newdialog %i", (int)newdial);
 		if(!newdial){continue;}
 		if(newdial->Form!=form){newdial->Conv(form);}
 		if(id==Paste){
 			tmpdial.push_back(newdial);
 			sel[rws]=true;
 		}else{
-			if(rws<(int)selarr.GetCount() && selarr[rws] < GetCount()){
+			if(rws<(int)selarr.GetCount()/* && selarr[rws] < GetCount()*/){
 				ChangeCell(rw, selarr[rws],newdial);
 			}
 			delete newdial;

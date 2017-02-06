@@ -171,7 +171,9 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 	,scPosH(0)
 	,lineHeight(17)
 	,headerHeight(25)
+	,lastCollumn(0)
 	,modified(false)
+	,hasArrow(true)
 {
 	SetBackgroundColour(parent->GetBackgroundColour());
 	SetForegroundColour(parent->GetForegroundColour());
@@ -181,7 +183,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 
 KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, const wxPoint &pos, 
 		const wxSize &size, int style)
-	:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL)
+	:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL|wxHORIZONTAL)
 	,bmp(NULL)
 	,sel(-1)
 	,lastSelX(-1)
@@ -190,7 +192,9 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, 
 	,scPosH(0)
 	,lineHeight(17)
 	,headerHeight(3)
+	,lastCollumn(0)
 	,modified(false)
+	,hasArrow(true)
 {
 	SetBackgroundColour(parent->GetBackgroundColour());
 	SetForegroundColour(parent->GetForegroundColour());
@@ -204,7 +208,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, 
 
 KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, const wxPoint &pos, 
 		const wxSize &size, int style)
-		:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL)
+		:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL|wxHORIZONTAL)
 	,bmp(NULL)
 	,sel(-1)
 	,lastSelX(-1)
@@ -213,7 +217,9 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, co
 	,scPosH(0)
 	,lineHeight(17)
 	,headerHeight(3)
+	,lastCollumn(0)
 	,modified(false)
+	,hasArrow(true)
 {
 	SetBackgroundColour(parent->GetBackgroundColour());
 	SetForegroundColour(parent->GetForegroundColour());
@@ -282,13 +288,14 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 			GetClientSize (&w, &h);
 		}
 	}
-	int maxWidth = GetMaxWidth();
+	int maxWidth = GetMaxWidth()+10;
 	int bitmapw = w;
-	if(maxWidth> w){
-		/*if(SetScrollBar(wxHORIZONTAL, scPosH, w, maxWidth)){
+	//if(maxWidth> w){
+		if(SetScrollBar(wxHORIZONTAL, scPosH, w, maxWidth, w-2)){
 			GetClientSize (&w, &h);
-		}*/
-	}
+			if(maxWidth <= w){scPosH=0;SetScrollPos(wxHORIZONTAL,0);}
+		}
+	//}
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < bitmapw || bmp->GetHeight() < h)) {
 		delete bmp;
@@ -306,7 +313,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	tdc.SetFont(GetFont());
 	//header
 	
-	int posX=scPosH+5;
+	int posX= 5-scPosH;
 	int posY=headerHeight;
 	for(size_t i = scPosV; i < maxsize; i++){
 		auto row = itemList[i]->row;
@@ -317,7 +324,6 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 			if(widths[j] == -1){widths[j] = w-1;}
 			//drawing
 			if(i==sel){
-				//wxColour highlight = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
 				tdc.SetPen(wxPen(highlight));
 				tdc.SetBrush(wxBrush(highlight));
 				tdc.DrawRectangle(posX, posY, widths[j], lineHeight);
@@ -327,10 +333,10 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 			
 		}
 		posY += lineHeight;
-		posX = posX=scPosH+5;
+		posX = posX=5-scPosH;
 		
 	}
-	posX=scPosH+5;
+	posX=5-scPosH;
 	tdc.SetPen(wxPen(txt));
 	if(headerHeight>4){
 		for(size_t j = 0; j < widths.size(); j++){
@@ -343,20 +349,18 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 		}
 		tdc.DrawLine(0, headerHeight-2, w, headerHeight-2);
 	}
-	//tdc.SetPen(wxPen("#000000"));
 	tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 	tdc.DrawRectangle(0,0,w,h);
 
 	wxPaintDC dc(this);
-	dc.Blit(-scPosH,0,w+scPosH,h,&tdc,0,0);
+	dc.Blit(0,0,w,h,&tdc,0,0);
 }
 	
 void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 {
-	/*if(evt.Leaving() && lastSelY >=0 || lastSelX>=0){
-		itemList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this);
-		return;
-	}*/
+	if (evt.LeftUp() && HasCapture()){
+		ReleaseMouse();
+	}
 	if (evt.GetWheelRotation() != 0) {
 		int w=0;
 		int h=0;
@@ -372,11 +376,41 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 	wxPoint cursor = evt.GetPosition();
 
 	int elemY = ((cursor.y-headerHeight)/lineHeight) + scPosV;
-	if(elemY<0){
+	if(elemY<0 || cursor.y <= headerHeight){
 		//tu napisz chwytanie headera
 		//if header < 5 wtedy nic nie robimy
+		if(headerHeight > 5){
+			if(!hasArrow && evt.LeftDown()){
+				if(!HasCapture()){CaptureMouse();}
+				diffX = cursor.x;
+				return;
+			}else if(!hasArrow && evt.LeftIsDown()){
+				widths[lastCollumn] += (cursor.x - diffX);
+				if(widths[lastCollumn]<20){widths[lastCollumn]=20;}
+				diffX = cursor.x;
+				Refresh(false);
+				return;
+			}
+			int maxwidth=5-scPosH;
+			//bool isonpos= false;
+			for(size_t i = 0; i < widths.size(); i++){
+				maxwidth += widths[i];
+				if(abs(maxwidth - cursor.x)<5){
+					if(hasArrow){
+						SetCursor(wxCURSOR_SIZEWE);
+						hasArrow = false;
+						lastCollumn = i;
+					}
+					return;
+				}
+			}
+			
+		}
+		if(!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow=true;}
 		return;
-	}else if((size_t)elemY>=itemList.size()){
+	}
+	if(!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow=true;}
+	if((size_t)elemY>=itemList.size()){
 		//tu ju¿ nic nie zrobimy, jesteœmy poza elemetami na samym dole
 		if(lastSelX != -1 && lastSelY !=-1){
 			itemList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this);
@@ -385,7 +419,7 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 		return;
 	}
 	int elemX = -1;
-	int startX = 0; 
+	int startX = 5-scPosH; 
 	for(size_t i = 0; i < widths.size(); i++){
 		if(cursor.x > startX && cursor.x <= startX + widths[i]){
 			elemX=i;
@@ -422,7 +456,7 @@ void KaiListCtrl::OnScroll(wxScrollWinEvent& event)
 {
 	size_t newPos=0;
 	int orient = event.GetOrientation();
-	size_t scPos = (orient = wxVERTICAL)? scPosV : scPosH;
+	size_t scPos = (orient == wxVERTICAL)? scPosV : scPosH;
 	newPos = event.GetPosition();
 	if (scPos != newPos) {
 		if(orient == wxVERTICAL){

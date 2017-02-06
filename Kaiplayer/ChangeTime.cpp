@@ -273,7 +273,7 @@ void CTwindow::OnSize(wxSizeEvent& event)
 		isscrollbar=false;
 		scPos=0;
 		scroll->Hide();
-		scroll->SetScrollbar(0, gh, h, gh-10);
+		scroll->SetScrollbar(scPos, gh, h, gh-10);
 		SetMinSize(wxSize(w,h));
 		panel->SetPosition(wxPoint(0,scPos));
 		cur->BoxSizer3->Layout();

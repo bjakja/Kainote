@@ -13,8 +13,32 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-//  This file is for automatic build change
-//  Autoversioning.exe change it after build using commandline
+#ifndef _FONT_ENUMERATOR_
+#define _FONT_ENUMERATOR_
 
-#define VersionKainote "0.9.0.683"
-#define NumVersionKainote 0,9,0,683
+#include <wx/arrstr.h>
+#include <windows.h>
+#include <wingdi.h>
+class kainoteFrame;
+
+class FontEnumerator
+{
+public:
+	FontEnumerator(kainoteFrame* parent);
+	~FontEnumerator();
+	const wxArrayString *EnumerateFonts(bool reenumerate = false);
+
+private:
+	
+	static int CALLBACK FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lptm,
+                                  DWORD WXUNUSED(dwStyle), LPARAM lParam);
+	static DWORD FontEnumerator::CheckFontsProc(void* cls);
+	void RefreshVideo();
+	wxArrayString *Fonts;
+	kainoteFrame* parent;
+	HANDLE eventKillSelf;
+	HANDLE checkFontsThread;
+};
+
+extern FontEnumerator FontEnum;
+#endif

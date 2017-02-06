@@ -507,7 +507,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color)
 
 	eyedropper_bitmap = wxBITMAP_PNG("eyedropper_tool");
 	//eyedropper_bitmap.SetMask(new wxMask(eyedropper_bitmap, wxColour(255, 0, 255)));
-	screen_dropper_icon = new wxStaticBitmap(this, SELECTOR_DROPPER, eyedropper_bitmap, wxDefaultPosition, wxSize(32,32), wxRAISED_BORDER);
+	screen_dropper_icon = new wxStaticBitmap(this, SELECTOR_DROPPER, eyedropper_bitmap, wxDefaultPosition, wxSize(32,32), wxSTATIC_BORDER);
 	screen_dropper = new ColorPickerScreenDropper(this, SELECTOR_DROPPER_PICK, 7, 7, 8, false);
 
 	// Arrange the controls in a nice way

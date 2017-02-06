@@ -207,7 +207,7 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 	}
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
-	wxColour background = Options.GetColour("Menu Background");
+	wxColour background = Options.GetColour("Window Background");
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
@@ -227,11 +227,12 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 			//wxImage img=tools[i]->GetBitmap().ConvertToImage();
 			//img=img.Rescale(20,20,wxIMAGE_QUALITY_HIGH);
 
-			tdc.DrawBitmap(tools[i]->GetBitmap(),(vertical)?pos1+4 : pos,(vertical)?pos : pos1+4);}
-		else if(tools[i]->type==3){
-			tdc.SetPen(wxPen("#606060")); 
-			tdc.DrawLine((vertical)?pos1+2 : pos+2, (vertical)?pos+2 : pos1+2, (vertical)? iconsize-2 : pos+2, (vertical)?pos+2 : iconsize-2);
+			tdc.DrawBitmap(tools[i]->GetBitmap(),(vertical)?pos1+4 : pos,(vertical)?pos : pos1+4);
 		}
+		/*else if(tools[i]->type==3){
+			tdc.SetPen(wxPen("#606060")); 
+			tdc.DrawLine((vertical)?pos1+2 : pos+2, (vertical)?pos+2 : pos1+2, (vertical)? iconsize-2 : pos+2, (vertical)?pos+2 : iconsize-2);*/
+		//}
 		pos+=tools[i]->size;
 	}
 	tdc.SetPen(wxPen(Options.GetColour("Window Text")));

@@ -1777,6 +1777,12 @@ void SubsGrid::GetUndo(bool redo)
 	RepaintWindow();
 	Edit->SetIt(erow);
 	Edit->RefreshStyle();
+	for(auto cur = sel.begin(); cur != sel.end(); cur++){
+		if(cur->first >= GetCount()){
+			sel.erase(cur,sel.end());
+			break;
+		}
+	}
 	VideoCtrl *vb=pan->Video;
 	if(Edit->Visual < CHANGEPOS || Edit->Visual == MOVEALL){
 		if(vb->IsShown() || vb->isFullscreen){vb->OpenSubs(SaveText());}

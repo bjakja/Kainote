@@ -276,6 +276,12 @@
     <ClCompile Include="KaiDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="KaiFrame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FontEnumerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DropFiles.h">
@@ -519,6 +525,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KaiDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FontEnumerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

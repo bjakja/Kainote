@@ -1223,7 +1223,7 @@ void AudioDisplay::UpdateScrollbar() {
 	if (!provider) return;
 	int page = w/12;
 	int len = provider->GetNumSamples() / samples / 12;
-	Position = PositionSample / samples;
+	Position = (PositionSample / samples);
 	ScrollBar->SetScrollbar(Position/12,page,len,int(page*0.7),true);
 }
 

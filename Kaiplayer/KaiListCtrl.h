@@ -139,11 +139,14 @@ private:
 	int sel;
 	int lastSelX;
 	int lastSelY;
+	int diffX;
+	int lastCollumn;
 	int scPosV;
 	int scPosH;
 	int lineHeight;
 	int headerHeight;
 	bool modified;
+	bool hasArrow;
 
 	DECLARE_EVENT_TABLE()
 	wxDECLARE_ABSTRACT_CLASS(KaiListCtrl);

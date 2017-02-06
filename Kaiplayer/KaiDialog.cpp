@@ -187,11 +187,12 @@ void KaiDialog::OnPaint(wxPaintEvent &evt)
 	wxMemoryDC mdc;
 	mdc.SelectObject(wxBitmap(w,h));
 	mdc.SetFont(GetFont());
-	wxColour bg = (isActive)? Options.GetColour("Button Background") : Options.GetColour("Window Inactive Background");
+	wxColour bg = (isActive)? Options.GetColour("Window Border Background") : Options.GetColour("Window Border Background Inactive");
 	mdc.SetBrush(bg);
-	mdc.SetPen((isActive)? Options.GetColour("Window Text") : Options.GetColour("Window Inactive Text"));
+	mdc.SetPen((isActive)? Options.GetColour("Window Border") : Options.GetColour("Window Border Inactive"));
 	mdc.DrawRectangle(0,0,w,h);
-	mdc.SetTextForeground(Options.GetColour("Window Text"));
+	wxColour text = (isActive)? Options.GetColour("Window Header Text") : Options.GetColour("Window Header Inactive Text");
+	mdc.SetTextForeground(text);
 	wxIconBundle icon = GetIcons();
 	if(icon.GetIconCount()){
 		mdc.DrawIcon(icon.GetIconByIndex(0), 4, 4);
@@ -200,13 +201,14 @@ void KaiDialog::OnPaint(wxPaintEvent &evt)
 		mdc.DrawText(GetTitle(), icon.GetIconCount()? 26 : 6, 4);
 	}
 	if(enter || pushed){
-		wxColour buttonxbg = (enter && !pushed)? Options.GetColour("Button Background Hover") : Options.GetColour("Button Background Pushed");
+		wxColour buttonxbg = (enter && !pushed)? Options.GetColour("Window Hover Header Element") : 
+			Options.GetColour("Window Pushed Header Element");
 		mdc.SetBrush(buttonxbg);
 		mdc.SetPen(buttonxbg);
 		mdc.DrawRectangle(w-25, 3, 18, 18);
 	}
 	//mdc.DrawText("X", w-20, 4);
-	mdc.SetPen(wxPen(Options.GetColour("Window Text"),2));
+	mdc.SetPen(wxPen(text,2));
 	mdc.DrawLine(w-21,7, w-12,16);
 	mdc.DrawLine(w-12,7, w-21,16);
 	dc.Blit(0,0,w,topBorder, &mdc, 0, 0);
@@ -227,12 +229,16 @@ void KaiDialog::OnMouseEvent(wxMouseEvent &evt)
 	GetClientSize(&w,&h);
 	int x = evt.GetX();
 	int y = evt.GetY();
+	wxRect rc(w-25, 3, 18, 18);
+	if(evt.Leaving()){
+		pushed = enter = false;
+		Refresh(false,&rc);
+	}
 	bool leftdown= evt.LeftDown() || evt.LeftDClick();
 	if(leftdown){
 		wxActivateEvent evt(wxEVT_ACTIVATE, true);
 		OnActivate(evt);
 	}
-	wxRect rc(w-25, 3, 18, 18);
 	if(x>=w-25 && x<w-5 && y>=6 && y<21){
 		if(leftdown){pushed=true; Refresh(false,&rc);}
 		if(!enter){enter = true; Refresh(false,&rc);}
@@ -292,24 +298,32 @@ WXLRESULT KaiDialog::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam
 		if (x >= border && x <= WindowRect.right - WindowRect.left - 30 && y >= border && y <= topBorder)
 			return HTCAPTION;
 		else if (style & wxRESIZE_BORDER){
+			int result = 0;
 			if (x < border && y < border)
-				return HTTOPLEFT;
+				result = HTTOPLEFT;
 			else if (x > WindowRect.right - WindowRect.left - border && y < border)
-				return HTTOPRIGHT;
+				result = HTTOPRIGHT;
 			else if (x > WindowRect.right - WindowRect.left - border && y > WindowRect.bottom - WindowRect.top - border)
-				return HTBOTTOMRIGHT;
+				result = HTBOTTOMRIGHT;
 			else if (x < border && y > WindowRect.bottom - WindowRect.top - border)
-				return HTBOTTOMLEFT;
+				result = HTBOTTOMLEFT;
 			else if (x < border)
-				return HTLEFT;
+				result = HTLEFT;
 			else if (y < border)
-				return HTTOP;
+				result = HTTOP;
 			else if (x > WindowRect.right - WindowRect.left - border)
-				return HTRIGHT;
+				result = HTRIGHT;
 			else if (y > WindowRect.bottom - WindowRect.top - border)
-				return HTBOTTOM;
+				result = HTBOTTOM;
 			else
-				return HTCLIENT;
+				result = HTCLIENT;
+
+			if(result != HTCLIENT && (enter || pushed)){
+				enter = pushed = false; 
+				wxRect rc(0,0,WindowRect.right - WindowRect.left,topBorder);
+				Refresh(false, &rc);
+			}
+			return result;
 		}else 
 			return HTCLIENT;
 
