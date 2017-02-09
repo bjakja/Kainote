@@ -17,27 +17,41 @@
 #define _FONT_ENUMERATOR_
 
 #include <wx/arrstr.h>
+#include <wx/thread.h>
+#include <wx/window.h>
 #include <windows.h>
 #include <wingdi.h>
+#include <map>
+#include <vector>
+#include <functional>
+
+
+
 class kainoteFrame;
 
 class FontEnumerator
 {
 public:
-	FontEnumerator(kainoteFrame* parent);
+	FontEnumerator();
 	~FontEnumerator();
-	const wxArrayString *EnumerateFonts(bool reenumerate = false);
-
+	void StartListening(kainoteFrame* parent);
+	void EnumerateFonts(bool reenumerate = false);
+	wxArrayString *GetFonts(const wxWindow *client, std::function<void()>);
+	void RemoveClient(const wxWindow *client);
+	bool CheckGlyphsExists(HDC dc, const wxString &textForCheck, std::vector<int> &missing); 
 private:
-	
+	void RefreshClientsFonts();
 	static int CALLBACK FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lptm,
                                   DWORD WXUNUSED(dwStyle), LPARAM lParam);
 	static DWORD FontEnumerator::CheckFontsProc(void* cls);
 	void RefreshVideo();
 	wxArrayString *Fonts;
+	wxArrayString *FontsTmp;
+	std::map<const wxWindow*, std::function<void()>> observers;
 	kainoteFrame* parent;
 	HANDLE eventKillSelf;
 	HANDLE checkFontsThread;
+	wxMutex enumerateMutex;
 };
 
 extern FontEnumerator FontEnum;

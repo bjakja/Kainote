@@ -116,7 +116,7 @@ wxBitmap *CreateBitmapPointerFromPngResource(const wxString& t_name);
 wxImage CreateImageFromPngResource(const wxString& t_name);
 #define wxBITMAP_PNG(x) CreateBitmapFromPngResource(x)
 #define PTR_BITMAP_PNG(x) CreateBitmapPointerFromPngResource(x)
-
+void MoveToMousePosition(wxWindow *win);
 
 enum{
 	ASS=1,

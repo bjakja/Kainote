@@ -19,7 +19,7 @@
 #include <wx/intl.h>
 #include <wx/string.h>
 #include <wx/settings.h>
-#include <wx/fontenum.h>
+#include "FontEnumerator.h"
 #include "config.h" 
 #include "ColorPicker.h"
 #include "KaiStaticBoxSizer.h"
@@ -32,11 +32,6 @@ wxColour Blackorwhite(wxColour kol)
 	return wxColour(kols,kols,kols);
 }
 
-bool sortf(wxString name1,wxString name2){
-	return (name1.CmpNoCase(name2)<0);
-}
-
-
 ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 	: wxWindow(parent,id,pos,size)
 {
@@ -47,8 +42,6 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	block=true;
 	wxFont font(8,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 	SetFont(font);
-	wxArrayString fontList = wxFontEnumerator::GetFacenames();
-	std::sort(fontList.begin(),fontList.end(),sortf);
 
 	wxBoxSizer *Main=new wxBoxSizer(wxVERTICAL);
 
@@ -62,7 +55,10 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	KaiStaticBoxSizer *stylefont= new KaiStaticBoxSizer(wxVERTICAL, this, _("Czcionka i rozmiar:"));
 	wxBoxSizer *fntsizer=new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *biussizer=new wxBoxSizer(wxHORIZONTAL);
-	sfont = new KaiChoice(this, ID_FONTNAME, "", wxDefaultPosition, wxDefaultSize, fontList);
+	sfont = new KaiChoice(this, ID_FONTNAME, "", wxDefaultPosition, wxDefaultSize, wxArrayString());
+	sfont -> PutArray(FontEnum.GetFonts(this,[=](){
+		SS->ReloadFonts();
+	}));
 	ssize = new NumCtrl(this, ID_TOUTLINE, "32",1,10000,false, wxDefaultPosition, wxSize(66,-1), wxTE_PROCESS_ENTER);
 
 	sb = new KaiCheckBox(this, ID_CBOLD, _("Pogrubienie"), wxDefaultPosition, wxSize(73,15));
@@ -245,6 +241,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 
 ColorChange::~ColorChange()
 {
+	FontEnum.RemoveClient(this);
 	wxDELETE(tab);
 }
 

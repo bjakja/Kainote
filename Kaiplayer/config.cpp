@@ -783,6 +783,20 @@ wxImage CreateImageFromPngResource(const wxString& t_name)
 	return image;
 }
 
+void MoveToMousePosition(wxWindow *win)
+{
+	wxPoint mst=wxGetMousePosition();
+	wxSize siz=win->GetSize();
+	siz.x;
+	wxRect rc = wxGetClientDisplayRect();
+	mst.x-=(siz.x/2);
+	mst.x=MID(0,mst.x, rc.width - siz.x);
+	mst.y+=15;
+	if(mst.y + siz.y > rc.height){
+		mst.y = mst.y - siz.y - 30;
+	}
+	win->Move(mst);
+}
 config Options;
 
 

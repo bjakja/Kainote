@@ -31,7 +31,7 @@ public:
 	FontList(wxWindow *parent, long id, const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize);
 	virtual ~FontList();
 
-	void Insert(wxString facename,int pos);
+	//void Insert(wxString facename,int pos);
 	void SetSelection(int pos);
 	void SetSelectionByName(wxString name);
 	void SetSelectionByPartialName(wxString PartialName);
@@ -52,7 +52,7 @@ private:
 	int scPos;
 	int Height;
 	bool holding;
-	wxArrayString fonts;
+	wxArrayString *fonts;
 
 	KaiScrollbar *scrollBar;
 	wxBitmap *bmp;

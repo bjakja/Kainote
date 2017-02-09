@@ -21,6 +21,7 @@
 #include <vector>
 #include <map>
 #include <ft2build.h>
+#include <wx/textctrl.h>
 #include "KaiRadioButton.h"
 #include "MappedButton.h"
 #include "KaiTextCtrl.h"
@@ -46,16 +47,22 @@ public:
 	KaiCheckBox *subsdir;
 	void PutChars(wxString txt, wxString fn, int move);
 	wxString CheckChars(FT_Face face, std::map<wxUniChar, wxString> *chars);
-	wxArrayString GetAssFonts(std::vector<bool> &founded, bool check=false);
+	void GetAssFonts(std::vector<bool> &found, bool check=false);
+	bool CheckGlyphs();
 	void CopyFonts(bool check=false);
 	void CopyMKVFonts();
 	void MuxVideoWithSubs();
 	wxString destdir;
 	wxArrayString facenames;
 	wxArrayString fontnames;
+	wxArrayString foundFonts;
+	std::vector<LOGFONTW> logFonts;
+	std::vector<LOGFONTW> foundLogFonts;
 	wxString copypath;
-
+	wxColour warning;
+	wxColour normal;
 private:
+	void EnumerateFonts();
 	void OnButtonStart(wxCommandEvent &event);
 	void OnChangeOpt(wxCommandEvent &event);
 	void OnButtonPath(wxCommandEvent &event);

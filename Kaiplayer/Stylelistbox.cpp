@@ -33,8 +33,7 @@ Stylelistbox::Stylelistbox(wxWindow* parent, bool styles, int numelem, wxString 
 	Main->Add(sizer1,0, wxEXPAND);
 	Main->Add(sizer,0, wxEXPAND);
 	SetSizerAndFit(Main);
-	wxPoint mousepos = wxGetMousePosition();
-	SetPosition(mousepos);
+	MoveToMousePosition(this);
 }
 
 Stylelistbox::~Stylelistbox()

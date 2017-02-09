@@ -90,6 +90,7 @@ public:
 	void EnableItem(int numItem, bool enable=true);
 	int Append(const wxString &item);
 	void Append(const wxArrayString &itemsArray);
+	void PutArray(wxArrayString *arr);
 	void Delete(int num);
 	void SetToolTip(const wxString &tooltip="");
 	void Sort();

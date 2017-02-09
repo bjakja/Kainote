@@ -761,16 +761,7 @@ void EditBox::AllColClick(int kol)
 	if(FindVal(num+taga, &iskol)){acol.SetAlphaString(iskol);}
 	else if(FindVal(tagal, &iskol)){acol.SetAlphaString(iskol);}
 	DialogColorPicker *ColourDialog = DialogColorPicker::Get(this, acol.GetWX());
-
-	wxPoint mst=wxGetMousePosition();
-	int dw, dh;
-	wxSize siz=ColourDialog->GetSize();
-	siz.x;
-	wxDisplaySize (&dw, &dh);
-	mst.x-=(siz.x/2);
-	mst.x=MID(0,mst.x, dw-siz.x);
-	mst.y+=15;
-	ColourDialog->Move(mst);
+	MoveToMousePosition(ColourDialog);
 	ColourDialog->Connect(11111,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&EditBox::OnColorChange,0,this);
 	if ( ColourDialog->ShowModal() == wxID_OK) {
 		Editor->SetSelection(Placed.x,Placed.x);

@@ -14,16 +14,21 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "FontEnumerator.h"
+#undef CreateDialog
 #include "kainoteMain.h"
 #include <wx/log.h>
 #include <wx/filefn.h>
+#include <Usp10.h>
+#include <unicode/utf16.h>
+//#pragma comment(lib,"Usp10.lib")
+	
 
-FontEnumerator::FontEnumerator(kainoteFrame* _parent)
+
+
+FontEnumerator::FontEnumerator()
 {
-	parent = _parent;
 	Fonts = new wxArrayString();
-	checkFontsThread = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)CheckFontsProc, this, 0, 0);
-	SetThreadPriority(checkFontsThread,THREAD_PRIORITY_LOWEST);
+	FontsTmp = new wxArrayString();
 }
 
 FontEnumerator::~FontEnumerator()
@@ -31,36 +36,81 @@ FontEnumerator::~FontEnumerator()
 	SetEvent(eventKillSelf);
 	WaitForSingleObject(checkFontsThread, 2000);
 	delete Fonts;
+	delete FontsTmp;
 }
 
-const wxArrayString *FontEnumerator::EnumerateFonts(bool reenumerate)
+void FontEnumerator::StartListening(kainoteFrame* _parent)
 {
-	if(Fonts->size()<1 || reenumerate){
-		LOGFONT lf;
-		lf.lfCharSet = DEFAULT_CHARSET;
-		wxStrlcpy(lf.lfFaceName, L"\0", WXSIZEOF(lf.lfFaceName));
-		lf.lfPitchAndFamily = 0;
-		HDC hDC = ::GetDC(NULL);
-		EnumFontFamiliesEx(hDC, &lf, (FONTENUMPROC)FontEnumeratorProc,
-			(LPARAM)this, 0 /* reserved */);
-		Fonts->Sort([](const wxString &i, const wxString &j){return i.CmpNoCase(j);});
+	parent = _parent;
+	checkFontsThread = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)CheckFontsProc, this, 0, 0);
+	SetThreadPriority(checkFontsThread,THREAD_PRIORITY_LOWEST);
+}
+
+void FontEnumerator::EnumerateFonts(bool reenumerate)
+{
+	wxMutexLocker lock(enumerateMutex);
+	FontsTmp->Clear();
+	LOGFONT lf;
+	lf.lfCharSet = DEFAULT_CHARSET;
+	wxStrlcpy(lf.lfFaceName, L"\0", WXSIZEOF(lf.lfFaceName));
+	lf.lfPitchAndFamily = 0;
+	HDC hDC = ::GetDC(NULL);
+	EnumFontFamiliesEx(hDC, &lf, (FONTENUMPROC)FontEnumeratorProc,
+		(LPARAM)this, 0 /* reserved */);
+	FontsTmp->Sort([](const wxString &i, const wxString &j){return i.CmpNoCase(j);});
+	wxArrayString *tmp = FontsTmp;
+	FontsTmp = Fonts;
+	Fonts = tmp;
+
+	::ReleaseDC(NULL, hDC);
+}
+
+wxArrayString *FontEnumerator::GetFonts(const wxWindow *client, std::function<void()> func)
+{
+	wxMutexLocker lock(enumerateMutex);
+	if(Fonts->size()<1){
+		EnumerateFonts(false);
 	}
+	if(client){observers[client] = func;}
 	return Fonts;
+}
+
+void FontEnumerator::RemoveClient(const wxWindow *client)
+{
+	auto it = observers.find(client);
+	if(it!=observers.end()){
+		observers.erase(it);
+	}
+}
+
+void FontEnumerator::RefreshClientsFonts()
+{
+	for(auto it = observers.begin(); it!=observers.end(); it++){
+		auto func = it->second;
+		func();
+	}
 }
 
 int CALLBACK FontEnumerator::FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lptm,
 												DWORD WXUNUSED(dwStyle), LPARAM lParam)
 {
 	FontEnumerator *Enum = (FontEnumerator*)lParam;
-	if(Enum->Fonts->Index(lplf->lfFaceName,false)==wxNOT_FOUND){
-		Enum->Fonts->Add(lplf->lfFaceName);
+	if(Enum->FontsTmp->Index(lplf->lfFaceName,false)==wxNOT_FOUND){
+		Enum->FontsTmp->Add(lplf->lfFaceName);
 	}
 	return true;
 }
 
 void FontEnumerator::RefreshVideo()
 {
-	parent->GetTab()->Video->Render();
+	//na razie tak, ale trzeba zrobiæ to tak by ¿aden idiota przy odœwie¿aniu nie zmieni³ zak³adki.
+	//TODO: Mo¿liwy b³¹d Devilkana, czyli mix napisów w zak³adkach, pamiêtaj o tym.
+	// nigdy nie pozwól by zmieni³a siê zak³adka gdy odœwie¿amy albo odœwie¿amy napisy na innej zak³adce ni¿ widoczna.
+	TabPanel *tab = parent->GetTab();
+	if(tab->Video->GetState()!=None){
+		tab->Video->OpenSubs(tab->Grid1->SaveText());
+		tab->Video->Render();
+	}
 }
 
 DWORD FontEnumerator::CheckFontsProc(void* fontEnum)
@@ -83,6 +133,7 @@ DWORD FontEnumerator::CheckFontsProc(void* fontEnum)
 		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait)/sizeof(HANDLE), events_to_wait, FALSE, INFINITE);
 		if(wait_result == WAIT_OBJECT_0+0){
 			fe->EnumerateFonts(true);
+			fe->RefreshClientsFonts();
 			fe->RefreshVideo();
 			if( FindNextChangeNotification( hDir ) == 0 ){
 				wxLogStatus(_("Nie mo¿na stworzyæ nastêpnego uchwytu notyfikacji zmian folderu czcionek."));
@@ -94,6 +145,66 @@ DWORD FontEnumerator::CheckFontsProc(void* fontEnum)
 	}
 
 	return FindCloseChangeNotification( hDir );
+}
+
+//w Dc ma byæ ustawiona czcionka
+bool FontEnumerator::CheckGlyphsExists(HDC dc, const wxString &textForCheck, std::vector<int> &missing)
+{
+	std::wstring utf16characters = textForCheck.wc_str();
+	/*utf16characters.reserve(textForCheck.size());
+	for (size_t i = 0; i < textForCheck.size(); i++) {
+		int chr = textForCheck[i];
+		if (U16_LENGTH(chr) == 1)
+			utf16characters.push_back(static_cast<wchar_t>(chr));
+		else {
+			utf16characters.push_back(U16_LEAD(chr));
+			utf16characters.push_back(U16_TRAIL(chr));
+		}
+	}*/
+	bool succeeded = true;
+	//code taken from Aegisub, fixed by me.
+	SCRIPT_CACHE cache = NULL;
+	WORD *indices = new WORD[utf16characters.size()];
+
+	// First try to check glyph coverage with Uniscribe, since it
+	// handles non-BMP unicode characters
+	HRESULT hr = ScriptGetCMap(dc, &cache, utf16characters.data(),
+		utf16characters.size(), 0, indices);
+
+	// Uniscribe doesn't like some types of fonts, so fall back to GDI
+	if (hr == E_HANDLE) {
+		succeeded = (GetGlyphIndicesW(dc, utf16characters.data(), utf16characters.size(),
+			indices, GGI_MARK_NONEXISTING_GLYPHS)==GDI_ERROR);
+		for (size_t i = 0; i < utf16characters.size(); ++i) {
+			if (U16_IS_SURROGATE(utf16characters[i]))
+				continue;
+			if (indices[i] == 65535)
+				missing.push_back(i);
+		}
+	}
+	else if (hr == S_FALSE) {
+		for (size_t i = 0; i < utf16characters.size(); ++i) {
+			// Uniscribe doesn't report glyph indexes for non-BMP characters,
+			// so we have to call ScriptGetCMap on each individual pair to
+			// determine if it's the missing one
+			if (U16_IS_SURROGATE(utf16characters[i])) {
+				hr = ScriptGetCMap(dc, &cache, &utf16characters[i], 2, 0, &indices[i]);
+				if (hr == S_FALSE) {
+					missing.push_back(i);
+					missing.push_back(i+1);
+				}
+				++i;
+			}
+			else if (indices[i] == 0) {
+				missing.push_back(i);
+			}
+		}
+	}else if(hr != S_OK){
+		succeeded=false;
+	}
+	ScriptFreeCache(&cache);
+	delete[] indices;
+	return succeeded;
 }
 
 FontEnumerator FontEnum;

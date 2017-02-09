@@ -36,7 +36,7 @@
 #include <wx/sysopt.h>
 #include "KaiTextCtrl.h"
 #include "KaiMessageBox.h"
-
+#include "FontEnumerator.h"
 
 #undef IsMaximized
 #if _DEBUG
@@ -75,7 +75,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	//wxBoxSizer *mains1= new wxBoxSizer(wxVERTICAL);
 	//mains=new wxBoxSizer(wxHORIZONTAL);
 	Tabs=new Notebook (this,ID_TABS);
-	//Tabs->SetMinSize(wxSize(500,300));
+	SetMinSize(wxSize(500,300));
 	Toolbar=new KaiToolbar(this,Menubar,-1,true);
 
 	//height 26 zmieniając jedną z tych wartości popraw je też dropfiles
@@ -215,12 +215,68 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&kainoteFrame::OnClose1);
 	Connect(30000,30059,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnRecent);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
-		if(!mylog){
+		/*if(!mylog){
 			mylog=new wxLogWindow(this, "Logi",true, false);
 			mylog->PassMessages(true);
 		}else{
 			delete mylog; mylog=NULL;
-		}
+		}*/
+		std::string txt = "Jakiśtam testowy tekst na powtórzenia tych samych liter bądź znaków specjalnych";
+		txt.erase(std::unique(txt.begin(), txt.end()), txt.end());
+		wxLogStatus(wxString(txt));
+		
+	LOGFONTW lf;
+	lf.lfCharSet = DEFAULT_CHARSET;
+	wcsncpy(lf.lfFaceName, L"Cocon", LF_FACESIZE);
+	lf.lfHeight=10;
+	lf.lfWidth=0;
+	lf.lfItalic= 0;
+	lf.lfWeight=400;
+	lf.lfUnderline=FALSE;
+	lf.lfStrikeOut=FALSE;
+	lf.lfEscapement=0;
+	lf.lfOrientation=0;
+	lf.lfPitchAndFamily = 0;
+	lf.lfQuality = 0;
+	lf.lfClipPrecision = 0;
+	lf.lfQuality = 0;
+	HDC dc = ::CreateCompatibleDC(NULL);
+	// Gather all of the styles for the given family name
+	std::vector<LOGFONTW> matches;
+	//using type = decltype(matches);
+	EnumFontFamiliesEx(dc, &lf, (FONTENUMPROCW)[](const LOGFONT *lf, const TEXTMETRIC *mt, DWORD style, LPARAM lParam) -> int {
+		reinterpret_cast<std::vector<LOGFONTW>*>(lParam)->push_back(*lf);
+		return 1;
+	}, (LPARAM)&matches, 0);
+
+	if(matches.size()<1){return;}
+	memcpy(lf.lfFaceName, matches[0].lfFaceName, LF_FACESIZE);
+
+		auto hfont = CreateFontIndirectW(&lf);
+		SelectObject(dc, hfont);
+		std::vector<int> missing;
+		//wxString tekst = "zażółćgęśląjaźń";
+		//wxString Result;
+	//FontEnum.CheckGlyphsExists(dc,tekst, missing);
+		DWORD ttcf = 0x66637474;
+	auto size = GetFontData(dc, ttcf, 0, nullptr, 0);
+	if (size == GDI_ERROR) {
+		ttcf = 0;
+		size = GetFontData(dc, 0, 0, nullptr, 0);
+	}
+	if (size == GDI_ERROR || size == 0){wxLogStatus("ni chuja fonta nie będzie");}
+	std::string buffer;
+		buffer.resize(size);
+	GetFontData(dc, ttcf, 0, &buffer[0], (int)size);
+
+	wxLogStatus("wnętrze naszej czcionki %i" + wxString(buffer), size);
+		SelectObject(dc, nullptr);
+		DeleteObject(hfont);
+	//for(size_t i = 0; i< missing.size(); i++){
+		//Result<<tekst[missing[i]];
+	//}
+	//wxLogStatus("Brakuje znaków: "+Result);
+		::DeleteDC(dc);
 	},9989);
 	/*Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
 		TabPanel *tab = GetTab();
@@ -236,6 +292,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	if(!Options.GetBool("Show Editor")){HideEditor();}	
 	std::set_new_handler(OnOutofMemory);
+	FontEnum.StartListening(this);
 }
 
 kainoteFrame::~kainoteFrame()

@@ -93,9 +93,6 @@ class stylestore: public KaiDialog
 		int prompt;
 		wxString oldname;
 		void modif();
-		volatile bool stopcheck;
-		static DWORD CheckFontProc(void* cls);
-		HANDLE thread;
 };
 
 enum{

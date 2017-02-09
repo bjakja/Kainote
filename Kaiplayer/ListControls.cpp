@@ -412,6 +412,22 @@ void KaiChoice::Append(const wxArrayString &itemsArray)
 	list->insert(list->end(), itemsArray.begin(), itemsArray.end());
 }
 
+void KaiChoice::PutArray(wxArrayString *arr)
+{
+	wxString ce = (choice>=0 && choice < (int)list->size())? (*list)[choice] : "";
+	if(list){delete list;}
+	list = new wxArrayString(*arr);
+	if(ce != ""){
+		if(choice >= (int)list->size()){
+			choice = 0;
+		}
+		if(ce != (*list)[choice]){
+			choice = list->Index(ce);
+		}
+	}
+	Refresh(false);
+}
+
 int KaiChoice::GetCount()
 {
 	return list->size();

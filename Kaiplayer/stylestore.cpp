@@ -27,7 +27,7 @@
 #include <wx/string.h>
 #include "StyleChange.h"
 #include "KaiMessageBox.h"
-#include <wx/fontenum.h>
+#include "FontEnumerator.h"
 
 
 stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
@@ -163,29 +163,11 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 
 	DoTooltips();
 
-	stopcheck=false;
-	thread = NULL;
-	thread = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)CheckFontProc, this, 0, 0);
-	SetThreadPriority(thread,THREAD_PRIORITY_LOWEST);
-
-	//SetMinSize(wxSize(200,-1));
 	SetMaxSize(wxSize(500,-1));
-	/*Bind(wxEVT_CHAR_HOOK, [=](wxKeyEvent &evt){
-		int key = evt.GetKeyCode();
-		if(key == WXK_ESCAPE || key == WXK_RETURN){
-			wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, (key == WXK_ESCAPE)? ID_CLOSE : ID_CONF);
-			ProcessEvent(evt);
-			return;
-		}
-		evt.Skip();
-	});*/
 }
 
 stylestore::~stylestore()
 {
-	stopcheck=true;
-	WaitForSingleObject(thread,2000);
-	CloseHandle(thread);
 }
 
 void stylestore::OnSwitchLines(wxCommandEvent& event)
@@ -719,44 +701,9 @@ void stylestore::LoadAssStyles()
 
 void stylestore::ReloadFonts()
 {
-	wxArrayString fontList = wxFontEnumerator::GetFacenames();
-	std::sort(fontList.begin(),fontList.end(),sortf);
-	wxString oldfname= cc->sfont->GetString(cc->sfont->GetSelection());
-	cc->sfont->Clear();
-	cc->sfont->Append(fontList);
-	int wfont=MAX(0,cc->sfont->FindString(oldfname));
-	cc->sfont->SetSelection(wfont);
+	wxArrayString *fontList = FontEnum.GetFonts(0,[](){});
+	cc->sfont->PutArray(fontList);
+	Store->Refresh(false);
+	ASS->Refresh(false);
 	wxLogStatus(_("Czcionki zaczytane ponownie."));
-}
-
-DWORD stylestore::CheckFontProc(void* cls)
-{
-	stylestore *ss=(stylestore*)cls;
-	if(!ss){wxLogStatus(_("Brak wskaźnika klasy magazynu stylów.")); return 0;}
-
-	HANDLE hDir  = NULL; 
-	wxString fontrealpath=wxGetOSDirectory() + "\\fonts\\";
-
-	hDir = FindFirstChangeNotification( fontrealpath.wc_str(), TRUE, FILE_NOTIFY_CHANGE_FILE_NAME);// | FILE_NOTIFY_CHANGE_LAST_WRITE
-
-	if(hDir == INVALID_HANDLE_VALUE ){wxLogStatus(_("Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek.")); return 0;}
-	while(1){
-		while( WaitForSingleObject( hDir, WAIT_TIMEOUT ) != WAIT_OBJECT_0 ){
-			if( ss->stopcheck ){
-				break;
-			}
-		}
-		if( ss->stopcheck ){
-			break;
-		}
-		//wxLogStatus("count %i", count);
-		ss->ReloadFonts();
-
-		if( FindNextChangeNotification( hDir ) == 0 ){
-			wxLogStatus(_("Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."));
-			return 0;
-		}
-	}
-
-	return FindCloseChangeNotification( hDir );
 }

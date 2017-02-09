@@ -15,24 +15,21 @@
 
 
 #include "FontDialog.h"
-#include <wx/fontenum.h>
+#include "FontEnumerator.h"
 #include <wx/regex.h>
 #include "Config.h"
 #include "SubsGrid.h"
 #include "KaiStaticBoxSizer.h"
-
-bool compare(wxString first, wxString second)
-{
-	return (first.CmpNoCase(second)<0);
-}
 
 FontList::FontList(wxWindow *parent,long id,const wxPoint &pos, const wxSize &size)
 	:wxWindow(parent,id,pos,size)
 {
 	scrollBar = new KaiScrollbar(this,ID_SCROLL1,wxDefaultPosition,wxDefaultSize,wxSB_VERTICAL);
 	scrollBar->SetScrollbar(0,10,100,10);
-	fonts = wxFontEnumerator::GetFacenames();
-	std::sort(fonts.begin(),fonts.end(),compare);
+	fonts = FontEnum.GetFonts(this, [=](){
+		fonts = FontEnum.GetFonts(0,[](){});
+		Refresh(false);
+	});
 
 	font= wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 
@@ -51,6 +48,7 @@ FontList::FontList(wxWindow *parent,long id,const wxPoint &pos, const wxSize &si
 }
 
 FontList::~FontList(){
+	FontEnum.RemoveClient(this);
 	if(bmp)delete bmp; bmp=0;
 }
 
@@ -106,11 +104,22 @@ void FontList::DrawFld(wxDC &dc,int w, int h)
 	int panelrows=(h/Height)+1;
 	int scrows;
 	if(scPos<0){scPos=0;}
-	if((scPos+panelrows)>=(int)fonts.size()+1){scrows=fonts.size();scPos=(scrows-panelrows)+1;
-	if(panelrows>(int)fonts.size()){scPos=0;scrollBar->Enable(false);}else{scrollBar->SetScrollbar(scPos,panelrows,fonts.size()+1,panelrows-1);}}
-	else{scrows=(scPos+panelrows);scrollBar->Enable(true);scrollBar->SetScrollbar(scPos,panelrows,fonts.size()+1,panelrows-1);}
+	if((scPos+panelrows)>=(int)fonts->size()+1){
+		scrows=fonts->size();
+		scPos=(scrows-panelrows)+1;
+		if(panelrows>(int)fonts->size()){
+			scPos=0;
+			scrollBar->Enable(false);
+		}else{
+			scrollBar->SetScrollbar(scPos,panelrows,fonts->size()+1,panelrows-1);}
+	}
+	else{
+		scrows=(scPos+panelrows);
+		scrollBar->Enable(true);
+		scrollBar->SetScrollbar(scPos,panelrows,fonts->size()+1,panelrows-1);
+	}
 
-	
+
 	for(int i=scPos; i<scrows; i++)
 	{
 		if(i==sel){
@@ -119,12 +128,12 @@ void FontList::DrawFld(wxDC &dc,int w, int h)
 			dc.DrawRectangle(posX,posY,w-2,Height);
 		}//else{dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));}
 
-		font.SetFaceName(fonts[i]);
+		font.SetFaceName((*fonts)[i]);
 		dc.SetFont(font);
 
 		wxRect cur(posX+4,posY,w-8,Height);	
 		dc.SetClippingRegion(cur);
-		dc.DrawLabel(fonts[i],cur,wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
+		dc.DrawLabel((*fonts)[i],cur,wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
 		dc.DestroyClippingRegion();
 
 		posY+=Height;
@@ -177,7 +186,7 @@ void FontList::OnMouseEvent(wxMouseEvent& event)
 		ReleaseMouse();
 	}
 
-	if (row < scPos || row >= (int)fonts.size()) {
+	if (row < scPos || row >= (int)fonts->size()) {
 		return;
 	}
 
@@ -190,7 +199,7 @@ void FontList::OnMouseEvent(wxMouseEvent& event)
 		CaptureMouse();
 	}
 
-	
+
 
 	if (holding) {
 		// Find direction
@@ -223,23 +232,22 @@ void FontList::OnMouseEvent(wxMouseEvent& event)
 
 }
 
-void FontList::Insert(wxString facename,int pos)
-{
-	fonts.Insert(facename,pos);
-}
-
 void FontList::SetSelection(int pos)
 {
-	if(pos<0 || pos>=(int)fonts.size()){wxBell();return;}
-	if (scPos<pos || scPos>pos+7){scPos -= (sel-pos);}
+	if(pos<0 || pos>=(int)fonts->size()){wxBell();return;}
+	if ((scPos<pos || scPos>pos+7) && scPos>=sel && scPos<sel+8){
+		scPos -= (sel-pos);
+	}else{
+		scPos = pos-3;
+	}
 	sel=pos;
-	
+
 	Refresh(false);
 }
 
 void FontList::SetSelectionByName(wxString name)
 {
-	int sell=fonts.Index(name,false);
+	int sell=fonts->Index(name,false);
 	if(sell!=-1){SetSelection(sell);}
 }
 
@@ -249,10 +257,10 @@ void FontList::SetSelectionByPartialName(wxString PartialName)
 	if(PartialName==""){SetSelection(0);return;}
 	int sell=-1;
 	PartialName=PartialName.Lower();
-	
-	for(size_t i=0; i<fonts.size(); i++){
-		wxString fontname = fonts[i].Lower();
-		
+
+	for(size_t i=0; i<fonts->size(); i++){
+		wxString fontname = (*fonts)[i].Lower();
+
 		if(fontname.StartsWith(PartialName)){
 			sell=i;
 			break;
@@ -266,7 +274,8 @@ void FontList::SetSelectionByPartialName(wxString PartialName)
 
 wxString FontList::GetString(int line)
 {
-	return fonts[line];
+	if(line<0||line>=(int)fonts->size()) return "";
+	return (*fonts)[line];
 }
 
 int FontList::GetSelection()
@@ -288,7 +297,7 @@ BEGIN_EVENT_TABLE(FontList,wxWindow)
 	EVT_COMMAND_SCROLL(ID_SCROLL1,FontList::OnScroll)
 	EVT_MOUSE_EVENTS(FontList::OnMouseEvent)
 	//EVT_KEY_DOWN(FontList::OnKeyPress)
-END_EVENT_TABLE()
+	END_EVENT_TABLE()
 
 	FontDialog::FontDialog(wxWindow *parent, Styles *acst)
 	:KaiDialog(parent,-1,_("Wybierz czcionkę"))
@@ -351,7 +360,6 @@ END_EVENT_TABLE()
 
 	SetSizerAndFit(Main);
 
-	CenterOnParent();
 	UpdatePreview();
 
 	Connect(ID_FONTLIST,wxEVT_COMMAND_LISTBOX_SELECTED,(wxObjectEventFunction)&FontDialog::OnFontChanged);
@@ -359,7 +367,7 @@ END_EVENT_TABLE()
 	Connect(ID_FONTSIZE1,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&FontDialog::OnUpdatePreview);
 	Connect(ID_FONTATTR,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&FontDialog::OnUpdatePreview);
 	Connect(ID_SCROLLUP,ID_SCROLLDOWN,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&FontDialog::OnScrollList);
-
+	MoveToMousePosition(this);
 }
 
 FontDialog::~FontDialog()
@@ -415,8 +423,8 @@ void FontDialog::OnScrollList(wxCommandEvent& event)
 }
 
 FontPickerButton::FontPickerButton(wxWindow *parent, int id, const wxFont& font,
-             const wxPoint& pos, const wxSize& size, long style)
-			 : MappedButton(parent, id, font.GetFaceName() + " " + std::to_string(font.GetPointSize()), 0, pos, size, style)
+								   const wxPoint& pos, const wxSize& size, long style)
+								   : MappedButton(parent, id, font.GetFaceName() + " " + std::to_string(font.GetPointSize()), 0, pos, size, style)
 {
 	ChangeFont(font);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FontPickerButton::OnClick, this, GetId());
