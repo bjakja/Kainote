@@ -20,17 +20,64 @@
 #include "MKVWrap.h"
 #include "FontEnumerator.h"
 #include <wx/wfstream.h>
-#include <wx/zipstrm.h>
 #include <wx/dir.h>
 #include <wx/regex.h>
 #include "KaiMessageBox.h"
 
-//#include <algorithm>
 
+SubsFont::SubsFont(const wxString &_name, const LOGFONTW &_logFont, int _bold, bool _italic){
+	name           = _name; 
+	logFont        = _logFont; 
+	fakeBold       = false; 
+	fakeItalic     = false; 
+	fakeNormal     = false; 
+	fakeBoldItalic = false;
+	italic         = _italic ? -1 : 0;
+	bold           = _bold == 1 ? 700 : _bold == 0 ? 400 : _bold;
+}
 
+LOGFONTW &SubsFont::GetLogFont(HDC dc)
+{
+	if(logFont.lfItalic != italic || logFont.lfWeight != bold){
+		std::vector<LOGFONTW> logFonts;
+		EnumFontFamiliesEx(dc, &logFont, (FONTENUMPROCW)[](const LOGFONT *lf, const TEXTMETRIC *mt, DWORD style, LPARAM lParam) -> int {
+			std::vector<LOGFONTW>* fonts = reinterpret_cast<std::vector<LOGFONTW>*>(lParam);
+			fonts->push_back(*lf);
+			return 1;
+		}, (LPARAM)&logFonts, 0);
+		size_t lfssize = logFonts.size();
+		bool BoldItalic = false;// int BII=-1;
+		bool Bold = false;// int BI=-1;
+		bool Italic = false;// int II=-1;
+		bool Normal = false;// int NI=-1;
+		for(size_t i=0; i < lfssize; i++){
+			if((logFonts[i].lfWeight >= 700) && (0 != logFonts[i].lfItalic)){
+				BoldItalic = true;// BII=i;
+			}else if(logFonts[i].lfWeight >= 700){
+				Bold = true;// BI=i;
+			}else if(0 != logFonts[i].lfItalic){
+				Italic = true;// II=i;
+			}else{
+				Normal = true;// NI=i;
+			}//Normal || ((logFonts[i].lfWeight < 700) && (0 == logFonts[i].lfItalic));
+		}
+		fakeBoldItalic = (bold>=700 && italic!=0)? !BoldItalic : false;
+		fakeBold = (bold>=700 && italic!=0)? !BoldItalic : (bold>=700)? !Bold : false;
+		fakeItalic = (italic!=0)? !Italic : false;
+		fakeNormal = (italic==0 && bold < 700)? !Normal : false;
+		//int whichFont = (bold>=700 && italic!=0 && BII>=0)? BII : 
+		//(bold>=700 && BI>=0)? BI : (italic!=0 && II>=0)? II : (NI>=0)? NI : 0;
+		//logFont = logFonts[0];
+		logFont.lfItalic=italic;
+		logFont.lfWeight=bold;
+	}
+
+	return logFont;
+}
 
 FontCollectorDialog::FontCollectorDialog(wxWindow *parent)
 	: KaiDialog(parent,-1,_("Kolekcjoner czcionek"),wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER)
+	, zip(NULL)
 {
 	warning = Options.GetColour("Window Warning Elements");
 	normal = Options.GetColour("Window Text");
@@ -40,7 +87,6 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent)
 	wxIcon icn;
 	icn.CopyFromBitmap(CreateBitmapFromPngResource("fontcollector"));
 	SetIcon(icn);
-
 
 	path=new KaiTextCtrl(this,-1,Options.GetString("Font Collect Directory"),wxDefaultPosition, wxSize(150,-1));
 	path->Enable(Options.GetInt("Font Collect Action")!=0);
@@ -71,7 +117,7 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent)
 	fromMKV->SetValue(Options.GetBool("Collect From MKV"));
 
 	Connect(7998,wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&FontCollectorDialog::OnChangeOpt);
-	console=new wxTextCtrl(this,-1,"",wxDefaultPosition,wxSize(300,200),wxTE_RICH2|wxTE_MULTILINE|wxTE_READONLY);
+	console=new wxTextCtrl(this,-1,"",wxDefaultPosition,wxSize(500,400),wxTE_RICH2|wxTE_MULTILINE|wxTE_READONLY);
 	console->SetForegroundColour(normal);
 	console->SetBackgroundColour(Options.GetColour("Window Background"));
 	bok=new MappedButton(this,9879,_("Rozpocznij"));
@@ -96,68 +142,96 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent)
 
 void FontCollectorDialog::GetAssFonts(std::vector<bool> &found, bool check)
 {
-	//facenames = FontEnum.GetFonts(0,[](){});
 	if(facenames.size()<1){EnumerateFonts();}
-	std::map<wxString, wxString> notfindfonts;
-	std::map<wxString, wxString> stylesfonts;
+	std::map<wxString, Styles*> stylesfonts;
 	File *subs= Notebook::GetTab()->Grid1->file->GetSubs();
 	wxRegEx reg("\\{[^\\{]*\\}",wxRE_ADVANCED);
-
+	bool first = true;
 	console->SetDefaultStyle(wxTextAttr(normal));
 	for(size_t i=0; i<subs->styles.size(); i++)
 	{
-		wxString fn=subs->styles[i]->Fontname/*.Lower()*/;
+		wxString fn=subs->styles[i]->Fontname;
+		bool bold = subs->styles[i]->Bold;
+		bool italic = subs->styles[i]->Italic;
+		wxString fnl = fn.Lower()<<(int)bold<<(int)italic;
 		int iresult = facenames.Index(fn,false);
 		if(iresult==-1){
-			notfindfonts[fn]<<subs->styles[i]->Name<<" ";
+			notFindFontsLog[fn]<<subs->styles[i]->Name<<",";
 			continue;
 		}
-		else if(foundFonts.Index(fn,false)==-1)
+		else
 		{
-			foundFonts.Add(fn);
-			foundLogFonts.push_back(logFonts[iresult]);
-			console->AppendText( wxString::Format(_("Znaleziono czcionkę o nazwie \"%s\" w stylu \"%s\".\n \n"), 
-				subs->styles[i]->Fontname, subs->styles[i]->Name) );
-			console->AppendText(wxString::Format(_("Czcionka \"%s\" jest zainstalowana.\n \n"), subs->styles[i]->Fontname));
-			found.push_back(check);
+			//pamiętaj, dodaj jeszcze boldy i itaici
+			if(!(foundFonts.find(fnl) != foundFonts.end())){
+				foundFonts[fnl] = SubsFont(fn,logFonts[iresult],(int)bold,italic);
+				found.push_back(check);
+			}
+			if(!(findFontsLog.find(fn)!=findFontsLog.end())){
+				findFontsLog[fn]<<wxString::Format(_("Znaleziono czcionkę \"%s\" w stylach:\n- %s\n"), 
+					fn, subs->styles[i]->Name);
+			}else{
+				findFontsLog[fn]<<"- "<<subs->styles[i]->Name<<"\n";
+			}
 		}
-		stylesfonts[subs->styles[i]->Name]=fn;
+		stylesfonts[subs->styles[i]->Name]=subs->styles[i];
 
 	}
-
+	first=true;
 	for(size_t i=0; i<subs->dials.size(); i++)
 	{
 		wxString text=subs->dials[i]->Text + subs->dials[i]->TextTl;
-		wxString ifont=stylesfonts[subs->dials[i]->Style];
-		//wxLogStatus(ifont);
+		Styles *lstyle = stylesfonts[subs->dials[i]->Style];
+		wxString ifont = (lstyle)? lstyle->Fontname : "";
 		int wlet=0;
 		while(true)
 		{
 			wxString part = text.Mid(wlet);
-			//wxLogStatus("line %i",i);
 			int flet=part.find("\\fn");
+			//int hasBoldTag=part.find("\\b");
+			//int hasItalicTag=part.find("\\i");
 
 			if(flet!=-1)
 			{
-				wxString fn= part.Mid(flet+3).BeforeFirst('\\').BeforeFirst('}')/*.Lower()*/;
+				wxString fn= part.Mid(flet+3).BeforeFirst('\\').BeforeFirst('}');
+				if(fn.IsEmpty()){
+					if(!ifont.IsEmpty()){
+						wxString txt=text.SubString(wlet,flet)+"}";
+						if(wlet!=0){txt+="{";};
+						reg.ReplaceAll(&txt,"");
+						PutChars(txt,ifont,i+1);
+					}
+					wlet= wlet+flet+3; continue;
+				}
+				bool bold = lstyle->Bold;
+				bool italic = lstyle->Italic;
+				wxString fnl = fn.Lower()<<(int)bold<<(int)italic;
 				int iresult = facenames.Index(fn,false);
 				if(iresult==-1){
-					notfindfonts[fn]<<(i+1)<<" ";
+					notFindFontsLog[fn]<<(i+1)<<",";
 				}
-				else if(foundFonts.Index(fn,false)==-1)
+				else
 				{
 					wxString txt=text.SubString(wlet,flet)+"}";
 					if(wlet!=0){txt+="{";};
 					reg.ReplaceAll(&txt,"");
 					PutChars(txt,ifont,i+1);
-					foundFonts.Add(fn);
-					foundLogFonts.push_back(logFonts[iresult]);
-					console->AppendText(wxString::Format(_("Znaleziono czcionkę o nazwie \"%s\" w linii nr %i.\n \n"), fn, (i+1)));
-					console->AppendText(wxString::Format(_("Czcionka \"%s\" jest zainstalowana.\n \n"), fn));
-					found.push_back(check);
+					if(!(foundFonts.find(fnl) != foundFonts.end())){
+						foundFonts[fnl] = SubsFont(fn,logFonts[iresult],(int)bold,italic);
+						found.push_back(check);
+					}
+					auto log = findFontsLog.find(fn);
+					if(!(log!=findFontsLog.end())){
+						findFontsLog[fn]<<wxString::Format(_("Znaleziono czcionkę \"%s\" w linijkach:\n%i,"), 
+							fn, (i+1));
+					}else{
+						if(log->second.EndsWith("\n")){
+							log->second<<wxString::Format(_("W linijkach:\n%i,"),(i+1));
+						}
+						log->second<<(i+1)<<",";
+					}
+					
 				}
 				wlet= wlet+flet+3+fn.Len();
-				//wxLogMessage("wlet",wlet);
 				ifont=fn;
 			}else{
 				if(ifont!=""){
@@ -170,14 +244,97 @@ void FontCollectorDialog::GetAssFonts(std::vector<bool> &found, bool check)
 			}
 		}
 	}
-	//wxLogStatus("size %i",(int)notfindfonts.size());
+
+
+
+}
+
+void FontCollectorDialog::CopyFonts(bool check)
+{
+	std::vector<bool> ffound;
+	console->SetDefaultStyle(wxTextAttr(normal));
+	if(!check && fontSizes.size()<1){
+		fontfolder = wxGetOSDirectory() + "\\fonts\\";
+		wxString seekpath = fontfolder+"*";
+		//wxArrayString fontfiles;
+		//wxDir::GetAllFiles(fontrealpath, &fontfiles, wxEmptyString, wxDIR_FILES);
+		STime processTime(sw.Time());
+		//console->AppendText(wxString::Format(_("Pobrano ścieżki czcionek z folderu fonts upłynęło %sms.\n"),processTime.GetFormatted(SRT)));
+		//console->Update();
+		/*bool notfound=false;
+		long lSize=0;
+
+		for(size_t i=0; i<fontfiles.size(); i++)
+		{
+			wxString ext=fontfiles[i].AfterLast('.').Lower();
+			if(ext=="ini" || ext=="compositefont"){continue;}
+			FILE *fp = _wfopen(fontfiles[i].wc_str(), L"rb");
+			if(!fp){continue;}
+			fseek (fp , 0 , SEEK_END);
+			lSize = ftell (fp);
+			fclose(fp);
+			fontSizes.insert(std::pair<long, wxString>(lSize, fontfiles[i]));
+		}
+		fontfiles.clear();*/
+		WIN32_FIND_DATAW data;
+		HANDLE h = FindFirstFileW(seekpath.wc_str(), &data);
+		if (h == INVALID_HANDLE_VALUE)
+		{
+			console->SetDefaultStyle(wxTextAttr(warning));
+			console->AppendText(_("Windows nie chce zwrócić właściwości o czcionkach z kopiowania czcionek nici.\n"));
+			return;
+		}
+		fontSizes.insert(std::pair<long, wxString>(data.nFileSizeLow, wxString(data.cFileName)));
+		while(1){
+			int result = FindNextFile(h, &data);
+			if(result == ERROR_NO_MORE_FILES || result == 0){break;}
+			else if(data.nFileSizeLow == 0){continue;} 
+			fontSizes.insert(std::pair<long, wxString>(data.nFileSizeLow, wxString(data.cFileName)));
+		}
+		FindClose(h);
+		processTime.NewTime(sw.Time());
+		console->AppendText(wxString::Format(_("Pobrano rozmiary %i czcionek upłynęło %sms.\n"),fontSizes.size(), processTime.GetFormatted(SRT)));
+		console->Update();
+	}
+	if(!check){
+		if(subsdir->GetValue()){
+			wxString rest;
+			copypath=Notebook::GetTab()->SubsPath.BeforeLast('\\',&rest);
+			copypath<<_("\\Czcionki");
+			if(opts->GetSelection()==2){copypath<<"\\"<<rest.BeforeLast('.')<<".zip";}
+		}else{
+			copypath=path->GetValue();
+			Options.SetString("Font Collect Directory",copypath);
+		}
+		wxString extt=copypath.Right(4).Lower();
+		if(opts->GetSelection()!=2){
+			if(extt==".zip"){copypath=copypath.BeforeLast('\\');}
+			if(!wxDir::Exists(copypath)){
+				wxDir::Make(copypath);
+			}
+		}else{
+			if(!wxDir::Exists(copypath.BeforeLast('\\'))){
+				wxDir::Make(copypath.BeforeLast('\\'));
+			}else if(wxFileExists(copypath)){
+				if(KaiMessageBox(_("Plik zip już istnieje, usunąć go?"),_("Potwierdzenie"),wxYES_NO,this)==wxYES){
+					wxRemoveFile(copypath);
+				}
+			}
+			wxFFileOutputStream *out = new wxFFileOutputStream(copypath);
+			zip = new wxZipOutputStream(out,9);
+		}
+	}
+
+	GetAssFonts(ffound,true);
+	bool allglyphs = CheckPathAndGlyphs(check,ffound);
+
 	console->SetDefaultStyle(wxTextAttr(warning));
-	for(auto cur=notfindfonts.begin(); cur!=notfindfonts.end(); cur++){
+	for(auto cur=notFindFontsLog.begin(); cur!=notFindFontsLog.end(); cur++){
 		wxString list=cur->second;
 		//wxLogStatus(list);
-		wxStringTokenizer token(list," ");
-		wxString result= _("Nie można znaleźć czcionki \"") + cur->first + "\".\r\n";
-		found.push_back(false);
+		wxStringTokenizer token(list,",", wxTOKEN_STRTOK);
+		wxString result= _("Nie znaleziono czcionki \"") + cur->first + "\".\r\n";
+		ffound.push_back(false);
 		bool first=true;
 		//wxLogStatus(cur->first+" "+cur->second);
 		while(token.HasMoreTokens()){
@@ -192,253 +349,7 @@ void FontCollectorDialog::GetAssFonts(std::vector<bool> &found, bool check)
 			}
 		}
 
-		console->AppendText(result+"\r\n");
-	}
-
-
-}
-
-void FontCollectorDialog::CopyFonts(bool check)
-{
-	std::vector<bool> ffound;
-	GetAssFonts(ffound,true);
-	bool allglyphs = CheckGlyphs();
-	if(check){
-		FontMap.clear();
-		int found=0;
-		int nfound=0;
-		for(size_t i=0; i<ffound.size(); i++){
-			if(!ffound[i]){
-				nfound++;
-			}else{found++;}
-		}
-		if(nfound||!allglyphs){
-			console->SetDefaultStyle(wxTextAttr(warning));
-			wxString noglyphs= (allglyphs)? L"" : _("\nNiektóre czcionki nie mają wszystkich znaków użytych w tekście.");
-			console->AppendText(wxString::Format(_("Zakończono, znaleziono %i czcionek.\nNie znaleziono %i czcionek. "), found, nfound ) + noglyphs );}
-		else{
-			console->SetDefaultStyle(wxTextAttr("#008000"));
-			console->AppendText(wxString::Format(_("Zakończono powodzeniem, znaleziono %i czcionek."), found));
-		}
-		return;
-	}
-
-	
-	FT_Library ft2lib;
-	if(FT_Init_FreeType(&ft2lib))
-	{wxLogMessage(_("Dupa blada freetype nie chce się zinitializować"));return;}
-
-	wxArrayString foundfaces;
-	wxArrayString fontfiles;
-
-	wxString fontrealpath=wxGetOSDirectory() + "\\fonts\\";
-	wxDir::GetAllFiles(fontrealpath, &fontfiles, wxEmptyString, wxDIR_FILES);
-
-	console->SetDefaultStyle(wxTextAttr(normal));
-	console->AppendText(_("Rozpoczęto szukanie czcionek.\n \n"));
-	bool notfound=false;
-	for(size_t i=0; i<foundFonts.size(); i++)
-	{
-		if(foundFonts[i].StartsWith("@")){
-			foundFonts[i]=foundFonts[i].Mid(1);
-		}
-	}
-	long lSize=0;
-	byte *buff=0;
-
-	for(size_t i=0; i<fontfiles.size(); i++)
-	{
-		FT_Face face;
-		wxString ext=fontfiles[i].AfterLast('.').Lower();
-		for(int findex=0; true ; findex++){//wxConvFileName
-			int error =FT_New_Face(ft2lib, fontfiles[i].mb_str(*wxConvFileName), findex, &face);
-			if(error == 1){
-				if(findex==0){
-					FILE *fp = _wfopen(fontfiles[i].wc_str(),L"rb");
-
-					fseek (fp , 0 , SEEK_END);
-					lSize = ftell (fp);
-					rewind (fp);
-
-					buff = (byte*)malloc(lSize);
-					if(!buff){fclose(fp);break;}
-					int result = fread (buff,1,lSize,fp);
-					fclose(fp);
-					if(result!=(int)lSize){free(buff);buff=0;break;}
-				}
-				error = FT_New_Memory_Face(ft2lib, &buff[0], lSize, findex, &face);
-			}
-			if(error && findex==0 && ext!="ini" && ext!="pfm" && ext!="compositefont"){
-				wxString namefrompath=fontfiles[i].AfterLast('\\').BeforeLast('.');
-				int inx=foundFonts.Index(namefrompath,false);
-				if(inx!=-1){
-					ffound[inx]=true;
-					//console->AppendText("Znaleziono czcionkę \""+all+"\".\n \n");
-					fontnames.Add(fontfiles[i]);
-					foundfaces.Add(namefrompath);
-				}
-
-				//console->AppendText("Czcionki: "+fontfiles[i]+"\nnie trawi FreeType, masz pecha nie skopiujesz jej.\n\n");
-			}
-			if(error){if(buff){free(buff); buff=0;}break;}
-
-
-			int inx;
-			// wxMBConvUTF16BE conv;
-			wxString fnf=wxString(face->family_name, wxConvLocal).Lower();
-			wxString style=wxString(face->style_name, wxConvLocal);
-
-			if(ext=="fon" || ext=="pfb"){
-				inx=foundFonts.Index(fnf,false);
-				if(inx!=-1){
-					wxString all=fnf+" "+style;
-					if( foundfaces.Index(all,false)==-1 && fontnames.Index(fontfiles[i],false)==-1){
-						ffound[inx]=true;
-						////console->AppendText("Znaleziono czcionkę \""+all+"\".\n \n");
-						//wxString res=CheckChars(face,&FontMap[fnf]);
-						////wxLogStatus(all+" "+res);
-						//if(res!=""){
-						//	allglyphs=false;
-						//	console->SetDefaultStyle(wxTextAttr(warning));
-						//	console->AppendText(wxString::Format(_("Czcionka \"%s\" nie ma znaków: "), all) + res);
-						//}
-						fontnames.Add(fontfiles[i]);
-						foundfaces.Add(all);
-						if(ext=="pfb"){fontnames.Add(fontfiles[i].RemoveLast(1)+"M");}
-					}
-				}
-
-				goto done;
-			}
-			int count = FT_Get_Sfnt_Name_Count(face);
-
-
-			for (int ii=0;ii<count;ii++) {
-
-				FT_SfntName name;
-				FT_Get_Sfnt_Name(face,ii,&name);
-				if (name.name_id == 1) {
-					char *str = new char[name.string_len+2];
-					memcpy(str,name.string,name.string_len);
-					str[name.string_len] = 0;
-					str[name.string_len+1] = 0;
-					wxString result;
-					if (name.encoding_id == 0) result = wxString(str, wxConvLocal);
-					else if (name.encoding_id == 1) { wxMBConvUTF16BE conv; result = wxString(str,conv);}
-					if(result==""){delete [] str; continue;}
-					result=result.Lower();
-
-					if((result!="arial" || fnf=="arial")){
-
-						inx=foundFonts.Index(result,false);
-						if(inx!=-1)
-						{
-
-							wxString all=result+" "+style;
-							if( foundfaces.Index(all,false)==-1 && fontnames.Index(fontfiles[i],false)==-1){
-								//wxString res=CheckChars(face,&FontMap[result]);
-								////wxLogStatus(result+" "+res);
-								//if(res!=""){
-								//	allglyphs=false;
-								//	console->SetDefaultStyle(wxTextAttr(warning));
-								//	console->AppendText(wxString::Format(_("Czcionka \"%s\" nie ma znaków: "), all) + res);
-								//}
-								ffound[inx]=true;
-								fontnames.Add(fontfiles[i]);
-								foundfaces.Add(all);
-							}
-						}
-					}
-
-					delete [] str;
-				}
-			}
-done:
-			FT_Done_Face(face);
-		}
-	}
-
-	FT_Done_FreeType( ft2lib);
-
-
-	if(subsdir->GetValue()){
-		wxString rest;
-		copypath=Notebook::GetTab()->SubsPath.BeforeLast('\\',&rest);
-		copypath<<_("\\Czcionki");
-		if(opts->GetSelection()==2){copypath<<"\\"<<rest.BeforeLast('.')<<".zip";}
-	}else{copypath=path->GetValue();
-	Options.SetString("Font Collect Directory",copypath);
-	}
-	//wxLogStatus("copy");
-	wxString extt=copypath.Right(4).Lower();
-	if(opts->GetSelection()!=2){
-		if(extt==".zip"){copypath=copypath.BeforeLast('\\');}
-		if(!wxDir::Exists(copypath))
-		{
-			wxDir::Make(copypath);
-		}
-		for(size_t i=0; i< fontnames.size(); i++)
-		{
-			//wxLogMessage(fontrealpath+fontnames[i]+" "+copypath+"\\"+fontnames[i]);
-			if(wxCopyFile(fontnames[i],copypath+"\\"+fontnames[i].AfterLast('\\'))){
-				console->SetDefaultStyle(wxTextAttr(normal));
-				console->AppendText(_("Skopiowano czcionkę o nazwie \"")+fontnames[i].AfterLast('\\')+"\".\n \n");
-			}
-			else
-			{
-				console->SetDefaultStyle(wxTextAttr(warning));
-				console->AppendText(_("Nie można skopiować czcionki o nazwie \"")+fontnames[i].AfterLast('\\')+"\".\n \n");
-			}
-		}
-	}
-	else
-	{
-		if(!wxDir::Exists(copypath.BeforeLast('\\')))
-		{
-			wxDir::Make(copypath.BeforeLast('\\'));
-		}
-		else if(wxFileExists(copypath)){
-			if(KaiMessageBox(_("Plik zip już istnieje, usunąć go?"),_("Potwierdzenie"),wxYES_NO,this)==wxYES){
-				wxRemoveFile(copypath);
-			}
-		}
-		wxFFileOutputStream *out =new wxFFileOutputStream(copypath);
-		wxZipOutputStream *zip = new wxZipOutputStream(*out);
-		zip->SetLevel(9);
-		for(size_t i=0; i< fontnames.size(); i++)
-		{
-
-			wxString filename = fontnames[i];
-			wxFFileInputStream in(filename);
-			bool isgood=in.IsOk();
-			if(isgood){
-				try {
-					//wxFileName fn(filename);
-					wxString fn=fontnames[i].AfterLast('\\');
-					//fn.Replace("_0","");
-					zip->PutNextEntry(fn);
-					zip->Write(in);
-					console->SetDefaultStyle(wxTextAttr(normal));
-					console->AppendText(_("Skopiowano czcionkę o nazwie \"")+fontnames[i].AfterLast('\\')+"\".\n \n");
-				}
-				catch (...) {
-					isgood=false;
-				}
-
-			}
-
-			if(!isgood)
-			{
-				console->SetDefaultStyle(wxTextAttr(warning));
-				console->AppendText(_("Nie można spakować czcionki o nazwie \"")+fontnames[i].AfterLast('\\')+"\".\n \n");
-				ffound[i]=false;
-			}
-
-		}
-		zip->Close();
-		delete zip;
-		delete out;
-
+		console->AppendText("\r\n"+result+"\r\n");
 	}
 	int found=0;
 	int nfound=0;
@@ -447,21 +358,72 @@ done:
 			nfound++;
 		}else{found++;}
 	}
-
-	foundfaces.clear();
-	fontfiles.clear();
 	FontMap.clear();
+	notFindFontsLog.clear();
+	findFontsLog.clear();
+	foundFonts.clear();
+	if(zip){
+		zip->Close();
+		delete zip;
+		zip = NULL;
+	}
+	wxString noglyphs= (allglyphs)? L"" : _("\nNiektóre czcionki nie mają wszystkich znaków użytych w tekście.");
 
-	if(nfound){
+	if(nfound||!allglyphs){
 		console->SetDefaultStyle(wxTextAttr(warning));
-		console->AppendText(wxString::Format(_("Zakończono, skopiowano %i czcionek.\nNie udało się skopiować %i czcionek."), (int)fontnames.size(), nfound));}
-	else{
+		if(check){
+			console->AppendText(wxString::Format(_("Zakończono, znaleziono %i czcionek.\nNie znaleziono %i czcionek. "), found, nfound ) + noglyphs );
+		}else{
+			console->AppendText(wxString::Format(_("Zakończono, skopiowano %i czcionek.\nNie udało się skopiować %i czcionek."), (int)fontnames.size(), nfound) + noglyphs);
+		}
+	}else{
 		console->SetDefaultStyle(wxTextAttr("#008000"));
-		console->AppendText(wxString::Format(_("Zakończono powodzeniem, skopiowano %i czcionek."), (int)fontnames.size()));
+		if(check){
+			console->AppendText(wxString::Format(_("Zakończono powodzeniem, znaleziono %i czcionek."), found));
+		}else{
+			console->AppendText(wxString::Format(_("Zakończono powodzeniem, skopiowano %i czcionek."), (int)fontnames.size()));
+		}
+	}
+
+}
+bool FontCollectorDialog::SaveFont(const wxString &fontname)
+{
+	wxString fn = fontname.AfterLast('\\');
+	if(zip){
+		wxFFileInputStream in(fontname);
+		bool isgood=in.IsOk();
+		if(isgood){
+			try {
+				zip->PutNextEntry(fn);
+				zip->Write(in);
+				console->SetDefaultStyle(wxTextAttr(normal));
+				console->AppendText(wxString::Format(_("Dodano do archiwum czcionkę \"%s\".\n"),fn));
+			}
+			catch (...) {
+				isgood=false;
+			}
+
+		}
+
+		if(!isgood){
+			console->SetDefaultStyle(wxTextAttr(warning));
+			console->AppendText(wxString::Format(_("Nie można spakować czcionki \"%s\".\n"), fn));
+		}
+		return isgood;
+	}else{
+		if(wxCopyFile(fontname,copypath+"\\"+fn)){
+			console->SetDefaultStyle(wxTextAttr(normal));
+			console->AppendText(wxString::Format(_("Skopiowano czcionkę \"%s\".\n"),fn));
+			return true;
+		}
+		else
+		{
+			console->SetDefaultStyle(wxTextAttr(warning));
+			console->AppendText(wxString::Format(_("Nie można skopiować czcionki \"%i\".\n"),fn));
+			return false;
+		}
 	}
 }
-
-
 
 void FontCollectorDialog::CopyMKVFonts()
 {
@@ -472,7 +434,8 @@ void FontCollectorDialog::CopyMKVFonts()
 	if(names.size()<1){
 		console->SetDefaultStyle(wxTextAttr(warning));
 		console->AppendText(_("Wczytany plik MKV nie ma żadnych czcionek."));
-		return;}
+		return;
+	}
 
 	wxString copypath;
 	if(subsdir->GetValue()){
@@ -480,15 +443,16 @@ void FontCollectorDialog::CopyMKVFonts()
 		copypath=Notebook::GetTab()->SubsPath.BeforeLast('\\',&rest);
 		copypath<<_("\\Czcionki");
 		if(opts->GetSelection()==2){copypath<<"\\"<<rest.BeforeLast('.')<<".zip";}
-	}else{copypath=path->GetValue();
-	Options.SetString("Font Collect Directory",copypath);
+	}else{
+		copypath=path->GetValue();
+		//Options.SetString("Font Collect Directory",copypath);
 	}
 
 	Options.SetString("Font Collect Directory",copypath);
 
 	size_t cpfonts=names.size();
 	wxString onlypath;
-	wxZipOutputStream *zip=NULL;
+	zip=NULL;
 	wxFFileOutputStream *out=NULL;
 	if(opts->GetSelection()!=2){
 		wxString extt=copypath.Right(4).Lower();
@@ -501,8 +465,8 @@ void FontCollectorDialog::CopyMKVFonts()
 		if(!wxDir::Exists(copypath.BeforeLast('\\'))){wxDir::Make(copypath.BeforeLast('\\'));}
 		else if(wxFileExists(copypath)){
 			if(KaiMessageBox(_("Plik zip już istnieje, usunąć go?"),_("Potwierdzenie"),wxYES_NO,this)==wxYES){wxRemoveFile(copypath);}}
-		out =new wxFFileOutputStream(copypath);
-		zip = new wxZipOutputStream(*out);
+		out = new wxFFileOutputStream(copypath);
+		zip = new wxZipOutputStream(out,9);
 	}
 	for(auto fontI : names){
 		if(mw.SaveFont(fontI.first, onlypath + fontI.second, zip))
@@ -521,7 +485,8 @@ void FontCollectorDialog::CopyMKVFonts()
 	{
 		zip->Close();
 		delete zip;
-		delete out;
+		zip=NULL;
+		//delete out;
 	}
 	if(cpfonts<names.size()){
 		console->SetDefaultStyle(wxTextAttr(warning));
@@ -537,9 +502,11 @@ void FontCollectorDialog::CopyMKVFonts()
 
 void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 {
+	sw.Start();
 	console->SetValue("");
 	path->Enable(false);
 	choosepath->Enable(false);
+	subsdir->Enable(false);
 	opts->Enable(false);
 	bok->Enable(false);
 	bcancel->Enable(false);
@@ -564,21 +531,28 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 		if(opts->GetSelection()==3){MuxVideoWithSubs();}
 	}
 done:
+	opts->Enable(true);
 	path->Enable(opts->GetSelection()!=0);
 	choosepath->Enable(opts->GetSelection()!=0);
-	opts->Enable(true);
+	subsdir->Enable(opts->GetSelection()!=0);
 	bok->Enable(true);
 	bcancel->Enable(true);
+	console->SetDefaultStyle(normal);
+	STime processTime(sw.Time());
+	console->AppendText(wxString::Format(_("\n\nZakończono w %sms"), processTime.GetFormatted(SRT)));
 }
 
 void FontCollectorDialog::OnChangeOpt(wxCommandEvent &event)
 {
 	path->Enable(opts->GetSelection()!=0);
+	path->Refresh(false);
 	choosepath->Enable(opts->GetSelection()!=0);
+	choosepath->Refresh(false);
 	subsdir->Enable(opts->GetSelection()!=0);
+	subsdir->Refresh(false);
 
 	fromMKV->Enable(opts->GetSelection()!=0 && Notebook::GetTab()->VideoPath.Lower().EndsWith(".mkv"));
-
+	fromMKV->Refresh(false);
 	Options.SetInt("Font Collect Action",opts->GetSelection());
 	Options.SetBool("Collector Subs Directory",subsdir->GetValue());
 	Options.SaveOptions(true,false);
@@ -607,24 +581,11 @@ void FontCollectorDialog::PutChars(wxString txt, wxString fn, int move)
 
 	for(size_t i=0; i<txt.Len(); i++)
 	{
-		ch[txt[i]] << move << " ";
-	}
-	FontMap[fn]=ch;
-}
-
-wxString FontCollectorDialog::CheckChars(FT_Face face, std::map<wxUniChar, wxString> *chars)
-{
-	wxString rettxt;
-	for(auto cur=chars->begin(); cur!= chars->end(); cur++)
-	{
-		size_t haschar=FT_Get_Char_Index(face,static_cast<ULONG>(cur->first));
-		if(haschar==0){
-			rettxt<< "\"" << cur->first << _("\", który występuje w linijkach:\n") << cur->second << ".\n";
-
+		if(!(ch.find(txt[i])!=ch.end())){
+			ch[txt[i]] ="";//<< move << " ";
 		}
 	}
-
-	return rettxt;
+	FontMap[fn]=ch;
 }
 
 void FontCollectorDialog::EnumerateFonts()
@@ -635,46 +596,127 @@ void FontCollectorDialog::EnumerateFonts()
 	HDC dc = ::CreateCompatibleDC(NULL);
 	memcpy(lf.lfFaceName, L"\0", LF_FACESIZE);
 	EnumFontFamiliesEx(dc, &lf, (FONTENUMPROCW)[](const LOGFONT *lf, const TEXTMETRIC *mt, DWORD style, LPARAM lParam) -> int {
-			FontCollectorDialog * dial = reinterpret_cast<FontCollectorDialog*>(lParam);
-			dial->facenames.push_back(lf->lfFaceName);
-			dial->logFonts.push_back(*lf);
-			return 1;
-		}, (LPARAM)this, 0);
+		FontCollectorDialog * dial = reinterpret_cast<FontCollectorDialog*>(lParam);
+		dial->facenames.push_back(lf->lfFaceName);
+		dial->logFonts.push_back(*lf);
+		return 1;
+	}, (LPARAM)this, 0);
 }
 
-bool FontCollectorDialog::CheckGlyphs()
+bool FontCollectorDialog::CheckPathAndGlyphs(bool onlyGlyphs, std::vector<bool> &found)
 {
 	bool allfound=true;
 	HDC dc = ::CreateCompatibleDC(NULL);
-
+	auto it = foundFonts.begin();
+	wxString lastfn;
 	for(size_t k = 0; k < foundFonts.size(); k++){
-		wxString fn = foundFonts[k];
-		LOGFONTW mlf=foundLogFonts[k];
+		LOGFONTW mlf = it->second.GetLogFont(dc);
+		wxString fn = it->second.name;
+		if(lastfn != fn){
+			console->Update();
+			console->SetDefaultStyle(wxTextAttr(normal));
+			console->AppendText("\n \n"+findFontsLog[fn].RemoveLast()+"\n");
+			console->SetDefaultStyle(wxTextAttr(warning));
+		}
+		lastfn=fn;
+		SubsFont &font = it->second;
+		it++;
 		auto hfont = CreateFontIndirectW(&mlf);
 		SelectObject(dc, hfont);
-
+		if(font.fakeNormal){
+			console->AppendText(wxString::Format(_("Czcionka \"%s\" nie ma stylu normalnego.\n"), fn));
+		}else if(font.fakeBold){
+			console->AppendText(wxString::Format(_("Czcionka \"%s\" nie ma pogrubienia.\n"), fn));
+		}else if(font.fakeItalic){
+			console->AppendText(wxString::Format(_("Czcionka \"%s\" nie ma kursywy.\n"), fn));
+		}else if(font.fakeBoldItalic){
+			console->AppendText(wxString::Format(_("Czcionka \"%s\" nie ma pogrubienia z kursywą.\n"), fn));
+		}
 		wxString text;
-		wxString rettxt;
-		wxArrayString lines;
-		std::vector<int> missing;
+		wxString missing;
 		CharMap ch=FontMap[fn];
 		for(auto it = ch.begin(); it!=ch.end(); it++)
 		{
 			text<<it->first;
-			lines.Add(it->second);
 		}
-		if(!FontEnum.CheckGlyphsExists(dc,text, missing))
+		if(!FontEnum.CheckGlyphsExists(dc, text, missing))
 		{
-			console->SetDefaultStyle(wxTextAttr(warning));
-			console->AppendText(wxString::Format(_("Nie można sprawdzić znaków czcionki \"%s\"."), fn));
+			console->AppendText(wxString::Format(_("Nie można sprawdzić znaków czcionki \"%s\".\n"), fn));
 		}
-		if(missing.size()>0){
+		if(missing.Len()>0){
 			allfound=false;
-			for(size_t i = 0; i< missing.size(); i++){
-				rettxt<< "\"" << text[missing[i]] << _("\", który występuje w linijkach:\n") << lines[missing[i]] << ".\n";	
+			console->AppendText(wxString::Format(_("Czcionka \"%s\" nie zawiera znaków: \"%s\".\n"), fn, missing));
+		}
+		if(!onlyGlyphs){
+			DWORD ttcf = 0x66637474;
+			auto size = GetFontData(dc, ttcf, 0, nullptr, 0);
+			if (size == GDI_ERROR) {
+				ttcf = 0;
+				size = GetFontData(dc, 0, 0, nullptr, 0);
 			}
-			console->SetDefaultStyle(wxTextAttr(warning));
-			console->AppendText(wxString::Format(_("Czcionka \"%s\" nie ma znaków: "), fn) + rettxt);
+			if (size == GDI_ERROR || size == 0){
+				console->AppendText(wxString::Format(_("Nie można pobrać zawartości czcionki \"%s\".\n"), fn));
+				found[k] = false;
+			}else{
+				std::string buffer;
+				buffer.resize(size);
+				GetFontData(dc, ttcf, 0, &buffer[0], (int)size);
+				std::string file_buffer;
+				file_buffer.resize(size);
+				bool succeeded = false;
+
+				for (auto it=fontSizes.equal_range(size).first; it!=fontSizes.equal_range(size).second; ++it){
+					wxString fullpath = fontfolder + it->second;
+					FILE *fp = _wfopen(fullpath.wc_str(), L"rb");
+					if(!fp){continue;}
+					fseek (fp , 0 , SEEK_END);
+					long lSize = ftell (fp);
+					rewind (fp);
+					if(lSize != size){
+						console->AppendText(wxString::Format(_("Rozmiar czcionki \"%s\" się różni.\n"), fn));
+						found[k] = false;
+						fclose(fp); 
+						continue;
+					}
+					int result = fread (&file_buffer[0],1,size,fp);
+					if(result != size){
+						console->AppendText(wxString::Format(_("Nie można odczytać czcionki \"%s\" z folderu fonts.\n"), fn));
+						found[k] = false;
+					}
+					fclose(fp);
+					if (memcmp(&file_buffer[0], &buffer[0], size) == 0) {
+						if(fontnames.Index(fullpath,true)==-1){
+							fontnames.Add(fullpath);
+							console->SetDefaultStyle(wxTextAttr(normal));
+							console->AppendText(wxString::Format(_("Znaleziono plik czcionki \"%s\".\n"), fullpath));
+							SaveFont(fullpath);
+							wxString ext = it->second.AfterLast('.').Lower();
+							if(ext == "pfm" || ext == "pfb"){
+								wxString repl = (ext == "pfm")? "pfb" : "pfm";
+								//char ch = 'a';
+								if(fullpath[fullpath.Len()-1] < 'Z'){repl = repl.Upper();}
+								wxString secondPath = fullpath.RemoveLast(3) + repl;
+								fontnames.Add(secondPath);
+								console->AppendText(wxString::Format(_("Znaleziono plik czcionki \"%s\".\n"), secondPath));
+								SaveFont(secondPath);
+							}
+							console->SetDefaultStyle(wxTextAttr(warning));
+						}//else{
+						//fake italic/bold font when another normal is added
+						//must succeed but not add a path
+						//}
+
+						succeeded = true;
+						found[k] = true;
+						break;
+					}
+				}
+				if(!succeeded){
+					console->AppendText(wxString::Format(_("Nie można znaleźć czcionki \"%s\" w folderze fonts.\n"), fn));
+					found[k] = false;
+				}
+			}
+
 		}
 		SelectObject(dc, NULL);
 		DeleteObject(hfont);

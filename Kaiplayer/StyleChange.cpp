@@ -295,9 +295,8 @@ void ColorChange::OnOKClick(wxCommandEvent& event)
 	UpdateStyle();
 	Hide();
 	//kopiujemy, bo by zapobiec wyciekom należy tab niezwłocznie usunąć.
-    SS->changestyle(tab->Copy());
+    SS->changestyle(tab->Copy());  
 	wxDELETE(tab);
-	  
 }
 
 void ColorChange::OnCancelClick(wxCommandEvent& event)

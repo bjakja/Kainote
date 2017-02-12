@@ -13,22 +13,34 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-//#define UNICODE
+#pragma once
 
 
 //#include <wx/wx.h>
 #include <Windows.h>
 #include <vector>
 #include <map>
-#include <ft2build.h>
-#include <wx/textctrl.h>
 #include "KaiRadioButton.h"
 #include "MappedButton.h"
 #include "KaiTextCtrl.h"
 #include "KaiDialog.h"
-#include FT_FREETYPE_H
-#include FT_GLYPH_H
-#include FT_SFNT_NAMES_H
+#include <wx/textctrl.h>
+#include <wx/zipstrm.h>
+
+class SubsFont{
+public:
+	SubsFont(const wxString &_name, const LOGFONTW &_logFont, int bold, bool italic);
+	SubsFont(){};
+	LOGFONTW &GetLogFont(HDC dc);
+	wxString name;
+	LOGFONTW logFont;
+	int bold; 
+	int italic;
+	bool fakeBoldItalic;
+	bool fakeBold;
+	bool fakeItalic;
+	bool fakeNormal;
+};
 
 class FontCollectorDialog : public KaiDialog
 {
@@ -46,25 +58,30 @@ public:
 	KaiCheckBox *fromMKV;
 	KaiCheckBox *subsdir;
 	void PutChars(wxString txt, wxString fn, int move);
-	wxString CheckChars(FT_Face face, std::map<wxUniChar, wxString> *chars);
 	void GetAssFonts(std::vector<bool> &found, bool check=false);
-	bool CheckGlyphs();
+	bool CheckPathAndGlyphs(bool onlyGlyphs, std::vector<bool> &found);
 	void CopyFonts(bool check=false);
 	void CopyMKVFonts();
 	void MuxVideoWithSubs();
 	wxString destdir;
 	wxArrayString facenames;
 	wxArrayString fontnames;
-	wxArrayString foundFonts;
 	std::vector<LOGFONTW> logFonts;
-	std::vector<LOGFONTW> foundLogFonts;
+	std::map<wxString, wxString> notFindFontsLog;
+	std::map<wxString, wxString> findFontsLog;
+	std::map<wxString, SubsFont> foundFonts;
+	std::multimap<long, wxString> fontSizes;
 	wxString copypath;
+	wxString fontfolder;
 	wxColour warning;
 	wxColour normal;
 private:
+	bool SaveFont(const wxString &fontname);
 	void EnumerateFonts();
 	void OnButtonStart(wxCommandEvent &event);
 	void OnChangeOpt(wxCommandEvent &event);
 	void OnButtonPath(wxCommandEvent &event);
+	wxZipOutputStream *zip;
+	wxStopWatch sw;
 };
 

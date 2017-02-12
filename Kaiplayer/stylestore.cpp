@@ -295,6 +295,7 @@ void stylestore::StylesWindow(wxString newname)
 
 void stylestore::changestyle(Styles *cstyl)
 {
+	Update();
 	Grid* grid=Notebook::GetTab()->Grid1;
 	int mult=0;
 	int fres= (stass)? grid->FindStyle(cstyl->Name, &mult) : Options.FindStyle(cstyl->Name, &mult);

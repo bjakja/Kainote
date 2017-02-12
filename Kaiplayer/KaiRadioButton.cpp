@@ -140,6 +140,8 @@ KaiRadioBox::KaiRadioBox(wxWindow *parent, int id, const wxString& label,
 	}
 	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, [=](wxCommandEvent &evt){
 		selected = evt.GetId() - 9876;
+		wxCommandEvent *evtrb = new wxCommandEvent(wxEVT_COMMAND_RADIOBOX_SELECTED, GetId());
+		wxQueueEvent(GetParent(), evtrb);
 	}, 9876, 9876 + names.size()-1);
 	SetSizerAndFit(box);
 	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});

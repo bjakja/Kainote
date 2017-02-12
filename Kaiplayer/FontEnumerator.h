@@ -38,7 +38,7 @@ public:
 	void EnumerateFonts(bool reenumerate = false);
 	wxArrayString *GetFonts(const wxWindow *client, std::function<void()>);
 	void RemoveClient(const wxWindow *client);
-	bool CheckGlyphsExists(HDC dc, const wxString &textForCheck, std::vector<int> &missing); 
+	bool CheckGlyphsExists(HDC dc, const wxString &textForCheck, wxString &missing); 
 private:
 	void RefreshClientsFonts();
 	static int CALLBACK FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lptm,

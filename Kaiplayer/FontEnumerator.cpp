@@ -148,19 +148,10 @@ DWORD FontEnumerator::CheckFontsProc(void* fontEnum)
 }
 
 //w Dc ma byæ ustawiona czcionka
-bool FontEnumerator::CheckGlyphsExists(HDC dc, const wxString &textForCheck, std::vector<int> &missing)
+bool FontEnumerator::CheckGlyphsExists(HDC dc, const wxString &textForCheck, wxString &missing)
 {
 	std::wstring utf16characters = textForCheck.wc_str();
-	/*utf16characters.reserve(textForCheck.size());
-	for (size_t i = 0; i < textForCheck.size(); i++) {
-		int chr = textForCheck[i];
-		if (U16_LENGTH(chr) == 1)
-			utf16characters.push_back(static_cast<wchar_t>(chr));
-		else {
-			utf16characters.push_back(U16_LEAD(chr));
-			utf16characters.push_back(U16_TRAIL(chr));
-		}
-	}*/
+	
 	bool succeeded = true;
 	//code taken from Aegisub, fixed by me.
 	SCRIPT_CACHE cache = NULL;
@@ -174,12 +165,12 @@ bool FontEnumerator::CheckGlyphsExists(HDC dc, const wxString &textForCheck, std
 	// Uniscribe doesn't like some types of fonts, so fall back to GDI
 	if (hr == E_HANDLE) {
 		succeeded = (GetGlyphIndicesW(dc, utf16characters.data(), utf16characters.size(),
-			indices, GGI_MARK_NONEXISTING_GLYPHS)==GDI_ERROR);
+			indices, GGI_MARK_NONEXISTING_GLYPHS)!=GDI_ERROR);
 		for (size_t i = 0; i < utf16characters.size(); ++i) {
 			if (U16_IS_SURROGATE(utf16characters[i]))
 				continue;
 			if (indices[i] == 65535)
-				missing.push_back(i);
+				missing<<utf16characters[i];
 		}
 	}
 	else if (hr == S_FALSE) {
@@ -190,13 +181,13 @@ bool FontEnumerator::CheckGlyphsExists(HDC dc, const wxString &textForCheck, std
 			if (U16_IS_SURROGATE(utf16characters[i])) {
 				hr = ScriptGetCMap(dc, &cache, &utf16characters[i], 2, 0, &indices[i]);
 				if (hr == S_FALSE) {
-					missing.push_back(i);
-					missing.push_back(i+1);
+					missing<<utf16characters[i];
+					missing<<utf16characters[i+1];
 				}
 				++i;
 			}
 			else if (indices[i] == 0) {
-				missing.push_back(i);
+				missing<<utf16characters[i];
 			}
 		}
 	}else if(hr != S_OK){
