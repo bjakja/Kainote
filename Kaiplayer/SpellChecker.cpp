@@ -28,11 +28,7 @@
 //
 // Aegisub Project http://www.aegisub.org/
 
-
-#pragma comment(lib, "libhunspell.lib")
 #include "SpellChecker.h"
-
-#include <wx/filename.h>
 #include <wx/dir.h>
 #include <wx/log.h>
 #include "OpennWrite.h"

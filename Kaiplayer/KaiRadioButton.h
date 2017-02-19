@@ -43,6 +43,7 @@ public:
 	virtual ~KaiRadioBox(){};
 	int GetSelection();
 	void SetSelection(int sel);
+	bool Enable(bool enable=true);
 private:
 	int selected;
 	std::vector< KaiRadioButton*> buttons;

@@ -5,9 +5,17 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -21,7 +29,20 @@
     <PlatformToolset>v110_xp</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110_xp</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110_xp</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v110_xp</PlatformToolset>
@@ -34,12 +55,23 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -54,6 +86,19 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>      _CRT_SECURE_NO_WARNINGS;
+        LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\luajit\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -61,7 +106,24 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Thirdparty\luajit\LuaJitBuild\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Thirdparty\luajit\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>     _CRT_SECURE_NO_WARNINGS;
+        LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\luajit\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>     _CRT_SECURE_NO_WARNINGS;
         LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -73,7 +135,7 @@
   </ItemDefinitionGroup>
   <!-- BuildVM stuff -->
   <PropertyGroup>
-    <BuildVMCommand>$(SolutionDir)ThirdParty\luajit\LuaJitBuild\$(Configuration)\LuaJitBuild</BuildVMCommand>
+    <BuildVMCommand>$(SolutionDir)ThirdParty\luajit\LuaJitBuild\$(Platform)\$(Configuration)\LuaJitBuild</BuildVMCommand>
     <BuildCompileTargets>
       BuildVM;
       ComputeLibDefNames;
@@ -82,15 +144,18 @@
     </BuildCompileTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <Target Name="BuildVM" Inputs="..\src\host\buildvm.c;..\src\lj_opt_fold.c" Outputs="..\LuaJitBuild\$(Configuration)\lj_vm.obj;..\LuaJitBuild\$(Configuration)\lj_folddef.h">
     <Message Text="luajit-buildvm peobj" Importance="High" />
-    <Exec Command="$(BuildVMCommand) -m peobj -o lj_vm.obj" WorkingDirectory="..\LuaJitBuild\$(Configuration)" />
+    <Exec Command="$(BuildVMCommand) -m peobj -o lj_vm.obj" WorkingDirectory="..\LuaJitBuild\$(Platform)\$(Configuration)" />
     <Message Text="luajit-buildvm folddef" Importance="High" />
-    <Exec Command="$(BuildVMCommand) -m folddef -o lj_folddef.h $(SolutionDir)ThirdParty\luajit\src\lj_opt_fold.c" WorkingDirectory="..\LuaJitBuild\$(Configuration)" />
+    <Exec Command="$(BuildVMCommand) -m folddef -o lj_folddef.h $(SolutionDir)ThirdParty\luajit\src\lj_opt_fold.c" WorkingDirectory="..\LuaJitBuild\$(Platform)\$(Configuration)" />
     <ItemGroup>
-      <Lib Include="..\LuaJitBuild\$(Configuration)\lj_vm.obj" />
+      <Lib Include="..\LuaJitBuild\$(Platform)\$(Configuration)\lj_vm.obj" />
     </ItemGroup>
   </Target>
   <Target Name="ComputeLibDefNames">
@@ -101,7 +166,7 @@
   </Target>
   <Target Name="BuildLibDefs" Inputs="@(LuajitLibSource)" Outputs="@(LuajitLibDefname -> '..\src\lj_%(Identity).h')">
     <Message Text="luajit-buildvm %(LuajitLibDefname.Identity)" Importance="High" Condition="'%(LuajitLibDefname.Identity)' != ''" />
-    <Exec Command="$(BuildVMCommand) -m %(LuajitLibDefname.Identity) -o lj_%(LuajitLibDefname.Identity).h @(LuajitLibSource->'$(SolutionDir)ThirdParty\luajit\src\%(filename)%(extension)',' ')" WorkingDirectory="..\LuaJitBuild\$(Configuration)" Condition="'%(LuajitLibDefname.Identity)' != ''" />
+    <Exec Command="$(BuildVMCommand) -m %(LuajitLibDefname.Identity) -o lj_%(LuajitLibDefname.Identity).h @(LuajitLibSource->'$(SolutionDir)ThirdParty\luajit\src\%(filename)%(extension)',' ')" WorkingDirectory="..\LuaJitBuild\$(Platform)\$(Configuration)" Condition="'%(LuajitLibDefname.Identity)' != ''" />
   </Target>
   <!-- Source files -->
   <ItemGroup>

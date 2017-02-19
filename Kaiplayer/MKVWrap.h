@@ -57,7 +57,7 @@ class Grid;
 // STD IO for MatroskaParser
 class MkvStdIO : public InputStream {
 public:
-	MkvStdIO(wxString filename);
+	MkvStdIO(const wxString &filename);
 	~MkvStdIO() { if (fp) fclose(fp); }
 
 	FILE *fp;
@@ -80,15 +80,15 @@ public:
 	~MatroskaWrapper();
 
 	bool IsOpen() { return file != NULL; }
-	bool Open(wxString filename,bool parse=true);
+	bool Open(const wxString &filename,bool parse=true);
 	void Close();
 	
 	bool GetSubtitles(Grid *target);
 
 	std::map<int, wxString> GetFontList();
-	bool SaveFont(int id, wxString path, wxZipOutputStream *zip=NULL);
+	bool SaveFont(int id, const wxString &path, wxZipOutputStream *zip=NULL);
 
 	static MatroskaWrapper wrapper;
 	Attachment *atts;
-	size_t count;
+	unsigned int count;
 };

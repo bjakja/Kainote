@@ -78,7 +78,7 @@ MatroskaWrapper::~MatroskaWrapper() {
 
 /////////////
 // Open file
-bool MatroskaWrapper::Open(wxString filename,bool parse) {
+bool MatroskaWrapper::Open(const wxString &filename,bool parse) {
 	// Make sure it's closed first
 	Close();
 	atts=NULL;
@@ -377,7 +377,7 @@ std::map<int, wxString> MatroskaWrapper::GetFontList()
 	return attsname;
 }
 
-bool MatroskaWrapper::SaveFont(int id, wxString path, wxZipOutputStream *zip)
+bool MatroskaWrapper::SaveFont(int id,const wxString &path, wxZipOutputStream *zip)
 {
 
 	char *tmp = new char[atts[id].Length];
@@ -386,8 +386,9 @@ bool MatroskaWrapper::SaveFont(int id, wxString path, wxZipOutputStream *zip)
 	bool isgood=true;
 
 	if(zip){
+		wxString fn = path.AfterLast('\\');
 		try{
-			isgood=zip->PutNextEntry(path);
+			isgood=zip->PutNextEntry(fn);
 			zip->Write((void*)tmp,atts[id].Length);
 		}
 		catch(...)
@@ -501,7 +502,7 @@ longlong StdIoGetFileSize(InputStream *_st) {
 	return epos;
 }
 
-MkvStdIO::MkvStdIO(wxString filename) {
+MkvStdIO::MkvStdIO(const wxString &filename) {
 	read = StdIoRead;
 	scan = StdIoScan;
 	getcachesize = StdIoGetCacheSize;

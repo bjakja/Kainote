@@ -12,6 +12,7 @@
 #include <dvdmedia.h>
 #include <strsafe.h>
 #include <checkbmi.h>
+#include <intsafe.h>
 
 static UINT MsgDestroy;
 

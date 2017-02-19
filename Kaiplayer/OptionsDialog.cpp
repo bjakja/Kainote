@@ -90,16 +90,18 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	//Main
 	{
 		wxBoxSizer *MainSizer=new wxBoxSizer(wxVERTICAL);
-		wxString labels[12]={_("Wczytywanie posortowanych napisów"),_("Włącz sprawdzanie pisowni"),
+		wxString labels[13]={_("Wczytywanie posortowanych napisów"),_("Włącz sprawdzanie pisowni"),
 			_("Zaznaczaj linijkę z czasem aktywnej\nlinijki poprzedniej zakładki"),_("Zapisuj napisy z nazwą wideo"),
 			_("Pokaż sugestie po dwukrotnym klininięciu na błąd"),_("Otwieraj napisy zawsze w nowej karcie"),
 			_("Nie przechodź do następnej linii przy edycji czasów"),_("Zapisuj zmiany po przejściu na inną linię"),
 			_("Wyłącz pokazywanie edycji na wideo\n(wymaga ponownego otwarcia zakładek)"),
-			_("Włącz szukanie widocznej linii\npo wyjściu z pełnego ekranu"),_("Nie ostrzegaj o niezgodności rozdzielczości"),
-			_("Poziom śledzenia logów skryptów LUA")};
-		wxString opts[12]={"Grid Load Sorted","Editbox Spellchecker","Auto Select Lines","Subs Autonaming",
+			_("Włącz szukanie widocznej linii\npo wyjściu z pełnego ekranu"),
+			_("Nie ostrzegaj o niezgodności rozdzielczości"),
+			_("Kompatybilność ze starymi skryptami Kainote"),_("Poziom śledzenia logów skryptów LUA")};
+		wxString opts[13]={"Grid Load Sorted","Editbox Spellchecker","Auto Select Lines","Subs Autonaming",
 			"Editbox Sugestions On Dclick","Open In New Card","Times Stop On line","Grid save without enter",
-			"Disable live editing","Seek For Visible Lines","Dont Ask For Bad Resolution","Automation Trace Level"};
+			"Disable live editing","Seek For Visible Lines","Dont Ask For Bad Resolution","Automation Old Scripts Compatybility",
+			"Automation Trace Level"};
 
 		wxString langopts[2]={"Polski","English"};
 		KaiStaticBoxSizer *langSizer=new KaiStaticBoxSizer(wxVERTICAL, Main, _("Język (wymaga restartu programu)"));
@@ -122,7 +124,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		dicSizer->Add(dic,0,wxALL|wxEXPAND,2);
 		MainSizer->Add(dicSizer,0,wxRIGHT|wxEXPAND,5);
 
-		for(int i=0;i<11;i++)
+		for(int i=0;i<12;i++)
 		{
 			KaiCheckBox *opt=new KaiCheckBox(Main,-1,labels[i]);
 			opt->SetValue(Options.GetBool(opts[i]));
@@ -134,12 +136,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxBoxSizer *MainSizer1=new wxBoxSizer(wxHORIZONTAL);
 		wxFlexGridSizer *MainSizer2=new wxFlexGridSizer(5,2,wxSize(5,5));
 		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieć inny id
-		NumCtrl *ltl = new NumCtrl(Main, 20000, Options.GetString(opts[11]), 0, 5,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
+		NumCtrl *ltl = new NumCtrl(Main, 20000, Options.GetString(opts[12]), 0, 5,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc = new NumCtrl(Main, 20000, Options.GetString("Offset of start time"), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc1 = new NumCtrl(Main, 20000, Options.GetString("Offset of end time"), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		KaiTextCtrl *sc2 = new KaiTextCtrl(Main, 22001, Options.GetString("Grid tag changing char"), wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc3 = new NumCtrl(Main, 20000, Options.GetString("Editbox tag buttons"), 0, 9,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
-		ConOpt(ltl, opts[11]);
+		ConOpt(ltl, opts[12]);
 		ConOpt(sc,"Offset of start time");
 		ConOpt(sc1,"Offset of end time");
 		ConOpt(sc2,"Grid tag changing char");
@@ -153,7 +155,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		MainSizer2->Add(sc2,0);
 		MainSizer2->Add(new wxStaticText(Main,-1,_("Ilość przycisków wstawiających tagi ASS:")),0,wxALIGN_CENTRE_VERTICAL);
 		MainSizer2->Add(sc3,0);
-		MainSizer2->Add(new wxStaticText(Main,-1,labels[11]),0,wxALIGN_CENTRE_VERTICAL);
+		MainSizer2->Add(new wxStaticText(Main,-1,labels[12]),0,wxALIGN_CENTRE_VERTICAL);
 		MainSizer2->Add(ltl,0);
 
 		MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
@@ -262,8 +264,10 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	//Video
 	{
 		wxString voptspl[]={_("Otwórz wideo z menu kontekstowego na pełnym ekranie"),_("Lewy przycisk myszy pauzuje wideo"),
-			_("Otwieraj wideo z czasem aktywnej linii"),_("Preferowane ścieżki audio (oddzielone średnikiem)")};
-		wxString vopts[]={"Video Fullskreen on Start","Video Pause on Click","Open Video At Active Line","Accepted audio stream"};
+			_("Otwieraj wideo z czasem aktywnej linii"),_("Preferowane ścieżki audio (oddzielone średnikiem)"),
+			_("Sposób szukania wideo w FFMS2 (wymaga ponownego wczytania)")};
+		wxString vopts[]={"Video Fullskreen on Start","Video Pause on Click","Open Video At Active Line",
+			"Accepted audio stream","FFMS2 Video Seeking"};
 		wxBoxSizer *MainSizer=new wxBoxSizer(wxVERTICAL);
 		for(int i=0;i<3;i++)
 		{
@@ -277,8 +281,13 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		ConOpt(tc,vopts[3]);
 		prefaudio->Add(tc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
 		MainSizer->Add(prefaudio,0,wxRIGHT|wxEXPAND,5);
-
-
+		KaiStaticBoxSizer *seekingsizer = new KaiStaticBoxSizer(wxHORIZONTAL,Video, voptspl[4]);
+		wxString seekingOpts[] = {_("Liniowe"), _("Normalne"), _("Niebezpieczne (szybkie w każdym przypadku)"), _("Agresywne (szybkie przy cofaniu)")};
+		KaiChoice *sopts = new KaiChoice(Video, 10000, wxDefaultPosition, wxSize(200,-1), 4, seekingOpts, wxTE_PROCESS_ENTER);
+		sopts->SetSelection(Options.GetInt(vopts[4]));
+		seekingsizer->Add(sopts, 1, wxEXPAND);
+		MainSizer->Add(seekingsizer,0, wxEXPAND|wxALL, 2);
+		ConOpt(sopts,vopts[4]);
 		Video->SetSizerAndFit(MainSizer);
 	}
 	//Hotkeys
@@ -811,7 +820,7 @@ void OptionsDialog::OnMapHkey(wxCommandEvent& event)
 		Hkeys.SetHKey(*itype, shkey, hkd.hotkey);
 		if(itemtext[0] != hkd.type){
 			long pos = Shortcuts->AppendItem(new ItemText(itemtext.replace(0,1,hkd.type)));
-			Shortcuts->GetItem(pos,1)->name = Hkeys.GetMenuH(*itype);
+			Shortcuts->SetItem(pos,1,new ItemText(Hkeys.GetMenuH(*itype)));
 			Shortcuts->ScrollTo(pos);
 		}else{
 			Shortcuts->GetItem(inum,1)->name = Hkeys.GetMenuH(*itype);

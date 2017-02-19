@@ -234,13 +234,29 @@ void KaiFrame::OnActivate(wxActivateEvent &evt)
 
 WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
+	/*if(uMsg == 28){
+		isActive = !isActive;
+		int w, h;
+		GetSize(&w,&h);
+	wxRect rc(0,0,w,ftopBorder);
+	Refresh(false, &rc);
+	if(!IsMaximized()){
+		wxRect rc1(0,ftopBorder,fborder,h-fborder-ftopBorder);
+		Refresh(false, &rc1);
+		wxRect rc2(w-fborder,ftopBorder,fborder,h-fborder-ftopBorder);
+		Refresh(false, &rc2);
+		wxRect rc3(0,h-fborder,w,fborder);
+		Refresh(false, &rc3);
+	}
+	return 1;
+	}*/
 	if (uMsg == WM_GETMINMAXINFO){
 		RECT maxRect;
 		MINMAXINFO * pInfo = (MINMAXINFO*)lParam;
 		SystemParametersInfo(SPI_GETWORKAREA,0,&maxRect,0);
 
-		pInfo->ptMaxSize.x = maxRect.right - maxRect.left+14;
-		pInfo->ptMaxSize.y = maxRect.bottom - maxRect.top+8;
+		pInfo->ptMaxSize.x = (maxRect.right - maxRect.left)+14;
+		pInfo->ptMaxSize.y = (maxRect.bottom - maxRect.top)+8;
 
 		pInfo->ptMaxPosition.x = maxRect.left-7;
 		pInfo->ptMaxPosition.y = maxRect.top-1;
@@ -263,9 +279,9 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 		int result = 0;
 		//int w = WindowRect.right - WindowRect.left;
 		//int h = WindowRect.bottom - WindowRect.top;
-		if (x >= fborder && x <= WindowRect.right - WindowRect.left - 76 && y >= fborder && y <= ftopBorder)
+		if (x >= fborder && x <= WindowRect.right - WindowRect.left - 76 && y >= fborder && y <= ftopBorder){
 			result = HTCAPTION;
-		else if (style & wxRESIZE_BORDER && !IsMaximized()){
+		}else if (style & wxRESIZE_BORDER && !IsMaximized()){
 
 			if (x < fborder && y < fborder)
 				result = HTTOPLEFT;

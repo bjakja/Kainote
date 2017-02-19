@@ -159,4 +159,12 @@ void KaiRadioBox::SetSelection(int sel)
 	buttons[selected]->SetValue(true);
 }
 
+bool KaiRadioBox::Enable(bool enable)
+{
+	for(size_t i=0; i < buttons.size(); i++){
+		buttons[i]->Enable(enable);
+	}
+	return true;
+}
+
 wxIMPLEMENT_ABSTRACT_CLASS(KaiRadioBox, wxWindow);

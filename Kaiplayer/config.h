@@ -117,6 +117,7 @@ wxImage CreateImageFromPngResource(const wxString& t_name);
 #define wxBITMAP_PNG(x) CreateBitmapFromPngResource(x)
 #define PTR_BITMAP_PNG(x) CreateBitmapPointerFromPngResource(x)
 void MoveToMousePosition(wxWindow *win);
+wxString MakePolishPlural(int num, const wxString &normal, const wxString &plural24, const wxString &pluralRest);
 
 enum{
 	ASS=1,

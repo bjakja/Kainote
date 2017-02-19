@@ -36,7 +36,8 @@ public:
 	~FontEnumerator();
 	void StartListening(kainoteFrame* parent);
 	void EnumerateFonts(bool reenumerate = false);
-	wxArrayString *GetFonts(const wxWindow *client, std::function<void()>);
+	wxArrayString *GetFonts(const wxWindow *client, std::function<void()> func);
+	void AddClient(const wxWindow *client, std::function<void()> func);
 	void RemoveClient(const wxWindow *client);
 	bool CheckGlyphsExists(HDC dc, const wxString &textForCheck, wxString &missing); 
 private:

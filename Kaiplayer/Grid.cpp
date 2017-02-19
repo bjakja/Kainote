@@ -121,7 +121,7 @@ void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 	menu->SetAccMenu( RemoveText,_("Usuń tekst"))->Enable(isen);
 	menu->SetAccMenu( Remove,_("Usuń"))->Enable(isen);
 	menu->AppendSeparator();
-	menu->SetAccMenu( FontCollector,_("Kolekcjoner czcionek"))->Enable(form<SRT);
+	menu->SetAccMenu( FontCollectorID,_("Kolekcjoner czcionek"))->Enable(form<SRT);
 	menu->SetAccMenu( SubsFromMKV,_("Wczytaj napisy z pliku MKV"))->Enable(Kai->GetTab()->VideoName.EndsWith(".mkv"));
 
 	if(dummy){

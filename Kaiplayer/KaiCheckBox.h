@@ -34,6 +34,7 @@ public:
 		changedForeground = true;
 		wxWindow::SetForegroundColour(fgcolor); return true;
 	}
+	bool Enable(bool enable=true);
 	bool changedBackground;
 	bool changedForeground;
 	bool isCheckBox;

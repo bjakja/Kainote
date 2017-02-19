@@ -174,4 +174,12 @@ void KaiCheckBox::OnSize(wxSizeEvent& event)
 	Refresh(false);
 }
 
+bool KaiCheckBox::Enable(bool enable)
+{
+	wxWindow::Enable(enable);
+	Refresh(false);
+	//Update();
+	return true;
+}
+
 wxIMPLEMENT_ABSTRACT_CLASS(KaiCheckBox, wxWindow);

@@ -327,6 +327,14 @@ void MappedButton::SetLabelText(const wxString &label)
 	Refresh(false);
 }
 
+bool MappedButton::Enable(bool enable)
+{
+	wxWindow::Enable(enable);
+	Refresh(false);
+	//Update();
+	return true;
+}
+
 ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, const wxString& tooltip,
              const wxPoint& pos, const wxSize& size, long style)
 			 :wxWindow(parent, id, pos, size, style|wxWANTS_CHARS)
@@ -460,5 +468,12 @@ void ToggleButton::SendEvent()
 	this->ProcessEvent(evt);
 }
 
+bool ToggleButton::Enable(bool enable)
+{
+	wxWindow::Enable(enable);
+	Refresh(false);
+	//Update();
+	return true;
+}
 
 wxIMPLEMENT_ABSTRACT_CLASS(MappedButton, wxWindow);

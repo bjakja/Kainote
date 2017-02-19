@@ -19,6 +19,7 @@
 
 #include "AutomationUtils.h"
 #include "OpennWrite.h"
+#include "config.h"
 #include <wx/tokenzr.h>
 #include <wx/log.h>
 
@@ -29,36 +30,49 @@ namespace Auto {
 
 
 	bool LoadFile(lua_State *L, wxString const& filename) {
-		OpenWrite ow;
-		wxString script; 
-		if(!ow.FileOpen(filename, &script)){return false;}
-		script.Replace("aegisub","kainote");
-		//script.Replace("\\","\\\\");
+		wxString script;
+		const char *constbuff;
+		char *buff;
+		char *cpybuff;
+		int size;
+		bool compatybility = Options.GetBool("Automation Old Scripts Compatybility");
+		if(compatybility){
+			OpenWrite ow;
+			if(!ow.FileOpen(filename, &script)){return false;}
+			script.Replace("kainote","aegisub");
 		
-		const char *buff = script.mb_str(wxConvUTF8).data();
-		int size= strlen(buff);
-		//FILE *f;
-		//f = _tfopen(filename.utf8_str().data(), L"rb");
-		//fseek(f,0,SEEK_END);
-		//int size=ftell (f);
-		//rewind(f);
-		//char *buff= new char[size];
-		////b[size1]=0;
-		//size = fread(buff, 1, size, f);
-		////wxLogStatus("sizes %i, %i", size, size1);
-		//if (size >= 3 && buff[0] == -17 && buff[1] == -69 && buff[2] == -65) {
-		//	buff += 3;
-		//	size -= 3;
-		//}
-		//wxLogStatus("sizes %i", size);
-		//wxMessageBox(script);
+			constbuff = script.mb_str(wxConvUTF8).data();
+			size= strlen(constbuff);
+		}else{
+			FILE *f=NULL;
+			//cpfn.Replace("\\/","\\");
+			//cpfn.Replace("\\\\","\\");
+			f = _wfopen(filename.wc_str(), L"rb");
+			if(!f){return false;}
+			fseek(f,0,SEEK_END);
+			size=ftell (f);
+			rewind(f);
+			cpybuff = buff = new char[size];
+			size = fread(buff, 1, size, f);
+			fclose(f);
+			/*wxFile f(filename, wxFile::read);
+			if(f.IsOpened()){
+				size = f.Length();
+				f.Read(buff,size);
+			}*/
+			//wxLogStatus("sizes %i, %i", size, size1);
+			if (size >= 3 && buff[0] == -17 && buff[1] == -69 && buff[2] == -65) {
+				buff += 3;
+				size -= 3;
+			}
+		}
 		wxString name = filename.AfterLast('\\');
 		if (!filename.EndsWith("moon")){
 			//wxLogStatus("file nie jest moonem");
 			//LuaScriptReader script_reader(filename);
-			bool ret = luaL_loadbuffer(L, buff, size, name.utf8_str().data()) == 0;
+			bool ret = luaL_loadbuffer(L, (compatybility)? constbuff : buff, size, name.utf8_str().data()) == 0;
 
-			//delete[] b;
+			if(!compatybility){delete[] cpybuff;}
 			//wxLogStatus("file nie jest moonem %i", (int)ret);
 			return ret;
 			
@@ -71,9 +85,10 @@ namespace Auto {
 
 		// Save the text we'll be loading for the line number rewriting in the
 		// error handling
-		lua_pushlstring(L, buff, size);
+		lua_pushlstring(L, (compatybility)? constbuff : buff, size);
 		lua_pushvalue(L, -1);
 		lua_setfield(L, LUA_REGISTRYINDEX, ("raw moonscript: " + name).utf8_str().data());
+		if(!compatybility){delete[] cpybuff;}
 
 		push_value(L, name);
 		if (lua_pcall(L, 2, 2, 0))

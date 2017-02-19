@@ -992,7 +992,7 @@ namespace Auto{
 
 		// register misc functions
 		// assume the "aegisub" global table exists
-		lua_getglobal(L, "kainote");
+		lua_getglobal(L, "aegisub");
 
 		set_field<&AutoToFile::LuaParseKaraokeData>(L, "parse_karaoke_data");
 		set_field<&AutoToFile::LuaSetUndoPoint>(L, "set_undo_point");

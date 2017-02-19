@@ -20,12 +20,17 @@
 #include <Windows.h>
 #include <vector>
 #include <map>
+#include <set>
 #include "KaiRadioButton.h"
 #include "MappedButton.h"
 #include "KaiTextCtrl.h"
 #include "KaiDialog.h"
 #include <wx/textctrl.h>
 #include <wx/zipstrm.h>
+#include <wx/thread.h>
+//enum{
+//	COLOR_WARNING = 
+//}
 
 class SubsFont{
 public:
@@ -42,13 +47,15 @@ public:
 	bool fakeNormal;
 };
 
+class FontCollector;
+
 class FontCollectorDialog : public KaiDialog
 {
+	friend class FontCollector;
 public:
-	FontCollectorDialog(wxWindow *parent);
-	virtual ~FontCollectorDialog(){};
-	typedef std::map<wxUniChar,wxString> CharMap;
-	std::map<wxString,CharMap> FontMap;
+	FontCollectorDialog(wxWindow *parent, FontCollector *_fc);
+	virtual ~FontCollectorDialog();
+	
 	KaiTextCtrl *path;
 	MappedButton *choosepath;
 	KaiRadioBox *opts;
@@ -57,13 +64,49 @@ public:
 	MappedButton *bcancel;
 	KaiCheckBox *fromMKV;
 	KaiCheckBox *subsdir;
-	void PutChars(wxString txt, wxString fn, int move);
-	void GetAssFonts(std::vector<bool> &found, bool check=false);
-	bool CheckPathAndGlyphs(bool onlyGlyphs, std::vector<bool> &found);
-	void CopyFonts(bool check=false);
+	wxString destdir;
+	wxString copypath;
+	wxColour warning;
+	wxColour normal;
+private:
+	void OnButtonStart(wxCommandEvent &event);
+	void OnChangeOpt(wxCommandEvent &event);
+	void OnButtonPath(wxCommandEvent &event);
+	void EnableControls();
+	FontCollector *fc;
+};
+
+class FontCollector
+{
+	friend class FontCollectorDialog;
+	friend class FontCollectorThread;
+public:
+	FontCollector(wxWindow *parent);
+	~FontCollector();
+	void CopyFonts();
 	void CopyMKVFonts();
 	void MuxVideoWithSubs();
-	wxString destdir;
+	void StartCollect(int operation);
+	void ShowDialog(wxWindow *parent);
+	FontCollectorDialog *fcd;
+	enum{
+		CHECK_FONTS=1,
+		COPY_FONTS,
+		COPY_MKV_FONTS=4,
+		MUX_VIDEO_WITH_SUBS=8,
+		AS_ZIP=16
+	};
+private:
+	typedef std::set<wxUniChar> CharMap;
+	std::map<wxString,CharMap> FontMap;
+	void PutChars(const wxString &txt, const wxString &fn);
+	void GetAssFonts(std::vector<bool> &found, bool check=false);
+	bool CheckPathAndGlyphs(std::vector<bool> &found);
+	bool SaveFont(const wxString &fontname);
+	void EnumerateFonts();
+	void SendMessageD(wxString string, wxColour col);
+	bool AddFont(const wxString &string);
+
 	wxArrayString facenames;
 	wxArrayString fontnames;
 	std::vector<LOGFONTW> logFonts;
@@ -71,17 +114,22 @@ public:
 	std::map<wxString, wxString> findFontsLog;
 	std::map<wxString, SubsFont> foundFonts;
 	std::multimap<long, wxString> fontSizes;
-	wxString copypath;
 	wxString fontfolder;
-	wxColour warning;
-	wxColour normal;
-private:
-	bool SaveFont(const wxString &fontname);
-	void EnumerateFonts();
-	void OnButtonStart(wxCommandEvent &event);
-	void OnChangeOpt(wxCommandEvent &event);
-	void OnButtonPath(wxCommandEvent &event);
+	wxString muxerpath;
 	wxZipOutputStream *zip;
 	wxStopWatch sw;
+	//wxString copypath;
+	int operation;
+	bool reloadFonts;
 };
 
+class FontCollectorThread : public wxThread
+{
+	friend class FontCollector;
+public:
+	FontCollectorThread(FontCollector *fc);
+	virtual ~FontCollectorThread(){};
+	wxThread::ExitCode Entry();
+private:
+	FontCollector *fc;
+};

@@ -40,6 +40,7 @@
 #include "Toolbar.h"
 #include "EnumFactory.h"
 #include "KaiStatusBar.h"
+class FontCollector;
 
 class kainoteFrame: public KaiFrame
 {
@@ -94,6 +95,7 @@ class kainoteFrame: public KaiFrame
 		findreplace *FR;
 		findreplace *SL;
 		Auto::Automation *Auto;
+		FontCollector *fc;
     private:
 
 		
@@ -223,7 +225,7 @@ enum{
 	XX( CloseAudio,)\
 	XX( ASSProperties,)\
 	XX( StyleManager,)\
-	XX( FontCollector,)\
+	XX( FontCollectorID,)\
 	XX( ConvertToASS,)\
 	XX( ConvertToSRT,)\
 	XX( ConvertToTMP,)\

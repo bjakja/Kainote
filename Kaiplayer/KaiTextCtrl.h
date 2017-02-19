@@ -47,6 +47,7 @@ public:
 	void SetMaxLength(int maxLen){maxSize = maxLen;}
 	void AppendText(const wxString &text);
 	//void SetValidator(const wxValidator &validator){};
+	bool Enable(bool enable=true);
 protected:
 	void ContextMenu(wxPoint mpos);
 	inline int FindY(int x);

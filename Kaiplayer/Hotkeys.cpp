@@ -144,8 +144,8 @@ void Hotkeys::LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio)
 		_hkeys[idAndType(SetStartTime,'G')] = hdata(_("Wstaw czas początkowy z wideo"), "Alt-Z");
 		_hkeys[idAndType(SetEndTime,'G')] = hdata(_("Wstaw czas końcowy z wideo"), "Alt-X");
 		_hkeys[idAndType(PlayPauseG,'G')] = hdata(_("Odtwarzaj / Pauza"), "Alt-Space");
-		_hkeys[idAndType(Plus5SecondG,'G')] = hdata(_("Wideo minus 5 sekund"), "Alt-Left");//Lewo
-		_hkeys[idAndType(Minus5SecondG,'G')] = hdata(_("Wideo plus 5 sekund"), "Alt-Right");//prawo
+		_hkeys[idAndType(Minus5SecondG,'G')] = hdata(_("Wideo minus 5 sekund"), "Alt-Left");//Lewo
+		_hkeys[idAndType(Plus5SecondG,'G')] = hdata(_("Wideo plus 5 sekund"), "Alt-Right");//prawo
 		_hkeys[idAndType(PreviousFrame,'G')] = hdata(_("Klatka w tył"), "Alt-A");
 		_hkeys[idAndType(NextFrame,'G')] = hdata(_("Klatka w przód"), "Alt-S");
 		_hkeys[idAndType(PreviousLine,'G')] = hdata(_("Poprzednia linijka"), "Ctrl-Up");//góra

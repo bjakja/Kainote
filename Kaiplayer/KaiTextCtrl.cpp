@@ -1061,6 +1061,14 @@ void KaiTextCtrl::MakeCursorVisible(bool refreshit)
 	Refresh(false);
 }
 
+bool KaiTextCtrl::Enable(bool enable)
+{
+	wxWindow::Enable(enable);
+	Refresh(false);
+	//Update();
+	return true;
+}
+
 wxIMPLEMENT_ABSTRACT_CLASS(KaiTextCtrl, wxWindow);
 
 BEGIN_EVENT_TABLE(KaiTextCtrl,wxWindow)

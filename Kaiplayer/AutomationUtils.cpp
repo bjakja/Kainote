@@ -280,9 +280,9 @@ void preload_modules(lua_State *L) {
 	lua_getglobal(L, "package");
 	lua_getfield(L, -1, "preload");
 
-	set_field(L, "kainote.__re_impl", luaopen_re_impl);
-	set_field(L, "kainote.__unicode_impl", luaopen_unicode_impl);
-	set_field(L, "kainote.__lfs_impl", luaopen_lfs_impl);
+	set_field(L, "aegisub.__re_impl", luaopen_re_impl);
+	set_field(L, "aegisub.__unicode_impl", luaopen_unicode_impl);
+	set_field(L, "aegisub.__lfs_impl", luaopen_lfs_impl);
 	set_field(L, "lpeg", luaopen_lpeg);
 	set_field(L, "luabins", luaopen_luabins);
 

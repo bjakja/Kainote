@@ -338,7 +338,7 @@ MenuItem *Menu::SetAccMenu(MenuItem *menuitem, const wxString &name)
 		}
 	}
 
-	if(id){menuitem->SetAccel(&Hkeys.GetHKey(id));}
+	if(id){menuitem->SetAccel(&Hkeys.GetHKey(id));menuitem->id=id;}
 	return Append(menuitem);
 }
 

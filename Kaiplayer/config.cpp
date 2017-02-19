@@ -267,6 +267,7 @@ void config::LoadDefaultConfig()
 	rawcfg[L"Default Style Catalog"] = "Default";
 	rawcfg[L"Dictionary Name"] = "pl";
 	rawcfg[L"Editbox Spellchecker"] = "true";
+	rawcfg[L"FFMS2 Video Seeking"] = "2";
 	rawcfg[L"Frames"] = "false";
 	rawcfg[L"Grid Font Name"] = "Tahoma";
 	rawcfg[L"Grid Font Size"] = "10";
@@ -797,6 +798,22 @@ void MoveToMousePosition(wxWindow *win)
 	}
 	win->Move(mst);
 }
+
+wxString MakePolishPlural(int num, const wxString &normal, const wxString &plural2to4, const wxString &pluralRest)
+{
+	wxString result;
+	int div10mod = (num % 10);
+	int div100mod = (num % 100);
+	if(num==1){result = normal;}
+	else if((div10mod >=2 && div10mod <= 4) && (div100mod<10 && div100mod>20)){
+		result = plural2to4;
+	}else{
+		result = pluralRest;
+	}
+	wxString finalResult;
+	return finalResult<<num<<" "<<result;
+}
+
 config Options;
 
 

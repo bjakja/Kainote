@@ -48,6 +48,7 @@
 kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	: KaiFrame(0, -1, _("Bez nazwy - ")+Options.progname, pos, size, wxDEFAULT_FRAME_STYLE)
 	,badResolution(false)
+	,fc(NULL)
 {
 
 #if logging
@@ -174,7 +175,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	SubsMenu->Append(ID_CONV, _("Konwersja"), _("Konwersja z jednego formatu napisów na inny"),true, PTR_BITMAP_PNG("convert"), ConvMenu);
 	SubsMenu->AppendTool(Toolbar,ChangeTime, _("Okno zmiany &czasów\tCtrl-I"), _("Przesuwanie czasów napisów"),PTR_BITMAP_PNG("times"));
-	SubsMenu->AppendTool(Toolbar,FontCollector, _("Kolekcjoner czcionek"), _("Kolekcjoner czcionek"),PTR_BITMAP_PNG("fontcollector"));
+	SubsMenu->AppendTool(Toolbar,FontCollectorID, _("Kolekcjoner czcionek"), _("Kolekcjoner czcionek"),PTR_BITMAP_PNG("fontcollector"));
 	SubsMenu->AppendTool(Toolbar,HideTags, _("Ukryj tagi w nawiasach"), _("Ukrywa tagi w nawiasach ASS i MDVD"),PTR_BITMAP_PNG("hidetags"));
 	Menubar->Append(SubsMenu, _("&Napisy"));
 
@@ -215,68 +216,13 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&kainoteFrame::OnClose1);
 	Connect(30000,30059,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnRecent);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
-		/*if(!mylog){
+		if(!mylog){
 			mylog=new wxLogWindow(this, "Logi",true, false);
 			mylog->PassMessages(true);
 		}else{
 			delete mylog; mylog=NULL;
-		}*/
-		std::string txt = "Jakiśtam testowy tekst na powtórzenia tych samych liter bądź znaków specjalnych";
-		txt.erase(std::unique(txt.begin(), txt.end()), txt.end());
-		wxLogStatus(wxString(txt));
+		}
 		
-	LOGFONTW lf;
-	lf.lfCharSet = DEFAULT_CHARSET;
-	wcsncpy(lf.lfFaceName, L"Cocon", LF_FACESIZE);
-	lf.lfHeight=10;
-	lf.lfWidth=0;
-	lf.lfItalic= 0;
-	lf.lfWeight=400;
-	lf.lfUnderline=FALSE;
-	lf.lfStrikeOut=FALSE;
-	lf.lfEscapement=0;
-	lf.lfOrientation=0;
-	lf.lfPitchAndFamily = 0;
-	lf.lfQuality = 0;
-	lf.lfClipPrecision = 0;
-	lf.lfQuality = 0;
-	HDC dc = ::CreateCompatibleDC(NULL);
-	// Gather all of the styles for the given family name
-	std::vector<LOGFONTW> matches;
-	//using type = decltype(matches);
-	EnumFontFamiliesEx(dc, &lf, (FONTENUMPROCW)[](const LOGFONT *lf, const TEXTMETRIC *mt, DWORD style, LPARAM lParam) -> int {
-		reinterpret_cast<std::vector<LOGFONTW>*>(lParam)->push_back(*lf);
-		return 1;
-	}, (LPARAM)&matches, 0);
-
-	if(matches.size()<1){return;}
-	memcpy(lf.lfFaceName, matches[0].lfFaceName, LF_FACESIZE);
-
-		auto hfont = CreateFontIndirectW(&lf);
-		SelectObject(dc, hfont);
-		std::vector<int> missing;
-		//wxString tekst = "zażółćgęśląjaźń";
-		//wxString Result;
-	//FontEnum.CheckGlyphsExists(dc,tekst, missing);
-		DWORD ttcf = 0x66637474;
-	auto size = GetFontData(dc, ttcf, 0, nullptr, 0);
-	if (size == GDI_ERROR) {
-		ttcf = 0;
-		size = GetFontData(dc, 0, 0, nullptr, 0);
-	}
-	if (size == GDI_ERROR || size == 0){wxLogStatus("ni chuja fonta nie będzie");}
-	std::string buffer;
-		buffer.resize(size);
-	GetFontData(dc, ttcf, 0, &buffer[0], (int)size);
-
-	wxLogStatus("wnętrze naszej czcionki %i" + wxString(buffer), size);
-		SelectObject(dc, nullptr);
-		DeleteObject(hfont);
-	//for(size_t i = 0; i< missing.size(); i++){
-		//Result<<tekst[missing[i]];
-	//}
-	//wxLogStatus("Brakuje znaków: "+Result);
-		::DeleteDC(dc);
 	},9989);
 	/*Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
 		TabPanel *tab = GetTab();
@@ -318,10 +264,10 @@ kainoteFrame::~kainoteFrame()
 
 	Options.SaveOptions();
 
-
 	if(ss){ss->Destroy();ss=NULL;}
 	if(FR){FR->Destroy();FR=NULL;}
 	if(Auto){delete Auto; Auto=NULL;}
+	if(fc){delete fc; fc=NULL;}
 	Tabs->Destroy();
 	Tabs=NULL;
 	SpellChecker::Destroy();
@@ -427,8 +373,9 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		ss->catalogList->SetSelection(chc);
 		ss->LoadAssStyles();
 		ss->Show();
-	}else if(id==FontCollector && pan->Grid1->form<SRT){
-		FontCollectorDialog fcd(this);
+	}else if(id==FontCollectorID && pan->Grid1->form<SRT){
+		if(!fc){fc=new FontCollector(this);}
+		fc->ShowDialog(this);
 	}else if(id>=ConvertToASS && id<=ConvertToMPL2){
 		OnConversion(( id - ConvertToASS ) + 1);
 	}else if(id==HideTags){
@@ -571,10 +518,10 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			L"CSRI - Copyright © David Lamparter;\r\n"\
 			L"Vsfilter - Copyright © Gabest;\r\n"\
 			L"FFMPEGSource2 - Copyright © Fredrik Mellbin;\r\n"\
-			L"FreeType - Copyright ©  David Turner, Robert Wilhelm, and Werner Lemberg;\r\n"\
 			L"ICU - Copyright © 1995-2016 International Business Machines Corporation and others\r\n"\
 			L"Boost - Copyright © Joe Coder 2004 - 2006.",
 			"O Kainote");
+		//L"FreeType - Copyright ©  David Turner, Robert Wilhelm, and Werner Lemberg;\r\n"\
 		//L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.\r\n"
 	}else if(id==Helpers){
 		wxString Testers=L"Zły los, Nyah2211, Wincenty271, Ksenoform, Deadsoul,\r\nVessin, Xandros, Areki, Waski_jestem.";
@@ -591,7 +538,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_("- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój spektrum audio \r\n")+
 			_("i głównego pola tekstowego, stworzył ciemny motyw i część ikon).\r\n")+
 			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy,\r\n")+
-			_("pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych ustprawnień).\r\n")+
+			_("pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych usprawnień).\r\n")+
 			_("- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w debugowaniu crashy).\r\n")+
 			_("- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\r\n \r\n")+
 			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\r\n");

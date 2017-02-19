@@ -348,8 +348,8 @@ namespace Auto{
 	{
 		include_path.push_back(filename.BeforeLast('\\')+"\\");
 		include_path.push_back(Options.pathfull+"\\Automation\\automation\\Include\\");
-		include_path[0].Replace("\\","/");
-		include_path[1].Replace("\\","/");
+		//include_path[0].Replace("\\","/");
+		//include_path[1].Replace("\\","/");
 		Create();
 	}
 
@@ -401,11 +401,11 @@ namespace Auto{
 
 		// reference to the script object
 		push_value(L, this);
-		lua_setfield(L, LUA_REGISTRYINDEX, "kainote");
+		lua_setfield(L, LUA_REGISTRYINDEX, "aegisub");
 		stackcheck.check_stack(0);
 
-		// make "kainote" table
-		lua_pushstring(L, "kainote");
+		// make "aegisub" table
+		lua_pushstring(L, "aegisub");
 		lua_createtable(L, 0, 13);
 
 		set_field<LuaCommand::LuaRegister>(L, "register_macro");
@@ -514,7 +514,7 @@ namespace Auto{
 
 	LuaScript* LuaScript::GetScriptObject(lua_State *L)
 	{
-		lua_getfield(L, LUA_REGISTRYINDEX, "kainote");
+		lua_getfield(L, LUA_REGISTRYINDEX, "aegisub");
 		void *ptr = lua_touserdata(L, -1);
 		lua_pop(L, 1);
 		return (LuaScript*)ptr;
@@ -795,7 +795,7 @@ namespace Auto{
 		//wxLogStatus("waited ");
 		
 		if(ps->lpd->cancelled || failed){
-			wxLogStatus("canceled ");
+			//wxLogStatus("canceled ");
 			SAFE_DELETE(subsobj);
 			c->Grid1->file->DummyUndo();
 			
@@ -927,7 +927,8 @@ namespace Auto{
 		if(loadSubsScripts){
 			AddFromSubs();
 		}else{
-			CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
+			//CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
+			ReloadScripts(true);
 		}
 		//ReloadScripts(true);
 	}
@@ -990,7 +991,8 @@ namespace Auto{
 
 	void Automation::ReloadScripts(bool first)
 	{
-
+		wxStopWatch sw;
+		sw.Start();
 		initialized =false;
 		if(!first){RemoveAll(true);}
 		int error_count = 0;
@@ -1032,13 +1034,14 @@ namespace Auto{
 
 			more = dir.GetNext(&fn);
 		}
-		//}wxLogStatus("weszło");
-		//wxLogStatus("po pętli");
+
 		if (error_count > 0) {
 			wxLogWarning(_("Jeden bądź więcej skryptów autoload zawiera błędy,\n obejrzyj opisy skryptów by uzyskać więcej informacji."));
 		}
 
 		initialized = true;
+		STime countTime(sw.Time());
+		wxLogStatus("Upłynęło %sms",countTime.GetFormatted(SRT));
 	}
 
 	bool Automation::AddFromSubs()
@@ -1135,7 +1138,7 @@ namespace Auto{
 
 		int (all)? 2 : Scripts.size()+2;*/
 		
-		int start=30100, i=0;
+		int start=34000, i=0;
 		//if(all){
 			for(size_t g = 0; g < Scripts.size(); g++){
 				auto script = Scripts[g];
@@ -1146,7 +1149,8 @@ namespace Auto{
 				for(size_t p = 0; p < macros.size(); p++){
 					auto macro = macros[p];
 					wxString text; text<<"Script "<<script->GetFilename()<<"-"<<p;
-					submenu->SetAccMenu(new MenuItem(start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
+					MenuItem *mi = submenu->SetAccMenu(new MenuItem(start,macro->StrDisplay(),macro->StrHelp()), text);
+					mi->Enable(macro->Validate(c));
 					Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 						if(wxGetKeyState(WXK_SHIFT)){
 							int ret=-1;
@@ -1163,14 +1167,17 @@ namespace Auto{
 						}else{
 							macro->RunScript();
 						}	
-					}, start);
+					}, mi->id);
 					start++;
 				}
 				if( macros.size()<1){
-					submenu->Append(start,script->GetDescription(),_("Błąd"));
-					//Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-						
-					//}, start);
+					wxString strippedbug = script->GetDescription();
+					strippedbug.Replace("\n","");
+					if(strippedbug.Len()>100){strippedbug = strippedbug.SubString(0,100)+"...";}
+					submenu->Append(start,strippedbug,_("Błąd"));
+					Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+						KaiMessageBox(script->GetDescription(),_("Pełny opis błędu Lua"));
+					}, start);
 					start++;
 				}
 				submenu->AppendSeparator();
@@ -1199,7 +1206,8 @@ namespace Auto{
 			for(size_t p = 0; p < macros.size(); p++){
 				auto macro = macros[p];
 				wxString text; text<<"Script "<<script->GetFilename()<<"-"<<p;
-				submenu->SetAccMenu(new MenuItem(start,macro->StrDisplay(),macro->StrHelp()), text)->Enable(macro->Validate(c));
+				MenuItem *mi = submenu->SetAccMenu(new MenuItem(start,macro->StrDisplay(),macro->StrHelp()), text);
+				mi->Enable(macro->Validate(c));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 					if(wxGetKeyState(WXK_SHIFT)){
 						int ret=-1;
@@ -1214,14 +1222,17 @@ namespace Auto{
 						}
 						if(ret>-2){Hkeys.SetAccels(true); Hkeys.SaveHkeys();}
 					}else{if(script->CheckLastModified(true)){script->Reload();}macro->RunScript();}	
-				}, start);
+				}, mi->id);
 				start++;
 			}
 			if( macros.size()<1){
-				submenu->Append(start,script->GetDescription(),_("Błąd"));
-				//Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-						
-				//}, start);
+				wxString strippedbug = script->GetDescription();
+				strippedbug.Replace("\n","");
+				if(strippedbug.Len()>100){strippedbug = strippedbug.SubString(0,100)+"...";}
+				submenu->Append(start,strippedbug,_("Błąd"));
+				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+					KaiMessageBox(script->GetDescription(),_("Pełny opis błędu Lua"));
+				}, start);
 				start++;
 			}
 			submenu->AppendSeparator();

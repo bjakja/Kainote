@@ -822,7 +822,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		}
 		else{
 			if(player){player->UpdateImage(true,true);}
-			Render();
+			Render(true,false);
 			//VFF->Refresh(false);
 		}
 	}
@@ -1390,7 +1390,7 @@ void VideoRend::MovePos(int cpos)
 	}
 	VideoCtrl *vb=(VideoCtrl*)this;
 	vb->displaytime();
-	if(!IsDshow){Render(true);}
+	if(!IsDshow){Render();}
 }
 
 

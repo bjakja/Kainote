@@ -41,6 +41,7 @@ public:
 	bool changedForeground;
 	wxString GetLabelText() const {return name;}
 	void SetLabelText(const wxString &label);
+	bool Enable(bool enable=true);
 	bool clicked;
 private:
 	void OnSize(wxSizeEvent& evt);
@@ -73,6 +74,7 @@ public:
 	}
 	bool changedForeground;
 	bool clicked;
+	bool Enable(bool enable=true);
 private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);

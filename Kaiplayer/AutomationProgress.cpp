@@ -58,7 +58,7 @@ namespace Auto{
 
 
 		// register progress reporting stuff
-		lua_getglobal(L, "kainote");
+		lua_getglobal(L, "aegisub");
 		lua_newtable(L);
 
 		lua_pushvalue(L, -3);
@@ -121,7 +121,7 @@ namespace Auto{
 		//delete update_timer;
 		//update_timer.Stop();
 		// remove progress reporting stuff
-		lua_getglobal(L, "kainote");
+		lua_getglobal(L, "aegisub");
 		lua_pushnil(L);
 		lua_setfield(L, -2, "progress");
 		lua_pushnil(L);

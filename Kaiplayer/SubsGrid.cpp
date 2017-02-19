@@ -227,7 +227,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 		SpellErrors.resize(size);
 	}
 
-	Dialogue *acdial=GetDial(MID(0,Edit->ebrow,size));
+	Dialogue *acdial=GetDial(MID(0,Edit->ebrow,size-1));
 	Dialogue *Dial;
 
 	
@@ -887,7 +887,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 			//2-kliknięcie lewym i edycja na pauzie
 			//3-kliknięcie lewym i edycja na pauzie i odtwarzaniu
 
-			if (dclick||(left_up && mvtal < 4 && mvtal > 0 )){
+			if (dclick||(((holding && lastsel!=row)|| click) && mvtal < 4 && mvtal > 0 )){
 				//
 				TabPanel *pan=(TabPanel*)GetParent();
 				if(pan->Video->GetState()!=None){
@@ -934,7 +934,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 
 		if (delta) {
 			ScrollTo(scPos + delta);//row - (h / (GridHeight+1)) row
-
+			
 			// End the hold if this was a mousedown to avoid accidental
 			// selection of extra lines
 			if (click) {// && row!=GetCount()-1
@@ -951,7 +951,8 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 			extendRow = lastRow;
 
 			// Set boundaries
-			int i1 = MID(0,row, GetCount()-1);
+			row = MID(0,row, GetCount()-1);
+			int i1 = row;
 			int i2 = lastRow;
 			if (i1 > i2) {
 				int aux = i1;
@@ -965,6 +966,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 				SelectRow(i, notFirst || ctrl,true,true);
 				notFirst = true;
 			}
+			Edit->SetIt(row,true,true,true);
 			lastsel=row;
 			Refresh(false);
 			if(Edit->Visual==CHANGEPOS/* || Edit->Visual==MOVEALL*/){
@@ -1334,7 +1336,7 @@ void SubsGrid::ChangeTime()
 	int difftime=(VAS)? file->subs->dials[mtimerow]->Start.mstime : file->subs->dials[mtimerow]->End.mstime;
 	int halfframe= (VAS)? -(vb->avtpf/2) : (vb->avtpf/2);
 	if((mto & 4) && vb->GetState()!=None){
-		added= vb->Tell() - difftime + halfframe - 10;
+		added= vb->Tell() - difftime + halfframe;
 		added=ZEROIT(added);
 	}
 	else if((mto & 8) && Edit->ABox->audioDisplay->hasMark){
