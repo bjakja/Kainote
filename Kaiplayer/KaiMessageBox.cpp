@@ -23,8 +23,8 @@
 KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const wxString &caption, long elems)
 	: KaiDialog(parent, -1, caption)
 {
-	//SetForegroundColour(Options.GetColour("Window Text"));
-	//SetBackgroundColour(Options.GetColour("Window Background"));
+	//SetForegroundColour(Options.GetColour(WindowText));
+	//SetBackgroundColour(Options.GetColour(WindowBackground));
 	wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
 	DialogSizer *sizer2 = new DialogSizer(wxVERTICAL);
 	wxStaticText *txt = new wxStaticText(this,-1,msg);

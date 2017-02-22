@@ -164,11 +164,11 @@ void KaiTreebook::OnPaint(wxPaintEvent& event)
 	tdc.SelectObject(*bmp);
 	tdc.SetFont(GetFont());
 	bool enabled = IsThisEnabled();
-	wxColour wbg = Options.GetColour("Window Background");
-	wxColour wfg = Options.GetColour("Window Text");
-	wxColour selColor = Options.GetColour("Menu Border Selection");
+	wxColour wbg = Options.GetColour(StaticListBackground);
+	wxColour wfg = Options.GetColour(WindowText);
+	wxColour selColor = Options.GetColour(StaticListSelection);
 	tdc.SetBrush(wxBrush(wbg));
-	tdc.SetPen(wxPen(wbg));
+	tdc.SetPen(wxPen(Options.GetColour(StaticListBorder)));
 	tdc.SetTextForeground(wfg);
 	tdc.DrawRectangle(0,0,treeWidth+10,h);
 	bool afterBranch = false;

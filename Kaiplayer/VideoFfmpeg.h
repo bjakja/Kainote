@@ -19,7 +19,6 @@
 
 #pragma once
 #include <wx/string.h>
-#include <wx/file.h>
 #include <vector>
 //#include <stdint.h>
 #include "include\ffms.h"
@@ -95,7 +94,8 @@ public:
 	wxString RealColorSpace;
 	wxString fname;
 	VideoRend *rend;
-	wxFile file_cache;
+	//wxFile file_cache;
+	FILE *fp;
 	wxArrayInt KeyFrames;
 	std::vector<int> Timecodes;
 private:

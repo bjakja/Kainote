@@ -326,9 +326,9 @@ void AudioSpectrum::SetScaling(float _power_scale)
 
 void AudioSpectrum::ChangeColours()
 {
-	wxColour firstcolor = Options.GetColour("Audio Spectrum First Color"); 
-	wxColour secondcolor = Options.GetColour("Audio Spectrum Second Color"); 
-	wxColour thirdcolor = Options.GetColour("Audio Spectrum Third Color"); 
+	wxColour firstcolor = Options.GetColour(AudioSpectrumBackground); 
+	wxColour secondcolor = Options.GetColour(AudioSpectrumEcho); 
+	wxColour thirdcolor = Options.GetColour(AudioSpectrumInner); 
 	float r2=thirdcolor.Red(), r1= secondcolor.Red(), r= firstcolor.Red(), 
 		g2=thirdcolor.Green(), g1=secondcolor.Green(), g=firstcolor.Green(), 
 		b2=thirdcolor.Blue(), b1=secondcolor.Blue(), b=firstcolor.Blue();

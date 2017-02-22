@@ -177,10 +177,10 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 	}
 	if(!bmp){bmp=new wxBitmap(ow, oh);}
 	tdc.SelectObject(*bmp);
-	wxColour background = Options.GetColour("Scrollbar Background");
-	wxColour scroll = (enter && !pushed)? Options.GetColour("Scrollbar Scroll Hover") : 
-		(pushed)? Options.GetColour("Scrollbar Scroll Pushed") :
-		Options.GetColour("Scrollbar Scroll");
+	wxColour background = Options.GetColour(ScrollbarBackground);
+	wxColour scroll = (enter && !pushed)? Options.GetColour(ScrollbarScrollHover) : 
+		(pushed)? Options.GetColour(ScrollbarScrollPushed) :
+		Options.GetColour(ScrollbarScroll);
 	tdc.SetPen(wxPen(background));
 	tdc.SetBrush(wxBrush(background));
 	tdc.DrawRectangle(0, 0, ow, oh);
@@ -369,6 +369,7 @@ bool KaiScrolledWindow::SetScrollBar(int orientation, int pos, int maxVisible, i
 			wxSize size = wxWindow::GetClientSize();
 			horizontal = new KaiScrollbar(this,-1, wxPoint(0, size.y-17), wxSize((vertical)? size.x - 17 : size.x, 17));
 			horizontal->integrated=true;
+			horizontal->SetScrollRate(20);
 			if(vertical){
 				vertical->SetTwoscrolbars(true);
 			}

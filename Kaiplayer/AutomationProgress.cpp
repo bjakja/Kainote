@@ -52,7 +52,7 @@ namespace Auto{
 		ps = this;
 		_parent=parent;
 		// Init trace level
-		trace_level = Options.GetInt("Automation Trace Level");
+		trace_level = Options.GetInt(AutomationTraceLevel);
 
 		//LuaProgressSink **ud = (LuaProgressSink**)lua_newuserdata(L, sizeof(LuaProgressSink*));
 
@@ -322,8 +322,8 @@ namespace Auto{
 		,closedialog(false)
 		,L(_L)
 	{
-		SetForegroundColour(Options.GetColour("Window Text"));
-		SetBackgroundColour(Options.GetColour("Window Background"));
+		SetForegroundColour(Options.GetColour(WindowText));
+		SetBackgroundColour(Options.GetColour(WindowBackground));
 		progress_display = new wxGauge(this, -1, 100, wxDefaultPosition, wxSize(600, 20));
 		title_display = new wxStaticText(this, -1, _T(""), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE|wxST_NO_AUTORESIZE);
 		task_display = new wxStaticText(this, -1, _T(""), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE|wxST_NO_AUTORESIZE);

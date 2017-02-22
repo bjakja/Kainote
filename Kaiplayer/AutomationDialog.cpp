@@ -460,8 +460,8 @@ namespace Auto{
 
 	KaiDialog* LuaDialog::CreateWindow(wxWindow *parent, wxString name) {
 		window = new KaiDialog(parent,-1,name);
-		window->SetForegroundColour(Options.GetColour("Window Text"));
-		window->SetBackgroundColour(Options.GetColour("Window Background"));
+		window->SetForegroundColour(Options.GetColour(WindowText));
+		window->SetBackgroundColour(Options.GetColour(WindowBackground));
 		auto ms = new DialogSizer(wxVERTICAL);
 		auto s = new wxGridBagSizer(4, 4);
 		for (auto& c : controls)

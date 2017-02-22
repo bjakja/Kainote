@@ -36,6 +36,7 @@ config::config()
 	progname+= " DEBUG";
 #endif
 	AudioOpts=false;
+	defaultColour = wxColour();
 }
 
 
@@ -47,7 +48,7 @@ config::~config()
 		delete (*it);
 	}
 	assstore.clear();
-	for(std::map<wxString, wxColour*>::iterator it = colors.begin(); it != colors.end(); it++)
+	for(std::map<COLOR, wxColour*>::iterator it = colors.begin(); it != colors.end(); it++)
 	{
 		delete it->second;
 	}
@@ -75,102 +76,102 @@ bool config::SetRawOptions(const wxString &textconfig)
 	return false;
 }
 
-wxString config::GetString(wxString lopt)
+wxString config::GetString(CONFIG opt)
 {
-	return rawcfg[lopt];
+	return rawcfg[opt];
 }
 
 
-bool config::GetBool(wxString lopt)
+bool config::GetBool(CONFIG opt)
 {   
-	wxString opt=rawcfg[lopt];
-	if(opt==_T("true")){return true;}
+	wxString ropt=rawcfg[opt];
+	if(ropt==_T("true")){return true;}
 	return false;
 }
 
-wxColour config::GetColour(wxString lopt)
+wxColour &config::GetColour(COLOR opt)
 {
-	auto it = colors.find(lopt);
+	auto it = colors.find(opt);
 	if(it!=colors.end()){
 		return *it->second;
 	}
-	return wxColour("#000000");
+	return defaultColour;//wxColour("#000000");
 }
 
-AssColor config::GetColor(wxString lopt)
+AssColor config::GetColor(COLOR opt)
 {
-	auto it = colors.find(lopt);
+	auto it = colors.find(opt);
 	if(it!=colors.end()){
 		return AssColor(*it->second);
 	}
 	return AssColor();
 }
 
-int config::GetInt(wxString lopt)
+int config::GetInt(CONFIG opt)
 {
-	return wxAtoi(rawcfg[lopt]);
+	return wxAtoi(rawcfg[opt]);
 }
-float config::GetFloat(wxString lopt)
+float config::GetFloat(CONFIG opt)
 {   
 	double fl;
-	wxString rawfloat=rawcfg[lopt];
+	wxString rawfloat=rawcfg[opt];
 	if(!rawfloat.ToDouble(&fl)){return 0.0;}
 	return fl;
 }
 
-void config::SetString(wxString lopt, wxString sopt)
+void config::SetString(CONFIG opt, const wxString &sopt)
 {
-	rawcfg[lopt]=sopt;
+	rawcfg[opt]=sopt;
 }
 
-void config::SetBool(wxString lopt, bool bopt)
+void config::SetBool(CONFIG opt, bool bopt)
 {
 	wxString bopt1 = (bopt)? _T("true") : _T("false");
-	rawcfg[lopt]=bopt1;
+	rawcfg[opt]=bopt1;
 }
 
-void config::SetColour(wxString lopt, wxColour copt)
+void config::SetColour(COLOR opt, wxColour &copt)
 {
-	auto it = colors.find(lopt);
+	auto it = colors.find(opt);
 	if(it!=colors.end()){
 		delete it->second;
 		it->second = new wxColour(copt);
 		return;
 	}
-	colors[lopt]=new wxColour(copt);
+	colors[opt]=new wxColour(copt);
 }
 
-void config::SetColor(wxString lopt, AssColor copt)
+void config::SetColor(COLOR opt, AssColor &copt)
 {
-	auto it = colors.find(lopt);
+	auto it = colors.find(opt);
 	if(it!=colors.end()){
 		delete it->second;
 		it->second = new wxColour(copt.GetWX());
 		return;
 	}
-	colors[lopt]=new wxColour(copt.GetWX());
+	colors[opt]=new wxColour(copt.GetWX());
 }
 
-void config::SetInt(wxString lopt, int iopt)
+void config::SetInt(CONFIG opt, int iopt)
 {
 	wxString iopt1=_T("");
-	rawcfg[lopt]=iopt1<<iopt;
+	rawcfg[opt]=iopt1<<iopt;
 }
 
-void config::SetFloat(wxString lopt, float fopt)
+void config::SetFloat(CONFIG opt, float fopt)
 {
 	wxString fopt1=_T("");
 	fopt1<<fopt;
 	fopt1.Replace(",",".");
-	rawcfg[lopt]=fopt1;
+	rawcfg[opt]=fopt1;
 }
 
 wxString config::GetRawOptions(bool Audio)
 {
 	wxString TextOpt=_T("["+progname+"]\r\n");
-	for (std::map<wxString,wxString>::iterator cur=rawcfg.begin();cur!=rawcfg.end();cur++) {
-		if((!Audio && cur->first.StartsWith("Audio")) || (Audio && !cur->first.StartsWith("Audio"))) {continue;}
-		TextOpt<<cur->first << _T("=") << cur->second << _T("\r\n");
+	for (std::map<CONFIG,wxString>::iterator cur=rawcfg.begin();cur!=rawcfg.end();cur++) {
+		if((!Audio && cur->first <= AudioWheelDefaultToZoom) || (Audio && cur->first >=AudioWheelDefaultToZoom)) {continue;}
+		TextOpt<<::GetString(cur->first) << _T("=") << cur->second << _T("\r\n");
 	}
 	return TextOpt;
 }
@@ -183,7 +184,7 @@ void config::CatchValsLabs(const wxString &line)
 	wxString Labels=line.BeforeFirst('=');
 	Labels.Trim(false);
 	Labels.Trim(true);
-	rawcfg[Labels]=Values;
+	rawcfg[GetCONFIGValue(Labels)] = Values;
 }
 void config::AddStyle(Styles *styl)
 {
@@ -191,7 +192,7 @@ void config::AddStyle(Styles *styl)
 
 }
 
-Styles *config::GetStyle(int i,wxString name, Styles* _styl)
+Styles *config::GetStyle(int i,const wxString &name, Styles* _styl)
 {
 	if(name!=_T("")){
 		for(unsigned int j=0;j<assstore.size();j++){
@@ -202,7 +203,7 @@ Styles *config::GetStyle(int i,wxString name, Styles* _styl)
 	return assstore[i];
 }
 
-int config::FindStyle(wxString name, int *multiplication)
+int config::FindStyle(const wxString &name, int *multiplication)
 {
 	int isfound=-1;
 	for(unsigned int j=0;j<assstore.size();j++)
@@ -258,146 +259,153 @@ void config::SaveOptions(bool cfg, bool style)
 
 void config::LoadDefaultConfig()
 {
-	rawcfg[L"Change Time"] = "2000";
-	rawcfg[L"Change mode"] = "0";
-	rawcfg[L"Convert Resolution W"] = "1280";
-	rawcfg[L"Convert Resolution H"] = "720";
-	rawcfg[L"Default FPS"] = "23.976";
-	rawcfg[L"Default Style"] = "Default";
-	rawcfg[L"Default Style Catalog"] = "Default";
-	rawcfg[L"Dictionary Name"] = "pl";
-	rawcfg[L"Editbox Spellchecker"] = "true";
-	rawcfg[L"FFMS2 Video Seeking"] = "2";
-	rawcfg[L"Frames"] = "false";
-	rawcfg[L"Grid Font Name"] = "Tahoma";
-	rawcfg[L"Grid Font Size"] = "10";
-	rawcfg[L"Grid tag changing char"] = L"☀";
-	rawcfg[L"Move time forward"] = "true";
-	rawcfg[L"Move Video To Active Line"] = "0";
-	rawcfg[L"New end times"] = "false";
-	rawcfg[L"Offset of start time"] = "0";
-	rawcfg[L"Offset of end time"] = "0";
-	rawcfg[L"Play Afrer Selection"] = "0";
-	rawcfg[L"Preview Text"] = "Podgląd";
-	rawcfg[L"Program Theme"] = "Default";
-	rawcfg[L"Show Editor"] = "true";
-	rawcfg[L"Show settings window"] = "false";
-	rawcfg[L"Start end times"] = "0";
-	rawcfg[L"Styles of time change"] = "";
-	rawcfg[L"Time show of letter"] = "110";
-	rawcfg[L"Index Video"] = "true";
-	rawcfg[L"Video Prog Bar"] = "true";
-	rawcfg[L"Video Window Size"] = "500,350";
-	rawcfg[L"Window Size"] = "800,600";
+	rawcfg[MoveTimesTime] = "2000";
+	rawcfg[MoveTimesWhichLines] = "0";
+	rawcfg[ConvertResolutionWidth] = "1280";
+	rawcfg[ConvertResolutionHeight] = "720";
+	rawcfg[ConvertFPS] = "23.976";
+	rawcfg[ConvertStyle] = "Default";
+	rawcfg[ConvertStyleCatalog] = "Default";
+	rawcfg[DictionaryLanguage] = "pl";
+	rawcfg[SpellcheckerOn] = "true";
+	rawcfg[FFMS2VideoSeeking] = "2";
+	rawcfg[MoveTimesByTime] = "false";
+	rawcfg[GridFontName] = "Tahoma";
+	rawcfg[GridFontSize] = "10";
+	rawcfg[GridTagsSwapChar] = L"☀";
+	rawcfg[MoveTimesForward] = "true";
+	rawcfg[ConvertNewEndTimes] = "false";
+	rawcfg[InsertStartOffset] = "0";
+	rawcfg[InsertEndOffset] = "0";
+	rawcfg[PlayAfterSelection] = "0";
+	rawcfg[PreviewText] = "Podgląd";
+	rawcfg[ProgramTheme] = "Default";
+	rawcfg[EditorOn] = "true";
+	rawcfg[ConvertShowSettings] = "false";
+	rawcfg[MoveTimesOn] = "true";
+	rawcfg[MoveTimesWhichTimes] = "0";
+	rawcfg[MoveTimesStyles] = "";
+	rawcfg[ConvertTimePerLetter] = "110";
+	rawcfg[VideoIndex] = "true";
+	rawcfg[VideoProgressBar] = "true";
+	rawcfg[VideoWindowSize] = "500,350";
+	rawcfg[WindowSize] = "800,600";
 }
 
 void config::LoadDefaultColors()
 {
-	colors[L"Audio Background"] = new wxColour("#000000");
-	colors[L"Audio Inactive Lines Background"] = new wxColour(0x37,0x35,0x64,0x55);//wxColour("#55373564");
-	colors[L"Audio Keyframes"] = new wxColour("#4AFF00");
-	colors[L"Audio Line Boundary End"] = new wxColour("#E67D00");
-	colors[L"Audio Line Boundary Inactive Line"] = new wxColour("#808080");
-	colors[L"Audio Line Boundary Mark"] = new wxColour("#FF00FF");
-	colors[L"Audio Line Boundary Start"] = new wxColour("#D80000");
-	colors[L"Audio Play Cursor"] = new wxColour("#FFFFFF");
-	colors[L"Audio Seconds Boundaries"] = new wxColour(0x0B,0x8A,0x9F,0x9B);//wxColour("#9B0B8A9F");
-	colors[L"Audio Selection Background"] = new wxColour(0xFF,0xFF,0xFF,0x37);//wxColour("#37FFFFFF");
-	colors[L"Audio Selection Background Modified"] = new wxColour(0xD6,0x00,0x00,0x37);//wxColour("#37D60000");
-	colors[L"Audio Spectrum First Color"] = new wxColour("#000000");
-	colors[L"Audio Spectrum Second Color"] = new wxColour("#8DA8FF");
-	colors[L"Audio Spectrum Third Color"] = new wxColour("#FFFFFF");
-	colors[L"Audio Syllable Boundaries"] = new wxColour("#FFFF00");
-	colors[L"Audio Syllable Text"] = new wxColour("#FF0000");
-	colors[L"Audio Waveform"] = new wxColour("#7D6EFE");
-	colors[L"Audio Waveform Inactive"] = new wxColour("#362C88");
-	colors[L"Audio Waveform Modified"] = new wxColour("#FFE6E6");
-	colors[L"Audio Waveform Selected"] = new wxColour("#DCDAFF");
-	colors[L"Button Background"] = new wxColour("#2A2A2A");
-	colors[L"Button Background Hover"] = new wxColour("#333333");
-	colors[L"Button Background Pushed"] = new wxColour("#333333");
-	colors[L"Button Border"] = new wxColour("#4E4E4E");
-	colors[L"Button Border Hover"] = new wxColour("#555555");
-	colors[L"Button Border Pushed"] = new wxColour("#555555");
-	colors[L"Button Inactive Border"] = new wxColour("#5A5A5A");
-	colors[L"Editor Background"] = new wxColour("#444444");
-	colors[L"Editor Border"] = new wxColour("#4E4E4E");
-	colors[L"Editor Border Focus"] = new wxColour("#8C8C8C");
-	colors[L"Editor Curly Braces"] = new wxColour("#7378FE");
-	colors[L"Editor Selection"] = new wxColour("#6E6E6E");
-	colors[L"Editor Selection No Focus"] = new wxColour("#65657E");
-	colors[L"Editor Spellchecker"] = new wxColour("#940000");
-	colors[L"Editor Tag Names"] = new wxColour("#D09404");
-	colors[L"Editor Tag Operators"] = new wxColour("#FA7676");
-	colors[L"Editor Tag Values"] = new wxColour("#EC62FB");
-	colors[L"Editor Text"] = new wxColour("#B7B7B7");
-	colors[L"Grid Active Line"] = new wxColour("#4000CA");
-	colors[L"Grid Background"] = new wxColour("#444444");
-	colors[L"Grid Collisions"] = new wxColour("#0010FF");
-	colors[L"Grid Comment"] = new wxColour("#BDBDBD");
-	colors[L"Grid Comparison"] = new wxColour("#DFDADA");
-	colors[L"Grid Comparison Background"] = new wxColour("#C0A073");
-	colors[L"Grid Comparison Background Selected"] = new wxColour("#909F3A");
-	colors[L"Grid Comparison Background selected"] = new wxColour("#909F3A");
-	colors[L"Grid Comparison Comment Background"] = new wxColour("#978063");
-	colors[L"Grid Comparison Comment Background Selected"] = new wxColour("#656F31");
-	colors[L"Grid Dialogue"] = new wxColour("#969696");
-	colors[L"Grid Label Modified"] = new wxColour("#A8FB05");
-	colors[L"Grid Label Normal"] = new wxColour("#6551FF");
-	colors[L"Grid Label Saved"] = new wxColour("#A398FF");
-	colors[L"Grid Lines"] = new wxColour("#4C4C4C");
-	colors[L"Grid Selected Comment"] = new wxColour("#839394");
-	colors[L"Grid Selected Dialogue"] = new wxColour("#B6D5C5");
-	colors[L"Grid Spellchecker"] = new wxColour("#FA9292");
-	colors[L"Grid Text"] = new wxColour("#121212");
-	colors[L"Menu Background"] = new wxColour("#323232");
-	colors[L"Menu Background Selection"] = new wxColour("#39374B");
-	colors[L"Menu Bar Background 1"] = new wxColour("#4A4A4A");
-	colors[L"Menu Bar Background 2"] = new wxColour("#222222");
-	colors[L"Menu Bar Background Selection"] = new wxColour("#39374B");
-	colors[L"Menu Bar Border Selection"] = new wxColour("#948FC4");
-	colors[L"Menu Border Selection"] = new wxColour("#5B5689");
-	colors[L"Scrollbar Background"] = new wxColour("#3A3A3A");
-	colors[L"Scrollbar Scroll"] = new wxColour("#686868");
-	colors[L"Scrollbar Scroll Hover"] = new wxColour("#868686");
-	colors[L"Scrollbar Scroll Pushed"] = new wxColour("#868686");
-	colors[L"Slider Background"] = new wxColour("#282828");
-	colors[L"Slider Background Hover"] = new wxColour("#333333");
-	colors[L"Slider Background Pushed"] = new wxColour("#333333");
-	colors[L"Slider Border"] = new wxColour("#4E4E4E");
-	colors[L"Slider Path Background"] = new wxColour("#282828");
-	colors[L"Slider Path Border"] = new wxColour("#434343");
-	colors[L"Staticbox Border"] = new wxColour("#565555");
-	colors[L"Style Preview Color1"] = new wxColour("#9A9A9A");
-	colors[L"Style Preview Color2"] = new wxColour("#686868");
-	colors[L"Tabs Background Active"] = new wxColour("#2D2D2D");
-	colors[L"Tabs Background Inactive"] = new wxColour("#3C3C3C");
-	colors[L"Tabs Background Inactive Hover"] = new wxColour("#2D2D2D");
-	colors[L"Tabs Bar Arrow"] = new wxColour("#9B9B9B");
-	colors[L"Tabs Bar Arrow Background"] = new wxColour("#222222");
-	colors[L"Tabs Bar Arrow Background Hover"] = new wxColour("#333333");
-	colors[L"Tabs Bar Background 1"] = new wxColour("#222222");
-	colors[L"Tabs Bar Background 2"] = new wxColour("#222222");
-	colors[L"Tabs Border Active"] = new wxColour("#000000");
-	colors[L"Tabs Border inactive"] = new wxColour("#000000");
-	colors[L"Tabs Close Hover"] = new wxColour("#D40403");
-	colors[L"Tabs Text Active"] = new wxColour("#B5B5B5");
-	colors[L"Tabs Text Inactive"] = new wxColour("#9B9B9B");
-	colors[L"Togglebutton Background Toggled"] = new wxColour("#393939");
-	colors[L"Togglebutton Border Toggled"] = new wxColour("#636363");
-	colors[L"Window Background"] = new wxColour("#222222");
-	colors[L"Window Border"] = new wxColour("#111111");
-	colors[L"Window Border Background"] = new wxColour("#786AEB");
-	colors[L"Window Border Background Inactive"] = new wxColour("#818181");
-	colors[L"Window Border Inactive"] = new wxColour("#111111");
-	colors[L"Window Header Inactive Text"] = new wxColour("#1A1A1A");
-	colors[L"Window Header Text"] = new wxColour("#1A1A1A");
-	colors[L"Window Hover Header Element"] = new wxColour("#D40403");
-	colors[L"Window Inactive Background"] = new wxColour("#303030");
-	colors[L"Window Inactive Text"] = new wxColour("#4E4E4E");
-	colors[L"Window Pushed Header Element"] = new wxColour("#E50403");
-	colors[L"Window Text"] = new wxColour("#9B9B9B");
-	colors[L"Window Warning Elements"] = new wxColour("#9B9B9B");
+	colors[AudioBackground] = new wxColour("#000000");
+	colors[AudioInactiveLinesBackground] = new wxColour(0x37,0x35,0x64,0x55);//wxColour("#55373564");
+	colors[AudioKeyframes] = new wxColour("#4AFF00");
+	colors[AudioLineBoundaryEnd] = new wxColour("#E67D00");
+	colors[AudioLineBoundaryInactiveLine] = new wxColour("#808080");
+	colors[AudioLineBoundaryMark] = new wxColour("#FF00FF");
+	colors[AudioLineBoundaryStart] = new wxColour("#D80000");
+	colors[AudioPlayCursor] = new wxColour("#FFFFFF");
+	colors[AudioSecondsBoundaries] = new wxColour(0x0B,0x8A,0x9F,0x9B);//wxColour("#9B0B8A9F");
+	colors[AudioSelectionBackground] = new wxColour(0xFF,0xFF,0xFF,0x37);//wxColour("#37FFFFFF");
+	colors[AudioSelectionBackgroundModified] = new wxColour(0xD6,0x00,0x00,0x37);//wxColour("#37D60000");
+	colors[AudioSpectrumBackground] = new wxColour("#000000");
+	colors[AudioSpectrumEcho] = new wxColour("#8DA8FF");
+	colors[AudioSpectrumInner] = new wxColour("#FFFFFF");
+	colors[AudioSyllableBoundaries] = new wxColour("#FFFF00");
+	colors[AudioSyllableText] = new wxColour("#FF0000");
+	colors[AudioWaveform] = new wxColour("#7D6EFE");
+	colors[AudioWaveformInactive] = new wxColour("#362C88");
+	colors[AudioWaveformModified] = new wxColour("#FFE6E6");
+	colors[AudioWaveformSelected] = new wxColour("#DCDAFF");
+	colors[TextFieldBackground] = new wxColour("#2A2A2A");
+	colors[TextFieldBorder] = new wxColour("#4E4E4E");
+	colors[TextFieldBorderOnFocus] = new wxColour("#8C8C8C");
+	colors[TextFieldSelection] = new wxColour("#6E6E6E");
+	colors[TextFieldSelectionNoFocus] = new wxColour("#65657E");
+	colors[ButtonBackground] = new wxColour("#2A2A2A");
+	colors[ButtonBackgroundHover] = new wxColour("#333333");
+	colors[ButtonBackgroundPushed] = new wxColour("#333333");
+	colors[ButtonBorder] = new wxColour("#4E4E4E");
+	colors[ButtonBorderHover] = new wxColour("#555555");
+	colors[ButtonBorderPushed] = new wxColour("#555555");
+	colors[ButtonBorderInactive] = new wxColour("#5A5A5A");
+	colors[EditorBackground] = new wxColour("#444444");
+	colors[EditorBorder] = new wxColour("#4E4E4E");
+	colors[EditorBorderOnFocus] = new wxColour("#8C8C8C");
+	colors[EditorBracesBackground] = new wxColour("#000000");
+	colors[EditorCurlyBraces] = new wxColour("#7378FE");
+	colors[EditorSelection] = new wxColour("#6E6E6E");
+	colors[EditorSelectionNoFocus] = new wxColour("#65657E");
+	colors[EditorSpellchecker] = new wxColour("#940000");
+	colors[EditorTagNames] = new wxColour("#D09404");
+	colors[EditorTagOperators] = new wxColour("#FA7676");
+	colors[EditorTagValues] = new wxColour("#EC62FB");
+	colors[EditorText] = new wxColour("#B7B7B7");
+	colors[GridActiveLine] = new wxColour("#4000CA");
+	colors[GridBackground] = new wxColour("#444444");
+	colors[GridCollisions] = new wxColour("#0010FF");
+	colors[GridComment] = new wxColour("#BDBDBD");
+	colors[GridComparison] = new wxColour("#DFDADA");
+	colors[GridComparisonBackground] = new wxColour("#C0A073");
+	colors[GridComparisonBackgroundSelected] = new wxColour("#909F3A");
+	colors[GridComparisonCommentBackground] = new wxColour("#978063");
+	colors[GridComparisonCommentBackgroundSelected] = new wxColour("#656F31");
+	colors[GridDialogue] = new wxColour("#969696");
+	colors[GridLabelModified] = new wxColour("#A8FB05");
+	colors[GridLabelNormal] = new wxColour("#6551FF");
+	colors[GridLabelSaved] = new wxColour("#A398FF");
+	colors[GridLines] = new wxColour("#4C4C4C");
+	colors[GridSelectedComment] = new wxColour("#839394");
+	colors[GridSelectedDialogue] = new wxColour("#B6D5C5");
+	colors[GridSpellchecker] = new wxColour("#FA9292");
+	colors[GridText] = new wxColour("#121212");
+	colors[MenuBackground] = new wxColour("#323232");
+	colors[MenuBackgroundSelection] = new wxColour("#39374B");
+	colors[MenuBarBackground1] = new wxColour("#4A4A4A");
+	colors[MenuBarBackground2] = new wxColour("#222222");
+	colors[MenuBarBackgroundSelection] = new wxColour("#39374B");
+	colors[MenuBarBorderSelection] = new wxColour("#948FC4");
+	colors[MenuBorderSelection] = new wxColour("#5B5689");
+	colors[ScrollbarBackground] = new wxColour("#3A3A3A");
+	colors[ScrollbarScroll] = new wxColour("#686868");
+	colors[ScrollbarScrollHover] = new wxColour("#868686");
+	colors[ScrollbarScrollPushed] = new wxColour("#868686");
+	colors[SliderBackground] = new wxColour("#282828");
+	colors[SliderBackgroundHover] = new wxColour("#333333");
+	colors[SliderBackgroundPushed] = new wxColour("#333333");
+	colors[SliderBorder] = new wxColour("#4E4E4E");
+	colors[SliderPathBackground] = new wxColour("#282828");
+	colors[SliderPathBorder] = new wxColour("#434343");
+	colors[StaticboxBorder] = new wxColour("#565555");
+	colors[StylePreviewColor1] = new wxColour("#9A9A9A");
+	colors[StylePreviewColor2] = new wxColour("#686868");
+	colors[TabsBackgroundActive] = new wxColour("#2D2D2D");
+	colors[TabsBackgroundInactive] = new wxColour("#3C3C3C");
+	colors[TabsBackgroundInactiveHover] = new wxColour("#2D2D2D");
+	colors[TabsBarArrow] = new wxColour("#9B9B9B");
+	colors[TabsBarArrowBackground] = new wxColour("#222222");
+	colors[TabsBarArrowBackgroundHover] = new wxColour("#333333");
+	colors[TabsBarBackground1] = new wxColour("#222222");
+	colors[TabsBarBackground2] = new wxColour("#222222");
+	colors[TabsBorderActive] = new wxColour("#000000");
+	colors[TabsBorderInactive] = new wxColour("#000000");
+	colors[TabsCloseHover] = new wxColour("#D40403");
+	colors[TabsTextActive] = new wxColour("#B5B5B5");
+	colors[TabsTextInactive] = new wxColour("#9B9B9B");
+	colors[TogglebuttonBackgroundToggled] = new wxColour("#393939");
+	colors[TogglebuttonBorderToggled] = new wxColour("#636363");
+	colors[WindowBackground] = new wxColour("#222222");
+	colors[WindowBorder] = new wxColour("#111111");
+	colors[WindowBorderBackground] = new wxColour("#786AEB");
+	colors[WindowBorderBackgroundInactive] = new wxColour("#818181");
+	colors[WindowBorderInactive] = new wxColour("#111111");
+	colors[WindowHeaderTextInactive] = new wxColour("#1A1A1A");
+	colors[WindowHeaderText] = new wxColour("#1A1A1A");
+	colors[WindowHoverHeaderElement] = new wxColour("#D40403");
+	colors[WindowBackgroundInactive] = new wxColour("#303030");
+	colors[WindowTextInactive] = new wxColour("#4E4E4E");
+	colors[WindowPushedHeaderElement] = new wxColour("#E50403");
+	colors[WindowHoverCloseButton] = new wxColour("#D40403");
+	colors[WindowPushedCloseButton] = new wxColour("#E50403");
+	colors[WindowText] = new wxColour("#9B9B9B");
+	colors[WindowWarningElements] = new wxColour("#9B9B9B");
 
 }
 
@@ -444,10 +452,10 @@ void config::LoadColors(const wxString &_themeName){
 	wxString themeName;
 	ClearColors();
 	if(_themeName.IsEmpty()){
-		themeName = Options.GetString("Program Theme");
+		themeName = Options.GetString(ProgramTheme);
 	}else{
 		themeName = _themeName;
-		Options.SetString("Program Theme", _themeName);
+		Options.SetString(ProgramTheme, _themeName);
 	}
 	bool failed = false;
 	if(themeName!="Default"){
@@ -470,7 +478,7 @@ void config::LoadColors(const wxString &_themeName){
 	}
 	LoadDefaultColors();	
 	if(failed){
-		Options.SetString("Program Theme", "Default");
+		Options.SetString(ProgramTheme, "Default");
 		KaiMessageBox(_("Nie można zaczytać motywu, zostanie przywrócony domyśny"));
 	}
 }
@@ -508,27 +516,27 @@ void config::clearstyles()
 
 void config::ClearColors()
 {
-	for(std::map<wxString, wxColour*>::iterator it = colors.begin(); it != colors.end(); it++)
+	for(std::map<COLOR, wxColour*>::iterator it = colors.begin(); it != colors.end(); it++)
 	{
 		delete it->second;
 	}
 	colors.clear();
 }
 
-void config::SetCoords(wxString lopt, int coordx, int coordy)
+void config::SetCoords(CONFIG opt, int coordx, int coordy)
 {
 	wxString iopt1=_T("");
-	rawcfg[lopt]=iopt1<<coordx<<","<<coordy;
+	rawcfg[opt]=iopt1<<coordx<<","<<coordy;
 }
 
-void config::GetCoords(wxString lopt, int *coordx, int *coordy)
+void config::GetCoords(CONFIG opt, int *coordx, int *coordy)
 {
-	wxString sopt=rawcfg[lopt];
+	wxString sopt=rawcfg[opt];
 	*coordx=wxAtoi(sopt.BeforeFirst(','));
 	*coordy=wxAtoi(sopt.AfterFirst(','));
 }
 
-void config::SetTable(wxString lopt, wxArrayString asopt,wxString split)
+void config::SetTable(CONFIG opt, wxArrayString &asopt,wxString split)
 {
 	wxString sresult;
 	wxString ES;
@@ -537,10 +545,10 @@ void config::SetTable(wxString lopt, wxArrayString asopt,wxString split)
 		wxString endchar=(i==asopt.size()-1)? ES : split;
 		sresult<<asopt[i]<<endchar;
 	}
-	rawcfg[lopt]=sresult;
+	rawcfg[opt]=sresult;
 }
 
-void config::SetIntTable(wxString lopt, wxArrayInt asopt,wxString split)
+void config::SetIntTable(CONFIG opt, wxArrayInt &asopt,wxString split)
 {
 	wxString sresult;
 	wxString ES;
@@ -549,33 +557,29 @@ void config::SetIntTable(wxString lopt, wxArrayInt asopt,wxString split)
 		wxString endchar=(i==asopt.size()-1)? ES : split;
 		sresult<<asopt[i]<<endchar;
 	}
-	rawcfg[lopt]=sresult;
+	rawcfg[opt]=sresult;
 }
 
-wxArrayString config::GetTable(wxString lopt, wxString split)
+void config::GetTable(CONFIG opt, wxArrayString &tbl, wxString split)
 {
-	wxArrayString strcfg;
-	wxString strtbl=rawcfg[lopt];
+	wxString strtbl=rawcfg[opt];
 	if(strtbl!=""){
 		wxStringTokenizer cfgtable(strtbl,split,wxTOKEN_STRTOK);
 		while(cfgtable.HasMoreTokens()){
-			strcfg.Add(cfgtable.NextToken());
+			tbl.Add(cfgtable.NextToken());
 		}  
 	}
-	return strcfg;
 }
 
-wxArrayInt config::GetIntTable(wxString lopt, wxString split)
+void config::GetIntTable(CONFIG opt, wxArrayInt &tbl, wxString split)
 {
-	wxArrayInt intcfg;
-	wxString strtbl=rawcfg[lopt];
+	wxString strtbl=rawcfg[opt];
 	if(strtbl!=""){
 		wxStringTokenizer cfgtable(strtbl,split,wxTOKEN_STRTOK);
 		while(cfgtable.HasMoreTokens()){
-			intcfg.Add(wxAtoi(cfgtable.NextToken()));
+			tbl.Add(wxAtoi(cfgtable.NextToken()));
 		}  
 	}
-	return intcfg;
 }
 
 bool sortfunc(Styles *styl1,Styles *styl2){
@@ -591,35 +595,36 @@ void config::Sortstyles()
 
 void config::LoadDefaultAudioConfig()
 {
-	rawcfg[L"Audio Autocommit"] = "true";
-	rawcfg[L"Audio Autofocus"] = "true";
-	rawcfg[L"Audio Autoscroll"] = "true";
-	rawcfg[L"Audio Box Height"] = "169";
-	rawcfg[L"Audio Delay"] = "0";
-	rawcfg[L"Audio Draw Cursor Time"] = "true";
-	rawcfg[L"Audio Draw Keyframes"] = "true";
-	rawcfg[L"Audio Draw Secondary Lines"] = "true";
-	rawcfg[L"Audio Draw Selection Background"] = "true";
-	rawcfg[L"Audio Draw video Position"] = "true";
-	rawcfg[L"Audio Grab Times On Select"] = "true";
-	rawcfg[L"Audio Horizontal Zoom"] = "50";
-	rawcfg[L"Audio Inactive Lines Display Mode"] = "1";
-	rawcfg[L"Audio Lead In"] = "200";
-	rawcfg[L"Audio Lead Out"] = "300";
-	rawcfg[L"Audio Line Boundaries Thickness"] = "2";
-	rawcfg[L"Audio Link"] = "false";
-	rawcfg[L"Audio Lock Scroll On Cursor"] = "false";
-	rawcfg[L"Audio Mark Play Time"] = "1000";
-	rawcfg[L"Audio Next Line On Commit"] = "true";
-	rawcfg[L"Audio RAM Cache"] = "false";
-	rawcfg[L"Audio Sample Rate"] = "0";
-	rawcfg[L"Audio Snap To Keyframes"] = "false";
-	rawcfg[L"Audio Snap To Other Lines"] = "false";
-	rawcfg[L"Audio Spectrum"] = "false";
-	rawcfg[L"Audio Start Drag Sensitivity"] = "2";
-	rawcfg[L"Audio Vertical Zoom"] = "50";
-	rawcfg[L"Audio Volume"] = "50";
-	rawcfg[L"Audio Wheel Default To Zoom"] = "false";
+	rawcfg[AudioAutoCommit] = "true";
+	rawcfg[AudioAutoFocus] = "true";
+	rawcfg[AudioAutoScroll] = "true";
+	rawcfg[AudioBoxHeight] = "169";
+	rawcfg[AudioDelay] = "0";
+	rawcfg[AudioDrawTimeCursor] = "true";
+	rawcfg[AudioDrawKeyframes] = "true";
+	rawcfg[AudioDrawSecondaryLines] = "true";
+	rawcfg[AudioDrawSelectionBackground] = "true";
+	rawcfg[AudioDrawVideoPosition] = "true";
+	rawcfg[AudioGrabTimesOnSelect] = "true";
+	rawcfg[AudioHorizontalZoom] = "50";
+	rawcfg[AudioInactiveLinesDisplayMode] = "1";
+	rawcfg[AudioKaraoke] = "false";
+	rawcfg[AudioKaraokeSplitMode] = "true";
+	rawcfg[AudioLeadIn] = "200";
+	rawcfg[AudioLeadOut] = "300";
+	rawcfg[AudioLineBoundariesThickness] = "2";
+	rawcfg[AudioLink] = "false";
+	rawcfg[AudioLockScrollOnCursor] = "false";
+	rawcfg[AudioMarkPlayTime] = "1000";
+	rawcfg[AudioNextLineOnCommit] = "true";
+	rawcfg[AudioRAMCache] = "false";
+	rawcfg[AudioSnapToKeyframes] = "false";
+	rawcfg[AudioSnapToOtherLines] = "false";
+	rawcfg[AudioSpectrumOn] = "false";
+	rawcfg[AudioStartDragSensitivity] = "2";
+	rawcfg[AudioVerticalZoom] = "50";
+	rawcfg[AudioVolume] = "50";
+	rawcfg[AudioWheelDefaultToZoom] = "false";
 
 }
 
@@ -660,17 +665,17 @@ void config::SetHexColor(const wxString &nameAndColor)
 	kol.SubString(diff+1,diff+2).ToLong(&r, 16);
 	kol.SubString(diff+3,diff+4).ToLong(&g, 16);
 	kol.SubString(diff+5,diff+6).ToLong(&b, 16);
-	colors[name]=new wxColour(r, g, b, a);
+	colors[GetCOLORValue(name)]=new wxColour(r, g, b, a);
 }
 
-wxString config::GetStringColor(std::map<wxString, wxColour*>::iterator it)
+wxString config::GetStringColor(std::map<COLOR, wxColour*>::iterator it)
 {
 	wxColour *col = it->second;
 	if (col->Alpha() < 0xFF)
 		return wxString::Format("#%02X%02X%02X%02X", col->Alpha(), col->Red(), col->Green(), col->Blue());
 	return wxString::Format("#%02X%02X%02X", col->Red(), col->Green(), col->Blue());
 }
-wxString config::GetStringColor(const wxString &optionName)
+wxString config::GetStringColor(COLOR optionName)
 {
 	wxColour *col = colors[optionName];
 	if (col->Alpha() < 0xFF)
@@ -681,11 +686,11 @@ wxString config::GetStringColor(const wxString &optionName)
 void config::SaveColors(const wxString &path){
 	wxString finalpath = path;
 	if(path.IsEmpty()){
-		finalpath = pathfull + "\\Themes\\" + GetString("Program Theme") + ".txt";
+		finalpath = pathfull + "\\Themes\\" + GetString(ProgramTheme) + ".txt";
 	}
 	OpenWrite ow(finalpath,true);
 	for(auto it = colors.begin(); it != colors.end(); it++){
-		ow.PartFileWrite(it->first + "=" + GetStringColor(it) + "\r\n");
+		ow.PartFileWrite(wxString(::GetString(it->first)) + "=" + GetStringColor(it) + "\r\n");
 	}
 }
 
@@ -813,6 +818,10 @@ wxString MakePolishPlural(int num, const wxString &normal, const wxString &plura
 	wxString finalResult;
 	return finalResult<<num<<" "<<result;
 }
+
+DEFINE_ENUM(CONFIG,CFG);
+
+DEFINE_ENUM(COLOR,CLR);
 
 config Options;
 

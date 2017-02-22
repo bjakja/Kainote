@@ -95,9 +95,9 @@ void FontList::DrawFld(wxDC &dc,int w, int h)
 {
 	int fw=0,fh=0,posX=1,posY=1;
 
-	dc.SetPen(wxPen(Options.GetColour("Window Text")));
-	dc.SetBrush(wxBrush(Options.GetColour("Window Background")));
-	dc.SetTextForeground(Options.GetColour("Window Text"));
+	dc.SetPen(wxPen(Options.GetColour(StaticListBorder)));
+	dc.SetBrush(wxBrush(Options.GetColour(StaticListBackground)));
+	dc.SetTextForeground(Options.GetColour(WindowText));
 	dc.DrawRectangle(0,0,w,h);
 
 
@@ -123,10 +123,11 @@ void FontList::DrawFld(wxDC &dc,int w, int h)
 	for(int i=scPos; i<scrows; i++)
 	{
 		if(i==sel){
-			dc.SetPen(wxPen(Options.GetColour("Menu Border Selection")));
-			dc.SetBrush(wxBrush(Options.GetColour("Menu Border Selection")));
+			wxColour selection = Options.GetColour(StaticListSelection);
+			dc.SetPen(wxPen(selection));
+			dc.SetBrush(wxBrush(selection));
 			dc.DrawRectangle(posX,posY,w-2,Height);
-		}//else{dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));}
+		}
 
 		font.SetFaceName((*fonts)[i]);
 		dc.SetFont(font);
@@ -302,8 +303,8 @@ BEGIN_EVENT_TABLE(FontList,wxWindow)
 	FontDialog::FontDialog(wxWindow *parent, Styles *acst)
 	:KaiDialog(parent,-1,_("Wybierz czcionkę"))
 {
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
+	SetForegroundColour(Options.GetColour(WindowText));
+	SetBackgroundColour(Options.GetColour(WindowBackground));
 	wxAcceleratorEntry entries[4];
 	entries[0].Set(wxACCEL_NORMAL, WXK_RETURN, wxID_OK);
 	entries[1].Set(wxACCEL_NORMAL, WXK_ESCAPE, wxID_CANCEL);

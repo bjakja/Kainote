@@ -69,7 +69,7 @@ void STime::ParseMS(wxString raw)
 	}else if(form==MDVD||form==MPL2){   
 		//float afps=(form==MPL2)?10 : Options.GetFloat("Default FPS");
 		int ress=wxAtoi(raw);
-		if(form==MDVD){orgframe=ress;mstime=(ress/Options.GetFloat("Default FPS"))*(1000);if(orgframe<0){orgframe=0;}}
+		if(form==MDVD){orgframe=ress;mstime=(ress/Options.GetFloat(ConvertFPS))*(1000);if(orgframe<0){orgframe=0;}}
 		else{mstime=(ress/10)*(1000);}
 	}
 
@@ -121,7 +121,7 @@ void STime::NewTime(int ms)
 {
 	mstime=ms;if(mstime<0){mstime=0;}
 	if(form==MDVD){
-		float fpsa=Options.GetFloat(_T("Default FPS"));
+		float fpsa=Options.GetFloat(ConvertFPS);
 		if(fpsa<1){fpsa=23.976f;}
 		orgframe=ceil(mstime*(fpsa/1000));
 	}
@@ -134,11 +134,11 @@ char STime::GetFormat()
 void STime::ChangeFormat(char format,float fps)
 {
 	if(form==MDVD){
-		float fpsa=(fps)?fps:Options.GetFloat("Default FPS");
+		float fpsa=(fps)?fps:Options.GetFloat(ConvertFPS);
 		if(fpsa<1){fpsa=23.976f;}
 		mstime=(orgframe/fpsa)*(1000);
 	}else if(format==MDVD){
-		float fpsa=(fps)?fps:Options.GetFloat(_T("Default FPS"));
+		float fpsa=(fps)?fps:Options.GetFloat(ConvertFPS);
 		if(fpsa<1){fpsa=23.976f;}
 		orgframe=ceil(mstime*(fpsa/1000));
 	}

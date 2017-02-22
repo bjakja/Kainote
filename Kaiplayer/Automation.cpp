@@ -927,8 +927,8 @@ namespace Auto{
 		if(loadSubsScripts){
 			AddFromSubs();
 		}else{
-			//CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
-			ReloadScripts(true);
+			CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
+			//ReloadScripts(true);
 		}
 		//ReloadScripts(true);
 	}
@@ -1084,12 +1084,12 @@ namespace Auto{
 
 	void Automation::OnEdit(wxString &Filename)
 	{
-		wxString editor=Options.GetString("Script Editor");
+		wxString editor=Options.GetString(AutomationScriptEditor);
 		if(editor=="" || wxGetKeyState(WXK_SHIFT)){
 			editor = wxFileSelector(_("Wybierz edytor skryptów"), "",
 				"C:\\Windows\\Notepad.exe", "exe", _("Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
 			if(!wxFileExists(editor)){return;}
-			Options.SetString("Script Editor",editor);
+			Options.SetString(AutomationScriptEditor,editor);
 			Options.SaveOptions();
 		}
 		

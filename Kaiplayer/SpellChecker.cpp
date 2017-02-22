@@ -48,7 +48,7 @@ SpellChecker *SpellChecker::Get()
 	if(!SC){
 		SC = new SpellChecker();
 		bool isgood = SC->Initialize();
-		if(!isgood){Options.SetBool("Editbox Spellchecker", false);}
+		if(!isgood){Options.SetBool(SpellcheckerOn, false);}
 	}
 	return SC;
 }
@@ -93,14 +93,14 @@ bool SpellChecker::Initialize()
 	Cleaning();
 
 	wxString pathhh=Options.pathfull+"\\Dictionary\\";
-	wxString name=Options.GetString("Dictionary Name");
+	wxString name=Options.GetString(DictionaryLanguage);
 	if(name==""){name="pl";}
 	wxString dic=pathhh+name+".dic";
 	wxString aff=pathhh+name+".aff";
 	// Check if language is available
 	if(!wxFileExists(dic) || !wxFileExists(aff)) 
 	{
-		Options.SetBool("Editbox Spellchecker",false);
+		Options.SetBool(SpellcheckerOn,false);
 		KaiMessageBox(wxString::Format(_("Brak plików słownika w folderze \"%s\\Dictionary\".\r\nSprawdzanie pisowni zostanie wyłączone"), Options.pathfull)); 
 		return false;
 	}

@@ -24,6 +24,7 @@
 #include <process.h>
 #include "include\ffmscompat.h"
 #include "Stylelistbox.h"
+#include <wx/file.h>
 
 
 
@@ -42,9 +43,10 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *_s
 	,thread(0)
 	,lastframe(-1)
 	,width(-1)
+	,fp(NULL)
 {
 	if(!Options.AudioOpts && !Options.LoadAudioOpts()){KaiMessageBox(_("Dupa blada, opcje się nie wczytały, na audio nie podziałasz"), _("Błędny błąd"));}
-	disccache = !Options.GetBool("Audio RAM Cache");
+	disccache = !Options.GetBool(AudioRAMCache);
 
 	success=false;
 	fname = filename;
@@ -312,7 +314,7 @@ done:
 			videotrack, 
 			index, 
 			sysinfo.dwNumberOfProcessors,
-			Options.GetInt("FFMS2 Video Seeking"),//FFMS_SEEK_NORMAL, // FFMS_SEEK_UNSAFE/*FFMS_SEEK_AGGRESSIVE*/
+			Options.GetInt(FFMS2VideoSeeking),//FFMS_SEEK_NORMAL, // FFMS_SEEK_UNSAFE/*FFMS_SEEK_AGGRESSIVE*/
 			&errinfo);
 		//Since the index is copied into the video source object upon its creation,
 		//we can and should now destroy the index object. 
@@ -434,7 +436,7 @@ done:
 	SampleRate=audioprops->SampleRate;
 	//BytesPerSample=audioprops->BitsPerSample/8;
 	//Channels=audioprops->Channels;
-	Delay=(Options.GetInt("Audio Delay")/1000);
+	Delay=(Options.GetInt(AudioDelay)/1000);
 	NumSamples=audioprops->NumSamples;
 	//audioprops = FFMS_GetAudioProperties(audiosource);
 	if(Delay >= (SampleRate*NumSamples*BytesPerSample)){
@@ -533,9 +535,14 @@ void VideoFfmpeg::GetBuffer(void *buf, int64_t start, int64_t count, double volu
 
 	if (count) {
 		if(disccache){
-			if(file_cache.IsOpened()){
+			/*if(file_cache.IsOpened()){
 				file_cache.Seek(start* BytesPerSample);
-				file_cache.Read((char*)buf,count* BytesPerSample);}
+				file_cache.Read((char*)buf,count* BytesPerSample);}*/
+			if(fp){
+				_int64 pos = start* BytesPerSample;
+				_fseeki64(fp, pos, SEEK_SET);
+				fread(buf, 1, count* BytesPerSample, fp);
+			}
 		}
 		else{
 			if(!Cache){return;}
@@ -736,11 +743,15 @@ bool VideoFfmpeg::DiskCache()
 	fname.Assign(diskCacheFilename);
 	if(!fname.DirExists()){wxMkdir(diskCacheFilename.BeforeLast('\\'));}
 	if(wxFileExists(diskCacheFilename)){
-		file_cache.Open(diskCacheFilename,wxFile::read);
-		return true;
+		//file_cache.Open(diskCacheFilename,wxFile::read);
+		fp = _wfopen(diskCacheFilename.wc_str(), L"rb");
+		if(fp)return true;
+		else return false;
 	}else{
-		file_cache.Create(diskCacheFilename,true,wxS_DEFAULT);
-		file_cache.Open(diskCacheFilename,wxFile::read_write);
+		//file_cache.Create(diskCacheFilename,true,wxS_DEFAULT);
+		//file_cache.Open(diskCacheFilename,wxFile::read_write);
+		fp = _wfopen(diskCacheFilename.wc_str(), L"w+b");
+		if(!fp)return false;
 	}
 	int block = 332768;
 	//int block2=block*2
@@ -750,7 +761,8 @@ bool VideoFfmpeg::DiskCache()
 		if(size%2==1){size++;}
 		char *silence=new char[size];
 		memset(silence,0,size);
-		int wr= file_cache.Write(silence,size); 
+		//int wr= file_cache.Write(silence,size); 
+		fwrite(silence, 1 ,size, fp);
 		delete[] silence;
 	}
 	try {
@@ -763,12 +775,14 @@ bool VideoFfmpeg::DiskCache()
 			//wxLogStatus("i %i block %i nums %i", (int)pos, block, (int)NumSamples);
 			GetAudio(data,pos,block);
 			//wxLogStatus("write");
-			file_cache.Write(data,block*BytesPerSample);
+			//file_cache.Write(data,block*BytesPerSample);
+			fwrite(data, 1 ,block*BytesPerSample, fp);
 			//wxLogStatus("Progress");
 			pos+=block;
 			progress->Progress(((float)pos/(float)(NumSamples))*100);
 			if(progress->WasCancelled()){
-				file_cache.Close();
+				//file_cache.Close();
+				fclose(fp);
 				wxRemoveFile(diskCacheFilename);
 				good=false;
 				delete[] data;
@@ -776,7 +790,8 @@ bool VideoFfmpeg::DiskCache()
 			}
 		}
 		delete[] data;
-		file_cache.Seek(0);
+		//file_cache.Seek(0);
+		rewind(fp);
 		if(Delay<0){NumSamples += (SampleRate * Delay * BytesPerSample);}
 	}
 	catch (...) {
@@ -790,8 +805,8 @@ bool VideoFfmpeg::DiskCache()
 
 void VideoFfmpeg::Cleardiskc()
 {
-	file_cache.Close();
-
+	//file_cache.Close();
+	if(fp){fclose(fp);fp=NULL;}
 	//wxRemoveFile(diskCacheFilename);
 }
 

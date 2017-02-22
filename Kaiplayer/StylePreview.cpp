@@ -23,8 +23,8 @@
 StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const wxSize& size)
 	: wxWindow(parent, id, pos, size) 
 {
-	wxColour kol1=Options.GetColour("Style Preview Color1");
-	wxColour kol2=Options.GetColour("Style Preview Color2");
+	wxColour kol1=Options.GetColour(StylePreviewColor1);
+	wxColour kol2=Options.GetColour(StylePreviewColor2);
 	b=kol1.Blue();
 	g=kol1.Green();
 	r=kol1.Red();
@@ -151,7 +151,7 @@ void StylePreview::SubsText(std::vector<byte> &buf)
 	wxString subs((wchar_t)0xFEFF);
 	subs<<"[Script Info]\r\nPlayResX: "<<width<<"\r\nPlayResY: "<<height<<"\r\nScaledBorderAndShadow: Yes\r\nScriptType: v4.00+\r\nWrapStyle: 0"
 		<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\r\n"
-		<<styl->styletext()<<"\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,0:01:26.00,"<<styl->Name<<",,0000,0000,0000,,"<<Options.GetString("Preview Text");
+		<<styl->styletext()<<"\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,0:01:26.00,"<<styl->Name<<",,0000,0000,0000,,"<<Options.GetString(PreviewText);
 
 	wxScopedCharBuffer buffer= subs.mb_str(wxConvUTF8);
 	int size = strlen(buffer);
@@ -165,13 +165,13 @@ void StylePreview::OnMouseEvent(wxMouseEvent& event)
 {
 	if(event.LeftDown()){
 		if(PrevText){
-			Options.SetString("Preview Text",PrevText->GetValue());
+			Options.SetString(PreviewText,PrevText->GetValue());
 			DrawPreview();
 			Options.SaveOptions();
 			PrevText->Destroy();PrevText=NULL;
 		}else{
 			wxSize siz=GetClientSize();
-			PrevText=new KaiTextCtrl(this,-1,Options.GetString("Preview Text"),wxPoint(0,0),wxSize(siz.x,-1));
+			PrevText=new KaiTextCtrl(this,-1,Options.GetString(PreviewText),wxPoint(0,0),wxSize(siz.x,-1));
 			PrevText->Show();
 		}
 

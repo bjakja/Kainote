@@ -283,7 +283,8 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 					}
 					if(blockString==""){blockString<<"Default,,0000,0000,0000,,";}
 					// Assemble final
-					blockString = wxString::Format("Dialogue: %li,",layer) + subStart.raw() + "," + subEnd.raw() + "," + blockString;
+					if(!blockString.StartsWith(",")){blockString.Prepend(",");}
+					blockString = wxString::Format("Dialogue: %li,",layer) + subStart.raw() + "," + subEnd.raw() + blockString;
 
 				}
 

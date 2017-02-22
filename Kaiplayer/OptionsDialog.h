@@ -24,13 +24,14 @@
 #include "KaiTreebook.h"
 #include "KaiListCtrl.h"
 #include "KaiDialog.h"
+#include "config.h"
 #include <vector>
 class kainoteFrame;
 
 class OptionsBind {
 public:
 	wxWindow *ctrl;
-	wxString option;
+	CONFIG option;
 };
 
 
@@ -48,7 +49,7 @@ public:
 private:
 	std::vector<OptionsBind> handles;
 
-	void ConOpt(wxWindow *ctrl,wxString option);
+	void ConOpt(wxWindow *ctrl,CONFIG option);
 	void OnSaveClick(wxCommandEvent& event);
 	void SetOptions(bool saveall=true);
 	void OnMapHkey(wxCommandEvent& event);

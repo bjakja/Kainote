@@ -28,8 +28,8 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 	: KaiDialog(kfparent, -1,(sellines)?_("Zaznacz"): (replace)?_("Znajdź i zamień"):_("Znajdź"))
 	,hasFocus(false)
 {
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
+	SetForegroundColour(Options.GetColour(WindowText));
+	SetBackgroundColour(Options.GetColour(WindowBackground));
 	Kai=kfparent;
 	reprow=posrow=0;
 	postxt=0;
@@ -43,7 +43,8 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 	RepText=NULL;
 	StartLine=EndLine=NULL;
 	tcstyle=NULL;
-	wxArrayString wfind=Options.GetTable("Find Recent","\f");
+	wxArrayString wfind;
+	Options.GetTable(FindRecent,wfind,"\f");
 	if(wfind.size()>20){wfind.RemoveAt(19,wfind.size()-20);}
 
 	if(!sellines){
@@ -63,7 +64,8 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		mainfrbsizer1->Add(frsbsizer,0,wxEXPAND|wxALL,3);
 
 		if(repl){
-			wxArrayString wrepl=Options.GetTable("Replace Recent","\f");
+			wxArrayString wrepl;
+			Options.GetTable(ReplaceRecent,wrepl,"\f");
 			if(wrepl.size()>20){wrepl.RemoveAt(19,wrepl.size()-20);}
 			KaiStaticBoxSizer* frsbsizer1=new KaiStaticBoxSizer(wxVERTICAL,this,_("Zamień"));
 			RepText = new KaiChoice(this, ID_REPTEXT, (last && last->RepText)?last->RepText->GetValue() : ES, wxDefaultPosition, wxSize(342,-1),wrepl);
@@ -774,7 +776,8 @@ void findreplace::AddRecent(){
 	wxString text=FindText->GetValue();
 
 
-	wxArrayString wfind=Options.GetTable("Find Recent","\f");
+	wxArrayString wfind;
+	Options.GetTable(FindRecent,wfind,"\f");
 	if(wfind.size()>20){wfind.RemoveAt(20,wfind.size()-20);}
 	for(size_t i=0;i<wfind.GetCount();i++)
 	{
@@ -787,10 +790,11 @@ void findreplace::AddRecent(){
 	FindText->Insert(text,0);
 
 	FindText->SetSelection(0);
-	Options.SetTable("Find Recent",wfind,"\f");
+	Options.SetTable(FindRecent,wfind,"\f");
 	if(repl){
 		wxString text=RepText->GetValue();
-		wxArrayString wrepl=Options.GetTable("Replace Recent","\f");
+		wxArrayString wrepl;
+		Options.GetTable(ReplaceRecent,wrepl,"\f");
 		if(wrepl.size()>20){wrepl.RemoveAt(20,wrepl.size()-20);}
 
 		for(size_t i=0;i<wrepl.GetCount();i++)
@@ -805,7 +809,7 @@ void findreplace::AddRecent(){
 		RepText->Insert(text,0);
 
 		RepText->SetSelection(0);
-		Options.SetTable("Replace Recent",wrepl,"\f");
+		Options.SetTable(ReplaceRecent,wrepl,"\f");
 	}
 
 }

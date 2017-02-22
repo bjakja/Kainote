@@ -52,7 +52,7 @@ void DescTxtCtrl::ChangeValue(wxString &val)
 		Refresh(false);
 	}
 	else{
-		SetForegroundColour(Options.GetColour("Window Text"));
+		SetForegroundColour(Options.GetColour(WindowText));
 		SetValue(val);
 		Refresh(false);
 	}
@@ -62,7 +62,7 @@ void DescTxtCtrl::OnFocus(wxFocusEvent &evt)
 {
 	if(choiceText->GetForegroundColour()=="#A0A0A0"){
 		SetValue("");
-		SetForegroundColour(Options.GetColour("Window Text"));
+		SetForegroundColour(Options.GetColour(WindowText));
 	}
 	evt.Skip();
 }
@@ -117,7 +117,7 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 			tag=tagtxt->txt->GetValue();
 			type=tagtxt->type->GetSelection();
 			wxString svtag = tag;
-			Options.SetString(wxString::Format("Editbox tag button%i",GetId()-15000),(tag!="")? svtag<<"\f"<<type : svtag);
+			Options.SetString((CONFIG)(GetId()-11000),(tag!="")? svtag<<"\f"<<type : svtag);
 			Options.SaveOptions(true,false);
 			if(tag!=""){SetToolTip(tag);}
 		}
@@ -136,8 +136,8 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	, EditCounter(0)
 {
 
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
+	SetForegroundColour(Options.GetColour(WindowText));
+	SetBackgroundColour(Options.GetColour(WindowBackground));
 	SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma"));
 	ebrow=0;
 	grid=grid1;
@@ -191,9 +191,9 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer4->Add(Bcol3,0,wxALL,2);
 	BoxSizer4->Add(Bcol4,0,wxALL,2);
 	BoxSizer4->Add(Ban,0,wxALL,2);
-	for(int i=0; i<Options.GetInt("Editbox tag buttons"); i++)
+	for(int i=0; i<Options.GetInt(EditboxTagButtons); i++)
 	{
-		BoxSizer4->Add(new TagButton(this, 15000+i, wxString::Format("T%i",i+1), Options.GetString(wxString::Format("Editbox tag button%i", i)),wxSize(24,24)),0,wxALL,2);
+		BoxSizer4->Add(new TagButton(this, 15000+i, wxString::Format("T%i",i+1), Options.GetString((CONFIG)i),wxSize(24,24)),0,wxALL,2);
 		Connect(15000+i,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnButtonTag);
 	}
 
@@ -234,7 +234,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer6->Add(AutoMoveTags,0,wxALIGN_CENTER|wxLEFT|wxTOP|wxBOTTOM,2);
 
 
-	TextEdit = new MTextEditor(this, 16667, Options.GetBool("Editbox Spellchecker"), wxDefaultPosition, wxSize(-1,30));
+	TextEdit = new MTextEditor(this, 16667, Options.GetBool(SpellcheckerOn), wxDefaultPosition, wxSize(-1,30));
 	TextEdit->EB=this;
 
 	TextEditTl = new MTextEditor(this, 16667, false, wxDefaultPosition, wxSize(-1,30));
@@ -307,7 +307,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	Connect(SplitLine,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnSplit);
 	Connect(StartDifference, EndDifference,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnPasteDiff);
 	Connect(wxEVT_SIZE,(wxObjectEventFunction)&EditBox::OnSize);
-	if(!Options.GetBool("Disable live editing")){
+	if(!Options.GetBool(DisableLiveVideoEditing)){
 		Connect(16668,NUMBER_CHANGED,(wxObjectEventFunction)&EditBox::OnEdit);
 		Connect(16667,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&EditBox::OnEdit);
 	}
@@ -324,7 +324,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
 	if(nochangeline&&ebrow==Row){goto done;}
-	if(Options.GetBool("Grid save without enter") && ebrow!=Row&&save){
+	if(Options.GetBool(GridSaveWithoutEnter) && ebrow!=Row&&save){
 
 		Send(false);
 	}
@@ -343,7 +343,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 	MarginREdit->SetInt(line->MarginR);
 	MarginVEdit->SetInt(line->MarginV);
 	EffectEdit->ChangeValue(line->Effect);
-	//TextEdit->SetTextS((TextEditTl->IsShown())? GetTags(line->Text) : line->Text , false);
+	
 	SetTextWithTags();
 
 	if(setaudio && ABox && ABox->IsShown()){ABox->audioDisplay->SetDialogue(line,ebrow);}
@@ -366,7 +366,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 		OnVideo=false;
 	}
 done:
-	int pas=Options.GetInt("Play After Selection");
+	int pas=Options.GetInt(PlayAfterSelection);
 	if(pas>0){
 		if(pas==1){
 			if(ABox){
@@ -391,19 +391,6 @@ done:
 	}
 	//ustawia czas i msy na polu tekstowym wideo
 	if(pan->Video->IsShown()){
-		//STime kkk;
-		//kkk.mstime=pan->Video->Tell();
-		//wxString times;
-		//times<<kkk.raw(SRT)<<";  ";
-		//if(!pan->Video->IsDshow){times<<pan->Video->lastframe<<";  ";}
-		//int sdiff=kkk.mstime - line->Start.mstime;
-		//int ediff=kkk.mstime - line->End.mstime;
-		//times<<sdiff<<" ms, "<<ediff<<" ms; wideo ";
-		//wxSize vsize = pan->Video->GetVideoSize();
-		//wxSize wsize = pan->Video->GetSize();
-		//times<<(int)((wsize.x/(float)vsize.x)*100)<<"%; zoom "<<(int)(pan->Video->zoomParcent*100)<<"%";
-		//pan->Video->mstimes->SetValue(times);
-		////wxRect rc=grid->GetMetrics(ebrow);
 		pan->Video->displaytime();
 
 	}
@@ -415,7 +402,7 @@ void EditBox::UpdateChars(wxString text)
 	wxString result;
 	bool isbad=false;
 	int ilzn=grid->CalcChars(text,&result,&isbad);
-	wxColour textcolour = Options.GetColour("Window Text"); 
+	wxColour textcolour = Options.GetColour(WindowText); 
 	Chars->SetLabelText(_("Linie: ")+result+"43");
 	Chars->SetForegroundColour((isbad)? *wxRED : textcolour);
 	int chtime= ilzn / ((line->End.mstime-line->Start.mstime) / 1000.0f);
@@ -434,9 +421,9 @@ void EditBox::UpdateChars(wxString text)
 void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 {
 	long cellm=0;
-	if(!dummy && StartEdit->changedBackGround){StartEdit->SetForegroundColour(Options.GetColour("Window Text"));StartEdit->Refresh(false);}
-	if(!dummy && EndEdit->changedBackGround ){EndEdit->SetForegroundColour(Options.GetColour("Window Text"));EndEdit->Refresh(false);}
-	if(!dummy && DurEdit->changedBackGround ){DurEdit->SetForegroundColour(Options.GetColour("Window Text"));DurEdit->Refresh(false);}
+	if(!dummy && StartEdit->changedBackGround){StartEdit->SetForegroundColour(Options.GetColour(WindowText));StartEdit->Refresh(false);}
+	if(!dummy && EndEdit->changedBackGround ){EndEdit->SetForegroundColour(Options.GetColour(WindowText));EndEdit->Refresh(false);}
+	if(!dummy && DurEdit->changedBackGround ){DurEdit->SetForegroundColour(Options.GetColour(WindowText));DurEdit->Refresh(false);}
 	if(line->IsComment != Comment->GetValue()){
 		line->IsComment= !line->IsComment;
 		cellm |= COMMENT;
@@ -794,7 +781,7 @@ void EditBox::OnNewline(wxCommandEvent& event)
 {
 	if(Visual){TextEdit->modified=true;}
 	if(splittedTags&&(TextEdit->modified || TextEditTl->modified)){TextEdit->modified=true; TextEditTl->modified=true;}
-	bool noNewLine = !(StartEdit->HasFocus() || EndEdit->HasFocus() || DurEdit->HasFocus()) || !Options.GetBool("Times Stop On line");
+	bool noNewLine = !(StartEdit->HasFocus() || EndEdit->HasFocus() || DurEdit->HasFocus()) || !Options.GetBool(NoNewLineAfterTimesEdition);
 	if(!noNewLine && ABox){ABox->audioDisplay->SetDialogue(line,ebrow);}
 	Send(noNewLine);
 }
@@ -890,7 +877,7 @@ void EditBox::SetTl(bool tl)
 	Bcpsel->Show(tl);
 	Bhide->Show(tl);
 	AutoMoveTags->Show(tl);
-	AutoMoveTags->SetValue(Options.GetBool("Auto Move Tags"));
+	AutoMoveTags->SetValue(Options.GetBool(AutoMoveTagsFromOriginal));
 	BoxSizer1->Layout();
 	if(TlMode->GetValue()!=tl){TlMode->SetValue(tl);}
 	kainoteFrame *Kai = (kainoteFrame*)Notebook::GetTabs()->GetParent();
@@ -1247,7 +1234,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		if(Visual>0){panel->Video->ResetVisual();}
 		else if(panel->Video->GetState()==Paused){panel->Video->Render();}
 	}else if(text){delete text;}
-	if(!Options.GetBool("Grid save without enter")){return;}
+	if(!Options.GetBool(GridSaveWithoutEnter)){return;}
 	if(EditCounter>=6){
 		bool tmpOnVideo = OnVideo;
 		Send(false,false,true);
@@ -1298,7 +1285,7 @@ void EditBox::OnColorChange(wxCommandEvent& event)
 void EditBox::OnButtonTag(wxCommandEvent& event)
 {
 	wxString type;
-	wxString tag=Options.GetString(wxString::Format("Editbox tag button%i",event.GetId()-15000)).BeforeFirst('\f', &type);
+	wxString tag=Options.GetString((CONFIG)(event.GetId()-11000)).BeforeFirst('\f', &type);
 
 
 	if(type!="2"){
@@ -1349,7 +1336,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 void EditBox::OnAutoMoveTags(wxCommandEvent& event)
 {
 	SetTextWithTags();
-	Options.SetBool("Auto Move Tags", AutoMoveTags->GetValue());
+	Options.SetBool(AutoMoveTagsFromOriginal, AutoMoveTags->GetValue());
 	Options.SaveOptions();
 }
 

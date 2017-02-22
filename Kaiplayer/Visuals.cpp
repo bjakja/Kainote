@@ -81,13 +81,14 @@ Visuals::~Visuals()
 	SAFE_DELETE(dummytext);
 }
 
-void Visuals::SetVisual(int _start,int _end)
+void Visuals::SetVisual(int _start, int _end, bool notDial)
 {
 	int nx=0, ny=0;
 	tab->Grid1->GetASSRes(&nx, &ny);
 	SubsSize=wxSize(nx,ny);
 	start=_start;
 	end=_end;
+	notDialogue = notDial;
 
 	wspw=((float)SubsSize.x/(float)(VideoSize.width - VideoSize.x));
 	wsph=((float)SubsSize.y/(float)(VideoSize.height - VideoSize.y));
@@ -235,7 +236,7 @@ void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen
 
 void Visuals::Draw(int time)
 {
-	if(!(time>=start && time<=end)){blockevents = true; return;}else if(blockevents){blockevents=false;}
+	if(!(time>=start && time<=end) || notDialogue){blockevents = true; return;}else if(blockevents){blockevents=false;}
 	wxMutexLocker lock(clipmutex);
 	line->SetAntialias(TRUE);
 	line->SetWidth(2.0);

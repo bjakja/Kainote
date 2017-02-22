@@ -383,7 +383,7 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 		time = timeGetTime();
 		wxPoint mpos=event.GetPosition();
 		int errn=FindError(mpos);
-		if(Options.GetBool("Editbox Sugestions On Dclick") && errn>=0){
+		if(Options.GetBool(EditboxSugestionsOnDoubleClick) && errn>=0){
 			wxString err=errs[errn];
 
 			wxArrayString suggs= SpellChecker::Get()->Suggestions(err);
@@ -588,16 +588,16 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 {
 	int fw=0,fh=0;
 
-	wxColour ctext = Options.GetColour("Editor Text");
-	wxColour ccurlybraces = Options.GetColour("Editor Curly Braces");//wxBLUE
-	wxColour coperators = Options.GetColour("Editor Tag Operators");//"#FF0000"
-	wxColour cnames = Options.GetColour("Editor Tag Names");//"#850085"
-	wxColour cvalues = Options.GetColour("Editor Tag Values");//"#6600FF"
-	wxColour bgbraces = Options.GetColour("Editor Braces Background");
-	wxColour cbackground = Options.GetColour("Editor Background");
-	wxColour cselection = Options.GetColour("Editor Selection");
-	wxColour cselnofocus = Options.GetColour("Editor Selection No Focus");
-	wxColour cspellerrors = Options.GetColour("Editor Spellchecker");
+	wxColour ctext = Options.GetColour(EditorText);
+	wxColour ccurlybraces = Options.GetColour(EditorCurlyBraces);//wxBLUE
+	wxColour coperators = Options.GetColour(EditorTagOperators);//"#FF0000"
+	wxColour cnames = Options.GetColour(EditorTagNames);//"#850085"
+	wxColour cvalues = Options.GetColour(EditorTagValues);//"#6600FF"
+	wxColour bgbraces = Options.GetColour(EditorBracesBackground);
+	wxColour cbackground = Options.GetColour(EditorBackground);
+	wxColour cselection = Options.GetColour(EditorSelection);
+	wxColour cselnofocus = Options.GetColour(EditorSelectionNoFocus);
+	wxColour cspellerrors = Options.GetColour(EditorSpellchecker);
 
 	dc.SetBrush(cbackground);
 	dc.SetPen(*wxTRANSPARENT_PEN);
@@ -843,7 +843,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	}
 
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
-	dc.SetPen(wxPen((HasFocus())? Options.GetColour("Editor Border Focus") : Options.GetColour("Editor Border")));
+	dc.SetPen(wxPen((HasFocus())? Options.GetColour(EditorBorderOnFocus) : Options.GetColour(EditorBorder)));
 	dc.DrawRectangle(0,scPos*2,w,windowh);
 }
 

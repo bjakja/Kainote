@@ -424,8 +424,8 @@ void Hotkeys::SetAccels(bool all){
 HkeysDialog::HkeysDialog( wxWindow *parent, wxString name, char hotkeyWindow, bool showWindowSelection)
 	: KaiDialog(parent,-1,_("Mapowanie przycisków"),wxDefaultPosition,wxDefaultSize,wxCAPTION|wxWANTS_CHARS|wxCLOSE_BOX)
 {
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
+	SetForegroundColour(Options.GetColour(WindowText));
+	SetBackgroundColour(Options.GetColour(WindowBackground));
 	global=NULL;
 	const int elems = 5;
 	wxString windows[elems] = {_("Skrót globalny"),_("Skrót pola napisów"), _("Skrót pola edycji"), _("Skrót wideo"), _("Skrót audio")};

@@ -228,14 +228,14 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	tdc.SelectObject(*bmp);
 	tdc.SetFont(GetFont());
 	bool enabled = IsThisEnabled();
-	tdc.SetBrush(wxBrush((enter && !clicked)? Options.GetColour("Button Background Hover") :
-		(clicked)? Options.GetColour("Button Background Pushed") : 
-		(enabled)? Options.GetColour("Button Background") : 
-		Options.GetColour("Window Inactive Background")));
-	tdc.SetPen(wxPen((enter && !clicked)? Options.GetColour("Button Border Hover") : 
-		(clicked)? Options.GetColour("Button Border Pushed") : 
-		(enabled)? Options.GetColour("Button Border") : 
-		Options.GetColour("Button Inactive Border")));
+	tdc.SetBrush(wxBrush((enter && !clicked)? Options.GetColour(ButtonBackgroundHover) :
+		(clicked)? Options.GetColour(ButtonBackgroundPushed) : 
+		(enabled)? Options.GetColour(ButtonBackground) : 
+		Options.GetColour(WindowBackgroundInactive)));
+	tdc.SetPen(wxPen((enter && !clicked)? Options.GetColour(ButtonBorderHover) : 
+		(clicked)? Options.GetColour(ButtonBorderPushed) : 
+		(enabled)? Options.GetColour(ButtonBorder) : 
+		Options.GetColour(ButtonBorderInactive)));
 	tdc.DrawRectangle(0,0,w,h);
 	
 	if(w>10){
@@ -245,12 +245,12 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 			tdc.DrawBitmap((enabled)? icon : icon.ConvertToDisabled(), (w - fw)/2, (h - fh)/2);
 		}else if(isColorButton){
 			tdc.SetBrush(wxBrush(buttonColor));
-			tdc.SetPen(wxPen(Options.GetColour("Button Border")));
+			tdc.SetPen(wxPen(Options.GetColour(ButtonBorder)));
 			tdc.DrawRectangle(4,4,w-8,h-8);
 		}
 		tdc.SetTextForeground((enabled && changedForeground)? GetForegroundColour() : 
-			(enabled)? Options.GetColour("Window Text") : 
-			Options.GetColour("Window Inactive Text"));
+			(enabled)? Options.GetColour(WindowText) : 
+			Options.GetColour(WindowTextInactive));
 		tdc.GetTextExtent(name, &fw, &fh);
 		wxRect cur(5, (h-fh)/2, w - 10, fh);
 		tdc.SetClippingRegion(cur);
@@ -401,16 +401,16 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 	tdc.SetFont(GetFont());
 	wxColour background = GetParent()->GetBackgroundColour();
 	bool enabled = IsThisEnabled();
-	tdc.SetBrush(wxBrush((enter && !clicked)? Options.GetColour("Button Background Hover") :
-		(toggled && !clicked)? Options.GetColour("Togglebutton Background Toggled") :
-		(clicked)? Options.GetColour("Button Background Pushed") : 
-		(enabled)? Options.GetColour("Button Background") : 
-		Options.GetColour("Window Inactive Background")));
-	tdc.SetPen(wxPen((enter && !clicked)? Options.GetColour("Button Border Hover") : 
-		(toggled && !clicked)? Options.GetColour("Togglebutton Border Toggled") :
-		(clicked)? Options.GetColour("Button Border Pushed") : 
-		(enabled)? Options.GetColour("Button Border") : 
-		Options.GetColour("Button Inactive Border")));
+	tdc.SetBrush(wxBrush((enter && !clicked)? Options.GetColour(ButtonBackgroundHover) :
+		(toggled && !clicked)? Options.GetColour(TogglebuttonBackgroundToggled) :
+		(clicked)? Options.GetColour(ButtonBackgroundPushed) : 
+		(enabled)? Options.GetColour(ButtonBackground) : 
+		Options.GetColour(WindowBackgroundInactive)));
+	tdc.SetPen(wxPen((enter && !clicked)? Options.GetColour(ButtonBorderHover) : 
+		(toggled && !clicked)? Options.GetColour(TogglebuttonBorderToggled) :
+		(clicked)? Options.GetColour(ButtonBorderPushed) : 
+		(enabled)? Options.GetColour(ButtonBorder) : 
+		Options.GetColour(ButtonBorderInactive)));
 	
 	tdc.DrawRectangle(0,0,w,h);
 
@@ -422,8 +422,8 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 			tdc.DrawBitmap(icon, (w - fw)/2, (h - fh)/2);
 		}else{
 			tdc.SetTextForeground((enabled && changedForeground)? GetForegroundColour() : 
-			(enabled)? Options.GetColour("Window Text") : 
-			Options.GetColour("Window Inactive Text"));
+			(enabled)? Options.GetColour(WindowText) : 
+			Options.GetColour(WindowTextInactive));
 			tdc.GetTextExtent(name, &fw, &fh);
 			wxRect cur(5, (h-fh)/2, w - 10, fh);
 			tdc.SetClippingRegion(cur);

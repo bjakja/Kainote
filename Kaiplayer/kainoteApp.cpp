@@ -105,7 +105,7 @@ bool kainoteApp::OnInit()
 			if(!Options.LoadOptions()){KaiMessageBox(_("Nie udało się wczytać opcji.\nDziałanie programu zostanie zakończone."),_("Uwaga"));return false;}
 
 			locale=NULL;
-			if(Options.GetInt(L"Program Language") != 0){
+			if(Options.GetInt(ProgramLanguage) != 0){
 				locale=new wxLocale();
 				if(!locale->Init(wxLANGUAGE_ENGLISH, wxLOCALE_DONT_LOAD_DEFAULT)){
 					KaiMessageBox("wxLocale cannot initialize, language change failed");
@@ -134,8 +134,8 @@ bool kainoteApp::OnInit()
 			for (int i=1;i<argc;i++) { paths.Add(argv[i]); }
 
 			int posx,posy,sizex,sizey;
-			Options.GetCoords("Window Position",&posx,&posy);
-			Options.GetCoords("Window Size",&sizex,&sizey);
+			Options.GetCoords(WindowPosition,&posx,&posy);
+			Options.GetCoords(WindowSize,&sizex,&sizey);
 			if(sizex<500 || sizey<350){
 				sizex=800;sizey=650;
 			}
@@ -144,7 +144,7 @@ bool kainoteApp::OnInit()
     		Frame = new kainoteFrame(wxPoint(posx,posy),wxSize(sizex,sizey));
 			bool opevent=false;
 			if(paths.GetCount()>0){
-				if(Options.GetBool("Video Fullskreen on Start")){
+				if(Options.GetBool(VideoFullskreenOnStart)){
 					
 					Frame->OpenFiles(paths,false, true); paths.clear();
 					Frame->GetTab()->Video->Layout();
@@ -254,8 +254,8 @@ bool kainoteApp::IsBusy()
 	wxWindowList children = Frame->GetChildren();
 	for (wxWindowList::Node *node=children.GetFirst(); node; node = node->GetNext()) {
             wxWindow *current = (wxWindow *)node->GetData();
-            if (current->IsKindOf(CLASSINFO(wxDialog)) 
-				&& (((wxDialog*)current)->IsModal() || ((wxDialog*)current)->GetId() == 31555 ))
+            if (current->IsKindOf(CLASSINFO(KaiDialog)) 
+				&& (((KaiDialog*)current)->IsModal() || ((KaiDialog*)current)->GetId() == 31555 ))
 		{
 			return true;
 		}

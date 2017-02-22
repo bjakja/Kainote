@@ -44,14 +44,14 @@ KaiToolbar::~KaiToolbar()
 		delete (*i);
 	}
 	tools.clear();
-	Options.SetTable("Toolbar IDs",names);
+	Options.SetTable(ToolbarIDs,names);
 	ids.clear();
 }
 
 void KaiToolbar::InitToolbar()
 {
 	wxArrayInt IDS;
-	wxString idnames=Options.GetString("Toolbar IDs");
+	wxString idnames=Options.GetString(ToolbarIDs);
 
 	if(idnames!=""){
 		wxStringTokenizer cfgtable(idnames,"|",wxTOKEN_STRTOK);
@@ -207,7 +207,7 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 	}
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
-	wxColour background = Options.GetColour("Window Background");
+	wxColour background = Options.GetColour(WindowBackground);
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
@@ -219,8 +219,8 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 	{
 		if(pos+tools[i]->size>maxx){pos1+=iconsize;pos=4;}
 		if(i==sel){
-			tdc.SetPen(wxPen((Clicked)?Options.GetColour("Button Border Pushed") : Options.GetColour("Button Border Hover")));
-			tdc.SetBrush(wxBrush((Clicked)?Options.GetColour("Button Background Hover") : Options.GetColour("Button Background Pushed")));
+			tdc.SetPen(wxPen((Clicked)?Options.GetColour(ButtonBorderPushed) : Options.GetColour(ButtonBorderHover)));
+			tdc.SetBrush(wxBrush((Clicked)?Options.GetColour(ButtonBackgroundHover) : Options.GetColour(ButtonBackgroundPushed)));
 			tdc.DrawRoundedRectangle((vertical)?pos1+2 :pos-2, (vertical)?pos-2 : pos1+2,iconsize-4,tools[i]->size-4,1.1);
 		}
 		if(tools[i]->type<2){
@@ -235,8 +235,8 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 		//}
 		pos+=tools[i]->size;
 	}
-	tdc.SetPen(wxPen(Options.GetColour("Window Text")));
-	tdc.SetBrush(wxBrush(Options.GetColour("Window Text")));
+	tdc.SetPen(wxPen(Options.GetColour(WindowText)));
+	tdc.SetBrush(wxBrush(Options.GetColour(WindowText)));
 	wxPoint points[3];
 	if(vertical){
 		tdc.DrawLine(pos1+14,pos-15,pos1+20,pos-15);
@@ -415,8 +415,8 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	tdc.SelectObject(*bmp);
 	wxBitmap checkbmp = wxBITMAP_PNG("check");
 	tdc.SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma"));
-	wxColour background = Options.GetColour("Menu Background");
-	wxColour txt = Options.GetColour("Window Text");
+	wxColour background = Options.GetColour(MenuBackground);
+	wxColour txt = Options.GetColour(WindowText);
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(txt));
 	tdc.DrawRectangle(0,0,ow,h);
@@ -437,8 +437,8 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 			if(parent->tools[j]->id==parent->ids[i+scPos]){check=true; break;}
 		}
 		if(i+scPos==sel){
-			tdc.SetPen(wxPen(Options.GetColour("Menu Border Selection")));
-			tdc.SetBrush(wxBrush(Options.GetColour("Menu Background Selection")));
+			tdc.SetPen(wxPen(Options.GetColour(MenuBorderSelection)));
+			tdc.SetBrush(wxBrush(Options.GetColour(MenuBackgroundSelection)));
 			tdc.DrawRectangle(1, (fh*i)+1,w-1,fh-2);
 		}
 		//tdc.SetPen(wxPen("#497CB0",2));

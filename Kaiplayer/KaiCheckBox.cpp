@@ -91,7 +91,7 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 	wxMemoryDC tdc;
 	tdc.SelectObject(wxBitmap(w,h));
 	tdc.SetFont(GetFont());
-	wxColour background = (changedBackground)? GetBackgroundColour() : Options.GetColour("Window Background");
+	wxColour background = (changedBackground)? GetBackgroundColour() : Options.GetColour(WindowBackground);
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
@@ -114,7 +114,7 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 			//tdc.DrawText(label,18, ((h-fontHeight)/2)+1);
 		//}
 		tdc.SetTextForeground((enabled && changedForeground)? GetForegroundColour() : 
-			(enabled)? Options.GetColour("Window Text") : Options.GetColour("Window Inactive Text"));
+			(enabled)? Options.GetColour(WindowText) : Options.GetColour(WindowTextInactive));
 		//wxRect cur(18, (h-fh)/2, w - 20, fh);
 		//tdc.SetClippingRegion(cur);
 		tdc.DrawText(label,18, (h-fontHeight)/2);

@@ -71,17 +71,17 @@ VideoToolbar::VideoToolbar (wxWindow *parent, const wxPoint &pos)
 	wxString playopts[4]={_("Nic"),_("Audio do końca linii"),_("Wideo do końca linii"),
 		_("Wideo do początku następnej linii")};
 	videoSeekAfter = new KaiChoice(this, ID_SEEK_AFTER, wxPoint(2,0), wxSize(70,22),6,movopts);
-	videoSeekAfter->SetSelection(Options.GetInt("Move Video To Active Line"));
+	videoSeekAfter->SetSelection(Options.GetInt(MoveVideoToActiveLine));
 	videoSeekAfter->SetToolTip(_("Przesuwaj wideo do aktualnej linii po:"));
 	videoPlayAfter = new KaiChoice(this, ID_PLAY_AFTER, wxPoint(72,0), wxSize(70,22),4,playopts);
-	videoPlayAfter->SetSelection(Options.GetInt("Play After Selection"));
+	videoPlayAfter->SetSelection(Options.GetInt(PlayAfterSelection));
 	videoPlayAfter->SetToolTip(_("Odtwarzaj po zmianie linii:"));
 	Bind(wxEVT_COMMAND_CHOICE_SELECTED,[=](wxCommandEvent &evt){ 
-		Options.SetInt("Move Video To Active Line",videoSeekAfter->GetSelection());
+		Options.SetInt(MoveVideoToActiveLine,videoSeekAfter->GetSelection());
 		Options.SaveOptions(true,false);
 	},ID_SEEK_AFTER);
 	Bind(wxEVT_COMMAND_CHOICE_SELECTED,[=](wxCommandEvent &evt){
-		Options.SetInt("Play After Selection",videoPlayAfter->GetSelection());
+		Options.SetInt(PlayAfterSelection,videoPlayAfter->GetSelection());
 		Options.SaveOptions(true,false);
 	},ID_PLAY_AFTER);
 	MoveToggled[0]=true;
@@ -183,14 +183,14 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 		if(icons[i]->icon->IsOk()){
 			bool toggled = i==Toggled || i==clipToggled || (i >= moveToolsStart && MoveToggled[i-moveToolsStart]);
 			if(i==sel){
-				tdc.SetBrush(wxBrush((toggled)? Options.GetColour("Togglebutton Background Toggled") : Options.GetColour("Menu Background Selection") ));
-				tdc.SetPen(wxPen(Options.GetColour("Menu Border Selection")));
+				tdc.SetBrush(wxBrush((toggled)? Options.GetColour(TogglebuttonBackgroundToggled) : Options.GetColour(MenuBackgroundSelection) ));
+				tdc.SetPen(wxPen(Options.GetColour(MenuBorderSelection)));
 				tdc.DrawRoundedRectangle(posX, 1, h-2, h-2, 2.0);
 			}else if(toggled){
-				tdc.SetBrush(wxBrush((clicked && i==sel)? Options.GetColour("Button Background Pushed") : 
-					Options.GetColour("Togglebutton Background Toggled")));
-				tdc.SetPen(wxPen((clicked && i==sel)? Options.GetColour("Button Border Pushed") : 
-					Options.GetColour("Togglebutton Border Toggled")));
+				tdc.SetBrush(wxBrush((clicked && i==sel)? Options.GetColour(ButtonBackgroundPushed) : 
+					Options.GetColour(TogglebuttonBackgroundToggled)));
+				tdc.SetPen(wxPen((clicked && i==sel)? Options.GetColour(ButtonBorderPushed) : 
+					Options.GetColour(TogglebuttonBorderToggled)));
 				tdc.DrawRoundedRectangle(posX, 1, h-2, h-2, 2.0);
 			}
 			

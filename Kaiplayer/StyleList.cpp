@@ -94,24 +94,22 @@ void StyleList::OnPaint(wxPaintEvent& event)
 	int fw=0,fh=0,posX=1,posY=1;
 	bdc.Clear();
 	bdc.SetFont(font);
-	wxColour background = GetParent()->GetBackgroundColour();
-	bdc.SetPen(wxPen(wxColour("#808080")));
+	wxColour background = Options.GetColour(StaticListBackground);
+	bdc.SetPen(wxPen(Options.GetColour(StaticListBorder)));
 	bdc.SetBrush(wxBrush(background));
 	bdc.DrawRectangle(0,0,w,h);
-
-	bdc.SetPen(wxPen(wxColour("#000000")));
 
 	for(int i=scPos; i<scrows; i++)
 	{
 		if(sels.Index(i)!=-1){
 			bdc.SetPen(*wxTRANSPARENT_PEN);
-			bdc.SetBrush(wxBrush(Options.GetColour("Menu Border Selection"))); //wxColour("#359AFF")
+			bdc.SetBrush(wxBrush(Options.GetColour(StaticListSelection))); 
 			bdc.DrawRectangle(posX,posY,w-2,Height);
 			}else{bdc.SetBrush(wxBrush(background));}
 		if(fontseeker->FindString(stylenames->at(i)->Fontname)==-1){
-			bdc.SetTextForeground(Options.GetColour("Window Warning Elements"));
+			bdc.SetTextForeground(Options.GetColour(WindowWarningElements));
 		}else{
-			bdc.SetTextForeground(Options.GetColour("Window Text"));
+			bdc.SetTextForeground(Options.GetColour(WindowText));
 		}
 		
 

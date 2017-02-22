@@ -71,8 +71,8 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	Create(parent,id, title, pos, size, wxBORDER_NONE|wxTAB_TRAVERSAL);
 	if ( !m_hasFont )
 		SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
+	SetForegroundColour(Options.GetColour(WindowText));
+	SetBackgroundColour(Options.GetColour(WindowBackground));
 	Bind(wxEVT_SIZE, &KaiDialog::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiDialog::OnPaint, this);
 	if(!(_style & wxWANTS_CHARS)){Bind(wxEVT_CHAR_HOOK, &KaiDialog::OnCharHook, this);}
@@ -84,8 +84,8 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(escapeId);evt.Skip();},wxID_CANCEL);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(enterId);evt.Skip();},wxID_OK);
 	Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
-		SetForegroundColour(Options.GetColour("Window Text"));
-		SetBackgroundColour(Options.GetColour("Window Background"));
+		SetForegroundColour(Options.GetColour(WindowText));
+		SetBackgroundColour(Options.GetColour(WindowBackground));
 	});
 }
 
@@ -187,11 +187,11 @@ void KaiDialog::OnPaint(wxPaintEvent &evt)
 	wxMemoryDC mdc;
 	mdc.SelectObject(wxBitmap(w,h));
 	mdc.SetFont(GetFont());
-	wxColour bg = (isActive)? Options.GetColour("Window Border Background") : Options.GetColour("Window Border Background Inactive");
+	wxColour bg = (isActive)? Options.GetColour(WindowBorderBackground) : Options.GetColour(WindowBorderBackgroundInactive);
 	mdc.SetBrush(bg);
-	mdc.SetPen((isActive)? Options.GetColour("Window Border") : Options.GetColour("Window Border Inactive"));
+	mdc.SetPen((isActive)? Options.GetColour(WindowBorder) : Options.GetColour(WindowBorderInactive));
 	mdc.DrawRectangle(0,0,w,h);
-	wxColour text = (isActive)? Options.GetColour("Window Header Text") : Options.GetColour("Window Header Inactive Text");
+	wxColour text = (isActive)? Options.GetColour(WindowHeaderText) : Options.GetColour(WindowHeaderTextInactive);
 	mdc.SetTextForeground(text);
 	wxIconBundle icon = GetIcons();
 	if(icon.GetIconCount()){
@@ -201,8 +201,8 @@ void KaiDialog::OnPaint(wxPaintEvent &evt)
 		mdc.DrawText(GetTitle(), icon.GetIconCount()? 26 : 6, 4);
 	}
 	if(enter || pushed){
-		wxColour buttonxbg = (enter && !pushed)? Options.GetColour("Window Hover Header Element") : 
-			Options.GetColour("Window Pushed Header Element");
+		wxColour buttonxbg = (enter && !pushed)? Options.GetColour(WindowHoverCloseButton) : 
+			Options.GetColour(WindowPushedCloseButton);
 		mdc.SetBrush(buttonxbg);
 		mdc.SetPen(buttonxbg);
 		mdc.DrawRectangle(w-25, 3, 18, 18);

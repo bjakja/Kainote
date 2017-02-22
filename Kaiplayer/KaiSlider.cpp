@@ -92,16 +92,16 @@ void KaiSlider::OnPaint(wxPaintEvent& evt)
 	tdc.SetBrush(GetBackgroundColour());
 	tdc.DrawRectangle(0,0,w,h);
 	bool enabled = IsThisEnabled();
-	wxColour slider = (enter && !pushed)? Options.GetColour("Slider Background Hover") :
-		(pushed)? Options.GetColour("Slider Background Pushed") : 
-		(enabled)? Options.GetColour("Slider Background") : 
-		Options.GetColour("Window Inactive Background");
-	wxColour sliderBorder = /*(enter && !pushed)? Options.GetColour("Button Border Hover") : 
-		(pushed)? Options.GetColour("Button Border Pushed") : */
-		(enabled)? Options.GetColour("Slider Border") : //Options.GetColour("Button Border") : 
-		Options.GetColour("Button Inactive Border");
-	tdc.SetPen(wxPen(Options.GetColour("Slider Path Border")));
-	tdc.SetBrush(wxBrush(Options.GetColour("Slider Path Background")));
+	wxColour slider = (enter && !pushed)? Options.GetColour(SliderBackgroundHover) :
+		(pushed)? Options.GetColour(SliderBackgroundPushed) : 
+		(enabled)? Options.GetColour(SliderBackground) : 
+		Options.GetColour(WindowBackgroundInactive);
+	wxColour sliderBorder = /*(enter && !pushed)? Options.GetColour(ButtonBorderHover) : 
+		(pushed)? Options.GetColour(ButtonBorderPushed) : */
+		(enabled)? Options.GetColour(SliderBorder) : //Options.GetColour(ButtonBorder) : 
+		Options.GetColour(ButtonBorderInactive);
+	tdc.SetPen(wxPen(Options.GetColour(SliderPathBorder)));
+	tdc.SetBrush(wxBrush(Options.GetColour(SliderPathBackground)));
 	if(style & wxVERTICAL){
 		
 		tdc.DrawRectangle((w/2)-2, thumbSize/2, 4, h - thumbSize);

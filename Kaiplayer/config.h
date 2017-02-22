@@ -26,6 +26,7 @@
 #include <algorithm>
 #include "Styles.h"
 #include <wx/utils.h> 
+#include "EnumFactory.h"
 #undef wxBITMAP_PNG
 
 
@@ -42,11 +43,263 @@
 #define MID(a,b,c) MAX((a),MIN((b),(c)))
 #endif
 
+//Pamiêtaj, zmiana ostatniej audio opcji wymaga te¿ zmiany przy szukaniu w zapisie
+#define CFG(CG) \
+	CG(AudioAutoCommit,)\
+	CG(AudioAutoFocus,)\
+	CG(AudioAutoScroll,)\
+	CG(AudioBoxHeight,)\
+	CG(AudioDelay,)\
+	CG(AudioDrawKeyframes,)\
+	CG(AudioDrawSecondaryLines,)\
+	CG(AudioDrawSelectionBackground,)\
+	CG(AudioDrawTimeCursor,)\
+	CG(AudioDrawVideoPosition,)\
+	CG(AudioGrabTimesOnSelect,)\
+	CG(AudioHorizontalZoom,)\
+	CG(AudioInactiveLinesDisplayMode,)\
+	CG(AudioKaraoke,)\
+	CG(AudioKaraokeMoveOnClick,)\
+	CG(AudioKaraokeSplitMode,)\
+	CG(AudioLeadIn,)\
+	CG(AudioLeadOut,)\
+	CG(AudioLineBoundariesThickness,)\
+	CG(AudioLink,)\
+	CG(AudioLockScrollOnCursor,)\
+	CG(AudioMarkPlayTime,)\
+	CG(AudioMergeEveryNWithSyllable,)\
+	CG(AudioNextLineOnCommit,)\
+	CG(AudioRAMCache,)\
+	CG(AudioSnapToKeyframes,)\
+	CG(AudioSnapToOtherLines,)\
+	CG(AudioSpectrumOn,)\
+	CG(AudioStartDragSensitivity,)\
+	CG(AudioVerticalZoom,)\
+	CG(AudioVolume,)\
+	CG(AudioWheelDefaultToZoom,)\
+	CG(AcceptedAudioStream,)\
+	CG(AudioRecent,)\
+	CG(AutomationOldScriptsCompatybility,)\
+	CG(AutomationRecent,)\
+	CG(AutomationScriptEditor,)\
+	CG(AutomationTraceLevel,)\
+	CG(AutoMoveTagsFromOriginal,)\
+	CG(AutoSelectLinesFromLastTab,)\
+	CG(ColorpickerRecent,)\
+	CG(ConvertASSTagsOnLineStart,)\
+	CG(ConvertFPS,)\
+	CG(ConvertFPSFromVideo,)\
+	CG(ConvertNewEndTimes,)\
+	CG(ConvertResolutionWidth,)\
+	CG(ConvertResolutionHeight,)\
+	CG(ConvertShowSettings,)\
+	CG(ConvertStyle,)\
+	CG(ConvertStyleCatalog,)\
+	CG(ConvertTimePerLetter,)\
+	CG(DictionaryLanguage,)\
+	CG(DisableLiveVideoEditing,)\
+	CG(DontAskForBadResolution,)\
+	CG(EditboxSugestionsOnDoubleClick,)\
+	CG(EditorOn,)\
+	CG(FindRecent,)\
+	CG(FontCollectorAction,)\
+	CG(FontCollectorDirectory,)\
+	CG(FontCollectorFromMKV,)\
+	CG(FontCollectorUseSubsDirectory,)\
+	CG(FFMS2VideoSeeking,)\
+	CG(GridFontName,)\
+	CG(GridFontSize,)\
+	CG(GridHideCollums,)\
+	CG(GridHideTags,)\
+	CG(GridLoadSortedSubs,)\
+	CG(GridSaveWithoutEnter,)\
+	CG(GridTagsSwapChar,)\
+	CG(InsertEndOffset,)\
+	CG(InsertStartOffset,)\
+	CG(MoveTimesByTime,)\
+	CG(MoveTimesCorrectEndTimes,)\
+	CG(MoveTimesForward,)\
+	CG(MoveTimesOn,)\
+	CG(MoveTimesOptions,)\
+	CG(MoveTimesWhichLines,)\
+	CG(MoveTimesWhichTimes,)\
+	CG(MoveTimesStyles,)\
+	CG(MoveTimesTime,)\
+	CG(MoveVideoToActiveLine,)\
+	CG(NoNewLineAfterTimesEdition,)\
+	CG(OpenSubsInNewCard,)\
+	CG(OpenVideoAtActiveLine,)\
+	CG(PlayAfterSelection,)\
+	CG(PostprocessorEnabling,)\
+	CG(PostprocessorKeyframeBeforeStart,)\
+	CG(PostprocessorKeyframeAfterStart,)\
+	CG(PostprocessorKeyframeBeforeEnd,)\
+	CG(PostprocessorKeyframeAfterEnd,)\
+	CG(PostprocessorLeadIn,)\
+	CG(PostprocessorLeadOut,)\
+	CG(PostprocessorThresholdStart,)\
+	CG(PostprocessorThresholdEnd,)\
+	CG(PreviewText,)\
+	CG(ProgramLanguage,)\
+	CG(ProgramTheme,)\
+	CG(ReplaceRecent,)\
+	CG(SelectVisibleLineAfterFullscreen,)\
+	CG(SpellcheckerOn,)\
+	CG(StyleManagerPosition,)\
+	CG(SubsAutonaming,)\
+	CG(SubsRecent,)\
+	CG(ToolbarIDs,)\
+	CG(VideoFullskreenOnStart,)\
+	CG(VideoIndex,)\
+	CG(VideoPauseOnClick,)\
+	CG(VideoProgressBar,)\
+	CG(VideoRecent,)\
+	CG(VideoVolume,)\
+	CG(VideoWindowSize,)\
+	CG(WindowMaximized,)\
+	CG(WindowPosition,)\
+	CG(WindowSize,)\
+	CG(EditboxTagButtons,=3999)\
+	CG(EditboxTagButton1,)\
+	CG(EditboxTagButton2,)\
+	CG(EditboxTagButton3,)\
+	CG(EditboxTagButton4,)\
+	CG(EditboxTagButton5,)\
+	CG(EditboxTagButton6,)\
+	CG(EditboxTagButton7,)\
+	CG(EditboxTagButton8,)\
+	CG(EditboxTagButton9,)\
+	CG(EditboxTagButton10,)\
+	
+DECLARE_ENUM(CONFIG,CFG)
+
+#define CLR(CR) \
+	CR(WindowBackground,)\
+	CR(WindowBackgroundInactive,)\
+	CR(WindowText,)\
+	CR(WindowTextInactive,)\
+	CR(WindowBorder,)\
+	CR(WindowBorderInactive,)\
+	CR(WindowBorderBackground,)\
+	CR(WindowBorderBackgroundInactive,)\
+	CR(WindowHeaderText,)\
+	CR(WindowHeaderTextInactive,)\
+	CR(WindowHoverHeaderElement,)\
+	CR(WindowPushedHeaderElement,)\
+	CR(WindowHoverCloseButton,)\
+	CR(WindowPushedCloseButton,)\
+	CR(WindowWarningElements,)\
+	CR(GridText,)\
+	CR(GridBackground,)\
+	CR(GridDialogue,)\
+	CR(GridComment,)\
+	CR(GridSelectedDialogue,)\
+	CR(GridSelectedComment,)\
+	CR(GridCollisions,)\
+	CR(GridLines,)\
+	CR(GridActiveLine,)\
+	CR(GridLabelNormal,)\
+	CR(GridLabelModified,)\
+	CR(GridLabelSaved,)\
+	CR(GridSpellchecker,)\
+	CR(GridComparison,)\
+	CR(GridComparisonBackground,)\
+	CR(GridComparisonBackgroundSelected,)\
+	CR(GridComparisonCommentBackground,)\
+	CR(GridComparisonCommentBackgroundSelected,)\
+	CR(EditorText,)\
+	CR(EditorTagNames,)\
+	CR(EditorTagValues,)\
+	CR(EditorCurlyBraces,)\
+	CR(EditorTagOperators,)\
+	CR(EditorBracesBackground,)\
+	CR(EditorBackground,)\
+	CR(EditorSelection,)\
+	CR(EditorSelectionNoFocus,)\
+	CR(EditorBorder,)\
+	CR(EditorBorderOnFocus,)\
+	CR(EditorSpellchecker,)\
+	CR(AudioBackground,)\
+	CR(AudioLineBoundaryStart,)\
+	CR(AudioLineBoundaryEnd,)\
+	CR(AudioLineBoundaryMark,)\
+	CR(AudioLineBoundaryInactiveLine,)\
+	CR(AudioPlayCursor,)\
+	CR(AudioSecondsBoundaries,)\
+	CR(AudioKeyframes,)\
+	CR(AudioSyllableBoundaries,)\
+	CR(AudioSyllableText,)\
+	CR(AudioSelectionBackground,)\
+	CR(AudioSelectionBackgroundModified,)\
+	CR(AudioInactiveLinesBackground,)\
+	CR(AudioWaveform,)\
+	CR(AudioWaveformInactive,)\
+	CR(AudioWaveformModified,)\
+	CR(AudioWaveformSelected,)\
+	CR(AudioSpectrumBackground,)\
+	CR(AudioSpectrumEcho,)\
+	CR(AudioSpectrumInner,)\
+	CR(TextFieldBackground,)\
+	CR(TextFieldBorder,)\
+	CR(TextFieldBorderOnFocus,)\
+	CR(TextFieldSelection,)\
+	CR(TextFieldSelectionNoFocus,)\
+	CR(ButtonBackground,)\
+	CR(ButtonBackgroundHover,)\
+	CR(ButtonBackgroundPushed,)\
+	CR(ButtonBorder,)\
+	CR(ButtonBorderHover,)\
+	CR(ButtonBorderPushed,)\
+	CR(ButtonBorderInactive,)\
+	CR(TogglebuttonBackgroundToggled,)\
+	CR(TogglebuttonBorderToggled,)\
+	CR(ScrollbarBackground,)\
+	CR(ScrollbarScroll,)\
+	CR(ScrollbarScrollHover,)\
+	CR(ScrollbarScrollPushed,)\
+	CR(StaticboxBorder,)\
+	CR(StaticListBorder,)\
+	CR(StaticListBackground,)\
+	CR(StaticListSelection,)\
+	CR(StaticListBackgroundHeadline,)\
+	CR(StaticListTextHeadline,)\
+	CR(StatusBarBorder,)\
+	CR(MenuBarBackground1,)\
+	CR(MenuBarBackground2,)\
+	CR(MenuBarBorderSelection,)\
+	CR(MenuBarBackgroundSelection,)\
+	CR(MenuBackground,)\
+	CR(MenuBorderSelection,)\
+	CR(MenuBackgroundSelection,)\
+	CR(TabsBarBackground1,)\
+	CR(TabsBarBackground2,)\
+	CR(TabsBorderActive,)\
+	CR(TabsBorderInactive,)\
+	CR(TabsBackgroundActive,)\
+	CR(TabsBackgroundInactive,)\
+	CR(TabsBackgroundInactiveHover,)\
+	CR(TabsTextActive,)\
+	CR(TabsTextInactive,)\
+	CR(TabsCloseHover,)\
+	CR(TabsBarArrow,)\
+	CR(TabsBarArrowBackground,)\
+	CR(TabsBarArrowBackgroundHover,)\
+	CR(SliderPathBackground,)\
+	CR(SliderPathBorder,)\
+	CR(SliderBorder,)\
+	CR(SliderBackground,)\
+	CR(SliderBackgroundHover,)\
+	CR(SliderBackgroundPushed,)\
+	CR(StylePreviewColor1,)\
+	CR(StylePreviewColor2,)\
+
+DECLARE_ENUM(COLOR,CLR)
+
 class config
 {
     private:
-    std::map<wxString, wxString> rawcfg;
-	std::map<wxString, wxColour*> colors;
+    std::map<CONFIG, wxString> rawcfg;
+	std::map<COLOR, wxColour*> colors;
    
 
     public:
@@ -58,30 +311,30 @@ class config
 	bool AudioOpts;
 
 
-    wxString GetString(wxString lopt);
-    bool GetBool(wxString lopt);
-    wxColour GetColour(wxString lopt);
-	AssColor GetColor(wxString lopt);
-    int GetInt(wxString lopt);
-    float GetFloat(wxString lopt);
+    wxString GetString(CONFIG opt);
+    bool GetBool(CONFIG opt);
+    wxColour &GetColour(COLOR opt);
+	AssColor GetColor(COLOR opt);
+    int GetInt(CONFIG opt);
+    float GetFloat(CONFIG opt);
+	void GetTable(CONFIG opt, wxArrayString &tbl, wxString split="|");
+	void GetIntTable(CONFIG opt, wxArrayInt &tbl, wxString split="|");
+	void GetCoords(CONFIG opt, int* coordx, int* coordy);
 
-    void SetString(wxString lopt, wxString sopt);
-    void SetBool(wxString lopt, bool bopt);
-    void SetColour(wxString lopt, wxColour copt);
-	void SetColor(wxString lopt, AssColor copt);
-    void SetInt(wxString lopt, int iopt);
-    void SetFloat(wxString lopt, float fopt);
-	void SetTable(wxString lopt, wxArrayString iopt,wxString split="|");
-	void SetIntTable(wxString lopt, wxArrayInt iopt,wxString split="|");
-	wxArrayString GetTable(wxString lopt,wxString split="|");
-	wxArrayInt GetIntTable(wxString lopt, wxString split="|");
-	void SetCoords(wxString lopt, int coordx, int coordy);
-	void GetCoords(wxString lopt, int* coordx, int* coordy);
+    void SetString(CONFIG opt, const wxString &sopt);
+    void SetBool(CONFIG opt, bool bopt);
+    void SetColour(COLOR opt, wxColour &copt);
+	void SetColor(COLOR opt, AssColor &copt);
+    void SetInt(CONFIG opt, int iopt);
+    void SetFloat(CONFIG opt, float fopt);
+	void SetTable(CONFIG opt, wxArrayString &iopt,wxString split="|");
+	void SetIntTable(CONFIG opt, wxArrayInt &iopt,wxString split="|");
+	void SetCoords(CONFIG opt, int coordx, int coordy);
     wxString GetRawOptions(bool Audio=false);
     void AddStyle(Styles *styl);
     void ChangeStyle(Styles *styl,int i);
-    Styles *GetStyle(int i,wxString name=_T(""), Styles* styl=NULL);
-    int FindStyle(wxString name, int *multiplication=NULL);
+    Styles *GetStyle(int i,const wxString &name=_T(""), Styles* styl=NULL);
+    int FindStyle(const wxString &name, int *multiplication=NULL);
     void DelStyle(int i);
     int StoreSize();
     void CatchValsLabs(const wxString &rawoptions);
@@ -100,12 +353,12 @@ class config
 	void ClearColors();
 	void Sortstyles();
 	void SetHexColor(const wxString &nameAndColor);
-	wxString GetStringColor(std::map<wxString, wxColour*>::iterator it);
-	wxString GetStringColor(const wxString &optionName);
+	wxString GetStringColor(std::map<COLOR, wxColour*>::iterator it);
+	wxString GetStringColor(COLOR optionName);
 	wxString GetReleaseDate();
     config();
     ~config();
-
+	wxColour defaultColour;
 };
 bool sortfunc(Styles *styl1,Styles *styl2);
 //formatowanie w tym przypadku wygl¹da tak, 

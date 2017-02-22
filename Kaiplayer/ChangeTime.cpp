@@ -28,11 +28,11 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
     Kai=kfparent;
     form=ASS;
     panel = new wxWindow(this,1);
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
+	SetForegroundColour(Options.GetColour(WindowText));
+	SetBackgroundColour(Options.GetColour(WindowBackground));
 	scroll=new KaiScrollbar(this,5558,wxDefaultPosition, wxDefaultSize, wxVERTICAL);
 	scroll->Hide();
-	scroll->SetScrollRate(5);
+	scroll->SetScrollRate(30);
 	isscrollbar=false;
 	//SetScrollRate(0,5);
 	scPos=0;
@@ -74,7 +74,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 
 	SE->Add(StartVAtime,1,wxEXPAND|wxLEFT|wxRIGHT,2);
 	SE->Add(EndVAtime,1,wxEXPAND|wxRIGHT,2);
-	wxColour warning = Options.GetColour("Window Warning Elements");
+	wxColour warning = Options.GetColour(WindowWarningElements);
 
 	videotime = new KaiCheckBox(panel, ID_VIDEO, _("Przesuń znacznik\ndo czasu wideo"));
 	videotime->SetForegroundColour(warning);
@@ -144,7 +144,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	Connect(22999,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&CTwindow::CollapsePane);
 
 	DoTooltips();
-	if(Options.GetInt("Postprocessor enabling")>15){wxCommandEvent evt; evt.SetId(122); CollapsePane(evt);}
+	if(Options.GetInt(PostprocessorEnabling)>15){wxCommandEvent evt; evt.SetId(122); CollapsePane(evt);}
 	RefVals();
 	
 	panel->SetSizerAndFit(Main);
@@ -156,15 +156,15 @@ CTwindow::~CTwindow()
 
 bool CTwindow::SetBackgroundColour(const wxColour &col)
 {
-	wxWindow::SetBackgroundColour(Options.GetColour("Window Background"));
-	panel->SetBackgroundColour(Options.GetColour("Window Background"));
+	wxWindow::SetBackgroundColour(Options.GetColour(WindowBackground));
+	panel->SetBackgroundColour(Options.GetColour(WindowBackground));
 	return true;
 }
 
 bool CTwindow::SetForegroundColour(const wxColour &col)
 {
-	wxWindow::SetForegroundColour(Options.GetColour("Window Text"));
-	panel->SetForegroundColour(Options.GetColour("Window Text"));
+	wxWindow::SetForegroundColour(Options.GetColour(WindowText));
+	panel->SetForegroundColour(Options.GetColour(WindowText));
 	return true;
 }
 
@@ -212,31 +212,31 @@ void CTwindow::OnAddStyles(wxCommandEvent& event)
 void CTwindow::OnOKClick(wxCommandEvent& event)
 {
 
-    Options.SetInt("Change Time",TimeText->GetTime().mstime);
+    Options.SetInt(MoveTimesTime,TimeText->GetTime().mstime);
 
 	if(form==ASS){
 		wxString sstyles=Stylestext->GetValue();
-		Options.SetString("Styles of time change",sstyles);
+		Options.SetString(MoveTimesStyles,sstyles);
 	}
 
 	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 8 Move to audio time;
-	Options.SetInt("Moving time options",(int)Forward->GetValue()|((int)StartVAtime->GetValue()<<1)|((int)videotime->GetValue()<<2)|((int)audiotime->GetValue()<<3));
+	Options.SetInt(MoveTimesOptions,(int)Forward->GetValue()|((int)StartVAtime->GetValue()<<1)|((int)videotime->GetValue()<<2)|((int)audiotime->GetValue()<<3));
 
-	Options.SetInt("Change mode",WhichLines->GetSelection());
-	Options.SetInt("Start end times",WhichTimes->GetSelection());
-	Options.SetInt("Corect times",CorTime->GetSelection());
+	Options.SetInt(MoveTimesWhichLines,WhichLines->GetSelection());
+	Options.SetInt(MoveTimesWhichTimes,WhichTimes->GetSelection());
+	Options.SetInt(MoveTimesCorrectEndTimes,CorTime->GetSelection());
 	if(LeadIn){
-		Options.SetInt("Lead in",LITime->GetInt());
-		Options.SetInt("Lead out",LOTime->GetInt());
-		Options.SetInt("Threshold start",ThresStart->GetInt());
-		Options.SetInt("Threshold end",ThresEnd->GetInt());
-		Options.SetInt("Keyframe before start",BeforeStart->GetInt());
-		Options.SetInt("Keyframe after start",AfterStart->GetInt());
-		Options.SetInt("Keyframe before end",BeforeEnd->GetInt());
-		Options.SetInt("Keyframe after end",AfterEnd->GetInt());
+		Options.SetInt(PostprocessorLeadIn,LITime->GetInt());
+		Options.SetInt(PostprocessorLeadOut,LOTime->GetInt());
+		Options.SetInt(PostprocessorThresholdStart,ThresStart->GetInt());
+		Options.SetInt(PostprocessorThresholdEnd,ThresEnd->GetInt());
+		Options.SetInt(PostprocessorKeyframeBeforeStart,BeforeStart->GetInt());
+		Options.SetInt(PostprocessorKeyframeAfterStart,AfterStart->GetInt());
+		Options.SetInt(PostprocessorKeyframeBeforeEnd,BeforeEnd->GetInt());
+		Options.SetInt(PostprocessorKeyframeAfterEnd,AfterEnd->GetInt());
 		//1 Lead In, 2 Lead Out, 4 Make times continous, 8 Snap to keyframe;
 		//int peres= (LeadIn->GetValue())? 1 : 0
-		Options.SetInt("Postprocessor enabling",(int)LeadIn->GetValue()+((int)LeadOut->GetValue()*2)+((int)Continous->GetValue()*4)+((int)SnapKF->GetValue()*8)+16);
+		Options.SetInt(PostprocessorEnabling,(int)LeadIn->GetValue()+((int)LeadOut->GetValue()*2)+((int)Continous->GetValue()*4)+((int)SnapKF->GetValue()*8)+16);
 	}//else{int pe = Options.GetInt("Postprocessor enabling"); if(pe>=16){Options.SetInt("Postprocessor enabling", pe^ 16);} }
 	int acid=event.GetId();
 	if (acid==ID_MOVE){
@@ -319,28 +319,28 @@ void CTwindow::AudioVideoTime(wxCommandEvent &event)
 
 void CTwindow::RefVals(CTwindow *from)
 {
-	STime ct=(from)? from->TimeText->GetTime() : STime(Options.GetInt("Change Time"));  
+	STime ct=(from)? from->TimeText->GetTime() : STime(Options.GetInt(MoveTimesTime));  
 	TimeText->SetTime(ct);
-	int mto=Options.GetInt("Moving time options");
+	int mto=Options.GetInt(MoveTimesOptions);
 	videotime->SetValue((from)? from->videotime->GetValue() : (mto & 4)>0);
 
 	bool movfrwd=(from)? from->Forward->GetValue() : mto & 1;
 	if(movfrwd){Forward->SetValue(true);}
 	else{Backward->SetValue(true);}
 
-	Stylestext->SetValue( (from)? from->Stylestext->GetValue() : Options.GetString("Styles of time change") );
+	Stylestext->SetValue( (from)? from->Stylestext->GetValue() : Options.GetString(MoveTimesStyles) );
 
-	int cm= (from)? from->WhichLines->GetSelection() : Options.GetInt("Change mode");
+	int cm= (from)? from->WhichLines->GetSelection() : Options.GetInt(MoveTimesWhichLines);
 	if(cm>(int)WhichLines->GetCount()){cm=0;}
 	WhichLines->SetSelection(cm);
    
-	WhichTimes->SetSelection((from)? from->WhichTimes->GetSelection() : Options.GetInt("Start end times"));
+	WhichTimes->SetSelection((from)? from->WhichTimes->GetSelection() : Options.GetInt(MoveTimesWhichTimes));
    
 	if( (from)? from->StartVAtime->GetValue() : (mto & 2)>0 ){StartVAtime->SetValue(true);}
 	else{EndVAtime->SetValue(true);}
 
-	CorTime->SetSelection((from)? from->CorTime->GetSelection() : Options.GetInt("Corect times"));
-	int enables = Options.GetInt("Postprocessor enabling");
+	CorTime->SetSelection((from)? from->CorTime->GetSelection() : Options.GetInt(MoveTimesCorrectEndTimes));
+	int enables = Options.GetInt(PostprocessorEnabling);
 	if(((enables & 16) && !LeadIn) || ( !(enables & 16) && LeadIn)){
 		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,22999); 
 		CollapsePane(evt);
@@ -350,14 +350,14 @@ void CTwindow::RefVals(CTwindow *from)
 		LeadOut->SetValue((from)? from->LeadOut->GetValue() : (enables & 2)>0);
 		Continous->SetValue((from)? from->Continous->GetValue() : (enables & 4)>0);
 		SnapKF->SetValue((from)? from->SnapKF->GetValue() : (enables & 8)>0);
-		LITime->SetInt((from)? from->LITime->GetInt() : Options.GetInt("Lead in"));
-		LOTime->SetInt((from)? from->LOTime->GetInt() : Options.GetInt("Lead out"));
-		ThresStart->SetInt((from)? from->ThresStart->GetInt() : Options.GetInt("Threshold start"));
-		ThresEnd->SetInt((from)? from->ThresEnd->GetInt() : Options.GetInt("Threshold end"));
-		BeforeStart->SetInt((from)? from->BeforeStart->GetInt() : Options.GetInt("Keyframe before start"));
-		AfterStart->SetInt((from)? from->AfterStart->GetInt() : Options.GetInt("Keyframe after start"));
-		BeforeEnd->SetInt((from)? from->BeforeEnd->GetInt() : Options.GetInt("Keyframe before end"));
-		AfterEnd->SetInt((from)? from->AfterEnd->GetInt() : Options.GetInt("Keyframe after end"));
+		LITime->SetInt((from)? from->LITime->GetInt() : Options.GetInt(PostprocessorLeadIn));
+		LOTime->SetInt((from)? from->LOTime->GetInt() : Options.GetInt(PostprocessorLeadOut));
+		ThresStart->SetInt((from)? from->ThresStart->GetInt() : Options.GetInt(PostprocessorThresholdStart));
+		ThresEnd->SetInt((from)? from->ThresEnd->GetInt() : Options.GetInt(PostprocessorThresholdEnd));
+		BeforeStart->SetInt((from)? from->BeforeStart->GetInt() : Options.GetInt(PostprocessorKeyframeBeforeStart));
+		AfterStart->SetInt((from)? from->AfterStart->GetInt() : Options.GetInt(PostprocessorKeyframeAfterStart));
+		BeforeEnd->SetInt((from)? from->BeforeEnd->GetInt() : Options.GetInt(PostprocessorKeyframeBeforeEnd));
+		AfterEnd->SetInt((from)? from->AfterEnd->GetInt() : Options.GetInt(PostprocessorKeyframeAfterEnd));
 	}
    
 }
@@ -365,8 +365,8 @@ void CTwindow::RefVals(CTwindow *from)
 void CTwindow::CollapsePane(wxCommandEvent &event)
 {
 	bool collapsed = (LeadIn==NULL);
-	int pe = Options.GetInt("Postprocessor enabling");
-	Options.SetInt("Postprocessor enabling", (collapsed)? pe | 16 : pe ^ 16);
+	int pe = Options.GetInt(PostprocessorEnabling);
+	Options.SetInt(PostprocessorEnabling, (collapsed)? pe | 16 : pe ^ 16);
 	
 	if(collapsed){
 		liosizer=new KaiStaticBoxSizer(wxHORIZONTAL,panel,_("Wstęp i zakończenie"));
@@ -374,10 +374,10 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		wxFlexGridSizer *fgsizer = new wxFlexGridSizer(2, 4, 4);
 		LeadIn=new KaiCheckBox(panel, -1, _("Wstęp"),wxDefaultPosition, wxSize(117,-1));
 		LeadIn->SetValue((pe & 1)>0);
-		LITime=new NumCtrl(panel,-1,Options.GetString("Lead in"),-10000,10000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
+		LITime=new NumCtrl(panel,-1,Options.GetString(PostprocessorLeadIn),-10000,10000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
 		LeadOut=new KaiCheckBox(panel, -1, _("Zakończenie"),wxDefaultPosition, wxSize(117,-1));
 		LeadOut->SetValue((pe & 2)>0);
-		LOTime=new NumCtrl(panel,-1,Options.GetString("Lead out"),-10000,10000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
+		LOTime=new NumCtrl(panel,-1,Options.GetString(PostprocessorLeadOut),-10000,10000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
 	
 		fgsizer->Add(LeadIn,wxEXPAND|wxLEFT,4);
 		fgsizer->Add(LITime,0);
@@ -393,8 +393,8 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		consizer->Add(Continous,0,wxEXPAND|wxALL, 2);
 
 		wxFlexGridSizer *fgsizer1 = new wxFlexGridSizer(2, 4, 4);
-		ThresStart=new NumCtrl(panel,-1,Options.GetString("Threshold start"),0,10000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
-		ThresEnd=new NumCtrl(panel,-1,Options.GetString("Threshold end"),0,10000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
+		ThresStart=new NumCtrl(panel,-1,Options.GetString(PostprocessorThresholdStart),0,10000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
+		ThresEnd=new NumCtrl(panel,-1,Options.GetString(PostprocessorThresholdEnd),0,10000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
 	
 		fgsizer1->Add(new EBStaticText(panel,_("Próg czasu początku"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer1->Add(ThresStart,0);
@@ -410,10 +410,10 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		snapsizer->Add(SnapKF,0,wxEXPAND|wxALL, 2);
 
 		wxFlexGridSizer *fgsizer2 = new wxFlexGridSizer(2, 4, 4);
-		BeforeStart=new NumCtrl(panel,-1,Options.GetString("Keyframe before start"),0,1000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
-		AfterStart=new NumCtrl(panel,-1,Options.GetString("Keyframe after start"),0,1000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
-		BeforeEnd=new NumCtrl(panel,-1,Options.GetString("Keyframe before end"),0,1000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
-		AfterEnd=new NumCtrl(panel,-1,Options.GetString("Keyframe after end"),0,1000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
+		BeforeStart=new NumCtrl(panel,-1,Options.GetString(PostprocessorKeyframeBeforeStart),0,1000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
+		AfterStart=new NumCtrl(panel,-1,Options.GetString(PostprocessorKeyframeAfterStart),0,1000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
+		BeforeEnd=new NumCtrl(panel,-1,Options.GetString(PostprocessorKeyframeBeforeEnd),0,1000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
+		AfterEnd=new NumCtrl(panel,-1,Options.GetString(PostprocessorKeyframeAfterEnd),0,1000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
 	
 		fgsizer2->Add(new EBStaticText(panel,_("Przed czasem początku"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer2->Add(BeforeStart,0);
@@ -452,17 +452,17 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		//wxSizeEvent evt;
 		//OnSize(evt);
 	}else{
-		Options.SetInt("Lead in",LITime->GetInt());
-		Options.SetInt("Lead out",LOTime->GetInt());
-		Options.SetInt("Threshold start",ThresStart->GetInt());
-		Options.SetInt("Threshold end",ThresEnd->GetInt());
-		Options.SetInt("Keyframe before start",BeforeStart->GetInt());
-		Options.SetInt("Keyframe after start",AfterStart->GetInt());
-		Options.SetInt("Keyframe before end",BeforeEnd->GetInt());
-		Options.SetInt("Keyframe after end",AfterEnd->GetInt());
+		Options.SetInt(PostprocessorLeadIn,LITime->GetInt());
+		Options.SetInt(PostprocessorLeadOut,LOTime->GetInt());
+		Options.SetInt(PostprocessorThresholdStart,ThresStart->GetInt());
+		Options.SetInt(PostprocessorThresholdEnd,ThresEnd->GetInt());
+		Options.SetInt(PostprocessorKeyframeBeforeStart,BeforeStart->GetInt());
+		Options.SetInt(PostprocessorKeyframeAfterStart,AfterStart->GetInt());
+		Options.SetInt(PostprocessorKeyframeBeforeEnd,BeforeEnd->GetInt());
+		Options.SetInt(PostprocessorKeyframeAfterEnd,AfterEnd->GetInt());
 		//1 Lead In, 2 Lead Out, 4 Make times continous, 8 Snap to keyframe;
 		//int peres= (LeadIn->GetValue())? 1 : 0
-		Options.SetInt("Postprocessor enabling",(int)LeadIn->GetValue()+((int)LeadOut->GetValue()*2)+((int)Continous->GetValue()*4)+((int)SnapKF->GetValue()*8));
+		Options.SetInt(PostprocessorEnabling,(int)LeadIn->GetValue()+((int)LeadOut->GetValue()*2)+((int)Continous->GetValue()*4)+((int)SnapKF->GetValue()*8));
 		int size=Main->GetItemCount();
 		for(int i=size-1; i>=size-3; i--){
 			Main->Detach(i);
@@ -520,7 +520,7 @@ void CTwindow::OnScroll(wxScrollEvent& event)
 void CTwindow::OnMouseScroll(wxMouseEvent& event)
 {
 	if(event.GetWheelRotation() != 0){
-		int step = 5 * event.GetWheelRotation() / event.GetWheelDelta();
+		int step = 30 * event.GetWheelRotation() / event.GetWheelDelta();
 		scPos = scroll->SetScrollPos(scPos-step); 
 		panel->SetPosition(wxPoint(0,-scPos));
 		panel->Update();

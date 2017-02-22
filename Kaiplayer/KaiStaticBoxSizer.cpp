@@ -51,7 +51,7 @@ void KaiStaticBox::PaintForeground(wxDC& tdc, const struct tagRECT& rc)
 	tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 	wxSize fsize = tdc.GetTextExtent(label);
 	int halfY = fsize.y/2;
-	tdc.SetPen(wxPen(Options.GetColour("Staticbox Border")));
+	tdc.SetPen(wxPen(Options.GetColour(StaticboxBorder)));
 	tdc.DrawRectangle(4, halfY, w-8, h - halfY - 2);
 	tdc.SetBackgroundMode(wxPENSTYLE_SOLID);
 	tdc.SetTextBackground(background);

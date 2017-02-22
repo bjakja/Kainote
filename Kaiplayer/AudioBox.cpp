@@ -48,13 +48,13 @@
 AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	wxPanel(parent,-1,wxDefaultPosition,wxSize(0,0),wxBORDER_SIMPLE)
 {
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
+	SetForegroundColour(Options.GetColour(WindowText));
+	SetBackgroundColour(Options.GetColour(WindowBackground));
 	// Setup
 	loaded = false;
 	arrows = holding = false;
 	oldy=-1;
-	int height = Options.GetInt("Audio Box Height");
+	int height = Options.GetInt(AudioBoxHeight);
 	SetMinSize(wxSize(-1,height));
 	// Display
 	audioScroll = new KaiScrollbar(this,Audio_Scrollbar,wxPoint(0,height-17), wxSize(100, 17));
@@ -69,21 +69,21 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	audioDisplay->grid=(Grid*)Wgrid;
 
 	// Zoom
-	int zoom = Options.GetInt("Audio Horizontal Zoom");
+	int zoom = Options.GetInt(AudioHorizontalZoom);
 	audioDisplay->SetSamplesPercent(zoom,false);
 	HorizontalZoom = new KaiSlider(this,Audio_Horizontal_Zoom,zoom,0,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH);
 	//HorizontalZoom->PushEventHandler(new FocusEvent());
 	HorizontalZoom->SetToolTip(_("Rozciągnięcie w poziomie"));
-	int pos = Options.GetInt("Audio Vertical Zoom");
+	int pos = Options.GetInt(AudioVerticalZoom);
 	float value = pow(float(pos)/50.0f,3);
 	audioDisplay->SetScale(value);
 	VerticalZoom = new KaiSlider(this,Audio_Vertical_Zoom,pos,1,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH|wxSL_INVERSE);
 	//VerticalZoom->PushEventHandler(new FocusEvent());
 	VerticalZoom->SetToolTip(_("Rozciągnięcie w pionie"));
-	VolumeBar = new KaiSlider(this,Audio_Volume,Options.GetInt("Audio Volume"),1,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH|wxSL_INVERSE);
+	VolumeBar = new KaiSlider(this,Audio_Volume,Options.GetInt(AudioVolume),1,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH|wxSL_INVERSE);
 	//VolumeBar->PushEventHandler(new FocusEvent());
 	VolumeBar->SetToolTip(_("Głośność"));
-	bool link = Options.GetBool("Audio Link");
+	bool link = Options.GetBool(AudioLink);
 	if (link) {
 		VolumeBar->SetValue(VerticalZoom->GetValue());
 		//VolumeBar->Enable(false);
@@ -170,19 +170,19 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 
 	AutoCommit = new ToggleButton(this,Audio_Check_AutoCommit,"",_("Automatycznie zatwierdza zmiany"),wxDefaultPosition,wxSize(26,26));
 	AutoCommit->SetBitmap(wxBITMAP_PNG("button_auto_commit"));
-	AutoCommit->SetValue(Options.GetBool("Audio Autocommit"));
+	AutoCommit->SetValue(Options.GetBool(AudioAutoCommit));
 	ButtonSizer->Add(AutoCommit,0,wxRIGHT,2);
 	NextCommit = new ToggleButton(this,Audio_Check_NextCommit,"",_("Przechodzenie do następnej linijki po zatwierdzeniu zmian"),wxDefaultPosition,wxSize(26,26));
 	NextCommit->SetBitmap(wxBITMAP_PNG("button_next_a_commit"));
-	NextCommit->SetValue(Options.GetBool("Audio Next Line On Commit"));
+	NextCommit->SetValue(Options.GetBool(AudioNextLineOnCommit));
 	ButtonSizer->Add(NextCommit,0,wxRIGHT,2);
 	AutoScroll = new ToggleButton(this,Audio_Check_AutoGoto,"",_("Automatyczne przewijanie do aktywnej linijki"), wxDefaultPosition,wxSize(26,26));
 	AutoScroll->SetBitmap(wxBITMAP_PNG("button_auto_go"));
-	AutoScroll->SetValue(Options.GetBool("Audio Autoscroll"));
+	AutoScroll->SetValue(Options.GetBool(AudioAutoScroll));
 	ButtonSizer->Add(AutoScroll,0,wxRIGHT,2);
 	SpectrumMode = new ToggleButton(this,Audio_Check_Spectrum,"",_("Tryb spektrum"), wxDefaultPosition,wxSize(26,26));
 	SpectrumMode->SetBitmap(wxBITMAP_PNG("button_spectrum"));
-	SpectrumMode->SetValue(Options.GetBool("Audio Spectrum"));
+	SpectrumMode->SetValue(Options.GetBool(AudioSpectrumOn));
 	ButtonSizer->Add(SpectrumMode,0,wxRIGHT,2);
 	ButtonSizer->AddStretchSpacer(1);
 
@@ -233,7 +233,7 @@ void AudioBox::OnScrollbar(wxScrollEvent &event) {
 // Horizontal zoom bar changed
 void AudioBox::OnHorizontalZoom(wxScrollEvent &event) {
 	audioDisplay->SetSamplesPercent(event.GetPosition());
-	Options.SetInt("Audio Horizontal Zoom",event.GetPosition());
+	Options.SetInt(AudioHorizontalZoom,event.GetPosition());
 	if(event.GetEventType()==wxEVT_SCROLL_THUMBRELEASE){
 		Options.SaveAudioOpts();
 	}
@@ -250,7 +250,7 @@ void AudioBox::OnVerticalZoom(wxScrollEvent &event) {
 		audioDisplay->player->SetVolume(value);
 		VolumeBar->SetThumbPosition(VerticalZoom->GetThumbPosition());
 	}
-	Options.SetInt("Audio Vertical Zoom",pos);
+	Options.SetInt(AudioVerticalZoom,pos);
 	if(event.GetEventType()==wxEVT_SCROLL_THUMBRELEASE){
 		Options.SaveAudioOpts();
 	}
@@ -263,7 +263,7 @@ void AudioBox::OnVolume(wxScrollEvent &event) {
 	int pos = event.GetPosition();
 	float value = pow(float(pos)/50.0f,3);
 	audioDisplay->player->SetVolume(value);
-	Options.SetInt("Audio Volume",pos);
+	Options.SetInt(AudioVolume,pos);
 	if(event.GetEventType()==wxEVT_SCROLL_THUMBRELEASE){
 		Options.SaveAudioOpts();
 	}
@@ -286,7 +286,7 @@ void AudioBox::OnVerticalLink(wxCommandEvent &event) {
 		VolumeBar->SetValue(pos);
 	}
 
-	Options.SetBool("Audio Link",VerticalLink->GetValue());
+	Options.SetBool(AudioLink,VerticalLink->GetValue());
 	Options.SaveAudioOpts();
 }
 
@@ -340,14 +340,14 @@ void AudioBox::OnPlayBeforeMark(wxCommandEvent &event) {
 	audioDisplay->SetFocus();
 	if(!audioDisplay->hasMark)return;
 	int start=audioDisplay->curMarkMS;
-	audioDisplay->Play(start-Options.GetInt("Audio Mark Play Time"),start);
+	audioDisplay->Play(start-Options.GetInt(AudioMarkPlayTime),start);
 }
 
 void AudioBox::OnPlayAfterMark(wxCommandEvent &event) {
 	audioDisplay->SetFocus();
 	if(!audioDisplay->hasMark)return;
 	int start=audioDisplay->curMarkMS;
-	audioDisplay->Play(start,start+Options.GetInt("Audio Mark Play Time"));
+	audioDisplay->Play(start,start+Options.GetInt(AudioMarkPlayTime));
 }
 
 /////////////////
@@ -429,11 +429,11 @@ void AudioBox::OnKaraoke(wxCommandEvent &event) {
 		audioDisplay->SetSamplesPercent(value);
 		HorizontalZoom->SetValue(value);
 	}
-	Options.SetInt("Audio Vertical Zoom",value);
+	Options.SetInt(AudioVerticalZoom,value);
 
 	audioDisplay->MakeDialogueVisible();
 
-	Options.SetBool("Audio Karaoke",audioDisplay->hasKara);
+	Options.SetBool(AudioKaraoke,audioDisplay->hasKara);
 	Options.SaveAudioOpts();
 }
 
@@ -446,7 +446,7 @@ void AudioBox::OnSplitMode(wxCommandEvent &event) {
 	if(audioDisplay->hasKara){
 		audioDisplay->karaoke->Split();
 		audioDisplay->UpdateImage(true);}
-	Options.SetBool("Audio Karaoke Split Mode",audioDisplay->karaAuto);
+	Options.SetBool(AudioKaraokeSplitMode,audioDisplay->karaAuto);
 	Options.SaveAudioOpts();
 }
 
@@ -463,7 +463,7 @@ void AudioBox::OnGoto(wxCommandEvent &event) {
 // Auto Goto
 void AudioBox::OnAutoGoto(wxCommandEvent &event) {
 	audioDisplay->SetFocus();
-	Options.SetBool("Audio Autoscroll",AutoScroll->GetValue());
+	Options.SetBool(AudioAutoScroll,AutoScroll->GetValue());
 	Options.SaveAudioOpts();
 }
 
@@ -472,7 +472,7 @@ void AudioBox::OnAutoGoto(wxCommandEvent &event) {
 // Auto Commit
 void AudioBox::OnAutoCommit(wxCommandEvent &event) {
 	audioDisplay->SetFocus();
-	Options.SetBool("Audio Autocommit",AutoCommit->GetValue());
+	Options.SetBool(AudioAutoCommit,AutoCommit->GetValue());
 	Options.SaveAudioOpts();
 }
 
@@ -481,7 +481,7 @@ void AudioBox::OnAutoCommit(wxCommandEvent &event) {
 // Next line on Commit
 void AudioBox::OnNextLineCommit(wxCommandEvent &event) {
 	audioDisplay->SetFocus();
-	Options.SetBool("Audio Next Line On Commit",NextCommit->GetValue());
+	Options.SetBool(AudioNextLineOnCommit,NextCommit->GetValue());
 	Options.SaveAudioOpts();
 }
 
@@ -490,7 +490,7 @@ void AudioBox::OnNextLineCommit(wxCommandEvent &event) {
 //////////////////////////
 // Spectrum Analyzer Mode
 void AudioBox::OnSpectrumMode(wxCommandEvent &event) {
-	Options.SetBool("Audio Spectrum",SpectrumMode->GetValue());
+	Options.SetBool(AudioSpectrumOn,SpectrumMode->GetValue());
 	Options.SaveAudioOpts();
 	audioDisplay->SetFocus();
 	audioDisplay->UpdateImage();
@@ -536,7 +536,7 @@ void AudioBox::OnMouseEvents(wxMouseEvent &event)
 		EB->TextEdit->Refresh(false);
 		EB->TlMode->Refresh(false);
 		ReleaseMouse();
-		Options.SetInt("Audio Box Height",npos);
+		Options.SetInt(AudioBoxHeight,npos);
 		Options.SaveAudioOpts();
 
 	}

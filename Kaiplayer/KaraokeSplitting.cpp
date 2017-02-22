@@ -40,7 +40,7 @@ void Karaoke::Split()
 {
 	Clearing();
 	bool Auto=AD->karaAuto;
-	bool Everyn=Options.GetBool("Merge Every N With Syllable");
+	bool Everyn=Options.GetBool(AudioMergeEveryNWithSyllable);
 	Dialogue *dial=AD->dialogue;
 	wxString Text=dial->Text;
 	int len=Text.Len();

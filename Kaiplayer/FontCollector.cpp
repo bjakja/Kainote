@@ -81,8 +81,8 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	: KaiDialog(parent,-1,_("Kolekcjoner czcionek"),wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER)
 	,fc(_fc)
 {
-	warning = Options.GetColour("Window Warning Elements");
-	normal = Options.GetColour("Window Text");
+	warning = Options.GetColour(WindowWarningElements);
+	normal = Options.GetColour(WindowText);
 	DialogSizer *Main = new DialogSizer(wxVERTICAL);
 	wxBoxSizer *Pathc = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *Buttons = new wxBoxSizer(wxHORIZONTAL);
@@ -90,11 +90,11 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	icn.CopyFromBitmap(CreateBitmapFromPngResource("fontcollector"));
 	SetIcon(icn);
 
-	path=new KaiTextCtrl(this,-1,Options.GetString("Font Collect Directory"),wxDefaultPosition, wxSize(150,-1));
-	path->Enable(Options.GetInt("Font Collect Action")!=0);
+	path=new KaiTextCtrl(this,-1,Options.GetString(FontCollectorDirectory),wxDefaultPosition, wxSize(150,-1));
+	path->Enable(Options.GetInt(FontCollectorAction)!=0);
 	//path->SetToolTip("Można też wybrać folder napisów wpisując <subs dir>.");
 	choosepath=new MappedButton(this,8799,_("Wybierz folder"));
-	choosepath->Enable(Options.GetInt("Font Collect Action")!=0);
+	choosepath->Enable(Options.GetInt(FontCollectorAction)!=0);
 	Connect(8799,wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&FontCollectorDialog::OnButtonPath);
 
 	Pathc->Add(path,1,wxEXPAND|wxALL,3);
@@ -106,22 +106,22 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	choices.Add(_("Spakuj zipem"));
 	choices.Add(_("Wmuxuj napisy w wideo (wymagany MKVToolnix)"));
 	opts=new KaiRadioBox(this,9987,_("Opcje"),wxDefaultPosition,wxDefaultSize,choices,0,wxRA_SPECIFY_ROWS);
-	opts->SetSelection(Options.GetInt("Font Collect Action"));
+	opts->SetSelection(Options.GetInt(FontCollectorAction));
 	Connect(9987,wxEVT_COMMAND_RADIOBOX_SELECTED, (wxObjectEventFunction)&FontCollectorDialog::OnChangeOpt);
 
 	subsdir=new KaiCheckBox(this,7998,_("Zapisuj do folderu z napisami"));
-	subsdir->Enable(Options.GetInt("Font Collect Action")!=0);
-	subsdir->SetValue(Options.GetBool("Collector Subs Directory"));
+	subsdir->Enable(Options.GetInt(FontCollectorAction)!=0);
+	subsdir->SetValue(Options.GetBool(FontCollectorUseSubsDirectory));
 
 
 	fromMKV=new KaiCheckBox(this,7991,_("Wyciągnij czcionki z wczytanego pliku MKV"));
 	fromMKV->Enable(Notebook::GetTab()->VideoPath.Lower().EndsWith(".mkv"));
-	fromMKV->SetValue(Options.GetBool("Collect From MKV"));
+	fromMKV->SetValue(Options.GetBool(FontCollectorFromMKV));
 
 	Connect(7998,wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&FontCollectorDialog::OnChangeOpt);
 	console=new wxTextCtrl(this,-1,"",wxDefaultPosition,wxSize(500,400),wxTE_RICH2|wxTE_MULTILINE|wxTE_READONLY);
 	console->SetForegroundColour(normal);
-	console->SetBackgroundColour(Options.GetColour("Window Background"));
+	console->SetBackgroundColour(Options.GetColour(WindowBackground));
 	bok=new MappedButton(this,9879,_("Rozpocznij"));
 	bok->SetFocus();
 	bcancel=new MappedButton(this,wxID_CANCEL,_("Zamknij"));
@@ -172,7 +172,7 @@ void FontCollectorDialog::OnButtonPath(wxCommandEvent &event)
 			(path->GetValue().EndsWith("zip"))? path->GetValue().AfterLast('\\') : "",
 			"zip",_("Pliki archiwum (*.zip)|*.zip"),wxFD_SAVE|wxFD_OVERWRITE_PROMPT,this);
 	}
-	Options.SetString("Font Collect Directory",destdir);
+	Options.SetString(FontCollectorDirectory,destdir);
 	Options.SaveOptions(true,false);
 	path->SetValue(destdir);
 }
@@ -232,7 +232,7 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 				}
 			}
 		}
-		Options.SetString("Font Collect Directory",copypath);
+		Options.SetString(FontCollectorDirectory,copypath);
 
 		int operation = (fromMKV->GetValue() && fromMKV->IsEnabled())? FontCollector::COPY_MKV_FONTS : 
 			(opts->GetSelection()==3)? FontCollector::MUX_VIDEO_WITH_SUBS : FontCollector::COPY_FONTS;
@@ -259,8 +259,8 @@ void FontCollectorDialog::OnChangeOpt(wxCommandEvent &event)
 	subsdir->Enable(opts->GetSelection()!=0);
 
 	fromMKV->Enable(opts->GetSelection()!=0 && Notebook::GetTab()->VideoPath.Lower().EndsWith(".mkv"));
-	Options.SetInt("Font Collect Action",opts->GetSelection());
-	Options.SetBool("Collector Subs Directory",subsdir->GetValue());
+	Options.SetInt(FontCollectorAction,opts->GetSelection());
+	Options.SetBool(FontCollectorUseSubsDirectory,subsdir->GetValue());
 	Options.SaveOptions(true,false);
 }
 

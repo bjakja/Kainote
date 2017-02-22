@@ -73,7 +73,7 @@ public:
 		zoomScale = scale;
 	};
 
-	virtual void SetVisual(int _start,int _end);
+	virtual void SetVisual(int _start,int _end, bool notDial);
 	virtual void Draw(int time);
 	virtual void DrawVisual(int time){};
 	virtual void SetCurVisual(){};
@@ -111,6 +111,7 @@ public:
 	TabPanel *tab;
 	bool hasArrow;
 	bool blockevents;
+	bool notDialogue;
 	wxString *dummytext;
 	wxPoint dumplaced;
 	wxPoint textplaced;

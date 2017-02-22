@@ -35,8 +35,8 @@ wxColour Blackorwhite(wxColour kol)
 ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 	: wxWindow(parent,id,pos,size)
 {
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
+	SetForegroundColour(Options.GetColour(WindowText));
+	SetBackgroundColour(Options.GetColour(WindowBackground));
 	Preview=NULL;
 	tab=NULL;
 	block=true;

@@ -227,7 +227,7 @@ void Dialogue::Conv(char type,wxString pref)
 	End.ChangeFormat(type);
 	if (type<SRT){
 		Layer=0;
-		Style=Options.GetString(_T("Default Style"));
+		Style=Options.GetString(ConvertStyle);
 		Actor=_T("");
 		MarginL=0;
 		MarginR=0;

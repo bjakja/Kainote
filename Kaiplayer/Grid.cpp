@@ -41,7 +41,7 @@ Grid::Grid(wxWindow* parent, kainoteFrame* kfparent,wxWindowID id,const wxPoint&
 			if(visible & id5000){visible ^= id5000;}
 			else{visible |= id5000;}
 			SpellErrors.clear();
-			Options.SetInt("Grid Hide Collums", visible);
+			Options.SetInt(GridHideCollums, visible);
 			RepaintWindow();
 		}
 	},ID_CHECK_EVENT);

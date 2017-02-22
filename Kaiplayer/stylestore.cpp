@@ -33,8 +33,8 @@
 stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 	: KaiDialog(parent,id,_("Menedżer stylów"),pos,wxSize(400,-1),wxDEFAULT_DIALOG_STYLE)
 {
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
+	SetForegroundColour(Options.GetColour(WindowText));
+	SetBackgroundColour(Options.GetColour(WindowBackground));
 	//wxAcceleratorEntry centries[1];
 	//centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, ID_CONF);
 	//wxAcceleratorTable caccel(1, centries);
@@ -670,7 +670,7 @@ void stylestore::OnClose(wxCommandEvent& event)
 	Options.SaveOptions(false);
 	int ww,hh;
 	GetPosition(&ww,&hh);
-	Options.SetCoords("Style Manager Position",ww,hh);
+	Options.SetCoords(StyleManagerPosition,ww,hh);
 	Hide();
 }
 

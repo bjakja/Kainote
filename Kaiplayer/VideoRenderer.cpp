@@ -897,7 +897,7 @@ bool VideoRend::UpdateRects(bool changeZoom)
 		hwnd=Video->TD->GetHWND();
 		rt=Video->TD->GetClientRect();
 		if(panelOnFullscreen){rt.height-=panelHeight;}
-		pbar=Options.GetBool("Video Prog Bar");
+		pbar=Options.GetBool(VideoProgressBar);
 		cross=false;
 	}else{
 		hwnd=GetHWND();
@@ -1449,7 +1449,7 @@ void VideoRend::SetVisual(bool remove, bool settext)
 		if(settext){OpenSubs(pan->Grid1->GetVisible());}
 		Vclips->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom),lines, m_font, d3device);
 		SetVisualZoom();
-		Vclips->SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime);
+		Vclips->SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime, pan->Edit->line->IsComment);
 		VisEdit=true;
 	}
 }

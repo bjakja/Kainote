@@ -597,18 +597,18 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 {
 	int fw=0,fh=0;
 	bool enabled = IsThisEnabled();
-	wxColour bg = (background.IsOk())? background : Options.GetColour("Window Background");
-	wxColour fg = (foreground.IsOk())? foreground : Options.GetColour("Window Text");
+	wxColour bg = (background.IsOk())? background : Options.GetColour(TextFieldBackground);
+	wxColour fg = (foreground.IsOk())? foreground : Options.GetColour(WindowText);
 	dc.SetFont(font);
 	dc.SetBrush(wxBrush((enabled)? bg : 
-		Options.GetColour("Window Inactive Background")));
+		Options.GetColour(WindowBackgroundInactive)));
 	dc.SetPen(wxPen((style & wxBORDER_NONE)? bg : 
-		(HasFocus())? Options.GetColour("Editor Border Focus") : 
-		(enabled)? Options.GetColour("Editor Border") : Options.GetColour("Button Inactive Border")));
+		(HasFocus())? Options.GetColour(TextFieldBorderOnFocus) : 
+		(enabled)? Options.GetColour(TextFieldBorder) : Options.GetColour(ButtonBorderInactive)));
 	dc.DrawRectangle(0,0,w,h);
 	if(wraps.size()<2 || positioning.size()<2){return;}
-	wxColour cselection = (HasFocus())? Options.GetColour("Editor Selection") : 
-		Options.GetColour("Editor Selection No Focus");
+	wxColour cselection = (HasFocus())? Options.GetColour(TextFieldSelection) : 
+		Options.GetColour(TextFieldSelectionNoFocus);
 
 
 	//Contsel=false;
@@ -696,7 +696,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 		dc.DrawText(subline,positioning[i]+fww,posY);
 
 		}*/
-		dc.SetTextForeground((enabled)? fg : Options.GetColour("Window Inactive Text"));
+		dc.SetTextForeground((enabled)? fg : Options.GetColour(WindowTextInactive));
 		dc.DrawText(line,positioning[i]+tmpPosX,tmpPosY);
 
 		tmpPosY+=Fheight;

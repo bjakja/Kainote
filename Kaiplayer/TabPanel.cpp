@@ -26,10 +26,10 @@ TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const
 	,edytor(true)
 	,holding(false)
 {
-	SetBackgroundColour(Options.GetColour("Window Background"));
+	SetBackgroundColour(Options.GetColour(WindowBackground));
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
 	int vw,vh;
-	Options.GetCoords("Video Window Size",&vw,&vh);
+	Options.GetCoords(VideoWindowSize,&vw,&vh);
 	if(vw<200){vw=550;vh=400;}
     Video = new VideoCtrl(this, kai, wxSize(vw,vh));
 	Video->Hide();
@@ -40,7 +40,7 @@ TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const
 	
 	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
     CTime= new CTwindow(this,kai,-1,wxDefaultPosition,wxDefaultSize,wxBORDER_SIMPLE);
-    CTime->Show(Options.GetBool("Show Change Time"));
+    CTime->Show(Options.GetBool(MoveTimesOn));
 	BoxSizer3->Add(Grid1, 1, wxEXPAND, 0);
 	BoxSizer3->Add(CTime, 0, wxEXPAND, 0);
     BoxSizer2->Add(Video, 0, wxEXPAND|wxALIGN_TOP, 0);
@@ -143,7 +143,7 @@ void TabPanel::OnMouseEvent(wxMouseEvent& event)
 			int ww,hh;
 			Video->CalcSize(&ww,&hh,w,npos,false,true);
 			Video->SetMinSize(wxSize(ww,hh+Video->panelHeight));
-			Options.SetCoords("Video Window Size",ww,hh+Video->panelHeight);
+			Options.SetCoords(VideoWindowSize,ww,hh+Video->panelHeight);
 		}else{Edit->SetMinSize(wxSize(w+(npos-h),npos));}
 		BoxSizer1->Layout();
 		//if(Video->GetState()==Paused){Video->Render();}

@@ -22,8 +22,8 @@
 ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	:KaiDialog(parent, -1, _("Właściwości napisów ASS"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
 {
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
+	SetForegroundColour(Options.GetColour(WindowText));
+	SetBackgroundColour(Options.GetColour(WindowBackground));
 	res=wxSize(w,h);
 	wxIcon icn;
 	icn.CopyFromBitmap(CreateBitmapFromPngResource("ASSPROPS"));

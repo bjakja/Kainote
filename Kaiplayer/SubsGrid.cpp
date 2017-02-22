@@ -87,9 +87,9 @@ SubsGrid::SubsGrid(wxWindow *parent, const long int id,const wxPoint& pos,const 
 	scPos=0;
 	scHor=0;
 	oldX=-1;
-	visible=Options.GetInt("Grid Hide Collums");
+	visible=Options.GetInt(GridHideCollums);
 	holding = false;
-	hideover=Options.GetBool("Grid Hide Tags");
+	hideover=Options.GetBool(GridHideTags);
 	Modified=false;
 	first=true;
 	makebkp=true;
@@ -122,12 +122,11 @@ SubsGrid::~SubsGrid()
 
 void SubsGrid::SetStyle() 
 {
-	wxString fontname = Options.GetString("Grid Font Name");
-	font.SetFaceName(fontname);
-	if (!font.IsOk())
-		font.SetFamily(wxFONTFAMILY_SWISS );
+	font.SetFaceName(Options.GetString(GridFontName));
+	//if (!font.IsOk())
+	font.SetFamily(wxFONTFAMILY_SWISS );
 	font.SetWeight(wxFONTWEIGHT_NORMAL);
-	font.SetPointSize(Options.GetInt("Grid Font Size"));
+	font.SetPointSize(Options.GetInt(GridFontSize));
 
 	{
 		wxClientDC dc(this);
@@ -189,28 +188,25 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	//tdc.SelectObject(tbmp);
 	//tdc.SetFont(font);
 
-	wxColour labelBkCol=Options.GetColour("Grid Label Saved");
-	wxColour labelBkColN=Options.GetColour("Grid Label Normal");
-	wxColour labelBkColM=Options.GetColour("Grid Label Modified");
-	wxColour linesCol=Options.GetColour("Grid Lines");
-	wxColour subsBkCol=Options.GetColour("Grid Dialogue");
-	wxColour comm=Options.GetColour("Grid Comment");
-	wxColour seldial=Options.GetColour("Grid Selected Dialogue");
-	wxColour selcom=Options.GetColour("Grid Selected Comment");
-	wxColour textcol=Options.GetColour("Grid Text");
-	wxColour collcol=Options.GetColour("Grid Collisions");
-	wxColour SpelcheckerCol=Options.GetColour("Grid Spellchecker");
-	wxColour ComparsionCol=Options.GetColour("Grid Comparison");
-	wxColour ComparsionBGCol=Options.GetColour("Grid Comparison Background");
-	wxColour ComparsionBGSelCol=Options.GetColour("Grid Comparison Background Selected");
-	wxColour ComparsionBGCmntCol=Options.GetColour("Grid Comparison Comment Background");
-	wxColour ComparsionBGCmntSelCol=Options.GetColour("Grid Comparison Comment Background Selected");
-	wxString chtag=Options.GetString("Grid tag changing char");
-	bool SpellCheckerOn = Options.GetBool("Editbox Spellchecker");
+	wxColour labelBkCol=Options.GetColour(GridLabelSaved);
+	wxColour labelBkColN=Options.GetColour(GridLabelNormal);
+	wxColour labelBkColM=Options.GetColour(GridLabelModified);
+	wxColour linesCol=Options.GetColour(GridLines);
+	wxColour subsBkCol=Options.GetColour(GridDialogue);
+	wxColour comm=Options.GetColour(GridComment);
+	wxColour seldial=Options.GetColour(GridSelectedDialogue);
+	wxColour selcom=Options.GetColour(GridSelectedComment);
+	wxColour textcol=Options.GetColour(GridText);
+	wxColour collcol=Options.GetColour(GridCollisions);
+	wxColour SpelcheckerCol=Options.GetColour(GridSpellchecker);
+	wxColour ComparsionCol=Options.GetColour(GridComparison);
+	wxColour ComparsionBGCol=Options.GetColour(GridComparisonBackground);
+	wxColour ComparsionBGSelCol=Options.GetColour(GridComparisonBackgroundSelected);
+	wxColour ComparsionBGCmntCol=Options.GetColour(GridComparisonCommentBackground);
+	wxColour ComparsionBGCmntSelCol=Options.GetColour(GridComparisonCommentBackgroundSelected);
+	wxString chtag=Options.GetString(GridTagsSwapChar);
+	bool SpellCheckerOn = Options.GetBool(SpellcheckerOn);
 	
-	/*tdc.SetPen(*wxTRANSPARENT_PEN);
-	tdc.SetBrush(wxBrush(linesCol));
-	tdc.DrawRectangle(0,0,GridWidth[0]+1,h);*/
 	tdc.SetPen(*wxTRANSPARENT_PEN);
 	tdc.SetBrush(wxBrush(linesCol));
 	tdc.DrawRectangle(0,0,w+scHor/*-(GridWidth[0]+1)*/,h);
@@ -440,18 +436,18 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 		tdc.SetBrush(wxBrush(labelBkColN));
 		tdc.DrawRectangle(0,posY,GridWidth[0],h);*/
 		tdc.SetPen(*wxTRANSPARENT_PEN);
-		tdc.SetBrush(wxBrush(Options.GetColour("Grid Background")));
+		tdc.SetBrush(wxBrush(Options.GetColour(GridBackground)));
 		tdc.DrawRectangle(0,posY,w+scHor/*-GridWidth[0]+1*/,h);
 	}
 	if(mtimerow>=scPos&&mtimerow<=scrows){
 		tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-		tdc.SetPen(wxPen(Options.GetColour("Grid Active Line"),3));
+		tdc.SetPen(wxPen(Options.GetColour(GridActiveLine),3));
 		tdc.DrawRectangle(1,((mtimerow-scPos+1)*(GridHeight+1))-1,(GridWidth[0]-1),GridHeight+2);
 	}
 
 	if(Edit->ebrow>=scPos&&Edit->ebrow<=scrows){
 		tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-		tdc.SetPen(wxPen(Options.GetColour("Grid Active Line")));
+		tdc.SetPen(wxPen(Options.GetColour(GridActiveLine)));
 		tdc.DrawRectangle(scHor,((Edit->ebrow-scPos+1)*(GridHeight+1))-1,w+scHor/*-(GridWidth[0]+1)*/,GridHeight+2);
 	}
 
@@ -882,7 +878,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 			}
 
 
-			int mvtal= Options.GetInt("Move Video To Active Line");
+			int mvtal= Options.GetInt(MoveVideoToActiveLine);
 			//1-kliknięcie lewym
 			//2-kliknięcie lewym i edycja na pauzie
 			//3-kliknięcie lewym i edycja na pauzie i odtwarzaniu
@@ -981,20 +977,20 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 
 void SubsGrid::Convert(char type)
 {
-	if(Options.GetBool("Show settings window")){
+	if(Options.GetBool(ConvertShowSettings)){
 		OptionsDialog od(Kai,Kai);
 		od.OptionsTree->ChangeSelection(2);
 		od.okok->SetFocus();
 		if(od.ShowModal()==wxID_CANCEL){return;}
 	}
-	if(Options.GetBool("FPS from video")&&Kai->GetTab()->VideoPath!=""){
-		Options.SetString("Default FPS",Kai->GetStatusText(2).BeforeFirst(' '));}
-	if(Options.GetFloat("Default FPS")<1){KaiMessageBox(_("Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."));return;}
+	if(Options.GetBool(ConvertFPSFromVideo)&&Kai->GetTab()->VideoPath!=""){
+		Options.SetString(ConvertFPS, Kai->GetStatusText(2).BeforeFirst(' '));}
+	if(Options.GetFloat(ConvertFPS)<1){KaiMessageBox(_("Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."));return;}
 
-	bool newendtimes=Options.GetBool("New end times");
-	wxString stname=Options.GetString("Default Style");
-	int endt=Options.GetInt("Time show of letter");
-	wxString prefix=Options.GetString("Ass Conversion Prefix");
+	bool newendtimes=Options.GetBool(ConvertNewEndTimes);
+	wxString stname=Options.GetString(ConvertStyle);
+	int endt=Options.GetInt(ConvertTimePerLetter);
+	wxString prefix=Options.GetString(ConvertASSTagsOnLineStart);
 	//KaiMessageBox("pętla");
 	int i=0;
 	while(i<GetCount())
@@ -1026,13 +1022,13 @@ void SubsGrid::Convert(char type)
 
 	if(type==ASS){
 		LoadDefault(false,true,false);
-		wxString resx=Options.GetString("Convert Resolution W");
-		wxString resy=Options.GetString("Convert Resolution H");
+		wxString resx=Options.GetString(ConvertResolutionWidth);
+		wxString resy=Options.GetString(ConvertResolutionHeight);
 		if(resx==""){resx="1280";}
 		if(resy==""){resx="720";}
 		AddSInfo("PlayResX",resx, false);
 		AddSInfo("PlayResY",resy, false);
-		wxString catalog=Options.GetString("Default Style Catalog");
+		wxString catalog=Options.GetString(ConvertStyleCatalog);
 
 		if(Options.dirs.Index(catalog)!=-1){Options.LoadStyles(catalog);}
 		int stind=Options.FindStyle(stname);
@@ -1134,7 +1130,7 @@ return 0;
 */
 void SubsGrid::SaveFile(wxString filename, bool cstat)
 {
-	if(Options.GetBool("Grid save without enter")){
+	if(Options.GetBool(GridSaveWithoutEnter)){
 		bool oldOnVideo = Edit->OnVideo;
 		Edit->Send(false,false,true);
 		Edit->OnVideo = oldOnVideo;
@@ -1190,7 +1186,7 @@ void SubsGrid::SaveFile(wxString filename, bool cstat)
 void SubsGrid::HideOver()
 {
 	hideover=!hideover;
-	Options.SetBool("Grid Hide Tags",hideover);
+	Options.SetBool(GridHideTags,hideover);
 	SpellErrors.clear();
 	Refresh(false);
 }
@@ -1291,27 +1287,27 @@ void SubsGrid::ChangeTime()
 	VideoCtrl *vb=Kai->GetTab()->Video;
 	int added=0;
 	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 8 Move to audio time;
-	int mto = Options.GetInt("Moving time options");
-	int tim = Options.GetInt("Change Time");
-	int lmd = MAX(0,Options.GetInt("Change mode"));
-	int seb = MAX(0,Options.GetInt("Start end times"));
-	int CT  = Options.GetInt("Corect times");
+	int mto = Options.GetInt(MoveTimesOptions);
+	int tim = Options.GetInt(MoveTimesTime);
+	int lmd = MAX(0,Options.GetInt(MoveTimesWhichLines));
+	int seb = MAX(0,Options.GetInt(MoveTimesWhichTimes));
+	int CT  = Options.GetInt(MoveTimesCorrectEndTimes);
 	//1 Lead In, 2 Lead Out, 4 Make times continous, 8 Snap to keyframe;
-	int pe  = Options.GetInt("Postprocessor enabling");
+	int pe  = Options.GetInt(PostprocessorEnabling);
 	int li, lo, ts, te, kbs, kas, kbe, kae;
 	if(pe){
 		if(form==TMP || pe<16){pe=0;}
 		else if(pe & 8 && !vb->VFF){pe^=8;}
-		li  = Options.GetInt("Lead in");
-		lo  = Options.GetInt("Lead out");
-		ts  = Options.GetInt("Threshold start");
-		te  = Options.GetInt("Threshold end");
-		kbs = Options.GetInt("Keyframe before start");
-		kas = Options.GetInt("Keyframe after start");
-		kbe = Options.GetInt("Keyframe before end");
-		kae = Options.GetInt("Keyframe after end");
+		li  = Options.GetInt(PostprocessorLeadIn);
+		lo  = Options.GetInt(PostprocessorLeadOut);
+		ts  = Options.GetInt(PostprocessorThresholdStart);
+		te  = Options.GetInt(PostprocessorThresholdEnd);
+		kbs = Options.GetInt(PostprocessorKeyframeBeforeStart);
+		kas = Options.GetInt(PostprocessorKeyframeAfterStart);
+		kbe = Options.GetInt(PostprocessorKeyframeBeforeEnd);
+		kae = Options.GetInt(PostprocessorKeyframeAfterEnd);
 	}
-	wxString style=Options.GetString("Styles of time change");
+	wxString style=Options.GetString(MoveTimesStyles);
 	if(!(mto & 1)){tim=(-tim);}
 	int VAS = mto & 2;
 
@@ -1389,7 +1385,7 @@ void SubsGrid::ChangeTime()
 			}
 			if(CT>0 || pe>16){
 				if(CT>1){
-					int endt=Options.GetInt("Time show of letter");
+					int endt=Options.GetInt(ConvertTimePerLetter);
 					int newend=(endt*dialc->Text.Len());
 					if(newend<1000){newend=1000;}
 					newend+=dialc->Start.mstime;
@@ -1584,8 +1580,8 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 
 			int next = MID(0,curLine+dir,GetCount()-1);
 			Edit->SetIt(next);
-			int mvtal= Options.GetInt("Move Video To Active Line");
-			int pasel= Options.GetInt("Play After Selection");
+			int mvtal= Options.GetInt(MoveVideoToActiveLine);
+			int pasel= Options.GetInt(PlayAfterSelection);
 			//1-kliknięcie lewym
 			//2-kliknięcie lewym i edycja na pauzie
 			//3-kliknięcie lewym i edycja na pauzie i odtwarzaniu
@@ -1788,7 +1784,7 @@ void SubsGrid::GetUndo(bool redo)
 	VideoCtrl *vb=pan->Video;
 	if(Edit->Visual < CHANGEPOS || Edit->Visual == MOVEALL){
 		if(vb->IsShown() || vb->isFullscreen){vb->OpenSubs(SaveText());}
-		int opt=Options.GetInt("Move Video To Active Line");
+		int opt=Options.GetInt(MoveVideoToActiveLine);
 		if(opt>1){
 			if(vb->GetState()==Paused || (vb->GetState()==Playing && (opt==3 || opt==5))){
 				vb->Seek(Edit->line->Start.mstime);}
@@ -1932,7 +1928,7 @@ void SubsGrid::SetModified(bool redit, bool dummy, int SetEditBoxLine)
 			}else{
 				if(vb->IsShown() || vb->isFullscreen){vb->OpenSubs(SaveText());}
 
-				int opt=Options.GetInt("Move Video To Active Line");
+				int opt=Options.GetInt(MoveVideoToActiveLine);
 				if(opt>1){
 					if(vb->GetState()==Paused || (vb->GetState()==Playing && (opt==3 || opt==5))){
 						vb->Seek(Edit->line->Start.mstime);}
@@ -2062,7 +2058,7 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 
 
 	if(form==MDVD||form==MPL2){
-		int endt=Options.GetInt("Time show of letter");
+		int endt=Options.GetInt(ConvertTimePerLetter);
 		for(int i=0;i<GetCount();i++){
 			Dialogue *dial=GetDial(i);
 
@@ -2082,7 +2078,7 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 	else if(form==ASS){
 		if(ext!="ass"){origform=0;AddStyle(new Styles());}
 		Edit->TlMode->Enable(true);Edit->RefreshStyle();
-		if(Options.GetBool("Grid Load Sorted")){std::sort(file->subs->dials.begin(), file->subs->dials.end(), sortstart);}}
+		if(Options.GetBool(GridLoadSortedSubs)){std::sort(file->subs->dials.begin(), file->subs->dials.end(), sortstart);}}
 	else{Edit->TlMode->Enable(false);}
 	if(active>=GetCount()){active=0;}
 
@@ -2245,8 +2241,8 @@ void SubsGrid::NextLine(int dir)
 	AdjustWidths(0);
 	Refresh(false);Edit->SetIt(nebrow);
 	if(Edit->ABox){Edit->ABox->audioDisplay->SetDialogue(Edit->line,nebrow);}
-	if(Kai->GetTab()->Video->GetState() != None && Options.GetBool("Editbox Video Time")){
-		Kai->GetTab()->Video->Seek(GetDial(nebrow)->Start.mstime-5);}
+	//if(Kai->GetTab()->Video->GetState() != None && Options.GetBool("Editbox Video Time")){
+		//Kai->GetTab()->Video->Seek(GetDial(nebrow)->Start.mstime-5);}
 }
 
 void SubsGrid::CheckText(wxString text, wxArrayInt &errs)

@@ -124,6 +124,7 @@ void Position::SetCurVisual()
 	for(size_t i = 0; i < sels.size(); i++){
 		//fix by uzyskaæ reakcjê na edycjê w editboxie
 		Dialogue *dial = (sels[i]==tab->Edit->ebrow)? tab->Edit->line : tab->Grid1->GetDial(sels[i]);
+		if(dial->IsComment){continue;}
 		D3DXVECTOR2 pos = GetPos(dial,&pib,&tp);
 		data.push_back(PosData(dial, sels[i], D3DXVECTOR2(((pos.x/wspw)-zoomMove.x)*zoomScale.x, 
 			((pos.y/wsph)-zoomMove.y)*zoomScale.y), tp, pib));

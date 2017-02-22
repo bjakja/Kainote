@@ -56,13 +56,14 @@ public:
 
 class ItemColor : public Item{
 public:
-	ItemColor(const AssColor &color, const wxString &_name) : Item(TYPE_COLOR){col = color; name = _name;}
+	ItemColor(const AssColor &color, int i) : Item(TYPE_COLOR){col = color;colOptNum=i;}
 	virtual ~ItemColor(){	
 	}
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList);
 	void Save();
 	AssColor col;
+	int colOptNum;
 };
 
 class ItemCheckBox : public Item{

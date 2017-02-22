@@ -43,8 +43,8 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title, const
 	MARGINS borderless = {0,0,0,0};
 	DwmExtendFrameIntoClientArea(m_hWnd, &borderless);
 	SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
+	SetForegroundColour(Options.GetColour(WindowText));
+	SetBackgroundColour(Options.GetColour(WindowBackground));
 	Bind(wxEVT_SIZE, &KaiFrame::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiFrame::OnPaint, this);
 	Bind(wxEVT_LEFT_DOWN, &KaiFrame::OnMouseEvent, this);
@@ -53,8 +53,8 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title, const
 	Bind(wxEVT_MOTION, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_ACTIVATE, &KaiFrame::OnActivate, this);
 	Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
-		SetForegroundColour(Options.GetColour("Window Text"));
-		SetBackgroundColour(Options.GetColour("Window Background"));
+		SetForegroundColour(Options.GetColour(WindowText));
+		SetBackgroundColour(Options.GetColour(WindowBackground));
 	});
 	
 }
@@ -73,11 +73,11 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 	wxMemoryDC mdc;
 	mdc.SelectObject(wxBitmap(w,h));
 	mdc.SetFont(GetFont());
-	wxColour bg = (isActive)? Options.GetColour("Window Border Background") : Options.GetColour("Window Border Background Inactive");
+	wxColour bg = (isActive)? Options.GetColour(WindowBorderBackground) : Options.GetColour(WindowBorderBackgroundInactive);
 	mdc.SetBrush(bg);
-	mdc.SetPen((isActive)? Options.GetColour("Window Border") : Options.GetColour("Window Border Inactive"));
+	mdc.SetPen((isActive)? Options.GetColour(WindowBorder) : Options.GetColour(WindowBorderInactive));
 	mdc.DrawRectangle(0,0,w,h);
-	wxColour text = (isActive)? Options.GetColour("Window Header Text") : Options.GetColour("Window Header Inactive Text");
+	wxColour text = (isActive)? Options.GetColour(WindowHeaderText) : Options.GetColour(WindowHeaderTextInactive);
 	mdc.SetTextForeground(text);
 	wxIconBundle icons = GetIcons();
 	if(icons.GetIconCount()){
@@ -93,20 +93,20 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 		mdc.DrawText(GetTitle(), icons.GetIconCount()? 30 : 6, 5);
 	}
 	if(enterClose || pushedClose){
-		wxColour buttonxbg = (enterClose && !pushedClose)? Options.GetColour("Window Hover Header Element") : 
-			Options.GetColour("Window Pushed Header Element");
+		wxColour buttonxbg = (enterClose && !pushedClose)? Options.GetColour(WindowHoverCloseButton) : 
+			Options.GetColour(WindowPushedCloseButton);
 		mdc.SetBrush(buttonxbg);
 		mdc.SetPen(buttonxbg);
 		mdc.DrawRectangle(w-25, 4, 18, 18);
 	}else if(enterMaximize || pushedMaximize){
-		wxColour buttonxbg = (enterMaximize && !pushedMaximize)? Options.GetColour("Window Hover Header Element") : 
-			Options.GetColour("Window Pushed Header Element");
+		wxColour buttonxbg = (enterMaximize && !pushedMaximize)? Options.GetColour(WindowHoverHeaderElement) : 
+			Options.GetColour(WindowPushedHeaderElement);
 		mdc.SetBrush(buttonxbg);
 		mdc.SetPen(buttonxbg);
 		mdc.DrawRectangle(w-50, 4, 18, 18);
 	}else if(enterMinimize || pushedMinimize){
-		wxColour buttonxbg = (enterMinimize && !pushedMinimize)? Options.GetColour("Window Hover Header Element") : 
-			Options.GetColour("Window Pushed Header Element");
+		wxColour buttonxbg = (enterMinimize && !pushedMinimize)? Options.GetColour(WindowHoverHeaderElement) : 
+			Options.GetColour(WindowPushedHeaderElement);
 		mdc.SetBrush(buttonxbg);
 		mdc.SetPen(buttonxbg);
 		mdc.DrawRectangle(w-75, 4, 18, 18);
@@ -139,6 +139,15 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 	dc.Blit(0,ftopBorder,fborder,h-ftopBorder-fborder, &mdc, 0, ftopBorder);
 	dc.Blit(w-fborder,ftopBorder,fborder,h-ftopBorder-fborder, &mdc, w-fborder, ftopBorder);
 	dc.Blit(0,h-fborder,w,fborder, &mdc, 0, h-fborder);
+}
+
+void KaiFrame::SetLabel(const wxString &text)
+{
+	wxTopLevelWindow::SetLabel(text);
+	int w, h;
+	GetClientSize(&w,&h);
+	wxRect rc(0,0,w,ftopBorder);
+	Refresh(false, &rc);
 }
 
 void KaiFrame::OnSize(wxSizeEvent &evt)

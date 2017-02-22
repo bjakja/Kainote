@@ -111,7 +111,7 @@ void ColorPickerSpectrum::OnPaint(wxPaintEvent &evt)
 
 	wxPen invpen(*wxWHITE, 3);
 	invpen.SetCap(wxCAP_BUTT);
-	wxPen blkpen(Options.GetColour("Window Text"), 1);
+	wxPen blkpen(Options.GetColour(WindowText), 1);
 	blkpen.SetCap(wxCAP_BUTT);
 
 	wxPoint arrow[3];
@@ -136,9 +136,9 @@ void ColorPickerSpectrum::OnPaint(wxPaintEvent &evt)
 		arrow[1] = wxPoint(background->GetWidth()+2+spectrum_horz_vert_arrow_size, y+1-spectrum_horz_vert_arrow_size);
 		arrow[2] = wxPoint(background->GetWidth()+2+spectrum_horz_vert_arrow_size, y+1+spectrum_horz_vert_arrow_size);
 		dc.SetPen(*wxTRANSPARENT_PEN);
-		dc.SetBrush(wxBrush(Options.GetColour("Window Background")));
+		dc.SetBrush(wxBrush(Options.GetColour(WindowBackground)));
 		dc.DrawRectangle(background->GetWidth()+2,0,siz.x-(background->GetWidth()+2),siz.y);
-		dc.SetBrush(Options.GetColour("Window Text"));
+		dc.SetBrush(Options.GetColour(WindowText));
 		dc.DrawPolygon(3, arrow);
 	}
 	
@@ -441,8 +441,8 @@ AssColor GetColorFromUser(wxWindow *parent, AssColor original)
 DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color)
 : KaiDialog(parent, 11111, _("Wybierz kolor"), wxDefaultPosition, wxDefaultSize)
 {
-	SetForegroundColour(Options.GetColour("Window Text"));
-	SetBackgroundColour(Options.GetColour("Window Background"));
+	SetForegroundColour(Options.GetColour(WindowText));
+	SetBackgroundColour(Options.GetColour(WindowBackground));
 	wxAcceleratorEntry centries[2];
     centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, wxID_OK);
     centries[1].Set(wxACCEL_NORMAL, WXK_ESCAPE, wxID_CANCEL);
@@ -606,7 +606,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color)
 	// Fill the controls
 	updating_controls = false;
 	SetColor(initial_color);
-	recent_box->LoadFromString(Options.GetString("Color Picker Recent"));
+	recent_box->LoadFromString(Options.GetString(ColorpickerRecent));
 
 	// The mouse event handler for the Dropper control must be manually assigned
 	// The EVT_MOUSE_EVENTS macro can't take a control id
@@ -657,7 +657,7 @@ void DialogColorPicker::SetColor(AssColor new_color)
 AssColor DialogColorPicker::GetColor()
 {
 	recent_box->AddColor(cur_color);
-	Options.SetString("Color Picker Recent", recent_box->StoreToString());
+	Options.SetString(ColorpickerRecent, recent_box->StoreToString());
 	return cur_color;
 }
 
@@ -873,8 +873,8 @@ wxBitmap *DialogColorPicker::MakeAlphaSlider()
 	unsigned char *ospec, *spec;
 
 	ospec = spec = (unsigned char *)malloc(10*256*3);
-	wxColour kol1=Options.GetColour("Style Preview Color1");
-	wxColour kol2=Options.GetColour("Style Preview Color2");
+	wxColour kol1=Options.GetColour(StylePreviewColor1);
+	wxColour kol2=Options.GetColour(StylePreviewColor2);
 	byte b3=kol1.Blue();
 	byte g3=kol1.Green();
 	byte r3=kol1.Red();
@@ -1224,8 +1224,8 @@ void TextColorPicker::OnPaint(wxPaintEvent &evt)
 	tdc.DrawRectangle(0,0,w,h);
 	
 	if(color.a){
-		wxColour col1=Options.GetColour("Style Preview Color1");
-		wxColour col2=Options.GetColour("Style Preview Color2");
+		wxColour col1=Options.GetColour(StylePreviewColor1);
+		wxColour col2=Options.GetColour(StylePreviewColor2);
 		int r2 = color.r, g2 = color.g, b2 = color.b;
 		int r = col1.Red(), g = col1.Green(), b = col1.Blue();
 		int r1 = col2.Red(), g1 = col2.Green(), b1 = col2.Blue();

@@ -59,17 +59,18 @@ void KaiStatusBar::OnPaint(wxPaintEvent& event)
 	tdc.SelectObject(*bmp);
 	tdc.SetFont(GetFont());
 	bool enabled = IsThisEnabled();
-	wxColour wbg = Options.GetColour("Window Background");
-	wxColour wfg = Options.GetColour("Window Text");
+	wxColour wbg = Options.GetColour(WindowBackground);
+	wxColour wfg = Options.GetColour(WindowText);
+	wxColour border = Options.GetColour(StatusBarBorder);
 	tdc.SetBrush(wxBrush(wbg));
-	tdc.SetPen(wxPen(wfg));
+	tdc.SetPen(wxPen(border));
 	tdc.DrawRectangle(0,0,w,h);
 	wxArrayInt widths;
 	CalcWidths(&widths);
 	int posX = 1;
 	for(size_t i = 0; i<widths.size(); i++){
 		if(widths[i]>0 && i>0){
-			tdc.SetPen(wfg);
+			tdc.SetPen(border);
 			tdc.DrawLine(posX-1, 1, posX-1, h-1);
 		}
 		if(labels[i]==""){posX += widths[i]; continue;}

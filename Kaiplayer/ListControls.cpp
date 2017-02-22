@@ -241,14 +241,14 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 	if(choiceText && choiceText->IsThisEnabled() != enabled){
 		choiceText->Enable(enabled);
 	}
-	tdc.SetBrush(wxBrush((enter && !clicked)? Options.GetColour("Button Background Hover") :
-		(clicked)? Options.GetColour("Button Background Pushed") : 
-		(enabled)? Options.GetColour("Button Background") : 
-		Options.GetColour("Window Inactive Background")));
-	tdc.SetPen(wxPen((enter && !clicked)? Options.GetColour("Button Border Hover") : 
-		(clicked)? Options.GetColour("Button Border Pushed") : 
-		(enabled)? Options.GetColour("Button Border") : 
-		Options.GetColour("Button Inactive Border")));
+	tdc.SetBrush(wxBrush((enter && !clicked)? Options.GetColour(ButtonBackgroundHover) :
+		(clicked)? Options.GetColour(ButtonBackgroundPushed) : 
+		(enabled)? Options.GetColour(ButtonBackground) : 
+		Options.GetColour(WindowBackgroundInactive)));
+	tdc.SetPen(wxPen((enter && !clicked)? Options.GetColour(ButtonBorderHover) : 
+		(clicked)? Options.GetColour(ButtonBorderPushed) : 
+		(enabled)? Options.GetColour(ButtonBorder) : 
+		Options.GetColour(ButtonBorderInactive)));
 	tdc.DrawRectangle(0,0,w,h);
 
 	if(w>15){
@@ -271,7 +271,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 			}
 			if(!choiceText){
 				tdc.SetTextForeground((useFgCol && enabled)? GetForegroundColour() : (enabled)?
-					Options.GetColour("Window Text") : Options.GetColour("Window Inactive Text"));
+					Options.GetColour(WindowText) : Options.GetColour(WindowTextInactive));
 				//tdc.DrawText(txt, 4, (h-fh));
 				wxRect cur(5, (h-fh)/2, w - 19, fh);
 				tdc.SetClippingRegion(cur);
@@ -680,11 +680,11 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	}
 	if(!bmp){bmp=new wxBitmap(ow, h);}
 	tdc.SelectObject(*bmp);
-	wxColour text = Options.GetColour("Window Text");
-	wxColour graytext = Options.GetColour("Window Inactive Text");
+	wxColour text = Options.GetColour(WindowText);
+	wxColour graytext = Options.GetColour(WindowTextInactive);
 	
 	tdc.SetFont(GetFont());
-	tdc.SetBrush(wxBrush(Options.GetColour("Menu Background")));
+	tdc.SetBrush(wxBrush(Options.GetColour(MenuBackground)));
 	tdc.SetPen(wxPen(text));
 	tdc.DrawRectangle(0,0,ow,h);
 	//tdc.SetTextForeground(Options.GetColour("Menu Bar Border Selection"));
@@ -693,8 +693,8 @@ void PopupList::OnPaint(wxPaintEvent &event)
 		int scrollPos=i+scPos;
 
 		if(scrollPos==sel){
-			tdc.SetPen(wxPen(Options.GetColour("Menu Border Selection")));
-			tdc.SetBrush(wxBrush(Options.GetColour("Menu Background Selection")));
+			tdc.SetPen(wxPen(Options.GetColour(MenuBorderSelection)));
+			tdc.SetBrush(wxBrush(Options.GetColour(MenuBackgroundSelection)));
 			tdc.DrawRectangle(2, (height*i)+2,w-4,height-2);
 		}
 		wxString desc=(*itemsList)[scrollPos];
