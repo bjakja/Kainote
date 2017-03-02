@@ -16,7 +16,7 @@
 #ifndef SUBSGRID_H_INCLUDED
 #define SUBSGRID_H_INCLUDED
 
-#pragma once
+//#pragma once
 
 #include <wx/wx.h>
 #include "SubsDialogue.h"

@@ -132,8 +132,10 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 
 
 EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
-	: wxWindow(parent, idd, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE)//|wxCLIP_CHILDREN
+	: wxWindow(parent, idd, wxDefaultPosition, wxDefaultSize/*, wxBORDER_SIMPLE*/)//|wxCLIP_CHILDREN
 	, EditCounter(0)
+	, ABox(NULL)
+	, line(NULL)
 {
 
 	SetForegroundColour(Options.GetColour(WindowText));
@@ -144,8 +146,6 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	grid->Edit=this;
 	isdetached=OnVideo=splittedTags=false;
 	Visual=0;
-	ABox=NULL;
-	line=NULL;
 
 	wxArrayString ans;
 	ans.Add("an1");
@@ -193,7 +193,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer4->Add(Ban,0,wxALL,2);
 	for(int i=0; i<Options.GetInt(EditboxTagButtons); i++)
 	{
-		BoxSizer4->Add(new TagButton(this, 15000+i, wxString::Format("T%i",i+1), Options.GetString((CONFIG)i),wxSize(24,24)),0,wxALL,2);
+		BoxSizer4->Add(new TagButton(this, 15000+i, wxString::Format("T%i",i+1), Options.GetString((CONFIG)(i+4000)),wxSize(24,24)),0,wxALL,2);
 		Connect(15000+i,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnButtonTag);
 	}
 
@@ -259,26 +259,26 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	EffectEdit = new DescTxtCtrl(this, 16658, wxSize(90,-1), _("Efekt"),valid);
 
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
-	BoxSizer2->Add(Comment,0,wxLEFT|wxALIGN_CENTER,4);
+	BoxSizer2->Add(Comment,0,wxLEFT|wxALIGN_CENTER,2);
 	BoxSizer2->Add(LayerEdit,0,wxLEFT,2);
 	BoxSizer2->Add(StartEdit,0,wxLEFT,2);
 	BoxSizer2->Add(EndEdit,0,wxLEFT,2);
 	BoxSizer2->Add(DurEdit,0,wxLEFT,2);
-	BoxSizer2->Add(StyleChoice,4,wxLEFT|wxEXPAND,2);
+	BoxSizer2->Add(StyleChoice,4,wxLEFT|wxRIGHT|wxEXPAND,2);
 	BoxSizer2->Add(ActorEdit,3,wxLEFT|wxEXPAND,2);
 	BoxSizer2->Add(MarginLEdit,0,wxLEFT,2);
 	BoxSizer2->Add(MarginREdit,0,wxLEFT,2);
 	BoxSizer2->Add(MarginVEdit,0,wxLEFT,2);
-	BoxSizer2->Add(EffectEdit,3,wxLEFT |wxEXPAND,2);
+	BoxSizer2->Add(EffectEdit,3,wxLEFT|wxRIGHT|wxEXPAND,2);
 	//BoxSizer1->AddSpacer(5);
 	//BoxSizer2->Add(BoxSizer3,0,wxEXPAND,0);
 
 	BoxSizer1 = new wxBoxSizer(wxVERTICAL);
 	BoxSizer1->Add(BoxSizer4, 0, wxLEFT | wxRIGHT | wxTOP, 2);
 	BoxSizer1->Add(BoxSizer5, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, 2);
-	BoxSizer1->Add(TextEditTl, 5, wxEXPAND|wxLEFT|wxRIGHT, 2);
+	BoxSizer1->Add(TextEditTl, 5, wxEXPAND|wxLEFT|wxRIGHT, 4);
 	BoxSizer1->Add(BoxSizer6, 0, wxLEFT | wxRIGHT, 2);
-	BoxSizer1->Add(TextEdit, 5, wxEXPAND|wxLEFT|wxRIGHT, 2);
+	BoxSizer1->Add(TextEdit, 5, wxEXPAND|wxLEFT|wxRIGHT, 4);
 	BoxSizer1->Add(BoxSizer2,0,wxEXPAND|wxALL,2);
 	//BoxSizer1->Add(BoxSizer3,0,wxLEFT | wxRIGHT | wxBOTTOM,2);
 	BoxSizer3 = NULL;
@@ -366,7 +366,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 		OnVideo=false;
 	}
 done:
-	int pas=Options.GetInt(PlayAfterSelection);
+	int pas=pan->Video->vToolbar->videoPlayAfter->GetSelection();//Options.GetInt(PlayAfterSelection);
 	if(pas>0){
 		if(pas==1){
 			if(ABox){
@@ -390,9 +390,8 @@ done:
 		}
 	}
 	//ustawia czas i msy na polu tekstowym wideo
-	if(pan->Video->IsShown()){
+	if(pan->Video->IsShown() && pan->Video->GetState() != None){
 		pan->Video->displaytime();
-
 	}
 
 }
@@ -403,12 +402,13 @@ void EditBox::UpdateChars(wxString text)
 	bool isbad=false;
 	int ilzn=grid->CalcChars(text,&result,&isbad);
 	wxColour textcolour = Options.GetColour(WindowText); 
+	wxColour warningcolour = Options.GetColour(WindowWarningElements);
 	Chars->SetLabelText(_("Linie: ")+result+"43");
-	Chars->SetForegroundColour((isbad)? *wxRED : textcolour);
+	Chars->SetForegroundColour((isbad)? warningcolour : textcolour);
 	int chtime= ilzn / ((line->End.mstime-line->Start.mstime) / 1000.0f);
 	if(chtime<0 || chtime>999){chtime=999;}
 	Chtime->SetLabelText(wxString::Format(_("Znaki na sekundę: %i<=15"),chtime));
-	Chtime->SetForegroundColour((chtime>15)? *wxRED : textcolour);
+	Chtime->SetForegroundColour((chtime>15)? warningcolour : textcolour);
 	BoxSizer5->Layout();
 	//Frames->Update();
 	//Times->Update();
@@ -943,7 +943,7 @@ void EditBox::DoTooltips()
 	MarginLEdit->SetToolTip(_("Margines lewy linijki"));
 	MarginREdit->SetToolTip(_("Margines prawy linijki"));
 	MarginVEdit->SetToolTip(_("Margines górny i dolny linijki"));
-	EffectEdit->SetToolTip(_("Efekt linijki. Służy do oznaczania linijek, na których zastosowane ma być karaoke bądź efekty VSFiltera"));
+	EffectEdit->SetToolTip(_("Efekt linijki. Służy do oznaczania linijek, na których zastosowane ma być karaoke bądź efekty VSFiltra"));
 	Chars->SetToolTip(_("Ilość znaków w każdej linijce.\nNie więcej niż 43 znaki na linijkę (maksymalnie 2 linijki)"));
 	Chtime->SetToolTip(_("Znaki na sekundę.\nNie powinny przekraczać 15 znaków na sekundę"));
 }
@@ -963,7 +963,7 @@ void EditBox::OnSize(wxSizeEvent& event)
 		BoxSizer2->Add(MarginLEdit,0,wxLEFT,2);
 		BoxSizer2->Add(MarginREdit,0,wxLEFT,2);
 		BoxSizer2->Add(MarginVEdit,0,wxLEFT,2);
-		BoxSizer2->Add(EffectEdit,5,wxLEFT |wxEXPAND,2);
+		BoxSizer2->Add(EffectEdit,5,wxLEFT | wxRIGHT | wxEXPAND,2);
 		delete BoxSizer3; BoxSizer3=NULL;
 		SetSizer(BoxSizer1);
 
@@ -979,7 +979,7 @@ void EditBox::OnSize(wxSizeEvent& event)
 		BoxSizer3->Add(MarginLEdit,0,wxLEFT,2);
 		BoxSizer3->Add(MarginREdit,0,wxLEFT,2);
 		BoxSizer3->Add(MarginVEdit,0,wxLEFT,2);
-		BoxSizer3->Add(EffectEdit,5,wxLEFT |wxEXPAND,2);
+		BoxSizer3->Add(EffectEdit,5,wxLEFT | wxRIGHT | wxEXPAND,2);
 		BoxSizer1->Add(BoxSizer3,0,wxEXPAND|wxLEFT | wxRIGHT | wxBOTTOM,2);
 		SetSizer(BoxSizer1);
 
@@ -1393,4 +1393,11 @@ void EditBox::OnChangeTimeDisplay(wxCommandEvent& event)
 {
 	grid->showFrames=Frames->GetValue();
 	grid->RepaintWindow(START|END);
+}
+
+bool EditBox::SetBackgroundColour(const wxColour &col)
+{
+	if(ABox){ABox->SetBackgroundColour(col);}
+	wxWindow::SetBackgroundColour(col);
+	return true;
 }

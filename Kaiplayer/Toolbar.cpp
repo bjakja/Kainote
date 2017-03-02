@@ -72,7 +72,7 @@ void KaiToolbar::InitToolbar()
 	for(size_t i=0; i<IDS.size();i++)
 	{
 		MenuItem *item=mb->FindItem(IDS[i]);
-		if(!item){wxLogStatus(_("Nie można znaleźć elementu o id %i"), IDS[i]);continue;}
+		if(!item){wxLogStatus(_("Nie można znaleźć elementu o idzie %i"), IDS[i]);continue;}
 		wxString desc=item->GetLabelText();
 		AddItem(IDS[i],desc,item->icon,item->IsEnabled(),(item->GetSubMenu()!=NULL)? 1 : 0);
 	}
@@ -220,7 +220,7 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 		if(pos+tools[i]->size>maxx){pos1+=iconsize;pos=4;}
 		if(i==sel){
 			tdc.SetPen(wxPen((Clicked)?Options.GetColour(ButtonBorderPushed) : Options.GetColour(ButtonBorderHover)));
-			tdc.SetBrush(wxBrush((Clicked)?Options.GetColour(ButtonBackgroundHover) : Options.GetColour(ButtonBackgroundPushed)));
+			tdc.SetBrush(wxBrush((Clicked)?Options.GetColour(ButtonBackgroundPushed) : Options.GetColour(ButtonBackgroundHover)));
 			tdc.DrawRoundedRectangle((vertical)?pos1+2 :pos-2, (vertical)?pos-2 : pos1+2,iconsize-4,tools[i]->size-4,1.1);
 		}
 		if(tools[i]->type<2){

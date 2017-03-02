@@ -604,7 +604,8 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 		Options.GetColour(WindowBackgroundInactive)));
 	dc.SetPen(wxPen((style & wxBORDER_NONE)? bg : 
 		(HasFocus())? Options.GetColour(TextFieldBorderOnFocus) : 
-		(enabled)? Options.GetColour(TextFieldBorder) : Options.GetColour(ButtonBorderInactive)));
+		(enabled)? Options.GetColour(TextFieldBorder) : 
+		Options.GetColour((style & wxBORDER_NONE)? WindowBackgroundInactive : ButtonBorderInactive)));
 	dc.DrawRectangle(0,0,w,h);
 	if(wraps.size()<2 || positioning.size()<2){return;}
 	wxColour cselection = (HasFocus())? Options.GetColour(TextFieldSelection) : 

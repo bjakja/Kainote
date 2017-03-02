@@ -51,7 +51,7 @@ public:
 	void SetAspectRatio(float AR);
 	void SetScaleAndZoom();
 	VideoSlider* vslider;
-	wxPanel* panel;
+	wxWindow* panel;
 	bool seekfiles;
 	bool eater;
 	bool fullarrow;
@@ -83,6 +83,7 @@ public:
 	void ReleaseMouse(){if(isFullscreen && TD){TD->ReleaseMouse();}else{wxWindow::ReleaseMouse();}}
 	bool HasCapture(){if(isFullscreen && TD){return TD->HasCapture();}else{return wxWindow::HasCapture();}}
 	bool SetCursor(const wxCursor &cursor){if(isFullscreen && TD){return TD->SetCursor(cursor);}else{return wxWindow::SetCursor(cursor);}};
+	bool SetBackgroundColour(const wxColour &col);
 	float wspx,wspy;
 	wxSize lastSize;
 	Fullscreen *TD;

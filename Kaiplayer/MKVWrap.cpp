@@ -51,6 +51,7 @@
 #include "KaraokeSplitting.h"
 #include "OpenNWrite.h"
 #include "KaiMessageBox.h"
+#include "Stylelistbox.h"
 
 ////////////
 // Instance
@@ -176,13 +177,14 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 
 	// Pick a track
 	else {
-		int choice = wxGetSingleChoiceIndex(_("Wybierz ścieżkę do wczytania:"), _("Znaleziono kilka ścieżek z napisami"), tracksNames);
-		if (choice == -1) {
+		KaiListBox tracks(target->GetParent(), tracksNames, _("Wybierz ścieżkę napisów"),true);
+		//int choice = wxGetSingleChoiceIndex(_("Wybierz ścieżkę do wczytania:"), _("Znaleziono kilka ścieżek z napisami"), tracksNames);
+		if (tracks.ShowModal() != wxID_OK) {
 			Close();
 			KaiMessageBox(_("Anulowano."));
 			return false;
 		}
-		trackToRead = tracksFound[choice];
+		trackToRead = tracksFound[tracks.GetIntSelection()];
 	}
 
 	// Picked track

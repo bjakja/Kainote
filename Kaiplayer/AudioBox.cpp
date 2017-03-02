@@ -46,10 +46,10 @@
 // Constructor
 //
 AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
-	wxPanel(parent,-1,wxDefaultPosition,wxSize(0,0),wxBORDER_SIMPLE)
+	wxPanel(parent,-1,wxDefaultPosition,wxSize(0,0)/*,wxBORDER_SIMPLE*/)
 {
-	SetForegroundColour(Options.GetColour(WindowText));
-	SetBackgroundColour(Options.GetColour(WindowBackground));
+	//SetForegroundColour(Options.GetColour(WindowText));
+	//SetBackgroundColour(Options.GetColour(WindowBackground));
 	// Setup
 	loaded = false;
 	arrows = holding = false;
@@ -105,7 +105,7 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	VertVol->Add(VolumeBar,1,wxEXPAND,0);
 	wxSizer *VertVolArea = new wxBoxSizer(wxVERTICAL);
 	VertVolArea->Add(VertVol,1,wxEXPAND,0);
-	VertVolArea->Add(VerticalLink,0,wxEXPAND,0);
+	VertVolArea->Add(VerticalLink,0,wxEXPAND|wxBOTTOM,2);
 
 	// Top sizer
 	TopSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -156,7 +156,7 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	temp->SetTwoHotkeys();
 	temp->SetToolTip(_("Zatwierdź zmiany"));
 	ButtonSizer->Add(temp,0,wxRIGHT,2);
-	temp = new MappedButton(this,AudioGoto,_("Przejdź to zaznaczenia"),wxBITMAP_PNG("button_audio_goto"),wxDefaultPosition,wxSize(26,26), 'A');
+	temp = new MappedButton(this,AudioGoto,_("Przejdź do zaznaczenia"),wxBITMAP_PNG("button_audio_goto"),wxDefaultPosition,wxSize(26,26), 'A');
 	ButtonSizer->Add(temp,0,wxRIGHT,8);
 
 	KaraSwitch = new ToggleButton(this,Audio_Button_Karaoke,"",_("Włącz / Wyłącz tworzenie karaoke"), wxDefaultPosition,wxSize(26,26));

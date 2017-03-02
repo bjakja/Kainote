@@ -48,7 +48,6 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 
 	panel->SetFont(thisFont);
 	Main=new wxBoxSizer(wxVERTICAL);
-	//SetBackgroundColour("#999999");
 	
 	//ramka czasu
 	KaiStaticBoxSizer *timesizer=new KaiStaticBoxSizer(wxVERTICAL,panel,_("Czas"));
@@ -121,7 +120,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 
 	KaiStaticBoxSizer *cesizer=new KaiStaticBoxSizer(wxVERTICAL,panel,_("Korekcja czasów końcowych"));
 	choices.clear();
-	choices.Add(_("Zostaw bez zmian"));
+	choices.Add(_("Pozostaw bez zmian"));
 	choices.Add(_("Skoryguj nachodzące czasy"));
 	choices.Add(_("Nowe czasy"));
 	CorTime = new KaiChoice(panel, -1, wxDefaultPosition, wxSize(130,-1), choices, KAI_SCROLL_ON_FOCUS);
@@ -130,12 +129,13 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	coll = new MappedButton(panel,22999,_("Opcje dodatkowe"),"",wxDefaultPosition, wxSize(-1,-1), 0);
 	LeadIn=NULL;
 	
-	Main->Add(timesizer,0,wxEXPAND|wxRIGHT|wxTOP|wxLEFT,4);
-	Main->Add(VAtiming,0,wxEXPAND|wxRIGHT|wxTOP|wxLEFT,4);
-	Main->Add(linesizer,0,wxEXPAND|wxLEFT|wxTOP|wxRIGHT,4);
-	Main->Add(timessizer,0,wxEXPAND|wxALL,4);
-	Main->Add(cesizer,0,wxEXPAND|wxLEFT|wxBOTTOM|wxRIGHT,4);
-	Main->Add(coll,0,wxEXPAND|wxLEFT|wxBOTTOM|wxRIGHT,4);
+	Main->Add(timesizer,0,wxEXPAND|wxALL,2);
+	Main->Add(VAtiming,0,wxEXPAND|wxALL,2);
+	Main->Add(linesizer,0,wxEXPAND|wxALL,2);
+	Main->Add(timessizer,0,wxEXPAND|wxALL,2);
+	Main->Add(cesizer,0,wxEXPAND|wxALL,2);
+	Main->AddSpacer(4);
+	Main->Add(coll,0,wxEXPAND|wxLEFT|wxBOTTOM|wxRIGHT,6);
 	
 	
 
@@ -301,7 +301,7 @@ void CTwindow::DoTooltips()
 	WhichLines->SetToolTip(_("Wybór linijek do przesunięcia"));
 	WhichTimes->SetToolTip(_("Wybór czasów do przesunięcia"));
 	AddStyles->SetToolTip(_("Wybierz style z listy"));
-	Stylestext->SetToolTip(_("Przesuń według następujących styli (oddzielone średnikiem)"));
+	Stylestext->SetToolTip(_("Przesuń według następujących stylów (oddzielone średnikiem)"));
 	CorTime->SetToolTip(_("Korekcja czasów końcowych, gdy są niewłaściwe albo nachodzą na siebie"));
 	
 }
@@ -438,9 +438,9 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		BeforeEnd->SetToolTip(_("Maksymalne przesunięcie do klatki kluczowej\nprzed czasem końcowym w milisekundach"));
 		AfterEnd->SetToolTip(_("Maksymalne przesunięcie do klatki kluczowej\npo czasie końcowym w milisekundach"));
 
-		Main->Add((wxSizer*)liosizer,0,wxEXPAND|wxLEFT|wxBOTTOM|wxRIGHT,4);
-		Main->Add((wxSizer*)consizer,0,wxEXPAND|wxLEFT|wxBOTTOM|wxRIGHT,4);
-		Main->Add((wxSizer*)snapsizer,0,wxEXPAND|wxLEFT|wxBOTTOM|wxRIGHT,4);
+		Main->Add((wxSizer*)liosizer,0,wxEXPAND|wxLEFT|wxRIGHT|wxBOTTOM,2);
+		Main->Add((wxSizer*)consizer,0,wxEXPAND|wxALL,2);
+		Main->Add((wxSizer*)snapsizer,0,wxEXPAND|wxALL,2);
 		panel->Fit();
 		if(event.GetId()==22999){
 			Contents(false);

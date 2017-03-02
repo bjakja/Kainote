@@ -27,8 +27,8 @@
 #include "Styles.h"
 #include <wx/utils.h> 
 #include "EnumFactory.h"
+//#include "kainoteApp.h"
 #undef wxBITMAP_PNG
-
 
 
 #ifndef MIN
@@ -198,6 +198,8 @@ DECLARE_ENUM(CONFIG,CFG)
 	CR(GridCollisions,)\
 	CR(GridLines,)\
 	CR(GridActiveLine,)\
+	CR(GridHeader,)\
+	CR(GridHeaderText,)\
 	CR(GridLabelNormal,)\
 	CR(GridLabelModified,)\
 	CR(GridLabelSaved,)\
@@ -247,9 +249,11 @@ DECLARE_ENUM(CONFIG,CFG)
 	CR(ButtonBackground,)\
 	CR(ButtonBackgroundHover,)\
 	CR(ButtonBackgroundPushed,)\
+	CR(ButtonBackgroundOnFocus,)\
 	CR(ButtonBorder,)\
 	CR(ButtonBorderHover,)\
 	CR(ButtonBorderPushed,)\
+	CR(ButtonBorderOnFocus,)\
 	CR(ButtonBorderInactive,)\
 	CR(TogglebuttonBackgroundToggled,)\
 	CR(TogglebuttonBorderToggled,)\
@@ -287,6 +291,8 @@ DECLARE_ENUM(CONFIG,CFG)
 	CR(SliderPathBackground,)\
 	CR(SliderPathBorder,)\
 	CR(SliderBorder,)\
+	CR(SliderBorderHover,)\
+	CR(SliderBorderPushed,)\
 	CR(SliderBackground,)\
 	CR(SliderBackgroundHover,)\
 	CR(SliderBackgroundPushed,)\
@@ -342,7 +348,7 @@ class config
     int LoadOptions();
 	void LoadColors(const wxString &themeName="");
 	void LoadDefaultConfig();
-	void LoadDefaultColors();
+	void LoadDefaultColors(bool dark=true);
 	void LoadDefaultAudioConfig();
 	bool LoadAudioOpts();
 	void SaveAudioOpts();

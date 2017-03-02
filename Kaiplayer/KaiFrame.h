@@ -28,6 +28,11 @@ public:
 	KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title="", const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
 	virtual ~KaiFrame();
 	void SetLabel(const wxString &text);
+	virtual void SetStatusText(const wxString &label, int field){};
+	//void GetClientSize(int *x, int *y);
+	//wxSize GetClientSize();
+	void SetClientSize(const wxSize &size);
+	void SetClientSize(int x, int y);
 
 private:
 	void OnPaint(wxPaintEvent &evt);

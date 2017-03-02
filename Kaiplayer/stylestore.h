@@ -63,6 +63,8 @@ class stylestore: public KaiDialog
 		void DoTooltips();
 		void LoadAssStyles();
 		void ReloadFonts();
+		bool SetForegroundColour(const wxColour &col);
+		bool SetBackgroundColour(const wxColour &col);
 
 	private:
 

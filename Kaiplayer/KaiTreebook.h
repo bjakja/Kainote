@@ -46,6 +46,7 @@ public:
 	int GetSelection();
 	void ChangeSelection(int sel);
 	void RefreshTree();
+	void SetColours(const wxColour &bgcol, const wxColour &fgcol);
 private:
 	void OnKeyPress(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);

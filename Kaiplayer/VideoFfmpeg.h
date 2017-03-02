@@ -57,6 +57,7 @@ public:
 	FFMS_VideoSource *videosource;
 	FFMS_AudioSource *audiosource;
 	FFMS_ErrorInfo errinfo;
+	FFMS_Index *index;
 	const FFMS_Frame *fframe;
 	
 	bool DiskCache();
@@ -66,6 +67,7 @@ public:
 	void SetColorSpace(const wxString& matrix);
 	bool disccache;
 	volatile bool success;
+	volatile bool isBusy;
 	int width;
 	int height;
 	int arwidth;

@@ -19,6 +19,7 @@
 #include "Toolbar.h"
 #include "KaiScrollbar.h"
 #include "wx/msw/private.h"
+#include "KainoteApp.h"
 
 static wxFont font = wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma");
 const static int height = 22;
@@ -400,6 +401,8 @@ MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos
 
 MenuDialog::~MenuDialog()
 {
+	kainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
+	frame->SetStatusText("",0);
 	if(loop){
 		loop -> Exit(0);
 	}
@@ -469,7 +472,8 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 			subMenuIsShown=false;
 		}
 		if(sel!=submenuToHide){sel=-1; Refresh(false);}
-		
+		kainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
+		frame->SetStatusText("",0);
 		return;
 	}else if(evt.Entering()){
 		if(submenuShown != -1 ){
@@ -503,7 +507,8 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 		
 		Refresh(false);
 		if(item->help != ""){
-			//wxLogStatus(item->help);
+			kainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
+			frame->SetStatusText(item->help,0);
 		}
 	}
 	

@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+ï»¿//  Copyright (c) 2016, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -116,19 +116,19 @@ void RotationXY::DrawVisual(int time)
 	CreateVERTEX(&vertices[178],addx,0.f,0xFFBB0000); //linia x
 	CreateVERTEX(&vertices[179],0.f,0.f,0xFFBB0000); //linia z
 	CreateVERTEX(&vertices[180],0.f,0.f,0xFFBB0000,9.f);
-	CreateVERTEX(&vertices[181],0.f,add1y,0xFFBB0000); //strza³ka y
+	CreateVERTEX(&vertices[181],0.f,add1y,0xFFBB0000); //strzaÅ‚ka y
 	CreateVERTEX(&vertices[182],0.f,addy,0xFFBB0000,-0.6f);
 	CreateVERTEX(&vertices[183],-0.6f,addy,0xFFBB0000);
 	CreateVERTEX(&vertices[184],0.f,addy,0xFFBB0000, 0.6f);
 	CreateVERTEX(&vertices[185],0.6f,addy,0xFFBB0000);
 	CreateVERTEX(&vertices[186],0.f,addy,0xFFBB0000, -0.6f);
-	CreateVERTEX(&vertices[187],add1x,0.f,0xFFBB0000);//strza³ka x
+	CreateVERTEX(&vertices[187],add1x,0.f,0xFFBB0000);//strzaÅ‚ka x
 	CreateVERTEX(&vertices[188],addx,0.f,0xFFBB0000, -0.6f);
 	CreateVERTEX(&vertices[189],addx,-0.6f,0xFFBB0000);
 	CreateVERTEX(&vertices[190],addx,0.f,0xFFBB0000, 0.6f);
 	CreateVERTEX(&vertices[191],addx,0.6f,0xFFBB0000, 0.f);
 	CreateVERTEX(&vertices[192],addx,0.f,0xFFBB0000, -0.6f);
-	CreateVERTEX(&vertices[193],0.f,0.f,0xFFBB0000,10.f); //strza³ka z
+	CreateVERTEX(&vertices[193],0.f,0.f,0xFFBB0000,10.f); //strzaÅ‚ka z
 	CreateVERTEX(&vertices[194],-0.6f,0.f,0xFFBB0000,9.f);
 	CreateVERTEX(&vertices[195],0.f,0.6f,0xFFBB0000,9.f);
 	CreateVERTEX(&vertices[196],0.6f,0.f,0xFFBB0000,9.f);
@@ -145,9 +145,9 @@ void RotationXY::DrawVisual(int time)
 	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, s.x, s.y, 0, 0.0f, 1.0f);
 	D3DXMatrixIdentity(&matIdentity);
 
-	HRN(device->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie mo¿na ustawiæ matrixa projection"));
-	HRN(device->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie mo¿na ustawiæ matrixa world"));
-	HRN(device->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie mo¿na ustawiæ matrixa view"));
+	HRN(device->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie moÅ¼na ustawiÄ‡ macierzy projekcji"));
+	HRN(device->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie moÅ¼na ustawiÄ‡ macierzy Å›wiata"));
+	HRN(device->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie moÅ¼na ustawiÄ‡ macierzy widoku"));
 	D3DXVECTOR2 v2[4];
 	v2[0].x=org.x-10.0f;
 	v2[0].y=org.y;
@@ -181,8 +181,8 @@ wxString RotationXY::GetVisual()
 			
 	}
 	if(type!=0){
-		float angy = (to.y - firstmove.y) - oldAngle.y;// zmieniony plus na minus by nie trzeba by³o 
-		angle.y = fmodf((-angy) + 360.f, 360.f);//przetrzymywaæ oldAngle i angle w minusach.
+		float angy = (to.y - firstmove.y) - oldAngle.y;// zmieniony plus na minus by nie trzeba byÅ‚o 
+		angle.y = fmodf((-angy) + 360.f, 360.f);//przetrzymywaÄ‡ oldAngle i angle w minusach.
 		result += "\\frx" + getfloat(angle.y);
 			
 	}
@@ -228,7 +228,7 @@ void RotationXY::OnMouseEvent(wxMouseEvent &evt)
 		if(isOrg){
 			org.x = x+diffs.x;
 			org.y = y+diffs.y;
-			SetVisual(GetVisual(),true,100);//type tak¿e ma liczbê 100 by by³o rozpoznawalne.
+			SetVisual(GetVisual(),true,100);//type takÅ¼e ma liczbÄ™ 100 by byÅ‚o rozpoznawalne.
 			return;
 		}
 		to.x=x;to.y=y;

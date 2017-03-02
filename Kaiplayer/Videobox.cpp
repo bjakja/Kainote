@@ -113,7 +113,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	,isOnAnotherMonitor(false)
 {
 
-	panel=new wxPanel(this,-1,wxPoint(0,size.y-panelHeight),wxSize(size.x,panelHeight));
+	panel=new wxWindow(this,-1,wxPoint(0,size.y-panelHeight),wxSize(size.x,panelHeight));
 	panel->SetBackgroundColour(Options.GetColour(WindowBackground));
 
 	vslider= new VideoSlider(panel, ID_SLIDER,wxPoint(0,1),wxSize(size.x,14));
@@ -128,6 +128,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	mstimes=new KaiTextCtrl(panel,-1,"",wxPoint(180,19),wxSize(360,-1),wxTE_READONLY);
 	mstimes->SetWindowStyle(wxBORDER_NONE);
 	mstimes->SetCursor(wxCURSOR_ARROW);
+	mstimes->SetBackgroundColour(Options.GetColour(WindowBackground));
 
 	vToolbar = new VideoToolbar(panel,wxPoint(0, panelHeight - 22));
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnChangeVisual, this, ID_VIDEO_TOOLBAR_EVENT);
@@ -145,11 +146,8 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	vtime.SetOwner(this,idvtime);
 	idletime.SetOwner(this,ID_IDLE);
 	
-	//panel->SetFocusIgnoringChildren();
-	Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
-		panel->SetBackgroundColour(Options.GetColour(WindowBackground));
-	});
 }
+
 VideoCtrl::~VideoCtrl()
 {
 }
@@ -243,6 +241,10 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 				//GetClientSize(&ww,&wh);
 				//wh-=Kai->Tabs->GetHeight();
 				//wxLogStatus("wh %i",wh);
+				//int sizex,sizey;
+				//GetClientSize(&sizex,&sizey);
+				//sizex-=iconsize;
+				//sizey -=(panelHeight+ Kai->Tabs->GetHeight() + Kai->Menubar->GetSize().y + Kai->StatusBar->GetSize().y);
 				CalcSize(&sx,&sy,0,0,true,true);
 				Kai->SetClientSize(sx+iconsize, sy+panelHeight + Kai->Tabs->GetHeight() + Kai->Menubar->GetSize().y + Kai->StatusBar->GetSize().y);
 				Kai->GetTab()->BoxSizer1->Layout();
@@ -1249,6 +1251,14 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 		if(!hasArrow){SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 	}
 
+}
+
+bool VideoCtrl::SetBackgroundColour(const wxColour &col)
+{
+	panel->SetBackgroundColour(col);
+	mstimes->SetBackgroundColour(col);
+	//vToolbar->Refresh(false);
+	return true;
 }
 
 BEGIN_EVENT_TABLE(VideoCtrl,wxWindow)

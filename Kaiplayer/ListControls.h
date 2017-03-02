@@ -109,6 +109,7 @@ private:
 	void SelectChoice(int sel, bool select = true, bool sendEvent=true);
 	inline void CalcMaxWidth(wxSize *result, bool changex, bool changey);
 	void OnArrow(wxCommandEvent &evt);
+	void OnActivate(wxFocusEvent &evt);
 	bool enter;
 	bool clicked;
 	wxArrayString *list;

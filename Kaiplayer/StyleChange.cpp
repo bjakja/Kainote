@@ -35,8 +35,8 @@ wxColour Blackorwhite(wxColour kol)
 ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 	: wxWindow(parent,id,pos,size)
 {
-	SetForegroundColour(Options.GetColour(WindowText));
-	SetBackgroundColour(Options.GetColour(WindowBackground));
+	//SetForegroundColour(Options.GetColour(WindowText));
+	//SetBackgroundColour(Options.GetColour(WindowBackground));
 	Preview=NULL;
 	tab=NULL;
 	block=true;
@@ -200,13 +200,13 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	styleprev->Add(Preview,1,wxEXPAND|wxALL,2);
 
 	wxBoxSizer *buttons=new wxBoxSizer(wxHORIZONTAL);
-	btnOk = new MappedButton(this, ID_BOK, "Ok", "", wxDefaultPosition, wxSize(50,-1));
+	btnOk = new MappedButton(this, ID_BOK, "Ok"/*, "", wxDefaultPosition, wxSize(50,-1)*/);
 	btnCancel = new MappedButton(this, ID_BCANCEL, _("Anuluj"));
 	btnCommit = new MappedButton(this, ID_BONVID, _("Zastosuj"));
 	btnFullscreen = new MappedButton(this, ID_BONFULL, _("Zobacz na pełnym ekranie"));
-	buttons->Add(btnOk,0,wxEXPAND|wxALL,2);
-	buttons->Add(btnCommit,0,wxEXPAND|wxALL,2);
-	buttons->Add(btnCancel,0,wxEXPAND|wxALL,2);
+	buttons->Add(btnOk,1,wxEXPAND|wxALL,2);
+	buttons->Add(btnCommit,1,wxEXPAND|wxALL,2);
+	buttons->Add(btnCancel,1,wxEXPAND|wxALL,2);
 	buttons->Add(btnFullscreen,0,wxEXPAND|wxALL,2);
 
 	//Main sizer
@@ -217,7 +217,7 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	Main->Add(sizer2,0,wxEXPAND|wxALL,2);
 	Main->Add(styleenc,0,wxEXPAND|wxALL,2);
 	Main->Add(styleprev,0,wxEXPAND|wxALL,2);
-	Main->Add(buttons,0,wxEXPAND|wxALL,2);
+	Main->Add(buttons,1,wxEXPAND|wxBOTTOM|wxLEFT|wxRIGHT,4);
 	
 	SetSizerAndFit(Main);
 

@@ -67,7 +67,7 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 					 ,isActive(true)
 					 ,style(_style)
 {
-	SetExtraStyle(GetExtraStyle() | wxTOPLEVEL_EX_DIALOG | wxWS_EX_BLOCK_EVENTS | wxCLIP_CHILDREN);
+	SetExtraStyle(GetExtraStyle() | wxTOPLEVEL_EX_DIALOG | wxWS_EX_BLOCK_EVENTS);// | wxCLIP_CHILDREN
 	Create(parent,id, title, pos, size, wxBORDER_NONE|wxTAB_TRAVERSAL);
 	if ( !m_hasFont )
 		SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
@@ -81,12 +81,10 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	Bind(wxEVT_LEFT_DCLICK, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_ACTIVATE, &KaiDialog::OnActivate, this);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(escapeId);evt.Skip();},wxID_CANCEL);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(enterId);evt.Skip();},wxID_OK);
-	Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
-		SetForegroundColour(Options.GetColour(WindowText));
-		SetBackgroundColour(Options.GetColour(WindowBackground));
-	});
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEscape, this, escapeId);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter, this, enterId);
+	wxWindow *win = FindWindow(enterId);
+	if(win){win->SetFocus();}
 }
 
 KaiDialog::~KaiDialog()
@@ -280,6 +278,30 @@ void KaiDialog::OnActivate(wxActivateEvent &evt)
 	wxRect rc3(0,h-border,w,border);
 	Refresh(false, &rc3);
 	Update();
+}
+
+void KaiDialog::SetEnterId(int _enterId)
+{
+	Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter, this, enterId);
+	enterId = _enterId;
+	//Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter,enterId);
+	wxWindow *win = FindWindow(enterId);
+	if(win){win->SetFocus();}
+}
+void KaiDialog::SetEscapeId(int _escapeId)
+{
+	Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEscape, this, escapeId);
+	escapeId = _escapeId;
+	//Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEscape,escapeId);
+}
+
+void KaiDialog::OnEnter(wxCommandEvent &evt)
+{
+	EndModal(enterId);evt.Skip();
+}
+void KaiDialog::OnEscape(wxCommandEvent &evt)
+{
+	EndModal(escapeId);evt.Skip();
 }
 
 WXLRESULT KaiDialog::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)

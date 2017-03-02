@@ -79,6 +79,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 		SendEvent();
 	});
 	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
+	Bind(wxEVT_KILL_FOCUS,[=](wxFocusEvent &evt){Refresh(false);});
 	wxAcceleratorEntry centries[1];
 	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
 	wxAcceleratorTable caccel(1, centries);
@@ -126,6 +127,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 		SendEvent();
 	});
 	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
+	Bind(wxEVT_KILL_FOCUS,[=](wxFocusEvent &evt){Refresh(false);});
 	wxAcceleratorEntry centries[1];
 	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
 	wxAcceleratorTable caccel(1, centries);
@@ -167,6 +169,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 		SendEvent();
 	});
 	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
+	Bind(wxEVT_KILL_FOCUS,[=](wxFocusEvent &evt){Refresh(false);});
 	wxAcceleratorEntry centries[1];
 	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
 	wxAcceleratorTable caccel(1, centries);
@@ -230,10 +233,12 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	bool enabled = IsThisEnabled();
 	tdc.SetBrush(wxBrush((enter && !clicked)? Options.GetColour(ButtonBackgroundHover) :
 		(clicked)? Options.GetColour(ButtonBackgroundPushed) : 
+		(HasFocus())? Options.GetColour(ButtonBackgroundOnFocus) : 
 		(enabled)? Options.GetColour(ButtonBackground) : 
 		Options.GetColour(WindowBackgroundInactive)));
 	tdc.SetPen(wxPen((enter && !clicked)? Options.GetColour(ButtonBorderHover) : 
-		(clicked)? Options.GetColour(ButtonBorderPushed) : 
+		(clicked)? Options.GetColour(ButtonBorderPushed) :
+		(HasFocus())? Options.GetColour(ButtonBorderOnFocus) : 
 		(enabled)? Options.GetColour(ButtonBorder) : 
 		Options.GetColour(ButtonBorderInactive)));
 	tdc.DrawRectangle(0,0,w,h);

@@ -22,12 +22,8 @@
 
 #include <Dvdmedia.h>
 #include "Vsfilterapi.h"
+#include <thread>
 
-
-/*const int FRACTION_SCALE = 1<<16;
-const int YUV_MIN = 16;
-const int cy = int(255/219.0*FRACTION_SCALE+0.5);
-const int cuv = int(255/224.0*FRACTION_SCALE+0.5);*/
 #if byvertices
 struct CUSTOMVERTEX
 {
@@ -176,7 +172,7 @@ bool VideoRend::InitDX(bool reset)
 	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, windowRect.right, windowRect.bottom, 0, 0.0f, 1.0f);
 	D3DXMatrixIdentity(&matIdentity);
 
-	HR(d3device->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie można ustawić macierzy porojekcji"));
+	HR(d3device->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie można ustawić macierzy projekcji"));
 	HR(d3device->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie można ustawić macierzy świata"));
 	HR(d3device->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie można ustawić macierzy widoku"));
 
@@ -472,7 +468,7 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 		if(copy){byte *cpy = (byte*) datas; memcpy(cpy,fdata,vheight*pitch);}
 	}
 	else{
-		wxLogStatus(_("Nie ma wskaźnika bufora klatki"));return false;
+		wxLogStatus(_("Brak bufora klatki"));return false;
 	}
 
 
@@ -791,10 +787,6 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		playend=(IsDshow)? 0 : GetDuration();
 		seek=true; vplayer->SetPosition(time);
 	}else{
-		//auto oldvstate = vstate;
-		//vstate=Paused;
-		//if(oldvstate==Playing){VFF->WaitForPause();}
-		//int decr= (vstate==Playing)? 1 : 0;
 		lastframe = VFF->GetFramefromMS(_time,(time>_time)? 0 : lastframe); //- decr;
 		if(!starttime){lastframe--;if(VFF->Timecodes[lastframe]>=_time){lastframe--;}}
 		time = VFF->Timecodes[lastframe];
@@ -815,21 +807,24 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 				//pan->Edit->OnVideo=false;
 			}
 		}	
-		if(/*old*/vstate==Playing){
+		if(vstate==Playing){
 			if(player){
 				player->player->SetCurrentPosition(player->GetSampleAtMS(time));
 			}
 		}
 		else{
 			if(player){player->UpdateImage(true,true);}
-			Render(true,false);
-			//VFF->Refresh(false);
+			if(!VFF->isBusy){
+				std::thread([=](){Render();}).detach();
+			}
 		}
 	}
 }
 
 bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 {
+	//delete textsubs;
+	//return true;
 	wxMutexLocker lock(mutexRender);
 	if (instance) csri_close(instance);
 	instance = NULL;
@@ -1373,16 +1368,18 @@ int VideoRend::GetVolume()
 void VideoRend::MovePos(int cpos)
 {	
 	if(!IsDshow){
-		lastframe=MID(0,lastframe+cpos,VFF->NumFrames-1);
-		time = VFF->Timecodes[lastframe];
-		TabPanel* pan=(TabPanel*)GetParent();
-		if(VisEdit){
-			wxString *txt=pan->Grid1->SaveText();
-			OpenSubs(txt);VisEdit=false;
-		}else if(pan->Edit->OnVideo){OpenSubs(pan->Grid1->SaveText());pan->Edit->OnVideo=false;}
-		if(player){player->UpdateImage(true,true);}
-		//Render(true);
-		//VFF->Refresh(false);
+		if(!VFF->isBusy){
+			lastframe=MID(0,lastframe+cpos,VFF->NumFrames-1);
+			time = VFF->Timecodes[lastframe];
+			TabPanel* pan=(TabPanel*)GetParent();
+			if(VisEdit){
+				wxString *txt=pan->Grid1->SaveText();
+				OpenSubs(txt);VisEdit=false;
+			}else if(pan->Edit->OnVideo){OpenSubs(pan->Grid1->SaveText());pan->Edit->OnVideo=false;}
+			if(player){player->UpdateImage(true,true);}
+			//std::thread([=](){Render();}).detach();
+			Render(true,false);
+		}
 	}
 	else{
 		time+=((avtpf)*cpos);
@@ -1390,7 +1387,7 @@ void VideoRend::MovePos(int cpos)
 	}
 	VideoCtrl *vb=(VideoCtrl*)this;
 	vb->displaytime();
-	if(!IsDshow){Render();}
+	
 }
 
 

@@ -192,7 +192,9 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 	}
 	else
 	{
-		if(opts->GetSelection()==3 && ( Notebook::GetTab()->VideoPath=="" || Notebook::GetTab()->SubsPath=="" )){KaiMessageBox(_("Brak zaczytanego wideo bądź napisów"));return;}
+		if(opts->GetSelection()==3 && ( Notebook::GetTab()->VideoPath=="" || Notebook::GetTab()->SubsPath=="" )){
+			KaiMessageBox(_("Brak wczytanego wideo bądź napisów"));return;
+		}
 		if(path->GetValue()=="" && !subsdir->GetValue() ){
 			KaiMessageBox(_("Wybierz folder, gdzie mają zostać skopiowane czcionki"));
 			EnableControls();
@@ -213,7 +215,7 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 		if(subsdir->GetValue()){
 			wxString rest;
 			copypath=Notebook::GetTab()->SubsPath.BeforeLast('\\',&rest);
-			copypath<<_("\\Czcionki\\");
+			copypath<<"\\Czcionki\\";
 			if(opts->GetSelection()==2){copypath<<rest.BeforeLast('.')<<".zip";}
 		}else{
 			copypath=path->GetValue();
@@ -397,7 +399,7 @@ void FontCollector::CopyFonts()
 		HANDLE h = FindFirstFileW(seekpath.wc_str(), &data);
 		if (h == INVALID_HANDLE_VALUE)
 		{
-			SendMessageD(_("Windows nie chce zwrócić właściwości o czcionkach z kopiowania czcionek nici.\n"),fcd->warning);
+			SendMessageD(_("Nie można pobrać rozmiarów i nazw plików czcionek\nkopiowanie zostaje przerwane.\n"),fcd->warning);
 			return;
 		}
 		fontSizes.insert(std::pair<long, wxString>(data.nFileSizeLow, wxString(data.cFileName)));
@@ -422,25 +424,22 @@ void FontCollector::CopyFonts()
 
 	for(auto cur=notFindFontsLog.begin(); cur!=notFindFontsLog.end(); cur++){
 		wxString list=cur->second;
-		//wxLogStatus(list);
 		wxStringTokenizer token(list,",", wxTOKEN_STRTOK);
-		wxString result= _("Nie znaleziono czcionki \"") + cur->first + "\".\r\n";
+		wxString result= _("Nie znaleziono czcionki \"") + cur->first + "\".\n";
 		ffound.push_back(false);
 		bool first=true;
-		//wxLogStatus(cur->first+" "+cur->second);
 		while(token.HasMoreTokens()){
 			wxString tkn=token.GetNextToken();
 			if(tkn.IsNumber()){
-				//wxLogStatus("Token %i %i",token.GetPosition(),tkn.Len());
-				result+= _("Użytej w linijkach: ") + list.Mid(token.GetPosition() - tkn.Len() - 1) + "\r\n";
+				result+= _("Użytej w linijkach: ") + list.Mid(token.GetPosition() - tkn.Len() - 1) + "\n";
 				break;
 			}else{
-				if(first){result += _("Użytej w stylach:\r\n"); first=false;}
-				result+=" - "+tkn+"\r\n";
+				if(first){result += _("Użytej w stylach:\n"); first=false;}
+				result+=" - "+tkn+"\n";
 			}
 		}
 
-		SendMessageD("\r\n"+result+"\r\n", fcd->warning);
+		SendMessageD("\n"+result+"\n", fcd->warning);
 	}
 	int found=0;
 	int nfound=0;

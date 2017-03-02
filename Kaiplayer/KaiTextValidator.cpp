@@ -126,7 +126,7 @@ bool KaiTextValidator::Validate(wxWindow *parent)
     if ( !errormsg.empty() )
     {
         m_validatorWindow->SetFocus();
-        KaiMessageBox(errormsg, _("B³¹d sprawdzania tekstu"),
+        KaiMessageBox(errormsg, _("Text check Error"),
                      wxOK | wxICON_EXCLAMATION, parent);
 
         return false;

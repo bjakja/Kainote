@@ -123,6 +123,7 @@ void Hotkeys::FillTable()
 void Hotkeys::LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio)
 {
 	if(!Audio){
+		_hkeys[idAndType(Quit,'G')] = hdata(_("Wyjście"),"Alt-F4");
 		_hkeys[idAndType(ChangeTime,'G')] = hdata(_("Okno zmiany czasów"),"Ctrl-I");
 		_hkeys[idAndType(ConvertToASS,'G')] = hdata(_("Konwertuj do ASS"), "F9");
 		_hkeys[idAndType(ConvertToSRT,'G')] = hdata(_("Konwertuj do SRT"), "F8");
@@ -336,7 +337,8 @@ wxAcceleratorEntry Hotkeys::GetHKey(const idAndType itype, const hdata *data)
 		}
 	}
 
-	if(key==0 && akey.Len()<2){key=static_cast<int>(akey[0]);}else if(key==0){wxLogStatus(_("Key \"%s\" nie jest prawidłowy"),akey);}
+	if(key==0 && akey.Len()<2){key=static_cast<int>(akey[0]);}
+	else if(key==0){wxLogStatus(_("Skrót \"%s\" nie jest prawidłowy"),akey);}
 	accelkey.Set(modif,key,(itype.id<1000)? itype.id+1000 : itype.id);
 
 	return accelkey;
@@ -365,7 +367,7 @@ void Hotkeys::ResetKey(const idAndType *itype, int id, char type)
 	if(it!= tmphkeys.end())
 	{
 		hkeys[tmpitype] = it->second;
-	}else{wxLogStatus(_("Nie można przywrócić skrótu, bo nie ma domyślnego ustawienia o idzie %i"), id);}
+	}else{wxLogStatus(_("Nie można przywrócić skrótu, bo nie ma domyślnego ustawienia o id %i"), id);}
 }
 
 int Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow, bool showWindowSelection)

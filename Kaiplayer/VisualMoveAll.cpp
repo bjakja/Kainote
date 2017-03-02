@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+ï»¿//  Copyright (c) 2016, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -212,9 +212,9 @@ void MoveAll::ChangeInLines(bool all)
 			size_t startMatch=0, lenMatch=0;
 			if(re.Matches(txt)){
 				wxString visual;
-				//wxString tag=re.GetMatch(txt, 1); tag te¿ nigdzie nie jest potrzebny, bo wycinamy tylko jego wartoœæ.
+				//wxString tag=re.GetMatch(txt, 1); tag teÅ¼ nigdzie nie jest potrzebny, bo wycinamy tylko jego wartoÅ›Ä‡.
 				tmp= re.GetMatch(txt, 1);
-				//re.GetMatch(&startMatch, &lenMatch, 2); niepotrzebny drugi raz u¿ycie tego samego
+				//re.GetMatch(&startMatch, &lenMatch, 2); niepotrzebny drugi raz uÅ¼ycie tego samego
 				wxStringTokenizer tkn(tmp, delimiter,wxTOKEN_STRTOK);
 				int count=0;
 				while(tkn.HasMoreTokens()){
@@ -263,7 +263,7 @@ void MoveAll::ChangeInLines(bool all)
 		tab->Grid1->SetModified(true);
 		tab->Grid1->Refresh();
 	}else{
-		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie mo¿na otworzyæ napisów"));}
+		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie moÅ¼na otworzyÄ‡ napisÃ³w"));}
 		tab->Video->VisEdit=true;
 		tab->Video->Render();
 

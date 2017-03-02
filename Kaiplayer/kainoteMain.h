@@ -24,7 +24,7 @@
 #ifndef KAINOTEMAIN_H
 #define KAINOTEMAIN_H
 
-#pragma once
+//#pragma once
 
 #include <wx/timer.h>
 #include <wx/sizer.h>
@@ -114,7 +114,6 @@ class kainoteFrame: public KaiFrame
 		void OnChangeLine(wxCommandEvent& event);
 		void OnDelete(wxCommandEvent& event);
 		void OnClose1(wxCloseEvent& event);
-		void AppendBitmap(Menu *menu, int id, wxString text, wxString help, wxBitmap bitmap,bool enable=true, Menu *SubMenu=0);
 		static void OnOutofMemory();
         Menu* ConvMenu;
         Menu* FileMenu;

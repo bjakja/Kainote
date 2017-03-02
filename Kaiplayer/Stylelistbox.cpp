@@ -67,24 +67,27 @@ wxString GetCheckedElements(wxWindow *parent)
 }
 
 
-KaiListBox::KaiListBox(wxWindow *parent, wxArrayString suggest, const wxString &title, bool centerOnParent)
+KaiListBox::KaiListBox(wxWindow *parent, const wxArrayString &suggest, const wxString &title, bool centerOnParent)
 	: KaiDialog(parent,-1,title,wxDefaultPosition)
+	,selection(0)
 {
 	DialogSizer *sizer=new DialogSizer(wxHORIZONTAL);
-	list=new KaiListCtrl(this,29886,suggest, wxDefaultPosition, wxSize(120,160));
+	list=new KaiListCtrl(this,29886,suggest, wxDefaultPosition, wxSize(220,160));
 	sizer->Add(list,1,wxEXPAND|wxALL,2);
 	SetSizerAndFit(sizer);
 	//
 	Connect(29886,LIST_ITEM_DOUBLECLICKED,(wxObjectEventFunction)&KaiListBox::OnDoubleClick);
 	if(centerOnParent){CenterOnParent();parent->Raise();}
 	else{
-		wxPoint mousepos = wxGetMousePosition();
-		SetPosition(mousepos);
+		//wxPoint mousepos = wxGetMousePosition();
+		//SetPosition(mousepos);
+		MoveToMousePosition(this);
 	}
 }
 
 void KaiListBox::OnDoubleClick(wxCommandEvent& evt)
 {
-	result=list->GetItem(evt.GetInt(),0)->name;
+	selection = evt.GetInt();
+	result=list->GetItem(selection,0)->name;
 	EndModal(wxID_OK);
 }

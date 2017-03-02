@@ -42,7 +42,7 @@
 #include <wx/dcmemory.h>
 #include <wx/dcscreen.h>
 #include <wx/settings.h>
-#include <wx/clipbrd.h>
+//#include <wx/clipbrd.h>
 #include "ColorPicker.h"
 #include "ColorSpace.h"
 #include "KainoteApp.h"

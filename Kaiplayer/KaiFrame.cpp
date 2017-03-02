@@ -27,7 +27,7 @@ int ftopBorder = 26;
 
 
 KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long _style)
-	:wxTopLevelWindow(parent, id, title, pos, size,/*wxBORDER_NONE|*//*wxSYSTEM_MENU|*/wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxCLOSE_BOX|wxRESIZE_BORDER/*|wxCAPTION*/)
+	:wxTopLevelWindow(parent, id, title, wxDefaultPosition, wxDefaultSize,/*wxBORDER_NONE|*/wxMAXIMIZE_BOX|wxSYSTEM_MENU|wxMINIMIZE_BOX|wxCLOSE_BOX|wxRESIZE_BORDER|wxCAPTION)
 	,style(_style)
 	,enterClose(false)
 	,pushedClose(false)
@@ -37,7 +37,6 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title, const
 	,pushedMinimize(false)
 	,isActive(true)
 {
-	//RECT rcFrame = { 0 };
 	//AdjustWindowRectEx(&rcFrame, WS_OVERLAPPEDWINDOW & ~WS_CAPTION, FALSE, NULL);
 	//SetWindowLong( m_hWnd, GWL_STYLE, /*GetWindowLong(m_hWnd, GWL_STYLE) | */WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
 	MARGINS borderless = {0,0,0,0};
@@ -52,11 +51,8 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title, const
 	Bind(wxEVT_LEFT_DCLICK, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_ACTIVATE, &KaiFrame::OnActivate, this);
-	Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
-		SetForegroundColour(Options.GetColour(WindowText));
-		SetBackgroundColour(Options.GetColour(WindowBackground));
-	});
-	
+	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
+	SetSize(pos.x,pos.y,size.x, size.y);
 }
 
 KaiFrame::~KaiFrame()
@@ -243,6 +239,20 @@ void KaiFrame::OnActivate(wxActivateEvent &evt)
 
 WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
+	 //if (uMsg == WM_CREATE)
+  //  {
+  //      RECT rcClient;
+  //      GetWindowRect(m_hWnd, &rcClient);
+
+  //      // Inform application of the frame change.
+  //      SetWindowPos(m_hWnd, 
+  //                   NULL, 
+  //                   rcClient.left, rcClient.top,
+  //                   rcClient.right-rcClient.left, rcClient.bottom-rcClient.top,
+  //                   SWP_FRAMECHANGED);
+
+  //  }
+
 	/*if(uMsg == 28){
 		isActive = !isActive;
 		int w, h;
@@ -259,19 +269,21 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 	}
 	return 1;
 	}*/
-	if (uMsg == WM_GETMINMAXINFO){
-		RECT maxRect;
-		MINMAXINFO * pInfo = (MINMAXINFO*)lParam;
-		SystemParametersInfo(SPI_GETWORKAREA,0,&maxRect,0);
+	//if (uMsg == WM_GETMINMAXINFO){
+	//	RECT rc;
+	//	MINMAXINFO * pInfo = (MINMAXINFO*)lParam;
+	//	SystemParametersInfo(SPI_GETWORKAREA,0,&rc,0);
 
-		pInfo->ptMaxSize.x = (maxRect.right - maxRect.left)+14;
-		pInfo->ptMaxSize.y = (maxRect.bottom - maxRect.top)+8;
+	//	pInfo->ptMaxSize.x = (rc.right-rc.left);//+(fborder*2);
+	//	pInfo->ptMaxSize.y = (rc.bottom-rc.top);//+fborder+1;
+	//	//pInfo->ptMaxTrackSize.x = (rc.right-rc.left)+(fborder*2);
+	//	//pInfo->ptMaxTrackSize.y = (rc.bottom-rc.top)+fborder+1;
 
-		pInfo->ptMaxPosition.x = maxRect.left-7;
-		pInfo->ptMaxPosition.y = maxRect.top-1;
-
-		return 0;
-	}
+	//	pInfo->ptMaxPosition.x = rc.left;//-fborder;
+	//	pInfo->ptMaxPosition.y = rc.top;//-1;
+	//	
+	//	//return 0;
+	//}
 	if ((uMsg == WM_NCCALCSIZE)){
 
 		return 0;
@@ -329,7 +341,16 @@ void KaiFrame::DoGetClientSize(int *w, int *h)
 	*w -= (fborder * 2);
 	*h -= (ftopBorder + fborder);
 }
-
+void KaiFrame::SetClientSize(const wxSize &size)
+{
+	SetClientSize(size.x, size.y);
+}
+void KaiFrame::SetClientSize(int x, int y)
+{
+	x+=(fborder * 2);
+	y+=(ftopBorder + fborder);
+	wxWindow::SetClientSize(x,y);
+}
 
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiFrame, wxTopLevelWindow);

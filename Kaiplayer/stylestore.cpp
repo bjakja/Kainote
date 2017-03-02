@@ -33,8 +33,7 @@
 stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 	: KaiDialog(parent,id,_("Menedżer stylów"),pos,wxSize(400,-1),wxDEFAULT_DIALOG_STYLE)
 {
-	SetForegroundColour(Options.GetColour(WindowText));
-	SetBackgroundColour(Options.GetColour(WindowBackground));
+	
 	//wxAcceleratorEntry centries[1];
 	//centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, ID_CONF);
 	//wxAcceleratorTable caccel(1, centries);
@@ -50,6 +49,9 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	cc=new ColorChange(this,-1);
 	cc->SS=this;
 	cc->Hide();
+
+	SetForegroundColour(Options.GetColour(WindowText));
+	SetBackgroundColour(Options.GetColour(WindowBackground));
 
 	wxBoxSizer *Mainsm= new wxBoxSizer(wxVERTICAL);
 	Mainall= new DialogSizer(wxHORIZONTAL);
@@ -70,7 +72,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	wxBoxSizer *katbutt=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *katall=new wxBoxSizer(wxHORIZONTAL);
 
-	Store = new StyleList(this, ID_STORESTYLES, &Options.assstore, cc->sfont, wxDefaultPosition, wxSize(-1,400));
+	Store = new StyleList(this, ID_STORESTYLES, &Options.assstore, cc->sfont, wxDefaultPosition, wxSize(-1,520));
 
 	storeNew = new MappedButton(this, ID_STORENEW, _("Nowy")/*, 0, wxDefaultPosition, wxSize(-1,34)*/);
 	storeCopy = new MappedButton(this, ID_STORECOPY, _("Kopiuj"));
@@ -78,13 +80,13 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	storeDelete = new MappedButton(this, ID_STOREDEL, _("Usuń"));
 	storeSort = new MappedButton(this, ID_STORESORT, _("Sortuj"));
 
-	katbutt->Add(storeNew,1,wxEXPAND|wxTOP|wxLEFT,5);
-	katbutt->Add(storeCopy,1,wxEXPAND|wxTOP|wxLEFT,5);
-	katbutt->Add(storeLoad,1,wxEXPAND|wxTOP|wxLEFT,5);
-	katbutt->Add(storeDelete,1,wxEXPAND|wxTOP|wxLEFT,5);
-	katbutt->Add(storeSort,1,wxEXPAND|wxTOP|wxLEFT,5);
+	katbutt->Add(storeNew,1,wxEXPAND|wxTOP|wxBOTTOM|wxLEFT,2);
+	katbutt->Add(storeCopy,1,wxEXPAND|wxTOP|wxBOTTOM|wxLEFT,2);
+	katbutt->Add(storeLoad,1,wxEXPAND|wxTOP|wxBOTTOM|wxLEFT,2);
+	katbutt->Add(storeDelete,1,wxEXPAND|wxTOP|wxBOTTOM|wxLEFT,2);
+	katbutt->Add(storeSort,1,wxEXPAND|wxTOP|wxBOTTOM|wxLEFT,2);
 
-	katall->Add(Store,4,wxEXPAND,0);
+	katall->Add(Store,4,wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT,2);
 	katall->Add(katbutt,1,wxEXPAND,0);
 
 	katsbs1->Add(katall,1,wxEXPAND|wxALL,2);
@@ -101,25 +103,25 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	wxBoxSizer *assbutt=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *assall=new wxBoxSizer(wxHORIZONTAL);
 
-	ASS = new StyleList(this, ID_ASSSTYLES, Notebook::GetTab()->Grid1->GetStyleTable(), cc->sfont, wxDefaultPosition, wxSize(-1,400));
+	ASS = new StyleList(this, ID_ASSSTYLES, Notebook::GetTab()->Grid1->GetStyleTable(), cc->sfont, wxDefaultPosition, wxSize(-1,520));
 
 
-	assNew = new MappedButton(this, ID_ASSNEW, _("Nowy")/*,0 ,wxDefaultPosition, wxSize(50,-1)*/);
+	assNew = new MappedButton(this, ID_ASSNEW, _("Nowy"));
 	assCopy = new MappedButton(this, ID_ASSCOPY, _("Kopiuj"));
 	assLoad = new MappedButton(this, ID_ASSLOAD, _("Wczytaj"));
 	assDelete = new MappedButton(this, ID_ASSDEL, _("Usuń"));
 	assSort = new MappedButton(this, ID_ASSSORT, _("Sortuj"));
 	SClean = new MappedButton(this, ID_ASSCLEAN, _("Oczyść"));
 
-	assbutt->Add(assNew,0,wxEXPAND|wxTOP|wxLEFT,5);
-	assbutt->Add(assCopy,0,wxEXPAND|wxTOP|wxLEFT,5);
-	assbutt->Add(assLoad,0,wxEXPAND|wxTOP|wxLEFT,5);
-	assbutt->Add(assDelete,0,wxEXPAND|wxTOP|wxLEFT,5);
-	assbutt->Add(assSort,0,wxEXPAND|wxTOP|wxLEFT,5);
-	assbutt->Add(SClean,0,wxEXPAND|wxTOP|wxLEFT,5);
+	assbutt->Add(assNew,1,wxEXPAND|wxTOP|wxBOTTOM|wxLEFT,2);
+	assbutt->Add(assCopy,1,wxEXPAND|wxTOP|wxBOTTOM|wxLEFT,2);
+	assbutt->Add(assLoad,1,wxEXPAND|wxTOP|wxBOTTOM|wxLEFT,2);
+	assbutt->Add(assDelete,1,wxEXPAND|wxTOP|wxBOTTOM|wxLEFT,2);
+	assbutt->Add(assSort,1,wxEXPAND|wxTOP|wxBOTTOM|wxLEFT,2);
+	assbutt->Add(SClean,1,wxEXPAND|wxTOP|wxBOTTOM|wxLEFT,2);
 
-	assall->Add(ASS,4,wxEXPAND,0);
-	assall->Add(assbutt,1,wxEXPAND|wxBOTTOM,5);
+	assall->Add(ASS,4,wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT,2);
+	assall->Add(assbutt,1,wxEXPAND);
 
 	asssbs->Add(assall,1,wxEXPAND|wxALL,2);
 
@@ -129,12 +131,15 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	Mainsm->Add(katsbs1,1,wxEXPAND|wxALL,2);
 	Mainsm->Add(butts,0,wxEXPAND|wxALL,2);
 	Mainsm->Add(asssbs,1,wxEXPAND|wxALL,2);
-	Mainsm->Add(close,0,wxALIGN_CENTER|wxALL,2);
+	Mainsm->Add(close,0,wxALIGN_CENTER|wxALL,4);
 
 
 
 	Mainall->Add(Mainsm,0,wxEXPAND);
-	Mainall->Add(cc,0,wxEXPAND|wxLEFT,5);
+	Mainall->Add(cc,0,wxEXPAND);
+	wxSize bs = wxSize(-1,cc->GetBestSize().y+29);
+	Mainall->SetMinSize(bs);
+	
 	SetSizerAndFit(Mainall);
 
 	Connect(ID_ASSSTYLES,wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,(wxObjectEventFunction)&stylestore::OnAssStyleChange);
@@ -163,7 +168,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 
 	DoTooltips();
 
-	SetMaxSize(wxSize(500,-1));
+	//SetMaxSize(wxSize(500,-1));
 }
 
 stylestore::~stylestore()
@@ -707,4 +712,20 @@ void stylestore::ReloadFonts()
 	Store->Refresh(false);
 	ASS->Refresh(false);
 	wxLogStatus(_("Czcionki zaczytane ponownie."));
+}
+
+bool stylestore::SetForegroundColour(const wxColour &col)
+{
+	wxWindow::SetForegroundColour(col);
+	//wxWindow::Refresh();
+	if(cc){cc->SetForegroundColour(col);}
+	return true;
+}
+
+bool stylestore::SetBackgroundColour(const wxColour &col)
+{
+	wxWindow::SetBackgroundColour(col);
+	//wxWindow::Refresh();
+	if(cc){cc->SetBackgroundColour(col);}
+	return true;
 }

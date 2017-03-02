@@ -88,7 +88,7 @@ void OpenWrite::FileWrite(const wxString &fileName, const wxString &textfile, bo
 	wxFileName fname;
 	fname.Assign(fileName);
 	if(!fname.DirExists()){wxMkdir(fileName.BeforeLast('\\'));}
-	if(fname.FileExists()&&!fname.IsFileReadable()){wxLogStatus(_("Pliku nie można odczytać."));return;}
+	if(fname.FileExists()&&!fname.IsFileReadable()){wxLogStatus(_("Nie można odczytać pliku."));return;}
 	
 	wxFile file;
 	if(!file.Exists(fileName)){

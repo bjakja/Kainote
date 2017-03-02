@@ -182,7 +182,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	AutoMenu = new Menu();
 	AutoMenu->AppendTool(Toolbar,AutoLoadScript, _("Wczytaj skrypt"), _("Wczytaj skrypt"),PTR_BITMAP_PNG("automation"));
 	AutoMenu->AppendTool(Toolbar,AutoReloadAutoload, _("Odśwież skrypty autoload"), _("Odśwież skrypty autoload"),PTR_BITMAP_PNG("automation"));
-	AutoMenu->Append(LoadLastScript, _("Uruchom ostatnio zaczytany skrypt"), _("Otwórz ostatnio zaczytany skrypt"));
+	AutoMenu->Append(LoadLastScript, _("Uruchom ostatnio zaczytany skrypt"), _("Uruchom ostatnio zaczytany skrypt"));
 	Menubar->Append(AutoMenu, _("Au&tomatyzacja"));
 
 	HelpMenu = new Menu();
@@ -224,10 +224,10 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 		}
 		
 	},9989);
-	/*Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
+	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
 		TabPanel *tab = GetTab();
-		tab->Video->SetZoom();
-	},7789);*/
+		if(tab->Grid1->IsShown()){tab->Grid1->SetFocus();}else{tab->Video->SetFocus();}
+	});
 	Connect(SnapWithStart,SnapWithEnd,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
 	SetDropTarget(new DragnDrop(this));
 	Bind(wxEVT_SIZE,&kainoteFrame::OnSize,this);
@@ -239,6 +239,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	if(!Options.GetBool(EditorOn)){HideEditor();}	
 	std::set_new_handler(OnOutofMemory);
 	FontEnum.StartListening(this);
+	SetSubsResolution(false);
 }
 
 kainoteFrame::~kainoteFrame()
@@ -268,8 +269,8 @@ kainoteFrame::~kainoteFrame()
 	if(FR){FR->Destroy();FR=NULL;}
 	if(Auto){delete Auto; Auto=NULL;}
 	if(fc){delete fc; fc=NULL;}
-	Tabs->Destroy();
-	Tabs=NULL;
+	//Tabs->Destroy();
+	//Tabs=NULL;
 	SpellChecker::Destroy();
 	VideoToolbar::DestroyIcons();
 }
@@ -506,42 +507,42 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	}else if(id==Quit){
 		Close();
 	}else if(id==About){
-		KaiMessageBox(_("Edytor napisów by Bjakja aka Bakura, wersja ") + 
-			Options.progname.AfterFirst(' ') + " z dnia " + Options.GetReleaseDate() + " \r\n\r\n"+
-			_("Ten program to jakby moje zaplecze do nauki C++, więc mogą zdarzyć się różne błędy.\r\n\r\n")+
-			_("Kainote zawiera w sobie części następujących projeków:\r\n")+
-			L"wxWidgets - Copyright © Julian Smart, Robert Roebling et al;\r\n"+
-			_("Color picker, wymuxowywanie napsów z mkv, audiobox, audio player, automation\r\ni kilka innych pojedynczych funkcji wzięte z Aegisuba -\r\n")+
-			L"Copyright © Rodrigo Braz Monteiro;\r\n"\
-			L"Hunspell - Copyright © Kevin Hendricks;\r\n"\
-			L"Matroska Parser - Copyright © Mike Matsnev;\r\n"\
-			L"CSRI - Copyright © David Lamparter;\r\n"\
-			L"Vsfilter - Copyright © Gabest;\r\n"\
-			L"FFMPEGSource2 - Copyright © Fredrik Mellbin;\r\n"\
-			L"ICU - Copyright © 1995-2016 International Business Machines Corporation and others\r\n"\
+		KaiMessageBox(wxString::Format(_("Edytor napisów by Bjakja aka Bakura (bjakja7@gmail.com),\nwersja %s z dnia %s"),
+			Options.progname.AfterFirst('v'), Options.GetReleaseDate()) + " \n\n"+
+			_("Ten program to jakby moje zaplecze do nauki C++, więc mogą zdarzyć się różne błędy.\n\n")+
+			_("Kainote zawiera w sobie części następujących projeków:\n")+
+			L"wxWidgets - Copyright © Julian Smart, Robert Roebling et al;\n"+
+			_("Color picker, wymuxowywanie napsów z mkv, audiobox, audio player, automation\ni kilka innych pojedynczych funkcji wzięte z Aegisuba -\n")+
+			L"Copyright © Rodrigo Braz Monteiro;\n"\
+			L"Hunspell - Copyright © Kevin Hendricks;\n"\
+			L"Matroska Parser - Copyright © Mike Matsnev;\n"\
+			L"CSRI - Copyright © David Lamparter;\n"\
+			L"Vsfilter - Copyright © Gabest;\n"\
+			L"FFMPEGSource2 - Copyright © Fredrik Mellbin;\n"\
+			L"ICU - Copyright © 1995-2016 International Business Machines Corporation and others\n"\
 			L"Boost - Copyright © Joe Coder 2004 - 2006.",
 			"O Kainote");
-		//L"FreeType - Copyright ©  David Turner, Robert Wilhelm, and Werner Lemberg;\r\n"\
-		//L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.\r\n"
+		//L"FreeType - Copyright ©  David Turner, Robert Wilhelm, and Werner Lemberg;\n"\
+		//L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.\n"
 	}else if(id==Helpers){
-		wxString Testers=L"Zły los, Nyah2211, Wincenty271, Ksenoform, Deadsoul,\r\nVessin, Xandros, Areki, Waski_jestem.";
-		wxString Credits=_("Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\r\n")+
-			_("- Archer (pierwsze przyciski do wideo).\r\n")+
-			_("- Kostek00 (przyciski do audio i narzędzi wizualnych).\r\n")+
-			_("- Xandros (nowe przyciski do wideo).\r\n")+
-			_("- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\r\n")+
-			_("- Areki, duplex (tłumaczenie anglojęzyczne).\r\n \r\n")+
-			_("Testerzy: (mniej i bardziej wprawieni użytkownicy programu)\r\n")+
-			_("- Funki27 (pierwszy tester mający spory wpływ na obecne działanie programu\r\n")+
-			_("i najbardziej narzekający na wszystko).\r\n")+
-			_("- Sacredus (chyba pierwszy tłumacz używający trybu tłumaczenia,\r\n nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\r\n")+
-			_("- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój spektrum audio \r\n")+
-			_("i głównego pola tekstowego, stworzył ciemny motyw i część ikon).\r\n")+
-			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy,\r\n")+
-			_("pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych usprawnień).\r\n")+
-			_("- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w debugowaniu crashy).\r\n")+
-			_("- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\r\n \r\n")+
-			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\r\n");
+		wxString Testers=L"Zły los, Nyah2211, Wincenty271, Ksenoform, Deadsoul,\nVessin, Xandros, Areki, Waski_jestem.";
+		wxString Credits=_("Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n")+
+			_("- Archer (pierwsze przyciski do wideo).\n")+
+			_("- Kostek00 (przyciski do audio i narzędzi wizualnych).\n")+
+			_("- Xandros (nowe przyciski do wideo).\n")+
+			_("- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\n")+
+			_("- Areki, duplex (tłumaczenie anglojęzyczne).\n \n")+
+			_("Testerzy: (mniej i bardziej wprawieni użytkownicy programu)\n")+
+			_("- Funki27 (pierwszy tester mający spory wpływ na obecne działanie programu\n")+
+			_("i najbardziej narzekający na wszystko).\n")+
+			_("- Sacredus (chyba pierwszy tłumacz używający trybu tłumaczenia,\n nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n")+
+			_("- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój spektrum audio \n")+
+			_("i głównego pola tekstowego, stworzył ciemny motyw i część ikon).\n")+
+			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy,\n")+
+			_("pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych usprawnień).\n")+
+			_("- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w debugowaniu crashy).\n")+
+			_("- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n \n")+
+			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n");
 		KaiMessageBox(Credits+Testers,_("Lista osób pomocnych przy tworzeniu programu"));
 
 	}else if(id==Help||id==ANSI){
@@ -797,7 +798,7 @@ void kainoteFrame::SetSubsResolution(bool showDialog)
 	SetStatusText(resolution, 7);
 	wxSize vsize;
 	
-	if(cur->Video->GetState()!=None){
+	if(cur->Video->GetState()!=None && cur->edytor){
 		vsize = cur->Video->GetVideoSize();
 		wxString vres;
 		vres<<vsize.x<<" x "<<vsize.y;
@@ -828,7 +829,7 @@ void kainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
 	resolution<<w<<" x "<<h;
 	SetStatusText(resolution, 5);
 	wxString sres = cur->Grid1->GetSInfo("PlayResX") +" x "+ cur->Grid1->GetSInfo("PlayResY");
-	if(resolution != sres && sres.Len()>3){
+	if(resolution != sres && sres.Len()>3 && cur->edytor){
 		wxColour warning = Options.GetColour(WindowWarningElements);
 		StatusBar->SetLabelTextColour(5, warning);
 		StatusBar->SetLabelTextColour(7, warning);
@@ -1173,7 +1174,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 			bool isload=pan->Video->Load(videos[i],(pan->edytor)? pan->Grid1->SaveText() : 0);
 
 			if(!isload){
-				if(pan->Video->IsDshow){KaiMessageBox(_("Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\r\nbądź brakuje kodeków czy też splittera"), _("Uwaga"));}
+				if(pan->Video->IsDshow){KaiMessageBox(_("Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\nbądź brakuje kodeków czy też splittera"), _("Uwaga"));}
 				break;
 			}
 			pan->Edit->Frames->Enable(!pan->Video->IsDshow);
@@ -1248,7 +1249,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 		SetStatusText("",2);
 		SetStatusText("",1);
 	}
-	if(cur->SubsPath!="" && cur->Grid1->form == ASS){
+	if(cur->Grid1->form == ASS){
 		SetSubsResolution();
 	}else{
 		SetStatusText("",7);
@@ -1322,10 +1323,12 @@ void kainoteFrame::HideEditor()
 		cur->Video->panelHeight = 44;
 		cur->Video->vToolbar->Hide();
 		if(cur->Video->GetState()!=None && !cur->Video->isFullscreen && !IsMaximized()){
-			int sx,sy,sizex,sizey;
-			GetClientSize(&sizex,&sizey);
+			int sx,sy, sizex, sizey;
+			GetClientSize(&sizex, &sizey);
+			sizex -= iconsize;
+			sizey -= (cur->Video->panelHeight+ Tabs->GetHeight() + Menubar->GetSize().y + StatusBar->GetSize().y);
 
-			cur->Video->CalcSize(&sx,&sy,sizex,sizey);
+			cur->Video->CalcSize(&sx,&sy, sizex, sizey, false, true);
 
 			SetClientSize(sx+iconsize,sy + cur->Video->panelHeight+ Tabs->GetHeight() + Menubar->GetSize().y + StatusBar->GetSize().y);
 
@@ -1352,12 +1355,6 @@ void kainoteFrame::OnPageClose(wxCommandEvent& event)
 	OnPageChanged(event);
 }
 
-void kainoteFrame::AppendBitmap(Menu *menu, int id, wxString text, wxString help, wxBitmap bitmap, bool enable, Menu *SubMenu)
-{
-	wxBitmap *bmp = NULL;
-	if(bitmap.IsOk()){bmp = new wxBitmap(bitmap); if(id!=ID_CONV){Toolbar->AddID(id);}}
-	menu->Append(id, text, help, enable, bmp, SubMenu);
-}
 
 void kainoteFrame::SaveAll()
 {
@@ -1445,7 +1442,7 @@ void kainoteFrame::OpenAudioInTab(TabPanel *pan, int id, const wxString &path)
 			pan->Edit->ABox->SetFile(Path, (id==40000));
 
 			if(pan->Edit->ABox->audioDisplay->loaded){
-				pan->Edit->BoxSizer1->Prepend(pan->Edit->ABox, 4, wxLEFT | wxRIGHT | wxTOP | wxEXPAND, 2);
+				pan->Edit->BoxSizer1->Prepend(pan->Edit->ABox, 4, wxLEFT | wxRIGHT | wxEXPAND, 4);
 				//int sizew,sizeh;
 				//Options.GetCoords("Video Window Size",&sizew,&sizeh);
 				if (!pan->Video->IsShown()){

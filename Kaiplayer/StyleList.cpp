@@ -28,6 +28,7 @@ StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray
 	//scrollBar->SetScrollbar(0,10,100,10);
 	stylenames=stylearray;
 	fontseeker=_fontseeker;
+	//SetMinSize(size);
 	
 	font= wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 	wxAcceleratorEntry entries[4];

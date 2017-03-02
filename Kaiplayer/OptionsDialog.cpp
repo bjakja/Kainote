@@ -31,12 +31,12 @@
 OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	: KaiDialog(parent,-1,_("Opcje"))
 {
-	wxColour text = Options.GetColour(WindowText);
-	wxColour window = Options.GetColour(WindowBackground);
+	//wxColour text = Options.GetColour(WindowText);
+	//wxColour window = Options.GetColour(WindowBackground);
 
 	OptionsTree= new KaiTreebook(this,-1);
-	OptionsTree->SetForegroundColour(text);
-	OptionsTree->SetBackgroundColour(window);
+	//OptionsTree->SetForegroundColour(text);
+	//OptionsTree->SetBackgroundColour(window);
 
 	Kai=kaiparent;
 	Stylelist=NULL;
@@ -46,46 +46,28 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	icn.CopyFromBitmap(CreateBitmapFromPngResource("SETTINGS"));
 	SetIcon(icn);
 
-	wxPanel *Main= new wxPanel(OptionsTree);
-	Main->SetForegroundColour(text);
-	Main->SetBackgroundColour(window);
-	wxPanel *ConvOpt= new wxPanel(OptionsTree);
-	ConvOpt->SetForegroundColour(text);
-	ConvOpt->SetBackgroundColour(window);
-	wxPanel *Hotkeyss= new wxPanel(OptionsTree);
-	Hotkeyss->SetForegroundColour(text);
-	Hotkeyss->SetBackgroundColour(window);
-	wxPanel *AudioMain= new wxPanel(OptionsTree);
-	AudioMain->SetForegroundColour(text);
-	AudioMain->SetBackgroundColour(window);
-	wxPanel *Video= new wxPanel(OptionsTree);
-	Video->SetForegroundColour(text);
-	Video->SetBackgroundColour(window);
-	wxPanel *Themes= new wxPanel(OptionsTree);
-	Themes->SetForegroundColour(text);
-	Themes->SetBackgroundColour(window);
+	wxWindow *Main= new wxWindow(OptionsTree,-1);
+	Main->SetForegroundColour(Options.GetColour(WindowText));
+	//Main->SetBackgroundColour(window);
+	wxWindow *ConvOpt= new wxWindow(OptionsTree,-1);
+	//ConvOpt->SetForegroundColour(text);
+	//ConvOpt->SetBackgroundColour(window);
+	wxWindow *Hotkeyss= new wxWindow(OptionsTree,-1);
+	//Hotkeyss->SetForegroundColour(text);
+	//Hotkeyss->SetBackgroundColour(window);
+	wxWindow *AudioMain= new wxWindow(OptionsTree,-1);
+	//AudioMain->SetForegroundColour(text);
+	//AudioMain->SetBackgroundColour(window);
+	wxWindow *Video= new wxWindow(OptionsTree,-1);
+	//Video->SetForegroundColour(text);
+	//Video->SetBackgroundColour(window);
+	wxWindow *Themes= new wxWindow(OptionsTree,-1);
+	//Themes->SetForegroundColour(text);
+	//Themes->SetBackgroundColour(window);
 
-	Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
-		wxColour text = Options.GetColour(WindowText);
-		wxColour window = Options.GetColour(WindowBackground);
-		OptionsTree->SetForegroundColour(text);
-		OptionsTree->SetBackgroundColour(window);
-		Main->SetForegroundColour(text);
-		Main->SetBackgroundColour(window);
-		ConvOpt->SetForegroundColour(text);
-		ConvOpt->SetBackgroundColour(window);
-		Hotkeyss->SetForegroundColour(text);
-		Hotkeyss->SetBackgroundColour(window);
-		AudioMain->SetForegroundColour(text);
-		AudioMain->SetBackgroundColour(window);
-		Video->SetForegroundColour(text);
-		Video->SetBackgroundColour(window);
-		Themes->SetForegroundColour(text);
-		Themes->SetBackgroundColour(window);
-	});
 
 	hkeymodif=0;
-	if(!Options.AudioOpts && !Options.LoadAudioOpts()){KaiMessageBox(_("Dupa blada, opcje się nie wczytały, audio nie skonfigurujesz"), _("Błędny błąd"));}
+	if(!Options.AudioOpts && !Options.LoadAudioOpts()){KaiMessageBox(_("Nie udało się wczytać opcji audio, konwiguracja ich będzie niemożliwa"), _("Błąd"));}
 
 	//Main
 	{
@@ -133,39 +115,39 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		}
 
 
-		wxBoxSizer *MainSizer1=new wxBoxSizer(wxHORIZONTAL);
-		wxFlexGridSizer *MainSizer2=new wxFlexGridSizer(5,2,wxSize(5,5));
+		//wxBoxSizer *MainSizer1=new wxBoxSizer(wxHORIZONTAL);
+		wxFlexGridSizer *MainSizer2=new wxFlexGridSizer(6,2,wxSize(5,5));
 		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieć inny id
-		NumCtrl *ltl = new NumCtrl(Main, 20000, Options.GetString(opts[12]), 0, 5,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
-		NumCtrl *sc = new NumCtrl(Main, 20000, Options.GetString(InsertStartOffset), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
-		NumCtrl *sc1 = new NumCtrl(Main, 20000, Options.GetString(InsertEndOffset), -100000, 100000,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
-		KaiTextCtrl *sc2 = new KaiTextCtrl(Main, 22001, Options.GetString(GridTagsSwapChar), wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
-		NumCtrl *sc3 = new NumCtrl(Main, 20000, Options.GetString(EditboxTagButtons), 0, 9,true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
+		NumCtrl *ltl = new NumCtrl(Main, 20000, Options.GetString(opts[12]), 0, 5,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
+		NumCtrl *sc = new NumCtrl(Main, 20000, Options.GetString(InsertStartOffset), -100000, 100000,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
+		NumCtrl *sc1 = new NumCtrl(Main, 20000, Options.GetString(InsertEndOffset), -100000, 100000,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
+		KaiTextCtrl *sc2 = new KaiTextCtrl(Main, 22001, Options.GetString(GridTagsSwapChar), wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
+		NumCtrl *sc3 = new NumCtrl(Main, 20000, Options.GetString(EditboxTagButtons), 0, 9,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
 		ConOpt(ltl, opts[12]);
 		ConOpt(sc,InsertStartOffset);
 		ConOpt(sc1,InsertEndOffset);
 		ConOpt(sc2,GridTagsSwapChar);
 		ConOpt(sc3,EditboxTagButtons);
 
-		MainSizer2->Add(new wxStaticText(Main,-1,_("Opóźnienie klatek początkowych w ms:")),0,wxALIGN_CENTRE_VERTICAL);
-		MainSizer2->Add(sc,0);
-		MainSizer2->Add(new wxStaticText(Main,-1,_("Opóźnienie klatek końcowych w ms:")),0,wxALIGN_CENTRE_VERTICAL);
-		MainSizer2->Add(sc1,0);
-		MainSizer2->Add(new wxStaticText(Main,-1,_("Znak podmiany tagów ASS:")),0,wxALIGN_CENTRE_VERTICAL);
-		MainSizer2->Add(sc2,0);
-		MainSizer2->Add(new wxStaticText(Main,-1,_("Ilość przycisków wstawiających tagi ASS:")),0,wxALIGN_CENTRE_VERTICAL);
-		MainSizer2->Add(sc3,0);
-		MainSizer2->Add(new wxStaticText(Main,-1,labels[12]),0,wxALIGN_CENTRE_VERTICAL);
-		MainSizer2->Add(ltl,0);
+		MainSizer2->Add(new wxStaticText(Main,-1,_("Opóźnienie klatek początkowych w ms:"),wxDefaultPosition, wxSize(240,-1)),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(sc,1,wxEXPAND);
+		MainSizer2->Add(new wxStaticText(Main,-1,_("Opóźnienie klatek końcowych w ms:")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(sc1,1,wxEXPAND);
+		MainSizer2->Add(new wxStaticText(Main,-1,_("Znak podmiany tagów ASS:")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(sc2,1,wxEXPAND);
+		MainSizer2->Add(new wxStaticText(Main,-1,_("Ilość przycisków wstawiających tagi ASS:")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(sc3,1,wxEXPAND);
+		MainSizer2->Add(new wxStaticText(Main,-1,labels[12]),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(ltl,1,wxEXPAND);
 
-		MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
+		//MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
 
 		FontPickerButton *optf=new FontPickerButton(Main,-1,wxFont(Options.GetInt(GridFontSize),wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,Options.GetString(GridFontName)));
 		ConOpt(optf,GridFontName);
-		MainSizer1->Add(new wxStaticText(Main,-1,_("Czcionka pola napisów:")),0,wxRIGHT| wxALIGN_CENTRE_VERTICAL,5);
-		MainSizer1->Add(optf,0);
+		MainSizer2->Add(new wxStaticText(Main,-1,_("Czcionka pola napisów:")),3,wxRIGHT| wxALIGN_CENTRE_VERTICAL|wxEXPAND,10);
+		MainSizer2->Add(optf,1,wxEXPAND);
 
-		MainSizer->Add(MainSizer1,0,wxLEFT|wxTOP,2);
+		MainSizer->Add(MainSizer2,0,wxRIGHT|wxEXPAND,5);
 
 		Main->SetSizerAndFit(MainSizer);
 	}
@@ -206,13 +188,13 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 			ConOpt(cmb,(i==0)? ConvertStyleCatalog : ConvertStyle);
 			if(i==0){
-				obr->Add(cmb,1,wxCENTER);
+				obr->Add(cmb,1,wxCENTER|wxALL,2);
 				ConvOptSizer1->Add(obr,0,wxRIGHT|wxEXPAND,5);
 				Katlist=cmb;
 				Connect(28888,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&OptionsDialog::OnChangeCatalog);
 			}
 			else{
-				obr0->Add(cmb,1,wxCENTER);
+				obr0->Add(cmb,1,wxCENTER|wxALL,2);
 				ConvOptSizer1->Add(obr0,0,wxRIGHT|wxEXPAND,5);
 				Stylelist=cmb;
 			}
@@ -224,7 +206,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		else{cmb->SetValue(convFPS);}
 
 		ConOpt(cmb,ConvertFPS);
-		obr1->Add(cmb,1,wxCENTER);
+		obr1->Add(cmb,1,wxCENTER|wxALL,2);
 		ConvOptSizer1->Add(obr1,0,wxRIGHT|wxEXPAND,5);
 
 
@@ -247,7 +229,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		obr4->Add(sc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
 
 		wxStaticText* txt= new wxStaticText(ConvOpt,-1," X ");
-		obr4->Add(txt,0,wxALL|wxALIGN_CENTER|wxALIGN_CENTER_VERTICAL|wxEXPAND,2);
+		obr4->Add(txt,0,wxTOP,5);
 
 		sc = new NumCtrl(ConvOpt, 20000, Options.GetString(ConvertResolutionHeight), 1, 3000, true, wxDefaultPosition, wxSize(115,-1), wxTE_PROCESS_ENTER);
 		ConOpt(sc,ConvertResolutionHeight);
@@ -285,8 +267,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxString seekingOpts[] = {_("Liniowe"), _("Normalne"), _("Niebezpieczne (szybkie w każdym przypadku)"), _("Agresywne (szybkie przy cofaniu)")};
 		KaiChoice *sopts = new KaiChoice(Video, 10000, wxDefaultPosition, wxSize(200,-1), 4, seekingOpts, wxTE_PROCESS_ENTER);
 		sopts->SetSelection(Options.GetInt(vopts[4]));
-		seekingsizer->Add(sopts, 1, wxEXPAND);
-		MainSizer->Add(seekingsizer,0, wxEXPAND|wxALL, 2);
+		seekingsizer->Add(sopts, 1, wxALL|wxALIGN_CENTER|wxEXPAND,2);
+		MainSizer->Add(seekingsizer,0, wxRIGHT|wxEXPAND, 5);
 		ConOpt(sopts,vopts[4]);
 		Video->SetSizerAndFit(MainSizer);
 	}
@@ -299,7 +281,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		Connect(26667,LIST_ITEM_DOUBLECLICKED,(wxObjectEventFunction)&OptionsDialog::OnMapHkey);
 		Connect(26667,LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);		
 
-		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){KaiMessageBox(_("Dupa blada, skróty klawiszowe nie wczytały się, na audio nie podziałasz"), _("Błędny błąd"));}
+		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){KaiMessageBox(_("Nie udało się wczytać opcji audio, konwiguracja ich będzie niemożliwa"), _("Błąd"));}
 
 		std::map<idAndType, hdata> _hkeys;
 		Hkeys.LoadDefault(_hkeys);
@@ -390,7 +372,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 	//Themes
 	{
-		const int numColors = 118;
+		const int numColors = 124;
 		wxString labels[numColors]={
 			//okno
 			_("Okno tło"),_("Okno nieaktywne tło"),_("Okno tekst"),_("Okno nieaktywny tekst"),
@@ -402,6 +384,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Napisy tekst"),_("Napisy tło"),_("Napisy tło dialogów"),_("Napisy tło komentarzy"),
 			_("Napisy zaznaczone dialogi"),_("Napisy zaznaczone komentarze"),
 			_("Napisy kolidujące linie"),_("Napisy obramowanie linijki"),_("Napisy obramowanie aktywnej linijki"),
+			_("Napisy nagłówek"),_("Napisy tekst nagłówka"),
 			_("Napisy etykieta"),_("Napisy etykieta zmodyfikowanej linii"),_("Napisy etykieta zapisanej linii"),
 			_("Napisy tło błędów pisowni"),_("Napisy porównanie"),_("Napisy tło porównania"),
 			_("Napisy tło porównania zaznaczenia"),_("Napisy tło komentarza porównania"),
@@ -423,8 +406,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Pole tekstowe obramowanie aktywnego okna"), _("Pole tekstowe zaznaczenie"),
 			_("Pole tekstowe zaznaczenie w nieaktywnym oknie"),
 			_("Przycisk i lista tło"), _("Przycisk i lista tło po najechaniu"), 
-			_("Przycisk i lista tło po wciśnięciu"), _("Przycisk i lista obramowanie"),
-			_("Przycisk i lista obramowanie po najechaniu"),_("Przycisk i lista obramowanie po wciśnięciu"),
+			_("Przycisk i lista tło po wciśnięciu"),_("Przycisk i lista tło aktywnego"),
+			_("Przycisk i lista obramowanie"),_("Przycisk i lista obramowanie po najechaniu"),
+			_("Przycisk i lista obramowanie po wciśnięciu"),_("Przycisk i lista obramowanie aktywnego"),
 			_("Przycisk i lista obramowanie nieaktywne"),_("Przełącznik tło włączonego"),
 			_("Przełącznik obramowanie włączonego"),_("Pasek przewijania tło"),_("Pasek przewijania suwak"),
 			_("Pasek przewijania suwak po najechaniu"),_("Pasek przewijania suwak po wciśnięciu"),
@@ -444,7 +428,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Pasek zakładek strzałka tło po najechaniu"),
 			//suwak
 			_("Suwak ścieżka tło"), _("Suwak ścieżka obramowanie"), _("Suwak obramowanie"), 
-			_("Suwak tło"), _("Suwak tło po najechaniu"), _("Suwak tło po wciśnięciu"),
+			_("Suwak obramowanie po najechaniu"), _("Suwak obramowanie po wciśnięciu"), _("Suwak tło"), 
+			_("Suwak tło po najechaniu"), _("Suwak tło po wciśnięciu"),
 			//podgląd styli
 			_("Pierwszy kolor podglądu styli"),_("Drugi kolor podglądu styli")
 		};
@@ -453,7 +438,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 		wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
 		wxArrayString choices;
-		choices.Add("Default");
+		choices.Add("DeepDark");
+		choices.Add("DeepLight");
 		wxArrayString files;
 		wxString pathwn = Options.pathfull + "\\Themes\\";
 		wxString programTheme = Options.GetString(ProgramTheme);
@@ -493,7 +479,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			wxString originalName = themeList->GetString(themeList->GetSelection());
 			wxString dir = Options.pathfull + "\\Themes\\";
 			wxString copyPath = dir + themeName + ".txt";
-			if(originalName== "Default"){
+			if(originalName == "DeepDark" || originalName == "DeepLight"){
 				Options.SaveColors(copyPath);
 				List->Enable(true);
 				List->Refresh(false);
@@ -520,32 +506,10 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 				ItemColor *item = (ItemColor*)List->GetItem(i, 1);
 				item->col = Options.GetColor((COLOR)item->colOptNum);
 			}
-			wxColour windowColor = Options.GetColour(WindowBackground);
-			wxColour textColor = Options.GetColour(WindowText);
-			Notebook *nb = Notebook::GetTabs();
-			
-			for(size_t i = 0; i < nb->Size(); i++){
-				TabPanel *tab = nb->Page(i);
-				tab->SetBackgroundColour(windowColor);
-				tab->SetForegroundColour(textColor);
-				if(tab->Edit->ABox){
-					tab->Edit->ABox->audioDisplay->ChangeColours();
-				}
-				const wxWindowList& siblings = tab->GetChildren();
-				for(auto it = siblings.begin(); it != siblings.end(); it++){
-					(*it)->SetBackgroundColour(windowColor);
-					(*it)->SetForegroundColour(textColor);
-				}
-
-			}
-			wxSysColourChangedEvent evt1;
-			wxQueueEvent(GetParent(), evt1.Clone());
-			ProcessEvent(evt1);
-			this->Refresh(false);
-			parent->Refresh(false);
-			List->Enable(themeName != "Default");
+			ChangeColors();
+			List->Enable(themeName != "DeepDark" && themeName != "DeepLight");
 		},14567);
-		if(programTheme == "Default"){List->Enable(false);}
+		if(programTheme == "DeepDark" || programTheme == "DeepLight"){List->Enable(false);}
 		Themes->SetSizerAndFit(sizer);
 		ConOpt(List,(CONFIG)1000);
 	}
@@ -692,30 +656,7 @@ void OptionsDialog::SetOptions(bool saveall)
 			if(OB.option == 1000 && list->GetModified()){
 				list->SaveAll(1);
 				Options.SaveColors();
-				wxColour windowColor = Options.GetColour(WindowBackground);
-				wxColour textColor = Options.GetColour(WindowText);
-
-				Notebook *nb = Notebook::GetTabs();
-			
-				for(size_t i = 0; i < nb->Size(); i++){
-					TabPanel *tab = nb->Page(i);
-					tab->SetBackgroundColour(windowColor);
-					tab->SetForegroundColour(textColor);
-					if(tab->Edit->ABox){
-						tab->Edit->ABox->audioDisplay->ChangeColours();
-					}
-					const wxWindowList& siblings = tab->GetChildren();
-					for(auto it = siblings.begin(); it != siblings.end(); it++){
-						(*it)->SetBackgroundColour(windowColor);
-						(*it)->SetForegroundColour(textColor);
-					}
-
-				}
-				wxSysColourChangedEvent evt;
-				wxQueueEvent(GetParent(), evt.Clone());
-				ProcessEvent(evt);
-				GetParent()->Refresh(false);
-				this->Refresh();
+				ChangeColors();
 			}
 		}
 	}
@@ -818,4 +759,45 @@ void OptionsDialog::OnChangeCatalog(wxCommandEvent& event)
 	Stylelist->SetSelection(0);
 }
 
+void OptionsDialog::ChangeColors(){
+
+	wxColour windowColor = Options.GetColour(WindowBackground);
+	wxColour textColor = Options.GetColour(WindowText);
+	Notebook *nb = Notebook::GetTabs();
+	//tabs colors		
+	for(size_t i = 0; i < nb->Size(); i++){
+		TabPanel *tab = nb->Page(i);
+		tab->SetBackgroundColour(windowColor);
+		tab->SetForegroundColour(textColor);
+		if(tab->Edit->ABox){
+			tab->Edit->ABox->audioDisplay->ChangeColours();
+		}
+		const wxWindowList& siblings = tab->GetChildren();
+		for(auto it = siblings.begin(); it != siblings.end(); it++){
+			(*it)->SetBackgroundColour(windowColor);
+			(*it)->SetForegroundColour(textColor);
+		}
+
+	}
+	//tree colours
+	OptionsTree->SetColours(windowColor, textColor);
+	//dialogs colours
+	wxWindowList::compatibility_iterator node = wxTopLevelWindows.GetFirst();
+	while (node)
+	{
+		wxWindow* win = node->GetData();
+		// do something with "win"
+		win->SetBackgroundColour(windowColor);
+		win->SetForegroundColour(textColor);
+		win->Refresh();
+		node = node->GetNext();
+	}
+	//wxSysColourChangedEvent evt1;
+	//ProcessEvent(evt1);
+	//SetBackgroundColour(windowColor);
+	
+	//this->Refresh();
+	//GetParent()->Refresh(false);
+
+}
 

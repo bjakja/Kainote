@@ -72,7 +72,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 	SetSizerAndFit(sizer2);
 	CenterOnParent();
 	Bind(wxEVT_CLOSE_WINDOW,[=](wxCloseEvent &evt){EndModal((elems & wxCANCEL)? wxCANCEL : wxNO);});
-	SetEscapeId((elems & wxCANCEL)? 9010 : (elems & wxNO)? wxID_NO : 9009);
+	SetEscapeId((elems & wxCANCEL)? wxCANCEL : (elems & wxNO)? wxNO : wxOK);
 	
 }
 

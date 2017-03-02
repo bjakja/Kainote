@@ -196,7 +196,9 @@ KaiChoice::~KaiChoice()
 void KaiChoice::SetToolTip(const wxString &tooltip)
 {
 	if(tooltip!=""){toolTip=tooltip;}
-	wxWindow::SetToolTip((choice>=0)? toolTip + "\n" + GetString(choice) : tooltip);
+	wxString tt = (choice>=0)? toolTip + "\n" + GetString(choice) : tooltip;
+	wxWindow::SetToolTip(tt);
+	if(choiceText){choiceText->SetToolTip(tt);}
 }
 
 bool KaiChoice::SetBackgroundColour(const wxColour &col)
@@ -243,10 +245,12 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 	}
 	tdc.SetBrush(wxBrush((enter && !clicked)? Options.GetColour(ButtonBackgroundHover) :
 		(clicked)? Options.GetColour(ButtonBackgroundPushed) : 
-		(enabled)? Options.GetColour(ButtonBackground) : 
+		(enabled)? Options.GetColour((GetWindowStyle() &KAI_COMBO_BOX)? TextFieldBackground : 
+		(HasFocus())? ButtonBackgroundOnFocus : ButtonBackground) : 
 		Options.GetColour(WindowBackgroundInactive)));
 	tdc.SetPen(wxPen((enter && !clicked)? Options.GetColour(ButtonBorderHover) : 
-		(clicked)? Options.GetColour(ButtonBorderPushed) : 
+		(clicked)? Options.GetColour(ButtonBorderPushed) :
+		(HasFocus())? Options.GetColour(ButtonBorderOnFocus) : 
 		(enabled)? Options.GetColour(ButtonBorder) : 
 		Options.GetColour(ButtonBorderInactive)));
 	tdc.DrawRectangle(0,0,w,h);
@@ -531,6 +535,10 @@ void KaiChoice::Sort()
 	list->Sort([](const wxString &first, const wxString &second){return first.CmpNoCase(second);});
 }
 
+void KaiChoice::OnActivate(wxFocusEvent &evt)
+{
+	Refresh(false);
+}
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiChoice, wxWindow);
 
@@ -539,6 +547,8 @@ BEGIN_EVENT_TABLE(KaiChoice, wxWindow)
 	EVT_PAINT(KaiChoice::OnPaint)
 	EVT_SIZE(KaiChoice::OnSize)
 	EVT_ERASE_BACKGROUND(KaiChoice::OnEraseBackground)
+	//EVT_SET_FOCUS(KaiChoice::OnActivate)
+	EVT_KILL_FOCUS(KaiChoice::OnActivate)
 	EVT_KEY_UP(KaiChoice::OnKeyPress)
 	EVT_MENU_RANGE(7865,7866,KaiChoice::OnArrow)
 END_EVENT_TABLE()
@@ -788,6 +798,7 @@ void PopupList::OnIdle(wxIdleEvent& event)
         }
     }
 }
+
 
 BEGIN_EVENT_TABLE(PopupList,/* wxFrame*/wxPopupWindow)
 	EVT_MOUSE_EVENTS(PopupList::OnMouseEvent)

@@ -74,6 +74,7 @@ void KaiTreebook::Fit()
 		}
 	}
 	SetMinSize(wxSize(width + treeWidth + 10, height));
+	SetColours(Options.GetColour(WindowBackground),Options.GetColour(WindowText));
 	Pages[selection]->page->Show();
 }
 
@@ -168,7 +169,7 @@ void KaiTreebook::OnPaint(wxPaintEvent& event)
 	wxColour wfg = Options.GetColour(WindowText);
 	wxColour selColor = Options.GetColour(StaticListSelection);
 	tdc.SetBrush(wxBrush(wbg));
-	tdc.SetPen(wxPen(Options.GetColour(StaticListBorder)));
+	tdc.SetPen(wxPen(wbg));
 	tdc.SetTextForeground(wfg);
 	tdc.DrawRectangle(0,0,treeWidth+10,h);
 	bool afterBranch = false;
@@ -228,7 +229,7 @@ void KaiTreebook::OnPaint(wxPaintEvent& event)
 	
 
 	tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-	tdc.SetPen(wxPen(wfg));
+	tdc.SetPen(wxPen(Options.GetColour(StaticListBorder)));
 	tdc.DrawRectangle(1,1,treeWidth+4,h-2);
 	wxPaintDC dc(this);
 	dc.Blit(0,0,w,h,&tdc,0,0);
@@ -261,6 +262,16 @@ int KaiTreebook::CalcElement(int element, int *lastPage)
 		if(lastPage && !Pages[i]->whichSubpage){*lastPage = clickedElem;}
 	}
 	return -1;
+}
+
+void KaiTreebook::SetColours(const wxColour &bgcol, const wxColour &fgcol)
+{
+	for(size_t i = 0; i < Pages.size(); i++){
+		Pages[i]->page->SetBackgroundColour(bgcol);
+		Pages[i]->page->SetForegroundColour(fgcol);
+	}
+	SetBackgroundColour(bgcol);
+	SetForegroundColour(fgcol);
 }
 
 BEGIN_EVENT_TABLE(KaiTreebook,wxWindow)

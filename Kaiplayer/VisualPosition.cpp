@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+ï»¿//  Copyright (c) 2016, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -122,7 +122,7 @@ void Position::SetCurVisual()
 	wxArrayInt sels= tab->Grid1->GetSels();
 	bool pib; wxPoint tp;
 	for(size_t i = 0; i < sels.size(); i++){
-		//fix by uzyskaæ reakcjê na edycjê w editboxie
+		//fix by uzyskaÄ‡ reakcjÄ™ na edycjÄ™ w editboxie
 		Dialogue *dial = (sels[i]==tab->Edit->ebrow)? tab->Edit->line : tab->Grid1->GetDial(sels[i]);
 		if(dial->IsComment){continue;}
 		D3DXVECTOR2 pos = GetPos(dial,&pib,&tp);
@@ -179,7 +179,7 @@ void Position::ChangeMultiline(bool all)
 		tab->Grid1->Refresh();
 	}else{
 		
-		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie mo¿na otworzyæ napisów"));}
+		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie moÅ¼na otworzyÄ‡ napisÃ³w"));}
 		tab->Video->VisEdit=true;
 		tab->Video->Render();
 	}

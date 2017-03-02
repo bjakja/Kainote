@@ -45,10 +45,10 @@ public:
 	int ShowModal();
     void EndModal(int retCode);
     bool IsModal() const;
-	void SetEscapeId(int _escapeId){escapeId = _escapeId;}
-    int GetEscapeId() const { return escapeId; }
-	void SetEnterId(int _enterId){enterId = _enterId;}
+	void SetEnterId(int _enterId);
+	void SetEscapeId(int _escapeId);
     int GetEnterId() const { return enterId; }
+	int GetEscapeId() const { return escapeId; }
 	void SetSizerAndFit1(wxSizer *sizer, bool deleteOld = true);
 private:
 	bool IsButtonFocused();
@@ -57,6 +57,8 @@ private:
 	void OnSize(wxSizeEvent &evt);
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnActivate(wxActivateEvent &evt);
+	void OnEnter(wxCommandEvent &evt);
+	void OnEscape(wxCommandEvent &evt);
 	WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
 
 	int escapeId;

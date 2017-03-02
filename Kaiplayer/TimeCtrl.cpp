@@ -101,7 +101,7 @@ void TimeCtrl::OnTimeWrite(wxCommandEvent& event)
 
 
 
-		if (nChar == _(":")||nChar == _(".")||nChar == _(",")) {
+		if (nChar == ":"||nChar == "."||nChar == ",") {
 			wxString tmp = txt;
 			txt = tmp.Left(selst-1);
 			txt += nChar;
@@ -136,7 +136,7 @@ void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
 		if (to != from && (key > 47 && key < 59 || key > 323 && key < 334)) {
 			wxString txt=GetValue();
 			wxString seltxt=txt.SubString(from,to-1);
-			wxRegEx reg(_("[0-9]"),wxRE_ADVANCED);
+			wxRegEx reg("[0-9]",wxRE_ADVANCED);
 			reg.ReplaceAll(&seltxt,_T("0"));
 			//txt.erase(from,to);
 			wxString all=txt.Left(from);

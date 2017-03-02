@@ -101,7 +101,7 @@ bool SpellChecker::Initialize()
 	if(!wxFileExists(dic) || !wxFileExists(aff)) 
 	{
 		Options.SetBool(SpellcheckerOn,false);
-		KaiMessageBox(wxString::Format(_("Brak plików słownika w folderze \"%s\\Dictionary\".\r\nSprawdzanie pisowni zostanie wyłączone"), Options.pathfull)); 
+		KaiMessageBox(wxString::Format(_("Brak plików słownika w folderze \"%s\\Dictionary\".\nSprawdzanie pisowni zostanie wyłączone"), Options.pathfull)); 
 		return false;
 	}
 	// Load
@@ -109,7 +109,7 @@ bool SpellChecker::Initialize()
 	
 	if (hunspell) {
 		conv = new wxCSConv(wxString(hunspell->get_dic_encoding(),wxConvUTF8));
-		if(!conv){KaiMessageBox(_("Nie można poprać formatu konwersji słownika."));}
+		if(!conv){KaiMessageBox(_("Nie można odczytać formatu konwersji słownika."));}
 		// Load user dictionary
 		wxString userpath=pathhh+"UserDic.udic";
 		if (wxFileExists(userpath)) {

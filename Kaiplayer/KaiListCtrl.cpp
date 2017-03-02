@@ -114,6 +114,8 @@ void ItemColor::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWind
 					wxTheClipboard->GetData( data );
 					col.SetAss(data.GetText());
 					theList->Refresh(false);
+					((KaiListCtrl*)theList)->SetModified(true);
+					modified = true;
 				}
 				wxTheClipboard->Close();
 			}
@@ -183,7 +185,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 
 KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, const wxPoint &pos, 
 		const wxSize &size, int style)
-	:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL|wxHORIZONTAL)
+	:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL)
 	,bmp(NULL)
 	,sel(-1)
 	,lastSelX(-1)
@@ -208,7 +210,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, 
 
 KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, const wxPoint &pos, 
 		const wxSize &size, int style)
-		:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL|wxHORIZONTAL)
+		:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL)
 	,bmp(NULL)
 	,sel(-1)
 	,lastSelX(-1)
@@ -290,12 +292,12 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	}
 	int maxWidth = GetMaxWidth()+10;
 	int bitmapw = w;
-	//if(maxWidth> w){
+	if(widths.size()>1){
 		if(SetScrollBar(wxHORIZONTAL, scPosH, w, maxWidth, w-2)){
 			GetClientSize (&w, &h);
 			if(maxWidth <= w){scPosH=0;SetScrollPos(wxHORIZONTAL,0);}
 		}
-	//}
+	}
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < bitmapw || bmp->GetHeight() < h)) {
 		delete bmp;
@@ -420,7 +422,8 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 	if((size_t)elemY>=itemList.size()){
 		//tu ju¿ nic nie zrobimy, jesteœmy poza elemetami na samym dole
 		if(lastSelX != -1 && lastSelY !=-1){
-			itemList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this);
+			wxMouseEvent evt1;
+			itemList[lastSelY]->row[lastSelX]->OnMouseEvent(evt1, false, true, this);
 			lastSelX=-1;lastSelY=-1;
 		}
 		return;
@@ -437,7 +440,8 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 		startX += widths[i];
 	}
 	if((elemX != lastSelX || elemY != lastSelY || evt.Leaving()) && lastSelX != -1 && lastSelY !=-1){
-		itemList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this);
+		wxMouseEvent evt1;
+		itemList[lastSelY]->row[lastSelX]->OnMouseEvent(evt1, false, true, this);
 	}
 	if(evt.LeftDown()){
 		

@@ -1036,7 +1036,7 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 	menut.Append(TEXTM_SEEKWORDS,_("Szukaj synonimu na synonimy.net"))->Enable(Selend.x!=Cursor.x);
 
 	if(!err.IsEmpty()){
-		menut.Append(TEXTM_ADD,_("&Dodaj słowo \"")+err+_("\" do słownika"));
+		menut.Append(TEXTM_ADD,wxString::Format(_("&Dodaj słowo \"%s\" do słownika"),err));
 	}
 
 	menut.Append(TEXTM_DEL,_("&Usuń"))->Enable(Selend.x!=Cursor.x);
@@ -1070,7 +1070,7 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 		SetSelection(from,from);modified=true;}
 	else if(id==TEXTM_ADD && !err.IsEmpty()){
 		bool succ = SpellChecker::Get()->AddWord(err);
-		if(!succ){KaiMessageBox(_("Błąd, słowo \"")+err+_("\" nie zostało dodane."));}
+		if(!succ){KaiMessageBox(wxString::Format(_("Błąd, słowo \"%s\" nie zostało dodane."),err));}
 		else{CheckText();EB->ClearErrs();Refresh(false);}
 	}else if(id>=TEXTM_SEEKWORDL && id<=TEXTM_SEEKWORDS){
 		wxString page=(id==TEXTM_SEEKWORDL)? L"http://ling.pl/" : 

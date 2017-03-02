@@ -498,7 +498,7 @@ namespace Auto{
 	{
 		for (auto macro : macros) {
 			if (macro->StrDisplay() == command->StrDisplay()) {
-				error(L, wxString::Format(_("Makro o nazwie '%s' jest już zedefiniowane w skrypcie '%s'"),
+				error(L, wxString::Format(_("Makro o nazwie '%s' jest już zdefiniowane w skrypcie '%s'"),
 					command->StrDisplay().utf8_str().data(), name.utf8_str().data()).mb_str(wxConvUTF8).data());
 			}
 		}
@@ -923,14 +923,14 @@ namespace Auto{
 
 	Automation::Automation(bool loadSubsScripts)
 	{
+		initialized = false;
 		AutoloadPath=Options.pathfull+"\\Automation\\automation\\Autoload";
 		if(loadSubsScripts){
 			AddFromSubs();
 		}else{
-			CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
+			//CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
 			//ReloadScripts(true);
 		}
-		//ReloadScripts(true);
 	}
 
 	Automation::~Automation()
@@ -993,7 +993,7 @@ namespace Auto{
 	{
 		wxStopWatch sw;
 		sw.Start();
-		initialized =false;
+		//initialized =false;
 		if(!first){RemoveAll(true);}
 		int error_count = 0;
 
@@ -1036,7 +1036,7 @@ namespace Auto{
 		}
 
 		if (error_count > 0) {
-			wxLogWarning(_("Jeden bądź więcej skryptów autoload zawiera błędy,\n obejrzyj opisy skryptów by uzyskać więcej informacji."));
+			wxLogWarning(_("Jeden bądź więcej skryptów autoload zawiera błędy.\nObejrzyj opisy skryptów, by uzyskać więcej informacji."));
 		}
 
 		initialized = true;
@@ -1123,10 +1123,12 @@ namespace Auto{
 		for(int j=(*bar)->GetMenuItemCount()-1; j>=3; j--){
 			(*bar)->Delete(j);
 		}
-		/*if(!initialized){
-			(*bar)->Append(30100,_("Wczytywanie skryptów..."))->Enable(false);
-			return;
-		}*/
+		if(!initialized){
+			//(*bar)->Append(30100,_("Wczytywanie skryptów..."))->Enable(false);
+			//return;
+			//ReloadScripts(true);
+			CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
+		}
 		bool changes = AddFromSubs();
 
 		/*if(!changes){

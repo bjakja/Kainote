@@ -136,7 +136,7 @@ public:
 	void SetTextWithTags();
 	void ClearErrs();
 	void OnEdit(wxCommandEvent& event);
-
+	bool SetBackgroundColour(const wxColour &col);
 	wxBoxSizer* BoxSizer1;
 
 	Dialogue *line;

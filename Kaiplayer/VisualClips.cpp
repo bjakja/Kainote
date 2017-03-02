@@ -18,6 +18,7 @@
 #include <wx/tokenzr.h>
 #include <wx/regex.h>
 #include <math.h> 
+#include "KaiMessageBox.h"
 
 
 ClipPoint::ClipPoint()
@@ -637,7 +638,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		{
 			int pos = CheckPos(xy, true);
 			if(psize > 0 && Points[(pos == (int)psize )? psize - 1 : pos].type=="m"){
-				wxMessageBox(_("Ze wzglêdu na b³êdy Vsfiltra zablokowa³em mo¿liwoœæ wstawiania dwóch \"m\" po sobie"), _("Uwaga"));
+				KaiMessageBox(_("Ze wzglêdu na b³êdy Vsfiltra zablokowa³em mo¿liwoœæ wstawiania dwóch \"m\" po sobie"), _("Uwaga"));
 				return;
 			}
 			AddMove(xy,pos);

@@ -81,7 +81,7 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 {
 	//MessageBeep(MB_ICONERROR);
 	//wxLogStatus("weszło");
-	PTR(InitializeGraph(), _("Graf się nie zainicjalizował"));
+	PTR(InitializeGraph(), _("Błąd inicjalizacji Direct Show"));
 	//wxLogStatus("graph");
 	VideoCtrl *Video =(VideoCtrl*)parent;
 	
@@ -92,7 +92,7 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 	
 	//bool anypin=false;
 	
-	HR(m_pGraph->AddSourceFilter(sFileName.wc_str(), L"Source Filter", &pSource.obj), _("Filtr źródła nie został dodany!"));
+	HR(m_pGraph->AddSourceFilter(sFileName.wc_str(), L"Source Filter", &pSource.obj), _("Filtr źródła nie został dodany"));
 	
 	/*if(SUCCEEDED(CoCreateInstance(CLSID_LAVVIDEO, NULL, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID *)&LAVVideo.obj)))
 	{
@@ -109,9 +109,9 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 	HR(CoCreateInstance(CLSID_DSoundRender, NULL, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID *)&pAudioRenderer.obj), _("Nie można utworzyć instancji renderera dźwięku"));
 	
 	//wxLogStatus("audio");
-	HR(m_pGraph->AddFilter(pAudioRenderer.obj, L"Direct Sound Renderer"), _("Nie można dodać renderera DirectSound"));
+	HR(m_pGraph->AddFilter(pAudioRenderer.obj, L"Direct Sound Renderer"), _("Nie można dodać renderera Direct Sound"));
 
-	bool isstream=false;
+	bool hasstream=false;
 
 	if(vobsub){
 		Selfdest<IBaseFilter> pVobsub;
@@ -223,7 +223,7 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 				}
 				pinfo.pFilter->QueryInterface(IID_IAMStreamSelect, (void**)&stream);
 				pinfo.pFilter->QueryInterface(IID_IAMExtendedSeeking, (void**)&chapters);
-				isstream=true;
+				hasstream=true;
 				break;
 			}
 			if(info){DeleteMediaType(info);}
@@ -237,7 +237,7 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 	m_state = Stopped;
 	m_pSeek->SetTimeFormat(&TIME_FORMAT_MEDIA_TIME);
 
-	if(!pSource.obj || isstream){return true;}
+	if(!pSource.obj || hasstream){return true;}
 	//hr=pSource->QueryInterface(IID_IAMStreamSelect, (void**)&stream);
 	if(FAILED(pSource->QueryInterface(IID_IAMStreamSelect, (void**)&stream))){
 		Selfdest<IPin> spin;
@@ -249,7 +249,7 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 		PIN_INFO pinfo;
 		HR(strpin.obj->QueryPinInfo(&pinfo),_("Nie można pobrać informacji o pinie splittera"));
 		if(FAILED(pinfo.pFilter->QueryInterface(IID_IAMStreamSelect, (void**)&stream)))
-		{wxLogStatus(_("z wyboru ścieżki nici"));}
+		{wxLogStatus(_("Błąd interfejsu wyboru ścieżek"));}
 	}
 	hr=pSource->QueryInterface(IID_IAMExtendedSeeking, (void**)&chapters);
 	
@@ -387,7 +387,7 @@ bool DShowPlayer::InitializeGraph()
 	TearDownGraph();
 
 	// Create the Filter Graph Manager.
-	HR(hr = CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, (void**)&m_pGraph),_("Nie można stworzyć grafa filtrów"));
+	HR(hr = CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, (void**)&m_pGraph),_("Nie można stworzyć interfejsu filtrów"));
 
 	// Query for graph interfaces. (These interfaces are exposed by the graph
     // manager regardless of which filters are in the graph.)

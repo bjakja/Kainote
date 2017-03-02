@@ -14,13 +14,19 @@
 #include <wx/snglinst.h>
 
 #include "KainoteMain.h"
+
 #if _DEBUG
 //#define _CRTDBG_MAP_ALLOC
-//#define _CRTDBG_MAP_ALLOC_NEW
-//#include <cstdlib>
-//#include <crtdbg.h>
+//  #define _CRTDBG_MAP_ALLOC_NEW
+//  #include <stdlib.h>
+//  #include <crtdbg.h>
+//
+//  #define DEBUG_NEW   new( _CLIENT_BLOCK, __FILE__, __LINE__)
+//  #define new DEBUG_NEW
 //#include <vld.h> 
 #endif
+
+
 
 class KaiServer;
 

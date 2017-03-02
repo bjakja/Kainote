@@ -42,13 +42,15 @@ wxString GetCheckedElements(wxWindow *parent);
 class KaiListBox : public KaiDialog
 {
 public:
-	KaiListBox(wxWindow *parent, wxArrayString suggest, const wxString &title, bool centerOnParent=false);
+	KaiListBox(wxWindow *parent, const wxArrayString &list, const wxString &title, bool centerOnParent=false);
 	virtual ~KaiListBox(){};
 	KaiListCtrl *list;
 	wxString GetSelection() const{return result;};
+	int GetIntSelection() {return selection;}
 private:
 	void OnDoubleClick(wxCommandEvent& evt);
 	wxString result;
+	int selection;
 };
 
 #endif

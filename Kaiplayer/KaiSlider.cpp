@@ -89,16 +89,16 @@ void KaiSlider::OnPaint(wxPaintEvent& evt)
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
 	tdc.SetPen(*wxTRANSPARENT_PEN);
-	tdc.SetBrush(GetBackgroundColour());
+	tdc.SetBrush(Options.GetColour(WindowBackground));
 	tdc.DrawRectangle(0,0,w,h);
 	bool enabled = IsThisEnabled();
 	wxColour slider = (enter && !pushed)? Options.GetColour(SliderBackgroundHover) :
 		(pushed)? Options.GetColour(SliderBackgroundPushed) : 
 		(enabled)? Options.GetColour(SliderBackground) : 
 		Options.GetColour(WindowBackgroundInactive);
-	wxColour sliderBorder = /*(enter && !pushed)? Options.GetColour(ButtonBorderHover) : 
-		(pushed)? Options.GetColour(ButtonBorderPushed) : */
-		(enabled)? Options.GetColour(SliderBorder) : //Options.GetColour(ButtonBorder) : 
+	wxColour sliderBorder = (enter && !pushed)? Options.GetColour(SliderBorderHover) : 
+		(pushed)? Options.GetColour(SliderBorderPushed) : 
+		(enabled)? Options.GetColour(SliderBorder) : 
 		Options.GetColour(ButtonBorderInactive);
 	tdc.SetPen(wxPen(Options.GetColour(SliderPathBorder)));
 	tdc.SetBrush(wxBrush(Options.GetColour(SliderPathBackground)));

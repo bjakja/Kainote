@@ -17,6 +17,7 @@
 #include "SubsGrid.h"
 #include "config.h"
 #include "EditBox.h"
+
 #include "kainoteMain.h"
 #include "OpennWrite.h"
 #include "OptionsDialog.h"
@@ -27,7 +28,7 @@
 #include <wx/regex.h>
 #include <wx/ffile.h>
 #include "KaiMessageBox.h"
-//#include <thread>
+
 
 bool sortstart(Dialogue *i,Dialogue *j){ 
 	if(i->Start.mstime!=j->Start.mstime){
@@ -122,9 +123,10 @@ SubsGrid::~SubsGrid()
 
 void SubsGrid::SetStyle() 
 {
-	font.SetFaceName(Options.GetString(GridFontName));
-	//if (!font.IsOk())
-	font.SetFamily(wxFONTFAMILY_SWISS );
+	wxString fontname = Options.GetString(GridFontName);
+	font.SetFaceName(fontname);
+	if (!font.IsOk())
+		font.SetFamily(wxFONTFAMILY_SWISS );
 	font.SetWeight(wxFONTWEIGHT_NORMAL);
 	font.SetPointSize(Options.GetInt(GridFontSize));
 
@@ -143,7 +145,7 @@ void SubsGrid::SetStyle()
 
 void SubsGrid::OnPaint(wxPaintEvent& event)
 {
-	
+
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w,&h);
@@ -165,7 +167,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	if(SetScrollBar(wxVERTICAL,scPos,panelrows, size + 3, panelrows-3)){
 		GetClientSize(&w,&h);
 	}
-	
+
 	// Prepare bitmap
 	if (bmp) {
 		if (bmp->GetWidth() < w+scHor || bmp->GetHeight() < h) {
@@ -179,15 +181,16 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	wxMemoryDC tdc;
 	tdc.SelectObject(*bmp);
 	int firstCol = GridWidth[0]+1;
-	
-	
+
+
 
 	tdc.SetFont(font);
 	//wxMemoryDC tdc;
 	//wxBitmap tbmp(w+scHor,h);
 	//tdc.SelectObject(tbmp);
 	//tdc.SetFont(font);
-
+	wxColour header = Options.GetColour(GridHeader);
+	wxColour headerText = Options.GetColour(GridHeaderText);
 	wxColour labelBkCol=Options.GetColour(GridLabelSaved);
 	wxColour labelBkColN=Options.GetColour(GridLabelNormal);
 	wxColour labelBkColM=Options.GetColour(GridLabelModified);
@@ -206,7 +209,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	wxColour ComparsionBGCmntSelCol=Options.GetColour(GridComparisonCommentBackgroundSelected);
 	wxString chtag=Options.GetString(GridTagsSwapChar);
 	bool SpellCheckerOn = Options.GetBool(SpellcheckerOn);
-	
+
 	tdc.SetPen(*wxTRANSPARENT_PEN);
 	tdc.SetBrush(wxBrush(linesCol));
 	tdc.DrawRectangle(0,0,w+scHor/*-(GridWidth[0]+1)*/,h);
@@ -214,11 +217,11 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	int ilcol;
 	posY=0;
 
-	bool isd=false;
+	bool isComment=false;
 	bool unkstyle=false;
 	bool shorttime=false;
 	int states=2;
-	
+
 	if(SpellErrors.size()<(size_t)size){
 		SpellErrors.resize(size);
 	}
@@ -226,12 +229,13 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	Dialogue *acdial=GetDial(MID(0,Edit->ebrow,size-1));
 	Dialogue *Dial;
 
-	
+
 	int fw,fh,bfw,bfh;
 
 	for(int i=scPos;i<scrows;i++){
 
 		wxArrayString strings;
+		bool isSelected = false;
 
 		if (i==scPos){
 			strings.Add("#");
@@ -258,7 +262,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 
 			strings.Add(wxString::Format("%i",i));
 
-			isd=Dial->IsComment;
+			isComment=Dial->IsComment;
 			states=Dial->State;
 			if (form<SRT){
 				strings.Add(wxString::Format("%i",Dial->Layer));
@@ -279,7 +283,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 			}
 			if (form<SRT){
 				if(FindStyle(Dial->Style)==-1){unkstyle=true;}else{unkstyle=false;}
-				strings.Add(Dial->Style);//(transl&&Dial.TextTl=="")?"TlStyl":
+				strings.Add(Dial->Style);
 				strings.Add(Dial->Actor);
 				strings.Add(wxString::Format("%i",Dial->MarginL));
 				strings.Add(wxString::Format("%i",Dial->MarginR));
@@ -318,6 +322,10 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 					CheckText(strings[strings.size()-1],SpellErrors[i-1]);
 				}
 			} 
+			if(sel.find(i-1) != sel.end()){
+				isSelected = true;
+			}
+
 		}
 
 		posX=0;
@@ -329,27 +337,24 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 		bool isCenter;
 		for (int j=0; j<ilcol; j++){
 			if(showtl&&j==ilcol-2){
-				int podz=(w + scHor - posX /*- (GridWidth[0] + 1)*/) / 2;
+				int podz=(w + scHor - posX) / 2;
 				GridWidth[j]=podz;
 				GridWidth[j+1]=podz;
 			}
 
 			if(!showtl&&j==ilcol-1){GridWidth[j] = w + scHor - posX/* - (GridWidth[0] + 1)*/;}
-			bool comparsion = (Comparsion && i!=scPos && Comparsion->at(i-1).size()>0);
+			bool comparison = (Comparsion && i!=scPos && Comparsion->at(i-1).size()>0);
 
 			if(GridWidth[j]>0){
 				tdc.SetPen(*wxTRANSPARENT_PEN);
-				wxColour kol= ( comparsion )? ComparsionBGCol :subsBkCol;
-				if(i==scPos||j==0&&states==0){kol=labelBkColN;}
-				else if(j==0&&states==2){kol=labelBkCol;}
-				else if(j==0&&states==1){kol=labelBkColM;}
-				else if(isd&&j!=0){ kol= ( comparsion )? ComparsionBGCmntCol : comm;}
+				wxColour kol= (comparison)? ComparsionBGCol :subsBkCol;
+				if(i==scPos){kol = header;}
+				else if(j==0){kol= (states == 0)? labelBkColN : (states == 2)? labelBkCol : labelBkColM;}
+				else if(isComment && j!=0 ){ kol= (comparison)? ComparsionBGCmntCol : comm;}
 
-				if(i>scPos){
-					if(sel.find(i-1)!=sel.end()&&j!=0){
-						if(isd){kol = ( comparsion )? ComparsionBGCmntSelCol : selcom;}
-						else{kol= ( comparsion )? ComparsionBGSelCol : seldial; }
-					}
+				if(isSelected && j > 0){
+					if(isComment){kol = (comparison)? ComparsionBGCmntSelCol : selcom;}
+					else{kol= (comparison)? ComparsionBGSelCol : seldial; }
 				}
 				tdc.SetBrush(wxBrush(kol));
 				if(unkstyle && j==4 || shorttime && (j==10||(j==3 && form>ASS))){
@@ -358,71 +363,71 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 
 				tdc.DrawRectangle(posX,posY,GridWidth[j],GridHeight);
 
-				if(i!=scPos && j==ilcol-1 && SpellErrors[i-1].size()>2){
-					tdc.SetBrush(wxBrush(SpelcheckerCol));
-					for(size_t k = 1; k < SpellErrors[i-1].size(); k+=2){
+				if(i!=scPos && j==ilcol-1){
 
-						wxString err=strings[j].SubString(SpellErrors[i-1][k], SpellErrors[i-1][k+1]);
-						err.Trim();
-						if(SpellErrors[i-1][k]>0){
-							wxString berr=strings[j].Mid(0, SpellErrors[i-1][k]);
-							tdc.GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &font);
-						}else{bfw=0;}
+					if(SpellErrors[i-1].size()>2){
+						tdc.SetBrush(wxBrush(SpelcheckerCol));
+						for(size_t k = 1; k < SpellErrors[i-1].size(); k+=2){
 
-						tdc.GetTextExtent(err, &fw, &fh, NULL, NULL, &font);
-						tdc.DrawRectangle(posX+bfw+4,posY,fw,GridHeight);
+							wxString err=strings[j].SubString(SpellErrors[i-1][k], SpellErrors[i-1][k+1]);
+							err.Trim();
+							if(SpellErrors[i-1][k]>0){
+								wxString berr=strings[j].Mid(0, SpellErrors[i-1][k]);
+								tdc.GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &font);
+							}else{bfw=0;}
+
+							tdc.GetTextExtent(err, &fw, &fh, NULL, NULL, &font);
+							tdc.DrawRectangle(posX+bfw+4,posY,fw,GridHeight);
+						}
+					}
+
+
+					if(comparison){
+						tdc.SetTextForeground(ComparsionCol);
+
+						for(size_t k = 1; k < Comparsion->at(i-1).size(); k+=2){
+							//if(Comparsion->at(i-1)[k]==Comparsion->at(i-1)[k+1]){continue;}
+							wxString cmp=strings[j].SubString(Comparsion->at(i-1)[k], Comparsion->at(i-1)[k+1]);
+
+							if(cmp==""){continue;}
+							if(cmp==" "){cmp="_";}
+							wxString bcmp;
+							if(Comparsion->at(i-1)[k]>0){
+								bcmp=strings[j].Mid(0, Comparsion->at(i-1)[k]);
+								tdc.GetTextExtent(bcmp, &bfw, &bfh, NULL, NULL, &font);
+							}else{bfw=0;}
+
+							tdc.GetTextExtent(cmp, &fw, &fh, NULL, NULL, &font);
+							if((cmp.StartsWith("T") || cmp.StartsWith("Y") || cmp.StartsWith(L"Ł"))){bfw++;}
+
+							tdc.DrawText(cmp,posX+bfw+3,posY);
+							tdc.DrawText(cmp,posX+bfw+5,posY);
+							tdc.DrawText(cmp,posX+bfw+3,posY+2);
+							tdc.DrawText(cmp,posX+bfw+5,posY+2);
+						}
+
 					}
 
 				}
 
-				bool collis=(i!=scPos && i!=Edit->ebrow+1 && (Dial->Start >= acdial->Start && Dial->Start < acdial->End 
-													|| Dial->End > acdial->Start && Dial->Start <= acdial->End) ); 
-				
 
-
+				bool collis=(i!=scPos && i!=Edit->ebrow+1 && 
+					(Dial->Start >= acdial->Start && Dial->Start < acdial->End || 
+					Dial->End > acdial->Start && Dial->Start <= acdial->End)); 
 
 				if(form<SRT){isCenter=!(j == 4 || j == 5 || j == 9 || j == 11 || j == 12);}
 				else if(form==TMP){isCenter=!(j == 2);}
 				else{isCenter=!(j == 4);}
-				
-				
-				
 
-				if(comparsion && j==ilcol-1){
-					tdc.SetTextForeground(ComparsionCol);
-					
-					for(size_t k = 1; k < Comparsion->at(i-1).size(); k+=2){
-						//if(Comparsion->at(i-1)[k]==Comparsion->at(i-1)[k+1]){continue;}
-						wxString cmp=strings[j].SubString(Comparsion->at(i-1)[k], Comparsion->at(i-1)[k+1]);
-						//wxLogStatus("cmp "+cmp);
-						if(cmp==""){continue;}
-						if(cmp==" "){cmp="_";}
-						wxString bcmp;
-						if(Comparsion->at(i-1)[k]>0){
-							bcmp=strings[j].Mid(0, Comparsion->at(i-1)[k]);
-							tdc.GetTextExtent(bcmp, &bfw, &bfh, NULL, NULL, &font);
-						}else{bfw=0;}
-						
-						tdc.GetTextExtent(cmp, &fw, &fh, NULL, NULL, &font);
-						if((cmp.StartsWith("T") || cmp.StartsWith("Y") || cmp.StartsWith(L"Ł"))){bfw++;}
-						
-						tdc.DrawText(cmp,posX+bfw+3,posY);
-						tdc.DrawText(cmp,posX+bfw+5,posY);
-						tdc.DrawText(cmp,posX+bfw+3,posY+2);
-						tdc.DrawText(cmp,posX+bfw+5,posY+2);
-					}
-					
-				}
-				tdc.SetTextForeground( (collis)? collcol : textcol);
+				tdc.SetTextForeground((i == scPos)? headerText : (collis)? collcol : textcol);
 				if(j==ilcol-1 && (strings[j].StartsWith("T") || strings[j].StartsWith("Y") || strings[j].StartsWith(L"Ł"))){posX++;}
-				cur = wxRect(posX+4,posY,GridWidth[j]-7,GridHeight);
+				cur = wxRect(posX+3,posY,GridWidth[j]-6,GridHeight);
 				tdc.SetClippingRegion(cur);
-				tdc.DrawLabel(strings[j],cur,isCenter ? wxALIGN_CENTER : (wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT));
+				tdc.DrawLabel(strings[j], cur, isCenter ? wxALIGN_CENTER : (wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT));
 				tdc.DestroyClippingRegion();
-				
-				//if(j!=0){
-					posX+=GridWidth[j]+1;
-				//}
+
+				posX+=GridWidth[j]+1;
+
 			}
 		}
 
@@ -432,12 +437,9 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 
 
 	if(bg){
-		/*tdc.SetPen(*wxTRANSPARENT_PEN);
-		tdc.SetBrush(wxBrush(labelBkColN));
-		tdc.DrawRectangle(0,posY,GridWidth[0],h);*/
 		tdc.SetPen(*wxTRANSPARENT_PEN);
 		tdc.SetBrush(wxBrush(Options.GetColour(GridBackground)));
-		tdc.DrawRectangle(0,posY,w+scHor/*-GridWidth[0]+1*/,h);
+		tdc.DrawRectangle(0,posY,w+scHor,h);
 	}
 	if(mtimerow>=scPos&&mtimerow<=scrows){
 		tdc.SetBrush(*wxTRANSPARENT_BRUSH);
@@ -448,10 +450,9 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	if(Edit->ebrow>=scPos&&Edit->ebrow<=scrows){
 		tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 		tdc.SetPen(wxPen(Options.GetColour(GridActiveLine)));
-		tdc.DrawRectangle(scHor,((Edit->ebrow-scPos+1)*(GridHeight+1))-1,w+scHor/*-(GridWidth[0]+1)*/,GridHeight+2);
+		tdc.DrawRectangle(scHor,((Edit->ebrow-scPos+1)*(GridHeight+1))-1,w+scHor,GridHeight+2);
 	}
 
-	//mdc.Blit(GridWidth[0]+1,0,w+scHor-(GridWidth[0]+1),h,&tdc,scHor,0);
 	wxPaintDC dc(this);
 	dc.Blit(0,0,firstCol,h,&tdc,0,0);
 	dc.Blit(firstCol,0,w+scHor,h,&tdc,scHor+firstCol,0);
@@ -739,7 +740,7 @@ void SubsGrid::SelectRow(int row, bool addToSelected, bool select, bool norefres
 		if(norefresh){return;}
 		Refresh(false);
 	}
-//done:
+	//done:
 	if(Edit->Visual==CHANGEPOS/* || Edit->Visual==MOVEALL*/){
 		Kai->GetTab()->Video->SetVisual();
 		Kai->GetTab()->Video->Render();
@@ -836,7 +837,8 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 		Refresh(false);
 		return;
 	}
-
+	TabPanel *pan=(TabPanel*)GetParent();
+	int mvtal= pan->Video->vToolbar->videoSeekAfter->GetSelection();//Options.GetInt(MoveVideoToActiveLine);
 	if (!(row < scPos || row >= GetCount())) {
 
 		if(holding && alt && lastsel!=row)
@@ -866,6 +868,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 			return;
 		}
 
+
 		// Normal click
 		if (!shift && !alt) {
 
@@ -878,14 +881,13 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 			}
 
 
-			int mvtal= Options.GetInt(MoveVideoToActiveLine);
+
 			//1-kliknięcie lewym
 			//2-kliknięcie lewym i edycja na pauzie
 			//3-kliknięcie lewym i edycja na pauzie i odtwarzaniu
 
-			if (dclick||(((holding && lastsel!=row)|| click) && mvtal < 4 && mvtal > 0 )){
+			if (dclick||((((left_up) && lastRow != row)|| click) && mvtal < 4 && mvtal > 0 )){
 				//
-				TabPanel *pan=(TabPanel*)GetParent();
 				if(pan->Video->GetState()!=None){
 					if(pan->Video->GetState()==Stopped){pan->Video->Play();pan->Video->Pause();}
 					short wh=(form<SRT)?2:1;
@@ -895,9 +897,9 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 					bool isstart;
 					int vczas;
 					if(event.GetX()>=whh && event.GetX()<whh+GridWidth[wh+1] && form!=TMP){ 
-						vczas=GetDial(row)->End.mstime; isstart=false;}
-					else{vczas=GetDial(row)->Start.mstime; isstart=true;}
-					if(ctrl){vczas-=1000;SelectRow(row);}
+						vczas=GetDial(Edit->ebrow)->End.mstime; isstart=false;}
+					else{vczas=GetDial(Edit->ebrow)->Start.mstime; isstart=true;}
+					if(ctrl){vczas-=1000;/*SelectRow(row);*/}
 					pan->Video->Seek(MAX(0,vczas),isstart,true,false);
 					if(Edit->ABox){Edit->ABox->audioDisplay->UpdateImage(true);}
 				}
@@ -930,7 +932,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 
 		if (delta) {
 			ScrollTo(scPos + delta);//row - (h / (GridHeight+1)) row
-			
+
 			// End the hold if this was a mousedown to avoid accidental
 			// selection of extra lines
 			if (click) {// && row!=GetCount()-1
@@ -940,6 +942,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 			}
 		}
 	}
+
 	// Block select
 	if ((left_up && shift && !alt)|| (holding && !ctrl && !alt && !shift && lastsel!=row)) {
 		if (lastRow != -1) {
@@ -963,6 +966,24 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 				notFirst = true;
 			}
 			Edit->SetIt(row,true,true,true);
+			if(mvtal < 4 && mvtal > 0){
+				//TabPanel *pan=(TabPanel*)GetParent();
+				if(pan->Video->GetState()!=None){
+					if(pan->Video->GetState()==Stopped){pan->Video->Play();pan->Video->Pause();}
+					short wh=(form<SRT)?2:1;
+					int whh=2;
+					for(int i = 0;i<=wh;i++){whh+=GridWidth[i];}
+					whh-=scHor;
+					bool isstart;
+					int vczas;
+					if(event.GetX()>=whh && event.GetX()<whh+GridWidth[wh+1] && form!=TMP){ 
+						vczas=GetDial(Edit->ebrow)->End.mstime; isstart=false;}
+					else{vczas=GetDial(Edit->ebrow)->Start.mstime; isstart=true;}
+					if(ctrl){vczas-=1000;/*SelectRow(row);*/}
+					pan->Video->Seek(MAX(0,vczas),isstart,true,false);
+					if(Edit->ABox){Edit->ABox->audioDisplay->UpdateImage(true);}
+				}
+			}
 			lastsel=row;
 			Refresh(false);
 			if(Edit->Visual==CHANGEPOS/* || Edit->Visual==MOVEALL*/){
@@ -984,7 +1005,8 @@ void SubsGrid::Convert(char type)
 		if(od.ShowModal()==wxID_CANCEL){return;}
 	}
 	if(Options.GetBool(ConvertFPSFromVideo)&&Kai->GetTab()->VideoPath!=""){
-		Options.SetString(ConvertFPS, Kai->GetStatusText(2).BeforeFirst(' '));}
+		Options.SetString(ConvertFPS, Kai->GetStatusText(4).BeforeFirst(' '));
+	}
 	if(Options.GetFloat(ConvertFPS)<1){KaiMessageBox(_("Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."));return;}
 
 	bool newendtimes=Options.GetBool(ConvertNewEndTimes);
@@ -1046,7 +1068,7 @@ void SubsGrid::Convert(char type)
 				return (i->End.mstime<j->End.mstime);
 			}
 			//if(i->Style!=j->Style){
-				//return (i->Style.CmpNoCase(j->Style)<0);
+			//return (i->Style.CmpNoCase(j->Style)<0);
 			//}
 			return (i->Text.CmpNoCase(j->Text)<0);
 		});
@@ -1071,7 +1093,7 @@ void SubsGrid::Convert(char type)
 	}else{
 		Kai->SetSubsResolution();
 	}
-	
+
 	form=type;
 	Edit->SetIt((Edit->ebrow < GetCount())? Edit->ebrow : 0);
 	SetModified();
@@ -1313,7 +1335,7 @@ void SubsGrid::ChangeTime()
 
 
 	std::map<Dialogue *,int,compare> tmpmap;
-	
+
 
 	if(seb!=0){
 		int answer=KaiMessageBox(wxString::Format(_("Czy naprawdę chcesz przesuwać tylko czasy %s?"), 
@@ -1340,7 +1362,7 @@ void SubsGrid::ChangeTime()
 		added=ZEROIT(added);
 	}
 
-	
+
 	wxArrayString stcomp;
 	if(lmd==4){
 		int g=0;
@@ -1369,7 +1391,7 @@ void SubsGrid::ChangeTime()
 				if(styl==stcomp[i]){fromstyl=true;}
 			}
 		}
-		
+
 		if( lmd==0
 			|| ( lmd==1 && sel.find(i) != sel.end() ) 
 			|| ( lmd==3 && firsttime <= file->subs->dials[i]->Start.mstime ) 
@@ -1395,7 +1417,7 @@ void SubsGrid::ChangeTime()
 				if(pe & 2){dialc->End.Change(lo);dialc->State=1;}
 				if(CT>0 || pe>19){
 					tmpmap[dialc]=i;
-					
+
 				}
 			}
 
@@ -1443,7 +1465,7 @@ void SubsGrid::ChangeTime()
 				int endrng1 = dialc->End.mstime + kae;
 				int pors = 0;
 				int pore = (hasend)? INT_MAX : it->first->Start.mstime + kas;
-					
+
 				if(cur!=tmpmap.begin()){
 					it--;
 					if(!hasend){it--;}
@@ -1547,7 +1569,7 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 		}
 		Refresh(false);
 	}
-	
+
 	// Up/down
 	int dir = 0;
 	if (key == WXK_UP) dir = -1;
@@ -1566,7 +1588,7 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 	}
 	if (key == WXK_RETURN){
 		Edit->TextEdit->SetFocus();}
-	
+
 	// Moving
 	if (dir) {
 		// Move selection
@@ -1580,13 +1602,14 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 
 			int next = MID(0,curLine+dir,GetCount()-1);
 			Edit->SetIt(next);
-			int mvtal= Options.GetInt(MoveVideoToActiveLine);
-			int pasel= Options.GetInt(PlayAfterSelection);
+			TabPanel *pan = (TabPanel*)GetParent();
+			int mvtal= pan->Video->vToolbar->videoSeekAfter->GetSelection();//Options.GetInt(MoveVideoToActiveLine);
+			int pasel= pan->Video->vToolbar->videoPlayAfter->GetSelection();//Options.GetInt(PlayAfterSelection);
 			//1-kliknięcie lewym
 			//2-kliknięcie lewym i edycja na pauzie
 			//3-kliknięcie lewym i edycja na pauzie i odtwarzaniu
 			if ( mvtal < 4 && mvtal > 0 && pasel==0){
-				TabPanel *pan = (TabPanel*)GetParent();
+				
 				if(pan->Video->GetState()==Stopped){pan->Video->Play();pan->Video->Pause();}
 				int vczas=GetDial(next)->Start.mstime;
 				pan->Video->Seek(MAX(0,vczas),true,true,false);
@@ -1759,7 +1782,7 @@ void SubsGrid::GetUndo(bool redo)
 		pan->Edit->HideControls();
 		Kai->UpdateToolbar();
 	}
-	
+
 	int erow=Edit->ebrow;
 	if(erow>=GetCount()){
 		erow=GetCount()-1;
@@ -1767,7 +1790,7 @@ void SubsGrid::GetUndo(bool redo)
 		sel[erow]=true;
 		lastRow=erow;
 	}
-	
+
 	Thaw();
 
 	if(Kai->ss){Kai->ss->ASS->SetArray(&file->subs->styles);Kai->ss->ASS->Refresh(false);}
@@ -1784,7 +1807,7 @@ void SubsGrid::GetUndo(bool redo)
 	VideoCtrl *vb=pan->Video;
 	if(Edit->Visual < CHANGEPOS || Edit->Visual == MOVEALL){
 		if(vb->IsShown() || vb->isFullscreen){vb->OpenSubs(SaveText());}
-		int opt=Options.GetInt(MoveVideoToActiveLine);
+		int opt=vb->vToolbar->videoSeekAfter->GetSelection();//Options.GetInt(MoveVideoToActiveLine);
 		if(opt>1){
 			if(vb->GetState()==Paused || (vb->GetState()==Playing && (opt==3 || opt==5))){
 				vb->Seek(Edit->line->Start.mstime);}
@@ -1928,7 +1951,7 @@ void SubsGrid::SetModified(bool redit, bool dummy, int SetEditBoxLine)
 			}else{
 				if(vb->IsShown() || vb->isFullscreen){vb->OpenSubs(SaveText());}
 
-				int opt=Options.GetInt(MoveVideoToActiveLine);
+				int opt=vb->vToolbar->videoSeekAfter->GetSelection();//Options.GetInt(MoveVideoToActiveLine);
 				if(opt>1){
 					if(vb->GetState()==Paused || (vb->GetState()==Playing && (opt==3 || opt==5))){
 						vb->Seek(Edit->line->Start.mstime);}
@@ -2091,9 +2114,9 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 	RepaintWindow();
 
 	Edit->SetIt(active,false,false);
-	
+
 	Edit->HideControls();
-	
+
 	file->EndLoad();
 	if(Kai->ss && form==ASS){Kai->ss->LoadAssStyles();}
 	if(form == ASS){RebuildActorEffectLists();}
@@ -2131,7 +2154,7 @@ bool SubsGrid::SetTlMode(bool mode)
 	if(mode){
 		if(GetSInfo("TLMode")==""){
 			//for(int i=0;i<GetCount();i++){file->subs->dials[i]->spells.clear();}
-			
+
 			int ssize=file->subs->styles.size();
 			if(ssize>0){
 				Styles *tlstyl=GetStyle(0,"Default")->Copy();
@@ -2147,7 +2170,7 @@ bool SubsGrid::SetTlMode(bool mode)
 		AddSInfo("TLMode", "Yes");
 		transl=true;
 		Kai->Menubar->Enable(SaveTranslation,true);
-		
+
 		Refresh(false);
 
 	}else{
@@ -2242,12 +2265,12 @@ void SubsGrid::NextLine(int dir)
 	Refresh(false);Edit->SetIt(nebrow);
 	if(Edit->ABox){Edit->ABox->audioDisplay->SetDialogue(Edit->line,nebrow);}
 	//if(Kai->GetTab()->Video->GetState() != None && Options.GetBool("Editbox Video Time")){
-		//Kai->GetTab()->Video->Seek(GetDial(nebrow)->Start.mstime-5);}
+	//Kai->GetTab()->Video->Seek(GetDial(nebrow)->Start.mstime-5);}
 }
 
 void SubsGrid::CheckText(wxString text, wxArrayInt &errs)
 {
-		
+
 	wxString notchar="/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{}";
 	text+=" ";
 	bool block=false;
@@ -2276,7 +2299,7 @@ void SubsGrid::CheckText(wxString text, wxArrayInt &errs)
 		else if(!block&&text.GetChar((i==0)? 0 : i-1)=='\\'){firsti=i+1;word="";}
 	}
 	if(errs.size()<2){errs.push_back(0);}
-	
+
 }
 
 
@@ -2392,7 +2415,7 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, bool trimSels)
 	}else if(visible){
 		*visible=false;
 	}
-	
+
 	bool isTlmode = GetSInfo("TLMode")=="Yes";
 	for(int i=0; i<GetCount(); i++){
 		Dialogue *dial=GetDial(i);
@@ -2419,18 +2442,18 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, bool trimSels)
 
 
 	/*if(!hasLines && selections ){
-		Dialogue *dial=Edit->line;
-		if(GetSInfo("TLMode")=="Yes" && dial->TextTl!=""){
-			(*txt)<<dial->GetRaw(false,GetSInfo("TLMode Style"));
-			(*txt)<<dial->GetRaw(true);
+	Dialogue *dial=Edit->line;
+	if(GetSInfo("TLMode")=="Yes" && dial->TextTl!=""){
+	(*txt)<<dial->GetRaw(false,GetSInfo("TLMode Style"));
+	(*txt)<<dial->GetRaw(true);
 
-		}else{
-			(*txt)<<dial->GetRaw();
-		}
-		int all= txt->Len();EBText->y=all-2;
-		all-= (GetSInfo("TLMode")=="Yes" && dial->TextTl!="")? 
-			dial->TextTl.Len() : dial->Text.Len();
-		EBText->x=all-2;
+	}else{
+	(*txt)<<dial->GetRaw();
+	}
+	int all= txt->Len();EBText->y=all-2;
+	all-= (GetSInfo("TLMode")=="Yes" && dial->TextTl!="")? 
+	dial->TextTl.Len() : dial->Text.Len();
+	EBText->x=all-2;
 
 	}*/
 
@@ -2533,5 +2556,5 @@ BEGIN_EVENT_TABLE(SubsGrid,KaiScrolledWindow)
 	EVT_TIMER(ID_AUTIMER,SubsGrid::OnBcktimer)
 	EVT_ERASE_BACKGROUND(SubsGrid::OnEraseBackground)
 	EVT_MOUSE_CAPTURE_LOST(SubsGrid::OnLostCapture)
-END_EVENT_TABLE()
+	END_EVENT_TABLE()
 
