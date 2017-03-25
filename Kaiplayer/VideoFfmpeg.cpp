@@ -47,7 +47,7 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *_s
 	,index(NULL)
 	,isBusy(false)
 {
-	if(!Options.AudioOpts && !Options.LoadAudioOpts()){KaiMessageBox(_("Dupa blada, opcje się nie wczytały, na audio nie podziałasz"), _("Błędny błąd"));}
+	if(!Options.AudioOpts && !Options.LoadAudioOpts()){KaiMessageBox(_("Nie można wczytać opcji audio"), _("Błąd"));}
 	disccache = !Options.GetBool(AudioRAMCache);
 
 	success=false;
@@ -331,7 +331,7 @@ done:
 		//we can and should now destroy the index object. 
 
 		if (videosource == NULL) {
-			wxLogMessage(_("Dupa bada, videosource nie utworzył się."));
+			wxLogMessage(_("Nie można utworzyć VideoSource."));
 			return 0;
 		}
 
@@ -366,7 +366,7 @@ done:
 		pixfmt[1] = -1;
 
 		if (FFMS_SetOutputFormatV2(videosource, pixfmt, width, height, FFMS_RESIZER_BILINEAR, &errinfo)) {
-			wxLogMessage(_("Dupa bada, nie można przekonwertować wideo na RGBA"));
+			wxLogMessage(_("Nie można przekonwertować wideo na RGBA"));
 			return 0;
 		}
 
@@ -381,18 +381,18 @@ done:
 		if(colormatrix.IsEmpty()){colormatrix=_("Brak");}
 		if (CS != FFMS_CS_RGB && CS != FFMS_CS_BT470BG && ColorSpace != colormatrix && colormatrix == "TV.601") {
 			if (FFMS_SetInputFormatV(videosource, FFMS_CS_BT470BG, CR, FFMS_GetPixFmt(""), &errinfo)){
-				wxLogMessage(_("Dupa bada, macierz YCbCr się nie znieniła"));
+				wxLogMessage(_("Nie można zmienić macierzy YCbCr"));
 			}
 			ColorSpace = ColorCatrixDescription(FFMS_CS_BT470BG, CR);
 		}
 
 		FFMS_Track *FrameData = FFMS_GetTrackFromVideo(videosource);
 		if (FrameData == NULL){
-			wxLogMessage(_("Dupa bada, nie można pobrać ścieżki wideo"));
+			wxLogMessage(_("Nie można pobrać ścieżki wideo"));
 			return 0;}
 		const FFMS_TrackTimeBase *TimeBase = FFMS_GetTimeBase(FrameData);
 		if (TimeBase == NULL){
-			wxLogMessage(_("Dupa bada, nie można pobrać informacji o wideo"));
+			wxLogMessage(_("Nie można pobrać informacji o wideo"));
 			return 0;}
 
 		const FFMS_FrameInfo *CurFrameData;
@@ -415,14 +415,10 @@ done:
 		}
 
 	}
-	/* Retrieve the track number of the first audio track */
-	//int trackn = FFMS_GetFirstTrackOfType(index, FFMS_TYPE_AUDIO, &errinfo);
-
 	if(audiotrack==-1){ SampleRate=-1; return 1;}
-	/* We now have enough information to create the audio source object */
-	audiosource = FFMS_CreateAudioSource(fname.utf8_str(), audiotrack, index, FFMS_DELAY_FIRST_VIDEO_TRACK, &errinfo);//FFMS_DELAY_FIRST_VIDEO_TRACK
+	
+	audiosource = FFMS_CreateAudioSource(fname.utf8_str(), audiotrack, index, FFMS_DELAY_FIRST_VIDEO_TRACK, &errinfo);
 	if (audiosource == NULL) {
-		/* handle error (you should know what to do by now) */
 		wxLogMessage(_("Wystąpił błąd tworzenia źródła audio: %s"),errinfo.Buffer);
 		return 0;
 	}
@@ -442,13 +438,11 @@ done:
 	const FFMS_AudioProperties *audioprops = FFMS_GetAudioProperties(audiosource);
 
 	SampleRate=audioprops->SampleRate;
-	//BytesPerSample=audioprops->BitsPerSample/8;
-	//Channels=audioprops->Channels;
 	Delay=(Options.GetInt(AudioDelay)/1000);
 	NumSamples=audioprops->NumSamples;
-	//audioprops = FFMS_GetAudioProperties(audiosource);
-	if(Delay >= (SampleRate*NumSamples*BytesPerSample)){
-		wxLogMessage(_("Z opóźnienia nici, przekracza czas trwania audio"));
+	
+	if(abs(Delay) >= (SampleRate*NumSamples*BytesPerSample)){
+		wxLogMessage(_("Nie można ustawić opóźnienia, przekracza czas trwania audio"));
 		Delay=0;
 	}
 
@@ -923,3 +917,4 @@ void VideoFfmpeg::SetColorSpace(const wxString& matrix){
 		ColorSpace = matrix;
 
 }
+

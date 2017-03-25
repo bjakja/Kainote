@@ -240,6 +240,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	std::set_new_handler(OnOutofMemory);
 	FontEnum.StartListening(this);
 	SetSubsResolution(false);
+	Auto=new Auto::Automation();
 }
 
 kainoteFrame::~kainoteFrame()
@@ -281,7 +282,6 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 {
 	int id=event.GetId();
 	int Modif = event.GetInt();
-	//MenuItem *item = (MenuItem*)event.GetClientData();
 
 	TabPanel *pan=GetTab();
 	//wxLogStatus("menu %i %i", id, Modif);
@@ -293,7 +293,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		int ret=-1;
 		wxString name=item->GetLabelText();
 		ret=Hkeys.OnMapHkey( id, name, this, GLOBAL_HOTKEY);
-		if(ret>-2){
+		if(ret > -2){
 			idAndType itype(id);
 			item->SetAccel(&Hkeys.GetHKey(itype));
 			SetAccels(false); 
@@ -335,6 +335,8 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		FR= new findreplace(this, FR, id==FindReplace);
 		FR->Show(true);
 		FR->ReloadStyle();
+		wxActivateEvent evt;
+		FR->OnSetFocus(evt);
 	}else if(id==SelectLines){
 		SL= new findreplace(this,SL,false,true);
 		SL->Show(true);
@@ -420,7 +422,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		//Auto->BuildMenu(&AutoMenu);
 	}else if(id ==LoadLastScript){
 		if(!Auto){Auto=new Auto::Automation(true);}
-		else{Auto->AddFromSubs();}
+		Auto->AddFromSubs();
 		int size = Auto->ASSScripts.size();
 		if(!size){KaiMessageBox(_("Ten plik napisów nie ma dodanych żadnych skryptów"));return;}
 		auto script = Auto->ASSScripts[size-1];
@@ -429,7 +431,6 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if(macro){
 			macro->Run(GetTab());
 		}else{
-
 			KaiMessageBox(wxString::Format(_("Błąd wczytywania skryptu Lua: %s\n%s"), script->GetPrettyFilename(), script->GetDescription()),_("Błąd"));
 			Auto->OnEdit(script->GetFilename());	
 		}
@@ -455,9 +456,8 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	int id=event.GetId();
 	int Modif = event.GetInt();
 	TabPanel *pan=GetTab();
-	//byte state[256];
-	//if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie można pobrać stanu klawiszy"));}
-	if(Modif==wxMOD_SHIFT/*state[VK_LSHIFT]>1 || state[VK_RSHIFT]>1 *//*&& (state[VK_LCONTROL]<1 && state[VK_RCONTROL]<1 && state[VK_LMENU]<1 && state[VK_RMENU]<1)*/){
+	
+	if(Modif==wxMOD_SHIFT){
 		MenuItem *item=Menubar->FindItem(id);
 		int ret=-1;
 		wxString name=item->GetLabelText();
@@ -537,7 +537,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_("i najbardziej narzekający na wszystko).\n")+
 			_("- Sacredus (chyba pierwszy tłumacz używający trybu tłumaczenia,\n nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n")+
 			_("- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój spektrum audio \n")+
-			_("i głównego pola tekstowego, stworzył ciemny motyw i część ikon).\n")+
+			_("i głównego pola tekstowego, stworzył ciemny i jasny motyw, a także część ikon).\n")+
 			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy,\n")+
 			_("pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych usprawnień).\n")+
 			_("- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w debugowaniu crashy).\n")+
@@ -1410,8 +1410,8 @@ void kainoteFrame::OpenAudioInTab(TabPanel *pan, int id, const wxString &path)
 		pan->Edit->Layout();}
 	else{
 
-		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){KaiMessageBox(_("Dupa blada, skróty klawiszowe się nie wczytały, na audio nie podziałasz"), _("Błędny błąd"));return;}
-		if(!Options.AudioOpts && !Options.LoadAudioOpts()){KaiMessageBox(_("Dupa blada, opcje się nie wczytały, na audio nie podziałasz"), _("Błędny błąd"));return;}
+		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){KaiMessageBox(_("Nie można wczytać skrótów klawiszowych audio"), _("Błąd"));return;}
+		if(!Options.AudioOpts && !Options.LoadAudioOpts()){KaiMessageBox(_("Nie można wczytać opcji audio"), _("Błąd"));return;}
 
 		wxString Path;
 		if(id==OpenAudio){

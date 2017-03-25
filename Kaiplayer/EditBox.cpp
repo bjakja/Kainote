@@ -99,7 +99,7 @@ void DescTxtCtrl::OnKillFocus(wxFocusEvent &evt)
 }
 
 TagButton::TagButton(wxWindow *parent, int id, const wxString &name, wxString tooltip, const wxSize &size)
-	: MappedButton(parent,id,name,"", wxDefaultPosition,size,0)
+	: MappedButton(parent,id,name,"", wxDefaultPosition,size,'E')
 {
 	wxString rest;
 	type=0;
@@ -123,6 +123,7 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 		}
 		tagtxt->Destroy();
 		//clicked=false; Refresh(false);
+		SetFocus();
 		return;
 	}
 
@@ -194,7 +195,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	for(int i=0; i<Options.GetInt(EditboxTagButtons); i++)
 	{
 		BoxSizer4->Add(new TagButton(this, 15000+i, wxString::Format("T%i",i+1), Options.GetString((CONFIG)(i+4000)),wxSize(24,24)),0,wxALL,2);
-		Connect(15000+i,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnButtonTag);
+		Connect(15000+i,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnButtonTag);
 	}
 
 
@@ -291,16 +292,17 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	Connect(ID_TLMODE,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&EditBox::OnTlMode); //16658
 	Connect(16658,wxEVT_COMMAND_COMBOBOX_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);    
 	Connect(IDSTYLE,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);    
-	Connect(PutBold,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnBoldClick);
-	Connect(PutItalic,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnItalClick);
-	Connect(ID_UND,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnUndClick);
-	Connect(ID_STRIKE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnStrikeClick);
+	Connect(PutBold,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnBoldClick);
+	Connect(PutItalic,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnItalClick);
+	Connect(ID_UND,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnUndClick);
+	Connect(ID_STRIKE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnStrikeClick);
 	Connect(ID_AN,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&EditBox::OnAnChoice);
-	Connect(ID_FONT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnFontClick);
-	Connect(ID_COL1,ID_COL4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnColorClick);
-	Connect(ID_CPALL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnCpAll);
-	Connect(ID_CPSEL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnCpSel);
-	Connect(ID_HIDE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnHideOrig);
+	Connect(ID_FONT,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnFontClick);
+	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnColorClick,this,ID_COL1,ID_COL4);
+	//Connect(ID_COL1,ID_COL4,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnColorClick);
+	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnCpAll, this, ID_CPALL);
+	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnCpSel, this, ID_CPSEL);
+	Connect(ID_HIDE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnHideOrig);
 	Connect(ID_AUTOMOVETAGS,wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnAutoMoveTags);
 	Connect(MENU_ZATW,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);
 	Connect(MENU_NLINE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnNewline);
@@ -410,8 +412,10 @@ void EditBox::UpdateChars(wxString text)
 	Chtime->SetLabelText(wxString::Format(_("Znaki na sekundę: %i<=15"),chtime));
 	Chtime->SetForegroundColour((chtime>15)? warningcolour : textcolour);
 	BoxSizer5->Layout();
-	//Frames->Update();
-	//Times->Update();
+	Frames->Refresh(false);
+	Frames->Update();
+	Times->Refresh(false);
+	Times->Update();
 }
 
 //Pobieranie danych z kontrolek editboxa

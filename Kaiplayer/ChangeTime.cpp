@@ -139,7 +139,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	
 	
 
-	Connect(ID_MOVE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&CTwindow::OnOKClick);
+	Connect(ID_MOVE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&CTwindow::OnOKClick);
 	Connect(ID_BSTYLE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&CTwindow::OnAddStyles);
 	Connect(22999,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&CTwindow::CollapsePane);
 

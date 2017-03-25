@@ -731,7 +731,7 @@ bool VideoRend::Pause()
 		SetThreadExecutionState(ES_CONTINUOUS);
 		vstate=Paused;
 		if(!IsDshow){
-			if(player){player->player->Stop();}
+			if(player){player->Stop(false);}/*player->*/
 		}else{
 			vplayer->Pause();
 		}

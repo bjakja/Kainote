@@ -30,6 +30,8 @@ private:
 	
 	void OnMouseLeft(wxMouseEvent &evt);
 	void DeselectRest();
+	void SelectNext(bool last);
+	void SelectPrev(bool first);
 	//bool hasGroup;
 
 	wxDECLARE_ABSTRACT_CLASS(KaiRadioButton);
@@ -50,5 +52,9 @@ private:
 	wxDECLARE_ABSTRACT_CLASS(KaiRadioBox);
 };
 
+enum{
+	ID_ACCEL_LEFT=19876,
+	ID_ACCEL_RIGHT,
+};
 
 #endif

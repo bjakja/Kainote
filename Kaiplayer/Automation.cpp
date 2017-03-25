@@ -925,11 +925,15 @@ namespace Auto{
 	{
 		initialized = false;
 		AutoloadPath=Options.pathfull+"\\Automation\\automation\\Autoload";
-		if(loadSubsScripts){
-			AddFromSubs();
-		}else{
-			//CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
-			//ReloadScripts(true);
+		if(loadSubsScripts){return;}
+		int loadMethod = Options.GetInt(AutomationLoadingMethod);
+		if(loadMethod < 2){
+			initialized = true;
+			if(loadMethod == 0){
+				CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
+			}else{
+				ReloadScripts(true);
+			}
 		}
 	}
 
@@ -991,6 +995,7 @@ namespace Auto{
 
 	void Automation::ReloadScripts(bool first)
 	{
+		initialized = true;
 		wxStopWatch sw;
 		sw.Start();
 		//initialized =false;
@@ -1039,7 +1044,7 @@ namespace Auto{
 			wxLogWarning(_("Jeden bądź więcej skryptów autoload zawiera błędy.\nObejrzyj opisy skryptów, by uzyskać więcej informacji."));
 		}
 
-		initialized = true;
+		
 		STime countTime(sw.Time());
 		wxLogStatus("Upłynęło %sms",countTime.GetFormatted(SRT));
 	}
@@ -1124,10 +1129,12 @@ namespace Auto{
 			(*bar)->Delete(j);
 		}
 		if(!initialized){
-			//(*bar)->Append(30100,_("Wczytywanie skryptów..."))->Enable(false);
-			//return;
-			//ReloadScripts(true);
-			CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
+			int loadMethod = Options.GetInt(AutomationLoadingMethod);
+			if(loadMethod % 2 == 0){
+				CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
+			}else{
+				ReloadScripts(true);
+			}
 		}
 		bool changes = AddFromSubs();
 
@@ -1165,7 +1172,19 @@ namespace Auto{
 								wxAcceleratorEntry entry;
 								item->SetAccel(&entry);
 							}
-							if(ret>-2){Hkeys.SetAccels(true); Hkeys.SaveHkeys();}
+							else if(ret<-2){
+								ret = -ret;
+								MenuItem *item= Kai->Menubar->FindItem(ret);
+								wxAcceleratorEntry entry= Hkeys.GetHKey(idAndType(ret));
+								item->SetAccel(&entry);
+							}
+							if(ret!=-2){
+								Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+									if(script->CheckLastModified(true)){script->Reload();}
+									macro->RunScript();
+								}, ret);
+								Hkeys.SetAccels(true); Hkeys.SaveHkeys();
+							}
 						}else{
 							macro->RunScript();
 						}	
@@ -1222,8 +1241,23 @@ namespace Auto{
 							wxAcceleratorEntry entry;
 							item->SetAccel(&entry);
 						}
-						if(ret>-2){Hkeys.SetAccels(true); Hkeys.SaveHkeys();}
-					}else{if(script->CheckLastModified(true)){script->Reload();}macro->RunScript();}	
+						else if(ret<-2){
+							ret = -ret;
+							MenuItem *item= Kai->Menubar->FindItem(ret);
+							wxAcceleratorEntry entry= Hkeys.GetHKey(idAndType(ret));
+							item->SetAccel(&entry);
+						}
+						if(ret!=-2){
+							Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+								if(script->CheckLastModified(true)){script->Reload();}
+								macro->RunScript();
+							}, ret);
+							Hkeys.SetAccels(true); Hkeys.SaveHkeys();
+						}
+					}else{
+						if(script->CheckLastModified(true)){script->Reload();}
+						macro->RunScript();
+					}	
 				}, mi->id);
 				start++;
 			}

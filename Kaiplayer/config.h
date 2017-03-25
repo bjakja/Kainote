@@ -79,6 +79,7 @@
 	CG(AudioWheelDefaultToZoom,)\
 	CG(AcceptedAudioStream,)\
 	CG(AudioRecent,)\
+	CG(AutomationLoadingMethod,)\
 	CG(AutomationOldScriptsCompatybility,)\
 	CG(AutomationRecent,)\
 	CG(AutomationScriptEditor,)\

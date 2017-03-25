@@ -377,7 +377,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 							}else{bfw=0;}
 
 							tdc.GetTextExtent(err, &fw, &fh, NULL, NULL, &font);
-							tdc.DrawRectangle(posX+bfw+4,posY,fw,GridHeight);
+							tdc.DrawRectangle(posX+bfw+3,posY,fw,GridHeight);
 						}
 					}
 
@@ -400,10 +400,10 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 							tdc.GetTextExtent(cmp, &fw, &fh, NULL, NULL, &font);
 							if((cmp.StartsWith("T") || cmp.StartsWith("Y") || cmp.StartsWith(L"Ł"))){bfw++;}
 
-							tdc.DrawText(cmp,posX+bfw+3,posY);
-							tdc.DrawText(cmp,posX+bfw+5,posY);
-							tdc.DrawText(cmp,posX+bfw+3,posY+2);
-							tdc.DrawText(cmp,posX+bfw+5,posY+2);
+							tdc.DrawText(cmp,posX+bfw+2,posY);
+							tdc.DrawText(cmp,posX+bfw+4,posY);
+							tdc.DrawText(cmp,posX+bfw+2,posY+2);
+							tdc.DrawText(cmp,posX+bfw+4,posY+2);
 						}
 
 					}
@@ -531,7 +531,7 @@ void SubsGrid::AdjustWidths(int cell)
 		}
 
 		if(ACTOR & cell){
-			dc.GetTextExtent(_("Actor"), &fw, &fh, NULL, NULL, &font);
+			dc.GetTextExtent(_("Aktor"), &fw, &fh, NULL, NULL, &font);
 			if(fw+10>acw&&acw!=0){acw=fw+10;};
 			GridWidth[5] = (acw==0)?0:acw;
 		}
@@ -965,25 +965,25 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 				SelectRow(i, notFirst || ctrl,true,true);
 				notFirst = true;
 			}
-			Edit->SetIt(row,true,true,true);
-			if(mvtal < 4 && mvtal > 0){
-				//TabPanel *pan=(TabPanel*)GetParent();
-				if(pan->Video->GetState()!=None){
-					if(pan->Video->GetState()==Stopped){pan->Video->Play();pan->Video->Pause();}
-					short wh=(form<SRT)?2:1;
-					int whh=2;
-					for(int i = 0;i<=wh;i++){whh+=GridWidth[i];}
-					whh-=scHor;
-					bool isstart;
-					int vczas;
-					if(event.GetX()>=whh && event.GetX()<whh+GridWidth[wh+1] && form!=TMP){ 
-						vczas=GetDial(Edit->ebrow)->End.mstime; isstart=false;}
-					else{vczas=GetDial(Edit->ebrow)->Start.mstime; isstart=true;}
-					if(ctrl){vczas-=1000;/*SelectRow(row);*/}
-					pan->Video->Seek(MAX(0,vczas),isstart,true,false);
-					if(Edit->ABox){Edit->ABox->audioDisplay->UpdateImage(true);}
-				}
-			}
+			//Edit->SetIt(row,true,true,true);
+			//if(mvtal < 4 && mvtal > 0){
+			//	//TabPanel *pan=(TabPanel*)GetParent();
+			//	if(pan->Video->GetState()!=None){
+			//		if(pan->Video->GetState()==Stopped){pan->Video->Play();pan->Video->Pause();}
+			//		short wh=(form<SRT)?2:1;
+			//		int whh=2;
+			//		for(int i = 0;i<=wh;i++){whh+=GridWidth[i];}
+			//		whh-=scHor;
+			//		bool isstart;
+			//		int vczas;
+			//		if(event.GetX()>=whh && event.GetX()<whh+GridWidth[wh+1] && form!=TMP){ 
+			//			vczas=GetDial(Edit->ebrow)->End.mstime; isstart=false;}
+			//		else{vczas=GetDial(Edit->ebrow)->Start.mstime; isstart=true;}
+			//		if(ctrl){vczas-=1000;/*SelectRow(row);*/}
+			//		pan->Video->Seek(MAX(0,vczas),isstart,true,false);
+			//		if(Edit->ABox){Edit->ABox->audioDisplay->UpdateImage(true);}
+			//	}
+			//}
 			lastsel=row;
 			Refresh(false);
 			if(Edit->Visual==CHANGEPOS/* || Edit->Visual==MOVEALL*/){

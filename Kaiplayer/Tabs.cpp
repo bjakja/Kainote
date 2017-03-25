@@ -747,7 +747,7 @@ void Notebook::OnResized()
 	sthis->GetClientSize(&w,&h);
 	if(sthis->split){w=sthis->splitline-2;}
 	for(size_t i=0;i<sthis->Size();i++){
-		if(i==sthis->iter||(sthis->split&&i==sthis->splititer))continue;
+		if(i==sthis->iter || (sthis->split && i == sthis->splititer))continue;
 		sthis->Pages[i]->SetSize(w,h-sthis->TabHeight);
 	}
 }
@@ -760,9 +760,10 @@ void Notebook::Split(size_t page)
 	if(!split)
 	{
 		Pages[splititer]->Hide();
-		Pages[iter]->SetPosition(wxPoint(0,0));
 		Pages[iter]->SetSize(w,h-TabHeight);
-		Pages[splititer]->SetPosition(wxPoint(0,0));
+		for(size_t k = 0; k < Size(); k++){
+			Pages[k]->SetPosition(wxPoint(0,0));
+		}
 		SetTimer(GetHWND(), 9876, 500, (TIMERPROC)OnResized);
 		return;
 	}

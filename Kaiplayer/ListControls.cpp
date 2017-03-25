@@ -421,6 +421,7 @@ void KaiChoice::PutArray(wxArrayString *arr)
 	wxString ce = (choice>=0 && choice < (int)list->size())? (*list)[choice] : "";
 	if(list){delete list;}
 	list = new wxArrayString(*arr);
+	if(itemList){itemList->Destroy(); itemList=NULL;}
 	if(ce != ""){
 		if(choice >= (int)list->size()){
 			choice = 0;
@@ -478,8 +479,8 @@ void KaiChoice::SendEvent(int _choice)
 
 void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool changeText)
 {
-	if(PartialName==""){SetSelection(0, false);return;}
-	int sell=-1;
+	if(PartialName==""){SetSelection(0, true);return;}
+	int sell= (changeText)? 0 : -1;
 	wxString PrtName = PartialName.Lower();
 
 	for(size_t i=0; i<list->size(); i++){
@@ -498,6 +499,7 @@ void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool chan
 void KaiChoice::SetValue(const wxString &text){
 	if(choiceText){choiceText->SetValue(text);}
 	else{txtchoice=text;}
+	choice = -1;
 }
 
 wxString KaiChoice::GetValue(){

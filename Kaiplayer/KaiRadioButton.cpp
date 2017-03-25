@@ -25,24 +25,31 @@ KaiRadioButton::KaiRadioButton(wxWindow *parent, int id, const wxString& label,
 			 //,isCheckBox(true)
 {
 	isCheckBox=false;
-	Bind(wxEVT_LEFT_UP, &KaiRadioButton::OnMouseLeft, this);
+	Bind(wxEVT_LEFT_DOWN, &KaiRadioButton::OnMouseLeft, this);
+	Bind(wxEVT_LEFT_DCLICK, &KaiRadioButton::OnMouseLeft, this);
 	if(style & wxRB_GROUP){SetValue(true);}
-
+	wxAcceleratorEntry entries[2];
+	entries[0].Set(wxACCEL_NORMAL, WXK_LEFT,ID_ACCEL_LEFT);
+	entries[1].Set(wxACCEL_NORMAL, WXK_RIGHT,ID_ACCEL_RIGHT);
+	wxAcceleratorTable accel(2, entries);
+	SetAcceleratorTable(accel);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){SelectPrev(false);}, ID_ACCEL_LEFT);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){SelectNext(false);}, ID_ACCEL_RIGHT);
 }
 
 void KaiRadioButton::OnMouseLeft(wxMouseEvent &evt)
 {
-	if(evt.LeftUp()){
-		bool oldclicked = clicked;
-		clicked=false;
+	//if(evt.LeftUp()){
+		//bool oldclicked = clicked;
+		clicked=true;//false;
 		Refresh(false);
-		if(oldclicked && !value){
+		if(/*oldclicked &&*/ !value){
 			value = !value;
 			DeselectRest();
 			wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
 			this->ProcessEvent(evt);
 		}
-	}
+	//}
 }
 
 void KaiRadioButton::SetValue(bool _value)
@@ -122,6 +129,109 @@ void KaiRadioButton::DeselectRest()
     }
 
 	if(!HasFocus()){SetFocus();}
+}
+void KaiRadioButton::SelectPrev(bool first)
+{
+	const wxWindowList& siblings = GetParent()->GetChildren();
+    wxWindowList::compatibility_iterator nodeThis = siblings.Find(this);
+    wxCHECK_RET( nodeThis, wxT("radio button not a child of its parent?") );
+
+	if ( !HasFlag(wxRB_GROUP) )
+    {
+        // ... turn off all radio buttons before it
+        for ( wxWindowList::compatibility_iterator nodeBefore = nodeThis->GetPrevious();
+              nodeBefore;
+              nodeBefore = nodeBefore->GetPrevious() )
+        {
+            KaiRadioButton *btn = wxDynamicCast(nodeBefore->GetData(),
+                                               KaiRadioButton);
+            if ( !btn )
+            {
+                // don't stop on non radio buttons, we could have intermixed
+                // buttons and e.g. static labels
+                continue;
+            }
+			
+            if ( btn->HasFlag(wxRB_SINGLE))
+            {
+                // A wxRB_SINGLE button isn't part of this group
+				SelectNext(true);
+                break;
+            }
+
+			if(first){
+				if ( btn->HasFlag(wxRB_GROUP) )
+				{
+					btn->SetValue(true);
+					wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
+					this->ProcessEvent(evt);
+					break;
+				}
+			}else{
+				btn->SetValue(true);
+				wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
+				this->ProcessEvent(evt);
+				break;
+			}
+        }
+    }else{
+		SelectNext(true);
+	}
+
+	
+}
+
+void KaiRadioButton::SelectNext(bool last)
+{
+	const wxWindowList& siblings = GetParent()->GetChildren();
+    wxWindowList::compatibility_iterator nodeThis = siblings.Find(this);
+    wxCHECK_RET( nodeThis, wxT("radio button not a child of its parent?") );
+	bool done = false;
+	KaiRadioButton *btntmp = NULL;
+
+	for ( wxWindowList::compatibility_iterator nodeAfter = nodeThis->GetNext();
+          nodeAfter;
+          nodeAfter = nodeAfter->GetNext() )
+    {
+        KaiRadioButton *btn = wxDynamicCast(nodeAfter->GetData(),
+                                           KaiRadioButton);
+
+        if ( !btn){
+			if(btntmp){
+				btntmp->SetValue(true); done = true; 
+				wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
+				this->ProcessEvent(evt);
+				break;
+			}
+			continue;
+		}
+            
+        if ( btn->HasFlag(wxRB_GROUP | wxRB_SINGLE) )
+        {
+            // no more buttons or the first button of the next group
+			if(last){
+				btn->SetValue(true);
+				wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
+				this->ProcessEvent(evt);
+			}else{
+				SelectPrev(true);
+			}
+			done=true;
+            break;
+        }
+
+		if(!last){
+			btn->SetValue(true);
+			wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
+			this->ProcessEvent(evt);
+			done=true;
+			break;
+		}
+		btntmp = btn;
+    }
+	if(!done){
+		SelectPrev(true);
+	}
 }
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiRadioButton, wxWindow);

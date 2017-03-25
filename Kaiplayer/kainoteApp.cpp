@@ -34,9 +34,6 @@ public:
  
 	 bool OnExec (const wxString &topic, const wxString &data)
      {
-		 //wxLogStatus("on exec");
-		 //kainoteApp *inst=(kainoteApp*)wxTheApp;
-		 //while(inst->isopening){ Sleep(25);}
          bool result = wxGetApp().OnSecondInstance(data);
  
          return result;

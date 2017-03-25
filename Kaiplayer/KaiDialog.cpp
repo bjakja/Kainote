@@ -80,7 +80,7 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	Bind(wxEVT_LEFT_UP, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_DCLICK, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiDialog::OnMouseEvent, this);
-	Bind(wxEVT_ACTIVATE, &KaiDialog::OnActivate, this);
+	//Bind(wxEVT_ACTIVATE, &KaiDialog::OnActivate, this);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEscape, this, escapeId);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter, this, enterId);
 	wxWindow *win = FindWindow(enterId);
@@ -264,21 +264,22 @@ void KaiDialog::SetSizerAndFit1(wxSizer *sizer, bool deleteOld)
 	//sizer->SetSizeHints(this);
 }
 
-void KaiDialog::OnActivate(wxActivateEvent &evt)
-{
-	isActive = evt.GetActive();
-	int w, h;
-	GetClientSize(&w,&h);
-	wxRect rc(0,0,w,topBorder);
-	Refresh(false, &rc);
-	wxRect rc1(0,topBorder,border,h-border-topBorder);
-	Refresh(false, &rc1);
-	wxRect rc2(w-border,topBorder,border,h-border-topBorder);
-	Refresh(false, &rc2);
-	wxRect rc3(0,h-border,w,border);
-	Refresh(false, &rc3);
-	Update();
-}
+//void KaiDialog::OnActivate(wxActivateEvent &evt)
+//{
+//	wxLogStatus("focus");
+//	isActive = evt.GetActive();
+//	int w, h;
+//	GetClientSize(&w,&h);
+//	wxRect rc(0,0,w,topBorder);
+//	Refresh(false, &rc);
+//	wxRect rc1(0,topBorder,border,h-border-topBorder);
+//	Refresh(false, &rc1);
+//	wxRect rc2(w-border,topBorder,border,h-border-topBorder);
+//	Refresh(false, &rc2);
+//	wxRect rc3(0,h-border,w,border);
+//	Refresh(false, &rc3);
+//	Update();
+//}
 
 void KaiDialog::SetEnterId(int _enterId)
 {
@@ -309,6 +310,20 @@ WXLRESULT KaiDialog::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam
 	//if(uMsg == WM_SIZING){
 	//	RedrawWindow(m_hWnd, NULL, NULL, RDW_INVALIDATE | RDW_INTERNALPAINT);//| RDW_NOERASE
 	//}
+	if(uMsg == WM_ACTIVATE){
+		isActive = (wParam != 0);//evt.GetActive();
+		int w, h;
+		GetClientSize(&w,&h);
+		wxRect rc(0,0,w,topBorder);
+		Refresh(false, &rc);
+		wxRect rc1(0,topBorder,border,h-border-topBorder);
+		Refresh(false, &rc1);
+		wxRect rc2(w-border,topBorder,border,h-border-topBorder);
+		Refresh(false, &rc2);
+		wxRect rc3(0,h-border,w,border);
+		Refresh(false, &rc3);
+		Update();
+	}
 	if(uMsg == WM_NCHITTEST){
 		RECT WindowRect;
 		int x, y;

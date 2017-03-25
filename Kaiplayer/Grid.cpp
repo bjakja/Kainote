@@ -138,7 +138,7 @@ void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 		int ret=-1;
 		wxString name=item->GetLabelText();
 		ret=Hkeys.OnMapHkey(id, name, this, GRID_HOTKEY);
-		if(ret==-1){
+		if(ret!=-2){
 			Hkeys.SetAccels();
 			Hkeys.SaveHkeys();
 		}

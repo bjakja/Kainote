@@ -316,7 +316,7 @@ void config::LoadDefaultColors(bool dark)
 	colors[GridDialogue] = new wxColour((dark)? "#969696" : "#C0C0C0");
 	colors[GridComment] = new wxColour((dark)? "#BDBDBD" : "#999999");
 	colors[GridSelectedDialogue] = new wxColour((dark)? "#B6D5C5" : "#EBF5EF");
-	colors[GridSelectedComment] = new wxColour((dark)? "#839394" : "#C4D4CA");
+	colors[GridSelectedComment] = new wxColour((dark)? "#89A9CF" : "#CF898B");
 	colors[GridCollisions] = new wxColour((dark)? "#0010FF" : "#FF0000");
 	colors[GridLines] = new wxColour((dark)? "#4C4C4C" : "#606060");
 	colors[GridActiveLine] = new wxColour((dark)? "#4000CA" : "#CA0065");
@@ -326,7 +326,7 @@ void config::LoadDefaultColors(bool dark)
 	colors[GridLabelModified] = new wxColour((dark)? "#A8FB05" : "#FBF804");
 	colors[GridLabelSaved] = new wxColour((dark)? "#A398FF" : "#A398FF");
 	colors[GridSpellchecker] = new wxColour((dark)? "#FA9292" : "#FA9292");
-	colors[GridComparison] = new wxColour((dark)? "#DFDADA" : "#DFDADA");
+	colors[GridComparison] = new wxColour((dark)? "#FFFFFF" : "#00E1FF");
 	colors[GridComparisonBackground] = new wxColour((dark)? "#C0A073" : "#F6D6AC");
 	colors[GridComparisonBackgroundSelected] = new wxColour((dark)? "#909F3A" : "#ADC044");
 	colors[GridComparisonCommentBackground] = new wxColour((dark)? "#978063" : "#D7AA70");
@@ -403,21 +403,21 @@ void config::LoadDefaultColors(bool dark)
 	colors[TabsBorderInactive] = new wxColour((dark)? "#000000" : "#ACACAC");
 	colors[TabsBackgroundActive] = new wxColour((dark)? "#2D2D2D" : "#C0C0C0");
 	colors[TabsBackgroundInactive] = new wxColour((dark)? "#3C3C3C" : "#F0F0F0");
-	colors[TabsBackgroundInactiveHover] = new wxColour((dark)? "#2D2D2D" : "#BDDBF8");
+	colors[TabsBackgroundInactiveHover] = new wxColour((dark)? "#2D2D2D" : "#D1D1D1");
 	colors[TabsTextActive] = new wxColour((dark)? "#B5B5B5" : "#000000");
 	colors[TabsTextInactive] = new wxColour((dark)? "#9B9B9B" : "#333333");
 	colors[TabsCloseHover] = new wxColour((dark)? "#D40403" : "#E04343");
 	colors[TabsBarArrow] = new wxColour((dark)? "#9B9B9B" : "#000000");
 	colors[TabsBarArrowBackground] = new wxColour((dark)? "#222222" : "#F0F0F0");
-	colors[TabsBarArrowBackgroundHover] = new wxColour((dark)? "#333333" : "#BDDBF8");
+	colors[TabsBarArrowBackgroundHover] = new wxColour((dark)? "#333333" : "#D1D1D1");
 	colors[SliderPathBackground] = new wxColour((dark)? "#282828" : "#E7EAEA");
 	colors[SliderPathBorder] = new wxColour((dark)? "#434343" : "#D6D6D6");
 	colors[SliderBorder] = new wxColour((dark)? "#4E4E4E" : "#ACACAC");
 	colors[SliderBorderHover] = new wxColour((dark)? "#555555" : "#7EB4EA");
 	colors[SliderBorderPushed] = new wxColour((dark)? "#555555" : "#569DE5");
 	colors[SliderBackground] = new wxColour((dark)? "#282828" : "#E5E5E5");
-	colors[SliderBackgroundHover] = new wxColour((dark)? "#333333" : "#BDDBF8");
-	colors[SliderBackgroundPushed] = new wxColour((dark)? "#333333" : "#BDDBF8");
+	colors[SliderBackgroundHover] = new wxColour((dark)? "#333333" : "#DCECFC");
+	colors[SliderBackgroundPushed] = new wxColour((dark)? "#333333" : "#C4E0FC");
 	colors[StylePreviewColor1] = new wxColour("#9A9A9A");
 	colors[StylePreviewColor2] = new wxColour("#686868");
 

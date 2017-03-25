@@ -56,7 +56,7 @@ private:
 	void OnPaint(wxPaintEvent &evt);
 	void OnSize(wxSizeEvent &evt);
 	void OnMouseEvent(wxMouseEvent &evt);
-	void OnActivate(wxActivateEvent &evt);
+	//void OnActivate(wxActivateEvent &evt);
 	void OnEnter(wxCommandEvent &evt);
 	void OnEscape(wxCommandEvent &evt);
 	WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);

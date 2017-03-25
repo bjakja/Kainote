@@ -31,9 +31,6 @@
 OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	: KaiDialog(parent,-1,_("Opcje"))
 {
-	//wxColour text = Options.GetColour(WindowText);
-	//wxColour window = Options.GetColour(WindowBackground);
-
 	OptionsTree= new KaiTreebook(this,-1);
 	//OptionsTree->SetForegroundColour(text);
 	//OptionsTree->SetBackgroundColour(window);
@@ -47,6 +44,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	SetIcon(icn);
 
 	wxWindow *Main= new wxWindow(OptionsTree,-1);
+	Main->SetForegroundColour(Options.GetColour(WindowText));
+	wxWindow *Main1= new wxWindow(OptionsTree,-1);
 	Main->SetForegroundColour(Options.GetColour(WindowText));
 	//Main->SetBackgroundColour(window);
 	wxWindow *ConvOpt= new wxWindow(OptionsTree,-1);
@@ -67,7 +66,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 
 	hkeymodif=0;
-	if(!Options.AudioOpts && !Options.LoadAudioOpts()){KaiMessageBox(_("Nie udało się wczytać opcji audio, konwiguracja ich będzie niemożliwa"), _("Błąd"));}
+	if(!Options.AudioOpts && !Options.LoadAudioOpts()){KaiMessageBox(_("Nie można wczytać opcji audio"), _("Błąd"));}
 
 	//Main
 	{
@@ -113,43 +112,52 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			ConOpt(opt,opts[i]);
 			MainSizer->Add(opt,0,wxALL,2);
 		}
+		Main->SetSizerAndFit(MainSizer);
 
+		//Main1
 
-		//wxBoxSizer *MainSizer1=new wxBoxSizer(wxHORIZONTAL);
+		wxBoxSizer *Main1Sizer=new wxBoxSizer(wxVERTICAL);
 		wxFlexGridSizer *MainSizer2=new wxFlexGridSizer(6,2,wxSize(5,5));
 		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieć inny id
-		NumCtrl *ltl = new NumCtrl(Main, 20000, Options.GetString(opts[12]), 0, 5,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
-		NumCtrl *sc = new NumCtrl(Main, 20000, Options.GetString(InsertStartOffset), -100000, 100000,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
-		NumCtrl *sc1 = new NumCtrl(Main, 20000, Options.GetString(InsertEndOffset), -100000, 100000,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
-		KaiTextCtrl *sc2 = new KaiTextCtrl(Main, 22001, Options.GetString(GridTagsSwapChar), wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
-		NumCtrl *sc3 = new NumCtrl(Main, 20000, Options.GetString(EditboxTagButtons), 0, 9,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
+		NumCtrl *ltl = new NumCtrl(Main1, 20000, Options.GetString(opts[12]), 0, 5,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
+		NumCtrl *sc = new NumCtrl(Main1, 20000, Options.GetString(InsertStartOffset), -100000, 100000,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
+		NumCtrl *sc1 = new NumCtrl(Main1, 20000, Options.GetString(InsertEndOffset), -100000, 100000,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
+		KaiTextCtrl *sc2 = new KaiTextCtrl(Main1, 22001, Options.GetString(GridTagsSwapChar), wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
+		NumCtrl *sc3 = new NumCtrl(Main1, 20000, Options.GetString(EditboxTagButtons), 0, 9,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
 		ConOpt(ltl, opts[12]);
 		ConOpt(sc,InsertStartOffset);
 		ConOpt(sc1,InsertEndOffset);
 		ConOpt(sc2,GridTagsSwapChar);
 		ConOpt(sc3,EditboxTagButtons);
 
-		MainSizer2->Add(new wxStaticText(Main,-1,_("Opóźnienie klatek początkowych w ms:"),wxDefaultPosition, wxSize(240,-1)),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(new wxStaticText(Main1,-1,_("Opóźnienie klatek początkowych w ms:"),wxDefaultPosition, wxSize(240,-1)),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
 		MainSizer2->Add(sc,1,wxEXPAND);
-		MainSizer2->Add(new wxStaticText(Main,-1,_("Opóźnienie klatek końcowych w ms:")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(new wxStaticText(Main1,-1,_("Opóźnienie klatek końcowych w ms:")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
 		MainSizer2->Add(sc1,1,wxEXPAND);
-		MainSizer2->Add(new wxStaticText(Main,-1,_("Znak podmiany tagów ASS:")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(new wxStaticText(Main1,-1,_("Znak podmiany tagów ASS:")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
 		MainSizer2->Add(sc2,1,wxEXPAND);
-		MainSizer2->Add(new wxStaticText(Main,-1,_("Ilość przycisków wstawiających tagi ASS:")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(new wxStaticText(Main1,-1,_("Ilość przycisków wstawiających tagi ASS:")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
 		MainSizer2->Add(sc3,1,wxEXPAND);
-		MainSizer2->Add(new wxStaticText(Main,-1,labels[12]),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(new wxStaticText(Main1,-1,labels[12]),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
 		MainSizer2->Add(ltl,1,wxEXPAND);
 
 		//MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
 
-		FontPickerButton *optf=new FontPickerButton(Main,-1,wxFont(Options.GetInt(GridFontSize),wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,Options.GetString(GridFontName)));
+		FontPickerButton *optf=new FontPickerButton(Main1,-1,wxFont(Options.GetInt(GridFontSize),wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,Options.GetString(GridFontName)));
 		ConOpt(optf,GridFontName);
-		MainSizer2->Add(new wxStaticText(Main,-1,_("Czcionka pola napisów:")),3,wxRIGHT| wxALIGN_CENTRE_VERTICAL|wxEXPAND,10);
+		MainSizer2->Add(new wxStaticText(Main1,-1,_("Czcionka pola napisów:")),3,wxRIGHT| wxALIGN_CENTRE_VERTICAL|wxEXPAND,10);
 		MainSizer2->Add(optf,1,wxEXPAND);
 
-		MainSizer->Add(MainSizer2,0,wxRIGHT|wxEXPAND,5);
+		KaiStaticBoxSizer *alm=new KaiStaticBoxSizer(wxHORIZONTAL,Main1,_("Sposób wczytywania skryptów autoload"));
+		wxString methods[] = {_("Przy starcie programu asynchronicznie"),_("Przy starcie programu"),_("Przy otwarciu menu asynchronicznie"),_("Przy otwarciu menu")};
+		KaiChoice *cmb = new KaiChoice(Main1, 10000, wxDefaultPosition, wxSize(200,-1), 4, methods, wxTE_PROCESS_ENTER);
+		cmb->SetSelection(Options.GetInt(AutomationLoadingMethod));
+		ConOpt(cmb,AutomationLoadingMethod);
+		alm->Add(cmb, 1, wxCENTER|wxEXPAND|wxALL,2);
+		Main1Sizer->Add(MainSizer2,0,wxRIGHT|wxEXPAND,5);
+		Main1Sizer->Add(alm,0,wxRIGHT|wxEXPAND,5);
 
-		Main->SetSizerAndFit(MainSizer);
+		Main1->SetSizerAndFit(Main1Sizer);
 	}
 
 	//Ustawienia konwersji
@@ -281,7 +289,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		Connect(26667,LIST_ITEM_DOUBLECLICKED,(wxObjectEventFunction)&OptionsDialog::OnMapHkey);
 		Connect(26667,LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);		
 
-		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){KaiMessageBox(_("Nie udało się wczytać opcji audio, konwiguracja ich będzie niemożliwa"), _("Błąd"));}
+		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){KaiMessageBox(_("Nie można wczytać skrótów klawiszowych audio"), _("Błąd"));}
 
 		std::map<idAndType, hdata> _hkeys;
 		Hkeys.LoadDefault(_hkeys);
@@ -517,6 +525,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	//Adding pages
 	OptionsTree->AddPage(Main,_("Edytor"));
 	OptionsTree->AddSubPage(ConvOpt,_("Konwersja"));
+	OptionsTree->AddPage(Main1,_("Edytor1"));
 	OptionsTree->AddPage(Video,_("Wideo"));
 	OptionsTree->AddPage(AudioMain,_("Audio"));
 	OptionsTree->AddPage(Themes,_("Motywy"));

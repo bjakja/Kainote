@@ -26,7 +26,6 @@
 
 findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace, bool sellines)
 	: KaiDialog(kfparent, -1,(sellines)?_("Zaznacz"): (replace)?_("Znajdź i zamień"):_("Znajdź"))
-	,hasFocus(false)
 {
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
@@ -174,7 +173,7 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		}
 
 		Connect(ID_BPLUS,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&findreplace::OnStylesWin);
-		Connect(wxEVT_ACTIVATE,(wxObjectEventFunction)&findreplace::OnSetFocus);
+		Bind(wxEVT_ACTIVATE,&findreplace::OnSetFocus, this);
 		//Bind(wxEVT_KILL_FOCUS,[=](wxFocusEvent &evt){wxLogStatus("kill focus");hasFocus=false;});
 		
 	}
@@ -831,7 +830,8 @@ void findreplace::Reset()
 }
 
 void findreplace::OnSetFocus(wxActivateEvent& event){
-	if(hasFocus){hasFocus=false; event.Skip(); return;}
+	//wxLogStatus("focus1");
+	if(!event.GetActive()){/*hasFocus=false;*/ return;}
 	//wxLogStatus("focus");
 	long from, to, fromO, toO;
 	EditBox *edit = Kai->GetTab()->Edit;
@@ -845,6 +845,5 @@ void findreplace::OnSetFocus(wxActivateEvent& event){
 		wxString selected = edit->TextEditTl->GetValue().SubString(fromO,toO-1);
 		if(selected.Lower() != FindText->GetValue().Lower()){FindText->SetValue(selected);}
 	}
-	hasFocus=true;
-	event.Skip();
+	//hasFocus=true;
 }

@@ -75,9 +75,9 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	Bind(wxEVT_LEAVE_WINDOW, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		SendEvent();
-	});
+	//Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		//SendEvent();
+	//});
 	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
 	Bind(wxEVT_KILL_FOCUS,[=](wxFocusEvent &evt){Refresh(false);});
 	wxAcceleratorEntry centries[1];
@@ -123,9 +123,9 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	Bind(wxEVT_LEAVE_WINDOW, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		SendEvent();
-	});
+	//Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		//SendEvent();
+	//});
 	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
 	Bind(wxEVT_KILL_FOCUS,[=](wxFocusEvent &evt){Refresh(false);});
 	wxAcceleratorEntry centries[1];
@@ -165,9 +165,9 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 	Bind(wxEVT_LEAVE_WINDOW, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		SendEvent();
-	});
+	//Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		//SendEvent();
+	//});
 	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
 	Bind(wxEVT_KILL_FOCUS,[=](wxFocusEvent &evt){Refresh(false);});
 	wxAcceleratorEntry centries[1];
@@ -292,7 +292,7 @@ void MappedButton::OnMouseEvent(wxMouseEvent &event)
 		SetToolTip();
 		Hkeys.SetAccels(true);
 		Hkeys.SaveHkeys();
-		
+		SetFocus();
 		return;
 	}		
 	if(event.LeftDown() || event.LeftDClick()){
@@ -313,7 +313,7 @@ void MappedButton::OnMouseEvent(wxMouseEvent &event)
 
 void MappedButton::SendEvent()
 {
-	wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
+	wxCommandEvent evt((Window)? wxEVT_COMMAND_MENU_SELECTED : wxEVT_COMMAND_BUTTON_CLICKED, GetId());
 	ProcessEvent(evt);
 }
 

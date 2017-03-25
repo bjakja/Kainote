@@ -274,9 +274,14 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 	}
 	block=false;
 	if(IsDshow){
+		if(!volslider->IsShown()){volslider->Show(); mstimes->SetSize(lastSize.x-290,-1);}
 		Play();
 		if(Kai->GetTab()->edytor && !isFullscreen){Pause();Render();}
 	}else{
+		if(volslider->IsShown()){
+			volslider->Show(false); 
+			mstimes->SetSize(lastSize.x-185,-1);
+		}
 		vstate = Paused;
 		Render();
 	}
@@ -337,7 +342,8 @@ void VideoCtrl::OnSize(wxSizeEvent& event)
 	panel->SetSize(0, asize.y-panelHeight, asize.x, panelHeight);
 	vslider->SetSize(wxSize(asize.x,14));
 	volslider->SetPosition(wxPoint(asize.x-110,17));
-	mstimes->SetSize(asize.x-300,-1);
+	int difSize = (volslider->IsShown())? 290 : 185;
+	mstimes->SetSize(asize.x - difSize,-1);
 	vToolbar->SetSize(asize.x, 22);
 	if(vstate != None){
 		UpdateVideoWindow();
@@ -823,7 +829,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 		int ret=-1;
 		wxString name=item->GetLabelText();
 		ret=Hkeys.OnMapHkey(id, name, this, VIDEO_HOTKEY);
-		if(ret==-1){
+		if(ret!=-2){
 			Hkeys.SetAccels();
 			Hkeys.SaveHkeys();
 		}

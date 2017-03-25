@@ -142,13 +142,13 @@ void Hotkeys::LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio)
 		_hkeys[idAndType(SaveSubsAs,'G')] = hdata(_("Zapisz jako..."), "Ctrl-Shift-S");
 		_hkeys[idAndType(RemoveText,'G')] = hdata(_("Usuń tekst"), "Alt-Delete");
 		_hkeys[idAndType(Remove,'G')] = hdata(_("Usuń linijkę"), "Shift-Delete");
-		_hkeys[idAndType(SetStartTime,'G')] = hdata(_("Wstaw czas początkowy z wideo"), "Alt-Z");
-		_hkeys[idAndType(SetEndTime,'G')] = hdata(_("Wstaw czas końcowy z wideo"), "Alt-X");
+		_hkeys[idAndType(SetStartTime,'G')] = hdata(_("Wstaw czas początkowy z wideo"), "Ctrl-Left");
+		_hkeys[idAndType(SetEndTime,'G')] = hdata(_("Wstaw czas końcowy z wideo"), "Ctrl-Right");
 		_hkeys[idAndType(PlayPauseG,'G')] = hdata(_("Odtwarzaj / Pauza"), "Alt-Space");
 		_hkeys[idAndType(Minus5SecondG,'G')] = hdata(_("Wideo minus 5 sekund"), "Alt-Left");//Lewo
 		_hkeys[idAndType(Plus5SecondG,'G')] = hdata(_("Wideo plus 5 sekund"), "Alt-Right");//prawo
-		_hkeys[idAndType(PreviousFrame,'G')] = hdata(_("Klatka w tył"), "Alt-A");
-		_hkeys[idAndType(NextFrame,'G')] = hdata(_("Klatka w przód"), "Alt-S");
+		_hkeys[idAndType(PreviousFrame,'G')] = hdata(_("Klatka w tył"), "Left");
+		_hkeys[idAndType(NextFrame,'G')] = hdata(_("Klatka w przód"), "Right");
 		_hkeys[idAndType(PreviousLine,'G')] = hdata(_("Poprzednia linijka"), "Ctrl-Up");//góra
 		_hkeys[idAndType(NextLine,'G')] = hdata(_("Następna linijka"), "Ctrl-Down");//dół
 		_hkeys[idAndType(JoinWithPrevious,'G')] = hdata(_("Scal z poprzednią linijką"), "F3");
@@ -231,7 +231,6 @@ int Hotkeys::LoadHkeys(bool Audio)
 		int first = token.find(L".");//0.8.0.build
 		if(first> -1){
 			wxString ver = token.Mid(first+5).BeforeFirst(' ');
-			//KaiMessageBox(ver);
 			int version=wxAtoi(ver);
 			checkVer=(version>487);
 		}
@@ -369,7 +368,7 @@ void Hotkeys::ResetKey(const idAndType *itype, int id, char type)
 		hkeys[tmpitype] = it->second;
 	}else{wxLogStatus(_("Nie można przywrócić skrótu, bo nie ma domyślnego ustawienia o id %i"), id);}
 }
-
+//return -2 anulowano zmianę skrótów, -1 nowy skrót, 1+ id do zmiany skrótu.
 int Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow, bool showWindowSelection)
 {
 	HkeysDialog hkd(parent, name, hotkeyWindow, showWindowSelection);
@@ -386,16 +385,14 @@ int Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow,
 				msg.SetYesLabel (_("Zamień skróty"));
 				msg.SetNoLabel (_("Usuń skrót"));
 				int result = msg.ShowModal();
-				if(result==wxNO)
-				{
+				if(result == wxYES){
 					auto finditer = hkeys.find(idAndType(id,hkd.type));
 					cur->second.Accel="";
 					if(finditer!=hkeys.end()){
 						cur->second.Accel = finditer->second.Accel;
 					}
-					resitem = cur->first.id;
-				}else if(result==wxNO)
-				{
+					resitem = -cur->first.id;
+				}else if(result == wxNO){
 					hkeys.erase(cur->first);
 					resitem = cur->first.id;
 				}else{ return resitem;}
@@ -432,7 +429,7 @@ HkeysDialog::HkeysDialog( wxWindow *parent, wxString name, char hotkeyWindow, bo
 	const int elems = 5;
 	wxString windows[elems] = {_("Skrót globalny"),_("Skrót pola napisów"), _("Skrót pola edycji"), _("Skrót wideo"), _("Skrót audio")};
 	wxString scwins = "GNEWA";
-	if(showWindowSelection){
+	if(showWindowSelection && hotkeyWindow == GLOBAL_HOTKEY){
 		global=new KaiChoice(this,-1,wxDefaultPosition,wxDefaultSize,elems, windows,wxWANTS_CHARS);
 		global->SetSelection(scwins.find(hotkeyWindow));
 		global->Connect(wxEVT_KEY_DOWN, (wxObjectEventFunction)&HkeysDialog::OnKeyPress,0,this);
@@ -443,13 +440,10 @@ HkeysDialog::HkeysDialog( wxWindow *parent, wxString name, char hotkeyWindow, bo
 	DialogSizer *MainSizer = new DialogSizer(wxVERTICAL);
 	if(global){MainSizer->Add(global, 0, wxTOP|wxLEFT|wxRIGHT|wxEXPAND, 12);}
 	MainSizer->Add(txt, 0, wxALL, 12);
-	//MainSizer->SetSizeHints(this);
 	SetSizerAndFit(MainSizer);
-	//CenterOnParent();
-	SetPosition(wxGetMousePosition());
+	MoveToMousePosition(this);
 	type = hotkeyWindow;
 	hkname=name;
-	//scr=script;
 }
 
 HkeysDialog::~HkeysDialog()
@@ -471,10 +465,10 @@ void HkeysDialog::OnKeyPress(wxKeyEvent& event)
 		if(event.ControlDown()){hotkey<<"Ctrl-";}
 		if(event.ShiftDown()){hotkey<<"Shift-";}
 
-		if(hotkey=="" && (type == 'G' || type == 'E') && (key>30 && key<127 || key>313 && key<318))//
+		if(hotkey=="" && (type == 'G' || type == 'E') && (key>30 && key<127 /*|| key>313 && key<318*/))
 		{
 			KaiMessageBox(_("Skróty globalne i edytora muszą zawierać modyfikatory (np. Shift, Ctrl, Alt)."));return;
-		}else if( event.GetModifiers() == wxMOD_CONTROL && (key == 'V' || key == 'C' || key == 'X')){
+		}else if( event.GetModifiers() == wxMOD_CONTROL && (key == 'V' || key == 'C' || key == 'X' || key == 'Z')){
 			KaiMessageBox(_("Nie możesz użyć skrótów do kopiowania, wycinania i wklejania.")); return;
 		}
 

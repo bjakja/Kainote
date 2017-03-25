@@ -597,11 +597,11 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 {
 	int fw=0,fh=0;
 	bool enabled = IsThisEnabled();
-	wxColour bg = (background.IsOk())? background : Options.GetColour(TextFieldBackground);
+	wxColour bg = (background.IsOk())? background : 
+		(enabled)? Options.GetColour(TextFieldBackground) : Options.GetColour(WindowBackgroundInactive);
 	wxColour fg = (foreground.IsOk())? foreground : Options.GetColour(WindowText);
 	dc.SetFont(font);
-	dc.SetBrush(wxBrush((enabled)? bg : 
-		Options.GetColour(WindowBackgroundInactive)));
+	dc.SetBrush(wxBrush(bg));
 	dc.SetPen(wxPen((style & wxBORDER_NONE)? bg : 
 		(HasFocus())? Options.GetColour(TextFieldBorderOnFocus) : 
 		(enabled)? Options.GetColour(TextFieldBorder) : 

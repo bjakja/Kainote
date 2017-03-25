@@ -66,7 +66,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -80,7 +80,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>      _CRT_SECURE_NO_WARNINGS;
         LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\luajit\LuaJitBuild\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\luajit\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -106,7 +106,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Thirdparty\luajit\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\luajit\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>     _CRT_SECURE_NO_WARNINGS;
         LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -145,11 +145,12 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
-  <Target Name="BuildVM" Inputs="..\src\host\buildvm.c;..\src\lj_opt_fold.c" Outputs="..\LuaJitBuild\$(Configuration)\lj_vm.obj;..\LuaJitBuild\$(Configuration)\lj_folddef.h">
+  <Target Name="BuildVM" Inputs="..\src\host\buildvm.c;..\src\lj_opt_fold.c" Outputs="..\LuaJitBuild\$(Platform)\$(Configuration)\lj_vm.obj;..\LuaJitBuild\$(Platform)\$(Configuration)\lj_folddef.h">
     <Message Text="luajit-buildvm peobj" Importance="High" />
     <Exec Command="$(BuildVMCommand) -m peobj -o lj_vm.obj" WorkingDirectory="..\LuaJitBuild\$(Platform)\$(Configuration)" />
     <Message Text="luajit-buildvm folddef" Importance="High" />

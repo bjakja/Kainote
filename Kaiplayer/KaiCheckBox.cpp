@@ -141,20 +141,22 @@ void KaiCheckBox::OnMouseEvent(wxMouseEvent &event)
 	}
 	
 	if(event.LeftDown() || event.LeftDClick()){
-		if(event.LeftDown()){clicked=true;}
+		//if(event.LeftDown()){
+		clicked=true;//}
+		value = !value;
+		wxCommandEvent evt((isCheckBox)? wxEVT_COMMAND_CHECKBOX_CLICKED : wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
+		this->ProcessEvent(evt);
 		Refresh(false);
 		SetFocus();
 		//event
 	}
 	if(event.LeftUp()){
-		bool oldclicked = clicked;
+		//bool oldclicked = clicked;
 		clicked=false;
 		Refresh(false);
-		if(oldclicked){
-			value = !value;
-			wxCommandEvent evt((isCheckBox)? wxEVT_COMMAND_CHECKBOX_CLICKED : wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
-			this->ProcessEvent(evt);
-		}
+		//if(oldclicked){
+			
+		//}
 	}
 	//event.Skip();
 }

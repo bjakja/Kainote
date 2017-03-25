@@ -1177,6 +1177,8 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 					delete provider; provider = 0; 
 					loaded= false; return;
 				}
+				//kopiujemy keyframes by nie robić specjalnie warunków czy jest wideo czy nie
+				if(vb->VFF){provider->KeyFrames = vb->VFF->KeyFrames;}
 				vb->player=this; ownProvider=true;
 			}
 
@@ -1447,10 +1449,6 @@ void AudioDisplay::AddLead(bool in,bool out) {
 void AudioDisplay::OnPaint(wxPaintEvent& event) {
 	if (w == 0 || h == 0) return;
 	DoUpdateImage();
-
-	//wxPaintDC dc(this);
-	//if (origImage) dc.DrawBitmap(*origImage,0,0);
-
 }
 
 
@@ -2077,12 +2075,10 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 		}else {
 			
 			cursorPaint=false;
-			//if(cursorPaint){
 			Refresh(false);
-				//cursorPaint=false;
-			//}
 			if (curPos > player->GetEndPosition() + 8192) {
 				player->Stop();
+				if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
 			}
 		}
 		
@@ -2094,7 +2090,7 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 		//needImageUpdate=true;
 		//cursorPaint=false;
 		//Refresh(false);
-		if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
+		//if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
 	}
 	oldCurPos = curpos;
 	if (oldCurPos < 0) oldCurPos = 0;

@@ -83,7 +83,7 @@ class findreplace: public KaiDialog
         bool fnext;
 		
 		bool fromstart;
-		bool hasFocus;
+		//bool hasFocus;
         void Find();
 		
 		void OnReplaceAll(wxCommandEvent& event);
