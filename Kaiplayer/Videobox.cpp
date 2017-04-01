@@ -241,13 +241,17 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 				//GetClientSize(&ww,&wh);
 				//wh-=Kai->Tabs->GetHeight();
 				//wxLogStatus("wh %i",wh);
-				//int sizex,sizey;
-				//GetClientSize(&sizex,&sizey);
-				//sizex-=iconsize;
-				//sizey -=(panelHeight+ Kai->Tabs->GetHeight() + Kai->Menubar->GetSize().y + Kai->StatusBar->GetSize().y);
+				int sizex,sizey;
+				Kai->GetClientSize(&sizex,&sizey);
 				CalcSize(&sx,&sy,0,0,true,true);
-				Kai->SetClientSize(sx+iconsize, sy+panelHeight + Kai->Tabs->GetHeight() + Kai->Menubar->GetSize().y + Kai->StatusBar->GetSize().y);
-				Kai->GetTab()->BoxSizer1->Layout();
+				sx+=iconsize;
+				sy+= (panelHeight + Kai->Tabs->GetHeight() + Kai->Menubar->GetSize().y + Kai->StatusBar->GetSize().y);
+				if(sx == sizex && sy == sizey){
+					UpdateVideoWindow();
+				}else{
+					Kai->SetClientSize(sx, sy);
+					Kai->GetTab()->BoxSizer1->Layout();
+				}
 			}
 			//załączony edytor
 		}else{

@@ -356,7 +356,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 	UpdateChars((TextEditTl->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
 	//ustawia clip/inny visual gdy jest włączony
 	if(Visual > CHANGEPOS){
-		pan->Video->SetVisual();
+		pan->Video->SetVisual(false, true);
 	}
 
 	//resetuje edycję na wideo
@@ -1141,7 +1141,7 @@ bool EditBox::FindVal(wxString tag, wxString *Finded, wxString text, bool *endse
 		if(ch=='\\' && brkt){
 			wxString ftag=txt.SubString(i+1,lslash-1);
 			if(ftag.EndsWith(")")){
-				if(ftag.Find('(')==-1||ftag.StartsWith("t(")){
+				if(ftag.Find('(')==-1 || ftag.Freq(')') >= 2 || ftag.StartsWith("t(")){
 					isT=true;
 					endT=lslash-1;
 				}
@@ -1290,7 +1290,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 {
 	wxString type;
 	wxString tag=Options.GetString((CONFIG)(event.GetId()-11000)).BeforeFirst('\f', &type);
-
+	if(tag.IsEmpty()){wxBell(); return;}
 
 	if(type!="2"){
 		if(type=="1"){TextEdit->SetSelection(0,0);}
@@ -1387,7 +1387,7 @@ void EditBox::SetTextWithTags()
 
 void EditBox::OnCursorMoved(wxCommandEvent& event)
 {
-	if(Visual==SCALE||Visual==ROTATEZ||Visual==ROTATEXY){
+	if(Visual==SCALE||Visual==ROTATEZ||Visual==ROTATEXY||Visual==CLIPRECT){
 		TabPanel* pan=(TabPanel*)GetParent();
 		pan->Video->ResetVisual();
 	}

@@ -216,26 +216,20 @@ void ClipRect::SetCurVisual()
 	int x1=0,x2=SubsSize.x,y1=0,y2=SubsSize.y;
 	wxString clip;
 	bool found =tab->Edit->FindVal("(i?clip[^\\)]+)", &clip);
-	if(found){
-		int rres = clip.Replace(",",",");
-		if( rres >= 3){
-			int match=1;
-			wxRegEx re;
-			if(rres>3){
-				re.Compile("\\(([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)", wxRE_ADVANCED);
-				match=2;
-			}else{
-				re.Compile("\\(([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)", wxRE_ADVANCED);
-			}
-			if(re.Matches(clip)){
-				x1=wxAtoi(re.GetMatch(clip,match));
-				y1=wxAtoi(re.GetMatch(clip,match+1));
-				x2=wxAtoi(re.GetMatch(clip,match+2));
-				y2=wxAtoi(re.GetMatch(clip,match+3));
-				showClip=true;
-			}
+	if(found && clip.Freq(',') == 3){
+		int match=1;
+		wxRegEx re("\\(([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)", wxRE_ADVANCED);
+
+		if(re.Matches(clip)){
+			x1=wxAtoi(re.GetMatch(clip,match));
+			y1=wxAtoi(re.GetMatch(clip,match+1));
+			x2=wxAtoi(re.GetMatch(clip,match+2));
+			y2=wxAtoi(re.GetMatch(clip,match+3));
+			showClip=true;
 		}
 		
+	}else{
+		showClip=false;
 	}
 
 	Corner[0] = D3DXVECTOR2(x1, y1);

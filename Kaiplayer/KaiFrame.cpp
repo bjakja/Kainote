@@ -63,7 +63,7 @@ KaiFrame::~KaiFrame()
 void KaiFrame::OnPaint(wxPaintEvent &evt)
 {
 	int w, h;
-	GetClientSize(&w,&h);
+	GetSize(&w,&h);
 	if(w<1 || h<1){return;}
 	wxPaintDC dc(this);
 	wxMemoryDC mdc;
@@ -141,7 +141,7 @@ void KaiFrame::SetLabel(const wxString &text)
 {
 	wxTopLevelWindow::SetLabel(text);
 	int w, h;
-	GetClientSize(&w,&h);
+	GetSize(&w,&h);
 	wxRect rc(0,0,w,ftopBorder);
 	Refresh(false, &rc);
 }
@@ -150,7 +150,7 @@ void KaiFrame::OnSize(wxSizeEvent &evt)
 {
 	//Refresh(false);
 	int w, h;
-	GetClientSize(&w,&h);
+	GetSize(&w,&h);
 	wxRect rc(0,0,w,ftopBorder);
 	Refresh(false, &rc);
 	if(!IsMaximized()){
@@ -168,7 +168,7 @@ void KaiFrame::OnSize(wxSizeEvent &evt)
 void KaiFrame::OnMouseEvent(wxMouseEvent &evt)
 {
 	int w, h;
-	GetClientSize(&w,&h);
+	GetSize(&w,&h);
 	int x = evt.GetX();
 	int y = evt.GetY();
 	wxRect rc(w-75, 0, 70, ftopBorder);
@@ -336,10 +336,19 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 	return wxTopLevelWindow::MSWWindowProc(uMsg, wParam, lParam);
 }
 
-void KaiFrame::DoGetClientSize(int *w, int *h)
+void KaiFrame::GetClientSize(int *w, int *h) const
 {
+	wxTopLevelWindow::GetClientSize(w, h);
 	*w -= (fborder * 2);
 	*h -= (ftopBorder + fborder);
+}
+
+wxSize KaiFrame::GetClientSize() const
+{
+	wxSize size = wxTopLevelWindow::GetClientSize();
+	size.x -= (fborder * 2);
+	size.y -= (ftopBorder + fborder);
+	return size;
 }
 void KaiFrame::SetClientSize(const wxSize &size)
 {

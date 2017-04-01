@@ -765,7 +765,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 	TabPanel* pan=(TabPanel*)GetParent();
 	if(IsDshow){
 		time=MID(0,_time,GetDuration());
-		if(corect&&IsDshow){
+		if(corect && IsDshow){
 			time/=avtpf;
 			if(starttime){time++;}
 			time*=avtpf;
@@ -787,35 +787,33 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		playend=(IsDshow)? 0 : GetDuration();
 		seek=true; vplayer->SetPosition(time);
 	}else{
-		lastframe = VFF->GetFramefromMS(_time,(time>_time)? 0 : lastframe); //- decr;
-		if(!starttime){lastframe--;if(VFF->Timecodes[lastframe]>=_time){lastframe--;}}
-		time = VFF->Timecodes[lastframe];
-		lasttime=timeGetTime()-time;
-		if(VisEdit){
-			SAFE_DELETE(Vclips->dummytext);
-			if(Vclips->Visual==VECTORCLIP){
-				Vclips->SetClip(Vclips->GetVisual(),true, false);
-				//SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime,false, false);
-				//OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
-			}else{
-				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
+		if(!VFF->isBusy){
+			lastframe = VFF->GetFramefromMS(_time,(time>_time)? 0 : lastframe); //- decr;
+			if(!starttime){lastframe--;if(VFF->Timecodes[lastframe]>=_time){lastframe--;}}
+			time = VFF->Timecodes[lastframe];
+			lasttime=timeGetTime()-time;
+			if(VisEdit){
+				SAFE_DELETE(Vclips->dummytext);
+				if(Vclips->Visual==VECTORCLIP){
+					Vclips->SetClip(Vclips->GetVisual(),true, false);
+				}else{
+					OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
+				}
+				VisEdit=false;
+			}else if(pan->Edit->OnVideo){
+				if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
+					wxCommandEvent evt;pan->Edit->OnEdit(evt);
+					//pan->Edit->OnVideo=false;
+				}
+			}	
+			if(vstate==Playing){
+				if(player){
+					player->player->SetCurrentPosition(player->GetSampleAtMS(time));
+				}
 			}
-			VisEdit=false;
-		}else if(pan->Edit->OnVideo){
-			if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
-				wxCommandEvent evt;pan->Edit->OnEdit(evt);
-				//pan->Edit->OnVideo=false;
-			}
-		}	
-		if(vstate==Playing){
-			if(player){
-				player->player->SetCurrentPosition(player->GetSampleAtMS(time));
-			}
-		}
-		else{
-			if(player){player->UpdateImage(true,true);}
-			if(!VFF->isBusy){
-				std::thread([=](){Render();}).detach();
+			else{
+				if(player){player->UpdateImage(true,true);}
+				Render(true,false);
 			}
 		}
 	}

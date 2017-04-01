@@ -206,6 +206,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	//tutaj dodawaj nowe idy
 	Connect(SaveSubs,Undo,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
 	Connect(7000,7011,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
+	Connect(ID_MOVE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
 	Connect(OpenSubs,ANSI,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
 	Connect(SelectFromVideo,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
 	Connect(Plus5SecondG,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnP5Sec);
@@ -446,6 +447,8 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		int fsel=pan->Grid1->FirstSel();
 		if(fsel<0){return;}
 		pan->Video->Seek(MAX(0,pan->Grid1->GetDial(fsel)->End.mstime),false);
+	}else if(id==ID_MOVE){
+		pan->CTime->OnOKClick(event);
 	}
 
 
@@ -1310,7 +1313,7 @@ void kainoteFrame::HideEditor()
 
 	}
 	else{//Wyłączanie edytora
-
+		cur->Video->panelHeight = 44;
 		cur->CTime->Hide();
 
 		cur->BoxSizer1->Remove(1);
@@ -1320,7 +1323,7 @@ void kainoteFrame::HideEditor()
 		cur->BoxSizer2->Detach(cur->Video);
 
 		cur->BoxSizer1->Add(cur->Video, 1, wxEXPAND|wxALIGN_TOP, 0);
-		cur->Video->panelHeight = 44;
+		
 		cur->Video->vToolbar->Hide();
 		if(cur->Video->GetState()!=None && !cur->Video->isFullscreen && !IsMaximized()){
 			int sx,sy, sizex, sizey;

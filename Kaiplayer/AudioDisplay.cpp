@@ -630,12 +630,13 @@ void AudioDisplay::DoUpdateImage() {
 
 	if(cursorPaint){
 		D3DXVECTOR2 v2[2]={D3DXVECTOR2(curpos,0),D3DXVECTOR2(curpos,h)};
+		d3dLine->SetWidth(2);
 		d3dLine->SetAntialias(TRUE);
 		d3dLine->Begin();
 		d3dLine->Draw(v2,2,AudioCursor);
 		d3dLine->End();
 		d3dLine->SetAntialias(FALSE);
-		//d3dLine->SetWidth(1);
+		d3dLine->SetWidth(1);
 		if(!player->IsPlaying()){
 			STime time;
 			time.NewTime(GetMSAtX(curpos));
@@ -1313,6 +1314,8 @@ void AudioDisplay::Stop(bool stopVideo) {
 	else if (player) {
 		player->Stop();
 		if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
+		cursorPaint=false;
+		Refresh(false);
 	}
 
 }

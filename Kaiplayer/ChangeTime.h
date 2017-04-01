@@ -69,7 +69,7 @@ public:
 
 	void Contents(bool addopts=true);
 	void RefVals(CTwindow *from=NULL);
-
+	void OnOKClick(wxCommandEvent& event);
 	wxBoxSizer *Main;
 
 
@@ -81,7 +81,6 @@ private:
 	int scPos;
 	MappedButton *coll;
 
-	void OnOKClick(wxCommandEvent& event);
 	void OnAddStyles(wxCommandEvent& event);
 	void OnSize(wxSizeEvent& event);
 	void OnScroll(wxScrollEvent& event);

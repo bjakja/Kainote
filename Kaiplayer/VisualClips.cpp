@@ -138,7 +138,7 @@ void DrawingAndClip::SetCurVisual()
 	wxString clip;
 	D3DXVECTOR2 linepos = GetPosnScale(&scale, &alignment, (Visual==VECTORDRAW)? tbl : NULL);
 	if(Visual!=VECTORDRAW){
-		bool found =tab->Edit->FindVal("(i?clip[^\\)]+)", &clip, "", 0, true);
+		bool found =tab->Edit->FindVal("(i?clip[^)]+\\))", &clip, "", 0, true);
 		if(found){int rres = clip.Replace(",",",");
 			if( rres >= 3) {clip = "";} 
 			else{clip = clip.AfterFirst((rres>0)? ',' : '(');}
@@ -196,7 +196,7 @@ void DrawingAndClip::SetCurVisual()
 		}
 	
 	}
-	//wxLogStatus(clip);
+	
 	if(!Points.empty() && Visual == VECTORDRAW){
 		D3DXVECTOR2 xyoffset = CalcWH();
 		for(size_t i = 0; i<Points.size(); i++){
@@ -204,7 +204,7 @@ void DrawingAndClip::SetCurVisual()
 			Points[i].y -= xyoffset.y;
 		}
 	}
-	//wxLogStatus("set cur visual");
+	
 }
 	
 wxString DrawingAndClip::GetVisual()

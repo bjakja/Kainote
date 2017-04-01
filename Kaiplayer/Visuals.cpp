@@ -468,13 +468,11 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 		//
 		wxString tmp;
 		wxString txt = Editor->GetValue();
-		if(edit->FindVal("(i?clip.)[^\\\\}]*", &tmp, txt, 0, true)){
-			//wxLogStatus("find");
+		if(edit->FindVal("(i?clip.)[^)]*\\)", &tmp, txt, 0, true)){
 			ChangeText(&txt,"",edit->InBracket,edit->Placed);
 			txt.Replace("{}", "");
 			Editor->SetTextS(txt, false, false);
 			Editor->modified = true;
-			//wxLogStatus("find");
 			edit->Send(false);
 			return;
 		}
@@ -493,7 +491,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 				//wxPoint pos;
 				wxString tmp="clip(";
 				wxString txt=Editor->GetValue();
-				bool fv=edit->FindVal("(i?clip.)[^\\\\}]*", &tmp,txt, 0, true);
+				bool fv=edit->FindVal("(i?clip.)[^)]*\\)", &tmp,txt, 0, true);
 				wxString tmp1=(tmp[0]=='c')? "iclip(" : "clip(";
 				wxString tclip= "\\"+tmp+clip+")";
 				edit->Placed.x += tmp.Len()+ 1 + ChangeText(&txt,tclip,edit->InBracket,edit->Placed);
@@ -517,19 +515,19 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 				wxString tmp="";
 				bool isf;
 				size_t cliplen = clip.Len();
-				isf=edit->FindVal("p([0-9]+)", &tmp, "", 0, true);
 				wxString txt=Editor->GetValue();
+				isf=edit->FindVal("p([0-9]+)", &tmp, txt, 0, true);
 				if(!isf){
 					ChangeText(&txt, "\\p1", edit->InBracket, edit->Placed);
 				}
-				isf=edit->FindVal("pos\\(([0-9,]+)\\)", &tmp, "", 0, true);
+				isf=edit->FindVal("pos\\(([,. 0-9-]+)\\)", &tmp, txt, 0, true);
 				if(!isf){
 					DrawingAndClip *drawing = (DrawingAndClip*)this;
 					float xx = drawing->_x * drawing->scale.x;
 					float yy = drawing->_y * drawing->scale.y;
 					ChangeText(&txt, "\\pos("+getfloat(xx)+","+getfloat(yy)+")", edit->InBracket, edit->Placed);
 				}
-				isf=edit->FindVal("an([0-9])", &tmp, "", 0, true);
+				isf=edit->FindVal("an([0-9])", &tmp, txt, 0, true);
 				if(!isf){
 					DrawingAndClip *drawing = (DrawingAndClip*)this;
 					ChangeText(&txt, "\\an"+getfloat(drawing->alignment,"1.0f"), edit->InBracket, edit->Placed);
@@ -537,13 +535,28 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 				txt.Replace("}{","");
 				dummytext=grid->GetVisible(&vis, &textplaced);
 				if(!vis){SAFE_DELETE(dummytext);return;}
-				edit->FindVal("p([0-9]+)", &tmp, "", 0, true);
-				txt += "{";
-				txt = "}" + txt;
-				wxRegEx re1("}([^{]+){", wxRE_ADVANCED);
-				re1.ReplaceAll(&txt,"}{\\1}{");
-				txt.RemoveLast();
-				txt.Remove(0,1);
+
+				int bracketPos = 0;
+				while(1){
+					bracketPos = txt.find("}", bracketPos);
+					if(bracketPos < 0 || bracketPos == txt.Len()-1){
+						break;
+					}
+					bracketPos++;
+					wxString mcheck = txt.Mid(bracketPos, 2);
+					if(!mcheck.StartsWith("m ")){
+						txt.insert(bracketPos, "{");
+						bracketPos++;
+						bracketPos = txt.find("{", bracketPos);
+						if(bracketPos < 0){
+							txt << "}";
+							break;
+						}
+						txt.insert(bracketPos, "}");
+					}
+				}
+				isf = edit->FindVal("p([0-9]+)", &tmp, txt, 0, true);
+				
 				wxString afterP1 = txt.Mid(edit->Placed.y);
 				int Mpos = -1;
 				//do poprawki usuwanie pierwszego nawiasu
@@ -551,35 +564,38 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 				if(isf){Mpos = afterP1.find("m ");}
 				if(Mpos== -1){Mpos = afterP1.find("}")+1;}
 				wxString startM = afterP1.Mid(Mpos);
-				if(Mpos>0 && isf){Mpos--; txt.Remove(Mpos + edit->Placed.y,1);}
 				int endClip = startM.find("{");
-				if(endClip > 0){endClip--; txt.Remove(endClip + edit->Placed.y,1);}else if(isf){txt.RemoveLast();}
 				if(endClip == -1 && isf){endClip=startM.Len()-1;clip+="{\\p0}";}
 				else if(endClip == -1){endClip=0;clip+="{\\p0}";}
 				txt.replace(Mpos + edit->Placed.y, endClip, clip);
+				//int startClip = Mpos + edit->Placed.y;
+				//endClip = clip.Len() + startClip;
+				
 
 				Editor->SetTextS(txt,false,false);
 
 				dummytext->replace(textplaced.x,textplaced.y,txt);
 				textplaced.y=txt.Len();
-				dumplaced.x=edit->Placed.y + Mpos + textplaced.x; dumplaced.y= dumplaced.x + cliplen;
+				dumplaced.x=edit->Placed.y + Mpos + textplaced.x; dumplaced.y= dumplaced.x + clip.Len();
 				
 
 			}
 		}else{
-			//if(dumplaced.x<dumplaced.y){dummytext->erase(dummytext->begin()+dumplaced.x, dummytext->begin()+dumplaced.y);}
+			//zmieniamy clip
 			dummytext->replace(dumplaced.x,dumplaced.y-dumplaced.x,clip);
-			//ChangeText(dummytext,clip,true,dumplaced);
-			//wxLogStatus(*dummytext);
+			//ustawiamy nowe pozycje dla następnej operacji zmiany
 			int oldy=dumplaced.y;
 			dumplaced.y=dumplaced.x+clip.Len();
 			textplaced.y += (dumplaced.y - oldy);
 			if(Visual==VECTORCLIP){
+				//zmieniamy clip tła przyciemniena w clipach
 				int endclip=dummytext->Find(')',true);
 				int startclip=dummytext->Find('(',true);
 				dummytext->replace(startclip+1, endclip-(startclip+1), clip);
 			}
+			//wyciągamy sam tekst linijki
 			wxString txt = dummytext->Mid(textplaced.x,textplaced.y);
+			//wstawiamy w edytor
 			Editor->SetTextS(txt,false,false);//,false,true
 			Editor->Refresh();
 		}

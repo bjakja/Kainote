@@ -1050,6 +1050,7 @@ void SubsGrid::Convert(char type)
 		if(resy==""){resx="720";}
 		AddSInfo("PlayResX",resx, false);
 		AddSInfo("PlayResY",resy, false);
+		AddSInfo("YCbCr Matrix","TV.601",false);
 		wxString catalog=Options.GetString(ConvertStyleCatalog);
 
 		if(Options.dirs.Index(catalog)!=-1){Options.LoadStyles(catalog);}
@@ -1805,7 +1806,7 @@ void SubsGrid::GetUndo(bool redo)
 		}
 	}
 	VideoCtrl *vb=pan->Video;
-	if(Edit->Visual < CHANGEPOS || Edit->Visual == MOVEALL){
+	if(Edit->Visual < CHANGEPOS/* || Edit->Visual == MOVEALL*/){
 		if(vb->IsShown() || vb->isFullscreen){vb->OpenSubs(SaveText());}
 		int opt=vb->vToolbar->videoSeekAfter->GetSelection();//Options.GetInt(MoveVideoToActiveLine);
 		if(opt>1){
@@ -2045,6 +2046,8 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 		}
 		wxString tlstyle;
 		if(tlmode){tlstyle=GetSInfo("TLMode Style");if(tlstyle==""){tlmode=false;}}
+		wxString matrix = GetSInfo("YCbCr Matrix");
+		if(matrix == "" || matrix == "None" ){AddSInfo("YCbCr Matrix","TV.601");}
 
 		while ( tokenizer.HasMoreTokens() )
 		{
@@ -2321,6 +2324,7 @@ void SubsGrid::LoadDefault(bool line,bool sav,bool endload)
 	AddSInfo("WrapStyle","0",sav);
 	AddSInfo("ScriptType","v4.00+",sav);
 	AddSInfo("Last Style Storage","Podstawowy",sav);
+	AddSInfo("YCbCr Matrix","TV.601",sav);
 	if(endload){file->EndLoad();}
 }
 

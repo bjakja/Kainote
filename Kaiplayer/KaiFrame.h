@@ -29,8 +29,8 @@ public:
 	virtual ~KaiFrame();
 	void SetLabel(const wxString &text);
 	virtual void SetStatusText(const wxString &label, int field){};
-	//void GetClientSize(int *x, int *y);
-	//wxSize GetClientSize();
+	void GetClientSize(int *w, int *h) const;
+	wxSize GetClientSize() const;
 	void SetClientSize(const wxSize &size);
 	void SetClientSize(int x, int y);
 
@@ -40,7 +40,6 @@ private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnActivate(wxActivateEvent &evt);
 	WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
-	void DoGetClientSize(int *w, int *h);
 	void OnEraseBackground(wxEraseEvent()){}
 	
 	long style;

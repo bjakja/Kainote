@@ -150,17 +150,16 @@ void VideoFfmpeg::Processing()
 		}else if(wait_result == WAIT_OBJECT_0+1){
 			byte *buff = (byte*)rend->datas;
 			if(rend->lastframe != lastframe){
-				fframe=FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
+				fframe=FFMS_GetFrame(videosource, rend->lastframe , &errinfo);
 				lastframe = rend->lastframe;
 			}
-			if(!fframe){SetEvent(eventComplete);continue;}
+			if(!fframe){SetEvent(eventComplete);isBusy = false;continue;}
 			memcpy(&buff[0],fframe->Data[0],fplane);
 			rend->DrawTexture(buff);
 			rend->Render(false);
 			SetEvent(eventComplete);
 			isBusy = false;
-		}
-		else{
+		}else{
 			break;
 		}
 
@@ -378,12 +377,11 @@ done:
 		ColorSpace = RealColorSpace = ColorCatrixDescription(CS, CR);
 		Grid *grid = ((TabPanel*)rend->GetParent())->Grid1;
 		wxString colormatrix = grid->GetSInfo("YCbCr Matrix");
-		if(colormatrix.IsEmpty()){colormatrix=_("Brak");}
-		if (CS != FFMS_CS_RGB && CS != FFMS_CS_BT470BG && ColorSpace != colormatrix && colormatrix == "TV.601") {
-			if (FFMS_SetInputFormatV(videosource, FFMS_CS_BT470BG, CR, FFMS_GetPixFmt(""), &errinfo)){
+		if (CS == FFMS_CS_BT709 || (ColorSpace != colormatrix && CS == FFMS_CS_BT470BG)) {
+			if (FFMS_SetInputFormatV(videosource, CS, CR, FFMS_GetPixFmt(""), &errinfo)){
 				wxLogMessage(_("Nie można zmienić macierzy YCbCr"));
 			}
-			ColorSpace = ColorCatrixDescription(FFMS_CS_BT470BG, CR);
+			ColorSpace = ColorCatrixDescription(CS, CR);
 		}
 
 		FFMS_Track *FrameData = FFMS_GetTrackFromVideo(videosource);
@@ -886,11 +884,11 @@ void VideoFfmpeg::Refresh(bool wait){
 
 wxString VideoFfmpeg::ColorCatrixDescription(int cs, int cr) {
 	// Assuming TV for unspecified
-	std::string str = cr == FFMS_CR_JPEG ? "PC" : "TV";
+	wxString str = cr == FFMS_CR_JPEG ? "PC" : "TV";
 
 	switch (cs) {
 		case FFMS_CS_RGB:
-			return "None";
+			return _("Brak");
 		case FFMS_CS_BT709:
 			return str + ".709";
 		case FFMS_CS_FCC:
@@ -908,7 +906,7 @@ wxString VideoFfmpeg::ColorCatrixDescription(int cs, int cr) {
 void VideoFfmpeg::SetColorSpace(const wxString& matrix){
 
 		if (matrix == ColorSpace) return;
-		if (matrix == RealColorSpace || matrix == _("Brak"))
+		if (matrix == RealColorSpace || (matrix != "TV.601" && matrix != "TV.709"))
 			FFMS_SetInputFormatV(videosource, CS, CR, FFMS_GetPixFmt(""), nullptr);
 		else if (matrix == "TV.601")
 			FFMS_SetInputFormatV(videosource, FFMS_CS_BT470BG, CR, FFMS_GetPixFmt(""), nullptr);
