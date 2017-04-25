@@ -27,34 +27,6 @@
 
 wxDEFINE_EVENT(CURSOR_MOVED, wxCommandEvent);
 
-//class listwindow : public wxDialog
-//{
-//public:
-//	listwindow(wxWindow *parent, wxArrayString suggest, const wxPoint& pos, wxString name="Sugestie");
-//	virtual ~listwindow();
-//
-//	wxListBox *disperrs;
-//	void OnDoubleClick(wxCommandEvent& event);
-//};
-//
-//listwindow::listwindow(wxWindow *parent, wxArrayString suggest, const wxPoint& pos, wxString name)
-//	: wxDialog(parent,-1,name,pos)
-//{
-//	wxBoxSizer *sizer=new wxBoxSizer(wxHORIZONTAL);
-//	disperrs=new wxListBox(this,19887,wxDefaultPosition,wxDefaultSize,suggest);
-//	Connect(19887,wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,(wxObjectEventFunction)&listwindow::OnDoubleClick);
-//	sizer->Add(disperrs,1,wxEXPAND|wxALL,2);
-//	sizer->SetMinSize(100,100);
-//	SetSizerAndFit(sizer);
-//}
-//listwindow::~listwindow()
-//{
-//}
-//
-//void listwindow::OnDoubleClick(wxCommandEvent& event)
-//{
-//	EndModal(wxID_OK);
-//}
 
 
 MTextEditor::MTextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos,const wxSize& size, long style)
@@ -108,10 +80,8 @@ MTextEditor::MTextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& p
 	holding = dholding = firstdhold = modified = wasDoubleClick = false;
 
 	font= wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
-	wxClientDC dc(this);
-	dc.SetFont(font);
 	int fw,fh;
-	dc.GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
+	GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	Fheight=fh;
 	scroll=new KaiScrollbar(this,3333,wxDefaultPosition,wxDefaultSize, wxSB_VERTICAL);
 	scroll->SetCursor(wxCURSOR_DEFAULT);
@@ -119,6 +89,7 @@ MTextEditor::MTextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& p
 	SetCaret(caret);
 	caret->Move(3,2);
 	caret->Show();
+	SetMinSize(wxSize(100,100));
 	//Refresh(false);
 }
 
@@ -432,7 +403,8 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 				Cursor.y=0;
 				Selend.x=MText.Len();
 				Selend.y=FindY(Selend.x);
-				Refresh(false);
+				MakeCursorVisible();
+				//Refresh(false);
 				return;
 			}
 		}
@@ -445,7 +417,8 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 		wxPoint cur;
 		HitTest(event.GetPosition(),&cur);
 		Cursor=cur;
-		Refresh(false);
+		//Refresh(false);
+		MakeCursorVisible();
 	}
 	if(dholding){
 		wxPoint cur;
@@ -467,8 +440,8 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 			Cursor.x=end;
 			Cursor.y=FindY(end);
 		}
-		Refresh(false);
-
+		//Refresh(false);
+		MakeCursorVisible();
 	}
 
 	if(event.RightDown())
@@ -481,16 +454,14 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 		fsize += event.GetWheelRotation() / event.GetWheelDelta();
 		if(fsize<7||fsize>70){fsize = MID(7,fsize,70); return;}
 		font.SetPointSize(fsize);
-		wxClientDC dc(this);
-		dc.SetFont(font);
 		int fw,fh;
-		dc.GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
+		GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
 		Fheight=fh;
 		caret->SetSize(1,fh);
 		CalcWrap(false, false);
 		Refresh(false);
 	}else if(event.GetWheelRotation() != 0){
-		int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();
+		int step = 30 * event.GetWheelRotation() / event.GetWheelDelta();
 		if(step>0 && scPos==0){return;}
 		scPos = MAX(scPos - step, 0);
 		Refresh(false);
@@ -531,10 +502,10 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 		int sw=0,sh=0;
 		scroll->GetSize(&sw,&sh);
 		scroll->SetSize(w-sw,0,sw,h);
-		int diff= h/2;
-		int diff2= bitmaph/2;
+		int diff= h;
+		int diff2= bitmaph;
 		if(scPos>diff2-diff){scPos=diff2-diff;}
-		scroll->SetScrollbar(scPos,diff,diff2,diff-1);
+		scroll->SetScrollbar(scPos,diff,diff2,diff-2);
 		w -= sw;
 	}else{
 		if(scroll->IsShown()){
@@ -577,7 +548,7 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 
 
 
-		dc.Blit(0,-scPos,w,h+scPos,&bmpDC,0,scPos);
+		dc.Blit(0,-scPos,w,h+scPos,&bmpDC,0,0);
 
 	}
 
@@ -714,7 +685,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			if(Cursor.x+Cursor.y==wchar){
 				int fww=0;
 				dc.GetTextExtent(mestext+parttext, &fww, &fh, NULL, NULL, &font);
-				caret->Move(fww+3,posY-(scPos*2));
+				caret->Move(fww+3,posY-(scPos));
 
 			}
 
@@ -739,8 +710,8 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 		if(HasFocus()&&(Cursor.x+Cursor.y==wchar)){
 			if(mestext+parttext==""){fw=0;}
 			else{dc.GetTextExtent(mestext+parttext, &fw, &fh, NULL, NULL, &font);}
-			//wxLogStatus("cursor %i %i %i",posY-(scPos*2), scPos, Fheight);
-			caret->Move(fw+3,posY-(scPos*2));
+			//wxLogStatus("cursor %i %i %i",posY-(scPos), scPos, Fheight);
+			caret->Move(fw+3,posY-(scPos));
 
 		}
 		parttext<<ch;
@@ -844,20 +815,20 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
 	dc.SetPen(wxPen((HasFocus())? Options.GetColour(EditorBorderOnFocus) : Options.GetColour(EditorBorder)));
-	dc.DrawRectangle(0,scPos*2,w,windowh);
+	dc.DrawRectangle(0,scPos,w,windowh);
 }
 
 bool MTextEditor::HitTest(wxPoint pos, wxPoint *cur)
 {
 	int w,h,fw=0,fh=0;
 	GetClientSize(&w,&h);
-	pos.y+=(scPos*2);
+	pos.y+=(scPos);
 	pos.x-=2;
 
 	cur->y=(pos.y/Fheight);
 	if(cur->y<0||wraps.size()<2){cur->y=0;cur->x=0;return false;}
 	if(cur->y>=(int)wraps.size()-1)
-	{cur->y=wraps.size()-2;cur->x=wraps[wraps.size()-2];}//wxLogMessage("line %i %i",cur->y, cur->x);
+	{cur->y=wraps.size()-2;cur->x=wraps[wraps.size()-2];}
 	else{cur->x=wraps[cur->y];}
 
 	bool find=false;
@@ -874,7 +845,7 @@ bool MTextEditor::HitTest(wxPoint pos, wxPoint *cur)
 		//apos+=fw;wxLogStatus("%i, %i", cur->x, cur->y);
 	}
 	if(!find){cur->x = wraps[cur->y+1];}
-	//wxLogStatus("%i %i", cur->x, cur->y);
+	
 	return find;
 }
 
@@ -948,7 +919,15 @@ void MTextEditor::CheckText()
 		else if(ch=='}'){block=false;firsti=i+1;word="";}
 
 		if(notchar.Find(ch)==-1&&text.GetChar((i==0)? 0 : i-1)!='\\'&&!block){word<<ch;lasti=i;}
-		else if(!block&&text.GetChar((i==0)? 0 : i-1)=='\\'&& (ch=='N'||ch=='h')){firsti=i+1;word="";}
+		else if(!block&&text.GetChar((i==0)? 0 : i-1)=='\\'){
+			word="";
+			if(ch == 'N' || ch == 'n' || ch =='h'){
+				firsti=i + 1;
+			}else{
+				firsti=i;
+				word<<ch;
+			}
+		}
 	}
 	//Refresh(false);
 
@@ -1170,12 +1149,11 @@ int MTextEditor::FindError(wxPoint mpos,bool mouse)
 
 wxPoint MTextEditor::PosFromCursor(wxPoint cur)
 {
-	wxMemoryDC dc;
-	dc.SelectObject(*bmp);
-	dc.SetFont(font);
 	int fw, fh;
-	if(wraps[cur.y]==cur.x){fw=0;}
-	else{dc.GetTextExtent(MText.SubString(wraps[cur.y],cur.x), &fw, &fh, NULL, NULL, &font);}
+	//if(wraps[cur.y]==cur.x){fw=0;}
+	//if(cur.x<=0||cur.y<0){return wxPoint(-scPos+2, (Fheight-scPos));}
+	if(wraps.size()<2 || wraps[cur.y]==cur.x){fw=0;}
+	else{GetTextExtent(MText.SubString(wraps[cur.y],cur.x), &fw, &fh, NULL, NULL, &font);}
 	wxPoint result;
 	result.x=fw+3;
 	result.y=(cur.y+1)*Fheight;
@@ -1212,6 +1190,26 @@ int MTextEditor::FindBracket(wxUniChar sbrkt, wxUniChar ebrkt, int pos, bool fro
 void MTextEditor::SpellcheckerOnOff()
 {
 	spell = !spell;
+	Refresh(false);
+}
+
+void MTextEditor::MakeCursorVisible()
+{
+	wxSize size = GetClientSize();
+	wxPoint pixelPos = PosFromCursor(Cursor);
+	pixelPos.y-=scPos;
+	
+	if(pixelPos.y < 3){
+		scPos -= (pixelPos.y > -Fheight)? Fheight : (abs(pixelPos.y)+10);
+		scPos = ((scPos/Fheight)-Fheight)*Fheight;
+		if(scPos<0){scPos=0;}
+	}else if(pixelPos.y > size.y-4){
+		int bitmaph= (wraps.size()*Fheight)+4;
+		int moving = pixelPos.y - (size.y - 10);
+		scPos += (moving < Fheight)? Fheight : moving+Fheight;
+		scPos = ((scPos/Fheight)+Fheight)*Fheight;
+		if(scPos>bitmaph){scPos=bitmaph;}
+	}
 	Refresh(false);
 }
 

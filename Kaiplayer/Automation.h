@@ -178,7 +178,7 @@ namespace Auto {
 	{
 
 	public:
-		Automation(bool loadSubsScripts=false);
+		Automation(bool loadSubsScripts=false, bool loadNow = false);
 		~Automation();
 
 		bool Add(wxString filename, bool addToSinfo= true, bool autoload=false);
@@ -193,6 +193,7 @@ namespace Auto {
 		void BuildMenu(Menu **bar, bool all=false);
 		// Get all managed scripts (both loaded and invalid)
 		//void OnMenuClick(wxCommandEvent &event);
+		LuaScript *FindScript(const wxString &path);
 
 		std::vector<Auto::LuaScript*> Scripts;
 		std::vector<Auto::LuaScript*> ASSScripts;

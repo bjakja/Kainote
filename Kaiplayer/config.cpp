@@ -317,6 +317,7 @@ void config::LoadDefaultColors(bool dark)
 	colors[GridComment] = new wxColour((dark)? "#BDBDBD" : "#999999");
 	colors[GridSelectedDialogue] = new wxColour((dark)? "#B6D5C5" : "#EBF5EF");
 	colors[GridSelectedComment] = new wxColour((dark)? "#89A9CF" : "#CF898B");
+	colors[GridVisibleOnVideo] = new wxColour((dark)? "#7878AA" : "#94B9D7");
 	colors[GridCollisions] = new wxColour((dark)? "#0010FF" : "#FF0000");
 	colors[GridLines] = new wxColour((dark)? "#4C4C4C" : "#606060");
 	colors[GridActiveLine] = new wxColour((dark)? "#4000CA" : "#CA0065");

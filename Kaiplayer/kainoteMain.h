@@ -110,7 +110,7 @@ class kainoteFrame: public KaiFrame
 		void OnPageAdd(wxCommandEvent& event);
 		void OnPageClose(wxCommandEvent& event);
 		void OnSize(wxSizeEvent& event);
-		
+		void OnRunScript(wxCommandEvent& event);
 		void OnChangeLine(wxCommandEvent& event);
 		void OnDelete(wxCommandEvent& event);
 		void OnClose1(wxCloseEvent& event);

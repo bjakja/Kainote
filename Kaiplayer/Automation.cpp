@@ -921,7 +921,7 @@ namespace Auto{
 		DeleteTimerQueueTimer(auto_->handle,0,0);
 	}
 
-	Automation::Automation(bool loadSubsScripts)
+	Automation::Automation(bool loadSubsScripts, bool loadNow)
 	{
 		initialized = false;
 		AutoloadPath=Options.pathfull+"\\Automation\\automation\\Autoload";
@@ -929,7 +929,7 @@ namespace Auto{
 		int loadMethod = Options.GetInt(AutomationLoadingMethod);
 		if(loadMethod < 2){
 			initialized = true;
-			if(loadMethod == 0){
+			if(loadMethod == 0 && !loadNow){
 				CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
 			}else{
 				ReloadScripts(true);
@@ -1163,9 +1163,10 @@ namespace Auto{
 					Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 						if(wxGetKeyState(WXK_SHIFT)){
 							int ret=-1;
-							ret=Hkeys.OnMapHkey( start, text, Kai, GLOBAL_HOTKEY, false);
-							if(ret==-1){
-								Kai->Menubar->FindItem(start)->SetAccel(&Hkeys.GetHKey(start));
+							int id = 0;
+							ret=Hkeys.OnMapHkey(&id, text, Kai);
+							/*if(ret==-1){
+								Kai->Menubar->FindItem(start)->SetAccel(&Hkeys.GetHKey(id));
 							}
 							else if(ret>0){
 								MenuItem *item= Kai->Menubar->FindItem(ret);
@@ -1177,18 +1178,18 @@ namespace Auto{
 								MenuItem *item= Kai->Menubar->FindItem(ret);
 								wxAcceleratorEntry entry= Hkeys.GetHKey(idAndType(ret));
 								item->SetAccel(&entry);
-							}
+							}*/
 							if(ret!=-2){
-								Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+								/*Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 									if(script->CheckLastModified(true)){script->Reload();}
 									macro->RunScript();
-								}, ret);
+								}, start);*/
 								Hkeys.SetAccels(true); Hkeys.SaveHkeys();
 							}
 						}else{
 							macro->RunScript();
 						}	
-					}, mi->id);
+					}, start);
 					start++;
 				}
 				if( macros.size()<1){
@@ -1232,9 +1233,10 @@ namespace Auto{
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 					if(wxGetKeyState(WXK_SHIFT)){
 						int ret=-1;
-						ret=Hkeys.OnMapHkey( start, text, Kai, GLOBAL_HOTKEY, false);
-						if(ret==-1){
-							Kai->Menubar->FindItem(start)->SetAccel(&Hkeys.GetHKey(start));
+						int id = 0;
+						ret=Hkeys.OnMapHkey( &id, text, Kai);
+						/*if(ret==-1){
+							Kai->Menubar->FindItem(start)->SetAccel(&Hkeys.GetHKey(id));
 						}
 						else if(ret>0){
 							MenuItem *item= Kai->Menubar->FindItem(ret);
@@ -1246,19 +1248,19 @@ namespace Auto{
 							MenuItem *item= Kai->Menubar->FindItem(ret);
 							wxAcceleratorEntry entry= Hkeys.GetHKey(idAndType(ret));
 							item->SetAccel(&entry);
-						}
+						}*/
 						if(ret!=-2){
-							Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+						/*	Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 								if(script->CheckLastModified(true)){script->Reload();}
 								macro->RunScript();
-							}, ret);
+							}, start);*/
 							Hkeys.SetAccels(true); Hkeys.SaveHkeys();
 						}
 					}else{
-						if(script->CheckLastModified(true)){script->Reload();}
+						//if(script->CheckLastModified(true)){script->Reload();}
 						macro->RunScript();
 					}	
-				}, mi->id);
+				}, start);
 				start++;
 			}
 			if( macros.size()<1){
@@ -1290,7 +1292,16 @@ namespace Auto{
 		HasChanges=false;
 	}
 
-
+	LuaScript *Automation::FindScript(const wxString &path)
+	{
+		for(size_t g = 0; g < Scripts.size(); g++){
+			if(Scripts[g]->GetFilename() == path){return Scripts[g];}
+		}
+		for(size_t g = 0; g < ASSScripts.size(); g++){
+			if(ASSScripts[g]->GetFilename() == path){return ASSScripts[g];}
+		}
+		return NULL;
+	}
 
 
 }

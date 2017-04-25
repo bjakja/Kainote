@@ -479,7 +479,7 @@ void KaiChoice::SendEvent(int _choice)
 
 void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool changeText)
 {
-	if(PartialName==""){SetSelection(0, true);return;}
+	if(PartialName==""){SetSelection(0, false);return;}
 	int sell= (changeText)? 0 : -1;
 	wxString PrtName = PartialName.Lower();
 

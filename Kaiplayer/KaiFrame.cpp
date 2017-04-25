@@ -44,7 +44,7 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title, const
 	SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
-	Bind(wxEVT_SIZE, &KaiFrame::OnSize, this);
+	//Bind(wxEVT_SIZE, &KaiFrame::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiFrame::OnPaint, this);
 	Bind(wxEVT_LEFT_DOWN, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &KaiFrame::OnMouseEvent, this);
@@ -239,20 +239,25 @@ void KaiFrame::OnActivate(wxActivateEvent &evt)
 
 WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
-	 //if (uMsg == WM_CREATE)
-  //  {
-  //      RECT rcClient;
-  //      GetWindowRect(m_hWnd, &rcClient);
-
-  //      // Inform application of the frame change.
-  //      SetWindowPos(m_hWnd, 
-  //                   NULL, 
-  //                   rcClient.left, rcClient.top,
-  //                   rcClient.right-rcClient.left, rcClient.bottom-rcClient.top,
-  //                   SWP_FRAMECHANGED);
-
-  //  }
-
+	 if (uMsg == WM_SIZE)
+    {
+        int w = LOWORD(lParam);
+		int h = HIWORD(lParam);
+		/*if(width<800 || height < 600){
+			return 1;
+		}*/
+		wxRect rc(0,0,w,ftopBorder);
+		Refresh(false, &rc);
+		if(!IsMaximized()){
+			wxRect rc1(0,ftopBorder,fborder,h-fborder-ftopBorder);
+			Refresh(false, &rc1);
+			wxRect rc2(w-fborder,ftopBorder,fborder,h-fborder-ftopBorder);
+			Refresh(false, &rc2);
+			wxRect rc3(0,h-fborder,w,fborder);
+			Refresh(false, &rc3);
+		}
+    }
+	 
 	/*if(uMsg == 28){
 		isActive = !isActive;
 		int w, h;
@@ -269,21 +274,12 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 	}
 	return 1;
 	}*/
-	//if (uMsg == WM_GETMINMAXINFO){
-	//	RECT rc;
-	//	MINMAXINFO * pInfo = (MINMAXINFO*)lParam;
-	//	SystemParametersInfo(SPI_GETWORKAREA,0,&rc,0);
-
-	//	pInfo->ptMaxSize.x = (rc.right-rc.left);//+(fborder*2);
-	//	pInfo->ptMaxSize.y = (rc.bottom-rc.top);//+fborder+1;
-	//	//pInfo->ptMaxTrackSize.x = (rc.right-rc.left)+(fborder*2);
-	//	//pInfo->ptMaxTrackSize.y = (rc.bottom-rc.top)+fborder+1;
-
-	//	pInfo->ptMaxPosition.x = rc.left;//-fborder;
-	//	pInfo->ptMaxPosition.y = rc.top;//-1;
-	//	
-	//	//return 0;
-	//}
+	if (uMsg == WM_GETMINMAXINFO){
+		MINMAXINFO * pInfo = (MINMAXINFO*)lParam;
+		pInfo->ptMinTrackSize.x = 600;
+		pInfo->ptMinTrackSize.y = 400;
+		return 0;
+	}
 	if ((uMsg == WM_NCCALCSIZE)){
 
 		return 0;

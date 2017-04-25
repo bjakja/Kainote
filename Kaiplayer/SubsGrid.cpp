@@ -151,7 +151,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	GetClientSize(&w,&h);
 	bool bg=false;
 	int size=GetCount();
-	int panelrows=(h/(GridHeight+1))+1;
+	panelrows=(h/(GridHeight+1))+1;
 	int scrows=scPos+panelrows;
 	//gdy widzimy koniec napisów
 	if(scrows >= size + 3){
@@ -208,6 +208,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	wxColour ComparsionBGCmntCol=Options.GetColour(GridComparisonCommentBackground);
 	wxColour ComparsionBGCmntSelCol=Options.GetColour(GridComparisonCommentBackgroundSelected);
 	wxString chtag=Options.GetString(GridTagsSwapChar);
+	wxColour visibleOnVideo = Options.GetColour(GridVisibleOnVideo);
 	bool SpellCheckerOn = Options.GetBool(SpellcheckerOn);
 
 	tdc.SetPen(*wxTRANSPARENT_PEN);
@@ -220,7 +221,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	bool isComment=false;
 	bool unkstyle=false;
 	bool shorttime=false;
-	int states=2;
+	int states=0;
 
 	if(SpellErrors.size()<(size_t)size){
 		SpellErrors.resize(size);
@@ -228,13 +229,17 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 
 	Dialogue *acdial=GetDial(MID(0,Edit->ebrow,size-1));
 	Dialogue *Dial;
-
+	int VideoPos = ((TabPanel*)GetParent())->Video->Tell();
 
 	int fw,fh,bfw,bfh;
+	wxColour kol;
+	visibleLines.clear();
+	
 
 	for(int i=scPos;i<scrows;i++){
 
 		wxArrayString strings;
+		bool comparison = false;
 		bool isSelected = false;
 
 		if (i==scPos){
@@ -257,6 +262,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 			if(form!=TMP){strings.Add(_("ZNS"));}
 			strings.Add(_("Tekst"));
 			if(showtl){strings.Add(_("Tekst tłumaczenia"));}
+			kol = header;
 		}else{
 			Dial=GetDial(i-1);
 
@@ -325,16 +331,29 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 			if(sel.find(i-1) != sel.end()){
 				isSelected = true;
 			}
-
+			bool comparison = (Comparsion && Comparsion->at(i-1).size()>0);//visibleLines
+			bool visibleLine = (Dial->Start <= VideoPos && Dial->End >= VideoPos);
+			kol = (comparison)? ComparsionBGCol : 
+				(visibleLine)? visibleOnVideo : 
+				subsBkCol;
+			if(isComment){kol= (comparison)? ComparsionBGCmntCol : comm;}
+			if(isSelected){
+				if(isComment){kol = (comparison)? ComparsionBGCmntSelCol : selcom;}
+				else{kol= (comparison)? ComparsionBGSelCol : seldial; }
+			}
+			if(visibleLine){visibleLines.push_back(true);}
+			else{visibleLines.push_back(false);}
 		}
 
 		posX=0;
 
 
 		ilcol=strings.GetCount();
+		
 
 		wxRect cur;
 		bool isCenter;
+		wxColour label= (states == 0)? labelBkColN : (states == 2)? labelBkCol : labelBkColM;
 		for (int j=0; j<ilcol; j++){
 			if(showtl&&j==ilcol-2){
 				int podz=(w + scHor - posX) / 2;
@@ -343,20 +362,12 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 			}
 
 			if(!showtl&&j==ilcol-1){GridWidth[j] = w + scHor - posX/* - (GridWidth[0] + 1)*/;}
-			bool comparison = (Comparsion && i!=scPos && Comparsion->at(i-1).size()>0);
+			
 
 			if(GridWidth[j]>0){
 				tdc.SetPen(*wxTRANSPARENT_PEN);
-				wxColour kol= (comparison)? ComparsionBGCol :subsBkCol;
-				if(i==scPos){kol = header;}
-				else if(j==0){kol= (states == 0)? labelBkColN : (states == 2)? labelBkCol : labelBkColM;}
-				else if(isComment && j!=0 ){ kol= (comparison)? ComparsionBGCmntCol : comm;}
-
-				if(isSelected && j > 0){
-					if(isComment){kol = (comparison)? ComparsionBGCmntSelCol : selcom;}
-					else{kol= (comparison)? ComparsionBGSelCol : seldial; }
-				}
-				tdc.SetBrush(wxBrush(kol));
+				
+				tdc.SetBrush(wxBrush((j==0 && i!=scPos)? label : kol));
 				if(unkstyle && j==4 || shorttime && (j==10||(j==3 && form>ASS))){
 					tdc.SetBrush(wxBrush(SpelcheckerCol));
 				}
@@ -2298,8 +2309,16 @@ void SubsGrid::CheckText(wxString text, wxArrayInt &errs)
 		else if(ch=='}'){block=false;firsti=i+1;word="";}
 
 
-		if(notchar.Find(ch)==-1&&text.GetChar((i==0)? 0 : i-1)!='\\'&&!block){word<<ch;lasti=i;}
-		else if(!block&&text.GetChar((i==0)? 0 : i-1)=='\\'){firsti=i+1;word="";}
+		if(notchar.Find(ch) == -1&& text.GetChar((i==0)? 0 : i-1) != '\\' && !block){word<<ch;lasti=i;}
+		else if( !block && text.GetChar((i==0)? 0 : i-1)=='\\'){
+			word="";
+			if(ch == 'N' || ch == 'n' || ch =='h'){
+				firsti=i + 1;
+			}else{
+				firsti=i;
+				word<<ch;
+			}
+		}
 	}
 	if(errs.size()<2){errs.push_back(0);}
 
@@ -2551,6 +2570,27 @@ void SubsGrid::RebuildActorEffectLists()
 	Edit->EffectEdit->Sort();
 }
 
+void SubsGrid::RefreshIfVisible(int time)
+{
+	int scrows = scPos + panelrows - 1;
+	int count = GetCount();
+	if(scrows>=count){scrows = count;}
+	if(scPos<0){scPos=0;}
+	if(visibleLines.size() < scrows-scPos){return;}
+	int counter = 0;
+	for(size_t i = scPos; i < scrows; i++){
+		Dialogue *dial = GetDial(i);
+		bool isVisible = dial->Start <= time && dial->End >= time;
+		if(isVisible != visibleLines[counter++]){
+			Refresh(false);
+			//wxLogStatus("refresh()");
+			break;
+		}
+		
+	}
+	
+}
+
 BEGIN_EVENT_TABLE(SubsGrid,KaiScrolledWindow)
 	EVT_PAINT(SubsGrid::OnPaint)
 	EVT_SIZE(SubsGrid::OnSize)
@@ -2560,5 +2600,5 @@ BEGIN_EVENT_TABLE(SubsGrid,KaiScrolledWindow)
 	EVT_TIMER(ID_AUTIMER,SubsGrid::OnBcktimer)
 	EVT_ERASE_BACKGROUND(SubsGrid::OnEraseBackground)
 	EVT_MOUSE_CAPTURE_LOST(SubsGrid::OnLostCapture)
-	END_EVENT_TABLE()
+END_EVENT_TABLE()
 

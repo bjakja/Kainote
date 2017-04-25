@@ -43,6 +43,7 @@ KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
 			 ,fontHeight(0)
 {
 	label = _label;
+	label.Replace("&", "");
 	wxSize newSize=size;
 	SetFont(parent->GetFont());
 	int fullw=0;

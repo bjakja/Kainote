@@ -138,7 +138,10 @@ void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
 			int newi = elem-moveToolsStart; MoveToggled[newi] = !MoveToggled[newi];
 		}
 		else if(elem>=toolsSize){clipToggled=elem;}
-		else{Toggled=elem;}
+		else{
+			if(elem == Toggled){Toggled=0;}
+			else{Toggled=elem;}
+		}
 		clicked=true;
 		Refresh(false);
 	}

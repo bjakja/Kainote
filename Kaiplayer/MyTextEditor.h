@@ -27,7 +27,7 @@ wxDECLARE_EVENT(CURSOR_MOVED, wxCommandEvent);
 
 class MTextEditor : public wxWindow
 	{
-	public:
+public:
 	MTextEditor(wxWindow *parent, int id, bool spell, const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=wxWANTS_CHARS); 
 	virtual ~MTextEditor();
 	void SetTextS(const wxString &text,bool modif=false, bool resetsel = true, bool noevent=false);
@@ -41,7 +41,7 @@ class MTextEditor : public wxWindow
 	void SpellcheckerOnOff();
 	EditBox* EB;
 	bool modified;
-	protected:
+protected:
 	void CheckText();
 	void ContextMenu(wxPoint mpos, int error);
 	inline int FindY(int x);
@@ -62,6 +62,7 @@ class MTextEditor : public wxWindow
 	void CalcWrap(bool updatechars=true, bool sendevent=true);
 	void FindWord(int pos,int *start, int *end);
 	int FindBracket(wxUniChar sbrkt, wxUniChar ebrkt, int pos, bool fromback=false);
+	void MakeCursorVisible();
 	bool spell;
     wxString MText;
 	wxBitmap* bmp;

@@ -71,7 +71,7 @@ void KaiSlider::OnSize(wxSizeEvent& evt)
 	GetClientSize (&w, &h);
 	int size = ((style & wxVERTICAL)!=0)? h : w;
 	thumbRange = size - thumbSize;
-	thumbPos = ((value / 1.f) * thumbRange);
+	thumbPos = ((value / 1.f) * thumbRange)-9;
 	Refresh(false);
 }
 	
@@ -114,7 +114,7 @@ void KaiSlider::OnPaint(wxPaintEvent& evt)
 		tdc.DrawRectangle(thumbSize/2, (h/2)-2, w - thumbSize, 4);
 		tdc.SetPen(wxPen(sliderBorder));
 		tdc.SetBrush(wxBrush(slider));
-		tdc.DrawRectangle(thumbPos+1,2 , thumbSize-1, h-4);
+		tdc.DrawRectangle(thumbPos+1,2 , thumbSize-2, h-4);
 
 
 	}

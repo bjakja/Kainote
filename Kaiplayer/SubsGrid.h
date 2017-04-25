@@ -109,12 +109,14 @@ public:
 	Dialogue *GetDial(int i);
 	wxString *GetVisible(bool *visible=0, wxPoint *point=0, bool trimSels=false);
 	void RebuildActorEffectLists();
+	void RefreshIfVisible(int time);
 
 	bool makebkp;
 	bool showFrames;
 	int lastRow;
 	int visible;
 	int mtimerow;
+	int panelrows;
 	SubsFile* file;
 	std::vector<wxArrayInt> SpellErrors;
 	std::vector<wxArrayInt> *Comparsion;
@@ -127,6 +129,7 @@ private:
 
 	void CheckText(wxString text, wxArrayInt &errs);
 protected:
+	std::vector<bool> visibleLines;
 	wxBitmap* bmp;
 	wxFont font;
 	int GridHeight;

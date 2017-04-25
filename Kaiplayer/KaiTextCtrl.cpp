@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+ï»¿//  Copyright (c) 2016, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -24,14 +24,17 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	:KaiScrolledWindow(parent,id,pos,size,_style|wxWANTS_CHARS,name)
 {
 	KText=text;
-	KText.Replace("\r","");
-	KText.Replace("\n","");
+	
 	bmp=NULL;
 	fsize=10;
 	posY=0;
 	scPos=0;
 	style = _style/*|wxWANTS_CHARS*//*|wxTE_MULTILINE|wxALIGN_CENTER*/;
-	if(style & wxTE_MULTILINE){maxSize=MAXINT;}else{style|=wxALIGN_CENTER_VERTICAL; maxSize=1000;}
+	if(style & wxTE_MULTILINE){maxSize=MAXINT;}else{
+		style|=wxALIGN_CENTER_VERTICAL; maxSize=1000;
+		KText.Replace("\r","");
+		KText.Replace("\n","");
+	}
 	SetCursor(wxCURSOR_IBEAM);
 	wxAcceleratorEntry entries[28];
 	entries[0].Set(wxACCEL_NORMAL, WXK_DELETE,ID_TDEL);
@@ -100,12 +103,9 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	Bind(wxEVT_LEAVE_WINDOW, &KaiTextCtrl::OnMouseEvent, this);
 	Bind(wxEVT_MOUSEWHEEL, &KaiTextCtrl::OnMouseEvent, this);
 	Bind(wxEVT_KEY_DOWN, &KaiTextCtrl::OnKeyPress, this);
-	/*Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
-		foreground = GetParent()->GetForegroundColour();
-		background = GetParent()->GetBackgroundColour();
-
-	});*/
 	
+	timer.SetOwner(this, 29067);
+	Bind(wxEVT_TIMER,[=](wxTimerEvent &evt){CalcWrap(false);Refresh(false);},29067);
 }
 
 KaiTextCtrl::~KaiTextCtrl()
@@ -144,8 +144,8 @@ void KaiTextCtrl::AppendText(const wxString &text)
 		KText.Replace("\n","");
 	}
 	
-	CalcWrap(false);
-	Refresh(false);
+	timer.Start(100,true);
+	//CalcWrap(false);Refresh(false);
 }
 
 void KaiTextCtrl::CalcWrap(bool sendevent)
@@ -182,8 +182,8 @@ void KaiTextCtrl::CalcWrap(bool sendevent)
 			if(nwrap < 0 && allwrap <0){i++; continue;}
 			size_t wwrap=(nwrap!=-1)? nwrap : allwrap+1;
 			wrap=tmptxt.SubString(podz,wwrap-1);
-			wrap.Replace("\r","");
-			wrap.Replace("\n","");
+			//wrap.Replace("\r","");
+			//wrap.Replace("\n","");
 			GetTextExtent(wrap, &fw, &fh, &font);
 			int pos = (style & wxALIGN_CENTER_HORIZONTAL)? ((w - fw)/2) : 
 				(style & wxALIGN_RIGHT)? (w - fw)-5 : 5;
@@ -220,7 +220,7 @@ void KaiTextCtrl::OnCharPress(wxKeyEvent& event)
 		event.Skip();return;
 	}
 	wxUniChar wkey=event.GetUnicodeKey();
-	if(wkey=='\t' || (style & wxTE_READONLY)){return;}
+	if(/*wkey=='\t' || */(style & wxTE_READONLY)){return;}
 	if(wkey){
 		if(Cursor!=Selend){
 			int curx=Cursor.x;
@@ -234,6 +234,7 @@ void KaiTextCtrl::OnCharPress(wxKeyEvent& event)
 		if((size_t)Cursor.x>=len){KText<<wkey;}
 		else{KText.insert(Cursor.x,1,wkey);}
 		CalcWrap();
+		//SendEvent();
 		if(Cursor.x+1>wraps[Cursor.y+1]){Cursor.y++;}
 		Cursor.x++;
 		Selend=Cursor;
@@ -273,6 +274,7 @@ void KaiTextCtrl::OnAccelerator(wxCommandEvent& event)
 			KText.Remove(curx,selx-curx);
 			Selend=Cursor;
 			CalcWrap();
+			//SendEvent();
 			SetSelection(curx,curx);
 		}else
 		{
@@ -285,6 +287,7 @@ void KaiTextCtrl::OnAccelerator(wxCommandEvent& event)
 		}
 		len=wraps.size();
 		CalcWrap();
+		//SendEvent();
 		//wxLogStatus("cursorx %i wraps %i",Cursor.x, wraps[Cursor.y]);
 		if(Cursor.x<wraps[Cursor.y] || (Cursor.x==wraps[Cursor.y] && len != wraps.size())){Cursor.y--;}
 		else if(Cursor.x>wraps[Cursor.y+1]){Cursor.y++;}
@@ -406,6 +409,7 @@ void KaiTextCtrl::OnAccelerator(wxCommandEvent& event)
 		Cursor.x++;Cursor.y++;
 		Selend=Cursor;
 		CalcWrap();
+		//SendEvent();
 		//Refresh(false);
 		MakeCursorVisible();
 		break;
@@ -528,6 +532,7 @@ void KaiTextCtrl::OnPaint(wxPaintEvent& event)
 	int w = 0, h = 0;
 	GetClientSize(&w,&h);
 	if(w==0||h==0){return;}
+	//CalcWrap(false);
 	//block=true;
 	wxPaintDC dc(this);
 	int bitmaph;
@@ -600,12 +605,13 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 	wxColour bg = (background.IsOk())? background : 
 		(enabled)? Options.GetColour(TextFieldBackground) : Options.GetColour(WindowBackgroundInactive);
 	wxColour fg = (foreground.IsOk())? foreground : Options.GetColour(WindowText);
-	dc.SetFont(font);
-	dc.SetBrush(wxBrush(bg));
-	dc.SetPen(wxPen((style & wxBORDER_NONE)? bg : 
+	wxColour border = (style & wxBORDER_NONE)? bg : 
 		(HasFocus())? Options.GetColour(TextFieldBorderOnFocus) : 
 		(enabled)? Options.GetColour(TextFieldBorder) : 
-		Options.GetColour((style & wxBORDER_NONE)? WindowBackgroundInactive : ButtonBorderInactive)));
+		Options.GetColour((style & wxBORDER_NONE)? WindowBackgroundInactive : ButtonBorderInactive);
+	dc.SetFont(font);
+	dc.SetBrush(wxBrush(bg));
+	dc.SetPen(wxPen(border));
 	dc.DrawRectangle(0,0,w,h);
 	if(wraps.size()<2 || positioning.size()<2){return;}
 	wxColour cselection = (HasFocus())? Options.GetColour(TextFieldSelection) : 
@@ -624,6 +630,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 
 	dc.SetFont(font);
 	wxString alltext=KText+" ";
+	//wxString tabulator = "        ";
 	int len=alltext.Len();
 	wxUniChar bchar=alltext[Cursor.x];
 
@@ -644,18 +651,24 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 			if(j==fst.y){
 				wxString ftext=KText.SubString(wraps[j],fst.x-1);
 				if(wraps[j]>fst.x-1){fw=0;}
-				else{GetTextExtent(ftext, &fw, &fh, &font);}
+				else{
+					/*ftext.Replace("\r", "");
+					ftext.Replace("\n", "");
+					ftext.Replace("\t", tabulator);*/
+					GetTextExtent(ftext, &fw, &fh, &font);
+				}
 				wxString stext=KText.SubString(fst.x,(fst.y==scd.y)? scd.x-1 : wraps[j+1]-1);
-				stext.Replace("\r", "");
+				/*stext.Replace("\r", "");
 				stext.Replace("\n", "");
+				stext.Replace("\t", tabulator);*/
 				GetTextExtent(stext, &fww, &fh, &font);
 
-			}
-			else{
+			}else{
 				fw=0;
 				wxString selText = KText.SubString(wraps[j], (j==scd.y)? scd.x-1 : wraps[j+1]-1);
-				selText.Replace("\r", "");
+				/*selText.Replace("\r", "");
 				selText.Replace("\n", "");
+				selText.Replace("\t", tabulator);*/
 				GetTextExtent(selText, &fww, &fh, &font);
 			}
 			dc.DrawRectangle(positioning[j+1] + fw + tmpPosX,(j*Fheight)+tmpPosY,fww,Fheight);
@@ -670,8 +683,9 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 			size_t start = wraps[cursorI];
 			size_t end = (cursorPos<wraps[cursorI+1])? cursorPos-1 : wraps[cursorI+1]-1;
 			wxString beforeCursor = KText.SubString(start, end);
-			beforeCursor.Replace("\r", "");
+			/*beforeCursor.Replace("\r", "");
 			beforeCursor.Replace("\n", "");
+			beforeCursor.Replace("\t", tabulator);*/
 			GetTextExtent(beforeCursor, &fww, &fh, &font);
 		}
 		caret->Move(positioning[cursorI+1] + fww + tmpPosX, tmpPosY + (Fheight * cursorI));
@@ -680,7 +694,10 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 	
 	//rysowanie tesktu
 	for(size_t i = 1; i< wraps.size(); i++){
-		wxString line = KText.SubString(wraps[i-1], wraps[i]-1).Trim().Trim(false);
+		wxString line = KText.SubString(wraps[i-1], wraps[i]-1);
+		line.Replace("\r", "");
+		line.Replace("\n", "");
+		line.Replace("\t", "        ");
 		/*wxString subline;
 		wxString subline1;
 		subline1 = line.BeforeFirst('j', &subline);
@@ -703,12 +720,14 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 		tmpPosY+=Fheight;
 
 	}
-
+	dc.SetBrush(*wxTRANSPARENT_BRUSH);
+	dc.SetPen(wxPen(border));
+	dc.DrawRectangle(0,0,w,h);
 
 }
 
 bool KaiTextCtrl::HitTest(wxPoint pos, wxPoint *cur)
-{//~~~~
+{
 	int w,h,fw=0,fh=0;
 	GetClientSize(&w,&h);
 	if(style & wxTE_MULTILINE){pos.y+=(scPos);}
@@ -721,6 +740,7 @@ bool KaiTextCtrl::HitTest(wxPoint pos, wxPoint *cur)
 	}else{cur->x=wraps[cur->y];}
 
 	bool find=false;
+	//wxString tabulator = "        ";
 	wxString txt=KText+" ";
 
 	int wlen=KText.Len();
@@ -729,7 +749,10 @@ bool KaiTextCtrl::HitTest(wxPoint pos, wxPoint *cur)
 	{
 
 		GetTextExtent(txt.SubString(cur->x,i), &fw, &fh, &font);
-		GetTextExtent(txt[i], &fww, &fh, &font);
+		//wxUniChar ch = txt[i];
+		//if(ch=='\t'){GetTextExtent(tabulator, &fww, &fh, &font);}
+		//else{
+			GetTextExtent(txt[i], &fww, &fh, &font);//}
 		fw += positioning[cur->y+1];
 		if(fw-(fww/2)-1>pos.x){cur->x=i; find=true;break;}
 	}
@@ -784,7 +807,7 @@ void KaiTextCtrl::OnKillFocus(wxFocusEvent& event)
 
 void KaiTextCtrl::FindWord(int pos, int *start, int *end)
 {
-	wxString wfind=" }])-—'`\"\\;:,.({[><?!*~@#$%^&/+=";
+	wxString wfind=" }])-â€”'`\"\\;:,.({[><?!*~@#$%^&/+=\t";
 	int len=KText.Len();
 	if(len<1){Cursor.x = Cursor.y = 0; *start=0; *end=0; return;}
 	bool fromend=(start!=NULL);
@@ -837,11 +860,11 @@ void KaiTextCtrl::ContextMenu(wxPoint mpos)
 	menut.Append(TEXT_PASTE,_("&Wklej"))->Enable(!(style & wxTE_READONLY));
 
 	menut.AppendSeparator();
-	menut.Append(TEXT_SEEKWORDL,_("Szukaj t³umaczenia s³owa na ling.pl"))->Enable(Selend.x!=Cursor.x);
-	menut.Append(TEXT_SEEKWORDB,_("Szukaj t³umaczenia s³owa na pl.ba.bla"))->Enable(Selend.x!=Cursor.x);
-	menut.Append(TEXT_SEEKWORDG,_("Szukaj t³umaczenia s³owa w google"))->Enable(Selend.x!=Cursor.x);
+	menut.Append(TEXT_SEEKWORDL,_("Szukaj tÅ‚umaczenia sÅ‚owa na ling.pl"))->Enable(Selend.x!=Cursor.x);
+	menut.Append(TEXT_SEEKWORDB,_("Szukaj tÅ‚umaczenia sÅ‚owa na pl.ba.bla"))->Enable(Selend.x!=Cursor.x);
+	menut.Append(TEXT_SEEKWORDG,_("Szukaj tÅ‚umaczenia sÅ‚owa w google"))->Enable(Selend.x!=Cursor.x);
 
-	menut.Append(TEXT_DEL,_("&Usuñ"))->Enable(Selend.x!=Cursor.x);
+	menut.Append(TEXT_DEL,_("&UsuÅ„"))->Enable(Selend.x!=Cursor.x);
 
 	int id=-1;
 	id=menut.GetPopupMenuSelection(mpos, this);
@@ -857,6 +880,7 @@ void KaiTextCtrl::ContextMenu(wxPoint mpos)
 		GetSelection(&from,&to);
 		KText.Remove(from,to-from);
 		CalcWrap();
+		//SendEvent();
 		SetSelection(from,from);modified=true;
 	}else if(id>=TEXT_SEEKWORDL && id<=TEXT_SEEKWORDG){
 		wxString page=(id==TEXT_SEEKWORDL)? L"http://ling.pl/" : 
@@ -896,6 +920,7 @@ void KaiTextCtrl::Copy(bool cut)
 	if(cut){
 		KText.Remove(curx,selx-curx);
 		CalcWrap();
+		//SendEvent();
 		SetSelection(curx,curx);
 		modified=true;
 	}
@@ -911,7 +936,7 @@ void KaiTextCtrl::Paste()
 			wxTextDataObject data;
 			wxTheClipboard->GetData( data );
 			wxString whatpaste = data.GetText();
-			whatpaste.Replace("\t"," ");
+			//whatpaste.Replace("\t"," ");
 			if(!(style & wxTE_MULTILINE)){
 				whatpaste.Replace("\n"," ");
 				whatpaste.Replace("\r","");
@@ -935,6 +960,7 @@ void KaiTextCtrl::Paste()
 			KText.insert(curx,whatpaste);
 			modified=true;
 			CalcWrap();
+			//SendEvent();
 			int whre=curx+whatpaste.Len();
 			SetSelection(whre, whre);
 
@@ -950,8 +976,8 @@ wxPoint KaiTextCtrl::PosFromCursor(wxPoint cur, bool correctToScroll)
 	if(wraps.size()<2 || wraps[cur.y]==cur.x){fw=0;}
 	else{
 		wxString beforeCursor = KText.SubString(wraps[cur.y],cur.x-1);
-		beforeCursor.Replace("\n","");
-		beforeCursor.Replace("\r","");
+		//beforeCursor.Replace("\n","");
+		//beforeCursor.Replace("\r","");
 		GetTextExtent(beforeCursor, &fw, &fh, &font);
 	}
 	wxPoint result;
@@ -1002,11 +1028,15 @@ void KaiTextCtrl::OnScroll(wxScrollWinEvent& event)
 
 void KaiTextCtrl::GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight, wxFont *textFont, bool correct)
 {
-	//wxFont *txtfont=NULL;
-	//if(!textFont){txtfont = &font;}
-	wxWindow::GetTextExtent(textToMesure, textWidth, textHeight, 0, 0, textFont);
+	wxString txt = textToMesure;
+	wxString tabulator = "        ";
+	txt.Replace("\r", "");
+	txt.Replace("\n", "");
+	txt.Replace("\t", tabulator);
+
+	wxWindow::GetTextExtent(txt, textWidth, textHeight, 0, 0, textFont);
 	if(correct && (textToMesure[0]=='\\' || textToMesure[0]=='j' || textToMesure[0]=='T' 
-		|| textToMesure[0]=='£' || textToMesure[0]=='Y')){
+		|| textToMesure[0]=='Å' || textToMesure[0]=='Y')){
 			(*textWidth)--;
 			//if(textToMesure[0]=='j' && textFont &&textFont->GetFaceName()=="Tahoma"){(*textWidth)--;}
 	}
@@ -1018,6 +1048,7 @@ void KaiTextCtrl::SetWindowStyle(long _style){
 	wxWindow::SetWindowStyle(_style);
 	scPos=0;
 	CalcWrap();
+	//SendEvent();
 	Refresh(false);
 }
 
@@ -1069,6 +1100,11 @@ bool KaiTextCtrl::Enable(bool enable)
 	//Update();
 	return true;
 }
+
+//void KaiTextCtrl::SendEvent()
+//{
+//	
+//}
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiTextCtrl, wxWindow);
 

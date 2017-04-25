@@ -77,22 +77,23 @@ public:
 };
 
 bars1::bars1(VideoCtrl *parent)
-	: KaiDialog(parent, -1, "", wxDefaultPosition, wxDefaultSize)
+	: KaiDialog((parent->isFullscreen)? (wxWindow*)parent->TD : parent, -1, "", wxDefaultPosition, wxDefaultSize)
 {
 	_parent=parent;
 	DialogSizer *sizer= new DialogSizer(wxVERTICAL);
-	actual= new wxStaticText(this,-1,wxString::Format(_("Proporcje ekranu: %5.3f"), parent->AR));
-	slider= new KaiSlider(this, 7767, 1000, parent->AR*1000, 2500);
+	actual= new wxStaticText(this,-1,wxString::Format(_("Proporcje ekranu: %5.3f"), 1.f / parent->AR));
+	slider= new KaiSlider(this, 7767, parent->AR*700000, 100000, 1000000, wxDefaultPosition, wxSize(400,-1),wxHORIZONTAL|wxSL_INVERSE);
 	Connect(7767,wxEVT_SCROLL_THUMBTRACK,(wxObjectEventFunction)&bars1::OnSlider);
 	sizer->Add(actual, 0, wxALL, 3);
 	sizer->Add(slider, 1, wxEXPAND|wxALL, 3);
 	SetSizerAndFit(sizer);
+	MoveToMousePosition(this);
 }
 
 void bars1::OnSlider(wxCommandEvent &event)
 {
-	_parent->SetAspectRatio(slider->GetValue()/1000.0f);
-	actual->SetLabelText(wxString::Format(_("Proporcje ekranu: %5.3f"), _parent->AR));
+	_parent->SetAspectRatio(slider->GetValue()/700000.0f);
+	actual->SetLabelText(wxString::Format(_("Proporcje ekranu: %5.3f"), 1.f / _parent->AR));
 }
 
 
@@ -404,7 +405,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		int w,h, mw, mh;
 		GetClientSize(&w,&h);
 		GetParent()->GetClientSize(&mw,&mh);
-		int incr=h-(step*20);
+		int incr=h+(step*20);
 		if(incr>=mh){incr=mh-3;}
 		if( y < h-panelHeight){
 			if(h<=350 && step>0 || h == incr){return;}
@@ -1036,6 +1037,13 @@ void VideoCtrl::OnEndFile(wxCommandEvent &event)
 void VideoCtrl::SetAspectRatio(float _AR)
 {
 	AR=_AR;
+	TabPanel *tab = ((TabPanel*)GetParent());
+	if(tab->edytor && !isFullscreen){
+		int ww,hh;
+		CalcSize(&ww,&hh,0,0,false,true);
+		SetMinSize(wxSize(ww,hh+panelHeight));
+		tab->BoxSizer1->Layout();
+	}
 	UpdateVideoWindow();
 	if(GetState()==Paused){Render(false);}
 }
@@ -1087,6 +1095,7 @@ void VideoCtrl::displaytime()
 		times<<sdiff<<" ms, "<<ediff<<" ms";}
 		mstimes->SetValue(times);
 		mstimes->Update();
+		pan->Grid1->RefreshIfVisible(kkk.mstime);
 	}
 
 }

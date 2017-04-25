@@ -105,11 +105,13 @@ public:
 	void FillTable();
 	void ResetKey(const idAndType *itype, int id=0, char type='G');
 	int OnMapHkey(int id, wxString name,wxWindow *parent, char hotkeyWindow = GLOBAL_HOTKEY, bool showWindowSelection=true);
+	int OnMapHkey(int *returnId, wxString name,wxWindow *parent);
 	void SetAccels(bool all=false);
+	wxString GetName(const idAndType itype);
 	std::map<idAndType, hdata> hkeys;
 	std::map<int, wxString> keys;
 	bool AudioKeys;
-
+	int lastScirptId;
 };
 
 

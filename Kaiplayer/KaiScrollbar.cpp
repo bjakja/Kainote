@@ -369,6 +369,7 @@ bool KaiScrolledWindow::SetScrollBar(int orientation, int pos, int maxVisible, i
 			wxSize size = wxWindow::GetClientSize();
 			horizontal = new KaiScrollbar(this,-1, wxPoint(0, size.y-17), wxSize((vertical)? size.x - 17 : size.x, 17));
 			horizontal->integrated=true;
+			horizontal->SetCursor(wxCURSOR_ARROW);
 			horizontal->SetScrollRate(20);
 			if(vertical){
 				vertical->SetTwoscrolbars(true);
@@ -393,6 +394,7 @@ bool KaiScrolledWindow::SetScrollBar(int orientation, int pos, int maxVisible, i
 			wxSize size = wxWindow::GetClientSize();
 			vertical = new KaiScrollbar(this,-1, wxPoint(size.x-17, 0), wxSize(17, (horizontal)? size.y - 17 : size.y), wxVERTICAL);
 			vertical->integrated=true;
+			vertical->SetCursor(wxCURSOR_ARROW);
 			if(horizontal){
 				horizontal->SetTwoscrolbars(true);
 			}

@@ -302,6 +302,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		}
 		return;
 	}
+	
 
 	if(id==SaveSubs){
 		Save(false);
@@ -430,7 +431,11 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if(script->CheckLastModified(true)){script->Reload();}
 		auto macro = script->GetMacro(0);
 		if(macro){
-			macro->Run(GetTab());
+			if(macro->Validate(pan)){
+				macro->Run(pan);
+			}else{
+				KaiMessageBox(wxString::Format(_("Warunki skryptu Lua '%s' nie zostały spełnione"), script->GetPrettyFilename()),_("Błąd"));
+			}
 		}else{
 			KaiMessageBox(wxString::Format(_("Błąd wczytywania skryptu Lua: %s\n%s"), script->GetPrettyFilename(), script->GetDescription()),_("Błąd"));
 			Auto->OnEdit(script->GetFilename());	
@@ -1077,11 +1082,13 @@ void kainoteFrame::SetAccels(bool _all)
 	entries[0].Set(wxACCEL_CTRL, (int) 'T', ID_ADDPAGE);
 	entries[1].Set(wxACCEL_CTRL, (int) 'W', ID_CLOSEPAGE);
 
-	for(auto cur=Hkeys.hkeys.rbegin(); cur!=Hkeys.hkeys.rend(); cur++){
+	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
 		if(cur->second.Accel=="" || cur->first.Type!='G'){continue;}
 		int id=cur->first.id;
 		if(id>=6850){
-			//if(id>7000){Connect(id,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);}
+			if(id>=30100){
+				Bind(wxEVT_COMMAND_MENU_SELECTED, &kainoteFrame::OnRunScript, this, id);
+			}
 			entries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 		}else if(id>6000){
 			MenuItem *item=Menubar->FindItem(id);
@@ -1645,5 +1652,34 @@ void kainoteFrame::OnOutofMemory()
 	std::exit(1);
 }
 
+void kainoteFrame::OnRunScript(wxCommandEvent& event)
+{
+	if(!Auto){Auto=new Auto::Automation(true, true);}
+	else if(Auto->Scripts.size()<1){Auto->ReloadScripts(true);}
+	wxString name = Hkeys.GetName(idAndType(event.GetId()));
+	if(!name.StartsWith("Script ")){ KaiMessageBox(wxString::Format(_("Skrót o nazwie '%s' nie należy do skrypru.")),_("Błąd"));return;}
+	else{name = name.Mid(7);}
+	wxString path = name.BeforeLast('-');
+	int wmacro = 0;
+	if(path.IsEmpty()){path = name;}
+	else{wmacro = wxAtoi(name.AfterLast('-'));}
+	Auto::LuaScript *script = Auto->FindScript(path);
+	if(!script){
+		Auto->Add(path);
+	}
+	if(script->CheckLastModified(true)){script->Reload();}
+	auto macro = script->GetMacro(wmacro);
+	if(macro){
+		TabPanel *pan = GetTab();
+		if(macro->Validate(pan)){
+			macro->Run(pan);
+		}else{
+			KaiMessageBox(wxString::Format(_("Warunki skryptu Lua '%s' nie zostały spełnione"), script->GetPrettyFilename()),_("Błąd"));
+		}
+	}else{
+		KaiMessageBox(wxString::Format(_("Błąd wczytywania skryptu Lua: %s\n%s"), script->GetPrettyFilename(), script->GetDescription()),_("Błąd"));
+		Auto->OnEdit(script->GetFilename());	
+	}
+}
 
 DEFINE_ENUM(Id,IDS)

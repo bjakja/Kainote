@@ -45,8 +45,6 @@ namespace Auto {
 			size= strlen(constbuff);
 		}else{
 			FILE *f=NULL;
-			//cpfn.Replace("\\/","\\");
-			//cpfn.Replace("\\\\","\\");
 			f = _wfopen(filename.wc_str(), L"rb");
 			if(!f){return false;}
 			fseek(f,0,SEEK_END);

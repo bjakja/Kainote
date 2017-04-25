@@ -235,11 +235,13 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer6->Add(AutoMoveTags,0,wxALIGN_CENTER|wxLEFT|wxTOP|wxBOTTOM,2);
 
 
-	TextEdit = new MTextEditor(this, 16667, Options.GetBool(SpellcheckerOn), wxDefaultPosition, wxSize(-1,30));
+	TextEdit = new MTextEditor(this, 16667, Options.GetBool(SpellcheckerOn),wxDefaultPosition, wxSize(-1, 30));
 	TextEdit->EB=this;
+	//TextEdit->SetMinSize(wxSize(100,100));
 
-	TextEditTl = new MTextEditor(this, 16667, false, wxDefaultPosition, wxSize(-1,30));
+	TextEditTl = new MTextEditor(this, 16667, false,wxDefaultPosition, wxSize(-1, 30));
 	TextEditTl->EB=this;
+	//TextEditTl->SetMinSize(wxSize(100,100));
 	TextEditTl->Hide();
 	Comment = new KaiCheckBox(this, ID_CHECKBOX1, _("Komentarz"), wxDefaultPosition, wxSize(82,-1));
 	Comment->SetValue(false);
@@ -277,10 +279,11 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer1 = new wxBoxSizer(wxVERTICAL);
 	BoxSizer1->Add(BoxSizer4, 0, wxLEFT | wxRIGHT | wxTOP, 2);
 	BoxSizer1->Add(BoxSizer5, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, 2);
-	BoxSizer1->Add(TextEditTl, 5, wxEXPAND|wxLEFT|wxRIGHT, 4);
+	BoxSizer1->Add(TextEditTl, 1, wxEXPAND|wxLEFT|wxRIGHT, 4);
 	BoxSizer1->Add(BoxSizer6, 0, wxLEFT | wxRIGHT, 2);
-	BoxSizer1->Add(TextEdit, 5, wxEXPAND|wxLEFT|wxRIGHT, 4);
+	BoxSizer1->Add(TextEdit, 1, wxEXPAND|wxLEFT|wxRIGHT, 4);
 	BoxSizer1->Add(BoxSizer2,0,wxEXPAND|wxALL,2);
+	BoxSizer1->SetMinSize(-1,200);
 	//BoxSizer1->Add(BoxSizer3,0,wxLEFT | wxRIGHT | wxBOTTOM,2);
 	BoxSizer3 = NULL;
 
@@ -774,7 +777,7 @@ void EditBox::OnCommit(wxCommandEvent& event)
 	if(splittedTags&&(TextEdit->modified || TextEditTl->modified)){TextEdit->modified=true; TextEditTl->modified=true;}
 	Send(false, false, Visual!=0);
 	if(Visual){
-		pan->Video->SetVisual();
+		pan->Video->SetVisual(false, true);
 	}
 	if(StyleChoice->HasFocus()||Comment->HasFocus()){grid->SetFocus();}
 	if(ABox){ABox->audioDisplay->SetDialogue(line,ebrow);}

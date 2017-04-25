@@ -65,6 +65,7 @@ protected:
 	void DrawFld(wxDC &dc,int w, int h, int windoww, int windowh);
 	bool HitTest(wxPoint pos, wxPoint *cur);
 	void CalcWrap(bool sendevent=true);
+	void SendEvent();
 	void FindWord(int pos,int *start, int *end);
 	void GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight, wxFont *textFont=NULL, bool correct=false);
 	void MakeCursorVisible(bool refresh=true);
@@ -72,6 +73,7 @@ protected:
 	wxBitmap* bmp;
 	wxFont font;
 	wxCaret *caret;
+	wxTimer timer;
 
 	int oldstart, oldend;
 	int posY;

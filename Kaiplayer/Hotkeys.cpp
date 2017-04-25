@@ -63,7 +63,8 @@ bool operator != ( const int match1, const idAndType &match){
 };
 
 Hotkeys::Hotkeys()
-{
+	:lastScirptId(30100)
+{	
 }
 
 void Hotkeys::FillTable()
@@ -243,17 +244,19 @@ int Hotkeys::LoadHkeys(bool Audio)
 	}
 
 	int g=0;
-	int scripts=30100;
+	lastScirptId=30100;
 	while(hk.HasMoreTokens())
 	{
 		wxString token=hk.NextToken();
 		token.Trim(false);
 		token.Trim(true);
 		if(token.StartsWith("Script")){
-			hkeys[idAndType(scripts,'G')] = 
-				hdata(token.BeforeFirst('=').Trim(false).Trim(true),
-				token.AfterFirst('=').Trim(false).Trim(true)) ;
-			scripts++;
+			wxString rest;
+			wxString name = token.BeforeFirst('=', &rest).Trim(false).Trim(true);
+			rest = rest.Trim(false).Trim(true);
+			if(rest.IsEmpty()){continue;}
+			hkeys[idAndType(lastScirptId,'G')] = hdata(name, rest);
+			lastScirptId++;
 			g++;
 			continue;
 		} 
@@ -372,7 +375,7 @@ void Hotkeys::ResetKey(const idAndType *itype, int id, char type)
 int Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow, bool showWindowSelection)
 {
 	HkeysDialog hkd(parent, name, hotkeyWindow, showWindowSelection);
-	int resitem=-2;
+	int resitem = -2;
 	if(hkd.ShowModal()==wxID_OK){
 		
 		for(auto cur=hkeys.begin(); cur!=hkeys.end(); cur++)
@@ -405,17 +408,69 @@ int Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow,
 	return resitem;
 }
 
+int Hotkeys::OnMapHkey(int *returnId, wxString name,wxWindow *parent)
+{
+	HkeysDialog hkd(parent, name, 'G', false);
+	int resitem = -2;
+	if(hkd.ShowModal()==wxID_OK){
+		int id = lastScirptId;
+		for(auto cur=hkeys.begin(); cur!=hkeys.end(); cur++)
+		{
+			if(cur->first.id>=30100){
+				if(cur->second.Name == name){
+					id = cur->first.id;
+				}
+			}
+		}
+		if(id == lastScirptId){lastScirptId++;}
+		*returnId = id;
+		for(auto cur=hkeys.begin(); cur!=hkeys.end(); cur++)
+		{
+			if(cur->second.Accel == hkd.hotkey && (cur->first.Type == hkd.type) ){
+
+				KaiMessageDialog msg(parent, 
+					wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
+					cur->second.Name), _("Uwaga"), wxYES_NO|wxCANCEL);
+				msg.SetYesLabel (_("Zamień skróty"));
+				msg.SetNoLabel (_("Usuń skrót"));
+				int result = msg.ShowModal();
+				if(result == wxYES){
+					auto finditer = hkeys.find(idAndType(id,hkd.type));
+					cur->second.Accel="";
+					if(finditer!=hkeys.end()){
+						cur->second.Accel = finditer->second.Accel;
+					}
+					resitem = -cur->first.id;
+				}else if(result == wxNO){
+					hkeys.erase(cur->first);
+					resitem = cur->first.id;
+				}else{ return resitem;}
+			}
+		}
+		
+		Hkeys.SetHKey(idAndType(id,hkd.type), hkd.hkname, hkd.hotkey);
+		//pamiętaj, jeśli użyjesz nie niszczonego menu to zwracaj resitem, bo inaczej nie zmieni skrótów w menu.
+		return -1;
+	}
+	return resitem;
+}
 
 void Hotkeys::SetAccels(bool all){
 	Notebook *Tabs=Notebook::GetTabs();
-	if(all){
-		kainoteFrame * frame = (kainoteFrame *)Tabs->GetParent();
-		frame->SetAccels();
-		return;
+	
+	kainoteFrame * frame = (kainoteFrame *)Tabs->GetParent();
+	frame->SetAccels(all);
+}
+
+wxString Hotkeys::GetName(const idAndType itype)
+{
+	auto it= hkeys.find(itype);
+	if(it!= hkeys.end())
+	{
+		return it->second.Name;
 	}
-	for(size_t i=0;i<Tabs->Size();i++){
-		Tabs->Page(i)->SetAccels();
-	}
+
+	return "";
 }
 
 //Okno dialogowe przechwytujące skróty klawiszowe
@@ -479,6 +534,8 @@ void HkeysDialog::OnKeyPress(wxKeyEvent& event)
 		EndModal(wxID_OK);
 	}
 }
+
+
 
 
 Hotkeys Hkeys;

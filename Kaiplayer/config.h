@@ -196,6 +196,7 @@ DECLARE_ENUM(CONFIG,CFG)
 	CR(GridComment,)\
 	CR(GridSelectedDialogue,)\
 	CR(GridSelectedComment,)\
+	CR(GridVisibleOnVideo,)\
 	CR(GridCollisions,)\
 	CR(GridLines,)\
 	CR(GridActiveLine,)\
