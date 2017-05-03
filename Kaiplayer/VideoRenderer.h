@@ -34,6 +34,7 @@
 //#if DXVA
 #include <dxva2api.h>
 //#endif
+#include <chrono>
 
 
 #ifndef SAFE_DELETE
@@ -150,7 +151,9 @@ class VideoRend : public wxWindow
 		void DrawZoom();
 		void ZoomMouseHandle(wxMouseEvent &evt);
 		void SetZoom();
+		void ResetZoom();
 		void SetVisualZoom();
+		int GetPreciseTime(bool start = true);
 		void DeleteAudioCache(){if(VFF){VFF->DeleteOldAudioCache();}}
 		void SetColorSpace(const wxString& matrix, bool render=true){
 			if(VFF){VFF->SetColorSpace(matrix);Render(false);}
@@ -200,6 +203,7 @@ class VideoRend : public wxWindow
 		size_t lasttime;
 		std::vector<chapter> chaps;
 		FloatRect zoomRect;
+		//std::chrono::system_clock::time_point startTime;
 		bool EnumFilters(Menu *menu);
 		bool FilterConfig(wxString name, int idx, wxPoint pos);
 	protected:

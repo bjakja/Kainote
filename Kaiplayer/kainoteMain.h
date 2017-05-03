@@ -75,7 +75,6 @@ class kainoteFrame: public KaiFrame
 		void OnMenuSelected(wxCommandEvent& event);
 		void OnMenuSelected1(wxCommandEvent& event);
 		void OnRecent(wxCommandEvent& event);
-		stylestore *ss;
 
 		TabPanel* GetTab();
 		
@@ -278,6 +277,7 @@ enum{
 	XX( RecentVideo,)\
 	XX( RecentSubs,)\
 	XX( SelectFromVideo,)\
+	XX( PlayActualLine,)\
 //
 DECLARE_ENUM(Id,IDS)
 

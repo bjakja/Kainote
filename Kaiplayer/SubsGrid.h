@@ -110,6 +110,7 @@ public:
 	wxString *GetVisible(bool *visible=0, wxPoint *point=0, bool trimSels=false);
 	void RebuildActorEffectLists();
 	void RefreshIfVisible(int time);
+	void SetVideoLineTime(wxMouseEvent &evt);
 
 	bool makebkp;
 	bool showFrames;
@@ -158,6 +159,7 @@ protected:
 	void OnEraseBackground(wxEraseEvent &event){};
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();} holding=false;};
 	wxTimer timer;
+	wxTimer nullifyTimer;
 	//HANDLE qtimer;
 
 	DECLARE_EVENT_TABLE()

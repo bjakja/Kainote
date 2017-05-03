@@ -48,7 +48,7 @@ class StylePreview : public wxWindow
 		Styles *styl;
 
 		void OnPaint(wxPaintEvent& event);
-		void SubsText(std::vector<byte> &buffer);
+		void SubsText(wxString *text);
 		void OnMouseEvent(wxMouseEvent& event);
 
 		DECLARE_EVENT_TABLE()

@@ -20,9 +20,6 @@
 #include <vector>
 #include "SubsDialogue.h"
 
-#ifndef ZEROIT
-#define ZEROIT(a) (((a+5)/10)*10)
-#endif
 
 class AudioDisplay;
 

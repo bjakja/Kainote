@@ -77,6 +77,40 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 			//wxTheClipboard->Flush();
 		}
 	}, ID_TCTLV);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		SetSelection(0,GetValue().Length());
+		Copy();
+	}, ID_TCTLC);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		//napisaæ tutaj zerowanie przy zaznaczeniu i ogólnie cofanie kursora i zerowanie jednej cyfry
+		if(form>=MDVD){evt.Skip(); return;}
+		long from, to;
+		GetSelection(&from, &to);
+		wxString timetxt = GetValue();
+		if(from==to){
+			if(from>0){from--;}
+			else{return;}
+		}
+
+		for(long i = from; i < to; i++)
+		{
+			wxUniChar nChar = timetxt[i];
+			if(nChar != ':' && nChar != '.' && nChar != ','){
+				timetxt[i] = '0';
+			}
+		}
+		if(from>0 && (timetxt[from-1] == ':' || timetxt[from-1] == '.' || timetxt[from-1] == ',')){
+			from--;
+		}
+		SetValue(timetxt);
+		SetSelection(from,from);
+	}, ID_TBACK);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		if(form>=MDVD){evt.Skip();}
+		//napisaæ tutaj zerowanie przy zaznaczeniu i ogólnie nieruchomy kursor i zerowanie jednej cyfry
+		//w Aegi shit happens wiêc olejê.
+	}, ID_TDEL);
+
 }
 
 
@@ -148,36 +182,7 @@ void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
 
 
 	}
-	if(!astmp||(key != WXK_BACK && key != WXK_DELETE)){event.Skip();}
-	if (event.ControlDown()) {
-
-		//if (key == 'C' || key == 'X') {
-
-			//SetSelection(0,GetValue().Length());
-			//Copy();//CopyTime();
-		//}
-		if (key == 'V') {
-			pastes=true;
-			SetSelection(0,GetValue().Length());
-			//Paste();
-			if (wxTheClipboard->Open())
-			{
-				if (wxTheClipboard->IsSupported( wxDF_TEXT ))
-				{
-					wxTextDataObject data;
-					wxTheClipboard->GetData( data );
-					wxString whatpaste = data.GetText();
-					SetValue(whatpaste, true, false);
-					SetSelection(0,whatpaste.Length());
-
-				}
-				wxTheClipboard->Close();
-				//wxTheClipboard->Flush();
-			}
-
-			//pastes=false;
-		}
-	}
+	event.Skip();
 }
 
 

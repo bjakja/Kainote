@@ -85,6 +85,7 @@
 	CG(AutomationScriptEditor,)\
 	CG(AutomationTraceLevel,)\
 	CG(AutoMoveTagsFromOriginal,)\
+	CG(AutoSaveMaxFiles,)\
 	CG(AutoSelectLinesFromLastTab,)\
 	CG(ColorpickerRecent,)\
 	CG(ConvertASSTagsOnLineStart,)\
@@ -108,6 +109,7 @@
 	CG(FontCollectorFromMKV,)\
 	CG(FontCollectorUseSubsDirectory,)\
 	CG(FFMS2VideoSeeking,)\
+	CG(GridChangeActiveOnSelection,)\
 	CG(GridFontName,)\
 	CG(GridFontSize,)\
 	CG(GridHideCollums,)\
@@ -118,6 +120,7 @@
 	CG(InsertEndOffset,)\
 	CG(InsertStartOffset,)\
 	CG(MoveTimesByTime,)\
+	CG(MoveTimesLoadSetTabOptions,)\
 	CG(MoveTimesCorrectEndTimes,)\
 	CG(MoveTimesForward,)\
 	CG(MoveTimesOn,)\
@@ -147,6 +150,7 @@
 	CG(SelectVisibleLineAfterFullscreen,)\
 	CG(SpellcheckerOn,)\
 	CG(StyleManagerPosition,)\
+	CG(StyleManagerDetachEditor,)\
 	CG(SubsAutonaming,)\
 	CG(SubsRecent,)\
 	CG(ToolbarIDs,)\
@@ -371,7 +375,7 @@ class config
 bool sortfunc(Styles *styl1,Styles *styl2);
 //formatowanie w tym przypadku wygl¹da tak, 
 //liczba która mówi ile cyfr przed przecinkiem i ile po, np 5.3f;
-wxString getfloat(float num, wxString format="5.3f", bool Truncate=true);
+wxString getfloat(float num, const wxString &format="5.3f", bool Truncate=true);
 wxBitmap CreateBitmapFromPngResource(const wxString& t_name);
 wxBitmap *CreateBitmapPointerFromPngResource(const wxString& t_name);
 wxImage CreateImageFromPngResource(const wxString& t_name);

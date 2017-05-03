@@ -291,6 +291,9 @@ void config::LoadDefaultConfig()
 	rawcfg[VideoProgressBar] = "true";
 	rawcfg[VideoWindowSize] = "500,350";
 	rawcfg[WindowSize] = "800,600";
+	rawcfg[AutomationTraceLevel] = "3";
+	rawcfg[AutoSaveMaxFiles] = "3";
+	rawcfg[GridChangeActiveOnSelection] = "true";
 }
 
 void config::LoadDefaultColors(bool dark)
@@ -709,7 +712,7 @@ void config::SaveColors(const wxString &path){
 	}
 }
 
-wxString getfloat(float num, wxString format, bool Truncate)
+wxString getfloat(float num, const wxString &format, bool Truncate)
 {
 	wxString strnum=wxString::Format(_T("%"+format),num);
 	//if(strnum.find('.')!= -1){return strnum.Trim(false);}
@@ -815,6 +818,9 @@ void MoveToMousePosition(wxWindow *win)
 	mst.y+=15;
 	if(mst.y + siz.y > rc.height){
 		mst.y = mst.y - siz.y - 30;
+		if(mst.y<0){
+			mst.y = rc.height - siz.y;
+		}
 	}
 	win->Move(mst);
 }

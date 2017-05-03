@@ -123,12 +123,20 @@ void Dialogue::SetRaw(wxString ldial)
 		Text = expresion.GetMatch( ldial, 4 );
 		Text.Trim(false);
 		return;
-	}else if(ldial.StartsWith(_T(";"))||ldial.StartsWith(_T("{"))){NonDial=true;IsComment=true;Text=ldial;Text.Trim(true);Form=ASS;return;
+	}else if(ldial.StartsWith(";")||(ldial.StartsWith("{") && ldial.EndsWith("}"))){
+		NonDial=true;
+		IsComment=true;
+		Style=_T("Default");
+		Text=ldial;
+		Text.Trim(true);
+		Form=ASS;
+		return;
 	}
 	else{
 		Form=0;
 		ldial.Trim(true);
-		NonDial=false;IsComment=false;
+		NonDial=false;
+		IsComment=false;
 		Style=_T("Default");
 		Text=ldial;
 		Text.Replace("\r\n","\\N");

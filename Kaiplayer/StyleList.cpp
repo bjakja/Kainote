@@ -18,16 +18,15 @@
 #include "config.h"
 #include <wx/msgdlg.h>
 #include <algorithm>
+#include "FontEnumerator.h"
 
 bool sortf(int i,int j){ return (i < j);}
 
-StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, KaiChoice *_fontseeker, const wxPoint &pos, const wxSize &size, long style)
+StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, const wxPoint &pos, const wxSize &size, long style)
 	      :KaiScrolledWindow(parent,id,pos,size, style|wxVERTICAL)
 {
-	//scrollBar = new wxScrollBar(this,27776,wxDefaultPosition,wxDefaultSize,wxSB_VERTICAL);
-	//scrollBar->SetScrollbar(0,10,100,10);
+	
 	stylenames=stylearray;
-	fontseeker=_fontseeker;
 	//SetMinSize(size);
 	
 	font= wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
@@ -99,6 +98,7 @@ void StyleList::OnPaint(wxPaintEvent& event)
 	bdc.SetPen(wxPen(Options.GetColour(StaticListBorder)));
 	bdc.SetBrush(wxBrush(background));
 	bdc.DrawRectangle(0,0,w,h);
+	wxArrayString *fonts = FontEnum.GetFonts(NULL, [](){});
 
 	for(int i=scPos; i<scrows; i++)
 	{
@@ -107,7 +107,7 @@ void StyleList::OnPaint(wxPaintEvent& event)
 			bdc.SetBrush(wxBrush(Options.GetColour(StaticListSelection))); 
 			bdc.DrawRectangle(posX,posY,w-2,Height);
 			}else{bdc.SetBrush(wxBrush(background));}
-		if(fontseeker->FindString(stylenames->at(i)->Fontname)==-1){
+		if(fonts->Index(stylenames->at(i)->Fontname,false)==-1){
 			bdc.SetTextForeground(Options.GetColour(WindowWarningElements));
 		}else{
 			bdc.SetTextForeground(Options.GetColour(WindowText));

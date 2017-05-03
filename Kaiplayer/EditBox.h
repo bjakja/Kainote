@@ -84,7 +84,7 @@ class EditBox : public wxWindow
 public:
 	EditBox(wxWindow *parent, Grid *grid1, kainoteFrame *kaif, int idd);
 	virtual ~EditBox();
-	void SetIt(int Row, bool setaudio=true, bool save=true, bool nochangeline=false);
+	void SetLine(int Row, bool setaudio=true, bool save=true, bool nochangeline=false, bool autoPlay = false);
 	void SetTl(bool tl);
 	void Send(bool selline=true, bool dummy=false, bool visualdummy=false);
 	void RefreshStyle(bool resetline=false);
@@ -114,6 +114,7 @@ public:
 	DescTxtCtrl* EffectEdit;
 	EBStaticText *Chars;
 	EBStaticText *Chtime;
+	MappedButton* StyleEdit;
 	MappedButton* Bfont;
 	MappedButton* Bcol1;
 	MappedButton* Bcol2;
@@ -182,6 +183,7 @@ private:
 	void OnCursorMoved(wxCommandEvent& event);
 	void OnAutoMoveTags(wxCommandEvent& event);
 	void OnChangeTimeDisplay(wxCommandEvent& event);
+	void OnStyleEdit(wxCommandEvent& event);
 	void DoTooltips();
 
 	bool isdetached;

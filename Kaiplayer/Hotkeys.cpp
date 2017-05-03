@@ -145,7 +145,7 @@ void Hotkeys::LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio)
 		_hkeys[idAndType(Remove,'G')] = hdata(_("Usuń linijkę"), "Shift-Delete");
 		_hkeys[idAndType(SetStartTime,'G')] = hdata(_("Wstaw czas początkowy z wideo"), "Ctrl-Left");
 		_hkeys[idAndType(SetEndTime,'G')] = hdata(_("Wstaw czas końcowy z wideo"), "Ctrl-Right");
-		_hkeys[idAndType(PlayPauseG,'G')] = hdata(_("Odtwarzaj / Pauza"), "Alt-Space");
+		_hkeys[idAndType(PlayPauseG,'G')] = hdata(_("Odtwórz / Pauza"), "Alt-Space");
 		_hkeys[idAndType(Minus5SecondG,'G')] = hdata(_("Wideo minus 5 sekund"), "Alt-Left");//Lewo
 		_hkeys[idAndType(Plus5SecondG,'G')] = hdata(_("Wideo plus 5 sekund"), "Alt-Right");//prawo
 		_hkeys[idAndType(PreviousFrame,'G')] = hdata(_("Klatka w tył"), "Left");
@@ -161,12 +161,13 @@ void Hotkeys::LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio)
 		_hkeys[idAndType(SelectFromVideo,'G')] = hdata(_("Zaznacz linię z czasem wideo"), "F2");
 		_hkeys[idAndType(Help,'G')] = hdata(_("Pomoc (niekompletna, ale jednak)"), "F1");
 		_hkeys[idAndType(Duplicate,'N')] = hdata(_("Duplikuj linie"), "Ctrl-D");
+		_hkeys[idAndType(CopyCollumns,'N')] = hdata(_("Kopiuj kolumny"), "Ctrl-Shift-C");
 		_hkeys[idAndType(PasteCollumns,'N')] = hdata(_("Wklej kolumny"), "Ctrl-Shift-V");
-		_hkeys[idAndType(PlayPause,'W')] = hdata(_("Odtwarzaj"), "Space");
-		_hkeys[idAndType(Plus5Second,'W')] = hdata(_("Plus 5 sekund"), "Right");//prawo
-		_hkeys[idAndType(Minus5Second,'W')] = hdata(_("Minus 5 sekund"), "Left");//lewo
-		_hkeys[idAndType(PlusMinute,'W')] = hdata(_("Plus minuta"), "Up");
-		_hkeys[idAndType(MinusMinute,'W')] = hdata(_("Minus minuta"), "Down");
+		_hkeys[idAndType(PlayPause,'W')] = hdata(_("Odtwórz / Pauza"), "Space");
+		_hkeys[idAndType(Plus5Second,'W')] = hdata(_("5 sekund do przodu"), "Right");//prawo
+		_hkeys[idAndType(Minus5Second,'W')] = hdata(_("5 sekund do tyłu"), "Left");//lewo
+		_hkeys[idAndType(PlusMinute,'W')] = hdata(_("Minuta do przodu"), "Up");
+		_hkeys[idAndType(MinusMinute,'W')] = hdata(_("Minuta do tyłu"), "Down");
 		_hkeys[idAndType(NextVideo,'W')] = hdata(_("Następny plik"), ".");
 		_hkeys[idAndType(PreviousVideo,'W')] = hdata(_("Poprzedni plik"), ",");
 		_hkeys[idAndType(VolumePlus,'W')] = hdata(_("Dźwięk głośniej"), "Num .");

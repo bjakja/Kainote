@@ -25,7 +25,7 @@
 class StyleList : public KaiScrolledWindow
 {
 	public:
-		StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, KaiChoice *_fontseeker, const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=wxWANTS_CHARS);
+		StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=wxWANTS_CHARS);
 		virtual ~StyleList();
 
 		void SetSelection(int sel,bool reset=false);
@@ -51,7 +51,7 @@ class StyleList : public KaiScrolledWindow
 		int Height;
 		bool holding;
 		std::vector<Styles*> *stylenames;
-		KaiChoice *fontseeker;
+		//wxArrayString *fontseeker;
 
 		//wxScrollBar *scrollBar;
 		wxBitmap *bmp;

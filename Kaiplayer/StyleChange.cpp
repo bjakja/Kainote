@@ -32,11 +32,27 @@ wxColour Blackorwhite(wxColour kol)
 	return wxColour(kols,kols,kols);
 }
 
-ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
-	: wxWindow(parent,id,pos,size)
+StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
+	//: wxWindow(parent,-1,pos)
+	:SCD(NULL)
+	,SS((StyleStore*)parent)
 {
-	//SetForegroundColour(Options.GetColour(WindowText));
-	//SetBackgroundColour(Options.GetColour(WindowBackground));
+	SetForegroundColour(Options.GetColour(WindowText));
+	SetBackgroundColour(Options.GetColour(WindowBackground));
+	DialogSizer *ds=NULL;
+	wxBoxSizer *Main1=NULL;
+	wxBoxSizer *Main2=NULL;
+	wxBoxSizer *Main3=NULL;
+	if(!window){
+		SCD = new KaiDialog(parent->GetParent(),-1,_("Edycja Stylu"),pos,wxDefaultSize, wxRESIZE_BORDER);
+		Create(SCD,-1);
+		ds=new DialogSizer(wxHORIZONTAL);
+		Main1=new wxBoxSizer(wxVERTICAL);
+		Main2=new wxBoxSizer(wxVERTICAL);
+		Main3=new wxBoxSizer(wxHORIZONTAL);
+	}else{
+		Create(parent,-1);
+	}
 	Preview=NULL;
 	tab=NULL;
 	block=true;
@@ -204,48 +220,66 @@ ColorChange::ColorChange(wxWindow* parent,wxWindowID id,const wxPoint& pos,const
 	btnCancel = new MappedButton(this, ID_BCANCEL, _("Anuluj"));
 	btnCommit = new MappedButton(this, ID_BONVID, _("Zastosuj"));
 	btnFullscreen = new MappedButton(this, ID_BONFULL, _("Zobacz na pełnym ekranie"));
-	buttons->Add(btnOk,1,wxEXPAND|wxALL,2);
-	buttons->Add(btnCommit,1,wxEXPAND|wxALL,2);
-	buttons->Add(btnCancel,1,wxEXPAND|wxALL,2);
+	buttons->Add(btnOk,(window)? 1 : 0,wxEXPAND|wxALL,2);
+	buttons->Add(btnCommit,(window)? 1 : 0,wxEXPAND|wxALL,2);
+	buttons->Add(btnCancel,(window)? 1 : 0,wxEXPAND|wxALL,2);
 	buttons->Add(btnFullscreen,0,wxEXPAND|wxALL,2);
 
 	//Main sizer
-	Main->Add(stylename,0,wxEXPAND|wxALL,2);
-	Main->Add(stylefont,0,wxEXPAND|wxALL,2);
-	Main->Add(stylekol,0,wxEXPAND|wxALL,2);
-	Main->Add(styleattr,0,wxEXPAND|wxALL,2);
-	Main->Add(sizer2,0,wxEXPAND|wxALL,2);
-	Main->Add(styleenc,0,wxEXPAND|wxALL,2);
-	Main->Add(styleprev,0,wxEXPAND|wxALL,2);
-	Main->Add(buttons,1,wxEXPAND|wxBOTTOM|wxLEFT|wxRIGHT,4);
+	if(window){
+		Main->Add(stylename,0,wxEXPAND|wxALL,2);
+		Main->Add(stylefont,0,wxEXPAND|wxALL,2);
+		Main->Add(stylekol,0,wxEXPAND|wxALL,2);
+		Main->Add(styleattr,0,wxEXPAND|wxALL,2);
+		Main->Add(sizer2,0,wxEXPAND|wxALL,2);
+		Main->Add(styleenc,0,wxEXPAND|wxALL,2);
+		Main->Add(styleprev,0,wxEXPAND|wxALL,2);
+		Main->Add(buttons,1,wxEXPAND|wxBOTTOM|wxLEFT|wxRIGHT,4);
+		SetSizerAndFit(Main);
+	}else{
+		Main1->Add(stylename,0,wxEXPAND|wxALL,2);
+		Main1->Add(stylefont,0,wxEXPAND|wxALL,2);
+		Main1->Add(stylekol,0,wxEXPAND|wxALL,2);
+		Main2->Add(styleattr,0,wxEXPAND|wxALL,2);
+		Main2->Add(sizer2,0,wxEXPAND|wxALL,2);
+		Main2->Add(styleenc,0,wxEXPAND|wxALL,2);
+		Main3->Add(Main1,0,wxEXPAND);
+		Main3->Add(Main2,0,wxEXPAND);
+		Main->Add(Main3,0,wxEXPAND);
+		Main->Add(styleprev,1,wxEXPAND|wxALL,2);
+		Main->Add(buttons,0,wxBOTTOM|wxLEFT|wxRIGHT|wxALIGN_CENTER,4);
+		SetSizerAndFit(Main);
+	}
 	
-	SetSizerAndFit(Main);
-
-
-	Connect(ID_BCOLOR1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ColorChange::Ons1Click);
-	Connect(ID_BCOLOR2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ColorChange::Ons2Click);
-	Connect(ID_BCOLOR3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ColorChange::Ons3Click);
-	Connect(ID_BCOLOR4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ColorChange::Ons4Click);
-	Connect(ID_BOK,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ColorChange::OnOKClick);
-	Connect(ID_BCANCEL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ColorChange::OnCancelClick);
-	Connect(ID_BONVID,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ColorChange::OnStyleVideo);
-	Connect(ID_BONFULL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ColorChange::OnStyleFull);
-	Connect(ID_FONTNAME,wxEVT_COMMAND_COMBOBOX_SELECTED,(wxObjectEventFunction)&ColorChange::OnUpdatePreview);
-	Connect(ID_TOUTLINE,NUMBER_CHANGED,(wxObjectEventFunction)&ColorChange::OnUpdatePreview);
-	Connect(ID_CBOLD,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&ColorChange::OnUpdatePreview);
-	Connect(ID_CENCODING,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&ColorChange::OnUpdatePreview);
-	//Connect(ID_RAN1, ID_RAN9,wxEVT_COMMAND_RADIOBUTTON_SELECTED,(wxObjectEventFunction)&ColorChange::OnUpdatePreview);
+	Connect(ID_BCOLOR1,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::Ons1Click);
+	Connect(ID_BCOLOR2,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::Ons2Click);
+	Connect(ID_BCOLOR3,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::Ons3Click);
+	Connect(ID_BCOLOR4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::Ons4Click);
+	Connect(ID_BOK,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::OnOKClick);
+	Connect(ID_BCANCEL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::OnCancelClick);
+	Connect(ID_BONVID,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::OnStyleVideo);
+	Connect(ID_BONFULL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::OnStyleFull);
+	Connect(ID_FONTNAME,wxEVT_COMMAND_COMBOBOX_SELECTED,(wxObjectEventFunction)&StyleChange::OnUpdatePreview);
+	Connect(ID_TOUTLINE,NUMBER_CHANGED,(wxObjectEventFunction)&StyleChange::OnUpdatePreview);
+	Connect(ID_CBOLD,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&StyleChange::OnUpdatePreview);
+	Connect(ID_CENCODING,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&StyleChange::OnUpdatePreview);
+	//Connect(ID_RAN1, ID_RAN9,wxEVT_COMMAND_RADIOBUTTON_SELECTED,(wxObjectEventFunction)&StyleChange::OnUpdatePreview);
 	DoTooltips();
+	if(ds){
+		ds->Add(this,1,wxEXPAND);
+		SCD->SetSizerAndFit(ds);
+	}
 	block=false;
 }
 
-ColorChange::~ColorChange()
+StyleChange::~StyleChange()
 {
 	FontEnum.RemoveClient(this);
 	wxDELETE(tab);
+	//if(SCD){SCD->Destroy();}
 }
 
-void ColorChange::OnAllCols(int kol)
+void StyleChange::OnAllCols(int kol)
 {
 	MappedButton *kolor=(kol==1)? s1 : (kol==2)? s2 : (kol==3)? s3 : s4;
 	NumCtrl *alpha=(kol==1)? alpha1 : (kol==2)? alpha2 : (kol==3)? alpha3 : alpha4;
@@ -270,43 +304,45 @@ void ColorChange::OnAllCols(int kol)
 	}
 }
 
-void ColorChange::Ons1Click(wxCommandEvent& event)
+void StyleChange::Ons1Click(wxCommandEvent& event)
 {
 	OnAllCols(1);
 }
 
-void ColorChange::Ons2Click(wxCommandEvent& event)
+void StyleChange::Ons2Click(wxCommandEvent& event)
 {
 	OnAllCols(2);
 }
 
-void ColorChange::Ons3Click(wxCommandEvent& event)
+void StyleChange::Ons3Click(wxCommandEvent& event)
 {
 	OnAllCols(3);
 }
 
-void ColorChange::Ons4Click(wxCommandEvent& event)
+void StyleChange::Ons4Click(wxCommandEvent& event)
 {
 	OnAllCols(4);
 }
 
-void ColorChange::OnOKClick(wxCommandEvent& event)
+void StyleChange::OnOKClick(wxCommandEvent& event)
 {
 	UpdateStyle();
 	Hide();
+	if(SCD){SCD->Hide();}
 	//kopiujemy, bo by zapobiec wyciekom należy tab niezwłocznie usunąć.
     SS->changestyle(tab->Copy());  
 	wxDELETE(tab);
 }
 
-void ColorChange::OnCancelClick(wxCommandEvent& event)
+void StyleChange::OnCancelClick(wxCommandEvent& event)
 {
 	Hide();
+	if(SCD){SCD->Hide();}
 	wxDELETE(tab);
 	SS->Mainall->Fit(SS);
 }
 
-void ColorChange::UpdateValues(Styles *styless)
+void StyleChange::UpdateValues(Styles *styless)
 {
 	block=true;
 	wxDELETE(tab);
@@ -362,23 +398,23 @@ void ColorChange::UpdateValues(Styles *styless)
     senc->SetSelection(choice);
 	block=false;
 	UpdatePreview();
-    Show();
+	Show();
 }
 
-void ColorChange::OnStyleVideo(wxCommandEvent& event)
+void StyleChange::OnStyleVideo(wxCommandEvent& event)
 {
 	UpdateStyle();
 	//tu tab zostaje bo w przeciwnym wypadku dialog straci swoją klasę a przecież jest jeszcze widoczny.
 	SS->changestyle(tab->Copy());
 }
 
-void ColorChange::OnStyleFull(wxCommandEvent& event)
+void StyleChange::OnStyleFull(wxCommandEvent& event)
 {
 	UpdateStyle();
 	SS->StyleonVideo(tab,true);
 }
 
-void ColorChange::UpdateStyle()
+void StyleChange::UpdateStyle()
 {
 	if(!tab){return;}
 	tab->Name = sname->GetValue();
@@ -410,21 +446,31 @@ void ColorChange::UpdateStyle()
 	tab->Encoding = senc->GetString(senc->GetSelection()).BeforeFirst(' ');
 }
 
-void ColorChange::UpdatePreview()
+void StyleChange::UpdatePreview()
 {
 	if(!Preview)return;
 	UpdateStyle();
 	Preview->DrawPreview(tab);
 }
 
-void ColorChange::OnUpdatePreview(wxCommandEvent& event)
+void StyleChange::OnUpdatePreview(wxCommandEvent& event)
 {
 	if(!block) {
 		UpdatePreview();
 	}
 }
 
-void ColorChange::DoTooltips()
+bool StyleChange::Show(bool show)
+{
+	wxWindow::Show(show);
+	if(SCD){
+		if(show && !SCD->IsShown()){MoveToMousePosition(SCD);}
+		SCD->Show(show);
+	}
+	return true;// wxWindow::Show(show);
+}
+
+void StyleChange::DoTooltips()
 {
 	sname->SetToolTip(_("Nazwa stylu"));
 	sfont->SetToolTip(_("Czcionka"));
@@ -461,4 +507,15 @@ void ColorChange::DoTooltips()
 	rb8->SetToolTip(_("Wyśrodkowane u góry"));
 	rb9->SetToolTip(_("Prawy górny róg"));
 	senc->SetToolTip(_("Kodowanie tekstu"));
+}
+
+bool StyleChange::Destroy()
+{
+	if(SCD){return SCD->Destroy();}
+	else{return wxWindowBase::Destroy();}
+}
+bool StyleChange::IsShown()
+{
+	if(SCD){return SCD->IsShown();}
+	else{return wxWindow::IsShown();}
 }

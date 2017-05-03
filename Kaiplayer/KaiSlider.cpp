@@ -71,7 +71,8 @@ void KaiSlider::OnSize(wxSizeEvent& evt)
 	GetClientSize (&w, &h);
 	int size = ((style & wxVERTICAL)!=0)? h : w;
 	thumbRange = size - thumbSize;
-	thumbPos = ((value / 1.f) * thumbRange)-9;
+	//int thumbMove = ((style & wxVERTICAL)!=0)? 9 : 9;
+	thumbPos = ((value / 1.f) * thumbRange);
 	Refresh(false);
 }
 	
@@ -148,10 +149,10 @@ void KaiSlider::OnMouseEvent(wxMouseEvent &evt)
 	int size2 = (isVertical)? w : h;
 	thumbRange = size - thumbSize;
 	if (evt.GetWheelRotation() != 0) {
-		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
+		float step = evt.GetWheelRotation() / evt.GetWheelDelta()/20.f;
 		value -= step;
-		if(value< 0.f){value = 0.f; SendEvent();return;}
-		if(value> 1.f){value = 0.f;  SendEvent(); return;}
+		if(value< 0.f){value = 0.f;}
+		if(value> 1.f){value = 1.f;}
 		thumbPos = ((value / 1.f) * thumbRange);
 		if(coord >= thumbPos && coord <= thumbPos+thumbSize){
 			enter=true;
@@ -218,7 +219,9 @@ void KaiSlider::OnMouseEvent(wxMouseEvent &evt)
 	if(holding){
 		thumbPos = coord - diff;
 		thumbPos = MID(0, thumbPos, thumbRange);
-		value = ((thumbPos) / (float)thumbRange) * 1.f;
+		wxLogStatus("thumbpos %i %i %i", thumbPos, coord, diff);
+		value = ((float)thumbPos / (float)thumbRange);
+		wxLogStatus("value %f %i", value, (int)((value * (float)(maxRange-minRange)) + minRange));
 		SendEvent();
 	}
 }
@@ -226,9 +229,9 @@ void KaiSlider::OnMouseEvent(wxMouseEvent &evt)
 int KaiSlider::GetValue(){
 	if(style & wxSL_INVERSE){
 		float invValue = 1.f - value;
-		return (invValue * (float)maxRange) + minRange;
+		return (invValue * (float)(maxRange-minRange)) + minRange;
 	}else{
-		return (value * (float)maxRange) + minRange;
+		return (value * (float)(maxRange-minRange)) + minRange;
 	}
 }
 

@@ -38,6 +38,8 @@ StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const w
 	PrevText=NULL;
 	vobsub=NULL;
 	styl=NULL;
+	Bind(wxEVT_SIZE,[=](wxSizeEvent &evt){DrawPreview(0);});
+	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
 }
 StylePreview::~StylePreview()
 {
@@ -53,7 +55,10 @@ void StylePreview::DrawPreview(Styles *style)
 	wxMutexLocker lock(mutex);
 	if(style){
 		wxDELETE(styl);
-		styl=style->Copy();}
+		styl=style->Copy();
+	}else if(!styl){
+		return;
+	}
 	if (instance) csri_close(instance);
 	instance = NULL;
 
@@ -67,9 +72,11 @@ void StylePreview::DrawPreview(Styles *style)
 	
 	GetClientSize(&width,&height);
 	pitch=width*4;
-	std::vector<byte> dat;
-	SubsText(dat);
-	instance = csri_open_mem(vobsub,&dat[0],dat.size(),NULL);
+	wxString dat;
+	SubsText(&dat);
+	wxScopedCharBuffer buffer= dat.mb_str(wxConvUTF8);
+	int size = strlen(buffer);
+	instance = csri_open_mem(vobsub,buffer,size,NULL);
 	if(!instance){
 		wxLogStatus(_("Instancja VobSuba nie utworzyła się."));return;}
 
@@ -142,22 +149,16 @@ void StylePreview::OnPaint(wxPaintEvent& event)
 
 }
 
-void StylePreview::SubsText(std::vector<byte> &buf)
+void StylePreview::SubsText(wxString *text)
 {
 	styl->Alignment="5";
 	//styl.MarginL="0";
 	//styl.MarginR="0";
 	//styl.MarginV="0";
-	wxString subs((wchar_t)0xFEFF);
-	subs<<"[Script Info]\r\nPlayResX: "<<width<<"\r\nPlayResY: "<<height<<"\r\nScaledBorderAndShadow: Yes\r\nScriptType: v4.00+\r\nWrapStyle: 0"
+	*text<<((wchar_t)0xFEFF);
+	*text<<"[Script Info]\r\nPlayResX: "<<width<<"\r\nPlayResY: "<<height<<"\r\nScaledBorderAndShadow: Yes\r\nScriptType: v4.00+\r\nWrapStyle: 0"
 		<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\r\n"
 		<<styl->styletext()<<"\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,0:01:26.00,"<<styl->Name<<",,0000,0000,0000,,"<<Options.GetString(PreviewText);
-
-	wxScopedCharBuffer buffer= subs.mb_str(wxConvUTF8);
-	int size = strlen(buffer);
-	buf.clear();
-	buf.resize(size);
-	memcpy(&buf[0],buffer,size);
 
 }
 

@@ -25,9 +25,7 @@ KaiStatusBar::KaiStatusBar(wxWindow *parent, int id, int style)
 {
 	Bind(wxEVT_SIZE, &KaiStatusBar::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiStatusBar::OnPaint, this);
-	/*Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &evt){
-		wxLogStatus("focus");
-	});*/
+	Bind(wxEVT_MOTION, &KaiStatusBar::OnMouseMove, this);
 	SetMinSize(wxSize(200,26));
 }
 
@@ -37,6 +35,14 @@ void KaiStatusBar::SetFieldsCount(int num, int *fields)
 		sizes.Add(fields[i]);
 	}
 	labels.resize(num);
+	tips.resize(num);
+}
+
+void KaiStatusBar::SetTooltips(wxString *_tips, int count)
+{
+	for(int i = 0; i < count; i++){
+		tips[i] = _tips[i];
+	}
 }
 
 void KaiStatusBar::OnSize(wxSizeEvent& event)
@@ -89,6 +95,26 @@ void KaiStatusBar::OnPaint(wxPaintEvent& event)
 	tdc.DrawBitmap(wxBITMAP_PNG("gripper"), w-18, h-18);
 	wxPaintDC dc(this);
 	dc.Blit(0,0,w,h,&tdc,0,0);
+}
+
+void KaiStatusBar::OnMouseMove(wxMouseEvent &evt)
+{
+	wxArrayInt widths;
+	CalcWidths(&widths);
+	int x = evt.GetX();
+	int posX = 1;
+	for(size_t i = 0; i<widths.size(); i++){
+		if(widths[i]>0 && posX < x && posX+widths[i] > x ){
+			
+			if(tips[i]!=tip){
+				tip = (labels[i].IsEmpty())? "" : tips[i];
+				SetToolTip(tip);
+			}
+			break;
+		}
+		posX += widths[i];
+
+	}
 }
 
 void KaiStatusBar::CalcWidths(wxArrayInt *widths)

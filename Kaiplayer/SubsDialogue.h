@@ -16,6 +16,13 @@
 #ifndef SUBSDIALOGUE_H_INCLUDED
 #define SUBSDIALOGUE_H_INCLUDED
 
+#ifndef ZEROIT
+#define ZEROIT(a) (((a+5)/10)*10)
+#endif
+#ifndef ZEROITNEG
+#define ZEROITNEG(a) (((a-5)/10)*10)
+#endif
+
 #include "SubsTime.h"
 #include <wx/colour.h>
 #include <vector>

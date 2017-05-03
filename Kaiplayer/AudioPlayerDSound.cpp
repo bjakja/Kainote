@@ -48,6 +48,7 @@
 
 #include "KainoteApp.h"
 #include "AudioPlayerDSound.h"
+#include <chrono>
 
 struct COMInitialization {
 	bool inited;
@@ -155,6 +156,7 @@ class DirectSoundPlayer2Thread {
 	int wanted_latency;
 	int buffer_length;
 
+	//std::chrono::system_clock::time_point last_playback_restart;
 	int last_playback_restart;
 
 	VideoFfmpeg *provider;
@@ -631,7 +633,8 @@ void DirectSoundPlayer2Thread::Play(int64_t start, int64_t count)
 	SetEvent(event_start_playback);
 	//SYSTEMTIME ftime;
 	//GetSystemTime (&ftime);
-	last_playback_restart = (int)timeGetTime();//ftime.wMilliseconds+(1000*ftime.wSecond)+(60000*ftime.wMinute)+(3600000*ftime.wHour);
+	//std::chrono::steady_clock::now();//
+	last_playback_restart = (int)timeGetTime();
 	//sw.Start (0);
 }
 
@@ -699,8 +702,8 @@ int DirectSoundPlayer2Thread::GetCurrentMS()
 
 	if (!IsPlaying()) return 0;
 
-
 	int milliseconds_elapsed = (int)(timeGetTime() - last_playback_restart);
+	//int milliseconds_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - last_playback_restart).count();
 
 	return start_frame + milliseconds_elapsed;
 }
@@ -713,6 +716,7 @@ int64_t DirectSoundPlayer2Thread::GetCurrentFrame()
 
 
 	int milliseconds_elapsed = (int)(timeGetTime() - last_playback_restart);
+	//int milliseconds_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - last_playback_restart).count();
 
 	return start_frame + (int64_t)milliseconds_elapsed * provider->GetSampleRate() / 1000;
 }

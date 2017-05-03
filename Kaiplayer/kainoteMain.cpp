@@ -57,7 +57,6 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 #else
 	mylog=NULL;
 #endif
-	ss=NULL;
 	FR=NULL;
 	SL=NULL;
 	Auto=NULL;
@@ -83,6 +82,9 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	StatusBar = new KaiStatusBar(this, ID_STATUSBAR1);
 	int StatusBarWidths[9] = { -12, 0, 0, 0, 0, 0, 0, 0, -22};
 	StatusBar->SetFieldsCount(9,StatusBarWidths);
+	wxString tooltips[]={"",_("Skala obrazu wideo"),_("Powiększenie wideo"),_("Czas trwania wideo"),
+		_("FPS"),_("Rozdzielczość wideo"),_("Proporcje wideo"),_("Rozdzielczość napisów"),_("Nazwa pliku wideo")};
+	StatusBar->SetTooltips(tooltips,9);
 	//StatusBar->SetLabelBackgroundColour(2,"#FF0000");
 	//StatusBar->SetLabelTextColour(2,"#000000");
 
@@ -208,7 +210,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(7000,7011,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
 	Connect(ID_MOVE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
 	Connect(OpenSubs,ANSI,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
-	Connect(SelectFromVideo,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
+	Connect(SelectFromVideo,PlayActualLine,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
 	Connect(Plus5SecondG,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnP5Sec);
 	Connect(Minus5SecondG,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnM5Sec);
 	Connect(PreviousLine,JoinWithNext,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnChangeLine);
@@ -267,12 +269,10 @@ kainoteFrame::~kainoteFrame()
 
 	Options.SaveOptions();
 
-	if(ss){ss->Destroy();ss=NULL;}
+	StyleStore::DestroyStore();
 	if(FR){FR->Destroy();FR=NULL;}
 	if(Auto){delete Auto; Auto=NULL;}
 	if(fc){delete fc; fc=NULL;}
-	//Tabs->Destroy();
-	//Tabs=NULL;
 	SpellChecker::Destroy();
 	VideoToolbar::DestroyIcons();
 }
@@ -366,18 +366,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}else if(id==ASSProperties){
 		OnAssProps();
 	}else if(id==StyleManager){
-		if(!ss){
-			ss=new stylestore(this);
-			int ww,hh;
-			Options.GetCoords(StyleManagerPosition,&ww,&hh);
-
-			ss->SetPosition(wxPoint(ww,hh));
-		}
-		ss->Store->Refresh(false);
-		int chc=ss->catalogList->FindString(Options.acdir);
-		ss->catalogList->SetSelection(chc);
-		ss->LoadAssStyles();
-		ss->Show();
+		StyleStore::ShowStore();
 	}else if(id==FontCollectorID && pan->Grid1->form<SRT){
 		if(!fc){fc=new FontCollector(this);}
 		fc->ShowDialog(this);
@@ -512,6 +501,12 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		GetTab()->Grid1->SelVideoLine();
 	}else if(id==Editor){
 		HideEditor();
+	}else if(id==PlayActualLine){
+		TabPanel *tab = GetTab();
+		tab->Edit->TextEdit->SetFocus();
+		tab->Video->PlayLine(tab->Edit->line->Start.mstime,tab->Edit->line->End.mstime - tab->Video->avtpf);
+		//wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED,ID_BPLINE);
+		//GetTab()->Video->OnAccelerator(evt);
 	}else if(id==Quit){
 		Close();
 	}else if(id==About){
@@ -746,9 +741,11 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 				{
 					if(katal==Options.dirs[i]){
 						Options.LoadStyles(katal);
-						if(ss){ss->Store->SetSelection(0,true);
-						int chc=ss->catalogList->FindString(Options.acdir);
-						ss->catalogList->SetSelection(chc);
+						if(StyleStore::HasStore()){
+							StyleStore *ss = StyleStore::Get();
+							ss->Store->SetSelection(0,true);
+							int chc=ss->catalogList->FindString(Options.acdir);
+							ss->catalogList->SetSelection(chc);
 						}
 					}
 				}
@@ -1270,7 +1267,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 	UpdateToolbar();
 
 	cur->Grid1->SetFocus();
-	if(Tabs->iter!=Tabs->GetOldSelection()){
+	if(Tabs->iter!=Tabs->GetOldSelection() && Options.GetBool(MoveTimesLoadSetTabOptions)){
 		cur->CTime->RefVals(Tabs->Page( Tabs->GetOldSelection() )->CTime);
 		//if(Options.GetBool("Grid save without enter")){
 			//Tabs->Page( Tabs->GetOldSelection() )->Edit->Send(false);
@@ -1283,7 +1280,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 			cur->Grid1->SelVideoLine(old->GetDial(old->FirstSel())->Start.mstime);
 		}
 	}
-	if(ss && ss->IsShown()){ss->LoadAssStyles();}
+	if(StyleStore::HasStore() && StyleStore::Get()->IsShown()){StyleStore::Get()->LoadAssStyles();}
 	if(FR){FR->Reset();FR->ReloadStyle();}
 }
 

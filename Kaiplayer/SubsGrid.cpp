@@ -28,7 +28,7 @@
 #include <wx/regex.h>
 #include <wx/ffile.h>
 #include "KaiMessageBox.h"
-
+#include <thread>
 
 bool sortstart(Dialogue *i,Dialogue *j){ 
 	if(i->Start.mstime!=j->Start.mstime){
@@ -109,6 +109,10 @@ SubsGrid::SubsGrid(wxWindow *parent, const long int id,const wxPoint& pos,const 
 
 	LoadDefault();
 	timer.SetOwner(this,ID_AUTIMER);
+	nullifyTimer.SetOwner(this,27890);
+	Bind(wxEVT_TIMER,[=](wxTimerEvent &evt){
+		Kai->SetStatusText(_(""),0);
+	},27890);
 	SetStyle();
 	AdjustWidths();
 	SetFocus();
@@ -641,7 +645,16 @@ void SubsGrid::ChangeLine(Dialogue *line1, int wline, long cells, bool selline, 
 
 	}
 	Refresh(false);
-	if(selline){Edit->SetIt(lastRow);}
+	if(selline){
+		Edit->SetLine(lastRow,true,true,false,true);
+		VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
+		if(vb->vToolbar->videoSeekAfter->GetSelection()==1 && vb->vToolbar->videoPlayAfter->GetSelection()<2){
+			if(vb->GetState()!=None){
+				if(vb->GetState()==Playing){vb->Pause();}
+				vb->Seek(Edit->line->Start.mstime);
+			}
+		}
+	}
 	SetModified(false,dummy);
 
 }
@@ -770,6 +783,27 @@ void SubsGrid::ScrollTo(int y, bool center){
 	}
 }
 
+void SubsGrid::SetVideoLineTime(wxMouseEvent &evt)
+{
+	TabPanel *tab=(TabPanel*)GetParent();
+	if(tab->Video->GetState()!=None){
+		if(tab->Video->GetState()==Stopped){tab->Video->Play();tab->Video->Pause();}
+		short wh=(form<SRT)?2:1;
+		int whh=2;
+		for(int i = 0;i<=wh;i++){whh+=GridWidth[i];}
+		whh-=scHor;
+		bool isstart;
+		int vczas;
+		if(evt.GetX()>=whh && evt.GetX()<whh+GridWidth[wh+1] && form!=TMP){ 
+			vczas=GetDial(Edit->ebrow)->End.mstime; isstart=false;}
+		else{
+			vczas=GetDial(Edit->ebrow)->Start.mstime; isstart=true;
+		}
+		if(evt.ControlDown()){vczas-=1000;}
+		tab->Video->Seek(MAX(0,vczas),isstart,true,false);
+		if(Edit->ABox){Edit->ABox->audioDisplay->UpdateImage(true);}
+	}
+}
 
 void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 
@@ -849,24 +883,16 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 		return;
 	}
 	TabPanel *pan=(TabPanel*)GetParent();
-	int mvtal= pan->Video->vToolbar->videoSeekAfter->GetSelection();//Options.GetInt(MoveVideoToActiveLine);
+	bool changeActive = Options.GetBool(GridChangeActiveOnSelection);
+	int mvtal= pan->Video->vToolbar->videoSeekAfter->GetSelection();//
+	int pas=pan->Video->vToolbar->videoPlayAfter->GetSelection();
 	if (!(row < scPos || row >= GetCount())) {
 
 		if(holding && alt && lastsel!=row)
 		{
 			if (lastsel != -1) {
 				file->edited=true;
-				//if(!sel[lastsel]){
-				//SelectRow(row,false,true);
-				//SwapRows(lastsel,row);
-				// }else{
-				/*if (row < scPos+1 ){
-				MoveRows(-1);
-				}else if(row > scPos+h/(GridHeight+1)-3){
-				MoveRows(1);
-				}else{*/
-				MoveRows(row-lastsel);//}
-				// }
+				MoveRows(row-lastsel);
 			}
 			lastsel=row;
 			//return;
@@ -885,35 +911,21 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 
 
 			//jakbym chciał znów dać zmianę edytowanej linii z ctrl to muszę dorobić mu refresh
-			if ((click && !ctrl) || (dclick && ctrl)) {// || dclick
-				Edit->SetIt(row,true,true,true);
-				SelectRow(row);
-				extendRow = -1;
+			if (click && (changeActive || !ctrl) || (dclick && ctrl)) {/*(click && !ctrl)*/ 
+				Edit->SetLine(row,true,true,true,!ctrl);
+				if(changeActive){Refresh(false);}
+				if(!ctrl){
+					SelectRow(row);
+					extendRow = -1;
+				}
 			}
-
-
 
 			//1-kliknięcie lewym
 			//2-kliknięcie lewym i edycja na pauzie
 			//3-kliknięcie lewym i edycja na pauzie i odtwarzaniu
 
-			if (dclick||((((left_up) && lastRow != row)|| click) && mvtal < 4 && mvtal > 0 )){
-				//
-				if(pan->Video->GetState()!=None){
-					if(pan->Video->GetState()==Stopped){pan->Video->Play();pan->Video->Pause();}
-					short wh=(form<SRT)?2:1;
-					int whh=2;
-					for(int i = 0;i<=wh;i++){whh+=GridWidth[i];}
-					whh-=scHor;
-					bool isstart;
-					int vczas;
-					if(event.GetX()>=whh && event.GetX()<whh+GridWidth[wh+1] && form!=TMP){ 
-						vczas=GetDial(Edit->ebrow)->End.mstime; isstart=false;}
-					else{vczas=GetDial(Edit->ebrow)->Start.mstime; isstart=true;}
-					if(ctrl){vczas-=1000;/*SelectRow(row);*/}
-					pan->Video->Seek(MAX(0,vczas),isstart,true,false);
-					if(Edit->ABox){Edit->ABox->audioDisplay->UpdateImage(true);}
-				}
+			if (dclick||((/*(left_up && lastRow != row) || */click) && mvtal < 4 && mvtal > 0 ) && pas < 2){
+				SetVideoLineTime(event);
 			}
 
 
@@ -976,25 +988,12 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 				SelectRow(i, notFirst || ctrl,true,true);
 				notFirst = true;
 			}
-			//Edit->SetIt(row,true,true,true);
-			//if(mvtal < 4 && mvtal > 0){
-			//	//TabPanel *pan=(TabPanel*)GetParent();
-			//	if(pan->Video->GetState()!=None){
-			//		if(pan->Video->GetState()==Stopped){pan->Video->Play();pan->Video->Pause();}
-			//		short wh=(form<SRT)?2:1;
-			//		int whh=2;
-			//		for(int i = 0;i<=wh;i++){whh+=GridWidth[i];}
-			//		whh-=scHor;
-			//		bool isstart;
-			//		int vczas;
-			//		if(event.GetX()>=whh && event.GetX()<whh+GridWidth[wh+1] && form!=TMP){ 
-			//			vczas=GetDial(Edit->ebrow)->End.mstime; isstart=false;}
-			//		else{vczas=GetDial(Edit->ebrow)->Start.mstime; isstart=true;}
-			//		if(ctrl){vczas-=1000;/*SelectRow(row);*/}
-			//		pan->Video->Seek(MAX(0,vczas),isstart,true,false);
-			//		if(Edit->ABox){Edit->ABox->audioDisplay->UpdateImage(true);}
-			//	}
-			//}
+			if(changeActive){
+				Edit->SetLine(row,true,true,true);
+				if(mvtal < 4 && mvtal > 0){
+					SetVideoLineTime(event);
+				}
+			}
 			lastsel=row;
 			Refresh(false);
 			if(Edit->Visual==CHANGEPOS/* || Edit->Visual==MOVEALL*/){
@@ -1107,7 +1106,7 @@ void SubsGrid::Convert(char type)
 	}
 
 	form=type;
-	Edit->SetIt((Edit->ebrow < GetCount())? Edit->ebrow : 0);
+	Edit->SetLine((Edit->ebrow < GetCount())? Edit->ebrow : 0);
 	SetModified();
 	RepaintWindow();
 }
@@ -1361,17 +1360,18 @@ void SubsGrid::ChangeTime()
 
 	int fs=FirstSel();
 	if (fs==-1&&lmd!=0&&lmd!=4){
-		KaiMessageBox(_("Nie zaznaczono linii do przesunięcia"),_("Uwaga"));return;}
+		KaiMessageBox(_("Nie zaznaczono linii do przesunięcia"),_("Uwaga"));return;
+	}
 
 	int difftime=(VAS)? file->subs->dials[mtimerow]->Start.mstime : file->subs->dials[mtimerow]->End.mstime;
-	int halfframe= (VAS)? -(vb->avtpf/2) : (vb->avtpf/2);
+	int halfframe= (VAS)? -(vb->avtpf/2.0f) : (vb->avtpf/2.0f);
 	if((mto & 4) && vb->GetState()!=None){
 		added= vb->Tell() - difftime + halfframe;
-		added=ZEROIT(added);
+		added=(added<0)?ZEROITNEG(added) : ZEROIT(added);
 	}
 	else if((mto & 8) && Edit->ABox->audioDisplay->hasMark){
 		added= Edit->ABox->audioDisplay->curMarkMS - difftime;
-		added=ZEROIT(added);
+		added=(added<0)?ZEROITNEG(added) : ZEROIT(added);
 	}
 
 
@@ -1613,14 +1613,14 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 			}
 
 			int next = MID(0,curLine+dir,GetCount()-1);
-			Edit->SetIt(next);
+			Edit->SetLine(next);
 			TabPanel *pan = (TabPanel*)GetParent();
 			int mvtal= pan->Video->vToolbar->videoSeekAfter->GetSelection();//Options.GetInt(MoveVideoToActiveLine);
 			int pasel= pan->Video->vToolbar->videoPlayAfter->GetSelection();//Options.GetInt(PlayAfterSelection);
 			//1-kliknięcie lewym
 			//2-kliknięcie lewym i edycja na pauzie
 			//3-kliknięcie lewym i edycja na pauzie i odtwarzaniu
-			if ( mvtal < 4 && mvtal > 0 && pasel==0){
+			if ( mvtal < 4 && mvtal > 0 && pasel>1){
 				
 				if(pan->Video->GetState()==Stopped){pan->Video->Play();pan->Video->Pause();}
 				int vczas=GetDial(next)->Start.mstime;
@@ -1749,7 +1749,7 @@ void SubsGrid::MoveRows(int step, bool sav)
 			}
 		}
 	}
-	Edit->SetIt(FirstSel());
+	Edit->SetLine(FirstSel());
 	Refresh(false);
 }
 
@@ -1805,10 +1805,14 @@ void SubsGrid::GetUndo(bool redo)
 
 	Thaw();
 
-	if(Kai->ss){Kai->ss->ASS->SetArray(&file->subs->styles);Kai->ss->ASS->Refresh(false);}
+	if(StyleStore::HasStore()){
+		StyleStore *SS = StyleStore::Get();
+		SS->ASS->SetArray(&file->subs->styles);
+		SS->ASS->Refresh(false);
+	}
 	SpellErrors.clear();
 	RepaintWindow();
-	Edit->SetIt(erow);
+	Edit->SetLine(erow);
 	Edit->RefreshStyle();
 	for(auto cur = sel.begin(); cur != sel.end(); cur++){
 		if(cur->first >= GetCount()){
@@ -1952,7 +1956,7 @@ void SubsGrid::SetModified(bool redit, bool dummy, int SetEditBoxLine)
 			if(erow>=GetCount()){erow=GetCount()-1;}
 			lastRow=erow;
 			if(scPos>erow){scPos=MAX(0,(erow-4));}
-			Edit->SetIt(erow);
+			Edit->SetLine(erow);
 			sel[erow]=true;
 		}
 		file->SaveUndo();
@@ -2127,22 +2131,24 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 	scPos=MAX(0,active-3);
 	RepaintWindow();
 
-	Edit->SetIt(active,false,false);
+	Edit->SetLine(active,false,false);
 
 	Edit->HideControls();
 
 	file->EndLoad();
-	if(Kai->ss && form==ASS){Kai->ss->LoadAssStyles();}
+	if(StyleStore::HasStore() && form==ASS){StyleStore::Get()->LoadAssStyles();}
 	if(form == ASS){RebuildActorEffectLists();}
 }
 
 void SubsGrid::SetStartTime(int stime)
 {
-
+	Edit->Send(false,false,true);
 	wxArrayInt sels=GetSels();
 	for(size_t i=0;i<sels.size();i++){
 		Dialogue *dialc=CopyDial(sels[i]);
+		if(!dialc){continue;}
 		dialc->Start.NewTime(stime);
+		if(dialc->End<stime){dialc->End.NewTime(stime);}
 	}
 	if(sels.size()){
 		SetModified();
@@ -2152,10 +2158,13 @@ void SubsGrid::SetStartTime(int stime)
 
 void SubsGrid::SetEndTime(int etime)
 {
+	Edit->Send(false,false,true);
 	wxArrayInt sels=GetSels();
 	for(size_t i=0;i<sels.size();i++){
 		Dialogue *dialc=CopyDial(sels[i]);
+		if(!dialc){continue;}
 		dialc->End.NewTime(etime);
+		if(dialc->Start>etime){dialc->Start.NewTime(etime);}
 	}
 	if(sels.size()){
 		SetModified();
@@ -2242,14 +2251,14 @@ void SubsGrid::SelVideoLine(int curtime)
 		Dialogue *dial = GetDial(i);
 		if(!dial->IsComment && (dial->Text!="" || dial->TextTl!="")){
 			if(time>= dial->Start.mstime&&time<=dial->End.mstime)
-			{Edit->SetIt(i);SelectRow(i);ScrollTo(i-4);
+			{Edit->SetLine(i);SelectRow(i);ScrollTo(i-4);
 			break;}
 			if(dial->Start.mstime > prevtime && dial->Start.mstime < time){prevtime = dial->Start.mstime;ip=i;}
 			if(dial->Start.mstime < durtime && dial->Start.mstime > time){durtime = dial->Start.mstime;idr=i;}
 
 		}
-		if(i==GetCount()-1){if((time-prevtime)>(durtime-time)){Edit->SetIt(idr);SelectRow(idr);ScrollTo(idr-4);}
-		else{Edit->SetIt(ip);SelectRow(ip);ScrollTo(ip-4);}}
+		if(i==GetCount()-1){if((time-prevtime)>(durtime-time)){Edit->SetLine(idr);SelectRow(idr);ScrollTo(idr-4);}
+		else{Edit->SetLine(ip);SelectRow(ip);ScrollTo(ip-4);}}
 	}
 
 }
@@ -2276,10 +2285,16 @@ void SubsGrid::NextLine(int dir)
 	sel.clear();
 	sel[nebrow]=true;
 	AdjustWidths(0);
-	Refresh(false);Edit->SetIt(nebrow);
+	Refresh(false);
+	Edit->SetLine(nebrow,true,true,false,true);
 	if(Edit->ABox){Edit->ABox->audioDisplay->SetDialogue(Edit->line,nebrow);}
-	//if(Kai->GetTab()->Video->GetState() != None && Options.GetBool("Editbox Video Time")){
-	//Kai->GetTab()->Video->Seek(GetDial(nebrow)->Start.mstime-5);}
+	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
+	if(vb->vToolbar->videoSeekAfter->GetSelection()==1 && vb->vToolbar->videoPlayAfter->GetSelection()<2){
+		if(vb->GetState()!=None){
+			if(vb->GetState()==Playing){vb->Pause();}
+			vb->Seek(Edit->line->Start.mstime);
+		}
+	}
 }
 
 void SubsGrid::CheckText(wxString text, wxArrayInt &errs)
@@ -2355,6 +2370,7 @@ Dialogue *SubsGrid::CopyDial(int i, bool push)
 
 Dialogue *SubsGrid::GetDial(int i)
 {
+	if(i >= file->subs->dials.size()){return NULL;}
 	return file->subs->dials[i];
 }
 
@@ -2483,12 +2499,16 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, bool trimSels)
 	return txt;
 }
 
-
+//VOID CALLBACK callbackfunc ( PVOID   lpParameter, BOOLEAN TimerOrWaitFired) {
+//	Automation *auto_ = (Automation*)lpParameter;
+//	auto_->ReloadScripts(true);
+//	DeleteTimerQueueTimer(auto_->handle,0,0);
+//}
 
 void SubsGrid::OnBcktimer(wxTimerEvent &event)
 {
 	TabPanel *pan=(TabPanel*)GetParent();
-	wxLogStatus(_("Autozapis"));
+	Kai->SetStatusText(_("Autozapis"),0);
 	wxString path;
 	wxString ext=(form<SRT)? "ass" : (form==SRT)? "srt" : "txt";
 
@@ -2496,11 +2516,11 @@ void SubsGrid::OnBcktimer(wxTimerEvent &event)
 		<<"_"<<Notebook::GetTabs()->FindPanel(pan)<<"_"<< numsave <<"."<<ext;
 
 	SaveFile(path, false);
-
-
-	numsave = !numsave;
+	int maxFiles = Options.GetInt(AutoSaveMaxFiles);
+	if(maxFiles>1 && numsave >= maxFiles){numsave=0;}
+	numsave++;
 	makebkp=true;
-	wxLogStatus("");
+	nullifyTimer.Start(5000,true);
 }
 
 void SubsGrid::GetASSRes(int *x,int *y)
@@ -2520,6 +2540,7 @@ int SubsGrid::CalcChars(wxString txt, wxString *lines, bool *bad)
 {
 	int len=txt.Len();
 	bool block=false;bool slash=false;
+	bool drawing = false;
 	int chars=0, lastchars=0, ns=0;
 	wxUniChar brs=(form==SRT)? '<' : '{';
 	wxUniChar bre=(form==SRT)? '>' : '}';
@@ -2527,7 +2548,11 @@ int SubsGrid::CalcChars(wxString txt, wxString *lines, bool *bad)
 	{
 		if(txt[i]==brs){block=true;}
 		else if(txt[i]==bre){block=false;}
-		else if(txt[i]=='\\' && !block){slash=true; continue;}
+		else if(block && txt[i]=='p' && txt[i-1]=='\\' && (i+1 < len && wxString(txt[i+1]).IsNumber())){
+			if(txt[i+1]=='0'){drawing=false;}
+			else{drawing=true;}
+		}
+		else if(txt[i]=='\\' && !block && !drawing){slash=true; continue;}
 		else if(slash){
 			if(txt[i]=='N'){
 				if(lines){
@@ -2540,7 +2565,7 @@ int SubsGrid::CalcChars(wxString txt, wxString *lines, bool *bad)
 			}else if(txt[i]!='h'){chars+=2;}
 			slash=false;
 		}
-		else if(!block && txt[i]!=' '){chars++;}
+		else if(!block && !drawing && txt[i]!=' '){chars++;}
 
 	}
 	if(lines){
@@ -2576,9 +2601,9 @@ void SubsGrid::RefreshIfVisible(int time)
 	int count = GetCount();
 	if(scrows>=count){scrows = count;}
 	if(scPos<0){scPos=0;}
-	if(visibleLines.size() < scrows-scPos){return;}
+	if((int)visibleLines.size() < scrows-scPos){return;}
 	int counter = 0;
-	for(size_t i = scPos; i < scrows; i++){
+	for(int i = scPos; i < scrows; i++){
 		Dialogue *dial = GetDial(i);
 		bool isVisible = dial->Start <= time && dial->End >= time;
 		if(isVisible != visibleLines[counter++]){

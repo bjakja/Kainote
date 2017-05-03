@@ -25,6 +25,7 @@
 #include "include\ffmscompat.h"
 #include "Stylelistbox.h"
 #include <wx/file.h>
+#include <chrono>
 
 
 
@@ -58,6 +59,7 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *_s
 	if(renderer){
 
 		thread = (HANDLE)_beginthreadex(0, 0, FFMS2Proc, this, 0, 0);//CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)FFMS2Proc, this, 0, 0);
+		SetThreadPriority(thread,THREAD_PRIORITY_TIME_CRITICAL);
 		progress->ShowDialog();
 		WaitForSingleObject(eventComplete, INFINITE);
 		ResetEvent(eventComplete);
@@ -126,7 +128,8 @@ void VideoFfmpeg::Processing()
 				else if(rend->vstate!=Playing){
 					break;
 				}	
-				acttime = timeGetTime() - rend->lasttime;
+				acttime = timeGetTime() - rend->lasttime; //rend->player->player->GetCurPositionMS();//
+				//acttime = rend->lasttime + std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - rend->startTime).count();
 
 				rend->lastframe++;
 				rend->time = Timecodes[rend->lastframe];

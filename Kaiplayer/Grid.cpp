@@ -133,7 +133,8 @@ void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 	
 	if(id<0){goto done;}
 	
-	if(Modifiers == wxMOD_SHIFT && id>5000){
+	if(Modifiers == wxMOD_SHIFT){
+		if( id<=5000){goto done;}
 		MenuItem *item=menu->FindItem(id);
 		int ret=-1;
 		wxString name=item->GetLabelText();
@@ -334,6 +335,7 @@ void Grid::OnPaste(int id)
 		newdial->State=1;
 		if(!newdial){continue;}
 		if(newdial->Form!=form){newdial->Conv(form);}
+		if(newdial->NonDial){newdial->NonDial=false; newdial->IsComment=false;}
 		if(id==Paste){
 			tmpdial.push_back(newdial);
 			sel[rws]=true;
@@ -695,28 +697,24 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 		Edit->HideControls();
 		
 	}
-	if(Kai->ss && form==ASS){Kai->ss->LoadAssStyles();}
+	if(StyleStore::HasStore() && form==ASS){StyleStore::Get()->LoadAssStyles();}
 }
 
-wxString getfloatstr(float num)
-{
-	wxString strnum=wxString::Format("%f",num);
-	strnum.Replace(",",".");
-	int rmv=0;
-	for(int i=strnum.Len()-1;i>0;i--){
-		if(strnum[i]=='0'){rmv++;}
-		else if(strnum[i]=='.'){rmv++;break;}
-		else{break;}
-	}
-	if(rmv){strnum.RemoveLast(rmv);}
-	return strnum;
-}
 
 
 void Grid::ResizeSubs(float xnsize, float ynsize)
 {
-	float val=ynsize;//(ynsize>xnsize)?ynsize:xnsize;
-	//float fscyval=ynsize/xnsize;
+	float val=xnsize;
+	int resizeScale = 0;
+	if(ynsize!=xnsize){
+		if(ynsize>xnsize){
+			resizeScale = 2;
+		}else{
+			val = ynsize;
+			resizeScale = 1;
+		}
+	}
+
 
 	for(int i=0;i<StylesSize();i++){
 		Styles *resized= file->CopyStyle(i);
@@ -732,29 +730,37 @@ void Grid::ResizeSubs(float xnsize, float ynsize)
 		mv*=ynsize;
 		resized->MarginV="";
 		resized->MarginV<<mv;
-		//int sy=wxAtoi(resized.ScaleY);
-		//sy*=fscyval;
-		//resized.ScaleY="";
-		//resized.ScaleY<<sy;
+		if(resizeScale==1){
+			double fscx=100;
+			resized->ScaleX.ToCDouble(&fscx);
+			fscx*=xnsize;
+			resized->ScaleX=getfloat(fscx);
+		}else if(resizeScale==2){
+			double fscy=100;
+			resized->ScaleY.ToCDouble(&fscy);
+			fscy*=ynsize;
+			resized->ScaleY=getfloat(fscy);
+		}
 		double fs=0;
 		resized->Fontsize.ToCDouble(&fs);
 		fs*=val;
-		resized->Fontsize="";
-		resized->Fontsize<<getfloatstr(fs);
+		resized->Fontsize=getfloat(fs);
 		float ol=wxAtoi(resized->Outline);
 		ol*=val;
-		resized->Outline=getfloatstr(ol);
+		resized->Outline=getfloat(ol);
 		float sh=wxAtoi(resized->Shadow);
 		sh*=val;
-		resized->Shadow=getfloatstr(sh);
-		//dbg<<resized.styletext()<<"\r\n";
-		//ChangeStyle(resized,i);
+		resized->Shadow=getfloat(sh);
+		double fsp=0;
+		resized->Spacing.ToCDouble(&fsp);
+		fsp*=val;
+		resized->Spacing=getfloat(fsp);
 	}
 
 	//dialogi, największy hardkor, wszystkie tagi zależne od rozdzielczości trzeba zmienić
 	//tu zacznie się potęga szukaczki tagów
-	wxRegEx onenum("\\\\(fax|fay|fs|bord|shad|pos|move|iclip|clip|org)([^\\\\}]*)",wxRE_ADVANCED);
-	wxRegEx drawing("\\\\p([0-9]+)[\\\\}]",wxRE_ADVANCED);
+	wxRegEx onenum("\\\\(fax|fay|fs|bord|shad|pos|move|iclip|clip|org)([^\\\\}\\)]*)",wxRE_ADVANCED);
+	wxRegEx drawing("\\\\p([0-9]+)[\\\\}\\)]",wxRE_ADVANCED);
 
 	for(int i=0;i<GetCount();i++){
 		//zaczniemy od najłatwiejszego, marginesy
@@ -791,6 +797,8 @@ void Grid::ResizeSubs(float xnsize, float ynsize)
 							int crn=crop.Find('n');
 							wxString wynik="(";
 							int ii=0;
+							double vlt=0.0;
+							
 							//clip rysunkowy
 							if (crm!=-1||crn!=-1)
 							{
@@ -798,11 +806,21 @@ void Grid::ResizeSubs(float xnsize, float ynsize)
 								while(tknzr.HasMoreTokens())
 								{
 									wxString tkn=tknzr.NextToken();
-									if(tkn.IsNumber())
+									if(tkn!="m" && tkn!="l" && tkn !="b" && tkn != "s" && tkn != "c")
 									{
-										int val=wxAtoi(tkn);
-										val*=(ii%2==0)?xnsize:ynsize;
-										wynik<<val<<" ";
+										wxString lastC;
+										if(tkn.EndsWith("c")){
+											tkn.RemoveLast(1);
+											lastC="c";
+										}
+										if(tkn.ToCDouble(&vlt)){
+											vlt*=(ii%2==0)?xnsize:ynsize;
+											wynik<<getfloat(vlt)<<lastC<<" ";
+										}else{
+											wxLogMessage(_("W linii %i nie można przeskalować wartości '%s'\nw wycinku wektorowym"), i+1, tkn);
+											wynik<<tkn<<lastC<<" ";
+										}
+										
 										ii++;
 									}
 									else
@@ -820,16 +838,19 @@ void Grid::ResizeSubs(float xnsize, float ynsize)
 									wxString tkn=tknzr.NextToken();
 									tkn.Trim();
 									tkn.Trim(false);
-									double vlt;
+									//double vlt;
 
-									if(ii<4&&tkn.ToCDouble(&vlt))
+									if(ii<4 && tkn.ToCDouble(&vlt))
 									{
 										vlt*=(ii%2==0)?xnsize:ynsize;
-										wynik<<getfloatstr(vlt)<<",";
+										wynik<<getfloat(vlt)<<",";
 										ii++;
 									}
 									else
 									{
+										if(ii<4){
+											wxLogMessage(_("W linii %i nie można przeskalować wartości '%s'\nw tagu '\\%s'"), i+1, tkn, onenum.GetMatch(subtxt,1));
+										}
 										wynik<<tkn<<",";
 										ii++;
 									}
@@ -843,17 +864,37 @@ void Grid::ResizeSubs(float xnsize, float ynsize)
 							txt.insert(pos+start,wynik);
 							
 							tdone=true;
-						}
+						}//pozostałe tagi nie zaczynające się od nawiasu
 						else if(crop.ToCDouble(&valtag))
 						{
-							
 							valtag*=val;
 							
 							txt.Remove(pos+start,len);
 							
-							txt.insert(pos+start,getfloatstr((float)valtag));
+							txt.insert(pos+start,getfloat((float)valtag));
 							
 							tdone=true;
+						}else{
+							bool startWithCX = crop.StartsWith("cx");
+							bool startWithCY = crop.StartsWith("cy");
+							bool startWithP = crop.StartsWith("p");
+							if(!startWithCX && !startWithCY && !startWithP){
+								wxLogMessage(_("W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"), i+1, crop, onenum.GetMatch(subtxt,1));
+							}else if((resizeScale==1 && startWithCX) || (resizeScale==2 && startWithCY) || startWithP){
+								float value = (resizeScale==1)? xnsize : (resizeScale==2)? ynsize : val;
+								int restTagChars = (startWithP)? 1 : 2;
+								wxString tag = "fs"+crop.Left(restTagChars);
+								wxString valTxt = crop.Mid(restTagChars);
+								if(valTxt.ToCDouble(&valtag))
+								{
+									valtag*=value;
+									txt.Remove(pos+start+restTagChars,len-restTagChars);
+									txt.insert(pos+start+restTagChars,getfloat((float)valtag));
+									tdone=true;
+								}else{
+									wxLogMessage(_("W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"), i+1, valTxt, tag);
+								}
+							}
 						}
 						pos+=(start+len);
 					}else{break;}
@@ -871,8 +912,10 @@ void Grid::ResizeSubs(float xnsize, float ynsize)
 					wxString draw;
 					size_t brpos=txt.find('}',start+len-1);
 					if(brpos>0){
-						draw=txt.Mid(brpos);
-						start=brpos;}
+						if(brpos+1>=txt.Len()){draw="";}
+						else{draw=txt.Mid(brpos+1);
+							start=brpos+1;}
+						}
 					else{draw=txt.Mid(start+len-1);}
 					int brpos1=draw.Find('{');
 					if(brpos1!=-1){draw=draw.Mid(0,brpos1-1);len=brpos1-1;}else{len=draw.Len();}
@@ -880,15 +923,26 @@ void Grid::ResizeSubs(float xnsize, float ynsize)
 					wxStringTokenizer tknzr(draw," ",wxTOKEN_STRTOK);
 					wxString wynik1;
 					int ii=0;
+					double vlt=0;
 					
 					while(tknzr.HasMoreTokens())
 					{
 						wxString tkn=tknzr.NextToken();
-						if(tkn.IsNumber())
+						if(tkn!="m" && tkn!="l" && tkn !="b" && tkn != "s" && tkn != "c")
 						{
-							int vala=wxAtoi(tkn);
-							vala*=val;
-							wynik1<<vala<<" ";
+							wxString lastC;
+							if(tkn.EndsWith("c")){
+								tkn.RemoveLast(1);
+								lastC="c";
+							}
+							if(tkn.ToCDouble(&vlt)){
+								vlt*=(ii%2==0)?xnsize:ynsize;
+								wynik1<<getfloat(vlt)<<lastC<<" ";
+							}else{
+								wxLogMessage(_("W linii %i nie można przeskalować wartości '%s'\nw rysunku wektorowym"), i+1, tkn);
+								wynik1<<tkn<<lastC<<" ";
+							}
+										
 							ii++;
 						}
 						else

@@ -422,7 +422,6 @@ namespace Auto{
 		LuaDialog dlg(L,true); // magically creates the config dialog structure etc
 		KaiDialog* window = dlg.CreateWindow(this,title_display->GetLabelText());
 		window->ShowModal();
-		window->CenterOnParent();
 		update_timer.Start();
 		// more magic: puts two values on stack: button pushed and table with control results
 

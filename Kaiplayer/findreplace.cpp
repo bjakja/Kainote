@@ -541,7 +541,7 @@ void findreplace::SelectLine()
 	}
 	int fsel=pan->Grid1->FirstSel();
 	int wset=(fsel<0)? pan->Edit->ebrow : fsel;
-	pan->Edit->SetIt(wset);
+	pan->Edit->SetLine(wset);
 	pan->Grid1->SetModified(false);
 	pan->Grid1->RepaintWindow();
 	wxString messagetxt= (sopt==0)? wxString::Format(_("Zaznaczono %i linijek."), allreps) :
@@ -702,7 +702,7 @@ void findreplace::Find()
 
 					pan->Grid1->SelectRow(posrow,false,true);
 					pan->Grid1->ScrollTo(posrow,true);
-					pan->Edit->SetIt(posrow);
+					pan->Edit->SetLine(posrow);
 					if(wrep==STYLE){
 						pan->Edit->StyleChoice->SetFocus();
 					}

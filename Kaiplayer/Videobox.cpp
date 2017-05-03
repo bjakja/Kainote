@@ -119,11 +119,11 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 
 	vslider= new VideoSlider(panel, ID_SLIDER,wxPoint(0,1),wxSize(size.x,14));
 	vslider->VB=this;
-	bprev = new BitmapButton(panel,CreateBitmapFromPngResource("backward"),CreateBitmapFromPngResource("backward1"), ID_BPREV, wxPoint(5,16), wxSize(26,26));
-	bpause = new BitmapButton(panel, CreateBitmapFromPngResource("play"),CreateBitmapFromPngResource("play1"),ID_BPAUSE, wxPoint(40,16), wxSize(26,26));
-	bpline = new BitmapButton(panel, CreateBitmapFromPngResource("playline"), CreateBitmapFromPngResource("playline1"),ID_BPLINE, wxPoint(75,16), wxSize(26,26));
-	bstop = new BitmapButton(panel, CreateBitmapFromPngResource("stop"),CreateBitmapFromPngResource("stop1"),ID_BSTOP, wxPoint(110,16), wxSize(26,26));
-	bnext = new BitmapButton(panel, CreateBitmapFromPngResource("forward"), CreateBitmapFromPngResource("forward1"),ID_BNEXT, wxPoint(145,16), wxSize(26,26));
+	bprev = new BitmapButton(panel,CreateBitmapFromPngResource("backward"),CreateBitmapFromPngResource("backward1"), PreviousVideo, _("Poprzedni plik"), wxPoint(5,16), wxSize(26,26));
+	bpause = new BitmapButton(panel, CreateBitmapFromPngResource("play"),CreateBitmapFromPngResource("play1"),PlayPause, _("Odtwórz / Pauza"), wxPoint(40,16), wxSize(26,26));
+	bpline = new BitmapButton(panel, CreateBitmapFromPngResource("playline"), CreateBitmapFromPngResource("playline1"),PlayActualLine,_("Odtwórz aktywną linię"), wxPoint(75,16), wxSize(26,26), GLOBAL_HOTKEY);
+	bstop = new BitmapButton(panel, CreateBitmapFromPngResource("stop"),CreateBitmapFromPngResource("stop1"), Id::Stop, _("Zatrzymaj"),wxPoint(110,16), wxSize(26,26));
+	bnext = new BitmapButton(panel, CreateBitmapFromPngResource("forward"), CreateBitmapFromPngResource("forward1"),NextVideo,_("Następny plik"), wxPoint(145,16), wxSize(26,26));
 
 	volslider=new VolSlider(panel,ID_VOL,Options.GetInt(VideoVolume),wxPoint(size.x-110,17),wxSize(110,25));
 	mstimes=new KaiTextCtrl(panel,-1,"",wxPoint(180,19),wxSize(360,-1),wxTE_READONLY);
@@ -141,7 +141,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 		Vclips->ChangeTool(evt.GetInt());
 	},ID_MOVE_TOOLBAR_EVENT);
 
-	Connect(ID_BPREV,ID_BPLINE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&VideoCtrl::OnVButton);
+	//Connect(ID_BPREV,ID_BPLINE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&VideoCtrl::OnAccelerator);
 	Connect(ID_VOL,wxEVT_COMMAND_SLIDER_UPDATED,(wxObjectEventFunction)&VideoCtrl::OnVolume);
 
 	vtime.SetOwner(this,idvtime);
@@ -371,6 +371,9 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		ZoomMouseHandle(event);
 		return;
 	}
+
+
+
 	if(Vclips){
 		Vclips->OnMouseEvent(event);if(!hasArrow){SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 		return;
@@ -392,8 +395,6 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		}
 		return;
 	}
-
-
 	if (event.GetWheelRotation() != 0 ) {
 		if(!event.ControlDown() || isFullscreen){ 
 			if(isFullscreen){TD->volslider->OnMouseEvent(event);}
@@ -523,7 +524,12 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 		if(key=='B'){if(GetState()==Playing){Pause();}ShowWindow(Kai->GetHWND(),SW_SHOWMINNOACTIVE);}
 	}
 	else if(key=='S'&&event.m_controlDown){Kai->Save(false);}
-	else if(key==WXK_RETURN && isFullscreen && TD){bool panelIsShown = TD->panel->IsShown(); TD->panel->Show(!panelIsShown);}
+	else if(key==WXK_RETURN && hasZoom){
+		SetZoom();
+	}
+	else if(key=='Z' && event.ControlDown() && event.ShiftDown()){
+		ResetZoom();
+	}
 	else if(event.ControlDown() && key=='A' && Vclips && (Vclips->Visual == VECTORCLIP || Vclips->Visual == VECTORDRAW)){
 		((DrawingAndClip*)Vclips)->ChangeSelection(true);
 		Render(false);
@@ -705,22 +711,26 @@ void VideoCtrl::OnNext()
 	NextFile();
 }
 
-void VideoCtrl::OnVButton(wxCommandEvent& event)
-{
-	int id=event.GetId();
-	if(id==ID_BPAUSE){Pause();}
-	else if(id==ID_BSTOP){
-		if(!Kai->GetTab()->edytor){Stop();}
-		else{if(GetState()==Playing){Pause();}Seek(0);}
-	}
-	else if(id==ID_BPREV){OnPrew();}
-	else if(id==ID_BNEXT){OnNext();}
-	else if(id==ID_BPLINE){
-		EditBox *EB = Notebook::GetTab()->Edit;
-		EB->TextEdit->SetFocus();
-		PlayLine(EB->line->Start.mstime,EB->line->End.mstime - avtpf);
-	}
-}
+//void VideoCtrl::OnVButton(wxCommandEvent& event)
+//{
+//	int id=event.GetId();
+//	wxLogStatus("id %i", id);
+//	if(id==ID_BPAUSE){Pause();}
+//	else if(id==ID_BSTOP){
+//		if(!Kai->GetTab()->edytor){Stop();}
+//		else{
+//			if(GetState()==Playing){Pause();}
+//			if(IsDshow){Seek(0);}
+//		}
+//	}
+//	else if(id==ID_BPREV){OnPrew();}
+//	else if(id==ID_BNEXT){OnNext();}
+//	else if(id==ID_BPLINE){
+//		EditBox *EB = Notebook::GetTab()->Edit;
+//		EB->TextEdit->SetFocus();
+//		PlayLine(EB->line->Start.mstime,EB->line->End.mstime - avtpf);
+//	}
+//}
 
 void VideoCtrl::OnVolume(wxScrollEvent& event)
 {
@@ -741,7 +751,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 		menu->SetAccMenu(CopyCoords,_("Kopiuj pozycję na wideo"));
 	}
 	menu->Append(PlayPause,txt)->Enable(GetState()!=None);
-	menu->SetAccMenu(Id::Stop,_("Stop"))->Enable(GetState()==Playing);
+	menu->SetAccMenu(Id::Stop,_("Zatrzymaj"))->Enable(GetState()==Playing);
 	wxString txt1;
 	if(!isFullscreen){txt1=_("Pełny ekran\tF");}
 	else{txt1=_("Wyłącz pełny ekran\tEscape");}
@@ -781,7 +791,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 	menu->SetAccMenu(SubbedFrameToPNG,_("Zapisz klatkę z napisami jako PNG"))->Enable(GetState()==Paused);
 	menu->SetAccMenu(SubbedFrameToClipboard,_("Kopiuj klatkę z napisami do schowka"))->Enable(GetState()==Paused);
 	menu->SetAccMenu(FrameToPNG,_("Zapisz klatkę jako PNG"))->Enable(GetState()==Paused && ((TabPanel*)GetParent())->edytor);
-	menu->SetAccMenu(FrameToClipboard,_("Zapisz klatkę do schowka"))->Enable(GetState()==Paused && ((TabPanel*)GetParent())->edytor);
+	menu->SetAccMenu(FrameToClipboard,_("Kopiuj klatkę do schowka"))->Enable(GetState()==Paused && ((TabPanel*)GetParent())->edytor);
 	menu->AppendSeparator();
 
 	menu->SetAccMenu(DeleteVideo,_("Usuń plik wideo"))->Enable(GetState()!=None);
@@ -953,7 +963,12 @@ void VideoCtrl::OnAccelerator(wxCommandEvent& event)
 	else if(id==CopyCoords){wxPoint pos=wxGetMousePosition();pos=ScreenToClient(pos);OnCopyCoords(pos);}
 	else if(id==Id::Stop){
 		if(!Kai->GetTab()->edytor){Stop();}
-		else{if(GetState()==Playing){Pause();Seek(0);}}
+		else{
+			if(GetState()==Playing){
+				Pause();
+			}
+			if(IsDshow){Seek(0);}
+		}
 	}
 	else if(id==FullScreen){SetFullskreen();}
 	else if(id==Editor){OpenEditor();}

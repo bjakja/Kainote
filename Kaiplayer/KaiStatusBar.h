@@ -29,17 +29,21 @@ public:
 	wxString GetStatusText(size_t field) const;
 	void SetLabelTextColour(size_t field, const wxColour &textColour);
 	void SetLabelBackgroundColour(size_t field, const wxColour &backgroundColour);
+	void SetTooltips(wxString *tips, int count);
 
 private:
 	void OnSize(wxSizeEvent& event);
 	void OnPaint(wxPaintEvent& event);
+	void OnMouseMove(wxMouseEvent &evt);
 	void CalcWidths(wxArrayInt *widths);
 	bool AcceptsFocus( ) const{return false;}
 	bool AcceptsFocusFromKeyboard () const {return false;}
 	bool AcceptsFocusRecursively () const{return false;}
 	wxBitmap *bmp;
+	wxString tip;
 	wxArrayInt sizes;
 	wxArrayString labels;
+	wxArrayString tips;
 	std::vector<wxColour> foreground;
 	std::vector<wxColour> background;
 };

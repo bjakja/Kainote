@@ -510,7 +510,7 @@ namespace Auto{
 		ms->Add(s, 0, wxALL, 5);
 		ms->Add(bs, 0, wxALIGN_CENTER|wxLEFT|wxRIGHT|wxBOTTOM, 5);
 		window->SetSizerAndFit(ms);
-
+		window->CenterOnParent();
 		return window;
 	}
 

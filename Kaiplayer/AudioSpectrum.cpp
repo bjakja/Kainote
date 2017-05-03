@@ -68,7 +68,7 @@ public:
 		if (i >= start && i-start < length)
 			return data[(i-start) + overlap*length];
 		else{
-			wxLogStatus("Getline null %i %i %i",i, start, (i-start));
+			//wxLogStatus("Getline null %i %i %i",i, start, (i-start));
 			return null_line;}
 	}
 
@@ -282,7 +282,6 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 			if (maxband - minband > imgheight) {
 				// more than one frequency sample per pixel (vertically compress data)
 				// pick the largest value per pixel for display
-			//wxLogStatus("bef last loop i %i , last line %i", x, next_line_imgcol);
 				// Iterate over pixels, picking a range of samples for each
 				for (int y = 0; y < imgheight; ++y) {
 					int sample1 = MAX(0,maxband * y/imgheight + minband);

@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stylestore.h"
+#include "StyleStore.h"
 #include "kainoteMain.h"
 
 #include "config.h"
@@ -30,24 +30,16 @@
 #include "FontEnumerator.h"
 
 
-stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
-	: KaiDialog(parent,id,_("Menedżer stylów"),pos,wxSize(400,-1),wxDEFAULT_DIALOG_STYLE)
+StyleStore::StyleStore(wxWindow* parent,const wxPoint& pos)
+	: KaiDialog(parent,-1,_("Menedżer stylów"),pos,wxSize(400,-1),wxDEFAULT_DIALOG_STYLE)
+	,stayOnTop(false)
 {
-	
-	//wxAcceleratorEntry centries[1];
-	//centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, ID_CONF);
-	//wxAcceleratorTable caccel(1, centries);
-	//this->SetAcceleratorTable(caccel);
-
-	//wxFont thisFont(8,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
-	//SetFont(thisFont);
-
+	bool isDetached = detachedEtit = Options.GetBool(StyleManagerDetachEditor);
 	wxIcon icn;
 	icn.CopyFromBitmap(wxBITMAP_PNG("styles"));
 	SetIcon(icn);
 
-	cc=new ColorChange(this,-1);
-	cc->SS=this;
+	cc=new StyleChange(this,!isDetached);
 	cc->Hide();
 
 	SetForegroundColour(Options.GetColour(WindowText));
@@ -72,7 +64,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	wxBoxSizer *katbutt=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *katall=new wxBoxSizer(wxHORIZONTAL);
 
-	Store = new StyleList(this, ID_STORESTYLES, &Options.assstore, cc->sfont, wxDefaultPosition, wxSize(-1,520));
+	Store = new StyleList(this, ID_STORESTYLES, &Options.assstore, wxDefaultPosition, wxSize(-1,520));
 
 	storeNew = new MappedButton(this, ID_STORENEW, _("Nowy")/*, 0, wxDefaultPosition, wxSize(-1,34)*/);
 	storeCopy = new MappedButton(this, ID_STORECOPY, _("Kopiuj"));
@@ -103,7 +95,7 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	wxBoxSizer *assbutt=new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *assall=new wxBoxSizer(wxHORIZONTAL);
 
-	ASS = new StyleList(this, ID_ASSSTYLES, Notebook::GetTab()->Grid1->GetStyleTable(), cc->sfont, wxDefaultPosition, wxSize(-1,520));
+	ASS = new StyleList(this, ID_ASSSTYLES, Notebook::GetTab()->Grid1->GetStyleTable(), wxDefaultPosition, wxSize(-1,520));
 
 
 	assNew = new MappedButton(this, ID_ASSNEW, _("Nowy"));
@@ -124,46 +116,54 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	assall->Add(assbutt,1,wxEXPAND);
 
 	asssbs->Add(assall,1,wxEXPAND|wxALL,2);
-
+	wxBoxSizer * buttons = new wxBoxSizer(wxHORIZONTAL);
 	close = new MappedButton(this, ID_CLOSE, _("Zamknij"));
+	detachEnable = new ToggleButton(this,ID_DETACH,_("Odepnij okno edycji"));
+	detachEnable->SetValue(isDetached);
+	buttons->Add(close,0,wxRIGHT,2);
+	buttons->Add(detachEnable,0,wxLEFT,2);
 
 	Mainsm->Add(katsbs,0,wxEXPAND|wxALL,2);
 	Mainsm->Add(katsbs1,1,wxEXPAND|wxALL,2);
 	Mainsm->Add(butts,0,wxEXPAND|wxALL,2);
 	Mainsm->Add(asssbs,1,wxEXPAND|wxALL,2);
-	Mainsm->Add(close,0,wxALIGN_CENTER|wxALL,4);
+	Mainsm->Add(buttons,0,wxALIGN_CENTER|wxALL,4);
 
 
 
 	Mainall->Add(Mainsm,0,wxEXPAND);
-	Mainall->Add(cc,0,wxEXPAND);
-	wxSize bs = wxSize(-1,cc->GetBestSize().y+29);
-	Mainall->SetMinSize(bs);
+	if(!isDetached){
+		Mainall->Add(cc,0,wxEXPAND);
+		wxSize bs = wxSize(-1,cc->GetBestSize().y+29);
+		Mainall->SetMinSize(bs);
+	}
+	SetEscapeId(ID_CLOSE);
 	
 	SetSizerAndFit(Mainall);
 
-	Connect(ID_ASSSTYLES,wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,(wxObjectEventFunction)&stylestore::OnAssStyleChange);
-	Connect(ID_ASSSTYLES,wxEVT_COMMAND_LISTBOX_SELECTED,(wxObjectEventFunction)&stylestore::OnSwitchLines);
-	Connect(ID_STORESTYLES,wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,(wxObjectEventFunction)&stylestore::OnStoreStyleChange);
-	Connect(ID_ADDTOSTORE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnAddToStore);
-	Connect(ID_ADDTOASS,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnAddToAss);
-	Connect(ID_STORENEW,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnStoreNew);
-	Connect(ID_ASSNEW,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnAssNew);
-	Connect(ID_CATALOG,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&stylestore::OnChangeCatalog);
-	Connect(ID_NEWCAT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnNewCatalog);
-	Connect(ID_DELCAT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnDelCatalog);
-	Connect(ID_STORECOPY,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnStoreCopy);
-	Connect(ID_STORELOAD,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnStoreLoad);
-	Connect(ID_STOREDEL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnStoreDelete);
-	Connect(ID_STORESORT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnStoreSort);
-	Connect(ID_ASSCOPY,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnAssCopy);
-	Connect(ID_ASSLOAD,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnAssLoad);
-	Connect(ID_ASSDEL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnAssDelete);
-	Connect(ID_ASSSORT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnAssSort);
-	Connect(ID_ASSCLEAN,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnCleanStyles);
-	Connect(ID_CONF,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnConfirm);
-	Connect(ID_CLOSE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&stylestore::OnClose);
-	Connect(wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&stylestore::OnClose);
+	Connect(ID_ASSSTYLES,wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,(wxObjectEventFunction)&StyleStore::OnAssStyleChange);
+	Connect(ID_ASSSTYLES,wxEVT_COMMAND_LISTBOX_SELECTED,(wxObjectEventFunction)&StyleStore::OnSwitchLines);
+	Connect(ID_STORESTYLES,wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,(wxObjectEventFunction)&StyleStore::OnStoreStyleChange);
+	Connect(ID_ADDTOSTORE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnAddToStore);
+	Connect(ID_ADDTOASS,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnAddToAss);
+	Connect(ID_STORENEW,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnStoreNew);
+	Connect(ID_ASSNEW,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnAssNew);
+	Connect(ID_CATALOG,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&StyleStore::OnChangeCatalog);
+	Connect(ID_NEWCAT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnNewCatalog);
+	Connect(ID_DELCAT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnDelCatalog);
+	Connect(ID_STORECOPY,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnStoreCopy);
+	Connect(ID_STORELOAD,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnStoreLoad);
+	Connect(ID_STOREDEL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnStoreDelete);
+	Connect(ID_STORESORT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnStoreSort);
+	Connect(ID_ASSCOPY,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnAssCopy);
+	Connect(ID_ASSLOAD,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnAssLoad);
+	Connect(ID_ASSDEL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnAssDelete);
+	Connect(ID_ASSSORT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnAssSort);
+	Connect(ID_ASSCLEAN,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnCleanStyles);
+	Connect(ID_CONF,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnConfirm);
+	Connect(ID_CLOSE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnClose);
+	Connect(ID_DETACH,wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,(wxObjectEventFunction)&StyleStore::OnDetachEdit);
+	//Connect(wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&StyleStore::OnClose);
 
 
 	DoTooltips();
@@ -171,17 +171,17 @@ stylestore::stylestore(wxWindow* parent,wxWindowID id,const wxPoint& pos,const w
 	//SetMaxSize(wxSize(500,-1));
 }
 
-stylestore::~stylestore()
+StyleStore::~StyleStore()
 {
 }
 
-void stylestore::OnSwitchLines(wxCommandEvent& event)
+void StyleStore::OnSwitchLines(wxCommandEvent& event)
 {
 	Notebook::GetTab()->Edit->RefreshStyle();
 }
 
 
-void stylestore::OnAssStyleChange(wxCommandEvent& event)
+void StyleStore::OnAssStyleChange(wxCommandEvent& event)
 {
 	wxArrayInt selects;
 	int kkk=ASS->GetSelections(selects);
@@ -192,7 +192,7 @@ void stylestore::OnAssStyleChange(wxCommandEvent& event)
 	StylesWindow();
 	//modif();
 }
-void stylestore::OnStoreStyleChange(wxCommandEvent& event)
+void StyleStore::OnStoreStyleChange(wxCommandEvent& event)
 {
 	wxArrayInt selects;
 	int kkk= Store->GetSelections(selects);
@@ -204,7 +204,7 @@ void stylestore::OnStoreStyleChange(wxCommandEvent& event)
 	//modif();
 }
 
-void stylestore::OnAddToStore(wxCommandEvent& event)
+void StyleStore::OnAddToStore(wxCommandEvent& event)
 {
 	Grid* grid=Notebook::GetTab()->Grid1;
 	wxArrayInt sels;
@@ -230,7 +230,7 @@ void stylestore::OnAddToStore(wxCommandEvent& event)
 	//modif();
 }
 
-void stylestore::OnAddToAss(wxCommandEvent& event)
+void StyleStore::OnAddToAss(wxCommandEvent& event)
 {
 	//wxMutexLocker lock(mutex);
 	Grid* grid=Notebook::GetTab()->Grid1;
@@ -256,7 +256,7 @@ void stylestore::OnAddToAss(wxCommandEvent& event)
 	modif();
 }
 
-void stylestore::OnStoreDelete(wxCommandEvent& event)
+void StyleStore::OnStoreDelete(wxCommandEvent& event)
 {
 	wxArrayInt sels;
 	int kkk=Store->GetSelections(sels);
@@ -269,7 +269,7 @@ void stylestore::OnStoreDelete(wxCommandEvent& event)
 	//modif();
 }
 
-void stylestore::OnAssDelete(wxCommandEvent& event)
+void StyleStore::OnAssDelete(wxCommandEvent& event)
 {
 	Grid* grid=Notebook::GetTab()->Grid1;
 	wxArrayInt sels;
@@ -284,7 +284,7 @@ void stylestore::OnAssDelete(wxCommandEvent& event)
 	modif();
 }
 
-void stylestore::StylesWindow(wxString newname)
+void StyleStore::StylesWindow(wxString newname)
 {
 	Grid* grid=Notebook::GetTab()->Grid1;
 	Styles *tab=NULL;
@@ -294,11 +294,11 @@ void stylestore::StylesWindow(wxString newname)
 	if(newname!=""){tab->Name=newname;}
 	oldname=tab->Name;
 	cc->UpdateValues(tab);
-	Mainall->Fit(this);
+	if(!detachedEtit){Mainall->Fit(this);}
 
 }
 
-void stylestore::changestyle(Styles *cstyl)
+void StyleStore::changestyle(Styles *cstyl)
 {
 	Update();
 	Grid* grid=Notebook::GetTab()->Grid1;
@@ -351,7 +351,7 @@ void stylestore::changestyle(Styles *cstyl)
 	modif();
 }
 
-void stylestore::OnChangeCatalog(wxCommandEvent& event)
+void StyleStore::OnChangeCatalog(wxCommandEvent& event)
 {
 	Options.SaveOptions(false);
 	Options.LoadStyles(catalogList->GetString(catalogList->GetSelection()));
@@ -359,7 +359,7 @@ void stylestore::OnChangeCatalog(wxCommandEvent& event)
 	Store->SetSelection(0,true);
 }
 
-void stylestore::OnNewCatalog(wxCommandEvent& event)
+void StyleStore::OnNewCatalog(wxCommandEvent& event)
 {
 	NewCatalog nc(this);
 	if(nc.ShowModal()==wxID_OK){
@@ -372,7 +372,7 @@ void stylestore::OnNewCatalog(wxCommandEvent& event)
 	}
 }
 
-void stylestore::OnDelCatalog(wxCommandEvent& event)
+void StyleStore::OnDelCatalog(wxCommandEvent& event)
 {
 	int cat=catalogList->GetSelection();
 	if(cat==-1){return;}
@@ -389,12 +389,12 @@ void stylestore::OnDelCatalog(wxCommandEvent& event)
 	Store->Refresh(false);
 }
 
-void stylestore::OnStoreLoad(wxCommandEvent& event)
+void StyleStore::OnStoreLoad(wxCommandEvent& event)
 {
 	LoadStylesS(false);
 }
 
-void stylestore::OnAssSort(wxCommandEvent& event)
+void StyleStore::OnAssSort(wxCommandEvent& event)
 {
 	Grid* grid=Notebook::GetTab()->Grid1;
 	std::sort(grid->GetStyleTable()->begin(), grid->GetStyleTable()->end(),sortfunc);
@@ -403,12 +403,12 @@ void stylestore::OnAssSort(wxCommandEvent& event)
 	modif();
 }
 
-void stylestore::OnAssLoad(wxCommandEvent& event)
+void StyleStore::OnAssLoad(wxCommandEvent& event)
 {
 	LoadStylesS(true);
 }
 
-void stylestore::OnStoreSort(wxCommandEvent& event)
+void StyleStore::OnStoreSort(wxCommandEvent& event)
 {
 	Options.Sortstyles();
 	Store->SetSelection(0,true);
@@ -416,7 +416,7 @@ void stylestore::OnStoreSort(wxCommandEvent& event)
 	//modif();
 }
 
-void stylestore::LoadStylesS(bool isass)
+void StyleStore::LoadStylesS(bool isass)
 {
 	Grid* grid=Notebook::GetTab()->Grid1;
 	wxFileDialog *openFileDialog= new wxFileDialog(this, _("Wybierz plik ASS"), 
@@ -479,7 +479,7 @@ void stylestore::LoadStylesS(bool isass)
 	if(isass){modif();}
 }
 
-void stylestore::OnAssCopy(wxCommandEvent& event)
+void StyleStore::OnAssCopy(wxCommandEvent& event)
 {
 	Grid* grid=Notebook::GetTab()->Grid1;
 	wxArrayInt selects;
@@ -492,7 +492,7 @@ void stylestore::OnAssCopy(wxCommandEvent& event)
 	StylesWindow(_("Kopia ")+kstyle->Name);
 	modif();
 }
-void stylestore::OnStoreCopy(wxCommandEvent& event)
+void StyleStore::OnStoreCopy(wxCommandEvent& event)
 {
 	wxArrayInt selects;
 	int kkk=Store->GetSelections(selects);
@@ -505,7 +505,7 @@ void stylestore::OnStoreCopy(wxCommandEvent& event)
 	//modif();
 }
 
-void stylestore::OnStoreNew(wxCommandEvent& event)
+void StyleStore::OnStoreNew(wxCommandEvent& event)
 {
 	bool gname=true;
 	int count=0;
@@ -520,7 +520,7 @@ void stylestore::OnStoreNew(wxCommandEvent& event)
 	//modif();
 }
 
-void stylestore::OnAssNew(wxCommandEvent& event)
+void StyleStore::OnAssNew(wxCommandEvent& event)
 {
 	//Styles nstyle=Styles();
 	bool gname=true;
@@ -537,7 +537,7 @@ void stylestore::OnAssNew(wxCommandEvent& event)
 	modif();
 }
 
-void stylestore::OnCleanStyles(wxCommandEvent& event)
+void StyleStore::OnCleanStyles(wxCommandEvent& event)
 {
 	std::map<wxString, bool> lineStyles;
 	wxString delStyles;
@@ -570,7 +570,7 @@ void stylestore::OnCleanStyles(wxCommandEvent& event)
 	KaiMessageBox(wxString::Format(_("Używane style:\n%s\nUsunięte style:\n%s"), existsStyles, delStyles), _("Status usuniętych stylów"));
 }
 
-void stylestore::StyleonVideo(Styles *styl, bool fullskreen)
+void StyleStore::StyleonVideo(Styles *styl, bool fullskreen)
 {
 	TabPanel* pan=Notebook::GetTab();
 	Grid *grid=pan->Grid1;
@@ -592,7 +592,10 @@ void stylestore::StyleonVideo(Styles *styl, bool fullskreen)
 			Dialogue *dial=grid->GetDial(i);
 			if(!dial->IsComment && (dial->Text!=""||dial->TextTl!="") && dial->Style==styl->Name){
 				if(time>=dial->Start.mstime && time <= dial->End.mstime){
-					pan->Edit->SetIt(i);grid->SelectRow(i);grid->ScrollTo(i-4);wl=i;ip=-1;idr=-1;
+					pan->Edit->SetLine(i);
+					grid->SelectRow(i);
+					grid->ScrollTo(i-4);
+					wl=i;ip=-1;idr=-1;
 					break;
 				}
 				if(dial->Start.mstime > prevtime && dial->Start.mstime<time){prevtime = dial->Start.mstime;ip=i;}
@@ -600,8 +603,18 @@ void stylestore::StyleonVideo(Styles *styl, bool fullskreen)
 			}
 
 		}
-		if(ip>=0){pan->Edit->SetIt(ip);grid->SelectRow(ip);grid->ScrollTo(ip-4);wl=ip;}
-		else if(idr>=0){pan->Edit->SetIt(idr);grid->SelectRow(idr);grid->ScrollTo(idr-4);wl=idr;}
+		if(ip>=0){
+			pan->Edit->SetLine(ip);
+			grid->SelectRow(ip);
+			grid->ScrollTo(ip-4);
+			wl=ip;
+		}
+		else if(idr>=0){
+			pan->Edit->SetLine(idr);
+			grid->SelectRow(idr);
+			grid->ScrollTo(idr-4);
+			wl=idr;
+		}
 
 		//wxString kkk;
 		//KaiMessageBox(kkk<<"ip "<<ip<<"idr "<<idr);
@@ -629,8 +642,11 @@ void stylestore::StyleonVideo(Styles *styl, bool fullskreen)
 	}
 	//grid->SaveFile(Kai->GetTab()->tnppath,false);
 	pan->Video->OpenSubs(txt);
-	if(fullskreen&&!pan->Video->isFullscreen){pan->Video->SetFullskreen();this->SetWindowStyle(wxSTAY_ON_TOP|wxDEFAULT_DIALOG_STYLE);}
-	if(!fullskreen&&pan->Video->isFullscreen){pan->Video->SetFullskreen();this->SetWindowStyle(wxDEFAULT_DIALOG_STYLE);}
+	if(fullskreen&&!pan->Video->isFullscreen){
+		pan->Video->SetFullskreen();
+		this->SetWindowStyle(GetWindowStyle()|wxSTAY_ON_TOP);
+	}
+	//if(!fullskreen&&pan->Video->isFullscreen){pan->Video->SetFullskreen();this->SetWindowStyle(GetWindowStyle()|~wxSTAY_ON_TOP);}
 	if(wl>=0){
 		pan->Video->Seek(grid->GetDial(wl)->Start.mstime+5);
 	}else{
@@ -641,7 +657,7 @@ void stylestore::StyleonVideo(Styles *styl, bool fullskreen)
 
 
 
-void stylestore::DoTooltips()
+void StyleStore::DoTooltips()
 {
 	catalogList->SetToolTip(_("Katalog styli"));
 	newCatalog->SetToolTip(_("Nowy katalog styli"));
@@ -662,7 +678,7 @@ void stylestore::DoTooltips()
 	SClean->SetToolTip(_("Oczyść napisy z nieużywanych stylów"));
 }
 
-void stylestore::OnConfirm(wxCommandEvent& event)
+void StyleStore::OnConfirm(wxCommandEvent& event)
 {
 
 	if(cc->IsShown())
@@ -670,16 +686,22 @@ void stylestore::OnConfirm(wxCommandEvent& event)
 	else{modif();OnClose(event);}
 }
 
-void stylestore::OnClose(wxCommandEvent& event)
+void StyleStore::OnClose(wxCommandEvent& event)
 {
 	Options.SaveOptions(false);
 	int ww,hh;
 	GetPosition(&ww,&hh);
 	Options.SetCoords(StyleManagerPosition,ww,hh);
+	/*if(stayOnTop){
+		TabPanel* pan=Notebook::GetTab();
+		this->Reparent(pan->GetParent());
+		stayOnTop=false;
+	}*/
 	Hide();
+	if(detachedEtit){cc->Show(false);}
 }
 
-void stylestore::modif()
+void StyleStore::modif()
 {
 	Grid* grid=Notebook::GetTab()->Grid1;
 	Notebook::GetTab()->Edit->RefreshStyle();
@@ -688,7 +710,7 @@ void stylestore::modif()
 	ASS->SetArray(grid->GetStyleTable());
 }
 
-void stylestore::LoadAssStyles()
+void StyleStore::LoadAssStyles()
 {
 	Grid* grid=Notebook::GetTab()->Grid1;
 	if (grid->StylesSize()<1){
@@ -705,7 +727,7 @@ void stylestore::LoadAssStyles()
 
 }
 
-void stylestore::ReloadFonts()
+void StyleStore::ReloadFonts()
 {
 	wxArrayString *fontList = FontEnum.GetFonts(0,[](){});
 	cc->sfont->PutArray(fontList);
@@ -714,7 +736,7 @@ void stylestore::ReloadFonts()
 	wxLogStatus(_("Czcionki zaczytane ponownie."));
 }
 
-bool stylestore::SetForegroundColour(const wxColour &col)
+bool StyleStore::SetForegroundColour(const wxColour &col)
 {
 	wxWindow::SetForegroundColour(col);
 	//wxWindow::Refresh();
@@ -722,10 +744,100 @@ bool stylestore::SetForegroundColour(const wxColour &col)
 	return true;
 }
 
-bool stylestore::SetBackgroundColour(const wxColour &col)
+bool StyleStore::SetBackgroundColour(const wxColour &col)
 {
 	wxWindow::SetBackgroundColour(col);
 	//wxWindow::Refresh();
 	if(cc){cc->SetBackgroundColour(col);}
 	return true;
+}
+
+void StyleStore::OnDetachEdit(wxCommandEvent& event)
+{
+	bool detach = detachEnable->GetValue();
+	bool show = cc->IsShown();
+	if(detachedEtit && !detach){
+		cc->Destroy();
+		cc = new StyleChange(this);
+		if(show){StylesWindow();}
+		else{cc->Show(false);}
+		Mainall->Add(SS->cc,0,wxEXPAND);
+		wxSize bs = wxSize(-1,cc->GetBestSize().y+29);
+		Mainall->SetMinSize(bs);
+		detachedEtit=false;
+	}else if(!detachedEtit && detach){
+		Mainall->Detach(cc);
+		cc->Destroy();
+		cc = new StyleChange(this,false);
+		//Mainall->Fit(this);
+		if(show){StylesWindow();}
+		else{cc->Show(false);}
+		detachedEtit=true;
+	}
+	Mainall->Fit(this);
+	Options.SetBool(StyleManagerDetachEditor,detach);
+}
+
+StyleStore *StyleStore::SS =NULL;
+
+void StyleStore::ShowStore()
+{
+	StyleStore *SS = Get();
+	bool detach = Options.GetBool(StyleManagerDetachEditor);
+	/*if(SS->stayOnTop){
+		TabPanel* pan=Notebook::GetTab();
+		SS->Reparent(pan);
+		SS->stayOnTop=false;
+	}*/
+	if(SS->detachedEtit && !detach){
+		SS->cc->Destroy();
+		SS->cc = new StyleChange(SS);
+		SS->cc->Show(false);
+		SS->Mainall->Add(SS->cc,0,wxEXPAND);
+		wxSize bs = wxSize(-1,SS->cc->GetBestSize().y+29);
+		SS->Mainall->SetMinSize(bs);
+		SS->Mainall->Fit(SS);
+		SS->detachedEtit=false;
+	}else if(!SS->detachedEtit && detach){
+		SS->Mainall->Detach(SS->cc);
+		SS->cc->Destroy();
+		SS->cc = new StyleChange(SS,false);
+		SS->cc->Show(false);
+		SS->Mainall->Fit(SS);
+		SS->detachedEtit=true;
+	}
+	SS->Store->Refresh(false);
+	int chc=SS->catalogList->FindString(Options.acdir);
+	SS->catalogList->SetSelection(chc);
+	SS->LoadAssStyles();
+	SS->Show();
+}
+		
+void StyleStore::ShowStyleEdit()
+{
+	StyleStore *SS = Get();
+	if(!SS->detachedEtit){
+		SS->Mainall->Detach(SS->cc);
+		SS->cc->Destroy();
+		SS->cc = new StyleChange(SS,false);
+		SS->detachedEtit=true;
+	}
+	SS->cc->Show();
+	SS->LoadAssStyles();
+
+}
+
+StyleStore *StyleStore::Get()
+{
+	if(!SS){
+		int ww,hh;
+		Options.GetCoords(StyleManagerPosition,&ww,&hh);
+		SS = new StyleStore(Notebook::GetTabs()->GetParent(), wxPoint(ww,hh));
+	}
+	return SS;
+}
+
+void StyleStore::DestroyStore()
+{
+	if(SS){delete SS; SS=NULL;}
 }

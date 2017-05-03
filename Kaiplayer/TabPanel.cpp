@@ -36,7 +36,7 @@ TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const
     Grid1 = new Grid(this,kai,-1,wxDefaultPosition,wxSize(400,200),wxBORDER_SIMPLE|wxWANTS_CHARS);//
     Edit = new EditBox(this, Grid1, kai, -1);
 	Edit->SetMinSize(wxSize(-1,200));
-	Edit->SetIt(0);
+	Edit->SetLine(0);
 	
 	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
     CTime= new CTwindow(this,kai,-1,wxDefaultPosition,wxDefaultSize,wxBORDER_SIMPLE);

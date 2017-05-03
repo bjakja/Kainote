@@ -23,20 +23,20 @@
 class BitmapButton : public wxStaticBitmap
 {
 public:
-	BitmapButton(wxWindow* parent, wxBitmap bitmap,wxBitmap bitmap1, int id, const wxPoint& pos, const wxSize& size);
+	BitmapButton(wxWindow* parent, wxBitmap bitmap,wxBitmap bitmap1, int hotkeyId, const wxString &tooltip, const wxPoint& pos, const wxSize& size, int window = 'W');
     virtual ~BitmapButton();
 	void ChangeBitmap(bool play);
 
 private:
 	wxBitmap bmp;
 	wxBitmap bmp1;
-	int idd;
 	wxImage img;
 	bool enter;
 	void OnLeftDown(wxMouseEvent& event);
-	
-
-	//DECLARE_EVENT_TABLE()
+	void SetToolTip(const wxString &_toolTip="");
+	wxString name;
+	int window;
+	int hotkeyId;
 };
 
 #endif

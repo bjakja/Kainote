@@ -187,17 +187,21 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 	wxBitmap scrollArrow = wxBITMAP_PNG("arrow_list");
 	wxBitmap scrollArrowPushed = wxBITMAP_PNG("arrow_list_pushed");
 	if(isVertical){
-		tdc.SetPen(wxPen(scroll));
-		tdc.SetBrush(wxBrush(scroll));
-		tdc.DrawRectangle(2, thumbPos, 13, thumbSize);
+		if(h> thumbSize+26){
+			tdc.SetPen(wxPen(scroll));
+			tdc.SetBrush(wxBrush(scroll));
+			tdc.DrawRectangle(2, thumbPos, 13, thumbSize);
+		}
 		wxImage img = (holding && element & ELEMENT_BUTTON_TOP)? scrollArrowPushed.ConvertToImage() : scrollArrow.ConvertToImage();
 		img = img.Rotate180();
 		tdc.DrawBitmap(wxBitmap(img), 3, 3);
 		tdc.DrawBitmap((holding && element & ELEMENT_BUTTON_BOTTOM)? scrollArrowPushed : scrollArrow, 3, h-13);
 	}else{
-		tdc.SetPen(wxPen(scroll));
-		tdc.SetBrush(wxBrush(scroll));
-		tdc.DrawRectangle(thumbPos, 2, thumbSize, 13);
+		if(w> thumbSize+26){
+			tdc.SetPen(wxPen(scroll));
+			tdc.SetBrush(wxBrush(scroll));
+			tdc.DrawRectangle(thumbPos, 2, thumbSize, 13);
+		}
 		wxImage img = (holding && element & ELEMENT_BUTTON_TOP)? scrollArrowPushed.ConvertToImage() : scrollArrow.ConvertToImage();
 		img = img.Rotate90();
 		tdc.DrawBitmap(wxBitmap(img), 3, 3);

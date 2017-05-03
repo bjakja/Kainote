@@ -40,7 +40,7 @@ MTextEditor::MTextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& p
 	scPos=0;
 	//SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	SetCursor(wxCURSOR_IBEAM);
-	wxAcceleratorEntry entries[29];
+	wxAcceleratorEntry entries[39];
 	entries[0].Set(wxACCEL_NORMAL, WXK_DELETE,ID_DEL);
 	entries[1].Set(wxACCEL_NORMAL, WXK_BACK,ID_BACK);
 	entries[2].Set(wxACCEL_CTRL, WXK_BACK,ID_CBACK);
@@ -70,10 +70,25 @@ MTextEditor::MTextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& p
 	entries[26].Set(wxACCEL_NORMAL, WXK_PAGEDOWN,ID_PDOWN);
 	entries[27].Set(wxACCEL_NORMAL, WXK_PAGEUP,ID_PUP);
 	entries[28].Set(wxACCEL_SHIFT|wxACCEL_CTRL, WXK_END,ID_CSEND);
-	wxAcceleratorTable accel(29, entries);
+	entries[29].Set(wxACCEL_NORMAL, WXK_NUMPAD0,WXK_NUMPAD0+10000);
+	entries[30].Set(wxACCEL_NORMAL, WXK_NUMPAD1,WXK_NUMPAD1+10000);
+	entries[31].Set(wxACCEL_NORMAL, WXK_NUMPAD2,WXK_NUMPAD2+10000);
+	entries[32].Set(wxACCEL_NORMAL, WXK_NUMPAD3,WXK_NUMPAD3+10000);
+	entries[33].Set(wxACCEL_NORMAL, WXK_NUMPAD4,WXK_NUMPAD4+10000);
+	entries[34].Set(wxACCEL_NORMAL, WXK_NUMPAD5,WXK_NUMPAD5+10000);
+	entries[35].Set(wxACCEL_NORMAL, WXK_NUMPAD6,WXK_NUMPAD6+10000);
+	entries[36].Set(wxACCEL_NORMAL, WXK_NUMPAD7,WXK_NUMPAD7+10000);
+	entries[37].Set(wxACCEL_NORMAL, WXK_NUMPAD8,WXK_NUMPAD8+10000);
+	entries[38].Set(wxACCEL_NORMAL, WXK_NUMPAD9,WXK_NUMPAD9+10000);
+	wxAcceleratorTable accel(39, entries);
 	SetAcceleratorTable(accel);
 	Connect(ID_DEL,ID_PUP,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&MTextEditor::OnAccelerator);
-
+	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
+		int key = evt.GetId() - 10276;
+		wxKeyEvent kevt;
+		kevt.m_uniChar = key;
+		OnCharPress(kevt);
+	}, WXK_NUMPAD0+10000, WXK_NUMPAD9+10000);
 
 	Cursor.x=Cursor.y=Selend.x=Selend.y = oldstart = oldend=0;
 
@@ -89,7 +104,7 @@ MTextEditor::MTextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& p
 	SetCaret(caret);
 	caret->Move(3,2);
 	caret->Show();
-	SetMinSize(wxSize(100,100));
+	//SetMinSize(wxSize(100,100));
 	//Refresh(false);
 }
 

@@ -328,7 +328,7 @@ void AudioDisplay::DoUpdateImage() {
 	
 	// Is spectrum?
 	bool spectrum = false;
-	if (provider && Options.GetBool(AudioSpectrumOn)) {
+	if (provider && box->SpectrumMode->GetValue()) {
 		spectrum = true;
 	}
 	HRESULT hr;
@@ -708,6 +708,7 @@ void AudioDisplay::DrawInactiveLines() {
 	}
 	D3DXVECTOR2 v2[2];
 	Dialogue *ADial = grid->GetDial(line_n);
+	if(!ADial){return;}
 	int aS = GetXAtMS(ADial->Start.mstime);
 	int aE = GetXAtMS(ADial->End.mstime);
 
@@ -2113,7 +2114,7 @@ void AudioDisplay::ChangeLine(int delta, bool block) {
 	// Set stuff
 	grid->SelectRow(next);
 	grid->ScrollTo(next-4);
-	Edit->SetIt(next);
+	Edit->SetLine(next);
 
 
 

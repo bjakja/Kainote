@@ -67,7 +67,7 @@ public:
 	void OnPrew();
     void OnNext();
 	void OnAccelerator(wxCommandEvent& event);
-	void OnVButton(wxCommandEvent& event);
+	//void OnVButton(wxCommandEvent& event);
 	void OnVolume(wxScrollEvent& event);
 	void OnSMinus();
 	void OnSPlus();

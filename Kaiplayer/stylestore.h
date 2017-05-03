@@ -27,15 +27,15 @@
 #include "ListControls.h"
 #include "KaiDialog.h"
 
-class ColorChange;
+class StyleChange;
 
 
-class stylestore: public KaiDialog
+class StyleStore: public KaiDialog
 {
 	public:
 
-		stylestore(wxWindow* parent ,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
-		virtual ~stylestore();
+		StyleStore(wxWindow* parent,const wxPoint& pos=wxDefaultPosition);
+		virtual ~StyleStore();
 		MappedButton* addToAss;
 		MappedButton* close;
 		MappedButton* assNew;
@@ -51,11 +51,12 @@ class stylestore: public KaiDialog
 		MappedButton* storeLoad;
 		MappedButton* storeDelete;
 		MappedButton* SClean;
+		ToggleButton* detachEnable;
 		StyleList* Store;
 		KaiChoice* catalogList;
 		StyleList* ASS;
 		DialogSizer *Mainall;
-		ColorChange* cc;
+		StyleChange* cc;
         void changestyle(Styles *cstyl);
 		void StylesWindow(wxString newname="");
         void LoadStylesS(bool ass);
@@ -65,6 +66,11 @@ class stylestore: public KaiDialog
 		void ReloadFonts();
 		bool SetForegroundColour(const wxColour &col);
 		bool SetBackgroundColour(const wxColour &col);
+		static void ShowStore();
+		static void ShowStyleEdit();
+		static StyleStore *Get();
+		static void DestroyStore();
+		static bool HasStore(){return (SS!=NULL);}
 
 	private:
 
@@ -89,12 +95,16 @@ class stylestore: public KaiDialog
 		void OnClose(wxCommandEvent& event);
 		void OnSwitchLines(wxCommandEvent& event);
 		void OnCleanStyles(wxCommandEvent& event);
+		void OnDetachEdit(wxCommandEvent& event);
 		bool stass;
 		bool dummy;
+		bool detachedEtit;
 		int selnum;
 		int prompt;
+		bool stayOnTop;
 		wxString oldname;
 		void modif();
+		static StyleStore *SS;
 };
 
 enum{
@@ -117,7 +127,8 @@ enum{
 	ID_ASSSORT,
 	ID_ASSCLEAN,
 	ID_CONF,
-	ID_CLOSEE
+	ID_CLOSEE,
+	ID_DETACH
 	};
 
 #endif

@@ -15,11 +15,13 @@
 
 #include "BitmapButton.h"
 #include "Config.h"
+#include "Hotkeys.h"
 
-BitmapButton::BitmapButton(wxWindow* parent, wxBitmap bitmap,wxBitmap bitmap1, int id, const wxPoint& pos, const wxSize& size)
-	:  wxStaticBitmap(parent, id, bitmap,pos,size)
+BitmapButton::BitmapButton(wxWindow* parent, wxBitmap bitmap, wxBitmap bitmap1, int hkeyId, const wxString &tooltip, const wxPoint& pos, const wxSize& size, int _window)
+	:  wxStaticBitmap(parent, -1, bitmap,pos,size)
+	, window(_window)
+	, hotkeyId(hkeyId)
 {
-	idd=id;
 	enter=false;
 	bmp=bitmap;
 	bmp1=bitmap1;
@@ -27,6 +29,7 @@ BitmapButton::BitmapButton(wxWindow* parent, wxBitmap bitmap,wxBitmap bitmap1, i
 	Bind(wxEVT_LEFT_UP, &BitmapButton::OnLeftDown, this);
 	Bind(wxEVT_LEAVE_WINDOW, &BitmapButton::OnLeftDown, this);
 	Bind(wxEVT_ENTER_WINDOW, &BitmapButton::OnLeftDown, this);
+	SetToolTip(tooltip);
 }
     
 BitmapButton::~BitmapButton()
@@ -70,19 +73,46 @@ void BitmapButton::OnLeftDown(wxMouseEvent& event)
 		
 		return;
 	}
-	if(event.Leaving()&&enter){
+	if(event.Leaving() && enter){
 		enter=false;
 		SetBitmap(bmp);
 		return;
 	}
 			
 	if(event.LeftDown()){
+		if(event.ShiftDown()){
+			wxString buttonName = (name!="")? name : GetToolTipText().BeforeFirst('(').Trim();
+			Hkeys.OnMapHkey( hotkeyId, buttonName, this, window);
+			SetToolTip();
+			Hkeys.SetAccels(true);
+			Hkeys.SaveHkeys();
+			SetFocus();
+			return;
+
+		}
 		SetBitmap(bmp1);
 	}
 	if(event.LeftUp()){
 		
 		SetBitmap(wxBitmap(img));
-		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,idd);this->ProcessEvent(evt);
+		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED,hotkeyId);this->ProcessEvent(evt);
 	}
 }
 	
+void BitmapButton::SetToolTip(const wxString &_toolTip)
+{
+	wxString toolTip = (_toolTip=="")? GetToolTipText().BeforeFirst('(').Trim() : _toolTip;
+	wxString desc = name;
+	if(toolTip.empty()){toolTip=desc;}
+	if(desc.empty()){desc=toolTip;}
+	
+	idAndType itype(hotkeyId, window);
+	wxString key = Hkeys.GetMenuH(itype, desc);
+	
+	if(key!="")
+	{
+		toolTip = toolTip + " ("+key+")";
+	}
+	wxWindow::SetToolTip(toolTip);
+	
+}

@@ -246,12 +246,13 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	Comment = new KaiCheckBox(this, ID_CHECKBOX1, _("Komentarz"), wxDefaultPosition, wxSize(82,-1));
 	Comment->SetValue(false);
 	LayerEdit = new NumCtrl(this, 16668, "",-10000000,10000000,true, wxDefaultPosition, wxSize(50,-1));
-	StartEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(87,-1),wxTE_CENTRE);
-	EndEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(87,-1),wxTE_CENTRE);
-	DurEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(87,-1),wxTE_CENTRE);
+	StartEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(82,-1),wxTE_CENTRE);
+	EndEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(82,-1),wxTE_CENTRE);
+	DurEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(82,-1),wxTE_CENTRE);
 	wxArrayString styles;
 	styles.Add("Default");
 	StyleChoice = new KaiChoice(this, IDSTYLE, wxDefaultPosition, wxSize(100,-1),styles);//wxSize(145,-1)
+	StyleEdit = new MappedButton(this,19989,_("Edytuj"), EDITBOX_HOTKEY, wxDefaultPosition, wxSize(45,-1));
 	//druga linia
 	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	valid.SetCharExcludes(",");
@@ -267,8 +268,9 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer2->Add(StartEdit,0,wxLEFT,2);
 	BoxSizer2->Add(EndEdit,0,wxLEFT,2);
 	BoxSizer2->Add(DurEdit,0,wxLEFT,2);
-	BoxSizer2->Add(StyleChoice,4,wxLEFT|wxRIGHT|wxEXPAND,2);
-	BoxSizer2->Add(ActorEdit,3,wxLEFT|wxEXPAND,2);
+	BoxSizer2->Add(StyleChoice,4,wxLEFT|wxEXPAND,2);
+	BoxSizer2->Add(StyleEdit,0,wxLEFT|wxRIGHT,2);
+	BoxSizer2->Add(ActorEdit,3,wxEXPAND);
 	BoxSizer2->Add(MarginLEdit,0,wxLEFT,2);
 	BoxSizer2->Add(MarginREdit,0,wxLEFT,2);
 	BoxSizer2->Add(MarginVEdit,0,wxLEFT,2);
@@ -279,9 +281,9 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer1 = new wxBoxSizer(wxVERTICAL);
 	BoxSizer1->Add(BoxSizer4, 0, wxLEFT | wxRIGHT | wxTOP, 2);
 	BoxSizer1->Add(BoxSizer5, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, 2);
-	BoxSizer1->Add(TextEditTl, 1, wxEXPAND|wxLEFT|wxRIGHT, 4);
+	BoxSizer1->Add(TextEditTl, 3, wxEXPAND|wxLEFT|wxRIGHT, 4);
 	BoxSizer1->Add(BoxSizer6, 0, wxLEFT | wxRIGHT, 2);
-	BoxSizer1->Add(TextEdit, 1, wxEXPAND|wxLEFT|wxRIGHT, 4);
+	BoxSizer1->Add(TextEdit, 3, wxEXPAND|wxLEFT|wxRIGHT, 4);
 	BoxSizer1->Add(BoxSizer2,0,wxEXPAND|wxALL,2);
 	BoxSizer1->SetMinSize(-1,200);
 	//BoxSizer1->Add(BoxSizer3,0,wxLEFT | wxRIGHT | wxBOTTOM,2);
@@ -302,7 +304,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	Connect(ID_AN,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&EditBox::OnAnChoice);
 	Connect(ID_FONT,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnFontClick);
 	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnColorClick,this,ID_COL1,ID_COL4);
-	//Connect(ID_COL1,ID_COL4,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnColorClick);
+	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnStyleEdit, this, 19989);
 	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnCpAll, this, ID_CPALL);
 	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnCpSel, this, ID_CPSEL);
 	Connect(ID_HIDE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnHideOrig);
@@ -325,12 +327,11 @@ EditBox::~EditBox()
 	wxDELETE(line);
 }
 
-void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
+void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool autoPlay)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
-	if(nochangeline&&ebrow==Row){goto done;}
-	if(Options.GetBool(GridSaveWithoutEnter) && ebrow!=Row&&save){
-
+	if(nochangeline && ebrow==Row){goto done;}
+	if(Options.GetBool(GridSaveWithoutEnter) && ebrow!=Row && save){
 		Send(false);
 	}
 	ebrow=Row;
@@ -353,8 +354,6 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 
 	if(setaudio && ABox && ABox->IsShown()){ABox->audioDisplay->SetDialogue(line,ebrow);}
 
-
-
 	//ustawia znaki na sekundę i ilość linii
 	UpdateChars((TextEditTl->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
 	//ustawia clip/inny visual gdy jest włączony
@@ -372,7 +371,7 @@ void EditBox::SetIt(int Row, bool setaudio, bool save, bool nochangeline)
 	}
 done:
 	int pas=pan->Video->vToolbar->videoPlayAfter->GetSelection();//Options.GetInt(PlayAfterSelection);
-	if(pas>0){
+	if(pas>0 && autoPlay){
 		if(pas==1){
 			if(ABox){
 				wxWindow *focused= wxWindow::FindFocus();
@@ -874,7 +873,7 @@ void EditBox::OnTlMode(wxCommandEvent& event)
 	bool show=!TextEditTl->IsShown();
 	if(grid->SetTlMode(show)){TlMode->SetValue(true);return;}
 	SetTl(show);
-	SetIt(ebrow);
+	SetLine(ebrow);
 }
 
 void EditBox::SetTl(bool tl)
@@ -926,7 +925,7 @@ void EditBox::RefreshStyle(bool resetline)
 	}
 	if(resetline){
 		if(grid->GetCount()>0){
-			SetIt(0);}
+			SetLine(0);}
 		else{ebrow=0;}
 	}
 }
@@ -946,6 +945,7 @@ void EditBox::DoTooltips()
 	EndEdit->SetToolTip(_("Czas końcowy linijki"));
 	DurEdit->SetToolTip(_("Czas trwania linijki"));
 	StyleChoice->SetToolTip(_("Styl linijki"));
+	StyleEdit->SetToolTip(_("Umożliwia edycję stylu linijki"));
 	ActorEdit->SetToolTip(_("Oznaczenie aktora linijki. Nie wpływa na wygląd napisów"));
 	MarginLEdit->SetToolTip(_("Margines lewy linijki"));
 	MarginREdit->SetToolTip(_("Margines prawy linijki"));
@@ -957,8 +957,6 @@ void EditBox::DoTooltips()
 
 void EditBox::OnSize(wxSizeEvent& event)
 {
-
-	//if(grid->form>SSA){event.Skip(); return;}
 	int w,h;
 	GetClientSize(&w,&h);
 	if(isdetached && w>800){
@@ -966,7 +964,7 @@ void EditBox::OnSize(wxSizeEvent& event)
 
 		for(int i = 5; i>=0; i--){BoxSizer3->Detach(i); }
 		BoxSizer2->Insert(0,Comment,0,wxLEFT|wxALIGN_CENTER,4);
-		BoxSizer2->Add(ActorEdit,5,wxEXPAND|wxLEFT,2);
+		BoxSizer2->Add(ActorEdit,5,wxEXPAND);
 		BoxSizer2->Add(MarginLEdit,0,wxLEFT,2);
 		BoxSizer2->Add(MarginREdit,0,wxLEFT,2);
 		BoxSizer2->Add(MarginVEdit,0,wxLEFT,2);
@@ -978,7 +976,7 @@ void EditBox::OnSize(wxSizeEvent& event)
 	}
 	else if(!isdetached && w<=800)
 	{
-		for(int i = 10; i>=6; i--){BoxSizer2->Detach(i);}
+		for(int i = 11; i>=7; i--){BoxSizer2->Detach(i);}
 		BoxSizer2->Detach(0);
 		BoxSizer3=new wxBoxSizer(wxHORIZONTAL);
 		BoxSizer3->Add(Comment,0,wxLEFT|wxALIGN_CENTER,4);
@@ -1008,6 +1006,7 @@ void EditBox::HideControls()
 	Comment->Enable(state);
 	LayerEdit->Enable(state);
 	StyleChoice->Enable(state);
+	StyleEdit->Enable(state);
 	ActorEdit->Enable(state);
 	MarginLEdit->Enable(state);
 	MarginREdit->Enable(state);
@@ -1207,13 +1206,19 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	if(StartEdit->HasFocus()||EndEdit->HasFocus()){
 		line->End=EndEdit->GetTime();
 		line->Start=StartEdit->GetTime();
-		if(line->Start>line->End){line->End=line->Start;EndEdit->SetTime(line->End);}
+		if(line->Start>line->End){
+			line->End=line->Start;
+			EndEdit->SetTime(line->End);
+			EndEdit->MarkDirty();
+		}
 		DurEdit->SetTime(line->End - line->Start);
+		UpdateChars((TextEditTl->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
 	}
 	else if(DurEdit->HasFocus()){
 		line->End.mstime=line->Start.mstime + DurEdit->GetTime().mstime;
 		EndEdit->SetTime(line->End);
 		EndEdit->MarkDirty();
+		UpdateChars((TextEditTl->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
 	}
 	if(Visual > 0){
 		panel->Video->SetVisual(false, true);
@@ -1350,14 +1355,26 @@ void EditBox::OnAutoMoveTags(wxCommandEvent& event)
 void EditBox::SetTextWithTags()
 {
 	if(grid->transl && line->TextTl=="" && AutoMoveTags->GetValue()){
-		int getr=line->Text.Find('}');
-		if(getr>1){
-			int brackets = line->Text.find("{");
+		wxString Text = line->Text;
+		Text.Replace("}{","");
+		int getr=Text.Find('}');
+		if(getr > -1){
+			int brackets = Text.find("{");
 			wxString restText; 
-			if(line->Text.Len()>(size_t)getr+1){restText = line->Text.Mid(getr+1);}
-			wxString txtTl=line->Text.substr(0,getr+1);
-			int pos=txtTl.Len();
+			if(Text.Len()>(size_t)getr+1){restText = Text.Mid(getr+1);}
+			int pos=0;
 			wxString txtOrg;
+			wxString txtTl;
+			if(Text.StartsWith("{")){
+				txtTl=Text.substr(0,getr+1);
+				pos=txtTl.Len();
+			}else if(brackets>0){
+				txtOrg=Text.substr(0,brackets-1);
+				txtTl=Text.SubString(brackets,getr);
+			}else{
+				txtOrg=Text.substr(0,getr+1);
+			}
+			
 			while(1){
 				brackets = restText.find("{");
 				getr = restText.Find('}');
@@ -1407,4 +1424,12 @@ bool EditBox::SetBackgroundColour(const wxColour &col)
 	if(ABox){ABox->SetBackgroundColour(col);}
 	wxWindow::SetBackgroundColour(col);
 	return true;
+}
+
+void EditBox::OnStyleEdit(wxCommandEvent& event)
+{
+	//napisz tu coś później by ten przycisk w ogóle działał, 
+	//a może na dobry początek chociaż managera w całości pokazać?
+	//wxLogStatus("Edytuj");
+	StyleStore::ShowStyleEdit();
 }

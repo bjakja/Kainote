@@ -904,7 +904,7 @@ void Notebook::OnCharHook(wxKeyEvent& event)
 	bool nmodif= !(event.AltDown() || event.ControlDown() || event.ShiftDown());
 	VideoCtrl *vb=GetTab()->Video;
 	if(ukey==179){vb->Pause();}
-	else if(ukey==178){wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,11015); vb->OnVButton(evt);}
+	//else if(ukey==178){wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,11015); vb->OnVButton(evt);}
 	else if(ukey==177){vb->PrevChap();}
 	else if(ukey==176){vb->NextChap();}
 	else if(ukey==175){vb->OnSPlus();return;}

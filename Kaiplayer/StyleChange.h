@@ -17,26 +17,23 @@
 #define COLORCHANGE_H
 
 	#include <wx/stattext.h>
-	#include <wx/textctrl.h>
-	#include <wx/checkbox.h>
-	#include <wx/radiobut.h>
-	#include <wx/statbox.h>
-	#include <wx/dialog.h>
 	#include "ListControls.h"
 	#include "MappedButton.h"
     #include "StylePreview.h"
-    #include "stylestore.h"
+    #include "StyleStore.h"
     #include "NumCtrl.h"
 	#include "KaiRadioButton.h"
+	#include "KaiDialog.h"
 
-bool sortf(wxString name1,wxString name2);
+//bool sortf(wxString name1,wxString name2);
 
-class ColorChange: public wxWindow
+
+class StyleChange: public wxWindow
 {
 	public:
 
-		ColorChange(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
-		virtual ~ColorChange();
+		StyleChange(wxWindow* parent, bool window=true, const wxPoint& pos=wxDefaultPosition);
+		virtual ~StyleChange();
 
 		KaiCheckBox* sob;
 		KaiRadioButton* rb1;
@@ -82,12 +79,13 @@ class ColorChange: public wxWindow
 		void UpdateValues(Styles *styl);
 		void UpdatePreview();
 
-		stylestore* SS;
+		StyleStore* SS;
 		void OnOKClick(wxCommandEvent& event);
 		void OnCancelClick(wxCommandEvent& event);
 		bool block;
-	
-		
+		bool Show(bool show = true);
+		bool Destroy();
+		bool IsShown();
 
 	private:
 
@@ -108,7 +106,7 @@ class ColorChange: public wxWindow
 
 		Styles *tab;
 		wxArrayString encs;
-		
+		KaiDialog *SCD;
 		
 };
 

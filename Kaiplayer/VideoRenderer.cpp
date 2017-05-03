@@ -24,6 +24,7 @@
 #include "Vsfilterapi.h"
 #include <thread>
 
+
 #if byvertices
 struct CUSTOMVERTEX
 {
@@ -707,6 +708,8 @@ bool VideoRend::Play(int end)
 
 	if(!IsDshow){
 		lasttime=timeGetTime()-time;
+		//lasttime=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()).count()-time;
+		//startTime = std::chrono::steady_clock::now();
 		if(player){player->Play(time,-1,false);}
 		time=VFF->Timecodes[lastframe];
 		VFF->Play();
@@ -792,6 +795,8 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			if(!starttime){lastframe--;if(VFF->Timecodes[lastframe]>=_time){lastframe--;}}
 			time = VFF->Timecodes[lastframe];
 			lasttime=timeGetTime()-time;
+			//lasttime=time;
+			//startTime = std::chrono::steady_clock::now();
 			if(VisEdit){
 				SAFE_DELETE(Vclips->dummytext);
 				if(Vclips->Visual==VECTORCLIP){
@@ -1012,6 +1017,21 @@ void VideoRend::SetZoom(){
 	Render();
 }
 
+void VideoRend::ResetZoom()
+{
+	if(vstate==None){return;}
+	zoomRect = FloatRect(backBufferRect.left,backBufferRect.top,backBufferRect.right, backBufferRect.bottom);
+	wxSize size(backBufferRect.right, backBufferRect.bottom);
+	float videoToScreenXX = size.x / (float)vwidth; 
+	float videoToScreenYY = size.y / (float)vheight; 
+	mainStreamRect.left = (zoomRect.x - backBufferRect.left) / videoToScreenXX;
+	mainStreamRect.top = (zoomRect.y - backBufferRect.top) / videoToScreenYY;
+	mainStreamRect.right = (zoomRect.width/ videoToScreenXX);
+	mainStreamRect.bottom = (zoomRect.height/ videoToScreenYY);
+	Render();
+	SetScaleAndZoom();
+}
+
 void VideoRend::Zoom(const wxSize &size)
 {
 	hasZoom=true;
@@ -1101,6 +1121,8 @@ void VideoRend::ZoomMouseHandle(wxMouseEvent &evt)
 	FloatRect tmp = zoomRect;
 	//wxWindow *window = (isFullscreen)? (wxWindow*)((VideoCtrl*)this)->TD : this; 
 
+	bool rotation = evt.GetWheelRotation() != 0;
+
 	if(evt.ButtonUp()){
 		if(HasCapture()){ReleaseMouse();}
 		if(!vb->hasArrow){SetCursor(wxCURSOR_ARROW);vb->hasArrow=true;}
@@ -1157,10 +1179,16 @@ void VideoRend::ZoomMouseHandle(wxMouseEvent &evt)
 			zoomDiff.y = y-zoomRect.y;
 		}
 
-	}else if(evt.LeftIsDown()){
+	}else if(evt.LeftIsDown() || rotation ){
 		int minx = backBufferRect.left;
 		int miny = backBufferRect.top;
-		if(grabbed <0){
+		if(rotation){
+			int step = 5 * evt.GetWheelRotation() / evt.GetWheelDelta();
+			zoomRect.x -= step;
+			zoomRect.y -= step/ar;
+			zoomRect.width += step;
+			zoomRect.height += step/ar;
+		}else if(grabbed <0){
 			float oldzx = zoomRect.x;
 			float oldzy = zoomRect.y;
 			if(zoomRect.x >= minx && zoomRect.width < s.x || (zoomRect.width == s.x && zoomRect.x > x - zoomDiff.x)){
@@ -1365,6 +1393,7 @@ int VideoRend::GetVolume()
 
 void VideoRend::MovePos(int cpos)
 {	
+	if(vstate==Playing){return;}
 	if(!IsDshow){
 		if(!VFF->isBusy){
 			lastframe=MID(0,lastframe+cpos,VFF->NumFrames-1);

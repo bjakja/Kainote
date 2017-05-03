@@ -523,7 +523,7 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 
 bool MenuDialog::SendEvent(MenuItem *item, int accel)
 {
-	if(!item->enabled){return false;}
+	if(!item->enabled && accel != wxMOD_SHIFT){return false;}
 	if(item->type == ITEM_CHECK){
 		item->check = !item->check;
 		Refresh(false);
@@ -540,6 +540,8 @@ bool MenuDialog::SendEvent(MenuItem *item, int accel)
 		evt->SetClientData(item);
 		evt->SetInt(accel);
 		wxQueueEvent(ParentMenu->GetParent(),evt);
+	}else{
+		this->accel=accel;
 	}
 	HideMenus(item->id);	
 	
