@@ -33,7 +33,9 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 	bool setFocus = true;
 	if(elems & wxOK){
 		btn = new MappedButton(this,9009,"OK");
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxOK);},9009);
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+			EndModal(wxOK);
+		},9009);
 		sizer1->Add(btn,0,wxALL,3);
 		btn -> SetFocus(); setFocus = false;
 	}
@@ -51,13 +53,17 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 	}
 	if(elems & wxNO){
 		btn = new MappedButton(this,wxID_NO,_("Nie"));
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxNO);},wxID_NO);
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+			EndModal(wxNO);
+		},wxID_NO);
 		sizer1->Add(btn,0,wxALL,3);
 		if(setFocus){btn -> SetFocus(); setFocus = false;}
 	}
 	if(elems & wxCANCEL){
 		btn = new MappedButton(this,9010,_("Anuluj"));
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxCANCEL);},9010);
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+			EndModal(wxCANCEL);
+		},9010);
 		sizer1->Add(btn,0,wxALL,3);
 		if(setFocus){btn -> SetFocus(); setFocus = false;}
 	}
@@ -71,8 +77,9 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 	sizer2->Add(sizer1,0,wxALL|wxALIGN_RIGHT,3);
 	SetSizerAndFit(sizer2);
 	CenterOnParent();
-	Bind(wxEVT_CLOSE_WINDOW,[=](wxCloseEvent &evt){EndModal((elems & wxCANCEL)? wxCANCEL : wxNO);});
-	SetEscapeId((elems & wxCANCEL)? wxCANCEL : (elems & wxNO)? wxNO : wxOK);
+	//Bind(wxEVT_CLOSE_WINDOW,[=](wxCloseEvent &evt){EndModal((elems & wxCANCEL)? wxCANCEL : (elems & wxNO)? wxNO : wxOK);});
+	//no i tu mamy problem bo id jest inny ni¿ ta wartoœæ która ma zostaæ zwrócona
+	SetEscapeId((elems & wxCANCEL)? 9010 : (elems & wxNO)? wxID_NO : 9009);
 	
 }
 

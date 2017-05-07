@@ -115,7 +115,7 @@
 	CG(GridHideCollums,)\
 	CG(GridHideTags,)\
 	CG(GridLoadSortedSubs,)\
-	CG(GridSaveWithoutEnter,)\
+	CG(GridSaveAfterCharacterCount,)\
 	CG(GridTagsSwapChar,)\
 	CG(InsertEndOffset,)\
 	CG(InsertStartOffset,)\
@@ -389,7 +389,8 @@ enum{
 	SRT,
 	TMP,
 	MDVD,
-	MPL2
+	MPL2,
+	FRAME=10
 };
 
 extern config Options;

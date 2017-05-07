@@ -35,18 +35,21 @@ public:
 	~STime();
 	void SetRaw(wxString rawtime, char format);
 	void NewTime(int ms);
+	void NewFrame(int frame);
 	void ParseMS(wxString time);
 	wxString raw(char format=0);//, float fps=0
 	char GetFormat();
 	void ChangeFormat(char format,float fps=0);
 	wxString GetFormatted(char format);
 	void Change(int ms);
-	bool operator> (STime por);
-	bool operator< (STime por);
-	bool operator>= (STime por);
-	bool operator<= (STime por);
-	bool operator== (STime por);
-	STime operator- (STime por);
+	void ChangeFrame(int ms);
+	bool operator> (const STime &comp);
+	bool operator< (const STime &comp);
+	bool operator>= (const STime &comp);
+	bool operator<= (const STime &comp);
+	bool operator== (const STime &comp);
+	STime operator- (const STime &comp);
+	STime operator+ (const STime &comp);
 };
 
 

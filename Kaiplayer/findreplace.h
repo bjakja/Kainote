@@ -65,7 +65,7 @@ class findreplace: public KaiDialog
 		KaiRadioBox *Selections;
 	
 		void ReloadStyle();
-		void SelectLine();
+		void SelectLines();
 		void AddRecent();
 		void OnStylesWin(wxCommandEvent& event);
 		void OnSelections(wxCommandEvent& event);
@@ -79,19 +79,20 @@ class findreplace: public KaiDialog
         int postxt;
 		int findstart;
 		int findend;
+		//int oldActive;
 		wxString oldfind;
         bool fnext;
 		
 		bool fromstart;
-		//bool hasFocus;
+		
         void Find();
 		
 		void OnReplaceAll(wxCommandEvent& event);
 		void OnButtonFind(wxCommandEvent& event);
 		void OnButtonRep(wxCommandEvent& event);
-		//void OnTextUpdate(wxCommandEvent& event);
 		void OnClose(wxCommandEvent& event);
 		void OnRecheck(wxCommandEvent& event);
+		void OnEnterConfirm(wxCommandEvent& event);
 };
 
 enum
@@ -105,7 +106,8 @@ enum
 	ID_FINDTEXT,
 	ID_REPTEXT,
 	ID_SLINE,
-	ID_ELINE
+	ID_ELINE,
+	ID_ENTER_CONFIRM
 	};
 
 #endif

@@ -412,18 +412,15 @@ MenuDialog::~MenuDialog()
 void MenuDialog::OnShowSubmenu(wxTimerEvent &evt)
 {
 	//wxLogStatus("show %i %i",submenuShown,sel);
-	if(submenuShown == -1 || sel == -1){return;}//|| sel != submenuShown
-	//if(submenuToHide != -1){hideSubmenuTimer.Start(200,true);}
+	if(submenuShown == -1 || sel == -1 || sel != submenuShown || submenuShown == submenuToHide){return;}//
+	
 	int scrollPos = submenuShown-scPos;
 	wxSize size = GetSize();
 	int x, y;
 	wxPopupWindowBase::DoGetPosition(&x, &y);
-	//pos = ScreenToClient(pos);
-	//pos.x += size.x;
-	//pos.y += scrollPos * height;
 	x += size.x;
 	y += scrollPos * height;
-	parent->items[submenuShown]->submenu->PopupMenu(wxPoint(x,y)/*pos*/, GetParent(), false);
+	parent->items[submenuShown]->submenu->PopupMenu(wxPoint(x,y), GetParent(), false);
 	submenuToHide=submenuShown;
 	subMenuIsShown=true;
 	selectOnStart=-1;
@@ -434,13 +431,10 @@ void MenuDialog::OnShowSubmenu(wxTimerEvent &evt)
 void MenuDialog::OnHideSubmenu(wxTimerEvent &evt)
 {
 	if(submenuToHide == -1){return;}
-	//if(sel == submenuToHide){subMenuIsShown=true; return;}
-	//wxLogStatus("Hidesubmenu timer %i",submenuToHide);
 	MenuItem *olditem=parent->items[submenuToHide];
+	
 	if(olditem->submenu->dialog){
-		//wxRect rc = olditem->submenu->dialog->GetScreenRect();
 		wxPoint pos = wxGetMousePosition();
-		//if(rc.Contains(pos)){return;}
 		if(lastActiveMenu==olditem->submenu->dialog){return;}
 		wxRect rc1 = GetScreenRect();
 		if(!rc1.Contains(pos)){sel=-1; Refresh(false);}
@@ -449,7 +443,7 @@ void MenuDialog::OnHideSubmenu(wxTimerEvent &evt)
 		olditem->submenu->DestroyDialog();
 		MenuBar::Menubar->md = parent;
 	}
-	if(submenuShown != submenuToHide){showSubmenuTimer.Start(1,true);}
+	if(submenuShown != submenuToHide){submenuToHide=-1;showSubmenuTimer.Start(1,true);return;}
 	submenuToHide=-1;
 }
 
@@ -491,15 +485,14 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 	
 	elem+=scPos;
 	if(elem>=(int)parent->items.size() || elem < 0){return;}
+	MenuItem *item=parent->items[elem];
+	if(subMenuIsShown && elem != submenuToHide){
+		hideSubmenuTimer.Start(400,true);
+		subMenuIsShown=false;
+	}
 	if(elem!=sel){
-		MenuItem *item=parent->items[elem];
 		sel=elem;
-		if(subMenuIsShown){
-			hideSubmenuTimer.Start(400,true);
-			subMenuIsShown=false;
-			//wxLogStatus("Hidesubmenu %i",submenuToHide);
-		}
-		//wxLogStatus("dialog %i", (item->submenu)? (int)item->submenu->dialog : 0);	
+		
 		if(item->submenu && item->submenu->dialog==NULL){// 
 			submenuShown=elem;
 			if(submenuToHide == -1){showSubmenuTimer.Start((leftdown)? 1 : 200,true);}// : (submenuToHide != -1)? 500
@@ -512,10 +505,9 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 		}
 	}
 	
-	if(evt.LeftUp() && !parent->items[elem]->submenu){
-		MenuItem *item=parent->items[elem];
+	if(evt.LeftUp() && !item->submenu){
 		SendEvent(item, evt.GetModifiers());
-	}else if(leftdown && parent->items[elem]->submenu && submenuShown != elem){
+	}else if(leftdown && item->submenu && item->submenu->dialog==NULL && submenuShown != elem){
 		submenuShown=elem;
 		showSubmenuTimer.Start(1,true);
 	}

@@ -614,7 +614,6 @@ void AudioDisplay::DoUpdateImage() {
 			d3dLine->SetWidth(2);
 			
 			float x = GetXAtMS(Video->Tell());
-			//wxLogStatus("xpos %i", x);
 			d3dLine->Begin();
 			D3DXVECTOR2 v2[2]={D3DXVECTOR2(x,0),D3DXVECTOR2(x,h)};
 			DrawDashedLine(v2,2,AudioCursor);
@@ -1401,20 +1400,16 @@ void AudioDisplay::CommitChanges (bool nextLine, bool Save) {
 	// Update dialogues
 	blockUpdate = true;
 	STime gtime;
+	gtime.ChangeFormat(Edit->line->Form);
 	gtime.NewTime(curStartMS);
 	Edit->StartEdit->SetTime(gtime,true);
 	gtime.NewTime(curEndMS);
 	Edit->EndEdit->SetTime(gtime,true);
 	gtime.NewTime(curEndMS - curStartMS);
 	Edit->DurEdit->SetTime(gtime,true);
-	//Edit->StartEdit->SetModified(true);
-	//Edit->EndEdit->SetModified(true);
 	if(Save){
 		Edit->Send(nextLine);
 		if(!nextLine){Edit->UpdateChars(Edit->TextEdit->GetValue());}
-		//Edit->StartEdit->SetModified(false);
-		//Edit->EndEdit->SetModified(false);
-		//Edit->DurEdit->SetModified(false);
 	}
 	blockUpdate = false;
 

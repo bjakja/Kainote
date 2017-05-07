@@ -138,6 +138,7 @@ StyleStore::StyleStore(wxWindow* parent,const wxPoint& pos)
 		Mainall->SetMinSize(bs);
 	}
 	SetEscapeId(ID_CLOSE);
+	SetEnterId(ID_CONF);
 	
 	SetSizerAndFit(Mainall);
 

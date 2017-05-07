@@ -51,7 +51,7 @@ class kainoteFrame: public KaiFrame
 		Notebook* Tabs;
 
 		wxBoxSizer *mains;
-        void Save(bool dial, int wtab=-1);
+        void Save(bool dial, int wtab=-1, bool changeLabel = true);
 		void SaveAll();
 
         bool OpenFile(wxString filename,bool fulls=false);

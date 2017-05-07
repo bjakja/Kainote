@@ -111,6 +111,7 @@ public:
 	void RebuildActorEffectLists();
 	void RefreshIfVisible(int time);
 	void SetVideoLineTime(wxMouseEvent &evt);
+	void ChangeTimeDisplay(bool frame);
 
 	bool makebkp;
 	bool showFrames;

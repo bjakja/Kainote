@@ -761,8 +761,8 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 	for(size_t i=1; i<MonRects.size(); i++)
 	{
 		wxString txt2;
-		if(isFullscreen){txt2 = wxString::Format(_("Przełącz pełny ekran na %i monitor"), (i+1));}
-		else{txt2 = wxString::Format(_("Włącz pełny ekran na %i monitorze"), (i+1));}
+		if(isFullscreen){txt2 = wxString::Format(_("Przełącz pełny ekran na %i monitor"), (int)(i+1));}
+		else{txt2 = wxString::Format(_("Włącz pełny ekran na %i monitorze"), (int)(i+1));}
 		menu->SetAccMenu(MENU_MONITORS+i,txt2)->Enable(GetState()!=None);
 	}
 

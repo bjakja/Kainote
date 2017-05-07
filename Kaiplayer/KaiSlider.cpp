@@ -219,9 +219,9 @@ void KaiSlider::OnMouseEvent(wxMouseEvent &evt)
 	if(holding){
 		thumbPos = coord - diff;
 		thumbPos = MID(0, thumbPos, thumbRange);
-		wxLogStatus("thumbpos %i %i %i", thumbPos, coord, diff);
+		//wxLogStatus("thumbpos %i %i %i", thumbPos, coord, diff);
 		value = ((float)thumbPos / (float)thumbRange);
-		wxLogStatus("value %f %i", value, (int)((value * (float)(maxRange-minRange)) + minRange));
+		//wxLogStatus("value %f %i", value, (int)((value * (float)(maxRange-minRange)) + minRange));
 		SendEvent();
 	}
 }

@@ -312,7 +312,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		SaveAll();
 	}else if(id==SaveTranslation){
 		GetTab()->Grid1->AddSInfo("TLMode", "Translated",false);
-		Save(true);
+		Save(true, -1, false);
 		GetTab()->Grid1->AddSInfo("TLMode", "Yes",false);
 	}else if(id==RemoveSubs){
 		if(SavePrompt(3)){event.SetInt(-1);return;}
@@ -655,7 +655,7 @@ void kainoteFrame::OnAssProps()
 	}
 }
 
-void kainoteFrame::Save(bool dial, int wtab)
+void kainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 {
 	TabPanel* atab=(wtab<0)? GetTab() : Tabs->Page(wtab);
 	if(atab->Grid1->origform!=atab->Grid1->form
@@ -688,7 +688,7 @@ void kainoteFrame::Save(bool dial, int wtab)
 	atab->Grid1->SaveFile(atab->SubsPath);
 	atab->Grid1->Modified=false;
 	atab->Grid1->origform=atab->Grid1->form;
-	Label(0,false,wtab);
+	if(changeLabel){Label(0,false,wtab);}
 #if _DEBUG
 	wxBell();
 #endif

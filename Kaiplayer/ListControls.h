@@ -96,6 +96,7 @@ public:
 	void Sort();
 	bool SetBackgroundColour(const wxColour &col);
 	bool SetForegroundColour(const wxColour &col);
+	bool HasFocus();
 	KaiTextCtrl *choiceText;
 private:
 	void OnSize(wxSizeEvent& event);

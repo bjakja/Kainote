@@ -145,6 +145,7 @@ public:
 	bool InBracket;
 	bool splittedTags;
 	bool OnVideo;
+	bool lastVisible;
 	int Visual;
 	int EditCounter;
 
@@ -164,20 +165,20 @@ private:
 	void OnCommit(wxCommandEvent& event);
 	void OnFontClick(wxCommandEvent& event);
 	void OnColorClick(wxCommandEvent& event);
-	void AllColClick(int kol);
+	void AllColorClick(int kol);
 	void OnBoldClick(wxCommandEvent& event);
-	void OnItalClick(wxCommandEvent& event);
-	void OnUndClick(wxCommandEvent& event);
+	void OnItalicClick(wxCommandEvent& event);
+	void OnUnderlineClick(wxCommandEvent& event);
 	void OnStrikeClick(wxCommandEvent& event);
 	void OnAnChoice(wxCommandEvent& event);
 	void OnTlMode(wxCommandEvent& event);
-	void OnCpAll(wxCommandEvent& event);
-	void OnCpSel(wxCommandEvent& event);
-	void OnReplClick(wxCommandEvent& event);
+	void OnCopyAll(wxCommandEvent& event);
+	void OnCopySelection(wxCommandEvent& event);
+	//void OnReplClick(wxCommandEvent& event);
 	void OnSize(wxSizeEvent& event);
 	void OnSplit(wxCommandEvent& event);
-	void OnHideOrig(wxCommandEvent& event);
-	void OnPasteDiff(wxCommandEvent& event);
+	void OnHideOriginal(wxCommandEvent& event);
+	void OnPasteDifferents(wxCommandEvent& event);
 	void OnColorChange(wxCommandEvent& event);
 	void OnButtonTag(wxCommandEvent& event);
 	void OnCursorMoved(wxCommandEvent& event);

@@ -151,8 +151,8 @@ wxString Dialogue::GetRaw(bool tl, wxString style)
 	if (Form<SRT){
 		if(IsComment){line=_T("Comment: ");}else{line=_T("Dialogue: ");};
 		wxString Styletl=(style!="")?style:Style;
-		line<<Layer<<_T(",")<<Start.raw()<<_T(",")
-			<<End.raw()<<_T(",")<<Styletl<<_T(",")<<Actor<<_T(",")
+		line<<Layer<<_T(",")<<Start.raw(Form)<<_T(",")
+			<<End.raw(Form)<<_T(",")<<Styletl<<_T(",")<<Actor<<_T(",")
 			<<MarginL<<_T(",")
 			<<MarginR<<_T(",")
 			<<MarginV<<_T(",")
@@ -161,17 +161,17 @@ wxString Dialogue::GetRaw(bool tl, wxString style)
 		//line+=wxString::Format("%i,%s,%s,%s,%s,%i,%i,%i,%s,%s",(int)Layer,Start.raw().data(),End.raw().data(),Styletl.data(),Actor.data(),(int)MarginL,(int)MarginR,(int)MarginV,Effect.data(),txttl.data());
 
 	}else if(Form==MDVD){
-		line<<_T("{")<<Start.raw()<<_T("}{")<<End.raw()<<_T("}")<<txttl;
+		line<<_T("{")<<Start.raw(Form)<<_T("}{")<<End.raw(Form)<<_T("}")<<txttl;
 	}
 	else if(Form==MPL2){
-		line<<_T("[")<<Start.raw()<<_T("][")<<End.raw()<<_T("]")<<txttl;
+		line<<_T("[")<<Start.raw(Form)<<_T("][")<<End.raw(Form)<<_T("]")<<txttl;
 	}
 	else if(Form==TMP){
-		line<<Start.raw()<<_T(":")<<txttl;
+		line<<Start.raw(Form)<<_T(":")<<txttl;
 	}
 	else if(Form==SRT){
 		txttl.Replace("\\N","\r\n");
-		line<<Start.raw()<<" --> "<<End.raw()<<"\r\n"<<txttl<<"\r\n";
+		line<<Start.raw(Form)<<" --> "<<End.raw(Form)<<"\r\n"<<txttl<<"\r\n";
 	}
 	line<<_T("\r\n");
 	return line;

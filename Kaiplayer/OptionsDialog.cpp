@@ -70,19 +70,19 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 	//Main
 	{
-		const int optsSize = 14;
+		const int optsSize = 13;
 		wxBoxSizer *MainSizer=new wxBoxSizer(wxVERTICAL);
 		wxString labels[optsSize]={_("Wczytywanie posortowanych napisów"),_("Włącz sprawdzanie pisowni"),
 			_("Zaznaczaj linijkę z czasem aktywnej\nlinijki poprzedniej zakładki"),_("Zapisuj napisy z nazwą wideo"),
 			_("Pokaż sugestie po dwukrotnym klininięciu na błąd"),_("Otwieraj napisy zawsze w nowej karcie"),
-			_("Nie przechodź do następnej linii przy edycji czasów"),_("Zapisuj zmiany po przejściu na inną linię"),
+			_("Nie przechodź do następnej linii przy edycji czasów"),
 			_("Wyłącz pokazywanie edycji na wideo\n(wymaga ponownego otwarcia zakładek)"),
 			_("Włącz szukanie widocznej linii\npo wyjściu z pełnego ekranu"),
 			_("Włącz przenoszenie wartości pola przesuwania czasów"),_("Zmieniaj aktywną linię przy zaznaczaniu"),
 			_("Nie ostrzegaj o niezgodności rozdzielczości"),
 			_("Kompatybilność ze starymi skryptami Kainote")};
 		CONFIG opts[optsSize]={GridLoadSortedSubs,SpellcheckerOn,AutoSelectLinesFromLastTab,SubsAutonaming,
-			EditboxSugestionsOnDoubleClick,OpenSubsInNewCard,NoNewLineAfterTimesEdition,GridSaveWithoutEnter,
+			EditboxSugestionsOnDoubleClick,OpenSubsInNewCard,NoNewLineAfterTimesEdition,
 			DisableLiveVideoEditing,SelectVisibleLineAfterFullscreen,MoveTimesLoadSetTabOptions,
 			GridChangeActiveOnSelection,DontAskForBadResolution,AutomationOldScriptsCompatybility};
 
@@ -119,8 +119,10 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		//Main1
 
 		wxBoxSizer *Main1Sizer=new wxBoxSizer(wxVERTICAL);
-		wxFlexGridSizer *MainSizer2=new wxFlexGridSizer(7,2,wxSize(5,5));
+		wxFlexGridSizer *MainSizer2=new wxFlexGridSizer(8,2,wxSize(5,5));
 		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieć inny id
+		NumCtrl *gridSaveAfter = new NumCtrl(Main1, 20000, Options.GetString(GridSaveAfterCharacterCount), 0, 100,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
+		gridSaveAfter->SetToolTip(_("Zero całkowicie wyłacza zapis przy pisaniu"));
 		NumCtrl *autoSaveMax = new NumCtrl(Main1, 20000, Options.GetString(AutoSaveMaxFiles), 2, 1000000,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
 		autoSaveMax->SetToolTip(_("Liczbę plików autozapisu można ustawić od 2 do 1000000"));
 		NumCtrl *ltl = new NumCtrl(Main1, 20000, Options.GetString(AutomationTraceLevel), 0, 5,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
@@ -129,6 +131,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		KaiTextCtrl *sc2 = new KaiTextCtrl(Main1, 22001, Options.GetString(GridTagsSwapChar), wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc3 = new NumCtrl(Main1, 20000, Options.GetString(EditboxTagButtons), 0, 9,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
 		
+		ConOpt(gridSaveAfter, GridSaveAfterCharacterCount);
 		ConOpt(autoSaveMax, AutoSaveMaxFiles);
 		ConOpt(ltl, AutomationTraceLevel);
 		ConOpt(sc,InsertStartOffset);
@@ -136,6 +139,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		ConOpt(sc2,GridTagsSwapChar);
 		ConOpt(sc3,EditboxTagButtons);
 
+		MainSizer2->Add(new wxStaticText(Main1,-1,_("Zapis napisów po ilości edycji"),wxDefaultPosition, wxSize(240,-1)),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(gridSaveAfter,1,wxEXPAND);
 		MainSizer2->Add(new wxStaticText(Main1,-1,_("Maksymalna ilość plików autozapisu"),wxDefaultPosition, wxSize(240,-1)),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
 		MainSizer2->Add(autoSaveMax,1,wxEXPAND);
 		MainSizer2->Add(new wxStaticText(Main1,-1,_("Opóźnienie klatek początkowych w ms:"),wxDefaultPosition, wxSize(240,-1)),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);

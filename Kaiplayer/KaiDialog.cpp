@@ -83,7 +83,7 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	//Bind(wxEVT_ACTIVATE, &KaiDialog::OnActivate, this);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEscape, this, escapeId);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter, this, enterId);
-	//Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
+	//Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){Refresh(false);});
 	wxWindow *win = FindWindow(enterId);
 	if(win){win->SetFocus();}
 }
@@ -244,9 +244,14 @@ void KaiDialog::OnMouseEvent(wxMouseEvent &evt)
 		if(evt.LeftUp()){
 			pushed = enter = false;
 			Refresh(false,&rc);
+			wxButton *btn = wxDynamicCast(FindWindow(escapeId), wxButton);
+			if(btn && btn->IsShown() && btn->IsEnabled()){
+				wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, escapeId);
+				ProcessEvent(evt);
+				return;
+			}
 			EndModal(escapeId);
-			wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, escapeId);
-			ProcessEvent(evt);
+			
 		}
 		return;
 	}else if (enter || pushed){

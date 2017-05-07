@@ -72,7 +72,7 @@ void KaiToolbar::InitToolbar()
 	for(size_t i=0; i<IDS.size();i++)
 	{
 		MenuItem *item=mb->FindItem(IDS[i]);
-		if(!item){wxLogStatus(_("Nie można znaleźć elementu o idzie %i"), IDS[i]);continue;}
+		if(!item){wxLogStatus(_("Nie można znaleźć elementu o id %i"), IDS[i]);continue;}
 		wxString desc=item->GetLabelText();
 		AddItem(IDS[i],desc,item->icon,item->IsEnabled(),(item->GetSubMenu()!=NULL)? 1 : 0);
 	}

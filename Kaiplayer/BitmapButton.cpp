@@ -18,7 +18,7 @@
 #include "Hotkeys.h"
 
 BitmapButton::BitmapButton(wxWindow* parent, wxBitmap bitmap, wxBitmap bitmap1, int hkeyId, const wxString &tooltip, const wxPoint& pos, const wxSize& size, int _window)
-	:  wxStaticBitmap(parent, -1, bitmap,pos,size)
+	:  wxStaticBitmap(parent, hkeyId+300, bitmap,pos,size)
 	, window(_window)
 	, hotkeyId(hkeyId)
 {

@@ -136,7 +136,7 @@ bool VideoRend::InitDX(bool reset)
 
 	if(reset){
 		hr=d3device->Reset(&d3dpp);
-		if(FAILED(hr)){wxLogStatus(_("Nie można zresetować Direct3D"));}
+		if(FAILED(hr)){wxLogMessage(_("Nie można zresetować Direct3D"));}
 	}else{
 		hr=d3dobject->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,
 			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED , &d3dpp, &d3device);//| D3DCREATE_FPU_PRESERVE
@@ -218,8 +218,8 @@ bool VideoRend::InitDX(bool reset)
 	//wxLogStatus("Textura ma niewłaściwy format"); return false;	
 	//}
 	if(IsDshow){
-		HR (d3device->GetBackBuffer(0,0, D3DBACKBUFFER_TYPE_MONO, &bars),L"Nie można stworzyć powierzchni");
-		HR (DXVA2CreateVideoService(d3device, IID_IDirectXVideoProcessorService, (VOID**)&dxvaService),L"Nie można stworzyć DXVA processor service");
+		HR (d3device->GetBackBuffer(0,0, D3DBACKBUFFER_TYPE_MONO, &bars),_("Nie można stworzyć powierzchni"));
+		HR (DXVA2CreateVideoService(d3device, IID_IDirectXVideoProcessorService, (VOID**)&dxvaService),_("Nie można stworzyć DXVA processor service"));
 		DXVA2_VideoDesc videoDesc;
 		videoDesc.SampleWidth                         = vwidth;
 		videoDesc.SampleHeight                        = vheight;
@@ -240,7 +240,7 @@ bool VideoRend::InitDX(bool reset)
 		GUID* guids = NULL;
 		//wxLogStatus("desc");
 
-		HR(dxvaService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids),L"Nie moźna pobrać GUIDów DXVA");
+		HR(dxvaService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids),_("Nie moźna pobrać GUIDów DXVA"));
 		D3DFORMAT* formats = NULL;
 		//D3DFORMAT* formats2 = NULL;
 		bool isgood=false;
@@ -249,7 +249,7 @@ bool VideoRend::InitDX(bool reset)
 		for(UINT i=0; i<count;i++){
 			//wxLogMessage("guid: %i",(int)i);
 			hr=dxvaService->GetVideoProcessorRenderTargets(guids[i], &videoDesc, &count1, &formats);
-			if(FAILED(hr)){wxLogStatus(L"Nie można uzyskać formatów DXVA");continue;}
+			if(FAILED(hr)){wxLogMessage(_("Nie można uzyskać formatów DXVA"));continue;}
 			for (UINT j = 0; j < count1; j++)
 			{
 				if (formats[j] == D3DFMT_X8R8G8B8)
@@ -260,22 +260,22 @@ bool VideoRend::InitDX(bool reset)
 			}
 
 			CoTaskMemFree(formats);
-			if(!isgood){ wxLogStatus(L"Format ten nie jest obsługiwany przez DXVA");continue;}
+			if(!isgood){ wxLogMessage(_("Format ten nie jest obsługiwany przez DXVA"));continue;}
 			isgood=false;
 
 			hr=dxvaService->GetVideoProcessorCaps(guids[i], &videoDesc, D3DFMT_X8R8G8B8, &DXVAcaps);
-			if(FAILED(hr)){wxLogStatus(L"GetVideoProcessorCaps zawiodło");continue;}
+			if(FAILED(hr)){wxLogMessage(_("GetVideoProcessorCaps zawiodło"));continue;}
 			if (DXVAcaps.NumForwardRefSamples > 0 || DXVAcaps.NumBackwardRefSamples > 0)
 			{
-				/*wxLogStatus(L"NumForwardRefSamples albo NumBackwardRefSample jest większe od zera");*/continue;
+				/*wxLogMessage(L"NumForwardRefSamples albo NumBackwardRefSample jest większe od zera");*/continue;
 			}
 
 			//if(DXVAcaps.DeviceCaps!=4){continue;}//DXVAcaps.InputPool
 			hr = dxvaService->CreateSurface(vwidth,vheight, 0, d3dformat, D3DPOOL_DEFAULT, 0, DXVA2_VideoSoftwareRenderTarget, &MainStream, NULL);
-			if(FAILED(hr)){wxLogStatus(L"Nie można stworzyć powierzchni dxva %i", (int)i);continue;}
+			if(FAILED(hr)){wxLogMessage(_("Nie można stworzyć powierzchni dxva %i"), (int)i);continue;}
 
 			hr = dxvaService->CreateVideoProcessor(guids[i], &videoDesc,D3DFMT_X8R8G8B8,0,&dxvaProcessor);
-			if(FAILED(hr)){wxLogStatus(L"Nie można stworzyć dxva processora");continue;}
+			if(FAILED(hr)){wxLogMessage(_("Nie można stworzyć dxva processora"));continue;}
 			dxvaGuid=guids[i];isgood=true;
 			break;
 		}
@@ -388,7 +388,7 @@ void VideoRend::Render(bool Frame, bool wait)
 
 	}else{
 		hr = d3device->StretchRect(MainStream,&mainStreamRect,bars,&backBufferRect,D3DTEXF_LINEAR);
-		if(FAILED(hr)){wxLogStatus(_("Nie można nałożyć powierzchni na siebie"));}
+		if(FAILED(hr)){wxLogMessage(_("Nie można nałożyć powierzchni na siebie"));}
 	}
 
 	hr = d3device->BeginScene();
@@ -469,7 +469,7 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 		if(copy){byte *cpy = (byte*) datas; memcpy(cpy,fdata,vheight*pitch);}
 	}
 	else{
-		wxLogStatus(_("Brak bufora klatki"));return false;
+		wxLogMessage(_("Brak bufora klatki"));return false;
 	}
 
 
@@ -845,14 +845,14 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 	// Select renderer
 	//if(!vobsub){
 	vobsub = csri_renderer_default();
-	if(!vobsub){wxLogStatus(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false;}
+	if(!vobsub){wxLogMessage(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false;}
 	//}
 
 	instance = csri_open_mem(vobsub,buffer,size,NULL);
-	if(!instance){wxLogStatus(_("Instancja VobSuba nie utworzyła się.")); delete textsubs; return false;}
+	if(!instance){wxLogMessage(_("Instancja VobSuba nie utworzyła się.")); delete textsubs; return false;}
 
 	if(!format || csri_request_fmt(instance,format)){
-		wxLogStatus(_("CSRI nie obsługuje tego formatu."));
+		wxLogMessage(_("CSRI nie obsługuje tego formatu."));
 		csri_close(instance);
 		instance = NULL;
 		delete textsubs; return false;
@@ -910,26 +910,14 @@ bool VideoRend::UpdateRects(bool changeZoom)
 	windowRect.left=rt.x;
 	windowRect.top=rt.y;
 
-	if(tab->edytor && !isFullscreen){
+	/*if(tab->edytor && !isFullscreen){
 		backBufferRect=windowRect;
 	}
 	else
-	{
+	{*/
 		int arwidth=rt.height / AR;
 		int arheight=rt.width * AR;
-		/*if(zoomParcent>1){
-
-			if(arwidth > rt.width){
-				int zoomARHeight = ((zoomRect.width - zoomRect.x)) * AR;
-				wxLogStatus("height %i %i %i", zoomARHeight,arheight,rt.height);
-				arheight = (zoomRect.width - zoomRect.x > rt.width)? zoomARHeight : rt.height;
-			}
-			if(arheight > rt.height){
-				int zoomARWidth = ((zoomRect.height - zoomRect.y)) / AR;
-				wxLogStatus("width %i %i %i", zoomARWidth,arwidth,rt.width);
-				arwidth = (zoomRect.height - zoomRect.y > rt.height)? zoomARWidth : rt.width;
-			}
-		}*/
+		
 		if(arwidth > rt.width)
 		{
 			int onebar=(rt.height-arheight)/2;
@@ -939,6 +927,7 @@ bool VideoRend::UpdateRects(bool changeZoom)
 				wxLogStatus("height %i %i %i, %i", zoomARHeight,arheight,rt.height,onebar);
 			}*/
 			backBufferRect.bottom=arheight+onebar;
+			//if(backBufferRect.bottom % 2 != 0){backBufferRect.bottom++;}
 			backBufferRect.right=rt.width;//zostaje bez zmian
 			backBufferRect.left=0;
 			backBufferRect.top=onebar;
@@ -953,6 +942,7 @@ bool VideoRend::UpdateRects(bool changeZoom)
 			}*/
 			backBufferRect.bottom=rt.height;//zostaje bez zmian
 			backBufferRect.right=arwidth+onebar;
+			//if(backBufferRect.right % 2 != 0){backBufferRect.right++;}
 			backBufferRect.left=onebar;
 			backBufferRect.top=0;
 		}
@@ -960,7 +950,7 @@ bool VideoRend::UpdateRects(bool changeZoom)
 		{
 			backBufferRect=windowRect;
 		}
-	}
+	//}
 	if(/*zoomRect.width>0 && */changeZoom){
 		wxSize s(backBufferRect.right, backBufferRect.bottom);
 		float videoToScreenX = (float)s.x / (float)vwidth; 

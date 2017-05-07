@@ -148,7 +148,10 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 	choiceText->Bind(wxEVT_LEAVE_WINDOW,&KaiChoice::OnMouseEvent,this,27789);
 	choiceText->Bind(wxEVT_MOUSEWHEEL, &KaiChoice::OnMouseEvent, this,27789);
 	choiceText->Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &evt){
-		focusSet=true;/* choiceText->GetSelection(&sels, &sele);*/
+		focusSet=true;Refresh(false);/* choiceText->GetSelection(&sels, &sele);*/
+	},27789);
+	choiceText->Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent &evt){
+		Refresh(false);
 	},27789);
 	choiceText->Bind(wxEVT_LEFT_UP, [=](wxMouseEvent &evt){
 		if(focusSet){
@@ -542,6 +545,11 @@ void KaiChoice::OnActivate(wxFocusEvent &evt)
 	Refresh(false);
 }
 
+bool KaiChoice::HasFocus()
+{
+	return (wxWindow::HasFocus() || (choiceText && choiceText->HasFocus()));
+}
+
 wxIMPLEMENT_ABSTRACT_CLASS(KaiChoice, wxWindow);
 
 BEGIN_EVENT_TABLE(KaiChoice, wxWindow)
@@ -549,7 +557,7 @@ BEGIN_EVENT_TABLE(KaiChoice, wxWindow)
 	EVT_PAINT(KaiChoice::OnPaint)
 	EVT_SIZE(KaiChoice::OnSize)
 	EVT_ERASE_BACKGROUND(KaiChoice::OnEraseBackground)
-	//EVT_SET_FOCUS(KaiChoice::OnActivate)
+	EVT_SET_FOCUS(KaiChoice::OnActivate)
 	EVT_KILL_FOCUS(KaiChoice::OnActivate)
 	EVT_KEY_UP(KaiChoice::OnKeyPress)
 	EVT_MENU_RANGE(7865,7866,KaiChoice::OnArrow)

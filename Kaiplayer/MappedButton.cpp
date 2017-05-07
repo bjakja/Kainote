@@ -75,15 +75,17 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	Bind(wxEVT_LEAVE_WINDOW, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
-	//Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		//SendEvent();
-	//});
+	Bind(wxEVT_KEY_DOWN, [=](wxKeyEvent &evt){
+		if(evt.GetKeyCode()==WXK_RETURN){
+			SendEvent();
+		}
+	});
 	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
 	Bind(wxEVT_KILL_FOCUS,[=](wxFocusEvent &evt){Refresh(false);});
-	wxAcceleratorEntry centries[1];
-	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
-	wxAcceleratorTable caccel(1, centries);
-	SetAcceleratorTable(caccel);
+	//wxAcceleratorEntry centries[1];
+	//centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
+	//wxAcceleratorTable caccel(1, centries);
+	//SetAcceleratorTable(caccel);
 	if(toolTip!=""){SetToolTip(toolTip);}
 	//SetForegroundColour(parent->GetForegroundColour());
 	
@@ -123,15 +125,17 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	Bind(wxEVT_LEAVE_WINDOW, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
-	//Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		//SendEvent();
-	//});
+	Bind(wxEVT_KEY_DOWN, [=](wxKeyEvent &evt){
+		if(evt.GetKeyCode()==WXK_RETURN){
+			SendEvent();
+		}
+	});
 	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
 	Bind(wxEVT_KILL_FOCUS,[=](wxFocusEvent &evt){Refresh(false);});
-	wxAcceleratorEntry centries[1];
-	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
-	wxAcceleratorTable caccel(1, centries);
-	SetAcceleratorTable(caccel);
+	//wxAcceleratorEntry centries[1];
+	//centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
+	//wxAcceleratorTable caccel(1, centries);
+	//SetAcceleratorTable(caccel);
 	//SetForegroundColour(parent->GetForegroundColour());
 }
 
@@ -165,15 +169,17 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 	Bind(wxEVT_LEAVE_WINDOW, &MappedButton::OnMouseEvent, this);
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
-	//Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		//SendEvent();
-	//});
+	Bind(wxEVT_KEY_DOWN, [=](wxKeyEvent &evt){
+		if(evt.GetKeyCode()==WXK_RETURN){
+			SendEvent();
+		}
+	});
 	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
 	Bind(wxEVT_KILL_FOCUS,[=](wxFocusEvent &evt){Refresh(false);});
-	wxAcceleratorEntry centries[1];
-	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
-	wxAcceleratorTable caccel(1, centries);
-	SetAcceleratorTable(caccel);
+	//wxAcceleratorEntry centries[1];
+	//centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
+	//wxAcceleratorTable caccel(1, centries);
+	//SetAcceleratorTable(caccel);
 	if(tooltip!=""){SetToolTip(tooltip);}
 	SetFont(parent->GetFont());
 	//SetForegroundColour(parent->GetForegroundColour());

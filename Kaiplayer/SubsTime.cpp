@@ -15,7 +15,7 @@
 
 #include "SubsTime.h"
 #include "Config.h"
-#include "KaraokeSplitting.h"//zeroit
+#include "SubsDialogue.h"
 
 
 STime::STime(){
@@ -43,7 +43,7 @@ void STime::ParseMS(wxString raw)
 {   
 
 	int csec1=0,sec1,min1,godz1;
-	if(raw.Trim()==""){mstime=0;}
+	if(raw.Trim()==""){mstime=0;orgframe=0;}
 	else if (form<MDVD){
 		wxString csec,sec,min,godz;
 		size_t godz11=raw.find(_T(":"),0);
@@ -66,11 +66,15 @@ void STime::ParseMS(wxString raw)
 			csec1=wxAtoi(csec);}
 
 		mstime=(godz1*3600000)+(min1*60000)+(sec1*1000)+csec1;
-	}else if(form==MDVD||form==MPL2){   
-		//float afps=(form==MPL2)?10 : Options.GetFloat("Default FPS");
+	}else{   
 		int ress=wxAtoi(raw);
-		if(form==MDVD){orgframe=ress;mstime=(ress/Options.GetFloat(ConvertFPS))*(1000);if(orgframe<0){orgframe=0;}}
-		else{mstime=(ress/10)*(1000);}
+		if(form==FRAME){
+			orgframe=ress;
+		}else if(form==MDVD){
+			orgframe=ress;
+			mstime=(ress/Options.GetFloat(ConvertFPS))*(1000);
+			if(orgframe<0){orgframe=0;}
+		}else{mstime=(ress/10)*(1000);}
 	}
 
 
@@ -81,41 +85,36 @@ wxString STime::raw(char ft)//,float custfps
 	wxString rawtxt;
 	if(form==SRT){mstime=ZEROIT(mstime);}
 	if(ft==0){ft=form;}
-	if(ft<SRT)
-	{
+	if(ft<SRT){
 		int csec=mstime/10;
 		int sec=mstime/1000;
 		int min=mstime/60000;
 		int godz=mstime/3600000;
 		rawtxt = wxString::Format(_T("%01i:%02i:%02i.%02i"),godz,(min%60),(sec%60),(csec%100));
-	}else if(ft==TMP)
-	{
+	}else if(ft==TMP){
 		int sec=mstime/1000;
 		int min=mstime/60000;
 		int godz=mstime/3600000;
 		rawtxt = wxString::Format(_T("%02i:%02i:%02i"),godz,(min%60),(sec%60));
-	}else if(ft==MDVD||ft==MPL2)
-	{
-		//float fps=(custfps>0)?custfps:Options.GetFloat(_T("Default FPS"));
-		//if(fps<1){fps=23.976f;}
-		//float afps=(ft==MPL2)?10 : fps;
-		int czas=ceil(mstime*(10.0f/1000));
-		rawtxt = wxString::Format(_T("%i"),(ft==MDVD)? orgframe : czas);
-	}else if(ft==SRT)
-	{
+	}else if(ft==SRT){
 		int sec=mstime/1000;
 		int min=mstime/60000;
 		int godz=mstime/3600000;
 		rawtxt = wxString::Format(_T("%02i:%02i:%02i,%03i"),godz,(min%60),(sec%60),(mstime%1000));
+	}else{
+		rawtxt = wxString::Format(_T("%i"),(ft!=MPL2)? orgframe : (int)ceil(mstime*(10.0f/1000.0f)));
 	}
-	form=ft;
+	//form=ft;
 	return rawtxt;
 }
 
 void STime::Change(int ms)
 {
 	mstime+=ms;if(mstime<0){mstime=0;}
-	//SetFormat(form);
+}
+void STime::ChangeFrame(int frame)
+{
+	orgframe+=frame;if(orgframe<0){orgframe=0;}
 }
 void STime::NewTime(int ms)
 {
@@ -125,19 +124,25 @@ void STime::NewTime(int ms)
 		if(fpsa<1){fpsa=23.976f;}
 		orgframe=ceil(mstime*(fpsa/1000));
 	}
-	//SetFormat(form);
+	
 }
+
+void STime::NewFrame(int frame)
+{
+	orgframe=frame;if(orgframe<0){orgframe=0;}
+}
+
 char STime::GetFormat()
 {
 	return form;
 }
 void STime::ChangeFormat(char format,float fps)
 {
-	if(form==MDVD){
+	if(form==MDVD && format!=FRAME){
 		float fpsa=(fps)?fps:Options.GetFloat(ConvertFPS);
 		if(fpsa<1){fpsa=23.976f;}
 		mstime=(orgframe/fpsa)*(1000);
-	}else if(format==MDVD){
+	}else if(format==MDVD && form!=FRAME){
 		float fpsa=(fps)?fps:Options.GetFloat(ConvertFPS);
 		if(fpsa<1){fpsa=23.976f;}
 		orgframe=ceil(mstime*(fpsa/1000));
@@ -150,34 +155,43 @@ wxString STime::GetFormatted(char format)
 	return raw(format);
 }
 
-bool STime::operator> (STime por)
+bool STime::operator> (const STime &comp)
 {
-	return mstime>por.mstime;
+	return mstime>comp.mstime;
 }
 
-bool STime::operator< (STime por)
+bool STime::operator< (const STime &comp)
 {
-	return mstime<por.mstime;
+	return mstime<comp.mstime;
 }
 
-bool STime::operator>= (STime por)
+bool STime::operator>= (const STime &comp)
 {
-	return mstime>por.mstime;
+	return mstime>comp.mstime;
 }
 
-bool STime::operator<= (STime por)
+bool STime::operator<= (const STime &comp)
 {
-	return mstime<por.mstime;
+	return mstime<comp.mstime;
 }
 
-bool STime::operator== (STime por)
+bool STime::operator== (const STime &comp)
 {
-	return mstime==por.mstime;
+	return mstime==comp.mstime;
 }
 
-STime STime::operator- (STime por)
+STime STime::operator- (const STime &comp)
 {
-	STime tmp;
-	tmp.mstime=mstime-por.mstime;
+	STime tmp = STime(comp);
+	tmp.mstime = mstime - comp.mstime;
+	tmp.orgframe = orgframe - comp.orgframe;
+	return tmp;
+}
+
+STime STime::operator+ (const STime &comp)
+{
+	STime tmp = STime(comp);
+	tmp.mstime = mstime + comp.mstime;
+	tmp.orgframe = orgframe + comp.orgframe;
 	return tmp;
 }

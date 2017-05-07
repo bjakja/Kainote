@@ -134,9 +134,10 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 
 EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	: wxWindow(parent, idd, wxDefaultPosition, wxDefaultSize/*, wxBORDER_SIMPLE*/)//|wxCLIP_CHILDREN
-	, EditCounter(0)
+	, EditCounter(1)
 	, ABox(NULL)
 	, line(NULL)
+	, lastVisible(false)
 {
 
 	SetForegroundColour(Options.GetColour(WindowText));
@@ -298,21 +299,21 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	Connect(16658,wxEVT_COMMAND_COMBOBOX_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);    
 	Connect(IDSTYLE,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);    
 	Connect(PutBold,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnBoldClick);
-	Connect(PutItalic,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnItalClick);
-	Connect(ID_UND,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnUndClick);
+	Connect(PutItalic,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnItalicClick);
+	Connect(ID_UND,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnUnderlineClick);
 	Connect(ID_STRIKE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnStrikeClick);
 	Connect(ID_AN,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&EditBox::OnAnChoice);
 	Connect(ID_FONT,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnFontClick);
 	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnColorClick,this,ID_COL1,ID_COL4);
 	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnStyleEdit, this, 19989);
-	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnCpAll, this, ID_CPALL);
-	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnCpSel, this, ID_CPSEL);
-	Connect(ID_HIDE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnHideOrig);
+	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnCopyAll, this, ID_CPALL);
+	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnCopySelection, this, ID_CPSEL);
+	Connect(ID_HIDE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnHideOriginal);
 	Connect(ID_AUTOMOVETAGS,wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnAutoMoveTags);
 	Connect(MENU_ZATW,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);
 	Connect(MENU_NLINE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnNewline);
 	Connect(SplitLine,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnSplit);
-	Connect(StartDifference, EndDifference,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnPasteDiff);
+	Connect(StartDifference, EndDifference,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnPasteDifferents);
 	Connect(wxEVT_SIZE,(wxObjectEventFunction)&EditBox::OnSize);
 	if(!Options.GetBool(DisableLiveVideoEditing)){
 		Connect(16668,NUMBER_CHANGED,(wxObjectEventFunction)&EditBox::OnEdit);
@@ -330,14 +331,23 @@ EditBox::~EditBox()
 void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool autoPlay)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
+	
 	if(nochangeline && ebrow==Row){goto done;}
-	if(Options.GetBool(GridSaveWithoutEnter) && ebrow!=Row && save){
+	if(Options.GetInt(GridSaveAfterCharacterCount)>1 && ebrow!=Row && save){
 		Send(false);
 	}
 	ebrow=Row;
 	grid->mtimerow=Row;
 	wxDELETE(line);
 	line=grid->GetDial(ebrow)->Copy();
+	if(grid->showFrames){
+		VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
+		//Start time - halfframe / end time + halfframe
+		if(vb->VFF){
+			line->Start.orgframe = vb->VFF->GetFramefromMS(line->Start.mstime);
+			line->End.orgframe = vb->VFF->GetFramefromMS(line->End.mstime);
+		}
+	}
 	Comment->SetValue(line->IsComment);
 	LayerEdit->SetInt(line->Layer);
 	StartEdit->SetTime(line->Start);
@@ -369,8 +379,20 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 		}
 		OnVideo=false;
 	}
-done:
-	int pas=pan->Video->vToolbar->videoPlayAfter->GetSelection();//Options.GetInt(PlayAfterSelection);
+
+done:	
+	
+	VideoCtrl *vb = pan->Video;
+	int pas = vb->vToolbar->videoPlayAfter->GetSelection();
+
+	if(vb->vToolbar->videoSeekAfter->GetSelection()==1 && pas<2 && !nochangeline){
+		if(vb->GetState()!=None){
+			if(vb->GetState()==Playing){vb->Pause();}
+			vb->Seek(line->Start.mstime);
+		}
+		return;
+	}
+	
 	if(pas>0 && autoPlay){
 		if(pas==1){
 			if(ABox){
@@ -442,13 +464,13 @@ void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 	}
 
 	if(StartEdit->IsModified()||StartEdit->HasFocus()){
-		line->Start=StartEdit->GetTime();
+		line->Start=StartEdit->GetTime(1);
 		if(line->Start.mstime>line->End.mstime){line->End=line->Start;}
 		cellm |=START;
 		StartEdit->SetModified(dummy);
 	}
 	if(EndEdit->IsModified()||EndEdit->HasFocus()){
-		line->End=EndEdit->GetTime();
+		line->End=EndEdit->GetTime(2);
 		if(line->Start.mstime>line->End.mstime){line->End=line->Start;}
 		cellm |= END;
 		EndEdit->SetModified(dummy);
@@ -511,6 +533,20 @@ void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 	if(cellm){
 		if(ebrow<grid->GetCount() && !dummy){
 			OnVideo=false;
+			//if(grid->showFrames && (cellm & START || cellm & END)){
+			//	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
+			//	//Start time - halfframe / end time + halfframe
+			//	if(vb->VFF){
+			//		if(cellm & START){
+			//			int time = vb->VFF->GetMSfromFrame(line->Start.orgframe)-(vb->avtpf/2.0f);
+			//			line->Start.mstime = ZEROIT(time);
+			//		}
+			//		if(cellm & END){
+			//			int time = vb->VFF->GetMSfromFrame(line->End.orgframe)+(vb->avtpf/2.0f);
+			//			line->End.mstime = ZEROIT(time);
+			//		}
+			//	}
+			//}
 			grid->ChangeLine(line, ebrow, cellm, selline, visualdummy);
 			if(cellm & ACTOR || cellm & EFFECT){
 				grid->RebuildActorEffectLists();
@@ -730,7 +766,7 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 	delete mstyle;
 }
 
-void EditBox::AllColClick(int kol)
+void EditBox::AllColorClick(int kol)
 {
 	num="";
 	num<<kol;
@@ -766,7 +802,7 @@ void EditBox::AllColClick(int kol)
 
 void EditBox::OnColorClick(wxCommandEvent& event)
 {
-	AllColClick(event.GetId()-ID_COL1+1);
+	AllColorClick(event.GetId()-ID_COL1+1);
 }
 
 void EditBox::OnCommit(wxCommandEvent& event)
@@ -809,7 +845,7 @@ void EditBox::OnBoldClick(wxCommandEvent& event)
 	else {PutinNonass("y:b", "Y:b");}
 }
 
-void EditBox::OnItalClick(wxCommandEvent& event)
+void EditBox::OnItalicClick(wxCommandEvent& event)
 {
 	if(grid->form<SRT){Styles *mstyle=grid->GetStyle(0,line->Style);
 	wxString wart=(mstyle->Italic)?"0":"1";
@@ -826,7 +862,7 @@ void EditBox::OnItalClick(wxCommandEvent& event)
 	else{PutinNonass("/", "/" );}
 }
 
-void EditBox::OnUndClick(wxCommandEvent& event)
+void EditBox::OnUnderlineClick(wxCommandEvent& event)
 {
 	if(grid->form<SRT){
 		Styles *mstyle=grid->GetStyle(0,line->Style);
@@ -890,13 +926,13 @@ void EditBox::SetTl(bool tl)
 	Kai->Toolbar->UpdateId(SaveTranslation, tl);
 }
 
-void EditBox::OnCpAll(wxCommandEvent& event)
+void EditBox::OnCopyAll(wxCommandEvent& event)
 {
 	TextEdit->SetTextS(TextEditTl->GetValue(),true);
 	TextEdit->SetFocus();
 }
 
-void EditBox::OnCpSel(wxCommandEvent& event)
+void EditBox::OnCopySelection(wxCommandEvent& event)
 {
 	long from, to, fromtl, totl;
 	TextEditTl->GetSelection(&from,&to);
@@ -1060,7 +1096,7 @@ void EditBox::OnSplit(wxCommandEvent& event)
 	tedit->SetSelection(whre,whre);
 }
 
-void EditBox::OnHideOrig(wxCommandEvent& event)
+void EditBox::OnHideOriginal(wxCommandEvent& event)
 {
 	wxString texttl = TextEditTl->GetValue();
 	texttl="{"+texttl+"}";
@@ -1068,7 +1104,7 @@ void EditBox::OnHideOrig(wxCommandEvent& event)
 	TextEditTl->SetTextS(texttl, true);
 }
 
-void EditBox::OnPasteDiff(wxCommandEvent& event)
+void EditBox::OnPasteDifferents(wxCommandEvent& event)
 {
 	if(Notebook::GetTab()->Video->GetState()==None){wxBell(); return;}
 	int idd=event.GetId();
@@ -1202,10 +1238,14 @@ bool EditBox::FindVal(wxString tag, wxString *Finded, wxString text, bool *endse
 void EditBox::OnEdit(wxCommandEvent& event)
 {
 	TabPanel* panel= (TabPanel*)GetParent();
+	//Start time - halfframe / end time + halfframe
+	bool startEndFocus = StartEdit->HasFocus()||EndEdit->HasFocus();
+	bool durFocus = DurEdit->HasFocus();
+
 	bool visible=false;
-	if(StartEdit->HasFocus()||EndEdit->HasFocus()){
-		line->End=EndEdit->GetTime();
-		line->Start=StartEdit->GetTime();
+	if(startEndFocus){
+		line->End=EndEdit->GetTime(2);
+		line->Start=StartEdit->GetTime(1);
 		if(line->Start>line->End){
 			line->End=line->Start;
 			EndEdit->SetTime(line->End);
@@ -1214,20 +1254,31 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		DurEdit->SetTime(line->End - line->Start);
 		UpdateChars((TextEditTl->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
 	}
-	else if(DurEdit->HasFocus()){
-		line->End.mstime=line->Start.mstime + DurEdit->GetTime().mstime;
+	else if(durFocus){
+		line->End = line->Start + DurEdit->GetTime();
 		EndEdit->SetTime(line->End);
 		EndEdit->MarkDirty();
 		UpdateChars((TextEditTl->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
 	}
+
 	if(Visual > 0){
 		panel->Video->SetVisual(false, true);
 		return;
 	}
+	int saveAfter = Options.GetInt(GridSaveAfterCharacterCount);
+	if(saveAfter && EditCounter>= saveAfter){
+		bool tmpOnVideo = OnVideo;
+		Send(false,false,true);
+		OnVideo = tmpOnVideo;
+		EditCounter=1;
+	}else{EditCounter++;}
+
 	wxString *text=NULL;
 	if(panel->Video->GetState()==Paused){
-		visible=true;
+		//visible=true;
 		text=grid->GetVisible(&visible);
+		if(lastVisible!=visible){visible=true;}
+		lastVisible=visible;
 		OnVideo=true;
 	}
 	else if(panel->Video->GetState()==Playing){
@@ -1246,13 +1297,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		if(Visual>0){panel->Video->ResetVisual();}
 		else if(panel->Video->GetState()==Paused){panel->Video->Render();}
 	}else if(text){delete text;}
-	if(!Options.GetBool(GridSaveWithoutEnter)){return;}
-	if(EditCounter>=6){
-		bool tmpOnVideo = OnVideo;
-		Send(false,false,true);
-		OnVideo = tmpOnVideo;
-		EditCounter=0;
-	}else{EditCounter++;}
+	
 }
 
 void EditBox::OnColorChange(wxCommandEvent& event)
@@ -1415,7 +1460,17 @@ void EditBox::OnCursorMoved(wxCommandEvent& event)
 
 void EditBox::OnChangeTimeDisplay(wxCommandEvent& event)
 {
-	grid->showFrames=Frames->GetValue();
+	bool frame = Frames->GetValue();
+	grid->ChangeTimeDisplay(frame);
+	wxDELETE(line);
+	line = grid->GetDial(ebrow)->Copy();
+	StartEdit->ShowFrames(frame);
+	EndEdit->ShowFrames(frame);
+	DurEdit->ShowFrames(frame);
+	StartEdit->SetTime(line->Start);
+	EndEdit->SetTime(line->End);
+	DurEdit->SetTime(line->End - line->Start);
+	
 	grid->RepaintWindow(START|END);
 }
 

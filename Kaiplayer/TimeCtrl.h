@@ -22,17 +22,21 @@
 
 class TimeCtrl : public KaiTextCtrl
 {
-    public:
+   public:
 	TimeCtrl(wxWindow* parent, const long int id, const wxString& val=_("0:00:00.00"), const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=0,const wxValidator& validator=wxDefaultValidator, const wxString& name=wxTextCtrlNameStr);
 	virtual ~TimeCtrl();
 
-	void SetTime(STime newtime, bool stillModified=false);
-	STime GetTime();
+	void SetTime(const STime &newtime, bool stillModified=false);
+	//0 nothing, 1 -halframe (start), 2 +halfframe (end),
+	STime GetTime(char opt = 0);
 	void ChangeFormat(char frm, float fps=0);
+	char GetFormat();
+	bool HasShownFrames(){return showFrames;}
+	void ShowFrames(bool show=true){showFrames = show;}
 
 	//void SetModified(bool modified);
 	bool changedBackGround;
-	private:
+private:
 	void OnMouseLost(wxMouseCaptureLostEvent& event){if(HasCapture()){ReleaseMouse();}; holding = false;};
 	char form;
 	STime mTime;
@@ -41,8 +45,9 @@ class TimeCtrl : public KaiTextCtrl
 	int oldpos;
 	int oldposx;
 	int curpos;
-	STime value;
+	int mstime;
 	int grad;
+	bool showFrames;
 	void OnTimeWrite(wxCommandEvent& event);
 	void OnMouseEvent(wxMouseEvent &event);
 	void OnKeyEvent(wxKeyEvent& event);

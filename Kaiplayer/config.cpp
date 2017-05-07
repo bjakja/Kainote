@@ -272,7 +272,7 @@ void config::LoadDefaultConfig()
 	rawcfg[MoveTimesByTime] = "false";
 	rawcfg[GridFontName] = "Tahoma";
 	rawcfg[GridFontSize] = "10";
-	rawcfg[GridSaveWithoutEnter] = "true";
+	rawcfg[GridSaveAfterCharacterCount] = "1";
 	rawcfg[GridTagsSwapChar] = L"☀";
 	rawcfg[MoveTimesForward] = "true";
 	rawcfg[ConvertNewEndTimes] = "false";

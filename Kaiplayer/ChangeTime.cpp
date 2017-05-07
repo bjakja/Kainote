@@ -211,8 +211,23 @@ void CTwindow::OnAddStyles(wxCommandEvent& event)
 
 void CTwindow::OnOKClick(wxCommandEvent& event)
 {
-
-    Options.SetInt(MoveTimesTime,TimeText->GetTime().mstime);
+	int time=0;
+	if(TimeText->HasShownFrames()){
+		TabPanel *tab = ((TabPanel*)GetParent());
+		if(!tab->Video->VFF){
+			wxLogMessage(_("Wideo nie jest wczytane przez FFMS2"));
+			time = TimeText->GetTime().mstime;
+		}else{
+			int startFrame = tab->Edit->line->Start.orgframe;
+			int endFrame = startFrame + TimeText->GetTime().orgframe;
+			int startMS = tab->Video->VFF->GetMSfromFrame(startFrame);
+			int endMS = tab->Video->VFF->GetMSfromFrame(endFrame);
+			time = ZEROIT(endMS - startMS)+10;
+		}
+	}else{
+		time = TimeText->GetTime().mstime;
+	}
+    Options.SetInt(MoveTimesTime,time);
 
 	if(form==ASS){
 		wxString sstyles=Stylestext->GetValue();
@@ -320,6 +335,18 @@ void CTwindow::AudioVideoTime(wxCommandEvent &event)
 void CTwindow::RefVals(CTwindow *from)
 {
 	STime ct=(from)? from->TimeText->GetTime() : STime(Options.GetInt(MoveTimesTime));  
+	if(from && (from->TimeText->HasShownFrames() != TimeText->HasShownFrames())){
+		TabPanel *tab = ((TabPanel*)GetParent());
+		if(!tab->Video->VFF){
+			wxLogMessage(_("Wideo nie jest wczytane przez FFMS2"));
+		}else{
+			if(TimeText->HasShownFrames()){
+				ct.NewFrame(tab->Video->VFF->GetFramefromMS(ct.mstime));
+			}else{
+				ct.NewTime(tab->Video->VFF->GetMSfromFrame(ct.orgframe));
+			}
+		}
+	}
 	TimeText->SetTime(ct);
 	int mto=Options.GetInt(MoveTimesOptions);
 	videotime->SetValue((from)? from->videotime->GetValue() : (mto & 4)>0);
