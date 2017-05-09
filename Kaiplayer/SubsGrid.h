@@ -72,6 +72,7 @@ public:
 	
 	Dialogue *GetDialCor(int ii);
 	void ChangeTime();
+	void ChangeFrames();
 	int GetCount();
 	int FirstSel();
 	void SortIt(short what,bool all=true);
@@ -108,6 +109,7 @@ public:
 	Dialogue *CopyDial(int i, bool push=true);
 	Dialogue *GetDial(int i);
 	wxString *GetVisible(bool *visible=0, wxPoint *point=0, bool trimSels=false);
+	//wxString *GetSubsToEnd(bool *visible=0, wxPoint *point=0);
 	void RebuildActorEffectLists();
 	void RefreshIfVisible(int time);
 	void SetVideoLineTime(wxMouseEvent &evt);

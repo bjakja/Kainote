@@ -25,8 +25,8 @@ class TimeCtrl : public KaiTextCtrl
    public:
 	TimeCtrl(wxWindow* parent, const long int id, const wxString& val=_("0:00:00.00"), const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=0,const wxValidator& validator=wxDefaultValidator, const wxString& name=wxTextCtrlNameStr);
 	virtual ~TimeCtrl();
-
-	void SetTime(const STime &newtime, bool stillModified=false);
+	//0 dont setup frame, 1 start frame, 2 end frame,
+	void SetTime(const STime &newtime, bool stillModified=false, int opt = 0);
 	//0 nothing, 1 -halframe (start), 2 +halfframe (end),
 	STime GetTime(char opt = 0);
 	void ChangeFormat(char frm, float fps=0);

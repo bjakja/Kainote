@@ -215,19 +215,21 @@ void CTwindow::OnOKClick(wxCommandEvent& event)
 	if(TimeText->HasShownFrames()){
 		TabPanel *tab = ((TabPanel*)GetParent());
 		if(!tab->Video->VFF){
-			wxLogMessage(_("Wideo nie jest wczytane przez FFMS2"));
-			time = TimeText->GetTime().mstime;
+			wxLogMessage(_("Wideo nie jest wczytane przez FFMS2")); return;
+			//time = TimeText->GetTime().mstime; 
 		}else{
-			int startFrame = tab->Edit->line->Start.orgframe;
+			/*int startFrame = tab->Edit->line->Start.orgframe;
 			int endFrame = startFrame + TimeText->GetTime().orgframe;
 			int startMS = tab->Video->VFF->GetMSfromFrame(startFrame);
 			int endMS = tab->Video->VFF->GetMSfromFrame(endFrame);
-			time = ZEROIT(endMS - startMS)+10;
+			time = ZEROIT(endMS - startMS)+10;*/
+			Options.SetInt(MoveTimesFrames,TimeText->GetTime().orgframe);
 		}
 	}else{
-		time = TimeText->GetTime().mstime;
+		//time = TimeText->GetTime().mstime;
+		Options.SetInt(MoveTimesTime,TimeText->GetTime().mstime);
 	}
-    Options.SetInt(MoveTimesTime,time);
+    
 
 	if(form==ASS){
 		wxString sstyles=Stylestext->GetValue();
@@ -254,13 +256,18 @@ void CTwindow::OnOKClick(wxCommandEvent& event)
 		Options.SetInt(PostprocessorEnabling,(int)LeadIn->GetValue()+((int)LeadOut->GetValue()*2)+((int)Continous->GetValue()*4)+((int)SnapKF->GetValue()*8)+16);
 	}//else{int pe = Options.GetInt("Postprocessor enabling"); if(pe>=16){Options.SetInt("Postprocessor enabling", pe^ 16);} }
 	int acid=event.GetId();
+	TabPanel *tab = Kai->GetTab();
 	if (acid==ID_MOVE){
-		Kai->GetTab()->Grid1->ChangeTime();
+		if(TimeText->HasShownFrames()){
+			tab->Grid1->ChangeFrames();
+		}else{
+			tab->Grid1->ChangeTime();
+		}
 	}else if(acid==ID_CLOSE){
 		Hide();
-		Kai->GetTab()->BoxSizer1->Layout();
+		tab->BoxSizer1->Layout();
 	}
-	Kai->GetTab()->Grid1->SetFocus();
+	tab->Grid1->SetFocus();
 }
 
 
@@ -337,15 +344,17 @@ void CTwindow::RefVals(CTwindow *from)
 	STime ct=(from)? from->TimeText->GetTime() : STime(Options.GetInt(MoveTimesTime));  
 	if(from && (from->TimeText->HasShownFrames() != TimeText->HasShownFrames())){
 		TabPanel *tab = ((TabPanel*)GetParent());
-		if(!tab->Video->VFF){
-			wxLogMessage(_("Wideo nie jest wczytane przez FFMS2"));
-		}else{
-			if(TimeText->HasShownFrames()){
-				ct.NewFrame(tab->Video->VFF->GetFramefromMS(ct.mstime));
+		
+		if(TimeText->HasShownFrames()){
+			if(!tab->Video->VFF){
+				wxLogMessage(_("Wideo nie jest wczytane przez FFMS2"));
 			}else{
-				ct.NewTime(tab->Video->VFF->GetMSfromFrame(ct.orgframe));
+				ct.NewFrame(tab->Video->VFF->GetFramefromMS(ct.mstime));
 			}
+		}else{
+			//ct.NewTime(tab->Video->VFF->GetMSfromFrame(ct.orgframe));
 		}
+		
 	}
 	TimeText->SetTime(ct);
 	int mto=Options.GetInt(MoveTimesOptions);

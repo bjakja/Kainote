@@ -197,7 +197,16 @@ void MTextEditor::OnCharPress(wxKeyEvent& event)
 void MTextEditor::OnKeyPress(wxKeyEvent& event)
 {
 	int key=event.GetKeyCode();
-	if(!(event.ControlDown() && !event.AltDown()) && (key>30 || key == 0)){event.Skip();}
+	if(!(event.ControlDown() && !event.AltDown()) && (key>30 || key == 0)){event.Skip();return;}
+	if(event.ControlDown() && key == '0'){
+		font.SetPointSize(10);
+		int fw,fh;
+		GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
+		Fheight=fh;
+		caret->SetSize(1,fh);
+		CalcWrap(false, false);
+		Refresh(false);
+	}
 }
 
 void MTextEditor::OnAccelerator(wxCommandEvent& event)

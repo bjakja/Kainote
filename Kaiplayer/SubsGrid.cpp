@@ -233,7 +233,8 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 
 	Dialogue *acdial=GetDial(MID(0,Edit->ebrow,size-1));
 	Dialogue *Dial;
-	int VideoPos = ((TabPanel*)GetParent())->Video->Tell();
+	TabPanel *tab = (TabPanel*)GetParent();
+	int VideoPos = tab->Video->Tell();
 
 	int fw,fh,bfw,bfh;
 	wxColour kol;
@@ -278,8 +279,8 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 				strings.Add(wxString::Format("%i",Dial->Layer));
 			}
 			
-			if(showFrames && Kai->GetTab()->Video->VFF){
-				VideoFfmpeg *VFF = Kai->GetTab()->Video->VFF;
+			if(showFrames && tab->Video->VFF){
+				VideoFfmpeg *VFF = tab->Video->VFF;
 				wxString frame;
 				frame << VFF->GetFramefromMS(Dial->Start.mstime);
 				strings.Add(frame);
@@ -289,8 +290,8 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 					strings.Add(frame);
 				}
 			}else{
-				strings.Add(Dial->Start.raw());
-				if (form!=TMP){strings.Add(Dial->End.raw());}
+				strings.Add(Dial->Start.raw(form));
+				if (form!=TMP){strings.Add(Dial->End.raw(form));}
 			}
 			
 			if (form<SRT){
@@ -649,13 +650,13 @@ void SubsGrid::ChangeLine(Dialogue *line1, int wline, long cells, bool selline, 
 	Refresh(false);
 	if(selline){
 		Edit->SetLine(lastRow,true,true,false,true);
-		VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
+		/*VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
 		if(vb->vToolbar->videoSeekAfter->GetSelection()==1 && vb->vToolbar->videoPlayAfter->GetSelection()<2){
 			if(vb->GetState()!=None){
 				if(vb->GetState()==Playing){vb->Pause();}
 				vb->Seek(Edit->line->Start.mstime);
 			}
-		}
+		}*/
 	}
 	SetModified(false,dummy);
 
@@ -1316,6 +1317,228 @@ public:
 	} // returns x>y
 };
 
+void SubsGrid::ChangeFrames()
+{
+	VideoCtrl *vb=((TabPanel*)GetParent())->Video;
+	if(!vb->VFF){wxLogMessage(_("Wideo nie jest wczytane przez FFMS2"));return;}
+	int addedFrames=0;
+	int halfframe= (vb->avtpf/2.0f);
+	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 8 Move to audio time;
+	int moveTimeOptions = Options.GetInt(MoveTimesOptions);
+	
+	//Time to move
+	int frame = Options.GetInt(MoveTimesFrames);
+	int whichLines = MAX(0,Options.GetInt(MoveTimesWhichLines));
+	int whichTimes = MAX(0,Options.GetInt(MoveTimesWhichTimes));
+	int correctEndTimes  = Options.GetInt(MoveTimesCorrectEndTimes);
+	//1 Lead In, 2 Lead Out, 4 Make times continous, 8 Snap to keyframe;
+	int PostprocessorOptions  = Options.GetInt(PostprocessorEnabling);
+	int li=0, lo=0, ts=0, te=0, kbs=0, kas=0, kbe=0, kae=0;
+	if(PostprocessorOptions){
+		if(form==TMP || PostprocessorOptions<16){PostprocessorOptions=0;}
+		else if(PostprocessorOptions & 8 && !vb->VFF){PostprocessorOptions^=8;}
+		li  = Options.GetInt(PostprocessorLeadIn);
+		lo  = Options.GetInt(PostprocessorLeadOut);
+		ts  = Options.GetInt(PostprocessorThresholdStart);
+		te  = Options.GetInt(PostprocessorThresholdEnd);
+		kbs = Options.GetInt(PostprocessorKeyframeBeforeStart);
+		kas = Options.GetInt(PostprocessorKeyframeAfterStart);
+		kbe = Options.GetInt(PostprocessorKeyframeBeforeEnd);
+		kae = Options.GetInt(PostprocessorKeyframeAfterEnd);
+	}
+	wxString style=Options.GetString(MoveTimesStyles);
+
+	if(!(moveTimeOptions & 1)){frame = (-frame);}
+	// video / audio move start or end
+	int VAS = moveTimeOptions & 2;
+
+
+	std::map<Dialogue *,int,compare> tmpmap;
+
+
+	if(whichTimes!=0){
+		int answer=KaiMessageBox(wxString::Format(_("Czy naprawdę chcesz przesuwać tylko czasy %s?"), 
+			(whichTimes==1)? _("początkowe") : _("końcowe")),_("Potwierdzenie"),wxYES_NO);
+		if(answer==wxNO){return;}
+	}
+
+	if(form==TMP){whichTimes=1;}
+
+	bool fromstyl=false;
+
+	int fs=FirstSel();
+	if (fs==-1 && whichLines!=0 && whichLines!=4){
+		KaiMessageBox(_("Nie zaznaczono linii do przesunięcia"),_("Uwaga"));return;
+	}
+
+	int difftime=(VAS)? file->subs->dials[mtimerow]->Start.orgframe : file->subs->dials[mtimerow]->End.orgframe;
+	//Start time - halfframe / end time + halfframe
+	//int halfframe= (VAS)? -(vb->avtpf/2.0f) : (vb->avtpf/2.0f);
+	if((moveTimeOptions & 4) && vb->GetState()!=None){
+		addedFrames= vb->GetCurrentFrame() - difftime;
+	}
+	else if((moveTimeOptions & 8) && Edit->ABox->audioDisplay->hasMark){
+		addedFrames= Edit->ABox->audioDisplay->curMarkMS - difftime;
+	}
+
+
+	wxArrayString stcomp;
+	if(whichLines == 4){
+		int g=0;
+		wxStringTokenizer styles(style,";");
+		while(styles.HasMoreTokens()){
+			wxString styl=styles.GetNextToken();
+			styl.Trim(false);
+			styl.Trim(true);
+			stcomp.Add(styl);
+
+			g++;
+		}
+	}
+
+	int firsttime=GetDial(fs)->Start.mstime;
+	Dialogue *dialc;
+	frame += addedFrames;
+	int newstarttime=-1;
+
+	for (int i=0;i<GetCount();i++)
+	{
+		if(whichLines==4 && stcomp.GetCount()>0 ){
+			fromstyl=false;
+			wxString styl=file->subs->dials[i]->Style;
+			for(size_t i=0;i<stcomp.GetCount();i++){
+				if(styl==stcomp[i]){fromstyl=true;}
+			}
+		}
+
+		if( whichLines==0
+			|| ( whichLines==1 && sel.find(i) != sel.end() ) 
+			|| ( whichLines==3 && firsttime <= file->subs->dials[i]->Start.mstime ) 
+			|| ( whichLines==2 && i>=fs )
+			|| fromstyl)
+		{
+
+			dialc=file->CopyDial(i,true,true);
+			if(frame!=0){
+				if(whichTimes!=2){
+					//dialc->Start.ChangeFrame(frame);
+					int startFrame = vb->VFF->GetFramefromMS(dialc->Start.mstime)+frame;
+					dialc->Start.NewTime(vb->VFF->GetMSfromFrame(startFrame)-halfframe);
+				}
+				if(whichTimes!=1){
+					//dialc->End.ChangeFrame(frame);
+					int endFrame = vb->VFF->GetFramefromMS(dialc->End.mstime)+frame;
+					dialc->End.NewTime(vb->VFF->GetMSfromFrame(endFrame)+halfframe);
+				}
+				dialc->State=1;
+
+			}
+			if(correctEndTimes>0 || PostprocessorOptions>16){
+				if(correctEndTimes>1){
+					int endt=Options.GetInt(ConvertTimePerLetter);
+					int newend=(endt*dialc->Text.Len());
+					if(newend<1000){newend=1000;}
+					newend+=dialc->Start.mstime;
+					dialc->End.NewTime(newend);
+				}
+				if(PostprocessorOptions & 1){dialc->Start.Change(-li);dialc->State=1;}
+				if(PostprocessorOptions & 2){dialc->End.Change(lo);dialc->State=1;}
+				if(correctEndTimes>0 || PostprocessorOptions>19){
+					tmpmap[dialc]=i;
+
+				}
+			}
+
+		}// if przesuwana linia
+
+	}//pętla for
+
+	// tu jeszcze należy poprawić uwzględniając linijkę z czasem przed tablicą i czasem po niej
+	// a może to w ogóle nie jest potrzebne?
+	if(correctEndTimes>0 || PostprocessorOptions>19){
+		bool hasend=false;
+		
+		for(auto cur=tmpmap.begin(); cur != tmpmap.end(); cur++){
+			auto it = cur;
+			dialc = cur->first;//file->subs->dials[cur->second];
+			it++;
+			if(!(it!=tmpmap.end())){it=cur; hasend=true;}
+			if(correctEndTimes>0 && dialc->End > it->first->Start && !hasend){
+				dialc->End = it->first->Start;
+				dialc->State=1;
+			}
+			if(PostprocessorOptions & 4){
+				int cdiff= (te+ts);
+				int tdiff = it->first->Start.mstime - dialc->End.mstime;
+				if(newstarttime != -1){
+					dialc->Start.NewTime(newstarttime);
+					newstarttime = -1;
+					dialc->State=1;
+				}
+				if(tdiff <= cdiff && tdiff > 0){
+					int wsp = ((float)tdiff / (float)cdiff)*te;
+					int newtime=ZEROIT(wsp);
+					dialc->End.Change(newtime);
+					newstarttime = dialc->End.mstime;
+					dialc->State=1; //dialcopy->State=1;
+
+				}
+
+			}
+			if(PostprocessorOptions & 8){
+				int strtrng = dialc->Start.mstime - kbs;
+				int strtrng1 = dialc->Start.mstime + kas;
+				int endrng = dialc->End.mstime - kbe;
+				int endrng1 = dialc->End.mstime + kae;
+				int pors = 0;
+				int pore = (hasend)? INT_MAX : it->first->Start.mstime + kas;
+
+				if(cur!=tmpmap.begin()){
+					it--;
+					if(!hasend){it--;}
+					pors = it->first->End.mstime - kbe;
+				}
+
+				int keyMS=0;
+				int strtres=INT_MAX;
+				int endres=-1;
+				for (unsigned int g=0;g<vb->VFF->KeyFrames.Count();g++) {
+					keyMS = vb->VFF->KeyFrames[g];
+					if (keyMS > strtrng && keyMS < strtrng1) {
+						keyMS = ZEROIT((keyMS-halfframe));
+						if(strtres>keyMS && keyMS != dialc->Start.mstime){strtres = keyMS;}
+					}
+					if (keyMS > endrng && keyMS < endrng1) {
+						keyMS = ZEROIT((keyMS-halfframe));
+						if(endres<keyMS && keyMS > dialc->Start.mstime){endres = keyMS;}
+					}
+				}
+				if(strtres!=INT_MAX && strtres >= pors){
+					//strtres -= vb->avtpf/2.f;
+					dialc->Start.NewTime(strtres);
+					dialc->State=1;
+				}
+				if(endres!=-1 && endres <= pore){
+					//endres -= vb->avtpf/2.f;
+					dialc->End.NewTime(endres);
+					dialc->State=1;
+				}
+			}
+
+			//dialc->Start.NewFrame(vb->VFF->GetFramefromMS(dialc->Start.mstime));
+			//dialc->End.NewFrame(vb->VFF->GetFramefromMS(dialc->End.mstime)-1);
+		}
+
+	}
+
+	SpellErrors.clear();
+	SetModified();
+	if(form>TMP){RepaintWindow(START|END);}else{Refresh(false);}
+#if _DEBUG
+	wxBell();
+#endif
+}
+
 void SubsGrid::ChangeTime()
 {
 	VideoCtrl *vb=((TabPanel*)GetParent())->Video;
@@ -1373,11 +1596,11 @@ void SubsGrid::ChangeTime()
 	int halfframe= (VAS)? -(vb->avtpf/2.0f) : (vb->avtpf/2.0f);
 	if((mto & 4) && vb->GetState()!=None){
 		added= vb->Tell() - difftime + halfframe;
-		added=(added<0)?ZEROITNEG(added) : ZEROIT(added);
+		added=ZEROIT(added);
 	}
 	else if((mto & 8) && Edit->ABox->audioDisplay->hasMark){
 		added= Edit->ABox->audioDisplay->curMarkMS - difftime;
-		added=(added<0)?ZEROITNEG(added) : ZEROIT(added);
+		added=ZEROIT(added);
 	}
 
 
@@ -1448,7 +1671,7 @@ void SubsGrid::ChangeTime()
 	// a może to w ogóle nie jest potrzebne?
 	if(CT>0 || pe>19){
 		bool hasend=false;
-		int Halfframe=vb->avtpf/2.f;
+		int Halfframe= vb->avtpf/2.f;
 		for(auto cur=tmpmap.begin(); cur != tmpmap.end(); cur++){
 			auto it = cur;
 			dialc = cur->first;//file->subs->dials[cur->second];
@@ -1501,7 +1724,7 @@ void SubsGrid::ChangeTime()
 					}
 					if (keyMS > endrng && keyMS < endrng1) {
 						keyMS = ZEROIT((keyMS-Halfframe));
-						if(endres<keyMS && keyMS != dialc->Start.mstime){endres = keyMS;}
+						if(endres<keyMS && keyMS > dialc->Start.mstime && keyMS != dialc->End.mstime){endres = keyMS;}
 					}
 				}
 				if(strtres!=INT_MAX && strtres >= pors){
@@ -1791,6 +2014,7 @@ void SubsGrid::GetUndo(bool redo)
 	TabPanel *pan =Kai->GetTab();
 	Freeze();
 	wxString resolution = GetSInfo("PlayResX") +" x "+ GetSInfo("PlayResY");
+	wxString matrix = GetSInfo("YCbCr Matrix");
 	if(redo){file->Redo();}else{file->Undo();}
 
 
@@ -1846,6 +2070,10 @@ void SubsGrid::GetUndo(bool redo)
 	}
 	wxString newResolution = GetSInfo("PlayResX") +" x "+ GetSInfo("PlayResY");
 	if(resolution != newResolution){Kai->SetSubsResolution();}
+	wxString newmatrix = GetSInfo("YCbCr Matrix");
+	if(matrix != newmatrix){
+		vb->SetColorSpace(newmatrix);
+	}
 	if(makebkp){
 		timer.Start(20000,true);
 		//CreateTimerQueueTimer(&qtimer,0,WAITORTIMERCALLBACK(OnBcktimer),this,20000,0,WT_EXECUTEONLYONCE);
@@ -2372,7 +2600,7 @@ Dialogue *SubsGrid::CopyDial(int i, bool push)
 
 Dialogue *SubsGrid::GetDial(int i)
 {
-	if(i >= file->subs->dials.size()){return NULL;}
+	if(i >= (int)file->subs->dials.size()){return NULL;}
 	return file->subs->dials[i];
 }
 
@@ -2442,6 +2670,7 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, bool trimSels)
 {
 	TabPanel *pan=(TabPanel*)GetParent();
 	int _time=pan->Video->Tell();
+	bool toEnd = pan->Video->GetState() == Playing;
 	wxString *txt=new wxString();
 
 	(*txt)<<"[Script Info]\r\n"<<GetSInfos(false);
@@ -2463,7 +2692,7 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, bool trimSels)
 		if(i==Edit->ebrow){ 
 			dial = Edit->line;
 		}
-		if(_time >= dial->Start.mstime && _time <= dial->End.mstime){
+		if((toEnd && _time <= dial->Start.mstime) || (_time >= dial->Start.mstime && _time <= dial->End.mstime)){
 			if(trimSels && sel.find(i)!=sel.end()){continue;}
 			if( isTlmode && dial->TextTl!=""){
 				(*txt)<<dial->GetRaw(false,GetSInfo("TLMode Style"));
@@ -2488,6 +2717,56 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, bool trimSels)
 
 	return txt;
 }
+
+//wxString *SubsGrid::GetSubsToEnd(bool *visible, wxPoint *point)
+//{
+//	TabPanel *pan=(TabPanel*)GetParent();
+//	int _time=pan->Video->Tell();
+//	wxString *txt=new wxString();
+//
+//	(*txt)<<"[Script Info]\r\n"<<GetSInfos(false);
+//	(*txt)<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
+//	(*txt)<<GetStyles(false);
+//	(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
+//
+//	Edit->Send(false,true);
+//	if(_time >= Edit->line->Start.mstime && _time <= Edit->line->End.mstime)
+//	{
+//		if(visible){*visible=true;}
+//	}else if(visible){
+//		*visible=false;
+//	}
+//	bool noLine = true;
+//	bool isTlmode = GetSInfo("TLMode")=="Yes";
+//	for(int i=0; i<GetCount(); i++){
+//		Dialogue *dial=GetDial(i);
+//		if(i==Edit->ebrow){ 
+//			dial = Edit->line;
+//		}
+//		if(_time >= dial->Start.mstime){
+//			if( isTlmode && dial->TextTl!=""){
+//				(*txt)<<dial->GetRaw(false,GetSInfo("TLMode Style"));
+//				(*txt)<<dial->GetRaw(true);
+//			}else{
+//				(*txt)<<dial->GetRaw();
+//			}
+//			noLine = false;
+//		}
+//		if( point && i==Edit->ebrow ){
+//			int all= txt->Len();point->x=all-2;
+//			int len = (GetSInfo("TLMode")=="Yes" && dial->TextTl!="")? 
+//				dial->TextTl.Len() : dial->Text.Len();
+//			point->y = len;
+//			point->x -= len;
+//		}
+//	}
+//	if(noLine){
+//		(*txt)<<Dialogue().GetRaw();
+//	}
+//
+//
+//	return txt;
+//}
 
 //VOID CALLBACK callbackfunc ( PVOID   lpParameter, BOOLEAN TimerOrWaitFired) {
 //	Automation *auto_ = (Automation*)lpParameter;
@@ -2611,12 +2890,12 @@ void SubsGrid::ChangeTimeDisplay(bool frame)
 	TabPanel *tab = (TabPanel*)GetParent();
 	VideoFfmpeg *VFF = tab->Video->VFF;
 	if(frame && VFF){
-		for(int i=0; i < GetCount(); i++){
+		/*for(int i=0; i < GetCount(); i++){
 			Dialogue *Dial = GetDial(i);
 			if(!Dial){continue;}
 			Dial->Start.orgframe = VFF->GetFramefromMS(Dial->Start.mstime);
 			Dial->End.orgframe = VFF->GetFramefromMS(Dial->End.mstime)-1;
-		}
+		}*/
 		//ShowFrames shows it properly when orgframe is setup
 		showFrames = true;
 		STime ct = tab->CTime->TimeText->GetTime();

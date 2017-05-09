@@ -123,6 +123,7 @@
 	CG(MoveTimesLoadSetTabOptions,)\
 	CG(MoveTimesCorrectEndTimes,)\
 	CG(MoveTimesForward,)\
+	CG(MoveTimesFrames,)\
 	CG(MoveTimesOn,)\
 	CG(MoveTimesOptions,)\
 	CG(MoveTimesWhichLines,)\

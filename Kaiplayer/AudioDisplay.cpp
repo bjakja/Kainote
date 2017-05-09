@@ -1171,7 +1171,8 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 			VideoCtrl *vb=pan->Video;
 			bool success=true;
 			if(vb->VFF && fromvideo){
-				provider = vb->VFF; ownProvider=false;
+				provider = vb->VFF; ownProvider = (provider->videosource==NULL);
+				if(ownProvider){vb->VFF=NULL;}
 			}else{
 				provider = new VideoFfmpeg(file, 0, &success);
 				if (!success || provider->SampleRate < 0) {
@@ -1399,14 +1400,13 @@ void AudioDisplay::CommitChanges (bool nextLine, bool Save) {
 
 	// Update dialogues
 	blockUpdate = true;
-	STime gtime;
-	gtime.ChangeFormat(Edit->line->Form);
+	STime gtime = STime(Edit->line->Start);
 	gtime.NewTime(curStartMS);
-	Edit->StartEdit->SetTime(gtime,true);
+	Edit->StartEdit->SetTime(gtime,true,1);
 	gtime.NewTime(curEndMS);
-	Edit->EndEdit->SetTime(gtime,true);
+	Edit->EndEdit->SetTime(gtime,true,2);
 	gtime.NewTime(curEndMS - curStartMS);
-	Edit->DurEdit->SetTime(gtime,true);
+	Edit->DurEdit->SetTime(gtime,true,2);
 	if(Save){
 		Edit->Send(nextLine);
 		if(!nextLine){Edit->UpdateChars(Edit->TextEdit->GetValue());}

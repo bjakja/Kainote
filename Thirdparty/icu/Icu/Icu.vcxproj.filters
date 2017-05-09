@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\source\i18n\affixpatternparser.cpp" />
     <ClCompile Include="..\source\i18n\alphaindex.cpp" />
     <ClCompile Include="..\source\i18n\anytrans.cpp" />
     <ClCompile Include="..\source\i18n\astro.cpp" />
@@ -52,19 +51,12 @@
     <ClCompile Include="..\source\i18n\currunit.cpp" />
     <ClCompile Include="..\source\i18n\dangical.cpp" />
     <ClCompile Include="..\source\i18n\datefmt.cpp" />
-    <ClCompile Include="..\source\i18n\dayperiodrules.cpp" />
     <ClCompile Include="..\source\i18n\dcfmtsym.cpp" />
     <ClCompile Include="..\source\i18n\decContext.c" />
     <ClCompile Include="..\source\i18n\decfmtst.cpp" />
     <ClCompile Include="..\source\i18n\decimalformatpattern.cpp" />
     <ClCompile Include="..\source\i18n\decimfmt.cpp" />
-    <ClCompile Include="..\source\i18n\decimfmtimpl.cpp" />
     <ClCompile Include="..\source\i18n\decNumber.c" />
-    <ClCompile Include="..\source\i18n\digitaffix.cpp" />
-    <ClCompile Include="..\source\i18n\digitaffixesandpadding.cpp" />
-    <ClCompile Include="..\source\i18n\digitformatter.cpp" />
-    <ClCompile Include="..\source\i18n\digitgrouping.cpp" />
-    <ClCompile Include="..\source\i18n\digitinterval.cpp" />
     <ClCompile Include="..\source\i18n\digitlst.cpp" />
     <ClCompile Include="..\source\i18n\dtfmtsym.cpp" />
     <ClCompile Include="..\source\i18n\dtitvfmt.cpp" />
@@ -102,10 +94,8 @@
     <ClCompile Include="..\source\i18n\numsys.cpp" />
     <ClCompile Include="..\source\i18n\olsontz.cpp" />
     <ClCompile Include="..\source\i18n\persncal.cpp" />
-    <ClCompile Include="..\source\i18n\pluralaffix.cpp" />
     <ClCompile Include="..\source\i18n\plurfmt.cpp" />
     <ClCompile Include="..\source\i18n\plurrule.cpp" />
-    <ClCompile Include="..\source\i18n\precision.cpp" />
     <ClCompile Include="..\source\i18n\quant.cpp" />
     <ClCompile Include="..\source\i18n\quantityformatter.cpp" />
     <ClCompile Include="..\source\i18n\rbnf.cpp" />
@@ -126,17 +116,13 @@
     <ClCompile Include="..\source\i18n\remtrans.cpp" />
     <ClCompile Include="..\source\i18n\repattrn.cpp" />
     <ClCompile Include="..\source\i18n\rulebasedcollator.cpp" />
-    <ClCompile Include="..\source\i18n\scientificnumberformatter.cpp" />
     <ClCompile Include="..\source\i18n\scriptset.cpp" />
     <ClCompile Include="..\source\i18n\search.cpp" />
     <ClCompile Include="..\source\i18n\selfmt.cpp" />
-    <ClCompile Include="..\source\i18n\sharedbreakiterator.cpp" />
     <ClCompile Include="..\source\i18n\simpletz.cpp" />
-    <ClCompile Include="..\source\i18n\smallintformatter.cpp" />
     <ClCompile Include="..\source\i18n\smpdtfmt.cpp" />
     <ClCompile Include="..\source\i18n\smpdtfst.cpp" />
     <ClCompile Include="..\source\i18n\sortkey.cpp" />
-    <ClCompile Include="..\source\i18n\standardplural.cpp" />
     <ClCompile Include="..\source\i18n\strmatch.cpp" />
     <ClCompile Include="..\source\i18n\strrepl.cpp" />
     <ClCompile Include="..\source\i18n\stsearch.cpp" />
@@ -158,7 +144,6 @@
     <ClCompile Include="..\source\i18n\tzrule.cpp" />
     <ClCompile Include="..\source\i18n\tztrans.cpp" />
     <ClCompile Include="..\source\i18n\ucal.cpp" />
-    <ClCompile Include="..\source\i18n\ucln_in.cpp" />
     <ClCompile Include="..\source\i18n\ucol.cpp" />
     <ClCompile Include="..\source\i18n\ucoleitr.cpp" />
     <ClCompile Include="..\source\i18n\ucol_res.cpp" />
@@ -167,7 +152,6 @@
     <ClCompile Include="..\source\i18n\udat.cpp" />
     <ClCompile Include="..\source\i18n\udateintervalformat.cpp" />
     <ClCompile Include="..\source\i18n\udatpg.cpp" />
-    <ClCompile Include="..\source\i18n\ufieldpositer.cpp" />
     <ClCompile Include="..\source\i18n\uitercollationiterator.cpp" />
     <ClCompile Include="..\source\i18n\ulocdata.c" />
     <ClCompile Include="..\source\i18n\umsg.cpp" />
@@ -189,8 +173,6 @@
     <ClCompile Include="..\source\i18n\utf8collationiterator.cpp" />
     <ClCompile Include="..\source\i18n\utmscale.c" />
     <ClCompile Include="..\source\i18n\utrans.cpp" />
-    <ClCompile Include="..\source\i18n\valueformatter.cpp" />
-    <ClCompile Include="..\source\i18n\visibledigits.cpp" />
     <ClCompile Include="..\source\i18n\vtzone.cpp" />
     <ClCompile Include="..\source\i18n\vzone.cpp" />
     <ClCompile Include="..\source\i18n\windtfmt.cpp" />
@@ -211,23 +193,18 @@
     <ClCompile Include="..\source\common\chariter.cpp" />
     <ClCompile Include="..\source\common\charstr.cpp" />
     <ClCompile Include="..\source\common\cmemory.c" />
-    <ClCompile Include="..\source\common\cstr.cpp" />
     <ClCompile Include="..\source\common\cstring.c" />
     <ClCompile Include="..\source\common\cwchar.c" />
     <ClCompile Include="..\source\common\dictbe.cpp" />
     <ClCompile Include="..\source\common\dictionarydata.cpp" />
     <ClCompile Include="..\source\common\dtintrv.cpp" />
     <ClCompile Include="..\source\common\errorcode.cpp" />
-    <ClCompile Include="..\source\common\filteredbrk.cpp" />
     <ClCompile Include="..\source\common\filterednormalizer2.cpp" />
     <ClCompile Include="..\source\common\icudataver.c" />
-    <ClCompile Include="..\source\common\icuplug.cpp" />
     <ClCompile Include="..\source\common\listformatter.cpp" />
-    <ClCompile Include="..\source\common\loadednormalizer2impl.cpp" />
     <ClCompile Include="..\source\common\locavailable.cpp" />
     <ClCompile Include="..\source\common\locbased.cpp" />
     <ClCompile Include="..\source\common\locdispnames.cpp" />
-    <ClCompile Include="..\source\common\locdspnm.cpp" />
     <ClCompile Include="..\source\common\locid.cpp" />
     <ClCompile Include="..\source\common\loclikely.cpp" />
     <ClCompile Include="..\source\common\locmap.c" />
@@ -239,7 +216,6 @@
     <ClCompile Include="..\source\common\normlzr.cpp" />
     <ClCompile Include="..\source\common\parsepos.cpp" />
     <ClCompile Include="..\source\common\patternprops.cpp" />
-    <ClCompile Include="..\source\common\pluralmap.cpp" />
     <ClCompile Include="..\source\common\propname.cpp" />
     <ClCompile Include="..\source\common\propsvec.c" />
     <ClCompile Include="..\source\common\punycode.cpp" />
@@ -254,7 +230,6 @@
     <ClCompile Include="..\source\common\rbbitblb.cpp" />
     <ClCompile Include="..\source\common\resbund.cpp" />
     <ClCompile Include="..\source\common\resbund_cnv.cpp" />
-    <ClCompile Include="..\source\common\resource.cpp" />
     <ClCompile Include="..\source\common\ruleiter.cpp" />
     <ClCompile Include="..\source\common\schriter.cpp" />
     <ClCompile Include="..\source\common\serv.cpp" />
@@ -265,7 +240,6 @@
     <ClCompile Include="..\source\common\servrbf.cpp" />
     <ClCompile Include="..\source\common\servslkf.cpp" />
     <ClCompile Include="..\source\common\sharedobject.cpp" />
-    <ClCompile Include="..\source\common\simpleformatter.cpp" />
     <ClCompile Include="..\source\common\stringpiece.cpp" />
     <ClCompile Include="..\source\common\stringtriebuilder.cpp" />
     <ClCompile Include="..\source\common\uarrsort.c" />
@@ -283,7 +257,6 @@
     <ClCompile Include="..\source\common\ucharstriebuilder.cpp" />
     <ClCompile Include="..\source\common\ucharstrieiterator.cpp" />
     <ClCompile Include="..\source\common\uchriter.cpp" />
-    <ClCompile Include="..\source\common\ucln_cmn.cpp" />
     <ClCompile Include="..\source\common\ucmndata.c" />
     <ClCompile Include="..\source\common\ucnv.c" />
     <ClCompile Include="..\source\common\ucnv2022.cpp" />
@@ -292,7 +265,6 @@
     <ClCompile Include="..\source\common\ucnvhz.c" />
     <ClCompile Include="..\source\common\ucnvisci.c" />
     <ClCompile Include="..\source\common\ucnvlat1.c" />
-    <ClCompile Include="..\source\common\ucnvmbcs.cpp" />
     <ClCompile Include="..\source\common\ucnvscsu.c" />
     <ClCompile Include="..\source\common\ucnvsel.cpp" />
     <ClCompile Include="..\source\common\ucnv_bld.cpp" />
@@ -309,7 +281,6 @@
     <ClCompile Include="..\source\common\ucnv_u7.c" />
     <ClCompile Include="..\source\common\ucnv_u8.c" />
     <ClCompile Include="..\source\common\ucol_swp.cpp" />
-    <ClCompile Include="..\source\common\ucurr.cpp" />
     <ClCompile Include="..\source\common\udata.cpp" />
     <ClCompile Include="..\source\common\udatamem.c" />
     <ClCompile Include="..\source\common\udataswp.c" />
@@ -321,15 +292,12 @@
     <ClCompile Include="..\source\common\uinvchar.c" />
     <ClCompile Include="..\source\common\uiter.cpp" />
     <ClCompile Include="..\source\common\ulist.c" />
-    <ClCompile Include="..\source\common\ulistformatter.cpp" />
     <ClCompile Include="..\source\common\uloc.cpp" />
-    <ClCompile Include="..\source\common\uloc_keytype.cpp" />
     <ClCompile Include="..\source\common\uloc_tag.c" />
     <ClCompile Include="..\source\common\umapfile.c" />
     <ClCompile Include="..\source\common\umath.c" />
     <ClCompile Include="..\source\common\umutex.cpp" />
     <ClCompile Include="..\source\common\unames.cpp" />
-    <ClCompile Include="..\source\common\unifiedcache.cpp" />
     <ClCompile Include="..\source\common\unifilt.cpp" />
     <ClCompile Include="..\source\common\unifunct.cpp" />
     <ClCompile Include="..\source\common\uniset.cpp" />
@@ -347,7 +315,6 @@
     <ClCompile Include="..\source\common\uobject.cpp" />
     <ClCompile Include="..\source\common\uprops.cpp" />
     <ClCompile Include="..\source\common\uresbund.cpp" />
-    <ClCompile Include="..\source\common\uresdata.cpp" />
     <ClCompile Include="..\source\common\ures_cnv.c" />
     <ClCompile Include="..\source\common\uscript.c" />
     <ClCompile Include="..\source\common\uscript_props.cpp" />
@@ -364,7 +331,6 @@
     <ClCompile Include="..\source\common\ustrfmt.c" />
     <ClCompile Include="..\source\common\ustring.cpp" />
     <ClCompile Include="..\source\common\ustrtrns.cpp" />
-    <ClCompile Include="..\source\common\ustr_cnv.cpp" />
     <ClCompile Include="..\source\common\ustr_titlecase_brkiter.cpp" />
     <ClCompile Include="..\source\common\ustr_wcs.cpp" />
     <ClCompile Include="..\source\common\utext.cpp" />
@@ -381,7 +347,13 @@
     <ClCompile Include="..\source\common\uvectr32.cpp" />
     <ClCompile Include="..\source\common\uvectr64.cpp" />
     <ClCompile Include="..\source\common\wintz.c" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)icudt57l.c" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)icudt53l.c" />
+    <ClCompile Include="..\source\common\icuplug.c" />
+    <ClCompile Include="..\source\common\ucln_cmn.c" />
+    <ClCompile Include="..\source\common\ucnvmbcs.c" />
+    <ClCompile Include="..\source\common\uresdata.c" />
+    <ClCompile Include="..\source\common\ustr_cnv.c" />
+    <ClCompile Include="..\source\i18n\ucln_in.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\i18n\affixpatternparser.h" />

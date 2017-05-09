@@ -26,6 +26,7 @@
 
 #include <boost/regex/icu.hpp>
 #include <boost/locale/conversion.hpp>
+#include <unicode/uclean.h>
 
 #ifdef _MSC_VER
 // Disable warnings for noreturn functions having return types
@@ -447,7 +448,7 @@ u32regex *regex_compile(const char *pattern, int flags, char **err) {
 	}
 }
 
-void regex_free(u32regex *re) { delete re; }
+void regex_free(u32regex *re) { delete re; /*u_cleanup();*/}
 void match_free(agi_re_match *m) { delete m; }
 
 const agi_re_flag *get_regex_flags() {

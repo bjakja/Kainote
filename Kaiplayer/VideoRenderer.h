@@ -127,6 +127,7 @@ class VideoRend : public wxWindow
 		void GoToNextKeyframe();
         void GoToPrevKeyframe();
 		int GetCurrentPosition();
+		int GetCurrentFrame();
 		int GetDuration();
 		int GetVolume();
 		void GetVideoSize(int *width, int *height);
@@ -156,7 +157,7 @@ class VideoRend : public wxWindow
 		int GetPreciseTime(bool start = true);
 		void DeleteAudioCache(){if(VFF){VFF->DeleteOldAudioCache();}}
 		void SetColorSpace(const wxString& matrix, bool render=true){
-			if(VFF){VFF->SetColorSpace(matrix);Render(false);}
+			if(VFF){VFF->SetColorSpace(matrix);Render();}
 		}
 		virtual void CaptureMouse(){};
 		virtual void ReleaseMouse(){};

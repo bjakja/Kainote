@@ -59,6 +59,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 	Bind(wxEVT_MOTION, &TimeCtrl::OnMouseEvent, this);
 	Bind(wxEVT_MOUSEWHEEL, &TimeCtrl::OnMouseEvent, this);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		if(form>=MDVD || showFrames){evt.Skip(); return;}
 		pastes=true;
 		
 		if (wxTheClipboard->Open())
@@ -77,6 +78,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 		}
 	}, ID_TCTLV);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		if(form>=MDVD || showFrames){evt.Skip(); return;}
 		SetSelection(0,GetValue().Length());
 		Copy();
 	}, ID_TCTLC);
@@ -105,7 +107,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 		SetSelection(from,from);
 	}, ID_TBACK);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		if(form>=MDVD){evt.Skip();}
+		if(form>=MDVD || showFrames){evt.Skip();}
 		//napisaæ tutaj zerowanie przy zaznaczeniu i ogólnie nieruchomy kursor i zerowanie jednej cyfry
 		//w Aegi shit happens wiêc olejê.
 	}, ID_TDEL);
@@ -184,12 +186,22 @@ void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
 }
 
 
-void TimeCtrl::SetTime(const STime &newtime, bool stillModified)
+void TimeCtrl::SetTime(const STime &newtime, bool stillModified, int opt)
 {
 	if(mTime==newtime && stillModified){return;}
 	mTime=newtime;
 	form = mTime.GetFormat();
-	SetValue(mTime.raw(showFrames? FRAME : form),stillModified);
+	if(showFrames && opt){
+		VideoCtrl *vb = ((TabPanel *)Notebook::GetTab())->Video;
+		if(vb->VFF){
+			mTime.orgframe = vb->VFF->GetFramefromMS(mTime.mstime);
+			//opt 2 = end frame
+			if(opt==2){mTime.orgframe--;}
+		}else{
+			//wxLogMessage(_("Wideo nie jest wczytane przez FFMS2"));
+		}
+	}
+	SetValue(mTime.raw(showFrames? FRAME : form),stillModified,false);
 	if(stillModified){
 		SetForegroundColour("#FF0000");
 		changedBackGround=true;
@@ -208,7 +220,7 @@ STime TimeCtrl::GetTime(char opt)
 			int time = vb->VFF->GetMSfromFrame(cpy.orgframe) + add;
 			cpy.mstime = ZEROIT(time);
 		}else{
-			wxLogMessage(_("Wideo nie jest wczytane przez FFMS2"));
+			//wxLogMessage(_("Wideo nie jest wczytane przez FFMS2"));
 		}
 		return cpy;
 	}

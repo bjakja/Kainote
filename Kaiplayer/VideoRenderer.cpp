@@ -615,7 +615,11 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 		VFF=tmpvff;
 		d3dformat=D3DFMT_X8R8G8B8;//D3DFMT_YUY2;//D3DFORMAT('21VN');
 		vformat=RGB32;//YUY2;//NV12;
-		vwidth=VFF->width;vheight=VFF->height;fps=VFF->fps;ax=VFF->arwidth;ay=VFF->arheight;
+		vwidth=VFF->width;
+		vheight=VFF->height;
+		fps=VFF->fps;
+		ax=VFF->arwidth;
+		ay=VFF->arheight;
 		if(vwidth % 2 != 0 ){vwidth++;}
 		pitch=vwidth*4;//1.5f;
 
@@ -779,7 +783,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 				Vclips->SetClip(Vclips->GetVisual(),true, false);
 			}else{
 				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
-				if(vstate==Playing)VisEdit=false;
+				if(vstate==Playing){ VisEdit=false;}
 			}
 		}else if(pan->Edit->OnVideo){
 			if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
@@ -790,7 +794,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		playend=(IsDshow)? 0 : GetDuration();
 		seek=true; vplayer->SetPosition(time);
 	}else{
-		if(!VFF->isBusy){
+		if(!VFF->isBusy || vstate == Playing){
 			lastframe = VFF->GetFramefromMS(_time,(time>_time)? 0 : lastframe); //- decr;
 			if(!starttime){lastframe--;if(VFF->Timecodes[lastframe]>=_time){lastframe--;}}
 			time = VFF->Timecodes[lastframe];
@@ -875,6 +879,11 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 int VideoRend::GetCurrentPosition()
 {
 	return time;
+}
+
+int VideoRend::GetCurrentFrame()
+{
+	return lastframe;
 }
 
 int VideoRend::GetDuration()

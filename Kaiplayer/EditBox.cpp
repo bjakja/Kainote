@@ -340,19 +340,17 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	grid->mtimerow=Row;
 	wxDELETE(line);
 	line=grid->GetDial(ebrow)->Copy();
-	if(grid->showFrames){
-		VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
-		//Start time - halfframe / end time + halfframe
-		if(vb->VFF){
-			line->Start.orgframe = vb->VFF->GetFramefromMS(line->Start.mstime);
-			line->End.orgframe = vb->VFF->GetFramefromMS(line->End.mstime);
-		}
-	}
 	Comment->SetValue(line->IsComment);
 	LayerEdit->SetInt(line->Layer);
-	StartEdit->SetTime(line->Start);
-	EndEdit->SetTime(line->End);
-	DurEdit->SetTime(line->End - line->Start);
+	StartEdit->SetTime(line->Start, false, 1);
+	EndEdit->SetTime(line->End, false, 2);
+	if(grid->showFrames){
+		STime durationTime = StartEdit->GetTime() - EndEdit->GetTime();
+		durationTime.orgframe++;
+		DurEdit->SetTime(durationTime);
+	}else{
+		DurEdit->SetTime(line->End - line->Start);
+	}
 	StyleChoice->SetSelection(StyleChoice->FindString(line->Style,true));
 	ActorEdit->ChangeValue(line->Actor);
 	MarginLEdit->SetInt(line->MarginL);
@@ -533,20 +531,6 @@ void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 	if(cellm){
 		if(ebrow<grid->GetCount() && !dummy){
 			OnVideo=false;
-			//if(grid->showFrames && (cellm & START || cellm & END)){
-			//	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
-			//	//Start time - halfframe / end time + halfframe
-			//	if(vb->VFF){
-			//		if(cellm & START){
-			//			int time = vb->VFF->GetMSfromFrame(line->Start.orgframe)-(vb->avtpf/2.0f);
-			//			line->Start.mstime = ZEROIT(time);
-			//		}
-			//		if(cellm & END){
-			//			int time = vb->VFF->GetMSfromFrame(line->End.orgframe)+(vb->avtpf/2.0f);
-			//			line->End.mstime = ZEROIT(time);
-			//		}
-			//	}
-			//}
 			grid->ChangeLine(line, ebrow, cellm, selline, visualdummy);
 			if(cellm & ACTOR || cellm & EFFECT){
 				grid->RebuildActorEffectLists();
@@ -1247,17 +1231,25 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		line->End=EndEdit->GetTime(2);
 		line->Start=StartEdit->GetTime(1);
 		if(line->Start>line->End){
-			line->End=line->Start;
-			EndEdit->SetTime(line->End);
-			EndEdit->MarkDirty();
+			if(StartEdit->HasFocus()){
+				line->End=line->Start;
+				EndEdit->SetTime(line->End,false,2);
+				EndEdit->MarkDirty();
+			}else{
+				line->Start=line->End;
+				StartEdit->SetTime(line->End,false,1);
+				StartEdit->MarkDirty();
+			}
 		}
-		DurEdit->SetTime(line->End - line->Start);
-		UpdateChars((TextEditTl->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
+		DurEdit->SetTime(line->End - line->Start,false,1);
 	}
 	else if(durFocus){
 		line->End = line->Start + DurEdit->GetTime();
-		EndEdit->SetTime(line->End);
+		EndEdit->SetTime(line->End,false,2);
 		EndEdit->MarkDirty();
+	}
+	if(durFocus || startEndFocus){
+		if(ABox && ABox->IsShown()){ABox->audioDisplay->SetDialogue(line,ebrow);}
 		UpdateChars((TextEditTl->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
 	}
 
@@ -1274,22 +1266,22 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	}else{EditCounter++;}
 
 	wxString *text=NULL;
-	if(panel->Video->GetState()==Paused){
+	if(panel->Video->GetState()!=None){
 		//visible=true;
 		text=grid->GetVisible(&visible);
 		if(lastVisible!=visible){visible=true;}
 		lastVisible=visible;
 		OnVideo=true;
 	}
-	else if(panel->Video->GetState()==Playing){
-		visible=true;
-		int vpos = panel->Video->Tell();
-		bool vis = (vpos > line->Start.mstime && vpos < line->End.mstime);
-		if(vis){text = grid->SaveText();}
-		else{visible = false;}
-		//else{if(!vis){return;}text=grid->GetVisible(&vis);OnVideo=true;}*/
-		OnVideo = false;
-	}
+	//else if(panel->Video->GetState()==Playing){
+	//	visible=true;
+	//	int vpos = panel->Video->Tell();
+	//	bool vis = (vpos > line->Start.mstime && vpos < line->End.mstime);
+	//	if(vis){text = grid->SaveText();}
+	//	else{visible = false;}
+	//	//else{if(!vis){return;}text=grid->GetVisible(&vis);OnVideo=true;}*/
+	//	OnVideo = false;
+	//}
 
 	
 	if(visible && (panel->Video->IsShown() || panel->Video->isFullscreen)){
@@ -1467,9 +1459,10 @@ void EditBox::OnChangeTimeDisplay(wxCommandEvent& event)
 	StartEdit->ShowFrames(frame);
 	EndEdit->ShowFrames(frame);
 	DurEdit->ShowFrames(frame);
-	StartEdit->SetTime(line->Start);
-	EndEdit->SetTime(line->End);
-	DurEdit->SetTime(line->End - line->Start);
+	StartEdit->SetTime(line->Start,false,1);
+	EndEdit->SetTime(line->End,false,2);
+	DurEdit->SetTime(line->End - line->Start, false, 2);
+	
 	
 	grid->RepaintWindow(START|END);
 }

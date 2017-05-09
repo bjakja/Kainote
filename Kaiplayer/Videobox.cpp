@@ -1104,10 +1104,12 @@ void VideoCtrl::displaytime()
 		times<<kkk.raw(SRT)<<";  ";
 		TabPanel *pan=(TabPanel*)GetParent();
 		if(!IsDshow){times<<lastframe<<";  ";}
-		if(pan->edytor){Dialogue *line=pan->Edit->line;
-		int sdiff=kkk.mstime - line->Start.mstime;
-		int ediff=kkk.mstime - line->End.mstime;
-		times<<sdiff<<" ms, "<<ediff<<" ms";}
+		if(pan->edytor){
+			Dialogue *line=pan->Edit->line;
+			int sdiff=kkk.mstime - ZEROIT(line->Start.mstime);
+			int ediff=kkk.mstime - ZEROIT(line->End.mstime);
+			times<<sdiff<<" ms, "<<ediff<<" ms";
+		}
 		mstimes->SetValue(times);
 		mstimes->Update();
 		pan->Grid1->RefreshIfVisible(kkk.mstime);

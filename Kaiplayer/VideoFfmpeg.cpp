@@ -105,6 +105,7 @@ void VideoFfmpeg::Processing()
 		{
 			byte *buff = (byte*)rend->datas;
 			int acttime;
+			isBusy = false;
 			while(1){
 
 				//rend->lastframe = GetFramefromMS(timeGetTime() - rend->lasttime, rend->lastframe);
@@ -380,11 +381,13 @@ done:
 		ColorSpace = RealColorSpace = ColorCatrixDescription(CS, CR);
 		Grid *grid = ((TabPanel*)rend->GetParent())->Grid1;
 		wxString colormatrix = grid->GetSInfo("YCbCr Matrix");
-		if (CS == FFMS_CS_BT709 || (ColorSpace != colormatrix && CS == FFMS_CS_BT470BG)) {
+		if ((CS == FFMS_CS_BT709 && colormatrix != "TV.601") || (ColorSpace != colormatrix && CS == FFMS_CS_BT470BG)) {
 			if (FFMS_SetInputFormatV(videosource, CS, CR, FFMS_GetPixFmt(""), &errinfo)){
 				wxLogMessage(_("Nie można zmienić macierzy YCbCr"));
 			}
-			ColorSpace = ColorCatrixDescription(CS, CR);
+		}
+		if(colormatrix == "TV.601"){
+			ColorSpace = ColorCatrixDescription(FFMS_CS_BT470BG, CR);
 		}
 
 		FFMS_Track *FrameData = FFMS_GetTrackFromVideo(videosource);
@@ -817,6 +820,8 @@ void VideoFfmpeg::Cleardiskc()
 
 int VideoFfmpeg::GetMSfromFrame(int frame)
 {
+	if(frame >= NumFrames){return frame * (1000.f / fps);}
+	else if(frame < 0){return 0;}
 	return Timecodes[frame];
 }
 
