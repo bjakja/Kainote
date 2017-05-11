@@ -339,7 +339,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 				isSelected = true;
 			}
 			bool comparison = (Comparsion && Comparsion->at(i-1).size()>0);//visibleLines
-			bool visibleLine = (Dial->Start <= VideoPos && Dial->End >= VideoPos);
+			bool visibleLine = (Dial->Start.mstime <= VideoPos && Dial->End.mstime > VideoPos);
 			kol = (comparison)? ComparsionBGCol : 
 				(visibleLine)? visibleOnVideo : 
 				subsBkCol;
@@ -904,8 +904,10 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 
 
 		// Toggle selected
-		if (left_up && ctrl && !shift && !alt) {
+		if (click && ctrl && !shift && !alt ) {
+			if(lastActive != row){
 			SelectRow(row,true,!(sel.find(row)!=sel.end()));
+			}
 			return;
 		}
 
@@ -918,7 +920,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 			if (click && (changeActive || !ctrl) || (dclick && ctrl)) {/*(click && !ctrl)*/ 
 				Edit->SetLine(row,true,true,true,!ctrl);
 				if(changeActive){Refresh(false);}
-				if(!ctrl){
+				if(!ctrl || dclick){
 					SelectRow(row);
 					extendRow = -1;
 				}
@@ -939,7 +941,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 		if (middle){
 			VideoCtrl *video=Kai->GetTab()->Video;
 			if(video->GetState()!=None){//
-				video->PlayLine(GetDial(row)->Start.mstime, GetDial(row)->End.mstime - video->avtpf/*-10*/);
+				video->PlayLine(GetDial(row)->Start.mstime, video->GetPlayEndTime(GetDial(row)->End.mstime) /*- video->avtpf*/);
 			}
 
 		}
@@ -1322,7 +1324,7 @@ void SubsGrid::ChangeFrames()
 	VideoCtrl *vb=((TabPanel*)GetParent())->Video;
 	if(!vb->VFF){wxLogMessage(_("Wideo nie jest wczytane przez FFMS2"));return;}
 	int addedFrames=0;
-	int halfframe= (vb->avtpf/2.0f);
+	//int halfframe= (vb->avtpf/2.0f);
 	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 8 Move to audio time;
 	int moveTimeOptions = Options.GetInt(MoveTimesOptions);
 	
@@ -1371,14 +1373,13 @@ void SubsGrid::ChangeFrames()
 		KaiMessageBox(_("Nie zaznaczono linii do przesunięcia"),_("Uwaga"));return;
 	}
 
-	int difftime=(VAS)? file->subs->dials[mtimerow]->Start.orgframe : file->subs->dials[mtimerow]->End.orgframe;
+	int difftime=(VAS)? file->subs->dials[mtimerow]->Start.mstime : file->subs->dials[mtimerow]->End.mstime;
 	//Start time - halfframe / end time + halfframe
-	//int halfframe= (VAS)? -(vb->avtpf/2.0f) : (vb->avtpf/2.0f);
 	if((moveTimeOptions & 4) && vb->GetState()!=None){
-		addedFrames= vb->GetCurrentFrame() - difftime;
+		addedFrames = vb->GetCurrentFrame() - vb->VFF->GetFramefromMS(difftime);
 	}
 	else if((moveTimeOptions & 8) && Edit->ABox->audioDisplay->hasMark){
-		addedFrames= Edit->ABox->audioDisplay->curMarkMS - difftime;
+		addedFrames = vb->VFF->GetFramefromMS(Edit->ABox->audioDisplay->curMarkMS - difftime);
 	}
 
 
@@ -1423,12 +1424,12 @@ void SubsGrid::ChangeFrames()
 				if(whichTimes!=2){
 					//dialc->Start.ChangeFrame(frame);
 					int startFrame = vb->VFF->GetFramefromMS(dialc->Start.mstime)+frame;
-					dialc->Start.NewTime(vb->VFF->GetMSfromFrame(startFrame)-halfframe);
+					dialc->Start.NewTime(vb->GetFrameTimeFromFrame(startFrame));
 				}
 				if(whichTimes!=1){
 					//dialc->End.ChangeFrame(frame);
 					int endFrame = vb->VFF->GetFramefromMS(dialc->End.mstime)+frame;
-					dialc->End.NewTime(vb->VFF->GetMSfromFrame(endFrame)+halfframe);
+					dialc->End.NewTime(vb->GetFrameTimeFromFrame(endFrame));
 				}
 				dialc->State=1;
 
@@ -1505,11 +1506,11 @@ void SubsGrid::ChangeFrames()
 				for (unsigned int g=0;g<vb->VFF->KeyFrames.Count();g++) {
 					keyMS = vb->VFF->KeyFrames[g];
 					if (keyMS > strtrng && keyMS < strtrng1) {
-						keyMS = ZEROIT((keyMS-halfframe));
+						keyMS = ZEROIT(vb->GetFrameTimeFromTime(keyMS));
 						if(strtres>keyMS && keyMS != dialc->Start.mstime){strtres = keyMS;}
 					}
 					if (keyMS > endrng && keyMS < endrng1) {
-						keyMS = ZEROIT((keyMS-halfframe));
+						keyMS = ZEROIT(vb->GetFrameTimeFromTime(keyMS));
 						if(endres<keyMS && keyMS > dialc->Start.mstime){endres = keyMS;}
 					}
 				}
@@ -1593,13 +1594,15 @@ void SubsGrid::ChangeTime()
 
 	int difftime=(VAS)? file->subs->dials[mtimerow]->Start.mstime : file->subs->dials[mtimerow]->End.mstime;
 	//Start time - halfframe / end time + halfframe
-	int halfframe= (VAS)? -(vb->avtpf/2.0f) : (vb->avtpf/2.0f);
+	//int halfframe= (VAS)? -(vb->avtpf/2.0f) : (vb->avtpf/2.0f);
 	if((mto & 4) && vb->GetState()!=None){
-		added= vb->Tell() - difftime + halfframe;
+		added= vb->GetFrameTime(VAS != 0) - difftime;
+		if(added<0){added-=10;}
 		added=ZEROIT(added);
 	}
 	else if((mto & 8) && Edit->ABox->audioDisplay->hasMark){
 		added= Edit->ABox->audioDisplay->curMarkMS - difftime;
+		if(added<0){added-=10;}
 		added=ZEROIT(added);
 	}
 
@@ -1671,7 +1674,7 @@ void SubsGrid::ChangeTime()
 	// a może to w ogóle nie jest potrzebne?
 	if(CT>0 || pe>19){
 		bool hasend=false;
-		int Halfframe= vb->avtpf/2.f;
+		//int Halfframe= vb->avtpf/2.f;
 		for(auto cur=tmpmap.begin(); cur != tmpmap.end(); cur++){
 			auto it = cur;
 			dialc = cur->first;//file->subs->dials[cur->second];
@@ -1719,11 +1722,11 @@ void SubsGrid::ChangeTime()
 				for (unsigned int g=0;g<vb->VFF->KeyFrames.Count();g++) {
 					keyMS = vb->VFF->KeyFrames[g];
 					if (keyMS > strtrng && keyMS < strtrng1) {
-						keyMS = ZEROIT((keyMS-Halfframe));
+						keyMS = ZEROIT(vb->GetFrameTimeFromTime(keyMS));
 						if(strtres>keyMS && keyMS != dialc->Start.mstime){strtres = keyMS;}
 					}
 					if (keyMS > endrng && keyMS < endrng1) {
-						keyMS = ZEROIT((keyMS-Halfframe));
+						keyMS = ZEROIT(vb->GetFrameTimeFromTime(keyMS));
 						if(endres<keyMS && keyMS > dialc->Start.mstime && keyMS != dialc->End.mstime){endres = keyMS;}
 					}
 				}
@@ -2874,10 +2877,9 @@ void SubsGrid::RefreshIfVisible(int time)
 	int counter = 0;
 	for(int i = scPos; i < scrows; i++){
 		Dialogue *dial = GetDial(i);
-		bool isVisible = dial->Start <= time && dial->End >= time;
+		bool isVisible = dial->Start.mstime <= time && dial->End.mstime > time;
 		if(isVisible != visibleLines[counter++]){
 			Refresh(false);
-			//wxLogStatus("refresh()");
 			break;
 		}
 		

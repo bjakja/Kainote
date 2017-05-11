@@ -23,6 +23,7 @@
 
 TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, const wxPoint& pos,const wxSize& size, long style,const wxValidator& validator, const wxString& name)
 	: KaiTextCtrl(parent, id, val, pos, size, style)
+	,timeUnchanged(true)
 {
 	KaiTextValidator valid(wxFILTER_INCLUDE_CHAR_LIST);
 	wxArrayString includes;
@@ -59,6 +60,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 	Bind(wxEVT_MOTION, &TimeCtrl::OnMouseEvent, this);
 	Bind(wxEVT_MOUSEWHEEL, &TimeCtrl::OnMouseEvent, this);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		timeUnchanged=false;
 		if(form>=MDVD || showFrames){evt.Skip(); return;}
 		pastes=true;
 		
@@ -84,6 +86,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 	}, ID_TCTLC);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		//napisaæ tutaj zerowanie przy zaznaczeniu i ogólnie cofanie kursora i zerowanie jednej cyfry
+		timeUnchanged=false;
 		if(form>=MDVD || showFrames){evt.Skip(); return;}
 		long from, to;
 		GetSelection(&from, &to);
@@ -107,6 +110,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 		SetSelection(from,from);
 	}, ID_TBACK);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		timeUnchanged=false;
 		if(form>=MDVD || showFrames){evt.Skip();}
 		//napisaæ tutaj zerowanie przy zaznaczeniu i ogólnie nieruchomy kursor i zerowanie jednej cyfry
 		//w Aegi shit happens wiêc olejê.
@@ -156,6 +160,7 @@ void TimeCtrl::OnTimeWrite(wxCommandEvent& event)
 	}
 	pastes=false;
 	if(IsModified()){wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);}
+	timeUnchanged=false;
 }
 
 void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
@@ -189,6 +194,7 @@ void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
 void TimeCtrl::SetTime(const STime &newtime, bool stillModified, int opt)
 {
 	if(mTime==newtime && stillModified){return;}
+	timeUnchanged=true;
 	mTime=newtime;
 	form = mTime.GetFormat();
 	if(showFrames && opt){
@@ -201,7 +207,7 @@ void TimeCtrl::SetTime(const STime &newtime, bool stillModified, int opt)
 			//wxLogMessage(_("Wideo nie jest wczytane przez FFMS2"));
 		}
 	}
-	SetValue(mTime.raw(showFrames? FRAME : form),stillModified,false);
+	SetValue(mTime.raw(showFrames? FRAME : form),stillModified);
 	if(stillModified){
 		SetForegroundColour("#FF0000");
 		changedBackGround=true;
@@ -211,13 +217,14 @@ void TimeCtrl::SetTime(const STime &newtime, bool stillModified, int opt)
 STime TimeCtrl::GetTime(char opt)
 {
 	mTime.SetRaw(GetValue(),showFrames? FRAME : form);
-	if(showFrames){
+	if(showFrames && !timeUnchanged){
 		STime cpy = STime(mTime);
 		cpy.ChangeFormat(form);
 		VideoCtrl *vb = ((TabPanel *)Notebook::GetTab())->Video;
 		if(vb->VFF){
-			int add = (opt==1)? -(vb->avtpf/2.0f) : (opt==2)? (vb->avtpf/2.0f) : 0;
-			int time = vb->VFF->GetMSfromFrame(cpy.orgframe) + add;
+			
+			int time = (!opt)? vb->VFF->GetMSfromFrame(cpy.orgframe) : 
+				vb->GetFrameTimeFromFrame(cpy.orgframe, opt == 1);
 			cpy.mstime = ZEROIT(time);
 		}else{
 			//wxLogMessage(_("Wideo nie jest wczytane przez FFMS2"));
@@ -287,6 +294,7 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 			else{mTime.mstime = mstime;}
 			SetValue(mTime.raw(showFrames? FRAME : form),true, false);
 			wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);
+			timeUnchanged=false;
 		}
 	}
 
@@ -330,6 +338,7 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 		SetValue(mTime.raw(showFrames? FRAME : form),true, false);
 
 		wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);
+		timeUnchanged=false;
 		return;
 	}
 
@@ -350,6 +359,7 @@ void TimeCtrl::OnPaste(wxCommandEvent &event)
 	SetSelection(0,GetValue().Length());
 	Paste();
 	SetSelection(0,GetValue().Length());
+	timeUnchanged=false;
 	pastes=false;
 }
 

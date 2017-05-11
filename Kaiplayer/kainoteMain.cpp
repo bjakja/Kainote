@@ -349,10 +349,10 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}else if(id==SetStartTime||id==SetEndTime){
 		if(pan->Video->GetState()!=None){
 			if(id==SetStartTime){
-				int time= pan->Video->Tell()-(pan->Video->avtpf/2.0f)+Options.GetInt(InsertStartOffset);
+				int time = pan->Video->GetFrameTime() + Options.GetInt(InsertStartOffset);
 				pan->Grid1->SetStartTime(ZEROIT(time));
 			}else{
-				int time=pan->Video->Tell()+(pan->Video->avtpf/2.0f)+Options.GetInt(InsertEndOffset);
+				int time = pan->Video->GetFrameTime(false)+Options.GetInt(InsertEndOffset);
 				pan->Grid1->SetEndTime(ZEROIT(time));
 			}
 		}
@@ -504,7 +504,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	}else if(id==PlayActualLine){
 		TabPanel *tab = GetTab();
 		tab->Edit->TextEdit->SetFocus();
-		tab->Video->PlayLine(tab->Edit->line->Start.mstime,tab->Edit->line->End.mstime - tab->Video->avtpf);
+		tab->Video->PlayLine(tab->Edit->line->Start.mstime, tab->Video->GetPlayEndTime(tab->Edit->line->End.mstime)/* - tab->Video->avtpf*/);
 		//wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED,ID_BPLINE);
 		//GetTab()->Video->OnAccelerator(evt);
 	}else if(id==Quit){

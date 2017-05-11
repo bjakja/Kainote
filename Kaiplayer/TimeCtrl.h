@@ -48,6 +48,7 @@ private:
 	int mstime;
 	int grad;
 	bool showFrames;
+	bool timeUnchanged;
 	void OnTimeWrite(wxCommandEvent& event);
 	void OnMouseEvent(wxMouseEvent &event);
 	void OnKeyEvent(wxKeyEvent& event);
@@ -58,7 +59,9 @@ private:
 };
 enum{
 	Time_Copy=4404,
-	Time_Paste=4405
+	Time_Paste=4405,
+	//START_EDIT=(1<<22),
+	//END_EDIT=(1<<23),
 };
 
 

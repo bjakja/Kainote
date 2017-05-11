@@ -140,6 +140,9 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
 		Vclips->ChangeTool(evt.GetInt());
 	},ID_MOVE_TOOLBAR_EVENT);
+	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
+		displaytime();
+	},23334);
 
 	//Connect(ID_BPREV,ID_BPLINE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&VideoCtrl::OnAccelerator);
 	Connect(ID_VOL,wxEVT_COMMAND_SLIDER_UPDATED,(wxObjectEventFunction)&VideoCtrl::OnVolume);
@@ -1083,7 +1086,7 @@ void VideoCtrl::SetScaleAndZoom()
 void VideoCtrl::displaytime()
 {
 	STime kkk;
-	kkk.mstime=Tell();
+	kkk.mstime=GetCurrentPosition();
 	float dur=GetDuration();
 	float val=(dur>0)? kkk.mstime/dur : 0.0;
 
@@ -1305,6 +1308,6 @@ BEGIN_EVENT_TABLE(VideoCtrl,wxWindow)
 	EVT_TIMER(idvtime, VideoCtrl::OnPlaytime)
 	EVT_TIMER(ID_IDLE, VideoCtrl::OnIdle)
 	EVT_ERASE_BACKGROUND(VideoCtrl::OnErase)
-	EVT_BUTTON(23333,VideoCtrl::OnEndFile)
+	//EVT_BUTTON(23333,VideoCtrl::OnEndFile)
 	EVT_MOUSE_CAPTURE_LOST(VideoCtrl::OnLostCapture)
 END_EVENT_TABLE()

@@ -650,7 +650,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 		}
 	}
 	diff=0;
-	avtpf=(1000.0f/fps);
+	frameDuration = (1000.0f/fps);
 	if(ay==0||ax==0){AR=0.0f;}else{AR=(float)ay/(float)ax;}
 
 	mainStreamRect.bottom=vheight;
@@ -772,10 +772,10 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 	TabPanel* pan=(TabPanel*)GetParent();
 	if(IsDshow){
 		time=MID(0,_time,GetDuration());
-		if(corect && IsDshow){
-			time/=avtpf;
+		if(corect){
+			time/=frameDuration;
 			if(starttime){time++;}
-			time*=avtpf;
+			time*=frameDuration;
 		}
 		if(VisEdit){
 			SAFE_DELETE(Vclips->dummytext);
@@ -884,6 +884,73 @@ int VideoRend::GetCurrentPosition()
 int VideoRend::GetCurrentFrame()
 {
 	return lastframe;
+}
+
+int VideoRend::GetFrameTime(bool start)
+{
+	if(VFF){
+		if(start){
+			int prevFrameTime = VFF->GetMSfromFrame(lastframe-1);
+			return time + ((prevFrameTime - time) / 2);
+		}else{
+			int nextFrameTime = VFF->GetMSfromFrame(lastframe+1);
+			return time + ((nextFrameTime - time) / 2);
+		}
+	}else{
+		int halfFrame = (start)? -(frameDuration/2.0f) : (frameDuration/2.0f)+1;
+		return time + halfFrame;
+	}
+}
+
+int VideoRend::GetFrameTimeFromTime(int _time, bool start)
+{
+	if(VFF){
+		if(start){
+			int frameFromTime = VFF->GetFramefromMS(_time);
+			int prevFrameTime = VFF->GetMSfromFrame(frameFromTime-1);
+			int frameTime = VFF->GetMSfromFrame(frameFromTime);
+			return frameTime + ((prevFrameTime - frameTime) / 2);
+		}else{
+			int frameFromTime = VFF->GetFramefromMS(_time);
+			int nextFrameTime = VFF->GetMSfromFrame(frameFromTime+1);
+			int frameTime = VFF->GetMSfromFrame(frameFromTime);
+			return frameTime + ((nextFrameTime - frameTime) / 2);
+		}
+	}else{
+		int halfFrame = (start)? -(frameDuration/2.0f) : (frameDuration/2.0f)+1;
+		return _time + halfFrame;
+	}
+}
+
+int VideoRend::GetFrameTimeFromFrame(int frame, bool start)
+{
+	if(VFF){
+		if(start){
+			int prevFrameTime = VFF->GetMSfromFrame(frame-1);
+			int frameTime = VFF->GetMSfromFrame(frame);
+			return frameTime + ((prevFrameTime - frameTime) / 2);
+		}else{
+			int nextFrameTime = VFF->GetMSfromFrame(frame+1);
+			int frameTime = VFF->GetMSfromFrame(frame);
+			return frameTime + ((nextFrameTime - frameTime) / 2);
+		}
+	}else{
+		int halfFrame = (start)? -(frameDuration/2.0f) : (frameDuration/2.0f)+1;
+		return (frame * (1000.f / fps)) + halfFrame;
+	}
+}
+
+int VideoRend::GetPlayEndTime(int _time)
+{
+	if(VFF){
+		int frameFromTime = VFF->GetFramefromMS(_time);
+		int prevFrameTime = VFF->GetMSfromFrame(frameFromTime-1);
+		return prevFrameTime;
+	}else{
+		_time/=frameDuration;
+		_time*=frameDuration;
+		return _time;
+	}
 }
 
 int VideoRend::GetDuration()
@@ -1408,7 +1475,7 @@ void VideoRend::MovePos(int cpos)
 		}
 	}
 	else{
-		time+=((avtpf)*cpos);
+		time += (frameDuration * cpos);
 		SetPosition(time,true,false);
 	}
 	VideoCtrl *vb=(VideoCtrl*)this;

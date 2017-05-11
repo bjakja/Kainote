@@ -586,7 +586,7 @@ void AudioDisplay::DoUpdateImage() {
 			D3DCOLOR lineBondaryMark= D3DCOLOR_FROM_WX(Options.GetColour(AudioLineBoundaryMark));
 			d3dLine->SetWidth(2.f);
 			d3dLine->Begin();
-			D3DXVECTOR2 v2[2]={D3DXVECTOR2(selMark,0),D3DXVECTOR2(selMark,h)};
+			D3DXVECTOR2 v2[2]={D3DXVECTOR2(selMark+1,0),D3DXVECTOR2(selMark+1,h)};
 			d3dLine->Draw(v2,2,lineBondaryMark);
 			d3dLine->End();
 			d3dLine->SetWidth(1.f);
@@ -1927,7 +1927,8 @@ int AudioDisplay::GetBoundarySnap(int ms,int rangeX,bool shiftHeld,bool start, b
 
 	// Convert range into miliseconds
 	int rangeMS = rangeX*samples*1000 / provider->GetSampleRate();
-	int halfframe=Notebook::GetTab()->Video->avtpf/2;
+	//int halfframe=Notebook::GetTab()->Video->avtpf/2;
+	//VideoCtrl *vb = (VideoCtrl*)box->GetGrandParent();
 	// Keyframe boundaries
 	wxArrayInt boundaries;
 
@@ -1939,7 +1940,12 @@ int AudioDisplay::GetBoundarySnap(int ms,int rangeX,bool shiftHeld,bool start, b
 		for (unsigned int i=0;i<provider->KeyFrames.Count();i++) {
 			keyMS = provider->KeyFrames[i];
 			int keyX=GetXAtMS(keyMS);
-			if (keyX >= 0 && keyX < w) {boundaries.Add(ZEROIT(keyMS-halfframe));}
+			if (keyX >= 0 && keyX < w) {
+				int frame = provider->GetFramefromMS(keyMS);
+				int prevFrameTime = provider->GetMSfromFrame(frame-1);
+				int frameTime = keyMS + ((prevFrameTime - keyMS) / 2);
+				boundaries.Add(ZEROIT(frameTime/*-halfframe*/));
+			}
 		}
 	}
 
@@ -2196,9 +2202,11 @@ void AudioDisplay::Commit()
 
 	if (autocommit) {
 		CommitChanges();
+		return;
 	}else{
 		CommitChanges(false,false);UpdateImage(true);
 	}
+	if(!Options.GetBool(DisableLiveVideoEditing)){Edit->OnEdit(wxCommandEvent());}
 }
 
 //////////////////

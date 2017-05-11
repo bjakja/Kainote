@@ -128,6 +128,10 @@ class VideoRend : public wxWindow
         void GoToPrevKeyframe();
 		int GetCurrentPosition();
 		int GetCurrentFrame();
+		int GetFrameTime(bool start = true);
+		int GetFrameTimeFromTime(int time, bool start = true);
+		int GetFrameTimeFromFrame(int frame, bool start = true);
+		int GetPlayEndTime(int time);
 		int GetDuration();
 		int GetVolume();
 		void GetVideoSize(int *width, int *height);
@@ -186,7 +190,7 @@ class VideoRend : public wxWindow
 		float AR, fps;
 		char *datas;
 		byte vformat;
-		float avtpf;
+		float frameDuration;
 		float zoomParcent;
 		wxString coords;
 		wxString pbtime;

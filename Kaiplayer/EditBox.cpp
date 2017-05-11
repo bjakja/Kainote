@@ -137,7 +137,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	, EditCounter(1)
 	, ABox(NULL)
 	, line(NULL)
-	, lastVisible(false)
+	, lastVisible(true)
 {
 
 	SetForegroundColour(Options.GetColour(WindowText));
@@ -247,7 +247,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	Comment = new KaiCheckBox(this, ID_CHECKBOX1, _("Komentarz"), wxDefaultPosition, wxSize(82,-1));
 	Comment->SetValue(false);
 	LayerEdit = new NumCtrl(this, 16668, "",-10000000,10000000,true, wxDefaultPosition, wxSize(50,-1));
-	StartEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(82,-1),wxTE_CENTRE);
+	StartEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(82,-1),wxTE_CENTER);
 	EndEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(82,-1),wxTE_CENTRE);
 	DurEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(82,-1),wxTE_CENTRE);
 	wxArrayString styles;
@@ -331,10 +331,24 @@ EditBox::~EditBox()
 void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool autoPlay)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
-	
-	if(nochangeline && ebrow==Row){goto done;}
+	int prevRow = ebrow;
+	if(nochangeline && ebrow == Row){goto done;}
 	if(Options.GetInt(GridSaveAfterCharacterCount)>1 && ebrow!=Row && save){
 		Send(false);
+	}
+	Dialogue *prevDial = grid->GetDial(ebrow);
+	if(prevDial && prevDial->Start.mstime > prevDial->End.mstime){
+		prevDial->End = prevDial->Start;
+		grid->Refresh(false);
+	}
+	if(StartEdit->changedBackGround){
+		StartEdit->SetForegroundColour(Options.GetColour(WindowText));//StartEdit->Refresh(false);
+	}
+	if(EndEdit->changedBackGround ){
+		EndEdit->SetForegroundColour(Options.GetColour(WindowText));//EndEdit->Refresh(false);
+	}
+	if(DurEdit->changedBackGround ){
+		DurEdit->SetForegroundColour(Options.GetColour(WindowText));//DurEdit->Refresh(false);
 	}
 	ebrow=Row;
 	grid->mtimerow=Row;
@@ -345,7 +359,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	StartEdit->SetTime(line->Start, false, 1);
 	EndEdit->SetTime(line->End, false, 2);
 	if(grid->showFrames){
-		STime durationTime = StartEdit->GetTime() - EndEdit->GetTime();
+		STime durationTime = EndEdit->GetTime() - StartEdit->GetTime();
 		durationTime.orgframe++;
 		DurEdit->SetTime(durationTime);
 	}else{
@@ -383,7 +397,7 @@ done:
 	VideoCtrl *vb = pan->Video;
 	int pas = vb->vToolbar->videoPlayAfter->GetSelection();
 
-	if(vb->vToolbar->videoSeekAfter->GetSelection()==1 && pas<2 && !nochangeline){
+	if(vb->vToolbar->videoSeekAfter->GetSelection()==1 && pas<2 && !nochangeline && prevRow != Row){
 		if(vb->GetState()!=None){
 			if(vb->GetState()==Playing){vb->Pause();}
 			vb->Seek(line->Start.mstime);
@@ -402,14 +416,8 @@ done:
 			if(pan->Video->IsShown() || pan->Video->isFullscreen){
 				Dialogue *next=grid->GetDial(MIN(ebrow+1, grid->GetCount()-1));
 				int ed=line->End.mstime, nst=next->Start.mstime;
-				int htpf= pan->Video->avtpf/2;
-				int playend = (nst>ed && pas>2)? nst-htpf : ed-htpf;
-				if(pan->Video->VFF){
-					int frame = pan->Video->VFF->GetFramefromMS((nst>ed && pas>2)? nst : ed);
-					frame--;
-					playend = pan->Video->VFF->GetMSfromFrame(frame);
-				}
-				pan->Video->PlayLine(line->Start.mstime,playend);
+				int playend = (nst>ed && pas>2)? nst : ed;
+				pan->Video->PlayLine(line->Start.mstime, pan->Video->GetPlayEndTime(playend));
 			}
 		}
 	}
@@ -447,9 +455,15 @@ void EditBox::UpdateChars(wxString text)
 void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 {
 	long cellm=0;
-	if(!dummy && StartEdit->changedBackGround){StartEdit->SetForegroundColour(Options.GetColour(WindowText));StartEdit->Refresh(false);}
-	if(!dummy && EndEdit->changedBackGround ){EndEdit->SetForegroundColour(Options.GetColour(WindowText));EndEdit->Refresh(false);}
-	if(!dummy && DurEdit->changedBackGround ){DurEdit->SetForegroundColour(Options.GetColour(WindowText));DurEdit->Refresh(false);}
+	if(!dummy && !visualdummy && StartEdit->changedBackGround){
+		StartEdit->SetForegroundColour(Options.GetColour(WindowText));//StartEdit->Refresh(false);
+	}
+	if(!dummy && !visualdummy && EndEdit->changedBackGround ){
+		EndEdit->SetForegroundColour(Options.GetColour(WindowText));//EndEdit->Refresh(false);
+	}
+	if(!dummy && !visualdummy && DurEdit->changedBackGround ){
+		DurEdit->SetForegroundColour(Options.GetColour(WindowText));//DurEdit->Refresh(false);
+	}
 	if(line->IsComment != Comment->GetValue()){
 		line->IsComment= !line->IsComment;
 		cellm |= COMMENT;
@@ -463,19 +477,19 @@ void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 
 	if(StartEdit->IsModified()||StartEdit->HasFocus()){
 		line->Start=StartEdit->GetTime(1);
-		if(line->Start.mstime>line->End.mstime){line->End=line->Start;}
+		//if(!visualdummy && line->Start.mstime>line->End.mstime){line->End=line->Start; cellm |= END;}
 		cellm |=START;
 		StartEdit->SetModified(dummy);
 	}
 	if(EndEdit->IsModified()||EndEdit->HasFocus()){
 		line->End=EndEdit->GetTime(2);
-		if(line->Start.mstime>line->End.mstime){line->End=line->Start;}
+		//if(!visualdummy && line->Start.mstime>line->End.mstime){line->End=line->Start; cellm |= START;}
 		cellm |= END;
 		EndEdit->SetModified(dummy);
 	}
 	if(DurEdit->IsModified()){
 		line->End=EndEdit->GetTime();
-		if(line->Start.mstime>line->End.mstime){line->End=line->Start;}
+		//if(line->Start.mstime>line->End.mstime){line->End=line->Start;}
 		cellm |= END;
 		DurEdit->SetModified(dummy);
 	}
@@ -522,7 +536,7 @@ void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 		}
 		TextEdit->modified=dummy;
 	}
-	if(TextEditTl->Modified()&&TextEditTl->IsShown()){
+	if(TextEditTl->Modified() && TextEditTl->IsShown()){
 		line->Text=TextEditTl->GetValue();
 		cellm |= TXT;
 		TextEditTl->modified=dummy;
@@ -779,7 +793,7 @@ void EditBox::AllColorClick(int kol)
 	if ( ColourDialog->ShowModal() == wxID_OK) {
 		Editor->SetSelection(Placed.x,Placed.x);
 	}else{
-		Editor->SetTextS(tmptext);wxCommandEvent evt;OnEdit(evt);
+		Editor->SetTextS(tmptext, true);wxCommandEvent evt;OnEdit(evt);
 	}
 	Editor->SetFocus();
 }
@@ -1094,7 +1108,7 @@ void EditBox::OnPasteDifferents(wxCommandEvent& event)
 	int idd=event.GetId();
 	int vidtime=Notebook::GetTab()->Video->Tell();
 	if(vidtime < line->Start.mstime || vidtime > line->End.mstime){wxBell(); return;}
-	int diff=(idd==StartDifference)? vidtime - line->Start.mstime : abs(vidtime - line->End.mstime); 
+	int diff=(idd==StartDifference)? vidtime - ZEROIT(line->Start.mstime) : abs(vidtime - ZEROIT(line->End.mstime)); 
 	long poss, pose;
 	TextEdit->GetSelection(&poss,&pose);
 	wxString kkk;
@@ -1226,22 +1240,33 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	bool startEndFocus = StartEdit->HasFocus()||EndEdit->HasFocus();
 	bool durFocus = DurEdit->HasFocus();
 
-	bool visible=false;
+	bool visible=true;
 	if(startEndFocus){
 		line->End=EndEdit->GetTime(2);
 		line->Start=StartEdit->GetTime(1);
 		if(line->Start>line->End){
 			if(StartEdit->HasFocus()){
-				line->End=line->Start;
-				EndEdit->SetTime(line->End,false,2);
-				EndEdit->MarkDirty();
+				//line->End=line->Start;
+				//EndEdit->SetTime(line->End,false,2);
+				//EndEdit->MarkDirty();
+				StartEdit->SetForegroundColour(Options.GetColour(WindowWarningElements));
+				StartEdit->changedBackGround=true;
 			}else{
-				line->Start=line->End;
-				StartEdit->SetTime(line->End,false,1);
-				StartEdit->MarkDirty();
+				//line->Start=line->End;
+				//StartEdit->SetTime(line->End,false,1);
+				//StartEdit->MarkDirty();
+				EndEdit->SetForegroundColour(Options.GetColour(WindowWarningElements));
+				EndEdit->changedBackGround=true;
 			}
+		}else if(StartEdit->changedBackGround){
+			StartEdit->SetForegroundColour(Options.GetColour(WindowText));
+		}else if(EndEdit->changedBackGround){
+			EndEdit->SetForegroundColour(Options.GetColour(WindowText));
 		}
-		DurEdit->SetTime(line->End - line->Start,false,1);
+
+		STime durTime = line->End - line->Start;
+		if(durTime.mstime<0){durTime.mstime=0;}
+		DurEdit->SetTime(durTime,false,1);
 	}
 	else if(durFocus){
 		line->End = line->Start + DurEdit->GetTime();
@@ -1269,8 +1294,8 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	if(panel->Video->GetState()!=None){
 		//visible=true;
 		text=grid->GetVisible(&visible);
-		if(lastVisible!=visible){visible=true;}
-		lastVisible=visible;
+		if(lastVisible!=visible){visible=true;lastVisible=false;}
+		else{lastVisible=visible;}
 		OnVideo=true;
 	}
 	//else if(panel->Video->GetState()==Playing){
@@ -1461,8 +1486,14 @@ void EditBox::OnChangeTimeDisplay(wxCommandEvent& event)
 	DurEdit->ShowFrames(frame);
 	StartEdit->SetTime(line->Start,false,1);
 	EndEdit->SetTime(line->End,false,2);
-	DurEdit->SetTime(line->End - line->Start, false, 2);
-	
+	//DurEdit->SetTime(line->End - line->Start, false, 2);
+	if(frame){
+		STime durationTime = EndEdit->GetTime() - StartEdit->GetTime();
+		durationTime.orgframe++;
+		DurEdit->SetTime(durationTime);
+	}else{
+		DurEdit->SetTime(line->End - line->Start);
+	}
 	
 	grid->RepaintWindow(START|END);
 }

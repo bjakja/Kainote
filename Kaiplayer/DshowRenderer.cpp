@@ -51,9 +51,11 @@ void CD2DVideoRender::OnReceiveFirstSample(IMediaSample *pMediaSample)
 	pMediaSample->GetPointer(&pBuffer);
 	
 	if(Vrend->seek){
-		//wxLogStatus("start %i %i", (int)(start/10000.0), (int)(end/10000.0));
 		time=Vrend->time;
-		Vrend->time= time+(start/10000.0);}
+		Vrend->time= time+(start/10000.0);
+		wxCommandEvent *evt=new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,23334);
+		wxQueueEvent(Vrend, evt);
+	}
 	Vrend->seek=false;
 	if(Vrend->vstate==Playing||Vrend->block){return;}//||Vrend->block
 	norender=true;
@@ -77,9 +79,10 @@ HRESULT CD2DVideoRender::Render(IMediaSample *pMediaSample)
     pMediaSample->GetTime(&start,&end);
 	Vrend->time=time+(start/10000.0);
 	if(!Vrend->block){
-		if(Vrend->playend && Vrend->time>=Vrend->playend){ 
+		if(Vrend->playend && Vrend->time >= Vrend->playend){ 
 			wxCommandEvent *evt=new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,2021);
 			wxQueueEvent(Vrend, evt);
+			return S_OK;
 		}
 		Vrend->DrawTexture(pBuffer);
 		Vrend->Render();
