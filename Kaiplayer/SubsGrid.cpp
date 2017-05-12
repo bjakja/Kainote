@@ -482,7 +482,7 @@ void SubsGrid::AdjustWidths(int cell)
 	wxClientDC dc(this);
 	dc.SetFont(font);
 
-	int law=0,stw=0,edw=0,syw=0,acw=0,efw=0,fw,fh;
+	int law=0,startMax=0,endMax=0,stw=0,edw=0,syw=0,acw=0,efw=0,fw=0,fh=0;
 	bool shml=false,shmr=false,shmv=false;
 
 
@@ -491,15 +491,13 @@ void SubsGrid::AdjustWidths(int cell)
 	dc.GetTextExtent(wxString::Format("%i",GetCount()), &fw, &fh, NULL, NULL, &font);
 	GridWidth[0]=fw+10;
 	Dialogue *ndial;
-	for(int i=0;i<maxx;i++)
-	{
+	for(int i=0;i<maxx;i++){
 		ndial=GetDialCor(i);
 		if(START & cell){
-			dc.GetTextExtent(ndial->Start.raw(), &fw, &fh, NULL, NULL, &font);
-			if(fw+10>stw){stw=fw+10;}}
-		if((END & cell)&&form!=TMP){
-			dc.GetTextExtent(ndial->End.raw(), &fw, &fh, NULL, NULL, &font);
-			if(fw+10>edw){edw=fw+10;}
+			if(ndial->Start.mstime > startMax){startMax = ndial->Start.mstime;}
+		}
+		if((END & cell) && form!=TMP){
+			if(ndial->End.mstime > endMax){endMax = ndial->End.mstime;}
 		}
 
 
@@ -520,6 +518,25 @@ void SubsGrid::AdjustWidths(int cell)
 			if((MARGINR & cell) && ndial->MarginR!=0){shmr=true;}
 			if((MARGINV & cell) && ndial->MarginV!=0){shmv=true;}
 		}
+	}
+
+	if(START & cell){
+		STime start(startMax);
+		if(showFrames){
+			VideoFfmpeg *VFF = ((TabPanel*)GetParent())->Video->VFF;
+			start.orgframe = VFF->GetFramefromMS(start.mstime);
+		}
+		dc.GetTextExtent(start.raw(showFrames? FRAME : form), &fw, &fh, NULL, NULL, &font);
+		stw=fw+10;
+	}
+	if(END & cell){
+		STime end(endMax);
+		if(showFrames){
+			VideoFfmpeg *VFF = ((TabPanel*)GetParent())->Video->VFF;
+			end.orgframe = VFF->GetFramefromMS(end.mstime);
+		}
+		dc.GetTextExtent(end.raw(showFrames? FRAME : form), &fw, &fh, NULL, NULL, &font);
+		edw=fw+10;
 	}
 
 	if((form<SRT)? (LAYER & cell) : (START & cell)){
@@ -2908,6 +2925,7 @@ void SubsGrid::ChangeTimeDisplay(bool frame)
 	}else{
 		showFrames = false;
 		STime ct = tab->CTime->TimeText->GetTime();
+		ct.ChangeFormat(ASS);
 		tab->CTime->TimeText->ShowFrames(showFrames);
 		tab->CTime->TimeText->SetTime(ct);
 	}

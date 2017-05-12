@@ -32,7 +32,8 @@ void Position::Draw(int time)
 	bool nothintoshow=true;
 	for(size_t i = 0; i < data.size(); i++){
 		auto pos = data[i];
-		if(time >= pos.dial->Start.mstime && time <= pos.dial->End.mstime){
+		//pamiętaj sprawdzanie czy czasy mieszczą się w przedziale to czas >= start && czas < koniec
+		if(time >= pos.dial->Start.mstime && time </*=*/ pos.dial->End.mstime){
 			DrawCross(pos.pos);
 			DrawRect(pos.pos);
 			nothintoshow=false;

@@ -121,7 +121,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxBoxSizer *Main1Sizer=new wxBoxSizer(wxVERTICAL);
 		wxFlexGridSizer *MainSizer2=new wxFlexGridSizer(8,2,wxSize(5,5));
 		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieć inny id
-		NumCtrl *gridSaveAfter = new NumCtrl(Main1, 20000, Options.GetString(GridSaveAfterCharacterCount), 0, 100,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
+		NumCtrl *gridSaveAfter = new NumCtrl(Main1, 20000, Options.GetString(GridSaveAfterCharacterCount), 0, 10000,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
 		gridSaveAfter->SetToolTip(_("Zero całkowicie wyłacza zapis przy pisaniu"));
 		NumCtrl *autoSaveMax = new NumCtrl(Main1, 20000, Options.GetString(AutoSaveMaxFiles), 2, 1000000,true, wxDefaultPosition, wxSize(120,-1), wxTE_PROCESS_ENTER);
 		autoSaveMax->SetToolTip(_("Liczbę plików autozapisu można ustawić od 2 do 1000000"));

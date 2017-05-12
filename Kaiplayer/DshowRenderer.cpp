@@ -25,7 +25,7 @@ CD2DVideoRender::CD2DVideoRender(VideoRend *_Vrend, HRESULT* phr)
 	: CBaseVideoRenderer(CLSID_KVideoRenderer, L"Video Renderer", NULL, phr)
 {
 	Vrend=_Vrend;
-	norender=block=false;
+	noRefresh=norender=false;
 	time=0;
 	Vinfo.fps=23.976f;
 	Vinfo.width=1280;
@@ -56,10 +56,12 @@ void CD2DVideoRender::OnReceiveFirstSample(IMediaSample *pMediaSample)
 		wxCommandEvent *evt=new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,23334);
 		wxQueueEvent(Vrend, evt);
 	}
+	//po testach to przestawić
 	Vrend->seek=false;
-	if(Vrend->vstate==Playing||Vrend->block){return;}//||Vrend->block
+	if(Vrend->vstate==Playing||Vrend->block||noRefresh){noRefresh=false; return;}
 	norender=true;
 
+	
 	Vrend->DrawTexture(pBuffer, true);
 	Vrend->Render();
 }
@@ -77,13 +79,17 @@ HRESULT CD2DVideoRender::Render(IMediaSample *pMediaSample)
 	
 	REFERENCE_TIME start=0, end=0;
     pMediaSample->GetTime(&start,&end);
-	Vrend->time=time+(start/10000.0);
 	if(!Vrend->block){
-		if(Vrend->playend && Vrend->time >= Vrend->playend){ 
+		if(Vrend->playend && time+(start/10000.0) >/*=*/ Vrend->playend){ 
 			wxCommandEvent *evt=new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,2021);
 			wxQueueEvent(Vrend, evt);
+			wxCommandEvent *evtRefreshTime=new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,23334);
+			wxQueueEvent(Vrend, evtRefreshTime);
+			noRefresh=true;
 			return S_OK;
+			//Vrend->Pause();
 		}
+		Vrend->time=time+(start/10000.0);
 		Vrend->DrawTexture(pBuffer);
 		Vrend->Render();
 	}else{byte *cpy = (byte*) Vrend->datas; memcpy(cpy,pBuffer,pMediaSample->GetSize());}

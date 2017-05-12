@@ -423,7 +423,7 @@ done:
 	}
 	//ustawia czas i msy na polu tekstowym wideo
 	if(pan->Video->IsShown() && pan->Video->GetState() != None){
-		pan->Video->displaytime();
+		pan->Video->RefreshTime();
 	}
 
 }

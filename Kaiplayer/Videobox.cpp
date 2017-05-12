@@ -112,6 +112,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	,TD(NULL)
 	,blockpaint(false)
 	,isOnAnotherMonitor(false)
+	,shownKeyframe(false)
 {
 
 	panel=new wxWindow(this,-1,wxPoint(0,size.y-panelHeight),wxSize(size.x,panelHeight));
@@ -141,7 +142,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 		Vclips->ChangeTool(evt.GetInt());
 	},ID_MOVE_TOOLBAR_EVENT);
 	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
-		displaytime();
+		RefreshTime();
 	},23334);
 
 	//Connect(ID_BPREV,ID_BPLINE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&VideoCtrl::OnAccelerator);
@@ -197,7 +198,7 @@ bool VideoCtrl::Pause(bool burstbl)
 	if(time>=GetDuration()&&burstbl){return false;}
 	if(!VideoRend::Pause()){return false;}
 	if(GetState()==Paused){
-		vtime.Stop();displaytime();}
+		vtime.Stop();RefreshTime();}
 	else if(GetState()==Playing){int ms=(isFullscreen)?1000:100;vtime.Start(ms);}
 
 
@@ -213,7 +214,7 @@ bool VideoCtrl::Stop()
 	if(!VideoRend::Stop()){return false;}
 	vtime.Stop();
 	Seek(0);
-	displaytime();
+	RefreshTime();
 
 	ChangeButtonBMP(true);
 
@@ -294,7 +295,7 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 		Render();
 	}
 
-	displaytime();
+	RefreshTime();
 
 	int pos= Options.GetInt(VideoVolume);
 	SetVolume(-(pos*pos));
@@ -332,7 +333,7 @@ bool VideoCtrl::Seek(int whre,bool starttime, bool disp, bool reloadSubs)
 	wxMutexLocker lock(vbmutex);
 	if(GetState()==None){return false;}
 	SetPosition(whre, starttime, true, reloadSubs);
-	if(disp){displaytime();}
+	if(disp && !IsDshow){RefreshTime();}
 	return true;
 }
 
@@ -508,7 +509,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 
 void VideoCtrl::OnPlaytime(wxTimerEvent& event)
 {
-	displaytime();
+	RefreshTime();
 }
 
 void VideoCtrl::OnKeyPress(wxKeyEvent& event)
@@ -636,7 +637,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 		block=false;
 
 		vToolbar->Synchronize(TD->vToolbar);
-		displaytime();
+		RefreshTime();
 		TD->Hide();
 		SetCursor(wxCURSOR_ARROW); hasArrow=true;
 	}
@@ -657,7 +658,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 		if(!panelOnFullscreen){TD->panel->Hide();}
 		TD->Show();
 		UpdateVideoWindow();
-		displaytime();
+		RefreshTime();
 		if(GetState()==Playing){vtime.Start(1000);}
 		//if(GetState()==Paused){Kp->Render();}
 		if(monitor && Kai->GetTab()->edytor){
@@ -886,7 +887,7 @@ void VideoCtrl::OnHidePB()
 {
 	bool pb=!Options.GetBool(VideoProgressBar);
 	Options.SetBool(VideoProgressBar,pb);
-	if(pb){pbar=true;displaytime();}else{pbar=false;}
+	if(pb){pbar=true; RefreshTime();}else{pbar=false;}
 	if(GetState()==Paused){Render(false);}
 }
 
@@ -1083,10 +1084,10 @@ void VideoCtrl::SetScaleAndZoom()
 //	AddPendingEvent(evt);
 //}
 
-void VideoCtrl::displaytime()
+void VideoCtrl::RefreshTime()
 {
 	STime kkk;
-	kkk.mstime=GetCurrentPosition();
+	kkk.mstime = time;
 	float dur=GetDuration();
 	float val=(dur>0)? kkk.mstime/dur : 0.0;
 
@@ -1106,7 +1107,18 @@ void VideoCtrl::displaytime()
 		wxString times;
 		times<<kkk.raw(SRT)<<";  ";
 		TabPanel *pan=(TabPanel*)GetParent();
-		if(!IsDshow){times<<lastframe<<";  ";}
+		if(!IsDshow){
+			times<<lastframe<<";  ";
+			if(VFF){
+				if(VFF->KeyFrames.Index(time) != -1){
+					shownKeyframe=true;
+					mstimes->SetForegroundColour(Options.GetColour(WindowWarningElements));
+				}else if(shownKeyframe){
+					shownKeyframe=false;
+					mstimes->SetForegroundColour(Options.GetColour(WindowText));
+				}
+			}
+		}
 		if(pan->edytor){
 			Dialogue *line=pan->Edit->line;
 			int sdiff=kkk.mstime - ZEROIT(line->Start.mstime);

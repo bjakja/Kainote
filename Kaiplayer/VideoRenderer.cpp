@@ -714,7 +714,7 @@ bool VideoRend::Play(int end)
 		lasttime=timeGetTime()-time;
 		//lasttime=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()).count()-time;
 		//startTime = std::chrono::steady_clock::now();
-		if(player){player->Play(time,-1,false);}
+		if(player){player->Play(time,end/*-1*/,false);}
 		time=VFF->Timecodes[lastframe];
 		VFF->Play();
 
@@ -947,9 +947,11 @@ int VideoRend::GetPlayEndTime(int _time)
 		int prevFrameTime = VFF->GetMSfromFrame(frameFromTime-1);
 		return prevFrameTime;
 	}else{
-		_time/=frameDuration;
-		_time*=frameDuration;
-		return _time;
+		int newTime = _time;
+		newTime/=frameDuration;
+		newTime = (newTime * frameDuration)+1.f;
+		if(_time == newTime && newTime % 10 == 0){newTime -= 5;}
+		return newTime;
 	}
 }
 
@@ -1479,7 +1481,7 @@ void VideoRend::MovePos(int cpos)
 		SetPosition(time,true,false);
 	}
 	VideoCtrl *vb=(VideoCtrl*)this;
-	vb->displaytime();
+	vb->RefreshTime();
 	
 }
 

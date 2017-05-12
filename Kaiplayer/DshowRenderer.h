@@ -71,8 +71,7 @@ private:
 	VideoInf Vinfo;
 	int time;
 	bool norender;
-	bool block;
-	
+	bool noRefresh;
 };
 
 #endif

@@ -371,7 +371,9 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if(!fc){fc=new FontCollector(this);}
 		fc->ShowDialog(this);
 	}else if(id>=ConvertToASS && id<=ConvertToMPL2){
-		OnConversion(( id - ConvertToASS ) + 1);
+		if(pan->Grid1->GetSInfo("TLMode")!="Yes"){
+			OnConversion(( id - ConvertToASS ) + 1);
+		}
 	}else if(id==HideTags){
 		pan->Grid1->HideOver();
 	}else if(id==ChangeTime){
@@ -431,8 +433,10 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		}
 	}else if(id==GoToPrewKeyframe){
 		pan->Video->GoToPrevKeyframe();
+		pan->Video->RefreshTime();
 	}else if(id==GoToNextKeyframe){
 		pan->Video->GoToNextKeyframe();
+		pan->Video->RefreshTime();
 	}else if(id==SetVideoAtStart){
 		int fsel=pan->Grid1->FirstSel();
 		if(fsel<0){return;}
@@ -1237,7 +1241,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 		tar.Empty();
 		tar<<x<<" x "<<y;
 		SetStatusText(tar,5);
-		cur->Video->displaytime();
+		cur->Video->RefreshTime();
 
 		STime kkk1;
 		kkk1.mstime=cur->Video->GetDuration();

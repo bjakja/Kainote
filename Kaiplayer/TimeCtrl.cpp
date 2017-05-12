@@ -169,11 +169,12 @@ void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
 	bool astmp=(form<MDVD && !showFrames);
 	//wxLogStatus("key %i", key);
 	if (astmp){
-
 		long from=0,to=0;
 		GetSelection(&from,&to);
+		wxString txt=GetValue();
+		
 		if (to != from && (key > 47 && key < 59 || key > 323 && key < 334)) {
-			wxString txt=GetValue();
+			
 			wxString seltxt=txt.SubString(from,to-1);
 			wxRegEx reg("[0-9]",wxRE_ADVANCED);
 			reg.ReplaceAll(&seltxt,_T("0"));
@@ -184,7 +185,9 @@ void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
 			SetValue(all, true, false);
 			SetSelection(from,from);
 		}
-
+		if(from >= txt.Len()){
+			wxBell();return;
+		}
 
 	}
 	event.Skip();
@@ -230,6 +233,8 @@ STime TimeCtrl::GetTime(char opt)
 			//wxLogMessage(_("Wideo nie jest wczytane przez FFMS2"));
 		}
 		return cpy;
+	}else{
+		mTime.ChangeFormat(form);
 	}
 	return mTime;
 }

@@ -72,7 +72,7 @@ public:
 	void OnSMinus();
 	void OnSPlus();
 	void ChangeStream();
-	void displaytime();
+	void RefreshTime();
 	void NextChap();
 	void PrevChap();
 	void ConnectAcc(int id);
@@ -88,6 +88,7 @@ public:
 	wxSize lastSize;
 	Fullscreen *TD;
 	bool hasArrow;
+	bool shownKeyframe;
 	wxString oldpath;
 	std::vector<RECT> MonRects;
 	bool isOnAnotherMonitor;

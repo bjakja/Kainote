@@ -235,8 +235,9 @@ void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen
 
 
 void Visuals::Draw(int time)
-{
-	if(!(time>=start && time<=end) || notDialogue){blockevents = true; return;}else if(blockevents){blockevents=false;}
+{//time<=end
+	//pamiętaj sprawdzanie czy czasy mieszczą się w przedziale to czas >= start && czas < koniec
+	if(!(time>=start && time<end) || notDialogue){blockevents = true; return;}else if(blockevents){blockevents=false;}
 	wxMutexLocker lock(clipmutex);
 	line->SetAntialias(TRUE);
 	line->SetWidth(2.0);
