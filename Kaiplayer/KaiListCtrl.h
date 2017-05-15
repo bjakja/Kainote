@@ -125,6 +125,8 @@ public:
 	int FindItem(int column, const wxString &textItem);
 	void ScrollTo(int row);
 	size_t GetCount(){return itemList.size();}
+	void SetSelection(int selection){sel = selection; Refresh(false);}
+	int GetSelection(){return sel;}
 private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);

@@ -727,6 +727,7 @@ wxString getfloat(float num, const wxString &format, bool Truncate)
 		else{/*if(trim){int tmpc=static_cast < int >(strnum.GetChar(i));tmpc++;strnum[i]=(wxUniChar)tmpc;}*/break;}
 	}
 	if(rmv){strnum.RemoveLast(rmv);}
+	//wxLogStatus("strnum %s num %f", strnum, num);
 	return strnum.Trim(false);
 }
 

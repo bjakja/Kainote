@@ -96,13 +96,9 @@ void Visuals::SetVisual(int _start, int _end, bool notDial)
 
 	SetCurVisual();
 	if(Visual==VECTORCLIP){
-		SetClip(GetVisual(),true); return;
+		SetClip(GetVisual(),true,true,false); return;
 	}
-	/*if(tab->Video->IsDshow){
-		tab->Video->Refresh(false);
-	}else{
-		tab->Video->VFF->Refresh(false);tab->Video->resized=false;
-	}*/
+	
 	tab->Video->Render(true,false);
 }
 
@@ -457,7 +453,7 @@ int ChangeText(wxString *txt, const wxString &what, bool notinbracket, const wxP
 	return 0;
 }
 
-void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
+void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorText)
 {
 	
 	EditBox *edit = tab->Edit;
@@ -466,15 +462,17 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 	//Editor
 	MTextEditor *Editor=(isOriginal)? edit->TextEditTl : edit->TextEdit;
 	if(clip==""){
-		//
+		
 		wxString tmp;
 		wxString txt = Editor->GetValue();
 		if(edit->FindVal("(i?clip.)[^)]*\\)", &tmp, txt, 0, true)){
 			ChangeText(&txt,"",edit->InBracket,edit->Placed);
 			txt.Replace("{}", "");
-			Editor->SetTextS(txt, false, false);
-			Editor->modified = true;
-			edit->Send(false);
+			if(changeEditorText){
+				Editor->SetTextS(txt, false, false);
+				Editor->modified=true;
+				edit->Send(false);
+			}
 			return;
 		}
 		tab->Video->VisEdit=false;
@@ -510,7 +508,10 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 				(*dummytext)<<visdl->GetRaw();
 				dumplaced.x=edit->Placed.x + textplaced.x; dumplaced.y=edit->Placed.y + textplaced.x;
 				delete visdl;
-				Editor->SetTextS(txt,false,false);
+				if(changeEditorText){
+					Editor->SetTextS(txt,false,false);
+					Editor->modified=true;
+				}
 				
 			}else{//rysunki wektorowe
 				wxString tmp="";
@@ -566,14 +567,17 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 				if(Mpos== -1){Mpos = afterP1.find("}")+1;}
 				wxString startM = afterP1.Mid(Mpos);
 				int endClip = startM.find("{");
-				if(endClip == -1 && isf){endClip=startM.Len()-1;clip+="{\\p0}";}
+				if(endClip == -1 && isf){endClip=startM.Len();clip+="{\\p0}";}
 				else if(endClip == -1){endClip=0;clip+="{\\p0}";}
 				txt.replace(Mpos + edit->Placed.y, endClip, clip);
 				//int startClip = Mpos + edit->Placed.y;
 				//endClip = clip.Len() + startClip;
 				
 
-				Editor->SetTextS(txt,false,false);
+				if(changeEditorText){
+					Editor->SetTextS(txt,false,false);
+					Editor->modified=true;
+				}
 
 				dummytext->replace(textplaced.x,textplaced.y,txt);
 				textplaced.y=txt.Len();
@@ -597,8 +601,10 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw)
 			//wyciągamy sam tekst linijki
 			wxString txt = dummytext->Mid(textplaced.x,textplaced.y);
 			//wstawiamy w edytor
-			Editor->SetTextS(txt,false,false);//,false,true
-			Editor->Refresh();
+			if(changeEditorText){
+				Editor->SetTextS(txt,false,false);
+				Editor->modified=true;
+			}
 		}
 		
 		tab->Video->VisEdit=false;

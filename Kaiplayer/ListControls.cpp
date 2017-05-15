@@ -550,6 +550,11 @@ bool KaiChoice::HasFocus()
 	return (wxWindow::HasFocus() || (choiceText && choiceText->HasFocus()));
 }
 
+void KaiChoice::SetMaxLength(int maxLen)
+{
+	if(choiceText){choiceText->SetMaxLength(maxLen);}
+}
+
 wxIMPLEMENT_ABSTRACT_CLASS(KaiChoice, wxWindow);
 
 BEGIN_EVENT_TABLE(KaiChoice, wxWindow)

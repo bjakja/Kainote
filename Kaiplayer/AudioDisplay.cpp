@@ -1180,7 +1180,12 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 					loaded= false; return;
 				}
 				//kopiujemy keyframes by nie robić specjalnie warunków czy jest wideo czy nie
-				if(vb->VFF){provider->KeyFrames = vb->VFF->KeyFrames;}
+				if(vb->VFF){
+					provider->KeyFrames = vb->VFF->KeyFrames;
+					provider->Timecodes = vb->VFF->Timecodes;
+					provider->NumFrames = vb->VFF->NumFrames;
+					provider->fps = vb->VFF->fps;
+				}
 				vb->player=this; ownProvider=true;
 			}
 
@@ -1482,7 +1487,10 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 			// Get focus
 			if (wxWindow::FindFocus() != this && Options.GetBool(AudioAutoFocus)) SetFocus();
 		}
-		else if (y < h+timelineHeight) onScale = true;
+		else if (y < h+timelineHeight){ 
+			onScale = true;
+			cursorPaint = false;
+		}
 		if(inside && onScale){UpdateImage(true); inside=false;}
 	}else{inside = false;}
 
@@ -1941,9 +1949,15 @@ int AudioDisplay::GetBoundarySnap(int ms,int rangeX,bool shiftHeld,bool start, b
 			keyMS = provider->KeyFrames[i];
 			int keyX=GetXAtMS(keyMS);
 			if (keyX >= 0 && keyX < w) {
-				int frame = provider->GetFramefromMS(keyMS);
-				int prevFrameTime = provider->GetMSfromFrame(frame-1);
-				int frameTime = keyMS + ((prevFrameTime - keyMS) / 2);
+				int frameTime = 0;
+				if(provider->Timecodes.size()<1){
+					//cóż wiele zrobić nie możemy gdy nie mamy wideo;
+					frameTime = keyMS - 21;
+				}else{
+					int frame = provider->GetFramefromMS(keyMS);
+					int prevFrameTime = provider->GetMSfromFrame(frame-1);
+					frameTime = keyMS + ((prevFrameTime - keyMS) / 2);
+				}
 				boundaries.Add(ZEROIT(frameTime/*-halfframe*/));
 			}
 		}
@@ -2221,9 +2235,10 @@ void AudioDisplay::DrawKeyframes() {
 	// Scan list
 	d3dLine->Begin();
 	for (size_t i=0;i<provider->KeyFrames.size();i++) {
-		int cur = ((provider->KeyFrames[i]-5)/10)*10;
+		int cur = provider->KeyFrames[i];
 		if(cur>=mintime && cur<=maxtime)
 		{
+			cur = ((cur-16)/10) * 10;
 			int x = GetXAtMS(cur);
 			//dc.DrawLine(x,0,x,h);
 			v2[0]=D3DXVECTOR2(x,0);

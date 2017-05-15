@@ -613,7 +613,7 @@ void kainoteFrame::OnAssProps()
 	wxString colls=ngrid->GetSInfo("Collisions");
 	if(colls=="Reverse"){sci.collision->SetSelection(1);}
 	wxString bords=ngrid->GetSInfo("ScaledBorderAndShadow");
-	if (bords=="no"){sci.CheckBox2->SetValue(false);}
+	if (bords=="no"){sci.scaleBorderAndShadow->SetValue(false);}
 
 	if(sci.ShowModal()==wxID_OK)
 	{
@@ -623,7 +623,7 @@ void kainoteFrame::OnAssProps()
 		else if(newx<1){newx=(float)newy*(4.0/3.0);}
 		else if(newy<1){newy=(float)newx*(3.0/4.0);if(newx==1280){newy=1024;}}
 
-		bool save=(!sci.CheckBox1->GetValue()&&(newx!=oldx||newy!=oldy));
+		bool save=(!sci.noScaling->GetValue()&&(newx!=oldx||newy!=oldy));
 
 		if(sci.title->GetValue()!=""){ if(sci.title->IsModified()){ngrid->AddSInfo("Title",sci.title->GetValue());} }
 		else{ngrid->AddSInfo("Title","Kainote Ass File");}
@@ -645,14 +645,14 @@ void kainoteFrame::OnAssProps()
 		if(ws != sci.wrapstyle->GetSelection()){ngrid->AddSInfo("WrapStyle",wxString::Format("%i",sci.wrapstyle->GetSelection()));}
 		wxString collis=(sci.collision->GetSelection()==0)?"Normal":"Reverse";
 		if(colls!=collis){ngrid->AddSInfo("Collisions",collis);}
-		wxString bordas=(sci.CheckBox2->GetValue())?"yes":"no";
+		wxString bordas=(sci.scaleBorderAndShadow->GetValue())?"yes":"no";
 		if(bords !=bordas){ ngrid->AddSInfo("ScaledBorderAndShadow",bordas);}
 
 
 		if(save){
 			int ox=wxAtoi(oldx);
 			int oy=wxAtoi(oldy);
-			ngrid->ResizeSubs((float)newx/(float)ox,(float)newy/(float)oy);
+			ngrid->ResizeSubs((float)newx/(float)ox,(float)newy/(float)oy, sci.stretchScale->GetValue());
 		}
 		ngrid->SetModified(save);
 		SetSubsResolution();
@@ -883,7 +883,7 @@ void kainoteFrame::ShowBadResolutionDialog(const wxString &videoRes, const wxStr
 			int oy=wxAtoi(sy);
 			int newx=wxAtoi(vx);
 			int newy=wxAtoi(vy);
-			grid->ResizeSubs((float)newx/(float)ox,(float)newy/(float)oy);
+			grid->ResizeSubs((float)newx/(float)ox,(float)newy/(float)oy,false);
 		}
 		grid->SetModified();
 		SetSubsResolution();
@@ -1667,8 +1667,10 @@ void kainoteFrame::OnRunScript(wxCommandEvent& event)
 	Auto::LuaScript *script = Auto->FindScript(path);
 	if(!script){
 		Auto->Add(path);
+		script = Auto->ASSScripts[Auto->ASSScripts.size()-1];
+	}else{
+		if(script->CheckLastModified(true)){script->Reload();}
 	}
-	if(script->CheckLastModified(true)){script->Reload();}
 	auto macro = script->GetMacro(wmacro);
 	if(macro){
 		TabPanel *pan = GetTab();

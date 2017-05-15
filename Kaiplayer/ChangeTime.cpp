@@ -215,7 +215,7 @@ void CTwindow::OnOKClick(wxCommandEvent& event)
 	if(TimeText->HasShownFrames()){
 		TabPanel *tab = ((TabPanel*)GetParent());
 		if(!tab->Video->VFF){
-			wxLogMessage(_("Wideo nie jest wczytane przez FFMS2")); return;
+			wxLogMessage(_("Wideo nie zostało wczytane przez FFMS2")); return;
 			//time = TimeText->GetTime().mstime; 
 		}else{
 			/*int startFrame = tab->Edit->line->Start.orgframe;
@@ -347,7 +347,7 @@ void CTwindow::RefVals(CTwindow *from)
 		
 		if(TimeText->HasShownFrames()){
 			if(!tab->Video->VFF){
-				wxLogMessage(_("Wideo nie jest wczytane przez FFMS2"));
+				wxLogMessage(_("Wideo nie zostało wczytane przez FFMS2"));
 			}else{
 				ct.NewFrame(tab->Video->VFF->GetFramefromMS(ct.mstime));
 			}

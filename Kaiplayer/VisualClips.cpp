@@ -90,24 +90,32 @@ void DrawingAndClip::DrawVisual(int time)
 	}
 	size_t size = Points.size();
 	if(!size){return;}
+
 	line->SetWidth(1.0f);
 	if(drawToolLines){
-		D3DXVECTOR2 v3[3] = {Points[FindPoint(size-1,"m",false,true)].GetVector(this), D3DXVECTOR2(x,y), Points[size-1].GetVector(this)};
-		line->Begin();
-		DrawDashedLine(v3, (Points[size-1].type!="m")? 3 : 2);
-		line->End();
+		int mPoint = FindPoint(size-1,"m",false,true);
+		if(mPoint >= 0 && mPoint < size-1){
+			D3DXVECTOR2 v3[3] = {Points[mPoint].GetVector(this), D3DXVECTOR2(x,y), Points[size-1].GetVector(this)};
+			line->Begin();
+			DrawDashedLine(v3, (Points[size-1].type!="m")? 3 : 2);
+			line->End();
+		}
 	}
 	if(Visual==VECTORDRAW && tbl[6]>2){D3DXVECTOR2 movePos = CalcMovePos(); _x = movePos.x; _y = movePos.y;}
-	//wxLogStatus("Create line %i %i", Points[0].x, Points[0].y);
-	size_t g=0;
+	//nie nale¿y dopuœciæ przypadków typu brak "m" na pocz¹tku by wesz³o zamiast tego l b¹dŸ b
+	if(Points[0].type!="m"){Points[0].type="m";}
+	size_t g= (size<2)? 0 : 1;
 	size_t lastM=0;
 	bool minusminus=false;
 	while(g < size){
+
 		if(Points[g].type=="l"){
 			DrawLine(g);
 			g++;
 		}else if(Points[g].type=="b"||Points[g].type=="s"){
 			g+=DrawCurve(g,(Points[g].type=="s"));
+		}else if(Points[g].type!="m"){
+			g++;
 		}
 
 		if(g >= size || Points[g].type=="m"){
@@ -177,22 +185,35 @@ void DrawingAndClip::SetCurVisual()
 	double tmpx=0;
 	bool gotx=false;
 	bool start=false;
-	wxString type;
+	int pointsAfterStart = 1;
+	wxString type = "m";
 	while(tokens.HasMoreTokens()){
 		wxString token=tokens.GetNextToken();
 		if(token=="p"){token="s";}
-		if(token=="m"||token=="l"||token=="b"||token=="s"){type=token;start=true;}
-		else if(token=="c"){continue;}
+		if(token=="m"||token=="l"||token=="b"||token=="s"){
+			type=token;
+			start=true;
+			pointsAfterStart=1;
+		}
+		else if(token=="c"){start=true;continue;}
 		else if(gotx){
 			double tmpy=0;
-			token.ToCDouble(&tmpy);
+			if(!token.ToCDouble(&tmpy)){gotx = false; continue;}
 			Points.push_back(ClipPoint(tmpx, tmpy,type,start));
 			gotx=false;
-			start=false;
+			if((type=="l" || type=="m" && pointsAfterStart==1)||(type=="b" && pointsAfterStart==3)){
+				if(type == "m"){type = "l";}
+				start=true;
+				pointsAfterStart=0;
+			}else{
+				start=false;
+			}
+			pointsAfterStart++;
 		}
 		else{
-			token.ToCDouble(&tmpx);
-			gotx=true;
+			if(token.ToCDouble(&tmpx)){
+				gotx=true;
+			}
 		}
 	
 	}
@@ -659,8 +680,8 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	if(leftisdown && grabbed!=-1 && !ctrl)
 	{
 		//drawtxt=true;
-		zx=MID(VideoSize.x,zx,VideoSize.width);
-		zy=MID(VideoSize.y,zy,VideoSize.height);
+		zx=MID(0,zx,VideoSize.width - VideoSize.x);
+		zy=MID(0,zy,VideoSize.height - VideoSize.y);
 		Points[grabbed].x=((zx+diffs.x)*wspw)-_x;
 		Points[grabbed].y=((zy+diffs.y)*wsph)-_y;
 

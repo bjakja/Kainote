@@ -29,7 +29,7 @@ public:
 	Grid(wxWindow* parent, kainoteFrame* kfparent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=0, const wxString& name=wxPanelNameStr);
 	virtual ~Grid();
 	void MoveTextTL(char mode);
-	void ResizeSubs(float xnsize, float ynsize);
+	void ResizeSubs(float xnsize, float ynsize, bool stretch);
 	void OnMkvSubs(wxCommandEvent &event);
 	void ConnectAcc(int id);
 	void OnAccelerator(wxCommandEvent &event);

@@ -316,7 +316,7 @@ namespace Auto{
 			}
 
 			void LuaReadBack(lua_State *L) {
-				value=(float)((NumCtrl*)scd)->GetDouble();
+				value=((NumCtrl*)scd)->GetDouble();
 				lua_pushnumber(L, value);
 			}
 		};

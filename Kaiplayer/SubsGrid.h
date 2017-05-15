@@ -119,8 +119,9 @@ public:
 	bool showFrames;
 	int lastRow;
 	int visible;
-	int mtimerow;
+	int markedLine;
 	int panelrows;
+	int lastActiveLine;
 	SubsFile* file;
 	std::vector<wxArrayInt> SpellErrors;
 	std::vector<wxArrayInt> *Comparsion;

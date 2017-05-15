@@ -351,7 +351,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 		DurEdit->SetForegroundColour(Options.GetColour(WindowText));//DurEdit->Refresh(false);
 	}
 	ebrow=Row;
-	grid->mtimerow=Row;
+	grid->markedLine=Row;
 	wxDELETE(line);
 	line=grid->GetDial(ebrow)->Copy();
 	Comment->SetValue(line->IsComment);
@@ -979,7 +979,7 @@ void EditBox::DoTooltips()
 	EndEdit->SetToolTip(_("Czas końcowy linijki"));
 	DurEdit->SetToolTip(_("Czas trwania linijki"));
 	StyleChoice->SetToolTip(_("Styl linijki"));
-	StyleEdit->SetToolTip(_("Umożliwia edycję stylu linijki"));
+	StyleEdit->SetToolTip(_("Umożliwia szybką edycję stylu linijki"));
 	ActorEdit->SetToolTip(_("Oznaczenie aktora linijki. Nie wpływa na wygląd napisów"));
 	MarginLEdit->SetToolTip(_("Margines lewy linijki"));
 	MarginREdit->SetToolTip(_("Margines prawy linijki"));
@@ -1278,10 +1278,6 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		UpdateChars((TextEditTl->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
 	}
 
-	if(Visual > 0){
-		panel->Video->SetVisual(false, true);
-		return;
-	}
 	int saveAfter = Options.GetInt(GridSaveAfterCharacterCount);
 	if(saveAfter && EditCounter>= saveAfter){
 		bool tmpOnVideo = OnVideo;
@@ -1289,6 +1285,11 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		OnVideo = tmpOnVideo;
 		EditCounter=1;
 	}else{EditCounter++;}
+
+	if(Visual > 0){
+		panel->Video->SetVisual(false, true);
+		return;
+	}
 
 	wxString *text=NULL;
 	if(panel->Video->GetState()!=None){

@@ -61,7 +61,8 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		//pionowy sizer kolumna 1
 		KaiStaticBoxSizer* frsbsizer=new KaiStaticBoxSizer(wxVERTICAL,this,_("Znajdź"));
 		FindText = new KaiChoice(this, ID_FINDTEXT, (last)?last->FindText->GetValue() : ES, wxDefaultPosition, wxSize(342,-1),wfind);
-		FindText->SetToolTip(_("Szukany text:"));
+		FindText->SetToolTip(_("Szukany tekst:"));
+		FindText->SetMaxLength(MAXINT);
 		frsbsizer->Add(FindText,0,wxEXPAND,0);
 		mainfrbsizer1->Add(frsbsizer,0,wxEXPAND|wxALL,3);
 
@@ -72,6 +73,7 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 			KaiStaticBoxSizer* frsbsizer1=new KaiStaticBoxSizer(wxVERTICAL,this,_("Zamień"));
 			RepText = new KaiChoice(this, ID_REPTEXT, (last && last->RepText)?last->RepText->GetValue() : ES, wxDefaultPosition, wxSize(342,-1),wrepl);
 			RepText->SetToolTip(_("Zamień na:"));
+			RepText->SetMaxLength(MAXINT);
 			frsbsizer1->Add(RepText,0,wxEXPAND,0);
 			mainfrbsizer1->Add(frsbsizer1,0,wxEXPAND|wxALL,3);
 		}
@@ -196,7 +198,8 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		KaiStaticBoxSizer* slsbsizer=new KaiStaticBoxSizer(wxVERTICAL,this,_("Znajdź"));
 		wxBoxSizer *sltpsizer= new wxBoxSizer(wxHORIZONTAL);
 		FindText = new KaiChoice(this, ID_FINDTEXT, (last)?last->FindText->GetValue():ES, wxDefaultPosition, wxSize(-1,24),wfind);
-		FindText->SetToolTip(_("Szukany text:"));
+		FindText->SetToolTip(_("Szukany tekst:"));
+		FindText->SetMaxLength(MAXINT);
 		Bplus = new MappedButton(this, ID_BPLUS, "+", 0, wxDefaultPosition, wxSize(24,24));
 		sltpsizer->Add(FindText,1,wxALL|wxEXPAND,3);
 		sltpsizer->Add(Bplus,0,wxALL,3);

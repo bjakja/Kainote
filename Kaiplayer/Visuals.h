@@ -82,7 +82,7 @@ public:
 	virtual wxString GetVisual(){return "";};
 	D3DXVECTOR2 GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);
 	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
-	void SetClip(wxString clip,bool dummy, bool redraw=true);
+	void SetClip(wxString clip,bool dummy, bool redraw=true, bool changeEditorText = true);
 	void SetVisual(wxString visual,bool dummy,int type);
 	D3DXVECTOR2 CalcMovePos();
 	D3DXVECTOR2 to;

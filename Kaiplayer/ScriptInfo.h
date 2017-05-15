@@ -36,18 +36,19 @@ class ScriptInfo: public KaiDialog
 		KaiTextCtrl* script;
 		NumCtrl* width;
 		KaiTextCtrl* update;
-		MappedButton* Button1;
+		MappedButton* save;
 		KaiChoice* wrapstyle;
 		KaiChoice* matrix;
-		KaiCheckBox* CheckBox2;
+		KaiCheckBox* scaleBorderAndShadow;
 		KaiChoice* collision;
 		KaiTextCtrl* editing;
 		KaiTextCtrl* title;
-		MappedButton* Button2;
-		KaiCheckBox* CheckBox1;
+		MappedButton* cancel;
+		KaiCheckBox* noScaling;
+		KaiCheckBox* stretchScale;
 		KaiTextCtrl* timing;
 		KaiTextCtrl* translation;
-		MappedButton* Fvideo;
+		MappedButton* resolutionFromVideo;
 
 		void DoTooltips();
 private:

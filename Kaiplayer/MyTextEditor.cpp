@@ -122,6 +122,7 @@ void MTextEditor::SetTextS(const wxString &text, bool modif, bool resetsel,bool 
 	if(resetsel){SetSelection(0,0);}
 	else{
 		if((size_t)Cursor.x>MText.Len()){Cursor.x = MText.Len();Cursor.y = FindY(Cursor.x);}
+		Refresh(false);
 	}
 	//else{Refresh(false);}
 }

@@ -366,11 +366,11 @@ void Hotkeys::ResetKey(const idAndType *itype, int id, char type)
 	idAndType tmpitype = (itype)? *itype : idAndType(id, type);
 	std::map<idAndType,hdata> tmphkeys;
 	LoadDefault(tmphkeys);LoadDefault(tmphkeys, true);
-	auto it= tmphkeys.find(id);
+	auto it= tmphkeys.find(tmpitype);
 	if(it!= tmphkeys.end())
 	{
 		hkeys[tmpitype] = it->second;
-	}else{wxLogStatus(_("Nie można przywrócić skrótu, bo nie ma domyślnego ustawienia o id %i"), id);}
+	}else{wxLogStatus(_("Nie można przywrócić skrótu, bo nie ma domyślnego ustawienia o id %i"), tmpitype.id);}
 }
 //return -2 anulowano zmianę skrótów, -1 nowy skrót, 1+ id do zmiany skrótu.
 int Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow, bool showWindowSelection)

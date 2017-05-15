@@ -264,6 +264,7 @@ int KaiListCtrl::SetItem(size_t row, size_t col, Item *item)
 	
 Item *KaiListCtrl::GetItem(size_t row, size_t col) const
 {
+	if(row<0 || row >= itemList.size() || col<0 || col >= itemList[row]->row.size()){return NULL;}
 	return itemList[row]->row[col];
 }
 
@@ -281,7 +282,9 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	if(w==0||h==0){return;}
 	size_t maxVisible = ((h-headerHeight)/lineHeight)+1;
 	size_t itemsize = itemList.size()+1;
-	if((size_t)scPosV>=itemsize-maxVisible){scPosV=itemsize-maxVisible;}
+	if((size_t)scPosV>=itemsize-maxVisible){
+		scPosV=itemsize-maxVisible;
+	}
 	if(scPosV<0){scPosV=0;}
 	size_t maxsize=itemsize-1;
 	if(itemsize>maxVisible){
@@ -517,7 +520,8 @@ int KaiListCtrl::FindItem(int column, const wxString &textItem)
 }
 
 void KaiListCtrl::ScrollTo(int row){
-	scPosV = SetScrollpos(wxVERTICAL,row);
+	scPosV = row;
+	SetScrollpos(wxVERTICAL,row);
 	Refresh(false);
 }
 

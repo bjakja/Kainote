@@ -58,20 +58,22 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 
 	width = new NumCtrl(this, -1,"",100,10000,true,wxDefaultPosition,wxSize(60,-1),wxTE_PROCESS_ENTER);
 	height = new NumCtrl(this, -1,"",100,10000,true,wxDefaultPosition,wxSize(60,-1),wxTE_PROCESS_ENTER);
-	Fvideo= new MappedButton(this,25456,_("Z wideo"),0,wxDefaultPosition,wxSize(85,-1));
-	Fvideo->Enable(w>0);
+	resolutionFromVideo= new MappedButton(this,25456,_("Z wideo"),0,wxDefaultPosition,wxSize(85,-1));
+	resolutionFromVideo->Enable(w>0);
 
 	boxsizer->Add(new wxStaticText(this, -1, _("Szerokość"),wxDefaultPosition,wxSize(60,-1)),0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	boxsizer->Add(width,0,wxALL,5);
 	boxsizer->Add(new wxStaticText(this, -1, _("Wysokość"),wxDefaultPosition,wxSize(60,-1)),0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	boxsizer->Add(height,0,wxALL,5);
-	boxsizer->Add(Fvideo,0,wxALL,5);
-
-	CheckBox1 = new KaiCheckBox(this, -1, _("Zmiana rozdzielczości tylko w nagłówku napisów"));
-	CheckBox1->SetValue(true);
+	boxsizer->Add(resolutionFromVideo,0,wxALL,5);
+	stretchScale = new KaiCheckBox(this, -1, _("Rozciągaj przy skalowaniu, gdy proporcje są różne"));
+	stretchScale->SetValue(false);
+	noScaling = new KaiCheckBox(this, -1, _("Zmiana rozdzielczości tylko w nagłówku napisów"));
+	noScaling->SetValue(true);
 
 	StaticBox2->Add(boxsizer,0,wxEXPAND);
-	StaticBox2->Add(CheckBox1,0,wxEXPAND|wxALL,5);
+	StaticBox2->Add(stretchScale,0,wxEXPAND|wxALL,5);
+	StaticBox2->Add(noScaling,0,wxEXPAND|wxALL,5);
 
 	matrix = new KaiChoice(this, -1 , wxDefaultPosition, wxSize(160,-1) );
 	matrix->SetSelection( matrix->Append(_("Brak")) );
@@ -105,19 +107,19 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	GridSizer1->Add(new wxStaticText(this, -1, _("Kolidowanie linijek")),1,wxEXPAND|wxALL|wxALIGN_CENTER_VERTICAL,5);
 	GridSizer1->Add(collision,1,wxEXPAND|wxALL,5);
 
-	CheckBox2 = new KaiCheckBox(this, -1, _("Skaluj obwódkę i cień"));
-	CheckBox2->SetValue(true);
+	scaleBorderAndShadow = new KaiCheckBox(this, -1, _("Skaluj obwódkę i cień"));
+	scaleBorderAndShadow->SetValue(true);
 
 	StaticBox3->Add(GridSizer1,1,wxEXPAND);
-	StaticBox3->Add(CheckBox2,0,wxEXPAND|wxALL,5);
+	StaticBox3->Add(scaleBorderAndShadow,0,wxEXPAND|wxALL,5);
 
 	wxBoxSizer *boxsizer1= new wxBoxSizer(wxHORIZONTAL);
-	Button1 = new MappedButton(this, wxID_OK, _("Zapisz"));
-	Button2 = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
-	Button1->SetFocus();
-	SetTmpDefaultItem(Button1);
-	boxsizer1->Add(Button1,0,wxALL,5);
-	boxsizer1->Add(Button2,0,wxALL,5);
+	save = new MappedButton(this, wxID_OK, _("Zapisz"));
+	cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	save->SetFocus();
+	SetTmpDefaultItem(save);
+	boxsizer1->Add(save,0,wxALL,5);
+	boxsizer1->Add(cancel,0,wxALL,5);
 
 	mainsizer->Add(StaticBox1,0,wxEXPAND|wxALL,4);
 	mainsizer->Add(StaticBox2,0,wxEXPAND|wxALL,4);
@@ -151,6 +153,6 @@ void ScriptInfo::DoTooltips()
 	width->SetToolTip(_("Szerokość wideo"));
 	wrapstyle->SetToolTip(_("Sposób dzielenia napisów"));
 	collision->SetToolTip(_("Kolidowanie linijek"));
-	CheckBox1->SetToolTip(_("Zmiana rozdzielczości tylko w nagłówku napisów, odznaczenie powoduje przeskalowanie całych napisów"));
-	CheckBox2->SetToolTip(_("Skalowana obwódka i cień"));
+	noScaling->SetToolTip(_("Zmiana rozdzielczości tylko w nagłówku napisów, odznaczenie powoduje przeskalowanie całych napisów"));
+	scaleBorderAndShadow->SetToolTip(_("Skalowana obwódka i cień"));
 }

@@ -702,16 +702,18 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 
 
 
-void Grid::ResizeSubs(float xnsize, float ynsize)
+void Grid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 {
 	float val=xnsize;
+	float val1=ynsize;
 	int resizeScale = 0;
 	if(ynsize!=xnsize){
 		if(ynsize>xnsize){
-			resizeScale = 2;
+			resizeScale = (stretch)? 2 : 0;
 		}else{
 			val = ynsize;
-			resizeScale = 1;
+			val1 = xnsize;
+			resizeScale = (stretch)? 1 : 0;
 		}
 	}
 
@@ -745,11 +747,13 @@ void Grid::ResizeSubs(float xnsize, float ynsize)
 		resized->Fontsize.ToCDouble(&fs);
 		fs*=val;
 		resized->Fontsize=getfloat(fs);
-		float ol=wxAtoi(resized->Outline);
-		ol*=val;
+		double ol=0;
+		resized->Outline.ToCDouble(&ol);
+		ol*=val1;
 		resized->Outline=getfloat(ol);
-		float sh=wxAtoi(resized->Shadow);
-		sh*=val;
+		double sh=0;
+		resized->Shadow.ToCDouble(&sh);
+		sh*=val1;
 		resized->Shadow=getfloat(sh);
 		double fsp=0;
 		resized->Spacing.ToCDouble(&fsp);
@@ -849,7 +853,7 @@ void Grid::ResizeSubs(float xnsize, float ynsize)
 									else
 									{
 										if(ii<4){
-											wxLogMessage(_("W linii %i nie można przeskalować wartości '%s'\nw tagu '\\%s'"), i+1, tkn, onenum.GetMatch(subtxt,1));
+											wxLogMessage(_("W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"), i+1, tkn, onenum.GetMatch(subtxt,1));
 										}
 										wynik<<tkn<<",";
 										ii++;
@@ -918,7 +922,7 @@ void Grid::ResizeSubs(float xnsize, float ynsize)
 						}
 					else{draw=txt.Mid(start+len-1);}
 					int brpos1=draw.Find('{');
-					if(brpos1!=-1){draw=draw.Mid(0,brpos1-1);len=brpos1-1;}else{len=draw.Len();}
+					if(brpos1!=-1){draw=draw.Mid(0,brpos1);len=brpos1;}else{len=draw.Len();}
 					//dbg<<draw<<"\r\n";
 					wxStringTokenizer tknzr(draw," ",wxTOKEN_STRTOK);
 					wxString wynik1;

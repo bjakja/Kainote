@@ -1049,7 +1049,7 @@ void VideoCtrl::OnPaint(wxPaintEvent& event)
 
 void VideoCtrl::OnEndFile(wxCommandEvent &event)
 {
-	if((!Kai->GetTab()->edytor||isFullscreen)&&IsDshow){NextFile();}//if(vstate==Playing){Pause();} 
+	if((!Kai->GetTab()->edytor||isFullscreen) && IsDshow){ NextFile();}
 	else{if(vstate==Playing){Pause(false);}}
 }
 
@@ -1320,6 +1320,6 @@ BEGIN_EVENT_TABLE(VideoCtrl,wxWindow)
 	EVT_TIMER(idvtime, VideoCtrl::OnPlaytime)
 	EVT_TIMER(ID_IDLE, VideoCtrl::OnIdle)
 	EVT_ERASE_BACKGROUND(VideoCtrl::OnErase)
-	//EVT_BUTTON(23333,VideoCtrl::OnEndFile)
+	EVT_BUTTON(23333,VideoCtrl::OnEndFile)
 	EVT_MOUSE_CAPTURE_LOST(VideoCtrl::OnLostCapture)
 END_EVENT_TABLE()

@@ -260,7 +260,7 @@ bool VideoRend::InitDX(bool reset)
 			}
 
 			CoTaskMemFree(formats);
-			if(!isgood){ wxLogMessage(_("Format ten nie jest obsługiwany przez DXVA"));continue;}
+			if(!isgood){ wxLogMessage(_("Ten format nie jest obsługiwany przez DXVA"));continue;}
 			isgood=false;
 
 			hr=dxvaService->GetVideoProcessorCaps(guids[i], &videoDesc, D3DFMT_X8R8G8B8, &DXVAcaps);
@@ -272,10 +272,10 @@ bool VideoRend::InitDX(bool reset)
 
 			//if(DXVAcaps.DeviceCaps!=4){continue;}//DXVAcaps.InputPool
 			hr = dxvaService->CreateSurface(vwidth,vheight, 0, d3dformat, D3DPOOL_DEFAULT, 0, DXVA2_VideoSoftwareRenderTarget, &MainStream, NULL);
-			if(FAILED(hr)){wxLogMessage(_("Nie można stworzyć powierzchni dxva %i"), (int)i);continue;}
+			if(FAILED(hr)){wxLogMessage(_("Nie można stworzyć powierzchni DXVA %i"), (int)i);continue;}
 
 			hr = dxvaService->CreateVideoProcessor(guids[i], &videoDesc,D3DFMT_X8R8G8B8,0,&dxvaProcessor);
-			if(FAILED(hr)){wxLogMessage(_("Nie można stworzyć dxva processora"));continue;}
+			if(FAILED(hr)){wxLogMessage(_("Nie można stworzyć processora DXVA"));continue;}
 			dxvaGuid=guids[i];isgood=true;
 			break;
 		}
@@ -714,7 +714,7 @@ bool VideoRend::Play(int end)
 		lasttime=timeGetTime()-time;
 		//lasttime=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()).count()-time;
 		//startTime = std::chrono::steady_clock::now();
-		if(player){player->Play(time,end/*-1*/,false);}
+		if(player){player->Play(time,-1,false);}
 		time=VFF->Timecodes[lastframe];
 		VFF->Play();
 
@@ -807,8 +807,9 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 					Vclips->SetClip(Vclips->GetVisual(),true, false);
 				}else{
 					OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
+					if(vstate==Playing){ VisEdit=false;}
 				}
-				VisEdit=false;
+				//VisEdit=false;
 			}else if(pan->Edit->OnVideo){
 				if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
 					wxCommandEvent evt;pan->Edit->OnEdit(evt);
@@ -1089,27 +1090,29 @@ void VideoRend::ResetZoom()
 {
 	if(vstate==None){return;}
 	zoomRect = FloatRect(backBufferRect.left,backBufferRect.top,backBufferRect.right, backBufferRect.bottom);
-	wxSize size(backBufferRect.right, backBufferRect.bottom);
+	wxSize size(backBufferRect.right - backBufferRect.left, backBufferRect.bottom - backBufferRect.top);
 	float videoToScreenXX = size.x / (float)vwidth; 
 	float videoToScreenYY = size.y / (float)vheight; 
 	mainStreamRect.left = (zoomRect.x - backBufferRect.left) / videoToScreenXX;
 	mainStreamRect.top = (zoomRect.y - backBufferRect.top) / videoToScreenYY;
-	mainStreamRect.right = (zoomRect.width/ videoToScreenXX);
-	mainStreamRect.bottom = (zoomRect.height/ videoToScreenYY);
+	mainStreamRect.right = (zoomRect.width - backBufferRect.left) / videoToScreenXX;
+	mainStreamRect.bottom = (zoomRect.height- backBufferRect.top) / videoToScreenYY;
+	zoomParcent = size.x / (zoomRect.width - zoomRect.x/* + backBufferRect.left*/);
 	Render();
 	SetScaleAndZoom();
 }
 
 void VideoRend::Zoom(const wxSize &size)
 {
+	//wxSize s1(backBufferRect.right - backBufferRect.left, backBufferRect.bottom - backBufferRect.top);
 	hasZoom=true;
 	float videoToScreenXX = size.x / (float)vwidth; 
 	float videoToScreenYY = size.y / (float)vheight; 
 	mainStreamRect.left = (zoomRect.x - backBufferRect.left) / videoToScreenXX;
 	mainStreamRect.top = (zoomRect.y - backBufferRect.top) / videoToScreenYY;
-	mainStreamRect.right = (zoomRect.width/ videoToScreenXX);
-	mainStreamRect.bottom = (zoomRect.height/ videoToScreenYY);
-	zoomParcent = size.x / (zoomRect.width - zoomRect.x + backBufferRect.left);
+	mainStreamRect.right = (zoomRect.width - backBufferRect.left)/ videoToScreenXX;
+	mainStreamRect.bottom = (zoomRect.height - backBufferRect.top)/ videoToScreenYY;
+	zoomParcent = size.x / (zoomRect.width - zoomRect.x/* + backBufferRect.left*/);
 	if(isFullscreen){UpdateRects(false);}
 	if(Vclips){
 		SetVisualZoom();
@@ -1184,7 +1187,8 @@ void VideoRend::ZoomMouseHandle(wxMouseEvent &evt)
 	//if(isFullscreen){win = vb->TD; wxGetMousePosition(&x,&y);}
 	
 	wxSize s(backBufferRect.right, backBufferRect.bottom);
-	float ar = (float)s.x/(float)s.y;
+	wxSize s1(backBufferRect.right - backBufferRect.left, backBufferRect.bottom - backBufferRect.top);
+	float ar = (float)s1.x/(float)s1.y;
 
 	FloatRect tmp = zoomRect;
 	//wxWindow *window = (isFullscreen)? (wxWindow*)((VideoCtrl*)this)->TD : this; 
@@ -1275,7 +1279,7 @@ void VideoRend::ZoomMouseHandle(wxMouseEvent &evt)
 			zoomRect.y = MID(miny, zoomRect.y, s.y);
 			zoomRect.width = MIN(zoomRect.width, s.x);
 			zoomRect.height = MIN(zoomRect.height, s.y);
-			Zoom(s);
+			Zoom(s1);
 			return;
 		}else if(grabbed<2){
 			if(grabbed==0){
@@ -1333,7 +1337,7 @@ void VideoRend::ZoomMouseHandle(wxMouseEvent &evt)
 		if(zoomRect.width - zoomRect.x < 100){
 			zoomRect = tmp;
 		}
-		Zoom(s);
+		Zoom(s1);
 	}
 
 }

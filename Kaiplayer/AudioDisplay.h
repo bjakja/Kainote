@@ -143,7 +143,7 @@ private:
 	void OnGetFocus(wxFocusEvent &event);
 	void OnLoseFocus(wxFocusEvent &event);
 	void OnEraseBackground(wxEraseEvent &event){};
-	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();Grabbed=-1;hold=0;holding=false;}};
 
 	bool InitDX(const wxSize &size);
 	void ClearDX();

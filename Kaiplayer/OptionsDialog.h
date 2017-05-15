@@ -54,6 +54,7 @@ private:
 	void SetOptions(bool saveall=true);
 	void OnMapHkey(wxCommandEvent& event);
 	void OnResetHkey(wxCommandEvent& event);
+	void OnDeleteHkey(wxCommandEvent& event);
 	//void OnKeyPress(wxKeyEvent& event);
 	void ChangeColors();
 	void OnChangeCatalog(wxCommandEvent& event);

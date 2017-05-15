@@ -84,7 +84,7 @@ SubsGrid::SubsGrid(wxWindow *parent, const long int id,const wxPoint& pos,const 
 {
 	posY=0;
 	posX=0;
-	row=mtimerow=0;
+	row=markedLine=lastActiveLine=0;
 	scPos=0;
 	scHor=0;
 	oldX=-1;
@@ -111,7 +111,7 @@ SubsGrid::SubsGrid(wxWindow *parent, const long int id,const wxPoint& pos,const 
 	timer.SetOwner(this,ID_AUTIMER);
 	nullifyTimer.SetOwner(this,27890);
 	Bind(wxEVT_TIMER,[=](wxTimerEvent &evt){
-		Kai->SetStatusText(_(""),0);
+		Kai->SetStatusText("",0);
 	},27890);
 	SetStyle();
 	AdjustWidths();
@@ -459,10 +459,10 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 		tdc.SetBrush(wxBrush(Options.GetColour(GridBackground)));
 		tdc.DrawRectangle(0,posY,w+scHor,h);
 	}
-	if(mtimerow>=scPos&&mtimerow<=scrows){
+	if(markedLine>=scPos&&markedLine<=scrows){
 		tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 		tdc.SetPen(wxPen(Options.GetColour(GridActiveLine),3));
-		tdc.DrawRectangle(1,((mtimerow-scPos+1)*(GridHeight+1))-1,(GridWidth[0]-1),GridHeight+2);
+		tdc.DrawRectangle(1,((markedLine-scPos+1)*(GridHeight+1))-1,(GridWidth[0]-1),GridHeight+2);
 	}
 
 	if(Edit->ebrow>=scPos&&Edit->ebrow<=scrows){
@@ -807,7 +807,9 @@ void SubsGrid::SetVideoLineTime(wxMouseEvent &evt)
 {
 	TabPanel *tab=(TabPanel*)GetParent();
 	if(tab->Video->GetState()!=None){
-		if(tab->Video->GetState()==Stopped){tab->Video->Play();tab->Video->Pause();}
+		if(tab->Video->GetState()==Stopped){
+			tab->Video->Play();tab->Video->Pause();
+		}
 		short wh=(form<SRT)?2:1;
 		int whh=2;
 		for(int i = 0;i<=wh;i++){whh+=GridWidth[i];}
@@ -847,7 +849,6 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 
 	if(ismenushown){ScreenToClient(&curX,&curY);}
 	int row = curY / (GridHeight+1)+scPos-1;
-	int lastActive = Edit->ebrow;
 
 	if (left_up && !holding) {
 		return;
@@ -858,9 +859,28 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 		SetFocus();}
 
 	// Popup
+	if(click && curX<=GridWidth[0] ){
+		TabPanel *tab=(TabPanel*)GetParent();
+		if(tab->Video->GetState()!=None && !(row < scPos || row >= GetCount())){
+			if(tab->Video->GetState()==Stopped){
+				tab->Video->Play();tab->Video->Pause();
+			}
+			int vtime=0;
+			bool isstart=true;
+			if(shift && form!=TMP){ 
+				vtime=GetDial(row)->End.mstime; isstart=false;}
+			else{
+				vtime=GetDial(row)->Start.mstime; isstart=true;
+			}
+			if(ctrl){vtime-=1000;}
+			tab->Video->Seek(MAX(0,vtime),isstart,true,false);
+			if(Edit->ABox){Edit->ABox->audioDisplay->UpdateImage(true);}
+		}
+		return;
+	}
 	if (right && !ctrl) {
 		if(curX<=GridWidth[0]){
-			mtimerow=row;
+			markedLine=row;
 			Refresh(false);
 
 		}else{
@@ -921,11 +941,12 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 
 
 		// Toggle selected
-		if (click && ctrl && !shift && !alt ) {
-			if(lastActive != row){
-			SelectRow(row,true,!(sel.find(row)!=sel.end()));
+		if (left_up && ctrl && !shift && !alt ) {
+			if(lastActiveLine != row){
+				SelectRow(row,true,!(sel.find(row)!=sel.end()));
+				return;
 			}
-			return;
+			
 		}
 
 
@@ -935,6 +956,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 
 			//jakbym chciał znów dać zmianę edytowanej linii z ctrl to muszę dorobić mu refresh
 			if (click && (changeActive || !ctrl) || (dclick && ctrl)) {/*(click && !ctrl)*/ 
+				lastActiveLine = Edit->ebrow;
 				Edit->SetLine(row,true,true,true,!ctrl);
 				if(changeActive){Refresh(false);}
 				if(!ctrl || dclick){
@@ -947,7 +969,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 			//2-kliknięcie lewym i edycja na pauzie
 			//3-kliknięcie lewym i edycja na pauzie i odtwarzaniu
 
-			if (dclick||(click && lastActive != row && mvtal < 4 && mvtal > 0 ) && pas < 2){
+			if (dclick||(click && lastActiveLine != row && mvtal < 4 && mvtal > 0 ) && pas < 2){
 				SetVideoLineTime(event);
 			}
 
@@ -1010,6 +1032,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 				notFirst = true;
 			}
 			if(changeActive){
+				lastActiveLine = Edit->ebrow;
 				Edit->SetLine(row,true,true,false);
 				//if(mvtal < 4 && mvtal > 0){
 					//SetVideoLineTime(event);
@@ -1339,7 +1362,7 @@ public:
 void SubsGrid::ChangeFrames()
 {
 	VideoCtrl *vb=((TabPanel*)GetParent())->Video;
-	if(!vb->VFF){wxLogMessage(_("Wideo nie jest wczytane przez FFMS2"));return;}
+	if(!vb->VFF){wxLogMessage(_("Wideo nie zostało wczytane przez FFMS2"));return;}
 	int addedFrames=0;
 	//int halfframe= (vb->avtpf/2.0f);
 	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 8 Move to audio time;
@@ -1390,7 +1413,7 @@ void SubsGrid::ChangeFrames()
 		KaiMessageBox(_("Nie zaznaczono linii do przesunięcia"),_("Uwaga"));return;
 	}
 
-	int difftime=(VAS)? file->subs->dials[mtimerow]->Start.mstime : file->subs->dials[mtimerow]->End.mstime;
+	int difftime=(VAS)? file->subs->dials[markedLine]->Start.mstime : file->subs->dials[markedLine]->End.mstime;
 	//Start time - halfframe / end time + halfframe
 	if((moveTimeOptions & 4) && vb->GetState()!=None){
 		addedFrames = vb->GetCurrentFrame() - vb->VFF->GetFramefromMS(difftime);
@@ -1609,7 +1632,7 @@ void SubsGrid::ChangeTime()
 		KaiMessageBox(_("Nie zaznaczono linii do przesunięcia"),_("Uwaga"));return;
 	}
 
-	int difftime=(VAS)? file->subs->dials[mtimerow]->Start.mstime : file->subs->dials[mtimerow]->End.mstime;
+	int difftime=(VAS)? file->subs->dials[markedLine]->Start.mstime : file->subs->dials[markedLine]->End.mstime;
 	//Start time - halfframe / end time + halfframe
 	//int halfframe= (VAS)? -(vb->avtpf/2.0f) : (vb->avtpf/2.0f);
 	if((mto & 4) && vb->GetState()!=None){
@@ -2385,7 +2408,7 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 
 	sel[active]=true;
 	lastRow=active;
-	mtimerow=active;
+	markedLine=active;
 
 	scPos=MAX(0,active-3);
 	RepaintWindow();

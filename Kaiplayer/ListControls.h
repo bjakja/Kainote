@@ -97,6 +97,7 @@ public:
 	bool SetBackgroundColour(const wxColour &col);
 	bool SetForegroundColour(const wxColour &col);
 	bool HasFocus();
+	void SetMaxLength(int maxLen);
 	KaiTextCtrl *choiceText;
 private:
 	void OnSize(wxSizeEvent& event);
