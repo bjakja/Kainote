@@ -450,6 +450,7 @@ void AudioDisplay::DoUpdateImage() {
 		int selWidth = Options.GetInt(AudioLineBoundariesThickness);
 		D3DCOLOR lineStartBondaryColor= D3DCOLOR_FROM_WX(Options.GetColour(AudioLineBoundaryStart));
 		int startDraw = lineStart+(selWidth/2);
+		//if(selWidth % 2 == 0){startDraw--;}
 		D3DXVECTOR2 v2[2]={D3DXVECTOR2(startDraw,0),D3DXVECTOR2(startDraw,h)};
 		d3dLine->SetWidth(selWidth);
 		d3dLine->Begin();
@@ -502,7 +503,6 @@ void AudioDisplay::DoUpdateImage() {
 			for(size_t j=0; j<karaoke->syls.size(); j++)
 			{
 				acsyl=karaoke->syls[j];
-				//acsyl.Replace(" ", "_");
 				int fw, fh;
 				GetTextExtent(acsyl,&fw, &fh, 0, 0, &karafont);
 
@@ -515,7 +515,6 @@ void AudioDisplay::DoUpdateImage() {
 					d3dLine->End();
 				}
 				int center=((XX-karstart)-fw)/2;
-				//dc.DrawText(acsyl,center+karstart,0);
 				D3DXVECTOR2 v5[2]={D3DXVECTOR2(center+karstart-1,(fh/2)+1), D3DXVECTOR2(center+karstart+fw+2,(fh/2+1))};
 				d3dLine->SetWidth(fh);
 				d3dLine->Begin();
@@ -557,8 +556,6 @@ void AudioDisplay::DoUpdateImage() {
 
 	// Modified text
 	if (NeedCommit || selStart > selEnd) {
-		//dc.SetFont(wxFont(9,wxDEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Verdana"))); // FIXME: hardcoded font name
-		//dc.SetTextForeground(wxColour(255,0,0));
 		RECT rect;
 		rect.left = 4;
 		rect.top = 4;
@@ -566,12 +563,10 @@ void AudioDisplay::DoUpdateImage() {
 		rect.bottom = rect.top + 100;
 		wxString text;
 		if (selStart <= selEnd) {
-			//dc.DrawText(_T("Zmodyfikowano"),4,4);
 			text=_("Zmodyfikowano");
 			DRAWOUTTEXT(d3dFont9, text, rect, DT_LEFT|DT_TOP, 0xFFFF0000 );
 		}
 		else {
-			//dc.DrawText(_T("Czas ujemny"),4,4);
 			text=_("Czas ujemny");
 			DRAWOUTTEXT(d3dFont9, text, rect, DT_LEFT|DT_TOP, 0xFFFF0000 );
 		}
@@ -2238,7 +2233,15 @@ void AudioDisplay::DrawKeyframes() {
 		int cur = provider->KeyFrames[i];
 		if(cur>=mintime && cur<=maxtime)
 		{
-			cur = ((cur-16)/10) * 10;
+			cur = ((cur-20)/10) * 10;
+			//if(provider->Timecodes.size()<1){
+			//	//cóż wiele zrobić nie możemy gdy nie mamy wideo;
+			//	cur -= 21;
+			//}else{
+			//	int frame = provider->GetFramefromMS(cur);
+			//	int prevFrameTime = provider->GetMSfromFrame(frame-1);
+			//	cur = cur + ((prevFrameTime - cur) / 2);
+			//}
 			int x = GetXAtMS(cur);
 			//dc.DrawLine(x,0,x,h);
 			v2[0]=D3DXVECTOR2(x,0);

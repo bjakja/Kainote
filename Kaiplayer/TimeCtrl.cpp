@@ -185,7 +185,7 @@ void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
 			SetValue(all, true, false);
 			SetSelection(from,from);
 		}
-		if(from >= txt.Len()){
+		if(from >= (long)txt.Len()){
 			wxBell();return;
 		}
 

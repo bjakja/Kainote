@@ -94,7 +94,7 @@ void DrawingAndClip::DrawVisual(int time)
 	line->SetWidth(1.0f);
 	if(drawToolLines){
 		int mPoint = FindPoint(size-1,"m",false,true);
-		if(mPoint >= 0 && mPoint < size-1){
+		if(mPoint >= 0 && mPoint < (int)size-1){
 			D3DXVECTOR2 v3[3] = {Points[mPoint].GetVector(this), D3DXVECTOR2(x,y), Points[size-1].GetVector(this)};
 			line->Begin();
 			DrawDashedLine(v3, (Points[size-1].type!="m")? 3 : 2);
