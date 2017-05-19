@@ -80,11 +80,13 @@ public:
 	virtual void ChangeTool(int _tool){};
 	virtual void OnMouseEvent(wxMouseEvent &evt){};
 	virtual wxString GetVisual(){return "";};
-	D3DXVECTOR2 GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);
-	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
+	virtual void ChangeVisual(wxString *txt, Dialogue *_dial){};
 	void SetClip(wxString clip,bool dummy, bool redraw=true, bool changeEditorText = true);
-	void SetVisual(wxString visual,bool dummy,int type);
+	void SetVisual(bool dummy,int type);
+	void ChangeOrg(wxString *text, Dialogue *_dial, float coordx, float coordy);
+	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
 	D3DXVECTOR2 CalcMovePos();
+	D3DXVECTOR2 GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);
 	D3DXVECTOR2 to;
 	D3DXVECTOR2 lastmove;
 	D3DXVECTOR2 firstmove;
@@ -117,6 +119,7 @@ public:
 	wxPoint textplaced;
 	D3DXVECTOR2 zoomMove;
 	D3DXVECTOR2 zoomScale;
+	wxArrayInt selPositions;
 };
 
 class PosData{
@@ -139,6 +142,7 @@ public:
 	//~Position();
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual(){return "";};
+	void ChangeVisual(wxString *txt, Dialogue *_dial){};
 	wxString GetVisual(int datapos);
 	void ChangeMultiline(bool all);
 	void SetCurVisual();
@@ -155,6 +159,7 @@ public:
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual();
+	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
 	int moveStart;
@@ -162,6 +167,9 @@ public:
 	byte type;
 	int grabbed;
 	wxPoint diffs;
+	D3DXVECTOR2 lastFrom;
+	D3DXVECTOR2 lastTo;
+	D3DXVECTOR2 moveDistance;
 };
 
 struct moveElems
@@ -177,6 +185,7 @@ public:
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual();
+	void ChangeVisual(wxString *txt, Dialogue *_dial){};
 	void SetCurVisual();
 	void ChangeInLines(bool all);
 	void ChangeTool(int _tool);
@@ -196,6 +205,7 @@ public:
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual();
+	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
 	byte type;
@@ -213,10 +223,12 @@ public:
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual();
+	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
 	bool isOrg;
 	D3DXVECTOR2 org;
+	D3DXVECTOR2 lastOrg;
 	wxPoint diffs;
 };
 
@@ -227,12 +239,14 @@ public:
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual();
+	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
 	bool isOrg;
 	D3DXVECTOR2 angle;
 	D3DXVECTOR2 oldAngle;
 	D3DXVECTOR2 org;
+	D3DXVECTOR2 lastOrg;
 	byte type;
 	byte AN;
 	wxPoint diffs;
@@ -245,6 +259,7 @@ public:
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual();
+	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
 	int HitTest(D3DXVECTOR2 pos, bool diff = true);
@@ -263,6 +278,7 @@ public:
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual();
+	void ChangeVisual(wxString *txt, int line){};
 	void SetCurVisual();
 	void SetPos(int x, int y);
 	int CheckPos(wxPoint pos, bool retlast=false, bool wsp=true);
@@ -307,5 +323,6 @@ public:
 	wxString textwithclip;
 };
 
+int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoint &pos);
 
 #endif

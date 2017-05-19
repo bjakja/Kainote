@@ -60,12 +60,13 @@ void Move::DrawVisual(int time)
 
 wxString Move::GetVisual()
 {
-	return "\\move("+getfloat(((from.x/zoomScale.x)+zoomMove.x)*wspw)+","+
-		getfloat(((from.y/zoomScale.y)+zoomMove.y)*wsph)+","+
-		getfloat(((to.x/zoomScale.x)+zoomMove.x)*wspw)+","+
-		getfloat(((to.y/zoomScale.y)+zoomMove.y)*wsph)+","+
-		getfloat(tbl[4]-tab->Edit->line->Start.mstime)+","+
-		getfloat(tbl[5]-tab->Edit->line->Start.mstime)+")";
+	int startTime = ZEROIT(tab->Edit->line->Start.mstime);
+	return "\\move("+getfloat(((from.x/zoomScale.x)+zoomMove.x)*wspw) + "," +
+		getfloat(((from.y/zoomScale.y)+zoomMove.y)*wsph) + "," +
+		getfloat(((to.x/zoomScale.x)+zoomMove.x)*wspw) + "," +
+		getfloat(((to.y/zoomScale.y)+zoomMove.y)*wsph) + "," +
+		getfloat(tbl[4] - startTime) + "," +
+		getfloat(tbl[5] - startTime) + ")";
 }
 
 void Move::OnMouseEvent(wxMouseEvent &evt)
@@ -81,9 +82,10 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 
 	if(evt.ButtonUp()){
 		if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}
-		SetVisual(GetVisual(),false,type);
+		SetVisual(false,type);
 		if(!hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 		grabbed = -1;
+		moveDistance = to - from;
 	}
 
 	if(click){
@@ -94,11 +96,12 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 		if(rightc){type=1;}
 
 		if(abs(to.x-x)<8 && abs(to.y-y)<8){
-			grabbed=1;type=1;
+			grabbed=1; type=1;
+			//lastTo = to;
 			diffs.x=to.x-x;
 			diffs.y=to.y-y;
 		}else if(abs(from.x-x)<8 && abs(from.y-y)<8){
-			grabbed=0;type=0;
+			grabbed=0; type=0;
 			diffs.x=from.x-x;
 			diffs.y=from.y-y;
 		}else{
@@ -106,15 +109,16 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 			if(type==1){
 				to.x=x;
 				to.y=y;
+				//lastTo = to;
 			}else{
 				from.x=x;
 				from.y=y;
 			}
 			diffs=wxPoint(0,0);
 		}
-		lastmove = to;
-		firstmove = from;
-		SetVisual(GetVisual(),true,type);
+		lastmove = lastTo = to;
+		firstmove = lastFrom = from;
+		SetVisual(true,type);
 
 	}else if(holding){
 		if(type==0){
@@ -141,7 +145,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 				}
 			}
 		}
-		SetVisual(GetVisual(),true,type);
+		SetVisual(true,type);
 	}
 
 }
@@ -156,8 +160,40 @@ void Move::SetCurVisual()
 		to.x=((tbl[2]/wspw)-zoomMove.x)*zoomScale.x; 
 		to.y=((tbl[3]/wsph)-zoomMove.y)*zoomScale.y;
 	}
+	moveDistance = to - from;
 	moveStart=(int)tbl[4];
 	if(tbl[4]>tbl[5]){tbl[5]=end;}
 	moveEnd=(int)tbl[5];
 
+}
+
+void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
+{
+	VideoCtrl *video = tab->Video;
+	float fps = video->fps;
+	bool dshow = video->IsDshow;
+	int startTime = ZEROIT(_dial->Start.mstime);
+	int endTime = ZEROIT(_dial->End.mstime);
+	int framestart = (dshow)? (((float)startTime/1000.f) * fps)+1 : video->VFF->GetFramefromMS(startTime);
+	int frameend = (dshow)? ((float)endTime/1000.f) * fps : video->VFF->GetFramefromMS(endTime)-1;
+	int msstart = (dshow)? ((framestart*1000) / fps) : video->VFF->GetMSfromFrame(framestart);
+	int msend = (dshow)? ((frameend*1000) / fps) : video->VFF->GetMSfromFrame(frameend);
+	int diff = endTime - startTime;
+	int moveStartTime = abs(msstart - startTime);
+	int moveEndTime = (diff - abs(endTime - msend));
+	bool inbracket=false;
+	wxPoint tagPos;
+	D3DXVECTOR2 textPosition = GetPos(_dial, &inbracket, &tagPos);
+	D3DXVECTOR2 moveFrom = lastFrom - from;
+	D3DXVECTOR2 moveTo = lastTo - to;
+	//wxLogStatus("from %f %f to %f %f",moveFrom.x, moveFrom.y, moveTo.x, moveTo.y);
+	wxString tag = "\\move("+getfloat(textPosition.x - ((moveFrom.x/zoomScale.x)+zoomMove.x)*wspw) + "," +
+		getfloat(textPosition.y - ((moveFrom.y/zoomScale.y)+zoomMove.y)*wsph) + "," +
+		getfloat(textPosition.x + (((moveDistance.x - moveTo.x)/zoomScale.x)+zoomMove.x)*wspw) + "," +
+		getfloat(textPosition.y + (((moveDistance.y - moveTo.y)/zoomScale.y)+zoomMove.y)*wsph) + "," +
+		std::to_string(moveStartTime) + "," +
+		std::to_string(moveEndTime) + ")";
+	//jako ¿e pozycje zwracaj¹ len to potrzeba dodaæ jeszcze start;
+	tagPos.y += tagPos.x - 1;
+	ChangeText(txt, tag, !inbracket, tagPos);
 }

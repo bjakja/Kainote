@@ -917,7 +917,7 @@ void MTextEditor::Replace(int start, int end, wxString rep)
 void MTextEditor::CheckText()
 {
 	if(MText==""){return;}
-	wxString notchar="/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{}";
+	wxString notchar="/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{} ";
 	wxString text=MText;
 	errors.clear();
 	errs.Clear();

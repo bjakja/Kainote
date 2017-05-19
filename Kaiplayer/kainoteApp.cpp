@@ -168,6 +168,14 @@ bool kainoteApp::OnInit()
 				timer.Start(500,true);
 				//opthread *ot=new opthread(this,pathss);
 			}
+#if _DEBUG
+			else if(paths.GetCount()<1){
+				paths.Add(Frame->subsrec[Frame->subsrec.size()-1]);
+				paths.Add(Frame->videorec[Frame->videorec.size()-1]);
+				timer.Start(50,true);
+			}
+#endif
+			
 		}
     }else{
 		wxString subs;

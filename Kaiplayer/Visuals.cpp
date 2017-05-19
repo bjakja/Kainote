@@ -264,67 +264,6 @@ D3DXVECTOR2 Visuals::CalcMovePos()
 	return ppos;
 }
 
-D3DXVECTOR2 Visuals::GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos){
-	//no i zadanie na jutro, napisać tę funkcję i najlepiej jeszcze getmove i getscale, 
-	//ładnie to ogarnąć w samych visualach a z editboxa wszystko wywalić, łącznie z clipami.
-	*putinBracket=false;
-	D3DXVECTOR2 result;
-	Styles *acstyl=tab->Grid1->GetStyle(0,Dial->Style);
-	bool istxttl = (tab->Grid1->transl && Dial->TextTl!="");
-	wxString txt = (istxttl)? Dial->TextTl : Dial->Text;
-	bool foundpos=false;
-	wxRegEx pos("\\\\(pos|move)\\(([^\\)]+)\\)",wxRE_ADVANCED);
-	if(pos.Matches(txt)){
-		wxString txtpos = pos.GetMatch(txt,2);
-		double posx=0, posy=0;
-		wxString rest, rest1;
-		bool res1 = txtpos.BeforeFirst(',', &rest).ToCDouble(&posx);
-		bool res2 = rest.BeforeFirst(',', &rest1).ToCDouble(&posy);
-		size_t startMatch,lenMatch;
-		if(pos.GetMatch(&startMatch, &lenMatch, 0)){
-			TextPos->x=startMatch;
-			TextPos->y=lenMatch;
-		}
-		result = D3DXVECTOR2(posx,posy);
-		if(res1&&res2){return result;}
-	}else{
-		result.x= (tab->Edit->line->MarginL!=0)? tab->Edit->line->MarginL : wxAtoi(acstyl->MarginL);
-		result.y= (tab->Edit->line->MarginV!=0)? tab->Edit->line->MarginV : wxAtoi(acstyl->MarginV);
-	}
-
-	if(txt!="" && txt[0]=='{'){
-		TextPos->x= 1;
-		TextPos->y= 0;
-	}else{
-		TextPos->x= 0;
-		TextPos->y= 0;
-		*putinBracket=true;
-	}
-	int tmpan;
-	tmpan=wxAtoi(acstyl->Alignment);
-	wxRegEx an("\\\\an([0-9]+)",wxRE_ADVANCED);
-	if(an.Matches(txt)){
-		tmpan=wxAtoi(an.GetMatch(txt,1));
-	}
-	//D3DXVECTOR2 dsize = Notebook::GetTab()->Video->Vclips->CalcWH();
-	int x, y;
-	tab->Grid1->GetASSRes(&x, &y);
-	if(tmpan % 3==2){
-		result.x = (x/2);
-	}
-	else if(tmpan % 3==0){
-		result.x = (Dial->MarginR!=0)? Dial->MarginR : wxAtoi(acstyl->MarginR);
-		result.x = x - result.x;
-	}
-	if(tmpan < 4){
-		result.y = (Dial->MarginV!=0)? Dial->MarginV : wxAtoi(acstyl->MarginV);
-		result.y =  y - result.y;
-	}else if(tmpan < 7){
-		result.y = (y/2);
-	}
-
-	return result;
-}
 
 //pobieranie pozycji i skali, trzeba tu zrobić rozróznienie na tagi działające na całą linię i tagi miejscowe.
 //W przypadku rysowania wektorowego, należy podać scale, w reszcie przypadków mozna olać wszystko bądź jedną wartość.
@@ -366,15 +305,18 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 
 	if(tbl && tbl[6]<4){
 		VideoCtrl *video = tab->Video;
-		int framestart=(video->IsDshow)? (((float)edit->line->Start.mstime/1000.0)*video->fps)+1 : video->VFF->GetFramefromMS(edit->line->Start.mstime);
-		int frameend=(video->IsDshow)? ((float)edit->line->End.mstime/1000.0)*video->fps : video->VFF->GetFramefromMS(edit->line->End.mstime)-1;
-		int msstart=(video->IsDshow)? ((framestart*1000)/video->fps) : video->VFF->GetMSfromFrame(framestart);
-		int msend=(video->IsDshow)? ((frameend*1000)/video->fps) : video->VFF->GetMSfromFrame(frameend);
-		int diff=edit->line->End.mstime - edit->line->Start.mstime;
-		//wxLogStatus("czasy %i %i %i %i %i", edit->line->Start.mstime, msstart, edit->line->End.mstime, msend, diff);
-		tbl[4]=abs( msstart - edit->line->Start.mstime);
-		tbl[5]=diff - abs(edit->line->End.mstime - msend);
-		tbl[4]+=edit->line->Start.mstime; tbl[5]+=edit->line->Start.mstime;
+		float fps = video->fps;
+		bool dshow = video->IsDshow;
+		int startTime = ZEROIT(edit->line->Start.mstime);
+		int endTime = ZEROIT(edit->line->End.mstime);
+		int framestart = (dshow)? (((float)startTime/1000.f) * fps)+1 : video->VFF->GetFramefromMS(startTime);
+		int frameend = (dshow)? ((float)endTime/1000.f) * fps : video->VFF->GetFramefromMS(endTime)-1;
+		int msstart = (dshow)? ((framestart*1000) / fps) : video->VFF->GetMSfromFrame(framestart);
+		int msend = (dshow)? ((frameend*1000) / fps) : video->VFF->GetMSfromFrame(frameend);
+		int diff = endTime - startTime;
+		
+		tbl[4] = startTime + abs(msstart - startTime);
+		tbl[5] = startTime + (diff - abs(endTime - msend));
 	}
 
 	wxString sxfd, syfd;
@@ -420,7 +362,6 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 		}
 		if(AN){*AN = tmpan;}
 		if(foundpos){return ppos;}
-		//D3DXVECTOR2 dsize = Notebook::GetTab()->Video->Vclips->CalcWH();
 		int x, y;
 		grid->GetASSRes(&x, &y);
 		if(tmpan % 3==2){
@@ -442,9 +383,9 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	return ppos;
 }
 //funkcja zwraca 1 gdy mamy przesunięcie o nawias, 0 w przeciwhnym przypadku
-int ChangeText(wxString *txt, const wxString &what, bool notinbracket, const wxPoint &pos)
+int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoint &pos)
 {
-	if(!notinbracket){
+	if(!inbracket){
 		txt->insert(0,"{"+what+"}");
 		return 1;
 	}
@@ -516,11 +457,13 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 			}else{//rysunki wektorowe
 				wxString tmp="";
 				bool isf;
+				bool hasP1=true;
 				size_t cliplen = clip.Len();
 				wxString txt=Editor->GetValue();
 				isf=edit->FindVal("p([0-9]+)", &tmp, txt, 0, true);
 				if(!isf){
 					ChangeText(&txt, "\\p1", edit->InBracket, edit->Placed);
+					hasP1 = false;
 				}
 				isf=edit->FindVal("pos\\(([,. 0-9-]+)\\)", &tmp, txt, 0, true);
 				if(!isf){
@@ -534,7 +477,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 					DrawingAndClip *drawing = (DrawingAndClip*)this;
 					ChangeText(&txt, "\\an"+getfloat(drawing->alignment,"1.0f"), edit->InBracket, edit->Placed);
 				}
-				txt.Replace("}{","");
+				//txt.Replace("}{","");
 				dummytext=grid->GetVisible(&vis, &textplaced);
 				if(!vis){SAFE_DELETE(dummytext);return;}
 
@@ -546,7 +489,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 					}
 					bracketPos++;
 					wxString mcheck = txt.Mid(bracketPos, 2);
-					if(!mcheck.StartsWith("m ")){
+					if(!mcheck.StartsWith("m ") && !mcheck.StartsWith("{")){
 						txt.insert(bracketPos, "{");
 						bracketPos++;
 						bracketPos = txt.find("{", bracketPos);
@@ -557,21 +500,25 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 						txt.insert(bracketPos, "}");
 					}
 				}
-				isf = edit->FindVal("p([0-9]+)", &tmp, txt, 0, true);
+				//isf = edit->FindVal("p([0-9]+)", &tmp, txt, 0, true);
 				
 				wxString afterP1 = txt.Mid(edit->Placed.y);
 				int Mpos = -1;
 				//do poprawki usuwanie pierwszego nawiasu
 
-				if(isf){Mpos = afterP1.find("m ");}
+				if(hasP1){Mpos = afterP1.find("m ");}
 				if(Mpos== -1){Mpos = afterP1.find("}")+1;}
 				wxString startM = afterP1.Mid(Mpos);
 				int endClip = startM.find("{");
-				if(endClip == -1 && isf){endClip=startM.Len();clip+="{\\p0}";}
-				else if(endClip == -1){endClip=0;clip+="{\\p0}";}
+				if(endClip == -1){
+					if(isf){endClip=startM.Len();}
+					else{endClip=0;}
+					clip+="{\\p0}";
+				}else if(!hasP1){
+					clip+="{\\p0}";
+				}
 				txt.replace(Mpos + edit->Placed.y, endClip, clip);
-				//int startClip = Mpos + edit->Placed.y;
-				//endClip = clip.Len() + startClip;
+				
 				
 
 				if(changeEditorText){
@@ -581,7 +528,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 
 				dummytext->replace(textplaced.x,textplaced.y,txt);
 				textplaced.y=txt.Len();
-				dumplaced.x=edit->Placed.y + Mpos + textplaced.x; dumplaced.y= dumplaced.x + clip.Len();
+				dumplaced.x=edit->Placed.y + Mpos + textplaced.x; dumplaced.y= dumplaced.x + cliplen;
 				
 
 			}
@@ -627,7 +574,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 }
 
 //Wstawianie visuali do tekstu linijki
-void Visuals::SetVisual(wxString visual,bool dummy, int type)
+void Visuals::SetVisual(bool dummy, int type)
 {
 	//wstawianie wisuali ale najpierw muszę sobie dać ich rozróżnianie
 	EditBox *edit = tab->Edit;
@@ -636,32 +583,94 @@ void Visuals::SetVisual(wxString visual,bool dummy, int type)
 	bool isOriginal=(grid->transl && edit->TextEdit->GetValue()=="");
 	//Editor
 	MTextEditor *Editor=(isOriginal)? edit->TextEditTl : edit->TextEdit;
+	if(edit->IsCursorOnStart()){
+		wxString *dtxt;
+		wxArrayInt sels= tab->Grid1->GetSels();
+		bool skipInvisible = dummy && tab->Video->GetState() != Playing;
+		if(dummy && !dummytext){
+			bool visible=false;
+			selPositions.clear();
+			dummytext = tab->Grid1->GetVisible(&visible, 0, &selPositions);
+			if(selPositions.size() != sels.size()){
+				wxLogStatus("Sizes mismatch");
+				return;
+			}
+		}
+		if(dummy){ dtxt = new wxString(*dummytext);}
+		int _time = tab->Video->Tell();
+		int moveLength=0;
+		for(size_t i = 0; i < sels.size(); i++){
+		
+			Dialogue *Dial = grid->GetDial(sels[i]);
+			if(skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){continue;}
+		
+			bool istxttl = (tab->Grid1->transl && Dial->TextTl!="");
+			wxString txt = (istxttl)? Dial->TextTl : Dial->Text;
+			ChangeVisual(&txt, Dial);
+			if(!dummy){
+				if(istxttl){
+					tab->Grid1->CopyDial(sels[i])->TextTl=txt;
+				}else{
+					tab->Grid1->CopyDial(sels[i])->Text=txt;
+				}
+			}else{
+				Dialogue Cpy=Dialogue(*Dial);
+				if(istxttl) {
+					Cpy.TextTl = txt;
+					wxString tlLines;
+					tlLines<<Cpy.GetRaw(true);
+					tlLines<<Cpy.GetRaw(false,tab->Grid1->GetSInfo("TLMode Style"));
+					dtxt->insert(selPositions[i] + moveLength,tlLines);
+					moveLength += tlLines.Len();
+				}else{
+					Cpy.Text = txt;
+					wxString thisLine = Cpy.GetRaw();
+					dtxt->insert(selPositions[i] + moveLength,thisLine);
+					moveLength += thisLine.Len();
+				}
+			}
+
+
+		}
+
+		if(!dummy){
+			tab->Video->VisEdit=true;
+			if(tab->Edit->splittedTags){tab->Edit->TextEditTl->modified=true;}
+			tab->Grid1->SetModified(true);
+			tab->Grid1->Refresh();
+		}else{
+		
+			if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
+			tab->Video->VisEdit=true;
+			tab->Video->Render();
+		}
+		return;
+	}
 
 	if(dummy){
 		wxString txt=Editor->GetValue();
 		bool fromStart=false;
-		if(Visual==MOVE||Visual==CHANGEPOS||Visual==CLIPRECT){fromStart = true;}
+		if(Visual==MOVE || Visual==CLIPRECT){fromStart = true;}
 		wxString tmp;
 		wxString xytype= (type==0)? "x" : "y";
 		wxString frxytype= (type==1)? "x" : "y";
 
-		wxString tagpattern= (type==100)? "(org).+" : (Visual==MOVE||Visual==CHANGEPOS)? "(move|pos).+" : (Visual==SCALE)? "(fsc"+xytype+").+" : (Visual==ROTATEZ)? "(frz?)[0-9-]+" : (Visual==ROTATEXY)? "(fr"+frxytype+").+" : (Visual==CLIPRECT)? "(i?clip).+" : "(fa"+xytype+").+";
-		edit->FindVal(tagpattern, &tmp, "", 0, fromStart);
+		wxString tagpattern= (type==100)? "(org).+" : 
+			(Visual==MOVE)? "(move|pos).+" : 
+			(Visual==SCALE)? "(fsc"+xytype+").+" : 
+			(Visual==ROTATEZ)? "(frz?)[0-9-]+" : 
+			(Visual==ROTATEXY)? "(fr"+frxytype+").+" : 
+			(Visual==CLIPRECT)? "(i?clip).+" : 
+			"(fa"+xytype+").+";
+		edit->FindVal(tagpattern, &tmp, txt, 0, fromStart);
 
 		if(type==2 && Visual>0){
 			if(edit->Placed.x < edit->Placed.y){txt.erase(txt.begin() + edit->Placed.x, txt.begin() + edit->Placed.y+1);}
 			wxString tagpattern= (Visual==SCALE)? "(fscx).+" : (Visual==ROTATEZ)? "(frz?)[0-9-]+" : (Visual==ROTATEXY)? "(frx).+" : "(fax).+";
 			edit->FindVal(tagpattern, &tmp, txt, 0, fromStart);
 		}
-		/*if(!edit->InBracket){
-			txt.insert(edit->Placed.x,"{"+visual+"}");
-		}
-		else{
-			if(edit->Placed.x<edit->Placed.y){txt.erase(txt.begin() + edit->Placed.x, txt.begin() + edit->Placed.y+1);}
-			txt.insert(edit->Placed.x, visual);
-			Editor->SetSelection(edit->Placed.x, edit->Placed.x, true);
-		}*/
-		ChangeText(&txt,visual,edit->InBracket,edit->Placed);
+
+		ChangeText(&txt,GetVisual(),edit->InBracket,edit->Placed);
 		if(!dummytext){
 			bool vis=false;
 			dummytext= grid->GetVisible(&vis, &dumplaced);
@@ -686,4 +695,94 @@ void Visuals::SetVisual(wxString visual,bool dummy, int type)
 		edit->Send(false,false,true);
 
 	}
+}
+
+D3DXVECTOR2 Visuals::GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos){
+	//no i zadanie na jutro, napisać tę funkcję i najlepiej jeszcze getmove i getscale, 
+	//ładnie to ogarnąć w samych visualach a z editboxa wszystko wywalić, łącznie z clipami.
+	*putinBracket=false;
+	D3DXVECTOR2 result;
+	Styles *acstyl=tab->Grid1->GetStyle(0,Dial->Style);
+	bool istxttl = (tab->Grid1->transl && Dial->TextTl!="");
+	wxString txt = (istxttl)? Dial->TextTl : Dial->Text;
+	bool foundpos=false;
+	wxRegEx pos("\\\\(pos|move)\\(([^\\)]+)\\)",wxRE_ADVANCED);
+	if(pos.Matches(txt)){
+		wxString txtpos = pos.GetMatch(txt,2);
+		double posx=0, posy=0;
+		wxString rest, rest1;
+		bool res1 = txtpos.BeforeFirst(',', &rest).ToCDouble(&posx);
+		bool res2 = rest.BeforeFirst(',', &rest1).ToCDouble(&posy);
+		size_t startMatch,lenMatch;
+		if(pos.GetMatch(&startMatch, &lenMatch, 0)){
+			TextPos->x=startMatch;
+			TextPos->y=lenMatch;
+		}
+		result = D3DXVECTOR2(posx,posy);
+		if(res1&&res2){return result;}
+	}else{
+		result.x= (tab->Edit->line->MarginL!=0)? tab->Edit->line->MarginL : wxAtoi(acstyl->MarginL);
+		result.y= (tab->Edit->line->MarginV!=0)? tab->Edit->line->MarginV : wxAtoi(acstyl->MarginV);
+	}
+
+	if(txt!="" && txt[0]=='{'){
+		TextPos->x= 1;
+		TextPos->y= 0;
+	}else{
+		TextPos->x= 0;
+		TextPos->y= 0;
+		*putinBracket=true;
+	}
+	int tmpan;
+	tmpan=wxAtoi(acstyl->Alignment);
+	wxRegEx an("\\\\an([0-9]+)",wxRE_ADVANCED);
+	if(an.Matches(txt)){
+		tmpan=wxAtoi(an.GetMatch(txt,1));
+	}
+	//D3DXVECTOR2 dsize = Notebook::GetTab()->Video->Vclips->CalcWH();
+	int x, y;
+	tab->Grid1->GetASSRes(&x, &y);
+	if(tmpan % 3==2){
+		result.x = (x/2);
+	}
+	else if(tmpan % 3==0){
+		result.x = (Dial->MarginR!=0)? Dial->MarginR : wxAtoi(acstyl->MarginR);
+		result.x = x - result.x;
+	}
+	if(tmpan < 4){
+		result.y = (Dial->MarginV!=0)? Dial->MarginV : wxAtoi(acstyl->MarginV);
+		result.y =  y - result.y;
+	}else if(tmpan < 7){
+		result.y = (y/2);
+	}
+
+	return result;
+}
+
+void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coordy)
+{
+	wxString val;
+	double orgx=0, orgy=0;
+	bool PutinBrackets = false;
+	wxPoint strPos;
+	if(tab->Edit->FindVal("org\\((.+)\\)",&val,*txt,0, true)){
+		wxString orgystr;
+		wxString orgxstr = val.BeforeFirst(',', &orgystr);
+		orgxstr.ToCDouble(&orgx);
+		orgystr.ToCDouble(&orgy);
+		PutinBrackets=false;
+		strPos = tab->Edit->Placed;
+	}else{
+		D3DXVECTOR2 pos = GetPos(_dial, &PutinBrackets, &strPos);
+		orgx = pos.x;
+		orgy = pos.y;
+		if(strPos.y == 0){
+			wxString posTag = "\\pos(" + getfloat(pos.x) + "," + getfloat(pos.y) + ")";
+			int append = ChangeText(txt, posTag, !PutinBrackets, strPos);
+			strPos.x += posTag.Len() + append;
+			PutinBrackets=false;
+		}
+	}
+	strPos.y += strPos.x - 1;
+	ChangeText(txt, "\\org(" + getfloat(orgx + coordx) + "," + getfloat(orgy + coordy) + ")", !PutinBrackets, strPos);
 }

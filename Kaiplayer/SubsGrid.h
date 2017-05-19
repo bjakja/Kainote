@@ -44,7 +44,7 @@ public:
 	void AddLine(Dialogue *line);
 	void AddStyle(Styles *nstyl);
 	void AdjustWidths(int cell=8191);
-	int CalcChars(wxString txt, wxString *lines=NULL, bool *bad=NULL);
+	int CalcChars(const wxString &txt, wxString *lines=NULL, bool *bad=NULL);
 	void ChangeLine(Dialogue *line1, int wline, long cells, bool selline=false, bool dummy=false);
 	void ChangeCell(long cells, int wline, Dialogue *what);
 	void ChangeStyle(Styles *nstyl,int i);
@@ -53,14 +53,14 @@ public:
 
 	int FindStyle(wxString name,int *multiplication=NULL);
 	wxString GetStyles(bool tld=false);
-	Styles *GetStyle(int i,wxString name=_(""));
+	Styles *GetStyle(int i,wxString name="");
 	std::vector<Styles*> *GetStyleTable();
 	void SetStyle();
 	void RepaintWindow(int cell=8191);
 	void SelectRow(int row, bool addToSelected = false, bool select=true, bool norefresh=false);
 	void ScrollTo(int y, bool center=false);
 	
-	void SaveFile(wxString filename, bool cstat=true);
+	void SaveFile(const wxString &filename, bool cstat=true);
 	wxString *SaveText();
 	void HideOver();
 	
@@ -83,12 +83,12 @@ public:
 	void InsertRows(int Row, std::vector<Dialogue *> RowsTable, bool AddToDestroy=false);
 	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy=true, bool Save=false);
 	void SetSubsForm(wxString ext="");
-	void AddSInfo(wxString SI, wxString val="", bool save=true);
+	void AddSInfo(const wxString &SI, wxString val="", bool save=true);
 	void SetModified(bool redit=true, bool dummy=false, int SetEditBoxLine = -1);
 	void UpdateUR(bool tolbar=true);
 	wxString GetSInfos(bool tld=false);
-	wxString GetSInfo(wxString key, int *ii=0);
-	SInfo *GetSInfoP(wxString key, int *ii=0);
+	wxString GetSInfo(const wxString &key, int *ii=0);
+	SInfo *GetSInfoP(const wxString &key, int *ii=0);
 	wxArrayInt GetSels(bool deselect=false);
 	void SwapRows(int frst, int scnd, bool sav=false);
 	void Loadfile(const wxString &str,const wxString &ext);
@@ -105,10 +105,10 @@ public:
 
 	void SelVideoLine(int time=-1);
 	void NextLine(int dir=1);
-	bool IsNum(wxString txt);
+	bool IsNum(const wxString &txt);
 	Dialogue *CopyDial(int i, bool push=true);
 	Dialogue *GetDial(int i);
-	wxString *GetVisible(bool *visible=0, wxPoint *point=0, bool trimSels=false);
+	wxString *GetVisible(bool *visible=0, wxPoint *point = NULL, wxArrayInt *selected = NULL);
 	//wxString *GetSubsToEnd(bool *visible=0, wxPoint *point=0);
 	void RebuildActorEffectLists();
 	void RefreshIfVisible(int time);

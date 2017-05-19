@@ -162,8 +162,8 @@ enum{
 	XX( AudioGoto, ) \
 	XX( AudioLeadin, ) \
 	XX( AudioLeadout, ) \
-	XX( Stop,=2020) \
-	XX( PlayPause,)\
+	XX( PlayPause,=2021)\
+	XX( StopPlayback,) \
 	XX( Plus5Second,)\
 	XX( Minus5Second,)\
 	XX( MinusMinute, ) \

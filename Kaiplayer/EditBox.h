@@ -88,9 +88,9 @@ public:
 	void SetTl(bool tl);
 	void Send(bool selline=true, bool dummy=false, bool visualdummy=false);
 	void RefreshStyle(bool resetline=false);
-	bool FindVal(wxString wval, wxString *returnval, wxString text="", bool *endsel=0, bool fromstart=false);
+	bool FindVal(const wxString &wval, wxString *returnval, const wxString &text="", bool *endsel=0, bool fromstart=false);
 	void HideControls();
-	void UpdateChars(wxString text);
+	void UpdateChars(const wxString &text);
 
 	Grid *grid;
 	int ebrow;
@@ -131,13 +131,14 @@ public:
 	KaiChoice* Ban;
 
 
-	void PutinText(wxString text, bool focus=true, bool onlysel=false, wxString *texttoPutin=0);
-	void PutinNonass(wxString text, wxString tag);
+	void PutinText(const wxString &text, bool focus=true, bool onlysel=false, wxString *texttoPutin=0);
+	void PutinNonass(const wxString &text, const wxString &tag);
 	//ustawia tekst i gdy trzeba wstawia tagi z orygina³u ustawiaj¹c w³aœciw¹ pozycjê kursora.
 	void SetTextWithTags();
 	void ClearErrs();
 	void OnEdit(wxCommandEvent& event);
 	bool SetBackgroundColour(const wxColour &col);
+	bool IsCursorOnStart();
 	wxBoxSizer* BoxSizer1;
 
 	Dialogue *line;

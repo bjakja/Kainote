@@ -106,7 +106,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 
 	if(evt.ButtonUp()){
 		if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}
-		SetVisual(GetVisual(),false,type);
+		SetVisual(false,type);
 		if(!hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 	}
 
@@ -167,7 +167,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 			}
 		}
 
-		SetVisual(GetVisual(),true,type);
+		SetVisual(true,type);
 	}
 }
 
@@ -182,4 +182,31 @@ void Scale::SetCurVisual()
 	to.x=from.x+(scale.x*addx);
 	to.y=from.y+(scale.y*addy);
 
+}
+
+void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
+{
+	wxString tag;
+	wxString val;
+	if(to.x==from.x){to.x=from.x+60.f;}
+	if(to.y==from.y){to.y=from.y+60.f;}
+		
+	if(type!=1){
+		float res=(abs(to.x - from.x))/60.f;
+		tag = "\\fscx" + getfloat(res*100);
+		
+		tab->Edit->FindVal("fscx(.+)", &val, *txt, 0, true);
+		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
+		scale.x=res;
+	}
+	if(type!=0){
+		float res=(abs(to.y - from.y))/60.f;
+		tag = "\\fscy" + getfloat(res*100);
+
+		tab->Edit->FindVal("fscy(.+)", &val, *txt, 0, true);
+		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
+		scale.y=res;
+	}
+
+	
 }

@@ -80,17 +80,20 @@ HRESULT CD2DVideoRender::Render(IMediaSample *pMediaSample)
 	REFERENCE_TIME start=0, end=0;
     pMediaSample->GetTime(&start,&end);
 	if(!Vrend->block){
-		if(Vrend->playend && time+(start/10000.0) >/*=*/ Vrend->playend){ 
+		bool endOfPlaying = Vrend->playend && time+(end/10000.0) >= Vrend->playend;
+		if(endOfPlaying){ 
 			wxCommandEvent *evt=new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,2021);
 			wxQueueEvent(Vrend, evt);
 			wxCommandEvent *evtRefreshTime=new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,23334);
 			wxQueueEvent(Vrend, evtRefreshTime);
 			noRefresh=true;
-			return S_OK;
+			//return S_OK;
 			//Vrend->Pause();
 		}
 		Vrend->time=time+(start/10000.0);
-		Vrend->DrawTexture(pBuffer);
+		//kończąc odtwarzanie trzeba skopiować klatkę bo będzie później edytować na pierwszej, 
+		//stop streaming nie działa, first sample jest zablokowane
+		Vrend->DrawTexture(pBuffer, endOfPlaying);
 		Vrend->Render();
 	}else{byte *cpy = (byte*) Vrend->datas; memcpy(cpy,pBuffer,pMediaSample->GetSize());}
 	

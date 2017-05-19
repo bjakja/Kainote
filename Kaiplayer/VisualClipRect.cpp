@@ -136,7 +136,7 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 
 	if(evt.ButtonUp()){
 		if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}
-		SetVisual(GetVisual(),false,0);
+		SetVisual(false,0);
 		if(!hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 	}
 
@@ -205,7 +205,7 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 			Corner[1].x = pointx;
 			Corner[1].y = pointy;
 		}
-		SetVisual(GetVisual(),true,0);
+		SetVisual(true,0);
 	}
 
 
@@ -276,4 +276,27 @@ int ClipRect::HitTest(D3DXVECTOR2 pos, bool diff)
 		if(resultFinal > INSIDE){resultFinal ^= INSIDE;}
 	}
 	return resultFinal;
+}
+
+void ClipRect::ChangeVisual(wxString *txt, Dialogue *dial)
+{
+	int x1, x2, y1, y2; 
+	if(Corner[0].x < Corner[1].x){
+		x1 = Corner[0].x;
+		x2 = Corner[1].x;
+	}else{
+		x1 = Corner[1].x;
+		x2 = Corner[0].x;
+	}
+	if(Corner[0].y < Corner[1].y){
+		y1 = Corner[0].y;
+		y2 = Corner[1].y;
+	}else{
+		y1 = Corner[1].y;
+		y2 = Corner[0].y;
+	}
+	wxString val;
+	wxString tag = wxString::Format("\\%sclip(%i,%i,%i,%i)",(invClip)? "i" : "", x1, y1, x2, y2);
+	tab->Edit->FindVal("i?clip(.+)", &val, *txt, 0, true);
+	ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 }

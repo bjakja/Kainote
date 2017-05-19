@@ -67,7 +67,7 @@ bool sortlayer(Dialogue *i,Dialogue *j){
 	return i->Start.mstime<j->Start.mstime;
 }
 
-bool SubsGrid::IsNum(wxString test) {
+bool SubsGrid::IsNum(const wxString &test) {
 	bool isnumber=true;
 	wxString testchars="0123456789";
 	for(size_t i=0;i<test.Len();i++){
@@ -785,7 +785,7 @@ void SubsGrid::SelectRow(int row, bool addToSelected, bool select, bool norefres
 		Refresh(false);
 	}
 	//done:
-	if(Edit->Visual==CHANGEPOS/* || Edit->Visual==MOVEALL*/){
+	if(Edit->Visual==CHANGEPOS){
 		Kai->GetTab()->Video->SetVisual();
 		Kai->GetTab()->Video->Render();
 	}
@@ -1205,7 +1205,7 @@ CloseHandle(ffile);
 return 0;
 }
 */
-void SubsGrid::SaveFile(wxString filename, bool cstat)
+void SubsGrid::SaveFile(const wxString &filename, bool cstat)
 {
 	if(Options.GetInt(GridSaveAfterCharacterCount)>1){
 		bool oldOnVideo = Edit->OnVideo;
@@ -2180,7 +2180,7 @@ void SubsGrid::SetSubsForm(wxString ext)
 }
 
 
-void SubsGrid::AddSInfo(wxString SI, wxString val, bool save)
+void SubsGrid::AddSInfo(const wxString &SI, wxString val, bool save)
 {
 	wxString key;
 	if(val==""){
@@ -2573,7 +2573,7 @@ void SubsGrid::NextLine(int dir)
 void SubsGrid::CheckText(wxString text, wxArrayInt &errs)
 {
 
-	wxString notchar="/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{}";
+	wxString notchar="/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{} ";
 	text+=" ";
 	bool block=false;
 	wxString word="";
@@ -2647,7 +2647,7 @@ Dialogue *SubsGrid::GetDial(int i)
 	return file->subs->dials[i];
 }
 
-wxString SubsGrid::GetSInfo(wxString key, int *ii)
+wxString SubsGrid::GetSInfo(const wxString &key, int *ii)
 {
 	int i=0;
 	for(std::vector<SInfo*>::iterator it=file->subs->sinfo.begin(); it!=file->subs->sinfo.end(); it++)
@@ -2658,7 +2658,7 @@ wxString SubsGrid::GetSInfo(wxString key, int *ii)
 	return "";
 }
 
-SInfo *SubsGrid::GetSInfoP(wxString key,int *ii)
+SInfo *SubsGrid::GetSInfoP(const wxString &key,int *ii)
 {
 	int i=0;
 	for(std::vector<SInfo*>::iterator it=file->subs->sinfo.begin(); it!=file->subs->sinfo.end(); it++)
@@ -2709,7 +2709,7 @@ wxString *SubsGrid::SaveText()
 	return txt;
 }
 
-wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, bool trimSels)
+wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, wxArrayInt *selected)
 {
 	TabPanel *pan=(TabPanel*)GetParent();
 	int _time=pan->Video->Tell();
@@ -2730,21 +2730,27 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, bool trimSels)
 	}
 	bool noLine = true;
 	bool isTlmode = GetSInfo("TLMode")=="Yes";
+	wxString tlStyle = GetSInfo("TLMode Style");
 	for(int i=0; i<GetCount(); i++){
 		Dialogue *dial=GetDial(i);
 		if(i==Edit->ebrow){ 
 			dial = Edit->line;
 		}
+		if(selected && sel.find(i)!=sel.end()){
+			selected->Add(txt->Len());
+			continue;
+		}
 		if((toEnd && _time <= dial->Start.mstime) || (_time >= dial->Start.mstime && _time <= dial->End.mstime)){
-			if(trimSels && sel.find(i)!=sel.end()){continue;}
+			//if(trimSels && sel.find(i)!=sel.end()){continue;}
 			if( isTlmode && dial->TextTl!=""){
-				(*txt)<<dial->GetRaw(false,GetSInfo("TLMode Style"));
+				(*txt)<<dial->GetRaw(false,tlStyle);
 				(*txt)<<dial->GetRaw(true);
 			}else{
-				(*txt)<<dial->GetRaw();}
+				(*txt)<<dial->GetRaw();
+			}
 			if( point && i==Edit->ebrow ){
 				int all= txt->Len();point->x=all-2;
-				int len = (GetSInfo("TLMode")=="Yes" && dial->TextTl!="")? 
+				int len = (isTlmode && dial->TextTl!="")? 
 					dial->TextTl.Len() : dial->Text.Len();
 				point->y = len;
 				point->x -= len;
@@ -2848,7 +2854,7 @@ void SubsGrid::GetASSRes(int *x,int *y)
 	*y=ny;
 }
 
-int SubsGrid::CalcChars(wxString txt, wxString *lines, bool *bad)
+int SubsGrid::CalcChars(const wxString &txt, wxString *lines, bool *bad)
 {
 	int len=txt.Len();
 	bool block=false;bool slash=false;

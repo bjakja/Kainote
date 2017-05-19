@@ -203,7 +203,7 @@ void RotationXY::OnMouseEvent(wxMouseEvent &evt)
 
 	if(evt.ButtonUp()){
 		if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}
-		SetVisual(GetVisual(),false,type);
+		SetVisual(false,type);
 		oldAngle=angle;
 		if(!hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 		isOrg=false;
@@ -216,6 +216,7 @@ void RotationXY::OnMouseEvent(wxMouseEvent &evt)
 		if(middlec){type=2;}
 		if(abs(org.x-x)<8 && abs(org.y-y)<8){
 			isOrg=true;
+			lastOrg = org;
 			diffs.x=org.x-x;
 			diffs.y=org.y-y;
 		}
@@ -228,11 +229,11 @@ void RotationXY::OnMouseEvent(wxMouseEvent &evt)
 		if(isOrg){
 			org.x = x+diffs.x;
 			org.y = y+diffs.y;
-			SetVisual(GetVisual(),true,100);//type także ma liczbę 100 by było rozpoznawalne.
+			SetVisual(true,100);//type także ma liczbę 100 by było rozpoznawalne.
 			return;
 		}
 		to.x=x;to.y=y;
-		SetVisual(GetVisual(),true,type);
+		SetVisual(true,type);
 	}
 
 }
@@ -265,4 +266,31 @@ void RotationXY::SetCurVisual()
 	angle=oldAngle;
 	lastmove=org;
 
+}
+
+void RotationXY::ChangeVisual(wxString *txt, Dialogue *dial)
+{
+	if(isOrg){
+		ChangeOrg(txt, dial, (((org.x - lastOrg.x)/zoomScale.x)+zoomMove.x)*wspw, 
+			(((org.y - lastOrg.y)/zoomScale.y)+zoomMove.y)*wsph);
+		return;
+	}
+
+	wxString tag;
+	wxString val;
+	if(type!=1){
+		angle.x = (to.x - firstmove.x) + oldAngle.x;
+		angle.x = fmodf(angle.x + 360.f, 360.f);
+		tag = "\\fry" + getfloat(angle.x);
+		tab->Edit->FindVal("fry(.+)", &val, *txt, 0, true);
+		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);	
+	}
+	if(type!=0){
+		float angy = (to.y - firstmove.y) - oldAngle.y;// zmieniony plus na minus by nie trzeba było 
+		angle.y = fmodf((-angy) + 360.f, 360.f);//przetrzymywać oldAngle i angle w minusach.
+		tag = "\\frx" + getfloat(angle.y);
+		tab->Edit->FindVal("frx(.+)", &val, *txt, 0, true);
+		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);		
+	}
+	
 }

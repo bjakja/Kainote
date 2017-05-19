@@ -33,7 +33,7 @@ void Position::Draw(int time)
 	for(size_t i = 0; i < data.size(); i++){
 		auto pos = data[i];
 		//pamiętaj sprawdzanie czy czasy mieszczą się w przedziale to czas >= start && czas < koniec
-		if(time >= pos.dial->Start.mstime && time </*=*/ pos.dial->End.mstime){
+		if(time >= pos.dial->Start.mstime && time < pos.dial->End.mstime){
 			DrawCross(pos.pos);
 			DrawRect(pos.pos);
 			nothintoshow=false;
@@ -137,14 +137,21 @@ void Position::ChangeMultiline(bool all)
 	wxString *dtxt;
 	if(!all && !dummytext){
 		bool visible=false; 
-		dummytext = tab->Grid1->GetVisible(&visible,0,true);
+		selPositions.clear();
+		dummytext = tab->Grid1->GetVisible(&visible, 0, &selPositions);
+		if(selPositions.size() != data.size()){
+			wxLogStatus("Sizes mismatch");
+			return;
+		}
 	}
-	if(!all){ dtxt=new wxString(*dummytext);}
+	if(!all){ dtxt = new wxString(*dummytext);}
+	bool skipInvisible = !all && tab->Video->GetState() != Playing;
 	int _time = tab->Video->Tell();
-	for(size_t i = 0; i< data.size(); i++){
+	int moveLength=0;
+	for(size_t i = 0; i < data.size(); i++){
 		
 		Dialogue *Dial = data[i].dial;
-		if(!all && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){continue;}
+		if(skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){continue;}
 		wxString visual = GetVisual(i);
 		
 		bool istxttl = (tab->Grid1->transl && Dial->TextTl!="");
@@ -162,11 +169,16 @@ void Position::ChangeMultiline(bool all)
 			Dialogue Cpy=Dialogue(*Dial);
 			if(istxttl) {
 				Cpy.TextTl = txt;
-				(*dtxt)<<Cpy.GetRaw(true);
-				(*dtxt)<<Cpy.GetRaw(false,tab->Grid1->GetSInfo("TLMode Style"));
+				wxString tlLines;
+				tlLines<<Cpy.GetRaw(true);
+				tlLines<<Cpy.GetRaw(false,tab->Grid1->GetSInfo("TLMode Style"));
+				dtxt->insert(selPositions[i] + moveLength,tlLines);
+				moveLength += tlLines.Len();
 			}else{
 				Cpy.Text = txt;
-				(*dtxt)<<Cpy.GetRaw();
+				wxString thisLine = Cpy.GetRaw();
+				dtxt->insert(selPositions[i] + moveLength,thisLine);
+				moveLength += thisLine.Len();
 			}
 		}
 
@@ -186,3 +198,4 @@ void Position::ChangeMultiline(bool all)
 	}
 	
 }
+

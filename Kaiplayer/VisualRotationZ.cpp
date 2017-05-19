@@ -135,7 +135,7 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 
 	if(evt.ButtonUp()){
 		if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}
-		SetVisual(GetVisual(),false,(isOrg)?100:0);
+		SetVisual(false,(isOrg)?100:0);
 		to=org;
 		if(isOrg){
 			lastmove.x = atan2((org.y-y), (org.x-x)) * (180.f / 3.1415926536f);
@@ -152,6 +152,7 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 		hasArrow=false;
 		if(abs(org.x-x)<8 && abs(org.y-y)<8){
 			isOrg=true;
+			lastOrg = org;
 			diffs.x=org.x-x;
 			diffs.y=org.y-y;
 			return;
@@ -164,11 +165,11 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 			org.x = x+diffs.x;
 			org.y = y+diffs.y;
 			
-			SetVisual(GetVisual(),true,100);//type tak¿e ma liczbê 100 by by³o rozpoznawalne.
+			SetVisual(true,100);//type tak¿e ma liczbê 100 by by³o rozpoznawalne.
 			return;
 		}
 		to.x=x;to.y=y;
-		SetVisual(GetVisual(),true,0);
+		SetVisual(true,0);
 
 	}
 
@@ -196,4 +197,22 @@ void RotationZ::SetCurVisual()
 	}else{org=from;}
 	to=org;
 
+}
+
+void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
+{
+	if(isOrg){
+		ChangeOrg(txt, dial, (((org.x - lastOrg.x)/zoomScale.x)+zoomMove.x)*wspw, 
+			(((org.y - lastOrg.y)/zoomScale.y)+zoomMove.y)*wsph);
+		return;
+	}
+
+	float angle = lastmove.x - atan2((org.y-to.y), (org.x-to.x)) * (180.f / 3.1415926536f);
+	angle = fmodf(angle + 360.f, 360.f);
+	lastmove.y = angle;
+	
+	wxString tag = "\\frz"+ getfloat(angle);
+	wxString val;
+	tab->Edit->FindVal("frz(.+)", &val, *txt, 0, true);
+	ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 }

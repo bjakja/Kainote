@@ -179,26 +179,33 @@ void MoveAll::ChangeInLines(bool all)
 	//D3DXVECTOR2 moving;
 	D3DXVECTOR2 moving = elems[numElem].elem - beforeMove;
 	int _time = tab->Video->Tell();
+	wxArrayInt sels= tab->Grid1->GetSels();
 	wxString *dtxt;
 	if(!all){
 		if(!dummytext){
+			selPositions.clear();
 			bool visible=false; 
-			dummytext = tab->Grid1->GetVisible(&visible,0,true);
+			dummytext = tab->Grid1->GetVisible(&visible,0,&selPositions);
+			if(selPositions.size() != sels.size()){
+				wxLogStatus("Sizes mismatch");
+				return;
+			}
 		}
+		
 		dtxt=new wxString(*dummytext);
 	}
-
+	bool skipInvisible = !all && tab->Video->GetState() != Playing;
 	wxString tmp;
 	//bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()=="");
 	//MTextEditor *Editor=(isOriginal)? tab->Edit->TextEditTl : tab->Edit->TextEdit;
 	//wxString origText=Editor->GetValue();
+	int moveLength = 0;
 	
-	wxArrayInt sels= tab->Grid1->GetSels();
 	for(size_t i = 0; i< sels.size(); i++){
 		wxString txt;
 		Dialogue *Dial = tab->Grid1->GetDial(sels[i]);
 
-		if(!all && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){continue;}
+		if(skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){continue;}
 		bool istexttl=(tab->Grid1->transl && Dial->TextTl!="");
 		txt = (istexttl)? Dial->TextTl : Dial->Text;
 
@@ -247,11 +254,16 @@ void MoveAll::ChangeInLines(bool all)
 			Dialogue Cpy=Dialogue(*Dial);
 			if(istexttl) {
 				Cpy.TextTl = txt;
-				(*dtxt)<<Cpy.GetRaw(true);
-				(*dtxt)<<Cpy.GetRaw(false,tab->Grid1->GetSInfo("TLMode Style"));
+				wxString tlLines;
+				tlLines<<Cpy.GetRaw(true);
+				tlLines<<Cpy.GetRaw(false,tab->Grid1->GetSInfo("TLMode Style"));
+				dtxt->insert(selPositions[i] + moveLength,tlLines);
+				moveLength += tlLines.Len();
 			}else{
 				Cpy.Text = txt;
-				(*dtxt)<<Cpy.GetRaw();
+				wxString thisLine = Cpy.GetRaw();
+				dtxt->insert(selPositions[i] + moveLength,thisLine);
+				moveLength += thisLine.Len();
 			}
 
 			
