@@ -43,7 +43,7 @@ class NumCtrl : public KaiTextCtrl
 
 		void OnNumWrite(wxCommandEvent& event);
         void OnMouseEvent(wxMouseEvent &event);
-        //void OnKeyEvent(wxKeyEvent& event);
+        void OnPaste(wxCommandEvent& event);
 		void OnMouseLost(wxMouseCaptureLostEvent& event);
 		double rfrom;
 		double rto;

@@ -54,13 +54,13 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	wxGridSizer *timegrid=new wxGridSizer(2, 0, 0);
 	MoveTime = new MappedButton(panel, ID_MOVE, _("Przesuń"), _("Przesuń czas napisów"), wxDefaultPosition, wxSize(60,22), GLOBAL_HOTKEY);
 	TimeText = new TimeCtrl(panel, -1, "0:00:00.00", wxDefaultPosition, wxSize(60,20), wxALIGN_CENTER|wxTE_PROCESS_ENTER);
-	Forward = new KaiRadioButton(panel, -1, _("W przód"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	Backward = new KaiRadioButton(panel, -1, _("W tył"));
-	
+	Forward = new KaiCheckBox(panel, -1, _("W przód"));
+	DisplayTimes = new KaiCheckBox(panel, 31221, _("Czasy"));
+	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CTwindow::OnChangeDisplayUnits, this, 31221);
 	timegrid->Add(TimeText,0,wxEXPAND|wxLEFT|wxRIGHT,2);
 	timegrid->Add(MoveTime,0,wxEXPAND|wxRIGHT,2);
 	timegrid->Add(Forward,1,wxEXPAND|wxLEFT|wxRIGHT,2);
-	timegrid->Add(Backward,1,wxEXPAND|wxRIGHT,2);
+	timegrid->Add(DisplayTimes,1,wxEXPAND|wxRIGHT,2);
 
 	timesizer->Add(timegrid,0,wxEXPAND,0);
 
@@ -172,6 +172,7 @@ void CTwindow::Contents(bool addopts)
 {
 	bool state;
 	form=Kai->GetTab()->Grid1->form;
+	VideoCtrl *vb = Kai->GetTab()->Video;
 	if(form<SRT){
 		state=true;
 		WhichLines->EnableItem(3);
@@ -181,11 +182,20 @@ void CTwindow::Contents(bool addopts)
 		WhichLines->EnableItem(4,false);
 		state=false;
 	}
-	Main->Layout();
+	bool lastEnable = DisplayTimes->IsEnabled();
+	DisplayTimes->Enable(vb->VFF != NULL);
+	if(lastEnable != DisplayTimes->IsEnabled()){
+		if(!vb->VFF && !DisplayTimes->GetValue()){
+			ChangeDisplayUnits(true);
+		}else if(vb->VFF && !DisplayTimes->GetValue()){
+			ChangeDisplayUnits(false);
+		}
+	}
+	//Main->Layout();
 	AddStyles->Enable(state);
 	Stylestext->Enable(state);
 	WhichTimes->Enable(form!=TMP);
-	if(Kai->GetTab()->Video->GetState()!=None){state=true;}else{state=false;}
+	if(vb->GetState()!=None){state=true;}else{state=false;}
 	videotime->Enable(state);
 	state=(Kai->GetTab()->Edit->ABox && Kai->GetTab()->Edit->ABox->audioDisplay->hasMark);
 	audiotime->Enable(state);
@@ -194,7 +204,7 @@ void CTwindow::Contents(bool addopts)
 		LeadIn->Enable(state);
 		LeadOut->Enable(state);
 		Continous->Enable(state);
-		SnapKF->Enable(state && Kai->GetTab()->Video->VFF);
+		SnapKF->Enable(state && vb->VFF);
 	}
 	if(addopts){RefVals();}
 	
@@ -236,8 +246,8 @@ void CTwindow::OnOKClick(wxCommandEvent& event)
 		Options.SetString(MoveTimesStyles,sstyles);
 	}
 
-	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 8 Move to audio time;
-	Options.SetInt(MoveTimesOptions,(int)Forward->GetValue()|((int)StartVAtime->GetValue()<<1)|((int)videotime->GetValue()<<2)|((int)audiotime->GetValue()<<3));
+	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 8 Move to audio time 16 display times / frames;
+	Options.SetInt(MoveTimesOptions,(int)Forward->GetValue()|((int)StartVAtime->GetValue()<<1)|((int)videotime->GetValue()<<2)|((int)audiotime->GetValue()<<3)|((int)DisplayTimes->GetValue()<<4));
 
 	Options.SetInt(MoveTimesWhichLines,WhichLines->GetSelection());
 	Options.SetInt(MoveTimesWhichTimes,WhichTimes->GetSelection());
@@ -258,11 +268,7 @@ void CTwindow::OnOKClick(wxCommandEvent& event)
 	int acid=event.GetId();
 	TabPanel *tab = Kai->GetTab();
 	if (acid==ID_MOVE){
-		if(TimeText->HasShownFrames()){
-			tab->Grid1->ChangeFrames();
-		}else{
-			tab->Grid1->ChangeTime();
-		}
+		tab->Grid1->ChangeTimes(TimeText->HasShownFrames());
 	}else if(acid==ID_CLOSE){
 		Hide();
 		tab->BoxSizer1->Layout();
@@ -318,8 +324,8 @@ void CTwindow::DoTooltips()
 	audiotime->SetToolTip(_("Przesuwanie zaznaczonej linijki do czasu\nznacznika audio ± czas przesunięcia"));
 	StartVAtime->SetToolTip(_("Przesuwa czas początkowy do czasu wideo / audio"));
 	EndVAtime->SetToolTip(_("Przesuwa czas końcowy do czasu wideo / audio"));
-	Forward->SetToolTip(_("Przesunięcie w przód"));
-	Backward->SetToolTip(_("Przesunięcie w tył"));
+	Forward->SetToolTip(_("Przesunięcie w przód / w tył"));
+	DisplayTimes->SetToolTip(_("Przesuwa napisy o ustawiony czas / klatki"));
 	WhichLines->SetToolTip(_("Wybór linijek do przesunięcia"));
 	WhichTimes->SetToolTip(_("Wybór czasów do przesunięcia"));
 	AddStyles->SetToolTip(_("Wybierz style z listy"));
@@ -341,6 +347,7 @@ void CTwindow::AudioVideoTime(wxCommandEvent &event)
 
 void CTwindow::RefVals(CTwindow *from)
 {
+	int mto=Options.GetInt(MoveTimesOptions);
 	STime ct=(from)? from->TimeText->GetTime() : STime(Options.GetInt(MoveTimesTime));  
 	if(from && (from->TimeText->HasShownFrames() != TimeText->HasShownFrames())){
 		TabPanel *tab = ((TabPanel*)GetParent());
@@ -350,19 +357,21 @@ void CTwindow::RefVals(CTwindow *from)
 				wxLogMessage(_("Wideo nie zostało wczytane przez FFMS2"));
 			}else{
 				ct.NewFrame(tab->Video->VFF->GetFramefromMS(ct.mstime));
+				DisplayTimes->Enable();
 			}
 		}else{
-			//ct.NewTime(tab->Video->VFF->GetMSfromFrame(ct.orgframe));
+			DisplayTimes->Enable(false);
 		}
 		
+	}else if((mto & 16) == 0){
+		ChangeDisplayUnits(false);
 	}
 	TimeText->SetTime(ct);
-	int mto=Options.GetInt(MoveTimesOptions);
+	
 	videotime->SetValue((from)? from->videotime->GetValue() : (mto & 4)>0);
 
-	bool movfrwd=(from)? from->Forward->GetValue() : mto & 1;
-	if(movfrwd){Forward->SetValue(true);}
-	else{Backward->SetValue(true);}
+	Forward->SetValue((from)? from->Forward->GetValue() : (mto & 1)>0);
+	DisplayTimes->SetValue((from)? from->DisplayTimes->GetValue() : (mto & 16)>0);
 
 	Stylestext->SetValue( (from)? from->Stylestext->GetValue() : Options.GetString(MoveTimesStyles) );
 
@@ -563,7 +572,25 @@ void CTwindow::OnMouseScroll(wxMouseEvent& event)
 	}
 }
 
-BEGIN_EVENT_TABLE(CTwindow,wxWindow/*wxScrolled<wxWindow>*/)
+void CTwindow::OnChangeDisplayUnits(wxCommandEvent& event)
+{
+	ChangeDisplayUnits(DisplayTimes->GetValue());
+}
+	
+void CTwindow::ChangeDisplayUnits(bool times)
+{
+	STime ct = TimeText->GetTime();
+	if(times){
+		TimeText->ShowFrames(false);
+		ct.mstime = Options.GetInt(MoveTimesTime);
+		TimeText->SetTime(ct);
+	}else{
+		TimeText->ShowFrames(true);
+		ct.orgframe = Options.GetInt(MoveTimesFrames);
+		TimeText->SetTime(ct);
+	}
+}
+BEGIN_EVENT_TABLE(CTwindow,wxWindow)
 EVT_SIZE(CTwindow::OnSize)
 EVT_COMMAND_SCROLL_THUMBTRACK(5558,CTwindow::OnScroll)
 EVT_MOUSEWHEEL(CTwindow::OnMouseScroll)

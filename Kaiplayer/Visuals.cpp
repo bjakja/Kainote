@@ -311,8 +311,8 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 		int endTime = ZEROIT(edit->line->End.mstime);
 		int framestart = (dshow)? (((float)startTime/1000.f) * fps)+1 : video->VFF->GetFramefromMS(startTime);
 		int frameend = (dshow)? ((float)endTime/1000.f) * fps : video->VFF->GetFramefromMS(endTime)-1;
-		int msstart = (dshow)? ((framestart*1000) / fps) : video->VFF->GetMSfromFrame(framestart);
-		int msend = (dshow)? ((frameend*1000) / fps) : video->VFF->GetMSfromFrame(frameend);
+		int msstart = (dshow)? ((framestart*1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(framestart);
+		int msend = (dshow)? ((frameend*1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(frameend);
 		int diff = endTime - startTime;
 		
 		tbl[4] = startTime + abs(msstart - startTime);
@@ -410,7 +410,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 			ChangeText(&txt,"",edit->InBracket,edit->Placed);
 			txt.Replace("{}", "");
 			if(changeEditorText){
-				Editor->SetTextS(txt, false, false);
+				Editor->SetTextS(txt, false, true);
 				Editor->modified=true;
 				edit->Send(false);
 			}
@@ -450,7 +450,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 				dumplaced.x=edit->Placed.x + textplaced.x; dumplaced.y=edit->Placed.y + textplaced.x;
 				delete visdl;
 				if(changeEditorText){
-					Editor->SetTextS(txt,false,false);
+					Editor->SetTextS(txt,false,true);
 					Editor->modified=true;
 				}
 				
@@ -522,7 +522,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 				
 
 				if(changeEditorText){
-					Editor->SetTextS(txt,false,false);
+					Editor->SetTextS(txt,false,true);
 					Editor->modified=true;
 				}
 
@@ -549,7 +549,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 			wxString txt = dummytext->Mid(textplaced.x,textplaced.y);
 			//wstawiamy w edytor
 			if(changeEditorText){
-				Editor->SetTextS(txt,false,false);
+				Editor->SetTextS(txt,false,true);
 				Editor->modified=true;
 			}
 		}
@@ -676,13 +676,12 @@ void Visuals::SetVisual(bool dummy, int type)
 			dummytext= grid->GetVisible(&vis, &dumplaced);
 			if(!vis){SAFE_DELETE(dummytext); return;}
 		}else{
-			Editor->SetTextS(txt,false,false);
+			Editor->SetTextS(txt,false,true);
 			Editor->Refresh(false);
 		}
 
 		dummytext->replace(dumplaced.x,dumplaced.y,txt);
 		dumplaced.y=txt.Len();
-
 		wxString *dtxt=new wxString(*dummytext);
 		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
 		tab->Video->VisEdit=true;

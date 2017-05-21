@@ -786,10 +786,12 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 				if(vstate==Playing){ VisEdit=false;}
 			}
 		}else if(pan->Edit->OnVideo){
-			if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
-				wxCommandEvent evt;pan->Edit->OnEdit(evt);
-				//pan->Edit->OnVideo=false;
-			}
+			//if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
+			//	wxCommandEvent evt;pan->Edit->OnEdit(evt);
+			//	//pan->Edit->OnVideo=false;
+			//}
+			OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
+			if(vstate==Playing){ pan->Edit->OnVideo=false;}
 		}	
 		playend=(IsDshow)? 0 : GetDuration();
 		seek=true; vplayer->SetPosition(time);
@@ -815,6 +817,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 					wxCommandEvent evt;pan->Edit->OnEdit(evt);
 					//pan->Edit->OnVideo=false;
 				}
+				//OpenSubs(pan->Grid1->SaveText()); pan->Edit->OnVideo=false;
 			}	
 			if(vstate==Playing){
 				if(player){
@@ -900,6 +903,25 @@ int VideoRend::GetFrameTime(bool start)
 	}else{
 		int halfFrame = (start)? -(frameDuration/2.0f) : (frameDuration/2.0f)+1;
 		return time + halfFrame;
+	}
+}
+
+int VideoRend::TrimTimeToFrame(int time, bool start)
+{
+	if(VFF){
+		int frameTime = VFF->GetFramefromMS(time);
+		if(!start){
+			frameTime--;
+			return time - VFF->GetMSfromFrame(frameTime);
+		}
+		return VFF->GetMSfromFrame(frameTime) - time;
+	}else{
+		int frameTime = (((float)time/1000.f) * fps);
+		if(start){
+			frameTime++;
+			return (((frameTime*1000) / fps) + 0.5f) - time;
+		}
+		return time - (((frameTime*1000) / fps) + 0.5f);
 	}
 }
 
@@ -1528,7 +1550,7 @@ void VideoRend::SetVisual(bool remove, bool settext)
 	if(remove){
 		SAFE_DELETE(Vclips); pan->Edit->Visual=0;
 		VisEdit=false;
-		OpenSubs(pan->Grid1->SaveText());
+		OpenSubs(pan->Grid1->GetVisible());
 		Render();
 	}
 	else{

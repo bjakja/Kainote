@@ -175,9 +175,9 @@ void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 	int startTime = ZEROIT(_dial->Start.mstime);
 	int endTime = ZEROIT(_dial->End.mstime);
 	int framestart = (dshow)? (((float)startTime/1000.f) * fps)+1 : video->VFF->GetFramefromMS(startTime);
-	int frameend = (dshow)? ((float)endTime/1000.f) * fps : video->VFF->GetFramefromMS(endTime)-1;
-	int msstart = (dshow)? ((framestart*1000) / fps) : video->VFF->GetMSfromFrame(framestart);
-	int msend = (dshow)? ((frameend*1000) / fps) : video->VFF->GetMSfromFrame(frameend);
+	int frameend = (dshow)? (((float)endTime/1000.f) * fps) : video->VFF->GetFramefromMS(endTime)-1;
+	int msstart = (dshow)? ((framestart*1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(framestart);
+	int msend = (dshow)? ((frameend*1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(frameend);
 	int diff = endTime - startTime;
 	int moveStartTime = abs(msstart - startTime);
 	int moveEndTime = (diff - abs(endTime - msend));

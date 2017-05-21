@@ -60,9 +60,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 	Bind(wxEVT_MOTION, &TimeCtrl::OnMouseEvent, this);
 	Bind(wxEVT_MOUSEWHEEL, &TimeCtrl::OnMouseEvent, this);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		timeUnchanged=false;
-		if(form>=MDVD || showFrames){evt.Skip(); return;}
-		pastes=true;
+		
 		
 		if (wxTheClipboard->Open())
 		{
@@ -71,9 +69,29 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 				wxTextDataObject data;
 				wxTheClipboard->GetData( data );
 				wxString whatpaste = data.GetText();
-				SetValue(whatpaste, true, false);
-				SetSelection(0,whatpaste.Length());
-
+				if(form>=MDVD || showFrames){
+					if(whatpaste.IsNumber()){
+						timeUnchanged=false;
+						evt.Skip(); 
+					}else{
+						wxBell(); 
+					}
+					wxTheClipboard->Close();
+					return;
+				}
+				wxString pattern = (form == ASS)? "^[0-9]\\:[0-5][0-9]\\:[0-5][0-9]\\.[0-9][0-9]$" : 
+					(form == SRT)? "^[0-9][0-9]\\:[0-5][0-9]\\:[0-5][0-9]\\,[0-9][0-9][0-9]$" :
+					"^[0-9][0-9]\\:[0-5][0-9]\\:[0-5][0-9]$";
+				wxRegEx timeCheck(pattern, wxRE_ADVANCED);
+				if(timeCheck.Matches(whatpaste)){
+					SetValue(whatpaste, true, false);
+					SetSelection(0,whatpaste.Length());
+					wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);
+					timeUnchanged=false;
+					pastes=true;
+				}else{
+					wxBell();
+				}
 			}
 			wxTheClipboard->Close();
 			//wxTheClipboard->Flush();
@@ -350,23 +368,23 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 	event.Skip();
 }
 
-void TimeCtrl::OnCopy(wxCommandEvent &event)
-{
-	SetFocus();
-	SetSelection(0,GetValue().Length());
-	Copy();
-}
-
-void TimeCtrl::OnPaste(wxCommandEvent &event)
-{
-	pastes=true;
-	SetFocus();
-	SetSelection(0,GetValue().Length());
-	Paste();
-	SetSelection(0,GetValue().Length());
-	timeUnchanged=false;
-	pastes=false;
-}
+//void TimeCtrl::OnCopy(wxCommandEvent &event)
+//{
+//	SetFocus();
+//	SetSelection(0,GetValue().Length());
+//	Copy();
+//}
+//
+//void TimeCtrl::OnPaste(wxCommandEvent &event)
+//{
+//	pastes=true;
+//	SetFocus();
+//	SetSelection(0,GetValue().Length());
+//	Paste();
+//	SetSelection(0,GetValue().Length());
+//	timeUnchanged=false;
+//	pastes=false;
+//}
 
 //void TimeCtrl::SetModified(bool modified)
 //{
@@ -382,7 +400,7 @@ void TimeCtrl::OnPaste(wxCommandEvent &event)
 
 BEGIN_EVENT_TABLE(TimeCtrl, KaiTextCtrl)
 	//EVT_MOUSE_EVENTS(TimeCtrl::OnMouseEvent)
-	EVT_MENU(Time_Copy,TimeCtrl::OnCopy)
-	EVT_MENU(Time_Paste,TimeCtrl::OnPaste)
+	//EVT_MENU(Time_Copy,TimeCtrl::OnCopy)
+	//EVT_MENU(Time_Paste,TimeCtrl::OnPaste)
 	EVT_MOUSE_CAPTURE_LOST(TimeCtrl::OnMouseLost)
 END_EVENT_TABLE()

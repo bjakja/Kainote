@@ -71,8 +71,7 @@ public:
 	void DelStyle(int i);
 	
 	Dialogue *GetDialCor(int ii);
-	void ChangeTime();
-	void ChangeFrames();
+	void ChangeTimes(bool byFrame = false);
 	int GetCount();
 	int FirstSel();
 	void SortIt(short what,bool all=true);

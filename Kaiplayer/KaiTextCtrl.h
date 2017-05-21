@@ -32,7 +32,7 @@ public:
 	void GetSelection(long *start, long* end);
 	void SetSelection(int start, int end, bool noEvent=false);
 	void SetWindowStyle(long style);
-	void Replace(int start, int end, wxString rep);
+	void Replace(int start, int end, wxString rep, bool sendEvent = true);
 	void Copy(bool cut=false);
 	void Paste();
 	wxString GetValue() const;

@@ -75,9 +75,7 @@ private:
 	AudioSpectrum *spectrumRenderer;
 	wxSize LastSize;
 	float curpos;
-	/*wxBitmap *origImage;
-	wxBitmap *spectrumDisplay;
-	wxBitmap *spectrumDisplaySelected;*/
+	
 	int64_t PositionSample;
 	float scale;
 	int samples;
@@ -129,7 +127,7 @@ private:
 	LPDIRECT3DDEVICE9 d3dDevice;
 	LPDIRECT3DSURFACE9 backBuffer;
 	LPDIRECT3DSURFACE9 spectrumSurface;
-	//LPDIRECT3DTEXTURE9 texture;
+
 	ID3DXLine *d3dLine;
 	LPD3DXFONT d3dFont;
 	LPD3DXFONT d3dFont8;
@@ -187,21 +185,21 @@ public:
 	virtual ~AudioDisplay();
 
 	void UpdateImage(bool weak=false, bool updateImmediately=false);
-	void Update();
+	void Update(bool moveToEnd = false);
 	void RecreateImage();
 	void SetPosition(int pos);
 	void SetSamplesPercent(int percent,bool update=true,float pivot=0.5);
 	void SetScale(float scale);
 	void UpdateScrollbar();
 	void SetDialogue(Dialogue *diag,int n=-1);
-	void MakeDialogueVisible(bool force=false);
+	void MakeDialogueVisible(bool force=false, bool moveToEnd = false);
 	void ChangeLine(int delta, bool block=false);
 	void Next(bool play=true);
 	void Prev(bool play=true);
 
 	bool UpdateTimeEditCtrls();
-	void CommitChanges(bool nextLine=false, bool Save=true);
-	void Commit();
+	void CommitChanges(bool nextLine=false, bool Save=true, bool moveToEnd = false);
+	void Commit(bool moveToEnd = false);
 	void AddLead(bool in,bool out);
 
 	void SetFile(wxString file, bool fromvideo);

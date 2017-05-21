@@ -805,11 +805,11 @@ wxString KaiTextCtrl::GetValue() const
 	return KText;
 }
 
-void KaiTextCtrl::Replace(int start, int end, wxString rep)
+void KaiTextCtrl::Replace(int start, int end, wxString rep, bool sendEvent)
 {
 	modified=true;
 	KText.replace(start, end-start,rep);
-	CalcWrap();
+	CalcWrap(sendEvent);
 	Cursor.x=0;Cursor.y=0;
 	Selend=Cursor;
 	//Refresh(false);

@@ -19,6 +19,35 @@
 #include <wx/regex.h>
 #include <wx/log.h>
 
+TagData::TagData(const wxString &name, unsigned int _startTextPos, unsigned int _length)
+{
+	tagName = name;
+	startTextPos = _startTextPos;
+	length = _length;
+}
+	
+void TagData::PutValue(const wxString &value)
+{
+	values.Add(value);
+}
+
+ParseData::ParseData()
+{
+}
+
+void ParseData::AddData(TagData *data)
+{
+	tags.push_back(data);
+}
+	
+ParseData::~ParseData()
+{
+	for(auto it = tags.begin(); it != tags.end(); it++){
+		delete (*it);
+	}
+	tags.clear();
+}
+
 Dialogue::Dialogue()
 {
 	Form=ASS;
@@ -31,15 +60,22 @@ Dialogue::Dialogue()
 	State=0;
 	NonDial=false;
 	IsComment=false;
+	pdata = NULL;
 }
 
 Dialogue::~Dialogue()
 {
+	ClearParse();
 }
 
+void Dialogue::ClearParse()
+{
+	if(pdata){delete pdata; pdata=NULL;}
+}
 
 Dialogue::Dialogue(wxString ldial,wxString txttl)
 {
+	pdata = NULL;
 	TextTl=txttl;
 	SetRaw(ldial);
 }
@@ -313,6 +349,111 @@ Dialogue *Dialogue::Copy(bool keepstate)
 	dial->Text=Text;
 	dial->TextTl=TextTl;
 	//dial->Scomment=Scomment;
+	dial->pdata=NULL;
 	return dial;
 }
 
+//Remember parse patterns need "(tag1|tag2|...)([^\\\\}]*)".
+//Rest added automatically.
+void Dialogue::ParseTags(const wxString &pattern)
+{
+	if(pdata){return;}
+	wxRegEx tagParser("\\\\"+pattern,wxRE_ADVANCED);
+	wxString txt = Text + TextTl;
+	size_t pos=0;
+	pdata = new ParseData();
+	while(true){
+		wxString subtxt=txt.Mid(pos);
+		if(tagParser.Matches(subtxt)){
+			size_t start,len;
+			if(tagParser.GetMatch(&start,&len,0)){
+
+				wxString tagName = tagParser.GetMatch(subtxt, 1);
+				wxString tagValue = tagParser.GetMatch(subtxt, 2);
+				size_t valueStart=0, valueLen=0;
+				tagParser.GetMatch(&valueStart, &valueLen, 2);
+				if(tagName == "p" && tagValue[0] != 'o' && tagValue[0] != 'b'){
+					//zlokalizowaæ rysunek i go wyci¹æ
+					wxString drawing;
+					int endBracket = subtxt.Find('}');
+					if(endBracket == -1 || endBracket+1 >= subtxt.Len()){
+						//idiot forgot about end bracket
+						//olaæ i tak vobsub tego poprawnie nie wyœwietli
+						//mo¿e daæ jakiœ warning
+						//drugi przypadek nie ma nic po nawiasie, 
+						//powinien break nast¹piæ samoczynnie, aczkolwiek nie zawadzi to steœciæ.
+						pos += (start+len); continue;
+					}else{
+						drawing = subtxt.Mid(endBracket+1).Trim(false);
+						int startBracket = subtxt.Find('{');
+						if(startBracket != -1){
+							drawing = drawing.substr(0, startBracket);
+						}
+					}
+					TagData *newTag = new TagData(tagName, pos + valueStart, valueLen);
+					newTag->PutValue(tagValue);
+					//no tak jednak values bêdzie trzeba przechowywaæ od razu z pozycj¹
+					newTag->PutValue(drawing);
+					pdata->AddData(newTag);
+				}else{
+					//na razie nothing to do
+					TagData *newTag = new TagData(tagName, pos + valueStart, valueLen);
+					newTag->PutValue(tagValue);
+					pdata->AddData(newTag);
+				}
+				
+				pos += (start+len);
+			}else{break;}
+
+		}else{break;}
+
+	}
+}
+//adding this time
+void Dialogue::ChangeTimes(int start, int end)
+{
+	ParseTags("(move|t|fad)\\(([^\\)\\\\}]*)");/*|fade*/
+	size_t replaceMismatch = 0;
+	for(size_t i = 0; i < pdata->tags.size(); i++){
+		TagData *tdata = pdata->tags[i];
+		//wxString values = tdata->values[0];
+		//values.Replace("(","");
+		//values.Replace(")","");
+		wxStringTokenizer splitValues(tdata->values[0],",",wxTOKEN_STRTOK);
+		int tokenCount = splitValues.CountTokens();
+		if(tdata->tagName == "move" && tokenCount < 5 || 
+			tdata->tagName == "t" && tokenCount < 2 || 
+			tdata->tagName == "fad" && tokenCount < 1){
+				continue;
+		}
+		int numToken = 0;
+		while(splitValues.HasMoreTokens()){
+			wxString token = splitValues.GetNextToken();
+			if(tdata->tagName == "move" && numToken < 4){
+				numToken++;
+				continue;
+			}
+			size_t t1Len = token.Len();
+			//size_t reps = token.Replace("(","");
+			int t1 = wxAtoi(token);
+			size_t t1Pos = splitValues.GetPosition() + tdata->startTextPos - t1Len - replaceMismatch - 1;
+			token = splitValues.GetNextToken();
+			size_t t2Len = token.Len();
+			//reps = token.Replace(")","");
+			size_t totalLen = t1Len + t2Len + 1;
+			int t2 = wxAtoi(token);
+			t1 = MAX(0, t1 + start);
+			t2 = MAX(0, t2 + end);
+
+			wxString timesString;
+			timesString << t1 << "," << t2;
+			replaceMismatch += totalLen - timesString.Len();
+			if(t1Pos >= Text.Len()){
+				TextTl.replace(t1Pos, totalLen, timesString);
+			}else{
+				Text.replace(t1Pos, totalLen, timesString);
+			}
+			break;
+		}
+	}
+}

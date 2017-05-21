@@ -218,6 +218,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Menubar->Connect(EVT_MENU_OPENED,(wxObjectEventFunction)&kainoteFrame::OnMenuOpened,0,this);
 	Connect(wxEVT_CLOSE_WINDOW,(wxObjectEventFunction)&kainoteFrame::OnClose1);
 	Connect(30000,30059,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnRecent);
+	Connect(PlayActualLine,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
 		if(!mylog){
 			mylog=new wxLogWindow(this, "Logi",true, false);
@@ -390,7 +391,10 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		bool vidvis=pan->Video->IsShown();
 		if(!vidshow && pan->Video->GetState()==Playing){pan->Video->Pause();}
 		pan->Video->Show(vidshow);
-		if(vidshow && !vidvis){pan->Video->OpenSubs(pan->Grid1->SaveText());}
+		if(vidshow && !vidvis){
+			pan->Edit->OnVideo=true;
+			pan->Video->OpenSubs(pan->Grid1->GetVisible()/*SaveText()*/);
+		}
 		if(pan->Edit->ABox){
 			pan->Edit->ABox->Show((id==ViewAll||id==ViewAudio));
 			if(id==ViewAudio){pan->Edit->SetMinSize(wxSize(500,350));}
@@ -472,15 +476,16 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		return;
 	}
 	if(id==OpenSubs){
-		if(SavePrompt(2)){return;}
+		//nie ma potrzeby pytać, bo w open file zapyta
+		//if(SavePrompt(2)){return;}
 
 		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"), 
-			(GetTab()->VideoPath!="")? GetTab()->VideoPath.BeforeLast('\\') : (subsrec.size()>0)?subsrec[subsrec.size()-1].BeforeLast('\\') : "", 
+			(GetTab()->VideoPath!="")? GetTab()->VideoPath.BeforeLast('\\') : 
+			(subsrec.size()>0)?subsrec[subsrec.size()-1].BeforeLast('\\') : "", 
 			"", _("Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv)|*.mkv"), wxFD_OPEN);
 		if (FileDialog1->ShowModal() == wxID_OK){
 			wxString file=FileDialog1->GetPath();
-			if(file.AfterLast('.')=="mkv")
-			{
+			if(file.AfterLast('.')=="mkv"){
 				event.SetString(file);
 				GetTab()->Grid1->OnMkvSubs(event);
 			}
@@ -569,8 +574,9 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 void kainoteFrame::OnConversion(char form)
 {
 	TabPanel *pan=GetTab();
+	//pan->Edit->OnVideo = true;
 	pan->Grid1->Convert(form);
-	if(pan->Video->GetState()!=None){pan->Video->OpenSubs(pan->Grid1->SaveText());pan->Video->Render();}
+	//if(pan->Video->GetState()!=None){pan->Video->OpenSubs(pan->Grid1->GetVisible()/*SaveText()*/);pan->Video->Render();}
 
 	pan->CTime->Contents();
 	UpdateToolbar();
@@ -757,7 +763,8 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 		}
 
 		if(pan->Video->GetState()!=None && !found){
-			bool isgood=pan->Video->OpenSubs((pan->edytor)? pan->Grid1->SaveText() : 0);
+			pan->Edit->OnVideo = true;
+			bool isgood=pan->Video->OpenSubs((pan->edytor)? pan->Grid1->GetVisible()/*SaveText()*/ : 0);
 			if(!isgood){KaiMessageBox(_("Otwieranie napisów nie powiodło się"), "Uwaga");}
 		}
 		SetRecent();

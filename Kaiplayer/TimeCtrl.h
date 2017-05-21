@@ -52,8 +52,8 @@ private:
 	void OnTimeWrite(wxCommandEvent& event);
 	void OnMouseEvent(wxMouseEvent &event);
 	void OnKeyEvent(wxKeyEvent& event);
-	void OnPaste(wxCommandEvent &event);
-	void OnCopy(wxCommandEvent &event);
+	//void OnPaste(wxCommandEvent &event);
+	//void OnCopy(wxCommandEvent &event);
 
 	DECLARE_EVENT_TABLE()
 };

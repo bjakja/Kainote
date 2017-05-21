@@ -39,8 +39,8 @@ public:
 	KaiRadioButton* EndVAtime;
 	KaiChoice *WhichLines;
 	KaiChoice *WhichTimes;
-	KaiRadioButton* Forward;
-	KaiRadioButton* Backward;
+	KaiCheckBox* Forward;
+	KaiCheckBox* DisplayTimes;
 
 	MappedButton* AddStyles;
 	MappedButton* MoveTime;
@@ -82,6 +82,8 @@ private:
 	MappedButton *coll;
 
 	void OnAddStyles(wxCommandEvent& event);
+	void OnChangeDisplayUnits(wxCommandEvent& event);
+	void ChangeDisplayUnits(bool times);
 	void OnSize(wxSizeEvent& event);
 	void OnScroll(wxScrollEvent& event);
 	void OnMouseScroll(wxMouseEvent& event);

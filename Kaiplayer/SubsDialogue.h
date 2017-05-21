@@ -19,13 +19,31 @@
 #ifndef ZEROIT
 #define ZEROIT(a) ((a/10)*10)
 #endif
-//#ifndef ZEROITNEG
-//#define ZEROITNEG(a) (((a-5)/10)*10)
-//#endif
+
 
 #include "SubsTime.h"
 #include <wx/colour.h>
 #include <vector>
+
+class TagData
+{
+public:
+	TagData(const wxString &name, unsigned int startTextPos, unsigned int length);
+	void PutValue(const wxString &name);
+	wxString tagName;
+	wxArrayString values;
+	unsigned int startTextPos;
+	unsigned int length;
+};
+
+class ParseData
+{
+public:
+	ParseData();
+	~ParseData();
+	void AddData(TagData *data);
+	std::vector<TagData*> tags;
+};
 
 class Dialogue
 {
@@ -38,13 +56,16 @@ public:
 	short MarginL, MarginR, MarginV;
 	char State, Form;
 	bool NonDial, IsComment;
+	ParseData *pdata;
 
 	void SetRaw(wxString ldial);
 	wxString GetRaw(bool tl=false,wxString style="");
 	wxString GetCols(int cols, bool tl=false,wxString style="");
 	void Conv(char type,wxString pref="");
 	Dialogue *Copy(bool keepstate=false);
-	
+	void ParseTags(const wxString &pattern);
+	void ChangeTimes(int start, int end);
+	void ClearParse();
 	Dialogue();
 	Dialogue(wxString ldial,wxString txttl="");
 	~Dialogue();

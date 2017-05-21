@@ -984,11 +984,11 @@ void AudioDisplay::GetDialoguePos(int64_t &selStart,int64_t &selEnd, bool cap) {
 
 //////////
 // Update
-void AudioDisplay::Update() {
+void AudioDisplay::Update(bool moveToEnd) {
 	if (blockUpdate) return;
 	if (loaded) {
 		if (Options.GetBool(AudioAutoScroll))
-			MakeDialogueVisible();
+			MakeDialogueVisible(false, moveToEnd);
 		else
 			UpdateImage(true);
 	}
@@ -1009,7 +1009,7 @@ void AudioDisplay::RecreateImage() {
 
 /////////////////////////
 // Make dialogue visible
-void AudioDisplay::MakeDialogueVisible(bool force) {
+void AudioDisplay::MakeDialogueVisible(bool force, bool moveToEnd) {
 	// Variables
 	int startShow=0, endShow=0;
 	// In karaoke mode the syllable and as much as possible towards the end of the line should be shown
@@ -1023,13 +1023,18 @@ void AudioDisplay::MakeDialogueVisible(bool force) {
 	if(hasKara){
 		if (startX < 50 || endX > (w-200)) {
 			UpdatePosition((startPos+endPos-w*samples)/2,true);
-			//wxLogMessage("pos %i",endPos - 100*samples);
 		}
 	}
 	else if (force || (startX < 50 && endX < w) || (endX > w-50 && startX > 0 )) {
 		if ((startX < 50) || (endX >= w-50 )) {
-			// Make sure the left edge of the selection is at least 50 pixels from the edge of the display
-			UpdatePosition(startPos - 50*samples, true);
+			
+			if(moveToEnd && (endX >= w-50 || endX < 50) ){
+				// Make sure the right edge of the selection is at least 50 pixels from the edge of the display
+				UpdatePosition(endPos - ((w - 50)*samples), true);
+			}else if(!moveToEnd){
+				// Make sure the left edge of the selection is at least 50 pixels from the edge of the display
+				UpdatePosition(startPos - 50*samples, true);
+			}
 		} else {
 			// Otherwise center the selection in display
 			UpdatePosition((startPos+endPos-w*samples)/2,true);
@@ -1391,7 +1396,7 @@ void AudioDisplay::SetDialogue(Dialogue *diag,int n) {
 
 //////////////////
 // Commit changes
-void AudioDisplay::CommitChanges (bool nextLine, bool Save) {
+void AudioDisplay::CommitChanges (bool nextLine, bool Save, bool moveToEnd) {
 	// Loaded?
 	if (!loaded) return;
 
@@ -1415,7 +1420,7 @@ void AudioDisplay::CommitChanges (bool nextLine, bool Save) {
 
 
 
-	Update();
+	Update(moveToEnd);
 }
 
 
@@ -1701,10 +1706,8 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 					selEnd = MAX(0, selEnd);
 					int nn = Edit->ebrow;
 					//automatyczne ustawianie czasów następnej linijki (Chwyt myszą end + ctrl)
-					//wxLogStatus(" hold %i %i %i %i", hold, nn, (int)event.ControlDown(), (int)event.AltDown());
 					if(hold==2 && nn<grid->GetCount()-1 && event.ControlDown() && event.AltDown())
 					{
-						//wxLogStatus(" hold1 %i %i %i %i", hold, nn, (int)event.ControlDown(), (int)event.AltDown());
 						Dialogue *dialc=grid->CopyDial(nn+1);
 						dialc->Start.NewTime(curEndMS);
 						dialc->End.NewTime(curEndMS+5000);
@@ -1721,7 +1724,8 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 					whichsyl=Grabbed;
 				}
 				if(hold!=4){
-					Commit();}
+					Commit(hold==2);
+				}
 
 				// Update stuff
 
@@ -2202,7 +2206,7 @@ bool AudioDisplay::UpdateTimeEditCtrls() {
 	return true;
 }
 
-void AudioDisplay::Commit()
+void AudioDisplay::Commit(bool moveToEnd)
 {
 	bool autocommit=Options.GetBool(AudioAutoCommit);
 	if(hasKara){
@@ -2210,10 +2214,10 @@ void AudioDisplay::Commit()
 	}
 
 	if (autocommit) {
-		CommitChanges();
+		CommitChanges(false, true, moveToEnd);
 		return;
 	}else{
-		CommitChanges(false,false);UpdateImage(true);
+		CommitChanges(false,false, moveToEnd);//UpdateImage(true);
 	}
 	if(!Options.GetBool(DisableLiveVideoEditing)){Edit->OnEdit(wxCommandEvent());}
 }

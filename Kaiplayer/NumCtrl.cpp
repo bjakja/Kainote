@@ -15,6 +15,7 @@
 
 
 #include "NumCtrl.h"
+#include "wx/clipbrd.h"
 
 wxDEFINE_EVENT(NUMBER_CHANGED, wxCommandEvent);
 
@@ -70,10 +71,12 @@ NumCtrl::NumCtrl(wxWindow *parent,long id,wxString text, int rangefrom, int rang
 	SetValidator(valid);
 
 	Connect(wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&NumCtrl::OnNumWrite);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &NumCtrl::OnPaste, this, ID_TCTLV);
 	Bind(wxEVT_RIGHT_DOWN, &NumCtrl::OnMouseEvent, this);
 	Bind(wxEVT_RIGHT_UP, &NumCtrl::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &NumCtrl::OnMouseEvent, this);
 	Bind(wxEVT_MOUSEWHEEL, &NumCtrl::OnMouseEvent, this);
+	SetMaxLength(10);
 }
 
 NumCtrl::NumCtrl(wxWindow *parent,long id,double _value, double rangefrom, double rangeto, bool intonly, const wxPoint &pos, const wxSize &size, long style)
@@ -113,6 +116,11 @@ NumCtrl::NumCtrl(wxWindow *parent,long id,double _value, double rangefrom, doubl
 	SetValidator(valid);
 
 	Connect(wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&NumCtrl::OnNumWrite);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &NumCtrl::OnPaste, this, ID_TCTLV);
+	/*Bind(wxEVT_RIGHT_DOWN, &NumCtrl::OnMouseEvent, this);
+	Bind(wxEVT_RIGHT_UP, &NumCtrl::OnMouseEvent, this);
+	Bind(wxEVT_MOTION, &NumCtrl::OnMouseEvent, this);
+	Bind(wxEVT_MOUSEWHEEL, &NumCtrl::OnMouseEvent, this);*/
 	SetMaxLength(20);
 }
 
@@ -123,8 +131,7 @@ NumCtrl::~NumCtrl()
 
 void NumCtrl::SetString(wxString val)
 {
-	if(!val.ToDouble(&value))
-	{val.ToCDouble(&value);}
+	if(!val.ToDouble(&value)){val.ToCDouble(&value);}
 	if(oint){
 		int finds=val.Find('.',true);
 		if(finds!=-1){val=val.BeforeFirst('.');}
@@ -144,7 +151,7 @@ void NumCtrl::SetString(wxString val)
 	}
 	if(val.IsEmpty()){val = getdouble(value);}
 	oldval=val;
-	SetValue(val, false, false);
+	SetValue(val, false);
 }
 
 void NumCtrl::SetInt(int val)
@@ -154,7 +161,7 @@ void NumCtrl::SetInt(int val)
 	value=(double)val;
 	wxString kkk;
 	oldval=kkk<<val;
-	SetValue(kkk,false, false);
+	SetValue(kkk,false);
 }
 
 void NumCtrl::SetDouble(double val)
@@ -163,7 +170,7 @@ void NumCtrl::SetDouble(double val)
 	else if(val<rfrom){val=rfrom;}
 	value=val;
 	oldval=getdouble(val);
-	SetValue(oldval,false,false);
+	SetValue(oldval,false);
 }
 
 wxString NumCtrl::GetString()
@@ -303,6 +310,34 @@ void NumCtrl::OnMouseLost(wxMouseCaptureLostEvent& event)
 {
 	if(HasCapture()){ReleaseMouse();}
 	holding = false;
+}
+
+void NumCtrl::OnPaste(wxCommandEvent& event)
+{
+	if (wxTheClipboard->Open())
+	{
+		if (wxTheClipboard->IsSupported( wxDF_TEXT ))
+		{
+			wxTextDataObject data;
+			wxTheClipboard->GetData( data );
+			wxString whatpaste = data.GetText();
+			double test=0;
+			if((oint && whatpaste.IsNumber()) || (!oint && whatpaste.ToCDouble(&test))){
+				long from=0, to=0;
+				GetSelection(&from,&to);
+				Replace(from, to, whatpaste, false);
+				MarkDirty();
+				int newSel = from + whatpaste.Len();
+				SetSelection(newSel, newSel);
+				wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);
+			}else{
+				wxBell(); 
+			}
+			
+		}
+		wxTheClipboard->Close();
+		//wxTheClipboard->Flush();
+	}
 }
 
 

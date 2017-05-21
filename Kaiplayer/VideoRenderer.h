@@ -129,6 +129,7 @@ class VideoRend : public wxWindow
 		int GetCurrentPosition();
 		int GetCurrentFrame();
 		int GetFrameTime(bool start = true);
+		int TrimTimeToFrame(int time, bool start = true);
 		int GetFrameTimeFromTime(int time, bool start = true);
 		int GetFrameTimeFromFrame(int frame, bool start = true);
 		int GetPlayEndTime(int time);

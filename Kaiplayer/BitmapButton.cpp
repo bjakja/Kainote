@@ -95,7 +95,7 @@ void BitmapButton::OnLeftDown(wxMouseEvent& event)
 	if(event.LeftUp()){
 		
 		SetBitmap(wxBitmap(img));
-		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED,hotkeyId);this->ProcessEvent(evt);
+		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,hotkeyId);this->ProcessEvent(evt);
 	}
 }
 	

@@ -384,20 +384,20 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	}
 
 	//resetuje edycję na wideo
-	if(OnVideo){
-		if(pan->Video->IsShown() || pan->Video->isFullscreen){
-			pan->Video->OpenSubs(grid->SaveText()); 
-			if(pan->Video->GetState()==Paused){pan->Video->Render();}
-		}
-		OnVideo=false;
-	}
+	//if(OnVideo){
+	//	if(pan->Video->IsShown() || pan->Video->isFullscreen){
+	//		pan->Video->OpenSubs(grid->GetVisible()/*SaveText()*/); 
+	//		if(pan->Video->GetState()==Paused){pan->Video->Render();}
+	//	}
+	//	//OnVideo=false;
+	//}
 
 done:	
 	
 	VideoCtrl *vb = pan->Video;
 	int pas = vb->vToolbar->videoPlayAfter->GetSelection();
-
-	if(vb->vToolbar->videoSeekAfter->GetSelection()==1 && pas<2 && !nochangeline && prevRow != Row){
+	int vsa = vb->vToolbar->videoSeekAfter->GetSelection();
+	if(vsa==1 && pas<2 && !nochangeline && prevRow != Row){
 		if(vb->GetState()!=None){
 			if(vb->GetState()==Playing){vb->Pause();}
 			vb->Seek(line->Start.mstime);
@@ -422,13 +422,13 @@ done:
 		}
 	}
 	//ustawia czas i msy na polu tekstowym wideo
-	if(pan->Video->IsShown() && pan->Video->GetState() != None){
+	if(pan->Video->IsShown() && pan->Video->GetState() != None && vsa == 0){
 		pan->Video->RefreshTime();
 	}
 
 }
 
-void EditBox::UpdateChars(wxString text)
+void EditBox::UpdateChars(const wxString &text)
 {
 	wxString result;
 	bool isbad=false;
@@ -555,7 +555,7 @@ void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 }
 
 
-void EditBox::PutinText(wxString text, bool focus, bool onlysel, wxString *texttoPutin)
+void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString *texttoPutin)
 {
 	bool oneline=(grid->sel.size()<2);
 	if(oneline && !onlysel){
@@ -612,7 +612,7 @@ void EditBox::PutinText(wxString text, bool focus, bool onlysel, wxString *textt
 
 }
 
-void EditBox::PutinNonass(wxString text, wxString tag)
+void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 {
 	if(grid->form==TMP)return;
 	long from, to, whre;
@@ -1119,7 +1119,7 @@ void EditBox::OnPasteDifferents(wxCommandEvent& event)
 }
 //znajduje tagi w polu tekstowym
 //w wyszukiwaniu nie używać // a także szukać tylko do końca taga, nie do następnego taga
-bool EditBox::FindVal(wxString tag, wxString *Finded, wxString text, bool *endsel, bool fromStart)
+bool EditBox::FindVal(const wxString &tag, wxString *Finded, const wxString &text, bool *endsel, bool fromStart)
 {
 	lasttag=tag;
 	long from=0, to=0;
@@ -1512,4 +1512,26 @@ void EditBox::OnStyleEdit(wxCommandEvent& event)
 	//a może na dobry początek chociaż managera w całości pokazać?
 	//wxLogStatus("Edytuj");
 	StyleStore::ShowStyleEdit();
+}
+
+bool EditBox::IsCursorOnStart()
+{
+	if(grid->sel.size()>1){return true;}
+	/*if(Visual == CLIPRECT || Visual == MOVE){return true;}
+	wxString txt=TextEdit->GetValue();
+	MTextEditor *Editor = TextEdit;
+	if(grid->transl && txt=="" ){
+		txt = TextEditTl->GetValue(); 
+		Editor = TextEditTl;
+	}
+	long from=0, to=0;
+	Editor->GetSelection(&from, &to);
+	if(from == 0 || txt.StartsWith("{")){
+		txt.Replace("}{","");
+		int endBracket = txt.Find('}');
+		if(endBracket == -1 || endBracket <= from+1){
+			return true;
+		}
+	}*/
+	return false;
 }
