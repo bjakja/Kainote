@@ -128,8 +128,7 @@ void Karaoke::Split()
 			syltimes.Add(ZEROIT(stime));
 		}
 	}
-	//wxString kkk;
-	//wxMessageBox(kkk<<"syl size "<<syls.size());
+	
 }
 
 

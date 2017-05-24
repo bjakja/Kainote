@@ -906,22 +906,21 @@ int VideoRend::GetFrameTime(bool start)
 	}
 }
 
-int VideoRend::TrimTimeToFrame(int time, bool start)
+void VideoRend::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
 {
+	if(!retStart || !retEnd){return;}
 	if(VFF){
-		int frameTime = VFF->GetFramefromMS(time);
-		if(!start){
-			frameTime--;
-			return time - VFF->GetMSfromFrame(frameTime);
-		}
-		return VFF->GetMSfromFrame(frameTime) - time;
+		int frameStartTime = VFF->GetFramefromMS(startTime);
+		int frameEndTime = VFF->GetFramefromMS(endTime, frameStartTime);
+		*retStart = VFF->GetMSfromFrame(frameStartTime) - startTime;
+		*retEnd = VFF->GetMSfromFrame(frameEndTime) - endTime;
 	}else{
-		int frameTime = (((float)time/1000.f) * fps);
-		if(start){
-			frameTime++;
-			return (((frameTime*1000) / fps) + 0.5f) - time;
-		}
-		return time - (((frameTime*1000) / fps) + 0.5f);
+		int frameStartTime = (((float)startTime/1000.f) * fps);
+		int frameEndTime = (((float)endTime/1000.f) * fps);
+		frameStartTime++;
+		frameEndTime++;
+		*retStart = (((frameStartTime*1000) / fps) + 0.5f) - startTime;
+		*retEnd = (((frameEndTime*1000) / fps) + 0.5f) - endTime;
 	}
 }
 
@@ -1551,9 +1550,9 @@ void VideoRend::SetVisual(bool remove, bool settext)
 		SAFE_DELETE(Vclips); pan->Edit->Visual=0;
 		VisEdit=false;
 		OpenSubs(pan->Grid1->GetVisible());
+		pan->Edit->OnVideo = true;
 		Render();
-	}
-	else{
+	}else{
 
 		int vis=pan->Edit->Visual;
 		if(!Vclips){

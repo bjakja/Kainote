@@ -284,7 +284,7 @@ void FontCollector::GetAssFonts(std::vector<bool> &found, bool check)
 	if(facenames.size()<1 || reloadFonts){EnumerateFonts();}
 	std::map<wxString, Styles*> stylesfonts;
 	File *subs= Notebook::GetTab()->Grid1->file->GetSubs();
-	wxRegEx reg("\\{[^\\{]*\\}",wxRE_ADVANCED);
+	
 	
 	for(size_t i=0; i<subs->styles.size(); i++)
 	{
@@ -317,67 +317,82 @@ void FontCollector::GetAssFonts(std::vector<bool> &found, bool check)
 
 	for(size_t i=0; i<subs->dials.size(); i++)
 	{
-		wxString text=subs->dials[i]->Text + subs->dials[i]->TextTl;
-		Styles *lstyle = stylesfonts[subs->dials[i]->Style];
+		Dialogue *dial = subs->dials[i];
+		if(dial->IsComment){continue;}
+		dial->ParseTags("fn|b|i|p", true);
+		ParseData *pdata = dial->pdata;
+		if(!pdata){continue;}
+		
+		wxString text = (dial->TextTl!="")? dial->TextTl : dial->Text;
+
+		Styles *lstyle = stylesfonts[dial->Style];
+		//if(!lstyle){
+			//SendMessageD(wxString::Format(_("Styl '%s' z linii %i nie istnieje.\n"), dial->Style, (int)i-1), fcd->warning);
+		//}
 		wxString ifont = (lstyle)? lstyle->Fontname : "";
 		int bold = (lstyle)? (int)lstyle->Bold : 0;
 		int italic = (lstyle)? (int)lstyle->Italic : 0;
 		int wlet=0;
-		while(true)
-		{
-			wxString part = text.Mid(wlet);
-			int flet=part.find("\\fn");
-			int hasBoldTag=part.find("\\b");
-			int hasItalicTag=part.find("\\i");
+		bool newFont = false;
+		bool lastPlain = false;
+		wxString textHavingFont;
+		size_t tagsSize = pdata->tags.size();
 
-			if(flet != -1 || 
-				(hasBoldTag != -1 && hasBoldTag+2 < (int)part.Len() && wxString(part[hasBoldTag+2]).IsNumber()) || 
-				(hasItalicTag != -1 && hasItalicTag+2 < (int)part.Len() && wxString(part[hasItalicTag+2]).IsNumber()))
-			{
-				wxString fn = (flet != -1)? part.Mid(flet+3).BeforeFirst('\\').BeforeFirst('}') : ifont;
-				if(hasBoldTag != -1){bold =  wxAtoi(part.Mid(hasBoldTag+2).BeforeFirst('\\').BeforeFirst('}'));}
-				if(hasItalicTag != -1){italic =  wxAtoi(part.Mid(hasItalicTag+2).BeforeFirst('\\').BeforeFirst('}'));} 
-					
-				wxString fnl = fn.Lower() << bold << italic;
-				int iresult = facenames.Index(fn,false);
+		for(size_t j = 0; j < tagsSize; j++)
+		{
+			TagData *tag = pdata->tags[j];
+			if(tag->tagName == "p"){continue;}
+				
+			if(tag->tagName == "plain"){
+				textHavingFont += tag->value;
+				if((lastPlain && j<tagsSize-1) || ifont.IsEmpty()){continue;}
+				lastPlain=true;
+				wxString fnl = ifont.Lower() << bold << italic;
+				int iresult = facenames.Index(ifont,false);
 				if(iresult==-1){
-					notFindFontsLog[fn]<<(i+1)<<",";
+					notFindFontsLog[ifont]<<(i+1)<<",";
 				}
 				else
 				{
-					wxString txt=text.SubString(wlet,
-						(flet!=-1)? flet : (hasBoldTag!= -1)? hasBoldTag : hasItalicTag)+"}";
-					if(wlet!=0){txt+="{";};
-					reg.ReplaceAll(&txt,"");
-					PutChars(txt,ifont);
+					//wxLogStatus(textHavingFont);
+					textHavingFont.Replace("\\N","");
+					textHavingFont.Replace("\\n","");
+					textHavingFont.Replace("\\h"," ");
+					PutChars(textHavingFont,ifont);
 					if(!(foundFonts.find(fnl) != foundFonts.end())){
-						foundFonts[fnl] = SubsFont(fn,logFonts[iresult],bold,(italic!=0));
+						foundFonts[fnl] = SubsFont(ifont,logFonts[iresult],bold,(italic!=0));
 						found.push_back(check);
 					}
-					if(flet != -1){
-						auto log = findFontsLog.find(fn);
+					if(newFont){
+						auto log = findFontsLog.find(ifont);
 						if(!(log!=findFontsLog.end())){
-							findFontsLog[fn]<<wxString::Format(_("Znaleziono czcionkę \"%s\" w linijkach:\n%i,"), 
-								fn, (int)(i+1));
+							findFontsLog[ifont]<<wxString::Format(_("Znaleziono czcionkę \"%s\" w linijkach:\n%i,"), 
+								ifont, (int)(i+1));
 						}else{
 							if(log->second.EndsWith("\n")){
 								log->second<<wxString::Format(_("W linijkach:\n%i,"),(int)(i+1));
 							}
 							log->second<<(i+1)<<",";
 						}
-						ifont=fn;
+						newFont=false;
 					}
 				}
-				wlet= wlet+flet+3+fn.Len();
-			}else if(ifont!=""){
-				wxString txt=text;
-				if(wlet!=0){txt= "{" + text.Mid(wlet); };
-				reg.ReplaceAll(&txt,"");
-				PutChars(txt,ifont);
+				textHavingFont.Empty();
+			}else{
+				if(tag->tagName == "fn"){
+					ifont = tag->value;
+					newFont = true;
+				}else if(tag->tagName == "b"){
+					bold = wxAtoi(tag->value);
+				}else if(tag->tagName == "i"){
+					italic = wxAtoi(tag->value);
+				}
+				lastPlain=false;
 			}
-			wlet=0;break;
+			
 			
 		}
+		dial->ClearParse();
 	}
 
 }
@@ -568,7 +583,6 @@ void FontCollector::CopyMKVFonts()
 
 void FontCollector::PutChars(const wxString &txt, const wxString &fn)
 {
-	//txt.erase(std::unique(txt.begin(), txt.end()), txt.end());
 	CharMap &ch=FontMap[fn];
 
 	for(size_t i=0; i<txt.Len(); i++)
@@ -577,7 +591,6 @@ void FontCollector::PutChars(const wxString &txt, const wxString &fn)
 			ch.insert(txt[i]);//<< move << " ";
 		}
 	}
-	//FontMap[fn]=ch;
 }
 
 void FontCollector::EnumerateFonts()
@@ -616,27 +629,29 @@ bool FontCollector::CheckPathAndGlyphs(std::vector<bool> &found)
 		SelectObject(dc, hfont);
 		if(font.fakeNormal){
 			SendMessageD(wxString::Format(_("Czcionka \"%s\" nie ma stylu normalnego.\n"), fn),fcd->warning);
+		}else if(font.fakeBoldItalic){
+			SendMessageD(wxString::Format(_("Czcionka \"%s\" nie ma pogrubienia z kursywą.\n"), fn),fcd->warning);
 		}else if(font.fakeBold){
 			SendMessageD(wxString::Format(_("Czcionka \"%s\" nie ma pogrubienia.\n"), fn),fcd->warning);
 		}else if(font.fakeItalic){
 			SendMessageD(wxString::Format(_("Czcionka \"%s\" nie ma kursywy.\n"), fn),fcd->warning);
-		}else if(font.fakeBoldItalic){
-			SendMessageD(wxString::Format(_("Czcionka \"%s\" nie ma pogrubienia z kursywą.\n"), fn),fcd->warning);
 		}
-		wxString text;
-		wxString missing;
-		CharMap ch=FontMap[fn];
-		for(auto it = ch.begin(); it!=ch.end(); it++)
-		{
-			text<<(*it);
-		}
-		if(!FontEnum.CheckGlyphsExists(dc, text, missing))
-		{
-			SendMessageD(wxString::Format(_("Nie można sprawdzić znaków czcionki \"%s\".\n"), fn),fcd->warning);
-		}
-		if(missing.Len()>0){
-			allfound=false;
-			SendMessageD(wxString::Format(_("Czcionka \"%s\" nie zawiera znaków: \"%s\".\n"), fn, missing),fcd->warning);
+		if(lastfn != fn){
+			wxString text;
+			wxString missing;
+			CharMap ch=FontMap[fn];
+			for(auto it = ch.begin(); it!=ch.end(); it++)
+			{
+				text<<(*it);
+			}
+			if(!FontEnum.CheckGlyphsExists(dc, text, missing))
+			{
+				SendMessageD(wxString::Format(_("Nie można sprawdzić znaków czcionki \"%s\".\n"), fn),fcd->warning);
+			}
+			if(missing.Len()>0){
+				allfound=false;
+				SendMessageD(wxString::Format(_("Czcionka \"%s\" nie zawiera znaków: \"%s\".\n"), fn, missing),fcd->warning);
+			}
 		}
 		if(!(operation & CHECK_FONTS)){
 			DWORD ttcf = 0x66637474;

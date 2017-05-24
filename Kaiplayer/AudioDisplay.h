@@ -191,7 +191,7 @@ public:
 	void SetSamplesPercent(int percent,bool update=true,float pivot=0.5);
 	void SetScale(float scale);
 	void UpdateScrollbar();
-	void SetDialogue(Dialogue *diag,int n=-1);
+	void SetDialogue(Dialogue *diag, int n=-1, bool moveToEnd = false);
 	void MakeDialogueVisible(bool force=false, bool moveToEnd = false);
 	void ChangeLine(int delta, bool block=false);
 	void Next(bool play=true);

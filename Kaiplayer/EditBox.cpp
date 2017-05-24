@@ -331,9 +331,9 @@ EditBox::~EditBox()
 void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool autoPlay)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
-	int prevRow = ebrow;
-	if(nochangeline && ebrow == Row){goto done;}
-	if(Options.GetInt(GridSaveAfterCharacterCount)>1 && ebrow!=Row && save){
+	bool rowChanged = ebrow != Row;
+	if(nochangeline && !rowChanged){goto done;}
+	if(Options.GetInt(GridSaveAfterCharacterCount)>1 && rowChanged && save){
 		Send(false);
 	}
 	Dialogue *prevDial = grid->GetDial(ebrow);
@@ -342,13 +342,13 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 		grid->Refresh(false);
 	}
 	if(StartEdit->changedBackGround){
-		StartEdit->SetForegroundColour(Options.GetColour(WindowText));//StartEdit->Refresh(false);
+		StartEdit->SetForegroundColour(Options.GetColour(WindowText));
 	}
 	if(EndEdit->changedBackGround ){
-		EndEdit->SetForegroundColour(Options.GetColour(WindowText));//EndEdit->Refresh(false);
+		EndEdit->SetForegroundColour(Options.GetColour(WindowText));
 	}
 	if(DurEdit->changedBackGround ){
-		DurEdit->SetForegroundColour(Options.GetColour(WindowText));//DurEdit->Refresh(false);
+		DurEdit->SetForegroundColour(Options.GetColour(WindowText));
 	}
 	ebrow=Row;
 	grid->markedLine=Row;
@@ -397,7 +397,7 @@ done:
 	VideoCtrl *vb = pan->Video;
 	int pas = vb->vToolbar->videoPlayAfter->GetSelection();
 	int vsa = vb->vToolbar->videoSeekAfter->GetSelection();
-	if(vsa==1 && pas<2 && !nochangeline && prevRow != Row){
+	if(vsa==1 && pas<2 && !nochangeline && rowChanged){
 		if(vb->GetState()!=None){
 			if(vb->GetState()==Playing){vb->Pause();}
 			vb->Seek(line->Start.mstime);

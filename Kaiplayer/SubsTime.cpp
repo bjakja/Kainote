@@ -24,10 +24,10 @@ STime::STime(){
 	orgframe=0;
 }
 
-STime::STime(int ms){
+STime::STime(int ms, int orgFrame){
 	mstime=ms;
 	form=ASS;
-	orgframe=0;
+	orgframe=orgFrame;
 }
 
 STime::~STime(){

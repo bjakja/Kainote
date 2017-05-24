@@ -31,7 +31,7 @@ public:
 	int mstime;
 
 	STime();
-	STime(int ms);
+	STime(int ms, int orgFrame=0);
 	~STime();
 	void SetRaw(wxString rawtime, char format);
 	void NewTime(int ms);

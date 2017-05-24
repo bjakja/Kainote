@@ -927,9 +927,10 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 		return;
 	}
 	TabPanel *pan=(TabPanel*)GetParent();
+	VideoCtrl *video=pan->Video;
 	bool changeActive = Options.GetBool(GridChangeActiveOnSelection);
-	int mvtal= pan->Video->vToolbar->videoSeekAfter->GetSelection();//
-	int pas=pan->Video->vToolbar->videoPlayAfter->GetSelection();
+	int mvtal= video->vToolbar->videoSeekAfter->GetSelection();//
+	int pas=video->vToolbar->videoPlayAfter->GetSelection();
 	if (!(row < scPos || row >= GetCount())) {
 
 		if(holding && alt && lastsel!=row)
@@ -981,7 +982,6 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 		}
 
 		if (middle){
-			VideoCtrl *video=Kai->GetTab()->Video;
 			if(video->GetState()!=None){//
 				video->PlayLine(GetDial(row)->Start.mstime, video->GetPlayEndTime(GetDial(row)->End.mstime) /*- video->avtpf*/);
 			}
@@ -1044,8 +1044,8 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 			lastsel=row;
 			Refresh(false);
 			if(Edit->Visual==CHANGEPOS/* || Edit->Visual==MOVEALL*/){
-				Kai->GetTab()->Video->SetVisual();
-				Kai->GetTab()->Video->Render();
+				video->SetVisual();
+				video->Render();
 			}
 		}
 	}
@@ -1055,13 +1055,14 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 
 void SubsGrid::Convert(char type)
 {
+	if(GetSInfo("TLMode")=="Yes"){return;}
 	if(Options.GetBool(ConvertShowSettings)){
 		OptionsDialog od(Kai,Kai);
 		od.OptionsTree->ChangeSelection(2);
 		od.okok->SetFocus();
 		if(od.ShowModal()==wxID_CANCEL){return;}
 	}
-	if(Options.GetBool(ConvertFPSFromVideo)&&Kai->GetTab()->VideoPath!=""){
+	if(Options.GetBool(ConvertFPSFromVideo) && Kai->GetTab()->VideoPath!=""){
 		Options.SetString(ConvertFPS, Kai->GetStatusText(4).BeforeFirst(' '));
 	}
 	if(Options.GetFloat(ConvertFPS)<1){KaiMessageBox(_("Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."));return;}
@@ -1391,6 +1392,7 @@ void SubsGrid::ChangeTimes(bool byFrame)
 		kae = Options.GetInt(PostprocessorKeyframeAfterEnd);
 	}
 	wxString style=Options.GetString(MoveTimesStyles);
+	bool changeTagTimes = (moveTimeOptions & 32) > 0;
 
 	if(!(moveTimeOptions & 1)){
 		time = (-time);
@@ -1456,6 +1458,7 @@ void SubsGrid::ChangeTimes(bool byFrame)
 	}
 
 	int firsttime=GetDial(fs)->Start.mstime;
+	//int endDiff = 0;
 	Dialogue *dialc;
 
 	for (int i=0;i<GetCount();i++)
@@ -1476,31 +1479,37 @@ void SubsGrid::ChangeTimes(bool byFrame)
 		{
 
 			dialc=file->CopyDial(i,true,true);
+			int startTrimed = 0, endTrimed = 0, duration = 0;
+			if(changeTagTimes){
+				vb->GetStartEndDelay(dialc->Start.mstime, dialc->End.mstime, &startTrimed, &endTrimed);
+			}
 			if(time!=0){
-				int startTrimed = vb->TrimTimeToFrame(dialc->Start.mstime);
-				int endTrimed = vb->TrimTimeToFrame(dialc->End.mstime);
 				if(whichTimes!=2){dialc->Start.Change(time);}
 				if(whichTimes!=1){dialc->End.Change(time);}
 				dialc->State=1;
-				int newStartTrimed = vb->TrimTimeToFrame(dialc->Start.mstime);
-				int newEndTrimed = vb->TrimTimeToFrame(dialc->End.mstime);
-				dialc->ChangeTimes(newStartTrimed - startTrimed, newEndTrimed - endTrimed);
 			}else if(frame!=0){
-				int startTrimed = vb->TrimTimeToFrame(dialc->Start.mstime);
-				int endTrimed = vb->TrimTimeToFrame(dialc->End.mstime);
+				if(whichTimes==0){
+					duration = dialc->End.mstime - dialc->Start.mstime;
+				}
 				if(whichTimes!=2){
 					int startFrame = vb->VFF->GetFramefromMS(dialc->Start.mstime)+frame;
-					dialc->Start.NewTime(vb->GetFrameTimeFromFrame(startFrame));
+					dialc->Start.NewTime(ZEROIT(vb->GetFrameTimeFromFrame(startFrame)));
 				}
 				if(whichTimes!=1){
+					//endDiff = dialc->End.mstime;
 					int endFrame = vb->VFF->GetFramefromMS(dialc->End.mstime)+frame;
-					dialc->End.NewTime(vb->GetFrameTimeFromFrame(endFrame));
+					dialc->End.NewTime(ZEROIT(vb->GetFrameTimeFromFrame(endFrame)));
+					//endDiff = dialc->End.mstime - endDiff;
 				}
 				dialc->State=1;
-				int newStartTrimed = vb->TrimTimeToFrame(dialc->Start.mstime);
-				int newEndTrimed = vb->TrimTimeToFrame(dialc->End.mstime);
-				dialc->ChangeTimes(newStartTrimed - startTrimed, newEndTrimed - endTrimed);
 			}
+			if(changeTagTimes){
+				int newStartTrimed=0, newEndTrimed=0;
+				vb->GetStartEndDelay(dialc->Start.mstime, dialc->End.mstime, &newStartTrimed, &newEndTrimed);
+				if(byFrame){newEndTrimed += ((dialc->End.mstime - dialc->Start.mstime) - duration);}
+				dialc->ChangeTimes(newStartTrimed - startTrimed, (newEndTrimed - endTrimed));
+			}
+
 			if(correctEndTimes>0 || PostprocessorOptions>16){
 				if(correctEndTimes>1){
 					int endt=Options.GetInt(ConvertTimePerLetter);
@@ -1698,18 +1707,7 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 
 			int next = MID(0,curLine+dir,GetCount()-1);
 			Edit->SetLine(next);
-			TabPanel *pan = (TabPanel*)GetParent();
-			int mvtal= pan->Video->vToolbar->videoSeekAfter->GetSelection();//Options.GetInt(MoveVideoToActiveLine);
-			int pasel= pan->Video->vToolbar->videoPlayAfter->GetSelection();//Options.GetInt(PlayAfterSelection);
-			//1-kliknięcie lewym
-			//2-kliknięcie lewym i edycja na pauzie
-			//3-kliknięcie lewym i edycja na pauzie i odtwarzaniu
-			if ( mvtal < 4 && mvtal > 0 && pasel>1){
-				
-				if(pan->Video->GetState()==Stopped){pan->Video->Play();pan->Video->Pause();}
-				int vczas=GetDial(next)->Start.mstime;
-				pan->Video->Seek(MAX(0,vczas),true,true,false);
-			}
+			
 			SelectRow(next);
 			int gridh=((h/(GridHeight+1))-1);
 			if(dir==1||dir==-1){
@@ -1725,7 +1723,10 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 
 		// Move selected
 		if (alt&&!shift) {
-			if((dir==1||dir==-1)&&FirstSel()!=-1){MoveRows(dir,true);ScrollTo(scPos+dir);}
+			if((dir==1||dir==-1)&&FirstSel()!=-1){
+				MoveRows(dir,true);
+				ScrollTo(scPos+dir);
+			}
 			return;
 		}
 
@@ -2403,7 +2404,6 @@ void SubsGrid::CheckText(wxString text, wxArrayInt &errs)
 			word.Trim(true);
 			bool isgood=SpellChecker::Get()->CheckWord(word);
 			if (!isgood){errs.push_back(firsti);errs.push_back(lasti);}
-			//KaiMessageBox(word);
 		}word="";firsti=i+1;}
 		if(ch=='{'){block=true;}
 		else if(ch=='}'){block=false;firsti=i+1;word="";}

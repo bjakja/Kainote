@@ -41,6 +41,7 @@ public:
 	KaiChoice *WhichTimes;
 	KaiCheckBox* Forward;
 	KaiCheckBox* DisplayTimes;
+	KaiCheckBox* MoveTagTimes;
 
 	MappedButton* AddStyles;
 	MappedButton* MoveTime;

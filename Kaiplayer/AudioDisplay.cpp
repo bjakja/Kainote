@@ -302,7 +302,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 
 void AudioDisplay::DoUpdateImage() {
 	// Loaded?
-	if (!loaded || !provider) return;
+	if (!loaded || !provider ) return;
 	wxMutexLocker lock(mutex);
 	// Needs updating?
 	//if (!needImageUpdate) return;
@@ -312,7 +312,7 @@ void AudioDisplay::DoUpdateImage() {
 	int timelineHeight = 20;
 	int displayH = h+timelineHeight;
 	
-	if (LastSize.x != w || LastSize.y != h) {
+	if (LastSize.x != w || LastSize.y != h || !d3dDevice) {
 		InitDX(wxSize(w,displayH));
 		LastSize=wxSize(w, h);
 	}
@@ -1359,7 +1359,7 @@ void AudioDisplay::SetSelection(int start, int end) {
 
 ////////////////
 // Set dialogue
-void AudioDisplay::SetDialogue(Dialogue *diag,int n) {
+void AudioDisplay::SetDialogue(Dialogue *diag, int n, bool moveToEnd) {
 	// Actual parameters
 	// Set variables
 	line_n = n;
@@ -1390,7 +1390,7 @@ void AudioDisplay::SetDialogue(Dialogue *diag,int n) {
 	}
 
 	// Update	
-	Update();
+	Update(moveToEnd);
 }
 
 

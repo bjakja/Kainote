@@ -18,17 +18,24 @@
 #include <wx/tokenzr.h>
 #include <wx/regex.h>
 #include <wx/log.h>
+#include <map>
+#include <iostream>
 
-TagData::TagData(const wxString &name, unsigned int _startTextPos, unsigned int _length)
+
+TagData::TagData(const wxString &name, unsigned int _startTextPos)
 {
 	tagName = name;
 	startTextPos = _startTextPos;
-	length = _length;
 }
 	
-void TagData::PutValue(const wxString &value)
+void TagData::PutValue(const wxString &_value)
 {
-	values.Add(value);
+	value = _value;
+}
+void TagData::PutDrawing(const wxString &_value, unsigned int _startTextPos)
+{
+	drawing = _value;
+	drawingStartTextPos = _startTextPos;
 }
 
 ParseData::ParseData()
@@ -353,73 +360,95 @@ Dialogue *Dialogue::Copy(bool keepstate)
 	return dial;
 }
 
-//Remember parse patterns need "(tag1|tag2|...)([^\\\\}]*)".
-//Rest added automatically.
-void Dialogue::ParseTags(const wxString &pattern)
+//Remember parse patterns need "tag1|tag2|..." whithout slashes.
+//Remember string position is start of the value, position of tag -=tagname.len+1
+void Dialogue::ParseTags(const wxString &pattern, bool plainText)
 {
 	if(pdata){return;}
-	wxRegEx tagParser("\\\\"+pattern,wxRE_ADVANCED);
-	wxString txt = Text + TextTl;
+	std::vector<wxString> tags;
+	wxStringTokenizer tkn(pattern,"|",wxTOKEN_STRTOK);
+	while(tkn.HasMoreTokens()){
+		tags.push_back(tkn.GetNextToken());
+	}
+	wxString txt = (TextTl != "")? TextTl : Text;
 	size_t pos=0;
+	size_t plainStart=0;
+	size_t drawingPos=-1;
+	size_t len = txt.Len();
+	bool tagsBlock = false;
 	pdata = new ParseData();
-	while(true){
-		wxString subtxt=txt.Mid(pos);
-		if(tagParser.Matches(subtxt)){
-			size_t start,len;
-			if(tagParser.GetMatch(&start,&len,0)){
+	while(pos < len){
+		wxUniChar ch=txt[pos];
+		if(ch=='}'){tagsBlock=false;plainStart=pos+1;}
+		else if(ch=='{' || pos >= len-1){
+			tagsBlock=true;
+			if(plainText && pos!=0 && drawingPos != plainStart){
+				if(pos >= len-1){pos++;}
+				TagData *newTag = new TagData("plain", plainStart);
+				newTag->PutValue(txt.SubString(plainStart,pos-1));
+				pdata->AddData(newTag);
+			}
+		}else if(tagsBlock && ch=='\\'){
+			pos ++;
+			//wxString tag;
+			int slashPos = txt.find('\\', pos);
+			int bracketPos = txt.find('}', pos);
+			int tagEnd = (slashPos == -1 && bracketPos == -1)? len :
+				(slashPos == -1)? bracketPos : (bracketPos == -1)? slashPos : 
+				(bracketPos < slashPos)? bracketPos : slashPos;
+			wxString tag = txt.SubString(pos, tagEnd - 1);
+			for(size_t i = 0; i < tags.size(); i++){
+				wxString tagName = tags[i];
+				int tagLen = tagName.Len();
+				if(tag.StartsWith(tagName) && (tag[tagLen] == '(' || 
+					wxString(tag[tagLen]).IsNumber() || tagName == "fn")){
 
-				wxString tagName = tagParser.GetMatch(subtxt, 1);
-				wxString tagValue = tagParser.GetMatch(subtxt, 2);
-				size_t valueStart=0, valueLen=0;
-				tagParser.GetMatch(&valueStart, &valueLen, 2);
-				if(tagName == "p" && tagValue[0] != 'o' && tagValue[0] != 'b'){
-					//zlokalizowaæ rysunek i go wyci¹æ
-					wxString drawing;
-					int endBracket = subtxt.Find('}');
-					if(endBracket == -1 || endBracket+1 >= subtxt.Len()){
-						//idiot forgot about end bracket
-						//olaæ i tak vobsub tego poprawnie nie wyœwietli
-						//mo¿e daæ jakiœ warning
-						//drugi przypadek nie ma nic po nawiasie, 
-						//powinien break nast¹piæ samoczynnie, aczkolwiek nie zawadzi to steœciæ.
-						pos += (start+len); continue;
-					}else{
-						drawing = subtxt.Mid(endBracket+1).Trim(false);
-						int startBracket = subtxt.Find('{');
-						if(startBracket != -1){
-							drawing = drawing.substr(0, startBracket);
+					TagData *newTag = new TagData(tagName, pos+tagLen);
+					wxString tagValue = tag.Mid(tagLen);
+					if(tagName == "p"){
+						wxString drawing;
+						int endBracket = txt.find('}', tagEnd);
+						if(endBracket == -1 || endBracket+1 >= len){
+							//idiot forgot about end bracket
+							//drugi przypadek nie ma nic po nawiasie, 
+							//nie zapisujemy tagu, ale kontynujemy szukanie tagów
+							//zwalniamy newTag, bo jest nam niepotrzebny
+							delete newTag;
+							pos = tagEnd - 1; continue;
+						}else{
+							int startBracket = txt.find('{', endBracket+1);
+							if(startBracket == -1){
+								startBracket = len;
+							}
+							drawing = txt.SubString(endBracket+1, startBracket-1);
+							newTag->PutValue(tagValue);
+							newTag->PutDrawing(drawing, endBracket+1);
+							drawingPos = endBracket+1;
 						}
+					
+					}else if(tag[tagLen] == '('){
+						newTag->startTextPos++;
+						newTag->PutValue(tagValue.After('(').BeforeFirst(')'));
+					}else{
+						newTag->PutValue(tagValue);
 					}
-					TagData *newTag = new TagData(tagName, pos + valueStart, valueLen);
-					newTag->PutValue(tagValue);
-					//no tak jednak values bêdzie trzeba przechowywaæ od razu z pozycj¹
-					newTag->PutValue(drawing);
 					pdata->AddData(newTag);
-				}else{
-					//na razie nothing to do
-					TagData *newTag = new TagData(tagName, pos + valueStart, valueLen);
-					newTag->PutValue(tagValue);
-					pdata->AddData(newTag);
+					pos = tagEnd - 1;
+					break;
 				}
-				
-				pos += (start+len);
-			}else{break;}
-
-		}else{break;}
-
+			}
+		}
+		pos ++;
 	}
 }
 //adding this time
 void Dialogue::ChangeTimes(int start, int end)
 {
-	ParseTags("(move|t|fad)\\(([^\\)\\\\}]*)");/*|fade*/
+	ParseTags("move|t|fad");/*|fade*/
 	size_t replaceMismatch = 0;
 	for(size_t i = 0; i < pdata->tags.size(); i++){
 		TagData *tdata = pdata->tags[i];
-		//wxString values = tdata->values[0];
-		//values.Replace("(","");
-		//values.Replace(")","");
-		wxStringTokenizer splitValues(tdata->values[0],",",wxTOKEN_STRTOK);
+		wxStringTokenizer splitValues(tdata->value,",",wxTOKEN_STRTOK);
 		int tokenCount = splitValues.CountTokens();
 		if(tdata->tagName == "move" && tokenCount < 5 || 
 			tdata->tagName == "t" && tokenCount < 2 || 
@@ -448,7 +477,7 @@ void Dialogue::ChangeTimes(int start, int end)
 			wxString timesString;
 			timesString << t1 << "," << t2;
 			replaceMismatch += totalLen - timesString.Len();
-			if(t1Pos >= Text.Len()){
+			if(TextTl != ""){
 				TextTl.replace(t1Pos, totalLen, timesString);
 			}else{
 				Text.replace(t1Pos, totalLen, timesString);
