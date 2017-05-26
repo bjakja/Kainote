@@ -78,6 +78,7 @@ protected:
 	wxPoint Cursor;
 	wxPoint Selend;
 	wxPoint Brackets;
+	wxPoint dclickCurPos;
 	bool holding;
 	bool dholding;
 	bool firstdhold;

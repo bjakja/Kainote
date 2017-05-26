@@ -29,13 +29,11 @@ class TagData
 {
 public:
 	TagData(const wxString &name, unsigned int startTextPos);
-	void PutValue(const wxString &name);
-	void PutDrawing(const wxString &name, unsigned int startTextPos);
+	void PutValue(const wxString &name, bool multiValue = false);
 	wxString tagName;
 	wxString value;
-	wxString drawing;
+	bool multiValue;
 	unsigned int startTextPos;
-	unsigned int drawingStartTextPos;
 };
 
 class ParseData
@@ -65,7 +63,7 @@ public:
 	wxString GetCols(int cols, bool tl=false,wxString style="");
 	void Conv(char type,wxString pref="");
 	Dialogue *Copy(bool keepstate=false);
-	void ParseTags(const wxString &pattern, bool plainText = false);
+	void ParseTags(wxString *tags, size_t n, bool plainText = false);
 	void ChangeTimes(int start, int end);
 	void ClearParse();
 	Dialogue();

@@ -366,6 +366,8 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 	bool leftup=event.LeftUp();
 	if(event.ButtonDown()){SetFocus();if(!click){Refresh(false);}}
 
+	//if(wasDoubleClick && event.Moving()){wasDoubleClick=false;}
+
 	if(leftup && (holding||dholding)){
 		holding=dholding=false;
 		if(HasCapture()){ReleaseMouse();}
@@ -422,7 +424,8 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 		if(!event.ShiftDown()){Selend=Cursor;}
 		if(wasDoubleClick){
 			wasDoubleClick=false;
-			if(timeGetTime()-time < 800){
+			
+			if(timeGetTime()-time < 800 && dclickCurPos == event.GetPosition()){
 				//wxLogStatus("trójklik");
 				Cursor.x=0;
 				Cursor.y=0;
@@ -440,7 +443,8 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 
 	if(holding){
 		wxPoint cur;
-		HitTest(event.GetPosition(),&cur);
+		dclickCurPos = event.GetPosition();
+		HitTest(dclickCurPos, &cur);
 		Cursor=cur;
 		//Refresh(false);
 		MakeCursorVisible();
@@ -452,16 +456,13 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 		FindWord(cur.x,&start,&end);
 		if((start==tmpstart && end==tmpend)){return;}
 		tmpstart=start;tmpend=end;
-		//wxLogStatus("pos %i %i %i %i", start, end, oldstart, oldend);
 
 		if(start<oldstart){
 			if(end==oldstart){Selend.x=oldend;Selend.y=FindY(oldend);}
-			//wxLogStatus("mn%i %i", Selend.x, start);
 			Cursor.x=start;
 			Cursor.y=FindY(start);
 		}else{
 			if(oldstart==start){Selend.x=oldstart;Selend.y=FindY(oldstart);}
-			//wxLogStatus("wi%i %i", Selend.x, end);
 			Cursor.x=end;
 			Cursor.y=FindY(end);
 		}

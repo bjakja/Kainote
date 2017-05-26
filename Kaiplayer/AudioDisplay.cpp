@@ -1411,10 +1411,11 @@ void AudioDisplay::CommitChanges (bool nextLine, bool Save, bool moveToEnd) {
 	gtime.NewTime(curEndMS);
 	Edit->EndEdit->SetTime(gtime,true,2);
 	gtime.NewTime(curEndMS - curStartMS);
-	Edit->DurEdit->SetTime(gtime,true,2);
+	Edit->DurEdit->SetTime(gtime,true,1);
 	if(Save){
 		Edit->Send(nextLine);
 		if(!nextLine){Edit->UpdateChars(Edit->TextEdit->GetValue());}
+		((TabPanel *)Edit->GetParent())->Video->RefreshTime();
 	}
 	blockUpdate = false;
 

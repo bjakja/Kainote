@@ -28,15 +28,12 @@ TagData::TagData(const wxString &name, unsigned int _startTextPos)
 	startTextPos = _startTextPos;
 }
 	
-void TagData::PutValue(const wxString &_value)
+void TagData::PutValue(const wxString &_value, bool _multiValue)
 {
 	value = _value;
+	multiValue = _multiValue;
 }
-void TagData::PutDrawing(const wxString &_value, unsigned int _startTextPos)
-{
-	drawing = _value;
-	drawingStartTextPos = _startTextPos;
-}
+
 
 ParseData::ParseData()
 {
@@ -362,18 +359,13 @@ Dialogue *Dialogue::Copy(bool keepstate)
 
 //Remember parse patterns need "tag1|tag2|..." whithout slashes.
 //Remember string position is start of the value, position of tag -=tagname.len+1
-void Dialogue::ParseTags(const wxString &pattern, bool plainText)
+void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 {
 	if(pdata){return;}
-	std::vector<wxString> tags;
-	wxStringTokenizer tkn(pattern,"|",wxTOKEN_STRTOK);
-	while(tkn.HasMoreTokens()){
-		tags.push_back(tkn.GetNextToken());
-	}
 	wxString txt = (TextTl != "")? TextTl : Text;
 	size_t pos=0;
 	size_t plainStart=0;
-	size_t drawingPos=-1;
+	bool hasDrawing=false;
 	size_t len = txt.Len();
 	bool tagsBlock = false;
 	pdata = new ParseData();
@@ -382,9 +374,10 @@ void Dialogue::ParseTags(const wxString &pattern, bool plainText)
 		if(ch=='}'){tagsBlock=false;plainStart=pos+1;}
 		else if(ch=='{' || pos >= len-1){
 			tagsBlock=true;
-			if(plainText && pos!=0 && drawingPos != plainStart){
+			//aby nie skraszowaæ programu odejmuj¹c od 0 przy unsigned dodam 1 do plain start
+			if((plainText || hasDrawing ) && plainStart+1 >= pos){
 				if(pos >= len-1){pos++;}
-				TagData *newTag = new TagData("plain", plainStart);
+				TagData *newTag = new TagData((hasDrawing)? "p" : "plain", plainStart);
 				newTag->PutValue(txt.SubString(plainStart,pos-1));
 				pdata->AddData(newTag);
 			}
@@ -397,7 +390,8 @@ void Dialogue::ParseTags(const wxString &pattern, bool plainText)
 				(slashPos == -1)? bracketPos : (bracketPos == -1)? slashPos : 
 				(bracketPos < slashPos)? bracketPos : slashPos;
 			wxString tag = txt.SubString(pos, tagEnd - 1);
-			for(size_t i = 0; i < tags.size(); i++){
+			if(tag.EndsWith(')')){tag.RemoveLast();}
+			for(size_t i = 0; i < ntags; i++){
 				wxString tagName = tags[i];
 				int tagLen = tagName.Len();
 				if(tag.StartsWith(tagName) && (tag[tagLen] == '(' || 
@@ -406,29 +400,11 @@ void Dialogue::ParseTags(const wxString &pattern, bool plainText)
 					TagData *newTag = new TagData(tagName, pos+tagLen);
 					wxString tagValue = tag.Mid(tagLen);
 					if(tagName == "p"){
-						wxString drawing;
-						int endBracket = txt.find('}', tagEnd);
-						if(endBracket == -1 || endBracket+1 >= len){
-							//idiot forgot about end bracket
-							//drugi przypadek nie ma nic po nawiasie, 
-							//nie zapisujemy tagu, ale kontynujemy szukanie tagów
-							//zwalniamy newTag, bo jest nam niepotrzebny
-							delete newTag;
-							pos = tagEnd - 1; continue;
-						}else{
-							int startBracket = txt.find('{', endBracket+1);
-							if(startBracket == -1){
-								startBracket = len;
-							}
-							drawing = txt.SubString(endBracket+1, startBracket-1);
-							newTag->PutValue(tagValue);
-							newTag->PutDrawing(drawing, endBracket+1);
-							drawingPos = endBracket+1;
-						}
-					
+						hasDrawing = (tagValue.Trim().Trim(false) == "0")? false : true;
+						newTag->PutValue(tagValue);
 					}else if(tag[tagLen] == '('){
 						newTag->startTextPos++;
-						newTag->PutValue(tagValue.After('(').BeforeFirst(')'));
+						newTag->PutValue(tagValue.After('(').BeforeFirst(')'), true);
 					}else{
 						newTag->PutValue(tagValue);
 					}
@@ -444,7 +420,8 @@ void Dialogue::ParseTags(const wxString &pattern, bool plainText)
 //adding this time
 void Dialogue::ChangeTimes(int start, int end)
 {
-	ParseTags("move|t|fad");/*|fade*/
+	wxString tags[] = {"move","t","fad"};
+	ParseTags(tags,3);/*|fade*/
 	size_t replaceMismatch = 0;
 	for(size_t i = 0; i < pdata->tags.size(); i++){
 		TagData *tdata = pdata->tags[i];

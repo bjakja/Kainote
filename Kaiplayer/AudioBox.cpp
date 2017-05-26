@@ -283,7 +283,8 @@ void AudioBox::OnVerticalLink(wxCommandEvent &event) {
 	float value = pow(float(pos)/50.0f,3);
 	if (VerticalLink->GetValue()) {
 		audioDisplay->player->SetVolume(value);
-		VolumeBar->SetValue(pos);
+		//VolumeBar->SetValue(pos);
+		VolumeBar->SetThumbPosition(VerticalZoom->GetThumbPosition());
 	}
 
 	Options.SetBool(AudioLink,VerticalLink->GetValue());
@@ -525,12 +526,15 @@ void AudioBox::OnMouseEvents(wxMouseEvent &event)
 
 	if (left_up && holding) {
 		holding = false;
-		int x=0; 
+		int x=3; 
 		if(sline){
 			sline->GetPosition(&x,&npos);
-			sline->Destroy();}
-		npos+=7;ScreenToClient(&x,&npos);
-		SetMinSize(wxSize(w,npos));
+			sline->Destroy();
+		}
+		//npos+=7;
+		ScreenToClient(&x,&npos);
+		if(npos<150){npos=150;}
+		SetMinSize(wxSize(-1,npos));
 		EditBox* EB= (EditBox*)GetParent();
 		EB->BoxSizer1->Layout();
 		EB->TextEdit->Refresh(false);
@@ -559,8 +563,10 @@ void AudioBox::OnMouseEvents(wxMouseEvent &event)
 	if (holding){
 
 		int npos=event.GetY();
-
-		if(npos!=oldy&&npos>150){
+		EditBox* EB= (EditBox*)GetParent();
+		wxSize ebSize = EB->GetClientSize();
+		int minEBSize = (EB->TextEditTl->IsShown())? 200 : 150;
+		if(npos!=oldy&& npos>150 && ebSize.y-npos > minEBSize){
 			int px=-5, py=npos;
 			ClientToScreen(&px,&py);
 			sline->SetPosition(wxPoint(px,py));

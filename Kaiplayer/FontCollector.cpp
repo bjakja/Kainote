@@ -315,11 +315,13 @@ void FontCollector::GetAssFonts(std::vector<bool> &found, bool check)
 
 	}
 
+	wxString tags[] = {"fn","b","i","p"};
+
 	for(size_t i=0; i<subs->dials.size(); i++)
 	{
 		Dialogue *dial = subs->dials[i];
 		if(dial->IsComment){continue;}
-		dial->ParseTags("fn|b|i|p", true);
+		dial->ParseTags(tags, 4, true);
 		ParseData *pdata = dial->pdata;
 		if(!pdata){continue;}
 		
@@ -588,7 +590,7 @@ void FontCollector::PutChars(const wxString &txt, const wxString &fn)
 	for(size_t i=0; i<txt.Len(); i++)
 	{
 		if(!(ch.find(txt[i])!=ch.end())){
-			ch.insert(txt[i]);//<< move << " ";
+			ch.insert(txt[i]);
 		}
 	}
 }

@@ -39,8 +39,9 @@ public:
 	KaiRadioButton* EndVAtime;
 	KaiChoice *WhichLines;
 	KaiChoice *WhichTimes;
-	KaiCheckBox* Forward;
-	KaiCheckBox* DisplayTimes;
+	KaiRadioButton* Forward;
+	KaiRadioButton* Backward;
+	KaiCheckBox* DisplayFrames;
 	KaiCheckBox* MoveTagTimes;
 
 	MappedButton* AddStyles;
@@ -72,7 +73,8 @@ public:
 	void RefVals(CTwindow *from=NULL);
 	void OnOKClick(wxCommandEvent& event);
 	wxBoxSizer *Main;
-
+	bool SetBackgroundColour(const wxColour &col);
+	bool SetForegroundColour(const wxColour &col);
 
 private:
 
@@ -91,8 +93,8 @@ private:
 	void AudioVideoTime(wxCommandEvent &event);
 	void CollapsePane(wxCommandEvent &event);
 	void DoTooltips();
-	bool SetBackgroundColour(const wxColour &col);
-	bool SetForegroundColour(const wxColour &col);
+	void SaveOptions();
+
 	DECLARE_EVENT_TABLE()
 };
 /*

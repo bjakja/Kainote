@@ -286,7 +286,6 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer1->Add(BoxSizer6, 0, wxLEFT | wxRIGHT, 2);
 	BoxSizer1->Add(TextEdit, 3, wxEXPAND|wxLEFT|wxRIGHT, 4);
 	BoxSizer1->Add(BoxSizer2,0,wxEXPAND|wxALL,2);
-	BoxSizer1->SetMinSize(-1,200);
 	//BoxSizer1->Add(BoxSizer3,0,wxLEFT | wxRIGHT | wxBOTTOM,2);
 	BoxSizer3 = NULL;
 
@@ -1023,6 +1022,15 @@ void EditBox::OnSize(wxSizeEvent& event)
 		SetSizer(BoxSizer1);
 
 		isdetached=true;
+	}
+
+	if(ABox){
+		wxSize aboxSize = ABox->GetClientSize();
+		int minEBSize = (TextEditTl->IsShown())? 200 : 150;
+		if((h - aboxSize.y) < minEBSize){
+			ABox->SetMinSize(wxSize(-1, h - minEBSize));
+			Options.SetInt(AudioBoxHeight, h - minEBSize);
+		}
 	}
 
 	event.Skip();

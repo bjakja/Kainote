@@ -36,10 +36,11 @@ private:
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();} holding = false;};
 	void SendEvent();
 	wxTimer pageLoop;
-	float value;
+	int value;
 	int minRange;
 	int maxRange;
 	int thumbPos;
+	float valueDivide;
 	int thumbSize;
 	int thumbRange;
 	int style;

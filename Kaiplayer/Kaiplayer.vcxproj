@@ -385,6 +385,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Styles.cpp" />
     <ClCompile Include="StyleStore.cpp" />
+    <ClCompile Include="SubsResampleDialog.cpp" />
     <ClCompile Include="VideoToolbar.cpp" />
     <ClCompile Include="VisualMoveAll.cpp" />
     <ClCompile Include="VisualClipRect.cpp" />
@@ -485,6 +486,7 @@
     <ClInclude Include="Grid.h" />
     <ClInclude Include="Styles.h" />
     <ClInclude Include="StyleStore.h" />
+    <ClInclude Include="SubsResampleDialog.h" />
     <ClInclude Include="Toolbar.h" />
     <ClInclude Include="VersionKainote.h" />
     <ClInclude Include="Hotkeys.h" />
