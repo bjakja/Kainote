@@ -876,6 +876,7 @@ void Grid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 			}
 			file->GetSubs()->ddials.push_back(diall);
 			file->GetSubs()->dials[i]=diall;
+			diall->ClearParse();
 		}else{
 			delete diall;
 		}

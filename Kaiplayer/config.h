@@ -154,6 +154,7 @@
 	CG(StyleManagerDetachEditor,)\
 	CG(SubsAutonaming,)\
 	CG(SubsRecent,)\
+	CG(TlModeShowOriginal,)\
 	CG(ToolbarIDs,)\
 	CG(VideoFullskreenOnStart,)\
 	CG(VideoIndex,)\

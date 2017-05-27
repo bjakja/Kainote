@@ -558,5 +558,8 @@
     <None Include="Bitmaps\eyedropper.cur">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="bitmaps\rcdata1.bin">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

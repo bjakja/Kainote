@@ -29,6 +29,7 @@ class StyleList : public KaiScrolledWindow
 		virtual ~StyleList();
 
 		void SetSelection(int sel,bool reset=false);
+		void SetSelections(const wxArrayInt &sels);
 		void Scroll(int step);
 		int GetSelections(wxArrayInt &sels);
 		void SetArray(std::vector<Styles*> *stylearray);

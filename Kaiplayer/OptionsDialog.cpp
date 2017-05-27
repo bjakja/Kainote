@@ -70,7 +70,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 	//Main
 	{
-		const int optsSize = 13;
+		const int optsSize = 14;
 		wxBoxSizer *MainSizer=new wxBoxSizer(wxVERTICAL);
 		wxString labels[optsSize]={_("Wczytywanie posortowanych napisów"),_("Włącz sprawdzanie pisowni"),
 			_("Zaznaczaj linijkę z czasem aktywnej\nlinijki poprzedniej zakładki"),_("Zapisuj napisy z nazwą wideo"),
@@ -79,12 +79,14 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Wyłącz pokazywanie edycji na wideo\n(wymaga ponownego otwarcia zakładek)"),
 			_("Włącz szukanie widocznej linii\npo wyjściu z pełnego ekranu"),
 			_("Włącz przenoszenie wartości pola przesuwania czasów"),_("Zmieniaj aktywną linię przy zaznaczaniu"),
+			_("Pokazuj oryginał w trybie tłumaczenia"),
 			_("Nie ostrzegaj o niezgodności rozdzielczości"),
 			_("Kompatybilność ze starymi skryptami Kainote")};
 		CONFIG opts[optsSize]={GridLoadSortedSubs,SpellcheckerOn,AutoSelectLinesFromLastTab,SubsAutonaming,
 			EditboxSugestionsOnDoubleClick,OpenSubsInNewCard,NoNewLineAfterTimesEdition,
 			DisableLiveVideoEditing,SelectVisibleLineAfterFullscreen,MoveTimesLoadSetTabOptions,
-			GridChangeActiveOnSelection,DontAskForBadResolution,AutomationOldScriptsCompatybility};
+			GridChangeActiveOnSelection,TlModeShowOriginal, DontAskForBadResolution,
+			AutomationOldScriptsCompatybility};
 
 		wxString langopts[2]={"Polski","English"};
 		KaiStaticBoxSizer *langSizer=new KaiStaticBoxSizer(wxVERTICAL, Main, _("Język (wymaga restartu programu)"));

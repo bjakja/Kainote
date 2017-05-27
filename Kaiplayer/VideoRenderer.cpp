@@ -813,11 +813,12 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 				}
 				//VisEdit=false;
 			}else if(pan->Edit->OnVideo){
-				if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
-					wxCommandEvent evt;pan->Edit->OnEdit(evt);
-					//pan->Edit->OnVideo=false;
-				}
-				//OpenSubs(pan->Grid1->SaveText()); pan->Edit->OnVideo=false;
+				//if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
+				//	wxCommandEvent evt;pan->Edit->OnEdit(evt);
+				//	//pan->Edit->OnVideo=false;
+				//}
+				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
+				if(vstate==Playing){ pan->Edit->OnVideo=false;}
 			}	
 			if(vstate==Playing){
 				if(player){

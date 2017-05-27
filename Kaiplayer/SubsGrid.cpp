@@ -2283,6 +2283,7 @@ bool SubsGrid::SetTlMode(bool mode)
 		}
 		AddSInfo("TLMode", "Yes");
 		transl=true;
+		if(Options.GetBool(TlModeShowOriginal)){showtl = true;}
 		Kai->Menubar->Enable(SaveTranslation,true);
 
 		Refresh(false);
@@ -2517,6 +2518,47 @@ wxString *SubsGrid::SaveText()
 		}
 
 	}
+
+	return txt;
+}
+wxString *SubsGrid::GetVisibleSubs()
+{
+	TabPanel *pan=(TabPanel*)GetParent();
+	int _time=pan->Video->Tell();
+	bool toEnd = pan->Video->GetState() == Playing;
+	wxString *txt=new wxString();
+
+	(*txt)<<"[Script Info]\r\n"<<GetSInfos(false);
+	(*txt)<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
+	(*txt)<<GetStyles(false);
+	(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
+
+	Edit->Send(false,true);
+
+	bool noLine = true;
+	bool isTlmode = GetSInfo("TLMode")=="Yes";
+	wxString tlStyle = GetSInfo("TLMode Style");
+	for(int i=0; i<GetCount(); i++){
+		Dialogue *dial=GetDial(i);
+		if(i==Edit->ebrow){ 
+			dial = Edit->line;
+		}
+		if((toEnd && _time <= dial->Start.mstime) || (_time >= dial->Start.mstime && _time <= dial->End.mstime)){
+			//if(trimSels && sel.find(i)!=sel.end()){continue;}
+			if( isTlmode && dial->TextTl!=""){
+				(*txt)<<dial->GetRaw(false,tlStyle);
+				(*txt)<<dial->GetRaw(true);
+			}else{
+				(*txt)<<dial->GetRaw();
+			}
+			noLine = false;
+		}
+
+	}
+	if(noLine){
+		(*txt)<<Dialogue().GetRaw();
+	}
+
 
 	return txt;
 }

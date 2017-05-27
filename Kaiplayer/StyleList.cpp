@@ -364,6 +364,17 @@ void StyleList::SetSelection(int _sel,bool reset)
 	Refresh(false);
 }
 
+void StyleList::SetSelections(const wxArrayInt &_sels)
+{
+	sels.clear();
+	for(size_t i = 0; i< _sels.size(); i++){
+		sels.push_back(_sels[i]);
+	}
+	if(sels.size()>0){
+		scPos=MAX(0,sels[0]-2);}
+	Refresh(false);
+}
+
 
 int StyleList::GetSelections(wxArrayInt &_sels)
 {

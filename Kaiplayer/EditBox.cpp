@@ -1307,16 +1307,6 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		else{lastVisible=visible;}
 		OnVideo=true;
 	}
-	//else if(panel->Video->GetState()==Playing){
-	//	visible=true;
-	//	int vpos = panel->Video->Tell();
-	//	bool vis = (vpos > line->Start.mstime && vpos < line->End.mstime);
-	//	if(vis){text = grid->SaveText();}
-	//	else{visible = false;}
-	//	//else{if(!vis){return;}text=grid->GetVisible(&vis);OnVideo=true;}*/
-	//	OnVideo = false;
-	//}
-
 	
 	if(visible && (panel->Video->IsShown() || panel->Video->isFullscreen)){
 		panel->Video->OpenSubs(text);

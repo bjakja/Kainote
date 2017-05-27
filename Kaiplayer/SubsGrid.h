@@ -108,7 +108,7 @@ public:
 	Dialogue *CopyDial(int i, bool push=true);
 	Dialogue *GetDial(int i);
 	wxString *GetVisible(bool *visible=0, wxPoint *point = NULL, wxArrayInt *selected = NULL);
-	//wxString *GetSubsToEnd(bool *visible=0, wxPoint *point=0);
+	wxString *GetVisibleSubs();
 	void RebuildActorEffectLists();
 	void RefreshIfVisible(int time);
 	void SetVideoLineTime(wxMouseEvent &evt);

@@ -40,47 +40,48 @@ MTextEditor::MTextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& p
 	scPos=0;
 	//SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	SetCursor(wxCURSOR_IBEAM);
-	wxAcceleratorEntry entries[39];
+	wxAcceleratorEntry entries[40];
 	entries[0].Set(wxACCEL_NORMAL, WXK_DELETE,ID_DEL);
 	entries[1].Set(wxACCEL_NORMAL, WXK_BACK,ID_BACK);
 	entries[2].Set(wxACCEL_CTRL, WXK_BACK,ID_CBACK);
-	entries[3].Set(wxACCEL_NORMAL, WXK_LEFT,ID_LEFT);
-	entries[4].Set(wxACCEL_NORMAL, WXK_RIGHT,ID_RIGHT);
-	entries[5].Set(wxACCEL_NORMAL, WXK_UP,ID_UP);
-	entries[6].Set(wxACCEL_NORMAL, WXK_DOWN,ID_DOWN);
-	entries[7].Set(wxACCEL_NORMAL, WXK_HOME,ID_HOME);
-	entries[8].Set(wxACCEL_NORMAL, WXK_END,ID_END);
-	entries[9].Set(wxACCEL_CTRL, WXK_LEFT,ID_CLEFT);
-	entries[10].Set(wxACCEL_CTRL, WXK_RIGHT,ID_CRIGHT);
-	entries[11].Set(wxACCEL_SHIFT, WXK_LEFT,ID_SLEFT);
-	entries[12].Set(wxACCEL_SHIFT, WXK_RIGHT,ID_SRIGHT);
-	entries[13].Set(wxACCEL_SHIFT, WXK_UP,ID_SUP);
-	entries[14].Set(wxACCEL_SHIFT, WXK_DOWN,ID_SDOWN);
-	entries[15].Set(wxACCEL_SHIFT|wxACCEL_CTRL, WXK_LEFT,ID_CSLEFT);
-	entries[16].Set(wxACCEL_SHIFT|wxACCEL_CTRL, WXK_RIGHT,ID_CSRIGHT);
-	entries[17].Set(wxACCEL_SHIFT, WXK_HOME,ID_SHOME);
-	entries[18].Set(wxACCEL_SHIFT, WXK_END,ID_SEND);
-	entries[19].Set(wxACCEL_CTRL, 'A',ID_CTLA);
-	entries[20].Set(wxACCEL_CTRL, 'V',ID_CTLV);
-	entries[21].Set(wxACCEL_CTRL, 'C',ID_CTLC);
-	entries[22].Set(wxACCEL_CTRL, 'X',ID_CTLX);
-	entries[23].Set(wxACCEL_NORMAL, 393,ID_WMENU);
-	entries[24].Set(wxACCEL_NORMAL, 394,ID_WMENU);
-	entries[25].Set(wxACCEL_NORMAL, 395,ID_WMENU);
-	entries[26].Set(wxACCEL_NORMAL, WXK_PAGEDOWN,ID_PDOWN);
-	entries[27].Set(wxACCEL_NORMAL, WXK_PAGEUP,ID_PUP);
-	entries[28].Set(wxACCEL_SHIFT|wxACCEL_CTRL, WXK_END,ID_CSEND);
-	entries[29].Set(wxACCEL_NORMAL, WXK_NUMPAD0,WXK_NUMPAD0+10000);
-	entries[30].Set(wxACCEL_NORMAL, WXK_NUMPAD1,WXK_NUMPAD1+10000);
-	entries[31].Set(wxACCEL_NORMAL, WXK_NUMPAD2,WXK_NUMPAD2+10000);
-	entries[32].Set(wxACCEL_NORMAL, WXK_NUMPAD3,WXK_NUMPAD3+10000);
-	entries[33].Set(wxACCEL_NORMAL, WXK_NUMPAD4,WXK_NUMPAD4+10000);
-	entries[34].Set(wxACCEL_NORMAL, WXK_NUMPAD5,WXK_NUMPAD5+10000);
-	entries[35].Set(wxACCEL_NORMAL, WXK_NUMPAD6,WXK_NUMPAD6+10000);
-	entries[36].Set(wxACCEL_NORMAL, WXK_NUMPAD7,WXK_NUMPAD7+10000);
-	entries[37].Set(wxACCEL_NORMAL, WXK_NUMPAD8,WXK_NUMPAD8+10000);
-	entries[38].Set(wxACCEL_NORMAL, WXK_NUMPAD9,WXK_NUMPAD9+10000);
-	wxAcceleratorTable accel(39, entries);
+	entries[3].Set(wxACCEL_CTRL, WXK_DELETE,ID_CDELETE);
+	entries[4].Set(wxACCEL_NORMAL, WXK_LEFT,ID_LEFT);
+	entries[5].Set(wxACCEL_NORMAL, WXK_RIGHT,ID_RIGHT);
+	entries[6].Set(wxACCEL_NORMAL, WXK_UP,ID_UP);
+	entries[7].Set(wxACCEL_NORMAL, WXK_DOWN,ID_DOWN);
+	entries[8].Set(wxACCEL_NORMAL, WXK_HOME,ID_HOME);
+	entries[9].Set(wxACCEL_NORMAL, WXK_END,ID_END);
+	entries[10].Set(wxACCEL_CTRL, WXK_LEFT,ID_CLEFT);
+	entries[11].Set(wxACCEL_CTRL, WXK_RIGHT,ID_CRIGHT);
+	entries[12].Set(wxACCEL_SHIFT, WXK_LEFT,ID_SLEFT);
+	entries[13].Set(wxACCEL_SHIFT, WXK_RIGHT,ID_SRIGHT);
+	entries[14].Set(wxACCEL_SHIFT, WXK_UP,ID_SUP);
+	entries[15].Set(wxACCEL_SHIFT, WXK_DOWN,ID_SDOWN);
+	entries[16].Set(wxACCEL_SHIFT|wxACCEL_CTRL, WXK_LEFT,ID_CSLEFT);
+	entries[17].Set(wxACCEL_SHIFT|wxACCEL_CTRL, WXK_RIGHT,ID_CSRIGHT);
+	entries[18].Set(wxACCEL_SHIFT, WXK_HOME,ID_SHOME);
+	entries[19].Set(wxACCEL_SHIFT, WXK_END,ID_SEND);
+	entries[20].Set(wxACCEL_CTRL, 'A',ID_CTLA);
+	entries[21].Set(wxACCEL_CTRL, 'V',ID_CTLV);
+	entries[22].Set(wxACCEL_CTRL, 'C',ID_CTLC);
+	entries[23].Set(wxACCEL_CTRL, 'X',ID_CTLX);
+	entries[24].Set(wxACCEL_NORMAL, 393,ID_WMENU);
+	entries[25].Set(wxACCEL_NORMAL, 394,ID_WMENU);
+	entries[26].Set(wxACCEL_NORMAL, 395,ID_WMENU);
+	entries[27].Set(wxACCEL_NORMAL, WXK_PAGEDOWN,ID_PDOWN);
+	entries[28].Set(wxACCEL_NORMAL, WXK_PAGEUP,ID_PUP);
+	entries[29].Set(wxACCEL_SHIFT|wxACCEL_CTRL, WXK_END,ID_CSEND);
+	entries[30].Set(wxACCEL_NORMAL, WXK_NUMPAD0,WXK_NUMPAD0+10000);
+	entries[31].Set(wxACCEL_NORMAL, WXK_NUMPAD1,WXK_NUMPAD1+10000);
+	entries[32].Set(wxACCEL_NORMAL, WXK_NUMPAD2,WXK_NUMPAD2+10000);
+	entries[33].Set(wxACCEL_NORMAL, WXK_NUMPAD3,WXK_NUMPAD3+10000);
+	entries[34].Set(wxACCEL_NORMAL, WXK_NUMPAD4,WXK_NUMPAD4+10000);
+	entries[35].Set(wxACCEL_NORMAL, WXK_NUMPAD5,WXK_NUMPAD5+10000);
+	entries[36].Set(wxACCEL_NORMAL, WXK_NUMPAD6,WXK_NUMPAD6+10000);
+	entries[37].Set(wxACCEL_NORMAL, WXK_NUMPAD7,WXK_NUMPAD7+10000);
+	entries[38].Set(wxACCEL_NORMAL, WXK_NUMPAD8,WXK_NUMPAD8+10000);
+	entries[39].Set(wxACCEL_NORMAL, WXK_NUMPAD9,WXK_NUMPAD9+10000);
+	wxAcceleratorTable accel(40, entries);
 	SetAcceleratorTable(accel);
 	Connect(ID_DEL,ID_PUP,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&MTextEditor::OnAccelerator);
 	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
@@ -216,11 +217,17 @@ void MTextEditor::OnAccelerator(wxCommandEvent& event)
 	int len;
 	int ID=event.GetId();
 	switch(ID){
+	case ID_CDELETE:
 	case ID_CBACK:
-		if(Cursor.x==0){return;}
+		//len = MText.Len();
+		if((ID==ID_CBACK && Cursor.x==0) || (ID==ID_CDELETE && Cursor.x>=MText.Len())){return;}
 		Selend.x=Cursor.x;
-		FindWord((Cursor.x<2)? 0 : Cursor.x-1 ,&Cursor.x,&len);
-		if(Cursor.x==1 && MText[0]==' '){Cursor.x--;}
+		if(ID==ID_CBACK){
+			FindWord((Cursor.x<2)? 0 : Cursor.x-1, &Cursor.x, &len);
+			if(Cursor.x==1 && MText[0]==' '){Cursor.x--;}
+		}else{
+			FindWord(Cursor.x, &len, &Selend.x);
+		}
 	case ID_DEL:
 	case ID_BACK:
 		if(Cursor!=Selend){
@@ -242,7 +249,7 @@ void MTextEditor::OnAccelerator(wxCommandEvent& event)
 		}
 		len=wraps.size();
 		CalcWrap();
-		//wxLogStatus("cursorx %i wraps %i",Cursor.x, wraps[Cursor.y]);
+		
 		if(Cursor.x<wraps[Cursor.y] || (Cursor.x==wraps[Cursor.y] && len != wraps.size())){Cursor.y--;}
 		else if(Cursor.x>wraps[Cursor.y+1]){Cursor.y++;}
 		Selend=Cursor;

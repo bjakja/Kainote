@@ -40,6 +40,7 @@ class StyleStore: public KaiDialog
 		MappedButton* close;
 		MappedButton* assNew;
 		MappedButton* assCopy;
+		MappedButton* assEdit;
 		MappedButton* assLoad;
 		MappedButton* storeSort;
 		MappedButton* assDelete;
@@ -48,6 +49,7 @@ class StyleStore: public KaiDialog
 		MappedButton* newCatalog;
 		MappedButton* storeNew;
 		MappedButton* storeCopy;
+		MappedButton* storeEdit;
 		MappedButton* storeLoad;
 		MappedButton* storeDelete;
 		MappedButton* SClean;
@@ -96,6 +98,8 @@ class StyleStore: public KaiDialog
 		void OnSwitchLines(wxCommandEvent& event);
 		void OnCleanStyles(wxCommandEvent& event);
 		void OnDetachEdit(wxCommandEvent& event);
+		void OnStyleMove(wxCommandEvent& event);
+
 		bool stass;
 		bool dummy;
 		bool detachedEtit;
@@ -115,6 +119,7 @@ enum{
 	ID_STORESTYLES,
 	ID_STORENEW,
 	ID_STORECOPY,
+	ID_STOREEDIT,
 	ID_STORELOAD,
 	ID_STOREDEL,
 	ID_STORESORT,
@@ -122,12 +127,21 @@ enum{
 	ID_ADDTOASS,
 	ID_ASSNEW,
 	ID_ASSCOPY,
+	ID_ASSEDIT,
 	ID_ASSLOAD,
 	ID_ASSDEL,
 	ID_ASSSORT,
 	ID_ASSCLEAN,
 	ID_CONF,
 	ID_CLOSEE,
+	ID_ASS_MOVE_TO_START,
+	ID_ASS_MOVE_UP,
+	ID_ASS_MOVE_DOWN,
+	ID_ASS_MOVE_TO_END,
+	ID_STORE_MOVE_TO_START,
+	ID_STORE_MOVE_UP,
+	ID_STORE_MOVE_DOWN,
+	ID_STORE_MOVE_TO_END,
 	ID_DETACH
 	};
 

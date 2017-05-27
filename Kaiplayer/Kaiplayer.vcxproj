@@ -529,6 +529,7 @@
     <None Include="Bitmaps\blank.cur" />
     <None Include="Bitmaps\button_link.bmp" />
     <None Include="Bitmaps\eyedropper.cur" />
+    <None Include="bitmaps\rcdata1.bin" />
     <None Include="kai.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
