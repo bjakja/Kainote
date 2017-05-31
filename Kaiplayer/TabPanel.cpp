@@ -75,8 +75,8 @@ void TabPanel::SetAccels()
 
 	std::vector<wxAcceleratorEntry> eentries;
 	eentries.resize(2);
-	eentries[0].Set(wxACCEL_CTRL, WXK_NUMPAD_ENTER, MENU_ZATW);
-    eentries[1].Set(wxACCEL_NORMAL, WXK_NUMPAD_ENTER, MENU_NLINE);
+	eentries[0].Set(wxACCEL_CTRL, WXK_NUMPAD_ENTER, MENU_COMMIT);
+    eentries[1].Set(wxACCEL_NORMAL, WXK_NUMPAD_ENTER, MENU_NEWLINE);
 	
 	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
 		int id=cur->first.id;
@@ -144,10 +144,11 @@ void TabPanel::OnMouseEvent(wxMouseEvent& event)
 			Video->CalcSize(&ww,&hh,w,npos,false,true);
 			Video->SetMinSize(wxSize(ww,hh+Video->panelHeight));
 			Options.SetCoords(VideoWindowSize,ww,hh+Video->panelHeight);
-		}else{Edit->SetMinSize(wxSize(w+(npos-h),npos));}
+		}else{Edit->SetMinSize(wxSize(-1,npos));}
 		BoxSizer1->Layout();
-		//if(Video->GetState()==Paused){Video->Render();}
-		
+		if(event.ShiftDown()){
+			SetVideoWindowSizes(w, npos);
+		}
 	}
 
 	if (left_up && !holding) {
@@ -190,6 +191,20 @@ void TabPanel::OnFocus(wxChildFocusEvent& event)
 	}
 }
 
+void TabPanel::SetVideoWindowSizes(int w, int h)
+{
+	Notebook *nb = Notebook::GetTabs(); 
+	for(int i = 0; i < nb->Size(); i++){
+		if(i == nb->iter){continue;}
+		TabPanel *tab = nb->Page(i);
+		if(tab->Video->GetState()!=None && tab->Video->IsShown()){
+			int ww,hh;
+			tab->Video->CalcSize(&ww, &hh, w, h, false, true);
+			tab->Video->SetMinSize(wxSize(ww,hh+tab->Video->panelHeight));
+		}else{tab->Edit->SetMinSize(wxSize(-1, h));}
+		tab->BoxSizer1->Layout();
+	}
+}
 
 BEGIN_EVENT_TABLE(TabPanel,wxWindow)
      EVT_MOUSE_EVENTS(TabPanel::OnMouseEvent)

@@ -29,6 +29,7 @@ public:
 	void SetValue(int _value);
 	int GetThumbPosition();
 	void SetThumbPosition(int position);
+	void SetToolTip(const wxString &_tip){tip = _tip; wxWindow::SetToolTip(_tip);}
 private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);
@@ -50,6 +51,7 @@ private:
 	bool pushed;
 	bool holding;
 	wxBitmap *bmp;
+	wxString tip;
 	DECLARE_EVENT_TABLE()
 };
 

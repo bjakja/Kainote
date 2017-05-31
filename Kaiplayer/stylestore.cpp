@@ -673,10 +673,10 @@ void StyleStore::StyleonVideo(Styles *styl, bool fullskreen)
 		tmpdial.Text=_("Linijka testowa stylu");
 		tmpdial.Start.NewTime(time-200);
 		tmpdial.End.NewTime(time+200);
-		(*txt)<<tmpdial.GetRaw();
+		tmpdial.GetRaw(txt);
 	}
 	else{
-		(*txt)<<grid->GetDial(wl)->GetRaw();
+		grid->GetDial(wl)->GetRaw(txt);
 
 	}
 	//grid->SaveFile(Kai->GetTab()->tnppath,false);

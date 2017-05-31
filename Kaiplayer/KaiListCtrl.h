@@ -30,14 +30,17 @@ enum{
 	TYPE_COLOR
 };
 
+class KaiListCtrl;
+
 class Item{
 public:
 	Item(byte _type=TYPE_TEXT){type=_type;modified=false;}
 	virtual ~Item(){	
 	}
-	virtual void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList){};
-	virtual void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList){};
+	virtual void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL){};
+	virtual void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList){};
 	virtual void Save(){};
+	virtual Item* Copy(){return NULL;}
 	bool modified;
 	byte type;
 	wxString name;
@@ -48,10 +51,11 @@ public:
 	ItemText(const wxString &txt) : Item(){name = txt;}
 	virtual ~ItemText(){		
 	}
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList){};
-	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL){};
+	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	wxString GetName(){return name;}
 	void Save(){};
+	Item* Copy(){return new ItemText(*this);}
 };
 
 class ItemColor : public Item{
@@ -59,9 +63,10 @@ public:
 	ItemColor(const AssColor &color, int i) : Item(TYPE_COLOR){col = color;colOptNum=i;}
 	virtual ~ItemColor(){	
 	}
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList);
-	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL);
+	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	void Save();
+	Item* Copy(){return new ItemColor(*this);}
 	AssColor col;
 	int colOptNum;
 };
@@ -70,9 +75,10 @@ class ItemCheckBox : public Item{
 public:
 	ItemCheckBox(bool check, const wxString &_label) : Item(TYPE_CHECKBOX){modified = check; enter=false; name = _label;}
 	virtual ~ItemCheckBox(){}
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, wxWindow *theList);
-	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, wxWindow *theList);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL);
+	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	void Save(){};
+	Item* Copy(){return new ItemCheckBox(*this);}
 	bool enter;
 };
 
@@ -96,7 +102,34 @@ public:
 	std::vector< Item*> row;
 
 };
-
+class List{
+public:
+	List(){};
+	~List(){
+		for(auto itg = garbage.begin(); itg != garbage.end(); itg++){
+			delete *itg;
+		}
+	}
+	void push_back(ItemRow* row){
+		itemList.push_back(row);
+		garbage.push_back(row);
+	};
+	ItemRow* operator [](const size_t num){
+		return itemList[num];
+	}
+	const size_t size(){return itemList.size();}
+	List *Copy(){
+		List *copy = new List();
+		copy->itemList = itemList;
+		return copy;
+	}
+	void Change(size_t pos, ItemRow* row){
+		itemList[pos] = row;
+		garbage.push_back(row);
+	}
+	std::vector< ItemRow*> itemList;
+	std::vector< ItemRow*> garbage;
+};
 
 class KaiListCtrl : public KaiScrolledWindow
 {
@@ -109,34 +142,40 @@ public:
 	KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, const wxPoint &pos = wxDefaultPosition, 
 		const wxSize &size = wxDefaultSize, int style = 0);
 	virtual ~KaiListCtrl(){
-		for(auto it = itemList.begin(); it != itemList.end(); it++){
+		for(auto it = historyList.begin(); it != historyList.end(); it++){
 			delete *it;
 		}
-		itemList.clear();
+		historyList.clear();
+		delete itemList;
 		if(bmp){delete bmp;}
 	};
 	int InsertColumn(size_t col, const wxString &name, byte type, int width);
 	int AppendItem(Item *item); 
 	int SetItem(size_t row, size_t col, Item *item); 
-	Item *GetItem(size_t row, size_t col) const;
+	Item *GetItem(size_t row, size_t col);
 	void SaveAll(int col);
-	void SetModified(bool modif){modified = modif;}
+	void SetModified(bool modif){modified = modif; /*if(modif){PushHistory();}*/}
 	bool GetModified(){return modified;}
 	int FindItem(int column, const wxString &textItem);
 	void ScrollTo(int row);
-	size_t GetCount(){return itemList.size();}
+	size_t GetCount(){return itemList->size();}
 	void SetSelection(int selection){sel = selection; Refresh(false);}
 	int GetSelection(){return sel;}
+	void PushHistory();
+	void Undo(wxCommandEvent &evt);
+	void Redo(wxCommandEvent &evt);
+	void StartEdition();
+	Item *CopyRow(int y, int x, bool pushBack = false);
 private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnScroll(wxScrollWinEvent& event);
-	//void OnMouseLost(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();} /*holding=false; */}
 	void OnEraseBackground(wxEraseEvent &evt){};
 	int GetMaxWidth();
 	ItemRow header;
-	std::vector< ItemRow*> itemList;
+	List *itemList;
+	std::vector<List*> historyList;
 	wxArrayInt widths;
 	wxBitmap *bmp;
 	int sel;
@@ -148,6 +187,7 @@ private:
 	int scPosH;
 	int lineHeight;
 	int headerHeight;
+	int iter;
 	bool modified;
 	bool hasArrow;
 

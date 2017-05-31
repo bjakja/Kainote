@@ -170,13 +170,14 @@ void Position::ChangeMultiline(bool all)
 			if(istxttl) {
 				Cpy.TextTl = txt;
 				wxString tlLines;
-				tlLines<<Cpy.GetRaw(true);
-				tlLines<<Cpy.GetRaw(false,tab->Grid1->GetSInfo("TLMode Style"));
+				Cpy.GetRaw(&tlLines, true);
+				Cpy.GetRaw(&tlLines, false,tab->Grid1->GetSInfo("TLMode Style"));
 				dtxt->insert(selPositions[i] + moveLength,tlLines);
 				moveLength += tlLines.Len();
 			}else{
 				Cpy.Text = txt;
-				wxString thisLine = Cpy.GetRaw();
+				wxString thisLine;
+				Cpy.GetRaw(&thisLine);
 				dtxt->insert(selPositions[i] + moveLength,thisLine);
 				moveLength += thisLine.Len();
 			}

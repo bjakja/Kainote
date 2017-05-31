@@ -24,15 +24,15 @@
 #include "KaiDialog.h"
 
 enum{
-	GLOBAL_HOTKEY='G',
-	GRID_HOTKEY='N',
-	EDITBOX_HOTKEY='E',
-	VIDEO_HOTKEY='W',
-	AUDIO_HOTKEY='A'
+	GLOBAL_HOTKEY=0,
+	GRID_HOTKEY,
+	EDITBOX_HOTKEY,
+	VIDEO_HOTKEY,
+	AUDIO_HOTKEY
 };
 class idAndType{
 public:
-	idAndType(int _id=0, char _type='G'){id= _id; Type= _type;}
+	idAndType(int _id=0, char _type=GLOBAL_HOTKEY){id= _id; Type= _type;}
 	bool operator < (const idAndType match){ return id < match.id;};
 	bool operator > (const idAndType match){ return id > match.id;};
 	bool operator <= (const idAndType match){ return id <= match.id;};
@@ -64,10 +64,10 @@ bool operator != ( const int match1, const idAndType &match);
 
 class hdata{
 public:
-	hdata(wxString accName, wxString _Accel){
+	hdata(const wxString &accName, const wxString &_Accel){
 		Name=accName; Accel=_Accel;
 	}
-	hdata(wxString acc){
+	hdata(const wxString &acc){
 		Accel=acc;
 	}
 	hdata(){}
@@ -103,7 +103,8 @@ public:
 	wxAcceleratorEntry GetHKey(const idAndType itype, const hdata *hkey=0);
 	wxString GetMenuH(const idAndType &itype, const wxString &name="");
 	void FillTable();
-	void ResetKey(const idAndType *itype, int id=0, char type='G');
+	void ResetKey(const idAndType *itype, int id=0, char type=GLOBAL_HOTKEY);
+	const wxString &GetDefaultKey(const idAndType &itype);
 	int OnMapHkey(int id, wxString name,wxWindow *parent, char hotkeyWindow = GLOBAL_HOTKEY, bool showWindowSelection=true);
 	int OnMapHkey(int *returnId, wxString name,wxWindow *parent);
 	void SetAccels(bool all=false);

@@ -41,6 +41,7 @@ class TabPanel : public wxWindow
 		wxBoxSizer* BoxSizer3;
 
 		void SetAccels();
+		void SetVideoWindowSizes(int w, int h);
 
 		bool edytor;
 		

@@ -188,6 +188,9 @@ enum{
 	XX( SplitLine, ) \
 	XX( StartDifference, ) \
 	XX( EndDifference, ) \
+	XX( FindNextDoubtful, ) \
+	XX( FindNextUntranslated, ) \
+	XX( SetDoubtful, ) \
 	XX( InsertBefore,=5555 ) \
 	XX( InsertAfter, ) \
 	XX( InsertBeforeVideo, ) \

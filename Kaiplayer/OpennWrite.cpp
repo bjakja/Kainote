@@ -110,11 +110,11 @@ void OpenWrite::PartFileWrite(const wxString &parttext)
 	if(!file.IsOpened()){wxLogStatus(_("Plik nie został otwarty."));return;}
 	if(isfirst){
 		wchar_t bom = 0xFEFF;
-		if(!file.Write(wxString(bom) + parttext,wxConvUTF8)){wxLogStatus(_("Nie można zapisać do pliku."));};
+		if(!file.Write(wxString(bom) + parttext/*,wxConvUTF8*/)){wxLogStatus(_("Nie można zapisać do pliku."));};
 		isfirst=false;
 		return;
 	}
-	if(!file.Write(parttext,wxConvUTF8)){wxLogStatus(_("Nie można zapisać do pliku."));};
+	if(!file.Write(parttext/*,wxConvUTF8*/)){wxLogStatus(_("Nie można zapisać do pliku."));};
 }
 
 void OpenWrite::CloseFile()

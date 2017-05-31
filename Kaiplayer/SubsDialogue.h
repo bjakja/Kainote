@@ -58,16 +58,16 @@ public:
 	bool NonDial, IsComment;
 	ParseData *pdata;
 
-	void SetRaw(wxString ldial);
-	wxString GetRaw(bool tl=false,wxString style="");
-	wxString GetCols(int cols, bool tl=false,wxString style="");
-	void Conv(char type,wxString pref="");
+	void SetRaw(const wxString &ldial);
+	void GetRaw(wxString *txt,bool tl=false,const wxString &style="");
+	wxString GetCols(int cols, bool tl=false,const wxString &style="");
+	void Conv(char type,const wxString &pref="");
 	Dialogue *Copy(bool keepstate=false);
 	void ParseTags(wxString *tags, size_t n, bool plainText = false);
 	void ChangeTimes(int start, int end);
 	void ClearParse();
 	Dialogue();
-	Dialogue(wxString ldial,wxString txttl="");
+	Dialogue(const wxString &ldial,const wxString &txttl="");
 	~Dialogue();
 };
 

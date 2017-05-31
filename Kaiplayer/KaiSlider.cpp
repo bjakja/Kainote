@@ -187,11 +187,11 @@ void KaiSlider::OnMouseEvent(wxMouseEvent &evt)
 	if(!holding){
 		if(!enter && coord >= thumbPos && coord <= thumbPos+thumbSize && coord2 >= 0 && coord2 <= size2 ){
 			enter = true;
-			SetToolTip(std::to_string(GetValue()));
+			wxWindow::SetToolTip(std::to_string(GetValue()));
 			Refresh(false);
 		}else if(enter && (coord < thumbPos || coord > thumbPos+thumbSize || coord2 < 0 || coord2 > size2)){
 			enter = false;
-			UnsetToolTip();
+			wxWindow::SetToolTip(tip);
 			Refresh(false);
 		}
 	}
@@ -260,7 +260,7 @@ void KaiSlider::SendEvent()
 	value = (thumbPos / valueDivide)+0.5f;
 	Refresh(false);
 	Update();
-	SetToolTip(std::to_string(GetValue()));
+	wxWindow::SetToolTip(std::to_string(GetValue()));
 	wxScrollEvent evt2(wxEVT_SCROLL_THUMBTRACK, GetId()); 
 	evt2.SetPosition(GetValue());
 	AddPendingEvent(evt2);

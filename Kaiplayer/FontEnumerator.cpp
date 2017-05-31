@@ -112,7 +112,7 @@ void FontEnumerator::RefreshVideo()
 	// nigdy nie pozwól by zmieni³a siê zak³adka gdy odœwie¿amy albo odœwie¿amy napisy na innej zak³adce ni¿ widoczna.
 	TabPanel *tab = parent->GetTab();
 	if(tab->Video->GetState()!=None){
-		tab->Video->OpenSubs(tab->Grid1->SaveText());
+		tab->Video->OpenSubs(tab->Grid1->SaveText(),true,true);
 		tab->Video->Render();
 	}
 }

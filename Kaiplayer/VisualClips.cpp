@@ -39,7 +39,7 @@ ClipPoint::ClipPoint(float _x, float _y, wxString _type, bool isstart)
 	isSelected=false;
 }
 	
-bool ClipPoint::IsInPos(wxPoint pos, int diff)
+bool ClipPoint::IsInPos(D3DXVECTOR2 pos, float diff)
 {
 	return (abs(pos.x-x) <= diff && abs(pos.y-y) <= diff);
 }
@@ -225,7 +225,7 @@ void DrawingAndClip::SetCurVisual()
 			Points[i].y -= xyoffset.y;
 		}
 	}
-	
+	pointArea = 5.f/ zoomScale.x;
 }
 	
 wxString DrawingAndClip::GetVisual()
@@ -269,24 +269,24 @@ void DrawingAndClip::SetPos(int x, int y)
 }
 
 // pos in screen position
-int DrawingAndClip::CheckPos(wxPoint pos, bool retlast, bool wsp)
+int DrawingAndClip::CheckPos(D3DXVECTOR2 pos, bool retlast, bool wsp)
 {
-	if(wsp){pos.x =(pos.x*wspw)-_x; pos.y =(pos.y*wsph)-_y;}
+	if(wsp){pos.x = (pos.x*wspw)-_x; pos.y = (pos.y*wsph)-_y;}
 	for(size_t i=0; i<Points.size(); i++)
 	{
-		if(Points[i].IsInPos(pos,5)){return (retlast && i==0)? Points.size() : i;}
+		if(Points[i].IsInPos(pos, pointArea)){return (retlast && i==0)? Points.size() : i;}
 	}
 	return (retlast)? Points.size() : -1;
 }
 
 // pos in clip position
-void DrawingAndClip::MovePoint(wxPoint pos, int point)
+void DrawingAndClip::MovePoint(D3DXVECTOR2 pos, int point)
 {
 	Points[point].x=pos.x;
 	Points[point].y=pos.y;
 }
 // pos in screen position	
-void DrawingAndClip::AddCurve(wxPoint pos, int whereis, wxString type)
+void DrawingAndClip::AddCurve(D3DXVECTOR2 pos, int whereis, wxString type)
 {
 	pos.x =(pos.x*wspw)-_x; pos.y =(pos.y*wsph)-_y;
 	wxPoint oldpos;
@@ -302,7 +302,7 @@ void DrawingAndClip::AddCurve(wxPoint pos, int whereis, wxString type)
 	acpoint=Points[whereis+2];
 }
 // pos in screen position
-void DrawingAndClip::AddCurvePoint(wxPoint pos, int whereis)
+void DrawingAndClip::AddCurvePoint(D3DXVECTOR2 pos, int whereis)
 {
 	if(Points[whereis-1].type=="s"||((int)Points.size()>whereis && Points[whereis].type=="s"))
 	{
@@ -311,13 +311,13 @@ void DrawingAndClip::AddCurvePoint(wxPoint pos, int whereis)
 	else{wxBell();}
 }
 // pos in screen position	
-void DrawingAndClip::AddLine(wxPoint pos, int whereis)
+void DrawingAndClip::AddLine(D3DXVECTOR2 pos, int whereis)
 {
 	Points.insert(Points.begin()+whereis, ClipPoint((pos.x*wspw)-_x, (pos.y*wsph)-_y,"l",true));
 	acpoint=Points[whereis];
 }
 // pos in screen position	
-void DrawingAndClip::AddMove(wxPoint pos, int whereis)
+void DrawingAndClip::AddMove(D3DXVECTOR2 pos, int whereis)
 {
 	Points.insert(Points.begin()+whereis, ClipPoint((pos.x*wspw)-_x, (pos.y*wsph)-_y,"m",true));
 	acpoint=Points[whereis];
@@ -488,14 +488,13 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	if(blockevents){return;}
 	event.GetPosition(&x,&y);
 
-	int zx = (x/zoomScale.x) + zoomMove.x;
-	int zy = (y/zoomScale.y) + zoomMove.y;
-	wxPoint xy=wxPoint(zx, zy);
+	float zx = (x/zoomScale.x) + zoomMove.x;
+	float zy = (y/zoomScale.y) + zoomMove.y;
+	D3DXVECTOR2 xy(zx, zy);
 	bool click=event.LeftDown();
 	bool leftisdown = event.LeftIsDown();
 	bool right=event.RightDown();
 	bool ctrl=event.ControlDown();
-	//if(click){wxLogStatus("click");}
 	size_t psize = Points.size();
 	
 	if(!event.ButtonDown() && !leftisdown){
@@ -557,7 +556,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		for(size_t i = 0; i < psize; i++)
 		{
 			float pointx=Points[i].wx(this), pointy=Points[i].wy(this);
-			if(abs(pointx-zx)<5 && abs(pointy-zy)<5)
+			if(abs(pointx-zx) < pointArea && abs(pointy-zy) < pointArea)
 			{
 				int j = i;
 				int er = 1;
@@ -622,7 +621,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		for(size_t i=0; i < psize; i++)
 		{
 			float pointx=Points[i].wx(this), pointy=Points[i].wy(this);
-			if(abs(pointx-zx)<5 && abs(pointy-zy)<5)
+			if(abs(pointx-zx)<pointArea && abs(pointy-zy)<pointArea)
 			{
 				if(!acpoint.isSelected){ChangeSelection();}
 				lastpoint = acpoint = Points[i];

@@ -27,6 +27,112 @@
 #include "OpennWrite.h"
 #include "KaiMessageBox.h"
 
+void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
+{
+	wxSize ex = dc->GetTextExtent(accel);
+	
+	if(modified){dc->SetTextForeground(Options.GetColour(WindowWarningElements));}
+	wxRect cur(x, y, width - 8, height);
+	dc->SetClippingRegion(cur);
+	dc->DrawLabel(accel,cur,wxALIGN_CENTER_VERTICAL);
+	dc->DestroyClippingRegion();
+	if(modified){dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled()? WindowText : WindowTextInactive));}
+}
+
+void ItemHotkey::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL)
+{
+	if(event.LeftDClick()){
+		int inum=theList->GetSelection();
+		if(inum<0){return;}
+		OnMapHotkey(theList, inum);
+	}
+}
+
+void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
+{
+	HkeysDialog hkd(theList,name, hotkeyId.Type, !name.StartsWith("Script") );
+	
+	if(hkd.ShowModal()==wxID_OK){
+		
+		wxString hotkey = accel;
+		const idAndType *itype=NULL;
+		for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
+			if(cur->second.Name == name){
+				if(itype){delete itype;}
+				itype= new idAndType(cur->first.id, hkd.type);
+			}
+
+			if(cur->second.Accel == hkd.hotkey && (cur->first.Type == hkd.type) ){
+				KaiMessageDialog msg(theList, 
+					wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
+					cur->second.Name), _("Uwaga"), wxYES_NO|wxCANCEL);
+				msg.SetYesLabel (_("Zamień skróty"));
+				msg.SetNoLabel (_("Usuń skrót"));
+				int result = msg.ShowModal();
+				if(result!=wxCANCEL){
+					if(result==wxNO){hotkey="";}
+					int nitem =theList->FindItem(0, wxString(cur->first.Type) + " " + cur->second.Name);
+					if(nitem>=0){
+						ItemHotkey* item = (ItemHotkey*)theList->CopyRow(nitem, 1);
+						item->accel = hotkey;
+						item->modified = true;
+						theList->Refresh(false);
+					}
+				}else{ if(itype){delete itype; itype = NULL;} return;}
+			}
+		}
+
+		if(!itype){return;}
+		if(hotkeyId.Type != hkd.type){
+			int nitem = theList->FindItem(0, wxString(hkd.type) + " " + name);
+			if(nitem<0){
+				ItemHotkey* item = (ItemHotkey*)theList->CopyRow(nitem, 1, true);
+				item->accel = hkd.hotkey;
+				item->modified = true;
+				int pos = theList->GetCount();
+				theList->ScrollTo(pos);
+				theList->SetSelection(pos);
+				goto done;
+			}
+			ItemHotkey* item = (ItemHotkey*)theList->CopyRow(nitem, 1);
+			item->accel = hkd.hotkey;
+			item->modified = true;
+			theList->ScrollTo(nitem+1);
+			theList->SetSelection(nitem);
+			goto done;
+		}
+		ItemHotkey* item = new ItemHotkey(*this);
+		item->accel = hkd.hotkey;
+		item->modified = true;
+		theList->Refresh(false);
+done:
+		delete itype; itype = NULL;
+	}
+}
+
+void ItemHotkey::OnResetHotkey(KaiListCtrl *theList, int y)
+{
+	const wxString &defKet = Hkeys.GetDefaultKey(hotkeyId);
+	Item *itemKey = theList->CopyRow(y,1);
+	((ItemHotkey*)itemKey)->accel = defKet;
+	theList->Refresh();
+
+}
+	
+void ItemHotkey::OnDeleteHotkey(KaiListCtrl *theList, int y)
+{
+	Item *itemKey = theList->CopyRow(y,1);
+	((ItemText*)itemKey)->name = "";
+	theList->Refresh();
+}
+
+void ItemHotkey::Save()
+{
+	if(modified){
+		Hkeys.SetHKey(hotkeyId, name, accel);
+		modified=false;
+	}
+}
 
 OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	: KaiDialog(parent,-1,_("Opcje"))
@@ -298,11 +404,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	//Hotkeys
 	{
 		wxBoxSizer *HkeysSizer=new wxBoxSizer(wxVERTICAL);
-		Shortcuts = new KaiListCtrl(Hotkeyss,26667,wxDefaultPosition,wxDefaultSize,wxLC_REPORT | wxLC_SINGLE_SEL);
+		Shortcuts = new KaiListCtrl(Hotkeyss,26667, wxDefaultPosition);
 		Shortcuts->InsertColumn(0,_("Funkcja"),TYPE_TEXT,220);
 		Shortcuts->InsertColumn(1,_("Skrót"),TYPE_TEXT,120);
-		Connect(26667,LIST_ITEM_DOUBLECLICKED,(wxObjectEventFunction)&OptionsDialog::OnMapHkey);
-		//Connect(26667,LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);		
+		//Connect(26667,LIST_ITEM_DOUBLECLICKED,(wxObjectEventFunction)&OptionsDialog::OnMapHkey);
+		//Connect(26667,LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);
+		wxString windowNames[] = {_("Globalny"),_("Napisy"),_("Edytor"),_("Wideo"),_("Audio")};
 
 		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){KaiMessageBox(_("Nie można wczytać skrótów klawiszowych audio"), _("Błąd"));}
 
@@ -320,14 +427,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 				if(tmpkey!=_hkeys.end()){
 					cur->second.Name = tmpkey->second.Name;
 				}else{
-					wxString gnewa = "GNEWA";
-					for(int i=0; i<5; i++){
-						char window = gnewa[i];
+					for(int window=0; window<5; window++){
 						if(window == cur->first.Type){
 							continue;
 						}else{
 							auto tmpkey = _hkeys.find(idAndType(cur->first.id, window));
-							if(tmpkey!=_hkeys.end()){// && tmpkey->second.Name!=""
+							if(tmpkey!=_hkeys.end()){
 								cur->second.Name = tmpkey->second.Name;
 								break;
 							}
@@ -337,11 +442,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 			}
 
-			wxString name=wxString(cur->first.Type)<<" "<<cur->second.Name;
+			wxString name= windowNames[cur->first.Type]<<" "<<cur->second.Name;
 			long pos = Shortcuts->AppendItem(new ItemText(name));
-			Shortcuts->SetItem(pos,1,new ItemText(cur->second.Accel));
+			Shortcuts->SetItem(pos,1,new ItemHotkey(cur->second.Name, cur->second.Accel, cur->first));
 			ii++;
 		}
+		Shortcuts->StartEdition();
 		Shortcuts->SetSelection(0);
 
 		HkeysSizer->Add(Shortcuts,1,wxALL|wxEXPAND,2);
@@ -411,7 +517,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 	//Themes
 	{
-		const int numColors = 125;
+		const int numColors = 126;
 		wxString labels[numColors]={
 			//okno
 			_("Okno tło"),_("Okno nieaktywne tło"),_("Okno tekst"),_("Okno nieaktywny tekst"),
@@ -425,8 +531,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Napisy kolidujące linie"),_("Napisy obramowanie linijki"),_("Napisy obramowanie aktywnej linijki"),
 			_("Napisy nagłówek"),_("Napisy tekst nagłówka"),
 			_("Napisy etykieta"),_("Napisy etykieta zmodyfikowanej linii"),_("Napisy etykieta zapisanej linii"),
-			_("Napisy tło błędów pisowni"),_("Napisy porównanie"),_("Napisy tło porównania"),
-			_("Napisy tło porównania zaznaczenia"),_("Napisy tło komentarza porównania"),
+			_("Napisy etykieta niepewnej linii"),_("Napisy tło błędów pisowni"),_("Napisy porównanie"),
+			_("Napisy tło porównania"),_("Napisy tło porównania zaznaczenia"),_("Napisy tło komentarza porównania"),
 			_("Napisy tło komentarza zazn. porównania"),
 			//edytor
 			_("Edytor tekst"),_("Edytor nazwy tagów"),_("Edytor wartości tagów"),
@@ -550,6 +656,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		},14567);
 		if(programTheme == "DeepDark" || programTheme == "DeepLight"){List->Enable(false);}
 		Themes->SetSizerAndFit(sizer);
+		List->StartEdition();
+		List->SetSelection(0);
 		ConOpt(List,(CONFIG)1000);
 	}
 
@@ -724,103 +832,24 @@ void OptionsDialog::OnMapHkey(wxCommandEvent& event)
 {
 	int inum=Shortcuts->GetSelection();
 	if(inum<0){return;}
-	wxString itemtext=Shortcuts->GetItem(inum,0)->name;
-	wxString hotkey=Shortcuts->GetItem(inum,1)->name;
-	wxString shkey=itemtext.AfterFirst(' ');
-	HkeysDialog hkd(this,shkey, itemtext[0], !shkey.StartsWith("Script") );
-	
-	if(hkd.ShowModal()==wxID_OK){
-
-		const idAndType *itype=NULL;
-		for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
-			if(cur->second.Name == shkey){
-				if(itype){delete itype;}
-				itype= new idAndType(cur->first.id, hkd.type);
-			}
-
-			if(cur->second.Accel == hkd.hotkey && (cur->first.Type == hkd.type) ){
-				KaiMessageDialog msg(this, 
-					wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
-					cur->second.Name), _("Uwaga"), wxYES_NO|wxCANCEL);
-				msg.SetYesLabel (_("Zamień skróty"));
-				msg.SetNoLabel (_("Usuń skrót"));
-				int result = msg.ShowModal();
-				if(result!=wxCANCEL){
-					if(result==wxNO){hotkey="";}
-					cur->second.Accel=hotkey;
-					int nitem =Shortcuts->FindItem(0, wxString(cur->first.Type) + " " + cur->second.Name);
-					if(nitem>=0){
-						Shortcuts->GetItem(nitem, 1)->name = hotkey;
-						Shortcuts->Refresh(false);
-					}
-				}else{ if(itype){delete itype; itype = NULL;} return;}
-			}
-		}
-
-		if(!itype){return;};
-		Hkeys.SetHKey(*itype, shkey, hkd.hotkey);
-		if(itemtext[0] != hkd.type){
-			int nitem =Shortcuts->FindItem(0, wxString(hkd.type) + " " + shkey);
-			if(nitem<0){
-				long pos = Shortcuts->AppendItem(new ItemText(itemtext.replace(0,1,hkd.type)));
-				Shortcuts->SetItem(pos,1,new ItemText(Hkeys.GetMenuH(*itype)));
-				Shortcuts->ScrollTo(pos+1);
-				Shortcuts->SetSelection(pos);
-				goto done;
-			}
-			inum = nitem;
-			Shortcuts->ScrollTo(nitem+1);
-			Shortcuts->SetSelection(nitem);
-		}
-		Shortcuts->GetItem(inum,1)->name = Hkeys.GetMenuH(*itype);
-		Shortcuts->Refresh(false);
-		
-done:
-		if(hkd.type=='A'){hkeymodif=2;}
-		else{hkeymodif=1;}
-		delete itype;
-	}
+	ItemHotkey * item = (ItemHotkey *)Shortcuts->GetItem(inum,1);
+	if(item){item->OnMapHotkey(Shortcuts,inum);}
 }
 
 void OptionsDialog::OnResetHkey(wxCommandEvent& event)
 {
 	int inum=Shortcuts->GetSelection();
-	Item *item = Shortcuts->GetItem(inum,0);
-	if(!item){return;}
-	wxString itemtext;
-	wxString type=((ItemText*)item)->name.BeforeFirst(' ', &itemtext);
-	const idAndType *itype=NULL;
-	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){//wxLogStatus(cur->first);
-		if(cur->second.Name == itemtext && type == cur->first.Type){itype = &cur->first; }
-	}
-	if(!itype){return;};
-	Hkeys.ResetKey(itype);
-	Item *itemKey = Shortcuts->GetItem(inum,1);
-	if(!itemKey){return;}
-	((ItemText*)itemKey)->name = Hkeys.GetMenuH(*itype);
-	Shortcuts->Refresh();
-	if(itemtext.StartsWith("A")){hkeymodif=2;}
-	else{hkeymodif=1;}
+	if(inum<0){return;}
+	ItemHotkey * item = (ItemHotkey *)Shortcuts->GetItem(inum,1);
+	if(item){item->OnResetHotkey(Shortcuts,inum);}
 }
 
 void OptionsDialog::OnDeleteHkey(wxCommandEvent& event)
 {
 	int inum=Shortcuts->GetSelection();
-	Item *item = Shortcuts->GetItem(inum,0);
-	if(!item){return;}
-	wxString itemtext;
-	wxString type=((ItemText*)item)->name.BeforeFirst(' ', &itemtext);
-	
-	bool found = false;
-	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
-		if(cur->second.Name == itemtext && type == cur->first.Type){cur->second.Accel = ""; found=true;}
-	}
-	Item *itemKey = Shortcuts->GetItem(inum,1);
-	if(!itemKey){return;}
-	((ItemText*)itemKey)->name = "";
-	Shortcuts->Refresh();
-	if(itemtext.StartsWith("A")){hkeymodif=2;}
-	else{hkeymodif=1;}
+	if(inum<0){return;}
+	ItemHotkey * item = (ItemHotkey *)Shortcuts->GetItem(inum,1);
+	if(item){item->OnDeleteHotkey(Shortcuts,inum);}
 }
 
 void OptionsDialog::OnChangeCatalog(wxCommandEvent& event)

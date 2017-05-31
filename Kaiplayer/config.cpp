@@ -390,7 +390,7 @@ void config::LoadDefaultColors(bool dark)
 	colors[StaticboxBorder] = new wxColour((dark)? "#565555" : "#DDDDDD");
 	colors[StaticListBorder] = new wxColour((dark)? "#4E4E4E" : "#ACACAC");
 	colors[StaticListBackground] = new wxColour((dark)? "#2A2A2A" : "#FFFFFF");
-	colors[StaticListSelection] = new wxColour((dark)? "#2D2879" : "#3399FF");
+	colors[StaticListSelection] = new wxColour((dark)? "#2D2879" : "#6DBAFF");
 	colors[StaticListBackgroundHeadline] = new wxColour((dark)? "#222222" : "#F6F6F6");
 	colors[StaticListTextHeadline] = new wxColour((dark)? "#9B9B9B" : "#000000");
 	colors[StatusBarBorder] = new wxColour((dark)? "#000000" : "#ACACAC");

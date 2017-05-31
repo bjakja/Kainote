@@ -785,8 +785,8 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 	}
 
 	wxString fnname=(found && issubs)?fntmp:filename;
-
-	bool isload=tab->Video->Load(fnname,tab->Grid1->SaveText(),fulls);
+	tab->Edit->OnVideo=true;
+	bool isload=tab->Video->Load(fnname,tab->Grid1->GetVisible(),fulls);
 
 
 	tab->Thaw();
@@ -1189,7 +1189,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 			SetSubsResolution(askForRes);
 		}
 		if(i<videos.size()){
-			bool isload=tab->Video->Load(videos[i],(tab->edytor)? tab->Grid1->SaveText() : 0);
+			bool isload=tab->Video->Load(videos[i],(tab->edytor)? tab->Grid1->GetVisible() : 0);
 
 			if(!isload){
 				if(tab->Video->IsDshow){KaiMessageBox(_("Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\nbądź brakuje kodeków czy też splittera"), _("Uwaga"));}

@@ -763,8 +763,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				//posX+=fw;
 				mestext<<bef;
 				parttext="{";
-			}
-			else{
+			}else{
 				//if(val){
 				wxString tmp=parttext.RemoveLast(1);
 				dc.GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
@@ -804,7 +803,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			}
 		}
 
-		if((ch=='\\'||ch=='('||ch==')'||ch==',')&&tagi){
+		if((ch=='\\' || ((ch=='('||ch==')'||ch==',') && val)) &&tagi){
 			if(ch=='\\'){slash=true;}
 			if(val&&(ch=='\\'||ch==')'||ch==',')){
 				wxString tmp=parttext.RemoveLast(1);
@@ -821,7 +820,6 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			dc.GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 			dc.SetTextForeground(coperators);
 			dc.DrawText(parttext,fw+3,posY);
-			//posX+=fw;
 			mestext<<parttext;
 			parttext="";
 			//continue;
@@ -840,7 +838,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			dc.SetFont(fnt);
 			dc.DrawText(MText[i],fw+3,(bry*Fheight)+1);
 			dc.SetFont(font);
-			//wxLogStatus("br x i y %i, %i", Brackets.x,Brackets.y);
+			
 		}
 
 		wchar++;

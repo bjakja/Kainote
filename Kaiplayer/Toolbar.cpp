@@ -359,8 +359,13 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 	int w=0;
 	int h=0;
 	GetSize (&w, &h);
-	if((x<0||y<0||x>w||y>h)&&leftdown){if(HasCapture()){ReleaseMouse();}Destroy();return;}
-	//if(x>w-20){}
+	if((x<0||y<0||x>w||y>h)){
+		if(leftdown){
+			if(HasCapture()){ReleaseMouse();}
+			Destroy();
+		}
+		return;
+	}
 
 	int elem = y/fh;
 	elem+=scPos;

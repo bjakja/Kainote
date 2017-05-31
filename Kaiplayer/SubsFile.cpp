@@ -97,11 +97,9 @@ void SubsFile::SaveUndo()
 		}
 		undo.erase(undo.begin()+iter+1, undo.end());
 	}
-	//wxLogStatus("sizes di %i, si %i, sii %i dd %i ds %i dsi %i", Dialogue::iterator, Styles::iterator, SInfo::iterator, (int)subs->ddials.size(), (int)(subs->dstyles.size()+Options.StoreSize()), (int)subs->dsinfo.size());   
 	undo.push_back(subs);
 	subs=subs->Copy();
 	iter++;
-	//wxLogStatus("size %i", undo.size());
 	edited=false;
 }
 

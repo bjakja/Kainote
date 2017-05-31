@@ -127,6 +127,7 @@ public:
 	MappedButton* Bcpall;
 	MappedButton* Bcpsel;
 	MappedButton* Bhide;
+	ToggleButton* DoubtfulTL;
 	ToggleButton* AutoMoveTags;
 	KaiChoice* Ban;
 
@@ -139,6 +140,9 @@ public:
 	void OnEdit(wxCommandEvent& event);
 	bool SetBackgroundColour(const wxColour &col);
 	bool IsCursorOnStart();
+	void FindNextDoubtfulTl(wxCommandEvent& event);
+	void FindNextUnTranslated(wxCommandEvent& event);
+
 	wxBoxSizer* BoxSizer1;
 
 	Dialogue *line;
@@ -175,7 +179,7 @@ private:
 	void OnTlMode(wxCommandEvent& event);
 	void OnCopyAll(wxCommandEvent& event);
 	void OnCopySelection(wxCommandEvent& event);
-	//void OnReplClick(wxCommandEvent& event);
+	void OnDoubtfulTl(wxCommandEvent& event);
 	void OnSize(wxSizeEvent& event);
 	void OnSplit(wxCommandEvent& event);
 	void OnHideOriginal(wxCommandEvent& event);
@@ -191,13 +195,15 @@ private:
 	bool isdetached;
 	wxMutex mutex;
 	wxString num;
+	int CurrentDoubtful;
+	int CurrentUntranslated;
 };
 
 
-
+//uwaga nie zmieniaæ kolejnoœci bo szlag trafi¹ skróty zapisane w hotkeys.txt
 enum{
-	ID_CHECKBOX1=3989,
-	IDSTYLE,
+	ID_COMMENT=3989,
+	ID_STYLE,
 	ID_FONT,
 	ID_UND,
 	ID_STRIKE,
@@ -210,8 +216,9 @@ enum{
 	ID_COL2,
 	ID_COL3,
 	ID_COL4,
-	MENU_ZATW,
-	MENU_NLINE,
+	MENU_COMMIT,
+	MENU_NEWLINE,
+	ID_DOUBTFULTL,
 	ID_AUTOMOVETAGS,
 	ID_TIMES_FRAMES,
 	

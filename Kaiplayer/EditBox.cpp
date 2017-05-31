@@ -138,6 +138,9 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	, ABox(NULL)
 	, line(NULL)
 	, lastVisible(true)
+	, OnVideo(true)
+	, CurrentDoubtful(0)
+	, CurrentUntranslated(0)
 {
 
 	SetForegroundColour(Options.GetColour(WindowText));
@@ -226,6 +229,8 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	Bcpsel->Hide();
 	Bhide = new MappedButton(this, ID_HIDE, _("Ukryj oryginał"),EDITBOX_HOTKEY);
 	Bhide->Hide();
+	DoubtfulTL = new ToggleButton(this, ID_DOUBTFULTL, _("Niepewne"));
+	DoubtfulTL ->Hide();
 	AutoMoveTags = new ToggleButton(this, ID_AUTOMOVETAGS, _("Przenoszenie tagów"));
 	AutoMoveTags->Hide();
 
@@ -233,18 +238,18 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer6->Add(Bcpsel,0,wxALIGN_CENTER|wxLEFT|wxTOP|wxBOTTOM,2);
 	BoxSizer6->Add(Bcpall,0,wxALIGN_CENTER|wxLEFT|wxTOP|wxBOTTOM,2);
 	BoxSizer6->Add(Bhide,0,wxALIGN_CENTER|wxLEFT|wxTOP|wxBOTTOM,2);
+	BoxSizer6->Add(DoubtfulTL,0,wxALIGN_CENTER|wxLEFT|wxTOP|wxBOTTOM,2);
 	BoxSizer6->Add(AutoMoveTags,0,wxALIGN_CENTER|wxLEFT|wxTOP|wxBOTTOM,2);
 
 
 	TextEdit = new MTextEditor(this, 16667, Options.GetBool(SpellcheckerOn),wxDefaultPosition, wxSize(-1, 30));
 	TextEdit->EB=this;
-	//TextEdit->SetMinSize(wxSize(100,100));
 
 	TextEditTl = new MTextEditor(this, 16667, false,wxDefaultPosition, wxSize(-1, 30));
 	TextEditTl->EB=this;
-	//TextEditTl->SetMinSize(wxSize(100,100));
+
 	TextEditTl->Hide();
-	Comment = new KaiCheckBox(this, ID_CHECKBOX1, _("Komentarz"), wxDefaultPosition, wxSize(82,-1));
+	Comment = new KaiCheckBox(this, ID_COMMENT, _("Komentarz"), wxDefaultPosition, wxSize(82,-1));
 	Comment->SetValue(false);
 	LayerEdit = new NumCtrl(this, 16668, "",-10000000,10000000,true, wxDefaultPosition, wxSize(50,-1));
 	StartEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(82,-1),wxTE_CENTER);
@@ -252,7 +257,7 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	DurEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(82,-1),wxTE_CENTRE);
 	wxArrayString styles;
 	styles.Add("Default");
-	StyleChoice = new KaiChoice(this, IDSTYLE, wxDefaultPosition, wxSize(100,-1),styles);//wxSize(145,-1)
+	StyleChoice = new KaiChoice(this, ID_STYLE, wxDefaultPosition, wxSize(100,-1),styles);//wxSize(145,-1)
 	StyleEdit = new MappedButton(this,19989,_("Edytuj"), EDITBOX_HOTKEY, wxDefaultPosition, wxSize(45,-1));
 	//druga linia
 	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
@@ -293,10 +298,10 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 
 
 
-	Connect(ID_CHECKBOX1,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&EditBox::OnCommit);
+	Connect(ID_COMMENT,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&EditBox::OnCommit);
 	Connect(ID_TLMODE,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&EditBox::OnTlMode); //16658
 	Connect(16658,wxEVT_COMMAND_COMBOBOX_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);    
-	Connect(IDSTYLE,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);    
+	Connect(ID_STYLE,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);    
 	Connect(PutBold,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnBoldClick);
 	Connect(PutItalic,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnItalicClick);
 	Connect(ID_UND,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnUnderlineClick);
@@ -308,9 +313,13 @@ EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
 	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnCopyAll, this, ID_CPALL);
 	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnCopySelection, this, ID_CPSEL);
 	Connect(ID_HIDE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnHideOriginal);
+	Connect(ID_DOUBTFULTL,wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnDoubtfulTl);
 	Connect(ID_AUTOMOVETAGS,wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnAutoMoveTags);
-	Connect(MENU_ZATW,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);
-	Connect(MENU_NLINE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnNewline);
+	Connect(MENU_COMMIT,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);
+	Connect(MENU_NEWLINE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnNewline);
+	Connect(FindNextDoubtful,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::FindNextDoubtfulTl);
+	Connect(FindNextUntranslated,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::FindNextUnTranslated);
+	Connect(SetDoubtful,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnDoubtfulTl);
 	Connect(SplitLine,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnSplit);
 	Connect(StartDifference, EndDifference,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnPasteDifferents);
 	Connect(wxEVT_SIZE,(wxObjectEventFunction)&EditBox::OnSize);
@@ -352,7 +361,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	ebrow=Row;
 	grid->markedLine=Row;
 	wxDELETE(line);
-	line=grid->GetDial(ebrow)->Copy();
+	line=grid->GetDial(ebrow)->Copy(true);
 	Comment->SetValue(line->IsComment);
 	LayerEdit->SetInt(line->Layer);
 	StartEdit->SetTime(line->Start, false, 1);
@@ -372,6 +381,10 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	EffectEdit->ChangeValue(line->Effect);
 	
 	SetTextWithTags();
+
+	if(DoubtfulTL->IsShown()){
+		DoubtfulTL->SetValue((line->State & 4) > 0);
+	}
 
 	if(setaudio && ABox && ABox->IsShown()){ABox->audioDisplay->SetDialogue(line,ebrow);}
 
@@ -915,6 +928,7 @@ void EditBox::SetTl(bool tl)
 	Bcpall->Show(tl);
 	Bcpsel->Show(tl);
 	Bhide->Show(tl);
+	DoubtfulTL->Show(tl);
 	AutoMoveTags->Show(tl);
 	AutoMoveTags->SetValue(Options.GetBool(AutoMoveTagsFromOriginal));
 	BoxSizer1->Layout();
@@ -1127,7 +1141,7 @@ void EditBox::OnPasteDifferents(wxCommandEvent& event)
 }
 //znajduje tagi w polu tekstowym
 //w wyszukiwaniu nie używać // a także szukać tylko do końca taga, nie do następnego taga
-bool EditBox::FindVal(const wxString &tag, wxString *Finded, const wxString &text, bool *endsel, bool fromStart)
+bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text, bool *endsel, bool fromStart)
 {
 	lasttag=tag;
 	long from=0, to=0;
@@ -1176,13 +1190,15 @@ bool EditBox::FindVal(const wxString &tag, wxString *Finded, const wxString &tex
 	bool firstT=false;
 	int endT;
 	int lslash=endT=klamrae+1;
-	wxString finded[2];
+	int lastTag = -1;
+	wxString found[2];
 	wxPoint fpoints[2];
 	if(klamrae==txt.Len()){klamrae--;}
 
 	for(int i=klamrae; i>=0; i--){
 		wxUniChar ch=txt[i];
 		if(ch=='\\' && brkt){
+			if(lastTag<0){lastTag=lslash;}
 			wxString ftag=txt.SubString(i+1,lslash-1);
 			if(ftag.EndsWith(")")){
 				if(ftag.Find('(')==-1 || ftag.Freq(')') >= 2 || ftag.StartsWith("t(")){
@@ -1194,9 +1210,9 @@ bool EditBox::FindVal(const wxString &tag, wxString *Finded, const wxString &tex
 
 				if(i<=from && from<endT){
 
-					if(finded[1]!="" && fpoints[1].y<=endT){
-						Placed=fpoints[1];*Finded=finded[1];return true;
-					}else if(finded[0]!=""){
+					if(found[1]!="" && fpoints[1].y<=endT){
+						Placed=fpoints[1];*Found=found[1];return true;
+					}else if(found[0]!=""){
 						if(fpoints[0].y<=endT){break;}
 					}else{
 						Placed.x=endT;Placed.y=Placed.x;InBracket=true;return false;
@@ -1213,9 +1229,9 @@ bool EditBox::FindVal(const wxString &tag, wxString *Finded, const wxString &tex
 
 				if((ftag.EndsWith(")")&&!ftag.StartsWith("("))||ftag.EndsWith("}")){ftag.RemoveLast(1);lslash--;}
 
-				if(finded[0]==""&&!isT){finded[0]=ftag; fpoints[0].x=i; fpoints[0].y=lslash-1;}
-				else{finded[1]=ftag; fpoints[1].x=i; fpoints[1].y=lslash-1;}
-				if(!isT && finded[0]!=""){
+				if(found[0]==""&&!isT){found[0]=ftag; fpoints[0].x=i; fpoints[0].y=lslash-1;}
+				else{found[1]=ftag; fpoints[1].x=i; fpoints[1].y=lslash-1;}
+				if(!isT && found[0]!=""){
 					break;
 				}
 			}
@@ -1231,8 +1247,11 @@ bool EditBox::FindVal(const wxString &tag, wxString *Finded, const wxString &tex
 
 	}
 
-	if(!isT && finded[0]!=""){
-		if(inbrkt){Placed=fpoints[0];} *Finded=finded[0]; return true;
+	if(!isT && found[0]!=""){
+		if(inbrkt){Placed=fpoints[0];} *Found=found[0]; return true;
+	}else if(lastTag >= 0){
+		Placed.x=lastTag;
+		Placed.y=lastTag;
 	}
 
 
@@ -1508,7 +1527,6 @@ void EditBox::OnStyleEdit(wxCommandEvent& event)
 {
 	//napisz tu coś później by ten przycisk w ogóle działał, 
 	//a może na dobry początek chociaż managera w całości pokazać?
-	//wxLogStatus("Edytuj");
 	StyleStore::ShowStyleEdit();
 }
 
@@ -1532,4 +1550,52 @@ bool EditBox::IsCursorOnStart()
 		}
 	}*/
 	return false;
+}
+
+	
+void EditBox::OnDoubtfulTl(wxCommandEvent& event)
+{
+	if(!grid->transl){wxBell();return;}
+	if(line->State & 4){
+		line->State ^= 4;
+	}else{
+		line->State |= 4;
+	}
+	Dialogue *dial = grid->GetDial(ebrow);
+	if(dial->State & 4){
+		dial->State ^= 4;
+	}else{
+		dial->State |= 4;
+	}
+	if(event.GetId() == SetDoubtful){
+		grid->NextLine();
+	}else{
+		grid->Refresh(false);
+	}
+}
+
+void EditBox::FindNextDoubtfulTl(wxCommandEvent& event)
+{
+	if(!grid->transl){wxBell();return;}
+	for(int i = ebrow; i < grid->GetCount(); i++){
+		Dialogue *dial = grid->GetDial(i);
+		if((dial->State & 4) > 0){
+			SetLine(i);
+			grid->Refresh(false);
+			break;
+		}
+	}
+}
+	
+void EditBox::FindNextUnTranslated(wxCommandEvent& event)
+{
+	if(!grid->transl){wxBell();return;}
+	for(int i = ebrow; i < grid->GetCount(); i++){
+		Dialogue *dial = grid->GetDial(i);
+		if(dial->TextTl == ""){
+			SetLine(i);
+			grid->Refresh(false);
+			break;
+		}
+	}
 }

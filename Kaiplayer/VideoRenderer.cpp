@@ -700,10 +700,13 @@ bool VideoRend::Play(int end)
 	TabPanel* pan=(TabPanel*)GetParent();
 	if(VisEdit){
 		wxString *txt=pan->Grid1->SaveText();
-		OpenSubs(txt);
+		OpenSubs(txt, false, true);
 		SAFE_DELETE(Vclips->dummytext);
 		VisEdit=false;
-	}else if(pan->Edit->OnVideo){OpenSubs(pan->Grid1->SaveText());pan->Edit->OnVideo=false;}
+	}else if(pan->Edit->OnVideo){
+		OpenSubs(pan->Grid1->SaveText(), false, true);
+		pan->Edit->OnVideo=false;
+	}
 
 	if(end>0){playend=end;}else if(IsDshow){playend=0;}else{playend=GetDuration();}
 	if(IsDshow){vplayer->Play();}
@@ -770,6 +773,7 @@ bool VideoRend::Stop()
 void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadSubs)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
+	bool playing = vstate==Playing;
 	if(IsDshow){
 		time=MID(0,_time,GetDuration());
 		if(corect){
@@ -782,7 +786,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			if(Vclips->Visual==VECTORCLIP){
 				Vclips->SetClip(Vclips->GetVisual(),true, false);
 			}else{
-				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
+				OpenSubs((playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible(),true, playing);
 				if(vstate==Playing){ VisEdit=false;}
 			}
 		}else if(pan->Edit->OnVideo){
@@ -790,8 +794,8 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			//	wxCommandEvent evt;pan->Edit->OnEdit(evt);
 			//	//pan->Edit->OnVideo=false;
 			//}
-			OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
-			if(vstate==Playing){ pan->Edit->OnVideo=false;}
+			OpenSubs((playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible(), true, playing);
+			if(playing){ pan->Edit->OnVideo=false;}
 		}	
 		playend=(IsDshow)? 0 : GetDuration();
 		seek=true; vplayer->SetPosition(time);
@@ -808,8 +812,8 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 				if(Vclips->Visual==VECTORCLIP){
 					Vclips->SetClip(Vclips->GetVisual(),true, false);
 				}else{
-					OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
-					if(vstate==Playing){ VisEdit=false;}
+					OpenSubs((playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible(), true, playing);
+					if(playing){ VisEdit=false;}
 				}
 				//VisEdit=false;
 			}else if(pan->Edit->OnVideo){
@@ -817,8 +821,8 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 				//	wxCommandEvent evt;pan->Edit->OnEdit(evt);
 				//	//pan->Edit->OnVideo=false;
 				//}
-				OpenSubs((vstate==Playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible());
-				if(vstate==Playing){ pan->Edit->OnVideo=false;}
+				OpenSubs((playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible(), true, playing);
+				if(playing){ pan->Edit->OnVideo=false;}
 			}	
 			if(vstate==Playing){
 				if(player){
@@ -833,7 +837,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 	}
 }
 
-bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
+bool VideoRend::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 {
 	//delete textsubs;
 	//return true;
@@ -857,7 +861,7 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw)
 	if(!vobsub){wxLogMessage(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false;}
 	//}
 
-	instance = csri_open_mem(vobsub,buffer,size,NULL);
+	instance = (fromFile)? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub,buffer,size,NULL);
 	if(!instance){wxLogMessage(_("Instancja VobSuba nie utworzyła się.")); delete textsubs; return false;}
 
 	if(!format || csri_request_fmt(instance,format)){
@@ -1493,10 +1497,11 @@ void VideoRend::MovePos(int cpos)
 			lastframe=MID(0,lastframe+cpos,VFF->NumFrames-1);
 			time = VFF->Timecodes[lastframe];
 			TabPanel* pan=(TabPanel*)GetParent();
-			if(VisEdit){
-				wxString *txt=pan->Grid1->SaveText();
-				OpenSubs(txt);VisEdit=false;
-			}else if(pan->Edit->OnVideo){OpenSubs(pan->Grid1->SaveText());pan->Edit->OnVideo=false;}
+			if(VisEdit || pan->Edit->OnVideo){
+				OpenSubs(pan->Grid1->SaveText(),false,true);
+				pan->Edit->OnVideo=false;
+				VisEdit=false;
+			}
 			if(player){player->UpdateImage(true,true);}
 			//std::thread([=](){Render();}).detach();
 			Render(true,false);
@@ -1533,7 +1538,7 @@ void VideoRend::ChangeVobsub(bool vobsub)
 
 	int tmptime = time;
 	TabPanel *pan=Kaia->Frame->GetTab();
-	OpenSubs((vobsub)? NULL : pan->Grid1->SaveText());
+	OpenSubs((vobsub)? NULL : pan->Grid1->SaveText(), true, true);
 	vplayer->OpenFile(pan->VideoPath,vobsub);
 	SetPosition(tmptime);
 	if(vstate==Paused){vplayer->Play();vplayer->Pause();}

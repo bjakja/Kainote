@@ -446,7 +446,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 				visdl->Text="";
 				visdl->Text<<"{\\p1\\bord0\\shad0\\fscx100\\fscy100\\1c&H000000&\\1a&H77&\\pos(0,0)\\an7\\"<<tmp1<<clip<<")}m 0 0 l "<<
 					nx<<" 0 "<<nx<<" "<<ny<<" 0 "<<ny;
-				(*dummytext)<<visdl->GetRaw();
+				visdl->GetRaw(dummytext);
 				dumplaced.x=edit->Placed.x + textplaced.x; dumplaced.y=edit->Placed.y + textplaced.x;
 				delete visdl;
 				if(changeEditorText){
@@ -618,13 +618,14 @@ void Visuals::SetVisual(bool dummy, int type)
 				if(istxttl) {
 					Cpy.TextTl = txt;
 					wxString tlLines;
-					tlLines<<Cpy.GetRaw(true);
-					tlLines<<Cpy.GetRaw(false,tab->Grid1->GetSInfo("TLMode Style"));
+					Cpy.GetRaw(&tlLines, true);
+					Cpy.GetRaw(&tlLines, false,tab->Grid1->GetSInfo("TLMode Style"));
 					dtxt->insert(selPositions[i] + moveLength,tlLines);
 					moveLength += tlLines.Len();
 				}else{
 					Cpy.Text = txt;
-					wxString thisLine = Cpy.GetRaw();
+					wxString thisLine;
+					Cpy.GetRaw(&thisLine);
 					dtxt->insert(selPositions[i] + moveLength,thisLine);
 					moveLength += thisLine.Len();
 				}

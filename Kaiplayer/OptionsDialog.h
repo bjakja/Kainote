@@ -17,8 +17,6 @@
 #define OPTIONSDIALOG
 
 #include <wx/wx.h>
-#include <wx/treebook.h>
-#include <wx/listctrl.h>
 #include "ListControls.h"
 #include "MappedButton.h"
 #include "KaiTreebook.h"
@@ -27,6 +25,23 @@
 #include "config.h"
 #include <vector>
 class kainoteFrame;
+
+class ItemHotkey : public Item{
+public:
+	ItemHotkey(const wxString &txt, const wxString &_accel, const idAndType &Id) : Item(){name = txt; accel = _accel; hotkeyId = Id;}
+	virtual ~ItemHotkey(){		
+	}
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL);
+	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
+	wxString GetName(){return name;}
+	void OnMapHotkey(KaiListCtrl *theList, int y);
+	void OnResetHotkey(KaiListCtrl *theList, int y);
+	void OnDeleteHotkey(KaiListCtrl *theList, int y);
+	void Save();
+	Item* Copy(){return new ItemHotkey(*this);}
+	idAndType hotkeyId;
+	wxString accel;
+};
 
 class OptionsBind {
 public:

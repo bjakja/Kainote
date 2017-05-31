@@ -77,23 +77,23 @@ void Dialogue::ClearParse()
 	if(pdata){delete pdata; pdata=NULL;}
 }
 
-Dialogue::Dialogue(wxString ldial,wxString txttl)
+Dialogue::Dialogue(const wxString &ldial,const wxString &txttl)
 {
 	pdata = NULL;
 	TextTl=txttl;
 	SetRaw(ldial);
 }
-void Dialogue::SetRaw(wxString ldial)
+void Dialogue::SetRaw(const wxString &ldial)
 {
 	State=0;
-	ldial.Trim(false);
+	//ldial.Trim(false);
 
-	if(ldial.StartsWith(_T("Dialogue"))||ldial.StartsWith(_T("Comment"))){
+	if(ldial.StartsWith("Dialogue")||ldial.StartsWith("Comment")){
 		wxStringTokenizer assdal(ldial,_T(","),wxTOKEN_RET_EMPTY_ALL);
 		if(assdal.CountTokens()>=9){
 			NonDial=false;
 			wxString token=assdal.GetNextToken();
-			if(token.StartsWith(_T("Dialogue"))){IsComment=false;}else{IsComment=true;}
+			if(token.StartsWith("Dialogue")){IsComment=false;}else{IsComment=true;}
 			if(token.Find("arked=")==-1){Layer=wxAtoi(token.AfterFirst(' '));}
 			else{Layer=wxAtoi(token.AfterLast('='));}
 			Form=ASS;
@@ -166,7 +166,7 @@ void Dialogue::SetRaw(wxString ldial)
 	}else if(ldial.StartsWith(";")||(ldial.StartsWith("{") && ldial.EndsWith("}"))){
 		NonDial=true;
 		IsComment=true;
-		Style=_T("Default");
+		Style="Default";
 		Text=ldial;
 		Text.Trim(true);
 		Form=ASS;
@@ -174,50 +174,51 @@ void Dialogue::SetRaw(wxString ldial)
 	}
 	else{
 		Form=0;
-		ldial.Trim(true);
 		NonDial=false;
 		IsComment=false;
-		Style=_T("Default");
+		Style="Default";
 		Text=ldial;
 		Text.Replace("\r\n","\\N");
+		Text.Trim(true);
 	}
 
 }
 
-wxString Dialogue::GetRaw(bool tl, wxString style)
+void Dialogue::GetRaw(wxString *txt, bool tl, const wxString &style)
 {
 	wxString line;
-	wxString txttl=(tl)?TextTl:Text;
 	if (Form<SRT){
-		if(IsComment){line=_T("Comment: ");}else{line=_T("Dialogue: ");};
-		wxString Styletl=(style!="")?style:Style;
+		if(IsComment){line=_T("Comment: ");}else{line=_T("Dialogue: ");}
+		bool styleTl = style!="";
+		const wxString &Styletl=(styleTl)?style : Style;
+		const wxString &EffectTl = (State & 4 && styleTl)? "\fD" : Effect;
 		line<<Layer<<_T(",")<<Start.raw(Form)<<_T(",")
 			<<End.raw(Form)<<_T(",")<<Styletl<<_T(",")<<Actor<<_T(",")
 			<<MarginL<<_T(",")
 			<<MarginR<<_T(",")
 			<<MarginV<<_T(",")
-			<<Effect<<_T(",")
-			<<txttl;
+			<<EffectTl<<_T(",");
+			line += (tl)?TextTl : Text;
 		//line+=wxString::Format("%i,%s,%s,%s,%s,%i,%i,%i,%s,%s",(int)Layer,Start.raw().data(),End.raw().data(),Styletl.data(),Actor.data(),(int)MarginL,(int)MarginR,(int)MarginV,Effect.data(),txttl.data());
 
 	}else if(Form==MDVD){
-		line<<_T("{")<<Start.raw(Form)<<_T("}{")<<End.raw(Form)<<_T("}")<<txttl;
+		line<<_T("{")<<Start.raw(Form)<<_T("}{")<<End.raw(Form)<<_T("}")<<Text;
 	}
 	else if(Form==MPL2){
-		line<<_T("[")<<Start.raw(Form)<<_T("][")<<End.raw(Form)<<_T("]")<<txttl;
+		line<<_T("[")<<Start.raw(Form)<<_T("][")<<End.raw(Form)<<_T("]")<<Text;
 	}
 	else if(Form==TMP){
-		line<<Start.raw(Form)<<_T(":")<<txttl;
+		line<<Start.raw(Form)<<_T(":")<<Text;
 	}
 	else if(Form==SRT){
-		txttl.Replace("\\N","\r\n");
-		line<<Start.raw(Form)<<" --> "<<End.raw(Form)<<"\r\n"<<txttl<<"\r\n";
+		Text.Replace("\\N","\r\n");
+		line<<Start.raw(Form)<<" --> "<<End.raw(Form)<<"\r\n"<<Text<<"\r\n";
 	}
 	line<<_T("\r\n");
-	return line;
+	(*txt)<<line;
 }
 
-wxString Dialogue::GetCols(int cols, bool tl, wxString style)
+wxString Dialogue::GetCols(int cols, bool tl, const wxString &style)
 {
 
 	wxString line;
@@ -267,7 +268,7 @@ wxString Dialogue::GetCols(int cols, bool tl, wxString style)
 	return line;
 }
 
-void Dialogue::Conv(char type,wxString pref)
+void Dialogue::Conv(char type, const wxString &pref)
 {
 	if(!Form){Form=0;if(type==ASS){return;}}
 	if(Form == TMP && End.mstime==0){End=Start;End.mstime+=2000;}
@@ -348,7 +349,7 @@ Dialogue *Dialogue::Copy(bool keepstate)
 	dial->MarginV=MarginV;
 	dial->NonDial=NonDial;
 	dial->Start=Start;
-	dial->State= (keepstate) ? State : 1;
+	dial->State= (keepstate) ? State : 1 + dial->State & 4;
 	dial->Style=Style;
 	dial->Text=Text;
 	dial->TextTl=TextTl;
@@ -440,12 +441,12 @@ void Dialogue::ChangeTimes(int start, int end)
 				continue;
 			}
 			size_t t1Len = token.Len();
-			//size_t reps = token.Replace("(","");
+			
 			int t1 = wxAtoi(token);
 			size_t t1Pos = splitValues.GetPosition() + tdata->startTextPos - t1Len - replaceMismatch - 1;
 			token = splitValues.GetNextToken();
 			size_t t2Len = token.Len();
-			//reps = token.Replace(")","");
+			
 			size_t totalLen = t1Len + t2Len + 1;
 			int t2 = wxAtoi(token);
 			t1 = MAX(0, t1 + start);

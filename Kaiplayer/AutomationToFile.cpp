@@ -199,7 +199,8 @@ namespace Auto{
 			lua_pushstring(L, "[Events]");
 			lua_setfield(L, -2, "section");
 
-			wxString raw(adial->GetRaw());
+			wxString raw;
+			adial->GetRaw(&raw);
 
 			lua_pushstring(L, raw.mb_str(wxConvUTF8).data());
 			lua_setfield(L, -2, "raw");

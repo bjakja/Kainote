@@ -211,6 +211,7 @@ DECLARE_ENUM(CONFIG,CFG)
 	CR(GridLabelNormal,)\
 	CR(GridLabelModified,)\
 	CR(GridLabelSaved,)\
+	CR(GridLabelDoubtful,)\
 	CR(GridSpellchecker,)\
 	CR(GridComparison,)\
 	CR(GridComparisonBackground,)\

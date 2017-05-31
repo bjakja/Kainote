@@ -45,7 +45,7 @@ class ClipPoint
 public:
 	ClipPoint(float x, float y, wxString type, bool isstart);
 	ClipPoint();
-	bool IsInPos(wxPoint pos, int diff);
+	bool IsInPos(D3DXVECTOR2 pos, float diff);
 	D3DXVECTOR2 GetVector(DrawingAndClip *parent);
 	float wx(DrawingAndClip *parent, bool zoomConversion = false);
 	float wy(DrawingAndClip *parent, bool zoomConversion = false);
@@ -281,12 +281,12 @@ public:
 	void ChangeVisual(wxString *txt, int line){};
 	void SetCurVisual();
 	void SetPos(int x, int y);
-	int CheckPos(wxPoint pos, bool retlast=false, bool wsp=true);
-	void MovePoint(wxPoint pos, int point);
-	void AddCurve(wxPoint pos, int whereis, wxString type="b");
-	void AddCurvePoint(wxPoint pos, int whereis);
-	void AddLine(wxPoint pos, int whereis);
-	void AddMove(wxPoint pos, int whereis);
+	int CheckPos(D3DXVECTOR2 pos, bool retlast=false, bool wsp=true);
+	void MovePoint(D3DXVECTOR2 pos, int point);
+	void AddCurve(D3DXVECTOR2 pos, int whereis, wxString type="b");
+	void AddCurvePoint(D3DXVECTOR2 pos, int whereis);
+	void AddLine(D3DXVECTOR2 pos, int whereis);
+	void AddMove(D3DXVECTOR2 pos, int whereis);
 	void DrawLine(int coord);
 	void DrawRect(int coord);
 	void DrawCircle(int coord);
@@ -313,6 +313,7 @@ public:
 	int x;
 	int y;
 	int lastpos;
+	float pointArea;
 	byte alignment;
 	wxPoint diffs;
 	wxRect selection;

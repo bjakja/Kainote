@@ -384,7 +384,7 @@ void Grid::CopyRows(int id)
 	{	
 		if(id!=CopyCollumns){
 			//tłumaczenie ma pierwszeństwo w kopiowaniu
-			whatcopy<<GetDial(selarr[i])->GetRaw(transl && GetDial(selarr[i])->TextTl!="");
+			GetDial(selarr[i])->GetRaw(&whatcopy, transl && GetDial(selarr[i])->TextTl!="");
 		}else{
 			whatcopy<<GetDial(selarr[i])->GetCols(cols,transl && GetDial(selarr[i])->TextTl!="");
 		}
@@ -564,7 +564,7 @@ void Grid::MoveTextTL(char mode)
 
 	wxArrayInt selecs=GetSels(true);
 	
-	if(selecs.GetCount()<1||!showtl||!transl)return;
+	if(selecs.GetCount()<1||!showtl||!transl) return;
 	int first=selecs[0];
 	int mrow=1;
 	if(selecs.GetCount()>1){
@@ -685,7 +685,7 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 
 
 		}
-		if(Kai->GetTab()->Video->GetState()!=None){Kai->GetTab()->Video->OpenSubs(SaveText());
+		if(Kai->GetTab()->Video->GetState()!=None){Kai->GetTab()->Video->OpenSubs(SaveText(),true,true);
 			if(!isgood){KaiMessageBox(_("Otwieranie napisów nie powiodło się"), _("Uwaga"));}
 			if(Kai->GetTab()->Video->GetState()==Paused){Kai->GetTab()->Video->Render();}
 		}

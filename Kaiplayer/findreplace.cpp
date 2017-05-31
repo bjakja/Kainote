@@ -518,7 +518,7 @@ void findreplace::SelectLines()
 		}
 
 		if((pan->Grid1->sel.find(i)!=pan->Grid1->sel.end())&&act!=0){
-			if(act<3){whatcopy<<Dial->GetRaw(pan->Grid1->transl&&Dial->TextTl!="");}
+			if(act<3){Dial->GetRaw(&whatcopy, pan->Grid1->transl&&Dial->TextTl!="");}
 			else if(act<5){Dial->State=1;mdial.push_back(Dial);}
 			else if(act<6){
 				Dialogue *dialc=pan->Grid1->CopyDial(i); 

@@ -414,12 +414,15 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		int incr=h+(step*20);
 		if(incr>=mh){incr=mh-3;}
 		if( y < h-panelHeight){
-			if(h<=350 && step>0 || h == incr){return;}
+			if(h<=350 && step<0 || h == incr){return;}
 			int ww,hh;
 			CalcSize(&ww,&hh,w,incr,false,true);
 			SetMinSize(wxSize(ww,hh+panelHeight));
 			Options.SetCoords(VideoWindowSize,ww,hh+panelHeight);
 			Kai->GetTab()->BoxSizer1->Layout();
+			if(event.ShiftDown()){
+				Kai->GetTab()->SetVideoWindowSizes(w, incr);
+			}
 		}
 		return;
 	}
