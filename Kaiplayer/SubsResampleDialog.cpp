@@ -29,7 +29,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 	wxString matrices[] = {"TV.601", "PC.601", "TV.709", "PC.709", "TV.FCC", "PC.FCC", "TV.240M", "PC.240M"};
 	subsResolutionX = new NumCtrl(this,26543,std::to_string(subsSize.x),100, 13000, true);
 	subsResolutionY = new NumCtrl(this,26544,std::to_string(subsSize.y),100, 10000, true);
-	MappedButton *fromSubs = new MappedButton(this, 26547, _("Pobierz z napisów"), 0);
+	MappedButton *fromSubs = new MappedButton(this, 26547, _("Pobierz z napisów"));
 	fromSubs->Enable(false);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		subsResolutionX->SetInt(subsSize.x);
@@ -47,7 +47,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 
 	destinedResolutionX = new NumCtrl(this,26545,std::to_string(videoSize.x),100, 13000, true);
 	destinedResolutionY = new NumCtrl(this,26546,std::to_string(videoSize.y),100, 10000, true);
-	MappedButton *fromVideo = new MappedButton(this, 26548, _("Pobierz z wideo"), 0);
+	MappedButton *fromVideo = new MappedButton(this, 26548, _("Pobierz z wideo"));
 	fromVideo->Enable(false);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		destinedResolutionX->SetInt(videoSize.x);
@@ -105,7 +105,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 	mainSizer->Add(videoResolutionStaticSizer,1, wxALL, 2);
 	mainSizer->Add(resamplingOptions,0, wxALL, 2);
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-	MappedButton *OK = new MappedButton(this, 26548, "OK", 0);
+	MappedButton *OK = new MappedButton(this, 26548, "OK");
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		int subsSizeX = subsResolutionX->GetInt();
 		int subsSizeY = subsResolutionY->GetInt();
@@ -115,7 +115,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 			videoSizeX/(float)subsSizeX, resamplingOptions->IsEnabled() && 
 			resamplingOptions->GetSelection() == 1);
 	},26548);
-	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"), 0);
+	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	buttonSizer->Add(OK, 0, wxALL, 2);
 	buttonSizer->Add(Cancel, 0, wxALL, 2);
 	mainSizer->Add(buttonSizer,0, wxALL|wxCENTER, 2);
@@ -154,13 +154,13 @@ SubsMismatchResolutionDialog::SubsMismatchResolutionDialog(wxWindow *parent, con
 	}
 	resamplingOptions = new KaiRadioBox(this, -1, _("Opcje skalowania"),wxDefaultPosition, wxSize(160,-1), options);
 	
-	MappedButton *OK = new MappedButton(this, 26548, "OK", 0);
+	MappedButton *OK = new MappedButton(this, 26548, "OK");
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		Notebook::GetTab()->Grid1->ResizeSubs(resizeX,resizeY, 
 			resamplingOptions->GetSelection() == 2);
 	},26548);
-	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"), 0);
-	MappedButton *TurnOff = new MappedButton(this, 26549, _("Wy³¹cz ostrze¿enie"), 0);
+	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	MappedButton *TurnOff = new MappedButton(this, 26549, _("Wy³¹cz ostrze¿enie"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		Grid *grid = Notebook::GetTab()->Grid1;
 		grid->AddSInfo("PlayResX",std::to_string(videoSize.x));

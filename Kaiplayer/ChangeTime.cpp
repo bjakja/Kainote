@@ -104,7 +104,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	WhichLines= new KaiChoice(panel,-1,wxDefaultPosition,wxDefaultSize,choices,KAI_SCROLL_ON_FOCUS);
 
 	wxBoxSizer *stylesizer= new wxBoxSizer(wxHORIZONTAL);
-	AddStyles = new MappedButton(panel, ID_BSTYLE, "+", "", wxDefaultPosition, wxSize(22,22), 0);
+	AddStyles = new MappedButton(panel, ID_BSTYLE, "+", "", wxDefaultPosition, wxSize(22,22), -1);
 	Stylestext = new KaiTextCtrl(panel, -1, "", wxDefaultPosition, wxSize(22,22), wxTE_PROCESS_ENTER);
 	stylesizer->Add(AddStyles,0,wxALL,2);
 	stylesizer->Add(Stylestext,1,wxEXPAND|wxBOTTOM|wxTOP|wxRIGHT,2);
@@ -131,7 +131,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	CorTime = new KaiChoice(panel, -1, wxDefaultPosition, wxSize(130,-1), choices, KAI_SCROLL_ON_FOCUS);
 	CorTime->SetSelection(0);
 	cesizer->Add(CorTime,0,wxEXPAND|wxLEFT|wxRIGHT,2);
-	coll = new MappedButton(panel,22999,_("Opcje dodatkowe"),"",wxDefaultPosition, wxSize(-1,-1), 0);
+	coll = new MappedButton(panel,22999,_("Opcje dodatkowe"));
 	LeadIn=NULL;
 	
 	Main->Add(timesizer,0,wxEXPAND|wxALL,2);

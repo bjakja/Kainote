@@ -192,7 +192,7 @@ MappedButton::~MappedButton()
 
 void MappedButton::SetToolTip(const wxString &_toolTip)
 {
-	if(Window){
+	if(Window>=0){
 		wxString toolTip = (_toolTip=="")? GetToolTipText().BeforeFirst('(').Trim() : _toolTip;
 		wxString desc = name;
 		if(toolTip.empty()){toolTip=desc;}
@@ -287,7 +287,7 @@ void MappedButton::OnMouseEvent(wxMouseEvent &event)
 		Refresh(false);
 		return;
 	}
-	if(Window && event.LeftDown() && (event.ShiftDown() || (twoHotkeys && event.ControlDown()))){
+	if(Window>=0 && event.LeftDown() && (event.ShiftDown() || (twoHotkeys && event.ControlDown()))){
 		//upewnij siê, ¿e da siê zmieniæ idy na nazwy, 
 		//mo¿e i trochê spowolni operacjê ale skoñczy siê ci¹g³e wywalanie hotkeysów
 		//mo¿e od razu funkcji onmaphotkey przekazaæ item by zrobi³a co trzeba
@@ -319,7 +319,7 @@ void MappedButton::OnMouseEvent(wxMouseEvent &event)
 
 void MappedButton::SendEvent()
 {
-	wxCommandEvent evt((Window)? wxEVT_COMMAND_MENU_SELECTED : wxEVT_COMMAND_BUTTON_CLICKED, GetId());
+	wxCommandEvent evt((Window>=0)? wxEVT_COMMAND_MENU_SELECTED : wxEVT_COMMAND_BUTTON_CLICKED, GetId());
 	ProcessEvent(evt);
 }
 

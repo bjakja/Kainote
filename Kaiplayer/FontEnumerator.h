@@ -37,8 +37,10 @@ public:
 	void StartListening(kainoteFrame* parent);
 	void EnumerateFonts(bool reenumerate = false);
 	wxArrayString *GetFonts(const wxWindow *client, std::function<void()> func);
+	wxArrayString *GetFilteredFonts(const wxWindow *client, std::function<void()> func, const wxString &filter);
 	void AddClient(const wxWindow *client, std::function<void()> func);
 	void RemoveClient(const wxWindow *client);
+	void RemoveFilteredClient(const wxWindow *client, bool clearFiltered=true);
 	bool CheckGlyphsExists(HDC dc, const wxString &textForCheck, wxString &missing); 
 private:
 	void RefreshClientsFonts();
@@ -48,11 +50,15 @@ private:
 	void RefreshVideo();
 	wxArrayString *Fonts;
 	wxArrayString *FontsTmp;
+	wxArrayString *FilteredFonts;
+	wxArrayString *FilteredFontsTmp;
+	wxString filter;
 	std::map<const wxWindow*, std::function<void()>> observers;
 	kainoteFrame* parent;
 	HANDLE eventKillSelf;
 	HANDLE checkFontsThread;
 	wxMutex enumerateMutex;
+	HDC hdc;
 };
 
 extern FontEnumerator FontEnum;

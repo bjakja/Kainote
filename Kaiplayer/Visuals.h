@@ -314,6 +314,7 @@ public:
 	int y;
 	int lastpos;
 	float pointArea;
+	int vectorScale;
 	byte alignment;
 	wxPoint diffs;
 	wxRect selection;

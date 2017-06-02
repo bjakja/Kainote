@@ -1494,7 +1494,7 @@ void SubsGrid::ChangeTimes(bool byFrame)
 			if(time!=0){
 				if(whichTimes!=2){dialc->Start.Change(time);}
 				if(whichTimes!=1){dialc->End.Change(time);}
-				dialc->State = 1 + dialc->State & 4;
+				dialc->State = 1 + (dialc->State & 4);
 			}else if(frame!=0){
 				if(whichTimes==0){
 					duration = dialc->End.mstime - dialc->Start.mstime;
@@ -1509,7 +1509,7 @@ void SubsGrid::ChangeTimes(bool byFrame)
 					dialc->End.NewTime(ZEROIT(vb->GetFrameTimeFromFrame(endFrame)));
 					//endDiff = dialc->End.mstime - endDiff;
 				}
-				dialc->State=1 + dialc->State & 4;
+				dialc->State=1 + (dialc->State & 4);
 			}
 			if(changeTagTimes){
 				int newStartTrimed=0, newEndTrimed=0;
@@ -1526,8 +1526,8 @@ void SubsGrid::ChangeTimes(bool byFrame)
 					newend+=dialc->Start.mstime;
 					dialc->End.NewTime(newend);
 				}
-				if(PostprocessorOptions & 1){dialc->Start.Change(-li);dialc->State=1 + dialc->State & 4;}
-				if(PostprocessorOptions & 2){dialc->End.Change(lo);dialc->State=1 + dialc->State & 4;}
+				if(PostprocessorOptions & 1){dialc->Start.Change(-li);dialc->State=1 + (dialc->State & 4);}
+				if(PostprocessorOptions & 2){dialc->End.Change(lo);dialc->State=1 + (dialc->State & 4);}
 				if(correctEndTimes>0 || PostprocessorOptions>19){
 					tmpmap[dialc]=i;
 
@@ -1553,7 +1553,7 @@ void SubsGrid::ChangeTimes(bool byFrame)
 			if(!(it!=tmpmap.end())){it=cur; hasend=true;}
 			if(correctEndTimes>0 && dialc->End > it->first->Start && !hasend){
 				dialc->End = it->first->Start;
-				dialc->State=1 + dialc->State & 4;
+				dialc->State=1 + (dialc->State & 4);
 			}
 			if(PostprocessorOptions & 4){
 				int cdiff= (te+ts);
@@ -1561,14 +1561,14 @@ void SubsGrid::ChangeTimes(bool byFrame)
 				if(newstarttime != -1){
 					dialc->Start.NewTime(newstarttime);
 					newstarttime = -1;
-					dialc->State=1 + dialc->State & 4;
+					dialc->State=1 + (dialc->State & 4);
 				}
 				if(tdiff <= cdiff && tdiff > 0){
 					int wsp = ((float)tdiff / (float)cdiff)*te;
 					int newtime=ZEROIT(wsp);
 					dialc->End.Change(newtime);
 					newstarttime = dialc->End.mstime;
-					dialc->State=1 + dialc->State & 4; 
+					dialc->State=1 + (dialc->State & 4); 
 
 				}
 
@@ -1603,11 +1603,11 @@ void SubsGrid::ChangeTimes(bool byFrame)
 				}
 				if(strtres!=INT_MAX && strtres >= pors){
 					dialc->Start.NewTime(strtres);
-					dialc->State=1 + dialc->State & 4;
+					dialc->State=1 + (dialc->State & 4);
 				}
 				if(endres!=-1 && endres <= pore){
 					dialc->End.NewTime(endres);
-					dialc->State=1 + dialc->State & 4;
+					dialc->State=1 + (dialc->State & 4);
 				}
 			}
 			dialc->ClearParse();
@@ -1629,11 +1629,11 @@ void SubsGrid::SortIt(short what, bool all)
 
 	std::vector<Dialogue*> selected;
 	if(all){
-		for(int i=0;i<GetCount();i++){file->subs->dials[i]->State=1 + file->subs->dials[i]->State & 4;}
+		for(int i=0;i<GetCount();i++){file->subs->dials[i]->State=1 + (file->subs->dials[i]->State & 4);}
 	}else{
 		for(auto cur=sel.begin(); cur!=sel.end(); cur++){
 			Dialogue *dial=file->subs->dials[cur->first];
-			dial->State=1 + dial->State & 4;
+			dial->State=1 + (dial->State & 4);
 			selected.push_back(dial);
 		}
 	}

@@ -611,6 +611,9 @@ Item *KaiListCtrl::CopyRow(int y, int x, bool pushBack)
 	}
 	if(pushBack){
 		itemList->push_back(newRow);
+		int newy = itemList->size()-1;
+		if(x < 0 || x >= (*itemList)[newy]->row.size()){return NULL;}
+		return (*itemList)[newy]->row[x];
 	}else{
 		itemList->Change(y, newRow);
 	}

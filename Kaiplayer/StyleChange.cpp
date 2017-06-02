@@ -70,12 +70,29 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 
 	KaiStaticBoxSizer *stylefont= new KaiStaticBoxSizer(wxVERTICAL, this, _("Czcionka i rozmiar:"));
 	wxBoxSizer *fntsizer=new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *filtersizer=new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *biussizer=new wxBoxSizer(wxHORIZONTAL);
 	sfont = new KaiChoice(this, ID_FONTNAME, "", wxDefaultPosition, wxDefaultSize, wxArrayString());
 	sfont -> PutArray(FontEnum.GetFonts(this,[=](){
 		SS->ReloadFonts();
 	}));
 	ssize = new NumCtrl(this, ID_TOUTLINE, "32",1,10000,false, wxDefaultPosition, wxSize(66,-1), wxTE_PROCESS_ENTER);
+	fontFilter = new KaiTextCtrl(this,-1,Options.GetString(StyleEditFilterText));
+	Filter = new ToggleButton(this, 21342, _("Filtruj"));
+	Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, [=](wxCommandEvent &evt){
+		wxString filter = fontFilter->GetValue();
+		if(filter.IsEmpty() || !Filter->GetValue()){
+			sfont -> PutArray(FontEnum.GetFonts(this,[=](){
+				SS->ReloadFonts();
+			}));
+			FontEnum.RemoveFilteredClient(this);
+		}else{
+			sfont -> PutArray(FontEnum.GetFilteredFonts(this,[=](){
+				SS->ReloadFonts();
+			}, filter));
+		}
+		Options.SetString(StyleEditFilterText, filter);
+	},21342);
 
 	sb = new KaiCheckBox(this, ID_CBOLD, _("Pogrubienie"), wxDefaultPosition, wxSize(73,15));
 	si = new KaiCheckBox(this, ID_CBOLD, _("Kursywa"), wxDefaultPosition, wxSize(73,15));
@@ -84,6 +101,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 
 	fntsizer->Add(sfont,4,wxEXPAND|wxALL,2);
 	fntsizer->Add(ssize,1,wxEXPAND|wxALL,2);
+	filtersizer->Add(fontFilter,4,wxEXPAND|wxALL,2);
+	filtersizer->Add(Filter,1,wxEXPAND|wxALL,2);
 
 	biussizer->Add(sb,1,wxEXPAND|wxALL,2);
 	biussizer->Add(si,1,wxEXPAND|wxALL,2);
@@ -91,6 +110,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 	biussizer->Add(ss,1,wxEXPAND|wxALL,2);
 
 	stylefont->Add(fntsizer,0,wxEXPAND,0);
+	stylefont->Add(filtersizer,0,wxEXPAND,0);
 	stylefont->Add(biussizer,0,wxEXPAND|wxALIGN_CENTER,0);
 
 	KaiStaticBoxSizer *stylekol= new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Kolory i przezroczystość:"));
@@ -216,7 +236,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 	styleprev->Add(Preview,1,wxEXPAND|wxALL,2);
 
 	wxBoxSizer *buttons=new wxBoxSizer(wxHORIZONTAL);
-	btnOk = new MappedButton(this, ID_BOK, "Ok"/*, "", wxDefaultPosition, wxSize(50,-1)*/);
+	btnOk = new MappedButton(this, ID_BOK, "Ok");
 	btnCancel = new MappedButton(this, ID_BCANCEL, _("Anuluj"));
 	btnCommit = new MappedButton(this, ID_BONVID, _("Zastosuj"));
 	btnFullscreen = new MappedButton(this, ID_BONFULL, _("Zobacz na pełnym ekranie"));

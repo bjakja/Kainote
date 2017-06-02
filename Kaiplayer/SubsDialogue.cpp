@@ -349,7 +349,7 @@ Dialogue *Dialogue::Copy(bool keepstate)
 	dial->MarginV=MarginV;
 	dial->NonDial=NonDial;
 	dial->Start=Start;
-	dial->State= (keepstate) ? State : 1 + dial->State & 4;
+	dial->State= (keepstate) ? State : 1 + (State & 4);
 	dial->Style=Style;
 	dial->Text=Text;
 	dial->TextTl=TextTl;

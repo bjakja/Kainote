@@ -55,6 +55,8 @@ class StyleChange: public wxWindow
 		MappedButton* btnCancel;
 		MappedButton* btnFullscreen;
 		KaiChoice* sfont;
+		KaiTextCtrl *fontFilter;
+		ToggleButton *Filter;
 		NumCtrl* alpha1;
 		NumCtrl* alpha2;
 		NumCtrl* alpha3;

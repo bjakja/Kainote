@@ -334,20 +334,20 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 		acstyl->ScaleY.ToDouble(&fscy);
 	}
 	if(scale){
-		scale->x=fscx/100;
-		scale->y=fscy/100;
+		scale->x=fscx/100.f;
+		scale->y=fscy/100.f;
 	}
 	if(draw){
 		wxRegEx drawscale;
 		if(Visual==VECTORCLIP){
-			*scale = D3DXVECTOR2(1,1);
+			*scale = D3DXVECTOR2(1.f,1.f);
 			drawscale.Compile("\\\\i?clip\\(([0-9]+),", wxRE_ADVANCED);
 		}else{
 			drawscale.Compile("\\\\p([0-9]+)", wxRE_ADVANCED);
 		}
 		int dscale=1;
 		if(drawscale.Matches(txt)){
-			dscale = wxAtoi(drawscale.GetMatch(txt,1));
+			((DrawingAndClip*)this)->vectorScale = dscale = wxAtoi(drawscale.GetMatch(txt,1));
 		}
 		dscale= pow(2.f,(dscale-1.f));
 		scale->x /= dscale;
@@ -424,9 +424,12 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 		return;
 	}
 	if(dummy){
-		bool vis=false;
-		//wxLogStatus("dummytext %i", (int)dummytext);
+
 		if(!dummytext){
+			bool vis=false;
+			dummytext= grid->GetVisible(&vis, &textplaced);
+			if(!vis){SAFE_DELETE(dummytext);return;}
+
 			if(Visual==VECTORCLIP){
 				//wxPoint pos;
 				wxString tmp="clip(";
@@ -436,8 +439,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 				wxString tclip= "\\"+tmp+clip+")";
 				edit->Placed.x += tmp.Len()+ 1 + ChangeText(&txt,tclip,edit->InBracket,edit->Placed);
 				edit->Placed.y=edit->Placed.x+clip.Len();
-				dummytext= grid->GetVisible(&vis, &textplaced);
-				if(!vis){SAFE_DELETE(dummytext);return;}
+				
 				dummytext->replace(textplaced.x,textplaced.y,txt);
 				textplaced.y=txt.Len();
 				int nx=0, ny=0;
@@ -477,9 +479,6 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 					DrawingAndClip *drawing = (DrawingAndClip*)this;
 					ChangeText(&txt, "\\an"+getfloat(drawing->alignment,"1.0f"), edit->InBracket, edit->Placed);
 				}
-				//txt.Replace("}{","");
-				dummytext=grid->GetVisible(&vis, &textplaced);
-				if(!vis){SAFE_DELETE(dummytext);return;}
 
 				int bracketPos = 0;
 				while(1){
@@ -518,8 +517,6 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 					clip+="{\\p0}";
 				}
 				txt.replace(Mpos + edit->Placed.y, endClip, clip);
-				
-				
 
 				if(changeEditorText){
 					Editor->SetTextS(txt,false,true);
@@ -529,7 +526,6 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 				dummytext->replace(textplaced.x,textplaced.y,txt);
 				textplaced.y=txt.Len();
 				dumplaced.x=edit->Placed.y + Mpos + textplaced.x; dumplaced.y= dumplaced.x + cliplen;
-				
 
 			}
 		}else{

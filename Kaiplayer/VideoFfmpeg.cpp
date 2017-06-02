@@ -140,7 +140,8 @@ void VideoFfmpeg::Processing()
 				if(tdiff>0){Sleep(tdiff);}
 				else{
 					while(1){
-						if(Timecodes[rend->lastframe]>=acttime || rend->lastframe>=NumFrames){
+						int frameTime = Timecodes[rend->lastframe];
+						if(frameTime>=acttime || frameTime>=rend->playend || rend->lastframe>=NumFrames){
 							if(rend->lastframe>=NumFrames){rend->lastframe = NumFrames-1; rend->time = rend->playend;}
 							break;
 						}else{

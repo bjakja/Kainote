@@ -80,14 +80,14 @@ void TabPanel::SetAccels()
 	
 	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
 		int id=cur->first.id;
-		if(cur->second.Accel=="" || cur->first.Type == 'A' || cur->first.Type == 'G'){continue;}
+		if(cur->second.Accel=="" || cur->first.Type == AUDIO_HOTKEY || cur->first.Type == GLOBAL_HOTKEY){continue;}
 		//editor
-		if(cur->first.Type == 'E'){
+		if(cur->first.Type == EDITBOX_HOTKEY){
 			eentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
-		}else if(cur->first.Type == 'N'){//grid
+		}else if(cur->first.Type == GRID_HOTKEY){//grid
 			gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 			if(id>5000 &&id<=6000){Grid1->ConnectAcc(id);}
-		}else if(cur->first.Type == 'W'){//video
+		}else if(cur->first.Type == VIDEO_HOTKEY){//video
 			ventries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 			if(id>2000 && id<3990){Video->ConnectAcc(id);}
 			if(id>=PlayPause && id<= Minus5Second){
@@ -97,11 +97,7 @@ void TabPanel::SetAccels()
 		} 
 
 	}
-	/*for(int i=PlayPause; i<= Minus5Second; i++){
-		idAndType itype(i, 'N');
-		gentries.push_back(Hkeys.GetHKey(&itype));
-		Grid1->ConnectAcc(i);
-	}*/
+	
 	wxAcceleratorTable accelg(gentries.size(), &gentries[0]);
     Grid1->SetAcceleratorTable(accelg);
 	wxAcceleratorTable accelv(ventries.size(), &ventries[0]);

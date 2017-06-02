@@ -266,7 +266,7 @@ int Hotkeys::LoadHkeys(bool Audio)
 		} 
 
 		wxString Values=token.AfterFirst(' ').Trim(false).Trim(true);
-		char type=Values[0];
+		int type=wxString("GNEWA").find(Values[0]);
 		Values = Values.Remove(0,2);
 		wxString Labels=token.BeforeFirst(' ').Trim(false).Trim(true);
 		if(Values!=""){
@@ -287,6 +287,7 @@ int Hotkeys::LoadHkeys(bool Audio)
 
 void Hotkeys::SaveHkeys(bool Audio)
 {
+	wxString gnewa = "GNEWA";
 	wxString Texthk="["+Options.progname+"]\r\n";
 	for (std::map<idAndType, hdata>::iterator cur = hkeys.begin();cur != hkeys.end();cur++) {
 		if((!Audio && cur->first.Type==AUDIO_HOTKEY) || (Audio && !(cur->first.Type==AUDIO_HOTKEY)) ) {continue;}
@@ -294,7 +295,7 @@ void Hotkeys::SaveHkeys(bool Audio)
 		else{
 			wxString idstring = GetString((Id)cur->first.id);
 			if(idstring==""){idstring<<cur->first.id;}
-			Texthk << idstring << " " << cur->first.Type << "=" << cur->second.Accel << "\r\n";
+			Texthk << idstring << " " << gnewa[cur->first.Type] << "=" << cur->second.Accel << "\r\n";
 		}
 	}
 	OpenWrite ow;
@@ -352,9 +353,7 @@ wxAcceleratorEntry Hotkeys::GetHKey(const idAndType itype, const hdata *data)
 
 void Hotkeys::SetHKey(const idAndType &itype, wxString name, wxString hotkey)
 {
-	if(hotkey!=""){
-		hkeys[itype] = hdata( name, hotkey);
-	}
+	hkeys[itype] = hdata( name, hotkey);
 }
 
 wxString Hotkeys::GetMenuH(const idAndType &itype, const wxString &name)
@@ -376,7 +375,7 @@ void Hotkeys::ResetKey(const idAndType *itype, int id, char type)
 	}else{wxLogStatus(_("Nie można przywrócić skrótu, bo nie ma domyślnego ustawienia o id %i"), tmpitype.id);}
 }
 
-const wxString &Hotkeys::GetDefaultKey(const idAndType &itype)
+wxString Hotkeys::GetDefaultKey(const idAndType &itype)
 {
 	std::map<idAndType,hdata> tmphkeys;
 	LoadDefault(tmphkeys);LoadDefault(tmphkeys, true);
@@ -385,6 +384,7 @@ const wxString &Hotkeys::GetDefaultKey(const idAndType &itype)
 	{
 		return it->second.Accel;
 	}
+	return "";
 }
 //return -2 anulowano zmianę skrótów, -1 nowy skrót, 1+ id do zmiany skrótu.
 int Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow, bool showWindowSelection)
@@ -552,3 +552,5 @@ void HkeysDialog::OnKeyPress(wxKeyEvent& event)
 
 
 Hotkeys Hkeys;
+
+DEFINE_ENUM(Id,IDS)

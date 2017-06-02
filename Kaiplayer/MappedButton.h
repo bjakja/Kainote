@@ -22,7 +22,7 @@
 class MappedButton :public wxWindow
 {
 public:
-	MappedButton(wxWindow *parent, int id, const wxString& label, int window = 0,
+	MappedButton(wxWindow *parent, int id, const wxString& label, int window = -1,
              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
 	MappedButton(wxWindow *parent, int id, const wxString& label, const wxString& tooltip,
              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, int window = EDITBOX_HOTKEY, long style = 0);

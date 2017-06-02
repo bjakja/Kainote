@@ -57,8 +57,8 @@ void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 	VB->blockpaint=true;
 	selarr = GetSels();
 	int sels=selarr.GetCount();
-	Menu *menu=new Menu('N');
-	Menu *hidemenu=new Menu('N');
+	Menu *menu=new Menu(GRID_HOTKEY);
+	Menu *hidemenu=new Menu(GRID_HOTKEY);
 	MenuItem *item;
 	item = hidemenu->SetAccMenu(5000+LAYER,_("Ukryj warstwę"),_("Ukryj warstwę"),true, ITEM_CHECK);
 	item->Enable(form<SRT);
@@ -765,7 +765,7 @@ void Grid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 	//tu zacznie się potęga szukaczki tagów
 	//wxRegEx onenum("\\\\(fax|fay|fs|bord|shad|pos|move|iclip|clip|org)([^\\\\}\\)]*)",wxRE_ADVANCED);
 	//wxRegEx drawing("\\\\p([0-9]+)[\\\\}\\)]",wxRE_ADVANCED);
-	wxString tags[] = {"pos","move","bord","shad","org"/*,"fax","fay"*/,"fsp","fscx"/*,"fscy"*/,"fs","clip","iclip","p"};
+	wxString tags[] = {"pos","move","bord","shad","org","fsp","fscx","fs","clip","iclip","p","xbord","ybord","xshad","yshad"};
 
 	for(int i=0;i<GetCount();i++){
 		//zaczniemy od najłatwiejszego, marginesy
@@ -783,7 +783,7 @@ void Grid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		/*long long replaceMismatch = 0;*/
 		size_t pos=0;
 		
-		diall->ParseTags(tags, 11, false);
+		diall->ParseTags(tags, 15, false);
 		ParseData *pdata = diall->pdata;
 		if(!pdata){continue;}
 		size_t tagsSize = pdata->tags.size();
@@ -855,7 +855,9 @@ void Grid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 			}else if(tag->tagName != "p"){
 				if(tag->value.ToCDouble(&tagValue)){
 					tagValue *= (tag->tagName == "fscx")? valFscx : 
-						(tag->tagName == "fs")? val1 : val;
+						(tag->tagName == "fs")? val1 :
+						(tag->tagName.StartsWith('x'))? xnsize : 
+						(tag->tagName.StartsWith('y'))? ynsize : val;
 					resizedTag = getfloat(tagValue);
 				}else{
 					wxLogMessage(_("W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"), i+1, tag->value, tag->tagName);

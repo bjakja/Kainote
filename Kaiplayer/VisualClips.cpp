@@ -72,6 +72,7 @@ DrawingAndClip::DrawingAndClip()
 	,drawToolLines(false)
 	,grabbed(-1)
 	,tool(1)
+	,vectorScale(1)
 {
 }
 
@@ -145,35 +146,35 @@ void DrawingAndClip::SetCurVisual()
 {
 	wxString clip;
 	D3DXVECTOR2 linepos = GetPosnScale(&scale, &alignment, (Visual==VECTORDRAW)? tbl : NULL);
+	
 	if(Visual!=VECTORDRAW){
 		bool found =tab->Edit->FindVal("(i?clip[^)]+\\))", &clip, "", 0, true);
 		if(found){int rres = clip.Replace(",",",");
 			if( rres >= 3) {clip = "";} 
 			else{clip = clip.AfterFirst((rres>0)? ',' : '(');}
 		}
+		wspw/=scale.x;
+		wsph/=scale.y;
 		_x=0;
 		_y=0;
 	}else{
 		bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()=="");
 		//Editor
 		MTextEditor *Editor=(isOriginal)? tab->Edit->TextEditTl : tab->Edit->TextEdit;
-		wxString txt=tab->Edit->TextEdit->GetValue();
-		wxRegEx re("(.*){[^}]*}(m[^{]+){[^}]*\\\\p0[^}]*}(.*)", wxRE_ADVANCED);
-		if(re.Matches(txt)){
-			clip = re.GetMatch(txt,2);
-			
-		}else{
-			wxRegEx re("(.*){[^}]*}(m[^{]+)", wxRE_ADVANCED);
-			if(re.Matches(txt)){
-				clip = re.GetMatch(txt,2);
-				
+		wxString tags[] = {"p"};
+		tab->Edit->line->ParseTags(tags,1);
+		ParseData *pdata = tab->Edit->line->pdata;
+		if(pdata->tags.size() >= 2){
+			int i=1;
+			while(i<pdata->tags.size()){
+				if(!pdata->tags[i]->value.IsNumber()){
+					clip = pdata->tags[1]->value;
+					break;
+				}
+				i++;
 			}
 		}
-		
-		//wxLogStatus("text "+textwithclip);
-		Editor->SetTextS(txt,false,false);
-		Editor->modified=true;
-
+		tab->Edit->line->ClearParse();
 		_x=linepos.x/scale.x;
 		_y=(linepos.y/scale.y);
 		wspw/=scale.x;
@@ -232,6 +233,9 @@ wxString DrawingAndClip::GetVisual()
 {
 	wxString format = (Visual==VECTORDRAW)? "6.2f" : "6.0f";
 	wxString clip;
+	if(Visual==VECTORCLIP && vectorScale>1){
+		clip<<vectorScale<<",";
+	}
 	wxString lasttype;
 	int cntb=0;
 	bool spline=false;

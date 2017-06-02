@@ -99,7 +99,7 @@ void DescTxtCtrl::OnKillFocus(wxFocusEvent &evt)
 }
 
 TagButton::TagButton(wxWindow *parent, int id, const wxString &name, wxString tooltip, const wxSize &size)
-	: MappedButton(parent,id,name,"", wxDefaultPosition,size,'E')
+	: MappedButton(parent,id,name,"", wxDefaultPosition,size,EDITBOX_HOTKEY)
 {
 	wxString rest;
 	type=0;
@@ -361,7 +361,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	ebrow=Row;
 	grid->markedLine=Row;
 	wxDELETE(line);
-	line=grid->GetDial(ebrow)->Copy(true);
+	line=grid->GetDial(ebrow)->Copy();
 	Comment->SetValue(line->IsComment);
 	LayerEdit->SetInt(line->Layer);
 	StartEdit->SetTime(line->Start, false, 1);

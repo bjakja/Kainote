@@ -150,6 +150,7 @@
 	CG(ReplaceRecent,)\
 	CG(SelectVisibleLineAfterFullscreen,)\
 	CG(SpellcheckerOn,)\
+	CG(StyleEditFilterText,)\
 	CG(StyleManagerPosition,)\
 	CG(StyleManagerDetachEditor,)\
 	CG(SubsAutonaming,)\

@@ -27,6 +27,8 @@
 #include "OpennWrite.h"
 #include "KaiMessageBox.h"
 
+const wxString windowNames[] = {_("Globalny"),_("Napisy"),_("Edytor"),_("Wideo"),_("Audio")};
+
 void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
 {
 	wxSize ex = dc->GetTextExtent(accel);
@@ -39,7 +41,7 @@ void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, Ka
 	if(modified){dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled()? WindowText : WindowTextInactive));}
 }
 
-void ItemHotkey::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL)
+void ItemHotkey::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed)
 {
 	if(event.LeftDClick()){
 		int inum=theList->GetSelection();
@@ -71,7 +73,7 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 				int result = msg.ShowModal();
 				if(result!=wxCANCEL){
 					if(result==wxNO){hotkey="";}
-					int nitem =theList->FindItem(0, wxString(cur->first.Type) + " " + cur->second.Name);
+					int nitem =theList->FindItem(0, windowNames[cur->first.Type] + " " + cur->second.Name);
 					if(nitem>=0){
 						ItemHotkey* item = (ItemHotkey*)theList->CopyRow(nitem, 1);
 						item->accel = hotkey;
@@ -84,11 +86,13 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 
 		if(!itype){return;}
 		if(hotkeyId.Type != hkd.type){
-			int nitem = theList->FindItem(0, wxString(hkd.type) + " " + name);
+			int nitem = theList->FindItem(0, windowNames[hkd.type] + " " + name);
 			if(nitem<0){
-				ItemHotkey* item = (ItemHotkey*)theList->CopyRow(nitem, 1, true);
-				item->accel = hkd.hotkey;
-				item->modified = true;
+				ItemHotkey* itemcopied = (ItemHotkey*)theList->CopyRow(y, 1, true);
+				ItemText *itemtext = (ItemText*)theList->GetItem(theList->GetCount()-1, 0);
+				itemtext->name = windowNames[hkd.type] + " " + name;
+				itemcopied->accel = hkd.hotkey;
+				itemcopied->modified = true;
 				int pos = theList->GetCount();
 				theList->ScrollTo(pos);
 				theList->SetSelection(pos);
@@ -101,29 +105,36 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 			theList->SetSelection(nitem);
 			goto done;
 		}
-		ItemHotkey* item = new ItemHotkey(*this);
+		ItemHotkey* item = (ItemHotkey*)theList->CopyRow(y, 1);
 		item->accel = hkd.hotkey;
 		item->modified = true;
 		theList->Refresh(false);
 done:
 		delete itype; itype = NULL;
+		theList->SetModified(true);
+		theList->PushHistory();
 	}
 }
 
 void ItemHotkey::OnResetHotkey(KaiListCtrl *theList, int y)
 {
 	const wxString &defKet = Hkeys.GetDefaultKey(hotkeyId);
-	Item *itemKey = theList->CopyRow(y,1);
-	((ItemHotkey*)itemKey)->accel = defKet;
-	theList->Refresh();
-
+	ItemHotkey *itemKey = (ItemHotkey*)theList->CopyRow(y,1);
+	itemKey->accel = defKet;
+	itemKey->modified = true;
+	theList->SetModified(true);
+	theList->Refresh(false);
+	theList->PushHistory();
 }
 	
 void ItemHotkey::OnDeleteHotkey(KaiListCtrl *theList, int y)
 {
-	Item *itemKey = theList->CopyRow(y,1);
-	((ItemText*)itemKey)->name = "";
-	theList->Refresh();
+	ItemHotkey *itemKey = (ItemHotkey*)theList->CopyRow(y,1);
+	itemKey->accel = "";
+	itemKey->modified = true;
+	theList->SetModified(true);
+	theList->Refresh(false);
+	theList->PushHistory();
 }
 
 void ItemHotkey::Save()
@@ -405,11 +416,10 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	{
 		wxBoxSizer *HkeysSizer=new wxBoxSizer(wxVERTICAL);
 		Shortcuts = new KaiListCtrl(Hotkeyss,26667, wxDefaultPosition);
-		Shortcuts->InsertColumn(0,_("Funkcja"),TYPE_TEXT,220);
-		Shortcuts->InsertColumn(1,_("Skrót"),TYPE_TEXT,120);
+		Shortcuts->InsertColumn(0,_("Funkcja"),TYPE_TEXT,260);
+		Shortcuts->InsertColumn(1,_("Skrót"),TYPE_TEXT,80);
 		//Connect(26667,LIST_ITEM_DOUBLECLICKED,(wxObjectEventFunction)&OptionsDialog::OnMapHkey);
 		//Connect(26667,LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);
-		wxString windowNames[] = {_("Globalny"),_("Napisy"),_("Edytor"),_("Wideo"),_("Audio")};
 
 		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){KaiMessageBox(_("Nie można wczytać skrótów klawiszowych audio"), _("Błąd"));}
 
@@ -442,7 +452,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 			}
 
-			wxString name= windowNames[cur->first.Type]<<" "<<cur->second.Name;
+			wxString name= windowNames[cur->first.Type]+" "+cur->second.Name;
 			long pos = Shortcuts->AppendItem(new ItemText(name));
 			Shortcuts->SetItem(pos,1,new ItemHotkey(cur->second.Name, cur->second.Accel, cur->first));
 			ii++;
@@ -452,18 +462,18 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 		HkeysSizer->Add(Shortcuts,1,wxALL|wxEXPAND,2);
 		wxBoxSizer *buttonsSizer = new wxBoxSizer(wxHORIZONTAL);
-		MappedButton *setHotkey = new MappedButton(Hotkeyss, 23232,_("Mapuj skrót"),0);
+		MappedButton *setHotkey = new MappedButton(Hotkeyss, 23232,_("Mapuj skrót"));
 		Connect(23232,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&OptionsDialog::OnMapHkey);
-		MappedButton *resetHotkey = new MappedButton(Hotkeyss, 23231,_("Przywróć skrót domyślny"),0);
+		MappedButton *resetHotkey = new MappedButton(Hotkeyss, 23231,_("Przywróć skrót domyślny"));
 		Connect(23231,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);
-		MappedButton *deleteHotkey = new MappedButton(Hotkeyss, 23230,_("Usuń skrót"),0);
+		MappedButton *deleteHotkey = new MappedButton(Hotkeyss, 23230,_("Usuń skrót"));
 		Connect(23230,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&OptionsDialog::OnDeleteHkey);
 		buttonsSizer->Add(setHotkey,0,wxALL,2);
 		buttonsSizer->Add(resetHotkey,0,wxALL,2);
 		buttonsSizer->Add(deleteHotkey,0,wxALL,2);
 		HkeysSizer->Add(buttonsSizer,0,wxALL|wxALIGN_CENTER,2);
 		Hotkeyss->SetSizerAndFit(HkeysSizer);
-
+		ConOpt(Shortcuts,(CONFIG)2000);
 	}
 
 	//Audio main
@@ -718,11 +728,11 @@ void OptionsDialog::ConOpt(wxWindow *ctrl,CONFIG option)
 void OptionsDialog::OnSaveClick(wxCommandEvent& event)
 {
 	SetOptions(false);
-	if(hkeymodif==1){Hkeys.SaveHkeys();Kai->SetAccels();}
+	/*if(hkeymodif==1){Hkeys.SaveHkeys();Kai->SetAccels();}
 	else if(hkeymodif==2){
 		Hkeys.SaveHkeys(true);
 		if(Kai->GetTab()->Edit->ABox){Kai->GetTab()->Edit->ABox->SetAccels();}
-	}
+	}*/
 	if(event.GetId()==wxID_OK){Hide();}
 }
 
@@ -801,10 +811,20 @@ void OptionsDialog::SetOptions(bool saveall)
 			}
 		}else if(OB.ctrl->IsKindOf(CLASSINFO(KaiListCtrl))){
 			KaiListCtrl *list = (KaiListCtrl*)OB.ctrl;
-			if(OB.option == 1000 && list->GetModified()){
+			if(list->GetModified()){
 				list->SaveAll(1);
 				Options.SaveColors();
-				ChangeColors();
+				if(OB.option == 1000){
+					ChangeColors();
+				}else{
+					Hkeys.SaveHkeys();Kai->SetAccels();
+					Hkeys.SaveHkeys(true);
+					Notebook *tabs = Kai->Tabs; 
+					for(size_t j = 0; j < tabs->Size(); j++){
+						TabPanel *tab = tabs->Page(j);
+						if(tab->Edit->ABox){tab->Edit->ABox->SetAccels();}
+					}
+				}
 			}
 		}
 	}

@@ -42,7 +42,7 @@ void Karaoke::Split()
 	bool Auto=AD->karaAuto;
 	bool Everyn=Options.GetBool(AudioMergeEveryNWithSyllable);
 	Dialogue *dial=AD->dialogue;
-	wxString Text=dial->Text;
+	wxString Text = (dial->TextTl != "")? dial->TextTl : dial->Text;
 	int len=Text.Len();
 	wxString aoi="aeioun ";
 	wxString aoi1="aeiouy";
@@ -135,7 +135,6 @@ void Karaoke::Split()
 wxString Karaoke::GetText()
 {
 	wxString text;
-	//wxLogStatus("sizes, syl: %i",(int)syls.size(),(int)kaas.size());
 	for(size_t i=0; i<syls.size(); i++)
 	{
 		int time=(i==0)? syltimes[i]-AD->curStartMS : (syltimes[i]-syltimes[i-1]);

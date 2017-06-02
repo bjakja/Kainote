@@ -425,7 +425,7 @@ void FontDialog::OnScrollList(wxCommandEvent& event)
 
 FontPickerButton::FontPickerButton(wxWindow *parent, int id, const wxFont& font,
 								   const wxPoint& pos, const wxSize& size, long style)
-								   : MappedButton(parent, id, font.GetFaceName() + " " + std::to_string(font.GetPointSize()), 0, pos, size, style)
+								   : MappedButton(parent, id, font.GetFaceName() + " " + std::to_string(font.GetPointSize()), -1, pos, size, style)
 {
 	ChangeFont(font);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FontPickerButton::OnClick, this, GetId());

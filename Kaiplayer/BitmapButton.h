@@ -23,7 +23,7 @@
 class BitmapButton : public wxStaticBitmap
 {
 public:
-	BitmapButton(wxWindow* parent, wxBitmap bitmap,wxBitmap bitmap1, int hotkeyId, const wxString &tooltip, const wxPoint& pos, const wxSize& size, int window = 'W');
+	BitmapButton(wxWindow* parent, wxBitmap bitmap,wxBitmap bitmap1, int hotkeyId, const wxString &tooltip, const wxPoint& pos, const wxSize& size, int window = 3/*VIDEO_HOTKEY*/);
     virtual ~BitmapButton();
 	void ChangeBitmap(bool play);
 

@@ -125,7 +125,7 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 
 		//pionowy sizer kolumna 2
 		wxBoxSizer* frbsizer=new wxBoxSizer(wxVERTICAL);
-		Button1 = new MappedButton(this, ID_BFIND, _("Znajdź"), 0, wxDefaultPosition, wxSize(124,-1));
+		Button1 = new MappedButton(this, ID_BFIND, _("Znajdź"), -1, wxDefaultPosition, wxSize(124,-1));
 		frbsizer->Add(Button1,1,wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT,6);
 
 		if(repl){
@@ -152,7 +152,7 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		RadioButton7->SetValue((last&&last->RadioButton7)?last->RadioButton7->GetValue():false);
 
 		wxBoxSizer* frbsizer4=new wxBoxSizer(wxHORIZONTAL);
-		Bplus = new MappedButton(this, ID_BPLUS, "+", 0, wxDefaultPosition, wxSize(22,22));
+		Bplus = new MappedButton(this, ID_BPLUS, "+", -1, wxDefaultPosition, wxSize(22,22));
 		tcstyle = new KaiTextCtrl(this, ID_TCSTYLE,(last&&last->tcstyle)?last->tcstyle->GetValue():ES, wxDefaultPosition, wxSize(-1,22));
 		frbsizer4->Add(Bplus,0,0,0);
 		frbsizer4->Add(tcstyle,0,wxLEFT,3);
@@ -200,7 +200,7 @@ findreplace::findreplace(kainoteFrame* kfparent, findreplace* last, bool replace
 		FindText = new KaiChoice(this, ID_FINDTEXT, (last)?last->FindText->GetValue():ES, wxDefaultPosition, wxSize(-1,24),wfind);
 		FindText->SetToolTip(_("Szukany tekst:"));
 		FindText->SetMaxLength(MAXINT);
-		Bplus = new MappedButton(this, ID_BPLUS, "+", 0, wxDefaultPosition, wxSize(24,24));
+		Bplus = new MappedButton(this, ID_BPLUS, "+", -1, wxDefaultPosition, wxSize(24,24));
 		sltpsizer->Add(FindText,1,wxALL|wxEXPAND,3);
 		sltpsizer->Add(Bplus,0,wxALL,3);
 

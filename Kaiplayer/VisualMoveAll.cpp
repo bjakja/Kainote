@@ -70,7 +70,7 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 
 		for(size_t i = 0; i <elems.size(); i++){
 			if(!(selectedTags & elems[i].type)){continue;}
-			if(abs(elems[i].elem.x - x) < 8 && abs(elems[i].elem.y - y) < 8){
+			if(abs(elems[i].elem.x - x) < 8 && abs(elems[i].elem.y - y) < 8 || i == elems.size()-1){
 				numElem=i;
 				beforeMove = lastmove = elems[i].elem;
 				diffs.x=elems[i].elem.x-x;
@@ -121,15 +121,12 @@ void MoveAll::SetCurVisual()
 			elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res,1))/wspw)-zoomMove.x)*zoomScale.x, 
 				((wxAtoi(re.GetMatch(res,2))/wsph)-zoomMove.y)*zoomScale.y);
 		}else{
-			wxString txt = tab->Edit->TextEdit->GetValue();
-			int repl = txt.Replace(",", ",");
-			wxRegEx re("\\(([0-9.-]+)[, ]*([0-9.-]+)[, ]*([0-9.-]+)", wxRE_ADVANCED);
-			if(repl==3){
+			//wxString txt = tab->Edit->TextEdit->GetValue();
+			int repl = res.Replace(",", ",");
+			wxRegEx re("\\(([0-9.-]+)[, ]*([0-9.-]+)", wxRE_ADVANCED);
+			if(repl>=3 && re.Matches(res)){
 				elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res,1))/wspw)-zoomMove.x)*zoomScale.x, 
 					((wxAtoi(re.GetMatch(res,2))/wsph)-zoomMove.y)*zoomScale.y);
-			}else if(repl>3){
-				elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res,2))/wspw)-zoomMove.x)*zoomScale.x, 
-					((wxAtoi(re.GetMatch(res,3))/wsph)-zoomMove.y)*zoomScale.y);
 			}
 		}
 		elem.type=TAGCLIP;
@@ -199,6 +196,7 @@ void MoveAll::ChangeInLines(bool all)
 	//bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()=="");
 	//MTextEditor *Editor=(isOriginal)? tab->Edit->TextEditTl : tab->Edit->TextEdit;
 	//wxString origText=Editor->GetValue();
+	wxString tlModeStyle = tab->Grid1->GetSInfo("TLMode Style");
 	int moveLength = 0;
 	
 	for(size_t i = 0; i< sels.size(); i++){
@@ -221,6 +219,14 @@ void MoveAll::ChangeInLines(bool all)
 				wxString visual;
 				//wxString tag=re.GetMatch(txt, 1); tag też nigdzie nie jest potrzebny, bo wycinamy tylko jego wartość.
 				tmp= re.GetMatch(txt, 1);
+				if(type==TAGCLIP){
+					int replacements = tmp.Replace(',',',');
+					if(replacements==1){
+						tmp=tmp.After(',');
+					}else if(replacements>1){
+						delimiter=",";
+					}
+				}
 				//re.GetMatch(&startMatch, &lenMatch, 2); niepotrzebny drugi raz użycie tego samego
 				wxStringTokenizer tkn(tmp, delimiter,wxTOKEN_STRTOK);
 				int count=0;
@@ -256,7 +262,7 @@ void MoveAll::ChangeInLines(bool all)
 				Cpy.TextTl = txt;
 				wxString tlLines;
 				Cpy.GetRaw(&tlLines, true);
-				Cpy.GetRaw(&tlLines,false,tab->Grid1->GetSInfo("TLMode Style"));
+				Cpy.GetRaw(&tlLines,false,tlModeStyle);
 				dtxt->insert(selPositions[i] + moveLength,tlLines);
 				moveLength += tlLines.Len();
 			}else{

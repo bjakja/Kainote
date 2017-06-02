@@ -29,6 +29,8 @@ FontEnumerator::FontEnumerator()
 {
 	Fonts = new wxArrayString();
 	FontsTmp = new wxArrayString();
+	FilteredFonts = NULL;
+	FilteredFontsTmp = NULL;
 }
 
 FontEnumerator::~FontEnumerator()
@@ -37,6 +39,8 @@ FontEnumerator::~FontEnumerator()
 	WaitForSingleObject(checkFontsThread, 2000);
 	delete Fonts;
 	delete FontsTmp;
+	wxDELETE(FilteredFonts);
+	wxDELETE(FilteredFontsTmp);
 }
 
 void FontEnumerator::StartListening(kainoteFrame* _parent)
@@ -50,19 +54,27 @@ void FontEnumerator::EnumerateFonts(bool reenumerate)
 {
 	wxMutexLocker lock(enumerateMutex);
 	FontsTmp->Clear();
+	if(FilteredFontsTmp){FilteredFontsTmp->Clear();}
 	LOGFONT lf;
 	lf.lfCharSet = DEFAULT_CHARSET;
 	wxStrlcpy(lf.lfFaceName, L"\0", WXSIZEOF(lf.lfFaceName));
 	lf.lfPitchAndFamily = 0;
-	HDC hDC = ::GetDC(NULL);
-	EnumFontFamiliesEx(hDC, &lf, (FONTENUMPROC)FontEnumeratorProc,
+	hdc = ::GetDC(NULL);
+	EnumFontFamiliesEx(hdc, &lf, (FONTENUMPROC)FontEnumeratorProc,
 		(LPARAM)this, 0 /* reserved */);
 	FontsTmp->Sort([](const wxString &i, const wxString &j){return i.CmpNoCase(j);});
 	wxArrayString *tmp = FontsTmp;
 	FontsTmp = Fonts;
 	Fonts = tmp;
+	if(FilteredFontsTmp){
+		FilteredFontsTmp->Sort([](const wxString &i, const wxString &j){return i.CmpNoCase(j);});
+		wxArrayString *tmp = FilteredFontsTmp;
+		FilteredFontsTmp = FilteredFonts;
+		FilteredFonts = tmp;
+	}
 
-	::ReleaseDC(NULL, hDC);
+	::ReleaseDC(NULL, hdc);
+	hdc=NULL;
 }
 
 wxArrayString *FontEnumerator::GetFonts(const wxWindow *client, std::function<void()> func)
@@ -74,6 +86,20 @@ wxArrayString *FontEnumerator::GetFonts(const wxWindow *client, std::function<vo
 	if(client){observers[client] = func;}
 	return Fonts;
 }
+
+wxArrayString *FontEnumerator::GetFilteredFonts(const wxWindow *client, std::function<void()> func, const wxString &_filter)
+{
+	wxMutexLocker lock(enumerateMutex);
+	filter = _filter;
+	if(!FilteredFonts){
+		FilteredFonts=new wxArrayString();
+		FilteredFontsTmp=new wxArrayString();
+	}
+	EnumerateFonts(false);
+	if(client){observers[client] = func;}
+	return FilteredFonts;
+}
+
 void FontEnumerator::AddClient(const wxWindow *client, std::function<void()> func)
 {
 	if(client){observers[client] = func;}
@@ -84,6 +110,19 @@ void FontEnumerator::RemoveClient(const wxWindow *client)
 	auto it = observers.find(client);
 	if(it!=observers.end()){
 		observers.erase(it);
+	}
+}
+//uwaga jeœli usuwamy filtry to bezwzglêdnie
+//trzeba zmieniæ wskaŸnik tablicy na niefiltrowane
+void FontEnumerator::RemoveFilteredClient(const wxWindow *client, bool clearFiltered)
+{
+	auto it = observers.find(client);
+	if(it!=observers.end()){
+		observers.erase(it);
+	}
+	if(clearFiltered){
+		wxDELETE(FilteredFonts);
+		wxDELETE(FilteredFontsTmp);
 	}
 }
 
@@ -101,6 +140,18 @@ int CALLBACK FontEnumerator::FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lpt
 	FontEnumerator *Enum = (FontEnumerator*)lParam;
 	if(Enum->FontsTmp->Index(lplf->lfFaceName,false)==wxNOT_FOUND){
 		Enum->FontsTmp->Add(lplf->lfFaceName);
+	}
+	if(Enum->FilteredFontsTmp && Enum->FilteredFontsTmp->Index(lplf->lfFaceName,false)==wxNOT_FOUND)
+	{
+		wxString missing;
+		auto hfont = CreateFontIndirectW(lplf);
+		SelectObject(Enum->hdc, hfont);
+		if(Enum->CheckGlyphsExists(Enum->hdc, Enum->filter, missing) && missing.empty()){
+			if(!missing.IsEmpty()){wxLogStatus(missing);}
+			Enum->FilteredFontsTmp->Add(lplf->lfFaceName);
+		}
+		SelectObject(Enum->hdc, NULL);
+		DeleteObject(hfont);
 	}
 	return true;
 }

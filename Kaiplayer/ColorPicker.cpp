@@ -1113,7 +1113,7 @@ void DialogColorPicker::OnColourCanged(wxTimerEvent &event)
 
 
 ButtonColorPicker::ButtonColorPicker(wxWindow *parent, AssColor _color, wxSize size)
-	: MappedButton(parent,-1,"","",wxDefaultPosition, size, 0)
+	: MappedButton(parent,-1,"","",wxDefaultPosition, size, -1)
 	, ActualColor(_color)
 {
 	SetBackgroundColour(_color.GetWX());

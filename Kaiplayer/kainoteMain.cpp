@@ -1091,7 +1091,7 @@ void kainoteFrame::SetAccels(bool _all)
 	entries[1].Set(wxACCEL_CTRL, (int) 'W', ID_CLOSEPAGE);
 
 	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
-		if(cur->second.Accel=="" || cur->first.Type!='G'){continue;}
+		if(cur->second.Accel=="" || cur->first.Type != GLOBAL_HOTKEY){continue;}
 		int id=cur->first.id;
 		if(id>=6850){
 			if(id>=30100){
@@ -1434,8 +1434,11 @@ void kainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 		wxString Path;
 		if(id==OpenAudio){
 			wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik audio"), 
-				(tab->VideoPath!="")? tab->VideoPath.BeforeLast('\\') : (videorec.size()>0)?subsrec[videorec.size()-1].BeforeLast('\\') : "", 
-				"", _("Pliki audio i wideo (*.wav),(*.w64),(*.aac),(*.mp3),(*.mp4),(*.mkv),(*.avi)|*.wav;*.w64;*.aac;*.mp3;*.mp4;*.mkv;*.avi|Wszystkie Pliki |*.*"), wxFD_OPEN);
+				(tab->VideoPath!="")? tab->VideoPath.BeforeLast('\\') : 
+				(videorec.size()>0)? subsrec[videorec.size()-1].BeforeLast('\\') : "", "", 
+				_("Pliki audio i wideo") + 
+				" (*.wav),(*.w64),(*.flac),(*.ac3),(*.aac),(*.ogg),(*.mp3),(*.mp4),(*.mkv),(*.avi)|*.wav;*.w64;*.flac;*.ac3;*.aac;*.ogg;*.mp3;*.mp4;*.mkv;*.avi|"+
+				_("Wszystkie pliki")+" |*.*", wxFD_OPEN);
 			int result = FileDialog1->ShowModal();
 			if (result == wxID_OK){
 				Path=FileDialog1->GetPath();
@@ -1669,4 +1672,3 @@ void kainoteFrame::OnRunScript(wxCommandEvent& event)
 	}
 }
 
-DEFINE_ENUM(Id,IDS)

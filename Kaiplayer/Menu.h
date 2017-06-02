@@ -168,7 +168,7 @@ class Menu : public Mnemonics
 	friend class MenuDialog;
 	friend class MenuBar;
 	public:
-	Menu(char window='G');
+	Menu(char window = 0);
 	//Menu(const wxString& title);
 	virtual ~Menu(){
 		Clear();
