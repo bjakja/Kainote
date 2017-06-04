@@ -148,6 +148,7 @@
 	CG(ProgramLanguage,)\
 	CG(ProgramTheme,)\
 	CG(ReplaceRecent,)\
+	CG(SelectionsRecent,)\
 	CG(SelectVisibleLineAfterFullscreen,)\
 	CG(SpellcheckerOn,)\
 	CG(StyleEditFilterText,)\

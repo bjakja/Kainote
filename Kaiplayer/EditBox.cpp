@@ -1561,11 +1561,14 @@ void EditBox::OnDoubtfulTl(wxCommandEvent& event)
 	}else{
 		line->State |= 4;
 	}
-	Dialogue *dial = grid->GetDial(ebrow);
-	if(dial->State & 4){
-		dial->State ^= 4;
-	}else{
-		dial->State |= 4;
+	wxArrayInt sels = grid->GetSels();
+	for(size_t i = 0; i<sels.size(); i++){
+		Dialogue *dial = grid->GetDial(sels[i]);
+		if(dial->State & 4){
+			dial->State ^= 4;
+		}else{
+			dial->State |= 4;
+		}
 	}
 	if(event.GetId() == SetDoubtful){
 		grid->NextLine();
@@ -1577,25 +1580,31 @@ void EditBox::OnDoubtfulTl(wxCommandEvent& event)
 void EditBox::FindNextDoubtfulTl(wxCommandEvent& event)
 {
 	if(!grid->transl){wxBell();return;}
-	for(int i = ebrow; i < grid->GetCount(); i++){
+	for(int i = CurrentDoubtful; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDial(i);
 		if((dial->State & 4) > 0){
 			SetLine(i);
-			grid->Refresh(false);
-			break;
+			grid->SelectRow(i);
+			grid->ScrollTo(i, true);
+			CurrentDoubtful = i+1;
+			return;
 		}
 	}
+	CurrentDoubtful=0;
 }
 	
 void EditBox::FindNextUnTranslated(wxCommandEvent& event)
 {
 	if(!grid->transl){wxBell();return;}
-	for(int i = ebrow; i < grid->GetCount(); i++){
+	for(int i = CurrentUntranslated; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDial(i);
-		if(dial->TextTl == ""){
+		if(dial->TextTl == ""/* && !dial->IsComment*/){
 			SetLine(i);
-			grid->Refresh(false);
-			break;
+			grid->SelectRow(i);
+			grid->ScrollTo(i, true);
+			CurrentUntranslated = i+1;
+			return;
 		}
 	}
+	CurrentUntranslated=0;
 }

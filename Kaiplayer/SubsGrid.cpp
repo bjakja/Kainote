@@ -266,7 +266,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 				strings.Add(_("Efekt"));
 			}
 			if(form!=TMP){strings.Add(_("ZNS"));}
-			strings.Add(_("Tekst"));
+			strings.Add(showtl? _("Tekst oryginalny") : _("Tekst"));
 			if(showtl){strings.Add(_("Tekst tłumaczenia"));}
 			kol = header;
 		}else{
@@ -1616,7 +1616,9 @@ void SubsGrid::ChangeTimes(bool byFrame)
 	}
 
 	SpellErrors.clear();
-	SetModified();
+	int tmpMarked = markedLine;
+	SetModified(true, false, -1, false);
+	markedLine = tmpMarked;
 	if(form>TMP){RepaintWindow(START|END);}else{Refresh(false);}
 #if _DEBUG
 	wxBell();
@@ -1906,7 +1908,9 @@ void SubsGrid::GetUndo(bool redo)
 	}
 	SpellErrors.clear();
 	RepaintWindow();
+	int tmpMarked = markedLine;
 	Edit->SetLine(erow);
+	markedLine = tmpMarked;
 	Edit->RefreshStyle();
 	for(auto cur = sel.begin(); cur != sel.end(); cur++){
 		if(cur->first >= GetCount()){
@@ -2038,7 +2042,7 @@ wxString SubsGrid::GetSInfos(bool tld)
 	return TextSI;
 }
 
-void SubsGrid::SetModified(bool redit, bool dummy, int SetEditBoxLine)
+void SubsGrid::SetModified(bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
 {
 	if(file->IsNotSaved()){
 		if(file->Iter()<1||!Modified){
@@ -2054,7 +2058,7 @@ void SubsGrid::SetModified(bool redit, bool dummy, int SetEditBoxLine)
 			int erow= (SetEditBoxLine >= 0)? SetEditBoxLine : Edit->ebrow;
 			if(erow>=GetCount()){erow=GetCount()-1;}
 			lastRow=erow;
-			if(scPos>erow){scPos=MAX(0,(erow-4));}
+			if(scPos>erow && Scroll){scPos=MAX(0,(erow-4));}
 			Edit->SetLine(erow);
 			sel[erow]=true;
 		}
@@ -2179,6 +2183,7 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 				if(dl->Effect == "\fD"){
 					dl->State |=4;
 				}
+				dl->Effect = tl.Effect;
 				AddLine(dl);
 			}else if(tlmode && dl->Text!=""){
 				AddLine(dl);
@@ -2195,7 +2200,7 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 	if(GetSInfo("TLMode")=="Yes"){
 		Edit->SetTl(true);
 		transl=true;
-		if(GetSInfo("TLMode Showtl")=="Yes"){showtl=true;}
+		if(GetSInfo("TLMode Showtl")=="Yes" || Options.GetBool(TlModeShowOriginal)){showtl=true;}
 		Kai->Menubar->Enable(SaveTranslation,true);
 	}
 
@@ -2320,14 +2325,13 @@ bool SubsGrid::SetTlMode(bool mode)
 
 		for(int i=0; i<GetCount(); i++)
 		{
-			if(file->subs->dials[i]->TextTl!="")
+			Dialogue *dial= GetDial(i);
+			if(dial->TextTl!="")
 			{
-				Dialogue *dial= GetDial(i);
 				dial->Text = dial->TextTl;
 				dial->TextTl="";
 			}
-			//file->subs->dials[i]->spells.clear();
-			file->subs->dials[i]->State ^= 4;
+			if(dial->State >= 4){dial->State -= 4;}
 		}
 
 		transl=false;

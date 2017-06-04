@@ -121,17 +121,17 @@ void Dialogue::SetRaw(const wxString &ldial)
 	MarginR=0;
 	MarginV=0;
 	if(ldial.Find(" --> ")!=-1){
-		NonDial=false;
-		IsComment=false;
-		Form=SRT;
-
 		wxString eend;
 		wxString ttext;
 		Start.SetRaw(ldial.BeforeFirst(' ',&eend),Form);
 		eend=eend.AfterFirst(' ');
 		End.SetRaw(eend.BeforeFirst('\r',&ttext),Form);
 		Text = ttext.AfterFirst('\n');
-		Text.Replace("\r\n","\\N");
+		Text.Replace("\r","");
+		Text.Replace("\n","\\N");
+		NonDial=false;
+		IsComment=false;
+		Form=SRT;
 	}
 	else if( expresion1.Matches( ldial ) )
 	{
@@ -178,7 +178,8 @@ void Dialogue::SetRaw(const wxString &ldial)
 		IsComment=false;
 		Style="Default";
 		Text=ldial;
-		Text.Replace("\r\n","\\N");
+		Text.Replace("\r","");
+		Text.Replace("\n","\\N");
 		Text.Trim(true);
 	}
 
@@ -211,8 +212,9 @@ void Dialogue::GetRaw(wxString *txt, bool tl, const wxString &style)
 		line<<Start.raw(Form)<<_T(":")<<Text;
 	}
 	else if(Form==SRT){
-		Text.Replace("\\N","\r\n");
-		line<<Start.raw(Form)<<" --> "<<End.raw(Form)<<"\r\n"<<Text<<"\r\n";
+		wxString txt = Text;
+		txt.Replace("\\N","\r\n");
+		line<<Start.raw(Form)<<" --> "<<End.raw(Form)<<"\r\n"<<txt<<"\r\n";
 	}
 	line<<_T("\r\n");
 	(*txt)<<line;

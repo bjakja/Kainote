@@ -424,6 +424,7 @@ void KaiChoice::PutArray(wxArrayString *arr)
 	wxString ce = (choice>=0 && choice < (int)list->size())? (*list)[choice] : "";
 	if(list){delete list;}
 	list = new wxArrayString(*arr);
+	if(list->size() < 1){choice = -1; ce = "";}
 	if(itemList){itemList->Destroy(); itemList=NULL;}
 	if(ce != ""){
 		if(choice >= (int)list->size()){

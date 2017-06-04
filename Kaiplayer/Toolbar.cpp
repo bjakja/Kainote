@@ -65,7 +65,7 @@ void KaiToolbar::InitToolbar()
 	if(IDS.size()<1){
 		IDS.Add(OpenSubs);IDS.Add(RecentSubs);IDS.Add(OpenVideo);IDS.Add(RecentVideo);
 		IDS.Add(SaveSubs);IDS.Add(SaveSubsAs);IDS.Add(SaveAllSubs);
-		IDS.Add(RemoveSubs);IDS.Add(Editor);IDS.Add(FindReplace);
+		IDS.Add(RemoveSubs);IDS.Add(Editor);IDS.Add(FindReplaceDialog);
 		IDS.Add(StyleManager);IDS.Add(ASSProperties);IDS.Add(ChangeTime);
 		IDS.Add(ConvertToASS);IDS.Add(ConvertToSRT);IDS.Add(Settings);
 	}
@@ -390,8 +390,7 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 			MenuItem *item=parent->mb->FindItem(parent->ids[elem]);
 			wxString desc=item->GetLabel();
 			desc.Replace("&","");
-			size_t reps=desc.Replace("\t"," (");
-			if (reps){desc.Append(")");}
+			desc = desc.BeforeFirst('\t');
 			parent->AddItem(parent->ids[elem], desc, item->icon,item->IsEnabled(), (item->GetSubMenu()!=NULL)? 1 : 0);
 		}else{
 			parent->tools.erase(parent->tools.begin()+result);

@@ -328,7 +328,8 @@ void config::LoadDefaultColors(bool dark)
 	colors[GridHeaderText] = new wxColour((dark)? "#121212" : "#000000");
 	colors[GridLabelNormal] = new wxColour((dark)? "#6551FF" : "#54AFFF");
 	colors[GridLabelModified] = new wxColour((dark)? "#A8FB05" : "#FBF804");
-	colors[GridLabelSaved] = new wxColour((dark)? "#A398FF" : "#A398FF");
+	colors[GridLabelSaved] = new wxColour((dark)? "#A398FF" : "#B8DFFF");
+	colors[GridLabelDoubtful] = new wxColour((dark)? "#FB9708" : "#FB710B");
 	colors[GridSpellchecker] = new wxColour((dark)? "#FA9292" : "#FA9292");
 	colors[GridComparison] = new wxColour((dark)? "#FFFFFF" : "#00E1FF");
 	colors[GridComparisonBackground] = new wxColour((dark)? "#C0A073" : "#F6D6AC");

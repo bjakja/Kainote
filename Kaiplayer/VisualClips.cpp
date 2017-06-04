@@ -150,7 +150,7 @@ void DrawingAndClip::SetCurVisual()
 	if(Visual!=VECTORDRAW){
 		bool found =tab->Edit->FindVal("(i?clip[^)]+\\))", &clip, "", 0, true);
 		if(found){int rres = clip.Replace(",",",");
-			if( rres >= 3) {clip = "";} 
+			if( rres >= 3) {clip = ""; scale = D3DXVECTOR2(1.f,1.f); vectorScale = 1;} 
 			else{clip = clip.AfterFirst((rres>0)? ',' : '(');}
 		}
 		wspw/=scale.x;
@@ -165,7 +165,7 @@ void DrawingAndClip::SetCurVisual()
 		tab->Edit->line->ParseTags(tags,1);
 		ParseData *pdata = tab->Edit->line->pdata;
 		if(pdata->tags.size() >= 2){
-			int i=1;
+			size_t i=1;
 			while(i<pdata->tags.size()){
 				if(!pdata->tags[i]->value.IsNumber()){
 					clip = pdata->tags[1]->value;

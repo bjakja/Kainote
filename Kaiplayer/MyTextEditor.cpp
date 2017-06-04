@@ -220,7 +220,7 @@ void MTextEditor::OnAccelerator(wxCommandEvent& event)
 	case ID_CDELETE:
 	case ID_CBACK:
 		//len = MText.Len();
-		if((ID==ID_CBACK && Cursor.x==0) || (ID==ID_CDELETE && Cursor.x>=MText.Len())){return;}
+		if((ID==ID_CBACK && Cursor.x==0) || (ID==ID_CDELETE && Cursor.x>=(int)MText.Len())){return;}
 		Selend.x=Cursor.x;
 		if(ID==ID_CBACK){
 			FindWord((Cursor.x<2)? 0 : Cursor.x-1, &Cursor.x, &len);

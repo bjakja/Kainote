@@ -108,8 +108,8 @@ StyleStore::StyleStore(wxWindow* parent,const wxPoint& pos)
 
 	wxBoxSizer *addToButtons=new wxBoxSizer(wxHORIZONTAL);
 
-	addToStore = new MappedButton(this, ID_ADDTOSTORE, _("^ Dodaj do magazynu"));
-	addToAss = new MappedButton(this, ID_ADDTOASS, _("v Dodaj do ASS"));
+	addToStore = new MappedButton(this, ID_ADDTOSTORE, _("Dodaj do magazynu"), arrowUp, wxDefaultPosition, wxDefaultSize, -1, 0, _("Dodaj do magazynu"));
+	addToAss = new MappedButton(this, ID_ADDTOASS, _("Dodaj do ASS"), arrowDown, wxDefaultPosition, wxDefaultSize, -1, 0, _("Dodaj do ASS"));
 	addToButtons->Add(addToStore,1,wxEXPAND|wxALL,5);
 	addToButtons->Add(addToAss,1,wxEXPAND|wxALL,5);
 	//addToButtons->AddStretchSpacer(3);

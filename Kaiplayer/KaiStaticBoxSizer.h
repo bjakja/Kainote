@@ -37,10 +37,10 @@ class KaiStaticBoxSizer : public wxBoxSizer
 public:
 	KaiStaticBoxSizer(int orient, wxWindow *parent, const wxString& _label);
 	virtual ~KaiStaticBoxSizer();
+	void ShowItems( bool show );
 private:
 	void RecalcSizes();
 	wxSize CalcMin();
-	void ShowItems( bool show );
 	bool Detach( wxWindow *window );
 	KaiStaticBox *box;
 };

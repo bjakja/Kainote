@@ -24,29 +24,29 @@
 #include "KaiRadioButton.h"
 #include "MappedButton.h"
 #include "KaiDialog.h"
-#include <wx/wx.h>
+#include "KaiStaticBoxSizer.h"
+
 class kainoteFrame;
 
 
-class findreplace: public KaiDialog
+class FindReplace: public KaiDialog
 {
 	public:
 
-		findreplace(kainoteFrame* kfparent, findreplace* last, bool replace, bool sellines=false);
-		virtual ~findreplace();
+		FindReplace(kainoteFrame* kfparent, bool replace);
+		virtual ~FindReplace();
 
         kainoteFrame* Kai;
 		
 		
 		MappedButton* Button4;
-		KaiRadioButton* RadioButton1;
-		KaiRadioButton* RadioButton2;
-		KaiRadioButton* RadioButton3;
-		KaiRadioButton* RadioButton4;
-		KaiRadioButton* RadioButton5;
-		KaiRadioButton* RadioButton6;
-		KaiRadioButton* RadioButton7;
-		KaiRadioButton* RadioButton8;
+		KaiRadioButton* CollumnText;
+		KaiRadioButton* CollumnStyle;
+		KaiRadioButton* AllLines;
+		KaiRadioButton* SelectedLines;
+		KaiRadioButton* CollumnActor;
+		KaiRadioButton* CollumnEffect;
+		KaiRadioButton* FromSelection;
 		MappedButton* Button1;
 		MappedButton* Bplus;
 		
@@ -59,17 +59,14 @@ class findreplace: public KaiDialog
 		KaiChoice* FindText;
 		KaiChoice* RepText;
 		KaiTextCtrl* tcstyle;
-		KaiCheckBox *Fdial;
-		KaiCheckBox *Fcomm;
-		KaiRadioBox *Actions;
-		KaiRadioBox *Selections;
+		//KaiStaticBoxSizer* ReplaceStaticSizer;
+		wxStaticText *repDescText;
+		DialogSizer* mainfrbsizer;
 	
 		void ReloadStyle();
-		void SelectLines();
 		void AddRecent();
+		void ChangeContents(bool replace);
 		void OnStylesWin(wxCommandEvent& event);
-		void OnSelections(wxCommandEvent& event);
-		void OnStylesWin1(wxCommandEvent& event);
 		void OnSetFocus(wxActivateEvent& event);
 		void Reset();
 		bool repl;
@@ -79,7 +76,6 @@ class findreplace: public KaiDialog
         int postxt;
 		int findstart;
 		int findend;
-		//int oldActive;
 		wxString oldfind;
         bool fnext;
 		
@@ -96,7 +92,7 @@ class findreplace: public KaiDialog
 };
 
 enum
-	{
+{
 	ID_BREP=13737,
 	ID_BREPALL,
 	ID_BFIND,
@@ -108,6 +104,6 @@ enum
 	ID_SLINE,
 	ID_ELINE,
 	ID_ENTER_CONFIRM
-	};
+};
 
 #endif

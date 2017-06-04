@@ -101,8 +101,8 @@
 	XX( SaveTranslation,)\
 	XX( RemoveSubs,)\
 	XX( Search,)\
-	XX( FindReplace,)\
-	XX( SelectLines,)\
+	XX( FindReplaceDialog,)\
+	XX( SelectLinesDialog,)\
 	XX( VideoIndexing,)\
 	XX( OpenAudio,)\
 	XX( AudioFromVideo,)\

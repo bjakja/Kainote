@@ -112,7 +112,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	EditMenu = new Menu();
 	EditMenu->AppendTool(Toolbar, Undo, _("&Cofnij"), _("Cofnij"),PTR_BITMAP_PNG("undo"),false);
 	EditMenu->AppendTool(Toolbar, Redo, _("&Ponów"), _("Ponów"),PTR_BITMAP_PNG("redo"),false);
-	EditMenu->AppendTool(Toolbar,FindReplace, _("Znajdź i za&mień"), _("Szuka i podmienia dane frazy tekstu"),PTR_BITMAP_PNG("findreplace"));
+	EditMenu->AppendTool(Toolbar,FindReplaceDialog, _("Znajdź i za&mień"), _("Szuka i podmienia dane frazy tekstu"),PTR_BITMAP_PNG("findreplace"));
 	EditMenu->AppendTool(Toolbar,Search, _("Z&najdź"), _("Szuka dane frazy tekstu"),PTR_BITMAP_PNG("search"));
 	Menu *SortMenu[2];
 	for(int i=0; i<2; i++){
@@ -127,7 +127,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	EditMenu->AppendTool(Toolbar,SortLines, _("Sort&uj wszystkie linie"), _("Sortuje wszystkie linie napisów ASS"),PTR_BITMAP_PNG("sort"),true,SortMenu[0]);
 	EditMenu->AppendTool(Toolbar,SortSelected, _("Sortu&j zaznaczone linie"),_("Sortuje zaznaczone linie napisów ASS"),PTR_BITMAP_PNG("sortsel"),true, SortMenu[1]);
-	EditMenu->AppendTool(Toolbar,SelectLines, _("Zaznacz &linijki"), _("Zaznacza linijki wg danej frazy tekstu"),PTR_BITMAP_PNG("sellines"));
+	EditMenu->AppendTool(Toolbar,SelectLinesDialog, _("Zaznacz &linijki"), _("Zaznacza linijki wg danej frazy tekstu"),PTR_BITMAP_PNG("sellines"));
 	Menubar->Append(EditMenu, _("&Edycja"));
 
 	VidMenu = new Menu();
@@ -333,16 +333,19 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->Grid1->GetUndo(false);
 	}else if(id==Redo){
 		tab->Grid1->GetUndo(true);
-	}else if(id==Search || id==FindReplace){
-		if(FR && FR->IsShown() && FR->repl && id==FindReplace){FR->Hide();return;}
-		FR= new findreplace(this, FR, id==FindReplace);
-		FR->Show(true);
+	}else if(id==Search || id==FindReplaceDialog){
+		if(FR && FR->IsShown() && FR->repl && id==FindReplaceDialog){FR->Hide();return;}
+		if(!FR){FR= new FindReplace(this, id==FindReplaceDialog);}
+		if((FR->repl && id!=FindReplaceDialog) || (!FR->repl && id==FindReplaceDialog)){
+			FR->ChangeContents(id==FindReplaceDialog);
+		}
+		FR->Show();
 		FR->ReloadStyle();
 		wxActivateEvent evt;
 		FR->OnSetFocus(evt);
-	}else if(id==SelectLines){
-		SL= new findreplace(this,SL,false,true);
-		SL->Show(true);
+	}else if(id==SelectLinesDialog){
+		if(!SL){SL= new SelectLines(this);}
+		SL->Show();
 	}else if(id==PlayPauseG){
 		tab->Video->Pause();
 	}else if(id==PreviousFrame||id==NextFrame){

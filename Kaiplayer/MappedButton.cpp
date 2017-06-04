@@ -140,7 +140,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 }
 
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, const wxBitmap& bitmap, const wxPoint& pos,
-            const wxSize& size, int window, long style)
+            const wxSize& size, int window, long style, const wxString &text)
 			 :wxWindow(parent, id, pos, size, style|wxWANTS_CHARS)
 			 ,Window(window)
 			 ,twoHotkeys(false)
@@ -152,12 +152,18 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 {
 	icon = bitmap;
 	wxSize newSize=size;
+	int fw=0, fh=0;
+	if(text!=""){
+		name = text;
+		GetTextExtent(name, &fw, &fh, 0, 0);
+		fw+=15;
+	}
 	if(size.x <1){
-		int fw = icon.GetWidth();
+		fw += icon.GetWidth();
 		newSize.x = fw+10;
 	}
 	if(size.y <1){
-		int fh = icon.GetHeight();
+		fh = (fh> icon.GetHeight())? fh : icon.GetHeight();
 		newSize.y = fh+10;
 	}
 	SetMinSize(newSize);
@@ -250,10 +256,16 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	tdc.DrawRectangle(0,0,w,h);
 	
 	if(w>10){
-		int fw, fh;
+		int fw, fh, iw = 0;
+		tdc.GetTextExtent(name, &fw, &fh);
 		if(icon.IsOk()){
-			fw=icon.GetWidth(); fh=icon.GetHeight();
-			tdc.DrawBitmap((enabled)? icon : icon.ConvertToDisabled(), (w - fw)/2, (h - fh)/2);
+			iw = icon.GetWidth();
+			if(name != ""){
+				fw += iw+5;
+			}else{
+				fw = iw; 
+			}
+			tdc.DrawBitmap((enabled)? icon : icon.ConvertToDisabled(), (w - fw)/2, (h - icon.GetHeight())/2);
 		}else if(isColorButton){
 			tdc.SetBrush(wxBrush(buttonColor));
 			tdc.SetPen(wxPen(Options.GetColour(ButtonBorder)));
@@ -262,12 +274,16 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 		tdc.SetTextForeground((enabled && changedForeground)? GetForegroundColour() : 
 			(enabled)? Options.GetColour(WindowText) : 
 			Options.GetColour(WindowTextInactive));
-		tdc.GetTextExtent(name, &fw, &fh);
-		wxRect cur(5, (h-fh)/2, w - 10, fh);
-		tdc.SetClippingRegion(cur);
-		tdc.DrawLabel(name,cur,wxALIGN_CENTER);
-		tdc.DestroyClippingRegion();
-		
+		if(name != ""){
+			if(iw){
+				tdc.DrawText(name, ((w- (fw))/2) + iw + 5, ((h-fh)/2));
+			}else{
+				wxRect cur(5, ((h-fh)/2), w - 10, fh);
+				tdc.SetClippingRegion(cur);
+				tdc.DrawLabel(name,cur, iw? wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL : wxALIGN_CENTER);
+				tdc.DestroyClippingRegion();
+			}
+		}
 		
 	}
 	wxPaintDC dc(this);

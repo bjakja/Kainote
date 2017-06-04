@@ -595,7 +595,7 @@ void KaiListCtrl::Undo(wxCommandEvent &evt)
 	
 void KaiListCtrl::Redo(wxCommandEvent &evt)
 {
-	if(iter< historyList.size()-1){
+	if(iter< (int)historyList.size()-1){
 		iter++;
 		delete itemList;
 		itemList = historyList[iter]->Copy();
@@ -612,12 +612,12 @@ Item *KaiListCtrl::CopyRow(int y, int x, bool pushBack)
 	if(pushBack){
 		itemList->push_back(newRow);
 		int newy = itemList->size()-1;
-		if(x < 0 || x >= (*itemList)[newy]->row.size()){return NULL;}
+		if(x < 0 || x >= (int)(*itemList)[newy]->row.size()){return NULL;}
 		return (*itemList)[newy]->row[x];
 	}else{
 		itemList->Change(y, newRow);
 	}
-	if(x < 0 || x >= (*itemList)[y]->row.size()){return NULL;}
+	if(x < 0 || x >= (int)(*itemList)[y]->row.size()){return NULL;}
 	return (*itemList)[y]->row[x];
 }
 

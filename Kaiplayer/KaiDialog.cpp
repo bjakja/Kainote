@@ -313,6 +313,14 @@ void KaiDialog::OnEscape(wxCommandEvent &evt)
 	EndModal(escapeId);evt.Skip();
 }
 
+void KaiDialog::SetLabel(const wxString &text)
+{
+	wxTopLevelWindow::SetLabel(text);
+	int w, h;
+	GetSize(&w,&h);
+	wxRect rc(0,0,w,topBorder);
+	Refresh(false, &rc);
+}
 WXLRESULT KaiDialog::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
 	//if(uMsg == WM_SIZING){

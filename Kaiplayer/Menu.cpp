@@ -77,6 +77,7 @@ void MenuItem::SetAccel(wxAcceleratorEntry *entry)
 	accel = entry;
 	if(label.find("\t")!=-1){label = label.BeforeFirst('\t');}
 	label += "\t" + entry->ToString();
+	label.Replace("+","-");
 	//if(MenuBar::Menubar){MenuBar::Menubar->SetAccelerators();}
 }
 

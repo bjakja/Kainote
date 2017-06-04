@@ -36,6 +36,7 @@
 #include "SpellChecker.h"
 #include "StyleStore.h"
 #include "FindReplace.h"
+#include "SelectLines.h"
 #include "Automation.h"
 #include "Toolbar.h"
 #include "KaiStatusBar.h"
@@ -90,8 +91,8 @@ class kainoteFrame: public KaiFrame
 		void SetSubsResolution(bool dialog=false);
 		void SetVideoResolution(int w, int h, bool dialog=false);
 		void ShowBadResolutionDialog(const wxString &videoRes, const wxString &subsRes);
-		findreplace *FR;
-		findreplace *SL;
+		FindReplace *FR;
+		SelectLines *SL;
 		Auto::Automation *Auto;
 		FontCollector *fc;
     private:

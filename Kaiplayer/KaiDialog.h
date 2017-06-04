@@ -50,6 +50,7 @@ public:
     int GetEnterId() const { return enterId; }
 	int GetEscapeId() const { return escapeId; }
 	void SetSizerAndFit1(wxSizer *sizer, bool deleteOld = true);
+	void SetLabel(const wxString &text);
 private:
 	bool IsButtonFocused();
 	void OnCharHook(wxKeyEvent &evt);

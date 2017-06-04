@@ -374,6 +374,7 @@ void CTwindow::RefVals(CTwindow *from)
 	videotime->SetValue((from)? from->videotime->GetValue() : (mto & 4)>0);
 
 	Forward->SetValue((from)? from->Forward->GetValue() : (mto & 1)>0);
+	Backward->SetValue((from)? from->Backward->GetValue() : (mto & 1)==0);
 	DisplayFrames->SetValue((from)? from->DisplayFrames->GetValue() : (mto & 16)>0);
 	MoveTagTimes->SetValue((from)? from->MoveTagTimes->GetValue() : (mto & 32)>0);
 	Stylestext->SetValue( (from)? from->Stylestext->GetValue() : Options.GetString(MoveTimesStyles) );
