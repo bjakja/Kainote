@@ -14,7 +14,6 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "KaiTextCtrl.h"
-#include "config.h"
 #include "Menu.h"
 #include <wx/clipbrd.h>
 #include <wx/msw/private.h>
@@ -22,6 +21,8 @@
 
 KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const wxPoint& pos,const wxSize& size, long _style, const wxValidator & validator, const wxString & name)
 	:KaiScrolledWindow(parent,id,pos,size,_style|wxWANTS_CHARS,name)
+	, background(WindowBackground)
+	, foreground(WindowText)
 {
 	KText=text;
 	
@@ -618,9 +619,8 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 {
 	int fw=0,fh=0;
 	bool enabled = IsThisEnabled();
-	wxColour bg = (background.IsOk())? background : 
-		(enabled)? Options.GetColour(TextFieldBackground) : Options.GetColour(WindowBackgroundInactive);
-	wxColour fg = (foreground.IsOk())? foreground : Options.GetColour(WindowText);
+	wxColour bg = (enabled)? Options.GetColour(background) : Options.GetColour(WindowBackgroundInactive);
+	wxColour fg = Options.GetColour(foreground);
 	wxColour border = (style & wxBORDER_NONE)? bg : 
 		(HasFocus())? Options.GetColour(TextFieldBorderOnFocus) : 
 		(enabled)? Options.GetColour(TextFieldBorder) : 

@@ -565,7 +565,7 @@ void AudioBox::OnMouseEvents(wxMouseEvent &event)
 		int npos=event.GetY();
 		EditBox* EB= (EditBox*)GetParent();
 		wxSize ebSize = EB->GetClientSize();
-		int minEBSize = (EB->TextEditTl->IsShown())? 200 : 150;
+		int minEBSize = (EB->TextEditOrig->IsShown())? 200 : 150;
 		if(npos!=oldy&& npos>150 && ebSize.y-npos > minEBSize){
 			int px=-5, py=npos;
 			ClientToScreen(&px,&py);

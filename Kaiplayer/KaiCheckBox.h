@@ -16,7 +16,8 @@
 #ifndef __KAICHECKBOX__
 #define __KAICHECKBOX__
 
-#include <wx/wx.h>
+#include <wx/window.h>
+#include "config.h"
 
 class KaiCheckBox : public wxWindow
 {
@@ -26,17 +27,17 @@ public:
 	virtual ~KaiCheckBox(){};
 	bool GetValue(){return value;}
 	void SetValue(bool _value){value = _value; Refresh(false);}
-	bool SetBackgroundColour(const wxColour &bgcolor){
-		changedBackground = true;
-		wxWindow::SetBackgroundColour(bgcolor); return true;
+	bool SetBackgroundColour(COLOR bgcolor){
+		background = bgcolor;
+		Refresh(false);
+		return true;
 	}
-	bool SetForegroundColour(const wxColour &fgcolor){
-		changedForeground = true;
-		wxWindow::SetForegroundColour(fgcolor); return true;
+	bool SetForegroundColour(COLOR fgcolor){
+		foreground = fgcolor;
+		Refresh(false);
+		return true;
 	}
 	bool Enable(bool enable=true);
-	bool changedBackground;
-	bool changedForeground;
 	bool isCheckBox;
 	bool value;
 	bool enter;
@@ -49,8 +50,8 @@ private:
 	void OnEraseBackground(wxEraseEvent &event){}
 	wxString label;
 	int fontHeight;
-	//wxColour background;
-	//wxColour foreground;
+	COLOR background;
+	COLOR foreground;
 	wxDECLARE_ABSTRACT_CLASS(KaiCheckBox);
 };
 

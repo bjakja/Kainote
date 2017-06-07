@@ -160,7 +160,7 @@ void DrawingAndClip::SetCurVisual()
 	}else{
 		bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()=="");
 		//Editor
-		MTextEditor *Editor=(isOriginal)? tab->Edit->TextEditTl : tab->Edit->TextEdit;
+		MTextEditor *Editor=(isOriginal)? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
 		wxString tags[] = {"p"};
 		tab->Edit->line->ParseTags(tags,1);
 		ParseData *pdata = tab->Edit->line->pdata;
@@ -622,6 +622,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 
 	if(click){
 		grabbed=-1;
+		axis=0;
 		for(size_t i=0; i < psize; i++)
 		{
 			float pointx=Points[i].wx(this), pointy=Points[i].wy(this);
@@ -635,6 +636,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 				diffs.y=pointy-zy;
 				tab->Video->CaptureMouse();
 				snapYminus=false;snapYplus=false;snapXminus=false;snapXplus=false;
+				firstmove = D3DXVECTOR2(zx,zy);
 				break;
 			}
 		}
@@ -696,10 +698,15 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			if(Points[grabbed].x == Points[grabbedMinus1].x || snapXminus){snapXminus=true;Points[grabbedMinus1].x = Points[grabbed].x;}
 			if(Points[grabbed].x == Points[grabbedPlus1].x || snapXplus){snapXplus=true;Points[grabbedPlus1].x = Points[grabbed].x;}
 			if(!(snapYminus||snapYplus||snapXminus||snapXminus)){
-				if(abs(Points[grabbed].x - lastpoint.x)<10){
+				if(axis == 0){
+					int diffx = abs(firstmove.x-x);
+					int diffy = abs(firstmove.y-y);
+					if(diffx != diffy){if(diffx > diffy){axis = 2;}else{axis = 1;}}
+				}
+				if(axis == 1){
 					Points[grabbed].x = lastpoint.x;
 				}
-				if(abs(Points[grabbed].y - lastpoint.y)<10){
+				if(axis == 2){
 					Points[grabbed].y = lastpoint.y;
 				}
 			}
@@ -722,7 +729,6 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		selection.width = x;
 		selection.height = y;
 		SelectPoints();
-		//wxLogStatus("selection points %i, %i, %i, %i)", selection.x, selection.y, selection.width, selection.height);
 		tab->Video->Render(false);
 	}
 	

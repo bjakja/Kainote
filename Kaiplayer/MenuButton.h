@@ -13,8 +13,24 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-//  This file is for automatic build change
-//  Autoversioning.exe change it after build using commandline
+#ifndef _MENU_BUTTON_
+#define _MENU_BUTTON_
 
-#define VersionKainote "0.9.1.743"
-#define NumVersionKainote 0,9,1,743
+#include "wx/statbmp.h"
+#include "Menu.h"
+
+class MenuButton : public wxStaticBitmap
+{
+public:
+	MenuButton(wxWindow *parent, int id, const wxString &tooltip, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize);
+	~MenuButton(){if(menu){delete menu;}}
+	//it own menu
+	void PutMenu(Menu *menu);
+	Menu *GetMenu(){return menu;}
+private:
+	void OnMouseEvent(wxMouseEvent &evt);
+	bool IsMenuShown;
+	Menu *menu;
+};
+
+#endif

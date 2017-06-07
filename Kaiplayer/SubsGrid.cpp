@@ -1227,9 +1227,10 @@ void SubsGrid::SaveFile(const wxString &filename, bool cstat)
 	OpenWrite ow(filename,true);
 
 	if (form<SRT){
-		AddSInfo("Last Style Storage",Options.acdir, false);
-
-		AddSInfo("Active Line", std::to_string(Edit->ebrow), false);
+		if(cstat){
+			AddSInfo("Last Style Storage",Options.acdir, false);
+			AddSInfo("Active Line", std::to_string(Edit->ebrow), false);
+		}
 
 		txt<<"[Script Info]\r\n;Plik utworzony przez "<<Options.progname<<"\r\n"<<GetSInfos(translated);
 		txt<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";

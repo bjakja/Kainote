@@ -27,10 +27,11 @@ bool DragnDrop::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames
 	if(filenames.size()>1){
 		Kai->OpenFiles(filenames);}
 	else if(filenames.size()>0){
+		wxString ext = filenames[0].AfterLast('.').Lower();
 		int w,h;
 		Kai->GetClientSize(&w,&h);
-		h -= (Kai->Menubar->GetSize().y + Kai->StatusBar->GetSize().y);
-		if(y >= h && y <= h + Kai->Tabs->GetHeight()){
+		h -= (Kai->Menubar->GetSize().y);
+		if(y >= h && y <= h + Kai->Tabs->GetHeight() && ext != "lua" && ext != "moon"){
 			int pixels;
 			int tab = Kai->Tabs->FindTab(x-iconsize,&pixels);
 			if(tab<0){Kai->InsertTab();}

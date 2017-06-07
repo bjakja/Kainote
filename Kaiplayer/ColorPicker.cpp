@@ -42,7 +42,7 @@
 #include <wx/dcmemory.h>
 #include <wx/dcscreen.h>
 #include <wx/settings.h>
-//#include <wx/clipbrd.h>
+#include "KaiStaticText.h"
 #include "ColorPicker.h"
 #include "ColorSpace.h"
 #include "KainoteApp.h"
@@ -513,7 +513,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color)
 	// Arrange the controls in a nice way
 	wxSizer *spectop_sizer = new wxBoxSizer(wxHORIZONTAL);
 	spectop_sizer->AddSpacer(50);
-	spectop_sizer->Add(new wxStaticText(this, -1, _("Wybrany kolor:")), 0, wxALIGN_CENTER|wxRIGHT, 5);
+	spectop_sizer->Add(new KaiStaticText(this, -1, _("Wybrany kolor:")), 0, wxALIGN_CENTER|wxRIGHT, 5);
 	spectop_sizer->Add(preview_box, 0, wxALIGN_CENTER_HORIZONTAL);
 	wxSizer *spectrum_sizer = new wxBoxSizer(wxHORIZONTAL);
 	//spectrum_sizer->Add(spectop_sizer, wxALIGN_CENTER_HORIZONTAL);
@@ -524,45 +524,45 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color)
 	spectrum_box->Add(spectop_sizer, wxALIGN_CENTER_HORIZONTAL, wxALL, 3);
 	spectrum_box->Add(spectrum_sizer, 0, wxALL, 3);
 	wxFlexGridSizer *rgb_sizer = new wxFlexGridSizer(2, 5, 5);
-	rgb_sizer->Add(new wxStaticText(this, -1, _("Czerwony:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	rgb_sizer->Add(new KaiStaticText(this, -1, _("Czerwony:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	rgb_sizer->Add(rgb_input[0], 0);
-	rgb_sizer->Add(new wxStaticText(this, -1, _("Zielony:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	rgb_sizer->Add(new KaiStaticText(this, -1, _("Zielony:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	rgb_sizer->Add(rgb_input[1], 0);
-	rgb_sizer->Add(new wxStaticText(this, -1, _("Niebieski:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	rgb_sizer->Add(new KaiStaticText(this, -1, _("Niebieski:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	rgb_sizer->Add(rgb_input[2], 0);
 	rgb_sizer->AddGrowableCol(0,1);
-	rgb_box->Add(rgb_sizer, 1, wxEXPAND | wxALL, 3);
+	rgb_box->Add(rgb_sizer, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL, 3);
 
 	wxFlexGridSizer *ass_input_sizer = new wxFlexGridSizer(2, 5, 5);
-	ass_input_sizer->Add(new wxStaticText(this, -1, "ASS:", wxDefaultPosition, textinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	ass_input_sizer->Add(new KaiStaticText(this, -1, "ASS:", wxDefaultPosition, textinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	ass_input_sizer->Add(ass_input, 0);
-	ass_input_sizer->Add(new wxStaticText(this, -1, "HTML:", wxDefaultPosition, textinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	ass_input_sizer->Add(new KaiStaticText(this, -1, "HTML:", wxDefaultPosition, textinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	ass_input_sizer->Add(html_input, 0);
-	ass_input_sizer->Add(new wxStaticText(this, -1, "Alpha:", wxDefaultPosition, textinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	ass_input_sizer->Add(new KaiStaticText(this, -1, "Alpha:", wxDefaultPosition, textinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	ass_input_sizer->Add(alpha_input, 0);
 	//ass_input_sizer->AddStretchSpacer();
 	ass_input_sizer->AddGrowableCol(0,1);
-	rgb_box->Add(ass_input_sizer, 0, wxALL|wxCENTER|wxEXPAND, 3);
+	rgb_box->Add(ass_input_sizer, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 3);
 
 	wxFlexGridSizer *hsl_sizer = new wxFlexGridSizer(2, 5, 5);
-	hsl_sizer->Add(new wxStaticText(this, -1, _("Odcień:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	hsl_sizer->Add(new KaiStaticText(this, -1, _("Odcień:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	hsl_sizer->Add(hsl_input[0], 0);
-	hsl_sizer->Add(new wxStaticText(this, -1, _("Nasycenie:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	hsl_sizer->Add(new KaiStaticText(this, -1, _("Nasycenie:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	hsl_sizer->Add(hsl_input[1], 0);
-	hsl_sizer->Add(new wxStaticText(this, -1, _("Jaskrawość:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	hsl_sizer->Add(new KaiStaticText(this, -1, _("Jaskrawość:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	hsl_sizer->Add(hsl_input[2], 0);
 	hsl_sizer->AddGrowableCol(0,1);
-	hsl_box->Add(hsl_sizer, 0, wxALL|wxEXPAND, 3);
+	hsl_box->Add(hsl_sizer, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 3);
 
 	wxFlexGridSizer *hsv_sizer = new wxFlexGridSizer(2, 5, 5);
-	hsv_sizer->Add(new wxStaticText(this, -1, _("Odcień:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	hsv_sizer->Add(new KaiStaticText(this, -1, _("Odcień:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	hsv_sizer->Add(hsv_input[0], 0);
-	hsv_sizer->Add(new wxStaticText(this, -1, _("Nasycenie:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	hsv_sizer->Add(new KaiStaticText(this, -1, _("Nasycenie:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	hsv_sizer->Add(hsv_input[1], 0);
-	hsv_sizer->Add(new wxStaticText(this, -1, _("Wartość:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL|wxEXPAND);
+	hsv_sizer->Add(new KaiStaticText(this, -1, _("Wartość:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	hsv_sizer->Add(hsv_input[2], 0);
 	hsv_sizer->AddGrowableCol(0,1);
-	hsv_box->Add(hsv_sizer, 0, wxALL|wxEXPAND, 3);
+	hsv_box->Add(hsv_sizer, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND, 3);
 
 	wxSizer *hsx_sizer = new wxBoxSizer(wxHORIZONTAL);
 	hsx_sizer->Add(hsl_box);

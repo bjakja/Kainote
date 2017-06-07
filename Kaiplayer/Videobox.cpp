@@ -26,6 +26,7 @@
 #include "ColorSpaceConverter.h"
 #include "Menu.h"
 #include "KaiMessageBox.h"
+#include "KaiStaticText.h"
 #pragma warning ( disable: 4482 )
 
 class CRecycleFile : public SHFILEOPSTRUCT {
@@ -71,7 +72,7 @@ public:
 	virtual ~bars1(){};
 
 	KaiSlider *slider;
-	wxStaticText *actual;
+	KaiStaticText *actual;
 	void OnSlider(wxCommandEvent &event);
 	VideoCtrl *_parent;
 };
@@ -81,7 +82,7 @@ bars1::bars1(VideoCtrl *parent)
 {
 	_parent=parent;
 	DialogSizer *sizer= new DialogSizer(wxVERTICAL);
-	actual= new wxStaticText(this,-1,wxString::Format(_("Proporcje ekranu: %5.3f"), 1.f / parent->AR));
+	actual= new KaiStaticText(this,-1,wxString::Format(_("Proporcje ekranu: %5.3f"), 1.f / parent->AR));
 	slider= new KaiSlider(this, 7767, parent->AR*700000, 100000, 1000000, wxDefaultPosition, wxSize(400,-1),wxHORIZONTAL|wxSL_INVERSE);
 	Connect(7767,wxEVT_SCROLL_THUMBTRACK,(wxObjectEventFunction)&bars1::OnSlider);
 	sizer->Add(actual, 0, wxALL, 3);
@@ -130,7 +131,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
 	mstimes=new KaiTextCtrl(panel,-1,"",wxPoint(180,19),wxSize(360,-1),wxTE_READONLY);
 	mstimes->SetWindowStyle(wxBORDER_NONE);
 	mstimes->SetCursor(wxCURSOR_ARROW);
-	mstimes->SetBackgroundColour(Options.GetColour(WindowBackground));
+	mstimes->SetBackgroundColour(WindowBackground);
 
 	vToolbar = new VideoToolbar(panel,wxPoint(0, panelHeight - 22));
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnChangeVisual, this, ID_VIDEO_TOOLBAR_EVENT);
@@ -1116,10 +1117,10 @@ void VideoCtrl::RefreshTime()
 			if(VFF){
 				if(VFF->KeyFrames.Index(time) != -1){
 					shownKeyframe=true;
-					mstimes->SetForegroundColour(Options.GetColour(WindowWarningElements));
+					mstimes->SetForegroundColour(WindowWarningElements);
 				}else if(shownKeyframe){
 					shownKeyframe=false;
-					mstimes->SetForegroundColour(Options.GetColour(WindowText));
+					mstimes->SetForegroundColour(WindowText);
 				}
 			}
 		}
@@ -1311,7 +1312,7 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 bool VideoCtrl::SetBackgroundColour(const wxColour &col)
 {
 	panel->SetBackgroundColour(col);
-	mstimes->SetBackgroundColour(col);
+	//mstimes->SetBackgroundColour(WindowBackground);
 	//vToolbar->Refresh(false);
 	return true;
 }

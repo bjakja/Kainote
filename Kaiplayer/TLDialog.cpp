@@ -15,6 +15,7 @@
 
 #include "TLDialog.h"
 #include "KaiStaticBoxSizer.h"
+#include "KaiStaticText.h"
 
 TLDialog::TLDialog(wxWindow *parent, Grid *subsgrid)
 	: KaiDialog(parent,-1,_("Opcje dopasowywania tłumaczenia"), wxDefaultPosition, wxDefaultSize,wxDEFAULT_DIALOG_STYLE)
@@ -37,8 +38,8 @@ TLDialog::TLDialog(wxWindow *parent, Grid *subsgrid)
 	UpExt=new MappedButton(this,29993,_("Dodaj linię"));
 	UpExt->SetToolTip(_("Dodaje pustą linijkę przed zaznaczoną.\nOryginał idzie w dół.\nDodanej linii należy ustawić czasy."));
 	
-	sizer2->Add(new wxStaticText(this,-1,_("Tekst oryginału")),1,wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_VERTICAL,5);
-	sizer2->Add(new wxStaticText(this,-1,_("Tekst tłumaczenia")),1,wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_VERTICAL,5);
+	sizer2->Add(new KaiStaticText(this,-1,_("Tekst oryginału")),1,wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_VERTICAL,5);
+	sizer2->Add(new KaiStaticText(this,-1,_("Tekst tłumaczenia")),1,wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_CENTER_VERTICAL,5);
 	
 	sizer1->Add(UpExt,0,wxALL|wxEXPAND,5);
 	sizer1->Add(Down,0,wxALL|wxEXPAND,5);
@@ -49,7 +50,7 @@ TLDialog::TLDialog(wxWindow *parent, Grid *subsgrid)
 
 	sizer->Add(sizer2,0,wxEXPAND|wxTOP,5);
 	sizer->Add(sizer1,0,wxEXPAND);
-	sizer->Add(new wxStaticText(this,-1,_("Objaśnienie:\nOryginał - tekst napisów z właściwnym timingiem służy\ndo porównania wklejanych dialogów, później zostaje usunięty.\nTłumaczenie - tekst wklejony do napisów z poprawnym timingiem.")),0,wxEXPAND|wxALL,5);
+	sizer->Add(new KaiStaticText(this,-1,_("Objaśnienie:\nOryginał - tekst napisów z właściwnym timingiem służy\ndo porównania wklejanych dialogów, później zostaje usunięty.\nTłumaczenie - tekst wklejony do napisów z poprawnym timingiem.")),0,wxEXPAND|wxALL,5);
 	SetSizerAndFit(sizer);
 	CenterOnParent();
 

@@ -16,6 +16,8 @@
 #include "KaiDialog.h"
 #include "MappedButton.h"
 #include "config.h"
+#include "wx/dcmemory.h"
+#include "wx/dcclient.h"
 #include "wx/msw/private.h"
 #include <Dwmapi.h>
 #pragma comment(lib, "Dwmapi.lib")
@@ -196,8 +198,20 @@ void KaiDialog::OnPaint(wxPaintEvent &evt)
 	if(icon.GetIconCount()){
 		mdc.DrawIcon(icon.GetIconByIndex(0), 4, 4);
 	}
-	if(GetTitle()!=""){
-		mdc.DrawText(GetTitle(), icon.GetIconCount()? 26 : 6, 4);
+	wxString title = GetTitle();
+	if(title!=""){
+		int start = icon.GetIconCount()? 26 : 6;
+		int removed = 0, fw=0, fh=0;
+		mdc.GetTextExtent(title, &fw, &fh);
+		while(fw > w - 22 - start && title!=""){
+			mdc.GetTextExtent(title, &fw, &fh);
+			title = title.RemoveLast();
+			removed++;
+		}
+		if(removed>0){
+			title = title.RemoveLast(2).Trim()+"...";
+		}
+		mdc.DrawText(title, start, 4);
 	}
 	if(enter || pushed){
 		wxColour buttonxbg = (enter && !pushed)? Options.GetColour(WindowHoverCloseButton) : 
@@ -244,7 +258,7 @@ void KaiDialog::OnMouseEvent(wxMouseEvent &evt)
 		if(evt.LeftUp()){
 			pushed = enter = false;
 			Refresh(false,&rc);
-			wxButton *btn = wxDynamicCast(FindWindow(escapeId), wxButton);
+			MappedButton *btn = wxDynamicCast(FindWindow(escapeId), MappedButton);
 			if(btn && btn->IsShown() && btn->IsEnabled()){
 				wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, escapeId);
 				ProcessEvent(evt);

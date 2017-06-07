@@ -179,10 +179,10 @@ wxString config::GetRawOptions(bool Audio)
 void config::CatchValsLabs(const wxString &line)
 {
 	wxString Values=line.AfterFirst('=');
-	Values.Trim(false);
-	Values.Trim(true);
+	//Values.Trim(false);
+	//Values.Trim(true);
 	wxString Labels=line.BeforeFirst('=');
-	Labels.Trim(false);
+	//Labels.Trim(false);
 	Labels.Trim(true);
 	rawcfg[GetCONFIGValue(Labels)] = Values;
 }
@@ -268,6 +268,7 @@ void config::LoadDefaultConfig()
 	rawcfg[ConvertStyleCatalog] = "Default";
 	rawcfg[DictionaryLanguage] = "pl";
 	rawcfg[SpellcheckerOn] = "true";
+	rawcfg[StyleEditFilterText] = "ĄĆĘŁŃÓŚŹŻąćęłńóśźż";
 	rawcfg[FFMS2VideoSeeking] = "2";
 	rawcfg[MoveTimesByTime] = "false";
 	rawcfg[GridFontName] = "Tahoma";
@@ -579,22 +580,22 @@ void config::SetIntTable(CONFIG opt, wxArrayInt &asopt,wxString split)
 	rawcfg[opt]=sresult;
 }
 
-void config::GetTable(CONFIG opt, wxArrayString &tbl, wxString split)
+void config::GetTable(CONFIG opt, wxArrayString &tbl, wxString split, int mode)
 {
 	wxString strtbl=rawcfg[opt];
 	if(strtbl!=""){
-		wxStringTokenizer cfgtable(strtbl,split,wxTOKEN_STRTOK);
+		wxStringTokenizer cfgtable(strtbl,split,(wxStringTokenizerMode)mode);
 		while(cfgtable.HasMoreTokens()){
 			tbl.Add(cfgtable.NextToken());
 		}  
 	}
 }
 
-void config::GetIntTable(CONFIG opt, wxArrayInt &tbl, wxString split)
+void config::GetIntTable(CONFIG opt, wxArrayInt &tbl, wxString split, int mode)
 {
 	wxString strtbl=rawcfg[opt];
 	if(strtbl!=""){
-		wxStringTokenizer cfgtable(strtbl,split,wxTOKEN_STRTOK);
+		wxStringTokenizer cfgtable(strtbl,split,(wxStringTokenizerMode)mode);
 		while(cfgtable.HasMoreTokens()){
 			tbl.Add(wxAtoi(cfgtable.NextToken()));
 		}  

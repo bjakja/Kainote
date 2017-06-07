@@ -25,6 +25,7 @@
 #include "MappedButton.h"
 #include "KaiDialog.h"
 #include "KaiStaticBoxSizer.h"
+#include "KaiStaticText.h"
 
 class kainoteFrame;
 
@@ -41,6 +42,7 @@ class FindReplace: public KaiDialog
 		
 		MappedButton* Button4;
 		KaiRadioButton* CollumnText;
+		KaiRadioButton* CollumnTextOriginal;
 		KaiRadioButton* CollumnStyle;
 		KaiRadioButton* AllLines;
 		KaiRadioButton* SelectedLines;
@@ -60,7 +62,7 @@ class FindReplace: public KaiDialog
 		KaiChoice* RepText;
 		KaiTextCtrl* tcstyle;
 		//KaiStaticBoxSizer* ReplaceStaticSizer;
-		wxStaticText *repDescText;
+		KaiStaticText *repDescText;
 		DialogSizer* mainfrbsizer;
 	
 		void ReloadStyle();
@@ -80,6 +82,7 @@ class FindReplace: public KaiDialog
         bool fnext;
 		
 		bool fromstart;
+		bool blockTextChange;
 		
         void Find();
 		

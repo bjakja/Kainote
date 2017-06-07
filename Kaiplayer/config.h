@@ -45,7 +45,7 @@
 
 //Pamiêtaj, zmiana ostatniej audio opcji wymaga te¿ zmiany przy szukaniu w zapisie
 #define CFG(CG) \
-	CG(AudioAutoCommit,)\
+	CG(AudioAutoCommit,=1)\
 	CG(AudioAutoFocus,)\
 	CG(AudioAutoScroll,)\
 	CG(AudioBoxHeight,)\
@@ -183,7 +183,7 @@
 DECLARE_ENUM(CONFIG,CFG)
 
 #define CLR(CR) \
-	CR(WindowBackground,)\
+	CR(WindowBackground,=1)\
 	CR(WindowBackgroundInactive,)\
 	CR(WindowText,)\
 	CR(WindowTextInactive,)\
@@ -334,8 +334,8 @@ class config
 	AssColor GetColor(COLOR opt);
     int GetInt(CONFIG opt);
     float GetFloat(CONFIG opt);
-	void GetTable(CONFIG opt, wxArrayString &tbl, wxString split="|");
-	void GetIntTable(CONFIG opt, wxArrayInt &tbl, wxString split="|");
+	void GetTable(CONFIG opt, wxArrayString &tbl, wxString split="|", int mode = 4);
+	void GetIntTable(CONFIG opt, wxArrayInt &tbl, wxString split="|", int mode = 4);
 	void GetCoords(CONFIG opt, int* coordx, int* coordy);
 
     void SetString(CONFIG opt, const wxString &sopt);

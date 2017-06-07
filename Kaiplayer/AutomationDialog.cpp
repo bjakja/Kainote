@@ -38,7 +38,7 @@
 #include "KaiCheckBox.h"
 #include "config.h"
 
-//#include <wx/clrpicker.h>
+#include "KaiStaticText.h"
 #include <wx/gbsizer.h>
 #include <wx/tokenzr.h>
 
@@ -151,7 +151,7 @@ namespace Auto{
 			Label(lua_State *L) : LuaDialogControl(L), label(get_field(L, "label")) { }
 
 			wxWindow *Create(wxWindow *parent) {
-				return new wxStaticText(parent, -1, wxString(label));
+				return new KaiStaticText(parent, -1, wxString(label));
 			}
 
 			int GetSizerFlags() const { return wxALIGN_CENTRE_VERTICAL | wxALIGN_LEFT; }

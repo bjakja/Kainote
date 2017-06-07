@@ -78,14 +78,13 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 
 	SE->Add(StartVAtime,1,wxEXPAND|wxLEFT|wxRIGHT,2);
 	SE->Add(EndVAtime,1,wxEXPAND|wxRIGHT,2);
-	wxColour warning = Options.GetColour(WindowWarningElements);
 
 	videotime = new KaiCheckBox(panel, ID_VIDEO, _("Przesuń znacznik\ndo czasu wideo"));
-	videotime->SetForegroundColour(warning);
+	videotime->SetForegroundColour(WindowWarningElements);
 	videotime->Enable(false);
 
 	audiotime = new KaiCheckBox(panel, ID_AUDIO, _("Przesuń znacznik\ndo czasu audio"));
-	audiotime->SetForegroundColour(warning);
+	audiotime->SetForegroundColour(WindowWarningElements);
 	audiotime->Enable(false);
 
 	Connect(ID_VIDEO,ID_AUDIO,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&CTwindow::AudioVideoTime);
@@ -293,7 +292,7 @@ void CTwindow::OnSize(wxSizeEvent& event)
 		isscrollbar=true;
 		SetMinSize(wxSize(w+17,h));
 		cur->BoxSizer3->Layout();
-		scroll->SetSize(w, 0, 17, gh);
+		scroll->SetSize(w-1, 0, 17, gh);
 		scroll->SetScrollbar(scPos, gh, h, gh-10);
 		scroll->Show();
 		
@@ -308,7 +307,7 @@ void CTwindow::OnSize(wxSizeEvent& event)
 		panel->SetPosition(wxPoint(0,scPos));
 		cur->BoxSizer3->Layout();
 	}else if(scroll->IsShown()){
-		scroll->SetSize(ctw-17, 0, 17, gh);
+		scroll->SetSize(ctw-18, 0, 17, gh);
 		scroll->SetScrollbar(scPos, gh, h, gh-10);
 		if(scPos != scroll->GetScrollPos()){
 			scPos = scroll->GetScrollPos();
@@ -445,9 +444,9 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		ThresStart=new NumCtrl(panel,-1,Options.GetString(PostprocessorThresholdStart),0,10000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
 		ThresEnd=new NumCtrl(panel,-1,Options.GetString(PostprocessorThresholdEnd),0,10000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
 	
-		fgsizer1->Add(new EBStaticText(panel,_("Próg czasu początku"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
+		fgsizer1->Add(new KaiStaticText(panel,-1,_("Próg czasu początku"),wxDefaultPosition, wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer1->Add(ThresStart,0);
-		fgsizer1->Add(new EBStaticText(panel,_("Próg czasu końca"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
+		fgsizer1->Add(new KaiStaticText(panel,-1,_("Próg czasu końca"),wxDefaultPosition, wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer1->Add(ThresEnd,0);
 	
 		consizer->Add(fgsizer1,0,wxEXPAND,0);
@@ -464,13 +463,13 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		BeforeEnd=new NumCtrl(panel,-1,Options.GetString(PostprocessorKeyframeBeforeEnd),0,1000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
 		AfterEnd=new NumCtrl(panel,-1,Options.GetString(PostprocessorKeyframeAfterEnd),0,1000,true,wxDefaultPosition, wxSize(40,-1),SCROLL_ON_FOCUS);
 	
-		fgsizer2->Add(new EBStaticText(panel,_("Przed czasem początku"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
+		fgsizer2->Add(new KaiStaticText(panel,-1,_("Przed czasem początku"),wxDefaultPosition, wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer2->Add(BeforeStart,0);
-		fgsizer2->Add(new EBStaticText(panel,_("Po czasie początku"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
+		fgsizer2->Add(new KaiStaticText(panel,-1,_("Po czasie początku"),wxDefaultPosition, wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer2->Add(AfterStart,0);
-		fgsizer2->Add(new EBStaticText(panel,_("Przed czasem końca"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
+		fgsizer2->Add(new KaiStaticText(panel,-1,_("Przed czasem końca"),wxDefaultPosition, wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer2->Add(BeforeEnd,0);
-		fgsizer2->Add(new EBStaticText(panel,_("Po czasie końca"), wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
+		fgsizer2->Add(new KaiStaticText(panel,-1,_("Po czasie końca"),wxDefaultPosition, wxSize(115,-1)),0,wxEXPAND|wxLEFT,4);
 		fgsizer2->Add(AfterEnd,0);
 	
 		snapsizer->Add(fgsizer2,0,wxEXPAND,0);

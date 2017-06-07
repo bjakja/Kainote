@@ -20,17 +20,20 @@
 #include "MappedButton.h"
 #include "KaiRadioButton.h"
 
+
 class SubsResampleDialog : public KaiDialog
 {
 public:
-	SubsResampleDialog(wxWindow *parent, const wxSize &subsSize, const wxSize &videoSize, const wxString &videoMatrix);
+	SubsResampleDialog(wxWindow *parent, const wxSize &subsSize, const wxSize &videoSize, const wxString &subsMatrix, const wxString &videoMatrix);
 	~SubsResampleDialog(){}
 	NumCtrl *subsResolutionX;
 	NumCtrl *subsResolutionY;
 	NumCtrl *destinedResolutionX;
 	NumCtrl *destinedResolutionY;
+#ifdef whithMatrix
 	KaiChoice *subsMatrix;
 	KaiChoice *destinedMatrix;
+#endif
 	KaiRadioBox *resamplingOptions;
 };
 

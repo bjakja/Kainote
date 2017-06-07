@@ -90,11 +90,12 @@ Menu::Menu(char window)
 }
 
 
-int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels, bool clientPos)
+int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels, bool clientPos, bool center)
 {
 	wxPoint npos= pos;
 	wxSize size;
 	CalcPosAndSize(parent, &npos, &size, clientPos);
+	if(center){npos.x -= (size.x/2);}
 	
 	dialog = new MenuDialog(this, parent, npos, size, false);
 	int ret = dialog->ShowPartialModal();
@@ -104,12 +105,12 @@ int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accel
 	return ret;
 }
 
-void Menu::PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos)
+void Menu::PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos, bool center)
 {
 	wxPoint npos= pos;
 	wxSize size;
 	CalcPosAndSize(parent, &npos, &size, clientPos);
-	//wxLogStatus("Mn size %i", mnemonics.size());
+	if(center){npos.x -= (size.x/2);}
 	
 	dialog = new MenuDialog(this, parent, npos, size, showIcons);
 	dialog->Show();//Show();

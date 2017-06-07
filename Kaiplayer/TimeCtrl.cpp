@@ -230,7 +230,7 @@ void TimeCtrl::SetTime(const STime &newtime, bool stillModified, int opt)
 	}
 	SetValue(mTime.raw(showFrames? FRAME : form),stillModified);
 	if(stillModified){
-		SetForegroundColour("#FF0000");
+		SetForegroundColour(WindowWarningElements);
 		changedBackGround=true;
 	}
 }

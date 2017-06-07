@@ -78,17 +78,45 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 				tab->Video->CaptureMouse();
 			}
 		}
-
+		firstmove = D3DXVECTOR2(x,y);
+		axis = 0;
 	}else if(holding && numElem >= 0 ){
-		lastmove = elems[numElem].elem;
-		elems[numElem].elem.x = x + diffs.x;
-		elems[numElem].elem.y = y + diffs.y;
+		
 
-		D3DXVECTOR2 moving = elems[numElem].elem - lastmove;
-		for(size_t j = 0; j < elems.size(); j++){
-			if(j == numElem || !(selectedTags & elems[j].type)){continue;}
-			elems[j].elem.x += moving.x;
-			elems[j].elem.y += moving.y;
+		if(evt.ShiftDown()){
+			if(axis == 0){
+				int diffx = abs(firstmove.x-x);
+				int diffy = abs(firstmove.y-y);
+				if(diffx != diffy){if(diffx > diffy){axis = 1;}else{axis = 2;}}
+				return;
+			}
+			lastmove = elems[numElem].elem;
+			if(axis==1){
+				elems[numElem].elem.x = x + diffs.x;
+			}else{
+				elems[numElem].elem.y = y + diffs.y;
+			}
+			D3DXVECTOR2 moving = elems[numElem].elem - lastmove;
+			for(size_t j = 0; j < elems.size(); j++){
+				if(j == numElem || !(selectedTags & elems[j].type)){continue;}
+				if(axis==1){
+					elems[j].elem.x += moving.x;
+				}else{
+					elems[j].elem.y += moving.y;
+				}
+			}
+		}else{
+			lastmove = elems[numElem].elem;
+			elems[numElem].elem.x = x + diffs.x;
+			elems[numElem].elem.y = y + diffs.y;
+
+			D3DXVECTOR2 moving = elems[numElem].elem - lastmove;
+			for(size_t j = 0; j < elems.size(); j++){
+				if(j == numElem || !(selectedTags & elems[j].type)){continue;}
+				elems[j].elem.x += moving.x;
+				elems[j].elem.y += moving.y;
+			}
+
 		}
 		ChangeInLines(false);
 	}
@@ -278,7 +306,7 @@ void MoveAll::ChangeInLines(bool all)
 	}
 	if(all){
 		tab->Video->VisEdit=true;
-		if(tab->Edit->splittedTags){tab->Edit->TextEditTl->modified=true;}
+		if(tab->Edit->splittedTags){tab->Edit->TextEditOrig->modified=true;}
 		tab->Grid1->SetModified(true);
 		tab->Grid1->Refresh();
 	}else{

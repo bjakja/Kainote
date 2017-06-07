@@ -288,6 +288,12 @@
     <ClCompile Include="SelectLines.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="KaiStaticText.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DropFiles.h">
@@ -543,6 +549,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SelectLines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiStaticText.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

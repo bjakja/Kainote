@@ -13,41 +13,30 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __KAI_STATUSBAR__
-#define __KAI_STATUSBAR__
+#ifndef _KAI_STATIC_TEXT_
+#define _KAI_STATIC_TEXT_
 
 #include <wx/window.h>
-#include <vector>
 #include "config.h"
 
-class KaiStatusBar : public wxWindow{
+class KaiStaticText : public wxWindow
+{
 public:
-	KaiStatusBar(wxWindow *parent, int id = -1, int style = 0);
-	virtual ~KaiStatusBar(){wxDELETE(bmp);};
+	KaiStaticText(wxWindow *parent, int id, const wxString& text, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int style = wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL);
+	~KaiStaticText(){};
 
-	void SetFieldsCount(int num, int *fields);
-	void SetLabelText(size_t field, const wxString &label);
-	wxString GetStatusText(size_t field) const;
-	void SetLabelTextColour(size_t field, COLOR textColor);
-	void SetLabelBackgroundColour(size_t field, COLOR backgroundColor);
-	void SetTooltips(wxString *tips, int count);
-
+	void OnPaint(wxPaintEvent &evt);
+	void SetLabelText(const wxString &_text);
+	bool SetForegroundColour(COLOR txtColor){textColour=txtColor, Refresh(false);return false;}
+	wxString GetLabelText() const {return text;}
 private:
-	void OnSize(wxSizeEvent& event);
-	void OnPaint(wxPaintEvent& event);
-	void OnMouseMove(wxMouseEvent &evt);
-	void CalcWidths(wxArrayInt *widths);
 	bool AcceptsFocus( ) const{return false;}
 	bool AcceptsFocusFromKeyboard () const {return false;}
 	bool AcceptsFocusRecursively () const{return false;}
-	wxBitmap *bmp;
-	wxString tip;
-	wxArrayInt sizes;
-	wxArrayString labels;
-	wxArrayString tips;
-	std::vector<COLOR> foreground;
-	std::vector<COLOR> background;
+	
+	int textHeight;
+	COLOR textColour;
+	wxString text;
 };
-
 
 #endif

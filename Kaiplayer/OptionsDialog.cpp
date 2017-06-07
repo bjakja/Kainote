@@ -26,6 +26,7 @@
 #include "FontDialog.h"
 #include "OpennWrite.h"
 #include "KaiMessageBox.h"
+#include "KaiStaticText.h"
 
 const wxString windowNames[] = {_("Globalny"),_("Napisy"),_("Edytor"),_("Wideo"),_("Audio")};
 
@@ -258,26 +259,26 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		ConOpt(sc2,GridTagsSwapChar);
 		ConOpt(sc3,EditboxTagButtons);
 
-		MainSizer2->Add(new wxStaticText(Main1,-1,_("Ilość edycji do zapisu"),wxDefaultPosition, wxSize(240,-1)),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(new KaiStaticText(Main1,-1,_("Ilość edycji do zapisu"),wxDefaultPosition, wxSize(240,-1)),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
 		MainSizer2->Add(gridSaveAfter,1,wxEXPAND);
-		MainSizer2->Add(new wxStaticText(Main1,-1,_("Maksymalna ilość plików autozapisu"),wxDefaultPosition, wxSize(240,-1)),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(new KaiStaticText(Main1,-1,_("Maksymalna ilość plików autozapisu"),wxDefaultPosition, wxSize(240,-1)),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
 		MainSizer2->Add(autoSaveMax,1,wxEXPAND);
-		MainSizer2->Add(new wxStaticText(Main1,-1,_("Opóźnienie klatek początkowych w ms:"),wxDefaultPosition, wxSize(240,-1)),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(new KaiStaticText(Main1,-1,_("Opóźnienie klatek początkowych w ms:"),wxDefaultPosition, wxSize(240,-1)),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
 		MainSizer2->Add(sc,1,wxEXPAND);
-		MainSizer2->Add(new wxStaticText(Main1,-1,_("Opóźnienie klatek końcowych w ms:")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(new KaiStaticText(Main1,-1,_("Opóźnienie klatek końcowych w ms:")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
 		MainSizer2->Add(sc1,1,wxEXPAND);
-		MainSizer2->Add(new wxStaticText(Main1,-1,_("Znak podmiany tagów ASS:")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(new KaiStaticText(Main1,-1,_("Znak podmiany tagów ASS:")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
 		MainSizer2->Add(sc2,1,wxEXPAND);
-		MainSizer2->Add(new wxStaticText(Main1,-1,_("Ilość przycisków wstawiających tagi ASS:")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(new KaiStaticText(Main1,-1,_("Ilość przycisków wstawiających tagi ASS:")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
 		MainSizer2->Add(sc3,1,wxEXPAND);
-		MainSizer2->Add(new wxStaticText(Main1,-1,_("Poziom śledzenia logów skryptów LUA")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
+		MainSizer2->Add(new KaiStaticText(Main1,-1,_("Poziom śledzenia logów skryptów LUA")),3,wxALIGN_CENTRE_VERTICAL|wxEXPAND);
 		MainSizer2->Add(ltl,1,wxEXPAND);
 
 		//MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
 
 		FontPickerButton *optf=new FontPickerButton(Main1,-1,wxFont(Options.GetInt(GridFontSize),wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,Options.GetString(GridFontName)));
 		ConOpt(optf,GridFontName);
-		MainSizer2->Add(new wxStaticText(Main1,-1,_("Czcionka pola napisów:")),3,wxRIGHT| wxALIGN_CENTRE_VERTICAL|wxEXPAND,10);
+		MainSizer2->Add(new KaiStaticText(Main1,-1,_("Czcionka pola napisów:")),3,wxRIGHT| wxALIGN_CENTRE_VERTICAL|wxEXPAND,10);
 		MainSizer2->Add(optf,1,wxEXPAND);
 
 		KaiStaticBoxSizer *alm=new KaiStaticBoxSizer(wxHORIZONTAL,Main1,_("Sposób wczytywania skryptów autoload"));
@@ -368,7 +369,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		ConOpt(sc,ConvertResolutionWidth);
 		obr4->Add(sc,1,wxALL|wxALIGN_CENTER|wxEXPAND,2);
 
-		wxStaticText* txt= new wxStaticText(ConvOpt,-1," X ");
+		KaiStaticText* txt= new KaiStaticText(ConvOpt,-1," X ");
 		obr4->Add(txt,0,wxTOP,5);
 
 		sc = new NumCtrl(ConvOpt, 20000, Options.GetString(ConvertResolutionHeight), 1, 3000, true, wxDefaultPosition, wxSize(115,-1), wxTE_PROCESS_ENTER);

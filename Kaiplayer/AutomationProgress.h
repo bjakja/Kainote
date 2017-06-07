@@ -37,6 +37,7 @@
 #include "MappedButton.h"
 #include "KaiTextCtrl.h"
 #include <utility>
+#include "KaiStaticText.h"
 
 namespace Auto{
 	wxDECLARE_EVENT(EVT_MESSAGE, wxThreadEvent);
@@ -47,8 +48,8 @@ namespace Auto{
 		virtual ~LuaProgressDialog();
 		wxBoxSizer *sizer;
 		wxGauge *progress_display;
-		wxStaticText *title_display;
-		wxStaticText *task_display;
+		KaiStaticText *title_display;
+		KaiStaticText *task_display;
 		KaiTextCtrl *debug_output;
 		MappedButton *cancel_button;
 		wxMutex data_mutex;

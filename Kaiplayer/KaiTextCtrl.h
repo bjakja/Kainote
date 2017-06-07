@@ -20,6 +20,7 @@
 #include <wx/caret.h>
 #include "KaiTextValidator.h"
 #include "KaiScrollbar.h"
+#include "config.h"
 
 class KaiTextCtrl : public KaiScrolledWindow
 {
@@ -39,10 +40,10 @@ public:
 	bool IsModified(){return modified;};
 	void MarkDirty(){modified=true;}
 	bool modified;
-	bool SetForegroundColour(const wxColour &color){foreground = color; Refresh(false);return true;}
-	bool SetBackgroundColour(const wxColour &color){background = color; Refresh(false);return true;}
-	wxColour GetForegroundColour() const {return foreground;}
-	wxColour GetBackgroundColour() const {return background;}
+	bool SetForegroundColour(COLOR color){foreground = color; Refresh(false);return true;}
+	bool SetBackgroundColour(COLOR color){background = color; Refresh(false);return true;}
+	COLOR GetForegroundColour() const {return foreground;}
+	COLOR GetBackgroundColour() const {return background;}
 	void SetModified(bool modif){modified = modif;}
 	void SetMaxLength(int maxLen){maxSize = maxLen;}
 	void AppendText(const wxString &text);
@@ -90,8 +91,8 @@ protected:
 	wxArrayInt wraps;
 	wxArrayInt positioning;
 	long style;
-	wxColour background;
-	wxColour foreground;
+	COLOR background;
+	COLOR foreground;
 	wxDECLARE_ABSTRACT_CLASS(KaiTextCtrl);
 	DECLARE_EVENT_TABLE()
 

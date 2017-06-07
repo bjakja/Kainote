@@ -197,8 +197,8 @@ class Menu : public Mnemonics
 	MenuItem *FindItemByPosition(int pos);
 	void Check(int id, bool check);
 	void AppendSeparator();
-	int GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels = 0, bool clientPos=true);
-	void PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos=true);
+	int GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels = 0, bool clientPos=true, bool center = false);
+	void PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos=true, bool center = false);
 	void SetMaxVisible(int maxVisible);
 	void SetShowIcons(bool showIcons);
 	void SetMinWidth(int width);

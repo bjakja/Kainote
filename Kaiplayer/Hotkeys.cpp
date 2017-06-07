@@ -503,7 +503,7 @@ HkeysDialog::HkeysDialog( wxWindow *parent, wxString name, char hotkeyWindow, bo
 		global->SetSelection(hotkeyWindow);
 		global->Connect(wxEVT_KEY_DOWN, (wxObjectEventFunction)&HkeysDialog::OnKeyPress,0,this);
 	}
-	wxStaticText *txt=new wxStaticText(this,-1,wxString::Format(_("Proszę wcisnąć klawisze skrótu dla \"%s\"."), name),wxDefaultPosition,wxDefaultSize,wxWANTS_CHARS);
+	KaiStaticText *txt=new KaiStaticText(this,-1,wxString::Format(_("Proszę wcisnąć klawisze skrótu dla \"%s\"."), name),wxDefaultPosition,wxDefaultSize,wxWANTS_CHARS);
 	txt->Connect(wxEVT_KEY_DOWN, (wxObjectEventFunction)&HkeysDialog::OnKeyPress,0,this);
 
 	DialogSizer *MainSizer = new DialogSizer(wxVERTICAL);

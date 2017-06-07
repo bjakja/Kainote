@@ -79,6 +79,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 	ssize = new NumCtrl(this, ID_TOUTLINE, "32",1,10000,false, wxDefaultPosition, wxSize(66,-1), wxTE_PROCESS_ENTER);
 	fontFilter = new KaiTextCtrl(this,-1,Options.GetString(StyleEditFilterText));
 	Filter = new ToggleButton(this, 21342, _("Filtruj"));
+	Filter->SetToolTip(_("Filtruje czcionki, by zawierały wpisane znaki"));
 	Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, [=](wxCommandEvent &evt){
 		wxString filter = fontFilter->GetValue();
 		if(filter.IsEmpty() || !Filter->GetValue()){

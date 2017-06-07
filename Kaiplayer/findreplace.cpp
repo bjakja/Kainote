@@ -31,7 +31,7 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	postxt=0;
 	findstart=-1;
 	findend=-1;
-	fnext=false;
+	fnext=blockTextChange=false;
 	repl=replace;
 	fromstart=true;
 	RepText=NULL;
@@ -56,7 +56,7 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	FindText = new KaiChoice(this, ID_FINDTEXT, "", wxDefaultPosition, wxDefaultSize,wfind);
 	FindText->SetToolTip(_("Szukany tekst:"));
 	FindText->SetMaxLength(MAXINT);
-	frsbsizer->Add(new wxStaticText(this,-1,_("Szukany tekst:")),1,wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxRIGHT,4,0);
+	frsbsizer->Add(new KaiStaticText(this,-1,_("Szukany tekst:")),1,wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxRIGHT,4,0);
 	frsbsizer->Add(FindText,4,wxEXPAND,0);
 	mainfrbsizer1->Add(frsbsizer,0,wxEXPAND|wxALL,3);
 
@@ -68,7 +68,7 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	RepText = new KaiChoice(this, ID_REPTEXT, "", wxDefaultPosition, wxDefaultSize,wrepl);
 	RepText->SetToolTip(_("Zamień na:"));
 	RepText->SetMaxLength(MAXINT);
-	repDescText = new wxStaticText(this,-1,_("Zamień na:"));
+	repDescText = new KaiStaticText(this,-1,_("Zamień na:"));
 	ReplaceStaticSizer->Add(repDescText,1,wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxRIGHT,4);
 	ReplaceStaticSizer->Add(RepText,4,wxEXPAND,0);
 	mainfrbsizer1->Add(ReplaceStaticSizer,0,wxEXPAND|wxALL,3);
@@ -91,22 +91,25 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	KaiStaticBoxSizer* frsbsizer2=new KaiStaticBoxSizer(wxVERTICAL,this,_("W polu"));
 	wxBoxSizer* frbsizer2=new wxBoxSizer(wxHORIZONTAL);
 	CollumnText = new KaiRadioButton(this, -1, _("Tekst"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	CollumnStyle = new KaiRadioButton(this, -1, _("Styl"));
+	CollumnTextOriginal = new KaiRadioButton(this, -1, _("Tekst oryginału"));
+	CollumnTextOriginal->Enable(Kai->GetTab()->Grid1->transl);
 	
-	frbsizer2->Add(CollumnText,1,wxALL|wxLEFT,1);
-	frbsizer2->Add(CollumnStyle,1,wxALL|wxLEFT,1);
-
+	frbsizer2->Add(CollumnText,1,wxALL,1);
+	frbsizer2->Add(CollumnTextOriginal,2,wxALL,1);
+	
 	wxBoxSizer* frbsizer3=new wxBoxSizer(wxHORIZONTAL);
+	CollumnStyle = new KaiRadioButton(this, -1, _("Styl"));
 	CollumnActor = new KaiRadioButton(this, -1, _("Aktor"));
 	CollumnEffect = new KaiRadioButton(this, -1, _("Efekt"));
 	
+	
+	frbsizer3->Add(CollumnStyle,1,wxEXPAND|wxLEFT,1);
 	frbsizer3->Add(CollumnActor,1,wxEXPAND|wxLEFT,1);
 	frbsizer3->Add(CollumnEffect,1,wxEXPAND|wxLEFT,1);
 
 	//static box sizer dodanie pierwszego i drugiego rzędu
 	frsbsizer2->Add(frbsizer2,1,wxEXPAND|wxLEFT,2);
 	frsbsizer2->Add(frbsizer3,1,wxEXPAND|wxLEFT,2);
-
 	//połączenie chceckboxów i radiobutonów z wyborem pola
 	mainfrbsizer2->Add(frbsizer1,1,wxEXPAND,0);
 	mainfrbsizer2->Add(frsbsizer2,1,wxEXPAND,0);
@@ -203,18 +206,17 @@ void FindReplace::ChangeContents(bool replace)
 {
 	repl = replace;
 	SetLabel((replace)? _("Znajdź i zamień") : _("Znajdź"));
-	//ReplaceStaticSizer->ShowItems(replace);
 	repDescText->Show(replace);
 	RepText->Show(replace);
 	Button2->Show(replace);
 	Button3->Show(replace);
-	//mainfrbsizer->Layout();
 	SetSizerAndFit(mainfrbsizer,false);
 }
 
 void FindReplace::OnReplaceAll(wxCommandEvent& event)
 {
-	long wrep=TXT;
+	TabPanel *pan=Kai->GetTab();
+	long wrep= (pan->Grid1->transl && !CollumnTextOriginal->GetValue())? TXTTL : TXT;
 	if(CollumnStyle->GetValue()){wrep=STYLE;}
 	else if(CollumnActor->GetValue()){wrep=ACTOR;}
 	else if(CollumnEffect->GetValue()){wrep=EFFECT;}
@@ -246,7 +248,7 @@ void FindReplace::OnReplaceAll(wxCommandEvent& event)
 	if(styll==""){notstyles=true;}else{styll=";"+styll+";";}
 	bool onlysel=SelectedLines->GetValue();
 
-	TabPanel *pan=Kai->GetTab();
+	
 
 	int fsel=pan->Grid1->FirstSel();
 
@@ -258,13 +260,14 @@ void FindReplace::OnReplaceAll(wxCommandEvent& event)
 			!(onlysel&&!(pan->Grid1->sel.find(i)!=pan->Grid1->sel.end()))){
 
 				if(wrep==STYLE){
-					txt=Dial->Style;}
-				else if(wrep==TXT || wrep==TXTTL){
-					if(pan->Grid1->transl&&Dial->TextTl!=""){txt= Dial->TextTl; wrep=TXTTL;}
-					else{txt= Dial->Text; wrep=TXT;}}
-				else if(wrep==ACTOR){
-					txt=Dial->Actor;}
-				else if(wrep==EFFECT){
+					txt=Dial->Style;
+				}else if(wrep==TXT){
+					txt= Dial->Text;
+				}else if(wrep==TXTTL){
+					txt= Dial->TextTl;
+				}else if(wrep==ACTOR){
+					txt=Dial->Actor;
+				}else if(wrep==EFFECT){
 					txt=Dial->Effect;
 				}
 				if( !(startline||endline) && (find.empty()||txt.empty()))
@@ -358,7 +361,8 @@ void FindReplace::OnButtonRep(wxCommandEvent& event)
 {
 	TabPanel *tab = Kai->GetTab();
 	if(posrow != tab->Edit->ebrow){Find();}
-	long wrep=TXT;
+	bool searchInOriginal = CollumnTextOriginal->GetValue();
+	long wrep= (tab->Grid1->transl && !searchInOriginal)? TXTTL : TXT;
 	if(CollumnStyle->GetValue()){wrep=STYLE;}
 	else if(CollumnActor->GetValue()){wrep=ACTOR;}
 	else if(CollumnEffect->GetValue()){wrep=EFFECT;}
@@ -371,7 +375,7 @@ void FindReplace::OnButtonRep(wxCommandEvent& event)
 	Grid *grid=tab->Grid1;
 
 	Dialogue *Dial = grid->GetDial(reprow);
-	MTextEditor *tmp=(tab->Grid1->transl && Dial->TextTl!="")? tab->Edit->TextEditTl : tab->Edit->TextEdit;
+	
 	if(wrep==STYLE){
 		//Kai->GetTab()->Edit->StyleChoice->SetFocus();
 		wxString oldstyle=Dial->Style;
@@ -379,19 +383,20 @@ void FindReplace::OnButtonRep(wxCommandEvent& event)
 		oldstyle.insert(findstart,rep);
 
 		grid->CopyDial(reprow)->Style=oldstyle;}
-	else if(wrep==TXT){
+	else if(wrep==TXT || wrep==TXTTL){
+		MTextEditor *tmp= (searchInOriginal)? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
 		//tmp->SetFocus();
-		tmp->Replace (findstart, findend, rep);
+		tmp->Replace(findstart, findend, rep);
 		grid->CopyDial(reprow)->Text=tmp->GetValue();
 	}
 	else if(wrep==ACTOR){
 		//Kai->GetTab()->Edit->ActorEdit->SetFocus();
-		tab->Edit->ActorEdit->choiceText->Replace (findstart, findend, rep);
+		tab->Edit->ActorEdit->choiceText->Replace(findstart, findend, rep);
 		grid->CopyDial(reprow)->Actor=tab->Edit->ActorEdit->GetValue();
 	}
 	else if(wrep==EFFECT){
 		//Kai->GetTab()->Edit->EffectEdit->SetFocus();
-		tab->Edit->EffectEdit->choiceText->Replace (findstart, findend, rep);
+		tab->Edit->EffectEdit->choiceText->Replace(findstart, findend, rep);
 		grid->CopyDial(reprow)->Effect=tab->Edit->EffectEdit->GetValue();
 	}
 
@@ -404,8 +409,8 @@ void FindReplace::OnButtonRep(wxCommandEvent& event)
 void FindReplace::Find()
 {
 	TabPanel *pan =Kai->GetTab();
-
-	long wrep=TXT;
+	bool searchInOriginal = CollumnTextOriginal->GetValue();
+	long wrep= (pan->Grid1->transl && !searchInOriginal)? TXTTL : TXT;
 	if(CollumnStyle->GetValue()){wrep=STYLE;}
 	else if(CollumnActor->GetValue()){wrep=ACTOR;}
 	else if(CollumnEffect->GetValue()){wrep=EFFECT;}
@@ -447,8 +452,8 @@ void FindReplace::Find()
 			&& !(onlysel && !(pan->Grid1->sel.find(posrow)!=pan->Grid1->sel.end()))){
 				if(wrep==STYLE){
 					txt=Dial->Style;}
-				else if(wrep==TXT){//W szukaniu tłumaczenie ma pierwszeństwo
-					txt=(pan->Grid1->transl&&Dial->TextTl!="")?Dial->TextTl:Dial->Text;}
+				else if(wrep==TXT || wrep==TXTTL){
+					txt=(wrep==TXTTL)?Dial->TextTl:Dial->Text;}
 				else if(wrep==ACTOR){
 					txt=Dial->Actor;}
 				else if(wrep==EFFECT){
@@ -502,9 +507,8 @@ void FindReplace::Find()
 					if(wrep==STYLE){
 						//pan->Edit->StyleChoice->SetFocus();
 					}
-					else if(wrep==TXT){
-						MTextEditor *tmp=(pan->Grid1->transl&&Dial->TextTl=="")?
-							pan->Edit->TextEditTl : pan->Edit->TextEdit;
+					else if(wrep==TXT || wrep==TXTTL){
+						MTextEditor *tmp= ( searchInOriginal)? pan->Edit->TextEditOrig : pan->Edit->TextEdit;
 						//tmp->SetFocus();
 						tmp->SetSelection(mwhere,findend);
 					}
@@ -611,6 +615,8 @@ void FindReplace::Reset()
 {
 	fromstart=true;
 	fnext=false;
+	if(CollumnTextOriginal->GetValue()){CollumnText->SetValue(true);}
+	CollumnTextOriginal->Enable(Kai->GetTab()->Grid1->transl);
 }
 
 void FindReplace::OnSetFocus(wxActivateEvent& event){
@@ -619,13 +625,13 @@ void FindReplace::OnSetFocus(wxActivateEvent& event){
 	long from, to, fromO, toO;
 	EditBox *edit = Kai->GetTab()->Edit;
 	edit->TextEdit->GetSelection(&from,&to);
-	edit->TextEditTl->GetSelection(&fromO,&toO);
+	edit->TextEditOrig->GetSelection(&fromO,&toO);
 	if(from<to){
 		wxString selected = edit->TextEdit->GetValue().SubString(from,to-1);
 		if(selected.Lower() != FindText->GetValue().Lower()){FindText->SetValue(selected);}
 	}
 	else if(fromO<toO){
-		wxString selected = edit->TextEditTl->GetValue().SubString(fromO,toO-1);
+		wxString selected = edit->TextEditOrig->GetValue().SubString(fromO,toO-1);
 		if(selected.Lower() != FindText->GetValue().Lower()){FindText->SetValue(selected);}
 	}
 	//hasFocus=true;

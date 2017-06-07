@@ -37,6 +37,7 @@
 #include "KaiTextCtrl.h"
 #include "KaiMessageBox.h"
 #include "FontEnumerator.h"
+#include "SubsResampleDialog.h"
 
 #undef IsMaximized
 #if _DEBUG
@@ -178,6 +179,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	SubsMenu->Append(ID_CONV, _("Konwersja"), _("Konwersja z jednego formatu napisów na inny"),true, PTR_BITMAP_PNG("convert"), ConvMenu);
 	SubsMenu->AppendTool(Toolbar,ChangeTime, _("Okno zmiany &czasów\tCtrl-I"), _("Przesuwanie czasów napisów"),PTR_BITMAP_PNG("times"));
 	SubsMenu->AppendTool(Toolbar,FontCollectorID, _("Kolekcjoner czcionek"), _("Kolekcjoner czcionek"),PTR_BITMAP_PNG("fontcollector"));
+	SubsMenu->AppendTool(Toolbar,SubsResample, _("Zmień rozdzielczość napisów"), _("Zmień rozdzielczość napisów"),PTR_BITMAP_PNG("subsresample"));
 	SubsMenu->AppendTool(Toolbar,HideTags, _("Ukryj tagi w nawiasach"), _("Ukrywa tagi w nawiasach ASS i MDVD"),PTR_BITMAP_PNG("hidetags"));
 	Menubar->Append(SubsMenu, _("&Napisy"));
 
@@ -371,6 +373,12 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		OnAssProps();
 	}else if(id==StyleManager){
 		StyleStore::ShowStore();
+	}else if(id==SubsResample){
+		TabPanel *tab = GetTab();
+		int x=0, y=0;
+		tab->Grid1->GetASSRes(&x,&y);
+		SubsResampleDialog SRD(this,wxSize(x,y),tab->Video->GetVideoSize(),"","");
+		SRD.ShowModal();
 	}else if(id==FontCollectorID && tab->Grid1->form<SRT){
 		if(!fc){fc=new FontCollector(this);}
 		fc->ShowDialog(this);
@@ -599,13 +607,8 @@ void kainoteFrame::OnAssProps()
 	sci.editing->SetValue(ngrid->GetSInfo("Original Editing"));
 	sci.timing->SetValue(ngrid->GetSInfo("Original Timing"));
 	sci.update->SetValue(ngrid->GetSInfo("Script Updated By"));
-	wxString oldx=ngrid->GetSInfo("PlayResX");
-	wxString oldy=ngrid->GetSInfo("PlayResY");
-	int nx=wxAtoi(oldx);
-	int ny=wxAtoi(oldy);
-	if(nx<1 && ny<1){nx=384;ny=288;}
-	else if(nx<1){nx=(float)ny*(4.0/3.0);if(ny==1024){nx=1280;}}
-	else if(ny<1){ny=(float)nx*(3.0/4.0);if(nx==1280){ny=1024;}}
+	int nx=0, ny=0;
+	ngrid->GetASSRes(&nx, &ny);
 	sci.width->SetInt(nx);
 	sci.height->SetInt(ny);
 	wxString matrix = ngrid->GetSInfo("YCbCr Matrix");
@@ -632,8 +635,6 @@ void kainoteFrame::OnAssProps()
 		else if(newx<1){newx=(float)newy*(4.0/3.0);}
 		else if(newy<1){newy=(float)newx*(3.0/4.0);if(newx==1280){newy=1024;}}
 
-		bool save=(!sci.noScaling->GetValue()&&(newx!=oldx||newy!=oldy));
-
 		if(sci.title->GetValue()!=""){ if(sci.title->IsModified()){ngrid->AddSInfo("Title",sci.title->GetValue());} }
 		else{ngrid->AddSInfo("Title","Kainote Ass File");}
 		if(sci.script->IsModified()){ngrid->AddSInfo("Original Script",sci.script->GetValue());}
@@ -656,14 +657,7 @@ void kainoteFrame::OnAssProps()
 		if(colls!=collis){ngrid->AddSInfo("Collisions",collis);}
 		wxString bordas=(sci.scaleBorderAndShadow->GetValue())?"yes":"no";
 		if(bords !=bordas){ ngrid->AddSInfo("ScaledBorderAndShadow",bordas);}
-
-
-		if(save){
-			int ox=wxAtoi(oldx);
-			int oy=wxAtoi(oldy);
-			ngrid->ResizeSubs((float)newx/(float)ox,(float)newy/(float)oy, sci.stretchScale->GetValue());
-		}
-		ngrid->SetModified(save);
+		ngrid->SetModified();
 		SetSubsResolution();
 	}
 }
@@ -822,9 +816,8 @@ void kainoteFrame::SetSubsResolution(bool showDialog)
 		wxString vres;
 		vres<<vsize.x<<" x "<<vsize.y;
 		if(vres!=resolution){
-			wxColour warning = Options.GetColour(WindowWarningElements);
-			StatusBar->SetLabelTextColour(5, warning);
-			StatusBar->SetLabelTextColour(7, warning);
+			StatusBar->SetLabelTextColour(5, WindowWarningElements);
+			StatusBar->SetLabelTextColour(7, WindowWarningElements);
 			badResolution=true;
 			if(showDialog){
 				ShowBadResolutionDialog(vres, resolution);
@@ -833,9 +826,8 @@ void kainoteFrame::SetSubsResolution(bool showDialog)
 		}
 	}
 	if(badResolution){
-		wxColour nullcol;
-		StatusBar->SetLabelTextColour(5, nullcol);
-		StatusBar->SetLabelTextColour(7, nullcol);
+		StatusBar->SetLabelTextColour(5, WindowText);
+		StatusBar->SetLabelTextColour(7, WindowText);
 		badResolution=false;
 	}
 
@@ -849,58 +841,31 @@ void kainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
 	SetStatusText(resolution, 5);
 	wxString sres = cur->Grid1->GetSInfo("PlayResX") +" x "+ cur->Grid1->GetSInfo("PlayResY");
 	if(resolution != sres && sres.Len()>3 && cur->edytor){
-		wxColour warning = Options.GetColour(WindowWarningElements);
-		StatusBar->SetLabelTextColour(5, warning);
-		StatusBar->SetLabelTextColour(7, warning);
+		StatusBar->SetLabelTextColour(5, WindowWarningElements);
+		StatusBar->SetLabelTextColour(7, WindowWarningElements);
 		badResolution=true;
 		if(showDialog){
 			ShowBadResolutionDialog(resolution, sres);
 		}
 	}else if(badResolution){
-		wxColour nullcol;
-		StatusBar->SetLabelTextColour(5, nullcol);
-		StatusBar->SetLabelTextColour(7, nullcol);
+		StatusBar->SetLabelTextColour(5, WindowText);
+		StatusBar->SetLabelTextColour(7, WindowText);
 		badResolution=false;
 	}
 }
 
 void kainoteFrame::ShowBadResolutionDialog(const wxString &videoRes, const wxString &subsRes)
 {
-	wxString info= wxString::Format(_("Rozdzielczości wideo i napisów różnią się."
-		L"\nMożesz zmienić je teraz lub skorzystać z opcji we właściwościach ASS.\n\n"
-		L"Rozdzielczość wideo: %s\nRozdzielczość napisów: %s\n\n"
-		L"Dopasować rozdzielczość do wideo?\n\n"
-		L"1. Dopasuj skrypt napisów do rozdzielczości wideo.\n"
-		L"2. Zmień wyłącznie rozdzielczość napisów.\n"
-		L"3. Pozostaw bez zmian.\n4. Wyłącz ostrzeżenie o niezgodności na stałe."),videoRes, subsRes);
-
-	KaiMessageDialog dlg(this, info, _("Niezgodna rozdzielczość"), wxOK|wxYES_NO|wxHELP);
-	dlg.SetHelpLabel(_("Wyłącz ostrzeżenie"));
-	dlg.SetOkLabel(_("Dopasuj"));
-	dlg.SetYesLabel(_("Zmień"));
-	dlg.SetNoLabel(_("Zamknij"));
-	int result = dlg.ShowModal();
 	wxString vx = videoRes.BeforeFirst(' ');
 	wxString sx = subsRes.BeforeFirst(' ');
 	wxString vy = videoRes.AfterLast(' ');
 	wxString sy = subsRes.AfterLast(' ');
-	Grid *grid = GetTab()->Grid1;
-	if(result == wxOK || result == wxYES){
-		grid->AddSInfo("PlayResX",vx);
-		grid->AddSInfo("PlayResY",vy);
-		if(result  == wxOK){
-			int ox=wxAtoi(sx);
-			int oy=wxAtoi(sy);
-			int newx=wxAtoi(vx);
-			int newy=wxAtoi(vy);
-			grid->ResizeSubs((float)newx/(float)ox,(float)newy/(float)oy,false);
-		}
-		grid->SetModified();
-		SetSubsResolution();
-	}else if(result == wxHELP){
-		Options.SetBool(DontAskForBadResolution,true);
-		Options.SaveOptions(true,false);
-	}
+	int ox=wxAtoi(sx);
+	int oy=wxAtoi(sy);
+	int newx=wxAtoi(vx);
+	int newy=wxAtoi(vy);
+	SubsMismatchResolutionDialog badResDialog(this, wxSize(ox,oy), wxSize(newx, newy));
+	badResDialog.ShowModal();
 }
 
 //0 - subs, 1 - vids, 2 - auds
@@ -1594,12 +1559,68 @@ void kainoteFrame::OnAudioSnap(wxCommandEvent& event)
 	TabPanel *tab=GetTab();
 	if(!tab->Edit->ABox){return;}
 	int id=event.GetId();
-	int time= (id==SnapWithStart)? tab->Edit->line->Start.mstime : tab->Edit->line->End.mstime;
-	int time2= (id==SnapWithStart)? tab->Edit->line->End.mstime : tab->Edit->line->Start.mstime;
-	int snaptime= tab->Edit->ABox->audioDisplay->GetBoundarySnap(time,1000,!Options.GetBool(AudioSnapToKeyframes),(id==SnapWithStart),true);
-	//wxLogStatus(" times %i %i", snaptime, time);
-	if(time!= snaptime){
-		if(id==SnapWithStart){
+	bool snapStartTime = (id==SnapWithStart);
+	int time= (snapStartTime)? tab->Edit->line->Start.mstime : tab->Edit->line->End.mstime;
+	int time2= (snapStartTime)? tab->Edit->line->End.mstime : tab->Edit->line->Start.mstime;
+	int snaptime=time;// tab->Edit->ABox->audioDisplay->GetBoundarySnap(time,1000,!Options.GetBool(AudioSnapToKeyframes),(id==SnapWithStart),true);
+	wxArrayInt &KeyFrames = tab->Video->VFF->KeyFrames;
+	int lastDifferents = MAXINT;
+	//wxArrayInt boundaries;
+	for(unsigned int i=0;i< KeyFrames.Count();i++) {
+		int keyMS = KeyFrames[i];
+		if (keyMS >= time-5000 && keyMS < time+5000) {
+			int frameTime = 0;
+			int frame = tab->Video->VFF->GetFramefromMS(keyMS);
+			int prevFrameTime = tab->Video->VFF->GetMSfromFrame(frame-1);
+			frameTime = keyMS + ((prevFrameTime - keyMS) / 2);
+			frameTime = ZEROIT(frameTime);
+			int actualDiff = abs(time - frameTime);
+			if(actualDiff < lastDifferents && actualDiff > 0){
+				if ((snapStartTime && frameTime >= time2) || (!snapStartTime && frameTime <= time2)){continue;}
+				snaptime = frameTime;
+				lastDifferents = actualDiff;
+			}
+		}
+	}
+
+	int inactiveType = Options.GetInt(AudioInactiveLinesDisplayMode);
+	if (inactiveType > 0) {
+		Dialogue *shade;
+		int shadeFrom,shadeTo;
+
+		// Get range
+		if (inactiveType == 1) {
+			shadeFrom = MAX(0,tab->Edit->ebrow-1);
+			shadeTo = MIN(shadeFrom+3,tab->Grid1->GetCount());
+		}
+		else {
+			shadeFrom = 0;
+			shadeTo = tab->Grid1->GetCount();
+		}
+
+		for (int j=shadeFrom;j<shadeTo;j++) {
+			if (j == tab->Edit->ebrow) continue;
+			shade = tab->Grid1->GetDial(j);
+
+			int start = shade->Start.mstime;
+			int end = shade->End.mstime;
+			int startDiff = abs(time - start);
+			int endDiff = abs(time - end);
+			if(startDiff < lastDifferents && startDiff>0){
+				if ((snapStartTime && start >= time2) || (!snapStartTime && start <= time2)){continue;}
+				snaptime = start;
+				lastDifferents = startDiff;
+			}
+			if(endDiff < lastDifferents && endDiff>0){
+				if ((snapStartTime && end >= time2) || (!snapStartTime && end <= time2)){continue;}
+				snaptime = end;
+				lastDifferents = endDiff;
+			}
+		}
+	}
+
+	if(time!= snaptime && abs(time-snaptime) < 5000){
+		if(snapStartTime){
 			if (snaptime>=time2){return;}
 			tab->Edit->StartEdit->SetTime(STime(snaptime), false, 1);
 			tab->Edit->StartEdit->SetModified(true);
@@ -1613,7 +1634,7 @@ void kainoteFrame::OnAudioSnap(wxCommandEvent& event)
 		if(durTime.mstime<0){durTime.mstime=0;}
 		tab->Edit->DurEdit->SetTime(durTime, false, 1);
 		tab->Edit->Send(false);
-		tab->Edit->ABox->audioDisplay->SetDialogue(tab->Edit->line,tab->Edit->ebrow);
+		tab->Edit->ABox->audioDisplay->SetDialogue(tab->Edit->line,tab->Edit->ebrow, !snapStartTime);
 		tab->Video->RefreshTime();
 	}
 }

@@ -29,18 +29,12 @@
 #include "MappedButton.h"
 #include "KaiRadioButton.h"
 #include "KaiDialog.h"
+#include "KaiStaticText.h"
+#include "MenuButton.h"
 
 class kainoteFrame;
 class Grid;
 
-class EBStaticText : public wxStaticText
-{
-public:
-	EBStaticText(wxWindow *parent, const wxString &txt, const wxSize &size=wxDefaultSize);
-	virtual ~EBStaticText(){};
-	void OnEraseBackground(wxEraseEvent &event);
-	DECLARE_EVENT_TABLE()
-};
 
 class DescTxtCtrl : public KaiChoice
 {
@@ -59,23 +53,24 @@ class txtdialog :public KaiDialog
 {
 public:
 	KaiTextCtrl *txt;
+	KaiTextCtrl *name;
 	KaiChoice *type;
-	txtdialog(wxWindow *parent, int id, const wxString &txtt, int type, const wxPoint &position);
+	txtdialog(wxWindow *parent, int id, const wxString &txtt, const wxString &_name, int type);
 	virtual ~txtdialog(){};
 };
 
 class TagButton :public MappedButton
 {
 public:
-	TagButton(wxWindow *parent, int id, const wxString &name, wxString tooltip, const wxSize &size);
+	TagButton(wxWindow *parent, int id, const wxString &name, const wxString &tag, int type, const wxSize &size);
 	virtual ~TagButton(){};
-	
+	wxString tag;
+	wxString name;
+	int type;
 private:
 	void OnMouseEvent(wxMouseEvent& event);
 	txtdialog *tagtxt;
-	wxString tag;
-	int type;
-	//DECLARE_EVENT_TABLE()
+	
 };
 
 
@@ -97,7 +92,7 @@ public:
 
 	AudioBox* ABox;
 	MTextEditor* TextEdit;
-	MTextEditor* TextEditTl;
+	MTextEditor* TextEditOrig;
 	KaiCheckBox* TlMode;
 	KaiRadioButton* Times;
 	KaiRadioButton* Frames;
@@ -112,8 +107,8 @@ public:
 	NumCtrl* MarginREdit;
 	NumCtrl* MarginVEdit;
 	DescTxtCtrl* EffectEdit;
-	EBStaticText *Chars;
-	EBStaticText *Chtime;
+	KaiStaticText *Chars;
+	KaiStaticText *Chtime;
 	MappedButton* StyleEdit;
 	MappedButton* Bfont;
 	MappedButton* Bcol1;
@@ -127,6 +122,7 @@ public:
 	MappedButton* Bcpall;
 	MappedButton* Bcpsel;
 	MappedButton* Bhide;
+	MenuButton* TagButtonManager;
 	ToggleButton* DoubtfulTL;
 	ToggleButton* AutoMoveTags;
 	KaiChoice* Ban;
@@ -185,11 +181,13 @@ private:
 	void OnHideOriginal(wxCommandEvent& event);
 	void OnPasteDifferents(wxCommandEvent& event);
 	void OnColorChange(wxCommandEvent& event);
-	void OnButtonTag(wxCommandEvent& event);
+	void OnButtonTag(int id);
+	void OnEditTag(wxCommandEvent& event);
 	void OnCursorMoved(wxCommandEvent& event);
 	void OnAutoMoveTags(wxCommandEvent& event);
 	void OnChangeTimeDisplay(wxCommandEvent& event);
 	void OnStyleEdit(wxCommandEvent& event);
+	void SetTagButtons();
 	void DoTooltips();
 
 	bool isdetached;

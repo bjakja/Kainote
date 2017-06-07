@@ -131,7 +131,7 @@ void SubsFile::DummyUndo()
 
 bool SubsFile::IsNotSaved()
 {
-    if(subs->ddials.size()==0 && subs->dstyles.size()==0 && subs->dsinfo.size()==0 && !edited){return false;}
+    if((subs->ddials.size()==0 && subs->dstyles.size()==0 && subs->dsinfo.size()==0 && !edited)){return false;}
     return true;
 }
 

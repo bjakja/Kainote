@@ -21,6 +21,7 @@
 #include <wx/wx.h>
 #include "VideoSlider.h"
 #include "BitmapButton.h"
+#include "KaiStaticText.h"
 class VideoToolbar;
 
 class Fullscreen : public wxFrame
@@ -33,7 +34,7 @@ public:
 	BitmapButton* bstop;
 	BitmapButton* bnext;
 	BitmapButton* bpline;
-	wxStaticText* Videolabel;
+	KaiStaticText* Videolabel;
 	VideoSlider* vslider;
 	VolSlider* volslider;
 	wxPanel* panel;

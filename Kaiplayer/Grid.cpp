@@ -779,7 +779,7 @@ void Grid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		if(diall->MarginR){diall->MarginR*=xnsize; marginChanged=true;}
 		if(diall->MarginV){diall->MarginV*=ynsize; marginChanged=true;}
 
-		wxString txt=diall->Text;
+		wxString txt=(diall->TextTl != "")? diall->TextTl : diall->Text;
 		/*long long replaceMismatch = 0;*/
 		size_t pos=0;
 		
@@ -874,7 +874,11 @@ void Grid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		if(marginChanged || textChanged){
 			if(textChanged){
 				if(SpellErrors.size() >= (size_t)i) SpellErrors[i].clear();
-				diall->Text=txt;
+				if(diall->TextTl != ""){
+					diall->TextTl=txt;
+				}else{
+					diall->Text=txt;
+				}
 			}
 			file->GetSubs()->ddials.push_back(diall);
 			file->GetSubs()->dials[i]=diall;
@@ -884,8 +888,8 @@ void Grid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		}
 		
 	}
-
-	Refresh(false);
+	
+	//Refresh(false);
 }
 
 void Grid::OnMakeContinous(int idd)
@@ -968,9 +972,9 @@ public:
 		oldfps->SetSelection(0);
 		newfps=new KaiChoice(this,-1,"",wxDefaultPosition,wxSize(80,-1),fpsy,0,valid);
 		newfps->SetSelection(2);
-		sizer->Add(new wxStaticText(this,-1,_("FPS napisów")),0,wxALIGN_CENTER_VERTICAL|wxALL,4);
+		sizer->Add(new KaiStaticText(this,-1,_("FPS napisów")),0,wxALIGN_CENTER_VERTICAL|wxALL,4);
 		sizer->Add(oldfps,0,wxEXPAND|wxALL,4);
-		sizer->Add(new wxStaticText(this,-1,_("Nowy FPS napisów")),0,wxALIGN_CENTER_VERTICAL|wxALL,4);
+		sizer->Add(new KaiStaticText(this,-1,_("Nowy FPS napisów")),0,wxALIGN_CENTER_VERTICAL|wxALL,4);
 		sizer->Add(newfps,0,wxEXPAND|wxALL,4);
 		MappedButton *ok=new MappedButton(this,15555,_("Zmień fps"));
 		Connect(15555,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&fpsdial::OkClick);

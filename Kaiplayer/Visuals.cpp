@@ -71,6 +71,7 @@ Visuals::Visuals()
 	font=0;
 	device=0;
 	start=end=oldtime=0;
+	axis = 0;
 	blockevents=false;
 	zoomScale=D3DXVECTOR2(1.0f,1.0f);
 	dummytext=NULL;
@@ -276,7 +277,7 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	Grid *grid = tab->Grid1;
 	wxString txt = edit->TextEdit->GetValue();
 	MTextEditor *Editor = edit->TextEdit;
-	if(grid->transl && txt==""){ txt = edit->TextEditTl->GetValue(); Editor = edit->TextEditTl;}
+	if(grid->transl && txt==""){ txt = edit->TextEditOrig->GetValue(); Editor = edit->TextEditOrig;}
 
 
 	Styles *acstyl=grid->GetStyle(0,edit->line->Style);
@@ -401,7 +402,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 	Grid *grid = tab->Grid1;
 	bool isOriginal=(grid->transl && edit->TextEdit->GetValue()=="");
 	//Editor
-	MTextEditor *Editor=(isOriginal)? edit->TextEditTl : edit->TextEdit;
+	MTextEditor *Editor=(isOriginal)? edit->TextEditOrig : edit->TextEdit;
 	if(clip==""){
 		
 		wxString tmp;
@@ -564,7 +565,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 		Editor->modified=true;
 		edit->UpdateChars(Editor->GetValue());
 		tab->Video->VisEdit=true;
-		if(edit->splittedTags){edit->TextEditTl->modified=true;}
+		if(edit->splittedTags){edit->TextEditOrig->modified=true;}
 		edit->Send(false,false,true);
 	}
 }
@@ -578,7 +579,7 @@ void Visuals::SetVisual(bool dummy, int type)
 
 	bool isOriginal=(grid->transl && edit->TextEdit->GetValue()=="");
 	//Editor
-	MTextEditor *Editor=(isOriginal)? edit->TextEditTl : edit->TextEdit;
+	MTextEditor *Editor=(isOriginal)? edit->TextEditOrig : edit->TextEdit;
 	if(edit->IsCursorOnStart()){
 		wxString *dtxt;
 		wxArrayInt sels= tab->Grid1->GetSels();
@@ -632,7 +633,7 @@ void Visuals::SetVisual(bool dummy, int type)
 
 		if(!dummy){
 			tab->Video->VisEdit=true;
-			if(tab->Edit->splittedTags){tab->Edit->TextEditTl->modified=true;}
+			if(tab->Edit->splittedTags){tab->Edit->TextEditOrig->modified=true;}
 			tab->Grid1->SetModified(true);
 			tab->Grid1->Refresh();
 		}else{
@@ -687,7 +688,7 @@ void Visuals::SetVisual(bool dummy, int type)
 		//Editor->Refresh(false);
 		Editor->modified=true;
 		tab->Video->VisEdit=true;
-		if(edit->splittedTags){edit->TextEditTl->modified=true;}
+		if(edit->splittedTags){edit->TextEditOrig->modified=true;}
 		edit->Send(false,false,true);
 
 	}

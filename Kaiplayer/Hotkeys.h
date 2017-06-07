@@ -109,6 +109,7 @@
 	XX( CloseAudio,)\
 	XX( ASSProperties,)\
 	XX( StyleManager,)\
+	XX( SubsResample,)\
 	XX( FontCollectorID,)\
 	XX( ConvertToASS,)\
 	XX( ConvertToSRT,)\

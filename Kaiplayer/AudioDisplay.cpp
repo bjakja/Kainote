@@ -1944,7 +1944,7 @@ int AudioDisplay::GetBoundarySnap(int ms,int rangeX,bool shiftHeld,bool start, b
 	if (shiftHeld) snapKey = !snapKey;
 	if (snapKey && provider->KeyFrames.size()>0 && Options.GetBool(AudioDrawKeyframes)) {
 		int64_t keyMS;
-		//int diff=(start)? -halfframe : - halfframe;
+
 		for (unsigned int i=0;i<provider->KeyFrames.Count();i++) {
 			keyMS = provider->KeyFrames[i];
 			int keyX=GetXAtMS(keyMS);

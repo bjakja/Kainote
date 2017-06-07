@@ -119,7 +119,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 		lastmove = lastTo = to;
 		firstmove = lastFrom = from;
 		SetVisual(true,type);
-
+		axis = 0;
 	}else if(holding){
 		if(type==0){
 			from.x=x+diffs.x;
@@ -129,18 +129,23 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 			to.y=y+diffs.y;
 		}
 		if(evt.ShiftDown()){
+			if(axis == 0){
+				int diffx = abs((type==0)? firstmove.x-x : lastmove.x-x);
+				int diffy = abs((type==0)? firstmove.y-y : lastmove.y-y);
+				if(diffx != diffy){if(diffx > diffy){axis = 2;}else{axis = 1;}}
+			}
 			if(type==0){
-				if(abs(from.x - firstmove.x)<15){
+				if(axis==1){
 					from.x = firstmove.x;
 				}
-				if(abs(from.y - firstmove.y)<15){
+				if(axis==2){
 					from.y = firstmove.y;
 				}
 			}else{
-				if(abs(to.x - lastmove.x)<15){
+				if(axis==1){
 					to.x = lastmove.x;
 				}
-				if(abs(to.y - lastmove.y)<15){
+				if(axis ==2){
 					to.y = lastmove.y;
 				}
 			}

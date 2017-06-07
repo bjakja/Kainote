@@ -44,8 +44,6 @@ class ScriptInfo: public KaiDialog
 		KaiTextCtrl* editing;
 		KaiTextCtrl* title;
 		MappedButton* cancel;
-		KaiCheckBox* noScaling;
-		KaiCheckBox* stretchScale;
 		KaiTextCtrl* timing;
 		KaiTextCtrl* translation;
 		MappedButton* resolutionFromVideo;

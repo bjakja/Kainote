@@ -606,6 +606,8 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 	if(!delStyles.empty()){
 		modif();
 	}
+	if(existsStyles.IsEmpty()){existsStyles=_("Brak");}
+	if(delStyles.IsEmpty()){delStyles=_("Brak");}
 	KaiMessageBox(wxString::Format(_("Używane style:\n%s\nUsunięte style:\n%s"), existsStyles, delStyles), _("Status usuniętych stylów"));
 }
 

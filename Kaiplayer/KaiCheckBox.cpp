@@ -15,13 +15,14 @@
 
 
 #include "KaiCheckBox.h"
-#include "config.h"
+#include <wx/dcmemory.h>
+#include <wx/dcclient.h>
 
 void BlueUp(wxBitmap *bmp)
 {
 	wxImage img=bmp->ConvertToImage();
 	int size=bmp->GetWidth()*bmp->GetHeight()*3;
-	byte *data=img.GetData();
+	unsigned char *data=img.GetData();
 			
 	for(int i=0; i<size; i++)
 	{
@@ -38,8 +39,8 @@ KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
 			 ,clicked(false)
 			 ,value(false)
 			 ,isCheckBox(true)
-			 ,changedBackground(false)
-			 ,changedForeground(false)
+			 ,foreground(WindowText)
+			 ,background(WindowBackground)
 			 ,fontHeight(0)
 {
 	label = _label;
@@ -71,7 +72,7 @@ KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
 	Bind(wxEVT_LEAVE_WINDOW, &KaiCheckBox::OnMouseEvent, this);
 	Bind(wxEVT_SIZE, &KaiCheckBox::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiCheckBox::OnPaint, this);
-	Bind(wxEVT_KEY_DOWN, &KaiCheckBox::OnKeyPress, this);
+	//Bind(wxEVT_KEY_DOWN, &KaiCheckBox::OnKeyPress, this);
 	Bind(wxEVT_ERASE_BACKGROUND, &KaiCheckBox::OnEraseBackground, this);
 	//SetBackgroundColour(parent->GetBackgroundColour());
 	//SetForegroundColour(parent->GetForegroundColour());
@@ -92,7 +93,7 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 	wxMemoryDC tdc;
 	tdc.SelectObject(wxBitmap(w,h));
 	tdc.SetFont(GetFont());
-	wxColour background = (changedBackground)? GetBackgroundColour() : Options.GetColour(WindowBackground);
+	wxColour background = Options.GetColour(this->background);
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
@@ -114,8 +115,7 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 			tdc.DestroyClippingRegion();*/
 			//tdc.DrawText(label,18, ((h-fontHeight)/2)+1);
 		//}
-		tdc.SetTextForeground((enabled && changedForeground)? GetForegroundColour() : 
-			(enabled)? Options.GetColour(WindowText) : Options.GetColour(WindowTextInactive));
+		tdc.SetTextForeground((enabled)? Options.GetColour(foreground) : Options.GetColour(WindowTextInactive));
 		//wxRect cur(18, (h-fh)/2, w - 20, fh);
 		//tdc.SetClippingRegion(cur);
 		tdc.DrawText(label,18, (h-fontHeight)/2);

@@ -17,7 +17,7 @@
 #include "MappedButton.h"
 #include "config.h"
 #include <wx/sizer.h>
-#include <wx/stattext.h>
+#include "KaiStaticText.h"
 
 
 KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const wxString &caption, long elems)
@@ -26,16 +26,16 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 	SetMinSize(wxSize(300,-1));
 	wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
 	DialogSizer *sizer2 = new DialogSizer(wxVERTICAL);
-	wxStaticText *txt = new wxStaticText(this,-1,msg);
+	KaiStaticText *txt = new KaiStaticText(this,-1,msg);
 	MappedButton *btn=NULL;
 	int whichFocus=0;
 	bool setFocus = true;
 	if(elems & wxOK){
-		btn = new MappedButton(this,9009,"OK");
+		btn = new MappedButton(this,9009,"OK",-1,wxDefaultPosition, wxSize(60,-1));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 			EndModal(wxOK);
 		},9009);
-		sizer1->Add(btn,0,wxALL,3);
+		sizer1->Add(btn,1,wxALL,3);
 		btn -> SetFocus(); setFocus = false;
 	}
 	if(elems & wxYES_TO_ALL){
@@ -45,35 +45,36 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 		if(setFocus){btn -> SetFocus(); setFocus = false;}
 	}
 	if(elems & wxYES){
-		btn = new MappedButton(this,wxID_YES,_("Tak"));
+		btn = new MappedButton(this,wxID_YES,_("Tak"),-1,wxDefaultPosition, wxSize(60,-1));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxYES);},wxID_YES);
-		sizer1->Add(btn,0,wxALL,3);
+		sizer1->Add(btn,1,wxALL,3);
 		if(setFocus){btn -> SetFocus(); setFocus = false;}
 	}
 	if(elems & wxNO){
-		btn = new MappedButton(this,wxID_NO,_("Nie"));
+		btn = new MappedButton(this,wxID_NO,_("Nie"),-1,wxDefaultPosition, wxSize(60,-1));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 			EndModal(wxNO);
 		},wxID_NO);
-		sizer1->Add(btn,0,wxALL,3);
+		sizer1->Add(btn,1,wxALL,3);
 		if(setFocus){btn -> SetFocus(); setFocus = false;}
 	}
 	if(elems & wxCANCEL){
-		btn = new MappedButton(this,9010,_("Anuluj"));
+		btn = new MappedButton(this,9010,_("Anuluj"),-1,wxDefaultPosition, wxSize(60,-1));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 			EndModal(wxCANCEL);
 		},9010);
-		sizer1->Add(btn,0,wxALL,3);
+		sizer1->Add(btn,1,wxALL,3);
 		if(setFocus){btn -> SetFocus(); setFocus = false;}
 	}
 	if(elems & wxHELP){
-		btn = new MappedButton(this,9011,_("Pomoc"));
+		btn = new MappedButton(this,9011,_("Pomoc"),-1,wxDefaultPosition, wxSize(60,-1));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxHELP);},9011);
-		sizer1->Add(btn,0,wxALL,3);
+		sizer1->Add(btn,1,wxALL,3);
 		if(setFocus){btn -> SetFocus(); setFocus = false;}
 	}
-	sizer2->Add(txt,0,wxALL|wxALIGN_CENTER_HORIZONTAL,16);
+	sizer2->Add(txt,0,wxALL|wxALIGN_LEFT,16);
 	sizer2->Add(sizer1,0,wxALL|wxALIGN_RIGHT,3);
+	sizer2->SetMinSize(180,-1);
 	SetSizerAndFit(sizer2);
 	CenterOnParent();
 	//Bind(wxEVT_CLOSE_WINDOW,[=](wxCloseEvent &evt){EndModal((elems & wxCANCEL)? wxCANCEL : (elems & wxNO)? wxNO : wxOK);});

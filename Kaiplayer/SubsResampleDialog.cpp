@@ -18,7 +18,7 @@
 #include "KaiStaticBoxSizer.h"
 #include "kainoteMain.h"
 
-SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize, const wxSize &videoSize, const wxString &videoMatrix)
+SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize, const wxSize &videoSize, const wxString &subsMatrix, const wxString &videoMatrix)
 	: KaiDialog(parent, -1, _("Zmieñ rozdzielczoœæ"))
 {
 	DialogSizer *mainSizer = new DialogSizer(wxVERTICAL);
@@ -26,9 +26,9 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 	wxBoxSizer *videoResolutionSizer = new wxBoxSizer(wxHORIZONTAL);
 	KaiStaticBoxSizer *subsResolutionStaticSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Rozdzielczoœæ napisów"));
 	KaiStaticBoxSizer *videoResolutionStaticSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Rozdzielczoœæ docelowa"));
-	wxString matrices[] = {"TV.601", "PC.601", "TV.709", "PC.709", "TV.FCC", "PC.FCC", "TV.240M", "PC.240M"};
-	subsResolutionX = new NumCtrl(this,26543,std::to_string(subsSize.x),100, 13000, true);
-	subsResolutionY = new NumCtrl(this,26544,std::to_string(subsSize.y),100, 10000, true);
+	
+	subsResolutionX = new NumCtrl(this,26543,std::to_string(subsSize.x),100, 13000, true, wxDefaultPosition, wxSize(60,-1));
+	subsResolutionY = new NumCtrl(this,26544,std::to_string(subsSize.y),100, 10000, true, wxDefaultPosition, wxSize(60,-1));
 	MappedButton *fromSubs = new MappedButton(this, 26547, _("Pobierz z napisów"));
 	fromSubs->Enable(false);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
@@ -36,17 +36,21 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 		subsResolutionX->SetInt(subsSize.y);
 		fromSubs->Enable(false);
 	}, 26547);
-	
+#ifdef whithMatrix	
+	wxString matrices[] = {"TV.601", "PC.601", "TV.709", "PC.709", "TV.FCC", "PC.FCC", "TV.240M", "PC.240M"};
 	subsMatrix = new KaiChoice(this, -1 , wxDefaultPosition, wxSize(160,-1), 8, matrices);
-	subsResolutionSizer->Add(subsResolutionX,1, wxALL, 2);
-	subsResolutionSizer->Add(new wxStaticText(this, -1, " X "),0, wxALL, 2);
-	subsResolutionSizer->Add(subsResolutionY,1, wxALL, 2);
-	subsResolutionSizer->Add(fromSubs,0, wxALL, 2);
-	subsResolutionStaticSizer->Add(subsResolutionSizer,0);
+#endif
+	subsResolutionSizer->Add(subsResolutionX,0, wxALL, 2);
+	subsResolutionSizer->Add(new KaiStaticText(this, -1, " x "),0, wxALL|wxALIGN_CENTER, 2);
+	subsResolutionSizer->Add(subsResolutionY,0, wxALL, 2);
+	subsResolutionSizer->Add(fromSubs,1, wxALL|wxEXPAND, 2);
+	subsResolutionStaticSizer->Add(subsResolutionSizer,1,wxEXPAND);
+#ifdef whithMatrix	
 	subsResolutionStaticSizer->Add(subsMatrix,0, wxALL, 2);
+#endif
 
-	destinedResolutionX = new NumCtrl(this,26545,std::to_string(videoSize.x),100, 13000, true);
-	destinedResolutionY = new NumCtrl(this,26546,std::to_string(videoSize.y),100, 10000, true);
+	destinedResolutionX = new NumCtrl(this,26545,std::to_string(videoSize.x),100, 13000, true, wxDefaultPosition, wxSize(60,-1));
+	destinedResolutionY = new NumCtrl(this,26546,std::to_string(videoSize.y),100, 10000, true, wxDefaultPosition, wxSize(60,-1));
 	MappedButton *fromVideo = new MappedButton(this, 26548, _("Pobierz z wideo"));
 	fromVideo->Enable(false);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
@@ -54,18 +58,22 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 		destinedResolutionY->SetInt(videoSize.y);
 		fromVideo->Enable(false);
 	}, 26548);
+#ifdef whithMatrix	
 	destinedMatrix = new KaiChoice(this, -1 , wxDefaultPosition, wxSize(160,-1), 8, matrices);
-	videoResolutionSizer->Add(destinedResolutionX,1, wxALL, 2);
-	videoResolutionSizer->Add(new wxStaticText(this, -1, " X "),0, wxALL, 2);
-	videoResolutionSizer->Add(destinedResolutionY,1, wxALL, 2);
-	videoResolutionSizer->Add(fromVideo,0, wxALL, 2);
-	videoResolutionStaticSizer->Add(videoResolutionSizer,0);
+#endif
+	videoResolutionSizer->Add(destinedResolutionX,0, wxALL, 2);
+	videoResolutionSizer->Add(new KaiStaticText(this, -1, " x "),0, wxALL|wxALIGN_CENTER, 2);
+	videoResolutionSizer->Add(destinedResolutionY,0, wxALL, 2);
+	videoResolutionSizer->Add(fromVideo,1, wxALL|wxEXPAND, 2);
+	videoResolutionStaticSizer->Add(videoResolutionSizer,1,wxEXPAND);
+#ifdef whithMatrix
 	videoResolutionStaticSizer->Add(subsMatrix,0, wxALL, 2);
+#endif
 
 	wxArrayString options;
 	options.Add(_("Nie rozci¹gaj"));
 	options.Add(_("Rozci¹gaj"));
-	resamplingOptions = new KaiRadioBox(this, -1, _("Opcje skalowania"),wxDefaultPosition, wxSize(160,-1), options);
+	resamplingOptions = new KaiRadioBox(this, -1, _("Opcje skalowania"),wxDefaultPosition,wxDefaultSize, options);
 	resamplingOptions->Enable((videoSize.x/(float)subsSize.x) != (videoSize.y/(float)subsSize.y));
 	auto OnChangedResolution = [=](wxCommandEvent &evt)->void{
 		int subsSizeX = subsResolutionX->GetInt();
@@ -101,9 +109,9 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 	};
 	Bind(NUMBER_CHANGED, OnChangedVideoResolution, 26545, 26546);
 
-	mainSizer->Add(subsResolutionStaticSizer,1, wxALL, 2);
-	mainSizer->Add(videoResolutionStaticSizer,1, wxALL, 2);
-	mainSizer->Add(resamplingOptions,0, wxALL, 2);
+	mainSizer->Add(subsResolutionStaticSizer,1, wxALL|wxEXPAND, 2);
+	mainSizer->Add(videoResolutionStaticSizer,1, wxALL|wxEXPAND, 2);
+	mainSizer->Add(resamplingOptions,0, wxALL|wxEXPAND, 2);
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton *OK = new MappedButton(this, 26548, "OK");
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
@@ -111,34 +119,31 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 		int subsSizeY = subsResolutionY->GetInt();
 		int videoSizeX = destinedResolutionX->GetInt();
 		int videoSizeY = destinedResolutionY->GetInt();
-		Notebook::GetTab()->Grid1->ResizeSubs(videoSizeX/(float)subsSizeX,
+		Grid *grid = Notebook::GetTab()->Grid1;
+		grid->AddSInfo("PlayResX",std::to_string(videoSizeX));
+		grid->AddSInfo("PlayResY",std::to_string(videoSizeY));
+		grid->ResizeSubs(videoSizeX/(float)subsSizeX,
 			videoSizeX/(float)subsSizeX, resamplingOptions->IsEnabled() && 
 			resamplingOptions->GetSelection() == 1);
+		grid->SetModified();
+		((kainoteFrame *)parent)->SetSubsResolution();
+		EndModal(0);
 	},26548);
 	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	buttonSizer->Add(OK, 0, wxALL, 2);
 	buttonSizer->Add(Cancel, 0, wxALL, 2);
 	mainSizer->Add(buttonSizer,0, wxALL|wxCENTER, 2);
-	SetSizer(mainSizer);
+	SetSizerAndFit(mainSizer);
 	CenterOnParent();
 	SetEnterId(26548);
 }
 
-//void SubsResampleDialog::OnChangeSubsResolution(wxCommandEvent &evt)
-//{
-//
-//}
-//	
-//void SubsResampleDialog::OnChangeVideoResolution(wxCommandEvent &evt)
-//{
-//
-//}
 
 SubsMismatchResolutionDialog::SubsMismatchResolutionDialog(wxWindow *parent, const wxSize &subsSize, const wxSize &videoSize)
 	: KaiDialog(parent, -1, _("Niezgodna rozdzielczoœæ"))
 {
 	DialogSizer *mainSizer = new DialogSizer(wxVERTICAL);
-	wxBoxSizer *buttonSizer = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxString info= wxString::Format(_("Rozdzielczoœci wideo i napisów ró¿ni¹ siê."
 		L"\nMo¿esz zmieniæ je teraz lub skorzystaæ z opcji we w³aœciwoœciach ASS.\n\n"
 		L"Rozdzielczoœæ wideo: %i x %i\nRozdzielczoœæ napisów: %i x %i\n\n"
@@ -153,7 +158,7 @@ SubsMismatchResolutionDialog::SubsMismatchResolutionDialog(wxWindow *parent, con
 		options.Add(_("Dopasuj skrypt napisów do rozdzielczoœci wideo (Rozci¹gnij)"));
 	}
 	resamplingOptions = new KaiRadioBox(this, -1, _("Opcje skalowania"),wxDefaultPosition, wxSize(160,-1), options);
-	
+	resamplingOptions->SetSelection(1);
 	MappedButton *OK = new MappedButton(this, 26548, "OK");
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		Notebook::GetTab()->Grid1->ResizeSubs(resizeX,resizeY, 
@@ -166,11 +171,11 @@ SubsMismatchResolutionDialog::SubsMismatchResolutionDialog(wxWindow *parent, con
 		grid->AddSInfo("PlayResX",std::to_string(videoSize.x));
 		grid->AddSInfo("PlayResY",std::to_string(videoSize.y));
 		if(resamplingOptions->GetSelection() != 0){
-		grid->ResizeSubs(resizeX,resizeY, 
-			resamplingOptions->GetSelection() == 2);
+			grid->ResizeSubs(resizeX,resizeY, resamplingOptions->GetSelection() == 2);
 		}
 		grid->SetModified();
 		((kainoteFrame *)parent)->SetSubsResolution();
+		EndModal(0);
 	},26548);
 	buttonSizer->Add(OK, 0, wxALL, 2);
 	buttonSizer->Add(Cancel, 0, wxALL, 2);
@@ -178,12 +183,13 @@ SubsMismatchResolutionDialog::SubsMismatchResolutionDialog(wxWindow *parent, con
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		Options.SetBool(DontAskForBadResolution,true);
 		Options.SaveOptions(true,false);
+		EndModal(0);
 	},26549);
 
-	mainSizer->Add(new wxStaticText(this,-1, info), 0, wxALL, 2);
+	mainSizer->Add(new KaiStaticText(this,-1, info), 0, wxALL, 5);
 	mainSizer->Add(resamplingOptions, 0, wxALL, 2);
 	mainSizer->Add(buttonSizer, 0, wxALL|wxCENTER, 2);
-	SetSizer(mainSizer);
+	SetSizerAndFit(mainSizer);
 	CenterOnParent();
 	SetEnterId(26548);
 }

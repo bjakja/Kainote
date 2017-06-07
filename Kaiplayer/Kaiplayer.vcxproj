@@ -376,6 +376,7 @@
     <ClCompile Include="KaiScrollbar.cpp" />
     <ClCompile Include="KaiSlider.cpp" />
     <ClCompile Include="KaiStaticBoxSizer.cpp" />
+    <ClCompile Include="KaiStaticText.cpp" />
     <ClCompile Include="KaiStatusBar.cpp" />
     <ClCompile Include="KaiTextCtrl.cpp" />
     <ClCompile Include="KaiTextValidator.cpp" />
@@ -383,6 +384,7 @@
     <ClCompile Include="ListControls.cpp" />
     <ClCompile Include="MappedButton.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="MenuButton.cpp" />
     <ClCompile Include="SelectLines.cpp" />
     <ClCompile Include="Styles.cpp" />
     <ClCompile Include="StyleStore.cpp" />
@@ -468,6 +470,7 @@
     <ClInclude Include="KaiScrollbar.h" />
     <ClInclude Include="KaiSlider.h" />
     <ClInclude Include="KaiStaticBoxSizer.h" />
+    <ClInclude Include="KaiStaticText.h" />
     <ClInclude Include="KaiStatusBar.h" />
     <ClInclude Include="KaiTextCtrl.h" />
     <ClInclude Include="KaiTextValidator.h" />
@@ -475,6 +478,7 @@
     <ClInclude Include="ListControls.h" />
     <ClInclude Include="MappedButton.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="MenuButton.h" />
     <ClInclude Include="SelectLines.h" />
     <ClInclude Include="StyleChange.h" />
     <ClInclude Include="ColorSpaceConverter.h" />

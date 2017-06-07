@@ -372,6 +372,7 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 	size_t len = txt.Len();
 	bool tagsBlock = false;
 	pdata = new ParseData();
+	if(len<1){return;}
 	while(pos < len){
 		wxUniChar ch=txt[pos];
 		if(ch=='}'){tagsBlock=false;plainStart=pos+1;}

@@ -16,7 +16,7 @@
 #include "ScriptInfo.h"
 #include "config.h"
 #include "KaiStaticBoxSizer.h"
-#include <wx/stattext.h>
+#include "KaiStaticText.h"
 #include <wx/sizer.h>
 
 ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
@@ -38,17 +38,17 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	timing = new KaiTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
 	update = new KaiTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
 
-	GridSizer->Add(new wxStaticText(this, -1, _("Tytuł")),0,wxEXPAND);
+	GridSizer->Add(new KaiStaticText(this, -1, _("Tytuł")),0,wxEXPAND);
 	GridSizer->Add(title,0,wxEXPAND);
-	GridSizer->Add(new wxStaticText(this, -1, _("Autor")),0,wxEXPAND);
+	GridSizer->Add(new KaiStaticText(this, -1, _("Autor")),0,wxEXPAND);
 	GridSizer->Add(script,0,wxEXPAND);
-	GridSizer->Add(new wxStaticText(this, -1, _("Tłumaczenie")),0,wxEXPAND);
+	GridSizer->Add(new KaiStaticText(this, -1, _("Tłumaczenie")),0,wxEXPAND);
 	GridSizer->Add(translation,0,wxEXPAND);
-	GridSizer->Add(new wxStaticText(this, -1, _("Korekta")),0,wxEXPAND);
+	GridSizer->Add(new KaiStaticText(this, -1, _("Korekta")),0,wxEXPAND);
 	GridSizer->Add(editing,0,wxEXPAND);
-	GridSizer->Add(new wxStaticText(this, -1, _("Timing")),0,wxEXPAND);
+	GridSizer->Add(new KaiStaticText(this, -1, _("Timing")),0,wxEXPAND);
 	GridSizer->Add(timing,0,wxEXPAND);
-	GridSizer->Add(new wxStaticText(this, -1, _("Edycja")),0,wxEXPAND);
+	GridSizer->Add(new KaiStaticText(this, -1, _("Edycja")),0,wxEXPAND);
 	GridSizer->Add(update,0,wxEXPAND);
 
 	StaticBox1->Add(GridSizer,0,wxEXPAND|wxALL,5);
@@ -61,19 +61,14 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	resolutionFromVideo= new MappedButton(this,25456,_("Z wideo"),-1,wxDefaultPosition,wxSize(85,-1));
 	resolutionFromVideo->Enable(w>0);
 
-	boxsizer->Add(new wxStaticText(this, -1, _("Szerokość"),wxDefaultPosition,wxSize(60,-1)),0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	boxsizer->Add(new KaiStaticText(this, -1, _("Szerokość"),wxDefaultPosition,wxSize(60,-1)),0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	boxsizer->Add(width,0,wxALL,5);
-	boxsizer->Add(new wxStaticText(this, -1, _("Wysokość"),wxDefaultPosition,wxSize(60,-1)),0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	boxsizer->Add(new KaiStaticText(this, -1, _("Wysokość"),wxDefaultPosition,wxSize(60,-1)),0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	boxsizer->Add(height,0,wxALL,5);
 	boxsizer->Add(resolutionFromVideo,0,wxALL,5);
-	stretchScale = new KaiCheckBox(this, -1, _("Rozciągaj przy skalowaniu, gdy proporcje są różne"));
-	stretchScale->SetValue(false);
-	noScaling = new KaiCheckBox(this, -1, _("Zmiana rozdzielczości tylko w nagłówku napisów"));
-	noScaling->SetValue(true);
 
 	StaticBox2->Add(boxsizer,0,wxEXPAND);
-	StaticBox2->Add(stretchScale,0,wxEXPAND|wxALL,5);
-	StaticBox2->Add(noScaling,0,wxEXPAND|wxALL,5);
+	
 
 	matrix = new KaiChoice(this, -1 , wxDefaultPosition, wxSize(160,-1) );
 	matrix->SetSelection( matrix->Append(_("Brak")) );
@@ -86,7 +81,7 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	matrix->Append("TV.240M");
 	matrix->Append("PC.240M");
 	wxBoxSizer *boxsizer2= new wxBoxSizer(wxHORIZONTAL);
-	boxsizer2->Add(new wxStaticText(this, -1, _("Macierz YCbCr"),wxDefaultPosition),0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	boxsizer2->Add(new KaiStaticText(this, -1, _("Macierz YCbCr"),wxDefaultPosition),0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	boxsizer2->Add(matrix,1,wxEXPAND|wxALL,5);
 	StaticBox2->Add(boxsizer2,0,wxEXPAND);
 
@@ -102,9 +97,9 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	collision->SetSelection( collision->Append(_("Normalne")) );
 	collision->Append(_("Odwrócone"));
 
-	GridSizer1->Add(new wxStaticText(this, -1, _("Styl dzielenia linijek")),1,wxEXPAND|wxALL|wxALIGN_CENTER_VERTICAL,5);
+	GridSizer1->Add(new KaiStaticText(this, -1, _("Styl dzielenia linijek")),1,wxEXPAND|wxALL|wxALIGN_CENTER_VERTICAL,5);
 	GridSizer1->Add(wrapstyle,1,wxEXPAND|wxALL,5);
-	GridSizer1->Add(new wxStaticText(this, -1, _("Kolidowanie linijek")),1,wxEXPAND|wxALL|wxALIGN_CENTER_VERTICAL,5);
+	GridSizer1->Add(new KaiStaticText(this, -1, _("Kolidowanie linijek")),1,wxEXPAND|wxALL|wxALIGN_CENTER_VERTICAL,5);
 	GridSizer1->Add(collision,1,wxEXPAND|wxALL,5);
 
 	scaleBorderAndShadow = new KaiCheckBox(this, -1, _("Skaluj obwódkę i cień"));
@@ -153,6 +148,5 @@ void ScriptInfo::DoTooltips()
 	width->SetToolTip(_("Szerokość wideo"));
 	wrapstyle->SetToolTip(_("Sposób dzielenia napisów"));
 	collision->SetToolTip(_("Kolidowanie linijek"));
-	noScaling->SetToolTip(_("Zmiana rozdzielczości tylko w nagłówku napisów, odznaczenie powoduje przeskalowanie całych napisów"));
 	scaleBorderAndShadow->SetToolTip(_("Skalowana obwódka i cień"));
 }

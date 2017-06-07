@@ -21,14 +21,15 @@
 #include <wx/gauge.h>
 #include <functional>
 #include "MappedButton.h"
+#include "KaiStaticText.h"
 
 struct ITaskbarList3;
 class ProgresDialog : public wxDialog
 {
 private:
 	wxGauge *gauge;
-	wxStaticText *text;
-	wxStaticText *text1;
+	KaiStaticText *text;
+	KaiStaticText *text1;
 	
 	bool canceled;
 	int oldtime;

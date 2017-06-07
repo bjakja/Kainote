@@ -16,7 +16,8 @@
 
 #include "MappedButton.h"
 #include "Config.h"
-
+#include "wx/dcmemory.h"
+#include "wx/dcclient.h"
 //static wxFont font;
 
 wxColour WhiteUp(const wxColour &color)
@@ -61,7 +62,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	GetTextExtent((name=="")? "TEXT" : name, &fw, &fh, 0, 0);
 	if(size.x <1){
 		newSize.x = fw+10;
-		if(newSize.x<60){newSize.x=60;}
+		//if(newSize.x<60){newSize.x=60;}
 	}
 	if(size.y <1){
 		newSize.y = fh+10;
@@ -80,7 +81,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 			SendEvent();
 		}
 	});
-	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
+	//Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
 	Bind(wxEVT_KILL_FOCUS,[=](wxFocusEvent &evt){Refresh(false);});
 	//wxAcceleratorEntry centries[1];
 	//centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
@@ -111,7 +112,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	GetTextExtent((name=="")? "TEXT" : name, &fw, &fh, 0, 0);
 	if(size.x <1){
 		newSize.x = fw+16;
-		if(newSize.x<60){newSize.x=60;}
+		//if(newSize.x<60){newSize.x=60;}
 	}
 	if(size.y <1){
 		newSize.y = fh+10;
@@ -130,7 +131,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 			SendEvent();
 		}
 	});
-	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
+	//Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
 	Bind(wxEVT_KILL_FOCUS,[=](wxFocusEvent &evt){Refresh(false);});
 	//wxAcceleratorEntry centries[1];
 	//centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
@@ -180,7 +181,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 			SendEvent();
 		}
 	});
-	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
+	//Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
 	Bind(wxEVT_KILL_FOCUS,[=](wxFocusEvent &evt){Refresh(false);});
 	//wxAcceleratorEntry centries[1];
 	//centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
@@ -345,7 +346,7 @@ void MappedButton::SetLabelText(const wxString &label)
 	int fw, fh;
 	GetTextExtent((name=="")? "TEXT" : name, &fw, &fh);
 	wxSize minSize = GetMinSize();
-	if(minSize.x < fw + 16){
+	if(minSize.x != fw + 16){
 		minSize.x = fw+16;
 		SetMinSize(minSize);
 		GetParent()->Layout();

@@ -62,7 +62,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 					 ,clicked(false)
 					 ,focusSet(false)
 					 ,choice(-1)
-					 ,useFgCol(false)
+					 ,foreground(WindowText)
 {
 	list = new wxArrayString(n,choices);
 	disabled = new std::map<int, bool>();
@@ -94,7 +94,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 					 ,clicked(false)
 					 ,focusSet(false)
 					 ,choice(-1)
-					 ,useFgCol(false)
+					 ,foreground(WindowText)
 {
 	list = new wxArrayString(choices);
 	disabled = new std::map<int, bool>();
@@ -126,7 +126,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 					 ,clicked(false)
 					 ,focusSet(false)
 					 ,choice(-1)
-					 ,useFgCol(false)
+					 ,foreground(WindowText)
 {
 	list = new wxArrayString(choices);
 	disabled = new std::map<int, bool>();
@@ -204,17 +204,16 @@ void KaiChoice::SetToolTip(const wxString &tooltip)
 	if(choiceText){choiceText->SetToolTip(tt);}
 }
 
-bool KaiChoice::SetBackgroundColour(const wxColour &col)
+bool KaiChoice::SetBackgroundColour(COLOR col)
 {
 	if(choiceText){choiceText->SetBackgroundColour(col);}
 	return true;
 }
 
-bool KaiChoice::SetForegroundColour(const wxColour &col)
+bool KaiChoice::SetForegroundColour(COLOR col)
 {
-	wxWindow::SetForegroundColour(col);
 	if(choiceText){choiceText->SetForegroundColour(col);}
-	useFgCol=true;
+	foreground = col;
 	return true;
 }
 
@@ -277,8 +276,8 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 				txt = txt.RemoveLast(2)+"...";
 			}
 			if(!choiceText){
-				tdc.SetTextForeground((useFgCol && enabled)? GetForegroundColour() : (enabled)?
-					Options.GetColour(WindowText) : Options.GetColour(WindowTextInactive));
+				tdc.SetTextForeground((enabled)? Options.GetColour(foreground) : 
+					Options.GetColour(WindowTextInactive));
 				//tdc.DrawText(txt, 4, (h-fh));
 				wxRect cur(5, (h-fh)/2, w - 19, fh);
 				tdc.SetClippingRegion(cur);

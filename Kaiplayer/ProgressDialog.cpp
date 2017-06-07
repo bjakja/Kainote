@@ -32,9 +32,9 @@ ProgresDialog::ProgresDialog(wxWindow *_parent, const wxString &title, const wxP
 	SetBackgroundColour(Options.GetColour(WindowBackground));
 	taskbar=NULL;
 	wxBoxSizer* sizer= new wxBoxSizer(wxVERTICAL);
-	text=new wxStaticText(this,-1,title);
+	text=new KaiStaticText(this,-1,title);
 	gauge=new wxGauge(this, -1, 100, wxDefaultPosition, wxSize(300,20), wxGA_HORIZONTAL);
-	text1=new wxStaticText(this,-1,_("Upłynęło 00:00:00.00 sekund"));
+	text1=new KaiStaticText(this,-1,_("Upłynęło 00:00:00.00 sekund"));
 	cancel= new MappedButton(this,23333,_("Anuluj"));
 	sizer->Add(text,0,wxALIGN_CENTER|wxALL, 3);//wxALIGN_CENTER|
 	sizer->Add(gauge,0,wxALIGN_CENTER|wxALL, 3);
@@ -51,6 +51,8 @@ ProgresDialog::ProgresDialog(wxWindow *_parent, const wxString &title, const wxP
 		std::function<int()> showDial = pair.first;
 		result = showDial();
 		sema->Post();
+		oldtime=0;
+		firsttime=timeGetTime();
 	});
 	Bind(EVT_END_MODAL, [=](wxThreadEvent &evt){
 		if(IsModal()){EndModal(wxID_OK);}
@@ -87,7 +89,7 @@ void ProgresDialog::Progress(int num)
 {
 	
 	int newtime = timeGetTime()-firsttime;
-	if(oldtime+5<newtime){
+	if(oldtime+5 < newtime){
 		gauge->SetValue(num);
 		
 		if(taskbar){
@@ -109,6 +111,7 @@ void ProgresDialog::Progress(int num)
 void ProgresDialog::Title(wxString title)
 {
 	text->SetLabelText(title);
+	Layout();
 	//bool main =wxThread::IsMain();
 	//if(!main){
 	//wxSafeYield(this);
@@ -131,7 +134,7 @@ void ProgresDialog::OnCancel(wxCommandEvent& event)
 
 void ProgresDialog::OnShow(wxThreadEvent& evt)
 {
-	bool main =wxThread::IsMain();
+	//bool main =wxThread::IsMain();
 	CenterOnParent();
 	ShowModal();
 }

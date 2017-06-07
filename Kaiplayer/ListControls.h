@@ -17,7 +17,7 @@
 #define _LIST_CONTROLS_
 
 #include <map>
-#include <wx/wx.h>
+#include "config.h"
 #include <wx/popupwin.h>
 #include <wx/msw/popupwin.h>
 
@@ -94,8 +94,8 @@ public:
 	void Delete(int num);
 	void SetToolTip(const wxString &tooltip="");
 	void Sort();
-	bool SetBackgroundColour(const wxColour &col);
-	bool SetForegroundColour(const wxColour &col);
+	bool SetBackgroundColour(COLOR col);
+	bool SetForegroundColour(COLOR col);
 	bool HasFocus();
 	void SetMaxLength(int maxLen);
 	KaiTextCtrl *choiceText;
@@ -123,7 +123,7 @@ private:
 	wxString toolTip;
 	PopupList *itemList;
 	wxString txtchoice;
-	bool useFgCol;
+	COLOR foreground;
 
 	wxDECLARE_ABSTRACT_CLASS(KaiChoice);
 	DECLARE_EVENT_TABLE()

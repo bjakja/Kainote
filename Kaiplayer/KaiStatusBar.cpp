@@ -14,7 +14,6 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "KaiStatusBar.h"
-#include "config.h"
 #include <wx\dcmemory.h>
 #include <wx\dcclient.h>
 #include <wx\log.h>
@@ -80,8 +79,8 @@ void KaiStatusBar::OnPaint(wxPaintEvent& event)
 			tdc.DrawLine(posX-1, 1, posX-1, h-1);
 		}
 		if(labels[i]==""){posX += widths[i]; continue;}
-		wxColour bg = (background.size() > i && background[i].IsOk())? background[i] : wbg;
-		tdc.SetTextForeground((foreground.size() > i && foreground[i].IsOk())? foreground[i] : wfg);
+		wxColour bg = (background.size() > i && background[i]>0)? Options.GetColour(background[i]) : wbg;
+		tdc.SetTextForeground((foreground.size() > i && foreground[i]>0)? Options.GetColour(foreground[i]) : wfg);
 		tdc.SetBrush(bg);
 		tdc.SetPen(bg);
 		tdc.DrawRectangle(posX,1,widths[i]-1,h-2);
@@ -148,16 +147,16 @@ wxString KaiStatusBar::GetStatusText(size_t field) const
 	return labels[field];
 }
 	
-void KaiStatusBar::SetLabelTextColour(size_t field, const wxColour &textColour)
+void KaiStatusBar::SetLabelTextColour(size_t field, COLOR textColour)
 {
-	if(field >= foreground.size()){foreground.resize(field+1);}
+	if(field >= foreground.size()){foreground.resize(field+1, (COLOR)0);}
 	foreground[field] = textColour;
 	Refresh(false);
 }
 	
-void KaiStatusBar::SetLabelBackgroundColour(size_t field, const wxColour &backgroundColour)
+void KaiStatusBar::SetLabelBackgroundColour(size_t field, COLOR backgroundColour)
 {
-	if(field >= background.size()){background.resize(field+1);}
+	if(field >= background.size()){background.resize(field+1, (COLOR)0);}
 	background[field] = backgroundColour;
 	Refresh(false);
 }

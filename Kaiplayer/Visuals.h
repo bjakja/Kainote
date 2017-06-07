@@ -107,6 +107,7 @@ public:
 	int oldtime;
 	
 	unsigned char Visual;
+	unsigned char axis;
 	
 	wxSize SubsSize;
 	wxRect VideoSize;
