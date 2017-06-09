@@ -27,6 +27,7 @@
 #include "OpennWrite.h"
 #include "KaiMessageBox.h"
 #include "KaiStaticText.h"
+#include "OptionsPanels.h"
 
 const wxString windowNames[] = {_("Globalny"),_("Napisy"),_("Edytor"),_("Wideo"),_("Audio")};
 
@@ -162,26 +163,15 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	SetIcon(icn);
 
 	wxWindow *Main= new wxWindow(OptionsTree,-1);
-	Main->SetForegroundColour(Options.GetColour(WindowText));
+	//Main->SetForegroundColour(Options.GetColour(WindowText));
 	wxWindow *Main1= new wxWindow(OptionsTree,-1);
-	Main->SetForegroundColour(Options.GetColour(WindowText));
-	//Main->SetBackgroundColour(window);
+	//Main->SetForegroundColour(Options.GetColour(WindowText));
 	wxWindow *ConvOpt= new wxWindow(OptionsTree,-1);
-	//ConvOpt->SetForegroundColour(text);
-	//ConvOpt->SetBackgroundColour(window);
 	wxWindow *Hotkeyss= new wxWindow(OptionsTree,-1);
-	//Hotkeyss->SetForegroundColour(text);
-	//Hotkeyss->SetBackgroundColour(window);
 	wxWindow *AudioMain= new wxWindow(OptionsTree,-1);
-	//AudioMain->SetForegroundColour(text);
-	//AudioMain->SetBackgroundColour(window);
 	wxWindow *Video= new wxWindow(OptionsTree,-1);
-	//Video->SetForegroundColour(text);
-	//Video->SetBackgroundColour(window);
 	wxWindow *Themes= new wxWindow(OptionsTree,-1);
-	//Themes->SetForegroundColour(text);
-	//Themes->SetBackgroundColour(window);
-
+	wxWindow *SubsProps = new SubtitlesProperties(OptionsTree, this);
 
 	hkeymodif=0;
 	if(!Options.AudioOpts && !Options.LoadAudioOpts()){KaiMessageBox(_("Nie można wczytać opcji audio"), _("Błąd"));}
@@ -680,6 +670,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	OptionsTree->AddPage(AudioMain,_("Audio"));
 	OptionsTree->AddPage(Themes,_("Motywy"));
 	OptionsTree->AddPage(Hotkeyss,_("Skróty klawiszowe"));
+	OptionsTree->AddPage(SubsProps,_("Właściwości Napisów"));
 	OptionsTree->Fit();
 
 	//adding buttons
@@ -689,9 +680,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	MappedButton *oknow=new MappedButton(this,ID_BCOMMIT,_("Zastosuj"));
 	MappedButton *cancel=new MappedButton(this,wxID_CANCEL,_("Anuluj"));
 
-	ButtonsSizer->Add(okok,0,wxRIGHT,2);
-	ButtonsSizer->Add(oknow,0,wxRIGHT,2);
-	ButtonsSizer->Add(cancel,0,wxRIGHT,2);
+	ButtonsSizer->Add(okok,1,wxRIGHT,2);
+	ButtonsSizer->Add(oknow,1,wxRIGHT,2);
+	ButtonsSizer->Add(cancel,1,wxRIGHT,2);
 
 	DialogSizer *TreeSizer=new DialogSizer(wxVERTICAL);
 	TreeSizer->Add(OptionsTree,0,wxALL,2);

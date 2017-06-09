@@ -385,6 +385,7 @@
     <ClCompile Include="MappedButton.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MenuButton.cpp" />
+    <ClCompile Include="OptionsPanels.cpp" />
     <ClCompile Include="SelectLines.cpp" />
     <ClCompile Include="Styles.cpp" />
     <ClCompile Include="StyleStore.cpp" />
@@ -479,6 +480,7 @@
     <ClInclude Include="MappedButton.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuButton.h" />
+    <ClInclude Include="OptionsPanels.h" />
     <ClInclude Include="SelectLines.h" />
     <ClInclude Include="StyleChange.h" />
     <ClInclude Include="ColorSpaceConverter.h" />

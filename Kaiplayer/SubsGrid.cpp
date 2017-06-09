@@ -308,7 +308,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 			if(form!=TMP && !(CNZ & visible)){
 				int chtime;
 				if( SpellErrors[i-1].size()<1 ){
-					chtime=CalcChars((!showtl&&transl&&Dial->TextTl!="")? 
+					chtime=CalcChars((transl && Dial->TextTl!="")? 
 						Dial->TextTl : Dial->Text) / ((Dial->End.mstime-Dial->Start.mstime)/1000.0f);
 					if(chtime<0 || chtime>999){chtime=999;}
 					SpellErrors[i-1].push_back(chtime);
@@ -949,7 +949,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 
 		// Toggle selected
 		if (left_up && ctrl && !shift && !alt ) {
-			if(lastActiveLine != row){
+			if(Edit->ebrow != lastActiveLine){
 				SelectRow(row,true,!(sel.find(row)!=sel.end()));
 				return;
 			}

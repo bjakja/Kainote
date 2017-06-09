@@ -86,7 +86,6 @@ private:
 	void OnScrollbar(wxScrollEvent &event);
 	void OnHorizontalZoom(wxScrollEvent &event);
 	void OnVerticalZoom(wxScrollEvent &event);
-	void OnVolume(wxScrollEvent &event);
 	void OnVerticalLink(wxCommandEvent &event);
 
 	void OnPlayDialogue(wxCommandEvent &event);
@@ -106,7 +105,7 @@ private:
 	void OnGoto(wxCommandEvent &event);
 	void OnLeadIn(wxCommandEvent &event);
 	void OnLeadOut(wxCommandEvent &event);
-
+	void OnVolume(wxScrollEvent &event);
 	void OnAutoGoto(wxCommandEvent &event);
 	void OnAutoCommit(wxCommandEvent &event);
 	void OnSpectrumMode(wxCommandEvent &event);
@@ -130,7 +129,8 @@ public:
 	void SetFile(wxString file,bool fromvideo);
 	void SetAccels();
 	void OnPlaySelection(wxCommandEvent &event);
-
+	void SetVolume(int vol);
+	int GetVolume();
 	DECLARE_EVENT_TABLE()
 };
 

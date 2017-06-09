@@ -60,11 +60,11 @@ public:
 	KaiChoice* Stylelist;
 	KaiChoice* Katlist;
 	MappedButton *okok;
+	void ConOpt(wxWindow *ctrl,CONFIG option);
 
 private:
 	std::vector<OptionsBind> handles;
 
-	void ConOpt(wxWindow *ctrl,CONFIG option);
 	void OnSaveClick(wxCommandEvent& event);
 	void SetOptions(bool saveall=true);
 	void OnMapHkey(wxCommandEvent& event);

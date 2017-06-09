@@ -1014,6 +1014,78 @@ void Grid::OnSetNewFPS()
 	}
 }
 
+class SwapPropertiesDialog :public KaiDialog
+{
+public:
+	SwapPropertiesDialog(wxWindow *parent)
+		:KaiDialog(parent,-1, _("Potwierdzenie"))
+	{
+		DialogSizer *main = new DialogSizer(wxVERTICAL);
+		const int numFields = 6;
+		wxString fieldNames[numFields] = {_("Tytuł"), _("Autor"), _("Tłumaczenie"), _("Korekta"), _("Timing"), _("Edycja")};
+		CONFIG fieldOnValues[numFields] = {ASSPropertiesTitleOn, ASSPropertiesScriptOn, ASSPropertiesTranslationOn, 
+			ASSPropertiesEditingOn, ASSPropertiesTimingOn, ASSPropertiesUpdateOn};
+		for(int i = 0; i < numFields; i++){
+			fields[i] = new KaiCheckBox(this, -1, fieldNames[i]);
+			fields[i]->SetValue(Options.GetBool(fieldOnValues[i]));
+			main->Add(fields[i], 0, wxEXPAND|wxALL, 3);
+		}
+		wxBoxSizer *buttons = new wxBoxSizer(wxHORIZONTAL);
+		MappedButton *Ok = new MappedButton(this, wxID_OK, "OK");
+		MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+		MappedButton *TurnOf = new MappedButton(this, 19921, _("Wyłącz potwierdzenie"));
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+			Options.SetBool(ASSPropertiesAskForChange, false);
+			Options.SaveOptions(true,false);
+			EndModal(19921);
+		}, 19921);
+		buttons->Add(Ok, 1, wxALL, 4);
+		buttons->Add(Cancel, 1, wxALL, 4);
+		buttons->Add(TurnOf, 0, wxALL, 4);
+		main->Add(buttons);
+		SetSizerAndFit(main);
+		CenterOnParent();
+	}
+	virtual ~SwapPropertiesDialog(){};
+	void SaveValues(){
+		const int numFields = 6;
+		CONFIG fieldOnValues[numFields] = {ASSPropertiesTitleOn, ASSPropertiesScriptOn, ASSPropertiesTranslationOn, 
+			ASSPropertiesEditingOn, ASSPropertiesTimingOn, ASSPropertiesUpdateOn};
+		for(int i = 0; i < numFields; i++){
+			Options.SetBool(fieldOnValues[i], fields[i]->GetValue());
+		}
+	}
+private:
+	KaiCheckBox *fields[6];
+};
+
+bool Grid::SwapAssProperties()
+{
+	if(Options.GetBool(ASSPropertiesAskForChange)){
+		SwapPropertiesDialog SPD(Kai);
+		int id = SPD.ShowModal();
+		if(id == wxID_OK){
+			SPD.SaveValues();
+		}else if(id == 19921){
+			return false;
+		}else{
+			return true;
+		}
+	}
+	const int numFields = 6;
+	CONFIG fieldOnValues[numFields] = {ASSPropertiesTitleOn, ASSPropertiesScriptOn, ASSPropertiesTranslationOn, 
+		ASSPropertiesEditingOn, ASSPropertiesTimingOn, ASSPropertiesUpdateOn};
+	CONFIG fieldValues[numFields] = {ASSPropertiesTitle, ASSPropertiesScript, ASSPropertiesTranslation, 
+		ASSPropertiesEditing, ASSPropertiesTiming, ASSPropertiesUpdate};
+	wxString fieldNames[numFields] = {"Title", "Original Script", "Original Translation", 
+		"Original Editing", "Original Timing", "Script Updated By"};
+	for(int i = 0; i < numFields; i++){
+		if(Options.GetBool(fieldOnValues[i])){
+			AddSInfo(fieldNames[i],Options.GetString(fieldValues[i]));
+		}
+	}
+	return false;
+}
 
 
 BEGIN_EVENT_TABLE(Grid,SubsGrid)

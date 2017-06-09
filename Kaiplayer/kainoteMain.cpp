@@ -692,6 +692,7 @@ void kainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 			SetRecent();
 		}else{return;}
 	}
+	if(atab->Grid1->SwapAssProperties()){return;}
 	atab->Grid1->SaveFile(atab->SubsPath);
 	atab->Grid1->Modified=false;
 	atab->Grid1->origform=atab->Grid1->form;

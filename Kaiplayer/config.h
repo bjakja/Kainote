@@ -45,7 +45,20 @@
 
 //Pamiêtaj, zmiana ostatniej audio opcji wymaga te¿ zmiany przy szukaniu w zapisie
 #define CFG(CG) \
-	CG(AudioAutoCommit,=1)\
+	CG(ASSPropertiesTitle,=1)\
+	CG(ASSPropertiesScript,)\
+	CG(ASSPropertiesTranslation,)\
+	CG(ASSPropertiesEditing,)\
+	CG(ASSPropertiesTiming,)\
+	CG(ASSPropertiesUpdate,)\
+	CG(ASSPropertiesTitleOn,)\
+	CG(ASSPropertiesScriptOn,)\
+	CG(ASSPropertiesTranslationOn,)\
+	CG(ASSPropertiesEditingOn,)\
+	CG(ASSPropertiesTimingOn,)\
+	CG(ASSPropertiesUpdateOn,)\
+	CG(ASSPropertiesAskForChange,)\
+	CG(AudioAutoCommit,)\
 	CG(AudioAutoFocus,)\
 	CG(AudioAutoScroll,)\
 	CG(AudioBoxHeight,)\

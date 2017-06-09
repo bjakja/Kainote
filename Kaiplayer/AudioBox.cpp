@@ -591,6 +591,25 @@ void AudioBox::SetAccels()
 	SetAcceleratorTable(accel);
 
 }
+
+void AudioBox::SetVolume(int vol)
+{
+	float value = pow(float(vol)/50.0f,3);
+	audioDisplay->player->SetVolume(value);
+	Options.SetInt(AudioVolume,vol);
+	Options.SaveAudioOpts();
+	VolumeBar->SetValue(vol);
+	if (VerticalLink->GetValue()) {
+		VerticalZoom->SetThumbPosition(VolumeBar->GetThumbPosition());
+		audioDisplay->SetScale(value);
+	}
+
+}
+
+int AudioBox::GetVolume()
+{
+	return VolumeBar->GetValue();
+}
 /*
 
 //////////////////////////////////////////

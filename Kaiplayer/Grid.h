@@ -35,6 +35,7 @@ public:
 	void OnAccelerator(wxCommandEvent &event);
 	void OnJoin(wxCommandEvent &event);
 	void ContextMenu(const wxPoint &pos, bool dummy=false);
+	bool SwapAssProperties(); 
 	
 protected:
 
@@ -54,7 +55,6 @@ private:
 	void OnSetFPSFromVideo();
 	void OnSetNewFPS();
 	void OnMakeContinous(int id);
-
 
 	DECLARE_EVENT_TABLE()
 };

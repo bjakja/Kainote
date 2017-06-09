@@ -1463,10 +1463,15 @@ void VideoRend::SetVolume(int vol)
 {
 	if(vstate==None){return;}
 	if(!IsDshow){
-		vol=8100+vol;
-		double dvol=vol/8100.0;
-		dvol=pow(dvol,2);
-		if(player){player->player->SetVolume(dvol);}
+		vol=7600+vol;
+		double dvol=vol/7600.0;
+		int sliderValue = (dvol*99)+1;
+		TabPanel *tab = (TabPanel*)GetParent();
+		if(tab->Edit->ABox){
+			tab->Edit->ABox->SetVolume(sliderValue);
+		}
+		//float value = pow(float(sliderValue)/50.0f,3);
+		//if(player){player->player->SetVolume(value);}
 	}
 	else
 	{

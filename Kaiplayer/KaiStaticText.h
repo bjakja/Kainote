@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+//  Copyright (c) 2017, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ class KaiStaticText : public wxWindow
 {
 public:
 	KaiStaticText(wxWindow *parent, int id, const wxString& text, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int style = wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL);
-	~KaiStaticText(){};
+	virtual ~KaiStaticText(){};
 
 	void OnPaint(wxPaintEvent &evt);
 	void SetLabelText(const wxString &_text);
