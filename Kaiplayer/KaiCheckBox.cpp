@@ -51,7 +51,7 @@ KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
 	wxArrayString lines = wxStringTokenize(label, "\n",wxTOKEN_RET_EMPTY_ALL);
 	for(size_t i=0; i < lines.size(); i++){
 		int fw, fh;
-		GetTextExtent((lines[i]=="")? "|" : lines[i], &fw, &fh);
+		GetTextExtent((lines[i]=="")? L"|" : lines[i], &fw, &fh);
 		fontHeight += fh;
 		if(fullw < fw){fullw = fw;}
 	}

@@ -113,6 +113,7 @@ public:
 	void RefreshIfVisible(int time);
 	void SetVideoLineTime(wxMouseEvent &evt);
 	void ChangeTimeDisplay(bool frame);
+	void DummyUndo(int newIter);
 
 	bool makebkp;
 	bool showFrames;

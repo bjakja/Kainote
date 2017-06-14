@@ -137,7 +137,24 @@ void DrawingAndClip::DrawVisual(int time)
 		}
 
 	}
-
+	if(lastpos>=0 && lastpos < (int)Points.size()){
+		D3DXVECTOR2 pos = Points[lastpos].GetVector(this);
+		int rcsize = 3;
+		VERTEX v9[4];
+		CreateVERTEX(&v9[0], pos.x-rcsize, pos.y-rcsize, 0xAACC8748);
+		CreateVERTEX(&v9[1], pos.x+rcsize, pos.y-rcsize, 0xAACC8748);
+		CreateVERTEX(&v9[2], pos.x-rcsize, pos.y+rcsize, 0xAACC8748);
+		CreateVERTEX(&v9[3], pos.x+rcsize, pos.y+rcsize, 0xAACC8748);
+		HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX) ),"primitive failed");
+	}
+	if(drawCross){
+		D3DXVECTOR2 v2[2] = {D3DXVECTOR2(x,0), D3DXVECTOR2(x,this->VideoSize.GetHeight())};
+		D3DXVECTOR2 v21[2] = {D3DXVECTOR2(0,y), D3DXVECTOR2(this->VideoSize.GetWidth(),y)};
+		line->Begin();
+		DrawDashedLine(v2, 2, 4, 0xFFFF00FF);
+		DrawDashedLine(v21, 2, 4, 0xFFFF00FF);
+		line->End();
+	}
 
 }
 
@@ -491,6 +508,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	}
 	if(blockevents){return;}
 	event.GetPosition(&x,&y);
+	
 
 	float zx = (x/zoomScale.x) + zoomMove.x;
 	float zy = (y/zoomScale.y) + zoomMove.y;
@@ -503,21 +521,22 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	
 	if(!event.ButtonDown() && !leftisdown){
 		int pos = CheckPos(xy);
-		if(pos!= -1 && hasArrow && !ctrl){
+		if(pos!= -1 && hasArrow/* && !ctrl*/){
 			acpoint=Points[pos];
-			if(!Points[pos].isSelected){
+			//if(!Points[pos].isSelected){
 				hasArrow=false;
-				Points[pos].isSelected=true;
+				//Points[pos].isSelected=true;
 				lastpos=pos;
 				tab->Video->Render(false);
 				//Points[pos]=acpoint;
-			}
+			//}
 			
-		}else if(pos== -1 && !hasArrow && !ctrl){
+		}else if(pos== -1 && !hasArrow/* && !ctrl*/){
 			hasArrow=true;
 			if(lastpos>=0 && lastpos < (int)psize){
 				//acpoint=Points[lastpos];
-				Points[lastpos].isSelected=false;
+				//Points[lastpos].isSelected=false;
+				lastpos = -1;
 				//wxLogStatus("znikanie podœwietlenia");
 				tab->Video->Render(false);
 				//Points[lastpos]=acpoint;
@@ -530,6 +549,13 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			tab->Video->Render(false);
 		}else if(drawToolLines){
 			drawToolLines=false;
+			tab->Video->Render(false);
+		}
+		if(!drawSelection){
+			if(tool==0 || pos!=-1 || tool > 3){drawCross=true;tab->Video->Render(false);}
+		}
+		if(event.Leaving() && drawCross){
+			drawCross=false;
 			tab->Video->Render(false);
 		}
 	}
@@ -628,9 +654,9 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			float pointx=Points[i].wx(this), pointy=Points[i].wy(this);
 			if(abs(pointx-zx)<pointArea && abs(pointy-zy)<pointArea)
 			{
-				if(!acpoint.isSelected){ChangeSelection();}
+				if(!acpoint.isSelected && !ctrl){ChangeSelection();}
 				lastpoint = acpoint = Points[i];
-				Points[i].isSelected=true;
+				Points[i].isSelected = (ctrl)? !Points[i].isSelected : true;
 				grabbed=i;
 				diffs.x=pointx-zx;
 				diffs.y=pointy-zy;
@@ -676,40 +702,42 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		else if( grabbed == -1 ){
 			tab->Video->CaptureMouse();
 			drawSelection=true;
+			drawCross=false;
 			selection = wxRect(x,y,x,y);
 			SelectPoints();
 		}
 		return;
 	}
 
-	if(leftisdown && grabbed!=-1 && !ctrl)
+	if(leftisdown && grabbed!=-1 && event.Dragging())
 	{
 		//drawtxt=true;
 		zx=MID(0,zx,VideoSize.width - VideoSize.x);
 		zy=MID(0,zy,VideoSize.height - VideoSize.y);
 		Points[grabbed].x=((zx+diffs.x)*wspw)-_x;
 		Points[grabbed].y=((zy+diffs.y)*wsph)-_y;
+		if(!Points[grabbed].isSelected){Points[grabbed].isSelected = true;}
 
 		if(event.ShiftDown()){
-			int grabbedPlus1 = (grabbed >= (int)psize-1)? 0 : grabbed+1;
+			/*int grabbedPlus1 = (grabbed >= (int)psize-1)? 0 : grabbed+1;
 			int grabbedMinus1 = (grabbed < 1)? psize-1 : grabbed-1;
 			if(Points[grabbed].y == Points[grabbedMinus1].y || snapYminus){snapYminus=true;Points[grabbedMinus1].y = Points[grabbed].y;}
 			if(Points[grabbed].y == Points[grabbedPlus1].y || snapYplus){snapYplus=true;Points[grabbedPlus1].y = Points[grabbed].y;}
 			if(Points[grabbed].x == Points[grabbedMinus1].x || snapXminus){snapXminus=true;Points[grabbedMinus1].x = Points[grabbed].x;}
-			if(Points[grabbed].x == Points[grabbedPlus1].x || snapXplus){snapXplus=true;Points[grabbedPlus1].x = Points[grabbed].x;}
-			if(!(snapYminus||snapYplus||snapXminus||snapXminus)){
-				if(axis == 0){
+			if(Points[grabbed].x == Points[grabbedPlus1].x || snapXplus){snapXplus=true;Points[grabbedPlus1].x = Points[grabbed].x;}*/
+			//if(!(snapYminus||snapYplus||snapXminus||snapXminus)){
+				//if(axis == 0){
 					int diffx = abs(firstmove.x-x);
 					int diffy = abs(firstmove.y-y);
 					if(diffx != diffy){if(diffx > diffy){axis = 2;}else{axis = 1;}}
-				}
+				//}
 				if(axis == 1){
 					Points[grabbed].x = lastpoint.x;
 				}
 				if(axis == 2){
 					Points[grabbed].y = lastpoint.y;
 				}
-			}
+			//}
 		}
 		if(Points[grabbed].isSelected){
 			float movementx = acpoint.x - Points[grabbed].x;

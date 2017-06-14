@@ -181,7 +181,7 @@ private:
 	void OnHideOriginal(wxCommandEvent& event);
 	void OnPasteDifferents(wxCommandEvent& event);
 	void OnColorChange(wxCommandEvent& event);
-	void OnButtonTag(int id);
+	void OnButtonTag(wxCommandEvent& event);
 	void OnEditTag(wxCommandEvent& event);
 	void OnCursorMoved(wxCommandEvent& event);
 	void OnAutoMoveTags(wxCommandEvent& event);

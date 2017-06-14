@@ -84,12 +84,12 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 		
 
 		if(evt.ShiftDown()){
-			if(axis == 0){
+			//if(axis == 0){
 				int diffx = abs(firstmove.x-x);
 				int diffy = abs(firstmove.y-y);
 				if(diffx != diffy){if(diffx > diffy){axis = 1;}else{axis = 2;}}
 				return;
-			}
+			//}
 			lastmove = elems[numElem].elem;
 			if(axis==1){
 				elems[numElem].elem.x = x + diffs.x;

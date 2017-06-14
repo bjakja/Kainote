@@ -774,6 +774,7 @@ void EditBox::AllColorClick(int kol)
 	wxString iskol;
 	wxString tmptext=TextEdit->GetValue();
 	MTextEditor *Editor = TextEdit;
+	int tmpIter = grid->file->Iter();
 	if(grid->transl && tmptext=="" ){
 		tmptext = TextEditOrig->GetValue(); 
 		Editor = TextEditOrig;
@@ -794,9 +795,12 @@ void EditBox::AllColorClick(int kol)
 	MoveToMousePosition(ColourDialog);
 	ColourDialog->Connect(11111,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&EditBox::OnColorChange,0,this);
 	if ( ColourDialog->ShowModal() == wxID_OK) {
+		//wywołane tylko by dodać kolor do recent;
+		ColourDialog->GetColor();
 		Editor->SetSelection(Placed.x,Placed.x);
 	}else{
-		Editor->SetTextS(tmptext, true);wxCommandEvent evt;OnEdit(evt);
+		//Editor->SetTextS(tmptext);
+		grid->DummyUndo(tmpIter);
 	}
 	Editor->SetFocus();
 }
@@ -1365,10 +1369,10 @@ void EditBox::OnColorChange(wxCommandEvent& event)
 	OnEdit(event);
 }
 
-void EditBox::OnButtonTag(int id)
+void EditBox::OnButtonTag(wxCommandEvent& event)
 {
 	wxString type;
-	wxString tag = Options.GetString((CONFIG)(id-11000)).BeforeFirst('\f', &type);
+	wxString tag = Options.GetString((CONFIG)(event.GetId()-11000)).BeforeFirst('\f', &type);
 	if(tag.IsEmpty()){wxBell(); return;}
 
 	if(type!="2"){

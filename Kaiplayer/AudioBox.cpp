@@ -552,8 +552,8 @@ void AudioBox::OnMouseEvents(wxMouseEvent &event)
 	if (click && event.GetY()>h-5) {
 		holding = true;
 		CaptureMouse();
-		sline= new wxDialog(this,-1,"",wxPoint(0,event.GetY()),wxSize(GetSize().GetWidth()+4,3),wxSTAY_ON_TOP|wxBORDER_NONE);
-		sline->SetBackgroundColour("#606060");
+		sline= new wxDialog(this,-1,"",wxPoint(0,event.GetY()),wxSize(GetSize().GetWidth()+4,2),wxSTAY_ON_TOP|wxBORDER_NONE);
+		sline->SetBackgroundColour(Options.GetColour(WindowText));
 		int px=-5, py=event.GetY();
 		ClientToScreen(&px,&py);
 		sline->SetPosition(wxPoint(px,py));

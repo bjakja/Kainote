@@ -151,7 +151,7 @@ void KaiSlider::OnMouseEvent(wxMouseEvent &evt)
 	thumbRange = size - thumbSize;
 	if (evt.GetWheelRotation() != 0) {
 		float step = evt.GetWheelRotation() / evt.GetWheelDelta();
-		thumbPos -= step;
+		thumbPos -= (step*3);
 		if(thumbPos< 0.f){thumbPos = 0.f;}
 		if(thumbPos> thumbRange){thumbPos = thumbRange;}
 		if(coord >= thumbPos && coord <= thumbPos+thumbSize){

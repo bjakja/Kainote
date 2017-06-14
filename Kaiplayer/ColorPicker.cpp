@@ -389,10 +389,7 @@ void ColorPickerScreenDropper::OnPaint(wxPaintEvent &evt)
 			wxColour color;
 
 			capdc.GetPixel(x, y, &color);
-			//color= wxColour(MIN(MAX(0,color.Red()-16)*1.0851f,255),MIN(MAX(0,color.Green()-16)*1.0851f,255),MIN(MAX(0,color.Blue()-16)*1.0851f, 255));
-			//wxLogStatus("color %i %i %i",(int)MIN(MAX(0,color.Red()-16)*1.0851f,255),(int)MIN(MAX(0,color.Green()-16)*1.0851f,255),(int)MIN(MAX(0,color.Blue()-16)*1.0851f, 255));
 			pdc.SetBrush(wxBrush(color));
-
 			pdc.DrawRectangle(x*magnification, y*magnification, magnification, magnification);
 		}
 	}
@@ -577,12 +574,12 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color)
 	picker_sizer->Add(screen_dropper_icon, 0, wxALIGN_CENTER|wxRIGHT, 10);
 	picker_sizer->Add(screen_dropper, 0, wxALIGN_CENTER);
 	picker_sizer->AddStretchSpacer();
-	picker_sizer->Add(recent_sizer, 0, wxALIGN_RIGHT|wxRIGHT,6);
+	picker_sizer->Add(recent_sizer, 0, wxALIGN_RIGHT|wxRIGHT|wxTOP|wxBOTTOM,4);
 	//picker_sizer->AddStretchSpacer();
 
 	wxSizer *button_sizer = new wxBoxSizer(wxHORIZONTAL);
-	button_sizer->Add(new MappedButton(this,wxID_OK,"OK"),0,wxALL,4);
-	button_sizer->Add(new MappedButton(this,wxID_CANCEL,_("Anuluj")),0,wxALL,4);
+	button_sizer->Add(new MappedButton(this,wxID_OK,"OK"),1,wxALL,4);
+	button_sizer->Add(new MappedButton(this,wxID_CANCEL,_("Anuluj")),1,wxALL,4);
 
 	wxSizer *input_sizer = new wxBoxSizer(wxVERTICAL);
 	input_sizer->Add(rgb_box, 0, wxALIGN_CENTER|wxEXPAND);

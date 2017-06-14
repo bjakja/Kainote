@@ -67,7 +67,7 @@ public:
 	void DrawCircle(D3DXVECTOR2 vector, bool sel=false, float size=6.0f);
 	void DrawCross(D3DXVECTOR2 position, D3DCOLOR color = 0xFFFF0000, bool useBegin=true);
 	void DrawArrow(D3DXVECTOR2 vector, D3DXVECTOR2 *vector1, int diff=0);
-	void DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen = 4);
+	void DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen = 4, unsigned int color = 0xFFBB0000);
 	void SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 scale){
 		zoomMove = move;
 		zoomScale = scale;
@@ -309,6 +309,7 @@ public:
 	bool snapYplus;
 	bool drawSelection;
 	bool drawToolLines;
+	bool drawCross;
 	int grabbed;
 	int tool;
 	int x;

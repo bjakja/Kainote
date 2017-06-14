@@ -345,7 +345,7 @@ void FindReplace::OnReplaceAll(wxCommandEvent& event)
 
 	pan->Grid1->SetModified();
 	pan->Grid1->Refresh(false);
-
+	blockTextChange=true;
 	KaiMessageBox(wxString::Format(_("Zmieniono %i razy."),allreps1),_("Szukaj Zamień"));
 	AddRecent();
 }
@@ -527,6 +527,7 @@ void FindReplace::Find()
 				}
 				else{postxt=0; posrow++;}
 				if(!foundsome && posrow> pan->Grid1->GetCount()-1){
+					blockTextChange=true;
 					if (KaiMessageBox(_("Wyszukiwanie zakończone, rozpocząć od początku?"), _("Potwierdzenie"),
 						wxICON_QUESTION | wxYES_NO, this) == wxYES ){
 							posrow=0;foundsome=true;
@@ -534,9 +535,11 @@ void FindReplace::Find()
 				}
 		}else{postxt=0;posrow++;}
 	}
-	if(!foundsome){KaiMessageBox(_("Nie znaleziono podanej frazy \"")+FindText->GetValue()+"\".", _("Potwierdzenie")); 
-	posrow=0;
-	fromstart=true;
+	if(!foundsome){
+		blockTextChange=true;
+		KaiMessageBox(_("Nie znaleziono podanej frazy \"")+FindText->GetValue()+"\".", _("Potwierdzenie")); 
+		posrow=0;
+		fromstart=true;
 	}
 	if(fromstart){AddRecent();fromstart=false;}
 	//Kai->Thaw();
@@ -620,7 +623,7 @@ void FindReplace::Reset()
 }
 
 void FindReplace::OnSetFocus(wxActivateEvent& event){
-	if(!event.GetActive()){/*hasFocus=false;*/ return;}
+	if(!event.GetActive() || blockTextChange){blockTextChange=false; return;}
 	//wxLogStatus("focus");
 	long from, to, fromO, toO;
 	EditBox *edit = Kai->GetTab()->Edit;

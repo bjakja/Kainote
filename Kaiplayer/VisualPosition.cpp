@@ -99,11 +99,11 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 			data[i].pos.y = data[i].lastpos.y - (firstmove.y-y);
 			if(evt.ShiftDown()){
 				//wxLogStatus("diff %i, %i", (int)(firstmove.x-x), (int)(firstmove.y-y));
-				if(axis == 0){
+				//if(axis == 0){
 					int diffx = abs(firstmove.x-x);
 					int diffy = abs(firstmove.y-y);
 					if(diffx != diffy){if(diffx > diffy){axis = 2;}else{axis = 1;}}
-				}
+				//}
 				if(axis==1){
 					data[i].pos.x = data[i].lastpos.x;
 				}else if(axis==2){

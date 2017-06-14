@@ -156,8 +156,9 @@ void TabPanel::OnMouseEvent(wxMouseEvent& event)
 		CaptureMouse();
 		int px=2, py=event.GetY();
 		ClientToScreen(&px,&py);
-		sline= new wxDialog(this,-1,"",wxPoint(px,py),wxSize(GetSize().GetWidth(),3),wxSTAY_ON_TOP|wxBORDER_NONE);
-		sline->SetBackgroundColour("#000000");
+		sline= new wxDialog(this,-1,"",wxPoint(px,py),wxSize(GetSize().GetWidth(),2),wxSTAY_ON_TOP|wxBORDER_NONE);
+		//sline->SetBackgroundColour("#000000");
+		sline->SetBackgroundColour(Options.GetColour(WindowText));
 		sline->Show();
 	}
 

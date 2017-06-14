@@ -528,7 +528,7 @@ void Grid::OnPasteTextTl()
 			while ( tokenizer.HasMoreTokens() )
 			{
 				wxString token = tokenizer.GetNextToken();
-				if(!(ext=="ass"&&!token.StartsWith("Dialogue"))){  
+				if(!(ext=="ass" && !token.StartsWith("Dialogue"))){  
 					Dialogue diall=Dialogue(token);
 					if(iline<GetCount()){
 						diall.Conv(form);

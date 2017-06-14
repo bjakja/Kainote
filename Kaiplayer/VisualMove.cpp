@@ -129,11 +129,11 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 			to.y=y+diffs.y;
 		}
 		if(evt.ShiftDown()){
-			if(axis == 0){
+			//if(axis == 0){
 				int diffx = abs((type==0)? firstmove.x-x : lastmove.x-x);
 				int diffy = abs((type==0)? firstmove.y-y : lastmove.y-y);
 				if(diffx != diffy){if(diffx > diffy){axis = 2;}else{axis = 1;}}
-			}
+			//}
 			if(type==0){
 				if(axis==1){
 					from.x = firstmove.x;

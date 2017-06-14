@@ -129,6 +129,23 @@ void SubsFile::DummyUndo()
 	subs=undo[iter]->Copy();
 }
 
+void SubsFile::DummyUndo(int newIter)
+{
+	if(newIter < 0 || newIter >= undo.size()){return;}
+	subs->Clear();
+	delete subs;
+	subs=undo[newIter]->Copy();
+	iter = newIter;
+	if(iter < undo.size() - 1){
+		for(std::vector<File*>::iterator it = undo.begin()+iter+1; it != undo.end(); it++)
+		{
+			(*it)->Clear();
+			delete (*it);
+		}
+		undo.erase(undo.begin()+iter+1, undo.end());
+	}
+}
+
 bool SubsFile::IsNotSaved()
 {
     if((subs->ddials.size()==0 && subs->dstyles.size()==0 && subs->dsinfo.size()==0 && !edited)){return false;}

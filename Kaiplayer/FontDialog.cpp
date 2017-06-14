@@ -352,8 +352,8 @@ BEGIN_EVENT_TABLE(FontList,wxWindow)
 
 	prev->Add(Preview,0,wxEXPAND|wxALL,5);
 
-	Bsizer->Add(Buttok,0,wxALL,5);
-	Bsizer->Add(Buttcancel,0,wxALL,5);
+	Bsizer->Add(Buttok,1,wxALL,5);
+	Bsizer->Add(Buttcancel,1,wxALL,5);
 
 	Main->Add(Cfont,0,wxEXPAND|wxALL,5);
 	Main->Add(prev,0,wxEXPAND|wxBOTTOM|wxLEFT|wxRIGHT,5);

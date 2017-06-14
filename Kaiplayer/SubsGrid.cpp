@@ -949,7 +949,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 
 		// Toggle selected
 		if (left_up && ctrl && !shift && !alt ) {
-			if(Edit->ebrow != lastActiveLine){
+			if(Edit->ebrow != lastActiveLine || Edit->ebrow != row){
 				SelectRow(row,true,!(sel.find(row)!=sel.end()));
 				return;
 			}
@@ -1877,6 +1877,8 @@ void SubsGrid::GetUndo(bool redo)
 	Freeze();
 	wxString resolution = GetSInfo("PlayResX") +" x "+ GetSInfo("PlayResY");
 	wxString matrix = GetSInfo("YCbCr Matrix");
+	wxString tlmode = GetSInfo("TLMode");
+
 	if(redo){file->Redo();}else{file->Undo();}
 
 
@@ -1908,6 +1910,14 @@ void SubsGrid::GetUndo(bool redo)
 		SS->ASS->Refresh(false);
 	}
 	SpellErrors.clear();
+
+	wxString newtlmode = GetSInfo("TLMode");
+	if(newtlmode != tlmode){
+		transl = (newtlmode == "Yes");
+		showtl = (GetSInfo("TLMode Showtl") == "Yes" || (transl && Options.GetBool(TlModeShowOriginal) != 0));
+		Edit->SetTl(transl);
+	}
+
 	RepaintWindow();
 	int tmpMarked = markedLine;
 	Edit->SetLine(erow);
@@ -1939,11 +1949,26 @@ void SubsGrid::GetUndo(bool redo)
 	if(matrix != newmatrix){
 		vb->SetColorSpace(newmatrix);
 	}
+	
+
 	if(makebkp){
 		timer.Start(20000,true);
 		//CreateTimerQueueTimer(&qtimer,0,WAITORTIMERCALLBACK(OnBcktimer),this,20000,0,WT_EXECUTEONLYONCE);
 		makebkp=false;
 	}
+}
+
+void SubsGrid::DummyUndo(int newIter)
+{
+	file->DummyUndo(newIter);
+	SpellErrors[Edit->ebrow].clear();
+	Edit->SetLine(Edit->ebrow,false, false);
+	RepaintWindow();
+	UpdateUR();
+	Kai->Label(newIter);
+	VideoCtrl *vb = Kai->GetTab()->Video;
+	vb->OpenSubs(GetVisible());
+	vb->Render();
 }
 
 wxArrayInt SubsGrid::GetSels(bool deselect)
@@ -2303,7 +2328,7 @@ bool SubsGrid::SetTlMode(bool mode)
 		if(Options.GetBool(TlModeShowOriginal)){showtl = true;}
 		Kai->Menubar->Enable(SaveTranslation,true);
 
-		Refresh(false);
+		//Refresh(false);
 
 	}else{
 		if(KaiMessageBox(_("Czy na pewno chcesz wyłączyć tryb tłumaczenia?\nObcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."),_("Potwierdzenie"),wxYES_NO)==wxNO)
@@ -2327,12 +2352,17 @@ bool SubsGrid::SetTlMode(bool mode)
 		for(int i=0; i<GetCount(); i++)
 		{
 			Dialogue *dial= GetDial(i);
+			Dialogue *dialc= NULL;
 			if(dial->TextTl!="")
 			{
-				dial->Text = dial->TextTl;
-				dial->TextTl="";
+				dialc = CopyDial(i);
+				dialc->Text = dialc->TextTl;
+				dialc->TextTl="";
 			}
-			if(dial->State >= 4){dial->State -= 4;}
+			if(dial->State >= 4){
+				if(!dialc){dialc = CopyDial(i);}
+				dialc->State -= 4;
+			}
 		}
 
 		transl=false;
@@ -2341,12 +2371,13 @@ bool SubsGrid::SetTlMode(bool mode)
 	}
 	SpellErrors.clear();
 	Refresh(false);
-	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
-	if(vb->GetState()!=None){
-		vb->OpenSubs(GetVisible()/*SaveText()*/);
-		if(vb->GetState()==Paused){vb->Render();}
-		Edit->OnVideo=true;
-	}
+	SetModified();
+	//VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
+	//if(vb->GetState()!=None){
+	//	vb->OpenSubs(GetVisible()/*SaveText()*/);
+	//	if(vb->GetState()==Paused){vb->Render();}
+	//	Edit->OnVideo=true;
+	//}
 	return false;
 }
 

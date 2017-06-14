@@ -207,7 +207,7 @@ void Visuals::DrawCircle(D3DXVECTOR2 pos, bool sel, float crsize)
 	HRN(device->DrawPrimitiveUP( D3DPT_LINESTRIP, 18, &v5[21], sizeof(VERTEX) ),"primitive failed");
 }
 
-void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen)
+void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen, unsigned int color)
 {
 
 	D3DXVECTOR2 actualPoint[2];
@@ -223,7 +223,7 @@ void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen
 		for(float j = 0; j <= 1; j += singleMovement){
 			actualPoint[1] -= diffUnits * dashLen;
 			if(j+singleMovement>=1){actualPoint[1] = vector[iPlus1];}
-			line->Draw(actualPoint,2,0xFFBB0000);
+			line->Draw(actualPoint, 2, color);
 			actualPoint[1] -= diffUnits * dashLen;
 			actualPoint[0] -= (diffUnits * dashLen)*2;
 		}
@@ -387,7 +387,7 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoint &pos)
 {
 	if(!inbracket){
-		txt->insert(0,"{"+what+"}");
+		txt->insert(pos.x,"{"+what+"}");
 		return 1;
 	}
 	if(pos.x<pos.y){txt->erase(txt->begin() + pos.x, txt->begin() + pos.y+1);}
@@ -580,7 +580,9 @@ void Visuals::SetVisual(bool dummy, int type)
 	bool isOriginal=(grid->transl && edit->TextEdit->GetValue()=="");
 	//Editor
 	MTextEditor *Editor=(isOriginal)? edit->TextEditOrig : edit->TextEdit;
+	//działanie dwuetapowe, pierwszy etap podmieniamy w wielu linijkach
 	if(edit->IsCursorOnStart()){
+		wxLogStatus("multiple lines");
 		wxString *dtxt;
 		wxArrayInt sels= tab->Grid1->GetSels();
 		bool skipInvisible = dummy && tab->Video->GetState() != Playing;
@@ -644,7 +646,7 @@ void Visuals::SetVisual(bool dummy, int type)
 		}
 		return;
 	}
-
+	//gdy pierwszy zawiedzie, mamy drugi czyli w jednej linii
 	if(dummy){
 		wxString txt=Editor->GetValue();
 		bool fromStart=false;
@@ -658,13 +660,12 @@ void Visuals::SetVisual(bool dummy, int type)
 			(Visual==SCALE)? "(fsc"+xytype+").+" : 
 			(Visual==ROTATEZ)? "(frz?)[0-9-]+" : 
 			(Visual==ROTATEXY)? "(fr"+frxytype+").+" : 
-			(Visual==CLIPRECT)? "(i?clip).+" : 
-			"(fa"+xytype+").+";
+			"(i?clip).+";
 		edit->FindVal(tagpattern, &tmp, txt, 0, fromStart);
 
 		if(type==2 && Visual>0){
 			if(edit->Placed.x < edit->Placed.y){txt.erase(txt.begin() + edit->Placed.x, txt.begin() + edit->Placed.y+1);}
-			wxString tagpattern= (Visual==SCALE)? "(fscx).+" : (Visual==ROTATEZ)? "(frz?)[0-9-]+" : (Visual==ROTATEXY)? "(frx).+" : "(fax).+";
+			wxString tagpattern= (Visual==SCALE)? "(fscx).+" : (Visual==ROTATEZ)? "(frz?)[0-9-]+" : "(frx).+";
 			edit->FindVal(tagpattern, &tmp, txt, 0, fromStart);
 		}
 
@@ -674,8 +675,9 @@ void Visuals::SetVisual(bool dummy, int type)
 			dummytext= grid->GetVisible(&vis, &dumplaced);
 			if(!vis){SAFE_DELETE(dummytext); return;}
 		}else{
-			Editor->SetTextS(txt,false,true);
-			Editor->Refresh(false);
+			Editor->SetTextS(txt,false,false);
+			//Editor->Refresh(false);
+			Editor->SetSelection(edit->Placed.x, edit->Placed.x, true);
 		}
 
 		dummytext->replace(dumplaced.x,dumplaced.y,txt);

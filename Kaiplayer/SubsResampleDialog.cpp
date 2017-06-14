@@ -159,12 +159,12 @@ SubsMismatchResolutionDialog::SubsMismatchResolutionDialog(wxWindow *parent, con
 	}
 	resamplingOptions = new KaiRadioBox(this, -1, _("Opcje skalowania"),wxDefaultPosition, wxSize(160,-1), options);
 	resamplingOptions->SetSelection(1);
-	MappedButton *OK = new MappedButton(this, 26548, "OK");
+	MappedButton *OK = new MappedButton(this, 26548, _("Zmieñ"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		Notebook::GetTab()->Grid1->ResizeSubs(resizeX,resizeY, 
 			resamplingOptions->GetSelection() == 2);
 	},26548);
-	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Nie zmieniaj"));
 	MappedButton *TurnOff = new MappedButton(this, 26549, _("Wy³¹cz ostrze¿enie"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		Grid *grid = Notebook::GetTab()->Grid1;
