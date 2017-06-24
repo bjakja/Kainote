@@ -197,7 +197,7 @@ void Karaoke::SplitSyl(int line, int nletters)
 	//tmp1<<nletters;
 	syls[line]=tmp;
 	syls.Insert(tmp1, line+1);
-	kaas.Insert(_("k"), line+1);
+	kaas.Insert("k", line+1);
 	int start, end;
 	GetSylTimes(line,start,end);
 	int ttmp=start+((end-start)/2);

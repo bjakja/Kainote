@@ -131,6 +131,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 		hasArrow=false;
 		int addy=(AN>3)?60 : -60, addx= (AN % 3 == 0)?-60 : 60;
 		if(leftc && evt.ShiftDown()){
+			type=2;
 			diffs.x = x;
 			diffs.y = y;
 			to.x=from.x;to.y=from.y;
@@ -146,18 +147,21 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 		to.x=x;to.y=y;
 		
 	}else if(holding){
-		if(evt.ShiftDown()&&type==2){
-			int diffx = abs(diffs.x-x);
+		if(evt.ShiftDown()){
+			//zamieniamy te wartoœci by przesuwanie w osi x dzia³a³o poprawnie, a nie na odwrót.
+			//drgawki nawet w photoshopie wystêpuj¹ bo wtedy jedna oœ ma + druga - i w zale¿noœci od tego która jest u¿yta
+			//zwiêksza b¹dŸ zmniejsza nam tekst/rysunek.
+			int diffx = abs(x-diffs.x);
 			int diffy = abs(diffs.y-y);
-			int move = (diffx>diffy)? diffs.x-x : diffs.y-y;
-			int addy=(AN>3)? move : -move, addx= (AN % 3 == 0)?-move : move;
+			int move = (diffx>diffy)? x-diffs.x : diffs.y-y;
+
 			D3DXVECTOR2 copyto = to;
 			wxPoint copydiffs = diffs;
-			to.x+=addx;
-			to.y+=addy;
+			to.x=to.x+move;
+			to.y=to.y-move;
 			diffs.x=x;
 			diffs.y=y;
-			if(to.x-from.x<10){diffs=copydiffs; to = copyto;}
+			if(to.x-from.x<1){diffs=copydiffs; to = copyto;}
 		}else{
 			if(type!=1){
 				to.x=x+diffs.x;

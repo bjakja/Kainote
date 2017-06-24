@@ -1152,7 +1152,8 @@ void SubsGrid::Convert(char type)
 			i++;
 		}
 		Kai->SetStatusText("",5);
-	}else{
+		
+	}else if(type == ASS){
 		Kai->SetSubsResolution();
 	}
 
@@ -1160,6 +1161,11 @@ void SubsGrid::Convert(char type)
 	Edit->SetLine((Edit->ebrow < GetCount())? Edit->ebrow : 0);
 	SetModified();
 	RepaintWindow();
+	
+	if(Edit->Visual > 0){
+		TabPanel *tab = Kai->GetTab();
+		tab->Video->SetVisual(true);
+	}
 }
 /*
 DWORD SubsGrid::saveproc(void* param)
@@ -1865,9 +1871,11 @@ void SubsGrid::UpdateUR(bool toolbar)
 	file->GetURStatus(&undo, &_redo);
 	Kai->Menubar->Enable(Undo,undo);
 	Kai->Menubar->Enable(Redo,_redo);
+	Kai->Menubar->Enable(SaveSubs, true);
 	if(toolbar){
 		Kai->Toolbar->UpdateId(Undo,undo);
 		Kai->Toolbar->UpdateId(Redo,_redo);
+		Kai->Toolbar->UpdateId(SaveSubs, true);
 	}
 }
 
@@ -2072,6 +2080,8 @@ void SubsGrid::SetModified(bool redit, bool dummy, int SetEditBoxLine, bool Scro
 {
 	if(file->IsNotSaved()){
 		if(file->Iter()<1||!Modified){
+			Kai->Toolbar->UpdateId(SaveSubs, true);
+			Kai->Menubar->Enable(SaveSubs, true);
 			Modified=true;
 		}
 		if(Comparsion){
@@ -2252,7 +2262,10 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 	else if(form==ASS){
 		if(ext!="ass"){origform=0;AddStyle(new Styles());}
 		Edit->TlMode->Enable(true);Edit->RefreshStyle();
-		if(Options.GetBool(GridLoadSortedSubs)){std::sort(file->subs->dials.begin(), file->subs->dials.end(), sortstart);}}
+		if(Options.GetBool(GridLoadSortedSubs)){
+			std::sort(file->subs->dials.begin(), file->subs->dials.end(), sortstart);
+		}
+	}
 	else{Edit->TlMode->Enable(false);}
 	if(active>=GetCount()){active=0;}
 
@@ -2271,6 +2284,8 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 	file->EndLoad();
 	if(StyleStore::HasStore() && form==ASS){StyleStore::Get()->LoadAssStyles();}
 	if(form == ASS){RebuildActorEffectLists();}
+	//Kai->Toolbar->UpdateId(SaveSubs, false);
+	//Kai->Menubar->Enable(SaveSubs, false);
 }
 
 void SubsGrid::SetStartTime(int stime)
@@ -2493,6 +2508,8 @@ void SubsGrid::LoadDefault(bool line,bool sav,bool endload)
 	AddSInfo("ScriptType","v4.00+",sav);
 	AddSInfo("Last Style Storage","Podstawowy",sav);
 	AddSInfo("YCbCr Matrix","TV.601",sav);
+	//Kai->Toolbar->UpdateId(SaveSubs, false);
+	//Kai->Menubar->Enable(SaveSubs, false);
 	if(endload){file->EndLoad();}
 }
 
@@ -2628,12 +2645,12 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, wxArrayInt *select
 	int _time=pan->Video->Tell();
 	bool toEnd = pan->Video->GetState() == Playing;
 	wxString *txt=new wxString();
-
-	(*txt)<<"[Script Info]\r\n"<<GetSInfos(false);
-	(*txt)<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
-	(*txt)<<GetStyles(false);
-	(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
-
+	if(form== ASS){
+		(*txt)<<"[Script Info]\r\n"<<GetSInfos(false);
+		(*txt)<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
+		(*txt)<<GetStyles(false);
+		(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
+	}
 	Edit->Send(false,true);
 	if(_time >= Edit->line->Start.mstime && _time <= Edit->line->End.mstime)
 	{

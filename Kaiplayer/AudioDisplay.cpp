@@ -1634,6 +1634,17 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 					else if(leftDown && tmpsyl>=0){
 						whichsyl=tmpsyl;
 						updated=true;
+					}else if(abs64 (x - selEnd) < 6){
+						wxCursor cursor(wxCURSOR_SIZEWE);
+						SetCursor(cursor);
+						defCursor=false;
+						if(leftDown){
+							hold = 2;
+						}else if(rightDown){
+							Grabbed = whichsyl = karaoke->syltimes.size() - 1;
+							hold = 5;
+						}
+						return;
 					}
 					if(!defCursor){SetCursor(wxNullCursor);defCursor=true;}
 				}else{
@@ -1775,16 +1786,17 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 						}*/
 
 						if(hasKara && (event.RightIsDown()||rightDown)){
-							int sizes=karaoke->syls.size();
+							int sizes=karaoke->syls.size()-1;
 							int addtime = snapped - curStartMS;
 							for(int i= 0; i<sizes; i++)
 							{
-								int time=karaoke->syltimes[i];
-								time+=addtime;
-								time=ZEROIT(time);
-								karaoke->syltimes[i]=time;
+								int time=karaoke->syltimes[i] + addtime;
+								karaoke->syltimes[i] = ZEROIT(time);
+								if(karaoke->syltimes[i]>karaoke->syltimes[i+1]){
+									karaoke->syltimes[i]=karaoke->syltimes[i+1];
+								}
 							}
-							curEndMS=karaoke->syltimes[sizes-1];
+							//curEndMS=karaoke->syltimes[sizes-1];
 						}
 						curStartMS = snapped;
 						updated = true;
@@ -1798,15 +1810,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 					if (x != selEnd) {
 						int snapped = GetBoundarySnap(GetMSAtX(x),16,event.ShiftDown(),false);
 						selEnd = GetXAtMS(snapped);
-						//selEnd = GetBoundarySnap(x,event.ShiftDown()?0:10,false);
-						/*if (selStart > selEnd) {
-						int temp = selStart;
-						selStart = selEnd;
-						selEnd = temp;
-						hold = 1;
-						curStartMS = snapped;
-						snapped = GetMSAtX(selEnd);
-						}*/
+						
 						curEndMS = snapped;
 
 						updated = true;
@@ -1815,22 +1819,16 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 				}
 				//drag karaoke
 				if (hold==5 && Grabbed!=-1){
-					//if(){
 					int newpos=ZEROIT(GetMSAtX(x));
 					int sizes=karaoke->syls.size()-1;
 					int prev=(Grabbed==0)? curStartMS : karaoke->syltimes[Grabbed-1];
 					int next=(Grabbed==sizes)? 2147483646 : karaoke->syltimes[Grabbed+1];
 					int prevpos=karaoke->syltimes[Grabbed];
 					karaoke->syltimes[Grabbed]=MID(prev,newpos,next);
-					if(Grabbed==sizes){curEndMS=karaoke->syltimes[Grabbed];}
+					if(Grabbed==sizes && (leftDown || event.LeftIsDown())){curEndMS=karaoke->syltimes[Grabbed];}
 					//prawy przycisk myszy
-					if(rightDown||event.RightIsDown()){
+					else if((rightDown || event.RightIsDown()) && Grabbed != sizes){
 						int addtime=karaoke->syltimes[Grabbed]-prevpos;
-						//int lines=sizes-(Grabbed+1);
-						//wxLogMessage("lines %i, addtimes %i", lines, addtime);
-						//lines+=10;
-						//if(addtime>0){addtime=lines;}else if(addtime<0){addtime= (-lines);}
-
 
 						for(int i= Grabbed+1;i<(int)karaoke->syls.size()-1;i++)
 						{
@@ -1839,15 +1837,14 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 							time=ZEROIT(time);
 							karaoke->syltimes[i]=time;
 							if(karaoke->syltimes[i]>karaoke->syltimes[i+1]){
-								karaoke->syltimes[i]=karaoke->syltimes[i+1];}
-							//if(addtime==0){break;}
-							//if(addtime>0){addtime--;}else{addtime++;}
+								karaoke->syltimes[i]=karaoke->syltimes[i+1];
+							}
 						}
 
 						curEndMS=karaoke->syltimes[sizes];
 					}
 					updated=true;
-					//}
+					
 				}
 
 
@@ -2010,7 +2007,7 @@ int AudioDisplay::GetBoundarySnap(int ms,int rangeX,bool shiftHeld,bool start, b
 	}
 
 	// Return best match
-	return bestMS;
+	return ZEROIT(bestMS);
 }
 
 

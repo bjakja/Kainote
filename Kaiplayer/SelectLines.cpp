@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+ï»¿//  Copyright (c) 2016, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ SelectLines::SelectLines(kainoteFrame* kfparent)
 	slrbsizer->Add(Contains,1,wxALL|wxEXPAND,3);
 	slrbsizer->Add(NotContains,1,wxALL|wxEXPAND,3);
 
-	KaiStaticBoxSizer* slsbsizer=new KaiStaticBoxSizer(wxVERTICAL,this,_("ZnajdŸ"));
+	KaiStaticBoxSizer* slsbsizer=new KaiStaticBoxSizer(wxVERTICAL,this,_("ZnajdÅº"));
 	wxBoxSizer *sltpsizer= new wxBoxSizer(wxHORIZONTAL);
 	FindText = new KaiChoice(this, -1, "", wxDefaultPosition, wxSize(-1,24),selsRecent);
 	FindText->SetToolTip(_("Szukany tekst:"));
@@ -47,8 +47,8 @@ SelectLines::SelectLines(kainoteFrame* kfparent)
 	sltpsizer->Add(FindText,1,wxALL|wxEXPAND,3);
 	sltpsizer->Add(ChooseStyles,0,wxALL,3);
 
-	MatchCase = new KaiCheckBox(this, -1, _("Uwzglêdniaj wielkoœæ liter"));
-	RegEx = new KaiCheckBox(this, -1, _("Wyra¿enia regularne"));
+	MatchCase = new KaiCheckBox(this, -1, _("UwzglÄ™dniaj wielkoÅ›Ä‡ liter"));
+	RegEx = new KaiCheckBox(this, -1, _("WyraÅ¼enia regularne"));
 
 	slsbsizer->Add(slrbsizer,0,wxEXPAND,0);
 	slsbsizer->Add(sltpsizer,0,wxEXPAND,0);
@@ -62,8 +62,8 @@ SelectLines::SelectLines(kainoteFrame* kfparent)
 	CollumnStyle = new KaiRadioButton(this, -1, _("Styl"));
 	CollumnActor = new KaiRadioButton(this, -1, _("Aktor"));
 	CollumnEffect = new KaiRadioButton(this, -1, _("Efekt"));
-	CollumnStartTime = new KaiRadioButton(this, -1, _("Czas Pocz¹tkowy"));
-	CollumnEndTime = new KaiRadioButton(this, -1, _("Czas Koñcowy"));
+	CollumnStartTime = new KaiRadioButton(this, -1, _("Czas PoczÄ…tkowy"));
+	CollumnEndTime = new KaiRadioButton(this, -1, _("Czas KoÅ„cowy"));
 		
 	sizer->Add(CollumnText,1,wxALL,3);
 	sizer->Add(CollumnStyle,1,wxALL,3);
@@ -89,13 +89,13 @@ SelectLines::SelectLines(kainoteFrame* kfparent)
 	Selections = new KaiRadioBox(this,-1,_("Zaznaczenie"),wxDefaultPosition,wxDefaultSize,sels,2);
 
 	wxArrayString action;
-	action.Add(_("Nie rób nic"));
+	action.Add(_("Nie rÃ³b nic"));
 	action.Add(_("Kopiuj"));
 	action.Add(_("Wytnij"));
-	action.Add(_("Przenieœ na pocz¹tek"));
-	action.Add(_("Przenieœ na koniec"));
+	action.Add(_("PrzenieÅ› na poczÄ…tek"));
+	action.Add(_("PrzenieÅ› na koniec"));
 	action.Add(_("Ustaw jako komentarz"));
-	action.Add(_("Usuñ"));
+	action.Add(_("UsuÅ„"));
 
 	Actions = new KaiRadioBox(this,-1,_("Akcja"),wxDefaultPosition,wxDefaultSize,action,2);
 
@@ -225,7 +225,7 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 			wxTheClipboard->SetData( new wxTextDataObject(whatcopy) );
 			wxTheClipboard->Close();
 		}
-	}//przenoszenie na pocz¹tek / koniec
+	}//przenoszenie na poczÄ…tek / koniec
 	if(act==2||act==6||act==3||act==4){
 		tab->Grid1->DeleteRows();
 		if(act==3||act==4)

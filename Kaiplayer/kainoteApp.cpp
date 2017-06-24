@@ -170,8 +170,8 @@ bool kainoteApp::OnInit()
 			}
 #if _DEBUG
 			else if(paths.GetCount()<1){
-				paths.Add(Frame->subsrec[Frame->subsrec.size()-1]);
-				paths.Add(Frame->videorec[Frame->videorec.size()-1]);
+				if(Frame->subsrec.size()>0){paths.Add(Frame->subsrec[0]);}
+				if(Frame->videorec.size()>0){paths.Add(Frame->videorec[0]);}
 				timer.Start(50,true);
 			}
 #endif

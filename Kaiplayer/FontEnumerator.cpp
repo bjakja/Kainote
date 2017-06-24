@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+ï»¿//  Copyright (c) 2016, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -112,8 +112,8 @@ void FontEnumerator::RemoveClient(const wxWindow *client)
 		observers.erase(it);
 	}
 }
-//uwaga jeœli usuwamy filtry to bezwzglêdnie
-//trzeba zmieniæ wskaŸnik tablicy na niefiltrowane
+//uwaga jeÅ›li usuwamy filtry to bezwzglÄ™dnie
+//trzeba zmieniÄ‡ wskaÅºnik tablicy na niefiltrowane
 void FontEnumerator::RemoveFilteredClient(const wxWindow *client, bool clearFiltered)
 {
 	auto it = observers.find(client);
@@ -158,9 +158,9 @@ int CALLBACK FontEnumerator::FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lpt
 
 void FontEnumerator::RefreshVideo()
 {
-	//na razie tak, ale trzeba zrobiæ to tak by ¿aden idiota przy odœwie¿aniu nie zmieni³ zak³adki.
-	//TODO: Mo¿liwy b³¹d Devilkana, czyli mix napisów w zak³adkach, pamiêtaj o tym.
-	// nigdy nie pozwól by zmieni³a siê zak³adka gdy odœwie¿amy albo odœwie¿amy napisy na innej zak³adce ni¿ widoczna.
+	//na razie tak, ale trzeba zrobiÄ‡ to tak by Å¼aden idiota przy odÅ›wieÅ¼aniu nie zmieniÅ‚ zakÅ‚adki.
+	//TODO: MoÅ¼liwy bÅ‚Ä…d Devilkana, czyli mix napisÃ³w w zakÅ‚adkach, pamiÄ™taj o tym.
+	// nigdy nie pozwÃ³l by zmieniÅ‚a siÄ™ zakÅ‚adka gdy odÅ›wieÅ¼amy albo odÅ›wieÅ¼amy napisy na innej zakÅ‚adce niÅ¼ widoczna.
 	TabPanel *tab = parent->GetTab();
 	if(tab->Video->GetState()!=None){
 		tab->Video->OpenSubs(tab->Grid1->SaveText(),true,true);
@@ -171,7 +171,7 @@ void FontEnumerator::RefreshVideo()
 DWORD FontEnumerator::CheckFontsProc(void* fontEnum)
 {
 	FontEnumerator *fe=(FontEnumerator*)fontEnum;
-	if(!fontEnum){wxLogMessage(_("Brak wskaŸnika klasy magazynu stylów.")); return 0;}
+	if(!fontEnum){wxLogMessage(_("Brak wskaÅºnika klasy magazynu stylÃ³w.")); return 0;}
 
 	HANDLE hDir  = NULL; 
 	fe->eventKillSelf = CreateEvent(0, FALSE, FALSE, 0);
@@ -179,7 +179,7 @@ DWORD FontEnumerator::CheckFontsProc(void* fontEnum)
 
 	hDir = FindFirstChangeNotification( fontrealpath.wc_str(), TRUE, FILE_NOTIFY_CHANGE_FILE_NAME);// | FILE_NOTIFY_CHANGE_LAST_WRITE
 
-	if(hDir == INVALID_HANDLE_VALUE ){wxLogMessage(_("Nie mo¿na stworzyæ uchwytu notyfikacji zmian folderu czcionek.")); return 0;}
+	if(hDir == INVALID_HANDLE_VALUE ){wxLogMessage(_("Nie moÅ¼na stworzyÄ‡ uchwytu notyfikacji zmian folderu czcionek.")); return 0;}
 	HANDLE events_to_wait[] = {
 		hDir,
 		fe->eventKillSelf
@@ -191,7 +191,7 @@ DWORD FontEnumerator::CheckFontsProc(void* fontEnum)
 			fe->RefreshClientsFonts();
 			fe->RefreshVideo();
 			if( FindNextChangeNotification( hDir ) == 0 ){
-				wxLogStatus(_("Nie mo¿na stworzyæ nastêpnego uchwytu notyfikacji zmian folderu czcionek."));
+				wxLogStatus(_("Nie moÅ¼na stworzyÄ‡ nastÄ™pnego uchwytu notyfikacji zmian folderu czcionek."));
 				return 0;
 			}
 		}else {
@@ -202,7 +202,7 @@ DWORD FontEnumerator::CheckFontsProc(void* fontEnum)
 	return FindCloseChangeNotification( hDir );
 }
 
-//w Dc ma byæ ustawiona czcionka
+//w Dc ma byÄ‡ ustawiona czcionka
 bool FontEnumerator::CheckGlyphsExists(HDC dc, const wxString &textForCheck, wxString &missing)
 {
 	std::wstring utf16characters = textForCheck.wc_str();

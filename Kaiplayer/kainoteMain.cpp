@@ -75,8 +75,9 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	//FrameSizer *mains1= new FrameSizer(wxVERTICAL);
 	//wxBoxSizer *mains1= new wxBoxSizer(wxVERTICAL);
 	//mains=new wxBoxSizer(wxHORIZONTAL);
+
 	Tabs=new Notebook (this,ID_TABS);
-	SetMinSize(wxSize(500,300));
+	//SetMinSize(wxSize(500,300));
 	Toolbar=new KaiToolbar(this,Menubar,-1,true);
 
 	//height 26 zmieniając jedną z tych wartości popraw je też dropfiles
@@ -97,7 +98,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	FileMenu = new Menu();
 	FileMenu->AppendTool(Toolbar,OpenSubs, _("&Otwórz napisy"), _("Otwórz plik napisów"),PTR_BITMAP_PNG("opensubs"));
-	FileMenu->AppendTool(Toolbar,SaveSubs, _("&Zapisz"), _("Zapisz aktualny plik"),PTR_BITMAP_PNG("save"));
+	FileMenu->AppendTool(Toolbar,SaveSubs, _("&Zapisz"), _("Zapisz aktualny plik"),PTR_BITMAP_PNG("save"), false);
 	FileMenu->AppendTool(Toolbar,SaveAllSubs, _("Zapisz &wszystko"), _("Zapisz wszystkie napisy"),PTR_BITMAP_PNG("saveall"));
 	FileMenu->AppendTool(Toolbar,SaveSubsAs, _("Zapisz &jako..."), _("Zapisz jako"),PTR_BITMAP_PNG("saveas"));
 	FileMenu->AppendTool(Toolbar,SaveTranslation, _("Zapisz &tłumaczenie"), _("Zapisz tłumaczenie"),PTR_BITMAP_PNG("savetl"),false);
@@ -367,7 +368,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		Options.SetBool(VideoIndex,Item->IsChecked());
 	}else if(id==VideoZoom){
 		tab->Video->SetZoom();
-	}else if(id>=OpenAudio&&id<=CloseAudio){
+	}else if(id>=OpenAudio && id<=CloseAudio){
 		OnOpenAudio(event);
 	}else if(id==ASSProperties){
 		OnAssProps();
@@ -696,7 +697,11 @@ void kainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 	atab->Grid1->SaveFile(atab->SubsPath);
 	atab->Grid1->Modified=false;
 	atab->Grid1->origform=atab->Grid1->form;
-	if(changeLabel){Label(0,false,wtab);}
+	if(changeLabel){
+		Toolbar->UpdateId(SaveSubs, false);
+		Menubar->Enable(SaveSubs, false);
+		Label(0,false,wtab);
+	}
 #if _DEBUG
 	wxBell();
 #endif
@@ -875,7 +880,7 @@ void kainoteFrame::SetRecent(short what)
 	int idd=30000+(20*what);
 	Menu *wmenu=(what==0)?SubsRecMenu : (what==1)? VidsRecMenu : AudsRecMenu;
 	int size= (what==0)?subsrec.size() : (what==1)? videorec.size() : audsrec.size();
-	wxArrayString recs=(what==0)?subsrec : (what==1)? videorec : audsrec;
+	wxArrayString &recs=(what==0)?subsrec : (what==1)? videorec : audsrec;
 	wxString path=(what==0)?GetTab()->SubsPath : (what==1)? GetTab()->VideoPath : GetTab()->Edit->ABox->audioName;
 
 	for(int i=0;i<size;i++){
@@ -884,11 +889,11 @@ void kainoteFrame::SetRecent(short what)
 			break;
 		}
 	}
-	recs.Add(path);
-	if(recs.size()>20){recs.erase(recs.begin());}
-	if(what==0){subsrec=recs; Options.SetTable(SubsRecent,recs);}
-	else if(what==1){videorec=recs; Options.SetTable(VideoRecent,recs);}
-	else{audsrec=recs; Options.SetTable(AudioRecent,recs);}
+	recs.Insert(path, 0);
+	if(recs.size()>20){recs.pop_back();}
+	if(what==0){Options.SetTable(SubsRecent,recs);}
+	else if(what==1){Options.SetTable(VideoRecent,recs);}
+	else{Options.SetTable(AudioRecent,recs);}
 }
 
 //0 - subs, 1 - vids, 2 - auds
@@ -913,7 +918,7 @@ void kainoteFrame::AppendRecent(short what,Menu *_Menu)
 	for(int i=0;i<size;i++)
 	{
 		if(!wxFileExists(recs[i])){continue;}
-		MenuItem* MI= new MenuItem(idd+i, recs[i].AfterLast('\\'), _("Otwórz ")+recs[i]);
+		MenuItem* MI= new MenuItem(idd+i, std::to_string(i+1) + " " + recs[i].AfterLast('\\'), _("Otwórz ")+recs[i]);
 		wmenu->Append(MI);
 	}
 
@@ -927,29 +932,29 @@ void kainoteFrame::AppendRecent(short what,Menu *_Menu)
 void kainoteFrame::OnRecent(wxCommandEvent& event)
 {
 	int id=event.GetId();
+	int numItem = 0;
 	int Modif=event.GetInt();
-	MenuItem* MI=0;
+	//MenuItem* MI=0;
+	wxString filename;
 	if(id<30020){
-		MI=SubsRecMenu->FindItem(id);
+		numItem = id - 30000;
+		if(numItem<0){return;}
+		filename = subsrec[numItem];
+		//MI=SubsRecMenu->FindItem(id);
 	}else if(id<30040){
-		MI=VidsRecMenu->FindItem(id);
+		numItem = id - 30020;
+		filename = videorec[numItem];
+		//MI=VidsRecMenu->FindItem(id);
 	}else{
-		MI=AudsRecMenu->FindItem(id);
+		numItem = id - 30040;
+		if(numItem > 20){return;}
+		filename = audsrec[numItem]; 
+		//MI=AudsRecMenu->FindItem(id);
 	}
-	if(!MI){wxLogStatus("Item Menu Przepadł");return;}
-	wxString filename=MI->GetHelp().AfterFirst(' ');
-	//wxLogStatus("onrecent %i %i" + MI->GetHelp() + MI->GetLabel(), MI->GetId(), Modif);
-	//return;
-	//byte state[256];
-	//if(GetKeyboardState(state)==FALSE){wxLogStatus(_("Nie można pobrać stanu klawiszy"));}
+	//if(!MI){wxLogStatus("Item Menu Przepadł");return;}
+	//wxString filename=MI->GetHelp().AfterFirst(' ');
 	if(Modif==wxMOD_CONTROL){
 		wxWCharBuffer buf=filename.BeforeLast('\\').c_str();
-		/*wchar_t **cmdline = new wchar_t*[3];
-		cmdline[0] = L"explorer";
-		cmdline[1] = buf.data();
-		cmdline[2] = 0;
-		long res = wxExecute(cmdline);
-		delete cmdline;*/
 		WinStruct<SHELLEXECUTEINFO> sei;
 		sei.lpFile = buf;
 		sei.lpVerb = wxT("explore");
@@ -1204,7 +1209,9 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 	wxString whiter;
 	TabPanel *cur=Tabs->GetPage();
 	int iter=cur->Grid1->file->Iter();
-	if(iter>0 && cur->Grid1->Modified){whiter<<iter<<"*";}
+	if(iter>0 && cur->Grid1->Modified){
+		whiter<<iter<<"*";
+	}
 	wxString name=(!cur->edytor)? cur->VideoName : cur->SubsName;
 	SetLabel(whiter+name+" - "+Options.progname);
 	if(cur->Video->GetState()!=None){
@@ -1495,13 +1502,17 @@ void kainoteFrame::OnMenuOpened(MenuEvent& event)
 		else if(i==ConvertToMDVD){enable=form!=MDVD;}//konwersja na mdvd
 		else if(i==ConvertToMPL2){enable=form!=MPL2;}//konwersja na mpl2
 		else if(i==ConvertToTMP){enable=form!=TMP;}//konwersja na tmp
-		if((i>=ConvertToASS && i<=ConvertToTMP) && tlmode){enable=false;}
-		if(i==ViewAudio || i==CloseAudio){enable= tab->Edit->ABox!=0;}
-		if((i==ViewVideo || i==ViewAll )||i==AudioFromVideo){
+		if((i>=ConvertToASS && i<=ConvertToMPL2) && tlmode){enable=false;}
+		else if(i==ViewAudio || i==CloseAudio){enable= tab->Edit->ABox!=0;}
+		else if((i==ViewVideo || i==ViewAll )||i==AudioFromVideo){
 			enable= tab->Video->GetState()!=None;
 			if(i!=AudioFromVideo){enable = (enable && !tab->Video->isOnAnotherMonitor);}
 		}
-		if(i==SaveTranslation){enable=tlmode;}
+		else if(i==SaveTranslation){enable=tlmode;}
+		else if(i==SaveSubs){if(!tab->Grid1->Modified){enable = false;}}
+		//else if(i==SaveAllSubs){
+			//for(size_t k = 0; k < Tabs->Size(); k){}
+		//}
 		Menubar->Enable(i, editor && enable);
 	}
 	//specjalna poprawka do zapisywania w trybie tłumaczenia, jeśli jest tlmode, to zawsze ma działać.

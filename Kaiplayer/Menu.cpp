@@ -494,7 +494,6 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 	}
 	if(elem!=sel){
 		sel=elem;
-		
 		if(item->submenu && item->submenu->dialog==NULL){// 
 			submenuShown=elem;
 			if(submenuToHide == -1){showSubmenuTimer.Start((leftdown)? 1 : 200,true);}// : (submenuToHide != -1)? 500

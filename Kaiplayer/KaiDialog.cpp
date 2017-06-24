@@ -320,11 +320,11 @@ void KaiDialog::SetEscapeId(int _escapeId)
 
 void KaiDialog::OnEnter(wxCommandEvent &evt)
 {
-	EndModal(enterId);evt.Skip();
+	EndModal(enterId); evt.Skip();
 }
 void KaiDialog::OnEscape(wxCommandEvent &evt)
 {
-	EndModal(escapeId);evt.Skip();
+	EndModal(escapeId); evt.Skip();
 }
 
 void KaiDialog::SetLabel(const wxString &text)

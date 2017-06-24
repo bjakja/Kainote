@@ -31,7 +31,7 @@
 #include "KaiMessageBox.h"
 
 Grid::Grid(wxWindow* parent, kainoteFrame* kfparent,wxWindowID id,const wxPoint& pos,const wxSize& size, long style, const wxString& name)
-	: SubsGrid(parent, id, pos, size, style, name)
+	:SubsGrid(parent, id, pos, size, style, name)
 {
 	Kai=kfparent;
 	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
@@ -1061,7 +1061,24 @@ private:
 
 bool Grid::SwapAssProperties()
 {
+	const int numFields = 6;
+	CONFIG fieldOnValues[numFields] = {ASSPropertiesTitleOn, ASSPropertiesScriptOn, ASSPropertiesTranslationOn, 
+		ASSPropertiesEditingOn, ASSPropertiesTimingOn, ASSPropertiesUpdateOn};
+	CONFIG fieldValues[numFields] = {ASSPropertiesTitle, ASSPropertiesScript, ASSPropertiesTranslation, 
+		ASSPropertiesEditing, ASSPropertiesTiming, ASSPropertiesUpdate};
+	wxString fieldNames[numFields] = {"Title", "Original Script", "Original Translation", 
+		"Original Editing", "Original Timing", "Script Updated By"};
 	if(Options.GetBool(ASSPropertiesAskForChange)){
+		bool hasSomethingToChange = false;
+		for(int i = 0; i < numFields; i++){
+			if(Options.GetBool(fieldOnValues[i])){
+				if(GetSInfo(fieldNames[i]) != Options.GetString(fieldValues[i])){
+					hasSomethingToChange = true;
+					break;
+				}
+			}
+		}
+		if(!hasSomethingToChange){return false;}
 		SwapPropertiesDialog SPD(Kai);
 		int id = SPD.ShowModal();
 		if(id == wxID_OK){
@@ -1072,13 +1089,7 @@ bool Grid::SwapAssProperties()
 			return true;
 		}
 	}
-	const int numFields = 6;
-	CONFIG fieldOnValues[numFields] = {ASSPropertiesTitleOn, ASSPropertiesScriptOn, ASSPropertiesTranslationOn, 
-		ASSPropertiesEditingOn, ASSPropertiesTimingOn, ASSPropertiesUpdateOn};
-	CONFIG fieldValues[numFields] = {ASSPropertiesTitle, ASSPropertiesScript, ASSPropertiesTranslation, 
-		ASSPropertiesEditing, ASSPropertiesTiming, ASSPropertiesUpdate};
-	wxString fieldNames[numFields] = {"Title", "Original Script", "Original Translation", 
-		"Original Editing", "Original Timing", "Script Updated By"};
+	
 	for(int i = 0; i < numFields; i++){
 		if(Options.GetBool(fieldOnValues[i])){
 			AddSInfo(fieldNames[i],Options.GetString(fieldValues[i]));

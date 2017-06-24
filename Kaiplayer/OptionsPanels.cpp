@@ -1,4 +1,4 @@
-//  Copyright (c) 2017, Marcin Drob
+ï»¿//  Copyright (c) 2017, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ SubtitlesProperties::SubtitlesProperties(wxWindow *parent, OptionsDialog *option
 	KaiStaticBoxSizer *StaticBox1 = new KaiStaticBoxSizer(wxVERTICAL,this, _("Informacje o napisach"));
 	//wxFlexGridSizer *GridSizer=new wxFlexGridSizer(3,5,5);
 	const int numFields = 6;
-	wxString fieldNames[numFields] = {_("Tytu³"), _("Autor"), _("T³umaczenie"), _("Korekta"), _("Timing"), _("Edycja")};
+	wxString fieldNames[numFields] = {_("TytuÅ‚"), _("Autor"), _("TÅ‚umaczenie"), _("Korekta"), _("Timing"), _("Edycja")};
 	CONFIG fieldValues[numFields] = {ASSPropertiesTitle, ASSPropertiesScript, ASSPropertiesTranslation, 
 		ASSPropertiesEditing, ASSPropertiesTiming, ASSPropertiesUpdate};
 	CONFIG fieldOnValues[numFields] = {ASSPropertiesTitleOn, ASSPropertiesScriptOn, ASSPropertiesTranslationOn, 
@@ -51,7 +51,7 @@ SubtitlesProperties::SubtitlesProperties(wxWindow *parent, OptionsDialog *option
 	main->Add(StaticBox1,0,wxEXPAND,0);
 	const int numCheckbox = 3;
 
-	KaiCheckBox *option = new KaiCheckBox(this, -1, _("Zawsze pytaj o zmianê informacji w napisach"), wxDefaultPosition, wxSize(18,-1));
+	KaiCheckBox *option = new KaiCheckBox(this, -1, _("Zawsze pytaj o zmianÄ™ informacji o napisach"), wxDefaultPosition, wxSize(18,-1));
 	option->SetValue(Options.GetBool(ASSPropertiesAskForChange));
 	main->Add(option,0,wxEXPAND|wxALL,5);
 	optionsDialog->ConOpt(option, ASSPropertiesAskForChange);

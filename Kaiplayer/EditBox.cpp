@@ -1183,6 +1183,7 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 		cursorpos=klamrae;}
 	bool isT=false;
 	bool firstT=false;
+	bool hasR = false;
 	int endT;
 	int lslash=endT=klamrae+1;
 	int lastTag = -1;
@@ -1195,6 +1196,9 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 		if(ch=='\\' && brkt){
 			if(lastTag<0){lastTag=lslash;}
 			wxString ftag=txt.SubString(i+1,lslash-1);
+			if(ftag == "r"){
+				hasR = true;
+			}
 			if(ftag.EndsWith(")")){
 				if(ftag.Find('(')==-1 || ftag.Freq(')') >= 2 || ftag.StartsWith("t(")){
 					isT=true;
@@ -1234,7 +1238,7 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 			lslash=i;
 		}else if(ch=='{'){
 			brkt=false;
-			if(txt[MAX(0,i-1)]!='}'){inbrkt=false;}
+			if(txt[MAX(0,i-1)]!='}'){inbrkt=false; if(hasR){break;} }
 		}else if(ch=='}'){
 			lslash=i;
 			brkt=true;
@@ -1244,7 +1248,7 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 
 	if(!isT && found[0]!=""){
 		if(inbrkt){Placed=fpoints[0];} *Found=found[0]; return true;
-	}else if(lastTag >= 0){
+	}else if(lastTag >= 0 && InBracket){
 		Placed.x=lastTag;
 		Placed.y=lastTag;
 	}
@@ -1688,7 +1692,7 @@ void EditBox::SetTagButtons()
 			}
 			if (i >= numofButtons){
 				if(!TagButtonManager){
-					BoxSizer4->Add(new TagButton(this, 15000+i, name, tag, type, wxSize((name.Len())>3? -1 : 24, 24)),0,wxALL,2);
+					BoxSizer4->Add(new TagButton(this, 15000+i, name, tag, type, wxSize((name.Len())>2? -1 : 24, 24)),0,wxALL,2);
 				}else if (i >= numofButtons){
 					BoxSizer4->Insert(10+i,new TagButton(this, 15000+i, name, tag, type, wxSize((name.Len())>3? -1 : 24, 24)),0,wxALL,2);
 				}

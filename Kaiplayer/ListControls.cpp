@@ -528,6 +528,8 @@ void KaiChoice::SelectChoice(int _choice, bool select, bool sendEvent){
 		wxCommandEvent evt((HasFlag(KAI_COMBO_BOX))? wxEVT_COMMAND_COMBOBOX_SELECTED : wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 		this->ProcessEvent(evt);
 	}
+	if(choice >=0 ){SetToolTip();}
+	else{SetToolTip(toolTip);}
 }
 
 void KaiChoice::Insert(const wxString &what, int position){

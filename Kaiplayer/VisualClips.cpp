@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+ï»¿//  Copyright (c) 2016, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ void DrawingAndClip::DrawVisual(int time)
 		}
 	}
 	if(Visual==VECTORDRAW && tbl[6]>2){D3DXVECTOR2 movePos = CalcMovePos(); _x = movePos.x; _y = movePos.y;}
-	//nie nale¿y dopuœciæ przypadków typu brak "m" na pocz¹tku by wesz³o zamiast tego l b¹dŸ b
+	//nie naleÅ¼y dopuÅ›ciÄ‡ przypadkÃ³w typu brak "m" na poczÄ…tku by weszÅ‚o zamiast tego l bÄ…dÅº b
 	if(Points[0].type!="m"){Points[0].type="m";}
 	size_t g= (size<2)? 0 : 1;
 	size_t lastM=0;
@@ -311,8 +311,8 @@ void DrawingAndClip::AddCurve(D3DXVECTOR2 pos, int whereis, wxString type)
 {
 	pos.x =(pos.x*wspw)-_x; pos.y =(pos.y*wsph)-_y;
 	wxPoint oldpos;
-	if(whereis!=Points.size()){whereis++;}//gdy wstawiamy beziera w œrodku to trzeba mu przesun¹æ punkt o 1,
-	//bo stworzy nam krzyw¹ zamiast poprzedniej linii
+	if(whereis!=Points.size()){whereis++;}//gdy wstawiamy beziera w Å›rodku to trzeba mu przesunÄ…Ä‡ punkt o 1,
+	//bo stworzy nam krzywÄ… zamiast poprzedniej linii
 	oldpos.x=Points[whereis-1].x;
 	oldpos.y=Points[whereis-1].y;
 	int diffx=(pos.x-oldpos.x)/3.0f;
@@ -537,7 +537,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 				//acpoint=Points[lastpos];
 				//Points[lastpos].isSelected=false;
 				lastpos = -1;
-				//wxLogStatus("znikanie podœwietlenia");
+				//wxLogStatus("znikanie podÅ›wietlenia");
 				tab->Video->Render(false);
 				//Points[lastpos]=acpoint;
 			}
@@ -690,7 +690,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		{
 			int pos = CheckPos(xy, true);
 			if(psize > 0 && Points[(pos == (int)psize )? psize - 1 : pos].type=="m"){
-				KaiMessageBox(_("Ze wzglêdu na b³êdy Vsfiltra zablokowa³em mo¿liwoœæ wstawiania dwóch \"m\" po sobie"), _("Uwaga"));
+				KaiMessageBox(_("Ze wzglÄ™du na bÅ‚Ä™dy Vsfiltra moÅ¼liwoÅ›Ä‡ wstawiania dwÃ³ch \"m\" po sobie zostaÅ‚a zablokowana."), _("Uwaga"));
 				return;
 			}
 			AddMove(xy,pos);
@@ -780,7 +780,7 @@ D3DXVECTOR2 DrawingAndClip::CalcWH()
 		offy = eb / wsph;
 		//wxLogStatus("textextent %i %i %i %i", ex, ey, eb, et);
 	}
-	//no i tutaj jeszcze zosta³o dopisaæ obliczanie rozmiaru
+	//no i tutaj jeszcze zostaÅ‚o dopisaÄ‡ obliczanie rozmiaru
 	float minx = FLT_MAX;
 	float miny = FLT_MAX;
 	float maxx = -FLT_MAX;
