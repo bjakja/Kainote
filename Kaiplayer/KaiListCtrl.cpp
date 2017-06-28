@@ -251,6 +251,16 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, co
 	}
 }
 
+void KaiListCtrl::SetTextArray(const wxArrayString &Array)
+{
+	delete itemList;
+	itemList = new List();
+	for(size_t i = 0; i < Array.size(); i++){
+		AppendItem(new ItemText(Array[i]));
+	}
+	Refresh(false);
+}
+
 int KaiListCtrl::InsertColumn(size_t col, const wxString &name, byte type, int width)
 {
 	if(col>= widths.size()){

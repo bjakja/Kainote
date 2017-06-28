@@ -43,14 +43,14 @@ void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, Ka
 	if(modified){dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled()? WindowText : WindowTextInactive));}
 }
 
-void ItemHotkey::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed)
-{
-	if(event.LeftDClick()){
-		int inum=theList->GetSelection();
-		if(inum<0){return;}
-		OnMapHotkey(theList, inum);
-	}
-}
+//void ItemHotkey::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed)
+//{
+//	if(event.LeftDClick()){
+//		int inum=theList->GetSelection();
+//		if(inum<0){return;}
+//		OnMapHotkey(theList, inum);
+//	}
+//}
 
 void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 {
@@ -409,7 +409,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		Shortcuts = new KaiListCtrl(Hotkeyss,26667, wxDefaultPosition);
 		Shortcuts->InsertColumn(0,_("Funkcja"),TYPE_TEXT,260);
 		Shortcuts->InsertColumn(1,_("Skrót"),TYPE_TEXT,80);
-		//Connect(26667,LIST_ITEM_DOUBLECLICKED,(wxObjectEventFunction)&OptionsDialog::OnMapHkey);
+		Connect(26667,LIST_ITEM_DOUBLECLICKED,(wxObjectEventFunction)&OptionsDialog::OnMapHkey);
 		//Connect(26667,LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);
 
 		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){KaiMessageBox(_("Nie można wczytać skrótów klawiszowych audio"), _("Błąd"));}

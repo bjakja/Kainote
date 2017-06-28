@@ -114,6 +114,7 @@ public:
 	void SetVideoLineTime(wxMouseEvent &evt);
 	void ChangeTimeDisplay(bool frame);
 	void DummyUndo(int newIter);
+	void CheckText(wxString text, wxArrayInt &errs);
 
 	bool makebkp;
 	bool showFrames;
@@ -132,7 +133,7 @@ private:
 	virtual void ContextMenu(const wxPoint &pos, bool dummy=false){};
 	
 
-	void CheckText(wxString text, wxArrayInt &errs);
+	
 protected:
 	std::vector<bool> visibleLines;
 	wxBitmap* bmp;

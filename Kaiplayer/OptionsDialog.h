@@ -31,7 +31,7 @@ public:
 	ItemHotkey(const wxString &txt, const wxString &_accel, const idAndType &Id) : Item(){name = txt; accel = _accel; hotkeyId = Id;}
 	virtual ~ItemHotkey(){		
 	}
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL){};
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	wxString GetName(){return name;}
 	void OnMapHotkey(KaiListCtrl *theList, int y);

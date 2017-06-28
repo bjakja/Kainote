@@ -166,6 +166,7 @@ public:
 	void Redo(wxCommandEvent &evt);
 	void StartEdition();
 	Item *CopyRow(int y, int x, bool pushBack = false);
+	void SetTextArray(const wxArrayString &Array);
 private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);

@@ -16,11 +16,9 @@
 #ifndef NEWCATALOG_H
 #define NEWCATALOG_H
 
-//(*Headers(NewCatalog)
 #include "KaiTextCtrl.h"
 #include "MappedButton.h"
 #include "KaiDialog.h"
-//*)
 
 class NewCatalog: public KaiDialog
 {

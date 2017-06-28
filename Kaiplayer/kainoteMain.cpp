@@ -38,6 +38,7 @@
 #include "KaiMessageBox.h"
 #include "FontEnumerator.h"
 #include "SubsResampleDialog.h"
+#include "SpellCheckerDialog.h"
 
 #undef IsMaximized
 #if _DEBUG
@@ -181,6 +182,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	SubsMenu->AppendTool(Toolbar,ChangeTime, _("Okno zmiany &czasów\tCtrl-I"), _("Przesuwanie czasów napisów"),PTR_BITMAP_PNG("times"));
 	SubsMenu->AppendTool(Toolbar,FontCollectorID, _("Kolekcjoner czcionek"), _("Kolekcjoner czcionek"),PTR_BITMAP_PNG("fontcollector"));
 	SubsMenu->AppendTool(Toolbar,SubsResample, _("Zmień rozdzielczość napisów"), _("Zmień rozdzielczość napisów"),PTR_BITMAP_PNG("subsresample"));
+	SubsMenu->AppendTool(Toolbar,SpellCheckerDialog, _("Sprawdź poprawność pisowni"), _("Sprawdź poprawność pisowni"),PTR_BITMAP_PNG("subsresample"));
 	SubsMenu->AppendTool(Toolbar,HideTags, _("Ukryj tagi w nawiasach"), _("Ukrywa tagi w nawiasach ASS i MDVD"),PTR_BITMAP_PNG("hidetags"));
 	Menubar->Append(SubsMenu, _("&Napisy"));
 
@@ -387,6 +389,8 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if(tab->Grid1->GetSInfo("TLMode")!="Yes"){
 			OnConversion(( id - ConvertToASS ) + 1);
 		}
+	}else if(id==SpellcheckerDialog){
+		SpellCheckerDialog *SCD = new SpellCheckerDialog(this);
 	}else if(id==HideTags){
 		tab->Grid1->HideOver();
 	}else if(id==ChangeTime){

@@ -103,6 +103,7 @@
 	XX( Search,)\
 	XX( FindReplaceDialog,)\
 	XX( SelectLinesDialog,)\
+	XX( SpellcheckerDialog,)\
 	XX( VideoIndexing,)\
 	XX( OpenAudio,)\
 	XX( AudioFromVideo,)\

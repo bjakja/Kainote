@@ -387,6 +387,7 @@
     <ClCompile Include="MenuButton.cpp" />
     <ClCompile Include="OptionsPanels.cpp" />
     <ClCompile Include="SelectLines.cpp" />
+    <ClCompile Include="SpellCheckerDialog.cpp" />
     <ClCompile Include="Styles.cpp" />
     <ClCompile Include="StyleStore.cpp" />
     <ClCompile Include="SubsResampleDialog.cpp" />
@@ -482,6 +483,7 @@
     <ClInclude Include="MenuButton.h" />
     <ClInclude Include="OptionsPanels.h" />
     <ClInclude Include="SelectLines.h" />
+    <ClInclude Include="SpellCheckerDialog.h" />
     <ClInclude Include="StyleChange.h" />
     <ClInclude Include="ColorSpaceConverter.h" />
     <ClInclude Include="ColorPicker.h" />
