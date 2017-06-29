@@ -21,6 +21,7 @@
 #include "KaiScrollbar.h"
 #include "Styles.h"
 
+wxDECLARE_EVENT(LIST_ITEM_LEFT_CLICK, wxCommandEvent);
 wxDECLARE_EVENT(LIST_ITEM_DOUBLECLICKED, wxCommandEvent);
 wxDECLARE_EVENT(LIST_ITEM_RIGHT_CLICK, wxCommandEvent);
 

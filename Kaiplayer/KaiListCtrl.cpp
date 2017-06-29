@@ -20,6 +20,7 @@
 #include "Menu.h"
 #include "wx/clipbrd.h"
 
+wxDEFINE_EVENT(LIST_ITEM_LEFT_CLICK, wxCommandEvent);
 wxDEFINE_EVENT(LIST_ITEM_DOUBLECLICKED, wxCommandEvent);
 wxDEFINE_EVENT(LIST_ITEM_RIGHT_CLICK, wxCommandEvent);
 
@@ -258,6 +259,7 @@ void KaiListCtrl::SetTextArray(const wxArrayString &Array)
 	for(size_t i = 0; i < Array.size(); i++){
 		AppendItem(new ItemText(Array[i]));
 	}
+	sel = -1;
 	Refresh(false);
 }
 
@@ -457,7 +459,7 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 	Item *copy=NULL;
 	if((size_t)elemY>=itemList->size()){
 		//tu ju¿ nic nie zrobimy, jesteœmy poza elemetami na samym dole
-		if(lastSelX != -1 && lastSelY !=-1){
+		if(lastSelX != -1 && lastSelY !=-1 && lastSelY < itemList->size() && lastSelX < (*itemList)[lastSelY]->row.size()){
 			(*itemList)[lastSelY]->row[lastSelX]->OnMouseEvent(wxMouseEvent(), false, true, this, &copy);
 			lastSelX=-1;lastSelY=-1;
 		}
@@ -489,9 +491,11 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 		}
 		startX += widths[i];
 	}
-	if((elemX != lastSelX || elemY != lastSelY || evt.Leaving()) && lastSelX != -1 && lastSelY !=-1){
-		(*itemList)[lastSelY]->row[lastSelX]->OnMouseEvent(wxMouseEvent(), false, true, this, &copy);
-		if(copy){delete copy; copy = NULL;}
+	if((elemX != lastSelX || elemY != lastSelY || evt.Leaving()) 
+		&& lastSelX != -1 && lastSelY !=-1 && lastSelY < itemList->size()  
+		&& lastSelX < (*itemList)[lastSelY]->row.size()){
+			(*itemList)[lastSelY]->row[lastSelX]->OnMouseEvent(wxMouseEvent(), false, true, this, &copy);
+			if(copy){delete copy; copy = NULL;}
 	}
 	
 	if(evt.LeftDown()){
@@ -500,12 +504,15 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 
 		Refresh(false);
 	}
-	if(evt.LeftDClick()){
+	if(evt.LeftDown()){
+		wxCommandEvent evt2(LIST_ITEM_LEFT_CLICK, GetId()); 
+		evt2.SetInt(elemY);
+		AddPendingEvent(evt2);
+	}else if(evt.LeftDClick()){
 		wxCommandEvent evt2(LIST_ITEM_DOUBLECLICKED, GetId()); 
 		evt2.SetInt(elemY);
 		AddPendingEvent(evt2);
-	}
-	if(evt.RightDown()){
+	}else if(evt.RightDown()){
 		wxCommandEvent evt2(LIST_ITEM_RIGHT_CLICK, GetId()); 
 		evt2.SetInt(elemY);
 		AddPendingEvent(evt2);

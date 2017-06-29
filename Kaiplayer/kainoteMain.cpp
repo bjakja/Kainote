@@ -182,7 +182,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	SubsMenu->AppendTool(Toolbar,ChangeTime, _("Okno zmiany &czasów\tCtrl-I"), _("Przesuwanie czasów napisów"),PTR_BITMAP_PNG("times"));
 	SubsMenu->AppendTool(Toolbar,FontCollectorID, _("Kolekcjoner czcionek"), _("Kolekcjoner czcionek"),PTR_BITMAP_PNG("fontcollector"));
 	SubsMenu->AppendTool(Toolbar,SubsResample, _("Zmień rozdzielczość napisów"), _("Zmień rozdzielczość napisów"),PTR_BITMAP_PNG("subsresample"));
-	SubsMenu->AppendTool(Toolbar,SpellCheckerDialog, _("Sprawdź poprawność pisowni"), _("Sprawdź poprawność pisowni"),PTR_BITMAP_PNG("subsresample"));
+	SubsMenu->AppendTool(Toolbar,SpellcheckerDialog, _("Sprawdź poprawność pisowni"), _("Sprawdź poprawność pisowni"),PTR_BITMAP_PNG("subsresample"));
 	SubsMenu->AppendTool(Toolbar,HideTags, _("Ukryj tagi w nawiasach"), _("Ukrywa tagi w nawiasach ASS i MDVD"),PTR_BITMAP_PNG("hidetags"));
 	Menubar->Append(SubsMenu, _("&Napisy"));
 
@@ -497,7 +497,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 
 		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"), 
 			(GetTab()->VideoPath!="")? GetTab()->VideoPath.BeforeLast('\\') : 
-			(subsrec.size()>0)?subsrec[subsrec.size()-1].BeforeLast('\\') : "", 
+			(subsrec.size()>0)? subsrec[0].BeforeLast('\\') : "", 
 			"", _("Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv)|*.mkv"), wxFD_OPEN);
 		if (FileDialog1->ShowModal() == wxID_OK){
 			wxString file=FileDialog1->GetPath();
@@ -512,7 +512,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		FileDialog1->Destroy();
 	}else if(id==OpenVideo){
 		wxFileDialog* FileDialog2 = new wxFileDialog(this, _("Wybierz plik wideo"), 
-			(videorec.size()>0)? videorec[videorec.size()-1].BeforeLast('\\') : "", 
+			(videorec.size()>0)? videorec[0].BeforeLast('\\') : "", 
 			"", _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"), wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, "wxFileDialog");
 		if (FileDialog2->ShowModal() == wxID_OK){
 			OpenFile(FileDialog2->GetPath());
@@ -1415,7 +1415,7 @@ void kainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 		if(id==OpenAudio){
 			wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik audio"), 
 				(tab->VideoPath!="")? tab->VideoPath.BeforeLast('\\') : 
-				(videorec.size()>0)? subsrec[videorec.size()-1].BeforeLast('\\') : "", "", 
+				(videorec.size()>0)? subsrec[0].BeforeLast('\\') : "", "", 
 				_("Pliki audio i wideo") + 
 				" (*.wav),(*.w64),(*.flac),(*.ac3),(*.aac),(*.ogg),(*.mp3),(*.mp4),(*.mkv),(*.avi)|*.wav;*.w64;*.flac;*.ac3;*.aac;*.ogg;*.mp3;*.mp4;*.mkv;*.avi|"+
 				_("Wszystkie pliki")+" |*.*", wxFD_OPEN);

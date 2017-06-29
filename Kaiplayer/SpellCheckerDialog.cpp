@@ -33,16 +33,17 @@ SpellCheckerDialog::SpellCheckerDialog(kainoteFrame *parent)
 	wxBoxSizer *replaceSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *listSizer = new wxBoxSizer(wxHORIZONTAL);
-	wxString misspellWord = FindNextMisspell();
-	misSpell = new KaiTextCtrl(this,-1,misspellWord);
-	replaceWord = new KaiTextCtrl(this,-1);
-	misspellSizer->Add(new KaiStaticText(this,-1, _("B³êdne s³owo:")), 3, wxEXPAND|wxALL, 2);
-	misspellSizer->Add(misSpell, 3, wxEXPAND|wxALL, 2);
-	replaceSizer->Add(new KaiStaticText(this,-1, _("Zmieñ na:")), 3, wxEXPAND|wxALL, 2);
-	replaceSizer->Add(replaceWord, 3, wxEXPAND|wxALL, 2);
-	suggestionsList = new KaiListCtrl(this, ID_SUGGESTIONS_LIST, SpellChecker::Get()->Suggestions(misspellWord));
 	ignoreComments = new KaiCheckBox(this, -1, _("Ignoruj komentarze"));
 	ignoreUpper = new KaiCheckBox(this, -1, _("Ignoruj s³owa z duzej litery"));
+	ignoreUpper->Enable(false);
+	//wxString misspellWord = FindNextMisspell();
+	misSpell = new KaiTextCtrl(this,-1,"");
+	replaceWord = new KaiTextCtrl(this,-1);
+	misspellSizer->Add(new KaiStaticText(this,-1, _("B³êdne s³owo:")), 1, wxEXPAND|wxALL, 2);
+	misspellSizer->Add(misSpell, 3, wxEXPAND|wxALL, 2);
+	replaceSizer->Add(new KaiStaticText(this,-1, _("Zmieñ na:")), 1, wxEXPAND|wxALL, 2);
+	replaceSizer->Add(replaceWord, 3, wxEXPAND|wxALL, 2);
+	suggestionsList = new KaiListCtrl(this, ID_SUGGESTIONS_LIST, wxArrayString());
 	replace = new MappedButton(this, ID_REPLACE, _("Zamieñ"));
 	replaceAll = new MappedButton(this, ID_REPLACE_ALL, _("Zamieñ wszystko"));
 	ignore = new MappedButton(this, ID_IGNORE, _("Ignoruj"));
@@ -66,10 +67,12 @@ SpellCheckerDialog::SpellCheckerDialog(kainoteFrame *parent)
 	main->Add(replaceSizer, 0, wxEXPAND);
 	main->Add(listSizer, 0, wxEXPAND);
 	SetSizerAndFit(main);
+	SetNextMisspell();
 	CenterOnParent();
 	Show();
 
-	Bind(LIST_ITEM_DOUBLECLICKED, &SpellCheckerDialog::OnSelectSuggestion, this, ID_SUGGESTIONS_LIST);
+	Bind(LIST_ITEM_LEFT_CLICK, &SpellCheckerDialog::OnSelectSuggestion, this, ID_SUGGESTIONS_LIST);
+	Bind(LIST_ITEM_DOUBLECLICKED, &SpellCheckerDialog::Replace, this, ID_REPLACE);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SpellCheckerDialog::Replace, this, ID_REPLACE);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SpellCheckerDialog::ReplaceAll, this, ID_REPLACE_ALL);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SpellCheckerDialog::Ignore, this, ID_IGNORE);
@@ -86,26 +89,29 @@ wxString SpellCheckerDialog::FindNextMisspell()
 {
 	//jakoœ zidentyfikowaæ, ¿e u¿yszkodnik niczego nie zmieni³
 	bool noComments = ignoreComments->GetValue();
-	errors.clear();
+	
 	TabPanel *tab = Kai->GetTab();
 	if(lastActiveLine != tab->Edit->ebrow){
 		lastLine = lastActiveLine = tab->Edit->ebrow;
 		lastMisspell = 0;
 	}
 	for(int i = lastLine; i < tab->Grid1->GetCount(); i++){
+		errors.clear();
 		Dialogue *Dial = tab->Grid1->GetDial(i);
 		if(Dial->IsComment && noComments){continue;}
 		wxString &Text = (tab->Grid1->transl)? Dial->TextTl : Dial->Text;
 		//w checktext kopiuje tekst wiêc nie muszê robiæ tego dwa razy.
 		tab->Grid1->CheckText(Text, errors);
 		if(i != lastLine){lastMisspell=0;}
-		if(errors.size()>1 && lastMisspell < errors.size()){
+		while(errors.size()>1 && lastMisspell < errors.size()){
 			wxString misspellWord = Text.SubString(errors[lastMisspell], errors[lastMisspell+1]);
 			lastMisspell += 2;
-			if(ignored.Index(misspellWord) == -1){
+			if(ignored.Index(misspellWord, false) == -1){
+				lastLine = i;
 				return misspellWord;
 			}
 		}
+		lastLine = i;
 	}
 	return "";
 }
@@ -114,6 +120,7 @@ void SpellCheckerDialog::SetNextMisspell()
 {
 	wxString misspellWord = FindNextMisspell();
 	misSpell->SetValue(misspellWord,true);
+	replaceWord->SetValue("",true);
 	if(misspellWord.IsEmpty()){
 		//mamy brak b³êdów trzeba poinformowaæ u¿yszkodnika i zablokowaæ jakiekolwiek akcje.
 		suggestionsList->SetTextArray(wxArrayString());
@@ -122,12 +129,15 @@ void SpellCheckerDialog::SetNextMisspell()
 	}else{
 		suggestionsList->SetTextArray(SpellChecker::Get()->Suggestions(misspellWord));
 	}
+	TabPanel *tab = Kai->GetTab();
 	if(lastActiveLine != lastLine){
-		TabPanel *tab = Kai->GetTab();
+		tab->Grid1->SelectRow(lastLine,false,true,true);
+		tab->Grid1->ScrollTo(lastLine,true);
 		tab->Edit->SetLine(lastLine);
-		tab->Edit->TextEdit->SetSelection(errors[lastMisspell], errors[lastMisspell+1]-1);
-
+		lastActiveLine = lastLine;
 	}
+	//tab->Edit->TextEdit->SetFocus();
+	tab->Edit->TextEdit->SetSelection(errors[lastMisspell-2], errors[lastMisspell-1]+1);
 }
 	
 void SpellCheckerDialog::Replace(wxCommandEvent &evt)
@@ -137,7 +147,14 @@ void SpellCheckerDialog::Replace(wxCommandEvent &evt)
 	TabPanel *tab = Kai->GetTab();
 	Dialogue *Dial = tab->Grid1->CopyDial(lastLine);
 	wxString &Text = (tab->Grid1->transl)? Dial->TextTl : Dial->Text;
-	Text.replace(errors[lastMisspell], errors[lastMisspell+1]-1, replaceTxt);
+	int start = errors[lastMisspell-2];
+	int end = errors[lastMisspell-1]+1;
+	Text.replace(start, end - start, replaceTxt);
+	tab->Grid1->SetModified();
+	tab->Grid1->Refresh(false);
+	//if(SpellChecker::Get()->CheckWord(replaceTxt)){
+		lastMisspell -= 2;
+	//}
 	SetNextMisspell();
 }
 	
@@ -148,7 +165,7 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 	if(replaceTxt.IsEmpty() || misspellTxt.IsEmpty()){return;}
 	TabPanel *tab = Kai->GetTab();
 	bool noComments = ignoreComments->GetValue();
-	std::wregex r("\\b" + misspellTxt.ToStdWstring() + "\\b"); // the pattern \b matches a word boundary
+	std::wregex r("\\b" + misspellTxt.Lower().ToStdWstring() + "\\b"); // the pattern \b matches a word boundary
 	std::wsmatch m;
 	std::wstring text;
 	int lenMismatch = 0;
@@ -157,20 +174,35 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 	for(int i = 0; i < tab->Grid1->GetCount(); i++){
 		Dialogue *Dial = tab->Grid1->GetDial(i);
 		if(Dial->IsComment && noComments){continue;}
-		wxString &Text = (tab->Grid1->transl)? Dial->TextTl : Dial->Text;
-		text = Text.ToStdWstring();
+		wxString Text = (tab->Grid1->transl)? Dial->TextTl : Dial->Text;
+		text = Text.Lower().ToStdWstring();
+		lenMismatch = 0;
+		textPos = 0;
+		bool changed = false;
 		while(std::regex_search(text, m, r)) {
 			int pos = m.position(0) + textPos;
 			int len = m.length(0);
 			//zrób coœ z tymi danymi
 			wxString misspellToReplace = Text.Mid(pos - lenMismatch, len);
 			Text.replace(pos - lenMismatch, len, GetRightCase(replaceTxt, misspellToReplace));
-			lenMismatch += (len - replaceTxt.Len());
+			lenMismatch += (len - replaceTxt.Len()) + 1;
 			text = m.suffix().str();
 			text.insert(0, L" ");
 			textPos = pos + len;
+			changed=true;
+		}
+		if(changed){
+			Dialogue *Dialc = tab->Grid1->CopyDial(i);
+			wxString &TextToChange = (tab->Grid1->transl)? Dialc->TextTl : Dialc->Text;
+			TextToChange=Text;
+			tab->Grid1->SpellErrors[i].clear();
 		}
 	}
+	tab->Grid1->SetModified();
+	tab->Grid1->Refresh(false);
+	//if(SpellChecker::Get()->CheckWord(replaceTxt)){
+		lastMisspell -= 2;
+	//}
 	SetNextMisspell();
 }
 	
