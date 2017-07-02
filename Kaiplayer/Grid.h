@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef GRID_H
-#define GRID_H
+#pragma once
 
 #include "SubsGrid.h"
 
@@ -50,8 +49,8 @@ private:
 	void OnPaste(int id);
 	void OnPasteTextTl();
 	void OnJoinToFirst(int id);
-	void OnInsertBeforeVideo();
-	void OnInsertAfterVideo();
+	void OnInsertBeforeVideo(bool frameTime = false);
+	void OnInsertAfterVideo(bool frameTime = false);
 	void OnSetFPSFromVideo();
 	void OnSetNewFPS();
 	void OnMakeContinous(int id);
@@ -59,4 +58,4 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
-#endif
+

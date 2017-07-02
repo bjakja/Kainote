@@ -584,8 +584,6 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 		wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
 		wxArrayString choices;
-		choices.Add("DeepDark");
-		choices.Add("DeepLight");
 		wxArrayString files;
 		wxString pathwn = Options.pathfull + "\\Themes\\";
 		wxString programTheme = Options.GetString(ProgramTheme);
@@ -595,6 +593,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		}
 		for (size_t i = 0; i < files.size(); i++){
 			choices.Add(files[i].AfterLast('\\').BeforeLast('.'));
+		}
+		if(choices.Index("DeepDark",false) == -1){
+			choices.Add("DeepDark");
+		}
+		if(choices.Index("DeepLight",false) == -1){
+			choices.Add("DeepLight");
 		}
 		KaiChoice *themeList = new KaiChoice(Themes,14567,wxDefaultPosition, wxDefaultSize, choices);
 		themeList->SetSelection(themeList->FindString(programTheme));
@@ -615,8 +619,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		for(int i=0;i<numColors;i++)
 		{
 			int row = List->AppendItem(new ItemText(labels[i]));
-			AssColor col = Options.GetColor((COLOR)i);
-			List->SetItem(row, 1, new ItemColor(col, i));
+			AssColor col = Options.GetColor((COLOR)(i+1));
+			List->SetItem(row, 1, new ItemColor(col, i+1));
 		}
 		sizer->Add(List, 1, wxALL|wxEXPAND, 2);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED,[=](wxCommandEvent &evt){

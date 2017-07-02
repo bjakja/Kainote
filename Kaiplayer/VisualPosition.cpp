@@ -195,7 +195,7 @@ void Position::ChangeMultiline(bool all)
 	if(all){
 		tab->Video->VisEdit=true;
 		if(tab->Edit->splittedTags){tab->Edit->TextEditOrig->modified=true;}
-		tab->Grid1->SetModified(true);
+		tab->Grid1->SetModified(VISUAL_POSITION,true);
 		tab->Grid1->Refresh();
 	}else{
 		

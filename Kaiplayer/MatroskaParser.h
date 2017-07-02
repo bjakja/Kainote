@@ -27,8 +27,7 @@
  *
  */
 
-#ifndef MATROSKA_PARSER_H
-#define	MATROSKA_PARSER_H
+#pragma once
 
 /* Random notes:
  *
@@ -391,4 +390,3 @@ X const char	  *cs_GetLastError(CompressedStream *cs);
 
 #undef X
 
-#endif

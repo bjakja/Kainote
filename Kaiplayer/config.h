@@ -13,10 +13,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CONFIG_H_INCLUDED
-#define CONFIG_H_INCLUDED
 
-//#pragma once
+#pragma once
+
 #include <wx/textfile.h>
 #include <wx/tokenzr.h>
 #include <wx/colour.h>
@@ -413,4 +412,3 @@ enum{
 
 extern config Options;
 
-#endif // CONFIG_H_INCLUDED

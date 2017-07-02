@@ -13,10 +13,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VIDEOVISUALS
-#define VIDEOVISUALS
-//#define UNICODE
+
 #pragma once
+
 #include <wx/wx.h>
 #include <vector>
 #include <d3d9.h>
@@ -329,4 +328,4 @@ public:
 
 int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoint &pos);
 
-#endif
+

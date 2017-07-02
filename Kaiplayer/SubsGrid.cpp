@@ -633,7 +633,7 @@ void SubsGrid::RepaintWindow(int cell)
 	AdjustWidths(cell);
 	Refresh(false);
 }
-void SubsGrid::ChangeLine(Dialogue *line1, int wline, long cells, bool selline, bool dummy)
+void SubsGrid::ChangeLine(unsigned char editionType, Dialogue *line1, int wline, long cells, bool selline, bool dummy)
 {
 	lastRow=wline;
 	wxArrayInt sels=GetSels();
@@ -678,7 +678,7 @@ void SubsGrid::ChangeLine(Dialogue *line1, int wline, long cells, bool selline, 
 			}
 		}*/
 	}
-	SetModified(false,dummy);
+	SetModified(editionType,false,dummy);
 
 }
 
@@ -906,7 +906,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 
 	if (left_up && holding) {
 		holding = false;
-		if(file->IsNotSaved()&&lastsel!=-1){SetModified();}
+		if(event.AltDown() && lastsel!=-1 && file->IsNotSaved()){SetModified(GRID_SWAP_LINES);}
 		ReleaseMouse();
 		if(oldX!=-1){return;}
 	}
@@ -1159,7 +1159,7 @@ void SubsGrid::Convert(char type)
 
 	form=type;
 	Edit->SetLine((Edit->ebrow < GetCount())? Edit->ebrow : 0);
-	SetModified();
+	SetModified(GRID_CONVERT);
 	RepaintWindow();
 	
 	if(Edit->Visual > 0){
@@ -1222,7 +1222,7 @@ void SubsGrid::SaveFile(const wxString &filename, bool cstat)
 {
 	if(Options.GetInt(GridSaveAfterCharacterCount)>1){
 		bool oldOnVideo = Edit->OnVideo;
-		Edit->Send(false,false,true);
+		Edit->Send(EDITBOX_LINE_EDITION,false,false,true);
 		Edit->OnVideo = oldOnVideo;
 	}
 	wxString txt;
@@ -1624,7 +1624,7 @@ void SubsGrid::ChangeTimes(bool byFrame)
 
 	SpellErrors.clear();
 	int tmpMarked = markedLine;
-	SetModified(true, false, -1, false);
+	SetModified(SHIFT_TIMES, true, false, -1, false);
 	markedLine = tmpMarked;
 	if(form>TMP){RepaintWindow(START|END);}else{Refresh(false);}
 #if _DEBUG
@@ -1659,7 +1659,7 @@ void SubsGrid::SortIt(short what, bool all)
 	}
 	file->edited=true;
 	SpellErrors.clear();
-	SetModified();
+	SetModified(GRID_SORT_LINES);
 	Refresh(false);
 } 
 
@@ -1804,7 +1804,7 @@ void SubsGrid::DeleteRows()
 	}
 	if(GetCount()<1){AddLine(new Dialogue());}
 	if(sels.size()>0){file->edited=true;}
-	SetModified();
+	SetModified(GRID_DELETE_LINES);
 	Thaw();
 	RepaintWindow();
 }
@@ -1862,7 +1862,7 @@ void SubsGrid::DeleteText()
 		if(sel.find(i)!=sel.end()){
 			CopyDial(i)->Text="";}
 	}
-	SetModified();
+	SetModified(GRID_DELETE_TEXT);
 	Refresh(false);
 }
 void SubsGrid::UpdateUR(bool toolbar)
@@ -1879,7 +1879,7 @@ void SubsGrid::UpdateUR(bool toolbar)
 	}
 }
 
-void SubsGrid::GetUndo(bool redo)
+void SubsGrid::GetUndo(bool redo, int iter)
 {
 	TabPanel *pan =Kai->GetTab();
 	Freeze();
@@ -1887,7 +1887,8 @@ void SubsGrid::GetUndo(bool redo)
 	wxString matrix = GetSInfo("YCbCr Matrix");
 	wxString tlmode = GetSInfo("TLMode");
 
-	if(redo){file->Redo();}else{file->Undo();}
+	if(iter != -2){if(file->SetHistory(iter)){Thaw();return;}}
+	else if(redo){file->Redo();}else{file->Undo();}
 
 
 	UpdateUR();
@@ -1975,8 +1976,10 @@ void SubsGrid::DummyUndo(int newIter)
 	UpdateUR();
 	Kai->Label(newIter);
 	VideoCtrl *vb = Kai->GetTab()->Video;
-	vb->OpenSubs(GetVisible());
-	vb->Render();
+	if(vb->GetState() != None){
+		vb->OpenSubs(GetVisible());
+		vb->Render();
+	}
 }
 
 wxArrayInt SubsGrid::GetSels(bool deselect)
@@ -2015,7 +2018,7 @@ void SubsGrid::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDest
 	if(AddToDestroy){file->subs->ddials.push_back(Dialog);}
 	if(Save){
 		sel[Row]=true;
-		SetModified();
+		SetModified(GRID_INSERT_ROW);
 		Refresh(false);
 	}
 }
@@ -2075,8 +2078,8 @@ wxString SubsGrid::GetSInfos(bool tld)
 	}
 	return TextSI;
 }
-
-void SubsGrid::SetModified(bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
+//wszystkie set modified trzeba znaleźć i dodać editiontype.
+void SubsGrid::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
 {
 	if(file->IsNotSaved()){
 		if(file->Iter()<1||!Modified){
@@ -2089,16 +2092,17 @@ void SubsGrid::SetModified(bool redit, bool dummy, int SetEditBoxLine, bool Scro
 		}
 
 		Kai->Label(file->Iter()+1);
+		int ebrow = Edit->ebrow;
 		if(redit)
 		{
-			int erow= (SetEditBoxLine >= 0)? SetEditBoxLine : Edit->ebrow;
+			int erow= (SetEditBoxLine >= 0)? SetEditBoxLine : ebrow;
 			if(erow>=GetCount()){erow=GetCount()-1;}
 			lastRow=erow;
 			if(scPos>erow && Scroll){scPos=MAX(0,(erow-4));}
 			Edit->SetLine(erow);
 			sel[erow]=true;
 		}
-		file->SaveUndo();
+		file->SaveUndo(editionType, ebrow+1);
 		if(!dummy){
 			VideoCtrl *vb=Kai->GetTab()->Video;
 			if(Edit->Visual >= CHANGEPOS){
@@ -2135,7 +2139,7 @@ void SubsGrid::SwapRows(int frst, int scnd, bool sav)
 	SpellErrors[frst]=SpellErrors[scnd];
 	SpellErrors[scnd] = tmpspell;
 	Refresh(false);
-	if(sav){SetModified();}
+	if(sav){SetModified(GRID_SWAP_LINES);}
 }
 
 void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
@@ -2281,7 +2285,7 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 
 	Edit->HideControls();
 
-	file->EndLoad();
+	file->EndLoad(OPEN_SUBTITLES, active+1);
 	if(StyleStore::HasStore() && form==ASS){StyleStore::Get()->LoadAssStyles();}
 	if(form == ASS){RebuildActorEffectLists();}
 	//Kai->Toolbar->UpdateId(SaveSubs, false);
@@ -2290,7 +2294,7 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 
 void SubsGrid::SetStartTime(int stime)
 {
-	Edit->Send(false,false,true);
+	Edit->Send(EDITBOX_LINE_EDITION,false,false,true);
 	wxArrayInt sels=GetSels();
 	for(size_t i=0;i<sels.size();i++){
 		Dialogue *dialc=CopyDial(sels[i]);
@@ -2299,14 +2303,14 @@ void SubsGrid::SetStartTime(int stime)
 		if(dialc->End<stime){dialc->End.NewTime(stime);}
 	}
 	if(sels.size()){
-		SetModified();
+		SetModified(GRID_SET_START_TIME);
 		Refresh(false);
 	}
 }
 
 void SubsGrid::SetEndTime(int etime)
 {
-	Edit->Send(false,false,true);
+	Edit->Send(EDITBOX_LINE_EDITION,false,false,true);
 	wxArrayInt sels=GetSels();
 	for(size_t i=0;i<sels.size();i++){
 		Dialogue *dialc=CopyDial(sels[i]);
@@ -2315,7 +2319,7 @@ void SubsGrid::SetEndTime(int etime)
 		if(dialc->Start>etime){dialc->Start.NewTime(etime);}
 	}
 	if(sels.size()){
-		SetModified();
+		SetModified(GRID_SET_END_TIME);
 		Refresh(false);
 	}
 }
@@ -2386,7 +2390,7 @@ bool SubsGrid::SetTlMode(bool mode)
 	}
 	SpellErrors.clear();
 	Refresh(false);
-	SetModified();
+	SetModified((mode)? GRID_TURN_ON_TLMODE : GRID_TURN_OFF_TLMODE);
 	//VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
 	//if(vb->GetState()!=None){
 	//	vb->OpenSubs(GetVisible()/*SaveText()*/);
@@ -2433,7 +2437,7 @@ void SubsGrid::NextLine(int dir)
 		tmp->Start.NewTime(eend); 
 		tmp->End.NewTime(eend+5000);
 		AddLine(tmp);
-		SetModified(false);
+		SetModified(GRID_APPEND_LINE, false);
 	}
 	int h,w;
 	GetClientSize(&w,&h);
@@ -2510,7 +2514,7 @@ void SubsGrid::LoadDefault(bool line,bool sav,bool endload)
 	AddSInfo("YCbCr Matrix","TV.601",sav);
 	//Kai->Toolbar->UpdateId(SaveSubs, false);
 	//Kai->Menubar->Enable(SaveSubs, false);
-	if(endload){file->EndLoad();}
+	if(endload){file->EndLoad(NEW_SUBTITLES, 1);}
 }
 
 Dialogue *SubsGrid::CopyDial(int i, bool push)
@@ -2609,7 +2613,7 @@ wxString *SubsGrid::GetVisibleSubs()
 	(*txt)<<GetStyles(false);
 	(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
 
-	Edit->Send(false,true);
+	Edit->Send(EDITBOX_LINE_EDITION, false, true);
 
 	bool noLine = true;
 	bool isTlmode = GetSInfo("TLMode")=="Yes";
@@ -2651,7 +2655,7 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, wxArrayInt *select
 		(*txt)<<GetStyles(false);
 		(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
 	}
-	Edit->Send(false,true);
+	Edit->Send(EDITBOX_LINE_EDITION, false, true);
 	if(_time >= Edit->line->Start.mstime && _time <= Edit->line->End.mstime)
 	{
 		if(visible){*visible=true;}
@@ -2728,21 +2732,26 @@ void SubsGrid::GetASSRes(int *x,int *y)
 	wxString oldy=GetSInfo("PlayResY");
 	int nx=wxAtoi(oldx);
 	int ny=wxAtoi(oldy);
+	bool changed = false;
 	if(nx<1 && ny<1){
-		nx=1280;ny=720;
-		AddSInfo("PlayResX", "1280");
-		AddSInfo("PlayResY", "720");
+		nx=384;ny=288;
+		AddSInfo("PlayResX", "384");
+		AddSInfo("PlayResY", "288");
+		changed = true;
 	}
 	else if(nx<1){
 		nx=(float)ny*(4.0/3.0);if(ny==1024){nx=1280;}
 		AddSInfo("PlayResX", std::to_string(nx));
+		changed = true;
 	}
 	else if(ny<1){
 		ny=(float)nx*(3.0/4.0);if(nx==1280){ny=1024;}
 		AddSInfo("PlayResY", std::to_string(ny));
+		changed = true;
 	}
 	*x=nx;
 	*y=ny;
+	//if(changed){SetModified(ASS_PROPERTIES, false, true, -1, false);}
 }
 
 int SubsGrid::CalcChars(const wxString &txt, wxString *lines, bool *bad)

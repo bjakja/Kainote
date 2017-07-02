@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NEWCATALOG_H
-#define NEWCATALOG_H
+#pragma once
 
 #include "KaiTextCtrl.h"
 #include "MappedButton.h"
@@ -34,4 +33,3 @@ class NewCatalog: public KaiDialog
 		
 };
 
-#endif

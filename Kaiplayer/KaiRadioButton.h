@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __KAIRADIOBUTTON__
-#define __KAIRADIOBUTTON__
+#pragma once
 
 #include "KaiCheckBox.h"
 #include <vector>
@@ -57,4 +56,3 @@ enum{
 	ID_ACCEL_RIGHT,
 };
 
-#endif

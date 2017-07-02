@@ -125,7 +125,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 		grid->ResizeSubs(videoSizeX/(float)subsSizeX,
 			videoSizeX/(float)subsSizeX, resamplingOptions->IsEnabled() && 
 			resamplingOptions->GetSelection() == 1);
-		grid->SetModified();
+		grid->SetModified(SUBTITLES_RESAMPLE);
 		((kainoteFrame *)parent)->SetSubsResolution();
 		EndModal(0);
 	},26548);
@@ -173,7 +173,7 @@ SubsMismatchResolutionDialog::SubsMismatchResolutionDialog(wxWindow *parent, con
 		if(resamplingOptions->GetSelection() != 0){
 			grid->ResizeSubs(resizeX,resizeY, resamplingOptions->GetSelection() == 2);
 		}
-		grid->SetModified();
+		grid->SetModified(SUBTITLES_RESAMPLE);
 		((kainoteFrame *)parent)->SetSubsResolution();
 		EndModal(0);
 	},26548);

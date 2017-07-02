@@ -7,8 +7,7 @@
  * License:
  **************************************************************/
 
-#ifndef KAINOTEAPP_H
-#define KAINOTEAPP_H
+#pragma once
 
 #include <wx/app.h>
 #include <wx/snglinst.h>
@@ -51,5 +50,4 @@ private:
 
 
 DECLARE_APP(kainoteApp)
-
-#endif 
+ 

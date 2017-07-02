@@ -14,8 +14,8 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef ENUMFACTORY
-#define ENUMFACTORY
+#pragma once
+
 // expansion macro for enum value definition
 #define ENUM_VALUE(name,assign) name assign,
 
@@ -49,5 +49,3 @@
   return (EnumType)0; /* handle input error */ \
   } \
 
-
-#endif

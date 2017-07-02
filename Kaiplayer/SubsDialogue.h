@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SUBSDIALOGUE_H_INCLUDED
-#define SUBSDIALOGUE_H_INCLUDED
+#pragma once
 
 #ifndef ZEROIT
 #define ZEROIT(a) ((a/10)*10)
@@ -71,4 +70,3 @@ public:
 	~Dialogue();
 };
 
-#endif // SUBSDIALOGUE_H_INCLUDED

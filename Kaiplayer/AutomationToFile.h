@@ -28,8 +28,7 @@
 //
 // Aegisub Project http://www.aegisub.org/
 
-#ifndef AUTOTOFILE
-#define AUTOTOFILE
+#pragma once
 
 extern "C" {
 #include <lua.hpp>
@@ -38,11 +37,6 @@ extern "C" {
 #include "SubsDialogue.h"
 #include "SubsFile.h"
 #include <wx/wx.h>
-
-
-
-	
-
 
 
 namespace Auto{
@@ -99,4 +93,3 @@ namespace Auto{
 
 };
 
-#endif

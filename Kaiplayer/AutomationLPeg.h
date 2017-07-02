@@ -5,8 +5,7 @@
 ** written by Roberto Ierusalimschy
 */
 
-#ifndef lpeg_h
-#define lpeg_h
+#pragma once
 
 #include "lua.h"
 
@@ -37,4 +36,4 @@ typedef void (*Newpf) (lua_State *L,
 
 //int luaopen_lpeg (lua_State *L);
 
-#endif
+

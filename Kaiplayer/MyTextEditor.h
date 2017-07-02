@@ -13,9 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MYTEXTEDITOR
-#define MYTEXTEDITOR
-
+#pragma once
 
 #include <wx/wx.h>
 #include <wx/caret.h>
@@ -132,4 +130,3 @@ enum{
 	ID_PUP
 };
 
-#endif

@@ -413,7 +413,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 			if(changeEditorText){
 				Editor->SetTextS(txt, false, true);
 				Editor->modified=true;
-				edit->Send(false);
+				edit->Send((Visual==VECTORCLIP)? VISUAL_VECTOR_CLIP : VISUAL_DRAWING, false);
 			}
 			return;
 		}
@@ -566,7 +566,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 		edit->UpdateChars(Editor->GetValue());
 		tab->Video->VisEdit=true;
 		if(edit->splittedTags){edit->TextEditOrig->modified=true;}
-		edit->Send(false,false,true);
+		edit->Send((Visual==VECTORCLIP)? VISUAL_VECTOR_CLIP : VISUAL_DRAWING, false,false,true);
 	}
 }
 
@@ -636,7 +636,9 @@ void Visuals::SetVisual(bool dummy, int type)
 		if(!dummy){
 			tab->Video->VisEdit=true;
 			if(tab->Edit->splittedTags){tab->Edit->TextEditOrig->modified=true;}
-			tab->Grid1->SetModified(true);
+			tab->Grid1->SetModified((Visual==MOVE)? VISUAL_MOVE : 
+				(Visual==SCALE)? VISUAL_SCALE : (Visual==ROTATEZ)? VISUAL_ROTATION_Z : 
+				(Visual==ROTATEXY)? VISUAL_ROTATION_X_Y : VISUAL_RECT_CLIP, true);
 			tab->Grid1->Refresh();
 		}else{
 		
@@ -691,7 +693,9 @@ void Visuals::SetVisual(bool dummy, int type)
 		Editor->modified=true;
 		tab->Video->VisEdit=true;
 		if(edit->splittedTags){edit->TextEditOrig->modified=true;}
-		edit->Send(false,false,true);
+		edit->Send((Visual==MOVE)? VISUAL_MOVE : 
+			(Visual==SCALE)? VISUAL_SCALE : (Visual==ROTATEZ)? VISUAL_ROTATION_Z : 
+			(Visual==ROTATEXY)? VISUAL_ROTATION_X_Y : VISUAL_RECT_CLIP,false,false,true);
 
 	}
 }

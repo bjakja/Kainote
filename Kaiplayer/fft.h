@@ -34,9 +34,7 @@
 //
 
 
-#ifndef FFT_H
-#define FFT_H
-
+#pragma once
 
 #include <stdlib.h> // size_t
 
@@ -68,4 +66,3 @@ public:
 };
 
 
-#endif

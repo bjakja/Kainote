@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __KAI_MESSAGEBOX__
-#define __KAI_MESSAGEBOX__
+#pragma once
 
 #include "KaiDialog.h"
 
@@ -34,5 +33,3 @@ public:
 int KaiMessageBox(const wxString& msg, const wxString &caption="", long elems = wxOK, wxWindow *parent=0 );
 
 #define wxYES_TO_ALL 64
-
-#endif

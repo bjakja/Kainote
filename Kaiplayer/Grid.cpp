@@ -94,6 +94,8 @@ void Grid::ContextMenu(const wxPoint &pos, bool dummy)
 	isen = (isen&&Kai->GetTab()->Video->GetState()!=None);
 	menu->SetAccMenu( InsertBeforeVideo,_("Wstaw przed z &czasem wideo"))->Enable(isen);
 	menu->SetAccMenu( InsertAfterVideo,_("Wstaw po z c&zasem wideo"))->Enable(isen);
+	menu->SetAccMenu( InsertBeforeWithVideoFrame,_("Wstaw przed z czasem klatki wideo"))->Enable(isen);
+	menu->SetAccMenu( InsertAfterWithVideoFrame,_("Wstaw po z czasem klatki wideo"))->Enable(isen);
 	isen = (sels >0);
 	menu->SetAccMenu( Duplicate,_("&Duplikuj linie"))->Enable(isen);
 	isen = (sels == 2);
@@ -201,7 +203,7 @@ void Grid::OnDuplicate()
 		InsertRows(rw1, dupl);
 		dupl.clear();
 	}
-	SetModified(false);
+	SetModified(GRID_DUPLICATE, false);
 	Refresh(false);
 }
 
@@ -250,7 +252,8 @@ void Grid::OnJoin(wxCommandEvent &event)
 	sel.clear();
 	file->edited=true;
 	SpellErrors.clear();
-	SetModified();
+	SetModified((idd==JoinWithPrevious)? GRID_JOIN_WITH_PREVIOUS : 
+		(idd==JoinWithNext)? GRID_JOIN_WITH_NEXT : GRID_JOIN_LINES);
 	RepaintWindow();
 }
 
@@ -271,7 +274,7 @@ void Grid::OnJoinToFirst(int id)
 	sel.clear();
 	sel[selarr[0]]=true;
 	SpellErrors.clear();
-	SetModified();
+	SetModified((id==JoinToLast)? GRID_JOIN_TO_LAST : GRID_JOIN_TO_FIRST);
 	RepaintWindow();
 }
 
@@ -354,7 +357,7 @@ void Grid::OnPaste(int id)
 	if(sel.size()!=0){
 		Edit->ebrow=sel.begin()->first;}
 	scPos+=cttkns;
-	SetModified();
+	SetModified((id==Paste)? GRID_PASTE : GRID_PASTE_COLLUMNS);
 	Thaw();
 	RepaintWindow();
 }
@@ -397,29 +400,33 @@ void Grid::CopyRows(int id)
 	}
 }
 
-void Grid::OnInsertBeforeVideo()
+void Grid::OnInsertBeforeVideo(bool frameTime)
 {
 	int rw=selarr[0];
 	sel.erase(sel.find(rw));
 	Dialogue *dialog=CopyDial(rw, false);
-	dialog->Text="";
-	dialog->TextTl="";
-	int time=Kai->GetTab()->Video->Tell();
+	if(!frameTime){
+		dialog->Text="";
+		dialog->TextTl="";
+	}
+	int time=Kai->GetTab()->Video->GetFrameTime();
 	dialog->Start.NewTime(time);
-	dialog->End.NewTime(time+4000);
+	dialog->End.NewTime(frameTime? Kai->GetTab()->Video->GetFrameTime(false) : time+4000);
 	InsertRows(rw, 1, dialog, false, true);
 }
 
-void Grid::OnInsertAfterVideo()
+void Grid::OnInsertAfterVideo(bool frameTime)
 {
 	int rw=selarr[0];
 	sel.erase(sel.find(rw));
 	Dialogue *dialog=CopyDial(rw, false);
-	dialog->Text="";
-	dialog->TextTl="";
-	int time=Kai->GetTab()->Video->Tell();
+	if(!frameTime){
+		dialog->Text="";
+		dialog->TextTl="";
+	}
+	int time=Kai->GetTab()->Video->GetFrameTime();
 	dialog->Start.NewTime(time);
-	dialog->End.NewTime(time+4000);
+	dialog->End.NewTime(frameTime? Kai->GetTab()->Video->GetFrameTime(false) : time+4000);
 	Edit->ebrow=rw+1;
 	InsertRows(rw+1, 1, dialog, false, true);
 }
@@ -436,8 +443,12 @@ void Grid::OnAccelerator(wxCommandEvent &event)
 		case PlayPause: if(vb->IsShown()){vb->Pause();} break;
 		case Plus5Second: vb->Seek(vb->Tell()+5000); break;
 		case Minus5Second: vb->Seek(vb->Tell()-5000); break;
-		case InsertBeforeVideo: if(sels>0 && hasVideo) OnInsertBeforeVideo(); break;
-		case InsertAfterVideo: if(sels>0 && hasVideo) OnInsertAfterVideo(); break;
+		case InsertBeforeVideo: 
+		case InsertBeforeWithVideoFrame: 
+			if(sels>0 && hasVideo) OnInsertBeforeVideo(id == InsertBeforeWithVideoFrame); break;
+		case InsertAfterVideo: 
+		case InsertAfterWithVideoFrame: 
+			if(sels>0 && hasVideo) OnInsertAfterVideo(id == InsertAfterWithVideoFrame); break;
 		case InsertBefore: if(sels>0) OnInsertBefore(); break;
 		case InsertAfter: if(sels>0) OnInsertAfter(); break;
 		case Duplicate: if(sels>0) OnDuplicate(); break;
@@ -553,7 +564,7 @@ void Grid::OnPasteTextTl()
 		AddSInfo("TLMode Showtl", "Yes");
 		showtl=true;
 		//Edit->SetIt(Edit->ebrow);
-		SetModified();
+		SetModified(GRID_PASTE_TRANSLATION);
 		Refresh(false);
 	}
 	FileDialog1->Destroy();
@@ -631,7 +642,7 @@ void Grid::MoveTextTL(char mode)
 		}
 
 	}
-	SetModified(true);
+	SetModified(GRID_TRANSLATION_TEXT_MOVE,true);
 	Refresh(false);
 
 }
@@ -695,9 +706,10 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 		sel[Edit->ebrow]=true;
 		RepaintWindow();
 		Edit->HideControls();
-		
+		if(StyleStore::HasStore() && form==ASS){StyleStore::Get()->LoadAssStyles();}
+		Kai->SetSubsResolution(true);
 	}
-	if(StyleStore::HasStore() && form==ASS){StyleStore::Get()->LoadAssStyles();}
+	
 }
 
 
@@ -914,7 +926,7 @@ void Grid::OnMakeContinous(int idd)
 			CopyDial(sels[i])->End = GetDial(sels[i]+1)->Start;
 		}
 	}
-	SetModified();
+	SetModified(GRID_MAKE_LINES_CONTINUES);
 	Refresh(false);
 }
 
@@ -939,7 +951,7 @@ void Grid::OnSetFPSFromVideo()
 		dialc->Start.Change(diffVideo *((dialc->Start.mstime - firstTime) / diffLines));
 		dialc->End.Change(diffVideo *((dialc->End.mstime - firstTime) / diffLines));
 	}
-	SetModified();
+	SetModified(GRID_SET_VIDEO_FPS);
 	if(form>TMP){RepaintWindow(START|END);}else{Refresh(false);}
 }
 
@@ -1009,7 +1021,7 @@ void Grid::OnSetNewFPS()
 			dialc->Start.NewTime(dialc->Start.mstime*sub);
 			dialc->End.NewTime(dialc->End.mstime*sub);
 		}
-		SetModified();
+		SetModified(GRID_SET_CUSTOM_FPS);
 		if(form>TMP){RepaintWindow(START|END);}else{Refresh(false);}
 	}
 }

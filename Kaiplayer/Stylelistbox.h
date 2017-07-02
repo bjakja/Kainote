@@ -13,15 +13,12 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STYLELISTBOX_H
-#define STYLELISTBOX_H
+#pragma once
 
-//(*Headers(Stylelistbox)
-#include <wx/string.h>
 #include "KaiListCtrl.h"
 #include "MappedButton.h"
 #include "KaiDialog.h"
-//*)
+
 
 class Stylelistbox: public KaiDialog
 {
@@ -53,4 +50,4 @@ private:
 	int selection;
 };
 
-#endif
+

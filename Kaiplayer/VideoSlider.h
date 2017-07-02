@@ -13,9 +13,10 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VIDEOSLIDER
-#define VIDEOSLIDER
+#pragma once
+
 #include <wx/wx.h>
+
 class VideoCtrl;
 
 class VideoSlider : public wxWindow
@@ -69,4 +70,3 @@ protected:
 	DECLARE_EVENT_TABLE()
 	};
 
-#endif

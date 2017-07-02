@@ -746,7 +746,7 @@ void StyleStore::modif()
 {
 	Grid* grid=Notebook::GetTab()->Grid1;
 	Notebook::GetTab()->Edit->RefreshStyle();
-	grid->SetModified(false);
+	grid->SetModified(STYLE_MANAGER,false);
 	grid->Refresh(false);
 	ASS->SetArray(grid->GetStyleTable());
 }

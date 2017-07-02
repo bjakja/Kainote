@@ -13,10 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SUBSGRID_H_INCLUDED
-#define SUBSGRID_H_INCLUDED
-
-//#pragma once
+#pragma once
 
 #include <wx/wx.h>
 #include "SubsDialogue.h"
@@ -45,7 +42,7 @@ public:
 	void AddStyle(Styles *nstyl);
 	void AdjustWidths(int cell=8191);
 	int CalcChars(const wxString &txt, wxString *lines=NULL, bool *bad=NULL);
-	void ChangeLine(Dialogue *line1, int wline, long cells, bool selline=false, bool dummy=false);
+	void ChangeLine(unsigned char editionType, Dialogue *line1, int wline, long cells, bool selline=false, bool dummy=false);
 	void ChangeCell(long cells, int wline, Dialogue *what);
 	void ChangeStyle(Styles *nstyl,int i);
 	void Clearing();
@@ -78,12 +75,12 @@ public:
 	void DeleteRows();
 	void DeleteRow(int rw,int len=1);
 	void DeleteText();
-	void GetUndo(bool redo);
+	void GetUndo(bool redo, int iter = -2);
 	void InsertRows(int Row, std::vector<Dialogue *> RowsTable, bool AddToDestroy=false);
 	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy=true, bool Save=false);
 	void SetSubsForm(wxString ext="");
 	void AddSInfo(const wxString &SI, wxString val="", bool save=true);
-	void SetModified(bool redit=true, bool dummy=false, int SetEditBoxLine = -1, bool Scroll = true);
+	void SetModified(unsigned char editionType, bool redit=true, bool dummy=false, int SetEditBoxLine = -1, bool Scroll = true);
 	void UpdateUR(bool tolbar=true);
 	wxString GetSInfos(bool tld=false);
 	wxString GetSInfo(const wxString &key, int *ii=0);
@@ -188,5 +185,3 @@ enum{
 	COMMENT=4096,
 	ID_AUTIMER
 };
-
-#endif // SUBSGRID_H_INCLUDED

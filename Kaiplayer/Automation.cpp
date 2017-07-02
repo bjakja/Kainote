@@ -819,7 +819,7 @@ namespace Auto{
 		}
 		//wxLogStatus("idx %i, %i", active_idx, c->Edit->ebrow);
 		c->Grid1->SpellErrors.clear();
-		c->Grid1->SetModified(true, false, active_idx);
+		c->Grid1->SetModified(AUTOMATION_SCRIPT, true, false, active_idx);
 		c->Grid1->RepaintWindow();	
 		//stackcheck.check_stack(2);
 		lua_pop(L, 1);

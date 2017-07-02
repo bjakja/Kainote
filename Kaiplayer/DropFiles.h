@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DROPFILES_H_INCLUDED
-#define DROPFILES_H_INCLUDED
+#pragma once
 
 #include <wx/dnd.h>
 #include <wx/wxprec.h>
@@ -42,4 +41,4 @@ class DragnDrop : public wxFileDropTarget
 //		bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
 //	};
 
-#endif // DROPFILES_H_INCLUDED
+

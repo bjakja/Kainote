@@ -13,8 +13,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TIMECONV_H_INCLUDED
-#define TIMECONV_H_INCLUDED
+#pragma once
+
 #include <wx/string.h>
 #include <wx/thread.h>
 
@@ -54,8 +54,3 @@ public:
 
 
 
-
-
-
-
-#endif // TIMECONV_H_INCLUDED

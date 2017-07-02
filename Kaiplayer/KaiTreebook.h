@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __KAI_TREEBOOK__
-#define __KAI_TREEBOOK__
+#pragma once
 
 #include <wx/window.h>
 #include <vector>
@@ -62,5 +61,3 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
-
-#endif

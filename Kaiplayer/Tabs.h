@@ -13,8 +13,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TABDIALOG
-#define TABDIALOG
 
 #pragma once
 
@@ -106,4 +104,3 @@ enum{
 	MENU_COMPARE=16888
 	};
 
-#endif

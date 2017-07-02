@@ -14,8 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef MENU_H
-#define MENU_H
+#pragma once
 
 #include <wx/wx.h>
 #include <vector>
@@ -267,4 +266,3 @@ enum{
 	ID_CHECK_EVENT=29595
 };
 
-#endif

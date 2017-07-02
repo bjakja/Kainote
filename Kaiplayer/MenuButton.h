@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _MENU_BUTTON_
-#define _MENU_BUTTON_
+#pragma once
 
 #include "wx/statbmp.h"
 #include "Menu.h"
@@ -33,4 +32,3 @@ private:
 	Menu *menu;
 };
 
-#endif

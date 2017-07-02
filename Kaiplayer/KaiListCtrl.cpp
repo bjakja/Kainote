@@ -302,6 +302,9 @@ Item *KaiListCtrl::GetItem(size_t row, size_t col)
 
 void KaiListCtrl::OnSize(wxSizeEvent& evt)
 {
+	if(headerHeight<5 && widths.size()==1){
+		widths[0] = -1;
+	}
 	Refresh(false);
 }
 	
@@ -638,6 +641,19 @@ Item *KaiListCtrl::CopyRow(int y, int x, bool pushBack)
 	return (*itemList)[y]->row[x];
 }
 
+void KaiListCtrl::SetSelection(int selection, bool center)
+{
+	sel = selection; 
+	if(center){
+		int w=0;
+		int h=0;
+		GetClientSize (&w, &h);
+		int visibleElems = ((h - headerHeight)/lineHeight);
+		int elemY = sel - (visibleElems/2);
+		scPosV = MID(0, elemY, itemList->size() - visibleElems + 2);
+	}
+	Refresh(false);
+}
 
 BEGIN_EVENT_TABLE(KaiListCtrl,KaiScrolledWindow)
 	EVT_PAINT(KaiListCtrl::OnPaint)

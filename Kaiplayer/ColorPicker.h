@@ -28,9 +28,7 @@
 //
 // Aegisub Project http://www.aegisub.org/
 
-#ifndef DIALOG_COLORPICKER_H
-#define DIALOG_COLORPICKER_H
-
+#pragma once
 
 #include "KaiDialog.h"
 #include <wx/colour.h>
@@ -250,4 +248,3 @@ enum {
 };
 
 
-#endif

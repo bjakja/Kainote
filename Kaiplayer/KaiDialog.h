@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _KAI_DIALOG_
-#define _KAI_DIALOG_
+#pragma once
 
 #include <wx/toplevel.h>
 #include <wx/evtloop.h>
@@ -72,5 +71,3 @@ private:
 	wxModalEventLoop *loop;
 	wxDECLARE_ABSTRACT_CLASS(KaiDialog);
 };
-
-#endif

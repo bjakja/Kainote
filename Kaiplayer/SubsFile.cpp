@@ -15,10 +15,100 @@
 
 
 #include "SubsFile.h"
-#include <wx/log.h>
+#include "KaiListCtrl.h"
+#include "MappedButton.h"
+
+//pamiêtaj iloœæ elementów tablicy musi byæ równ iloœci enumów
+wxString historyNames[] = {
+	"",//pierwszy element którego nie u¿ywamy a musi byæ ostatni enum weszed³ a tak¿e ochroniæ nas przed potencjalnym 0
+	_("Otwarcie napisów"),
+	_("Nowe napisy"),
+	_("Edycja linii"),
+	_("Edycja wielu linii"),
+	_("Poprawa b³êdu pisowni w polu tekstowym"),
+	_("Powielenie linijek"),
+	_("Po³¹czenie linijek"),
+	_("Po³¹czenie linijki z poprzedni¹"),
+	_("Po³¹czenie linijki z nastêpn¹"),
+	/*10*/_("Po³¹czenie linijek pozostawienie pierszej"),
+	_("Po³¹czenie linijek pozostawienie ostatniej"),
+	_("Wklejenie linijek"),
+	_("Wklejenie kolumn"),
+	_("Wklejenie t³umaczenia"),
+	_("Przesuniêcie tekstu t³umaczenia"),
+	_("Ustawienie czasów linii jako ci¹g³ych"),
+	_("Ustawienie FPSu obliczonego z wideo"),
+	_("Ustawienie w³asnego FPSu"),
+	_("Zamiana linijek"),
+	/*20*/_("Konwersja napisów"),
+	_("Sortowanie napisów"),
+	_("Usuniêcie linijek"),
+	_("Usuniêcie tekstu"),
+	_("Ustawienie czasu pocz¹tkowego"),
+	_("Ustawienie czasu koñcowego"),
+	_("W³¹czenie trybu t³umaczenia"),
+	_("Wy³¹czenie trybu t³umaczenia"),
+	_("Dodanie nowej linii"),
+	_("Wstawienie linii"),
+	/*30*/_("Zmiana czasu na wykresie audio"),
+	_("Przyklejenie do klatki kluczowej"),
+	_("Zmiana nag³ówku napisów"),
+	_("Akcja zaznacz linijki"),
+	_("Przesuniêcie czasów"),
+	_("Poprawa b³êdu pisowni"),
+	_("Edycja stylów"),
+	_("Zmiana rozdzielczoœci napisów"),
+	_("Narzêdzie pozycjonowania"),
+	_("Narzêdzie ruchu"),
+	/*40*/_("Narzêdzie skalowania"),
+	_("Narzêdzie obrotów w osi Z"),
+	_("Narzêdzie obrotów w osiach X i Y"),
+	_("Narzêdzie wycinów prostok¹tnych"),
+	_("Narzêdzie wycinów wektorowych"),
+	_("Narzêdzie rysunków wektorowych"),
+	_("Narzêdzie zmieniacz pozycji"),
+	_("Zamieñ"),
+	_("Zamieñ wszystko"),
+	_("Skrypt automatyzacji"),
+};
+
+HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<void(int)> func )
+	: KaiDialog(parent, -1, _("Historia"),wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
+{
+	wxArrayString history;
+	file->GetHistoryTable(&history);
+	KaiListCtrl *HistoryList = new KaiListCtrl(this, ID_HISTORY_LIST, history);
+	//HistoryList->ScrollTo(file->Iter()-2);
+	Bind(LIST_ITEM_DOUBLECLICKED, [=](wxCommandEvent &evt){
+		func(HistoryList->GetSelection());
+	}, ID_HISTORY_LIST);
+	DialogSizer *main = new DialogSizer(wxVERTICAL);
+	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+	MappedButton *Set = new MappedButton(this, ID_SET_HISTORY, _("Ustaw"));
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+		func(HistoryList->GetSelection());
+	}, ID_SET_HISTORY);
+	MappedButton *Ok = new MappedButton(this, ID_SET_HISTORY_AND_CLOSE, _("OK"));
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+		func(HistoryList->GetSelection());
+		Hide();
+	}, ID_SET_HISTORY_AND_CLOSE);
+	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	buttonSizer->Add(Set,1,wxALL,3);
+	buttonSizer->Add(Ok,1,wxALL,3);
+	buttonSizer->Add(Cancel,1,wxALL,3);
+	main->Add(HistoryList,1,wxEXPAND|wxALL,3);
+	main->Add(buttonSizer,0, wxCENTER);
+	main->SetMinSize(300,400);
+	SetSizerAndFit(main);
+	CenterOnParent();
+	HistoryList->SetSelection(file->Iter(),true);
+}
 
 
 File::File()
+	:etidtionType(0)
+	,activeLine(0)
 {
 }
 
@@ -86,7 +176,7 @@ SubsFile::~SubsFile()
 }
 
 
-void SubsFile::SaveUndo()
+void SubsFile::SaveUndo(unsigned char editionType, int activeLine)
 {
 	int size=maxx();
 	if(iter!=size){
@@ -97,6 +187,8 @@ void SubsFile::SaveUndo()
 		}
 		undo.erase(undo.begin()+iter+1, undo.end());
 	}
+	subs->activeLine = activeLine;
+	subs->etidtionType = editionType;
 	undo.push_back(subs);
 	subs=subs->Copy();
 	iter++;
@@ -108,6 +200,7 @@ void SubsFile::Redo()
 {
     if(iter<maxx()){
 		iter++;
+		subs->Clear();
 		delete subs;
 		subs=undo[iter]->Copy();
 	}
@@ -117,9 +210,22 @@ void SubsFile::Undo()
 {
     if(iter>0){
 		iter--;
+		subs->Clear();
 		delete subs;
 		subs=undo[iter]->Copy();
 	}
+}
+
+bool SubsFile::SetHistory(int _iter)
+{
+    if(_iter < undo.size() && _iter>=0){
+		iter = _iter;
+		subs->Clear();
+		delete subs;
+		subs=undo[iter]->Copy();
+		return false;
+	}
+	return true;
 }
 
 void SubsFile::DummyUndo()
@@ -186,8 +292,10 @@ SInfo *SubsFile::CopySinfo(int i, bool push)
 	return sinf;
 }
 
-void SubsFile::EndLoad()
+void SubsFile::EndLoad(unsigned char editionType, int activeLine)
 {
+	subs->activeLine = activeLine;
+	subs->etidtionType = editionType;
 	undo.push_back(subs);
 	subs=subs->Copy();
 }
@@ -213,4 +321,18 @@ void SubsFile::GetURStatus(bool *_undo, bool *_redo)
 File *SubsFile::GetSubs()
 {
 	return subs;
+}
+
+void SubsFile::GetHistoryTable(wxArrayString *history)
+{
+	for(size_t i = 0; i < undo.size(); i++){
+		history->push_back(historyNames[undo[i]->etidtionType] + 
+			wxString::Format(_(", aktywna linia %i"), undo[i]->activeLine));
+	}
+}
+
+void SubsFile::ShowHistory(wxWindow *parent, std::function<void(int)> functionAfterChangeHistory)
+{
+	HistoryDialog HD(parent, this, functionAfterChangeHistory);
+	HD.ShowModal();
 }

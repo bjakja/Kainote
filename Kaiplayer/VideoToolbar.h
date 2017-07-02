@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __VIDEO_TOOLBAR__
-#define __VIDEO_TOOLBAR__
+#pragma once
 
 #include <wx/wx.h>
 #include <vector>
@@ -98,4 +97,3 @@ enum{
 	ID_PLAY_AFTER
 };
 
-#endif

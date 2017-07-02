@@ -138,6 +138,7 @@ void Hotkeys::LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio)
 		_hkeys[idAndType(FindReplaceDialog,GLOBAL_HOTKEY)] = hdata(_("Znajdź i zmień"), "Ctrl-H");
 		_hkeys[idAndType(Undo,GLOBAL_HOTKEY)] = hdata(_("Cofnij"), "Ctrl-Z");
 		_hkeys[idAndType(Redo,GLOBAL_HOTKEY)] = hdata(_("Ponów"), "Ctrl-Y");
+		_hkeys[idAndType(History,GLOBAL_HOTKEY)] = hdata(_("Historia"), "Ctrl-Shift-H");
 		_hkeys[idAndType(OpenSubs,GLOBAL_HOTKEY)] = hdata(_("Otwórz napisy"), "Ctrl-O");
 		_hkeys[idAndType(SaveSubs,GLOBAL_HOTKEY)] = hdata(_("Zapisz"), "Ctrl-S");
 		_hkeys[idAndType(SaveSubsAs,GLOBAL_HOTKEY)] = hdata(_("Zapisz jako..."), "Ctrl-Shift-S");

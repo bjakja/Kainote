@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STYLEPREVIEW
-#define STYLEPREVIEW
+#pragma once
 
 
 #include <wx/wx.h>
@@ -54,4 +53,3 @@ class StylePreview : public wxWindow
 		DECLARE_EVENT_TABLE()
 	};
 
-#endif

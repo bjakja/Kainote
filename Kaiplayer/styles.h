@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STYLES_H_INCLUDED
-#define STYLES_H_INCLUDED
+#pragma once
 
 #include <wx/colour.h>
 
@@ -67,4 +66,3 @@ public:
 	SInfo *Copy();
 };
 
-#endif // STYLES_H_INCLUDED

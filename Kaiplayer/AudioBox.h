@@ -35,9 +35,7 @@
 //
 
 
-#ifndef AUDIO_BOX_H
-#define AUDIO_BOX_H
-
+#pragma once
 
 ///////////
 // Headers
@@ -155,4 +153,3 @@ enum {
 };
 
 
-#endif

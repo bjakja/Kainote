@@ -28,8 +28,7 @@
 //
 // Aegisub Project http://www.aegisub.org/
 
-#ifndef AUTODIALOG
-#define AUTODIALOG
+#pragma once
 
 #include <wx/wx.h>
 #include "KaiDialog.h"
@@ -113,4 +112,3 @@ class LuaDialogControl {
 
 };
 
-#endif

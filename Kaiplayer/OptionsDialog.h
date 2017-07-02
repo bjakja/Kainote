@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef OPTIONSDIALOG
-#define OPTIONSDIALOG
+#pragma once
 
 #include <wx/wx.h>
 #include "ListControls.h"
@@ -86,4 +85,3 @@ enum{
 
 
 
-#endif

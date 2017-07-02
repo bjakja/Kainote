@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __KAI_TEXT_CTRL__
-#define __KAI_TEXT_CTRL__
+#pragma once
 
 #include <wx/wx.h>
 #include <wx/caret.h>
@@ -149,4 +148,3 @@ enum{
 	ID_TRETURN
 };
 
-#endif

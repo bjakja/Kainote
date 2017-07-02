@@ -21,10 +21,7 @@
 
  **************************************************************/
 
-#ifndef KAINOTEMAIN_H
-#define KAINOTEMAIN_H
-
-//#pragma once
+#pragma once
 
 #include <wx/timer.h>
 #include <wx/sizer.h>
@@ -90,7 +87,7 @@ class kainoteFrame: public KaiFrame
 		wxString GetStatusText(int field){return StatusBar->GetStatusText(field);}
 		void SetSubsResolution(bool dialog=false);
 		void SetVideoResolution(int w, int h, bool dialog=false);
-		void ShowBadResolutionDialog(const wxString &videoRes, const wxString &subsRes);
+		void ShowBadResolutionDialog(const wxSize &videoRes, const wxSize &subsRes);
 		FindReplace *FR;
 		SelectLines *SL;
 		Auto::Automation *Auto;
@@ -142,14 +139,3 @@ enum{
 	ID_CONV
 };
 
-	/*XX( CrossPositioner,)\
-	XX( Positioner,)\
-	XX( Movement,)\
-	XX( Scalling,)\
-	XX( RotatingZ,)\
-	XX( RotatingXY,)\
-	XX( RectangleClips,)\
-	XX( VectorClips,)\
-	XX( VectorDrawings,)\
-	XX( MoveAll,)\*/
-#endif // KAINOTEMAIN_H

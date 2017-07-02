@@ -9,8 +9,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _KAIVALTEXT_H_
-#define _KAIVALTEXT_H_
+#pragma once
 
 #include "wx/defs.h"
 
@@ -103,4 +102,3 @@ private:
 };
 
 
-#endif // _WX_VALTEXT_H_

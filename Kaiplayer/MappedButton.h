@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _MAPPED_BUTTON_
-#define _MAPPED_BUTTON_
+#pragma once
 
 #include "wx/tglbtn.h"
 #include "Hotkeys.h"
@@ -86,5 +85,3 @@ private:
 	bool enter;
 	bool toggled;
 };
-
-#endif

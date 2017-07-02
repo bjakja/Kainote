@@ -427,7 +427,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 	if(event.LeftDClick() && event.GetModifiers()==0){
 		SetFullskreen();
 		if(!isFullscreen && Kai->GetTab()->SubsPath!="" && Options.GetBool(SelectVisibleLineAfterFullscreen)){
-			Kai->GetTab()->Edit->Send(false);
+			Kai->GetTab()->Edit->Send(EDITBOX_LINE_EDITION,false);
 			Kai->GetTab()->Grid1->SelVideoLine();
 		}
 		int w,h;
@@ -515,7 +515,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 			if(istl){aline->TextTl=ltext;}else{aline->Text=ltext;}
 			Kai->GetTab()->Grid1->ChangeCell((istl)?TXTTL : TXT, Kai->GetTab()->Edit->ebrow, aline);
 			Kai->GetTab()->Grid1->Refresh(false);
-			Kai->GetTab()->Grid1->SetModified();
+			Kai->GetTab()->Grid1->SetModified(VISUAL_POSITION);
 		}
 	}
 

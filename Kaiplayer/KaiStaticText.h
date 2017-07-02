@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _KAI_STATIC_TEXT_
-#define _KAI_STATIC_TEXT_
+#pragma once
 
 #include <wx/window.h>
 #include "config.h"
@@ -38,5 +37,3 @@ private:
 	COLOR textColour;
 	wxString text;
 };
-
-#endif

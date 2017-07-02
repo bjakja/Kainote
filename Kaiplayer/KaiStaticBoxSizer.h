@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _STATICBOXSIZER_
-#define _STATICBOXSIZER_
+#pragma once
 
 #include <wx/wx.h>
 
@@ -44,5 +43,3 @@ private:
 	bool Detach( wxWindow *window );
 	KaiStaticBox *box;
 };
-
-#endif

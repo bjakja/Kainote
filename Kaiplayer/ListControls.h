@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _LIST_CONTROLS_
-#define _LIST_CONTROLS_
+#pragma once
 
 #include <map>
 #include "config.h"
@@ -134,4 +133,3 @@ enum{
 	KAI_SCROLL_ON_FOCUS
 };
 
-#endif

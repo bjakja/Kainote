@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __KAISLIDER__
-#define __KAISLIDER__
+#pragma once
 
 #include <wx/window.h>
 #include <wx/timer.h>
@@ -54,5 +53,3 @@ private:
 	wxString tip;
 	DECLARE_EVENT_TABLE()
 };
-
-#endif

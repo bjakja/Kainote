@@ -14,6 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+
 #include <wx/string.h>
 
 typedef unsigned char BYTE;

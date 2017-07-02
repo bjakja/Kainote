@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef NUMCTRL
-#define NUMCTRL
+#pragma once
 
 #include <wx/wx.h>
 #include "KaiTextCtrl.h"
@@ -58,4 +57,3 @@ class NumCtrl : public KaiTextCtrl
 		DECLARE_EVENT_TABLE()
 	};
 
-#endif

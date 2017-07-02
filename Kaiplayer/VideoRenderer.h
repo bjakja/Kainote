@@ -13,10 +13,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VIDEORENDERER
-#define VIDEORENDERER
 
 #pragma once
+
 #include <wx/wx.h>
 #include <d3d9.h>
 #include <d3dx9.h>
@@ -271,4 +270,3 @@ class VideoRend : public wxWindow
 	font->DrawTextW(NULL, text.wchar_str(), -1, &rect, align, color );
 #endif
 
-#endif

@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __KAI_TOOLBAR__
-#define __KAI_TOOLBAR__
+#pragma once
 
 #include <wx/wx.h>
 #include "Menu.h"
@@ -116,4 +115,3 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
-#endif

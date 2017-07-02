@@ -13,9 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef FONTDIALOG
-#define FONTDIALOG
-
+#pragma once
 
 #include "NumCtrl.h"
 #include "KaiCheckBox.h"
@@ -112,4 +110,3 @@ enum{
 	ID_SCROLLUP=30060,
 	ID_SCROLLDOWN=30061
 };
-#endif

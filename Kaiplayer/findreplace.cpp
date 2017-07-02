@@ -343,7 +343,7 @@ void FindReplace::OnReplaceAll(wxCommandEvent& event)
 
 	}
 
-	pan->Grid1->SetModified();
+	pan->Grid1->SetModified(REPLACE_ALL);
 	pan->Grid1->Refresh(false);
 	blockTextChange=true;
 	KaiMessageBox(wxString::Format(_("Zmieniono %i razy."),allreps1),_("Szukaj Zamień"));
@@ -400,7 +400,7 @@ void FindReplace::OnButtonRep(wxCommandEvent& event)
 		grid->CopyDial(reprow)->Effect=tab->Edit->EffectEdit->GetValue();
 	}
 
-	grid->SetModified();
+	grid->SetModified(REPLACE_SINGLE);
 	grid->Refresh(false);
 	postxt=findstart+rep.Len();
 	Find();

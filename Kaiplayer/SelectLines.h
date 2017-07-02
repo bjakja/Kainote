@@ -13,9 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SELECTLINES_H
-#define SELECTLINES_H
-
+#pragma once
 
 #include "ListControls.h"
 #include "KaiTextCtrl.h"
@@ -66,4 +64,3 @@ enum{
 	ID_SELECTIONS
 };
 
-#endif

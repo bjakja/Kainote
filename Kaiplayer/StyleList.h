@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STYLELIST
-#define STYLELIST
+#pragma once
 
 #include <wx/wx.h>
 #include <vector>
@@ -62,4 +61,3 @@ class StyleList : public KaiScrolledWindow
 };
 
 
-#endif

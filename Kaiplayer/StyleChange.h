@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef COLORCHANGE_H
-#define COLORCHANGE_H
+#pragma once
 
 	#include <wx/stattext.h>
 	#include "ListControls.h"
@@ -154,4 +153,4 @@ enum{
 	ID_BONFULL
 	};
 
-#endif
+

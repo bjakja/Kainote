@@ -34,8 +34,7 @@
 // Contact: mailto:zeratul@cellosoft.com
 //
 
-#ifndef AUDIO_SPECTRUM_H
-#define AUDIO_SPECTRUM_H
+#pragma once
 
 #include <wx/wxprec.h>
 #include <stdint.h>
@@ -89,5 +88,3 @@ public:
 };
 
 
-
-#endif

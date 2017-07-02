@@ -28,8 +28,7 @@
 //
 // Aegisub Project http://www.aegisub.org/
 
-#ifndef AUTOMATION_H
-#define AUTOMATION_H
+#pragma once
 
 #include <deque>
 #include <vector>
@@ -217,4 +216,3 @@ class LuaThreadedCall : public wxThread {
 	};
 }
 
-#endif

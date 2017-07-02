@@ -33,8 +33,7 @@
 // Contact: mailto:zeratul@cellosoft.com
 //
 
-#ifndef COLORSPACE_H
-#define COLORSPACE_H
+#pragma once
 
 #include <wx/wxprec.h>
 #include <wx/colour.h>
@@ -79,4 +78,4 @@ wxString color_to_html(wxColour color);
 wxColour html_to_color(wxString html);
 
 
-#endif
+

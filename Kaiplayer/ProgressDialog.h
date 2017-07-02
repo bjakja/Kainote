@@ -14,8 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef PROGRESSDIALOG
-#define PROGRESSDIALOG
+#pragma once
 
 #include <wx/wx.h>
 #include <wx/gauge.h>
@@ -81,4 +80,3 @@ private:
 
 
 
-#endif

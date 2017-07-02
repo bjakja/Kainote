@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __KAISCROLLBAR__
-#define __KAISCROLLBAR__
+#pragma once
 
 #include <wx/wx.h>
 
@@ -98,5 +97,3 @@ enum{
 	ELEMENT_THUMB=4,
 	ELEMENT_BETWEEN_THUMB=8
 };
-
-#endif

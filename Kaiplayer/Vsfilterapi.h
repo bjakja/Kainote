@@ -28,8 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
  ****************************************************************************/
 
-#ifndef _CSRILIB_H
-#define _CSRILIB_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -186,4 +185,4 @@ extern void csrilib_os_init();
 }
 #endif
 
-#endif /*_CSRILIB_H */
+

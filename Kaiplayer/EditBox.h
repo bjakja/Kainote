@@ -13,8 +13,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EDITBOX_H_INCLUDED
-#define EDITBOX_H_INCLUDED
 
 #pragma once
 
@@ -81,7 +79,7 @@ public:
 	virtual ~EditBox();
 	void SetLine(int Row, bool setaudio=true, bool save=true, bool nochangeline=false, bool autoPlay = false);
 	void SetTl(bool tl);
-	void Send(bool selline=true, bool dummy=false, bool visualdummy=false);
+	void Send(unsigned char editionType, bool selline=true, bool dummy=false, bool visualdummy=false);
 	void RefreshStyle(bool resetline=false);
 	bool FindVal(const wxString &wval, wxString *returnval, const wxString &text="", bool *endsel=0, bool fromstart=false);
 	void HideControls();
@@ -222,4 +220,3 @@ enum{
 	
 };
 
-#endif // EDITBOX_H_INCLUDED

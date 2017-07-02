@@ -115,6 +115,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	EditMenu = new Menu();
 	EditMenu->AppendTool(Toolbar, Undo, _("&Cofnij"), _("Cofnij"),PTR_BITMAP_PNG("undo"),false);
 	EditMenu->AppendTool(Toolbar, Redo, _("&Ponów"), _("Ponów"),PTR_BITMAP_PNG("redo"),false);
+	EditMenu->AppendTool(Toolbar, History, _("&Historia"), _("Historia"),PTR_BITMAP_PNG("history"),true);
 	EditMenu->AppendTool(Toolbar,FindReplaceDialog, _("Znajdź i za&mień"), _("Szuka i podmienia dane frazy tekstu"),PTR_BITMAP_PNG("findreplace"));
 	EditMenu->AppendTool(Toolbar,Search, _("Z&najdź"), _("Szuka dane frazy tekstu"),PTR_BITMAP_PNG("search"));
 	Menu *SortMenu[2];
@@ -182,7 +183,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	SubsMenu->AppendTool(Toolbar,ChangeTime, _("Okno zmiany &czasów\tCtrl-I"), _("Przesuwanie czasów napisów"),PTR_BITMAP_PNG("times"));
 	SubsMenu->AppendTool(Toolbar,FontCollectorID, _("Kolekcjoner czcionek"), _("Kolekcjoner czcionek"),PTR_BITMAP_PNG("fontcollector"));
 	SubsMenu->AppendTool(Toolbar,SubsResample, _("Zmień rozdzielczość napisów"), _("Zmień rozdzielczość napisów"),PTR_BITMAP_PNG("subsresample"));
-	SubsMenu->AppendTool(Toolbar,SpellcheckerDialog, _("Sprawdź poprawność pisowni"), _("Sprawdź poprawność pisowni"),PTR_BITMAP_PNG("subsresample"));
+	SubsMenu->AppendTool(Toolbar,SpellcheckerDialog, _("Sprawdź poprawność pisowni"), _("Sprawdź poprawność pisowni"),PTR_BITMAP_PNG("spellchecker"));
 	SubsMenu->AppendTool(Toolbar,HideTags, _("Ukryj tagi w nawiasach"), _("Ukrywa tagi w nawiasach ASS i MDVD"),PTR_BITMAP_PNG("hidetags"));
 	Menubar->Append(SubsMenu, _("&Napisy"));
 
@@ -211,7 +212,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(ID_CLOSEPAGE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnPageClose);
 	Connect(NextTab,PreviousTab,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnPageChange);
 	//tutaj dodawaj nowe idy
-	Connect(SaveSubs,Undo,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
+	Connect(SaveSubs,History,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
 	Connect(7000,7011,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
 	Connect(ID_MOVE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
 	Connect(OpenSubs,ANSI,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
@@ -338,6 +339,10 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->Grid1->GetUndo(false);
 	}else if(id==Redo){
 		tab->Grid1->GetUndo(true);
+	}else if(id==History){
+		tab->Grid1->file->ShowHistory(this, [=](int iter){
+			tab->Grid1->GetUndo(false, iter);
+		});
 	}else if(id==Search || id==FindReplaceDialog){
 		if(FR && FR->IsShown() && FR->repl && id==FindReplaceDialog){FR->Hide();return;}
 		if(!FR){FR= new FindReplace(this, id==FindReplaceDialog);}
@@ -662,7 +667,7 @@ void kainoteFrame::OnAssProps()
 		if(colls!=collis){ngrid->AddSInfo("Collisions",collis);}
 		wxString bordas=(sci.scaleBorderAndShadow->GetValue())?"yes":"no";
 		if(bords !=bordas){ ngrid->AddSInfo("ScaledBorderAndShadow",bordas);}
-		ngrid->SetModified();
+		ngrid->SetModified(ASS_PROPERTIES);
 		SetSubsResolution();
 	}
 }
@@ -817,7 +822,9 @@ void kainoteFrame::SetSubsResolution(bool showDialog)
 {
 	TabPanel *cur = GetTab();
 	if(cur->Grid1->form != ASS){return;}
-	wxString resolution = cur->Grid1->GetSInfo("PlayResX") +" x "+ cur->Grid1->GetSInfo("PlayResY");
+	int x=0, y=0;
+	cur->Grid1->GetASSRes(&x, &y);
+	wxString resolution = std::to_string(x) +" x "+ std::to_string(y);
 	SetStatusText(resolution, 7);
 	wxSize vsize;
 	
@@ -830,7 +837,7 @@ void kainoteFrame::SetSubsResolution(bool showDialog)
 			StatusBar->SetLabelTextColour(7, WindowWarningElements);
 			badResolution=true;
 			if(showDialog){
-				ShowBadResolutionDialog(vres, resolution);
+				ShowBadResolutionDialog(vsize, wxSize(x,y));
 			}
 			return;
 		}
@@ -849,13 +856,15 @@ void kainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
 	wxString resolution;
 	resolution<<w<<" x "<<h;
 	SetStatusText(resolution, 5);
-	wxString sres = cur->Grid1->GetSInfo("PlayResX") +" x "+ cur->Grid1->GetSInfo("PlayResY");
+	int x=0, y=0;
+	cur->Grid1->GetASSRes(&x, &y);
+	wxString sres = std::to_string(x) +" x "+ std::to_string(y);
 	if(resolution != sres && sres.Len()>3 && cur->edytor){
 		StatusBar->SetLabelTextColour(5, WindowWarningElements);
 		StatusBar->SetLabelTextColour(7, WindowWarningElements);
 		badResolution=true;
 		if(showDialog){
-			ShowBadResolutionDialog(resolution, sres);
+			ShowBadResolutionDialog(wxSize(w,h), wxSize(x,y));
 		}
 	}else if(badResolution){
 		StatusBar->SetLabelTextColour(5, WindowText);
@@ -864,17 +873,9 @@ void kainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
 	}
 }
 
-void kainoteFrame::ShowBadResolutionDialog(const wxString &videoRes, const wxString &subsRes)
+void kainoteFrame::ShowBadResolutionDialog(const wxSize &videoRes, const wxSize &subsRes)
 {
-	wxString vx = videoRes.BeforeFirst(' ');
-	wxString sx = subsRes.BeforeFirst(' ');
-	wxString vy = videoRes.AfterLast(' ');
-	wxString sy = subsRes.AfterLast(' ');
-	int ox=wxAtoi(sx);
-	int oy=wxAtoi(sy);
-	int newx=wxAtoi(vx);
-	int newy=wxAtoi(vy);
-	SubsMismatchResolutionDialog badResDialog(this, wxSize(ox,oy), wxSize(newx, newy));
+	SubsMismatchResolutionDialog badResDialog(this, subsRes, videoRes);
 	badResDialog.ShowModal();
 }
 
@@ -1649,7 +1650,7 @@ void kainoteFrame::OnAudioSnap(wxCommandEvent& event)
 		STime durTime = tab->Edit->EndEdit->GetTime() - tab->Edit->StartEdit->GetTime();
 		if(durTime.mstime<0){durTime.mstime=0;}
 		tab->Edit->DurEdit->SetTime(durTime, false, 1);
-		tab->Edit->Send(false);
+		tab->Edit->Send(SNAP_TO_KEYFRAME_OR_LINE_TIME, false);
 		tab->Edit->ABox->audioDisplay->SetDialogue(tab->Edit->line,tab->Edit->ebrow, !snapStartTime);
 		tab->Video->RefreshTime();
 	}

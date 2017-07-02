@@ -237,7 +237,7 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 	int fsel=tab->Grid1->FirstSel();
 	int wset=(fsel<0)? tab->Edit->ebrow : fsel;
 	tab->Edit->SetLine(wset);
-	tab->Grid1->SetModified(false);
+	tab->Grid1->SetModified(SELECT_LINES, false);
 	tab->Grid1->RepaintWindow();
 	wxString messagetxt= (sopt==0)? wxString::Format(_("Zaznaczono %i linijek."), allreps) :
 		(sopt==1)? wxString::Format(_("Dodano do zaznaczenia %i linijek."), allreps) : 

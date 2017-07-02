@@ -307,7 +307,7 @@ void MoveAll::ChangeInLines(bool all)
 	if(all){
 		tab->Video->VisEdit=true;
 		if(tab->Edit->splittedTags){tab->Edit->TextEditOrig->modified=true;}
-		tab->Grid1->SetModified(true);
+		tab->Grid1->SetModified(VISUAL_POSITION_SHIFTER,true);
 		tab->Grid1->Refresh();
 	}else{
 		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}

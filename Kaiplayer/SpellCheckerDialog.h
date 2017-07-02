@@ -22,6 +22,7 @@
 #include "KaiListCtrl.h"
 
 class kainoteFrame;
+class TabPanel;
 
 class SpellCheckerDialog : public KaiDialog
 {
@@ -39,6 +40,7 @@ private:
 	void AddWord(wxCommandEvent &evt);
 	void RemoveWord(wxCommandEvent &evt);
 	void OnSelectSuggestion(wxCommandEvent &evt);
+	void OnActive(wxActivateEvent &evt);
 	wxString GetRightCase(const wxString &replaceWord, const wxString &misspellWord);
 
 	KaiTextCtrl *misSpell;
@@ -59,7 +61,9 @@ private:
 	int lastActiveLine;
 	wxArrayString ignored;
 	wxArrayInt errors;
+	wxString lastText;
 	kainoteFrame *Kai;
+	TabPanel *tab;
 };
 
 enum

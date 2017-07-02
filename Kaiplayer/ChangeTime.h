@@ -13,8 +13,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef CTwindow_H
-#define CTwindow_H
+#pragma once
+
 #include "TimeCtrl.h"
 #include "SubsTime.h"
 #include "NumCtrl.h"
@@ -123,4 +123,3 @@ enum{
 	ID_AUDIO
 };
 
-#endif

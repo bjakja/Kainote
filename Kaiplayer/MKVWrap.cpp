@@ -349,7 +349,7 @@ bool MatroskaWrapper::GetSubtitles(Grid *target) {
 			for (unsigned int i=0;i<subList.size();i++) {
 				target->AddLine(new Dialogue(subList[i]));
 			}
-			target->file->EndLoad();
+			target->file->EndLoad(OPEN_SUBTITLES, 1);
 			subList.clear();
 			return 1;
 		});

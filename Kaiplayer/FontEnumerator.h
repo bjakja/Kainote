@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _FONT_ENUMERATOR_
-#define _FONT_ENUMERATOR_
+#pragma once
 
 #include <wx/arrstr.h>
 #include <wx/thread.h>
@@ -62,4 +61,4 @@ private:
 };
 
 extern FontEnumerator FontEnum;
-#endif
+

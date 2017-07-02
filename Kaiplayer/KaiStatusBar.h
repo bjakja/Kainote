@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __KAI_STATUSBAR__
-#define __KAI_STATUSBAR__
+#pragma once
 
 #include <wx/window.h>
 #include <vector>
@@ -49,5 +48,3 @@ private:
 	std::vector<COLOR> background;
 };
 
-
-#endif

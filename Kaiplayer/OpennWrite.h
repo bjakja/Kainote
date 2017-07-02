@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef OPENNWRITE_H_INCLUDED
-#define OPENNWRITE_H_INCLUDED
+#pragma once
 
 #include <wx/file.h>
 #include <wx/thread.h>
@@ -36,4 +35,4 @@ class OpenWrite
     bool isfirst;
 };
 
-#endif // OPENNWRITE_H_INCLUDED
+

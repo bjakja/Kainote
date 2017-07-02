@@ -75,61 +75,62 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 	mdc.DrawRectangle(0,0,w,h);
 	wxColour text = (isActive)? Options.GetColour(WindowHeaderText) : Options.GetColour(WindowHeaderTextInactive);
 	mdc.SetTextForeground(text);
+	int maximizeDiff = (IsMaximized())? 3 : 0;
 	wxIconBundle icons = GetIcons();
 	if(icons.GetIconCount()){
 		//if(icons.GetIconByIndex(0).GetHeight()!=16){
 		wxImage img = wxBitmap(icons.GetIconByIndex(0)).ConvertToImage();
 		img = img.Scale(16,16,wxIMAGE_QUALITY_BILINEAR);
-		mdc.DrawBitmap(wxBitmap(img), 8, 5);
+		mdc.DrawBitmap(wxBitmap(img), 8 + maximizeDiff, 5 + maximizeDiff);
 		//}else{
 		//mdc.DrawIcon(icons.GetIconByIndex(0), 4, 4);
 		//}
 	}
 	if(GetTitle()!=""){
-		mdc.DrawText(GetTitle(), icons.GetIconCount()? 30 : 6, 5);
+		mdc.DrawText(GetTitle(), icons.GetIconCount()? 30 : 6 + maximizeDiff, 5 + maximizeDiff);
 	}
 	if(enterClose || pushedClose){
 		wxColour buttonxbg = (enterClose && !pushedClose)? Options.GetColour(WindowHoverCloseButton) : 
 			Options.GetColour(WindowPushedCloseButton);
 		mdc.SetBrush(buttonxbg);
 		mdc.SetPen(buttonxbg);
-		mdc.DrawRectangle(w-25, 4, 18, 18);
+		mdc.DrawRectangle(w-25 - maximizeDiff, 4 + maximizeDiff, 18, 18);
 	}else if(enterMaximize || pushedMaximize){
 		wxColour buttonxbg = (enterMaximize && !pushedMaximize)? Options.GetColour(WindowHoverHeaderElement) : 
 			Options.GetColour(WindowPushedHeaderElement);
 		mdc.SetBrush(buttonxbg);
 		mdc.SetPen(buttonxbg);
-		mdc.DrawRectangle(w-50, 4, 18, 18);
+		mdc.DrawRectangle(w-50 - maximizeDiff, 4 + maximizeDiff, 18, 18);
 	}else if(enterMinimize || pushedMinimize){
 		wxColour buttonxbg = (enterMinimize && !pushedMinimize)? Options.GetColour(WindowHoverHeaderElement) : 
 			Options.GetColour(WindowPushedHeaderElement);
 		mdc.SetBrush(buttonxbg);
 		mdc.SetPen(buttonxbg);
-		mdc.DrawRectangle(w-75, 4, 18, 18);
+		mdc.DrawRectangle(w-75 - maximizeDiff, 4 + maximizeDiff, 18, 18);
 	}
 	mdc.SetPen(wxPen(text,2));
 	mdc.SetBrush(wxBrush(text));
 	//draw X
-	mdc.DrawLine(w-21,8, w-12,16);
-	mdc.DrawLine(w-12,8, w-21,16);
+	mdc.DrawLine(w-21 - maximizeDiff,8 + maximizeDiff, w-12 - maximizeDiff,16 + maximizeDiff);
+	mdc.DrawLine(w-12 - maximizeDiff,8 + maximizeDiff, w-21 - maximizeDiff,16 + maximizeDiff);
 	//draw maximize
 
 	if(IsMaximized()){
 		mdc.SetPen(text);
 		mdc.SetBrush(*wxTRANSPARENT_BRUSH);
-		mdc.DrawRectangle(w-44,8, 9,7);
-		mdc.DrawRectangle(w-47,11, 9,7);
+		mdc.DrawRectangle(w-44 - maximizeDiff,8 + maximizeDiff, 9,7);
+		mdc.DrawRectangle(w-47 - maximizeDiff,11 + maximizeDiff, 9,7);
 		mdc.SetPen(*wxTRANSPARENT_PEN);
 	}else{
 		mdc.SetPen(*wxTRANSPARENT_PEN);
-		mdc.DrawRectangle(w-47,7, 1,12);
-		mdc.DrawRectangle(w-47,7, 12,2);
-		mdc.DrawRectangle(w-47,18, 12,1);
-		mdc.DrawRectangle(w-36,7, 1,12);
+		mdc.DrawRectangle(w-47 - maximizeDiff,7 + maximizeDiff, 1,12);
+		mdc.DrawRectangle(w-47 - maximizeDiff,7 + maximizeDiff, 12,2);
+		mdc.DrawRectangle(w-47 - maximizeDiff,18 + maximizeDiff, 12,1);
+		mdc.DrawRectangle(w-36 - maximizeDiff,7 + maximizeDiff, 1,12);
 	}
 	//draw minimize
 	mdc.SetBrush(wxBrush(text));
-	mdc.DrawRectangle(w-72,17, 12,2);
+	mdc.DrawRectangle(w-72 - maximizeDiff,17 + maximizeDiff, 12,2);
 
 	dc.Blit(0,0,w,ftopBorder, &mdc, 0, 0);
 	dc.Blit(0,ftopBorder,fborder,h-ftopBorder-fborder, &mdc, 0, ftopBorder);

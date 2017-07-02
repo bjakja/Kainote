@@ -28,8 +28,7 @@
 //
 // Aegisub Project http://www.aegisub.org/
 
-#ifndef SPELLCHECK
-#define SPELLCHECK
+#pragma once
 
 #include "Config.h"
 #include <hunspell.hxx>
@@ -60,5 +59,3 @@ private:
 };
 
 
-
-#endif

@@ -335,7 +335,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	bool rowChanged = ebrow != Row;
 	if(nochangeline && !rowChanged){goto done;}
 	if(Options.GetInt(GridSaveAfterCharacterCount)>1 && rowChanged && save){
-		Send(false);
+		Send(EDITBOX_LINE_EDITION, false);
 	}
 	Dialogue *prevDial = grid->GetDial(ebrow);
 	if(prevDial && prevDial->Start.mstime > prevDial->End.mstime){
@@ -455,7 +455,7 @@ void EditBox::UpdateChars(const wxString &text)
 //selline przechodzi do następnej linii
 //dummy nie zapisuje linii do grida
 //visualdummy nie odświeża klatki wideo wykorzystywane przy visualu clipów
-void EditBox::Send(bool selline, bool dummy, bool visualdummy)
+void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool visualdummy)
 {
 	long cellm=0;
 	if(!dummy && !visualdummy && StartEdit->changedBackGround){
@@ -548,7 +548,7 @@ void EditBox::Send(bool selline, bool dummy, bool visualdummy)
 	if(cellm){
 		if(ebrow<grid->GetCount() && !dummy){
 			//OnVideo=false;
-			grid->ChangeLine(line, ebrow, cellm, selline, visualdummy);
+			grid->ChangeLine(editionType, line, ebrow, cellm, selline, visualdummy);
 			if(cellm & ACTOR || cellm & EFFECT){
 				grid->RebuildActorEffectLists();
 			}
@@ -609,7 +609,7 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 				else{dialc->Text.Prepend("{"+text+"}");}
 			}
 		}
-		grid->SetModified();
+		grid->SetModified(EDITBOX_MULTILINE_EDITION);
 		grid->Refresh(false);
 	}
 
@@ -699,7 +699,7 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 				dialc->Text.Prepend(chars+text+chare);
 			}
 		}
-		grid->SetModified();
+		grid->SetModified(EDITBOX_MULTILINE_EDITION);
 		grid->Refresh(false);
 	}
 
@@ -815,7 +815,7 @@ void EditBox::OnCommit(wxCommandEvent& event)
 	TabPanel* pan=(TabPanel*)GetParent();
 	pan->Video->blockpaint=true;
 	if(splittedTags&&(TextEdit->modified || TextEditOrig->modified)){TextEdit->modified=true; TextEditOrig->modified=true;}
-	Send(false, false, Visual!=0);
+	Send(EDITBOX_LINE_EDITION, false, false, Visual!=0);
 	if(Visual){
 		pan->Video->SetVisual(false, true);
 	}
@@ -830,7 +830,7 @@ void EditBox::OnNewline(wxCommandEvent& event)
 	if(splittedTags&&(TextEdit->modified || TextEditOrig->modified)){TextEdit->modified=true; TextEditOrig->modified=true;}
 	bool noNewLine = !(StartEdit->HasFocus() || EndEdit->HasFocus() || DurEdit->HasFocus()) || !Options.GetBool(NoNewLineAfterTimesEdition);
 	if(!noNewLine && ABox){ABox->audioDisplay->SetDialogue(line,ebrow);}
-	Send(noNewLine);
+	Send(EDITBOX_LINE_EDITION, noNewLine);
 }
 
 void EditBox::OnBoldClick(wxCommandEvent& event)
@@ -1307,7 +1307,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	int saveAfter = Options.GetInt(GridSaveAfterCharacterCount);
 	if(saveAfter && EditCounter>= saveAfter){
 		bool tmpOnVideo = OnVideo;
-		Send(false,false,true);
+		Send(EDITBOX_LINE_EDITION, false, false, true);
 		OnVideo = tmpOnVideo;
 		EditCounter=1;
 	}else{EditCounter++;}

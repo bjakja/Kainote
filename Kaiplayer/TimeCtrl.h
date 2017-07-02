@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TIMECTRL_H_INCLUDED
-#define TIMECTRL_H_INCLUDED
+#pragma once
 
 #include <wx/wx.h>
 #include "SubsTime.h"
@@ -65,4 +64,3 @@ enum{
 };
 
 
-#endif // TIMECTRL_H_INCLUDED

@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _KAILISTCTRL_
-#define _KAILISTCTRL_
+#pragma once
 
 #include <wx/wx.h>
 #include <vector>
@@ -160,7 +159,7 @@ public:
 	int FindItem(int column, const wxString &textItem);
 	void ScrollTo(int row);
 	size_t GetCount(){return itemList->size();}
-	void SetSelection(int selection){sel = selection; Refresh(false);}
+	void SetSelection(int selection, bool center = false);
 	int GetSelection(){return sel;}
 	void PushHistory();
 	void Undo(wxCommandEvent &evt);
@@ -198,4 +197,3 @@ private:
 };
 
 
-#endif

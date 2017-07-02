@@ -33,8 +33,7 @@
 // Contact: mailto:jiifurusu@gmail.com
 //
 
-#ifndef DIRECTSOUND2
-#define DIRECTSOUND2
+#pragma once
 
 #include <wx/wxprec.h>
 #include <stdint.h>
@@ -83,4 +82,3 @@ public:
 };
 
 
-#endif

@@ -15,7 +15,7 @@
 //
 // Aegisub Project http://www.aegisub.org/
 
-
+#pragma once
 
 #include <vector>
 #include <wx/wx.h>

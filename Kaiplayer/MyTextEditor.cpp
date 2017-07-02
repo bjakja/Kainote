@@ -22,6 +22,7 @@
 #include <wx/clipbrd.h>
 #include "KaiMessageBox.h"
 #include "Stylelistbox.h"
+#include "SubsFile.h"
 //#include <wx/graphics.h>
 #undef DrawText
 
@@ -405,7 +406,7 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 				if(spell){CheckText();}
 				int newto=from+txt.Len();
 				SetSelection(newto,newto);
-				EB->Send(false);
+				EB->Send(EDITBOX_SPELL_CHECKER, false);
 				modified=false;
 			}
 			return;
@@ -1063,7 +1064,7 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 		if(spell){CheckText();}
 		int newto=from+suggs[id-30200].Len();
 		SetSelection(newto,newto);
-		EB->Send(false);
+		EB->Send(EDITBOX_SPELL_CHECKER,false);
 		modified=false;
 	}
 	else if(id==TEXTM_COPY){

@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef VIDEOPROGBAR_H_INCLUDED
-#define VIDEOPROGBAR_H_INCLUDED
+#pragma once
 
 #include <wx/panel.h>
 #include <wx/font.h>
@@ -46,4 +45,3 @@ private:
 	int panelsize;
 };
 
-#endif // VIDEOPROGBAR_H_INCLUDED

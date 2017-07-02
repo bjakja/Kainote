@@ -28,8 +28,7 @@
 //
 // Aegisub Project http://www.aegisub.org/
 
-#ifndef AUTOPROGRESS
-#define AUTOPROGRESS
+#pragma once
 
 #include <wx/wx.h>
 
@@ -112,4 +111,3 @@ class LuaProgressSink : public wxEvtHandler{
 
 };
 
-#endif

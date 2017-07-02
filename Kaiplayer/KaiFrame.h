@@ -13,9 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _KAI_FRAME_
-#define _KAI_FRAME_
-
+#pragma once
 
 #include <wx/toplevel.h>
 //#include <wx/frame.h>
@@ -54,4 +52,3 @@ private:
 	wxDECLARE_ABSTRACT_CLASS(KaiFrame);
 };
 
-#endif

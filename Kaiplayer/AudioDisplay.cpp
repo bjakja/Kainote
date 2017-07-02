@@ -1413,7 +1413,7 @@ void AudioDisplay::CommitChanges (bool nextLine, bool Save, bool moveToEnd) {
 	gtime.NewTime(curEndMS - curStartMS);
 	Edit->DurEdit->SetTime(gtime,true,1);
 	if(Save){
-		Edit->Send(nextLine);
+		Edit->Send(AUDIO_CHANGE_TIME, nextLine);
 		if(!nextLine){Edit->UpdateChars(Edit->TextEdit->GetValue());}
 		((TabPanel *)Edit->GetParent())->Video->RefreshTime();
 	}

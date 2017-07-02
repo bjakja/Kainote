@@ -13,11 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __HOTKEYS__
-#define __HOTKEYS__
-//#include <wx/string.h>
-//#include <wx/accel.h>
-//#include <wx/arrstr.h>
+#pragma once
 
 #include <map>
 #include "ListControls.h"
@@ -78,6 +74,8 @@
 	XX( InsertAfter, ) \
 	XX( InsertBeforeVideo, ) \
 	XX( InsertAfterVideo, ) \
+	XX( InsertBeforeWithVideoFrame, ) \
+	XX( InsertAfterWithVideoFrame, ) \
 	XX( Swap, ) \
 	XX( Duplicate, ) \
 	XX( Join, ) \
@@ -138,6 +136,7 @@
 	XX( GoToPrewKeyframe,)\
 	XX( Redo,)\
 	XX( Undo,)\
+	XX( History,)\
 	XX( OpenSubs,=6800)\
 	XX( OpenVideo,)\
 	XX( Settings,)\
@@ -263,6 +262,4 @@ public:
 };
 
 
-	extern Hotkeys Hkeys;
-
-#endif
+extern Hotkeys Hkeys;

@@ -13,8 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef __KAICHECKBOX__
-#define __KAICHECKBOX__
+#pragma once
 
 #include <wx/window.h>
 #include "config.h"
@@ -56,5 +55,3 @@ private:
 };
 
 void BlueUp(wxBitmap *bmp);
-
-#endif
