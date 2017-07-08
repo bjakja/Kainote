@@ -27,8 +27,8 @@ Stylelistbox::Stylelistbox(wxWindow* parent, bool styles, int numelem, wxString 
 	CheckListBox1 = new KaiListCtrl(this, -1,numelem, arr, wxDefaultPosition, wxSize(200,300), style);
 	Button1 = new MappedButton(this, wxID_OK, "Ok");
 	Button2 = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
-	sizer->Add(Button1, 0, wxALL, 2);
-	sizer->Add(Button2, 0, wxALL, 2);
+	sizer->Add(Button1, 1, wxALL, 2);
+	sizer->Add(Button2, 1, wxALL, 2);
 	sizer1->Add(CheckListBox1,0, wxEXPAND);
 	Main->Add(sizer1,0, wxEXPAND);
 	Main->Add(sizer,0, wxEXPAND);

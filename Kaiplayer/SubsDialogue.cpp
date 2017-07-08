@@ -123,6 +123,7 @@ void Dialogue::SetRaw(const wxString &ldial)
 	if(ldial.Find(" --> ")!=-1){
 		wxString eend;
 		wxString ttext;
+		Form=SRT;
 		Start.SetRaw(ldial.BeforeFirst(' ',&eend),Form);
 		eend=eend.AfterFirst(' ');
 		End.SetRaw(eend.BeforeFirst('\r',&ttext),Form);
@@ -131,7 +132,6 @@ void Dialogue::SetRaw(const wxString &ldial)
 		Text.Replace("\n","\\N");
 		NonDial=false;
 		IsComment=false;
-		Form=SRT;
 	}
 	else if( expresion1.Matches( ldial ) )
 	{

@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+ï»¿//  Copyright (c) 2016, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -18,57 +18,57 @@
 #include "KaiListCtrl.h"
 #include "MappedButton.h"
 
-//pamiêtaj iloœæ elementów tablicy musi byæ równ iloœci enumów
+//pamiÄ™taj iloÅ›Ä‡ elementÃ³w tablicy musi byÄ‡ rÃ³wn iloÅ›ci enumÃ³w
 wxString historyNames[] = {
-	"",//pierwszy element którego nie u¿ywamy a musi byæ ostatni enum weszed³ a tak¿e ochroniæ nas przed potencjalnym 0
-	_("Otwarcie napisów"),
+	"",//pierwszy element ktÃ³rego nie uÅ¼ywamy a musi byÄ‡ ostatni enum weszedÅ‚ a takÅ¼e ochroniÄ‡ nas przed potencjalnym 0
+	_("Otwarcie napisÃ³w"),
 	_("Nowe napisy"),
 	_("Edycja linii"),
 	_("Edycja wielu linii"),
-	_("Poprawa b³êdu pisowni w polu tekstowym"),
+	_("Poprawa bÅ‚Ä™du pisowni w polu tekstowym"),
 	_("Powielenie linijek"),
-	_("Po³¹czenie linijek"),
-	_("Po³¹czenie linijki z poprzedni¹"),
-	_("Po³¹czenie linijki z nastêpn¹"),
-	/*10*/_("Po³¹czenie linijek pozostawienie pierszej"),
-	_("Po³¹czenie linijek pozostawienie ostatniej"),
+	_("PoÅ‚Ä…czenie linijek"),
+	_("PoÅ‚Ä…czenie linijki z poprzedniÄ…"),
+	_("PoÅ‚Ä…czenie linijki z nastÄ™pnÄ…"),
+	/*10*/_("PoÅ‚Ä…czenie linijek pozostawienie pierszej"),
+	_("PoÅ‚Ä…czenie linijek pozostawienie ostatniej"),
 	_("Wklejenie linijek"),
 	_("Wklejenie kolumn"),
-	_("Wklejenie t³umaczenia"),
-	_("Przesuniêcie tekstu t³umaczenia"),
-	_("Ustawienie czasów linii jako ci¹g³ych"),
+	_("Wklejenie tÅ‚umaczenia"),
+	_("PrzesuniÄ™cie tekstu tÅ‚umaczenia"),
+	_("Ustawienie czasÃ³w linii jako ciÄ…gÅ‚ych"),
 	_("Ustawienie FPSu obliczonego z wideo"),
-	_("Ustawienie w³asnego FPSu"),
+	_("Ustawienie wÅ‚asnego FPSu"),
 	_("Zamiana linijek"),
-	/*20*/_("Konwersja napisów"),
-	_("Sortowanie napisów"),
-	_("Usuniêcie linijek"),
-	_("Usuniêcie tekstu"),
-	_("Ustawienie czasu pocz¹tkowego"),
-	_("Ustawienie czasu koñcowego"),
-	_("W³¹czenie trybu t³umaczenia"),
-	_("Wy³¹czenie trybu t³umaczenia"),
+	/*20*/_("Konwersja napisÃ³w"),
+	_("Sortowanie napisÃ³w"),
+	_("UsuniÄ™cie linijek"),
+	_("UsuniÄ™cie tekstu"),
+	_("Ustawienie czasu poczÄ…tkowego"),
+	_("Ustawienie czasu koÅ„cowego"),
+	_("WÅ‚Ä…czenie trybu tÅ‚umaczenia"),
+	_("WyÅ‚Ä…czenie trybu tÅ‚umaczenia"),
 	_("Dodanie nowej linii"),
 	_("Wstawienie linii"),
 	/*30*/_("Zmiana czasu na wykresie audio"),
 	_("Przyklejenie do klatki kluczowej"),
-	_("Zmiana nag³ówku napisów"),
+	_("Zmiana nagÅ‚Ã³wku napisÃ³w"),
 	_("Akcja zaznacz linijki"),
-	_("Przesuniêcie czasów"),
-	_("Poprawa b³êdu pisowni"),
-	_("Edycja stylów"),
-	_("Zmiana rozdzielczoœci napisów"),
-	_("Narzêdzie pozycjonowania"),
-	_("Narzêdzie ruchu"),
-	/*40*/_("Narzêdzie skalowania"),
-	_("Narzêdzie obrotów w osi Z"),
-	_("Narzêdzie obrotów w osiach X i Y"),
-	_("Narzêdzie wycinów prostok¹tnych"),
-	_("Narzêdzie wycinów wektorowych"),
-	_("Narzêdzie rysunków wektorowych"),
-	_("Narzêdzie zmieniacz pozycji"),
-	_("Zamieñ"),
-	_("Zamieñ wszystko"),
+	_("PrzesuniÄ™cie czasÃ³w"),
+	_("Poprawa bÅ‚Ä™du pisowni"),
+	_("Edycja stylÃ³w"),
+	_("Zmiana rozdzielczoÅ›ci napisÃ³w"),
+	_("NarzÄ™dzie pozycjonowania"),
+	_("NarzÄ™dzie ruchu"),
+	/*40*/_("NarzÄ™dzie skalowania"),
+	_("NarzÄ™dzie obrotÃ³w w osi Z"),
+	_("NarzÄ™dzie obrotÃ³w w osiach X i Y"),
+	_("NarzÄ™dzie wycinÃ³w prostokÄ…tnych"),
+	_("NarzÄ™dzie wycinÃ³w wektorowych"),
+	_("NarzÄ™dzie rysunkÃ³w wektorowych"),
+	_("NarzÄ™dzie zmieniacz pozycji"),
+	_("ZamieÅ„"),
+	_("ZamieÅ„ wszystko"),
 	_("Skrypt automatyzacji"),
 };
 
@@ -302,7 +302,7 @@ void SubsFile::EndLoad(unsigned char editionType, int activeLine)
 
 void SubsFile::RemoveFirst(int num)
 {
-	//uwaga pierwszym elementem tablicy s¹ napisy zaraz po wczytaniu dlatego te¿ nie nale¿y go usuwaæ
+	//uwaga pierwszym elementem tablicy sÄ… napisy zaraz po wczytaniu dlatego teÅ¼ nie naleÅ¼y go usuwaÄ‡
 	for(std::vector<File*>::iterator it = undo.begin()+1; it != undo.begin()+num; it++)
 	{
 		(*it)->Clear();

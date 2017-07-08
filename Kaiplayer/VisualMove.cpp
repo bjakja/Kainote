@@ -166,32 +166,43 @@ void Move::SetCurVisual()
 		to.y=((tbl[3]/wsph)-zoomMove.y)*zoomScale.y;
 	}
 	moveDistance = to - from;
-	moveStart=(int)tbl[4];
-	if(tbl[4]>tbl[5]){tbl[5]=end;}
-	moveEnd=(int)tbl[5];
+	int startIter = 4, endIter = 5;
+	if(tbl[4]>tbl[5]){startIter = 5; endIter = 4;}
+	moveStart=(int)tbl[startIter];
+	moveEnd=(int)tbl[endIter];
 
 }
 
 void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 {
-	VideoCtrl *video = tab->Video;
-	float fps = video->fps;
-	bool dshow = video->IsDshow;
-	int startTime = ZEROIT(_dial->Start.mstime);
-	int endTime = ZEROIT(_dial->End.mstime);
-	int framestart = (dshow)? (((float)startTime/1000.f) * fps)+1 : video->VFF->GetFramefromMS(startTime);
-	int frameend = (dshow)? (((float)endTime/1000.f) * fps) : video->VFF->GetFramefromMS(endTime)-1;
-	int msstart = (dshow)? ((framestart*1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(framestart);
-	int msend = (dshow)? ((frameend*1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(frameend);
-	int diff = endTime - startTime;
-	int moveStartTime = abs(msstart - startTime);
-	int moveEndTime = (diff - abs(endTime - msend));
-	bool inbracket=false;
+	bool putinbracket=false;
 	wxPoint tagPos;
-	D3DXVECTOR2 textPosition = GetPos(_dial, &inbracket, &tagPos);
+	D3DXVECTOR2 textPosition = GetPos(_dial, &putinbracket, &tagPos);
 	D3DXVECTOR2 moveFrom = lastFrom - from;
 	D3DXVECTOR2 moveTo = lastTo - to;
-	//wxLogStatus("from %f %f to %f %f",moveFrom.x, moveFrom.y, moveTo.x, moveTo.y);
+	int moveStartTime=0, moveEndTime=0;
+	wxString tagBefore = putinbracket? L"" : txt->SubString(tagPos.x, tagPos.y);
+	wxArrayString values = wxStringTokenize(tagBefore, ",",wxTOKEN_STRTOK);
+	if(putinbracket || values.size() < 6){
+		VideoCtrl *video = tab->Video;
+		float fps = video->fps;
+		bool dshow = video->IsDshow;
+		int startTime = ZEROIT(_dial->Start.mstime);
+		int endTime = ZEROIT(_dial->End.mstime);
+		int framestart = (dshow)? (((float)startTime/1000.f) * fps)+1 : video->VFF->GetFramefromMS(startTime);
+		int frameend = (dshow)? (((float)endTime/1000.f) * fps) : video->VFF->GetFramefromMS(endTime)-1;
+		int msstart = (dshow)? ((framestart*1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(framestart);
+		int msend = (dshow)? ((frameend*1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(frameend);
+		int diff = endTime - startTime;
+		moveStartTime = abs(msstart - startTime);
+		moveEndTime = (diff - abs(endTime - msend));
+	}else{
+		wxString t2 = values[5];
+		wxString t1 = values[4];
+		t2.Replace(")","");
+		moveStartTime = wxAtoi(t1);
+		moveEndTime = wxAtoi(t2);
+	}
 	wxString tag = "\\move("+getfloat(textPosition.x - ((moveFrom.x/zoomScale.x)+zoomMove.x)*wspw) + "," +
 		getfloat(textPosition.y - ((moveFrom.y/zoomScale.y)+zoomMove.y)*wsph) + "," +
 		getfloat(textPosition.x + (((moveDistance.x - moveTo.x)/zoomScale.x)+zoomMove.x)*wspw) + "," +
@@ -200,5 +211,5 @@ void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 		std::to_string(moveEndTime) + ")";
 	//jako ¿e pozycje zwracaj¹ len to potrzeba dodaæ jeszcze start;
 	tagPos.y += tagPos.x - 1;
-	ChangeText(txt, tag, !inbracket, tagPos);
+	ChangeText(txt, tag, !putinbracket, tagPos);
 }

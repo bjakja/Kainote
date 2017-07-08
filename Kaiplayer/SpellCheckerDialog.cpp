@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+ï»¿//  Copyright (c) 2016, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -34,22 +34,22 @@ SpellCheckerDialog::SpellCheckerDialog(kainoteFrame *parent)
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *listSizer = new wxBoxSizer(wxHORIZONTAL);
 	ignoreComments = new KaiCheckBox(this, -1, _("Ignoruj komentarze"));
-	ignoreUpper = new KaiCheckBox(this, -1, _("Ignoruj s³owa z duzej litery"));
+	ignoreUpper = new KaiCheckBox(this, -1, _("Ignoruj sÅ‚owa z duzej litery"));
 	ignoreUpper->Enable(false);
 	//wxString misspellWord = FindNextMisspell();
 	misSpell = new KaiTextCtrl(this,-1,"");
 	replaceWord = new KaiTextCtrl(this,-1);
-	misspellSizer->Add(new KaiStaticText(this,-1, _("B³êdne s³owo:")), 1, wxEXPAND|wxALL, 2);
+	misspellSizer->Add(new KaiStaticText(this,-1, _("BÅ‚Ä™dne sÅ‚owo:")), 1, wxEXPAND|wxALL, 2);
 	misspellSizer->Add(misSpell, 4, wxEXPAND|wxALL, 2);
-	replaceSizer->Add(new KaiStaticText(this,-1, _("Zmieñ na:")), 1, wxEXPAND|wxALL, 2);
+	replaceSizer->Add(new KaiStaticText(this,-1, _("ZmieÅ„ na:")), 1, wxEXPAND|wxALL, 2);
 	replaceSizer->Add(replaceWord, 4, wxEXPAND|wxALL, 2);
 	suggestionsList = new KaiListCtrl(this, ID_SUGGESTIONS_LIST, wxArrayString());
-	replace = new MappedButton(this, ID_REPLACE, _("Zamieñ"));
-	replaceAll = new MappedButton(this, ID_REPLACE_ALL, _("Zamieñ wszystko"));
+	replace = new MappedButton(this, ID_REPLACE, _("ZamieÅ„"));
+	replaceAll = new MappedButton(this, ID_REPLACE_ALL, _("ZamieÅ„ wszystko"));
 	ignore = new MappedButton(this, ID_IGNORE, _("Ignoruj"));
 	ignoreAll = new MappedButton(this, ID_IGNORE_ALL, _("Ignoruj wszystko"));
-	addWord = new MappedButton(this, ID_ADD_WORD, _("Dodaj do s³ownika"));
-	removeWord = new MappedButton(this, ID_REMOVE_WORD, _("Usuñ ze s³ownika"));
+	addWord = new MappedButton(this, ID_ADD_WORD, _("Dodaj do sÅ‚ownika"));
+	removeWord = new MappedButton(this, ID_REMOVE_WORD, _("UsuÅ„ ze sÅ‚ownika"));
 	removeWord->Enable(false);
 	close = new MappedButton(this, ID_CLOSE_DIALOG, _("Zamknij"));
 	buttonSizer->Add(ignoreComments, 0, wxEXPAND|wxALL, 2);
@@ -89,7 +89,7 @@ SpellCheckerDialog::SpellCheckerDialog(kainoteFrame *parent)
 
 wxString SpellCheckerDialog::FindNextMisspell()
 {
-	//jakoœ zidentyfikowaæ, ¿e u¿yszkodnik niczego nie zmieni³
+	//jakoÅ› zidentyfikowaÄ‡, Å¼e uÅ¼yszkodnik niczego nie zmieniÅ‚
 	bool noComments = ignoreComments->GetValue();
 	
 	tab = Kai->GetTab();
@@ -102,7 +102,7 @@ wxString SpellCheckerDialog::FindNextMisspell()
 		Dialogue *Dial = tab->Grid1->GetDial(i);
 		if(Dial->IsComment && noComments){continue;}
 		wxString &Text = (tab->Grid1->transl)? Dial->TextTl : Dial->Text;
-		//w checktext kopiuje tekst wiêc nie muszê robiæ tego dwa razy.
+		//w checktext kopiuje tekst wiÄ™c nie muszÄ™ robiÄ‡ tego dwa razy.
 		tab->Grid1->CheckText(Text, errors);
 		if(i != lastLine){lastMisspell=0;}
 		while(errors.size()>1 && lastMisspell < errors.size()){
@@ -124,9 +124,9 @@ void SpellCheckerDialog::SetNextMisspell()
 	misSpell->SetValue(misspellWord,true);
 	replaceWord->SetValue("",true);
 	if(misspellWord.IsEmpty()){
-		//mamy brak b³êdów trzeba poinformowaæ u¿yszkodnika i zablokowaæ jakiekolwiek akcje.
+		//mamy brak bÅ‚Ä™dÃ³w trzeba poinformowaÄ‡ uÅ¼yszkodnika i zablokowaÄ‡ jakiekolwiek akcje.
 		suggestionsList->SetTextArray(wxArrayString());
-		KaiMessageBox(_("Nie znaleziono wiêcej b³êdów pisowni"), _("Uwaga"), wxOK, this);
+		KaiMessageBox(_("Nie znaleziono wiÄ™cej bÅ‚Ä™dÃ³w pisowni"), _("Uwaga"), wxOK, this);
 		return;
 	}else{
 		suggestionsList->SetTextArray(SpellChecker::Get()->Suggestions(misspellWord));
@@ -194,7 +194,7 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 		while(std::regex_search(text, m, r)) {
 			int pos = m.position(0) + textPos;
 			int len = m.length(0);
-			//zrób coœ z tymi danymi
+			//zrÃ³b coÅ› z tymi danymi
 			wxString misspellToReplace = Text.Mid(pos - lenMismatch, len);
 			Text.replace(pos - lenMismatch, len, GetRightCase(replaceTxt, misspellToReplace));
 			lenMismatch += (len - replaceTxt.Len()) + 1;
@@ -237,7 +237,7 @@ void SpellCheckerDialog::AddWord(wxCommandEvent &evt)
 	
 void SpellCheckerDialog::RemoveWord(wxCommandEvent &evt)
 {
-	// na razie shithappens, bo nie wiem jeszcze co z tym fantem zrobiæ
+	// na razie shithappens, bo nie wiem jeszcze co z tym fantem zrobiÄ‡
 
 }
 

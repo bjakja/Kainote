@@ -178,7 +178,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 	//Main
 	{
-		const int optsSize = 14;
+		const int optsSize = 15;
 		wxBoxSizer *MainSizer=new wxBoxSizer(wxVERTICAL);
 		wxString labels[optsSize]={_("Wczytywanie posortowanych napisów"),_("Włącz sprawdzanie pisowni"),
 			_("Zaznaczaj linijkę z czasem aktywnej\nlinijki poprzedniej zakładki"),_("Zapisuj napisy z nazwą wideo"),
@@ -187,13 +187,13 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Wyłącz pokazywanie edycji na wideo\n(wymaga ponownego otwarcia zakładek)"),
 			_("Włącz szukanie widocznej linii\npo wyjściu z pełnego ekranu"),
 			_("Włącz przenoszenie wartości pola przesuwania czasów"),_("Zmieniaj aktywną linię przy zaznaczaniu"),
-			_("Pokazuj oryginał w trybie tłumaczenia"),
+			_("Pokazuj oryginał w trybie tłumaczenia"), _("Używaj skróty klawiszowe numpada w polach tekstowych"),
 			_("Nie ostrzegaj o niezgodności rozdzielczości"),
 			_("Kompatybilność ze starymi skryptami Kainote")};
 		CONFIG opts[optsSize]={GridLoadSortedSubs,SpellcheckerOn,AutoSelectLinesFromLastTab,SubsAutonaming,
 			EditboxSugestionsOnDoubleClick,OpenSubsInNewCard,NoNewLineAfterTimesEdition,
 			DisableLiveVideoEditing,SelectVisibleLineAfterFullscreen,MoveTimesLoadSetTabOptions,
-			GridChangeActiveOnSelection,TlModeShowOriginal, DontAskForBadResolution,
+			GridChangeActiveOnSelection,TlModeShowOriginal, TextFieldAllowNumpadHotkeys,DontAskForBadResolution,
 			AutomationOldScriptsCompatybility};
 
 		wxString langopts[2]={"Polski","English"};
@@ -595,10 +595,10 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			choices.Add(files[i].AfterLast('\\').BeforeLast('.'));
 		}
 		if(choices.Index("DeepDark",false) == -1){
-			choices.Add("DeepDark");
+			choices.Insert("DeepDark",0);
 		}
 		if(choices.Index("DeepLight",false) == -1){
-			choices.Add("DeepLight");
+			choices.Insert("DeepLight",1);
 		}
 		KaiChoice *themeList = new KaiChoice(Themes,14567,wxDefaultPosition, wxDefaultSize, choices);
 		themeList->SetSelection(themeList->FindString(programTheme));

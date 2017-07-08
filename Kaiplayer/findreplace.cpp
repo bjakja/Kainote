@@ -27,7 +27,7 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
 	Kai=kfparent;
-	reprow=posrow=0;
+	lastActive=reprow=posrow=0;
 	postxt=0;
 	findstart=-1;
 	findend=-1;
@@ -93,16 +93,16 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	CollumnText = new KaiRadioButton(this, -1, _("Tekst"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
 	CollumnTextOriginal = new KaiRadioButton(this, -1, _("Tekst oryginału"));
 	CollumnTextOriginal->Enable(Kai->GetTab()->Grid1->transl);
-	
+
 	frbsizer2->Add(CollumnText,1,wxALL,1);
 	frbsizer2->Add(CollumnTextOriginal,2,wxALL,1);
-	
+
 	wxBoxSizer* frbsizer3=new wxBoxSizer(wxHORIZONTAL);
 	CollumnStyle = new KaiRadioButton(this, -1, _("Styl"));
 	CollumnActor = new KaiRadioButton(this, -1, _("Aktor"));
 	CollumnEffect = new KaiRadioButton(this, -1, _("Efekt"));
-	
-	
+
+
 	frbsizer3->Add(CollumnStyle,1,wxEXPAND|wxLEFT,1);
 	frbsizer3->Add(CollumnActor,1,wxEXPAND|wxLEFT,1);
 	frbsizer3->Add(CollumnEffect,1,wxEXPAND|wxLEFT,1);
@@ -141,9 +141,12 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	//poziomy sizer spód
 	KaiStaticBoxSizer* frsbsizer3=new KaiStaticBoxSizer(wxHORIZONTAL,this,_("Linijki"));
 
-	AllLines = new KaiRadioButton(this, -1, _("Wszystkie linijki"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	SelectedLines = new KaiRadioButton(this, -1, _("Zaznaczone linijki"));
-	FromSelection = new KaiRadioButton(this, -1, _("Od zaznaczonej"));
+	AllLines = new KaiRadioButton(this, 23156, _("Wszystkie linijki"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	SelectedLines = new KaiRadioButton(this, 23157, _("Zaznaczone linijki"));
+	FromSelection = new KaiRadioButton(this, 23158, _("Od zaznaczonej"));
+	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, [=](wxCommandEvent &evt){Reset();}, 23156);
+	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, [=](wxCommandEvent &evt){Reset();}, 23157);
+	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, [=](wxCommandEvent &evt){Reset();}, 23158);
 
 	wxBoxSizer* frbsizer4=new wxBoxSizer(wxHORIZONTAL);
 	Bplus = new MappedButton(this, ID_BPLUS, "+", -1, wxDefaultPosition, wxSize(22,22));
@@ -248,12 +251,10 @@ void FindReplace::OnReplaceAll(wxCommandEvent& event)
 	if(styll==""){notstyles=true;}else{styll=";"+styll+";";}
 	bool onlysel=SelectedLines->GetValue();
 
-	
-
 	int fsel=pan->Grid1->FirstSel();
 
 
-	for(int i=(!AllLines->GetValue()&&fsel>=0)?fsel:0;i<pan->Grid1->GetCount();i++)
+	for(int i = (!AllLines->GetValue() && fsel>=0)? fsel : 0; i<pan->Grid1->GetCount(); i++)
 	{
 		Dialogue *Dial=pan->Grid1->GetDial(i);
 		if((notstyles||styll.Find(";"+Dial->Style+";")!=-1)&&
@@ -360,7 +361,7 @@ void FindReplace::OnButtonFind(wxCommandEvent& event)
 void FindReplace::OnButtonRep(wxCommandEvent& event)
 {
 	TabPanel *tab = Kai->GetTab();
-	if(posrow != tab->Edit->ebrow){Find();}
+	if(lastActive != tab->Edit->ebrow){Find();}
 	bool searchInOriginal = CollumnTextOriginal->GetValue();
 	long wrep= (tab->Grid1->transl && !searchInOriginal)? TXTTL : TXT;
 	if(CollumnStyle->GetValue()){wrep=STYLE;}
@@ -375,7 +376,7 @@ void FindReplace::OnButtonRep(wxCommandEvent& event)
 	Grid *grid=tab->Grid1;
 
 	Dialogue *Dial = grid->GetDial(reprow);
-	
+
 	if(wrep==STYLE){
 		//Kai->GetTab()->Edit->StyleChoice->SetFocus();
 		wxString oldstyle=Dial->Style;
@@ -402,7 +403,7 @@ void FindReplace::OnButtonRep(wxCommandEvent& event)
 
 	grid->SetModified(REPLACE_SINGLE);
 	grid->Refresh(false);
-	postxt=findstart+rep.Len();
+	postxt=findstart + rep.Len();
 	Find();
 }
 
@@ -422,7 +423,7 @@ void FindReplace::Find()
 
 	wxString find1=FindText->GetValue();
 	if(find1!=oldfind){fromstart=true;fnext=false;oldfind=find1;}
-	if(!fromstart && posrow != pan->Edit->ebrow){posrow=pan->Edit->ebrow;}
+	if(!fromstart && lastActive != pan->Edit->ebrow){lastActive = pan->Edit->ebrow;}
 
 	if(startline && regex){
 		find1="^"+find1;
@@ -438,38 +439,44 @@ void FindReplace::Find()
 	int mwhere=-1;
 	size_t mlen=0;
 	bool foundsome=false;
-	if(fromstart){int fsel=pan->Grid1->FirstSel();posrow=(SelectedLines->GetValue()&&fsel>=0)?fsel:0;postxt=0;}
+	if(fromstart){
+		int fsel=pan->Grid1->FirstSel();
+		posrow= (!AllLines->GetValue() && fsel>=0)? fsel : 0;
+		postxt=0;
+	}
 	wxString styll=tcstyle->GetValue();
-	bool notstyles=false;
-	if(styll==""){notstyles=true;}else{styll=";"+styll+";";}
+	bool styles=false;
+	if(styll!=""){
+		styles=true;
+		styll=";"+styll+";";
+	}
 	bool onlysel=SelectedLines->GetValue();	
 
 	while(posrow<pan->Grid1->GetCount())
 	{
-
 		Dialogue *Dial=pan->Grid1->GetDial(posrow);
-		if(notstyles||styll.Find(";"+Dial->Style+";")!=-1
-			&& !(onlysel && !(pan->Grid1->sel.find(posrow)!=pan->Grid1->sel.end()))){
+		if((!styles && !onlysel) || 
+			(styles && styll.Find(";"+Dial->Style+";")!=-1) || 
+			(onlysel && pan->Grid1->sel.find(posrow) != pan->Grid1->sel.end())){
 				if(wrep==STYLE){
-					txt=Dial->Style;}
-				else if(wrep==TXT || wrep==TXTTL){
-					txt=(wrep==TXTTL)?Dial->TextTl:Dial->Text;}
-				else if(wrep==ACTOR){
-					txt=Dial->Actor;}
-				else if(wrep==EFFECT){
-					txt=Dial->Effect;}
+					txt=Dial->Style;
+				}else if(wrep==TXT || wrep==TXTTL){
+					txt=(wrep==TXTTL)? Dial->TextTl : Dial->Text;
+				}else if(wrep==ACTOR){
+					txt=Dial->Actor;
+				}else if(wrep==EFFECT){
+					txt=Dial->Effect;
+				}
 
 				//no to szukamy
 				if(!(startline || endline) && (find1.empty()||txt.empty()))
 				{
-					if(txt.empty() && find1.empty())
-					{
+					if(txt.empty() && find1.empty()){
 						mwhere=0; mlen=0;
 					}
 					else{postxt=0;posrow++;continue;}
 
-				}
-				else if(regex){
+				}else if(regex){
 					int rxflags=wxRE_ADVANCED;
 					if(!matchcase){rxflags |= wxRE_ICASE;}
 					wxRegEx rgx (find1,rxflags);
@@ -485,13 +492,27 @@ void FindReplace::Find()
 
 					}
 
-				}
-				else{
-					wxString ltext=(!matchcase)? txt.Lower() : txt;
+				}else{
+					wxString ltext= (!matchcase)? txt.Lower() : txt;
 					wxString lfind= (!matchcase)? find1.Lower() : find1;
-					if(startline){if(ltext.StartsWith(lfind) || lfind.empty()){mwhere= 0;postxt=0;} else {mwhere=-1;}}
-					if(endline){if(ltext.EndsWith(lfind) || lfind.empty()){mwhere=txt.Len()-lfind.Len();postxt=0;} else {mwhere=-1;}}
-					else{mwhere= ltext.find(lfind,postxt);}
+					if(startline){
+						if(ltext.StartsWith(lfind) || lfind.empty()){
+							mwhere = 0;
+							postxt = 0; 
+						}else{
+							mwhere=-1;
+						}
+					}
+					if(endline){
+						if(ltext.EndsWith(lfind) || lfind.empty()){
+							mwhere=txt.Len()-lfind.Len();
+							postxt=0;
+						}else{
+							mwhere=-1;
+						}
+					}else{
+						mwhere= ltext.find(lfind,postxt);
+					}
 					mlen=lfind.Len();
 				}
 
@@ -499,11 +520,12 @@ void FindReplace::Find()
 					postxt=mwhere+mlen;
 					findstart=mwhere;
 					findend=postxt;
-					reprow=posrow;
+					lastActive = reprow = posrow;
 
-					pan->Grid1->SelectRow(posrow,false,true);
-					pan->Grid1->ScrollTo(posrow,true);
+					if(!SelectedLines->GetValue()){pan->Grid1->SelectRow(posrow,false,true);}
 					pan->Edit->SetLine(posrow);
+					pan->Grid1->ScrollTo(posrow,true);
+					if(SelectedLines->GetValue()){pan->Grid1->Refresh(false);}
 					if(wrep==STYLE){
 						//pan->Edit->StyleChoice->SetFocus();
 					}
@@ -522,18 +544,23 @@ void FindReplace::Find()
 					}
 
 					foundsome=true;
-					if((size_t)postxt>=txt.Len()||startline){posrow++;postxt=0;}
+					if((size_t)postxt>=txt.Len() || startline){
+						posrow++;postxt=0;
+					}
 					break;
+				}else{
+					postxt=0; 
+					posrow++;
 				}
-				else{postxt=0; posrow++;}
-				if(!foundsome && posrow> pan->Grid1->GetCount()-1){
-					blockTextChange=true;
-					if (KaiMessageBox(_("Wyszukiwanie zakończone, rozpocząć od początku?"), _("Potwierdzenie"),
-						wxICON_QUESTION | wxYES_NO, this) == wxYES ){
-							posrow=0;foundsome=true;
-					}else{posrow=0;foundsome=true;break;}
-				}
+				
 		}else{postxt=0;posrow++;}
+		if(!foundsome && posrow> pan->Grid1->GetCount()-1){
+			blockTextChange=true;
+			if (KaiMessageBox(_("Wyszukiwanie zakończone, rozpocząć od początku?"), _("Potwierdzenie"),
+				wxICON_QUESTION | wxYES_NO, this) == wxYES ){
+					posrow=0;//foundsome=true;
+			}else{posrow=0;foundsome=true;break;}
+		}
 	}
 	if(!foundsome){
 		blockTextChange=true;

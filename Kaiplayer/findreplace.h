@@ -75,6 +75,7 @@ class FindReplace: public KaiDialog
         int postxt;
 		int findstart;
 		int findend;
+		int lastActive;
 		wxString oldfind;
         bool fnext;
 		

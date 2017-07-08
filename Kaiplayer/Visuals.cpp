@@ -582,7 +582,7 @@ void Visuals::SetVisual(bool dummy, int type)
 	MTextEditor *Editor=(isOriginal)? edit->TextEditOrig : edit->TextEdit;
 	//działanie dwuetapowe, pierwszy etap podmieniamy w wielu linijkach
 	if(edit->IsCursorOnStart()){
-		wxLogStatus("multiple lines");
+		//wxLogStatus("multiple lines");
 		wxString *dtxt;
 		wxArrayInt sels= tab->Grid1->GetSels();
 		bool skipInvisible = dummy && tab->Video->GetState() != Playing;

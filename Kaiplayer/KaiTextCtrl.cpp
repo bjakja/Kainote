@@ -65,27 +65,34 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	entries[24].Set(wxACCEL_NORMAL, WXK_PAGEDOWN,ID_TPDOWN);
 	entries[25].Set(wxACCEL_NORMAL, WXK_PAGEUP,ID_TPUP);
 	entries[26].Set(wxACCEL_SHIFT|wxACCEL_CTRL, WXK_END,ID_TCSEND);
-	entries[27].Set(wxACCEL_NORMAL, WXK_NUMPAD0,WXK_NUMPAD0+10000);
-	entries[28].Set(wxACCEL_NORMAL, WXK_NUMPAD1,WXK_NUMPAD1+10000);
-	entries[29].Set(wxACCEL_NORMAL, WXK_NUMPAD2,WXK_NUMPAD2+10000);
-	entries[30].Set(wxACCEL_NORMAL, WXK_NUMPAD3,WXK_NUMPAD3+10000);
-	entries[31].Set(wxACCEL_NORMAL, WXK_NUMPAD4,WXK_NUMPAD4+10000);
-	entries[32].Set(wxACCEL_NORMAL, WXK_NUMPAD5,WXK_NUMPAD5+10000);
-	entries[33].Set(wxACCEL_NORMAL, WXK_NUMPAD6,WXK_NUMPAD6+10000);
-	entries[34].Set(wxACCEL_NORMAL, WXK_NUMPAD7,WXK_NUMPAD7+10000);
-	entries[35].Set(wxACCEL_NORMAL, WXK_NUMPAD8,WXK_NUMPAD8+10000);
-	entries[36].Set(wxACCEL_NORMAL, WXK_NUMPAD9,WXK_NUMPAD9+10000);
+	int numEntries = 27;
+	bool setNumpadAccels = !Options.GetBool(TextFieldAllowNumpadHotkeys);
+	if(setNumpadAccels){
+		entries[27].Set(wxACCEL_NORMAL, WXK_NUMPAD0,WXK_NUMPAD0+10000);
+		entries[28].Set(wxACCEL_NORMAL, WXK_NUMPAD1,WXK_NUMPAD1+10000);
+		entries[29].Set(wxACCEL_NORMAL, WXK_NUMPAD2,WXK_NUMPAD2+10000);
+		entries[30].Set(wxACCEL_NORMAL, WXK_NUMPAD3,WXK_NUMPAD3+10000);
+		entries[31].Set(wxACCEL_NORMAL, WXK_NUMPAD4,WXK_NUMPAD4+10000);
+		entries[32].Set(wxACCEL_NORMAL, WXK_NUMPAD5,WXK_NUMPAD5+10000);
+		entries[33].Set(wxACCEL_NORMAL, WXK_NUMPAD6,WXK_NUMPAD6+10000);
+		entries[34].Set(wxACCEL_NORMAL, WXK_NUMPAD7,WXK_NUMPAD7+10000);
+		entries[35].Set(wxACCEL_NORMAL, WXK_NUMPAD8,WXK_NUMPAD8+10000);
+		entries[36].Set(wxACCEL_NORMAL, WXK_NUMPAD9,WXK_NUMPAD9+10000);
+		numEntries = 37;
+	}
 	bool processEnter = !(style & wxTE_PROCESS_ENTER) && (style & wxTE_MULTILINE);
-	if(processEnter){entries[37].Set(wxACCEL_NORMAL, WXK_RETURN,ID_TRETURN);}
-	wxAcceleratorTable accel((processEnter)? 38 : 37, entries);
+	if(processEnter){entries[37].Set(wxACCEL_NORMAL, WXK_RETURN,ID_TRETURN); numEntries++;}
+	wxAcceleratorTable accel(numEntries, entries);
 	SetAcceleratorTable(accel);
 	Connect(ID_TDEL,ID_TRETURN,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&KaiTextCtrl::OnAccelerator);
-	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
-		int key = evt.GetId() - 10276;
-		wxKeyEvent kevt;
-		kevt.m_uniChar = key;
-		OnCharPress(kevt);
-	}, WXK_NUMPAD0+10000, WXK_NUMPAD9+10000);
+	if(setNumpadAccels){
+		Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
+			int key = evt.GetId() - 10276;
+			wxKeyEvent kevt;
+			kevt.m_uniChar = key;
+			OnCharPress(kevt);
+		}, WXK_NUMPAD0+10000, WXK_NUMPAD9+10000);
+	}
 
 
 	Cursor.x=Cursor.y=Selend.x=Selend.y = oldstart = oldend=0;

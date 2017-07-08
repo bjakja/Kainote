@@ -16,7 +16,7 @@
 #include "SubsTime.h"
 #include "Config.h"
 #include "SubsDialogue.h"
-
+#include <wx/log.h>
 
 STime::STime(){
 	mstime=0;

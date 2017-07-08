@@ -168,6 +168,7 @@
 	CG(StyleManagerDetachEditor,)\
 	CG(SubsAutonaming,)\
 	CG(SubsRecent,)\
+	CG(TextFieldAllowNumpadHotkeys,)\
 	CG(TlModeShowOriginal,)\
 	CG(ToolbarIDs,)\
 	CG(VideoFullskreenOnStart,)\
