@@ -76,6 +76,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 	bool holding = (evt.LeftIsDown()||evt.RightIsDown()||evt.MiddleIsDown());
 	bool leftc = evt.LeftDown();
 	bool rightc = evt.RightDown();
+	bool shift = evt.ShiftDown();
 
 	int x, y;
 	evt.GetPosition(&x,&y);
@@ -104,7 +105,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 			grabbed=0; type=0;
 			diffs.x=from.x-x;
 			diffs.y=from.y-y;
-		}else{
+		}else if(!shift){
 			grabbed= -1;
 			if(type==1){
 				to.x=x;
@@ -120,7 +121,8 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 		firstmove = lastFrom = from;
 		SetVisual(true,type);
 		axis = 0;
-	}else if(holding){
+	}
+	if(holding){
 		if(type==0){
 			from.x=x+diffs.x;
 			from.y=y+diffs.y;
@@ -128,7 +130,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 			to.x=x+diffs.x;
 			to.y=y+diffs.y;
 		}
-		if(evt.ShiftDown()){
+		if(shift){
 			//if(axis == 0){
 				int diffx = abs((type==0)? firstmove.x-x : lastmove.x-x);
 				int diffy = abs((type==0)? firstmove.y-y : lastmove.y-y);
@@ -145,7 +147,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 				if(axis==1){
 					to.x = lastmove.x;
 				}
-				if(axis ==2){
+				if(axis==2){
 					to.y = lastmove.y;
 				}
 			}

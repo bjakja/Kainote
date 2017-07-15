@@ -134,6 +134,19 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 		//w Aegi shit happens wiêc olejê.
 	}, ID_TDEL);
 
+	bool setNumpadAccels = !Options.GetBool(TextFieldAllowNumpadHotkeys);
+	if(setNumpadAccels){
+		Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
+			int key = evt.GetId() - 10276;
+			wxKeyEvent kevt;
+			kevt.m_uniChar = key;
+			OnKeyEvent(kevt);
+			if(kevt.GetSkipped()){
+				evt.Skip();
+			}
+		}, WXK_NUMPAD0+10000, WXK_NUMPAD9+10000);
+	}
+
 }
 
 TimeCtrl::~TimeCtrl()
@@ -150,12 +163,8 @@ void TimeCtrl::OnTimeWrite(wxCommandEvent& event)
 
 	if(!pastes && selst==seled && (selst>0) && selst<(long)txt.Len() && form<MDVD && !showFrames){
 
-
 		wxString nChar = txt.Mid(selst,1);
-		//wxString aChar = txt.Mid(selst-1,1);
-
-
-
+		
 
 		if (nChar == ":"||nChar == "."||nChar == ",") {
 			wxString tmp = txt;
