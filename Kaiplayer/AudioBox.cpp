@@ -196,6 +196,8 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 
 	SetAccels();
 	SetFocusIgnoringChildren();
+
+	
 }
 
 
@@ -218,6 +220,9 @@ void AudioBox::SetFile(wxString file, bool fromvideo) {
 	audioDisplay->SetFile(file, fromvideo);
 	if (file != "") loaded = audioDisplay->loaded;
 	audioName = file;
+	if(!Options.GetBool(AudioLink)){
+		SetVolume(Options.GetInt(AudioVolume));
+	}
 }
 
 
