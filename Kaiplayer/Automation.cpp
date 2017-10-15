@@ -953,9 +953,11 @@ namespace Auto{
 		ls->CheckLastModified(false);
 		scripts.push_back(ls);
 		if(!autoload && addToSinfo){
-			wxString scriptpaths = Notebook::GetTab()->Grid1->GetSInfo("Automation Scripts");
+			Grid *grid = Notebook::GetTab()->Grid1;
+			wxString scriptpaths = grid->GetSInfo("Automation Scripts");
 			scriptpaths<<"|"<<filename;
-			Notebook::GetTab()->Grid1->AddSInfo("Automation Scripts", scriptpaths);
+			grid->AddSInfo("Automation Scripts", scriptpaths);
+			grid->SetModified(ASS_PROPERTIES, false, true, -1, false);
 		}
 		HasChanges=true;
 		//wxLogStatus("description: " + ls->GetDescription());

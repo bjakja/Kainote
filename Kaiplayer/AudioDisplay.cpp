@@ -1718,11 +1718,14 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 					selEnd = MAX(0, selEnd);
 					int nn = Edit->ebrow;
 					//automatyczne ustawianie czasów następnej linijki (Chwyt myszą end + ctrl)
-					if(hold==2 && nn<grid->GetCount()-1 && event.ControlDown() && event.AltDown())
-					{
+					if(hold==2 && nn<grid->GetCount()-1 && event.ControlDown() && event.AltDown()){
 						Dialogue *dialc=grid->CopyDial(nn+1);
 						dialc->Start.NewTime(curEndMS);
-						dialc->End.NewTime(curEndMS+5000);
+						if(dialc->End < dialc->Start){dialc->End.NewTime(curEndMS+5000);}
+					}else if(hold==1 && nn>0 && event.ControlDown() && event.AltDown()){
+						Dialogue *dialc=grid->CopyDial(nn-1);
+						dialc->End.NewTime(curStartMS);
+						if(dialc->End < dialc->Start){dialc->Start.NewTime(curStartMS-5000);}
 					}
 				}
 

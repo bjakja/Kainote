@@ -180,12 +180,13 @@ void TabPanel::OnFocus(wxChildFocusEvent& event)
 {
 	Notebook *nt=Notebook::GetTabs();
 	//if(!nt){return;}
-	if(!nt->split){return;}
+	if (!nt->split){ event.Skip(); return; }
 
 	if(nt->GetTab()!=this)
 	{
 		nt->ChangeActiv();
 	}
+	event.Skip();
 }
 
 void TabPanel::SetVideoWindowSizes(int w, int h)

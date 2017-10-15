@@ -246,7 +246,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	bool im=Options.GetBool(WindowMaximized);
 	if(im){Maximize(Options.GetBool(WindowMaximized));}
 
-	if(!Options.GetBool(EditorOn)){HideEditor();}	
+	if(!Options.GetBool(EditorOn)){HideEditor(false);}	
 	std::set_new_handler(OnOutofMemory);
 	FontEnum.StartListening(this);
 	SetSubsResolution(false);
@@ -744,10 +744,16 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 	tab->Freeze();
 	if(issubs||found){  
 		wxString fname=(found&&!issubs)?fntmp:filename;
-		if(nonewtab){if(SavePrompt(2)){tab->Thaw();return true;}}
+		if(nonewtab){
+			if(SavePrompt(2)){tab->Thaw();return true;}
+		}
 		OpenWrite ow; 
 		wxString s;
 		if(!ow.FileOpen(fname, &s)){tab->Thaw();return false;}
+		//remove comparison after every subs load or delete 
+		else if (nonewtab && tab->Grid1->Comparison){
+			Tabs->RemoveComparison();
+		}
 		tab->Grid1->Loadfile(s,ext);
 
 		if(ext=="ssa"){ext="ass";fname=fname.BeforeLast('.')+".ass";}
@@ -1253,35 +1259,35 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 	}else{
 		SetStatusText("",7);
 	}
-	if(cur->edytor){cur->Grid1->SetFocus();}else{cur->Video->SetFocus();}
+	
 	cur->Grid1->UpdateUR(false);
 
 	UpdateToolbar();
 
-	cur->Grid1->SetFocus();
-	if(Tabs->iter!=Tabs->GetOldSelection() && Options.GetBool(MoveTimesLoadSetTabOptions)){
-		cur->CTime->RefVals(Tabs->Page( Tabs->GetOldSelection() )->CTime);
-		//if(Options.GetBool("Grid save without enter")){
-			//Tabs->Page( Tabs->GetOldSelection() )->Edit->Send(false);
-		//}
-	}
+	if (!event.GetInt()){
+		if (cur->edytor){ cur->Grid1->SetFocus(); }
+		else{ cur->Video->SetFocus(); }
+		if (Tabs->iter != Tabs->GetOldSelection() && Options.GetBool(MoveTimesLoadSetTabOptions)){
+			cur->CTime->RefVals(Tabs->Page(Tabs->GetOldSelection())->CTime);
+		}
 
-	if(Options.GetBool(AutoSelectLinesFromLastTab)){
-		Grid *old=Tabs->Page(Tabs->GetOldSelection())->Grid1;
-		if(old->FirstSel()>-1){
-			cur->Grid1->SelVideoLine(old->GetDial(old->FirstSel())->Start.mstime);
+		if (Options.GetBool(AutoSelectLinesFromLastTab)){
+			Grid *old = Tabs->Page(Tabs->GetOldSelection())->Grid1;
+			if (old->FirstSel() > -1){
+				cur->Grid1->SelVideoLine(old->GetDial(old->FirstSel())->Start.mstime);
+			}
 		}
 	}
 	if(StyleStore::HasStore() && StyleStore::Get()->IsShown()){StyleStore::Get()->LoadAssStyles();}
 	if(FR){FR->Reset();FR->ReloadStyle();}
 }
 
-void kainoteFrame::HideEditor()
+void kainoteFrame::HideEditor(bool save)
 {
 	TabPanel *cur=GetTab();
 
 	cur->edytor = !cur->edytor;
-
+	if(save){Options.SetBool(EditorOn,cur->edytor);}
 	cur->Grid1->Show(cur->edytor);
 
 	cur->Edit->Show(cur->edytor);

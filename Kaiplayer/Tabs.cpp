@@ -18,19 +18,22 @@
 #include "TabPanel.h"
 #include "kainoteApp.h"
 #include "Menu.h"
+#include "KaiMessageBox.h"
 
 
 Notebook::Notebook(wxWindow *parent, int id)
 	: wxWindow(parent,id)
 {
-	fvis=olditer=iter=0;
-	splitline=splititer=compareSecondTab=0;
+	firstVisibleTab=olditer=iter=0;
+	splitline=splititer=0;
 	oldtab=oldI=over=-1;
 	block=split=onx=farr=rarr=plus=false;
 	hasCompare=false;
 	TabHeight=25;
 	allvis=arrow=true;
 	sline=NULL;
+	compareFirstGrid = NULL;
+	compareSecondGrid = NULL;
 	font=wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 	sthis=this;
 
@@ -85,7 +88,7 @@ void Notebook::AddPage(bool refresh)
 	Pages[iter]->SetSize(Pages[olditer]->GetSize());
 	CalcSizes();
 	if(refresh){
-		if(!Options.GetBool(EditorOn)){kainoteFrame *kai=(kainoteFrame *)GetParent();kai->HideEditor();}
+		if(!Options.GetBool(EditorOn)){kainoteFrame *kai=(kainoteFrame *)GetParent();kai->HideEditor(false);}
 		wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 		AddPendingEvent(evt2);
 		//Thaw();
@@ -108,7 +111,7 @@ size_t Notebook::Size()
 	return Pages.size();
 }
 
-void Notebook::SetPageText(int page, wxString label)
+void Notebook::SetPageText(int page, const wxString &label)
 {
 	Names[page]=label;
 	CalcSizes();
@@ -135,10 +138,34 @@ void Notebook::DeletePage(size_t page)
 		return;
 	}
 	block=false;
-	if(split && Size()>2){
-		int i = 0;
-		for(; i < (int)Size(); i++){
-			if(i!=iter && i!=splititer){break;}
+	//remove compare if it exist
+	if (hasCompare && Pages[page]->Grid1->Comparison != NULL){
+		RemoveComparison();
+	}
+	int tmpSize = Size();
+	if (split && tmpSize>2 && (page == iter || page == splititer)){
+		bool deleteActiveTab = page == iter;
+		int i = (deleteActiveTab) ? iter+1 : splititer+1;
+		if (i >= tmpSize){
+			i = tmpSize - 2; 
+			if (i == iter || i == splititer){ 
+				if (i == iter){ 
+					splititer = i - 1; 
+					if (splititer < 0){
+						splititer = 0;
+					}
+				}
+				if (i == splititer){
+					iter = i - 1;
+					if (iter < 0){
+						iter = 0;
+					}
+				}
+				i--; 
+			}
+			if (i < 0){ 
+				i = 0; KaiMessageBox("Nieoczekiwany błąd usuwania zakładki przy wyświetlaniu dwóch zakładek"); 
+			}
 		}
 		Pages[i]->SetSize(Pages[page]->GetSize());
 		Pages[i]->SetPosition(Pages[page]->GetPosition());
@@ -170,16 +197,15 @@ void Notebook::DeletePage(size_t page)
 	}
 
 	size_t rsize=Size()-1;
-	if(olditer>rsize){olditer=rsize;}
-	if(iter>rsize){iter=rsize;}
-	else if(page<iter){iter--;}
-	if(page>rsize){page=rsize;}
-	if(fvis>rsize){fvis=rsize;}
+	if(olditer > rsize){olditer=rsize;}
+	if(iter > rsize){iter=rsize;}
+	else if(page < iter){iter--;}
+	if (page < splititer){ splititer--; }
+	else if (splititer > rsize){ splititer = rsize; }
+	if(page>  rsize){page=rsize;}
+	if(firstVisibleTab>rsize){firstVisibleTab=rsize;}
 
 	CalcSizes();
-	if(page==iter){
-		Pages[iter]->Show();
-	}
 	Thaw();
 
 	//int w,h;
@@ -205,7 +231,7 @@ void Notebook::CalcSizes()
 		all+=Tabsizes[i]+2;
 	}
 	allvis=(all<w-22);
-	if(allvis){fvis=0;}
+	if(allvis){firstVisibleTab=0;}
 }
 
 
@@ -261,6 +287,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			int tmpiter=(aciter)? iter : splititer;
 			int tmpsplititer=(!aciter)? iter : splititer;
 			//wxLogStatus("size iter %i splititer %i", tmpiter, tmpsplititer);
+			//TODO dorobić pewne sprawdzanie dwóch zakładek, po pozycji to trochę nie halo.
 			Pages[tmpiter]->SetSize(splitline-3,hh-2);
 			Pages[tmpsplititer]->SetSize(w-(splitline+3),hh-2);
 			Pages[tmpsplititer]->SetPosition(wxPoint(splitline+2,1));
@@ -277,7 +304,8 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 
 
 		}
-		if(arrow && split){SetCursor(wxCURSOR_SIZEWE);arrow=false;}
+		if(arrow && split && abs(splitline - x) < 4){SetCursor(wxCURSOR_SIZEWE);arrow=false;}
+		else if(!arrow && split){ SetCursor(wxCURSOR_ARROW); arrow = true; }
 		return;
 	}
 
@@ -294,14 +322,14 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		oldI=i;
 
 		if(!allvis && (click || dclick) && x<20){
-			if(fvis>0){
-				fvis--;RefreshRect(wxRect(0,hh,w,25),false);
+			if(firstVisibleTab>0){
+				firstVisibleTab--;RefreshRect(wxRect(0,hh,w,25),false);
 			}
 			return;
 		}
 		else if(!allvis && (click || dclick) && x>w-17 && x<=w){
-			if(fvis<Size()-1){
-				fvis++;RefreshRect(wxRect(w-17,hh,17,25),false);
+			if(firstVisibleTab<Size()-1){
+				firstVisibleTab++;RefreshRect(wxRect(w-17,hh,17,25),false);
 			}
 			return;
 		}
@@ -319,7 +347,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			}
 		}
 
-		else if(i!=iter&&click){
+		else if(i!=iter && click){
 			ChangePage(i);
 		}
 		else if(i==iter && click && (x>num+Tabsizes[i]-18 && x<num+Tabsizes[i]-5)){
@@ -445,21 +473,10 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		if(id >= MENU_CHOOSE-101 && id <= MENU_CHOOSE+99){
 			OnTabSel(id);
 		}else if(id == MENU_COMPARE){
-			if(hasCompare){
-				delete Pages[compareFirstTab]->Grid1->Comparsion;
-				Pages[compareFirstTab]->Grid1->Comparsion = NULL;
-				Pages[compareFirstTab]->Grid1->Refresh(false);
-				delete Pages[compareSecondTab]->Grid1->Comparsion;
-				Pages[compareSecondTab]->Grid1->Comparsion = NULL;
-				Pages[compareSecondTab]->Grid1->Refresh(false);
-				compareFirstTab=0;
-				compareSecondTab=0;
-				hasCompare=false;
-				return;
-			}
-			compareFirstTab=iter;
-			compareSecondTab=i;
-			SubsComparsion();
+			if (hasCompare){ RemoveComparison(); }
+			compareFirstGrid = Pages[iter]->Grid1;
+			compareSecondGrid = Pages[i]->Grid1;
+			SubsComparison();
 			hasCompare=true;
 		}else{
 			OnSave(id);
@@ -521,7 +538,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 
 	wxGraphicsContext *gc = wxGraphicsContext::Create(dc);
 	//pętla do rysowania zakładek
-	for(size_t i=fvis;i<Tabsizes.size();i++){
+	for(size_t i=firstVisibleTab;i<Tabsizes.size();i++){
 		//wybrana zakładka
 		if(i==iter){
 			//rysowanie linii po obu stronach aktywnej zakładki
@@ -543,14 +560,21 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.DrawText("X",start+Tabsizes[i]-15,3);
 			
 
-		}else{
+		}
+		else if ( split && i == splititer){
+			dc.SetTextForeground(inactiveText);
+			dc.SetPen(*wxTRANSPARENT_PEN);
+			dc.SetBrush(Options.GetColour((i == (size_t)over) ? TabsBackgroundInactiveHover : TabsBackgroundSecondWindow));
+			dc.DrawRectangle(start + 1, 1, Tabsizes[i] - 1, 23);
+		}
+		else{
 			//nieaktywna lub najechana nieaktywna zakładka
 			dc.SetTextForeground(inactiveText);
 			dc.SetPen(*wxTRANSPARENT_PEN);
 			dc.SetBrush(wxBrush(Options.GetColour((i==(size_t)over)? TabsBackgroundInactiveHover : TabsBackgroundInactive)));
 			dc.DrawRectangle(start+1,1,Tabsizes[i]-1,22);
 		}
-
+		
 		//rysowanie konturów zakładki
 		if(gc){
 			gc->SetPen( wxPen(Options.GetColour((i==iter)? TabsBorderActive : TabsBorderInactive)));
@@ -691,15 +715,18 @@ void Notebook::OnTabSel(int id)
 			iter=i;
 			//wxLogStatus("%i", (int)i);
 			if(Kai->SavePrompt()){break;}
+			if (hasCompare && Pages[i]->Grid1->Comparison != NULL){ RemoveComparison(); }
 			Pages[i]->Destroy();
 			Pages.pop_back();
 			Names.pop_back();
 			Tabsizes.pop_back();
 		}
 		//wxLogStatus("destroyed");
-		iter=0;olditer=0;fvis=0;
+		int pagesSize = Pages.size();
+		if (olditer >= pagesSize){ olditer = 0; }
+		firstVisibleTab = 0;
 		int w=-1,h=-1;
-		if(Pages.size()<1){
+		if (pagesSize < 1){
 			Pages.push_back(new TabPanel(this,(kainoteFrame*)GetParent()));
 			wxString name=Pages[0]->SubsName;
 			Names.Add(name);
@@ -714,22 +741,22 @@ void Notebook::OnTabSel(int id)
 
 	}
 	else{
-		TabPanel *tmp=Page(fvis);
+		TabPanel *tmp=Page(firstVisibleTab);
 		tmp->Hide();
-		Pages[fvis]=Pages[wtab];
-		Pages[fvis]->Show();
+		Pages[firstVisibleTab]=Pages[wtab];
+		Pages[firstVisibleTab]->Show();
 		Pages[wtab]=tmp;
-		wxString tmp1=Names[fvis];
-		Names[fvis]=Names[wtab];
+		wxString tmp1=Names[firstVisibleTab];
+		Names[firstVisibleTab]=Names[wtab];
 		Names[wtab]=tmp1;
 		Tabsizes[iter]-=18;
-		int tmp2=Tabsizes[fvis];
-		Tabsizes[fvis]=Tabsizes[wtab];
+		int tmp2=Tabsizes[firstVisibleTab];
+		Tabsizes[firstVisibleTab]=Tabsizes[wtab];
 		Tabsizes[wtab]=tmp2;
-		Tabsizes[fvis]+=18;
+		Tabsizes[firstVisibleTab]+=18;
 
 		olditer=iter;
-		iter=fvis;
+		iter=firstVisibleTab;
 		RefreshBar();
 	}
 }
@@ -780,12 +807,33 @@ void Notebook::Split(size_t page)
 	SetTimer(GetHWND(), 9876, 500, (TIMERPROC)OnResized);
 }
 
+void Notebook::RemoveComparison()
+{
+	if (hasCompare){
+		if (compareFirstGrid){
+			delete compareFirstGrid->Comparison;
+			compareFirstGrid->Comparison = NULL;
+			compareFirstGrid->Refresh(false);
+		}
+		if (compareFirstGrid){
+			delete compareSecondGrid->Comparison;
+			compareSecondGrid->Comparison = NULL;
+			compareSecondGrid->Refresh(false);
+		}
+		compareFirstGrid = NULL;
+		compareSecondGrid = NULL;
+		hasCompare = false;
+		return;
+	}
+
+}
+
 int Notebook::FindTab(int x, int *_num)
 {
 	int num=(allvis)?2 : 20;
 	*_num=num;
 	int restab=-1;
-	for(size_t i=fvis;i<Tabsizes.size();i++){
+	for(size_t i=firstVisibleTab;i<Tabsizes.size();i++){
 		if(x>num&&x<num+Tabsizes[i]){
 			restab=i;
 			*_num=num;
@@ -802,8 +850,10 @@ void Notebook::ChangeActiv()
 	splititer=tmp;
 	Tabsizes[iter]+=18;
 	Tabsizes[splititer]-=18;
-	((kainoteFrame*)GetParent())->UpdateToolbar();
-
+	//kainoteFrame * Kai = ((kainoteFrame*)GetParent());
+	wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
+	evt2.SetInt(1);
+	AddPendingEvent(evt2);
 	RefreshBar();
 }
 
@@ -919,17 +969,25 @@ TabPanel *Notebook::GetSecondPage()
 	return Pages[splititer];
 }
 
-void Notebook::SubsComparsion()
+int Notebook::GetIterByPos(const wxPoint &pos){
+	bool nonActiveFrame = (Pages[iter]->GetPosition().x == 1) ? pos.x > splitline : pos.x <= splitline;
+	if (split && nonActiveFrame)
+		return splititer;
+	else
+		return iter;
+}
+
+void Notebook::SubsComparison()
 {
-	Grid *G1 = Pages[compareFirstTab]->Grid1;
-	Grid *G2 = Pages[compareSecondTab]->Grid1;
+	Grid *G1 = compareFirstGrid;
+	Grid *G2 = compareSecondGrid;
 
 	int firstSize= G1->GetCount(), secondSize= G2->GetCount();
-	if(G1->Comparsion){G1->Comparsion->clear();}else{G1->Comparsion=new std::vector<wxArrayInt>;}
-	if(G2->Comparsion){G2->Comparsion->clear();}else{G2->Comparsion=new std::vector<wxArrayInt>;}
+	if(G1->Comparison){G1->Comparison->clear();}else{G1->Comparison=new std::vector<wxArrayInt>;}
+	if(G2->Comparison){G2->Comparison->clear();}else{G2->Comparison=new std::vector<wxArrayInt>;}
 	wxArrayInt emptyarray;
-	G1->Comparsion->resize(firstSize, emptyarray);
-	G2->Comparsion->resize(secondSize, emptyarray);
+	G1->Comparison->resize(firstSize, emptyarray);
+	G2->Comparison->resize(secondSize, emptyarray);
 
 	int lastJ=0;
 
@@ -941,7 +999,7 @@ void Notebook::SubsComparsion()
 
 			Dialogue *dial2=G2->GetDial(j);
 			if(dial1->Start == dial2->Start && dial1->End == dial2->End){
-				CompareTexts((G1->transl && dial1->TextTl != "")? dial1->TextTl : dial1->Text, (G2->transl && dial2->TextTl != "")? dial2->TextTl : dial2->Text, G1->Comparsion->at(i), G2->Comparsion->at(j));
+				CompareTexts((G1->transl && dial1->TextTl != "")? dial1->TextTl : dial1->Text, (G2->transl && dial2->TextTl != "")? dial2->TextTl : dial2->Text, G1->Comparison->at(i), G2->Comparison->at(j));
 				lastJ=j+1;
 				break;
 			}

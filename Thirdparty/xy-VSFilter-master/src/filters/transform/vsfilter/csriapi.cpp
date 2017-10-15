@@ -87,7 +87,9 @@ CSRIAPI csri_inst *csri_open_mem(csri_rend *renderer, const void *data, size_t l
 	inst->cs = new CCritSec();
 	//if(!inst->cs){return 0;}
 	//CAutoLock cAutoLock(inst->cs);
-	inst->rts = new CRenderedTextSubtitle(inst->cs);
+	inst->rts = new CRenderedTextSubtitle(inst->cs);//m_eYCbCrMatrix
+	//inst->rts->m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT601;
+	//inst->rts->m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
 	inst->spp=NULL;
 	if (inst->rts->Open((BYTE*)data, (int)length, DEFAULT_CHARSET, _T("CSRI memory subtitles"))) {
 		inst->rts->AddRef();

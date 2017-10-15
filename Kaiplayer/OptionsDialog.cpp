@@ -518,7 +518,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 	//Themes
 	{
-		const int numColors = 126;
+		const int numColors = 127;
 		wxString labels[numColors]={
 			//okno
 			_("Okno tło"),_("Okno nieaktywne tło"),_("Okno tekst"),_("Okno nieaktywny tekst"),
@@ -568,7 +568,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			//zakładki
 			_("Pasek zakładek tło 1"), _("Pasek zakładek tło 2"), _("Zakładki obramowanie aktywnej"), 
 			_("Zakładki obramowanie nieaktywnej"),_("Zakładki tło aktywnej"), _("Zakładki tło nieaktywnej"), 
-			_("Zakładki tło nieaktywnej po najechaniu"),
+			_("Zakładki tło nieaktywnej po najechaniu"), _("Zakładki tło drugiej widocznej zakładki"),
 			_("Zakładki tekst aktywnej"), _("Zakładki tekst nieaktywnej"), _("Zakładki zamknięcie po najechaniu"), 
 			_("Pasek zakładek strzałka"), _("Pasek zakładek strzałka tło"), 
 			_("Pasek zakładek strzałka tło po najechaniu"),
@@ -577,7 +577,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Suwak obramowanie po najechaniu"), _("Suwak obramowanie po wciśnięciu"), _("Suwak tło"), 
 			_("Suwak tło po najechaniu"), _("Suwak tło po wciśnięciu"),
 			//podgląd styli
-			_("Pierwszy kolor podglądu styli"),_("Drugi kolor podglądu styli")
+			_("Pierwszy kolor podglądu styli"), _("Drugi kolor podglądu styli")
 		};
 		
 

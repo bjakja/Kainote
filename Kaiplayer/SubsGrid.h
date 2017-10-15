@@ -122,7 +122,7 @@ public:
 	int lastActiveLine;
 	SubsFile* file;
 	std::vector<wxArrayInt> SpellErrors;
-	std::vector<wxArrayInt> *Comparsion;
+	std::vector<wxArrayInt> *Comparison;
 	
 	SubsGrid(wxWindow *parent, const long int id ,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=wxWANTS_CHARS, const wxString& name=wxPanelNameStr);
 	virtual ~SubsGrid();

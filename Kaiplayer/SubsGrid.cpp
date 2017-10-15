@@ -101,7 +101,7 @@ SubsGrid::SubsGrid(wxWindow *parent, const long int id,const wxPoint& pos,const 
 	showtl=false;
 	ismenushown=false;
 	showFrames=false;
-	Comparsion=NULL;
+	Comparison=NULL;
 	bmp=NULL;
 	numsave=0;
 	file=new SubsFile();
@@ -207,11 +207,11 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	wxColour textcol=Options.GetColour(GridText);
 	wxColour collcol=Options.GetColour(GridCollisions);
 	wxColour SpelcheckerCol=Options.GetColour(GridSpellchecker);
-	wxColour ComparsionCol=Options.GetColour(GridComparison);
-	wxColour ComparsionBGCol=Options.GetColour(GridComparisonBackground);
-	wxColour ComparsionBGSelCol=Options.GetColour(GridComparisonBackgroundSelected);
-	wxColour ComparsionBGCmntCol=Options.GetColour(GridComparisonCommentBackground);
-	wxColour ComparsionBGCmntSelCol=Options.GetColour(GridComparisonCommentBackgroundSelected);
+	wxColour ComparisonCol=Options.GetColour(GridComparison);
+	wxColour ComparisonBGCol=Options.GetColour(GridComparisonBackground);
+	wxColour ComparisonBGSelCol=Options.GetColour(GridComparisonBackgroundSelected);
+	wxColour ComparisonBGCmntCol=Options.GetColour(GridComparisonCommentBackground);
+	wxColour ComparisonBGCmntSelCol=Options.GetColour(GridComparisonCommentBackgroundSelected);
 	wxString chtag=Options.GetString(GridTagsSwapChar);
 	wxColour visibleOnVideo = Options.GetColour(GridVisibleOnVideo);
 	bool SpellCheckerOn = Options.GetBool(SpellcheckerOn);
@@ -340,15 +340,15 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 			if(sel.find(i-1) != sel.end()){
 				isSelected = true;
 			}
-			bool comparison = (Comparsion && Comparsion->at(i-1).size()>0);//visibleLines
+			comparison = (Comparison && Comparison->at(i-1).size()>0);//visibleLines
 			bool visibleLine = (Dial->Start.mstime <= VideoPos && Dial->End.mstime > VideoPos);
-			kol = (comparison)? ComparsionBGCol : 
+			kol = (comparison)? ComparisonBGCol : 
 				(visibleLine)? visibleOnVideo : 
 				subsBkCol;
-			if(isComment){kol= (comparison)? ComparsionBGCmntCol : comm;}
+			if(isComment){kol= (comparison)? ComparisonBGCmntCol : comm;}
 			if(isSelected){
-				if(isComment){kol = (comparison)? ComparsionBGCmntSelCol : selcom;}
-				else{kol= (comparison)? ComparsionBGSelCol : seldial; }
+				if(isComment){kol = (comparison)? ComparisonBGCmntSelCol : selcom;}
+				else{kol= (comparison)? ComparisonBGSelCol : seldial; }
 			}
 			if(visibleLine){visibleLines.push_back(true);}
 			else{visibleLines.push_back(false);}
@@ -404,17 +404,17 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 
 
 					if(comparison){
-						tdc.SetTextForeground(ComparsionCol);
+						tdc.SetTextForeground(ComparisonCol);
 
-						for(size_t k = 1; k < Comparsion->at(i-1).size(); k+=2){
-							//if(Comparsion->at(i-1)[k]==Comparsion->at(i-1)[k+1]){continue;}
-							wxString cmp=strings[j].SubString(Comparsion->at(i-1)[k], Comparsion->at(i-1)[k+1]);
+						for(size_t k = 1; k < Comparison->at(i-1).size(); k+=2){
+							//if(Comparison->at(i-1)[k]==Comparison->at(i-1)[k+1]){continue;}
+							wxString cmp=strings[j].SubString(Comparison->at(i-1)[k], Comparison->at(i-1)[k+1]);
 
 							if(cmp==""){continue;}
 							if(cmp==" "){cmp="_";}
 							wxString bcmp;
-							if(Comparsion->at(i-1)[k]>0){
-								bcmp=strings[j].Mid(0, Comparsion->at(i-1)[k]);
+							if(Comparison->at(i-1)[k]>0){
+								bcmp=strings[j].Mid(0, Comparison->at(i-1)[k]);
 								tdc.GetTextExtent(bcmp, &bfw, &bfh, NULL, NULL, &font);
 							}else{bfw=0;}
 
@@ -613,7 +613,7 @@ void SubsGrid::AdjustWidths(int cell)
 void SubsGrid::Clearing()
 {
 	sel.clear();
-	SAFE_DELETE(Comparsion);
+	SAFE_DELETE(Comparison);
 	SAFE_DELETE(file);
 	SpellErrors.clear();
 	Modified=false;
@@ -1120,6 +1120,7 @@ void SubsGrid::Convert(char type)
 		if(stind<0){Styles *newstyl=new Styles(); newstyl->Name=stname;AddStyle(newstyl);}
 		else{AddStyle(Options.GetStyle(stind)->Copy());}
 		Edit->RefreshStyle();
+		Kai->SetSubsResolution();
 	}
 	if(form==ASS){
 		std::sort(file->subs->dials.begin(),file->subs->dials.end(),[](Dialogue *i, Dialogue *j){
@@ -1220,8 +1221,9 @@ return 0;
 */
 void SubsGrid::SaveFile(const wxString &filename, bool cstat)
 {
-	if(Options.GetInt(GridSaveAfterCharacterCount)>1){
+	if(Options.GetInt(GridSaveAfterCharacterCount) != 1){
 		bool oldOnVideo = Edit->OnVideo;
+		// no i tu mamy do poprawki dummy subs;
 		Edit->Send(EDITBOX_LINE_EDITION,false,false,true);
 		Edit->OnVideo = oldOnVideo;
 	}
@@ -1250,6 +1252,7 @@ void SubsGrid::SaveFile(const wxString &filename, bool cstat)
 	
 	for(int i=0;i<GetCount();i++)
 	{
+		//a tu trzeba w przypadku ebrow pobrać editbox line
 		Dialogue *dial=GetDial(i);
 		
 		if(tlmodeOn){
@@ -2087,8 +2090,8 @@ void SubsGrid::SetModified(unsigned char editionType, bool redit, bool dummy, in
 			Kai->Menubar->Enable(SaveSubs, true);
 			Modified=true;
 		}
-		if(Comparsion){
-			Kai->Tabs->SubsComparsion();
+		if(Comparison){
+			Kai->Tabs->SubsComparison();
 		}
 
 		Kai->Label(file->Iter()+1);
@@ -2428,7 +2431,7 @@ void SubsGrid::SelVideoLine(int curtime)
 
 void SubsGrid::NextLine(int dir)
 {
-	if(Edit->ABox&&Edit->ABox->audioDisplay->hold!=0){return;}
+	if(Edit->ABox && Edit->ABox->audioDisplay->hold!=0){return;}
 	int nebrow=Edit->ebrow+dir;
 	if(nebrow<0){return;}
 	if(nebrow>=GetCount()){
@@ -2436,6 +2439,8 @@ void SubsGrid::NextLine(int dir)
 		int eend= tmp->End.mstime; 
 		tmp->Start.NewTime(eend); 
 		tmp->End.NewTime(eend+5000);
+		tmp->Text="";
+		tmp->TextTl="";
 		AddLine(tmp);
 		SetModified(GRID_APPEND_LINE, false);
 	}
@@ -2444,6 +2449,7 @@ void SubsGrid::NextLine(int dir)
 	scPos = MID(0, nebrow-((h/(GridHeight+1))/2), GetCount()-1);
 	sel.clear();
 	sel[nebrow]=true;
+	lastRow = nebrow;
 	AdjustWidths(0);
 	Refresh(false);
 	Edit->SetLine(nebrow,true,true,false,true);

@@ -13,7 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Minilua", "Thirdparty\luaji
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Icu", "Thirdparty\icu\Icu\Icu.vcxproj", "{875E0BB7-06E8-4570-8E3C-AE9EF88F38BB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Boost", "Thirdparty\boost_1_61_0\build\Boost.vcxproj", "{C91E1D87-614C-47E8-9587-393568D41738}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Boost", "Thirdparty\boost_1_61_0\BoostBuild\Boost.vcxproj", "{C91E1D87-614C-47E8-9587-393568D41738}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

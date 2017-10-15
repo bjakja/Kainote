@@ -78,7 +78,7 @@ class kainoteFrame: public KaiFrame
 		void InsertTab(bool sel=true);
 		void OpenFiles(wxArrayString,bool intab=false, bool nofreeze=false, bool newtab=false);
 		void OpenAudioInTab(TabPanel *pan, int id, const wxString &path);
-		void HideEditor();
+		void HideEditor(bool save = true);
 		bool SavePrompt(char mode=1, int wtab=-1);
 		void UpdateToolbar();
 		void OnOpenAudio(wxCommandEvent& event);

@@ -1378,9 +1378,10 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 	wxString type;
 	wxString tag = Options.GetString((CONFIG)(event.GetId()-11000)).BeforeFirst('\f', &type);
 	if(tag.IsEmpty()){wxBell(); return;}
+	type = type.BeforeFirst('\f');
 
 	if(type!="2"){
-		if(type=="1"){TextEdit->SetSelection(0,0);}
+		//if(type=="1"){TextEdit->SetSelection(0,0);}
 		if(!tag.StartsWith("\\")){tag.Prepend("\\");}
 		wxString delims="1234567890-&()[]";
 		bool found=false;
@@ -1397,7 +1398,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		if(!found){findtag=tag.AfterFirst('\\');}
 		wxString iskol;
 
-		FindVal(findtag+"(.*)", &iskol);
+		FindVal(findtag+"(.*)", &iskol, "", 0, type=="1");
 
 		PutinText(tag);
 	}else{
@@ -1530,8 +1531,8 @@ void EditBox::SetTextWithTags()
 
 
 
-			TextEdit->SetTextS(txtTl, false);
-			TextEditOrig->SetTextS(txtOrg, false);
+			TextEdit->SetTextS(txtTl, TextEdit->modified);
+			TextEditOrig->SetTextS(txtOrg, TextEditOrig->modified);
 			splittedTags=true;
 
 			TextEdit->SetSelection(pos,pos);
@@ -1540,8 +1541,8 @@ void EditBox::SetTextWithTags()
 		}
 	}
 	splittedTags=false;
-	TextEdit->SetTextS((TextEditOrig->IsShown())? line->TextTl : line->Text , false);
-	if(TextEditOrig->IsShown()){TextEditOrig->SetTextS(line->Text, false);}
+	TextEdit->SetTextS((TextEditOrig->IsShown())? line->TextTl : line->Text , TextEdit->modified);
+	if(TextEditOrig->IsShown()){TextEditOrig->SetTextS(line->Text, TextEditOrig->modified);}
 }
 
 void EditBox::OnCursorMoved(wxCommandEvent& event)

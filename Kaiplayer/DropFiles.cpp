@@ -28,14 +28,22 @@ bool DragnDrop::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames
 		Kai->OpenFiles(filenames);}
 	else if(filenames.size()>0){
 		wxString ext = filenames[0].AfterLast('.').Lower();
+		bool isLuaScript = ext == "lua" || ext == "moon";
 		int w,h;
 		Kai->GetClientSize(&w,&h);
 		h -= (Kai->Menubar->GetSize().y);
-		if(y >= h && y <= h + Kai->Tabs->GetHeight() && ext != "lua" && ext != "moon"){
-			int pixels;
-			int tab = Kai->Tabs->FindTab(x-iconsize,&pixels);
-			if(tab<0){Kai->InsertTab();}
-			else if(Kai->Tabs->iter != tab){Kai->Tabs->ChangePage(tab);}
+		x -= iconsize;
+		if (!isLuaScript){
+			if (y >= h && y <= h + Kai->Tabs->GetHeight()){
+				int pixels;
+				int tab = Kai->Tabs->FindTab(x, &pixels);
+				if (tab < 0){ Kai->InsertTab(); }
+				else if (Kai->Tabs->iter != tab){ Kai->Tabs->ChangePage(tab); }
+			}
+			else{
+				int tabByPos = Kai->Tabs->GetIterByPos(wxPoint(x, y));
+				if (Kai->Tabs->iter != tabByPos){ Kai->Tabs->ChangePage(tabByPos); }
+			}
 		}
 		Kai->OpenFile(filenames[0]);
 	}

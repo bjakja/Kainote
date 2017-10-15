@@ -170,7 +170,7 @@ wxString config::GetRawOptions(bool Audio)
 {
 	wxString TextOpt=_T("["+progname+"]\r\n");
 	for (std::map<CONFIG,wxString>::iterator cur=rawcfg.begin();cur!=rawcfg.end();cur++) {
-		if((!Audio && cur->first <= AudioWheelDefaultToZoom) || (Audio && cur->first >=AudioWheelDefaultToZoom)) {continue;}
+		if((!Audio && cur->first <= AudioWheelDefaultToZoom) || (Audio && cur->first > AudioWheelDefaultToZoom)) {continue;}
 		TextOpt<<::GetString(cur->first) << _T("=") << cur->second << _T("\r\n");
 	}
 	return TextOpt;
@@ -642,7 +642,7 @@ void config::LoadDefaultAudioConfig()
 	rawcfg[AudioSnapToKeyframes] = "false";
 	rawcfg[AudioSnapToOtherLines] = "false";
 	rawcfg[AudioSpectrumOn] = "false";
-	rawcfg[AudioStartDragSensitivity] = "2";
+	rawcfg[AudioStartDragSensitivity] = "6";
 	rawcfg[AudioVerticalZoom] = "50";
 	rawcfg[AudioVolume] = "50";
 	rawcfg[AudioWheelDefaultToZoom] = "false";

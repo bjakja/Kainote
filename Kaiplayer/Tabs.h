@@ -21,6 +21,7 @@
 //#include <wx/process.h>
 
 class TabPanel;
+class Grid;
 
 class Notebook : public wxWindow
 	{
@@ -30,21 +31,23 @@ class Notebook : public wxWindow
 		virtual ~Notebook();
 		TabPanel *GetPage();
 		void AddPage(bool refresh=true);
-		void SetPageText(int page, wxString label);
+		void SetPageText(int page, const wxString &label);
 		void ChangePage(int page);
 		TabPanel *GetSecondPage();
+		int GetIterByPos(const wxPoint &pos);
 		int GetSelection();
 		int GetOldSelection();
 		size_t Size();
 		TabPanel *Page(size_t i);
 		void DeletePage(size_t page);
 		void Split(size_t page);
+		void RemoveComparison();
 		int FindTab(int x, int *num);
 		int FindPanel(TabPanel* pan);
 		int GetHeight();
 		void ChangeActiv();
 		void RefreshBar();
-		void SubsComparsion();
+		void SubsComparison();
 
 		size_t iter;
 		bool block;
@@ -69,7 +72,7 @@ class Notebook : public wxWindow
 		int TabHeight;
 		size_t olditer;
 		int over;
-		size_t fvis;
+		size_t firstVisibleTab;
 		int start;
 		bool onx;
 		bool farr;
@@ -78,8 +81,10 @@ class Notebook : public wxWindow
 		bool allvis;
 		bool arrow;
 		bool hasCompare;
-		int compareFirstTab;
-		int compareSecondTab;
+		//int compareFirstTab;
+		//int compareSecondTab;
+		Grid *compareFirstGrid;
+		Grid *compareSecondGrid;
 		int splitline;
 		int splititer;
 		int oldtab;

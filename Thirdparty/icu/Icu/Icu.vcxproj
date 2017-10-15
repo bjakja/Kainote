@@ -802,26 +802,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110_xp</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -929,7 +929,7 @@ _WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Thirdparty\icu\source\common\unicode;I:\Kainote\Thirdparty\icu\source\common;..\Thirdparty\icu\source\i18n\unicode;..\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>U_STATIC_IMPLEMENTATION;U_ENABLE_DYLOAD=0;
         U_CHECK_DYLOAD=0;
         UCONFIG_NO_FILE_IO=1;
@@ -942,6 +942,8 @@ _WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 BOOST_SYSTEM_NO_DEPRECATED;
 BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
 _WINDOWS;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -973,6 +975,7 @@ BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
 WIN32;
 _WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

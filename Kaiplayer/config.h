@@ -44,20 +44,7 @@
 
 //Pamiêtaj, zmiana ostatniej audio opcji wymaga te¿ zmiany przy szukaniu w zapisie
 #define CFG(CG) \
-	CG(ASSPropertiesTitle,=1)\
-	CG(ASSPropertiesScript,)\
-	CG(ASSPropertiesTranslation,)\
-	CG(ASSPropertiesEditing,)\
-	CG(ASSPropertiesTiming,)\
-	CG(ASSPropertiesUpdate,)\
-	CG(ASSPropertiesTitleOn,)\
-	CG(ASSPropertiesScriptOn,)\
-	CG(ASSPropertiesTranslationOn,)\
-	CG(ASSPropertiesEditingOn,)\
-	CG(ASSPropertiesTimingOn,)\
-	CG(ASSPropertiesUpdateOn,)\
-	CG(ASSPropertiesAskForChange,)\
-	CG(AudioAutoCommit,)\
+	CG(AudioAutoCommit,=1)\
 	CG(AudioAutoFocus,)\
 	CG(AudioAutoScroll,)\
 	CG(AudioBoxHeight,)\
@@ -90,6 +77,19 @@
 	CG(AudioVolume,)\
 	CG(AudioWheelDefaultToZoom,)\
 	CG(AcceptedAudioStream,)\
+	CG(ASSPropertiesTitle,)\
+	CG(ASSPropertiesScript,)\
+	CG(ASSPropertiesTranslation,)\
+	CG(ASSPropertiesEditing,)\
+	CG(ASSPropertiesTiming,)\
+	CG(ASSPropertiesUpdate,)\
+	CG(ASSPropertiesTitleOn,)\
+	CG(ASSPropertiesScriptOn,)\
+	CG(ASSPropertiesTranslationOn,)\
+	CG(ASSPropertiesEditingOn,)\
+	CG(ASSPropertiesTimingOn,)\
+	CG(ASSPropertiesUpdateOn,)\
+	CG(ASSPropertiesAskForChange,)\
 	CG(AudioRecent,)\
 	CG(AutomationLoadingMethod,)\
 	CG(AutomationOldScriptsCompatybility,)\
@@ -306,6 +306,7 @@ DECLARE_ENUM(CONFIG,CFG)
 	CR(TabsBackgroundActive,)\
 	CR(TabsBackgroundInactive,)\
 	CR(TabsBackgroundInactiveHover,)\
+	CR(TabsBackgroundSecondWindow,)\
 	CR(TabsTextActive,)\
 	CR(TabsTextInactive,)\
 	CR(TabsCloseHover,)\
