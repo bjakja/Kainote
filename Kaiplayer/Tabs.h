@@ -49,7 +49,7 @@ class Notebook : public wxWindow
 		void RefreshBar();
 		void SubsComparison();
 
-		size_t iter;
+		int iter;
 		bool block;
 		bool split;
 		static Notebook *GetTabs();

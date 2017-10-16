@@ -142,34 +142,31 @@ void Notebook::DeletePage(size_t page)
 	if (hasCompare && Pages[page]->Grid1->Comparison != NULL){
 		RemoveComparison();
 	}
+	/*wxSize deletedPageSize = Pages[page]->GetSize();
+	wxPoint deletedPagePos = Pages[page]->GetPosition();
+	*/
+
 	int tmpSize = Size();
-	if (split && tmpSize>2 && (page == iter || page == splititer)){
-		bool deleteActiveTab = page == iter;
-		int i = (deleteActiveTab) ? iter+1 : splititer+1;
-		if (i >= tmpSize){
-			i = tmpSize - 2; 
-			if (i == iter || i == splititer){ 
-				if (i == iter){ 
-					splititer = i - 1; 
-					if (splititer < 0){
-						splititer = 0;
-					}
-				}
-				if (i == splititer){
-					iter = i - 1;
-					if (iter < 0){
-						iter = 0;
-					}
-				}
-				i--; 
-			}
-			if (i < 0){ 
-				i = 0; KaiMessageBox("Nieoczekiwany błąd usuwania zakładki przy wyświetlaniu dwóch zakładek"); 
-			}
+	if (split && tmpSize>2){
+		int tmpiter = iter;
+		int tmpsplititer = splititer;
+		if (page < iter || (page == iter && iter + 1 == splititer && iter != 0) || 
+			(iter >= tmpSize - 1 && iter - 1 != splititer)){ iter--; }
+		else if (page == iter && iter + 1 == splititer && iter == 0){ iter += 2; }
+		else if (page == iter && iter - 1 == splititer && iter >= tmpSize-1){ iter -= 2; }
+		if (page < splititer || (page == splititer && splititer + 1 == iter && splititer != 0) || 
+			(splititer >= tmpSize - 1 && splititer - 1 != iter)){ splititer--; }
+		else if (page == splititer && splititer + 1 == iter && splititer == 0){ splititer += 2; }
+		else if (page == splititer && splititer - 1 == iter && splititer >= tmpSize-1){ splititer -= 2; }
+
+		if (page == tmpiter || page == tmpsplititer){
+			bool deleteActiveTab = page == tmpiter;
+			int newVisibleTab = (deleteActiveTab) ? iter : splititer;
+			
+			Pages[newVisibleTab]->SetSize(Pages[page]->GetSize());
+			Pages[newVisibleTab]->SetPosition(Pages[page]->GetPosition());
+			Pages[newVisibleTab]->Show();
 		}
-		Pages[i]->SetSize(Pages[page]->GetSize());
-		Pages[i]->SetPosition(Pages[page]->GetPosition());
-		Pages[i]->Show();
 	}
 	Pages[page]->Destroy();
 	Pages.erase(Pages.begin()+page);
@@ -198,11 +195,11 @@ void Notebook::DeletePage(size_t page)
 
 	size_t rsize=Size()-1;
 	if(olditer > rsize){olditer=rsize;}
-	if(iter > rsize){iter=rsize;}
-	else if(page < iter){iter--;}
-	if (page < splititer){ splititer--; }
-	else if (splititer > rsize){ splititer = rsize; }
-	if(page>  rsize){page=rsize;}
+	//if(iter > rsize){iter=rsize;}
+	//else if(page < iter){iter--;}
+	//if (page < splititer){ splititer--; }
+	//else if (splititer > rsize){ splititer = rsize; }
+	//if(page>  rsize){page=rsize;}
 	if(firstVisibleTab>rsize){firstVisibleTab=rsize;}
 
 	CalcSizes();
