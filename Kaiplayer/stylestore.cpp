@@ -770,7 +770,7 @@ void StyleStore::LoadAssStyles()
 
 void StyleStore::ReloadFonts()
 {
-	wxArrayString *fontList = (cc->fontFilter->GetValue().IsEmpty())? 
+	wxArrayString *fontList = (!Options.GetBool(StyleFilterTextOn)) ?
 		FontEnum.GetFonts(0,[](){}) : 
 		FontEnum.GetFilteredFonts(0,[](){}, cc->fontFilter->GetValue());
 	cc->sfont->PutArray(fontList);

@@ -2,6 +2,7 @@
 *.jam
 *.png
 *.htm
+*.html
 *.css
 *.bat
 *.exe
@@ -15,3 +16,5 @@ more/
 stage/
 status/
 tools/
+INSTALL
+Jamroot

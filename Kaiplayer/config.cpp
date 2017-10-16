@@ -410,7 +410,8 @@ void config::LoadDefaultColors(bool dark)
 	colors[TabsBorderInactive] = new wxColour((dark)? "#000000" : "#ACACAC");
 	colors[TabsBackgroundActive] = new wxColour((dark)? "#2D2D2D" : "#C0C0C0");
 	colors[TabsBackgroundInactive] = new wxColour((dark)? "#3C3C3C" : "#F0F0F0");
-	colors[TabsBackgroundInactiveHover] = new wxColour((dark)? "#2D2D2D" : "#D1D1D1");
+	colors[TabsBackgroundInactiveHover] = new wxColour((dark) ? "#2D2D2D" : "#D1D1D1"); 
+	colors[TabsBackgroundSecondWindow] = new wxColour((dark) ? "#181818" : "#AFAFAF");
 	colors[TabsTextActive] = new wxColour((dark)? "#B5B5B5" : "#000000");
 	colors[TabsTextInactive] = new wxColour((dark)? "#9B9B9B" : "#333333");
 	colors[TabsCloseHover] = new wxColour((dark)? "#D40403" : "#E04343");

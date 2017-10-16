@@ -917,26 +917,32 @@ void kainoteFrame::AppendRecent(short what,Menu *_Menu)
 		wmenu=(what==0)?SubsRecMenu : (what==1)? VidsRecMenu : AudsRecMenu;
 	}
 	int idd=30000+(20*what);
-	int size= (what==0)?subsrec.size() : (what==1)? videorec.size() : audsrec.size();
+	//int size= (what==0)?subsrec.size() : (what==1)? videorec.size() : audsrec.size();
 
-	wxArrayString recs=(what==0)?subsrec : (what==1)? videorec : audsrec;
-	//wxLogStatus("count %i", wmenu->GetMenuItemCount());
+	wxArrayString &recs=(what==0)?subsrec : (what==1)? videorec : audsrec;
+	
 	for(int j=wmenu->GetMenuItemCount()-1; j>=0; j--){
-		//wxLogStatus("deleted %i", j);
 		wmenu->Destroy(wmenu->FindItemByPosition(j));
 	}
-
-	for(int i=0;i<size;i++)
+	int i = 0;
+	bool changedRecent = false;
+	while (i<recs.size())
 	{
-		if(!wxFileExists(recs[i])){continue;}
+		if (!wxFileExists(recs[i])){ recs.erase(recs.begin() + i); continue; }
 		MenuItem* MI= new MenuItem(idd+i, std::to_string(i+1) + " " + recs[i].AfterLast('\\'), _("Otwórz ")+recs[i]);
 		wmenu->Append(MI);
+		i++;
 	}
 
 	if(!wmenu->GetMenuItemCount()){
 		MenuItem* MI= new MenuItem(idd, _("Brak"));
 		MI->Enable(false);
 		wmenu->Append(MI);
+	}
+	if (changedRecent){
+		if (what == 0){ Options.SetTable(SubsRecent, recs); }
+		else if (what == 1){ Options.SetTable(VideoRecent, recs); }
+		else{ Options.SetTable(AudioRecent, recs); }
 	}
 }
 

@@ -94,8 +94,8 @@ wxArrayString *FontEnumerator::GetFilteredFonts(const wxWindow *client, std::fun
 	if(!FilteredFonts){
 		FilteredFonts=new wxArrayString();
 		FilteredFontsTmp=new wxArrayString();
+		EnumerateFonts(false);
 	}
-	EnumerateFonts(false);
 	if(client){observers[client] = func;}
 	return FilteredFonts;
 }

@@ -16,8 +16,6 @@
 
 #include <wx/wx.h>
 #include "StyleChange.h"
-#include <wx/intl.h>
-#include <wx/string.h>
 #include <wx/settings.h>
 #include "FontEnumerator.h"
 #include "config.h" 
@@ -72,17 +70,28 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 	wxBoxSizer *fntsizer=new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *filtersizer=new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *biussizer=new wxBoxSizer(wxHORIZONTAL);
+	wxString fontFilterText = Options.GetString(StyleEditFilterText);
+	bool fontFilterOn = Options.GetBool(StyleFilterTextOn);
 	sfont = new KaiChoice(this, ID_FONTNAME, "", wxDefaultPosition, wxDefaultSize, wxArrayString());
-	sfont -> PutArray(FontEnum.GetFonts(this,[=](){
-		SS->ReloadFonts();
-	}));
+	if (fontFilterText.IsEmpty() || !fontFilterOn){
+		sfont->PutArray(FontEnum.GetFonts(this, [=](){
+			SS->ReloadFonts();
+		}));
+	}
+	else{
+		sfont->PutArray(FontEnum.GetFilteredFonts(this, [=](){
+			SS->ReloadFonts();
+		}, fontFilterText));
+	}
 	ssize = new NumCtrl(this, ID_TOUTLINE, "32",1,10000,false, wxDefaultPosition, wxSize(66,-1), wxTE_PROCESS_ENTER);
-	fontFilter = new KaiTextCtrl(this,-1,Options.GetString(StyleEditFilterText));
+	fontFilter = new KaiTextCtrl(this, -1, fontFilterText);
 	Filter = new ToggleButton(this, 21342, _("Filtruj"));
 	Filter->SetToolTip(_("Filtruje czcionki, by zawierały wpisane znaki"));
+	Filter->SetValue(fontFilterOn);
 	Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, [=](wxCommandEvent &evt){
 		wxString filter = fontFilter->GetValue();
-		if(filter.IsEmpty() || !Filter->GetValue()){
+		bool filterOn = Filter->GetValue();
+		if (filter.IsEmpty() || !filterOn){
 			sfont -> PutArray(FontEnum.GetFonts(this,[=](){
 				SS->ReloadFonts();
 			}));
@@ -93,6 +102,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 			}, filter));
 		}
 		Options.SetString(StyleEditFilterText, filter);
+		Options.SetBool(StyleFilterTextOn, filterOn);
 	},21342);
 
 	sb = new KaiCheckBox(this, ID_CBOLD, _("Pogrubienie"), wxDefaultPosition, wxSize(73,15));

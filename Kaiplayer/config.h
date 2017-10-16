@@ -164,6 +164,7 @@
 	CG(SelectVisibleLineAfterFullscreen,)\
 	CG(SpellcheckerOn,)\
 	CG(StyleEditFilterText,)\
+	CG(StyleFilterTextOn,)\
 	CG(StyleManagerPosition,)\
 	CG(StyleManagerDetachEditor,)\
 	CG(SubsAutonaming,)\

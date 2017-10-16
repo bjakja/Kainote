@@ -1,1 +1,0 @@
-signtool sign /f I:\Kainote\Cert\ia.p12 /t http://timestamp.comodoca.com/authenticode I:Kainote\Release\Kainote.exe

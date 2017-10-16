@@ -4,6 +4,7 @@ Kainote setup.*
 *.rar
 *.7z
 *.psd
+Trash/
 
 
 ## Ignore Visual Studio temporary files, build results, and
