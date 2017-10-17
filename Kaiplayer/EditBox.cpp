@@ -22,6 +22,7 @@
 #include "FontDialog.h"
 #include "ColorPicker.h"
 #include "Visuals.h"
+#include "KaiMessageBox.h"
 
 
 DescTxtCtrl::DescTxtCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc, const wxValidator &validator)
@@ -1640,6 +1641,7 @@ void EditBox::OnDoubtfulTl(wxCommandEvent& event)
 void EditBox::FindNextDoubtfulTl(wxCommandEvent& event)
 {
 	if(!grid->transl){wxBell();return;}
+SeekDoubtful:
 	for(int i = CurrentDoubtful; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDial(i);
 		if((dial->State & 4) > 0){
@@ -1650,12 +1652,15 @@ void EditBox::FindNextDoubtfulTl(wxCommandEvent& event)
 			return;
 		}
 	}
+	if (CurrentDoubtful == 0){ KaiMessageBox(_("Nie znaleziono więcej niepewnych")); return; }
 	CurrentDoubtful=0;
+	goto SeekDoubtful;
 }
 
 void EditBox::FindNextUnTranslated(wxCommandEvent& event)
 {
 	if(!grid->transl){wxBell();return;}
+SeekUntranslated:
 	for(int i = CurrentUntranslated; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDial(i);
 		if(dial->TextTl == ""/* && !dial->IsComment*/){
@@ -1666,7 +1671,9 @@ void EditBox::FindNextUnTranslated(wxCommandEvent& event)
 			return;
 		}
 	}
+	if (CurrentUntranslated == 0){ KaiMessageBox(_("Nie znaleziono więcej nieprzetłumaczonych")); return; }
 	CurrentUntranslated=0;
+	goto SeekUntranslated;
 }
 
 void EditBox::SetTagButtons()
