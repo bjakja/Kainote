@@ -1430,7 +1430,7 @@ void kainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 				(tab->VideoPath!="")? tab->VideoPath.BeforeLast('\\') : 
 				(videorec.size()>0)? subsrec[0].BeforeLast('\\') : "", "", 
 				_("Pliki audio i wideo") + 
-				" (*.wav),(*.w64),(*.flac),(*.ac3),(*.aac),(*.ogg),(*.mp3),(*.mp4),(*.mkv),(*.avi)|*.wav;*.w64;*.flac;*.ac3;*.aac;*.ogg;*.mp3;*.mp4;*.mkv;*.avi|"+
+				" (*.wav),(*.w64),(*.flac),(*.ac3),(*.aac),(*.ogg),(*.mp3),(*.mp4),(*.m4a),(*.mkv),(*.avi)|*.wav;*.w64;*.flac;*.ac3;*.aac;*.ogg;*.mp3;*.mp4;*.m4a;*.mkv;*.avi|"+
 				_("Wszystkie pliki")+" |*.*", wxFD_OPEN);
 			int result = FileDialog1->ShowModal();
 			if (result == wxID_OK){

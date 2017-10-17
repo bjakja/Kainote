@@ -42,7 +42,7 @@ TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const
     CTime= new CTwindow(this,kai,-1,wxDefaultPosition,wxDefaultSize,wxBORDER_SIMPLE);
     CTime->Show(Options.GetBool(MoveTimesOn));
 	BoxSizer3->Add(Grid1, 1, wxEXPAND, 0);
-	BoxSizer3->Add(CTime, 0, wxEXPAND|wxRIGHT, 2);
+	BoxSizer3->Add(CTime, 0, wxEXPAND, 0);
     BoxSizer2->Add(Video, 0, wxEXPAND|wxALIGN_TOP, 0);
     BoxSizer2->Add(Edit, 1, wxEXPAND|wxALIGN_TOP, 0);
     BoxSizer1 = new wxBoxSizer(wxVERTICAL);

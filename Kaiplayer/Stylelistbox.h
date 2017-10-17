@@ -46,6 +46,7 @@ public:
 	int GetIntSelection() {return selection;}
 private:
 	void OnDoubleClick(wxCommandEvent& evt);
+	void OnOKClick(wxCommandEvent& evt);
 	wxString result;
 	int selection;
 };

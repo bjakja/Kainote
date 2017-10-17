@@ -900,7 +900,8 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 	if (event.GetWheelRotation() != 0) {
 		int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();
 		ScrollTo(scPos - step);
-		return;}
+		return;
+	}
 
 
 

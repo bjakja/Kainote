@@ -71,16 +71,22 @@ KaiListBox::KaiListBox(wxWindow *parent, const wxArrayString &suggest, const wxS
 	: KaiDialog(parent,-1,title,wxDefaultPosition)
 	,selection(0)
 {
-	DialogSizer *sizer=new DialogSizer(wxHORIZONTAL);
+	DialogSizer *sizer=new DialogSizer(wxVERTICAL);
+	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	list=new KaiListCtrl(this,29886,suggest, wxDefaultPosition, wxSize(220,160));
+	list->SetSelection(0);
+	MappedButton *OK = new MappedButton(this, 8888, "OK");
+	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	sizer->Add(list,1,wxEXPAND|wxALL,2);
+	buttonSizer->Add(OK, 1, wxALL, 4);
+	buttonSizer->Add(Cancel, 1, wxALL, 4);
+	sizer->Add(buttonSizer, 0, wxCENTER);
 	SetSizerAndFit(sizer);
-	//
+
 	Connect(29886,LIST_ITEM_DOUBLECLICKED,(wxObjectEventFunction)&KaiListBox::OnDoubleClick);
+	Connect(8888, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&KaiListBox::OnOKClick);
 	if(centerOnParent){CenterOnParent();parent->Raise();}
 	else{
-		//wxPoint mousepos = wxGetMousePosition();
-		//SetPosition(mousepos);
 		MoveToMousePosition(this);
 	}
 }
@@ -89,5 +95,13 @@ void KaiListBox::OnDoubleClick(wxCommandEvent& evt)
 {
 	selection = evt.GetInt();
 	result=list->GetItem(selection,0)->name;
+	EndModal(wxID_OK);
+}
+
+void KaiListBox::OnOKClick(wxCommandEvent& evt)
+{
+	selection = list->GetSelection();
+	if (selection < 0){ selection = 0; }
+	result = list->GetItem(selection, 0)->name;
 	EndModal(wxID_OK);
 }
