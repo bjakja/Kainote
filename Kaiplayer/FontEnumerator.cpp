@@ -147,7 +147,7 @@ int CALLBACK FontEnumerator::FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lpt
 		auto hfont = CreateFontIndirectW(lplf);
 		SelectObject(Enum->hdc, hfont);
 		if(Enum->CheckGlyphsExists(Enum->hdc, Enum->filter, missing) && missing.empty()){
-			if(!missing.IsEmpty()){wxLogStatus(missing);}
+			//if(!missing.IsEmpty()){wxLogStatus(missing);}
 			Enum->FilteredFontsTmp->Add(lplf->lfFaceName);
 		}
 		SelectObject(Enum->hdc, NULL);

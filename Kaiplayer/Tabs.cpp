@@ -142,9 +142,6 @@ void Notebook::DeletePage(size_t page)
 	if (hasCompare && Pages[page]->Grid1->Comparison != NULL){
 		RemoveComparison();
 	}
-	/*wxSize deletedPageSize = Pages[page]->GetSize();
-	wxPoint deletedPagePos = Pages[page]->GetPosition();
-	*/
 
 	int tmpSize = Size();
 	if (split && tmpSize>2){
@@ -195,8 +192,11 @@ void Notebook::DeletePage(size_t page)
 
 	size_t rsize=Size()-1;
 	if(olditer > rsize){olditer=rsize;}
-	//if(iter > rsize){iter=rsize;}
-	//else if(page < iter){iter--;}
+	if (!split){
+		if (iter > rsize){ iter = rsize; }
+		else if (page < iter){ iter--; }
+		Pages[iter]->Show();
+	}
 	//if (page < splititer){ splititer--; }
 	//else if (splititer > rsize){ splititer = rsize; }
 	//if(page>  rsize){page=rsize;}
