@@ -1652,7 +1652,7 @@ SeekDoubtful:
 			return;
 		}
 	}
-	if (CurrentDoubtful == 0){ KaiMessageBox(_("Nie znaleziono więcej niepewnych")); return; }
+	if (CurrentDoubtful == 0){ KaiMessageBox(_("Nie znaleziono niepewnych")); return; }
 	CurrentDoubtful=0;
 	goto SeekDoubtful;
 }
@@ -1671,7 +1671,7 @@ SeekUntranslated:
 			return;
 		}
 	}
-	if (CurrentUntranslated == 0){ KaiMessageBox(_("Nie znaleziono więcej nieprzetłumaczonych")); return; }
+	if (CurrentUntranslated == 0){ KaiMessageBox(_("Nie znaleziono nieprzetłumaczonych")); return; }
 	CurrentUntranslated=0;
 	goto SeekUntranslated;
 }
@@ -1734,3 +1734,9 @@ void EditBox::SetTagButtons()
 	
 
 }
+
+void EditBox::SetActiveLineToDoubtful()
+{
+	CurrentDoubtful = ebrow;
+	CurrentUntranslated = ebrow;
+};

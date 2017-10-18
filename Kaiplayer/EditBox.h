@@ -136,6 +136,7 @@ public:
 	bool IsCursorOnStart();
 	void FindNextDoubtfulTl(wxCommandEvent& event);
 	void FindNextUnTranslated(wxCommandEvent& event);
+	void SetActiveLineToDoubtful();
 
 	wxBoxSizer* BoxSizer1;
 

@@ -966,6 +966,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 			if (click && (changeActive || !ctrl) || (dclick && ctrl)) {/*(click && !ctrl)*/ 
 				lastActiveLine = Edit->ebrow;
 				Edit->SetLine(row,true,true,true,!ctrl);
+				if (transl){ Edit->SetActiveLineToDoubtful(); }
 				if(changeActive){Refresh(false);}
 				if(!ctrl || dclick){
 					SelectRow(row);
@@ -1041,6 +1042,7 @@ void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 			if(changeActive){
 				lastActiveLine = Edit->ebrow;
 				Edit->SetLine(row,true,true,false);
+				if (transl){ Edit->SetActiveLineToDoubtful(); }
 				//if(mvtal < 4 && mvtal > 0){
 					//SetVideoLineTime(event);
 				//}
@@ -1728,7 +1730,6 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 
 			int next = MID(0,curLine+dir,GetCount()-1);
 			Edit->SetLine(next);
-			
 			SelectRow(next);
 			int gridh=((h/(GridHeight+1))-1);
 			if(dir==1||dir==-1){
@@ -1738,21 +1739,21 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 			}else{
 				ScrollTo(next);}
 			lastRow=next;
-			return;
+			//return;
 		}
 
 
 		// Move selected
-		if (alt&&!shift) {
+		else if (alt&&!shift) {
 			if((dir==1||dir==-1)&&FirstSel()!=-1){
 				MoveRows(dir,true);
 				ScrollTo(scPos+dir);
 			}
-			return;
+			//return;
 		}
 
 		// Shift-selection
-		if (shift && !ctrl && !alt) {
+		else if (shift && !ctrl && !alt) {
 			// Find end
 			if (extendRow == -1) extendRow = Edit->ebrow;
 			extendRow = lastRow = MID(0,extendRow+dir,GetCount()-1);
@@ -1779,8 +1780,9 @@ void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 				ScrollTo(extendRow-gridh+1);}
 			else if(dir!=1&&dir!=-1){
 				ScrollTo(extendRow);}
-			return;
+			//return;
 		}
+		if (transl){ Edit->SetActiveLineToDoubtful(); }
 	}
 
 

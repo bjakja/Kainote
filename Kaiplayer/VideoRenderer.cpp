@@ -634,16 +634,15 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 		if(!vplayer){vplayer= new DShowPlayer(this);}
 
 		if(!vplayer->OpenFile(fname, __vobsub)){/*block=false;*/return false;}
+		wxSize siz = vplayer->GetVideoSize();
+		vwidth = siz.x; vheight = siz.y;
+		if (vwidth % 2 != 0){ vwidth++; }
 
-		wxSize siz=vplayer->GetVideoSize();
-		vwidth=siz.x;vheight=siz.y;
-		if(vwidth % 2 != 0 ){vwidth++;}
-
-		pitch=vwidth*vplayer->inf.bytes;
-		fps=vplayer->inf.fps;
-		vformat=vplayer->inf.CT;
-		ax=vplayer->inf.ARatioX;
-		ay=vplayer->inf.ARatioY;
+		pitch = vwidth*vplayer->inf.bytes;
+		fps = vplayer->inf.fps;
+		vformat = vplayer->inf.CT;
+		ax = vplayer->inf.ARatioX;
+		ay = vplayer->inf.ARatioY;
 		d3dformat=(vformat==5)? D3DFORMAT('21VN') : (vformat==3)? D3DFORMAT('21VY') : (vformat==2)? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
 		if(player){
 			Kaia->Frame->OpenAudioInTab(((TabPanel*)GetParent()),CloseAudio,"");
@@ -1545,6 +1544,18 @@ void VideoRend::ChangeVobsub(bool vobsub)
 	TabPanel *pan=Kaia->Frame->GetTab();
 	OpenSubs((vobsub)? NULL : pan->Grid1->SaveText(), true, true);
 	vplayer->OpenFile(pan->VideoPath,vobsub);
+	vformat = vplayer->inf.CT;
+	D3DFORMAT tmpd3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') : (vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
+	if (tmpd3dformat != d3dformat){
+		d3dformat = tmpd3dformat;
+		int tmppitch = vwidth * vplayer->inf.bytes;
+		if (tmppitch != pitch){
+			pitch = tmppitch;
+			if (datas){ delete[] datas; datas = NULL; }
+			datas = new char[vheight * pitch];
+		}
+		UpdateVideoWindow();
+	}
 	SetPosition(tmptime);
 	if(vstate==Paused){vplayer->Play();vplayer->Pause();}
 	else if(vstate==Playing){vplayer->Play();}
