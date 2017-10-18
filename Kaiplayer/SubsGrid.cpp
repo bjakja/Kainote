@@ -2644,8 +2644,11 @@ wxString *SubsGrid::GetVisibleSubs()
 		}
 
 	}
-	if(noLine){
-		Dialogue().GetRaw(txt);
+	if (noLine){
+		Dialogue dial;
+		if (form != ASS)
+			dial.Conv(form);
+		dial.GetRaw(txt);
 	}
 
 
@@ -2703,7 +2706,10 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, wxArrayInt *select
 
 	}
 	if(noLine){
-		Dialogue().GetRaw(txt);
+		Dialogue dial;
+		if (form != ASS)
+			dial.Conv(form);
+		dial.GetRaw(txt);
 	}
 
 

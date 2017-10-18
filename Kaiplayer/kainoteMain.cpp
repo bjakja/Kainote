@@ -869,7 +869,7 @@ void kainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
 		StatusBar->SetLabelTextColour(5, WindowWarningElements);
 		StatusBar->SetLabelTextColour(7, WindowWarningElements);
 		badResolution=true;
-		if(showDialog){
+		if (showDialog && cur->Grid1->form == ASS){
 			ShowBadResolutionDialog(wxSize(w,h), wxSize(x,y));
 		}
 	}else if(badResolution){
