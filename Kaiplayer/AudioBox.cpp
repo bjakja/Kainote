@@ -220,9 +220,7 @@ void AudioBox::SetFile(wxString file, bool fromvideo) {
 	audioDisplay->SetFile(file, fromvideo);
 	if (file != "") loaded = audioDisplay->loaded;
 	audioName = file;
-	if(!Options.GetBool(AudioLink)){
-		SetVolume(Options.GetInt(AudioVolume));
-	}
+	SetVolume(Options.GetInt(AudioVolume));
 }
 
 
@@ -254,6 +252,7 @@ void AudioBox::OnVerticalZoom(wxScrollEvent &event) {
 	if (VerticalLink->GetValue()) {
 		audioDisplay->player->SetVolume(value);
 		VolumeBar->SetThumbPosition(VerticalZoom->GetThumbPosition());
+		Options.SetInt(AudioVolume, pos);
 	}
 	Options.SetInt(AudioVerticalZoom,pos);
 	if(event.GetEventType()==wxEVT_SCROLL_THUMBRELEASE){
@@ -275,6 +274,7 @@ void AudioBox::OnVolume(wxScrollEvent &event) {
 	if (VerticalLink->GetValue()) {
 		VerticalZoom->SetThumbPosition(VolumeBar->GetThumbPosition());
 		audioDisplay->SetScale(value);
+		Options.SetInt(AudioVerticalZoom, pos);
 	}
 }
 
