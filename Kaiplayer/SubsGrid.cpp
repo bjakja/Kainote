@@ -2231,9 +2231,10 @@ void SubsGrid::Loadfile(const wxString &str,const wxString &ext){
 				}
 				dl->Effect = tl.Effect;
 				AddLine(dl);
-			}else if(tlmode && dl->Text!=""){
+			}else/* if(tlmode && dl->Text!="")*/{
+				//stary tryb tłumaczenia nie istnieje od 2 lat, nie ma sensu usuwać pustych linii, zważywszy na to, że to może usunąć coś ważnego.
 				AddLine(dl);
-			}else{delete dl;}
+			}/*else{delete dl;}*/
 		}
 
 
@@ -2645,10 +2646,12 @@ wxString *SubsGrid::GetVisibleSubs()
 
 	}
 	if (noLine){
-		Dialogue dial;
+		/*Dialogue dial;
 		if (form != ASS)
 			dial.Conv(form);
-		dial.GetRaw(txt);
+		dial.GetRaw(txt);*/
+		delete txt;
+		return NULL;
 	}
 
 
@@ -2706,10 +2709,12 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, wxArrayInt *select
 
 	}
 	if(noLine){
-		Dialogue dial;
+		/*Dialogue dial;
 		if (form != ASS)
 			dial.Conv(form);
-		dial.GetRaw(txt);
+		dial.GetRaw(txt);*/
+		delete txt;
+		return NULL;
 	}
 
 

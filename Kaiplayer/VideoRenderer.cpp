@@ -844,7 +844,7 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 	if (instance) csri_close(instance);
 	instance = NULL;
 	//wxLogStatus(*textsubs);
-	if(!textsubs) {/*if (vobsub) {csri_close_renderer(vobsub);}*/return false;}
+	if(!textsubs) {return true;}
 	//const char *buffer= textsubs.mb_str(wxConvUTF8).data();
 	if(VisEdit && Vclips->Visual==VECTORCLIP && Vclips->dummytext){
 		//wxLogStatus("clip background");
