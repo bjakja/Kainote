@@ -1,0 +1,53 @@
+/***************************************************************
+ * Name:      kainoteApp.h
+ * Purpose:   Defines Application Class
+ * Author:    Bjakja (bjakja@op.pl)
+ * Created:   2012-04-23
+ * Copyright: Bjakja (www.costam.com)
+ * License:
+ **************************************************************/
+
+#pragma once
+
+#include <wx/app.h>
+#include <wx/snglinst.h>
+
+#include "KainoteMain.h"
+
+#if _DEBUG
+//#define _CRTDBG_MAP_ALLOC
+//  #define _CRTDBG_MAP_ALLOC_NEW
+//  #include <stdlib.h>
+//  #include <crtdbg.h>
+//
+//  #define DEBUG_NEW   new( _CLIENT_BLOCK, __FILE__, __LINE__)
+//  #define new DEBUG_NEW
+//#include <vld.h> 
+#endif
+
+
+
+class KaiServer;
+
+class kainoteApp : public wxApp
+{
+public:
+    bool OnInit();
+	int OnExit();
+	bool OnSecondInstance(wxString _paths);
+	//void OnUnhandledException();
+	void OnFatalException();
+	void OnOpen(wxTimerEvent &evt);
+	bool IsBusy();
+	kainoteFrame* Frame;
+	wxTimer timer;
+	wxArrayString paths;
+private:
+	wxSingleInstanceChecker* m_checker;
+	KaiServer *MyServer;
+	wxLocale *locale;
+};
+
+
+DECLARE_APP(kainoteApp)
+ 

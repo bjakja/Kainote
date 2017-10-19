@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\src\ljamalg.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\lj_alloc.h" />
+    <ClInclude Include="..\src\lj_arch.h" />
+    <ClInclude Include="..\src\lj_asm.h" />
+    <ClInclude Include="..\src\lj_asm_arm.h" />
+    <ClInclude Include="..\src\lj_asm_mips.h" />
+    <ClInclude Include="..\src\lj_asm_ppc.h" />
+    <ClInclude Include="..\src\lj_asm_x86.h" />
+    <ClInclude Include="..\src\lj_bc.h" />
+    <ClInclude Include="..\src\lj_bcdump.h" />
+    <ClInclude Include="..\src\lj_carith.h" />
+    <ClInclude Include="..\src\lj_ccall.h" />
+    <ClInclude Include="..\src\lj_ccallback.h" />
+    <ClInclude Include="..\src\lj_cconv.h" />
+    <ClInclude Include="..\src\lj_cdata.h" />
+    <ClInclude Include="..\src\lj_char.h" />
+    <ClInclude Include="..\src\lj_clib.h" />
+    <ClInclude Include="..\src\lj_cparse.h" />
+    <ClInclude Include="..\src\lj_crecord.h" />
+    <ClInclude Include="..\src\lj_ctype.h" />
+    <ClInclude Include="..\src\lj_debug.h" />
+    <ClInclude Include="..\src\lj_def.h" />
+    <ClInclude Include="..\src\lj_dispatch.h" />
+    <ClInclude Include="..\src\lj_emit_arm.h" />
+    <ClInclude Include="..\src\lj_emit_mips.h" />
+    <ClInclude Include="..\src\lj_emit_ppc.h" />
+    <ClInclude Include="..\src\lj_emit_x86.h" />
+    <ClInclude Include="..\src\lj_err.h" />
+    <ClInclude Include="..\src\lj_errmsg.h" />
+    <ClInclude Include="..\src\lj_ff.h" />
+    <ClInclude Include="..\src\lj_ffrecord.h" />
+    <ClInclude Include="..\src\lj_frame.h" />
+    <ClInclude Include="..\src\lj_func.h" />
+    <ClInclude Include="..\src\lj_gc.h" />
+    <ClInclude Include="..\src\lj_gdbjit.h" />
+    <ClInclude Include="..\src\lj_ir.h" />
+    <ClInclude Include="..\src\lj_ircall.h" />
+    <ClInclude Include="..\src\lj_iropt.h" />
+    <ClInclude Include="..\src\lj_jit.h" />
+    <ClInclude Include="..\src\lj_lex.h" />
+    <ClInclude Include="..\src\lj_lib.h" />
+    <ClInclude Include="..\src\lj_mcode.h" />
+    <ClInclude Include="..\src\lj_meta.h" />
+    <ClInclude Include="..\src\lj_obj.h" />
+    <ClInclude Include="..\src\lj_parse.h" />
+    <ClInclude Include="..\src\lj_record.h" />
+    <ClInclude Include="..\src\lj_snap.h" />
+    <ClInclude Include="..\src\lj_state.h" />
+    <ClInclude Include="..\src\lj_str.h" />
+    <ClInclude Include="..\src\lj_strscan.h" />
+    <ClInclude Include="..\src\lj_tab.h" />
+    <ClInclude Include="..\src\lj_target.h" />
+    <ClInclude Include="..\src\lj_target_arm.h" />
+    <ClInclude Include="..\src\lj_target_mips.h" />
+    <ClInclude Include="..\src\lj_target_ppc.h" />
+    <ClInclude Include="..\src\lj_target_x86.h" />
+    <ClInclude Include="..\src\lj_trace.h" />
+    <ClInclude Include="..\src\lj_traceerr.h" />
+    <ClInclude Include="..\src\lj_udata.h" />
+    <ClInclude Include="..\src\lj_vm.h" />
+    <ClInclude Include="..\src\lj_vmevent.h" />
+    <ClInclude Include="..\src\lj_libdef.h" />
+    <ClInclude Include="..\src\lj_ffdef.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\jit\bc.lua" />
+    <None Include="..\src\jit\bcsave.lua" />
+    <None Include="..\src\jit\dis_arm.lua" />
+    <None Include="..\src\jit\dis_mips.lua" />
+    <None Include="..\src\jit\dis_mipsel.lua" />
+    <None Include="..\src\jit\dis_ppc.lua" />
+    <None Include="..\src\jit\dis_x64.lua" />
+    <None Include="..\src\jit\dis_x86.lua" />
+    <None Include="..\src\jit\dump.lua" />
+    <None Include="..\src\jit\v.lua" />
+  </ItemGroup>
+</Project>

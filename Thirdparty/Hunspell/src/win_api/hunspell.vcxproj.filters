@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="tools">
+      <UniqueIdentifier>{14dde9e8-6eda-43cf-bef0-8a0fb08ede03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="parsers">
+      <UniqueIdentifier>{0815b093-0469-4190-bbc5-fc071a83f991}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\tools\hunspell.cxx">
+      <Filter>tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\firstparser.cxx">
+      <Filter>parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\htmlparser.cxx">
+      <Filter>parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\latexparser.cxx">
+      <Filter>parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\manparser.cxx">
+      <Filter>parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parsers\textparser.cxx">
+      <Filter>parsers</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\parsers\firstparser.hxx">
+      <Filter>parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsers\htmlparser.hxx">
+      <Filter>parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsers\latexparser.hxx">
+      <Filter>parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsers\manparser.hxx">
+      <Filter>parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parsers\textparser.hxx">
+      <Filter>parsers</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
