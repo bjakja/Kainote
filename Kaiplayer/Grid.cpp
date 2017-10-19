@@ -286,19 +286,29 @@ void Grid::OnPaste(int id)
 	if(row < 0){wxBell();return;}
 	int collumns = 0;
 	if(id==PasteCollumns){
+		int numCollumns = (transl) ? 11 : 10;
 		wxString pasteText = (transl) ? _("Tekst do oryginału") : _("Tekst");
 		wxString arr[11] = { _("Warstwa"), _("Czas początkowy"), _("Czas końcowy"), _("Aktor"), _("Styl"), _("Margines lewy"), _("Margines prawy"), _("Margines pionowy"), _("Efekt"), pasteText, _("Tekst do tłumaczenia") };
 		int vals[11]={LAYER,START,END,ACTOR,STYLE,MARGINL,MARGINR,MARGINV,EFFECT,TXT,TXTTL};
-		Stylelistbox slx(this,false,(transl)? 11 : 10,arr);
+		Stylelistbox slx(this, false, numCollumns, arr);
+		int Selections = Options.GetInt(PasteCollumnsSelection);
+		for (int j = 0; j < numCollumns; j++){
+			if (Selections & vals[j]){
+				Item * checkBox = slx.CheckListBox1->GetItem(j, 0);
+				if (checkBox)
+					checkBox->modified = true;
+			}
+		}
 		if(slx.ShowModal()==wxID_OK)
 		{
 			for (size_t v=0;v<slx.CheckListBox1->GetCount();v++)
 			{
-
 				if(slx.CheckListBox1->GetItem(v,0)->modified){
 					collumns |= vals[v];
 				}
 			}
+			Options.SetInt(PasteCollumnsSelection, collumns);
+			Options.SaveOptions();
 		}else{return;}
 
 	}else{
@@ -374,6 +384,14 @@ void Grid::CopyRows(int id)
 		wxString arr[ ]={_("Warstwa"),_("Czas początkowy"),_("Czas końcowy"),_("Aktor"),_("Styl"),_("Margines lewy"),_("Margines prawy"),_("Margines pionowy"),_("Efekt"),_("Tekst"),_("Tekst bez tagów")};
 		int vals[ ]={LAYER,START,END,ACTOR,STYLE,MARGINL,MARGINR,MARGINV,EFFECT,TXT,TXTTL};
 		Stylelistbox slx(this,false,11,arr);
+		int Selections = Options.GetInt(CopyCollumnsSelection);
+		for (int j = 0; j < 11; j++){
+			if (Selections & vals[j]){
+				Item * checkBox = slx.CheckListBox1->GetItem(j, 0);
+				if (checkBox)
+					checkBox->modified = true;
+			}
+		}
 		if(slx.ShowModal()==wxID_OK)
 		{
 			for (size_t v=0;v<slx.CheckListBox1->GetCount();v++)
@@ -383,6 +401,8 @@ void Grid::CopyRows(int id)
 					cols|= vals[v];
 				}
 			}
+			Options.SetInt(CopyCollumnsSelection, cols);
+			Options.SaveOptions();
 		}else{return;}
 
 	}

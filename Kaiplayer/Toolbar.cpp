@@ -66,8 +66,9 @@ void KaiToolbar::InitToolbar()
 		IDS.Add(OpenSubs);IDS.Add(RecentSubs);IDS.Add(OpenVideo);IDS.Add(RecentVideo);
 		IDS.Add(SaveSubs);IDS.Add(SaveSubsAs);IDS.Add(SaveAllSubs);
 		IDS.Add(RemoveSubs);IDS.Add(Editor);IDS.Add(FindReplaceDialog);
-		IDS.Add(StyleManager);IDS.Add(ASSProperties);IDS.Add(ChangeTime);
-		IDS.Add(ConvertToASS);IDS.Add(ConvertToSRT);IDS.Add(Settings);
+		IDS.Add(StyleManager); IDS.Add(ASSProperties); IDS.Add(ChangeTime); 
+		IDS.Add(ConvertToASS); IDS.Add(ConvertToSRT); IDS.Add(VideoZoom); 
+		IDS.Add(SubsResample); IDS.Add(Settings);
 	}
 	for(size_t i=0; i<IDS.size();i++)
 	{

@@ -110,6 +110,7 @@
 	CG(ConvertStyle,)\
 	CG(ConvertStyleCatalog,)\
 	CG(ConvertTimePerLetter,)\
+	CG(CopyCollumnsSelection,)\
 	CG(DictionaryLanguage,)\
 	CG(DisableLiveVideoEditing,)\
 	CG(DontAskForBadResolution,)\
@@ -146,6 +147,7 @@
 	CG(NoNewLineAfterTimesEdition,)\
 	CG(OpenSubsInNewCard,)\
 	CG(OpenVideoAtActiveLine,)\
+	CG(PasteCollumnsSelection,)\
 	CG(PlayAfterSelection,)\
 	CG(PostprocessorEnabling,)\
 	CG(PostprocessorKeyframeBeforeStart,)\
