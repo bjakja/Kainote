@@ -97,6 +97,8 @@ int VideoToolbar::GetToggled()
 
 void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
 {
+	if (!iconsEnabled){ evt.Skip(); return; }
+
 	if (evt.GetWheelRotation() != 0) {
 		if(blockScroll || !showClipTools){evt.Skip(); return;}
 		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
@@ -196,8 +198,8 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 					Options.GetColour(TogglebuttonBorderToggled)));
 				tdc.DrawRoundedRectangle(posX, 1, h-2, h-2, 2.0);
 			}
-			
-			tdc.DrawBitmap(*(icons[i]->icon),posX+2,3);
+			wxBitmap &icon = *(icons[i]->icon);
+			tdc.DrawBitmap((iconsEnabled) ? icon : icon.ConvertToDisabled(), posX + 2, 3);
 			posX+=h;
 		}
 		i++;
@@ -223,5 +225,6 @@ void VideoToolbar::Synchronize(VideoToolbar *vtoolbar){
 	showClipTools = vtoolbar->showClipTools;
 	showMoveTools = vtoolbar->showMoveTools;
 	blockScroll = vtoolbar->blockScroll;
+	iconsEnabled = vtoolbar->iconsEnabled;
 	if(IsShown()){Refresh(false);}
 }

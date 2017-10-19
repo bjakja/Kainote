@@ -64,6 +64,17 @@ public:
 			delete (*cur);
 		}
 	}
+	void DisableVisuals(bool Disable){ 
+		iconsEnabled = !Disable; 
+		Toggled = 0;
+		clipToggled = toolsSize + 1;
+		sel = -1;
+		clicked = false;
+		showClipTools = false;
+		showMoveTools = false;
+		blockScroll = false;
+		Refresh(false); 
+	}
 	KaiChoice *videoSeekAfter;
 	KaiChoice *videoPlayAfter;
 private:
@@ -79,6 +90,7 @@ private:
 	bool showClipTools;
 	bool showMoveTools;
 	bool blockScroll;
+	bool iconsEnabled = true;
 	wxBitmap *bmp;
 	static std::vector< itemdata*> icons;
 };

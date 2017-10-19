@@ -900,7 +900,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\Thirdparty\icu\source\common\unicode;I:\Kainote\Thirdparty\icu\source\common;..\Thirdparty\icu\source\i18n\unicode;..\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>U_STATIC_IMPLEMENTATION;U_ENABLE_DYLOAD=0;
         U_CHECK_DYLOAD=0;
         UCONFIG_NO_FILE_IO=1;
@@ -915,6 +915,7 @@ BOOST_SYSTEM_NO_DEPRECATED;
 BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
 WIN32;
 _WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

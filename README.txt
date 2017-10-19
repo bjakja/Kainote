@@ -8,20 +8,13 @@ https://www.microsoft.com/en-us/download/details.aspx?id=3138
 
 Put into folder Thirdparty:
 
-wxWidgets 
-http://wxwidgets.org/
-
 Boost
-http://www.boost.org/
+https://sourceforge.net/projects/boost/files/boost/1.61.0/
 
 Icu
-http://site.icu-project.org/
+http://download.icu-project.org/files/icu4c/53.1/icu4c-53_1-src.zip
 
 Check in project properties if paths of installed windows SDK's are correct
 or change it to yours paths.
 
-Before open program solution, build wxWidgets, Hunspell, BaseClasses, Freetype, xy-Vsfilter
-
-Number of build increases automatically after release build.
-It will be greater of one than in exe.
-Version is stored in versionKainote.h.
+Before open program solution, build wxWidgets, Hunspell, BaseClasses, xy-Vsfilter

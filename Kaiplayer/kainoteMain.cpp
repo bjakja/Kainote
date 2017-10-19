@@ -602,6 +602,7 @@ void kainoteFrame::OnConversion(char form)
 	tab->CTime->Contents();
 	UpdateToolbar();
 	tab->Edit->HideControls();
+	tab->Video->vToolbar->DisableVisuals(form != ASS);
 }
 
 
@@ -778,12 +779,16 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 					}
 				}
 			}
+
 		}
 
-		if(tab->Video->GetState()!=None && !found){
-			tab->Edit->OnVideo = true;
-			bool isgood=tab->Video->OpenSubs((tab->edytor)? tab->Grid1->GetVisible()/*SaveText()*/ : 0);
-			if(!isgood){KaiMessageBox(_("Otwieranie napisów nie powiodło się"), "Uwaga");}
+		if(tab->Video->GetState()!=None){
+			if (!found){
+				tab->Edit->OnVideo = true;
+				bool isgood = tab->Video->OpenSubs((tab->edytor) ? tab->Grid1->GetVisible()/*SaveText()*/ : 0);
+				if (!isgood){ KaiMessageBox(_("Otwieranie napisów nie powiodło się"), "Uwaga"); }
+			}
+			tab->Video->vToolbar->DisableVisuals(ext != "ass");
 		}
 		SetRecent();
 
@@ -1178,6 +1183,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 
 			Label();
 			SetSubsResolution(askForRes);
+			tab->Video->vToolbar->DisableVisuals(ext != "ass");
 		}
 		if(i<videos.size()){
 			bool isload=tab->Video->Load(videos[i],(tab->edytor)? tab->Grid1->GetVisible() : 0);

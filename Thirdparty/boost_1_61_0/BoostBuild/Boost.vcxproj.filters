@@ -126,9 +126,6 @@
     <ClCompile Include="..\libs\system\src\error_code.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\locale_stubs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\libs\thread\src\win32\thread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -139,6 +136,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libs\locale\src\shared\ids.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="locale_stubs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
