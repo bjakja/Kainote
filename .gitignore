@@ -28,7 +28,7 @@ Trash/
 [Rr]elease_dll/
 x64/
 x86/
-build/
+#build/
 bld/
 [Bb]in/
 [Oo]bj/

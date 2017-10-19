@@ -1,2 +1,4 @@
-*
-!.gitignore
+samples/
+lib/
+vc_mswu/
+vc_mswud/
