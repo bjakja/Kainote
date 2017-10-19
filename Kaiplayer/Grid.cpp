@@ -282,20 +282,21 @@ void Grid::OnJoinToFirst(int id)
 void Grid::OnPaste(int id)
 {
 
-	int rw=FirstSel();
-	if(rw < 0){wxBell();return;}
+	int row=FirstSel();
+	if(row < 0){wxBell();return;}
+	int collumns = 0;
 	if(id==PasteCollumns){
-		wxString arr[ ]={_("Warstwa"),_("Czas początkowy"),_("Czas końcowy"),_("Aktor"),_("Styl"),_("Margines lewy"),_("Margines prawy"),_("Margines pionowy"),_("Efekt"),_("Tekst")};
-		int vals[ ]={LAYER,START,END,ACTOR,STYLE,MARGINL,MARGINR,MARGINV,EFFECT,TXT};
-		Stylelistbox slx(this,false,10,arr);
+		wxString pasteText = (transl) ? _("Tekst do oryginału") : _("Tekst");
+		wxString arr[11] = { _("Warstwa"), _("Czas początkowy"), _("Czas końcowy"), _("Aktor"), _("Styl"), _("Margines lewy"), _("Margines prawy"), _("Margines pionowy"), _("Efekt"), pasteText, _("Tekst do tłumaczenia") };
+		int vals[11]={LAYER,START,END,ACTOR,STYLE,MARGINL,MARGINR,MARGINV,EFFECT,TXT,TXTTL};
+		Stylelistbox slx(this,false,(transl)? 11 : 10,arr);
 		if(slx.ShowModal()==wxID_OK)
 		{
-			rw=0;
 			for (size_t v=0;v<slx.CheckListBox1->GetCount();v++)
 			{
 
 				if(slx.CheckListBox1->GetItem(v,0)->modified){
-					rw|= vals[v];
+					collumns |= vals[v];
 				}
 			}
 		}else{return;}
@@ -317,7 +318,7 @@ void Grid::OnPaste(int id)
 	}
 	wxStringTokenizer wpaste(whatpaste,"\n", wxTOKEN_STRTOK);
 	int cttkns=wpaste.CountTokens();
-	int rws= (id==PasteCollumns)? 0 : rw;
+	int rws= (id==PasteCollumns)? 0 : row;
 	std::vector<Dialogue*> tmpdial;
 	wxString token;
 	wxString tmptoken;
@@ -337,6 +338,10 @@ void Grid::OnPaste(int id)
 		newdial= new Dialogue(token);
 		newdial->State=1;
 		if(!newdial){continue;}
+		//TODO przetestować czy wstawia poprawnie w text tłumaczenia
+		if (collumns & TXTTL){ 
+			newdial->TextTl = newdial->Text; 
+		}
 		if(newdial->Form!=form){newdial->Conv(form);}
 		if(newdial->NonDial){newdial->NonDial=false; newdial->IsComment=false;}
 		if(id==Paste){
@@ -344,7 +349,7 @@ void Grid::OnPaste(int id)
 			sel[rws]=true;
 		}else{
 			if(rws<(int)selarr.GetCount()/* && selarr[rws] < GetCount()*/){
-				ChangeCell(rw, selarr[rws],newdial);
+				ChangeCell(collumns, selarr[rws],newdial);
 			}
 			delete newdial;
 		}
@@ -352,7 +357,7 @@ void Grid::OnPaste(int id)
 	}
 
 	if(tmpdial.size()>0){
-		InsertRows(rw, tmpdial,true);
+		InsertRows(row, tmpdial,true);
 	}
 	if(sel.size()!=0){
 		Edit->ebrow=sel.begin()->first;}

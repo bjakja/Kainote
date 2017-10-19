@@ -88,20 +88,24 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 				int diffx = abs(firstmove.x-x);
 				int diffy = abs(firstmove.y-y);
 				if(diffx != diffy){if(diffx > diffy){axis = 1;}else{axis = 2;}}
-				return;
+				//return;
 			//}
 			lastmove = elems[numElem].elem;
 			if(axis==1){
 				elems[numElem].elem.x = x + diffs.x;
-			}else{
+				elems[numElem].elem.y = beforeMove.y;
+			}
+			else if (axis == 2){
 				elems[numElem].elem.y = y + diffs.y;
+				elems[numElem].elem.x = beforeMove.x;
 			}
 			D3DXVECTOR2 moving = elems[numElem].elem - lastmove;
 			for(size_t j = 0; j < elems.size(); j++){
 				if(j == numElem || !(selectedTags & elems[j].type)){continue;}
 				if(axis==1){
 					elems[j].elem.x += moving.x;
-				}else{
+				}
+				else if (axis == 2){
 					elems[j].elem.y += moving.y;
 				}
 			}
