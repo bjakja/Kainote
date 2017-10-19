@@ -72,21 +72,21 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	int zoom = Options.GetInt(AudioHorizontalZoom);
 	audioDisplay->SetSamplesPercent(zoom,false);
 	HorizontalZoom = new KaiSlider(this,Audio_Horizontal_Zoom,zoom,0,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH);
-	//HorizontalZoom->PushEventHandler(new FocusEvent());
 	HorizontalZoom->SetToolTip(_("Rozciągnięcie w poziomie"));
 	int pos = Options.GetInt(AudioVerticalZoom);
 	float value = pow(float(pos)/50.0f,3);
 	audioDisplay->SetScale(value);
 	VerticalZoom = new KaiSlider(this,Audio_Vertical_Zoom,pos,1,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH|wxSL_INVERSE);
-	//VerticalZoom->PushEventHandler(new FocusEvent());
 	VerticalZoom->SetToolTip(_("Rozciągnięcie w pionie"));
 	VolumeBar = new KaiSlider(this,Audio_Volume,Options.GetInt(AudioVolume),1,100,wxDefaultPosition,wxSize(-1,20),wxSL_VERTICAL|wxSL_BOTH|wxSL_INVERSE);
-	//VolumeBar->PushEventHandler(new FocusEvent());
 	VolumeBar->SetToolTip(_("Głośność"));
 	bool link = Options.GetBool(AudioLink);
 	if (link) {
-		VolumeBar->SetValue(VerticalZoom->GetValue());
+		int volume = VerticalZoom->GetValue();
+		VolumeBar->SetValue(volume);
+		Options.SetInt(AudioVolume, volume);
 		//VolumeBar->Enable(false);
+
 	}
 	VerticalLink = new ToggleButton(this,Audio_Vertical_Link,"","", wxDefaultPosition, wxSize(40,24));
 	VerticalLink->SetBitmap(wxBITMAP_PNG("button_link"));
@@ -220,7 +220,9 @@ void AudioBox::SetFile(wxString file, bool fromvideo) {
 	audioDisplay->SetFile(file, fromvideo);
 	if (file != "") loaded = audioDisplay->loaded;
 	audioName = file;
-	SetVolume(Options.GetInt(AudioVolume));
+	//SetVolume(Options.GetInt(AudioVolume));
+	float value = pow(float(Options.GetInt(AudioVolume)) / 50.0f, 3);
+	audioDisplay->player->SetVolume(value);
 }
 
 
@@ -290,6 +292,7 @@ void AudioBox::OnVerticalLink(wxCommandEvent &event) {
 		audioDisplay->player->SetVolume(value);
 		//VolumeBar->SetValue(pos);
 		VolumeBar->SetThumbPosition(VerticalZoom->GetThumbPosition());
+		Options.SetBool(AudioVolume, pos);
 	}
 
 	Options.SetBool(AudioLink,VerticalLink->GetValue());
