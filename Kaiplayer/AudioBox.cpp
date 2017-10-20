@@ -292,7 +292,7 @@ void AudioBox::OnVerticalLink(wxCommandEvent &event) {
 		audioDisplay->player->SetVolume(value);
 		//VolumeBar->SetValue(pos);
 		VolumeBar->SetThumbPosition(VerticalZoom->GetThumbPosition());
-		Options.SetBool(AudioVolume, pos);
+		Options.SetInt(AudioVolume, pos);
 	}
 
 	Options.SetBool(AudioLink,VerticalLink->GetValue());
