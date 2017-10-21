@@ -392,12 +392,14 @@ namespace Auto{
 	{
 		wxMutexLocker lock(data_mutex);
 		title_display->SetLabelText(evt.GetPayload<wxString>());
+		Layout();
 	}
 
 	void LuaProgressDialog::SetTask(wxThreadEvent &evt)
 	{
 		wxMutexLocker lock(data_mutex);
 		task_display->SetLabelText(evt.GetPayload<wxString>());
+		Layout();
 	}
 
 	void LuaProgressDialog::SetProgress(wxThreadEvent &evt)

@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="windows-1257"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="testparser"
-	ProjectGUID="{611BF6C7-332A-49BB-B2A3-80AFD5B785D9}"
-	RootNamespace="testparser"
+	Name="hunspell"
+	ProjectGUID="{6A0453F4-B12A-4810-B9A2-8AB059316ED7}"
+	RootNamespace="hunspell"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\hunspell;..\parsers;."
+				AdditionalIncludeDirectories="..\src\hunspell;..\src\parsers;."
 				PreprocessorDefinitions="W32;WIN32;_DEBUG;_CONSOLE;HUNSPELL_STATIC;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -119,7 +119,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="3"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\hunspell;..\parsers;."
+				AdditionalIncludeDirectories="..\src\hunspell;..\src\parsers;."
 				PreprocessorDefinitions="W32;WIN32;NDEBUG;_CONSOLE;HUNSPELL_STATIC;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -175,50 +175,54 @@
 	</References>
 	<Files>
 		<Filter
+			Name="tools"
+			>
+			<File
+				RelativePath="..\src\tools\hunspell.cxx"
+				>
+			</File>
+		</Filter>
+		<Filter
 			Name="parsers"
 			>
 			<File
-				RelativePath="..\parsers\firstparser.cxx"
+				RelativePath="..\src\parsers\firstparser.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\parsers\firstparser.hxx"
+				RelativePath="..\src\parsers\firstparser.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\parsers\htmlparser.cxx"
+				RelativePath="..\src\parsers\htmlparser.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\parsers\htmlparser.hxx"
+				RelativePath="..\src\parsers\htmlparser.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\parsers\latexparser.cxx"
+				RelativePath="..\src\parsers\latexparser.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\parsers\latexparser.hxx"
+				RelativePath="..\src\parsers\latexparser.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\parsers\manparser.cxx"
+				RelativePath="..\src\parsers\manparser.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\parsers\manparser.hxx"
+				RelativePath="..\src\parsers\manparser.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\parsers\testparser.cxx"
+				RelativePath="..\src\parsers\textparser.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\parsers\textparser.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\parsers\textparser.hxx"
+				RelativePath="..\src\parsers\textparser.hxx"
 				>
 			</File>
 		</Filter>

@@ -23,6 +23,8 @@ KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, co
 	, text(_text)
 	, textColour(WindowText)
 	, textHeight(0)
+	, textScroll(NULL)
+	, scPos(0)
 {
 	int fullw=0;
 	textHeight=0;
@@ -58,6 +60,7 @@ void KaiStaticText::SetLabelText(const wxString &_text){
 		textHeight += fh;
 		if(fullw < fw){fullw = fw;}
 	}
+	if (textHeight > 400){ fullw += 20; }
 	if(size.x != fullw || size.y != textHeight){
 		size.x = fullw;
 		size.y = textHeight;
@@ -77,10 +80,17 @@ void KaiStaticText::SetLabelText(const wxString &_text){
 	
 void KaiStaticText::OnPaint(wxPaintEvent &evt)
 {
-	int w=0;
-	int h=0;
-	GetClientSize (&w, &h);
-	if(w==0||h==0){return;}
+	int w = 0;
+	int h = 0;
+	GetClientSize(&w, &h);
+	if (w == 0 || h == 0){ return; }
+	if (textHeight > 400){
+		if (!textScroll){ textScroll = new KaiScrollbar(this, -1, wxDefaultPosition, wxDefaultSize, wxVERTICAL); }
+		int sw=0, sh=0;
+		textScroll->GetSize(&sw, &sh);
+		textScroll->SetSize(w - sw, 0, sw, h);
+		w -= sw;
+	}
 	wxMemoryDC tdc;
 	tdc.SelectObject(wxBitmap(w,h));
 	tdc.SetFont(GetFont());
@@ -94,8 +104,17 @@ void KaiStaticText::OnPaint(wxPaintEvent &evt)
 	//tdc.DestroyClippingRegion();
 	//int fw=0, fh=0;
 	//tdc.GetTextExtent(text, &fw, &fh, 0, 0, &GetFont());
-	tdc.DrawText(text, 0, (h-textHeight)/2);
+	tdc.DrawText(text, scPos, (h-textHeight)/2);
 	wxPaintDC dc(this);
 	dc.Blit(0,0,w,h,&tdc,0,0);
 }
 
+void KaiStaticText::OnScroll(wxScrollEvent& event)
+{
+	int newPos = event.GetPosition();
+
+	if (scPos != newPos) {
+		scPos = newPos;
+		Refresh(false);
+	}
+}

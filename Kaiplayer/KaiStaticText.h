@@ -17,6 +17,7 @@
 
 #include <wx/window.h>
 #include "config.h"
+#include "KaiScrollbar.h"
 
 class KaiStaticText : public wxWindow
 {
@@ -32,8 +33,11 @@ private:
 	bool AcceptsFocus( ) const{return false;}
 	bool AcceptsFocusFromKeyboard () const {return false;}
 	bool AcceptsFocusRecursively () const{return false;}
+	void OnScroll(wxScrollEvent& event);
 	
 	int textHeight;
+	int scPos;
 	COLOR textColour;
 	wxString text;
+	KaiScrollbar *textScroll;
 };

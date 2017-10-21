@@ -171,7 +171,7 @@ bool SpellChecker::AddWord(wxString word)
 {
 	if (word.IsEmpty() || word.IsNumber()) return false;
 
-	hunspell->add(word.mb_str(*conv));
+	hunspell->add(word.mb_str(*conv));//.mb_str(*conv))
 	wxString pathhh=Options.pathfull+"\\Dictionary\\UserDic.udic";
 	OpenWrite ow;
 	wxString txt;

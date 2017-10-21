@@ -219,7 +219,7 @@ _UNICODE;UNICODE;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>Icu.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\Thirdparty\icu\Icu\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>boost_system-vc110-mt-1_61.lib;boost_date_time-vc110-mt-1_61.lib;boost_chrono-vc110-mt-1_61.lib;boost_regex-vc110-mt-1_61.lib;boost_locale-vc110-mt-1_61.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>boost_system-vc120-mt-1_61.lib;boost_date_time-vc120-mt-1_61.lib;boost_chrono-vc120-mt-1_61.lib;boost_regex-vc120-mt-1_61.lib;boost_locale-vc120-mt-1_61.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Lib>
       <AdditionalDependencies>icu.lib;%(AdditionalDependencies)</AdditionalDependencies>

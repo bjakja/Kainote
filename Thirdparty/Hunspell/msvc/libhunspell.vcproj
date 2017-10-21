@@ -43,7 +43,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\hunspell;."
+				AdditionalIncludeDirectories="..\src\hunspell;."
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;HUNSPELL_STATIC;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
@@ -112,7 +112,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="3"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\hunspell;."
+				AdditionalIncludeDirectories="..\src\hunspell;."
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;HUNSPELL_STATIC;_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -183,7 +183,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="3"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="..\hunspell;."
+				AdditionalIncludeDirectories="..\src\hunspell;."
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;BUILDING_LIBHUNSPELL;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -265,7 +265,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\hunspell;."
+				AdditionalIncludeDirectories="..\src\hunspell;."
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;BUILDING_LIBHUNSPELL"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
@@ -376,115 +376,115 @@
 			Name="hunspell"
 			>
 			<File
-				RelativePath="..\hunspell\affentry.cxx"
+				RelativePath="..\src\hunspell\affentry.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\affentry.hxx"
+				RelativePath="..\src\hunspell\affentry.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\affixmgr.cxx"
+				RelativePath="..\src\hunspell\affixmgr.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\affixmgr.hxx"
+				RelativePath="..\src\hunspell\affixmgr.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\atypes.hxx"
+				RelativePath="..\src\hunspell\atypes.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\baseaffix.hxx"
+				RelativePath="..\src\hunspell\baseaffix.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\csutil.cxx"
+				RelativePath="..\src\hunspell\csutil.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\csutil.hxx"
+				RelativePath="..\src\hunspell\csutil.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\dictmgr.cxx"
+				RelativePath="..\src\hunspell\dictmgr.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\dictmgr.hxx"
+				RelativePath="..\src\hunspell\dictmgr.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\filemgr.cxx"
+				RelativePath="..\src\hunspell\filemgr.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\filemgr.hxx"
+				RelativePath="..\src\hunspell\filemgr.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\hashmgr.cxx"
+				RelativePath="..\src\hunspell\hashmgr.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\hashmgr.hxx"
+				RelativePath="..\src\hunspell\hashmgr.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\htypes.hxx"
+				RelativePath="..\src\hunspell\htypes.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\hunspell.cxx"
+				RelativePath="..\src\hunspell\hunspell.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\hunspell.h"
+				RelativePath="..\src\hunspell\hunspell.h"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\hunspell.hxx"
+				RelativePath="..\src\hunspell\hunspell.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\hunzip.cxx"
+				RelativePath="..\src\hunspell\hunzip.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\hunzip.hxx"
+				RelativePath="..\src\hunspell\hunzip.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\langnum.hxx"
+				RelativePath="..\src\hunspell\langnum.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\phonet.cxx"
+				RelativePath="..\src\hunspell\phonet.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\phonet.hxx"
+				RelativePath="..\src\hunspell\phonet.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\replist.cxx"
+				RelativePath="..\src\hunspell\replist.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\replist.hxx"
+				RelativePath="..\src\hunspell\replist.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\suggestmgr.cxx"
+				RelativePath="..\src\hunspell\suggestmgr.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\suggestmgr.hxx"
+				RelativePath="..\src\hunspell\suggestmgr.hxx"
 				>
 			</File>
 			<File
-				RelativePath="..\hunspell\w_char.hxx"
+				RelativePath="..\src\hunspell\w_char.hxx"
 				>
 			</File>
 		</Filter>
