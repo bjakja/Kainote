@@ -794,6 +794,11 @@
     <ClInclude Include="..\source\i18n\zrule.h" />
     <ClInclude Include="..\source\i18n\ztrans.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\luajit\Minilua\Minilua.vcxproj">
+      <Project>{325d093d-826b-4a7d-83c7-1cad22911b9f}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{875E0BB7-06E8-4570-8E3C-AE9EF88F38BB}</ProjectGuid>
     <RootNamespace>Icu</RootNamespace>
