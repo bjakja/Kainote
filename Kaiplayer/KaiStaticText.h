@@ -29,15 +29,18 @@ public:
 	void SetLabelText(const wxString &_text);
 	bool SetForegroundColour(COLOR txtColor){textColour=txtColor, Refresh(false);return false;}
 	wxString GetLabelText() const {return text;}
+	
 private:
 	bool AcceptsFocus( ) const{return false;}
 	bool AcceptsFocusFromKeyboard () const {return false;}
 	bool AcceptsFocusRecursively () const{return false;}
 	void OnScroll(wxScrollEvent& event);
+	void OnMouseScroll(wxMouseEvent &evt);
 	
 	int textHeight;
 	int scPos;
 	COLOR textColour;
 	wxString text;
 	KaiScrollbar *textScroll;
+	DECLARE_EVENT_TABLE()
 };

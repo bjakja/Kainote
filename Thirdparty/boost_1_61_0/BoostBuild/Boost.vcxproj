@@ -104,7 +104,7 @@
       <IgnoreSpecificDefaultLibraries>boost_system-vc120-mt-gd-1_61.lib;boost_date_time-vc120-mt-gd-1_61.lib;boost_chrono-vc120-mt-gd-1_61.lib;libboost_regex-vc120-mt-gd-1_61.lib;boost_locale-vc120-mt-gd-1_61.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>I:\Kainote\Thirdparty\icu\Icu\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\icu\Icu\Win32\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>icu.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>

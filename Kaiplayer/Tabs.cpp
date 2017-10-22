@@ -125,7 +125,7 @@ TabPanel *Notebook::Page(size_t i)
 	return Pages[i];
 }
 
-void Notebook::DeletePage(size_t page)
+void Notebook::DeletePage(int page)
 {
 	Freeze();
 	kainoteFrame *Kai=(kainoteFrame*)GetParent();
@@ -190,7 +190,7 @@ void Notebook::DeletePage(size_t page)
 
 	}
 
-	size_t rsize=Size()-1;
+	int rsize=Size()-1;
 	if(olditer > rsize){olditer=rsize;}
 	if (!split){
 		if (iter > rsize){ iter = rsize; }
@@ -231,7 +231,7 @@ void Notebook::CalcSizes(bool makeActiveVisible)
 	if (makeActiveVisible && !allTabsVisible){
 		if (iter < firstVisibleTab){ firstVisibleTab = iter; return; }
 		int tabsWidth = 0;
-		for (size_t i = 0; i < Size(); i++){
+		for (int i = 0; i < Size(); i++){
 			if (i == firstVisibleTab){
 				tabsWidth = 0;
 			}
@@ -468,7 +468,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 
 		Menu menu1;
 
-		for(size_t g=0;g<Size();g++)
+		for(int g=0;g<Size();g++)
 		{
 			menu1.Append(MENU_CHOOSE+g,Page(g)->SubsName,"",true,0,0,(g==iter)? ITEM_RADIO : ITEM_NORMAL);
 		}
@@ -792,7 +792,7 @@ void Notebook::OnResized()
 	int w,h;
 	sthis->GetClientSize(&w,&h);
 	if(sthis->split){w=sthis->splitline-2;}
-	for(size_t i=0;i<sthis->Size();i++){
+	for(int i=0;i<sthis->Size();i++){
 		if(i==sthis->iter || (sthis->split && i == sthis->splititer))continue;
 		sthis->Pages[i]->SetSize(w,h-sthis->TabHeight);
 	}
@@ -807,7 +807,7 @@ void Notebook::Split(size_t page)
 	{
 		Pages[splititer]->Hide();
 		Pages[iter]->SetSize(w,h-TabHeight);
-		for(size_t k = 0; k < Size(); k++){
+		for(int k = 0; k < Size(); k++){
 			Pages[k]->SetPosition(wxPoint(0,0));
 		}
 		SetTimer(GetHWND(), 9876, 500, (TIMERPROC)OnResized);

@@ -192,7 +192,7 @@ void TabPanel::OnFocus(wxChildFocusEvent& event)
 void TabPanel::SetVideoWindowSizes(int w, int h)
 {
 	Notebook *nb = Notebook::GetTabs(); 
-	for(size_t i = 0; i < nb->Size(); i++){
+	for(int i = 0; i < nb->Size(); i++){
 		if(i == nb->iter){continue;}
 		TabPanel *tab = nb->Page(i);
 		if(tab->Video->GetState()!=None && tab->Video->IsShown()){

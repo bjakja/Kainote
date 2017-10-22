@@ -232,7 +232,12 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 		}else{
 			delete mylog; mylog=NULL;
 		}
-		
+		//test messagebox z masą tekstu
+		//KaiMessageBox("a\nl\ne\n \nj\na\nj\na\n \na\nl\ne\n \nj\na\nj\na\n \na\nl\ne\n \nj\na\nj\na\n \na\nl\ne\n \nj\na\nj\na\n \na\nl\ne\n \nj\na\nj\na\n \na\nl\ne\n \nj\na\nj\na\n \na\nl\ne\n \nj\na\nj\na\n \na\nl\ne\n \nj\na\nj\na\n \na\nl\ne\n \nj\na\nj\na\n \na\nl\ne\n \nj\na\nj\na\n \na\nl\ne\n \nj\na\nj\na\n \na\nl\ne\n \nj\na\nj\na\n \n");
+		/*if (Auto){
+			delete Auto;
+			Auto = NULL;
+		}*/
 	},9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
 		TabPanel *tab = GetTab();

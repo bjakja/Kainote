@@ -39,7 +39,7 @@ class Notebook : public wxWindow
 		int GetOldSelection();
 		int Size();
 		TabPanel *Page(size_t i);
-		void DeletePage(size_t page);
+		void DeletePage(int page);
 		void Split(size_t page);
 		void RemoveComparison();
 		int FindTab(int x, int *num);

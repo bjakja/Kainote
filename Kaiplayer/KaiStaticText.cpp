@@ -36,12 +36,14 @@ KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, co
 		textHeight += fh;
 		if(fullw < fw){fullw = fw;}
 	}
+	int windowHeight = textHeight;
+	if (textHeight > 400){ windowHeight = 400; fullw += 20; }
 	if(size.x <1){
 		newSize.x = fullw+20;
 	}
 	if(size.y <1){
-		newSize.y = textHeight+2;
-		if(textHeight<17){newSize.y=17;}
+		newSize.y = windowHeight + 2;
+		if (windowHeight<17){ newSize.y = 17; }
 	}
 	SetMinSize(newSize);
 	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
@@ -60,10 +62,11 @@ void KaiStaticText::SetLabelText(const wxString &_text){
 		textHeight += fh;
 		if(fullw < fw){fullw = fw;}
 	}
-	if (textHeight > 400){ fullw += 20; }
-	if(size.x != fullw || size.y != textHeight){
+	int windowHeight = textHeight;
+	if (textHeight > 400){ windowHeight = 400; fullw += 20; }
+	if (size.x != fullw || size.y != windowHeight){
 		size.x = fullw;
-		size.y = textHeight;
+		size.y = windowHeight;
 		SetMinSize(size);
 		wxSizer *sizer = GetSizer();
 		if(sizer){
@@ -85,12 +88,25 @@ void KaiStaticText::OnPaint(wxPaintEvent &evt)
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
 	if (textHeight > 400){
-		if (!textScroll){ textScroll = new KaiScrollbar(this, -1, wxDefaultPosition, wxDefaultSize, wxVERTICAL); }
-		int sw=0, sh=0;
-		textScroll->GetSize(&sw, &sh);
-		textScroll->SetSize(w - sw, 0, sw, h);
-		w -= sw;
+		if (!textScroll){ 
+			textScroll = new KaiScrollbar(this, 9999, wxDefaultPosition, wxDefaultSize, wxVERTICAL); 
+			textScroll->SetScrollRate(10);
+			int sw = 0, sh = 0;
+			textScroll->GetSize(&sw, &sh);
+			textScroll->SetSize(w - sw, 0, sw, h);
+			w -= sw;
+		}
+		int pageSize = h;
+		if (scPos<0){ scPos = 0; }
+		else if (scPos >(textHeight + 20) - pageSize){ scPos = (textHeight + 20) - pageSize; }
+		textScroll->SetScrollbar(scPos, pageSize, textHeight+20, pageSize - 1);
 	}
+	else if (textScroll){
+		textScroll->Destroy();
+		textScroll = NULL;
+	}
+
+	
 	wxMemoryDC tdc;
 	tdc.SelectObject(wxBitmap(w,h));
 	tdc.SetFont(GetFont());
@@ -104,7 +120,7 @@ void KaiStaticText::OnPaint(wxPaintEvent &evt)
 	//tdc.DestroyClippingRegion();
 	//int fw=0, fh=0;
 	//tdc.GetTextExtent(text, &fw, &fh, 0, 0, &GetFont());
-	tdc.DrawText(text, scPos, (h-textHeight)/2);
+	tdc.DrawText(text, 0, /*(h-textHeight)/2*/ -scPos);
 	wxPaintDC dc(this);
 	dc.Blit(0,0,w,h,&tdc,0,0);
 }
@@ -118,3 +134,18 @@ void KaiStaticText::OnScroll(wxScrollEvent& event)
 		Refresh(false);
 	}
 }
+
+void KaiStaticText::OnMouseScroll(wxMouseEvent &evt)
+{
+	if (evt.GetWheelRotation() != 0) {
+		int step = 10 * evt.GetWheelRotation() / evt.GetWheelDelta();
+		scPos -= step;
+		Refresh(false);
+		return;
+	}
+}
+
+BEGIN_EVENT_TABLE(KaiStaticText, wxWindow)
+EVT_COMMAND_SCROLL(9999, KaiStaticText::OnScroll)
+EVT_MOUSEWHEEL(KaiStaticText::OnMouseScroll)
+END_EVENT_TABLE()

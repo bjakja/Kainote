@@ -732,7 +732,7 @@ void Grid::OnMkvSubs(wxCommandEvent &event)
 		RepaintWindow();
 		Edit->HideControls();
 		if(StyleStore::HasStore() && form==ASS){StyleStore::Get()->LoadAssStyles();}
-		Kai->SetSubsResolution(true);
+		Kai->SetSubsResolution(!Options.GetBool(DontAskForBadResolution));
 	}
 	
 }
