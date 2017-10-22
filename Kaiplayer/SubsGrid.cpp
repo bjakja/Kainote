@@ -2503,8 +2503,6 @@ void SubsGrid::CheckText(wxString text, wxArrayInt &errs)
 }
 
 
-
-
 void SubsGrid::LoadDefault(bool line,bool sav,bool endload)
 {
 	if(line)
@@ -2571,37 +2569,6 @@ wxString *SubsGrid::SaveText()
 {
 	wxString *path=new wxString();
 
-	/*if (form<SRT){
-
-		(*txt)<<"[Script Info]\r\n"<<GetSInfos(GetSInfo("TLMode")=="Translated");
-		(*txt)<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
-		(*txt)<<GetStyles(GetSInfo("TLMode")=="Translated");
-		(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
-	}
-
-	bool tlmode=(GetSInfo("TLMode")=="Yes");
-	wxString tlstyle=GetSInfo("TLMode Style");
-
-	for(int i=0;i<GetCount();i++)
-	{
-		Dialogue *dial=GetDial(i);
-		if(i==Edit->ebrow){Edit->Send(false,true);dial=Edit->line;}
-		if(tlmode && dial->TextTl!=""){
-			dial->GetRaw(txt, false,tlstyle);
-			dial->GetRaw(txt, true);
-
-		}else{
-			if(form==SRT){
-				wxString all;
-				all<<i+1<<"\r\n";
-				dial->GetRaw(&all);
-				(*txt)<<all;
-			}else{
-				dial->GetRaw(txt);
-			}
-		}
-
-	}*/
 	TabPanel *tab = (TabPanel*)GetParent();
 	wxString ext=(form<SRT)? "ass" : (form==SRT)? "srt" : "txt";
 
@@ -2611,52 +2578,52 @@ wxString *SubsGrid::SaveText()
 
 	return path;
 }
-wxString *SubsGrid::GetVisibleSubs()
-{
-	TabPanel *pan=(TabPanel*)GetParent();
-	int _time=pan->Video->Tell();
-	bool toEnd = pan->Video->GetState() == Playing;
-	wxString *txt=new wxString();
-
-	(*txt)<<"[Script Info]\r\n"<<GetSInfos(false);
-	(*txt)<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
-	(*txt)<<GetStyles(false);
-	(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
-
-	Edit->Send(EDITBOX_LINE_EDITION, false, true);
-
-	bool noLine = true;
-	bool isTlmode = GetSInfo("TLMode")=="Yes";
-	wxString tlStyle = GetSInfo("TLMode Style");
-	for(int i=0; i<GetCount(); i++){
-		Dialogue *dial=GetDial(i);
-		if(i==Edit->ebrow){ 
-			dial = Edit->line;
-		}
-		if((toEnd && _time <= dial->Start.mstime) || (_time >= dial->Start.mstime && _time <= dial->End.mstime)){
-			//if(trimSels && sel.find(i)!=sel.end()){continue;}
-			if( isTlmode && dial->TextTl!=""){
-				dial->GetRaw(txt, false,tlStyle);
-				dial->GetRaw(txt, true);
-			}else{
-				dial->GetRaw(txt);
-			}
-			noLine = false;
-		}
-
-	}
-	if (noLine){
-		/*Dialogue dial;
-		if (form != ASS)
-			dial.Conv(form);
-		dial.GetRaw(txt);*/
-		delete txt;
-		return NULL;
-	}
-
-
-	return txt;
-}
+//wxString *SubsGrid::GetVisibleSubs()
+//{
+//	TabPanel *pan=(TabPanel*)GetParent();
+//	int _time=pan->Video->Tell();
+//	bool toEnd = pan->Video->GetState() == Playing;
+//	wxString *txt=new wxString();
+//
+//	(*txt)<<"[Script Info]\r\n"<<GetSInfos(false);
+//	(*txt)<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
+//	(*txt)<<GetStyles(false);
+//	(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
+//
+//	Edit->Send(EDITBOX_LINE_EDITION, false, true);
+//
+//	bool noLine = true;
+//	bool isTlmode = GetSInfo("TLMode")=="Yes";
+//	wxString tlStyle = GetSInfo("TLMode Style");
+//	for(int i=0; i<GetCount(); i++){
+//		Dialogue *dial=GetDial(i);
+//		if(i==Edit->ebrow){ 
+//			dial = Edit->line;
+//		}
+//		if((toEnd && _time <= dial->Start.mstime) || (_time >= dial->Start.mstime && _time <= dial->End.mstime)){
+//			//if(trimSels && sel.find(i)!=sel.end()){continue;}
+//			if( isTlmode && dial->TextTl!=""){
+//				dial->GetRaw(txt, false,tlStyle);
+//				dial->GetRaw(txt, true);
+//			}else{
+//				dial->GetRaw(txt);
+//			}
+//			noLine = false;
+//		}
+//
+//	}
+//	if (noLine){
+//		/*Dialogue dial;
+//		if (form != ASS)
+//			dial.Conv(form);
+//		dial.GetRaw(txt);*/
+//		delete txt;
+//		return NULL;
+//	}
+//
+//
+//	return txt;
+//}
 
 wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, wxArrayInt *selected)
 {
@@ -2709,10 +2676,6 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, wxArrayInt *select
 
 	}
 	if(noLine){
-		/*Dialogue dial;
-		if (form != ASS)
-			dial.Conv(form);
-		dial.GetRaw(txt);*/
 		delete txt;
 		return NULL;
 	}
@@ -2858,25 +2821,9 @@ void SubsGrid::ChangeTimeDisplay(bool frame)
 	TabPanel *tab = (TabPanel*)GetParent();
 	VideoFfmpeg *VFF = tab->Video->VFF;
 	if(frame && VFF){
-		/*for(int i=0; i < GetCount(); i++){
-			Dialogue *Dial = GetDial(i);
-			if(!Dial){continue;}
-			Dial->Start.orgframe = VFF->GetFramefromMS(Dial->Start.mstime);
-			Dial->End.orgframe = VFF->GetFramefromMS(Dial->End.mstime)-1;
-		}*/
-		//ShowFrames shows it properly when orgframe is setup
 		showFrames = true;
-		/*STime ct = tab->CTime->TimeText->GetTime();
-		tab->CTime->TimeText->ShowFrames(showFrames);
-		ct.orgframe = VFF->GetFramefromMS(ct.mstime);
-		tab->CTime->TimeText->SetTime(ct);*/
-		
 	}else{
 		showFrames = false;
-		/*STime ct = tab->CTime->TimeText->GetTime();
-		ct.ChangeFormat(ASS);
-		tab->CTime->TimeText->ShowFrames(showFrames);
-		tab->CTime->TimeText->SetTime(ct);*/
 	}
 	
 }
