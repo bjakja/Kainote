@@ -92,7 +92,7 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	wxBoxSizer* frbsizer2=new wxBoxSizer(wxHORIZONTAL);
 	CollumnText = new KaiRadioButton(this, -1, _("Tekst"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
 	CollumnTextOriginal = new KaiRadioButton(this, -1, _("Tekst oryginału"));
-	CollumnTextOriginal->Enable(Kai->GetTab()->Grid1->transl);
+	CollumnTextOriginal->Enable(Kai->GetTab()->Grid->hasTLMode);
 
 	frbsizer2->Add(CollumnText,1,wxALL,1);
 	frbsizer2->Add(CollumnTextOriginal,2,wxALL,1);
@@ -219,7 +219,7 @@ void FindReplace::ChangeContents(bool replace)
 void FindReplace::OnReplaceAll(wxCommandEvent& event)
 {
 	TabPanel *pan=Kai->GetTab();
-	long wrep= (pan->Grid1->transl && !CollumnTextOriginal->GetValue())? TXTTL : TXT;
+	long wrep= (pan->Grid->hasTLMode && !CollumnTextOriginal->GetValue())? TXTTL : TXT;
 	if(CollumnStyle->GetValue()){wrep=STYLE;}
 	else if(CollumnActor->GetValue()){wrep=ACTOR;}
 	else if(CollumnEffect->GetValue()){wrep=EFFECT;}
@@ -251,14 +251,14 @@ void FindReplace::OnReplaceAll(wxCommandEvent& event)
 	if(styll==""){notstyles=true;}else{styll=";"+styll+";";}
 	bool onlysel=SelectedLines->GetValue();
 
-	int fsel=pan->Grid1->FirstSel();
+	int fsel=pan->Grid->FirstSel();
 
 
-	for(int i = (!AllLines->GetValue() && fsel>=0)? fsel : 0; i<pan->Grid1->GetCount(); i++)
+	for(int i = (!AllLines->GetValue() && fsel>=0)? fsel : 0; i<pan->Grid->GetCount(); i++)
 	{
-		Dialogue *Dial=pan->Grid1->GetDial(i);
+		Dialogue *Dial=pan->Grid->GetDial(i);
 		if((notstyles||styll.Find(";"+Dial->Style+";")!=-1)&&
-			!(onlysel&&!(pan->Grid1->sel.find(i)!=pan->Grid1->sel.end()))){
+			!(onlysel&&!(pan->Grid->Selections.find(i)!=pan->Grid->Selections.end()))){
 
 				if(wrep==STYLE){
 					txt=Dial->Style;
@@ -330,7 +330,7 @@ void FindReplace::OnReplaceAll(wxCommandEvent& event)
 				}
 				else{allreps=txt.Replace(find,rep);}
 				if(allreps>0){
-					Dialogue *Dialc=pan->Grid1->CopyDial(i);
+					Dialogue *Dialc=pan->Grid->CopyDial(i);
 					if(wrep==TXT){Dialc->Text=txt;}
 					else if(wrep==TXTTL){Dialc->TextTl=txt;}
 					else if(wrep==STYLE){Dialc->Style=txt;}
@@ -344,8 +344,8 @@ void FindReplace::OnReplaceAll(wxCommandEvent& event)
 
 	}
 
-	pan->Grid1->SetModified(REPLACE_ALL);
-	pan->Grid1->Refresh(false);
+	pan->Grid->SetModified(REPLACE_ALL);
+	pan->Grid->Refresh(false);
 	blockTextChange=true;
 	KaiMessageBox(wxString::Format(_("Zmieniono %i razy."),allreps1),_("Szukaj Zamień"));
 	AddRecent();
@@ -363,7 +363,7 @@ void FindReplace::OnButtonRep(wxCommandEvent& event)
 	TabPanel *tab = Kai->GetTab();
 	if(lastActive != tab->Edit->ebrow){Find();}
 	bool searchInOriginal = CollumnTextOriginal->GetValue();
-	long wrep= (tab->Grid1->transl && !searchInOriginal)? TXTTL : TXT;
+	long wrep= (tab->Grid->hasTLMode && !searchInOriginal)? TXTTL : TXT;
 	if(CollumnStyle->GetValue()){wrep=STYLE;}
 	else if(CollumnActor->GetValue()){wrep=ACTOR;}
 	else if(CollumnEffect->GetValue()){wrep=EFFECT;}
@@ -373,7 +373,7 @@ void FindReplace::OnButtonRep(wxCommandEvent& event)
 	if(findstart==-1||findend==-1){return;}
 	fnext=true;
 	wxString rep=RepText->GetValue();
-	Grid *grid=tab->Grid1;
+	SubsGrid *grid=tab->Grid;
 
 	Dialogue *Dial = grid->GetDial(reprow);
 
@@ -411,7 +411,7 @@ void FindReplace::Find()
 {
 	TabPanel *pan =Kai->GetTab();
 	bool searchInOriginal = CollumnTextOriginal->GetValue();
-	long wrep= (pan->Grid1->transl && !searchInOriginal)? TXTTL : TXT;
+	long wrep= (pan->Grid->hasTLMode && !searchInOriginal)? TXTTL : TXT;
 	if(CollumnStyle->GetValue()){wrep=STYLE;}
 	else if(CollumnActor->GetValue()){wrep=ACTOR;}
 	else if(CollumnEffect->GetValue()){wrep=EFFECT;}
@@ -440,7 +440,7 @@ void FindReplace::Find()
 	size_t mlen=0;
 	bool foundsome=false;
 	if(fromstart){
-		int fsel=pan->Grid1->FirstSel();
+		int fsel=pan->Grid->FirstSel();
 		posrow= (!AllLines->GetValue() && fsel>=0)? fsel : 0;
 		postxt=0;
 	}
@@ -452,12 +452,12 @@ void FindReplace::Find()
 	}
 	bool onlysel=SelectedLines->GetValue();	
 
-	while(posrow<pan->Grid1->GetCount())
+	while(posrow<pan->Grid->GetCount())
 	{
-		Dialogue *Dial=pan->Grid1->GetDial(posrow);
+		Dialogue *Dial=pan->Grid->GetDial(posrow);
 		if((!styles && !onlysel) || 
 			(styles && styll.Find(";"+Dial->Style+";")!=-1) || 
-			(onlysel && pan->Grid1->sel.find(posrow) != pan->Grid1->sel.end())){
+			(onlysel && pan->Grid->Selections.find(posrow) != pan->Grid->Selections.end())){
 				if(wrep==STYLE){
 					txt=Dial->Style;
 				}else if(wrep==TXT || wrep==TXTTL){
@@ -522,10 +522,10 @@ void FindReplace::Find()
 					findend=postxt;
 					lastActive = reprow = posrow;
 
-					if(!SelectedLines->GetValue()){pan->Grid1->SelectRow(posrow,false,true);}
+					if(!SelectedLines->GetValue()){pan->Grid->SelectRow(posrow,false,true);}
 					pan->Edit->SetLine(posrow);
-					pan->Grid1->ScrollTo(posrow,true);
-					if(SelectedLines->GetValue()){pan->Grid1->Refresh(false);}
+					pan->Grid->ScrollTo(posrow,true);
+					if(SelectedLines->GetValue()){pan->Grid->Refresh(false);}
 					if(wrep==STYLE){
 						//pan->Edit->StyleChoice->SetFocus();
 					}
@@ -554,7 +554,7 @@ void FindReplace::Find()
 				}
 				
 		}else{postxt=0;posrow++;}
-		if(!foundsome && posrow> pan->Grid1->GetCount()-1){
+		if(!foundsome && posrow> pan->Grid->GetCount()-1){
 			blockTextChange=true;
 			if (KaiMessageBox(_("Wyszukiwanie zakończone, rozpocząć od początku?"), _("Potwierdzenie"),
 				wxICON_QUESTION | wxYES_NO, this) == wxYES ){
@@ -646,7 +646,7 @@ void FindReplace::Reset()
 	fromstart=true;
 	fnext=false;
 	if(CollumnTextOriginal->GetValue()){CollumnText->SetValue(true);}
-	CollumnTextOriginal->Enable(Kai->GetTab()->Grid1->transl);
+	CollumnTextOriginal->Enable(Kai->GetTab()->Grid->hasTLMode);
 }
 
 void FindReplace::OnSetFocus(wxActivateEvent& event){

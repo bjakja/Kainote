@@ -45,7 +45,7 @@ wxString GetCheckedElements(wxWindow *parent)
 
 	wxString styletext="";
 	wxString *elems;
-	const std::vector<Styles*> styles = Notebook::GetTab()->Grid1->file->GetSubs()->styles;
+	const std::vector<Styles*> styles = Notebook::GetTab()->Grid->file->GetSubs()->styles;
 	elems = new wxString[styles.size()];
 	for (size_t j=0;j<styles.size();j++){
 		Styles *acstyl=styles[j];

@@ -20,6 +20,7 @@
 #include "SubsDialogue.h"
 #include "KaiDialog.h"
 #include <vector>
+#include <set>
 #include <functional>
 
 enum{
@@ -85,6 +86,7 @@ public:
 	std::vector<Dialogue*> ddials;
 	std::vector<Styles*> dstyles;
 	std::vector<SInfo*> dsinfo;
+	std::set<int> sel;
 
 	unsigned char etidtionType;
 	int activeLine;
@@ -96,7 +98,7 @@ public:
 
 class SubsFile
 {
-	friend class SubsGrid;
+	friend class SubsGridBase;
 private:
 	std::vector<File*> undo;
 	int iter;

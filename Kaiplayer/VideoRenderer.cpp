@@ -698,12 +698,12 @@ bool VideoRend::Play(int end)
 	if( !(IsShown() || (vb->TD && vb->TD->IsShown())) ){return false;}
 	TabPanel* pan=(TabPanel*)GetParent();
 	if(VisEdit){
-		wxString *txt=pan->Grid1->SaveText();
+		wxString *txt=pan->Grid->SaveText();
 		OpenSubs(txt, false, true);
 		SAFE_DELETE(Vclips->dummytext);
 		VisEdit=false;
 	}else if(pan->Edit->OnVideo){
-		OpenSubs(pan->Grid1->SaveText(), false, true);
+		OpenSubs(pan->Grid->SaveText(), false, true);
 		pan->Edit->OnVideo=false;
 	}
 
@@ -785,7 +785,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			if(Vclips->Visual==VECTORCLIP){
 				Vclips->SetClip(Vclips->GetVisual(),true, false);
 			}else{
-				OpenSubs((playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible(),true, playing);
+				OpenSubs((playing)? pan->Grid->SaveText() : pan->Grid->GetVisible(),true, playing);
 				if(vstate==Playing){ VisEdit=false;}
 			}
 		}else if(pan->Edit->OnVideo){
@@ -793,7 +793,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			//	wxCommandEvent evt;pan->Edit->OnEdit(evt);
 			//	//pan->Edit->OnVideo=false;
 			//}
-			OpenSubs((playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible(), true, playing);
+			OpenSubs((playing)? pan->Grid->SaveText() : pan->Grid->GetVisible(), true, playing);
 			if(playing){ pan->Edit->OnVideo=false;}
 		}	
 		playend=(IsDshow)? 0 : GetDuration();
@@ -811,7 +811,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 				if(Vclips->Visual==VECTORCLIP){
 					Vclips->SetClip(Vclips->GetVisual(),true, false);
 				}else{
-					OpenSubs((playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible(), true, playing);
+					OpenSubs((playing)? pan->Grid->SaveText() : pan->Grid->GetVisible(), true, playing);
 					if(playing){ VisEdit=false;}
 				}
 				//VisEdit=false;
@@ -820,7 +820,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 				//	wxCommandEvent evt;pan->Edit->OnEdit(evt);
 				//	//pan->Edit->OnVideo=false;
 				//}
-				OpenSubs((playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible(), true, playing);
+				OpenSubs((playing)? pan->Grid->SaveText() : pan->Grid->GetVisible(), true, playing);
 				if(playing){ pan->Edit->OnVideo=false;}
 			}	
 			if(vstate==Playing){
@@ -1502,7 +1502,7 @@ void VideoRend::MovePos(int cpos)
 			time = VFF->Timecodes[lastframe];
 			TabPanel* pan=(TabPanel*)GetParent();
 			if(VisEdit || pan->Edit->OnVideo){
-				OpenSubs(pan->Grid1->SaveText(),false,true);
+				OpenSubs(pan->Grid->SaveText(),false,true);
 				pan->Edit->OnVideo=false;
 				VisEdit=false;
 			}
@@ -1542,7 +1542,7 @@ void VideoRend::ChangeVobsub(bool vobsub)
 
 	int tmptime = time;
 	TabPanel *pan=Kaia->Frame->GetTab();
-	OpenSubs((vobsub)? NULL : pan->Grid1->SaveText(), true, true);
+	OpenSubs((vobsub)? NULL : pan->Grid->SaveText(), true, true);
 	vplayer->OpenFile(pan->VideoPath,vobsub);
 	vformat = vplayer->inf.CT;
 	D3DFORMAT tmpd3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') : (vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
@@ -1571,7 +1571,7 @@ void VideoRend::SetVisual(bool remove, bool settext)
 	if(remove){
 		SAFE_DELETE(Vclips); pan->Edit->Visual=0;
 		VisEdit=false;
-		OpenSubs(pan->Grid1->GetVisible());
+		OpenSubs(pan->Grid->GetVisible());
 		pan->Edit->OnVideo = true;
 		Render();
 	}else{
@@ -1583,9 +1583,9 @@ void VideoRend::SetVisual(bool remove, bool settext)
 			bool vectorclip = Vclips->Visual == VECTORCLIP;
 			delete Vclips;
 			Vclips = Visuals::Get(vis,this);
-			if(vectorclip && !settext){OpenSubs(pan->Grid1->GetVisible());}
+			if(vectorclip && !settext){OpenSubs(pan->Grid->GetVisible());}
 		}else{SAFE_DELETE(Vclips->dummytext);}
-		if(settext){OpenSubs(pan->Grid1->GetVisible());}
+		if(settext){OpenSubs(pan->Grid->GetVisible());}
 		Vclips->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom),lines, m_font, d3device);
 		SetVisualZoom();
 		Vclips->SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime, pan->Edit->line->IsComment);

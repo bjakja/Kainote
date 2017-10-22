@@ -55,7 +55,7 @@
 //////////////
 // Prototypes
 
-class Grid;
+class SubsGrid;
 class AudioBox;
 class EditBox;
 
@@ -158,7 +158,7 @@ private:
 	void DoUpdateImage();
 
 public:
-	Grid *grid;
+	SubsGrid *grid;
 	EditBox *Edit;
 	VideoFfmpeg *provider;
 	DirectSoundPlayer2 *player;

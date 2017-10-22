@@ -97,13 +97,13 @@ wxString SpellCheckerDialog::FindNextMisspell()
 		lastLine = lastActiveLine = tab->Edit->ebrow;
 		lastMisspell = 0;
 	}
-	for(int i = lastLine; i < tab->Grid1->GetCount(); i++){
+	for(int i = lastLine; i < tab->Grid->GetCount(); i++){
 		errors.clear();
-		Dialogue *Dial = tab->Grid1->GetDial(i);
+		Dialogue *Dial = tab->Grid->GetDial(i);
 		if(Dial->IsComment && noComments){continue;}
-		wxString &Text = (tab->Grid1->transl)? Dial->TextTl : Dial->Text;
+		wxString &Text = (tab->Grid->hasTLMode)? Dial->TextTl : Dial->Text;
 		//w checktext kopiuje tekst więc nie muszę robić tego dwa razy.
-		tab->Grid1->CheckText(Text, errors);
+		tab->Grid->CheckText(Text, errors);
 		if(i != lastLine){lastMisspell=0;}
 		while(errors.size()>1 && lastMisspell < errors.size()){
 			wxString misspellWord = Text.SubString(errors[lastMisspell], errors[lastMisspell+1]);
@@ -133,14 +133,14 @@ void SpellCheckerDialog::SetNextMisspell()
 	}
 	tab = Kai->GetTab();
 	if(lastActiveLine != lastLine){
-		tab->Grid1->SelectRow(lastLine,false,true,true);
-		tab->Grid1->ScrollTo(lastLine,true);
+		tab->Grid->SelectRow(lastLine,false,true,true);
+		tab->Grid->ScrollTo(lastLine,true);
 		tab->Edit->SetLine(lastLine);
 		lastActiveLine = lastLine;
 	}else/* if(tab->Grid1->Edit->ebrow != lastActiveLine)*/{
-		tab->Grid1->ScrollTo(lastLine,true);
+		tab->Grid->ScrollTo(lastLine,true);
 	}
-	lastText = (tab->Grid1->transl)? tab->Edit->line->TextTl : tab->Edit->line->Text;
+	lastText = (tab->Grid->hasTLMode)? tab->Edit->line->TextTl : tab->Edit->line->Text;
 	//tab->Edit->TextEdit->SetFocus();
 	tab->Edit->TextEdit->SetSelection(errors[lastMisspell-2], errors[lastMisspell-1]+1);
 }
@@ -157,13 +157,13 @@ void SpellCheckerDialog::Replace(wxCommandEvent &evt)
 	wxString replaceTxt = replaceWord->GetValue();
 	if(replaceTxt.IsEmpty() || errors.size()<2){return;}
 	tab = Kai->GetTab();
-	Dialogue *Dial = tab->Grid1->CopyDial(lastLine);
-	wxString &Text = (tab->Grid1->transl)? Dial->TextTl : Dial->Text;
+	Dialogue *Dial = tab->Grid->CopyDial(lastLine);
+	wxString &Text = (tab->Grid->hasTLMode)? Dial->TextTl : Dial->Text;
 	int start = errors[lastMisspell-2];
 	int end = errors[lastMisspell-1]+1;
 	Text.replace(start, end - start, replaceTxt);
-	tab->Grid1->SetModified(SPELL_CHECKER);
-	tab->Grid1->Refresh(false);
+	tab->Grid->SetModified(SPELL_CHECKER);
+	tab->Grid->Refresh(false);
 	//if(SpellChecker::Get()->CheckWord(replaceTxt)){
 		lastMisspell -= 2;
 	//}
@@ -183,10 +183,10 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 	int lenMismatch = 0;
 	int textPos = 0;
 	
-	for(int i = 0; i < tab->Grid1->GetCount(); i++){
-		Dialogue *Dial = tab->Grid1->GetDial(i);
+	for(int i = 0; i < tab->Grid->GetCount(); i++){
+		Dialogue *Dial = tab->Grid->GetDial(i);
 		if(Dial->IsComment && noComments){continue;}
-		wxString Text = (tab->Grid1->transl)? Dial->TextTl : Dial->Text;
+		wxString Text = (tab->Grid->hasTLMode)? Dial->TextTl : Dial->Text;
 		text = Text.Lower().ToStdWstring();
 		lenMismatch = 0;
 		textPos = 0;
@@ -204,14 +204,14 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 			changed=true;
 		}
 		if(changed){
-			Dialogue *Dialc = tab->Grid1->CopyDial(i);
-			wxString &TextToChange = (tab->Grid1->transl)? Dialc->TextTl : Dialc->Text;
+			Dialogue *Dialc = tab->Grid->CopyDial(i);
+			wxString &TextToChange = (tab->Grid->hasTLMode)? Dialc->TextTl : Dialc->Text;
 			TextToChange=Text;
-			tab->Grid1->SpellErrors[i].clear();
+			tab->Grid->SpellErrors[i].clear();
 		}
 	}
-	tab->Grid1->SetModified(SPELL_CHECKER);
-	tab->Grid1->Refresh(false);
+	tab->Grid->SetModified(SPELL_CHECKER);
+	tab->Grid->Refresh(false);
 	//if(SpellChecker::Get()->CheckWord(replaceTxt)){
 		lastMisspell -= 2;
 	//}
@@ -273,7 +273,7 @@ void SpellCheckerDialog::OnActive(wxActivateEvent &evt)
 {
 	if(evt.GetActive()){
 		TabPanel *tab1 = Kai->GetTab();
-		wxString &ActualText = (tab1->Grid1->transl)? tab1->Edit->line->TextTl : tab1->Edit->line->Text;
+		wxString &ActualText = (tab1->Grid->hasTLMode)? tab1->Edit->line->TextTl : tab1->Edit->line->Text;
 		if(tab != tab1 || lastActiveLine != tab1->Edit->ebrow || lastText != ActualText){
 			lastMisspell=0;
 			SetNextMisspell();

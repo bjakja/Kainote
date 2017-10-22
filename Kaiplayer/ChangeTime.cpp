@@ -176,7 +176,7 @@ bool CTwindow::SetForegroundColour(const wxColour &col)
 void CTwindow::Contents(bool addopts)
 {
 	bool state;
-	form=Kai->GetTab()->Grid1->form;
+	form=Kai->GetTab()->Grid->subsFormat;
 	VideoCtrl *vb = Kai->GetTab()->Video;
 	if(form<SRT){
 		state=true;
@@ -269,12 +269,12 @@ void CTwindow::OnOKClick(wxCommandEvent& event)
 	int acid=event.GetId();
 	TabPanel *tab = Kai->GetTab();
 	if (acid==ID_MOVE){
-		tab->Grid1->ChangeTimes(TimeText->HasShownFrames());
+		tab->Grid->ChangeTimes(TimeText->HasShownFrames());
 	}else if(acid==ID_CLOSE){
 		Hide();
 		tab->BoxSizer1->Layout();
 	}
-	tab->Grid1->SetFocus();
+	tab->Grid->SetFocus();
 }
 
 
@@ -282,7 +282,7 @@ void CTwindow::OnSize(wxSizeEvent& event)
 {
 	int h,gw,gh;
 	TabPanel* cur=(TabPanel*)GetParent();
-	cur->Grid1->GetClientSize(&gw,&gh);
+	cur->Grid->GetClientSize(&gw,&gh);
 	int w;
 	panel->GetBestSize(&w,&h);
 	int ctw, cth;
@@ -527,7 +527,7 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 		//OnSize(evt);
 		int w, h,gw,gh;
 		TabPanel* cur=(TabPanel*)GetParent();
-		cur->Grid1->GetClientSize(&gw,&gh);
+		cur->Grid->GetClientSize(&gw,&gh);
 		panel->GetBestSize(&w,&h);
 		scPos = 0;
 		if(gh < h)//pojawianie scrollbara

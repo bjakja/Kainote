@@ -85,7 +85,7 @@ Visuals::~Visuals()
 void Visuals::SetVisual(int _start, int _end, bool notDial)
 {
 	int nx=0, ny=0;
-	tab->Grid1->GetASSRes(&nx, &ny);
+	tab->Grid->GetASSRes(&nx, &ny);
 	SubsSize=wxSize(nx,ny);
 	start=_start;
 	end=_end;
@@ -274,10 +274,10 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	bool draw=(Visual == VECTORCLIP || Visual == VECTORDRAW);
 	D3DXVECTOR2 ppos(0.0f,0.0f);
 	EditBox *edit = tab->Edit;
-	Grid *grid = tab->Grid1;
+	SubsGrid *grid = tab->Grid;
 	wxString txt = edit->TextEdit->GetValue();
 	MTextEditor *Editor = edit->TextEdit;
-	if(grid->transl && txt==""){ txt = edit->TextEditOrig->GetValue(); Editor = edit->TextEditOrig;}
+	if(grid->hasTLMode && txt==""){ txt = edit->TextEditOrig->GetValue(); Editor = edit->TextEditOrig;}
 
 
 	Styles *acstyl=grid->GetStyle(0,edit->line->Style);
@@ -399,8 +399,8 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 {
 	
 	EditBox *edit = tab->Edit;
-	Grid *grid = tab->Grid1;
-	bool isOriginal=(grid->transl && edit->TextEdit->GetValue()=="");
+	SubsGrid *grid = tab->Grid;
+	bool isOriginal=(grid->hasTLMode && edit->TextEdit->GetValue()=="");
 	//Editor
 	MTextEditor *Editor=(isOriginal)? edit->TextEditOrig : edit->TextEdit;
 	if(clip==""){
@@ -418,7 +418,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 			return;
 		}
 		tab->Video->VisEdit=false;
-		if(!tab->Video->OpenSubs(tab->Grid1->GetVisible())){wxLogStatus(_("Nie można otworzyć napisów"));}
+		if(!tab->Video->OpenSubs(tab->Grid->GetVisible())){wxLogStatus(_("Nie można otworzyć napisów"));}
 		tab->Video->VisEdit=true;
 		if(redraw){tab->Video->Render();}
 		
@@ -575,21 +575,21 @@ void Visuals::SetVisual(bool dummy, int type)
 {
 	//wstawianie wisuali ale najpierw muszę sobie dać ich rozróżnianie
 	EditBox *edit = tab->Edit;
-	Grid *grid = tab->Grid1;
+	SubsGrid *grid = tab->Grid;
 
-	bool isOriginal=(grid->transl && edit->TextEdit->GetValue()=="");
+	bool isOriginal=(grid->hasTLMode && edit->TextEdit->GetValue()=="");
 	//Editor
 	MTextEditor *Editor=(isOriginal)? edit->TextEditOrig : edit->TextEdit;
 	//działanie dwuetapowe, pierwszy etap podmieniamy w wielu linijkach
 	if(edit->IsCursorOnStart()){
 		//wxLogStatus("multiple lines");
 		wxString *dtxt;
-		wxArrayInt sels= tab->Grid1->GetSels();
+		wxArrayInt sels= tab->Grid->GetSels();
 		bool skipInvisible = dummy && tab->Video->GetState() != Playing;
 		if(dummy && !dummytext){
 			bool visible=false;
 			selPositions.clear();
-			dummytext = tab->Grid1->GetVisible(&visible, 0, &selPositions);
+			dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
 			if(selPositions.size() != sels.size()){
 				wxLogStatus("Sizes mismatch");
 				return;
@@ -603,14 +603,14 @@ void Visuals::SetVisual(bool dummy, int type)
 			Dialogue *Dial = grid->GetDial(sels[i]);
 			if(skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){continue;}
 		
-			bool istxttl = (tab->Grid1->transl && Dial->TextTl!="");
+			bool istxttl = (tab->Grid->hasTLMode && Dial->TextTl!="");
 			wxString txt = (istxttl)? Dial->TextTl : Dial->Text;
 			ChangeVisual(&txt, Dial);
 			if(!dummy){
 				if(istxttl){
-					tab->Grid1->CopyDial(sels[i])->TextTl=txt;
+					tab->Grid->CopyDial(sels[i])->TextTl=txt;
 				}else{
-					tab->Grid1->CopyDial(sels[i])->Text=txt;
+					tab->Grid->CopyDial(sels[i])->Text=txt;
 				}
 			}else{
 				Dialogue Cpy=Dialogue(*Dial);
@@ -618,7 +618,7 @@ void Visuals::SetVisual(bool dummy, int type)
 					Cpy.TextTl = txt;
 					wxString tlLines;
 					Cpy.GetRaw(&tlLines, true);
-					Cpy.GetRaw(&tlLines, false,tab->Grid1->GetSInfo("TLMode Style"));
+					Cpy.GetRaw(&tlLines, false,tab->Grid->GetSInfo("TLMode Style"));
 					dtxt->insert(selPositions[i] + moveLength,tlLines);
 					moveLength += tlLines.Len();
 				}else{
@@ -636,10 +636,10 @@ void Visuals::SetVisual(bool dummy, int type)
 		if(!dummy){
 			tab->Video->VisEdit=true;
 			if(tab->Edit->splittedTags){tab->Edit->TextEditOrig->modified=true;}
-			tab->Grid1->SetModified((Visual==MOVE)? VISUAL_MOVE : 
+			tab->Grid->SetModified((Visual==MOVE)? VISUAL_MOVE : 
 				(Visual==SCALE)? VISUAL_SCALE : (Visual==ROTATEZ)? VISUAL_ROTATION_Z : 
 				(Visual==ROTATEXY)? VISUAL_ROTATION_X_Y : VISUAL_RECT_CLIP, true);
-			tab->Grid1->Refresh();
+			tab->Grid->Refresh();
 		}else{
 		
 			if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
@@ -705,8 +705,8 @@ D3DXVECTOR2 Visuals::GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos
 	//ładnie to ogarnąć w samych visualach a z editboxa wszystko wywalić, łącznie z clipami.
 	*putinBracket=false;
 	D3DXVECTOR2 result;
-	Styles *acstyl=tab->Grid1->GetStyle(0,Dial->Style);
-	bool istxttl = (tab->Grid1->transl && Dial->TextTl!="");
+	Styles *acstyl=tab->Grid->GetStyle(0,Dial->Style);
+	bool istxttl = (tab->Grid->hasTLMode && Dial->TextTl!="");
 	wxString txt = (istxttl)? Dial->TextTl : Dial->Text;
 	bool foundpos=false;
 	wxRegEx pos("\\\\(pos|move)\\(([^\\)]+)\\)",wxRE_ADVANCED);
@@ -744,7 +744,7 @@ D3DXVECTOR2 Visuals::GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos
 	}
 	//D3DXVECTOR2 dsize = Notebook::GetTab()->Video->Vclips->CalcWH();
 	int x, y;
-	tab->Grid1->GetASSRes(&x, &y);
+	tab->Grid->GetASSRes(&x, &y);
 	if(tmpan % 3==2){
 		result.x = (x/2);
 	}

@@ -88,7 +88,7 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 	if(click){
 		tab->Video->SetCursor(wxCURSOR_SIZING);
 		hasArrow=false;
-		wxArrayInt sels= tab->Grid1->GetSels();
+		wxArrayInt sels= tab->Grid->GetSels();
 		if(sels.size()!=data.size()){SetCurVisual();tab->Video->Render();}
 		firstmove.x=x;
 		firstmove.y=y;
@@ -126,11 +126,11 @@ wxString Position::GetVisual(int datapos)
 void Position::SetCurVisual()
 {
 	data.clear();
-	wxArrayInt sels= tab->Grid1->GetSels();
+	wxArrayInt sels= tab->Grid->GetSels();
 	bool pib; wxPoint tp;
 	for(size_t i = 0; i < sels.size(); i++){
 		//fix by uzyskać reakcję na edycję w editboxie
-		Dialogue *dial = (sels[i]==tab->Edit->ebrow)? tab->Edit->line : tab->Grid1->GetDial(sels[i]);
+		Dialogue *dial = (sels[i]==tab->Edit->ebrow)? tab->Edit->line : tab->Grid->GetDial(sels[i]);
 		if(dial->IsComment){continue;}
 		D3DXVECTOR2 pos = GetPos(dial,&pib,&tp);
 		data.push_back(PosData(dial, sels[i], D3DXVECTOR2(((pos.x/wspw)-zoomMove.x)*zoomScale.x, 
@@ -144,7 +144,7 @@ void Position::ChangeMultiline(bool all)
 	if(!all && !dummytext){
 		bool visible=false; 
 		selPositions.clear();
-		dummytext = tab->Grid1->GetVisible(&visible, 0, &selPositions);
+		dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
 		if(selPositions.size() != data.size()){
 			wxLogStatus("Sizes mismatch");
 			return;
@@ -160,16 +160,16 @@ void Position::ChangeMultiline(bool all)
 		if(skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){continue;}
 		wxString visual = GetVisual(i);
 		
-		bool istxttl = (tab->Grid1->transl && Dial->TextTl!="");
+		bool istxttl = (tab->Grid->hasTLMode && Dial->TextTl!="");
 		wxString txt = (istxttl)? Dial->TextTl : Dial->Text;
 		
 		if(data[i].putinBracket){visual = "{" + visual + "}";}
 		txt.replace(data[i].TextPos.x, data[i].TextPos.y, visual);
 		if(all){
 			if(istxttl){
-				tab->Grid1->CopyDial(data[i].numpos)->TextTl=txt;
+				tab->Grid->CopyDial(data[i].numpos)->TextTl=txt;
 			}else{
-				tab->Grid1->CopyDial(data[i].numpos)->Text=txt;
+				tab->Grid->CopyDial(data[i].numpos)->Text=txt;
 			}
 		}else{
 			Dialogue Cpy=Dialogue(*Dial);
@@ -177,7 +177,7 @@ void Position::ChangeMultiline(bool all)
 				Cpy.TextTl = txt;
 				wxString tlLines;
 				Cpy.GetRaw(&tlLines, true);
-				Cpy.GetRaw(&tlLines, false,tab->Grid1->GetSInfo("TLMode Style"));
+				Cpy.GetRaw(&tlLines, false,tab->Grid->GetSInfo("TLMode Style"));
 				dtxt->insert(selPositions[i] + moveLength,tlLines);
 				moveLength += tlLines.Len();
 			}else{
@@ -195,8 +195,8 @@ void Position::ChangeMultiline(bool all)
 	if(all){
 		tab->Video->VisEdit=true;
 		if(tab->Edit->splittedTags){tab->Edit->TextEditOrig->modified=true;}
-		tab->Grid1->SetModified(VISUAL_POSITION,true);
-		tab->Grid1->Refresh();
+		tab->Grid->SetModified(VISUAL_POSITION,true);
+		tab->Grid->Refresh();
 	}else{
 		
 		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}

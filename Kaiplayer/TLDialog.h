@@ -18,12 +18,12 @@
 #include "KaiDialog.h"
 #include "MappedButton.h"
 
-#include "Grid.h"
+#include "SubsGrid.h"
 
 class TLDialog  : public KaiDialog
 {
 public:
-	TLDialog(wxWindow *parent, Grid *subsgrid);
+	TLDialog(wxWindow *parent, SubsGrid *subsgrid);
 	virtual ~TLDialog();
 
 	
@@ -43,7 +43,7 @@ private:
 	void OnUpExt(wxCommandEvent& event);
 	void OnDownDel(wxCommandEvent& event);
 
-	Grid *Sbsgrid;
+	SubsGrid *Sbsgrid;
 };
 
 

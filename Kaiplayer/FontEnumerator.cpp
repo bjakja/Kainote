@@ -163,7 +163,7 @@ void FontEnumerator::RefreshVideo()
 	// nigdy nie pozwól by zmieniła się zakładka gdy odświeżamy albo odświeżamy napisy na innej zakładce niż widoczna.
 	TabPanel *tab = parent->GetTab();
 	if(tab->Video->GetState()!=None){
-		tab->Video->OpenSubs(tab->Grid1->SaveText(),true,true);
+		tab->Video->OpenSubs(tab->Grid->SaveText(),true,true);
 		tab->Video->Render();
 	}
 }

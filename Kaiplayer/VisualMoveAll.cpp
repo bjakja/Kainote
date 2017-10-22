@@ -208,13 +208,13 @@ void MoveAll::ChangeInLines(bool all)
 	//D3DXVECTOR2 moving;
 	D3DXVECTOR2 moving = elems[numElem].elem - beforeMove;
 	int _time = tab->Video->Tell();
-	wxArrayInt sels= tab->Grid1->GetSels();
+	wxArrayInt sels= tab->Grid->GetSels();
 	wxString *dtxt;
 	if(!all){
 		if(!dummytext){
 			selPositions.clear();
 			bool visible=false; 
-			dummytext = tab->Grid1->GetVisible(&visible,0,&selPositions);
+			dummytext = tab->Grid->GetVisible(&visible,0,&selPositions);
 			if(selPositions.size() != sels.size()){
 				wxLogStatus("Sizes mismatch");
 				return;
@@ -228,15 +228,15 @@ void MoveAll::ChangeInLines(bool all)
 	//bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()=="");
 	//MTextEditor *Editor=(isOriginal)? tab->Edit->TextEditTl : tab->Edit->TextEdit;
 	//wxString origText=Editor->GetValue();
-	wxString tlModeStyle = tab->Grid1->GetSInfo("TLMode Style");
+	wxString tlModeStyle = tab->Grid->GetSInfo("TLMode Style");
 	int moveLength = 0;
 	
 	for(size_t i = 0; i< sels.size(); i++){
 		wxString txt;
-		Dialogue *Dial = tab->Grid1->GetDial(sels[i]);
+		Dialogue *Dial = tab->Grid->GetDial(sels[i]);
 
 		if(skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){continue;}
-		bool istexttl=(tab->Grid1->transl && Dial->TextTl!="");
+		bool istexttl=(tab->Grid->hasTLMode && Dial->TextTl!="");
 		txt = (istexttl)? Dial->TextTl : Dial->Text;
 
 		for(int k = 0; k < 6; k++){
@@ -287,7 +287,7 @@ void MoveAll::ChangeInLines(bool all)
 		
 		}
 		if(all){
-			tab->Grid1->CopyDial(sels[i])->Text=txt;
+			tab->Grid->CopyDial(sels[i])->Text=txt;
 		}else{
 			Dialogue Cpy=Dialogue(*Dial);
 			if(istexttl) {
@@ -311,8 +311,8 @@ void MoveAll::ChangeInLines(bool all)
 	if(all){
 		tab->Video->VisEdit=true;
 		if(tab->Edit->splittedTags){tab->Edit->TextEditOrig->modified=true;}
-		tab->Grid1->SetModified(VISUAL_POSITION_SHIFTER,true);
-		tab->Grid1->Refresh();
+		tab->Grid->SetModified(VISUAL_POSITION_SHIFTER,true);
+		tab->Grid->Refresh();
 	}else{
 		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
 		tab->Video->VisEdit=true;

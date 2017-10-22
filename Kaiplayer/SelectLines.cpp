@@ -151,16 +151,16 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 	if(!matchcase){find.MakeLower();}
 	TabPanel *tab=Kai->GetTab();
 	//wxString test;
-	if(sopt==0){tab->Grid1->sel.clear();}
+	if(sopt==0){tab->Grid->Selections.clear();}
 
-	for(int i=0;i < tab->Grid1->GetCount();i++)
+	for(int i=0;i < tab->Grid->GetCount();i++)
 	{
-		Dialogue *Dial=tab->Grid1->GetDial(i);
+		Dialogue *Dial=tab->Grid->GetDial(i);
 
 		if(wrep==STYLE){
 			txt=Dial->Style;}
 		else if(wrep==TXT){
-			txt=(tab->Grid1->transl && Dial->TextTl!="")? Dial->TextTl : Dial->Text;}
+			txt=(tab->Grid->hasTLMode && Dial->TextTl!="")? Dial->TextTl : Dial->Text;}
 		else if(wrep==ACTOR){
 			txt=Dial->Actor;}
 		else if(wrep==EFFECT){
@@ -194,23 +194,23 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 			&&((diall && !Dial->IsComment) || (commm && Dial->IsComment))){
 				bool select=(sopt==2)?false:true;
 				if(select){
-					tab->Grid1->sel[i]=select;
+					tab->Grid->Selections[i]=select;
 					allreps++;
 				}
 				else{
-					std::map<int,bool>::iterator it= tab->Grid1->sel.find(i);
-					if(it!=tab->Grid1->sel.end()){
-						tab->Grid1->sel.erase(it);
+					std::map<int,bool>::iterator it= tab->Grid->Selections.find(i);
+					if(it!=tab->Grid->Selections.end()){
+						tab->Grid->Selections.erase(it);
 						allreps++;
 					}
 				}
 		}
 
-		if((tab->Grid1->sel.find(i) != tab->Grid1->sel.end())&&act!=0){
-			if(act<3){Dial->GetRaw(&whatcopy, tab->Grid1->transl && Dial->TextTl!="");}
+		if((tab->Grid->Selections.find(i) != tab->Grid->Selections.end())&&act!=0){
+			if(act<3){Dial->GetRaw(&whatcopy, tab->Grid->hasTLMode && Dial->TextTl!="");}
 			else if(act<5){Dial->State= 1 + (Dial->State & 4); mdial.push_back(Dial);}
 			else if(act<6){
-				Dialogue *dialc = tab->Grid1->CopyDial(i); 
+				Dialogue *dialc = tab->Grid->CopyDial(i); 
 				dialc->State=1 + (dialc->State & 4);
 				dialc->IsComment=true;
 			}
@@ -227,18 +227,18 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 		}
 	}//przenoszenie na początek / koniec
 	if(act==2||act==6||act==3||act==4){
-		tab->Grid1->DeleteRows();
+		tab->Grid->DeleteRows();
 		if(act==3||act==4)
 		{
-			tab->Grid1->InsertRows((act==3)? 0 : tab->Grid1->GetCount(), mdial);
+			tab->Grid->InsertRows((act==3)? 0 : tab->Grid->GetCount(), mdial);
 			mdial.clear();
 		}
 	}
-	int fsel=tab->Grid1->FirstSel();
+	int fsel=tab->Grid->FirstSel();
 	int wset=(fsel<0)? tab->Edit->ebrow : fsel;
 	tab->Edit->SetLine(wset);
-	tab->Grid1->SetModified(SELECT_LINES, false);
-	tab->Grid1->RepaintWindow();
+	tab->Grid->SetModified(SELECT_LINES, false);
+	tab->Grid->RepaintWindow();
 	wxString messagetxt= (sopt==0)? wxString::Format(_("Zaznaczono %i linijek."), allreps) :
 		(sopt==1)? wxString::Format(_("Dodano do zaznaczenia %i linijek."), allreps) : 
 		wxString::Format(_("Odznaczono %i linijek."), allreps);

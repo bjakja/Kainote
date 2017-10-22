@@ -129,7 +129,7 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 
 
 
-EditBox::EditBox(wxWindow *parent, Grid *grid1, kainoteFrame* kaif,int idd)
+EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, kainoteFrame* kaif,int idd)
 	: wxWindow(parent, idd, wxDefaultPosition, wxDefaultSize/*, wxBORDER_SIMPLE*/)//|wxCLIP_CHILDREN
 	, EditCounter(1)
 	, ABox(NULL)
@@ -561,12 +561,12 @@ void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool vis
 
 void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString *texttoPutin)
 {
-	bool oneline=(grid->sel.size()<2);
+	bool oneline=(grid->Selections.size()<2);
 	if(oneline && !onlysel){
 		long whre;
 		wxString txt=TextEdit->GetValue();
 		MTextEditor *Editor = TextEdit;
-		if(grid->transl && txt=="" ){
+		if(grid->hasTLMode && txt=="" ){
 			txt = TextEditOrig->GetValue(); 
 			Editor = TextEditOrig;
 		}
@@ -594,18 +594,18 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 		wxArrayInt sels=grid->GetSels();
 		for(size_t i=0;i<sels.size();i++){
 			Dialogue *dialc=grid->CopyDial(sels[i]);
-			wxString txt=(grid->transl && dialc->TextTl!="")? dialc->TextTl : dialc->Text;
+			wxString txt=(grid->hasTLMode && dialc->TextTl!="")? dialc->TextTl : dialc->Text;
 			FindVal(lasttag,&tmp,txt);
 
 			if(InBracket && txt!=""){
 				//wxLogMessage("placed %i, %i: \r\n",Placed.x,Placed.y);
 				if(Placed.x<Placed.y){txt.erase(txt.begin()+Placed.x, txt.begin()+Placed.y+1);}
 				txt.insert(Placed.x,text);
-				if(grid->transl && dialc->TextTl!=""){
+				if(grid->hasTLMode && dialc->TextTl!=""){
 					dialc->TextTl=txt;}
 				else{dialc->Text=txt;}
 			}else{
-				if(grid->transl && dialc->TextTl!=""){
+				if(grid->hasTLMode && dialc->TextTl!=""){
 					dialc->TextTl.Prepend("{"+text+"}");}
 				else{dialc->Text.Prepend("{"+text+"}");}
 			}
@@ -618,15 +618,15 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 
 void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 {
-	if(grid->form==TMP)return;
+	if(grid->subsFormat==TMP)return;
 	long from, to, whre;
 	size_t start=0, len=0;
 	bool match=false;
 	TextEdit->GetSelection(&from,&to);
 	wxString txt=TextEdit->GetValue();
-	bool oneline=(grid->sel.size()<2);
+	bool oneline=(grid->Selections.size()<2);
 	if(oneline){//zmiany tylko w editboxie
-		if(grid->form==SRT){
+		if(grid->subsFormat==SRT){
 
 			wxRegEx srttag("\\</?"+text+"\\>", wxRE_ADVANCED|wxRE_ICASE);
 			if(srttag.Matches(txt.SubString(from-4,from+4))){
@@ -656,7 +656,7 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 				if(!match){txt.insert(to,"</"+tag+">");whre=to+4;}
 			}
 
-		}else if(grid->form==MDVD){
+		}else if(grid->subsFormat==MDVD){
 
 
 			wxRegEx srttag("\\{"+text+"}", wxRE_ADVANCED|wxRE_ICASE);
@@ -681,8 +681,8 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 	}
 	else
 	{//zmiany wszystkich zaznaczonych linijek
-		wxString chars=(grid->form==SRT)? "<" : "{";
-		wxString chare=(grid->form==SRT)? ">" : "}";
+		wxString chars=(grid->subsFormat==SRT)? "<" : "{";
+		wxString chare=(grid->subsFormat==SRT)? ">" : "}";
 		wxArrayInt sels=grid->GetSels();
 		for(size_t i=0;i<sels.size();i++)
 		{
@@ -708,7 +708,7 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 
 void EditBox::OnFontClick(wxCommandEvent& event)
 {
-	char form=grid->form;
+	char form=grid->subsFormat;
 	Styles *mstyle=(form<SRT)? grid->GetStyle(0,line->Style)->Copy() : new Styles();
 
 	wxString tmp;
@@ -776,7 +776,7 @@ void EditBox::AllColorClick(int kol)
 	wxString tmptext=TextEdit->GetValue();
 	MTextEditor *Editor = TextEdit;
 	int tmpIter = grid->file->Iter();
-	if(grid->transl && tmptext=="" ){
+	if(grid->hasTLMode && tmptext=="" ){
 		tmptext = TextEditOrig->GetValue(); 
 		Editor = TextEditOrig;
 	}
@@ -789,7 +789,7 @@ void EditBox::AllColorClick(int kol)
 		(kol==3)? style->OutlineColour :
 		style->BackColour;
 
-	acol = (!FindVal(num+tag, &iskol))? acol : (grid->form<SRT)? AssColor("&"+iskol) : AssColor(wxString("#FFFFFF"));
+	acol = (!FindVal(num+tag, &iskol))? acol : (grid->subsFormat<SRT)? AssColor("&"+iskol) : AssColor(wxString("#FFFFFF"));
 	if(FindVal(num+taga, &iskol)){acol.SetAlphaString(iskol);}
 	else if(FindVal(tagal, &iskol)){acol.SetAlphaString(iskol);}
 	DialogColorPicker *ColourDialog = DialogColorPicker::Get(this, acol.GetWX());
@@ -836,7 +836,7 @@ void EditBox::OnNewline(wxCommandEvent& event)
 
 void EditBox::OnBoldClick(wxCommandEvent& event)
 {
-	if(grid->form<SRT){
+	if(grid->subsFormat<SRT){
 		Styles *mstyle=grid->GetStyle(0,line->Style);
 		wxString wart=(mstyle->Bold)?"0":"1";
 		bool issel=true;
@@ -847,13 +847,13 @@ void EditBox::OnBoldClick(wxCommandEvent& event)
 		if(FindVal("b(0|1)",&wart)){if(wart=="1"){wart="0";}else{wart="1";}}
 		PutinText("\\b"+wart);
 	}
-	else if(grid->form==SRT){PutinNonass("b", "b");}
+	else if(grid->subsFormat==SRT){PutinNonass("b", "b");}
 	else {PutinNonass("y:b", "Y:b");}
 }
 
 void EditBox::OnItalicClick(wxCommandEvent& event)
 {
-	if(grid->form<SRT){Styles *mstyle=grid->GetStyle(0,line->Style);
+	if(grid->subsFormat<SRT){Styles *mstyle=grid->GetStyle(0,line->Style);
 	wxString wart=(mstyle->Italic)?"0":"1";
 	bool issel=true;
 	if(FindVal("i(0|1)",&wart,"",&issel)){if(wart=="1"){wart="0";}else{wart="1";}}
@@ -863,14 +863,14 @@ void EditBox::OnItalicClick(wxCommandEvent& event)
 	if(FindVal("i(0|1)",&wart)){if(wart=="1"){wart="0";}else{wart="1";}}
 	PutinText("\\i"+wart);
 	}
-	else if(grid->form==SRT){PutinNonass("i", "i");}
-	else if(grid->form==MDVD){PutinNonass("y:i", "Y:i");}
+	else if(grid->subsFormat==SRT){PutinNonass("i", "i");}
+	else if(grid->subsFormat==MDVD){PutinNonass("y:i", "Y:i");}
 	else{PutinNonass("/", "/" );}
 }
 
 void EditBox::OnUnderlineClick(wxCommandEvent& event)
 {
-	if(grid->form<SRT){
+	if(grid->subsFormat<SRT){
 		Styles *mstyle=grid->GetStyle(0,line->Style);
 		wxString wart=(mstyle->Underline)?"0":"1";
 		bool issel=true;
@@ -881,12 +881,12 @@ void EditBox::OnUnderlineClick(wxCommandEvent& event)
 		if(FindVal("u(0|1)",&wart)){if(wart=="1"){wart="0";}else{wart="1";}}
 		PutinText("\\u"+wart);
 	}
-	else if(grid->form==SRT){PutinNonass("u", "u");}
+	else if(grid->subsFormat==SRT){PutinNonass("u", "u");}
 }
 
 void EditBox::OnStrikeClick(wxCommandEvent& event)
 {
-	if(grid->form<SRT){
+	if(grid->subsFormat<SRT){
 		Styles *mstyle=grid->GetStyle(0,line->Style);
 		wxString wart=(mstyle->StrikeOut)?"0":"1";
 		bool issel=true;
@@ -897,13 +897,13 @@ void EditBox::OnStrikeClick(wxCommandEvent& event)
 		if(FindVal("s(0|1)",&wart)){if(wart=="1"){wart="0";}else{wart="1";}}
 		PutinText("\\s"+wart);
 	}
-	else if(grid->form==SRT){PutinNonass("s", "s");}
+	else if(grid->subsFormat==SRT){PutinNonass("s", "s");}
 }
 
 void EditBox::OnAnChoice(wxCommandEvent& event)
 {
 	TextEdit->SetSelection(0,0);
-	if(grid->transl){TextEditOrig->SetSelection(0,0);}
+	if(grid->hasTLMode){TextEditOrig->SetSelection(0,0);}
 	lasttag="an([0-9])";
 	wxString tag;
 	FindVal("an([0-9])",&tag);
@@ -1049,7 +1049,7 @@ void EditBox::OnSize(wxSizeEvent& event)
 
 void EditBox::HideControls()
 {
-	bool state=grid->form<SRT;
+	bool state=grid->subsFormat<SRT;
 
 	Ban->Enable(state);
 	Bcol2->Enable(state);
@@ -1065,18 +1065,18 @@ void EditBox::HideControls()
 	MarginVEdit->Enable(state);
 	EffectEdit->Enable(state);
 
-	state=grid->form<SRT || grid->form==MDVD;
+	state=grid->subsFormat<SRT || grid->subsFormat==MDVD;
 	Bcol1->Enable(state);
 	Bfont->Enable(state);
 
-	state=grid->form<=SRT || grid->form==MDVD;
+	state=grid->subsFormat<=SRT || grid->subsFormat==MDVD;
 	Bbold->Enable(state);
 
-	state=grid->form<=SRT;
+	state=grid->subsFormat<=SRT;
 	Bund->Enable(state);
 	Bstrike->Enable(state);
 
-	state=grid->form!=TMP;
+	state=grid->subsFormat!=TMP;
 	EndEdit->Enable(state);
 	DurEdit->Enable(state);
 	Bital->Enable(state);
@@ -1088,15 +1088,15 @@ void EditBox::ClearErrs()
 	Notebook *nb= Notebook::GetTabs();
 	for(size_t i = 0; i < nb->Size(); i++)
 	{
-		nb->Page(i)->Grid1->SpellErrors.clear();
+		nb->Page(i)->Grid->SpellErrors.clear();
 	}
 	grid->Refresh(false);
 }
 
 void EditBox::OnSplit(wxCommandEvent& event)
 {
-	wxString Splitchar=(grid->form<=SRT)? "\\N" : "|";
-	bool istl=(grid->transl && TextEdit->GetValue()=="");
+	wxString Splitchar=(grid->subsFormat<=SRT)? "\\N" : "|";
+	bool istl=(grid->hasTLMode && TextEdit->GetValue()=="");
 	//Editor
 	MTextEditor *tedit=(istl)? TextEditOrig : TextEdit;
 	wxString txt=tedit->GetValue();
@@ -1147,13 +1147,13 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 	wxString txt;
 	if(text==""){
 		txt = TextEdit->GetValue(); 
-		if(grid->transl && txt=="" ){
+		if(grid->hasTLMode && txt=="" ){
 			fromOriginal = true;
 			txt = TextEditOrig->GetValue(); 
 		}
 	}else{txt=text;}
 	if(txt==""){Placed.x=0;Placed.y=0; InBracket=false; cursorpos=0; if(endsel){*endsel=false;} return false;}
-	if(grid->sel.size()<2){
+	if(grid->Selections.size()<2){
 		MTextEditor *Editor = (fromOriginal)? TextEditOrig : TextEdit;
 		if(!fromStart){Editor->GetSelection(&from,&to);}
 	}
@@ -1337,7 +1337,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 
 void EditBox::OnColorChange(wxCommandEvent& event)
 {
-	if(grid->form<SRT){
+	if(grid->subsFormat<SRT){
 		wxString iskol;
 		wxString tag=(num=="1")? "?c&(.*)" : "c&(.*)";
 		Styles *style = grid->GetStyle(0,line->Style);
@@ -1406,7 +1406,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		long from, to;
 		wxString txt= TextEdit->GetValue();
 		MTextEditor *Editor = TextEdit;
-		if(grid->transl && txt==""){ txt = TextEditOrig->GetValue(); Editor = TextEditOrig;}
+		if(grid->hasTLMode && txt==""){ txt = TextEditOrig->GetValue(); Editor = TextEditOrig;}
 		Editor->GetSelection(&from, &to);
 
 		if(from!=to){
@@ -1495,7 +1495,7 @@ void EditBox::OnAutoMoveTags(wxCommandEvent& event)
 
 void EditBox::SetTextWithTags()
 {
-	if(grid->transl && line->TextTl=="" && AutoMoveTags->GetValue()){
+	if(grid->hasTLMode && line->TextTl=="" && AutoMoveTags->GetValue()){
 		wxString Text = line->Text;
 		Text.Replace("}{","");
 		int getr=Text.Find('}');
@@ -1574,7 +1574,7 @@ void EditBox::OnChangeTimeDisplay(wxCommandEvent& event)
 		DurEdit->SetTime(line->End - line->Start);
 	}
 
-	grid->RepaintWindow(START|END);
+	grid->RefreshColumns(START|END);
 }
 
 bool EditBox::SetBackgroundColour(const wxColour &col)
@@ -1593,7 +1593,7 @@ void EditBox::OnStyleEdit(wxCommandEvent& event)
 
 bool EditBox::IsCursorOnStart()
 {
-	if(grid->sel.size()>1){return true;}
+	if(grid->Selections.size()>1){return true;}
 	/*if(Visual == CLIPRECT || Visual == MOVE){return true;}
 	wxString txt=TextEdit->GetValue();
 	MTextEditor *Editor = TextEdit;
@@ -1616,7 +1616,7 @@ bool EditBox::IsCursorOnStart()
 
 void EditBox::OnDoubtfulTl(wxCommandEvent& event)
 {
-	if(!grid->transl){wxBell();return;}
+	if(!grid->hasTLMode){wxBell();return;}
 	if(line->State & 4){
 		line->State ^= 4;
 	}else{
@@ -1640,7 +1640,7 @@ void EditBox::OnDoubtfulTl(wxCommandEvent& event)
 
 void EditBox::FindNextDoubtfulTl(wxCommandEvent& event)
 {
-	if(!grid->transl){wxBell();return;}
+	if(!grid->hasTLMode){wxBell();return;}
 SeekDoubtful:
 	for(int i = CurrentDoubtful; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDial(i);
@@ -1659,7 +1659,7 @@ SeekDoubtful:
 
 void EditBox::FindNextUnTranslated(wxCommandEvent& event)
 {
-	if(!grid->transl){wxBell();return;}
+	if(!grid->hasTLMode){wxBell();return;}
 SeekUntranslated:
 	for(int i = CurrentUntranslated; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDial(i);

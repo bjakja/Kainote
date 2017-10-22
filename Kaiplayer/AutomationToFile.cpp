@@ -967,7 +967,7 @@ namespace Auto{
 	int AutoToFile::LuaGetScriptResolution(lua_State *L)
 	{
 		int w, h;
-		Notebook::GetTab()->Grid1->GetASSRes(&w, &h);
+		Notebook::GetTab()->Grid->GetASSRes(&w, &h);
 		push_value(L, w);
 		push_value(L, h);
 		return 2;

@@ -376,6 +376,7 @@
     <ClCompile Include="SpellCheckerDialog.cpp" />
     <ClCompile Include="Styles.cpp" />
     <ClCompile Include="StyleStore.cpp" />
+    <ClCompile Include="SubsGridWindow.cpp" />
     <ClCompile Include="SubsResampleDialog.cpp" />
     <ClCompile Include="VideoToolbar.cpp" />
     <ClCompile Include="VisualMoveAll.cpp" />
@@ -388,7 +389,7 @@
     <ClCompile Include="EditBox.cpp" />
     <ClCompile Include="FontCollector.cpp" />
     <ClCompile Include="FontDialog.cpp" />
-    <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="SubsGrid.cpp" />
     <ClCompile Include="Hotkeys.cpp" />
     <ClCompile Include="KaraokeSplitting.cpp" />
     <ClCompile Include="MatroskaParser.c" />
@@ -406,7 +407,7 @@
     <ClCompile Include="StylePreview.cpp" />
     <ClCompile Include="SubsDialogue.cpp" />
     <ClCompile Include="SubsFile.cpp" />
-    <ClCompile Include="SubsGrid.cpp" />
+    <ClCompile Include="SubsGridBase.cpp" />
     <ClCompile Include="Tabs.cpp" />
     <ClCompile Include="TabPanel.cpp" />
     <ClCompile Include="SubsTime.cpp" />
@@ -479,9 +480,10 @@
     <ClInclude Include="EnumFactory.h" />
     <ClInclude Include="FontCollector.h" />
     <ClInclude Include="FontDialog.h" />
-    <ClInclude Include="Grid.h" />
+    <ClInclude Include="SubsGrid.h" />
     <ClInclude Include="Styles.h" />
     <ClInclude Include="StyleStore.h" />
+    <ClInclude Include="SubsGridWindow.h" />
     <ClInclude Include="SubsResampleDialog.h" />
     <ClInclude Include="Toolbar.h" />
     <ClInclude Include="VersionKainote.h" />
@@ -503,7 +505,7 @@
     <ClInclude Include="StylePreview.h" />
     <ClInclude Include="SubsDialogue.h" />
     <ClInclude Include="SubsFile.h" />
-    <ClInclude Include="SubsGrid.h" />
+    <ClInclude Include="SubsGridBase.h" />
     <ClInclude Include="Tabs.h" />
     <ClInclude Include="TabPanel.h" />
     <ClInclude Include="SubsTime.h" />

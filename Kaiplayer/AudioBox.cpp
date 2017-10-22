@@ -66,7 +66,7 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	audioDisplay->ScrollBar = audioScroll;
 	audioDisplay->box = this;
 	audioDisplay->Edit=(EditBox*)parent;
-	audioDisplay->grid=(Grid*)Wgrid;
+	audioDisplay->grid=(SubsGrid*)Wgrid;
 
 	// Zoom
 	int zoom = Options.GetInt(AudioHorizontalZoom);

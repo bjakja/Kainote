@@ -428,7 +428,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		SetFullskreen();
 		if(!isFullscreen && Kai->GetTab()->SubsPath!="" && Options.GetBool(SelectVisibleLineAfterFullscreen)){
 			Kai->GetTab()->Edit->Send(EDITBOX_LINE_EDITION,false);
-			Kai->GetTab()->Grid1->SelVideoLine();
+			Kai->GetTab()->Grid->SelVideoLine();
 		}
 		int w,h;
 		GetClientSize(&w,&h);
@@ -466,7 +466,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 
 		if(event.Entering()){
 			int nx=0, ny=0;
-			Kai->GetTab()->Grid1->GetASSRes(&nx,&ny);
+			Kai->GetTab()->Grid->GetASSRes(&nx,&ny);
 			wspx=(float)nx/(float)(w - 1);
 			wspy=(float)ny/(float)(h - panelHeight - 1);
 
@@ -498,7 +498,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		if(!isFullscreen)
 		{
 			Dialogue *aline=Kai->GetTab()->Edit->line;
-			bool istl=(Kai->GetTab()->Grid1->transl && aline->TextTl!="");
+			bool istl=(Kai->GetTab()->Grid->hasTLMode && aline->TextTl!="");
 			wxString ltext=(istl)? aline->TextTl : aline->Text;
 			wxRegEx posmov("\\\\(pos|move)([^\\\\}]+)",wxRE_ADVANCED);
 			posmov.ReplaceAll(&ltext,"");
@@ -513,9 +513,9 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 				ltext="{"+postxt+"}"+ltext;
 			}
 			if(istl){aline->TextTl=ltext;}else{aline->Text=ltext;}
-			Kai->GetTab()->Grid1->ChangeCell((istl)?TXTTL : TXT, Kai->GetTab()->Edit->ebrow, aline);
-			Kai->GetTab()->Grid1->Refresh(false);
-			Kai->GetTab()->Grid1->SetModified(VISUAL_POSITION);
+			Kai->GetTab()->Grid->ChangeCell((istl)?TXTTL : TXT, Kai->GetTab()->Edit->ebrow, aline);
+			Kai->GetTab()->Grid->Refresh(false);
+			Kai->GetTab()->Grid->SetModified(VISUAL_POSITION);
 		}
 	}
 
@@ -541,7 +541,7 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 		//OpenEditor((key==WXK_ESCAPE));
 		SetFullskreen();
 		if(Kai->GetTab()->SubsPath!=""){
-			Kai->GetTab()->Grid1->SelVideoLine();}
+			Kai->GetTab()->Grid->SelVideoLine();}
 		if(key=='B'){if(GetState()==Playing){Pause();}ShowWindow(Kai->GetHWND(),SW_SHOWMINNOACTIVE);}
 	}
 	else if(key=='S'&&event.m_controlDown){Kai->Save(false);}
@@ -955,7 +955,7 @@ void VideoCtrl::OpenEditor(bool esc)
 		//}
 		Options.SetBool(EditorOn, true);
 		if(Kai->GetTab()->SubsPath!=""){
-			Kai->GetTab()->Grid1->SelVideoLine();}
+			Kai->GetTab()->Grid->SelVideoLine();}
 
 
 		SetFullskreen();
@@ -1168,7 +1168,7 @@ void VideoCtrl::RefreshTime()
 		}
 		mstimes->SetValue(times);
 		mstimes->Update();
-		pan->Grid1->RefreshIfVisible(kkk.mstime);
+		pan->Grid->RefreshIfVisible(kkk.mstime);
 	}
 
 }
@@ -1178,7 +1178,7 @@ void VideoCtrl::OnCopyCoords(const wxPoint &pos)
 	int w, h;
 	GetClientSize(&w,&h);
 	int nx=0, ny=0;
-	Kai->GetTab()->Grid1->GetASSRes(&nx,&ny);
+	Kai->GetTab()->Grid->GetASSRes(&nx,&ny);
 	wspx=(float)nx/(float)(w-1);
 	wspy=(float)ny/(float)(h - panelHeight - 1);
 	int posx=(float)pos.x*wspx;

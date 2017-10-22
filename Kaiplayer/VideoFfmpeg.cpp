@@ -380,7 +380,7 @@ done:
 		if (CS == FFMS_CS_UNSPECIFIED)
 			CS = width > 1024 || height >= 600 ? FFMS_CS_BT709 : FFMS_CS_BT470BG;
 		ColorSpace = RealColorSpace = ColorCatrixDescription(CS, CR);
-		Grid *grid = ((TabPanel*)rend->GetParent())->Grid1;
+		SubsGrid *grid = ((TabPanel*)rend->GetParent())->Grid;
 		wxString colormatrix = grid->GetSInfo("YCbCr Matrix");
 		if ((CS == FFMS_CS_BT709 && colormatrix != "TV.601") || (ColorSpace != colormatrix && CS == FFMS_CS_BT470BG)) {
 			if (FFMS_SetInputFormatV(videosource, CS, CR, FFMS_GetPixFmt(""), &errinfo)){

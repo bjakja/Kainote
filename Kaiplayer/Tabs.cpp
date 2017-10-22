@@ -139,7 +139,7 @@ void Notebook::DeletePage(int page)
 	}
 	block=false;
 	//remove compare if it exist
-	if (hasCompare && Pages[page]->Grid1->Comparison != NULL){
+	if (hasCompare && Pages[page]->Grid->Comparison != NULL){
 		RemoveComparison();
 	}
 
@@ -493,8 +493,8 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			OnTabSel(id);
 		}else if(id == MENU_COMPARE){
 			if (hasCompare){ RemoveComparison(); }
-			compareFirstGrid = Pages[iter]->Grid1;
-			compareSecondGrid = Pages[i]->Grid1;
+			compareFirstGrid = Pages[iter]->Grid;
+			compareSecondGrid = Pages[i]->Grid;
 			SubsComparison();
 			hasCompare=true;
 		}else{
@@ -734,7 +734,7 @@ void Notebook::OnTabSel(int id)
 			iter=i;
 			//wxLogStatus("%i", (int)i);
 			if(Kai->SavePrompt()){break;}
-			if (hasCompare && Pages[i]->Grid1->Comparison != NULL){ RemoveComparison(); }
+			if (hasCompare && Pages[i]->Grid->Comparison != NULL){ RemoveComparison(); }
 			Pages[i]->Destroy();
 			Pages.pop_back();
 			Names.pop_back();
@@ -998,8 +998,8 @@ int Notebook::GetIterByPos(const wxPoint &pos){
 
 void Notebook::SubsComparison()
 {
-	Grid *G1 = compareFirstGrid;
-	Grid *G2 = compareSecondGrid;
+	SubsGrid *G1 = compareFirstGrid;
+	SubsGrid *G2 = compareSecondGrid;
 
 	int firstSize= G1->GetCount(), secondSize= G2->GetCount();
 	if(G1->Comparison){G1->Comparison->clear();}else{G1->Comparison=new std::vector<wxArrayInt>;}
@@ -1018,7 +1018,7 @@ void Notebook::SubsComparison()
 
 			Dialogue *dial2=G2->GetDial(j);
 			if(dial1->Start == dial2->Start && dial1->End == dial2->End){
-				CompareTexts((G1->transl && dial1->TextTl != "")? dial1->TextTl : dial1->Text, (G2->transl && dial2->TextTl != "")? dial2->TextTl : dial2->Text, G1->Comparison->at(i), G2->Comparison->at(j));
+				CompareTexts((G1->hasTLMode && dial1->TextTl != "")? dial1->TextTl : dial1->Text, (G2->hasTLMode && dial2->TextTl != "")? dial2->TextTl : dial2->Text, G1->Comparison->at(i), G2->Comparison->at(j));
 				lastJ=j+1;
 				break;
 			}

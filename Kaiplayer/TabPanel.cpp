@@ -33,15 +33,15 @@ TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const
 	if(vw<200){vw=550;vh=400;}
     Video = new VideoCtrl(this, kai, wxSize(vw,vh));
 	Video->Hide();
-    Grid1 = new Grid(this,kai,-1,wxDefaultPosition,wxSize(400,200),wxBORDER_SIMPLE|wxWANTS_CHARS);//
-    Edit = new EditBox(this, Grid1, kai, -1);
+    Grid = new SubsGrid(this,kai,-1,wxDefaultPosition,wxSize(400,200),wxBORDER_SIMPLE|wxWANTS_CHARS);//
+    Edit = new EditBox(this, Grid, kai, -1);
 	Edit->SetMinSize(wxSize(-1,200));
 	Edit->SetLine(0);
 	
 	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
     CTime= new CTwindow(this,kai,-1,wxDefaultPosition,wxDefaultSize,wxBORDER_SIMPLE);
     CTime->Show(Options.GetBool(MoveTimesOn));
-	BoxSizer3->Add(Grid1, 1, wxEXPAND, 0);
+	BoxSizer3->Add(Grid, 1, wxEXPAND, 0);
 	BoxSizer3->Add(CTime, 0, wxEXPAND, 0);
     BoxSizer2->Add(Video, 0, wxEXPAND|wxALIGN_TOP, 0);
     BoxSizer2->Add(Edit, 1, wxEXPAND|wxALIGN_TOP, 0);
@@ -86,20 +86,20 @@ void TabPanel::SetAccels()
 			eentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 		}else if(cur->first.Type == GRID_HOTKEY){//grid
 			gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
-			if(id>5000 &&id<=6000){Grid1->ConnectAcc(id);}
+			if(id>5000 &&id<=6000){Grid->ConnectAcc(id);}
 		}else if(cur->first.Type == VIDEO_HOTKEY){//video
 			ventries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 			if(id>2000 && id<3990){Video->ConnectAcc(id);}
 			if(id>=PlayPause && id<= Minus5Second){
 				gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
-				Grid1->ConnectAcc(id);
+				Grid->ConnectAcc(id);
 			}
 		} 
 
 	}
 	
 	wxAcceleratorTable accelg(gentries.size(), &gentries[0]);
-    Grid1->SetAcceleratorTable(accelg);
+    Grid->SetAcceleratorTable(accelg);
 	wxAcceleratorTable accelv(ventries.size(), &ventries[0]);
     Video->SetAcceleratorTable(accelv);
     wxAcceleratorTable accele(eentries.size(), &eentries[0]);

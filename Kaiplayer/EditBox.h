@@ -31,7 +31,7 @@
 #include "MenuButton.h"
 
 class kainoteFrame;
-class Grid;
+class SubsGrid;
 
 
 class DescTxtCtrl : public KaiChoice
@@ -75,7 +75,7 @@ private:
 class EditBox : public wxWindow
 {
 public:
-	EditBox(wxWindow *parent, Grid *grid1, kainoteFrame *kaif, int idd);
+	EditBox(wxWindow *parent, SubsGrid *grid1, kainoteFrame *kaif, int idd);
 	virtual ~EditBox();
 	void SetLine(int Row, bool setaudio=true, bool save=true, bool nochangeline=false, bool autoPlay = false);
 	void SetTl(bool tl);
@@ -85,7 +85,7 @@ public:
 	void HideControls();
 	void UpdateChars(const wxString &text);
 
-	Grid *grid;
+	SubsGrid *grid;
 	int ebrow;
 
 	AudioBox* ABox;

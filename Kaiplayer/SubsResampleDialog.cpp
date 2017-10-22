@@ -119,7 +119,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 		int subsSizeY = subsResolutionY->GetInt();
 		int videoSizeX = destinedResolutionX->GetInt();
 		int videoSizeY = destinedResolutionY->GetInt();
-		Grid *grid = Notebook::GetTab()->Grid1;
+		SubsGrid *grid = Notebook::GetTab()->Grid;
 		grid->AddSInfo("PlayResX",std::to_string(videoSizeX));
 		grid->AddSInfo("PlayResY",std::to_string(videoSizeY));
 		grid->ResizeSubs(videoSizeX/(float)subsSizeX,
@@ -161,13 +161,13 @@ SubsMismatchResolutionDialog::SubsMismatchResolutionDialog(wxWindow *parent, con
 	resamplingOptions->SetSelection(1);
 	MappedButton *OK = new MappedButton(this, 26548, _("Zmień"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
-		Notebook::GetTab()->Grid1->ResizeSubs(resizeX,resizeY, 
+		Notebook::GetTab()->Grid->ResizeSubs(resizeX,resizeY, 
 			resamplingOptions->GetSelection() == 2);
 	},26548);
 	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Nie zmieniaj"));
 	MappedButton *TurnOff = new MappedButton(this, 26549, _("Wyłącz ostrzeżenie"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
-		Grid *grid = Notebook::GetTab()->Grid1;
+		SubsGrid *grid = Notebook::GetTab()->Grid;
 		grid->AddSInfo("PlayResX",std::to_string(videoSize.x));
 		grid->AddSInfo("PlayResY",std::to_string(videoSize.y));
 		if(resamplingOptions->GetSelection() != 0){

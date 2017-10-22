@@ -724,8 +724,8 @@ namespace Auto{
 
 	static std::vector<int> selected_rows(const TabPanel *c)
 	{
-		auto const& sel = c->Grid1->GetSels();
-		int offset = c->Grid1->SInfoSize() + c->Grid1->StylesSize()+1;
+		auto const& sel = c->Grid->GetSels();
+		int offset = c->Grid->SInfoSize() + c->Grid->StylesSize()+1;
 		std::vector<int> rows;
 		rows.reserve(sel.size());
 		for (auto line : sel)
@@ -742,10 +742,10 @@ namespace Auto{
 		lua_pushcclosure(L, add_stack_trace, 0);
 
 		GetFeatureFunction("validate");
-		auto subsobj = new AutoToFile(L, c->Grid1->file->GetSubs(), true);
+		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true);
 
 		push_value(L, selected_rows(c));
-		push_value(L, c->Edit->ebrow + c->Grid1->SInfoSize() + c->Grid1->StylesSize()+1);
+		push_value(L, c->Edit->ebrow + c->Grid->SInfoSize() + c->Grid->StylesSize()+1);
 
 		int err = lua_pcall(L, 3, 2, -5 /* three args, function, error handler */);
 		SAFE_DELETE(subsobj);
@@ -776,9 +776,9 @@ namespace Auto{
 		stackcheck.check_stack(0);
 
 		GetFeatureFunction("run");
-		auto subsobj = new AutoToFile(L, c->Grid1->file->GetSubs(), true);
+		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true);
 
-		int original_offset = c->Grid1->SInfoSize() + c->Grid1->StylesSize()+1;
+		int original_offset = c->Grid->SInfoSize() + c->Grid->StylesSize()+1;
 		auto original_sel = selected_rows(c);
 		int original_active = c->Edit->ebrow + original_offset;
 
@@ -797,7 +797,7 @@ namespace Auto{
 		if(ps->lpd->cancelled || failed){
 			//wxLogStatus("canceled ");
 			SAFE_DELETE(subsobj);
-			c->Grid1->file->DummyUndo();
+			c->Grid->file->DummyUndo();
 			
 			delete ps;
 			return;
@@ -812,15 +812,15 @@ namespace Auto{
 		// Check for a new active row
 		if (lua_isnumber(L, -1)) {
 			active_idx = lua_tointeger(L, -1) - original_offset;
-			if (active_idx < 0 || active_idx >= c->Grid1->GetCount()) {
-				wxLogError("Active row %d is out of bounds (must be 1-%u)", active_idx, c->Grid1->GetCount());
+			if (active_idx < 0 || active_idx >= c->Grid->GetCount()) {
+				wxLogError("Active row %d is out of bounds (must be 1-%u)", active_idx, c->Grid->GetCount());
 				active_idx = original_active;
 			}
 		}
 		//wxLogStatus("idx %i, %i", active_idx, c->Edit->ebrow);
-		c->Grid1->SpellErrors.clear();
-		c->Grid1->SetModified(AUTOMATION_SCRIPT, true, false, active_idx);
-		c->Grid1->RepaintWindow();	
+		c->Grid->SpellErrors.clear();
+		c->Grid->SetModified(AUTOMATION_SCRIPT, true, false, active_idx);
+		c->Grid->RepaintWindow();	
 		//stackcheck.check_stack(2);
 		lua_pop(L, 1);
 
@@ -830,12 +830,12 @@ namespace Auto{
 				if (!lua_isnumber(L, -1))
 					return;
 				int cur = lua_tointeger(L, -1)-original_offset;
-				if (cur < 0 || cur >= c->Grid1->GetCount()) {
-					wxLogError("Selected row %d is out of bounds (must be 1-%u)", cur, c->Grid1->GetCount());
+				if (cur < 0 || cur >= c->Grid->GetCount()) {
+					wxLogError("Selected row %d is out of bounds (must be 1-%u)", cur, c->Grid->GetCount());
 					throw LuaForEachBreak();
 				}
 
-				c->Grid1->sel[cur]=true;
+				c->Grid->Selections[cur]=true;
 			});
 
 			/*AssDialogue *new_active = c->selectionController->GetActiveLine();
@@ -884,9 +884,9 @@ namespace Auto{
 		stackcheck.check_stack(0);
 
 		GetFeatureFunction("isactive");
-		auto subsobj = new AutoToFile(L, c->Grid1->file->GetSubs(), true);
+		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true);
 		push_value(L, selected_rows(c));
-		push_value(L, c->Edit->ebrow + c->Grid1->SInfoSize() + c->Grid1->StylesSize()+1);
+		push_value(L, c->Edit->ebrow + c->Grid->SInfoSize() + c->Grid->StylesSize()+1);
 
 		int err = lua_pcall(L, 3, 1, 0);
 
@@ -953,7 +953,7 @@ namespace Auto{
 		ls->CheckLastModified(false);
 		scripts.push_back(ls);
 		if(!autoload && addToSinfo){
-			Grid *grid = Notebook::GetTab()->Grid1;
+			SubsGrid *grid = Notebook::GetTab()->Grid;
 			wxString scriptpaths = grid->GetSInfo("Automation Scripts");
 			scriptpaths<<"|"<<filename;
 			grid->AddSInfo("Automation Scripts", scriptpaths);
@@ -1054,7 +1054,7 @@ namespace Auto{
 	bool Automation::AddFromSubs()
 	{
 		//wxLogStatus("weszło");
-		wxString paths=Notebook::GetTab()->Grid1->GetSInfo("Automation Scripts");
+		wxString paths=Notebook::GetTab()->Grid->GetSInfo("Automation Scripts");
 		//wxLogStatus("m"+paths);
 		if(paths==""){return false;}
 		if(paths==scriptpaths && ASSScripts.size()>0){return false;}

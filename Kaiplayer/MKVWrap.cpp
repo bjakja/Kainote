@@ -46,7 +46,7 @@
 #include <wx/filename.h>
 #include "ProgressDialog.h"
 #include "MKVWrap.h"
-#include "Grid.h"
+#include "SubsGrid.h"
 #include "SubsTime.h"
 #include "KaraokeSplitting.h"
 #include "OpenNWrite.h"
@@ -133,7 +133,7 @@ void MatroskaWrapper::Close() {
 
 /////////////////
 // Get subtitles
-bool MatroskaWrapper::GetSubtitles(Grid *target) {
+bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 	// Get info
 
 	int tracks = mkv_GetNumTracks(file);

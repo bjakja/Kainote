@@ -21,7 +21,7 @@
 //#include <wx/process.h>
 
 class TabPanel;
-class Grid;
+class SubsGrid;
 
 class Notebook : public wxWindow
 	{
@@ -83,8 +83,8 @@ class Notebook : public wxWindow
 		bool hasCompare;
 		//int compareFirstTab;
 		//int compareSecondTab;
-		Grid *compareFirstGrid;
-		Grid *compareSecondGrid;
+		SubsGrid *compareFirstGrid;
+		SubsGrid *compareSecondGrid;
 		int splitline;
 		int splititer;
 		int oldtab;

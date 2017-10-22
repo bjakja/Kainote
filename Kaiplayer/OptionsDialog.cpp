@@ -418,7 +418,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		Hkeys.LoadDefault(_hkeys);
 		Hkeys.LoadDefault(_hkeys,true);
 		Notebook::GetTab()->Video->ContextMenu(wxPoint(0,0),true);
-		Notebook::GetTab()->Grid1->ContextMenu(wxPoint(0,0),true);
+		Notebook::GetTab()->Grid->ContextMenu(wxPoint(0,0),true);
 
 		long ii=0;
 
@@ -746,9 +746,9 @@ void OptionsDialog::SetOptions(bool saveall)
 				Options.SetBool(OB.option,cb->GetValue());
 				if(OB.option == SpellcheckerOn){
 					for(size_t i = 0; i< Kai->Tabs->Size();i++){
-						Kai->Tabs->Page(i)->Grid1->SpellErrors.clear();
+						Kai->Tabs->Page(i)->Grid->SpellErrors.clear();
 					}
-					Kai->Tabs->GetTab()->Grid1->Refresh(false);
+					Kai->Tabs->GetTab()->Grid->Refresh(false);
 					Kai->Tabs->GetTab()->Edit->TextEdit->SpellcheckerOnOff();
 				}
 			}
@@ -779,7 +779,7 @@ void OptionsDialog::SetOptions(bool saveall)
 					if(cbx->GetId()==10001){
 						SpellChecker::Destroy();
 						colmod=true;
-						Kai->GetTab()->Grid1->SpellErrors.clear();
+						Kai->GetTab()->Grid->SpellErrors.clear();
 					}
 				}
 			}else{
@@ -825,18 +825,18 @@ void OptionsDialog::SetOptions(bool saveall)
 		}
 	}
 	if(fontmod){
-		Kai->GetTab()->Grid1->SetStyle();
-		Kai->GetTab()->Grid1->RepaintWindow();
+		Kai->GetTab()->Grid->SetStyle();
+		Kai->GetTab()->Grid->RepaintWindow();
 		if(Kai->Tabs->split){
-			Kai->Tabs->GetSecondPage()->Grid1->SetStyle();
-			Kai->Tabs->GetSecondPage()->Grid1->RepaintWindow();
+			Kai->Tabs->GetSecondPage()->Grid->SetStyle();
+			Kai->Tabs->GetSecondPage()->Grid->RepaintWindow();
 		}
 	}
 	if(colmod){
-		Kai->GetTab()->Grid1->Refresh(false);
+		Kai->GetTab()->Grid->Refresh(false);
 		if(Kai->GetTab()->Edit->ABox){Kai->GetTab()->Edit->ABox->audioDisplay->ChangeColours();}
 		if(Kai->Tabs->split){
-			Kai->Tabs->GetSecondPage()->Grid1->Refresh(false);
+			Kai->Tabs->GetSecondPage()->Grid->Refresh(false);
 			if(Kai->Tabs->GetSecondPage()->Edit->ABox){Kai->Tabs->GetSecondPage()->Edit->ABox->audioDisplay->ChangeColours();}
 		}
 	}

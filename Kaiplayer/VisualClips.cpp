@@ -175,7 +175,7 @@ void DrawingAndClip::SetCurVisual()
 		_x=0;
 		_y=0;
 	}else{
-		bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()=="");
+		bool isOriginal=(tab->Grid->hasTLMode && tab->Edit->TextEdit->GetValue()=="");
 		//Editor
 		MTextEditor *Editor=(isOriginal)? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
 		wxString tags[] = {"p"};
@@ -770,7 +770,7 @@ D3DXVECTOR2 DrawingAndClip::CalcWH()
 	if (alignment==7 || Points.size()<1){return D3DXVECTOR2(0,0);}
 	float offx=0, offy=0;
 	if(textwithclip!=""){
-		Styles *textstyle= tab->Grid1->GetStyle(0,tab->Edit->line->Style);
+		Styles *textstyle= tab->Grid->GetStyle(0,tab->Edit->line->Style);
 		wxFont stylefont(wxAtoi(textstyle->Fontsize),wxSWISS,(textstyle->Italic)? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
 			(textstyle->Bold)? wxBOLD : wxNORMAL, textstyle->Underline, textstyle->Fontname);//, textstyle->Encoding
 		int ex=0, ey=0, eb=0, et=0;

@@ -17,7 +17,7 @@
 #pragma once
 
 #include <wx/wx.h>
-#include "Grid.h"
+#include "SubsGrid.h"
 #include "Videobox.h"
 #include "EditBox.h"
 #include "ChangeTime.h"
@@ -29,7 +29,7 @@ class TabPanel : public wxWindow
 		TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize);
 		virtual ~TabPanel();
 
-		Grid* Grid1;
+		SubsGrid* Grid;
         EditBox* Edit;
 		VideoCtrl* Video;
 		CTwindow* CTime;

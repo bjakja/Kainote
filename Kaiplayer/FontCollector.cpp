@@ -283,7 +283,7 @@ void FontCollector::GetAssFonts(std::vector<bool> &found, bool check)
 {
 	if(facenames.size()<1 || reloadFonts){EnumerateFonts();}
 	std::map<wxString, Styles*> stylesfonts;
-	File *subs= Notebook::GetTab()->Grid1->file->GetSubs();
+	File *subs= Notebook::GetTab()->Grid->file->GetSubs();
 	
 	
 	for(size_t i=0; i<subs->styles.size(); i++)

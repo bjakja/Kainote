@@ -50,7 +50,7 @@
 
 //////////////
 // Prototypes
-class Grid;
+class SubsGrid;
 
 
 /////////////////////////////
@@ -83,7 +83,7 @@ public:
 	bool Open(const wxString &filename,bool parse=true);
 	void Close();
 	
-	bool GetSubtitles(Grid *target);
+	bool GetSubtitles(SubsGrid *target);
 
 	std::map<int, wxString> GetFontList();
 	bool SaveFont(int id, const wxString &path, wxZipOutputStream *zip=NULL);

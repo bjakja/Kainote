@@ -17,7 +17,7 @@
 #include "KaiStaticBoxSizer.h"
 #include "KaiStaticText.h"
 
-TLDialog::TLDialog(wxWindow *parent, Grid *subsgrid)
+TLDialog::TLDialog(wxWindow *parent, SubsGrid *subsgrid)
 	: KaiDialog(parent,-1,_("Opcje dopasowywania tłumaczenia"), wxDefaultPosition, wxDefaultSize,wxDEFAULT_DIALOG_STYLE)
 {
 	Sbsgrid=subsgrid;
