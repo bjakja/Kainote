@@ -337,24 +337,24 @@ void StyleStore::StylesWindow(wxString newname)
 
 }
 
-void StyleStore::changestyle(Styles *cstyl)
+bool StyleStore::changestyle(Styles *cstyl)
 {
 	Update();
 	Grid* grid=Notebook::GetTab()->Grid1;
 	int mult=0;
 	int fres= (stass)? grid->FindStyle(cstyl->Name, &mult) : Options.FindStyle(cstyl->Name, &mult);
+	if (fres != -1) mult = 1;
 	if(!dummy){
 		if(stass && selnum>=grid->StylesSize()){dummy=true;}
 		else if(!stass && selnum>=Options.StoreSize()){dummy=true;}
 		//selnum=(stass)? grid->FindStyle(oldname) : Options.FindStyle(oldname); if(selnum<0){dummy=true;}
 	}
 
-
 	if(fres!=-1 && dummy || (mult>1 || mult==1 && oldname!=cstyl->Name) && !dummy)
 	{
 		Mainall->Fit(this);
 		KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" jest już na liście."), cstyl->Name));
-		return;
+		return false;
 	}
 	if(fres!=-1){selnum=fres;}
 	else if(!dummy){selnum= (stass)? grid->FindStyle(oldname) : Options.FindStyle(oldname);}
@@ -388,6 +388,7 @@ void StyleStore::changestyle(Styles *cstyl)
 	oldname=cstyl->Name;
 	dummy=false;
 	modif();
+	return true;
 }
 
 void StyleStore::OnChangeCatalog(wxCommandEvent& event)
@@ -561,6 +562,7 @@ void StyleStore::OnStoreNew(wxCommandEvent& event)
 
 void StyleStore::OnAssNew(wxCommandEvent& event)
 {
+	Grid* grid = Notebook::GetTab()->Grid1;
 	//Styles nstyle=Styles();
 	bool gname=true;
 	int count=0;
@@ -571,7 +573,7 @@ void StyleStore::OnAssNew(wxCommandEvent& event)
 	while(gname){
 		wxString ns=_("Nowy Styl");
 		wxString nss=(count==0)?ns:ns<<count;
-		if(Options.FindStyle(nss)==-1){StylesWindow(nss);break;}else{count++;}
+		if(grid->FindStyle(nss)==-1){StylesWindow(nss);break;}else{count++;}
 	}
 	modif();
 }
