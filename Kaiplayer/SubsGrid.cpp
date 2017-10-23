@@ -336,11 +336,11 @@ void SubsGrid::OnPaste(int id)
 	{
 		Dialogue *newdial=NULL;
 		token = (tmptoken.empty())? wpaste.NextToken().Trim(false).Trim() : tmptoken;
-		if(IsNum(token)){
+		if(IsNumber(token)){
 			token.Empty();
 			while(wpaste.HasMoreTokens()){
 				tmptoken = wpaste.NextToken().Trim(false).Trim();
-				if(IsNum(tmptoken)){break;}
+				if(IsNumber(tmptoken)){break;}
 				token += "\r\n" + tmptoken;
 			}
 
@@ -353,7 +353,7 @@ void SubsGrid::OnPaste(int id)
 			newdial->TextTl = newdial->Text; 
 		}
 		if(newdial->Form!=subsFormat){newdial->Conv(subsFormat);}
-		if(newdial->NonDial){newdial->NonDial=false; newdial->IsComment=false;}
+		if(newdial->NonDialogue){newdial->NonDialogue=false; newdial->IsComment=false;}
 		if(id==Paste){
 			tmpdial.push_back(newdial);
 			Selections.insert(rws);
@@ -537,7 +537,7 @@ void SubsGrid::OnPasteTextTl()
 			while ( tokenizer.HasMoreTokens() )
 			{
 				wxString text=tokenizer.GetNextToken().Trim();
-				if(IsNum(text)){if(text1!=""){
+				if(IsNumber(text)){if(text1!=""){
 					//dbg<<text1<<"\n";
 					//dbg<<ndl.Start.raw<<" x "<<ndl.End.raw<<" x "<<ndl.Text<<"\n"; 
 					Dialogue diall=Dialogue(text1.Trim());
@@ -821,7 +821,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		size_t pos=0;
 		
 		diall->ParseTags(tags, 15, false);
-		ParseData *pdata = diall->pdata;
+		ParseData *pdata = diall->parseData;
 		if(!pdata){continue;}
 		size_t tagsSize = pdata->tags.size();
 		//if(tagsSize < 1){continue;}

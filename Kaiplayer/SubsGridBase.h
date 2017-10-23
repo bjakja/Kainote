@@ -86,17 +86,17 @@ public:
 
 	void SelVideoLine(int time=-1);
 	void NextLine(int dir=1);
-	bool IsNum(const wxString &txt);
+	bool IsNumber(const wxString &txt);
 	Dialogue *CopyDial(int i, bool push=true);
 	Dialogue *GetDial(int i);
 	wxString *GetVisible(bool *visible=0, wxPoint *point = NULL, wxArrayInt *selected = NULL);
-	wxString *GetVisibleSubs();
+	//wxString *GetVisibleSubs();
 	void RebuildActorEffectLists();
 	
 	void DummyUndo(int newIter);
 	
 
-	bool makebkp;
+	bool makebackup;
 	
 	
 	SubsGridBase(wxWindow *parent, const long int id ,const wxPoint& pos,const wxSize& size, long style);
@@ -106,7 +106,7 @@ public:
 protected:
 	short numsave;
 	
-	void OnBcktimer(wxTimerEvent &event);
+	void OnBackupTimer(wxTimerEvent &event);
 	
 	wxTimer timer;
 	wxTimer nullifyTimer;

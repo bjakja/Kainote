@@ -180,7 +180,7 @@ void DrawingAndClip::SetCurVisual()
 		MTextEditor *Editor=(isOriginal)? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
 		wxString tags[] = {"p"};
 		tab->Edit->line->ParseTags(tags,1);
-		ParseData *pdata = tab->Edit->line->pdata;
+		ParseData *pdata = tab->Edit->line->parseData;
 		if(pdata->tags.size() >= 2){
 			size_t i=1;
 			while(i<pdata->tags.size()){

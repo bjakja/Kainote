@@ -120,6 +120,7 @@ File::~File()
 	ddials.clear();
 	dstyles.clear();
 	dsinfo.clear();
+	sel.clear();
 	//wxLogStatus("Clearing");
 }
 void File::Clear()
@@ -153,6 +154,7 @@ File *File::Copy()
 	file->dials = dials;
 	file->styles= styles;
 	file->sinfo = sinfo;
+	//file->sel = sel;
 	return file;
 }
 

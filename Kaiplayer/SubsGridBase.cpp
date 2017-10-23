@@ -67,7 +67,7 @@ bool sortlayer(Dialogue *i,Dialogue *j){
 	return i->Start.mstime<j->Start.mstime;
 }
 
-bool SubsGridBase::IsNum(const wxString &test) {
+bool SubsGridBase::IsNumber(const wxString &test) {
 	bool isnumber=true;
 	wxString testchars="0123456789";
 	for(size_t i=0;i<test.Len();i++){
@@ -84,7 +84,7 @@ SubsGridBase::SubsGridBase(wxWindow *parent, const long int id,const wxPoint& po
 {
 	Modified=false;
 	first=true;
-	makebkp=true;
+	makebackup=true;
 	extendRow=-1;
 	lastRow=0;
 	lastsel=-1;
@@ -128,7 +128,7 @@ void SubsGridBase::Clearing()
 }
 void SubsGridBase::AddLine(Dialogue *line)
 {
-	if(line->NonDial){delete line; return;}
+	if(line->NonDialogue){delete line; return;}
 	file->subs->ddials.push_back(line);
 	file->subs->dials.push_back(line);
 }
@@ -991,10 +991,10 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	}
 	
 
-	if(makebkp){
+	if(makebackup){
 		timer.Start(20000,true);
 		//CreateTimerQueueTimer(&qtimer,0,WAITORTIMERCALLBACK(OnBcktimer),this,20000,0,WT_EXECUTEONLYONCE);
-		makebkp=false;
+		makebackup=false;
 	}
 }
 
@@ -1062,7 +1062,7 @@ void SubsGridBase::SetSubsForm(wxString ext)
 	while(rw<GetCount())
 	{
 		Dialogue *dial=GetDial(rw);
-		if (dial->NonDial || dial->Form==0){rw++;}
+		if (dial->NonDialogue || dial->Form==0){rw++;}
 		else if(!ext.empty() && (subsext!=dial->Form || (subsext==TMP && dial->Form>SRT))){rw++;}//form=dial->Form; 
 		else{subsFormat=dial->Form; break;}
 	}
@@ -1152,10 +1152,10 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 			}
 		}
 
-		if(makebkp){
+		if(makebackup){
 			timer.Start(20000, true);
 			//CreateTimerQueueTimer(&qtimer,0,WAITORTIMERCALLBACK(OnBcktimer),this,20000,0,WT_EXECUTEONLYONCE);
-			makebkp=false;
+			makebackup=false;
 		}
 		UpdateUR();
 	}
@@ -1188,7 +1188,7 @@ void SubsGridBase::Loadfile(const wxString &str,const wxString &ext){
 		wxString text1;
 		while ( tokenizer.HasMoreTokens() ){
 			wxString text=tokenizer.GetNextToken().Trim();
-			if(IsNum(text)){if(text1!=""){
+			if(IsNumber(text)){if(text1!=""){
 				AddLine(new Dialogue(text1.Trim())); text1="";}}
 			else{text1<<text<<"\r\n";}
 		}
@@ -1677,7 +1677,7 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 //	DeleteTimerQueueTimer(auto_->handle,0,0);
 //}
 
-void SubsGridBase::OnBcktimer(wxTimerEvent &event)
+void SubsGridBase::OnBackupTimer(wxTimerEvent &event)
 {
 	TabPanel *pan=(TabPanel*)GetParent();
 	Kai->SetStatusText(_("Autozapis"),0);
@@ -1691,7 +1691,7 @@ void SubsGridBase::OnBcktimer(wxTimerEvent &event)
 	int maxFiles = Options.GetInt(AutoSaveMaxFiles);
 	if(maxFiles>1 && numsave >= maxFiles){numsave=0;}
 	numsave++;
-	makebkp=true;
+	makebackup=true;
 	nullifyTimer.Start(5000,true);
 }
 
@@ -1749,7 +1749,7 @@ BEGIN_EVENT_TABLE(SubsGridBase,KaiScrolledWindow)
 	EVT_SCROLLWIN(SubsGridBase::OnScroll)
 	EVT_MOUSE_EVENTS(SubsGridBase::OnMouseEvent)
 	EVT_KEY_DOWN(SubsGridBase::OnKeyPress)
-	EVT_TIMER(ID_AUTIMER,SubsGridBase::OnBcktimer)
+	EVT_TIMER(ID_AUTIMER,SubsGridBase::OnBackupTimer)
 	EVT_ERASE_BACKGROUND(SubsGridBase::OnEraseBackground)
 	EVT_MOUSE_CAPTURE_LOST(SubsGridBase::OnLostCapture)
 END_EVENT_TABLE()

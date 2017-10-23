@@ -54,8 +54,9 @@ public:
 	int Layer;
 	short MarginL, MarginR, MarginV;
 	char State, Form;
-	bool NonDial, IsComment;
-	ParseData *pdata;
+	bool NonDialogue, IsComment;
+	bool isVisible = true;
+	ParseData *parseData;
 
 	void SetRaw(const wxString &ldial);
 	void GetRaw(wxString *txt,bool tl=false,const wxString &style="");

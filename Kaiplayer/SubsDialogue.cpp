@@ -62,9 +62,9 @@ Dialogue::Dialogue()
 	MarginR=0;
 	MarginV=0;
 	State=0;
-	NonDial=false;
+	NonDialogue=false;
 	IsComment=false;
-	pdata = NULL;
+	parseData = NULL;
 }
 
 Dialogue::~Dialogue()
@@ -74,12 +74,12 @@ Dialogue::~Dialogue()
 
 void Dialogue::ClearParse()
 {
-	if(pdata){delete pdata; pdata=NULL;}
+	if(parseData){delete parseData; parseData=NULL;}
 }
 
 Dialogue::Dialogue(const wxString &ldial,const wxString &txttl)
 {
-	pdata = NULL;
+	parseData = NULL;
 	TextTl=txttl;
 	SetRaw(ldial);
 }
@@ -91,7 +91,7 @@ void Dialogue::SetRaw(const wxString &ldial)
 	if(ldial.StartsWith("Dialogue")||ldial.StartsWith("Comment")){
 		wxStringTokenizer assdal(ldial,_T(","),wxTOKEN_RET_EMPTY_ALL);
 		if(assdal.CountTokens()>=9){
-			NonDial=false;
+			NonDialogue=false;
 			wxString token=assdal.GetNextToken();
 			if(token.StartsWith("Dialogue")){IsComment=false;}else{IsComment=true;}
 			if(token.Find("arked=")==-1){Layer=wxAtoi(token.AfterFirst(' '));}
@@ -130,12 +130,12 @@ void Dialogue::SetRaw(const wxString &ldial)
 		Text = ttext.AfterFirst('\n');
 		Text.Replace("\r","");
 		Text.Replace("\n","\\N");
-		NonDial=false;
+		NonDialogue=false;
 		IsComment=false;
 	}
 	else if( expresion1.Matches( ldial ) )
 	{
-		NonDial=false;
+		NonDialogue=false;
 		IsComment=false;
 		Form=MDVD;
 		Start.SetRaw(expresion1.GetMatch( ldial, 1 ),Form);
@@ -145,7 +145,7 @@ void Dialogue::SetRaw(const wxString &ldial)
 		return;
 	}else if( expresion2.Matches( ldial ) )
 	{
-		NonDial=false;
+		NonDialogue=false;
 		IsComment=false;
 		Form=MPL2;
 		Start.SetRaw(expresion2.GetMatch( ldial, 1 ),Form);
@@ -155,7 +155,7 @@ void Dialogue::SetRaw(const wxString &ldial)
 		return;
 	}else if( expresion.Matches( ldial) )
 	{
-		NonDial=false;
+		NonDialogue=false;
 		IsComment=false;
 		Form=TMP;
 		wxString timeparts;
@@ -164,17 +164,18 @@ void Dialogue::SetRaw(const wxString &ldial)
 		Text.Trim(false);
 		return;
 	}else if(ldial.StartsWith(";")||(ldial.StartsWith("{") && ldial.EndsWith("}"))){
-		NonDial=true;
+		NonDialogue=true;
 		IsComment=true;
 		Style="Default";
 		Text=ldial;
 		Text.Trim(true);
 		Form=ASS;
+		isVisible = false;
 		return;
 	}
 	else{
 		Form=0;
-		NonDial=false;
+		NonDialogue=false;
 		IsComment=false;
 		Style="Default";
 		Text=ldial;
@@ -349,29 +350,29 @@ Dialogue *Dialogue::Copy(bool keepstate)
 	dial->MarginL=MarginL;
 	dial->MarginR=MarginR;
 	dial->MarginV=MarginV;
-	dial->NonDial=NonDial;
+	dial->NonDialogue=NonDialogue;
 	dial->Start=Start;
 	dial->State= (keepstate) ? State : 1 + (State & 4);
 	dial->Style=Style;
 	dial->Text=Text;
 	dial->TextTl=TextTl;
-	//dial->Scomment=Scomment;
-	dial->pdata=NULL;
+	dial->isVisible=isVisible;
+	dial->parseData=NULL;
 	return dial;
 }
 
-//Remember parse patterns need "tag1|tag2|..." whithout slashes.
+//Remember parse patterns need "tag1|tag2|..." without slashes.
 //Remember string position is start of the value, position of tag -=tagname.len+1
 void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 {
-	if(pdata){return;}
+	if(parseData){return;}
 	wxString txt = (TextTl != "")? TextTl : Text;
 	size_t pos=0;
 	size_t plainStart=0;
 	bool hasDrawing=false;
 	size_t len = txt.Len();
 	bool tagsBlock = false;
-	pdata = new ParseData();
+	parseData = new ParseData();
 	if(len<1){return;}
 	while(pos < len){
 		wxUniChar ch=txt[pos];
@@ -383,7 +384,7 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 			if((plainText || hasDrawing ) && plainStart+1 <= pos){
 				TagData *newTag = new TagData((hasDrawing)? "p" : "plain", plainStart);
 				newTag->PutValue(txt.SubString(plainStart,pos-1));
-				pdata->AddData(newTag);
+				parseData->AddData(newTag);
 			}
 		}else if(tagsBlock && ch=='\\'){
 			pos ++;
@@ -412,7 +413,7 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 					}else{
 						newTag->PutValue(tagValue);
 					}
-					pdata->AddData(newTag);
+					parseData->AddData(newTag);
 					pos = tagEnd - 1;
 					break;
 				}
@@ -427,8 +428,8 @@ void Dialogue::ChangeTimes(int start, int end)
 	wxString tags[] = {"move","t","fad"};
 	ParseTags(tags,3);/*|fade*/
 	size_t replaceMismatch = 0;
-	for(size_t i = 0; i < pdata->tags.size(); i++){
-		TagData *tdata = pdata->tags[i];
+	for(size_t i = 0; i < parseData->tags.size(); i++){
+		TagData *tdata = parseData->tags[i];
 		wxStringTokenizer splitValues(tdata->value,",",wxTOKEN_STRTOK);
 		int tokenCount = splitValues.CountTokens();
 		if(tdata->tagName == "move" && tokenCount < 5 || 

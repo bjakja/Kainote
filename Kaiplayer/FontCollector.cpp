@@ -322,7 +322,7 @@ void FontCollector::GetAssFonts(std::vector<bool> &found, bool check)
 		Dialogue *dial = subs->dials[i];
 		if(dial->IsComment){continue;}
 		dial->ParseTags(tags, 4, true);
-		ParseData *pdata = dial->pdata;
+		ParseData *pdata = dial->parseData;
 		if(!pdata){continue;}
 		
 		wxString text = (dial->TextTl!="")? dial->TextTl : dial->Text;
