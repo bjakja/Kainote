@@ -285,7 +285,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>vc_mswud\wxprec_richtextlib.pch</PrecompiledHeaderOutputFile>
-      <ObjectFileName>vc_mswud\richtext\</ObjectFileName>
+      <ObjectFileName>vc_mswud\richtext\$(Platform)</ObjectFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -322,7 +322,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>vc_mswud\wxprec_richtextlib.pch</PrecompiledHeaderOutputFile>
-      <ObjectFileName>vc_mswud\richtext\</ObjectFileName>
+      <ObjectFileName>vc_mswud\richtext\$(Platform)</ObjectFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -357,7 +357,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>vc_mswu\wxprec_richtextlib.pch</PrecompiledHeaderOutputFile>
-      <ObjectFileName>vc_mswu\richtext\</ObjectFileName>
+      <ObjectFileName>vc_mswu\richtext\$(Platform)</ObjectFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -392,7 +392,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>vc_mswu\wxprec_richtextlib.pch</PrecompiledHeaderOutputFile>
-      <ObjectFileName>vc_mswu\richtext\</ObjectFileName>
+      <ObjectFileName>vc_mswu\richtext\$(Platform)</ObjectFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>

@@ -2676,8 +2676,13 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, wxArrayInt *select
 
 	}
 	if(noLine){
-		delete txt;
-		return NULL;
+		if (form == ASS){
+			Dialogue().GetRaw(txt);
+		}
+		else{
+			delete txt;
+			return NULL;
+		}
 	}
 
 
