@@ -601,6 +601,9 @@ void kainoteFrame::OnConversion(char form)
 {
 	TabPanel *tab=GetTab();
 	//tab->Edit->OnVideo = true;
+	if (form != ASS && tab->Edit->Visual){
+		tab->Video->SetVisual(true);
+	}
 	tab->Grid1->Convert(form);
 	//if(tab->Video->GetState()!=None){tab->Video->OpenSubs(tab->Grid1->GetVisible()/*SaveText()*/);tab->Video->Render();}
 
@@ -794,6 +797,9 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 				if (!isgood){ KaiMessageBox(_("Otwieranie napisów nie powiodło się"), "Uwaga"); }
 			}
 			tab->Video->vToolbar->DisableVisuals(ext != "ass");
+			if (ext != "ass" && tab->Edit->Visual){
+				tab->Video->SetVisual(true);
+			}
 		}
 		SetRecent();
 

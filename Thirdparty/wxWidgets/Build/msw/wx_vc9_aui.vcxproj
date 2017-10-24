@@ -165,7 +165,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>vc_mswud\wxprec_auilib.pch</PrecompiledHeaderOutputFile>
-      <ObjectFileName>vc_mswud\aui\$(Platform)</ObjectFileName>
+      <ObjectFileName>vc_mswud\aui\$(Platform)\</ObjectFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -202,7 +202,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>vc_mswud\wxprec_auilib.pch</PrecompiledHeaderOutputFile>
-      <ObjectFileName>vc_mswud\aui\$(Platform)</ObjectFileName>
+      <ObjectFileName>vc_mswud\aui\$(Platform)\</ObjectFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -237,7 +237,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>vc_mswu\wxprec_auilib.pch</PrecompiledHeaderOutputFile>
-      <ObjectFileName>vc_mswu\aui\$(Platform)</ObjectFileName>
+      <ObjectFileName>vc_mswu\aui\$(Platform)\</ObjectFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -272,7 +272,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>vc_mswu\wxprec_auilib.pch</PrecompiledHeaderOutputFile>
-      <ObjectFileName>vc_mswu\aui\$(Platform)</ObjectFileName>
+      <ObjectFileName>vc_mswu\aui\$(Platform)\</ObjectFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
