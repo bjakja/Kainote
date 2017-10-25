@@ -978,31 +978,32 @@ void MTextEditor::OnKillFocus(wxFocusEvent& event)
 
 void MTextEditor::FindWord(int pos, int *start, int *end)
 {
-	wxString wfind=" }])({[-—'`\"\\;:,.><?!*~@#$%^&/+=";
+	wxString wfind=" ]})({[-—'`\"\\;:,.><?!*~@#$%^&/+=";
 	int len=MText.Len();
 	if(len<1){Cursor.x = Cursor.y = 0; *start=0; *end=0; return;}
 	bool fromend=(start!=NULL);
 
 	if(!fromend){pos--;}
 	pos=MID(0,pos,len-1);
-	//wxString ttt="tekst:";
-	//wxLogStatus(ttt<<MText[pos]);
 	bool hasres=false;
 	int lastres=-1;
 	if(fromend){
 		*start=(fromend)? 0 : len;
 		for(int i=pos; i>=0; i--){
 			int res=wfind.Find(MText[i]);
-			if(res!=-1){lastres=res;}
+			if (lastres == 0 && res != 0 && i + 2 <= pos && MText[i + 1] == ' '){
+				*start = i + 2;
+				break;
+			}
+			if (res != -1){ lastres = res; }
 			if(res!=-1&&!hasres){
 				if(i==pos){hasres=true;continue;}
 				bool isen=(MText[i]=='\\' && MText[i+1]=='N');
 				*start=(isen && pos==i+1)? i : (isen)? i+2 : i+1;
 				break;
 			}else if(hasres && res==-1){
-				if(i+1==pos){continue;}
-				else if(lastres<1 && i+2==pos){hasres=false; continue;}
-				*start = (lastres>3 && (MText[pos] == ' ' || i+2<=pos)) ? i + 1 : i + 2;
+				if (lastres < 1 && (i + 2 == pos || i + 1 == pos)){ hasres = false; continue; }
+				*start = ((lastres>3 && lastres<6 && i + 2 <= pos) || i + 1 == pos || MText[i + 2] == ' ') ? i + 1 : i + 2;
 				break;
 			}
 		}
@@ -1011,13 +1012,15 @@ void MTextEditor::FindWord(int pos, int *start, int *end)
 	*end=(fromend && end==NULL)? 0 : len;
 	for(int i=pos; i<len; i++){
 		int res=wfind.Find(MText[i]);
+		if (res == 0 && i > pos){
+			*end = i + 1;
+			break;
+		}
 		if(res!=-1&&!hasres){
-			//wxLogStatus("ipos2 %i %i",i, pos);
 			if(i==pos){hasres=true;continue;}
 			*end=(res<1)? i+1 : i;
 			break;
-		}else if(hasres&&res==-1){
-			//wxLogStatus("ipos3 %i %i",i, pos);
+		}else if(hasres && res==-1){
 			*end= (i>0 && MText[i-1]=='\\' && MText[i]=='N')? i+1 : i;
 			break;
 		}
