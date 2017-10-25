@@ -440,7 +440,6 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 			wasDoubleClick=false;
 			
 			if(timeGetTime()-time < 800 && dclickCurPos == event.GetPosition()){
-				//wxLogStatus("trójklik");
 				Cursor.x=0;
 				Cursor.y=0;
 				Selend.x=MText.Len();
@@ -1012,7 +1011,7 @@ void MTextEditor::FindWord(int pos, int *start, int *end)
 	*end=(fromend && end==NULL)? 0 : len;
 	for(int i=pos; i<len; i++){
 		int res=wfind.Find(MText[i]);
-		if (res == 0 && i > pos){
+		if (res == 0 /*&& i > pos*/){
 			*end = i + 1;
 			break;
 		}
