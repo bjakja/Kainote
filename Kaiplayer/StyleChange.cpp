@@ -365,6 +365,7 @@ void StyleChange::OnOKClick(wxCommandEvent& event)
 		wxDELETE(tab);
 		SS->Mainall->Fit(SS);
 	}
+	
 }
 
 void StyleChange::OnCancelClick(wxCommandEvent& event)

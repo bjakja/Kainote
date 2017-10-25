@@ -1350,6 +1350,7 @@ void kainoteFrame::HideEditor(bool save)
 		cur->BoxSizer1->Add(cur->Video, 1, wxEXPAND|wxALIGN_TOP, 0);
 		
 		cur->Video->vToolbar->Hide();
+		//potencjalny krasz po wyłączaniu edytora
 		if(cur->Video->GetState()!=None && !cur->Video->isFullscreen && !IsMaximized()){
 			int sx,sy, sizex, sizey;
 			GetClientSize(&sizex, &sizey);

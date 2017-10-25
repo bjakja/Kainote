@@ -354,6 +354,7 @@ bool StyleStore::changestyle(Styles *cstyl)
 	{
 		Mainall->Fit(this);
 		KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" jest już na liście."), cstyl->Name));
+		delete cstyl;
 		return false;
 	}
 	if(fres!=-1){selnum=fres;}

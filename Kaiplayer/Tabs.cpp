@@ -892,7 +892,6 @@ void Notebook::OnSave(int id)
 	}else{
 		Kai->Save(false,id);
 	}
-
 }
 
 Notebook *Notebook::sthis=NULL;
@@ -929,9 +928,13 @@ LRESULT CALLBACK Notebook::PauseOnMinimalize( int code, WPARAM wParam, LPARAM lP
 	wxLogStatus("następne/poprzednie okno?");
 	return 0;
 	}*/
-	if (wParam == SC_MINIMIZE){
-		if(sthis->GetTab()->Video->vstate==Playing){sthis->GetTab()->Video->Pause();}
-		return 0;
+	if (code == HCBT_MINMAX){
+		if (lParam==7 && sthis->GetTab()->Video->vstate == Playing){ 
+			sthis->GetTab()->Video->Pause(); 
+		}
+	}
+	if (wParam == SC_RESTORE){
+		sthis->GetTab()->Refresh(false);
 	}
 	//wxLogStatus("jakiś event %i %i", code, (int)wParam);
 	return CallNextHookEx( 0, code, wParam, lParam );

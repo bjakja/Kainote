@@ -978,7 +978,7 @@ void MTextEditor::OnKillFocus(wxFocusEvent& event)
 
 void MTextEditor::FindWord(int pos, int *start, int *end)
 {
-	wxString wfind=" }])-—'`\"\\;:,.({[><?!*~@#$%^&/+=";
+	wxString wfind=" }])({[-—'`\"\\;:,.><?!*~@#$%^&/+=";
 	int len=MText.Len();
 	if(len<1){Cursor.x = Cursor.y = 0; *start=0; *end=0; return;}
 	bool fromend=(start!=NULL);
@@ -999,10 +999,10 @@ void MTextEditor::FindWord(int pos, int *start, int *end)
 				bool isen=(MText[i]=='\\' && MText[i+1]=='N');
 				*start=(isen && pos==i+1)? i : (isen)? i+2 : i+1;
 				break;
-			}else if(hasres&&res==-1){
+			}else if(hasres && res==-1){
 				if(i+1==pos){continue;}
 				else if(lastres<1 && i+2==pos){hasres=false; continue;}
-				*start=(lastres>0 && (MText[pos]==' '||i+2<pos))?i+1 : i+2;
+				*start = (lastres>3 && (MText[pos] == ' ' || i+2<=pos)) ? i + 1 : i + 2;
 				break;
 			}
 		}
