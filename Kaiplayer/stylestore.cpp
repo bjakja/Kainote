@@ -174,7 +174,7 @@ StyleStore::StyleStore(wxWindow* parent,const wxPoint& pos)
 		wxSize bs = wxSize(-1,cc->GetBestSize().y+29);
 		Mainall->SetMinSize(bs);
 	}
-	SetEscapeId(ID_CLOSE);
+	SetEscapeId(ID_CLOSE, true);
 	SetEnterId(ID_CONF);
 	
 	SetSizerAndFit(Mainall);

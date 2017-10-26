@@ -86,7 +86,7 @@ KaiListBox::KaiListBox(wxWindow *parent, const wxArrayString &suggest, const wxS
 
 	Connect(29886,LIST_ITEM_DOUBLECLICKED,(wxObjectEventFunction)&KaiListBox::OnDoubleClick);
 	Connect(8888, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&KaiListBox::OnOKClick);
-	if(centerOnParent){CenterOnParent();parent->Raise();}
+	if(centerOnParent){CenterOnParent();/*parent->Raise();*/}
 	else{
 		MoveToMousePosition(this);
 	}

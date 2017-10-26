@@ -128,7 +128,7 @@ bool KaiDialog::Show(bool show)
 	if(!show){
 		return Hide();
 	}else{
-		wxWindow *win = FindWindow(enterId);
+		wxWindow *win = FindWindow((setEscapeIdWithFocus) ?escapeId : enterId);
 		bool wasShown = wxTopLevelWindow::Show();
 		if (win){ win->SetFocus(); }
 		return wasShown;
@@ -313,10 +313,11 @@ void KaiDialog::SetEnterId(int _enterId)
 	//Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter,enterId);
 	
 }
-void KaiDialog::SetEscapeId(int _escapeId)
+void KaiDialog::SetEscapeId(int _escapeId, bool setFocus)
 {
 	Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEscape, this, escapeId);
 	escapeId = _escapeId;
+	setEscapeIdWithFocus = setFocus;
 	//Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEscape,escapeId);
 }
 

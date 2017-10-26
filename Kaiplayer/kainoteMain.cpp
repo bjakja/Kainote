@@ -240,8 +240,14 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 		}*/
 	},9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
+		//todo make this not failed when two dialogs of video are shown
 		TabPanel *tab = GetTab();
-		if(tab->Grid1->IsShown()){tab->Grid1->SetFocus();}else{tab->Video->SetFocus();}
+		if (tab->Grid1->IsShown()){ 
+			tab->Grid1->SetFocus(); 
+		}
+		else if (tab->Video->IsShown()){ 
+			tab->Video->SetFocus(); 
+		}
 	});
 	Connect(SnapWithStart,SnapWithEnd,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
 	SetDropTarget(new DragnDrop(this));
@@ -358,6 +364,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		FR->ReloadStyle();
 		wxActivateEvent evt;
 		FR->OnSetFocus(evt);
+		/*FR->FindText->SetFocus();*/
 	}else if(id==SelectLinesDialog){
 		if(!SL){SL= new SelectLines(this);}
 		SL->Show();

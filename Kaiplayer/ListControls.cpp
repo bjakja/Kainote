@@ -552,6 +552,12 @@ bool KaiChoice::HasFocus()
 	return (wxWindow::HasFocus() || (choiceText && choiceText->HasFocus()));
 }
 
+void KaiChoice::SetFocus()
+{
+	if (choiceText){ choiceText->SetFocus(); }
+	else{ wxWindow::SetFocus(); }
+}
+
 void KaiChoice::SetMaxLength(int maxLen)
 {
 	if(choiceText){choiceText->SetMaxLength(maxLen);}

@@ -199,6 +199,7 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 		if(!repl){ChangeContents(true);}
 		else{Hide();}
 	}, FindReplaceDialog);
+
 }
 
 FindReplace::~FindReplace()
@@ -664,6 +665,7 @@ void FindReplace::OnSetFocus(wxActivateEvent& event){
 		wxString selected = edit->TextEditOrig->GetValue().SubString(fromO,toO-1);
 		if(selected.Lower() != FindText->GetValue().Lower()){FindText->SetValue(selected);}
 	}
+	FindText->SetFocus();
 	//hasFocus=true;
 }
 
