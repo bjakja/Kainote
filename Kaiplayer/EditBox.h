@@ -129,7 +129,7 @@ public:
 	void PutinText(const wxString &text, bool focus=true, bool onlysel=false, wxString *texttoPutin=0);
 	void PutinNonass(const wxString &text, const wxString &tag);
 	//ustawia tekst i gdy trzeba wstawia tagi z orygina³u ustawiaj¹c w³aœciw¹ pozycjê kursora.
-	void SetTextWithTags();
+	void SetTextWithTags(bool RefreshVideo = false);
 	void ClearErrs();
 	void OnEdit(wxCommandEvent& event);
 	bool SetBackgroundColour(const wxColour &col);

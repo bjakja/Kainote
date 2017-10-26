@@ -1222,12 +1222,14 @@ CloseHandle(ffile);
 return 0;
 }
 */
-void SubsGrid::SaveFile(const wxString &filename, bool cstat)
+void SubsGrid::SaveFile(const wxString &filename, bool cstat, bool loadFromEditbox)
 {
-	if(Options.GetInt(GridSaveAfterCharacterCount) != 1){
+	int saveAfterCharacterCount = Options.GetInt(GridSaveAfterCharacterCount);
+	bool dummyEditboxChanges = (loadFromEditbox && !saveAfterCharacterCount);
+	if (dummyEditboxChanges || saveAfterCharacterCount > 1){
 		bool oldOnVideo = Edit->OnVideo;
 		// no i tu mamy do poprawki dummy subs;
-		Edit->Send(EDITBOX_LINE_EDITION,false,false,true);
+		Edit->Send(EDITBOX_LINE_EDITION, false, dummyEditboxChanges, true);
 		Edit->OnVideo = oldOnVideo;
 	}
 	wxString txt;
@@ -1256,7 +1258,7 @@ void SubsGrid::SaveFile(const wxString &filename, bool cstat)
 	for(int i=0;i<GetCount();i++)
 	{
 		//a tu trzeba w przypadku ebrow pobrać editbox line
-		Dialogue *dial=GetDial(i);
+		Dialogue *dial = (dummyEditboxChanges && i == Edit->ebrow)? Edit->line : GetDial(i);
 		
 		if(tlmodeOn){
 			bool hasTextTl = dial->TextTl!="";
@@ -2574,7 +2576,7 @@ wxString *SubsGrid::SaveText()
 
 	(*path)<<Options.pathfull<<"\\Subs\\DummySubs_"<<Notebook::GetTabs()->FindPanel(tab)<<"."<<ext;
 
-	SaveFile(*path, false);
+	SaveFile(*path, false, true);
 
 	return path;
 }
@@ -2638,7 +2640,7 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, wxArrayInt *select
 		(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
 	}
 	Edit->Send(EDITBOX_LINE_EDITION, false, true);
-	if(_time >= Edit->line->Start.mstime && _time <= Edit->line->End.mstime)
+	if(_time >= Edit->line->Start.mstime && _time < Edit->line->End.mstime)
 	{
 		if(visible){*visible=true;}
 	}else if(visible){
@@ -2656,7 +2658,7 @@ wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, wxArrayInt *select
 			selected->Add(txt->Len());
 			continue;
 		}
-		if((toEnd && _time <= dial->Start.mstime) || (_time >= dial->Start.mstime && _time <= dial->End.mstime)){
+		if((toEnd && _time <= dial->Start.mstime) || (_time >= dial->Start.mstime && _time < dial->End.mstime)){
 			//if(trimSels && sel.find(i)!=sel.end()){continue;}
 			if( isTlmode && dial->TextTl!=""){
 				dial->GetRaw(txt, false, tlStyle);

@@ -57,7 +57,7 @@ public:
 	void SelectRow(int row, bool addToSelected = false, bool select=true, bool norefresh=false);
 	void ScrollTo(int y, bool center=false);
 	
-	void SaveFile(const wxString &filename, bool cstat=true);
+	void SaveFile(const wxString &filename, bool cstat=true, bool loadFromEditbox=false);
 	wxString *SaveText();
 	void HideOver();
 	

@@ -1286,7 +1286,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 	cur->Grid1->UpdateUR(false);
 
 	UpdateToolbar();
-
+	//blokada zmiany focusa przy przejściu na drugą widoczną zakładkę
 	if (!event.GetInt()){
 		if (cur->edytor){ cur->Grid1->SetFocus(); }
 		else{ cur->Video->SetFocus(); }
