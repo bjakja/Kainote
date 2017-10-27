@@ -253,12 +253,11 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	bool dclick=event.LeftDClick();
 	bool mdown=event.MiddleDown();
 
-	if(event.ButtonDown()){SetFocus();}
 
 	int w,h,hh;
 	GetClientSize(&w,&h);
 	hh=h-25;
-
+	//if (event.ButtonDown()){ SetFocus(); }
 	//wyłączanie wszystkich aktywności przy wyjściu z zakładek
 	
 
@@ -757,7 +756,6 @@ void Notebook::OnTabSel(int id)
 		if(w<1){GetClientSize(&w,&h);}
 		RefreshRect(wxRect(0,h-25,w,25),false);
 		Pages[iter]->Show();
-
 	}
 	else{
 		TabPanel *tmp=Page(firstVisibleTab);
@@ -864,6 +862,11 @@ int Notebook::FindTab(int x, int *_num)
 }
 void Notebook::ChangeActiv()
 {
+	wxWindow *win = FindFocus();
+	if (win && IsDescendant(Pages[iter])){
+		Pages[iter]->lastFocusedWindow = win;
+	}
+	else{ Pages[iter]->lastFocusedWindow = NULL; }
 	int tmp=iter;
 	iter=splititer;
 	splititer=tmp;

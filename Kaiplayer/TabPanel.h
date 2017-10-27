@@ -28,6 +28,8 @@ class TabPanel : public wxWindow
 	public:
 		TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize);
 		virtual ~TabPanel();
+		bool Hide();
+		//bool Show(bool show=true);
 
 		Grid* Grid1;
         EditBox* Edit;
@@ -48,6 +50,7 @@ class TabPanel : public wxWindow
 		wxString VideoName;
 		wxString SubsPath;
 		wxString VideoPath;
+		wxWindow *lastFocusedWindow = NULL;
 
 	private:
 		wxDialog* sline;

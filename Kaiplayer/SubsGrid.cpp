@@ -115,7 +115,6 @@ SubsGrid::SubsGrid(wxWindow *parent, const long int id,const wxPoint& pos,const 
 	},27890);
 	SetStyle();
 	AdjustWidths();
-	SetFocus();
 }
 
 

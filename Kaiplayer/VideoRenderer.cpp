@@ -23,6 +23,7 @@
 #include <Dvdmedia.h>
 #include "Vsfilterapi.h"
 #include <thread>
+#include "OpennWrite.h"
 
 
 #if byvertices
@@ -846,9 +847,16 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 	//wxLogStatus(*textsubs);
 	if(!textsubs) {return true;}
 	//const char *buffer= textsubs.mb_str(wxConvUTF8).data();
-	if(VisEdit && Vclips->Visual==VECTORCLIP && Vclips->dummytext){
-		//wxLogStatus("clip background");
-		(*textsubs)<<Vclips->dummytext->Trim().AfterLast('\n');
+	if (VisEdit && Vclips->Visual == VECTORCLIP && Vclips->dummytext){
+		wxString toAppend = Vclips->dummytext->Trim().AfterLast('\n');
+		if (fromFile){
+			OpenWrite ow(*textsubs,false);
+			ow.PartFileWrite(toAppend);
+			ow.CloseFile();
+		}
+		else{
+			(*textsubs) << toAppend;
+		}
 	}
 	wxScopedCharBuffer buffer= textsubs->mb_str(wxConvUTF8);
 	int size = strlen(buffer);

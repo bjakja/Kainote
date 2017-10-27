@@ -240,7 +240,6 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 		}*/
 	},9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
-		//todo make this not failed when two dialogs of video are shown
 		TabPanel *tab = GetTab();
 		if (tab->Grid1->IsShown()){ 
 			tab->Grid1->SetFocus(); 
@@ -364,7 +363,6 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		FR->ReloadStyle();
 		wxActivateEvent evt;
 		FR->OnSetFocus(evt);
-		/*FR->FindText->SetFocus();*/
 	}else if(id==SelectLinesDialog){
 		if(!SL){SL= new SelectLines(this);}
 		SL->Show();
@@ -1295,7 +1293,11 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 	UpdateToolbar();
 	//blokada zmiany focusa przy przejściu na drugą widoczną zakładkę
 	if (!event.GetInt()){
-		if (cur->edytor){ cur->Grid1->SetFocus(); }
+		//Todo: zrobić jakiś bezpieczny sposób, bo wbrew pozorom element do którego ten wskaźnik należy może zniknąć
+		if (cur->lastFocusedWindow != NULL){
+			cur->lastFocusedWindow->SetFocus();
+		}
+		else if (cur->edytor){ cur->Grid1->SetFocus(); }
 		else{ cur->Video->SetFocus(); }
 		if (Tabs->iter != Tabs->GetOldSelection() && Options.GetBool(MoveTimesLoadSetTabOptions)){
 			cur->CTime->RefVals(Tabs->Page(Tabs->GetOldSelection())->CTime);
@@ -1317,7 +1319,6 @@ void kainoteFrame::HideEditor(bool save)
 	TabPanel *cur=GetTab();
 
 	cur->edytor = !cur->edytor;
-	if(save){Options.SetBool(EditorOn,cur->edytor);}
 	cur->Grid1->Show(cur->edytor);
 
 	cur->Edit->Show(cur->edytor);
@@ -1378,6 +1379,7 @@ void kainoteFrame::HideEditor(bool save)
 		//cur->Video->vToolbar->Enable(false);
 	}
 	UpdateToolbar();
+	if (save){ Options.SetBool(EditorOn, cur->edytor); Options.SaveOptions(true, false); }
 }
 
 void kainoteFrame::OnPageAdd(wxCommandEvent& event)
