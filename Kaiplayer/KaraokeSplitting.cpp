@@ -116,7 +116,7 @@ void Karaoke::Split()
 				if (Auto && (ch == 'n' && aoi1.Find(nch) != -1 || //linia odpowiedzialna za podzia³ n
 					(aoi2.Find(ch)!=-1 && nch=='n' && 
 					(nnch==' '||(Everyn && aoi1.Find(nnch)==-1))) ||
-					nch == '\"')){
+					nch == '\"')){//#7 skip splitting " on end syllable
 					continue;
 				}
 				syls.Add(Text.SubString(start,i));

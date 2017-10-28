@@ -1469,7 +1469,8 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	if(box->arrows){box->SetCursor(wxCURSOR_ARROW); box->arrows=false;}
 	// Leaving event
 	if (event.Leaving()) {
-		cursorPaint=false;
+		if(!player->IsPlaying())
+			cursorPaint=false;
 		UpdateImage(true);
 		return;
 	}
@@ -1490,6 +1491,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 		}
 		else if (y < h+timelineHeight){ 
 			onScale = true;
+			if (!player->IsPlaying())
 			cursorPaint = false;
 		}
 		if(inside && onScale){UpdateImage(true); inside=false;}
@@ -1506,13 +1508,12 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	// Click type
 
 	if (buttonUP && holding) {
-		//wxLogStatus("left or right up");
 		holding = false;
 		if (HasCapture()) ReleaseMouse();
 	}
 
 
-	if(leftDown&&event.ControlDown()&&!event.AltDown()&&!onScale)
+	if(leftDown && event.ControlDown() && !event.AltDown() && !onScale)
 	{
 		int pos=GetMSAtX(x);
 		Notebook::GetTab()->Video->Seek(pos);
@@ -1574,6 +1575,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 			int delta = lastDragX - x;
 			lastDragX = x;
 			UpdatePosition(Position + delta);
+			curpos = GetXAtSample(player->GetCurrentPosition());
 			UpdateImage();
 			//Refresh(false);
 			return;
@@ -1587,7 +1589,8 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	// Left click - focos trzeba nadawać wszystkimi przyciskami
 	if (event.ButtonDown()) {
 		SetFocus();
-		cursorPaint=false;
+		if (!player->IsPlaying())
+			cursorPaint=false;
 	}
 
 
@@ -2081,7 +2084,6 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 			}
 
 			// Draw cursor
-			//wxMemoryDC src;
 			curpos = GetXAtSample(curPos);
 			if (curpos >= 0.f && curpos < GetClientSize().GetWidth()) {
 
