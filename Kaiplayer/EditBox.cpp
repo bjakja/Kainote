@@ -714,12 +714,12 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 	wxString tmp;
 	if(form<SRT){
 
-		if(FindVal("b(0|1)",&tmp)){if(mstyle->Bold&&tmp=="0"){mstyle->Bold=false;}else if(!mstyle->Bold&&tmp=="1"){mstyle->Bold=true;}}
-		if(FindVal("i(0|1)",&tmp)){if(mstyle->Italic&&tmp=="0"){mstyle->Italic=false;}else if(!mstyle->Italic&&tmp=="1"){mstyle->Italic=true;}}
-		if(FindVal("u(0|1)",&tmp)){if(mstyle->Underline&&tmp=="0"){mstyle->Underline=false;}else if(!mstyle->Underline&&tmp=="1"){mstyle->Underline=true;}}
-		if(FindVal("s(0|1)",&tmp)){if(mstyle->StrikeOut&&tmp=="0"){mstyle->StrikeOut=false;}else if(!mstyle->StrikeOut&&tmp=="1"){mstyle->StrikeOut=true;}}
-		if(FindVal("fs([0-9]+)",&tmp)){mstyle->Fontsize=tmp;}
-		if(FindVal("fn(.*)",&tmp)){mstyle->Fontname=tmp;}
+		if(FindVal("b",&tmp)){if(mstyle->Bold&&tmp=="0"){mstyle->Bold=false;}else if(!mstyle->Bold&&tmp=="1"){mstyle->Bold=true;}}
+		if(FindVal("i",&tmp)){if(mstyle->Italic&&tmp=="0"){mstyle->Italic=false;}else if(!mstyle->Italic&&tmp=="1"){mstyle->Italic=true;}}
+		if(FindVal("u",&tmp)){if(mstyle->Underline&&tmp=="0"){mstyle->Underline=false;}else if(!mstyle->Underline&&tmp=="1"){mstyle->Underline=true;}}
+		if(FindVal("s",&tmp)){if(mstyle->StrikeOut&&tmp=="0"){mstyle->StrikeOut=false;}else if(!mstyle->StrikeOut&&tmp=="1"){mstyle->StrikeOut=true;}}
+		if(FindVal("fs",&tmp)){mstyle->Fontsize=tmp;}
+		if(FindVal("fn",&tmp)){mstyle->Fontname=tmp;}
 	}
 	FontDialog FD(this,mstyle);
 	if (FD.ShowModal() == wxID_OK) {
@@ -733,33 +733,33 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 		if (retstyl->Fontsize!=mstyle->Fontsize)
 		{
 			if(form<SRT){
-				FindVal("fs([0-9]+)",&tmp);
+				FindVal("fs",&tmp);
 				PutinText("\\fs"+retstyl->Fontsize);}
 			else{PutinNonass("S:"+retstyl->Fontname, "s:([^}]*)");}
 		}
 		if (retstyl->Bold!=mstyle->Bold)
 		{
 			if(form<SRT){wxString bld=(retstyl->Bold)?"1":"0";
-			FindVal("b(0|1)",&tmp);
+			FindVal("b",&tmp);
 			PutinText("\\b"+bld);}
 			else{PutinNonass("y:b",(retstyl->Bold)?"Y:b" : "");}
 		}
 		if (retstyl->Italic!=mstyle->Italic)
 		{
 			if(form<SRT){wxString ital=(retstyl->Italic)?"1":"0";
-			FindVal("i(0|1)",&tmp);
+			FindVal("i",&tmp);
 			PutinText("\\i"+ital);}
 			else{PutinNonass("y:i", (retstyl->Italic)?"Y:i" : "");}
 		}
 		if (retstyl->Underline!=mstyle->Underline)
 		{
-			FindVal("u(0|1)",&tmp);
+			FindVal("u",&tmp);
 			wxString under=(retstyl->Underline)?"1":"0";
 			PutinText("\\u"+under);
 		}
 		if (retstyl->StrikeOut!=mstyle->StrikeOut)
 		{
-			FindVal("s(0|1)",&tmp);
+			FindVal("s",&tmp);
 			wxString strike=(retstyl->StrikeOut)?"1":"0";
 			PutinText("\\s"+strike);
 		}
@@ -780,16 +780,16 @@ void EditBox::AllColorClick(int kol)
 		tmptext = TextEditOrig->GetValue(); 
 		Editor = TextEditOrig;
 	}
-	wxString tag=(kol==1)? "?c&(.*)" : "c&(.*)";
-	wxString taga=(kol==1)? "?a&(.*)" : "a&(.*)";
-	wxString tagal= "alpha(.*)";
+	wxString tag = "c";//(kol==1)? "?c&(.*)" : "c&(.*)";
+	wxString taga = "a";//(kol==1)? "?a&(.*)" : "a&(.*)";
+	wxString tagal = "alpha";//"alpha(.*)";
 	Styles *style=grid->GetStyle(0,line->Style);
 	AssColor acol=(kol==1)? style->PrimaryColour :
 		(kol==2)? style->SecondaryColour :
 		(kol==3)? style->OutlineColour :
 		style->BackColour;
 
-	acol = (!FindVal(num+tag, &iskol))? acol : (grid->form<SRT)? AssColor("&"+iskol) : AssColor(wxString("#FFFFFF"));
+	acol = (!FindVal(num+tag, &iskol))? acol : (grid->form<SRT)? AssColor(iskol) : AssColor(wxString("#FFFFFF"));
 	if(FindVal(num+taga, &iskol)){acol.SetAlphaString(iskol);}
 	else if(FindVal(tagal, &iskol)){acol.SetAlphaString(iskol);}
 	DialogColorPicker *ColourDialog = DialogColorPicker::Get(this, acol.GetWX());
@@ -843,11 +843,11 @@ void EditBox::OnBoldClick(wxCommandEvent& event)
 		Styles *mstyle=grid->GetStyle(0,line->Style);
 		wxString wart=(mstyle->Bold)?"0":"1";
 		bool issel=true;
-		if(FindVal("b(0|1)",&wart,"",&issel)){wart = (wart=="1")? "0" :"1";}
+		if(FindVal("b",&wart,"",&issel)){wart = (wart=="1")? "0" :"1";}
 		PutinText("\\b"+wart);
 		if(!issel)return;
 		wart=(mstyle->Bold)?"1":"0";
-		if(FindVal("b(0|1)",&wart)){if(wart=="1"){wart="0";}else{wart="1";}}
+		if(FindVal("b",&wart)){if(wart=="1"){wart="0";}else{wart="1";}}
 		PutinText("\\b"+wart);
 	}
 	else if(grid->form==SRT){PutinNonass("b", "b");}
@@ -859,11 +859,11 @@ void EditBox::OnItalicClick(wxCommandEvent& event)
 	if(grid->form<SRT){Styles *mstyle=grid->GetStyle(0,line->Style);
 	wxString wart=(mstyle->Italic)?"0":"1";
 	bool issel=true;
-	if(FindVal("i(0|1)",&wart,"",&issel)){if(wart=="1"){wart="0";}else{wart="1";}}
+	if(FindVal("i",&wart,"",&issel)){if(wart=="1"){wart="0";}else{wart="1";}}
 	PutinText("\\i"+wart);
 	if(!issel)return;
 	wart=(mstyle->Italic)?"1":"0";
-	if(FindVal("i(0|1)",&wart)){if(wart=="1"){wart="0";}else{wart="1";}}
+	if(FindVal("i",&wart)){if(wart=="1"){wart="0";}else{wart="1";}}
 	PutinText("\\i"+wart);
 	}
 	else if(grid->form==SRT){PutinNonass("i", "i");}
@@ -877,11 +877,11 @@ void EditBox::OnUnderlineClick(wxCommandEvent& event)
 		Styles *mstyle=grid->GetStyle(0,line->Style);
 		wxString wart=(mstyle->Underline)?"0":"1";
 		bool issel=true;
-		if(FindVal("u(0|1)",&wart,"",&issel)){if(wart=="1"){wart="0";}else{wart="1";}}
+		if(FindVal("u",&wart,"",&issel)){if(wart=="1"){wart="0";}else{wart="1";}}
 		PutinText("\\u"+wart);
 		if(!issel)return;
 		wart=(mstyle->Underline)?"1":"0";
-		if(FindVal("u(0|1)",&wart)){if(wart=="1"){wart="0";}else{wart="1";}}
+		if(FindVal("u",&wart)){if(wart=="1"){wart="0";}else{wart="1";}}
 		PutinText("\\u"+wart);
 	}
 	else if(grid->form==SRT){PutinNonass("u", "u");}
@@ -893,11 +893,11 @@ void EditBox::OnStrikeClick(wxCommandEvent& event)
 		Styles *mstyle=grid->GetStyle(0,line->Style);
 		wxString wart=(mstyle->StrikeOut)?"0":"1";
 		bool issel=true;
-		if(FindVal("s(0|1)",&wart,"",&issel)){if(wart=="1"){wart="0";}else{wart="1";}}
+		if(FindVal("s",&wart,"",&issel)){if(wart=="1"){wart="0";}else{wart="1";}}
 		PutinText("\\s"+wart);
 		if(!issel)return;
 		wart=(mstyle->StrikeOut)?"0":"1";
-		if(FindVal("s(0|1)",&wart)){if(wart=="1"){wart="0";}else{wart="1";}}
+		if(FindVal("s",&wart)){if(wart=="1"){wart="0";}else{wart="1";}}
 		PutinText("\\s"+wart);
 	}
 	else if(grid->form==SRT){PutinNonass("s", "s");}
@@ -907,9 +907,9 @@ void EditBox::OnAnChoice(wxCommandEvent& event)
 {
 	TextEdit->SetSelection(0,0);
 	if(grid->transl){TextEditOrig->SetSelection(0,0);}
-	lasttag="an([0-9])";
+	lasttag="an";
 	wxString tag;
-	FindVal("an([0-9])",&tag);
+	FindVal("an",&tag);
 	PutinText("\\"+Ban->GetString(Ban->GetSelection()),true);
 }
 
@@ -1185,7 +1185,7 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 		if(InBracket){cursorpos--;}
 	}else{
 		cursorpos=klamrae;}
-	bool isT=false;
+	/*bool isT=false;
 	bool firstT=false;
 	bool hasR = false;
 	int endT;
@@ -1240,20 +1240,25 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 			}
 
 			lslash=i;
-		}else if(ch=='{'){
+		}else if(ch=='{' && i>0){
 			wxString textBeforeBracket = txt.SubString(0, i);
 			int startBracket = textBeforeBracket.Find('{', true);
 			int endBracket = textBeforeBracket.Find('}', true);
 			if (endBracket >= startBracket){
 				brkt = false;
-				if (txt[MAX(0, i - 1)] != '}'){ inbrkt = false; if (hasR){ break; } }
+				if (txt[i - 1] != '}'){ inbrkt = false; if (hasR){ break; } }
 			}
 			else{
 				lslash = i-1;
 			}
 		}else if(ch=='}'){
-			lslash=i;
-			brkt=true;
+			wxString textBeforeBracket = txt.SubString(0, i);
+			int startBracket = textBeforeBracket.Find('{', true);
+			int endBracket = textBeforeBracket.Find('}', true);
+			if (endBracket < startBracket){
+				lslash = i;
+				brkt = true;
+			}
 		}
 
 	}
@@ -1264,7 +1269,46 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 		Placed.x=lastTag;
 		Placed.y=lastTag;
 	}
+	else if (lastTag == -1 && InBracket){
+		InBracket = false;
+	}*/
+	//dummy dial for parse text tags
+	Dialogue dial;
+	dial.Text = txt.SubString(0, klamrae);
+	wxString tags[] = { tag, "t" };
+	dial.ParseTags(tags, 2);
+	ParseData *data = dial.pdata;
+	TagData *tmpdata = NULL;
+	bool isT = false;
+	for (int i = 0; i < data->tags.size(); i++)
+	{
+		TagData *tdata = data->tags[i];
+		if (tdata->tagName == "t"){
+			size_t len = tdata->value.Len();
+			if (tdata->startTextPos + len >= from){
+				int endBracket = tdata->value.Find('}');
+				int nextT = tdata->value.Find("\t");
+				int newEnd = (endBracket < nextT) ? endBracket : nextT;
+				if (newEnd > 0 && tdata->startTextPos + newEnd >= from || newEnd < 1){
+					isT = true;
+				}
+			}
+		}
+		else{
+			tmpdata = tdata;
+			if (isT){ break; }
+		}
 
+	}
+	if (tmpdata){
+		if (tmpdata->startTextPos > klamras){
+			Placed.x = tmpdata->startTextPos;
+			Placed.y = tmpdata->startTextPos + tmpdata->tagName.Len() - 1;
+			InBracket = true;
+		}
+		*Found = tmpdata->value;
+		return true;
+	}
 
 
 	return false;
@@ -1350,7 +1394,7 @@ void EditBox::OnColorChange(wxCommandEvent& event)
 {
 	if(grid->form<SRT){
 		wxString iskol;
-		wxString tag=(num=="1")? "?c&(.*)" : "c&(.*)";
+		wxString tag="1c";
 		Styles *style = grid->GetStyle(0,line->Style);
 		AssColor col= (num=="1")? style->PrimaryColour :
 			(num=="2")? style->SecondaryColour :
@@ -1361,20 +1405,16 @@ void EditBox::OnColorChange(wxCommandEvent& event)
 		//wxString strcol = col.GetAss(false,true);
 		wxString chooseColor = event.GetString();
 		FindVal(num+tag, &iskol);
-		//if(chooseColor == strcol){
-		//if(iskol!=""){PutinText("", false);}
-		/*}else */if(iskol != chooseColor){
+		if(iskol != chooseColor){
 			PutinText("\\"+num+"c"+event.GetString()+"&", false);
 		}
 
-		if(FindVal(num+"a&(.*)", &iskol)){
+		if(FindVal(num+"a", &iskol)){
 			iskol.Replace("H","");
 			iskol.Replace("&","");
 			alpha = wcstol(iskol.wc_str(), NULL, 16);//wxAtoi(iskol);
 		}
-		/*if(alpha != -1 && stylealpha == event.GetInt()){
-		PutinText("", false);
-		}else */if(alpha != event.GetInt()/* && stylealpha != event.GetInt()*/){
+		if(alpha != event.GetInt()){
 			PutinText("\\"+num+wxString::Format("a&H%02X&",event.GetInt()), false);
 
 		} 
@@ -1410,7 +1450,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		if(!found){findtag=tag.AfterFirst('\\');}
 		wxString iskol;
 
-		FindVal(findtag+"(.*)", &iskol, "", 0, type=="1");
+		FindVal(findtag, &iskol, "", 0, type=="1");
 
 		PutinText(tag);
 	}else{

@@ -360,8 +360,9 @@ Dialogue *Dialogue::Copy(bool keepstate)
 	return dial;
 }
 
-//Remember parse patterns need "tag1|tag2|..." whithout slashes.
+//Remember parse patterns need "tag1|tag2|..." without slashes.
 //Remember string position is start of the value, position of tag -=tagname.len+1
+//Plain text returns text stripped from tags
 void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 {
 	if(pdata){return;}
@@ -387,19 +388,25 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 			}
 		}else if(tagsBlock && ch=='\\'){
 			pos ++;
-			//wxString tag;
-			int slashPos = txt.find('\\', pos);
-			int bracketPos = txt.find('}', pos);
-			int tagEnd = (slashPos == -1 && bracketPos == -1)? len :
-				(slashPos == -1)? bracketPos : (bracketPos == -1)? slashPos : 
-				(bracketPos < slashPos)? bracketPos : slashPos;
+			
+			size_t findings[3];
+			findings[0] = txt.find('\\', pos);
+			findings[1] = txt.find('}', pos);
+			//tylko dla idiotów
+			findings[2] = txt.find('{', pos);
+			int tagEnd = len;
+			for (int k = 0; k < 3; k++){
+				if (tagEnd > findings[k]){
+					tagEnd = findings[k];
+				}
+			}
 			wxString tag = txt.SubString(pos, tagEnd - 1);
 			if(tag.EndsWith(')')){tag.RemoveLast();}
 			for(size_t i = 0; i < ntags; i++){
 				wxString tagName = tags[i];
 				int tagLen = tagName.Len();
-				if(tag.StartsWith(tagName) && (tag[tagLen] == '(' || 
-					wxString(tag[tagLen]).IsNumber() || tagName == "fn")){
+				if ((tag.StartsWith(tagName) || (tagName[0] == '1' && tagName[1] == tag[0])) && 
+					(tag[tagLen] == '(' || wxString(tag[tagLen]).IsNumber() || tag[tagLen] == '&' || tagName == "fn")){
 
 					TagData *newTag = new TagData(tagName, pos+tagLen);
 					wxString tagValue = tag.Mid(tagLen);
