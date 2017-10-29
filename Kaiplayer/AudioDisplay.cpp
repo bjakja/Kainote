@@ -1586,7 +1586,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	// Outside
 	if (!inside && hold == 0) return;
 
-	// Left click - focos trzeba nadawać wszystkimi przyciskami
+	// Left click - focus trzeba nadawać wszystkimi przyciskami
 	if (event.ButtonDown()) {
 		SetFocus();
 		if (!player->IsPlaying())
