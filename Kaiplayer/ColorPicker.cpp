@@ -446,7 +446,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color)
     wxAcceleratorTable caccel(2, centries);
     this->SetAcceleratorTable(caccel);
 	updatecols.SetOwner(this, 7789);
-	Connect(7789,wxEVT_TIMER,(wxObjectEventFunction)&DialogColorPicker::OnColourCanged);
+	Connect(7789,wxEVT_TIMER,(wxObjectEventFunction)&DialogColorPicker::OnColourChanged);
 
 	hsv_spectrum    = 0;
 	alphaslider     = 0;
@@ -578,9 +578,9 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color)
 	//picker_sizer->AddStretchSpacer();
 
 	wxSizer *button_sizer = new wxBoxSizer(wxHORIZONTAL);
-	button_sizer->Add(new MappedButton(this,wxID_OK,"OK"),1,wxALL,4);
+	button_sizer->Add(new MappedButton(this, wxID_OK, "OK"), 1, wxALL, 4);
 	button_sizer->Add(new MappedButton(this,wxID_CANCEL,_("Anuluj")),1,wxALL,4);
-
+	
 	wxSizer *input_sizer = new wxBoxSizer(wxVERTICAL);
 	input_sizer->Add(rgb_box, 0, wxALIGN_CENTER|wxEXPAND);
 	input_sizer->AddSpacer(5);
@@ -597,7 +597,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color)
 	SetSizerAndFit(main_sizer);
 	//main_sizer->SetSizeHints(this);
 
-	ass_input->SetFocus();
+	//ass_input->SetFocus();
 
 
 	// Fill the controls
@@ -1098,7 +1098,7 @@ DialogColorPicker *DialogColorPicker::Get(wxWindow *parent, AssColor color)
 	}
 	return DCP;
 }
-void DialogColorPicker::OnColourCanged(wxTimerEvent &event)
+void DialogColorPicker::OnColourChanged(wxTimerEvent &event)
 {
 	wxCommandEvent evt(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 	AssColor akol;

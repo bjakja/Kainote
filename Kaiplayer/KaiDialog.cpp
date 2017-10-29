@@ -86,8 +86,6 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEscape, this, escapeId);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter, this, enterId);
 	//Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){Refresh(false);});
-	//wxWindow *win = FindWindow(enterId);
-	//if(win){win->SetFocus();}
 }
 
 KaiDialog::~KaiDialog()
@@ -160,17 +158,24 @@ void KaiDialog::OnCharHook(wxKeyEvent &evt)
 	}else if(key == WXK_TAB){
 		const wxWindowList list = GetChildren();
 		auto result = list.Find(FindFocus());
+		wxWindowListNode *nextWindow = NULL;
+		//todo ta wersja nie radzi sobie z listami bo focusa ma ich dziecko
+		if (!result){
+			result = list.GetFirst();
+		}
 		if(result){
 			auto nextWindow = result->GetNext();
 			while(1){
 				if(!nextWindow){
-					wxObject *data = list.GetFirst()->GetData();
+					nextWindow = list.GetFirst();
+					wxObject *data = nextWindow->GetData();
 					if(data){
 						wxWindow *win = wxDynamicCast(data,wxWindow);
-						if(win){win->SetFocus();}
+						if (win && win->IsFocusable()){ 
+							win->SetFocus(); return; 
+						}
 					}
-					return;
-				}else if(nextWindow->GetData()->CanBeFocused()){
+				}else if(nextWindow->GetData()->IsFocusable()){
 					nextWindow->GetData()->SetFocus();
 					return;
 				}
