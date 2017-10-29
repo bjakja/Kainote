@@ -1220,7 +1220,6 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 	}
 	LPMSG msg = (LPMSG)lParam;
 	
-	
 	if( msg->message == WM_MOUSEWHEEL ){
 		POINT mouse;
 		GetCursorPos (&mouse);
@@ -1236,7 +1235,7 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 		return 1;
 	}
 	if(showMnemonics || Menubar->md){
-		//wxLogStatus("event %i", (int)msg->message);
+
 		if( msg->message == WM_LBUTTONDOWN || msg->message == WM_NCLBUTTONDOWN || 
 			msg->message == WM_RBUTTONDOWN || msg->message == WM_NCRBUTTONDOWN){
 			Menubar->HideMnemonics();

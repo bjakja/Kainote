@@ -253,12 +253,11 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	bool dclick=event.LeftDClick();
 	bool mdown=event.MiddleDown();
 
-	if(event.ButtonDown()){SetFocus();}
 
 	int w,h,hh;
 	GetClientSize(&w,&h);
 	hh=h-25;
-
+	//if (event.ButtonDown()){ SetFocus(); }
 	//wyłączanie wszystkich aktywności przy wyjściu z zakładek
 	
 
@@ -757,7 +756,6 @@ void Notebook::OnTabSel(int id)
 		if(w<1){GetClientSize(&w,&h);}
 		RefreshRect(wxRect(0,h-25,w,25),false);
 		Pages[iter]->Show();
-
 	}
 	else{
 		TabPanel *tmp=Page(firstVisibleTab);
@@ -864,6 +862,11 @@ int Notebook::FindTab(int x, int *_num)
 }
 void Notebook::ChangeActiv()
 {
+	wxWindow *win = FindFocus();
+	if (win && IsDescendant(Pages[iter])){
+		Pages[iter]->lastFocusedWindow = win;
+	}
+	else{ Pages[iter]->lastFocusedWindow = NULL; }
 	int tmp=iter;
 	iter=splititer;
 	splititer=tmp;
@@ -892,7 +895,6 @@ void Notebook::OnSave(int id)
 	}else{
 		Kai->Save(false,id);
 	}
-
 }
 
 Notebook *Notebook::sthis=NULL;
@@ -929,9 +931,13 @@ LRESULT CALLBACK Notebook::PauseOnMinimalize( int code, WPARAM wParam, LPARAM lP
 	wxLogStatus("następne/poprzednie okno?");
 	return 0;
 	}*/
-	if (wParam == SC_MINIMIZE){
-		if(sthis->GetTab()->Video->vstate==Playing){sthis->GetTab()->Video->Pause();}
-		return 0;
+	if (code == HCBT_MINMAX){
+		if (lParam==7 && sthis->GetTab()->Video->vstate == Playing){ 
+			sthis->GetTab()->Video->Pause(); 
+		}
+	}
+	if (wParam == SC_RESTORE){
+		sthis->GetTab()->Refresh(false);
 	}
 	//wxLogStatus("jakiś event %i %i", code, (int)wParam);
 	return CallNextHookEx( 0, code, wParam, lParam );

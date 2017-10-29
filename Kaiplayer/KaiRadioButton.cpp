@@ -39,17 +39,15 @@ KaiRadioButton::KaiRadioButton(wxWindow *parent, int id, const wxString& label,
 
 void KaiRadioButton::OnMouseLeft(wxMouseEvent &evt)
 {
-	//if(evt.LeftUp()){
-		//bool oldclicked = clicked;
-		clicked=true;//false;
-		Refresh(false);
-		if(/*oldclicked &&*/ !value){
-			value = !value;
-			DeselectRest();
-			wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
-			this->ProcessEvent(evt);
-		}
-	//}
+	clicked = true;
+	Refresh(false);
+	if (!value){
+		value = !value;
+		DeselectRest();
+		wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
+		this->ProcessEvent(evt);
+	}
+	SetFocus();
 }
 
 void KaiRadioButton::SetValue(bool _value)
@@ -128,7 +126,7 @@ void KaiRadioButton::DeselectRest()
         btn->SetValue(false);
     }
 
-	if(!HasFocus()){SetFocus();}
+	//if(!HasFocus()){SetFocus();}
 }
 void KaiRadioButton::SelectPrev(bool first)
 {

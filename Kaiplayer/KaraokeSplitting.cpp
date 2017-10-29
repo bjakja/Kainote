@@ -73,7 +73,14 @@ void Karaoke::Split()
 			else if(kpart){
 				if((nch=='o' || nch=='f')&&ch=='k'){kaas.Add("k"+wxString(nch));continue;}
 				else if(ch=='k'){kaas.Add("k");}
-				if(nch=='}'){stime += (wxAtoi(res)*10); syltimes.Add(stime); res=""; kpart=false; syll=true; continue;}
+				if(nch=='}'){
+					stime += (wxAtoi(res)*10); 
+					syltimes.Add(stime); 
+					res=""; 
+					kpart=false; 
+					syll=true; 
+					continue;
+				}
 				res<<nch;
 			}
 			else if(syll){
@@ -106,9 +113,12 @@ void Karaoke::Split()
 			wxUniChar nnch=(i<len-2)? textlow[i+2] : '\t';
 
 			if((Auto && achars.Find(ch)!=-1 && chars.Find(nch)==-1) || (!Auto && ch==' ')){
-				//wxLogStatus(Text.SubString(start,i));
-				if(Auto && (ch=='n' && aoi1.Find(nch)!=-1)//linia odpowiedzialna za podzia³ n
-					|| (aoi2.Find(ch)!=-1 && nch=='n' && (nnch==' '||(Everyn && aoi1.Find(nnch)==-1))) ){continue;}
+				if (Auto && (ch == 'n' && aoi1.Find(nch) != -1 || //linia odpowiedzialna za podzia³ n
+					(aoi2.Find(ch)!=-1 && nch=='n' && 
+					(nnch==' '||(Everyn && aoi1.Find(nnch)==-1))) ||
+					nch == '\"')){//#7 skip splitting " on end syllable
+					continue;
+				}
 				syls.Add(Text.SubString(start,i));
 				kaas.Add("k");
 				start=i+1;

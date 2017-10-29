@@ -96,6 +96,7 @@ public:
 	bool SetBackgroundColour(COLOR col);
 	bool SetForegroundColour(COLOR col);
 	bool HasFocus();
+	void SetFocus();
 	void SetMaxLength(int maxLen);
 	KaiTextCtrl *choiceText;
 private:

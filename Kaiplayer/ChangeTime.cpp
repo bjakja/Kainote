@@ -206,6 +206,7 @@ void CTwindow::Contents(bool addopts)
 	videotime->Enable(state);
 	state=(Kai->GetTab()->Edit->ABox && Kai->GetTab()->Edit->ABox->audioDisplay->hasMark);
 	audiotime->Enable(state);
+	
 	if(LeadIn){
 		state=(form!=TMP);
 		LeadIn->Enable(state);
@@ -371,7 +372,7 @@ void CTwindow::RefVals(CTwindow *from)
 	TimeText->SetTime(ct);
 	
 	videotime->SetValue((from)? from->videotime->GetValue() : (mto & 4)>0);
-
+	audiotime->SetValue((from) ? from->audiotime->GetValue() : (mto & 8)>0);
 	Forward->SetValue((from)? from->Forward->GetValue() : (mto & 1)>0);
 	Backward->SetValue((from)? from->Backward->GetValue() : (mto & 1)==0);
 	DisplayFrames->SetValue((from)? from->DisplayFrames->GetValue() : (mto & 16)>0);

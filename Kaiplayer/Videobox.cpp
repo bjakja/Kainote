@@ -182,7 +182,6 @@ void VideoCtrl::PlayLine(int start, int end)
 bool VideoCtrl::Pause(bool burstbl)
 {
 	wxMutexLocker lock(vbmutex);
-	//vbmutex.Lock();
 
 	if(GetState()==None){
 		MenuItem *index=Kai->Menubar->FindItem(VideoIndexing);
@@ -202,8 +201,6 @@ bool VideoCtrl::Pause(bool burstbl)
 	if(GetState()==Paused){
 		vtime.Stop();RefreshTime();}
 	else if(GetState()==Playing){int ms=(isFullscreen)?1000:100;vtime.Start(ms);}
-
-
 	ChangeButtonBMP(!(GetState()==Playing));
 
 	return true;
@@ -274,8 +271,6 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 			Options.SetCoords(VideoWindowSize,sx,sy+panelHeight);
 		}
 
-
-		//wxLogStatus("Video layout");
 	}
 	if(isFullscreen){
 		UpdateVideoWindow();
@@ -434,7 +429,6 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		GetClientSize(&w,&h);
 
 		if(y>=h-panelHeight && !hasArrow){
-			//wxLogStatus("y %i, h %i, hasArrow %i", y ,h-45, hasArrow);
 			SetCursor(wxCURSOR_ARROW);hasArrow=true;
 		}
 		return;
@@ -628,7 +622,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 		if(TD->HasCapture()){TD->ReleaseMouse();}
 
 		int sx,sy,sizex,sizey;
-		//KaiMessageBox("set size");
+
 		if(!Kai->GetTab()->edytor){
 			if(!Kai->IsMaximized()){
 				Kai->GetClientSize(&sizex,&sizey);
@@ -643,7 +637,7 @@ void VideoCtrl::SetFullskreen(int monitor)
 			Kai->GetTab()->BoxSizer1->Layout();
 		}
 		volslider->SetValue(Options.GetInt(VideoVolume));
-		//wxLogStatus("głośność okno %i %i", volslider->GetValue(),Options.GetInt("Video Volume"));
+
 		if(!IsShown()){
 			isOnAnotherMonitor=false;
 			Show();GetParent()->Layout();

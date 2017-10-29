@@ -399,6 +399,8 @@ void SubsGrid::CopyRows(int id)
 
 				if(slx.CheckListBox1->GetItem(v,0)->modified){
 					cols|= vals[v];
+	bool dummyEditboxChanges = (loadFromEditbox && !saveAfterCharacterCount);
+	if (dummyEditboxChanges || saveAfterCharacterCount > 1){
 				}
 			}
 			Options.SetInt(CopyCollumnsSelection, cols);
@@ -1048,6 +1050,11 @@ void SubsGrid::OnSetNewFPS()
 		}
 		SetModified(GRID_SET_CUSTOM_FPS);
 		if(subsFormat>TMP){RefreshColumns(START|END);}else{Refresh(false);}
+		if (form == ASS){
+			Dialogue().GetRaw(txt);
+		}
+		else{
+		}
 	}
 }
 

@@ -529,7 +529,7 @@ void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool vis
 		EffectEdit->choiceText->SetModified(dummy);
 	}
 
-	if(TextEdit->Modified()){
+	if (TextEdit->Modified() || splittedTags){
 		if(TextEditOrig->IsShown()){
 			line->TextTl=TextEdit->GetValue();
 			cellm |= TXTTL;
@@ -540,7 +540,7 @@ void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool vis
 		}
 		TextEdit->modified=dummy;
 	}
-	if(TextEditOrig->Modified() && TextEditOrig->IsShown()){
+	if ((TextEditOrig->Modified() || splittedTags) && TextEditOrig->IsShown()){
 		line->Text=TextEditOrig->GetValue();
 		cellm |= TXT;
 		TextEditOrig->modified=dummy;
@@ -815,7 +815,9 @@ void EditBox::OnCommit(wxCommandEvent& event)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
 	pan->Video->blockpaint=true;
-	if(splittedTags&&(TextEdit->modified || TextEditOrig->modified)){TextEdit->modified=true; TextEditOrig->modified=true;}
+	if (splittedTags && (TextEdit->modified || TextEditOrig->modified)){ 
+		TextEdit->modified = true; TextEditOrig->modified = true; splittedTags = false; 
+	}
 	Send(EDITBOX_LINE_EDITION, false, false, Visual!=0);
 	if(Visual){
 		pan->Video->SetVisual(false, true);
@@ -832,6 +834,7 @@ void EditBox::OnNewline(wxCommandEvent& event)
 	bool noNewLine = !(StartEdit->HasFocus() || EndEdit->HasFocus() || DurEdit->HasFocus()) || !Options.GetBool(NoNewLineAfterTimesEdition);
 	if(!noNewLine && ABox){ABox->audioDisplay->SetDialogue(line,ebrow);}
 	Send(EDITBOX_LINE_EDITION, noNewLine);
+	splittedTags = false;
 }
 
 void EditBox::OnBoldClick(wxCommandEvent& event)
@@ -1237,12 +1240,27 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 			}
 
 			lslash=i;
-		}else if(ch=='{'){
-			brkt=false;
-			if(txt[MAX(0,i-1)]!='}'){inbrkt=false; if(hasR){break;} }
-		}else if(ch=='}'){
-			lslash=i;
-			brkt=true;
+		}
+		else if (ch == '{' && i > 0){
+			wxString textBeforeBracket = txt.SubString(0, i);
+			int startBracket = textBeforeBracket.Find('{', true);
+			int endBracket = textBeforeBracket.Find('}', true);
+			if (endBracket >= startBracket){
+				brkt = false;
+				if (txt[i - 1] != '}'){ inbrkt = false; if (hasR){ break; } }
+			}
+			else{
+				lslash = i - 1;
+			}
+		}
+		else if (ch == '}'){
+			wxString textBeforeBracket = txt.SubString(0, i);
+			int startBracket = textBeforeBracket.Find('{', true);
+			int endBracket = textBeforeBracket.Find('}', true);
+			if (endBracket < startBracket){
+				lslash = i;
+				brkt = true;
+			}
 		}
 
 	}
@@ -1322,7 +1340,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	if(panel->Video->GetState()!=None){
 		//visible=true;
 		text=grid->GetVisible(&visible);
-		if(lastVisible!=visible){visible=true;lastVisible=false;}
+		if(!visible && lastVisible!=visible){visible=true;lastVisible=false;}
 		else{lastVisible=visible;}
 		OnVideo=true;
 	}
@@ -1488,12 +1506,12 @@ void EditBox::OnEditTag(wxCommandEvent &event)
 
 void EditBox::OnAutoMoveTags(wxCommandEvent& event)
 {
-	SetTextWithTags();
+	SetTextWithTags(true);
 	Options.SetBool(AutoMoveTagsFromOriginal, AutoMoveTags->GetValue());
 	Options.SaveOptions();
 }
 
-void EditBox::SetTextWithTags()
+void EditBox::SetTextWithTags(bool RefreshVideo)
 {
 	if(grid->hasTLMode && line->TextTl=="" && AutoMoveTags->GetValue()){
 		wxString Text = line->Text;
@@ -1532,18 +1550,27 @@ void EditBox::SetTextWithTags()
 
 
 
-			TextEdit->SetTextS(txtTl, TextEdit->modified);
-			TextEditOrig->SetTextS(txtOrg, TextEditOrig->modified);
+			TextEdit->SetTextS(txtTl, TextEdit->modified, true);
+			TextEditOrig->SetTextS(txtOrg, TextEditOrig->modified, true);
 			splittedTags=true;
 
 			TextEdit->SetSelection(pos,pos);
 			TextEdit->SetFocus();
-			return;
+			goto done;
 		}
 	}
+	if (splittedTags){ delete line; line = grid->GetDial(ebrow)->Copy(); }
 	splittedTags=false;
-	TextEdit->SetTextS((TextEditOrig->IsShown())? line->TextTl : line->Text , TextEdit->modified);
-	if(TextEditOrig->IsShown()){TextEditOrig->SetTextS(line->Text, TextEditOrig->modified);}
+	TextEdit->SetTextS((TextEditOrig->IsShown())? line->TextTl : line->Text , TextEdit->modified, true);
+	if(TextEditOrig->IsShown()){TextEditOrig->SetTextS(line->Text, TextEditOrig->modified, true);}
+done:
+	if (RefreshVideo){
+		VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
+		if (vb->GetState() != None){
+			vb->OpenSubs(grid->GetVisible());
+			vb->Render();
+		}
+	}
 }
 
 void EditBox::OnCursorMoved(wxCommandEvent& event)

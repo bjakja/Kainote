@@ -204,6 +204,37 @@ void TabPanel::SetVideoWindowSizes(int w, int h)
 	}
 }
 
+bool TabPanel::Hide()
+{
+	//Todo zbadać czemu twierdzi, że grid to nie jest descendant of tabpanel
+	wxWindow *win = FindFocus();
+	if (win && IsDescendant(win)){
+		lastFocusedWindow = win;
+	}
+	else{ lastFocusedWindow = NULL; }
+	return wxWindow::Show(false);
+}
+
+//bool TabPanel::Show(bool show)
+//{
+//	bool ret = wxWindow::Show();
+//	if (focusedWindowId !=0){
+//		wxWindow *lastFocusedWindow = FindWindowById(focusedWindowId);
+//		if (lastFocusedWindow){
+//			lastFocusedWindow->SetFocus();
+//		}
+//	}
+//	else{
+//		if (Grid1->IsShown()){
+//			Grid1->SetFocus();
+//		}
+//		else if (Video->IsShown()){
+//			Video->SetFocus();
+//		}
+//	}
+//	return ret;
+//}
+
 BEGIN_EVENT_TABLE(TabPanel,wxWindow)
      EVT_MOUSE_EVENTS(TabPanel::OnMouseEvent)
 	 EVT_CHILD_FOCUS(TabPanel::OnFocus)

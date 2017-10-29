@@ -358,11 +358,14 @@ void StyleChange::Ons4Click(wxCommandEvent& event)
 void StyleChange::OnOKClick(wxCommandEvent& event)
 {
 	UpdateStyle();
-	Hide();
-	if(SCD){SCD->Hide();}
-	//kopiujemy, bo by zapobiec wyciekom należy tab niezwłocznie usunąć.
-    SS->changestyle(tab->Copy());  
-	wxDELETE(tab);
+	//kopiujemy, bo by zapobiec wyciekom należy tab niezwłocznie usunąć. 
+	if (SS->changestyle(tab->Copy())){
+		Hide();
+		if (SCD){ SCD->Hide(); }
+		wxDELETE(tab);
+		SS->Mainall->Fit(SS);
+	}
+	
 }
 
 void StyleChange::OnCancelClick(wxCommandEvent& event)
