@@ -343,6 +343,7 @@
     <ClCompile Include="AutomationScriptReader.cpp" />
     <ClCompile Include="AutomationToFile.cpp" />
     <ClCompile Include="AutomationUtils.cpp" />
+    <ClCompile Include="AVLtree.cpp" />
     <ClCompile Include="BitmapButton.cpp" />
     <ClCompile Include="ChangeTime.cpp" />
     <ClCompile Include="ColorSpace.cpp" />
@@ -440,6 +441,7 @@
     <ClInclude Include="AutomationScriptReader.h" />
     <ClInclude Include="AutomationToFile.h" />
     <ClInclude Include="AutomationUtils.h" />
+    <ClInclude Include="AVLtree.h" />
     <ClInclude Include="BitmapButton.h" />
     <ClInclude Include="ChangeTime.h" />
     <ClInclude Include="ColorSpace.h" />

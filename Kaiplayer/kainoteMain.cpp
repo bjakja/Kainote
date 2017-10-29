@@ -241,8 +241,8 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	},9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
 		TabPanel *tab = GetTab();
-		if (tab->Grid1->IsShown()){ 
-			tab->Grid1->SetFocus(); 
+		if (tab->Grid->IsShown()){ 
+			tab->Grid->SetFocus(); 
 		}
 		else if (tab->Video->IsShown()){ 
 			tab->Video->SetFocus(); 
@@ -1296,7 +1296,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 		if (cur->lastFocusedWindow != NULL){
 			cur->lastFocusedWindow->SetFocus();
 		}
-		else if (cur->edytor){ cur->Grid1->SetFocus(); }
+		else if (cur->edytor){ cur->Grid->SetFocus(); }
 		else{ cur->Video->SetFocus(); }
 		if (Tabs->iter != Tabs->GetOldSelection() && Options.GetBool(MoveTimesLoadSetTabOptions)){
 			cur->CTime->RefVals(Tabs->Page(Tabs->GetOldSelection())->CTime);

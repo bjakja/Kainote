@@ -163,6 +163,7 @@ SubsFile::SubsFile()
     iter=0;
 	edited=false;
 	subs = new File();
+	IdConverter = new AVLtree();
 }
 
 SubsFile::~SubsFile()
@@ -323,6 +324,15 @@ void SubsFile::GetURStatus(bool *_undo, bool *_redo)
 File *SubsFile::GetSubs()
 {
 	return subs;
+}
+
+void SubsFile::LoadVisibleDialogues()
+{
+	for (size_t i = 0; i < subs->dials.size();i++){
+		if (subs->dials[i]->isVisible){
+			IdConverter->insert(i);
+		}
+	}
 }
 
 void SubsFile::GetHistoryTable(wxArrayString *history)

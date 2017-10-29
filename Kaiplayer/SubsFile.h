@@ -19,6 +19,7 @@
 #include "Styles.h"
 #include "SubsDialogue.h"
 #include "KaiDialog.h"
+#include "AVLtree.h"
 #include <vector>
 #include <set>
 #include <functional>
@@ -103,6 +104,7 @@ private:
 	std::vector<File*> undo;
 	int iter;
 	File *subs;
+	AVLtree *IdConverter;
 public:
 	SubsFile();
 	~SubsFile();
@@ -111,6 +113,7 @@ public:
 	void Undo();
 	void DummyUndo();
 	void DummyUndo(int newIter);
+	void LoadVisibleDialogues();
 	void EndLoad(unsigned char editionType, int activeLine);
 	Dialogue *CopyDial(int i, bool push=true, bool keepstate=false);
 	Styles *CopyStyle(int i, bool push=true);
