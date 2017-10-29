@@ -1242,7 +1242,7 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 			lslash=i;
 		}
 		else if (ch == '{' && i > 0){
-			wxString textBeforeBracket = txt.SubString(0, i);
+			wxString textBeforeBracket = txt.SubString(0, i-1);
 			int startBracket = textBeforeBracket.Find('{', true);
 			int endBracket = textBeforeBracket.Find('}', true);
 			if (endBracket >= startBracket){
@@ -1253,8 +1253,8 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 				lslash = i - 1;
 			}
 		}
-		else if (ch == '}'){
-			wxString textBeforeBracket = txt.SubString(0, i);
+		else if (ch == '}' && i > 0){
+			wxString textBeforeBracket = txt.SubString(0, i-1);
 			int startBracket = textBeforeBracket.Find('{', true);
 			int endBracket = textBeforeBracket.Find('}', true);
 			if (endBracket < startBracket){
