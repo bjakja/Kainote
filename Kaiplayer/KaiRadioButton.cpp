@@ -161,12 +161,14 @@ void KaiRadioButton::SelectPrev(bool first)
 				if ( btn->HasFlag(wxRB_GROUP) )
 				{
 					btn->SetValue(true);
+					btn->SetFocus();
 					wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
 					this->ProcessEvent(evt);
 					break;
 				}
-			}else{
+			}else if(btn->CanBeFocused()){
 				btn->SetValue(true);
+				btn->SetFocus();
 				wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
 				this->ProcessEvent(evt);
 				break;
@@ -195,8 +197,9 @@ void KaiRadioButton::SelectNext(bool last)
                                            KaiRadioButton);
 
         if ( !btn){
-			if(btntmp){
+			if (btntmp && btntmp->CanBeFocused()){
 				btntmp->SetValue(true); done = true; 
+				btntmp->SetFocus();
 				wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
 				this->ProcessEvent(evt);
 				break;
@@ -207,8 +210,9 @@ void KaiRadioButton::SelectNext(bool last)
         if ( btn->HasFlag(wxRB_GROUP | wxRB_SINGLE) )
         {
             // no more buttons or the first button of the next group
-			if(last){
+			if (last && btn->CanBeFocused()){
 				btn->SetValue(true);
+				btn->SetFocus();
 				wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
 				this->ProcessEvent(evt);
 			}else{
@@ -218,8 +222,9 @@ void KaiRadioButton::SelectNext(bool last)
             break;
         }
 
-		if(!last){
+		if (!last && btn->CanBeFocused()){
 			btn->SetValue(true);
+			btn->SetFocus();
 			wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
 			this->ProcessEvent(evt);
 			done=true;

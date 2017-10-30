@@ -157,11 +157,13 @@ void KaiDialog::OnCharHook(wxKeyEvent &evt)
 		return;
 	}else if(key == WXK_TAB){
 		const wxWindowList list = GetChildren();
-		auto result = list.Find(FindFocus());
+		wxWindow *focused = FindFocus();
+		auto result = list.Find(focused);
 		wxWindowListNode *nextWindow = NULL;
 		//todo ta wersja nie radzi sobie z listami bo focusa ma ich dziecko
 		if (!result){
-			result = list.GetFirst();
+			result = list.Find(focused->GetParent());
+			//if still no result, it's mean thats nothing to do
 		}
 		if(result){
 			auto nextWindow = result->GetNext();
