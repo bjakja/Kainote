@@ -113,7 +113,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 	mainSizer->Add(videoResolutionStaticSizer,1, wxALL|wxEXPAND, 2);
 	mainSizer->Add(resamplingOptions,0, wxALL|wxEXPAND, 2);
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-	MappedButton *OK = new MappedButton(this, 26548, "OK");
+	MappedButton *OK = new MappedButton(this, 6548, "OK");
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		int subsSizeX = subsResolutionX->GetInt();
 		int subsSizeY = subsResolutionY->GetInt();
@@ -128,14 +128,14 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 		grid->SetModified(SUBTITLES_RESAMPLE);
 		((kainoteFrame *)parent)->SetSubsResolution();
 		EndModal(0);
-	},26548);
+	},6548);
 	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
-	buttonSizer->Add(OK, 0, wxALL, 2);
-	buttonSizer->Add(Cancel, 0, wxALL, 2);
+	buttonSizer->Add(OK, 1, wxALL, 2);
+	buttonSizer->Add(Cancel, 1, wxALL, 2);
 	mainSizer->Add(buttonSizer,0, wxALL|wxCENTER, 2);
 	SetSizerAndFit(mainSizer);
 	CenterOnParent();
-	SetEnterId(26548);
+	SetEnterId(6548);
 }
 
 

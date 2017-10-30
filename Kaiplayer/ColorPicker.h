@@ -50,6 +50,9 @@ private:
 
 	void OnPaint(wxPaintEvent &evt);
 	void OnMouse(wxMouseEvent &evt);
+	bool AcceptsFocus() const{ return false; }
+	bool AcceptsFocusFromKeyboard() const { return false; }
+	bool AcceptsFocusRecursively() const{ return false; }
 
 public:
 	ColorPickerSpectrum(wxWindow *parent, wxWindowID id, wxBitmap *_background, int xx, int yy, bool vert, wxSize _size);
@@ -79,6 +82,9 @@ private:
 	void OnClick(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent &evt);
 	void OnSize(wxSizeEvent &evt);
+	bool AcceptsFocus() const{ return false; }
+	bool AcceptsFocusFromKeyboard() const { return false; }
+	bool AcceptsFocusRecursively() const{ return false; }
 
 public:
 	ColorPickerRecent(wxWindow *parent, wxWindowID id, int _cols, int _rows, int _cellsize);
@@ -104,6 +110,9 @@ private:
 
 	void OnMouse(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent &evt);
+	bool AcceptsFocus() const{ return false; }
+	bool AcceptsFocusFromKeyboard() const { return false; }
+	bool AcceptsFocusRecursively() const{ return false; }
 
 public:
 	ColorPickerScreenDropper(wxWindow *parent, wxWindowID id, int _resx, int _resy, int _magnification, bool _integrated_dropper);
@@ -179,7 +188,7 @@ private:
 	void OnRecentSelect(wxCommandEvent &evt); // also handles dropper pick
 	void OnDropperMouse(wxMouseEvent &evt);
 	void OnMouse(wxMouseEvent &evt);
-	void OnColourCanged(wxTimerEvent &evt);
+	void OnColourChanged(wxTimerEvent &evt);
 	
 
 public:

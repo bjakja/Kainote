@@ -303,7 +303,6 @@ bool VideoRend::InitDX(bool reset)
 
 void VideoRend::Render(bool Frame, bool wait)
 {
-	//wxLogStatus("render");
 	if(Frame && !IsDshow){VFF->Refresh(wait);resized=false; return;}
 	wxMutexLocker lock(mutexRender);
 	HRESULT hr = S_OK;
@@ -382,10 +381,6 @@ void VideoRend::Render(bool Frame, bool wait)
 		samples.PlanarAlpha = DXVA2_Fixed32OpaqueAlpha();
 
 		hr = dxvaProcessor->VideoProcessBlt(bars, &blt, &samples, 1, NULL);
-
-
-
-
 
 	}else{
 		hr = d3device->StretchRect(MainStream,&mainStreamRect,bars,&backBufferRect,D3DTEXF_LINEAR);
@@ -741,7 +736,7 @@ bool VideoRend::Pause()
 		SetThreadExecutionState(ES_CONTINUOUS);
 		vstate=Paused;
 		if(!IsDshow){
-			if(player){player->Stop(false);}/*player->*/
+			if(player){player->Stop(false);}
 		}else{
 			vplayer->Pause();
 		}
@@ -758,10 +753,8 @@ bool VideoRend::Stop()
 		SetThreadExecutionState(ES_CONTINUOUS);
 		vstate=Stopped;
 		if(IsDshow){vplayer->Stop();}
-
-		if(!IsDshow){if(player){player->Stop();}//if(thread){CloseHandle(thread);thread=NULL;}
-		}
-
+		if (!IsDshow && player){ player->Stop(); }
+		
 		time=0;
 		playend=(IsDshow)? 0 : GetDuration();
 
@@ -784,7 +777,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		if(VisEdit){
 			SAFE_DELETE(Vclips->dummytext);
 			if(Vclips->Visual==VECTORCLIP){
-				Vclips->SetClip(Vclips->GetVisual(),true, false);
+				Vclips->SetClip(Vclips->GetVisual(),true, false, false);
 			}else{
 				OpenSubs((playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible(),true, playing);
 				if(vstate==Playing){ VisEdit=false;}
@@ -810,7 +803,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			if(VisEdit){
 				SAFE_DELETE(Vclips->dummytext);
 				if(Vclips->Visual==VECTORCLIP){
-					Vclips->SetClip(Vclips->GetVisual(),true, false);
+					Vclips->SetClip(Vclips->GetVisual(),true, false, false);
 				}else{
 					OpenSubs((playing)? pan->Grid1->SaveText() : pan->Grid1->GetVisible(), true, playing);
 					if(playing){ VisEdit=false;}
@@ -844,7 +837,7 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 	wxMutexLocker lock(mutexRender);
 	if (instance) csri_close(instance);
 	instance = NULL;
-	//wxLogStatus(*textsubs);
+
 	if(!textsubs) {return true;}
 	//const char *buffer= textsubs.mb_str(wxConvUTF8).data();
 	if (VisEdit && Vclips->Visual == VECTORCLIP && Vclips->dummytext){
@@ -1081,7 +1074,6 @@ bool VideoRend::UpdateRects(bool changeZoom)
 //funkcja zmiany rozdziałki okna wideo
 void VideoRend::UpdateVideoWindow()
 {
-
 
 	wxMutexLocker lock(mutexRender);
 	block=true;
