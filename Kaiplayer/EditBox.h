@@ -82,6 +82,7 @@ public:
 	void Send(unsigned char editionType, bool selline=true, bool dummy=false, bool visualdummy=false);
 	void RefreshStyle(bool resetline=false);
 	bool FindVal(const wxString &wval, wxString *returnval, const wxString &text="", bool *endsel=0, bool fromstart=false);
+	bool FindTagsValue(wxString *tags, int numTags, const wxString &textToSeek = "", bool fromStart = false);
 	void HideControls();
 	void UpdateChars(const wxString &text);
 
@@ -126,7 +127,7 @@ public:
 	KaiChoice* Ban;
 
 
-	void PutinText(const wxString &text, bool focus=true, bool onlysel=false, wxString *texttoPutin=0);
+	void PutinText(bool focus=true, bool onlysel=false);
 	void PutinNonass(const wxString &text, const wxString &tag);
 	//ustawia tekst i gdy trzeba wstawia tagi z orygina³u ustawiaj¹c w³aœciw¹ pozycjê kursora.
 	void SetTextWithTags(bool RefreshVideo = false);
@@ -141,20 +142,15 @@ public:
 	wxBoxSizer* BoxSizer1;
 
 	Dialogue *line;
-	wxPoint Placed;
-	bool InBracket;
 	bool splittedTags;
 	bool OnVideo;
 	bool lastVisible;
 	int Visual;
 	int EditCounter;
+	std::vector<FindTagData> ftdata;
 
 private:
 	
-	
-	wxString lasttag;
-	int cursorpos;
-
 	wxBoxSizer* BoxSizer2;
 	wxBoxSizer* BoxSizer3;
 	wxBoxSizer* BoxSizer4;
@@ -194,6 +190,7 @@ private:
 	wxString num;
 	int CurrentDoubtful;
 	int CurrentUntranslated;
+	std::vector<wxString> tags;
 };
 
 

@@ -403,12 +403,14 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 	bool isOriginal=(grid->transl && edit->TextEdit->GetValue()=="");
 	//Editor
 	MTextEditor *Editor=(isOriginal)? edit->TextEditOrig : edit->TextEdit;
+	wxString tags[] = { "clip", "iclip", "t" };
+	std::vector<FindTagData> ftdata;
 	if(clip==""){
 		
-		wxString tmp;
 		wxString txt = Editor->GetValue();
-		if(edit->FindVal("(i?clip.)[^)]*\\)", &tmp, txt, 0, true)){
-			ChangeText(&txt,"",edit->InBracket,edit->Placed);
+		
+		if (FindTagValue(txt, tags, 3, ftdata, 0, true)){
+			ChangeTagValue(txt, ftdata, false);
 			txt.Replace("{}", "");
 			if(changeEditorText){
 				Editor->SetTextS(txt, false, true);
@@ -432,10 +434,11 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 			if(!vis){SAFE_DELETE(dummytext);return;}
 
 			if(Visual==VECTORCLIP){
-				//wxPoint pos;
+				ftdata.clear();
 				wxString tmp="clip(";
 				wxString txt=Editor->GetValue();
-				bool fv=edit->FindVal("(i?clip.)[^)]*\\)", &tmp,txt, 0, true);
+				bool fv = FindTagValue(txt, tags, 3, ftdata, 0, true);
+
 				wxString tmp1=(tmp[0]=='c')? "iclip(" : "clip(";
 				wxString tclip= "\\"+tmp+clip+")";
 				edit->Placed.x += tmp.Len()+ 1 + ChangeText(&txt,tclip,edit->InBracket,edit->Placed);

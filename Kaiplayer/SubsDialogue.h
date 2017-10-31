@@ -33,6 +33,7 @@ public:
 	wxString value;
 	bool multiValue;
 	unsigned int startTextPos;
+	char position = -1;
 };
 
 class ParseData
@@ -70,3 +71,23 @@ public:
 	~Dialogue();
 };
 
+class FindTagData
+{
+public:
+	FindTagData(const wxString &_value, const wxPoint &_position, bool inBracket, int cursorPos){
+		value = _value;
+		position = _position;
+		inBracket = inBracket;
+		cursorPos = cursorPos;
+	}
+	FindTagData(){};
+	wxString value;
+	wxPoint position;
+	bool inBracket = false;
+	int cursorPos=0;
+	bool found = false;
+};
+
+bool FindTagValue(const wxString &textToSeek, wxString *tags, int numTags, std::vector<FindTagData> &ftdata, int textPosition, bool fromStart = false);
+
+int ChangeTagValue(wxString &textTochange, std::vector<FindTagData> &ftdata, bool all = true);

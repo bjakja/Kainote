@@ -214,9 +214,12 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 void ClipRect::SetCurVisual()
 {
 	int x1=0,x2=SubsSize.x,y1=0,y2=SubsSize.y;
-	wxString clip;
-	bool found =tab->Edit->FindVal("(i?clip[^\\)]+)", &clip);
-	if(found && clip.Freq(',') == 3){
+	wxString tags[] = { "clip", "iclip", "t" };
+	
+	tab->Edit->FindTagsValue(tags, 3,"", true);
+	if ((tab->Edit->ftdata[0].found && tab->Edit->ftdata[0].value.Freq(',') == 3) || 
+		(tab->Edit->ftdata[1].found && tab->Edit->ftdata[1].value.Freq(',') == 3)){
+		wxString clip = (tab->Edit->ftdata[0].found) ? tab->Edit->ftdata[0].value : tab->Edit->ftdata[1].value;
 		int match=1;
 		wxRegEx re("\\(([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)", wxRE_ADVANCED);
 

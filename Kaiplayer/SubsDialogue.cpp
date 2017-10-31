@@ -410,6 +410,7 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 
 					TagData *newTag = new TagData(tagName, pos+tagLen);
 					wxString tagValue = tag.Mid(tagLen);
+					newTag->position = i;
 					if(tagName == "p"){
 						hasDrawing = (tagValue.Trim().Trim(false) == "0")? false : true;
 						newTag->PutValue(tagValue);
@@ -473,4 +474,114 @@ void Dialogue::ChangeTimes(int start, int end)
 			break;
 		}
 	}
+}
+
+//Need to add t tag to list
+//FindTagData must be initialized with numTags-1
+bool FindTagValue(const wxString &textToSeek, wxString *tags, int numTags, std::vector<FindTagData> &ftdata, int textPosition, bool fromStart)
+{
+	if (textToSeek == ""){ return false; }
+	bool InBracket = true;
+	int startBracket = textToSeek.SubString(0, textPosition).Find('{', true);
+	int endBracket = textToSeek.SubString(0, (textPosition - 2 < 1) ? 1 : (textPosition - 2)).Find('}', true);
+	if (startBracket == -1 || (startBracket < endBracket && endBracket != -1)){ InBracket = false; endBracket = textPosition; }
+	else{
+		int tmpfrom = textPosition - 2;
+		do{
+			endBracket = textToSeek.find('}', (tmpfrom < 1) ? 1 : tmpfrom);
+			tmpfrom = endBracket + 1;
+		} while (endBracket != -1 && endBracket < (int)textToSeek.Len() - 1 && textToSeek[endBracket + 1] == '{');
+		if (endBracket < 0){ endBracket = textToSeek.Len() - 1; }
+	}
+
+	//dummy dial for parse text tags
+	Dialogue dial;
+	dial.Text = textToSeek.SubString(0, endBracket);
+	dial.ParseTags(tags, numTags);
+	ParseData *data = dial.pdata;
+	std::vector<TagData *> tmpdata;
+	tmpdata.resize(numTags - 1);
+	ftdata.resize(numTags - 1);
+	bool isT = false;
+	for (int i = 0; i < data->tags.size(); i++)
+	{
+		TagData *tdata = data->tags[i];
+		if (tdata->tagName == "t"){
+			size_t len = tdata->value.Len();
+			if (tdata->startTextPos + len >= textPosition){
+				int endBracket = tdata->value.Find('}');
+				int nextT = tdata->value.Find("\\t");
+				int newEnd = (endBracket < nextT) ? endBracket : nextT;
+				if (newEnd > 0 && tdata->startTextPos + newEnd >= textPosition || newEnd < 1){
+					isT = true;
+				}
+			}
+		}
+		else{
+			tmpdata[tdata->position] = tdata;
+			if (isT){ break; }
+		}
+
+	}
+	bool found = false;
+	for (size_t i = 0; i < numTags - 1; i++){
+		if (tmpdata[i]){
+			if (tmpdata[i]->startTextPos > startBracket){
+				ftdata[i].position = wxPoint(tmpdata[i]->startTextPos - tmpdata[i]->tagName.Len() - 1, tmpdata[i]->startTextPos + tmpdata[i]->value.Len() - 1);
+				InBracket = true;
+			}
+			else{
+				int slash = dial.Text.Find('\\',true);
+				int tagPos = 0;
+				if (slash > 0 && slash > startBracket){
+					int endBracket = dial.Text.Find('}', true);
+					if (endBracket > slash){
+						tagPos = endBracket - 1;
+					}
+					else{ tagPos = slash - 1; }
+				}
+				else{
+					tagPos = MIN(0, startBracket - 1);
+				}
+
+				ftdata[i].position = wxPoint(tagPos, tagPos);
+			}
+			ftdata[i].value = tmpdata[i]->value;
+			ftdata[i].found = true;
+			bool found = true;
+		}
+		else{
+			ftdata[i].position = wxPoint(endBracket, endBracket);
+		}
+		ftdata[i].cursorPos = endBracket;
+	}
+	
+	return found;
+}
+
+int ChangeTagValue(wxString &textTochange, std::vector<FindTagData> &ftdata, bool all)
+{
+	std::sort(ftdata.begin(), ftdata.end(), [](FindTagData &i, FindTagData &j){
+		return j.position.x < i.position.x;
+	});
+	int positionDiff = 0;
+	for (size_t i = 0; i < ftdata.size(); i++){
+		auto data = ftdata[i];
+		if (!all && !data.found){ continue; }
+		if (!data.inBracket){
+			textTochange.insert(data.position.x, "{" + data.value + "}");
+			positionDiff += data.value.Len() + 2;
+		}
+		else{
+			if (data.position.x < data.position.y){ 
+				textTochange.erase(textTochange.begin() + data.position.x, textTochange.begin() + data.position.y + 1); 
+			}
+			textTochange.insert(data.position.x, data.value);
+			//todo test it for good position calculation
+			positionDiff += (data.position.y - data.position.x) - data.value.Len();
+		}
+
+	}
+	//todo test it for good position calculation
+	ftdata[0].cursorPos += positionDiff;
 }
