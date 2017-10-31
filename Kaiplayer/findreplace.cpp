@@ -257,7 +257,7 @@ void FindReplace::OnReplaceAll(wxCommandEvent& event)
 
 	for(int i = (!AllLines->GetValue() && fsel>=0)? fsel : 0; i<pan->Grid->GetCount(); i++)
 	{
-		Dialogue *Dial=pan->Grid->GetDial(i);
+		Dialogue *Dial=pan->Grid->GetDialogue(i);
 		if((notstyles||styll.Find(";"+Dial->Style+";")!=-1)&&
 			!(onlysel&&!(pan->Grid->Selections.find(i)!=pan->Grid->Selections.end()))){
 
@@ -376,7 +376,7 @@ void FindReplace::OnButtonRep(wxCommandEvent& event)
 	wxString rep=RepText->GetValue();
 	SubsGrid *grid=tab->Grid;
 
-	Dialogue *Dial = grid->GetDial(reprow);
+	Dialogue *Dial = grid->GetDialogue(reprow);
 
 	if(wrep==STYLE){
 		//Kai->GetTab()->Edit->StyleChoice->SetFocus();
@@ -455,7 +455,7 @@ void FindReplace::Find()
 
 	while(posrow<pan->Grid->GetCount())
 	{
-		Dialogue *Dial=pan->Grid->GetDial(posrow);
+		Dialogue *Dial=pan->Grid->GetDialogue(posrow);
 		if((!styles && !onlysel) || 
 			(styles && styll.Find(";"+Dial->Style+";")!=-1) || 
 			(onlysel && pan->Grid->Selections.find(posrow) != pan->Grid->Selections.end())){

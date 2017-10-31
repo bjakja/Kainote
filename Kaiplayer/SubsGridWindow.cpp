@@ -139,7 +139,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		SpellErrors.resize(size);
 	}
 
-	Dialogue *acdial = GetDial(MID(0, Edit->ebrow, size - 1));
+	Dialogue *acdial = GetDialogue(MID(0, Edit->ebrow, size - 1));
 	Dialogue *Dial;
 	TabPanel *tab = (TabPanel*)GetParent();
 	int VideoPos = tab->Video->Tell();
@@ -178,7 +178,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			kol = header;
 		}
 		else{
-			Dial = GetDial(i - 1);
+			Dial = GetDialogue(i - 1);
 
 			strings.Add(wxString::Format("%i", i));
 
@@ -415,7 +415,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 	GridWidth[0] = fw + 10;
 	Dialogue *ndial;
 	for (int i = 0; i<maxx; i++){
-		ndial = GetDialCor(i);
+		ndial = GetCheckedDialogue(i);
 		if (START & cell){
 			if (ndial->Start.mstime > startMax){ startMax = ndial->Start.mstime; }
 		}
@@ -604,10 +604,10 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 			int vtime = 0;
 			bool isstart = true;
 			if (shift && subsFormat != TMP){
-				vtime = GetDial(row)->End.mstime; isstart = false;
+				vtime = GetDialogue(row)->End.mstime; isstart = false;
 			}
 			else{
-				vtime = GetDial(row)->Start.mstime; isstart = true;
+				vtime = GetDialogue(row)->Start.mstime; isstart = true;
 			}
 			if (ctrl){ vtime -= 1000; }
 			tab->Video->Seek(MAX(0, vtime), isstart, true, false);
@@ -722,7 +722,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 		if (middle){
 			if (video->GetState() != None){//
-				video->PlayLine(GetDial(row)->Start.mstime, video->GetPlayEndTime(GetDial(row)->End.mstime) /*- video->avtpf*/);
+				video->PlayLine(GetDialogue(row)->Start.mstime, video->GetPlayEndTime(GetDialogue(row)->End.mstime) /*- video->avtpf*/);
 			}
 
 		}
@@ -1052,7 +1052,7 @@ void SubsGridWindow::RefreshIfVisible(int time)
 	if ((int)visibleLines.size() < scrows - scPos){ return; }
 	int counter = 0;
 	for (int i = scPos; i < scrows; i++){
-		Dialogue *dial = GetDial(i);
+		Dialogue *dial = GetDialogue(i);
 		bool isVisible = dial->Start.mstime <= time && dial->End.mstime > time;
 		if (isVisible != visibleLines[counter++]){
 			Refresh(false);
@@ -1133,4 +1133,16 @@ int SubsGridWindow::CalcChars(const wxString &txt, wxString *lines, bool *bad)
 
 
 	return chars;
+}
+
+Dialogue *SubsGridWindow::GetCheckedDialogue(int rw)
+{
+	Dialogue *dial = file->GetDialogue(rw);
+	if (first){
+		if (dial->Form != subsFormat){ dial->Conv(subsFormat); }
+		if (dial->Start.mstime > dial->End.mstime){
+			dial->End.mstime = dial->Start.mstime;
+		}
+	}
+	return dial;
 }

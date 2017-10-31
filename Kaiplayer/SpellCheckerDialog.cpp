@@ -99,7 +99,7 @@ wxString SpellCheckerDialog::FindNextMisspell()
 	}
 	for(int i = lastLine; i < tab->Grid->GetCount(); i++){
 		errors.clear();
-		Dialogue *Dial = tab->Grid->GetDial(i);
+		Dialogue *Dial = tab->Grid->GetDialogue(i);
 		if(Dial->IsComment && noComments){continue;}
 		wxString &Text = (tab->Grid->hasTLMode)? Dial->TextTl : Dial->Text;
 		//w checktext kopiuje tekst więc nie muszę robić tego dwa razy.
@@ -184,7 +184,7 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 	int textPos = 0;
 	
 	for(int i = 0; i < tab->Grid->GetCount(); i++){
-		Dialogue *Dial = tab->Grid->GetDial(i);
+		Dialogue *Dial = tab->Grid->GetDialogue(i);
 		if(Dial->IsComment && noComments){continue;}
 		wxString Text = (tab->Grid->hasTLMode)? Dial->TextTl : Dial->Text;
 		text = Text.Lower().ToStdWstring();

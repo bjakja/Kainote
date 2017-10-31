@@ -162,8 +162,8 @@ void SubsGrid::OnInsertBefore()
 	dialog->Text="";
 	dialog->TextTl="";
 	dialog->End=dialog->Start;
-	if(rw>0 && GetDial(rw-1)->End > dialog->Start){
-		dialog->Start=GetDial(rw-1)->End;
+	if(rw>0 && GetDialogue(rw-1)->End > dialog->Start){
+		dialog->Start=GetDialogue(rw-1)->End;
 	}else{dialog->Start.Change(-4000);}
 	InsertRows(rw, 1, dialog, false, true);
 }
@@ -176,8 +176,8 @@ void SubsGrid::OnInsertAfter()
 	dialog->Text="";
 	dialog->TextTl="";
 	dialog->Start=dialog->End;
-	if(rw<GetCount()-1 && GetDial(rw+1)->End > dialog->Start){
-		dialog->End=GetDial(rw+1)->Start;
+	if(rw<GetCount()-1 && GetDialogue(rw+1)->End > dialog->Start){
+		dialog->End=GetDialogue(rw+1)->Start;
 	}else{dialog->End.Change(4000);}
 	Edit->ebrow=rw+1;
 	InsertRows(rw+1, 1, dialog, false, true);
@@ -235,7 +235,7 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	for(size_t i=0;i<selarr.size();i++)
 	{
 		wxString en=(i==0)?"":en1;
-		Dialogue *dial=GetDial(selarr[i]);
+		Dialogue *dial=GetDialogue(selarr[i]);
 		if(dial->Start.mstime < start){ start = dial->Start.mstime;}
 		if(dial->End.mstime > end){	end = dial->End.mstime;}
 		if(ntext==""){ntext=dial->Text;}
@@ -261,7 +261,7 @@ void SubsGrid::OnJoinToFirst(int id)
 {
 
 	Dialogue *dialc = file->CopyDial(selarr[0]);
-	Dialogue *ldial = GetDial(selarr[selarr.size()-1]);
+	Dialogue *ldial = GetDialogue(selarr[selarr.size()-1]);
 	dialc->End = ldial->End;
 
 	if(id==JoinToLast){
@@ -399,8 +399,6 @@ void SubsGrid::CopyRows(int id)
 
 				if(slx.CheckListBox1->GetItem(v,0)->modified){
 					cols|= vals[v];
-	bool dummyEditboxChanges = (loadFromEditbox && !saveAfterCharacterCount);
-	if (dummyEditboxChanges || saveAfterCharacterCount > 1){
 				}
 			}
 			Options.SetInt(CopyCollumnsSelection, cols);
@@ -414,9 +412,9 @@ void SubsGrid::CopyRows(int id)
 	{	
 		if(id!=CopyCollumns){
 			//tłumaczenie ma pierwszeństwo w kopiowaniu
-			GetDial(selarr[i])->GetRaw(&whatcopy, hasTLMode && GetDial(selarr[i])->TextTl!="");
+			GetDialogue(selarr[i])->GetRaw(&whatcopy, hasTLMode && GetDialogue(selarr[i])->TextTl!="");
 		}else{
-			whatcopy<<GetDial(selarr[i])->GetCols(cols,hasTLMode && GetDial(selarr[i])->TextTl!="");
+			whatcopy<<GetDialogue(selarr[i])->GetCols(cols,hasTLMode && GetDialogue(selarr[i])->TextTl!="");
 		}
 	}
 	if (wxTheClipboard->Open())
@@ -612,7 +610,7 @@ void SubsGrid::MoveTextTL(char mode)
 	if(mode<3){// w górę ^
 		//tryb 2 gdzie dodaje puste linijki a tekst pl pozostaje bez zmian
 		if(mode==2){
-			Dialogue *insdial =GetDial(first)->Copy();
+			Dialogue *insdial =GetDialogue(first)->Copy();
 			insdial->Text="";
 			InsertRows(first, mrow, insdial);
 		}
@@ -622,16 +620,16 @@ void SubsGrid::MoveTextTL(char mode)
 			if(i<first+mrow){
 				//tryb1 gdzie łączy wszystkie nachodzące linijki w jedną
 				if(mode==1){
-					wxString mid=(GetDial(first)->TextTl!="" && GetDial(i+1)->TextTl!="")?"\\N":"";
-					CopyDial(first)->TextTl << mid << GetDial(i+1)->TextTl;
-					if(i!=first){CopyDial(i)->TextTl = GetDial(i+mrow)->TextTl;}
+					wxString mid=(GetDialogue(first)->TextTl!="" && GetDialogue(i+1)->TextTl!="")?"\\N":"";
+					CopyDial(first)->TextTl << mid << GetDialogue(i+1)->TextTl;
+					if(i!=first){CopyDial(i)->TextTl = GetDialogue(i+mrow)->TextTl;}
 				}else if(i+mrow<GetCount()){
-					CopyDial(i)->TextTl = GetDial(i+mrow)->TextTl;
+					CopyDial(i)->TextTl = GetDialogue(i+mrow)->TextTl;
 				}
 			}
 			else if(i<GetCount()-mrow){
-				CopyDial(i)->TextTl = GetDial(i+mrow)->TextTl;}
-			else if(GetDial(i)->Text!=""){/*wxLogStatus("onlytl mrow--");*/mrow--;}
+				CopyDial(i)->TextTl = GetDialogue(i+mrow)->TextTl;}
+			else if(GetDialogue(i)->Text!=""){/*wxLogStatus("onlytl mrow--");*/mrow--;}
 
 		}
 		
@@ -657,13 +655,13 @@ void SubsGrid::MoveTextTL(char mode)
 				if(mode==3){
 					CopyDial(i)->TextTl="";}
 				else if(mode==4||mode==5){
-					if(mode==4){if(onlyo){CopyDial(first+mrow)->Start = GetDial(first)->Start; onlyo=false;}
-					CopyDial(first+mrow)->Text.Prepend(GetDial(i)->Text+"\\N");mrow--;}
+					if(mode==4){if(onlyo){CopyDial(first+mrow)->Start = GetDialogue(first)->Start; onlyo=false;}
+					CopyDial(first+mrow)->Text.Prepend(GetDialogue(i)->Text+"\\N");mrow--;}
 					DeleteRow(i);
 				}
 			}
 			else{
-				CopyDial(i)->TextTl = GetDial(i-mrow)->TextTl;}
+				CopyDial(i)->TextTl = GetDialogue(i-mrow)->TextTl;}
 
 
 		}
@@ -809,7 +807,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 	for(int i=0;i<GetCount();i++){
 		//zaczniemy od najłatwiejszego, marginesy
 
-		Dialogue *diall=GetDial(i);
+		Dialogue *diall=GetDialogue(i);
 		if(diall->IsComment){continue;}
 		diall=diall->Copy();
 		bool marginChanged=false;
@@ -941,7 +939,7 @@ void SubsGrid::OnMakeContinous(int idd)
 		for(size_t i=0; i < sels.size(); i++)
 		{
 			if(sels[i]<1){continue;}
-			CopyDial(sels[i])->Start = GetDial(sels[i]-1)->End;
+			CopyDial(sels[i])->Start = GetDialogue(sels[i]-1)->End;
 		}
 	}
 	else
@@ -950,7 +948,7 @@ void SubsGrid::OnMakeContinous(int idd)
 		for(size_t i=0; i < sels.size(); i++)
 		{
 			if(sels[i]>=dialsize){continue;}
-			CopyDial(sels[i])->End = GetDial(sels[i]+1)->Start;
+			CopyDial(sels[i])->End = GetDialogue(sels[i]+1)->Start;
 		}
 	}
 	SetModified(GRID_MAKE_LINES_CONTINUES);
@@ -965,8 +963,8 @@ void SubsGrid::ConnectAcc(int id)
 void SubsGrid::OnSetFPSFromVideo()
 {
 	if(selarr.size()!=2){return;}
-	Dialogue *first=GetDial(selarr[0]);
-	Dialogue *second=GetDial(selarr[1]);
+	Dialogue *first=GetDialogue(selarr[0]);
+	Dialogue *second=GetDialogue(selarr[1]);
 	int firstTime=first->Start.mstime;
 	int secondTime=second->Start.mstime;
 	int videoTime=Notebook::GetTab()->Video->Tell();
@@ -1050,11 +1048,6 @@ void SubsGrid::OnSetNewFPS()
 		}
 		SetModified(GRID_SET_CUSTOM_FPS);
 		if(subsFormat>TMP){RefreshColumns(START|END);}else{Refresh(false);}
-		if (form == ASS){
-			Dialogue().GetRaw(txt);
-		}
-		else{
-		}
 	}
 }
 

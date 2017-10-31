@@ -278,6 +278,26 @@ Dialogue *SubsFile::CopyDial(int i, bool push, bool keepstate)
 	if(push){subs->dials[i]=dial;}
 	return dial;
 }
+
+Dialogue *SubsFile::GetDialogue(int i)
+{
+	int Id = (*IdConverter)[i];
+	if (Id < 0){
+		Id = (*IdConverter)[IdConverter->size() - 1];
+		wxLogStatus("przekroczone drzewko %i, %i", i);
+	}
+	return subs->dials[Id];
+}
+
+Dialogue *&SubsFile::operator[](int i)
+{
+	int Id = (*IdConverter)[i];
+	if (Id < 0){
+		Id = (*IdConverter)[IdConverter->size() - 1];
+		wxLogStatus("przekroczone drzewko %i, %i", i);
+	}
+	return subs->dials[Id];
+}
 	
 Styles *SubsFile::CopyStyle(int i, bool push)
 {

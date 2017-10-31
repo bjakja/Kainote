@@ -338,7 +338,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	if(Options.GetInt(GridSaveAfterCharacterCount)>1 && rowChanged && save){
 		Send(EDITBOX_LINE_EDITION, false);
 	}
-	Dialogue *prevDial = grid->GetDial(ebrow);
+	Dialogue *prevDial = grid->GetDialogue(ebrow);
 	if(prevDial && prevDial->Start.mstime > prevDial->End.mstime){
 		prevDial->End = prevDial->Start;
 		grid->Refresh(false);
@@ -355,7 +355,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	ebrow=Row;
 	grid->markedLine=Row;
 	wxDELETE(line);
-	line=grid->GetDial(ebrow)->Copy();
+	line=grid->GetDialogue(ebrow)->Copy();
 	Comment->SetValue(line->IsComment);
 	LayerEdit->SetInt(line->Layer);
 	StartEdit->SetTime(line->Start, false, 1);
@@ -420,7 +420,7 @@ done:
 			}
 		}else{
 			if(pan->Video->IsShown() || pan->Video->isFullscreen){
-				Dialogue *next=grid->GetDial(MIN(ebrow+1, grid->GetCount()-1));
+				Dialogue *next=grid->GetDialogue(MIN(ebrow+1, grid->GetCount()-1));
 				int ed=line->End.mstime, nst=next->Start.mstime;
 				int playend = (nst>ed && pas>2)? nst : ed;
 				pan->Video->PlayLine(line->Start.mstime, pan->Video->GetPlayEndTime(playend));
@@ -1559,7 +1559,7 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 			goto done;
 		}
 	}
-	if (splittedTags){ delete line; line = grid->GetDial(ebrow)->Copy(); }
+	if (splittedTags){ delete line; line = grid->GetDialogue(ebrow)->Copy(); }
 	splittedTags=false;
 	TextEdit->SetTextS((TextEditOrig->IsShown())? line->TextTl : line->Text , TextEdit->modified, true);
 	if(TextEditOrig->IsShown()){TextEditOrig->SetTextS(line->Text, TextEditOrig->modified, true);}
@@ -1586,7 +1586,7 @@ void EditBox::OnChangeTimeDisplay(wxCommandEvent& event)
 	bool frame = Frames->GetValue();
 	grid->ChangeTimeDisplay(frame);
 	wxDELETE(line);
-	line = grid->GetDial(ebrow)->Copy();
+	line = grid->GetDialogue(ebrow)->Copy();
 	StartEdit->ShowFrames(frame);
 	EndEdit->ShowFrames(frame);
 	DurEdit->ShowFrames(frame);
@@ -1651,7 +1651,7 @@ void EditBox::OnDoubtfulTl(wxCommandEvent& event)
 	}
 	wxArrayInt sels = grid->GetSels();
 	for(size_t i = 0; i<sels.size(); i++){
-		Dialogue *dial = grid->GetDial(sels[i]);
+		Dialogue *dial = grid->GetDialogue(sels[i]);
 		if(dial->State & 4){
 			dial->State ^= 4;
 		}else{
@@ -1670,7 +1670,7 @@ void EditBox::FindNextDoubtfulTl(wxCommandEvent& event)
 	if(!grid->hasTLMode){wxBell();return;}
 SeekDoubtful:
 	for(int i = CurrentDoubtful; i < grid->GetCount(); i++){
-		Dialogue *dial = grid->GetDial(i);
+		Dialogue *dial = grid->GetDialogue(i);
 		if((dial->State & 4) > 0){
 			SetLine(i);
 			grid->SelectRow(i);
@@ -1689,7 +1689,7 @@ void EditBox::FindNextUnTranslated(wxCommandEvent& event)
 	if(!grid->hasTLMode){wxBell();return;}
 SeekUntranslated:
 	for(int i = CurrentUntranslated; i < grid->GetCount(); i++){
-		Dialogue *dial = grid->GetDial(i);
+		Dialogue *dial = grid->GetDialogue(i);
 		if(dial->TextTl == ""/* && !dial->IsComment*/){
 			SetLine(i);
 			grid->SelectRow(i);

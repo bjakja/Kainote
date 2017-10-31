@@ -116,6 +116,8 @@ public:
 	void LoadVisibleDialogues();
 	void EndLoad(unsigned char editionType, int activeLine);
 	Dialogue *CopyDial(int i, bool push=true, bool keepstate=false);
+	Dialogue *GetDialogue(int i);
+	Dialogue *&operator[](int i);
 	Styles *CopyStyle(int i, bool push=true);
 	SInfo *CopySinfo(int i, bool push=true);
 	void GetURStatus(bool *_undo, bool *_redo);

@@ -155,7 +155,7 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 
 	for(int i=0;i < tab->Grid->GetCount();i++)
 	{
-		Dialogue *Dial=tab->Grid->GetDial(i);
+		Dialogue *Dial=tab->Grid->GetDialogue(i);
 
 		if(wrep==STYLE){
 			txt=Dial->Style;}

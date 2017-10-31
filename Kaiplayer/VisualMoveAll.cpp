@@ -233,7 +233,7 @@ void MoveAll::ChangeInLines(bool all)
 	
 	for(size_t i = 0; i< sels.size(); i++){
 		wxString txt;
-		Dialogue *Dial = tab->Grid->GetDial(sels[i]);
+		Dialogue *Dial = tab->Grid->GetDialogue(sels[i]);
 
 		if(skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){continue;}
 		bool istexttl=(tab->Grid->hasTLMode && Dial->TextTl!="");

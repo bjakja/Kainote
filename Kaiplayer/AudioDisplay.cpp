@@ -701,7 +701,7 @@ void AudioDisplay::DrawInactiveLines() {
 		shadeTo = grid->GetCount();
 	}
 	D3DXVECTOR2 v2[2];
-	Dialogue *ADial = grid->GetDial(line_n);
+	Dialogue *ADial = grid->GetDialogue(line_n);
 	if(!ADial){return;}
 	int aS = GetXAtMS(ADial->Start.mstime);
 	int aE = GetXAtMS(ADial->End.mstime);
@@ -709,7 +709,7 @@ void AudioDisplay::DrawInactiveLines() {
 	for (int j=shadeFrom;j<shadeTo;j++) {
 		if (j == line_n) continue;
 		if (j < 0 || j>= grid->GetCount() ) continue;
-		shade = grid->GetDial(j);
+		shade = grid->GetDialogue(j);
 
 
 		// Get coordinates
@@ -1221,7 +1221,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 
 	// Set default selection
 	int n = Edit->ebrow;
-	SetDialogue(grid->GetDial(n),n);
+	SetDialogue(grid->GetDialogue(n),n);
 }
 
 
@@ -1987,7 +1987,7 @@ int AudioDisplay::GetBoundarySnap(int ms,int rangeX,bool shiftHeld,bool start, b
 
 		for (int j=shadeFrom;j<shadeTo;j++) {
 			if (j == line_n) continue;
-			shade = grid->GetDial(j);
+			shade = grid->GetDialogue(j);
 
 
 			// Get coordinates

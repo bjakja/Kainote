@@ -475,11 +475,11 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}else if(id==SetVideoAtStart){
 		int fsel=tab->Grid->FirstSel();
 		if(fsel<0){return;}
-		tab->Video->Seek(MAX(0,tab->Grid->GetDial(fsel)->Start.mstime),true);
+		tab->Video->Seek(MAX(0,tab->Grid->GetDialogue(fsel)->Start.mstime),true);
 	}else if(id==SetVideoAtEnd){
 		int fsel=tab->Grid->FirstSel();
 		if(fsel<0){return;}
-		tab->Video->Seek(MAX(0,tab->Grid->GetDial(fsel)->End.mstime),false);
+		tab->Video->Seek(MAX(0,tab->Grid->GetDialogue(fsel)->End.mstime),false);
 	}else if(id==ID_MOVE){
 		tab->CTime->OnOKClick(event);
 	}
@@ -1305,7 +1305,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 		if (Options.GetBool(AutoSelectLinesFromLastTab)){
 			SubsGrid *old = Tabs->Page(Tabs->GetOldSelection())->Grid;
 			if (old->FirstSel() > -1){
-				cur->Grid->SelVideoLine(old->GetDial(old->FirstSel())->Start.mstime);
+				cur->Grid->SelVideoLine(old->GetDialogue(old->FirstSel())->Start.mstime);
 			}
 		}
 	}
@@ -1655,7 +1655,7 @@ void kainoteFrame::OnAudioSnap(wxCommandEvent& event)
 
 		for (int j=shadeFrom;j<shadeTo;j++) {
 			if (j == tab->Edit->ebrow) continue;
-			shade = tab->Grid->GetDial(j);
+			shade = tab->Grid->GetDialogue(j);
 
 			int start = shade->Start.mstime;
 			int end = shade->End.mstime;

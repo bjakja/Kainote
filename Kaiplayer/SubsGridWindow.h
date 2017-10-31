@@ -63,6 +63,7 @@ protected:
 	void OnSize(wxSizeEvent& event);
 	void OnEraseBackground(wxEraseEvent &event){};
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } holding = false; };
+	Dialogue * GetCheckedDialogue(int i);
 
 	int GridHeight=0;
 	int GridWidth[13];
@@ -90,6 +91,11 @@ protected:
 	wxFont font;
 private:
 	virtual void ContextMenu(const wxPoint &pos, bool dummy = false){};
+	virtual Dialogue * GetDialogue(int i){ return NULL; };
+	virtual int GetCount(){ return 0; };
+	virtual int FindStyle(wxString name, int *multiplication = NULL){ return 0; };
+	virtual void MoveRows(int step, bool sav = false){};
+	virtual void SetModified(unsigned char editionType, bool redit = true, bool dummy = false, int SetEditBoxLine = -1, bool Scroll = true){};
 };
 
 enum{

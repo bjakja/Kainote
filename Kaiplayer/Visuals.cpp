@@ -600,7 +600,7 @@ void Visuals::SetVisual(bool dummy, int type)
 		int moveLength=0;
 		for(size_t i = 0; i < sels.size(); i++){
 		
-			Dialogue *Dial = grid->GetDial(sels[i]);
+			Dialogue *Dial = grid->GetDialogue(sels[i]);
 			if(skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){continue;}
 		
 			bool istxttl = (tab->Grid->hasTLMode && Dial->TextTl!="");

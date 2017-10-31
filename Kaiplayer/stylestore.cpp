@@ -378,7 +378,7 @@ bool StyleStore::changestyle(Styles *cstyl)
 		int res=KaiMessageBox(_("Nazwa stylu została zmieniona, czy chcesz zmienić ją także w napisach?"), _("Potwierdzenie"), wxYES_NO);
 		if(res==wxYES){
 			for(int i=0; i<grid->GetCount(); i++){
-				if(grid->GetDial(i)->Style==oldname)
+				if(grid->GetDialogue(i)->Style==oldname)
 				{
 					grid->CopyDial(i)->Style=cstyl->Name;
 				}
@@ -588,7 +588,7 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 	wxString tlStyle=grid->GetSInfo("TLMode Style");
 
 	for(int i = 0; i < grid->GetCount(); i++){
-		lineStyles[grid->GetDial(i)->Style]=true;
+		lineStyles[grid->GetDialogue(i)->Style]=true;
 	}
 
 	int j = 0;
@@ -633,7 +633,7 @@ void StyleStore::StyleonVideo(Styles *styl, bool fullskreen)
 		int idr=-1;
 		for(int i =0;i<grid->GetCount();i++)
 		{
-			Dialogue *dial=grid->GetDial(i);
+			Dialogue *dial=grid->GetDialogue(i);
 			if(!dial->IsComment && (dial->Text!=""||dial->TextTl!="") && dial->Style==styl->Name){
 				if(time>=dial->Start.mstime && time <= dial->End.mstime){
 					pan->Edit->SetLine(i);
@@ -681,7 +681,7 @@ void StyleStore::StyleonVideo(Styles *styl, bool fullskreen)
 		tmpdial.GetRaw(txt);
 	}
 	else{
-		grid->GetDial(wl)->GetRaw(txt);
+		grid->GetDialogue(wl)->GetRaw(txt);
 
 	}
 	//grid->SaveFile(Kai->GetTab()->tnppath,false);
@@ -692,7 +692,7 @@ void StyleStore::StyleonVideo(Styles *styl, bool fullskreen)
 	}
 	//if(!fullskreen&&pan->Video->isFullscreen){pan->Video->SetFullskreen();this->SetWindowStyle(GetWindowStyle()|~wxSTAY_ON_TOP);}
 	if(wl>=0){
-		pan->Video->Seek(grid->GetDial(wl)->Start.mstime+5);
+		pan->Video->Seek(grid->GetDialogue(wl)->Start.mstime+5);
 	}else{
 		pan->Video->Render();
 	}

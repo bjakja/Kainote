@@ -54,8 +54,6 @@ public:
 	
 	
 	void DelStyle(int i);
-	
-	Dialogue *GetDialCor(int ii);
 	void ChangeTimes(bool byFrame = false);
 	
 	void SortIt(short what,bool all=true);
@@ -88,9 +86,8 @@ public:
 	void NextLine(int dir=1);
 	bool IsNumber(const wxString &txt);
 	Dialogue *CopyDial(int i, bool push=true);
-	Dialogue *GetDial(int i);
+	Dialogue *GetDialogue(int i);
 	wxString *GetVisible(bool *visible=0, wxPoint *point = NULL, wxArrayInt *selected = NULL);
-	//wxString *GetVisibleSubs();
 	void RebuildActorEffectLists();
 	
 	void DummyUndo(int newIter);

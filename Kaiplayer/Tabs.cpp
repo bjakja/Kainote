@@ -1019,10 +1019,10 @@ void Notebook::SubsComparison()
 	for(int i=0; i<firstSize; i++){
 
 		int j=lastJ;
-		Dialogue *dial1=G1->GetDial(i);
+		Dialogue *dial1=G1->GetDialogue(i);
 		while(j<secondSize){
 
-			Dialogue *dial2=G2->GetDial(j);
+			Dialogue *dial2=G2->GetDialogue(j);
 			if(dial1->Start == dial2->Start && dial1->End == dial2->End){
 				CompareTexts((G1->hasTLMode && dial1->TextTl != "")? dial1->TextTl : dial1->Text, (G2->hasTLMode && dial2->TextTl != "")? dial2->TextTl : dial2->Text, G1->Comparison->at(i), G2->Comparison->at(j));
 				lastJ=j+1;
