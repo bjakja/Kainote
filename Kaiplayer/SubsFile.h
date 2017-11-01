@@ -114,10 +114,12 @@ public:
 	void DummyUndo();
 	void DummyUndo(int newIter);
 	void LoadVisibleDialogues();
+	void ReloadVisibleDialogues();
 	void EndLoad(unsigned char editionType, int activeLine);
 	Dialogue *CopyDial(int i, bool push=true, bool keepstate=false);
 	Dialogue *GetDialogue(int i);
 	Dialogue *&operator[](int i);
+	void DeleteDialogues(int from, int to);
 	Styles *CopyStyle(int i, bool push=true);
 	SInfo *CopySinfo(int i, bool push=true);
 	void GetURStatus(bool *_undo, bool *_redo);

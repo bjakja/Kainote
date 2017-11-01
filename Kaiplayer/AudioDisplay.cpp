@@ -51,7 +51,7 @@
 
 #include "ColorSpace.h"
 #include "Hotkeys.h"
-#include "Grid.h"
+#include "SubsGrid.h"
 #include "kainoteApp.h"
 
 #define D3DCOLOR_FROM_WX(col) \

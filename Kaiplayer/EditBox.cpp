@@ -15,7 +15,7 @@
 
 
 #include "EditBox.h"
-#include "Grid.h"
+#include "SubsGrid.h"
 #include "KainoteApp.h"
 #include <wx/regex.h>
 #include <wx/tglbtn.h>

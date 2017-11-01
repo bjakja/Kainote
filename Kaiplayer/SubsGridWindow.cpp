@@ -21,15 +21,33 @@
 #include <wx/regex.h>
 
 SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style)
-	:KaiScrolledWindow(parent,id,pos,size,style)
+	:SubsGridBase(parent, id, pos, size, style)
 {
 	visibleColumns = Options.GetInt(GridHideCollums);
 	hideOverrideTags = Options.GetBool(GridHideTags);
-	file = new SubsFile();
-
+	bmp = NULL;
 	SetStyle();
 	AdjustWidths();
-	SetFocus();
+	//SetFocus();
+	Bind(wxEVT_PAINT, &SubsGridWindow::OnPaint, this);
+	Bind(wxEVT_SIZE, &SubsGridWindow::OnSize, this);
+	Bind(wxEVT_KEY_DOWN, &SubsGridWindow::OnKeyPress, this);
+	Bind(wxEVT_TIMER, &SubsGridWindow::OnBackupTimer, this, ID_AUTIMER);
+	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
+	Bind(wxEVT_MOUSE_CAPTURE_LOST, &SubsGridWindow::OnLostCapture, this);
+	Bind(wxEVT_SCROLLWIN_THUMBTRACK, &SubsGridWindow::OnScroll, this);
+	Bind(wxEVT_MOUSEWHEEL, &SubsGridWindow::OnMouseEvent, this);
+	Bind(wxEVT_MOTION, &SubsGridWindow::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_DOWN, &SubsGridWindow::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_UP, &SubsGridWindow::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_DCLICK, &SubsGridWindow::OnMouseEvent, this);
+	Bind(wxEVT_MIDDLE_DOWN, &SubsGridWindow::OnMouseEvent, this);
+	Bind(wxEVT_RIGHT_DOWN, &SubsGridWindow::OnMouseEvent, this);
+}
+
+SubsGridWindow::~SubsGridWindow()
+{
+	if (bmp){ delete bmp; bmp = NULL; }
 }
 
 void SubsGridWindow::SetStyle()
@@ -411,7 +429,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 
 	int maxx = GetCount();
 
-	dc.GetTextExtent(wxString::Format("%i", GetCount()), &fw, &fh, NULL, NULL, &font);
+	dc.GetTextExtent(wxString::Format("%i", maxx), &fw, &fh, NULL, NULL, &font);
 	GridWidth[0] = fw + 10;
 	Dialogue *ndial;
 	for (int i = 0; i<maxx; i++){
@@ -1076,13 +1094,6 @@ void SubsGridWindow::ChangeTimeDisplay(bool frame)
 
 }
 
-int SubsGridWindow::FirstSel()
-{
-	if (!Selections.empty()){
-		return *Selections.begin();
-	}
-	return -1;
-}
 
 void SubsGridWindow::HideOverrideTags()
 {
@@ -1135,6 +1146,36 @@ int SubsGridWindow::CalcChars(const wxString &txt, wxString *lines, bool *bad)
 	return chars;
 }
 
+void SubsGridWindow::SelVideoLine(int curtime)
+{
+	if (Kai->GetTab()->Video->GetState() == None && curtime < 0){ return; }
+
+	int time = (curtime < 0) ? Kai->GetTab()->Video->Tell() : curtime;
+	int prevtime = 0;
+	int durtime = (curtime < 0) ? Kai->GetTab()->Video->GetDuration() : 36000000;
+	int idr = 0, ip = 0;
+	//wxLogMessage("time %i, durtime %i",time,durtime);
+	for (int i = 0; i < GetCount(); i++)
+	{
+		Dialogue *dial = GetDialogue(i);
+		if (!dial->IsComment && (dial->Text != "" || dial->TextTl != "")){
+			if (time >= dial->Start.mstime&&time <= dial->End.mstime)
+			{
+				Edit->SetLine(i); SelectRow(i); ScrollTo(i - 4);
+				break;
+			}
+			if (dial->Start.mstime > prevtime && dial->Start.mstime < time){ prevtime = dial->Start.mstime; ip = i; }
+			if (dial->Start.mstime < durtime && dial->Start.mstime > time){ durtime = dial->Start.mstime; idr = i; }
+
+		}
+		if (i == GetCount() - 1){
+			if ((time - prevtime) > (durtime - time)){ Edit->SetLine(idr); SelectRow(idr); ScrollTo(idr - 4); }
+			else{ Edit->SetLine(ip); SelectRow(ip); ScrollTo(ip - 4); }
+		}
+	}
+
+}
+
 Dialogue *SubsGridWindow::GetCheckedDialogue(int rw)
 {
 	Dialogue *dial = file->GetDialogue(rw);
@@ -1146,3 +1187,15 @@ Dialogue *SubsGridWindow::GetCheckedDialogue(int rw)
 	}
 	return dial;
 }
+
+//BEGIN_EVENT_TABLE(SubsGridWindow, SubsGridBase)
+//EVT_SIZE(SubsGridWindow::OnSize)
+//EVT_SCROLLWIN(SubsGridWindow::OnScroll)
+//EVT_MOUSE_EVENTS(SubsGridWindow::OnMouseEvent)
+//EVT_KEY_DOWN(SubsGridWindow::OnKeyPress)
+//EVT_TIMER(ID_AUTIMER, SubsGridWindow::OnBackupTimer)
+//EVT_ERASE_BACKGROUND(SubsGridWindow::OnEraseBackground)
+//EVT_MOUSE_CAPTURE_LOST(SubsGridWindow::OnLostCapture)
+//END_EVENT_TABLE()
+//EVT_PAINT(SubsGridWindow::OnPaint)
+//

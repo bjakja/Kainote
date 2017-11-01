@@ -826,10 +826,10 @@ void OptionsDialog::SetOptions(bool saveall)
 	}
 	if(fontmod){
 		Kai->GetTab()->Grid->SetStyle();
-		Kai->GetTab()->Grid->RepaintWindow();
+		Kai->GetTab()->Grid->RefreshColumns();
 		if(Kai->Tabs->split){
 			Kai->Tabs->GetSecondPage()->Grid->SetStyle();
-			Kai->Tabs->GetSecondPage()->Grid->RepaintWindow();
+			Kai->Tabs->GetSecondPage()->Grid->RefreshColumns();
 		}
 	}
 	if(colmod){

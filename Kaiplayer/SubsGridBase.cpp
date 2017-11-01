@@ -28,7 +28,7 @@
 #include <wx/regex.h>
 #include <wx/ffile.h>
 #include "KaiMessageBox.h"
-#include <thread>
+//#include <thread>
 
 bool sortstart(Dialogue *i,Dialogue *j){ 
 	if(i->Start.mstime!=j->Start.mstime){
@@ -80,36 +80,29 @@ bool SubsGridBase::IsNumber(const wxString &test) {
 
 
 SubsGridBase::SubsGridBase(wxWindow *parent, const long int id,const wxPoint& pos,const wxSize& size, long style)
-	: SubsGridWindow(parent, id, pos, size, style | wxVERTICAL)
+	: KaiScrolledWindow(parent, id, pos, size, style | wxVERTICAL)
 {
+	file = new SubsFile();
 	Modified=false;
-	first=true;
 	makebackup=true;
-	extendRow=-1;
-	lastRow=0;
-	lastsel=-1;
 	ismenushown=false;
 	showFrames=false;
 	Comparison=NULL;
-	bmp=NULL;
 	numsave=0;
 	
-
-
 	LoadDefault();
-	timer.SetOwner(this,ID_AUTIMER);
-	nullifyTimer.SetOwner(this,27890);
-	Bind(wxEVT_TIMER,[=](wxTimerEvent &evt){
-		Kai->SetStatusText("",0);
-	},27890);
-	
+	timer.SetOwner(this, ID_AUTIMER);
+	//reset autosave on statusbar
+	nullifyTimer.SetOwner(this, 27890);
+	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
+		Kai->SetStatusText("", 0);
+	}, 27890);
 }
 
 
 SubsGridBase::~SubsGridBase()
 {
 	Clearing();
-	if(bmp){delete bmp;bmp=NULL;}
 }
 
 
@@ -128,9 +121,11 @@ void SubsGridBase::Clearing()
 }
 void SubsGridBase::AddLine(Dialogue *line)
 {
-	//if(line->NonDialogue){delete line; return;}
 	file->subs->ddials.push_back(line);
 	file->subs->dials.push_back(line);
+	if (line->isVisible){
+		file->IdConverter->insert(file->subs->dials.size() - 1);
+	}
 }
 
 void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, int wline, long cells, bool selline, bool dummy)
@@ -170,13 +165,6 @@ void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, int wl
 	Refresh(false);
 	if(selline){
 		Edit->SetLine(lastRow,true,true,false,true);
-		/*VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
-		if(vb->vToolbar->videoSeekAfter->GetSelection()==1 && vb->vToolbar->videoPlayAfter->GetSelection()<2){
-			if(vb->GetState()!=None){
-				if(vb->GetState()==Playing){vb->Pause();}
-				vb->Seek(Edit->line->Start.mstime);
-			}
-		}*/
 	}
 	SetModified(editionType,false,dummy);
 
@@ -231,7 +219,7 @@ void SubsGridBase::Convert(char type)
 	wxString stname=Options.GetString(ConvertStyle);
 	int endt=Options.GetInt(ConvertTimePerLetter);
 	wxString prefix=Options.GetString(ConvertASSTagsOnLineStart);
-	//KaiMessageBox("pętla");
+	
 	int i=0;
 	while(i<GetCount())
 	{
@@ -286,9 +274,6 @@ void SubsGridBase::Convert(char type)
 			if(i->End.mstime!=j->End.mstime){
 				return (i->End.mstime<j->End.mstime);
 			}
-			//if(i->Style!=j->Style){
-			//return (i->Style.CmpNoCase(j->Style)<0);
-			//}
 			return (i->Text.CmpNoCase(j->Text)<0);
 		});
 		Dialogue *lastDialogue = GetDialogue(0);
@@ -751,6 +736,7 @@ void SubsGridBase::SortIt(short what, bool all)
 		selected.clear();
 	}
 	file->edited=true;
+	file->ReloadVisibleDialogues();
 	SpellErrors.clear();
 	SetModified(GRID_SORT_LINES);
 	Refresh(false);
@@ -760,8 +746,7 @@ void SubsGridBase::SortIt(short what, bool all)
 void SubsGridBase::DeleteRow(int rw, int len)
 {
 	int rwlen=rw+len;
-	file->edited=true;
-	file->subs->dials.erase(file->subs->dials.begin()+rw, file->subs->dials.begin()+rwlen);
+	file->DeleteDialogues(rw, rwlen);
 	if((int)SpellErrors.size()>rwlen){ SpellErrors.erase(SpellErrors.begin()+rw, SpellErrors.begin()+rwlen);}
 	else{SpellErrors.clear();}
 }
@@ -774,6 +759,7 @@ void SubsGridBase::DeleteRows()
 	{
 		file->subs->dials.erase(file->subs->dials.begin()+sels[i]);
 		SpellErrors.erase(SpellErrors.begin()+sels[i]);
+		file->IdConverter->deleteItemByKey(i);
 	}
 	if(GetCount()<1){AddLine(new Dialogue());}
 	if(sels.size()>0){file->edited=true;}
@@ -950,6 +936,14 @@ void SubsGridBase::DummyUndo(int newIter)
 	}
 }
 
+int SubsGridBase::FirstSel()
+{
+	if (!Selections.empty()){
+		return *Selections.begin();
+	}
+	return -1;
+}
+
 wxArrayInt SubsGridBase::GetSels(bool deselect)
 {
 	wxArrayInt sels;
@@ -966,10 +960,13 @@ wxArrayInt SubsGridBase::GetSels(bool deselect)
 //bo brak dodania gdy trzeba to wycieki pamięci,
 //a podwójne dodanie to krasz przy niszczeniu obiektu.
 void SubsGridBase::InsertRows(int Row, 
-						  std::vector<Dialogue *> RowsTable,
+						  const std::vector<Dialogue *> &RowsTable,
 						  bool AddToDestroy)
 {
 	file->subs->dials.insert(file->subs->dials.begin()+Row, RowsTable.begin(), RowsTable.end());
+	for (int i = 0; i < RowsTable.size(); i++){
+		if (RowsTable[i]->isVisible){ file->IdConverter->insert(i + Row); }
+	}
 	wxArrayInt emptyarray;
 	SpellErrors.insert(SpellErrors.begin()+Row,RowsTable.size(),emptyarray);
 	if(AddToDestroy){file->subs->ddials.insert(file->subs->ddials.end(), RowsTable.begin(), RowsTable.end());}
@@ -981,6 +978,9 @@ void SubsGridBase::InsertRows(int Row,
 void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save)
 {
 	file->subs->dials.insert(file->subs->dials.begin()+Row,NumRows,Dialog);
+	for (int i = Row; i < Row + NumRows; i++){
+		if (file->subs->dials[i]->isVisible){ file->IdConverter->insert(i); }
+	}
 	wxArrayInt emptyarray;
 	SpellErrors.insert(SpellErrors.begin()+Row,NumRows,emptyarray);
 	if(AddToDestroy){file->subs->ddials.push_back(Dialog);}
@@ -1371,32 +1371,6 @@ bool SubsGridBase::SetTlMode(bool mode)
 	return false;
 }
 
-void SubsGridBase::SelVideoLine(int curtime)
-{
-	if(Kai->GetTab()->Video->GetState()==None && curtime<0){return;}
-
-	int time=(curtime<0)? Kai->GetTab()->Video->Tell() : curtime;
-	int prevtime=0;
-	int durtime=(curtime<0)? Kai->GetTab()->Video->GetDuration() : 36000000;
-	int idr=0,ip=0;
-	//wxLogMessage("time %i, durtime %i",time,durtime);
-	for(int i =0;i<GetCount();i++)
-	{
-		Dialogue *dial = GetDialogue(i);
-		if(!dial->IsComment && (dial->Text!="" || dial->TextTl!="")){
-			if(time>= dial->Start.mstime&&time<=dial->End.mstime)
-			{Edit->SetLine(i);SelectRow(i);ScrollTo(i-4);
-			break;}
-			if(dial->Start.mstime > prevtime && dial->Start.mstime < time){prevtime = dial->Start.mstime;ip=i;}
-			if(dial->Start.mstime < durtime && dial->Start.mstime > time){durtime = dial->Start.mstime;idr=i;}
-
-		}
-		if(i==GetCount()-1){if((time-prevtime)>(durtime-time)){Edit->SetLine(idr);SelectRow(idr);ScrollTo(idr-4);}
-		else{Edit->SetLine(ip);SelectRow(ip);ScrollTo(ip-4);}}
-	}
-
-}
-
 void SubsGridBase::NextLine(int dir)
 {
 	if(Edit->ABox && Edit->ABox->audioDisplay->hold!=0){return;}
@@ -1460,7 +1434,9 @@ Dialogue *SubsGridBase::CopyDial(int i, bool push)
 
 Dialogue *SubsGridBase::GetDialogue(int i)
 {
-	if(i >= (int)file->subs->dials.size()){return NULL;}
+	if(i >= (int)file->subs->dials.size()){
+		return NULL;
+	}
 	return file->GetDialogue(i);
 }
 
@@ -1644,14 +1620,5 @@ void SubsGridBase::RebuildActorEffectLists()
 
 
 
-BEGIN_EVENT_TABLE(SubsGridBase,KaiScrolledWindow)
-	EVT_PAINT(SubsGridBase::OnPaint)
-	EVT_SIZE(SubsGridBase::OnSize)
-	EVT_SCROLLWIN(SubsGridBase::OnScroll)
-	EVT_MOUSE_EVENTS(SubsGridBase::OnMouseEvent)
-	EVT_KEY_DOWN(SubsGridBase::OnKeyPress)
-	EVT_TIMER(ID_AUTIMER,SubsGridBase::OnBackupTimer)
-	EVT_ERASE_BACKGROUND(SubsGridBase::OnEraseBackground)
-	EVT_MOUSE_CAPTURE_LOST(SubsGridBase::OnLostCapture)
-END_EVENT_TABLE()
+
 

@@ -176,6 +176,7 @@ SubsFile::~SubsFile()
 		delete (*it);
 	}
     undo.clear();
+	delete IdConverter;
 }
 
 
@@ -206,6 +207,7 @@ void SubsFile::Redo()
 		subs->Clear();
 		delete subs;
 		subs=undo[iter]->Copy();
+		ReloadVisibleDialogues();
 	}
 }
 
@@ -216,6 +218,7 @@ void SubsFile::Undo()
 		subs->Clear();
 		delete subs;
 		subs=undo[iter]->Copy();
+		ReloadVisibleDialogues();
 	}
 }
 
@@ -226,6 +229,7 @@ bool SubsFile::SetHistory(int _iter)
 		subs->Clear();
 		delete subs;
 		subs=undo[iter]->Copy();
+		ReloadVisibleDialogues();
 		return false;
 	}
 	return true;
@@ -236,6 +240,7 @@ void SubsFile::DummyUndo()
 	subs->Clear();
 	delete subs;
 	subs=undo[iter]->Copy();
+	ReloadVisibleDialogues();
 }
 
 void SubsFile::DummyUndo(int newIter)
@@ -244,6 +249,7 @@ void SubsFile::DummyUndo(int newIter)
 	subs->Clear();
 	delete subs;
 	subs=undo[newIter]->Copy();
+	ReloadVisibleDialogues();
 	iter = newIter;
 	if(iter < undo.size() - 1){
 		for(std::vector<File*>::iterator it = undo.begin()+iter+1; it != undo.end(); it++)
@@ -284,7 +290,7 @@ Dialogue *SubsFile::GetDialogue(int i)
 	int Id = (*IdConverter)[i];
 	if (Id < 0){
 		Id = (*IdConverter)[IdConverter->size() - 1];
-		wxLogStatus("przekroczone drzewko %i, %i", i);
+		wxLogStatus("przekroczone drzewko %i, %i", i, IdConverter->size());
 	}
 	return subs->dials[Id];
 }
@@ -294,9 +300,18 @@ Dialogue *&SubsFile::operator[](int i)
 	int Id = (*IdConverter)[i];
 	if (Id < 0){
 		Id = (*IdConverter)[IdConverter->size() - 1];
-		wxLogStatus("przekroczone drzewko %i, %i", i);
+		wxLogStatus("przekroczone drzewko %i, %i", i, IdConverter->size());
 	}
 	return subs->dials[Id];
+}
+
+void SubsFile::DeleteDialogues(int from, int to)
+{
+	edited = true;
+	subs->dials.erase(subs->dials.begin() + from, subs->dials.begin() + to);
+	for (int i = from; i <= to; i++){
+		IdConverter->deleteItemByKey(i);
+	}
 }
 	
 Styles *SubsFile::CopyStyle(int i, bool push)
@@ -321,6 +336,7 @@ void SubsFile::EndLoad(unsigned char editionType, int activeLine)
 	subs->etidtionType = editionType;
 	undo.push_back(subs);
 	subs=subs->Copy();
+	//LoadVisibleDialogues();
 }
 
 void SubsFile::RemoveFirst(int num)
@@ -351,6 +367,19 @@ void SubsFile::LoadVisibleDialogues()
 	for (size_t i = 0; i < subs->dials.size();i++){
 		if (subs->dials[i]->isVisible){
 			IdConverter->insert(i);
+		}
+	}
+}
+
+void SubsFile::ReloadVisibleDialogues()
+{
+	for (size_t i = 0; i < subs->dials.size(); i++){
+		bool visible = subs->dials[i]->isVisible;
+		if (visible && IdConverter->getElementByKey(i) == -1){
+			IdConverter->insert(i);
+		}
+		else if (!visible && IdConverter->getElementByKey(i) != -1){
+			IdConverter->deleteItemByKey(i);
 		}
 	}
 }

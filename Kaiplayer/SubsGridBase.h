@@ -18,12 +18,17 @@
 #include <wx/wx.h>
 
 #include "Styles.h"
-#include "SubsGridWindow.h"
+#include "SubsDialogue.h"
+#include "SubsFile.h"
 
-//class EditBox;
-//class kainoteFrame;
+#include "KaiScrollbar.h"
+#include <vector>
+#include <set>
 
-class SubsGridBase : public SubsGridWindow
+class EditBox;
+class kainoteFrame;
+
+class SubsGridBase : public KaiScrolledWindow
 {
 	friend class SubsFile;
 public:
@@ -61,7 +66,7 @@ public:
 	void DeleteRow(int rw,int len=1);
 	void DeleteText();
 	void GetUndo(bool redo, int iter = -2);
-	void InsertRows(int Row, std::vector<Dialogue *> RowsTable, bool AddToDestroy=false);
+	void InsertRows(int Row, const std::vector<Dialogue *> &RowsTable, bool AddToDestroy=false);
 	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy=true, bool Save=false);
 	void SetSubsForm(wxString ext="");
 	void AddSInfo(const wxString &SI, wxString val="", bool save=true);
@@ -70,6 +75,7 @@ public:
 	wxString GetSInfos(bool tld=false);
 	wxString GetSInfo(const wxString &key, int *ii=0);
 	SInfo *GetSInfoP(const wxString &key, int *ii=0);
+	int FirstSel();
 	wxArrayInt GetSels(bool deselect=false);
 	void SwapRows(int frst, int scnd, bool sav=false);
 	void Loadfile(const wxString &str,const wxString &ext);
@@ -81,8 +87,6 @@ public:
 	void GetASSRes(int *x,int *y);
 	int SInfoSize();
 	int GetCount();
-
-	void SelVideoLine(int time=-1);
 	void NextLine(int dir=1);
 	bool IsNumber(const wxString &txt);
 	Dialogue *CopyDial(int i, bool push=true);
@@ -92,26 +96,60 @@ public:
 	
 	void DummyUndo(int newIter);
 	
-
-	bool makebackup;
-	
 	
 	SubsGridBase(wxWindow *parent, const long int id ,const wxPoint& pos,const wxSize& size, long style);
 	virtual ~SubsGridBase();
 
-	
+	bool hasTLMode = false;
+	bool showOriginal = false;
+	bool makebackup;
+	char subsFormat = ASS;
+	char originalFormat = ASS;
+	int markedLine = 0;
+	bool showFrames = false;
+	std::vector<wxArrayInt> SpellErrors;
+	std::vector<wxArrayInt> *Comparison;
+	std::set<int> Selections;
+	SubsFile* file;
+	EditBox *Edit;
+private:
+	virtual void AdjustWidths(int cell = 8191){};
+	virtual void RefreshColumns(int cell = 8191){};
 protected:
 	short numsave;
-	
-	void OnBackupTimer(wxTimerEvent &event);
-	
+	bool hideOverrideTags;
+	bool ismenushown = false;
+	bool first = false;
+	int visibleColumns;
+	int panelrows = 0;
+	int lastActiveLine = 0;
+	int lastRow = 0;
+	int scPos = 0;
+	int scHor = 0;
+	int GridHeight = 0;
+	kainoteFrame* Kai;
+	std::vector<bool> visibleLines;
 	wxTimer timer;
 	wxTimer nullifyTimer;
-	//HANDLE qtimer;
-
-	DECLARE_EVENT_TABLE()
+	void OnBackupTimer(wxTimerEvent &event);
+	
 };
 
 bool sortstart(Dialogue *i,Dialogue *j);
 
-
+enum{
+	LAYER = 1,
+	START = 2,
+	END = 4,
+	STYLE = 8,
+	ACTOR = 16,
+	MARGINL = 32,
+	MARGINR = 64,
+	MARGINV = 128,
+	EFFECT = 256,
+	CNZ = 512,
+	TXT = 1024,
+	TXTTL = 2048,
+	COMMENT = 4096,
+	ID_AUTIMER
+};

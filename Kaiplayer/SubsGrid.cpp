@@ -31,7 +31,7 @@
 #include "KaiMessageBox.h"
 
 SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-	:SubsGridBase(parent, id, pos, size, style)
+	:SubsGridWindow(parent, id, pos, size, style)
 {
 	Kai=kfparent;
 	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){

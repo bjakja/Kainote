@@ -194,11 +194,11 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 			&&((diall && !Dial->IsComment) || (commm && Dial->IsComment))){
 				bool select=(sopt==2)?false:true;
 				if(select){
-					tab->Grid->Selections[i]=select;
+					tab->Grid->Selections.insert(select);
 					allreps++;
 				}
 				else{
-					std::map<int,bool>::iterator it= tab->Grid->Selections.find(i);
+					std::set<int>::iterator it= tab->Grid->Selections.find(i);
 					if(it!=tab->Grid->Selections.end()){
 						tab->Grid->Selections.erase(it);
 						allreps++;
@@ -238,7 +238,7 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 	int wset=(fsel<0)? tab->Edit->ebrow : fsel;
 	tab->Edit->SetLine(wset);
 	tab->Grid->SetModified(SELECT_LINES, false);
-	tab->Grid->RepaintWindow();
+	tab->Grid->RefreshColumns();
 	wxString messagetxt= (sopt==0)? wxString::Format(_("Zaznaczono %i linijek."), allreps) :
 		(sopt==1)? wxString::Format(_("Dodano do zaznaczenia %i linijek."), allreps) : 
 		wxString::Format(_("Odznaczono %i linijek."), allreps);

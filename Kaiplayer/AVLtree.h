@@ -59,8 +59,8 @@ class AVLtree
 
         class func{
             public:
-            virtual void operator()(Node *node) const;
-            virtual void operator()(Node *node, int i) const;
+				virtual void operator()(Node *node) const{};
+				virtual void operator()(Node *node, int i) const{};
         };
 
         class changeIndex : public func{

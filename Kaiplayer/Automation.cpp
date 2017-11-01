@@ -314,7 +314,7 @@ namespace Auto{
 			lua_pushnil(L);
 		else {
 			lua_createtable(L, 0, 14);
-#define PUSH_FIELD(name, fieldname) set_field(L, #name, c->Grid1->GetSInfo(#name))
+#define PUSH_FIELD(name, fieldname) set_field(L, #name, c->Grid->GetSInfo(#name))
 			PUSH_FIELD(automation_scripts, "Automation Scripts");
 			PUSH_FIELD(export_filters, "");
 			PUSH_FIELD(export_encoding, "");
@@ -820,7 +820,7 @@ namespace Auto{
 		//wxLogStatus("idx %i, %i", active_idx, c->Edit->ebrow);
 		c->Grid->SpellErrors.clear();
 		c->Grid->SetModified(AUTOMATION_SCRIPT, true, false, active_idx);
-		c->Grid->RepaintWindow();	
+		c->Grid->RefreshColumns();	
 		//stackcheck.check_stack(2);
 		lua_pop(L, 1);
 
@@ -835,7 +835,7 @@ namespace Auto{
 					throw LuaForEachBreak();
 				}
 
-				c->Grid->Selections[cur]=true;
+				c->Grid->Selections.insert(cur);
 			});
 
 			/*AssDialogue *new_active = c->selectionController->GetActiveLine();

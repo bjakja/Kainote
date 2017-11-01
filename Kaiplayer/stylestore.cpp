@@ -563,7 +563,7 @@ void StyleStore::OnStoreNew(wxCommandEvent& event)
 
 void StyleStore::OnAssNew(wxCommandEvent& event)
 {
-	Grid* grid = Notebook::GetTab()->Grid1;
+	SubsGrid* grid = Notebook::GetTab()->Grid;
 	//Styles nstyle=Styles();
 	bool gname=true;
 	int count=0;

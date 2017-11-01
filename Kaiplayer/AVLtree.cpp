@@ -15,19 +15,19 @@
 
 #include "AVLtree.h"
 #include <iostream>
-#include "vld.h"
 
 AVLtree::AVLtree()
 {
-
+	root = NULL;
 }
 
 AVLtree::~AVLtree()
 {
     del Del;
     rightToLeftOrder(root,Del);
-    delete root;
-    root=NULL;
+    //if(root)
+		//delete root;
+    //root=NULL;
 }
 
 int AVLtree::operator[](int id){

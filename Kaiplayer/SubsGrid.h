@@ -15,13 +15,13 @@
 
 #pragma once
 
-#include "SubsGridBase.h"
+#include "SubsGridWindow.h"
 
 
 class kainoteFrame;
 
 
-class SubsGrid: public SubsGridBase
+class SubsGrid: public SubsGridWindow
 {
 public:
 
