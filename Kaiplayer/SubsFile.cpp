@@ -309,9 +309,9 @@ Dialogue *&SubsFile::operator[](int i)
 void SubsFile::DeleteDialogues(int from, int to)
 {
 	edited = true;
-	subs->dials.erase(subs->dials.begin() + from, subs->dials.begin() + to);
+	subs->dials.erase(subs->dials.begin() + IdConverter->getElementById(from), subs->dials.begin() + IdConverter->getElementById(to));
 	for (int i = from; i <= to; i++){
-		IdConverter->deleteItemByKey(i);
+		IdConverter->deleteItemById(i);
 	}
 }
 	

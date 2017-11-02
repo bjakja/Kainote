@@ -271,7 +271,7 @@ void SubsGrid::OnJoinToFirst(int id)
 	Edit->ebrow=selarr[0];
 	DeleteRow(selarr[1], selarr[selarr.size()-1]-selarr[1]+1);
 
-	Selections.clear();
+	
 	Selections.insert(selarr[0]);
 	SpellErrors.clear();
 	SetModified((id==JoinToLast)? GRID_JOIN_TO_LAST : GRID_JOIN_TO_FIRST);

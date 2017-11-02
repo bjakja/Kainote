@@ -792,16 +792,15 @@ void SubsGridBase::DeleteRows()
 	//for(int i= sels.size()-1; i>=0; i--)
 	for (auto i = Selections.rbegin(); i != Selections.rend(); i++)
 	{
-		int selection = file->IdConverter->getElementById(*i);
-		file->subs->dials.erase(file->subs->dials.begin() + selection);
-		SpellErrors.erase(SpellErrors.begin() + selection);
-		file->IdConverter->deleteItemById(selection);
+		int sel = *i;
+		file->subs->dials.erase(file->subs->dials.begin() + file->IdConverter->getElementById(sel));
+		SpellErrors.erase(SpellErrors.begin() + sel);
+		file->IdConverter->deleteItemById(sel);
 	}
+	if (Selections.size()>0){ file->edited = true; }
 	Selections.clear();
 	if(GetCount()<1){AddLine(new Dialogue());}
-	if (Selections.size()>0){ file->edited = true; }
 	SetModified(GRID_DELETE_LINES);
-	Selections.insert(Edit->ebrow);
 	Thaw();
 	RefreshColumns();
 }
@@ -1085,7 +1084,7 @@ wxString SubsGridBase::GetSInfos(bool tld)
 	return TextSI;
 }
 //wszystkie set modified trzeba znaleźć i dodać editiontype.
-void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
+void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll, bool clearSelections)
 {
 	if(file->IsNotSaved()){
 		if(file->Iter()<1||!Modified){
@@ -1096,11 +1095,13 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 		if(Comparison){
 			Kai->Tabs->SubsComparison();
 		}
-
+		file->subs->sel = Selections;
 		Kai->Label(file->Iter()+1);
 		int ebrow = Edit->ebrow;
-		if(redit)
-		{
+		if (clearSelections){
+			Selections.clear();
+		}
+		if(redit){
 			int erow= (SetEditBoxLine >= 0)? SetEditBoxLine : ebrow;
 			if(erow>=GetCount()){erow=GetCount()-1;}
 			lastRow=erow;
@@ -1108,7 +1109,6 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 			Edit->SetLine(erow);
 			Selections.insert(erow);
 		}
-		file->subs->sel = Selections;
 		file->SaveUndo(editionType, ebrow+1);
 		if(!dummy){
 			VideoCtrl *vb=Kai->GetTab()->Video;
