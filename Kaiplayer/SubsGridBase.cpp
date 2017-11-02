@@ -310,17 +310,19 @@ void SubsGridBase::Convert(char type)
 	}
 }
 
-void SubsGridBase::SaveFile(const wxString &filename, bool cstat)
+void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromEditbox)
 {
-	if(Options.GetInt(GridSaveAfterCharacterCount) != 1){
+	int saveAfterCharacterCount = Options.GetInt(GridSaveAfterCharacterCount);
+	bool dummyEditboxChanges = (loadFromEditbox && !saveAfterCharacterCount);
+	if (dummyEditboxChanges || saveAfterCharacterCount > 1){
 		bool oldOnVideo = Edit->OnVideo;
 		// no i tu mamy do poprawki dummy subs;
-		Edit->Send(EDITBOX_LINE_EDITION,false,false,true);
+		Edit->Send(EDITBOX_LINE_EDITION, false, dummyEditboxChanges, true);
 		Edit->OnVideo = oldOnVideo;
 	}
 	wxString txt;
 	wxString tlmode = GetSInfo("TLMode");
-	bool hasTLModeated = tlmode == "hasTLModeated";
+	bool translated = tlmode == "Translated";
 	bool tlmodeOn = tlmode != "";
 
 	OpenWrite ow(filename,true);
@@ -331,42 +333,74 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat)
 			AddSInfo("Active Line", std::to_string(Edit->ebrow), false);
 		}
 
-		txt<<"[Script Info]\r\n;Plik utworzony przez "<<Options.progname<<"\r\n"<<GetSInfos(hasTLModeated);
+		txt << "[Script Info]\r\n;Plik utworzony przez " << Options.progname << "\r\n" << GetSInfos(translated);
 		txt<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
-		txt<<GetStyles(hasTLModeated);
+		txt << GetStyles(translated);
 		txt<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
 	}
 	ow.PartFileWrite(txt);
 
 	txt=GetSInfo("TLMode Style");
 	wxString raw;
-	
-	for(int i=0;i<GetCount();i++)
-	{
-		//a tu trzeba w przypadku ebrow pobrać editbox line
-		Dialogue *dial=GetDialogue(i);
-		
-		if(tlmodeOn){
-			bool hasTextTl = dial->TextTl!="";
-			if(!hasTLModeated && (hasTextTl || dial->State & 4)){
-				dial->GetRaw(&raw, false,txt);
-				dial->GetRaw(&raw, true);
-			}else{
-				dial->GetRaw(&raw, hasTextTl);
-			}
-		}else{
-			
-			if(subsFormat==SRT){
-				raw<<i+1<<"\r\n";
-			}
-			dial->GetRaw(&raw);
-		}
-		//if(i % 30 == 29){
-		ow.PartFileWrite(raw);
-		raw.Empty();
-		//}
-		if(dial->State & 1 && cstat){dial->State++;}
+	if (dummyEditboxChanges){
+		for (int i = 0; i < GetCount(); i++)
+		{
+			//a tu trzeba w przypadku ebrow pobrać editbox line
+			Dialogue *dial = (i == Edit->ebrow) ? Edit->line : GetDialogue(i);
 
+			if (tlmodeOn){
+				bool hasTextTl = dial->TextTl != "";
+				if (!translated && (hasTextTl || dial->State & 4)){
+					dial->GetRaw(&raw, false, txt);
+					dial->GetRaw(&raw, true);
+				}
+				else{
+					dial->GetRaw(&raw, hasTextTl);
+				}
+			}
+			else{
+
+				if (subsFormat == SRT){
+					raw << i + 1 << "\r\n";
+				}
+				dial->GetRaw(&raw);
+			}
+
+			ow.PartFileWrite(raw);
+			raw.Empty();
+
+		}
+	}
+	else{
+		for (int i = 0; i < file->subs->dials.size(); i++)
+		{
+			//a tu trzeba w przypadku ebrow pobrać editbox line
+			Dialogue *dial = file->subs->dials[i];
+
+			if (tlmodeOn){
+				bool hasTextTl = dial->TextTl != "";
+				if (!translated && (hasTextTl || dial->State & 4)){
+					dial->GetRaw(&raw, false, txt);
+					dial->GetRaw(&raw, true);
+				}
+				else{
+					dial->GetRaw(&raw, hasTextTl);
+				}
+			}
+			else{
+
+				if (subsFormat == SRT){
+					raw << i + 1 << "\r\n";
+				}
+				dial->GetRaw(&raw);
+			}
+
+			ow.PartFileWrite(raw);
+			raw.Empty();
+
+			if (dial->State & 1 && cstat){ dial->State++; }
+
+		}
 	}
 	
 	ow.CloseFile();
@@ -754,16 +788,20 @@ void SubsGridBase::DeleteRow(int rw, int len)
 void SubsGridBase::DeleteRows()
 {
 	Freeze();
-	wxArrayInt sels=GetSels(true);
-	for(int i= sels.size()-1; i>=0; i--)
+	//wxArrayInt sels=GetSels(true);
+	//for(int i= sels.size()-1; i>=0; i--)
+	for (auto i = Selections.rbegin(); i != Selections.rend(); i++)
 	{
-		file->subs->dials.erase(file->subs->dials.begin()+sels[i]);
-		SpellErrors.erase(SpellErrors.begin()+sels[i]);
-		file->IdConverter->deleteItemByKey(i);
+		int selection = file->IdConverter->getElementById(*i);
+		file->subs->dials.erase(file->subs->dials.begin() + selection);
+		SpellErrors.erase(SpellErrors.begin() + selection);
+		file->IdConverter->deleteItemById(selection);
 	}
+	Selections.clear();
 	if(GetCount()<1){AddLine(new Dialogue());}
-	if(sels.size()>0){file->edited=true;}
+	if (Selections.size()>0){ file->edited = true; }
 	SetModified(GRID_DELETE_LINES);
+	Selections.insert(Edit->ebrow);
 	Thaw();
 	RefreshColumns();
 }
@@ -862,13 +900,6 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 		Kai->UpdateToolbar();
 	}
 
-	/*int erow=Edit->ebrow;
-	if(erow>=GetCount()){
-		erow=GetCount()-1;
-		sel.clear();
-		sel.insert(erow);
-		lastRow=erow;
-	}*/
 	Selections = file->subs->sel;
 	Thaw();
 
@@ -886,10 +917,11 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 		Edit->SetTl(hasTLMode);
 	}
 
-	RefreshColumns();
 	int tmpMarked = markedLine;
-	Edit->SetLine(file->subs->activeLine);
-	markedLine = tmpMarked;
+	Edit->SetLine(MAX(0,file->subs->activeLine-1));
+	if (tmpMarked < GetCount())
+		markedLine = tmpMarked;
+	RefreshColumns();
 	Edit->RefreshStyle();
 	
 	VideoCtrl *vb=pan->Video;
@@ -963,9 +995,12 @@ void SubsGridBase::InsertRows(int Row,
 						  const std::vector<Dialogue *> &RowsTable,
 						  bool AddToDestroy)
 {
-	file->subs->dials.insert(file->subs->dials.begin()+Row, RowsTable.begin(), RowsTable.end());
+	int convertedRow = file->IdConverter->getElementById(Row);
+	file->subs->dials.insert(file->subs->dials.begin() + convertedRow, RowsTable.begin(), RowsTable.end());
 	for (int i = 0; i < RowsTable.size(); i++){
-		if (RowsTable[i]->isVisible){ file->IdConverter->insert(i + Row); }
+		if (RowsTable[i]->isVisible){ 
+			file->IdConverter->insert(i + convertedRow);
+		}
 	}
 	wxArrayInt emptyarray;
 	SpellErrors.insert(SpellErrors.begin()+Row,RowsTable.size(),emptyarray);
@@ -977,9 +1012,12 @@ void SubsGridBase::InsertRows(int Row,
 //a podwójne dodanie to krasz przy niszczeniu obiektu.
 void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save)
 {
-	file->subs->dials.insert(file->subs->dials.begin()+Row,NumRows,Dialog);
-	for (int i = Row; i < Row + NumRows; i++){
-		if (file->subs->dials[i]->isVisible){ file->IdConverter->insert(i); }
+	int convertedRow = file->IdConverter->getElementById(Row);
+	file->subs->dials.insert(file->subs->dials.begin() + convertedRow, NumRows, Dialog);
+	for (int i = convertedRow; i < convertedRow + NumRows; i++){
+		if (file->subs->dials[i]->isVisible){ 
+			file->IdConverter->insert(i); 
+		}
 	}
 	wxArrayInt emptyarray;
 	SpellErrors.insert(SpellErrors.begin()+Row,NumRows,emptyarray);
@@ -1179,7 +1217,7 @@ void SubsGridBase::Loadfile(const wxString &str,const wxString &ext){
 		while ( tokenizer.HasMoreTokens() )
 		{
 			wxString token = tokenizer.GetNextToken();
-			if(isASS && !(token.StartsWith("Dial") || token.StartsWith("Comm"))){continue;}
+			if (isASS && !(token.StartsWith("Dial") || token.StartsWith("Comm") || token.StartsWith(";"))){ continue; }
 			Dialogue *dl= new Dialogue(token);
 			if(!tlmode){
 				AddLine(dl);
@@ -1194,10 +1232,10 @@ void SubsGridBase::Loadfile(const wxString &str,const wxString &ext){
 				}
 				dl->Effect = tl.Effect;
 				AddLine(dl);
-			}else/* if(tlmode && dl->Text!="")*/{
+			}else{
 				//stary tryb tłumaczenia nie istnieje od 2 lat, nie ma sensu usuwać pustych linii, zważywszy na to, że to może usunąć coś ważnego.
 				AddLine(dl);
-			}/*else{delete dl;}*/
+			}
 		}
 
 
@@ -1477,7 +1515,7 @@ wxString *SubsGridBase::SaveText()
 
 	(*path)<<Options.pathfull<<"\\Subs\\DummySubs_"<<Notebook::GetTabs()->FindPanel(tab)<<"."<<ext;
 
-	SaveFile(*path, false);
+	SaveFile(*path, false, true);
 
 	return path;
 }

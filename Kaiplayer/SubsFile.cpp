@@ -154,7 +154,8 @@ File *File::Copy()
 	file->dials = dials;
 	file->styles= styles;
 	file->sinfo = sinfo;
-	//file->sel = sel;
+	file->sel = sel;
+	file->activeLine = activeLine;
 	return file;
 }
 
@@ -279,9 +280,9 @@ int SubsFile::Iter()
 
 Dialogue *SubsFile::CopyDial(int i, bool push, bool keepstate)
 {
-	Dialogue *dial=subs->dials[i]->Copy(keepstate);
+	Dialogue *dial= GetDialogue(i)->Copy(keepstate);
 	subs->ddials.push_back(dial);
-	if(push){subs->dials[i]=dial;}
+	if (push){ (*this)[i] = dial; }
 	return dial;
 }
 
@@ -381,6 +382,11 @@ void SubsFile::ReloadVisibleDialogues()
 		else if (!visible && IdConverter->getElementByKey(i) != -1){
 			IdConverter->deleteItemByKey(i);
 		}
+	}
+	int lastElementKey = IdConverter->getElementById(IdConverter->size() - 1);
+	if (lastElementKey >= subs->dials.size()){
+		for (int i = subs->dials.size(); i <= lastElementKey; i++)
+			IdConverter->deleteItemByKey(i);
 	}
 }
 

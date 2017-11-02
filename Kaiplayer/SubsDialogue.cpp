@@ -190,6 +190,7 @@ void Dialogue::GetRaw(wxString *txt, bool tl, const wxString &style)
 {
 	wxString line;
 	if (Form<SRT){
+		if (NonDialogue){ (*txt) << Text << "\r\n"; return; }
 		if(IsComment){line=_T("Comment: ");}else{line=_T("Dialogue: ");}
 		bool styleTl = style!="";
 		const wxString &Styletl=(styleTl)?style : Style;

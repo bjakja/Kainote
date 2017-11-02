@@ -47,6 +47,7 @@ class AVLtree
         Node *getNext(Node *right_node);
         Node *rightRotate(Node*);
         Node *leftRotate(Node*);
+		int deleteItemByNode(int key, Node *node);
         int height(Node*);
         int getBalance(Node*);
 
@@ -97,7 +98,7 @@ class AVLtree
         int getElementByKey(int key);
         int getElementById(int id);
         int deleteItemByKey(int key);
-
+		int  deleteItemById(int id);
         void printF();
 
         void preOrder(const func&);

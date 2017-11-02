@@ -50,7 +50,7 @@ public:
 	std::vector<Styles*> *GetStyleTable();
 	
 	
-	void SaveFile(const wxString &filename, bool cstat=true);
+	void SaveFile(const wxString &filename, bool cstat = true, bool loadFromEditbox = false);
 	wxString *SaveText();
 	
 	

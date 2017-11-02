@@ -36,6 +36,8 @@ int AVLtree::operator[](int id){
 
 int AVLtree::size()
 {
+	if (root == NULL) 
+		return 0;
 	return root->num_of_elements_on_left + root->num_of_elements_on_right + 1;
 }
 
@@ -144,107 +146,104 @@ AVLtree::Node* AVLtree::insert(Node* node, int key)
 }
 
 
-int AVLtree::deleteItemByKey(int key){
-	Node *node=getElementByKey(root, key);
+int AVLtree::deleteItemByNode(int key, Node *node){
 
-	if (node != NULL){
-        int key = node->key;
-		if (node->left == NULL && node->right == NULL){
-			if (node->previous != NULL){
-				if (node->previous->left == node){
-					node->previous->left = NULL;
-					--node->previous->num_of_elements_on_left;
-				}
-				else if (node->previous->right == node){
-					node->previous->right = NULL;
-					--node->previous->num_of_elements_on_right;
-				}
-				node->previous->height = 1 + max(height(node->previous->left),
-                    height(node->previous->right));
-				root = repairNumOf(node->previous);
+    //int key = node->key;
+	if (node->left == NULL && node->right == NULL){
+		if (node->previous != NULL){
+			if (node->previous->left == node){
+				node->previous->left = NULL;
+				--node->previous->num_of_elements_on_left;
 			}
-			if(node==root){
-                delete root;
-                root=NULL;
-                node=NULL;
-			} else {
-                delete node;
-                node = NULL;
+			else if (node->previous->right == node){
+				node->previous->right = NULL;
+				--node->previous->num_of_elements_on_right;
 			}
-
+			node->previous->height = 1 + max(height(node->previous->left),
+                height(node->previous->right));
+			root = repairNumOf(node->previous);
 		}
-		else if (node->left == NULL && node->right != NULL){
-            if(node->previous!=NULL){
-                if (node->previous->left == node){
-                    node->previous->left = node->right;
-                    node->right->previous = node->previous;
-                    --node->previous->num_of_elements_on_left;
-                }
-                else{
-                    node->previous->right = node->right;
-                    node->right->previous = node->previous;
-                    --node->previous->num_of_elements_on_right;
-                }
-                node->previous->height = 1 + max(height(node->previous->left),
-                        height(node->previous->right));
-                root = repairNumOf(node->previous);
-            } else {
-                root = node->right;
-                root->previous=NULL;
-            }
-			delete node;
-			node = NULL;
+		if(node==root){
+            delete root;
+            root=NULL;
+            node=NULL;
+		} else {
+            delete node;
+            node = NULL;
 		}
-		else if (node->left != NULL && node->right == NULL){
-            if(node->previous!=NULL){
-                if (node->previous->left == node){
-                    node->previous->left = node->left;
-                    node->left->previous = node->previous;
-                    --node->previous->num_of_elements_on_left;
-                }
-                else{
-                    node->previous->right = node->left;
-                    node->left->previous = node->previous;
-                    --node->previous->num_of_elements_on_right;
-                }
-                node->previous->height = 1 + max(height(node->previous->left),
-                        height(node->previous->right));
-                root = repairNumOf(node->previous);
-            } else {
-                root = node->left;
-                root->previous=NULL;
-            }
-			delete node;
-			node = NULL;
-		}
-		else {
-			Node *temp = getNext(node->right);
 
-			node->key = temp->key;
-
-            if (temp->previous->left == temp){
-                temp->previous->left = temp->right;
-                --temp->previous->num_of_elements_on_left;
-            }
-            else {
-                temp->previous->right = temp->right;
-                --temp->previous->num_of_elements_on_right;
-            }
-
-			if (temp->right != NULL){
-				temp->right->previous = temp->previous;
-			}
-			temp->previous->height = 1 + max(height(temp->previous->left),
-                    height(temp->previous->right));
-			root = repairNumOf(temp->previous);
-			delete temp;
-			temp = NULL;
-
-		}
-		addIndex(-1, key, root);
-		return key;
 	}
-	return -1;
+	else if (node->left == NULL && node->right != NULL){
+        if(node->previous!=NULL){
+            if (node->previous->left == node){
+                node->previous->left = node->right;
+                node->right->previous = node->previous;
+                --node->previous->num_of_elements_on_left;
+            }
+            else{
+                node->previous->right = node->right;
+                node->right->previous = node->previous;
+                --node->previous->num_of_elements_on_right;
+            }
+            node->previous->height = 1 + max(height(node->previous->left),
+                    height(node->previous->right));
+            root = repairNumOf(node->previous);
+        } else {
+            root = node->right;
+            root->previous=NULL;
+        }
+		delete node;
+		node = NULL;
+	}
+	else if (node->left != NULL && node->right == NULL){
+        if(node->previous!=NULL){
+            if (node->previous->left == node){
+                node->previous->left = node->left;
+                node->left->previous = node->previous;
+                --node->previous->num_of_elements_on_left;
+            }
+            else{
+                node->previous->right = node->left;
+                node->left->previous = node->previous;
+                --node->previous->num_of_elements_on_right;
+            }
+            node->previous->height = 1 + max(height(node->previous->left),
+                    height(node->previous->right));
+            root = repairNumOf(node->previous);
+        } else {
+            root = node->left;
+            root->previous=NULL;
+        }
+		delete node;
+		node = NULL;
+	}
+	else {
+		Node *temp = getNext(node->right);
+
+		node->key = temp->key;
+
+        if (temp->previous->left == temp){
+            temp->previous->left = temp->right;
+            --temp->previous->num_of_elements_on_left;
+        }
+        else {
+            temp->previous->right = temp->right;
+            --temp->previous->num_of_elements_on_right;
+        }
+
+		if (temp->right != NULL){
+			temp->right->previous = temp->previous;
+		}
+		temp->previous->height = 1 + max(height(temp->previous->left),
+                height(temp->previous->right));
+		root = repairNumOf(temp->previous);
+		delete temp;
+		temp = NULL;
+
+	}
+	addIndex(-1, key, root);
+	return key;
+	
 }
 
 AVLtree::Node *AVLtree::getNext(Node *right_node){
@@ -440,6 +439,17 @@ void AVLtree::fromToKey(Node *node, int from, int to, const func &f){
 		}
 		fromToKey(node->right, from, to, f);
 	}
+}
+
+int  AVLtree::deleteItemByKey(int key){
+	Node *node = getElementByKey(root, key);
+	if (node == NULL) return -1;
+	return deleteItemByNode(key, node);
+}
+int  AVLtree::deleteItemById(int id){
+	Node *node = getElementById(root, id);
+	if (node == NULL) return -1;
+	return deleteItemByNode(node->key, node);
 }
 
 ///
