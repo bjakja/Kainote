@@ -51,7 +51,6 @@ class AVLtree
         int height(Node*);
         int getBalance(Node*);
 
-        void preOrder(Node*,const func&);
         void rightToLeftOrder(Node*, const func&);
         void leftToRightOrder(Node*, const func&);
         void fromTo(Node*, int from, int to, const func&);
@@ -62,21 +61,6 @@ class AVLtree
             public:
 				virtual void operator()(Node *node) const{};
 				virtual void operator()(Node *node, int i) const{};
-        };
-
-        class changeIndex : public func{
-            void operator()(Node *node, int i) const {
-
-            }
-            void operator()(Node *node) const {}
-        };
-
-        class print : public func{
-            void operator()(Node *node, int i) const {}
-            void operator()(Node *node) const {
-                
-
-            }
         };
 
         class del : public func{
@@ -99,9 +83,6 @@ class AVLtree
         int getElementById(int id);
         int deleteItemByKey(int key);
 		int  deleteItemById(int id);
-        void printF();
-
-        void preOrder(const func&);
         void leftToRightOrder(const func&);
         void fromTo(int from, int to, const func&);
         void fromToKey(int from, int to, const func&);

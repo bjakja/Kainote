@@ -25,9 +25,6 @@ AVLtree::~AVLtree()
 {
     del Del;
     rightToLeftOrder(root,Del);
-    //if(root)
-		//delete root;
-    //root=NULL;
 }
 
 int AVLtree::operator[](int id){
@@ -346,25 +343,6 @@ int AVLtree::getBalance(Node *N)
 /// Funkcje przechodzace po drzewie
 /// f kest funkcja ktora ma sie wykonac
 /// na poszczegolnych wierzcholkach drzewa
-
-void AVLtree::printF(){
-    print Print;
-    leftToRightOrder(Print);
-}
-
-void AVLtree::preOrder(const func &f){
-    preOrder(root, f);
-}
-
-void AVLtree::preOrder(Node *node, const func &f)
-{
-	if (node != NULL)
-	{
-		f(node);
-		preOrder(node->left, f);
-		preOrder(node->right, f);
-	}
-}
 
 void AVLtree::leftToRightOrder(const func &f){
     leftToRightOrder(root, f);
