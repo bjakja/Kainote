@@ -315,6 +315,11 @@ void SubsFile::DeleteDialogues(int from, int to)
 		IdConverter->deleteItemById(i);
 	}
 }
+
+int SubsFile::GetElementById(int Id)
+{
+	return IdConverter->getElementById(Id);
+}
 	
 Styles *SubsFile::CopyStyle(int i, bool push)
 {

@@ -119,6 +119,7 @@ public:
 	Dialogue *CopyDial(int i, bool push=true, bool keepstate=false);
 	Dialogue *GetDialogue(int i);
 	Dialogue *&operator[](int i);
+	int GetElementById(int Id);
 	void DeleteDialogues(int from, int to);
 	Styles *CopyStyle(int i, bool push=true);
 	SInfo *CopySinfo(int i, bool push=true);

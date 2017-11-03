@@ -729,7 +729,7 @@ namespace Auto{
 		std::vector<int> rows;
 		rows.reserve(sel.size());
 		for (auto line : sel)
-			rows.push_back(line + offset);
+			rows.push_back(c->Grid->file->GetElementById(line) + offset);
 		sort(rows.begin(), rows.end());
 		return rows;
 	}
@@ -745,7 +745,7 @@ namespace Auto{
 		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true);
 
 		push_value(L, selected_rows(c));
-		push_value(L, c->Edit->ebrow + c->Grid->SInfoSize() + c->Grid->StylesSize()+1);
+		push_value(L, c->Grid->file->GetElementById(c->Edit->ebrow) + c->Grid->SInfoSize() + c->Grid->StylesSize() + 1);
 
 		int err = lua_pcall(L, 3, 2, -5 /* three args, function, error handler */);
 		SAFE_DELETE(subsobj);
@@ -780,7 +780,7 @@ namespace Auto{
 
 		int original_offset = c->Grid->SInfoSize() + c->Grid->StylesSize()+1;
 		auto original_sel = selected_rows(c);
-		int original_active = c->Edit->ebrow + original_offset;
+		int original_active = c->Grid->file->GetElementById(c->Edit->ebrow) + original_offset;
 
 		push_value(L, original_sel);
 		push_value(L, original_active);
@@ -803,10 +803,9 @@ namespace Auto{
 			return;
 		}
 		
-		
+		c->Grid->file->ReloadVisibleDialogues();
 		//if(ps->lpd->cancelled && ps->lpd->IsModal()){ps->lpd->EndModal(0);}
-
-		//wxLogStatus("select lines");
+		c->Grid->SaveSelections(true);
 		int active_idx = c->Edit->ebrow;
 
 		// Check for a new active row
@@ -817,7 +816,7 @@ namespace Auto{
 				active_idx = original_active;
 			}
 		}
-		//wxLogStatus("idx %i, %i", active_idx, c->Edit->ebrow);
+		
 		c->Grid->SpellErrors.clear();
 		c->Grid->SetModified(AUTOMATION_SCRIPT, true, false, active_idx);
 		c->Grid->RefreshColumns();	
@@ -886,7 +885,7 @@ namespace Auto{
 		GetFeatureFunction("isactive");
 		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true);
 		push_value(L, selected_rows(c));
-		push_value(L, c->Edit->ebrow + c->Grid->SInfoSize() + c->Grid->StylesSize()+1);
+		push_value(L, c->Grid->file->GetElementById(c->Edit->ebrow) + c->Grid->SInfoSize() + c->Grid->StylesSize() + 1);
 
 		int err = lua_pcall(L, 3, 1, 0);
 
