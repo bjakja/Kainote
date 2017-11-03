@@ -153,9 +153,8 @@ void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, int wl
 	AdjustWidths(cells);
 
 	if(selline){
-
+		SaveSelections(true);
 		lastRow=wline+1;
-		Selections.clear();
 		Selections.insert(lastRow);
 		int h,w;
 		GetClientSize(&w,&h);
@@ -300,6 +299,7 @@ void SubsGridBase::Convert(char type)
 	}
 
 	subsFormat=type;
+	file->ReloadVisibleDialogues();
 	Edit->SetLine((Edit->ebrow < GetCount())? Edit->ebrow : 0);
 	SetModified(GRID_CONVERT);
 	RefreshColumns();
@@ -747,7 +747,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 void SubsGridBase::SortIt(short what, bool all)
 {
-
+	SaveSelections();
 	std::vector<Dialogue*> selected;
 	if(all){
 		for(int i=0;i<GetCount();i++){file->GetDialogue(i)->State=1 + (file->GetDialogue(i)->State & 4);}
@@ -788,8 +788,6 @@ void SubsGridBase::DeleteRow(int rw, int len)
 void SubsGridBase::DeleteRows()
 {
 	Freeze();
-	//wxArrayInt sels=GetSels(true);
-	//for(int i= sels.size()-1; i>=0; i--)
 	for (auto i = Selections.rbegin(); i != Selections.rend(); i++)
 	{
 		int sel = *i;
@@ -798,7 +796,7 @@ void SubsGridBase::DeleteRows()
 		file->IdConverter->deleteItemById(sel);
 	}
 	if (Selections.size()>0){ file->edited = true; }
-	Selections.clear();
+	SaveSelections(true);
 	if(GetCount()<1){AddLine(new Dialogue());}
 	SetModified(GRID_DELETE_LINES);
 	Thaw();
@@ -807,6 +805,7 @@ void SubsGridBase::DeleteRows()
 
 void SubsGridBase::MoveRows(int step, bool sav)
 {
+	SaveSelections();
 	wxArrayInt sels=GetSels();
 
 	if (sels.GetCount()<1){return;}
@@ -882,7 +881,7 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	wxString resolution = GetSInfo("PlayResX") +" x "+ GetSInfo("PlayResY");
 	wxString matrix = GetSInfo("YCbCr Matrix");
 	wxString tlmode = GetSInfo("TLMode");
-
+	SaveSelections();
 	if(iter != -2){if(file->SetHistory(iter)){Thaw();return;}}
 	else if(redo){file->Redo();}else{file->Undo();}
 
@@ -1011,6 +1010,7 @@ void SubsGridBase::InsertRows(int Row,
 //a podwójne dodanie to krasz przy niszczeniu obiektu.
 void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save)
 {
+	SaveSelections();
 	int convertedRow = file->IdConverter->getElementById(Row);
 	file->subs->dials.insert(file->subs->dials.begin() + convertedRow, NumRows, Dialog);
 	for (int i = convertedRow; i < convertedRow + NumRows; i++){
@@ -1084,7 +1084,7 @@ wxString SubsGridBase::GetSInfos(bool tld)
 	return TextSI;
 }
 //wszystkie set modified trzeba znaleźć i dodać editiontype.
-void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll, bool clearSelections)
+void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
 {
 	if(file->IsNotSaved()){
 		if(file->Iter()<1||!Modified){
@@ -1095,12 +1095,12 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 		if(Comparison){
 			Kai->Tabs->SubsComparison();
 		}
-		file->subs->sel = Selections;
-		Kai->Label(file->Iter()+1);
-		int ebrow = Edit->ebrow;
-		if (clearSelections){
-			Selections.clear();
+		if (!savedSelections){
+			SaveSelections();
 		}
+		savedSelections = false;
+		Kai->Label(file->Iter()+1);
+		int ebrow = Edit->ebrow;	
 		if(redit){
 			int erow= (SetEditBoxLine >= 0)? SetEditBoxLine : ebrow;
 			if(erow>=GetCount()){erow=GetCount()-1;}
@@ -1581,16 +1581,9 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 		}
 	}
 
-
 	return txt;
 }
 
-
-//VOID CALLBACK callbackfunc ( PVOID   lpParameter, BOOLEAN TimerOrWaitFired) {
-//	Automation *auto_ = (Automation*)lpParameter;
-//	auto_->ReloadScripts(true);
-//	DeleteTimerQueueTimer(auto_->handle,0,0);
-//}
 
 void SubsGridBase::OnBackupTimer(wxTimerEvent &event)
 {
@@ -1656,6 +1649,13 @@ void SubsGridBase::RebuildActorEffectLists()
 	Edit->EffectEdit->Sort();
 }
 
+void SubsGridBase::SaveSelections(bool clear)
+{
+	file->undo[file->iter]->sel = Selections;
+	file->undo[file->iter]->activeLine = Edit->ebrow+1;
+	savedSelections = true;
+	if (clear){ Selections.clear(); }
+}
 
 
 

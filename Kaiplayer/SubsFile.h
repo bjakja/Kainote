@@ -94,7 +94,7 @@ public:
 	File();
 	~File();
 	void Clear();
-	File *Copy();
+	File *Copy(bool copySelections = true);
 };
 
 class SubsFile

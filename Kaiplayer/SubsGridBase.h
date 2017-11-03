@@ -53,11 +53,7 @@ public:
 	void SaveFile(const wxString &filename, bool cstat = true, bool loadFromEditbox = false);
 	wxString *SaveText();
 	
-	
-	
 	int StylesSize();
-	
-	
 	void DelStyle(int i);
 	void ChangeTimes(bool byFrame = false);
 	
@@ -70,7 +66,7 @@ public:
 	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy=true, bool Save=false);
 	void SetSubsForm(wxString ext="");
 	void AddSInfo(const wxString &SI, wxString val="", bool save=true);
-	void SetModified(unsigned char editionType, bool redit = true, bool dummy = false, int SetEditBoxLine = -1, bool Scroll = true, bool clearSelections = true);
+	void SetModified(unsigned char editionType, bool redit = true, bool dummy = false, int SetEditBoxLine = -1, bool Scroll = true);
 	void UpdateUR(bool tolbar=true);
 	wxString GetSInfos(bool tld=false);
 	wxString GetSInfo(const wxString &key, int *ii=0);
@@ -89,6 +85,7 @@ public:
 	int GetCount();
 	void NextLine(int dir=1);
 	bool IsNumber(const wxString &txt);
+	void SaveSelections(bool clear=false);
 	Dialogue *CopyDial(int i, bool push=true);
 	Dialogue *GetDialogue(int i);
 	wxString *GetVisible(bool *visible=0, wxPoint *point = NULL, wxArrayInt *selected = NULL);
@@ -107,6 +104,7 @@ public:
 	char originalFormat = ASS;
 	int markedLine = 0;
 	bool showFrames = false;
+	bool savedSelections = false;
 	std::vector<wxArrayInt> SpellErrors;
 	std::vector<wxArrayInt> *Comparison;
 	std::set<int> Selections;

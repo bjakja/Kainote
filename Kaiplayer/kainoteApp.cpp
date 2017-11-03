@@ -169,11 +169,11 @@ bool kainoteApp::OnInit()
 				//opthread *ot=new opthread(this,pathss);
 			}
 #if _DEBUG
-			/*else if(paths.GetCount()<1){
+			else if(paths.GetCount()<1){
 				if(Frame->subsrec.size()>0){paths.Add(Frame->subsrec[0]);}
 				if(Frame->videorec.size()>0){paths.Add(Frame->videorec[0]);}
 				timer.Start(50,true);
-			}*/
+			}
 #endif
 			
 		}

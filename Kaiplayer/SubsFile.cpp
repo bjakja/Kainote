@@ -148,13 +148,14 @@ void File::Clear()
 
 
 
-File *File::Copy()
+File *File::Copy(bool copySelections)
 {
 	File *file=new File();
 	file->dials = dials;
 	file->styles= styles;
 	file->sinfo = sinfo;
-	file->sel = sel;
+	if (copySelections)
+		file->sel = sel;
 	file->activeLine = activeLine;
 	return file;
 }
@@ -374,19 +375,18 @@ void SubsFile::LoadVisibleDialogues()
 
 void SubsFile::ReloadVisibleDialogues()
 {
-	for (size_t i = 0; i < subs->dials.size(); i++){
-		bool visible = subs->dials[i]->isVisible;
+	int i = 0;
+	int size = subs->dials.size();
+	while (i < IdConverter->size()){
+		bool visible = (i<size)? subs->dials[i]->isVisible : false;
 		if (visible && IdConverter->getElementByKey(i) == -1){
 			IdConverter->insert(i);
 		}
 		else if (!visible && IdConverter->getElementByKey(i) != -1){
 			IdConverter->deleteItemByKey(i);
+			continue;
 		}
-	}
-	int lastElementKey = IdConverter->getElementById(IdConverter->size() - 1);
-	if (lastElementKey >= subs->dials.size()){
-		for (int i = subs->dials.size(); i <= lastElementKey; i++)
-			IdConverter->deleteItemByKey(i);
+		i++;
 	}
 }
 

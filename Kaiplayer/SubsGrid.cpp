@@ -156,8 +156,8 @@ done:
 
 void SubsGrid::OnInsertBefore()
 {
+	SaveSelections(true);
 	int rw=selarr[0];
-	Selections.clear();
 	Dialogue *dialog=CopyDial(rw, false);
 	dialog->Text="";
 	dialog->TextTl="";
@@ -170,8 +170,8 @@ void SubsGrid::OnInsertBefore()
 
 void SubsGrid::OnInsertAfter()
 {
+	SaveSelections(true);
 	int rw=selarr[0];
-	Selections.clear();
 	Dialogue *dialog=CopyDial(rw, false);
 	dialog->Text="";
 	dialog->TextTl="";
@@ -185,8 +185,8 @@ void SubsGrid::OnInsertAfter()
 
 void SubsGrid::OnDuplicate()
 {
+	SaveSelections();
 	int rw=selarr[0];
-	//sel.clear();
 	int rw1=rw+1;
 	for(size_t i=1; i<selarr.GetCount(); i++){if(rw1==selarr[i]){rw1++;}else{break;} }
 	int rw2=rw1-rw;
@@ -194,10 +194,8 @@ void SubsGrid::OnDuplicate()
 	for(int i=0; i<rw2; i++){
 
 		dupl.push_back(file->CopyDial(i+rw,false));
-		//sel.insert(i+rw1);
 
 	}
-	//Edit->ebrow=rw1;
 
 	if(dupl.size()>0){
 		InsertRows(rw1, dupl);
@@ -210,6 +208,7 @@ void SubsGrid::OnDuplicate()
 
 void SubsGrid::OnJoin(wxCommandEvent &event)
 {
+	SaveSelections(true);
 	wxString ntext;
 	wxString ntltext;
 	wxString en1;
@@ -249,7 +248,6 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	dialc->End.NewTime(end);
 	dialc->Text=ntext;
 	dialc->TextTl=ntltext;
-	Selections.clear();
 	file->edited=true;
 	SpellErrors.clear();
 	SetModified((idd==JoinWithPrevious)? GRID_JOIN_WITH_PREVIOUS : 
@@ -259,7 +257,7 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 
 void SubsGrid::OnJoinToFirst(int id)
 {
-
+	SaveSelections(true);
 	Dialogue *dialc = file->CopyDial(selarr[0]);
 	Dialogue *ldial = GetDialogue(selarr[selarr.size()-1]);
 	dialc->End = ldial->End;
@@ -271,7 +269,6 @@ void SubsGrid::OnJoinToFirst(int id)
 	Edit->ebrow=selarr[0];
 	DeleteRow(selarr[1], selarr[selarr.size()-1]-selarr[1]+1);
 
-	
 	Selections.insert(selarr[0]);
 	SpellErrors.clear();
 	SetModified((id==JoinToLast)? GRID_JOIN_TO_LAST : GRID_JOIN_TO_FIRST);
@@ -281,9 +278,9 @@ void SubsGrid::OnJoinToFirst(int id)
 
 void SubsGrid::OnPaste(int id)
 {
-
 	int row=FirstSel();
 	if(row < 0){wxBell();return;}
+	SaveSelections(id != PasteCollumns);
 	int collumns = 0;
 	if(id==PasteCollumns){
 		int numCollumns = (hasTLMode) ? 11 : 10;
@@ -311,8 +308,7 @@ void SubsGrid::OnPaste(int id)
 			Options.SaveOptions();
 		}else{return;}
 
-	}else{
-		Selections.clear();}
+	}
 	Freeze();
 	wxString whatpaste;
 	if (wxTheClipboard->Open())
@@ -370,7 +366,8 @@ void SubsGrid::OnPaste(int id)
 		InsertRows(row, tmpdial,true);
 	}
 	if(Selections.size()!=0){
-		Edit->ebrow = *Selections.begin();}
+		Edit->ebrow = *Selections.begin();
+	}
 	scPos+=cttkns;
 	SetModified((id==Paste)? GRID_PASTE : GRID_PASTE_COLLUMNS);
 	Thaw();
@@ -427,6 +424,7 @@ void SubsGrid::CopyRows(int id)
 
 void SubsGrid::OnInsertBeforeVideo(bool frameTime)
 {
+	SaveSelections();
 	int rw=selarr[0];
 	Selections.erase(Selections.find(rw));
 	Dialogue *dialog=CopyDial(rw, false);
@@ -442,6 +440,7 @@ void SubsGrid::OnInsertBeforeVideo(bool frameTime)
 
 void SubsGrid::OnInsertAfterVideo(bool frameTime)
 {
+	SaveSelections();
 	int rw=selarr[0];
 	Selections.erase(Selections.find(rw));
 	Dialogue *dialog=CopyDial(rw, false);
@@ -601,6 +600,7 @@ void SubsGrid::MoveTextTL(char mode)
 	wxArrayInt selecs=GetSels(true);
 	
 	if(selecs.GetCount()<1||!showOriginal||!hasTLMode) return;
+	SaveSelections();
 	int first=selecs[0];
 	int mrow=1;
 	if(selecs.GetCount()>1){
