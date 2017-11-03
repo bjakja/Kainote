@@ -139,9 +139,11 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
 	wxAcceleratorTable caccel(1, centries);
 	SetAcceleratorTable(caccel);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		SendEvent();
-	}, GetId());
+	if (Window < 0){
+		Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+			SendEvent();
+		}, GetId());
+	}
 	//SetForegroundColour(parent->GetForegroundColour());
 }
 
