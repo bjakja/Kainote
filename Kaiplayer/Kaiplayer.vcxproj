@@ -188,6 +188,9 @@
       <Command>
       </Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -294,6 +297,13 @@
     <PostBuildEvent>
       <Command>$(SolutionDir)AutoVersioning "$(ProjectDir)VersionKainote.h"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
+git rev-parse --verify HEAD &gt;&gt;  gitparams.h
+
+echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
+git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">
     <ClCompile>

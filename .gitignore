@@ -5,6 +5,7 @@ Kainote setup.*
 *.7z
 *.psd
 Trash/
+gitparams.h
 
 
 ## Ignore Visual Studio temporary files, build results, and

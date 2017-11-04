@@ -1239,28 +1239,25 @@ void VideoCtrl::ChangeStream()
 	Options.GetTable(AcceptedAudioStream,enabled,";");
 	if(enabled.size()<1){return;}
 	wxArrayString streams=GetStreams();
+	//int firstSubsStream = -1;
 	int numofastreams=0;
 	for(int i=streams.size()-1; i>=0; i--){
-		if(!(streams[i][0]=='A') && !(streams[i][0]=='a'))
-		{
-			streams[i]="";
-		}
-		else
-		{
-			streams[i]=streams[i].AfterFirst(' ').Lower();
+		if(streams[i][0]=='A' && streams[i][0]=='a'){
+			streams[i] = streams[i].AfterFirst(' ').Lower();
 			numofastreams++;
+			continue;
 		}
+		/*else if (firstSubsStream == -1 && streams[i][0] == 'S' || streams[i][0] == 's'){
+			firstSubsStream = i;
+		}*/
+		streams[i] = "";
 	}
 	if(numofastreams>1){
-		for(int i=0; i<(int)streams.size(); i++)
-		{
+		for(int i=0; i<(int)streams.size(); i++){
 			if(streams[i]==""){continue;}
-			for(int j=0; j<(int)enabled.size(); j++)
-			{
-				if(streams[i].Lower().find(enabled[j])!=-1)
-				{
-					if(streams[i].AfterLast(' ')=="0")
-					{
+			for(int j=0; j<(int)enabled.size(); j++){
+				if(streams[i].Lower().find(enabled[j])!=-1){
+					if(streams[i].AfterLast(' ')=="0"){
 						EnableStream((long)i);
 					}
 					return;
@@ -1268,6 +1265,12 @@ void VideoCtrl::ChangeStream()
 			}
 		}
 	}
+	/*if (firstSubsStream != -1){
+		TabPanel *tab = Kai->GetTab();
+		if (!tab->edytor && Kai->FindFile(tab->VideoPath, false, false).empty()){
+		EnableStream((long)firstSubsStream);
+		}
+		}*/
 }
 
 BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor,HDC hdcMonitor,LPRECT lprcMonitor,LPARAM dwData)
