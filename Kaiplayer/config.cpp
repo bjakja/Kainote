@@ -36,7 +36,7 @@ config::config()
 {
 	wxString gitVersion ;
 #ifdef GIT_CUR_COMMIT
-	gitVersion = " - " + wxString(ADD_QUOTES(GIT_BRANCH)) + "-" + wxString(ADD_QUOTES(GIT_CURR_COMMIT)).Left(7);
+	gitVersion = " - " + wxString(ADD_QUOTES(GIT_BRANCH)) + "-" + wxString(ADD_QUOTES(GIT_CUR_COMMIT)).Left(7);
 #endif
 	progname = _T("Kainote v") + wxString(VersionKainote) + gitVersion;
 #if _DEBUG
