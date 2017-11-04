@@ -27,11 +27,18 @@
 #include <wx/bitmap.h>
 #include <wx/msgdlg.h>
 #include <windows.h>
+#include "gitparams.h"
 
+#define ADD_QUOTES_HELPER(s) #s
+#define ADD_QUOTES(s) ADD_QUOTES_HELPER(s)
 
 config::config()
 {
-	progname=_T("Kainote v")+wxString(VersionKainote);
+	wxString gitVersion ;
+#ifdef GIT_CUR_COMMIT
+	gitVersion = " - " + wxString(ADD_QUOTES(GIT_BRANCH)) + "-" + wxString(ADD_QUOTES(GIT_CUR_COMMIT)).Left(7);
+#endif
+	progname = _T("Kainote v") + wxString(VersionKainote) + gitVersion;
 #if _DEBUG
 	progname+= " DEBUG";
 #endif

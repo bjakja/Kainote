@@ -798,6 +798,11 @@ void EditBox::AllColorClick(int kol)
 	if ( ColourDialog->ShowModal() == wxID_OK) {
 		//wywołane tylko by dodać kolor do recent;
 		ColourDialog->GetColor();
+		wxString txt = Editor->GetValue();
+		if (txt[Placed.x] != '}'){
+			int bracketPos = txt.find("}", Placed.x);
+			if (bracketPos != -1){ Placed.x = Placed.y = bracketPos+1; }
+		}
 		Editor->SetSelection(Placed.x,Placed.x);
 	}else{
 		//Editor->SetTextS(tmptext);
@@ -1242,7 +1247,7 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 			lslash=i;
 		}
 		else if (ch == '{' && i > 0){
-			wxString textBeforeBracket = txt.SubString(0, i);
+			wxString textBeforeBracket = txt.SubString(0, i-1);
 			int startBracket = textBeforeBracket.Find('{', true);
 			int endBracket = textBeforeBracket.Find('}', true);
 			if (endBracket >= startBracket){
@@ -1253,8 +1258,8 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 				lslash = i - 1;
 			}
 		}
-		else if (ch == '}'){
-			wxString textBeforeBracket = txt.SubString(0, i);
+		else if (ch == '}' && i > 0){
+			wxString textBeforeBracket = txt.SubString(0, i-1);
 			int startBracket = textBeforeBracket.Find('{', true);
 			int endBracket = textBeforeBracket.Find('}', true);
 			if (endBracket < startBracket){

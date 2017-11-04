@@ -47,6 +47,7 @@ KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, co
 	}
 	SetMinSize(newSize);
 	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
+	//Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){});
 	Bind(wxEVT_PAINT, &KaiStaticText::OnPaint, this);
 }
 

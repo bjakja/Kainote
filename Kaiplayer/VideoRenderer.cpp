@@ -1530,7 +1530,13 @@ wxArrayString VideoRend::GetStreams()
 
 void VideoRend::EnableStream(long index)
 {
-	if(vplayer->stream){seek=true;vplayer->stream->Enable(index,AMSTREAMSELECTENABLE_ENABLE);}
+	if(vplayer->stream){
+		seek=true;
+		auto hr = vplayer->stream->Enable(index,AMSTREAMSELECTENABLE_ENABLE);
+		if (FAILED(hr)){
+			wxLogStatus("Cannot change stream");
+		}
+	}
 }
 
 
