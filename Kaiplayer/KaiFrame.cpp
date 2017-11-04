@@ -172,7 +172,7 @@ void KaiFrame::OnMouseEvent(wxMouseEvent &evt)
 	GetSize(&w,&h);
 	int x = evt.GetX();
 	int y = evt.GetY();
-	wxRect rc(w-75, 0, 70, ftopBorder);
+	wxRect rc(w-78, 0, 70, ftopBorder);
 	if(evt.Leaving()){
 		pushedClose = enterClose = pushedMinimize = enterMinimize = pushedMaximize = enterMaximize = false;
 		Refresh(false,&rc);
