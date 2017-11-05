@@ -306,6 +306,9 @@
     <ClCompile Include="AVLtree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SubsGridFiltering.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DropFiles.h">
@@ -579,6 +582,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AVLtree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridFiltering.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

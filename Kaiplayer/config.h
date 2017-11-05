@@ -125,6 +125,10 @@
 	CG(GridChangeActiveOnSelection,)\
 	CG(GridFontName,)\
 	CG(GridFontSize,)\
+	CG(GridFilterAfterLoad,)\
+	CG(GridFilterBy,)\
+	CG(GridFilterInverted,)\
+	CG(GridFilterStyles,)\
 	CG(GridHideCollums,)\
 	CG(GridHideTags,)\
 	CG(GridLoadSortedSubs,)\

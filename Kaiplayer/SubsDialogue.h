@@ -55,7 +55,7 @@ public:
 	short MarginL, MarginR, MarginV;
 	char State, Form;
 	bool NonDialogue, IsComment;
-	bool isVisible = true;
+	unsigned char isVisible = 1;
 	ParseData *parseData;
 
 	void SetRaw(const wxString &ldial);

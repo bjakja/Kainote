@@ -170,7 +170,7 @@ void Dialogue::SetRaw(const wxString &ldial)
 		Text=ldial;
 		Text.Trim(true);
 		Form=ASS;
-		isVisible = false;
+		isVisible = 0;
 		return;
 	}
 	else{

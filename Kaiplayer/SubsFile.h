@@ -113,13 +113,14 @@ public:
 	void Undo();
 	void DummyUndo();
 	void DummyUndo(int newIter);
-	void LoadVisibleDialogues();
+	void ReloadVisibleDialogues(int keyFrom, int keyTo);
 	void ReloadVisibleDialogues();
 	void EndLoad(unsigned char editionType, int activeLine);
 	Dialogue *CopyDial(int i, bool push=true, bool keepstate=false);
 	Dialogue *GetDialogue(int i);
 	Dialogue *&operator[](int i);
 	int GetElementById(int Id);
+	int GetElementByKey(int Key);
 	void DeleteDialogues(int from, int to);
 	Styles *CopyStyle(int i, bool push=true);
 	SInfo *CopySinfo(int i, bool push=true);

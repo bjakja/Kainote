@@ -320,6 +320,11 @@ int SubsFile::GetElementById(int Id)
 {
 	return IdConverter->getElementById(Id);
 }
+
+int SubsFile::GetElementByKey(int Key)
+{
+	return IdConverter->getElementByKey(Key);
+}
 	
 Styles *SubsFile::CopyStyle(int i, bool push)
 {
@@ -369,12 +374,20 @@ File *SubsFile::GetSubs()
 	return subs;
 }
 
-void SubsFile::LoadVisibleDialogues()
+void SubsFile::ReloadVisibleDialogues(int keyfrom, int keyto)
 {
-	for (size_t i = 0; i < subs->dials.size();i++){
-		if (subs->dials[i]->isVisible){
+	int i = keyfrom;
+	int size = subs->dials.size();
+	while (i <= keyto){
+		bool visible = (i < size) ? subs->dials[i]->isVisible > 0 : false;
+		if (visible && IdConverter->getElementByKey(i) == -1){
 			IdConverter->insert(i);
 		}
+		else if (!visible && IdConverter->getElementByKey(i) != -1){
+			IdConverter->deleteItemByKey(i);
+			continue;
+		}
+		i++;
 	}
 }
 
@@ -383,7 +396,7 @@ void SubsFile::ReloadVisibleDialogues()
 	int i = 0;
 	int size = subs->dials.size();
 	while (i < IdConverter->size()){
-		bool visible = (i<size)? subs->dials[i]->isVisible : false;
+		bool visible = (i<size)? subs->dials[i]->isVisible > 0 : false;
 		if (visible && IdConverter->getElementByKey(i) == -1){
 			IdConverter->insert(i);
 		}
