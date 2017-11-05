@@ -77,13 +77,22 @@ void SubsGridFiltering::FilterByDoubtful()
 {
 	File *Subs = grid->file->GetSubs();
 	Dialogue *lastDial = NULL;
+	int isFirstInvisible = 0;
 	for (int i = 0; i < Subs->dials.size(); i++){
 		Dialogue *dial = Subs->dials[i];
-		if (lastDial && lastDial->isVisible != dial->isVisible){
-			if (!Invert && lastDial->isVisible){ lastDial->isVisible = VISIBLE_HIDDEN_BLOCK; }
-		}
+		if (dial->NonDialogue) continue;
 		if (dial->State & 4){ dial->isVisible = !Invert; }
-		else if (!dial->NonDialogue){ dial->isVisible = Invert; }
+		else{ dial->isVisible = Invert; }
+		if (!isFirstInvisible && !dial->isVisible){
+			isFirstInvisible++;
+		}
+		else if (isFirstInvisible == 1 && dial->isVisible){
+			dial->isVisible = VISIBLE_HIDDEN_BLOCK;
+			isFirstInvisible++;
+		}
+		else if (lastDial && lastDial->isVisible && !dial->isVisible){
+			lastDial->isVisible = VISIBLE_HIDDEN_BLOCK;
+		}
 		lastDial = dial;
 	}
 }
@@ -91,10 +100,24 @@ void SubsGridFiltering::FilterByDoubtful()
 void SubsGridFiltering::FilterByUntranslated()
 {
 	File *Subs = grid->file->GetSubs();
+	Dialogue *lastDial = NULL;
+	int isFirstInvisible = 0;
 	for (int i = 0; i < Subs->dials.size(); i++){
 		Dialogue *dial = Subs->dials[i];
+		if (dial->NonDialogue) continue;
 		if (dial->TextTl.empty()){ dial->isVisible = !Invert; }
-		else if (!dial->NonDialogue){ dial->isVisible = Invert; }
+		else{ dial->isVisible = Invert; }
+		if (!isFirstInvisible && !dial->isVisible){
+			isFirstInvisible++;
+		}
+		else if (isFirstInvisible == 1 && dial->isVisible){
+			dial->isVisible = VISIBLE_HIDDEN_BLOCK;
+			isFirstInvisible++;
+		}
+		else if (lastDial && lastDial->isVisible && !dial->isVisible){
+			lastDial->isVisible = VISIBLE_HIDDEN_BLOCK;
+		}
+		lastDial = dial;
 	}
 }
 inline bool FindStyle(const wxArrayString &styles, const wxString &dialStyle){
@@ -107,20 +130,48 @@ inline bool FindStyle(const wxArrayString &styles, const wxString &dialStyle){
 void SubsGridFiltering::FilterByStyles(wxArrayString &styles)
 {
 	File *Subs = grid->file->GetSubs();
+	Dialogue *lastDial = NULL;
+	int isFirstInvisible = 0;
 	for (int i = 0; i < Subs->dials.size(); i++){
 		Dialogue *dial = Subs->dials[i];
+		if (dial->NonDialogue) continue;
 		if (FindStyle(styles, dial->Style)){ dial->isVisible = !Invert; }
-		else if (!dial->NonDialogue){ dial->isVisible = Invert; }
+		else{ dial->isVisible = Invert; }
+		if (!isFirstInvisible && !dial->isVisible){
+			isFirstInvisible++;
+		}
+		else if (isFirstInvisible == 1 && dial->isVisible){
+			dial->isVisible = VISIBLE_HIDDEN_BLOCK;
+			isFirstInvisible++;
+		}
+		else if (lastDial && lastDial->isVisible && !dial->isVisible){
+			lastDial->isVisible = VISIBLE_HIDDEN_BLOCK;
+		}
+		lastDial = dial;
 	}
 }
 
 void SubsGridFiltering::FilterBySelections()
 {
 	File *Subs = grid->file->GetSubs();
+	Dialogue *lastDial = NULL;
+	int isFirstInvisible = 0;
 	for (int i = 0; i < Subs->dials.size(); i++){
 		Dialogue *dial = Subs->dials[i];
+		if (dial->NonDialogue) continue;
 		if (grid->Selections.find(grid->file->GetElementByKey(i)) != grid->Selections.end()){ dial->isVisible = !Invert; }
-		else if (!dial->NonDialogue){ dial->isVisible = Invert; }
+		else{ dial->isVisible = Invert; }
+		if (!isFirstInvisible && !dial->isVisible){
+			isFirstInvisible++;
+		}
+		else if (isFirstInvisible == 1 && dial->isVisible){
+			dial->isVisible = VISIBLE_HIDDEN_BLOCK;
+			isFirstInvisible++;
+		}
+		else if (lastDial && lastDial->isVisible && !dial->isVisible){
+			lastDial->isVisible = VISIBLE_HIDDEN_BLOCK;
+		}
+		lastDial = dial;
 	}
 }
 
@@ -128,7 +179,7 @@ void SubsGridFiltering::TurnOffFiltering()
 {
 	File *Subs = grid->file->GetSubs();
 	for (auto dial : Subs->dials){
-		if (!dial->isVisible && !dial->NonDialogue){ dial->isVisible = true; }
+		if (!dial->isVisible && !dial->NonDialogue){ dial->isVisible = VISIBLE; }
 	}
 }
 
