@@ -1,4 +1,4 @@
-﻿//  Copyright (c) 2016, Marcin Drob
+﻿//  Copyright (c) 2012-2017, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #include <wx/regex.h>
 #include <wx/ffile.h>
 #include "KaiMessageBox.h"
-//#include <thread>
+
 
 bool sortstart(Dialogue *i,Dialogue *j){ 
 	if(i->Start.mstime!=j->Start.mstime){
@@ -1656,6 +1656,7 @@ void SubsGridBase::SaveSelections(bool clear)
 	savedSelections = true;
 	if (clear){ Selections.clear(); }
 }
+
 
 
 

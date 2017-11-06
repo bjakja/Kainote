@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+//  Copyright (c) 2012-2017, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -105,6 +105,7 @@ public:
 	int markedLine = 0;
 	bool showFrames = false;
 	bool savedSelections = false;
+	bool isFiltered = false;
 	std::vector<wxArrayInt> SpellErrors;
 	std::vector<wxArrayInt> *Comparison;
 	std::set<int> Selections;

@@ -29,6 +29,7 @@
 #include "Menu.h"
 #include <wx/regex.h>
 #include "KaiMessageBox.h"
+#include "SubsGridFiltering.h"
 
 SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 	:SubsGridWindow(parent, id, pos, size, style)
@@ -59,7 +60,9 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	int sels=selarr.GetCount();
 	Menu *menu=new Menu(GRID_HOTKEY);
 	Menu *hidemenu=new Menu(GRID_HOTKEY);
+	Menu *filterMenu = new Menu(GRID_HOTKEY);
 	MenuItem *item;
+	//hide submenu
 	item = hidemenu->SetAccMenu(5000+LAYER,_("Ukryj warstwę"),_("Ukryj warstwę"),true, ITEM_CHECK);
 	item->Enable(subsFormat<SRT);
 	item->Check((visibleColumns & LAYER)!=0);
@@ -86,6 +89,14 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	item->Enable(subsFormat<SRT);
 	item->Check((visibleColumns & EFFECT)!=0);
 	hidemenu->SetAccMenu(5000+CNZ,_("Ukryj znaki na sekundę"),_("Ukryj znaki na sekundę"),true, ITEM_CHECK)->Check((visibleColumns & CNZ)!=0);
+
+	//filter submenu
+	filterMenu->SetAccMenu(4446, _("Filtrowanie odwrócone"), _("Filtrowanie odwrócone"), true, ITEM_CHECK)->Check(Options.GetBool(GridFilterInverted));
+	filterMenu->SetAccMenu(FilterByDoubtful, _("Filtruj według niepewnych"), _("Filtruj według niepewnych"))->Enable(hasTLMode);
+	filterMenu->SetAccMenu(FilterByUntranslated, _("Filtruj według nieprzetłumaczonych"), _("Filtruj według nieprzetłumaczonych"))->Enable(hasTLMode);
+	filterMenu->SetAccMenu(FilterBySelections, _("Filtruj według zaznaczeń"), _("Filtruj według zaznaczeń"))->Enable(sels>0);
+	filterMenu->SetAccMenu(FilterByStyles, _("Filtruj według stylów"), _("Filtruj według stylów"));
+	filterMenu->SetAccMenu(FilterByNothing, _("Wyłącz filtrowanie"), _("Wyłącz filtrowanie"));
 
 	bool isen;
 	isen = (sels == 1);
@@ -114,6 +125,8 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	menu->SetAccMenu( CopyCollumns,_("Kopiuj kolumny"))->Enable(isen);
 	menu->SetAccMenu( PasteCollumns,_("Wklej kolumny"));
 	menu->Append(4444,_("Ukryj kolumny"),hidemenu);
+	menu->SetAccMenu(HideSelected, _("Ukryj zaznaczone linijki"))->Enable(sels>0);
+	menu->Append(4445, _("Filtruj"), filterMenu);
 	menu->SetAccMenu( NewFPS,_("Ustaw nowy FPS"));
 	menu->SetAccMenu( FPSFromVideo,_("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState()!=None && sels==2);
 	menu->SetAccMenu(PasteTranslation, _("Wklej tekst tłumaczenia"))->Enable(subsFormat<SRT && ((TabPanel*)GetParent())->SubsPath != "");
@@ -490,6 +503,21 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 		case Join: if(sels>1){OnJoin(event);} break;
 		case JoinToFirst:
 		case JoinToLast: if(sels>1){OnJoinToFirst(id);} break;
+		case 4446:
+			Options.SetBool(GridFilterInverted, !Options.GetBool(GridFilterInverted)); break;
+		case HideSelected:
+		{
+			SubsGridFiltering filter(this);
+			filter.FilterBySelections(true);
+			isFiltered = true;
+			break;
+		}
+		case FilterByDoubtful:
+		case FilterByUntranslated:
+		case FilterBySelections:
+		case FilterByStyles:
+		case FilterByNothing:
+			Filter(id); break;
 		case PasteTranslation: if(subsFormat<SRT && ((TabPanel*)GetParent())->SubsPath!=""){OnPasteTextTl();} break;
 		case SubsFromMKV: if( Kai->GetTab()->VideoName.EndsWith(".mkv")){OnMkvSubs(event);} break;
 		case NewFPS: OnSetNewFPS(); break;
@@ -537,8 +565,6 @@ void SubsGrid::OnPasteTextTl()
 			{
 				wxString text=tokenizer.GetNextToken().Trim();
 				if(IsNumber(text)){if(text1!=""){
-					//dbg<<text1<<"\n";
-					//dbg<<ndl.Start.raw<<" x "<<ndl.End.raw<<" x "<<ndl.Text<<"\n"; 
 					Dialogue diall=Dialogue(text1.Trim());
 					if(iline<GetCount()){
 						diall.Conv(subsFormat);
@@ -1135,6 +1161,26 @@ bool SubsGrid::SwapAssProperties()
 	return false;
 }
 
+void SubsGrid::Filter(int id)
+{
+	SubsGridFiltering filter((SubsGrid*)this);
+	Options.SetInt(GridFilterBy, (id == FilterByDoubtful) ? 1 : (id == FilterByUntranslated) ? 2 : (id == FilterBySelections) ? 3 : (id == FilterByStyles) ? 4 : 0);
+	if (id == FilterByStyles){
+		Options.SetString(GridFilterStyles, GetCheckedElements(Kai));
+	}
+	if (id != FilterByNothing){ isFiltered = true; }
+	else{ isFiltered = false; }
+	filter.Filter();
+}
+
+void SubsGrid::RefreshSubsOnVideo()
+{
+	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
+	if (vb->GetState() != None){
+		vb->OpenSubs(GetVisible());
+		vb->Render();
+	}
+}
 
 BEGIN_EVENT_TABLE(SubsGrid, SubsGridBase)
 	EVT_MENU(Cut,SubsGrid::OnAccelerator)

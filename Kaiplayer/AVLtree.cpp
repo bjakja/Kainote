@@ -75,10 +75,10 @@ AVLtree::Node *AVLtree::getElementById(Node *node, int id){
 	else return getElementById(node->right, id - node->num_of_elements_on_left - 1);
 }
 
-void AVLtree::insert(int key){
-    addIndex(1, key, root);
+void AVLtree::insert(int key, bool moveKeys){
+	if (moveKeys){ addIndex(1, key, root); }
     if(root!=NULL)
-        root=insert(root, key);
+		root = insert(root, key);
     else
         root=new Node(key, NULL);
 	previous = NULL;
@@ -143,7 +143,7 @@ AVLtree::Node* AVLtree::insert(Node* node, int key)
 }
 
 
-int AVLtree::deleteItemByNode(int key, Node *node){
+int AVLtree::deleteItemByNode(int key, Node *node, bool moveKeys){
 
     //int key = node->key;
 	if (node->left == NULL && node->right == NULL){
@@ -238,7 +238,8 @@ int AVLtree::deleteItemByNode(int key, Node *node){
 		temp = NULL;
 
 	}
-	addIndex(-1, key, root);
+	if (moveKeys)
+		addIndex(-1, key, root);
 	return key;
 	
 }
@@ -419,15 +420,15 @@ void AVLtree::fromToKey(Node *node, int from, int to, const func &f){
 	}
 }
 
-int  AVLtree::deleteItemByKey(int key){
+int  AVLtree::deleteItemByKey(int key, bool moveKeys){
 	Node *node = getElementByKey(root, key);
 	if (node == NULL) return -1;
-	return deleteItemByNode(key, node);
+	return deleteItemByNode(key, node, moveKeys);
 }
-int  AVLtree::deleteItemById(int id){
+int  AVLtree::deleteItemById(int id, bool moveKeys){
 	Node *node = getElementById(root, id);
 	if (node == NULL) return -1;
-	return deleteItemByNode(node->key, node);
+	return deleteItemByNode(node->key, node, moveKeys);
 }
 
 ///

@@ -41,13 +41,13 @@ class AVLtree
         Node *previous;
 
         Node *repairNumOf(Node*);
-        Node *insert(Node *node, int key);
+		Node *insert(Node *node, int key);
         Node *getElementByKey(Node *node, int key);
         Node *getElementById(Node *node, int id);
         Node *getNext(Node *right_node);
         Node *rightRotate(Node*);
         Node *leftRotate(Node*);
-		int deleteItemByNode(int key, Node *node);
+		int deleteItemByNode(int key, Node *node, bool addIndex);
         int height(Node*);
         int getBalance(Node*);
 
@@ -78,11 +78,11 @@ class AVLtree
 
         Node *root;
 
-        void insert(int key);
+		void insert(int key, bool moveKeys = true);
         int getElementByKey(int key);
         int getElementById(int id);
-        int deleteItemByKey(int key);
-		int  deleteItemById(int id);
+		int deleteItemByKey(int key, bool moveKeys = true);
+		int  deleteItemById(int id, bool moveKeys = true);
         void leftToRightOrder(const func&);
         void fromTo(int from, int to, const func&);
         void fromToKey(int from, int to, const func&);

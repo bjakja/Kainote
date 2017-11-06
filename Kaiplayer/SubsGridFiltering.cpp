@@ -18,6 +18,7 @@
 
 SubsGridFiltering::SubsGridFiltering(SubsGrid *_grid)
 	:grid(_grid)
+	, Invert(false)
 {
 }
 
@@ -28,7 +29,7 @@ SubsGridFiltering::~SubsGridFiltering()
 void SubsGridFiltering::Filter()
 {
 	Invert = Options.GetBool(GridFilterInverted);
-	bool filterBy = Options.GetInt(GridFilterBy);
+	int filterBy = Options.GetInt(GridFilterBy);
 	switch (filterBy)
 	{
 	case 0:
@@ -52,22 +53,31 @@ void SubsGridFiltering::Filter()
 	FilteringFinalize();
 }
 
-void SubsGridFiltering::FilterPartial(int from, int to, bool hide)
+void SubsGridFiltering::FilterPartial(int from, bool hide)
 {
 	File *Subs = grid->file->GetSubs();
+	Dialogue *lastDial = NULL;
 	int keyFrom = grid->file->GetElementById(from);
-	int keyTo = grid->file->GetElementById(to);
-	if (keyFrom > 0){ keyFrom--; }
-	else if (keyFrom < Subs->dials.size()){ keyTo++; }
-	for (int i = keyFrom; i <= keyTo; i++){
+	int keyTo = keyFrom;
+	for (int i = keyFrom; i < Subs->dials.size(); i++){
 		Dialogue *dial = Subs->dials[i];
 		if (!dial->NonDialogue){ 
-			dial->isVisible = (hide && ((i != 0 && i == keyFrom) || (i == 0 && i == keyTo))) ? VISIBLE_HIDDEN_BLOCK :
+			if (i != keyFrom && dial->isVisible == (unsigned char)hide){ 
+				keyTo = i - 1; 
+				if (keyFrom == 0 && hide){ lastDial->isVisible = VISIBLE_HIDDEN_BLOCK; }
+				else if (!hide){ lastDial->isVisible = VISIBLE_END_BLOCK; }
+				break;
+			}
+			dial->isVisible = (hide && (i != 0 && i == keyFrom)) ? VISIBLE_HIDDEN_BLOCK :
 				(!hide && i == keyFrom) ? VISIBLE_START_BLOCK : 
-				(!hide && i == keyTo) ? VISIBLE_END_BLOCK : 
 				!hide ? VISIBLE :
 				NOT_VISIBLE;
 		}
+		lastDial = dial;
+	}
+	if (keyFrom == keyTo){ 
+		keyTo = Subs->dials.size() - 1; 
+		wxLogStatus("Something went wrong with partially hiding it is better to check it for potencial bugs."); 
 	}
 	grid->file->ReloadVisibleDialogues(keyFrom, keyTo);
 	grid->RefreshColumns();
@@ -151,7 +161,7 @@ void SubsGridFiltering::FilterByStyles(wxArrayString &styles)
 	}
 }
 
-void SubsGridFiltering::FilterBySelections()
+void SubsGridFiltering::FilterBySelections(bool addToFiltering)
 {
 	File *Subs = grid->file->GetSubs();
 	Dialogue *lastDial = NULL;
@@ -159,8 +169,10 @@ void SubsGridFiltering::FilterBySelections()
 	for (int i = 0; i < Subs->dials.size(); i++){
 		Dialogue *dial = Subs->dials[i];
 		if (dial->NonDialogue) continue;
-		if (grid->Selections.find(grid->file->GetElementByKey(i)) != grid->Selections.end()){ dial->isVisible = !Invert; }
-		else{ dial->isVisible = Invert; }
+		if (grid->Selections.find(grid->file->GetElementByKey(i)) != grid->Selections.end()){ 
+			dial->isVisible = (addToFiltering)? false : !Invert; 
+		}
+		else if (!addToFiltering){ dial->isVisible = Invert; }
 		if (!isFirstInvisible && !dial->isVisible){
 			isFirstInvisible++;
 		}
@@ -173,13 +185,16 @@ void SubsGridFiltering::FilterBySelections()
 		}
 		lastDial = dial;
 	}
+	if (addToFiltering){ FilteringFinalize(); }
 }
 
 void SubsGridFiltering::TurnOffFiltering()
 {
 	File *Subs = grid->file->GetSubs();
 	for (auto dial : Subs->dials){
-		if (!dial->isVisible && !dial->NonDialogue){ dial->isVisible = VISIBLE; }
+		if (!dial->isVisible && !dial->NonDialogue){ 
+			dial->isVisible = VISIBLE; 
+		}
 	}
 }
 
@@ -187,4 +202,5 @@ void SubsGridFiltering::FilteringFinalize()
 {
 	grid->file->ReloadVisibleDialogues();
 	grid->RefreshColumns();
+	grid->RefreshSubsOnVideo();
 }

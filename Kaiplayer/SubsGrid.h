@@ -35,6 +35,7 @@ public:
 	void OnJoin(wxCommandEvent &event);
 	void ContextMenu(const wxPoint &pos, bool dummy=false);
 	bool SwapAssProperties(); 
+	void RefreshSubsOnVideo();
 	
 protected:
 
@@ -54,6 +55,7 @@ private:
 	void OnSetFPSFromVideo();
 	void OnSetNewFPS();
 	void OnMakeContinous(int id);
+	void Filter(int id);
 
 	DECLARE_EVENT_TABLE()
 };

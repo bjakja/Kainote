@@ -13,6 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#pragma once
 #include <wx/wx.h>
 class SubsGrid;
 
@@ -23,13 +24,13 @@ public:
 	~SubsGridFiltering();
 
 	void Filter();
-	void FilterPartial(int from, int to, bool hide = true);
+	void FilterPartial(int from, bool hide = true);
+	void FilterBySelections(bool addToFiltering = false);
 
 private:
 	void FilterByDoubtful();
 	void FilterByUntranslated();
 	void FilterByStyles(wxArrayString &styles);
-	void FilterBySelections();
 	void TurnOffFiltering();
 	void FilteringFinalize();
 	SubsGrid *grid;

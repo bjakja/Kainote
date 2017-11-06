@@ -289,20 +289,28 @@ Dialogue *SubsFile::CopyDial(int i, bool push, bool keepstate)
 
 Dialogue *SubsFile::GetDialogue(int i)
 {
-	int Id = (*IdConverter)[i];
+	int Id = IdConverter->getElementById(i);
 	if (Id < 0){
 		Id = (*IdConverter)[IdConverter->size() - 1];
 		wxLogStatus("przekroczone drzewko %i, %i", i, IdConverter->size());
+	}
+	if (Id >= subs->dials.size()){
+		wxLogStatus("tablica dialogów przekroczona %i, %i", Id, subs->dials.size());
+		Id = subs->dials.size() - 1;
 	}
 	return subs->dials[Id];
 }
 
 Dialogue *&SubsFile::operator[](int i)
 {
-	int Id = (*IdConverter)[i];
+	int Id = IdConverter->getElementById(i);
 	if (Id < 0){
 		Id = (*IdConverter)[IdConverter->size() - 1];
 		wxLogStatus("przekroczone drzewko %i, %i", i, IdConverter->size());
+	}
+	if (Id >= subs->dials.size()){
+		wxLogStatus("tablica dialogów przekroczona %i, %i", Id, subs->dials.size());
+		Id = subs->dials.size() - 1;
 	}
 	return subs->dials[Id];
 }
@@ -381,11 +389,10 @@ void SubsFile::ReloadVisibleDialogues(int keyfrom, int keyto)
 	while (i <= keyto){
 		bool visible = (i < size) ? subs->dials[i]->isVisible > 0 : false;
 		if (visible && IdConverter->getElementByKey(i) == -1){
-			IdConverter->insert(i);
+			IdConverter->insert(i,false);
 		}
 		else if (!visible && IdConverter->getElementByKey(i) != -1){
-			IdConverter->deleteItemByKey(i);
-			continue;
+			IdConverter->deleteItemByKey(i,false);
 		}
 		i++;
 	}
@@ -395,14 +402,13 @@ void SubsFile::ReloadVisibleDialogues()
 {
 	int i = 0;
 	int size = subs->dials.size();
-	while (i < IdConverter->size()){
+	while (i < IdConverter->size()/* || i < size*/){
 		bool visible = (i<size)? subs->dials[i]->isVisible > 0 : false;
 		if (visible && IdConverter->getElementByKey(i) == -1){
-			IdConverter->insert(i);
+			IdConverter->insert(i, false);
 		}
 		else if (!visible && IdConverter->getElementByKey(i) != -1){
-			IdConverter->deleteItemByKey(i);
-			continue;
+			IdConverter->deleteItemByKey(i,false);
 		}
 		i++;
 	}

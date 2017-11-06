@@ -84,6 +84,12 @@
 	XX( Copy, ) \
 	XX( Paste, ) \
 	XX( Cut, ) \
+	XX( HideSelected, ) \
+	XX( FilterByDoubtful, ) \
+	XX( FilterByUntranslated, ) \
+	XX( FilterBySelections, ) \
+	XX( FilterByStyles, ) \
+	XX( FilterByNothing, ) \
 	XX( PasteTranslation, ) \
 	XX( TranslationDialog, ) \
 	XX( SubsFromMKV, ) \

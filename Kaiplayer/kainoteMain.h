@@ -1,9 +1,9 @@
 /***************************************************************
  * Name:      kainoteMain.h
- * Purpose:   Defines Application Frame
+ * Purpose:   Subtitles editor and player
  * Author:    Bjakja (bjakja@op.pl)
  * Created:   2012-04-23
- * Copyright: Bjakja (http://animesub.info/forum/viewtopic.php?id=258715)
+ * Copyright: Marcin Drob aka Bjakja (http://animesub.info/forum/viewtopic.php?id=258715)
  * License:
 
  * Kainote is free software: you can redistribute it and/or modify
