@@ -1574,6 +1574,7 @@ done:
 		if (vb->GetState() != None){
 			vb->OpenSubs(grid->GetVisible());
 			vb->Render();
+			OnVideo = true;
 		}
 	}
 }

@@ -402,7 +402,7 @@ void SubsFile::ReloadVisibleDialogues()
 {
 	int i = 0;
 	int size = subs->dials.size();
-	while (i < IdConverter->size()/* || i < size*/){
+	while (i < IdConverter->size() || i < size){
 		bool visible = (i<size)? subs->dials[i]->isVisible > 0 : false;
 		if (visible && IdConverter->getElementByKey(i) == -1){
 			IdConverter->insert(i, false);

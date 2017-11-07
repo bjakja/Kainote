@@ -45,6 +45,10 @@ SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, cons
 			Options.SetInt(GridHideCollums, visibleColumns);
 			RefreshColumns();
 		}
+		else if (id == 4446){
+			Options.SetBool(GridFilterInverted, !Options.GetBool(GridFilterInverted));
+		}
+
 	},ID_CHECK_EVENT);
 }
 
@@ -503,8 +507,6 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 		case Join: if(sels>1){OnJoin(event);} break;
 		case JoinToFirst:
 		case JoinToLast: if(sels>1){OnJoinToFirst(id);} break;
-		case 4446:
-			Options.SetBool(GridFilterInverted, !Options.GetBool(GridFilterInverted)); break;
 		case HideSelected:
 		{
 			SubsGridFiltering filter(this);
@@ -1175,10 +1177,16 @@ void SubsGrid::Filter(int id)
 
 void SubsGrid::RefreshSubsOnVideo()
 {
+	Selections.clear();
+	SpellErrors.clear();
+	if (Edit->ebrow >= GetCount()){ Edit->ebrow = GetCount() - 1; ScrollTo(Edit->ebrow, true); }
+	Selections.insert(Edit->ebrow);
+	Edit->SetLine(Edit->ebrow);
 	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
 	if (vb->GetState() != None){
 		vb->OpenSubs(GetVisible());
 		vb->Render();
+		Edit->OnVideo = true;
 	}
 }
 

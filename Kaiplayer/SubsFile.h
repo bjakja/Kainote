@@ -104,7 +104,7 @@ private:
 	std::vector<File*> undo;
 	int iter;
 	File *subs;
-	AVLtree *IdConverter;
+	
 public:
 	SubsFile();
 	~SubsFile();
@@ -134,6 +134,7 @@ public:
 	void GetHistoryTable(wxArrayString *history);
 	bool SetHistory(int iter);
 	bool edited;
+	AVLtree *IdConverter;
 };
 
 class HistoryDialog : public KaiDialog

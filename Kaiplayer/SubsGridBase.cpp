@@ -342,7 +342,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 
 	txt=GetSInfo("TLMode Style");
 	wxString raw;
-	if (dummyEditboxChanges){
+	if (loadFromEditbox){
 		for (int i = 0; i < GetCount(); i++)
 		{
 			//a tu trzeba w przypadku ebrow pobrać editbox line
@@ -982,6 +982,18 @@ wxArrayInt SubsGridBase::GetSels(bool deselect)
 		sels.Add(*i);
 	}
 	if(deselect){Selections.clear();}
+
+	return sels;
+}
+
+wxArrayInt SubsGridBase::GetSelectionsKeys(bool deselect)
+{
+	wxArrayInt sels;
+	for (std::set<int>::iterator i = Selections.begin(); i != Selections.end(); i++)
+	{
+		sels.Add(file->GetElementById(*i));
+	}
+	if (deselect){ Selections.clear(); }
 
 	return sels;
 }

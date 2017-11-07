@@ -43,7 +43,7 @@ void SubsGridFiltering::Filter()
 	case 4:
 	{
 		wxArrayString styles;
-		Options.GetTable(GridFilterStyles, styles, ",");
+		Options.GetTable(GridFilterStyles, styles, ";");
 		FilterByStyles(styles);
 		break;
 	}
@@ -62,24 +62,26 @@ void SubsGridFiltering::FilterPartial(int from, bool hide)
 	for (int i = keyFrom; i < Subs->dials.size(); i++){
 		Dialogue *dial = Subs->dials[i];
 		if (!dial->NonDialogue){ 
-			if (i != keyFrom && dial->isVisible == (unsigned char)hide){ 
+			if (lastDial && (dial->isVisible == VISIBLE || dial->isVisible == VISIBLE_HIDDEN_BLOCK)){
 				keyTo = i - 1; 
-				if (keyFrom == 0 && hide){ lastDial->isVisible = VISIBLE_HIDDEN_BLOCK; }
-				else if (!hide){ lastDial->isVisible = VISIBLE_END_BLOCK; }
+				if (!hide){ lastDial->isVisible = VISIBLE_END_BLOCK; }
 				break;
 			}
-			dial->isVisible = (hide && (i != 0 && i == keyFrom)) ? VISIBLE_HIDDEN_BLOCK :
+			dial->isVisible = (hide && (i == keyFrom)) ? VISIBLE_HIDDEN_BLOCK :
 				(!hide && i == keyFrom) ? VISIBLE_START_BLOCK : 
-				!hide ? VISIBLE :
+				!hide ? VISIBLE_BLOCK :
 				NOT_VISIBLE;
 		}
 		lastDial = dial;
 	}
 	if (keyFrom == keyTo){ 
 		keyTo = Subs->dials.size() - 1; 
+		if (!hide)
+			Subs->dials[keyTo]->isVisible = VISIBLE_END_BLOCK;
 		wxLogStatus("Something went wrong with partially hiding it is better to check it for potencial bugs."); 
 	}
 	grid->file->ReloadVisibleDialogues(keyFrom, keyTo);
+	grid->RefreshSubsOnVideo();
 	grid->RefreshColumns();
 }
 
@@ -87,21 +89,26 @@ void SubsGridFiltering::FilterByDoubtful()
 {
 	File *Subs = grid->file->GetSubs();
 	Dialogue *lastDial = NULL;
-	int isFirstInvisible = 0;
+	bool BeginBlock = false;
 	for (int i = 0; i < Subs->dials.size(); i++){
 		Dialogue *dial = Subs->dials[i];
 		if (dial->NonDialogue) continue;
-		if (dial->State & 4){ dial->isVisible = !Invert; }
-		else{ dial->isVisible = Invert; }
-		if (!isFirstInvisible && !dial->isVisible){
-			isFirstInvisible++;
+		bool hasDoubtful = (dial->State & 4);
+		if (hasDoubtful && !Invert || !hasDoubtful && Invert){
+			if (!BeginBlock){
+				BeginBlock = true;
+				if (lastDial){
+					lastDial->isVisible = VISIBLE_HIDDEN_BLOCK;
+				}
+				else{ /*zasygnalizowaæ gridowi, ¿e ma ukryte linie na starcie*/ }
+			}
+			dial->isVisible = NOT_VISIBLE;
 		}
-		else if (isFirstInvisible == 1 && dial->isVisible){
-			dial->isVisible = VISIBLE_HIDDEN_BLOCK;
-			isFirstInvisible++;
-		}
-		else if (lastDial && lastDial->isVisible && !dial->isVisible){
-			lastDial->isVisible = VISIBLE_HIDDEN_BLOCK;
+		else{
+			if (BeginBlock){
+				BeginBlock = false;
+			}
+			dial->isVisible = VISIBLE;
 		}
 		lastDial = dial;
 	}
@@ -111,28 +118,35 @@ void SubsGridFiltering::FilterByUntranslated()
 {
 	File *Subs = grid->file->GetSubs();
 	Dialogue *lastDial = NULL;
-	int isFirstInvisible = 0;
+	bool BeginBlock = false;
 	for (int i = 0; i < Subs->dials.size(); i++){
 		Dialogue *dial = Subs->dials[i];
 		if (dial->NonDialogue) continue;
-		if (dial->TextTl.empty()){ dial->isVisible = !Invert; }
-		else{ dial->isVisible = Invert; }
-		if (!isFirstInvisible && !dial->isVisible){
-			isFirstInvisible++;
+		bool hasUntranslated = dial->TextTl.empty();
+		if (hasUntranslated && !Invert || !hasUntranslated && Invert){
+			if (!BeginBlock){
+				BeginBlock = true;
+				if (lastDial){
+					lastDial->isVisible = VISIBLE_HIDDEN_BLOCK;
+				}
+				else{ /*zasygnalizowaæ gridowi, ¿e ma ukryte linie na starcie*/ }
+			}
+			dial->isVisible = NOT_VISIBLE;
 		}
-		else if (isFirstInvisible == 1 && dial->isVisible){
-			dial->isVisible = VISIBLE_HIDDEN_BLOCK;
-			isFirstInvisible++;
-		}
-		else if (lastDial && lastDial->isVisible && !dial->isVisible){
-			lastDial->isVisible = VISIBLE_HIDDEN_BLOCK;
+		else{
+			if (BeginBlock){
+				BeginBlock = false;
+			}
+			dial->isVisible = VISIBLE;
 		}
 		lastDial = dial;
 	}
 }
 inline bool FindStyle(const wxArrayString &styles, const wxString &dialStyle){
 	for (auto style : styles){ 
-		if (style == dialStyle) { return true; }
+		if (style == dialStyle) {
+			return true; 
+		}
 	}
 	return false;
 }
@@ -141,21 +155,26 @@ void SubsGridFiltering::FilterByStyles(wxArrayString &styles)
 {
 	File *Subs = grid->file->GetSubs();
 	Dialogue *lastDial = NULL;
-	int isFirstInvisible = 0;
+	bool BeginBlock = false;
 	for (int i = 0; i < Subs->dials.size(); i++){
 		Dialogue *dial = Subs->dials[i];
 		if (dial->NonDialogue) continue;
-		if (FindStyle(styles, dial->Style)){ dial->isVisible = !Invert; }
-		else{ dial->isVisible = Invert; }
-		if (!isFirstInvisible && !dial->isVisible){
-			isFirstInvisible++;
+		bool hasStyle = FindStyle(styles, dial->Style);
+		if (hasStyle && !Invert || !hasStyle && Invert){
+			if (!BeginBlock){
+				BeginBlock = true;
+				if (lastDial){
+					lastDial->isVisible = VISIBLE_HIDDEN_BLOCK;
+				}
+				else{ /*zasygnalizowaæ gridowi, ¿e ma ukryte linie na starcie*/ }
+			}
+			dial->isVisible = NOT_VISIBLE;
 		}
-		else if (isFirstInvisible == 1 && dial->isVisible){
-			dial->isVisible = VISIBLE_HIDDEN_BLOCK;
-			isFirstInvisible++;
-		}
-		else if (lastDial && lastDial->isVisible && !dial->isVisible){
-			lastDial->isVisible = VISIBLE_HIDDEN_BLOCK;
+		else{
+			if (BeginBlock){
+				BeginBlock = false;
+			}
+			dial->isVisible = VISIBLE;
 		}
 		lastDial = dial;
 	}
@@ -164,24 +183,31 @@ void SubsGridFiltering::FilterByStyles(wxArrayString &styles)
 void SubsGridFiltering::FilterBySelections(bool addToFiltering)
 {
 	File *Subs = grid->file->GetSubs();
+	wxArrayInt sels = grid->GetSelectionsKeys();
+	int selssize = sels.size();
 	Dialogue *lastDial = NULL;
-	int isFirstInvisible = 0;
+	bool BeginBlock = false;
+	int j = 0;
 	for (int i = 0; i < Subs->dials.size(); i++){
 		Dialogue *dial = Subs->dials[i];
 		if (dial->NonDialogue) continue;
-		if (grid->Selections.find(grid->file->GetElementByKey(i)) != grid->Selections.end()){ 
-			dial->isVisible = (addToFiltering)? false : !Invert; 
+		bool isSelected = false;
+		if (j < selssize){ isSelected = sels[j] == i; if (isSelected){ j++; } }
+		if (isSelected && !Invert || !isSelected && Invert){
+			if (!BeginBlock){
+				BeginBlock = true;
+				if (lastDial){
+					lastDial->isVisible = VISIBLE_HIDDEN_BLOCK;
+				}
+				else{ /*zasygnalizowaæ gridowi, ¿e ma ukryte linie na starcie*/ }
+			}
+			dial->isVisible = NOT_VISIBLE; 
 		}
-		else if (!addToFiltering){ dial->isVisible = Invert; }
-		if (!isFirstInvisible && !dial->isVisible){
-			isFirstInvisible++;
-		}
-		else if (isFirstInvisible == 1 && dial->isVisible){
-			dial->isVisible = VISIBLE_HIDDEN_BLOCK;
-			isFirstInvisible++;
-		}
-		else if (lastDial && lastDial->isVisible && !dial->isVisible){
-			lastDial->isVisible = VISIBLE_HIDDEN_BLOCK;
+		else if (!addToFiltering){
+			if (BeginBlock){ 
+				BeginBlock = false; 
+			}
+			dial->isVisible = VISIBLE; 
 		}
 		lastDial = dial;
 	}
@@ -201,6 +227,6 @@ void SubsGridFiltering::TurnOffFiltering()
 void SubsGridFiltering::FilteringFinalize()
 {
 	grid->file->ReloadVisibleDialogues();
-	grid->RefreshColumns();
 	grid->RefreshSubsOnVideo();
+	grid->RefreshColumns();
 }

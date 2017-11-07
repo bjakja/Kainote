@@ -149,7 +149,6 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	bool isComment = false;
 	bool unkstyle = false;
 	bool shorttime = false;
-	bool drawCollapseLine = false;
 	int states = 0;
 
 	if (SpellErrors.size()<(size_t)size){
@@ -286,7 +285,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 		if (isFiltered){
 			posX = 12;
-			if (Dial && Dial->isVisible > 1 || drawCollapseLine){
+			if (Dial && Dial->isVisible > 1){
 				tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 				tdc.SetPen(textcol);
 				int halfLine = posY + (GridHeight / 2);
@@ -298,17 +297,15 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				}
 				else if (Dial->isVisible == VISIBLE_START_BLOCK){
 					tdc.DrawRectangle(1, startDrawPosY, 10, 10);
-					tdc.DrawLine(4, halfLine-1, 10, halfLine-1);
-					tdc.DrawLine(6, startDrawPosY + 11, 10, posY + GridHeight);
-					drawCollapseLine = true;
+					tdc.DrawLine(3, halfLine-1, 9, halfLine-1);
+					tdc.DrawLine(6, startDrawPosY + 11, 6, posY + GridHeight);
+				}
+				else if (Dial->isVisible == VISIBLE_BLOCK){
+					tdc.DrawLine(6, posY-1, 6, posY + GridHeight);
 				}
 				else if (Dial->isVisible == VISIBLE_END_BLOCK){
-					tdc.DrawLine(6, posY, 6, halfLine);
+					tdc.DrawLine(6, posY-1, 6, halfLine);
 					tdc.DrawLine(6, halfLine, 12, halfLine);
-					drawCollapseLine = false;
-				}
-				else if (drawCollapseLine){
-					tdc.DrawLine(6, posY, 6, posY + GridHeight);
 				}
 			}
 		}
@@ -434,7 +431,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	if (Edit->ebrow >= scPos&&Edit->ebrow <= scrows){
 		tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 		tdc.SetPen(wxPen(Options.GetColour(GridActiveLine)));
-		tdc.DrawRectangle(scHor, ((Edit->ebrow - scPos + 1)*(GridHeight + 1)) - 1, w + scHor, GridHeight + 2);
+		tdc.DrawRectangle(posX+scHor, ((Edit->ebrow - scPos + 1)*(GridHeight + 1)) - 1, w + scHor - posX, GridHeight + 2);
 	}
 
 	wxPaintDC dc(this);
@@ -700,7 +697,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 
 	// Click type
-	if (click) {
+	if (click && curX >= hideColumnWidth) {
 		holding = true;
 		if (!shift) lastRow = row;
 		lastsel = row;
@@ -729,6 +726,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 				SubsGridFiltering filter((SubsGrid*)this);
 				filter.FilterPartial(row, dial->isVisible == VISIBLE_START_BLOCK);
 			}
+			return;
 		}
 
 		if (holding && alt && lastsel != row)

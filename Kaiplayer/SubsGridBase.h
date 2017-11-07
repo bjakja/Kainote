@@ -73,6 +73,7 @@ public:
 	SInfo *GetSInfoP(const wxString &key, int *ii=0);
 	int FirstSel();
 	wxArrayInt GetSels(bool deselect=false);
+	wxArrayInt GetSelectionsKeys(bool deselect = false);
 	void SwapRows(int frst, int scnd, bool sav=false);
 	void Loadfile(const wxString &str,const wxString &ext);
 	void MoveRows(int step, bool sav=false);
