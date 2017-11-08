@@ -412,6 +412,7 @@ void SubsFile::ReloadVisibleDialogues()
 		}
 		i++;
 	}
+	assert(IdConverter->size() <= size);
 }
 
 void SubsFile::GetHistoryTable(wxArrayString *history)

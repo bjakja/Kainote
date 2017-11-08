@@ -284,28 +284,30 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 
 		if (isFiltered){
-			posX = 12;
-			if (Dial && Dial->isVisible > 1){
+			posX = 11;
+			bool drawHiddenLinesRect = (i == 1 && hasHiddenLinesAtStart);
+			if (Dial && (Dial->isVisible > 1 || drawHiddenLinesRect)){
 				tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 				tdc.SetPen(textcol);
 				int halfLine = posY + (GridHeight / 2);
 				int startDrawPosY = posY + ((GridHeight - 10) / 2);
-				if (Dial->isVisible == VISIBLE_HIDDEN_BLOCK){
-					tdc.DrawRectangle(1, startDrawPosY, 10, 10);
-					tdc.DrawLine(3, halfLine-1, 9, halfLine-1);
-					tdc.DrawLine(6, startDrawPosY + 2, 6, startDrawPosY + 8);
+				if (drawHiddenLinesRect){ halfLine -= GridHeight + 1; startDrawPosY -= GridHeight + 1; }
+				if ((drawHiddenLinesRect && Dial->isVisible == VISIBLE) || Dial->isVisible == VISIBLE_HIDDEN_BLOCK){
+					tdc.DrawRectangle(1, startDrawPosY, 9, 9);
+					tdc.DrawLine(3, halfLine-1, 8, halfLine-1);
+					tdc.DrawLine(5, startDrawPosY + 2, 5, startDrawPosY + 7);
 				}
-				else if (Dial->isVisible == VISIBLE_START_BLOCK){
-					tdc.DrawRectangle(1, startDrawPosY, 10, 10);
-					tdc.DrawLine(3, halfLine-1, 9, halfLine-1);
-					tdc.DrawLine(6, startDrawPosY + 11, 6, posY + GridHeight);
+				else if (drawHiddenLinesRect || Dial->isVisible == VISIBLE_START_BLOCK){
+					tdc.DrawRectangle(1, startDrawPosY, 9, 9);
+					tdc.DrawLine(3, halfLine-1, 8, halfLine-1);
+					tdc.DrawLine(5, startDrawPosY + 10, 5, posY + GridHeight);
 				}
 				else if (Dial->isVisible == VISIBLE_BLOCK){
-					tdc.DrawLine(6, posY-1, 6, posY + GridHeight);
+					tdc.DrawLine(5, posY-1, 5, posY + GridHeight);
 				}
 				else if (Dial->isVisible == VISIBLE_END_BLOCK){
-					tdc.DrawLine(6, posY-1, 6, halfLine);
-					tdc.DrawLine(6, halfLine, 12, halfLine);
+					tdc.DrawLine(5, posY-1, 5, halfLine);
+					tdc.DrawLine(5, halfLine, 11, halfLine);
 				}
 			}
 		}
@@ -416,7 +418,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 	}
 
-	posX = (isFiltered) ? 12 : 0;
+	posX = (isFiltered) ? 11 : 0;
 	if (bg){
 		tdc.SetPen(*wxTRANSPARENT_PEN);
 		tdc.SetBrush(wxBrush(Options.GetColour(GridBackground)));
@@ -592,7 +594,7 @@ void SubsGridWindow::SetVideoLineTime(wxMouseEvent &evt)
 		int whh = 2;
 		for (int i = 0; i <= wh; i++){ whh += GridWidth[i]; }
 		whh -= scHor;
-		if (isFiltered){ whh += 12; }
+		if (isFiltered){ whh += 11; }
 		bool isstart;
 		int vczas;
 		bool getEndTime = evt.GetX() >= whh && evt.GetX() < whh + GridWidth[wh + 1] && subsFormat != TMP;
@@ -630,7 +632,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 	if (ismenushown){ ScreenToClient(&curX, &curY); }
 	int row = curY / (GridHeight + 1) + scPos - 1;
-	int hideColumnWidth = (isFiltered) ? 13 : 0;
+	int hideColumnWidth = (isFiltered) ? 12 : 0;
 	bool isNumerizeColumn = (curX >= hideColumnWidth && curX < GridWidth[0] + hideColumnWidth);
 
 	if (left_up && !holding) {
@@ -697,7 +699,15 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 
 	// Click type
-	if (click && curX >= hideColumnWidth) {
+	if (hasHiddenLinesAtStart && row == -1 && click && curX < hideColumnWidth){
+		Dialogue *dial = GetDialogue(0);
+		if (dial->isVisible == VISIBLE_BLOCK || dial->isVisible == VISIBLE){
+			SubsGridFiltering filter((SubsGrid*)this, Edit->ebrow);
+			filter.FilterPartial(0, dial->isVisible == VISIBLE_BLOCK);
+		}
+		return;
+	}
+	else if (click && curX >= hideColumnWidth) {
 		holding = true;
 		if (!shift) lastRow = row;
 		lastsel = row;
@@ -723,7 +733,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		if (click && curX < hideColumnWidth){
 			Dialogue *dial = GetDialogue(row);
 			if (dial->isVisible == VISIBLE_HIDDEN_BLOCK || dial->isVisible == VISIBLE_START_BLOCK){
-				SubsGridFiltering filter((SubsGrid*)this);
+				SubsGridFiltering filter((SubsGrid*)this, Edit->ebrow);
 				filter.FilterPartial(row, dial->isVisible == VISIBLE_START_BLOCK);
 			}
 			return;

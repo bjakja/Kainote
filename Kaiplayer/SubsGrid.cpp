@@ -100,7 +100,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	filterMenu->SetAccMenu(FilterByUntranslated, _("Filtruj według nieprzetłumaczonych"), _("Filtruj według nieprzetłumaczonych"))->Enable(hasTLMode);
 	filterMenu->SetAccMenu(FilterBySelections, _("Filtruj według zaznaczeń"), _("Filtruj według zaznaczeń"))->Enable(sels>0);
 	filterMenu->SetAccMenu(FilterByStyles, _("Filtruj według stylów"), _("Filtruj według stylów"));
-	filterMenu->SetAccMenu(FilterByNothing, _("Wyłącz filtrowanie"), _("Wyłącz filtrowanie"));
+	filterMenu->SetAccMenu(FilterByNothing, _("Wyłącz filtrowanie"), _("Wyłącz filtrowanie"))->Enable(isFiltered);
 
 	bool isen;
 	isen = (sels == 1);
@@ -509,7 +509,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 		case JoinToLast: if(sels>1){OnJoinToFirst(id);} break;
 		case HideSelected:
 		{
-			SubsGridFiltering filter(this);
+			SubsGridFiltering filter(this, Edit->ebrow);
 			filter.FilterBySelections(true);
 			isFiltered = true;
 			break;
@@ -1165,7 +1165,7 @@ bool SubsGrid::SwapAssProperties()
 
 void SubsGrid::Filter(int id)
 {
-	SubsGridFiltering filter((SubsGrid*)this);
+	SubsGridFiltering filter((SubsGrid*)this, Edit->ebrow);
 	Options.SetInt(GridFilterBy, (id == FilterByDoubtful) ? 1 : (id == FilterByUntranslated) ? 2 : (id == FilterBySelections) ? 3 : (id == FilterByStyles) ? 4 : 0);
 	if (id == FilterByStyles){
 		Options.SetString(GridFilterStyles, GetCheckedElements(Kai));
@@ -1175,13 +1175,14 @@ void SubsGrid::Filter(int id)
 	filter.Filter();
 }
 
-void SubsGrid::RefreshSubsOnVideo()
+void SubsGrid::RefreshSubsOnVideo(int newActiveLine)
 {
 	Selections.clear();
 	SpellErrors.clear();
-	if (Edit->ebrow >= GetCount()){ Edit->ebrow = GetCount() - 1; ScrollTo(Edit->ebrow, true); }
-	Selections.insert(Edit->ebrow);
-	Edit->SetLine(Edit->ebrow);
+	newActiveLine = MID(0, newActiveLine, GetCount()-1);
+	if (Edit->ebrow != newActiveLine){ Edit->ebrow = newActiveLine; ScrollTo(newActiveLine, true); }
+	Selections.insert(newActiveLine);
+	Edit->SetLine(newActiveLine);
 	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
 	if (vb->GetState() != None){
 		vb->OpenSubs(GetVisible());

@@ -20,7 +20,7 @@ class SubsGrid;
 class SubsGridFiltering
 {
 public:
-	SubsGridFiltering(SubsGrid *_grid);
+	SubsGridFiltering(SubsGrid *_grid, int _activeLine);
 	~SubsGridFiltering();
 
 	void Filter();
@@ -35,6 +35,8 @@ private:
 	void FilteringFinalize();
 	SubsGrid *grid;
 	bool Invert;
+	int activeLineDiff = 0;
+	int activeLine;
 };
 
 enum{

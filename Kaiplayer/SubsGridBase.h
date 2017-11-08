@@ -107,6 +107,7 @@ public:
 	bool showFrames = false;
 	bool savedSelections = false;
 	bool isFiltered = false;
+	bool hasHiddenLinesAtStart = false;
 	std::vector<wxArrayInt> SpellErrors;
 	std::vector<wxArrayInt> *Comparison;
 	std::set<int> Selections;
