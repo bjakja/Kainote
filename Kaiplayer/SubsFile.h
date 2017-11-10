@@ -121,6 +121,7 @@ public:
 	Dialogue *&operator[](int i);
 	int GetElementById(int Id);
 	int GetElementByKey(int Key);
+	unsigned char CheckIfHasHiddenBlock(int i);
 	void DeleteDialogues(int from, int to);
 	Styles *CopyStyle(int i, bool push=true);
 	SInfo *CopySinfo(int i, bool push=true);

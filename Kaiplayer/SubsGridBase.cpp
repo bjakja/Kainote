@@ -123,7 +123,7 @@ void SubsGridBase::AddLine(Dialogue *line)
 {
 	file->subs->ddials.push_back(line);
 	file->subs->dials.push_back(line);
-	if (line->isVisible){
+	if (*line->isVisible){
 		file->IdConverter->insert(file->subs->dials.size() - 1);
 	}
 }
@@ -1008,7 +1008,7 @@ void SubsGridBase::InsertRows(int Row,
 	int convertedRow = file->IdConverter->getElementById(Row);
 	file->subs->dials.insert(file->subs->dials.begin() + convertedRow, RowsTable.begin(), RowsTable.end());
 	for (int i = 0; i < RowsTable.size(); i++){
-		if (RowsTable[i]->isVisible){ 
+		if (*RowsTable[i]->isVisible){ 
 			file->IdConverter->insert(i + convertedRow);
 		}
 	}
@@ -1026,7 +1026,7 @@ void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddTo
 	int convertedRow = file->IdConverter->getElementById(Row);
 	file->subs->dials.insert(file->subs->dials.begin() + convertedRow, NumRows, Dialog);
 	for (int i = convertedRow; i < convertedRow + NumRows; i++){
-		if (file->subs->dials[i]->isVisible){ 
+		if (*file->subs->dials[i]->isVisible){ 
 			file->IdConverter->insert(i); 
 		}
 	}

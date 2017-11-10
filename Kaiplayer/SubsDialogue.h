@@ -24,6 +24,61 @@
 #include <wx/colour.h>
 #include <vector>
 
+class StoreHelper {
+public:
+	StoreHelper(){ stored = new unsigned char(1); }
+	~StoreHelper(){
+		if (*deleteReference < 1 && stored){ 
+			delete stored; stored = NULL; delete deleteReference; deleteReference = NULL; 
+		}
+		else{ 
+			(*deleteReference)--; 
+		}
+	};
+	void Store(const StoreHelper &sh, bool copy){ 
+		if (*deleteReference < 1 && stored){
+			delete stored; stored = NULL;
+			delete deleteReference; deleteReference = NULL;
+		}
+		if (copy){
+			stored = new unsigned char(*sh.stored);
+			deleteReference = new size_t(0);
+		}
+		else{
+			stored = sh.stored;
+			if (deleteReference){ delete deleteReference; }
+			deleteReference = sh.deleteReference;
+			(*deleteReference)++;
+		}
+	};
+	/*void operator =(const StoreHelper &sh){
+		stored = sh.stored;
+		(*deleteReference)++;
+	}*/
+	void operator =(const unsigned char value){
+		*stored = value;
+	}
+	bool operator ==(const unsigned char value){
+		return *stored == value;
+	}
+	bool operator !=(const unsigned char value){
+		return *stored != value;
+	}
+	bool operator >(const unsigned char value){
+		return *stored > value;
+	}
+	bool operator <(const unsigned char value){
+		return *stored < value;
+	}
+	bool operator !(){
+		return !(*stored);
+	}
+	unsigned char *&operator *(){ return stored; };
+private:
+	unsigned char *stored = NULL;
+	size_t *deleteReference = new size_t(0);
+};
+
 class TagData
 {
 public:
@@ -49,20 +104,19 @@ class Dialogue
 
 public:
 	wxString Style, Actor, Effect, Text, TextTl;
-	//wxString Scomment;
 	STime Start, End;
 	int Layer;
 	short MarginL, MarginR, MarginV;
 	char State, Form;
 	bool NonDialogue, IsComment;
-	unsigned char isVisible = 1;
+	StoreHelper isVisible;
 	ParseData *parseData;
 
 	void SetRaw(const wxString &ldial);
 	void GetRaw(wxString *txt,bool tl=false,const wxString &style="");
 	wxString GetCols(int cols, bool tl=false,const wxString &style="");
 	void Conv(char type,const wxString &pref="");
-	Dialogue *Copy(bool keepstate=false);
+	Dialogue *Copy(bool keepstate=false, bool copyIsVisible = true);
 	void ParseTags(wxString *tags, size_t n, bool plainText = false);
 	void ChangeTimes(int start, int end);
 	void ClearParse();
@@ -71,3 +125,8 @@ public:
 	~Dialogue();
 };
 
+enum{
+	NOT_VISIBLE = 0,
+	VISIBLE,
+	VISIBLE_BLOCK,
+};

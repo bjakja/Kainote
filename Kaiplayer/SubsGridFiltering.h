@@ -24,8 +24,9 @@ public:
 	~SubsGridFiltering();
 
 	void Filter();
-	void FilterPartial(int from, bool hide = true);
+	void FilterPartial(int from);
 	void FilterBySelections(bool addToFiltering = false);
+	void RemoveFiltering();
 
 private:
 	void FilterByDoubtful();
@@ -39,11 +40,4 @@ private:
 	int activeLine;
 };
 
-enum{
-	NOT_VISIBLE=0,
-	VISIBLE,
-	VISIBLE_START_BLOCK,
-	VISIBLE_BLOCK,
-	VISIBLE_END_BLOCK,
-	VISIBLE_HIDDEN_BLOCK
-};
+

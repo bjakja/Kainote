@@ -149,7 +149,9 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	bool isComment = false;
 	bool unkstyle = false;
 	bool shorttime = false;
+	bool startBlock = false;
 	int states = 0;
+	int startDrawPosYFromPlus = 0;
 
 	if (SpellErrors.size()<(size_t)size){
 		SpellErrors.resize(size);
@@ -285,31 +287,40 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 		if (isFiltered){
 			posX = 11;
-			bool drawHiddenLinesRect = (i == 1 && hasHiddenLinesAtStart);
-			if (Dial && (Dial->isVisible > 1 || drawHiddenLinesRect)){
+			unsigned char hasHiddenBlock = file->CheckIfHasHiddenBlock(i - 1);
+			if (hasHiddenBlock){
 				tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 				tdc.SetPen(textcol);
-				int halfLine = posY + (GridHeight / 2);
-				int startDrawPosY = posY + ((GridHeight - 10) / 2);
-				if (drawHiddenLinesRect){ halfLine -= GridHeight + 1; startDrawPosY -= GridHeight + 1; }
-				if ((drawHiddenLinesRect && Dial->isVisible == VISIBLE) || Dial->isVisible == VISIBLE_HIDDEN_BLOCK){
-					tdc.DrawRectangle(1, startDrawPosY, 9, 9);
-					tdc.DrawLine(3, halfLine-1, 8, halfLine-1);
-					tdc.DrawLine(5, startDrawPosY + 2, 5, startDrawPosY + 7);
+				int halfGridHeight = (GridHeight / 2);
+				int newPosY = posY + GridHeight + 1;
+				int startDrawPosY = newPosY + ((GridHeight - 10) / 2) - halfGridHeight;
+				tdc.DrawRectangle(1, startDrawPosY, 9, 9);
+				tdc.DrawLine(3, newPosY - 1, 8, newPosY - 1);
+				if (hasHiddenBlock == 1){ 
+					tdc.DrawLine(5, startDrawPosY + 2, 5, startDrawPosY + 7); 
 				}
-				else if (drawHiddenLinesRect || Dial->isVisible == VISIBLE_START_BLOCK){
-					tdc.DrawRectangle(1, startDrawPosY, 9, 9);
-					tdc.DrawLine(3, halfLine-1, 8, halfLine-1);
-					tdc.DrawLine(5, startDrawPosY + 10, 5, posY + GridHeight);
-				}
-				else if (Dial->isVisible == VISIBLE_BLOCK){
-					tdc.DrawLine(5, posY-1, 5, posY + GridHeight);
-				}
-				else if (Dial->isVisible == VISIBLE_END_BLOCK){
-					tdc.DrawLine(5, posY-1, 5, halfLine);
-					tdc.DrawLine(5, halfLine, 11, halfLine);
+				else{
+					startDrawPosYFromPlus = startDrawPosY + 9;
+					startBlock = true;
 				}
 			}
+			else if (Dial){
+				if (!startBlock && Dial->isVisible == VISIBLE_BLOCK){
+					startDrawPosYFromPlus = posY - 1; startBlock = true;
+				}
+				bool isLastLine = (i >= scrows -1);
+				if (startBlock && (Dial->isVisible != VISIBLE_BLOCK || isLastLine)){
+					tdc.SetBrush(*wxTRANSPARENT_BRUSH);
+					tdc.SetPen(textcol);
+					int halfLine = posY-1;
+					if (isLastLine){ halfLine = posY + GridHeight; }
+					tdc.DrawLine(5, startDrawPosYFromPlus, 5, halfLine);
+					tdc.DrawLine(5, halfLine, 11, halfLine);
+					startBlock = false;
+				}
+			}
+			
+			
 		}
 		else{
 			posX = 0;
@@ -698,15 +709,18 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	}
 
 
-	// Click type
-	if (hasHiddenLinesAtStart && row == -1 && click && curX < hideColumnWidth){
-		Dialogue *dial = GetDialogue(0);
-		if (dial->isVisible == VISIBLE_BLOCK || dial->isVisible == VISIBLE){
-			SubsGridFiltering filter((SubsGrid*)this, Edit->ebrow);
-			filter.FilterPartial(0, dial->isVisible == VISIBLE_BLOCK);
+	
+	if (curX < hideColumnWidth){
+		int filterRow = (curY + (GridHeight / 2)) / (GridHeight + 1) + scPos - 2;
+		if (!(filterRow < scPos || filterRow >= GetCount()) || filterRow == -1) {
+			if (click && file->CheckIfHasHiddenBlock(filterRow)){
+				SubsGridFiltering filter((SubsGrid*)this, Edit->ebrow);
+				filter.FilterPartial(filterRow);
+			}
 		}
 		return;
 	}
+	// Click type
 	else if (click && curX >= hideColumnWidth) {
 		holding = true;
 		if (!shift) lastRow = row;
@@ -729,15 +743,6 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	int mvtal = video->vToolbar->videoSeekAfter->GetSelection();//
 	int pas = video->vToolbar->videoPlayAfter->GetSelection();
 	if (!(row < scPos || row >= GetCount())) {
-
-		if (click && curX < hideColumnWidth){
-			Dialogue *dial = GetDialogue(row);
-			if (dial->isVisible == VISIBLE_HIDDEN_BLOCK || dial->isVisible == VISIBLE_START_BLOCK){
-				SubsGridFiltering filter((SubsGrid*)this, Edit->ebrow);
-				filter.FilterPartial(row, dial->isVisible == VISIBLE_START_BLOCK);
-			}
-			return;
-		}
 
 		if (holding && alt && lastsel != row)
 		{

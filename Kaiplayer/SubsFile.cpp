@@ -281,7 +281,7 @@ int SubsFile::Iter()
 
 Dialogue *SubsFile::CopyDial(int i, bool push, bool keepstate)
 {
-	Dialogue *dial= GetDialogue(i)->Copy(keepstate);
+	Dialogue *dial = GetDialogue(i)->Copy(keepstate, !push);
 	subs->ddials.push_back(dial);
 	if (push){ (*this)[i] = dial; }
 	return dial;
@@ -295,7 +295,7 @@ Dialogue *SubsFile::GetDialogue(int i)
 		wxLogStatus("przekroczone drzewko %i, %i", i, IdConverter->size());
 	}
 	if (Id >= subs->dials.size()){
-		wxLogStatus("tablica dialogów przekroczona %i, %i", Id, subs->dials.size());
+		wxLogStatus("tablica dialogów przekroczona %i, %i", Id, (int)subs->dials.size());
 		Id = subs->dials.size() - 1;
 	}
 	return subs->dials[Id];
@@ -402,7 +402,8 @@ void SubsFile::ReloadVisibleDialogues()
 {
 	int i = 0;
 	int size = subs->dials.size();
-	while (i < IdConverter->size() || i < size){
+	int lastElem = IdConverter->getElementById(IdConverter->size() - 1);
+	while (i <= lastElem || i < size){
 		bool visible = (i<size)? subs->dials[i]->isVisible > 0 : false;
 		if (visible && IdConverter->getElementByKey(i) == -1){
 			IdConverter->insert(i, false);
@@ -413,6 +414,34 @@ void SubsFile::ReloadVisibleDialogues()
 		i++;
 	}
 	assert(IdConverter->size() <= size);
+}
+
+unsigned char SubsFile::CheckIfHasHiddenBlock(int i){
+	int size = IdConverter->size();
+	if (i + 1 < size){
+		int j = i + 1;
+		Dialogue * dial = GetDialogue(j);
+		if (dial->isVisible == VISIBLE_BLOCK){
+			if (j < 1) return 2;
+			Dialogue * dialPrev = GetDialogue(j - 1);
+			if (dialPrev->isVisible != VISIBLE_BLOCK) return 2;
+			return 0;
+		}
+	}
+	if (i >= size){ return 0; }
+	int keyFirst = (i < 0) ? -1 : IdConverter->getElementById(i);
+	int keySecond = IdConverter->getElementById(i + 1);
+	if ((keyFirst + 1) != keySecond){
+		int size = subs->dials.size();
+		int j = keyFirst + 1;
+		if (keySecond < 0){ keySecond = size - 1; }
+		while (j <= keySecond){
+			if (!subs->dials[j]->NonDialogue){ return 1; }
+			j++;
+		}
+	}
+	
+	return 0;
 }
 
 void SubsFile::GetHistoryTable(wxArrayString *history)

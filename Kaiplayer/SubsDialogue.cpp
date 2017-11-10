@@ -170,7 +170,7 @@ void Dialogue::SetRaw(const wxString &ldial)
 		Text=ldial;
 		Text.Trim(true);
 		Form=ASS;
-		isVisible = 0;
+		*isVisible = 0;
 		return;
 	}
 	else{
@@ -338,7 +338,7 @@ void Dialogue::Conv(char type, const wxString &pref)
 	Form=type;
 }
 
-Dialogue *Dialogue::Copy(bool keepstate)
+Dialogue *Dialogue::Copy(bool keepstate, bool copyIsVisible)
 {
 	Dialogue *dial =new Dialogue();
 	//if(!dial){return NULL;}
@@ -357,7 +357,7 @@ Dialogue *Dialogue::Copy(bool keepstate)
 	dial->Style=Style;
 	dial->Text=Text;
 	dial->TextTl=TextTl;
-	dial->isVisible=isVisible;
+	dial->isVisible.Store(isVisible, copyIsVisible);
 	dial->parseData=NULL;
 	return dial;
 }

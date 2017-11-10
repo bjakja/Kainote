@@ -837,7 +837,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 
 		Dialogue *diall=GetDialogue(i);
 		if(diall->IsComment){continue;}
-		diall=diall->Copy();
+		diall=diall->Copy(false, true);
 		bool marginChanged=false;
 		bool textChanged=false;
 		if(diall->MarginL){diall->MarginL*=xnsize; marginChanged=true;}
