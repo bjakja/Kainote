@@ -73,7 +73,7 @@ public:
 	bool operator !(){
 		return !(*stored);
 	}
-	unsigned char *&operator *(){ return stored; };
+	unsigned char &operator *(){ return *stored; };
 private:
 	unsigned char *stored = NULL;
 	size_t *deleteReference = new size_t(0);

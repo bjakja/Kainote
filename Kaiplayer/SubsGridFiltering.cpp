@@ -59,15 +59,17 @@ void SubsGridFiltering::FilterPartial(int from)
 {
 	File *Subs = grid->file->GetSubs();
 	Dialogue *lastDial = NULL;
-	int keyFrom = (from <= 0) ? 0 : grid->file->GetElementById(from)+1;
+	int keyFrom = (from < 0) ? 0 : grid->file->GetElementById(from)+1;
 	int keyTo = keyFrom;
 	bool hide = true;
+	bool changed = false;
 	
 	for (int i = keyFrom; i < Subs->dials.size(); i++){
 		Dialogue *dial = Subs->dials[i];
-		if (!dial->NonDialogue){ 
+		if (!dial->NonDialogue){
 			if (lastDial && dial->isVisible == VISIBLE){
-				keyTo = i - 1; 
+				keyTo = i - 1;
+				changed = true;
 				break;
 			}
 			if (!dial->isVisible){ hide = false; }
@@ -78,10 +80,10 @@ void SubsGridFiltering::FilterPartial(int from)
 			else if (!hide && i <= activeLine){
 				activeLineDiff++;
 			}
+			lastDial = dial;
 		}
-		lastDial = dial;
 	}
-	if (keyFrom == keyTo && from != -1){ 
+	if (!changed){
 		keyTo = Subs->dials.size() - 1; 
 		wxLogStatus("Something went wrong with partially hiding it is better to check it for potencial bugs."); 
 	}
@@ -96,8 +98,8 @@ void SubsGridFiltering::FilterByDoubtful()
 	for (int i = 0; i < Subs->dials.size(); i++){
 		Dialogue *dial = Subs->dials[i];
 		if (dial->NonDialogue) continue;
-		int notDoubtful = (dial->State & 4);
-		if (notDoubtful && !Invert || !notDoubtful && Invert){
+		int isDoubtful = (dial->State & 4);
+		if (!isDoubtful && !Invert || isDoubtful && Invert){
 			if (*dial->isVisible && i <= activeLine){ activeLineDiff--; }
 			dial->isVisible = NOT_VISIBLE;
 		}

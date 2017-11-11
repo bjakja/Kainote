@@ -434,8 +434,8 @@ unsigned char SubsFile::CheckIfHasHiddenBlock(int i){
 	if ((keyFirst + 1) != keySecond){
 		int size = subs->dials.size();
 		int j = keyFirst + 1;
-		if (keySecond < 0){ keySecond = size - 1; }
-		while (j <= keySecond){
+		if (keySecond < 0){ keySecond = size; }
+		while (j < keySecond){
 			if (!subs->dials[j]->NonDialogue){ return 1; }
 			j++;
 		}

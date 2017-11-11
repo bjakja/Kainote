@@ -63,6 +63,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	selarr = GetSels();
 	int sels=selarr.GetCount();
 	Menu *menu=new Menu(GRID_HOTKEY);
+	menu->SetMaxVisible(35);
 	Menu *hidemenu=new Menu(GRID_HOTKEY);
 	Menu *filterMenu = new Menu(GRID_HOTKEY);
 	MenuItem *item;
@@ -837,7 +838,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 
 		Dialogue *diall=GetDialogue(i);
 		if(diall->IsComment){continue;}
-		diall=diall->Copy(false, true);
+		diall=diall->Copy(false, false);
 		bool marginChanged=false;
 		bool textChanged=false;
 		if(diall->MarginL){diall->MarginL*=xnsize; marginChanged=true;}
@@ -1168,7 +1169,9 @@ void SubsGrid::Filter(int id)
 	SubsGridFiltering filter((SubsGrid*)this, Edit->ebrow);
 	Options.SetInt(GridFilterBy, (id == FilterByDoubtful) ? 1 : (id == FilterByUntranslated) ? 2 : (id == FilterBySelections) ? 3 : (id == FilterByStyles) ? 4 : 0);
 	if (id == FilterByStyles){
-		Options.SetString(GridFilterStyles, GetCheckedElements(Kai));
+		wxString checkedStyles = GetCheckedElements(Kai);
+		if (checkedStyles.empty()){ return; }
+		Options.SetString(GridFilterStyles, checkedStyles);
 	}
 	if (id != FilterByNothing){ isFiltered = true; }
 	else{ isFiltered = false; }

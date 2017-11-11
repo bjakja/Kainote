@@ -299,23 +299,28 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				if (hasHiddenBlock == 1){ 
 					tdc.DrawLine(5, startDrawPosY + 2, 5, startDrawPosY + 7); 
 				}
-				else{
-					startDrawPosYFromPlus = startDrawPosY + 9;
-					startBlock = true;
-				}
+				//tdc.SetPen(SpelcheckerCol);
+				tdc.DrawLine(10, newPosY - 1, w, newPosY - 1);
 			}
-			else if (Dial){
+			if (Dial){
 				if (!startBlock && Dial->isVisible == VISIBLE_BLOCK){
-					startDrawPosYFromPlus = posY - 1; startBlock = true;
+					startDrawPosYFromPlus = posY + 4; startBlock = true;
 				}
 				bool isLastLine = (i >= scrows -1);
-				if (startBlock && (Dial->isVisible != VISIBLE_BLOCK || isLastLine)){
+				bool notVisibleBlock = Dial->isVisible != VISIBLE_BLOCK;
+				if (startBlock && (notVisibleBlock || isLastLine)){
 					tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 					tdc.SetPen(textcol);
 					int halfLine = posY-1;
-					if (isLastLine){ halfLine = posY + GridHeight; }
+					if (isLastLine && !notVisibleBlock){ halfLine = posY + GridHeight; }
 					tdc.DrawLine(5, startDrawPosYFromPlus, 5, halfLine);
 					tdc.DrawLine(5, halfLine, 11, halfLine);
+					if (!isLastLine || notVisibleBlock){
+						tdc.DrawLine(11, posY - 1, w, posY - 1);
+					}
+					else if(i >= size){
+						tdc.DrawLine(11, posY +GridHeight, w, posY + GridHeight);
+					}
 					startBlock = false;
 				}
 			}
@@ -435,21 +440,22 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		tdc.SetBrush(wxBrush(Options.GetColour(GridBackground)));
 		tdc.DrawRectangle(posX, posY, w + scHor, h);
 	}
-	if (markedLine >= scPos && markedLine <= scrows){
-		tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-		tdc.SetPen(wxPen(Options.GetColour(GridActiveLine), 3));
-		tdc.DrawRectangle(posX + 1, ((markedLine - scPos + 1)*(GridHeight + 1)) - 1, (GridWidth[0] - 1), GridHeight + 2);
-	}
+	if (size > 0){
+		if (markedLine >= scPos && markedLine <= scrows){
+			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
+			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine), 3));
+			tdc.DrawRectangle(posX + 1, ((markedLine - scPos + 1)*(GridHeight + 1)) - 1, (GridWidth[0] - 1), GridHeight + 2);
+		}
 
-	if (Edit->ebrow >= scPos&&Edit->ebrow <= scrows){
-		tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-		tdc.SetPen(wxPen(Options.GetColour(GridActiveLine)));
-		tdc.DrawRectangle(posX+scHor, ((Edit->ebrow - scPos + 1)*(GridHeight + 1)) - 1, w + scHor - posX, GridHeight + 2);
+		if (Edit->ebrow >= scPos&&Edit->ebrow <= scrows){
+			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
+			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine)));
+			tdc.DrawRectangle(posX, ((Edit->ebrow - scPos + 1)*(GridHeight + 1)) - 1, w + scHor - posX, GridHeight + 2);
+		}
 	}
-
 	wxPaintDC dc(this);
-	dc.Blit(0, 0, firstCol, h, &tdc, 0, 0);
-	dc.Blit(firstCol, 0, w + scHor, h, &tdc, scHor + firstCol, 0);
+	dc.Blit(0, 0, firstCol + posX, h, &tdc, 0, 0);
+	dc.Blit(firstCol + posX, 0, w + scHor, h, &tdc, scHor + firstCol + posX, 0);
 }
 
 void SubsGridWindow::RefreshColumns(int cell)

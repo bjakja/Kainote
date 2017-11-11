@@ -546,26 +546,21 @@ namespace Auto{
 					lua_error(L);
 					return 0;}
 				if(i<sinfo && e->lclass=="info"){
-					//wxLogStatus("Sifno nadpisanie %i, %i", i, sinfo);
 					SInfo *inf=e->info->Copy();
 					Subs->dsinfo.push_back(inf);
 					Subs->sinfo[i]=inf;
 				}
 				else if(i<styles && e->lclass=="style")
 				{
-					//wxLogStatus("Styles nadpisanie %i, %i", i, styles);
 					Styles *styl = e->astyle->Copy();
 					Subs->dstyles.push_back(styl);
 					Subs->styles[i-sinfo]=styl;
-					//wxLogStatus("style");
 				}
 				else if(i<dials && e->lclass=="dialogue")
 				{
-					//wxLogStatus("Dials nadpisanie %i, %i", i, dials);
-					Dialogue *dial=e->adial->Copy();
+					Dialogue *dial=e->adial->Copy(false,false);
 					Subs->ddials.push_back(dial);
 					Subs->dials[i-styles]=dial;
-					//wxLogStatus(dial->GetRaw());
 				}
 				else
 				{
@@ -736,7 +731,6 @@ namespace Auto{
 			}
 			else if(e->lclass=="style")
 			{
-				//wxLogStatus("stylesstart %i %i", start-sinfo, stylsize);
 				Styles *styl=e->astyle->Copy();
 				Subs->styles.push_back(styl);
 				Subs->dstyles.push_back(styl);
@@ -789,14 +783,12 @@ namespace Auto{
 			if(e->lclass=="info")
 			{
 				SInfo *inf=e->info->Copy();
-				//wxLogStatus("sinfostart %i %i", start, sinfo);
 				if(start >= sinfo){Subs->sinfo.push_back(inf);}
 				else{Subs->sinfo.insert(Subs->sinfo.begin()+start, inf);}
 				Subs->dsinfo.push_back(inf);
 			}
 			else if(e->lclass=="style")
 			{
-				//wxLogStatus("stylesstart %i %i", start-sinfo, stylsize);
 				Styles *styl=e->astyle->Copy();
 				if(start-sinfo >= stylsize){Subs->styles.push_back(styl);}
 				else{Subs->styles.insert(Subs->styles.begin()+(start-sinfo), styl);}
@@ -804,10 +796,10 @@ namespace Auto{
 			}
 			else if(e->lclass=="dialogue")
 			{
-				//wxLogStatus("dialstart %i %i", start-styles, Subs->dials.size());
-				Dialogue *dial=e->adial->Copy();
-				if(start-styles >= dialsize){Subs->dials.push_back(dial);}
-				else{Subs->dials.insert(Subs->dials.begin()+(start-styles), dial);}
+				int newStart = start - styles;
+				Dialogue *dial = e->adial->Copy(false, newStart >= dialsize);
+				if (newStart >= dialsize){ Subs->dials.push_back(dial); }
+				else{ Subs->dials.insert(Subs->dials.begin() + newStart, dial); }
 				Subs->ddials.push_back(dial);
 			}
 			else{
