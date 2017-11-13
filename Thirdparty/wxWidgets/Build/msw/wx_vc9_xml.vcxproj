@@ -284,7 +284,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>vc_mswud\wxprec_xmllib.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>vc_mswud\$(Platform)\wxprec_xmllib.pch</PrecompiledHeaderOutputFile>
       <ObjectFileName>vc_mswud\xml\$(Platform)\</ObjectFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -321,7 +321,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>vc_mswud\wxprec_xmllib.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>vc_mswud\$(Platform)\wxprec_xmllib.pch</PrecompiledHeaderOutputFile>
       <ObjectFileName>vc_mswud\xml\$(Platform)\</ObjectFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>

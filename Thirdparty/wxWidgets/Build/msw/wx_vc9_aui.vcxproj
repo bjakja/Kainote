@@ -164,7 +164,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>vc_mswud\wxprec_auilib.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>vc_mswud\$(Platform)\wxprec_auilib.pch</PrecompiledHeaderOutputFile>
       <ObjectFileName>vc_mswud\aui\$(Platform)\</ObjectFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -201,7 +201,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>vc_mswud\wxprec_auilib.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>vc_mswud\$(Platform)\wxprec_auilib.pch</PrecompiledHeaderOutputFile>
       <ObjectFileName>vc_mswud\aui\$(Platform)\</ObjectFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>

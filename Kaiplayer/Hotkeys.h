@@ -85,11 +85,12 @@
 	XX( Paste, ) \
 	XX( Cut, ) \
 	XX( HideSelected, ) \
+	XX( FilterByNothing, ) \
+	XX( FilterByStyles, ) \
+	XX( FilterBySelections, ) \
+	XX( FilterByDialogues, ) \
 	XX( FilterByDoubtful, ) \
 	XX( FilterByUntranslated, ) \
-	XX( FilterBySelections, ) \
-	XX( FilterByStyles, ) \
-	XX( FilterByNothing, ) \
 	XX( PasteTranslation, ) \
 	XX( TranslationDialog, ) \
 	XX( SubsFromMKV, ) \

@@ -73,7 +73,7 @@ public:
 	SInfo *GetSInfoP(const wxString &key, int *ii=0);
 	int FirstSel();
 	wxArrayInt GetSels(bool deselect=false);
-	wxArrayInt GetSelectionsKeys(bool deselect = false);
+	void GetSelectionsKeys(wxArrayInt &sels, bool deselect = false);
 	void SwapRows(int frst, int scnd, bool sav=false);
 	void Loadfile(const wxString &str,const wxString &ext);
 	void MoveRows(int step, bool sav=false);
@@ -107,7 +107,6 @@ public:
 	bool showFrames = false;
 	bool savedSelections = false;
 	bool isFiltered = false;
-	bool hasHiddenLinesAtStart = false;
 	std::vector<wxArrayInt> SpellErrors;
 	std::vector<wxArrayInt> *Comparison;
 	std::set<int> Selections;

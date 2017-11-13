@@ -26,7 +26,10 @@
 
 class StoreHelper {
 public:
-	StoreHelper(){ stored = new unsigned char(1); }
+	StoreHelper(){}
+	StoreHelper(const StoreHelper &sh){
+		Store(sh, false);
+	}
 	~StoreHelper(){
 		if (*deleteReference < 1 && stored){ 
 			delete stored; stored = NULL; delete deleteReference; deleteReference = NULL; 
@@ -51,10 +54,10 @@ public:
 			(*deleteReference)++;
 		}
 	};
-	/*void operator =(const StoreHelper &sh){
-		stored = sh.stored;
-		(*deleteReference)++;
-	}*/
+	StoreHelper &operator =(const StoreHelper &sh){
+		Store(sh, false);
+		return *this;
+	}
 	void operator =(const unsigned char value){
 		*stored = value;
 	}
@@ -75,7 +78,7 @@ public:
 	}
 	unsigned char &operator *(){ return *stored; };
 private:
-	unsigned char *stored = NULL;
+	unsigned char *stored = new unsigned char(1);
 	size_t *deleteReference = new size_t(0);
 };
 

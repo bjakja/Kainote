@@ -327,7 +327,7 @@ MenuItem *Menu::SetAccMenu(int id, const wxString &txt, const wxString &help, bo
 	txtcopy.Replace("&","");
 	wxString hkey=Hkeys.GetMenuH(itype, txtcopy);
 	wxString mtext=(hkey!="")? txt.BeforeFirst('\t')+"\t"+hkey : txt;
-	return Append(id,mtext,help,true,0,0,kind);
+	return Append(id, mtext, help, enable, 0, 0, kind);
 }
 
 MenuItem *Menu::SetAccMenu(MenuItem *menuitem, const wxString &name)

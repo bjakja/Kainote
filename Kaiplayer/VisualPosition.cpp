@@ -140,7 +140,7 @@ void Position::SetCurVisual()
 
 void Position::ChangeMultiline(bool all)
 {
-	wxString *dtxt;
+	wxString *dtxt = NULL;
 	if(!all && !dummytext){
 		bool visible=false; 
 		selPositions.clear();

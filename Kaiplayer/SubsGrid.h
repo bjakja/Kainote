@@ -35,7 +35,7 @@ public:
 	void OnJoin(wxCommandEvent &event);
 	void ContextMenu(const wxPoint &pos, bool dummy=false);
 	bool SwapAssProperties(); 
-	void RefreshSubsOnVideo(int newActiveLine);
+	void RefreshSubsOnVideo(int newActiveLine, bool scroll = true);
 	
 protected:
 

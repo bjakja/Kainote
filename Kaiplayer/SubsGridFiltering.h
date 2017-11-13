@@ -15,6 +15,8 @@
 
 #pragma once
 #include <wx/wx.h>
+
+class Dialogue;
 class SubsGrid;
 
 class SubsGridFiltering
@@ -25,19 +27,27 @@ public:
 
 	void Filter();
 	void FilterPartial(int from);
-	void FilterBySelections(bool addToFiltering = false);
+	void HideSelections();
 	void RemoveFiltering();
 
 private:
-	void FilterByDoubtful();
-	void FilterByUntranslated();
-	void FilterByStyles(wxArrayString &styles);
+	inline bool CheckHiding(Dialogue *dial, int i);
 	void TurnOffFiltering();
 	void FilteringFinalize();
 	SubsGrid *grid;
 	bool Invert;
 	int activeLineDiff = 0;
 	int activeLine;
+	int filterBy = 0;
+	int selectionsJ = 0;
+	wxArrayInt keySelections;
+	wxArrayString styles;
 };
 
-
+enum{
+	FILTER_BY_STYLES = 1,
+	FILTER_BY_SELECTIONS,
+	FILTER_BY_DIALOGUES = 4,
+	FILTER_BY_DOUBTFUL = 8,
+	FILTER_BY_UNTRANSLATED = 16,
+};

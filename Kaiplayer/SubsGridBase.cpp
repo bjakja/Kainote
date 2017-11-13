@@ -316,7 +316,6 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 	bool dummyEditboxChanges = (loadFromEditbox && !saveAfterCharacterCount);
 	if (dummyEditboxChanges || saveAfterCharacterCount > 1){
 		bool oldOnVideo = Edit->OnVideo;
-		// no i tu mamy do poprawki dummy subs;
 		Edit->Send(EDITBOX_LINE_EDITION, false, dummyEditboxChanges, true);
 		Edit->OnVideo = oldOnVideo;
 	}
@@ -986,16 +985,12 @@ wxArrayInt SubsGridBase::GetSels(bool deselect)
 	return sels;
 }
 
-wxArrayInt SubsGridBase::GetSelectionsKeys(bool deselect)
+void SubsGridBase::GetSelectionsKeys(wxArrayInt &sels, bool deselect)
 {
-	wxArrayInt sels;
-	for (std::set<int>::iterator i = Selections.begin(); i != Selections.end(); i++)
-	{
+	for (std::set<int>::iterator i = Selections.begin(); i != Selections.end(); i++){
 		sels.Add(file->GetElementById(*i));
 	}
 	if (deselect){ Selections.clear(); }
-
-	return sels;
 }
 
 //Uważaj na dodawanie do niszczarki, 
@@ -1546,7 +1541,7 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 		(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
 	}
 	Edit->Send(EDITBOX_LINE_EDITION, false, true);
-	if(_time >= Edit->line->Start.mstime && _time <= Edit->line->End.mstime)
+	if(_time >= Edit->line->Start.mstime && _time < Edit->line->End.mstime)
 	{
 		if(visible){*visible=true;}
 	}else if(visible){
@@ -1564,7 +1559,7 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 			selected->Add(txt->Len());
 			continue;
 		}
-		if((toEnd && _time <= dial->Start.mstime) || (_time >= dial->Start.mstime && _time <= dial->End.mstime)){
+		if((toEnd && _time <= dial->Start.mstime) || (_time >= dial->Start.mstime && _time < dial->End.mstime)){
 			//if(trimSels && sel.find(i)!=sel.end()){continue;}
 			if( isTlmode && dial->TextTl!=""){
 				dial->GetRaw(txt, false, tlStyle);

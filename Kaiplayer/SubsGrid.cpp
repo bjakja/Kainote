@@ -35,8 +35,11 @@ SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, cons
 	:SubsGridWindow(parent, id, pos, size, style)
 {
 	Kai=kfparent;
+	//jak już wszystko będzie działało to można wywalić albo dać if(!autofilter)
+	Options.SetInt(GridFilterBy, 0);
 	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
-		int id = ((MenuItem*)evt.GetClientData())->id;
+		MenuItem *item = (MenuItem*)evt.GetClientData();
+		int id = item->id;
 		if(id>5000 && id<5555){
 			int id5000=(id-5000);
 			if(visibleColumns & id5000){visibleColumns ^= id5000;}
@@ -47,6 +50,36 @@ SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, cons
 		}
 		else if (id == 4446){
 			Options.SetBool(GridFilterInverted, !Options.GetBool(GridFilterInverted));
+		}
+		else if (id >= FilterByStyles && id <= FilterByUntranslated){
+			int filterBy = Options.GetInt(GridFilterBy);
+			int addToFilterBy = pow(2, (id - FilterByStyles));
+			if (item->check){
+				filterBy |= addToFilterBy;
+			}
+			else{
+				filterBy ^= addToFilterBy;
+			}
+			Options.SetInt(GridFilterBy, filterBy);
+		}
+		else if (id == 4448){
+			//tu jeszcze trzeba dopisać coś by ładnie ustawiało check w filterby
+			int filterBy = Options.GetInt(GridFilterBy);
+			wxString &name = item->label;
+			wxArrayString styles; 
+			Options.GetTable(GridFilterStyles, styles, ";");
+			bool found = false;
+			for (int i = 0; i < styles.size(); i++){
+				if (styles[i] == name){
+					if (!item->check){ styles.RemoveAt(i); }
+					found = true;
+					break;
+				}
+			}
+			if (!found && item->check){ styles.Add(name); }
+			Options.SetTable(GridFilterStyles, styles, ";");
+			if (styles.size() > 0 && !(filterBy & FILTER_BY_STYLES)){ Options.SetInt(GridFilterBy, filterBy | FILTER_BY_STYLES); }
+			if (styles.size() < 1 && (filterBy & FILTER_BY_STYLES)){ Options.SetInt(GridFilterBy, filterBy ^ FILTER_BY_STYLES); }
 		}
 
 	},ID_CHECK_EVENT);
@@ -68,46 +101,45 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	Menu *filterMenu = new Menu(GRID_HOTKEY);
 	MenuItem *item;
 	//hide submenu
-	item = hidemenu->SetAccMenu(5000+LAYER,_("Ukryj warstwę"),_("Ukryj warstwę"),true, ITEM_CHECK);
-	item->Enable(subsFormat<SRT);
-	item->Check((visibleColumns & LAYER)!=0);
-	hidemenu->SetAccMenu(5000+START,_("Ukryj czas początkowy"),_("Ukryj czas początkowy"),true, ITEM_CHECK)->Check((visibleColumns & START)!=0);
-	item = hidemenu->SetAccMenu(5000+END,_("Ukryj czas końcowy"),_("Ukryj czas końcowy"),true, ITEM_CHECK);
-	item->Enable(subsFormat!=TMP);
-	item->Check((visibleColumns & END)!=0);
-	item = hidemenu->SetAccMenu(5000+ACTOR,_("Ukryj aktora"),_("Ukryj aktora"),true, ITEM_CHECK);
-	item->Enable(subsFormat<SRT);
-	item->Check((visibleColumns & ACTOR)!=0);
-	item = hidemenu->SetAccMenu(5000+STYLE,_("Ukryj styl"),_("Ukryj styl"),true, ITEM_CHECK);
-	item->Enable(subsFormat<SRT);
-	item->Check((visibleColumns & STYLE)!=0);
-	item = hidemenu->SetAccMenu(5000+MARGINL,_("Ukryj lewy margines"),_("Ukryj lewy margines"),true, ITEM_CHECK);
-	item->Enable(subsFormat<SRT);
-	item->Check((visibleColumns & MARGINL)!=0);
-	item = hidemenu->SetAccMenu(5000+MARGINR,_("Ukryj prawy margines"),_("Ukryj prawy margines"),true, ITEM_CHECK);
-	item->Enable(subsFormat<SRT);
-	item->Check((visibleColumns & MARGINR)!=0);
-	item = hidemenu->SetAccMenu(5000+MARGINV,_("Ukryj pionowy margines"),_("Ukryj pionowy margines"),true, ITEM_CHECK);
-	item->Enable(subsFormat<SRT);
-	item->Check((visibleColumns & MARGINV)!=0);
-	item = hidemenu->SetAccMenu(5000+EFFECT,_("Ukryj efekt"),_("Ukryj efekt"),true, ITEM_CHECK);
-	item->Enable(subsFormat<SRT);
-	item->Check((visibleColumns & EFFECT)!=0);
+	hidemenu->SetAccMenu(5000 + LAYER, _("Ukryj warstwę"), _("Ukryj warstwę"), subsFormat<SRT, ITEM_CHECK)->Check((visibleColumns & LAYER)!=0);
+	hidemenu->SetAccMenu(5000 + START, _("Ukryj czas początkowy"), _("Ukryj czas początkowy"), true, ITEM_CHECK)->Check((visibleColumns & START) != 0);
+	hidemenu->SetAccMenu(5000 + END, _("Ukryj czas końcowy"), _("Ukryj czas końcowy"), subsFormat != TMP, ITEM_CHECK)->Check((visibleColumns & END)!=0);
+	hidemenu->SetAccMenu(5000 + ACTOR, _("Ukryj aktora"), _("Ukryj aktora"), subsFormat<SRT, ITEM_CHECK)->Check((visibleColumns & ACTOR)!=0);
+	hidemenu->SetAccMenu(5000 + STYLE, _("Ukryj styl"), _("Ukryj styl"), subsFormat<SRT, ITEM_CHECK)->Check((visibleColumns & STYLE)!=0);
+	hidemenu->SetAccMenu(5000 + MARGINL, _("Ukryj lewy margines"), _("Ukryj lewy margines"), subsFormat<SRT, ITEM_CHECK)->Check((visibleColumns & MARGINL)!=0);
+	hidemenu->SetAccMenu(5000 + MARGINR, _("Ukryj prawy margines"), _("Ukryj prawy margines"), subsFormat<SRT, ITEM_CHECK)->Check((visibleColumns & MARGINR) != 0);
+	hidemenu->SetAccMenu(5000 + MARGINV, _("Ukryj pionowy margines"), _("Ukryj pionowy margines"), subsFormat<SRT, ITEM_CHECK)->Check((visibleColumns & MARGINV) != 0);
+	hidemenu->SetAccMenu(5000 + EFFECT, _("Ukryj efekt"), _("Ukryj efekt"), subsFormat<SRT, ITEM_CHECK)->Check((visibleColumns & EFFECT)!=0);
 	hidemenu->SetAccMenu(5000+CNZ,_("Ukryj znaki na sekundę"),_("Ukryj znaki na sekundę"),true, ITEM_CHECK)->Check((visibleColumns & CNZ)!=0);
-
+	
+	//styles menu
+	Menu *stylesMenu = new Menu();
+	std::vector<Styles*> &styles = file->GetSubs()->styles;
+	wxArrayString filterStyles;
+	Options.GetTable(GridFilterStyles, filterStyles, ";");
+	wxArrayString checkedStyles;
+	for (int i = 0; i < StylesSize(); i++){
+		MenuItem * styleItem = stylesMenu->Append(4448, styles[i]->Name, "", true, NULL, NULL, ITEM_CHECK);
+		if (filterStyles.Index(styles[i]->Name) != -1){ styleItem->Check(); checkedStyles.Add(styles[i]->Name); }
+	}
+	Options.SetTable(GridFilterStyles, checkedStyles, ";");
 	//filter submenu
+	int filterBy = Options.GetInt(GridFilterBy);
 	filterMenu->SetAccMenu(4446, _("Filtrowanie odwrócone"), _("Filtrowanie odwrócone"), true, ITEM_CHECK)->Check(Options.GetBool(GridFilterInverted));
-	filterMenu->SetAccMenu(FilterByDoubtful, _("Filtruj według niepewnych"), _("Filtruj według niepewnych"))->Enable(hasTLMode);
-	filterMenu->SetAccMenu(FilterByUntranslated, _("Filtruj według nieprzetłumaczonych"), _("Filtruj według nieprzetłumaczonych"))->Enable(hasTLMode);
-	filterMenu->SetAccMenu(FilterBySelections, _("Filtruj według zaznaczeń"), _("Filtruj według zaznaczeń"))->Enable(sels>0);
-	filterMenu->SetAccMenu(FilterByStyles, _("Filtruj według stylów"), _("Filtruj według stylów"));
+	MenuItem *Item = new MenuItem(FilterByStyles, _("Filtruj według stylów"), _("Filtruj według stylów"), true, NULL, stylesMenu);
+	filterMenu->SetAccMenu(Item, Item->label)->Check(filterBy & FILTER_BY_STYLES);
+	filterMenu->SetAccMenu(FilterBySelections, _("Filtruj według zaznaczeń"), _("Filtruj według zaznaczeń"), sels > 0, ITEM_CHECK)->Check(filterBy & FILTER_BY_SELECTIONS && sels > 0);
+	filterMenu->SetAccMenu(FilterByDialogues, _("Filtruj według dialogów / komentarzy"), _("Filtruj według dialogów / komentarzy"), true, ITEM_CHECK)->Check(filterBy & FILTER_BY_DIALOGUES);
+	filterMenu->SetAccMenu(FilterByDoubtful, _("Filtruj według niepewnych"), _("Filtruj według niepewnych"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_DOUBTFUL && hasTLMode);
+	filterMenu->SetAccMenu(FilterByUntranslated, _("Filtruj według nieprzetłumaczonych"), _("Filtruj według nieprzetłumaczonych"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_UNTRANSLATED && hasTLMode);
+	filterMenu->SetAccMenu(4447, _("filtruj"), _("Wyłącz filtrowanie"));
 	filterMenu->SetAccMenu(FilterByNothing, _("Wyłącz filtrowanie"), _("Wyłącz filtrowanie"))->Enable(isFiltered);
 
 	bool isen;
 	isen = (sels == 1);
 	menu->SetAccMenu( InsertBefore,_("Wstaw &przed"))->Enable(isen);
 	menu->SetAccMenu( InsertAfter,_("Wstaw p&o"))->Enable(isen);
-	isen = (isen&&Kai->GetTab()->Video->GetState()!=None);
+	isen = (isen && Kai->GetTab()->Video->GetState()!=None);
 	menu->SetAccMenu( InsertBeforeVideo,_("Wstaw przed z &czasem wideo"))->Enable(isen);
 	menu->SetAccMenu( InsertAfterVideo,_("Wstaw po z c&zasem wideo"))->Enable(isen);
 	menu->SetAccMenu( InsertBeforeWithVideoFrame,_("Wstaw przed z czasem klatki wideo"))->Enable(isen);
@@ -131,7 +163,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	menu->SetAccMenu( PasteCollumns,_("Wklej kolumny"));
 	menu->Append(4444,_("Ukryj kolumny"),hidemenu);
 	menu->SetAccMenu(HideSelected, _("Ukryj zaznaczone linijki"))->Enable(sels>0);
-	menu->Append(4445, _("Filtruj"), filterMenu);
+	menu->Append(4445, _("Filtrowanie"), filterMenu);
 	menu->SetAccMenu( NewFPS,_("Ustaw nowy FPS"));
 	menu->SetAccMenu( FPSFromVideo,_("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState()!=None && sels==2);
 	menu->SetAccMenu(PasteTranslation, _("Wklej tekst tłumaczenia"))->Enable(subsFormat<SRT && ((TabPanel*)GetParent())->SubsPath != "");
@@ -511,14 +543,11 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 		case HideSelected:
 		{
 			SubsGridFiltering filter(this, Edit->ebrow);
-			filter.FilterBySelections(true);
+			filter.HideSelections();
 			isFiltered = true;
 			break;
 		}
-		case FilterByDoubtful:
-		case FilterByUntranslated:
-		case FilterBySelections:
-		case FilterByStyles:
+		case 4447:
 		case FilterByNothing:
 			Filter(id); break;
 		case PasteTranslation: if(subsFormat<SRT && ((TabPanel*)GetParent())->SubsPath!=""){OnPasteTextTl();} break;
@@ -1167,23 +1196,25 @@ bool SubsGrid::SwapAssProperties()
 void SubsGrid::Filter(int id)
 {
 	SubsGridFiltering filter((SubsGrid*)this, Edit->ebrow);
-	Options.SetInt(GridFilterBy, (id == FilterByDoubtful) ? 1 : (id == FilterByUntranslated) ? 2 : (id == FilterBySelections) ? 3 : (id == FilterByStyles) ? 4 : 0);
-	if (id == FilterByStyles){
-		wxString checkedStyles = GetCheckedElements(Kai);
-		if (checkedStyles.empty()){ return; }
-		Options.SetString(GridFilterStyles, checkedStyles);
+	wxString styles = Options.GetString(GridFilterStyles);
+	if (!styles.empty()){
+		int filterBy = Options.GetInt(GridFilterBy);
+		Options.SetInt(GridFilterBy, filterBy | FILTER_BY_STYLES);
 	}
 	if (id != FilterByNothing){ isFiltered = true; }
-	else{ isFiltered = false; }
+	else{ isFiltered = false; Options.SetInt(GridFilterBy, 0); }
 	filter.Filter();
 }
 
-void SubsGrid::RefreshSubsOnVideo(int newActiveLine)
+void SubsGrid::RefreshSubsOnVideo(int newActiveLine, bool scroll)
 {
 	Selections.clear();
 	SpellErrors.clear();
 	newActiveLine = MID(0, newActiveLine, GetCount()-1);
-	if (Edit->ebrow != newActiveLine){ Edit->ebrow = newActiveLine; ScrollTo(newActiveLine, true); }
+	if (Edit->ebrow != newActiveLine){ 
+		Edit->ebrow = newActiveLine; 
+		if (scroll){ ScrollTo(newActiveLine, true); }
+	}
 	Selections.insert(newActiveLine);
 	Edit->SetLine(newActiveLine);
 	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
