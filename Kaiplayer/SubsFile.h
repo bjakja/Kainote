@@ -123,6 +123,7 @@ public:
 	int GetElementByKey(int Key);
 	unsigned char CheckIfHasHiddenBlock(int i);
 	void DeleteDialogues(int from, int to);
+	void DeleteDialoguesByKeys(int from, int to);
 	Styles *CopyStyle(int i, bool push=true);
 	SInfo *CopySinfo(int i, bool push=true);
 	void GetURStatus(bool *_undo, bool *_redo);

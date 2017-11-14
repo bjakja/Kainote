@@ -75,7 +75,7 @@ public:
 	wxArrayInt GetSels(bool deselect=false);
 	void GetSelectionsKeys(wxArrayInt &sels, bool deselect = false);
 	void SwapRows(int frst, int scnd, bool sav=false);
-	void LoadSubtitles(const wxString &str,const wxString &ext);
+	void LoadSubtitles(const wxString &str, wxString &ext);
 	void MoveRows(int step, bool sav=false);
 	void SetStartTime(int stime);
 	void SetEndTime(int etime);

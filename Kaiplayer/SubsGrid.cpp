@@ -563,14 +563,6 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	else if(id>6000){
 		Kai->OnMenuSelected(event);
 	}
-	/*else if(id>5000 && id<5555){
-		int id5000=(id-5000);
-		if(visible & id5000){visible ^= id5000;}
-		else{visible |= id5000;}
-		SpellErrors.clear();
-		Options.SetInt("Grid Hide Collums", visible);
-		RefreshColumns();
-	}*/
 }
 
 

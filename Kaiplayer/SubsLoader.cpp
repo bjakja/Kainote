@@ -17,7 +17,7 @@
 #include "SubsGrid.h"
 #include "KaiMessageBox.h"
 
-SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, const wxString &ext)
+SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 {
 	grid = _grid;
 	grid->Clearing();
@@ -29,7 +29,9 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, const wxString &ex
 			succeeded = LoadSRT(text);
 			if (!succeeded){
 				succeeded = LoadTXT(text);
+				if (succeeded) ext = "txt";
 			}
+			else{ ext = "srt"; }
 		}
 	}
 	else if (ext == "srt"){
@@ -38,7 +40,9 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, const wxString &ex
 			succeeded = LoadASS(text);
 			if (!succeeded){
 				succeeded = LoadTXT(text);
+				if (succeeded) ext = "txt";
 			}
+			else{ ext = "ass"; }
 		}
 	}
 	else{
@@ -48,11 +52,13 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, const wxString &ex
 			grid->Clearing();
 			grid->file = new SubsFile();
 			succeeded = LoadSRT(text);
+			if (succeeded) ext = "srt";
 		}
 		else if (grid->subsFormat == ASS){
 			grid->Clearing();
 			grid->file = new SubsFile();
 			succeeded = LoadASS(text);
+			if (succeeded) ext = "ass";
 		}
 	}
 

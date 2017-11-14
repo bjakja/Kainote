@@ -210,20 +210,22 @@ void SubsGridBase::Convert(char type)
 	wxString prefix=Options.GetString(ConvertASSTagsOnLineStart);
 	
 	int i=0;
-	while(i<GetCount())
+	File *subs = file->GetSubs();
+	auto &dials = subs->dials;
+	while (i<dials.size())
 	{
-		if((type>ASS) && (subsFormat<SRT) && GetDialogue(i)->IsComment){
-			while(GetDialogue(i)->IsComment){
-				DeleteRow(i);
+		if ((type>ASS) && (subsFormat<SRT) && dials[i]->IsComment){
+			while (dials[i]->IsComment){
+				file->DeleteDialoguesByKeys(i,i+1);
 			}
 		}
 		Dialogue *dialc=CopyDial(i);
 		dialc->Conv(type,prefix);
 		if((newendtimes && type!=TMP)||subsFormat==TMP)
 		{
-			if(i>0){
-				if(GetDialogue(i-1)->End.mstime > dialc->Start.mstime){
-					GetDialogue(i-1)->End = dialc->Start;
+			if (i > 0){
+				if (dials[i - 1]->End.mstime > dialc->Start.mstime){
+					dials[i - 1]->End = dialc->Start;
 				}
 			}
 
@@ -272,11 +274,11 @@ void SubsGridBase::Convert(char type)
 			if(lastDialogue->Start == actualDialogue->Start && 
 				lastDialogue->End == actualDialogue->End && 
 				lastDialogue->Text == actualDialogue->Text){
-					DeleteRow(i-1);
+					file->DeleteDialoguesByKeys(i-1, i); 
 					lastDialogue = actualDialogue;
 					continue;
 			}else if(actualDialogue->Text==""){
-				DeleteRow(i);
+				file->DeleteDialoguesByKeys(i, i+1);
 				continue;
 			}
 			lastDialogue = actualDialogue;
@@ -1148,7 +1150,7 @@ void SubsGridBase::SwapRows(int frst, int scnd, bool sav)
 	if(sav){SetModified(GRID_SWAP_LINES);}
 }
 
-void SubsGridBase::LoadSubtitles(const wxString &str,const wxString &ext){
+void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext){
 
 	bool oldHasTlMode = hasTLMode;
 	int active = 0;

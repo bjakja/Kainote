@@ -324,6 +324,15 @@ void SubsFile::DeleteDialogues(int from, int to)
 	}
 }
 
+void SubsFile::DeleteDialoguesByKeys(int from, int to)
+{
+	edited = true;
+	subs->dials.erase(subs->dials.begin() + from, subs->dials.begin() + to);
+	for (int i = from; i <= to; i++){
+		IdConverter->deleteItemByKey(i);
+	}
+}
+
 int SubsFile::GetElementById(int Id)
 {
 	return IdConverter->getElementById(Id);

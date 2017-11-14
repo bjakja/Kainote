@@ -157,11 +157,13 @@ inline bool SubsGridFiltering::CheckHiding(Dialogue *dial, int i)
 	}
 	if (filterBy & FILTER_BY_DOUBTFUL && (dial->State & 4)){
 		result ^= FILTER_BY_DOUBTFUL;
-		result ^= FILTER_BY_UNTRANSLATED;
+		if (filterBy &FILTER_BY_UNTRANSLATED) 
+			result ^= FILTER_BY_UNTRANSLATED;
 	}
 	if (filterBy & FILTER_BY_UNTRANSLATED && dial->TextTl.empty()){
-		result ^= FILTER_BY_DOUBTFUL;
 		result ^= FILTER_BY_UNTRANSLATED;
+		if (filterBy &FILTER_BY_DOUBTFUL)
+			result ^= FILTER_BY_DOUBTFUL;
 	}
 	return result != 0;
 }

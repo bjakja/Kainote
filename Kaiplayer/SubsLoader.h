@@ -19,7 +19,7 @@ class SubsGrid;
 
 class SubsLoader{
 public:
-	SubsLoader(SubsGrid *grid, const wxString &text, const wxString &ext);
+	SubsLoader(SubsGrid *grid, const wxString &text, wxString &ext);
 private:
 	bool LoadASS(const wxString &text);
 	bool LoadSRT(const wxString &text);

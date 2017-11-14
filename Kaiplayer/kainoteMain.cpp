@@ -605,12 +605,10 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 void kainoteFrame::OnConversion(char form)
 {
 	TabPanel *tab=GetTab();
-	//tab->Edit->OnVideo = true;
 	if (form != ASS && tab->Edit->Visual){
 		tab->Video->SetVisual(true);
 	}
-	//if(tab->Video->GetState()!=None){tab->Video->OpenSubs(tab->Grid1->GetVisible()/*SaveText()*/);tab->Video->Render();}
-
+	tab->Grid->Convert(form);
 	tab->CTime->Contents();
 	UpdateToolbar();
 	tab->Edit->HideControls();
