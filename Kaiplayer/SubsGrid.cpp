@@ -99,7 +99,6 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	menu->SetMaxVisible(35);
 	Menu *hidemenu=new Menu(GRID_HOTKEY);
 	Menu *filterMenu = new Menu(GRID_HOTKEY);
-	MenuItem *item;
 	//hide submenu
 	hidemenu->SetAccMenu(5000 + LAYER, _("Ukryj warstwę"), _("Ukryj warstwę"), subsFormat<SRT, ITEM_CHECK)->Check((visibleColumns & LAYER)!=0);
 	hidemenu->SetAccMenu(5000 + START, _("Ukryj czas początkowy"), _("Ukryj czas początkowy"), true, ITEM_CHECK)->Check((visibleColumns & START) != 0);
@@ -129,7 +128,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	MenuItem *Item = new MenuItem(FilterByStyles, _("Filtruj według stylów"), _("Filtruj według stylów"), true, NULL, stylesMenu);
 	filterMenu->SetAccMenu(Item, Item->label)->Check(filterBy & FILTER_BY_STYLES);
 	filterMenu->SetAccMenu(FilterBySelections, _("Filtruj według zaznaczeń"), _("Filtruj według zaznaczeń"), sels > 0, ITEM_CHECK)->Check(filterBy & FILTER_BY_SELECTIONS && sels > 0);
-	filterMenu->SetAccMenu(FilterByDialogues, _("Filtruj według dialogów / komentarzy"), _("Filtruj według dialogów / komentarzy"), true, ITEM_CHECK)->Check(filterBy & FILTER_BY_DIALOGUES);
+	filterMenu->SetAccMenu(FilterByDialogues, _("Filtruj według dialogów / komentarzy"), _("Filtruj według dialogów / komentarzy"), true, ITEM_CHECK)->Check((filterBy & FILTER_BY_DIALOGUES) != 0);
 	filterMenu->SetAccMenu(FilterByDoubtful, _("Filtruj według niepewnych"), _("Filtruj według niepewnych"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_DOUBTFUL && hasTLMode);
 	filterMenu->SetAccMenu(FilterByUntranslated, _("Filtruj według nieprzetłumaczonych"), _("Filtruj według nieprzetłumaczonych"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_UNTRANSLATED && hasTLMode);
 	filterMenu->SetAccMenu(4447, _("filtruj"), _("Wyłącz filtrowanie"));

@@ -15,6 +15,7 @@
 
 
 #include "SubsGridBase.h"
+#include "SubsLoader.h"
 #include "config.h"
 #include "EditBox.h"
 
@@ -66,17 +67,6 @@ bool sortlayer(Dialogue *i,Dialogue *j){
 	}
 	return i->Start.mstime<j->Start.mstime;
 }
-
-bool SubsGridBase::IsNumber(const wxString &test) {
-	bool isnumber=true;
-	wxString testchars="0123456789";
-	for(size_t i=0;i<test.Len();i++){
-		wxUniChar ch=test.GetChar(i);
-		if(testchars.Find(ch)==-1){isnumber=false;break;}
-	}
-	return isnumber;
-}
-
 
 
 SubsGridBase::SubsGridBase(wxWindow *parent, const long int id,const wxPoint& pos,const wxSize& size, long style)
@@ -1158,108 +1148,18 @@ void SubsGridBase::SwapRows(int frst, int scnd, bool sav)
 	if(sav){SetModified(GRID_SWAP_LINES);}
 }
 
-void SubsGridBase::Loadfile(const wxString &str,const wxString &ext){
+void SubsGridBase::LoadSubtitles(const wxString &str,const wxString &ext){
 
-	Clearing();
-	int active=0;
-	file=new SubsFile();
+	bool oldHasTlMode = hasTLMode;
+	int active = 0;
 
-	if(ext=="srt"){
+	SubsLoader SL((SubsGrid*)this, str, ext);
 
-		wxStringTokenizer tokenizer(str,"\n",wxTOKEN_STRTOK);
-		tokenizer.GetNextToken();
-
-		wxString text1;
-		while ( tokenizer.HasMoreTokens() ){
-			wxString text=tokenizer.GetNextToken().Trim();
-			if(IsNumber(text)){if(text1!=""){
-				AddLine(new Dialogue(text1.Trim())); text1="";}}
-			else{text1<<text<<"\r\n";}
-		}
-
-		if(text1!=""){AddLine( new Dialogue(text1.Trim())); text1="";}
+	if (oldHasTlMode != hasTLMode){
+		Edit->SetTl(hasTLMode);
+		Kai->Menubar->Enable(SaveTranslation, hasTLMode);
 	}
-	else{
-
-		short sinfoo=0;
-		char format=ASS;
-		bool isASS= (ext=="ass"||ext=="ssa");
-		wxStringTokenizer tokenizer(str,"\n",wxTOKEN_STRTOK);
-
-
-		while ( tokenizer.HasMoreTokens() && isASS){
-			wxString token = tokenizer.GetNextToken().Trim(false);
-			if(token.StartsWith("Style: "))
-			{
-				//1 = ASS, 2 = SSA, potrzebne tylko przy odczycie napisów.
-				AddStyle(new Styles(token,format));
-				sinfoo=2;
-			}
-			else if(sinfoo==2 && !token.StartsWith("Style:")){
-				break;
-			}
-			else if(token.StartsWith("[V4")){
-				if(!token.StartsWith("[V4+")){format=2;}//ze względu na to, że wywaliłem ssa z formatów
-				//muszę posłać do konstruktora styli 2 jako format SSA, nie używam tu srt, 
-				//żeby później źle tego nie zinterpretować
-				sinfoo=1;
-			}
-			else if(!token.StartsWith(";") && !token.StartsWith("[") && sinfoo==0 && token.Find(':')!=wxNOT_FOUND){
-				AddSInfo(token);
-			}
-		}
-		if(ext == "ssa"){AddSInfo("ScriptType", "4.00+");}
-
-		bool tlmode=(GetSInfo("TLMode")=="Yes");
-		if(GetSInfo("Active Line")!="" &&(ext=="ass"||ext=="ssa")){active=wxAtoi(GetSInfo("Active Line"));}
-		if(hasTLMode&&!tlmode){
-			hasTLMode=false;
-			showOriginal=false;
-			Kai->Menubar->Enable(SaveTranslation,false);
-			Edit->SetTl(false);
-		}
-		wxString tlstyle;
-		if(tlmode){tlstyle=GetSInfo("TLMode Style");if(tlstyle==""){tlmode=false;}}
-		wxString matrix = GetSInfo("YCbCr Matrix");
-		if(matrix == "" || matrix == "None" ){AddSInfo("YCbCr Matrix","TV.601");}
-
-		while ( tokenizer.HasMoreTokens() )
-		{
-			wxString token = tokenizer.GetNextToken();
-			if (isASS && !(token.StartsWith("Dial") || token.StartsWith("Comm") || token.StartsWith(";"))){ continue; }
-			Dialogue *dl= new Dialogue(token);
-			if(!tlmode){
-				AddLine(dl);
-			}
-			else if(tlmode && dl->Style==tlstyle){
-				wxString ntoken = tokenizer.GetNextToken();
-				Dialogue tl(ntoken);
-				dl->Style=tl.Style; 
-				dl->TextTl=tl.Text;
-				if(dl->Effect == "\fD"){
-					dl->State |=4;
-				}
-				dl->Effect = tl.Effect;
-				AddLine(dl);
-			}else{
-				//stary tryb tłumaczenia nie istnieje od 2 lat, nie ma sensu usuwać pustych linii, zważywszy na to, że to może usunąć coś ważnego.
-				AddLine(dl);
-			}
-		}
-
-
-	}
-
-	if(GetCount()<1){LoadDefault();KaiMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera błędy)"));subsFormat=ASS;}
-	else{SetSubsForm();}
-	originalFormat=subsFormat;
-
-	if(GetSInfo("TLMode")=="Yes"){
-		Edit->SetTl(true);
-		hasTLMode=true;
-		if(GetSInfo("TLMode Showtl")=="Yes" || Options.GetBool(TlModeShowOriginal)){showOriginal=true;}
-		Kai->Menubar->Enable(SaveTranslation,true);
-	}
+	if (hasTLMode && (GetSInfo("TLMode Showtl") == "Yes" || Options.GetBool(TlModeShowOriginal))){ showOriginal = true; }
 
 
 	if(subsFormat==MDVD||subsFormat==MPL2){
@@ -1281,14 +1181,16 @@ void SubsGridBase::Loadfile(const wxString &str,const wxString &ext){
 		}
 	}
 	else if(subsFormat==ASS){
-		if(ext!="ass"){originalFormat=0;AddStyle(new Styles());}
+		if (ext != "ass"){ originalFormat = 0; if (StylesSize() < 1){ AddStyle(new Styles()); } }
 		Edit->TlMode->Enable(true);Edit->RefreshStyle();
 		if(Options.GetBool(GridLoadSortedSubs)){
 			std::sort(file->subs->dials.begin(), file->subs->dials.end(), sortstart);
 		}
+		active = wxAtoi(GetSInfo("Active Line"));
+		if (active >= GetCount()){ active = 0; }
 	}
 	else{Edit->TlMode->Enable(false);}
-	if(active>=GetCount()){active=0;}
+	
 
 
 	Selections.insert(active);
@@ -1666,7 +1568,15 @@ void SubsGridBase::SaveSelections(bool clear)
 	if (clear){ Selections.clear(); }
 }
 
-
+bool SubsGridBase::IsNumber(const wxString &test) {
+	bool isnumber = true;
+	wxString testchars = "0123456789";
+	for (size_t i = 0; i < test.Len(); i++){
+		wxUniChar ch = test.GetChar(i);
+		if (testchars.Find(ch) == -1){ isnumber = false; break; }
+	}
+	return isnumber;
+}
 
 
 

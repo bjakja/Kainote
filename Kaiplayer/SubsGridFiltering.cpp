@@ -163,5 +163,5 @@ inline bool SubsGridFiltering::CheckHiding(Dialogue *dial, int i)
 		result ^= FILTER_BY_DOUBTFUL;
 		result ^= FILTER_BY_UNTRANSLATED;
 	}
-	return result;
+	return result != 0;
 }

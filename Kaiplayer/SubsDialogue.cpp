@@ -83,6 +83,11 @@ Dialogue::Dialogue(const wxString &ldial,const wxString &txttl)
 	TextTl=txttl;
 	SetRaw(ldial);
 }
+
+static wxRegEx expresion1(_T("^\\{([0-9-]+)\\}{([0-9-]*)\\}([^\r\n]*)"), wxRE_ADVANCED);
+static wxRegEx expresion2(_T("^\\[([0-9-]+)\\]\\[([0-9-]*)\\]([^\r\n]*)"), wxRE_ADVANCED);
+static wxRegEx expresion(_T("^([0-9]+)[:;]([0-9]+)[:;]([0-9]+)[:;, ]([^\r\n]*)"), wxRE_ADVANCED);
+
 void Dialogue::SetRaw(const wxString &ldial)
 {
 	State=0;
@@ -111,10 +116,6 @@ void Dialogue::SetRaw(const wxString &ldial)
 			return;
 		}
 	}
-
-	wxRegEx expresion1( _T("^\\{([0-9-]+)\\}{([0-9-]*)\\}([^\r\n]*)") , wxRE_ADVANCED);
-	wxRegEx expresion2( _T("^\\[([0-9-]+)\\]\\[([0-9-]*)\\]([^\r\n]*)") , wxRE_ADVANCED);
-	wxRegEx expresion( _T("^([0-9]+)[:;]([0-9]+)[:;]([0-9]+)[:;, ]([^\r\n]*)") , wxRE_ADVANCED);
 
 	Layer=0;
 	MarginL=0;

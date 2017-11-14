@@ -75,7 +75,7 @@ public:
 	wxArrayInt GetSels(bool deselect=false);
 	void GetSelectionsKeys(wxArrayInt &sels, bool deselect = false);
 	void SwapRows(int frst, int scnd, bool sav=false);
-	void Loadfile(const wxString &str,const wxString &ext);
+	void LoadSubtitles(const wxString &str,const wxString &ext);
 	void MoveRows(int step, bool sav=false);
 	void SetStartTime(int stime);
 	void SetEndTime(int etime);
@@ -85,7 +85,6 @@ public:
 	int SInfoSize();
 	int GetCount();
 	void NextLine(int dir=1);
-	bool IsNumber(const wxString &txt);
 	void SaveSelections(bool clear=false);
 	Dialogue *CopyDial(int i, bool push=true);
 	Dialogue *GetDialogue(int i);
@@ -93,6 +92,7 @@ public:
 	void RebuildActorEffectLists();
 	
 	void DummyUndo(int newIter);
+	bool IsNumber(const wxString &txt);
 	
 	
 	SubsGridBase(wxWindow *parent, const long int id ,const wxPoint& pos,const wxSize& size, long style);

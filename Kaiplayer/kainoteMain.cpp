@@ -767,7 +767,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 		else if (nonewtab && tab->Grid->Comparison){
 			Tabs->RemoveComparison();
 		}
-		tab->Grid->Loadfile(s,ext);
+		tab->Grid->LoadSubtitles(s,ext);
 
 		if(ext=="ssa"){ext="ass";fname=fname.BeforeLast('.')+".ass";}
 		tab->SubsPath=fname;
@@ -1187,7 +1187,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 			if(!ow.FileOpen(subs[i], &s)){
 				break;
 			}else{
-				tab->Grid->Loadfile(s,ext);
+				tab->Grid->LoadSubtitles(s,ext);
 			}
 
 			if(ext=="ssa"){ext="ass";subs[i]=subs[i].BeforeLast('.')+".ass";}
