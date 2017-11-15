@@ -64,7 +64,7 @@ public:
 	void GetUndo(bool redo, int iter = -2);
 	void InsertRows(int Row, const std::vector<Dialogue *> &RowsTable, bool AddToDestroy=false);
 	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy=true, bool Save=false);
-	void SetSubsForm(wxString ext="");
+	void SetSubsFormat(wxString ext="");
 	void AddSInfo(const wxString &SI, wxString val="", bool save=true);
 	void SetModified(unsigned char editionType, bool redit = true, bool dummy = false, int SetEditBoxLine = -1, bool Scroll = true);
 	void UpdateUR(bool tolbar=true);

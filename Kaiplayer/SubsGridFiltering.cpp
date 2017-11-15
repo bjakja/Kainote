@@ -31,6 +31,14 @@ void SubsGridFiltering::Filter()
 {
 	Invert = Options.GetBool(GridFilterInverted);
 	filterBy = Options.GetInt(GridFilterBy);
+	if (!filterBy){
+		if (grid->isFiltered){
+			TurnOffFiltering();
+			FilteringFinalize();
+			grid->isFiltered = false;
+		}
+		return;
+	}
 	if (filterBy & FILTER_BY_STYLES){
 		Options.GetTable(GridFilterStyles, styles, ";");
 	}

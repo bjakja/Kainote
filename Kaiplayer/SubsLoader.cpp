@@ -47,7 +47,7 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 	}
 	else{
 		LoadTXT(text);
-		grid->SetSubsForm();
+		grid->SetSubsFormat();
 		if (grid->subsFormat == SRT){
 			grid->Clearing();
 			grid->file = new SubsFile();
@@ -63,7 +63,7 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 	}
 
 	if (!succeeded){ grid->LoadDefault(); KaiMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera b³êdy)")); grid->subsFormat = ASS; }
-	else{ grid->SetSubsForm(); }
+	else{ grid->SetSubsFormat(); }
 	grid->originalFormat = grid->subsFormat;
 }
 

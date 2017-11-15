@@ -131,7 +131,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	filterMenu->SetAccMenu(FilterByDialogues, _("Filtruj według dialogów / komentarzy"), _("Filtruj według dialogów / komentarzy"), true, ITEM_CHECK)->Check((filterBy & FILTER_BY_DIALOGUES) != 0);
 	filterMenu->SetAccMenu(FilterByDoubtful, _("Filtruj według niepewnych"), _("Filtruj według niepewnych"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_DOUBTFUL && hasTLMode);
 	filterMenu->SetAccMenu(FilterByUntranslated, _("Filtruj według nieprzetłumaczonych"), _("Filtruj według nieprzetłumaczonych"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_UNTRANSLATED && hasTLMode);
-	filterMenu->SetAccMenu(4447, _("filtruj"), _("Wyłącz filtrowanie"));
+	filterMenu->SetAccMenu(4447, _("Filtruj"), _("Filtruj"));
 	filterMenu->SetAccMenu(FilterByNothing, _("Wyłącz filtrowanie"), _("Wyłącz filtrowanie"))->Enable(isFiltered);
 
 	bool isen;
@@ -748,7 +748,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 
 	if(isgood){
 		if(hasTLMode){Edit->SetTl(false); hasTLMode=false;showOriginal=false;Kai->Menubar->Enable(SaveTranslation,false);}
-		SetSubsForm();
+		SetSubsFormat();
 		wxString ext=(subsFormat<SRT)?"ass" : "srt";
 		if(subsFormat<SRT){Edit->TlMode->Enable();}else{Edit->TlMode->Enable(false);}
 
@@ -776,7 +776,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 		}
 
 		if(!Kai->GetTab()->edytor&&!Kai->GetTab()->Video->isFullscreen){Kai->HideEditor();}
-		Kai->GetTab()->CTime->Contents();
+		Kai->GetTab()->ShiftTimes->Contents();
 		Selections.insert(Edit->ebrow);
 		RefreshColumns();
 		Edit->HideControls();
@@ -1193,7 +1193,7 @@ void SubsGrid::Filter(int id)
 		Options.SetInt(GridFilterBy, filterBy | FILTER_BY_STYLES);
 	}
 	if (id != FilterByNothing){ isFiltered = true; }
-	else{ isFiltered = false; Options.SetInt(GridFilterBy, 0); }
+	else{ Options.SetInt(GridFilterBy, 0); }
 	filter.Filter();
 }
 

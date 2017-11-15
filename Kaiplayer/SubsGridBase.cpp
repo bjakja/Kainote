@@ -192,7 +192,6 @@ void SubsGridBase::ChangeCell(long wcell, int wline, Dialogue *what)
 
 void SubsGridBase::Convert(char type)
 {
-	if(GetSInfo("TLMode")=="Yes"){return;}
 	if(Options.GetBool(ConvertShowSettings)){
 		OptionsDialog od(Kai,Kai);
 		od.OptionsTree->ChangeSelection(2);
@@ -219,7 +218,7 @@ void SubsGridBase::Convert(char type)
 				file->DeleteDialoguesByKeys(i,i+1);
 			}
 		}
-		Dialogue *dialc=CopyDial(i);
+		Dialogue *dialc = file->CopyDialogueByKey(i);
 		dialc->Conv(type,prefix);
 		if((newendtimes && type!=TMP)||subsFormat==TMP)
 		{
@@ -252,7 +251,11 @@ void SubsGridBase::Convert(char type)
 		if(Options.dirs.Index(catalog)!=-1){Options.LoadStyles(catalog);}
 		int stind=Options.FindStyle(stname);
 
-		if(stind<0){Styles *newstyl=new Styles(); newstyl->Name=stname;AddStyle(newstyl);}
+		if(stind<0){
+			Styles *newstyl=new Styles(); 
+			newstyl->Name=stname;
+			AddStyle(newstyl);
+		}
 		else{AddStyle(Options.GetStyle(stind)->Copy());}
 		Edit->RefreshStyle();
 		Kai->SetSubsResolution();
@@ -267,10 +270,10 @@ void SubsGridBase::Convert(char type)
 			}
 			return (i->Text.CmpNoCase(j->Text)<0);
 		});
-		Dialogue *lastDialogue = GetDialogue(0);
+		Dialogue *lastDialogue = dials[0];
 		int i = 1; 
-		while(i < GetCount()){
-			Dialogue *actualDialogue = GetDialogue(i);
+		while (i < dials.size()){
+			Dialogue *actualDialogue = dials[i];
 			if(lastDialogue->Start == actualDialogue->Start && 
 				lastDialogue->End == actualDialogue->End && 
 				lastDialogue->Text == actualDialogue->Text){
@@ -867,7 +870,7 @@ void SubsGridBase::UpdateUR(bool toolbar)
 
 void SubsGridBase::GetUndo(bool redo, int iter)
 {
-	TabPanel *pan =Kai->GetTab();
+	TabPanel *tab =Kai->GetTab();
 	Freeze();
 	wxString resolution = GetSInfo("PlayResX") +" x "+ GetSInfo("PlayResY");
 	wxString matrix = GetSInfo("YCbCr Matrix");
@@ -882,11 +885,15 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	Kai->Label(file->Iter());
 
 
-	char oldform=subsFormat;SetSubsForm();
-	if(oldform!=subsFormat){
-		pan->CTime->Contents();
-		pan->Edit->HideControls();
+	char oldformat=subsFormat;
+	SetSubsFormat();
+	if(oldformat!=subsFormat){
+		tab->ShiftTimes->Contents();
+		tab->Edit->HideControls();
 		Kai->UpdateToolbar();
+		if (oldformat == ASS || subsFormat == ASS){
+			tab->Video->vToolbar->DisableVisuals(subsFormat != ASS);
+		}
 	}
 
 	Selections = file->subs->sel;
@@ -913,7 +920,7 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	RefreshColumns();
 	Edit->RefreshStyle();
 	
-	VideoCtrl *vb=pan->Video;
+	VideoCtrl *vb=tab->Video;
 	if(Edit->Visual < CHANGEPOS){
 		
 		if(vb->IsShown() || vb->isFullscreen){vb->OpenSubs(GetVisible()/*SaveText()*/);Edit->OnVideo=true;}
@@ -1029,7 +1036,7 @@ void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddTo
 	}
 }
 
-void SubsGridBase::SetSubsForm(wxString ext)
+void SubsGridBase::SetSubsFormat(wxString ext)
 {
 	subsFormat=ASS;
 	int rw=0;

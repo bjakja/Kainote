@@ -117,6 +117,7 @@ public:
 	void ReloadVisibleDialogues();
 	void EndLoad(unsigned char editionType, int activeLine);
 	Dialogue *CopyDial(int i, bool push=true, bool keepstate=false);
+	Dialogue *CopyDialogueByKey(int i, bool push = true, bool keepstate = false);
 	Dialogue *GetDialogue(int i);
 	Dialogue *&operator[](int i);
 	int GetElementById(int Id);

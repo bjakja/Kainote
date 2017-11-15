@@ -1561,7 +1561,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 			if(!hasMark){
 				hasMark=true;
 				TabPanel *panel=(TabPanel*)grid->GetParent();
-				panel->CTime->Contents();
+				panel->ShiftTimes->Contents();
 			}
 			hasMark=true;
 			UpdateImage(true);

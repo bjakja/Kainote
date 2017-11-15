@@ -93,7 +93,7 @@ void Notebook::AddPage(bool refresh)
 		AddPendingEvent(evt2);
 		//Thaw();
 		RefreshRect(wxRect(0,h-25,w,25),false);
-	}else{Pages[iter]->CTime->RefVals(Pages[olditer]->CTime);}
+	}else{Pages[iter]->ShiftTimes->RefVals(Pages[olditer]->ShiftTimes);}
 }
 
 int Notebook::GetSelection()

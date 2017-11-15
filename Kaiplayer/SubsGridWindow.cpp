@@ -719,7 +719,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	if (curX < hideColumnWidth){
 		int filterRow = (curY + (GridHeight / 2)) / (GridHeight + 1) + scPos - 2;
 		if (!(filterRow < scPos || filterRow >= GetCount()) || filterRow == -1) {
-			if (click && file->CheckIfHasHiddenBlock(filterRow)){
+			if ((click || dclick) && file->CheckIfHasHiddenBlock(filterRow)){
 				SubsGridFiltering filter((SubsGrid*)this, Edit->ebrow);
 				filter.FilterPartial(filterRow);
 			}

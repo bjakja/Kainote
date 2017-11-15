@@ -287,6 +287,14 @@ Dialogue *SubsFile::CopyDial(int i, bool push, bool keepstate)
 	return dial;
 }
 
+Dialogue *SubsFile::CopyDialogueByKey(int i, bool push, bool keepstate)
+{
+	Dialogue *dial = subs->dials[i]->Copy(keepstate, !push);
+	subs->ddials.push_back(dial);
+	if (push){ subs->dials[i] = dial; }
+	return dial;
+}
+
 Dialogue *SubsFile::GetDialogue(int i)
 {
 	int Id = IdConverter->getElementById(i);

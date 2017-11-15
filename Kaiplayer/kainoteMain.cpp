@@ -409,9 +409,9 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}else if(id==HideTags){
 		tab->Grid->HideOverrideTags();
 	}else if(id==ChangeTime){
-		bool show=!tab->CTime->IsShown();
+		bool show=!tab->ShiftTimes->IsShown();
 		Options.SetBool(MoveTimesOn,show);
-		tab->CTime->Show(show);
+		tab->ShiftTimes->Show(show);
 		tab->BoxSizer1->Layout();
 	}else if(id>6999&&id<7012){
 		bool all=id<7006;
@@ -481,7 +481,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if(fsel<0){return;}
 		tab->Video->Seek(MAX(0,tab->Grid->GetDialogue(fsel)->End.mstime),false);
 	}else if(id==ID_MOVE){
-		tab->CTime->OnOKClick(event);
+		tab->ShiftTimes->OnOKClick(event);
 	}
 
 
@@ -605,11 +605,12 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 void kainoteFrame::OnConversion(char form)
 {
 	TabPanel *tab=GetTab();
+	if (tab->Grid->GetSInfo("TLMode") == "Yes"){ return; }
 	if (form != ASS && tab->Edit->Visual){
 		tab->Video->SetVisual(true);
 	}
 	tab->Grid->Convert(form);
-	tab->CTime->Contents();
+	tab->ShiftTimes->Contents();
 	UpdateToolbar();
 	tab->Edit->HideControls();
 	tab->Video->vToolbar->DisableVisuals(form != ASS);
@@ -813,7 +814,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 			if(tab->Video->VFF && tab->Video->vstate != None && tab->Grid->subsFormat == ASS){
 				tab->Video->SetColorSpace(tab->Grid->GetSInfo("YCbCr Matrix"));
 			}
-			tab->CTime->Contents();
+			tab->ShiftTimes->Contents();
 			UpdateToolbar(); 
 			tab->Thaw();
 			return true;
@@ -826,7 +827,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 
 
 	tab->Thaw();
-	tab->CTime->Contents();
+	tab->ShiftTimes->Contents();
 	UpdateToolbar();
 	Options.SaveOptions(true, false);
 	if(!isload){return isload;}
@@ -1211,7 +1212,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 			tab->Video->seekfiles=true;
 
 		}
-		tab->CTime->Contents();
+		tab->ShiftTimes->Contents();
 
 	}
 
@@ -1297,7 +1298,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 		else if (cur->edytor){ cur->Grid->SetFocus(); }
 		else{ cur->Video->SetFocus(); }
 		if (Tabs->iter != Tabs->GetOldSelection() && Options.GetBool(MoveTimesLoadSetTabOptions)){
-			cur->CTime->RefVals(Tabs->Page(Tabs->GetOldSelection())->CTime);
+			cur->ShiftTimes->RefVals(Tabs->Page(Tabs->GetOldSelection())->ShiftTimes);
 		}
 
 		if (Options.GetBool(AutoSelectLinesFromLastTab)){
@@ -1335,7 +1336,7 @@ void kainoteFrame::HideEditor(bool save)
 			cur->Video->SetMinSize(wxSize(sx,sy + cur->Video->panelHeight));
 		}else{cur->Video->Hide();}
 		if(Options.GetBool(MoveTimesOn)){
-			cur->CTime->Show();
+			cur->ShiftTimes->Show();
 		}
 		cur->BoxSizer1->Layout();
 		Label();
@@ -1344,7 +1345,7 @@ void kainoteFrame::HideEditor(bool save)
 	}
 	else{//Wyłączanie edytora
 		cur->Video->panelHeight = 44;
-		cur->CTime->Hide();
+		cur->ShiftTimes->Hide();
 
 		cur->BoxSizer1->Remove(1);
 

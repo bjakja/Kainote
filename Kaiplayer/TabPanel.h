@@ -34,7 +34,7 @@ class TabPanel : public wxWindow
 		SubsGrid* Grid;
         EditBox* Edit;
 		VideoCtrl* Video;
-		CTwindow* CTime;
+		ShiftTimesWindow* ShiftTimes;
 
 		wxBoxSizer* BoxSizer1;
 		wxBoxSizer* BoxSizer2;

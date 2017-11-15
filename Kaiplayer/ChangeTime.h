@@ -29,12 +29,12 @@ class kainoteFrame;
 
 
 
-class CTwindow: public wxWindow//wxScrolled<wxWindow>
+class ShiftTimesWindow: public wxWindow//wxScrolled<wxWindow>
 {
 public:
 	
-	CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id=-1,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize,long style=0);
-	virtual ~CTwindow();
+	ShiftTimesWindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id=-1,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize,long style=0);
+	virtual ~ShiftTimesWindow();
 	KaiRadioButton* StartVAtime;
 	KaiRadioButton* EndVAtime;
 	KaiChoice *WhichLines;
@@ -70,7 +70,7 @@ public:
 	wxWindow *panel; 
 
 	void Contents(bool addopts=true);
-	void RefVals(CTwindow *from=NULL);
+	void RefVals(ShiftTimesWindow *from=NULL);
 	void OnOKClick(wxCommandEvent& event);
 	wxBoxSizer *Main;
 	bool SetBackgroundColour(const wxColour &col);

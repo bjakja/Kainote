@@ -22,7 +22,7 @@
 //#include "ColorPicker.h"
 
 
-CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const wxPoint& pos,const wxSize& size,long style)
+ShiftTimesWindow::ShiftTimesWindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const wxPoint& pos,const wxSize& size,long style)
 	: wxWindow/*wxScrolled<wxWindow>*/(parent, id, pos, size, style|wxVERTICAL)
 {
     Kai=kfparent;
@@ -58,7 +58,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	Backward = new KaiRadioButton(panel, -1, _("W tył"));
 	DisplayFrames = new KaiCheckBox(panel, 31221, _("Klatki"));
 	MoveTagTimes = new KaiCheckBox(panel, -1, _("Czasy tagów"));
-	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &CTwindow::OnChangeDisplayUnits, this, 31221);
+	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &ShiftTimesWindow::OnChangeDisplayUnits, this, 31221);
 	timegrid->Add(TimeText,0,wxEXPAND|wxLEFT|wxRIGHT,2);
 	timegrid->Add(MoveTime,0,wxEXPAND|wxRIGHT,2);
 	timegrid->Add(Forward,1,wxEXPAND|wxLEFT|wxRIGHT,2);
@@ -87,7 +87,7 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	audiotime->SetForegroundColour(WindowWarningElements);
 	audiotime->Enable(false);
 
-	Connect(ID_VIDEO,ID_AUDIO,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&CTwindow::AudioVideoTime);
+	Connect(ID_VIDEO,ID_AUDIO,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&ShiftTimesWindow::AudioVideoTime);
 	//TextColorPicker *picker = new TextColorPicker(this, AssColor(wxString("#AABBCC")));
 	VAtiming->Add(SE,0,wxEXPAND|wxTOP,2);
 	VAtiming->Add(videotime,1,wxEXPAND|wxLEFT,2);
@@ -143,9 +143,9 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	
 	
 
-	Connect(ID_MOVE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&CTwindow::OnOKClick);
-	Connect(ID_BSTYLE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&CTwindow::OnAddStyles);
-	Connect(22999,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&CTwindow::CollapsePane);
+	Connect(ID_MOVE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&ShiftTimesWindow::OnOKClick);
+	Connect(ID_BSTYLE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ShiftTimesWindow::OnAddStyles);
+	Connect(22999,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ShiftTimesWindow::CollapsePane);
 
 	DoTooltips();
 	if(Options.GetInt(PostprocessorEnabling)>15){wxCommandEvent evt; evt.SetId(122); CollapsePane(evt);}
@@ -154,26 +154,26 @@ CTwindow::CTwindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const w
 	panel->SetSizerAndFit(Main);
 }
 
-CTwindow::~CTwindow()
+ShiftTimesWindow::~ShiftTimesWindow()
 {
 	SaveOptions();
 }
 
-bool CTwindow::SetBackgroundColour(const wxColour &col)
+bool ShiftTimesWindow::SetBackgroundColour(const wxColour &col)
 {
 	wxWindow::SetBackgroundColour(Options.GetColour(WindowBackground));
 	panel->SetBackgroundColour(Options.GetColour(WindowBackground));
 	return true;
 }
 
-bool CTwindow::SetForegroundColour(const wxColour &col)
+bool ShiftTimesWindow::SetForegroundColour(const wxColour &col)
 {
 	wxWindow::SetForegroundColour(Options.GetColour(WindowText));
 	panel->SetForegroundColour(Options.GetColour(WindowText));
 	return true;
 }
 
-void CTwindow::Contents(bool addopts)
+void ShiftTimesWindow::Contents(bool addopts)
 {
 	bool state;
 	form=Kai->GetTab()->Grid->subsFormat;
@@ -220,14 +220,14 @@ void CTwindow::Contents(bool addopts)
 
 
 
-void CTwindow::OnAddStyles(wxCommandEvent& event)
+void ShiftTimesWindow::OnAddStyles(wxCommandEvent& event)
 {
 	wxString result = GetCheckedElements(Kai);
 	Stylestext->SetValue(result);
 	if(result != ""){WhichLines->SetSelection(4);}
 }
 
-void CTwindow::SaveOptions()
+void ShiftTimesWindow::SaveOptions()
 {
 	if(TimeText->HasShownFrames()){
 		Options.SetInt(MoveTimesFrames,TimeText->GetTime().orgframe);
@@ -264,7 +264,7 @@ void CTwindow::SaveOptions()
 	}
 }
 
-void CTwindow::OnOKClick(wxCommandEvent& event)
+void ShiftTimesWindow::OnOKClick(wxCommandEvent& event)
 {
 	SaveOptions();
 	int acid=event.GetId();
@@ -279,7 +279,7 @@ void CTwindow::OnOKClick(wxCommandEvent& event)
 }
 
 
-void CTwindow::OnSize(wxSizeEvent& event)
+void ShiftTimesWindow::OnSize(wxSizeEvent& event)
 {
 	int h,gw,gh;
 	TabPanel* cur=(TabPanel*)GetParent();
@@ -319,7 +319,7 @@ void CTwindow::OnSize(wxSizeEvent& event)
 	
 }
 
-void CTwindow::DoTooltips()
+void ShiftTimesWindow::DoTooltips()
 {
 	TimeText->SetToolTip(_("Czas przesunięcia"));
 	videotime->SetToolTip(_("Przesuwanie zaznaczonej linijki\ndo czasu wideo ± czas przesunięcia"));
@@ -337,7 +337,7 @@ void CTwindow::DoTooltips()
 	
 }
 
-void CTwindow::AudioVideoTime(wxCommandEvent &event)
+void ShiftTimesWindow::AudioVideoTime(wxCommandEvent &event)
 {
 	int id=event.GetId();
 	if (id==ID_VIDEO && videotime->GetValue()){
@@ -348,7 +348,7 @@ void CTwindow::AudioVideoTime(wxCommandEvent &event)
 	}
 }
 
-void CTwindow::RefVals(CTwindow *from)
+void ShiftTimesWindow::RefVals(ShiftTimesWindow *from)
 {
 	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 
 	//8 Move to audio time 16 display times / frames 32 move tag times;
@@ -411,7 +411,7 @@ void CTwindow::RefVals(CTwindow *from)
    
 }
 
-void CTwindow::CollapsePane(wxCommandEvent &event)
+void ShiftTimesWindow::CollapsePane(wxCommandEvent &event)
 {
 	bool collapsed = (LeadIn==NULL);
 	int pe = Options.GetInt(PostprocessorEnabling);
@@ -555,7 +555,7 @@ void CTwindow::CollapsePane(wxCommandEvent &event)
 	
 }
 
-void CTwindow::OnScroll(wxScrollEvent& event)
+void ShiftTimesWindow::OnScroll(wxScrollEvent& event)
 {
 	int newPos = event.GetPosition();
 	//wxLogStatus("scroll %i %i", newPos, scPos);
@@ -566,7 +566,7 @@ void CTwindow::OnScroll(wxScrollEvent& event)
 	}
 }
 
-void CTwindow::OnMouseScroll(wxMouseEvent& event)
+void ShiftTimesWindow::OnMouseScroll(wxMouseEvent& event)
 {
 	if(event.GetWheelRotation() != 0){
 		int step = 30 * event.GetWheelRotation() / event.GetWheelDelta();
@@ -576,12 +576,12 @@ void CTwindow::OnMouseScroll(wxMouseEvent& event)
 	}
 }
 
-void CTwindow::OnChangeDisplayUnits(wxCommandEvent& event)
+void ShiftTimesWindow::OnChangeDisplayUnits(wxCommandEvent& event)
 {
 	ChangeDisplayUnits(!DisplayFrames->GetValue());
 }
 	
-void CTwindow::ChangeDisplayUnits(bool times)
+void ShiftTimesWindow::ChangeDisplayUnits(bool times)
 {
 	STime ct = TimeText->GetTime();
 	if(times){
@@ -594,8 +594,8 @@ void CTwindow::ChangeDisplayUnits(bool times)
 		TimeText->SetTime(ct);
 	}
 }
-BEGIN_EVENT_TABLE(CTwindow,wxWindow)
-EVT_SIZE(CTwindow::OnSize)
-EVT_COMMAND_SCROLL_THUMBTRACK(5558,CTwindow::OnScroll)
-EVT_MOUSEWHEEL(CTwindow::OnMouseScroll)
+BEGIN_EVENT_TABLE(ShiftTimesWindow,wxWindow)
+EVT_SIZE(ShiftTimesWindow::OnSize)
+EVT_COMMAND_SCROLL_THUMBTRACK(5558,ShiftTimesWindow::OnScroll)
+EVT_MOUSEWHEEL(ShiftTimesWindow::OnMouseScroll)
 END_EVENT_TABLE()
