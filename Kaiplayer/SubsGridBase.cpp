@@ -296,13 +296,9 @@ void SubsGridBase::Convert(char type)
 	subsFormat=type;
 	file->ReloadVisibleDialogues();
 	Edit->SetLine((Edit->ebrow < GetCount())? Edit->ebrow : 0);
+	SpellErrors.clear();
 	SetModified(GRID_CONVERT);
 	RefreshColumns();
-	
-	if(Edit->Visual > 0){
-		TabPanel *tab = Kai->GetTab();
-		tab->Video->SetVisual(true);
-	}
 }
 
 void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromEditbox)
@@ -1463,6 +1459,7 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 	bool noLine = true;
 	bool isTlmode = GetSInfo("TLMode")=="Yes";
 	wxString tlStyle = GetSInfo("TLMode Style");
+	int j = 1;
 	for(int i=0; i<GetCount(); i++){
 		Dialogue *dial=GetDialogue(i);
 		if(i==Edit->ebrow){ 
@@ -1478,6 +1475,10 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 				dial->GetRaw(txt, false, tlStyle);
 				dial->GetRaw(txt, true);
 			}else{
+				if (subsFormat == SRT){
+					(*txt) << j << "\r\n";
+					j++;
+				}
 				dial->GetRaw(txt);
 			}
 			if( point && i==Edit->ebrow ){

@@ -403,8 +403,6 @@ MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos
 
 MenuDialog::~MenuDialog()
 {
-	kainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
-	frame->SetStatusText("",0);
 	if(loop){
 		loop -> Exit(0);
 	}
@@ -457,12 +455,15 @@ void MenuDialog::DoGetPosition(int *x, int *y) const
 
 void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 {
+	int w = 0;
+	int h = 0;
+	GetClientSize(&w, &h);
 	bool leftdown=evt.LeftDown();
 	int x=evt.GetX();
 	int y=evt.GetY();
 	int elem = y/height;
 
-	if(evt.Leaving()){
+	if (evt.Leaving() || y >= h-4){
 		if(submenuToHide != -1 ){
 			hideSubmenuTimer.Start(400,true);
 			subMenuIsShown=false;
@@ -500,12 +501,13 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 		}
 		
 		Refresh(false);
-		if(item->help != ""){
-			kainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
-			frame->SetStatusText(item->help,0);
-		}
+		kainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
+		frame->SetStatusText(item->help, 0);
 	}
-	
+	if (evt.Entering()){
+		kainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
+		frame->SetStatusText(item->help, 0);
+	}
 	if(evt.LeftUp() && !item->submenu){
 		SendEvent(item, evt.GetModifiers());
 	}else if(leftdown && item->submenu && item->submenu->dialog==NULL && submenuShown != elem){
@@ -553,8 +555,8 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	if(scPos>=itemsize-maxVisible){scPos=itemsize-maxVisible;}
 	if(scPos<0){scPos=0;}
 	int maxsize=itemsize;
-	if(sel<scPos && sel!=-1){scPos=sel;}
-	else if(sel>= scPos + maxVisible && (sel-maxVisible+1) >= 0){scPos=sel-maxVisible+1;}
+	//if(sel<scPos && sel!=-1){scPos=sel;}
+	//else if(sel>= scPos + maxVisible && (sel-maxVisible+1) >= 0){scPos=sel-maxVisible+1;}
 	if(itemsize>maxVisible){
 		maxsize=maxVisible;
 		if(!scroll){
@@ -671,6 +673,8 @@ void MenuDialog::OnScroll(wxScrollEvent& event)
 void MenuDialog::HideMenus(int id)
 {
 	if(!ParentMenu){return;}
+	kainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
+	frame->SetStatusText("",0);
 	MenuBar::Menubar->md=NULL;
 	int subMenu=ParentMenu->submenuToHide;
 	Menu *menu=ParentMenu->parent;

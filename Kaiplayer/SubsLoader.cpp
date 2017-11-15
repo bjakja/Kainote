@@ -22,7 +22,9 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 	grid = _grid;
 	grid->Clearing();
 	grid->file = new SubsFile();
+	grid->originalFormat = 0;
 	bool succeeded = false;
+	bool validFormat = false;
 	if (ext == "ass" || ext == "ssa"){
 		succeeded = LoadASS(text);
 		if (!succeeded){
@@ -33,6 +35,7 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 			}
 			else{ ext = "srt"; }
 		}
+		else{ validFormat = true; }
 	}
 	else if (ext == "srt"){
 		succeeded = LoadSRT(text);
@@ -44,6 +47,7 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 			}
 			else{ ext = "ass"; }
 		}
+		else{ validFormat = true; }
 	}
 	else{
 		LoadTXT(text);
@@ -60,11 +64,15 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 			succeeded = LoadASS(text);
 			if (succeeded) ext = "ass";
 		}
+		else{ validFormat = true; }
 	}
 
 	if (!succeeded){ grid->LoadDefault(); KaiMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera b³êdy)")); grid->subsFormat = ASS; }
-	else{ grid->SetSubsFormat(); }
-	grid->originalFormat = grid->subsFormat;
+	else{ 
+		grid->SetSubsFormat(); 
+		if (validFormat)
+			grid->originalFormat = grid->subsFormat;
+	}
 }
 
 bool SubsLoader::LoadASS(const wxString &text)
