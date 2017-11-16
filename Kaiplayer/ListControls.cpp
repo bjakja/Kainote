@@ -259,7 +259,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 
 	if(w>15){
 		wxBitmap arrow = wxBITMAP_PNG("arrow_list");
-		tdc.DrawBitmap((enabled)? arrow : arrow.ConvertToDisabled(), w - 17, (h-10)/2);
+		tdc.DrawBitmap((enabled && list->size() > 0) ? arrow : arrow.ConvertToDisabled(), w - 17, (h - 10) / 2);
 
 		if((choice>=0 || !txtchoice.IsEmpty()) && choice< (int)list->size()){
 			int fh=0, fw=w, ex=0, et=0;
@@ -530,6 +530,16 @@ void KaiChoice::SelectChoice(int _choice, bool select, bool sendEvent){
 	}
 	if(choice >=0 ){SetToolTip();}
 	else{SetToolTip(toolTip);}
+}
+
+wxString KaiChoice::GetString(int pos){
+	if (choiceText){
+		return choiceText->GetValue();
+	}
+	else if (pos < 0 || pos >= (int)list->size()){
+		return "";
+	}
+	return (*list)[pos];
 }
 
 void KaiChoice::Insert(const wxString &what, int position){

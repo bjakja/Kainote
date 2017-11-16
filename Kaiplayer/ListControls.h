@@ -74,12 +74,7 @@ public:
 	void Clear();
 	/*void Prepend(wxString what);*/
 	void Insert(const wxString &what, int position);
-	wxString GetString(int pos){
-		if(pos<0 || pos >= (int)list->size()){
-			return "";
-		}
-		return (*list)[pos];
-	}
+	wxString GetString(int pos);
 	int GetSelection(){return choice;};
 	void SetValue(const wxString &text);
 	wxString GetValue();

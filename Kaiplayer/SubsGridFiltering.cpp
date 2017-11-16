@@ -105,6 +105,7 @@ void SubsGridFiltering::HideSelections()
 {
 	File *Subs = grid->file->GetSubs();
 	grid->GetSelectionsKeys(keySelections);
+	Dialogue *lastDial = NULL;
 	int selssize = keySelections.size();
 	int j = 0;
 	for (int i = 0; i < Subs->dials.size(); i++){
@@ -114,8 +115,11 @@ void SubsGridFiltering::HideSelections()
 		if (j < selssize){ isSelected = keySelections[j] == i; if (isSelected){ j++; } }
 		if (isSelected && !Invert || !isSelected && Invert){
 			if (*dial->isVisible && i <= activeLine){ activeLineDiff--; }
-			dial->isVisible = NOT_VISIBLE; 
+			dial->isVisible = NOT_VISIBLE;
 		}
+		if (lastDial && lastDial->isVisible == VISIBLE_BLOCK && dial->isVisible == NOT_VISIBLE){ dial->isVisible = VISIBLE_BLOCK; }
+		else if (lastDial && lastDial->isVisible == NOT_VISIBLE && dial->isVisible == VISIBLE_BLOCK){ lastDial->isVisible = VISIBLE_BLOCK; }
+		lastDial = dial;
 	}
 	FilteringFinalize(); 
 }
@@ -149,16 +153,22 @@ void SubsGridFiltering::FilteringFinalize()
 inline bool SubsGridFiltering::CheckHiding(Dialogue *dial, int i)
 {
 	int result = filterBy;
-	if (filterBy & FILTER_BY_SELECTIONS && selectionsJ < keySelections.size() && keySelections[selectionsJ] == i){
-		selectionsJ++;
-		result ^= FILTER_BY_SELECTIONS;
+	if (filterBy & FILTER_BY_SELECTIONS){
+		if (selectionsJ < keySelections.size() && keySelections[selectionsJ] == i){
+			selectionsJ++;
+			return true;
+		}
+		else{
+			result ^= FILTER_BY_SELECTIONS;
+		}
 	}
 	if (filterBy & FILTER_BY_STYLES){
 		for (auto style : styles){
 			if (style == dial->Style) {
-				result ^= FILTER_BY_STYLES; break;
+				return true;
 			}
 		}
+		result ^= FILTER_BY_STYLES;
 	}
 	if (filterBy & FILTER_BY_DIALOGUES && !dial->IsComment){
 		result ^= FILTER_BY_DIALOGUES;
