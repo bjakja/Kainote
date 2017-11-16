@@ -194,7 +194,7 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 			&&((diall && !Dial->IsComment) || (commm && Dial->IsComment))){
 				bool select=(sopt==2)?false:true;
 				if(select){
-					tab->Grid->Selections.insert(select);
+					tab->Grid->Selections.insert(i);
 					allreps++;
 				}
 				else{
