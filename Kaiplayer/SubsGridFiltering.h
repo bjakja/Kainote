@@ -25,7 +25,7 @@ public:
 	SubsGridFiltering(SubsGrid *_grid, int _activeLine);
 	~SubsGridFiltering();
 
-	void Filter();
+	void Filter(bool noSelections = false);
 	void FilterPartial(int from);
 	void HideSelections();
 	void RemoveFiltering();

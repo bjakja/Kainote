@@ -27,10 +27,11 @@ SubsGridFiltering::~SubsGridFiltering()
 {
 }
 
-void SubsGridFiltering::Filter()
+void SubsGridFiltering::Filter(bool noSelections)
 {
 	Invert = Options.GetBool(GridFilterInverted);
 	filterBy = Options.GetInt(GridFilterBy);
+	bool addToFilter = Options.GetBool(GridAddToFilter);
 	if (!filterBy){
 		if (grid->isFiltered){
 			TurnOffFiltering();
@@ -43,9 +44,10 @@ void SubsGridFiltering::Filter()
 		Options.GetTable(GridFilterStyles, styles, ";");
 	}
 	if (filterBy & FILTER_BY_SELECTIONS){
-		grid->GetSelectionsKeys(keySelections);
+		if (noSelections){ filterBy ^= FILTER_BY_SELECTIONS; }
+		else{ grid->GetSelectionsKeys(keySelections); }
 	}
-
+	Dialogue *lastDial = NULL;
 	File *Subs = grid->file->GetSubs();
 	for (int i = 0; i < Subs->dials.size(); i++){
 		Dialogue *dial = Subs->dials[i];
@@ -54,6 +56,11 @@ void SubsGridFiltering::Filter()
 		if (hideDialogue && !Invert || !hideDialogue && Invert){
 			if (*dial->isVisible && i <= activeLine){ activeLineDiff--; }
 			dial->isVisible = NOT_VISIBLE;
+		}
+		else if (addToFilter){
+			if (lastDial && lastDial->isVisible == VISIBLE_BLOCK && dial->isVisible == NOT_VISIBLE){ dial->isVisible = VISIBLE_BLOCK; }
+			else if (lastDial && lastDial->isVisible == NOT_VISIBLE && dial->isVisible == VISIBLE_BLOCK){ lastDial->isVisible = VISIBLE_BLOCK; }
+			lastDial = dial;
 		}
 		else{
 			if (!dial->isVisible && i <= activeLine){ activeLineDiff++; }
@@ -135,7 +142,7 @@ void SubsGridFiltering::TurnOffFiltering()
 	File *Subs = grid->file->GetSubs();
 	int i = 0;
 	for (auto dial : Subs->dials){
-		if (dial->isVisible != 1 && !dial->NonDialogue){ 
+		if (dial->isVisible != VISIBLE && !dial->NonDialogue){
 			if (i <= keyActiveLine && dial->isVisible < 1){ activeLineDiff++; }
 			dial->isVisible = VISIBLE; 
 		}

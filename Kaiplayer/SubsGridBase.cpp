@@ -16,6 +16,7 @@
 
 #include "SubsGridBase.h"
 #include "SubsLoader.h"
+#include "SubsGridFiltering.h"
 #include "config.h"
 #include "EditBox.h"
 
@@ -29,6 +30,7 @@
 #include <wx/regex.h>
 #include <wx/ffile.h>
 #include "KaiMessageBox.h"
+
 
 
 bool sortstart(Dialogue *i,Dialogue *j){ 
@@ -322,6 +324,9 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 			AddSInfo("Last Style Storage",Options.acdir, false);
 			AddSInfo("Active Line", std::to_string(Edit->ebrow), false);
 		}
+		//if (isFiltered && !loadFromEditbox){
+
+		//}
 
 		txt << "[Script Info]\r\n;Plik utworzony przez " << Options.progname << "\r\n" << GetSInfos(translated);
 		txt<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
@@ -1213,7 +1218,14 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext){
 	Edit->HideControls();
 
 	if(StyleStore::HasStore() && subsFormat==ASS){StyleStore::Get()->LoadAssStyles();}
-	if(subsFormat == ASS){RebuildActorEffectLists();}
+	if(subsFormat == ASS){
+		if (Options.GetBool(GridFilterAfterLoad)){
+			isFiltered = true;
+			SubsGridFiltering filter((SubsGrid*)this, Edit->ebrow);
+			filter.Filter(true);
+		}
+		RebuildActorEffectLists();
+	}
 	
 }
 

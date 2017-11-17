@@ -36,7 +36,7 @@ SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, cons
 {
 	Kai=kfparent;
 	//jak już wszystko będzie działało to można wywalić albo dać if(!autofilter)
-	Options.SetInt(GridFilterBy, 0);
+	//Options.SetInt(GridFilterBy, 0);
 	Bind(wxEVT_COMMAND_MENU_SELECTED,[=](wxCommandEvent &evt){
 		MenuItem *item = (MenuItem*)evt.GetClientData();
 		int id = item->id;
@@ -63,7 +63,6 @@ SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, cons
 			Options.SetInt(GridFilterBy, filterBy);
 		}
 		else if (id == 4448){
-			//tu jeszcze trzeba dopisać coś by ładnie ustawiało check w filterby
 			int filterBy = Options.GetInt(GridFilterBy);
 			wxString &name = item->label;
 			wxArrayString styles; 
@@ -80,6 +79,12 @@ SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, cons
 			Options.SetTable(GridFilterStyles, styles, ";");
 			if (styles.size() > 0 && !(filterBy & FILTER_BY_STYLES)){ Options.SetInt(GridFilterBy, filterBy | FILTER_BY_STYLES); }
 			if (styles.size() < 1 && (filterBy & FILTER_BY_STYLES)){ Options.SetInt(GridFilterBy, filterBy ^ FILTER_BY_STYLES); }
+		}
+		else if (id == 4449){
+			Options.SetBool(GridAddToFilter, item->check);
+		}
+		else if (id == 4450){
+			Options.SetBool(GridFilterAfterLoad, item->check);
 		}
 
 	},ID_CHECK_EVENT);
@@ -124,11 +129,14 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	Options.SetTable(GridFilterStyles, checkedStyles, ";");
 	//filter submenu
 	int filterBy = Options.GetInt(GridFilterBy);
+	bool isASS = subsFormat == ASS;
+	filterMenu->SetAccMenu(4450, _("Filtruj po wczytaniu napisów"), _("Nie obejmuje zaznaczonych linii"), isASS, ITEM_CHECK)->Check(Options.GetBool(GridFilterAfterLoad));
 	filterMenu->SetAccMenu(4446, _("Filtrowanie odwrócone"), _("Filtrowanie odwrócone"), true, ITEM_CHECK)->Check(Options.GetBool(GridFilterInverted));
-	MenuItem *Item = new MenuItem(FilterByStyles, _("Ukryj linie ze stylami"), _("Ukryj linie ze stylami"), true, NULL, stylesMenu);
+	filterMenu->SetAccMenu(4449, _("Nie resetuj wcześniejszego filtrowania"), _("Nie resetuj wcześniejszego filtrowania"), true, ITEM_CHECK)->Check(Options.GetBool(GridAddToFilter));
+	MenuItem *Item = new MenuItem(FilterByStyles, _("Ukryj linie ze stylami"), _("Ukryj linie ze stylami"), isASS, NULL, stylesMenu);
 	filterMenu->SetAccMenu(Item, Item->label)->Check(filterBy & FILTER_BY_STYLES);
 	filterMenu->SetAccMenu(FilterBySelections, _("Ukryj zaznaczone linie"), _("Ukryj zaznaczone linie"), sels > 0, ITEM_CHECK)->Check(filterBy & FILTER_BY_SELECTIONS && sels > 0);
-	filterMenu->SetAccMenu(FilterByDialogues, _("Ukryj komentarze"), _("Ukryj komentarze"), true, ITEM_CHECK)->Check((filterBy & FILTER_BY_DIALOGUES) != 0);
+	filterMenu->SetAccMenu(FilterByDialogues, _("Ukryj komentarze"), _("Ukryj komentarze"), isASS, ITEM_CHECK)->Check((filterBy & FILTER_BY_DIALOGUES) != 0);
 	filterMenu->SetAccMenu(FilterByDoubtful, _("Pokaż niepewne"), _("Pokaż niepewne"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_DOUBTFUL && hasTLMode);
 	filterMenu->SetAccMenu(FilterByUntranslated, _("Pokaż nieprzetłumaczonyche"), _("Pokaż nieprzetłumaczonyche"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_UNTRANSLATED && hasTLMode);
 	filterMenu->SetAccMenu(4447, _("Filtruj"), _("Filtruj"));
