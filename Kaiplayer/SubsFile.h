@@ -91,6 +91,7 @@ public:
 
 	unsigned char etidtionType;
 	int activeLine;
+	int markerLine = 0;
 	File();
 	~File();
 	void Clear();
@@ -108,7 +109,7 @@ private:
 public:
 	SubsFile();
 	~SubsFile();
-	void SaveUndo(unsigned char editionType, int activeLine);
+	void SaveUndo(unsigned char editionType, int activeLine, int markerLine);
 	void Redo();
 	void Undo();
 	void DummyUndo();

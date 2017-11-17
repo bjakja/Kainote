@@ -157,6 +157,7 @@ File *File::Copy(bool copySelections)
 	if (copySelections)
 		file->sel = sel;
 	file->activeLine = activeLine;
+	file->markerLine = markerLine;
 	return file;
 }
 
@@ -182,7 +183,7 @@ SubsFile::~SubsFile()
 }
 
 
-void SubsFile::SaveUndo(unsigned char editionType, int activeLine)
+void SubsFile::SaveUndo(unsigned char editionType, int activeLine, int markerLine)
 {
 	int size=maxx();
 	if(iter!=size){
@@ -194,6 +195,7 @@ void SubsFile::SaveUndo(unsigned char editionType, int activeLine)
 		undo.erase(undo.begin()+iter+1, undo.end());
 	}
 	subs->activeLine = activeLine;
+	subs->markerLine = markerLine;
 	subs->etidtionType = editionType;
 	undo.push_back(subs);
 	subs=subs->Copy();
@@ -370,10 +372,10 @@ SInfo *SubsFile::CopySinfo(int i, bool push)
 void SubsFile::EndLoad(unsigned char editionType, int activeLine)
 {
 	subs->activeLine = activeLine;
+	subs->markerLine = activeLine - 1;
 	subs->etidtionType = editionType;
 	undo.push_back(subs);
 	subs=subs->Copy();
-	//LoadVisibleDialogues();
 }
 
 void SubsFile::RemoveFirst(int num)

@@ -913,11 +913,14 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 		showOriginal = (GetSInfo("TLMode Showtl") == "Yes" || (hasTLMode && Options.GetBool(TlModeShowOriginal) != 0));
 		Edit->SetTl(hasTLMode);
 	}
-
-	int tmpMarked = markedLine;
-	Edit->SetLine(MAX(0,file->subs->activeLine-1));
-	if (tmpMarked < GetCount())
-		markedLine = tmpMarked;
+	//brak zabezpieczenia? Czyżby aktywna nie mogła przekroczyć tablicy?
+	//obecnie może, ale czy przy zmianie zaznaczeń na klucze też będzie mogła?
+	//zabezpieczenie nawet przed potencjalnie niemożliwym zdarzeniem nie gryzie.
+	int gridSize = GetCount();
+	int newActiveLine = MIN(file->subs->activeLine, gridSize);
+	Edit->SetLine(MAX(0, newActiveLine - 1));
+	if (markedLine != file->subs->markerLine && file->subs->markerLine < gridSize)
+		markedLine = file->subs->markerLine;
 	RefreshColumns();
 	Edit->RefreshStyle();
 	
@@ -1118,7 +1121,7 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 			Edit->SetLine(erow);
 			Selections.insert(erow);
 		}
-		file->SaveUndo(editionType, ebrow+1);
+		file->SaveUndo(editionType, ebrow+1, markedLine);
 		if(!dummy){
 			VideoCtrl *vb=Kai->GetTab()->Video;
 			if(Edit->Visual >= CHANGEPOS){
@@ -1586,6 +1589,7 @@ void SubsGridBase::SaveSelections(bool clear)
 {
 	file->undo[file->iter]->sel = Selections;
 	file->undo[file->iter]->activeLine = Edit->ebrow+1;
+	file->undo[file->iter]->markerLine = markedLine;
 	savedSelections = true;
 	if (clear){ Selections.clear(); }
 }
