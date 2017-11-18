@@ -158,6 +158,7 @@ File *File::Copy(bool copySelections)
 		file->sel = sel;
 	file->activeLine = activeLine;
 	file->markerLine = markerLine;
+	file->scrollPosition = scrollPosition;
 	return file;
 }
 

@@ -877,6 +877,7 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	wxString matrix = GetSInfo("YCbCr Matrix");
 	wxString tlmode = GetSInfo("TLMode");
 	SaveSelections();
+	savedSelections = false;
 	if(iter != -2){if(file->SetHistory(iter)){Thaw();return;}}
 	else if(redo){file->Redo();}else{file->Undo();}
 
@@ -921,6 +922,9 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	Edit->SetLine(MAX(0, newActiveLine - 1));
 	if (markedLine != file->subs->markerLine && file->subs->markerLine < gridSize)
 		markedLine = file->subs->markerLine;
+	if (scPos != file->subs->scrollPosition)
+		scPos = file->subs->scrollPosition;
+
 	RefreshColumns();
 	Edit->RefreshStyle();
 	
@@ -1590,6 +1594,7 @@ void SubsGridBase::SaveSelections(bool clear)
 	file->undo[file->iter]->sel = Selections;
 	file->undo[file->iter]->activeLine = Edit->ebrow+1;
 	file->undo[file->iter]->markerLine = markedLine;
+	file->undo[file->iter]->scrollPosition = scPos;
 	savedSelections = true;
 	if (clear){ Selections.clear(); }
 }

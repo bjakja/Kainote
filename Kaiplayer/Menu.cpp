@@ -264,16 +264,17 @@ int Menu::GetMenuItemCount()
 	return items.size();
 }
 	
-MenuItem *Menu::FindItem(int id)
+MenuItem *Menu::FindItem(int id, Menu **menu)
 {
 	for(size_t i = 0; i < items.size(); i++ ){
 		if(items[i]->id==id){
+			if (menu)
+				*menu = this;
 			return items[i];
 		}else if(items[i]->submenu){
-			MenuItem * item = items[i]->submenu->FindItem(id);
+			MenuItem * item = items[i]->submenu->FindItem(id, menu);
 			if(item){return item;}
 		}
-
 	}
 	return NULL;
 }
@@ -292,10 +293,10 @@ MenuItem *Menu::FindItem(const wxString& label)
 	return NULL;
 }
 
-MenuItem *Menu::FindItemGlobally(int id)
+MenuItem *Menu::FindItemGlobally(int id, Menu **menu)
 {
 	if (MenuDialog::ParentMenu && MenuDialog::ParentMenu->parent){
-		return MenuDialog::ParentMenu->parent->FindItem(id);
+		return MenuDialog::ParentMenu->parent->FindItem(id, menu);
 	}
 	return NULL;
 }
@@ -325,6 +326,11 @@ void Menu::DestroyDialog()
 	if(dialog){
 		dialog->Destroy(); dialog=NULL;
 	}
+}
+
+void Menu::RefreshMenu()
+{
+	if (dialog){ dialog->Refresh(false); }
 }
 
 MenuItem *Menu::SetAccMenu(int id, const wxString &txt, const wxString &help, bool enable, int kind)

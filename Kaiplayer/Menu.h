@@ -191,8 +191,8 @@ class Menu : public Mnemonics
 	}
 	bool Destroy(MenuItem *item);
 	int GetMenuItemCount();
-	MenuItem *FindItem(int id);
-	static MenuItem *FindItemGlobally(int id);
+	MenuItem *FindItem(int id, Menu **menu=NULL);
+	static MenuItem *FindItemGlobally(int id, Menu **menu = NULL);
 	MenuItem *FindItem(const wxString& label);
 	MenuItem *FindItemByPosition(int pos);
 	void Check(int id, bool check);
@@ -206,6 +206,7 @@ class Menu : public Mnemonics
 	wxString GetTitle() const {return title;};
 	void HideMenu(){dialog->HideMenus();}
 	void SelectOnStart(int numitem);
+	void RefreshMenu();
 private:
 	void CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool clientPos);
 	void DestroyDialog();

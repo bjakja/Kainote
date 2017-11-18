@@ -92,6 +92,7 @@ public:
 	unsigned char etidtionType;
 	int activeLine;
 	int markerLine = 0;
+	int scrollPosition = 0;
 	File();
 	~File();
 	void Clear();

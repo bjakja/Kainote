@@ -77,13 +77,23 @@ SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, cons
 			Options.SetTable(GridFilterStyles, filterStyles, ";");
 			if (filterStyles.size() > 0 && !(filterBy & FILTER_BY_STYLES)){
 				Options.SetInt(GridFilterBy, filterBy | FILTER_BY_STYLES);
-				MenuItem * parentItem = Menu::FindItemGlobally(FilterByStyles);
-				if (parentItem){ parentItem->Check(true); }
+				Menu *parentMenu=NULL;
+				MenuItem * parentItem = Menu::FindItemGlobally(FilterByStyles, &parentMenu);
+				if (parentItem){ 
+					parentItem->Check(true); 
+					if (parentMenu)
+						parentMenu->RefreshMenu();
+				}
 			}
 			if (filterStyles.size() < 1 && (filterBy & FILTER_BY_STYLES)){
 				Options.SetInt(GridFilterBy, filterBy ^ FILTER_BY_STYLES);
-				MenuItem * parentItem = Menu::FindItemGlobally(FilterByStyles);
-				if (parentItem){ parentItem->Check(false); }
+				Menu *parentMenu = NULL;
+				MenuItem * parentItem = Menu::FindItemGlobally(FilterByStyles, &parentMenu);
+				if (parentItem){
+					parentItem->Check(false);
+					if (parentMenu)
+						parentMenu->RefreshMenu();
+				}
 			}
 		}
 		else if (id == 4449){
@@ -127,6 +137,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	std::vector<Styles*> &styles = file->GetSubs()->styles;
 	wxArrayString optionsFilterStyles;
 	Options.GetTable(GridFilterStyles, optionsFilterStyles, ";");
+	filterStyles.clear();
 	for (int i = 0; i < StylesSize(); i++){
 		MenuItem * styleItem = stylesMenu->Append(4448, styles[i]->Name, "", true, NULL, NULL, ITEM_CHECK);
 		if (optionsFilterStyles.Index(styles[i]->Name) != -1){ styleItem->Check(); filterStyles.Add(styles[i]->Name); }
