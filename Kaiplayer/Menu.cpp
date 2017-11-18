@@ -292,6 +292,13 @@ MenuItem *Menu::FindItem(const wxString& label)
 	return NULL;
 }
 
+MenuItem *Menu::FindItemGlobally(int id)
+{
+	if (MenuDialog::ParentMenu && MenuDialog::ParentMenu->parent){
+		return MenuDialog::ParentMenu->parent->FindItem(id);
+	}
+	return NULL;
+}
 	
 MenuItem *Menu::FindItemByPosition(int pos)
 {

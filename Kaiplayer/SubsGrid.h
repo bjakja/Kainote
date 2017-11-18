@@ -40,6 +40,7 @@ public:
 protected:
 
     wxArrayInt selarr;
+	wxArrayString filterStyles;
 
 private:
 	void CopyRows(int id);

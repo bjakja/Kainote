@@ -27,7 +27,7 @@ SubsGridFiltering::~SubsGridFiltering()
 {
 }
 
-void SubsGridFiltering::Filter(bool noSelections)
+void SubsGridFiltering::Filter(bool autoFiltering)
 {
 	Invert = Options.GetBool(GridFilterInverted);
 	filterBy = Options.GetInt(GridFilterBy);
@@ -40,15 +40,29 @@ void SubsGridFiltering::Filter(bool noSelections)
 		}
 		return;
 	}
+	File *Subs = grid->file->GetSubs();
 	if (filterBy & FILTER_BY_STYLES){
 		Options.GetTable(GridFilterStyles, styles, ";");
+		
+		size_t i = 0;
+		while (i < styles.size()){
+			if (grid->FindStyle(styles[i]) == -1){
+				styles.RemoveAt(i);
+				continue;
+			}
+			i++;
+		}
+		if (styles.size()<1){ 
+			grid->isFiltered = false;
+			return; 
+		}
+		
 	}
 	if (filterBy & FILTER_BY_SELECTIONS){
-		if (noSelections){ filterBy ^= FILTER_BY_SELECTIONS; }
+		if (autoFiltering){ filterBy ^= FILTER_BY_SELECTIONS; }
 		else{ grid->GetSelectionsKeys(keySelections); }
 	}
 	Dialogue *lastDial = NULL;
-	File *Subs = grid->file->GetSubs();
 	for (int i = 0; i < Subs->dials.size(); i++){
 		Dialogue *dial = Subs->dials[i];
 		if (dial->NonDialogue) continue;

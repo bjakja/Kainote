@@ -192,6 +192,7 @@ class Menu : public Mnemonics
 	bool Destroy(MenuItem *item);
 	int GetMenuItemCount();
 	MenuItem *FindItem(int id);
+	static MenuItem *FindItemGlobally(int id);
 	MenuItem *FindItem(const wxString& label);
 	MenuItem *FindItemByPosition(int pos);
 	void Check(int id, bool check);
