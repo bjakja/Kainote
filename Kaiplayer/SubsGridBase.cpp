@@ -101,7 +101,6 @@ SubsGridBase::~SubsGridBase()
 
 void SubsGridBase::Clearing()
 {
-	Selections.clear();
 	SAFE_DELETE(Comparison);
 	SAFE_DELETE(file);
 	SpellErrors.clear();
@@ -123,7 +122,8 @@ void SubsGridBase::AddLine(Dialogue *line)
 void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, int wline, long cells, bool selline, bool dummy)
 {
 	lastRow=wline;
-	wxArrayInt sels=GetSels();
+	wxArrayInt sels;
+	file->GetSelections(sels);
 	if(sels.size()<2){
 		ChangeCell(cells,wline,line1);
 	}else{
@@ -139,7 +139,7 @@ void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, int wl
 		tmp->Start.NewTime(eend); 
 		tmp->End.NewTime(eend+5000);
 		tmp->Style=line1->Style;
-		if(subsFormat!=ASS){tmp->Conv(subsFormat);}
+		if(subsFormat!=ASS){tmp->Convert(subsFormat);}
 		AddLine(tmp);
 	}
 	AdjustWidths(cells);
@@ -147,7 +147,7 @@ void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, int wl
 	if(selline){
 		SaveSelections(true);
 		lastRow=wline+1;
-		Selections.insert(lastRow);
+		file->InsertSelection(lastRow);
 		int h,w;
 		GetClientSize(&w,&h);
 		scPos = MID(0, lastRow-((h/(GridHeight+1))/2), GetCount()-1);
@@ -163,7 +163,7 @@ void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, int wl
 
 void SubsGridBase::ChangeCell(long wcell, int wline, Dialogue *what)
 {
-	Dialogue *dial=CopyDial(wline);
+	Dialogue *dial=CopyDialogue(wline);
 	if(wcell & LAYER){
 		dial->Layer=what->Layer;}
 	if(wcell & START){
@@ -221,7 +221,7 @@ void SubsGridBase::Convert(char type)
 			}
 		}
 		Dialogue *dialc = file->CopyDialogueByKey(i);
-		dialc->Conv(type,prefix);
+		dialc->Convert(type,prefix);
 		if((newendtimes && type!=TMP)||subsFormat==TMP)
 		{
 			if (i > 0){
@@ -537,7 +537,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 	bool fromstyl=false;
 
-	int fs=FirstSel();
+	int fs=FirstSelection();
 	if (fs==-1 && whichLines!=0 && whichLines!=4){
 		KaiMessageBox(_("Nie zaznaczono linii do przesunięcia"),_("Uwaga"));return;
 	}
@@ -594,13 +594,13 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 		}
 
 		if( whichLines==0
-			|| ( whichLines==1 && Selections.find(i) != Selections.end() ) 
+			|| ( whichLines==1 && file->IsSelected(i) ) 
 			|| ( whichLines==3 && firsttime <= file->GetDialogue(i)->Start.mstime ) 
 			|| ( whichLines==2 && i>=fs )
 			|| fromstyl)
 		{
 
-			dialc=file->CopyDial(i,true,true);
+			dialc=file->CopyDialogue(i,true,true);
 			int startTrimed = 0, endTrimed = 0, duration = 0;
 			if(changeTagTimes){
 				vb->GetStartEndDelay(dialc->Start.mstime, dialc->End.mstime, &startTrimed, &endTrimed);
@@ -747,9 +747,9 @@ void SubsGridBase::SortIt(short what, bool all)
 	if(all){
 		for(int i=0;i<GetCount();i++){file->GetDialogue(i)->State=1 + (file->GetDialogue(i)->State & 4);}
 	}else{
-		for(auto cur=Selections.begin(); cur!=Selections.end(); cur++){
-			Dialogue *dial=file->GetDialogue(*cur);
-			dial->State=1 + (dial->State & 4);
+		for (auto cur = file->subs->Selections.begin(); cur != file->subs->Selections.end(); cur++){
+			Dialogue *dial=file->subs->dials[*cur];
+			dial->State = 1 + (dial->State & 4);
 			selected.push_back(dial);
 		}
 	}
@@ -759,8 +759,8 @@ void SubsGridBase::SortIt(short what, bool all)
 
 	if(!all){
 		int ii=0;
-		for(auto cur=Selections.begin(); cur!=Selections.end(); cur++){
-			(*file)[*cur] = selected[ii++];
+		for (auto cur = file->subs->Selections.begin(); cur != file->subs->Selections.end(); cur++){
+			file->subs->dials[*cur] = selected[ii++];
 		}
 		selected.clear();
 	}
@@ -783,14 +783,14 @@ void SubsGridBase::DeleteRow(int rw, int len)
 void SubsGridBase::DeleteRows()
 {
 	Freeze();
-	for (auto i = Selections.rbegin(); i != Selections.rend(); i++)
+	for (auto i = file->subs->Selections.rbegin(); i != file->subs->Selections.rend(); i++)
 	{
 		int sel = *i;
-		file->subs->dials.erase(file->subs->dials.begin() + file->IdConverter->getElementById(sel));
-		SpellErrors.erase(SpellErrors.begin() + sel);
-		file->IdConverter->deleteItemById(sel);
+		file->subs->dials.erase(file->subs->dials.begin() + sel);
+		file->IdConverter->deleteItemByKey(sel);
 	}
-	if (Selections.size()>0){ file->edited = true; }
+	SpellErrors.clear();
+	if (file->subs->Selections.size()>0){ file->edited = true; }
 	SaveSelections(true);
 	if(GetCount()<1){AddLine(new Dialogue());}
 	SetModified(GRID_DELETE_LINES);
@@ -801,23 +801,24 @@ void SubsGridBase::DeleteRows()
 void SubsGridBase::MoveRows(int step, bool sav)
 {
 	SaveSelections();
-	wxArrayInt sels=GetSels();
+	wxArrayInt sels;
+	file->GetSelections(sels);
 
 	if (sels.GetCount()<1){return;}
 	if(step<0){
 
 		for (size_t i=0;i<sels.GetCount();i++)
 		{
-			int istep=sels[i]+step;
-			//if(istep<tmpstep){istep=tmpstep;tmpstep++;}
+			int sel = sels[i];
+			int istep = sel + step;
 			if(istep<0){break;}
-			Selections.insert(istep);
-			Selections.erase(Selections.find(sels[i]));
+			file->InsertSelection(istep);
+			file->EraseSelection(sel);
 			if(step!=-1){
-				InsertRows(istep,1,GetDialogue(sels[i]),false);
-				DeleteRow(sels[i],1);
+				InsertRows(istep,1,GetDialogue(sel),false);
+				DeleteRow(sel,1);
 			}else{
-				SwapRows(sels[i],istep);
+				SwapRows(sel,istep);
 			}
 
 		}
@@ -825,32 +826,31 @@ void SubsGridBase::MoveRows(int step, bool sav)
 	{
 		for (int i=sels.GetCount()-1;i>=0;i--)
 		{
-			int istep=sels[i]+step;
-			//if(istep<0){istep=tmpstep;tmpstep++;}
+			int sel = sels[i];
+			int istep = sel + step;
 			if(istep>GetCount()-1) break;
-			Selections.insert(istep);
-			Selections.erase(Selections.find(sels[i]));
+			file->InsertSelection(istep);
+			file->EraseSelection(sel);
 			if(step!=1){
-				//break;
-				Dialogue *dial=GetDialogue(sels[i]);
-				DeleteRow(sels[i],1);
+				Dialogue *dial=GetDialogue(sel);
+				DeleteRow(sel,1);
 				InsertRows(istep,1,dial,false);
 			}
 			else{
-				SwapRows(sels[i],istep);
+				SwapRows(sel,istep);
 			}
 		}
 	}
-	Edit->SetLine(FirstSel());
+	Edit->SetLine(FirstSelection());
 	Refresh(false);
 }
 
 void SubsGridBase::DeleteText()
 {
-	for (int i=0;i<GetCount();i++)
-	{
-		if(Selections.find(i)!=Selections.end()){
-			CopyDial(i)->Text="";}
+	wxArrayInt sels;
+	file->GetSelections(sels);
+	for (auto i : sels){
+		CopyDialogue(i)->Text="";
 	}
 	SetModified(GRID_DELETE_TEXT);
 	Refresh(false);
@@ -898,7 +898,6 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 		}
 	}
 
-	Selections = file->subs->sel;
 	Thaw();
 
 	if(StyleStore::HasStore()){
@@ -914,16 +913,15 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 		showOriginal = (GetSInfo("TLMode Showtl") == "Yes" || (hasTLMode && Options.GetBool(TlModeShowOriginal) != 0));
 		Edit->SetTl(hasTLMode);
 	}
-	//brak zabezpieczenia? Czyżby aktywna nie mogła przekroczyć tablicy?
-	//obecnie może, ale czy przy zmianie zaznaczeń na klucze też będzie mogła?
-	//zabezpieczenie nawet przed potencjalnie niemożliwym zdarzeniem nie gryzie.
-	int gridSize = GetCount();
-	int newActiveLine = MIN(file->subs->activeLine, gridSize);
-	Edit->SetLine(MAX(0, newActiveLine - 1));
-	if (markedLine != file->subs->markerLine && file->subs->markerLine < gridSize)
-		markedLine = file->subs->markerLine;
-	if (scPos != file->subs->scrollPosition)
-		scPos = file->subs->scrollPosition;
+	//Odtąd nie będzie trzeba tego zabezpieczać, FindIdFromKey nie zwróci -1;
+	int corrected = -1;
+	Edit->SetLine(file->FindIdFromKey(file->subs->activeLine, &corrected));
+	markedLine = file->FindIdFromKey(file->subs->markerLine);
+	scPos = file->FindIdFromKey(file->subs->scrollPosition);
+	if (corrected >= 0){ 
+		file->EraseSelectionKey(file->subs->activeLine);
+		file->InsertSelectionKey(corrected);
+	}
 
 	RefreshColumns();
 	Edit->RefreshStyle();
@@ -931,8 +929,8 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	VideoCtrl *vb=tab->Video;
 	if(Edit->Visual < CHANGEPOS){
 		
-		if(vb->IsShown() || vb->isFullscreen){vb->OpenSubs(GetVisible()/*SaveText()*/);Edit->OnVideo=true;}
-		int opt=vb->vToolbar->videoSeekAfter->GetSelection();//Options.GetInt(MoveVideoToActiveLine);
+		if(vb->IsShown() || vb->isFullscreen){vb->OpenSubs(GetVisible());Edit->OnVideo=true;}
+		int opt=vb->vToolbar->videoSeekAfter->GetSelection();
 		if(opt>1){
 			if(vb->GetState()==Paused || (vb->GetState()==Playing && (opt==3 || opt==5))){
 				vb->Seek(Edit->line->Start.mstime);}
@@ -972,42 +970,28 @@ void SubsGridBase::DummyUndo(int newIter)
 	}
 }
 
-int SubsGridBase::FirstSel()
+int SubsGridBase::FirstSelection()
 {
-	if (!Selections.empty()){
-		return *Selections.begin();
+	if (!file->subs->Selections.empty()){
+		// return only visible element when nothing is visible, return -1;
+		for (auto it = file->subs->Selections.begin(); it != file->subs->Selections.end(); it++){
+			int sel = file->IdConverter->getElementByKey(*it);
+			if (sel >= 0)
+				return sel;
+		}
 	}
 	return -1;
 }
 
-wxArrayInt SubsGridBase::GetSels(bool deselect)
-{
-	wxArrayInt sels;
-	for(std::set<int>::iterator i=Selections.begin();i!=Selections.end();i++)
-	{
-		sels.Add(*i);
-	}
-	if(deselect){Selections.clear();}
-
-	return sels;
-}
-
-void SubsGridBase::GetSelectionsKeys(wxArrayInt &sels, bool deselect)
-{
-	for (std::set<int>::iterator i = Selections.begin(); i != Selections.end(); i++){
-		sels.Add(file->GetElementById(*i));
-	}
-	if (deselect){ Selections.clear(); }
-}
 
 //Uważaj na dodawanie do niszczarki, 
 //bo brak dodania gdy trzeba to wycieki pamięci,
 //a podwójne dodanie to krasz przy niszczeniu obiektu.
 void SubsGridBase::InsertRows(int Row, 
 						  const std::vector<Dialogue *> &RowsTable,
-						  bool AddToDestroy)
+						  bool AddToDestroy, bool asKey)
 {
-	int convertedRow = file->IdConverter->getElementById(Row);
+	int convertedRow = (asKey) ? Row : file->IdConverter->getElementById(Row);
 	if (convertedRow < 0){ convertedRow = file->subs->dials.size(); }
 	file->subs->dials.insert(file->subs->dials.begin() + convertedRow, RowsTable.begin(), RowsTable.end());
 	for (int i = 0; i < RowsTable.size(); i++){
@@ -1015,6 +999,7 @@ void SubsGridBase::InsertRows(int Row,
 			file->IdConverter->insert(i + convertedRow);
 		}
 	}
+	if (asKey){ Row = file->IdConverter->getElementByKey(Row); }
 	wxArrayInt emptyarray;
 	SpellErrors.insert(SpellErrors.begin()+Row,RowsTable.size(),emptyarray);
 	if(AddToDestroy){file->subs->ddials.insert(file->subs->ddials.end(), RowsTable.begin(), RowsTable.end());}
@@ -1023,10 +1008,10 @@ void SubsGridBase::InsertRows(int Row,
 //Uważaj na dodawanie do niszczarki, 
 //bo brak dodania gdy trzeba to wycieki pamięci,
 //a podwójne dodanie to krasz przy niszczeniu obiektu.
-void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save)
+void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save, bool asKey)
 {
 	SaveSelections();
-	int convertedRow = file->IdConverter->getElementById(Row);
+	int convertedRow = (asKey)? Row : file->IdConverter->getElementById(Row);
 	if (convertedRow < 0){ convertedRow = file->subs->dials.size(); }
 	file->subs->dials.insert(file->subs->dials.begin() + convertedRow, NumRows, Dialog);
 	for (int i = convertedRow; i < convertedRow + NumRows; i++){
@@ -1034,11 +1019,12 @@ void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddTo
 			file->IdConverter->insert(i); 
 		}
 	}
+	if (asKey){ Row = file->IdConverter->getElementByKey(Row); }
 	wxArrayInt emptyarray;
 	SpellErrors.insert(SpellErrors.begin()+Row,NumRows,emptyarray);
 	if(AddToDestroy){file->subs->ddials.push_back(Dialog);}
 	if(Save){
-		Selections.insert(Row);
+		file->InsertSelectionKey(convertedRow);
 		SetModified(GRID_INSERT_ROW);
 		Refresh(false);
 	}
@@ -1123,9 +1109,9 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 			lastRow=erow;
 			if(scPos>erow && Scroll){scPos=MAX(0,(erow-4));}
 			Edit->SetLine(erow);
-			Selections.insert(erow);
+			file->InsertSelection(erow);
 		}
-		file->SaveUndo(editionType, ebrow+1, markedLine);
+		file->SaveUndo(editionType, ebrow, markedLine);
 		if(!dummy){
 			VideoCtrl *vb=Kai->GetTab()->Video;
 			if(Edit->Visual >= CHANGEPOS){
@@ -1210,13 +1196,12 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext){
 	
 
 
-	Selections.insert(active);
+	file->InsertSelection(active);
 	lastRow=active;
 	markedLine=active;
 
 	scPos=MAX(0,active-3);
-	file->subs->sel = Selections;
-	file->EndLoad(OPEN_SUBTITLES, active + 1);
+	file->EndLoad(OPEN_SUBTITLES, active);
 
 	RefreshColumns();
 	Edit->OnVideo = true;
@@ -1239,9 +1224,10 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext){
 void SubsGridBase::SetStartTime(int stime)
 {
 	Edit->Send(EDITBOX_LINE_EDITION,false,false,true);
-	wxArrayInt sels=GetSels();
+	wxArrayInt sels;
+	file->GetSelections(sels);
 	for(size_t i=0;i<sels.size();i++){
-		Dialogue *dialc=CopyDial(sels[i]);
+		Dialogue *dialc=CopyDialogue(sels[i]);
 		if(!dialc){continue;}
 		dialc->Start.NewTime(stime);
 		if(dialc->End<stime){dialc->End.NewTime(stime);}
@@ -1255,9 +1241,10 @@ void SubsGridBase::SetStartTime(int stime)
 void SubsGridBase::SetEndTime(int etime)
 {
 	Edit->Send(EDITBOX_LINE_EDITION,false,false,true);
-	wxArrayInt sels=GetSels();
+	wxArrayInt sels;
+	file->GetSelections(sels);
 	for(size_t i=0;i<sels.size();i++){
-		Dialogue *dialc=CopyDial(sels[i]);
+		Dialogue *dialc=CopyDialogue(sels[i]);
 		if(!dialc){continue;}
 		dialc->End.NewTime(etime);
 		if(dialc->Start>etime){dialc->Start.NewTime(etime);}
@@ -1318,12 +1305,12 @@ bool SubsGridBase::SetTlMode(bool mode)
 			Dialogue *dialc= NULL;
 			if(dial->TextTl!="")
 			{
-				dialc = CopyDial(i);
+				dialc = CopyDialogue(i);
 				dialc->Text = dialc->TextTl;
 				dialc->TextTl="";
 			}
 			if(dial->State >= 4){
-				if(!dialc){dialc = CopyDial(i);}
+				if(!dialc){dialc = CopyDialogue(i);}
 				dialc->State -= 4;
 			}
 		}
@@ -1351,6 +1338,7 @@ void SubsGridBase::NextLine(int dir)
 	if(nebrow<0){return;}
 	if(nebrow>=GetCount()){
 		Dialogue *tmp=GetDialogue(GetCount()-1)->Copy();
+		tmp->isVisible = VISIBLE;
 		int eend= tmp->End.mstime; 
 		tmp->Start.NewTime(eend); 
 		tmp->End.NewTime(eend+5000);
@@ -1362,8 +1350,8 @@ void SubsGridBase::NextLine(int dir)
 	int h,w;
 	GetClientSize(&w,&h);
 	scPos = MID(0, nebrow-((h/(GridHeight+1))/2), GetCount()-1);
-	Selections.clear();
-	Selections.insert(nebrow);
+	file->ClearSelections();
+	file->InsertSelection(nebrow);
 	lastRow = nebrow;
 	AdjustWidths(0);
 	Refresh(false);
@@ -1380,7 +1368,7 @@ void SubsGridBase::LoadDefault(bool line,bool sav,bool endload)
 	{
 		AddLine(new Dialogue());
 		AddStyle(new Styles());
-		Selections.insert(0);
+		file->InsertSelectionKey(0);
 		originalFormat=subsFormat=ASS;
 	}
 	AddSInfo("Title","Kainote Ass File",sav);
@@ -1394,15 +1382,14 @@ void SubsGridBase::LoadDefault(bool line,bool sav,bool endload)
 	//Kai->Toolbar->UpdateId(SaveSubs, false);
 	//Kai->Menubar->Enable(SaveSubs, false);
 	if(endload){
-		file->subs->sel = Selections;
-		file->EndLoad(NEW_SUBTITLES, 1);
+		file->EndLoad(NEW_SUBTITLES, 0);
 	}
 }
 
-Dialogue *SubsGridBase::CopyDial(int i, bool push)
+Dialogue *SubsGridBase::CopyDialogue(int i, bool push)
 {
 	if(push && (int)SpellErrors.size() > i){SpellErrors[i].Clear();}
-	return file->CopyDial(i, push);
+	return file->CopyDialogue(i, push);
 }
 
 Dialogue *SubsGridBase::GetDialogue(int i)
@@ -1479,12 +1466,13 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 	bool isTlmode = GetSInfo("TLMode")=="Yes";
 	wxString tlStyle = GetSInfo("TLMode Style");
 	int j = 1;
+	int keyI = 0;
 	for(int i=0; i<GetCount(); i++){
-		Dialogue *dial=GetDialogue(i);
+		Dialogue *dial=file->GetDialogue(i, &keyI);
 		if(i==Edit->ebrow){ 
 			dial = Edit->line;
 		}
-		if(selected && Selections.find(i)!=Selections.end()){
+		if (selected && file->IsSelectedByKey(keyI)){
 			selected->Add(txt->Len());
 			continue;
 		}
@@ -1591,12 +1579,13 @@ void SubsGridBase::RebuildActorEffectLists()
 
 void SubsGridBase::SaveSelections(bool clear)
 {
-	file->undo[file->iter]->sel = Selections;
-	file->undo[file->iter]->activeLine = Edit->ebrow+1;
-	file->undo[file->iter]->markerLine = markedLine;
-	file->undo[file->iter]->scrollPosition = scPos;
+	file->undo[file->iter]->Selections = file->subs->Selections;
+	//tutaj muszą być przeróbki na klucze
+	file->undo[file->iter]->activeLine = file->GetElementById(Edit->ebrow);
+	file->undo[file->iter]->markerLine = file->GetElementById(markedLine);
+	file->undo[file->iter]->scrollPosition = file->GetElementById(scPos);
 	savedSelections = true;
-	if (clear){ Selections.clear(); }
+	if (clear){ file->ClearSelections(); }
 }
 
 bool SubsGridBase::IsNumber(const wxString &test) {

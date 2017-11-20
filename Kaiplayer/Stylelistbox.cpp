@@ -24,12 +24,12 @@ Stylelistbox::Stylelistbox(wxWindow* parent, bool styles, int numelem, wxString 
 	DialogSizer *Main = new DialogSizer(wxVERTICAL);
 	KaiStaticBoxSizer *sizer1 = new KaiStaticBoxSizer(wxVERTICAL, this, (styles)?_("Wybierz style") : _("Wybierz kolumny"));
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
-	CheckListBox1 = new KaiListCtrl(this, -1,numelem, arr, wxDefaultPosition, wxSize(200,300), style);
+	CheckListBox = new KaiListCtrl(this, -1,numelem, arr, wxDefaultPosition, wxSize(200,300), style);
 	Button1 = new MappedButton(this, wxID_OK, "Ok");
 	Button2 = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	sizer->Add(Button1, 1, wxALL, 2);
 	sizer->Add(Button2, 1, wxALL, 2);
-	sizer1->Add(CheckListBox1,0, wxEXPAND);
+	sizer1->Add(CheckListBox,0, wxEXPAND);
 	Main->Add(sizer1,0, wxEXPAND);
 	Main->Add(sizer,0, wxEXPAND);
 	SetSizerAndFit(Main);
@@ -54,11 +54,11 @@ wxString GetCheckedElements(wxWindow *parent)
 	Stylelistbox slx(parent, true, styles.size(), elems);
 	if(slx.ShowModal()==wxID_OK){
 
-		for (size_t v=0;v<slx.CheckListBox1->GetCount();v++)
+		for (size_t v=0;v<slx.CheckListBox->GetCount();v++)
 		{
 
-			if(slx.CheckListBox1->GetItem(v, 0)->modified){
-				styletext<<slx.CheckListBox1->GetItem(v, 0)->name<<";";
+			if(slx.CheckListBox->GetItem(v, 0)->modified){
+				styletext<<slx.CheckListBox->GetItem(v, 0)->name<<";";
 			}
 		}
 	}

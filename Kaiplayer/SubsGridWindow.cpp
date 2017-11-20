@@ -152,6 +152,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	bool startBlock = false;
 	int states = 0;
 	int startDrawPosYFromPlus = 0;
+	int keyI = 0;
 
 	if (SpellErrors.size()<(size_t)size){
 		SpellErrors.resize(size);
@@ -196,7 +197,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			kol = header;
 		}
 		else{
-			Dial = GetDialogue(i - 1);
+			Dial = file->GetDialogue(i - 1, &keyI);
 
 			strings.Add(wxString::Format("%i", i));
 
@@ -267,20 +268,18 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					CheckText(strings[strings.size() - 1], SpellErrors[i - 1]);
 				}
 			}
-			if (Selections.find(i - 1) != Selections.end()){
-				isSelected = true;
-			}
-			comparison = (Comparison && Comparison->at(i - 1).size()>0);//visibleColumnsLines
-			bool visibleColumnsLine = (Dial->Start.mstime <= VideoPos && Dial->End.mstime > VideoPos);
+			isSelected = file->IsSelectedByKey(keyI);
+			comparison = (Comparison && Comparison->at(i - 1).size()>0);
+			bool visibleLine = (Dial->Start.mstime <= VideoPos && Dial->End.mstime > VideoPos);
 			kol = (comparison) ? ComparisonBGCol :
-				(visibleColumnsLine) ? visibleOnVideo :
+				(visibleLine) ? visibleOnVideo :
 				subsBkCol;
 			if (isComment){ kol = (comparison) ? ComparisonBGCmntCol : comm; }
 			if (isSelected){
 				if (isComment){ kol = (comparison) ? ComparisonBGCmntSelCol : selcom; }
 				else{ kol = (comparison) ? ComparisonBGSelCol : seldial; }
 			}
-			if (visibleColumnsLine){ visibleLines.push_back(true); }
+			if (visibleLine){ visibleLines.push_back(true); }
 			else{ visibleLines.push_back(false); }
 		}
 
@@ -764,7 +763,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		// Toggle selected
 		if (left_up && ctrl && !shift && !alt) {
 			if (Edit->ebrow != lastActiveLine || Edit->ebrow != row){
-				SelectRow(row, true, !(Selections.find(row) != Selections.end()));
+				SelectRow(row, true, file->IsSelected(row));
 				return;
 			}
 
@@ -918,9 +917,10 @@ void SubsGridWindow::OnSize(wxSizeEvent& event)
 void SubsGridWindow::SelectRow(int row, bool addToSelected, bool select, bool norefresh)
 {
 	row = MID(0, row, GetCount() - 1);
+	int rowKey = file->GetElementById(row);
 	if (addToSelected){
-		if (!select){ Selections.erase(Selections.find(row)); }
-		else{ Selections.insert(row); }
+		if (!select){ file->EraseSelectionKey(rowKey); }
+		else{ file->InsertSelectionKey(rowKey); }
 		if (norefresh){ return; }
 		int w = 0;
 		int h = 0;
@@ -930,8 +930,8 @@ void SubsGridWindow::SelectRow(int row, bool addToSelected, bool select, bool no
 
 	}
 	else{
-		Selections.clear();
-		Selections.insert(row);
+		file->ClearSelections();
+		file->InsertSelectionKey(rowKey);
 		if (norefresh){ return; }
 		Refresh(false);
 	}
@@ -978,7 +978,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 	if (key == 'A' && ctrl && !alt && !shift) {
 		//SelectRow(0,false,true,true);
 		for (int i = 0; i<GetCount(); i++){
-			Selections.insert(i);
+			file->InsertSelection(i);
 		}
 		Refresh(false);
 	}
@@ -1033,7 +1033,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 
 		// Move selected
 		else if (alt&&!shift) {
-			if ((dir == 1 || dir == -1) && FirstSel() != -1){
+			if ((dir == 1 || dir == -1) && FirstSelection() != -1){
 				MoveRows(dir, true);
 				ScrollTo(scPos + dir);
 			}
@@ -1241,7 +1241,7 @@ Dialogue *SubsGridWindow::GetCheckedDialogue(int rw)
 {
 	Dialogue *dial = file->GetDialogue(rw);
 	if (first){
-		if (dial->Form != subsFormat){ dial->Conv(subsFormat); }
+		if (dial->Form != subsFormat){ dial->Convert(subsFormat); }
 		if (dial->Start.mstime > dial->End.mstime){
 			dial->End.mstime = dial->Start.mstime;
 		}

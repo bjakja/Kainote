@@ -43,6 +43,7 @@ class AVLtree
         Node *repairNumOf(Node*);
 		Node *insert(Node *node, int key);
         Node *getElementByKey(Node *node, int key);
+		int getIdByKey(Node *node, int key);
         Node *getElementById(Node *node, int id);
         Node *getNext(Node *right_node);
         Node *rightRotate(Node*);

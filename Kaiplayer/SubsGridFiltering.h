@@ -36,7 +36,7 @@ private:
 	void FilteringFinalize();
 	SubsGrid *grid;
 	bool Invert;
-	int activeLineDiff = 0;
+	//int activeLineDiff = 0;
 	int activeLine;
 	int filterBy = 0;
 	int selectionsJ = 0;

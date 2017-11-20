@@ -44,7 +44,7 @@ public:
 			delete deleteReference; deleteReference = NULL;
 		}
 		if (copy){
-			stored = new unsigned char(*sh.stored);
+			stored = new unsigned char(VISIBLE);
 			deleteReference = new size_t(0);
 		}
 		else{
@@ -118,7 +118,7 @@ public:
 	void SetRaw(const wxString &ldial);
 	void GetRaw(wxString *txt,bool tl=false,const wxString &style="");
 	wxString GetCols(int cols, bool tl=false,const wxString &style="");
-	void Conv(char type,const wxString &pref="");
+	void Convert(char type,const wxString &pref="");
 	Dialogue *Copy(bool keepstate=false, bool copyIsVisible = true);
 	void ParseTags(wxString *tags, size_t n, bool plainText = false);
 	void ChangeTimes(int start, int end);

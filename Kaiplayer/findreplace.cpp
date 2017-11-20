@@ -252,14 +252,14 @@ void FindReplace::OnReplaceAll(wxCommandEvent& event)
 	if(styll==""){notstyles=true;}else{styll=";"+styll+";";}
 	bool onlysel=SelectedLines->GetValue();
 
-	int fsel=pan->Grid->FirstSel();
+	int fsel=pan->Grid->FirstSelection();
 
-
+	int keyI = 0;
 	for(int i = (!AllLines->GetValue() && fsel>=0)? fsel : 0; i<pan->Grid->GetCount(); i++)
 	{
-		Dialogue *Dial=pan->Grid->GetDialogue(i);
+		Dialogue *Dial = pan->Grid->file->GetDialogue(i, &keyI);
 		if((notstyles||styll.Find(";"+Dial->Style+";")!=-1)&&
-			!(onlysel&&!(pan->Grid->Selections.find(i)!=pan->Grid->Selections.end()))){
+			!(onlysel&&!(pan->Grid->file->IsSelected(keyI)))){
 
 				if(wrep==STYLE){
 					txt=Dial->Style;
@@ -331,7 +331,7 @@ void FindReplace::OnReplaceAll(wxCommandEvent& event)
 				}
 				else{allreps=txt.Replace(find,rep);}
 				if(allreps>0){
-					Dialogue *Dialc=pan->Grid->CopyDial(i);
+					Dialogue *Dialc=pan->Grid->CopyDialogue(i);
 					if(wrep==TXT){Dialc->Text=txt;}
 					else if(wrep==TXTTL){Dialc->TextTl=txt;}
 					else if(wrep==STYLE){Dialc->Style=txt;}
@@ -384,22 +384,22 @@ void FindReplace::OnButtonRep(wxCommandEvent& event)
 		oldstyle.Remove(findstart, findend-findstart);
 		oldstyle.insert(findstart,rep);
 
-		grid->CopyDial(reprow)->Style=oldstyle;}
+		grid->CopyDialogue(reprow)->Style=oldstyle;}
 	else if(wrep==TXT || wrep==TXTTL){
 		MTextEditor *tmp= (searchInOriginal)? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
 		//tmp->SetFocus();
 		tmp->Replace(findstart, findend, rep);
-		grid->CopyDial(reprow)->Text=tmp->GetValue();
+		grid->CopyDialogue(reprow)->Text=tmp->GetValue();
 	}
 	else if(wrep==ACTOR){
 		//Kai->GetTab()->Edit->ActorEdit->SetFocus();
 		tab->Edit->ActorEdit->choiceText->Replace(findstart, findend, rep);
-		grid->CopyDial(reprow)->Actor=tab->Edit->ActorEdit->GetValue();
+		grid->CopyDialogue(reprow)->Actor=tab->Edit->ActorEdit->GetValue();
 	}
 	else if(wrep==EFFECT){
 		//Kai->GetTab()->Edit->EffectEdit->SetFocus();
 		tab->Edit->EffectEdit->choiceText->Replace(findstart, findend, rep);
-		grid->CopyDial(reprow)->Effect=tab->Edit->EffectEdit->GetValue();
+		grid->CopyDialogue(reprow)->Effect=tab->Edit->EffectEdit->GetValue();
 	}
 
 	grid->SetModified(REPLACE_SINGLE);
@@ -441,7 +441,7 @@ void FindReplace::Find()
 	size_t mlen=0;
 	bool foundsome=false;
 	if(fromstart){
-		int fsel=pan->Grid->FirstSel();
+		int fsel=pan->Grid->FirstSelection();
 		posrow= (!AllLines->GetValue() && fsel>=0)? fsel : 0;
 		postxt=0;
 	}
@@ -458,7 +458,7 @@ void FindReplace::Find()
 		Dialogue *Dial=pan->Grid->GetDialogue(posrow);
 		if((!styles && !onlysel) || 
 			(styles && styll.Find(";"+Dial->Style+";")!=-1) || 
-			(onlysel && pan->Grid->Selections.find(posrow) != pan->Grid->Selections.end())){
+			(onlysel && pan->Grid->file->IsSelected(posrow))){
 				if(wrep==STYLE){
 					txt=Dial->Style;
 				}else if(wrep==TXT || wrep==TXTTL){

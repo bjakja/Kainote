@@ -88,7 +88,8 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 	if(click){
 		tab->Video->SetCursor(wxCURSOR_SIZING);
 		hasArrow=false;
-		wxArrayInt sels= tab->Grid->GetSels();
+		wxArrayInt sels;
+		tab->Grid->file->GetSelections(sels);
 		if(sels.size()!=data.size()){SetCurVisual();tab->Video->Render();}
 		firstmove.x=x;
 		firstmove.y=y;
@@ -126,7 +127,8 @@ wxString Position::GetVisual(int datapos)
 void Position::SetCurVisual()
 {
 	data.clear();
-	wxArrayInt sels= tab->Grid->GetSels();
+	wxArrayInt sels;
+	tab->Grid->file->GetSelections(sels);
 	bool pib; wxPoint tp;
 	for(size_t i = 0; i < sels.size(); i++){
 		//fix by uzyskać reakcję na edycję w editboxie
@@ -167,9 +169,9 @@ void Position::ChangeMultiline(bool all)
 		txt.replace(data[i].TextPos.x, data[i].TextPos.y, visual);
 		if(all){
 			if(istxttl){
-				tab->Grid->CopyDial(data[i].numpos)->TextTl=txt;
+				tab->Grid->CopyDialogue(data[i].numpos)->TextTl=txt;
 			}else{
-				tab->Grid->CopyDial(data[i].numpos)->Text=txt;
+				tab->Grid->CopyDialogue(data[i].numpos)->Text=txt;
 			}
 		}else{
 			Dialogue Cpy=Dialogue(*Dial);

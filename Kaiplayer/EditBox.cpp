@@ -561,7 +561,7 @@ void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool vis
 
 void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString *texttoPutin)
 {
-	bool oneline=(grid->Selections.size()<2);
+	bool oneline=(grid->file->SelectionsSize()<2);
 	if(oneline && !onlysel){
 		long whre;
 		wxString txt=TextEdit->GetValue();
@@ -591,9 +591,10 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 		Editor->SetSelection(whre,whre);//}else{Placed.x=whre;}
 	}else{
 		wxString tmp;
-		wxArrayInt sels=grid->GetSels();
+		wxArrayInt sels;
+		grid->file->GetSelectionsAsKeys(sels);
 		for(size_t i=0;i<sels.size();i++){
-			Dialogue *dialc=grid->CopyDial(sels[i]);
+			Dialogue *dialc=grid->CopyDialogue(sels[i]);
 			wxString txt=(grid->hasTLMode && dialc->TextTl!="")? dialc->TextTl : dialc->Text;
 			FindVal(lasttag,&tmp,txt);
 
@@ -624,7 +625,7 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 	bool match=false;
 	TextEdit->GetSelection(&from,&to);
 	wxString txt=TextEdit->GetValue();
-	bool oneline=(grid->Selections.size()<2);
+	bool oneline = (grid->file->SelectionsSize()<2);
 	if(oneline){//zmiany tylko w editboxie
 		if(grid->subsFormat==SRT){
 
@@ -683,10 +684,11 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 	{//zmiany wszystkich zaznaczonych linijek
 		wxString chars=(grid->subsFormat==SRT)? "<" : "{";
 		wxString chare=(grid->subsFormat==SRT)? ">" : "}";
-		wxArrayInt sels=grid->GetSels();
+		wxArrayInt sels;
+		grid->file->GetSelectionsAsKeys(sels);
 		for(size_t i=0;i<sels.size();i++)
 		{
-			Dialogue *dialc=grid->CopyDial(sels[i]);
+			Dialogue *dialc=grid->file->CopyDialogueByKey(sels[i]);
 			wxString txt=dialc->Text;
 			//dialc->spells.Clear();
 			if(txt.StartsWith(chars))
@@ -1161,7 +1163,7 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 		}
 	}else{txt=text;}
 	if(txt==""){Placed.x=0;Placed.y=0; InBracket=false; cursorpos=0; if(endsel){*endsel=false;} return false;}
-	if(grid->Selections.size()<2){
+	if (grid->file->SelectionsSize()<2){
 		MTextEditor *Editor = (fromOriginal)? TextEditOrig : TextEdit;
 		if(!fromStart){Editor->GetSelection(&from,&to);}
 	}
@@ -1626,7 +1628,7 @@ void EditBox::OnStyleEdit(wxCommandEvent& event)
 
 bool EditBox::IsCursorOnStart()
 {
-	if(grid->Selections.size()>1){return true;}
+	if (grid->file->SelectionsSize()>1){ return true; }
 	/*if(Visual == CLIPRECT || Visual == MOVE){return true;}
 	wxString txt=TextEdit->GetValue();
 	MTextEditor *Editor = TextEdit;
@@ -1655,9 +1657,10 @@ void EditBox::OnDoubtfulTl(wxCommandEvent& event)
 	}else{
 		line->State |= 4;
 	}
-	wxArrayInt sels = grid->GetSels();
+	wxArrayInt sels; 
+	grid->file->GetSelectionsAsKeys(sels);
 	for(size_t i = 0; i<sels.size(); i++){
-		Dialogue *dial = grid->GetDialogue(sels[i]);
+		Dialogue *dial = grid->file->CopyDialogueByKey(sels[i]);
 		if(dial->State & 4){
 			dial->State ^= 4;
 		}else{

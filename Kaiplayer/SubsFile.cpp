@@ -120,7 +120,7 @@ File::~File()
 	ddials.clear();
 	dstyles.clear();
 	dsinfo.clear();
-	sel.clear();
+	Selections.clear();
 	//wxLogStatus("Clearing");
 }
 void File::Clear()
@@ -155,7 +155,7 @@ File *File::Copy(bool copySelections)
 	file->styles= styles;
 	file->sinfo = sinfo;
 	if (copySelections)
-		file->sel = sel;
+		file->Selections = Selections;
 	file->activeLine = activeLine;
 	file->markerLine = markerLine;
 	file->scrollPosition = scrollPosition;
@@ -195,8 +195,8 @@ void SubsFile::SaveUndo(unsigned char editionType, int activeLine, int markerLin
 		}
 		undo.erase(undo.begin()+iter+1, undo.end());
 	}
-	subs->activeLine = activeLine;
-	subs->markerLine = markerLine;
+	//subs->activeLine = activeLine;
+	//subs->markerLine = markerLine;
 	subs->etidtionType = editionType;
 	undo.push_back(subs);
 	subs=subs->Copy();
@@ -282,7 +282,7 @@ int SubsFile::Iter()
     return iter;
 }
 
-Dialogue *SubsFile::CopyDial(int i, bool push, bool keepstate)
+Dialogue *SubsFile::CopyDialogue(int i, bool push, bool keepstate)
 {
 	Dialogue *dial = GetDialogue(i)->Copy(keepstate, !push);
 	subs->ddials.push_back(dial);
@@ -298,32 +298,33 @@ Dialogue *SubsFile::CopyDialogueByKey(int i, bool push, bool keepstate)
 	return dial;
 }
 
-Dialogue *SubsFile::GetDialogue(int i)
+Dialogue *SubsFile::GetDialogue(int i, int *key)
 {
-	int Id = IdConverter->getElementById(i);
-	if (Id < 0){
-		Id = (*IdConverter)[IdConverter->size() - 1];
+	int Key = IdConverter->getElementById(i);
+	if (Key < 0){
+		Key = (*IdConverter)[IdConverter->size() - 1];
 		wxLogStatus("przekroczone drzewko %i, %i", i, IdConverter->size());
 	}
-	if (Id >= subs->dials.size()){
-		wxLogStatus("tablica dialogów przekroczona %i, %i", Id, (int)subs->dials.size());
-		Id = subs->dials.size() - 1;
+	if (Key >= subs->dials.size()){
+		wxLogStatus("tablica dialogów przekroczona %i, %i", Key, (int)subs->dials.size());
+		Key = subs->dials.size() - 1;
 	}
-	return subs->dials[Id];
+	if (key){ *key = Key; }
+	return subs->dials[Key];
 }
 
 Dialogue *&SubsFile::operator[](int i)
 {
-	int Id = IdConverter->getElementById(i);
-	if (Id < 0){
-		Id = (*IdConverter)[IdConverter->size() - 1];
+	int Key = IdConverter->getElementById(i);
+	if (Key < 0){
+		Key = (*IdConverter)[IdConverter->size() - 1];
 		wxLogStatus("przekroczone drzewko %i, %i", i, IdConverter->size());
 	}
-	if (Id >= subs->dials.size()){
-		wxLogStatus("tablica dialogów przekroczona %i, %i", Id, subs->dials.size());
-		Id = subs->dials.size() - 1;
+	if (Key >= subs->dials.size()){
+		wxLogStatus("tablica dialogów przekroczona %i, %i", Key, (int)subs->dials.size());
+		Key = subs->dials.size() - 1;
 	}
-	return subs->dials[Id];
+	return subs->dials[Key];
 }
 
 void SubsFile::DeleteDialogues(int from, int to)
@@ -342,6 +343,84 @@ void SubsFile::DeleteDialoguesByKeys(int from, int to)
 	for (int i = from; i <= to; i++){
 		IdConverter->deleteItemByKey(i);
 	}
+}
+
+void SubsFile::GetSelections(wxArrayInt &selections, bool deselect)
+{
+	for (std::set<int>::iterator i = subs->Selections.begin(); i != subs->Selections.end(); i++){
+		int sel = IdConverter->getElementByKey(*i);
+		if(sel >= 0) 
+			selections.Add(sel);
+	}
+	if (deselect){ subs->Selections.clear(); }
+}
+
+void SubsFile::GetSelectionsAsKeys(wxArrayInt &selectionsKeys, bool deselect)
+{
+	for (std::set<int>::iterator i = subs->Selections.begin(); i != subs->Selections.end(); i++){
+		selectionsKeys.Add(*i);
+	}
+	if (deselect){ subs->Selections.clear(); }
+}
+
+void SubsFile::InsertSelection(int i)
+{
+	//insert -1 raczej nic nie zaszkodzi bo przechowujemy int
+	subs->Selections.insert(IdConverter->getElementById(i));
+}
+
+void SubsFile::InsertSelectionKey(int i)
+{
+	subs->Selections.insert(i);
+}
+
+void SubsFile::EraseSelection(int i)
+{
+	//trzeba to sprawdzić czy erase skraszuje gdy dostanie -1
+	subs->Selections.erase(IdConverter->getElementById(i));
+}
+
+void SubsFile::EraseSelectionKey(int i)
+{
+	subs->Selections.erase(i);
+}
+
+int SubsFile::FindIdFromKey(int key, int *corrected)
+{
+	int Id = IdConverter->getElementByKey(key);
+	if (Id < 0){
+		Id = 0;
+		if (key >= subs->dials.size()){ key = subs->dials.size()-1; }
+		int i = key;
+		while (i >= 0){
+			if (subs->dials[i]->isVisible != NOT_VISIBLE){
+				Id = IdConverter->getElementByKey(i); break;
+			}
+			i--;
+		}
+		if (corrected){ *corrected = i; }
+	}
+	return Id;
+}
+
+bool SubsFile::IsSelectedByKey(int key)
+{
+	return subs->Selections.find(key) != subs->Selections.end();
+}
+
+bool SubsFile::IsSelected(int i)
+{
+	return subs->Selections.find(IdConverter->getElementById(i)) != subs->Selections.end();
+}
+
+int SubsFile::SelectionsSize()
+{
+	return subs->Selections.size();
+}
+
+void SubsFile::ClearSelections()
+{
+	subs->Selections.clear();
 }
 
 int SubsFile::GetElementById(int Id)
@@ -372,8 +451,8 @@ SInfo *SubsFile::CopySinfo(int i, bool push)
 
 void SubsFile::EndLoad(unsigned char editionType, int activeLine)
 {
-	subs->activeLine = activeLine;
-	subs->markerLine = activeLine - 1;
+	//subs->activeLine = activeLine;
+	//subs->markerLine = activeLine;
 	subs->etidtionType = editionType;
 	undo.push_back(subs);
 	subs=subs->Copy();
@@ -468,7 +547,7 @@ void SubsFile::GetHistoryTable(wxArrayString *history)
 {
 	for(size_t i = 0; i < undo.size(); i++){
 		history->push_back(historyNames[undo[i]->etidtionType] + 
-			wxString::Format(_(", aktywna linia %i"), undo[i]->activeLine));
+			wxString::Format(_(", aktywna linia %i"), GetElementByKey(undo[i]->activeLine) + 1);
 	}
 }
 

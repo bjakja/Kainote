@@ -39,7 +39,7 @@ public:
 	
 protected:
 
-    wxArrayInt selarr;
+    wxArrayInt selections;
 	wxArrayString filterStyles;
 
 private:

@@ -150,12 +150,12 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 
 	if(!matchcase){find.MakeLower();}
 	TabPanel *tab=Kai->GetTab();
-	//wxString test;
-	if(sopt==0){tab->Grid->Selections.clear();}
+	tab->Grid->SaveSelections(sopt == 0);
+	File *Subs = tab->Grid->file->GetSubs();
 
-	for(int i=0;i < tab->Grid->GetCount();i++)
+	for (int i = 0; i < Subs->dials.size(); i++)
 	{
-		Dialogue *Dial=tab->Grid->GetDialogue(i);
+		Dialogue *Dial = Subs->dials[i];
 
 		if(wrep==STYLE){
 			txt=Dial->Style;}
@@ -194,23 +194,22 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 			&&((diall && !Dial->IsComment) || (commm && Dial->IsComment))){
 				bool select=(sopt==2)?false:true;
 				if(select){
-					tab->Grid->Selections.insert(i);
+					tab->Grid->file->InsertSelectionKey(i);
 					allreps++;
 				}
 				else{
-					std::set<int>::iterator it= tab->Grid->Selections.find(i);
-					if(it!=tab->Grid->Selections.end()){
-						tab->Grid->Selections.erase(it);
+					if (tab->Grid->file->IsSelectedByKey(i)){
+						tab->Grid->file->EraseSelectionKey(i);
 						allreps++;
 					}
 				}
 		}
 
-		if((tab->Grid->Selections.find(i) != tab->Grid->Selections.end())&&act!=0){
+		if (tab->Grid->file->IsSelectedByKey(i) && act != 0){
 			if(act<3){Dial->GetRaw(&whatcopy, tab->Grid->hasTLMode && Dial->TextTl!="");}
 			else if(act<5){Dial->State= 1 + (Dial->State & 4); mdial.push_back(Dial);}
 			else if(act<6){
-				Dialogue *dialc = tab->Grid->CopyDial(i); 
+				Dialogue *dialc = tab->Grid->file->CopyDialogueByKey(i); 
 				dialc->State=1 + (dialc->State & 4);
 				dialc->IsComment=true;
 			}
@@ -230,11 +229,11 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 		tab->Grid->DeleteRows();
 		if(act==3||act==4)
 		{
-			tab->Grid->InsertRows((act==3)? 0 : tab->Grid->GetCount(), mdial);
+			tab->Grid->InsertRows((act==3)? 0 : -1, mdial, false, true);
 			mdial.clear();
 		}
 	}
-	int fsel=tab->Grid->FirstSel();
+	int fsel=tab->Grid->FirstSelection();
 	int wset=(fsel<0)? tab->Edit->ebrow : fsel;
 	tab->Edit->SetLine(wset);
 	tab->Grid->SetModified(SELECT_LINES, false);

@@ -273,7 +273,7 @@ wxString Dialogue::GetCols(int cols, bool tl, const wxString &style)
 	return line;
 }
 
-void Dialogue::Conv(char type, const wxString &pref)
+void Dialogue::Convert(char type, const wxString &pref)
 {
 	if(!Form){Form=0;if(type==ASS){return;}}
 	if(Form == TMP && End.mstime==0){End=Start;End.mstime+=2000;}

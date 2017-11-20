@@ -157,7 +157,7 @@ void SpellCheckerDialog::Replace(wxCommandEvent &evt)
 	wxString replaceTxt = replaceWord->GetValue();
 	if(replaceTxt.IsEmpty() || errors.size()<2){return;}
 	tab = Kai->GetTab();
-	Dialogue *Dial = tab->Grid->CopyDial(lastLine);
+	Dialogue *Dial = tab->Grid->CopyDialogue(lastLine);
 	wxString &Text = (tab->Grid->hasTLMode)? Dial->TextTl : Dial->Text;
 	int start = errors[lastMisspell-2];
 	int end = errors[lastMisspell-1]+1;
@@ -204,7 +204,7 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 			changed=true;
 		}
 		if(changed){
-			Dialogue *Dialc = tab->Grid->CopyDial(i);
+			Dialogue *Dialc = tab->Grid->CopyDialogue(i);
 			wxString &TextToChange = (tab->Grid->hasTLMode)? Dialc->TextTl : Dialc->Text;
 			TextToChange=Text;
 			tab->Grid->SpellErrors[i].clear();

@@ -29,7 +29,7 @@ class Stylelistbox: public KaiDialog
 
 		
 		MappedButton* Button1;
-		KaiListCtrl* CheckListBox1;
+		KaiListCtrl* CheckListBox;
 		MappedButton* Button2;
 		
 };

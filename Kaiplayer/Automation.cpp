@@ -724,13 +724,13 @@ namespace Auto{
 
 	static std::vector<int> selected_rows(const TabPanel *c)
 	{
-		auto const& sel = c->Grid->GetSels();
+		auto const& sels = c->Grid->file->GetSubs()->Selections;
 		int offset = c->Grid->SInfoSize() + c->Grid->StylesSize()+1;
 		std::vector<int> rows;
-		rows.reserve(sel.size());
-		for (auto line : sel)
-			rows.push_back(c->Grid->file->GetElementById(line) + offset);
-		sort(rows.begin(), rows.end());
+		rows.reserve(sels.size());
+		for (auto line : sels)
+			rows.push_back(line + offset);
+		//sort(rows.begin(), rows.end());
 		return rows;
 	}
 
@@ -776,7 +776,8 @@ namespace Auto{
 		stackcheck.check_stack(0);
 
 		GetFeatureFunction("run");
-		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true);
+		File *subs = c->Grid->file->GetSubs();
+		auto subsobj = new AutoToFile(L, subs, true);
 
 		int original_offset = c->Grid->SInfoSize() + c->Grid->StylesSize()+1;
 		auto original_sel = selected_rows(c);
@@ -806,20 +807,18 @@ namespace Auto{
 		c->Grid->file->ReloadVisibleDialogues();
 		//if(ps->lpd->cancelled && ps->lpd->IsModal()){ps->lpd->EndModal(0);}
 		c->Grid->SaveSelections(true);
-		int active_idx = c->Edit->ebrow;
+		original_offset = c->Grid->SInfoSize() + c->Grid->StylesSize() + 1;
+		int active_idx = original_active;
 
 		// Check for a new active row
 		if (lua_isnumber(L, -1)) {
 			active_idx = lua_tointeger(L, -1) - original_offset;
-			if (active_idx < 0 || active_idx >= c->Grid->GetCount()) {
-				wxLogError("Active row %d is out of bounds (must be 1-%u)", active_idx, c->Grid->GetCount());
+			if (active_idx < 0 || active_idx >= subs->dials.size()) {
+				wxLogError("Active row %d is out of bounds (must be 1-%u)", active_idx, subs->dials.size());
 				active_idx = original_active;
 			}
 		}
 		
-		c->Grid->SpellErrors.clear();
-		c->Grid->SetModified(AUTOMATION_SCRIPT, true, false, active_idx);
-		c->Grid->RefreshColumns();	
 		//stackcheck.check_stack(2);
 		lua_pop(L, 1);
 
@@ -828,21 +827,14 @@ namespace Auto{
 			lua_for_each(L, [&] {
 				if (!lua_isnumber(L, -1))
 					return;
-				int cur = lua_tointeger(L, -1)-original_offset;
-				if (cur < 0 || cur >= c->Grid->GetCount()) {
-					wxLogError("Selected row %d is out of bounds (must be 1-%u)", cur, c->Grid->GetCount());
+				int cur = lua_tointeger(L, -1) - original_offset;
+				if (cur < 0 || cur >= subs->dials.size()) {
+					wxLogError("Selected row %d is out of bounds (must be 1-%u)", cur, subs->dials.size());
 					throw LuaForEachBreak();
 				}
-
-				c->Grid->Selections.insert(cur);
+				c->Grid->file->InsertSelectionKey(cur);
 			});
 
-			/*AssDialogue *new_active = c->selectionController->GetActiveLine();
-			if (active_line && (active_idx > 0 || !sel.count(new_active)))
-			new_active = active_line;
-			if (sel.empty())
-			sel.insert(new_active);
-			c->selectionController->SetSelectionAndActive(std::move(sel), new_active);*/
 		}
 		else {
 			lua_pop(L, 1);
@@ -869,6 +861,9 @@ namespace Auto{
 			new_active = *new_sel.begin();
 			c->selectionController->SetSelectionAndActive(std::move(new_sel), new_active);*/
 		}
+		c->Grid->SpellErrors.clear();
+		c->Grid->SetModified(AUTOMATION_SCRIPT, true, false, c->Grid->file->GetElementByKey(active_idx));
+		c->Grid->RefreshColumns();
 		SAFE_DELETE(subsobj);
 		SAFE_DELETE(ps);
 		//stackcheck.check_stack(0);

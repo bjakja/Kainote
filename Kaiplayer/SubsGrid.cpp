@@ -114,8 +114,8 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 {
 	VideoCtrl *VB=((TabPanel*)GetParent())->Video;
 	VB->blockpaint=true;
-	selarr = GetSels();
-	int sels=selarr.GetCount();
+	file->GetSelections(selections);
+	int sels=selections.GetCount();
 	Menu *menu=new Menu(GRID_HOTKEY);
 	menu->SetMaxVisible(35);
 	Menu *hidemenu=new Menu(GRID_HOTKEY);
@@ -230,8 +230,8 @@ done:
 void SubsGrid::OnInsertBefore()
 {
 	SaveSelections(true);
-	int rw=selarr[0];
-	Dialogue *dialog=CopyDial(rw, false);
+	int rw=selections[0];
+	Dialogue *dialog=CopyDialogue(rw, false);
 	dialog->Text="";
 	dialog->TextTl="";
 	dialog->End=dialog->Start;
@@ -244,8 +244,8 @@ void SubsGrid::OnInsertBefore()
 void SubsGrid::OnInsertAfter()
 {
 	SaveSelections(true);
-	int rw=selarr[0];
-	Dialogue *dialog=CopyDial(rw, false);
+	int rw=selections[0];
+	Dialogue *dialog=CopyDialogue(rw, false);
 	dialog->Text="";
 	dialog->TextTl="";
 	dialog->Start=dialog->End;
@@ -259,15 +259,13 @@ void SubsGrid::OnInsertAfter()
 void SubsGrid::OnDuplicate()
 {
 	SaveSelections();
-	int rw=selarr[0];
+	int rw=selections[0];
 	int rw1=rw+1;
-	for(size_t i=1; i<selarr.GetCount(); i++){if(rw1==selarr[i]){rw1++;}else{break;} }
+	for(size_t i=1; i<selections.GetCount(); i++){if(rw1==selections[i]){rw1++;}else{break;} }
 	int rw2=rw1-rw;
 	std::vector<Dialogue *> dupl;
 	for(int i=0; i<rw2; i++){
-
-		dupl.push_back(file->CopyDial(i+rw,false));
-
+		dupl.push_back(file->CopyDialogue(i+rw,false));
 	}
 
 	if(dupl.size()>0){
@@ -288,26 +286,26 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	int idd=event.GetId();
 	if(idd==JoinWithPrevious){
 		if(Edit->ebrow==0){return;}
-		selarr.Clear();
-		selarr.Add(Edit->ebrow-1);
-		selarr.Add(Edit->ebrow);
+		selections.Clear();
+		selections.Add(Edit->ebrow-1);
+		selections.Add(Edit->ebrow);
 		en1=" ";
 	}else if(idd==JoinWithNext){
 		if(Edit->ebrow>=GetCount()||GetCount()<2){return;}
-		selarr.Clear();
-		selarr.Add(Edit->ebrow);
-		selarr.Add(Edit->ebrow+1);
+		selections.Clear();
+		selections.Add(Edit->ebrow);
+		selections.Add(Edit->ebrow+1);
 		en1=" ";
 	}else{en1="\\N";}
 
 
-	Dialogue *dialc = file->CopyDial(selarr[0]);
-	Edit->ebrow=selarr[0];
+	Dialogue *dialc = file->CopyDialogue(selections[0]);
+	Edit->ebrow=selections[0];
 	int start=INT_MAX, end=0;
-	for(size_t i=0;i<selarr.size();i++)
+	for(size_t i=0;i<selections.size();i++)
 	{
 		wxString en=(i==0)?"":en1;
-		Dialogue *dial=GetDialogue(selarr[i]);
+		Dialogue *dial=GetDialogue(selections[i]);
 		if(dial->Start.mstime < start){ start = dial->Start.mstime;}
 		if(dial->End.mstime > end){	end = dial->End.mstime;}
 		if(ntext==""){ntext=dial->Text;}
@@ -316,7 +314,7 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 		else if(dial->TextTl!=""){ntltext<<en<<dial->TextTl;}
 	}
 
-	DeleteRow(selarr[1], selarr[selarr.size()-1]-selarr[1]+1);
+	DeleteRow(selections[1], selections[selections.size()-1]-selections[1]+1);
 	dialc->Start.NewTime(start);
 	dialc->End.NewTime(end);
 	dialc->Text=ntext;
@@ -331,18 +329,18 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 void SubsGrid::OnJoinToFirst(int id)
 {
 	SaveSelections(true);
-	Dialogue *dialc = file->CopyDial(selarr[0]);
-	Dialogue *ldial = GetDialogue(selarr[selarr.size()-1]);
+	Dialogue *dialc = file->CopyDialogue(selections[0]);
+	Dialogue *ldial = GetDialogue(selections[selections.size()-1]);
 	dialc->End = ldial->End;
 
 	if(id==JoinToLast){
 		dialc->Text = ldial->Text;
 		dialc->TextTl = ldial->TextTl;
 	}
-	Edit->ebrow=selarr[0];
-	DeleteRow(selarr[1], selarr[selarr.size()-1]-selarr[1]+1);
+	Edit->ebrow=selections[0];
+	DeleteRow(selections[1], selections[selections.size()-1]-selections[1]+1);
 
-	Selections.insert(selarr[0]);
+	file->InsertSelection(selections[0]);
 	SpellErrors.clear();
 	SetModified((id==JoinToLast)? GRID_JOIN_TO_LAST : GRID_JOIN_TO_FIRST);
 	RefreshColumns();
@@ -351,7 +349,7 @@ void SubsGrid::OnJoinToFirst(int id)
 
 void SubsGrid::OnPaste(int id)
 {
-	int row=FirstSel();
+	int row=FirstSelection();
 	if(row < 0){wxBell();return;}
 	SaveSelections(id != PasteCollumns);
 	int collumns = 0;
@@ -361,19 +359,19 @@ void SubsGrid::OnPaste(int id)
 		wxString arr[11] = { _("Warstwa"), _("Czas początkowy"), _("Czas końcowy"), _("Aktor"), _("Styl"), _("Margines lewy"), _("Margines prawy"), _("Margines pionowy"), _("Efekt"), pasteText, _("Tekst do tłumaczenia") };
 		int vals[11]={LAYER,START,END,ACTOR,STYLE,MARGINL,MARGINR,MARGINV,EFFECT,TXT,TXTTL};
 		Stylelistbox slx(this, false, numCollumns, arr);
-		int Selections = Options.GetInt(PasteCollumnsSelection);
+		int PasteCollumnsSelections = Options.GetInt(PasteCollumnsSelection);
 		for (int j = 0; j < numCollumns; j++){
-			if (Selections & vals[j]){
-				Item * checkBox = slx.CheckListBox1->GetItem(j, 0);
+			if (PasteCollumnsSelections & vals[j]){
+				Item * checkBox = slx.CheckListBox->GetItem(j, 0);
 				if (checkBox)
 					checkBox->modified = true;
 			}
 		}
 		if(slx.ShowModal()==wxID_OK)
 		{
-			for (size_t v=0;v<slx.CheckListBox1->GetCount();v++)
+			for (size_t v=0;v<slx.CheckListBox->GetCount();v++)
 			{
-				if(slx.CheckListBox1->GetItem(v,0)->modified){
+				if(slx.CheckListBox->GetItem(v,0)->modified){
 					collumns |= vals[v];
 				}
 			}
@@ -421,14 +419,14 @@ void SubsGrid::OnPaste(int id)
 		if (collumns & TXTTL){ 
 			newdial->TextTl = newdial->Text; 
 		}
-		if(newdial->Form!=subsFormat){newdial->Conv(subsFormat);}
+		if(newdial->Form!=subsFormat){newdial->Convert(subsFormat);}
 		if(newdial->NonDialogue){newdial->NonDialogue=false; newdial->IsComment=false;}
 		if(id==Paste){
 			tmpdial.push_back(newdial);
-			Selections.insert(rws);
+			file->InsertSelection(rws);
 		}else{
-			if(rws<(int)selarr.GetCount()/* && selarr[rws] < GetCount()*/){
-				ChangeCell(collumns, selarr[rws],newdial);
+			if(rws<(int)selections.GetCount()/* && selarr[rws] < GetCount()*/){
+				ChangeCell(collumns, selections[rws],newdial);
 			}
 			delete newdial;
 		}
@@ -438,11 +436,8 @@ void SubsGrid::OnPaste(int id)
 	if(tmpdial.size()>0){
 		InsertRows(row, tmpdial,true);
 	}
-	if(Selections.size()!=0){
-		Edit->ebrow = *Selections.begin();
-	}
 	scPos+=cttkns;
-	SetModified((id==Paste)? GRID_PASTE : GRID_PASTE_COLLUMNS);
+	SetModified((id == Paste) ? GRID_PASTE : GRID_PASTE_COLLUMNS, true, false, FirstSelection());
 	Thaw();
 	RefreshColumns();
 }
@@ -454,20 +449,20 @@ void SubsGrid::CopyRows(int id)
 		wxString arr[ ]={_("Warstwa"),_("Czas początkowy"),_("Czas końcowy"),_("Aktor"),_("Styl"),_("Margines lewy"),_("Margines prawy"),_("Margines pionowy"),_("Efekt"),_("Tekst"),_("Tekst bez tagów")};
 		int vals[ ]={LAYER,START,END,ACTOR,STYLE,MARGINL,MARGINR,MARGINV,EFFECT,TXT,TXTTL};
 		Stylelistbox slx(this,false,11,arr);
-		int Selections = Options.GetInt(CopyCollumnsSelection);
+		int PasteCollumnsSelections = Options.GetInt(CopyCollumnsSelection);
 		for (int j = 0; j < 11; j++){
-			if (Selections & vals[j]){
-				Item * checkBox = slx.CheckListBox1->GetItem(j, 0);
+			if (PasteCollumnsSelections & vals[j]){
+				Item * checkBox = slx.CheckListBox->GetItem(j, 0);
 				if (checkBox)
 					checkBox->modified = true;
 			}
 		}
 		if(slx.ShowModal()==wxID_OK)
 		{
-			for (size_t v=0;v<slx.CheckListBox1->GetCount();v++)
+			for (size_t v=0;v<slx.CheckListBox->GetCount();v++)
 			{
 
-				if(slx.CheckListBox1->GetItem(v,0)->modified){
+				if(slx.CheckListBox->GetItem(v,0)->modified){
 					cols|= vals[v];
 				}
 			}
@@ -476,15 +471,14 @@ void SubsGrid::CopyRows(int id)
 		}else{return;}
 
 	}
-	selarr=GetSels();
 	wxString whatcopy;
-	for(size_t i=0; i<selarr.GetCount();i++)
+	for(size_t i=0; i<selections.GetCount();i++)
 	{	
 		if(id!=CopyCollumns){
 			//tłumaczenie ma pierwszeństwo w kopiowaniu
-			GetDialogue(selarr[i])->GetRaw(&whatcopy, hasTLMode && GetDialogue(selarr[i])->TextTl!="");
+			GetDialogue(selections[i])->GetRaw(&whatcopy, hasTLMode && GetDialogue(selections[i])->TextTl!="");
 		}else{
-			whatcopy<<GetDialogue(selarr[i])->GetCols(cols,hasTLMode && GetDialogue(selarr[i])->TextTl!="");
+			whatcopy<<GetDialogue(selections[i])->GetCols(cols,hasTLMode && GetDialogue(selections[i])->TextTl!="");
 		}
 	}
 	if (wxTheClipboard->Open())
@@ -498,9 +492,9 @@ void SubsGrid::CopyRows(int id)
 void SubsGrid::OnInsertBeforeVideo(bool frameTime)
 {
 	SaveSelections();
-	int rw=selarr[0];
-	Selections.erase(Selections.find(rw));
-	Dialogue *dialog=CopyDial(rw, false);
+	int rw=selections[0];
+	file->EraseSelection(rw);
+	Dialogue *dialog=CopyDialogue(rw, false);
 	if(!frameTime){
 		dialog->Text="";
 		dialog->TextTl="";
@@ -514,9 +508,9 @@ void SubsGrid::OnInsertBeforeVideo(bool frameTime)
 void SubsGrid::OnInsertAfterVideo(bool frameTime)
 {
 	SaveSelections();
-	int rw=selarr[0];
-	Selections.erase(Selections.find(rw));
-	Dialogue *dialog=CopyDial(rw, false);
+	int rw=selections[0];
+	file->EraseSelection(rw);
+	Dialogue *dialog=CopyDialogue(rw, false);
 	if(!frameTime){
 		dialog->Text="";
 		dialog->TextTl="";
@@ -533,8 +527,8 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 {
 	int id=event.GetId();
 	VideoCtrl *vb=Kai->GetTab()->Video;
-	selarr = GetSels();
-	int sels=selarr.GetCount();
+	file->GetSelections(selections);
+	int sels=selections.GetCount();
 	bool hasVideo = vb->GetState() != None;
 	switch(id){
 		case PlayPause: if(vb->IsShown()){vb->Pause();} break;
@@ -558,7 +552,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 		case RemoveText: if(sels>0) DeleteText(); break;
 		case ContinousPrevious: 
 		case ContinousNext: if(sels>0) OnMakeContinous(id); break;
-		case Swap: if(sels==2){SwapRows(selarr[0],selarr[1],true);} break;
+		case Swap: if(sels==2){SwapRows(selections[0],selections[1],true);} break;
 		case FPSFromVideo: if( hasVideo && sels==2){OnSetFPSFromVideo();} break;
 		case Join: if(sels>1){OnJoin(event);} break;
 		case JoinToFirst:
@@ -614,11 +608,11 @@ void SubsGrid::OnPasteTextTl()
 				if(IsNumber(text)){if(text1!=""){
 					Dialogue diall=Dialogue(text1.Trim());
 					if(iline<GetCount()){
-						diall.Conv(subsFormat);
-						CopyDial(iline)->TextTl=diall.Text;
+						diall.Convert(subsFormat);
+						CopyDialogue(iline)->TextTl=diall.Text;
 					}
 					else{
-						diall.Conv(subsFormat);
+						diall.Convert(subsFormat);
 						diall.Start.NewTime(0);
 						diall.End.NewTime(0);
 						diall.Style=GetSInfo("TLMode Style");
@@ -639,10 +633,10 @@ void SubsGrid::OnPasteTextTl()
 				if(!(ext=="ass" && !token.StartsWith("Dialogue"))){  
 					Dialogue diall=Dialogue(token);
 					if(iline<GetCount()){
-						diall.Conv(subsFormat);
-						CopyDial(iline)->TextTl=diall.Text;}
+						diall.Convert(subsFormat);
+						CopyDialogue(iline)->TextTl=diall.Text;}
 					else{
-						diall.Conv(subsFormat);
+						diall.Convert(subsFormat);
 						diall.Start.NewTime(0);
 						diall.End.NewTime(0);
 						diall.Style=GetSInfo("TLMode Style");
@@ -669,15 +663,12 @@ void SubsGrid::OnPasteTextTl()
 
 void SubsGrid::MoveTextTL(char mode)
 {
-
-	wxArrayInt selecs=GetSels(true);
-	
-	if(selecs.GetCount()<1||!showOriginal||!hasTLMode) return;
+	if(selections.GetCount()<1||!showOriginal||!hasTLMode) return;
 	SaveSelections();
-	int first=selecs[0];
+	int first=selections[0];
 	int mrow=1;
-	if(selecs.GetCount()>1){
-		mrow=selecs[1]-first;
+	if(selections.GetCount()>1){
+		mrow=selections[1] - first;
 	}
 	
 	if(mode<3){// w górę ^
@@ -687,22 +678,22 @@ void SubsGrid::MoveTextTL(char mode)
 			insdial->Text="";
 			InsertRows(first, mrow, insdial);
 		}
-		Selections.insert(first);
+		file->InsertSelection(first);
 		for(int i=first; i<GetCount(); i++)
 		{
 			if(i<first+mrow){
 				//tryb1 gdzie łączy wszystkie nachodzące linijki w jedną
 				if(mode==1){
 					wxString mid=(GetDialogue(first)->TextTl!="" && GetDialogue(i+1)->TextTl!="")?"\\N":"";
-					CopyDial(first)->TextTl << mid << GetDialogue(i+1)->TextTl;
-					if(i!=first){CopyDial(i)->TextTl = GetDialogue(i+mrow)->TextTl;}
+					CopyDialogue(first)->TextTl << mid << GetDialogue(i+1)->TextTl;
+					if(i!=first){CopyDialogue(i)->TextTl = GetDialogue(i+mrow)->TextTl;}
 				}else if(i+mrow<GetCount()){
-					CopyDial(i)->TextTl = GetDialogue(i+mrow)->TextTl;
+					CopyDialogue(i)->TextTl = GetDialogue(i+mrow)->TextTl;
 				}
 			}
 			else if(i<GetCount()-mrow){
-				CopyDial(i)->TextTl = GetDialogue(i+mrow)->TextTl;}
-			else if(GetDialogue(i)->Text!=""){/*wxLogStatus("onlytl mrow--");*/mrow--;}
+				CopyDialogue(i)->TextTl = GetDialogue(i+mrow)->TextTl;}
+			else if(GetDialogue(i)->Text!=""){mrow--;}
 
 		}
 		
@@ -726,15 +717,15 @@ void SubsGrid::MoveTextTL(char mode)
 		{
 			if(i<first+mrow){
 				if(mode==3){
-					CopyDial(i)->TextTl="";}
+					CopyDialogue(i)->TextTl="";}
 				else if(mode==4||mode==5){
-					if(mode==4){if(onlyo){CopyDial(first+mrow)->Start = GetDialogue(first)->Start; onlyo=false;}
-					CopyDial(first+mrow)->Text.Prepend(GetDialogue(i)->Text+"\\N");mrow--;}
+					if(mode==4){if(onlyo){CopyDialogue(first+mrow)->Start = GetDialogue(first)->Start; onlyo=false;}
+					CopyDialogue(first+mrow)->Text.Prepend(GetDialogue(i)->Text+"\\N");mrow--;}
 					DeleteRow(i);
 				}
 			}
 			else{
-				CopyDial(i)->TextTl = GetDialogue(i-mrow)->TextTl;}
+				CopyDialogue(i)->TextTl = GetDialogue(i-mrow)->TextTl;}
 
 
 		}
@@ -801,7 +792,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 
 		if(!Kai->GetTab()->edytor&&!Kai->GetTab()->Video->isFullscreen){Kai->HideEditor();}
 		Kai->GetTab()->ShiftTimes->Contents();
-		Selections.insert(Edit->ebrow);
+		file->InsertSelection(Edit->ebrow);
 		RefreshColumns();
 		Edit->HideControls();
 		if(StyleStore::HasStore() && subsFormat==ASS){StyleStore::Get()->LoadAssStyles();}
@@ -1004,24 +995,23 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 
 void SubsGrid::OnMakeContinous(int idd)
 {
-	wxArrayInt sels=GetSels();
-	if(sels.size()<0){wxBell();return;}
+	if(selections.size()<0){wxBell();return;}
 	if(idd==ContinousPrevious){
 		
 		/*int diff=GetDial(fs)->End.mstime - GetDial(fs-1)->Start.mstime;*/
-		for(size_t i=0; i < sels.size(); i++)
+		for(size_t i=0; i < selections.size(); i++)
 		{
-			if(sels[i]<1){continue;}
-			CopyDial(sels[i])->Start = GetDialogue(sels[i]-1)->End;
+			if(selections[i]<1){continue;}
+			CopyDialogue(selections[i])->Start = GetDialogue(selections[i]-1)->End;
 		}
 	}
 	else
 	{
 		int dialsize = GetCount()-1;
-		for(size_t i=0; i < sels.size(); i++)
+		for(size_t i=0; i < selections.size(); i++)
 		{
-			if(sels[i]>=dialsize){continue;}
-			CopyDial(sels[i])->End = GetDialogue(sels[i]+1)->Start;
+			if(selections[i]>=dialsize){continue;}
+			CopyDialogue(selections[i])->End = GetDialogue(selections[i]+1)->Start;
 		}
 	}
 	SetModified(GRID_MAKE_LINES_CONTINUES);
@@ -1035,9 +1025,9 @@ void SubsGrid::ConnectAcc(int id)
 
 void SubsGrid::OnSetFPSFromVideo()
 {
-	if(selarr.size()!=2){return;}
-	Dialogue *first=GetDialogue(selarr[0]);
-	Dialogue *second=GetDialogue(selarr[1]);
+	if(selections.size()!=2){return;}
+	Dialogue *first=GetDialogue(selections[0]);
+	Dialogue *second=GetDialogue(selections[1]);
 	int firstTime=first->Start.mstime;
 	int secondTime=second->Start.mstime;
 	int videoTime=Notebook::GetTab()->Video->Tell();
@@ -1045,7 +1035,7 @@ void SubsGrid::OnSetFPSFromVideo()
 	float diffLines = (secondTime-firstTime);
 
 	for (int i=0;i<GetCount();i++){
-		Dialogue *dialc=CopyDial(i);
+		Dialogue *dialc=CopyDialogue(i);
 		dialc->Start.Change(diffVideo *((dialc->Start.mstime - firstTime) / diffLines));
 		dialc->End.Change(diffVideo *((dialc->End.mstime - firstTime) / diffLines));
 	}
@@ -1115,7 +1105,7 @@ void SubsGrid::OnSetNewFPS()
 		double sub = nfps.ofps / nfps.nfps;
 
 		for (int i=0;i<GetCount();i++){
-			Dialogue *dialc=CopyDial(i);
+			Dialogue *dialc=CopyDialogue(i);
 			dialc->Start.NewTime(dialc->Start.mstime*sub);
 			dialc->End.NewTime(dialc->End.mstime*sub);
 		}
@@ -1221,16 +1211,21 @@ void SubsGrid::Filter(int id)
 	filter.Filter();
 }
 
-void SubsGrid::RefreshSubsOnVideo(int newActiveLine, bool scroll)
+void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 {
-	Selections.clear();
+	file->ClearSelections();
 	SpellErrors.clear();
-	newActiveLine = MID(0, newActiveLine, GetCount()-1);
+	int corrected = -1;
+	int newActiveLine = file->FindIdFromKey(newActiveLineKey, &corrected);
+	if (corrected >= 0){
+		newActiveLineKey = corrected;
+	}
+	//newActiveLine = MID(0, newActiveLine, GetCount()-1);
 	if (Edit->ebrow != newActiveLine){ 
 		Edit->ebrow = newActiveLine; 
 		if (scroll){ ScrollTo(newActiveLine, true); }
 	}
-	Selections.insert(newActiveLine);
+	file->InsertSelectionKey(newActiveLineKey);
 	Edit->SetLine(newActiveLine);
 	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
 	if (vb->GetState() != None){

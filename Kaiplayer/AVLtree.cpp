@@ -43,10 +43,26 @@ int AVLtree::size()
 ///
 
 
-int AVLtree::getElementByKey(int id){
-    Node *t = getElementByKey(root, id);
-    if(t!=NULL) return t->key;
-    else return -1;
+int AVLtree::getElementByKey(int key){
+	id = 0;
+	return getIdByKey(root, key);
+}
+
+int AVLtree::getIdByKey(Node *node, int key)
+{
+	if (node == NULL) return -1;
+	if (key < node->key){
+		return getIdByKey(node->left, key);
+	}
+	else if (key > node->key){
+		id += node->num_of_elements_on_left + 1;
+		return getIdByKey(node->right, key);
+	}
+	else if (key == node->key){
+		id += node->num_of_elements_on_left;
+		return id;
+	}
+	return -1;
 }
 
 AVLtree::Node *AVLtree::getElementByKey(Node *root, int key){

@@ -380,7 +380,7 @@ bool StyleStore::changestyle(Styles *cstyl)
 			for(int i=0; i<grid->GetCount(); i++){
 				if(grid->GetDialogue(i)->Style==oldname)
 				{
-					grid->CopyDial(i)->Style=cstyl->Name;
+					grid->CopyDialogue(i)->Style=cstyl->Name;
 				}
 			}
 			grid->AdjustWidths(STYLE);
@@ -484,15 +484,15 @@ void StyleStore::LoadStylesS(bool isass)
 		Stylelistbox stl(this);
 		for(size_t i=0;i<tmps.size();i++){
 
-			stl.CheckListBox1->AppendItem(new ItemCheckBox(false, tmps[i]->Name));
+			stl.CheckListBox->AppendItem(new ItemCheckBox(false, tmps[i]->Name));
 		}
 		if(isass){ASS->SetSelection(wxNOT_FOUND);}else{Store->SetSelection(wxNOT_FOUND);}
 		if(stl.ShowModal()== wxID_OK){
-			for (size_t v=0;v<stl.CheckListBox1->GetCount();v++)
+			for (size_t v=0;v<stl.CheckListBox->GetCount();v++)
 			{
-				if(stl.CheckListBox1->GetItem(v, 0)->modified){
+				if(stl.CheckListBox->GetItem(v, 0)->modified){
 
-					int fstyle= (isass)? grid->FindStyle(stl.CheckListBox1->GetItem(v, 0)->name) : Options.FindStyle(stl.CheckListBox1->GetItem(v, 0)->name);
+					int fstyle= (isass)? grid->FindStyle(stl.CheckListBox->GetItem(v, 0)->name) : Options.FindStyle(stl.CheckListBox->GetItem(v, 0)->name);
 					if(fstyle==-1){
 						if(isass){grid->AddStyle(tmps[v]);ASS->Refresh(false);}
 						else{Options.AddStyle(tmps[v]);Store->Refresh(false);}
@@ -500,7 +500,7 @@ void StyleStore::LoadStylesS(bool isass)
 					else{
 						if(prompt != wxYES_TO_ALL && prompt != wxCANCEL){
 							prompt = KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"), 
-								stl.CheckListBox1->GetItem(v, 0)->name), _("Potwierdzenie"),wxYES_TO_ALL|wxYES|wxNO|wxCANCEL, this);
+								stl.CheckListBox->GetItem(v, 0)->name), _("Potwierdzenie"),wxYES_TO_ALL|wxYES|wxNO|wxCANCEL, this);
 							//if(prompt == wxID_CANCEL){return;}
 						}
 						if( prompt == wxYES || prompt == wxYES_TO_ALL  ){

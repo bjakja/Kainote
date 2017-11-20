@@ -62,8 +62,8 @@ public:
 	void DeleteRow(int rw,int len=1);
 	void DeleteText();
 	void GetUndo(bool redo, int iter = -2);
-	void InsertRows(int Row, const std::vector<Dialogue *> &RowsTable, bool AddToDestroy=false);
-	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy=true, bool Save=false);
+	void InsertRows(int Row, const std::vector<Dialogue *> &RowsTable, bool AddToDestroy=false, bool asKey = false);
+	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy = true, bool Save = false, bool asKey = false);
 	void SetSubsFormat(wxString ext="");
 	void AddSInfo(const wxString &SI, wxString val="", bool save=true);
 	void SetModified(unsigned char editionType, bool redit = true, bool dummy = false, int SetEditBoxLine = -1, bool Scroll = true);
@@ -71,9 +71,7 @@ public:
 	wxString GetSInfos(bool tld=false);
 	wxString GetSInfo(const wxString &key, int *ii=0);
 	SInfo *GetSInfoP(const wxString &key, int *ii=0);
-	int FirstSel();
-	wxArrayInt GetSels(bool deselect=false);
-	void GetSelectionsKeys(wxArrayInt &sels, bool deselect = false);
+	int FirstSelection();
 	void SwapRows(int frst, int scnd, bool sav=false);
 	void LoadSubtitles(const wxString &str, wxString &ext);
 	void MoveRows(int step, bool sav=false);
@@ -86,7 +84,7 @@ public:
 	int GetCount();
 	void NextLine(int dir=1);
 	void SaveSelections(bool clear=false);
-	Dialogue *CopyDial(int i, bool push=true);
+	Dialogue *CopyDialogue(int i, bool push=true);
 	Dialogue *GetDialogue(int i);
 	wxString *GetVisible(bool *visible=0, wxPoint *point = NULL, wxArrayInt *selected = NULL);
 	void RebuildActorEffectLists();
@@ -109,7 +107,6 @@ public:
 	bool isFiltered = false;
 	std::vector<wxArrayInt> SpellErrors;
 	std::vector<wxArrayInt> *Comparison;
-	std::set<int> Selections;
 	SubsFile* file;
 	EditBox *Edit;
 private:

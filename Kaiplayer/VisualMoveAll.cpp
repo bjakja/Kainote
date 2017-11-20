@@ -208,7 +208,8 @@ void MoveAll::ChangeInLines(bool all)
 	//D3DXVECTOR2 moving;
 	D3DXVECTOR2 moving = elems[numElem].elem - beforeMove;
 	int _time = tab->Video->Tell();
-	wxArrayInt sels= tab->Grid->GetSels();
+	wxArrayInt sels;
+	tab->Grid->file->GetSelections(sels);
 	wxString *dtxt;
 	if(!all){
 		if(!dummytext){
@@ -287,7 +288,7 @@ void MoveAll::ChangeInLines(bool all)
 		
 		}
 		if(all){
-			tab->Grid->CopyDial(sels[i])->Text=txt;
+			tab->Grid->CopyDialogue(sels[i])->Text=txt;
 		}else{
 			Dialogue Cpy=Dialogue(*Dial);
 			if(istexttl) {

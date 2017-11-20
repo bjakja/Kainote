@@ -473,11 +473,11 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->Video->GoToNextKeyframe();
 		tab->Video->RefreshTime();
 	}else if(id==SetVideoAtStart){
-		int fsel=tab->Grid->FirstSel();
+		int fsel=tab->Grid->FirstSelection();
 		if(fsel<0){return;}
 		tab->Video->Seek(MAX(0,tab->Grid->GetDialogue(fsel)->Start.mstime),true);
 	}else if(id==SetVideoAtEnd){
-		int fsel=tab->Grid->FirstSel();
+		int fsel=tab->Grid->FirstSelection();
 		if(fsel<0){return;}
 		tab->Video->Seek(MAX(0,tab->Grid->GetDialogue(fsel)->End.mstime),false);
 	}else if(id==ID_MOVE){
@@ -1303,8 +1303,8 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 
 		if (Options.GetBool(AutoSelectLinesFromLastTab)){
 			SubsGrid *old = Tabs->Page(Tabs->GetOldSelection())->Grid;
-			if (old->FirstSel() > -1){
-				cur->Grid->SelVideoLine(old->GetDialogue(old->FirstSel())->Start.mstime);
+			if (old->FirstSelection() > -1){
+				cur->Grid->SelVideoLine(old->GetDialogue(old->FirstSelection())->Start.mstime);
 			}
 		}
 	}

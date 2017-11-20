@@ -584,7 +584,8 @@ void Visuals::SetVisual(bool dummy, int type)
 	if(edit->IsCursorOnStart()){
 		//wxLogStatus("multiple lines");
 		wxString *dtxt;
-		wxArrayInt sels= tab->Grid->GetSels();
+		wxArrayInt sels; 
+		tab->Grid->file->GetSelections(sels);
 		bool skipInvisible = dummy && tab->Video->GetState() != Playing;
 		if(dummy && !dummytext){
 			bool visible=false;
@@ -608,9 +609,9 @@ void Visuals::SetVisual(bool dummy, int type)
 			ChangeVisual(&txt, Dial);
 			if(!dummy){
 				if(istxttl){
-					tab->Grid->CopyDial(sels[i])->TextTl=txt;
+					tab->Grid->CopyDialogue(sels[i])->TextTl=txt;
 				}else{
-					tab->Grid->CopyDial(sels[i])->Text=txt;
+					tab->Grid->CopyDialogue(sels[i])->Text=txt;
 				}
 			}else{
 				Dialogue Cpy=Dialogue(*Dial);
