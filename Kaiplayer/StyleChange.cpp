@@ -242,7 +242,6 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 	styleenc->Add(senc,1,wxEXPAND|wxALL,2);
 
 	KaiStaticBoxSizer *styleprev= new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Podgląd stylu:"));
-	//Preview= new KaiTextCtrl(this, -1, Options.GetString("Preview Text"), wxDefaultPosition, wxSize(-1,100), wxTE_PROCESS_ENTER|wxTE_MULTILINE|wxTE_CENTRE);
 	Preview= new StylePreview(this, -1, wxDefaultPosition, wxSize(-1,100));
 	styleprev->Add(Preview,1,wxEXPAND|wxALL,2);
 
@@ -251,9 +250,9 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 	btnCancel = new MappedButton(this, ID_BCANCEL, _("Anuluj"));
 	btnCommit = new MappedButton(this, ID_BONVID, _("Zastosuj"));
 	btnFullscreen = new MappedButton(this, ID_BONFULL, _("Zobacz na pełnym ekranie"));
-	buttons->Add(btnOk,(window)? 1 : 0,wxEXPAND|wxALL,2);
-	buttons->Add(btnCommit,(window)? 1 : 0,wxEXPAND|wxALL,2);
-	buttons->Add(btnCancel,(window)? 1 : 0,wxEXPAND|wxALL,2);
+	buttons->Add(btnOk,1,wxEXPAND|wxALL,2);
+	buttons->Add(btnCommit,1,wxEXPAND|wxALL,2);
+	buttons->Add(btnCancel,1,wxEXPAND|wxALL,2);
 	buttons->Add(btnFullscreen,0,wxEXPAND|wxALL,2);
 
 	//Main sizer

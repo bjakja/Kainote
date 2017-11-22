@@ -1107,7 +1107,11 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 			int erow= (SetEditBoxLine >= 0)? SetEditBoxLine : ebrow;
 			if(erow>=GetCount()){erow=GetCount()-1;}
 			lastRow=erow;
-			if(scPos>erow && Scroll){scPos=MAX(0,(erow-4));}
+			int w, h;
+			GetClientSize(&w, &h);
+			if ((scPos > erow || scPos + (h / (GridHeight + 1)) < erow+2) && Scroll){
+				scPos = MAX(0, erow - ((h / (GridHeight + 1)) / 2));
+			}
 			Edit->SetLine(erow);
 			file->InsertSelection(erow);
 		}

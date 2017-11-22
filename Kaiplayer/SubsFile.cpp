@@ -371,6 +371,14 @@ void SubsFile::InsertSelection(int i)
 	subs->Selections.insert(IdConverter->getElementById(i));
 }
 
+void SubsFile::InsertSelections(int from, int to)
+{
+	int fromKey = IdConverter->getElementById(from);
+	int toKey = IdConverter->getElementById(to);
+	for (int i = fromKey; i < toKey; i++)
+		subs->Selections.insert(i);
+}
+
 void SubsFile::InsertSelectionKey(int i)
 {
 	subs->Selections.insert(i);

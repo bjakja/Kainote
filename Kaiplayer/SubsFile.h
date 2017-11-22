@@ -129,6 +129,7 @@ public:
 	void GetSelections(wxArrayInt &selections, bool deselect=false);
 	void GetSelectionsAsKeys(wxArrayInt &selectionsKeys, bool deselect=false);
 	void InsertSelection(int i);
+	void InsertSelections(int from, int to);
 	void InsertSelectionKey(int i);
 	void EraseSelection(int i);
 	void EraseSelectionKey(int i);
