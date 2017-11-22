@@ -457,9 +457,8 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 	byte *texbuf;
 	byte bytes=(vformat==RGB32)? 4 : (vformat==YUY2)? 2 : 1;
 
-
 	D3DLOCKED_RECT d3dlr;
-	//wxLogStatus("kopiowanie");
+
 	if(nframe){	
 		fdata= nframe;
 		if(copy){byte *cpy = (byte*) datas; memcpy(cpy,fdata,vheight*pitch);}
@@ -484,7 +483,6 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 	texbuf = static_cast<byte *>(d3dlr.pBits);
 
 	diff=d3dlr.Pitch- (vwidth*bytes);
-	//wxLogStatus("diff %i", diff);	
 	//int check=0;	
 	if (!diff){memcpy(texbuf,fdata,(vheight*pitch));}
 	else{
@@ -774,6 +772,10 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			if(starttime){time++;}
 			time*=frameDuration;
 		}
+		//albo to przypadek albo ustawianie pozycji przed ustawianiem clipów jest rozwiązaniem dość częstego krasza
+		//przy wielu plikach jednocześnie, był zawsze po seekingu
+		playend = 0;
+		seek = true; vplayer->SetPosition(time);
 		if(VisEdit){
 			SAFE_DELETE(Vclips->dummytext);
 			if(Vclips->Visual==VECTORCLIP){
@@ -790,14 +792,13 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			OpenSubs((playing)? pan->Grid->SaveText() : pan->Grid->GetVisible(), true, playing);
 			if(playing){ pan->Edit->OnVideo=false;}
 		}	
-		playend=(IsDshow)? 0 : GetDuration();
-		seek=true; vplayer->SetPosition(time);
 	}else{
 		if(!VFF->isBusy || vstate == Playing){
 			lastframe = VFF->GetFramefromMS(_time,(time>_time)? 0 : lastframe); //- decr;
 			if(!starttime){lastframe--;if(VFF->Timecodes[lastframe]>=_time){lastframe--;}}
 			time = VFF->Timecodes[lastframe];
 			lasttime=timeGetTime()-time;
+			playend = GetDuration();
 			//lasttime=time;
 			//startTime = std::chrono::steady_clock::now();
 			if(VisEdit){

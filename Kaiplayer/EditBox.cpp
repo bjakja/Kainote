@@ -332,6 +332,8 @@ EditBox::~EditBox()
 
 void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool autoPlay)
 {
+	//if (!grid->GetCount()){ Enable(false); return; }
+	//else if (!IsEnabled()){ Enable(); }
 	TabPanel* pan=(TabPanel*)GetParent();
 	bool rowChanged = ebrow != Row;
 	if(nochangeline && !rowChanged){goto done;}

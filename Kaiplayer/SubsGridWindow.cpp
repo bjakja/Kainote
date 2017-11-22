@@ -158,7 +158,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		SpellErrors.resize(size);
 	}
 
-	Dialogue *acdial = GetDialogue(MID(0, Edit->ebrow, size - 1));
+	Dialogue *acdial = (size>0)? GetDialogue(MID(0, Edit->ebrow, size - 1)) : NULL;
 	Dialogue *Dial=NULL;
 	TabPanel *tab = (TabPanel*)GetParent();
 	int VideoPos = tab->Video->Tell();
@@ -299,7 +299,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					tdc.DrawLine(5, startDrawPosY + 2, 5, startDrawPosY + 7); 
 				}
 				//tdc.SetPen(SpelcheckerCol);
-				tdc.DrawLine(10, newPosY - 1, w, newPosY - 1);
+				tdc.DrawLine(10, newPosY - 1, w+scHor, newPosY - 1);
 			}
 			if (Dial){
 				if (!startBlock && Dial->isVisible == VISIBLE_BLOCK){
@@ -315,10 +315,10 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					tdc.DrawLine(5, startDrawPosYFromPlus, 5, halfLine);
 					tdc.DrawLine(5, halfLine, 11, halfLine);
 					if (!isLastLine || notVisibleBlock){
-						tdc.DrawLine(11, posY - 1, w, posY - 1);
+						tdc.DrawLine(11, posY - 1, w + scHor, posY - 1);
 					}
 					else if(i >= size){
-						tdc.DrawLine(11, posY +GridHeight, w, posY + GridHeight);
+						tdc.DrawLine(11, posY + GridHeight, w + scHor, posY + GridHeight);
 					}
 					startBlock = false;
 				}

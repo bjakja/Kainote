@@ -44,7 +44,8 @@ public:
 			delete deleteReference; deleteReference = NULL;
 		}
 		if (copy){
-			stored = new unsigned char(VISIBLE);
+			stored = new unsigned char(*sh.stored);
+			if (*stored < 1){ *stored = 1; }
 			deleteReference = new size_t(0);
 		}
 		else{

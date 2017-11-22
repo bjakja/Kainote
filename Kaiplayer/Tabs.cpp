@@ -860,7 +860,7 @@ int Notebook::FindTab(int x, int *_num)
 	}
 	return restab;
 }
-void Notebook::ChangeActiv()
+void Notebook::ChangeActive()
 {
 	wxWindow *win = FindFocus();
 	if (win && IsDescendant(Pages[iter])){
@@ -950,7 +950,7 @@ void Notebook::ChangePage(int i)
 
 	olditer=iter;
 	if(split && splititer==i){
-		ChangeActiv();return;
+		ChangeActive();return;
 	}
 	if(Pages[olditer]->Video->GetState()==Playing){Pages[olditer]->Video->Pause();}
 	if(split){

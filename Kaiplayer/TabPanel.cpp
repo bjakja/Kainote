@@ -111,17 +111,20 @@ void TabPanel::OnMouseEvent(wxMouseEvent& event)
 	{
 	bool click = event.LeftDown();
 	bool left_up = event.LeftUp();
-
+	int w, h;
+	Video->GetClientSize(&w, &h);
+	int npos = event.GetY();
 	if(event.Leaving()){
 		SetCursor(wxCURSOR_ARROW);}
-	else{
+	else if (npos < h && !click && !holding && !left_up){
+		SetCursor(wxCURSOR_NO_ENTRY); return;
+	}else{
 		SetCursor(wxCURSOR_SIZENS);}
 	
 
 	if (left_up && holding) {
 		ReleaseMouse();
 		holding = false;
-		int npos=event.GetY();
 		if(sline){
 			int x; 
 			sline->GetPosition(&x,&npos);
@@ -129,8 +132,9 @@ void TabPanel::OnMouseEvent(wxMouseEvent& event)
 			sline->Destroy();
 			sline=NULL;
 		}
-		int w,h, mw, mh;
-		Video->GetClientSize(&w,&h);
+		/*int w,h, mw, mh;
+		Video->GetClientSize(&w,&h);*/
+		int mw, mh;
 		GetClientSize(&mw,&mh);
 		if(npos>=mh){npos=mh-3;}
 		
@@ -154,19 +158,17 @@ void TabPanel::OnMouseEvent(wxMouseEvent& event)
 	if (click) {
 		holding = true;
 		CaptureMouse();
-		int px=2, py=event.GetY();
-		ClientToScreen(&px,&py);
-		sline= new wxDialog(this,-1,"",wxPoint(px,py),wxSize(GetSize().GetWidth(),2),wxSTAY_ON_TOP|wxBORDER_NONE);
-		//sline->SetBackgroundColour("#000000");
+		int px=2 , py=npos;
+		ClientToScreen(&px, &py);
+		sline = new wxDialog(this, -1, "", wxPoint(px, py), wxSize(GetSize().GetWidth(), 2), wxSTAY_ON_TOP | wxBORDER_NONE);
 		sline->SetBackgroundColour(Options.GetColour(WindowText));
 		sline->Show();
 	}
 
 	if (holding){
-		int npos=event.GetY();
 		int w=0,h=0;
 		Video->GetClientSize(&w,&h);
-		int limit=(Video->GetState()!=None&&Video->IsShown())? 350 : 150;
+		int limit=(Video->GetState()!=None && Video->IsShown())? 350 : 150;
 		if(npos!=h&&npos>limit){
 			int px=2, py=npos;
 			ClientToScreen(&px,&py);
@@ -184,7 +186,7 @@ void TabPanel::OnFocus(wxChildFocusEvent& event)
 
 	if(nt->GetTab()!=this)
 	{
-		nt->ChangeActiv();
+		nt->ChangeActive();
 	}
 	event.Skip();
 }

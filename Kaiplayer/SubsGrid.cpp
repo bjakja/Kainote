@@ -258,7 +258,7 @@ void SubsGrid::OnInsertAfter()
 
 void SubsGrid::OnDuplicate()
 {
-	SaveSelections();
+	SaveSelections(true);
 	int rw=selections[0];
 	int rw1=rw+1;
 	for(size_t i=1; i<selections.GetCount(); i++){if(rw1==selections[i]){rw1++;}else{break;} }
@@ -266,13 +266,14 @@ void SubsGrid::OnDuplicate()
 	std::vector<Dialogue *> dupl;
 	for(int i=0; i<rw2; i++){
 		dupl.push_back(file->CopyDialogue(i+rw,false));
+		file->InsertSelection(rw1 + i);
 	}
 
 	if(dupl.size()>0){
 		InsertRows(rw1, dupl);
 		dupl.clear();
 	}
-	SetModified(GRID_DUPLICATE, false);
+	SetModified(GRID_DUPLICATE, true, false, rw1);
 	Refresh(false);
 }
 

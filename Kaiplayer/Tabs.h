@@ -45,7 +45,7 @@ class Notebook : public wxWindow
 		int FindTab(int x, int *num);
 		int FindPanel(TabPanel* pan);
 		int GetHeight();
-		void ChangeActiv();
+		void ChangeActive();
 		void RefreshBar();
 		void SubsComparison();
 

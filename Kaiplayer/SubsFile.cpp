@@ -154,7 +154,7 @@ File *File::Copy(bool copySelections)
 	file->dials = dials;
 	file->styles= styles;
 	file->sinfo = sinfo;
-	if (copySelections)
+	//if (copySelections)
 		file->Selections = Selections;
 	file->activeLine = activeLine;
 	file->markerLine = markerLine;
@@ -347,6 +347,7 @@ void SubsFile::DeleteDialoguesByKeys(int from, int to)
 
 void SubsFile::GetSelections(wxArrayInt &selections, bool deselect)
 {
+	selections.clear();
 	for (std::set<int>::iterator i = subs->Selections.begin(); i != subs->Selections.end(); i++){
 		int sel = IdConverter->getElementByKey(*i);
 		if(sel >= 0) 
@@ -357,6 +358,7 @@ void SubsFile::GetSelections(wxArrayInt &selections, bool deselect)
 
 void SubsFile::GetSelectionsAsKeys(wxArrayInt &selectionsKeys, bool deselect)
 {
+	selectionsKeys.clear();
 	for (std::set<int>::iterator i = subs->Selections.begin(); i != subs->Selections.end(); i++){
 		selectionsKeys.Add(*i);
 	}
@@ -390,15 +392,24 @@ int SubsFile::FindIdFromKey(int key, int *corrected)
 	int Id = IdConverter->getElementByKey(key);
 	if (Id < 0){
 		Id = 0;
-		if (key >= subs->dials.size()){ key = subs->dials.size()-1; }
-		int i = key;
+		int size = subs->dials.size();
+		if (key >= size){ key = size - 1; }
+		int i = key-1;
 		while (i >= 0){
 			if (subs->dials[i]->isVisible != NOT_VISIBLE){
-				Id = IdConverter->getElementByKey(i); break;
+				if (corrected){ *corrected = i; }
+				return IdConverter->getElementByKey(i);
 			}
 			i--;
 		}
-		if (corrected){ *corrected = i; }
+		i = key+1;
+		while (i < size){
+			if (subs->dials[i]->isVisible != NOT_VISIBLE){
+				if (corrected){ *corrected = i; }
+				return IdConverter->getElementByKey(i);
+			}
+			i++;
+		}
 	}
 	return Id;
 }
@@ -512,7 +523,6 @@ void SubsFile::ReloadVisibleDialogues()
 		}
 		i++;
 	}
-	assert(IdConverter->size() <= size);
 }
 
 unsigned char SubsFile::CheckIfHasHiddenBlock(int i){
@@ -531,9 +541,8 @@ unsigned char SubsFile::CheckIfHasHiddenBlock(int i){
 	int keyFirst = (i < 0) ? -1 : IdConverter->getElementById(i);
 	int keySecond = IdConverter->getElementById(i + 1);
 	if ((keyFirst + 1) != keySecond){
-		int size = subs->dials.size();
 		int j = keyFirst + 1;
-		if (keySecond < 0){ keySecond = size; }
+		if (keySecond < 0){ keySecond = subs->dials.size(); }
 		while (j < keySecond){
 			if (!subs->dials[j]->NonDialogue){ return 1; }
 			j++;
@@ -547,7 +556,7 @@ void SubsFile::GetHistoryTable(wxArrayString *history)
 {
 	for(size_t i = 0; i < undo.size(); i++){
 		history->push_back(historyNames[undo[i]->etidtionType] + 
-			wxString::Format(_(", aktywna linia %i"), GetElementByKey(undo[i]->activeLine) + 1);
+			wxString::Format(_(", aktywna linia %i"), GetElementByKey(undo[i]->activeLine) + 1));
 	}
 }
 

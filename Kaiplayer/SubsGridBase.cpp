@@ -1010,7 +1010,7 @@ void SubsGridBase::InsertRows(int Row,
 //a podwójne dodanie to krasz przy niszczeniu obiektu.
 void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save, bool asKey)
 {
-	SaveSelections();
+	//SaveSelections();
 	int convertedRow = (asKey)? Row : file->IdConverter->getElementById(Row);
 	if (convertedRow < 0){ convertedRow = file->subs->dials.size(); }
 	file->subs->dials.insert(file->subs->dials.begin() + convertedRow, NumRows, Dialog);
@@ -1334,11 +1334,12 @@ bool SubsGridBase::SetTlMode(bool mode)
 void SubsGridBase::NextLine(int dir)
 {
 	if(Edit->ABox && Edit->ABox->audioDisplay->hold!=0){return;}
-	int nebrow=Edit->ebrow+dir;
-	if(nebrow<0){return;}
-	if(nebrow>=GetCount()){
-		Dialogue *tmp=GetDialogue(GetCount()-1)->Copy();
-		tmp->isVisible = VISIBLE;
+	int size = GetCount();
+	if (size < 1){ dir = 0; }
+	int nebrow = Edit->ebrow + dir;
+	if(nebrow < 0){return;}
+	if (nebrow >= size){
+		Dialogue *tmp = GetDialogue(size - 1)->Copy();
 		int eend= tmp->End.mstime; 
 		tmp->Start.NewTime(eend); 
 		tmp->End.NewTime(eend+5000);
@@ -1584,8 +1585,8 @@ void SubsGridBase::SaveSelections(bool clear)
 	file->undo[file->iter]->activeLine = file->GetElementById(Edit->ebrow);
 	file->undo[file->iter]->markerLine = file->GetElementById(markedLine);
 	file->undo[file->iter]->scrollPosition = file->GetElementById(scPos);
-	savedSelections = true;
 	if (clear){ file->ClearSelections(); }
+	savedSelections = true;
 }
 
 bool SubsGridBase::IsNumber(const wxString &test) {
