@@ -121,6 +121,7 @@ public:
 	Dialogue *CopyDialogue(int i, bool push=true, bool keepstate=false);
 	Dialogue *CopyDialogueByKey(int i, bool push = true, bool keepstate = false);
 	Dialogue *GetDialogue(int i, int *key=NULL);
+	Dialogue *GetDialogueByKey(int i);
 	Dialogue *&operator[](int i);
 	void DeleteDialogues(int from, int to);
 	void DeleteDialoguesByKeys(int from, int to);

@@ -152,10 +152,12 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 	TabPanel *tab=Kai->GetTab();
 	tab->Grid->SaveSelections(sopt == 0);
 	File *Subs = tab->Grid->file->GetSubs();
+	bool skipFiltered = !tab->Grid->ignoreFiltered;
 
 	for (int i = 0; i < Subs->dials.size(); i++)
 	{
 		Dialogue *Dial = Subs->dials[i];
+		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue){ continue; }
 
 		if(wrep==STYLE){
 			txt=Dial->Style;}

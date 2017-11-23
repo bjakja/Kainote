@@ -472,42 +472,49 @@ void SubsGridWindow::AdjustWidths(int cell)
 	int law = 0, startMax = 0, endMax = 0, stw = 0, edw = 0, syw = 0, acw = 0, efw = 0, fw = 0, fh = 0;
 	bool shml = false, shmr = false, shmv = false;
 
-
-	int maxx = GetCount();
+	File *Subs = file->GetSubs();
+	int maxx = Subs->dials.size();
 
 	dc.GetTextExtent(wxString::Format("%i", maxx), &fw, &fh, NULL, NULL, &font);
 	GridWidth[0] = fw + 10;
-	Dialogue *ndial;
+	Dialogue *dial;
 	for (int i = 0; i<maxx; i++){
-		ndial = GetCheckedDialogue(i);
+		dial = Subs->dials[i];
+		if (!dial->isVisible){ continue; }
+		if (first){
+			if (dial->Form != subsFormat){ dial->Convert(subsFormat); }
+			if (dial->Start.mstime > dial->End.mstime){
+				dial->End.mstime = dial->Start.mstime;
+			}
+		}
 		if (START & cell){
-			if (ndial->Start.mstime > startMax){ startMax = ndial->Start.mstime; }
+			if (dial->Start.mstime > startMax){ startMax = dial->Start.mstime; }
 		}
 		if ((END & cell) && subsFormat != TMP){
-			if (ndial->End.mstime > endMax){ endMax = ndial->End.mstime; }
+			if (dial->End.mstime > endMax){ endMax = dial->End.mstime; }
 		}
 
 
 		if (subsFormat<SRT){
-			if ((LAYER & cell) && ndial->Layer != 0){
-				dc.GetTextExtent(wxString::Format("%i", ndial->Layer), &fw, &fh, NULL, NULL, &font);
+			if ((LAYER & cell) && dial->Layer != 0){
+				dc.GetTextExtent(wxString::Format("%i", dial->Layer), &fw, &fh, NULL, NULL, &font);
 				if (fw + 10>law){ law = fw + 10; }
 			}
 			if (STYLE & cell){
-				dc.GetTextExtent(ndial->Style, &fw, &fh, NULL, NULL, &font);
+				dc.GetTextExtent(dial->Style, &fw, &fh, NULL, NULL, &font);
 				if (fw + 10>syw){ syw = fw + 10; }
 			}
-			if ((ACTOR & cell) && ndial->Actor != ""){
-				dc.GetTextExtent(ndial->Actor, &fw, &fh, NULL, NULL, &font);
+			if ((ACTOR & cell) && dial->Actor != ""){
+				dc.GetTextExtent(dial->Actor, &fw, &fh, NULL, NULL, &font);
 				if (fw + 10>acw){ acw = fw + 10; }
 			}
-			if ((EFFECT & cell) && ndial->Effect != ""){
-				dc.GetTextExtent(ndial->Effect, &fw, &fh, NULL, NULL, &font);
+			if ((EFFECT & cell) && dial->Effect != ""){
+				dc.GetTextExtent(dial->Effect, &fw, &fh, NULL, NULL, &font);
 				if (fw + 10>efw){ efw = fw + 10; }
 			}
-			if ((MARGINL & cell) && ndial->MarginL != 0){ shml = true; }
-			if ((MARGINR & cell) && ndial->MarginR != 0){ shmr = true; }
-			if ((MARGINV & cell) && ndial->MarginV != 0){ shmv = true; }
+			if ((MARGINL & cell) && dial->MarginL != 0){ shml = true; }
+			if ((MARGINR & cell) && dial->MarginR != 0){ shmr = true; }
+			if ((MARGINV & cell) && dial->MarginV != 0){ shmv = true; }
 		}
 	}
 
@@ -763,7 +770,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		// Toggle selected
 		if (left_up && ctrl && !shift && !alt) {
 			if (Edit->ebrow != lastActiveLine || Edit->ebrow != row){
-				SelectRow(row, true, file->IsSelected(row));
+				SelectRow(row, true, !file->IsSelected(row));
 				return;
 			}
 
@@ -1237,15 +1244,15 @@ void SubsGridWindow::SelVideoLine(int curtime)
 
 }
 
-Dialogue *SubsGridWindow::GetCheckedDialogue(int rw)
-{
-	Dialogue *dial = file->GetDialogue(rw);
-	if (first){
-		if (dial->Form != subsFormat){ dial->Convert(subsFormat); }
-		if (dial->Start.mstime > dial->End.mstime){
-			dial->End.mstime = dial->Start.mstime;
-		}
-	}
-	return dial;
-}
+//Dialogue *SubsGridWindow::GetCheckedDialogue(int rw)
+//{
+//	Dialogue *dial = file->GetDialogue(rw);
+//	if (first){
+//		if (dial->Form != subsFormat){ dial->Convert(subsFormat); }
+//		if (dial->Start.mstime > dial->End.mstime){
+//			dial->End.mstime = dial->Start.mstime;
+//		}
+//	}
+//	return dial;
+//}
 

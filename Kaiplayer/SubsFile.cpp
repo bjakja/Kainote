@@ -313,6 +313,11 @@ Dialogue *SubsFile::GetDialogue(int i, int *key)
 	return subs->dials[Key];
 }
 
+Dialogue *SubsFile::GetDialogueByKey(int Key)
+{
+	return subs->dials[Key];
+}
+
 Dialogue *&SubsFile::operator[](int i)
 {
 	int Key = IdConverter->getElementById(i);

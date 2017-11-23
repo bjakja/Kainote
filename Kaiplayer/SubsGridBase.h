@@ -85,6 +85,7 @@ public:
 	void NextLine(int dir=1);
 	void SaveSelections(bool clear=false);
 	Dialogue *CopyDialogue(int i, bool push=true);
+	Dialogue *CopyDialogueByKey(int i, bool push = true);
 	Dialogue *GetDialogue(int i);
 	wxString *GetVisible(bool *visible=0, wxPoint *point = NULL, wxArrayInt *selected = NULL);
 	void RebuildActorEffectLists();
@@ -105,6 +106,7 @@ public:
 	bool showFrames = false;
 	bool savedSelections = false;
 	bool isFiltered = false;
+	bool ignoreFiltered = false;
 	std::vector<wxArrayInt> SpellErrors;
 	std::vector<wxArrayInt> *Comparison;
 	SubsFile* file;

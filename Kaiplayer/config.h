@@ -132,6 +132,7 @@
 	CG(GridFilterStyles,)\
 	CG(GridHideCollums,)\
 	CG(GridHideTags,)\
+	CG(GridIgnoreFiltering,)\
 	CG(GridLoadSortedSubs,)\
 	CG(GridSaveAfterCharacterCount,)\
 	CG(GridTagsSwapChar,)\

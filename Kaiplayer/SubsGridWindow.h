@@ -43,7 +43,7 @@ protected:
 	void OnScroll(wxScrollWinEvent& event);
 	void OnSize(wxSizeEvent& event);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } holding = false; };
-	Dialogue * GetCheckedDialogue(int i);
+	//Dialogue * GetCheckedDialogue(int i);
 
 	int GridWidth[13];
 	int posY=0;
