@@ -752,7 +752,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	TabPanel *pan = (TabPanel*)GetParent();
 	VideoCtrl *video = pan->Video;
 	bool changeActive = Options.GetBool(GridChangeActiveOnSelection);
-	int mvtal = video->vToolbar->videoSeekAfter->GetSelection();//
+	int mvtal = video->vToolbar->videoSeekAfter->GetSelection();
 	int pas = video->vToolbar->videoPlayAfter->GetSelection();
 	if (!(row < scPos || row >= GetCount())) {
 
@@ -769,8 +769,9 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 		// Toggle selected
 		if (left_up && ctrl && !shift && !alt) {
-			if (Edit->ebrow != lastActiveLine || Edit->ebrow != row){
+			if (!(Edit->ebrow == row && file->SelectionsSize()==1)){
 				SelectRow(row, true, !file->IsSelected(row));
+				if (file->SelectionsSize() < 1){ SelectRow(Edit->ebrow); }
 				return;
 			}
 
@@ -782,7 +783,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 
 			//jakbym chcia³ znów daæ zmianê edytowanej linii z ctrl to muszê dorobiæ mu refresh
-			if (click && (changeActive || !ctrl) || (dclick && ctrl)) {/*(click && !ctrl)*/
+			if (click && (changeActive || !ctrl) || (dclick && ctrl)) {
 				lastActiveLine = Edit->ebrow;
 				Edit->SetLine(row, true, true, true, !ctrl);
 				if (hasTLMode){ Edit->SetActiveLineToDoubtful(); }
@@ -806,8 +807,8 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		}
 
 		if (middle){
-			if (video->GetState() != None){//
-				video->PlayLine(GetDialogue(row)->Start.mstime, video->GetPlayEndTime(GetDialogue(row)->End.mstime) /*- video->avtpf*/);
+			if (video->GetState() != None){
+				video->PlayLine(GetDialogue(row)->Start.mstime, video->GetPlayEndTime(GetDialogue(row)->End.mstime));
 			}
 
 		}
