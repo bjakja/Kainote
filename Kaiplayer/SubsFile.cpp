@@ -335,8 +335,13 @@ Dialogue *&SubsFile::operator[](int i)
 void SubsFile::DeleteDialogues(int from, int to)
 {
 	edited = true;
-	subs->dials.erase(subs->dials.begin() + IdConverter->getElementById(from), subs->dials.begin() + IdConverter->getElementById(to));
-	for (int i = from; i <= to; i++){
+	if (to < IdConverter->size()){
+		subs->dials.erase(subs->dials.begin() + IdConverter->getElementById(from), subs->dials.begin() + IdConverter->getElementById(to));
+	}
+	else{
+		subs->dials.erase(subs->dials.begin() + IdConverter->getElementById(from), subs->dials.end());
+	}
+	for (int i = from; i < to; i++){
 		IdConverter->deleteItemById(i);
 	}
 }
@@ -345,7 +350,7 @@ void SubsFile::DeleteDialoguesByKeys(int from, int to)
 {
 	edited = true;
 	subs->dials.erase(subs->dials.begin() + from, subs->dials.begin() + to);
-	for (int i = from; i <= to; i++){
+	for (int i = from; i < to; i++){
 		IdConverter->deleteItemByKey(i);
 	}
 }

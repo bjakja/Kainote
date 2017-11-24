@@ -301,7 +301,8 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 		en1 = " ";
 	}
 	else if (idd == JoinWithNext){
-		if (Edit->ebrow >= GetCount() || GetCount() < 2){ return; }
+		int sizegrid = GetCount();
+		if (Edit->ebrow >= sizegrid-1 || sizegrid < 2){ return; }
 		selections.Clear();
 		selections.Add(Edit->ebrow);
 		selections.Add(Edit->ebrow + 1);
