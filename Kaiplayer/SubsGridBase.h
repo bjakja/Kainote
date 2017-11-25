@@ -44,9 +44,9 @@ public:
 	void Clearing();
 	void Convert(char type);
 
-	int FindStyle(wxString name,int *multiplication=NULL);
+	int FindStyle(const wxString &name,int *multiplication=NULL);
 	wxString GetStyles(bool tld=false);
-	Styles *GetStyle(int i,wxString name="");
+	Styles *GetStyle(int i, const wxString &name="");
 	std::vector<Styles*> *GetStyleTable();
 	
 	

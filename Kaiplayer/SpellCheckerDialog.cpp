@@ -101,7 +101,7 @@ wxString SpellCheckerDialog::FindNextMisspell()
 		errors.clear();
 		Dialogue *Dial = tab->Grid->GetDialogue(i);
 		if(Dial->IsComment && noComments){continue;}
-		wxString &Text = (tab->Grid->hasTLMode)? Dial->TextTl : Dial->Text;
+		const wxString &Text = (tab->Grid->hasTLMode)? Dial->TextTl : Dial->Text;
 		//w checktext kopiuje tekst więc nie muszę robić tego dwa razy.
 		tab->Grid->CheckText(Text, errors);
 		if(i != lastLine){lastMisspell=0;}
@@ -158,7 +158,7 @@ void SpellCheckerDialog::Replace(wxCommandEvent &evt)
 	if(replaceTxt.IsEmpty() || errors.size()<2){return;}
 	tab = Kai->GetTab();
 	Dialogue *Dial = tab->Grid->CopyDialogue(lastLine);
-	wxString &Text = (tab->Grid->hasTLMode)? Dial->TextTl : Dial->Text;
+	wxString &Text = Dial->Text.CheckTlRef(Dial->TextTl, tab->Grid->hasTLMode);
 	int start = errors[lastMisspell-2];
 	int end = errors[lastMisspell-1]+1;
 	Text.replace(start, end - start, replaceTxt);
@@ -205,7 +205,7 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 		}
 		if(changed){
 			Dialogue *Dialc = tab->Grid->CopyDialogue(i);
-			wxString &TextToChange = (tab->Grid->hasTLMode)? Dialc->TextTl : Dialc->Text;
+			wxString &TextToChange = Dialc->Text.CheckTlRef(Dialc->TextTl, tab->Grid->hasTLMode);
 			TextToChange=Text;
 			tab->Grid->SpellErrors[i].clear();
 		}
@@ -273,7 +273,7 @@ void SpellCheckerDialog::OnActive(wxActivateEvent &evt)
 {
 	if(evt.GetActive()){
 		TabPanel *tab1 = Kai->GetTab();
-		wxString &ActualText = (tab1->Grid->hasTLMode)? tab1->Edit->line->TextTl : tab1->Edit->line->Text;
+		wxString &ActualText = tab1->Edit->line->Text.CheckTlRef(tab1->Edit->line->TextTl, tab->Grid->hasTLMode);
 		if(tab != tab1 || lastActiveLine != tab1->Edit->ebrow || lastText != ActualText){
 			lastMisspell=0;
 			SetNextMisspell();

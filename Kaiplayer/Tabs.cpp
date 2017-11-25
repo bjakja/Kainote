@@ -1024,11 +1024,10 @@ void Notebook::SubsComparison()
 
 			Dialogue *dial2=G2->GetDialogue(j);
 			if(dial1->Start == dial2->Start && dial1->End == dial2->End){
-				CompareTexts((G1->hasTLMode && dial1->TextTl != "")? dial1->TextTl : dial1->Text, (G2->hasTLMode && dial2->TextTl != "")? dial2->TextTl : dial2->Text, G1->Comparison->at(i), G2->Comparison->at(j));
+				CompareTexts((G1->hasTLMode && dial1->TextTl != "") ? dial1->TextTl : dial1->Text, (G2->hasTLMode && dial2->TextTl != "") ? dial2->TextTl : dial2->Text, G1->Comparison->at(i), G2->Comparison->at(j));
 				lastJ=j+1;
 				break;
 			}
-
 			j++;
 		}
 
@@ -1039,7 +1038,7 @@ void Notebook::SubsComparison()
 }
 
 
-void Notebook::CompareTexts(wxString &first, wxString &second, wxArrayInt &firstCompare, wxArrayInt &secondCompare)
+void Notebook::CompareTexts(const wxString &first, const wxString &second, wxArrayInt &firstCompare, wxArrayInt &secondCompare)
 {
 
 	if(first==second){

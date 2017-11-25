@@ -68,7 +68,7 @@ class Notebook : public wxWindow
 		void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
 		void OnCharHook(wxKeyEvent& event);
 		void CalcSizes(bool makeActiveVisible=false);
-		void CompareTexts(wxString &first, wxString &second, wxArrayInt &firstCompare, wxArrayInt &secondCompare);
+		void CompareTexts(const wxString &first, const wxString &second, wxArrayInt &firstCompare, wxArrayInt &secondCompare);
 		int TabHeight;
 		int olditer;
 		int over;

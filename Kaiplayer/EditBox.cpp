@@ -33,7 +33,7 @@ DescTxtCtrl::DescTxtCtrl(wxWindow *parent, int id, const wxSize &size, const wxS
 	choiceText->Bind(wxEVT_KILL_FOCUS, &DescTxtCtrl::OnKillFocus,this);
 }
 
-void DescTxtCtrl::ChangeValue(wxString &val)
+void DescTxtCtrl::ChangeValue(const wxString &val)
 {
 	if(val=="" && !choiceText->HasFocus()){
 		SetForegroundColour(WindowTextInactive); 
@@ -609,8 +609,8 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 				else{dialc->Text=txt;}
 			}else{
 				if(grid->hasTLMode && dialc->TextTl!=""){
-					dialc->TextTl.Prepend("{"+text+"}");}
-				else{dialc->Text.Prepend("{"+text+"}");}
+					dialc->TextTl->Prepend("{"+text+"}");}
+				else{dialc->Text->Prepend("{"+text+"}");}
 			}
 		}
 		grid->SetModified(EDITBOX_MULTILINE_EDITION);
@@ -701,7 +701,7 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 			}
 			else
 			{
-				dialc->Text.Prepend(chars+text+chare);
+				dialc->Text->Prepend(chars+text+chare);
 			}
 		}
 		grid->SetModified(EDITBOX_MULTILINE_EDITION);

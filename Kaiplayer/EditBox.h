@@ -39,7 +39,7 @@ class DescTxtCtrl : public KaiChoice
 public:
 	DescTxtCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc, const wxValidator &validator = wxDefaultValidator);
 	virtual ~DescTxtCtrl(){};
-	void ChangeValue(wxString &val);
+	void ChangeValue(const wxString &val);
 private:
 	void OnFocus(wxFocusEvent &evt);
 	void OnKillFocus(wxFocusEvent &evt);

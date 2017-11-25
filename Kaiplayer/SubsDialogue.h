@@ -85,66 +85,83 @@ private:
 };
 
 //dialogue strings helper class
-class StoreTextHelper : public wxString{
+class StoreTextHelper{
 public:
-	StoreTextHelper():wxString(){}
-	StoreTextHelper(StoreTextHelper &sh){
+	StoreTextHelper(){}
+	StoreTextHelper(const StoreTextHelper &sh){
 		Store(sh);
 	}
-	StoreTextHelper(const wxString &txt){
+	/*StoreTextHelper(const wxString &txt){
 		StoreText(txt);
 	}
+	StoreTextHelper(const char *txt){
+		StoreText(txt);
+	}
+	StoreTextHelper(const wchar_t *txt){
+		StoreText(txt);
+	}*/
 	~StoreTextHelper(){
 		if (*deleteReference < 1){
-			delete this;
+			delete stored; stored = NULL;
 			delete deleteReference; deleteReference = NULL;
 		}
 		else{
 			(*deleteReference)--;
 		}
 	};
-	void Store(StoreTextHelper &sh){
+	void Store(const StoreTextHelper &sh){
 		if (*deleteReference < 1){
-			delete this;
+			delete stored; stored = NULL;
 			delete deleteReference; deleteReference = NULL;
 		}
-		wxString * sthis = this;
-		sthis = &sh;
-		if (deleteReference){ delete deleteReference; }
+		else{
+			(*deleteReference)--;
+		}
+		stored = sh.stored;
 		deleteReference = sh.deleteReference;
 		(*deleteReference)++;
 		
 	};
 	void StoreText(const wxString &txt){
 		if (*deleteReference < 1){
-			delete this;
-			//delete deleteReference; deleteReference = NULL;
+			delete stored; stored = NULL;
+			delete deleteReference; deleteReference = NULL;
 		}
 		else{
-			deleteReference = new size_t(0);
+			(*deleteReference)--;
 		}
-		*this = txt;
+		deleteReference = new size_t(0);
+		stored = new wxString(txt);
 	};
+	StoreTextHelper &operator =(const StoreTextHelper &sh){
+		Store(sh);
+		return *this;
+	}
 	
 	StoreTextHelper &operator =(const wxString &newString){
 		StoreText(newString);
 		return *this;
 	}
-	wxString &operator =(StoreTextHelper &sh){
-		Store(sh);
-		return *this;
+	operator const wxString&(){ 
+		return *stored; 
 	}
-	bool operator !=(const wxString &comptext){ return comptext != (*this); };
-	bool operator ==(const wxString &comptext){ return comptext == (*this); };
+	bool operator !=(const wxString &comptext) const{ return comptext != (*stored); };
+	bool operator !=(const char *comptext) const{ return comptext != (*stored); };
+	bool operator ==(const wxString &comptext) const{ return comptext == (*stored); };
+	bool operator ==(const char *comptext) const{ return comptext == (*stored); };
 	wxString &operator <<(wxString &text){
-		StoreText(*this << text);
-		return *this;
+		StoreText(*stored << text);
+		return *stored;
+	};
+	wxString &operator <<(const char *text){
+		StoreText(*stored << text);
+		return *stored;
 	};
 	//Operator kopiuje wskaŸnik bo w wiêkszoœci przypadków potrzebujemy kopiê. Gdy nie u¿ywamy *
-	wxString *operator ->(){ StoreText(*this); return this; }
+	wxString *operator ->(){ StoreText(*stored); return stored; }
 	//Operator zwraca czysty wskaŸnik, nie mo¿na go zmieniaæ, tylko do sprawdzania
-	//wxString operator *(){ return *this; }
-	//const wxString &operator &(){ return *this; }
+	//wxString operator *(){ return *stored; }
+	//const wxString &operator &(){ return *stored; }
 	wxString &CheckTlRef(StoreTextHelper &TextTl, bool condition){ 
 		if (condition) { 
 			return *TextTl.Copy();
@@ -155,18 +172,30 @@ public:
 	}
 	wxString CheckTl(const StoreTextHelper &TextTl, bool condition){
 		if (condition) {
-			return TextTl;
+			return *TextTl.stored;
 		}
 		else {
-			return *this;
+			return *stored;
 		}
 	}
-	size_t Len(){ return wxString::Len(); }
-	int CmpNoCase(const StoreTextHelper &TextTl) const{
-		return wxString::CmpNoCase(TextTl);
+	size_t Len() const{ 
+		return stored->Len(); 
 	}
+	int CmpNoCase(const StoreTextHelper &TextTl) const{
+		return stored->CmpNoCase(*TextTl.stored);
+	}
+	bool empty() const{
+		return stored->empty();
+	}
+	wxString & Trim(bool fromRight = true){
+		return stored->Trim(fromRight);
+	}
+	const wxScopedCharBuffer mb_str(const wxMBConv& conv = wxConvLibc) const{
+		return stored->mb_str(conv);
+	}
+	wxString *Copy(){ StoreText(*stored); return stored; }
 private:
-	wxString *Copy(){ StoreText(*this); return this; }
+	wxString *stored = new wxString();
 	size_t *deleteReference = new size_t(0);
 };
 
@@ -194,7 +223,7 @@ class Dialogue
 {
 
 public:
-	wxString Style, Actor, Effect, Text, TextTl;
+	StoreTextHelper Style, Actor, Effect, Text, TextTl;
 	STime Start, End;
 	int Layer;
 	short MarginL, MarginR, MarginV;

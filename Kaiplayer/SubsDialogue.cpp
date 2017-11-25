@@ -129,8 +129,8 @@ void Dialogue::SetRaw(const wxString &ldial)
 		eend=eend.AfterFirst(' ');
 		End.SetRaw(eend.BeforeFirst('\r',&ttext),Form);
 		Text = ttext.AfterFirst('\n');
-		Text.Replace("\r","");
-		Text.Replace("\n","\\N");
+		Text->Replace("\r","");
+		Text->Replace("\n","\\N");
 		NonDialogue=false;
 		IsComment=false;
 	}
@@ -180,8 +180,8 @@ void Dialogue::SetRaw(const wxString &ldial)
 		IsComment=false;
 		Style="Default";
 		Text=ldial;
-		Text.Replace("\r","");
-		Text.Replace("\n","\\N");
+		Text->Replace("\r","");
+		Text->Replace("\n","\\N");
 		Text.Trim(true);
 	}
 
@@ -195,14 +195,14 @@ void Dialogue::GetRaw(wxString *txt, bool tl, const wxString &style)
 		if(IsComment){line=_T("Comment: ");}else{line=_T("Dialogue: ");}
 		bool styleTl = style!="";
 		const wxString &Styletl=(styleTl)?style : Style;
-		const wxString &EffectTl = (State & 4 && styleTl)? "\fD" : Effect;
+		const wxString &EffectTl = (State & 4 && styleTl)? wxString("\fD") : Effect;
 		line<<Layer<<_T(",")<<Start.raw(Form)<<_T(",")
 			<<End.raw(Form)<<_T(",")<<Styletl<<_T(",")<<Actor<<_T(",")
 			<<MarginL<<_T(",")
 			<<MarginR<<_T(",")
 			<<MarginV<<_T(",")
 			<<EffectTl<<_T(",");
-			line += (tl)?TextTl : Text;
+			line += (tl)? TextTl : Text;
 		//line+=wxString::Format("%i,%s,%s,%s,%s,%i,%i,%i,%s,%s",(int)Layer,Start.raw().data(),End.raw().data(),Styletl.data(),Actor.data(),(int)MarginL,(int)MarginR,(int)MarginV,Effect.data(),txttl.data());
 
 	}else if(Form==MDVD){
@@ -227,7 +227,7 @@ wxString Dialogue::GetCols(int cols, bool tl, const wxString &style)
 {
 
 	wxString line;
-	wxString txttl=(tl)?TextTl:Text;
+	wxString txttl=(tl)? TextTl : Text;
 	if(cols & 2048){
 		wxRegEx reg(_T("\\{[^\\{]*\\}"),wxRE_ADVANCED);
 		reg.ReplaceAll(&txttl,_T(""));
@@ -307,7 +307,7 @@ void Dialogue::Convert(char type, const wxString &pref)
 			if(type<SRT){Text= pref;}else{Text="";}
 			if(il>0){Text<<ital;}
 			Text<<tmp;
-			Text.Replace("}{","");
+			Text->Replace("}{","");
 		}else{
 			wxRegEx regibu(_T("\\<([ibu])\\>"),wxRE_ADVANCED);
 			wxRegEx regibu0(_T("\\</([ibu])\\>"),wxRE_ADVANCED);
@@ -462,9 +462,9 @@ void Dialogue::ChangeTimes(int start, int end)
 			timesString << t1 << "," << t2;
 			replaceMismatch += totalLen - timesString.Len();
 			if(TextTl != ""){
-				TextTl.replace(t1Pos, totalLen, timesString);
+				TextTl->replace(t1Pos, totalLen, timesString);
 			}else{
-				Text.replace(t1Pos, totalLen, timesString);
+				Text->replace(t1Pos, totalLen, timesString);
 			}
 			break;
 		}

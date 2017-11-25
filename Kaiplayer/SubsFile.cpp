@@ -282,6 +282,11 @@ int SubsFile::Iter()
     return iter;
 }
 
+int SubsFile::GetAllCount()
+{
+	return subs->dials.size();
+}
+
 Dialogue *SubsFile::CopyDialogue(int i, bool push, bool keepstate)
 {
 	Dialogue *dial = GetDialogue(i)->Copy(keepstate, !push);

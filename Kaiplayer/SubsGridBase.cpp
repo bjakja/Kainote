@@ -434,7 +434,7 @@ int SubsGridBase::StylesSize()
 	return file->subs->styles.size();
 }
 
-Styles *SubsGridBase::GetStyle(int i, wxString name)
+Styles *SubsGridBase::GetStyle(int i, const wxString &name)
 {
 	if (name != ""){
 		for (unsigned int j = 0; j < file->subs->styles.size(); j++)
@@ -451,7 +451,7 @@ std::vector<Styles*> *SubsGridBase::GetStyleTable()
 }
 
 //multiplication musi być ustawione na zero, wtedy zwróci ilość multiplikacji
-int SubsGridBase::FindStyle(wxString name, int *multip)
+int SubsGridBase::FindStyle(const wxString &name, int *multip)
 {
 	int isfound = -1;
 	for (unsigned int j = 0; j < file->subs->styles.size(); j++)
@@ -1604,10 +1604,10 @@ void SubsGridBase::RebuildActorEffectLists()
 	Edit->EffectEdit->Clear();
 	for (int i = 0; i < GetCount(); i++){
 		Dialogue *dial = GetDialogue(i);
-		if (!dial->Actor.IsEmpty() && Edit->ActorEdit->FindString(dial->Actor, true) < 0){
+		if (!dial->Actor.empty() && Edit->ActorEdit->FindString(dial->Actor, true) < 0){
 			Edit->ActorEdit->Append(dial->Actor);
 		}
-		if (!dial->Effect.IsEmpty() && Edit->EffectEdit->FindString(dial->Effect, true) < 0){
+		if (!dial->Effect.empty() && Edit->EffectEdit->FindString(dial->Effect, true) < 0){
 			Edit->EffectEdit->Append(dial->Effect);
 		}
 	}

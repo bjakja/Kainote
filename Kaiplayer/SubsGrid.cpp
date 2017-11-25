@@ -747,7 +747,7 @@ void SubsGrid::MoveTextTL(char mode)
 				else if (mode == 4 || mode == 5){
 					if (mode == 4){
 						if (onlyo){ CopyDialogue(first + mrow)->Start = GetDialogue(first)->Start; onlyo = false; }
-						CopyDialogue(first + mrow)->Text.Prepend(GetDialogue(i)->Text + "\\N"); mrow--;
+						CopyDialogue(first + mrow)->Text->Prepend(GetDialogue(i)->Text + "\\N"); mrow--;
 					}
 					DeleteRow(i);
 				}

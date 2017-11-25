@@ -132,12 +132,11 @@ bool kainoteApp::OnInit()
 			}
 
 			MyServer=new KaiServer();
-			if(!MyServer){
-				wxLogStatus(_("Nie można utworzyć serwera DDE"));
-			}
-			else if (!(MyServer->Create(server))){
-				delete MyServer;
-				MyServer = NULL;
+			if(MyServer){
+				if (!(MyServer->Create(server))){
+					delete MyServer;
+					MyServer = NULL;
+				}
 			}
 			
 			for (int i=1;i<argc;i++) { paths.Add(argv[i]); }
@@ -198,17 +197,13 @@ bool kainoteApp::OnInit()
 
 		delete m_checker; // OnExit() won't be called if we return false
         m_checker = NULL;
-		//wxLogStatus("execute");
 		    
 		wxClient *Client=new wxClient;
         KaiConnection * Connection = (KaiConnection*)Client->MakeConnection("", server, "NewStart");
 
-		if (Connection)
-        {
-		
-		Connection->Execute(subs);
-		delete Connection;
-			
+		if (Connection){
+			Connection->Execute(subs);
+			delete Connection;
 		}
 		delete Client;
 			

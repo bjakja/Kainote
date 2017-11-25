@@ -133,7 +133,7 @@ int KaiScrollbar::SetScrollPos(int pos)
 void KaiScrollbar::SendEvent()
 {
 	Refresh(false);
-	Update ();
+	Update();
 	if(integrated){
 		wxScrollWinEvent evt2(wxEVT_SCROLLWIN_THUMBTRACK,unitPos,(isVertical)? wxVERTICAL : wxHORIZONTAL); 
 		((KaiScrolledWindow*)GetParent())->ProcessEvent(evt2);

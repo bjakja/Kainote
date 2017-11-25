@@ -118,6 +118,7 @@ public:
 	void ReloadVisibleDialogues(int keyFrom, int keyTo);
 	void ReloadVisibleDialogues();
 	void EndLoad(unsigned char editionType, int activeLine);
+	int GetAllCount();
 	Dialogue *CopyDialogue(int i, bool push=true, bool keepstate=false);
 	Dialogue *CopyDialogueByKey(int i, bool push = true, bool keepstate = false);
 	Dialogue *GetDialogue(int i, int *key=NULL);
