@@ -147,7 +147,6 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 		MenuItem * styleItem = stylesMenu->Append(4448, styles[i]->Name, "", true, NULL, NULL, ITEM_CHECK);
 		if (optionsFilterStyles.Index(styles[i]->Name) != -1){ styleItem->Check(); filterStyles.Add(styles[i]->Name); }
 	}
-	//Options.SetTable(GridFilterStyles, checkedStyles, ";");
 	//filter submenu
 	int filterBy = Options.GetInt(GridFilterBy);
 	bool isASS = subsFormat == ASS;
@@ -155,7 +154,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	filterMenu->SetAccMenu(4446, _("Filtrowanie odwrócone"), _("Filtrowanie odwrócone"), true, ITEM_CHECK)->Check(Options.GetBool(GridFilterInverted));
 	filterMenu->SetAccMenu(4449, _("Nie resetuj wcześniejszego filtrowania"), _("Nie resetuj wcześniejszego filtrowania"), true, ITEM_CHECK)->Check(Options.GetBool(GridAddToFilter));
 	MenuItem *Item = new MenuItem(FilterByStyles, _("Ukryj linie ze stylami"), _("Ukryj linie ze stylami"), isASS, NULL, stylesMenu, ITEM_CHECK);
-	filterMenu->SetAccMenu(Item, Item->label)->Check(filterBy & FILTER_BY_STYLES && filterStyles.size() > 0);
+	filterMenu->SetAccMenu(Item, Item->label)->Check(filterStyles.size() > 0);
 	filterMenu->SetAccMenu(FilterBySelections, _("Ukryj zaznaczone linie"), _("Ukryj zaznaczone linie"), sels > 0, ITEM_CHECK)->Check(filterBy & FILTER_BY_SELECTIONS && sels > 0);
 	filterMenu->SetAccMenu(FilterByDialogues, _("Ukryj komentarze"), _("Ukryj komentarze"), isASS, ITEM_CHECK)->Check((filterBy & FILTER_BY_DIALOGUES) != 0);
 	filterMenu->SetAccMenu(FilterByDoubtful, _("Pokaż niepewne"), _("Pokaż niepewne"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_DOUBTFUL && hasTLMode);
@@ -1273,6 +1272,7 @@ void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 	}
 	file->InsertSelectionKey(newActiveLineKey);
 	Edit->SetLine(newActiveLine);
+	if (Comparison && (Options.GetInt(SubsComparisonType) & COMPARE_BY_VISIBLE)){ Kai->Tabs->SubsComparison(); }
 	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
 	if (vb->GetState() != None){
 		vb->OpenSubs(GetVisible());

@@ -508,9 +508,9 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 	}
 	if(elem!=sel){
 		sel=elem;
-		if(item->submenu && item->submenu->dialog==NULL){// 
+		if (item->submenu && item->submenu->dialog == NULL && item->enabled){
 			submenuShown=elem;
-			if(submenuToHide == -1){showSubmenuTimer.Start((leftdown)? 1 : 200,true);}// : (submenuToHide != -1)? 500
+			if (submenuToHide == -1){ showSubmenuTimer.Start((leftdown) ? 1 : 200, true); }
 		}
 		
 		Refresh(false);
@@ -523,7 +523,8 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 	}
 	if(evt.LeftUp() && !item->submenu){
 		SendEvent(item, evt.GetModifiers());
-	}else if(leftdown && item->submenu && item->submenu->dialog==NULL && submenuShown != elem){
+	}
+	else if (leftdown && item->submenu && item->submenu->dialog == NULL && item->enabled && submenuShown != elem){
 		submenuShown=elem;
 		showSubmenuTimer.Start(1,true);
 	}

@@ -92,7 +92,7 @@ public:
 	
 	void DummyUndo(int newIter);
 	bool IsNumber(const wxString &txt);
-	
+	void GetCommonStyles(SubsGridBase *grid, wxArrayString &styleTable);
 	
 	SubsGridBase(wxWindow *parent, const long int id ,const wxPoint& pos,const wxSize& size, long style);
 	virtual ~SubsGridBase();

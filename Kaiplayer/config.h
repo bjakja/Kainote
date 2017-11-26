@@ -176,6 +176,8 @@
 	CG(StyleManagerPosition,)\
 	CG(StyleManagerDetachEditor,)\
 	CG(SubsAutonaming,)\
+	CG(SubsComparisonType,)\
+	CG(SubsComparisonStyles,)\
 	CG(SubsRecent,)\
 	CG(TextFieldAllowNumpadHotkeys,)\
 	CG(TlModeShowOriginal,)\

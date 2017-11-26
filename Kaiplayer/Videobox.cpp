@@ -1159,10 +1159,11 @@ void VideoCtrl::RefreshTime()
 			int sdiff=kkk.mstime - ZEROIT(line->Start.mstime);
 			int ediff=kkk.mstime - ZEROIT(line->End.mstime);
 			times<<sdiff<<" ms, "<<ediff<<" ms";
+			pan->Grid->RefreshIfVisible(kkk.mstime);
 		}
 		mstimes->SetValue(times);
 		mstimes->Update();
-		pan->Grid->RefreshIfVisible(kkk.mstime);
+		
 	}
 
 }

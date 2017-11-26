@@ -150,18 +150,24 @@ public:
 	bool operator ==(const wxString &comptext) const{ return comptext == (*stored); };
 	bool operator ==(const char *comptext) const{ return comptext == (*stored); };
 	wxString &operator <<(wxString &text){
-		StoreText(*stored << text);
+		if ((*deleteReference) > 0){
+			StoreText(*stored + text);
+		}
+		else{ *stored << text; }
 		return *stored;
 	};
 	wxString &operator <<(const char *text){
-		StoreText(*stored << text);
+		if ((*deleteReference) > 0){
+			StoreText(*stored + text);
+		}
+		else{ *stored << text; }
 		return *stored;
 	};
-	//Operator kopiuje wskaŸnik bo w wiêkszoœci przypadków potrzebujemy kopiê. Gdy nie u¿ywamy *
-	wxString *operator ->(){ StoreText(*stored); return stored; }
-	//Operator zwraca czysty wskaŸnik, nie mo¿na go zmieniaæ, tylko do sprawdzania
-	//wxString operator *(){ return *stored; }
-	//const wxString &operator &(){ return *stored; }
+	//Operator kopiuje wskaŸnik gdy mamy dodatkowe u¿ycia w przeciwnym razie to nie jest w ogóle potrzebne.
+	wxString *operator ->(){ 
+		if ((*deleteReference) > 0){ StoreText(*stored); }
+		return stored; 
+	}
 	wxString &CheckTlRef(StoreTextHelper &TextTl, bool condition){ 
 		if (condition) { 
 			return *TextTl.Copy();
@@ -193,7 +199,10 @@ public:
 	const wxScopedCharBuffer mb_str(const wxMBConv& conv = wxConvLibc) const{
 		return stored->mb_str(conv);
 	}
-	wxString *Copy(){ StoreText(*stored); return stored; }
+	wxString *Copy(){
+		if ((*deleteReference) > 0){ StoreText(*stored); } 
+		return stored;
+	}
 private:
 	wxString *stored = new wxString();
 	size_t *deleteReference = new size_t(0);

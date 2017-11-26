@@ -1636,5 +1636,16 @@ bool SubsGridBase::IsNumber(const wxString &test) {
 	return isnumber;
 }
 
-
+void SubsGridBase::GetCommonStyles(SubsGridBase *_grid, wxArrayString &styleTable)
+{
+	std::vector<Styles *> &styles1 = file->subs->styles;
+	std::vector<Styles *> &styles2 = _grid->file->subs->styles;
+	for (auto style1 : styles1){
+		for (auto style2 : styles2){
+			if (style1->Name == style2->Name){
+				styleTable.Add(style1->Name); break;
+			}
+		}
+	}
+}
 

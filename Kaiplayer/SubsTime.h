@@ -48,6 +48,7 @@ public:
 	bool operator>= (const STime &comp);
 	bool operator<= (const STime &comp);
 	bool operator== (const STime &comp);
+	bool operator!= (const STime &comp);
 	STime operator- (const STime &comp);
 	STime operator+ (const STime &comp);
 };

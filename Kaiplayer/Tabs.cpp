@@ -47,6 +47,55 @@ Notebook::Notebook(wxWindow *parent, int id)
 	CalcSizes();
 	Hook = NULL;
 	Hook = SetWindowsHookEx(WH_CBT, &PauseOnMinimalize, NULL,GetCurrentThreadId());//WH_MOUSE
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		MenuItem *item = (MenuItem*)evt.GetClientData();
+		int id = item->id;
+		int compareBy = Options.GetInt(SubsComparisonType);
+		switch (id)
+		{
+		case MENU_COMPARE + 1:
+			compareBy ^= COMPARE_BY_TIMES;
+			break;
+		case MENU_COMPARE + 2:
+			compareBy ^= COMPARE_BY_VISIBLE;
+			break;
+		case MENU_COMPARE + 3:
+			compareBy ^= COMPARE_BY_STYLES;
+			break;
+		case 4448:
+		{
+			int compareBy = Options.GetInt(SubsComparisonType);
+			wxArrayString comparisonStyles;
+			Options.GetTable(SubsComparisonStyles, comparisonStyles, ";");
+			wxString &name = item->label;
+			bool found = false;
+			for (int i = 0; i < comparisonStyles.size(); i++){
+				if (comparisonStyles[i] == name){
+					if (!item->check){ comparisonStyles.RemoveAt(i); }
+					found = true;
+					break;
+				}
+			}
+			if (!found && item->check){ comparisonStyles.Add(name); }
+			Options.SetTable(SubsComparisonStyles, comparisonStyles, ";");
+			if ((comparisonStyles.size() > 0 && !(compareBy & COMPARE_BY_CHOSEN_STYLES)) ||
+				(comparisonStyles.size() < 1 && compareBy & COMPARE_BY_CHOSEN_STYLES)){
+				compareBy ^= COMPARE_BY_CHOSEN_STYLES;
+				Menu *parentMenu = NULL;
+				MenuItem * parentItem = Menu::FindItemGlobally(MENU_COMPARE + 4, &parentMenu);
+				if (parentItem){
+					parentItem->Check(comparisonStyles.size() > 0);
+					if (parentMenu)
+						parentMenu->RefreshMenu();
+				}
+			}
+			break;
+		}
+		default:
+			return;
+		}
+		Options.SetInt(SubsComparisonType, compareBy);
+	}, ID_CHECK_EVENT);
 }
 
 
@@ -481,12 +530,31 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			wxString txt=(split)? _("Wyświetl jedną zakładkę") : _("Wyświetl dwie zakładki");
 			menu1.Append((MENU_CHOOSE-2)-i, txt);
 		}
-		if((i!=iter && Size()>1 && i!=-1) || hasCompare){
-			wxString txt=(hasCompare)? _("Wyłącz porównanie plików") : _("Włącz porównanie plików");
-			menu1.Append(MENU_COMPARE, txt);
+		bool canCompare = (i != iter && Size() > 1 && i != -1);
+		Menu *styleComparisonMenu = new Menu();
+		int checkedStyles = 0;
+		if (canCompare){
+			wxArrayString availableStyles;
+			Pages[iter]->Grid->GetCommonStyles(Pages[i]->Grid, availableStyles);
+			wxArrayString compareStyles;
+			Options.GetTable(SubsComparisonStyles, compareStyles, ";");
+			for (int i = 0; i < availableStyles.size(); i++){
+				MenuItem * styleItem = styleComparisonMenu->Append(4448, availableStyles[i], "", true, NULL, NULL, ITEM_CHECK);
+				if (compareStyles.Index(availableStyles[i]) != -1){ styleItem->Check(); checkedStyles++; }
+			}
 		}
+		int compareBy = Options.GetInt(SubsComparisonType);
+		Menu *comparisonMenu = new Menu();
+		comparisonMenu->Append(MENU_COMPARE + 1, _("Porównaj według czasów"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_TIMES);
+		comparisonMenu->Append(MENU_COMPARE + 2, _("Porównaj według widocznych linijek"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_VISIBLE);
+		comparisonMenu->Append(MENU_COMPARE + 3, _("Porównaj według stylów"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_STYLES);
+		comparisonMenu->Append(MENU_COMPARE + 4, _("Porównaj według wybranych stylów"), styleComparisonMenu, "", ITEM_CHECK, canCompare)->Check(checkedStyles);
+		comparisonMenu->Append(MENU_COMPARE, _("Porównaj"))->Enable(canCompare);
+		comparisonMenu->Append(MENU_COMPARE, _("Wyłącz porównanie"))->Enable(hasCompare);
+		menu1.Append(MENU_COMPARE + 5, _("Porównanie napisów"), comparisonMenu)->Enable(canCompare||hasCompare);
+
 		int id=menu1.GetPopupMenuSelection(event.GetPosition(),this);
-		//wxLogStatus("id %i", id);
+		
 		if(id<0){return;}
 		if(id >= MENU_CHOOSE-101 && id <= MENU_CHOOSE+99){
 			OnTabSel(id);
@@ -1004,10 +1072,18 @@ int Notebook::GetIterByPos(const wxPoint &pos){
 
 void Notebook::SubsComparison()
 {
+	int comparisonType = Options.GetInt(SubsComparisonType);
+	if (!comparisonType){ return; }
+	bool compareByVisible = comparisonType & COMPARE_BY_VISIBLE;
+	bool compareByTimes = comparisonType & COMPARE_BY_TIMES;
+	bool compareByStyles = comparisonType & COMPARE_BY_STYLES;
+	bool compareByChosenStyles = comparisonType & COMPARE_BY_CHOSEN_STYLES;
+	wxArrayString compareStyles;
+	Options.GetTable(SubsComparisonStyles, compareStyles, ";");
+	
 	SubsGrid *G1 = compareFirstGrid;
 	SubsGrid *G2 = compareSecondGrid;
-
-	int firstSize= G1->GetCount(), secondSize= G2->GetCount();
+	int firstSize = G1->file->GetAllCount(), secondSize = G2->file->GetAllCount();
 	if(G1->Comparison){G1->Comparison->clear();}else{G1->Comparison=new std::vector<wxArrayInt>;}
 	if(G2->Comparison){G2->Comparison->clear();}else{G2->Comparison=new std::vector<wxArrayInt>;}
 	wxArrayInt emptyarray;
@@ -1019,15 +1095,24 @@ void Notebook::SubsComparison()
 	for(int i=0; i<firstSize; i++){
 
 		int j=lastJ;
-		Dialogue *dial1=G1->GetDialogue(i);
+		Dialogue *dial1=G1->file->GetDialogueByKey(i);
+		if (compareByVisible && !dial1->isVisible){ continue; }
 		while(j<secondSize){
 
-			Dialogue *dial2=G2->GetDialogue(j);
-			if(dial1->Start == dial2->Start && dial1->End == dial2->End){
-				CompareTexts((G1->hasTLMode && dial1->TextTl != "") ? dial1->TextTl : dial1->Text, (G2->hasTLMode && dial2->TextTl != "") ? dial2->TextTl : dial2->Text, G1->Comparison->at(i), G2->Comparison->at(j));
-				lastJ=j+1;
-				break;
-			}
+			Dialogue *dial2 = G2->file->GetDialogueByKey(j);
+			if (compareByVisible && !dial2->isVisible){ j++; continue; }
+
+			if (compareByTimes && (dial1->Start != dial2->Start || dial1->End != dial2->End)){ j++; continue; }
+
+			if (compareByStyles && dial1->Style != dial2->Style){ j++; continue; }
+
+			if (compareByChosenStyles && compareStyles.Index(dial1->Style) == -1){ j++; continue; }
+
+			CompareTexts((G1->hasTLMode && dial1->TextTl != "") ? dial1->TextTl : dial1->Text,
+				(G2->hasTLMode && dial2->TextTl != "") ? dial2->TextTl : dial2->Text,
+				G1->Comparison->at(i), G2->Comparison->at(j));
+			lastJ = j + 1;
+			break;
 			j++;
 		}
 

@@ -180,6 +180,11 @@ bool STime::operator== (const STime &comp)
 	return mstime==comp.mstime;
 }
 
+bool STime::operator!= (const STime &comp)
+{
+	return mstime != comp.mstime;
+}
+
 STime STime::operator- (const STime &comp)
 {
 	STime tmp = STime(comp);

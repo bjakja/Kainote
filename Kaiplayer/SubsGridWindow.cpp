@@ -161,7 +161,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	Dialogue *acdial = (size>0)? GetDialogue(MID(0, Edit->ebrow, size - 1)) : NULL;
 	Dialogue *Dial=NULL;
 	TabPanel *tab = (TabPanel*)GetParent();
-	int VideoPos = tab->Video->Tell();
+	int VideoPos = tab->Video->vstate !=None? tab->Video->Tell() : -1;
 
 	int fw, fh, bfw, bfh;
 	wxColour kol;
@@ -277,7 +277,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				}
 			}
 			isSelected = file->IsSelectedByKey(i);
-			comparison = (Comparison && Comparison->at(k).size()>0);
+			comparison = (Comparison && Comparison->at(i).size()>0);
 			bool visibleLine = (Dial->Start.mstime <= VideoPos && Dial->End.mstime > VideoPos);
 			kol = (comparison) ? ComparisonBGCol :
 				(visibleLine) ? visibleOnVideo :
@@ -383,15 +383,15 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				if (comparison){
 					tdc.SetTextForeground(ComparisonCol);
 
-					for (size_t c = 1; c < Comparison->at(k).size(); c += 2){
+					for (size_t c = 1; c < Comparison->at(i).size(); c += 2){
 						//if(Comparison->at(i-1)[k]==Comparison->at(i-1)[k+1]){continue;}
-						wxString cmp = strings[j].SubString(Comparison->at(k)[c], Comparison->at(k)[c + 1]);
+						wxString cmp = strings[j].SubString(Comparison->at(i)[c], Comparison->at(i)[c + 1]);
 
 						if (cmp == ""){ continue; }
 						if (cmp == " "){ cmp = "_"; }
 						wxString bcmp;
-						if (Comparison->at(k)[c]>0){
-							bcmp = strings[j].Mid(0, Comparison->at(k)[c]);
+						if (Comparison->at(i)[c]>0){
+							bcmp = strings[j].Mid(0, Comparison->at(i)[c]);
 							tdc.GetTextExtent(bcmp, &bfw, &bfh, NULL, NULL, &font);
 						}
 						else{ bfw = 0; }
