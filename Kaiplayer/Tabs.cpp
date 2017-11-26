@@ -60,31 +60,31 @@ Notebook::Notebook(wxWindow *parent, int id)
 			compareBy ^= COMPARE_BY_VISIBLE;
 			break;
 		case MENU_COMPARE + 3:
+			compareBy ^= COMPARE_BY_SELECTIONS;
+			break;
+		case MENU_COMPARE + 4:
 			compareBy ^= COMPARE_BY_STYLES;
 			break;
 		case 4448:
 		{
-			int compareBy = Options.GetInt(SubsComparisonType);
-			wxArrayString comparisonStyles;
-			Options.GetTable(SubsComparisonStyles, comparisonStyles, ";");
 			wxString &name = item->label;
 			bool found = false;
-			for (int i = 0; i < comparisonStyles.size(); i++){
-				if (comparisonStyles[i] == name){
-					if (!item->check){ comparisonStyles.RemoveAt(i); }
+			for (int i = 0; i < compareStyles.size(); i++){
+				if (compareStyles[i] == name){
+					if (!item->check){ compareStyles.RemoveAt(i); }
 					found = true;
 					break;
 				}
 			}
-			if (!found && item->check){ comparisonStyles.Add(name); }
-			Options.SetTable(SubsComparisonStyles, comparisonStyles, ";");
-			if ((comparisonStyles.size() > 0 && !(compareBy & COMPARE_BY_CHOSEN_STYLES)) ||
-				(comparisonStyles.size() < 1 && compareBy & COMPARE_BY_CHOSEN_STYLES)){
+			if (!found && item->check){ compareStyles.Add(name); }
+			Options.SetTable(SubsComparisonStyles, compareStyles, ";");
+			if ((compareStyles.size() > 0 && !(compareBy & COMPARE_BY_CHOSEN_STYLES)) ||
+				(compareStyles.size() < 1 && compareBy & COMPARE_BY_CHOSEN_STYLES)){
 				compareBy ^= COMPARE_BY_CHOSEN_STYLES;
 				Menu *parentMenu = NULL;
 				MenuItem * parentItem = Menu::FindItemGlobally(MENU_COMPARE + 4, &parentMenu);
 				if (parentItem){
-					parentItem->Check(comparisonStyles.size() > 0);
+					parentItem->Check(compareStyles.size() > 0);
 					if (parentMenu)
 						parentMenu->RefreshMenu();
 				}
@@ -532,26 +532,26 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		}
 		bool canCompare = (i != iter && Size() > 1 && i != -1);
 		Menu *styleComparisonMenu = new Menu();
-		int checkedStyles = 0;
 		if (canCompare){
 			wxArrayString availableStyles;
 			Pages[iter]->Grid->GetCommonStyles(Pages[i]->Grid, availableStyles);
-			wxArrayString compareStyles;
-			Options.GetTable(SubsComparisonStyles, compareStyles, ";");
+			wxArrayString optionsCompareStyles;
+			Options.GetTable(SubsComparisonStyles, optionsCompareStyles, ";");
 			for (int i = 0; i < availableStyles.size(); i++){
 				MenuItem * styleItem = styleComparisonMenu->Append(4448, availableStyles[i], "", true, NULL, NULL, ITEM_CHECK);
-				if (compareStyles.Index(availableStyles[i]) != -1){ styleItem->Check(); checkedStyles++; }
+				if (optionsCompareStyles.Index(availableStyles[i]) != -1){ styleItem->Check(); compareStyles.Add(availableStyles[i]); }
 			}
 		}
 		int compareBy = Options.GetInt(SubsComparisonType);
 		Menu *comparisonMenu = new Menu();
 		comparisonMenu->Append(MENU_COMPARE + 1, _("Porównaj według czasów"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_TIMES);
 		comparisonMenu->Append(MENU_COMPARE + 2, _("Porównaj według widocznych linijek"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_VISIBLE);
-		comparisonMenu->Append(MENU_COMPARE + 3, _("Porównaj według stylów"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_STYLES);
-		comparisonMenu->Append(MENU_COMPARE + 4, _("Porównaj według wybranych stylów"), styleComparisonMenu, "", ITEM_CHECK, canCompare)->Check(checkedStyles);
+		comparisonMenu->Append(MENU_COMPARE + 3, _("Porównaj według zaznaczeń"), NULL, "", ITEM_CHECK, canCompare && Pages[iter]->Grid->file->SelectionsSize()>0 && Pages[i]->Grid->file->SelectionsSize()>0)->Check(compareBy & COMPARE_BY_STYLES);
+		comparisonMenu->Append(MENU_COMPARE + 4, _("Porównaj według stylów"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_STYLES);
+		comparisonMenu->Append(MENU_COMPARE + 5, _("Porównaj według wybranych stylów"), styleComparisonMenu, "", ITEM_CHECK, canCompare)->Check(compareStyles.size() > 0);
 		comparisonMenu->Append(MENU_COMPARE, _("Porównaj"))->Enable(canCompare);
 		comparisonMenu->Append(MENU_COMPARE, _("Wyłącz porównanie"))->Enable(hasCompare);
-		menu1.Append(MENU_COMPARE + 5, _("Porównanie napisów"), comparisonMenu)->Enable(canCompare||hasCompare);
+		menu1.Append(MENU_COMPARE + 6, _("Porównanie napisów"), comparisonMenu, _("Porównanie napisów"))->Enable(canCompare || hasCompare);
 
 		int id=menu1.GetPopupMenuSelection(event.GetPosition(),this);
 		
@@ -1073,14 +1073,12 @@ int Notebook::GetIterByPos(const wxPoint &pos){
 void Notebook::SubsComparison()
 {
 	int comparisonType = Options.GetInt(SubsComparisonType);
-	if (!comparisonType){ return; }
+	if (!comparisonType && compareStyles.size() < 1){ return; }
 	bool compareByVisible = comparisonType & COMPARE_BY_VISIBLE;
 	bool compareByTimes = comparisonType & COMPARE_BY_TIMES;
 	bool compareByStyles = comparisonType & COMPARE_BY_STYLES;
-	bool compareByChosenStyles = comparisonType & COMPARE_BY_CHOSEN_STYLES;
-	wxArrayString compareStyles;
-	Options.GetTable(SubsComparisonStyles, compareStyles, ";");
-	
+	bool compareByChosenStyles = compareStyles.size() > 0;
+	bool compareBySelections = comparisonType & COMPARE_BY_SELECTIONS;
 	SubsGrid *G1 = compareFirstGrid;
 	SubsGrid *G2 = compareSecondGrid;
 	int firstSize = G1->file->GetAllCount(), secondSize = G2->file->GetAllCount();
@@ -1106,7 +1104,9 @@ void Notebook::SubsComparison()
 
 			if (compareByStyles && dial1->Style != dial2->Style){ j++; continue; }
 
-			if (compareByChosenStyles && compareStyles.Index(dial1->Style) == -1){ j++; continue; }
+			if (compareByChosenStyles && (compareStyles.Index(dial1->Style) == -1 || dial1->Style != dial2->Style)){ j++; continue; }
+
+			if (compareBySelections && (!G1->file->IsSelectedByKey(i) || !G2->file->IsSelectedByKey(j))){ j++; continue; }
 
 			CompareTexts((G1->hasTLMode && dial1->TextTl != "") ? dial1->TextTl : dial1->Text,
 				(G2->hasTLMode && dial2->TextTl != "") ? dial2->TextTl : dial2->Text,

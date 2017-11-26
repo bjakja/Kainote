@@ -95,6 +95,7 @@ private:
 	std::vector<TabPanel*> Pages;
 	wxArrayInt Tabsizes;
 	wxArrayString Names;
+	wxArrayString compareStyles;
 	HHOOK Hook;
 	//HHOOK Hooktest; 
 	//static LRESULT CALLBACK testhook( int code, WPARAM wParam, LPARAM lParam );
@@ -110,6 +111,7 @@ enum{
 	COMPARE_BY_TIMES = 1,
 	COMPARE_BY_STYLES,
 	COMPARE_BY_CHOSEN_STYLES = 4,
-	COMPARE_BY_VISIBLE = 8
+	COMPARE_BY_VISIBLE = 8,
+	COMPARE_BY_SELECTIONS = 16
 };
 
