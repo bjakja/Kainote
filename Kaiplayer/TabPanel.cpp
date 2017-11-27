@@ -112,7 +112,7 @@ void TabPanel::OnMouseEvent(wxMouseEvent& event)
 	bool click = event.LeftDown();
 	bool left_up = event.LeftUp();
 	int w, h;
-	Video->GetClientSize(&w, &h);
+	Edit->GetClientSize(&w, &h);
 	int npos = event.GetY();
 	if(event.Leaving()){
 		SetCursor(wxCURSOR_ARROW);}

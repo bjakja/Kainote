@@ -771,7 +771,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 		// Toggle selected
 		if (left_up && ctrl && !shift && !alt) {
-			if (!(Edit->ebrow == row && file->SelectionsSize()==1)){
+			if (!(Edit->ebrow == row && file->SelectionsSize() == 1 && file->IsSelected(row))){
 				SelectRow(row, true, !file->IsSelected(row));
 				if (file->SelectionsSize() < 1){ SelectRow(Edit->ebrow); }
 				return;

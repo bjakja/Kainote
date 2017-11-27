@@ -82,7 +82,7 @@ Notebook::Notebook(wxWindow *parent, int id)
 				(compareStyles.size() < 1 && compareBy & COMPARE_BY_CHOSEN_STYLES)){
 				compareBy ^= COMPARE_BY_CHOSEN_STYLES;
 				Menu *parentMenu = NULL;
-				MenuItem * parentItem = Menu::FindItemGlobally(MENU_COMPARE + 4, &parentMenu);
+				MenuItem * parentItem = Menu::FindItemGlobally(MENU_COMPARE + 5, &parentMenu);
 				if (parentItem){
 					parentItem->Check(compareStyles.size() > 0);
 					if (parentMenu)
@@ -546,7 +546,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		Menu *comparisonMenu = new Menu();
 		comparisonMenu->Append(MENU_COMPARE + 1, _("Porównaj według czasów"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_TIMES);
 		comparisonMenu->Append(MENU_COMPARE + 2, _("Porównaj według widocznych linijek"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_VISIBLE);
-		comparisonMenu->Append(MENU_COMPARE + 3, _("Porównaj według zaznaczeń"), NULL, "", ITEM_CHECK, canCompare && Pages[iter]->Grid->file->SelectionsSize()>0 && Pages[i]->Grid->file->SelectionsSize()>0)->Check(compareBy & COMPARE_BY_STYLES);
+		comparisonMenu->Append(MENU_COMPARE + 3, _("Porównaj według zaznaczeń"), NULL, "", ITEM_CHECK, canCompare && Pages[iter]->Grid->file->SelectionsSize()>0 && Pages[i]->Grid->file->SelectionsSize()>0)->Check(compareBy & COMPARE_BY_SELECTIONS);
 		comparisonMenu->Append(MENU_COMPARE + 4, _("Porównaj według stylów"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_STYLES);
 		comparisonMenu->Append(MENU_COMPARE + 5, _("Porównaj według wybranych stylów"), styleComparisonMenu, "", ITEM_CHECK, canCompare)->Check(compareStyles.size() > 0);
 		comparisonMenu->Append(MENU_COMPARE, _("Porównaj"))->Enable(canCompare);
