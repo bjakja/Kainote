@@ -227,7 +227,6 @@ DECLARE_ENUM(CONFIG,CFG)
 	CR(GridDialogue,)\
 	CR(GridComment,)\
 	CR(GridSelectedDialogue,)\
-	CR(GridSelectedComment,)\
 	CR(GridVisibleOnVideo,)\
 	CR(GridCollisions,)\
 	CR(GridLines,)\
@@ -239,11 +238,11 @@ DECLARE_ENUM(CONFIG,CFG)
 	CR(GridLabelSaved,)\
 	CR(GridLabelDoubtful,)\
 	CR(GridSpellchecker,)\
-	CR(GridComparison,)\
-	CR(GridComparisonBackground,)\
-	CR(GridComparisonBackgroundSelected,)\
-	CR(GridComparisonCommentBackground,)\
-	CR(GridComparisonCommentBackgroundSelected,)\
+	CR(GridComparisonOutline,)\
+	CR(GridComparisonBackgroundNotMatch,)\
+	CR(GridComparisonBackgroundMatch,)\
+	CR(GridComparisonCommentBackgroundNotMatch,)\
+	CR(GridComparisonCommentBackgroundMatch,)\
 	CR(EditorText,)\
 	CR(EditorTagNames,)\
 	CR(EditorTagValues,)\
@@ -355,7 +354,7 @@ class config
 
     wxString GetString(CONFIG opt);
     bool GetBool(CONFIG opt);
-    wxColour &GetColour(COLOR opt);
+    const wxColour &GetColour(COLOR opt);
 	AssColor GetColor(COLOR opt);
     int GetInt(CONFIG opt);
     float GetFloat(CONFIG opt);

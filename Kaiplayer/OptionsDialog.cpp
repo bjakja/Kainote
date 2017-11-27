@@ -518,7 +518,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 	//Themes
 	{
-		const int numColors = 127;
+		const int numColors = 126;
 		wxString labels[numColors]={
 			//okno
 			_("Okno tło"),_("Okno nieaktywne tło"),_("Okno tekst"),_("Okno nieaktywny tekst"),
@@ -528,13 +528,13 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Okno najechane zamykanie"),_("Okno wciśnięte zamykanie"),_("Okno elementy ostrzegające"),
 			//napisy
 			_("Napisy tekst"),_("Napisy tło"),_("Napisy tło dialogów"),_("Napisy tło komentarzy"),
-			_("Napisy zaznaczone dialogi"),_("Napisy zaznaczone komentarze"),_("Napisy linijki widoczne na wideo"),
+			_("Napisy zaznaczone dialogi"),_("Napisy linijki widoczne na wideo"),
 			_("Napisy kolidujące linie"),_("Napisy obramowanie linijki"),_("Napisy obramowanie aktywnej linijki"),
 			_("Napisy nagłówek"),_("Napisy tekst nagłówka"),
 			_("Napisy etykieta"),_("Napisy etykieta zmodyfikowanej linii"),_("Napisy etykieta zapisanej linii"),
-			_("Napisy etykieta niepewnej linii"),_("Napisy tło błędów pisowni"),_("Napisy porównanie"),
-			_("Napisy tło porównania"),_("Napisy tło porównania zaznaczenia"),_("Napisy tło komentarza porównania"),
-			_("Napisy tło komentarza zazn. porównania"),
+			_("Napisy etykieta niepewnej linii"),_("Napisy tło błędów pisowni"),_("Napisy obramowanie porównania"),
+			_("Napisy tło porównanie brak zgodności"),_("Napisy tło porównania zgodność"),_("Napisy tło komentarza por. brak zgodności"),
+			_("Napisy tło komentarza por. zgodność"),
 			//edytor
 			_("Edytor tekst"),_("Edytor nazwy tagów"),_("Edytor wartości tagów"),
 			_("Edytor nawiasy klamrowe"),_("Edytor operatory tagów"),_("Edytor tło nawiasów"),_("Edytor tło"),

@@ -272,7 +272,7 @@ kainoteFrame::~kainoteFrame()
 
 	Toolbar->Destroy();
 	Options.SetBool(WindowMaximized,im);
-	Options.SetBool(EditorOn,GetTab()->edytor);
+	Options.SetBool(EditorOn,GetTab()->editor);
 	Options.SetTable(SubsRecent,subsrec);
 	Options.SetTable(VideoRecent,videorec);
 	Options.SetTable(AudioRecent,audsrec);
@@ -734,7 +734,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 	wxString fntmp="";
 	bool issubs=(ext=="ass"||ext=="txt"||ext=="sub"||ext=="srt"||ext=="ssa");
 
-	if(tab->edytor && !(issubs && tab->VideoPath.BeforeLast('.')==filename.BeforeLast('.'))
+	if(tab->editor && !(issubs && tab->VideoPath.BeforeLast('.')==filename.BeforeLast('.'))
 		&&!(!issubs && tab->SubsPath.BeforeLast('.')==filename.BeforeLast('.'))){
 			fntmp= FindFile(filename,issubs,!(fulls || tab->Video->isFullscreen) );
 			if(fntmp!=""){found=true;if(!issubs){ext=fntmp.AfterLast('.');}}
@@ -790,7 +790,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 		if(tab->Video->GetState()!=None){
 			if (!found){
 				tab->Edit->OnVideo = true;
-				bool isgood = tab->Video->OpenSubs((tab->edytor) ? tab->Grid->GetVisible()/*SaveText()*/ : 0);
+				bool isgood = tab->Video->OpenSubs((tab->editor) ? tab->Grid->GetVisible()/*SaveText()*/ : 0);
 				if (!isgood){ KaiMessageBox(_("Otwieranie napisów nie powiodło się"), "Uwaga"); }
 			}
 			tab->Video->vToolbar->DisableVisuals(ext != "ass");
@@ -803,7 +803,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 
 		Label();
 		SetSubsResolution(!Options.GetBool(DontAskForBadResolution));
-		if(!tab->edytor && !fulls && !tab->Video->isFullscreen){HideEditor();}
+		if(!tab->editor && !fulls && !tab->Video->isFullscreen){HideEditor();}
 		if(!found){
 			if(tab->Video->VFF && tab->Video->vstate != None && tab->Grid->subsFormat == ASS){
 				tab->Video->SetColorSpace(tab->Grid->GetSInfo("YCbCr Matrix"));
@@ -847,7 +847,7 @@ void kainoteFrame::SetSubsResolution(bool showDialog)
 	SetStatusText(resolution, 7);
 	wxSize vsize;
 	
-	if(cur->Video->GetState()!=None && cur->edytor){
+	if(cur->Video->GetState()!=None && cur->editor){
 		vsize = cur->Video->GetVideoSize();
 		wxString vres;
 		vres<<vsize.x<<" x "<<vsize.y;
@@ -878,7 +878,7 @@ void kainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
 	int x=0, y=0;
 	cur->Grid->GetASSRes(&x, &y);
 	wxString sres = std::to_string(x) +" x "+ std::to_string(y);
-	if(resolution != sres && sres.Len()>3 && cur->edytor){
+	if(resolution != sres && sres.Len()>3 && cur->editor){
 		StatusBar->SetLabelTextColour(5, WindowWarningElements);
 		StatusBar->SetLabelTextColour(7, WindowWarningElements);
 		badResolution=true;
@@ -1186,7 +1186,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 			if(ext=="ssa"){ext="ass";subs[i]=subs[i].BeforeLast('.')+".ass";}
 			tab->SubsPath=subs[i];
 			tab->SubsName=tab->SubsPath.AfterLast('\\');
-			if(!tab->edytor){HideEditor();}
+			if(!tab->editor){HideEditor();}
 			SetRecent();
 
 			Label();
@@ -1194,7 +1194,7 @@ void kainoteFrame::OpenFiles(wxArrayString files,bool intab, bool nofreeze, bool
 			tab->Video->vToolbar->DisableVisuals(ext != "ass");
 		}
 		if(i<videos.size()){
-			bool isload=tab->Video->Load(videos[i],(tab->edytor)? tab->Grid->GetVisible() : 0);
+			bool isload=tab->Video->Load(videos[i],(tab->editor)? tab->Grid->GetVisible() : 0);
 
 			if(!isload){
 				if(tab->Video->IsDshow){KaiMessageBox(_("Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\nbądź brakuje kodeków czy też splittera"), _("Uwaga"));}
@@ -1243,7 +1243,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 	if(iter>0 && cur->Grid->Modified){
 		whiter<<iter<<"*";
 	}
-	wxString name=(!cur->edytor)? cur->VideoName : cur->SubsName;
+	wxString name=(!cur->editor)? cur->VideoName : cur->SubsName;
 	SetLabel(whiter+name+" - "+Options.progname);
 	if(cur->Video->GetState()!=None){
 		SetStatusText(getfloat(cur->Video->fps)+" FPS",4);
@@ -1260,7 +1260,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 		STime kkk1;
 		kkk1.mstime=cur->Video->GetDuration();
 		SetStatusText(kkk1.raw(SRT),3);
-		if(cur->edytor){
+		if(cur->editor){
 			SetStatusText(cur->VideoName,8);
 		}
 		else{SetStatusText("",8);}
@@ -1289,7 +1289,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 		if (cur->lastFocusedWindow != NULL){
 			cur->lastFocusedWindow->SetFocus();
 		}
-		else if (cur->edytor){ cur->Grid->SetFocus(); }
+		else if (cur->editor){ cur->Grid->SetFocus(); }
 		else{ cur->Video->SetFocus(); }
 		if (Tabs->iter != Tabs->GetOldSelection() && Options.GetBool(MoveTimesLoadSetTabOptions)){
 			cur->ShiftTimes->RefVals(Tabs->Page(Tabs->GetOldSelection())->ShiftTimes);
@@ -1310,12 +1310,12 @@ void kainoteFrame::HideEditor(bool save)
 {
 	TabPanel *cur=GetTab();
 
-	cur->edytor = !cur->edytor;
-	cur->Grid->Show(cur->edytor);
+	cur->editor = !cur->editor;
+	cur->Grid->Show(cur->editor);
 
-	cur->Edit->Show(cur->edytor);
+	cur->Edit->Show(cur->editor);
 
-	if(cur->edytor){//Załączanie Edytora
+	if(cur->editor){//Załączanie Edytora
 
 		cur->BoxSizer1->Detach(cur->Video);
 		cur->BoxSizer2->Prepend(cur->Video, 0, wxEXPAND|wxALIGN_TOP, 0);
@@ -1371,7 +1371,7 @@ void kainoteFrame::HideEditor(bool save)
 		//cur->Video->vToolbar->Enable(false);
 	}
 	UpdateToolbar();
-	if (save){ Options.SetBool(EditorOn, cur->edytor); Options.SaveOptions(true, false); }
+	if (save){ Options.SetBool(EditorOn, cur->editor); Options.SaveOptions(true, false); }
 }
 
 void kainoteFrame::OnPageAdd(wxCommandEvent& event)
@@ -1518,7 +1518,7 @@ void kainoteFrame::OnMenuOpened(MenuEvent& event)
 	}
 	TabPanel *tab = GetTab();
 	bool enable=(tab->Video->GetState()!=None);
-	bool editor=tab->edytor;
+	bool editor=tab->editor;
 	for(int i = PlayPauseG; i<=SetVideoAtEnd; i++)
 	{
 		Menubar->Enable(i,(i<SetStartTime)? enable : enable && editor);

@@ -96,13 +96,13 @@ bool config::GetBool(CONFIG opt)
 	return false;
 }
 
-wxColour &config::GetColour(COLOR opt)
+const wxColour &config::GetColour(COLOR opt)
 {
 	auto it = colors.find(opt);
 	if(it!=colors.end()){
 		return *it->second;
 	}
-	return defaultColour;//wxColour("#000000");
+	return defaultColour;
 }
 
 AssColor config::GetColor(COLOR opt)
@@ -327,8 +327,7 @@ void config::LoadDefaultColors(bool dark)
 	colors[GridBackground] = new wxColour((dark)? "#444444" : "#D7D7D7");
 	colors[GridDialogue] = new wxColour((dark)? "#969696" : "#C0C0C0");
 	colors[GridComment] = new wxColour((dark)? "#BDBDBD" : "#999999");
-	colors[GridSelectedDialogue] = new wxColour((dark)? "#B6D5C5" : "#EBF5EF");
-	colors[GridSelectedComment] = new wxColour((dark)? "#89A9CF" : "#CF898B");
+	colors[GridSelectedDialogue] = (dark) ? new wxColour(0x5A, 0xD6, 0x93, 76) : new wxColour(0x8E, 0xF8, 0xB5, 76);//#4C5AD693 #4C8EF8B5 new wxColour((dark)? "#B6D5C5" : "#EBF5EF");
 	colors[GridVisibleOnVideo] = new wxColour((dark)? "#7878AA" : "#94B9D7");
 	colors[GridCollisions] = new wxColour((dark)? "#0010FF" : "#FF0000");
 	colors[GridLines] = new wxColour((dark)? "#4C4C4C" : "#606060");
@@ -340,11 +339,11 @@ void config::LoadDefaultColors(bool dark)
 	colors[GridLabelSaved] = new wxColour((dark)? "#A398FF" : "#B8DFFF");
 	colors[GridLabelDoubtful] = new wxColour((dark)? "#FB9708" : "#FB710B");
 	colors[GridSpellchecker] = new wxColour((dark)? "#FA9292" : "#FA9292");
-	colors[GridComparison] = new wxColour((dark)? "#FFFFFF" : "#00E1FF");
-	colors[GridComparisonBackground] = new wxColour((dark)? "#C0A073" : "#F6D6AC");
-	colors[GridComparisonBackgroundSelected] = new wxColour((dark)? "#909F3A" : "#ADC044");
-	colors[GridComparisonCommentBackground] = new wxColour((dark)? "#978063" : "#D7AA70");
-	colors[GridComparisonCommentBackgroundSelected] = new wxColour((dark)? "#656F31" : "#88963A");
+	colors[GridComparisonOutline] = new wxColour((dark)? "#FFFFFF" : "#00E1FF");
+	colors[GridComparisonBackgroundNotMatch] = new wxColour((dark)? "#C0A073" : "#F6D6AC");
+	colors[GridComparisonBackgroundMatch] = new wxColour((dark)? "#909F3A" : "#ADC044");
+	colors[GridComparisonCommentBackgroundNotMatch] = new wxColour((dark)? "#978063" : "#D7AA70");
+	colors[GridComparisonCommentBackgroundMatch] = new wxColour((dark)? "#656F31" : "#88963A");
 	colors[EditorText] = new wxColour((dark)? "#B7B7B7" : "#000000");
 	colors[EditorTagNames] = new wxColour((dark)? "#E2A000" : "#17AF21");
 	colors[EditorTagValues] = new wxColour((dark)? "#EE54FF" : "#BD16D0");

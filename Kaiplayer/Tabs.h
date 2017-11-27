@@ -22,6 +22,7 @@
 
 class TabPanel;
 class SubsGrid;
+class compareData;
 
 class Notebook : public wxWindow
 {
@@ -68,7 +69,7 @@ private:
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
 	void OnCharHook(wxKeyEvent& event);
 	void CalcSizes(bool makeActiveVisible = false);
-	void CompareTexts(const wxString &first, const wxString &second, wxArrayInt &firstCompare, wxArrayInt &secondCompare);
+	void CompareTexts(compareData &firstTable, compareData &secondTable, const wxString &first, const wxString &second);
 	int TabHeight;
 	int olditer;
 	int over;

@@ -43,7 +43,7 @@ class TabPanel : public wxWindow
 		void SetAccels();
 		void SetVideoWindowSizes(int w, int h);
 
-		bool edytor;
+		bool editor;
 		
 
 		wxString SubsName;

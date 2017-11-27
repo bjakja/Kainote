@@ -1016,7 +1016,7 @@ bool VideoRend::UpdateRects(bool changeZoom)
 	windowRect.left=rt.x;
 	windowRect.top=rt.y;
 
-	/*if(tab->edytor && !isFullscreen){
+	/*if(tab->editor && !isFullscreen){
 		backBufferRect=windowRect;
 	}
 	else
@@ -1622,7 +1622,7 @@ bool VideoRend::FilterConfig(wxString name, int idx, wxPoint pos)
 
 byte *VideoRend::GetFramewithSubs(bool subs, bool *del)
 {
-	bool dssubs=(IsDshow && subs && Notebook::GetTab()->edytor);
+	bool dssubs=(IsDshow && subs && Notebook::GetTab()->editor);
 	bool ffnsubs=(!IsDshow && !subs);
 	byte *cpy1;
 	byte bytes=(vformat==RGB32)? 4 : (vformat==YUY2)? 2 : 1;

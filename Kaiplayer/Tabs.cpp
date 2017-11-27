@@ -559,7 +559,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		if(id >= MENU_CHOOSE-101 && id <= MENU_CHOOSE+99){
 			OnTabSel(id);
 		}else if(id == MENU_COMPARE){
-			if (hasCompare){ RemoveComparison(); }
+			if (hasCompare){ RemoveComparison(); return; }
 			compareFirstGrid = Pages[iter]->Grid;
 			compareSecondGrid = Pages[i]->Grid;
 			SubsComparison();
@@ -568,7 +568,6 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			OnSave(id);
 		}
 
-		return;
 	}
 	
 
@@ -908,7 +907,6 @@ void Notebook::RemoveComparison()
 		compareFirstGrid = NULL;
 		compareSecondGrid = NULL;
 		hasCompare = false;
-		return;
 	}
 
 }
@@ -1082,11 +1080,10 @@ void Notebook::SubsComparison()
 	SubsGrid *G1 = compareFirstGrid;
 	SubsGrid *G2 = compareSecondGrid;
 	int firstSize = G1->file->GetAllCount(), secondSize = G2->file->GetAllCount();
-	if(G1->Comparison){G1->Comparison->clear();}else{G1->Comparison=new std::vector<wxArrayInt>;}
-	if(G2->Comparison){G2->Comparison->clear();}else{G2->Comparison=new std::vector<wxArrayInt>;}
-	wxArrayInt emptyarray;
-	G1->Comparison->resize(firstSize, emptyarray);
-	G2->Comparison->resize(secondSize, emptyarray);
+	if(G1->Comparison){G1->Comparison->clear();}else{G1->Comparison=new std::vector<compareData>;}
+	if (G2->Comparison){ G2->Comparison->clear(); }else{ G2->Comparison = new std::vector<compareData>; }
+	G1->Comparison->resize(firstSize, compareData());
+	G2->Comparison->resize(secondSize, compareData());
 
 	int lastJ=0;
 
@@ -1108,9 +1105,12 @@ void Notebook::SubsComparison()
 
 			if (compareBySelections && (!G1->file->IsSelectedByKey(i) || !G2->file->IsSelectedByKey(j))){ j++; continue; }
 
-			CompareTexts((G1->hasTLMode && dial1->TextTl != "") ? dial1->TextTl : dial1->Text,
-				(G2->hasTLMode && dial2->TextTl != "") ? dial2->TextTl : dial2->Text,
-				G1->Comparison->at(i), G2->Comparison->at(j));
+			compareData & firstCompare = compareFirstGrid->Comparison->at(i);
+			compareData & secondCompare = compareSecondGrid->Comparison->at(j);
+			CompareTexts(firstCompare, secondCompare, (compareFirstGrid->hasTLMode && dial1->TextTl != "") ? dial1->TextTl : dial1->Text,
+				(compareSecondGrid->hasTLMode && dial2->TextTl != "") ? dial2->TextTl : dial2->Text);
+			firstCompare.secondComparedLine = j;
+			secondCompare.secondComparedLine = i;
 			lastJ = j + 1;
 			break;
 			j++;
@@ -1123,10 +1123,11 @@ void Notebook::SubsComparison()
 }
 
 
-void Notebook::CompareTexts(const wxString &first, const wxString &second, wxArrayInt &firstCompare, wxArrayInt &secondCompare)
+void Notebook::CompareTexts(compareData &firstCompare, compareData &secondCompare, const wxString &first, const wxString &second)
 {
-
 	if(first==second){
+		firstCompare.differences = false;
+		secondCompare.differences = false;
 		return;
 	}
 	firstCompare.push_back(1);
@@ -1209,8 +1210,7 @@ void Notebook::CompareTexts(const wxString &first, const wxString &second, wxArr
 		secondCompare.push_back(ssecond);
 		secondCompare.push_back((l2 - i2) -1);
 	}
-
-	//free(dpt);
+	
 	delete dpt;
 }
 

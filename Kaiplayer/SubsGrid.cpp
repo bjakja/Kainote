@@ -220,7 +220,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 		wxString name = item->GetLabelText();
 		ret = Hkeys.OnMapHkey(id, name, this, GRID_HOTKEY);
 		if (ret != -2){
-			Hkeys.SetAccels();
+			Hkeys.SetAccels(true);
 			Hkeys.SaveHkeys();
 		}
 		goto done;
@@ -821,7 +821,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 			if (Kai->GetTab()->Video->GetState() == Paused){ Kai->GetTab()->Video->Render(); }
 		}
 
-		if (!Kai->GetTab()->edytor&&!Kai->GetTab()->Video->isFullscreen){ Kai->HideEditor(); }
+		if (!Kai->GetTab()->editor&&!Kai->GetTab()->Video->isFullscreen){ Kai->HideEditor(); }
 		Kai->GetTab()->ShiftTimes->Contents();
 		file->InsertSelection(Edit->ebrow);
 		RefreshColumns();

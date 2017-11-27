@@ -23,7 +23,7 @@
 TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const wxSize &size)
 	: wxWindow(parent,-1, pos, size)
 	,sline(NULL)
-	,edytor(true)
+	,editor(true)
 	,holding(false)
 {
 	SetBackgroundColour(Options.GetColour(WindowBackground));

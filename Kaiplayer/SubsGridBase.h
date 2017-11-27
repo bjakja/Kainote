@@ -28,6 +28,18 @@
 class EditBox;
 class kainoteFrame;
 
+class compareData{
+public:
+	compareData(){};
+	_wxArraywxArrayInt &operator [](size_t i)const{ return lineCompare[i]; }
+	size_t size()const{ return lineCompare.size(); }
+	void push_back(const int &elem){ lineCompare.Add(elem); }
+	int secondComparedLine = 0;
+	bool differences = true;
+private:
+	wxArrayInt lineCompare;
+};
+
 class SubsGridBase : public KaiScrolledWindow
 {
 	friend class SubsFile;
@@ -108,7 +120,7 @@ public:
 	bool isFiltered = false;
 	bool ignoreFiltered = false;
 	std::vector<wxArrayInt> SpellErrors;
-	std::vector<wxArrayInt> *Comparison;
+	std::vector<compareData> *Comparison;
 	SubsFile* file;
 	EditBox *Edit;
 private:

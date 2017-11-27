@@ -15,6 +15,7 @@
 
 #include "SubsGridWindow.h"
 #include "config.h"
+#include "Utils.h"
 #include "EditBox.h"
 
 #include "kainoteMain.h"
@@ -116,27 +117,26 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 	tdc.SetFont(font);
 	
-	wxColour header = Options.GetColour(GridHeader);
-	wxColour headerText = Options.GetColour(GridHeaderText);
-	wxColour labelBkCol = Options.GetColour(GridLabelSaved);
-	wxColour labelBkColN = Options.GetColour(GridLabelNormal);
-	wxColour labelBkColM = Options.GetColour(GridLabelModified);
-	wxColour labelBkColD = Options.GetColour(GridLabelDoubtful);
-	wxColour linesCol = Options.GetColour(GridLines);
-	wxColour subsBkCol = Options.GetColour(GridDialogue);
-	wxColour comm = Options.GetColour(GridComment);
-	wxColour seldial = Options.GetColour(GridSelectedDialogue);
-	wxColour selcom = Options.GetColour(GridSelectedComment);
-	wxColour textcol = Options.GetColour(GridText);
-	wxColour collcol = Options.GetColour(GridCollisions);
-	wxColour SpelcheckerCol = Options.GetColour(GridSpellchecker);
-	wxColour ComparisonCol = Options.GetColour(GridComparison);
-	wxColour ComparisonBGCol = Options.GetColour(GridComparisonBackground);
-	wxColour ComparisonBGSelCol = Options.GetColour(GridComparisonBackgroundSelected);
-	wxColour ComparisonBGCmntCol = Options.GetColour(GridComparisonCommentBackground);
-	wxColour ComparisonBGCmntSelCol = Options.GetColour(GridComparisonCommentBackgroundSelected);
+	const wxColour &header = Options.GetColour(GridHeader);
+	const wxColour &headerText = Options.GetColour(GridHeaderText);
+	const wxColour &labelBkCol = Options.GetColour(GridLabelSaved);
+	const wxColour &labelBkColN = Options.GetColour(GridLabelNormal);
+	const wxColour &labelBkColM = Options.GetColour(GridLabelModified);
+	const wxColour &labelBkColD = Options.GetColour(GridLabelDoubtful);
+	const wxColour &linesCol = Options.GetColour(GridLines);
+	const wxColour &subsBkCol = Options.GetColour(GridDialogue);
+	const wxColour &comm = Options.GetColour(GridComment);
+	const wxColour &seldial = Options.GetColour(GridSelectedDialogue);
+	const wxColour &textcol = Options.GetColour(GridText);
+	const wxColour &collcol = Options.GetColour(GridCollisions);
+	const wxColour &SpelcheckerCol = Options.GetColour(GridSpellchecker);
+	const wxColour &ComparisonCol = Options.GetColour(GridComparisonOutline);
+	const wxColour &ComparisonBG = Options.GetColour(GridComparisonBackgroundNotMatch);
+	const wxColour &ComparisonBGMatch = Options.GetColour(GridComparisonBackgroundMatch);
+	const wxColour &ComparisonBGCmnt = Options.GetColour(GridComparisonCommentBackgroundNotMatch);
+	const wxColour &ComparisonBGCmntMatch = Options.GetColour(GridComparisonCommentBackgroundMatch);
 	wxString chtag = Options.GetString(GridTagsSwapChar);
-	wxColour visibleOnVideo = Options.GetColour(GridVisibleOnVideo);
+	const wxColour &visibleOnVideo = Options.GetColour(GridVisibleOnVideo);
 	bool SpellCheckerOn = Options.GetBool(SpellcheckerOn);
 
 	tdc.SetPen(*wxTRANSPARENT_PEN);
@@ -278,17 +278,19 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			}
 			isSelected = file->IsSelectedByKey(i);
 			comparison = (Comparison && Comparison->at(i).size()>0);
+			bool comparisonMatch = (Comparison && !Comparison->at(i).differences);
 			bool visibleLine = (Dial->Start.mstime <= VideoPos && Dial->End.mstime > VideoPos);
-			kol = (comparison) ? ComparisonBGCol :
+			kol = (comparison) ? ComparisonBG :
+				(comparisonMatch) ? ComparisonBGMatch :
 				(visibleLine) ? visibleOnVideo :
 				subsBkCol;
-			if (isComment){ kol = (comparison) ? ComparisonBGCmntCol : comm; }
+			if (isComment){ kol = (comparison) ? ComparisonBGCmnt : (comparisonMatch) ? ComparisonBGCmntMatch : comm; }
 			if (isSelected){
-				if (isComment){ kol = (comparison) ? ComparisonBGCmntSelCol : selcom; }
-				else{ kol = (comparison) ? ComparisonBGSelCol : seldial; }
+				//if (isComment){ kol = (comparison) ? ComparisonBGCmntSelCol : selcom; }
+				//else{ kol = (comparison) ? ComparisonBGSelCol : seldial; }
+				kol = GetColorWithAlpha(seldial, kol);
 			}
-			if (visibleLine){ visibleLines.push_back(true); }
-			else{ visibleLines.push_back(false); }
+			visibleLines.push_back(visibleLine);
 		}
 		
 		if (isFiltered){
