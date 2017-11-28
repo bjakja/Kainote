@@ -23,8 +23,8 @@
 StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const wxSize& size)
 	: wxWindow(parent, id, pos, size) 
 {
-	wxColour kol1=Options.GetColour(StylePreviewColor1);
-	wxColour kol2=Options.GetColour(StylePreviewColor2);
+	const wxColour & kol1=Options.GetColour(StylePreviewColor1);
+	const wxColour & kol2=Options.GetColour(StylePreviewColor2);
 	b=kol1.Blue();
 	g=kol1.Green();
 	r=kol1.Red();

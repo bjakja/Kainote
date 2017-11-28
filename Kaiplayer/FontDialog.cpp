@@ -123,7 +123,7 @@ void FontList::DrawFld(wxDC &dc,int w, int h)
 	for(int i=scPos; i<scrows; i++)
 	{
 		if(i==sel){
-			wxColour selection = Options.GetColour(StaticListSelection);
+			const wxColour & selection = Options.GetColour(StaticListSelection);
 			dc.SetPen(wxPen(selection));
 			dc.SetBrush(wxBrush(selection));
 			dc.DrawRectangle(posX,posY,w-2,Height);

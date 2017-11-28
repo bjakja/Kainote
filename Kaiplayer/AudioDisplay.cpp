@@ -351,7 +351,7 @@ void AudioDisplay::DoUpdateImage() {
 		deviceLost = false;
 	}
 	// Background
-	wxColour background = Options.GetColour(AudioBackground);
+	const wxColour & background = Options.GetColour(AudioBackground);
 	hr = d3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_FROM_WX(background), 1.0f, 0 );
 	
 

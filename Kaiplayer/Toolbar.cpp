@@ -208,7 +208,7 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 	}
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
-	wxColour background = Options.GetColour(WindowBackground);
+	const wxColour & background = Options.GetColour(WindowBackground);
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
@@ -420,8 +420,8 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	tdc.SelectObject(*bmp);
 	wxBitmap checkbmp = wxBITMAP_PNG("check");
 	tdc.SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma"));
-	wxColour background = Options.GetColour(MenuBackground);
-	wxColour txt = Options.GetColour(WindowText);
+	const wxColour & background = Options.GetColour(MenuBackground);
+	const wxColour & txt = Options.GetColour(WindowText);
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(txt));
 	tdc.DrawRectangle(0,0,ow,h);

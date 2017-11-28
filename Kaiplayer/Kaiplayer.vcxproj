@@ -420,6 +420,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="Styles.cpp" />
     <ClCompile Include="StyleStore.cpp" />
     <ClCompile Include="SubsGridFiltering.cpp" />
+    <ClCompile Include="SubsGridPreview.cpp" />
     <ClCompile Include="SubsGridWindow.cpp" />
     <ClCompile Include="SubsLoader.cpp" />
     <ClCompile Include="SubsResampleDialog.cpp" />
@@ -530,6 +531,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="Styles.h" />
     <ClInclude Include="StyleStore.h" />
     <ClInclude Include="SubsGridFiltering.h" />
+    <ClInclude Include="SubsGridPreview.h" />
     <ClInclude Include="SubsGridWindow.h" />
     <ClInclude Include="SubsLoader.h" />
     <ClInclude Include="SubsResampleDialog.h" />

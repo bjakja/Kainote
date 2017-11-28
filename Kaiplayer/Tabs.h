@@ -22,7 +22,6 @@
 
 class TabPanel;
 class SubsGrid;
-class compareData;
 
 class Notebook : public wxWindow
 {
@@ -42,13 +41,11 @@ public:
 	TabPanel *Page(size_t i);
 	void DeletePage(int page);
 	void Split(size_t page);
-	void RemoveComparison();
 	int FindTab(int x, int *num);
 	int FindPanel(TabPanel* pan);
 	int GetHeight();
 	void ChangeActive();
 	void RefreshBar();
-	void SubsComparison();
 
 	int iter;
 	bool block;
@@ -69,7 +66,7 @@ private:
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
 	void OnCharHook(wxKeyEvent& event);
 	void CalcSizes(bool makeActiveVisible = false);
-	void CompareTexts(compareData &firstTable, compareData &secondTable, const wxString &first, const wxString &second);
+	
 	int TabHeight;
 	int olditer;
 	int over;
@@ -81,11 +78,6 @@ private:
 	bool plus;
 	bool allTabsVisible;
 	bool arrow;
-	bool hasCompare;
-	//int compareFirstTab;
-	//int compareSecondTab;
-	SubsGrid *compareFirstGrid;
-	SubsGrid *compareSecondGrid;
 	int splitline;
 	int splititer;
 	int oldtab;
@@ -96,7 +88,6 @@ private:
 	std::vector<TabPanel*> Pages;
 	wxArrayInt Tabsizes;
 	wxArrayString Names;
-	wxArrayString compareStyles;
 	HHOOK Hook;
 	//HHOOK Hooktest; 
 	//static LRESULT CALLBACK testhook( int code, WPARAM wParam, LPARAM lParam );

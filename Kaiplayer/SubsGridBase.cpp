@@ -1116,7 +1116,7 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 			Modified = true;
 		}
 		if (Comparison){
-			Kai->Tabs->SubsComparison();
+			SubsComparison();
 		}
 		if (!savedSelections){
 			SaveSelections();
@@ -1143,9 +1143,9 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 				vb->SetVisual(false, true);
 			}
 			else{
-				if (vb->IsShown() || vb->isFullscreen){ vb->OpenSubs(GetVisible()/*SaveText()*/); Edit->OnVideo = true; }
+				if (vb->IsShown() || vb->isFullscreen){ vb->OpenSubs(GetVisible()); Edit->OnVideo = true; }
 
-				int opt = vb->vToolbar->videoSeekAfter->GetSelection();//Options.GetInt(MoveVideoToActiveLine);
+				int opt = vb->vToolbar->videoSeekAfter->GetSelection();
 				if (opt > 1){
 					if (vb->GetState() == Paused || (vb->GetState() == Playing && (opt == 3 || opt == 5))){
 						vb->Seek(Edit->line->Start.mstime);
@@ -1649,3 +1649,172 @@ void SubsGridBase::GetCommonStyles(SubsGridBase *_grid, wxArrayString &styleTabl
 	}
 }
 
+void SubsGridBase::SubsComparison()
+{
+	int comparisonType = Options.GetInt(SubsComparisonType);
+	if (!comparisonType && compareStyles.size() < 1){ return; }
+	bool compareByVisible = (comparisonType & COMPARE_BY_VISIBLE) != 0;
+	bool compareByTimes = (comparisonType & COMPARE_BY_TIMES) != 0;
+	bool compareByStyles = (comparisonType & COMPARE_BY_STYLES) != 0;
+	bool compareByChosenStyles = compareStyles.size() > 0;
+	bool compareBySelections = (comparisonType & COMPARE_BY_SELECTIONS) != 0;
+	int firstSize = CG1->file->GetAllCount(), secondSize = CG2->file->GetAllCount();
+	if (CG1->Comparison){ CG1->Comparison->clear(); }
+	else{ CG1->Comparison = new std::vector<compareData>; }
+	if (CG2->Comparison){ CG2->Comparison->clear(); }
+	else{ CG2->Comparison = new std::vector<compareData>; }
+	CG1->Comparison->resize(firstSize, compareData());
+	CG2->Comparison->resize(secondSize, compareData());
+
+	int lastJ = 0;
+
+	for (int i = 0; i<firstSize; i++){
+
+		int j = lastJ;
+		Dialogue *dial1 = CG1->file->GetDialogueByKey(i);
+		if (compareByVisible && !dial1->isVisible){ continue; }
+		while (j<secondSize){
+
+			Dialogue *dial2 = CG2->file->GetDialogueByKey(j);
+			if (compareByVisible && !dial2->isVisible){ j++; continue; }
+
+			if (compareByTimes && (dial1->Start != dial2->Start || dial1->End != dial2->End)){ j++; continue; }
+
+			if (compareByStyles && dial1->Style != dial2->Style){ j++; continue; }
+
+			if (compareByChosenStyles && (compareStyles.Index(dial1->Style) == -1 || dial1->Style != dial2->Style)){ j++; continue; }
+
+			if (compareBySelections && (!CG1->file->IsSelectedByKey(i) || !CG2->file->IsSelectedByKey(j))){ j++; continue; }
+
+			compareData & firstCompare = CG1->Comparison->at(i);
+			compareData & secondCompare = CG2->Comparison->at(j);
+			CompareTexts(firstCompare, secondCompare, (CG1->hasTLMode && dial1->TextTl != "") ? dial1->TextTl : dial1->Text,
+				(CG2->hasTLMode && dial2->TextTl != "") ? dial2->TextTl : dial2->Text);
+			firstCompare.secondComparedLine = j;
+			secondCompare.secondComparedLine = i;
+			lastJ = j + 1;
+			break;
+			j++;
+		}
+
+	}
+
+	CG1->Refresh(false);
+	CG2->Refresh(false);
+}
+
+
+void SubsGridBase::CompareTexts(compareData &firstCompare, compareData &secondCompare, const wxString &first, const wxString &second)
+{
+	if (first == second){
+		firstCompare.differences = false;
+		secondCompare.differences = false;
+		return;
+	}
+	firstCompare.push_back(1);
+	secondCompare.push_back(1);
+
+
+	size_t l1 = first.Len(), l2 = second.Len();
+	size_t sz = (l1 + 1) * (l2 + 1) * sizeof(size_t);
+	size_t w = l2 + 1;
+	size_t* dpt;
+	size_t i1, i2;
+	dpt = new size_t[sz];
+
+	if (//sz / (l1 + 1) / (l2 + 1) != sizeof(size_t) ||
+		//(
+		dpt == NULL)
+	{
+		wxLogStatus("memory allocation failed");
+		return;
+	}
+
+	/*for (i1 = 0; i1 <= l1; i1++)
+	dpt[w * i1 + 0] = 0;
+	for (i2 = 0; i2 <= l2; i2++)
+	dpt[w * 0 + i2] = 0;*/
+	memset(dpt, 0, sz);
+
+	for (i1 = 1; i1 <= l1; i1++){
+		for (i2 = 1; i2 <= l2; i2++)
+		{
+			if (first[l1 - i1] == second[l2 - i2])
+			{
+				dpt[w * i1 + i2] = dpt[w * (i1 - 1) + (i2 - 1)] + 1;
+			}
+			else if (dpt[w * (i1 - 1) + i2] > dpt[w * i1 + (i2 - 1)])
+			{
+				dpt[w * i1 + i2] = dpt[w * (i1 - 1) + i2];
+			}
+			else
+			{
+				dpt[w * i1 + i2] = dpt[w * i1 + (i2 - 1)];
+			}
+		}
+	}
+
+	int sfirst = -1, ssecond = -1;
+	i1 = l1; i2 = l2;
+	for (;;){
+		if ((i1 > 0) && (i2 > 0) && (first[l1 - i1] == second[l2 - i2])){
+			if (sfirst >= 0){
+				firstCompare.push_back(sfirst);
+				firstCompare.push_back((l1 - i1) - 1);
+				sfirst = -1;
+			}
+			if (ssecond >= 0){
+				secondCompare.push_back(ssecond);
+				secondCompare.push_back((l2 - i2) - 1);
+				ssecond = -1;
+			}
+			i1--; i2--; continue;
+		}
+		else{
+			if (i1 > 0 && (i2 == 0 || dpt[w * (i1 - 1) + i2] >= dpt[w * i1 + (i2 - 1)])){
+				if (sfirst == -1){ sfirst = l1 - i1; }
+				i1--; continue;
+			}
+			else if (i2 > 0 && (i1 == 0 || dpt[w * (i1 - 1) + i2] < dpt[w * i1 + (i2 - 1)])){
+				if (ssecond == -1){ ssecond = l2 - i2; }
+				i2--; continue;
+			}
+		}
+
+		break;
+	}
+	if (sfirst >= 0){
+		firstCompare.push_back(sfirst);
+		firstCompare.push_back((l1 - i1) - 1);
+	}
+	if (ssecond >= 0){
+		secondCompare.push_back(ssecond);
+		secondCompare.push_back((l2 - i2) - 1);
+	}
+
+	delete dpt;
+}
+
+void SubsGridBase::RemoveComparison()
+{
+	if (hasCompare){
+		if (CG1){
+			delete CG1->Comparison;
+			CG1->Comparison = NULL;
+			CG1->Refresh(false);
+		}
+		if (CG2){
+			delete CG2->Comparison;
+			CG2->Comparison = NULL;
+			CG2->Refresh(false);
+		}
+		CG1 = NULL;
+		CG2 = NULL;
+		hasCompare = false;
+	}
+}
+
+SubsGrid* SubsGridBase::CG1 = NULL;
+SubsGrid* SubsGridBase::CG2 = NULL;
+bool SubsGridBase::hasCompare = false;
+wxArrayString SubsGridBase::compareStyles = wxArrayString();

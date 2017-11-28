@@ -23,6 +23,7 @@ class kainoteFrame;
 
 class SubsGrid: public SubsGridWindow
 {
+	friend class SubsGridPreview;
 public:
 
 	SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);

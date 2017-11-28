@@ -27,6 +27,7 @@
 
 class EditBox;
 class kainoteFrame;
+class SubsGrid;
 
 class compareData{
 public:
@@ -34,7 +35,7 @@ public:
 	_wxArraywxArrayInt &operator [](size_t i)const{ return lineCompare[i]; }
 	size_t size()const{ return lineCompare.size(); }
 	void push_back(const int &elem){ lineCompare.Add(elem); }
-	int secondComparedLine = 0;
+	int secondComparedLine = -1;
 	bool differences = true;
 private:
 	wxArrayInt lineCompare;
@@ -123,10 +124,18 @@ public:
 	std::vector<compareData> *Comparison;
 	SubsFile* file;
 	EditBox *Edit;
+	//comparison static pointers needs short name because we not use this class
+	static SubsGrid* CG1;
+	static SubsGrid* CG2;
+	static void SubsComparison();
+	static void RemoveComparison();
+	static wxArrayString compareStyles;
+	static bool hasCompare;
 private:
 	virtual void AdjustWidths(int cell = 8191){};
 	virtual void RefreshColumns(int cell = 8191){};
 protected:
+	static void CompareTexts(compareData &firstTable, compareData &secondTable, const wxString &first, const wxString &second);
 	short numsave;
 	bool hideOverrideTags;
 	bool ismenushown = false;

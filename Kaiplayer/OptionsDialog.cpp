@@ -881,8 +881,8 @@ void OptionsDialog::OnChangeCatalog(wxCommandEvent& event)
 
 void OptionsDialog::ChangeColors(){
 
-	wxColour windowColor = Options.GetColour(WindowBackground);
-	wxColour textColor = Options.GetColour(WindowText);
+	const wxColour & windowColor = Options.GetColour(WindowBackground);
+	const wxColour & textColor = Options.GetColour(WindowText);
 	Notebook *nb = Notebook::GetTabs();
 	//tabs colors		
 	for(size_t i = 0; i < nb->Size(); i++){

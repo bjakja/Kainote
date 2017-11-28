@@ -19,7 +19,9 @@
 #include "EditBox.h"
 
 #include "kainoteMain.h"
+#include "kaiMessageBox.h"
 #include "SubsGridFiltering.h"
+#include "SubsGridPreview.h"
 #include <wx/regex.h>
 
 SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style)
@@ -82,6 +84,13 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	GetClientSize(&w, &h);
 	bool bg = false;
 	int size = GetCount();
+	wxPoint previewpos;
+	wxSize previewsize;
+	if (preview){
+		previewpos = preview->GetPosition();
+		previewsize = preview->GetSize();
+		size += (previewsize.y / (GridHeight + 1)) + 1;
+	}
 	panelrows = (h / (GridHeight + 1)) + 1;
 	int scrows = scPos + panelrows;
 	//gdy widzimy koniec napisów
@@ -152,7 +161,6 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	bool startBlock = false;
 	int states = 0;
 	int startDrawPosYFromPlus = 0;
-	//int keyI = 0;
 
 	if (SpellErrors.size()<(size_t)size){
 		SpellErrors.resize(size);
@@ -205,7 +213,6 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		}
 		else{
 			
-
 			strings.push_back(wxString::Format("%i", k+1));
 
 			isComment = Dial->IsComment;
@@ -286,8 +293,6 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				subsBkCol;
 			if (isComment){ kol = (comparison) ? ComparisonBGCmnt : (comparisonMatch) ? ComparisonBGCmntMatch : comm; }
 			if (isSelected){
-				//if (isComment){ kol = (comparison) ? ComparisonBGCmntSelCol : selcom; }
-				//else{ kol = (comparison) ? ComparisonBGSelCol : seldial; }
 				kol = GetColorWithAlpha(seldial, kol);
 			}
 			visibleLines.push_back(visibleLine);
@@ -433,6 +438,12 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		}
 
 		posY += GridHeight + 1;
+		if (preview){
+			if (posY > previewpos.y && posY < previewpos.y + previewsize.y){
+				posY = previewpos.y + previewsize.y;
+			}
+			else if (posY > h){ scrows = k + 1; break; }
+		}
 		k++;
 		i++;
 	}
@@ -447,13 +458,17 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		if (markedLine >= scPos && markedLine <= scrows){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine), 3));
-			tdc.DrawRectangle(posX + 1, ((markedLine - scPos + 1)*(GridHeight + 1)) - 1, (GridWidth[0] - 1), GridHeight + 2);
+			int ypos = ((markedLine - scPos + 1)*(GridHeight + 1)) - 1;
+			if (preview && ypos > previewpos.y){ ypos += previewsize.y; }
+			tdc.DrawRectangle(posX + 1, ypos, (GridWidth[0] - 1), GridHeight + 2);
 		}
 
-		if (Edit->ebrow >= scPos&&Edit->ebrow <= scrows){
+		if (Edit->ebrow >= scPos && Edit->ebrow <= scrows){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine)));
-			tdc.DrawRectangle(posX, ((Edit->ebrow - scPos + 1)*(GridHeight + 1)) - 1, w + scHor - posX, GridHeight + 2);
+			int ypos = ((Edit->ebrow - scPos + 1)*(GridHeight + 1)) - 1;
+			if (preview && ypos > previewpos.y){ ypos += previewsize.y; }
+			tdc.DrawRectangle(posX, ypos, w + scHor - posX, GridHeight + 2);
 		}
 	}
 	wxPaintDC dc(this);
@@ -796,6 +811,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 					SelectRow(row);
 					extendRow = -1;
 				}
+				if (Comparison){ ShowSecondComparedLine(row); }
 			}
 
 			//1-klikniêcie lewym
@@ -1221,15 +1237,46 @@ void SubsGridWindow::SelVideoLine(int curtime)
 
 }
 
-//Dialogue *SubsGridWindow::GetCheckedDialogue(int rw)
-//{
-//	Dialogue *dial = file->GetDialogue(rw);
-//	if (first){
-//		if (dial->Form != subsFormat){ dial->Convert(subsFormat); }
-//		if (dial->Start.mstime > dial->End.mstime){
-//			dial->End.mstime = dial->Start.mstime;
-//		}
-//	}
-//	return dial;
-//}
+void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview)
+{
+	SubsGrid *thisgrid = (SubsGrid*)this;
+	SubsGrid *secondgrid = NULL;
+	if (thisgrid == CG1)
+		secondgrid = CG2;
+	else if (thisgrid == CG2)
+		secondgrid = CG1;
+	else
+		return;
+	//tymczasowo zdisejblowane do testów
+	//if (!showPreview && !secondgrid->IsShown()){ return; }
+	//Line is id here we need convert it to key
+	compareData & data = Comparison->at(file->GetElementById(Line));
+	int secondGridLine = data.secondComparedLine;
+	if (secondGridLine < 0){ return; }
+	int diffPosition = Line - scPos;
+	secondgrid->scPos = secondGridLine - diffPosition;
+	secondgrid->Edit->SetLine(secondGridLine);
+	secondgrid->SelectRow(secondGridLine, false, true, true);
+	if (!showPreview /*|| !secondgrid->IsShown()*/){
+		int w, h;
+		GetClientSize(&w, &h);
+		int previewHeight = h / 3;
+		if (previewHeight < 100)
+			previewHeight = 100;
+		if (h < 120){ KaiMessageBox(_("Nie mo¿na wyœwietliæ podgl¹du, poniewa¿ wielkoœæ okna napisów jest zbyt ma³a")); return; }
+		int realGridHeight = (GridHeight + 1);
+		int previewPosition = diffPosition * realGridHeight;
+		if (previewPosition + previewHeight > h){
+			int newLine = (((w - previewHeight) / 2) / realGridHeight);
+			int diff = Line - newLine;
+			scPos -= diff;
+			previewPosition = newLine * realGridHeight;
+		}
+		preview = new SubsGridPreview(secondgrid, thisgrid, previewPosition, wxSize(w, previewHeight));
+		Refresh(false);
+	}
+	else{
+		secondgrid->Refresh(false);
+	}
+}
 

@@ -165,9 +165,9 @@ void KaiTreebook::OnPaint(wxPaintEvent& event)
 	tdc.SelectObject(*bmp);
 	tdc.SetFont(GetFont());
 	bool enabled = IsThisEnabled();
-	wxColour wbg = Options.GetColour(StaticListBackground);
-	wxColour wfg = Options.GetColour(WindowText);
-	wxColour selColor = Options.GetColour(StaticListSelection);
+	const wxColour & wbg = Options.GetColour(StaticListBackground);
+	const wxColour & wfg = Options.GetColour(WindowText);
+	const wxColour & selColor = Options.GetColour(StaticListSelection);
 	tdc.SetBrush(wxBrush(wbg));
 	tdc.SetPen(wxPen(wbg));
 	tdc.SetTextForeground(wfg);

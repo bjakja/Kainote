@@ -758,7 +758,7 @@ bool kainoteFrame::OpenFile(wxString filename,bool fulls)
 		if(!ow.FileOpen(fname, &s)){tab->Thaw();return false;}
 		//remove comparison after every subs load or delete 
 		else if (nonewtab && tab->Grid->Comparison){
-			Tabs->RemoveComparison();
+			SubsGridBase::RemoveComparison();
 		}
 		tab->Grid->LoadSubtitles(s,ext);
 

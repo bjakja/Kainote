@@ -18,6 +18,8 @@
 #include "SubsGridBase.h"
 #include <wx/window.h>
 
+class SubsGridPreview;
+
 class SubsGridWindow : public SubsGridBase
 {
 public:
@@ -43,7 +45,7 @@ protected:
 	void OnScroll(wxScrollWinEvent& event);
 	void OnSize(wxSizeEvent& event);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } holding = false; };
-	//Dialogue * GetCheckedDialogue(int i);
+	void ShowSecondComparedLine(int Line, bool showPreview = false);
 
 	int GridWidth[13];
 	int posY=0;
@@ -56,7 +58,7 @@ protected:
 
 	wxBitmap* bmp;
 	wxFont font;
-	
+	SubsGridPreview *preview=NULL;
 	
 private:
 	virtual void ContextMenu(const wxPoint &pos, bool dummy = false){};

@@ -593,11 +593,11 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	wxBitmap dot = wxBITMAP_PNG("dot");
 	wxBitmap separator = wxBITMAP_PNG("separator");
 	wxBitmap arrow = wxBITMAP_PNG("arrow");
-	wxColour highlight = Options.GetColour(MenuBorderSelection);
-	wxColour text = Options.GetColour(WindowText);
-	wxColour graytext = Options.GetColour(WindowTextInactive);
-	wxColour background = Options.GetColour(MenuBackground);
-	wxColour menuhighlight = Options.GetColour(MenuBackgroundSelection);
+	const wxColour & highlight = Options.GetColour(MenuBorderSelection);
+	const wxColour & text = Options.GetColour(WindowText);
+	const wxColour & graytext = Options.GetColour(WindowTextInactive);
+	const wxColour & background = Options.GetColour(MenuBackground);
+	const wxColour & menuhighlight = Options.GetColour(MenuBackgroundSelection);
 	tdc.SetFont(font);
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(text));

@@ -723,8 +723,8 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	}
 	if(!bmp){bmp=new wxBitmap(ow, h);}
 	tdc.SelectObject(*bmp);
-	wxColour text = Options.GetColour(WindowText);
-	wxColour graytext = Options.GetColour(WindowTextInactive);
+	const wxColour & text = Options.GetColour(WindowText);
+	const wxColour & graytext = Options.GetColour(WindowTextInactive);
 	
 	tdc.SetFont(GetFont());
 	tdc.SetBrush(wxBrush(Options.GetColour(MenuBackground)));

@@ -596,16 +596,16 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 {
 	int fw=0,fh=0;
 
-	wxColour ctext = Options.GetColour(EditorText);
-	wxColour ccurlybraces = Options.GetColour(EditorCurlyBraces);//wxBLUE
-	wxColour coperators = Options.GetColour(EditorTagOperators);//"#FF0000"
-	wxColour cnames = Options.GetColour(EditorTagNames);//"#850085"
-	wxColour cvalues = Options.GetColour(EditorTagValues);//"#6600FF"
-	wxColour bgbraces = Options.GetColour(EditorBracesBackground);
-	wxColour cbackground = Options.GetColour(EditorBackground);
-	wxColour cselection = Options.GetColour(EditorSelection);
-	wxColour cselnofocus = Options.GetColour(EditorSelectionNoFocus);
-	wxColour cspellerrors = Options.GetColour(EditorSpellchecker);
+	const wxColour & ctext = Options.GetColour(EditorText);
+	const wxColour & ccurlybraces = Options.GetColour(EditorCurlyBraces);//wxBLUE
+	const wxColour & coperators = Options.GetColour(EditorTagOperators);//"#FF0000"
+	const wxColour & cnames = Options.GetColour(EditorTagNames);//"#850085"
+	const wxColour & cvalues = Options.GetColour(EditorTagValues);//"#6600FF"
+	const wxColour & bgbraces = Options.GetColour(EditorBracesBackground);
+	const wxColour & cbackground = Options.GetColour(EditorBackground);
+	const wxColour & cselection = Options.GetColour(EditorSelection);
+	const wxColour & cselnofocus = Options.GetColour(EditorSelectionNoFocus);
+	const wxColour & cspellerrors = Options.GetColour(EditorSpellchecker);
 
 	dc.SetBrush(cbackground);
 	dc.SetPen(*wxTRANSPARENT_PEN);

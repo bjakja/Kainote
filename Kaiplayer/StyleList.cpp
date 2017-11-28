@@ -94,7 +94,7 @@ void StyleList::OnPaint(wxPaintEvent& event)
 	int fw=0,fh=0,posX=1,posY=1;
 	bdc.Clear();
 	bdc.SetFont(font);
-	wxColour background = Options.GetColour(StaticListBackground);
+	const wxColour & background = Options.GetColour(StaticListBackground);
 	bdc.SetPen(wxPen(Options.GetColour(StaticListBorder)));
 	bdc.SetBrush(wxBrush(background));
 	bdc.DrawRectangle(0,0,w,h);

@@ -177,7 +177,7 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 	}
 	if(!bmp){bmp=new wxBitmap(ow, oh);}
 	tdc.SelectObject(*bmp);
-	wxColour background = Options.GetColour(ScrollbarBackground);
+	const wxColour & background = Options.GetColour(ScrollbarBackground);
 	wxColour scroll = (enter && !pushed)? Options.GetColour(ScrollbarScrollHover) : 
 		(pushed)? Options.GetColour(ScrollbarScrollPushed) :
 		Options.GetColour(ScrollbarScroll);

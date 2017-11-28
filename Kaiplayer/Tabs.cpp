@@ -28,12 +28,9 @@ Notebook::Notebook(wxWindow *parent, int id)
 	splitline=splititer=0;
 	oldtab=oldI=over=-1;
 	block=split=onx=farr=rarr=plus=false;
-	hasCompare=false;
 	TabHeight=25;
 	allTabsVisible=arrow=true;
 	sline=NULL;
-	compareFirstGrid = NULL;
-	compareSecondGrid = NULL;
 	font=wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 	sthis=this;
 
@@ -69,22 +66,22 @@ Notebook::Notebook(wxWindow *parent, int id)
 		{
 			wxString &name = item->label;
 			bool found = false;
-			for (int i = 0; i < compareStyles.size(); i++){
-				if (compareStyles[i] == name){
-					if (!item->check){ compareStyles.RemoveAt(i); }
+			for (int i = 0; i < SubsGridBase::compareStyles.size(); i++){
+				if (SubsGridBase::compareStyles[i] == name){
+					if (!item->check){ SubsGridBase::compareStyles.RemoveAt(i); }
 					found = true;
 					break;
 				}
 			}
-			if (!found && item->check){ compareStyles.Add(name); }
-			Options.SetTable(SubsComparisonStyles, compareStyles, ";");
-			if ((compareStyles.size() > 0 && !(compareBy & COMPARE_BY_CHOSEN_STYLES)) ||
-				(compareStyles.size() < 1 && compareBy & COMPARE_BY_CHOSEN_STYLES)){
+			if (!found && item->check){ SubsGridBase::compareStyles.Add(name); }
+			Options.SetTable(SubsComparisonStyles, SubsGridBase::compareStyles, ";");
+			if ((SubsGridBase::compareStyles.size() > 0 && !(compareBy & COMPARE_BY_CHOSEN_STYLES)) ||
+				(SubsGridBase::compareStyles.size() < 1 && compareBy & COMPARE_BY_CHOSEN_STYLES)){
 				compareBy ^= COMPARE_BY_CHOSEN_STYLES;
 				Menu *parentMenu = NULL;
 				MenuItem * parentItem = Menu::FindItemGlobally(MENU_COMPARE + 5, &parentMenu);
 				if (parentItem){
-					parentItem->Check(compareStyles.size() > 0);
+					parentItem->Check(SubsGridBase::compareStyles.size() > 0);
 					if (parentMenu)
 						parentMenu->RefreshMenu();
 				}
@@ -188,9 +185,7 @@ void Notebook::DeletePage(int page)
 	}
 	block=false;
 	//remove compare if it exist
-	if (hasCompare && Pages[page]->Grid->Comparison != NULL){
-		RemoveComparison();
-	}
+	SubsGridBase::RemoveComparison();
 
 	int tmpSize = Size();
 	if (split && tmpSize>2){
@@ -539,31 +534,34 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			Options.GetTable(SubsComparisonStyles, optionsCompareStyles, ";");
 			for (int i = 0; i < availableStyles.size(); i++){
 				MenuItem * styleItem = styleComparisonMenu->Append(4448, availableStyles[i], "", true, NULL, NULL, ITEM_CHECK);
-				if (optionsCompareStyles.Index(availableStyles[i]) != -1){ styleItem->Check(); compareStyles.Add(availableStyles[i]); }
+				if (optionsCompareStyles.Index(availableStyles[i]) != -1){ styleItem->Check(); SubsGridBase::compareStyles.Add(availableStyles[i]); }
 			}
 		}
 		int compareBy = Options.GetInt(SubsComparisonType);
 		Menu *comparisonMenu = new Menu();
 		comparisonMenu->Append(MENU_COMPARE + 1, _("Porównaj według czasów"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_TIMES);
-		comparisonMenu->Append(MENU_COMPARE + 2, _("Porównaj według widocznych linijek"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_VISIBLE);
-		comparisonMenu->Append(MENU_COMPARE + 3, _("Porównaj według zaznaczeń"), NULL, "", ITEM_CHECK, canCompare && Pages[iter]->Grid->file->SelectionsSize()>0 && Pages[i]->Grid->file->SelectionsSize()>0)->Check(compareBy & COMPARE_BY_SELECTIONS);
-		comparisonMenu->Append(MENU_COMPARE + 4, _("Porównaj według stylów"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_STYLES);
-		comparisonMenu->Append(MENU_COMPARE + 5, _("Porównaj według wybranych stylów"), styleComparisonMenu, "", ITEM_CHECK, canCompare)->Check(compareStyles.size() > 0);
+		comparisonMenu->Append(MENU_COMPARE + 2, _("Porównaj według widocznych linijek"), NULL, "", ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_VISIBLE)>0);
+		comparisonMenu->Append(MENU_COMPARE + 3, _("Porównaj według zaznaczeń"), NULL, "", ITEM_CHECK, canCompare && Pages[iter]->Grid->file->SelectionsSize()>0 && Pages[i]->Grid->file->SelectionsSize()>0)->Check((compareBy & COMPARE_BY_SELECTIONS)>0);
+		comparisonMenu->Append(MENU_COMPARE + 4, _("Porównaj według stylów"), NULL, "", ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_STYLES)>0);
+		comparisonMenu->Append(MENU_COMPARE + 5, _("Porównaj według wybranych stylów"), styleComparisonMenu, "", ITEM_CHECK, canCompare)->Check(SubsGridBase::compareStyles.size() > 0);
 		comparisonMenu->Append(MENU_COMPARE, _("Porównaj"))->Enable(canCompare);
-		comparisonMenu->Append(MENU_COMPARE, _("Wyłącz porównanie"))->Enable(hasCompare);
-		menu1.Append(MENU_COMPARE + 6, _("Porównanie napisów"), comparisonMenu, _("Porównanie napisów"))->Enable(canCompare || hasCompare);
+		comparisonMenu->Append(MENU_COMPARE - 1, _("Wyłącz porównanie"))->Enable(SubsGridBase::hasCompare);
+		menu1.Append(MENU_COMPARE + 6, _("Porównanie napisów"), comparisonMenu, _("Porównanie napisów"))->Enable(canCompare || SubsGridBase::hasCompare);
 
 		int id=menu1.GetPopupMenuSelection(event.GetPosition(),this);
 		
 		if(id<0){return;}
 		if(id >= MENU_CHOOSE-101 && id <= MENU_CHOOSE+99){
 			OnTabSel(id);
-		}else if(id == MENU_COMPARE){
-			if (hasCompare){ RemoveComparison(); return; }
-			compareFirstGrid = Pages[iter]->Grid;
-			compareSecondGrid = Pages[i]->Grid;
-			SubsComparison();
-			hasCompare=true;
+		}
+		else if (id == MENU_COMPARE){
+			SubsGridBase::CG1 = Pages[iter]->Grid;
+			SubsGridBase::CG2 = Pages[i]->Grid;
+			SubsGridBase::SubsComparison();
+			SubsGridBase::hasCompare = true;
+		}
+		else if (id == MENU_COMPARE - 1){
+			SubsGridBase::RemoveComparison();
 		}else{
 			OnSave(id);
 		}
@@ -613,9 +611,9 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	dc.GradientFillLinear(wxRect(0,0,w,TabHeight),
 		Options.GetColour(TabsBarBackground2),
 		Options.GetColour(TabsBarBackground1),wxTOP);
-	wxColour activeLines = Options.GetColour(TabsBorderActive);
-	wxColour activeText = Options.GetColour(TabsTextActive);
-	wxColour inactiveText = Options.GetColour(TabsTextInactive);
+	const wxColour & activeLines = Options.GetColour(TabsBorderActive);
+	const wxColour & activeText = Options.GetColour(TabsTextActive);
+	const wxColour & inactiveText = Options.GetColour(TabsTextInactive);
 
 	
 	start=(allTabsVisible)?2 : 20;
@@ -692,8 +690,8 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	dc.SetBrush(wxBrush(Options.GetColour(TabsBarArrowBackground)));
 	//strzałki do przesuwania zakładek
 	if(!allTabsVisible){
-		wxColour backgroundHover = Options.GetColour(TabsBarArrowBackgroundHover);
-		wxColour arrow = Options.GetColour(TabsBarArrow);
+		const wxColour & backgroundHover = Options.GetColour(TabsBarArrowBackgroundHover);
+		const wxColour & arrow = Options.GetColour(TabsBarArrow);
 		dc.DrawRectangle(w-16,0,16,25);
 		if(farr){dc.SetBrush(wxBrush(backgroundHover));}
 		dc.DrawRectangle(0,0,16,25);
@@ -800,7 +798,7 @@ void Notebook::OnTabSel(int id)
 			iter=i;
 			//wxLogStatus("%i", (int)i);
 			if(Kai->SavePrompt()){break;}
-			if (hasCompare && Pages[i]->Grid->Comparison != NULL){ RemoveComparison(); }
+			SubsGridBase::RemoveComparison();
 			Pages[i]->Destroy();
 			Pages.pop_back();
 			Names.pop_back();
@@ -889,26 +887,6 @@ void Notebook::Split(size_t page)
 	//Pages[iter]->Refresh();
 
 	SetTimer(GetHWND(), 9876, 500, (TIMERPROC)OnResized);
-}
-
-void Notebook::RemoveComparison()
-{
-	if (hasCompare){
-		if (compareFirstGrid){
-			delete compareFirstGrid->Comparison;
-			compareFirstGrid->Comparison = NULL;
-			compareFirstGrid->Refresh(false);
-		}
-		if (compareFirstGrid){
-			delete compareSecondGrid->Comparison;
-			compareSecondGrid->Comparison = NULL;
-			compareSecondGrid->Refresh(false);
-		}
-		compareFirstGrid = NULL;
-		compareSecondGrid = NULL;
-		hasCompare = false;
-	}
-
 }
 
 int Notebook::FindTab(int x, int *_num)
@@ -1066,152 +1044,6 @@ int Notebook::GetIterByPos(const wxPoint &pos){
 		return splititer;
 	else
 		return iter;
-}
-
-void Notebook::SubsComparison()
-{
-	int comparisonType = Options.GetInt(SubsComparisonType);
-	if (!comparisonType && compareStyles.size() < 1){ return; }
-	bool compareByVisible = comparisonType & COMPARE_BY_VISIBLE;
-	bool compareByTimes = comparisonType & COMPARE_BY_TIMES;
-	bool compareByStyles = comparisonType & COMPARE_BY_STYLES;
-	bool compareByChosenStyles = compareStyles.size() > 0;
-	bool compareBySelections = comparisonType & COMPARE_BY_SELECTIONS;
-	SubsGrid *G1 = compareFirstGrid;
-	SubsGrid *G2 = compareSecondGrid;
-	int firstSize = G1->file->GetAllCount(), secondSize = G2->file->GetAllCount();
-	if(G1->Comparison){G1->Comparison->clear();}else{G1->Comparison=new std::vector<compareData>;}
-	if (G2->Comparison){ G2->Comparison->clear(); }else{ G2->Comparison = new std::vector<compareData>; }
-	G1->Comparison->resize(firstSize, compareData());
-	G2->Comparison->resize(secondSize, compareData());
-
-	int lastJ=0;
-
-	for(int i=0; i<firstSize; i++){
-
-		int j=lastJ;
-		Dialogue *dial1=G1->file->GetDialogueByKey(i);
-		if (compareByVisible && !dial1->isVisible){ continue; }
-		while(j<secondSize){
-
-			Dialogue *dial2 = G2->file->GetDialogueByKey(j);
-			if (compareByVisible && !dial2->isVisible){ j++; continue; }
-
-			if (compareByTimes && (dial1->Start != dial2->Start || dial1->End != dial2->End)){ j++; continue; }
-
-			if (compareByStyles && dial1->Style != dial2->Style){ j++; continue; }
-
-			if (compareByChosenStyles && (compareStyles.Index(dial1->Style) == -1 || dial1->Style != dial2->Style)){ j++; continue; }
-
-			if (compareBySelections && (!G1->file->IsSelectedByKey(i) || !G2->file->IsSelectedByKey(j))){ j++; continue; }
-
-			compareData & firstCompare = compareFirstGrid->Comparison->at(i);
-			compareData & secondCompare = compareSecondGrid->Comparison->at(j);
-			CompareTexts(firstCompare, secondCompare, (compareFirstGrid->hasTLMode && dial1->TextTl != "") ? dial1->TextTl : dial1->Text,
-				(compareSecondGrid->hasTLMode && dial2->TextTl != "") ? dial2->TextTl : dial2->Text);
-			firstCompare.secondComparedLine = j;
-			secondCompare.secondComparedLine = i;
-			lastJ = j + 1;
-			break;
-			j++;
-		}
-
-	}
-
-	G1->Refresh(false);
-	G2->Refresh(false);
-}
-
-
-void Notebook::CompareTexts(compareData &firstCompare, compareData &secondCompare, const wxString &first, const wxString &second)
-{
-	if(first==second){
-		firstCompare.differences = false;
-		secondCompare.differences = false;
-		return;
-	}
-	firstCompare.push_back(1);
-	secondCompare.push_back(1);
-
-
-	size_t l1 = first.Len(), l2 = second.Len();
-	size_t sz = (l1 + 1) * (l2 + 1) * sizeof(size_t);
-	size_t w = l2 + 1;
-	size_t* dpt;
-	size_t i1, i2;
-	dpt = new size_t[sz];
-
-	if (//sz / (l1 + 1) / (l2 + 1) != sizeof(size_t) ||
-		//(
-			dpt == NULL)
-	{
-		wxLogStatus("memory allocation failed");
-		return ;
-	}
-
-	/*for (i1 = 0; i1 <= l1; i1++)
-	dpt[w * i1 + 0] = 0;
-	for (i2 = 0; i2 <= l2; i2++)
-	dpt[w * 0 + i2] = 0;*/
-	memset(dpt, 0, sz);
-
-	for (i1 = 1; i1 <= l1; i1++){
-		for (i2 = 1; i2 <= l2; i2++)
-		{
-			if (first[l1 - i1] == second[l2 - i2])
-			{
-				dpt[w * i1 + i2] = dpt[w * (i1 - 1) + (i2 - 1)] + 1;
-			}
-			else if (dpt[w * (i1 - 1) + i2] > dpt[w * i1 + (i2 - 1)])
-			{
-				dpt[w * i1 + i2] = dpt[w * (i1 - 1) + i2];
-			}
-			else
-			{
-				dpt[w * i1 + i2] = dpt[w * i1 + (i2 - 1)];
-			}
-		}
-	}
-
-	int sfirst=-1, ssecond=-1;
-	i1 = l1; i2 = l2;
-	for (;;){
-		if ((i1 > 0) && (i2 > 0) && (first[l1 - i1] == second[l2 - i2])){
-			if(sfirst>=0){
-				firstCompare.push_back(sfirst);
-				firstCompare.push_back((l1 - i1) -1);
-				sfirst=-1;
-			}
-			if(ssecond>=0){
-				secondCompare.push_back(ssecond);
-				secondCompare.push_back((l2 - i2) -1);
-				ssecond=-1;
-			}
-			i1--; i2--; continue;
-		}
-		else{
-			if (i1 > 0 && (i2 == 0 || dpt[w * (i1 - 1) + i2] >= dpt[w * i1 + (i2 - 1)])){
-				if(sfirst==-1){sfirst = l1 - i1;}
-				i1--; continue;
-			}
-			else if (i2 > 0 && (i1 == 0 || dpt[w * (i1 - 1) + i2] < dpt[w * i1 + (i2 - 1)])){
-				if(ssecond==-1){ssecond = l2 - i2;}
-				i2--; continue;
-			}
-		}
-
-		break;
-	}
-	if(sfirst>=0){
-		firstCompare.push_back(sfirst);
-		firstCompare.push_back((l1 - i1) -1);
-	}
-	if(ssecond>=0){
-		secondCompare.push_back(ssecond);
-		secondCompare.push_back((l2 - i2) -1);
-	}
-	
-	delete dpt;
 }
 
 

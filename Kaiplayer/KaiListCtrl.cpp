@@ -39,8 +39,8 @@ void ItemText::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiL
 void ItemColor::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
 {
 	if(col.a){
-		wxColour col1=Options.GetColour(StylePreviewColor1);
-		wxColour col2=Options.GetColour(StylePreviewColor2);
+		const wxColour & col1=Options.GetColour(StylePreviewColor1);
+		const wxColour & col2=Options.GetColour(StylePreviewColor2);
 		int r2 = col.r, g2 = col.g, b2 = col.b;
 		int r = col1.Red(), g = col1.Green(), b = col1.Blue();
 		int r1 = col2.Red(), g1 = col2.Green(), b1 = col2.Blue();
@@ -343,10 +343,10 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	if(!bmp){bmp=new wxBitmap(bitmapw, h);}
 	tdc.SelectObject(*bmp);
 	bool enabled = IsThisEnabled();
-	wxColour highlight = Options.GetColour(StaticListSelection);
-	wxColour txt = Options.GetColour(WindowText);
-	wxColour inactivetxt = Options.GetColour(WindowTextInactive);
-	wxColour border = Options.GetColour(StaticListBorder);
+	const wxColour & highlight = Options.GetColour(StaticListSelection);
+	const wxColour & txt = Options.GetColour(WindowText);
+	const wxColour & inactivetxt = Options.GetColour(WindowTextInactive);
+	const wxColour & border = Options.GetColour(StaticListBorder);
 	tdc.SetPen(wxPen(border));
 	tdc.SetBrush(wxBrush(enabled? Options.GetColour(StaticListBackground) : Options.GetColour(WindowBackgroundInactive)));
 	tdc.DrawRectangle(0,0,w,h);

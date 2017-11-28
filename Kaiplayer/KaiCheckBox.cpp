@@ -93,7 +93,7 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 	wxMemoryDC tdc;
 	tdc.SelectObject(wxBitmap(w,h));
 	tdc.SetFont(GetFont());
-	wxColour background = Options.GetColour(this->background);
+	const wxColour & background = Options.GetColour(this->background);
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
