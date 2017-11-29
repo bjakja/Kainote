@@ -19,17 +19,18 @@
 
 class SubsGrid;
 
-class SubsGridPreview : public KaiScrolledWindow
+class SubsGridPreview : public wxWindow
 {
 	friend class SubsGrid;
 public:
 	SubsGridPreview(SubsGrid *_previewGrid, SubsGrid *windowToDraw, int posY, const wxSize &size);
 	virtual ~SubsGridPreview();
+	void MakeVisible();
 private:
 	void OnPaint(wxPaintEvent &evt);
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnSize(wxSizeEvent &evt);
-	void OnScroll(wxScrollWinEvent &evt);
+	void OnScroll(wxScrollEvent &evt);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } holding = false; };
 
 	SubsGrid *previewGrid;
@@ -39,5 +40,7 @@ private:
 	int scHor = 0;
 	int oldX = -1;
 	bool holding = false;
-	int headerHeight = 16;
+	bool onX = false;
+	bool pushedX = false;
+	KaiScrollbar *scrollbar=NULL;
 };

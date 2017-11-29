@@ -45,7 +45,7 @@ protected:
 	void OnScroll(wxScrollWinEvent& event);
 	void OnSize(wxSizeEvent& event);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } holding = false; };
-	void ShowSecondComparedLine(int Line, bool showPreview = false);
+	void ShowSecondComparedLine(int Line, bool showPreview = false, bool fromPreview = false);
 
 	int GridWidth[13];
 	int posY=0;

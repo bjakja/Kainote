@@ -52,6 +52,7 @@ SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoin
 SubsGridWindow::~SubsGridWindow()
 {
 	if (bmp){ delete bmp; bmp = NULL; }
+	if (preview){ preview->Destroy(); }
 }
 
 void SubsGridWindow::SetStyle()
@@ -439,8 +440,8 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 		posY += GridHeight + 1;
 		if (preview){
-			if (posY > previewpos.y && posY < previewpos.y + previewsize.y){
-				posY = previewpos.y + previewsize.y;
+			if (posY >= previewpos.y-2 && posY < previewpos.y + previewsize.y){
+				posY = previewpos.y + previewsize.y + 3;
 			}
 			else if (posY > h){ scrows = k + 1; break; }
 		}
@@ -458,17 +459,17 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		if (markedLine >= scPos && markedLine <= scrows){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine), 3));
-			int ypos = ((markedLine - scPos + 1)*(GridHeight + 1)) - 1;
-			if (preview && ypos > previewpos.y){ ypos += previewsize.y; }
-			tdc.DrawRectangle(posX + 1, ypos, (GridWidth[0] - 1), GridHeight + 2);
+			int ypos = ((markedLine - scPos + 1)*(GridHeight + 1));
+			if (preview && ypos >= previewpos.y-2){ ypos += previewsize.y + 5; }
+			tdc.DrawRectangle(posX + 1, ypos - 1, (GridWidth[0] - 1), GridHeight + 2);
 		}
 
 		if (Edit->ebrow >= scPos && Edit->ebrow <= scrows){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine)));
-			int ypos = ((Edit->ebrow - scPos + 1)*(GridHeight + 1)) - 1;
-			if (preview && ypos > previewpos.y){ ypos += previewsize.y; }
-			tdc.DrawRectangle(posX, ypos, w + scHor - posX, GridHeight + 2);
+			int ypos = ((Edit->ebrow - scPos + 1)*(GridHeight + 1));
+			if (preview && ypos >= previewpos.y-2){ ypos += previewsize.y + 5; }
+			tdc.DrawRectangle(posX, ypos - 1, w + scHor - posX, GridHeight + 2);
 		}
 	}
 	wxPaintDC dc(this);
@@ -668,7 +669,15 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	bool dclick = event.LeftDClick();
 	bool middle = event.MiddleDown();
 	bool right = event.RightDown();
-	int curY = (event.GetY());
+	int curY = event.GetY();
+	if (preview){
+		wxPoint previewpos = preview->GetPosition();
+		wxSize previewsize = preview->GetSize();
+		if (curY >= previewpos.y - 2 && curY <= previewpos.y + previewsize.y + 1){ return; }
+		if (curY > previewpos.y + previewsize.y){
+			curY -= previewsize.y + 3;
+		}
+	}
 	int curX = (event.GetX());
 
 
@@ -1237,7 +1246,7 @@ void SubsGridWindow::SelVideoLine(int curtime)
 
 }
 
-void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview)
+void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fromPreview)
 {
 	SubsGrid *thisgrid = (SubsGrid*)this;
 	SubsGrid *secondgrid = NULL;
@@ -1258,21 +1267,32 @@ void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview)
 	secondgrid->Edit->SetLine(secondGridLine);
 	secondgrid->SelectRow(secondGridLine, false, true, true);
 	if (!showPreview /*|| !secondgrid->IsShown()*/){
-		int w, h;
-		GetClientSize(&w, &h);
-		int previewHeight = h / 3;
-		if (previewHeight < 100)
-			previewHeight = 100;
-		if (h < 120){ KaiMessageBox(_("Nie mo¿na wyœwietliæ podgl¹du, poniewa¿ wielkoœæ okna napisów jest zbyt ma³a")); return; }
-		int realGridHeight = (GridHeight + 1);
-		int previewPosition = diffPosition * realGridHeight;
-		if (previewPosition + previewHeight > h){
-			int newLine = (((w - previewHeight) / 2) / realGridHeight);
-			int diff = Line - newLine;
-			scPos -= diff;
-			previewPosition = newLine * realGridHeight;
+		if (!preview){
+			int w, h;
+			GetClientSize(&w, &h);
+			int previewHeight = h / 3;
+			if (previewHeight < 100)
+				previewHeight = 100;
+			if (h < 120){ KaiMessageBox(_("Nie mo¿na wyœwietliæ podgl¹du, poniewa¿ wielkoœæ okna napisów jest zbyt ma³a")); return; }
+			int realGridHeight = (GridHeight + 1);
+			int previewPosition = (diffPosition + 2) * realGridHeight;
+			if (previewPosition + previewHeight > h){
+				int newLine = (((w - previewHeight) / 2) / realGridHeight);
+				int diff = Line - newLine;
+				scPos -= diff;
+				previewPosition = newLine * realGridHeight;
+			}
+			preview = new SubsGridPreview(secondgrid, thisgrid, previewPosition+2, wxSize(w, previewHeight));
 		}
-		preview = new SubsGridPreview(secondgrid, thisgrid, previewPosition, wxSize(w, previewHeight));
+		else{
+			if (fromPreview){
+				secondgrid->Refresh(false);
+				return;
+			}
+			preview->MakeVisible();
+			preview->Refresh(false);
+			return;
+		}
 		Refresh(false);
 	}
 	else{
