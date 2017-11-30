@@ -84,6 +84,7 @@
 	XX( Copy, ) \
 	XX( Paste, ) \
 	XX( Cut, ) \
+	XX( ShowPreview, ) \
 	XX( HideSelected, ) \
 	XX( FilterByNothing, ) \
 	XX( FilterByStyles, ) \

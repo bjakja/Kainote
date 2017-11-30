@@ -386,12 +386,28 @@ void SubsFile::InsertSelection(int i)
 	subs->Selections.insert(IdConverter->getElementById(i));
 }
 
-void SubsFile::InsertSelections(int from, int to)
+void SubsFile::InsertSelections(int from, int to, bool deselect /*= false*/)
 {
+	if (deselect){ subs->Selections.clear(); }
 	int fromKey = IdConverter->getElementById(from);
+	if (fromKey < 0){ return; }
 	int toKey = IdConverter->getElementById(to);
-	for (int i = fromKey; i < toKey; i++)
-		subs->Selections.insert(i);
+	if (toKey < 0){ toKey = subs->dials.size(); }
+	for (int i = fromKey; i <= toKey; i++){
+		if (*subs->dials[i]->isVisible){
+			subs->Selections.insert(i);
+		}
+	}
+}
+void SubsFile::InsertKeySelections(int from, int to, bool deselect /*= false*/)
+{
+	if (deselect){ subs->Selections.clear(); }
+	if (to < 0){ to = subs->dials.size()-1; }
+	for (int i = from; i <= to; i++){
+		if (*subs->dials[i]->isVisible){
+			subs->Selections.insert(i);
+		}
+	}
 }
 
 void SubsFile::InsertSelectionKey(int i)

@@ -58,8 +58,8 @@ protected:
 
 	wxBitmap* bmp;
 	wxFont font;
-	SubsGridPreview *preview=NULL;
-	
+	SubsGridPreview *preview = NULL;
+	SubsGridPreview *thisPreview = NULL;
 private:
 	virtual void ContextMenu(const wxPoint &pos, bool dummy = false){};
 	//DECLARE_EVENT_TABLE();

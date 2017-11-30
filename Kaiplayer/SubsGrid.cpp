@@ -191,6 +191,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	menu->Append(4444, _("Ukryj kolumny"), hidemenu);
 	menu->SetAccMenu(HideSelected, _("Ukryj zaznaczone linijki"))->Enable(sels > 0);
 	menu->Append(4445, _("Filtrowanie"), filterMenu);
+	menu->SetAccMenu(ShowPreview, _("Pokaż podgląd"))->Enable(Notebook::GetTabs()->Size()>1);
 	menu->Append(4451, _("Ignoruj filtrowanie przy akcjach"), NULL, "", ITEM_CHECK)->Check(ignoreFiltered);
 	menu->SetAccMenu(NewFPS, _("Ustaw nowy FPS"));
 	menu->SetAccMenu(FPSFromVideo, _("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState() != None && sels == 2);
@@ -279,7 +280,7 @@ void SubsGrid::OnDuplicate()
 		InsertRows(rw1, dupl);
 		dupl.clear();
 	}
-	file->InsertSelections(rw1, rw1 + rw2);
+	file->InsertSelections(rw1, rw1 + rw2 - 1);
 	SetModified(GRID_DUPLICATE, true, false, rw1);
 	Refresh(false);
 }
@@ -585,6 +586,9 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	case PasteTranslation: if (subsFormat < SRT && ((TabPanel*)GetParent())->SubsPath != ""){ OnPasteTextTl(); } break;
 	case SubsFromMKV: if (Kai->GetTab()->VideoName.EndsWith(".mkv")){ OnMkvSubs(event); } break;
 	case NewFPS: OnSetNewFPS(); break;
+	case ShowPreview:
+		OnShowPreview();
+		break;
 	default:
 		break;
 	}
@@ -1056,6 +1060,11 @@ void SubsGrid::OnMakeContinous(int idd)
 	}
 	SetModified(GRID_MAKE_LINES_CONTINUES);
 	Refresh(false);
+}
+
+void SubsGrid::OnShowPreview()
+{
+
 }
 
 void SubsGrid::ConnectAcc(int id)

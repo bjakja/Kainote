@@ -57,6 +57,7 @@ private:
 	void OnSetFPSFromVideo();
 	void OnSetNewFPS();
 	void OnMakeContinous(int id);
+	void OnShowPreview();
 	void Filter(int id);
 
 	DECLARE_EVENT_TABLE()

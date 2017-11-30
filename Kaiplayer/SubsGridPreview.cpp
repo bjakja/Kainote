@@ -25,6 +25,7 @@ SubsGridPreview::SubsGridPreview(SubsGrid *_previewGrid, SubsGrid *windowToDraw,
 	,previewGrid(_previewGrid)
 	, parent(windowToDraw)
 {
+	previewGrid->thisPreview = this;
 	scPos = previewGrid->scPos;
 	scrollbar = new KaiScrollbar(this, 5432, wxDefaultPosition, wxDefaultSize,wxVERTICAL);
 	Bind(wxEVT_PAINT, &SubsGridPreview::OnPaint, this);
@@ -59,6 +60,15 @@ void SubsGridPreview::MakeVisible()
 	}
 }
 
+void SubsGridPreview::DestroyPreview(bool refresh)
+{
+	parent->preview = NULL;
+	previewGrid->thisPreview = NULL;
+	if(refresh)
+		parent->Refresh(false);
+	Destroy();
+}
+
 void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 {
 	int w = 0;
@@ -70,13 +80,13 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	if (scPos < 0){ scPos = 0; }
 	int scrows = scPos + panelrows;
 	//gdy widzimy koniec napisów
-	if (scrows >= size + 3){
+	if (scrows >= size + 2){
 		bg = true;
-		scrows = size + 1;
+		scrows = size;
 		scPos = (scrows - panelrows) + 2;// dojechanie do koñca napisów
 		if (panelrows > size + 3){ scPos = 0; }// w przypadku gdy ca³e napisy s¹ widoczne, wtedy nie skrollujemy i pozycja =0
 	}
-	else if (scrows >= size + 2){
+	else if (scrows >= size + 1){
 		bg = true;
 		scrows--;//w przypadku gdy mamy liniê przed koñcem napisów musimy zani¿yæ wynik bo przekroczy tablicê.
 	}
@@ -157,7 +167,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	int i = previewGrid->file->GetElementById(scPos) - 1;
 	int k = scPos - 1;
 
-	while (i < previewGrid->file->GetAllCount() && k < scrows - 1){
+	while (i < previewGrid->file->GetAllCount() && k < scrows){
 		bool isHeadline = (k < scPos);
 		if (!isHeadline){
 			Dial = previewGrid->file->GetDialogueByKey(i);
@@ -195,15 +205,15 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			int center = ((w - fw) / 2) + scHor;
 			tdc.SetTextForeground(Options.GetColour(WindowHeaderText));
 			tdc.DrawText(tab->SubsName, center, 1);
-			int xHeight = previewGrid->GridHeight - 4;
+			int xHeight = previewGrid->GridHeight - 6;
 			int wPos = w + scHor - 21;
 			if (onX || pushedX){
 				tdc.SetBrush(Options.GetColour(pushedX ? WindowPushedCloseButton : WindowHoverCloseButton));
-				tdc.DrawRectangle(wPos, 2, wPos + xHeight - 2, xHeight);
+				tdc.DrawRectangle(wPos, 3, xHeight+2, xHeight+2);
 			}
 			tdc.SetPen(wxPen(Options.GetColour(WindowHeaderText),2));
-			tdc.DrawLine(wPos + 2, 3, wPos + xHeight-1, xHeight);
-			tdc.DrawLine(wPos + xHeight-1, 3, wPos + 2, xHeight);
+			tdc.DrawLine(wPos + 2, 5, wPos + xHeight-2, xHeight+1);
+			tdc.DrawLine(wPos + xHeight-2, 5, wPos + 2, xHeight+1);
 
 			posY += previewGrid->GridHeight + 1;
 			k++;
@@ -499,25 +509,25 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	}
 	if (curY < previewGrid->GridHeight){
 		if (curX + 4 >= w - 21){
-			if (curX + 4 > w - (21 - previewGrid->GridHeight - 4)){ return; }
+			int Width = (previewGrid->GridHeight - 4);
+			if (curX + 4 >= (w - 21) + Width || curY<2 || curY>Width+2){ return; }
 			if (left_up){
-				parent->preview = NULL;
-				parent->Refresh(false);
-				Destroy();
+				DestroyPreview(true);
 			}
 			else if (click){
 				pushedX = true;
-				wxRect rect(w - 21, 2, 20, previewGrid->GridHeight - 4);
+				wxRect rect(w - 21, 2, 20, Width);
 				Refresh(false, &rect);
 			}
 			else if (!onX){
 				onX = true;
-				wxRect rect(w - 21, 2, 20, previewGrid->GridHeight - 4);
+				wxRect rect(w - 21, 2, 20, Width);
 				Refresh(false, &rect);
 			}
 			return;
 		}
 	}
+	
 	if (left_up && holding) {
 		holding = false;
 		//Save swap lines after alt release 
@@ -526,7 +536,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	}
 	if (curX < 0 || curX > w-4){ return; }
 
-	int row = (curY /*+ headerHeight*/) / (previewGrid->GridHeight + 1) + scPos - 1;
+	int row = curY / (previewGrid->GridHeight + 1) + scPos - 1;
 	int hideColumnWidth = (previewGrid->isFiltered) ? 12 : 0;
 	bool isNumerizeColumn = (curX >= hideColumnWidth && curX < previewGrid->GridWidth[0] + hideColumnWidth);
 
@@ -706,11 +716,12 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			}
 
 			// Toggle each
-			bool notFirst = false;
-			for (int i = i1; i <= i2; i++) {
-				previewGrid->SelectRow(i, notFirst || ctrl, true, true);
-				notFirst = true;
-			}
+			//bool notFirst = false;
+			//for (int i = i1; i <= i2; i++) {
+				//previewGrid->SelectRow(i, notFirst || ctrl, true, true);
+				//notFirst = true;
+			//}
+			previewGrid->file->InsertSelections(i1, i2, !ctrl);
 			if (changeActive){
 				previewGrid->lastActiveLine = tab->Edit->ebrow;
 				tab->Edit->SetLine(row, true, true, false);

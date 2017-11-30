@@ -52,7 +52,8 @@ SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoin
 SubsGridWindow::~SubsGridWindow()
 {
 	if (bmp){ delete bmp; bmp = NULL; }
-	if (preview){ preview->Destroy(); }
+	if (preview){ preview->DestroyPreview(); }
+	if (thisPreview){ thisPreview->DestroyPreview(); thisPreview = NULL; }
 }
 
 void SubsGridWindow::SetStyle()
@@ -93,6 +94,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		size += (previewsize.y / (GridHeight + 1)) + 1;
 	}
 	panelrows = (h / (GridHeight + 1)) + 1;
+	if (scPos < 0){ scPos = 0; }
 	int scrows = scPos + panelrows;
 	//gdy widzimy koniec napisów
 	if (scrows >= size + 3){
@@ -849,16 +851,21 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		int scdelta = (alt) ? 1 : 3;
 		int minVis = scPos + 1;
 		int maxVis = scPos + h / (GridHeight + 1) - 2;
+		if (preview){
+			wxPoint previewpos = preview->GetPosition();
+			wxSize previewsize = preview->GetSize();
+			maxVis -= (previewsize.y / (GridHeight + 1)) + 1;
+		}
 		int delta = 0;
 		if (row < minVis && row != 0) delta = -scdelta;
 		if (row > maxVis) delta = scdelta;
 
 		if (delta) {
-			ScrollTo(scPos + delta);//row - (h / (GridHeight+1)) row
+			ScrollTo(scPos + delta);
 
 			// End the hold if this was a mousedown to avoid accidental
 			// selection of extra lines
-			if (click) {// && row!=GetCount()-1
+			if (click) {
 				holding = false;
 				left_up = true;
 				ReleaseMouse();
@@ -883,22 +890,15 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 			}
 
 			// Toggle each
-			bool notFirst = false;
-			for (int i = i1; i <= i2; i++) {
-				SelectRow(i, notFirst || ctrl, true, true);
-				notFirst = true;
-			}
+			file->InsertSelections(i1, i2, !ctrl);
 			if (changeActive){
 				lastActiveLine = Edit->ebrow;
 				Edit->SetLine(row, true, true, false);
 				if (hasTLMode){ Edit->SetActiveLineToDoubtful(); }
-				//if(mvtal < 4 && mvtal > 0){
-				//SetVideoLineTime(event);
-				//}
 			}
 			lastsel = row;
 			Refresh(false);
-			if (Edit->Visual == CHANGEPOS/* || Edit->Visual==MOVEALL*/){
+			if (Edit->Visual == CHANGEPOS){
 				video->SetVisual();
 				video->Render();
 			}
@@ -955,7 +955,13 @@ void SubsGridWindow::ScrollTo(int y, bool center){
 	int w, h;
 	GetClientSize(&w, &h);
 	if (center){ y -= (h / (GridHeight + 1)) / 2; }
-	int nextY = MID(0, y, GetCount() + 2 - h / (GridHeight + 1));
+	int size = GetCount() + 2;
+	if (preview){
+		wxPoint previewpos = preview->GetPosition();
+		wxSize previewsize = preview->GetSize();
+		size += (previewsize.y / (GridHeight + 1)) + 1;
+	}
+	int nextY = MID(0, y, size - h / (GridHeight + 1));
 
 	if (scPos != nextY) {
 		scPos = nextY;
@@ -985,10 +991,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 
 	// Select all
 	if (key == 'A' && ctrl && !alt && !shift) {
-		//SelectRow(0,false,true,true);
-		for (int i = 0; i<GetCount(); i++){
-			file->InsertSelection(i);
-		}
+		file->InsertKeySelections(0, -1);
 		Refresh(false);
 	}
 
@@ -1027,6 +1030,11 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 			Edit->SetLine(next);
 			SelectRow(next);
 			int gridh = ((h / (GridHeight + 1)) - 1);
+			if (preview){
+				wxPoint previewpos = preview->GetPosition();
+				wxSize previewsize = preview->GetSize();
+				gridh -= (previewsize.y / (GridHeight + 1)) + 1;
+			}
 			if (dir == 1 || dir == -1){
 				bool above = (next <= scPos);
 				bool below = (next >= scPos + gridh);
@@ -1063,14 +1071,15 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 				i2 = aux;
 			}
 
-			// Select range
-			bool notfirst = false;
-			for (int i = i1; i <= i2; i++) {
-				SelectRow(i, notfirst);
-				notfirst = true;
-			}
+			
+			file->InsertSelections(i1, i2, true);
 
 			int gridh = ((h / (GridHeight + 1)) - 1);
+			if (preview){
+				wxPoint previewpos = preview->GetPosition();
+				wxSize previewsize = preview->GetSize();
+				gridh -= (previewsize.y / (GridHeight + 1)) + 1;
+			}
 			if (extendRow == scPos && (dir == 1 || dir == -1)){
 				ScrollTo(extendRow - 1);
 			}
@@ -1080,6 +1089,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 			else if (dir != 1 && dir != -1){
 				ScrollTo(extendRow);
 			}
+			else{ Refresh(false); }
 			//return;
 		}
 		if (hasTLMode){ Edit->SetActiveLineToDoubtful(); }
@@ -1266,34 +1276,28 @@ void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fro
 	secondgrid->scPos = secondGridLine - diffPosition;
 	secondgrid->Edit->SetLine(secondGridLine);
 	secondgrid->SelectRow(secondGridLine, false, true, true);
-	if (!showPreview /*|| !secondgrid->IsShown()*/){
+	if (!showPreview && !fromPreview){
 		if (!preview){
 			int w, h;
 			GetClientSize(&w, &h);
-			int previewHeight = h / 3;
-			if (previewHeight < 100)
-				previewHeight = 100;
-			if (h < 120){ KaiMessageBox(_("Nie mo¿na wyœwietliæ podgl¹du, poniewa¿ wielkoœæ okna napisów jest zbyt ma³a")); return; }
 			int realGridHeight = (GridHeight + 1);
+			int previewHeight = (((h / 3) / realGridHeight) * realGridHeight) + realGridHeight + 4;
+			if (previewHeight < 100)
+				previewHeight = ((100 / realGridHeight) * realGridHeight) + realGridHeight + 4;
+			if (h < 150){ KaiMessageBox(_("Nie mo¿na wyœwietliæ podgl¹du, poniewa¿ wielkoœæ okna napisów jest zbyt ma³a")); return; }
 			int previewPosition = (diffPosition + 2) * realGridHeight;
 			if (previewPosition + previewHeight > h){
-				int newLine = (((w - previewHeight) / 2) / realGridHeight);
-				int diff = Line - newLine;
-				scPos -= diff;
+				int newLine = (((h - previewHeight) / 2) / realGridHeight);
+				scPos = (Line - newLine)+2;
 				previewPosition = newLine * realGridHeight;
 			}
 			preview = new SubsGridPreview(secondgrid, thisgrid, previewPosition+2, wxSize(w, previewHeight));
+			Refresh(false);
 		}
 		else{
-			if (fromPreview){
-				secondgrid->Refresh(false);
-				return;
-			}
 			preview->MakeVisible();
 			preview->Refresh(false);
-			return;
 		}
-		Refresh(false);
 	}
 	else{
 		secondgrid->Refresh(false);
