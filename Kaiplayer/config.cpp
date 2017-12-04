@@ -841,8 +841,8 @@ wxString MakePolishPlural(int num, const wxString &normal, const wxString &plura
 	wxString result;
 	int div10mod = (num % 10);
 	int div100mod = (num % 100);
-	if(num==1){result = normal;}
-	else if((div10mod >=2 && div10mod <= 4) && (div100mod<10 && div100mod>20)){
+	if (num == 1 || num == -1){ result = normal; }
+	else if((div10mod >=2 && div10mod <= 4) && (div100mod<10 || div100mod>20)){
 		result = plural2to4;
 	}else{
 		result = pluralRest;

@@ -46,9 +46,7 @@ class SubsGridBase : public KaiScrolledWindow
 	friend class SubsFile;
 public:
 
-	wxMutex mutex;
-  
-	bool Modified;
+	//wxMutex mutex;
 	void AddLine(Dialogue *line);
 	void AddStyle(Styles *nstyl);
 	void ChangeLine(unsigned char editionType, Dialogue *line1, int wline, long cells, bool selline=false, bool dummy=false);
@@ -61,7 +59,7 @@ public:
 	wxString GetStyles(bool tld=false);
 	Styles *GetStyle(int i, const wxString &name="");
 	std::vector<Styles*> *GetStyleTable();
-	
+	bool IsModified();
 	
 	void SaveFile(const wxString &filename, bool cstat = true, bool loadFromEditbox = false);
 	wxString *SaveText();

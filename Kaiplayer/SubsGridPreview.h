@@ -15,9 +15,27 @@
 
 #pragma once
 #include "KaiScrollbar.h"
-
+#include "KaiListCtrl.h"
+#include <vector>
 
 class SubsGrid;
+class TabPanel;
+
+class MultiPreviewData{
+public:
+	MultiPreviewData(){}
+	MultiPreviewData(TabPanel *_tab, SubsGrid *_grid, int _lineRangeStart, int _lineRangeEnd = 1){
+		tab = _tab;
+		grid = _grid;
+		lineRangeStart = _lineRangeStart;
+		lineRangeEnd = _lineRangeEnd;
+	};
+	bool operator ==(const MultiPreviewData &data){ return data.grid == grid && data.lineRangeStart == lineRangeStart; }
+	TabPanel *tab = NULL;
+	SubsGrid *grid = NULL;
+	int lineRangeStart = 0;
+	int lineRangeEnd = 1;
+};
 
 class SubsGridPreview : public wxWindow
 {
@@ -27,12 +45,16 @@ public:
 	virtual ~SubsGridPreview();
 	void MakeVisible();
 	void DestroyPreview(bool refresh = false);
+	void NewSeeking(bool makeVisible = true);
 private:
 	void OnPaint(wxPaintEvent &evt);
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnSize(wxSizeEvent &evt);
 	void OnScroll(wxScrollEvent &evt);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } holding = false; };
+	void OnOccurenceChanged(wxCommandEvent &evt);
+	void SeekForOccurences();
+	void ContextMenu(const wxPoint &pos);
 
 	SubsGrid *previewGrid;
 	SubsGrid *parent;
@@ -40,8 +62,12 @@ private:
 	int scPos = 0;
 	int scHor = 0;
 	int oldX = -1;
+	//int selectedItem = 0;
 	bool holding = false;
 	bool onX = false;
 	bool pushedX = false;
 	KaiScrollbar *scrollbar=NULL;
+	KaiListCtrl *occurencesList = NULL;
+	std::vector<MultiPreviewData> previewData;
+	MultiPreviewData lastData;
 };

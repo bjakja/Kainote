@@ -19,6 +19,7 @@
 #include <wx/window.h>
 
 class SubsGridPreview;
+class SubsGrid;
 
 class SubsGridWindow : public SubsGridBase
 {
@@ -27,6 +28,7 @@ public:
 	virtual ~SubsGridWindow();
 	void AdjustWidths(int cell = 8191);
 	int CalcChars(const wxString &txt, wxString *lines = NULL, bool *bad = NULL);
+	void ChangeActiveLine(int newActiveLine, bool refresh = false);
 	void ChangeTimeDisplay(bool frame);
 	void CheckText(wxString text, wxArrayInt &errs);
 	void HideOverrideTags();
@@ -46,6 +48,7 @@ protected:
 	void OnSize(wxSizeEvent& event);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } holding = false; };
 	void ShowSecondComparedLine(int Line, bool showPreview = false, bool fromPreview = false);
+	bool ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowToDraw, int activeLine, int diffPosition);
 
 	int GridWidth[13];
 	int posY=0;

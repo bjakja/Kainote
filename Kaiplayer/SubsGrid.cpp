@@ -191,8 +191,8 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	menu->Append(4444, _("Ukryj kolumny"), hidemenu);
 	menu->SetAccMenu(HideSelected, _("Ukryj zaznaczone linijki"))->Enable(sels > 0);
 	menu->Append(4445, _("Filtrowanie"), filterMenu);
-	menu->SetAccMenu(ShowPreview, _("Pokaż podgląd"))->Enable(Notebook::GetTabs()->Size()>1);
 	menu->Append(4451, _("Ignoruj filtrowanie przy akcjach"), NULL, "", ITEM_CHECK)->Check(ignoreFiltered);
+	menu->SetAccMenu(ShowPreview, _("Pokaż podgląd napisów"))->Enable(Notebook::GetTabs()->Size()>1 && !preview);
 	menu->SetAccMenu(NewFPS, _("Ustaw nowy FPS"));
 	menu->SetAccMenu(FPSFromVideo, _("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState() != None && sels == 2);
 	menu->SetAccMenu(PasteTranslation, _("Wklej tekst tłumaczenia"))->Enable(subsFormat < SRT && ((TabPanel*)GetParent())->SubsPath != "");
@@ -587,7 +587,8 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	case SubsFromMKV: if (Kai->GetTab()->VideoName.EndsWith(".mkv")){ OnMkvSubs(event); } break;
 	case NewFPS: OnSetNewFPS(); break;
 	case ShowPreview:
-		OnShowPreview();
+		if (Notebook::GetTabs()->Size()>1 && !preview)
+			OnShowPreview();
 		break;
 	default:
 		break;
@@ -772,7 +773,7 @@ void SubsGrid::MoveTextTL(char mode)
 void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 {
 	int idd = event.GetId();
-	if (Modified){
+	if (IsModified()){
 		int wbutton = KaiMessageBox(_("Zapisać plik przed wczytaniem napisów z MKV?"),
 			_("Potwierdzenie"), wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
 		if (wbutton == wxYES){ Kai->Save(false); }
@@ -1064,7 +1065,12 @@ void SubsGrid::OnMakeContinous(int idd)
 
 void SubsGrid::OnShowPreview()
 {
-
+	if (CG1 == this || CG2 == this){
+		ShowSecondComparedLine(Edit->ebrow, true);
+	}
+	else{
+		ShowPreviewWindow(NULL, this, Edit->ebrow, Edit->ebrow - scPos);
+	}
 }
 
 void SubsGrid::ConnectAcc(int id)

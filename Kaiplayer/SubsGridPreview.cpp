@@ -16,7 +16,7 @@
 #include "SubsGridPreview.h"
 #include "SubsGrid.h"
 #include "SubsGridFiltering.h"
-#include "TabPanel.h"
+#include "KainoteMain.h"
 #include "Utils.h"
 #include <wx/regex.h>
 
@@ -25,7 +25,12 @@ SubsGridPreview::SubsGridPreview(SubsGrid *_previewGrid, SubsGrid *windowToDraw,
 	,previewGrid(_previewGrid)
 	, parent(windowToDraw)
 {
-	previewGrid->thisPreview = this;
+	if (!previewGrid){ 
+		NewSeeking(false);
+	}
+	else{
+		previewGrid->thisPreview = this;
+	}
 	scPos = previewGrid->scPos;
 	scrollbar = new KaiScrollbar(this, 5432, wxDefaultPosition, wxDefaultSize,wxVERTICAL);
 	Bind(wxEVT_PAINT, &SubsGridPreview::OnPaint, this);
@@ -58,6 +63,7 @@ void SubsGridPreview::MakeVisible()
 	if ((scPos > erow || scPos + (h / (previewGrid->GridHeight + 1)) < erow + 2)){
 		scPos = MAX(0, erow - ((h / (previewGrid->GridHeight + 1)) / 2) + 1);
 	}
+	Refresh(false);
 }
 
 void SubsGridPreview::DestroyPreview(bool refresh)
@@ -67,6 +73,24 @@ void SubsGridPreview::DestroyPreview(bool refresh)
 	if(refresh)
 		parent->Refresh(false);
 	Destroy();
+}
+
+void SubsGridPreview::NewSeeking(bool makeVisible/*=true*/)
+{
+	SeekForOccurences();
+	/*if (!occurencesList){
+		wxSize size = GetClientSize();
+		occurencesList = new KaiListCtrl(this, 3232, occurences, wxPoint(size.x - 304, previewGrid->GridHeight + 1), wxSize(300, size.y - (previewGrid->GridHeight + 5)));
+		occurencesList->SetFont(wxFont(7, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT));
+		Bind(LIST_ITEM_LEFT_CLICK, &SubsGridPreview::OnOccurenceChanged, this, 3232);
+	}
+	else{
+		occurencesList->SetTextArray(occurences);
+	}
+	occurencesList->SetSelection(0);*/
+	previewGrid->ChangeActiveLine(lastData.lineRangeStart);
+	if (makeVisible)
+		MakeVisible();
 }
 
 void SubsGridPreview::OnPaint(wxPaintEvent &evt)
@@ -178,26 +202,6 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		strings.clear();
 
 		if (isHeadline){
-			/*strings.push_back("#");
-			if (previewGrid->subsFormat < SRT){
-				strings.push_back(_("W."));
-			}
-			strings.push_back(_("Start"));
-			if (previewGrid->subsFormat != TMP){
-				strings.push_back(_("Koniec"));
-			}
-			if (previewGrid->subsFormat < SRT){
-				strings.push_back(_("Styl"));
-				strings.push_back(_("Aktor"));
-				strings.push_back(_("M.L."));
-				strings.push_back(_("M.P."));
-				strings.push_back(_("M.Pi."));
-				strings.push_back(_("Efekt"));
-			}
-			if (previewGrid->subsFormat != TMP){ strings.push_back(_("ZNS")); }
-			strings.push_back(previewGrid->showOriginal ? _("Tekst oryginalny") : _("Tekst"));
-			if (previewGrid->showOriginal){ strings.push_back(_("Tekst t³umaczenia")); }
-			kol = header;*/
 			tdc.SetBrush(wxBrush(Options.GetColour(WindowBorderBackground)));
 			tdc.SetPen(*wxTRANSPARENT_PEN);
 			tdc.DrawRectangle(0, posY, w + scHor, previewGrid->GridHeight);
@@ -354,6 +358,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		bool isCenter;
 		wxColour label = (states == 0) ? labelBkColN : (states == 2) ? labelBkCol :
 			(states == 1) ? labelBkColM : labelBkColD;
+		if (i >= lastData.lineRangeStart && i< lastData.lineRangeStart + lastData.lineRangeEnd){ label = GetColorWithAlpha(wxColour(0,0,255,60), kol); }
 		for (int j = 0; j < ilcol; j++){
 			if (previewGrid->showOriginal&&j == ilcol - 2){
 				int podz = (w + scHor - posX) / 2;
@@ -427,8 +432,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 
 
 			bool collis = (!isHeadline && k != tab->Edit->ebrow &&
-				(Dial->Start >= acdial->Start && Dial->Start < acdial->End ||
-				Dial->End > acdial->Start && Dial->Start <= acdial->End));
+				(Dial->Start < acdial->End && Dial->End > acdial->Start));
 
 			if (previewGrid->subsFormat < SRT){ isCenter = !(j == 4 || j == 5 || j == 9 || j == 11 || j == 12); }
 			else if (previewGrid->subsFormat == TMP){ isCenter = !(j == 2); }
@@ -579,6 +583,9 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			Refresh(false);
 
 		}
+		else{
+			ContextMenu(event.GetPosition());
+		}
 		return;
 	}
 
@@ -691,7 +698,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			Refresh(false);
 			// End the hold if this was a mousedown to avoid accidental
 			// selection of extra lines
-			if (click) {// && row!=GetCount()-1
+			if (click) {
 				holding = false;
 				left_up = true;
 				ReleaseMouse();
@@ -716,11 +723,6 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			}
 
 			// Toggle each
-			//bool notFirst = false;
-			//for (int i = i1; i <= i2; i++) {
-				//previewGrid->SelectRow(i, notFirst || ctrl, true, true);
-				//notFirst = true;
-			//}
 			previewGrid->file->InsertSelections(i1, i2, !ctrl);
 			if (changeActive){
 				previewGrid->lastActiveLine = tab->Edit->ebrow;
@@ -748,3 +750,102 @@ void SubsGridPreview::OnScroll(wxScrollEvent& event)
 		Refresh(false);
 	}
 }
+
+
+void SubsGridPreview::SeekForOccurences()
+{
+	if (lastData.grid){ lastData.grid->thisPreview = NULL; }
+	TabPanel *tabp = (TabPanel*)parent->GetParent();
+	Dialogue * actualDial = parent->GetDialogue(tabp->Edit->ebrow);
+	int startTime = actualDial->Start.mstime;
+	int endTime = actualDial->End.mstime;
+	Notebook * nb = Notebook::GetTabs();
+	File *thisSubs = parent->file->GetSubs();
+	previewData.clear();
+	int lastSel = 0;
+	for (int i = 0; i < nb->Size(); i++){
+		TabPanel *tab = nb->Page(i);
+		File *subs = tab->Grid->file->GetSubs();
+		if (thisSubs == subs){ continue; }
+		int lastLine = -2;
+		int startMin = INT_MAX;
+		int startMax = -1;
+		int endMin = INT_MAX;
+		int endMax = -1;
+		int keyStartMin = 0, keyStartMax = 0, keyEndMin = 0, keyEndMax = 0;
+		for (size_t j = 0; j < subs->dials.size(); j++){
+			Dialogue *dial = subs->dials[j];
+			if (!dial->isVisible){ continue; }
+			if (dial->Start.mstime < endTime && dial->End.mstime > startTime){
+				if (lastLine+1 == j){
+					lastLine = j;
+					int lastData = previewData.size() - 1;
+					previewData[lastData].lineRangeEnd = (j - previewData[lastData].lineRangeStart) + 1;
+				}
+				else{
+					lastLine = j;
+					previewData.push_back(MultiPreviewData(tab, tab->Grid, j));
+				}
+			}
+			else if (dial->Start.mstime > startMax && dial->Start.mstime < startTime){
+				startMax = dial->Start.mstime; keyStartMax = j;
+			}
+			else if (dial->Start.mstime < startMin && dial->Start.mstime > startTime){
+				startMin = dial->Start.mstime; keyStartMin = j;
+			}
+			else if (dial->End.mstime > endMax && dial->End.mstime < endTime){
+				endMax = dial->End.mstime; keyEndMax = j;
+			}
+			else if (dial->End.mstime < endMin && dial->End.mstime > endTime){
+				endMin = dial->End.mstime; keyEndMin = j;
+			}
+			
+		}
+		if (lastLine == -2){
+			int bestStart, bestJ;
+			int bestEnd, bestJE;
+			
+			if (abs(startTime - startMax) > abs(startTime - startMin)){
+				bestStart = startMin; bestJ = keyStartMin;
+			}
+			else{ bestStart = startMax; bestJ = keyStartMax; }
+			if (abs(endTime - endMax) > abs(endTime - endMin)){
+				bestEnd = endMin; bestJE = keyEndMin;
+			}
+			else{ bestEnd = endMax; bestJE = keyEndMax; }
+			if (abs(startTime - bestStart) > abs(endTime - bestEnd)){
+				bestJ = bestJE;
+			}
+			//bestJ jest naszym wynikiem w tym przypadku, nie potrzebujemy samego czasu który jest najlepszy
+			previewData.push_back(MultiPreviewData(tab, tab->Grid, bestJ, 0));
+		}
+		if (lastData.grid == tab->Grid){ lastSel = i; }
+	}
+	//assert(previewData.size() < 1);
+	previewGrid = previewData[lastSel].grid;
+	previewGrid->thisPreview = this;
+	lastData = previewData[lastSel];
+	//teraz powinno byæ neverfailed ale assert nie zaszkodzi
+}
+
+void SubsGridPreview::ContextMenu(const wxPoint &pos)
+{
+	Menu *menu = new Menu();
+	SeekForOccurences();
+	for (int i = 0; i < previewData.size(); i++){
+		wxString name = previewData[i].tab->SubsName + " (" + std::to_string(previewData[i].lineRangeStart) + " " + std::to_string(previewData[i].lineRangeEnd) + ")";
+		MenuItem * Item = menu->Append(4880 + i, name, "", true, NULL, NULL, (lastData == previewData[i]) ? ITEM_RADIO : ITEM_NORMAL);
+	}
+	int result = menu->GetPopupMenuSelection(pos, this);
+	delete menu;
+	if (result < 0){ return; }
+	int line = result - 4880;
+	if (lastData.grid){ lastData.grid->thisPreview = NULL; }
+	lastData = previewData[line];
+	previewGrid = previewData[line].grid;
+	previewGrid->thisPreview = this;
+	previewGrid->ChangeActiveLine(previewData[line].lineRangeStart);
+	MakeVisible();
+}
+
+

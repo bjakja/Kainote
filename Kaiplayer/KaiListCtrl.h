@@ -134,11 +134,12 @@ public:
 class KaiListCtrl : public KaiScrolledWindow
 {
 public:
+	//Custom multilist
 	KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int style = 0);
 	//CheckboxList
 	KaiListCtrl(wxWindow *parent, int id, int numelem = 0, wxString *list = 0, const wxPoint &pos = wxDefaultPosition, 
 		const wxSize &size = wxDefaultSize, int style = 0);
-	//nomralList
+	//TextList
 	KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, const wxPoint &pos = wxDefaultPosition, 
 		const wxSize &size = wxDefaultSize, int style = 0);
 	virtual ~KaiListCtrl(){

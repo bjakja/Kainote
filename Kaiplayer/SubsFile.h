@@ -89,7 +89,7 @@ public:
 	std::vector<SInfo*> dsinfo;
 	std::set<int> Selections;
 
-	unsigned char etidtionType;
+	unsigned char editionType;
 	int activeLine;
 	int markerLine = 0;
 	int scrollPosition = 0;
@@ -106,13 +106,13 @@ private:
 	std::vector<File*> undo;
 	int iter;
 	File *subs;
-	
+	int lastSave = 0;
 public:
 	SubsFile();
 	~SubsFile();
 	void SaveUndo(unsigned char editionType, int activeLine, int markerLine);
-	void Redo();
-	void Undo();
+	bool Redo();
+	bool Undo();
 	void DummyUndo();
 	void DummyUndo(int newIter);
 	void ReloadVisibleDialogues(int keyFrom, int keyTo);
@@ -153,6 +153,10 @@ public:
 	void ShowHistory(wxWindow *parent, std::function<void(int)> functionAfterChangeHistory);
 	void GetHistoryTable(wxArrayString *history);
 	bool SetHistory(int iter);
+	void SetLastSave();
+	int GetActualHistoryIter();
+	int GetLastSaveIter(){ return lastSave; }
+	bool CanSave(){ return iter != lastSave; }
 	bool edited;
 	AVLtree *IdConverter;
 };

@@ -698,7 +698,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	}
 
 	// Seeking video by click on numeration column
-	if (click && isNumerizeColumn){
+	if ((click || dclick) && isNumerizeColumn){
 		TabPanel *tab = (TabPanel*)GetParent();
 		if (tab->Video->GetState() != None && !(row < scPos || row >= GetCount())){
 			if (tab->Video->GetState() != Paused){
@@ -823,6 +823,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 					extendRow = -1;
 				}
 				if (Comparison){ ShowSecondComparedLine(row); }
+				else if (preview){ preview->NewSeeking(); }
 			}
 
 			//1-klikniêcie lewym
@@ -919,7 +920,10 @@ void SubsGridWindow::OnScroll(wxScrollWinEvent& event)
 
 void SubsGridWindow::OnSize(wxSizeEvent& event)
 {
-	//wxSize size= GetClientSize();
+	if (preview){
+		wxSize size = GetClientSize();
+		preview->SetSize(wxSize(size.x, -1));
+	}
 	Refresh(false);
 }
 
@@ -1226,6 +1230,14 @@ int SubsGridWindow::CalcChars(const wxString &txt, wxString *lines, bool *bad)
 	return chars;
 }
 
+void SubsGridWindow::ChangeActiveLine(int newActiveLine, bool refresh /*= false*/)
+{
+	Edit->SetLine(newActiveLine);
+	SelectRow(newActiveLine, false, true, true);
+	if (refresh)
+		Refresh(false);
+}
+
 void SubsGridWindow::SelVideoLine(int curtime)
 {
 	if (Kai->GetTab()->Video->GetState() == None && curtime < 0){ return; }
@@ -1267,32 +1279,17 @@ void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fro
 	else
 		return;
 	//tymczasowo zdisejblowane do testów
-	//if (!showPreview && !secondgrid->IsShown()){ return; }
+	if (!(showPreview || preview) && !secondgrid->IsShownOnScreen()){ return; }
 	//Line is id here we need convert it to key
 	compareData & data = Comparison->at(file->GetElementById(Line));
 	int secondGridLine = data.secondComparedLine;
 	if (secondGridLine < 0){ return; }
 	int diffPosition = Line - scPos;
 	secondgrid->scPos = secondGridLine - diffPosition;
-	secondgrid->Edit->SetLine(secondGridLine);
-	secondgrid->SelectRow(secondGridLine, false, true, true);
-	if (!showPreview && !fromPreview){
+	secondgrid->ChangeActiveLine(secondGridLine);
+	if (!fromPreview){
 		if (!preview){
-			int w, h;
-			GetClientSize(&w, &h);
-			int realGridHeight = (GridHeight + 1);
-			int previewHeight = (((h / 3) / realGridHeight) * realGridHeight) + realGridHeight + 4;
-			if (previewHeight < 100)
-				previewHeight = ((100 / realGridHeight) * realGridHeight) + realGridHeight + 4;
-			if (h < 150){ KaiMessageBox(_("Nie mo¿na wyœwietliæ podgl¹du, poniewa¿ wielkoœæ okna napisów jest zbyt ma³a")); return; }
-			int previewPosition = (diffPosition + 2) * realGridHeight;
-			if (previewPosition + previewHeight > h){
-				int newLine = (((h - previewHeight) / 2) / realGridHeight);
-				scPos = (Line - newLine)+2;
-				previewPosition = newLine * realGridHeight;
-			}
-			preview = new SubsGridPreview(secondgrid, thisgrid, previewPosition+2, wxSize(w, previewHeight));
-			Refresh(false);
+			ShowPreviewWindow(secondgrid, thisgrid, Line, diffPosition);
 		}
 		else{
 			preview->MakeVisible();
@@ -1304,3 +1301,22 @@ void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fro
 	}
 }
 
+bool SubsGridWindow::ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowToDraw, int activeLine, int diffPosition)
+{
+	int w, h;
+	GetClientSize(&w, &h);
+	int realGridHeight = (GridHeight + 1);
+	int previewHeight = (((h / 3) / realGridHeight) * realGridHeight) + realGridHeight + 4;
+	if (previewHeight < 100)
+		previewHeight = ((100 / realGridHeight) * realGridHeight) + realGridHeight + 4;
+	if (h < 150){ KaiMessageBox(_("Nie mo¿na wyœwietliæ podgl¹du, poniewa¿ wielkoœæ okna napisów jest zbyt ma³a")); return false; }
+	int previewPosition = (diffPosition + 2) * realGridHeight;
+	if (previewPosition + previewHeight > h){
+		int newLine = (((h - previewHeight) / 2) / realGridHeight);
+		scPos = (activeLine - newLine) + 2;
+		previewPosition = newLine * realGridHeight;
+	}
+	preview = new SubsGridPreview(previewGrid, windowToDraw, previewPosition + 2, wxSize(w, previewHeight));
+	Refresh(false);
+	return true;
+}

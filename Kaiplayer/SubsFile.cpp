@@ -103,11 +103,13 @@ HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<voi
 	SetSizerAndFit(main);
 	CenterOnParent();
 	HistoryList->SetSelection(file->Iter(),true);
+	SetLabel(_("Historia") + " (" +
+		MakePolishPlural(history.GetCount(), _("element"), _("elementy"), _("elementów")) + ")");
 }
 
 
 File::File()
-	:etidtionType(0)
+	:editionType(0)
 	,activeLine(0)
 {
 }
@@ -186,18 +188,18 @@ SubsFile::~SubsFile()
 
 void SubsFile::SaveUndo(unsigned char editionType, int activeLine, int markerLine)
 {
-	int size=maxx();
-	if(iter!=size){
+	if (iter != maxx()){
 		for(std::vector<File*>::iterator it = undo.begin()+iter+1; it != undo.end(); it++)
 		{
 			(*it)->Clear();
 			delete (*it);
 		}
 		undo.erase(undo.begin()+iter+1, undo.end());
+		if (lastSave >= undo.size()){ lastSave = -1; }
 	}
-	//subs->activeLine = activeLine;
+	subs->activeLine = GetElementById(activeLine);
 	//subs->markerLine = markerLine;
-	subs->etidtionType = editionType;
+	subs->editionType = editionType;
 	undo.push_back(subs);
 	subs=subs->Copy();
 	iter++;
@@ -205,7 +207,7 @@ void SubsFile::SaveUndo(unsigned char editionType, int activeLine, int markerLin
 }
 
 
-void SubsFile::Redo()
+bool SubsFile::Redo()
 {
     if(iter<maxx()){
 		iter++;
@@ -213,10 +215,12 @@ void SubsFile::Redo()
 		delete subs;
 		subs=undo[iter]->Copy();
 		ReloadVisibleDialogues();
+		return false;
 	}
+	return true;
 }
 
-void SubsFile::Undo()
+bool SubsFile::Undo()
 {
     if(iter>0){
 		iter--;
@@ -224,7 +228,9 @@ void SubsFile::Undo()
 		delete subs;
 		subs=undo[iter]->Copy();
 		ReloadVisibleDialogues();
+		return false;
 	}
+	return true;
 }
 
 bool SubsFile::SetHistory(int _iter)
@@ -503,7 +509,7 @@ void SubsFile::EndLoad(unsigned char editionType, int activeLine)
 {
 	//subs->activeLine = activeLine;
 	//subs->markerLine = activeLine;
-	subs->etidtionType = editionType;
+	subs->editionType = editionType;
 	undo.push_back(subs);
 	subs=subs->Copy();
 }
@@ -517,6 +523,7 @@ void SubsFile::RemoveFirst(int num)
 		delete (*it);
 	}
 	undo.erase(undo.begin()+1, undo.begin()+num);
+	if (lastSave>iter){ lastSave -= (num - 1); }
 	iter-=(num-1);
 }
 
@@ -594,7 +601,7 @@ unsigned char SubsFile::CheckIfHasHiddenBlock(int i){
 void SubsFile::GetHistoryTable(wxArrayString *history)
 {
 	for(size_t i = 0; i < undo.size(); i++){
-		history->push_back(historyNames[undo[i]->etidtionType] + 
+		history->push_back(historyNames[undo[i]->editionType] + 
 			wxString::Format(_(", aktywna linia %i"), GetElementByKey(undo[i]->activeLine) + 1));
 	}
 }
@@ -603,4 +610,16 @@ void SubsFile::ShowHistory(wxWindow *parent, std::function<void(int)> functionAf
 {
 	HistoryDialog HD(parent, this, functionAfterChangeHistory);
 	HD.ShowModal();
+}
+
+void SubsFile::SetLastSave()
+{
+	lastSave = iter;
+}
+
+int SubsFile::GetActualHistoryIter()
+{
+	if (lastSave < 0)
+		return iter;
+	return iter - lastSave;
 }

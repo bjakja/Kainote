@@ -75,7 +75,6 @@ SubsGridBase::SubsGridBase(wxWindow *parent, const long int id, const wxPoint& p
 	: KaiScrolledWindow(parent, id, pos, size, style | wxVERTICAL)
 {
 	file = new SubsFile();
-	Modified = false;
 	makebackup = true;
 	ismenushown = false;
 	showFrames = false;
@@ -104,7 +103,7 @@ void SubsGridBase::Clearing()
 	SAFE_DELETE(Comparison);
 	SAFE_DELETE(file);
 	SpellErrors.clear();
-	isFiltered = Modified = false;
+	isFiltered = false;
 	first = true;
 	scPos = 0;
 	lastRow = 0;
@@ -352,12 +351,13 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 	txt = GetSInfo("TLMode Style");
 	wxString raw;
 	if (loadFromEditbox){
+		int activeLineKey = file->GetElementById(Edit->ebrow);
 		for (int i = 0; i < file->subs->dials.size(); i++)
 		{
 			Dialogue *dial = file->subs->dials[i];
 			if (!ignoreFiltered && !dial->isVisible || dial->NonDialogue){ continue; }
 			//a tu trzeba w przypadku ebrow pobrać editbox line
-			if (i == Edit->ebrow){ dial = Edit->line; };
+			if (i == activeLineKey){ dial = Edit->line; };
 
 			if (tlmodeOn){
 				bool hasTextTl = dial->TextTl != "";
@@ -414,7 +414,10 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 	}
 
 	ow.CloseFile();
-	if (cstat){ Refresh(false); }
+	if (cstat){ 
+		file->SetLastSave();
+		Refresh(false); 
+	}
 }
 
 void SubsGridBase::AddStyle(Styles *nstyl)
@@ -874,12 +877,18 @@ void SubsGridBase::UpdateUR(bool toolbar)
 	file->GetURStatus(&undo, &_redo);
 	Kai->Menubar->Enable(Undo, undo);
 	Kai->Menubar->Enable(Redo, _redo);
+	Kai->Menubar->Enable(UndoToLastSave, file->GetActualHistoryIter() != 0 && file->lastSave != -1);
 	Kai->Menubar->Enable(SaveSubs, true);
 	if (toolbar){
 		Kai->Toolbar->UpdateId(Undo, undo);
 		Kai->Toolbar->UpdateId(Redo, _redo);
 		Kai->Toolbar->UpdateId(SaveSubs, true);
 	}
+}
+
+bool SubsGridBase::IsModified()
+{
+	return file->CanSave();
 }
 
 void SubsGridBase::GetUndo(bool redo, int iter)
@@ -891,14 +900,15 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	wxString tlmode = GetSInfo("TLMode");
 	SaveSelections();
 	savedSelections = false;
-	if (iter != -2){ if (file->SetHistory(iter)){ Thaw(); return; } }
-	else if (redo){ file->Redo(); }
-	else{ file->Undo(); }
-
+	bool failed = false;
+	if (iter != -2){ failed = file->SetHistory(iter); }
+	else if (redo){ failed = file->Redo(); }
+	else{ failed = file->Undo(); }
+	if (failed){ Thaw(); return; }
 
 	UpdateUR();
 
-	Kai->Label(file->Iter());
+	Kai->Label(file->GetActualHistoryIter());
 
 
 	char oldformat = subsFormat;
@@ -979,7 +989,7 @@ void SubsGridBase::DummyUndo(int newIter)
 	Edit->SetLine(Edit->ebrow, false, false);
 	RefreshColumns();
 	UpdateUR();
-	Kai->Label(newIter);
+	Kai->Label(file->GetActualHistoryIter());
 	VideoCtrl *vb = Kai->GetTab()->Video;
 	if (vb->GetState() != None){
 		vb->OpenSubs(GetVisible());
@@ -1110,10 +1120,9 @@ wxString SubsGridBase::GetSInfos(bool tld)
 void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
 {
 	if (file->IsNotSaved()){
-		if (file->Iter() < 1 || !Modified){
+		if (!IsModified()){
 			Kai->Toolbar->UpdateId(SaveSubs, true);
 			Kai->Menubar->Enable(SaveSubs, true);
-			Modified = true;
 		}
 		if (Comparison){
 			SubsComparison();
@@ -1122,7 +1131,6 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 			SaveSelections();
 		}
 		savedSelections = false;
-		Kai->Label(file->Iter() + 1);
 		int ebrow = Edit->ebrow;
 		if (redit){
 			int erow = (SetEditBoxLine >= 0) ? SetEditBoxLine : ebrow;
@@ -1137,6 +1145,7 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 			file->InsertSelection(erow);
 		}
 		file->SaveUndo(editionType, ebrow, markedLine);
+		Kai->Label(file->GetActualHistoryIter());
 		if (!dummy){
 			VideoCtrl *vb = Kai->GetTab()->Video;
 			if (Edit->Visual >= CHANGEPOS){
@@ -1502,12 +1511,13 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 	bool isTlmode = GetSInfo("TLMode") == "Yes";
 	wxString tlStyle = GetSInfo("TLMode Style");
 	int j = 1;
+	int activeLineKey = file->GetElementById(Edit->ebrow);
 
 	for (int i = 0; i < file->subs->dials.size(); i++)
 	{
 		Dialogue *dial = file->subs->dials[i];
 		if (!ignoreFiltered && !dial->isVisible || dial->NonDialogue){ continue; }
-		if (i == Edit->ebrow){
+		if (i == activeLineKey){
 			dial = Edit->line;
 		}
 		if (selected && file->IsSelectedByKey(i)){

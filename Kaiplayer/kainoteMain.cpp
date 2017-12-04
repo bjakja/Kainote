@@ -114,6 +114,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	EditMenu = new Menu();
 	EditMenu->AppendTool(Toolbar, Undo, _("&Cofnij"), _("Cofnij"),PTR_BITMAP_PNG("undo"),false);
+	EditMenu->AppendTool(Toolbar, UndoToLastSave, _("Cofnij do ostatniego zapisu"), _("Cofnij do ostatniego zapisu"), PTR_BITMAP_PNG("undo"), false);
 	EditMenu->AppendTool(Toolbar, Redo, _("&Ponów"), _("Ponów"),PTR_BITMAP_PNG("redo"),false);
 	EditMenu->AppendTool(Toolbar, History, _("&Historia"), _("Historia"),PTR_BITMAP_PNG("history"),true);
 	EditMenu->AppendTool(Toolbar,FindReplaceDialog, _("Znajdź i za&mień"), _("Szuka i podmienia dane frazy tekstu"),PTR_BITMAP_PNG("findreplace"));
@@ -406,7 +407,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		bool show=!tab->ShiftTimes->IsShown();
 		Options.SetBool(MoveTimesOn,show);
 		tab->ShiftTimes->Show(show);
-		tab->BoxSizer1->Layout();
+		tab->BoxSizer3->Layout();
 	}else if(id>6999&&id<7012){
 		bool all=id<7006;
 		int difid=(all)? 7000 : 7006;
@@ -418,7 +419,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->Video->Show(vidshow);
 		if(vidshow && !vidvis){
 			tab->Edit->OnVideo=true;
-			tab->Video->OpenSubs(tab->Grid->GetVisible()/*SaveText()*/);
+			tab->Video->OpenSubs(tab->Grid->GetVisible());
 		}
 		if(tab->Edit->ABox){
 			tab->Edit->ABox->Show((id==ViewAll||id==ViewAudio));
@@ -470,10 +471,14 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		int fsel=tab->Grid->FirstSelection();
 		if(fsel<0){return;}
 		tab->Video->Seek(MAX(0,tab->Grid->GetDialogue(fsel)->Start.mstime),true);
-	}else if(id==SetVideoAtEnd){
-		int fsel=tab->Grid->FirstSelection();
-		if(fsel<0){return;}
-		tab->Video->Seek(MAX(0,tab->Grid->GetDialogue(fsel)->End.mstime),false);
+	}
+	else if (id == SetVideoAtEnd){
+		int fsel = tab->Grid->FirstSelection();
+		if (fsel < 0){ return; }
+		tab->Video->Seek(MAX(0, tab->Grid->GetDialogue(fsel)->End.mstime), false);
+	}
+	else if (id == UndoToLastSave){
+		tab->Grid->GetUndo(false, tab->Grid->file->GetLastSaveIter());
 	}else if(id==ID_MOVE){
 		tab->ShiftTimes->OnOKClick(event);
 	}
@@ -710,7 +715,6 @@ void kainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 	}
 	if(atab->Grid->SwapAssProperties()){return;}
 	atab->Grid->SaveFile(atab->SubsPath);
-	atab->Grid->Modified=false;
 	atab->Grid->originalFormat=atab->Grid->subsFormat;
 	if(changeLabel){
 		Toolbar->UpdateId(SaveSubs, false);
@@ -1070,9 +1074,9 @@ TabPanel* kainoteFrame::GetTab()
 
 void kainoteFrame::Label(int iter,bool video, int wtab)
 {
-	wxString whiter;
-	if(iter>0){whiter<<iter<<"*";}
 	TabPanel* atab=(wtab<0)? GetTab() : Tabs->Page(wtab);
+	wxString whiter;
+	if (atab->Grid->IsModified()){ whiter << iter << "*"; }
 
 	/*MEMORYSTATUSEX statex;
 	statex.dwLength = sizeof (statex);
@@ -1081,10 +1085,10 @@ void kainoteFrame::Label(int iter,bool video, int wtab)
 	int availmem=statex.ullAvailVirtual/div;
 	int totalmem=statex.ullTotalVirtual/div;
 	wxString memtxt= wxString::Format(" RAM: %i KB / %i KB", totalmem-availmem, totalmem);*/
-	wxString name=(video)?atab->VideoName : atab->SubsName;
-	SetLabel(whiter+name+" - "+Options.progname /*+ memtxt*/);
+	wxString name = (video) ? atab->VideoName : whiter + atab->SubsName;
+	SetLabel(name+" - "+Options.progname /*+ memtxt*/);
 	if(name.Len()>35){name=name.SubString(0,35)+"...";}
-	Tabs->SetPageText((wtab<0)? Tabs->GetSelection() : wtab, whiter+name);
+	Tabs->SetPageText((wtab<0)? Tabs->GetSelection() : wtab, name);
 }
 
 void kainoteFrame::SetAccels(bool _all)
@@ -1240,7 +1244,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 	wxString whiter;
 	TabPanel *cur=Tabs->GetPage();
 	int iter=cur->Grid->file->Iter();
-	if(iter>0 && cur->Grid->Modified){
+	if(cur->Grid->IsModified()){
 		whiter<<iter<<"*";
 	}
 	wxString name=(!cur->editor)? cur->VideoName : cur->SubsName;
@@ -1390,7 +1394,7 @@ void kainoteFrame::SaveAll()
 {
 	for(size_t i=0;i<Tabs->Size();i++)
 	{
-		if(!Tabs->Page(i)->Grid->Modified){continue;}
+		if(!Tabs->Page(i)->Grid->IsModified()){continue;}
 		Save(false,i);
 		Label(0,false,i);
 	}
@@ -1401,7 +1405,7 @@ void kainoteFrame::SaveAll()
 bool kainoteFrame::SavePrompt(char mode, int wtab)
 {
 	TabPanel* atab=(wtab<0)? GetTab() : Tabs->Page(wtab);	
-	if(atab->Grid->file->Iter()>0 && atab->Grid->Modified){
+	if(atab->Grid->IsModified()){
 		wxWindow *_parent=(atab->Video->isFullscreen)? (wxWindow*)atab->Video->TD : this;
 		int answer = KaiMessageBox(wxString::Format(_("Zapisać napisy o nazwie \"%s\" przed %s?"), 
 			atab->SubsName, (mode==0)? _("zamknięciem programu") :
@@ -1545,7 +1549,7 @@ void kainoteFrame::OnMenuOpened(MenuEvent& event)
 			if(i!=AudioFromVideo){enable = (enable && !tab->Video->isOnAnotherMonitor);}
 		}
 		else if(i==SaveTranslation){enable=tlmode;}
-		else if(i==SaveSubs){if(!tab->Grid->Modified){enable = false;}}
+		else if(i==SaveSubs){if(!tab->Grid->IsModified()){enable = false;}}
 		//else if(i==SaveAllSubs){
 			//for(size_t k = 0; k < Tabs->Size(); k){}
 		//}

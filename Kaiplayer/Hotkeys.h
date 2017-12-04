@@ -144,6 +144,7 @@
 	XX( GoToPrewKeyframe,)\
 	XX( Redo,)\
 	XX( Undo,)\
+	XX( UndoToLastSave,)\
 	XX( History,)\
 	XX( OpenSubs,=6800)\
 	XX( OpenVideo,)\

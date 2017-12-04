@@ -169,6 +169,7 @@ void ItemCheckBox::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, Ka
 	}
 };
 
+//custom multilist
 KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxSize &size, int style)
 	:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL|wxHORIZONTAL)
 	,bmp(NULL)
@@ -198,6 +199,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &KaiListCtrl::Redo, this, 11643);
 }
 
+//checkboxList
 KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, const wxPoint &pos, 
 		const wxSize &size, int style)
 	:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL)
@@ -225,40 +227,49 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, 
 	}
 }
 
-KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, const wxPoint &pos, 
-		const wxSize &size, int style)
-		:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL)
-	,bmp(NULL)
-	,sel(-1)
-	,lastSelX(-1)
-	,lastSelY(-1)
-	,scPosV(0)
-	,scPosH(0)
-	,lineHeight(17)
-	,headerHeight(3)
-	,lastCollumn(0)
-	,modified(false)
-	,hasArrow(true)
-	,iter(0)
-	,itemList(new List())
+//textList
+KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, const wxPoint &pos,
+	const wxSize &size, int style)
+	:KaiScrolledWindow(parent, id, pos, size, style | wxVERTICAL)
+	, bmp(NULL)
+	, sel(-1)
+	, lastSelX(-1)
+	, lastSelY(-1)
+	, scPosV(0)
+	, scPosH(0)
+	, lineHeight(17)
+	, headerHeight(3)
+	, lastCollumn(0)
+	, modified(false)
+	, hasArrow(true)
+	, iter(0)
+	, itemList(new List())
 {
 	SetBackgroundColour(parent->GetBackgroundColour());
 	SetForegroundColour(parent->GetForegroundColour());
 	SetMinSize(size);
-	SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT));
+	SetFont(wxFont(9, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT));
 	InsertColumn(0, "", TYPE_TEXT, -1);
-	for(size_t i = 0; i < list.size(); i++){
+	int maxwidth = -1;
+	for (size_t i = 0; i < list.size(); i++){
 		AppendItem(new ItemText(list[i]));
+		wxSize textSize = GetTextExtent(list[i]);
+		if (textSize.x > maxwidth){ maxwidth = textSize.x; }
 	}
+	widths[0] = maxwidth+10;
 }
 
 void KaiListCtrl::SetTextArray(const wxArrayString &Array)
 {
 	delete itemList;
 	itemList = new List();
+	int maxwidth = -1;
 	for(size_t i = 0; i < Array.size(); i++){
 		AppendItem(new ItemText(Array[i]));
+		wxSize textSize = GetTextExtent(Array[i]);
+		if (textSize.x > maxwidth){ maxwidth = textSize.x; }
 	}
+	widths[0] = maxwidth+10;
 	sel = -1;
 	Refresh(false);
 }
@@ -302,9 +313,9 @@ Item *KaiListCtrl::GetItem(size_t row, size_t col)
 
 void KaiListCtrl::OnSize(wxSizeEvent& evt)
 {
-	if(headerHeight<5 && widths.size()==1){
+	/*if(headerHeight<5 && widths.size()==1){
 		widths[0] = -1;
-	}
+	}*/
 	Refresh(false);
 }
 	
@@ -327,14 +338,16 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 			GetClientSize (&w, &h);
 		}
 	}
-	int maxWidth = GetMaxWidth()+10;
+	int maxWidth = GetMaxWidth();
+	if (widths.size() > 1){ maxWidth += 10; }
+	else if (maxWidth < w - 1){ maxWidth = w - 1; }
 	int bitmapw = w;
-	if(widths.size()>1){
-		if(SetScrollBar(wxHORIZONTAL, scPosH, w, maxWidth, w-2)){
-			GetClientSize (&w, &h);
-			if(maxWidth <= w){scPosH=0;SetScrollPos(wxHORIZONTAL,0);}
-		}
+	
+	if(SetScrollBar(wxHORIZONTAL, scPosH, w, maxWidth, w-2)){
+		GetClientSize (&w, &h);
+		if(maxWidth <= w){scPosH=0;SetScrollPos(wxHORIZONTAL,0);}
 	}
+	
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < bitmapw || bmp->GetHeight() < h)) {
 		delete bmp;
@@ -362,7 +375,6 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 			if(j>=row.size()){
 				continue;
 			}
-			if(widths[j] == -1){widths[j] = w-1;}
 			//drawing
 			if(i==sel){
 				tdc.SetPen(wxPen(highlight));
@@ -543,7 +555,7 @@ void KaiListCtrl::OnScroll(wxScrollWinEvent& event)
 int KaiListCtrl::GetMaxWidth()
 {
 	int maxWidth=0;
-	for(size_t i =0; i < widths.size(); i++){
+	for(size_t i = 0; i < widths.size(); i++){
 		maxWidth += widths[i];
 	}
 	return maxWidth;
