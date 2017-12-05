@@ -217,8 +217,8 @@ bool kainoteApp::OnInit()
 
 int kainoteApp::OnExit()
 {
-    delete m_checker;
-	delete MyServer;
+	if (m_checker){ delete m_checker; }
+	if (MyServer){ delete MyServer; }
 	wxDELETE(locale);	
     return 0;
 }

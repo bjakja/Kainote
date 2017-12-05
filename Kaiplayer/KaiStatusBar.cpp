@@ -73,7 +73,8 @@ void KaiStatusBar::OnPaint(wxPaintEvent& event)
 	wxArrayInt widths;
 	CalcWidths(&widths);
 	int posX = 1;
-	for(size_t i = 0; i<widths.size(); i++){
+	int widthsSize = widths.size();
+	for (size_t i = 0; i < widthsSize; i++){
 		if(widths[i]>0 && i>0){
 			tdc.SetPen(border);
 			tdc.DrawLine(posX-1, 1, posX-1, h-1);
@@ -84,7 +85,7 @@ void KaiStatusBar::OnPaint(wxPaintEvent& event)
 		tdc.SetBrush(bg);
 		tdc.SetPen(bg);
 		tdc.DrawRectangle(posX,1,widths[i]-1,h-2);
-		wxRect cur(posX+4, 1, widths[i] - 5, h-2);
+		wxRect cur(posX + 4, 1, (i >= widthsSize - 1) ? widths[i] - 20 : widths[i] - 5, h - 2);
 		tdc.SetClippingRegion(cur);
 		tdc.DrawLabel(labels[i],cur,wxALIGN_CENTER_VERTICAL);
 		tdc.DestroyClippingRegion();

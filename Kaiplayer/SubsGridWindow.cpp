@@ -1311,7 +1311,7 @@ bool SubsGridWindow::ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowTo
 		previewHeight = ((100 / realGridHeight) * realGridHeight) + realGridHeight + 4;
 	if (h < 150){ KaiMessageBox(_("Nie mo¿na wyœwietliæ podgl¹du, poniewa¿ wielkoœæ okna napisów jest zbyt ma³a")); return false; }
 	int previewPosition = (diffPosition + 2) * realGridHeight;
-	if (previewPosition + previewHeight > h){
+	if (previewPosition + previewHeight > h || previewPosition < 20){
 		int newLine = (((h - previewHeight) / 2) / realGridHeight);
 		scPos = (activeLine - newLine) + 2;
 		previewPosition = newLine * realGridHeight;

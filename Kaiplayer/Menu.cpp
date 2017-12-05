@@ -92,6 +92,7 @@ Menu::Menu(char window)
 
 int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels, bool clientPos, bool center)
 {
+	if (dialog){ return -1; }
 	wxPoint npos= pos;
 	wxSize size;
 	CalcPosAndSize(parent, &npos, &size, clientPos);
@@ -107,6 +108,7 @@ int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accel
 
 void Menu::PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos, bool center)
 {
+	if (dialog){ return; }
 	wxPoint npos= pos;
 	wxSize size;
 	CalcPosAndSize(parent, &npos, &size, clientPos);

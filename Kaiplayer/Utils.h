@@ -16,6 +16,8 @@
 #pragma once
 
 #include <wx/colour.h>
+#include <wx/string.h>
+#include <wx/window.h>
 
 inline wxColour GetColorWithAlpha(const wxColour &colorWithAlpha, const wxColour &background)
 {
@@ -28,5 +30,18 @@ inline wxColour GetColorWithAlpha(const wxColour &colorWithAlpha, const wxColour
 	return wxColour(fr, fg, fb);
 }
 
-
+inline wxString GetTruncateText(const wxString &textToTruncate, int width, wxWindow *window)
+{
+	int w, h;
+	window->GetTextExtent(textToTruncate, &w, &h);
+	if (w > width){
+		int len = textToTruncate.Len() - 1;
+		while (w > width && len > 3){
+			window->GetTextExtent(textToTruncate.SubString(0, len), &w, &h);
+			len--;
+		}
+		return textToTruncate.SubString(0, len - 2) + "...";
+	}
+	return textToTruncate;
+}
 

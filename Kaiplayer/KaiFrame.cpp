@@ -14,6 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "KaiFrame.h"
+#include "Utils.h"
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include "config.h"
@@ -87,7 +88,9 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 		//}
 	}
 	if(GetTitle()!=""){
-		mdc.DrawText(GetTitle(), icons.GetIconCount()? 30 : 6 + maximizeDiff, 5 + maximizeDiff);
+		int startX = icons.GetIconCount() ? 30 : 6 + maximizeDiff;
+		int maxWidth = w - 75 - maximizeDiff - startX;
+		mdc.DrawText(GetTruncateText(GetTitle(), maxWidth, this), startX, 5 + maximizeDiff);
 	}
 	if(enterClose || pushedClose){
 		wxColour buttonxbg = (enterClose && !pushedClose)? Options.GetColour(WindowHoverCloseButton) : 
@@ -275,6 +278,10 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 	}
 	return 1;
 	}*/
+	if (uMsg == WM_CLOSE){
+		Close();
+		return 0;
+	}
 	if (uMsg == WM_GETMINMAXINFO){
 		MINMAXINFO * pInfo = (MINMAXINFO*)lParam;
 		pInfo->ptMinTrackSize.x = 600;

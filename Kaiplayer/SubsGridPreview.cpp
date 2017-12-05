@@ -63,6 +63,9 @@ void SubsGridPreview::MakeVisible()
 	if ((scPos > erow || scPos + (h / (previewGrid->GridHeight + 1)) < erow + 2)){
 		scPos = MAX(0, erow - ((h / (previewGrid->GridHeight + 1)) / 2) + 1);
 	}
+	if (!lastData.grid){
+		lastData.lineRangeStart = erow;
+	}
 	Refresh(false);
 }
 
@@ -583,7 +586,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			Refresh(false);
 
 		}
-		else{
+		else if(lastData.grid){
 			ContextMenu(event.GetPosition());
 		}
 		return;

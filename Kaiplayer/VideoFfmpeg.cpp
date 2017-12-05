@@ -885,7 +885,6 @@ void VideoFfmpeg::Refresh(bool wait){
 	isBusy = true;
 	ResetEvent(eventComplete);
 	SetEvent(eventRefresh);
-	//wxLogStatus("set event");
 	if(rend->vstate==Paused && wait){
 		WaitForSingleObject(eventComplete, 4000);
 	}
