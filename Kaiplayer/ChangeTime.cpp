@@ -243,7 +243,7 @@ void ShiftTimesWindow::SaveOptions()
 	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 
 	//8 Move to audio time 16 display times / frames 32 move tag times;
 	Options.SetInt(MoveTimesOptions,(int)Forward->GetValue()|((int)StartVAtime->GetValue()<<1)|
-		((int)videotime->GetValue()<<2)|((int)audiotime->GetValue()<<3)|
+		((int)videotime->GetValue() << 2) | ((int)(audiotime->GetValue()) << 3) |
 		((int)DisplayFrames->GetValue()<<4)|((int)MoveTagTimes->GetValue()<<5));
 
 	Options.SetInt(MoveTimesWhichLines,WhichLines->GetSelection());

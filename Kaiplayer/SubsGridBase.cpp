@@ -581,7 +581,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 		}
 
 	}
-	else if ((moveTimeOptions & 8) && Edit->ABox->audioDisplay->hasMark){
+	else if ((moveTimeOptions & 8) && Edit->ABox && Edit->ABox->audioDisplay->hasMark){
 		if (byFrame){
 			frame += vb->VFF->GetFramefromMS(Edit->ABox->audioDisplay->curMarkMS - difftime);
 		}

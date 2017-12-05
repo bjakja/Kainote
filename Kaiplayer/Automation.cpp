@@ -913,6 +913,7 @@ namespace Auto{
 		Automation *auto_ = (Automation*)lpParameter;
 		auto_->ReloadScripts(true);
 		DeleteTimerQueueTimer(auto_->handle,0,0);
+		SetEvent(auto_->eventEndAutoload);
 	}
 
 	Automation::Automation(bool loadSubsScripts, bool loadNow)
@@ -924,6 +925,7 @@ namespace Auto{
 		if(loadMethod < 2){
 			initialized = true;
 			if(loadMethod == 0 && !loadNow){
+				eventEndAutoload = CreateEvent(NULL, FALSE, FALSE, NULL);
 				CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
 			}else{
 				ReloadScripts(true);
@@ -933,6 +935,10 @@ namespace Auto{
 
 	Automation::~Automation()
 	{
+		breakLoading = true;
+		if (eventEndAutoload){
+			WaitForSingleObject(eventEndAutoload,50000);
+		}
 		RemoveAll(true);
 	}
 
@@ -1013,6 +1019,9 @@ namespace Auto{
 		bool more = dir.GetFirst(&fn, wxEmptyString, wxDIR_FILES);
 
 		while (more) {
+			if (breakLoading){ 
+				break; 
+			}
 			script_path.SetName(fn);
 			try {
 				wxString fullpath = script_path.GetFullPath();
@@ -1127,6 +1136,7 @@ namespace Auto{
 		if(!initialized){
 			int loadMethod = Options.GetInt(AutomationLoadingMethod);
 			if(loadMethod % 2 == 0){
+				eventEndAutoload = CreateEvent(NULL, FALSE, FALSE, NULL);
 				CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
 			}else{
 				ReloadScripts(true);

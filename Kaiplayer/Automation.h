@@ -197,11 +197,13 @@ namespace Auto {
 		std::vector<Auto::LuaScript*> Scripts;
 		std::vector<Auto::LuaScript*> ASSScripts;
 		HANDLE handle;
+		HANDLE eventEndAutoload = NULL;
 	private:
 		wxString AutoloadPath;
 		bool HasChanges;
 		wxString scriptpaths;
 		bool initialized;
+		volatile bool breakLoading = false;
 	};
 
 // Run a lua function on a background thread
