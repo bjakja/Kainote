@@ -45,7 +45,7 @@ public:
 	bool CalcSize(int *width, int *height,int wwidth=0,int wheight=0,bool setstatus=false,bool calcH=false);
 
 	void NextFile(bool next=true);
-	void SetFullskreen(int wmonitor=0);
+	void SetFullscreen(int wmonitor=0);
 	void SetAspectRatio(float AR);
 	void SetScaleAndZoom();
 	VideoSlider* vslider;

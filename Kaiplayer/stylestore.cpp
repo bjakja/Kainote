@@ -687,7 +687,7 @@ void StyleStore::StyleonVideo(Styles *styl, bool fullskreen)
 	//grid->SaveFile(Kai->GetTab()->tnppath,false);
 	pan->Video->OpenSubs(txt);
 	if(fullskreen&&!pan->Video->isFullscreen){
-		pan->Video->SetFullskreen();
+		pan->Video->SetFullscreen();
 		this->SetWindowStyle(GetWindowStyle()|wxSTAY_ON_TOP);
 	}
 	//if(!fullskreen&&pan->Video->isFullscreen){pan->Video->SetFullskreen();this->SetWindowStyle(GetWindowStyle()|~wxSTAY_ON_TOP);}

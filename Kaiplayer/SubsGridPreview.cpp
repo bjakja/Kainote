@@ -148,7 +148,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	const wxColour &linesCol = Options.GetColour(GridLines);
 	const wxColour &subsBkCol = Options.GetColour(GridDialogue);
 	const wxColour &comm = Options.GetColour(GridComment);
-	const wxColour &seldial = Options.GetColour(GridSelectedDialogue);
+	const wxColour &seldial = Options.GetColour(GridSelection);
 	const wxColour &textcol = Options.GetColour(GridText);
 	const wxColour &collcol = Options.GetColour(GridCollisions);
 	const wxColour &SpelcheckerCol = Options.GetColour(GridSpellchecker);

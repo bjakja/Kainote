@@ -222,9 +222,13 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, 
 	SetMinSize(size);
 	SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT));
 	InsertColumn(0, "", TYPE_CHECKBOX, -1);
+	int maxwidth = -1;
 	for(int i = 0; i < numelem; i++){
 		AppendItem(new ItemCheckBox(false, list[i]));
+		wxSize textSize = GetTextExtent(list[i]);
+		if (textSize.x > maxwidth){ maxwidth = textSize.x; }
 	}
+	widths[0] = maxwidth + 28;
 }
 
 //textList

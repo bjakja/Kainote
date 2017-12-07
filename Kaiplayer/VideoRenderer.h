@@ -70,8 +70,8 @@ typedef void csri_rend;
 enum PlaybackState
 {
 	Playing,
-	Stopped,
 	Paused,
+	Stopped,
 	None
 };
 struct chapter

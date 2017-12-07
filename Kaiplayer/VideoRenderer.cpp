@@ -303,8 +303,9 @@ bool VideoRend::InitDX(bool reset)
 
 void VideoRend::Render(bool Frame, bool wait)
 {
-	if(Frame && !IsDshow){VFF->Refresh(wait);resized=false; return;}
+	if (Frame && !IsDshow){ VFF->Refresh(wait); resized = false; return; }
 	wxMutexLocker lock(mutexRender);
+	resized = false;
 	HRESULT hr = S_OK;
 
 	if( devicelost )
@@ -461,7 +462,9 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 
 	if(nframe){	
 		fdata= nframe;
-		if(copy){byte *cpy = (byte*) datas; memcpy(cpy,fdata,vheight*pitch);}
+		if(copy){
+			byte *cpy = (byte*) datas; memcpy(cpy,fdata,vheight*pitch);
+		}
 	}
 	else{
 		wxLogMessage(_("Brak bufora klatki"));return false;
@@ -739,7 +742,7 @@ bool VideoRend::Pause()
 			vplayer->Pause();
 		}
 	}
-	else if(vstate==Paused || vstate==Stopped){
+	else if(vstate != None){
 		Play();
 	}else{return false;}
 	return true;
@@ -1077,10 +1080,10 @@ void VideoRend::UpdateVideoWindow()
 {
 
 	wxMutexLocker lock(mutexRender);
-	block=true;
-	if(!UpdateRects()){block=false;return;}
+	/*block=true;*/
+	if(!UpdateRects()){/*block=false;*/return;}
 
-	if(!InitDX(true)){block=false;return;}
+	if(!InitDX(true)){/*block=false;*/return;}
 
 	if(IsDshow && datas){
 
@@ -1103,7 +1106,7 @@ void VideoRend::UpdateVideoWindow()
 		VisEdit=true;
 	}
 	SetScaleAndZoom();
-	block=false;
+	/*block=false;*/
 }
 void VideoRend::SetZoom(){
 	if(vstate==None){return;}
@@ -1415,7 +1418,7 @@ void VideoRend::DrawLines(wxPoint point)
 	vectors[3].x = backBufferRect.right;
 	vectors[3].y = point.y;
 	cross=true;	
-	if(vstate==Paused && !block){Render(resized);}      
+	if(vstate==Paused/* && !block*/){Render(resized);}     
 }
 
 void VideoRend::DrawProgBar()

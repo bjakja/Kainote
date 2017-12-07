@@ -528,7 +528,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Okno najechane zamykanie"),_("Okno wciśnięte zamykanie"),_("Okno elementy ostrzegające"),
 			//napisy
 			_("Napisy tekst"),_("Napisy tło"),_("Napisy tło dialogów"),_("Napisy tło komentarzy"),
-			_("Napisy zaznaczone dialogi"),_("Napisy linijki widoczne na wideo"),
+			_("Napisy zaznaczenia (przezroczystość)"),_("Napisy linijki widoczne na wideo"),
 			_("Napisy kolidujące linie"),_("Napisy obramowanie linijki"),_("Napisy obramowanie aktywnej linijki"),
 			_("Napisy nagłówek"),_("Napisy tekst nagłówka"),
 			_("Napisy etykieta"),_("Napisy etykieta zmodyfikowanej linii"),_("Napisy etykieta zapisanej linii"),

@@ -226,7 +226,7 @@ DECLARE_ENUM(CONFIG,CFG)
 	CR(GridBackground,)\
 	CR(GridDialogue,)\
 	CR(GridComment,)\
-	CR(GridSelectedDialogue,)\
+	CR(GridSelection,)\
 	CR(GridVisibleOnVideo,)\
 	CR(GridCollisions,)\
 	CR(GridLines,)\
@@ -333,7 +333,7 @@ DECLARE_ENUM(CONFIG,CFG)
 	CR(SliderBackgroundPushed,)\
 	CR(StylePreviewColor1,)\
 	CR(StylePreviewColor2,)\
-
+	//jeœli tu coœ dopiszesz, to musisz zmieniæ przy porównaniu (504 cpp) czy rozmiar tablicy kolorów jest w³aœciwy
 DECLARE_ENUM(COLOR,CLR)
 
 class config
@@ -383,8 +383,9 @@ class config
     int LoadOptions();
 	void LoadColors(const wxString &themeName="");
 	void LoadDefaultConfig();
-	void LoadDefaultColors(bool dark=true);
+	void LoadDefaultColors(bool dark = true, std::map<COLOR, wxColour*> *table = NULL);
 	void LoadDefaultAudioConfig();
+	void LoadMissingColours(const wxString &path);
 	bool LoadAudioOpts();
 	void SaveAudioOpts();
     void SaveOptions(bool cfg=true, bool style=true);

@@ -305,135 +305,135 @@ void config::LoadDefaultConfig()
 	rawcfg[GridChangeActiveOnSelection] = "true";
 }
 
-void config::LoadDefaultColors(bool dark)
+void config::LoadDefaultColors(bool dark, std::map<COLOR, wxColour*> *table)
 {
-
-	colors[WindowBackground] = new wxColour((dark)? "#222222" : "#F0F0F0");
-	colors[WindowBackgroundInactive] = new wxColour((dark)? "#303030" : "#EFEFEF");
-	colors[WindowText] = new wxColour((dark)? "#9B9B9B" : "#000000");
-	colors[WindowTextInactive] = new wxColour((dark)? "#4E4E4E" : "#757575");
-	colors[WindowBorder] = new wxColour((dark)? "#111111" : "#4086C3");
-	colors[WindowBorderInactive] = new wxColour((dark)? "#353535" : "#D3D3D3");
-	colors[WindowBorderBackground] = new wxColour((dark)? "#786AEB" : "#54AFFF");
-	colors[WindowBorderBackgroundInactive] = new wxColour((dark)? "#818181" : "#EBEBEB");
-	colors[WindowHeaderText] = new wxColour((dark)? "#1A1A1A" : "#000000");
-	colors[WindowHeaderTextInactive] = new wxColour((dark)? "#1A1A1A" : "#000000");
-	colors[WindowHoverHeaderElement] = new wxColour((dark)? "#044BD4" : "#3665B3");
-	colors[WindowPushedHeaderElement] = new wxColour((dark)? "#0451E5" : "#3D6099");
-	colors[WindowHoverCloseButton] = new wxColour((dark)? "#D40403" : "#E04343");
-	colors[WindowPushedCloseButton] = new wxColour((dark)? "#E50403" : "#993D3D");
-	colors[WindowWarningElements] = new wxColour((dark)? "#E0D812" : "#FF0000");
-	colors[GridText] = new wxColour((dark)? "#121212" : "#000000");
-	colors[GridBackground] = new wxColour((dark)? "#444444" : "#D7D7D7");
-	colors[GridDialogue] = new wxColour((dark)? "#969696" : "#C0C0C0");
-	colors[GridComment] = new wxColour((dark)? "#BDBDBD" : "#999999");
-	colors[GridSelectedDialogue] = (dark) ? new wxColour(0x5A, 0xD6, 0x93, 76) : new wxColour(0x8E, 0xF8, 0xB5, 76);//#4C5AD693 #4C8EF8B5 new wxColour((dark)? "#B6D5C5" : "#EBF5EF");
-	colors[GridVisibleOnVideo] = new wxColour((dark)? "#7878AA" : "#94B9D7");
-	colors[GridCollisions] = new wxColour((dark)? "#0010FF" : "#FF0000");
-	colors[GridLines] = new wxColour((dark)? "#4C4C4C" : "#606060");
-	colors[GridActiveLine] = new wxColour((dark)? "#4000CA" : "#CA0065");
-	colors[GridHeader] = new wxColour((dark)? "#6551FF" : "#54AFFF");
-	colors[GridHeaderText] = new wxColour((dark)? "#121212" : "#000000");
-	colors[GridLabelNormal] = new wxColour((dark)? "#6551FF" : "#54AFFF");
-	colors[GridLabelModified] = new wxColour((dark)? "#A8FB05" : "#FBF804");
-	colors[GridLabelSaved] = new wxColour((dark)? "#A398FF" : "#B8DFFF");
-	colors[GridLabelDoubtful] = new wxColour((dark)? "#FB9708" : "#FB710B");
-	colors[GridSpellchecker] = new wxColour((dark)? "#FA9292" : "#FA9292");
-	colors[GridComparisonOutline] = new wxColour((dark)? "#FFFFFF" : "#00E1FF");
-	colors[GridComparisonBackgroundNotMatch] = new wxColour((dark)? "#C0A073" : "#F6D6AC");
-	colors[GridComparisonBackgroundMatch] = new wxColour((dark)? "#909F3A" : "#ADC044");
-	colors[GridComparisonCommentBackgroundNotMatch] = new wxColour((dark)? "#978063" : "#D7AA70");
-	colors[GridComparisonCommentBackgroundMatch] = new wxColour((dark)? "#656F31" : "#88963A");
-	colors[EditorText] = new wxColour((dark)? "#B7B7B7" : "#000000");
-	colors[EditorTagNames] = new wxColour((dark)? "#E2A000" : "#17AF21");
-	colors[EditorTagValues] = new wxColour((dark)? "#EE54FF" : "#BD16D0");
-	colors[EditorCurlyBraces] = new wxColour((dark)? "#8489FF" : "#1622D0");
-	colors[EditorTagOperators] = new wxColour((dark)? "#F96666" : "#FA0012");
-	colors[EditorBracesBackground] = new wxColour((dark)? "#000000" : "#A6A6A6");
-	colors[EditorBackground] = new wxColour((dark)? "#444444" : "#FFFFFF");
-	colors[EditorSelection] = new wxColour((dark)? "#6E6E6E" : "#99CCFF");
-	colors[EditorSelectionNoFocus] = new wxColour((dark)? "#65657E" : "#CCCCCC");
-	colors[EditorBorder] = new wxColour((dark)? "#4E4E4E" : "#828790");
-	colors[EditorBorderOnFocus] = new wxColour((dark)? "#8C8C8C" : "#569DE5");
-	colors[EditorSpellchecker] = new wxColour((dark)? "#940000" : "#FA9292");
-	colors[AudioBackground] = new wxColour((dark)? "#000000" : "#000000");
-	colors[AudioLineBoundaryStart] = new wxColour((dark)? "#D80000" : "#D80000");
-	colors[AudioLineBoundaryEnd] = new wxColour((dark)? "#E67D00" : "#D09916");
-	colors[AudioLineBoundaryMark] = new wxColour("#FF00FF");
-	colors[AudioLineBoundaryInactiveLine] = new wxColour("#808080");
-	colors[AudioPlayCursor] = new wxColour("#FFFFFF");
-	colors[AudioSecondsBoundaries] = new wxColour(0x0B,0x8A,0x9F,0x9B);//wxColour((dark)? "#9B0B8A9F" : "");
-	colors[AudioKeyframes] = new wxColour("#4AFF00");
-	colors[AudioSyllableBoundaries] = new wxColour("#FFFF00");
-	colors[AudioSyllableText] = new wxColour("#FF0000");
-	colors[AudioSelectionBackground] = new wxColour(0xFF,0xFF,0xFF,0x37);//wxColour((dark)? "#37FFFFFF" : "");
-	colors[AudioSelectionBackgroundModified] = new wxColour(0xD6,0x00,0x00,0x37);//wxColour((dark)? "#37D60000" : "");
-	colors[AudioInactiveLinesBackground] = new wxColour(0x37,0x35,0x64,0x55);//wxColour((dark)? "#55373564" : "");
-	colors[AudioWaveform] = new wxColour("#7D6EFE");
-	colors[AudioWaveformInactive] = new wxColour("#362C88");
-	colors[AudioWaveformModified] = new wxColour("#FFE6E6");
-	colors[AudioWaveformSelected] = new wxColour("#DCDAFF");
-	colors[AudioSpectrumBackground] = new wxColour("#000000");
-	colors[AudioSpectrumEcho] = new wxColour("#8DA8FF");
-	colors[AudioSpectrumInner] = new wxColour("#FFFFFF");
-	colors[TextFieldBackground] = new wxColour((dark)? "#2A2A2A" : "#FFFFFF");
-	colors[TextFieldBorder] = new wxColour((dark)? "#4E4E4E" : "#ACACAC");
-	colors[TextFieldBorderOnFocus] = new wxColour((dark)? "#8C8C8C" : "#569DE5");
-	colors[TextFieldSelection] = new wxColour((dark)? "#6E6E6E" : "#3399FF");
-	colors[TextFieldSelectionNoFocus] = new wxColour((dark)? "#65657E" : "#A6A6A6");
-	colors[ButtonBackground] = new wxColour((dark)? "#2A2A2A" : "#E5E5E5");
-	colors[ButtonBackgroundHover] = new wxColour((dark)? "#333333" : "#DCECFC");
-	colors[ButtonBackgroundPushed] = new wxColour((dark)? "#333333" : "#C4E0FC");
-	colors[ButtonBackgroundOnFocus] = new wxColour((dark)? "#2A2A2A" : "#E5E5E5");
-	colors[ButtonBorder] = new wxColour((dark)? "#4E4E4E" : "#ACACAC");
-	colors[ButtonBorderHover] = new wxColour((dark)? "#555555" : "#7EB4EA");
-	colors[ButtonBorderPushed] = new wxColour((dark)? "#555555" : "#569DE5");
-	colors[ButtonBorderOnFocus] = new wxColour((dark)? "#5B5689" : "#569DE5");
-	colors[ButtonBorderInactive] = new wxColour((dark)? "#5A5A5A" : "#BFBFBF");
-	colors[TogglebuttonBackgroundToggled] = new wxColour((dark)? "#39374B" : "#C4E0FC");
-	colors[TogglebuttonBorderToggled] = new wxColour((dark)? "#5B5689" : "#569DE5");
-	colors[ScrollbarBackground] = new wxColour((dark)? "#3A3A3A" : "#E7E7E7");
-	colors[ScrollbarScroll] = new wxColour((dark)? "#686868" : "#CDCDCD");
-	colors[ScrollbarScrollHover] = new wxColour((dark)? "#868686" : "#A6A6A6");
-	colors[ScrollbarScrollPushed] = new wxColour((dark)? "#868686" : "#A6A6A6");
-	colors[StaticboxBorder] = new wxColour((dark)? "#565555" : "#DDDDDD");
-	colors[StaticListBorder] = new wxColour((dark)? "#4E4E4E" : "#ACACAC");
-	colors[StaticListBackground] = new wxColour((dark)? "#2A2A2A" : "#FFFFFF");
-	colors[StaticListSelection] = new wxColour((dark)? "#2D2879" : "#6DBAFF");
-	colors[StaticListBackgroundHeadline] = new wxColour((dark)? "#222222" : "#F6F6F6");
-	colors[StaticListTextHeadline] = new wxColour((dark)? "#9B9B9B" : "#000000");
-	colors[StatusBarBorder] = new wxColour((dark)? "#000000" : "#ACACAC");
-	colors[MenuBarBackground1] = new wxColour((dark)? "#4A4A4A" : "#F0F0F0");
-	colors[MenuBarBackground2] = new wxColour((dark)? "#222222" : "#F0F0F0");
-	colors[MenuBarBorderSelection] = new wxColour((dark)? "#948FC4" : "#66A7E8");
-	colors[MenuBarBackgroundSelection] = new wxColour((dark)? "#39374B" : "#D1E8FF");
-	colors[MenuBackground] = new wxColour((dark)? "#323232" : "#F0F0F0");
-	colors[MenuBorderSelection] = new wxColour((dark)? "#5B5689" : "#66A7E8");
-	colors[MenuBackgroundSelection] = new wxColour((dark)? "#39374B" : "#D1E8FF");
-	colors[TabsBarBackground1] = new wxColour((dark)? "#222222" : "#F0F0F0");
-	colors[TabsBarBackground2] = new wxColour((dark)? "#222222" : "#F0F0F0");
-	colors[TabsBorderActive] = new wxColour((dark)? "#000000" : "#8A8A8A");
-	colors[TabsBorderInactive] = new wxColour((dark)? "#000000" : "#ACACAC");
-	colors[TabsBackgroundActive] = new wxColour((dark)? "#2D2D2D" : "#C0C0C0");
-	colors[TabsBackgroundInactive] = new wxColour((dark)? "#3C3C3C" : "#F0F0F0");
-	colors[TabsBackgroundInactiveHover] = new wxColour((dark) ? "#2D2D2D" : "#D1D1D1"); 
-	colors[TabsBackgroundSecondWindow] = new wxColour((dark) ? "#181818" : "#AFAFAF");
-	colors[TabsTextActive] = new wxColour((dark)? "#B5B5B5" : "#000000");
-	colors[TabsTextInactive] = new wxColour((dark)? "#9B9B9B" : "#333333");
-	colors[TabsCloseHover] = new wxColour((dark)? "#D40403" : "#E04343");
-	colors[TabsBarArrow] = new wxColour((dark)? "#9B9B9B" : "#000000");
-	colors[TabsBarArrowBackground] = new wxColour((dark)? "#222222" : "#F0F0F0");
-	colors[TabsBarArrowBackgroundHover] = new wxColour((dark)? "#333333" : "#D1D1D1");
-	colors[SliderPathBackground] = new wxColour((dark)? "#282828" : "#E7EAEA");
-	colors[SliderPathBorder] = new wxColour((dark)? "#434343" : "#D6D6D6");
-	colors[SliderBorder] = new wxColour((dark)? "#4E4E4E" : "#ACACAC");
-	colors[SliderBorderHover] = new wxColour((dark)? "#555555" : "#7EB4EA");
-	colors[SliderBorderPushed] = new wxColour((dark)? "#555555" : "#569DE5");
-	colors[SliderBackground] = new wxColour((dark)? "#282828" : "#E5E5E5");
-	colors[SliderBackgroundHover] = new wxColour((dark)? "#333333" : "#DCECFC");
-	colors[SliderBackgroundPushed] = new wxColour((dark)? "#333333" : "#C4E0FC");
-	colors[StylePreviewColor1] = new wxColour("#9A9A9A");
-	colors[StylePreviewColor2] = new wxColour("#686868");
+	auto &colours = (table) ? *table : colors;
+	colours[WindowBackground] = new wxColour((dark)? "#222222" : "#F0F0F0");
+	colours[WindowBackgroundInactive] = new wxColour((dark)? "#303030" : "#EFEFEF");
+	colours[WindowText] = new wxColour((dark)? "#9B9B9B" : "#000000");
+	colours[WindowTextInactive] = new wxColour((dark)? "#4E4E4E" : "#757575");
+	colours[WindowBorder] = new wxColour((dark)? "#111111" : "#4086C3");
+	colours[WindowBorderInactive] = new wxColour((dark)? "#353535" : "#D3D3D3");
+	colours[WindowBorderBackground] = new wxColour((dark)? "#786AEB" : "#54AFFF");
+	colours[WindowBorderBackgroundInactive] = new wxColour((dark)? "#818181" : "#EBEBEB");
+	colours[WindowHeaderText] = new wxColour((dark)? "#1A1A1A" : "#000000");
+	colours[WindowHeaderTextInactive] = new wxColour((dark)? "#1A1A1A" : "#000000");
+	colours[WindowHoverHeaderElement] = new wxColour((dark)? "#044BD4" : "#3665B3");
+	colours[WindowPushedHeaderElement] = new wxColour((dark)? "#0451E5" : "#3D6099");
+	colours[WindowHoverCloseButton] = new wxColour((dark)? "#D40403" : "#E04343");
+	colours[WindowPushedCloseButton] = new wxColour((dark)? "#E50403" : "#993D3D");
+	colours[WindowWarningElements] = new wxColour((dark)? "#E0D812" : "#FF0000");
+	colours[GridText] = new wxColour((dark)? "#121212" : "#000000");
+	colours[GridBackground] = new wxColour((dark)? "#444444" : "#D7D7D7");
+	colours[GridDialogue] = new wxColour((dark)? "#969696" : "#C0C0C0");
+	colours[GridComment] = new wxColour((dark)? "#BDBDBD" : "#999999");
+	colours[GridSelection] = (dark) ? new wxColour(0x5A, 0xD6, 0x93, 76) : new wxColour(0x8E, 0xF8, 0xB5, 76);//#4C5AD693 #4C8EF8B5 new wxColour((dark)? "#B6D5C5" : "#EBF5EF");
+	colours[GridVisibleOnVideo] = new wxColour((dark)? "#7878AA" : "#94B9D7");
+	colours[GridCollisions] = new wxColour((dark)? "#0010FF" : "#FF0000");
+	colours[GridLines] = new wxColour((dark)? "#4C4C4C" : "#606060");
+	colours[GridActiveLine] = new wxColour((dark)? "#4000CA" : "#CA0065");
+	colours[GridHeader] = new wxColour((dark)? "#6551FF" : "#54AFFF");
+	colours[GridHeaderText] = new wxColour((dark)? "#121212" : "#000000");
+	colours[GridLabelNormal] = new wxColour((dark)? "#6551FF" : "#54AFFF");
+	colours[GridLabelModified] = new wxColour((dark)? "#A8FB05" : "#FBF804");
+	colours[GridLabelSaved] = new wxColour((dark)? "#A398FF" : "#B8DFFF");
+	colours[GridLabelDoubtful] = new wxColour((dark)? "#FB9708" : "#FB710B");
+	colours[GridSpellchecker] = new wxColour((dark)? "#FA9292" : "#FA9292");
+	colours[GridComparisonOutline] = new wxColour((dark)? "#FFFFFF" : "#00E1FF");
+	colours[GridComparisonBackgroundNotMatch] = new wxColour((dark)? "#C0A073" : "#F6D6AC");
+	colours[GridComparisonBackgroundMatch] = new wxColour((dark)? "#909F3A" : "#ADC044");
+	colours[GridComparisonCommentBackgroundNotMatch] = new wxColour((dark)? "#978063" : "#D7AA70");
+	colours[GridComparisonCommentBackgroundMatch] = new wxColour((dark)? "#656F31" : "#88963A");
+	colours[EditorText] = new wxColour((dark)? "#B7B7B7" : "#000000");
+	colours[EditorTagNames] = new wxColour((dark)? "#E2A000" : "#17AF21");
+	colours[EditorTagValues] = new wxColour((dark)? "#EE54FF" : "#BD16D0");
+	colours[EditorCurlyBraces] = new wxColour((dark)? "#8489FF" : "#1622D0");
+	colours[EditorTagOperators] = new wxColour((dark)? "#F96666" : "#FA0012");
+	colours[EditorBracesBackground] = new wxColour((dark)? "#000000" : "#A6A6A6");
+	colours[EditorBackground] = new wxColour((dark)? "#444444" : "#FFFFFF");
+	colours[EditorSelection] = new wxColour((dark)? "#6E6E6E" : "#99CCFF");
+	colours[EditorSelectionNoFocus] = new wxColour((dark)? "#65657E" : "#CCCCCC");
+	colours[EditorBorder] = new wxColour((dark)? "#4E4E4E" : "#828790");
+	colours[EditorBorderOnFocus] = new wxColour((dark)? "#8C8C8C" : "#569DE5");
+	colours[EditorSpellchecker] = new wxColour((dark)? "#940000" : "#FA9292");
+	colours[AudioBackground] = new wxColour((dark)? "#000000" : "#000000");
+	colours[AudioLineBoundaryStart] = new wxColour((dark)? "#D80000" : "#D80000");
+	colours[AudioLineBoundaryEnd] = new wxColour((dark)? "#E67D00" : "#D09916");
+	colours[AudioLineBoundaryMark] = new wxColour("#FF00FF");
+	colours[AudioLineBoundaryInactiveLine] = new wxColour("#808080");
+	colours[AudioPlayCursor] = new wxColour("#FFFFFF");
+	colours[AudioSecondsBoundaries] = new wxColour(0x0B,0x8A,0x9F,0x9B);//wxColour((dark)? "#9B0B8A9F" : "");
+	colours[AudioKeyframes] = new wxColour("#4AFF00");
+	colours[AudioSyllableBoundaries] = new wxColour("#FFFF00");
+	colours[AudioSyllableText] = new wxColour("#FF0000");
+	colours[AudioSelectionBackground] = new wxColour(0xFF,0xFF,0xFF,0x37);//wxColour((dark)? "#37FFFFFF" : "");
+	colours[AudioSelectionBackgroundModified] = new wxColour(0xD6,0x00,0x00,0x37);//wxColour((dark)? "#37D60000" : "");
+	colours[AudioInactiveLinesBackground] = new wxColour(0x37,0x35,0x64,0x55);//wxColour((dark)? "#55373564" : "");
+	colours[AudioWaveform] = new wxColour("#7D6EFE");
+	colours[AudioWaveformInactive] = new wxColour("#362C88");
+	colours[AudioWaveformModified] = new wxColour("#FFE6E6");
+	colours[AudioWaveformSelected] = new wxColour("#DCDAFF");
+	colours[AudioSpectrumBackground] = new wxColour("#000000");
+	colours[AudioSpectrumEcho] = new wxColour("#8DA8FF");
+	colours[AudioSpectrumInner] = new wxColour("#FFFFFF");
+	colours[TextFieldBackground] = new wxColour((dark)? "#2A2A2A" : "#FFFFFF");
+	colours[TextFieldBorder] = new wxColour((dark)? "#4E4E4E" : "#ACACAC");
+	colours[TextFieldBorderOnFocus] = new wxColour((dark)? "#8C8C8C" : "#569DE5");
+	colours[TextFieldSelection] = new wxColour((dark)? "#6E6E6E" : "#3399FF");
+	colours[TextFieldSelectionNoFocus] = new wxColour((dark)? "#65657E" : "#A6A6A6");
+	colours[ButtonBackground] = new wxColour((dark)? "#2A2A2A" : "#E5E5E5");
+	colours[ButtonBackgroundHover] = new wxColour((dark)? "#333333" : "#DCECFC");
+	colours[ButtonBackgroundPushed] = new wxColour((dark)? "#333333" : "#C4E0FC");
+	colours[ButtonBackgroundOnFocus] = new wxColour((dark)? "#2A2A2A" : "#E5E5E5");
+	colours[ButtonBorder] = new wxColour((dark)? "#4E4E4E" : "#ACACAC");
+	colours[ButtonBorderHover] = new wxColour((dark)? "#555555" : "#7EB4EA");
+	colours[ButtonBorderPushed] = new wxColour((dark)? "#555555" : "#569DE5");
+	colours[ButtonBorderOnFocus] = new wxColour((dark)? "#5B5689" : "#569DE5");
+	colours[ButtonBorderInactive] = new wxColour((dark)? "#5A5A5A" : "#BFBFBF");
+	colours[TogglebuttonBackgroundToggled] = new wxColour((dark)? "#39374B" : "#C4E0FC");
+	colours[TogglebuttonBorderToggled] = new wxColour((dark)? "#5B5689" : "#569DE5");
+	colours[ScrollbarBackground] = new wxColour((dark)? "#3A3A3A" : "#E7E7E7");
+	colours[ScrollbarScroll] = new wxColour((dark)? "#686868" : "#CDCDCD");
+	colours[ScrollbarScrollHover] = new wxColour((dark)? "#868686" : "#A6A6A6");
+	colours[ScrollbarScrollPushed] = new wxColour((dark)? "#868686" : "#A6A6A6");
+	colours[StaticboxBorder] = new wxColour((dark)? "#565555" : "#DDDDDD");
+	colours[StaticListBorder] = new wxColour((dark)? "#4E4E4E" : "#ACACAC");
+	colours[StaticListBackground] = new wxColour((dark)? "#2A2A2A" : "#FFFFFF");
+	colours[StaticListSelection] = new wxColour((dark)? "#2D2879" : "#6DBAFF");
+	colours[StaticListBackgroundHeadline] = new wxColour((dark)? "#222222" : "#F6F6F6");
+	colours[StaticListTextHeadline] = new wxColour((dark)? "#9B9B9B" : "#000000");
+	colours[StatusBarBorder] = new wxColour((dark)? "#000000" : "#ACACAC");
+	colours[MenuBarBackground1] = new wxColour((dark)? "#4A4A4A" : "#F0F0F0");
+	colours[MenuBarBackground2] = new wxColour((dark)? "#222222" : "#F0F0F0");
+	colours[MenuBarBorderSelection] = new wxColour((dark)? "#948FC4" : "#66A7E8");
+	colours[MenuBarBackgroundSelection] = new wxColour((dark)? "#39374B" : "#D1E8FF");
+	colours[MenuBackground] = new wxColour((dark)? "#323232" : "#F0F0F0");
+	colours[MenuBorderSelection] = new wxColour((dark)? "#5B5689" : "#66A7E8");
+	colours[MenuBackgroundSelection] = new wxColour((dark)? "#39374B" : "#D1E8FF");
+	colours[TabsBarBackground1] = new wxColour((dark)? "#222222" : "#F0F0F0");
+	colours[TabsBarBackground2] = new wxColour((dark)? "#222222" : "#F0F0F0");
+	colours[TabsBorderActive] = new wxColour((dark)? "#000000" : "#8A8A8A");
+	colours[TabsBorderInactive] = new wxColour((dark)? "#000000" : "#ACACAC");
+	colours[TabsBackgroundActive] = new wxColour((dark)? "#2D2D2D" : "#C0C0C0");
+	colours[TabsBackgroundInactive] = new wxColour((dark)? "#3C3C3C" : "#F0F0F0");
+	colours[TabsBackgroundInactiveHover] = new wxColour((dark) ? "#2D2D2D" : "#D1D1D1"); 
+	colours[TabsBackgroundSecondWindow] = new wxColour((dark) ? "#181818" : "#AFAFAF");
+	colours[TabsTextActive] = new wxColour((dark)? "#B5B5B5" : "#000000");
+	colours[TabsTextInactive] = new wxColour((dark)? "#9B9B9B" : "#333333");
+	colours[TabsCloseHover] = new wxColour((dark)? "#D40403" : "#E04343");
+	colours[TabsBarArrow] = new wxColour((dark)? "#9B9B9B" : "#000000");
+	colours[TabsBarArrowBackground] = new wxColour((dark)? "#222222" : "#F0F0F0");
+	colours[TabsBarArrowBackgroundHover] = new wxColour((dark)? "#333333" : "#D1D1D1");
+	colours[SliderPathBackground] = new wxColour((dark)? "#282828" : "#E7EAEA");
+	colours[SliderPathBorder] = new wxColour((dark)? "#434343" : "#D6D6D6");
+	colours[SliderBorder] = new wxColour((dark)? "#4E4E4E" : "#ACACAC");
+	colours[SliderBorderHover] = new wxColour((dark)? "#555555" : "#7EB4EA");
+	colours[SliderBorderPushed] = new wxColour((dark)? "#555555" : "#569DE5");
+	colours[SliderBackground] = new wxColour((dark)? "#282828" : "#E5E5E5");
+	colours[SliderBackgroundHover] = new wxColour((dark)? "#333333" : "#DCECFC");
+	colours[SliderBackgroundPushed] = new wxColour((dark)? "#333333" : "#C4E0FC");
+	colours[StylePreviewColor1] = new wxColour("#9A9A9A");
+	colours[StylePreviewColor2] = new wxColour("#686868");
 
 }
 
@@ -500,7 +500,13 @@ void config::LoadColors(const wxString &_themeName){
 				token.Trim(true);
 				if (token.Len()>0){SetHexColor(token);g++;}
 			}
-			if(colors.size()>10){return;}
+			if(colors.size()>10){
+				if (colors.find((COLOR)0) != colors.end() || colors.size() < StylePreviewColor2){
+					LoadMissingColours(path);
+					KaiMessageBox(wxString::Format(_("W motywie \"%s\" brakowało część kolorów, zostały doczytane z domyślnego."), themeName));
+				}
+				return;
+			}
 		}
 		failed = true;
 	}
@@ -509,6 +515,28 @@ void config::LoadColors(const wxString &_themeName){
 		Options.SetString(ProgramTheme, "DeepDark");
 		KaiMessageBox(_("Nie można zaczytać motywu, zostanie przywrócony domyśny"));
 	}
+}
+
+void config::LoadMissingColours(const wxString &path)
+{
+	std::map<COLOR, wxColour*> defaultColors;
+	LoadDefaultColors(true, &defaultColors);
+	auto j = colors.begin();
+	if (j->first == 0){ 
+		j++; 
+		delete colors.begin()->second;
+		colors.erase(colors.begin()); 
+	}
+	for (auto i = defaultColors.begin(); i != defaultColors.end(); i++){
+		if (j != colors.end() && i->first == j->first){
+			delete i->second;
+			j++;
+		} else{
+			colors[i->first] = i->second;
+		}
+	}
+	defaultColors.clear();
+	SaveColors(path);
 }
 
 

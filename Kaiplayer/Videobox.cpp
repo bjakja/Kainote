@@ -222,7 +222,7 @@ bool VideoCtrl::Stop()
 
 bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 {   
-	if(fulls){SetFullskreen();}
+	if(fulls){SetFullscreen();}
 	prevchap=-1;
 	MenuItem *index=Kai->Menubar->FindItem(VideoIndexing);
 	bool shown=true;
@@ -235,16 +235,12 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 	}
 
 	eater=IsDshow;
-
+	
 	if(!isFullscreen&&!fulls){
 		int sx,sy;
 		//wyłączony edytor
 		if(!Kai->GetTab()->editor){
 			if(!Kai->IsMaximized()){
-				//int ww,wh;
-				//GetClientSize(&ww,&wh);
-				//wh-=Kai->Tabs->GetHeight();
-				//wxLogStatus("wh %i",wh);
 				int sizex,sizey;
 				Kai->GetClientSize(&sizex,&sizey);
 				CalcSize(&sx,&sy,0,0,true,true);
@@ -265,8 +261,6 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 			if(ischanged||!shown){
 				SetMinSize(wxSize(sx,sy+panelHeight));
 				Kai->GetTab()->BoxSizer1->Layout();
-			}else{
-				//Render();
 			}
 			Options.SetCoords(VideoWindowSize,sx,sy+panelHeight);
 		}
@@ -278,12 +272,13 @@ bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
 		wxString res;
 		Kai->SetVideoResolution(size.x, size.y, !Options.GetBool(DontAskForBadResolution));
 	}
-	block=false;
+	//block = false;
 	if(IsDshow){
-		if(!volslider->IsShown()){volslider->Show(); mstimes->SetSize(lastSize.x-290,-1);}
 		Play();
-		if(Kai->GetTab()->editor && !isFullscreen){Pause();Render();}
+		if (Kai->GetTab()->editor && !isFullscreen){ Pause(); }
+		if (!volslider->IsShown()){ volslider->Show(); mstimes->SetSize(lastSize.x - 290, -1); }
 	}else{
+		block = false;
 		if(volslider->IsShown()){
 			volslider->Show(false); 
 			mstimes->SetSize(lastSize.x-185,-1);
@@ -420,7 +415,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 
 
 	if(event.LeftDClick() && event.GetModifiers()==0){
-		SetFullskreen();
+		SetFullscreen();
 		if(!isFullscreen && Kai->GetTab()->SubsPath!="" && Options.GetBool(SelectVisibleLineAfterFullscreen)){
 			Kai->GetTab()->Edit->Send(EDITBOX_LINE_EDITION,false);
 			Kai->GetTab()->Grid->SelVideoLine();
@@ -526,14 +521,14 @@ void VideoCtrl::OnPlaytime(wxTimerEvent& event)
 void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 {
 	int key = event.GetKeyCode();
-	if(key=='F'){SetFullskreen();}
+	if(key=='F'){SetFullscreen();}
 	else if(key == WXK_WINDOWS_MENU){
 		wxWindow *owner = (isFullscreen && TD)? (wxWindow *)TD : this;
 		wxPoint poss= owner->ScreenToClient(wxGetMousePosition());
 		ContextMenu(poss);}
 	else if((key=='B'||key==WXK_ESCAPE) && isFullscreen){
 		//OpenEditor((key==WXK_ESCAPE));
-		SetFullskreen();
+		SetFullscreen();
 		if(Kai->GetTab()->SubsPath!=""){
 			Kai->GetTab()->Grid->SelVideoLine();}
 		if(key=='B'){if(GetState()==Playing){Pause();}ShowWindow(Kai->GetHWND(),SW_SHOWMINNOACTIVE);}
@@ -610,7 +605,7 @@ void VideoCtrl::NextFile(bool next)
 	Pause(false);
 }
 
-void VideoCtrl::SetFullskreen(int monitor)
+void VideoCtrl::SetFullscreen(int monitor)
 {
 	//wxMutexLocker lock(vbmutex);
 	isFullscreen = !isFullscreen;
@@ -887,7 +882,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 		FilterConfig(item->GetLabel(), id-13000,pos);
 	}else if(id>15000 && id<15000+(int)MonRects.size()){
 		isFullscreen=false;
-		SetFullskreen(id - 15000);
+		SetFullscreen(id - 15000);
 	}
 	delete menu;
 	ismenu=false;
@@ -952,7 +947,7 @@ void VideoCtrl::OpenEditor(bool esc)
 			Kai->GetTab()->Grid->SelVideoLine();}
 
 
-		SetFullskreen();
+		SetFullscreen();
 
 		if(!esc){ShowWindow(Kai->GetHWND(),SW_MINIMIZE);}
 	}
@@ -985,7 +980,7 @@ void VideoCtrl::OnAccelerator(wxCommandEvent& event)
 			if(IsDshow){Seek(0);}
 		}
 	}
-	else if(id==FullScreen){SetFullskreen();}
+	else if(id==FullScreen){SetFullscreen();}
 	else if(id==Editor){OpenEditor();}
 	else if(id==OpenVideo){OnOpVideo();}
 	else if(id==Id::OpenSubs){OnOpSubs();}
@@ -1065,7 +1060,12 @@ void VideoCtrl::OnSPlus()
 
 void VideoCtrl::OnPaint(wxPaintEvent& event)
 {
-	if( !block && !blockpaint && vstate==Paused ){Render(true);}
+	if( !block /*&& !blockpaint*/&& vstate==Paused ){
+		Render(true);
+	}
+	else if (block){
+		block = false;
+	}
 	else if(vstate==None){
 		int x, y;
 		GetClientSize(&x,&y);

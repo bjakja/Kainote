@@ -41,8 +41,7 @@ CD2DVideoRender::~CD2DVideoRender()
 void CD2DVideoRender::OnReceiveFirstSample(IMediaSample *pMediaSample)
 {
 	//CAutoLock m_lock(this->m_pLock);
- 
-	if(!pMediaSample){return;}
+	if (!pMediaSample || Vrend->vstate >= Stopped){ return; }
  
 	REFERENCE_TIME start=0, end=0;
     pMediaSample->GetTime(&start,&end);
@@ -58,7 +57,7 @@ void CD2DVideoRender::OnReceiveFirstSample(IMediaSample *pMediaSample)
 	}
 	//po testach to przestawić
 	Vrend->seek=false;
-	if(Vrend->vstate==Playing||Vrend->block||noRefresh){noRefresh=false; return;}
+	if(Vrend->vstate==Playing/*||Vrend->block*/||noRefresh){noRefresh=false; return;}
 	norender=true;
 
 	
@@ -70,16 +69,15 @@ HRESULT CD2DVideoRender::Render(IMediaSample *pMediaSample)
 {
 	//CAutoLock m_lock(this->m_pLock);
 	if(!pMediaSample||m_bStreaming==FALSE) return E_POINTER;//
-	//wxLogStatus("playing");
+
 	if(pMediaSample->IsPreroll()==S_OK||norender){norender = false; return S_OK;}
 	
 	BYTE* pBuffer = NULL;
 	HR1(pMediaSample->GetPointer(&pBuffer));
-	//wxLogMessage("leng %i",(int)pMediaSample->GetActualDataLength());
 	
 	REFERENCE_TIME start=0, end=0;
     pMediaSample->GetTime(&start,&end);
-	if(!Vrend->block){
+	/*if(!Vrend->block){*/
 		bool endOfPlaying = Vrend->playend && time+(end/10000.0) >= Vrend->playend;
 		if(endOfPlaying){ 
 			wxCommandEvent *evt=new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED,2021);
@@ -93,9 +91,9 @@ HRESULT CD2DVideoRender::Render(IMediaSample *pMediaSample)
 		Vrend->time=time+(start/10000.0);
 		//kończąc odtwarzanie trzeba skopiować klatkę bo będzie później edytować na pierwszej, 
 		//stop streaming nie działa, first sample jest zablokowane
-		Vrend->DrawTexture(pBuffer, endOfPlaying);
+		Vrend->DrawTexture(pBuffer, endOfPlaying || Vrend->resized);
 		Vrend->Render();
-	}else{byte *cpy = (byte*) Vrend->datas; memcpy(cpy,pBuffer,pMediaSample->GetSize());}
+	/*}else{byte *cpy = (byte*) Vrend->datas; memcpy(cpy,pBuffer,pMediaSample->GetSize());}*/
 	
 	return S_OK;
 }
