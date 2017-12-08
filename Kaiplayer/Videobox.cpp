@@ -448,7 +448,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 			if(cross){
 				cross=false;
 				if(!hasArrow){SetCursor(wxCURSOR_ARROW);hasArrow=true;}
-				if(GetState()==Paused){Render(false);}
+				if(GetState()==Paused && !block){Render(false);}
 			}
 			return;
 		}
@@ -1063,9 +1063,6 @@ void VideoCtrl::OnPaint(wxPaintEvent& event)
 	if( !block /*&& !blockpaint*/&& vstate==Paused ){
 		Render(true);
 	}
-	else if (block){
-		block = false;
-	}
 	else if(vstate==None){
 		int x, y;
 		GetClientSize(&x,&y);
@@ -1112,12 +1109,6 @@ void VideoCtrl::SetScaleAndZoom()
 	zoom<<(int)(zoomParcent*100)<<"%";
 	Kai->SetStatusText(zoom,2);
 }
-
-//void VideoCtrl::SendEvent()
-//{
-//	wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,23333);
-//	AddPendingEvent(evt);
-//}
 
 void VideoCtrl::RefreshTime()
 {
@@ -1294,25 +1285,18 @@ BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor,HDC hdcMonitor,LPRECT lprcMonito
 wxRect VideoCtrl::GetMonitorRect(int wmonitor){
 	MonRects.clear();
 	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)this);
-	//wxLogStatus("size %i", MonRects.size());
 	wxRect rt(MonRects[0].left, MonRects[0].top,  abs(MonRects[0].right - MonRects[0].left), abs(MonRects[0].bottom - MonRects[0].top));
 	if(wmonitor==-1||MonRects.size()==1){return rt;}
 	else if(wmonitor==0){
 		wxRect rect=Kai->GetRect();
 		int x= (rect.width/2)+rect.x;
 		int y= (rect.height/2)+rect.y;
-		//wxLogStatus("Monitor pos %i %i", x, y);
 		for(size_t i=0; i<MonRects.size(); i++){
-			//wxLogStatus("Monitor pos %i %i %i %i %i %i", x, y, MonRects[i].left, MonRects[i].top, MonRects[i].right, MonRects[i].bottom);
-			if(MonRects[i].left <= x && x < MonRects[i].right && MonRects[i].top <= y && y < MonRects[i].bottom)
-			{
-
-				//wxLogStatus("znalazło %i monitor", i);
+			if(MonRects[i].left <= x && x < MonRects[i].right && MonRects[i].top <= y && y < MonRects[i].bottom){
 				return wxRect(MonRects[i].left, MonRects[i].top,  abs(MonRects[i].right - MonRects[i].left), abs(MonRects[wmonitor].bottom - MonRects[wmonitor].top));
 			}
 		}
 	}else{
-		//wxLogStatus("znalazło %i monitor", wmonitor);
 		return wxRect(MonRects[wmonitor].left, MonRects[wmonitor].top, abs(MonRects[wmonitor].right - MonRects[wmonitor].left), abs(MonRects[wmonitor].bottom - MonRects[wmonitor].top));
 	}
 	return rt;
@@ -1346,8 +1330,6 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 bool VideoCtrl::SetBackgroundColour(const wxColour &col)
 {
 	panel->SetBackgroundColour(col);
-	//mstimes->SetBackgroundColour(WindowBackground);
-	//vToolbar->Refresh(false);
 	return true;
 }
 

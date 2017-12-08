@@ -317,7 +317,7 @@ void KaiDialog::SetEnterId(int _enterId)
 {
 	Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter, this, enterId);
 	enterId = _enterId;
-	//Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter,enterId);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter, this,enterId);
 	
 }
 void KaiDialog::SetEscapeId(int _escapeId, bool setFocus)
@@ -325,7 +325,7 @@ void KaiDialog::SetEscapeId(int _escapeId, bool setFocus)
 	Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEscape, this, escapeId);
 	escapeId = _escapeId;
 	setEscapeIdWithFocus = setFocus;
-	//Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEscape,escapeId);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEscape, this, escapeId);
 }
 
 void KaiDialog::OnEnter(wxCommandEvent &evt)

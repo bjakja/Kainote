@@ -86,6 +86,7 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 	}
 
 	if(click){
+		if (!tab->Video->HasCapture()){ tab->Video->CaptureMouse(); }
 		tab->Video->SetCursor(wxCURSOR_SIZING);
 		hasArrow=false;
 		wxArrayInt sels;

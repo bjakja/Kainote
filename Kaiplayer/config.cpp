@@ -340,10 +340,10 @@ void config::LoadDefaultColors(bool dark, std::map<COLOR, wxColour*> *table)
 	colours[GridLabelDoubtful] = new wxColour((dark)? "#FB9708" : "#FB710B");
 	colours[GridSpellchecker] = new wxColour((dark)? "#FA9292" : "#FA9292");
 	colours[GridComparisonOutline] = new wxColour((dark)? "#FFFFFF" : "#00E1FF");
-	colours[GridComparisonBackgroundNotMatch] = new wxColour((dark)? "#C0A073" : "#F6D6AC");
-	colours[GridComparisonBackgroundMatch] = new wxColour((dark)? "#909F3A" : "#ADC044");
-	colours[GridComparisonCommentBackgroundNotMatch] = new wxColour((dark)? "#978063" : "#D7AA70");
-	colours[GridComparisonCommentBackgroundMatch] = new wxColour((dark)? "#656F31" : "#88963A");
+	colours[GridComparisonBackgroundNotMatch] = new wxColour((dark)? "#C0A073" : "#C8A679");
+	colours[GridComparisonBackgroundMatch] = new wxColour((dark)? "#8F8DB3" : "#8F8DB3");
+	colours[GridComparisonCommentBackgroundNotMatch] = new wxColour((dark)? "#F3C38F" : "#F3C38F");
+	colours[GridComparisonCommentBackgroundMatch] = new wxColour((dark)? "#BEBCFB" : "#BEBCFB");
 	colours[EditorText] = new wxColour((dark)? "#B7B7B7" : "#000000");
 	colours[EditorTagNames] = new wxColour((dark)? "#E2A000" : "#17AF21");
 	colours[EditorTagValues] = new wxColour((dark)? "#EE54FF" : "#BD16D0");

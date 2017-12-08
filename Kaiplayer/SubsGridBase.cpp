@@ -893,7 +893,7 @@ bool SubsGridBase::IsModified()
 
 void SubsGridBase::GetUndo(bool redo, int iter)
 {
-	TabPanel *tab = Kai->GetTab();
+	TabPanel *tab = (TabPanel*)GetParent();
 	Freeze();
 	wxString resolution = GetSInfo("PlayResX") + " x " + GetSInfo("PlayResY");
 	wxString matrix = GetSInfo("YCbCr Matrix");
@@ -990,7 +990,7 @@ void SubsGridBase::DummyUndo(int newIter)
 	RefreshColumns();
 	UpdateUR();
 	Kai->Label(file->GetActualHistoryIter());
-	VideoCtrl *vb = Kai->GetTab()->Video;
+	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
 	if (vb->GetState() != None){
 		vb->OpenSubs(GetVisible());
 		vb->Render();
@@ -1027,8 +1027,10 @@ void SubsGridBase::InsertRows(int Row,
 		}
 	}
 	if (asKey){ Row = file->IdConverter->getElementByKey(Row); }
-	wxArrayInt emptyarray;
-	SpellErrors.insert(SpellErrors.begin() + Row, RowsTable.size(), emptyarray);
+	if (Row >= 0){
+		wxArrayInt emptyarray;
+		SpellErrors.insert(SpellErrors.begin() + Row, RowsTable.size(), emptyarray);
+	}
 	if (AddToDestroy){ file->subs->ddials.insert(file->subs->ddials.end(), RowsTable.begin(), RowsTable.end()); }
 }
 
@@ -1047,8 +1049,10 @@ void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddTo
 		}
 	}
 	if (asKey){ Row = file->IdConverter->getElementByKey(Row); }
-	wxArrayInt emptyarray;
-	SpellErrors.insert(SpellErrors.begin() + Row, NumRows, emptyarray);
+	if (Row >= 0){
+		wxArrayInt emptyarray;
+		SpellErrors.insert(SpellErrors.begin() + Row, NumRows, emptyarray);
+	}
 	if (AddToDestroy){ file->subs->ddials.push_back(Dialog); }
 	if (Save){
 		file->InsertSelectionKey(convertedRow);
@@ -1147,7 +1151,7 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 		file->SaveUndo(editionType, ebrow, markedLine);
 		Kai->Label(file->GetActualHistoryIter());
 		if (!dummy){
-			VideoCtrl *vb = Kai->GetTab()->Video;
+			VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
 			if (Edit->Visual >= CHANGEPOS){
 				vb->SetVisual(false, true);
 			}

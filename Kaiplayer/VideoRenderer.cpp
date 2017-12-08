@@ -836,8 +836,6 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 
 bool VideoRend::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 {
-	//delete textsubs;
-	//return true;
 	wxMutexLocker lock(mutexRender);
 	if (instance) csri_close(instance);
 	instance = NULL;
@@ -1418,7 +1416,9 @@ void VideoRend::DrawLines(wxPoint point)
 	vectors[3].x = backBufferRect.right;
 	vectors[3].y = point.y;
 	cross=true;	
-	if(vstate==Paused/* && !block*/){Render(resized);}     
+	if(vstate==Paused && !block){
+		Render(resized);
+	}     
 }
 
 void VideoRend::DrawProgBar()

@@ -69,6 +69,8 @@ void KaiStaticText::SetLabelText(const wxString &_text){
 		size.x = fullw;
 		size.y = windowHeight;
 		SetMinSize(size);
+		SetSize(size);
+		SetMaxSize(size);
 		wxSizer *sizer = GetSizer();
 		if(sizer){
 			sizer->Layout();

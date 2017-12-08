@@ -57,12 +57,13 @@ void CD2DVideoRender::OnReceiveFirstSample(IMediaSample *pMediaSample)
 	}
 	//po testach to przestawić
 	Vrend->seek=false;
-	if(Vrend->vstate==Playing/*||Vrend->block*/||noRefresh){noRefresh=false; return;}
+	if(Vrend->vstate==Playing || noRefresh){noRefresh=false; return;}
 	norender=true;
 
 	
 	Vrend->DrawTexture(pBuffer, true);
 	Vrend->Render();
+	if (Vrend->block){ Vrend->block = false; }
 }
 
 HRESULT CD2DVideoRender::Render(IMediaSample *pMediaSample)

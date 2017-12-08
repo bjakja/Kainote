@@ -233,6 +233,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 			}else{
 			delete mylog; mylog=NULL;
 		}
+	
 	},9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
 		TabPanel *tab = GetTab();

@@ -781,10 +781,14 @@ namespace Auto{
 
 		int original_offset = c->Grid->SInfoSize() + c->Grid->StylesSize()+1;
 		auto original_sel = selected_rows(c);
-		int original_active = c->Grid->file->GetElementById(c->Edit->ebrow) + original_offset;
+		// original active do not have offset
+		int original_active = c->Grid->file->GetElementById(c->Edit->ebrow);
 
 		push_value(L, original_sel);
-		push_value(L, original_active);
+		push_value(L, original_active + original_offset);
+
+		c->Grid->SaveSelections();
+
 		LuaProgressSink *ps = new LuaProgressSink(L, c);
 
 		
@@ -793,10 +797,8 @@ namespace Auto{
 		ps->ShowDialog(StrDisplay());
 		wxThread::ExitCode code = call.Wait();
 		bool failed = (int)code == 1;
-		//wxLogStatus("waited ");
 		
 		if(ps->lpd->cancelled || failed){
-			//wxLogStatus("canceled ");
 			SAFE_DELETE(subsobj);
 			c->Grid->file->DummyUndo();
 			
@@ -806,7 +808,7 @@ namespace Auto{
 		
 		c->Grid->file->ReloadVisibleDialogues();
 		//if(ps->lpd->cancelled && ps->lpd->IsModal()){ps->lpd->EndModal(0);}
-		c->Grid->SaveSelections(true);
+		//c->Grid->SaveSelections(true);
 		original_offset = c->Grid->SInfoSize() + c->Grid->StylesSize() + 1;
 		int active_idx = original_active;
 

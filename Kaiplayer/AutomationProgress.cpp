@@ -325,16 +325,16 @@ namespace Auto{
 		SetForegroundColour(Options.GetColour(WindowText));
 		SetBackgroundColour(Options.GetColour(WindowBackground));
 		progress_display = new wxGauge(this, -1, 100, wxDefaultPosition, wxSize(600, 20));
-		title_display = new KaiStaticText(this, -1, _T(""), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE|wxST_NO_AUTORESIZE);
-		task_display = new KaiStaticText(this, -1, _T(""), wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE|wxST_NO_AUTORESIZE);
+		title_display = new KaiStaticText(this, -1, _T("")/*, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE|wxST_NO_AUTORESIZE*/);
+		task_display = new KaiStaticText(this, -1, _T("")/*, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE|wxST_NO_AUTORESIZE*/);
 		cancel_button = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 		debug_output = new KaiTextCtrl(this, -1, _T(""), wxDefaultPosition, wxSize(600, 220), wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH2);
 		//debug_output->Hide();
 		// put it in a sizer
 		sizer = new wxBoxSizer(wxVERTICAL);
-		sizer->Add(title_display, 0, wxEXPAND | wxALL, 5);
+		sizer->Add(title_display, 0, wxALIGN_CENTER | wxALL, 5);
 		sizer->Add(progress_display, 0, wxALL&~wxTOP, 5);
-		sizer->Add(task_display, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
+		sizer->Add(task_display, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT | wxBOTTOM, 5);
 		sizer->Add(cancel_button, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT | wxBOTTOM, 5);
 		sizer->Add(debug_output, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
 		//sizer->Show(debug_output, false);
