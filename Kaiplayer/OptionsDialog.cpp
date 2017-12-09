@@ -311,9 +311,10 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 			int sel=cmb->FindString(optname);
 
-			if(sel>=0){cmb->SetSelection(sel);if(i==0 && Options.acdir!=optname){Options.LoadStyles(optname);}}
+			if(sel>=0){cmb->SetSelection(sel);if(i==0 && Options.actualStyleDir!=optname){Options.LoadStyles(optname);}}
 			else{
-				if(i==0){sel=cmb->FindString(Options.acdir);}cmb->SetSelection(MAX(0,sel));
+				if(i==0){sel=cmb->FindString(Options.actualStyleDir);}
+				cmb->SetSelection(MAX(0,sel));
 				wxString co=(i==0)?_("katalog dla stylu") : _("styl"); 
 				KaiMessageBox(wxString::Format(_("Wybrany %s konwersji nie istnieje,\nzostanie zmieniony na domyślny"), co),_("Uwaga"));}
 

@@ -1058,9 +1058,8 @@ namespace Auto{
 
 	bool Automation::AddFromSubs()
 	{
-		//wxLogStatus("weszło");
 		wxString paths=Notebook::GetTab()->Grid->GetSInfo("Automation Scripts");
-		//wxLogStatus("m"+paths);
+
 		if(paths==""){return false;}
 		if(paths==scriptpaths && ASSScripts.size()>0){return false;}
 		paths.Trim(false);

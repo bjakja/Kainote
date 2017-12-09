@@ -347,7 +347,7 @@ class config
 	std::vector<Styles*> assstore;
     wxString progname;
 	//aktualny katalog --- œcie¿ka do folderu programu
-    wxString acdir, pathfull;
+    wxString actualStyleDir, pathfull;
     wxArrayString dirs;
 	bool AudioOpts;
 
@@ -413,6 +413,8 @@ wxImage CreateImageFromPngResource(const wxString& t_name);
 #define PTR_BITMAP_PNG(x) CreateBitmapPointerFromPngResource(x)
 void MoveToMousePosition(wxWindow *win);
 wxString MakePolishPlural(int num, const wxString &normal, const wxString &plural24, const wxString &pluralRest);
+
+static const wxString emptyString;
 
 enum{
 	ASS=1,

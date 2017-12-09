@@ -579,15 +579,13 @@ void VideoRend::Clear()
 
 
 
-bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, bool __vobsub, bool fullscreen)
+bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow/*=true*/, bool vobsub/*=false*/)
 {
 	wxMutexLocker lock(mutexOpenFile);
 	//block=true;
 	kainoteApp *Kaia=(kainoteApp*)wxTheApp;
 	VideoFfmpeg *tmpvff=NULL;
-	//wxLogStatus("stop");
 	if(vstate==Playing){((VideoCtrl*)this)->Stop();}
-	//wxLogStatus("stoped");
 	IsDshow=Dshow;
 	if(!Dshow){
 		bool success;
@@ -630,7 +628,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 
 		if(!vplayer){vplayer= new DShowPlayer(this);}
 
-		if(!vplayer->OpenFile(fname, __vobsub)){/*block=false;*/return false;}
+		if(!vplayer->OpenFile(fname, vobsub)){/*block=false;*/return false;}
 		wxSize siz = vplayer->GetVideoSize();
 		vwidth = siz.x; vheight = siz.y;
 		if (vwidth % 2 != 0){ vwidth++; }
@@ -673,7 +671,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	format->pixfmt = framee->pixfmt;
 	format->fps=(!IsDshow)? 25.0f : fps;
 
-	if(!__vobsub){
+	if(!vobsub){
 		OpenSubs(textsubs,false);
 	}else{
 		SAFE_DELETE(textsubs);

@@ -326,7 +326,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 		Edit->OnVideo = oldOnVideo;
 	}
 	wxString txt;
-	wxString tlmode = GetSInfo("TLMode");
+	const wxString &tlmode = GetSInfo("TLMode");
 	bool translated = tlmode == "Translated";
 	bool tlmodeOn = tlmode != "";
 
@@ -334,16 +334,21 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 
 	if (subsFormat < SRT){
 		if (cstat){
-			AddSInfo("Last Style Storage", Options.acdir, false);
+			AddSInfo("Last Style Storage", Options.actualStyleDir, false);
 			AddSInfo("Active Line", std::to_string(Edit->ebrow), false);
+			if (Edit->ABox){
+				AddSInfo("Audio File", Edit->ABox->audioName, false);
+			}
+			TabPanel *tab = (TabPanel*)GetParent();
+			if (!tab->VideoPath.empty()){
+				AddSInfo("Video File", tab->VideoPath, false);
+			}
 		}
-		//if (isFiltered && !loadFromEditbox){
-
-		//}
-
-		txt << "[Script Info]\r\n;Plik utworzony przez " << Options.progname << "\r\n" << GetSInfos(translated);
+		
+		txt << "[Script Info]\r\n;Plik utworzony przez " << Options.progname << "\r\n";
+		GetSInfos(txt, translated);
 		txt << "\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
-		txt << GetStyles(translated);
+		GetStyles(txt, translated);
 		txt << " \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
 	}
 	ow.PartFileWrite(txt);
@@ -470,18 +475,16 @@ int SubsGridBase::FindStyle(const wxString &name, int *multip)
 	return isfound;
 }
 
-wxString SubsGridBase::GetStyles(bool tld)
+void SubsGridBase::GetStyles(wxString &stylesText, bool tld/*=false*/)
 {
-	wxString allst;
 	wxString tmpst;
 	if (tld){ tmpst = GetSInfo("TLMode Style"); }
 	for (size_t i = 0; i < file->subs->styles.size(); i++)
 	{
 		if (!(tld&&file->subs->styles[i]->Name == tmpst)){
-			allst << file->subs->styles[i]->styletext();
+			stylesText << file->subs->styles[i]->styletext();
 		}
 	}
-	return allst;
 }
 
 void SubsGridBase::DelStyle(int i)
@@ -895,9 +898,9 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 {
 	TabPanel *tab = (TabPanel*)GetParent();
 	Freeze();
-	wxString resolution = GetSInfo("PlayResX") + " x " + GetSInfo("PlayResY");
-	wxString matrix = GetSInfo("YCbCr Matrix");
-	wxString tlmode = GetSInfo("TLMode");
+	const wxString &resolution = GetSInfo("PlayResX") + " x " + GetSInfo("PlayResY");
+	const wxString &matrix = GetSInfo("YCbCr Matrix");
+	const wxString &tlmode = GetSInfo("TLMode");
 	SaveSelections();
 	savedSelections = false;
 	bool failed = false;
@@ -931,7 +934,7 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	}
 	SpellErrors.clear();
 
-	wxString newtlmode = GetSInfo("TLMode");
+	const wxString &newtlmode = GetSInfo("TLMode");
 	if (newtlmode != tlmode){
 		hasTLMode = (newtlmode == "Yes");
 		showOriginal = (GetSInfo("TLMode Showtl") == "Yes" || (hasTLMode && Options.GetBool(TlModeShowOriginal) != 0));
@@ -967,9 +970,9 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	else if (Edit->Visual == CHANGEPOS){
 		vb->SetVisual(false, true);
 	}
-	wxString newResolution = GetSInfo("PlayResX") + " x " + GetSInfo("PlayResY");
+	const wxString &newResolution = GetSInfo("PlayResX") + " x " + GetSInfo("PlayResY");
 	if (resolution != newResolution){ Kai->SetSubsResolution(); }
-	wxString newmatrix = GetSInfo("YCbCr Matrix");
+	const wxString &newmatrix = GetSInfo("YCbCr Matrix");
 	if (matrix != newmatrix){
 		vb->SetColorSpace(newmatrix);
 	}
@@ -1110,15 +1113,13 @@ void SubsGridBase::AddSInfo(const wxString &SI, wxString val, bool save)
 	//}
 }
 
-wxString SubsGridBase::GetSInfos(bool tld)
+void SubsGridBase::GetSInfos(wxString &textSinfo, bool tld/*=false*/)
 {
-	wxString TextSI = "";
 	for (std::vector<SInfo*>::iterator cur = file->subs->sinfo.begin(); cur != file->subs->sinfo.end(); cur++) {
 		if (!(tld && (*cur)->Name.StartsWith("TLMode"))){
-			TextSI << (*cur)->Name << ": " << (*cur)->Val << "\r\n";
+			textSinfo << (*cur)->Name << ": " << (*cur)->Val << "\r\n";
 		}
 	}
-	return TextSI;
 }
 //wszystkie set modified trzeba znaleźć i dodać editiontype.
 void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
@@ -1335,7 +1336,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 			file->subs->sinfo.erase(file->subs->sinfo.begin() + iinf);
 		}
 		iinf = -1;
-		wxString vall = GetSInfo("TLMode Style", &iinf);
+		const wxString &vall = GetSInfo("TLMode Style", &iinf);
 		if (iinf >= 0){
 			int g = FindStyle(vall);
 			if (g >= 0){ DelStyle(g); }
@@ -1449,7 +1450,7 @@ Dialogue *SubsGridBase::GetDialogue(int i)
 	return file->GetDialogue(i);
 }
 
-wxString SubsGridBase::GetSInfo(const wxString &key, int *ii)
+const wxString & SubsGridBase::GetSInfo(const wxString &key, int *ii/*=0*/)
 {
 	int i = 0;
 	for (std::vector<SInfo*>::iterator it = file->subs->sinfo.begin(); it != file->subs->sinfo.end(); it++)
@@ -1457,7 +1458,7 @@ wxString SubsGridBase::GetSInfo(const wxString &key, int *ii)
 		if (key == (*it)->Name) { if (ii){ *ii = i; } return (*it)->Val; }
 		i++;
 	}
-	return "";
+	return emptyString;
 }
 
 SInfo *SubsGridBase::GetSInfoP(const wxString &key, int *ii)
@@ -1499,9 +1500,10 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 	bool toEnd = pan->Video->GetState() == Playing;
 	wxString *txt = new wxString();
 	if (subsFormat == ASS){
-		(*txt) << "[Script Info]\r\n" << GetSInfos(false);
+		(*txt) << "[Script Info]\r\n";
+		GetSInfos(*txt, false);
 		(*txt) << "\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
-		(*txt) << GetStyles(false);
+		GetStyles(*txt, false);
 		(*txt) << " \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
 	}
 	Edit->Send(EDITBOX_LINE_EDITION, false, true);
@@ -1513,7 +1515,7 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 	}
 	bool noLine = true;
 	bool isTlmode = GetSInfo("TLMode") == "Yes";
-	wxString tlStyle = GetSInfo("TLMode Style");
+	const wxString &tlStyle = GetSInfo("TLMode Style");
 	int j = 1;
 	int activeLineKey = file->GetElementById(Edit->ebrow);
 
@@ -1585,8 +1587,8 @@ void SubsGridBase::OnBackupTimer(wxTimerEvent &event)
 
 void SubsGridBase::GetASSRes(int *x, int *y)
 {
-	wxString oldx = GetSInfo("PlayResX");
-	wxString oldy = GetSInfo("PlayResY");
+	const wxString &oldx = GetSInfo("PlayResX");
+	const wxString &oldy = GetSInfo("PlayResY");
 	int nx = wxAtoi(oldx);
 	int ny = wxAtoi(oldy);
 	bool changed = false;

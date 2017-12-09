@@ -56,7 +56,7 @@ public:
 	void Convert(char type);
 
 	int FindStyle(const wxString &name,int *multiplication=NULL);
-	wxString GetStyles(bool tld=false);
+	void GetStyles(wxString &stylesText, bool tld=false);
 	Styles *GetStyle(int i, const wxString &name="");
 	std::vector<Styles*> *GetStyleTable();
 	bool IsModified();
@@ -79,8 +79,8 @@ public:
 	void AddSInfo(const wxString &SI, wxString val="", bool save=true);
 	void SetModified(unsigned char editionType, bool redit = true, bool dummy = false, int SetEditBoxLine = -1, bool Scroll = true);
 	void UpdateUR(bool tolbar=true);
-	wxString GetSInfos(bool tld=false);
-	wxString GetSInfo(const wxString &key, int *ii=0);
+	void GetSInfos(wxString &textSinfo, bool tld=false);
+	const wxString &GetSInfo(const wxString &key, int *ii=0);
 	SInfo *GetSInfoP(const wxString &key, int *ii=0);
 	int FirstSelection();
 	void SwapRows(int frst, int scnd, bool sav=false);

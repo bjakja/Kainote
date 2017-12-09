@@ -32,7 +32,7 @@ KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, co
 	wxArrayString lines = wxStringTokenize(text, "\n",wxTOKEN_RET_EMPTY_ALL);
 	for(size_t i=0; i < lines.size(); i++){
 		int fw, fh;
-		GetTextExtent((text.IsEmpty())? L"|" : lines[i], &fw, &fh, 0, 0, &GetFont());
+		GetTextExtent((lines[i] == "") ? L"|" : lines[i], &fw, &fh, 0, 0, &GetFont());
 		textHeight += fh;
 		if(fullw < fw){fullw = fw;}
 	}
@@ -59,7 +59,7 @@ void KaiStaticText::SetLabelText(const wxString &_text){
 	wxArrayString lines = wxStringTokenize(text, "\n",wxTOKEN_RET_EMPTY_ALL);
 	for(size_t i=0; i < lines.size(); i++){
 		int fw, fh;
-		GetTextExtent((lines[i]=="")? L"|" : lines[i], &fw, &fh, 0, 0, &GetFont());
+		GetTextExtent((lines[i] == "") ? L"|" : lines[i], &fw, &fh, 0, 0, &GetFont());
 		textHeight += fh;
 		if(fullw < fw){fullw = fw;}
 	}
@@ -140,7 +140,7 @@ void KaiStaticText::OnScroll(wxScrollEvent& event)
 
 void KaiStaticText::OnMouseScroll(wxMouseEvent &evt)
 {
-	if (evt.GetWheelRotation() != 0) {
+	if (evt.GetWheelRotation() != 0 && textScroll) {
 		int step = 10 * evt.GetWheelRotation() / evt.GetWheelDelta();
 		scPos -= step;
 		Refresh(false);

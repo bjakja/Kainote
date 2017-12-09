@@ -153,8 +153,7 @@ bool kainoteApp::OnInit()
 			bool opevent=false;
 			if(paths.GetCount()>0){
 				if(Options.GetBool(VideoFullskreenOnStart)){
-					
-					Frame->OpenFiles(paths,false, true); paths.clear();
+					Frame->OpenFiles(paths,false, true);
 					Frame->GetTab()->Video->Layout();
 				}
 				else{
@@ -168,19 +167,11 @@ bool kainoteApp::OnInit()
     		SetTopWindow(Frame);
 			timer.SetOwner(this,1199);
 			Connect(1199,wxEVT_TIMER,(wxObjectEventFunction)&kainoteApp::OnOpen);
-			//Bind(EVT_OPEN,&kainoteApp::OnOpen,this);
-			//
 			if(opevent){
-				//wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,1119);
-				//AddPendingEvent(evt);
-				//wxLogStatus("opevent");
-				//Frame->OpenFiles(pathss,false, true); paths.clear();
-				//isopening=false;
 				timer.Start(500,true);
-				//opthread *ot=new opthread(this,pathss);
 			}
 #if _DEBUG
-			else if(paths.GetCount()<1){
+			else if (paths.GetCount()<1){
 				if(Frame->subsrec.size()>0){paths.Add(Frame->subsrec[0]);}
 				if(Frame->videorec.size()>0){paths.Add(Frame->videorec[0]);}
 				timer.Start(50,true);
@@ -257,7 +248,7 @@ void kainoteApp::OnFatalException()
 void kainoteApp::OnOpen(wxTimerEvent &evt)
 {
 	if(!IsBusy()){
-		Frame->OpenFiles(paths,false);paths.clear();
+		Frame->OpenFiles(paths,false);
 	}
 }
 

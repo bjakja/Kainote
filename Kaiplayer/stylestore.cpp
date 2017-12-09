@@ -59,7 +59,7 @@ StyleStore::StyleStore(wxWindow* parent,const wxPoint& pos)
 
 	KaiStaticBoxSizer *catalogSizer=new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Katalog:"));
 	catalogList = new KaiChoice(this, ID_CATALOG, wxDefaultPosition, wxDefaultSize, Options.dirs);
-	int chc=catalogList->FindString(Options.acdir);
+	int chc=catalogList->FindString(Options.actualStyleDir);
 	catalogList->SetSelection(chc);
 	newCatalog = new MappedButton(this, ID_NEWCAT, _("Nowy"));
 	MappedButton *deleteCatalog = new MappedButton(this, ID_DELCAT, _("Usuń"));
@@ -407,7 +407,7 @@ void StyleStore::OnNewCatalog(wxCommandEvent& event)
 		wxString nkat=nc.TextCtrl1->GetValue();
 		catalogList->SetSelection(catalogList->Append(nkat));
 		Options.dirs.Add(nkat);
-		Options.acdir=nkat;
+		Options.actualStyleDir=nkat;
 		Options.clearstyles();
 		Store->Refresh(false);
 	}
@@ -421,12 +421,12 @@ void StyleStore::OnDelCatalog(wxCommandEvent& event)
 	if(Cat=="Default"){wxBell();return;}
 	catalogList->Delete(cat);
 	Options.dirs.RemoveAt(cat);
-	Options.acdir=Options.dirs[MAX(0,cat-1)];
+	Options.actualStyleDir=Options.dirs[MAX(0,cat-1)];
 	catalogList->SetSelection(MAX(0,cat-1));
 	wxString path;
 	path<<Options.pathfull<<"\\Catalog\\"<<Cat<<".sty";
 	wxRemoveFile(path);
-	Options.LoadStyles(Options.acdir);
+	Options.LoadStyles(Options.actualStyleDir);
 	Store->Refresh(false);
 }
 
@@ -585,7 +585,7 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 	wxString delStyles;
 	wxString existsStyles;
 	SubsGrid *grid=Notebook::GetTab()->Grid;
-	wxString tlStyle=grid->GetSInfo("TLMode Style");
+	const wxString &tlStyle=grid->GetSInfo("TLMode Style");
 
 	for(int i = 0; i < grid->GetCount(); i++){
 		lineStyles[grid->GetDialogue(i)->Style]=true;
@@ -667,7 +667,8 @@ void StyleStore::StyleonVideo(Styles *styl, bool fullskreen)
 
 
 	wxString *txt=new wxString();
-	(*txt)<<"[Script Info]\r\n"<<grid->GetSInfos();
+	(*txt) << "[Script Info]\r\n";
+	grid->GetSInfos(*txt);
 	(*txt)<<"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
 	(*txt)<<styl->styletext();
 	(*txt)<<" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
@@ -853,7 +854,7 @@ void StyleStore::ShowStore()
 		SS->detachedEtit=true;
 	}
 	SS->Store->Refresh(false);
-	int chc=SS->catalogList->FindString(Options.acdir);
+	int chc=SS->catalogList->FindString(Options.actualStyleDir);
 	SS->catalogList->SetSelection(chc);
 	SS->LoadAssStyles();
 	SS->Show();

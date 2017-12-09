@@ -37,6 +37,7 @@ public:
 	void ContextMenu(const wxPoint &pos, bool dummy=false);
 	bool SwapAssProperties(); 
 	void RefreshSubsOnVideo(int newActiveLine, bool scroll = true);
+	void LoadStyleCatalog();
 	
 protected:
 

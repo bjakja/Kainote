@@ -51,13 +51,13 @@ class kainoteFrame: public KaiFrame
         void Save(bool dial, int wtab=-1, bool changeLabel = true);
 		void SaveAll();
 
-        bool OpenFile(wxString filename,bool fulls=false);
+        bool OpenFile(const wxString &filename,bool fulls=false);
 		void Label(int iter=0,bool video=false, int wtab=-1);
 		
 		void SetRecent(short what=0);
 		void AppendRecent(short what=0,Menu *Menu=0);
 		void SetAccels(bool all=true);
-		wxString FindFile(wxString fn,bool video,bool prompt=true);
+		bool FindFile(const wxString &fn, wxString &foundFile,bool video);
 
 		Menu* VidsRecMenu;
 		Menu* SubsRecMenu;
@@ -76,7 +76,7 @@ class kainoteFrame: public KaiFrame
 		TabPanel* GetTab();
 		
 		void InsertTab(bool sel=true);
-		void OpenFiles(wxArrayString,bool intab=false, bool nofreeze=false, bool newtab=false);
+		void OpenFiles(wxArrayString &files,bool intab=false, bool nofreeze=false, bool newtab=false);
 		void OpenAudioInTab(TabPanel *pan, int id, const wxString &path);
 		void HideEditor(bool save = true);
 		bool SavePrompt(char mode=1, int wtab=-1);

@@ -135,7 +135,7 @@ bool SubsLoader::LoadASS(const wxString &text)
 		}
 	}
 	grid->hasTLMode = tlmode;
-	wxString matrix = grid->GetSInfo("YCbCr Matrix");
+	const wxString &matrix = grid->GetSInfo("YCbCr Matrix");
 	if (matrix == "" || matrix == "None"){ grid->AddSInfo("YCbCr Matrix", "TV.601"); }
 	return grid->GetCount() > 0;
 }

@@ -229,7 +229,7 @@ void MoveAll::ChangeInLines(bool all)
 	//bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()=="");
 	//MTextEditor *Editor=(isOriginal)? tab->Edit->TextEditTl : tab->Edit->TextEdit;
 	//wxString origText=Editor->GetValue();
-	wxString tlModeStyle = tab->Grid->GetSInfo("TLMode Style");
+	const wxString &tlModeStyle = tab->Grid->GetSInfo("TLMode Style");
 	int moveLength = 0;
 	
 	for(size_t i = 0; i< sels.size(); i++){

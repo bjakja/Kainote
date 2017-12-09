@@ -193,7 +193,7 @@ bool VideoCtrl::Pause(bool burstbl)
 			}
 			return false;
 		}
-		Load(Kai->videorec[Kai->videorec.size()-1],NULL);
+		LoadVideo(Kai->videorec[Kai->videorec.size()-1],NULL);
 		return true;
 	}
 	if(time>=GetDuration()&&burstbl){return false;}
@@ -220,14 +220,15 @@ bool VideoCtrl::Stop()
 	return true;
 }
 
-bool VideoCtrl::Load(const wxString& fileName, wxString *subsName,bool fulls)
+bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName,bool fulls /*= false*/)
 {   
 	if(fulls){SetFullscreen();}
 	prevchap=-1;
 	MenuItem *index=Kai->Menubar->FindItem(VideoIndexing);
+	bool byFFMS2 = index->IsChecked() && index->IsEnabled() && !fulls && !isFullscreen;
 	bool shown=true;
 	block=true;
-	if(!OpenFile(fileName, subsName, !(index->IsChecked() && index->IsEnabled() && !fulls && !isFullscreen), !Kai->GetTab()->editor, fulls)){
+	if (!OpenFile(fileName, subsName, !byFFMS2, !Kai->GetTab()->editor)){
 		delete subsName; block=false;return false;
 	}
 	if( !(IsShown() || (TD && TD->IsShown())) ){

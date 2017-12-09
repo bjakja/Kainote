@@ -619,7 +619,7 @@ void Visuals::SetVisual(bool dummy, int type)
 					Cpy.TextTl = txt;
 					wxString tlLines;
 					Cpy.GetRaw(&tlLines, true);
-					Cpy.GetRaw(&tlLines, false,tab->Grid->GetSInfo("TLMode Style"));
+					Cpy.GetRaw(&tlLines, false, tab->Grid->GetSInfo("TLMode Style"));
 					dtxt->insert(selPositions[i] + moveLength,tlLines);
 					moveLength += tlLines.Len();
 				}else{

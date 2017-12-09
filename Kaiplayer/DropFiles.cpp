@@ -25,7 +25,8 @@ DragnDrop::DragnDrop(kainoteFrame* kfparent)
 bool DragnDrop::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames)
 {
 	if(filenames.size()>1){
-		Kai->OpenFiles(filenames);}
+		Kai->OpenFiles(wxArrayString(filenames));
+	}
 	else if(filenames.size()>0){
 		wxString ext = filenames[0].AfterLast('.').Lower();
 		bool isLuaScript = ext == "lua" || ext == "moon";

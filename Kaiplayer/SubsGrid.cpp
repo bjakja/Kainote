@@ -779,21 +779,13 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 		if (wbutton == wxYES){ Kai->Save(false); }
 		else if (wbutton == wxCANCEL){ return; }
 	}
-	wxString mkvpath;
-	if (idd == SubsFromMKV)
-	{
-		mkvpath = Kai->GetTab()->VideoPath;
-	}
-	else{
-		mkvpath = event.GetString();
-	}
-
-
+	TabPanel *tab = Kai->GetTab();
+	wxString mkvpath = (idd == SubsFromMKV) ? tab->VideoPath : event.GetString();
+	
 	MatroskaWrapper mw;
 	if (!mw.Open(mkvpath, false)){ return; }
 	int isgood = (int)mw.GetSubtitles(this);
 	mw.Close();
-
 
 	if (isgood){
 		if (hasTLMode){ Edit->SetTl(false); hasTLMode = false; showOriginal = false; Kai->Menubar->Enable(SaveTranslation, false); }
@@ -802,32 +794,22 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 		if (subsFormat < SRT){ Edit->TlMode->Enable(); }
 		else{ Edit->TlMode->Enable(false); }
 
-		Kai->GetTab()->SubsPath = mkvpath.BeforeLast('.') + _(" napisy.") + ext;
-		Kai->GetTab()->SubsName = Kai->GetTab()->SubsPath.AfterLast('\\');
+		tab->SubsPath = mkvpath.BeforeLast('.') + _(" napisy.") + ext;
+		tab->SubsName = tab->SubsPath.AfterLast('\\');
 		//Kai->SetRecent();
 		Kai->UpdateToolbar();
 		Edit->RefreshStyle(true);
 
 		Kai->Label();
-		if (subsFormat == ASS){
-			wxString katal = GetSInfo("Last Style Storage");
-
-			if (katal != ""){
-				for (size_t i = 0; i < Options.dirs.size(); i++){
-					if (katal == Options.dirs[i]){ Options.LoadStyles(katal); }
-				}
-			}
-
-
-		}
-		if (Kai->GetTab()->Video->GetState() != None){
-			Kai->GetTab()->Video->OpenSubs(SaveText(), true, true);
+		LoadStyleCatalog();
+		if (tab->Video->GetState() != None){
+			tab->Video->OpenSubs(SaveText(), true, true);
 			if (!isgood){ KaiMessageBox(_("Otwieranie napisów nie powiodło się"), _("Uwaga")); }
-			if (Kai->GetTab()->Video->GetState() == Paused){ Kai->GetTab()->Video->Render(); }
+			if (tab->Video->GetState() == Paused){ tab->Video->Render(); }
 		}
 
-		if (!Kai->GetTab()->editor&&!Kai->GetTab()->Video->isFullscreen){ Kai->HideEditor(); }
-		Kai->GetTab()->ShiftTimes->Contents();
+		if (!tab->editor&&!tab->Video->isFullscreen){ Kai->HideEditor(); }
+		tab->ShiftTimes->Contents();
 		file->InsertSelection(Edit->ebrow);
 		RefreshColumns();
 		Edit->HideControls();
@@ -1294,6 +1276,26 @@ void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 		vb->Render();
 		Edit->OnVideo = true;
 	}
+}
+
+void SubsGrid::LoadStyleCatalog()
+{
+	if (subsFormat != ASS){ return; }
+	const wxString &catalog = GetSInfo("Last Style Storage");
+
+	if (catalog.empty()){ return; }
+	for (size_t i = 0; i < Options.dirs.size(); i++){
+		if (catalog == Options.dirs[i]){
+			Options.LoadStyles(catalog);
+			if (StyleStore::HasStore()){
+				StyleStore *ss = StyleStore::Get();
+				ss->Store->SetSelection(0, true);
+				int chc = ss->catalogList->FindString(Options.actualStyleDir);
+				ss->catalogList->SetSelection(chc);
+			}
+		}
+	}
+
 }
 
 BEGIN_EVENT_TABLE(SubsGrid, SubsGridBase)
