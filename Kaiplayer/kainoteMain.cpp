@@ -834,6 +834,7 @@ bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 		if (issubs && !fulls && !tab->Video->isFullscreen){
 			wxString videopath = tab->Grid->GetSInfo(L"Video File");
 			wxString audiopath = tab->Grid->GetSInfo(L"Audio File");
+			if (audiopath.StartsWith("?")){ audiopath = videopath; }
 			bool hasVideoPath = (!videopath.empty() && (wxFileExists(videopath) ||
 				wxFileExists(videopath.Prepend(filename.BeforeLast('\\') + "\\"))));
 			bool hasAudioPath = (!audiopath.empty() && (wxFileExists(audiopath) ||
@@ -841,16 +842,19 @@ bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 			int flags = wxNO;
 			wxString prompt;
 			if (hasVideoPath || hasAudioPath){
-				prompt = _("Wczytać pliki zapisane w napisach?\n"); flags |= wxOK;
+				prompt = _("Skojarzone pliki:\n"); flags |= wxOK;
+				if (hasVideoPath){ prompt += _("Wideo: ") + videopath + "\n"; }
+				if (hasAudioPath){ prompt += _("Audio: ") + audiopath + "\n"; }
 			}
 			if (!secondFileName.empty()){
-				prompt += wxString::Format(_("Wczytać wideo o nazwie \"%s\"?"), secondFileName.AfterLast('\\')); flags |= wxYES;
+				if (!prompt.empty()){ prompt += "\n"; }
+				prompt += _("Wideo z folderu:\n") + secondFileName.AfterLast('\\'); flags |= wxYES;
 			}
 			if (!prompt.empty()){
 				KaiMessageDialog dlg(this, prompt, _("Potwierdzenie"), flags);
 				if (flags & wxYES && flags & wxOK){
-					dlg.SetOkLabel(_("Wczytaj z napisów"));
-					dlg.SetYesLabel(_("Wczytaj wideo"));
+					dlg.SetOkLabel(_("Wczytaj skojarzone"));
+					dlg.SetYesLabel(_("Wczytaj z folderu"));
 				}
 				else if (flags & wxOK){ dlg.SetOkLabel(_("Tak")); }
 				int result = dlg.ShowModal();
@@ -863,7 +867,7 @@ bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 							OpenAudioInTab(tab, 30040, audiopath);
 							found = changeAudio = false;
 						}
-						else if(hasVideoPath){
+						if(hasVideoPath){
 							MenuItem *item = VidMenu->FindItem(VideoIndexing);
 							if (item) item->Check();
 						}

@@ -27,17 +27,10 @@ KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, co
 	, scPos(0)
 {
 	int fullw=0;
-	textHeight=0;
+	int windowHeight = 0;
 	wxSize newSize = size;
-	wxArrayString lines = wxStringTokenize(text, "\n",wxTOKEN_RET_EMPTY_ALL);
-	for(size_t i=0; i < lines.size(); i++){
-		int fw, fh;
-		GetTextExtent((lines[i] == "") ? L"|" : lines[i], &fw, &fh, 0, 0, &GetFont());
-		textHeight += fh;
-		if(fullw < fw){fullw = fw;}
-	}
-	int windowHeight = textHeight;
-	if (textHeight > 400){ windowHeight = 400; fullw += 20; }
+	CalculateSize(&fullw, &windowHeight);
+	
 	if(size.x <1){
 		newSize.x = fullw+20;
 	}
@@ -51,26 +44,53 @@ KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, co
 	Bind(wxEVT_PAINT, &KaiStaticText::OnPaint, this);
 }
 
+void KaiStaticText::CalculateSize(int *w, int *h)
+{
+	int fullw = 0;
+	textHeight = 0;
+	int mainTextPos = 0;
+	int textDiff = 0;
+	wxStringTokenizer tokenizer(text, "\n", wxTOKEN_RET_EMPTY_ALL);
+	while (tokenizer.HasMoreTokens()){
+		wxString token = tokenizer.GetNextToken();
+		int fw, fh;
+		GetTextExtent((token == "") ? L"|" : token, &fw, &fh, 0, 0, &GetFont());
+		textHeight += fh;
+		if (fw > 600){
+			wxStringTokenizer tokenizer1(token, " \\/,.-()[]", wxTOKEN_STRTOK);
+			int lastPosition = 0; fw = 0;
+			while (tokenizer1.HasMoreTokens()){
+				if (fw > 500){
+					text.insert(mainTextPos + lastPosition + textDiff, '\n');
+					textDiff++;
+					textHeight += fh;
+					break;
+				}
+				tokenizer1.GetNextToken();
+				lastPosition = tokenizer1.GetPosition();
+				GetTextExtent(token.SubString(0, lastPosition), &fw, &fh, 0, 0, &GetFont());
+			}
+		}
+		mainTextPos = tokenizer.GetPosition();
+		if (fullw < fw){ fullw = fw; }
+	}
+	*h = textHeight;
+	if (textHeight > 400){ *h = 400; fullw += 20; }
+	*w = fullw;
+}
+
 void KaiStaticText::SetLabelText(const wxString &_text){
 	text = _text; 
 	int fullw=0;
-	textHeight=0;
+	int windowHeight = 0;
 	wxSize size=GetClientSize();
-	wxArrayString lines = wxStringTokenize(text, "\n",wxTOKEN_RET_EMPTY_ALL);
-	for(size_t i=0; i < lines.size(); i++){
-		int fw, fh;
-		GetTextExtent((lines[i] == "") ? L"|" : lines[i], &fw, &fh, 0, 0, &GetFont());
-		textHeight += fh;
-		if(fullw < fw){fullw = fw;}
-	}
-	int windowHeight = textHeight;
-	if (textHeight > 400){ windowHeight = 400; fullw += 20; }
+	CalculateSize(&fullw, &windowHeight);
 	if (size.x != fullw || size.y != windowHeight){
 		size.x = fullw;
 		size.y = windowHeight;
 		SetMinSize(size);
-		SetSize(size);
-		SetMaxSize(size);
+		//SetSize(size);
+		//SetMaxSize(size);
 		wxSizer *sizer = GetSizer();
 		if(sizer){
 			sizer->Layout();

@@ -23,6 +23,7 @@ class KaiStaticText : public wxWindow
 {
 public:
 	KaiStaticText(wxWindow *parent, int id, const wxString& text, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int style = wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL);
+	void CalculateSize(int *w, int *h);
 	virtual ~KaiStaticText(){};
 
 	void OnPaint(wxPaintEvent &evt);
