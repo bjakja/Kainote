@@ -147,6 +147,7 @@ HRESULT CD2DVideoRender::StopStreaming()
 			Vrend->DrawTexture(pBuffer, true);
 			Vrend->Render();
 			norender=true;
+			if (Vrend->block){ Vrend->block = false; }
 		}
 		
 	}

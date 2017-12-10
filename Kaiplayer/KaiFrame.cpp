@@ -52,7 +52,7 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title, const
 	Bind(wxEVT_LEFT_DCLICK, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_ACTIVATE, &KaiFrame::OnActivate, this);
-	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
+	//Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
 	SetSize(pos.x,pos.y,size.x, size.y);
 }
 
@@ -260,7 +260,11 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 			wxRect rc3(0,h-fborder,w,fborder);
 			Refresh(false, &rc3);
 		}
+		Update();
     }
+	 if (uMsg == WM_ERASEBKGND){
+		 return 0;
+	 }
 	 
 	/*if(uMsg == 28){
 		isActive = !isActive;
@@ -333,6 +337,7 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 			pushedClose = enterClose = pushedMinimize = enterMinimize = pushedMaximize = enterMaximize = false;
 			wxRect rc(0,0,WindowRect.right - WindowRect.left,ftopBorder);
 			Refresh(false, &rc);
+			Update();
 		}
 		return result;
 	}

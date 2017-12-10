@@ -579,7 +579,7 @@ void VideoRend::Clear()
 
 
 
-bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow/*=true*/, bool vobsub/*=false*/)
+bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, bool vobsub, bool changeAudio)
 {
 	wxMutexLocker lock(mutexOpenFile);
 	//block=true;
@@ -617,18 +617,20 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow/*
 		ay=VFF->arheight;
 		if(vwidth % 2 != 0 ){vwidth++;}
 		pitch=vwidth*4;//1.5f;
-
-		TabPanel *pan = ((TabPanel*)GetParent());
-		if(VFF->GetSampleRate()>0){
-			Kaia->Frame->OpenAudioInTab(pan,40000,fname);
-			player = pan->Edit->ABox->audioDisplay;
-		}else if(player){Kaia->Frame->OpenAudioInTab(pan,CloseAudio,"");}
+		if (changeAudio){
+			TabPanel *pan = ((TabPanel*)GetParent());
+			if (VFF->GetSampleRate() > 0){
+				Kaia->Frame->OpenAudioInTab(pan, 40000, fname);
+				player = pan->Edit->ABox->audioDisplay;
+			}
+			else if (player){ Kaia->Frame->OpenAudioInTab(pan, CloseAudio, ""); }
+		}
 		if(VFF->width<0){return false;}
 	}else{
 
 		if(!vplayer){vplayer= new DShowPlayer(this);}
 
-		if(!vplayer->OpenFile(fname, vobsub)){/*block=false;*/return false;}
+		if(!vplayer->OpenFile(fname, vobsub)){return false;}
 		wxSize siz = vplayer->GetVideoSize();
 		vwidth = siz.x; vheight = siz.y;
 		if (vwidth % 2 != 0){ vwidth++; }

@@ -777,13 +777,14 @@ void kainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 
 bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 {
-	wxString ext = filename.Right(3).Lower();
+	wxString ext = filename.AfterLast('.').Lower();
 	if (ext == "exe" || ext == "zip" || ext == "rar" || ext == "7z"){ return false; }
 	if (ext == "lua" || ext == "moon"){ if (!Auto){ Auto = new Auto::Automation(false); }Auto->Add(filename); return true; }
 	TabPanel *tab = GetTab();
 
 	bool found = false;
 	bool nonewtab = true;
+	bool changeAudio = true;
 	wxString secondFileName;
 	bool issubs = (ext == "ass" || ext == "txt" || ext == "sub" || ext == "srt" || ext == "ssa");
 
@@ -860,7 +861,7 @@ bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 					if (!audiopath.empty()){
 						if (hasAudioPath && audiopath != videopath){
 							OpenAudioInTab(tab, 30040, audiopath);
-							found = false;
+							found = changeAudio = false;
 						}
 						else if(hasVideoPath){
 							MenuItem *item = VidMenu->FindItem(VideoIndexing);
@@ -892,29 +893,24 @@ bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 			if (tab->Video->VFF && tab->Video->vstate != None && tab->Grid->subsFormat == ASS){
 				tab->Video->SetColorSpace(tab->Grid->GetSInfo("YCbCr Matrix"));
 			}
-			tab->ShiftTimes->Contents();
-			UpdateToolbar();
-			tab->Thaw();
-			return true;
+			goto done;
 		}
 	}
 
 	const wxString &fnname = (found && issubs) ? secondFileName : filename;
 	tab->Edit->OnVideo = true;
-	bool isload = tab->Video->LoadVideo(fnname, tab->Grid->GetVisible(), fulls);
-
-	tab->Thaw();
-	tab->ShiftTimes->Contents();
-	UpdateToolbar();
-	Options.SaveOptions(true, false);
-	if (!isload){ return isload; }
+	bool isload = tab->Video->LoadVideo(fnname, tab->Grid->GetVisible(), fulls, changeAudio);
+	if (!isload){ tab->Thaw(); return false; }
 	tab->Video->seekfiles = true;
 	tab->Edit->Frames->Enable(!tab->Video->IsDshow);
 	tab->Edit->Times->Enable(!tab->Video->IsDshow);
 
-	//tab->Grid1->SetFocus();
-
 	Tabs->GetTab()->Video->DeleteAudioCache();
+done:
+	tab->ShiftTimes->Contents();
+	UpdateToolbar();
+	tab->Thaw();
+	Options.SaveOptions(true, false);
 	return true;
 }
 

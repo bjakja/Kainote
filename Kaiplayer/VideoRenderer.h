@@ -116,7 +116,7 @@ class VideoRend : public wxWindow
 		VideoRend(wxWindow *parent, const wxSize &size=wxDefaultSize);
 		virtual ~VideoRend();
 
-		bool OpenFile(const wxString &fname, wxString *textsubs, bool Dshow=true, bool vobsub=false);
+		bool OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, bool vobsub, bool changeAudio = true);
 		bool OpenSubs(wxString *textsubs, bool redraw=true, bool fromFile = false);
 		bool Play(int end=-1);
 		bool PlayLine(int start, int end);

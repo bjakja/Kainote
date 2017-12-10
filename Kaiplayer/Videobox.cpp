@@ -220,7 +220,7 @@ bool VideoCtrl::Stop()
 	return true;
 }
 
-bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName,bool fulls /*= false*/)
+bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName,bool fulls /*= false*/, bool changeAudio)
 {   
 	if(fulls){SetFullscreen();}
 	prevchap=-1;
@@ -228,8 +228,8 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName,bool full
 	bool byFFMS2 = index->IsChecked() && index->IsEnabled() && !fulls && !isFullscreen;
 	bool shown=true;
 	block=true;
-	if (!OpenFile(fileName, subsName, !byFFMS2, !Kai->GetTab()->editor)){
-		delete subsName; block=false;return false;
+	if (!OpenFile(fileName, subsName, !byFFMS2, !Kai->GetTab()->editor, changeAudio)){
+		delete subsName; block=false; return false;
 	}
 	if( !(IsShown() || (TD && TD->IsShown())) ){
 		shown=false; Show();

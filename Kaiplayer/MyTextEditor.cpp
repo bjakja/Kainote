@@ -141,6 +141,7 @@ void MTextEditor::CalcWrap(bool updatechars, bool sendevent)
 	if(MText!=""){
 		int w,h,fw,fh;
 		GetClientSize(&w,&h);
+		//if (w < 30){ return; }
 		if(scroll->IsShown()){
 			int sw, sh;
 			scroll->GetSize(&sw,&sh);
@@ -150,12 +151,11 @@ void MTextEditor::CalcWrap(bool updatechars, bool sendevent)
 		wxString wrapchars=" \\,;:}{()";
 		size_t i = 0;
 		int nwrap=-1;
-		int allwrap=-1;
+		int allwrap=0;
 		while(i<MText.Len())
 		{
 			wxString wrap=MText.SubString(podz,i);
 			GetTextExtent(wrap, &fw, &fh, NULL, NULL, &font);
-			//wxLogStatus("wrap %s fw %i w %i\r\n", wrap.data(), fw, w);
 			if(fw<w-7){
 				allwrap=i;
 				if(wrapchars.Find(MText[i])!=-1){
@@ -164,8 +164,8 @@ void MTextEditor::CalcWrap(bool updatechars, bool sendevent)
 				}
 			}
 			else{
-				int wwrap=(nwrap!=-1)? nwrap : allwrap+1;
-				wraps.Add(wwrap);podz=wwrap;nwrap=-1;allwrap=-1;
+				int wwrap = (nwrap > 0 && nwrap > wraps[wraps.size() - 1]) ? nwrap : allwrap + 1;
+				wraps.Add(wwrap); podz = wwrap; nwrap = -1; allwrap = i;
 			}
 			i++;
 		}
@@ -508,11 +508,9 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 void MTextEditor::OnSize(wxSizeEvent& event)
 {
 	CalcWrap(false,false);
-	Cursor.x=0;
-	Cursor.y=0;
-	Selend=Cursor;
-
-	Refresh(false);
+	Cursor.y = FindY(Cursor.x);
+	Selend.y = FindY(Selend.x);
+	MakeCursorVisible();
 }
 
 int MTextEditor::FindY(int x)
@@ -526,7 +524,7 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 	//if(block){return;} 
 	int w = 0, h = 0;
 	GetClientSize(&w,&h);
-	if(w==0||h==0){return;}
+	if(w < 1||h==0){return;}
 	//block=true;
 	wxPaintDC dc(this);
 	int bitmaph= (wraps.size()*Fheight)+4;
@@ -534,6 +532,8 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 		if(!scroll->IsShown()){
 			scroll->Show();
 			CalcWrap(false, false);
+			Cursor.y = FindY(Cursor.x);
+			Selend.y = FindY(Selend.x);
 			bitmaph= (wraps.size()*Fheight)+4;
 		}
 		int sw=0,sh=0;
@@ -544,18 +544,18 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 		if(scPos>diff2-diff){scPos=diff2-diff;}
 		scroll->SetScrollbar(scPos,diff,diff2,diff-2);
 		w -= sw;
+		if (w < 0){ return; }
 	}else{
 		if(scroll->IsShown()){
 			scroll->Hide();
 			CalcWrap(false,false);
+			Cursor.y = FindY(Cursor.x);
+			Selend.y = FindY(Selend.x);
 		}
 		bitmaph=h;
 		scPos=0;
 	}
-	//wxLogStatus("%i %i %i",scPos,h,bitmaph);
-
-
-
+	
 	bool direct = false;
 
 	if (direct) {
@@ -563,9 +563,6 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 	}
 
 	else {
-		// Get size and pos
-		//scrollBar->GetSize().GetWidth();
-
 		// Prepare bitmap
 		if (bmp) {
 			if (bmp->GetWidth() < w || bmp->GetHeight() < bitmaph) {
@@ -597,10 +594,10 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	int fw=0,fh=0;
 
 	const wxColour & ctext = Options.GetColour(EditorText);
-	const wxColour & ccurlybraces = Options.GetColour(EditorCurlyBraces);//wxBLUE
-	const wxColour & coperators = Options.GetColour(EditorTagOperators);//"#FF0000"
-	const wxColour & cnames = Options.GetColour(EditorTagNames);//"#850085"
-	const wxColour & cvalues = Options.GetColour(EditorTagValues);//"#6600FF"
+	const wxColour & ccurlybraces = Options.GetColour(EditorCurlyBraces);
+	const wxColour & coperators = Options.GetColour(EditorTagOperators);
+	const wxColour & cnames = Options.GetColour(EditorTagNames);
+	const wxColour & cvalues = Options.GetColour(EditorTagValues);
 	const wxColour & bgbraces = Options.GetColour(EditorBracesBackground);
 	const wxColour & cbackground = Options.GetColour(EditorBackground);
 	const wxColour & cselection = Options.GetColour(EditorSelection);
@@ -610,9 +607,6 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	dc.SetBrush(cbackground);
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.DrawRectangle(0,0,w,h);
-	//dc.SetPen(wxPen("#000000"));
-
-	//if(MText==""){return;}
 
 	bool tagi=false;
 	bool slash=false;
@@ -669,8 +663,6 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			dc.GetTextExtent(etext, &fww, &fh, NULL, NULL, &font);
 			for(int q=fsty+1; q<=scndy; q++){
 				int rest= (q==scndy)? errors[g+1]-1 : wraps[q+1]-1;
-				//wxLogStatus("wraps[q-1] %i, rest %i %i %i %i", wraps[q], rest, q, scndy, errors[g+1]-1);
-				//if(wraps[q]>rest){continue;}
 				wxString btext=MText.SubString(wraps[q], rest);
 				dc.GetTextExtent(btext, &fwww, &fh, NULL, NULL, &font);
 				dc.DrawRectangle(3,(q*Fheight)+1,fwww,Fheight);
@@ -696,8 +688,6 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				else{dc.GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font);}
 				wxString stext=MText.SubString(fst.x,(fst.y==scd.y)? scd.x-1 : wraps[j+1]-1);
 				dc.GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
-				//wxLogMessage("fww %i, %i", fww, fw);
-				//wxLogStatus("%i %i"+stext+" "+ftext, scd.x+wraps[j]-1, wraps[j+1]);
 			}
 			else if(j==scd.y){
 				fw=0;
@@ -747,7 +737,6 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 		if(HasFocus()&&(Cursor.x+Cursor.y==wchar)){
 			if(mestext+parttext==""){fw=0;}
 			else{dc.GetTextExtent(mestext+parttext, &fw, &fh, NULL, NULL, &font);}
-			//wxLogStatus("cursor %i %i %i",posY-(scPos), scPos, Fheight);
 			caret->Move(fw+3,posY-(scPos));
 
 		}
@@ -877,7 +866,6 @@ bool MTextEditor::HitTest(wxPoint pos, wxPoint *cur)
 		GetTextExtent(txt.SubString(cur->x,i), &fw, &fh, NULL, NULL, &font);
 		GetTextExtent(txt[i], &fww, &fh, NULL, NULL, &font);
 		if(fw+1-(fww/2)>pos.x){cur->x=i; find=true;break;}
-		//apos+=fw;wxLogStatus("%i, %i", cur->x, cur->y);
 	}
 	if(!find){cur->x = wraps[cur->y+1];}
 	
@@ -1202,10 +1190,8 @@ void MTextEditor::OnScroll(wxScrollEvent& event)
 {
 	if(scroll->IsShown()){
 		int newPos = event.GetPosition();
-		//wxLogStatus("%i",newPos);
 		if (scPos != newPos) {
 			scPos = newPos;
-			//wxLogStatus("%i",newPos);
 			Refresh(false);
 		}
 	}

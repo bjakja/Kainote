@@ -2027,6 +2027,8 @@ void AudioDisplay::OnSize(wxSizeEvent &event) {
 	LastSize=wxSize(w,h);
 	GetClientSize(&w,&h);
 	h -= 20;
+	if (LastSize.x == w && LastSize.y == h)
+		return;
 
 	// Update image
 	UpdateSamples();

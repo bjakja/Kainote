@@ -533,12 +533,8 @@ void KaiTextCtrl::OnMouseEvent(wxMouseEvent& event)
 void KaiTextCtrl::OnSize(wxSizeEvent& event)
 {
 	CalcWrap(false);
-	//Cursor.x=0;
-	//Cursor.y=0;
-	//Selend=Cursor;
 	Cursor.y = FindY(Cursor.x);
 	Selend.y = FindY(Selend.x);
-	//Refresh(false);
 	MakeCursorVisible();
 }
 

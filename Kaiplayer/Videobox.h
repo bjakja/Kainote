@@ -37,7 +37,7 @@ public:
     bool Pause(bool burstbl=true);
     bool Stop();
 
-    bool LoadVideo(const wxString& fileName, wxString *subsName, bool fulls = false);
+	bool LoadVideo(const wxString& fileName, wxString *subsName, bool fulls = false, bool changeAudio = true);
     PlaybackState GetState();
 
     bool Seek(int whre,bool starttime=true,bool disp=true, bool reloadSubs=true);
