@@ -260,7 +260,8 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 			wxRect rc3(0,h-fborder,w,fborder);
 			Refresh(false, &rc3);
 		}
-		Update();
+		//tutaj nie mo¿e byæ update bo zostawia jakieœ œmieci w górnym rogu okna
+		//Update();
     }
 	 if (uMsg == WM_ERASEBKGND){
 		 return 0;
@@ -337,7 +338,7 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 			pushedClose = enterClose = pushedMinimize = enterMinimize = pushedMaximize = enterMaximize = false;
 			wxRect rc(0,0,WindowRect.right - WindowRect.left,ftopBorder);
 			Refresh(false, &rc);
-			Update();
+			//Update();
 		}
 		return result;
 	}

@@ -158,7 +158,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	filterMenu->SetAccMenu(FilterBySelections, _("Ukryj zaznaczone linie"), _("Ukryj zaznaczone linie"), sels > 0, ITEM_CHECK)->Check(filterBy & FILTER_BY_SELECTIONS && sels > 0);
 	filterMenu->SetAccMenu(FilterByDialogues, _("Ukryj komentarze"), _("Ukryj komentarze"), isASS, ITEM_CHECK)->Check((filterBy & FILTER_BY_DIALOGUES) != 0);
 	filterMenu->SetAccMenu(FilterByDoubtful, _("Pokaż niepewne"), _("Pokaż niepewne"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_DOUBTFUL && hasTLMode);
-	filterMenu->SetAccMenu(FilterByUntranslated, _("Pokaż nieprzetłumaczonyche"), _("Pokaż nieprzetłumaczonyche"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_UNTRANSLATED && hasTLMode);
+	filterMenu->SetAccMenu(FilterByUntranslated, _("Pokaż nieprzetłumaczone"), _("Pokaż nieprzetłumaczone"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_UNTRANSLATED && hasTLMode);
 	filterMenu->SetAccMenu(4447, _("Filtruj"), _("Filtruj"));
 	filterMenu->SetAccMenu(FilterByNothing, _("Wyłącz filtrowanie"), _("Wyłącz filtrowanie"))->Enable(isFiltered);
 
