@@ -55,10 +55,7 @@
 class FinalSpectrumCache{
 private:
 	std::vector<CacheLine> data;
-	unsigned long start, length; // start and end of range
-	unsigned int overlaps;
-	
-	
+	unsigned long start; 
 
 public:
 	CacheLine& GetLine(unsigned long i, unsigned int overlap)
@@ -68,16 +65,13 @@ public:
 		if (i >= start && i-start < length)
 			return data[(i-start) + overlap*length];
 		else{
-			//wxLogStatus("Getline null %i %i %i",i, start, (i-start));
 			return null_line;}
 	}
 
 
-	FinalSpectrumCache(FFT *fft, unsigned long _start, unsigned long _length, unsigned int _overlaps)
+	FinalSpectrumCache(FFT *fft, unsigned long _start)
 	{
 		start = _start;
-		length = _length;
-		overlaps = _overlaps;
 
 		// Add an upper limit to number of overlaps or trust user to do sane things?
 		// Any limit should probably be a function of length
@@ -122,9 +116,11 @@ public:
 		
 	}
 
-	static void SetLineLength(unsigned long new_length)
+	static void SetLineLength(unsigned long new_length, unsigned long _length, unsigned int _overlaps)
 	{
 		line_length = new_length;
+		length = _length;
+		overlaps = _overlaps;
 		null_line.resize(new_length, 0);
 	}
 
@@ -132,12 +128,16 @@ public:
 	{
 	}
 
+	static unsigned long length;
+	static unsigned int overlaps;
 	static unsigned long line_length;
 	static CacheLine null_line;
 };
 
 CacheLine FinalSpectrumCache::null_line;
 unsigned long FinalSpectrumCache::line_length;
+unsigned long FinalSpectrumCache::length;
+unsigned int FinalSpectrumCache::overlaps;
 
 // AudioSpectrum
 AudioSpectrum::AudioSpectrum(VideoFfmpeg *_provider)
@@ -171,10 +171,10 @@ AudioSpectrum::~AudioSpectrum()
 
 void AudioSpectrum::SetupSpectrum(int overlaps, int length)
 {
-	
+
 	fft_overlaps = overlaps;
 
-	FinalSpectrumCache::SetLineLength(line_length);
+	FinalSpectrumCache::SetLineLength(line_length, subcachelen, fft_overlaps);
 
 }
 
@@ -186,10 +186,8 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 	int parc = parcPow * (imgwidth/500.f);
 	if(parc<1){parc=1;}
 	if(parc>24){parc=24;}
-	//wxLogStatus("parc %i %i %f %f %i", parcent, imgwidth, parcPow, (imgwidth/500.f), parc); 
 	//int newlen = 7.f/pow((150-percent)/100.0f, 8);
 	//newlen = MID(7,newlen,12);
-    //wxLogStatus("line len %i",parc);
 	if(parc!=fft_overlaps){ 
 		for (size_t i = 0; i < numsubcaches; ++i){
 			if (sub_caches[i]) delete sub_caches[i]; sub_caches[i]=NULL;
@@ -232,34 +230,11 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 		
 		if(!sub_caches[subcache])
 		{
-			//wxLogStatus("subcachemake %i %i %i", start, i, (start+i)*spc->subcachelen);
-			sub_caches[subcache] = new FinalSpectrumCache(fft,(baseline/subcachelen) * subcachelen,subcachelen,fft_overlaps);
+			sub_caches[subcache] = new FinalSpectrumCache(fft,(baseline/subcachelen) * subcachelen);
 		}
 			
 		CacheLine &line=sub_caches[subcache]->GetLine(baseline, overlap);
 		j++;
-		//wxLogStatus("Befor cache");
-		//wxLogStatus("bef cache i %i , last line %i", i, last_line);
-		//AudioSpectrumCache::CacheLine &line = GetLine(baseline, overlap);
-		//wxLogStatus("aft cache i %i , last line %i", i, last_line);
-		/*++overlap;
-		if (overlap >= fft_overlaps) {
-			overlap = 0;
-			++baseline;
-		}*/
-
-		// Apply a "compressed" scaling to the signal power
-		//wxLogStatus("bef power i %i , last line %i", i, last_line);
-		//for (unsigned int j = 0; j < line_length; j++) {
-			// First do a simple linear scale power calculation -- 8 gives a reasonable default scaling
-			//power[j] = line[j] * upscale;
-			/*if (power[j] > maxpower * 2/3) {
-				double p = power[j] - twothirdmaxpower;
-				p = log(p) * onethirdmaxpower / logoverscale;
-				power[j] = p + twothirdmaxpower;
-			}*/
-		//}
-		//wxLogStatus("aft power i %i , last line %i", i, last_line);
 
 #define WRITE_PIXEL \
 	if (intensity < 0) intensity = 0; \

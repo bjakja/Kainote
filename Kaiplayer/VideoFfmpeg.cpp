@@ -25,7 +25,7 @@
 #include "include\ffmscompat.h"
 #include "Stylelistbox.h"
 #include <wx/file.h>
-#include <chrono>
+#include <thread>
 
 
 
@@ -35,6 +35,7 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *_s
 	, eventRefresh (CreateEvent(0, FALSE, FALSE, 0))
 	, eventKillSelf (CreateEvent(0, FALSE, FALSE, 0))
 	, eventComplete (CreateEvent(0, FALSE, FALSE, 0))
+	, eventAudioComplete (CreateEvent(0, FALSE, FALSE, 0))
 	,blnum(0)
 	,Cache(0)
 	,Delay(0)
@@ -71,7 +72,7 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *_s
 	}
 	SAFE_DELETE(progress);
 	if(index){FFMS_DestroyIndex(index);}
-	if(audiosource){FFMS_DestroyAudioSource(audiosource);audiosource=0;}
+	
 }
 
 unsigned int __stdcall VideoFfmpeg::FFMS2Proc(void* cls)
@@ -268,11 +269,6 @@ done:
 
 	wxString path=Options.pathfull + "\\Indices\\" + fname.AfterLast('\\').BeforeLast('.') + wxString::Format("_%i.ffindex",audiotrack);
 
-	//FFMS_Index *index=NULL;
-
-
-	//show dialog
-	//progress->ShowDialog();
 
 	if(wxFileExists(path)){
 		index = FFMS_ReadIndex(path.utf8_str(), &errinfo);
@@ -302,12 +298,10 @@ done:
 			//FFMS_CancelIndexing(Indexer);
 			return 0;
 		}
-		//wxLogStatus("write index "+path);
 		if(!wxDir::Exists(path.BeforeLast('\\')))
 		{
 			wxDir::Make(path.BeforeLast('\\'));
 		}
-		//wxLogMessage("write index");
 		if(FFMS_WriteIndex(path.utf8_str(), index, &errinfo))
 		{
 			wxLogMessage(_("Nie można zapisać indeksu, wystąpił błąd %s"), errinfo.Buffer);
@@ -318,10 +312,7 @@ done:
 		newIndex=true;
 	}
 	
-
-	//wxLogStatus("video");
 	if(videotrack!=-1 && rend){	
-		//wxLogStatus("num of cores %i", (int)std::thread::hardware_concurrency());
 		SYSTEM_INFO sysinfo;
 		GetSystemInfo( &sysinfo );
 		videosource = FFMS_CreateVideoSource(
@@ -363,7 +354,6 @@ done:
 			}
 			if(!divided){break;}
 		}
-
 
 		int pixfmt[2];
 		pixfmt[0] = FFMS_GetPixFmt("bgra");//PIX_FMT_YUYV422; //PIX_FMT_NV12 == 25  PIX_FMT_YUVJ420P;//PIX_FMT_YUV411P;//PIX_FMT_YUV420P; //PIX_FMT_YUYV422;//PIX_FMT_NV12;//FFMS_GetPixFmt("bgra");PIX_FMT_YUYV422;//
@@ -451,14 +441,8 @@ done:
 		Delay=0;
 	}
 
-	if(disccache){
-		diskCacheFilename="";
-		diskCacheFilename << Options.pathfull << "\\AudioCache\\" << fname.AfterLast('\\').BeforeLast('.')<< "_track" << audiotrack << ".w64";
-		if(newIndex && wxFileExists(diskCacheFilename)){wxRemoveFile(diskCacheFilename);}
-		if(!DiskCache()){return 0;}
-	}else{
-		if(!CacheIt()){return 0;}
-	}
+	audioLoadThread = new std::thread(AudioLoad, this, newIndex, audiotrack);
+	audioLoadThread->detach();
 	return 1;
 }
 
@@ -473,6 +457,11 @@ VideoFfmpeg::~VideoFfmpeg()
 		CloseHandle(eventStartPlayback);
 		CloseHandle(eventRefresh);
 		CloseHandle(eventKillSelf);
+	}
+
+	if (audioLoadThread){ 
+		WaitForSingleObject(eventAudioComplete, INFINITE);
+		//delete audioLoadThread; 
 	}
 	KeyFrames.Clear();
 	Timecodes.clear();
@@ -491,6 +480,28 @@ int FFMS_CC VideoFfmpeg::UpdateProgress(int64_t Current, int64_t Total, void *IC
 	ProgressSink *progress= (ProgressSink*)ICPrivate;
 	progress->Progress(((double)Current/(double)Total)*100);
 	return progress->WasCancelled();
+}
+
+void VideoFfmpeg::AudioLoad(VideoFfmpeg *vf, bool newIndex, int audiotrack)
+{
+	if (vf->disccache){
+		vf->diskCacheFilename = "";
+		vf->diskCacheFilename << Options.pathfull << "\\AudioCache\\" << vf->fname.AfterLast('\\').BeforeLast('.') << "_track" << audiotrack << ".w64";
+		if (newIndex && wxFileExists(vf->diskCacheFilename)){ wxRemoveFile(vf->diskCacheFilename); }
+		if (!vf->DiskCache()){ goto done; }
+	}
+	else{
+		if (!vf->RAMCache()){ goto done; }
+	}
+	vf->audioNotInitialized = false;
+done:
+	if (vf->audiosource){ FFMS_DestroyAudioSource(vf->audiosource); vf->audiosource = 0; }
+	SetEvent(vf->eventAudioComplete);
+	delete vf->audioLoadThread; vf->audioLoadThread = NULL;
+	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
+	AudioBox *abox = Kaia->Frame->GetTab()->Edit->ABox;
+	if(abox)
+		abox->audioDisplay->UpdateImage();
 }
 
 void VideoFfmpeg::GetFrame(int ttime, byte *buff)
@@ -522,12 +533,13 @@ void VideoFfmpeg::GetAudio(void *buf, int64_t start, int64_t count)
 
 	}
 
-	FFMS_GetAudio(audiosource, buf, start, count, &errinfo);
+	if (FFMS_GetAudio(audiosource, buf, start, count, &errinfo)){ wxLogStatus("error audio" + wxString(errinfo.Buffer)); }
 
 }
 
 void VideoFfmpeg::GetBuffer(void *buf, int64_t start, int64_t count, double volume)
 {
+	if (audioNotInitialized){ return; }
 	wxMutexLocker lock(blockaudio);
 
 	if (start+count > NumSamples) {
@@ -594,6 +606,7 @@ void VideoFfmpeg::GetBuffer(void *buf, int64_t start, int64_t count, double volu
 
 void VideoFfmpeg::GetWaveForm(int *min,int *peak,int64_t start,int w,int h,int samples,float scale)
 {
+	if (audioNotInitialized){ return; }
 	wxMutexLocker lock(blockaudio);
 	int n = w * samples;
 	for (int i=0;i<w;i++) {
@@ -653,10 +666,9 @@ int64_t VideoFfmpeg::GetNumSamples()
 	return NumSamples;
 }
 
-bool VideoFfmpeg::CacheIt()
+bool VideoFfmpeg::RAMCache()
 {
-	progress->Title(_("Zapisywanie do pamięci RAM"));
-	//progress->cancel->Enable(false);
+	//progress->Title(_("Zapisywanie do pamięci RAM"));
 	int64_t end=NumSamples*BytesPerSample;
 
 	int blsize=(1<<22);
@@ -665,7 +677,6 @@ bool VideoFfmpeg::CacheIt()
 	Cache=new char*[blnum];
 	if(Cache==NULL){KaiMessageBox(_("Za mało pamięci RAM"));return false;}
 
-	//int64_t pos=0;
 	int64_t pos= (Delay<0)? -(SampleRate * Delay * BytesPerSample) : 0;
 	int halfsize=(blsize/BytesPerSample);
 
@@ -674,7 +685,6 @@ bool VideoFfmpeg::CacheIt()
 	{
 		if(i >= blnum-1){blsize=end-pos; halfsize=(blsize/BytesPerSample);}
 		Cache[i]= new char[blsize];
-		//wxLogStatus("pos %i, size %i, end %i, pos+size %i",(int)pos, blsize, (int)end, ((int)pos+blsize));
 		if(Delay>0 && i == 0){
 			int delaysize=SampleRate*Delay*BytesPerSample;
 			if(delaysize%2==1){delaysize++;}
@@ -687,8 +697,8 @@ bool VideoFfmpeg::CacheIt()
 			pos+=halfsize;
 		}
 
-		progress->Progress(((float)i/(float)(blnum-1))*100);
-		if(progress->WasCancelled()){blnum=i+1;Clearcache();return false;}
+		//progress->Progress(((float)i/(float)(blnum-1))*100);
+		//if(progress->WasCancelled()){blnum=i+1;Clearcache();return false;}
 	}
 	if(Delay<0){NumSamples += (SampleRate * Delay * BytesPerSample);}
 	return true;
@@ -743,9 +753,9 @@ int VideoFfmpeg::FramefromTime(int time)
 
 bool VideoFfmpeg::DiskCache()
 {
-	progress->Title(_("Zapisywanie na dysk twardy"));
+	//progress->Title(_("Zapisywanie na dysk twardy"));
 
-	progress->Progress(0);
+	//progress->Progress(0);
 
 	bool good=true;
 	wxFileName fname;
@@ -781,22 +791,19 @@ bool VideoFfmpeg::DiskCache()
 		int64_t pos= (Delay<0)? -(SampleRate * Delay * BytesPerSample) : 0;
 		for (int i=0;i<all; i++) {
 			if (block+pos > NumSamples) block = NumSamples - pos;
-			//wxLogStatus("i %i block %i nums %i", (int)pos, block, (int)NumSamples);
 			GetAudio(data,pos,block);
-			//wxLogStatus("write");
 			//file_cache.Write(data,block*BytesPerSample);
 			fwrite(data, 1 ,block*BytesPerSample, fp);
-			//wxLogStatus("Progress");
 			pos+=block;
-			progress->Progress(((float)pos/(float)(NumSamples))*100);
-			if(progress->WasCancelled()){
-				//file_cache.Close();
-				fclose(fp);
-				wxRemoveFile(diskCacheFilename);
-				good=false;
-				delete[] data;
-				return false;
-			}
+			//progress->Progress(((float)pos/(float)(NumSamples))*100);
+			//if(progress->WasCancelled()){
+			//	//file_cache.Close();
+			//	fclose(fp);
+			//	wxRemoveFile(diskCacheFilename);
+			//	good=false;
+			//	delete[] data;
+			//	return false;
+			//}
 		}
 		delete[] data;
 		//file_cache.Seek(0);

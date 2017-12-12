@@ -1138,7 +1138,7 @@ namespace Auto{
 			int loadMethod = Options.GetInt(AutomationLoadingMethod);
 			if(loadMethod % 2 == 0){
 				eventEndAutoload = CreateEvent(NULL, FALSE, FALSE, NULL);
-				CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
+				CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,5,0,0);
 			}else{
 				ReloadScripts(true);
 			}

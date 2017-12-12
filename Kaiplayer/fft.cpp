@@ -55,9 +55,9 @@ FFT::FFT(size_t nsamples, VideoFfmpeg *_prov)
 	,diff(-1)
 	,prov(_prov)
 {
-	if (!IsPowerOfTwo(n_samples)) {
-		throw L"FFT requires power of two input.";
-	}
+	//if (!IsPowerOfTwo(n_samples)) {
+		assert(IsPowerOfTwo(n_samples));
+	//}
 	angle_num = 2.0f * 3.1415926535897932384626433832795f;
 	NumBits = NumberOfBitsNeeded(n_samples);
 	input=new short[n_samples];//0

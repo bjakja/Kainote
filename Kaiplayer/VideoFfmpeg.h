@@ -18,7 +18,7 @@
 
 #include <wx/string.h>
 #include <vector>
-//#include <stdint.h>
+#include <thread>
 #include "include\ffms.h"
 #include "ProgressDialog.h"
 
@@ -41,7 +41,7 @@ public:
 	int GetBytesPerSample();
 	int GetChannels();
 	int64_t GetNumSamples();
-	bool CacheIt();
+	bool RAMCache();
 	int TimefromFrame(int nframe);
 	int FramefromTime(int time);
 	int GetMSfromFrame(int frame);
@@ -51,6 +51,7 @@ public:
 	//bool com_inited;
 	ProgressSink *progress;
 	static int __stdcall UpdateProgress(int64_t Current, int64_t Total, void *ICPrivate);
+	static void AudioLoad(VideoFfmpeg *parent, bool newIndex, int audiotrack);
 	void Clearcache();
 	FFMS_VideoSource *videosource;
 	FFMS_AudioSource *audiosource;
@@ -66,6 +67,7 @@ public:
 	bool disccache;
 	volatile bool success;
 	volatile bool isBusy;
+	volatile bool audioNotInitialized = true;
 	int width;
 	int height;
 	int arwidth;
@@ -88,7 +90,8 @@ public:
 	HANDLE eventStartPlayback,
 		eventRefresh,
 		eventKillSelf,
-		eventComplete;
+		eventComplete,
+		eventAudioComplete;
 	wxString diskCacheFilename;
 	wxString ColorSpace;
 	wxString RealColorSpace;
@@ -98,6 +101,7 @@ public:
 	FILE *fp;
 	wxArrayInt KeyFrames;
 	std::vector<int> Timecodes;
+	std::thread *audioLoadThread = NULL;
 private:
 	
 	char **Cache;

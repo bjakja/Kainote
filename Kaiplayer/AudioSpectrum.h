@@ -42,8 +42,6 @@
 
 class FFT;
 // Specified and implemented in cpp file, interface is private to spectrum code
-//class AudioSpectrumCacheManager;
-//class SpectrumThread;
 class FinalSpectrumCache;
 
 typedef std::vector<float> CacheLine;
