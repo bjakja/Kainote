@@ -534,7 +534,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Napisy nagłówek"),_("Napisy tekst nagłówka"),
 			_("Napisy etykieta"),_("Napisy etykieta zmodyfikowanej linii"),_("Napisy etykieta zapisanej linii"),
 			_("Napisy etykieta niepewnej linii"),_("Napisy tło błędów pisowni"),_("Napisy obramowanie porównania"),
-			_("Napisy tło porównanie brak zgodności"),_("Napisy tło porównania zgodność"),_("Napisy tło komentarza por. brak zgodności"),
+			_("Napisy tło porównania brak zgodności"),_("Napisy tło porównania zgodność"),_("Napisy tło komentarza por. brak zgodności"),
 			_("Napisy tło komentarza por. zgodność"),
 			//edytor
 			_("Edytor tekst"),_("Edytor nazwy tagów"),_("Edytor wartości tagów"),

@@ -164,7 +164,7 @@ void Hotkeys::LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio)
 		_hkeys[idAndType(Duplicate,GRID_HOTKEY)] = hdata(_("Duplikuj linie"), "Ctrl-D");
 		_hkeys[idAndType(CopyCollumns,GRID_HOTKEY)] = hdata(_("Kopiuj kolumny"), "Ctrl-Shift-C");
 		_hkeys[idAndType(PasteCollumns,GRID_HOTKEY)] = hdata(_("Wklej kolumny"), "Ctrl-Shift-V");
-		_hkeys[idAndType(ShowPreview, GRID_HOTKEY)] = hdata(_("Pokaż podgląd"), "Ctrl-Q");
+		_hkeys[idAndType(ShowPreview, GRID_HOTKEY)] = hdata(_("Pokaż podgląd napisów"), "Ctrl-Q");
 		_hkeys[idAndType(PlayPause,VIDEO_HOTKEY)] = hdata(_("Odtwórz / Pauza"), "Space");
 		_hkeys[idAndType(Plus5Second,VIDEO_HOTKEY)] = hdata(_("5 sekund do przodu"), "L");
 		_hkeys[idAndType(Minus5Second,VIDEO_HOTKEY)] = hdata(_("5 sekund do tyłu"), ";");

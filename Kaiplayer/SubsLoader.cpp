@@ -1,4 +1,4 @@
-//  Copyright (c) 2012-2017, Marcin Drob
+ï»¿//  Copyright (c) 2012-2017, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 		else{ validFormat = true; }
 	}
 
-	if (!succeeded){ grid->LoadDefault(); KaiMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera b³êdy)")); grid->subsFormat = ASS; }
+	if (!succeeded){ grid->LoadDefault(); KaiMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera bÅ‚Ä™dy)")); grid->subsFormat = ASS; }
 	else{ 
 		grid->SetSubsFormat(); 
 		if (validFormat)
@@ -106,13 +106,13 @@ bool SubsLoader::LoadASS(const wxString &text)
 				grid->AddLine(dl);
 			}
 			else{
-				//stary tryb t³umaczenia nie istnieje od 2 lat, nie ma sensu usuwaæ pustych linii, zwa¿ywszy na to, ¿e to mo¿e usun¹æ coœ wa¿nego.
+				//stary tryb tÅ‚umaczenia nie istnieje od 2 lat, nie ma sensu usuwaÄ‡ pustych linii, zwaÅ¼ywszy na to, Å¼e to moÅ¼e usunÄ…Ä‡ coÅ› waÅ¼nego.
 				grid->AddLine(dl);
 			}
 		}
 		else if (token.StartsWith("Style:"))
 		{
-			//1 = ASS, 2 = SSA, potrzebne tylko przy odczycie napisów.
+			//1 = ASS, 2 = SSA, potrzebne tylko przy odczycie napisÃ³w.
 			grid->AddStyle(new Styles(token, format));
 			section = 2;
 		}
@@ -120,9 +120,9 @@ bool SubsLoader::LoadASS(const wxString &text)
 			if (!token.StartsWith("[V4+")){
 				format = 2;
 				grid->AddSInfo("ScriptType", "4.00+");
-			}//ze wzglêdu na to, ¿e wywali³em ssa z formatów
-			//muszê pos³aæ do konstruktora styli 2 jako format SSA, nie u¿ywam tu srt, 
-			//¿eby póŸniej Ÿle tego nie zinterpretowaæ
+			}//ze wzglÄ™du na to, Å¼e wywaliÅ‚em ssa z formatÃ³w
+			//muszÄ™ posÅ‚aÄ‡ do konstruktora styli 2 jako format SSA, nie uÅ¼ywam tu srt, 
+			//Å¼eby pÃ³Åºniej Åºle tego nie zinterpretowaÄ‡
 			section = 1;
 		}
 		else if (!token.StartsWith(";") && !token.StartsWith("[") && token.Find(':') != wxNOT_FOUND){

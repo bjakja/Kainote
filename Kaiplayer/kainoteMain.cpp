@@ -636,12 +636,11 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	}
 	else if (id == Help || id == ANSI){
 		WinStruct<SHELLEXECUTEINFO> sei;
-		wxString url = (id == Help) ? L"file://" + Options.pathfull + L"\\Help\\Kainote pomoc.html" : L"http://animesub.info/forum/viewtopic.php?id=258715";
+		wxString url = (id == Help) ? L"https://bjakja.github.io/index.html" : L"http://animesub.info/forum/viewtopic.php?id=258715";
 		sei.lpFile = url.c_str();
 		sei.lpVerb = wxT("open");
 		sei.nShow = SW_RESTORE;
 		sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
-
 		ShellExecuteEx(&sei);
 	}
 

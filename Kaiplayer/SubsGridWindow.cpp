@@ -1,4 +1,4 @@
-//  Copyright (c) 2012-2017, Marcin Drob
+ï»¿//  Copyright (c) 2012-2017, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -96,16 +96,16 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	panelrows = (h / (GridHeight + 1)) + 1;
 	if (scPos < 0){ scPos = 0; }
 	int scrows = scPos + panelrows;
-	//gdy widzimy koniec napisów
+	//gdy widzimy koniec napisÃ³w
 	if (scrows >= size + 3){
 		bg = true;
 		scrows = size + 1;
-		scPos = (scrows - panelrows) + 2;// dojechanie do koñca napisów
-		if (panelrows > size + 3){ scPos = 0; }// w przypadku gdy ca³e napisy s¹ widoczne, wtedy nie skrollujemy i pozycja =0
+		scPos = (scrows - panelrows) + 2;// dojechanie do koÅ„ca napisÃ³w
+		if (panelrows > size + 3){ scPos = 0; }// w przypadku gdy caÅ‚e napisy sÄ… widoczne, wtedy nie skrollujemy i pozycja =0
 	}
 	else if (scrows >= size + 2){
 		bg = true;
-		scrows--;//w przypadku gdy mamy liniê przed koñcem napisów musimy zani¿yæ wynik bo przekroczy tablicê.
+		scrows--;//w przypadku gdy mamy liniÄ™ przed koÅ„cem napisÃ³w musimy zaniÅ¼yÄ‡ wynik bo przekroczy tablicÄ™.
 	}
 	if (SetScrollBar(wxVERTICAL, scPos, panelrows, size + 3, panelrows - 3)){
 		GetClientSize(&w, &h);
@@ -211,7 +211,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			}
 			if (subsFormat != TMP){ strings.push_back(_("ZNS")); }
 			strings.push_back(showOriginal ? _("Tekst oryginalny") : _("Tekst"));
-			if (showOriginal){ strings.push_back(_("Tekst t³umaczenia")); }
+			if (showOriginal){ strings.push_back(_("Tekst tÅ‚umaczenia")); }
 			kol = header;
 		}
 		else{
@@ -219,7 +219,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			strings.push_back(wxString::Format("%i", k+1));
 
 			isComment = Dial->IsComment;
-			//gdy zrobisz inaczej niepewne to u¿yj ^ 4 by wywaliæ 4 ze state.
+			//gdy zrobisz inaczej niepewne to uÅ¼yj ^ 4 by wywaliÄ‡ 4 ze state.
 			states = Dial->State;
 			if (subsFormat<SRT){
 				strings.push_back(wxString::Format("%i", Dial->Layer));
@@ -407,7 +407,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 						else{ bfw = 0; }
 
 						tdc.GetTextExtent(cmp, &fw, &fh, NULL, NULL, &font);
-						if ((cmp.StartsWith("T") || cmp.StartsWith("Y") || cmp.StartsWith(L"£"))){ bfw++; }
+						if ((cmp.StartsWith("T") || cmp.StartsWith("Y") || cmp.StartsWith(L"Å"))){ bfw++; }
 
 						tdc.DrawText(cmp, posX + bfw + 2, posY);
 						tdc.DrawText(cmp, posX + bfw + 4, posY);
@@ -429,7 +429,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			else{ isCenter = !(j == 4); }
 
 			tdc.SetTextForeground((isHeadline) ? headerText : (collis) ? collcol : textcol);
-			if (j == ilcol - 1 && (strings[j].StartsWith("T") || strings[j].StartsWith("Y") || strings[j].StartsWith(L"£"))){ posX++; }
+			if (j == ilcol - 1 && (strings[j].StartsWith("T") || strings[j].StartsWith("Y") || strings[j].StartsWith(L"Å"))){ posX++; }
 			cur = wxRect(posX + 3, posY, GridWidth[j] - 6, GridHeight);
 			tdc.SetClippingRegion(cur);
 			tdc.DrawLabel(strings[j], cur, isCenter ? wxALIGN_CENTER : (wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT));
@@ -812,7 +812,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		if (!shift && !alt) {
 
 
-			//jakbym chcia³ znów daæ zmianê edytowanej linii z ctrl to muszê dorobiæ mu refresh
+			//jakbym chciaÅ‚ znÃ³w daÄ‡ zmianÄ™ edytowanej linii z ctrl to muszÄ™ dorobiÄ‡ mu refresh
 			if (click && (changeActive || !ctrl) || (dclick && ctrl)) {
 				lastActiveLine = Edit->ebrow;
 				Edit->SetLine(row, true, true, true, !ctrl);
@@ -826,9 +826,9 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 				else if (preview){ preview->NewSeeking(); }
 			}
 
-			//1-klikniêcie lewym
-			//2-klikniêcie lewym i edycja na pauzie
-			//3-klikniêcie lewym i edycja na pauzie i odtwarzaniu
+			//1-klikniÄ™cie lewym
+			//2-klikniÄ™cie lewym i edycja na pauzie
+			//3-klikniÄ™cie lewym i edycja na pauzie i odtwarzaniu
 
 			if (dclick || (click && lastActiveLine != row && mvtal < 4 && mvtal > 0) && pas < 2){
 				SetVideoLineTime(event);
@@ -1104,7 +1104,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs)
 {
 
-	wxString notchar = "/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{} ";
+	wxString notchar = "/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{}Â ";
 	text += " ";
 	bool block = false;
 	wxString word = "";
@@ -1278,7 +1278,7 @@ void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fro
 		secondgrid = CG1;
 	else
 		return;
-	//tymczasowo zdisejblowane do testów
+	//tymczasowo zdisejblowane do testÃ³w
 	if (!(showPreview || preview) && !secondgrid->IsShownOnScreen()){ return; }
 	//Line is id here we need convert it to key
 	compareData & data = Comparison->at(file->GetElementById(Line));
@@ -1309,7 +1309,7 @@ bool SubsGridWindow::ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowTo
 	int previewHeight = (((h / 3) / realGridHeight) * realGridHeight) + realGridHeight + 4;
 	if (previewHeight < 100)
 		previewHeight = ((100 / realGridHeight) * realGridHeight) + realGridHeight + 4;
-	if (h < 150){ KaiMessageBox(_("Nie mo¿na wyœwietliæ podgl¹du, poniewa¿ wielkoœæ okna napisów jest zbyt ma³a")); return false; }
+	if (h < 150){ KaiMessageBox(_("Nie moÅ¼na wyÅ›wietliÄ‡ podglÄ…du, poniewaÅ¼ wielkoÅ›Ä‡ okna napisÃ³w jest zbyt maÅ‚a")); return false; }
 	int previewPosition = (diffPosition + 2) * realGridHeight;
 	if (previewPosition + previewHeight > h || previewPosition < 20){
 		int newLine = (((h - previewHeight) / 2) / realGridHeight);

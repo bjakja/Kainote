@@ -88,7 +88,7 @@ HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<voi
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		func(HistoryList->GetSelection());
 	}, ID_SET_HISTORY);
-	MappedButton *Ok = new MappedButton(this, ID_SET_HISTORY_AND_CLOSE, _("OK"));
+	MappedButton *Ok = new MappedButton(this, ID_SET_HISTORY_AND_CLOSE, "OK");
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		func(HistoryList->GetSelection());
 		Hide();
