@@ -586,7 +586,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	kainoteApp *Kaia=(kainoteApp*)wxTheApp;
 	VideoFfmpeg *tmpvff=NULL;
 	if(vstate==Playing){((VideoCtrl*)this)->Stop();}
-	IsDshow=Dshow;
+	
 	if(!Dshow){
 		bool success;
 		tmpvff=new VideoFfmpeg(fname, this, &success);
@@ -594,16 +594,15 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 			SAFE_DELETE(tmpvff);/*block=false;*/return false;
 		}
 	}
-
+	SAFE_DELETE(VFF);
 	if(vstate!=None){
 		resized=seek=cross=pbar=false;
 		vstate=None;Clear();
 	}
-
+	IsDshow = Dshow;
 	time=0;
 	lastframe=0;
 
-	SAFE_DELETE(VFF);
 	if(!Dshow){
 		SAFE_DELETE(vplayer);
 		//VFF=new VideoFfmpeg(fname, Kaia->Frame->Tabs->GetSelection(),&success);
