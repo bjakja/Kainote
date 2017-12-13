@@ -49,12 +49,10 @@
 #include <utility>
 
 
-FFT::FFT(size_t nsamples, VideoFfmpeg *_prov)
-	:n_samples(nsamples)
-	,allsamples(0)
-	,diff(-1)
-	,prov(_prov)
+void FFT::Set(size_t nsamples, VideoFfmpeg *_prov)
 {
+	prov = _prov;
+	n_samples = nsamples;
 	//if (!IsPowerOfTwo(n_samples)) {
 		assert(IsPowerOfTwo(n_samples));
 	//}
@@ -71,32 +69,11 @@ FFT::~FFT()
 	delete[] output_r;
 }
 
-//void FFT::RecreateTable(size_t asamples)
-//{
-//	if(allsamples<asamples){
-//		if(input){delete[] input;}
-//		input = new short[asamples];
-//	}
-//	allsamples=asamples;
-//	diff=-1;
-//}
-//
-//void FFT::SetDiff(size_t whre)
-//{
-//	diff=whre;
-//	prov->GetBuffer(input,whre,allsamples);
-//}
 /////////////
 // Transform
-void FFT::Transform (size_t whre, bool inverse) {
+void FFT::Transform(size_t whre) {
 	
-	//whre -= diff;
 	prov->GetBuffer(input,whre,n_samples);
-		
-	
-	//int th=wthread * n_samples;
-	//if(whre>=allsamples-n_samples){wxLogStatus("przekroczenie %i %i",whre, allsamples-n_samples);return;}
-	//assert(whre<allsamples-n_samples);
 
 	// Variables
 	unsigned int i, j, k, n;
@@ -106,7 +83,7 @@ void FFT::Transform (size_t whre, bool inverse) {
 	// Copy samples to output buffers
 	for (i=0; i<n_samples; i++) {
 		j = ReverseBits (i,NumBits);
-		output_r[j] = (float)input[i/*+whre*/];
+		output_r[j] = (float)input[i];
 		output_i[j] = 0.0f;
 	}
 

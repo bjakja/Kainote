@@ -1,5 +1,6 @@
 // Copyright (c) 2005, 2006, Rodrigo Braz Monteiro
 // Copyright (c) 2006, 2007, Niels Martin Hansen
+// Copyright(c) 2014, 2017, Marcin Drob
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -41,16 +42,86 @@
 #include <list>
 #include <utility>
 #include <algorithm>
-#include "FFT.h"
+//#include "FFT.h"
 #include "AudioSpectrum.h"
 
 #include "ColorSpace.h"
 #include <wx/log.h>
+#include <process.h>
 
+//template<unsigned N1, typename T = double>
+class DanielsonLanczos {
+	
+	//DanielsonLanczos<N / 2, T> next;
+	float PI = 3.1415926535897932384626433832795f;
+	float PI2 = 2 * 3.1415926535897932384626433832795f;
+	unsigned long N/* = N1 / 2*/;
+public:
+	//DanielsonLanczos();
+	DanielsonLanczos(unsigned long N1){ N = N1 / 2; };
+	/*void apply(float* data) {
+		apply1(data);
+		apply1(data + N);
+	}*/
+	void apply1(float* data) {
+		//next.apply(data);
+		//next.apply(data + N);
 
-//typedef std::vector<float> CacheLine;
-// Bottom level FFT cache, holds actual power data itself
+		float wtemp, tempr, tempi, wr, wi, wpr, wpi;
+		wtemp = sin(PI / N);
+		wpr = -2.0*wtemp*wtemp;
+		wpi = -sin(PI2 / N);
+		wr = 1.0;
+		wi = 0.0;
+		for (unsigned i = 0; i < N; i += 2) {
+			tempr = data[i + N] * wr - data[i + N + 1] * wi;
+			tempi = data[i + N] * wi + data[i + N + 1] * wr;
+			data[i + N] = data[i] - tempr;
+			data[i + N + 1] = data[i + 1] - tempi;
+			data[i] += tempr;
+			data[i + 1] += tempi;
 
+			wtemp = wr;
+			wr += wr*wpr - wi*wpi;
+			wi += wi*wpr + wtemp*wpi;
+		}
+	}
+};
+
+class FFT
+{
+public:
+	FFT(){};
+	~FFT(){
+		if (output)
+			delete[] output;
+	}
+	void Set(unsigned long len, VideoFfmpeg *_prov){
+		prov = _prov;
+		//n_samples = nsamples;
+		input = new short[len];//0
+		output = new float[len];
+	}
+	void Transform(size_t whre){
+		prov->GetBuffer(output, whre, n_samples);
+		for (int i = 0; i < n_samples; i++){
+			output[i] = (float)input[i];
+		}
+
+		dl.apply1(output);
+		dl.apply1(output + line_length);
+	}
+	float Get(int i){
+		return sqrt(output[i] * output[i] + output[i + line_length] * output[i + line_length]);
+	}
+	float * output;
+private:
+	VideoFfmpeg *prov;
+	size_t n_samples = doublelen;
+	DanielsonLanczos dl = DanielsonLanczos(doublelen);
+	
+	short * input;
+};
 
 class FinalSpectrumCache{
 private:
@@ -90,11 +161,7 @@ public:
 			// line_length is half of the number of samples used to calculate a line, since half of the output from
 			// a Fourier transform of real data is redundant, and not interesting for the purpose of creating
 			// a frequenmcy/power spectrum.
-			//wxLogStatus("bufor : %i  %i",start, start * doublelen);
-
-			//int64_t sample = start * doublelen + overlap*overlap_offset;
-
-				
+			
 			for (unsigned int overlap = 0; overlap < overlaps; ++overlap) {
 				// Initialize
 				sample = (start * doublelen) + (overlap*overlap_offset) + (i*doublelen);
@@ -104,8 +171,11 @@ public:
 				CacheLine &line = data[i + length*overlap];
 				
 				for (size_t j = 0; j < line_length; ++j) {
-					line[j] = sqrt(fft->output_r[j]*fft->output_r[j] +
-						fft->output_i[j]*fft->output_i[j]);
+					//line[j] = sqrt(fft->output_r[j]*fft->output_r[j] +
+						//fft->output_i[j]*fft->output_i[j]);
+					int g = j + line_length;
+					float ns = (fft->output[j] * fft->output[j]) + (fft->output[g] * fft->output[g]);
+					line[j] = sqrt(ns);
 				}
 					
 			}
@@ -145,37 +215,37 @@ AudioSpectrum::AudioSpectrum(VideoFfmpeg *_provider)
 	provider = _provider;
 	subcachelen=16;
 	power_scale = 1;
-	line_length = 1<<9;
+	//line_length = 1<<9;//256
 	size_t doublelen=line_length*2;
 	int64_t _num_lines = provider->GetNumSamples()+doublelen / doublelen;
 	num_lines = (unsigned long)_num_lines;
 	numsubcaches = (num_lines + subcachelen)/subcachelen;
+	AudioThreads = new AudioSpectrumMultiThreading(line_length, subcachelen, provider);
 	SetupSpectrum();
 	ChangeColours();
 	
 
 	minband = 0;//Options.GetInt(_T("Audio Spectrum Cutoff"));
 	maxband = line_length - minband * 2/3; // TODO: make this customisable?
-	fft = new FFT(doublelen, provider);
 	sub_caches.resize(numsubcaches,0);
 }
 
 
 AudioSpectrum::~AudioSpectrum()
 {
-	delete fft;
+	delete AudioThreads;
 	for (size_t i = 0; i < numsubcaches; ++i){
 		if (sub_caches[i]) delete sub_caches[i];
 	}
 }
 
-void AudioSpectrum::SetupSpectrum(int overlaps, int length)
+void AudioSpectrum::SetupSpectrum(int overlaps)
 {
 
 	fft_overlaps = overlaps;
 
 	FinalSpectrumCache::SetLineLength(line_length, subcachelen, fft_overlaps);
-
+	AudioThreads->SetCache(&sub_caches, fft_overlaps);
 }
 
 void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool selected, unsigned char *img, int imgleft, int imgwidth, int imgpitch, int imgheight, int parcent)
@@ -183,9 +253,9 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
     wxCriticalSectionLocker locker(CritSec);
 	
     float parcPow = pow((150-parcent)/100.0f, 8);
-	int parc = parcPow * (imgwidth/500.f);
+	int parc = parcPow * (imgwidth/800.f);
 	if(parc<1){parc=1;}
-	if(parc>24){parc=24;}
+	if(parc>10){parc=10;}
 	//int newlen = 7.f/pow((150-percent)/100.0f, 8);
 	//newlen = MID(7,newlen,12);
 	if(parc!=fft_overlaps){ 
@@ -211,13 +281,14 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 	const int maxpower = (1 << (16 - 1))*256;
 
 	const double upscale = power_scale * 16384 / line_length;
+	AudioThreads->CreateCache(first_line / subcachelen, last_line / subcachelen);
 	//const double onethirdmaxpower = maxpower / 3, twothirdmaxpower = maxpower * 2/3;
 	//const double logoverscale = log(maxpower*upscale - twothirdmaxpower);
 
 	// Note that here "lines" are actually bands of power data
 	unsigned long baseline = first_line / fft_overlaps;
 	unsigned int overlap = first_line % fft_overlaps;
-	unsigned int j = 0;
+	//unsigned int j = 0;
 	unsigned int start = baseline / subcachelen;
 	for (unsigned long i = first_line; i <= last_line; ++i) {
 		// Handle horizontal compression and don't unneededly re-render columns
@@ -228,13 +299,14 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 		baseline = i / fft_overlaps;
 		overlap = i % fft_overlaps;
 		
-		if(!sub_caches[subcache])
+		/*if(!sub_caches[subcache])
 		{
-			sub_caches[subcache] = new FinalSpectrumCache(fft,(baseline/subcachelen) * subcachelen);
-		}
+		sub_caches[subcache] = new FinalSpectrumCache(fft,(baseline/subcachelen) * subcachelen);
+		}*/
+		assert(sub_caches[subcache]);
 			
 		CacheLine &line=sub_caches[subcache]->GetLine(baseline, overlap);
-		j++;
+		//j++;
 
 #define WRITE_PIXEL \
 	if (intensity < 0) intensity = 0; \
@@ -329,5 +401,90 @@ void AudioSpectrum::ChangeColours()
 
 }
 
+AudioSpectrumMultiThreading::AudioSpectrumMultiThreading(unsigned long _line_length, unsigned long _subcachelen, VideoFfmpeg *provider)
+{
+	line_length = _line_length; 
+	subcachelen = _subcachelen;
+	sthread = this; 
+	SYSTEM_INFO sysinfo;
+	GetSystemInfo(&sysinfo);
+	numThreads = sysinfo.dwNumberOfProcessors;
+	if (numThreads < 1){ numThreads = 2; }
+	eventKillSelf = CreateEvent(0, TRUE, FALSE, 0);
+	ffttable = new FFT[numThreads];
+	threads = new HANDLE[numThreads];
+	eventCacheCopleted = new HANDLE[numThreads];
+	eventMakeCache = new HANDLE[numThreads];
+	//int doublelen = line_length * 2;
+	for (int i = 0; i < numThreads; i++){
+		eventCacheCopleted[i] = CreateEvent(0, FALSE, FALSE, 0);
+		eventMakeCache[i] = CreateEvent(0, FALSE, FALSE, 0);
+		ffttable[i].Set(doublelen, provider);
+		threads[i] = (HANDLE)_beginthreadex(0, 0, AudioProc, new int(i), 0, 0);
+	}
+}
 
+AudioSpectrumMultiThreading::~AudioSpectrumMultiThreading()
+{
+	if (ffttable) 
+		delete[] ffttable;
+	if (threads){
+		SetEvent(eventKillSelf);
+		WaitForMultipleObjects(numThreads, threads, TRUE, 20000);
+		for (int i = 0; i < numThreads; i++){
+			CloseHandle(threads[i]);
+			CloseHandle(eventMakeCache[i]);
+			CloseHandle(eventCacheCopleted[i]);
+		}
+		CloseHandle(eventKillSelf);
+		delete[] threads;
+		delete[] eventMakeCache;
+		delete[] eventCacheCopleted;
+	}
+}
 
+void AudioSpectrumMultiThreading::CreateCache(unsigned long _start, unsigned long _end)
+{
+	start = _start;
+	end = _end;
+	len = ((end - start) / numThreads) + 1;
+	for (int i = 0; i < numThreads; i++)
+		SetEvent(eventMakeCache[i]);
+
+	WaitForMultipleObjects(numThreads, eventCacheCopleted, TRUE, INFINITE);
+}
+
+unsigned int __stdcall AudioSpectrumMultiThreading::AudioProc(void* num)
+{
+	int numOfThread = *((int*)num);
+	sthread->AudioPorocessing(numOfThread);
+	delete num;
+	return 0;
+}
+void AudioSpectrumMultiThreading::AudioPorocessing(int numOfTread)
+{
+	HANDLE events_to_wait[] = {
+		eventMakeCache[numOfTread],
+		eventKillSelf
+	};
+	HANDLE &complete = eventCacheCopleted[numOfTread];
+	FFT &cfft = ffttable[numOfTread];
+	while (1){
+		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait) / sizeof(HANDLE), events_to_wait, FALSE, INFINITE);
+		if (wait_result == WAIT_OBJECT_0 + 0){
+			unsigned long threadStart = start + len *numOfTread;
+			for (unsigned long i = threadStart; i < threadStart + len; i++){
+				if (i > end){ continue; }
+				if ((*sub_caches)[i] == NULL){
+					(*sub_caches)[i] = new FinalSpectrumCache(&cfft, (i/overlaps) * subcachelen);
+				}
+			}
+			SetEvent(complete);
+		}
+		else if(wait_result == WAIT_OBJECT_0 + 1){
+			break;
+		}
+	}
+}
+
+AudioSpectrumMultiThreading *AudioSpectrumMultiThreading::sthread = NULL;

@@ -39,10 +39,17 @@
 #include <wx/wxprec.h>
 #include <stdint.h>
 #include "VideoFfmpeg.h"
+//#include <thread>
+
+const unsigned long line_length = 1 << 9; // number of frequency components per line (half of number of samples)
+const unsigned long doublelen = line_length * 2;
 
 class FFT;
+
+//class FFT;
 // Specified and implemented in cpp file, interface is private to spectrum code
 class FinalSpectrumCache;
+class AudioSpectrumMultiThreading;
 
 typedef std::vector<float> CacheLine;
 
@@ -60,8 +67,6 @@ private:
 
 	VideoFfmpeg *provider;
 	
-
-	unsigned long line_length; // number of frequency components per line (half of number of samples)
 	unsigned long num_lines; // number of lines needed for the audio
 	unsigned int fft_overlaps; // number of overlaps used in FFT
 	float power_scale; // amplification of displayed power
@@ -69,11 +74,11 @@ private:
 	int maxband; // largest frequency band displayed
 	int subcachelen;
 	size_t numsubcaches;
-	FFT *fft;
 	wxCriticalSection CritSec;
-	void SetupSpectrum(int overlaps = 1, int length = (1<<9));
+	void SetupSpectrum(int overlaps = 1);
 	CacheLine &GetLine(unsigned long i, unsigned int overlap);
 	std::vector<FinalSpectrumCache*> sub_caches;
+	AudioSpectrumMultiThreading *AudioThreads;
 public:
 	AudioSpectrum(VideoFfmpeg *_provider);
 	~AudioSpectrum();
@@ -85,4 +90,25 @@ public:
 	void ChangeColours();
 };
 
+class AudioSpectrumMultiThreading
+{
+public:
+	AudioSpectrumMultiThreading(unsigned long _line_length, unsigned long _subcachelen, VideoFfmpeg *provider);
+	~AudioSpectrumMultiThreading();
+	void SetCache(std::vector<FinalSpectrumCache*> *_sub_caches, unsigned int _overlaps){ sub_caches = _sub_caches; overlaps = _overlaps; }
+	void CreateCache(unsigned long _start, unsigned long _end);
+private:
+	static unsigned int __stdcall AudioProc(void* cls);
+	void AudioPorocessing(int numOfTread);
+	std::vector<FinalSpectrumCache*> *sub_caches;
+	unsigned long line_length, start, end, len, subcachelen;
+	unsigned int overlaps;
+	int numThreads;
+	FFT *ffttable = NULL;
+	HANDLE *threads=NULL;
+	HANDLE *eventCacheCopleted = NULL;
+	HANDLE *eventMakeCache = NULL;
+	HANDLE eventKillSelf;
+	static AudioSpectrumMultiThreading *sthread;
+};
 

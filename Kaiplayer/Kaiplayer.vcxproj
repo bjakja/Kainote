@@ -391,7 +391,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="ColorSpace.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DShowPlayer.cpp" />
-    <ClCompile Include="FFT.cpp" />
     <ClCompile Include="FindReplace.cpp" />
     <ClCompile Include="FontEnumerator.cpp" />
     <ClCompile Include="KaiCheckBox.cpp" />

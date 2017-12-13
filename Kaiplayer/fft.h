@@ -47,19 +47,18 @@ private:
 	float angle_num;
 	unsigned int NumBits;
 	size_t n_samples;
-	size_t allsamples;
-	int diff;
+	size_t allsamples = 0;
 	VideoFfmpeg *prov;
 public:
-	FFT(size_t n_samples, VideoFfmpeg *prov);
+	FFT(){};
+	void Set(size_t n_samples, VideoFfmpeg *prov);
 	~FFT();
-	void Transform(size_t whre,bool inverse=false);
+	void Transform(size_t whre);
 	bool IsPowerOfTwo(unsigned int x);
 	unsigned int NumberOfBitsNeeded(unsigned int n_samples);
 	unsigned int ReverseBits(unsigned int index, unsigned int bits);
 	float FrequencyAtIndex(unsigned int baseFreq, unsigned int n_samples, unsigned int index);
 	void RecreateTable(size_t asamples);
-	void SetDiff(size_t whre);
 	short *input;
 	float *output_r;
 	float *output_i;
