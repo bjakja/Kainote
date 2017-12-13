@@ -791,7 +791,7 @@ bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 		&& !(!issubs && tab->SubsPath.BeforeLast('.') == filename.BeforeLast('.'))){*/
 	if (tab->editor){
 		found = FindFile(filename, secondFileName, issubs);
-		if (!issubs && found){
+		if (!issubs && found && !fulls && !tab->Video->isFullscreen){
 			if (KaiMessageBox(wxString::Format(_("Wczytać napisy o nazwie \"%s\"?"), secondFileName.AfterLast('\\')),
 				_("Potwierdzenie"), wxICON_QUESTION | wxYES_NO, this) == wxNO){
 				found = false;

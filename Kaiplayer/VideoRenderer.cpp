@@ -591,6 +591,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 		bool success;
 		tmpvff=new VideoFfmpeg(fname, this, &success);
 		if(!success || !tmpvff){
+			IsDshow = false;
 			SAFE_DELETE(tmpvff);/*block=false;*/return false;
 		}
 	}
