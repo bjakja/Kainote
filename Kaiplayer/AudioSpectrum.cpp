@@ -35,6 +35,7 @@
 // Contact: mailto:zeratul@cellosoft.com
 //
 
+#include "GFFT/GFFT.h"
 #include "Config.h"
 
 #include <assert.h>
@@ -49,79 +50,7 @@
 #include <wx/log.h>
 #include <process.h>
 
-//template<unsigned N1, typename T = double>
-class DanielsonLanczos {
-	
-	//DanielsonLanczos<N / 2, T> next;
-	float PI = 3.1415926535897932384626433832795f;
-	float PI2 = 2 * 3.1415926535897932384626433832795f;
-	unsigned long N/* = N1 / 2*/;
-public:
-	//DanielsonLanczos();
-	DanielsonLanczos(unsigned long N1){ N = N1 / 2; };
-	/*void apply(float* data) {
-		apply1(data);
-		apply1(data + N);
-	}*/
-	void apply1(float* data) {
-		//next.apply(data);
-		//next.apply(data + N);
 
-		float wtemp, tempr, tempi, wr, wi, wpr, wpi;
-		wtemp = sin(PI / N);
-		wpr = -2.0*wtemp*wtemp;
-		wpi = -sin(PI2 / N);
-		wr = 1.0;
-		wi = 0.0;
-		for (unsigned i = 0; i < N; i += 2) {
-			tempr = data[i + N] * wr - data[i + N + 1] * wi;
-			tempi = data[i + N] * wi + data[i + N + 1] * wr;
-			data[i + N] = data[i] - tempr;
-			data[i + N + 1] = data[i + 1] - tempi;
-			data[i] += tempr;
-			data[i + 1] += tempi;
-
-			wtemp = wr;
-			wr += wr*wpr - wi*wpi;
-			wi += wi*wpr + wtemp*wpi;
-		}
-	}
-};
-
-class FFT
-{
-public:
-	FFT(){};
-	~FFT(){
-		if (output)
-			delete[] output;
-	}
-	void Set(unsigned long len, VideoFfmpeg *_prov){
-		prov = _prov;
-		//n_samples = nsamples;
-		input = new short[len];//0
-		output = new float[len];
-	}
-	void Transform(size_t whre){
-		prov->GetBuffer(output, whre, n_samples);
-		for (int i = 0; i < n_samples; i++){
-			output[i] = (float)input[i];
-		}
-
-		dl.apply1(output);
-		dl.apply1(output + line_length);
-	}
-	float Get(int i){
-		return sqrt(output[i] * output[i] + output[i + line_length] * output[i + line_length]);
-	}
-	float * output;
-private:
-	VideoFfmpeg *prov;
-	size_t n_samples = doublelen;
-	DanielsonLanczos dl = DanielsonLanczos(doublelen);
-	
-	short * input;
-};
 
 class FinalSpectrumCache{
 private:
@@ -173,9 +102,9 @@ public:
 				for (size_t j = 0; j < line_length; ++j) {
 					//line[j] = sqrt(fft->output_r[j]*fft->output_r[j] +
 						//fft->output_i[j]*fft->output_i[j]);
-					int g = j + line_length;
-					float ns = (fft->output[j] * fft->output[j]) + (fft->output[g] * fft->output[g]);
-					line[j] = sqrt(ns);
+					int g = (j *2) + 1;//(line_length);
+					//float ns = (fft->output[j] * fft->output[j]) + (fft->output[g] * fft->output[g]);
+					line[j] = sqrt(fft->output[j*2] * fft->output[j*2] + fft->output[g] * fft->output[g]);
 				}
 					
 			}
@@ -474,7 +403,7 @@ void AudioSpectrumMultiThreading::AudioPorocessing(int numOfTread)
 		if (wait_result == WAIT_OBJECT_0 + 0){
 			unsigned long threadStart = start + len *numOfTread;
 			for (unsigned long i = threadStart; i < threadStart + len; i++){
-				if (i > end){ continue; }
+				//if (i > end){ continue; }
 				if ((*sub_caches)[i] == NULL){
 					(*sub_caches)[i] = new FinalSpectrumCache(&cfft, (i/overlaps) * subcachelen);
 				}

@@ -312,6 +312,9 @@
     <ClCompile Include="SubsGridPreview.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GFFT\GFFT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DropFiles.h">
@@ -473,9 +476,6 @@
     <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FFT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FindReplace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -597,6 +597,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SubsGridPreview.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GFFT\GFFT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

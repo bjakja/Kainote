@@ -393,6 +393,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="DShowPlayer.cpp" />
     <ClCompile Include="FindReplace.cpp" />
     <ClCompile Include="FontEnumerator.cpp" />
+    <ClCompile Include="GFFT\GFFT.cpp" />
     <ClCompile Include="KaiCheckBox.cpp" />
     <ClCompile Include="KaiDialog.cpp" />
     <ClCompile Include="KaiFrame.cpp" />
@@ -491,9 +492,9 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="ColorSpace.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="DShowPlayer.h" />
-    <ClInclude Include="FFT.h" />
     <ClInclude Include="FindReplace.h" />
     <ClInclude Include="FontEnumerator.h" />
+    <ClInclude Include="GFFT\GFFT.h" />
     <ClInclude Include="KaiCheckBox.h" />
     <ClInclude Include="KaiDialog.h" />
     <ClInclude Include="KaiFrame.h" />
