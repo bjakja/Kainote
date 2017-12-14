@@ -171,6 +171,7 @@ void AudioSpectrum::SetupSpectrum(int overlaps)
 
 void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool selected, unsigned char *img, int imgleft, int imgwidth, int imgpitch, int imgheight, int parcent)
 {
+	if (provider->audioNotInitialized){ return; }
     wxCriticalSectionLocker locker(CritSec);
 	
     float parcPow = pow((150-parcent)/100.0f, 8);
@@ -209,8 +210,6 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 
 	const double upscale = power_scale * 16384 / line_length;
 	AudioThreads->CreateCache(startcache, endcache);
-	//const double onethirdmaxpower = maxpower / 3, twothirdmaxpower = maxpower * 2/3;
-	//const double logoverscale = log(maxpower*upscale - twothirdmaxpower);
 
 	// Note that here "lines" are actually bands of power data
 	unsigned long baseline = first_line / fft_overlaps;

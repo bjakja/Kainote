@@ -20,7 +20,7 @@ class AbstractFFT;
 
 class VideoFfmpeg;
 
-const unsigned long line_length = 1 << 9; // number of frequency components per line (half of number of samples)
+const unsigned long line_length = 1 << 10; // number of frequency components per line (half of number of samples)
 const unsigned long doublelen = line_length * 2;
 
 class FFT

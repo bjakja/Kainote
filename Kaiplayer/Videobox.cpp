@@ -664,7 +664,9 @@ void VideoCtrl::SetFullscreen(int monitor)
 		TD->vToolbar->Synchronize(vToolbar);
 		if(!panelOnFullscreen){TD->panel->Hide();}
 		TD->Show();
+		block = true;
 		UpdateVideoWindow();
+		block = true;
 		RefreshTime();
 		if(GetState()==Playing){vtime.Start(1000);}
 		//if(GetState()==Paused){Kp->Render();}

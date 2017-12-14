@@ -239,7 +239,7 @@ FFT::~FFT(){
 
 void FFT::Set( VideoFfmpeg *_prov){
 	Loki::Factory<AbstractFFT<float>, unsigned int> gfft_factory;
-FactoryInit<GFFTList<GFFT, doublelen, doublelen + 1, float>::Result>::apply(gfft_factory);
+	FactoryInit<GFFTList<GFFT, doublelen, doublelen + 1, float>::Result>::apply(gfft_factory);
 
 	gfft = gfft_factory.CreateObject(doublelen);
 	prov = _prov;

@@ -65,7 +65,6 @@ private:
 	size_t numsubcaches;
 	wxCriticalSection CritSec;
 	void SetupSpectrum(int overlaps = 1);
-	CacheLine &GetLine(unsigned long i, unsigned int overlap);
 	std::vector<FinalSpectrumCache*> sub_caches;
 	AudioSpectrumMultiThreading *AudioThreads;
 public:
