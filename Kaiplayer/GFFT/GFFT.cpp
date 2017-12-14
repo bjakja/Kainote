@@ -1,3 +1,22 @@
+//  Copyright (c) 2017, Marcin Drob
+
+//  Kainote is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  Kainote is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
+
+//Code taken from article http://www.drdobbs.com/cpp/a-simple-and-efficient-fft-implementatio/199702312?pgno=2 
+//using Loki library for make template
+//Adapted by me
+
 #include <iostream>
 #include <cmath>
 #include <math.h>
@@ -208,25 +227,6 @@ struct GFFTList<FFT, End, End, T, FactoryPolicy> {
 	typedef Loki::NullType Result;
 };
 
-//int main()
-//{
-//    double signal[16] = {0,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0};
-//
-//    Loki::Factory<AbstractFFT<double>,unsigned int> gfft_factory;
-//
-//    FactoryInit<GFFTList<GFFT,8,9>
-//            ::Result>::apply(gfft_factory);
-//
-//    AbstractFFT<double>* gfft = gfft_factory.CreateObject(8);
-//    gfft->fft(signal);
-//
-//    for(int i=0;i<16;i+=2){
-//        cout << signal[i]  << " " << signal[i+1] << "i" << endl;
-//    }
-//    return 0;
-//}
-const unsigned long llength = 1 << 9; // number of frequency components per line (half of number of samples)
-const unsigned long dlen = llength * 2;
 
 
 FFT::~FFT(){
@@ -237,22 +237,19 @@ FFT::~FFT(){
 	delete gfft;
 }
 
-void FFT::Set(unsigned long len, VideoFfmpeg *_prov){
+void FFT::Set( VideoFfmpeg *_prov){
 	Loki::Factory<AbstractFFT<float>, unsigned int> gfft_factory;
+FactoryInit<GFFTList<GFFT, doublelen, doublelen + 1, float>::Result>::apply(gfft_factory);
 
-	FactoryInit<GFFTList<GFFT, dlen, dlen + 1, float>::Result>::apply(gfft_factory);
-
-	gfft = gfft_factory.CreateObject(dlen);
+	gfft = gfft_factory.CreateObject(doublelen);
 	prov = _prov;
-	n_samples = len;
-	input = new short[n_samples];
-	output = new float[n_samples * 2];
+	input = new short[doublelen];
+	output = new float[doublelen * 2];
 }
 
 void FFT::Transform(size_t whre){
-	//wxLogStatus("whre %i", (int)whre);
-	prov->GetBuffer(input, whre, n_samples);
-	for (int i = 0; i < n_samples; i++){
+	prov->GetBuffer(input, whre, doublelen);
+	for (int i = 0; i < doublelen; i++){
 		output[i * 2] = (float)input[i];
 		output[(i * 2) + 1] = 0.f;
 	}

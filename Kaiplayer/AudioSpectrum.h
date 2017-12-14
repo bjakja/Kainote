@@ -38,16 +38,10 @@
 
 #include <wx/wxprec.h>
 #include <stdint.h>
+#include "GFFT/GFFT.h"
 #include "VideoFfmpeg.h"
-//#include <thread>
 
-const unsigned long line_length = 1 << 9; // number of frequency components per line (half of number of samples)
-const unsigned long doublelen = line_length * 2;
 
-class FFT;
-
-//class FFT;
-// Specified and implemented in cpp file, interface is private to spectrum code
 class FinalSpectrumCache;
 class AudioSpectrumMultiThreading;
 
@@ -56,14 +50,9 @@ typedef std::vector<float> CacheLine;
 class AudioSpectrum {
 	friend class SpectrumThread;
 private:
-	// Data provider
-	//AudioSpectrumCacheManager *cache;
 
 	// Colour pallettes
 	unsigned char colours_normal[256*3];
-	//unsigned char colours_selected[256*3];
-	
-	
 
 	VideoFfmpeg *provider;
 	
