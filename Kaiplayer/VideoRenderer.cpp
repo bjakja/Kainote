@@ -586,10 +586,12 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	kainoteApp *Kaia=(kainoteApp*)wxTheApp;
 	VideoFfmpeg *tmpvff=NULL;
 	if(vstate==Playing){((VideoCtrl*)this)->Stop();}
+	
 	if(!Dshow){
 		bool success;
 		tmpvff=new VideoFfmpeg(fname, this, &success);
 		if(!success || !tmpvff){
+			IsDshow = false;
 			SAFE_DELETE(tmpvff);/*block=false;*/return false;
 		}
 	}
