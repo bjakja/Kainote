@@ -79,9 +79,9 @@ public:
 		// Both start and end are included in the range stored, so we have end-start+1 elements
 		data.resize(length*overlaps, null_line);
 
-		unsigned int overlap_offset = line_length / overlaps * 2; // FIXME: the result seems weird/wrong without this factor 2, but why?
+		//test it
+		unsigned int overlap_offset = doublelen / overlaps;
 
-		int doublelen=line_length*2;
 		int64_t sample=start;
 
 		for (unsigned long i = 0; i < length; ++i) {
@@ -92,17 +92,14 @@ public:
 			
 			for (unsigned int overlap = 0; overlap < overlaps; ++overlap) {
 				// Initialize
-				sample = (start * doublelen) + (overlap*overlap_offset) + (i*doublelen);
+				sample = (start * doublelen) + (overlap * overlap_offset) + (i*doublelen);
 				
 				fft->Transform(sample);
 				
 				CacheLine &line = data[i + length*overlap];
 				
 				for (size_t j = 0; j < line_length; ++j) {
-					//line[j] = sqrt(fft->output_r[j]*fft->output_r[j] +
-						//fft->output_i[j]*fft->output_i[j]);
-					int g = (j *2) + 1;//(line_length);
-					//float ns = (fft->output[j] * fft->output[j]) + (fft->output[g] * fft->output[g]);
+					int g = (j *2) + 1;
 					line[j] = sqrt(fft->output[j*2] * fft->output[j*2] + fft->output[g] * fft->output[g]);
 				}
 					
@@ -143,7 +140,7 @@ AudioSpectrum::AudioSpectrum(VideoFfmpeg *_provider)
 	int64_t _num_lines = provider->GetNumSamples()+doublelen / doublelen;
 	num_lines = (unsigned long)_num_lines;
 	numsubcaches = (num_lines + subcachelen)/subcachelen;
-	AudioThreads = new AudioSpectrumMultiThreading(line_length, subcachelen, provider);
+	AudioThreads = new AudioSpectrumMultiThreading(subcachelen, provider);
 	SetupSpectrum();
 	ChangeColours();
 	minband = 0;//Options.GetInt(_T("Audio Spectrum Cutoff"));
@@ -171,13 +168,14 @@ void AudioSpectrum::SetupSpectrum(int overlaps)
 
 void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool selected, unsigned char *img, int imgleft, int imgwidth, int imgpitch, int imgheight, int parcent)
 {
-	if (provider->audioNotInitialized){ return; }
     wxCriticalSectionLocker locker(CritSec);
 	
     float parcPow = pow((150-parcent)/100.0f, 8);
 	int parc = (parcPow * (imgwidth/500.f));
 	if(parc<1){parc=1;}
-	if(parc>10){parc=10;}
+	if(parc>10){
+		parc=10;
+	}
 	unsigned long first_line = (unsigned long)(parc * range_start / line_length / 2);
 	unsigned long last_line = (unsigned long)(parc * range_end / line_length / 2);
 	unsigned long startcache = first_line / subcachelen;
@@ -317,9 +315,8 @@ void AudioSpectrum::ChangeColours()
 
 }
 
-AudioSpectrumMultiThreading::AudioSpectrumMultiThreading(unsigned long _line_length, unsigned long _subcachelen, VideoFfmpeg *provider)
+AudioSpectrumMultiThreading::AudioSpectrumMultiThreading(unsigned long _subcachelen, VideoFfmpeg *provider)
 {
-	line_length = _line_length; 
 	subcachelen = _subcachelen;
 	sthread = this; 
 	SYSTEM_INFO sysinfo;
@@ -389,9 +386,11 @@ void AudioSpectrumMultiThreading::AudioPorocessing(int numOfTread)
 		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait) / sizeof(HANDLE), events_to_wait, FALSE, INFINITE);
 		if (wait_result == WAIT_OBJECT_0 + 0){
 			unsigned long threadStart = start + len *numOfTread;
+			bool audioSetted = false;
 			for (unsigned long i = threadStart; i < threadStart + len; i++){
 				//if (i > end){ continue; }
 				if ((*sub_caches)[i] == NULL){
+					if (!audioSetted){ SetAudio(i, len - (i - threadStart), &cfft); audioSetted = true; }
 					(*sub_caches)[i] = new FinalSpectrumCache(&cfft, (i/overlaps) * subcachelen);
 				}
 			}
@@ -401,6 +400,19 @@ void AudioSpectrumMultiThreading::AudioPorocessing(int numOfTread)
 			break;
 		}
 	}
+}
+
+void AudioSpectrumMultiThreading::SetAudio(unsigned long _start, int _len, FFT *fft)
+{
+	if (_len < 1){
+		bool thisisbad = true;
+	}
+	size_t samplestart = ((_start / overlaps) * subcachelen) * doublelen;
+	size_t offset = (doublelen / overlaps) ;
+	size_t sampleend = (((_start + _len - 1) / overlaps) * subcachelen) * doublelen;
+	sampleend += ((overlaps - 1) * offset) + ((subcachelen-1) * doublelen);
+
+	fft->SetAudio(samplestart, (sampleend - samplestart) + doublelen);
 }
 
 AudioSpectrumMultiThreading *AudioSpectrumMultiThreading::sthread = NULL;

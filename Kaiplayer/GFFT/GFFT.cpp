@@ -243,14 +243,37 @@ void FFT::Set( VideoFfmpeg *_prov){
 
 	gfft = gfft_factory.CreateObject(doublelen);
 	prov = _prov;
-	input = new short[doublelen];
+	input = NULL;
 	output = new float[doublelen * 2];
 }
 
+void FFT::SetAudio(size_t _from, size_t len)
+{
+	from = _from;
+	if (inputSize != len){
+		if (input && inputSize < len){
+			delete[] input; input = NULL;
+		}
+		inputSize = len;
+	}
+	if (!input){
+		input = new short[inputSize];
+	}
+	prov->GetBuffer(input, from, inputSize);
+}
+
 void FFT::Transform(size_t whre){
-	prov->GetBuffer(input, whre, doublelen);
+	int64_t start = (whre - from);
+	if (start + doublelen > inputSize && input){
+		//SetAudio(start, start + doublelen);
+		assert(false);
+	}
+	//else if (lastend == inputSize){
+		//bool goodCalculation = true;
+		//wxLogStatus("GoodCalculation %i", (int)inputSize);
+	//}
 	for (int i = 0; i < doublelen; i++){
-		output[i * 2] = (float)input[i];
+		output[i * 2] = (float)input[i + start];
 		output[(i * 2) + 1] = 0.f;
 	}
 

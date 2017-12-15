@@ -81,15 +81,16 @@ public:
 class AudioSpectrumMultiThreading
 {
 public:
-	AudioSpectrumMultiThreading(unsigned long _line_length, unsigned long _subcachelen, VideoFfmpeg *provider);
+	AudioSpectrumMultiThreading(unsigned long _subcachelen, VideoFfmpeg *provider);
 	~AudioSpectrumMultiThreading();
 	void SetCache(std::vector<FinalSpectrumCache*> *_sub_caches, unsigned int _overlaps){ sub_caches = _sub_caches; overlaps = _overlaps; }
 	void CreateCache(unsigned long _start, unsigned long _end);
 private:
 	static unsigned int __stdcall AudioProc(void* cls);
 	void AudioPorocessing(int numOfTread);
+	void SetAudio(unsigned long start, int len, FFT *fft);
 	std::vector<FinalSpectrumCache*> *sub_caches;
-	unsigned long line_length, start, end, len, subcachelen;
+	unsigned long start, end, len, subcachelen;
 	unsigned int overlaps;
 	int numThreads;
 	FFT *ffttable = NULL;

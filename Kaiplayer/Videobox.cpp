@@ -666,7 +666,7 @@ void VideoCtrl::SetFullscreen(int monitor)
 		TD->Show();
 		block = true;
 		UpdateVideoWindow();
-		block = true;
+		block = false;
 		RefreshTime();
 		if(GetState()==Playing){vtime.Start(1000);}
 		//if(GetState()==Paused){Kp->Render();}

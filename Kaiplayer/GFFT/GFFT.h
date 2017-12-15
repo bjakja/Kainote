@@ -31,10 +31,13 @@ public:
 	void Set(VideoFfmpeg *_prov);
 	void Transform(size_t whre);
 	float Get(int i);
-
+	void SetAudio(size_t from, size_t to);
 	float * output;
 private:
 	VideoFfmpeg *prov;
 	short * input;
 	AbstractFFT<float>* gfft;
+	size_t inputSize = 0;
+	size_t from = 0;
+	//size_t lastend = 0;
 };

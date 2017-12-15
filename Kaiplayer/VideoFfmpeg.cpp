@@ -498,10 +498,10 @@ done:
 	if (vf->audiosource){ FFMS_DestroyAudioSource(vf->audiosource); vf->audiosource = 0; }
 	SetEvent(vf->eventAudioComplete);
 	delete vf->audioLoadThread; vf->audioLoadThread = NULL;
-	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
+	/*kainoteApp *Kaia = (kainoteApp*)wxTheApp;
 	AudioBox *abox = Kaia->Frame->GetTab()->Edit->ABox;
 	if(abox)
-		abox->audioDisplay->UpdateImage();
+	abox->audioDisplay->UpdateImage();*/
 }
 
 void VideoFfmpeg::GetFrame(int ttime, byte *buff)
@@ -556,9 +556,6 @@ void VideoFfmpeg::GetBuffer(void *buf, int64_t start, int64_t count, double volu
 
 	if (count) {
 		if(disccache){
-			/*if(file_cache.IsOpened()){
-				file_cache.Seek(start* BytesPerSample);
-				file_cache.Read((char*)buf,count* BytesPerSample);}*/
 			if(fp){
 				_int64 pos = start* BytesPerSample;
 				_fseeki64(fp, pos, SEEK_SET);
@@ -578,7 +575,6 @@ void VideoFfmpeg::GetBuffer(void *buf, int64_t start, int64_t count, double volu
 				readsize = MIN(remaining,blsize - offset);
 
 				memcpy(tmpbuf,(char *)(Cache[i++]+offset),readsize);
-				//wxLogStatus(_("i %i, readsize %i, end %i"), i, readsize, end);
 				tmpbuf+=readsize;
 				offset=0;
 				remaining-=readsize;
@@ -669,6 +665,7 @@ int64_t VideoFfmpeg::GetNumSamples()
 bool VideoFfmpeg::RAMCache()
 {
 	//progress->Title(_("Zapisywanie do pamięci RAM"));
+	audioProgress = 0;
 	int64_t end=NumSamples*BytesPerSample;
 
 	int blsize=(1<<22);
@@ -696,11 +693,10 @@ bool VideoFfmpeg::RAMCache()
 			GetAudio(Cache[i], pos, halfsize);
 			pos+=halfsize;
 		}
-
-		//progress->Progress(((float)i/(float)(blnum-1))*100);
-		//if(progress->WasCancelled()){blnum=i+1;Clearcache();return false;}
+		audioProgress = ((float)i / (float)(blnum - 1));
 	}
 	if(Delay<0){NumSamples += (SampleRate * Delay * BytesPerSample);}
+	audioProgress = 1.f;
 	return true;
 }
 
@@ -756,6 +752,7 @@ bool VideoFfmpeg::DiskCache()
 	//progress->Title(_("Zapisywanie na dysk twardy"));
 
 	//progress->Progress(0);
+	audioProgress = 0;
 
 	bool good=true;
 	wxFileName fname;
@@ -793,20 +790,13 @@ bool VideoFfmpeg::DiskCache()
 			if (block+pos > NumSamples) block = NumSamples - pos;
 			GetAudio(data,pos,block);
 			//file_cache.Write(data,block*BytesPerSample);
-			fwrite(data, 1 ,block*BytesPerSample, fp);
+			fwrite(data, 1 ,block * BytesPerSample, fp);
 			pos+=block;
-			//progress->Progress(((float)pos/(float)(NumSamples))*100);
-			//if(progress->WasCancelled()){
-			//	//file_cache.Close();
-			//	fclose(fp);
-			//	wxRemoveFile(diskCacheFilename);
-			//	good=false;
-			//	delete[] data;
-			//	return false;
-			//}
+			audioProgress = ((float)pos / (float)(NumSamples));
+			
 		}
 		delete[] data;
-		//file_cache.Seek(0);
+		
 		rewind(fp);
 		if(Delay<0){NumSamples += (SampleRate * Delay * BytesPerSample);}
 	}
@@ -815,7 +805,7 @@ bool VideoFfmpeg::DiskCache()
 	}
 
 	if(!good){Cleardiskc();}
-
+	else{ audioProgress = 1.f; }
 	return good;
 }
 

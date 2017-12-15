@@ -89,9 +89,6 @@ private:
 	bool needImageUpdate;
 	bool needImageUpdateWeak;
 	bool hasSel;
-	
-	
-	
 	bool diagUpdated;
 	bool holding;
 	bool draggingScale;
@@ -113,10 +110,6 @@ private:
 	int *peak;
 	int *min;
 
-	//int scrubTime;
-	//int64_t scrubLastPos;
-	//bool scrubbing;
-	//int scrubLastRate;
 	wxMutex mutex;
 	int whichsyl;
 	int letter;
@@ -151,6 +144,7 @@ private:
 	void DrawInactiveLines();
 	void DrawWaveform(bool weak);
 	void DrawSpectrum(bool weak);
+	void DrawProgress();
 	void GetDialoguePos(int64_t &start,int64_t &end,bool cap);
 	void GetKaraokePos(int64_t &start,int64_t &end,bool cap);
 	void UpdatePosition(int pos,bool IsSample=false);
@@ -177,6 +171,8 @@ public:
 	AudioBox *box;
 	KaiScrollbar *ScrollBar;
 	wxTimer UpdateTimer;
+	wxTimer ProgressTimer;
+	float lastProgress = -1.f;
 	bool cursorPaint;
 
 	AudioDisplay(wxWindow *parent);

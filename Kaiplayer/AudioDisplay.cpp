@@ -54,10 +54,12 @@
 #include "SubsGrid.h"
 #include "kainoteApp.h"
 
-#define D3DCOLOR_FROM_WX(col) \
-    ((D3DCOLOR)((((col.Alpha())&0xff)<<24)|(((col.Red())&0xff)<<16)|(((col.Green())&0xff)<<8)|((col.Blue())&0xff)))
-#define D3DCOLOR_FROM_WXA(col, alpha) \
-    ((D3DCOLOR)((((alpha)&0xff)<<24)|(((col.Red())&0xff)<<16)|(((col.Green())&0xff)<<8)|((col.Blue())&0xff)))
+inline D3DCOLOR D3DCOLOR_FROM_WX(const wxColour &col){
+	return (D3DCOLOR)((((col.Alpha()) & 0xff) << 24) | (((col.Red()) & 0xff) << 16) | (((col.Green()) & 0xff) << 8) | ((col.Blue()) & 0xff));
+}
+//inline D3DCOLOR D3DCOLOR_FROM_WXA(col, alpha){
+//	((D3DCOLOR)((((alpha)& 0xff) << 24) | (((col.Red()) & 0xff) << 16) | (((col.Green()) & 0xff) << 8) | ((col.Blue()) & 0xff)))
+//}
 
 int64_t abs64(int64_t input) {
 	if (input < 0) return -input;
@@ -124,7 +126,15 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	UpdateTimer.SetOwner(this,Audio_Update_Timer);
 	GetClientSize(&w,&h);
 	h -= 20;
-	
+	ProgressTimer.SetOwner(this, 7654);
+	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
+		if (!provider->audioNotInitialized){
+			UpdateImage(); ProgressTimer.Stop();
+		}
+		else if (provider->audioProgress != lastProgress){
+			Refresh(false);
+		}
+	}, 7654);
 	// Set cursor
 	//wxCursor cursor(wxCURSOR_BLANK);
 	//SetCursor(cursor);
@@ -316,12 +326,6 @@ void AudioDisplay::DoUpdateImage() {
 		InitDX(wxSize(w,displayH));
 		LastSize=wxSize(w, h);
 	}
-	
-
-	// Options
-	bool draw_boundary_lines = Options.GetBool(AudioDrawSecondaryLines);
-	bool draw_selection_background = Options.GetBool(AudioDrawSelectionBackground);
-	bool drawKeyframes = Options.GetBool(AudioDrawKeyframes);
 
 	// Invalid dimensions
 	if (w == 0 || displayH == 0) return;
@@ -350,17 +354,23 @@ void AudioDisplay::DoUpdateImage() {
 
 		deviceLost = false;
 	}
+
 	// Background
-	const wxColour & background = Options.GetColour(AudioBackground);
-	hr = d3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_FROM_WX(background), 1.0f, 0 );
+	hr = d3dDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_FROM_WX(Options.GetColour(AudioBackground)), 1.0f, 0);
 	
 
 	hr = d3dDevice->BeginScene();
 	// Draw image to be displayed
 
-	//// Selection position
-	////hasSel = false;
-	////hasKaraoke = karaoke->enabled;
+	if (provider->audioNotInitialized){
+		DrawProgress();
+		goto done;
+	}
+	// Options
+	bool draw_boundary_lines = Options.GetBool(AudioDrawSecondaryLines);
+	bool draw_selection_background = Options.GetBool(AudioDrawSelectionBackground);
+	bool drawKeyframes = Options.GetBool(AudioDrawKeyframes);
+
 	selStart = 0;
 	selEnd = 0;
 	lineStart = 0;
@@ -652,10 +662,9 @@ void AudioDisplay::DoUpdateImage() {
 		d3dLine->Draw(v5,5,waveformColor);
 		d3dLine->End();
 	}
-
+	
+done:
 	hr = d3dDevice->EndScene();
-
-
 
 	hr = d3dDevice->Present(NULL, NULL, NULL, NULL );
 
@@ -684,6 +693,7 @@ void AudioDisplay::DrawInactiveLines() {
 	// Set options
 	D3DCOLOR waveformInactive = D3DCOLOR_FROM_WX(Options.GetColour(AudioWaveformInactive));
 	D3DCOLOR boundaryInactiveLine = D3DCOLOR_FROM_WX(Options.GetColour(AudioLineBoundaryInactiveLine));
+	D3DCOLOR fill = D3DCOLOR_FROM_WX(Options.GetColour(AudioInactiveLinesBackground));
 	int selWidth = Options.GetInt(AudioLineBoundariesThickness);
 	Dialogue *shade;
 	int shadeX1,shadeX2;
@@ -734,7 +744,6 @@ void AudioDisplay::DrawInactiveLines() {
 		x1 = MIN(x1,selX1);
 		x2 = MIN(x2,selX1);
 
-		D3DCOLOR fill = D3DCOLOR_FROM_WX(Options.GetColour(AudioInactiveLinesBackground));
 		VERTEX v9[4];
 		CreateVERTEX(&v9[0], x1, 0, fill);
 		CreateVERTEX(&v9[1], x2+1, 0, fill);
@@ -766,7 +775,6 @@ void AudioDisplay::DrawInactiveLines() {
 		}
 		
 		// Draw boundaries
-		//dc.SetPen(wxPen(Options.GetColour(_T("Audio Line Boundary Inactive Line"))));
 		d3dLine->SetWidth(selWidth);
 		d3dLine->Begin();
 		v2[0]=D3DXVECTOR2(shadeX1+(selWidth/2),0);
@@ -910,7 +918,6 @@ void AudioDisplay::DrawWaveform(bool weak) {
 			v2[0]=D3DXVECTOR2(i,peak[i]);
 			v2[1]=D3DXVECTOR2(i,min[i]-1);
 			d3dLine->Draw(v2,2,waveformSelected);
-			//wxLogStatus("drawWaveform1 %i", (int)FAILED(hr));
 		}
 
 		// Draw post-selection
@@ -918,7 +925,6 @@ void AudioDisplay::DrawWaveform(bool weak) {
 			v2[0]=D3DXVECTOR2(i,peak[i]);
 			v2[1]=D3DXVECTOR2(i,min[i]-1);
 			d3dLine->Draw(v2,2,waveform);
-			//wxLogStatus("drawWaveform2 %i", (int)FAILED(hr));
 		}
 	}
 	d3dLine->End();
@@ -929,7 +935,6 @@ void AudioDisplay::DrawWaveform(bool weak) {
 // Draw spectrum analyzer
 void AudioDisplay::DrawSpectrum(bool weak) {
 	
-	//wxLogStatus("drawSpectrum");
 	if (!weak) {
 		if (!spectrumRenderer)
 			spectrumRenderer = new AudioSpectrum(provider);
@@ -942,8 +947,6 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 		// Use a slightly slower, but simple way
 		// Always draw the spectrum for the entire width
 		// Hack: without those divs by 2 the display is horizontally compressed
-		//spectrumRenderer->RenderRange(Position*samples, (Position+w)*samples, false, img, dxw, h, samplesPercent);
-		//spectrumRenderer->RenderRange(Position*samples, (Position+w)*samples, false, img, dxw, h, samplesPercent);
 		spectrumRenderer->RenderRange(Position*samples, (Position+w)*samples, false, img, 0, w, dxw, h, samplesPercent);
 		spectrumSurface->UnlockRect();
 	
@@ -953,16 +956,59 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 	if(FAILED(d3dDevice->StretchRect(spectrumSurface,&rc,backBuffer,&rc,D3DTEXF_LINEAR))){
 		wxLogStatus(_("Nie można nałożyć powierzchni spectrum na siebie"));
 	}
-	//if (hasSel && selStartCap < selEndCap) {
-	//	// There is a visible selection and we don't have a rendered one
-	//	// This should be done regardless whether we're "weak" or not
-	//	// Assume a few things were already set up when things were first rendered though
-	//	//unsigned char *img = (unsigned char *)malloc(h*w*3);
-	//	spectrumRenderer->RenderRange(Position*samples, (Position+w)*samples, true, img, w, h, samplesPercent);
-	//	//wxImage imgobj(w, h, img, false);
-	//	//spectrumDisplaySelected = new wxBitmap(imgobj);
-	//}
 	
+}
+
+void AudioDisplay::DrawProgress()
+{
+	provider->audioProgress;
+	//koordynaty czarnej ramki
+	D3DXVECTOR2 vectors[16];
+	float halfY = (h + 20) / 2;
+	vectors[4].x = 20;
+	vectors[4].y = halfY - 20;
+	vectors[5].x = w - 20;
+	vectors[5].y = halfY - 20;
+	vectors[6].x = w - 20;
+	vectors[6].y = halfY + 20;
+	vectors[7].x = 20;
+	vectors[7].y = halfY + 20;
+	vectors[8].x = 20;
+	vectors[8].y = halfY - 20;
+	//koordynaty białej ramki
+	vectors[9].x = 21;
+	vectors[9].y = halfY - 19;
+	vectors[10].x = w - 21;
+	vectors[10].y = halfY - 19;
+	vectors[11].x = w - 21;
+	vectors[11].y = halfY + 19;
+	vectors[12].x = 21;
+	vectors[12].y = halfY + 19;
+	vectors[13].x = 21;
+	vectors[13].y = halfY - 19;
+	//koordynaty paska postępu
+	int rw = 22;
+	vectors[14].x = rw;
+	vectors[14].y = halfY;
+	vectors[15].x = ((provider->audioProgress / 1.f) * w-44) + rw;
+	vectors[15].y = halfY;
+
+	d3dLine->SetWidth(1);
+	d3dLine->Begin();
+	d3dLine->Draw(&vectors[4], 5, 0xFF00FFFF);
+	d3dLine->Draw(&vectors[9], 5, 0xFFFFFFFF);
+	d3dLine->End();
+	d3dLine->SetWidth(37);
+	d3dLine->Begin();
+	d3dLine->Draw(&vectors[14], 2, 0xFFFFFFFF);
+	d3dLine->End();
+	RECT textParcent;
+	textParcent.left = 20;
+	textParcent.right = w - 20;
+	textParcent.top = halfY - 20;
+	textParcent.bottom = halfY + 20;
+	wxString txt = std::to_string((int)(provider->audioProgress * 100.f)) + L"%";
+	DRAWOUTTEXT(d3dFont, txt, textParcent, DT_CENTER | DT_VCENTER, 0xFFFFFFFF)
 }
 
 //////////////////////////
@@ -1218,7 +1264,9 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 	if (!loaded) return;
 
 	assert(loaded == (provider != NULL));
-
+	if (provider->audioNotInitialized){
+		ProgressTimer.Start(50);
+	}
 	// Set default selection
 	int n = Edit->ebrow;
 	SetDialogue(grid->GetDialogue(n),n);
