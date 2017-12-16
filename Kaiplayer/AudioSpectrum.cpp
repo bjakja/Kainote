@@ -51,109 +51,98 @@
 
 
 
-class FinalSpectrumCache{
+class SpectrumCache{
 private:
 	std::vector<CacheLine> data;
-	unsigned long start; 
 
 public:
-	CacheLine& GetLine(unsigned long i, unsigned int overlap)
+	CacheLine& GetLine(unsigned long i)
 	{
 
 		// This check ought to be redundant
-		if (i >= start && i-start < length)
-			return data[(i-start) + overlap*length];
+		if (i >= start && i-start < subcachelen)
+			return data[(i-start)];
 		else{
 			return null_line;}
 	}
 
+	SpectrumCache(){};
 
-	FinalSpectrumCache(FFT *fft, unsigned long _start)
+	void CreateCache(FFT *fft, unsigned long _start)
 	{
 		start = _start;
 
 		// Add an upper limit to number of overlaps or trust user to do sane things?
-		// Any limit should probably be a function of length
+		// Any limit should probably be a function of subcachelen
 
 		// First fill the data vector with blanks
 		// Both start and end are included in the range stored, so we have end-start+1 elements
-		data.resize(length*overlaps, null_line);
+		data.resize(subcachelen, null_line);
 
 		//test it
-		unsigned int overlap_offset = doublelen / overlaps;
+		/*unsigned int overlap_offset = doublelen / overlaps;*/
 
 		int64_t sample=start;
+		int64_t fftStart = (start * doublelen);
+		//float scale_factor = 10 / sqrt(2 * (float)(doublelen));
 
-		for (unsigned long i = 0; i < length; ++i) {
+		for (unsigned long i = 0; i < subcachelen; ++i) {
 			// Start sample number of the next line calculated
 			// line_length is half of the number of samples used to calculate a line, since half of the output from
 			// a Fourier transform of real data is redundant, and not interesting for the purpose of creating
 			// a frequenmcy/power spectrum.
 			
-			for (unsigned int overlap = 0; overlap < overlaps; ++overlap) {
-				// Initialize
-				sample = (start * doublelen) + (overlap * overlap_offset) + (i*doublelen);
-				
-				fft->Transform(sample);
-				
-				CacheLine &line = data[i + length*overlap];
-				
-				for (size_t j = 0; j < line_length; ++j) {
-					int g = (j *2) + 1;
-					line[j] = sqrt(fft->output[j*2] * fft->output[j*2] + fft->output[g] * fft->output[g]);
-				}
-					
+			sample = fftStart + (i * doublelen);
+
+			fft->Transform(sample);
+
+			CacheLine &line = data[i];
+
+			for (size_t j = 0; j < line_length; ++j) {
+				int g = (j * 2) + 1;
+				line[j] = /*log10( */sqrt(fft->output[j * 2] * fft->output[j * 2] + fft->output[g] * fft->output[g])/* * scale_factor + 1)*/;
 			}
-				
-				
+						
 			
 		}
 		
 	}
 
-	static void SetLineLength(unsigned long _length, unsigned int _overlaps)
+	static void SetLineLength(unsigned long _length)
 	{
-		length = _length;
-		overlaps = _overlaps;
 		null_line.resize(line_length, 0);
 	}
 
-	~FinalSpectrumCache()
+	~SpectrumCache()
 	{
 	}
-
-	static unsigned long length;
-	static unsigned int overlaps;
+	unsigned long start = -1;
 	static CacheLine null_line;
 };
 
-CacheLine FinalSpectrumCache::null_line;
-unsigned long FinalSpectrumCache::length;
-unsigned int FinalSpectrumCache::overlaps;
+CacheLine SpectrumCache::null_line;
+
 
 // AudioSpectrum
 AudioSpectrum::AudioSpectrum(VideoFfmpeg *_provider)
 {
 	provider = _provider;
-	subcachelen = 16;
 	power_scale = 1;
-	int64_t _num_lines = provider->GetNumSamples()+doublelen / doublelen;
-	num_lines = (unsigned long)_num_lines;
+	int64_t num_lines = provider->GetNumSamples()+doublelen / doublelen;
 	numsubcaches = (num_lines + subcachelen)/subcachelen;
-	AudioThreads = new AudioSpectrumMultiThreading(subcachelen, provider);
+	AudioThreads = new AudioSpectrumMultiThreading(provider, &sub_caches);
 	SetupSpectrum();
 	ChangeColours();
 	minband = 0;//Options.GetInt(_T("Audio Spectrum Cutoff"));
-	maxband = line_length - minband * 2/3; // TODO: make this customisable?
-	sub_caches.resize(numsubcaches, 0);
+	maxband = line_length/* - minband * 2/3*/; // TODO: make this customisable?
 }
 
 
 AudioSpectrum::~AudioSpectrum()
 {
 	delete AudioThreads;
-	for (size_t i = 0; i < numsubcaches; ++i){
-		if (sub_caches[i]) delete sub_caches[i];
+	for (size_t i = 0; i < sub_caches.size(); ++i){
+		delete sub_caches[i];
 	}
 }
 
@@ -162,8 +151,8 @@ void AudioSpectrum::SetupSpectrum(int overlaps)
 
 	fft_overlaps = overlaps;
 
-	FinalSpectrumCache::SetLineLength(subcachelen, fft_overlaps);
-	AudioThreads->SetCache(&sub_caches, fft_overlaps);
+	SpectrumCache::SetLineLength(subcachelen);
+	AudioThreads->SetCache(fft_overlaps);
 }
 
 void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool selected, unsigned char *img, int imgleft, int imgwidth, int imgpitch, int imgheight, int parcent)
@@ -176,33 +165,26 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 	if(parc>10){
 		parc=10;
 	}
-	unsigned long first_line = (unsigned long)(parc * range_start / line_length / 2);
-	unsigned long last_line = (unsigned long)(parc * range_end / line_length / 2);
+	unsigned long first_line = (unsigned long)(parc * range_start / doublelen);
+	unsigned long last_line = (unsigned long)(parc * range_end / doublelen);
 	unsigned long startcache = first_line / subcachelen;
 	unsigned long endcache = last_line / subcachelen;
 	if(parc!=fft_overlaps){ 
-		for (size_t i = 0; i < numsubcaches; ++i){
-			if (sub_caches[i]){
-				delete sub_caches[i];
-				sub_caches[i] = NULL;
-			}
+		for (size_t i = 0; i < sub_caches.size(); ++i){
+			sub_caches[i]->start = -1;
 		}
 		SetupSpectrum(parc);
 	}
-	else{
-		for (size_t i = 0; i < numsubcaches; ++i){
-			if (sub_caches[i] && (i < startcache || i> endcache)) {
-				delete sub_caches[i]; 
-				sub_caches[i] = NULL;
-			}
-		}
+	//trzeba napisaæ jeszcze overlapy bo ten kod nie zadzia³a.
+	size_t size = sub_caches.size();
+	size_t neededsize = (endcache - startcache) + AudioThreads->numThreads;
+	if (size < neededsize){
+		sub_caches.resize((neededsize * 3), 0);
+		for (int i = size; i < neededsize * 3; i++)
+			sub_caches[i] = new SpectrumCache();
 	}
 
 	int last_imgcol_rendered = -1;
-
-	unsigned char *palette=colours_normal;
-	
-
 	// Some scaling constants
 	const int maxpower = (1 << (16 - 1))*256;
 
@@ -210,20 +192,21 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 	AudioThreads->CreateCache(startcache, endcache);
 
 	// Note that here "lines" are actually bands of power data
-	unsigned long baseline = first_line / fft_overlaps;
-	unsigned int overlap = first_line % fft_overlaps;
-	//unsigned int j = 0;
-	unsigned int start = baseline / subcachelen;
-	for (unsigned long i = first_line; i <= last_line; ++i) {
+	unsigned long sampleRange = (last_line - first_line + 1);
+	unsigned long subcache = AudioThreads->lastCachePosition;
+	SpectrumCache *cache = sub_caches[subcache];
+	for (unsigned long i = first_line, k = 0; i <= last_line; ++i, ++k) {
 		// Handle horizontal compression and don't unneededly re-render columns
-		int imgcol = imgleft + imgwidth * (i - first_line) / (last_line - first_line + 1);
+		int imgcol = imgleft + imgwidth * k / sampleRange;
 		if (imgcol <= last_imgcol_rendered)
 			continue;
-		size_t subcache = i / subcachelen;
-		baseline = i / fft_overlaps;
-		overlap = i % fft_overlaps;
-			
-		CacheLine &line=sub_caches[subcache]->GetLine(baseline, overlap);
+		//size_t subcache = i / subcachelen;
+		if (i % subcachelen == 0 && k>0){
+			subcache++; 
+			if (subcache >= sub_caches.size()){ subcache = 0; }
+			cache = sub_caches[subcache]; 
+		}
+		CacheLine &line=cache->GetLine(i);
 
 #define WRITE_PIXEL \
 	if (intensity < 0) intensity = 0; \
@@ -233,9 +216,11 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 	img[((imgheight-y-1)*imgpitch+x)*4 + 0] = palette[intensity*3+2];
 
 		// Handle horizontal expansion
-		int next_line_imgcol = imgleft + imgwidth * (i - first_line + 1) / (last_line - first_line + 1);
+		int next_line_imgcol = imgleft + imgwidth * (k + 1) / sampleRange;
 		if (next_line_imgcol >= imgpitch)
 			next_line_imgcol = imgpitch-1;
+
+		//last_imgcol_rendered = next_line_imgcol;
 
 		for (int x = imgcol; x <= next_line_imgcol; ++x) {
 
@@ -245,12 +230,13 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 				// pick the largest value per pixel for display
 				// Iterate over pixels, picking a range of samples for each
 				for (int y = 0; y < imgheight; ++y) {
-					int sample1 = MAX(0,maxband * y/imgheight + minband);
-					int sample2 = MIN(signed(line_length-1),maxband * (y+1)/imgheight + minband);
+					const int &sample1 = std::max(0, maxband * y / imgheight + minband);
+					const int &sample2 = std::min(signed(line_length - 1), maxband * (y + 1) / imgheight + minband);
 					float maxval = 0;
 					for (int samp = sample1; samp <= sample2; samp++) {
 						if (line[samp] > maxval) maxval = line[samp];
 					}
+					//float maxval = *std::max_element(&line[sample1], &line[sample2]);
 					int intensity = int(256 * (maxval * upscale) / maxpower);
 					WRITE_PIXEL
 				}
@@ -263,10 +249,10 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, bool sel
 				// Iterate over pixels, picking the nearest power values
 				for (int y = 0; y < imgheight; ++y) {
 					float ideal = (float)(y+1.)/imgheight * maxband;
-					float sample1 = line[(int)floor(ideal)+minband] * upscale;
-					float sample2 = line[(int)ceil(ideal)+minband] * upscale;
+					float sample1 = line[(int)floor(ideal)+minband]/* * upscale*/;
+					float sample2 = line[(int)ceil(ideal)+minband]/* * upscale*/;
 					float frac = ideal - floor(ideal);
-					int intensity = int(((1-frac)*sample1 + frac*sample2) / maxpower * 256);
+					int intensity = int(((1 - frac)*sample1 + frac*sample2) * upscale / maxpower * 256);
 					WRITE_PIXEL
 				}
 			}
@@ -294,7 +280,7 @@ void AudioSpectrum::ChangeColours()
 		b2=thirdcolor.Blue(), b1=secondcolor.Blue(), b=firstcolor.Blue();
 	
 	// Generate colour maps
-	unsigned char *palptr = colours_normal;
+	unsigned char *palptr = palette;
 	float div = (1.f/128.f);
 	float i = 0;
 	int j = 0;
@@ -315,9 +301,9 @@ void AudioSpectrum::ChangeColours()
 
 }
 
-AudioSpectrumMultiThreading::AudioSpectrumMultiThreading(unsigned long _subcachelen, VideoFfmpeg *provider)
+AudioSpectrumMultiThreading::AudioSpectrumMultiThreading(VideoFfmpeg *provider, std::vector<SpectrumCache*> *_sub_caches)
 {
-	subcachelen = _subcachelen;
+	sub_caches = _sub_caches;
 	sthread = this; 
 	SYSTEM_INFO sysinfo;
 	GetSystemInfo(&sysinfo);
@@ -328,7 +314,6 @@ AudioSpectrumMultiThreading::AudioSpectrumMultiThreading(unsigned long _subcache
 	threads = new HANDLE[numThreads];
 	eventCacheCopleted = new HANDLE[numThreads];
 	eventMakeCache = new HANDLE[numThreads];
-	//int doublelen = line_length * 2;
 	for (int i = 0; i < numThreads; i++){
 		eventCacheCopleted[i] = CreateEvent(0, FALSE, FALSE, 0);
 		eventMakeCache[i] = CreateEvent(0, FALSE, FALSE, 0);
@@ -358,13 +343,41 @@ AudioSpectrumMultiThreading::~AudioSpectrumMultiThreading()
 
 void AudioSpectrumMultiThreading::CreateCache(unsigned long _start, unsigned long _end)
 {
+	if (_start == start && end == _end){ return; }
+	if (_start < end && start < _end){
+		long newPosition = lastCachePosition - (start - _start);
+		size_t subcachessize = sub_caches->size();
+		if (newPosition < 0){ lastCachePosition = newPosition + subcachessize; }
+		else if (newPosition >= subcachessize){ lastCachePosition = newPosition - subcachessize; }
+		else(lastCachePosition = newPosition);
+	}
+	else{
+		FindCache(_start * subcachelen, _end * subcachelen);
+	}
 	start = _start;
 	end = _end;
 	len = ((end - start) / numThreads) + 1;
+	//if ((*sub_caches)[lastCachePosition]->start == _start * subcachelen &&)
 	for (int i = 0; i < numThreads; i++)
 		SetEvent(eventMakeCache[i]);
 
 	WaitForMultipleObjects(numThreads, eventCacheCopleted, TRUE, INFINITE);
+}
+
+void AudioSpectrumMultiThreading::FindCache(unsigned long _start, unsigned long _end)
+{
+	for (size_t i = 0; i < sub_caches->size(); i++){
+		SpectrumCache *cache = (*sub_caches)[i];
+		if (cache->start == _start){
+			lastCachePosition = i;
+			break;
+		}
+		else if (_end == cache->start){
+			long currentstart = i - ((len -1) * numThreads) - 1;
+			lastCachePosition = (currentstart < 0) ? sub_caches->size() + currentstart : currentstart;
+			break;
+		}
+	}
 }
 
 unsigned int __stdcall AudioSpectrumMultiThreading::AudioProc(void* num)
@@ -386,13 +399,19 @@ void AudioSpectrumMultiThreading::AudioPorocessing(int numOfTread)
 		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait) / sizeof(HANDLE), events_to_wait, FALSE, INFINITE);
 		if (wait_result == WAIT_OBJECT_0 + 0){
 			unsigned long threadStart = start + len *numOfTread;
+			unsigned long startcache = lastCachePosition + (len *numOfTread);
 			bool audioSetted = false;
+			size_t sssize = sub_caches->size();
 			for (unsigned long i = threadStart; i < threadStart + len; i++){
-				//if (i > end){ continue; }
-				if ((*sub_caches)[i] == NULL){
-					if (!audioSetted){ SetAudio(i, len - (i - threadStart), &cfft); audioSetted = true; }
-					(*sub_caches)[i] = new FinalSpectrumCache(&cfft, (i/overlaps) * subcachelen);
+				unsigned long currentCache = i * subcachelen;
+				if (startcache >= sssize){
+					startcache -= sssize;
 				}
+				if ((*sub_caches)[startcache]->start != currentCache){
+					if (!audioSetted){ SetAudio(i, len - (i - threadStart), &cfft); audioSetted = true; }
+					(*sub_caches)[startcache]->CreateCache(&cfft, currentCache);
+				}
+				startcache++;
 			}
 			SetEvent(complete);
 		}
@@ -407,10 +426,10 @@ void AudioSpectrumMultiThreading::SetAudio(unsigned long _start, int _len, FFT *
 	if (_len < 1){
 		bool thisisbad = true;
 	}
-	size_t samplestart = ((_start / overlaps) * subcachelen) * doublelen;
-	size_t offset = (doublelen / overlaps) ;
-	size_t sampleend = (((_start + _len - 1) / overlaps) * subcachelen) * doublelen;
-	sampleend += ((overlaps - 1) * offset) + ((subcachelen-1) * doublelen);
+	size_t samplestart = (_start * subcachelen) * doublelen;
+	//size_t offset = (doublelen / overlaps) ;
+	size_t sampleend = ((_start + _len - 1) * subcachelen) * doublelen;
+	sampleend += ((subcachelen-1) * doublelen);
 
 	fft->SetAudio(samplestart, (sampleend - samplestart) + doublelen);
 }

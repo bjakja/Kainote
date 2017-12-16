@@ -42,38 +42,34 @@
 #include "VideoFfmpeg.h"
 
 
-class FinalSpectrumCache;
+class SpectrumCache;
 class AudioSpectrumMultiThreading;
 
 typedef std::vector<float> CacheLine;
+const int subcachelen = 16;
 
 class AudioSpectrum {
 	friend class SpectrumThread;
 private:
 
 	// Colour pallettes
-	unsigned char colours_normal[256*3];
+	unsigned char palette[256 * 3];
 
 	VideoFfmpeg *provider;
-	
-	unsigned long num_lines; // number of lines needed for the audio
 	unsigned int fft_overlaps; // number of overlaps used in FFT
 	float power_scale; // amplification of displayed power
 	int minband; // smallest frequency band displayed
 	int maxband; // largest frequency band displayed
-	int subcachelen;
 	size_t numsubcaches;
 	wxCriticalSection CritSec;
 	void SetupSpectrum(int overlaps = 1);
-	std::vector<FinalSpectrumCache*> sub_caches;
+	std::vector<SpectrumCache*> sub_caches;
 	AudioSpectrumMultiThreading *AudioThreads;
 public:
 	AudioSpectrum(VideoFfmpeg *_provider);
 	~AudioSpectrum();
 	
-
 	void RenderRange(int64_t range_start, int64_t range_end, bool selected, unsigned char *img, int imgleft, int imgwidth, int imgpitch, int imgheight, int percent);
-
 	void SetScaling(float _power_scale);
 	void ChangeColours();
 };
@@ -81,18 +77,20 @@ public:
 class AudioSpectrumMultiThreading
 {
 public:
-	AudioSpectrumMultiThreading(unsigned long _subcachelen, VideoFfmpeg *provider);
+	AudioSpectrumMultiThreading(VideoFfmpeg *provider, std::vector<SpectrumCache*> *_sub_caches);
 	~AudioSpectrumMultiThreading();
-	void SetCache(std::vector<FinalSpectrumCache*> *_sub_caches, unsigned int _overlaps){ sub_caches = _sub_caches; overlaps = _overlaps; }
+	void SetCache(unsigned int _overlaps){overlaps = _overlaps; }
 	void CreateCache(unsigned long _start, unsigned long _end);
+	unsigned long start=0, end=0, lastCachePosition = 0;
+	void FindCache(unsigned long _start, unsigned long _end);
+	int numThreads;
 private:
 	static unsigned int __stdcall AudioProc(void* cls);
 	void AudioPorocessing(int numOfTread);
 	void SetAudio(unsigned long start, int len, FFT *fft);
-	std::vector<FinalSpectrumCache*> *sub_caches;
-	unsigned long start, end, len, subcachelen;
+	std::vector<SpectrumCache*> *sub_caches;
+	unsigned long len;
 	unsigned int overlaps;
-	int numThreads;
 	FFT *ffttable = NULL;
 	HANDLE *threads=NULL;
 	HANDLE *eventCacheCopleted = NULL;
