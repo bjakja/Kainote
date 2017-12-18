@@ -51,7 +51,7 @@ KaiToolbar::~KaiToolbar()
 void KaiToolbar::InitToolbar()
 {
 	wxArrayInt IDS;
-	wxString idnames=Options.GetString(ToolbarIDs);
+	const wxString & idnames= Options.GetString(ToolbarIDs);
 
 	if(idnames!=""){
 		wxStringTokenizer cfgtable(idnames,"|",wxTOKEN_STRTOK);

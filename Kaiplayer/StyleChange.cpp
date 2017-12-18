@@ -70,7 +70,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 	wxBoxSizer *fntsizer=new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *filtersizer=new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *biussizer=new wxBoxSizer(wxHORIZONTAL);
-	wxString fontFilterText = Options.GetString(StyleEditFilterText);
+	const wxString & fontFilterText = Options.GetString(StyleEditFilterText);
 	bool fontFilterOn = Options.GetBool(StyleFilterTextOn);
 	sfont = new KaiChoice(this, ID_FONTNAME, "", wxDefaultPosition, wxDefaultSize, wxArrayString());
 	if (fontFilterText.IsEmpty() || !fontFilterOn){

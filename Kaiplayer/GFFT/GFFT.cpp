@@ -239,7 +239,7 @@ FFT::~FFT(){
 
 void FFT::Set( VideoFfmpeg *_prov){
 	Loki::Factory<AbstractFFT<float>, unsigned int> gfft_factory;
-	FactoryInit<GFFTList<GFFT, doublelen, doublelen + 1, float>::Result>::apply(gfft_factory);
+	FactoryInit<GFFTList<GFFT, doublelen, doublelen + 20, float>::Result>::apply(gfft_factory);
 
 	gfft = gfft_factory.CreateObject(doublelen);
 	prov = _prov;
@@ -264,11 +264,11 @@ void FFT::SetAudio(size_t _from, size_t len)
 
 void FFT::Transform(size_t whre){
 	int64_t start = (whre - from);
-	if (start + doublelen > inputSize && input){
+	if (start + doublelen > inputSize){
 		//SetAudio(start, start + doublelen);
 		assert(false);
 	}
-	//else if (lastend == inputSize){
+	//else if (start + doublelen == inputSize){
 		//bool goodCalculation = true;
 		//wxLogStatus("GoodCalculation %i", (int)inputSize);
 	//}

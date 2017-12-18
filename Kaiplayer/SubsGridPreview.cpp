@@ -157,7 +157,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	const wxColour &ComparisonBGMatch = Options.GetColour(GridComparisonBackgroundMatch);
 	const wxColour &ComparisonBGCmnt = Options.GetColour(GridComparisonCommentBackgroundNotMatch);
 	const wxColour &ComparisonBGCmntMatch = Options.GetColour(GridComparisonCommentBackgroundMatch);
-	wxString chtag = Options.GetString(GridTagsSwapChar);
+	const wxString &chtag = Options.GetString(GridTagsSwapChar);
 	const wxColour &visibleOnVideo = Options.GetColour(GridVisibleOnVideo);
 	bool SpellCheckerOn = Options.GetBool(SpellcheckerOn);
 

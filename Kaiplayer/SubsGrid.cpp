@@ -1243,7 +1243,7 @@ bool SubsGrid::SwapAssProperties()
 void SubsGrid::Filter(int id)
 {
 	SubsGridFiltering filter((SubsGrid*)this, Edit->ebrow);
-	wxString styles = Options.GetString(GridFilterStyles);
+	const wxString & styles = Options.GetString(GridFilterStyles);
 	if (!styles.empty()){
 		int filterBy = Options.GetInt(GridFilterBy);
 		Options.SetInt(GridFilterBy, filterBy | FILTER_BY_STYLES);

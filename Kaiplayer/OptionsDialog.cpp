@@ -331,7 +331,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 				Stylelist=cmb;
 			}
 		}
-		wxString convFPS = Options.GetString(ConvertFPS);
+		const wxString & convFPS = Options.GetString(ConvertFPS);
 		KaiChoice *cmb = new KaiChoice(ConvOpt, -1, convFPS, wxDefaultPosition, wxSize(200,-1), fpsy, wxTE_PROCESS_ENTER);
 		int sel=cmb->FindString(convFPS);
 		if(sel>=0){cmb->SetSelection(sel);}
@@ -587,7 +587,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxArrayString choices;
 		wxArrayString files;
 		wxString pathwn = Options.pathfull + "\\Themes\\";
-		wxString programTheme = Options.GetString(ProgramTheme);
+		const wxString & programTheme = Options.GetString(ProgramTheme);
 		wxDir kat(pathwn);
 		if(kat.IsOpened()){
 			kat.GetAllFiles(pathwn,&files,"*.txt", wxDIR_FILES);
@@ -737,6 +737,7 @@ void OptionsDialog::SetOptions(bool saveall)
 {
 	bool fontmod=false;
 	bool colmod=false;
+	bool audio = false;
 	for(size_t i = 0; i<handles.size(); i++)
 	{
 		OptionsBind OB=handles[i];
@@ -745,6 +746,7 @@ void OptionsDialog::SetOptions(bool saveall)
 			KaiCheckBox *cb=(KaiCheckBox*)OB.ctrl;
 			if(Options.GetBool(OB.option)!=cb->GetValue()){
 				Options.SetBool(OB.option,cb->GetValue());
+				if (OB.option <= AudioWheelDefaultToZoom){ audio = true; }
 				if(OB.option == SpellcheckerOn){
 					for(size_t i = 0; i< Kai->Tabs->Size();i++){
 						Kai->Tabs->Page(i)->Grid->SpellErrors.clear();
@@ -788,6 +790,7 @@ void OptionsDialog::SetOptions(bool saveall)
 					Options.SetInt(OB.option,cbx->GetSelection());
 				}
 			}
+			if (OB.option <= AudioWheelDefaultToZoom){ audio = true; }
 		}else if(OB.ctrl->IsKindOf(CLASSINFO(KaiTextCtrl))){
 
 			if(OB.ctrl->GetId()!=20000){
@@ -806,6 +809,7 @@ void OptionsDialog::SetOptions(bool saveall)
 					Options.SetInt(OB.option,num);
 				}
 			}
+			if (OB.option <= AudioWheelDefaultToZoom){ audio = true; }
 		}else if(OB.ctrl->IsKindOf(CLASSINFO(KaiListCtrl))){
 			KaiListCtrl *list = (KaiListCtrl*)OB.ctrl;
 			if(list->GetModified()){
@@ -841,6 +845,7 @@ void OptionsDialog::SetOptions(bool saveall)
 			if(Kai->Tabs->GetSecondPage()->Edit->ABox){Kai->Tabs->GetSecondPage()->Edit->ABox->audioDisplay->ChangeColours();}
 		}
 	}
+	if (audio && Kai->GetTab()->Edit->ABox){ Kai->GetTab()->Edit->ABox->audioDisplay->ChangeOptions(); }
 	Options.SaveOptions();
 	Options.SaveAudioOpts();
 }
@@ -891,7 +896,7 @@ void OptionsDialog::ChangeColors(){
 		tab->SetBackgroundColour(windowColor);
 		tab->SetForegroundColour(textColor);
 		if(tab->Edit->ABox){
-			tab->Edit->ABox->audioDisplay->ChangeColours();
+			tab->Edit->ABox->audioDisplay->ChangeOptions();
 		}
 		const wxWindowList& siblings = tab->GetChildren();
 		for(auto it = siblings.begin(); it != siblings.end(); it++){

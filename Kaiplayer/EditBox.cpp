@@ -1724,7 +1724,7 @@ void EditBox::SetTagButtons()
 		for(int i=0; i<numTagButtons; i++)
 		{
 			wxArrayString tagOption;
-			Options.GetTable((CONFIG)(i+4000),tagOption,"\f", wxTOKEN_RET_EMPTY_ALL);
+			Options.GetTable((CONFIG)(i + EditboxTagButton1), tagOption, "\f", wxTOKEN_RET_EMPTY_ALL);
 			wxString name;
 			wxString tag;
 			int type = 0;

@@ -540,8 +540,7 @@ void VideoFfmpeg::GetAudio(void *buf, int64_t start, int64_t count)
 void VideoFfmpeg::GetBuffer(void *buf, int64_t start, int64_t count, double volume)
 {
 	if (audioNotInitialized){ return; }
-	wxMutexLocker lock(blockaudio);
-
+	
 	if (start+count > NumSamples) {
 		int64_t oldcount = count;
 		count = NumSamples-start;
@@ -557,6 +556,7 @@ void VideoFfmpeg::GetBuffer(void *buf, int64_t start, int64_t count, double volu
 	if (count) {
 		if(disccache){
 			if(fp){
+				wxMutexLocker lock(blockaudio);
 				_int64 pos = start* BytesPerSample;
 				_fseeki64(fp, pos, SEEK_SET);
 				fread(buf, 1, count* BytesPerSample, fp);

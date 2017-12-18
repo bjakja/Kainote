@@ -217,9 +217,9 @@ void SubsGridBase::Convert(char type)
 	if (Options.GetFloat(ConvertFPS) < 1){ KaiMessageBox(_("Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie.")); return; }
 
 	bool newendtimes = Options.GetBool(ConvertNewEndTimes);
-	wxString stname = Options.GetString(ConvertStyle);
+	const wxString & stname = Options.GetString(ConvertStyle);
 	int endt = Options.GetInt(ConvertTimePerLetter);
-	wxString prefix = Options.GetString(ConvertASSTagsOnLineStart);
+	const wxString & prefix = Options.GetString(ConvertASSTagsOnLineStart);
 
 	int i = 0;
 	File *subs = file->GetSubs();
@@ -259,7 +259,7 @@ void SubsGridBase::Convert(char type)
 		AddSInfo("PlayResX", resx, false);
 		AddSInfo("PlayResY", resy, false);
 		AddSInfo("YCbCr Matrix", "TV.601", false);
-		wxString catalog = Options.GetString(ConvertStyleCatalog);
+		const wxString & catalog = Options.GetString(ConvertStyleCatalog);
 
 		if (Options.dirs.Index(catalog) != -1){ Options.LoadStyles(catalog); }
 		int stind = Options.FindStyle(stname);

@@ -46,7 +46,7 @@ class SpectrumCache;
 class AudioSpectrumMultiThreading;
 
 typedef std::vector<float> CacheLine;
-const int subcachelen = 16;
+
 
 class AudioSpectrum {
 	friend class SpectrumThread;
@@ -56,11 +56,10 @@ private:
 	unsigned char palette[256 * 3];
 
 	VideoFfmpeg *provider;
-	unsigned int fft_overlaps; // number of overlaps used in FFT
+	//unsigned int fft_overlaps; // number of overlaps used in FFT
 	float power_scale; // amplification of displayed power
 	int minband; // smallest frequency band displayed
 	int maxband; // largest frequency band displayed
-	size_t numsubcaches;
 	wxCriticalSection CritSec;
 	void SetupSpectrum(int overlaps = 1);
 	std::vector<SpectrumCache*> sub_caches;
@@ -69,7 +68,7 @@ public:
 	AudioSpectrum(VideoFfmpeg *_provider);
 	~AudioSpectrum();
 	
-	void RenderRange(int64_t range_start, int64_t range_end, bool selected, unsigned char *img, int imgleft, int imgwidth, int imgpitch, int imgheight, int percent);
+	void RenderRange(int64_t range_start, int64_t range_end, unsigned char *img, int imgwidth, int imgpitch, int imgheight, int percent);
 	void SetScaling(float _power_scale);
 	void ChangeColours();
 };
@@ -79,7 +78,7 @@ class AudioSpectrumMultiThreading
 public:
 	AudioSpectrumMultiThreading(VideoFfmpeg *provider, std::vector<SpectrumCache*> *_sub_caches);
 	~AudioSpectrumMultiThreading();
-	void SetCache(unsigned int _overlaps){overlaps = _overlaps; }
+	//void SetCache(unsigned int _overlaps){overlaps = _overlaps; }
 	void CreateCache(unsigned long _start, unsigned long _end);
 	unsigned long start=0, end=0, lastCachePosition = 0;
 	void FindCache(unsigned long _start, unsigned long _end);
@@ -90,7 +89,7 @@ private:
 	void SetAudio(unsigned long start, int len, FFT *fft);
 	std::vector<SpectrumCache*> *sub_caches;
 	unsigned long len;
-	unsigned int overlaps;
+	//unsigned int overlaps;
 	FFT *ffttable = NULL;
 	HANDLE *threads=NULL;
 	HANDLE *eventCacheCopleted = NULL;

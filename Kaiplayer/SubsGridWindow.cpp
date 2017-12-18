@@ -58,7 +58,7 @@ SubsGridWindow::~SubsGridWindow()
 
 void SubsGridWindow::SetStyle()
 {
-	wxString fontname = Options.GetString(GridFontName);
+	const wxString & fontname = Options.GetString(GridFontName);
 	font.SetFaceName(fontname);
 	if (!font.IsOk())
 		font.SetFamily(wxFONTFAMILY_SWISS);
@@ -147,7 +147,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	const wxColour &ComparisonBGMatch = Options.GetColour(GridComparisonBackgroundMatch);
 	const wxColour &ComparisonBGCmnt = Options.GetColour(GridComparisonCommentBackgroundNotMatch);
 	const wxColour &ComparisonBGCmntMatch = Options.GetColour(GridComparisonCommentBackgroundMatch);
-	wxString chtag = Options.GetString(GridTagsSwapChar);
+	const wxString & chtag = Options.GetString(GridTagsSwapChar);
 	const wxColour &visibleOnVideo = Options.GetColour(GridVisibleOnVideo);
 	bool SpellCheckerOn = Options.GetBool(SpellcheckerOn);
 

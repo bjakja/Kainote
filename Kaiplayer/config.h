@@ -19,6 +19,7 @@
 #include <wx/textfile.h>
 #include <wx/tokenzr.h>
 #include <wx/colour.h>
+#include <wx/string.h>
 #include <wx/image.h>
 #include <map>
 #include <vector>
@@ -43,6 +44,7 @@
 #endif
 
 //Pamiêtaj, zmiana ostatniej audio opcji wymaga te¿ zmiany przy szukaniu w zapisie
+//Dont change enumeration config and colors from 1 to last, zero for non exist trash
 #define CFG(CG) \
 	CG(AudioAutoCommit,=1)\
 	CG(AudioAutoFocus,)\
@@ -192,7 +194,7 @@
 	CG(WindowMaximized,)\
 	CG(WindowPosition,)\
 	CG(WindowSize,)\
-	CG(EditboxTagButtons,=3999)\
+	CG(EditboxTagButtons,)\
 	CG(EditboxTagButton1,)\
 	CG(EditboxTagButton2,)\
 	CG(EditboxTagButton3,)\
@@ -203,6 +205,7 @@
 	CG(EditboxTagButton8,)\
 	CG(EditboxTagButton9,)\
 	CG(EditboxTagButton10,)\
+	//if you write here a new enum then change configSize
 	
 DECLARE_ENUM(CONFIG,CFG)
 
@@ -338,10 +341,12 @@ DECLARE_ENUM(COLOR,CLR)
 
 class config
 {
-    private:
-    std::map<CONFIG, wxString> rawcfg;
-	std::map<COLOR, wxColour*> colors;
-   
+private:
+	static const unsigned int configSize = EditboxTagButton10 + 1;
+	wxString stringConfig[configSize];
+	static const unsigned int colorsSize = StylePreviewColor2 + 1;
+	wxColour colors[colorsSize];
+	
 
     public:
 	std::vector<Styles*> assstore;
@@ -352,7 +357,7 @@ class config
 	bool AudioOpts;
 
 
-    wxString GetString(CONFIG opt);
+    const wxString &GetString(CONFIG opt);
     bool GetBool(CONFIG opt);
     const wxColour &GetColour(COLOR opt);
 	AssColor GetColor(COLOR opt);
@@ -371,7 +376,7 @@ class config
 	void SetTable(CONFIG opt, wxArrayString &iopt,wxString split="|");
 	void SetIntTable(CONFIG opt, wxArrayInt &iopt,wxString split="|");
 	void SetCoords(CONFIG opt, int coordx, int coordy);
-    wxString GetRawOptions(bool Audio=false);
+    void GetRawOptions(wxString &options, bool Audio=false);
     void AddStyle(Styles *styl);
     void ChangeStyle(Styles *styl,int i);
     Styles *GetStyle(int i,const wxString &name=_T(""), Styles* styl=NULL);
@@ -383,20 +388,19 @@ class config
     int LoadOptions();
 	void LoadColors(const wxString &themeName="");
 	void LoadDefaultConfig();
-	void LoadDefaultColors(bool dark = true, std::map<COLOR, wxColour*> *table = NULL);
+	void LoadDefaultColors(bool dark = true, wxColour *table = NULL);
 	void LoadDefaultAudioConfig();
 	void LoadMissingColours(const wxString &path);
 	bool LoadAudioOpts();
 	void SaveAudioOpts();
     void SaveOptions(bool cfg=true, bool style=true);
 	void SaveColors(const wxString &path="");
-    void LoadStyles(wxString katalog);
+    void LoadStyles(const wxString &katalog);
     void clearstyles();
-	void ClearColors();
 	void Sortstyles();
 	void SetHexColor(const wxString &nameAndColor);
-	wxString GetStringColor(std::map<COLOR, wxColour*>::iterator it);
-	wxString GetStringColor(COLOR optionName);
+	//wxString GetStringColor(unsigned int);
+	wxString GetStringColor(size_t optionName);
 	wxString GetReleaseDate();
     config();
     ~config();

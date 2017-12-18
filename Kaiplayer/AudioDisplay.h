@@ -124,6 +124,35 @@ private:
 	LPD3DXFONT d3dFont8;
 	LPD3DXFONT d3dFont9;
 	bool deviceLost;
+	//config
+	int selWidth;
+	int shadeType;
+	bool drawVideoPos;
+	bool spectrumOn;
+	bool drawSelectionBackground;
+	bool drawKeyframes;
+	bool drawBoundaryLines;
+
+	D3DCOLOR keyframe;
+	D3DCOLOR background;
+	D3DCOLOR selectionBackgroundModified;
+	D3DCOLOR selectionBackground;
+	D3DCOLOR waveform;
+	D3DCOLOR secondBondariesColor;
+	D3DCOLOR lineStartBondaryColor;
+	D3DCOLOR lineEndBondaryColor;
+	D3DCOLOR syllableBondaresColor;
+	D3DCOLOR syllableTextColor;
+	D3DCOLOR lineBondaryMark;
+	D3DCOLOR AudioCursor;
+	D3DCOLOR waveformInactive;
+	D3DCOLOR boundaryInactiveLine;
+	D3DCOLOR inactiveLinesBackground;
+	D3DCOLOR timescaleBackground;
+	//D3DCOLOR timescale3dLight;
+	D3DCOLOR timescaleText;
+	D3DCOLOR waveformModified;
+	D3DCOLOR waveformSelected;
 
 	void OnPaint(wxPaintEvent &event);
 	void OnMouseEvent(wxMouseEvent &event);
@@ -208,6 +237,7 @@ public:
 	float GetXAtMS(int64_t ms);
 	int GetMSAtSample(int64_t x);
 	int64_t GetSampleAtMS(int64_t ms);
+	void ChangeOptions();
 	void ChangeColours(){
 		if(spectrumRenderer){
 			spectrumRenderer->ChangeColours();

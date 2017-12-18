@@ -499,7 +499,8 @@ void AudioBox::OnNextLineCommit(wxCommandEvent &event) {
 //////////////////////////
 // Spectrum Analyzer Mode
 void AudioBox::OnSpectrumMode(wxCommandEvent &event) {
-	Options.SetBool(AudioSpectrumOn,SpectrumMode->GetValue());
+	audioDisplay->spectrumOn = SpectrumMode->GetValue();
+	Options.SetBool(AudioSpectrumOn, audioDisplay->spectrumOn);
 	Options.SaveAudioOpts();
 	audioDisplay->SetFocus();
 	audioDisplay->UpdateImage();
