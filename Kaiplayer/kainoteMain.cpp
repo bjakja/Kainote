@@ -39,6 +39,7 @@
 #include "FontEnumerator.h"
 #include "SubsResampleDialog.h"
 #include "SpellCheckerDialog.h"
+#include "LanguageToolLoader.h"
 
 #undef IsMaximized
 #if _DEBUG
@@ -227,14 +228,27 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(30000, 30059, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnRecent);
 	Connect(PlayActualLine, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
-		if (!mylog){
+		/*if (!mylog){
 			mylog = new wxLogWindow(this, "Logi", true, false);
 			mylog->PassMessages(true);
-		}
-		else{
+			}
+			else{
 			delete mylog; mylog = NULL;
+			}*/
+		ModuleLoader ml;
+		LanguageToolModule *LTM = ml.GetModule();
+		if (LTM && LTM->init()){
+			wxLogStatus("initialized");
+			
+			if (LTM->setLanguage("Polish")){
+				std::vector <RuleMatch> errors;
+				LTM->checkText("Java to Megachujnia w bialy dzien", errors);
+				for (auto error : errors){
+					wxLogStatus("Java to Megachujnia w bialy dzien");
+					wxLogStatus("error %s", error.message);
+				}
+			}
 		}
-
 	}, 9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
 		TabPanel *tab = GetTab();

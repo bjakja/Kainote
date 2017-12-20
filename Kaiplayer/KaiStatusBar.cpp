@@ -74,7 +74,7 @@ void KaiStatusBar::OnPaint(wxPaintEvent& event)
 	CalcWidths(&widths);
 	int posX = 1;
 	int widthsSize = widths.size();
-	for (size_t i = 0; i < widthsSize; i++){
+	for (int i = 0; i < widthsSize; i++){
 		if(widths[i]>0 && i>0){
 			tdc.SetPen(border);
 			tdc.DrawLine(posX-1, 1, posX-1, h-1);

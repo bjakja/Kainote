@@ -67,7 +67,7 @@ SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, cons
 			int filterBy = Options.GetInt(GridFilterBy);
 			wxString &name = item->label;
 			bool found = false;
-			for (int i = 0; i < filterStyles.size(); i++){
+			for (size_t i = 0; i < filterStyles.size(); i++){
 				if (filterStyles[i] == name){
 					if (!item->check){ filterStyles.RemoveAt(i); }
 					found = true;
@@ -887,7 +887,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 	//wxRegEx drawing("\\\\p([0-9]+)[\\\\}\\)]",wxRE_ADVANCED);
 	wxString tags[] = { "pos", "move", "bord", "shad", "org", "fsp", "fscx", "fs", "clip", "iclip", "p", "xbord", "ybord", "xshad", "yshad" };
 	File *Subs = file->GetSubs();
-	for (int i = 0; i < Subs->dials.size(); i++){
+	for (size_t i = 0; i < Subs->dials.size(); i++){
 		//zaczniemy od najłatwiejszego, marginesy
 
 		Dialogue *diall = Subs->dials[i];

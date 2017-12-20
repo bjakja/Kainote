@@ -154,7 +154,7 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 	File *Subs = tab->Grid->file->GetSubs();
 	bool skipFiltered = !tab->Grid->ignoreFiltered;
 
-	for (int i = 0; i < Subs->dials.size(); i++)
+	for (size_t i = 0; i < Subs->dials.size(); i++)
 	{
 		Dialogue *Dial = Subs->dials[i];
 		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue){ continue; }
