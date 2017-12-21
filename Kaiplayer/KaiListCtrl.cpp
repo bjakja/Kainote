@@ -228,7 +228,8 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, 
 		wxSize textSize = GetTextExtent(list[i]);
 		if (textSize.x > maxwidth){ maxwidth = textSize.x; }
 	}
-	widths[0] = maxwidth + 28;
+	if (numelem)
+		widths[0] = maxwidth + 28;
 }
 
 //textList
@@ -260,7 +261,8 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, co
 		wxSize textSize = GetTextExtent(list[i]);
 		if (textSize.x > maxwidth){ maxwidth = textSize.x; }
 	}
-	widths[0] = maxwidth+10;
+	if (list.size())
+		widths[0] = maxwidth+10;
 }
 
 void KaiListCtrl::SetTextArray(const wxArrayString &Array)
@@ -344,7 +346,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	}
 	int maxWidth = GetMaxWidth();
 	if (widths.size() > 1){ maxWidth += 10; }
-	else if (maxWidth < w - 1){ maxWidth = w - 1; }
+	else if (maxWidth < w - 1){ maxWidth = w - 1; if (widths.size() == 1){ widths[0] = w - 4; } }
 	int bitmapw = w;
 	
 	if(SetScrollBar(wxHORIZONTAL, scPosH, w, maxWidth, w-2)){
@@ -558,11 +560,26 @@ void KaiListCtrl::OnScroll(wxScrollWinEvent& event)
 
 int KaiListCtrl::GetMaxWidth()
 {
+	
 	int maxWidth=0;
 	for(size_t i = 0; i < widths.size(); i++){
+		if (widths[i] == -1){ SetWidth(i); }
 		maxWidth += widths[i];
 	}
 	return maxWidth;
+}
+
+void KaiListCtrl::SetWidth(size_t j)
+{
+	int maxwidth = -1;
+	for (int i = 0; i < itemList->size(); i++){
+		Item * item = (*itemList)[i]->Get(j);
+		if (!item) continue;
+
+		wxSize textSize = GetTextExtent(item->name);
+		if (textSize.x > maxwidth){ maxwidth = textSize.x; }
+	}
+	widths[j] = maxwidth + 28;
 }
 
 void KaiListCtrl::SaveAll(int col)

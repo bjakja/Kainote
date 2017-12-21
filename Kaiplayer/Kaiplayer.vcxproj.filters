@@ -392,12 +392,6 @@
     <ClInclude Include="KaiMessageBox.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="KainoteApp.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="KainoteMain.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
     <ClInclude Include="KaiRadioButton.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
@@ -628,6 +622,12 @@
     </ClInclude>
     <ClInclude Include="VersionKainote.h">
       <Filter>Header Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="KainoteApp.h">
+      <Filter>Header Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="KainoteMain.h">
+      <Filter>Header Files\Windows &amp; Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
