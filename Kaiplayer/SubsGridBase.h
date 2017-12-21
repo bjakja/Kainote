@@ -129,6 +129,7 @@ public:
 	static void RemoveComparison();
 	static wxArrayString compareStyles;
 	static bool hasCompare;
+	int scPos = 0;
 private:
 	virtual void AdjustWidths(int cell = 8191){};
 	virtual void RefreshColumns(int cell = 8191){};
@@ -142,7 +143,7 @@ protected:
 	int panelrows = 0;
 	int lastActiveLine = 0;
 	int lastRow = 0;
-	int scPos = 0;
+	
 	int scHor = 0;
 	int GridHeight = 0;
 	kainoteFrame* Kai;

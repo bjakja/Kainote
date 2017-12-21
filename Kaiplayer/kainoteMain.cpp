@@ -242,9 +242,20 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 			
 			if (LTM->setLanguage("Polish")){
 				std::vector <RuleMatch> errors;
-				wxString text = "Java to Megachujnia w bialy dzien która potrafi doprowadzić do ostateczności";
+				wxString text;
+				File *file = GetTab()->Grid->file->GetSubs();
+				int scPos = GetTab()->Grid->scPos;
+				for (size_t i = scPos; i < file->dials.size(); i++){
+					if (i > scPos+25)
+						break;
+					if (!file->dials[i]->isVisible){
+						continue;
+					}
+					text << file->dials[i]->Text << "\r\n";
+				}
+				text.Replace("\\N", "\r\n");
 				LTM->checkText(text.mb_str(wxConvUTF8).data(), errors);
-				wxLogStatus(text);
+				//wxLogStatus(text);
 				for (auto &error : errors){
 					wxLogStatus("error %s %i %i %s", wxString(error.message, wxConvUTF8), error.FromPos, error.EndPos, text.SubString(error.FromPos, error.EndPos));
 					error.Release();
