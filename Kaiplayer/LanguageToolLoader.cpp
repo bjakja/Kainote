@@ -35,8 +35,10 @@ LanguageToolModule *ModuleLoader::GetModule()
 }
 
 ModuleLoader::~ModuleLoader(){
+	if (LTM)
+		LTM->release();
 	if (hDLL)
 		FreeLibrary(hDLL);
-	if (LTM)
-		delete LTM;
+	//if (LTM)
+		//delete LTM;
 }

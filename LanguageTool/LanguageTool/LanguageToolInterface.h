@@ -16,26 +16,43 @@
 
 #include <list>
 #include <vector>
-#include <wx/string.h>
 using namespace std;
 
 class RuleMatch{
 public:
-	wxString message;
+	char * message;
 	int FromPos;
 	int EndPos;
-	list<wxString> SuggestedReplacements;
+	list<char * > SuggestedReplacements;
 	RuleMatch();
-	RuleMatch(const wxString &mes, int from, int to) : message(mes), FromPos(from), EndPos(to){}
+	RuleMatch(const char * mes, int from, int to) : FromPos(from), EndPos(to){
+		if (mes){
+			size_t meslen = strlen(mes);
+			message = new char[meslen + 1];
+			if (message)
+				strcpy(message, mes);
+		}
+	}
+	void Release(){
+		if (message){ delete[] message; message = NULL; }
+		for (auto suggest : SuggestedReplacements){
+			if (suggest){
+				delete[] suggest;
+				suggest = NULL;
+			}
+		}
+	}
 };
 
 class LanguageToolModule{
 public:
 	LanguageToolModule(){};
 	virtual ~LanguageToolModule(){};
-	virtual void checkText(const wxString &text_to_check, vector<RuleMatch> &result){};
+	virtual void checkText(const char * text_to_check, vector<RuleMatch> &result){};
 	virtual bool init(){ return false; };
-	virtual void getLanguages(vector<wxString> &languages){};
-	virtual bool setLanguage(const wxString &language){ return false; };
+	// delete[] every language
+	virtual void getLanguages(vector<char * > &languages){};
+	virtual bool setLanguage(const char * language){ return false; };
+	virtual void release(){};
 };
 

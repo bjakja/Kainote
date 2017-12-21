@@ -1,4 +1,4 @@
-//  Copyright (c) 2017, £ukasz Gπsowski
+Ôªø//  Copyright (c) 2017, ≈Åukasz GƒÖsowski
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -15,42 +15,41 @@
 
 #include "LanguageTool.h"
 #include "windows.h"
-#include <string.h>
+#include <wchar.h>
 
 
 LanguageTool* LanguageTool::instance = nullptr;
-bool LanguageTool::init(){                     // Pointer to native interface
-	wchar_t path[_MAX_PATH];
-	wchar_t * pch;
-	/*HMODULE phModule = NULL;
-	wchar_t dummyChar;
 
-	if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
-		GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-		(LPCWSTR)&dummyChar,
-		&phModule))
+bool LanguageTool::init(){                     // Pointer to native interface
+	char path[_MAX_PATH];
+	char * pch;
+	char Jpath[_MAX_PATH];
+	GetModuleFileNameA(NULL, path, sizeof(path));
+	pch = path;
+	while (pch != NULL)
 	{
-		cerr << "Cannot get handlename";
-	}*/
-	GetModuleFileNameW(NULL, path, sizeof(path));
-	wxString KainotePath = wxString(path).BeforeLast('\\');
-	KainotePath.Replace("\\", "/");
-	KainotePath.Prepend("-Djava.class.path=");
-	KainotePath += "/LanguageTool/languagetool-facade-4.0-jar-with-dependencies.jar";
+		pch = strstr(pch + 1, "\\");
+		if(pch)
+			*pch = '/';
+	}
+	pch = strrchr(path, '/');
+	if (!pch){ return false; }
+	strcpy(Jpath, "-Djava.class.path=");
+	size_t tmpsize = pch - path;
+	strncpy(&Jpath[18], path, tmpsize);
+	strcpy(&Jpath[tmpsize + 18], "/LanguageTool/languagetool-facade-4.0-jar-with-dependencies.jar\0");
+	
        //================== prepare loading of Java VM ============================
     JavaVMInitArgs vm_args;                        // Initialization arguments
-    JavaVMOption* options = new JavaVMOption[4];   // JVM invocation options
-    //options[0].optionString = "-Djava.class.path=languagetool-master/languagetool-core/target/classes";   // where to find java .class
-
-	strcpy(options[0].optionString, KainotePath.mb_str(wxConvUTF8).data());   // where to find java .class
-    //options[1].optionString = "-verbose:jni";
+    JavaVMOption options;   // JVM invocation options
+	options.optionString = Jpath;   // where to find java .class
+ 
     vm_args.version = JNI_VERSION_1_6;             // minimum Java version
     vm_args.nOptions = 1;                          // number of options
-    vm_args.options = options;
+    vm_args.options = &options;
     vm_args.ignoreUnrecognized = false;     // invalid options make the JVM init fail
        //=============== load and initialize Java VM and JNI interface =============
     jint rc = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);  // YES !!
-    delete options;    // we then no longer need the initialisation options.
     if (rc != JNI_OK) {
           cerr << "ERROR: JNI_OK not ok!";
          return false;
@@ -158,12 +157,10 @@ bool LanguageTool::init(){                     // Pointer to native interface
     return true;
 
 }
-void LanguageTool::checkText(const wxString &text_to_check, vector<RuleMatch> &errors)
+void LanguageTool::checkText(const char * text_to_check, vector<RuleMatch> &errors)
 {
-    jstring text = env->NewStringUTF(text_to_check.c_str());
-    cout << "Start" << endl;
+	jstring text = env->NewStringUTF(text_to_check);
     jobjectArray result = (jobjectArray)env->CallObjectMethod(class_LanguageToolFacade, LanguageToolFacade_checkText,text);
-    cout << "End" << endl;
     jsize len = env->GetArrayLength(result);
     for(int i=0;i<len;i++){
         jobject rule = env->GetObjectArrayElement(result, (jsize)i);
@@ -172,11 +169,16 @@ void LanguageTool::checkText(const wxString &text_to_check, vector<RuleMatch> &e
         jstring s = (jstring) env->GetObjectField( rule, RuleMatch_message);
         jobjectArray r = (jobjectArray) env->CallObjectMethod(env->GetObjectField( rule, RuleMatch_replacements), List_toArray);
         jsize r_len = env->GetArrayLength(r);
-        errors.push_back(RuleMatch(env->GetStringUTFChars(s,0), a, b));
+		errors.push_back(RuleMatch(env->GetStringUTFChars(s, 0), a, b));
 
         for(int j=0; j< r_len;j++){
             jstring s = (jstring) env->GetObjectArrayElement(r, j);
-            errors.at(errors.size()-1).SuggestedReplacements.push_back(env->GetStringUTFChars(s,0));
+			const char * sugg = env->GetStringUTFChars(s, 0);
+			size_t sugglen = strlen(sugg);
+			char * suggest = new char[sugglen+1];
+			if (suggest)
+				strcpy(suggest, sugg);
+			errors.at(errors.size() - 1).SuggestedReplacements.push_back(suggest);
         }
     }
 }
@@ -187,26 +189,33 @@ LanguageTool* LanguageTool::getInstance(){
     return instance;
 }
 
-void LanguageTool::getLanguages(vector<wxString> &languages){
+void LanguageTool::getLanguages(vector<char * > &languages){
 	jobjectArray langs = (jobjectArray)env->CallObjectMethod(class_LanguageToolFacade, LanguageToolFacade_getLanguages);
 	jsize len = env->GetArrayLength(langs);
 	for (int i = 0; i < len; i++){
 		jstring s = (jstring)env->GetObjectArrayElement(langs, i);
-		languages.push_back(env->GetStringUTFChars(s, 0));
+		const char * lang = env->GetStringUTFChars(s, 0);
+		size_t langlen = strlen(lang);
+		char * language = new char[langlen+1];
+		if (language)
+			strcpy(language, lang);
+		languages.push_back(language);
 	}
 }
 
-bool LanguageTool::setLanguage(const wxString &language){
-	jstring lang = env->NewStringUTF(language.c_str());
+bool LanguageTool::setLanguage(const char * language){
+	jstring lang = env->NewStringUTF(language);
 	jboolean result = (jboolean)env->CallStaticBooleanMethod(class_LanguageToolFacade, LanguageToolFacade_setLanguage, lang);
 	return (bool)result;
+}
+
+void LanguageTool::release()
+{
+	delete this;
 }
 
 LanguageTool::~LanguageTool(){
 	if (jvm){
 		jvm->DestroyJavaVM();
-		delete jvm;
 	}
-	if (env)
-		delete env;
 }

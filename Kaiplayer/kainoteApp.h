@@ -51,7 +51,7 @@ public:
 	void OnFatalException();
 	void OnOpen(wxTimerEvent &evt);
 	bool IsBusy();
-	kainoteFrame* Frame;
+	kainoteFrame* Frame = NULL;
 	wxTimer timer;
 	wxArrayString paths;
 private:

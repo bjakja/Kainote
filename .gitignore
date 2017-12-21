@@ -4,6 +4,7 @@ Kainote setup.*
 *.rar
 *.7z
 *.psd
+*.jar
 Trash/
 gitparams.h
 
@@ -35,6 +36,7 @@ bld/
 [Oo]bj/
 Cert/
 Help/
+lib/
 
 # Visual Studio 2015 cache/options directory
 .vs/

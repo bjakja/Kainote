@@ -242,11 +242,14 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 			
 			if (LTM->setLanguage("Polish")){
 				std::vector <RuleMatch> errors;
-				LTM->checkText("Java to Megachujnia w bialy dzien", errors);
-				for (auto error : errors){
-					wxLogStatus("Java to Megachujnia w bialy dzien");
-					wxLogStatus("error %s", error.message);
+				wxString text = "Java to Megachujnia w bialy dzien która potrafi doprowadzić do ostateczności";
+				LTM->checkText(text.mb_str(wxConvUTF8).data(), errors);
+				wxLogStatus(text);
+				for (auto &error : errors){
+					wxLogStatus("error %s %i %i %s", wxString(error.message, wxConvUTF8), error.FromPos, error.EndPos, text.SubString(error.FromPos, error.EndPos));
+					error.Release();
 				}
+				
 			}
 		}
 	}, 9989);
@@ -260,9 +263,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 		}
 	});
 	Connect(SnapWithStart, SnapWithEnd, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
-	SetDropTarget(new DragnDrop(this));
 	Bind(wxEVT_SIZE, &kainoteFrame::OnSize, this);
-
 
 	bool im = Options.GetBool(WindowMaximized);
 	if (im){ Maximize(Options.GetBool(WindowMaximized)); }
@@ -272,6 +273,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	FontEnum.StartListening(this);
 	SetSubsResolution(false);
 	Auto = new Auto::Automation();
+	SetDropTarget(new DragnDrop(this));
 }
 
 kainoteFrame::~kainoteFrame()

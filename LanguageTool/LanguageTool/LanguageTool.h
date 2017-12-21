@@ -45,12 +45,13 @@ class LanguageTool : public LanguageToolModule{
         jfieldID RuleMatch_message, RuleMatch_replacements;
 
     public:
-        /*LanguageTool(LanguageTool const&) = delete;
-        void operator=(LanguageTool const&) = delete;*/
+        LanguageTool(LanguageTool const&) = delete;
+        void operator=(LanguageTool const&) = delete;
         static LanguageTool* getInstance();
-		void checkText(const wxString &text_to_check, vector<RuleMatch> &result);
+		void checkText(const char * text_to_check, vector<RuleMatch> &result);
         bool init();
-		void getLanguages(vector<wxString> &languages);
-		bool setLanguage(const wxString &language);
+		void getLanguages(vector<char *> &languages);
+		bool setLanguage(const char * language);
+		void release();
         ~LanguageTool();
 };
