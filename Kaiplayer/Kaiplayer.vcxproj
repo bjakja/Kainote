@@ -411,6 +411,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="KaiTextValidator.cpp" />
     <ClCompile Include="KaiTreeBook.cpp" />
     <ClCompile Include="LanguageToolLoader.cpp" />
+    <ClCompile Include="LanguageToolSpellchecker.cpp" />
     <ClCompile Include="ListControls.cpp" />
     <ClCompile Include="MappedButton.cpp" />
     <ClCompile Include="Menu.cpp" />
@@ -513,6 +514,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="KaiTextValidator.h" />
     <ClInclude Include="KaiTreebook.h" />
     <ClInclude Include="LanguageToolLoader.h" />
+    <ClInclude Include="LanguageToolSpellchecker.h" />
     <ClInclude Include="ListControls.h" />
     <ClInclude Include="MappedButton.h" />
     <ClInclude Include="Menu.h" />

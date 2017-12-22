@@ -345,6 +345,9 @@
     <ClCompile Include="LanguageToolLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LanguageToolSpellchecker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -634,6 +637,9 @@
     </ClInclude>
     <ClInclude Include="KainoteMain.h">
       <Filter>Header Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="LanguageToolSpellchecker.h">
+      <Filter>Header Files\Utils &amp; Config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
