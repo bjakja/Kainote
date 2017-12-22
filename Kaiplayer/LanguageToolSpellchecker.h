@@ -18,7 +18,16 @@
 #include <wx/string.h>
 #include "LanguageToolLoader.h"
 
+class DialogueErrors{
+public:
+	DialogueErrors();
+	~DialogueErrors();
+	void AppendError(RuleMatch *rule);
+	void Clear();
+};
+
 class SubsGrid;
+class Dialogue;
 
 class LanguageToolSpellchecker{
 public:
@@ -26,11 +35,13 @@ public:
 	~LanguageToolSpellchecker(){};
 	void CheckLines(size_t from, size_t to);
 private:
-	void StripTags();
+	void StripTags(Dialogue *dial);
+	void GenerateErrors(std::vector<RuleMatch> &errors, size_t from, size_t to);
 
 	wxString strippedText;
 	ModuleLoader ml;
 	LanguageToolModule *LTM = NULL;
 	SubsGrid *grid = NULL;
+	bool initializeFailed = false;
 };
 

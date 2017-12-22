@@ -228,41 +228,41 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(30000, 30059, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnRecent);
 	Connect(PlayActualLine, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
-		/*if (!mylog){
+		if (!mylog){
 			mylog = new wxLogWindow(this, "Logi", true, false);
 			mylog->PassMessages(true);
 			}
 			else{
 			delete mylog; mylog = NULL;
-			}*/
-		ModuleLoader ml;
-		LanguageToolModule *LTM = ml.GetModule();
-		if (LTM && LTM->init()){
-			wxLogStatus("initialized");
-			
-			if (LTM->setLanguage("Polish")){
-				std::vector <RuleMatch> errors;
-				wxString text;
-				File *file = GetTab()->Grid->file->GetSubs();
-				int scPos = GetTab()->Grid->scPos;
-				for (size_t i = scPos; i < file->dials.size(); i++){
-					if (i > scPos+25)
-						break;
-					if (!file->dials[i]->isVisible){
-						continue;
-					}
-					text << file->dials[i]->Text << "\r\n";
-				}
-				text.Replace("\\N", "\r\n");
-				LTM->checkText(text.mb_str(wxConvUTF8).data(), errors);
-				//wxLogStatus(text);
-				for (auto &error : errors){
-					wxLogStatus("error %s %i %i %s", wxString(error.message, wxConvUTF8), error.FromPos, error.EndPos, text.SubString(error.FromPos, error.EndPos));
-					error.Release();
-				}
-				
 			}
-		}
+		//ModuleLoader ml;
+		//LanguageToolModule *LTM = ml.GetModule();
+		//if (LTM && LTM->init()){
+		//	wxLogStatus("initialized");
+		//	
+		//	if (LTM->setLanguage("Polish")){
+		//		std::vector <RuleMatch> errors;
+		//		wxString text;
+		//		File *file = GetTab()->Grid->file->GetSubs();
+		//		int scPos = GetTab()->Grid->scPos;
+		//		for (size_t i = scPos; i < file->dials.size(); i++){
+		//			if (i > scPos+25)
+		//				break;
+		//			if (!file->dials[i]->isVisible){
+		//				continue;
+		//			}
+		//			text << file->dials[i]->Text << "\r\n";
+		//		}
+		//		text.Replace("\\N", "\r\n");
+		//		LTM->checkText(text.mb_str(wxConvUTF8).data(), errors);
+		//		//wxLogStatus(text);
+		//		for (auto &error : errors){
+		//			wxLogStatus("error %s %i %i %s", wxString(error.message, wxConvUTF8), error.FromPos, error.EndPos, text.SubString(error.FromPos, error.EndPos));
+		//			error.Release();
+		//		}
+		//		
+		//	}
+		//}
 	}, 9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
 		TabPanel *tab = GetTab();
