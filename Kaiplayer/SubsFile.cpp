@@ -396,9 +396,9 @@ void SubsFile::InsertSelections(int from, int to, bool deselect /*= false*/)
 {
 	if (deselect){ subs->Selections.clear(); }
 	int fromKey = IdConverter->getElementById(from);
-	if (fromKey < 0){ return; }
+	if (fromKey < 0 ){ return; }
 	int toKey = IdConverter->getElementById(to);
-	if (toKey < 0){ toKey = subs->dials.size(); }
+	if (toKey < 0 ){ toKey = subs->dials.size()-1; }
 	for (int i = fromKey; i <= toKey; i++){
 		if (*subs->dials[i]->isVisible){
 			subs->Selections.insert(i);
