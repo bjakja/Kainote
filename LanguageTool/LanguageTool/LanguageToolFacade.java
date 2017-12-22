@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.List;
 import org.languagetool.Language;
 import org.languagetool.Languages;
+import org.languagetool.MultiThreadedJLanguageTool;
 
 
 /**
@@ -32,9 +33,9 @@ import org.languagetool.Languages;
  */
 public class LanguageToolFacade {
 
-  static JLanguageTool langTool;
+  static MultiThreadedJLanguageTool langTool;
   public static boolean setLanguage(String name){
-      langTool = new JLanguageTool(Languages.getLanguageForName(name));
+      langTool = new MultiThreadedJLanguageTool(Languages.getLanguageForName(name));
       return true;
   }
   
@@ -54,9 +55,7 @@ public class LanguageToolFacade {
         array = result.toArray(array);
         return array;
     }
-    else return null;
+    else return new RuleMatch[0];
   }
-  
-  
   
 }
