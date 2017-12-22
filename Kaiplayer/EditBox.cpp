@@ -1404,7 +1404,7 @@ void EditBox::OnColorChange(wxCommandEvent& event)
 void EditBox::OnButtonTag(wxCommandEvent& event)
 {
 	wxString type;
-	wxString tag = Options.GetString((CONFIG)(event.GetId()-11000)).BeforeFirst('\f', &type);
+	wxString tag = Options.GetString((CONFIG)(event.GetId() - 15000 + EditboxTagButton1)).BeforeFirst('\f', &type);
 	if(tag.IsEmpty()){wxBell(); return;}
 	type = type.BeforeFirst('\f');
 
@@ -1506,7 +1506,7 @@ void EditBox::OnEditTag(wxCommandEvent &event)
 			}
 		}
 		wxString svtag = tb->tag;
-		Options.SetString((CONFIG)(id - 11000),svtag<<"\f"<<tb->type<<"\f"<<tb->name);
+		Options.SetString((CONFIG)(id - 15000 + EditboxTagButton1), svtag << "\f" << tb->type << "\f" << tb->name);
 		Options.SaveOptions(true,false);
 		if(tb->tag!=""){tb->SetToolTip(tb->tag);}
 	}
