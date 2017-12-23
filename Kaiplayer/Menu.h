@@ -217,6 +217,7 @@ private:
 
 protected:
 	char wnd;
+	bool isShown = false;
 	MenuDialog *dialog;
 };
 
