@@ -18,12 +18,13 @@
 #include <wx/string.h>
 #include "LanguageToolLoader.h"
 
-class DialogueErrors{
+class Misspells{
 public:
-	DialogueErrors();
-	~DialogueErrors();
+	Misspells();
+	~Misspells();
 	void AppendError(RuleMatch *rule);
 	void Clear();
+	void ClearBlock(std::vector<Misspells*>::iterator);
 };
 
 class SubsGrid;
@@ -36,7 +37,7 @@ public:
 	void CheckLines(size_t from, size_t to);
 private:
 	void StripTags(Dialogue *dial);
-	void GenerateErrors(std::vector<RuleMatch> &errors, size_t from, size_t to);
+	void GenerateErrors(std::vector<RuleMatch*> &errors, size_t from, size_t to, size_t ltstart);
 
 	wxString strippedText;
 	ModuleLoader ml;

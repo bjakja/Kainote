@@ -38,18 +38,20 @@ void LanguageToolSpellchecker::CheckLines(size_t from, size_t to)
 	size_t size = grid->GetCount();
 	size_t ltfrom = (from > 0) ? from-1 : 0;
 	size_t ltto = (to < size-1) ? to + 1 : size-1;
+	size_t ltstart = 0;
 	File *file = grid->file->GetSubs();
 	for (size_t i = ltfrom; i <= ltto; i++){
 		Dialogue *dial = file->dials[i];
 		if (!dial->isVisible){ continue; }
 		StripTags(dial);
+		if (i < from){ ltstart = strippedText.Len(); }
 	}
 	if (strippedText.empty())
 		return;
 
-	std::vector<RuleMatch> errors;
+	std::vector<RuleMatch *> errors;
 	LTM->checkText(strippedText.mb_str(wxConvUTF8).data(), errors);
-	GenerateErrors(errors, from, to);
+	GenerateErrors(errors, from, to, ltstart);
 }
 
 void LanguageToolSpellchecker::StripTags(Dialogue *dial)
@@ -68,35 +70,55 @@ void LanguageToolSpellchecker::StripTags(Dialogue *dial)
 			if (chp1 == 'N' || chp1 == 'n'){ text.replace(i, i + 1, "\r\n"); }
 			else if (chp1 == 'h'){ text.replace(i, i + 1, ""); }
 		}
+		else if (i == len - 1 && !block){
+			if (lastI < 0){ strippedText << text; }
+			else{
+				strippedText << text.SubString(lastI, i);
+			}
+		}
 	}
 	strippedText << "\r\n";
 }
 
-void LanguageToolSpellchecker::GenerateErrors(std::vector<RuleMatch> &errors, size_t from, size_t to)
+void LanguageToolSpellchecker::GenerateErrors(std::vector<RuleMatch*> &errors, size_t from, size_t to, size_t ltstart)
 {
+	// jeszcze trzeba napisaæ synchronizacjê, a póŸniej wywaliæ b³êdy z from-1 ltI trzeba nadaæ pocz¹tek 2 linijki.
 	bool hideTags = grid->hideOverrideTags;
 	size_t swapLen = Options.GetString(GridTagsSwapChar).Len();
 	File *file = grid->file->GetSubs();
-	size_t ltI = 0;
-	size_t ltErrorI = 0;
+	size_t ltI = ltstart;
+	size_t swapI = 0;
+	size_t lineI = 0;
+	while (0 < errors.size()){
+		if (errors[0]->FromPos < ltI){ errors.erase(errors.begin()); }
+		else{ break; }
+	}
 	for (size_t i = from; i <= to; i++){
 		Dialogue *dial = file->dials[i];
 		if (!dial->isVisible){ continue; }
-
 		bool block = false;
 		const wxString &text = dial->Text.CheckTlRef(dial->TextTl, dial->TextTl != "" && grid->hasTLMode);
-		for (size_t i = 0; i < text.Len(); i++)
+		for (size_t j = 0; j < text.Len(); j++)
 		{
-			const wxUniChar &ch = text[i];
-			if (ch == '{'){ block = true; }
+			const wxUniChar &ch = text[j];
+			if (ch == '{'){ swapI += swapLen; block = true; }
 			else if (ch == '}'){ block = false; }
 			else if (!block){
-				RuleMatch & rule = errors[ltErrorI];
-				if (ltI == rule.FromPos){ rule.FromPos = i; }
-				if (ltI == rule.EndPos){ rule.EndPos = i; ltErrorI++; }
+				RuleMatch * rule = errors[0];
+				if (ltI == rule->FromPos){
+					rule->FromPos = (hideTags) ? lineI + swapI : j;
+					//tu jeszcze wstawiæ do tablicy grida;
+				}
+				if (ltI == rule->EndPos){ 
+					rule->EndPos = (hideTags) ? lineI + swapI : j;
+					errors.erase(errors.begin());
+				}
 				ltI++;
+				lineI++;
 			}
 		}
+		swapI = 0;
+		lineI = 0;
 		ltI += 2;
 	}
 }

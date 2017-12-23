@@ -157,7 +157,7 @@ bool LanguageTool::init(){                     // Pointer to native interface
     return true;
 
 }
-void LanguageTool::checkText(const char * text_to_check, vector<RuleMatch> &errors)
+void LanguageTool::checkText(const char * text_to_check, vector<RuleMatch*> &errors)
 {
 	jstring text = env->NewStringUTF(text_to_check);
     jobjectArray result = (jobjectArray)env->CallObjectMethod(class_LanguageToolFacade, LanguageToolFacade_checkText,text);
@@ -169,7 +169,8 @@ void LanguageTool::checkText(const char * text_to_check, vector<RuleMatch> &erro
         jstring s = (jstring) env->GetObjectField( rule, RuleMatch_message);
         jobjectArray r = (jobjectArray) env->CallObjectMethod(env->GetObjectField( rule, RuleMatch_replacements), List_toArray);
         jsize r_len = env->GetArrayLength(r);
-		errors.push_back(RuleMatch(env->GetStringUTFChars(s, 0), a, b));
+		RuleMatch *Rule = new RuleMatch(env->GetStringUTFChars(s, 0), a, b);
+		errors.push_back(Rule);
 
         for(int j=0; j< r_len;j++){
             jstring s = (jstring) env->GetObjectArrayElement(r, j);
@@ -178,7 +179,7 @@ void LanguageTool::checkText(const char * text_to_check, vector<RuleMatch> &erro
 			char * suggest = new char[sugglen+1];
 			if (suggest)
 				strcpy(suggest, sugg);
-			errors.at(errors.size() - 1).SuggestedReplacements.push_back(suggest);
+			Rule->SuggestedReplacements.push_back(suggest);
         }
     }
 }

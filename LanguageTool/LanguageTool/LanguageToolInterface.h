@@ -33,7 +33,7 @@ public:
 				strcpy(message, mes);
 		}
 	}
-	void Release(){
+	~RuleMatch(){
 		if (message){ delete[] message; message = NULL; }
 		for (auto suggest : SuggestedReplacements){
 			if (suggest){
@@ -48,7 +48,7 @@ class LanguageToolModule{
 public:
 	LanguageToolModule(){};
 	virtual ~LanguageToolModule(){};
-	virtual void checkText(const char * text_to_check, vector<RuleMatch> &result){};
+	virtual void checkText(const char * text_to_check, vector<RuleMatch*> &result){};
 	virtual bool init(){ return false; };
 	// delete[] every language
 	virtual void getLanguages(vector<char * > &languages){};
