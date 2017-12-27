@@ -60,7 +60,7 @@ public:
 	KaiChoice* Katlist;
 	MappedButton *okok;
 	void ConOpt(wxWindow *ctrl,CONFIG option);
-
+	static wxString *windowNames;
 private:
 	std::vector<OptionsBind> handles;
 

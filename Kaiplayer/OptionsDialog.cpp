@@ -29,7 +29,6 @@
 #include "KaiStaticText.h"
 #include "OptionsPanels.h"
 
-const wxString windowNames[] = {_("Globalny"),_("Napisy"),_("Edytor"),_("Wideo"),_("Audio")};
 
 void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
 {
@@ -75,7 +74,7 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 				int result = msg.ShowModal();
 				if(result!=wxCANCEL){
 					if(result==wxNO){hotkey="";}
-					int nitem =theList->FindItem(0, windowNames[cur->first.Type] + " " + cur->second.Name);
+					int nitem = theList->FindItem(0, OptionsDialog::windowNames[cur->first.Type] + " " + cur->second.Name);
 					if(nitem>=0){
 						ItemHotkey* item = (ItemHotkey*)theList->CopyRow(nitem, 1);
 						item->accel = hotkey;
@@ -88,11 +87,11 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 
 		if(!itype){return;}
 		if(hotkeyId.Type != hkd.type){
-			int nitem = theList->FindItem(0, windowNames[hkd.type] + " " + name);
+			int nitem = theList->FindItem(0, OptionsDialog::windowNames[hkd.type] + " " + name);
 			if(nitem<0){
 				ItemHotkey* itemcopied = (ItemHotkey*)theList->CopyRow(y, 1, true);
 				ItemText *itemtext = (ItemText*)theList->GetItem(theList->GetCount()-1, 0);
-				itemtext->name = windowNames[hkd.type] + " " + name;
+				itemtext->name = OptionsDialog::windowNames[hkd.type] + " " + name;
 				itemcopied->accel = hkd.hotkey;
 				itemcopied->modified = true;
 				int pos = theList->GetCount();
@@ -146,13 +145,13 @@ void ItemHotkey::Save()
 		modified=false;
 	}
 }
+wxString *OptionsDialog::windowNames = NULL;
 
 OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	: KaiDialog(parent,-1,_("Opcje"))
 {
+	windowNames = new wxString[5]{ _("Globalny"), _("Napisy"), _("Edytor"), _("Wideo"), _("Audio") };
 	OptionsTree= new KaiTreebook(this,-1);
-	//OptionsTree->SetForegroundColour(text);
-	//OptionsTree->SetBackgroundColour(window);
 
 	Kai=kaiparent;
 	Stylelist=NULL;
@@ -163,9 +162,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	SetIcon(icn);
 
 	wxWindow *Main= new wxWindow(OptionsTree,-1);
-	//Main->SetForegroundColour(Options.GetColour(WindowText));
 	wxWindow *Main1= new wxWindow(OptionsTree,-1);
-	//Main->SetForegroundColour(Options.GetColour(WindowText));
 	wxWindow *ConvOpt= new wxWindow(OptionsTree,-1);
 	wxWindow *Hotkeyss= new wxWindow(OptionsTree,-1);
 	wxWindow *AudioMain= new wxWindow(OptionsTree,-1);
@@ -711,6 +708,7 @@ OptionsDialog::~OptionsDialog()
 			if(Kai->GetTab()->Edit->ABox){Kai->GetTab()->Edit->ABox->SetAccels();}
 		}
 	}*/
+	delete[] windowNames;
 	handles.clear();
 }
 
