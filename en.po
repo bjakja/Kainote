@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-12-11 21:32+0100\n"
-"PO-Revision-Date: 2017-12-12 09:27+0100\n"
+"POT-Creation-Date: 2017-12-27 13:47+0100\n"
+"PO-Revision-Date: 2017-12-27 13:48+0100\n"
 "Last-Translator: Bakura, Areki, duplex, Kostek00, Sacredus\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -185,66 +185,66 @@ msgstr "Auto-scroll to the active line"
 msgid "Tryb spektrum"
 msgstr "Spectrum mode"
 
-#: AudioDisplay.cpp:222 VideoRenderer.cpp:107
+#: AudioDisplay.cpp:233 VideoRenderer.cpp:107
 msgid "Nie można utwożyć objektu Direct3D"
 msgstr "Cannot create Direct3D object"
 
-#: AudioDisplay.cpp:249 VideoRenderer.cpp:140
+#: AudioDisplay.cpp:260 VideoRenderer.cpp:140
 msgid "Nie można zresetować Direct3D"
 msgstr "Cannot reset Direct3D"
 
-#: AudioDisplay.cpp:255 VideoRenderer.cpp:146
+#: AudioDisplay.cpp:266 VideoRenderer.cpp:146
 msgid "Nie można utworzyć urządzenia D3D9"
 msgstr "Cannot create D3D9"
 
-#: AudioDisplay.cpp:277 VideoRenderer.cpp:169
+#: AudioDisplay.cpp:288 VideoRenderer.cpp:169
 msgid "Zawiodło któreś z ustawień DirectX"
 msgstr "One of the DirectX settings failed"
 
-#: AudioDisplay.cpp:285
+#: AudioDisplay.cpp:296
 msgid "Nie można ustawić macierzy porojekcji"
 msgstr "Cannot set matrix projection"
 
 # Zły: nie rozumiem
-#: AudioDisplay.cpp:286 VideoRenderer.cpp:178 VisualRotationXY.cpp:149
+#: AudioDisplay.cpp:297 VideoRenderer.cpp:178 VisualRotationXY.cpp:149
 msgid "Nie można ustawić macierzy świata"
 msgstr "Cannot set matrix view"
 
 # Zły: nie rozumiem
-#: AudioDisplay.cpp:287 VideoRenderer.cpp:179 VisualRotationXY.cpp:150
+#: AudioDisplay.cpp:298 VideoRenderer.cpp:179 VisualRotationXY.cpp:150
 msgid "Nie można ustawić macierzy widoku"
 msgstr "Cannot set matrix world"
 
-#: AudioDisplay.cpp:288 VideoRenderer.cpp:222 VideoRenderer.cpp:290
+#: AudioDisplay.cpp:299 VideoRenderer.cpp:222 VideoRenderer.cpp:290
 msgid "Nie można stworzyć powierzchni"
 msgstr "Cannot create surface"
 
-#: AudioDisplay.cpp:290 VideoRenderer.cpp:296
+#: AudioDisplay.cpp:301 VideoRenderer.cpp:296
 msgid "Nie można stworzyć linii D3DX"
 msgstr "Cannot open D3DX line"
 
-#: AudioDisplay.cpp:291 AudioDisplay.cpp:292 AudioDisplay.cpp:293
+#: AudioDisplay.cpp:302 AudioDisplay.cpp:303 AudioDisplay.cpp:304
 #: VideoRenderer.cpp:297
 msgid "Nie można stworzyć czcionki D3DX"
 msgstr "Cannot create D3DX font"
 
-#: AudioDisplay.cpp:295 VideoRenderer.cpp:292
+#: AudioDisplay.cpp:306 VideoRenderer.cpp:292
 msgid "Nie można stworzyć plain surface"
 msgstr "Cannot create plain surface"
 
-#: AudioDisplay.cpp:566
+#: AudioDisplay.cpp:565
 msgid "Zmodyfikowano"
 msgstr "Modified"
 
-#: AudioDisplay.cpp:570
+#: AudioDisplay.cpp:569
 msgid "Czas ujemny"
 msgstr "Negative time"
 
-#: AudioDisplay.cpp:938 VideoRenderer.cpp:482 VideoRenderer.cpp:484
+#: AudioDisplay.cpp:921 VideoRenderer.cpp:482 VideoRenderer.cpp:484
 msgid "Nie można zablokować bufora tekstury"
 msgstr "Cannot lock texture buffer"
 
-#: AudioDisplay.cpp:954
+#: AudioDisplay.cpp:935
 msgid "Nie można nałożyć powierzchni spectrum na siebie"
 msgstr "Cannot blit spectrum surfaces"
 
@@ -276,8 +276,8 @@ msgstr "Macro named '%s' is already defined in the script '%s'"
 msgid "Wystąpił błąd podczas wykonywania skryptu Lua:\n"
 msgstr "An error occurred during the loading of the script Lua:\n"
 
-#: Automation.cpp:1040 Automation.cpp:1082 kainoteMain.cpp:495
-#: kainoteMain.cpp:1836
+#: Automation.cpp:1040 Automation.cpp:1082 kainoteMain.cpp:496
+#: kainoteMain.cpp:1839
 #, c-format
 msgid ""
 "Błąd wczytywania skryptu Lua: %s\n"
@@ -324,9 +324,9 @@ msgid "Błąd automatyzacji"
 msgstr "Automation error"
 
 #: Automation.cpp:1206 Automation.cpp:1277 OptionsDialog.cpp:177
-#: OptionsDialog.cpp:416 VideoFfmpeg.cpp:51 kainoteMain.cpp:491
-#: kainoteMain.cpp:495 kainoteMain.cpp:1530 kainoteMain.cpp:1531
-#: kainoteMain.cpp:1811 kainoteMain.cpp:1832 kainoteMain.cpp:1836
+#: OptionsDialog.cpp:416 VideoFfmpeg.cpp:52 kainoteMain.cpp:492
+#: kainoteMain.cpp:496 kainoteMain.cpp:1533 kainoteMain.cpp:1534
+#: kainoteMain.cpp:1814 kainoteMain.cpp:1835 kainoteMain.cpp:1839
 msgid "Błąd"
 msgstr "Error"
 
@@ -344,7 +344,7 @@ msgid "Odśwież"
 msgstr "Refresh"
 
 #: AutomationProgress.cpp:330 ColorPicker.cpp:582 EditBox.cpp:88
-#: EditBox.cpp:1466 FontDialog.cpp:342 KaiMessageBox.cpp:62 MappedButton.cpp:36
+#: EditBox.cpp:1490 FontDialog.cpp:342 KaiMessageBox.cpp:62 MappedButton.cpp:36
 #: NewCatalog.cpp:42 OptionsDialog.cpp:686 ProgressDialog.cpp:38
 #: ScriptInfo.cpp:113 StyleChange.cpp:250 Stylelistbox.cpp:29
 #: Stylelistbox.cpp:79 SubsFile.cpp:96 SubsGrid.cpp:1119 SubsGrid.cpp:1175
@@ -447,11 +447,11 @@ msgstr "A method of time shift"
 msgid "Obydwa czasy"
 msgstr "Both times"
 
-#: ChangeTime.cpp:117 SubsGrid.cpp:371 SubsGrid.cpp:463 kainoteMain.cpp:125
+#: ChangeTime.cpp:117 SubsGrid.cpp:371 SubsGrid.cpp:463 kainoteMain.cpp:127
 msgid "Czas początkowy"
 msgstr "The starting time"
 
-#: ChangeTime.cpp:118 SubsGrid.cpp:371 SubsGrid.cpp:463 kainoteMain.cpp:126
+#: ChangeTime.cpp:118 SubsGrid.cpp:371 SubsGrid.cpp:463 kainoteMain.cpp:128
 msgid "Czas końcowy"
 msgstr "End time"
 
@@ -802,13 +802,13 @@ msgstr "Comment"
 
 #: EditBox.cpp:259 SelectLines.cpp:63 SubsGrid.cpp:371 SubsGrid.cpp:463
 #: SubsGridWindow.cpp:206 SubsGridWindow.cpp:589 findreplace.cpp:102
-#: kainoteMain.cpp:128
+#: kainoteMain.cpp:130
 msgid "Aktor"
 msgstr "Actor"
 
 #: EditBox.cpp:263 SelectLines.cpp:64 SubsGrid.cpp:371 SubsGrid.cpp:463
 #: SubsGridWindow.cpp:210 SubsGridWindow.cpp:602 findreplace.cpp:103
-#: kainoteMain.cpp:129
+#: kainoteMain.cpp:131
 msgid "Efekt"
 msgstr "Effect"
 
@@ -821,11 +821,11 @@ msgstr "Lines: "
 msgid "Znaki na sekundę: %i<=15"
 msgstr "Characters per second: %i<=15"
 
-#: EditBox.cpp:991
+#: EditBox.cpp:990
 msgid "Położenie tekstu"
 msgstr "Text position"
 
-#: EditBox.cpp:992
+#: EditBox.cpp:991
 msgid ""
 "Tryb tłumaczenia wyświetla i zapisuje zarówno tekst obcojęzyczny, jak i "
 "tekst tłumaczenia"
@@ -833,60 +833,60 @@ msgstr ""
 "Translation mode displays and writes both text foreign language and text "
 "translations."
 
-#: EditBox.cpp:993
+#: EditBox.cpp:992
 msgid "Kopiuje cały tekst obcojęzyczny do pola z tłumaczeniem"
 msgstr ""
 "Copies the entire text of the foreign language to the field of translation."
 
-#: EditBox.cpp:994
+#: EditBox.cpp:993
 msgid "Kopiuje zaznaczony tekst obcojęzyczny do pola z tłumaczeniem"
 msgstr "Copies selected text foreign language to the field of translation."
 
-#: EditBox.cpp:997
+#: EditBox.cpp:996
 msgid "Ustawia linijkę jako komentarz. Komentarze nie są wyświetlane"
 msgstr "Sets the line as a comment. Comments are not shown."
 
-#: EditBox.cpp:998
+#: EditBox.cpp:997
 msgid "Warstwa linijki, wyższe warstwy są na wierzchu"
 msgstr "The layer line. The higher layers are on top."
 
-#: EditBox.cpp:999
+#: EditBox.cpp:998
 msgid "Czas początkowy linijki"
 msgstr "Line start time."
 
-#: EditBox.cpp:1000
+#: EditBox.cpp:999
 msgid "Czas końcowy linijki"
 msgstr "Line end time."
 
-#: EditBox.cpp:1001
+#: EditBox.cpp:1000
 msgid "Czas trwania linijki"
 msgstr "Line duration."
 
-#: EditBox.cpp:1002
+#: EditBox.cpp:1001
 msgid "Styl linijki"
 msgstr "Line style."
 
-#: EditBox.cpp:1003
+#: EditBox.cpp:1002
 msgid "Umożliwia szybką edycję stylu linijki"
 msgstr "You can quickly edit style for current line"
 
-#: EditBox.cpp:1004
+#: EditBox.cpp:1003
 msgid "Oznaczenie aktora linijki. Nie wpływa na wygląd napisów"
 msgstr "Marking actor. It does not affect the appearance of the subtitles."
 
-#: EditBox.cpp:1005
+#: EditBox.cpp:1004
 msgid "Margines lewy linijki"
 msgstr "Left margin line."
 
-#: EditBox.cpp:1006
+#: EditBox.cpp:1005
 msgid "Margines prawy linijki"
 msgstr "Right margin line."
 
-#: EditBox.cpp:1007
+#: EditBox.cpp:1006
 msgid "Margines górny i dolny linijki"
 msgstr "The top and bottom margin line."
 
-#: EditBox.cpp:1008
+#: EditBox.cpp:1007
 msgid ""
 "Efekt linijki. Służy do oznaczania linijek, na których zastosowane ma być "
 "karaoke bądź efekty VSFiltra"
@@ -894,7 +894,7 @@ msgstr ""
 "The line effect. It is used to mark lines, which used to be karaoke or "
 "VSFilter effects."
 
-#: EditBox.cpp:1009
+#: EditBox.cpp:1008
 msgid ""
 "Ilość znaków w każdej linijce.\n"
 "Nie więcej niż 43 znaki na linijkę (maksymalnie 2 linijki)"
@@ -902,7 +902,7 @@ msgstr ""
 "Number of characters in each line.\n"
 "No more than 43 characters per line (maximum 2 lines)."
 
-#: EditBox.cpp:1010
+#: EditBox.cpp:1009
 msgid ""
 "Znaki na sekundę.\n"
 "Nie powinny przekraczać 15 znaków na sekundę"
@@ -910,23 +910,23 @@ msgstr ""
 "Characters per second.\n"
 "Should not exceed 15 characters per second."
 
-#: EditBox.cpp:1460 EditBox.cpp:1750
+#: EditBox.cpp:1484 EditBox.cpp:1774
 msgid "Zmień ilość przycisków"
 msgstr "Change amount of buttons"
 
-#: EditBox.cpp:1693
+#: EditBox.cpp:1717
 msgid "Nie znaleziono niepewnych"
 msgstr "Not confirmed not found"
 
-#: EditBox.cpp:1712
+#: EditBox.cpp:1736
 msgid "Nie znaleziono nieprzetłumaczonych"
 msgstr "Untranslated not found"
 
-#: EditBox.cpp:1752
+#: EditBox.cpp:1776
 msgid "Zarządzaj przyciskami tagów"
 msgstr "Manage tag buttons"
 
-#: FontCollector.cpp:81 SubsGrid.cpp:205 kainoteMain.cpp:185
+#: FontCollector.cpp:81 SubsGrid.cpp:205 kainoteMain.cpp:187
 msgid "Kolekcjoner czcionek"
 msgstr "Fonts collector"
 
@@ -1000,9 +1000,9 @@ msgid "Plik zip już istnieje, usunąć go?"
 msgstr "The zip file already exists, delete it?"
 
 #: FontCollector.cpp:232 SubsGrid.cpp:778 SubsGrid.cpp:1161
-#: SubsGridBase.cpp:561 SubsGridBase.cpp:1328 Videobox.cpp:712 Videobox.cpp:721
-#: findreplace.cpp:585 findreplace.cpp:594 kainoteMain.cpp:796
-#: kainoteMain.cpp:853 kainoteMain.cpp:1497 stylestore.cpp:260
+#: SubsGridBase.cpp:561 SubsGridBase.cpp:1328 Videobox.cpp:714 Videobox.cpp:723
+#: findreplace.cpp:585 findreplace.cpp:594 kainoteMain.cpp:798
+#: kainoteMain.cpp:855 kainoteMain.cpp:1500 stylestore.cpp:260
 #: stylestore.cpp:288 stylestore.cpp:378 stylestore.cpp:503
 msgid "Potwierdzenie"
 msgstr "Confirmation"
@@ -1279,23 +1279,23 @@ msgstr "Exit"
 msgid "Okno zmiany czasów"
 msgstr "Shift times"
 
-#: Hotkeys.cpp:129 kainoteMain.cpp:177
+#: Hotkeys.cpp:129 kainoteMain.cpp:179
 msgid "Konwertuj do ASS"
 msgstr "Convert to ASS"
 
-#: Hotkeys.cpp:130 kainoteMain.cpp:178
+#: Hotkeys.cpp:130 kainoteMain.cpp:180
 msgid "Konwertuj do SRT"
 msgstr "Convert to SRT"
 
-#: Hotkeys.cpp:131 kainoteMain.cpp:179
+#: Hotkeys.cpp:131 kainoteMain.cpp:181
 msgid "Konwertuj do MDVD"
 msgstr "Convert to MDVD"
 
-#: Hotkeys.cpp:132 kainoteMain.cpp:180
+#: Hotkeys.cpp:132 kainoteMain.cpp:182
 msgid "Konwertuj do MPL2"
 msgstr "Convert to MPL2"
 
-#: Hotkeys.cpp:133 kainoteMain.cpp:181
+#: Hotkeys.cpp:133 kainoteMain.cpp:183
 msgid "Konwertuj do TMP"
 msgstr "Convert to TMP"
 
@@ -1303,11 +1303,11 @@ msgstr "Convert to TMP"
 msgid "Menedżer stylów"
 msgstr "Style manager"
 
-#: Hotkeys.cpp:135 kainoteMain.cpp:173
+#: Hotkeys.cpp:135 kainoteMain.cpp:175
 msgid "Włącz / Wyłącz edytor"
 msgstr "Enable / Disable editor"
 
-#: Hotkeys.cpp:136 Videobox.cpp:797 kainoteMain.cpp:139
+#: Hotkeys.cpp:136 Videobox.cpp:799 kainoteMain.cpp:141
 msgid "Otwórz wideo"
 msgstr "Open video"
 
@@ -1320,19 +1320,19 @@ msgstr "Find"
 msgid "Znajdź i zmień"
 msgstr "Find and replace"
 
-#: Hotkeys.cpp:139 kainoteMain.cpp:116
+#: Hotkeys.cpp:139 kainoteMain.cpp:118
 msgid "Cofnij"
 msgstr "Undo"
 
-#: Hotkeys.cpp:140 kainoteMain.cpp:118
+#: Hotkeys.cpp:140 kainoteMain.cpp:120
 msgid "Ponów"
 msgstr "Redo"
 
-#: Hotkeys.cpp:141 SubsFile.cpp:76 SubsFile.cpp:106 kainoteMain.cpp:119
+#: Hotkeys.cpp:141 SubsFile.cpp:76 SubsFile.cpp:106 kainoteMain.cpp:121
 msgid "Historia"
 msgstr "History"
 
-#: Hotkeys.cpp:142 Videobox.cpp:799
+#: Hotkeys.cpp:142 Videobox.cpp:801
 msgid "Otwórz napisy"
 msgstr "Open subtitles"
 
@@ -1352,11 +1352,11 @@ msgstr "Delete text"
 msgid "Usuń linijkę"
 msgstr "Delete line"
 
-#: Hotkeys.cpp:147 kainoteMain.cpp:142
+#: Hotkeys.cpp:147 kainoteMain.cpp:144
 msgid "Wstaw czas początkowy z wideo"
 msgstr "Insert start time from video"
 
-#: Hotkeys.cpp:148 kainoteMain.cpp:143
+#: Hotkeys.cpp:148 kainoteMain.cpp:145
 msgid "Wstaw czas końcowy z wideo"
 msgstr "Insert end time from video"
 
@@ -1372,11 +1372,11 @@ msgstr "Video minus 5 seconds"
 msgid "Wideo plus 5 sekund"
 msgstr "Video plus 5 seconds"
 
-#: Hotkeys.cpp:152 kainoteMain.cpp:144
+#: Hotkeys.cpp:152 kainoteMain.cpp:146
 msgid "Klatka w tył"
 msgstr "Previous frame"
 
-#: Hotkeys.cpp:153 kainoteMain.cpp:145
+#: Hotkeys.cpp:153 kainoteMain.cpp:147
 msgid "Klatka w przód"
 msgstr "Next frame"
 
@@ -1543,7 +1543,7 @@ msgstr "Play"
 msgid "Odtwarzaj zastępcze"
 msgstr "Play alt"
 
-#: Hotkeys.cpp:198 VideoFullscreen.cpp:43 Videobox.cpp:127 Videobox.cpp:765
+#: Hotkeys.cpp:198 VideoFullscreen.cpp:43 Videobox.cpp:127 Videobox.cpp:767
 msgid "Zatrzymaj"
 msgstr "Stop"
 
@@ -1609,7 +1609,7 @@ msgstr ""
 #: Hotkeys.cpp:404 Hotkeys.cpp:450 OptionsDialog.cpp:72 OptionsDialog.cpp:319
 #: SpellCheckerDialog.cpp:129 SubsGrid.cpp:807 SubsGridBase.cpp:542
 #: SubsGridBase.cpp:571 VisualClips.cpp:693 kainoteApp.cpp:114
-#: kainoteApp.cpp:130 kainoteMain.cpp:1283
+#: kainoteApp.cpp:130 kainoteMain.cpp:1286
 msgid "Uwaga"
 msgstr "Warning"
 
@@ -1672,7 +1672,7 @@ msgstr "Paste"
 msgid "Tak dla wszystkich"
 msgstr "Yes to all"
 
-#: KaiMessageBox.cpp:48 MappedButton.cpp:38 kainoteMain.cpp:858
+#: KaiMessageBox.cpp:48 MappedButton.cpp:38 kainoteMain.cpp:860
 msgid "Tak"
 msgstr "Yes"
 
@@ -1811,7 +1811,7 @@ msgstr "Video"
 msgid "Audio"
 msgstr "Audio"
 
-#: OptionsDialog.cpp:177 VideoFfmpeg.cpp:51 kainoteMain.cpp:1531
+#: OptionsDialog.cpp:177 VideoFfmpeg.cpp:52 kainoteMain.cpp:1534
 msgid "Nie można wczytać opcji audio"
 msgstr "Cannot load audio config"
 
@@ -2057,7 +2057,7 @@ msgstr "Function"
 msgid "Skrót"
 msgstr "Hotkey"
 
-#: OptionsDialog.cpp:416 kainoteMain.cpp:1530
+#: OptionsDialog.cpp:416 kainoteMain.cpp:1533
 msgid "Nie można wczytać skrótów klawiszowych audio"
 msgstr "Cannot load audio hotkeys"
 
@@ -2118,8 +2118,8 @@ msgid "Wczytuj audio do pamięci RAM"
 msgstr "Load audio into RAM"
 
 #: OptionsDialog.cpp:496 ScriptInfo.cpp:74 VideoFfmpeg.cpp:899
-#: VideoFfmpeg.cpp:910 kainoteMain.cpp:1033 stylestore.cpp:612
-#: stylestore.cpp:613
+#: VideoFfmpeg.cpp:910 kainoteMain.cpp:1035 stylestore.cpp:617
+#: stylestore.cpp:618
 msgid "Brak"
 msgstr "None"
 
@@ -2667,7 +2667,7 @@ msgstr "Name"
 msgid "Kolor"
 msgstr "Color"
 
-#: OptionsDialog.cpp:672 kainoteMain.cpp:183
+#: OptionsDialog.cpp:672 kainoteMain.cpp:185
 msgid "Konwersja"
 msgstr "Conversion"
 
@@ -2728,7 +2728,7 @@ msgstr "Time elapsed: 00:00:00.00"
 msgid "Upłynęło %s sekund"
 msgstr "Time elapsed: %s"
 
-#: ScriptInfo.cpp:23 kainoteMain.cpp:174
+#: ScriptInfo.cpp:23 kainoteMain.cpp:176
 msgid "Właściwości napisów ASS"
 msgstr "Properties subtitle ASS"
 
@@ -3667,7 +3667,7 @@ msgstr "Load subtitles of MKV file"
 msgid "Tekst do oryginału"
 msgstr "Text into original"
 
-#: SubsGrid.cpp:371 SubsGrid.cpp:463 kainoteMain.cpp:130
+#: SubsGrid.cpp:371 SubsGrid.cpp:463 kainoteMain.cpp:132
 msgid "Warstwa"
 msgstr "Layer"
 
@@ -3683,7 +3683,7 @@ msgstr "Text into translation"
 msgid "Tekst bez tagów"
 msgstr "Text without tags"
 
-#: SubsGrid.cpp:609 Videobox.cpp:925 kainoteMain.cpp:550
+#: SubsGrid.cpp:609 Videobox.cpp:927 kainoteMain.cpp:551
 msgid "Wybierz plik napisów"
 msgstr "Choose subtitle file"
 
@@ -3699,7 +3699,7 @@ msgstr "Save the file before loading the subtitle of MKV?"
 msgid " napisy."
 msgstr " subtitles."
 
-#: SubsGrid.cpp:807 kainoteMain.cpp:883
+#: SubsGrid.cpp:807 kainoteMain.cpp:885
 msgid "Otwieranie napisów nie powiodło się"
 msgstr "Cannot open subtitles"
 
@@ -3743,9 +3743,8 @@ msgid "Wideo nie zostało wczytane przez FFMS2"
 msgstr "Video wasn't loaded using FFMS2"
 
 #: SubsGridBase.cpp:542
-#, fuzzy
-msgid "Nie zaznaczono stylów do przesunięcia"
-msgstr "No styles to shift time"
+msgid "Nie wybrano stylów do przesunięcia"
+msgstr ""
 
 #: SubsGridBase.cpp:560
 #, c-format
@@ -3821,7 +3820,7 @@ msgstr "Invalid format (file may be corrupted or contain errors)"
 msgid "Zmień rozdzielczość"
 msgstr "Change resolution"
 
-#: SubsResampleDialog.cpp:27 kainoteMain.cpp:89
+#: SubsResampleDialog.cpp:27 kainoteMain.cpp:91
 msgid "Rozdzielczość napisów"
 msgstr "Subtitles resolution"
 
@@ -3980,7 +3979,7 @@ msgstr ""
 "will be deleted\n"
 "translation - subtitles you paste into the right timing"
 
-#: TabPanel.cpp:54 kainoteMain.cpp:339
+#: TabPanel.cpp:54 kainoteMain.cpp:340
 msgid "Bez tytułu"
 msgstr "Untitled"
 
@@ -4045,74 +4044,66 @@ msgstr "Cannot find element with id %i"
 msgid "Wybierz ikony paska narzędzi"
 msgstr "Choose toolbar icons"
 
-#: VideoFfmpeg.cpp:57
+#: VideoFfmpeg.cpp:58
 msgid "Indeksowanie pliku wideo"
 msgstr "Indexing video"
 
-#: VideoFfmpeg.cpp:188 VideoFfmpeg.cpp:300
+#: VideoFfmpeg.cpp:189 VideoFfmpeg.cpp:296
 #, c-format
 msgid "Wystąpił błąd indeksowania: %s"
 msgstr "Indexing error occured: %s"
 
-#: VideoFfmpeg.cpp:251
+#: VideoFfmpeg.cpp:252
 msgid "Wybierz ścieżkę"
 msgstr "Choose the track"
 
-#: VideoFfmpeg.cpp:297
+#: VideoFfmpeg.cpp:293
 msgid "Indeksowanie anulowane przez użytkownika"
 msgstr "Indexing canceled by the user"
 
-#: VideoFfmpeg.cpp:313
+#: VideoFfmpeg.cpp:307
 #, c-format
 msgid "Nie można zapisać indeksu, wystąpił błąd %s"
 msgstr "Cannot save index, error %s occured"
 
-#: VideoFfmpeg.cpp:338
+#: VideoFfmpeg.cpp:329
 msgid "Nie można utworzyć VideoSource."
 msgstr "Cannot create VideoSource."
 
-#: VideoFfmpeg.cpp:373
+#: VideoFfmpeg.cpp:363
 msgid "Nie można przekonwertować wideo na RGBA"
 msgstr "Cannot convert video to RGBA"
 
 # Zły: nie rozumiem
-#: VideoFfmpeg.cpp:387
+#: VideoFfmpeg.cpp:377
 msgid "Nie można zmienić macierzy YCbCr"
 msgstr "Cannot change YCbCr matrix"
 
-#: VideoFfmpeg.cpp:396
+#: VideoFfmpeg.cpp:386
 msgid "Nie można pobrać ścieżki wideo"
 msgstr "You cannot load the video track"
 
-#: VideoFfmpeg.cpp:400
+#: VideoFfmpeg.cpp:390
 msgid "Nie można pobrać informacji o wideo"
 msgstr "You cannot get information about the video"
 
-#: VideoFfmpeg.cpp:427
+#: VideoFfmpeg.cpp:417
 #, c-format
 msgid "Wystąpił błąd tworzenia źródła audio: %s"
 msgstr "An error occured when creating audio source: %s"
 
-#: VideoFfmpeg.cpp:436
+#: VideoFfmpeg.cpp:426
 #, c-format
 msgid "Wystąpił błąd konwertowania audio: %s"
 msgstr "An error occured when converting audio: %s"
 
-#: VideoFfmpeg.cpp:450
+#: VideoFfmpeg.cpp:440
 msgid "Nie można ustawić opóźnienia, przekracza czas trwania audio"
 msgstr "Delay failed, it's longer than audio duration time"
 
-#: VideoFfmpeg.cpp:658
-msgid "Zapisywanie do pamięci RAM"
-msgstr "Loading into RAM"
-
-#: VideoFfmpeg.cpp:666
+#: VideoFfmpeg.cpp:678
 msgid "Za mało pamięci RAM"
 msgstr "Not enough RAM"
-
-#: VideoFfmpeg.cpp:746
-msgid "Zapisywanie na dysk twardy"
-msgstr "Saving to hard disk"
 
 #: VideoFullscreen.cpp:40
 msgid "Poprzedni plik wideo"
@@ -4317,105 +4308,105 @@ msgstr "On moving to another line play:"
 msgid "Proporcje ekranu: %5.3f"
 msgstr "Aspect ratio: %5.3f"
 
-#: Videobox.cpp:712
+#: Videobox.cpp:714
 msgid "Czy na pewno chcesz zindeksować poprzednie wideo?"
 msgstr "Are you sure you want to index the previous video?"
 
-#: Videobox.cpp:721
+#: Videobox.cpp:723
 msgid "Czy na pewno chcesz zindeksować następne wideo?"
 msgstr "Are you sure you want to index the next video?"
 
-#: Videobox.cpp:758
+#: Videobox.cpp:760
 msgid "Odtwórz\t"
 msgstr "Play"
 
-#: Videobox.cpp:759
+#: Videobox.cpp:761
 msgid "Pauza\t"
 msgstr "Pause"
 
-#: Videobox.cpp:762
+#: Videobox.cpp:764
 msgid "Kopiuj pozycję na wideo"
 msgstr "Copy video position"
 
-#: Videobox.cpp:767
+#: Videobox.cpp:769
 msgid "Pełny ekran\tF"
 msgstr "Full screen\tF"
 
-#: Videobox.cpp:768
+#: Videobox.cpp:770
 msgid "Wyłącz pełny ekran\tEscape"
 msgstr "Exit full screen\tEscape"
 
-#: Videobox.cpp:775
+#: Videobox.cpp:777
 #, c-format
 msgid "Przełącz pełny ekran na %i monitor"
 msgstr "Switch full screen to monitor %i"
 
-#: Videobox.cpp:776
+#: Videobox.cpp:778
 #, c-format
 msgid "Włącz pełny ekran na %i monitorze"
 msgstr "Open in full screen on monitor %i"
 
-#: Videobox.cpp:780
+#: Videobox.cpp:782
 msgid "Otwórz edytor"
 msgstr "Open editor"
 
-#: Videobox.cpp:795 kainoteMain.cpp:108
+#: Videobox.cpp:797 kainoteMain.cpp:110
 msgid "Ostatnio otwarte napisy"
 msgstr "Recently opened subtitles"
 
-#: Videobox.cpp:796 kainoteMain.cpp:141
+#: Videobox.cpp:798 kainoteMain.cpp:143
 msgid "Ostatnio otwarte wideo"
 msgstr "Recently opened videos"
 
-#: Videobox.cpp:800
+#: Videobox.cpp:802
 msgid "Ukryj / pokaż pasek postępu"
 msgstr "Show / hide progress bar"
 
-#: Videobox.cpp:801
+#: Videobox.cpp:803
 msgid "Zmień proporcje wideo"
 msgstr "Change aspect ratio"
 
-#: Videobox.cpp:802
+#: Videobox.cpp:804
 msgid "Zapisz klatkę z napisami jako PNG"
 msgstr "Save frame with subtitles as PNG"
 
-#: Videobox.cpp:803
+#: Videobox.cpp:805
 msgid "Kopiuj klatkę z napisami do schowka"
 msgstr "Copy frame with subtitles to clipboard"
 
-#: Videobox.cpp:804
+#: Videobox.cpp:806
 msgid "Zapisz klatkę jako PNG"
 msgstr "Save frame as PNG"
 
-#: Videobox.cpp:805
+#: Videobox.cpp:807
 msgid "Kopiuj klatkę do schowka"
 msgstr "Copy frame to clipboard"
 
-#: Videobox.cpp:808
+#: Videobox.cpp:810
 msgid "Usuń plik wideo"
 msgstr "Remove video"
 
-#: Videobox.cpp:821
+#: Videobox.cpp:823
 msgid "Filtry"
 msgstr "Filters"
 
-#: Videobox.cpp:821
+#: Videobox.cpp:823
 msgid "Wyświetla użyte filtry"
 msgstr "Shows used filters"
 
-#: Videobox.cpp:903
+#: Videobox.cpp:905
 msgid "Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"
 msgstr "Are you sure you want to move loaded video to recycle bin?"
 
-#: Videobox.cpp:903
+#: Videobox.cpp:905
 msgid "Usuwanie"
 msgstr "Deleting"
 
-#: Videobox.cpp:912 kainoteMain.cpp:567
+#: Videobox.cpp:914 kainoteMain.cpp:568
 msgid "Wybierz plik wideo"
 msgstr "Choose video file"
 
-#: Videobox.cpp:914
+#: Videobox.cpp:916
 msgid ""
 "Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
 "(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
@@ -4425,11 +4416,11 @@ msgstr ""
 "(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
 "All files (*.*)|*.*"
 
-#: Videobox.cpp:927
+#: Videobox.cpp:929
 msgid "Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 msgstr "Subtitle files (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 
-#: Videobox.cpp:1274
+#: Videobox.cpp:1276
 msgid "Nie można pobrać informacji o monitorze"
 msgstr "Unable to retrieve information about the monitor"
 
@@ -4628,483 +4619,483 @@ msgid ""
 "Działanie programu zostanie zakończone."
 msgstr "Cannot read hotkeys. Program will be terminated."
 
-#: kainoteMain.cpp:51
+#: kainoteMain.cpp:53
 msgid "Bez nazwy - "
 msgstr "Untitled - "
 
-#: kainoteMain.cpp:88
+#: kainoteMain.cpp:90
 msgid "Skala obrazu wideo"
 msgstr "Video scale"
 
-#: kainoteMain.cpp:88
+#: kainoteMain.cpp:90
 msgid "Powiększenie wideo"
 msgstr "Video zoom"
 
-#: kainoteMain.cpp:88
+#: kainoteMain.cpp:90
 msgid "Czas trwania wideo"
 msgstr "Video duration."
 
-#: kainoteMain.cpp:89
+#: kainoteMain.cpp:91
 msgid "FPS"
 msgstr "FPS"
 
-#: kainoteMain.cpp:89
+#: kainoteMain.cpp:91
 msgid "Rozdzielczość wideo"
 msgstr "Video resolution"
 
-#: kainoteMain.cpp:89
+#: kainoteMain.cpp:91
 msgid "Proporcje wideo"
 msgstr "Video aspect ratio"
 
-#: kainoteMain.cpp:89
+#: kainoteMain.cpp:91
 msgid "Nazwa pliku wideo"
 msgstr "Video file name"
 
-#: kainoteMain.cpp:101
+#: kainoteMain.cpp:103
 msgid "&Otwórz napisy"
 msgstr "&Open subtitles"
 
-#: kainoteMain.cpp:101
+#: kainoteMain.cpp:103
 msgid "Otwórz plik napisów"
 msgstr "Open subtitle file"
 
-#: kainoteMain.cpp:102
+#: kainoteMain.cpp:104
 msgid "&Zapisz"
 msgstr "&Save"
 
-#: kainoteMain.cpp:102
+#: kainoteMain.cpp:104
 msgid "Zapisz aktualny plik"
 msgstr "Save current file"
 
-#: kainoteMain.cpp:103
+#: kainoteMain.cpp:105
 msgid "Zapisz &wszystko"
 msgstr "Save all"
 
-#: kainoteMain.cpp:103
+#: kainoteMain.cpp:105
 msgid "Zapisz wszystkie napisy"
 msgstr "Save all subtitles"
 
-#: kainoteMain.cpp:104
+#: kainoteMain.cpp:106
 msgid "Zapisz &jako..."
 msgstr "Save &as..."
 
-#: kainoteMain.cpp:104
+#: kainoteMain.cpp:106
 msgid "Zapisz jako"
 msgstr "Save as"
 
-#: kainoteMain.cpp:105
+#: kainoteMain.cpp:107
 msgid "Zapisz &tłumaczenie"
 msgstr "Save translation"
 
-#: kainoteMain.cpp:105
+#: kainoteMain.cpp:107
 msgid "Zapisz tłumaczenie"
 msgstr "Save translation"
 
-#: kainoteMain.cpp:108
+#: kainoteMain.cpp:110
 msgid "Ostatnio otwa&rte napisy"
 msgstr "Recently opened subtitles"
 
-#: kainoteMain.cpp:109
+#: kainoteMain.cpp:111
 msgid "Usuń napisy z e&dytora"
 msgstr "Remove subtitles from the editor"
 
-#: kainoteMain.cpp:109
+#: kainoteMain.cpp:111
 msgid "Usuń napisy z edytora"
 msgstr "Remove subtitles from the editor"
 
-#: kainoteMain.cpp:110
+#: kainoteMain.cpp:112
 msgid "Pokaż / Ukryj okno logów"
 msgstr "Show / Hide log window"
 
-#: kainoteMain.cpp:111
+#: kainoteMain.cpp:113
 msgid "&Ustawienia"
 msgstr "&Settings"
 
-#: kainoteMain.cpp:111
+#: kainoteMain.cpp:113
 msgid "Ustawienia programu"
 msgstr "Program settings"
 
 # Nie zapomnij o wstawianiu \t bo to jest konieczne, by u skróty wyświetlały się po prawej stronie, poza tym & to litera podkreślona gdy wciśniesz alt więc jeśli znasz się na tyle to możesz własne pododawać, ale tam gdzie nie ma & lepiej tego nie rób, bo tam zapewne jest opis, który wyświetla się na statusie.
-#: kainoteMain.cpp:112
+#: kainoteMain.cpp:114
 msgid "Wyjści&e\tAlt-F4"
 msgstr "&Exit\tAlt-F4"
 
-#: kainoteMain.cpp:112
+#: kainoteMain.cpp:114
 msgid "Zakończ działanie programu"
 msgstr "Exit the program"
 
-#: kainoteMain.cpp:113
+#: kainoteMain.cpp:115
 msgid "&Plik"
 msgstr "&File"
 
-#: kainoteMain.cpp:116
+#: kainoteMain.cpp:118
 msgid "&Cofnij"
 msgstr "&Undo"
 
-#: kainoteMain.cpp:117
+#: kainoteMain.cpp:119
 msgid "Cofnij do ostatniego zapisu"
 msgstr "Undo to last save"
 
-#: kainoteMain.cpp:118
+#: kainoteMain.cpp:120
 msgid "&Ponów"
 msgstr "&Redo"
 
-#: kainoteMain.cpp:119
+#: kainoteMain.cpp:121
 msgid "&Historia"
 msgstr "&History"
 
-#: kainoteMain.cpp:120
+#: kainoteMain.cpp:122
 msgid "Znajdź i za&mień"
 msgstr "Find and re&place"
 
-#: kainoteMain.cpp:120
+#: kainoteMain.cpp:122
 msgid "Szuka i podmienia dane frazy tekstu"
 msgstr "Searches for expressions and replaces them"
 
-#: kainoteMain.cpp:121
+#: kainoteMain.cpp:123
 msgid "Z&najdź"
 msgstr "&Find"
 
-#: kainoteMain.cpp:121
+#: kainoteMain.cpp:123
 msgid "Szuka dane frazy tekstu"
 msgstr "Searches for expressions"
 
-#: kainoteMain.cpp:125
+#: kainoteMain.cpp:127
 msgid "Sortuj według czasu początkowego"
 msgstr "Sort by start time"
 
-#: kainoteMain.cpp:126
+#: kainoteMain.cpp:128
 msgid "Sortuj według czasu końcowego"
 msgstr "Sort by end time"
 
-#: kainoteMain.cpp:127
+#: kainoteMain.cpp:129
 msgid "Style"
 msgstr "Styles"
 
-#: kainoteMain.cpp:127
+#: kainoteMain.cpp:129
 msgid "Sortuj według styli"
 msgstr "Sort by styles"
 
-#: kainoteMain.cpp:128
+#: kainoteMain.cpp:130
 msgid "Sortuj według aktora"
 msgstr "Sort by actor"
 
-#: kainoteMain.cpp:129
+#: kainoteMain.cpp:131
 msgid "Sortuj według efektu"
 msgstr "Sort by effect"
 
-#: kainoteMain.cpp:130
+#: kainoteMain.cpp:132
 msgid "Sortuj według warstwy"
 msgstr "Sort by layer"
 
-#: kainoteMain.cpp:133
+#: kainoteMain.cpp:135
 msgid "Sort&uj wszystkie linie"
 msgstr "So&rt all lines"
 
-#: kainoteMain.cpp:133
+#: kainoteMain.cpp:135
 msgid "Sortuje wszystkie linie napisów ASS"
 msgstr "Sorts all lines in ASS file"
 
-#: kainoteMain.cpp:134
+#: kainoteMain.cpp:136
 msgid "Sortu&j zaznaczone linie"
 msgstr "So&rt selected lines"
 
-#: kainoteMain.cpp:134
+#: kainoteMain.cpp:136
 msgid "Sortuje zaznaczone linie napisów ASS"
 msgstr "Sorts selected lines in ASS file"
 
-#: kainoteMain.cpp:135
+#: kainoteMain.cpp:137
 msgid "Zaznacz &linijki"
 msgstr "Select &lines"
 
-#: kainoteMain.cpp:135
+#: kainoteMain.cpp:137
 msgid "Zaznacza linijki wg danej frazy tekstu"
 msgstr "Selects lines by expressions"
 
-#: kainoteMain.cpp:136
+#: kainoteMain.cpp:138
 msgid "&Edycja"
 msgstr "&Edit"
 
-#: kainoteMain.cpp:139
+#: kainoteMain.cpp:141
 msgid "Otwiera wybrane wideo"
 msgstr "Opens video file"
 
-#: kainoteMain.cpp:141
+#: kainoteMain.cpp:143
 msgid "Ostatnio otwarte video"
 msgstr "Recently opened videos"
 
-#: kainoteMain.cpp:142
+#: kainoteMain.cpp:144
 msgid "Wstawia czas początkowy z wideo"
 msgstr "Insert start time from video"
 
-#: kainoteMain.cpp:143
+#: kainoteMain.cpp:145
 msgid "Wstawia czas końcowy z wideo"
 msgstr "Insert end time from video"
 
-#: kainoteMain.cpp:144
+#: kainoteMain.cpp:146
 msgid "Przechodzi o jedną klatkę w tył"
 msgstr "Go to previous frame"
 
-#: kainoteMain.cpp:145
+#: kainoteMain.cpp:147
 msgid "Przechodzi o jedną klatkę w przód"
 msgstr "Go to next frame"
 
-#: kainoteMain.cpp:146
+#: kainoteMain.cpp:148
 msgid "Przejdź do czasu początkowego linii"
 msgstr "Go to start time"
 
-#: kainoteMain.cpp:146
+#: kainoteMain.cpp:148
 msgid "Przechodzi wideo do czasu początkowego linii"
 msgstr "Moves video to start time"
 
-#: kainoteMain.cpp:147
+#: kainoteMain.cpp:149
 msgid "Przejdź do czasu końcowego linii"
 msgstr "Go to end time "
 
-#: kainoteMain.cpp:147
+#: kainoteMain.cpp:149
 msgid "Przechodzi wideo do czasu końcowego linii"
 msgstr "Moves video to end time"
 
-#: kainoteMain.cpp:148
+#: kainoteMain.cpp:150
 msgid "Odtwarzaj / Pauza"
 msgstr "Play / Pause"
 
-#: kainoteMain.cpp:148
+#: kainoteMain.cpp:150
 msgid "Odtwarza lub pauzuje wideo"
 msgstr "Plays / Pauses video"
 
-#: kainoteMain.cpp:149
+#: kainoteMain.cpp:151
 msgid "Przejdź do poprzedniej klatki kluczowej"
 msgstr "Go to previous keyframe"
 
-#: kainoteMain.cpp:150
+#: kainoteMain.cpp:152
 msgid "Przejdź do następnej klatki kluczowej"
 msgstr "Go to next keyframe"
 
-#: kainoteMain.cpp:151
+#: kainoteMain.cpp:153
 msgid "Powiększ wideo"
 msgstr "Zoom  video"
 
-#: kainoteMain.cpp:152
+#: kainoteMain.cpp:154
 msgid "Otwieraj wideo przez FFMS2"
 msgstr "Open video with FFMS2"
 
-#: kainoteMain.cpp:152
+#: kainoteMain.cpp:154
 msgid "Otwiera wideo przez FFMS2, co daje dokładność klatkową"
 msgstr "Opens video with FFMS2 for frame precision"
 
-#: kainoteMain.cpp:154
+#: kainoteMain.cpp:156
 msgid "&Wideo"
 msgstr "&Video"
 
-#: kainoteMain.cpp:157
+#: kainoteMain.cpp:159
 msgid "Otwórz audio"
 msgstr "Open audio"
 
-#: kainoteMain.cpp:157
+#: kainoteMain.cpp:159
 msgid "Otwiera wybrane audio"
 msgstr "Opens audio file"
 
-#: kainoteMain.cpp:160
+#: kainoteMain.cpp:162
 msgid "Ostatnio otwarte audio"
 msgstr "Recently opened audio"
 
-#: kainoteMain.cpp:161
+#: kainoteMain.cpp:163
 msgid "Otwórz audio z wideo"
 msgstr "Open audio from video"
 
-#: kainoteMain.cpp:161
+#: kainoteMain.cpp:163
 msgid "Otwiera audio z wideo"
 msgstr "Opens audio from video"
 
-#: kainoteMain.cpp:162
+#: kainoteMain.cpp:164
 msgid "Zamknij audio"
 msgstr "Close audio"
 
-#: kainoteMain.cpp:162
+#: kainoteMain.cpp:164
 msgid "Zamyka audio"
 msgstr "Closes audio"
 
-#: kainoteMain.cpp:163
+#: kainoteMain.cpp:165
 msgid "A&udio"
 msgstr "A&udio"
 
-#: kainoteMain.cpp:166
+#: kainoteMain.cpp:168
 msgid "Wszystko"
 msgstr "All"
 
-#: kainoteMain.cpp:166
+#: kainoteMain.cpp:168
 msgid "Wszystkie okna są widoczne"
 msgstr "Shows all windows"
 
-#: kainoteMain.cpp:167
+#: kainoteMain.cpp:169
 msgid "Wideo i napisy"
 msgstr "Video and subs"
 
-#: kainoteMain.cpp:167
+#: kainoteMain.cpp:169
 msgid "Widoczne tylko okno wideo i napisów"
 msgstr "Shows only video window and subs window"
 
-#: kainoteMain.cpp:168
+#: kainoteMain.cpp:170
 msgid "Audio i napisy"
 msgstr "Audio and subs"
 
-#: kainoteMain.cpp:168
+#: kainoteMain.cpp:170
 msgid "Widoczne tylko okno audio i napisów"
 msgstr "Shows only audio window and subs window"
 
-#: kainoteMain.cpp:169
+#: kainoteMain.cpp:171
 msgid "Tylko napisy"
 msgstr "Only subtitles"
 
-#: kainoteMain.cpp:169
+#: kainoteMain.cpp:171
 msgid "Widoczne tylko okno napisów"
 msgstr "Shows only subtitles window"
 
-#: kainoteMain.cpp:170
+#: kainoteMain.cpp:172
 msgid "Wido&k"
 msgstr "View"
 
-#: kainoteMain.cpp:173
+#: kainoteMain.cpp:175
 msgid "Włączanie bądź wyłączanie edytora"
 msgstr "Enables / disables editor"
 
-#: kainoteMain.cpp:174
+#: kainoteMain.cpp:176
 msgid "Właściwości ASS"
 msgstr "ASS properties"
 
-#: kainoteMain.cpp:175
+#: kainoteMain.cpp:177
 msgid "&Menedżer stylów"
 msgstr "Style &manager"
 
-#: kainoteMain.cpp:175
+#: kainoteMain.cpp:177
 msgid "Służy do zarządzania stylami ASS"
 msgstr "Is used to manage ASS styles"
 
-#: kainoteMain.cpp:177
+#: kainoteMain.cpp:179
 msgid "Konwertuje do formatu ASS"
 msgstr "Converts to ASS format"
 
-#: kainoteMain.cpp:178
+#: kainoteMain.cpp:180
 msgid "Konwertuje do formatu SRT"
 msgstr "Converts to SRT format"
 
-#: kainoteMain.cpp:179
+#: kainoteMain.cpp:181
 msgid "Konwertuje do formatu microDVD"
 msgstr "Converts to microDVD format"
 
-#: kainoteMain.cpp:180
+#: kainoteMain.cpp:182
 msgid "Konwertuje do formatu MPL2"
 msgstr "Converts to MPL2 format"
 
-#: kainoteMain.cpp:181
+#: kainoteMain.cpp:183
 msgid "Konwertuje do formatu TMPlayer (niezalecene)"
 msgstr "Converts to TMPlayer format (not recommended)"
 
-#: kainoteMain.cpp:183
+#: kainoteMain.cpp:185
 msgid "Konwersja z jednego formatu napisów na inny"
 msgstr "Converts from one format to another"
 
-#: kainoteMain.cpp:184
+#: kainoteMain.cpp:186
 msgid "Okno zmiany &czasów\tCtrl-I"
 msgstr "Shift &times...\tCtrl-I"
 
-#: kainoteMain.cpp:184
+#: kainoteMain.cpp:186
 msgid "Przesuwanie czasów napisów"
 msgstr "Shifts subtitles times"
 
-#: kainoteMain.cpp:186
+#: kainoteMain.cpp:188
 msgid "Zmień rozdzielczość napisów"
 msgstr "Resample subtitles"
 
-#: kainoteMain.cpp:187
+#: kainoteMain.cpp:189
 msgid "Sprawdź poprawność pisowni"
 msgstr "Spell checker"
 
-#: kainoteMain.cpp:188
+#: kainoteMain.cpp:190
 msgid "Ukryj tagi w nawiasach"
 msgstr "Hide tags"
 
-#: kainoteMain.cpp:188
+#: kainoteMain.cpp:190
 msgid "Ukrywa tagi w nawiasach ASS i MDVD"
 msgstr "Hides tags in ASS and MDVD"
 
-#: kainoteMain.cpp:189
+#: kainoteMain.cpp:191
 msgid "&Napisy"
 msgstr "Su&btitles"
 
-#: kainoteMain.cpp:192
+#: kainoteMain.cpp:194
 msgid "Wczytaj skrypt"
 msgstr "Load script"
 
-#: kainoteMain.cpp:193
+#: kainoteMain.cpp:195
 msgid "Odśwież skrypty autoload"
 msgstr "Refresh autoload scripts"
 
-#: kainoteMain.cpp:194
+#: kainoteMain.cpp:196
 msgid "Uruchom ostatnio zaczytany skrypt"
 msgstr "Recent script"
 
-#: kainoteMain.cpp:195
+#: kainoteMain.cpp:197
 msgid "Au&tomatyzacja"
 msgstr "Au&tomation"
 
 # Zły: nawias zostawiam, nie wiem czy jest już wersja angielska
 # A widziałeś aby ktoś ją robił?
-#: kainoteMain.cpp:198
+#: kainoteMain.cpp:200
 msgid "&Pomoc (niekompletna, ale jednak)"
 msgstr "&Help (English version is not yet available)"
 
-#: kainoteMain.cpp:198
+#: kainoteMain.cpp:200
 msgid "Otwiera pomoc w domyślnej przeglądarce"
 msgstr "Opens help in default browser"
 
-#: kainoteMain.cpp:199
+#: kainoteMain.cpp:201
 msgid "&Wątek programu na forum AnimeSub.info"
 msgstr "&Forum thread on animesub.info (Polish)"
 
-#: kainoteMain.cpp:199
+#: kainoteMain.cpp:201
 msgid "Otwiera wątek programu na forum AnimeSub.info"
 msgstr "Opens forum thread on animesub.info (Polish)"
 
-#: kainoteMain.cpp:200
+#: kainoteMain.cpp:202
 msgid "&O programie"
 msgstr "&About"
 
-#: kainoteMain.cpp:200
+#: kainoteMain.cpp:202
 msgid "Wyświetla informacje o programie"
 msgstr "Shows program info"
 
-#: kainoteMain.cpp:201
+#: kainoteMain.cpp:203
 msgid "&Lista osób pomocnych przy tworzeniu programu"
 msgstr "&Credits"
 
-#: kainoteMain.cpp:201
+#: kainoteMain.cpp:203
 msgid "Wyświetla listę osób pomocnych przy tworzeniu programu"
 msgstr "Shows credits"
 
-#: kainoteMain.cpp:202
+#: kainoteMain.cpp:204
 msgid "Pomo&c"
 msgstr "&Help"
 
-#: kainoteMain.cpp:461
+#: kainoteMain.cpp:462
 msgid "Wybierz sktypt"
 msgstr "Choose script"
 
-#: kainoteMain.cpp:463
+#: kainoteMain.cpp:464
 msgid "Pliki skryptów (*.lua),(*.moon)|*.lua;*.moon;"
 msgstr "Script files (*.lua),(*.moon)|*.lua;*.moon;"
 
-#: kainoteMain.cpp:482
+#: kainoteMain.cpp:483
 msgid "Ten plik napisów nie ma dodanych żadnych skryptów"
 msgstr "This subtitles don't have any scripts added"
 
-#: kainoteMain.cpp:491 kainoteMain.cpp:1832
+#: kainoteMain.cpp:492 kainoteMain.cpp:1835
 #, c-format
 msgid "Warunki skryptu Lua '%s' nie zostały spełnione"
 msgstr "Validation Lua script '%s' failed"
 
-#: kainoteMain.cpp:553
+#: kainoteMain.cpp:554
 msgid ""
 "Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*."
 "sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv)|*.mkv"
@@ -5112,7 +5103,7 @@ msgstr ""
 "Subtitle files (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*."
 "sub;*.txt|Video with subtitles (*.mkv)|*.mkv"
 
-#: kainoteMain.cpp:569
+#: kainoteMain.cpp:570
 msgid ""
 "Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
 "(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;"
@@ -5122,7 +5113,7 @@ msgstr ""
 "(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;"
 "*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"
 
-#: kainoteMain.cpp:597
+#: kainoteMain.cpp:598
 #, c-format
 msgid ""
 "Edytor napisów by Bjakja aka Bakura (bjakja7@gmail.com),\n"
@@ -5131,7 +5122,7 @@ msgstr ""
 "Subtitle editor by Bjakja aka Bakura (bjakja7@gmail.com),\n"
 "version %s built %s"
 
-#: kainoteMain.cpp:599
+#: kainoteMain.cpp:600
 msgid ""
 "Ten program to jakby moje zaplecze do nauki C++, więc mogą zdarzyć się różne "
 "błędy.\n"
@@ -5140,11 +5131,11 @@ msgstr ""
 "This program was written while learning C++, so it may contain bugs\n"
 "\n"
 
-#: kainoteMain.cpp:600
+#: kainoteMain.cpp:601
 msgid "Kainote zawiera w sobie części następujących projeków:\n"
 msgstr "Kainote contains parts of:\n"
 
-#: kainoteMain.cpp:602
+#: kainoteMain.cpp:603
 msgid ""
 "Color picker, wymuxowywanie napsów z mkv, audiobox, audio player, "
 "automation\n"
@@ -5153,27 +5144,27 @@ msgstr ""
 "Color picker, muxingout subs from mkv, audiobox, audio player, automation\n"
 "and some other features taken from Aegisub -\n"
 
-#: kainoteMain.cpp:617
+#: kainoteMain.cpp:618
 msgid "Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n"
 msgstr "Graphical help: (buttons, help pictures etc.)\n"
 
-#: kainoteMain.cpp:618
+#: kainoteMain.cpp:619
 msgid "- Archer (pierwsze przyciski do wideo).\n"
 msgstr "- Archer (first video buttons)\n"
 
-#: kainoteMain.cpp:619
+#: kainoteMain.cpp:620
 msgid "- Kostek00 (przyciski do audio i narzędzi wizualnych).\n"
 msgstr "- Kostek00 (audio buttons and visual tools)\n"
 
-#: kainoteMain.cpp:620
+#: kainoteMain.cpp:621
 msgid "- Xandros (nowe przyciski do wideo).\n"
 msgstr "- Xandros (new video buttons)\n"
 
-#: kainoteMain.cpp:621
+#: kainoteMain.cpp:622
 msgid "- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\n"
 msgstr "- Devilkan (menu and toolbar buttons)\n"
 
-#: kainoteMain.cpp:622
+#: kainoteMain.cpp:623
 msgid ""
 "- Areki, duplex (tłumaczenie anglojęzyczne).\n"
 " \n"
@@ -5181,20 +5172,20 @@ msgstr ""
 "- Areki, duplex (English translation)\n"
 " \n"
 
-#: kainoteMain.cpp:623
+#: kainoteMain.cpp:624
 msgid "Testerzy: (mniej i bardziej wprawieni użytkownicy programu)\n"
 msgstr "Testers:\n"
 
-#: kainoteMain.cpp:624
+#: kainoteMain.cpp:625
 msgid ""
 "- Funki27 (pierwszy tester mający spory wpływ na obecne działanie programu\n"
 msgstr "- Funki27 (first tester, Kainote improved a lot thanks to him,\n"
 
-#: kainoteMain.cpp:625
+#: kainoteMain.cpp:626
 msgid "i najbardziej narzekający na wszystko).\n"
 msgstr "complained a lot)\n"
 
-#: kainoteMain.cpp:626
+#: kainoteMain.cpp:627
 msgid ""
 "- Sacredus (chyba pierwszy tłumacz używający trybu tłumaczenia,\n"
 " nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n"
@@ -5202,7 +5193,7 @@ msgstr ""
 "- Sacredus (first translator using translation mode,\n"
 "great help testing Kainote on a slow computer)\n"
 
-#: kainoteMain.cpp:627
+#: kainoteMain.cpp:628
 msgid ""
 "- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój spektrum "
 "audio \n"
@@ -5210,14 +5201,14 @@ msgstr ""
 "- Kostek00 (found many bugs, had really big influance over audio spectrum "
 "development\n"
 
-#: kainoteMain.cpp:628
+#: kainoteMain.cpp:629
 msgid ""
 "i głównego pola tekstowego, stworzył ciemny i jasny motyw, a także część "
 "ikon).\n"
 msgstr ""
 "and main text field, created dark and light theme and part of icons).\n"
 
-#: kainoteMain.cpp:629
+#: kainoteMain.cpp:630
 msgid ""
 "- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia "
 "wytropił już wiele crashy,\n"
@@ -5225,14 +5216,14 @@ msgstr ""
 "- Devilkan (crashhunter, because of his system and habits he made Kainote "
 "crash a lot\n"
 
-#: kainoteMain.cpp:630
+#: kainoteMain.cpp:631
 msgid ""
 "pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych "
 "usprawnień).\n"
 msgstr ""
 "Helped with typesetting tools and came up with many more improvements).\n"
 
-#: kainoteMain.cpp:631
+#: kainoteMain.cpp:632
 msgid ""
 "- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga "
 "w debugowaniu crashy).\n"
@@ -5240,7 +5231,7 @@ msgstr ""
 "- MatiasMovie (found some crashes and sugessted some improvements, helps "
 "with crash debugging).\n"
 
-#: kainoteMain.cpp:632
+#: kainoteMain.cpp:633
 msgid ""
 "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n"
 " \n"
@@ -5248,62 +5239,62 @@ msgstr ""
 "- mas1904 (found some errors and is helping with crash debuging).\n"
 " \n"
 
-#: kainoteMain.cpp:633
+#: kainoteMain.cpp:634
 msgid ""
 "Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n"
 msgstr "Thanks to other Kainote users who reported bugs:\n"
 
-#: kainoteMain.cpp:634
+#: kainoteMain.cpp:635
 msgid "Lista osób pomocnych przy tworzeniu programu"
 msgstr "Credits"
 
-#: kainoteMain.cpp:740
+#: kainoteMain.cpp:741
 msgid "Plik napisów "
 msgstr "Subtitles file "
 
-#: kainoteMain.cpp:751
+#: kainoteMain.cpp:752
 msgid "Zapisz plik napisów"
 msgstr "Save subtitles file"
 
-#: kainoteMain.cpp:795
+#: kainoteMain.cpp:797
 #, c-format
 msgid "Wczytać napisy o nazwie \"%s\"?"
 msgstr "Do you want to load subtitles named %s?"
 
-#: kainoteMain.cpp:844
+#: kainoteMain.cpp:846
 msgid "Skojarzone pliki:\n"
 msgstr "Associated files:\n"
 
-#: kainoteMain.cpp:845
+#: kainoteMain.cpp:847
 msgid "Wideo: "
 msgstr "Video:"
 
-#: kainoteMain.cpp:846
+#: kainoteMain.cpp:848
 msgid "Audio: "
 msgstr "Audio:"
 
-#: kainoteMain.cpp:850
+#: kainoteMain.cpp:852
 msgid "Wideo z folderu:\n"
 msgstr "Video from directory:\n"
 
-#: kainoteMain.cpp:855
+#: kainoteMain.cpp:857
 msgid "Wczytaj skojarzone"
 msgstr "Load associated"
 
-#: kainoteMain.cpp:856
+#: kainoteMain.cpp:858
 msgid "Wczytaj z folderu"
 msgstr "Load from directory"
 
 # Po otwórz musi być spacja, bo zaburzy to działanie recentów.
-#: kainoteMain.cpp:1027
+#: kainoteMain.cpp:1029
 msgid "Otwórz "
 msgstr "Open "
 
-#: kainoteMain.cpp:1079
+#: kainoteMain.cpp:1081
 msgid "Nie można otworzyć folderu"
 msgstr "Cannot open folder"
 
-#: kainoteMain.cpp:1283
+#: kainoteMain.cpp:1286
 msgid ""
 "Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\n"
 "bądź brakuje kodeków czy też splittera"
@@ -5311,44 +5302,44 @@ msgstr ""
 "File isn't a correct video file or is corrupted\n"
 "or codecs or splitter might be missing"
 
-#: kainoteMain.cpp:1492
+#: kainoteMain.cpp:1495
 #, c-format
 msgid "Zapisać napisy o nazwie \"%s\" przed %s?"
 msgstr "Do you want to save subtitles named \"%s\" before %s?"
 
-#: kainoteMain.cpp:1493
+#: kainoteMain.cpp:1496
 msgid "zamknięciem programu"
 msgstr "exiting program"
 
-#: kainoteMain.cpp:1494
+#: kainoteMain.cpp:1497
 msgid "zamknięciem zakładki"
 msgstr "closing tab"
 
-#: kainoteMain.cpp:1495
+#: kainoteMain.cpp:1498
 msgid "wczytaniem nowych napisów"
 msgstr "loading new subtitles"
 
-#: kainoteMain.cpp:1496
+#: kainoteMain.cpp:1499
 msgid "usunięciem napisów"
 msgstr "removing subtitles"
 
-#: kainoteMain.cpp:1535
+#: kainoteMain.cpp:1538
 msgid "Wybierz plik audio"
 msgstr "Choose audio file"
 
-#: kainoteMain.cpp:1538
+#: kainoteMain.cpp:1541
 msgid "Pliki audio i wideo"
 msgstr "Audio and video files"
 
-#: kainoteMain.cpp:1540
+#: kainoteMain.cpp:1543
 msgid "Wszystkie pliki"
 msgstr "All files"
 
-#: kainoteMain.cpp:1787 kainoteMain.cpp:1796
+#: kainoteMain.cpp:1790 kainoteMain.cpp:1799
 msgid "Zabrakło pamięci RAM, usunięto część historii"
 msgstr "Not enough RAM. History partially deleted."
 
-#: kainoteMain.cpp:1811
+#: kainoteMain.cpp:1814
 #, c-format
 msgid "Skrót o nazwie '%s' nie należy do skrypru."
 msgstr "Hotkey \"%s\" it's not script hotkey."
@@ -5441,15 +5432,15 @@ msgid "Pliki napisów ASS(*.ass)|*.ass"
 msgstr "ASS subtitle files(*.ass)|*.ass"
 
 # tekst dodawany przed kopią stylu
-#: stylestore.cpp:533 stylestore.cpp:545
+#: stylestore.cpp:538 stylestore.cpp:550
 msgid "Kopia "
 msgstr "Copy of "
 
-#: stylestore.cpp:557 stylestore.cpp:575
+#: stylestore.cpp:562 stylestore.cpp:580
 msgid "Nowy Styl"
 msgstr "New Style"
 
-#: stylestore.cpp:614
+#: stylestore.cpp:619
 #, c-format
 msgid ""
 "Używane style:\n"
@@ -5462,77 +5453,87 @@ msgstr ""
 "Styles deleted:\n"
 "%s"
 
-#: stylestore.cpp:614
+#: stylestore.cpp:619
 msgid "Status usuniętych stylów"
 msgstr "Status of deleted styles"
 
-#: stylestore.cpp:679
+#: stylestore.cpp:684
 msgid "Linijka testowa stylu"
 msgstr "Testing line"
 
-#: stylestore.cpp:707
+#: stylestore.cpp:712
 msgid "Katalog styli"
 msgstr "Styles catalog"
 
-#: stylestore.cpp:708
+#: stylestore.cpp:713
 msgid "Nowy katalog styli"
 msgstr "New catalog"
 
-#: stylestore.cpp:711
+#: stylestore.cpp:716
 msgid "Utwórz nowy styl magazynu"
 msgstr "Create new style in storage"
 
-#: stylestore.cpp:712
+#: stylestore.cpp:717
 msgid "Kopiuj styl magazynu"
 msgstr "Copy the style in storage"
 
-#: stylestore.cpp:713
+#: stylestore.cpp:718
 msgid "Wczytaj do magazynu styl z pliku ass"
 msgstr "Load style from external ASS file to storage"
 
-#: stylestore.cpp:714
+#: stylestore.cpp:719
 msgid "Usuń styl z magazynu"
 msgstr "Delete style from storage"
 
-#: stylestore.cpp:715
+#: stylestore.cpp:720
 msgid "Sortuj style w magazynie"
 msgstr "Sort styles in storage"
 
-#: stylestore.cpp:716
+#: stylestore.cpp:721
 msgid "Utwórz nowy styl napisów"
 msgstr "Create new style in ASS"
 
-#: stylestore.cpp:717
+#: stylestore.cpp:722
 msgid "Kopiuj styl napisów"
 msgstr "Copy style in ASS"
 
-#: stylestore.cpp:718
+#: stylestore.cpp:723
 msgid "Wczytaj do napisów styl z pliku ass"
 msgstr "Load style from external ASS file"
 
-#: stylestore.cpp:719
+#: stylestore.cpp:724
 msgid "Usuń styl z napisów"
 msgstr "Delete style from ASS"
 
-#: stylestore.cpp:720
+#: stylestore.cpp:725
 msgid "Sortuj style w napisach"
 msgstr "Sort styles in ASS"
 
-#: stylestore.cpp:721
+#: stylestore.cpp:726
 msgid "Dodaj do magazynu styl z napisów"
 msgstr "Copy style from ASS to storage"
 
-#: stylestore.cpp:722
+#: stylestore.cpp:727
 msgid "Dodaj do napisów styl z magazynu"
 msgstr "Copy style from storage to ASS"
 
-#: stylestore.cpp:723
+#: stylestore.cpp:728
 msgid "Oczyść napisy z nieużywanych stylów"
 msgstr "Delete unused ASS styles"
 
-#: stylestore.cpp:783
+#: stylestore.cpp:788
 msgid "Czcionki zaczytane ponownie."
 msgstr "Fonts was reloaded."
+
+#, fuzzy
+#~ msgid "Nie zaznaczono stylów do przesunięcia"
+#~ msgstr "No styles to shift time"
+
+#~ msgid "Zapisywanie do pamięci RAM"
+#~ msgstr "Loading into RAM"
+
+#~ msgid "Zapisywanie na dysk twardy"
+#~ msgstr "Saving to hard disk"
 
 #~ msgid "Pokaż podgląd"
 #~ msgstr "Show subtitles preview"

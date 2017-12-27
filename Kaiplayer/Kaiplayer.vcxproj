@@ -192,7 +192,8 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>$(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)x64\Release\Kainote x64.zip" "C:\Users\Bakura\Dropbox\Kainote x64_1.zip"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
@@ -320,7 +321,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </Link>
     <PostBuildEvent>
       <Command>$(SolutionDir)AutoVersioning "$(ProjectDir)VersionKainote.h"
-$(SolutionDir)AutoSending/Release/AutoSending "$(SolutionDir)x64/Release/Kainote x64.zip" "C:/Users/Bakura/Dropbox/Kainote x64.zip"</Command>
+$(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)x64\Release\Kainote x64.zip" "C:\Users\Bakura\Dropbox\Kainote x64.zip"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
