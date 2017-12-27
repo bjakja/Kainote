@@ -533,7 +533,10 @@ void VideoFfmpeg::GetAudio(void *buf, int64_t start, int64_t count)
 
 	}
 
-	if (FFMS_GetAudio(audiosource, buf, start, count, &errinfo)){ wxLogStatus("error audio" + wxString(errinfo.Buffer)); }
+	if (FFMS_GetAudio(audiosource, buf, start, count, &errinfo)){ 
+		//sprawdzić co z tym kraszem
+		wxLogMessage("error audio" + wxString(errinfo.Buffer)); 
+	}
 
 }
 

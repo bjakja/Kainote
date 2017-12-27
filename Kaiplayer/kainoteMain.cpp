@@ -39,6 +39,8 @@
 #include "FontEnumerator.h"
 #include "SubsResampleDialog.h"
 #include "SpellCheckerDialog.h"
+#include <wx/zipstrm.h>
+#include <wx/wfstream.h>
 
 #undef IsMaximized
 #if _DEBUG
@@ -234,7 +236,6 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 		else{
 			delete mylog; mylog = NULL;
 		}
-
 	}, 9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
 		TabPanel *tab = GetTab();
