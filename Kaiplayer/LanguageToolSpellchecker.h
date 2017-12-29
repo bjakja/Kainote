@@ -20,11 +20,22 @@
 
 class Misspells{
 public:
-	Misspells();
-	~Misspells();
+	Misspells(){};
+	~Misspells(){ Clear(); };
 	void AppendError(RuleMatch *rule);
 	void Clear();
-	void ClearBlock(std::vector<Misspells*>::iterator);
+	void ClearBlock(std::vector<Misspells*> &table, size_t from, size_t to);
+	size_t size() const{
+		return errors.size();
+	}
+	bool empty() const{
+		return isempty;
+	}
+	bool GetMesures(size_t i, const wxString &text, wxDC &dc, wxPoint &retPos);
+	short CPS = -1;
+	bool isempty = true;
+private:
+	std::vector<RuleMatch*> errors;
 };
 
 class SubsGrid;

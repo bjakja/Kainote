@@ -988,7 +988,7 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 void SubsGridBase::DummyUndo(int newIter)
 {
 	file->DummyUndo(newIter);
-	SpellErrors[Edit->ebrow].clear();
+	SpellErrors[Edit->ebrow]->Clear();
 	Edit->SetLine(Edit->ebrow, false, false);
 	RefreshColumns();
 	UpdateUR();
@@ -1031,8 +1031,7 @@ void SubsGridBase::InsertRows(int Row,
 	}
 	if (asKey){ Row = file->IdConverter->getElementByKey(Row); }
 	if (Row >= 0){
-		wxArrayInt emptyarray;
-		SpellErrors.insert(SpellErrors.begin() + Row, RowsTable.size(), emptyarray);
+		SpellErrors.insert(SpellErrors.begin() + Row, RowsTable.size(), 0);
 	}
 	if (AddToDestroy){ file->subs->ddials.insert(file->subs->ddials.end(), RowsTable.begin(), RowsTable.end()); }
 }
@@ -1053,8 +1052,7 @@ void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddTo
 	}
 	if (asKey){ Row = file->IdConverter->getElementByKey(Row); }
 	if (Row >= 0){
-		wxArrayInt emptyarray;
-		SpellErrors.insert(SpellErrors.begin() + Row, NumRows, emptyarray);
+		SpellErrors.insert(SpellErrors.begin() + Row, NumRows, 0);
 	}
 	if (AddToDestroy){ file->subs->ddials.push_back(Dialog); }
 	if (Save){
@@ -1186,7 +1184,7 @@ void SubsGridBase::SwapRows(int frst, int scnd, bool sav)
 	Dialogue *tmp = file->GetDialogue(frst);
 	(*file)[frst] = file->GetDialogue(scnd);
 	(*file)[scnd] = tmp;
-	wxArrayInt tmpspell = SpellErrors[frst];
+	Misspells *tmpspell = SpellErrors[frst];
 	SpellErrors[frst] = SpellErrors[scnd];
 	SpellErrors[scnd] = tmpspell;
 	Refresh(false);
@@ -1433,12 +1431,12 @@ void SubsGridBase::LoadDefault(bool line, bool sav, bool endload)
 
 Dialogue *SubsGridBase::CopyDialogue(int i, bool push)
 {
-	if (push && (int)SpellErrors.size() > i){ SpellErrors[i].Clear(); }
+	if (push && (int)SpellErrors.size() > i){ SpellErrors[i]->Clear(); }
 	return file->CopyDialogue(i, push);
 }
 Dialogue *SubsGridBase::CopyDialogueByKey(int i, bool push)
 {
-	if (push && (int)SpellErrors.size() > i){ SpellErrors[i].Clear(); }
+	if (push && (int)SpellErrors.size() > i){ SpellErrors[i]->Clear(); }
 	return file->CopyDialogueByKey(i, push);
 }
 

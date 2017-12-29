@@ -5,6 +5,7 @@ Kainote setup.*
 *.7z
 *.psd
 *.jar
+*.lst
 Trash/
 gitparams.h
 

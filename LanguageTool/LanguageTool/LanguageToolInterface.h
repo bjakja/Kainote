@@ -20,11 +20,12 @@ using namespace std;
 
 class RuleMatch{
 public:
-	char * message;
+	char * message = NULL;
 	int FromPos;
 	int EndPos;
 	list<char * > SuggestedReplacements;
 	RuleMatch();
+	RuleMatch(const RuleMatch &rm) = delete;
 	RuleMatch(const char * mes, int from, int to) : FromPos(from), EndPos(to){
 		if (mes){
 			size_t meslen = strlen(mes);
@@ -41,6 +42,9 @@ public:
 				suggest = NULL;
 			}
 		}
+	}
+	RuleMatch *Copy(){
+		RuleMatch * rm = new RuleMatch(message, FromPos, EndPos);
 	}
 };
 

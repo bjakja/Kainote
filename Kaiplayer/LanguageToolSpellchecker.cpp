@@ -89,10 +89,13 @@ void LanguageToolSpellchecker::GenerateErrors(std::vector<RuleMatch*> &errors, s
 	size_t ltI = ltstart;
 	size_t swapI = 0;
 	size_t lineI = 0;
+	size_t lastDialI = from;
 	while (0 < errors.size()){
 		if (errors[0]->FromPos < ltI){ errors.erase(errors.begin()); }
 		else{ break; }
 	}
+	if (errors.size() < 1){ return; }
+	RuleMatch * rule = errors[0];
 	for (size_t i = from; i <= to; i++){
 		Dialogue *dial = file->dials[i];
 		if (!dial->isVisible){ continue; }
@@ -104,14 +107,30 @@ void LanguageToolSpellchecker::GenerateErrors(std::vector<RuleMatch*> &errors, s
 			if (ch == '{'){ swapI += swapLen; block = true; }
 			else if (ch == '}'){ block = false; }
 			else if (!block){
-				RuleMatch * rule = errors[0];
+				
 				if (ltI == rule->FromPos){
 					rule->FromPos = (hideTags) ? lineI + swapI : j;
 					//tu jeszcze wstawiæ do tablicy grida;
+					grid->SpellErrors[i]->AppendError(rule);
+					lastDialI = i;
 				}
 				if (ltI == rule->EndPos){ 
+					if (i != lastDialI){
+						//pierwsze to trzeba mo¿e jakoœ zakoñczyæ nieszczêsnego b³êda 
+						//w poprzedniej linii bo na koñcu te¿ mog¹ byæ tagi.
+						//drugie zrobiæ kopiê rule bo orygina³ tkwi w poprzedniej linii.
+						rule = rule->Copy();
+						//trzecie wrzuciæ to do tablicy grida
+						grid->SpellErrors[i]->AppendError(rule);
+						//czwarte trzeba wrzuciæ do kopi jakiœ pocz¹tek, który bêdzie obejmowa³ now¹ liniê
+						//tylko to trzeba chyba sprawdzaæ na koñcu linii by móc wyznaczyæ pocz¹tek od pierwszego znaku któy nei jest tagiem
+					}
 					rule->EndPos = (hideTags) ? lineI + swapI : j;
 					errors.erase(errors.begin());
+					if (errors.size() > 0)
+						rule = errors[0];
+					else
+						return;
 				}
 				ltI++;
 				lineI++;
@@ -121,4 +140,48 @@ void LanguageToolSpellchecker::GenerateErrors(std::vector<RuleMatch*> &errors, s
 		lineI = 0;
 		ltI += 2;
 	}
+}
+
+void Misspells::AppendError(RuleMatch *rule)
+{
+	errors.push_back(rule);
+	isempty = false;
+}
+
+void Misspells::Clear()
+{
+	for (auto it = errors.begin(); it != errors.end(); it++){
+		delete (*it);
+	}
+	errors.clear();
+	isempty = true;
+}
+
+void Misspells::ClearBlock(std::vector<Misspells*> &table, size_t from, size_t to)
+{
+	auto end = table.begin() + (to + 1);
+	for (auto it = table.begin() + from; it != table.end() && it != end; it++){
+		Misspells* ms = *it;
+		if(ms)
+			ms->Clear();
+	}
+}
+
+bool Misspells::GetMesures(size_t i, const wxString &text, wxDC &dc, wxPoint &retPos){
+	if (i >= errors.size())
+		return false;
+	size_t txtLen = text.Len();
+	RuleMatch *rule = errors[i];
+	if (rule->FromPos >= txtLen)
+		return false;
+	int fh;
+	wxString err = text.SubString(rule->FromPos, rule->EndPos);
+	err.Trim();
+	if (rule->FromPos > 0){
+		wxString berr = text.Mid(0, rule->FromPos);
+		dc.GetTextExtent(berr, &retPos.x, NULL);
+	}
+	else{ retPos.x = 0; }
+	dc.GetTextExtent(err, &retPos.y, NULL);
+	return true;
 }

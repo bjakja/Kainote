@@ -22,6 +22,7 @@
 #include "SubsFile.h"
 
 #include "KaiScrollbar.h"
+#include "LanguageToolSpellchecker.h"
 #include <vector>
 #include <set>
 
@@ -118,7 +119,7 @@ public:
 	bool savedSelections = false;
 	bool isFiltered = false;
 	bool ignoreFiltered = false;
-	std::vector<wxArrayInt> SpellErrors;
+	std::vector<Misspells*> SpellErrors;
 	std::vector<compareData> *Comparison;
 	SubsFile* file;
 	EditBox *Edit;

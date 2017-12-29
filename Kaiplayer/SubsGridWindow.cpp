@@ -215,7 +215,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			kol = header;
 		}
 		else{
-			
+			if (!SpellErrors[k]){ SpellErrors[k] = new Misspells(); }
 			strings.push_back(wxString::Format("%i", k+1));
 
 			isComment = Dial->IsComment;
@@ -256,20 +256,19 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 			if (subsFormat != TMP && !(CNZ & visibleColumns)){
 				int chtime;
-				if (SpellErrors[k].size()<1){
+				if (SpellErrors[k]->CPS<0){
 					chtime = CalcChars((hasTLMode && txttl != "") ? txttl : txt) / 
 						((Dial->End.mstime - Dial->Start.mstime) / 1000.0f);
 					if (chtime<0 || chtime>999){ chtime = 999; }
-					SpellErrors[k].push_back(chtime);
-
+					SpellErrors[k]->CPS = chtime;
 				}
-				else{ chtime = SpellErrors[k][0]; }
+				else{ chtime = SpellErrors[k]->CPS; }
 				strings.push_back(wxString::Format("%i", chtime));
 				shorttime = chtime>15;
 			}
 			else{
 				if (subsFormat != TMP){ strings.push_back(""); }
-				if (SpellErrors[k].size() == 0){ SpellErrors[k].push_back(0); }
+				//if (SpellErrors[k]->empty()){ SpellErrors[k]->AppendError(0); }
 			}
 
 			if (hideOverrideTags){
@@ -282,7 +281,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			if (showOriginal){ strings.push_back(txttl); }
 
 			if (SpellCheckerOn && (!hasTLMode && txt != "" || hasTLMode && txttl != "")){
-				if (SpellErrors[k].size()<2){
+				if (SpellErrors[k]->empty()){
 					CheckText(strings[strings.size() - 1], SpellErrors[k]);
 				}
 			}
@@ -372,20 +371,14 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 			if (!isHeadline && j == ilcol - 1){
 
-				if (SpellErrors[k].size()>2){
+				if (!SpellErrors[k]->empty()){
 					tdc.SetBrush(wxBrush(SpelcheckerCol));
-					for (size_t s = 1; s < SpellErrors[k].size(); s += 2){
-
-						wxString err = strings[j].SubString(SpellErrors[k][s], SpellErrors[k][s + 1]);
-						err.Trim();
-						if (SpellErrors[k][s]>0){
-							wxString berr = strings[j].Mid(0, SpellErrors[k][s]);
-							tdc.GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &font);
+					wxPoint pos;
+					for (size_t s = 0; s < SpellErrors[k]->size(); s++){
+						if (SpellErrors[k]->GetMesures(s, strings[j], tdc, pos)){
+							//jako że wxpoint przyjmuje tylko zmienne x i y to drugą pozycją x jest pos.y
+							tdc.DrawRectangle(posX + pos.x + 3, posY, pos.y, GridHeight);
 						}
-						else{ bfw = 0; }
-
-						tdc.GetTextExtent(err, &fw, &fh, NULL, NULL, &font);
-						tdc.DrawRectangle(posX + bfw + 3, posY, fw, GridHeight);
 					}
 				}
 
@@ -1101,7 +1094,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 
 }
 
-void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs)
+void SubsGridWindow::CheckText(wxString text, Misspells *errs)
 {
 
 	wxString notchar = "/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{} ";
@@ -1122,7 +1115,7 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs)
 				word.Trim(false);
 				word.Trim(true);
 				bool isgood = SpellChecker::Get()->CheckWord(word);
-				if (!isgood){ errs.push_back(firsti); errs.push_back(lasti); }
+				if (!isgood){ errs->AppendError(new RuleMatch(NULL, firsti, lasti)); }
 			}word = ""; firsti = i + 1;
 		}
 		if (ch == '{'){ block = true; }
@@ -1141,8 +1134,7 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs)
 			}
 		}
 	}
-	if (errs.size()<2){ errs.push_back(0); }
-
+	
 }
 
 void SubsGridWindow::RefreshIfVisible(int time)
