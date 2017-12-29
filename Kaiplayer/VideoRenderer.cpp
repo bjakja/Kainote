@@ -137,7 +137,10 @@ bool VideoRend::InitDX(bool reset)
 
 	if(reset){
 		hr=d3device->Reset(&d3dpp);
-		if(FAILED(hr)){wxLogMessage(_("Nie można zresetować Direct3D"));}
+		if(FAILED(hr)){
+			wxLogStatus(_("Nie można zresetować Direct3D"));
+			return false;
+		}
 	}else{
 		hr=d3dobject->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,
 			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED , &d3dpp, &d3device);//| D3DCREATE_FPU_PRESERVE
@@ -248,9 +251,9 @@ bool VideoRend::InitDX(bool reset)
 		GUID dxvaGuid;
 		DXVA2_VideoProcessorCaps DXVAcaps;
 		for(UINT i=0; i<count;i++){
-			//wxLogMessage("guid: %i",(int)i);
+			//wxLogStatus("guid: %i",(int)i);
 			hr=dxvaService->GetVideoProcessorRenderTargets(guids[i], &videoDesc, &count1, &formats);
-			if(FAILED(hr)){wxLogMessage(_("Nie można uzyskać formatów DXVA"));continue;}
+			if(FAILED(hr)){wxLogStatus(_("Nie można uzyskać formatów DXVA"));continue;}
 			for (UINT j = 0; j < count1; j++)
 			{
 				if (formats[j] == D3DFMT_X8R8G8B8)
@@ -261,22 +264,22 @@ bool VideoRend::InitDX(bool reset)
 			}
 
 			CoTaskMemFree(formats);
-			if(!isgood){ wxLogMessage(_("Ten format nie jest obsługiwany przez DXVA"));continue;}
+			if(!isgood){ wxLogStatus(_("Ten format nie jest obsługiwany przez DXVA"));continue;}
 			isgood=false;
 
 			hr=dxvaService->GetVideoProcessorCaps(guids[i], &videoDesc, D3DFMT_X8R8G8B8, &DXVAcaps);
-			if(FAILED(hr)){wxLogMessage(_("GetVideoProcessorCaps zawiodło"));continue;}
+			if(FAILED(hr)){wxLogStatus(_("GetVideoProcessorCaps zawiodło"));continue;}
 			if (DXVAcaps.NumForwardRefSamples > 0 || DXVAcaps.NumBackwardRefSamples > 0)
 			{
-				/*wxLogMessage(L"NumForwardRefSamples albo NumBackwardRefSample jest większe od zera");*/continue;
+				/*wxLogStatus(L"NumForwardRefSamples albo NumBackwardRefSample jest większe od zera");*/continue;
 			}
 
 			//if(DXVAcaps.DeviceCaps!=4){continue;}//DXVAcaps.InputPool
 			hr = dxvaService->CreateSurface(vwidth,vheight, 0, d3dformat, D3DPOOL_DEFAULT, 0, DXVA2_VideoSoftwareRenderTarget, &MainStream, NULL);
-			if(FAILED(hr)){wxLogMessage(_("Nie można stworzyć powierzchni DXVA %i"), (int)i);continue;}
+			if(FAILED(hr)){wxLogStatus(_("Nie można stworzyć powierzchni DXVA %i"), (int)i);continue;}
 
 			hr = dxvaService->CreateVideoProcessor(guids[i], &videoDesc,D3DFMT_X8R8G8B8,0,&dxvaProcessor);
-			if(FAILED(hr)){wxLogMessage(_("Nie można stworzyć processora DXVA"));continue;}
+			if(FAILED(hr)){wxLogStatus(_("Nie można stworzyć processora DXVA"));continue;}
 			dxvaGuid=guids[i];isgood=true;
 			break;
 		}
@@ -303,7 +306,7 @@ bool VideoRend::InitDX(bool reset)
 
 void VideoRend::Render(bool Frame, bool wait)
 {
-	if (Frame && !IsDshow){ VFF->Refresh(wait); resized = false; return; }
+	if (Frame && !IsDshow && !devicelost){ VFF->Refresh(wait); resized = false; return; }
 	wxMutexLocker lock(mutexRender);
 	resized = false;
 	HRESULT hr = S_OK;
@@ -312,18 +315,25 @@ void VideoRend::Render(bool Frame, bool wait)
 	{
 		if( FAILED( hr = d3device->TestCooperativeLevel() ) )
 		{
-			if( D3DERR_DEVICELOST == hr ||
-				D3DERR_DRIVERINTERNALERROR == hr )
+			if (D3DERR_DEVICELOST == hr ||
+				D3DERR_DRIVERINTERNALERROR == hr){
+				//wxLogStatus("cooperative level device lost");
 				return;
+			}
 
 			if( D3DERR_DEVICENOTRESET == hr )
 			{
 				Clear();
 				InitDX();
+				if (IsDshow){ RecreateSurface(); }
+				//else{}
+				devicelost = false;
+				Render(true, false);
+				//wxLogStatus("cooperative not reset");
 			}
 			return;
 		}
-
+		//wxLogStatus("device was lost but is ok now");
 		devicelost = false;
 	}
 
@@ -385,7 +395,7 @@ void VideoRend::Render(bool Frame, bool wait)
 
 	}else{
 		hr = d3device->StretchRect(MainStream,&mainStreamRect,bars,&backBufferRect,D3DTEXF_LINEAR);
-		if(FAILED(hr)){wxLogMessage(_("Nie można nałożyć powierzchni na siebie"));}
+		if(FAILED(hr)){wxLogStatus(_("Nie można nałożyć powierzchni na siebie"));}
 	}
 
 	hr = d3device->BeginScene();
@@ -444,9 +454,14 @@ void VideoRend::Render(bool Frame, bool wait)
 
 
 	hr = d3device->Present(NULL, &windowRect, NULL, NULL );
-	if( D3DERR_DEVICELOST == hr ||
-		D3DERR_DRIVERINTERNALERROR == hr )
-		devicelost = true;
+	if (D3DERR_DEVICELOST == hr ||
+		D3DERR_DRIVERINTERNALERROR == hr){
+		if (!devicelost){
+			devicelost = true;
+			//wxLogStatus("device lost when rendering");
+		}
+		Render(true, false);
+	}
 }
 
 
@@ -467,7 +482,7 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 		}
 	}
 	else{
-		wxLogMessage(_("Brak bufora klatki"));return false;
+		wxLogStatus(_("Brak bufora klatki"));return false;
 	}
 
 
@@ -540,6 +555,16 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 	return true;
 }
 
+void VideoRend::RecreateSurface()
+{
+	int all = vheight*pitch;
+	char *cpy = new char[all];
+	byte *cpy1 = (byte*)cpy;
+	byte *data1 = (byte*)datas;
+	memcpy(cpy1, data1, all);
+	DrawTexture(cpy1);
+	delete[] cpy;
+}
 
 VideoRend::~VideoRend()
 {
@@ -860,27 +885,21 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 	// Select renderer
 	//if(!vobsub){
 	vobsub = csri_renderer_default();
-	if(!vobsub){wxLogMessage(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false;}
+	if(!vobsub){wxLogStatus(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false;}
 	//}
 
 	instance = (fromFile)? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub,buffer,size,NULL);
-	if(!instance){wxLogMessage(_("Instancja VobSuba nie utworzyła się.")); delete textsubs; return false;}
+	if(!instance){wxLogStatus(_("Instancja VobSuba nie utworzyła się.")); delete textsubs; return false;}
 
 	if(!format || csri_request_fmt(instance,format)){
-		wxLogMessage(_("CSRI nie obsługuje tego formatu."));
+		wxLogStatus(_("CSRI nie obsługuje tego formatu."));
 		csri_close(instance);
 		instance = NULL;
 		delete textsubs; return false;
 	}
 
 	if(redraw && vstate!=None && IsDshow && datas){
-		int all=vheight*pitch;
-		char *cpy=new char[all];
-		byte *cpy1=(byte*)cpy;
-		byte *data1=(byte*)datas;
-		memcpy(cpy1,data1,all);
-		DrawTexture(cpy1);
-		delete[] cpy;
+		RecreateSurface();
 	}
 
 	delete textsubs;
@@ -1081,17 +1100,18 @@ void VideoRend::UpdateVideoWindow()
 	/*block=true;*/
 	if(!UpdateRects()){/*block=false;*/return;}
 
-	if(!InitDX(true)){/*block=false;*/return;}
+	if (!InitDX(true)){ 
+		//need tests, if lost device return any error when reseting or not
+		//wxLogStatus("lost device");
+		Clear();
+		if (!InitDX()){ 
+			//wxLogStatus("Total lost device");
+			return; 
+		} 
+	}
 
 	if(IsDshow && datas){
-
-		int all=vheight*pitch;
-		char *cpy=new char[all];
-		byte *cpy1=(byte*)cpy;
-		byte *data1=(byte*)datas;
-		memcpy(cpy1,data1,all);
-		DrawTexture(cpy1);
-		delete[] cpy;
+		RecreateSurface();
 	}
 
 

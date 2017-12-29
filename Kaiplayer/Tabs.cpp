@@ -980,9 +980,9 @@ LRESULT CALLBACK Notebook::PauseOnMinimalize( int code, WPARAM wParam, LPARAM lP
 			sthis->GetTab()->Video->Pause(); 
 		}
 	}
-	if (wParam == SC_RESTORE){
-		sthis->GetTab()->Refresh(false);
-	}
+	//if (wParam == SC_RESTORE){
+		//sthis->GetTab()->Refresh(false);
+	//}
 	//wxLogStatus("jakiś event %i %i", code, (int)wParam);
 	return CallNextHookEx( 0, code, wParam, lParam );
 }
