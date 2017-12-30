@@ -44,7 +44,7 @@ public:
 		}
 	}
 	RuleMatch *Copy(){
-		RuleMatch * rm = new RuleMatch(message, FromPos, EndPos);
+		return new RuleMatch(message, FromPos, EndPos);
 	}
 };
 

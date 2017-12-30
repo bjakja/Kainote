@@ -58,7 +58,8 @@ protected:
 	int lastsel=-1;
 	int oldX=-1;
 	bool holding=false;
-
+	bool useLanguageTool = true;
+	LanguageToolSpellchecker *LTSC = NULL;
 	wxBitmap* bmp;
 	wxFont font;
 	SubsGridPreview *preview = NULL;

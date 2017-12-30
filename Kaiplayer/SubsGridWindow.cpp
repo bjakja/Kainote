@@ -142,6 +142,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	const wxColour &textcol = Options.GetColour(GridText);
 	const wxColour &collcol = Options.GetColour(GridCollisions);
 	const wxColour &SpelcheckerCol = Options.GetColour(GridSpellchecker);
+	const wxColour &SpelcheckerColInt = wxColour("#FFFF00");
 	const wxColour &ComparisonCol = Options.GetColour(GridComparisonOutline);
 	const wxColour &ComparisonBG = Options.GetColour(GridComparisonBackgroundNotMatch);
 	const wxColour &ComparisonBGMatch = Options.GetColour(GridComparisonBackgroundMatch);
@@ -149,7 +150,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	const wxColour &ComparisonBGCmntMatch = Options.GetColour(GridComparisonCommentBackgroundMatch);
 	const wxString & chtag = Options.GetString(GridTagsSwapChar);
 	const wxColour &visibleOnVideo = Options.GetColour(GridVisibleOnVideo);
-	bool SpellCheckerOn = Options.GetBool(SpellcheckerOn);
+	bool SpellCheckerOn = Options.GetBool(SpellcheckerOn) && !useLanguageTool;
 
 	tdc.SetPen(*wxTRANSPARENT_PEN);
 	tdc.SetBrush(wxBrush(linesCol));
@@ -166,7 +167,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	int startDrawPosYFromPlus = 0;
 
 	if (SpellErrors.size()<(size_t)size){
-		SpellErrors.resize(size);
+		SpellErrors.resize(size,0);
 	}
 
 	Dialogue *acdial = (size>0)? GetDialogue(MID(0, Edit->ebrow, size - 1)) : NULL;
@@ -216,6 +217,10 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		}
 		else{
 			if (!SpellErrors[k]){ SpellErrors[k] = new Misspells(); }
+			if (SpellErrors[k]->isempty && useLanguageTool){ 
+				if (!LTSC){ LTSC = LanguageToolSpellchecker::Get((SubsGrid*)this); }
+				LTSC->CheckLines(k, scrows - 2);
+			}
 			strings.push_back(wxString::Format("%i", k+1));
 
 			isComment = Dial->IsComment;
@@ -371,11 +376,11 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 			if (!isHeadline && j == ilcol - 1){
 
-				if (!SpellErrors[k]->empty()){
-					tdc.SetBrush(wxBrush(SpelcheckerCol));
-					wxPoint pos;
+				if (!SpellErrors[k]->size()<0){
+					wxPoint pos; bool isMisspell = true;
 					for (size_t s = 0; s < SpellErrors[k]->size(); s++){
-						if (SpellErrors[k]->GetMesures(s, strings[j], tdc, pos)){
+						if (SpellErrors[k]->GetMesures(s, strings[j], tdc, pos, isMisspell)){
+							tdc.SetBrush(wxBrush((isMisspell)? SpelcheckerCol : SpelcheckerColInt));
 							//jako że wxpoint przyjmuje tylko zmienne x i y to drugą pozycją x jest pos.y
 							tdc.DrawRectangle(posX + pos.x + 3, posY, pos.y, GridHeight);
 						}
@@ -1175,7 +1180,7 @@ void SubsGridWindow::HideOverrideTags()
 {
 	hideOverrideTags = !hideOverrideTags;
 	Options.SetBool(GridHideTags, hideOverrideTags);
-	SpellErrors.clear();
+	ClearErrors();
 	Refresh(false);
 }
 

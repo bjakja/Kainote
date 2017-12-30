@@ -749,7 +749,7 @@ void OptionsDialog::SetOptions(bool saveall)
 				if (OB.option <= AudioWheelDefaultToZoom){ audio = true; }
 				if(OB.option == SpellcheckerOn){
 					for(size_t i = 0; i< Kai->Tabs->Size();i++){
-						Kai->Tabs->Page(i)->Grid->SpellErrors.clear();
+						Kai->Tabs->Page(i)->Grid->ClearErrors();
 					}
 					Kai->Tabs->GetTab()->Grid->Refresh(false);
 					Kai->Tabs->GetTab()->Edit->TextEdit->SpellcheckerOnOff();
@@ -782,7 +782,7 @@ void OptionsDialog::SetOptions(bool saveall)
 					if(cbx->GetId()==10001){
 						SpellChecker::Destroy();
 						colmod=true;
-						Kai->GetTab()->Grid->SpellErrors.clear();
+						Kai->GetTab()->Grid->ClearErrors();
 					}
 				}
 			}else{

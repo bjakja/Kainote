@@ -24,14 +24,20 @@ public:
 	~Misspells(){ Clear(); };
 	void AppendError(RuleMatch *rule);
 	void Clear();
-	void ClearBlock(std::vector<Misspells*> &table, size_t from, size_t to);
+	static void ClearBlock(std::vector<Misspells*> &table, size_t from, size_t to);
 	size_t size() const{
 		return errors.size();
 	}
 	bool empty() const{
 		return isempty;
 	}
-	bool GetMesures(size_t i, const wxString &text, wxDC &dc, wxPoint &retPos);
+	RuleMatch *GetError(size_t i){ 
+		if (i < errors.size())
+			return errors[i];
+		return NULL;
+	}
+	void GetErrorString(size_t i, const wxString& text, wxString &error);
+	bool GetMesures(size_t i, const wxString &text, wxDC &dc, wxPoint &retPos, bool &isMisspell);
 	short CPS = -1;
 	bool isempty = true;
 private:
@@ -43,10 +49,12 @@ class Dialogue;
 
 class LanguageToolSpellchecker{
 public:
-	LanguageToolSpellchecker(SubsGrid *_grid);
+	static LanguageToolSpellchecker *Get(SubsGrid *_grid);
+	static void DestroyLTSpellchecker();
 	~LanguageToolSpellchecker(){};
 	void CheckLines(size_t from, size_t to);
 private:
+	LanguageToolSpellchecker(SubsGrid *_grid);
 	void StripTags(Dialogue *dial);
 	void GenerateErrors(std::vector<RuleMatch*> &errors, size_t from, size_t to, size_t ltstart);
 
@@ -55,5 +63,6 @@ private:
 	LanguageToolModule *LTM = NULL;
 	SubsGrid *grid = NULL;
 	bool initializeFailed = false;
+	static LanguageToolSpellchecker *LTSC;
 };
 

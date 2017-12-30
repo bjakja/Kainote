@@ -20,6 +20,7 @@
 #include "KaiCheckBox.h"
 #include "KaiDialog.h"
 #include "KaiListCtrl.h"
+#include "LanguageToolSpellchecker.h"
 
 class kainoteFrame;
 class TabPanel;
@@ -60,7 +61,7 @@ private:
 	int lastMisspell;
 	int lastActiveLine;
 	wxArrayString ignored;
-	wxArrayInt errors;
+	Misspells *errors;
 	wxString lastText;
 	kainoteFrame *Kai;
 	TabPanel *tab;

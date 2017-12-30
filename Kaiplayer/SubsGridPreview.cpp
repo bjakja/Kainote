@@ -152,6 +152,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	const wxColour &textcol = Options.GetColour(GridText);
 	const wxColour &collcol = Options.GetColour(GridCollisions);
 	const wxColour &SpelcheckerCol = Options.GetColour(GridSpellchecker);
+	const wxColour &SpelcheckerColInt = wxColour("#FFFF00");
 	const wxColour &ComparisonCol = Options.GetColour(GridComparisonOutline);
 	const wxColour &ComparisonBG = Options.GetColour(GridComparisonBackgroundNotMatch);
 	const wxColour &ComparisonBGMatch = Options.GetColour(GridComparisonBackgroundMatch);
@@ -159,7 +160,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	const wxColour &ComparisonBGCmntMatch = Options.GetColour(GridComparisonCommentBackgroundMatch);
 	const wxString &chtag = Options.GetString(GridTagsSwapChar);
 	const wxColour &visibleOnVideo = Options.GetColour(GridVisibleOnVideo);
-	bool SpellCheckerOn = Options.GetBool(SpellcheckerOn);
+	bool SpellCheckerOn = Options.GetBool(SpellcheckerOn) && !previewGrid->useLanguageTool;
 
 	tdc.SetPen(*wxTRANSPARENT_PEN);
 	tdc.SetBrush(wxBrush(linesCol));
@@ -228,7 +229,11 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			continue;
 		}
 		else{
-
+			if (!previewGrid->SpellErrors[k]){ previewGrid->SpellErrors[k] = new Misspells(); }
+			if (previewGrid->SpellErrors[k]->isempty && previewGrid->useLanguageTool){
+				if (!previewGrid->LTSC){ previewGrid->LTSC = LanguageToolSpellchecker::Get((SubsGrid*)this); }
+				previewGrid->LTSC->CheckLines(k, scrows - 1);
+			}
 
 			strings.push_back(wxString::Format("%i", k + 1));
 
@@ -270,20 +275,20 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 
 			if (previewGrid->subsFormat != TMP && !(CNZ & previewGrid->visibleColumns)){
 				int chtime;
-				if (previewGrid->SpellErrors[k].size() < 1){
+				if (previewGrid->SpellErrors[k]->CPS < 0){
 					chtime = previewGrid->CalcChars((previewGrid->hasTLMode && txttl != "") ? txttl : txt) /
 						((Dial->End.mstime - Dial->Start.mstime) / 1000.0f);
 					if (chtime < 0 || chtime>999){ chtime = 999; }
-					previewGrid->SpellErrors[k].push_back(chtime);
+					previewGrid->SpellErrors[k]->CPS = chtime;
 
 				}
-				else{ chtime = previewGrid->SpellErrors[k][0]; }
+				else{ chtime = previewGrid->SpellErrors[k]->CPS; }
 				strings.push_back(wxString::Format("%i", chtime));
 				shorttime = chtime > 15;
 			}
 			else{
 				if (previewGrid->subsFormat != TMP){ strings.push_back(""); }
-				if (previewGrid->SpellErrors[k].size() == 0){ previewGrid->SpellErrors[k].push_back(0); }
+				//if (previewGrid->SpellErrors[k].size() == 0){ previewGrid->SpellErrors[k].push_back(0); }
 			}
 
 			if (previewGrid->hideOverrideTags){
@@ -296,7 +301,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			if (previewGrid->showOriginal){ strings.push_back(txttl); }
 
 			if (SpellCheckerOn && (!previewGrid->hasTLMode && txt != "" || previewGrid->hasTLMode && txttl != "")){
-				if (previewGrid->SpellErrors[k].size() < 2){
+				if (previewGrid->SpellErrors[k]->empty()){
 					previewGrid->CheckText(strings[strings.size() - 1], previewGrid->SpellErrors[k]);
 				}
 			}
@@ -386,20 +391,15 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 
 			if (!isHeadline && j == ilcol - 1){
 
-				if (previewGrid->SpellErrors[k].size() > 2){
-					tdc.SetBrush(wxBrush(SpelcheckerCol));
-					for (size_t s = 1; s < previewGrid->SpellErrors[k].size(); s += 2){
-
-						wxString err = strings[j].SubString(previewGrid->SpellErrors[k][s], previewGrid->SpellErrors[k][s + 1]);
-						err.Trim();
-						if (previewGrid->SpellErrors[k][s]>0){
-							wxString berr = strings[j].Mid(0, previewGrid->SpellErrors[k][s]);
-							tdc.GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &previewGrid->font);
+				if (!previewGrid->SpellErrors[k]->empty()){
+					//tdc.SetBrush(wxBrush(SpelcheckerCol));
+					wxPoint pos; bool isMisspell = true;
+					for (size_t s = 0; s < previewGrid->SpellErrors[k]->size(); s++){
+						if (previewGrid->SpellErrors[k]->GetMesures(s, strings[j], tdc, pos, isMisspell)){
+							tdc.SetBrush(wxBrush((isMisspell) ? SpelcheckerCol : SpelcheckerColInt));
+							//jako ¿e wxpoint przyjmuje tylko zmienne x i y to drug¹ pozycj¹ x jest pos.y
+							tdc.DrawRectangle(posX + pos.x + 3, posY, pos.y, previewGrid->GridHeight);
 						}
-						else{ bfw = 0; }
-
-						tdc.GetTextExtent(err, &fw, &fh, NULL, NULL, &previewGrid->font);
-						tdc.DrawRectangle(posX + bfw + 3, posY, fw, previewGrid->GridHeight);
 					}
 				}
 

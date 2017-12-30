@@ -102,7 +102,7 @@ void SubsGridBase::Clearing()
 {
 	SAFE_DELETE(Comparison);
 	SAFE_DELETE(file);
-	SpellErrors.clear();
+	DeleteErrors();
 	isFiltered = false;
 	first = true;
 	scPos = 0;
@@ -311,7 +311,7 @@ void SubsGridBase::Convert(char type)
 	subsFormat = type;
 	file->ReloadVisibleDialogues();
 	Edit->SetLine((Edit->ebrow < GetCount()) ? Edit->ebrow : 0);
-	SpellErrors.clear();
+	ClearErrors();
 	SetModified(GRID_CONVERT);
 	RefreshColumns();
 }
@@ -744,7 +744,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 	}
 
-	SpellErrors.clear();
+	ClearErrors();
 	int tmpMarked = markedLine;
 	SetModified(SHIFT_TIMES, true, false, -1, false);
 	markedLine = tmpMarked;
@@ -783,7 +783,7 @@ void SubsGridBase::SortIt(short what, bool all)
 	}
 	file->edited = true;
 	file->ReloadVisibleDialogues();
-	SpellErrors.clear();
+	ClearErrors();
 	SetModified(GRID_SORT_LINES);
 	Refresh(false);
 }
@@ -793,8 +793,8 @@ void SubsGridBase::DeleteRow(int rw, int len)
 {
 	int rwlen = rw + len;
 	file->DeleteDialogues(rw, rwlen);
-	if ((int)SpellErrors.size() > rwlen){ SpellErrors.erase(SpellErrors.begin() + rw, SpellErrors.begin() + rwlen); }
-	else{ SpellErrors.clear(); }
+	if ((int)SpellErrors.size() > rwlen){ Misspells::ClearBlock(SpellErrors, rw, rwlen); }
+	else{ ClearErrors(); }
 }
 
 void SubsGridBase::DeleteRows()
@@ -806,7 +806,7 @@ void SubsGridBase::DeleteRows()
 		file->subs->dials.erase(file->subs->dials.begin() + sel);
 		file->IdConverter->deleteItemByKey(sel);
 	}
-	SpellErrors.clear();
+	ClearErrors();
 	if (file->subs->Selections.size() > 0){ file->edited = true; }
 	SaveSelections(true);
 	if (GetCount() < 1){ AddLine(new Dialogue()); }
@@ -932,7 +932,7 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 		SS->ASS->SetArray(&file->subs->styles);
 		SS->ASS->Refresh(false);
 	}
-	SpellErrors.clear();
+	ClearErrors();
 
 	const wxString &newtlmode = GetSInfo("TLMode");
 	if (newtlmode != tlmode){
@@ -988,7 +988,8 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 void SubsGridBase::DummyUndo(int newIter)
 {
 	file->DummyUndo(newIter);
-	SpellErrors[Edit->ebrow]->Clear();
+	if(SpellErrors[Edit->ebrow])
+		SpellErrors[Edit->ebrow]->Clear();
 	Edit->SetLine(Edit->ebrow, false, false);
 	RefreshColumns();
 	UpdateUR();
@@ -1361,7 +1362,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 		showOriginal = false;
 		Kai->Menubar->Enable(SaveTranslation, false);
 	}
-	SpellErrors.clear();
+	ClearErrors();
 	Refresh(false);
 	SetModified((mode) ? GRID_TURN_ON_TLMODE : GRID_TURN_OFF_TLMODE);
 	//VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
@@ -1431,12 +1432,12 @@ void SubsGridBase::LoadDefault(bool line, bool sav, bool endload)
 
 Dialogue *SubsGridBase::CopyDialogue(int i, bool push)
 {
-	if (push && (int)SpellErrors.size() > i){ SpellErrors[i]->Clear(); }
+	if (push && (int)SpellErrors.size() > i && SpellErrors[i]){ SpellErrors[i]->Clear(); }
 	return file->CopyDialogue(i, push);
 }
 Dialogue *SubsGridBase::CopyDialogueByKey(int i, bool push)
 {
-	if (push && (int)SpellErrors.size() > i){ SpellErrors[i]->Clear(); }
+	if (push && (int)SpellErrors.size() > i && SpellErrors[i]){ SpellErrors[i]->Clear(); }
 	return file->CopyDialogueByKey(i, push);
 }
 
@@ -1661,6 +1662,23 @@ void SubsGridBase::GetCommonStyles(SubsGridBase *_grid, wxArrayString &styleTabl
 			}
 		}
 	}
+}
+
+void SubsGridBase::DeleteErrors()
+{
+
+	for (size_t i = 0; i < SpellErrors.size(); i++){
+		Misspells * ms = SpellErrors[i];
+		if (ms){
+			delete ms;
+			SpellErrors[i] = NULL;
+		}
+	}
+}
+
+void SubsGridBase::ClearErrors()
+{
+	Misspells::ClearBlock(SpellErrors, 0, SpellErrors.size());
 }
 
 void SubsGridBase::SubsComparison()

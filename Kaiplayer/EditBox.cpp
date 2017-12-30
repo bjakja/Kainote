@@ -1100,7 +1100,7 @@ void EditBox::ClearErrs()
 	Notebook *nb= Notebook::GetTabs();
 	for(size_t i = 0; i < nb->Size(); i++)
 	{
-		nb->Page(i)->Grid->SpellErrors.clear();
+		nb->Page(i)->Grid->ClearErrors();
 	}
 	grid->Refresh(false);
 }

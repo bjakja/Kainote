@@ -1,21 +1,17 @@
-/* LanguageTool, a natural language style checker 
- * Copyright (C) 2013 Daniel Naber (http://www.danielnaber.de)
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301
- * USA
- */
+//  Copyright (c) 2017, £ukasz G¹sowski
+
+//  Kainote is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  Kainote is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 package org.languagetool.facade;
 
 import org.languagetool.JLanguageTool;
@@ -25,7 +21,6 @@ import java.io.IOException;
 import java.util.List;
 import org.languagetool.Language;
 import org.languagetool.Languages;
-import org.languagetool.MultiThreadedJLanguageTool;
 
 
 /**
@@ -33,10 +28,17 @@ import org.languagetool.MultiThreadedJLanguageTool;
  */
 public class LanguageToolFacade {
 
-  static MultiThreadedJLanguageTool langTool;
+  static JLanguageTool langTool;
+  static Language language;
   public static boolean setLanguage(String name){
-      langTool = new MultiThreadedJLanguageTool(Languages.getLanguageForName(name));
-      return true;
+      language = Languages.getLanguageForName(name);
+      if(Languages.isLanguageSupported(language.getShortCode())){
+        langTool = new JLanguageTool(language);
+        return true;
+      } else {
+          language = null;
+          return false;
+      }
   }
   
   public static String[] getLanguages(){
@@ -48,14 +50,22 @@ public class LanguageToolFacade {
       return languages;
   }
 
-  public static RuleMatch[] checkText(String input) throws IOException {
-    List<RuleMatch> result = langTool.check(input);
-    if(result!=null){
-        RuleMatch[] array = new RuleMatch[result.size()];
-        array = result.toArray(array);
-        return array;
+  public static RuleMatch[] checkText(String input){
+    List<RuleMatch> result;
+    if(language!=null){
+        try {
+            result = langTool.check(input);
+            if(result!=null){
+                RuleMatch[] array = new RuleMatch[result.size()];
+                array = result.toArray(array);
+                return array;
+            }
+            else return new RuleMatch[0];
+        }
+        catch (IOException e){
+            return new RuleMatch[0];    
+        }
     }
-    else return new RuleMatch[0];
-  }
-  
+    return new RuleMatch[0];
+ }
 }

@@ -863,7 +863,7 @@ namespace Auto{
 			new_active = *new_sel.begin();
 			c->selectionController->SetSelectionAndActive(std::move(new_sel), new_active);*/
 		}
-		c->Grid->SpellErrors.clear();
+		c->Grid->ClearErrors();
 		c->Grid->SetModified(AUTOMATION_SCRIPT, true, false, c->Grid->file->GetElementByKey(active_idx));
 		c->Grid->RefreshColumns();
 		SAFE_DELETE(subsobj);

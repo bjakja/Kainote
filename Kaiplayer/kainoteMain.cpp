@@ -317,6 +317,7 @@ kainoteFrame::~kainoteFrame()
 	if (fc){ delete fc; fc = NULL; }
 	SpellChecker::Destroy();
 	VideoToolbar::DestroyIcons();
+	LanguageToolSpellchecker::DestroyLTSpellchecker();
 }
 
 

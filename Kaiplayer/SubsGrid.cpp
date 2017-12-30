@@ -45,7 +45,7 @@ SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, cons
 			int id5000 = (id - 5000);
 			if (visibleColumns & id5000){ visibleColumns ^= id5000; }
 			else{ visibleColumns |= id5000; }
-			SpellErrors.clear();
+			ClearErrors();
 			Options.SetInt(GridHideCollums, visibleColumns);
 			RefreshColumns();
 		}
@@ -332,7 +332,7 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	dialc->Text = ntext;
 	dialc->TextTl = ntltext;
 	file->edited = true;
-	SpellErrors.clear();
+	ClearErrors();
 	SetModified((idd == JoinWithPrevious) ? GRID_JOIN_WITH_PREVIOUS :
 		(idd == JoinWithNext) ? GRID_JOIN_WITH_NEXT : GRID_JOIN_LINES);
 	RefreshColumns();
@@ -353,7 +353,7 @@ void SubsGrid::OnJoinToFirst(int id)
 	DeleteRow(selections[1], selections[selections.size() - 1] - selections[1] + 1);
 
 	file->InsertSelection(selections[0]);
-	SpellErrors.clear();
+	ClearErrors();
 	SetModified((id == JoinToLast) ? GRID_JOIN_TO_LAST : GRID_JOIN_TO_FIRST);
 	RefreshColumns();
 }
@@ -999,7 +999,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 
 		if (marginChanged || textChanged){
 			if (textChanged){
-				if (SpellErrors.size() >= (size_t)i) SpellErrors[i].clear();
+				if (SpellErrors.size() >= (size_t)i && SpellErrors[i]) SpellErrors[i]->Clear();
 				if (diall->TextTl != ""){
 					diall->TextTl = txt;
 				}
@@ -1256,7 +1256,7 @@ void SubsGrid::Filter(int id)
 void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 {
 	file->ClearSelections();
-	SpellErrors.clear();
+	ClearErrors();
 	int corrected = -1;
 	int newActiveLine = file->FindIdFromKey(newActiveLineKey, &corrected);
 	if (corrected >= 0){

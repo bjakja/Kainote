@@ -98,16 +98,17 @@ wxString SpellCheckerDialog::FindNextMisspell()
 		lastMisspell = 0;
 	}
 	for(int i = lastLine; i < tab->Grid->GetCount(); i++){
-		errors.clear();
+		errors->Clear();
 		Dialogue *Dial = tab->Grid->GetDialogue(i);
 		if(Dial->IsComment && noComments){continue;}
 		const wxString &Text = (tab->Grid->hasTLMode)? Dial->TextTl : Dial->Text;
 		//w checktext kopiuje tekst więc nie muszę robić tego dwa razy.
 		tab->Grid->CheckText(Text, errors);
 		if(i != lastLine){lastMisspell=0;}
-		while(errors.size()>1 && lastMisspell < errors.size()){
-			wxString misspellWord = Text.SubString(errors[lastMisspell], errors[lastMisspell+1]);
-			lastMisspell += 2;
+		while(!errors->empty() && lastMisspell < errors->size()){
+			wxString misspellWord;// = Text.SubString(errors[lastMisspell], errors[lastMisspell+1]);
+			errors->GetErrorString(lastMisspell, Text, misspellWord);
+			lastMisspell ++;
 			if(ignored.Index(misspellWord, false) == -1){
 				lastLine = i;
 				return misspellWord;
@@ -142,7 +143,9 @@ void SpellCheckerDialog::SetNextMisspell()
 	}
 	lastText = (tab->Grid->hasTLMode)? tab->Edit->line->TextTl : tab->Edit->line->Text;
 	//tab->Edit->TextEdit->SetFocus();
-	tab->Edit->TextEdit->SetSelection(errors[lastMisspell-2], errors[lastMisspell-1]+1);
+	RuleMatch *rule = errors->GetError(lastMisspell-1);
+	if (rule)
+		tab->Edit->TextEdit->SetSelection(rule->FromPos, rule->EndPos);
 }
 	
 void SpellCheckerDialog::Replace(wxCommandEvent &evt)
@@ -155,17 +158,18 @@ void SpellCheckerDialog::Replace(wxCommandEvent &evt)
 		}
 	}
 	wxString replaceTxt = replaceWord->GetValue();
-	if(replaceTxt.IsEmpty() || errors.size()<2){return;}
+	if(replaceTxt.IsEmpty() || errors->empty()){return;}
 	tab = Kai->GetTab();
 	Dialogue *Dial = tab->Grid->CopyDialogue(lastLine);
 	wxString &Text = Dial->Text.CheckTlRef(Dial->TextTl, tab->Grid->hasTLMode);
-	int start = errors[lastMisspell-2];
-	int end = errors[lastMisspell-1]+1;
-	Text.replace(start, end - start, replaceTxt);
-	tab->Grid->SetModified(SPELL_CHECKER);
-	tab->Grid->Refresh(false);
+	RuleMatch *rule = errors->GetError(lastMisspell - 1);
+	if (rule){
+		Text.replace(rule->FromPos, rule->EndPos - rule->FromPos, replaceTxt);
+		tab->Grid->SetModified(SPELL_CHECKER);
+		tab->Grid->Refresh(false);
+	}
 	//if(SpellChecker::Get()->CheckWord(replaceTxt)){
-		lastMisspell -= 2;
+		lastMisspell --;
 	//}
 	SetNextMisspell();
 }
@@ -207,7 +211,8 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 			Dialogue *Dialc = tab->Grid->CopyDialogue(i);
 			wxString &TextToChange = Dialc->Text.CheckTlRef(Dialc->TextTl, tab->Grid->hasTLMode);
 			TextToChange=Text;
-			tab->Grid->SpellErrors[i].clear();
+			if(tab->Grid->SpellErrors[i])
+				tab->Grid->SpellErrors[i]->Clear();
 		}
 	}
 	tab->Grid->SetModified(SPELL_CHECKER);
