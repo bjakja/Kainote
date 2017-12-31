@@ -92,7 +92,8 @@ Menu::Menu(char window)
 
 int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels, bool clientPos, bool center)
 {
-	if (dialog){ return -1; }
+	if (isShown){ return -1; }
+	isShown = true;
 	wxPoint npos= pos;
 	wxSize size;
 	CalcPosAndSize(parent, &npos, &size, clientPos);
@@ -103,6 +104,7 @@ int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accel
 	if(accels){*accels = dialog->accel;}
 	dialog->Destroy();
 	dialog = NULL;
+	isShown = false;
 	return ret;
 }
 
@@ -534,7 +536,8 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 
 bool MenuDialog::SendEvent(MenuItem *item, int accel)
 {
-	if(!item->enabled && accel != wxMOD_SHIFT){return false;}
+	if (!ParentMenu){ Destroy(); return false; }
+	if (!item->enabled && accel != wxMOD_SHIFT){ return false; }
 	if(item->type == ITEM_CHECK){
 		item->check = !item->check;
 		Refresh(false);
@@ -744,12 +747,16 @@ void MenuDialog::EndPartialModal(int ReturnId)
 	Hide();
 }
 
-WXLRESULT MenuDialog::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam) {
-	
-	//wxLogStatus("md message %i", (int)message);
-    if (message == 28 && ParentMenu) {
-		ParentMenu->HideMenus();
-		MenuBar::Menubar->HideMnemonics();
+WXLRESULT MenuDialog::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam) 
+{
+	if (message == 28) {
+		if (ParentMenu){
+			ParentMenu->HideMenus();
+			MenuBar::Menubar->HideMnemonics();
+		}
+		else{
+			Destroy();
+		}
 		return 0;
     }
     return wxPopupWindow::MSWWindowProc(message, wParam, lParam);

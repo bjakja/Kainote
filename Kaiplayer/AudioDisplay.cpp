@@ -349,9 +349,10 @@ void AudioDisplay::DoUpdateImage() {
 			{
 				ClearDX();
 				InitDX(wxSize(w,displayH));
+				UpdateImage(false, true);
 			}
 			return;
-			}
+		}
 
 		deviceLost = false;
 	}
@@ -655,9 +656,11 @@ done:
 
 	hr = d3dDevice->Present(NULL, NULL, NULL, NULL );
 
-	if( D3DERR_DEVICELOST == hr ||
-		D3DERR_DRIVERINTERNALERROR == hr )
+	if (D3DERR_DEVICELOST == hr ||
+		D3DERR_DRIVERINTERNALERROR == hr){
 		deviceLost = true;
+		UpdateImage(false, true);
+	}
 	// Done
 	needImageUpdate = false;
 	needImageUpdateWeak = true;

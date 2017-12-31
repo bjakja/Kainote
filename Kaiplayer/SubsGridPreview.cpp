@@ -765,6 +765,7 @@ void SubsGridPreview::SeekForOccurences()
 	Notebook * nb = Notebook::GetTabs();
 	File *thisSubs = parent->file->GetSubs();
 	previewData.clear();
+	int tabI = 0;
 	int lastSel = 0;
 	for (int i = 0; i < nb->Size(); i++){
 		TabPanel *tab = nb->Page(i);
@@ -822,7 +823,8 @@ void SubsGridPreview::SeekForOccurences()
 			//bestJ jest naszym wynikiem w tym przypadku, nie potrzebujemy samego czasu który jest najlepszy
 			previewData.push_back(MultiPreviewData(tab, tab->Grid, bestJ, 0));
 		}
-		if (lastData.grid == tab->Grid){ lastSel = i; }
+		if (lastData.grid == tab->Grid){ lastSel = tabI; }
+		tabI++;
 	}
 	//assert(previewData.size() < 1);
 	previewGrid = previewData[lastSel].grid;

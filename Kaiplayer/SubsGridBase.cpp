@@ -1506,7 +1506,7 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 		(*txt) << " \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
 	}
 	Edit->Send(EDITBOX_LINE_EDITION, false, true);
-	if (_time >= Edit->line->Start.mstime && _time < Edit->line->End.mstime){
+	if ((_time >= Edit->line->Start.mstime || toEnd) && _time < Edit->line->End.mstime){
 		if (visible){ *visible = true; }
 	}
 	else if (visible){

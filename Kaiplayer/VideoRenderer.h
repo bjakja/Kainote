@@ -144,6 +144,7 @@ class VideoRend : public wxWindow
 		void DrawLines(wxPoint point);
 		void DrawProgBar();
 		bool DrawTexture(byte *nframe=NULL, bool copy=false);
+		void RecreateSurface();
 		void EnableStream(long index);
 		void MovePos(int cpos);
 		void ChangeVobsub(bool vobsub=false);

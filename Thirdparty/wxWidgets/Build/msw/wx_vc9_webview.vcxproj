@@ -356,7 +356,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>vc_mswu\wxprec_webviewlib.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>vc_mswu\$(Platform)\wxprec_webviewlib.pch</PrecompiledHeaderOutputFile>
       <ObjectFileName>vc_mswu\webview\$(Platform)\</ObjectFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -391,7 +391,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>vc_mswu\wxprec_webviewlib.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>vc_mswu\$(Platform)\wxprec_webviewlib.pch</PrecompiledHeaderOutputFile>
       <ObjectFileName>vc_mswu\webview\$(Platform)\</ObjectFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>

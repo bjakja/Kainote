@@ -125,7 +125,7 @@ class kainoteFrame: public KaiFrame
 		bool badResolution;
 		/*int fontlastmodif;
 		int fontlastmodifl;*/
-		
+		wxMutex blockOpen;
 };
 
 

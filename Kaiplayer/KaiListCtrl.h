@@ -99,6 +99,12 @@ public:
 		}
 		row.clear();
 	}
+	Item *Get(size_t i){ 
+		if (i < row.size())
+			return row[i]; 
+
+		return NULL;
+	}
 	std::vector< Item*> row;
 
 };
@@ -175,6 +181,7 @@ private:
 	void OnScroll(wxScrollWinEvent& event);
 	void OnEraseBackground(wxEraseEvent &evt){};
 	int GetMaxWidth();
+	void SetWidth(size_t i=0);
 	ItemRow header;
 	List *itemList;
 	std::vector<List*> historyList;

@@ -1275,8 +1275,9 @@ void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fro
 		secondgrid = CG1;
 	else
 		return;
-	//tymczasowo zdisejblowane do testów
-	if (!(showPreview || preview) && !secondgrid->IsShownOnScreen()){ return; }
+
+	bool hiddenSecondGrid = !secondgrid->IsShownOnScreen();
+	if (!(showPreview || preview) && hiddenSecondGrid){ return; }
 	//Line is id here we need convert it to key
 	compareData & data = Comparison->at(file->GetElementById(Line));
 	int secondGridLine = data.secondComparedLine;
@@ -1284,7 +1285,7 @@ void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fro
 	int diffPosition = Line - scPos;
 	secondgrid->scPos = secondGridLine - diffPosition;
 	secondgrid->ChangeActiveLine(secondGridLine);
-	if (!fromPreview){
+	if (!fromPreview && hiddenSecondGrid){
 		if (!preview){
 			ShowPreviewWindow(secondgrid, thisgrid, Line, diffPosition);
 		}

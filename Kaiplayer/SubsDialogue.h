@@ -40,7 +40,8 @@ public:
 		}
 	};
 	void Store(const StoreHelper &sh, bool copy){ 
-		if (*deleteReference < 1 && stored){
+		assert(sh.stored);
+		if (*deleteReference < 1 && stored != sh.stored){
 			delete stored; stored = NULL;
 			delete deleteReference; deleteReference = NULL;
 		}
@@ -51,7 +52,7 @@ public:
 		}
 		else{
 			stored = sh.stored;
-			if (deleteReference){ delete deleteReference; }
+			//if (deleteReference){ delete deleteReference; }
 			deleteReference = sh.deleteReference;
 			(*deleteReference)++;
 		}
@@ -61,24 +62,32 @@ public:
 		return *this;
 	}
 	void operator =(const unsigned char value){
+		assert(stored);
 		*stored = value;
 	}
 	bool operator ==(const unsigned char value){
+		assert(stored);
 		return *stored == value;
 	}
 	bool operator !=(const unsigned char value){
 		return *stored != value;
 	}
 	bool operator >(const unsigned char value){
+		assert(stored);
 		return *stored > value;
 	}
 	bool operator <(const unsigned char value){
+		assert(stored);
 		return *stored < value;
 	}
 	bool operator !(){
+		assert(stored);
 		return !(*stored);
 	}
-	unsigned char &operator *(){ return *stored; };
+	unsigned char &operator *(){ 
+		assert(stored);
+		return *stored; 
+	};
 private:
 	unsigned char *stored = new unsigned char(1);
 	size_t *deleteReference = new size_t(0);

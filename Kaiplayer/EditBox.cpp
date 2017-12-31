@@ -590,18 +590,17 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 		}
 		Editor->SetTextS(txt,true);
 		if(focus){Editor->SetFocus();}
-		Editor->SetSelection(whre,whre);//}else{Placed.x=whre;}
+		Editor->SetSelection(whre,whre);//}else{Placed.x=whre;}CopyDialogueByKey
 	}else{
 		wxString tmp;
 		wxArrayInt sels;
 		grid->file->GetSelectionsAsKeys(sels);
 		for(size_t i=0;i<sels.size();i++){
-			Dialogue *dialc=grid->CopyDialogue(sels[i]);
+			Dialogue *dialc=grid->CopyDialogueByKey(sels[i]);
 			wxString txt=(grid->hasTLMode && dialc->TextTl!="")? dialc->TextTl : dialc->Text;
 			FindVal(lasttag,&tmp,txt);
 
 			if(InBracket && txt!=""){
-				//wxLogMessage("placed %i, %i: \r\n",Placed.x,Placed.y);
 				if(Placed.x<Placed.y){txt.erase(txt.begin()+Placed.x, txt.begin()+Placed.y+1);}
 				txt.insert(Placed.x,text);
 				if(grid->hasTLMode && dialc->TextTl!=""){
@@ -1404,7 +1403,7 @@ void EditBox::OnColorChange(wxCommandEvent& event)
 void EditBox::OnButtonTag(wxCommandEvent& event)
 {
 	wxString type;
-	wxString tag = Options.GetString((CONFIG)(event.GetId()-11000)).BeforeFirst('\f', &type);
+	wxString tag = Options.GetString((CONFIG)(event.GetId() - 15000 + EditboxTagButton1)).BeforeFirst('\f', &type);
 	if(tag.IsEmpty()){wxBell(); return;}
 	type = type.BeforeFirst('\f');
 
@@ -1430,25 +1429,50 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 
 		PutinText(tag);
 	}else{
+		bool oneline = (grid->file->SelectionsSize()<2);
+		
 		long from, to;
-		wxString txt= TextEdit->GetValue();
+		wxString txt = TextEdit->GetValue();
 		MTextEditor *Editor = TextEdit;
-		if(grid->hasTLMode && txt==""){ txt = TextEditOrig->GetValue(); Editor = TextEditOrig;}
+		if (grid->hasTLMode && txt == ""){ txt = TextEditOrig->GetValue(); Editor = TextEditOrig; }
 		Editor->GetSelection(&from, &to);
+		if (oneline){
+			if (from != to){
+				txt.erase(txt.begin() + from, txt.begin() + to);
+			}
+			int klamras = txt.Mid(from).Find('{');
+			int klamrae = txt.Mid(from).Find('}');
 
-		if(from!=to){
-			txt.erase(txt.begin()+from, txt.begin()+to);
+			if (klamrae != -1 && (klamras == -1 || klamras > klamrae) && klamras<from && klamrae>from){
+				from += klamrae + 1;
+			}
+			txt.insert(from, tag);
+			from += tag.Len();
+			Editor->SetTextS(txt, true);
+			Editor->SetSelection(from, from);
 		}
-		int klamras=txt.Mid(from).Find('{');
-		int klamrae=txt.Mid(from).Find('}');
+		else{
+			wxArrayInt sels;
+			grid->file->GetSelectionsAsKeys(sels);
+			for (size_t i = 0; i < sels.size(); i++){
+				long cpyfrom = from;
+				Dialogue *dialc = grid->CopyDialogueByKey(sels[i]);
+				wxString &txt = dialc->Text.CheckTlRef(dialc->TextTl, grid->hasTLMode && dialc->TextTl != "");
+				int klamras = txt.Mid(from).Find('{');
+				int klamrae = txt.Mid(from).Find('}');
 
-		if(klamrae!=-1 && (klamras==-1 || klamras>klamrae)){
-			from+=klamrae+1;
+				if (klamrae != -1 && (klamras == -1 || klamras > klamrae) && klamras<from && klamrae>from){
+					cpyfrom += klamrae + 1;
+				}
+				if (cpyfrom >= txt.size())
+					cpyfrom = txt.size();
+				txt.insert(cpyfrom, tag);
+			}
+			grid->SetModified(EDITBOX_MULTILINE_EDITION);
+			grid->Refresh(false);
+
 		}
-		txt.insert(from, tag);
-		from+=tag.Len();
-		Editor->SetTextS(txt, true);
-		Editor->SetSelection(from, from);
+
 	}
 
 }
@@ -1506,7 +1530,7 @@ void EditBox::OnEditTag(wxCommandEvent &event)
 			}
 		}
 		wxString svtag = tb->tag;
-		Options.SetString((CONFIG)(id - 11000),svtag<<"\f"<<tb->type<<"\f"<<tb->name);
+		Options.SetString((CONFIG)(id - 15000 + EditboxTagButton1), svtag << "\f" << tb->type << "\f" << tb->name);
 		Options.SaveOptions(true,false);
 		if(tb->tag!=""){tb->SetToolTip(tb->tag);}
 	}

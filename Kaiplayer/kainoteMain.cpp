@@ -39,7 +39,7 @@
 #include "FontEnumerator.h"
 #include "SubsResampleDialog.h"
 #include "SpellCheckerDialog.h"
-#include "LanguageToolLoader.h"
+
 
 #undef IsMaximized
 #if _DEBUG
@@ -804,6 +804,7 @@ void kainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 
 bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 {
+	wxMutexLocker lock(blockOpen);
 	wxString ext = filename.AfterLast('.').Lower();
 	if (ext == "exe" || ext == "zip" || ext == "rar" || ext == "7z"){ return false; }
 	if (ext == "lua" || ext == "moon"){ if (!Auto){ Auto = new Auto::Automation(false); }Auto->Add(filename); return true; }
@@ -1247,6 +1248,7 @@ bool comp(wxString first, wxString second)
 //OpenFiles automatically cleares files table
 void kainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bool newtab)
 {
+	wxMutexLocker lock(blockOpen);
 	std::sort(files.begin(), files.end(), comp);
 	wxArrayString subs;
 	wxArrayString videos;

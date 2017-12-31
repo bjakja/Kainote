@@ -514,6 +514,11 @@ void StyleStore::LoadStylesS(bool isass)
 				}
 			}
 		}
+		else{
+			for (size_t i = 0; i < tmps.size(); i++){
+				delete tmps[i];
+			}
+		}
 		tmps.clear();
 	}
 	openFileDialog->Destroy();
