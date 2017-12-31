@@ -31,11 +31,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 	subsResolutionY = new NumCtrl(this,26544,std::to_string(subsSize.y),100, 10000, true, wxDefaultPosition, wxSize(60,-1));
 	MappedButton *fromSubs = new MappedButton(this, 26547, _("Pobierz z napisów"));
 	fromSubs->Enable(false);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
-		subsResolutionX->SetInt(subsSize.x);
-		subsResolutionX->SetInt(subsSize.y);
-		fromSubs->Enable(false);
-	}, 26547);
+	
 #ifdef whithMatrix	
 	wxString matrices[] = {"TV.601", "PC.601", "TV.709", "PC.709", "TV.FCC", "PC.FCC", "TV.240M", "PC.240M"};
 	subsMatrix = new KaiChoice(this, -1 , wxDefaultPosition, wxSize(160,-1), 8, matrices);
@@ -53,11 +49,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 	destinedResolutionY = new NumCtrl(this,26546,std::to_string(videoSize.y),100, 10000, true, wxDefaultPosition, wxSize(60,-1));
 	MappedButton *fromVideo = new MappedButton(this, 26548, _("Pobierz z wideo"));
 	fromVideo->Enable(false);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
-		destinedResolutionX->SetInt(videoSize.x);
-		destinedResolutionY->SetInt(videoSize.y);
-		fromVideo->Enable(false);
-	}, 26548);
+	
 #ifdef whithMatrix	
 	destinedMatrix = new KaiChoice(this, -1 , wxDefaultPosition, wxSize(160,-1), 8, matrices);
 #endif
@@ -91,6 +83,13 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 		}
 	};
 	Bind(NUMBER_CHANGED, OnChangedResolution, 26543, 26544);
+	//from subs button bind
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+		subsResolutionX->SetInt(subsSize.x);
+		subsResolutionX->SetInt(subsSize.y);
+		fromSubs->Enable(false);
+		OnChangedResolution(wxCommandEvent());
+	}, 26547);
 
 	auto OnChangedVideoResolution = [=](wxCommandEvent &evt)->void{
 		int videoSizeX = destinedResolutionX->GetInt();
@@ -108,6 +107,13 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 		}
 	};
 	Bind(NUMBER_CHANGED, OnChangedVideoResolution, 26545, 26546);
+	//from video button bind
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+		destinedResolutionX->SetInt(videoSize.x);
+		destinedResolutionY->SetInt(videoSize.y);
+		fromVideo->Enable(false);
+		OnChangedVideoResolution(wxCommandEvent());
+	}, 26548);
 
 	mainSizer->Add(subsResolutionStaticSizer,1, wxALL|wxEXPAND, 2);
 	mainSizer->Add(videoResolutionStaticSizer,1, wxALL|wxEXPAND, 2);
@@ -119,6 +125,9 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 		int subsSizeY = subsResolutionY->GetInt();
 		int videoSizeX = destinedResolutionX->GetInt();
 		int videoSizeY = destinedResolutionY->GetInt();
+		if (subsSizeX == videoSizeX && subsSizeY == videoSizeY){
+			return;
+		}
 		SubsGrid *grid = Notebook::GetTab()->Grid;
 		grid->AddSInfo("PlayResX",std::to_string(videoSizeX));
 		grid->AddSInfo("PlayResY",std::to_string(videoSizeY));

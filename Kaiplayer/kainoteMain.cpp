@@ -413,7 +413,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		TabPanel *tab = GetTab();
 		int x = 0, y = 0;
 		tab->Grid->GetASSRes(&x, &y);
-		SubsResampleDialog SRD(this, wxSize(x, y), tab->Video->GetVideoSize(), "", "");
+		SubsResampleDialog SRD(this, wxSize(x, y), (tab->Video->GetState() == None) ? wxSize(x, y) : tab->Video->GetVideoSize(), "", "");
 		SRD.ShowModal();
 	}
 	else if (id == FontCollectorID && tab->Grid->subsFormat < SRT){
