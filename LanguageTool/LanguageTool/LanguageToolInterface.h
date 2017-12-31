@@ -39,9 +39,10 @@ public:
 		for (auto suggest : SuggestedReplacements){
 			if (suggest){
 				delete[] suggest;
-				suggest = NULL;
+				//suggest = NULL;
 			}
 		}
+		SuggestedReplacements.clear();
 	}
 	RuleMatch *Copy(){
 		return new RuleMatch(message, FromPos, EndPos);

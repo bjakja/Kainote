@@ -376,7 +376,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 			if (!isHeadline && j == ilcol - 1){
 
-				if (!SpellErrors[k]->size()<0){
+				if (SpellErrors[k]->size()>0){
 					wxPoint pos; bool isMisspell = true;
 					for (size_t s = 0; s < SpellErrors[k]->size(); s++){
 						if (SpellErrors[k]->GetMesures(s, strings[j], tdc, pos, isMisspell)){

@@ -33,7 +33,7 @@ wxDEFINE_EVENT(CURSOR_MOVED, wxCommandEvent);
 MTextEditor::MTextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos,const wxSize& size, long style)
 	:wxWindow(parent,id,pos,size,style)
 {
-	spell=_spell;
+	spell = false;//_spell;
 	MText="";
 	bmp=NULL;
 	fsize=10;

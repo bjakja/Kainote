@@ -132,24 +132,27 @@ void LanguageToolSpellchecker::GenerateErrors(std::vector<RuleMatch*> &errors, s
 			if (ch == '{'){ swapI += swapLen; block = true; }
 			else if (ch == '}'){ block = false; }
 			else if (!block){
-				if (setStartTime && !needSkip){
+				if (setStartTime){
 					//pierwsze to trzeba mo¿e jakoœ zakoñczyæ nieszczêsnego b³êda 
 					//w poprzedniej linii bo na koñcu te¿ mog¹ byæ tagi.
 					/*Tu nie robimy nic, to jest zrobione przy setEndTime*/
 					//drugie zrobiæ kopiê rule bo orygina³ tkwi w poprzedniej linii.
-					rule = rule->Copy();
-					//trzecie wrzuciæ to do tablicy grida
-					grid->SpellErrors[i]->AppendError(rule);
-					//czwarte trzeba wrzuciæ do kopi jakiœ pocz¹tek, który bêdzie obejmowa³ now¹ liniê
-					//tylko to trzeba chyba sprawdzaæ na koñcu linii, by móc wyznaczyæ pocz¹tek od pierwszego znaku który nie jest tagiem
-					rule->FromPos = (hideTags) ? lineI + swapI : j;
-					
+					if (!needSkip){
+						rule = rule->Copy();
+						//trzecie wrzuciæ to do tablicy grida
+						grid->SpellErrors[i]->AppendError(rule);
+						//czwarte trzeba wrzuciæ do kopi jakiœ pocz¹tek, który bêdzie obejmowa³ now¹ liniê
+						//tylko to trzeba chyba sprawdzaæ na koñcu linii, by móc wyznaczyæ pocz¹tek od pierwszego znaku który nie jest tagiem
+						rule->FromPos = (hideTags) ? lineI + swapI : j;
+					}
 					setStartTime = false;
 				}
-				if (ltI == rule->FromPos && !needSkip){
-					rule->FromPos = (hideTags) ? lineI + swapI : j;
-					//tu jeszcze wstawiæ do tablicy grida;
-					grid->SpellErrors[i]->AppendError(rule);
+				if (ltI == rule->FromPos){
+					if (!needSkip){
+						rule->FromPos = (hideTags) ? lineI + swapI : j;
+						//tu jeszcze wstawiæ do tablicy grida;
+						grid->SpellErrors[i]->AppendError(rule);
+					}
 					setEndTime = true;
 				}
 				if (ltI == rule->EndPos){ 
@@ -157,6 +160,7 @@ void LanguageToolSpellchecker::GenerateErrors(std::vector<RuleMatch*> &errors, s
 					rule->EndPos = (hideTags) ? lineI + swapI : j;
 					if (needSkip)
 						delete rule;
+
 					errors.erase(errors.begin());
 					setEndTime = false;
 					if (errors.size() > 0)
