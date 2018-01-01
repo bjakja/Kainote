@@ -64,7 +64,7 @@ void LanguageToolSpellchecker::CheckLines(size_t from, size_t to)
 
 	std::vector<RuleMatch *> errors;
 	LTM->checkText(strippedText.mb_str(wxConvUTF8).data(), errors);
-	GenerateErrors(errors, from, to, ltstart);
+	GenerateErrors(errors, ltfrom, ltto, 0);
 }
 
 void LanguageToolSpellchecker::StripTags(Dialogue *dial)
@@ -103,11 +103,12 @@ void LanguageToolSpellchecker::GenerateErrors(std::vector<RuleMatch*> &errors, s
 	size_t swapI = 0;
 	size_t lineI = 0;
 	//size_t lastDialI = from;
-	while (0 < errors.size()){
-		if (errors[0]->FromPos < ltI){ errors.erase(errors.begin()); }
-		else{ break; }
-	}
+	//while (0 < errors.size()){
+		//if (errors[0]->FromPos < ltI){ errors.erase(errors.begin()); }
+		//else{ break; }
+	//}
 	if (errors.size() < 1){ return; }
+	RuleMatch * lastrule = NULL;
 	RuleMatch * rule = errors[0];
 	bool setEndTime = false;
 	bool setStartTime = false;
@@ -132,33 +133,30 @@ void LanguageToolSpellchecker::GenerateErrors(std::vector<RuleMatch*> &errors, s
 			if (ch == '{'){ swapI += swapLen; block = true; }
 			else if (ch == '}'){ block = false; }
 			else if (!block){
-				if (setStartTime){
-					//pierwsze to trzeba mo¿e jakoœ zakoñczyæ nieszczêsnego b³êda 
-					//w poprzedniej linii bo na koñcu te¿ mog¹ byæ tagi.
-					/*Tu nie robimy nic, to jest zrobione przy setEndTime*/
-					//drugie zrobiæ kopiê rule bo orygina³ tkwi w poprzedniej linii.
-					if (!needSkip){
-						rule = rule->Copy();
-						//trzecie wrzuciæ to do tablicy grida
-						grid->SpellErrors[i]->AppendError(rule);
-						//czwarte trzeba wrzuciæ do kopi jakiœ pocz¹tek, który bêdzie obejmowa³ now¹ liniê
-						//tylko to trzeba chyba sprawdzaæ na koñcu linii, by móc wyznaczyæ pocz¹tek od pierwszego znaku który nie jest tagiem
-						rule->FromPos = (hideTags) ? lineI + swapI : j;
-					}
-					setStartTime = false;
-				}
-				if (ltI == rule->FromPos){
-					if (!needSkip){
+				//if (setStartTime){
+				//	//pierwsze to trzeba mo¿e jakoœ zakoñczyæ nieszczêsnego b³êda 
+				//	//w poprzedniej linii bo na koñcu te¿ mog¹ byæ tagi.
+				//	/*Tu nie robimy nic, to jest zrobione przy setEndTime*/
+				//	//drugie zrobiæ kopiê rule bo orygina³ tkwi w poprzedniej linii.
+				//	if (!needSkip){
+				//		//trzecie wrzuciæ to do tablicy grida
+				//		grid->SpellErrors[i]->AppendError(rule);
+				//		//czwarte trzeba wrzuciæ do kopi jakiœ pocz¹tek, który bêdzie obejmowa³ now¹ liniê
+				//		//tylko to trzeba chyba sprawdzaæ na koñcu linii, by móc wyznaczyæ pocz¹tek od pierwszego znaku który nie jest tagiem
+				//		rule->FromPos = (hideTags) ? lineI + swapI : j;
+				//	}
+				//	setStartTime = false;
+				//}
+				
+				if (ltI == rule->EndPos){ 
+					if (ltI == rule->FromPos && !needSkip && !setEndTime){
 						rule->FromPos = (hideTags) ? lineI + swapI : j;
 						//tu jeszcze wstawiæ do tablicy grida;
 						grid->SpellErrors[i]->AppendError(rule);
 					}
-					setEndTime = true;
-				}
-				if (ltI == rule->EndPos){ 
-					
 					rule->EndPos = (hideTags) ? lineI + swapI : j;
-					if (needSkip)
+					lastrule = rule;
+					if (needSkip && !setEndTime)
 						delete rule;
 
 					errors.erase(errors.begin());
@@ -169,14 +167,40 @@ void LanguageToolSpellchecker::GenerateErrors(std::vector<RuleMatch*> &errors, s
 						return;
 					}
 				}
+				if (ltI == rule->FromPos && !setEndTime){
+					if (!needSkip){
+						rule->FromPos = (hideTags) ? lineI + swapI : j;
+						//tu jeszcze wstawiæ do tablicy grida;
+						grid->SpellErrors[i]->AppendError(rule);
+					}
+					setEndTime = true;
+				}
 				ltI++;
 				lineI++;
 			}
 		}
-		if (setEndTime && !needSkip){
+		if (rule->FromPos >= ltI && rule->FromPos < ltI + 2){
+			rule->FromPos = ltI + 2;
+		}
+		if (setEndTime){
+			if (rule->EndPos < ltI+2){
+				rule->EndPos = (hideTags) ? lineI + swapI : text.Len();
+				lastrule = rule;
+				if (needSkip && !setEndTime)
+					delete rule;
+
+				setEndTime = false;
+				errors.erase(errors.begin());
+				if (errors.size() > 0)
+					rule = errors[0];
+				else{
+					return;
+				}
+			}
 			//pierwsze to trzeba mo¿e jakoœ zakoñczyæ nieszczêsnego b³êda 
 			//w poprzedniej linii bo na koñcu te¿ mog¹ byæ tagi.
-			rule->EndPos = (hideTags) ? lineI + swapI : text.Len()-1;
+			//grid->SpellErrors[i]->GetError(grid->SpellErrors[i]->size()-1)->EndPos 
+			
 			//drugie zrobiæ kopiê rule bo orygina³ tkwi w poprzedniej linii.
 			/*Tu nie robimy nic, to jest zrobione przy setEndTime*/
 			//trzecie wrzuciæ to do tablicy grida
@@ -184,29 +208,33 @@ void LanguageToolSpellchecker::GenerateErrors(std::vector<RuleMatch*> &errors, s
 			//czwarte trzeba wrzuciæ do kopi jakiœ pocz¹tek, który bêdzie obejmowa³ now¹ liniê
 			//tylko to trzeba chyba sprawdzaæ na koñcu linii by móc wyznaczyæ pocz¹tek od pierwszego znaku któy nei jest tagiem
 			/*Tu nie robimy nic, to jest zrobione przy setStartTime*/
-			setStartTime = true;
-			setEndTime = false;
+			
+			
 		}
 		swapI = 0;
 		lineI = 0;
 		ltI += 2;
+	}
+	
+	if (errors.size() > 0){
+		bool thisIsBad = true;
 	}
 }
 
 void Misspells::AppendError(RuleMatch *rule)
 {
 	errors.push_back(rule);
-	//isempty = false;
+	isempty = false;
 }
 
 void Misspells::Clear()
 {
-	for (auto it = errors.begin(); it != errors.end(); it++){
-		delete (*it);
+	for (size_t i = 0; i < errors.size(); i++){
+		delete errors[i];
 	}
 	errors.clear();
 	CPS = -1;
-	//isempty = true;
+	isempty = true;
 }
 
 void Misspells::ClearBlock(std::vector<Misspells*> &table, size_t from, size_t to)
@@ -237,8 +265,11 @@ bool Misspells::GetMesures(size_t i, const wxString &text, wxDC &dc, wxPoint &re
 	RuleMatch *rule = errors[i];
 	if (rule->FromPos >= txtLen)
 		return false;
-	//int fh;
-	wxString err = text.SubString(rule->FromPos, rule->EndPos);
+	wxString err;
+	if (rule->FromPos > rule->EndPos)
+		err = text.SubString(rule->FromPos, text.Len());
+	else
+		err = text.SubString(rule->FromPos, rule->EndPos-1);
 	err.Trim();
 	if (rule->FromPos > 0){
 		wxString berr = text.Mid(0, rule->FromPos);

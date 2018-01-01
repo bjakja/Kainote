@@ -41,7 +41,7 @@ bool LanguageTool::init(){                     // Pointer to native interface
 	
        //================== prepare loading of Java VM ============================
     JavaVMInitArgs vm_args;                        // Initialization arguments
-    JavaVMOption options;   // JVM invocation options
+	JavaVMOption options;   // JVM invocation options
 	options.optionString = Jpath;   // where to find java .class
  
     vm_args.version = JNI_VERSION_1_6;             // minimum Java version
