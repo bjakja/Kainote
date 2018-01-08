@@ -89,6 +89,7 @@ protected:
 	size_t maxSize;
 	wxArrayInt wraps;
 	wxArrayInt positioning;
+	wxSize lastSize;
 	long style;
 	COLOR background;
 	COLOR foreground;

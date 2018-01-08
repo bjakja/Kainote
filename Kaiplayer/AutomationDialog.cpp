@@ -109,7 +109,7 @@ namespace Auto{
 	void read_string_array(lua_State *L, T &cont) {
 		lua_for_each(L, [&] {
 			if (lua_isstring(L, -1))
-				cont.push_back(lua_tostring(L, -1));
+				cont.push_back(wxString(lua_tostring(L, -1), wxConvUTF8));
 		});
 	}
 
