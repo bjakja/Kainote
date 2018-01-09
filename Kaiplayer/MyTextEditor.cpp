@@ -580,8 +580,6 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 
 		DrawFld(bmpDC,w,bitmaph,h);
 
-
-
 		dc.Blit(0,-scPos,w,h+scPos,&bmpDC,0,0);
 
 	}
@@ -630,19 +628,19 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	if(bchar=='{')
 	{
 		Brackets.x=Cursor.x;
-		Brackets.y=FindBracket('{','}',Cursor.x+1);//MText.find('}',Cursor.x);
+		Brackets.y=FindBracket('{','}',Cursor.x+1);
 	}else if(bchar=='}')
 	{
 		Brackets.y=Cursor.x;
-		Brackets.x=FindBracket('}','{',Cursor.x-1,true);//MText.SubString(0,Cursor.x).Find('{',true);
+		Brackets.x=FindBracket('}','{',Cursor.x-1,true);
 	}else if(bchar=='(')
 	{
 		Brackets.x=Cursor.x;
-		Brackets.y=FindBracket('(',')',Cursor.x+1);//MText.find(')',Cursor.x);
+		Brackets.y=FindBracket('(',')',Cursor.x+1);
 	}else if(bchar==')')
 	{
 		Brackets.y=Cursor.x;
-		Brackets.x=FindBracket(')','(',Cursor.x-1,true);//MText.SubString(0,Cursor.x).Find('(',true);
+		Brackets.x=FindBracket(')','(',Cursor.x-1,true);
 	}else{Brackets.x=-1;Brackets.y=-1;}
 
 	int fww, fwww;
@@ -704,8 +702,6 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	//rysowanie liter
 	for(int i=0;i<len;i++){
 		wxUniChar ch=alltext.GetChar(i);
-
-
 
 		if(i==wraps[wline+1]){
 			//if(i==MText.Len()-1){parttext<<ch;}
