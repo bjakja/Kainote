@@ -556,33 +556,33 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 		scPos=0;
 	}
 	
-	bool direct = false;
+	/*bool direct = false;
 
 	if (direct) {
 		DrawFld(dc,w,h,h);
-	}
+	}*/
 
-	else {
+	/*else {*/
 		// Prepare bitmap
 		if (bmp) {
-			if (bmp->GetWidth() < w || bmp->GetHeight() < bitmaph) {
+			if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
 				delete bmp;
 				bmp = NULL;
 			}
 		}
 
-		if (!bmp) bmp = new wxBitmap(w,bitmaph);
+		if (!bmp) bmp = new wxBitmap(w,h);
 
 		// Draw bitmap
 		wxMemoryDC bmpDC;
 
 		bmpDC.SelectObject(*bmp);
 
-		DrawFld(bmpDC,w,bitmaph,h);
+		DrawFld(bmpDC,w,h,h);
 
-		dc.Blit(0,-scPos,w,h+scPos,&bmpDC,0,0);
+		dc.Blit(0,0,w,h,&bmpDC,0,0);
 
-	}
+	//}
 
 	//block=false;
 }
@@ -617,6 +617,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 
 	//Contsel=false;
 	posY=2;
+	posY -= scPos;
 	bool isfirst=true;
 	int wline=0;
 	int wchar=0;
@@ -624,7 +625,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	dc.SetFont(font);
 	wxString alltext=MText+" ";
 	int len=alltext.Len();
-	wxUniChar bchar=alltext[Cursor.x];
+	const wxUniChar &bchar=alltext[Cursor.x];
 	if(bchar=='{')
 	{
 		Brackets.x=Cursor.x;
@@ -663,9 +664,9 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				int rest= (q==scndy)? errors[g+1]-1 : wraps[q+1]-1;
 				wxString btext=MText.SubString(wraps[q], rest);
 				dc.GetTextExtent(btext, &fwww, &fh, NULL, NULL, &font);
-				dc.DrawRectangle(3,(q*Fheight)+1,fwww,Fheight);
+				dc.DrawRectangle(3, ((q*Fheight) + 1) - scPos, fwww, Fheight);
 			}
-			dc.DrawRectangle(fw+3,(fsty*Fheight)+1,fww,Fheight);
+			dc.DrawRectangle(fw + 3, ((fsty*Fheight) + 1) - scPos, fww, Fheight);
 		}
 	}
 
@@ -695,21 +696,25 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				fw=0;
 				dc.GetTextExtent(MText.SubString(wraps[j],wraps[j+1]-1), &fww, &fh, NULL, NULL, &font);
 			}
-			dc.DrawRectangle(fw+3,(j*Fheight)+1,fww,Fheight);
+			dc.DrawRectangle(fw+3,((j*Fheight)+1)-scPos,fww,Fheight);
 			//if(j==scd.y)break;
 		}
 	}
+	bool hasFocus = HasFocus();
+	bool cursorWasSet = false;
 	//rysowanie liter
-	for(int i=0;i<len;i++){
-		wxUniChar ch=alltext.GetChar(i);
+	for (int i = 0; i < len; i++){
+		if (posY > h)
+			break;
+			
+		const wxUniChar &ch=alltext[i];
 
 		if(i==wraps[wline+1]){
-			//if(i==MText.Len()-1){parttext<<ch;}
 			if(Cursor.x+Cursor.y==wchar){
 				int fww=0;
 				dc.GetTextExtent(mestext+parttext, &fww, &fh, NULL, NULL, &font);
-				caret->Move(fww+3,posY-(scPos));
-
+				caret->Move(fww+3,posY/*-(scPos)*/);
+				cursorWasSet = true;
 			}
 
 			if(parttext!=""){
@@ -726,20 +731,25 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			wline++;
 			wchar++;
 			parttext="";
-			//wchar=0;
 			mestext="";
 		}
+		if (posY + Fheight<0){
+			if (ch == '{')
+				tagi = true;
+			else if (ch == '}')
+				tagi = false;
 
-		if(HasFocus()&&(Cursor.x+Cursor.y==wchar)){
+			wchar++;
+			continue;
+		}
+
+		if (hasFocus && (Cursor.x + Cursor.y == wchar)){
 			if(mestext+parttext==""){fw=0;}
 			else{dc.GetTextExtent(mestext+parttext, &fw, &fh, NULL, NULL, &font);}
-			caret->Move(fw+3,posY-(scPos));
-
+			caret->Move(fw+3,posY/*-(scPos)*/);
+			cursorWasSet = true;
 		}
 		parttext<<ch;
-		//mestext<<ch;
-
-
 
 		if(ch=='{'||ch=='}'){
 			if(ch=='{'){
@@ -754,7 +764,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				parttext="{";
 			}else{
 				//if(val){
-				wxString tmp=parttext.RemoveLast(1);
+				wxString &tmp=parttext.RemoveLast(1);
 				dc.GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground((val)? cvalues : ctext);
 				if(tmp.StartsWith("T") || tmp.StartsWith("Y") || tmp.StartsWith(L"Ł")){fw--;}
@@ -813,7 +823,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			parttext="";
 			//continue;
 		}
-		if(HasFocus()&&(i==Brackets.x||i==Brackets.y)){
+		if(hasFocus&&(i==Brackets.x||i==Brackets.y)){
 			int bry=FindY(i);
 			wxColour col=bgbraces;
 			if(Brackets.x==-1||Brackets.y==-1){col=cspellerrors;}
@@ -821,21 +831,23 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			//dc.SetPen(wxPen(col));
 			if(i>0){dc.GetTextExtent(MText.SubString(wraps[bry],i-1), &fw, &fh, NULL, NULL, &font);}else{fw=0;}
 			dc.GetTextExtent(MText[i], &fww, &fh, NULL, NULL, &font);
-			dc.DrawRectangle(fw+3,(bry*Fheight)+1,fww,Fheight);
+			dc.DrawRectangle(fw+3,((bry*Fheight)+2)-scPos,fww,Fheight);
 			wxFont fnt=dc.GetFont();
 			fnt=fnt.Bold();
 			dc.SetFont(fnt);
-			dc.DrawText(MText[i],fw+3,(bry*Fheight)+1);
+			dc.DrawText(MText[i], fw + 3, ((bry*Fheight) + 2) - scPos);
 			dc.SetFont(font);
 			
 		}
 
 		wchar++;
 	}
-
+	if (!cursorWasSet){
+		caret->Move(0, -50);
+	}
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
 	dc.SetPen(wxPen((HasFocus())? Options.GetColour(EditorBorderOnFocus) : Options.GetColour(EditorBorder)));
-	dc.DrawRectangle(0,scPos,w,windowh);
+	dc.DrawRectangle(0,0,w,windowh);
 }
 
 bool MTextEditor::HitTest(wxPoint pos, wxPoint *cur)
@@ -1221,13 +1233,13 @@ void MTextEditor::MakeCursorVisible()
 	
 	if(pixelPos.y < 3){
 		scPos -= (pixelPos.y > -Fheight)? Fheight : (abs(pixelPos.y)+10);
-		scPos = ((scPos/Fheight)-Fheight)*Fheight;
+		scPos = ((scPos / Fheight)*Fheight) - Fheight;
 		if(scPos<0){scPos=0;}
 	}else if(pixelPos.y > size.y-4){
 		int bitmaph= (wraps.size()*Fheight)+4;
 		int moving = pixelPos.y - (size.y - 10);
 		scPos += (moving < Fheight)? Fheight : moving+Fheight;
-		scPos = ((scPos/Fheight)+Fheight)*Fheight;
+		scPos = ((scPos / Fheight)*Fheight)+Fheight;
 		if(scPos>bitmaph){scPos=bitmaph;}
 	}
 	Refresh(false);

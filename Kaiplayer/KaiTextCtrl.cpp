@@ -663,7 +663,6 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 
 	dc.SetFont(font);
 	wxString alltext=KText+" ";
-	//wxString tabulator = "        ";
 	int len=alltext.Len();
 	wxUniChar bchar=alltext[Cursor.x];
 

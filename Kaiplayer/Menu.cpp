@@ -92,8 +92,7 @@ Menu::Menu(char window)
 
 int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels, bool clientPos, bool center)
 {
-	if (isShown){ return -1; }
-	isShown = true;
+	if (parentMenu){ return -1; }
 	wxPoint npos= pos;
 	wxSize size;
 	CalcPosAndSize(parent, &npos, &size, clientPos);
@@ -102,9 +101,10 @@ int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accel
 	dialog = new MenuDialog(this, parent, npos, size, false);
 	int ret = dialog->ShowPartialModal();
 	if(accels){*accels = dialog->accel;}
-	dialog->Destroy();
-	dialog = NULL;
-	isShown = false;
+	if (dialog){
+		dialog->Destroy();
+		dialog = NULL;
+	}
 	return ret;
 }
 
