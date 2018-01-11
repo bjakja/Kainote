@@ -479,9 +479,10 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 	}
 
 
-	if (event.RightDown()) {
+	if (event.RightUp()) {
 		ContextMenu(event.GetPosition());
-		return;}
+		return;
+	}
 
 	if (event.MiddleDown()||(event.LeftDown()&&event.ControlDown())){
 		//OpenEditor();

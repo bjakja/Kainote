@@ -726,13 +726,12 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 			Refresh(false);
 
 		}
-		else{
-			ContextMenu(event.GetPosition());
-		}
-
 		return;
 	}
-
+	else if (event.RightUp()){
+		ContextMenu(event.GetPosition());
+		return;
+	}
 	// Mouse wheel
 	if (event.GetWheelRotation() != 0) {
 		int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();

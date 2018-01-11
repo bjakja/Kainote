@@ -199,7 +199,7 @@ class Menu : public Mnemonics
 	void AppendSeparator();
 	int GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels = 0, bool clientPos=true, bool center = false);
 	void PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos=true, bool center = false);
-	void SetMaxVisible(int maxVisible);
+	void SetMaxVisible(byte maxVisible);
 	void SetShowIcons(bool showIcons);
 	void SetMinWidth(int width);
 	void SetTitle(const wxString &_title){title = _title;};
@@ -217,6 +217,7 @@ private:
 
 protected:
 	char wnd;
+	byte maxVisible = 30;
 	MenuDialog *dialog;
 };
 

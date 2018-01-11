@@ -23,7 +23,6 @@
 
 static wxFont font = wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma");
 const static int height = 22;
-static int maxVisible = 30;
 static bool showMnemonics=false;
 static bool secondAlt=false;
 static bool showIcons=true;
@@ -92,7 +91,10 @@ Menu::Menu(char window)
 
 int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels, bool clientPos, bool center)
 {
-	if (parentMenu){ return -1; }
+	if (MenuDialog::ParentMenu){ 
+		//return -1; 
+		MenuDialog::ParentMenu->HideMenus();
+	}
 	wxPoint npos= pos;
 	wxSize size;
 	CalcPosAndSize(parent, &npos, &size, clientPos);
@@ -156,7 +158,7 @@ void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool cli
 	
 }
 
-void Menu::SetMaxVisible(int _maxVisible)
+void Menu::SetMaxVisible(byte _maxVisible)
 {
 	maxVisible=_maxVisible;
 }
@@ -500,7 +502,7 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 		int step = 3 * evt.GetWheelRotation() / evt.GetWheelDelta();
 		scPos -=step;
 		if(scPos<0){scPos=0;}
-		else if(scPos > (int)parent->items.size()-maxVisible){scPos = parent->items.size()-maxVisible;}
+		else if (scPos >(int)parent->items.size() - parent->maxVisible){ scPos = parent->items.size() - parent->maxVisible; }
 	}
 	
 	elem+=scPos;
@@ -571,18 +573,18 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	if(w==0||h==0){return;}
 	int ow = w;
 	int itemsize = parent->items.size();
-	if(scPos>=itemsize-maxVisible){scPos=itemsize-maxVisible;}
+	if (scPos >= itemsize - parent->maxVisible){ scPos = itemsize - parent->maxVisible; }
 	if(scPos<0){scPos=0;}
 	int maxsize=itemsize;
 	//if(sel<scPos && sel!=-1){scPos=sel;}
 	//else if(sel>= scPos + maxVisible && (sel-maxVisible+1) >= 0){scPos=sel-maxVisible+1;}
-	if(itemsize>maxVisible){
-		maxsize=maxVisible;
+	if (itemsize>parent->maxVisible){
+		maxsize = parent->maxVisible;
 		if(!scroll){
 			scroll = new KaiScrollbar(this,-1,wxPoint(w-18,1),wxSize(17, h-2), wxVERTICAL);
 			scroll->SetScrollRate(3);
 		}
-		scroll->SetScrollbar(scPos, maxVisible, itemsize, maxVisible-1);
+		scroll->SetScrollbar(scPos, parent->maxVisible, itemsize, parent->maxVisible - 1);
 		w-=18;
 	}
 	
@@ -716,7 +718,7 @@ void MenuDialog::HideMenus(int id)
 	else{ParentMenu->parent->DestroyDialog();}
 	ParentMenu=NULL;
 	showIcons=true;
-	maxVisible=30;
+	//maxVisible=30;
 	minWidth = 0; 
 
 }
@@ -1263,8 +1265,8 @@ LRESULT CALLBACK MenuBar::OnMouseClick( int code, WPARAM wParam, LPARAM lParam )
 	}
 	if(showMnemonics || Menubar->md){
 
-		if( msg->message == WM_LBUTTONDOWN || msg->message == WM_NCLBUTTONDOWN || 
-			msg->message == WM_RBUTTONDOWN || msg->message == WM_NCRBUTTONDOWN){
+		if( msg->message == WM_LBUTTONDOWN || msg->message == WM_NCLBUTTONDOWN /*|| 
+			msg->message == WM_RBUTTONDOWN || msg->message == WM_NCRBUTTONDOWN*/){
 			Menubar->HideMnemonics();
 			if(!MenuDialog::ParentMenu){return 0;}
 			POINT mouse;

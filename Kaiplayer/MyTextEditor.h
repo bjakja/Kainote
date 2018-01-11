@@ -61,6 +61,7 @@ protected:
 	void FindWord(int pos,int *start, int *end);
 	int FindBracket(wxUniChar sbrkt, wxUniChar ebrkt, int pos, bool fromback=false);
 	void MakeCursorVisible();
+	
 	bool spell;
     wxString MText;
 	wxBitmap* bmp;

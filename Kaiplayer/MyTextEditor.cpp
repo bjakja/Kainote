@@ -147,27 +147,67 @@ void MTextEditor::CalcWrap(bool updatechars, bool sendevent)
 			scroll->GetSize(&sw,&sh);
 			w-=sw;
 		}
-		int podz=0;
-		wxString wrapchars=" \\,;:}{()";
 		size_t i = 0;
-		int nwrap=-1;
-		int allwrap=0;
-		while(i<MText.Len())
-		{
-			wxString wrap=MText.SubString(podz,i);
-			GetTextExtent(wrap, &fw, &fh, NULL, NULL, &font);
-			if(fw<w-7){
-				allwrap=i;
-				if(wrapchars.Find(MText[i])!=-1){
-					nwrap=i;
-					if(MText[i]==' '){nwrap++;}
+		size_t textLen = MText.Len();
+		if (w < 20){
+			while (i < textLen - 1){ i++; wraps.Add(i); }
+		}
+		else{
+			int podz = 0;
+			wxString wrapchars = " \\,;:}{()";
+
+			int nwrap = -1;
+			int allwrap = 0;
+			int approxSize = w / fsize;
+			while (i < textLen)
+			{
+				i = podz + approxSize;
+				if (i >= textLen){ i = textLen - 1; }
+				bool forward = false;
+				bool forwardNotFound = true;
+				bool backward = false;
+				bool backwardNotFound = true;
+				while (1)
+				{
+					wxString wrap = MText.SubString(podz, i);
+					GetTextExtent(wrap, &fw, &fh, NULL, NULL, &font);
+					allwrap = i;
+					if (fw < w - 7 && !backward && backwardNotFound && i < textLen - 1){
+						int j = i + 1;
+						while (j < textLen && forwardNotFound){
+							if (wrapchars.Find(MText[j]) != -1){
+								nwrap = j;
+								if (MText[j] == ' '){ nwrap++; }
+								forward = true;
+								break;
+							}
+							j++;
+						}
+						if (!forward){ i++; forwardNotFound = false; }
+						else{ i = j; }
+					}
+					else if (fw > w - 7 && i > podz){
+						size_t k = i - 1;
+						while (k > podz && backwardNotFound){
+							if (wrapchars.Find(MText[k]) != -1){
+								nwrap = k;
+								if (MText[k] == ' '){ nwrap++; }
+								backward = true;
+								break;
+							}
+							k--;
+						}
+						if (!backward){ if (i > podz) i--; backwardNotFound = false; }
+						else{ i = k; }
+					}
+					else{
+						int wwrap = (nwrap > 0 && nwrap > wraps[wraps.size() - 1] && nwrap <= allwrap && i < textLen) ? nwrap : (i >= textLen) ? textLen : allwrap + 1;
+						wraps.Add(wwrap); podz = wwrap; nwrap = -1; allwrap = i;
+						i++;
+						break;
+					}
 				}
 			}
-			else{
-				int wwrap = (nwrap > 0 && nwrap > wraps[wraps.size() - 1]) ? nwrap : allwrap + 1;
-				wraps.Add(wwrap); podz = wwrap; nwrap = -1; allwrap = i;
-			}
-			i++;
 		}
 	}
 	wraps.Add(MText.Len());
@@ -481,7 +521,7 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 		MakeCursorVisible();
 	}
 
-	if(event.RightDown())
+	if(event.RightUp())
 	{
 		wxPoint pos=event.GetPosition();
 		ContextMenu(pos,FindError(pos));
@@ -1245,7 +1285,7 @@ void MTextEditor::MakeCursorVisible()
 	Refresh(false);
 }
 
-//void MTextEditor::OnEraseBackground(wxEraseEvent& event){}
+
 BEGIN_EVENT_TABLE(MTextEditor,wxWindow)
 	EVT_PAINT(MTextEditor::OnPaint)
 	EVT_SIZE(MTextEditor::OnSize)
