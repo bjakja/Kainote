@@ -785,6 +785,7 @@ void StyleStore::ReloadFonts()
 	cc->sfont->PutArray(fontList);
 	Store->Refresh(false);
 	ASS->Refresh(false);
+	cc->UpdatePreview();
 	wxLogStatus(_("Czcionki zaczytane ponownie."));
 }
 

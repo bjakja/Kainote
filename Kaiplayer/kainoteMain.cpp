@@ -229,13 +229,42 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(30000, 30059, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnRecent);
 	Connect(PlayActualLine, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
-		if (!mylog){
+		/*if (!mylog){
 			mylog = new wxLogWindow(this, "Logi", true, false);
 			mylog->PassMessages(true);
 		}
 		else{
 			delete mylog; mylog = NULL;
-		}
+		}*/
+		class tmpDial : public KaiDialog{
+		public:
+			tmpDial(wxWindow *win) 
+				: KaiDialog(win, -1, "Testowy dialog pola tekstowego", wxDefaultPosition, wxSize(500, 300), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+			{
+				DialogSizer *sizer = new DialogSizer(wxVERTICAL);
+				txtField = new KaiTextCtrl(this, -1, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
+				int k = 0; int l = 123; int m = 255;
+				for (int i = 0; i < 1000; i++){
+					txtField->AppendText("Pierwszy tekst");
+					txtField->AppendTextWithStyle("Drugi tekst ", wxColour(l, m, k));
+					txtField->AppendText("Trzeci tekst");
+					txtField->AppendTextWithStyle("Czwarty tekst", wxColour(m, l, k));
+					txtField->AppendText("Nty tekst\n");
+					k += 15; l += 15; m += 15;
+					if (k > 255)
+						k = 0;
+					if (l > 255)
+						l = 0;
+					if (l > 255)
+						l = 0;
+				}
+				sizer->Add(txtField,1,wxEXPAND);
+				SetSizerAndFit(sizer);
+			}
+			KaiTextCtrl * txtField;
+		};
+		tmpDial dl(this);
+		dl.ShowModal();
 	}, 9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
 		TabPanel *tab = GetTab();

@@ -21,6 +21,17 @@
 #include "KaiScrollbar.h"
 #include "config.h"
 
+class TextStyle{
+public:
+	TextStyle(){};
+	TextStyle(size_t _from, size_t _to, const wxColour & col){ from = _from; to = _to; color = col; };
+
+	size_t from=0;
+	size_t to=0;
+	wxColour color;
+	//maybe later I add font when I make custom dc class with GDI plus
+};
+
 class KaiTextCtrl : public KaiScrolledWindow
 {
 public:
@@ -32,7 +43,7 @@ public:
 	void GetSelection(long *start, long* end);
 	void SetSelection(int start, int end, bool noEvent=false);
 	void SetWindowStyle(long style);
-	void Replace(int start, int end, wxString rep, bool sendEvent = true);
+	void Replace(int start, int end, const wxString & rep, bool sendEvent = true);
 	void Copy(bool cut=false);
 	void Paste();
 	wxString GetValue() const;
@@ -46,6 +57,12 @@ public:
 	void SetModified(bool modif){modified = modif;}
 	void SetMaxLength(int maxLen){maxSize = maxLen;}
 	void AppendText(const wxString &text);
+	//now only color;font later
+	void AppendTextWithStyle(const wxString &text, const wxColour &color);
+	void SetStyle(size_t from, size_t to, const wxColour &color);
+	bool FindStyle(size_t pos, size_t *ret, bool returnSize = false);
+	void MoveStyles(size_t textPos, int moveIndex);
+	void DeleteStyles(size_t textStart, size_t textEnd);
 	//void SetValidator(const wxValidator &validator){};
 	bool Enable(bool enable=true);
 protected:
@@ -67,8 +84,9 @@ protected:
 	void CalcWrap(bool sendevent=true);
 	void SendEvent();
 	void FindWord(int pos,int *start, int *end);
-	void GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight, wxFont *textFont=NULL, bool correct=false);
+	void GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight, wxDC *dc=NULL, bool correct=false);
 	void MakeCursorVisible(bool refresh=true);
+	inline size_t GetCharMesure(const wxUniChar & nchar, const wxDC &dc);
     wxString KText;
 	wxBitmap* bmp;
 	wxFont font;
@@ -89,6 +107,8 @@ protected:
 	size_t maxSize;
 	wxArrayInt wraps;
 	wxArrayInt positioning;
+	std::vector<TextStyle> textStyles;
+	std::map<wxUniChar, int> charmap;
 	wxSize lastSize;
 	long style;
 	COLOR background;

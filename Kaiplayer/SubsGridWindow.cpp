@@ -47,6 +47,7 @@ SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoin
 	Bind(wxEVT_LEFT_DCLICK, &SubsGridWindow::OnMouseEvent, this);
 	Bind(wxEVT_MIDDLE_DOWN, &SubsGridWindow::OnMouseEvent, this);
 	Bind(wxEVT_RIGHT_DOWN, &SubsGridWindow::OnMouseEvent, this);
+	Bind(wxEVT_RIGHT_UP, &SubsGridWindow::OnMouseEvent, this);
 }
 
 SubsGridWindow::~SubsGridWindow()
@@ -732,6 +733,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		ContextMenu(event.GetPosition());
 		return;
 	}
+	
 	// Mouse wheel
 	if (event.GetWheelRotation() != 0) {
 		int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();

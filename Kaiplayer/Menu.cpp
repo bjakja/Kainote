@@ -91,19 +91,18 @@ Menu::Menu(char window)
 
 int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels, bool clientPos, bool center)
 {
-	if (MenuDialog::ParentMenu){ 
-		//return -1; 
-		MenuDialog::ParentMenu->HideMenus();
+	if (MenuDialog::ParentMenu){
+		MenuDialog::ParentMenu->HideMenus(-5);
 	}
-	wxPoint npos= pos;
+	wxPoint npos = pos;
 	wxSize size;
 	CalcPosAndSize(parent, &npos, &size, clientPos);
 	if(center){npos.x -= (size.x/2);}
 	
 	dialog = new MenuDialog(this, parent, npos, size, false);
 	int ret = dialog->ShowPartialModal();
-	if(accels){*accels = dialog->accel;}
-	if (dialog){
+	if (dialog && ret > -5){
+		if (accels){ *accels = dialog->accel; }
 		dialog->Destroy();
 		dialog = NULL;
 	}
@@ -396,7 +395,6 @@ MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos
 {
 	if(!ParentMenu){
 		ParentMenu=this;
-		//wxLogStatus("hasHook %i",(int)Hook);
 	}
 	//show
 	showSubmenuTimer.SetOwner(this, 13475);
@@ -422,8 +420,10 @@ MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos
 
 MenuDialog::~MenuDialog()
 {
-	if(loop){
-		loop -> Exit(0);
+	if (loop && loop->IsRunning()){
+		//-5 is safe retcode for destroyed windows, it's will not destroy again
+		loop->Exit(-5);
+		//pod ¿adnym pozorem nie niszcz loop bo to gówno przestaje dzia³aæ dopiero gdy wszystkie funkcje siê wykonaj¹
 	}
 	wxDELETE(bmp);
 }
@@ -690,7 +690,7 @@ void MenuDialog::OnScroll(wxScrollEvent& event)
 		Refresh(false);
 	}
 }
-
+//retcode -5 for dialog instant destroy, loop still extists is destroyed in showPartialModal
 void MenuDialog::HideMenus(int id)
 {
 	if(!ParentMenu){return;}
@@ -714,7 +714,11 @@ void MenuDialog::HideMenus(int id)
 		//menu->dialog->HideWithEffect(wxSHOW_EFFECT_BLEND,1);
 		menu->DestroyDialog();
 	}
-	if(ParentMenu->isPartialModal){ParentMenu->EndPartialModal(id);}
+	if(ParentMenu->isPartialModal){
+		ParentMenu->EndPartialModal(id);
+		if (id == -5)
+			ParentMenu->Destroy();
+	}
 	else{ParentMenu->parent->DestroyDialog();}
 	ParentMenu=NULL;
 	showIcons=true;
@@ -736,16 +740,20 @@ int MenuDialog::ShowPartialModal()
 	int resid=-3;
 	Show();
 	if(IsShown()){
-		loop = new wxGUIEventLoop();
-		resid = loop->Run();
-		delete loop; loop=NULL;
+		wxGUIEventLoop * looplocal = loop = new wxGUIEventLoop();
+		resid = looplocal->Run();
+		delete looplocal; 
+		if (resid > -5)
+			loop = NULL;
 	}
 	return resid;
 }
 //Odwo³uje pêtlê czekaj¹c¹
 void MenuDialog::EndPartialModal(int ReturnId)
 {
-	if(loop) loop -> Exit(ReturnId);
+	if (loop){
+		loop->Exit(ReturnId);
+	}
 	Hide();
 }
 

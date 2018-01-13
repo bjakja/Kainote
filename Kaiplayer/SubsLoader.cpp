@@ -50,7 +50,7 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 		else{ validFormat = true; }
 	}
 	else{
-		LoadTXT(text);
+		succeeded = LoadTXT(text);
 		grid->SetSubsFormat();
 		if (grid->subsFormat == SRT){
 			grid->Clearing();
