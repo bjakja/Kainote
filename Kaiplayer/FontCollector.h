@@ -24,7 +24,6 @@
 #include "MappedButton.h"
 #include "KaiTextCtrl.h"
 #include "KaiDialog.h"
-#include <wx/textctrl.h>
 #include <wx/zipstrm.h>
 #include <wx/thread.h>
 //enum{
@@ -58,7 +57,7 @@ public:
 	KaiTextCtrl *path;
 	MappedButton *choosepath;
 	KaiRadioBox *opts;
-	wxTextCtrl *console;
+	KaiTextCtrl *console;
 	MappedButton *bok;
 	MappedButton *bcancel;
 	KaiCheckBox *fromMKV;

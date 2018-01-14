@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2017-12-27 13:47+0100\n"
-"PO-Revision-Date: 2017-12-27 13:48+0100\n"
+"PO-Revision-Date: 2018-01-14 18:26+0100\n"
 "Last-Translator: Bakura, Areki, duplex, Kostek00, Sacredus\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -1173,7 +1173,7 @@ msgstr "Completed successfully and copied %i fonts."
 #: FontCollector.cpp:634
 #, c-format
 msgid "Czcionka \"%s\" nie ma stylu normalnego.\n"
-msgstr "Font \"%s\" is missing normal style:\n"
+msgstr "Font \"%s\" is missing normal style.\n"
 
 #: FontCollector.cpp:636
 #, c-format

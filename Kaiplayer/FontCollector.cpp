@@ -119,9 +119,9 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	fromMKV->SetValue(Options.GetBool(FontCollectorFromMKV));
 
 	Connect(7998,wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&FontCollectorDialog::OnChangeOpt);
-	console=new wxTextCtrl(this,-1,"",wxDefaultPosition,wxSize(500,400),wxTE_RICH2|wxTE_MULTILINE|wxTE_READONLY);
-	console->SetForegroundColour(normal);
-	console->SetBackgroundColour(Options.GetColour(WindowBackground));
+	console=new KaiTextCtrl(this,-1,"",wxDefaultPosition,wxSize(500,400),wxTE_MULTILINE|wxTE_READONLY);
+	//console->SetForegroundColour(normal);
+	//console->SetBackgroundColour(Options.GetColour(WindowBackground));
 	bok=new MappedButton(this,9879,_("Rozpocznij"));
 	bok->SetFocus();
 	bcancel=new MappedButton(this,wxID_CANCEL,_("Zamknij"));
@@ -138,8 +138,8 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 
 	Bind(EVT_APPEND_MESSAGE,[=](wxThreadEvent evt){
 		std::pair<wxString, wxColour> *data = evt.GetPayload<std::pair<wxString, wxColour>*>();
-		console->SetDefaultStyle(wxTextAttr(data->second));
-		console->AppendText(data->first);
+		//console->SetDefaultStyle(wxTextAttr(data->second));
+		console->AppendTextWithStyle(data->first, data->second);
 		delete data;
 	});
 	Bind(EVT_ENABLE_BUTTONS,[=](wxThreadEvent evt){

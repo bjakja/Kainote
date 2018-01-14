@@ -244,7 +244,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 				DialogSizer *sizer = new DialogSizer(wxVERTICAL);
 				txtField = new KaiTextCtrl(this, -1, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
 				int k = 0; int l = 123; int m = 255;
-				for (int i = 0; i < 1000; i++){
+				for (int i = 0; i < 10000; i++){
 					txtField->AppendText("Pierwszy tekst");
 					txtField->AppendTextWithStyle("Drugi tekst ", wxColour(l, m, k));
 					txtField->AppendText("Trzeci tekst");

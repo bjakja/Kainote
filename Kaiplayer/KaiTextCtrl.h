@@ -86,7 +86,6 @@ protected:
 	void FindWord(int pos,int *start, int *end);
 	void GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight, wxDC *dc=NULL, bool correct=false);
 	void MakeCursorVisible(bool refresh=true);
-	inline size_t GetCharMesure(const wxUniChar & nchar, const wxDC &dc);
     wxString KText;
 	wxBitmap* bmp;
 	wxFont font;
@@ -108,8 +107,8 @@ protected:
 	wxArrayInt wraps;
 	wxArrayInt positioning;
 	std::vector<TextStyle> textStyles;
-	std::map<wxUniChar, int> charmap;
-	wxSize lastSize;
+	std::vector<int> charmap;
+	int lastXSize;
 	long style;
 	COLOR background;
 	COLOR foreground;
