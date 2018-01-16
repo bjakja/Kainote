@@ -229,42 +229,13 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(30000, 30059, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnRecent);
 	Connect(PlayActualLine, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
-		/*if (!mylog){
+		if (!mylog){
 			mylog = new wxLogWindow(this, "Logi", true, false);
 			mylog->PassMessages(true);
 		}
 		else{
 			delete mylog; mylog = NULL;
-		}*/
-		class tmpDial : public KaiDialog{
-		public:
-			tmpDial(wxWindow *win) 
-				: KaiDialog(win, -1, "Testowy dialog pola tekstowego", wxDefaultPosition, wxSize(500, 300), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
-			{
-				DialogSizer *sizer = new DialogSizer(wxVERTICAL);
-				txtField = new KaiTextCtrl(this, -1, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
-				int k = 0; int l = 123; int m = 255;
-				for (int i = 0; i < 10000; i++){
-					txtField->AppendText("Pierwszy tekst");
-					txtField->AppendTextWithStyle("Drugi tekst ", wxColour(l, m, k));
-					txtField->AppendText("Trzeci tekst");
-					txtField->AppendTextWithStyle("Czwarty tekst", wxColour(m, l, k));
-					txtField->AppendText("Nty tekst\n");
-					k += 15; l += 15; m += 15;
-					if (k > 255)
-						k = 0;
-					if (l > 255)
-						l = 0;
-					if (l > 255)
-						l = 0;
-				}
-				sizer->Add(txtField,1,wxEXPAND);
-				SetSizerAndFit(sizer);
-			}
-			KaiTextCtrl * txtField;
-		};
-		tmpDial dl(this);
-		dl.ShowModal();
+		}
 	}, 9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
 		TabPanel *tab = GetTab();
@@ -580,25 +551,38 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"),
 			(GetTab()->VideoPath != "") ? GetTab()->VideoPath.BeforeLast('\\') :
 			(subsrec.size() > 0) ? subsrec[0].BeforeLast('\\') : "",
-			"", _("Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv)|*.mkv"), wxFD_OPEN);
+			"", _("Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv)|*.mkv"), wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
 		if (FileDialog1->ShowModal() == wxID_OK){
-			wxString file = FileDialog1->GetPath();
-			if (file.AfterLast('.') == "mkv"){
-				event.SetString(file);
-				GetTab()->Grid->OnMkvSubs(event);
+			wxArrayString paths;
+			FileDialog1->GetPaths(paths);
+			Freeze();
+			GetTab()->Hide();
+			for (auto &file : paths){
+				if (GetTab()->SubsPath != ""){ InsertTab(false); }
+				if (file.AfterLast('.') == "mkv"){
+					event.SetString(file);
+					GetTab()->Grid->OnMkvSubs(event);
+				}
+				else{
+					OpenFile(file);
+				}
 			}
-			else{
-				OpenFile(file);
-			}
+			Thaw();
+			GetTab()->Show();
 		}
 		FileDialog1->Destroy();
 	}
 	else if (id == OpenVideo){
 		wxFileDialog* FileDialog2 = new wxFileDialog(this, _("Wybierz plik wideo"),
 			(videorec.size() > 0) ? videorec[0].BeforeLast('\\') : "",
-			"", _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"), wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, "wxFileDialog");
+			"", _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN|wxFD_FILE_MUST_EXIST|wxFD_MULTIPLE, wxDefaultPosition, wxDefaultSize, "wxFileDialog");
 		if (FileDialog2->ShowModal() == wxID_OK){
-			OpenFile(FileDialog2->GetPath());
+			wxArrayString paths;
+			FileDialog2->GetPaths(paths);
+			if (paths.size()<2 && paths.size()>0)
+				OpenFile(paths[0]);
+			else
+				OpenFiles(paths);
 		}
 		FileDialog2->Destroy();
 	}

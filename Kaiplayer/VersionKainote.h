@@ -16,5 +16,5 @@
 //  This file is for automatic build change
 //  Autoversioning.exe change it after build using commandline
 
-#define VersionKainote "0.9.2.844"
-#define NumVersionKainote 0,9,2,844
+#define VersionKainote "0.9.2.845"
+#define NumVersionKainote 0,9,2,845
