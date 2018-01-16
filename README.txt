@@ -77,7 +77,7 @@ MPL2, MDVD, TMP.
 
 - Konwersja miêdzy tymi formatami.
 
-- Tryb t³umaczenia: przechowóje tekst oryginalny tak d³ugo póki
+- Tryb t³umaczenia: przechowuje tekst oryginalny tak d³ugo póki
 t³umaczenie nie zostanie ukoñczone.
 
 - Szukanie niepewnych i nieprzet³umaczonych linijek.

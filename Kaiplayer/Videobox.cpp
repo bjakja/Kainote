@@ -1310,22 +1310,23 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 {
 	EditBox *eb = Kai->GetTab()->Edit;
 	int vis = evt.GetInt();
+	VideoToolbar *vTB = (isFullscreen && TD) ? TD->vToolbar : vToolbar;
 
 	if(vis==eb->Visual){return;}
 	if(Vclips && vis == 0){ 
 		SetVisual(true); 
-		if(vToolbar->ClipToolsShown()||vToolbar->MoveToolsShown()){vToolbar->ShowTools(false,vToolbar->ClipToolsShown());}
+		if(vTB->ClipToolsShown()||vTB->MoveToolsShown()){vTB->ShowTools(false,vTB->ClipToolsShown());}
 	}else if( vis != eb->Visual ){
 		if(vis==VECTORCLIP || vis==VECTORDRAW || eb->Visual==VECTORCLIP 
 			|| eb->Visual==VECTORDRAW || vis==MOVEALL || eb->Visual==MOVEALL){
 				bool vector = (vis==VECTORCLIP || vis==VECTORDRAW || vis==MOVEALL);
 				bool isMove =  (vis==MOVEALL || (eb->Visual==MOVEALL && vis!=VECTORCLIP && vis!=VECTORDRAW));
 				if(isFullscreen && TD){TD->vToolbar->ShowTools(vector, !isMove);}
-				else{vToolbar->ShowTools(vector, !isMove) ;}
+				else{vTB->ShowTools(vector, !isMove) ;}
 		}
 		eb->Visual = vis;
 		SetVisual();
-		if(vis==MOVEALL){Vclips->ChangeTool(vToolbar->GetMoveToggled());}
+		if(vis==MOVEALL){Vclips->ChangeTool(vTB->GetMoveToggled());}
 		if(!hasArrow){SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 	}
 

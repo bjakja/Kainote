@@ -53,8 +53,8 @@ void MoveAll::DrawVisual(int time)
 void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 {
 	if(blockevents){return;}
-	bool click = evt.LeftDown()||evt.RightDown()||evt.MiddleDown();
-	bool holding = (evt.LeftIsDown()||evt.RightIsDown()||evt.MiddleIsDown());
+	bool click = evt.LeftDown();
+	bool holding = (evt.LeftIsDown()||evt.RightIsDown());
 
 	int x, y;
 	evt.GetPosition(&x,&y);
@@ -66,7 +66,7 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 		numElem=-1;
 	}
 	
-	if(click){
+	if (click){
 
 		for(size_t i = 0; i <elems.size(); i++){
 			if(!(selectedTags & elems[i].type)){continue;}
@@ -80,7 +80,21 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 		}
 		firstmove = D3DXVECTOR2(x,y);
 		axis = 0;
-	}else if(holding && numElem >= 0 ){
+	}else if (evt.RightDown()){
+
+		for (size_t i = 0; i < elems.size(); i++){
+			if (!(selectedTags & elems[i].type)){ continue; }
+			numElem = i;
+			beforeMove = lastmove = elems[i].elem;
+			diffs.x = elems[i].elem.x - x;
+			diffs.y = elems[i].elem.y - y;
+			tab->Video->CaptureMouse();
+			break;
+		}
+		firstmove = D3DXVECTOR2(x, y);
+		axis = 0;
+	}
+	else if (holding && numElem >= 0){
 		
 
 		if(evt.ShiftDown()){
