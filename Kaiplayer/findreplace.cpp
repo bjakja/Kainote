@@ -354,13 +354,15 @@ void FindReplace::OnReplaceAll(wxCommandEvent& event)
 		}
 
 	}
-
-	tab->Grid->SetModified(REPLACE_ALL);
-	if (wrep < TXT){
-		tab->Grid->RefreshColumns(wrep);
-	} 
-	else{
-		tab->Grid->Refresh(false);
+	if (allreps1){
+		tab->Grid->SpellErrors.clear();
+		tab->Grid->SetModified(REPLACE_ALL);
+		if (wrep < TXT){
+			tab->Grid->RefreshColumns(wrep);
+		}
+		else{
+			tab->Grid->Refresh(false);
+		}
 	}
 	blockTextChange = true;
 	KaiMessageBox(wxString::Format(_("Zmieniono %i razy."), allreps1), _("Szukaj Zamień"));
@@ -679,8 +681,7 @@ void FindReplace::Reset()
 }
 
 void FindReplace::OnSetFocus(wxActivateEvent& event){
-	if (!event.GetActive() || blockTextChange){ blockTextChange = false; return; }
-	//wxLogStatus("focus");
+	if (!event.GetActive() || blockTextChange){ if (event.GetActive()){ blockTextChange = false; } return; }
 	long from, to, fromO, toO;
 	EditBox *edit = Kai->GetTab()->Edit;
 	edit->TextEdit->GetSelection(&from, &to);
