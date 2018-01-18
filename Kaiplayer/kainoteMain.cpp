@@ -81,7 +81,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	Tabs = new Notebook(this, ID_TABS);
 	//SetMinSize(wxSize(500,300));
-	Toolbar = new KaiToolbar(this, Menubar, -1, true);
+	Toolbar = new KaiToolbar(this, Menubar, -1);
 
 	//height 26 zmieniając jedną z tych wartości popraw je też dropfiles
 	StatusBar = new KaiStatusBar(this, ID_STATUSBAR1);
@@ -1107,14 +1107,39 @@ void kainoteFrame::OnRecent(wxCommandEvent& event)
 void kainoteFrame::OnSize(wxSizeEvent& event)
 {
 	wxSize size = GetSize();
-	int fborder = 7;//(IsMaximized())? 0 : 5;
-	int ftopBorder = 26;
+	int fborder = borders.left = borders.right = borders.bottom = 7;
+	int ftopBorder = borders.top = 26;
 	int menuHeight = Menubar->GetSize().GetHeight();
-	int toolbarWidth = Toolbar->GetSize().GetWidth();
+	int toolbarWidth = Toolbar->GetThickness();
 	int statusbarHeight = StatusBar->GetSize().GetHeight();
+	//0 left, 1 top, 2 right, 3 bottom
+	int toolbarAlignment = Options.GetInt(ToolbarAlignment);
+	borders.top += menuHeight;
+	borders.bottom += statusbarHeight;
 	Menubar->SetSize(fborder, ftopBorder, size.x - (fborder * 2), menuHeight);
-	Toolbar->SetSize(fborder, ftopBorder + menuHeight, toolbarWidth, size.y - menuHeight - statusbarHeight - ftopBorder - fborder);
-	Tabs->SetSize(fborder + toolbarWidth, ftopBorder + menuHeight, size.x - toolbarWidth - (fborder * 2), size.y - menuHeight - statusbarHeight - ftopBorder - fborder);
+	switch (toolbarAlignment){
+	case 0://left
+		Toolbar->SetSize(borders.left, borders.top, toolbarWidth, size.y - borders.top - borders.bottom); 
+		borders.left += toolbarWidth; 
+		break;
+	case 1://top
+		Toolbar->SetSize(borders.left, borders.top, size.x - borders.left - borders.right, toolbarWidth);
+		borders.top += toolbarWidth; 
+		break;
+	case 2://right
+		borders.right += toolbarWidth;
+		Toolbar->SetSize(size.x - borders.right, borders.top, toolbarWidth, size.y - borders.top - borders.bottom); 
+		break;
+	case 3://bottom
+		borders.bottom += toolbarWidth;
+		Toolbar->SetSize(borders.left, size.y - borders.bottom, size.x - borders.left - borders.right, toolbarWidth); 
+		break;
+	default:
+		Toolbar->SetSize(borders.left, borders.top, toolbarWidth, size.y - borders.top - borders.bottom);
+		borders.left += toolbarWidth;
+		break;
+	}
+	Tabs->SetSize(borders.left, borders.top, size.x - borders.left - borders.right, size.y - borders.top - borders.bottom);
 	StatusBar->SetSize(fborder, size.y - statusbarHeight - fborder, size.x - (fborder * 2), statusbarHeight);
 
 	event.Skip();
@@ -1456,12 +1481,12 @@ void kainoteFrame::HideEditor(bool save)
 		if (cur->Video->GetState() != None && !cur->Video->isFullscreen && !IsMaximized()){
 			int sx, sy, sizex, sizey;
 			GetClientSize(&sizex, &sizey);
-			sizex -= iconsize;
-			sizey -= (cur->Video->panelHeight + Tabs->GetHeight() + Menubar->GetSize().y + StatusBar->GetSize().y);
+			sizex -= borders.left + borders.right;
+			sizey -= (cur->Video->panelHeight + borders.bottom + borders.top);
 
 			cur->Video->CalcSize(&sx, &sy, sizex, sizey, false, true);
 
-			SetClientSize(sx + iconsize, sy + cur->Video->panelHeight + Tabs->GetHeight() + Menubar->GetSize().y + StatusBar->GetSize().y);
+			SetClientSize(sx + borders.left + borders.right, sy + cur->Video->panelHeight + borders.bottom + borders.top);
 
 		}
 		cur->Video->SetFocus();

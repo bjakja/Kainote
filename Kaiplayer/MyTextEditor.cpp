@@ -210,7 +210,10 @@ void MTextEditor::CalcWrap(bool updatechars, bool sendevent)
 			}
 		}
 	}
-	wraps.Add(MText.Len());
+	else{
+		wraps.Add(MText.Len());
+	}
+	//
 	if(updatechars){EB->UpdateChars(MText);}
 	if(sendevent){wxCommandEvent evt2(wxEVT_COMMAND_TEXT_UPDATED, GetId()); AddPendingEvent(evt2);}
 }

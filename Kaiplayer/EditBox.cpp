@@ -1773,7 +1773,7 @@ void EditBox::SetTagButtons()
 		}
 		menu->Append(16000, _("Zmień ilość przycisków"));
 		if(!TagButtonManager){
-			TagButtonManager = new MenuButton(this, -1, _("Zarządzaj przyciskami tagów"),wxDefaultPosition, wxSize(24,24));
+			TagButtonManager = new MenuButton(this, -1, _("Zarządzaj przyciskami tagów"),wxDefaultPosition, wxSize(23,24));
 			BoxSizer4->Add(TagButtonManager,0,wxALIGN_CENTER|wxALL,2);
 			Connect(16000,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnEditTag);
 		}

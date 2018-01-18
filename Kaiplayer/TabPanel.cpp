@@ -45,6 +45,7 @@ TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const
 	BoxSizer3->Add(ShiftTimes, 0, wxEXPAND, 0);
     BoxSizer2->Add(Video, 0, wxEXPAND|wxALIGN_TOP, 0);
     BoxSizer2->Add(Edit, 1, wxEXPAND|wxALIGN_TOP, 0);
+	
     BoxSizer1 = new wxBoxSizer(wxVERTICAL);
     BoxSizer1->Add(BoxSizer2, 0, wxEXPAND|wxALIGN_TOP, 0);
 	BoxSizer1->AddSpacer(3);

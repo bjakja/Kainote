@@ -16,11 +16,11 @@
 #include "MenuButton.h"
 
 MenuButton::MenuButton(wxWindow *parent, int id, const wxString &tooltip, const wxPoint &pos, const wxSize &size)
-	: wxStaticBitmap(parent, id, wxBITMAP_PNG("ARROW_LIST_DOUBLE"), pos, size)
+	: MappedButton(parent, id, tooltip, wxBITMAP_PNG("ARROW_LIST_DOUBLE"), pos, size)
 	, IsMenuShown(false)
 	, menu(NULL)
 {
-	SetToolTip(tooltip);
+	//SetToolTip(tooltip);
 	Bind(wxEVT_LEFT_DOWN, &MenuButton::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_DCLICK, &MenuButton::OnMouseEvent, this);
 	//Bind(wxEVT_LEFT_UP, &MenuButton::OnMouseEvent, this);

@@ -47,7 +47,7 @@ class kainoteFrame: public KaiFrame
 
 		Notebook* Tabs;
 
-		wxBoxSizer *mains;
+		//wxBoxSizer *mains;
         void Save(bool dial, int wtab=-1, bool changeLabel = true);
 		void SaveAll();
 
@@ -88,10 +88,12 @@ class kainoteFrame: public KaiFrame
 		void SetSubsResolution(bool dialog=false);
 		void SetVideoResolution(int w, int h, bool dialog=false);
 		void ShowBadResolutionDialog(const wxSize &videoRes, const wxSize &subsRes);
+		void OnSize(wxSizeEvent& event);
 		FindReplace *FR;
 		SelectLines *SL;
 		Auto::Automation *Auto;
 		FontCollector *fc;
+		RECT borders;
     private:
 
 		
@@ -105,7 +107,6 @@ class kainoteFrame: public KaiFrame
 		void OnPageChange(wxCommandEvent& event);
 		void OnPageAdd(wxCommandEvent& event);
 		void OnPageClose(wxCommandEvent& event);
-		void OnSize(wxSizeEvent& event);
 		void OnRunScript(wxCommandEvent& event);
 		void OnChangeLine(wxCommandEvent& event);
 		void OnDelete(wxCommandEvent& event);

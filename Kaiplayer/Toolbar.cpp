@@ -20,10 +20,9 @@
 #include "KainoteApp.h"
 #include "wx/utils.h"
 
-KaiToolbar::KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id, bool _orient)
+KaiToolbar::KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id)
 	:wxWindow(Parent,-1,wxDefaultPosition,wxSize(iconsize,-1))
 	,bmp(NULL)
-	,vertical(_orient)
 	,Clicked(false)
 	,wasmoved(false)
 	,wh(iconsize)
@@ -31,7 +30,7 @@ KaiToolbar::KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id, bool _orient)
 	,sel(-1)
 	,mb(mainm)
 {
-	
+	alignment = Options.GetInt(ToolbarAlignment);
 }
 
 KaiToolbar::~KaiToolbar()
@@ -208,6 +207,7 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 	}
 	if(!bmp){bmp=new wxBitmap(w,h);}
 	tdc.SelectObject(*bmp);
+	bool vertical = alignment % 2 == 0;
 	const wxColour & background = Options.GetColour(WindowBackground);
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
@@ -222,7 +222,7 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 		if(i==sel){
 			tdc.SetPen(wxPen((Clicked)?Options.GetColour(ButtonBorderPushed) : Options.GetColour(ButtonBorderHover)));
 			tdc.SetBrush(wxBrush((Clicked)?Options.GetColour(ButtonBackgroundPushed) : Options.GetColour(ButtonBackgroundHover)));
-			tdc.DrawRoundedRectangle((vertical)?pos1+2 :pos-2, (vertical)?pos-2 : pos1+2,iconsize-4,tools[i]->size-4,1.1);
+			tdc.DrawRoundedRectangle((vertical) ? pos1 + 2 : pos - 2, (vertical) ? pos - 2 : (i >= (int)tools.size() - 1) ? pos1 + 2 + (iconsize - (tools[i]->size)) : pos1 + 2, iconsize - 4, tools[i]->size - 4, 1.1);
 		}
 		if(tools[i]->type<2){
 			//wxImage img=tools[i]->GetBitmap().ConvertToImage();
@@ -252,8 +252,6 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 		points[2]=wxPoint(pos-3,pos1+21);
 	}
 	
-	
-	
 	tdc.SetPen(*wxTRANSPARENT_PEN);
 	tdc.DrawPolygon(3,points);
 	wxPaintDC dc(this);
@@ -265,16 +263,19 @@ void KaiToolbar::OnSize(wxSizeEvent &evt)
 	int h=0;
 	GetClientSize (&w, &h);
 	if(w==0||h==0){return;}
-	
+	bool vertical = alignment % 2 == 0;
 	float maxx=(vertical)? h : w;
-	int toolbarrows=((tools.size()*iconsize)-8)/maxx;
+	int toolbarrows=((tools.size()*iconsize)-2)/maxx;
 
 	wh=(toolbarrows+1)*iconsize;
 	int maxxwh=(vertical)? w : h;
 	if(maxxwh!=wh){
-		SetMinSize(wxSize(wh,-1));
+		thickness = wh;
+		SetSize(wxSize(wh,-1));
 		kainoteFrame *Kai= (kainoteFrame*)GetParent();
-		Kai->Layout();
+		//Kai->Layout();
+		wxSizeEvent evt;
+		Kai->OnSize(evt);
 	}
 	
 	Refresh(false);
@@ -286,6 +287,7 @@ wxPoint KaiToolbar::FindElem(wxPoint pos)
 	int h=0;
 	GetClientSize (&w, &h);
 	wxPoint res(-1,0);
+	bool vertical = alignment % 2 == 0;
 	int maxx=(vertical)? h : w;
 	int tmppos=0;
 	int curpos=(vertical)? pos.y : pos.x;
@@ -294,13 +296,14 @@ wxPoint KaiToolbar::FindElem(wxPoint pos)
 	//int wrap=0;
 	for(size_t i=0; i<tools.size(); i++)
 	{
-		if(tmppos+tools[i]->size>maxx){res.y++;tmppos=0;}
-		if(curpos>tmppos && curpos<=tmppos+tools[i]->size &&res.y==curpos1)
+		int toolsize = (vertical) ? tools[i]->size : iconsize;
+		if (tmppos + toolsize > maxx){ res.y++; tmppos = 0; }
+		if (curpos > tmppos && curpos <= tmppos + toolsize && res.y == curpos1)
 		{
 			res.x=i;
 			return res;
 		}
-		tmppos += tools[i]->size;
+		tmppos += toolsize;
 		
 	}
 	return res;
@@ -323,12 +326,33 @@ bool KaiToolbar::Updatetoolbar()
 void KaiToolbar::OnToolbarOpts(wxCommandEvent &event)
 {
 	wxPoint point=GetPosition();
-	point=ClientToScreen(point);
-	point.y+=20;
-	point.x+=GetSize().x;
-	ToolbarMenu *tbr=new ToolbarMenu(this,point);
+	point = GetParent()->ClientToScreen(point);
+	switch (alignment){
+		case 0://left
+			point.y += 20;
+			point.x += GetSize().x;
+			break;
+		case 1://top
+			point.y += GetSize().y;
+			point.x += tools.size() * iconsize - 175;
+			break;
+		case 2://right
+			point.y += 20;
+			point.x -= /*GetSize().x + */350;
+			break;
+		case 3://bottom
+			point.y -= 510;
+			if (point.y < 0){ point.y = 0; }
+			point.x += tools.size() * iconsize - 175;
+			break;
+		default:
+			point.y += 20;
+			point.x += GetSize().x;
+			break;
+	}
+	ToolbarMenu *tbr = new ToolbarMenu(this,point);
 	tbr->Show();
-	//wxLogStatus("showed");
+	
 }
 
 BEGIN_EVENT_TABLE(KaiToolbar, wxWindow)
@@ -339,7 +363,7 @@ BEGIN_EVENT_TABLE(KaiToolbar, wxWindow)
 END_EVENT_TABLE()
 
 ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos)
-	:wxDialog(_parent,-1,"",pos, wxSize(350,500), wxBORDER_NONE)
+	:wxDialog(_parent,-1,"",pos, wxSize(350,510), wxBORDER_NONE)
 	,sel(-1)
 	,scPos(0)
 	,parent(_parent)
@@ -350,6 +374,23 @@ ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos)
 	//uważaj gdy kiedyś zechcesz zmienić rozmiar tego okna, to ustaw odpowiednio scrollbar
 	scroll = new KaiScrollbar(this, -1, wxDefaultPosition, wxDefaultSize, wxVERTICAL);
 	Bind(wxEVT_IDLE,&ToolbarMenu::OnIdle, this);
+	wxString ans[] = { _("Po lewej"), _("U góry"), _("Po prawej"), _("Na dole") };
+	alignments = new KaiChoice(this, 32213, wxPoint(4, 4), wxSize(342, 24), 4, ans);
+	if (parent->alignment > 3 || parent->alignment < 0)
+		parent->alignment = 0;
+	alignments->SetSelection(parent->alignment);
+	alignments->SetToolTip(_("Pozycja paska narzędzi"));
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
+		parent->alignment = alignments->GetSelection();
+		Options.SetInt(ToolbarAlignment, parent->alignment);
+		kainoteFrame *win = (kainoteFrame*)parent->GetParent();
+		if (win){
+			wxSizeEvent evt;
+			win->OnSize(evt);
+			win->Tabs->Refresh(false);
+		}
+		Destroy();
+	}, 32213);
 }
 
 void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
@@ -368,9 +409,9 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 		return;
 	}
 
-	int elem = y/fh;
+	int elem = (y-30)/fh;
 	elem+=scPos;
-	if(elem>=(int)parent->ids.size()){return;}
+	if (elem >= (int)parent->ids.size() || y <= 30){ sel = -1; Refresh(false); return; }
 	if(elem!=sel){
 		sel=elem;
 		Refresh(false);
@@ -394,6 +435,7 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 			desc = desc.BeforeFirst('\t');
 			parent->AddItem(parent->ids[elem], desc, item->icon,item->IsEnabled(), (item->GetSubMenu()!=NULL)? 1 : 0);
 		}else{
+			delete parent->tools[result];
 			parent->tools.erase(parent->tools.begin()+result);
 
 		}
@@ -431,10 +473,11 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	else if(scPos<0){scPos=0;}
 	int maxsize=MAX(idssize,scPos+visible);
 	scroll->SetScrollbar(scPos,visible,idssize,visible-1);
-	scroll->SetSize(w,1,17,h-2);
+	scroll->SetSize(w,31,17,h-32);
 	tdc.SetTextForeground(txt);
 	for(int i=0;i<visible; i++)
 	{
+		int posY = (fh*i) + 32;
 		MenuItem *item=parent->mb->FindItem(parent->ids[i+scPos]);
 		bool check=false;
 		for(size_t j=0; j<parent->tools.size();j++)
@@ -444,17 +487,17 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 		if(i+scPos==sel){
 			tdc.SetPen(wxPen(Options.GetColour(MenuBorderSelection)));
 			tdc.SetBrush(wxBrush(Options.GetColour(MenuBackgroundSelection)));
-			tdc.DrawRectangle(1, (fh*i)+1,w-1,fh-2);
+			tdc.DrawRectangle(1, posY-1, w - 1, fh - 2);
 		}
 		//tdc.SetPen(wxPen("#497CB0",2));
 		//tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 		
 		
 		if(check){
-			tdc.DrawBitmap(checkbmp,4,(fh*i)+2);
+			tdc.DrawBitmap(checkbmp,4,posY);
 		}
 
-		tdc.DrawBitmap(item->GetBitmap(),fh+8,(fh*i)+2);
+		tdc.DrawBitmap(item->GetBitmap(), fh + 8, posY);
 		wxString desc=item->GetLabel();
 		desc.Replace("&","");
 		size_t reps=desc.Replace("\t"," (");
@@ -467,9 +510,9 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 			accel.Prepend("(");
 			int fw, fhh;
 			tdc.GetTextExtent(accel, &fw, &fhh);
-			tdc.DrawText(accel,w-fw-8,(fh*i)+2);
+			tdc.DrawText(accel, w - fw - 8, posY);
 		}
-		tdc.DrawText(label,(fh*2)+15,(fh*i)+2);
+		tdc.DrawText(label, (fh * 2) + 15, posY);
 		
 
 	}

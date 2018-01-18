@@ -786,7 +786,6 @@ void Notebook::OnTabSel(int id)
 	//wxLogStatus("wtab %i", wtab);
 	if(wtab<-1){
 		wtab=abs(wtab+2);
-		//wxLogStatus("wtab split %i", wtab);
 		Split(wtab);
 	}
 	else if(wtab<0){
@@ -796,7 +795,6 @@ void Notebook::OnTabSel(int id)
 		for(int i=(int)Pages.size()-1; i>=0; i--)
 		{
 			iter=i;
-			//wxLogStatus("%i", (int)i);
 			if(Kai->SavePrompt()){break;}
 			SubsGridBase::RemoveComparison();
 			Pages[i]->Destroy();
@@ -804,8 +802,10 @@ void Notebook::OnTabSel(int id)
 			Names.pop_back();
 			Tabsizes.pop_back();
 		}
-		//wxLogStatus("destroyed");
 		int pagesSize = Pages.size();
+		if (iter <= pagesSize || splititer <= pagesSize)
+			split = false;
+
 		if (olditer >= pagesSize){ olditer = 0; }
 		firstVisibleTab = 0;
 		int w=-1,h=-1;

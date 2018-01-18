@@ -61,7 +61,7 @@ class KaiToolbar :public wxWindow
 {
 	friend class ToolbarMenu;
 public:
-	KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id, bool vertical);
+	KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id);
 	virtual ~KaiToolbar();
 
 	void AddItem(int id, const wxString &label, wxBitmap *normal,bool enable, byte type=0);
@@ -72,6 +72,8 @@ public:
 	bool Updatetoolbar();
 	void InitToolbar();
 	void AddID(int id);
+	int GetThickness(){ return thickness; }
+	//void ChangeOrientation(byte _alignment){ alignment = _alignment; }
 	wxArrayInt ids;
 
 private:
@@ -82,12 +84,13 @@ private:
 	wxPoint FindElem(wxPoint pos);
 	std::vector<toolitem*> tools;
 	
-	bool vertical;
+	byte alignment;
 	bool Clicked;
 	bool wasmoved;
 	int wh;
 	int oldelem;
 	int sel;
+	int thickness = iconsize;
 	wxBitmap *bmp;
 	MenuBar *mb;
 	DECLARE_EVENT_TABLE()
@@ -99,7 +102,6 @@ class ToolbarMenu :public wxDialog
 public:
 	ToolbarMenu(KaiToolbar*parent, const wxPoint &pos);
 	virtual ~ToolbarMenu(){wxDELETE(bmp);};
-
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent &event);
@@ -109,6 +111,7 @@ private:
 	KaiToolbar*parent;
 	wxBitmap *bmp;
 	KaiScrollbar *scroll;
+	KaiChoice *alignments;
 	int sel;
 	int fh;
 	int scPos;

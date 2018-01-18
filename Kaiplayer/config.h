@@ -184,6 +184,7 @@
 	CG(TextFieldAllowNumpadHotkeys,)\
 	CG(TlModeShowOriginal,)\
 	CG(ToolbarIDs,)\
+	CG(ToolbarAlignment,)\
 	CG(VideoFullskreenOnStart,)\
 	CG(VideoIndex,)\
 	CG(VideoPauseOnClick,)\

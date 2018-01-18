@@ -15,10 +15,10 @@
 
 #pragma once
 
-#include "wx/statbmp.h"
+#include "MappedButton.h"
 #include "Menu.h"
 
-class MenuButton : public wxStaticBitmap
+class MenuButton : public MappedButton
 {
 public:
 	MenuButton(wxWindow *parent, int id, const wxString &tooltip, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize);

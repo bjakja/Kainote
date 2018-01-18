@@ -243,10 +243,10 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName,bool full
 		if(!Kai->GetTab()->editor){
 			if(!Kai->IsMaximized()){
 				int sizex,sizey;
-				Kai->GetClientSize(&sizex,&sizey);
+				Kai->GetSize(&sizex,&sizey);
 				CalcSize(&sx,&sy,0,0,true,true);
-				sx+=iconsize;
-				sy+= (panelHeight + Kai->Tabs->GetHeight() + Kai->Menubar->GetSize().y + Kai->StatusBar->GetSize().y);
+				sx += Kai->borders.left + Kai->borders.right;
+				sy += (panelHeight + Kai->borders.bottom + Kai->borders.top);
 				if(sx == sizex && sy == sizey){
 					UpdateVideoWindow();
 				}else{
@@ -623,9 +623,10 @@ void VideoCtrl::SetFullscreen(int monitor)
 		if(!Kai->GetTab()->editor){
 			if(!Kai->IsMaximized()){
 				Kai->GetClientSize(&sizex,&sizey);
-				int yDiff = panelHeight + Kai->Tabs->GetHeight() + Kai->Menubar->GetSize().y + Kai->StatusBar->GetSize().y;
-				CalcSize(&sx,&sy,sizex - iconsize,sizey - yDiff);
-				Kai->SetClientSize(sx + iconsize, sy + yDiff);
+				int yDiff = panelHeight + Kai->borders.bottom + Kai->borders.top;
+				int xDiff = Kai->borders.left + Kai->borders.right;
+				CalcSize(&sx, &sy, sizex - xDiff, sizey - yDiff);
+				Kai->SetClientSize(sx + xDiff, sy + yDiff);
 			}
 		}else{
 			Options.GetCoords(VideoWindowSize,&sizex,&sizey);
