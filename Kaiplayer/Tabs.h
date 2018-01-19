@@ -63,7 +63,7 @@ private:
 	void OnSize(wxSizeEvent& event);
 	static void OnResized();
 	void OnEraseBackground(wxEraseEvent &event);
-	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){ splitLineHolding = false; if (HasCapture()){ ReleaseMouse(); } };
 	void OnCharHook(wxKeyEvent& event);
 	void CalcSizes(bool makeActiveVisible = false);
 	
@@ -78,6 +78,7 @@ private:
 	bool plus;
 	bool allTabsVisible;
 	bool arrow;
+	bool splitLineHolding = false;
 	int splitline;
 	int splititer;
 	int oldtab;

@@ -316,17 +316,18 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		return;
 	}
 
-	if(y<hh){
-
-		if(click){
+	if (y<hh && split){
+		bool isInSplitLine = abs(splitline - x) < 4;
+		if (click && isInSplitLine){
 			CaptureMouse();
 			int px=x, py=2;
 			ClientToScreen(&px,&py);
 			sline= new wxDialog(this,-1,"",wxPoint(px,py),wxSize(3,h-27),wxSTAY_ON_TOP|wxBORDER_NONE);
 			sline->SetBackgroundColour("#000000");
 			sline->Show();
+			splitLineHolding = true;
 		}
-		else if(event.LeftUp())
+		else if (event.LeftUp() && splitLineHolding)
 		{
 			int npos=x;
 			if(sline){
@@ -338,18 +339,16 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			}
 			if(HasCapture()){ReleaseMouse();}
 			splitline=npos;
-			bool aciter=(Pages[iter]->GetPosition().x==1);
-			int tmpiter=(aciter)? iter : splititer;
-			int tmpsplititer=(!aciter)? iter : splititer;
-			//wxLogStatus("size iter %i splititer %i", tmpiter, tmpsplititer);
-			//TODO dorobić pewne sprawdzanie dwóch zakładek, po pozycji to trochę nie halo.
+			bool leftTab=(Pages[iter]->GetPosition().x==1);
+			int tmpiter=(leftTab)? iter : splititer;
+			int tmpsplititer=(!leftTab)? iter : splititer;
 			Pages[tmpiter]->SetSize(splitline-3,hh-2);
-			Pages[tmpsplititer]->SetSize(w-(splitline+3),hh-2);
-			Pages[tmpsplititer]->SetPosition(wxPoint(splitline+2,1));
-			Refresh(false);//wxRect(0,hh,w,25),
+			Pages[tmpsplititer]->SetSize(splitline + 2, 1, w - (splitline + 3), hh - 2);
+			Refresh(false);
 			SetTimer(GetHWND(), 9876, 500, (TIMERPROC)OnResized);
+			splitLineHolding = false;
 		}
-		else if(event.LeftIsDown())
+		else if (event.LeftIsDown() && splitLineHolding)
 		{
 			if(x!=splitline){
 				int px=MID(200,x,w-200), py=2;
@@ -357,14 +356,14 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 				if(sline){sline->SetPosition(wxPoint(px,py));}
 			}
 
-
 		}
-		if(arrow && split && abs(splitline - x) < 4){SetCursor(wxCURSOR_SIZEWE);arrow=false;}
-		else if(!arrow && split){ SetCursor(wxCURSOR_ARROW); arrow = true; }
+		if (!splitLineHolding && arrow && isInSplitLine){ SetCursor(wxCURSOR_SIZEWE); arrow = false; }
 		return;
 	}
 
-	if(!arrow){SetCursor(wxCURSOR_ARROW);arrow=true;}
+	if (!arrow && !splitLineHolding){
+		SetCursor(wxCURSOR_ARROW);arrow=true;
+	}
 
 	if (!allTabsVisible && event.GetWheelRotation() != 0) {
 		int step = 1 * event.GetWheelRotation() / event.GetWheelDelta();
@@ -426,7 +425,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 
 	}	
 
-
+	//swap tabs
 	if(event.LeftIsDown() && i >= 0 && oldI >= 0 && i != oldI){
 		wxString tmpname = Names[i];
 		int tmpsize = Tabsizes[i];
@@ -878,14 +877,9 @@ void Notebook::Split(size_t page)
 	}
 	splitline=w/2;
 	splititer=page;
-	Pages[iter]->SetSize(splitline-3,h-TabHeight-2);
-	Pages[iter]->SetPosition(wxPoint(1,1));
-	Pages[splititer]->SetSize(w-(splitline+3),h-TabHeight-2);
-	Pages[splititer]->SetPosition(wxPoint(splitline+2,1));
+	Pages[iter]->SetSize(1, 1, splitline-3, h-TabHeight-2);
+	Pages[splititer]->SetSize(splitline + 2, 1, w - (splitline + 3), h - TabHeight - 2);
 	Pages[splititer]->Show();
-	//Pages[iter]->SetWindowStyleFlag(wxBORDER_SUNKEN);
-	//Pages[iter]->Refresh();
-
 	SetTimer(GetHWND(), 9876, 500, (TIMERPROC)OnResized);
 }
 
