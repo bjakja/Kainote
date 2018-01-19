@@ -45,7 +45,11 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VideoVolume), wxPoint(size.x - 110, 17), wxSize(110, 25));
 	KaiCheckBox *showToolbar = new KaiCheckBox(panel, 7777, _("Pokaż pasek narzędzi"), wxPoint(180, 21), wxSize(150, -1));
 	showToolbar->SetValue(!vc->IsDshow);
-	Videolabel = new KaiStaticText(panel, -1, "", wxPoint(340, 24));
+	mstimes = new KaiTextCtrl(panel, -1, "", wxPoint(340, 21), wxSize(300, -1), wxTE_READONLY);
+	mstimes->SetWindowStyle(wxBORDER_NONE);
+	mstimes->SetCursor(wxCURSOR_ARROW);
+	mstimes->SetBackgroundColour(WindowBackground);
+	Videolabel = new KaiStaticText(panel, -1, "", wxPoint(644, 22));
 	Videolabel->Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){
 		panel->SetFocus();
 		evt.Skip();
@@ -96,7 +100,7 @@ void Fullscreen::OnSize()
 	vslider->SetSize(wxSize(asize.x,14));
 	if(vc->IsDshow){volslider->Show(); volslider->SetPosition(wxPoint(asize.x-110,17));}
 	else{volslider->Show(false);}
-	Videolabel->SetSize(asize.x-450,-1);
+	Videolabel->SetSize(asize.x-114,-1);
 	if(vToolbar->IsShown()){vToolbar->SetSize(asize.x, 22);}
 	panel->SetSize(0, asize.y - panelsize, asize.x, panelsize);
 }

@@ -164,7 +164,7 @@ bool VideoCtrl::Play()
 	wxMutexLocker lock(vbmutex);
 	if(time>=GetDuration()){return false;}
 	if(!VideoRend::Play()){return false;}
-	int ms=(isFullscreen)?1000:100;
+	int ms=(isFullscreen && !TD->panel->IsShown())? 1000 : 100;
 	vtime.Start(ms);
 	ChangeButtonBMP(false);
 	return true;
@@ -174,7 +174,7 @@ void VideoCtrl::PlayLine(int start, int end)
 {
 	//wxMutexLocker lock(vbmutex);
 	if(!VideoRend::PlayLine(start, end)){return;}
-	int ms=(isFullscreen)?1000:100;
+	int ms = (isFullscreen && !TD->panel->IsShown()) ? 1000 : 100;
 	vtime.Start(ms);
 	ChangeButtonBMP(false);
 }
@@ -200,7 +200,10 @@ bool VideoCtrl::Pause(bool burstbl)
 	if(!VideoRend::Pause()){return false;}
 	if(GetState()==Paused){
 		vtime.Stop();RefreshTime();}
-	else if(GetState()==Playing){int ms=(isFullscreen)?1000:100;vtime.Start(ms);}
+	else if(GetState()==Playing){
+		int ms = (isFullscreen && !TD->panel->IsShown()) ? 1000 : 100;
+		vtime.Start(ms);
+	}
 	ChangeButtonBMP(!(GetState()==Playing));
 
 	return true;
@@ -436,8 +439,8 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 
 		int w,h;
 		TD->GetClientSize(&w, &h);
-		if(y >= h - panelHeight && !TD->panel->IsShown()){TD->panel->Show();}
-		else if(y < h - panelHeight && TD->panel->IsShown() && !panelOnFullscreen){TD->panel->Show(false);SetFocus();}
+		if (y >= h - panelHeight && !TD->panel->IsShown()){ vtime.Start(100); TD->panel->Show(); }
+		else if (y < h - panelHeight && TD->panel->IsShown() && !panelOnFullscreen){ vtime.Start(1000); TD->panel->Show(false); SetFocus(); }
 		if(!TD->panel->IsShown() && !ismenu){idletime.Start(1000, true);}
 	}
 	else if(Kai->GetTab()->editor){
@@ -551,8 +554,10 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 
 void VideoCtrl::OnIdle(wxTimerEvent& event)
 {
-	if(isFullscreen && !TD->panel->IsShown()&&!ismenu){
-		TD->SetCursor(wxCURSOR_BLANK);eater=IsDshow;fullarrow=false;
+	if(isFullscreen && !TD->panel->IsShown() && !ismenu){
+		TD->SetCursor(wxCURSOR_BLANK);
+		eater=IsDshow;
+		fullarrow=false;
 	}
 }
 
@@ -670,7 +675,7 @@ void VideoCtrl::SetFullscreen(int monitor)
 		UpdateVideoWindow();
 		block = false;
 		RefreshTime();
-		if(GetState()==Playing){vtime.Start(1000);}
+		if(GetState()==Playing && !TD->panel->IsShown()){vtime.Start(1000);}
 		//if(GetState()==Paused){Kp->Render();}
 		if(monitor && Kai->GetTab()->editor){
 			Hide();
@@ -1122,10 +1127,34 @@ void VideoCtrl::RefreshTime()
 	float dur=GetDuration();
 	float val=(dur>0)? kkk.mstime/dur : 0.0;
 
-
-
 	if(isFullscreen){
 		TD->vslider->SetValue(val);
+		if (TD->panel->IsShown()){
+			wxString times;
+			times << kkk.raw(SRT) << ";  ";
+			TabPanel *pan = (TabPanel*)GetParent();
+			if (!IsDshow){
+				times << lastframe << ";  ";
+				if (VFF){
+					if (VFF->KeyFrames.Index(time) != -1){
+						shownKeyframe = true;
+						TD->mstimes->SetForegroundColour(WindowWarningElements);
+					}
+					else if (shownKeyframe){
+						shownKeyframe = false;
+						TD->mstimes->SetForegroundColour(WindowText);
+					}
+				}
+			}
+			if (pan->editor){
+				Dialogue *line = pan->Edit->line;
+				int sdiff = kkk.mstime - ZEROIT(line->Start.mstime);
+				int ediff = kkk.mstime - ZEROIT(line->End.mstime);
+				times << sdiff << " ms, " << ediff << " ms";
+			}
+			TD->mstimes->SetValue(times);
+			TD->mstimes->Update();
+		}
 		if(!pbar){return;}
 		STime kkk1;
 		kkk1.mstime=dur;

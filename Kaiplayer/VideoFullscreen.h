@@ -16,10 +16,11 @@
 #pragma once
 
 #include <wx/panel.h>
-#include <wx/font.h>
-#include <wx/wx.h>
+//#include <wx/font.h>
+#include <wx/window.h>
 #include "VideoSlider.h"
 #include "BitmapButton.h"
+#include "KaiTextCtrl.h"
 #include "KaiStaticText.h"
 class VideoToolbar;
 
@@ -33,7 +34,8 @@ public:
 	BitmapButton* bstop;
 	BitmapButton* bnext;
 	BitmapButton* bpline;
-	KaiStaticText* Videolabel;
+	KaiTextCtrl* mstimes;
+	KaiStaticText *Videolabel;
 	VideoSlider* vslider;
 	VolSlider* volslider;
 	wxPanel* panel;
