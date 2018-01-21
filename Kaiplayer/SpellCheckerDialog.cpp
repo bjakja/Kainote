@@ -126,6 +126,7 @@ void SpellCheckerDialog::SetNextMisspell()
 	if(misspellWord.IsEmpty()){
 		//mamy brak błędów trzeba poinformować użyszkodnika i zablokować jakiekolwiek akcje.
 		suggestionsList->SetTextArray(wxArrayString());
+		blockOnActive=true;
 		KaiMessageBox(_("Nie znaleziono więcej błędów pisowni"), _("Uwaga"), wxOK, this);
 		return;
 	}else{
@@ -272,6 +273,7 @@ wxString SpellCheckerDialog::GetRightCase(const wxString &replaceWord, const wxS
 void SpellCheckerDialog::OnActive(wxActivateEvent &evt)
 {
 	if(evt.GetActive()){
+		if (blockOnActive){ blockOnActive = false; return; }
 		TabPanel *tab1 = Kai->GetTab();
 		wxString &ActualText = tab1->Edit->line->Text.CheckTlRef(tab1->Edit->line->TextTl, tab->Grid->hasTLMode);
 		if(tab != tab1 || lastActiveLine != tab1->Edit->ebrow || lastText != ActualText){

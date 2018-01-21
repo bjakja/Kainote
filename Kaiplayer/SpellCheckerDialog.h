@@ -59,6 +59,7 @@ private:
 	int lastLine;
 	int lastMisspell;
 	int lastActiveLine;
+	bool blockOnActive=false;
 	wxArrayString ignored;
 	wxArrayInt errors;
 	wxString lastText;
