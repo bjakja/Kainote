@@ -376,8 +376,6 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	int num;
 	int i = FindTab(x, &num);
 
-
-
 	// klik, dwuklik i środkowy
 	if(click||dclick||mdown){
 		oldI=i;
@@ -820,6 +818,8 @@ void Notebook::OnTabSel(int id)
 		if(w<1){GetClientSize(&w,&h);}
 		RefreshRect(wxRect(0,h-25,w,25),false);
 		Pages[iter]->Show();
+		wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
+		AddPendingEvent(evt2);
 	}
 	else{
 		TabPanel *tmp=Page(firstVisibleTab);
@@ -901,7 +901,7 @@ int Notebook::FindTab(int x, int *_num)
 void Notebook::ChangeActive()
 {
 	wxWindow *win = FindFocus();
-	if (win && IsDescendant(Pages[iter])){
+	if (win && Pages[iter]->IsDescendant(win)){
 		Pages[iter]->lastFocusedWindow = win;
 	}
 	else{ Pages[iter]->lastFocusedWindow = NULL; }

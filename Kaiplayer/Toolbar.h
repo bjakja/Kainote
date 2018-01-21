@@ -24,12 +24,13 @@ static int iconsize=24;
 class toolitem
 {
 public:
-	toolitem(wxBitmap *_icon, const wxString& _label, int _id, bool _enable, byte _type)
+	toolitem(wxBitmap *_icon, const wxString& _label, short _id, bool _enable, byte _type, bool _toggled)
 	{
 		icon=_icon; label=_label; id=_id; enabled=_enable;type=_type;size=iconsize;
+		if (type == 2){ toggled = _toggled; }
 	}
-	//types 0 - normal icon, 1 -icon with submenu 2 - clickable element, 3 - spacer 
-	toolitem(byte _type, int _size, int _id=-1, bool enable=false)
+	//types 0 - normal icon, 1 -icon with submenu, 2 - togglebutton, 3 - clickable element, 4 - spacer
+	toolitem(byte _type, byte _size, short _id = -1, bool enable = false)
 	{
 		type = _type; size=_size; enabled=enable; id=_id;
 	}
@@ -49,11 +50,12 @@ public:
 	int GetType(){
 		return type;
 	}
-	wxBitmap *icon;
+	wxBitmap *icon = NULL;
 	wxString label;
-	int id;
-	int size;
+	short id;
+	byte size;
 	byte type;
+	bool toggled = false;
 	bool enabled;
 };
 
@@ -64,10 +66,11 @@ public:
 	KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id);
 	virtual ~KaiToolbar();
 
-	void AddItem(int id, const wxString &label, wxBitmap *normal,bool enable, byte type=0);
-	void InsertItem(int id, int index, const wxString &label, wxBitmap *normal,bool enable, byte type=0);
+	void AddItem(int id, const wxString &label, wxBitmap *normal,bool enable, byte type=0, bool toggled = false);
+	void InsertItem(int id, int index, const wxString &label, wxBitmap *normal, bool enable, byte type = 0, bool toggled = false);
 	void AddSpacer();
 	void InsertSpacer(int index);
+	toolitem *FindItem(int id);
 	void UpdateId(int id, bool enable);
 	bool Updatetoolbar();
 	void InitToolbar();

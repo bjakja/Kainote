@@ -637,8 +637,8 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 		//tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 		
 		if(showIcons){
-			if(item->type==ITEM_CHECK && item->check){
-				tdc.DrawBitmap(checkbmp,5,(height*i)+5);
+			if(item->type==ITEM_CHECK){
+				if (item->check) tdc.DrawBitmap(checkbmp, 5, (height*i) + 5);
 			}else if(item->type==ITEM_RADIO && noRadio){
 				tdc.DrawBitmap(dot,5,(height*i)+4);
 				noRadio=false;

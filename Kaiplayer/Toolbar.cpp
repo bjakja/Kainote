@@ -39,7 +39,7 @@ KaiToolbar::~KaiToolbar()
 	wxDELETE(bmp);
 	for(auto i = tools.begin(); i!=tools.end(); i++)
 	{
-		if((*i)->id!=34566){names.Add(GetString((Id)(*i)->id));}
+		if ((*i)->id != 32566){ names.Add(GetString((Id)(*i)->id)); }
 		delete (*i);
 	}
 	tools.clear();
@@ -74,26 +74,27 @@ void KaiToolbar::InitToolbar()
 		MenuItem *item=mb->FindItem(IDS[i]);
 		if(!item){wxLogStatus(_("Nie można znaleźć elementu o id %i"), IDS[i]);continue;}
 		wxString desc=item->GetLabelText();
-		AddItem(IDS[i],desc,item->icon,item->IsEnabled(),(item->GetSubMenu()!=NULL)? 1 : 0);
+		bool isToogleButton = item->type == ITEM_CHECK;
+		AddItem(IDS[i], desc, item->icon, item->IsEnabled(), (isToogleButton) ? 2 : (item->GetSubMenu() != NULL) ? 1 : 0, (isToogleButton)?item->check : false);
 	}
-	tools.push_back(new toolitem(2,16,34566,true));
+	tools.push_back(new toolitem(3,16,32566,true));
 	
 	Refresh(false);
 }
 
 	
-void KaiToolbar::AddItem(int id, const wxString &label, wxBitmap *normal,bool enable, byte type)
+void KaiToolbar::AddItem(int id, const wxString &label, wxBitmap *normal, bool enable, byte type, bool toggled)
 {
-	if(tools.size()>0 && tools[tools.size()-1]->GetType()==2){
-		tools.insert(tools.begin()+tools.size()-2, new toolitem(normal,label,id,enable,type));
+	if(tools.size()>0 && tools[tools.size()-1]->GetType()==3){
+		tools.insert(tools.begin() + tools.size() - 2, new toolitem(normal, label, id, enable, type, toggled));
 		return;
 	}
-	tools.push_back(new toolitem(normal,label,id,enable,type));
+	tools.push_back(new toolitem(normal, label, id, enable, type, toggled));
 }
 	
-void KaiToolbar::InsertItem(int id, int index, const wxString &label,wxBitmap *normal,bool enable, byte type)
+void KaiToolbar::InsertItem(int id, int index, const wxString &label, wxBitmap *normal, bool enable, byte type, bool toggled)
 {
-	tools.insert(tools.begin()+index,new toolitem(normal,label,id,enable,type));
+	tools.insert(tools.begin() + index, new toolitem(normal, label, id, enable, type, toggled));
 }
 
 void KaiToolbar::AddSpacer()
@@ -103,6 +104,18 @@ void KaiToolbar::AddSpacer()
 void KaiToolbar::InsertSpacer(int index)
 {
 	tools.insert(tools.begin()+index, new toolitem(3,12));	
+}
+
+toolitem * KaiToolbar::FindItem(int id)
+{
+	for (auto i = tools.begin(); i != tools.end(); i++)
+	{
+		if ((*i)->id == id)
+		{
+			return (*i);
+		}
+	}
+	return NULL;
 }
 
 void KaiToolbar::UpdateId(int id, bool enable)
@@ -145,7 +158,7 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 		sel=elem;oldelem=elem;
 		Refresh(false);
 	}
-	else if(sel!=elem && tools[elem]->type<2 && !event.LeftIsDown()){
+	else if(sel!=elem && tools[elem]->type<3 && !event.LeftIsDown()){
 		wxString shkeyadd;
 		wxString shkey=Hkeys.GetMenuH(tools[elem]->id);
 		if (shkey!=""){shkeyadd<<" ("<<shkey<<")";}
@@ -156,7 +169,8 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 	}
 	if(!tools[elem]->enabled){int tmpsel= sel; sel=-1;if(tmpsel!=sel){Refresh(false);}}
 	if((leftdown || (event.Entering() && event.LeftIsDown()))){// && tools[elem]->type<3
-		Clicked=true;Refresh(false);oldelem=elem;
+		Clicked=true;
+		Refresh(false); oldelem = elem;
 	}else if(event.LeftIsDown() && oldelem!=elem && oldelem>=0){
 		if(elem==tools.size()-1 || oldelem==tools.size()-1){oldelem=elem;return;}
 		toolitem *tmpitem=tools[oldelem];
@@ -167,6 +181,10 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 		wasmoved=true;
 	}else if(event.LeftUp()){
 		if(!wasmoved && tools[elem]->enabled){
+			if (tools[elem]->type == 2){
+				tools[elem]->toggled = !tools[elem]->toggled;
+				Refresh(false);
+			}
 			if(tools[elem]->type==1){
 				MenuItem *item=mb->FindItem(tools[elem]->id);
 				Menu * smenu=item->GetSubMenu();
@@ -185,6 +203,7 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 				smenu->PopupMenu(event.GetPosition(), this);
 			}else{
 				wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED,tools[elem]->id);
+				evt.SetInt(1000);
 				ProcessEvent(evt);
 			}
 		}
@@ -219,12 +238,13 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 	for(int i=0; i<(int)tools.size(); i++)
 	{
 		if(pos+tools[i]->size>maxx){pos1+=iconsize;pos=4;}
-		if(i==sel){
-			tdc.SetPen(wxPen((Clicked)?Options.GetColour(ButtonBorderPushed) : Options.GetColour(ButtonBorderHover)));
-			tdc.SetBrush(wxBrush((Clicked)?Options.GetColour(ButtonBackgroundPushed) : Options.GetColour(ButtonBackgroundHover)));
+		bool toggled = tools[i]->toggled;
+		if (i == sel || toggled){
+			tdc.SetPen(wxPen((Clicked || toggled) ? Options.GetColour(ButtonBorderPushed) : Options.GetColour(ButtonBorderHover)));
+			tdc.SetBrush(wxBrush((Clicked || toggled) ? Options.GetColour(ButtonBackgroundPushed) : Options.GetColour(ButtonBackgroundHover)));
 			tdc.DrawRoundedRectangle((vertical) ? pos1 + 2 : pos - 2, (vertical) ? pos - 2 : (i >= (int)tools.size() - 1) ? pos1 + 2 + (iconsize - (tools[i]->size)) : pos1 + 2, iconsize - 4, tools[i]->size - 4, 1.1);
 		}
-		if(tools[i]->type<2){
+		if(tools[i]->type<3){
 			//wxImage img=tools[i]->GetBitmap().ConvertToImage();
 			//img=img.Rescale(20,20,wxIMAGE_QUALITY_HIGH);
 
@@ -359,7 +379,7 @@ BEGIN_EVENT_TABLE(KaiToolbar, wxWindow)
 	EVT_MOUSE_EVENTS(KaiToolbar::OnMouseEvent)
 	EVT_PAINT(KaiToolbar::OnPaint)
 	EVT_SIZE(KaiToolbar::OnSize)
-	EVT_MENU(34566,KaiToolbar::OnToolbarOpts)
+	EVT_MENU(32566,KaiToolbar::OnToolbarOpts)
 END_EVENT_TABLE()
 
 ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos)
@@ -433,7 +453,9 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 			wxString desc=item->GetLabel();
 			desc.Replace("&","");
 			desc = desc.BeforeFirst('\t');
-			parent->AddItem(parent->ids[elem], desc, item->icon,item->IsEnabled(), (item->GetSubMenu()!=NULL)? 1 : 0);
+			bool isToogleButton = item->type == ITEM_CHECK;
+			parent->AddItem(parent->ids[elem], desc, item->icon, item->IsEnabled(), 
+				(isToogleButton) ? 2 : (item->GetSubMenu() != NULL) ? 1 : 0, (isToogleButton) ? item->check : false);
 		}else{
 			delete parent->tools[result];
 			parent->tools.erase(parent->tools.begin()+result);

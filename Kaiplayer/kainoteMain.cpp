@@ -116,7 +116,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	EditMenu = new Menu();
 	EditMenu->AppendTool(Toolbar, Undo, _("&Cofnij"), _("Cofnij"), PTR_BITMAP_PNG("undo"), false);
-	EditMenu->AppendTool(Toolbar, UndoToLastSave, _("Cofnij do ostatniego zapisu"), _("Cofnij do ostatniego zapisu"), PTR_BITMAP_PNG("undo"), false);
+	EditMenu->AppendTool(Toolbar, UndoToLastSave, _("Cofnij do ostatniego zapisu"), _("Cofnij do ostatniego zapisu"), PTR_BITMAP_PNG("UNDOTOLASTSAVE"), false);
 	EditMenu->AppendTool(Toolbar, Redo, _("&Ponów"), _("Ponów"), PTR_BITMAP_PNG("redo"), false);
 	EditMenu->AppendTool(Toolbar, History, _("&Historia"), _("Historia"), PTR_BITMAP_PNG("history"), true);
 	EditMenu->AppendTool(Toolbar, FindReplaceDialog, _("Znajdź i za&mień"), _("Szuka i podmienia dane frazy tekstu"), PTR_BITMAP_PNG("findreplace"));
@@ -151,8 +151,9 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	VidMenu->AppendTool(Toolbar, GoToPrewKeyframe, _("Przejdź do poprzedniej klatki kluczowej"), "", PTR_BITMAP_PNG("prevkeyframe"));
 	VidMenu->AppendTool(Toolbar, GoToNextKeyframe, _("Przejdź do następnej klatki kluczowej"), "", PTR_BITMAP_PNG("nextkeyframe"));
 	VidMenu->AppendTool(Toolbar, VideoZoom, _("Powiększ wideo"), "", PTR_BITMAP_PNG("zoom"));
-	VidMenu->Append(VideoIndexing, _("Otwieraj wideo przez FFMS2"), _("Otwiera wideo przez FFMS2, co daje dokładność klatkową"), true, 0, 0, ITEM_CHECK)->Check(Options.GetBool(VideoIndex));
-
+	bool videoIndex = Options.GetBool(VideoIndex);
+	VidMenu->Append(VideoIndexing, _("Otwieraj wideo przez FFMS2"), _("Otwiera wideo przez FFMS2, co daje dokładność klatkową"), true, PTR_BITMAP_PNG("FFMS2INDEXING"), 0, ITEM_CHECK)->Check(videoIndex);
+	Toolbar->AddID(VideoIndexing);
 	Menubar->Append(VidMenu, _("&Wideo"));
 
 	AudMenu = new Menu();
@@ -347,6 +348,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			tab->Grid->RefreshColumns();
 
 			if (tab->Video->GetState() != None){ tab->Video->OpenSubs(NULL); tab->Video->Render(); }
+			SetSubsResolution(false);
 		}
 	}
 	else if (id == Undo){
@@ -394,8 +396,20 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		}
 	}
 	else if (id == VideoIndexing){
+		toolitem *ToolItem = Toolbar->FindItem(VideoIndexing);
 		MenuItem *Item = Menubar->FindItem(VideoIndexing);
-		Options.SetBool(VideoIndex, Item->IsChecked());
+		if (Modif == 1000 && ToolItem){
+			if (Item)
+				Item->Check(ToolItem->toggled);
+			Options.SetBool(VideoIndex, ToolItem->toggled);
+		}
+		else if(Item){
+			if (ToolItem){
+				ToolItem->toggled = Item->IsChecked();
+				Toolbar->Refresh(false);
+			}
+			Options.SetBool(VideoIndex, Item->IsChecked());
+		}
 	}
 	else if (id == VideoZoom){
 		tab->Video->SetZoom();
@@ -884,6 +898,11 @@ bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 						if(hasVideoPath){
 							MenuItem *item = VidMenu->FindItem(VideoIndexing);
 							if (item) item->Check();
+							toolitem *titem = Toolbar->FindItem(VideoIndexing);
+							if (titem){ 
+								titem->toggled = true;
+								Toolbar->Refresh(false);
+							}
 						}
 					}
 					if (hasVideoPath){ secondFileName = videopath; found = true; }
@@ -1462,7 +1481,7 @@ void kainoteFrame::HideEditor(bool save)
 		cur->BoxSizer1->Layout();
 		Label();
 		if (cur->Video->GetState() != None){ cur->Video->ChangeVobsub(); }
-
+		SetSubsResolution(false);
 	}
 	else{//Wyłączanie edytora
 		cur->Video->panelHeight = 44;
@@ -1496,6 +1515,7 @@ void kainoteFrame::HideEditor(bool save)
 		if (cur->VideoName != ""){ Label(0, true); }
 		if (cur->Video->GetState() != None){ cur->Video->ChangeVobsub(true); }
 		//cur->Video->vToolbar->Enable(false);
+		SetStatusText("", 7);
 	}
 	UpdateToolbar();
 	if (save){ Options.SetBool(EditorOn, cur->editor); Options.SaveOptions(true, false); }

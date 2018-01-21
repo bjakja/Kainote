@@ -201,7 +201,7 @@ void MTextEditor::CalcWrap(bool updatechars, bool sendevent)
 						else{ i = k; }
 					}
 					else{
-						int wwrap = (nwrap > 0 && nwrap > wraps[wraps.size() - 1] && nwrap <= allwrap && i < textLen) ? nwrap : (i >= textLen) ? textLen : allwrap + 1;
+						int wwrap = (nwrap > 0 && nwrap > wraps[wraps.size() - 1] && nwrap <= allwrap && i < textLen-1) ? nwrap : (i >= textLen-1) ? textLen : allwrap + 1;
 						wraps.Add(wwrap); podz = wwrap; nwrap = -1; allwrap = i;
 						i++;
 						break;
