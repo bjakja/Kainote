@@ -1007,12 +1007,32 @@ void VideoCtrl::OnAccelerator(wxCommandEvent& event)
 		if(id==FrameToPNG || id==SubbedFrameToPNG){
 			TabPanel *pan=Notebook::GetTab();
 			wxString path;
-			int num=0;
-			do{
-				path= pan->VideoPath;
-				path<<num<<".png";
+			int num=1;
+			wxArrayString paths;
+			wxString filespec;
+			wxString dirpath = pan->VideoPath.BeforeLast('\\', &filespec);
+			wxDir kat(dirpath);
+			path = pan->VideoPath;
+			if (kat.IsOpened()){
+				kat.GetAllFiles(dirpath, &paths, filespec.BeforeLast('.') << "_*_*.png", wxDIR_FILES);
+			}
+			for (wxString &file : paths){
+				if (file.find("_" + std::to_string(num) + "_") == wxNOT_FOUND){
+					break;
+				}
 				num++;
-			}while(wxFileExists(path));
+			}
+			path = pan->VideoPath.BeforeLast('.');
+			STime currentTime;
+			currentTime.mstime = time;
+			wxString timestring = currentTime.raw(SRT);
+			timestring.Replace(":", ";");
+			//path.Replace(",", ".");
+			path << "_" << num << "_" << timestring << ".png";
+			
+			if (wxFileExists(path)){
+				bool thisisbad = true;
+			}
 			conv.SavePNG(path,framebuf);
 		}else{
 			conv.SavetoClipboard(framebuf);
