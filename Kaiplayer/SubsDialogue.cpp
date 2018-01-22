@@ -314,6 +314,7 @@ void Dialogue::Convert(char type, const wxString &pref)
 			regibu.ReplaceAll(&tmp,"{\\\\\\1\t1}");
 			regibu0.ReplaceAll(&tmp,_T("{\\\\\\1\t0}"));
 			tmp.Replace("\t","");
+			tmp.Replace("<br>", "\\N");
 			Text=pref+tmp;
 		}
 
@@ -334,6 +335,56 @@ void Dialogue::Convert(char type, const wxString &pref)
 			tmp.Replace(_T("\\N"),_T("|"));}
 		Text=tmp;
 		
+	}
+	else if (Form == SRT){
+		wxString tmp = Text;
+		tmp.Replace("\\N", "|");
+		tmp.Replace("<br>", "|");
+		if (type == MDVD){
+			tmp.Replace("<i>", "{y:i}");
+			tmp.Replace("<b>", "{y:b}");
+		}
+		else if (type == MPL2){
+			tmp.Replace("<i>", "/");
+		}
+		wxRegEx reg(_T("\\<[^>]*\\>"), wxRE_ADVANCED);
+		reg.ReplaceAll(&tmp, "");
+		Text = tmp;
+	}
+	else if (type == SRT){
+		wxString tmp = Text;
+		tmp.Replace("|", "\\N");
+		if (type == MDVD){
+			tmp.Replace("{y:i}", "<i>");
+			tmp.Replace("{y:b}", "<b>");
+			wxRegEx reg("\\{[^}]*\\}", wxRE_ADVANCED);
+			reg.ReplaceAll(&tmp, "");
+		}
+		else if (type == MPL2){
+			tmp.Replace("/", "<i>");
+		}
+		Text = tmp;
+	}
+	else if (Form == MDVD && type == MPL2){
+		wxString tmp = Text;
+		tmp.Replace("{y:i}", "/");
+		wxRegEx reg("\\{[^}]*\\}", wxRE_ADVANCED);
+		reg.ReplaceAll(&tmp, "");
+		Text = tmp;
+	}
+	else if (Form == MPL2 && type == MDVD){
+		Text->Replace("/", "{y:i}");
+	}
+	else{
+		if (Form == MDVD){
+			wxString tmp = Text;
+			wxRegEx reg("\\{[^}]*\\}", wxRE_ADVANCED);
+			reg.ReplaceAll(&tmp, "");
+			Text = tmp;
+		}
+		else if (Form == MPL2){
+			Text->Replace("/", "");
+		}
 	}
 
 	Form=type;
