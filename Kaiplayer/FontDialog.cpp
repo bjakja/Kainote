@@ -365,7 +365,7 @@ BEGIN_EVENT_TABLE(FontList,wxWindow)
 
 	Connect(ID_FONTLIST,wxEVT_COMMAND_LISTBOX_SELECTED,(wxObjectEventFunction)&FontDialog::OnFontChanged);
 	Connect(ID_FONTNAME,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&FontDialog::OnUpdateText);
-	Connect(ID_FONTSIZE1,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&FontDialog::OnUpdatePreview);
+	Connect(ID_FONTSIZE1, NUMBER_CHANGED, (wxObjectEventFunction)&FontDialog::OnUpdatePreview);
 	Connect(ID_FONTATTR,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&FontDialog::OnUpdatePreview);
 	Connect(ID_SCROLLUP,ID_SCROLLDOWN,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&FontDialog::OnScrollList);
 	MoveToMousePosition(this);
