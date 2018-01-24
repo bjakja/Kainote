@@ -30,7 +30,7 @@
 #include <wx/regex.h>
 #include <wx/ffile.h>
 #include "KaiMessageBox.h"
-
+#include "SubsGridPreview.h"
 
 
 bool sortstart(Dialogue *i, Dialogue *j){
@@ -130,9 +130,9 @@ void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, int wl
 		for (size_t i = 0; i < sels.size(); i++){
 			ChangeCell(cells, sels[i], line1);
 		}
-		if (selline){ wline = sels[sels.size() - 1]; }
+		//if (selline){ wline = sels[sels.size() - 1]; }
 	}
-	if (wline >= GetCount() - 1 && selline){
+	/*if (wline >= GetCount() - 1 && selline){
 		Dialogue *tmp = new Dialogue();
 		tmp->State = 1;
 		int eend = line1->End.mstime;
@@ -156,9 +156,14 @@ void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, int wl
 	Refresh(false);
 	if (selline){
 		Edit->SetLine(lastRow, true, true, false, true);
+	}*/
+	AdjustWidths(cells);
+	if (selline)
+		NextLine();
+	else{
+		Refresh(false);
 	}
 	SetModified(editionType, false, dummy);
-
 }
 
 void SubsGridBase::ChangeCell(long wcell, int wline, Dialogue *what)
@@ -677,7 +682,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 		for (auto cur = tmpmap.begin(); cur != tmpmap.end(); cur++){
 			auto it = cur;
-			dialc = cur->first;//file->GetDialogue(cur->second);
+			dialc = cur->first;
 			it++;
 			if (!(it != tmpmap.end())){ it = cur; hasend = true; }
 			if (correctEndTimes > 0 && dialc->End > it->first->Start && !hasend){
@@ -1366,12 +1371,6 @@ bool SubsGridBase::SetTlMode(bool mode)
 	SpellErrors.clear();
 	Refresh(false);
 	SetModified((mode) ? GRID_TURN_ON_TLMODE : GRID_TURN_OFF_TLMODE);
-	//VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
-	//if(vb->GetState()!=None){
-	//	vb->OpenSubs(GetVisible()/*SaveText()*/);
-	//	if(vb->GetState()==Paused){vb->Render();}
-	//	Edit->OnVideo=true;
-	//}
 	return false;
 }
 
@@ -1391,6 +1390,8 @@ void SubsGridBase::NextLine(int dir)
 		tmp->TextTl = "";
 		AddLine(tmp);
 		SetModified(GRID_APPEND_LINE, false);
+		if(subsFormat>TMP)
+			AdjustWidths(START|END);
 	}
 	int h, w;
 	GetClientSize(&w, &h);
@@ -1398,11 +1399,12 @@ void SubsGridBase::NextLine(int dir)
 	file->ClearSelections();
 	file->InsertSelection(nebrow);
 	lastRow = nebrow;
-	AdjustWidths(0);
+	//AdjustWidths(0);
 	Refresh(false);
 	Edit->SetLine(nebrow, true, true, false, true);
-	//if(Edit->ABox){Edit->ABox->audioDisplay->SetDialogue(Edit->line,nebrow);}
-
+	SubsGrid *grid = (SubsGrid*)this;
+	if (Comparison){ grid->ShowSecondComparedLine(nebrow); }
+	else if (grid->preview){ grid->preview->NewSeeking(); }
 }
 
 
@@ -1424,8 +1426,6 @@ void SubsGridBase::LoadDefault(bool line, bool sav, bool endload)
 	AddSInfo("ScriptType", "v4.00+", sav);
 	AddSInfo("Last Style Storage", "Default", sav);
 	AddSInfo("YCbCr Matrix", "TV.601", sav);
-	//Kai->Toolbar->UpdateId(SaveSubs, false);
-	//Kai->Menubar->Enable(SaveSubs, false);
 	if (endload){
 		file->EndLoad(NEW_SUBTITLES, 0);
 	}

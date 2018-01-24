@@ -39,6 +39,8 @@ public:
 	void SelVideoLine(int time = -1);
 	void SetStyle();
 	void SetVideoLineTime(wxMouseEvent &evt);
+	void ShowSecondComparedLine(int Line, bool showPreview = false, bool fromPreview = false);
+	SubsGridPreview *preview = NULL;
 	
 protected:
 	void OnKeyPress(wxKeyEvent &event);
@@ -47,7 +49,6 @@ protected:
 	void OnScroll(wxScrollWinEvent& event);
 	void OnSize(wxSizeEvent& event);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } holding = false; };
-	void ShowSecondComparedLine(int Line, bool showPreview = false, bool fromPreview = false);
 	bool ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowToDraw, int activeLine, int diffPosition);
 
 	int GridWidth[13];
@@ -61,7 +62,6 @@ protected:
 
 	wxBitmap* bmp;
 	wxFont font;
-	SubsGridPreview *preview = NULL;
 	SubsGridPreview *thisPreview = NULL;
 private:
 	virtual void ContextMenu(const wxPoint &pos, bool dummy = false){};

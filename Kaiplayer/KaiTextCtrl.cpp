@@ -262,7 +262,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent)
 	positioning.clear();
 	positioning.Add(0);
 	int w,h,fw=0,fh=0;
-	GetClientSize(&w,&h);
+	GetSize(&w,&h);
 	wxMemoryDC dc((bmp) ? *bmp : wxBitmap(10, 10));
 	dc.SetFont(font);
 	if(KText!="" && multiline){
@@ -274,6 +274,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent)
 		size_t len = KText.Len();
 		bool seekSpace = true;
 		int mesureSize = w - 10;
+		if (mesureSize <= 10){ for (int i = 1; i < len; i++){ wraps.Add(i);  positioning.Add(5); return; } }
 		int stylewrap = (style & wxALIGN_CENTER_HORIZONTAL) ? 1 : (style & wxALIGN_RIGHT) ? 2 : 0;
 		int pos = 5;
 		while (i < len)
@@ -298,6 +299,9 @@ void KaiTextCtrl::CalcWrap(bool sendevent)
 					seekSpace = false;
 					j--;
 					continue;
+				}
+				else if (0 >= j - podz + 1){ 
+					j = allwrap = podz + 1; 
 				}
 				//else if (i != j){
 				//	size_t res = KText.find(' ', j);

@@ -401,7 +401,6 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	//}
 
 done:	
-
 	VideoCtrl *vb = pan->Video;
 	int pas = vb->vToolbar->videoPlayAfter->GetSelection();
 	int vsa = vb->vToolbar->videoSeekAfter->GetSelection();

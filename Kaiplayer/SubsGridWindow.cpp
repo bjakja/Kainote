@@ -1048,6 +1048,8 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 			else{
 				ScrollTo(next);
 			}
+			if (Comparison){ ShowSecondComparedLine(next); }
+			else if (preview){ preview->NewSeeking(); }
 			lastRow = next;
 			//return;
 		}

@@ -100,7 +100,7 @@ void Fullscreen::OnSize()
 	vslider->SetSize(wxSize(asize.x,14));
 	if(vc->IsDshow){volslider->Show(); volslider->SetPosition(wxPoint(asize.x-110,17));}
 	else{volslider->Show(false);}
-	Videolabel->SetSize(asize.x-114,-1);
+	Videolabel->SetSize(asize.x-758,-1);
 	if(vToolbar->IsShown()){vToolbar->SetSize(asize.x, 22);}
 	panel->SetSize(0, asize.y - panelsize, asize.x, panelsize);
 }
