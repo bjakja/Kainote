@@ -809,6 +809,7 @@ void AudioDisplay::DrawTimescale() {
 	// Timescale ticks
 	int64_t start = Position*samples;
 	int rate = provider->GetSampleRate();
+	int lastTextPos = -1000;
 	for (int i=1;i<32;i*=2) {
 		int pixBounds = rate / (samples * 4 / i);
 		if (pixBounds >= 8) {
@@ -821,7 +822,7 @@ void AudioDisplay::DrawTimescale() {
 					d3dLine->Draw(v2,2,timescaleText);
 
 					// Draw text
-					wxCoord textW,textH;
+					wxCoord textW;
 					int hr = 0;
 					int m = 0;
 					int s = pos/rate;
@@ -837,14 +838,16 @@ void AudioDisplay::DrawTimescale() {
 					if (hr) text = wxString::Format(_T("%i:%02i:%02i"),hr,m,s);
 					else if (m) text = wxString::Format(_T("%i:%02i"),m,s);
 					else text = wxString::Format(_T("%i"),s);
-					GetTextExtent(text,&textW,&textH,NULL,NULL,&scaleFont);
-					RECT rect;
-					rect.left = x-50;//MAX(0,x-textW/2)+1;
-					rect.top = h+8;
-					rect.right = rect.left + 100;
-					rect.bottom = rect.top + 40;
-					d3dFont8->DrawTextW(NULL, text.wchar_str(), -1, &rect, DT_CENTER, timescaleText );
-					//dc.DrawText(text,MAX(0,x-textW/2)+1,h+8);
+					GetTextExtent(text, &textW, NULL, NULL, NULL, &scaleFont);
+					if (x > lastTextPos + textW){
+						RECT rect;
+						rect.left = x - 50;//MAX(0,x-textW/2)+1;
+						rect.top = h + 8;
+						rect.right = rect.left + 100;
+						rect.bottom = rect.top + 40;
+						d3dFont8->DrawTextW(NULL, text.wchar_str(), -1, &rect, DT_CENTER, timescaleText);
+						lastTextPos = x;
+					}
 				}
 
 				// Other

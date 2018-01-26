@@ -677,12 +677,9 @@ void Visuals::SetVisual(bool dummy, int type)
 			bool vis=false;
 			dummytext= grid->GetVisible(&vis, &dumplaced);
 			if(!vis){SAFE_DELETE(dummytext); return;}
-		}else{
-			Editor->SetTextS(txt,false,false);
-			//Editor->Refresh(false);
-			Editor->SetSelection(edit->Placed.x, edit->Placed.x, true);
 		}
-
+		Editor->SetTextS(txt,false,false);
+		Editor->SetSelection(edit->Placed.x, edit->Placed.x, true);
 		dummytext->replace(dumplaced.x,dumplaced.y,txt);
 		dumplaced.y=txt.Len();
 		wxString *dtxt=new wxString(*dummytext);
