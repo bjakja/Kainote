@@ -35,6 +35,7 @@ class Karaoke
 		bool GetSylAtX(int x, int *result);
 		bool GetLetterAtX(int x, int *syl, int *letter);
 		void GetSylTimes(int i, int &start, int &end);
+		void GetSylVisibleTimes(int i, int &start, int &end);
 		void Join(int line);
 		void ChangeSplit(int line, int nletters);
 		void SplitSyl(int line, int nletters);

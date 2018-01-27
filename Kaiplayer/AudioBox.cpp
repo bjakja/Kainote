@@ -532,7 +532,6 @@ void AudioBox::OnMouseEvents(wxMouseEvent &event)
 	else if(!arrows && npos>h-4){
 		SetCursor(wxCURSOR_SIZENS); arrows= true;}
 
-
 	if (left_up && holding) {
 		holding = false;
 		int x=3; 
@@ -558,7 +557,7 @@ void AudioBox::OnMouseEvents(wxMouseEvent &event)
 		return;
 	}
 
-	if (click && event.GetY()>h-5) {
+	if (click && !holding && event.GetY()>h - 5) {
 		holding = true;
 		CaptureMouse();
 		sline= new wxDialog(this,-1,"",wxPoint(0,event.GetY()),wxSize(GetSize().GetWidth()+4,2),wxSTAY_ON_TOP|wxBORDER_NONE);

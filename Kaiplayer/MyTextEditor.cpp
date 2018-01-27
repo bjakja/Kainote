@@ -150,7 +150,7 @@ void MTextEditor::CalcWrap(bool updatechars, bool sendevent)
 		size_t i = 0;
 		size_t textLen = MText.Len();
 		if (w < 20){
-			while (i < textLen - 1){ i++; wraps.Add(i); }
+			while (i < textLen){ i++; wraps.Add(i); }
 		}
 		else{
 			int podz = 0;

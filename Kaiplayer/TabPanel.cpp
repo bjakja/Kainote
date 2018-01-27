@@ -116,16 +116,19 @@ void TabPanel::OnMouseEvent(wxMouseEvent& event)
 	Edit->GetClientSize(&w, &h);
 	int npos = event.GetY();
 	if(event.Leaving()){
-		SetCursor(wxCURSOR_ARROW);}
+		SetCursor(wxCURSOR_ARROW);
+	}
 	else if (npos < h && !click && !holding && !left_up){
 		SetCursor(wxCURSOR_NO_ENTRY); return;
 	}else{
 		SetCursor(wxCURSOR_SIZENS);}
-	
 
-	if (left_up && holding) {
+	if (!holding && HasCapture())
 		ReleaseMouse();
+	
+	if (left_up && holding) {
 		holding = false;
+		ReleaseMouse();
 		if(sline){
 			int x; 
 			sline->GetPosition(&x,&npos);
@@ -133,19 +136,20 @@ void TabPanel::OnMouseEvent(wxMouseEvent& event)
 			sline->Destroy();
 			sline=NULL;
 		}
-		/*int w,h, mw, mh;
-		Video->GetClientSize(&w,&h);*/
+		
 		int mw, mh;
 		GetClientSize(&mw,&mh);
-		if(npos>=mh){npos=mh-3;}
+		if(npos>=mh){
+			npos=mh-3;
+		}
 		
 		if(Video->GetState()!=None&&Video->IsShown()){
-			
+			Options.GetCoords(VideoWindowSize, &w, &h);
 			int ww,hh;
 			Video->CalcSize(&ww,&hh,w,npos,false,true);
 			Video->SetMinSize(wxSize(ww,hh+Video->panelHeight));
 			Options.SetCoords(VideoWindowSize,ww,hh+Video->panelHeight);
-		}else{Edit->SetMinSize(wxSize(-1,npos));}
+		}/*else{*/Edit->SetMinSize(wxSize(-1,npos));/*}*/
 		BoxSizer1->Layout();
 		if(event.ShiftDown()){
 			SetVideoWindowSizes(w, npos);
@@ -156,7 +160,7 @@ void TabPanel::OnMouseEvent(wxMouseEvent& event)
 		return;
 	}
 
-	if (click) {
+	if (click && !holding) {
 		holding = true;
 		CaptureMouse();
 		int px=2 , py=npos;

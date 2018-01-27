@@ -1044,14 +1044,14 @@ void AudioDisplay::MakeDialogueVisible(bool force, bool moveToEnd) {
 	int startShow=0, endShow=0;
 	// In karaoke mode the syllable and as much as possible towards the end of the line should be shown
 
-	GetTimesSelection(startShow,endShow);
+	GetTimesSelection(startShow,endShow, true);
 
 	int startPos = GetSampleAtMS(startShow);
 	int endPos = GetSampleAtMS(endShow);
 	int startX = GetXAtMS(startShow);
 	int endX = GetXAtMS(endShow);
 	if(hasKara){
-		if (startX < 50 || endX > (w-200)) {
+		if (startX < 50 || endX > (w-100)) {
 			UpdatePosition((startPos+endPos-w*samples)/2,true);
 		}
 	}
@@ -1402,10 +1402,13 @@ void AudioDisplay::GetTimesDialogue(int &start,int &end) {
 
 ////////////////////////////
 // Get samples of selection
-void AudioDisplay::GetTimesSelection(int &start,int &end) {
+void AudioDisplay::GetTimesSelection(int &start,int &end, bool rangeEnd /*= false*/) {
 	if(hasKara){
 		whichsyl = MID(0,whichsyl,(int)karaoke->syls.size()-1);
-		karaoke->GetSylTimes(whichsyl, start, end);
+		if (rangeEnd)
+			karaoke->GetSylVisibleTimes(whichsyl, start, end);
+		else
+			karaoke->GetSylTimes(whichsyl, start, end);
 	}else{
 		start = curStartMS;
 		end = curEndMS;

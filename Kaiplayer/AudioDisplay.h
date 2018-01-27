@@ -246,7 +246,7 @@ public:
 	}
 
 	void GetTimesDialogue(int &start,int &end);
-	void GetTimesSelection(int &start,int &end);
+	void GetTimesSelection(int &start,int &end, bool rangeEnd = false);
 	void SetSelection(int start, int end);
 	int GetBoundarySnap(int x,int range,bool shiftHeld,bool start=true, bool keysnap=false);
 	DECLARE_EVENT_TABLE()

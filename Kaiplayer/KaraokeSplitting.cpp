@@ -96,9 +96,7 @@ void Karaoke::Split()
 	{
 		wxRegEx reg(_T("\\{([^{]*)\\}"),wxRE_ADVANCED);
 		wxRegEx reg1(_T("[ ]*\\\\(.)[ ]*"),wxRE_ADVANCED);
-		//reg.ReplaceAll(&textlow,_T(""));
 		reg.ReplaceAll(&Text,_T(""));
-		//reg1.ReplaceAll(&textlow,_T(" "));
 		reg1.ReplaceAll(&Text,_T(" "));
 		textlow=Text+" ";
 		textlow=textlow.Lower();
@@ -109,8 +107,8 @@ void Karaoke::Split()
 		for(int i=0; i<len; i++)
 		{
 			wxUniChar ch=textlow[i];
-			wxUniChar nch=(i<len-1)? textlow[i+1] : '\t';
-			wxUniChar nnch=(i<len-2)? textlow[i+2] : '\t';
+			wxUniChar nch=(i<len-1)? textlow[i+1] : L'\t';
+			wxUniChar nnch=(i<len-2)? textlow[i+2] : L'\t';
 
 			if((Auto && achars.Find(ch)!=-1 && chars.Find(nch)==-1) || (!Auto && ch==' ')){
 				if (Auto && (ch == 'n' && aoi1.Find(nch) != -1 || //linia odpowiedzialna za podzia³ n
@@ -249,4 +247,10 @@ void Karaoke::GetSylTimes(int i, int &start, int &end)
 {
 	start=(i==0)?AD->curStartMS : syltimes[i-1];
 	end=syltimes[i];
+}
+
+void Karaoke::GetSylVisibleTimes(int i, int &start, int &end)
+{
+	start = (i == 0) ? AD->curStartMS : syltimes[i - 1];
+	end = (i < syltimes.size()-1)? syltimes[i + 1] : AD->curEndMS;
 }
