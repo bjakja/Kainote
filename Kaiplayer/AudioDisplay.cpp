@@ -2233,11 +2233,12 @@ void AudioDisplay::Prev(bool play) {
 	// Karaoke
 	if(hasKara&&play){
 		whichsyl--;
-		if(whichsyl<0){whichsyl=karaoke->syls.size()-1;ChangeLine(-1);}
+		if (whichsyl < 0){ ChangeLine(-1); whichsyl = karaoke->syls.size() - 1; MakeDialogueVisible(); }
 
 	}else{
 		//if(Notebook::GetTab()->Video->GetState()==Playing){Notebook::GetTab()->Video->Pause();}
-		ChangeLine(-1);}
+		ChangeLine(-1);
+	}
 
 	if (play) {
 		int start=0,end=0;

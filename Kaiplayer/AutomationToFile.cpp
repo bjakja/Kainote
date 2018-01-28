@@ -564,9 +564,9 @@ namespace Auto{
 				}
 				else
 				{
-					wxString fclass=(e->lclass=="info")? "info" : (e->lclass=="style")? "styli" : "dialogów";
-					wxString sclass=(i<sinfo)? "info" : (i<styles)? "styli" : "dialogów";
-					wxString all = _T("You try put line of class: ") + fclass + _T(" in section of class: ") + sclass;
+					wxString fclass=(e->lclass=="info")? L"info" : (e->lclass=="style")? L"styli" : L"dialogów";
+					wxString sclass=(i<sinfo)? L"info" : (i<styles)? L"styli" : L"dialogów";
+					wxString all = wxString::Format(_("Nie mo¿na dodaæ linii klasy: %s w pole klasy: %s"), fclass, sclass);
 					SAFE_DELETE(e);
 					lua_pushstring(L,all.mb_str(wxConvUTF8).data());
 					lua_error(L);

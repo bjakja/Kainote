@@ -62,12 +62,18 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 			grid->Clearing();
 			grid->file = new SubsFile();
 			succeeded = LoadASS(text);
-			if (succeeded) ext = "ass";
+			ext = "ass";
+			if (!succeeded){
+				grid->LoadDefault(false,false,false);
+				succeeded = LoadTXT(text);
+				KaiMessageBox(_("Ten plik napisów jest zwykłym tekstem, zostaje otwarty jako napisy ASS"));
+			}
 		}
 		else{ validFormat = true; }
 	}
-
-	if (!succeeded){ grid->LoadDefault(); KaiMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera błędy)")); grid->subsFormat = ASS; }
+	//PAMIĘTAJ nie możesz dopuścić pod żadnym pozorem by tablica pozostała pusta
+	//helper text class będzie kraszować gdy dostaje null w operatorze =
+	if (!succeeded){ grid->LoadDefault(); KaiMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera błędy)")); grid->subsFormat = ASS; ext = "ass"; }
 	else{ 
 		grid->SetSubsFormat(); 
 		if (validFormat)

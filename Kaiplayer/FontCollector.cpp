@@ -331,7 +331,7 @@ void FontCollector::GetAssFonts(std::vector<bool> &found, bool check)
 		//if(!lstyle){
 			//SendMessageD(wxString::Format(_("Styl '%s' z linii %i nie istnieje.\n"), dial->Style, (int)i-1), fcd->warning);
 		//}
-		wxString ifont = (lstyle)? lstyle->Fontname : "";
+		wxString ifont = (lstyle)? lstyle->Fontname : L"";
 		int bold = (lstyle)? (int)lstyle->Bold : 0;
 		int italic = (lstyle)? (int)lstyle->Italic : 0;
 		int wlet=0;

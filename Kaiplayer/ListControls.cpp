@@ -393,7 +393,7 @@ void KaiChoice::SetSelection(int sel, bool changeText)
 		itemList->SetSelection(choice);
 	}
 	if(choiceText && changeText){
-		wxString txt = (sel < 0)? wxEmptyString : (*list)[sel];
+		wxString txt = (sel < 0)? L"" : (*list)[sel];
 		choiceText->SetValue(txt);
 	}
 	Refresh(false);
@@ -420,7 +420,7 @@ void KaiChoice::Append(const wxArrayString &itemsArray)
 
 void KaiChoice::PutArray(wxArrayString *arr)
 {
-	wxString ce = (choice>=0 && choice < (int)list->size())? (*list)[choice] : "";
+	wxString ce = (choice>=0 && choice < (int)list->size())? (*list)[choice] : L"";
 	if(list){delete list;}
 	list = new wxArrayString(*arr);
 	if(list->size() < 1){choice = -1; ce = "";}
