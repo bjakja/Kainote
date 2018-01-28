@@ -135,10 +135,10 @@ bool SpellChecker::Initialize()
 }
 
 bool SpellChecker::CheckWord(wxString word) {
-	if (!hunspell) return true;
+	if (!hunspell || word == "") return true;
 
 	wxCharBuffer buf = word.mb_str(*conv);
-	if (buf) return (hunspell->spell(buf) == 1);
+	if (buf && strlen(buf)) return (hunspell->spell(buf) == 1);
 
 	return false;
 }

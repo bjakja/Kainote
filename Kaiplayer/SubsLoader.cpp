@@ -72,7 +72,7 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 		else{ validFormat = true; }
 	}
 	//PAMIĘTAJ nie możesz dopuścić pod żadnym pozorem by tablica pozostała pusta
-	//helper text class będzie kraszować gdy dostaje null w operatorze =
+	//helper text class będzie kraszować, gdy dostaje null w operatorze =
 	if (!succeeded){ grid->LoadDefault(); KaiMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera błędy)")); grid->subsFormat = ASS; ext = "ass"; }
 	else{ 
 		grid->SetSubsFormat(); 
