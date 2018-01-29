@@ -297,7 +297,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 
 			if (SpellCheckerOn && (!previewGrid->hasTLMode && txt != "" || previewGrid->hasTLMode && txttl != "")){
 				if (previewGrid->SpellErrors[k].size() < 2){
-					previewGrid->CheckText(strings[strings.size() - 1], previewGrid->SpellErrors[k]);
+					previewGrid->CheckText(strings[strings.size() - 1], previewGrid->SpellErrors[k], chtag);
 				}
 			}
 			isSelected = previewGrid->file->IsSelectedByKey(i);

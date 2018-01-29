@@ -32,6 +32,7 @@
 #include "AutomationToFile.h"
 #include "AutomationUtils.h"
 #include "KainoteApp.h"
+#include "AudioSpectrum.h"
 #include <wx/regex.h>
 
 //template<int (AutoToFile::*closure)(lua_State *)>
@@ -55,12 +56,15 @@ namespace Auto{
 		SAFE_DELETE(info);
 	}
 
-
-	AutoToFile *AutoToFile::laf=NULL;
+	AutoToFile *AutoToFile::laf = NULL;
 
 	AutoToFile::~AutoToFile()
 	{
 		////wxLogStatus("auto to file dest");
+		if (spectrum){
+			delete spectrum;
+			spectrum = NULL;
+		}
 	}
 
 	void AutoToFile::CheckAllowModify()
@@ -697,17 +701,13 @@ namespace Auto{
 
 		for(int i=b; i >= a; i--){
 			if(i<sinfo){
-				//wxLogStatus("deleterange si %i %i", i, sinfo); 
 				Subs->sinfo.erase(Subs->sinfo.begin()+i);
 			}else if(i<styles){
-				//wxLogStatus("deleterange st %i %i", i, styles);
 				Subs->styles.erase(Subs->styles.begin()+(i-sinfo));
 			}else{
-				//wxLogStatus("deleterange dial %i %i", i, dials);
 				Subs->dials.erase(Subs->dials.begin()+(i-styles));
 			}
 		}	
-		//wxLogStatus(" lengths %i %i %i %i %i", Subs->sinfo.size(), Subs->styles.size(),Subs->dials.size(),all, b);
 		return 0;
 	}
 
@@ -823,7 +823,7 @@ namespace Auto{
 	}
 
 	int AutoToFile::LuaParseKaraokeData(lua_State *L)
-	{//wxLogStatus("kara wesz³o");
+	{
 		SubsEntry *e = LuaToLine(L);
 		if(!e){return 0;}
 		else if(e->lclass!="dialogue"){
@@ -926,8 +926,6 @@ namespace Auto{
 			set_field(L, "text_stripped", ktext_stripped.mb_str(wxConvUTF8).data());
 			lua_rawseti(L, -2, kcount++);
 		}
-		//wxLogStatus("text "+e->adial->Text+" stripped "+ktext_stripped+" %i", kcount-1);
-		//wxLogStatus(deb);
 		SAFE_DELETE(e);
 
 		return 1;
@@ -965,6 +963,56 @@ namespace Auto{
 		return 2;
 	}
 
+	int AutoToFile::LuaGetFreqencyReach(lua_State *L)
+	{
+		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2) || !lua_isnumber(L, 3) || !lua_isnumber(L, 4) || !lua_isnumber(L, 5)) {
+			lua_pushstring(L, "Non number argument of function GetFreqencyReach");
+			lua_error(L);
+			return 0;
+		}
+		TabPanel *tab = Notebook::GetTab();
+		VideoFfmpeg* VFF = tab->Video->VFF;
+		if (!VFF){
+			if (!tab->Edit->ABox){
+				lua_pushstring(L, "GetFreqencyReach needs loaded audio by FFMS2");
+				lua_error(L);
+				return 0;
+			}
+			VFF = tab->Edit->ABox->audioDisplay->provider;
+			if (!VFF){
+				lua_pushstring(L, "GetFreqencyReach cannot get audio provider");
+				lua_error(L);
+				return 0;
+			}
+		}
+
+		int start = lua_tointeger(L, 1), 
+			end = lua_tointeger(L, 2), 
+			freqstart = MAX(lua_tointeger(L, 3),0), 
+			freqend = MIN(lua_tointeger(L, 4), 22000),
+			peek = MID(5,lua_tointeger(L, 5),1000);
+
+		std::vector<int> output;
+		if (start < 0 || end < 0){
+			lua_pushstring(L, "GetFreqencyReach start or end time less than zero");
+			lua_error(L);
+			return 0;
+		}
+		else if (start >= end){
+			push_value(L, output);
+			return 1;
+		}
+			
+		
+		if (!laf->spectrum)
+			laf->spectrum = new AudioSpectrum(VFF);
+
+		laf->spectrum->CreateRange(output, start, end, freqstart, freqend, peek);
+
+		push_value(L, output);
+		return 1;
+	}
+
 	AutoToFile::AutoToFile(lua_State *_L, File *subsfile, bool _can_modify)
 	{
 		L=_L;
@@ -988,6 +1036,7 @@ namespace Auto{
 		lua_getglobal(L, "aegisub");
 
 		set_field<&AutoToFile::LuaParseKaraokeData>(L, "parse_karaoke_data");
+		set_field<&AutoToFile::LuaGetFreqencyReach>(L, "get_frequency_peeks");
 		set_field<&AutoToFile::LuaSetUndoPoint>(L, "set_undo_point");
 
 		lua_pop(L, 1); // pop "aegisub" table
@@ -999,6 +1048,7 @@ namespace Auto{
 	{
 		delete this;
 	}
+
 	int AutoToFile::ObjectGarbageCollect(lua_State *L){
 		//assert(lua_type(L, idx) == LUA_TUSERDATA);
 		//auto ud = lua_touserdata(L, lua_upvalueindex(1));

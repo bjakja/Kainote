@@ -33,13 +33,13 @@ TabPanel::TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos, const
 	if(vw<200){vw=550;vh=400;}
     Video = new VideoCtrl(this, kai, wxSize(vw,vh));
 	Video->Hide();
-    Grid = new SubsGrid(this,kai,-1,wxDefaultPosition,wxSize(400,200),wxBORDER_SIMPLE|wxWANTS_CHARS);//
+    Grid = new SubsGrid(this,kai,-1,wxDefaultPosition,wxSize(400,200),/*wxBORDER_SIMPLE|*/wxWANTS_CHARS);//
     Edit = new EditBox(this, Grid, kai, -1);
 	Edit->SetMinSize(wxSize(-1,200));
 	Edit->SetLine(0);
 	
 	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
-    ShiftTimes= new ShiftTimesWindow(this,kai,-1,wxDefaultPosition,wxDefaultSize,wxBORDER_SIMPLE);
+    ShiftTimes= new ShiftTimesWindow(this,kai,-1,wxDefaultPosition,wxDefaultSize/*,wxBORDER_SIMPLE*/);
     ShiftTimes->Show(Options.GetBool(MoveTimesOn));
 	BoxSizer3->Add(Grid, 1, wxEXPAND, 0);
 	BoxSizer3->Add(ShiftTimes, 0, wxEXPAND, 0);

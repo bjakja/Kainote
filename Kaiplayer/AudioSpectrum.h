@@ -69,6 +69,7 @@ public:
 	~AudioSpectrum();
 	
 	void RenderRange(int64_t range_start, int64_t range_end, unsigned char *img, int imgwidth, int imgpitch, int imgheight, int percent);
+	void CreateRange(std::vector<int> &output, int64_t timeStart, int64_t timeEnd, int frequendyMin, int frequencyMax, int peek);
 	void SetScaling(float _power_scale);
 	void ChangeColours();
 };

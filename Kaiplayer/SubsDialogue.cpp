@@ -164,7 +164,8 @@ void Dialogue::SetRaw(const wxString &ldial)
 		Text = expresion.GetMatch( ldial, 4 );
 		Text.Trim(false);
 		return;
-	}else if(ldial.StartsWith(";")||(ldial.StartsWith("{") && ldial.EndsWith("}"))){
+	}
+	else if (ldial.StartsWith(";") || (ldial.StartsWith("{") && ldial.EndsWith("}") && ldial.Freq('{') == 1 && ldial.Freq('}') == 1)){
 		NonDialogue=true;
 		IsComment=true;
 		Style="Default";

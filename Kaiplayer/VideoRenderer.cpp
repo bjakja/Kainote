@@ -730,7 +730,7 @@ bool VideoRend::Play(int end)
 	}
 
 	if(end>0){playend=end;}else if(IsDshow){playend=0;}else{playend=GetDuration();}
-	if(IsDshow){vplayer->Play();}
+	if (IsDshow){ if (time < GetDuration() - frameDuration) vplayer->Play(); else return false; }
 
 	vstate=Playing;
 

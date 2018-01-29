@@ -103,7 +103,7 @@ wxString SpellCheckerDialog::FindNextMisspell()
 		if(Dial->IsComment && noComments){continue;}
 		const wxString &Text = (tab->Grid->hasTLMode)? Dial->TextTl : Dial->Text;
 		//w checktext kopiuje tekst więc nie muszę robić tego dwa razy.
-		tab->Grid->CheckText(Text, errors);
+		tab->Grid->CheckText(Text, errors, "");
 		if(i != lastLine){lastMisspell=0;}
 		while(errors.size()>1 && lastMisspell < errors.size()){
 			wxString misspellWord = Text.SubString(errors[lastMisspell], errors[lastMisspell+1]);

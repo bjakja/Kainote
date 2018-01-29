@@ -2202,8 +2202,6 @@ void AudioDisplay::ChangeLine(int delta, bool block) {
 	grid->ScrollTo(next-4);
 	Edit->SetLine(next);
 
-
-
 }
 
 

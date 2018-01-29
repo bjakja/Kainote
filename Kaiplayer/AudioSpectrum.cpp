@@ -263,6 +263,71 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, unsigned
 	
 }
 
+void AudioSpectrum::CreateRange(std::vector<int> &output, int64_t timeStart, int64_t timeEnd, int frequendyMin, int frequencyMax, int peek)
+{
+	wxCriticalSectionLocker locker(CritSec);
+	overlaps = 1;
+	subcachelen = 16;
+	int sampleRate = provider->GetSampleRate();
+	int64_t range_start = timeStart * sampleRate / 1000;
+	int64_t range_end = timeEnd * sampleRate / 1000;
+	unsigned long first_line = (unsigned long)(range_start / doublelen);
+	unsigned long last_line = (unsigned long)(range_end / doublelen);
+	unsigned long startcache = first_line / subcachelen;
+	unsigned long endcache = last_line / subcachelen;
+	int indexStart = (int)(frequendyMin / (sampleRate / doublelen));
+	int indexEnd = (int)(frequencyMax / (sampleRate / doublelen));
+	indexStart = MID(0, indexStart, line_length - 1);
+	indexEnd = MID(0, indexEnd, line_length - 1);
+	if (indexStart > indexEnd){
+		int tmp = indexStart;
+		indexStart = indexEnd;
+		indexEnd = tmp;
+	}
+
+
+	size_t size = sub_caches.size();
+	size_t neededsize = (endcache - startcache) + AudioThreads->numThreads;
+	if (size < neededsize){
+		sub_caches.resize((neededsize * 3), 0);
+		for (int i = size; i < neededsize * 3; i++)
+			sub_caches[i] = new SpectrumCache();
+	}
+
+	const int maxpower = (1 << (16 - 1)) * 100;
+	const double upscale = 16384 / line_length;
+	AudioThreads->CreateCache(startcache, endcache);
+
+	// Note that here "lines" are actually bands of power data
+	bool reached = false;
+	int64_t lasttime = -1;
+	unsigned long subcache = AudioThreads->lastCachePosition;
+	SpectrumCache *cache = sub_caches[subcache];
+	for (unsigned long i = first_line; i <= last_line; ++i) {
+		if (i % subcachelen == 0 && i > first_line){
+			subcache++;
+			if (subcache >= sub_caches.size()){ subcache = 0; }
+			cache = sub_caches[subcache];
+		}
+		CacheLine &line = cache->GetLine(i);
+		int64_t lli = (int64_t)i;
+		int64_t time = (lli * doublelen * 1000) / sampleRate;
+		for (int j = indexStart; j < indexEnd; j++){
+			if (lasttime >= time)
+				break;
+
+			int intensity = int(100 * (line[j] * upscale) / maxpower);
+			if (intensity >= peek && !reached){
+				output.push_back(time);
+				break;
+			}
+			else if (intensity < peek && reached){
+				reached = false;
+			}
+		}
+		lasttime = time;
+	}
+}
 
 void AudioSpectrum::SetScaling(float _power_scale)
 {

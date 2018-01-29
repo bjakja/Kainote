@@ -284,7 +284,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 			if (SpellCheckerOn && (!hasTLMode && txt != "" || hasTLMode && txttl != "")){
 				if (SpellErrors[k].size()<2){
-					CheckText(strings[strings.size() - 1], SpellErrors[k]);
+					CheckText(strings[strings.size() - 1], SpellErrors[k], chtag);
 				}
 			}
 			isSelected = file->IsSelectedByKey(i);
@@ -1104,10 +1104,11 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 
 }
 
-void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs)
+void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &tagsReplacement)
 {
 
 	wxString notchar = "/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{} ";
+	bool repltags = hideOverrideTags && tagsReplacement.Len() > 0;
 	text += " ";
 	bool block = false;
 	wxString word = "";
@@ -1118,19 +1119,23 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs)
 	for (size_t i = 0; i<text.Len(); i++)
 	{
 		wxUniChar ch = text.GetChar(i);
+		
 		if (notchar.Find(ch) != -1 && !block){
 			if (word.Len()>1){
 				if (word.StartsWith("'")){ word = word.Remove(0, 1); }
 				if (word.EndsWith("'")){ word = word.RemoveLast(1); }
 				word.Trim(false);
 				word.Trim(true);
+				//if (repltags){ word.Replace(tagsReplacement,""); }
 				bool isgood = SpellChecker::Get()->CheckWord(word);
 				if (!isgood){ errs.push_back(firsti); errs.push_back(lasti); }
 			}word = ""; firsti = i + 1;
 		}
-		if (ch == '{'){ block = true; }
-		else if (ch == '}'){ block = false; firsti = i + 1; word = ""; }
-
+		if (ch == '{'){ block = true; continue; }
+		else if (ch == '}'){ block = false; firsti = i + 1; word = ""; continue; }
+		else if (repltags && tagsReplacement[0] == ch && text.Mid(i, tagsReplacement.Len()) == tagsReplacement){
+			firsti = i + tagsReplacement.Len(); word = ""; continue;
+		}
 
 		if (notchar.Find(ch) == -1 && text.GetChar((i == 0) ? 0 : i - 1) != '\\' && !block){ word << ch; lasti = i; }
 		else if (!block && text.GetChar((i == 0) ? 0 : i - 1) == '\\'){

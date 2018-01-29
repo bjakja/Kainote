@@ -38,6 +38,7 @@ extern "C" {
 #include "SubsFile.h"
 #include <wx/wx.h>
 
+class AudioSpectrum;
 
 namespace Auto{
 
@@ -62,6 +63,7 @@ namespace Auto{
 	
 	private:
 		File *file;
+		AudioSpectrum *spectrum = NULL;
 		lua_State *L;
 
 		bool can_modify;
@@ -85,7 +87,8 @@ namespace Auto{
 		static int LuaParseKaraokeData(lua_State *L);
 		static int LuaGetScriptResolution(lua_State *L);
 		static int LuaSetUndoPoint(lua_State *L) {return 0;};
-		
+		//static int LuaGenerateFFT(lua_State *L);
+		static int LuaGetFreqencyReach(lua_State *L);
 
 		static AutoToFile *laf;//GetObjPointer(lua_State *L, int idx);
 
