@@ -412,6 +412,7 @@ void SubsGrid::OnPaste(int id)
 	std::vector<Dialogue*> tmpdial;
 	wxString token;
 	wxString tmptoken;
+	int startline = rws;
 	while (wpaste.HasMoreTokens())
 	{
 		Dialogue *newdial = NULL;
@@ -436,7 +437,6 @@ void SubsGrid::OnPaste(int id)
 		if (newdial->NonDialogue){ newdial->NonDialogue = false; newdial->IsComment = false; }
 		if (id == Paste){
 			tmpdial.push_back(newdial);
-			file->InsertSelection(rws);
 		}
 		else{
 			if (rws < (int)selections.GetCount()/* && selarr[rws] < GetCount()*/){
@@ -449,6 +449,7 @@ void SubsGrid::OnPaste(int id)
 
 	if (tmpdial.size()>0){
 		InsertRows(row, tmpdial, true);
+		file->InsertSelections(startline, rws - 1);
 	}
 	scPos += cttkns;
 	SetModified((id == Paste) ? GRID_PASTE : GRID_PASTE_COLLUMNS, true, false, FirstSelection());

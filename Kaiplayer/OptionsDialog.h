@@ -79,8 +79,7 @@ private:
 };
 
 enum{
-	ID_BOK=12233,
-	ID_BCOMMIT
+	ID_BCOMMIT = 12233
 };
 
 

@@ -320,7 +320,7 @@ BEGIN_EVENT_TABLE(FontList,wxWindow)
 	wxBoxSizer *Fattr= new wxBoxSizer(wxVERTICAL);
 	//wxBoxSizer *Flist= new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *Bsizer= new wxBoxSizer(wxHORIZONTAL);
-	FontName = new KaiTextCtrl(this,ID_FONTNAME,acst->Fontname,wxDefaultPosition,wxSize(150,-1),wxTE_PROCESS_ENTER);
+	FontName = new KaiTextCtrl(this,ID_FONT_NAME,acst->Fontname,wxDefaultPosition,wxSize(150,-1),wxTE_PROCESS_ENTER);
 
 	Fonts= new FontList(this,ID_FONTLIST,wxDefaultPosition,wxSize(180,-1));
 	Fonts->SetSelectionByName(acst->Fontname);
@@ -364,7 +364,7 @@ BEGIN_EVENT_TABLE(FontList,wxWindow)
 	UpdatePreview();
 
 	Connect(ID_FONTLIST,wxEVT_COMMAND_LISTBOX_SELECTED,(wxObjectEventFunction)&FontDialog::OnFontChanged);
-	Connect(ID_FONTNAME,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&FontDialog::OnUpdateText);
+	Connect(ID_FONT_NAME,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&FontDialog::OnUpdateText);
 	Connect(ID_FONTSIZE1, NUMBER_CHANGED, (wxObjectEventFunction)&FontDialog::OnUpdatePreview);
 	Connect(ID_FONTATTR,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&FontDialog::OnUpdatePreview);
 	Connect(ID_SCROLLUP,ID_SCROLLDOWN,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&FontDialog::OnScrollList);

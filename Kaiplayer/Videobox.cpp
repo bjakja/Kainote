@@ -1367,6 +1367,7 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 		SetVisual(true); 
 		if(vTB->ClipToolsShown()||vTB->MoveToolsShown()){vTB->ShowTools(false,vTB->ClipToolsShown());}
 	}else if( vis != eb->Visual ){
+		if (hasZoom){ SetZoom(); }
 		if(vis==VECTORCLIP || vis==VECTORDRAW || eb->Visual==VECTORCLIP 
 			|| eb->Visual==VECTORDRAW || vis==MOVEALL || eb->Visual==MOVEALL){
 				bool vector = (vis==VECTORCLIP || vis==VECTORDRAW || vis==MOVEALL);

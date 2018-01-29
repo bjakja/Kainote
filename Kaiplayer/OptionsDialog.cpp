@@ -28,6 +28,7 @@
 #include "KaiMessageBox.h"
 #include "KaiStaticText.h"
 #include "OptionsPanels.h"
+#include "StyleChange.h"
 
 
 void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
@@ -796,6 +797,9 @@ void OptionsDialog::SetOptions(bool saveall)
 				wxString str=sc->GetValue();
 				if(Options.GetString(OB.option)!=str){
 					Options.SetString(OB.option,str);
+					if (OB.option == GridTagsSwapChar){
+						Kai->GetTab()->Grid->SpellErrors.clear();
+					}
 				}
 				if(sc->GetId() == 22001){
 					colmod=true;
@@ -916,12 +920,8 @@ void OptionsDialog::ChangeColors(){
 		win->Refresh();
 		node = node->GetNext();
 	}
-	//wxSysColourChangedEvent evt1;
-	//ProcessEvent(evt1);
-	//SetBackgroundColour(windowColor);
 	
-	//this->Refresh();
-	//GetParent()->Refresh(false);
-
+	//if(StyleStore::Get()->IsShown())
+	StyleStore::Get()->cc->UpdatePreview();
 }
 

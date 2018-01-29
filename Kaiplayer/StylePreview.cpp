@@ -23,16 +23,6 @@
 StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const wxSize& size)
 	: wxWindow(parent, id, pos, size) 
 {
-	const wxColour & kol1=Options.GetColour(StylePreviewColor1);
-	const wxColour & kol2=Options.GetColour(StylePreviewColor2);
-	b=kol1.Blue();
-	g=kol1.Green();
-	r=kol1.Red();
-
-	b1=kol2.Blue();
-	g1=kol2.Green();
-	r1=kol2.Red();
-
 	bmpframe=NULL;
 	instance=NULL;
 	PrevText=NULL;
@@ -79,6 +69,16 @@ void StylePreview::DrawPreview(Styles *style)
 	instance = csri_open_mem(vobsub,buffer,size,NULL);
 	if(!instance){
 		wxLogStatus(_("Instancja VobSuba nie utworzyła się."));return;}
+
+	const wxColour & kol1 = Options.GetColour(StylePreviewColor1);
+	const wxColour & kol2 = Options.GetColour(StylePreviewColor2);
+	b = kol1.Blue();
+	g = kol1.Green();
+	r = kol1.Red();
+
+	b1 = kol2.Blue();
+	g1 = kol2.Green();
+	r1 = kol2.Red();
 
 	unsigned char *data= (unsigned char *)malloc(width * height * 4);
 

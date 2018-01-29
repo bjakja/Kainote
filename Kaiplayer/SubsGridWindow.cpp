@@ -1126,10 +1126,10 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 				if (word.EndsWith("'")){ word = word.RemoveLast(1); }
 				word.Trim(false);
 				word.Trim(true);
-				//if (repltags){ word.Replace(tagsReplacement,""); }
 				bool isgood = SpellChecker::Get()->CheckWord(word);
 				if (!isgood){ errs.push_back(firsti); errs.push_back(lasti); }
-			}word = ""; firsti = i + 1;
+			}
+			word = ""; firsti = i + 1;
 		}
 		if (ch == '{'){ block = true; continue; }
 		else if (ch == '}'){ block = false; firsti = i + 1; word = ""; continue; }
