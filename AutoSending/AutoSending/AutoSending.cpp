@@ -51,10 +51,10 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 		return 1; 
 	}
-	char * path = argv[1];//*/"H:\\Kainote\\x64\\Release\\Kainote x64.zip\0";
+	char * path = argv[1];//"H:\\Kainote\\x64\\Release\\Kainote x64.zip\0";
 	if (!check_exist_file(path)){ std::cerr << "Kainote path don't exist " << path; return 1; }
 
-	int filenamessize = 138;//tyle policzy³ visual studio
+	int filenamessize = 140;//tyle policzy³ visual studio
 	char * filenames[] = { 
 		"Kainote_x64\\Automation\\automation\\Autoload\\Aegisub-Motion.moon\0",
 		"Kainote_x64\\Automation\\automation\\Autoload\\cleantags-autoload.lua\0",
@@ -179,10 +179,10 @@ int _tmain(int argc, _TCHAR* argv[])
 		"Kainote_x64\\Automation\\automation\\Include\\Yutils.lua\0",
 		"Kainote_x64\\Automation\\automation\\packages\\karahelper.dll\0",
 		//"Kainote_x64\\Automation\\automation\\tests\\DepUnit\\modules\\l0\0",
-		//"Kainote_x64\\Automation\\autosave\0",
+		"Kainote_x64\\Automation\\autosave\\txt.txt\0",
 		//"Kainote_x64\\Automation\\config\0",
 		//"Kainote_x64\\Automation\\feedDump\0",
-		//"Kainote_x64\\Automation\\log\0",
+		"Kainote_x64\\Automation\\log\\txt.txt\0",
 		//"Kainote_x64\\Automation\\temp\0",
 		//"Kainote_x64\\Automation\\tests\0",
 		"Kainote_x64\\Dictionary\\en_US.aff\0",
@@ -219,9 +219,20 @@ int _tmain(int argc, _TCHAR* argv[])
 		char * pch1 = strchr(fn, '\\');
 		size_t newnewstart = pch1 - fn + 1;
 		strcpy(&zipdir[newstart], &fn[newnewstart]);
-		//std::cout << zipdir;
+		
 		size_t size = 0;
 		FILE *file = fopen(zipdir, "rb");
+		if (!file){
+			zip_fileinfo zfi = { 0 };
+			if (S_OK == zipOpenNewFileInZip(zf, fn, &zfi, NULL, 0, NULL, 0, NULL, Z_DEFLATED, Z_DEFAULT_COMPRESSION)){
+				if (zipCloseFileInZip(zf))
+					_return = false;
+
+				continue;
+			}
+			_return = false;
+			continue;
+		}
 		if (file)
 		{
 			zip_fileinfo zfi = { 0 };
@@ -249,14 +260,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	if (!_return)
 		return 4;
 	
-	//wchar_t * dbxpath = argv[2]//L"C:\\Users\\Bakura\\Dropbox\\Kainote x64_1.zip\0";
+	//char dbx[] = "C:\\Users\\Bakura\\Dropbox\\Kainote x64.zip\0";
 	char * dbx = argv[2];
 	//if (convert(, &dbx)){
 		//if (!check_exist_file(dbx)){ std::cerr << "Dropbox path don't exist " << path; delete[] dbx; return 1; }
 	std::ifstream src(path, std::ios::binary);
 	std::ofstream dst(dbx, std::ios::binary);
 	dst << src.rdbuf();
-	//delete[] dbx;
+	
 	/*}
 	else{
 		std::cerr << "Cannot convert Dropbox path " << dbxpath; return 1;

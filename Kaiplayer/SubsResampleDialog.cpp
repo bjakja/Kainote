@@ -135,6 +135,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 			videoSizeX/(float)subsSizeX, resamplingOptions->IsEnabled() && 
 			resamplingOptions->GetSelection() == 1);
 		grid->SetModified(SUBTITLES_RESAMPLE);
+		grid->Refresh(false);
 		((kainoteFrame *)parent)->SetSubsResolution();
 		EndModal(0);
 	},6548);

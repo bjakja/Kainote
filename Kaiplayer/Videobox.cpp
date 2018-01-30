@@ -532,10 +532,13 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 		wxPoint poss= owner->ScreenToClient(wxGetMousePosition());
 		ContextMenu(poss);}
 	else if((key=='B'||key==WXK_ESCAPE) && isFullscreen){
-		//OpenEditor((key==WXK_ESCAPE));
 		SetFullscreen();
-		if(Kai->GetTab()->SubsPath!=""){
-			Kai->GetTab()->Grid->SelVideoLine();}
+		//if(Kai->GetTab()->SubsPath!=""){
+			//Kai->GetTab()->Grid->SelVideoLine();}
+		if (Kai->GetTab()->SubsPath != "" && Options.GetBool(SelectVisibleLineAfterFullscreen)){
+			Kai->GetTab()->Edit->Send(EDITBOX_LINE_EDITION, false);
+			Kai->GetTab()->Grid->SelVideoLine();
+		}
 		if(key=='B'){if(GetState()==Playing){Pause();}ShowWindow(Kai->GetHWND(),SW_SHOWMINNOACTIVE);}
 	}
 	else if(key=='S'&&event.m_controlDown){Kai->Save(false);}

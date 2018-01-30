@@ -965,7 +965,7 @@ namespace Auto{
 
 	int AutoToFile::LuaGetFreqencyReach(lua_State *L)
 	{
-		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2) || !lua_isnumber(L, 3) || !lua_isnumber(L, 4) || !lua_isnumber(L, 5)) {
+		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2) || !lua_isnumber(L, 3) || !lua_isnumber(L, 4)) {
 			lua_pushstring(L, "Non number argument of function GetFreqencyReach");
 			lua_error(L);
 			return 0;
@@ -988,11 +988,11 @@ namespace Auto{
 
 		int start = lua_tointeger(L, 1), 
 			end = lua_tointeger(L, 2), 
-			freqstart = MAX(lua_tointeger(L, 3),0), 
-			freqend = MIN(lua_tointeger(L, 4), 22000),
-			peek = MID(5,lua_tointeger(L, 5),1000);
+			/*freqstart = MIN(0, lua_tointeger(L, 3), 22000),*/freqstart = lua_tointeger(L, 3),
+			peek = MID(0,lua_tointeger(L, 4),1000);
 
 		std::vector<int> output;
+		std::vector<int> intensities;
 		if (start < 0 || end < 0){
 			lua_pushstring(L, "GetFreqencyReach start or end time less than zero");
 			lua_error(L);
@@ -1007,10 +1007,13 @@ namespace Auto{
 		if (!laf->spectrum)
 			laf->spectrum = new AudioSpectrum(VFF);
 
-		laf->spectrum->CreateRange(output, start, end, freqstart, freqend, peek);
-
+		laf->spectrum->CreateRange(output, intensities, start, end, freqstart, peek);
 		push_value(L, output);
-		return 1;
+		if (peek > 0){
+			return 1;
+		}
+		push_value(L, intensities);
+		return 2;
 	}
 
 	AutoToFile::AutoToFile(lua_State *_L, File *subsfile, bool _can_modify)

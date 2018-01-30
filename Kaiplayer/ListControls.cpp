@@ -728,7 +728,7 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	
 	tdc.SetFont(GetFont());
 	tdc.SetBrush(wxBrush(Options.GetColour(MenuBackground)));
-	tdc.SetPen(wxPen(text));
+	tdc.SetPen(wxPen(Options.GetColour(WindowBorder)));
 	tdc.DrawRectangle(0,0,ow,h);
 	//tdc.SetTextForeground(Options.GetColour("Menu Bar Border Selection"));
 	for(int i=0;i<maxsize; i++)
