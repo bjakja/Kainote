@@ -86,7 +86,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 	//from subs button bind
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		subsResolutionX->SetInt(subsSize.x);
-		subsResolutionX->SetInt(subsSize.y);
+		subsResolutionY->SetInt(subsSize.y);
 		fromSubs->Enable(false);
 		OnChangedResolution(wxCommandEvent());
 	}, 26547);
@@ -132,7 +132,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 		grid->AddSInfo("PlayResX",std::to_string(videoSizeX));
 		grid->AddSInfo("PlayResY",std::to_string(videoSizeY));
 		grid->ResizeSubs(videoSizeX/(float)subsSizeX,
-			videoSizeX/(float)subsSizeX, resamplingOptions->IsEnabled() && 
+			videoSizeY/(float)subsSizeY, resamplingOptions->IsEnabled() && 
 			resamplingOptions->GetSelection() == 1);
 		grid->SetModified(SUBTITLES_RESAMPLE);
 		grid->Refresh(false);

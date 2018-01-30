@@ -832,13 +832,13 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 	if (ynsize != xnsize){
 		if (ynsize > xnsize){
 			resizeScale = (stretch) ? 1 : 0;
-			valFscx = (stretch) ? (xnsize / ynsize) : 1.f;
+			valFscx = (stretch) ? (ynsize / xnsize) : 1.f;
 		}
 		else{
 			val = ynsize;
 			val1 = xnsize;
 			resizeScale = (stretch) ? 1 : 0;
-			valFscx = (stretch) ? (ynsize / xnsize) : 1.f;
+			valFscx = (stretch) ? (xnsize / ynsize) : 1.f;
 		}
 		if (stretch){ vectorXScale /= valFscx; }
 	}
@@ -866,7 +866,8 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		}
 		double fs = 0;
 		resized->Fontsize.ToCDouble(&fs);
-		fs *= val1;
+		//TODO: sprawdzić czy nie ma jakiegoś przypadku, gdzie ta wartość będzie musiała przyjąć val1
+		fs *= val/*1*/;
 		resized->Fontsize = getfloat(fs);
 		double ol = 0;
 		resized->Outline.ToCDouble(&ol);
