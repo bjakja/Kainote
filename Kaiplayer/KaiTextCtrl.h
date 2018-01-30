@@ -108,7 +108,7 @@ protected:
 	wxArrayInt positioning;
 	std::vector<TextStyle> textStyles;
 	std::vector<int> charmap;
-	int lastXSize;
+	wxSize lastSize;
 	long style;
 	COLOR background;
 	COLOR foreground;
