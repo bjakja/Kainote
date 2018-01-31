@@ -607,7 +607,7 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	const wxColour & menuhighlight = Options.GetColour(MenuBackgroundSelection);
 	tdc.SetFont(font);
 	tdc.SetBrush(wxBrush(background));
-	tdc.SetPen(wxPen(text));
+	tdc.SetPen(wxPen(Options.GetColour(WindowBorder)));
 	tdc.DrawRectangle(0,0,ow,h);
 	tdc.SetTextForeground(text);
 	wxSize mnbefsize;

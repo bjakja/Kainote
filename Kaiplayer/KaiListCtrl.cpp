@@ -502,11 +502,13 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 						continue;
 					}
 					newRow->row.push_back((*itemList)[elemY]->row[g]->Copy());
+					newRow->row[g]->modified = true;
 				}
 				//(*itemList)[elemY]=newRow;
 				itemList->Change(elemY, newRow);
 				PushHistory();
 				Refresh(false);
+				copy = NULL;
 			}
 			break;
 		}
@@ -586,8 +588,12 @@ void KaiListCtrl::SaveAll(int col)
 {
 	if(!modified){return;}
 	for(size_t i = 0; i<itemList->size(); i++){
-		if((*itemList)[i]->row.size()<=(size_t)col){continue;}
-		(*itemList)[i]->row[col]->Save();
+		for (size_t j = 0; j < (*itemList)[i]->row.size(); j++){
+			if (j == col)
+				(*itemList)[i]->row[j]->Save();
+			else
+				(*itemList)[i]->row[j]->modified = false;
+		}
 	}
 	modified = false;
 }
@@ -640,8 +646,17 @@ void KaiListCtrl::Undo(wxCommandEvent &evt)
 {
 	if(iter>0){
 		iter--;
+		List * actual = historyList[iter]->Copy();
+		for (size_t i = 0; i < itemList->size(); i++){
+			if (i < actual->size() && (*itemList)[i] != (*actual)[i]){
+				for (size_t j = 0; j < (*actual)[i]->row.size(); j++)
+					(*actual)[i]->row[j]->modified = true;
+
+				modified = true;
+			}
+		}
 		delete itemList;
-		itemList = historyList[iter]->Copy();
+		itemList = actual;
 		Refresh(false);
 	}
 }
@@ -650,8 +665,17 @@ void KaiListCtrl::Redo(wxCommandEvent &evt)
 {
 	if(iter< (int)historyList.size()-1){
 		iter++;
+		List * actual = historyList[iter]->Copy();
+		for (size_t i = 0; i < itemList->size(); i++){
+			if (i < actual->size() && (*itemList)[i] != (*actual)[i]){
+				for (size_t j = 0; j < (*actual)[i]->row.size(); j++)
+					(*actual)[i]->row[j]->modified = true;
+
+				modified = true;
+			}
+		}
 		delete itemList;
-		itemList = historyList[iter]->Copy();
+		itemList = actual;
 		Refresh(false);
 	}
 }

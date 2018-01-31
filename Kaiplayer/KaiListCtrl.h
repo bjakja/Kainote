@@ -133,6 +133,8 @@ public:
 		itemList[pos] = row;
 		garbage.push_back(row);
 	}
+	const std::vector< ItemRow*> & GetGarbage(){ return garbage; }
+private:
 	std::vector< ItemRow*> itemList;
 	std::vector< ItemRow*> garbage;
 };
