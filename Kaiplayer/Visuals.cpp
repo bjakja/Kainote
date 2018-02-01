@@ -234,7 +234,8 @@ void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen
 void Visuals::Draw(int time)
 {//time<=end
 	//pamiętaj sprawdzanie czy czasy mieszczą się w przedziale to czas >= start && czas < koniec
-	if(!(time>=start && time<end) || notDialogue){blockevents = true; return;}else if(blockevents){blockevents=false;}
+	if (!(time >= start && time < end) || notDialogue){ DrawWarning(notDialogue); blockevents = true; return; }
+	else if (blockevents){ blockevents = false; }
 	wxMutexLocker lock(clipmutex);
 	line->SetAntialias(TRUE);
 	line->SetWidth(2.0);
@@ -244,7 +245,15 @@ void Visuals::Draw(int time)
 	oldtime=time;
 }
 
-
+void Visuals::DrawWarning(bool comment)
+{
+	LPD3DXFONT warningFont;
+	HRN(D3DXCreateFont(device, VideoSize.width/20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &warningFont), _("Nie można stworzyć czcionki D3DX"));
+	RECT rt = { 0, 0, VideoSize.width, VideoSize.height };
+	DRAWOUTTEXT(warningFont, comment ? _("Narzędzia edycji wizualnej\nnie działają na komentarzach") :
+		_("Linia nie jest widoczna na wideo,\nalbo ma zerowy czas trwania"), rt, DT_CENTER | DT_VCENTER, 0xFFFF0000);
+	SAFE_RELEASE(warningFont);
+}
 
 D3DXVECTOR2 Visuals::CalcMovePos()
 {
@@ -787,3 +796,5 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 	strPos.y += strPos.x - 1;
 	ChangeText(txt, "\\org(" + getfloat(orgx + coordx) + "," + getfloat(orgy + coordy) + ")", !PutinBrackets, strPos);
 }
+
+

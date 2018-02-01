@@ -42,7 +42,8 @@ void Position::Draw(int time)
 	
 	line->SetAntialias(FALSE);
 	oldtime=time;
-	if(nothintoshow){blockevents = true;}else if(blockevents){blockevents=false;}
+	if (nothintoshow){ DrawWarning(notDialogue); blockevents = true; }
+	else if (blockevents){ blockevents = false; }
 }
 
 void Position::OnMouseEvent(wxMouseEvent &evt)

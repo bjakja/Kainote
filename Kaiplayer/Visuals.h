@@ -80,6 +80,7 @@ public:
 	virtual void OnMouseEvent(wxMouseEvent &evt){};
 	virtual wxString GetVisual(){return "";};
 	virtual void ChangeVisual(wxString *txt, Dialogue *_dial){};
+	void DrawWarning(bool comment);
 	void SetClip(wxString clip,bool dummy, bool redraw=true, bool changeEditorText = true);
 	void SetVisual(bool dummy,int type);
 	void ChangeOrg(wxString *text, Dialogue *_dial, float coordx, float coordy);

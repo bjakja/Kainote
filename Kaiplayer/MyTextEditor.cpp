@@ -989,8 +989,8 @@ void MTextEditor::CheckText()
 			}
 			word="";firsti=i+1;
 		}
-		if(ch=='{'){block=true;}
-		else if(ch=='}'){block=false;firsti=i+1;word="";}
+		if (ch == '{'){ block = true; continue; }
+		else if (ch == '}'){ block = false; firsti = i + 1; word = ""; continue; }
 
 		if(notchar.Find(ch)==-1&&text.GetChar((i==0)? 0 : i-1)!='\\'&&!block){word<<ch;lasti=i;}
 		else if(!block&&text.GetChar((i==0)? 0 : i-1)=='\\'){
