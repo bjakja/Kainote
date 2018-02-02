@@ -810,7 +810,7 @@ namespace Auto{
 		//if(ps->lpd->cancelled && ps->lpd->IsModal()){ps->lpd->EndModal(0);}
 		//c->Grid->SaveSelections(true);
 		original_offset = c->Grid->SInfoSize() + c->Grid->StylesSize() + 1;
-		int active_idx = original_active;
+		int active_idx = -1;
 
 		// Check for a new active row
 		if (lua_isnumber(L, -1)) {
@@ -818,7 +818,8 @@ namespace Auto{
 			if (active_idx < 0 || active_idx >= subs->dials.size()) {
 				wxLogError("Active row %d is out of bounds (must be 1-%u)", active_idx, subs->dials.size());
 				active_idx = original_active;
-			}
+			}else
+				c->Grid->file->ClearSelections();
 		}
 		
 		//stackcheck.check_stack(2);
@@ -826,6 +827,7 @@ namespace Auto{
 
 		// top of stack will be selected lines array, if any was returned
 		if (lua_istable(L, -1)) {
+			c->Grid->file->ClearSelections();
 			lua_for_each(L, [&] {
 				if (!lua_isnumber(L, -1))
 					return;
@@ -834,6 +836,8 @@ namespace Auto{
 					wxLogError("Selected row %d is out of bounds (must be 1-%u)", cur, subs->dials.size());
 					throw LuaForEachBreak();
 				}
+				if (active_idx == -1)
+					active_idx = cur;
 				c->Grid->file->InsertSelectionKey(cur);
 			});
 
@@ -841,28 +845,9 @@ namespace Auto{
 		else {
 			lua_pop(L, 1);
 
-			/*Selection new_sel;
-			AssDialogue *new_active = nullptr;
-
-			int prev = original_offset;
-			auto it = c->ass->Events.begin();
-			for (int row : original_sel) {
-			while (row > prev && it != c->ass->Events.end()) {
-			++prev;
-			++it;
-			}
-			if (it == c->ass->Events.end()) break;
-			new_sel.insert(&*it);
-			if (row == original_active)
-			new_active = &*it;
-			}
-
-			if (new_sel.empty() && !c->ass->Events.empty())
-			new_sel.insert(&c->ass->Events.front());
-			if (!new_sel.count(new_active))
-			new_active = *new_sel.begin();
-			c->selectionController->SetSelectionAndActive(std::move(new_sel), new_active);*/
 		}
+		if (active_idx == -1)
+			active_idx = original_active;
 		c->Grid->SpellErrors.clear();
 		c->Grid->SetModified(AUTOMATION_SCRIPT, true, false, c->Grid->file->GetElementByKey(active_idx));
 		c->Grid->RefreshColumns();

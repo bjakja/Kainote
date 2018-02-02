@@ -263,7 +263,7 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, unsigned
 	
 }
 
-void AudioSpectrum::CreateRange(std::vector<int> &output, std::vector<int> &intensities, int64_t timeStart, int64_t timeEnd, int frequency, int peek)
+void AudioSpectrum::CreateRange(std::vector<int> &output, std::vector<int> &intensities, int64_t timeStart, int64_t timeEnd, wxPoint frequency, int peek)
 {
 	wxCriticalSectionLocker locker(CritSec);
 	overlaps = 1;
@@ -275,8 +275,12 @@ void AudioSpectrum::CreateRange(std::vector<int> &output, std::vector<int> &inte
 	unsigned long last_line = (unsigned long)(range_end / doublelen);
 	unsigned long startcache = first_line / subcachelen;
 	unsigned long endcache = last_line / subcachelen;
-	int indexStart = (int)(frequency / (sampleRate / doublelen));
+	int indexStart = (int)(frequency.x / (sampleRate / doublelen));
 	indexStart = MID(0, indexStart, line_length - 1);
+	int indexEnd = (int)(frequency.y / (sampleRate / doublelen));
+	indexEnd = MID(0, indexEnd, line_length - 1);
+	if (indexEnd < indexStart)
+		indexEnd = indexStart;
 	
 	size_t size = sub_caches.size();
 	size_t neededsize = (endcache - startcache) + AudioThreads->numThreads;
@@ -306,20 +310,27 @@ void AudioSpectrum::CreateRange(std::vector<int> &output, std::vector<int> &inte
 		int64_t lli = i;
 		int64_t time = (lli * doublelen * 1000) / sampleRate;
 		//g += doublelen;
+		int lastintensity = 0;
 		if (lasttime < time){
-
-			int intensity = int(100 * (line[indexStart] * upscale) / maxpower);
-			if (!peek){
-				output.push_back(time);
-				intensities.push_back(intensity);
-			}
-			else if (intensity >= peek /*&& !reached*/){
-				output.push_back(time);
-				//reached = true;
-			}
-			//else if (intensity < peek && reached){
+			for (int i = indexStart; i <= indexEnd; i++){
+				int intensity = int(100 * (line[i] * upscale) / maxpower);
+				if (!peek){
+					if (lastintensity < intensity)
+						lastintensity = intensity;
+					if (i == indexEnd){
+						output.push_back(time);
+						intensities.push_back(lastintensity);
+					}
+				}
+				else if (intensity >= peek /*&& !reached*/){
+					output.push_back(time);
+					break;
+					//reached = true;
+				}
+				//else if (intensity < peek && reached){
 				//reached = false;
-			//}
+				//}
+			}
 		}
 		lasttime = time;
 	}
