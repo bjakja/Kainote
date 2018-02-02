@@ -252,13 +252,17 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	}, 9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
 		TabPanel *tab = GetTab();
-		if (tab->Grid->IsShown()){
+		if (tab->lastFocusedWindow){
+			tab->lastFocusedWindow->SetFocus();
+		}
+		else if (tab->Grid->IsShown()){
 			tab->Grid->SetFocus();
 		}
 		else if (tab->Video->IsShown()){
 			tab->Video->SetFocus();
 		}
 	});
+	Bind(wxEVT_ACTIVATE, &kainoteFrame::OnActivate, this);
 	Connect(SnapWithStart, SnapWithEnd, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
 	SetDropTarget(new DragnDrop(this));
 	Bind(wxEVT_SIZE, &kainoteFrame::OnSize, this);
@@ -276,7 +280,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 kainoteFrame::~kainoteFrame()
 {
-
+	Unbind(wxEVT_ACTIVATE, &kainoteFrame::OnActivate, this);
 	bool im = IsMaximized();
 	if (!im && !IsIconized()){
 		int posx, posy, sizex, sizey;
@@ -1763,6 +1767,17 @@ void kainoteFrame::OnClose1(wxCloseEvent& event)
 	}
 	Tabs->iter = curit;
 	event.Skip();
+}
+
+void kainoteFrame::OnActivate(wxActivateEvent &evt)
+{
+	if (!evt.GetActive()){
+		TabPanel *tab = GetTab();
+		wxWindow *win = FindFocus();
+		if (win && tab->IsDescendant(win)){
+			tab->lastFocusedWindow = win;
+		}
+	}
 }
 
 void kainoteFrame::OnAudioSnap(wxCommandEvent& event)
