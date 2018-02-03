@@ -183,7 +183,11 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	SpectrumMode = new ToggleButton(this,Audio_Check_Spectrum,"",_("Tryb spektrum"), wxDefaultPosition,wxSize(26,26));
 	SpectrumMode->SetBitmap(wxBITMAP_PNG("button_spectrum"));
 	SpectrumMode->SetValue(Options.GetBool(AudioSpectrumOn));
-	ButtonSizer->Add(SpectrumMode,0,wxRIGHT,2);
+	ButtonSizer->Add(SpectrumMode, 0, wxRIGHT, 2);
+	SpectrumNonLinear = new ToggleButton(this, Audio_Check_Spectrum_Non_Linear, "", _("Uwydatnienie częstotliwości głosu na spektrum"), wxDefaultPosition, wxSize(26, 26));
+	SpectrumNonLinear->SetBitmap(wxBITMAP_PNG("button_spectrum"));
+	SpectrumNonLinear->SetValue(Options.GetBool(AudioSpectrumNonLinearOn));
+	ButtonSizer->Add(SpectrumNonLinear, 0, wxRIGHT, 2);
 	ButtonSizer->AddStretchSpacer(1);
 
 
@@ -507,6 +511,18 @@ void AudioBox::OnSpectrumMode(wxCommandEvent &event) {
 }
 
 
+void AudioBox::OnSpectrumNonLinear(wxCommandEvent &event)
+{
+	bool value = SpectrumNonLinear->GetValue();
+	if (audioDisplay->spectrumRenderer){
+		audioDisplay->spectrumRenderer->SetNonLinear(value);
+	}
+	Options.SetBool(AudioSpectrumNonLinearOn, value);
+	Options.SaveAudioOpts();
+	audioDisplay->SetFocus();
+	audioDisplay->UpdateImage();
+}
+
 ///////////////
 // Lead in/out
 void AudioBox::OnLeadIn(wxCommandEvent &event) {
@@ -662,6 +678,7 @@ BEGIN_EVENT_TABLE(AudioBox,wxPanel)
 	EVT_TOGGLEBUTTON(Audio_Button_Split,AudioBox::OnSplitMode)
 	EVT_TOGGLEBUTTON(Audio_Check_AutoGoto,AudioBox::OnAutoGoto)
 	EVT_TOGGLEBUTTON(Audio_Check_Spectrum,AudioBox::OnSpectrumMode)
+	EVT_TOGGLEBUTTON(Audio_Check_Spectrum_Non_Linear, AudioBox::OnSpectrumNonLinear)
 	EVT_TOGGLEBUTTON(Audio_Check_AutoCommit,AudioBox::OnAutoCommit)
 	EVT_TOGGLEBUTTON(Audio_Check_NextCommit,AudioBox::OnNextLineCommit)
 	EVT_MOUSE_EVENTS(AudioBox::OnMouseEvents)

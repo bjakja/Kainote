@@ -74,6 +74,7 @@
 	CG(AudioSnapToKeyframes,)\
 	CG(AudioSnapToOtherLines,)\
 	CG(AudioSpectrumOn,)\
+	CG(AudioSpectrumNonLinearOn,)\
 	CG(AudioStartDragSensitivity,)\
 	CG(AudioVerticalZoom,)\
 	CG(AudioVolume,)\

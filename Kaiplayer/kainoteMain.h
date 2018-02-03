@@ -111,6 +111,7 @@ class kainoteFrame: public KaiFrame
 		void OnChangeLine(wxCommandEvent& event);
 		void OnDelete(wxCommandEvent& event);
 		void OnClose1(wxCloseEvent& event);
+		void OnActivate(wxActivateEvent &evt);
 		static void OnOutofMemory();
         Menu* ConvMenu;
         Menu* FileMenu;

@@ -138,6 +138,7 @@ AudioSpectrum::AudioSpectrum(VideoFfmpeg *_provider)
 	ChangeColours();
 	minband = 0;//Options.GetInt(_T("Audio Spectrum Cutoff"));
 	maxband = line_length/* - minband * 2/3*/; // TODO: make this customisable?
+	nonlinear = Options.GetBool(AudioSpectrumNonLinearOn);
 }
 
 
@@ -184,6 +185,7 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, unsigned
 	}
 
 	int last_imgcol_rendered = -1;
+	float factor = pow(line_length, 1.f / (imgheight - 1));
 	// Some scaling constants
 	const int maxpower = (1 << (16 - 1))*256;
 
@@ -228,14 +230,31 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, unsigned
 				// more than one frequency sample per pixel (vertically compress data)
 				// pick the largest value per pixel for display
 				// Iterate over pixels, picking a range of samples for each
+				int sample2 = 0;
+				int sample1 = 0;
+				float samplecounter = 1.f;
 				for (int y = 0; y < imgheight; ++y) {
-					const int &sample1 = std::max(0, maxband * y / imgheight + minband);
-					const int &sample2 = std::min(signed(line_length - 1), maxband * (y + 1) / imgheight + minband);
+					if (nonlinear){
+						if (sample2 >= (int)samplecounter){
+							sample2++;
+						}
+						else{ sample2 = (int)samplecounter; }
+						samplecounter *= factor;
+						if (sample1 >= line_length)
+							sample1 = line_length - 1;
+						if (sample2 >= line_length)
+							sample2 = line_length - 1;
+					}
+					else{
+						sample1 = std::max(0, maxband * y / imgheight + minband);
+						sample2 = std::min(signed(line_length - 1), maxband * (y + 1) / imgheight + minband);
+					}
 					float maxval = 0;
 					for (int samp = sample1; samp <= sample2; samp++) {
 						if (line[samp] > maxval) maxval = line[samp];
 					}
 					//float maxval = *std::max_element(&line[sample1], &line[sample2]);
+					sample1 = sample2+1;
 					int intensity = int(256 * (maxval * upscale) / maxpower);
 					WRITE_PIXEL
 				}

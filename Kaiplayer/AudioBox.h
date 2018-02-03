@@ -78,6 +78,7 @@ private:
 	ToggleButton *NextCommit;
 	ToggleButton *AutoCommit;
 	ToggleButton *SpectrumMode;
+	ToggleButton *SpectrumNonLinear;
 	ToggleButton *KaraSwitch;
 	ToggleButton *KaraMode;
 
@@ -107,6 +108,7 @@ private:
 	void OnAutoGoto(wxCommandEvent &event);
 	void OnAutoCommit(wxCommandEvent &event);
 	void OnSpectrumMode(wxCommandEvent &event);
+	void OnSpectrumNonLinear(wxCommandEvent &event);
 	void OnNextLineCommit(wxCommandEvent &event);
 	void OnMouseEvents(wxMouseEvent &event);
 
@@ -149,7 +151,8 @@ enum {
 	Audio_Check_AutoCommit,
 	Audio_Check_NextCommit,
 	Audio_Check_AutoGoto,
-	Audio_Check_Spectrum
+	Audio_Check_Spectrum,
+	Audio_Check_Spectrum_Non_Linear
 };
 
 

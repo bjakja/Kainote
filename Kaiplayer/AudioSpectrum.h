@@ -60,6 +60,7 @@ private:
 	float power_scale; // amplification of displayed power
 	int minband; // smallest frequency band displayed
 	int maxband; // largest frequency band displayed
+	bool nonlinear = true;
 	wxCriticalSection CritSec;
 	void SetupSpectrum(int overlaps = 1);
 	std::vector<SpectrumCache*> sub_caches;
@@ -72,6 +73,7 @@ public:
 	void CreateRange(std::vector<int> &output, std::vector<int> &intensities, int64_t timeStart, int64_t timeEnd, wxPoint frequency, int peek);
 	void SetScaling(float _power_scale);
 	void ChangeColours();
+	void SetNonLinear(bool _nonlinear){ nonlinear = _nonlinear; }
 };
 
 class AudioSpectrumMultiThreading
