@@ -16,18 +16,18 @@
 
 #pragma once
 
-#include <wx/textfile.h>
+//#include <wx/textfile.h>
 #include <wx/tokenzr.h>
-#include <wx/colour.h>
-#include <wx/string.h>
-#include <wx/image.h>
+//#include <wx/colour.h>
+//#include <wx/string.h>
+//#include <wx/image.h>
 #include <map>
 #include <vector>
 #include <algorithm>
 #include "Styles.h"
 #include <wx/utils.h> 
 #include "EnumFactory.h"
-//#include "kainoteApp.h"
+#include <wx/wx.h>
 #undef wxBITMAP_PNG
 
 
@@ -420,6 +420,8 @@ wxImage CreateImageFromPngResource(const wxString& t_name);
 void MoveToMousePosition(wxWindow *win);
 wxString MakePolishPlural(int num, const wxString &normal, const wxString &plural24, const wxString &pluralRest);
 
+BOOL __stdcall MonitorEnumProc1(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData);
+wxRect GetMonitorRect(int wmonitor, std::vector<tagRECT> *MonitorRects, wxWindow *mainWindow, bool workArea);
 static const wxString emptyString;
 
 enum{

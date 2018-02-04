@@ -29,6 +29,7 @@
 #include <windows.h>
 #include "gitparams.h"
 
+
 #define ADD_QUOTES_HELPER(s) #s
 #define ADD_QUOTES(s) ADD_QUOTES_HELPER(s)
 
@@ -826,14 +827,14 @@ void MoveToMousePosition(wxWindow *win)
 	wxPoint mst=wxGetMousePosition();
 	wxSize siz=win->GetSize();
 	siz.x;
-	wxRect rc = wxGetClientDisplayRect();
+	wxRect rc = GetMonitorRect(0, NULL, win->GetParent(), true);//wxGetClientDisplayRect();
 	mst.x-=(siz.x/2);
-	mst.x=MID(0,mst.x, rc.width - siz.x);
+	mst.x = MID(rc.x, mst.x, (rc.width + rc.x) - siz.x);
 	mst.y+=15;
-	if(mst.y + siz.y > rc.height){
+	if(mst.y + siz.y > rc.height + rc.y){
 		mst.y = mst.y - siz.y - 30;
-		if(mst.y<0){
-			mst.y = rc.height - siz.y;
+		if (mst.y<rc.y){
+			mst.y = (rc.height + rc.y) - siz.y;
 		}
 	}
 	win->Move(mst);
@@ -852,6 +853,58 @@ wxString MakePolishPlural(int num, const wxString &normal, const wxString &plura
 	}
 	wxString finalResult;
 	return finalResult<<num<<" "<<result;
+}
+
+BOOL CALLBACK MonitorEnumProc1(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
+{
+	std::pair<std::vector<RECT>, bool> *pair = (std::pair<std::vector<RECT>, bool> *)dwData;
+	MONITORINFO monitorinfo;
+	ZeroMemory(&monitorinfo, sizeof(monitorinfo));
+	monitorinfo.cbSize = sizeof(monitorinfo);
+
+	if (!GetMonitorInfo(hMonitor, &monitorinfo)){
+		wxLogStatus(_("Nie można pobrać informacji o monitorze"));
+		return TRUE;
+	}
+	//podstawowy monitor ma być pierwszy w tablicy
+	if (monitorinfo.dwFlags == MONITORINFOF_PRIMARY){
+		pair->first.insert(pair->first.begin(), (pair->second) ? monitorinfo.rcWork : monitorinfo.rcMonitor);
+		return TRUE;
+	}
+	pair->first.push_back((pair->second) ? monitorinfo.rcWork : monitorinfo.rcMonitor);
+	return TRUE;
+}
+
+wxRect GetMonitorRect(int wmonitor, std::vector<RECT> *MonitorRects, wxWindow *mainWindow, bool workArea){
+	std::vector<RECT> MonRects;// = new std::vector<RECT>();
+	std::pair<std::vector<RECT>, bool> *pair = new std::pair<std::vector<RECT>, bool>(MonRects, workArea);
+	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc1, (LPARAM)pair);
+	MonRects = pair->first;
+	delete pair;
+	if (MonRects.size()==0){
+		bool ktos_ukradl_ci_monitor = false;
+		assert(ktos_ukradl_ci_monitor);
+	}
+	wxRect rt(MonRects[0].left, MonRects[0].top, abs(MonRects[0].right - MonRects[0].left), abs(MonRects[0].bottom - MonRects[0].top));
+	if (wmonitor == -1 || MonRects.size() == 1){ return rt; }
+	else if (wmonitor == 0){
+		wxRect rect = mainWindow->GetRect();
+		int x = (rect.width / 2) + rect.x;
+		int y = (rect.height / 2) + rect.y;
+		for (size_t i = 0; i < MonRects.size(); i++){
+			if (MonRects[i].left <= x && x < MonRects[i].right && MonRects[i].top <= y && y < MonRects[i].bottom){
+				if (MonitorRects)
+					*MonitorRects = MonRects;
+				return wxRect(MonRects[i].left, MonRects[i].top, abs(MonRects[i].right - MonRects[i].left), abs(MonRects[wmonitor].bottom - MonRects[wmonitor].top));
+			}
+		}
+	}
+	else{
+		if (MonitorRects)
+			*MonitorRects = MonRects;
+		return wxRect(MonRects[wmonitor].left, MonRects[wmonitor].top, abs(MonRects[wmonitor].right - MonRects[wmonitor].left), abs(MonRects[wmonitor].bottom - MonRects[wmonitor].top));
+	}
+	return rt;
 }
 
 DEFINE_ENUM(CONFIG,CFG);

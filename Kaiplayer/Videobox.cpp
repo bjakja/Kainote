@@ -857,7 +857,6 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 	//ismenu=true;
 	if(isFullscreen){
 		id=menu->GetPopupMenuSelection(pos, TD, &Modifiers, true);
-		//wxLogStatus("fulscreen menu %i", id);
 	}else{
 		id=menu->GetPopupMenuSelection(pos, this, &Modifiers, true);
 	}

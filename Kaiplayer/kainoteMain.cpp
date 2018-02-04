@@ -230,24 +230,12 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(30000, 30059, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnRecent);
 	Connect(PlayActualLine, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
-		/*if (!mylog){
+		if (!mylog){
 			mylog = new wxLogWindow(this, "Logi", true, false);
 			mylog->PassMessages(true);
 		}
 		else{
 			delete mylog; mylog = NULL;
-		}*/
-		int tableelem = 0;
-		int height = 88;
-		float factor = pow(1024, 1.f / (height-1));
-		float start = 1.f;
-		for (int i = 0; i < height; i++){
-			if (tableelem >= (int)start){
-				tableelem++;
-			}
-			else{ tableelem = (int)start; }
-			wxLogStatus("table place float %f tableelem %d", start, tableelem);
-			start *= factor;
 		}
 	}, 9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
