@@ -25,9 +25,10 @@
 #include <wx/log.h>
 #include <wx/mstream.h>
 #include <wx/bitmap.h>
-#include <wx/msgdlg.h>
-#include <windows.h>
+//#include <wx/msgdlg.h>
+#include "Tabs.h"//<windows.h>
 #include "gitparams.h"
+
 
 
 #define ADD_QUOTES_HELPER(s) #s
@@ -827,7 +828,7 @@ void MoveToMousePosition(wxWindow *win)
 	wxPoint mst=wxGetMousePosition();
 	wxSize siz=win->GetSize();
 	siz.x;
-	wxRect rc = GetMonitorRect(0, NULL, win->GetParent(), true);//wxGetClientDisplayRect();
+	wxRect rc = GetMonitorRect(0, NULL, mst, true);//wxGetClientDisplayRect();
 	mst.x-=(siz.x/2);
 	mst.x = MID(rc.x, mst.x, (rc.width + rc.x) - siz.x);
 	mst.y+=15;
@@ -875,8 +876,8 @@ BOOL CALLBACK MonitorEnumProc1(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMon
 	return TRUE;
 }
 
-wxRect GetMonitorRect(int wmonitor, std::vector<RECT> *MonitorRects, wxWindow *mainWindow, bool workArea){
-	std::vector<RECT> MonRects;// = new std::vector<RECT>();
+wxRect GetMonitorRect(int wmonitor, std::vector<tagRECT> *MonitorRects, const wxPoint &position, bool workArea){
+	std::vector<RECT> MonRects;
 	std::pair<std::vector<RECT>, bool> *pair = new std::pair<std::vector<RECT>, bool>(MonRects, workArea);
 	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc1, (LPARAM)pair);
 	MonRects = pair->first;
@@ -888,9 +889,8 @@ wxRect GetMonitorRect(int wmonitor, std::vector<RECT> *MonitorRects, wxWindow *m
 	wxRect rt(MonRects[0].left, MonRects[0].top, abs(MonRects[0].right - MonRects[0].left), abs(MonRects[0].bottom - MonRects[0].top));
 	if (wmonitor == -1 || MonRects.size() == 1){ return rt; }
 	else if (wmonitor == 0){
-		wxRect rect = mainWindow->GetRect();
-		int x = (rect.width / 2) + rect.x;
-		int y = (rect.height / 2) + rect.y;
+		int x = position.x;
+		int y = position.y;
 		for (size_t i = 0; i < MonRects.size(); i++){
 			if (MonRects[i].left <= x && x < MonRects[i].right && MonRects[i].top <= y && y < MonRects[i].bottom){
 				if (MonitorRects)

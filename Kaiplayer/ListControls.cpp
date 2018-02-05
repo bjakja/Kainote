@@ -482,6 +482,8 @@ void KaiChoice::SendEvent(int _choice)
 
 void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool changeText)
 {
+	wxCommandEvent evt(wxEVT_COMMAND_COMBOBOX_SELECTED, GetId());
+	this->ProcessEvent(evt);
 	if(PartialName==""){SetSelection(0, false);return;}
 	int sell= (changeText)? 0 : -1;
 	wxString PrtName = PartialName.Lower();
@@ -638,11 +640,9 @@ void PopupList::CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &control
 	if(size->x > 400){size->x=400;}
 	if(size->x < controlSize.x){size->x = controlSize.x;}
 	size->y = height * isize + 2;
-	int w, h;
-	wxRect workArea = wxGetClientDisplayRect();
-	w = workArea.width - workArea.x;
-	h = workArea.height - workArea.y;
 	wxPoint ScreenPos = Parent->ClientToScreen(*pos);
+	wxRect workArea = GetMonitorRect(0, NULL, ScreenPos, true);
+	int h = workArea.height + workArea.y;
 	if((ScreenPos.y + size->y) > h){
 		pos->y -= (size->y + controlSize.y);
 	}

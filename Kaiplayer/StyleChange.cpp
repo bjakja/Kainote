@@ -316,15 +316,7 @@ void StyleChange::OnAllCols(int kol)
 	wxColour koll= kolor->GetBackgroundColour();
 
 	DialogColorPicker *ColourDialog = DialogColorPicker::Get(this,AssColor(koll,alpha->GetInt()));
-	wxPoint mst=wxGetMousePosition();
-	int dw, dh;
-	wxSize siz=ColourDialog->GetSize();
-	siz.x;
-	wxDisplaySize (&dw, &dh);
-	mst.x-=(siz.x/2);
-	mst.x=MID(0,mst.x, dw-siz.x);
-	mst.y+=15;
-	ColourDialog->Move(mst);
+	MoveToMousePosition(ColourDialog);
 	if ( ColourDialog->ShowModal() == wxID_OK) {
 		AssColor kol=ColourDialog->GetColor();
 		kolor->SetForegroundColour(Blackorwhite(kol.GetWX()));

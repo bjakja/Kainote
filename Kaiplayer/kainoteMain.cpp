@@ -306,7 +306,6 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	int Modif = event.GetInt();
 
 	TabPanel *tab = GetTab();
-	//wxLogStatus("menu %i %i", id, Modif);
 	if (Modif == wxMOD_SHIFT){
 		MenuItem *item = Menubar->FindItem(id);
 		//upewnij się, że da się zmienić idy na nazwy, 

@@ -136,18 +136,15 @@ void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool cli
 	if(isize > (size_t)maxVisible) {size->x += 20; isize=maxVisible;}
 	size->y = height * isize + 4;
 	int w,h;
-	wxRect workArea = wxGetClientDisplayRect();
-	w = workArea.width - workArea.x;
-	h = workArea.height - workArea.y;
+	wxRect workArea = GetMonitorRect(0, NULL, wxPoint(pos->x + size->x, pos->y), true);
+	w = workArea.width + workArea.x;
+	h = workArea.height + workArea.y;
 	if(size->y > h){ size->y = h; }
 	if((pos->x + size->x) > w){
 		pos->x -= size->x;
-		//wxLogStatus("dialog %i %i", (int)parentMenu, (parentMenu)? (int)parentMenu->dialog : 0);
 		if(parentMenu && parentMenu->dialog){
 			wxSize size = parentMenu->dialog->GetClientSize();
-			//wxLogStatus("posx %i", pos->x);
 			pos->x -= size.x;
-			//wxLogStatus("posx1 %i", pos->x);
 		}
 	}
 	if((pos->y + size->y) > h){
