@@ -185,7 +185,7 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	SpectrumMode->SetValue(Options.GetBool(AudioSpectrumOn));
 	ButtonSizer->Add(SpectrumMode, 0, wxRIGHT, 2);
 	SpectrumNonLinear = new ToggleButton(this, Audio_Check_Spectrum_Non_Linear, "", _("Uwydatnienie częstotliwości głosu na spektrum"), wxDefaultPosition, wxSize(26, 26));
-	SpectrumNonLinear->SetBitmap(wxBITMAP_PNG("button_spectrum"));
+	SpectrumNonLinear->SetBitmap(wxBITMAP_PNG("SPECTRUM_NON_LINEAR"));
 	SpectrumNonLinear->SetValue(Options.GetBool(AudioSpectrumNonLinearOn));
 	ButtonSizer->Add(SpectrumNonLinear, 0, wxRIGHT, 2);
 	ButtonSizer->AddStretchSpacer(1);
