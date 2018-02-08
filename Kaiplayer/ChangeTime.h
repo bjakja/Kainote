@@ -92,8 +92,9 @@ private:
 	void OnMouseScroll(wxMouseEvent& event);
 	void AudioVideoTime(wxCommandEvent &event);
 	void CollapsePane(wxCommandEvent &event);
-	void DoTooltips();
+	void DoTooltips(bool normal = true);
 	void SaveOptions();
+	void CreateControls(bool normal = true);
 
 	DECLARE_EVENT_TABLE()
 };

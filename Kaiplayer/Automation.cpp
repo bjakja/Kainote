@@ -931,7 +931,6 @@ namespace Auto{
 
 	bool Automation::Add(wxString filename, bool addToSinfo, bool autoload)
 	{
-		
 		std::vector<Auto::LuaScript*> &scripts = (autoload)? Scripts : ASSScripts;
 		Auto::LuaScript *ls= new Auto::LuaScript(filename);
 		for (size_t i = 0; i < scripts.size(); i++) {

@@ -136,14 +136,9 @@ void KaiStaticText::OnPaint(wxPaintEvent &evt)
 	tdc.SetBrush(Options.GetColour(WindowBackground));
 	tdc.SetPen(*wxTRANSPARENT_PEN);
 	tdc.DrawRectangle(0,0,w,h);
-	//wxRect cur(0, 0, w, h);
 	tdc.SetTextForeground(Options.GetColour(textColour));
-	//tdc.SetClippingRegion(cur);
-	//tdc.DrawLabel(text,cur,GetWindowStyle());
-	//tdc.DestroyClippingRegion();
-	//int fw=0, fh=0;
-	//tdc.GetTextExtent(text, &fw, &fh, 0, 0, &GetFont());
-	tdc.DrawText(text, 0, /*(h-textHeight)/2*/ -scPos);
+	int center = (textHeight < h) ? (h - textHeight) / 2 : 0;
+	tdc.DrawText(text, 0, -scPos + center);
 	wxPaintDC dc(this);
 	dc.Blit(0,0,w,h,&tdc,0,0);
 }
@@ -166,6 +161,7 @@ void KaiStaticText::OnMouseScroll(wxMouseEvent &evt)
 		Refresh(false);
 		return;
 	}
+	evt.Skip();
 }
 
 BEGIN_EVENT_TABLE(KaiStaticText, wxWindow)

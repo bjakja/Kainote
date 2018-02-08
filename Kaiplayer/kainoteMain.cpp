@@ -476,6 +476,8 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}
 	else if (id == AutoLoadScript){
 		if (!Auto){ Auto = new Auto::Automation(); }
+		if (Auto->ASSScripts.size() < 1)
+			Auto->AddFromSubs();
 		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz sktypt"),
 			Options.GetString(AutomationRecent),
 			"", _("Pliki skryptów (*.lua),(*.moon)|*.lua;*.moon;"), wxFD_OPEN);
@@ -495,7 +497,8 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}
 	else if (id == LoadLastScript){
 		if (!Auto){ Auto = new Auto::Automation(true); }
-		Auto->AddFromSubs();
+		if (Auto->ASSScripts.size() < 1)
+			Auto->AddFromSubs();
 		int size = Auto->ASSScripts.size();
 		if (!size){ KaiMessageBox(_("Ten plik napisów nie ma dodanych żadnych skryptów")); return; }
 		auto script = Auto->ASSScripts[size - 1];
@@ -810,7 +813,13 @@ bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 	wxMutexLocker lock(blockOpen);
 	wxString ext = filename.AfterLast('.').Lower();
 	if (ext == "exe" || ext == "zip" || ext == "rar" || ext == "7z"){ return false; }
-	if (ext == "lua" || ext == "moon"){ if (!Auto){ Auto = new Auto::Automation(false); }Auto->Add(filename); return true; }
+	if (ext == "lua" || ext == "moon"){ 
+		if (!Auto){ Auto = new Auto::Automation(false); }
+		if (Auto->ASSScripts.size() < 1)
+			Auto->AddFromSubs();
+		Auto->Add(filename); 
+		return true; 
+	}
 	TabPanel *tab = GetTab();
 
 	bool found = false;
@@ -1292,6 +1301,8 @@ void kainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 		}
 		else if (ext == "lua" || ext == "moon"){
 			if (!Auto){ Auto = new Auto::Automation(false); }
+			if (Auto->ASSScripts.size() < 1)
+				Auto->AddFromSubs();
 			Auto->Add(files[i]);
 		}
 		else if (ext != "exe" && ext != "zip" && ext != "rar" && ext != "7z"){

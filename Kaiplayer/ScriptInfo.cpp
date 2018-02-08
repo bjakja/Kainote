@@ -81,9 +81,9 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	matrix->Append("TV.240M");
 	matrix->Append("PC.240M");
 	wxBoxSizer *boxsizer2= new wxBoxSizer(wxHORIZONTAL);
-	boxsizer2->Add(new KaiStaticText(this, -1, _("Macierz YCbCr"),wxDefaultPosition),0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	boxsizer2->Add(matrix,1,wxEXPAND|wxALL,5);
-	StaticBox2->Add(boxsizer2,0,wxEXPAND);
+	boxsizer2->Add(new KaiStaticText(this, -1, _("Macierz YCbCr"),wxDefaultPosition),1);
+	boxsizer2->Add(matrix,1,wxLEFT,3);
+	StaticBox2->Add(boxsizer2,1,wxEXPAND|wxALL, 5);
 
 	KaiStaticBoxSizer *StaticBox3 = new KaiStaticBoxSizer(wxVERTICAL,this, _("Opcje"));
 	wxGridSizer *GridSizer1=new wxGridSizer(2,5,5);
@@ -97,10 +97,10 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	collision->SetSelection( collision->Append(_("Normalne")) );
 	collision->Append(_("Odwrócone"));
 
-	GridSizer1->Add(new KaiStaticText(this, -1, _("Styl dzielenia linijek")),1,wxEXPAND|wxALL|wxALIGN_CENTER_VERTICAL,5);
-	GridSizer1->Add(wrapstyle,1,wxEXPAND|wxALL,5);
-	GridSizer1->Add(new KaiStaticText(this, -1, _("Kolidowanie linijek")),1,wxEXPAND|wxALL|wxALIGN_CENTER_VERTICAL,5);
-	GridSizer1->Add(collision,1,wxEXPAND|wxALL,5);
+	GridSizer1->Add(new KaiStaticText(this, -1, _("Styl dzielenia linijek")), 1 , wxEXPAND|wxLEFT, 5);
+	GridSizer1->Add(wrapstyle,1,wxEXPAND|wxRIGHT, 5);
+	GridSizer1->Add(new KaiStaticText(this, -1, _("Kolidowanie linijek")), 1, wxEXPAND | wxLEFT, 5);
+	GridSizer1->Add(collision,1,wxEXPAND|wxRIGHT, 5);
 
 	scaleBorderAndShadow = new KaiCheckBox(this, -1, _("Skaluj obwódkę i cień"));
 	scaleBorderAndShadow->SetValue(true);
@@ -113,13 +113,13 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	save->SetFocus();
 	SetTmpDefaultItem(save);
-	boxsizer1->Add(save,0,wxALL,5);
-	boxsizer1->Add(cancel,0,wxALL,5);
+	boxsizer1->Add(save,1,wxALL,5);
+	boxsizer1->Add(cancel,1,wxALL,5);
 
 	mainsizer->Add(StaticBox1,0,wxEXPAND|wxALL,4);
 	mainsizer->Add(StaticBox2,0,wxEXPAND|wxALL,4);
 	mainsizer->Add(StaticBox3,1,wxEXPAND|wxALL,4);
-	mainsizer->Add(boxsizer1,0,wxEXPAND|wxALL,4);
+	mainsizer->Add(boxsizer1,0,wxBOTTOM|wxALIGN_CENTER,3);
 
 	SetSizerAndFit(mainsizer);
 

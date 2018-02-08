@@ -605,6 +605,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 	Dialogue *dialc;
 	Dialogue *Dial;
 	bool skipFiltered = !ignoreFiltered;
+	if (PostprocessorOptions){ time = 0; frame = 0; VAS = 0; whichTimes = 0; correctEndTimes = 0; moveTimeOptions = 0; }
 
 	for (int i = 0; i < Subs->dials.size(); i++)
 	{
