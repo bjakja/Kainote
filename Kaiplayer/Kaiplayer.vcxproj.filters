@@ -342,6 +342,9 @@
     <ClCompile Include="GFFT\GFFT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Registry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -628,6 +631,9 @@
     </ClInclude>
     <ClInclude Include="KainoteMain.h">
       <Filter>Header Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="Registry.h">
+      <Filter>Header Files\Utils &amp; Config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -40,8 +40,9 @@
 #include "SubsResampleDialog.h"
 #include "SpellCheckerDialog.h"
 #include <math.h>
-
-
+#include <wx/stdpaths.h>
+#include "Registry.h"
+#include <ShlObj.h>
 #undef IsMaximized
 #if _DEBUG
 #define logging 5
@@ -69,9 +70,17 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Options.GetTable(AudioRecent, audsrec);
 	wxFont thisFont(10, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT);
 	SetFont(thisFont);
-	wxIcon kaiicon("aaaa", wxBITMAP_TYPE_ICO_RESOURCE);
-	SetIcon(kaiicon);
-
+	wxIcon KaiIcon("KAI_SMALL_ICON", wxBITMAP_TYPE_ICO_RESOURCE);
+	//::SendMessage(GetHwnd(), WM_SETICON, ICON_SMALL, (LPARAM)GetHiconOf(KaiIcon));
+	SetIcon(KaiIcon);
+	const wxSize bigIconSize(::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
+	if (bigIconSize.x > 32){
+		wxIcon KaiLargeIcon("KAI_TLARGE_ICON", wxBITMAP_TYPE_ICO_RESOURCE);
+		::SendMessage(GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)GetHiconOf(KaiLargeIcon));
+	}
+	else{
+		::SendMessage(GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)GetHiconOf(KaiIcon));
+	}
 	//height 22 zmieniając jedną z tych wartości popraw je też dropfiles
 	Menubar = new MenuBar(this);
 
@@ -230,13 +239,17 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(30000, 30059, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnRecent);
 	Connect(PlayActualLine, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
-		if (!mylog){
+		/*if (!mylog){
 			mylog = new wxLogWindow(this, "Logi", true, false);
 			mylog->PassMessages(true);
 		}
 		else{
 			delete mylog; mylog = NULL;
-		}
+		}*/
+		
+		Registry::AddFileAssociation(".ass", "Napisy ASS", 0);
+		Registry::AddFileAssociation(".srt", "Napisy SRT", 1);
+		Registry::AddFileAssociation(".mkv", "Wideo MKV", 3);
 	}, 9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
 		TabPanel *tab = GetTab();

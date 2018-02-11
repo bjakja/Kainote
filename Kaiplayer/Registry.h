@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+//  Copyright (c) 2012-2018, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -13,8 +13,18 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-//  This file is for automatic build change
-//  Autoversioning.exe change it after build using commandline
+#include <wx/wx.h>
 
-#define VersionKainote "0.9.2.886"
-#define NumVersionKainote 0,9,2,886
+class Registry{
+public:
+	Registry(HKEY hKey, const wxString &strKey, bool &success, bool canWrite = false);
+	bool OpenNewRegistry(HKEY hKey, const wxString &strKey, bool canWrite = false);
+	void CloseRegistry();
+	~Registry();
+	void SetStringValue(const wxString &strKey, const wxString &value);
+	bool GetStringValue(const wxString &strKey, wxString &outValue);
+	static bool AddFileAssociation(const wxString &extension, const wxString &extName, int icon);
+	static bool RemoveFileAssociation(const wxString &extension);
+private:
+	HKEY regHKey = NULL;
+};

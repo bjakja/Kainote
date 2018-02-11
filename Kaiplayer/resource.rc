@@ -15,7 +15,8 @@ LANGUAGE LANG_POLISH, SUBLANG_DEFAULT
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-AAAA                    ICON                    "kai.ico"
+KAI_SMALL_ICON          ICON                    "Bitmaps/KaiSmallIcon.ico"
+KAI_TLARGE_ICON          ICON                    "Bitmaps/KaiLargeIcon.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

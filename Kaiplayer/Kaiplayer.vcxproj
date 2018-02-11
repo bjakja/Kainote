@@ -416,6 +416,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MenuButton.cpp" />
     <ClCompile Include="OptionsPanels.cpp" />
+    <ClCompile Include="Registry.cpp" />
     <ClCompile Include="SelectLines.cpp" />
     <ClCompile Include="SpellCheckerDialog.cpp" />
     <ClCompile Include="Styles.cpp" />
@@ -517,6 +518,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuButton.h" />
     <ClInclude Include="OptionsPanels.h" />
+    <ClInclude Include="Registry.h" />
     <ClInclude Include="SelectLines.h" />
     <ClInclude Include="SpellCheckerDialog.h" />
     <ClInclude Include="StyleChange.h" />
