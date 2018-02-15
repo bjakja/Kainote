@@ -98,13 +98,28 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\Kaiplayer\Bitmaps\KaiASS.ico" />
-    <Image Include="..\..\Kaiplayer\Bitmaps\KaiSRT.ico" />
-    <Image Include="..\..\Kaiplayer\Bitmaps\KaiSUB.ico" />
-    <Image Include="..\..\Kaiplayer\Bitmaps\KaiTXT.ico" />
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource.rc" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Kainote_ass.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Kainote_srt.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Kainote_ssa.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Kainote_sub.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Kainote_txt.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_3gp.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_asf.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_avi.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_m2ts.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_mkv.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_mp4.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_mpeg.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_mpg.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_ogm.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_rm.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_rmvb.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_ts.ico" />
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_wmv.ico" />
+    <Image Include="icon1.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

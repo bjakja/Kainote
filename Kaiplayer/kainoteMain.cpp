@@ -660,12 +660,12 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 				//L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.\n"
 	}
 	else if (id == Helpers){
-		wxString Testers = L"Zły los, Nyah2211, Wincenty271, Ksenoform, Deadsoul,\nVessin, Xandros, Areki, Waski_jestem.";
+		wxString Testers = L"Nyah2211, Wincenty271, Ksenoform,\nVessin, Xandros.";
 		wxString Credits = _("Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n") +
-			_("- Archer (pierwsze przyciski do wideo).\n") +
 			_("- Kostek00 (przyciski do audio i narzędzi wizualnych).\n") +
 			_("- Xandros (nowe przyciski do wideo).\n") +
 			_("- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\n") +
+			_("- Zły Los (ikony do skojarzonych plików i do menu).\n") +
 			_("- Areki, duplex (tłumaczenie anglojęzyczne).\n \n") +
 			_("Testerzy: (mniej i bardziej wprawieni użytkownicy programu)\n") +
 			_("- Funki27 (pierwszy tester mający spory wpływ na obecne działanie programu\n") +
@@ -676,7 +676,8 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy,\n") +
 			_("pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych usprawnień).\n") +
 			_("- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w debugowaniu crashy).\n") +
-			_("- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n \n") +
+			_("- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy, zrobił drzewko AVL).\n \n") +/* i jar do Language Tool*/
+			_("- bigdo (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n \n") +
 			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n");
 		KaiMessageBox(Credits + Testers, _("Lista osób pomocnych przy tworzeniu programu"));
 

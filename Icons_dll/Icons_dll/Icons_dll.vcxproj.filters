@@ -40,22 +40,67 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\Kaiplayer\Bitmaps\KaiASS.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\Kaiplayer\Bitmaps\KaiSRT.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\Kaiplayer\Bitmaps\KaiSUB.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\Kaiplayer\Bitmaps\KaiTXT.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="Resource.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Kainote_ass.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Kainote_srt.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Kainote_ssa.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Kainote_sub.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Kainote_txt.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_3gp.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_asf.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_avi.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_m2ts.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_mkv.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_mp4.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_mpeg.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_mpg.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_ogm.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_rm.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_rmvb.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_ts.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Kaiplayer\Bitmaps\Video_wmv.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -14,6 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <wx/wx.h>
+#include <vector>
 
 class Registry{
 public:
@@ -25,6 +26,8 @@ public:
 	bool GetStringValue(const wxString &strKey, wxString &outValue);
 	static bool AddFileAssociation(const wxString &extension, const wxString &extName, int icon);
 	static bool RemoveFileAssociation(const wxString &extension);
+	static void CheckFileAssociation(const wxString *extensions, int numExt, std::vector<bool> &output);
+	static void RefreshRegistry();
 private:
 	HKEY regHKey = NULL;
 };

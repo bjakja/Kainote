@@ -54,7 +54,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	char * path = argv[1];//"H:\\Kainote\\x64\\Release\\Kainote x64.zip\0";
 	if (!check_exist_file(path)){ std::cerr << "Kainote path don't exist " << path; return 1; }
 
-	int filenamessize = 140;//tyle policzy³ visual studio
+	int filenamessize = 141;//tyle policzy³ visual studio
 	char * filenames[] = { 
 		"Kainote_x64\\Automation\\automation\\Autoload\\Aegisub-Motion.moon\0",
 		"Kainote_x64\\Automation\\automation\\Autoload\\cleantags-autoload.lua\0",
@@ -191,6 +191,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		"Kainote_x64\\Dictionary\\pl.dic\0",
 		"Kainote_x64\\D3DX9_43.dll\0",
 		"Kainote_x64\\ffms2.dll\0",
+		"Kainote_x64\\Icons.dll\0",
 		"Kainote_x64\\KaiNote.exe\0",
 		"Kainote_x64\\KaiNote.pdb\0",
 		"Kainote_x64\\KaiNote_AVX.exe\0",

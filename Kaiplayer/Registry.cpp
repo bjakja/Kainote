@@ -30,12 +30,12 @@ bool Registry::OpenNewRegistry(HKEY hKey, const wxString &strKey, bool canWrite 
 	{
 		nError = RegCreateKeyEx(hKey, strKey.wc_str(), NULL, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &regHKey, NULL);
 		if (nError){
-			wxLogStatus("cannot create key %s", strKey);
+			//wxLogStatus("cannot create key %s", strKey);
 			return false;
 		}
 	}
 	else if (nError){
-		wxLogStatus("cannot open key %s", strKey);
+		//wxLogStatus("cannot open key %s", strKey);
 		return false;
 	}
 	//else success!!!
@@ -74,7 +74,7 @@ bool Registry::GetStringValue(const wxString &strKey, wxString &outValue)
 	DWORD size = 20048;
 	LONG nError = RegQueryValueExW(regHKey, (strKey!="") ? strKey.wc_str() : NULL, NULL, &type, (LPBYTE)&data, &size);
 	if (nError){
-		wxLogStatus("cannot create key %s", strKey);
+		//wxLogStatus("cannot create key %s", strKey);
 		return false;
 	}
 	outValue = wxString(data);
@@ -109,7 +109,7 @@ bool Registry::AddFileAssociation(const wxString &extension, const wxString &ext
 		wxLogStatus("Nie mo¿na dodaæ ikony"); return false;
 	}
 	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension + "\\Shell\\Open\\Command", true)){
-		reg.SetStringValue("", pathfull + " %1");
+		reg.SetStringValue("", "\""+pathfull + "\" \"%1\"");
 		reg.CloseRegistry();
 	}
 	else{
@@ -121,9 +121,6 @@ bool Registry::AddFileAssociation(const wxString &extension, const wxString &ext
 
 bool Registry::RemoveFileAssociation(const wxString &extension)
 {
-	wxStandardPathsBase &paths = wxStandardPaths::Get();
-	wxString pathfull = paths.GetExecutablePath();
-	wxString progName = pathfull.AfterLast('\\').BeforeFirst('.');
 	wxString mainPath = "Software\\Classes\\";
 	bool success = false;
 	Registry reg(HKEY_CURRENT_USER, mainPath + extension, success, true);
@@ -134,4 +131,34 @@ bool Registry::RemoveFileAssociation(const wxString &extension)
 	else{ wxLogStatus("Nie mo¿na usun¹æ rozszerzenia %s", extension); return false; }
 	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, NULL, NULL);
 	return true;
+}
+
+void Registry::CheckFileAssociation(const wxString *extensions, int numExt, std::vector<bool> &output)
+{
+	wxStandardPathsBase &paths = wxStandardPaths::Get();
+	wxString pathfull = paths.GetExecutablePath();
+	wxString progName = pathfull.AfterLast('\\').BeforeFirst('.');
+	wxString mainPath = "Software\\Classes\\";
+	for (int i = 0; i < numExt; i++){
+		bool success = false;
+		Registry reg(HKEY_CURRENT_USER, mainPath + extensions[i], success, false);
+		if (success){
+			wxString out;
+			reg.GetStringValue("", out);
+			if (out == progName + extensions[i]){
+				output.push_back(true);
+			}
+			else{
+				output.push_back(false);
+			}
+			reg.CloseRegistry();
+			
+		}
+		else{ output.push_back(false); }
+	}
+}
+
+void Registry::RefreshRegistry()
+{
+	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, NULL, NULL);
 }

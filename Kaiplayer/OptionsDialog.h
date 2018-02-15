@@ -76,6 +76,7 @@ private:
 	kainoteFrame *Kai;
 
 	unsigned char hkeymodif;
+	std::vector<bool> registeredExts;
 };
 
 enum{

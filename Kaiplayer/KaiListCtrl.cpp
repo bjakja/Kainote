@@ -160,6 +160,7 @@ void ItemCheckBox::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, Ka
 	if(event.LeftDown()){
 		modified = !modified;
 		theList->Refresh(false);
+		theList->SetModified(true);
 	}
 	if(!enter && _enter){
 		enter = _enter; theList->Refresh(false);

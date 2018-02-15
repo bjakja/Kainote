@@ -29,6 +29,7 @@
 #include "KaiStaticText.h"
 #include "OptionsPanels.h"
 #include "StyleChange.h"
+#include "Registry.h"
 
 
 void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
@@ -169,6 +170,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	wxWindow *AudioMain= new wxWindow(OptionsTree,-1);
 	wxWindow *Video= new wxWindow(OptionsTree,-1);
 	wxWindow *Themes= new wxWindow(OptionsTree,-1);
+	wxWindow *Assocs = new wxWindow(OptionsTree, -1);
 	wxWindow *SubsProps = new SubtitlesProperties(OptionsTree, this);
 
 	hkeymodif=0;
@@ -565,20 +567,20 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Pasek menu tło zaznaczenia"),_("Menu tło"),_("Menu obramowanie zaznaczenia"),
 			_("Menu tło zaznaczenia"),
 			//zakładki
-			_("Pasek zakładek tło 1"), _("Pasek zakładek tło 2"), _("Zakładki obramowanie aktywnej"), 
-			_("Zakładki obramowanie nieaktywnej"),_("Zakładki tło aktywnej"), _("Zakładki tło nieaktywnej"), 
+			_("Pasek zakładek tło 1"), _("Pasek zakładek tło 2"), _("Zakładki obramowanie aktywnej"),
+			_("Zakładki obramowanie nieaktywnej"), _("Zakładki tło aktywnej"), _("Zakładki tło nieaktywnej"),
 			_("Zakładki tło nieaktywnej po najechaniu"), _("Zakładki tło drugiej widocznej zakładki"),
-			_("Zakładki tekst aktywnej"), _("Zakładki tekst nieaktywnej"), _("Zakładki zamknięcie po najechaniu"), 
-			_("Pasek zakładek strzałka"), _("Pasek zakładek strzałka tło"), 
+			_("Zakładki tekst aktywnej"), _("Zakładki tekst nieaktywnej"), _("Zakładki zamknięcie po najechaniu"),
+			_("Pasek zakładek strzałka"), _("Pasek zakładek strzałka tło"),
 			_("Pasek zakładek strzałka tło po najechaniu"),
 			//suwak
-			_("Suwak ścieżka tło"), _("Suwak ścieżka obramowanie"), _("Suwak obramowanie"), 
-			_("Suwak obramowanie po najechaniu"), _("Suwak obramowanie po wciśnięciu"), _("Suwak tło"), 
+			_("Suwak ścieżka tło"), _("Suwak ścieżka obramowanie"), _("Suwak obramowanie"),
+			_("Suwak obramowanie po najechaniu"), _("Suwak obramowanie po wciśnięciu"), _("Suwak tło"),
 			_("Suwak tło po najechaniu"), _("Suwak tło po wciśnięciu"),
 			//podgląd styli
 			_("Pierwszy kolor podglądu styli"), _("Drugi kolor podglądu styli")
 		};
-		
+
 
 		wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 		wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
@@ -587,82 +589,101 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		wxString pathwn = Options.pathfull + "\\Themes\\";
 		const wxString & programTheme = Options.GetString(ProgramTheme);
 		wxDir kat(pathwn);
-		if(kat.IsOpened()){
-			kat.GetAllFiles(pathwn,&files,"*.txt", wxDIR_FILES);
+		if (kat.IsOpened()){
+			kat.GetAllFiles(pathwn, &files, "*.txt", wxDIR_FILES);
 		}
 		for (size_t i = 0; i < files.size(); i++){
 			choices.Add(files[i].AfterLast('\\').BeforeLast('.'));
 		}
-		if(choices.Index("DeepDark",false) == -1){
-			choices.Insert("DeepDark",0);
+		if (choices.Index("DeepDark", false) == -1){
+			choices.Insert("DeepDark", 0);
 		}
-		if(choices.Index("DeepLight",false) == -1){
-			choices.Insert("DeepLight",1);
+		if (choices.Index("DeepLight", false) == -1){
+			choices.Insert("DeepLight", 1);
 		}
-		KaiChoice *themeList = new KaiChoice(Themes,14567,wxDefaultPosition, wxDefaultSize, choices);
+		KaiChoice *themeList = new KaiChoice(Themes, 14567, wxDefaultPosition, wxDefaultSize, choices);
 		themeList->SetSelection(themeList->FindString(programTheme));
 
-		KaiTextCtrl *newTheme = new KaiTextCtrl(Themes,-1,"");
-		MappedButton *copyTheme = new MappedButton(Themes,14566,_("Kopiuj"));
+		KaiTextCtrl *newTheme = new KaiTextCtrl(Themes, -1, "");
+		MappedButton *copyTheme = new MappedButton(Themes, 14566, _("Kopiuj"));
 
 
 
-		sizer->Add(themeList, 0, wxALL|wxEXPAND, 2);
-		sizer1->Add(newTheme, 1, wxRIGHT|wxTOP|wxBOTTOM|wxEXPAND, 2);
-		sizer1->Add(copyTheme, 0, wxLEFT|wxTOP|wxBOTTOM, 2);
-		sizer->Add(sizer1, 0, wxALL|wxEXPAND, 2);
+		sizer->Add(themeList, 0, wxALL | wxEXPAND, 2);
+		sizer1->Add(newTheme, 1, wxRIGHT | wxTOP | wxBOTTOM | wxEXPAND, 2);
+		sizer1->Add(copyTheme, 0, wxLEFT | wxTOP | wxBOTTOM, 2);
+		sizer->Add(sizer1, 0, wxALL | wxEXPAND, 2);
 
 		KaiListCtrl *List = new KaiListCtrl(Themes, -1, wxDefaultPosition, wxSize(300, -1));
 		List->InsertColumn(0, _("Nazwa"), TYPE_TEXT, 240);
 		List->InsertColumn(1, _("Kolor"), TYPE_COLOR, 150);
-		for(int i=0;i<numColors;i++)
+		for (int i = 0; i < numColors; i++)
 		{
 			int row = List->AppendItem(new ItemText(labels[i]));
-			AssColor col = Options.GetColor((COLOR)(i+1));
-			List->SetItem(row, 1, new ItemColor(col, i+1));
+			AssColor col = Options.GetColor((COLOR)(i + 1));
+			List->SetItem(row, 1, new ItemColor(col, i + 1));
 		}
-		sizer->Add(List, 1, wxALL|wxEXPAND, 2);
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED,[=](wxCommandEvent &evt){
+		sizer->Add(List, 1, wxALL | wxEXPAND, 2);
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 			wxString themeName = newTheme->GetValue();
-			if(themeName.IsEmpty() || choices.Index(themeName, false) != -1){wxBell(); return;}
+			if (themeName.IsEmpty() || choices.Index(themeName, false) != -1){ wxBell(); return; }
 			wxString originalName = themeList->GetString(themeList->GetSelection());
 			wxString dir = Options.pathfull + "\\Themes\\";
 			wxString copyPath = dir + themeName + ".txt";
-			if(originalName == "DeepDark" || originalName == "DeepLight"){
+			if (originalName == "DeepDark" || originalName == "DeepLight"){
 				Options.SaveColors(copyPath);
 				List->Enable(true);
 				List->Refresh(false);
-			}else{
+			}
+			else{
 
-				if(!wxDirExists(dir)){
+				if (!wxDirExists(dir)){
 					wxBell(); return;
 				}
 				wxString originalPath = dir + originalName + ".txt";
 				wxCopyFile(originalPath, copyPath, false);
 			}
 			Options.SetString(ProgramTheme, themeName);
-			if(!List->IsEnabled()){List->Enable(false);}
+			if (!List->IsEnabled()){ List->Enable(false); }
 			newTheme->SetValue("");
 			int size = themeList->Append(themeName);
 			themeList->SetSelection(size);
-		},14566);
-		Bind(wxEVT_COMMAND_CHOICE_SELECTED,[=](wxCommandEvent &evt){
+		}, 14566);
+		Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
 			wxString themeName = themeList->GetString(themeList->GetSelection());
-			if(themeName.IsEmpty()){return;}
+			if (themeName.IsEmpty()){ return; }
 			Options.LoadColors(themeName);
-			for(int i=0;i<numColors;i++)
+			for (int i = 0; i < numColors; i++)
 			{
 				ItemColor *item = (ItemColor*)List->GetItem(i, 1);
 				item->col = Options.GetColor((COLOR)item->colOptNum);
 			}
 			ChangeColors();
 			List->Enable(themeName != "DeepDark" && themeName != "DeepLight");
-		},14567);
-		if(programTheme == "DeepDark" || programTheme == "DeepLight"){List->Enable(false);}
+		}, 14567);
+		if (programTheme == "DeepDark" || programTheme == "DeepLight"){ List->Enable(false); }
 		Themes->SetSizerAndFit(sizer);
 		List->StartEdition();
 		List->SetSelection(0);
-		ConOpt(List,(CONFIG)1000);
+		ConOpt(List, (CONFIG)1000);
+	}
+	//associations
+	{
+		wxString extensions[] = { ".ass", ".ssa", ".srt", ".sub", ".txt", ".mkv", ".mp4", ".avi", ".ogm", ".wmv", ".asf", ".rmvb", ".rm", ".3gp", ".mpg", ".mpeg", ".ts", ".m2ts" };
+		wxString extensionsDesc[] = { "Napisy ASS", "Napisy SSA", "Napisy SRT", "Napisy SUB", "Napisy TXT", "Wideo MKV", "Wideo MP4", "Wideo AVI", "Wideo OGM", 
+			"Wideo WMV", "Wideo ASF", "Wideo RMVB", "Wideo RM", "Wideo 3GP", "Wideo MPG", "Wideo MPEG", "Wideo TS", "Wideo M2TS" };
+		int numExtensions = 18;
+		
+		Registry::CheckFileAssociation(extensions, numExtensions, registeredExts);
+
+		wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
+		KaiListCtrl *CheckListBox = new KaiListCtrl(Assocs, -1, numExtensions, extensionsDesc);
+		for (int i = 0; i < numExtensions; i++){
+			CheckListBox->GetItem(i, 0)->modified = registeredExts[i];
+		}
+		sizer->Add(CheckListBox, 1, wxEXPAND | wxALL, 4);
+		ConOpt(CheckListBox, (CONFIG)3000);
+		Assocs->SetSizerAndFit(sizer);
 	}
 
 	//Adding pages
@@ -673,6 +694,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	OptionsTree->AddPage(AudioMain,_("Audio"));
 	OptionsTree->AddPage(Themes,_("Motywy"));
 	OptionsTree->AddPage(Hotkeyss,_("Skróty klawiszowe"));
+	OptionsTree->AddPage(Assocs, _("Skojarzenia"));
 	OptionsTree->AddPage(SubsProps,_("Właściwości Napisów"));
 	OptionsTree->Fit();
 
@@ -815,11 +837,14 @@ void OptionsDialog::SetOptions(bool saveall)
 		}else if(OB.ctrl->IsKindOf(CLASSINFO(KaiListCtrl))){
 			KaiListCtrl *list = (KaiListCtrl*)OB.ctrl;
 			if(list->GetModified()){
-				list->SaveAll(1);
-				Options.SaveColors();
+				
 				if(OB.option == 1000){
+					list->SaveAll(1);
+					Options.SaveColors();
 					ChangeColors();
-				}else{
+				}
+				else if (OB.option == 2000){
+					list->SaveAll(1);
 					Hkeys.SaveHkeys();Kai->SetAccels();
 					Hkeys.SaveHkeys(true);
 					Notebook *tabs = Kai->Tabs; 
@@ -827,6 +852,21 @@ void OptionsDialog::SetOptions(bool saveall)
 						TabPanel *tab = tabs->Page(j);
 						if(tab->Edit->ABox){tab->Edit->ABox->SetAccels();}
 					}
+				}
+				else{
+					wxString extensions[] = { ".ass", ".ssa", ".srt", ".sub", ".txt", ".mkv", ".mp4", ".avi", ".ogm", ".wmv", ".asf", ".rmvb", ".rm", ".3gp", ".mpg", ".mpeg", ".ts", ".m2ts" };
+					wxString extensionsDesc[] = { "Napisy ASS", "Napisy SSA", "Napisy SRT", "Napisy SUB", "Napisy TXT", "Wideo MKV", "Wideo MP4", "Wideo AVI", "Wideo OGM",
+						"Wideo WMV", "Wideo ASF", "Wideo RMVB", "Wideo RM", "Wideo 3GP", "Wideo MPG", "Wideo MPEG", "Wideo TS", "Wideo M2TS" };
+
+					for (size_t i = 0; i < registeredExts.size(); i++){
+						if (list->GetItem(i, 0)->modified != registeredExts[i]){
+							if (registeredExts[i])
+								Registry::RemoveFileAssociation(extensions[i]);
+							else
+								Registry::AddFileAssociation(extensions[i], extensionsDesc[i], i);
+						}
+					}
+					//Registry::RefreshRegistry();
 				}
 			}
 		}
