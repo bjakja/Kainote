@@ -117,7 +117,7 @@ public:
 	void DummyUndo(int newIter);
 	void ReloadVisibleDialogues(int keyFrom, int keyTo);
 	void ReloadVisibleDialogues();
-	void EndLoad(unsigned char editionType, int activeLine);
+	void EndLoad(unsigned char editionType, int activeLine, bool initialSave = false);
 	int GetAllCount();
 	Dialogue *CopyDialogue(int i, bool push=true, bool keepstate=false);
 	Dialogue *CopyDialogueByKey(int i, bool push = true, bool keepstate = false);

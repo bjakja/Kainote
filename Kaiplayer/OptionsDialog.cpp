@@ -676,12 +676,34 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		
 		Registry::CheckFileAssociation(extensions, numExtensions, registeredExts);
 
-		wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
+		wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 		KaiListCtrl *CheckListBox = new KaiListCtrl(Assocs, -1, numExtensions, extensionsDesc);
 		for (int i = 0; i < numExtensions; i++){
 			CheckListBox->GetItem(i, 0)->modified = registeredExts[i];
 		}
+		//type 1 = select all, 2 = select subs, 3 = select video, 4 = deselect all, 
+		auto changeSelections = [=](wxCommandEvent &evt){
+			int type = evt.GetId() - 17776;
+			for (int i = 0; i < numExtensions; i++){
+				CheckListBox->GetItem(i, 0)->modified = (type == 1 || (type == 2 && i<4) || (type == 3 && i>4)) ? true : false;
+			}
+			CheckListBox->SetModified(true);
+			CheckListBox->Refresh(false);
+		};
+		wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+		wxBoxSizer *buttonSizer1 = new wxBoxSizer(wxHORIZONTAL);
+		wxString buttonTexts[] = { _("Zaznacz wszystko"),_("Zaznacz napisy"),_("Zaznacz wideo"),_("Odznacz wszystko") };
+		for (int i = 0; i < 4; i++){
+			MappedButton *btn = new MappedButton(Assocs, 17777 + i, buttonTexts[i]);
+			if (i<2)
+				buttonSizer->Add(btn, 1, wxALL, 2);
+			else
+				buttonSizer1->Add(btn, 1, wxALL, 2);
+		}
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, changeSelections, 17777, 17780);
 		sizer->Add(CheckListBox, 1, wxEXPAND | wxALL, 4);
+		sizer->Add(buttonSizer, 0, wxEXPAND | wxALIGN_CENTER);
+		sizer->Add(buttonSizer1, 0, wxEXPAND | wxALIGN_CENTER);
 		ConOpt(CheckListBox, (CONFIG)3000);
 		Assocs->SetSizerAndFit(sizer);
 	}

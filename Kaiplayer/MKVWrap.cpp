@@ -350,8 +350,8 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 				target->AddLine(new Dialogue(subList[i]));
 			}
 			const wxString &matrix = target->GetSInfo("YCbCr Matrix");
-			if(matrix == "" || matrix == "None" ){target->AddSInfo("YCbCr Matrix","TV.601");}
-			target->file->EndLoad(OPEN_SUBTITLES, 0);
+			if ((matrix == "" || matrix == "None") && codecType < 1){ target->AddSInfo("YCbCr Matrix", "TV.601"); }
+			target->file->EndLoad(OPEN_SUBTITLES, 0, true);
 			subList.clear();
 			return 1;
 		});

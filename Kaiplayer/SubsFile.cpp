@@ -505,10 +505,13 @@ SInfo *SubsFile::CopySinfo(int i, bool push)
 	return sinf;
 }
 
-void SubsFile::EndLoad(unsigned char editionType, int activeLine)
+void SubsFile::EndLoad(unsigned char editionType, int activeLine, bool initialSave)
 {
 	//subs->activeLine = activeLine;
 	//subs->markerLine = activeLine;
+	if (initialSave)
+		lastSave = -1;
+
 	subs->editionType = editionType;
 	undo.push_back(subs);
 	subs=subs->Copy();

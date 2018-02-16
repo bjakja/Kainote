@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 			while (result){
 				unzGetCurrentFileInfo64(ufile, &pfile_info, szFileName, 10000, extraField, 10000, szComment, 10000);
 				if (!convert(szFileName, &targetfilename[3])){ 
-					cout << "nie mo¿na przekonwertowaæ œcie¿ki " << szFileName << ", wtf ?\n";
+					cout << "nie mo¿na przekonwertowaæ œcie¿ki " << szFileName << ", wtf?\n";
 					continue; 
 				}
 				hFile = CreateFileW(targetfilename, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 						unzCloseCurrentFile(ufile);
 						unzClose(ufile);
 						CloseHandle(hFile);
-						cout << "zabrak³o miejsca na dysku albo odwali³ numer?\n";
+						cout << "zabrak³o miejsca na dysku albo odwali³ numer\n";
 						return 1;
 					}
 					readresult = unzReadCurrentFile(ufile, &chunk, chunksize);

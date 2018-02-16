@@ -795,7 +795,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 		if (subsFormat < SRT){ Edit->TlMode->Enable(); }
 		else{ Edit->TlMode->Enable(false); }
 
-		tab->SubsPath = mkvpath.BeforeLast('.') + _(" napisy.") + ext;
+		tab->SubsPath = mkvpath.BeforeLast('.') + "." + ext;
 		tab->SubsName = tab->SubsPath.AfterLast('\\');
 		//Kai->SetRecent();
 		Kai->UpdateToolbar();
