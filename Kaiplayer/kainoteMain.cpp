@@ -239,17 +239,13 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(30000, 30059, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnRecent);
 	Connect(PlayActualLine, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
-		/*if (!mylog){
+		if (!mylog){
 			mylog = new wxLogWindow(this, "Logi", true, false);
 			mylog->PassMessages(true);
 		}
 		else{
 			delete mylog; mylog = NULL;
-		}*/
-		
-		Registry::AddFileAssociation(".ass", "Napisy ASS", 0);
-		Registry::AddFileAssociation(".srt", "Napisy SRT", 1);
-		Registry::AddFileAssociation(".mkv", "Wideo MKV", 3);
+		}
 	}, 9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
 		TabPanel *tab = GetTab();

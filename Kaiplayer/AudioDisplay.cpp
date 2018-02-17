@@ -974,7 +974,7 @@ void AudioDisplay::DrawProgress()
 	int rw = 22;
 	vectors[14].x = rw;
 	vectors[14].y = halfY;
-	vectors[15].x = ((provider->audioProgress / 1.f) * w-44) + rw;
+	vectors[15].x = ((provider->audioProgress / 1.f) * (w - 44)) + rw;
 	vectors[15].y = halfY;
 
 	d3dLine->SetWidth(1);

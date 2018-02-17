@@ -87,7 +87,7 @@ bool Registry::AddFileAssociation(const wxString &extension, const wxString &ext
 	wxString pathfull = paths.GetExecutablePath();
 	wxString progName = pathfull.AfterLast('\\').BeforeFirst('.');
 	wxString mainPath = "Software\\Classes\\";
-	bool success = false;
+	bool success = false;//HKEY_CURRENT_USER//HKEY_LOCAL_MACHINE
 	Registry reg(HKEY_CURRENT_USER, mainPath + extension, success, true);
 	if (success){
 		reg.SetStringValue("", progName + extension);

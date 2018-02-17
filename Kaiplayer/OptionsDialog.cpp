@@ -614,6 +614,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		sizer1->Add(copyTheme, 0, wxLEFT | wxTOP | wxBOTTOM, 2);
 		sizer->Add(sizer1, 0, wxALL | wxEXPAND, 2);
 
+		KaiStaticText *warning = new KaiStaticText(Themes, -1, _("UWAGA! Przezroczystość działa tylko na wykresie audio\ni zaznaczeniach w napisach."));
+		sizer->Add(warning, 0, wxALL | wxEXPAND, 2);
 		KaiListCtrl *List = new KaiListCtrl(Themes, -1, wxDefaultPosition, wxSize(300, -1));
 		List->InsertColumn(0, _("Nazwa"), TYPE_TEXT, 240);
 		List->InsertColumn(1, _("Kolor"), TYPE_COLOR, 150);
@@ -670,13 +672,15 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	//associations
 	{
 		wxString extensions[] = { ".ass", ".ssa", ".srt", ".sub", ".txt", ".mkv", ".mp4", ".avi", ".ogm", ".wmv", ".asf", ".rmvb", ".rm", ".3gp", ".mpg", ".mpeg", ".ts", ".m2ts" };
-		wxString extensionsDesc[] = { "Napisy ASS", "Napisy SSA", "Napisy SRT", "Napisy SUB", "Napisy TXT", "Wideo MKV", "Wideo MP4", "Wideo AVI", "Wideo OGM", 
-			"Wideo WMV", "Wideo ASF", "Wideo RMVB", "Wideo RM", "Wideo 3GP", "Wideo MPG", "Wideo MPEG", "Wideo TS", "Wideo M2TS" };
+		wxString extensionsDesc[] = { _("Napisy ASS"), _("Napisy SSA"), _("Napisy SRT"), _("Napisy SUB"), _("Napisy TXT"), _("Wideo MKV"), _("Wideo MP4"), _("Wideo AVI"), _("Wideo OGM"), 
+			_("Wideo WMV"), _("Wideo ASF"), _("Wideo RMVB"), _("Wideo RM"), _("Wideo 3GP"), _("Wideo MPG"), _("Wideo MPEG"), _("Wideo TS"), _("Wideo M2TS") };
 		int numExtensions = 18;
 		
 		Registry::CheckFileAssociation(extensions, numExtensions, registeredExts);
 
 		wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+		KaiStaticText *warning = new KaiStaticText(Assocs, -1, _("UWAGA! Działanie na każdym Windowsie jest inne.\nPrzykładowo na Windows7 WMP zablokował\nmożliwość zmiany skojarzeń wideo."));
+		sizer->Add(warning, 0, wxEXPAND | wxALL, 4);
 		KaiListCtrl *CheckListBox = new KaiListCtrl(Assocs, -1, numExtensions, extensionsDesc);
 		for (int i = 0; i < numExtensions; i++){
 			CheckListBox->GetItem(i, 0)->modified = registeredExts[i];

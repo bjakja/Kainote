@@ -317,7 +317,7 @@ void VideoRend::Render(bool Frame, bool wait)
 		{
 			if (D3DERR_DEVICELOST == hr ||
 				D3DERR_DRIVERINTERNALERROR == hr){
-				//wxLogStatus("cooperative level device lost");
+				//wxLogMessage("cooperative level device lost");
 				return;
 			}
 
@@ -329,11 +329,11 @@ void VideoRend::Render(bool Frame, bool wait)
 				//else{}
 				devicelost = false;
 				Render(true, false);
-				//wxLogStatus("cooperative not reset");
+				//wxLogMessage("cooperative not reset");
 			}
 			return;
 		}
-		//wxLogStatus("device was lost but is ok now");
+		//wxLogMessage("device was lost but is ok now");
 		devicelost = false;
 	}
 
@@ -458,8 +458,8 @@ void VideoRend::Render(bool Frame, bool wait)
 		D3DERR_DRIVERINTERNALERROR == hr){
 		if (!devicelost){
 			devicelost = true;
-			//wxLogStatus("device lost when rendering");
 		}
+		//wxLogMessage("device lost when rendering");
 		Render(true, false);
 	}
 }
@@ -500,7 +500,7 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 #endif
 	texbuf = static_cast<byte *>(d3dlr.pBits);
 
-	diff=d3dlr.Pitch- (vwidth*bytes);
+	diff=d3dlr.Pitch - (vwidth*bytes);
 	//int check=0;	
 	if (!diff){memcpy(texbuf,fdata,(vheight*pitch));}
 	else{

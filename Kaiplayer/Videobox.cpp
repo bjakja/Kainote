@@ -720,7 +720,7 @@ bool VideoCtrl::CalcSize(int *width, int *height,int wwidth,int wheight,bool set
 void VideoCtrl::OnPrew()
 {
 	MenuItem *index=Kai->Menubar->FindItem(VideoIndexing);
-	if(index->IsChecked()&&index->IsEnabled()){
+	if (index->IsChecked() && index->IsEnabled() && !isFullscreen){
 		if(KaiMessageBox(_("Czy na pewno chcesz zindeksować poprzednie wideo?"),_("Potwierdzenie"),wxYES_NO)==wxNO)return;}
 	NextFile(false);
 }
@@ -729,7 +729,7 @@ void VideoCtrl::OnPrew()
 void VideoCtrl::OnNext()
 {
 	MenuItem *index=Kai->Menubar->FindItem(VideoIndexing);
-	if(index->IsChecked()&&index->IsEnabled()){
+	if(index->IsChecked() && index->IsEnabled() && !isFullscreen){
 		if(KaiMessageBox(_("Czy na pewno chcesz zindeksować następne wideo?"),_("Potwierdzenie"),wxYES_NO)==wxNO)return;}
 	NextFile();
 }
