@@ -267,11 +267,10 @@ int VideoFfmpeg::Init()
 	}
 done:
 
-	wxString path=Options.pathfull + "\\Indices\\" + fname.AfterLast('\\').BeforeLast('.') + wxString::Format("_%i.ffindex",audiotrack);
+	indexPath=Options.pathfull + "\\Indices\\" + fname.AfterLast('\\').BeforeLast('.') + wxString::Format("_%i.ffindex",audiotrack);
 
-
-	if(wxFileExists(path)){
-		index = FFMS_ReadIndex(path.utf8_str(), &errinfo);
+	if (wxFileExists(indexPath)){
+		index = FFMS_ReadIndex(indexPath.utf8_str(), &errinfo);
 
 		if(FFMS_IndexBelongsToFile(index, fname.utf8_str(), &errinfo))
 		{
@@ -298,11 +297,11 @@ done:
 			//FFMS_CancelIndexing(Indexer);
 			return 0;
 		}
-		if(!wxDir::Exists(path.BeforeLast('\\')))
+		if (!wxDir::Exists(indexPath.BeforeLast('\\')))
 		{
-			wxDir::Make(path.BeforeLast('\\'));
+			wxDir::Make(indexPath.BeforeLast('\\'));
 		}
-		if(FFMS_WriteIndex(path.utf8_str(), index, &errinfo))
+		if (FFMS_WriteIndex(indexPath.utf8_str(), index, &errinfo))
 		{
 			wxLogMessage(_("Nie można zapisać indeksu, wystąpił błąd %s"), errinfo.Buffer);
 			//FFMS_DestroyIndex(index);
@@ -310,6 +309,10 @@ done:
 			//return 0;
 		}
 		newIndex=true;
+	}
+	if (audiotrack != -1){
+		audioLoadThread = new std::thread(AudioLoad, this, newIndex, audiotrack);
+		audioLoadThread->detach();
 	}
 	
 	if(videotrack!=-1 && rend){	
@@ -410,39 +413,7 @@ done:
 		}
 
 	}
-	if(audiotrack==-1){ SampleRate=-1; return 1;}
-	
-	audiosource = FFMS_CreateAudioSource(fname.utf8_str(), audiotrack, index, FFMS_DELAY_FIRST_VIDEO_TRACK, &errinfo);
-	if (audiosource == NULL) {
-		wxLogMessage(_("Wystąpił błąd tworzenia źródła audio: %s"),errinfo.Buffer);
-		return 0;
-	}
-
-	FFMS_ResampleOptions *resopts=FFMS_CreateResampleOptions(audiosource);
-	resopts->ChannelLayout=FFMS_CH_FRONT_CENTER;
-	resopts->SampleFormat=FFMS_FMT_S16;
-
-	if (FFMS_SetOutputFormatA(audiosource, resopts, &errinfo)){
-		wxLogMessage(_("Wystąpił błąd konwertowania audio: %s"),errinfo.Buffer);
-	}
-	else{
-		BytesPerSample=2;
-		Channels=1;
-	}
-	FFMS_DestroyResampleOptions(resopts);
-	const FFMS_AudioProperties *audioprops = FFMS_GetAudioProperties(audiosource);
-
-	SampleRate=audioprops->SampleRate;
-	Delay=(Options.GetInt(AudioDelay)/1000);
-	NumSamples=audioprops->NumSamples;
-	
-	if(abs(Delay) >= (SampleRate*NumSamples*BytesPerSample)){
-		wxLogMessage(_("Nie można ustawić opóźnienia, przekracza czas trwania audio"));
-		Delay=0;
-	}
-
-	audioLoadThread = new std::thread(AudioLoad, this, newIndex, audiotrack);
-	audioLoadThread->detach();
+	//if(audiotrack==-1){ SampleRate=-1; return 1;}
 	return 1;
 }
 
@@ -482,26 +453,77 @@ int FFMS_CC VideoFfmpeg::UpdateProgress(int64_t Current, int64_t Total, void *IC
 	return progress->WasCancelled();
 }
 
+bool VideoFfmpeg::CreateAudioSource(int audioTrack)
+{
+	FFMS_Init(0, 1);
+
+	if (wxFileExists(indexPath)){
+		audioIndex = FFMS_ReadIndex(indexPath.utf8_str(), &errinfo);
+
+		if (FFMS_IndexBelongsToFile(audioIndex, fname.utf8_str(), &errinfo))
+		{
+			FFMS_DestroyIndex(audioIndex);
+			audioIndex = NULL;
+		}
+	}
+	//TODO: zrobić opcję ponownego zaczytania audio dla debili
+	if (!audioIndex)
+		return false;
+
+	audiosource = FFMS_CreateAudioSource(fname.utf8_str(), audioTrack, audioIndex, FFMS_DELAY_FIRST_VIDEO_TRACK, &errinfo);
+	if (audiosource == NULL) {
+		wxLogMessage(_("Wystąpił błąd tworzenia źródła audio: %s"), errinfo.Buffer);
+		return false;
+	}
+
+	FFMS_ResampleOptions *resopts = FFMS_CreateResampleOptions(audiosource);
+	resopts->ChannelLayout = FFMS_CH_FRONT_CENTER;
+	resopts->SampleFormat = FFMS_FMT_S16;
+
+	if (FFMS_SetOutputFormatA(audiosource, resopts, &errinfo)){
+		wxLogMessage(_("Wystąpił błąd konwertowania audio: %s"), errinfo.Buffer);
+	}
+	else{
+		BytesPerSample = 2;
+		Channels = 1;
+	}
+	FFMS_DestroyResampleOptions(resopts);
+	const FFMS_AudioProperties *audioprops = FFMS_GetAudioProperties(audiosource);
+
+	SampleRate = audioprops->SampleRate;
+	Delay = (Options.GetInt(AudioDelay) / 1000);
+	NumSamples = audioprops->NumSamples;
+
+	if (abs(Delay) >= (SampleRate * NumSamples * BytesPerSample)){
+		wxLogMessage(_("Nie można ustawić opóźnienia, przekracza czas trwania audio"));
+		Delay = 0;
+	}
+	return true;
+}
+
 void VideoFfmpeg::AudioLoad(VideoFfmpeg *vf, bool newIndex, int audiotrack)
 {
 	if (vf->disccache){
 		vf->diskCacheFilename = "";
 		vf->diskCacheFilename << Options.pathfull << "\\AudioCache\\" << vf->fname.AfterLast('\\').BeforeLast('.') << "_track" << audiotrack << ".w64";
-		if (newIndex && wxFileExists(vf->diskCacheFilename)){ wxRemoveFile(vf->diskCacheFilename); }
-		if (!vf->DiskCache()){ goto done; }
+		//if (newIndex || !wxFileExists(vf->diskCacheFilename)){ 
+		//	newIndex = true;
+		//}
+		if (!(vf->CreateAudioSource(audiotrack) && vf->DiskCache(!newIndex))){ goto done; }
 	}
 	else{
-		if (!vf->RAMCache()){ goto done; }
+		if (!(vf->CreateAudioSource(audiotrack) && vf->RAMCache())){ goto done; }
 	}
 	vf->audioNotInitialized = false;
 done:
-	if (vf->audiosource){ FFMS_DestroyAudioSource(vf->audiosource); vf->audiosource = 0; }
+	if (vf->audioIndex){
+		FFMS_DestroyIndex(vf->audioIndex);
+		vf->audioIndex = NULL;
+	}
+	if (vf->audiosource){ FFMS_DestroyAudioSource(vf->audiosource); vf->audiosource = NULL; }
 	SetEvent(vf->eventAudioComplete);
-	delete vf->audioLoadThread; vf->audioLoadThread = NULL;
-	/*kainoteApp *Kaia = (kainoteApp*)wxTheApp;
-	AudioBox *abox = Kaia->Frame->GetTab()->Edit->ABox;
-	if(abox)
-	abox->audioDisplay->UpdateImage();*/
+	if (vf->audioLoadThread){ delete vf->audioLoadThread; vf->audioLoadThread = NULL; }
+	
 }
 
 void VideoFfmpeg::GetFrame(int ttime, byte *buff)
@@ -750,37 +772,32 @@ int VideoFfmpeg::FramefromTime(int time)
 	return lastframe;
 }
 
-bool VideoFfmpeg::DiskCache()
+bool VideoFfmpeg::DiskCache(bool audioExist/*=false*/)
 {
-	//progress->Title(_("Zapisywanie na dysk twardy"));
-
-	//progress->Progress(0);
 	audioProgress = 0;
 
 	bool good=true;
-	wxFileName fname;
-	fname.Assign(diskCacheFilename);
-	if(!fname.DirExists()){wxMkdir(diskCacheFilename.BeforeLast('\\'));}
-	if(wxFileExists(diskCacheFilename)){
-		//file_cache.Open(diskCacheFilename,wxFile::read);
+	wxFileName discCacheFile;
+	discCacheFile.Assign(diskCacheFilename);
+	if(!discCacheFile.DirExists()){wxMkdir(diskCacheFilename.BeforeLast('\\'));}
+	if (audioExist){
 		fp = _wfopen(diskCacheFilename.wc_str(), L"rb");
-		if(fp)return true;
-		else return false;
+		if (fp)
+			return true;
+		else 
+			return false;
 	}else{
-		//file_cache.Create(diskCacheFilename,true,wxS_DEFAULT);
-		//file_cache.Open(diskCacheFilename,wxFile::read_write);
 		fp = _wfopen(diskCacheFilename.wc_str(), L"w+b");
-		if(!fp)return false;
+		if(!fp || !audiosource)
+			return false;
 	}
 	int block = 332768;
-	//int block2=block*2
 	if(Delay>0){
 
 		int size=(SampleRate*Delay*BytesPerSample);
 		if(size%2==1){size++;}
 		char *silence=new char[size];
 		memset(silence,0,size);
-		//int wr= file_cache.Write(silence,size); 
 		fwrite(silence, 1 ,size, fp);
 		delete[] silence;
 	}
@@ -792,7 +809,6 @@ bool VideoFfmpeg::DiskCache()
 		for (int i=0;i<all; i++) {
 			if (block+pos > NumSamples) block = NumSamples - pos;
 			GetAudio(data,pos,block);
-			//file_cache.Write(data,block*BytesPerSample);
 			fwrite(data, 1 ,block * BytesPerSample, fp);
 			pos+=block;
 			audioProgress = ((float)pos / (float)(NumSamples));
@@ -814,9 +830,7 @@ bool VideoFfmpeg::DiskCache()
 
 void VideoFfmpeg::Cleardiskc()
 {
-	//file_cache.Close();
 	if(fp){fclose(fp);fp=NULL;}
-	//wxRemoveFile(diskCacheFilename);
 }
 
 int VideoFfmpeg::GetMSfromFrame(int frame)

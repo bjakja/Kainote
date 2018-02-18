@@ -51,15 +51,17 @@ public:
 	//bool com_inited;
 	ProgressSink *progress;
 	static int __stdcall UpdateProgress(int64_t Current, int64_t Total, void *ICPrivate);
+	bool CreateAudioSource(int audioTrack);
 	static void AudioLoad(VideoFfmpeg *parent, bool newIndex, int audiotrack);
 	void Clearcache();
 	FFMS_VideoSource *videosource;
 	FFMS_AudioSource *audiosource;
 	FFMS_ErrorInfo errinfo;
 	FFMS_Index *index;
+	FFMS_Index *audioIndex = NULL;
 	const FFMS_Frame *fframe;
 	
-	bool DiskCache();
+	bool DiskCache(bool audioExist=false);
 	void Cleardiskc();
 	void DeleteOldAudioCache();
 	wxString ColorCatrixDescription(int cs, int cr);
@@ -76,7 +78,7 @@ public:
 	int NumFrames;
 	int CR;
 	int CS;
-	int SampleRate;
+	int SampleRate=-1;
 	int BytesPerSample;
 	int Channels;
 	int lasttime;
@@ -97,6 +99,7 @@ public:
 	wxString ColorSpace;
 	wxString RealColorSpace;
 	wxString fname;
+	wxString indexPath;
 	VideoRend *rend;
 	//wxFile file_cache;
 	FILE *fp;

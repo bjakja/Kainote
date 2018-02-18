@@ -314,11 +314,12 @@ void AudioSpectrum::CreateRange(std::vector<int> &output, std::vector<int> &inte
 	AudioThreads->CreateCache(startcache, endcache);
 
 	// Note that here "lines" are actually bands of power data
-	//bool reached = false;
 	int64_t lasttime = -1;
 	unsigned long subcache = AudioThreads->lastCachePosition;
 	SpectrumCache *cache = sub_caches[subcache];
 	//int64_t g = range_start;
+	int lastintensity = 0;
+	int lastintensitytime = 0;
 	for (unsigned long i = first_line; i <= last_line; ++i) {
 		if (i % subcachelen == 0 && i > first_line){
 			subcache++;
@@ -329,7 +330,8 @@ void AudioSpectrum::CreateRange(std::vector<int> &output, std::vector<int> &inte
 		int64_t lli = i;
 		int64_t time = (lli * doublelen * 1000) / sampleRate;
 		//g += doublelen;
-		int lastintensity = 0;
+		
+		bool reached = false;
 		if (lasttime < time){
 			for (int i = indexStart; i <= indexEnd; i++){
 				int intensity = int(100 * (line[i] * upscale) / maxpower);
@@ -339,16 +341,21 @@ void AudioSpectrum::CreateRange(std::vector<int> &output, std::vector<int> &inte
 					if (i == indexEnd){
 						output.push_back(time);
 						intensities.push_back(lastintensity);
+						lastintensity = 0;
 					}
 				}
-				else if (intensity >= peek /*&& !reached*/){
-					output.push_back(time);
-					break;
-					//reached = true;
+				else if (intensity >= peek){
+					if (lastintensity < intensity){
+						lastintensity = intensity;
+						lastintensitytime = time;
+					}
+					//break;
+					reached = true;
 				}
-				//else if (intensity < peek && reached){
-				//reached = false;
-				//}
+			}
+			if (lastintensity && !reached){
+				output.push_back(lastintensitytime);
+				lastintensity = 0;
 			}
 		}
 		lasttime = time;
