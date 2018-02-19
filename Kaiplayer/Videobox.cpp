@@ -288,7 +288,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName,bool full
 			mstimes->SetSize(lastSize.x-185,-1);
 		}
 		vstate = Paused;
-		Render();
+		Render(true,false);
 	}
 
 	RefreshTime();
@@ -1093,7 +1093,7 @@ void VideoCtrl::OnSPlus()
 void VideoCtrl::OnPaint(wxPaintEvent& event)
 {
 	if( !block /*&& !blockpaint*/&& vstate==Paused ){
-		Render(true);
+		Render(true,false);
 	}
 	else if(vstate==None){
 		int x, y;

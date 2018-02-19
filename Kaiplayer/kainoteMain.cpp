@@ -159,6 +159,8 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	VidMenu->AppendTool(Toolbar, PlayPauseG, _("Odtwarzaj / Pauza"), _("Odtwarza lub pauzuje wideo"), PTR_BITMAP_PNG("pausemenu"), false);
 	VidMenu->AppendTool(Toolbar, GoToPrewKeyframe, _("Przejdź do poprzedniej klatki kluczowej"), "", PTR_BITMAP_PNG("prevkeyframe"));
 	VidMenu->AppendTool(Toolbar, GoToNextKeyframe, _("Przejdź do następnej klatki kluczowej"), "", PTR_BITMAP_PNG("nextkeyframe"));
+	VidMenu->AppendTool(Toolbar, SetAudioFromVideo, _("Ustaw audio z czasem wideo"), "", PTR_BITMAP_PNG("SETVIDEOTIMEONAUDIO"));
+	VidMenu->AppendTool(Toolbar, SetAudioMarkFromVideo, _("Ustaw znacznik audio z czasem wideo"), "", PTR_BITMAP_PNG("SETVIDEOTIMEONAUDIOMARK"));
 	VidMenu->AppendTool(Toolbar, VideoZoom, _("Powiększ wideo"), "", PTR_BITMAP_PNG("zoom"));
 	bool videoIndex = Options.GetBool(VideoIndex);
 	VidMenu->Append(VideoIndexing, _("Otwieraj wideo przez FFMS2"), _("Otwiera wideo przez FFMS2, co daje dokładność klatkową"), true, PTR_BITMAP_PNG("FFMS2INDEXING"), 0, ITEM_CHECK)->Check(videoIndex);
@@ -405,6 +407,16 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 				int time = tab->Video->GetFrameTime(false) + Options.GetInt(InsertEndOffset);
 				tab->Grid->SetEndTime(ZEROIT(time));
 			}
+		}
+	}
+	else if (id == SetAudioFromVideo || id == SetAudioMarkFromVideo){
+		if (tab->Edit->ABox){
+			AudioDisplay *adisp = tab->Edit->ABox->audioDisplay;
+			int time = tab->Video->Tell();
+			int pos = adisp->GetXAtMS(time);
+			if (id == SetAudioMarkFromVideo)
+				adisp->SetMark(time);
+			adisp->ChangePosition(time);
 		}
 	}
 	else if (id == VideoIndexing){
@@ -1700,6 +1712,9 @@ void kainoteFrame::OnMenuOpened(MenuEvent& event)
 	enable = (tab->Video->VFF != NULL);
 	Menubar->Enable(GoToPrewKeyframe, enable);
 	Menubar->Enable(GoToNextKeyframe, enable);
+	enable = (tab->Edit->ABox != NULL);
+	Menubar->Enable(SetAudioFromVideo, enable);
+	Menubar->Enable(SetAudioMarkFromVideo, enable);
 	//kolejno numery id
 	char form = tab->Grid->subsFormat;
 	bool tlmode = tab->Grid->hasTLMode;

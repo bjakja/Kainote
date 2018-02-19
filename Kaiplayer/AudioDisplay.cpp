@@ -1392,6 +1392,16 @@ void AudioDisplay::Stop(bool stopVideo) {
 }
 
 
+void AudioDisplay::ChangePosition(int time, bool center /*= true*/)
+{
+	int64_t samplepos = GetSampleAtMS(time);
+	if (center)
+		samplepos = (samplepos/samples) - (w / 2);
+
+	UpdatePosition(samplepos, !center);
+	UpdateImage();
+}
+
 ///////////////////////////
 // Get samples of dialogue
 void AudioDisplay::GetTimesDialogue(int &start,int &end) {
@@ -1625,13 +1635,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 		SetCursor(wxNullCursor);
 		if(rightDown)
 		{
-			curMarkMS=GetMSAtX(x);
-			if(!hasMark){
-				hasMark=true;
-				TabPanel *panel=(TabPanel*)grid->GetParent();
-				panel->ShiftTimes->Contents();
-			}
-			hasMark=true;
+			SetMark(GetMSAtX(x));
 			UpdateImage(true);
 			return;
 		}
@@ -2204,6 +2208,17 @@ void AudioDisplay::ChangeLine(int delta, bool block) {
 
 }
 
+
+void AudioDisplay::SetMark(int time)
+{
+	curMarkMS = time;
+	if (!hasMark){
+		hasMark = true;
+		TabPanel *panel = (TabPanel*)grid->GetParent();
+		panel->ShiftTimes->Contents();
+	}else
+		hasMark = true;
+}
 
 ////////
 // Next

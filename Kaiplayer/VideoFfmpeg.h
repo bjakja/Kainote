@@ -61,7 +61,7 @@ public:
 	FFMS_Index *audioIndex = NULL;
 	const FFMS_Frame *fframe;
 	
-	bool DiskCache(bool audioExist=false);
+	bool DiskCache(bool newIndex);
 	void Cleardiskc();
 	void DeleteOldAudioCache();
 	wxString ColorCatrixDescription(int cs, int cr);

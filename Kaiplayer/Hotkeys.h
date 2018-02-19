@@ -142,6 +142,8 @@
 	XX( SetVideoAtEnd,)\
 	XX( GoToNextKeyframe,)\
 	XX( GoToPrewKeyframe,)\
+	XX( SetAudioFromVideo,)\
+	XX( SetAudioMarkFromVideo,)\
 	XX( Redo,)\
 	XX( Undo,)\
 	XX( UndoToLastSave,)\

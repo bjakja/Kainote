@@ -729,7 +729,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		}
 		return;
 	}
-	else if (event.RightUp()){
+	else if (event.RightUp() && !isNumerizeColumn){
 		ContextMenu(event.GetPosition());
 		return;
 	}

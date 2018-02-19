@@ -62,7 +62,9 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *_s
 		thread = (HANDLE)_beginthreadex(0, 0, FFMS2Proc, this, 0, 0);//CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)FFMS2Proc, this, 0, 0);
 		SetThreadPriority(thread,THREAD_PRIORITY_TIME_CRITICAL);
 		progress->ShowDialog();
-		WaitForSingleObject(eventComplete, INFINITE);
+		HANDLE events[] = { eventComplete, eventAudioComplete };
+		WaitForMultipleObjects(2, events, TRUE, INFINITE);
+		ResetEvent(eventAudioComplete);
 		ResetEvent(eventComplete);
 		*_success = success;
 	}else{
@@ -506,13 +508,14 @@ void VideoFfmpeg::AudioLoad(VideoFfmpeg *vf, bool newIndex, int audiotrack)
 	if (vf->disccache){
 		vf->diskCacheFilename = "";
 		vf->diskCacheFilename << Options.pathfull << "\\AudioCache\\" << vf->fname.AfterLast('\\').BeforeLast('.') << "_track" << audiotrack << ".w64";
-		//if (newIndex || !wxFileExists(vf->diskCacheFilename)){ 
-		//	newIndex = true;
-		//}
-		if (!(vf->CreateAudioSource(audiotrack) && vf->DiskCache(!newIndex))){ goto done; }
+		if (!vf->CreateAudioSource(audiotrack)){ goto done; }
+		SetEvent(vf->eventAudioComplete);
+		if (!vf->DiskCache(newIndex)){ goto done; }
 	}
 	else{
-		if (!(vf->CreateAudioSource(audiotrack) && vf->RAMCache())){ goto done; }
+		if (!vf->CreateAudioSource(audiotrack)){ goto done; }
+		SetEvent(vf->eventAudioComplete);
+		if (!vf->RAMCache()){ goto done; }
 	}
 	vf->audioNotInitialized = false;
 done:
@@ -772,7 +775,7 @@ int VideoFfmpeg::FramefromTime(int time)
 	return lastframe;
 }
 
-bool VideoFfmpeg::DiskCache(bool audioExist/*=false*/)
+bool VideoFfmpeg::DiskCache(bool newIndex)
 {
 	audioProgress = 0;
 
@@ -780,7 +783,7 @@ bool VideoFfmpeg::DiskCache(bool audioExist/*=false*/)
 	wxFileName discCacheFile;
 	discCacheFile.Assign(diskCacheFilename);
 	if(!discCacheFile.DirExists()){wxMkdir(diskCacheFilename.BeforeLast('\\'));}
-	if (audioExist){
+	if (!newIndex && discCacheFile.FileExists()){
 		fp = _wfopen(diskCacheFilename.wc_str(), L"rb");
 		if (fp)
 			return true;
@@ -899,9 +902,9 @@ void VideoFfmpeg::Refresh(bool wait){
 	isBusy = true;
 	ResetEvent(eventComplete);
 	SetEvent(eventRefresh);
-	if(rend->vstate==Paused && wait){
-		WaitForSingleObject(eventComplete, 4000);
-	}
+	//if(rend->vstate==Paused && wait){
+		//WaitForSingleObject(eventComplete, 4000);
+	//}
 };
 
 wxString VideoFfmpeg::ColorCatrixDescription(int cs, int cr) {

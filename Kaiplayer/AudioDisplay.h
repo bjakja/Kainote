@@ -217,6 +217,7 @@ public:
 	void SetDialogue(Dialogue *diag, int n=-1, bool moveToEnd = false);
 	void MakeDialogueVisible(bool force=false, bool moveToEnd = false);
 	void ChangeLine(int delta, bool block=false);
+	void SetMark(int time);
 	void Next(bool play=true);
 	void Prev(bool play=true);
 
@@ -244,7 +245,7 @@ public:
 		}
 		UpdateImage();
 	}
-
+	void ChangePosition(int time, bool center = true);
 	void GetTimesDialogue(int &start,int &end);
 	void GetTimesSelection(int &start,int &end, bool rangeEnd = false);
 	void SetSelection(int start, int end);

@@ -306,8 +306,8 @@ bool VideoRend::InitDX(bool reset)
 
 void VideoRend::Render(bool Frame, bool wait)
 {
-	if (Frame && !IsDshow && !devicelost){ VFF->Refresh(wait); resized = false; return; }
 	wxMutexLocker lock(mutexRender);
+	if (Frame && !IsDshow && !devicelost){ VFF->Refresh(wait); resized = false; return; }
 	resized = false;
 	HRESULT hr = S_OK;
 

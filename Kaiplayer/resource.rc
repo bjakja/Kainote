@@ -15,8 +15,8 @@ LANGUAGE LANG_POLISH, SUBLANG_DEFAULT
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-KAI_SMALL_ICON          ICON                    "Bitmaps/KaiSmallIcon.ico"
 KAI_TLARGE_ICON          ICON                    "Bitmaps/KaiLargeIcon.ico"
+KAI_SMALL_ICON          ICON                    "Bitmaps/KaiSmallIcon.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -70,6 +70,8 @@ PREVFRAME               RCDATA                  "Bitmaps/PrevFrame.png"
 NEXTFRAME               RCDATA                  "Bitmaps/NextFrame.png"
 PREVKEYFRAME            RCDATA                  "Bitmaps/PrevKeyFrame.png"
 NEXTKEYFRAME            RCDATA                  "Bitmaps/NextKeyFrame.png"
+SETVIDEOTIMEONAUDIO     RCDATA                  "Bitmaps/SetVideoTimeOnAudio.png"
+SETVIDEOTIMEONAUDIOMARK RCDATA                  "Bitmaps/SetVideoTimeOnAudioMark.png"
 VIDEOONSTIME            RCDATA                  "Bitmaps/Videoonstime.png"
 VIDEOONETIME            RCDATA                  "Bitmaps/Videoonetime.png"
 ZOOM		            RCDATA                  "Bitmaps/Zoom.png"
