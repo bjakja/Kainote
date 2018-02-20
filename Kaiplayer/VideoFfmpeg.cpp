@@ -760,7 +760,10 @@ bool VideoFfmpeg::RAMCache()
 			pos+=halfsize;
 		}
 		audioProgress = ((float)i / (float)(blnum - 1));
-		if (stopLoadingAudio) break;
+		if (stopLoadingAudio) { 
+			blnum = i + 1;
+			break; 
+		}
 	}
 	if(Delay<0){NumSamples += (SampleRate * Delay * BytesPerSample);}
 	audioProgress = 1.f;
