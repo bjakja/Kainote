@@ -1794,7 +1794,7 @@ void kainoteFrame::OnClose1(wxCloseEvent& event)
 
 void kainoteFrame::OnActivate(wxActivateEvent &evt)
 {
-	if (!evt.GetActive()){
+	if (!evt.GetActive() && Tabs->Size()){
 		TabPanel *tab = GetTab();
 		wxWindow *win = FindFocus();
 		if (win && tab->IsDescendant(win)){
