@@ -496,12 +496,16 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 #ifdef byvertices
 	HR(MainStream->LockRect( &d3dlr,0, 0), _("Nie można zablokować bufora tekstury"));//D3DLOCK_NOSYSLOCK
 #else
-	HR(MainStream->LockRect( &d3dlr,0, D3DLOCK_NOSYSLOCK), _("Nie można zablokować bufora tekstury"));//D3DLOCK_NOSYSLOCK
+	try{
+		HR(MainStream->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Nie można zablokować bufora tekstury"));
+	}
+	catch (...){
+		return false;
+	}
 #endif
 	texbuf = static_cast<byte *>(d3dlr.pBits);
 
 	diff=d3dlr.Pitch - (vwidth*bytes);
-	//int check=0;	
 	if (!diff){memcpy(texbuf,fdata,(vheight*pitch));}
 	else{
 
@@ -512,7 +516,6 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 				fdata+=vwidth;
 				memset(texbuf,0,diff);
 				texbuf+=diff;
-				//check+=(vwidth+diff);
 			}
 			int hheight=vheight/2;
 			int fwidth=(vformat==NV12)? vwidth : vwidth/2;
@@ -524,7 +527,6 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 				fdata+=fwidth;
 				memset(texbuf,0,fdiff);
 				texbuf+=fdiff;
-				//check+=(fwidth+diff);
 			}
 			if(vformat<NV12){
 				for(int i=0; i <hheight; i++){
@@ -533,13 +535,11 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 					fdata+=fwidth;
 					memset(texbuf,0,fdiff);
 					texbuf+=fdiff;
-					//check+=(fwidth+diff);
 				}
 			}
 		}
 		else
 		{
-			//int fheight=vheight;
 			int fwidth=vwidth * bytes;
 			for(int i=0; i <vheight; i++){
 				memcpy(texbuf,fdata,fwidth);

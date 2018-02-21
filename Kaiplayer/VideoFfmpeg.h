@@ -28,11 +28,11 @@ class VideoFfmpeg
 {
 public:
 	VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *success);
+	~VideoFfmpeg();
 	static unsigned int __stdcall FFMS2Proc(void* cls);
 	void Processing();
 	void Refresh(bool wait=true);
 	void Play(){SetEvent(eventStartPlayback);};
-	~VideoFfmpeg();
 	void GetFrame(int frame, byte* buff);
 	void GetBuffer(void *buf, int64_t start, int64_t count, double vol=1.0);
 	void GetWaveForm(int *min,int *peak,int64_t start,int w,int h,int samples,float scale);
@@ -48,17 +48,14 @@ public:
 	int GetFramefromMS(int MS, int seekfrom=0);
 	int Init();
 
-	//bool com_inited;
 	ProgressSink *progress;
 	static int __stdcall UpdateProgress(int64_t Current, int64_t Total, void *ICPrivate);
-	bool CreateAudioSource(int audioTrack);
 	static void AudioLoad(VideoFfmpeg *parent, bool newIndex, int audiotrack);
 	void Clearcache();
 	FFMS_VideoSource *videosource;
 	FFMS_AudioSource *audiosource;
 	FFMS_ErrorInfo errinfo;
 	FFMS_Index *index;
-	FFMS_Index *audioIndex = NULL;
 	const FFMS_Frame *fframe;
 	
 	bool DiskCache(bool newIndex);

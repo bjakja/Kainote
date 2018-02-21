@@ -117,9 +117,11 @@ void VideoFfmpeg::Processing()
 					rend->time = Timecodes[rend->lastframe];
 					lastframe = rend->lastframe;
 				}
+				if (audioNotInitialized)
+					GetFFMSFrame(rend->lastframe);
+				else
+					fframe=FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
 				
-				//fframe=FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
-				GetFFMSFrame(rend->lastframe);
 				if(!fframe){continue;}
 				memcpy(&buff[0],fframe->Data[0],fplane);
 
@@ -160,8 +162,10 @@ void VideoFfmpeg::Processing()
 		}else if(wait_result == WAIT_OBJECT_0+1){
 			byte *buff = (byte*)rend->datas;
 			if(rend->lastframe != lastframe){
-				//fframe = FFMS_GetFrame(videosource, rend->lastframe , &errinfo);
-				GetFFMSFrame(rend->lastframe);
+				if (audioNotInitialized)
+					GetFFMSFrame(rend->lastframe);
+				else
+					fframe = FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
 				lastframe = rend->lastframe;
 			}
 			if(!fframe){SetEvent(eventComplete);isBusy = false;continue;}
@@ -467,7 +471,6 @@ VideoFfmpeg::~VideoFfmpeg()
 		stopLoadingAudio = true;
 		WaitForSingleObject(eventAudioComplete, INFINITE);
 		CloseHandle(eventAudioComplete);
-		//delete audioLoadThread; 
 	}
 	KeyFrames.Clear();
 	Timecodes.clear();
@@ -488,74 +491,18 @@ int FFMS_CC VideoFfmpeg::UpdateProgress(int64_t Current, int64_t Total, void *IC
 	return progress->WasCancelled();
 }
 
-//bool VideoFfmpeg::CreateAudioSource(int audioTrack)
-//{
-//	FFMS_Init(0, 1);
-//
-//	if (wxFileExists(indexPath)){
-//		audioIndex = FFMS_ReadIndex(indexPath.utf8_str(), &errinfo);
-//
-//		if (FFMS_IndexBelongsToFile(audioIndex, fname.utf8_str(), &errinfo))
-//		{
-//			FFMS_DestroyIndex(audioIndex);
-//			audioIndex = NULL;
-//		}
-//	}
-//	//TODO: zrobić opcję ponownego zaczytania audio dla debili
-//	if (!audioIndex)
-//		return false;
-//
-//	audiosource = FFMS_CreateAudioSource(fname.utf8_str(), audioTrack, audioIndex, FFMS_DELAY_FIRST_VIDEO_TRACK, &errinfo);
-//	if (audiosource == NULL) {
-//		wxLogStatus(_("Wystąpił błąd tworzenia źródła audio: %s"), errinfo.Buffer);
-//		return false;
-//	}
-//
-//	FFMS_ResampleOptions *resopts = FFMS_CreateResampleOptions(audiosource);
-//	resopts->ChannelLayout = FFMS_CH_FRONT_CENTER;
-//	resopts->SampleFormat = FFMS_FMT_S16;
-//
-//	if (FFMS_SetOutputFormatA(audiosource, resopts, &errinfo)){
-//		wxLogStatus(_("Wystąpił błąd konwertowania audio: %s"), errinfo.Buffer);
-//	}
-//	else{
-//		BytesPerSample = 2;
-//		Channels = 1;
-//	}
-//	FFMS_DestroyResampleOptions(resopts);
-//	const FFMS_AudioProperties *audioprops = FFMS_GetAudioProperties(audiosource);
-//
-//	SampleRate = audioprops->SampleRate;
-//	Delay = (Options.GetInt(AudioDelay) / 1000);
-//	NumSamples = audioprops->NumSamples;
-//
-//	if (abs(Delay) >= (SampleRate * NumSamples * BytesPerSample)){
-//		wxLogStatus(_("Nie można ustawić opóźnienia, przekracza czas trwania audio"));
-//		Delay = 0;
-//	}
-//	return true;
-//}
-
 void VideoFfmpeg::AudioLoad(VideoFfmpeg *vf, bool newIndex, int audiotrack)
 {
 	if (vf->disccache){
 		vf->diskCacheFilename = "";
 		vf->diskCacheFilename << Options.pathfull << "\\AudioCache\\" << vf->fname.AfterLast('\\').BeforeLast('.') << "_track" << audiotrack << ".w64";
-		//if (!vf->CreateAudioSource(audiotrack)){ goto done; }
-		//SetEvent(vf->eventAudioComplete);
 		if (!vf->DiskCache(newIndex)){ goto done; }
 	}
 	else{
-		//if (!vf->CreateAudioSource(audiotrack)){ goto done; }
-		//SetEvent(vf->eventAudioComplete);
 		if (!vf->RAMCache()){ goto done; }
 	}
 	vf->audioNotInitialized = false;
 done:
-	/*if (vf->audioIndex){
-		FFMS_DestroyIndex(vf->audioIndex);
-		vf->audioIndex = NULL;
-	}*/
 	if (vf->audiosource){ FFMS_DestroyAudioSource(vf->audiosource); vf->audiosource = NULL; }
 	SetEvent(vf->eventAudioComplete);
 	if (vf->audioLoadThread){ delete vf->audioLoadThread; vf->audioLoadThread = NULL; }
