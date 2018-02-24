@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+//  Copyright (c) 2012-2018, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -16,5 +16,5 @@
 //  This file is for automatic build change
 //  Autoversioning.exe change it after build using commandline
 
-#define VersionKainote "0.9.2.890"
-#define NumVersionKainote 0,9,2,890
+#define VersionKainote "0.9.3.891"
+#define NumVersionKainote 0,9,3,891

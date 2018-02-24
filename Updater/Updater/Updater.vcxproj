@@ -140,6 +140,7 @@
     <ClCompile Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\zip.c" />
     <ClCompile Include="Downloader.cpp" />
     <ClCompile Include="UpdaterMain.cpp" />
+    <ClCompile Include="ZipHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\crypt.h" />
@@ -148,6 +149,7 @@
     <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\mztools.h" />
     <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\unzip.h" />
     <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\zip.h" />
+    <ClInclude Include="ZipHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1727,7 +1727,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 					wxCursor cursor(wxCURSOR_SIZEWE);
 					SetCursor(cursor);
 					defCursor=false;
-					if(middleDown){
+					if(middleDown || (shiftDown && leftDown)){
 						karaoke->Join(Grabbed);
 						Commit();
 						return;

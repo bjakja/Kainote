@@ -36,6 +36,9 @@
     <ClCompile Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\mztools.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ZipHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\mztools.h">
@@ -54,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\iowin32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZipHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

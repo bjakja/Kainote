@@ -39,16 +39,11 @@
 #include "FontEnumerator.h"
 #include "SubsResampleDialog.h"
 #include "SpellCheckerDialog.h"
-#include <math.h>
-#include <wx/stdpaths.h>
-#include "Registry.h"
-#include <ShlObj.h>
+
 #undef IsMaximized
 #if _DEBUG
 #define logging 5
 #endif
-//#define wxIMAGE_PNG(x) wxImage(wxS(#x),wxBITMAP_TYPE_PNG_RESOURCE)
-
 
 kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	: KaiFrame(0, -1, _("Bez nazwy - ") + Options.progname, pos, size, wxDEFAULT_FRAME_STYLE)

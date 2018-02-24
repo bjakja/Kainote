@@ -234,7 +234,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			_return = false;
 			continue;
 		}
-		if (file)
+		else
 		{
 			zip_fileinfo zfi = { 0 };
 			if (S_OK == zipOpenNewFileInZip(zf, fn, &zfi, NULL, 0, NULL, 0, NULL, Z_DEFLATED, Z_DEFAULT_COMPRESSION))
@@ -248,10 +248,11 @@ int _tmain(int argc, _TCHAR* argv[])
 				}
 				if (zipCloseFileInZip(zf))
 					_return = false;
-
+				fclose(file);
 				continue;
 			}
 			_return = false;
+			fclose(file);
 		}
 		_return = false;
 	}

@@ -20,7 +20,7 @@
 #define FTELLO_FUNC(stream) ftello(stream)
 #define FSEEKO_FUNC(stream, offset, origin) fseeko(stream, offset, origin)
 #else
-#define FOPEN_FUNC(filename, mode) fopen64(filename, mode)
+#define FOPEN_FUNC(filename, mode) _wfopen/*fopen64*/(filename, mode)
 #define FTELLO_FUNC(stream) ftello64(stream)
 #define FSEEKO_FUNC(stream, offset, origin) fseeko64(stream, offset, origin)
 #endif
@@ -113,18 +113,18 @@ static voidpf ZCALLBACK fopen_file_func (voidpf opaque, const char* filename, in
 static voidpf ZCALLBACK fopen64_file_func (voidpf opaque, const void* filename, int mode)
 {
     FILE* file = NULL;
-    const char* mode_fopen = NULL;
+    const wchar_t* mode_fopen = NULL;
     if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
-        mode_fopen = "rb";
+        mode_fopen = L"rb";
     else
     if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
-        mode_fopen = "r+b";
+        mode_fopen = L"r+b";
     else
     if (mode & ZLIB_FILEFUNC_MODE_CREATE)
-        mode_fopen = "wb";
+        mode_fopen = L"wb";
 
     if ((filename!=NULL) && (mode_fopen != NULL))
-        file = FOPEN_FUNC((const char*)filename, mode_fopen);
+        file = FOPEN_FUNC((const wchar_t*)filename, mode_fopen);
     return file;
 }
 
