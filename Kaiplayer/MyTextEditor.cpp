@@ -699,14 +699,14 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			int fsty=FindY(errors[g]);
 			wxString ftext=MText.SubString(wraps[fsty],errors[g]-1);
 			if(wraps[fsty]>=errors[g]){fw=0;}
-			else{dc.GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font);}
+			else{GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font);}
 			int scndy=FindY(errors[g+1]-1);
 			wxString etext=MText.SubString(errors[g], (fsty==scndy)?errors[g+1]-1 : wraps[fsty+1]-1);
-			dc.GetTextExtent(etext, &fww, &fh, NULL, NULL, &font);
+			GetTextExtent(etext, &fww, &fh, NULL, NULL, &font);
 			for(int q=fsty+1; q<=scndy; q++){
 				int rest= (q==scndy)? errors[g+1]-1 : wraps[q+1]-1;
 				wxString btext=MText.SubString(wraps[q], rest);
-				dc.GetTextExtent(btext, &fwww, &fh, NULL, NULL, &font);
+				GetTextExtent(btext, &fwww, &fh, NULL, NULL, &font);
 				dc.DrawRectangle(3, ((q*Fheight) + 1) - scPos, fwww, Fheight);
 			}
 			dc.DrawRectangle(fw + 3, ((fsty*Fheight) + 1) - scPos, fww, Fheight);
@@ -727,17 +727,17 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			if(j==fst.y){
 				wxString ftext=MText.SubString(wraps[j],fst.x-1);
 				if(wraps[j]>fst.x-1){fw=0;}
-				else{dc.GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font);}
+				else{GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font);}
 				wxString stext=MText.SubString(fst.x,(fst.y==scd.y)? scd.x-1 : wraps[j+1]-1);
-				dc.GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
+				GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
 			}
 			else if(j==scd.y){
 				fw=0;
-				dc.GetTextExtent(MText.SubString(wraps[j],scd.x-1), &fww, &fh, NULL, NULL, &font);
+				GetTextExtent(MText.SubString(wraps[j],scd.x-1), &fww, &fh, NULL, NULL, &font);
 			}
 			else{
 				fw=0;
-				dc.GetTextExtent(MText.SubString(wraps[j],wraps[j+1]-1), &fww, &fh, NULL, NULL, &font);
+				GetTextExtent(MText.SubString(wraps[j],wraps[j+1]-1), &fww, &fh, NULL, NULL, &font);
 			}
 			dc.DrawRectangle(fw+3,((j*Fheight)+1)-scPos,fww,Fheight);
 			//if(j==scd.y)break;
@@ -755,16 +755,16 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 		if(i==wraps[wline+1]){
 			if(Cursor.x+Cursor.y==wchar){
 				int fww=0;
-				dc.GetTextExtent(mestext+parttext, &fww, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext+parttext, &fww, &fh, NULL, NULL, &font);
 				caret->Move(fww+3,posY/*-(scPos)*/);
 				cursorWasSet = true;
 			}
 
 			if(parttext!=""){
-				dc.GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				wxColour kol=(val)? cvalues : (slash)? cnames : ctext;
 				dc.SetTextForeground(kol);
-				if(isfirst && (parttext.StartsWith(L"T") || parttext.StartsWith(L"Y") || parttext.StartsWith(L"Ł"))){fw++;isfirst=false;}
+				//if(isfirst && (parttext.StartsWith(L"T") || parttext.StartsWith(L"Y") || parttext.StartsWith(L"Ł"))){fw++;isfirst=false;}
 				mestext<<parttext;
 				dc.DrawText(parttext,fw+3,posY);
 			}
@@ -788,7 +788,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 
 		if (hasFocus && (Cursor.x + Cursor.y == wchar)){
 			if(mestext+parttext==""){fw=0;}
-			else{dc.GetTextExtent(mestext+parttext, &fw, &fh, NULL, NULL, &font);}
+			else{GetTextExtent(mestext+parttext, &fw, &fh, NULL, NULL, &font);}
 			caret->Move(fw+3,posY/*-(scPos)*/);
 			cursorWasSet = true;
 		}
@@ -798,9 +798,9 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			if(ch=='{'){
 				tagi=true;
 				wxString bef=parttext.BeforeLast('{');
-				dc.GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground(ctext);
-				if(isfirst && (bef.StartsWith("T") || bef.StartsWith("Y") || bef.StartsWith(L"Ł"))){fw++;isfirst=false;}
+				//if(isfirst && (bef.StartsWith("T") || bef.StartsWith("Y") || bef.StartsWith(L"Ł"))){fw++;isfirst=false;}
 				dc.DrawText(bef,fw+3,posY);
 				//posX+=fw;
 				mestext<<bef;
@@ -808,7 +808,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			}else{
 				//if(val){
 				wxString &tmp=parttext.RemoveLast(1);
-				dc.GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground((val)? cvalues : ctext);
 				if(tmp.StartsWith("T") || tmp.StartsWith("Y") || tmp.StartsWith(L"Ł")){fw--;}
 				dc.DrawText(tmp,fw+3,posY);
@@ -818,7 +818,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				//}
 				tagi=slash=val=false;
 			}
-			dc.GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+			GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 			dc.SetTextForeground(ccurlybraces);
 			dc.DrawText(parttext,fw+3,posY);
 			mestext<<parttext;
@@ -833,7 +833,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			if((znaki.Find(ch)!=-1&&tagtest!="1"&&tagtest!="2"&&tagtest!="3"&&tagtest!="4")||tagtest=="fn"||ch=='('){
 				slash=false;
 				wxString tmp=(tagtest=="fn")? parttext : parttext.RemoveLast(1);
-				dc.GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground(cnames);
 				dc.DrawText(tmp,fw+2,posY);
 				//posX+=fw;
@@ -849,7 +849,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			if(ch=='\\'){slash=true;}
 			if(val&&(ch=='\\'||ch==')'||ch==',')){
 				wxString tmp=parttext.RemoveLast(1);
-				dc.GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground(cvalues);
 				dc.DrawText(tmp,fw+3,posY);
 				//posX+=fw;
@@ -859,7 +859,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 
 			}
 			if(ch=='('){val=true;slash=false;}
-			dc.GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+			GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 			dc.SetTextForeground(coperators);
 			dc.DrawText(parttext,fw+3,posY);
 			mestext<<parttext;
@@ -872,8 +872,8 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			if(Brackets.x==-1||Brackets.y==-1){col=cspellerrors;}
 			dc.SetBrush(wxBrush(col));
 			//dc.SetPen(wxPen(col));
-			if(i>0){dc.GetTextExtent(MText.SubString(wraps[bry],i-1), &fw, &fh, NULL, NULL, &font);}else{fw=0;}
-			dc.GetTextExtent(MText[i], &fww, &fh, NULL, NULL, &font);
+			if(i>0){GetTextExtent(MText.SubString(wraps[bry],i-1), &fw, &fh, NULL, NULL, &font);}else{fw=0;}
+			GetTextExtent(MText[i], &fww, &fh, NULL, NULL, &font);
 			dc.DrawRectangle(fw+3,((bry*Fheight)+2)-scPos,fww,Fheight);
 			wxFont fnt=dc.GetFont();
 			fnt=fnt.Bold();

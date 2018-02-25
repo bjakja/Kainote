@@ -219,8 +219,8 @@ bool Karaoke::GetLetterAtX(int x, int *syl, int *result)
 	int tw,th, start, end;
 
 	if(GetSylAtX(x, syl)){
-		wxFont karafont(11,wxDEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Verdana"));
-		AD->GetTextExtent(syls[*syl],&tw, &th, 0, 0, &karafont);
+		//wxFont karafont(11,wxDEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Verdana"));
+		AD->GetTextExtentPixel(syls[*syl], &tw, &th);
 		GetSylTimes(*syl,start,end);
 		start=AD->GetXAtMS(start);
 		end=AD->GetXAtMS(end);
@@ -230,7 +230,8 @@ bool Karaoke::GetLetterAtX(int x, int *syl, int *result)
 		//if(x+tw<center){*result=text.Len(); return true;}
 		for(size_t i=0;i<text.Len();i++)
 		{
-			AD->GetTextExtent(text[i],&tw, &th, 0, 0, &karafont);
+			//AD->GetTextExtent(text[i],&tw, &th, 0, 0, &karafont);
+			AD->GetTextExtentPixel(text[i], &tw, &th);
 			center+=(tw/2);
 			if(x<center){*result=i;return true;}
 			center+=(tw/2);

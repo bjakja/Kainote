@@ -497,14 +497,14 @@ void AudioDisplay::DoUpdateImage() {
 		// Draw karaoke
 		if (hasKara) {
 			int karstart=selStart;
-			wxFont karafont(10,wxDEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Verdana"));
+			//wxFont karafont(10,wxDEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Verdana"));
 			wxString acsyl;
 			D3DXVECTOR2 v2[2]={D3DXVECTOR2(0,0),D3DXVECTOR2(0,h)};
 			for(size_t j=0; j<karaoke->syls.size(); j++)
 			{
 				acsyl=karaoke->syls[j];
 				int fw, fh;
-				GetTextExtent(acsyl,&fw, &fh, 0, 0, &karafont);
+				GetTextExtentPixel(acsyl,&fw, &fh);
 
 				float XX=GetXAtMS(karaoke->syltimes[j]);
 				if(XX>=0){
@@ -521,15 +521,16 @@ void AudioDisplay::DoUpdateImage() {
 				d3dLine->Draw(v5,2,syllableBondaresColor);
 				d3dLine->End();
 				d3dLine->SetWidth(1);
-				RECT rect={center+karstart,0,center+karstart+(fw*2),fh};
+				RECT rect={center+karstart,0,center+karstart+fw,fh};
 				d3dFont9->DrawTextW(NULL, acsyl.wchar_str(), -1, &rect, DT_LEFT, syllableTextColor );
-				//DRAWOUTTEXT(d3dFont9, acsyl, rect, DT_CENTER, syllableTextColor );
 				//obramowanie aktywynej sylaby
 				if(letter>=0 && syll >=0 && syll==j){
 					int start,end;
 					int fwl, fhl;
 					if(letter==0){fwl=0;}
-					else{GetTextExtent(acsyl.Mid(0,letter),&fwl, &fhl, 0, 0, &karafont);}
+					else{ 
+						GetTextExtentPixel(acsyl.Mid(0, letter), &fwl, &fhl); 
+					}
 					
 					karaoke->GetSylTimes(j,start,end);
 					
@@ -635,7 +636,7 @@ void AudioDisplay::DoUpdateImage() {
 			wxString text = time.GetFormatted(ASS);
 			RECT rect;
 			rect.left = curpos-150;
-			rect.top = 5;
+			rect.top = (hasKara)? 20 : 5;
 			rect.right = rect.left + 300;
 			rect.bottom = rect.top + 100;
 			DRAWOUTTEXT(d3dFont,text,rect,DT_CENTER, 0xFFFFFFFF);
@@ -2090,6 +2091,18 @@ int AudioDisplay::GetBoundarySnap(int ms,int rangeX,bool shiftHeld,bool start, b
 
 
 
+
+void AudioDisplay::GetTextExtentPixel(const wxString &text, int *x, int *y)
+{
+	RECT rcRect = { 0, 0, 0, 0 };
+	d3dFont9->DrawTextW(NULL, text.wchar_str(), -1, &rcRect, DT_CALCRECT, 0xFF000000);
+	*x = rcRect.right - rcRect.left;
+	*y = rcRect.bottom - rcRect.top;
+	if (text.StartsWith(" "))
+		*x += 4;
+	if (text.EndsWith(" "))
+		*x += 4;
+}
 
 //////////////
 // Size event

@@ -84,7 +84,7 @@ protected:
 	void CalcWrap(bool sendevent=true);
 	void SendEvent();
 	void FindWord(int pos,int *start, int *end);
-	void GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight, wxDC *dc=NULL, bool correct=false);
+	void GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight, bool correct=false);
 	void MakeCursorVisible(bool refresh=true);
     wxString KText;
 	wxBitmap* bmp;

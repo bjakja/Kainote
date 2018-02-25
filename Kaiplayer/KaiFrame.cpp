@@ -50,6 +50,7 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title, const
 	Bind(wxEVT_LEFT_DOWN, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_DCLICK, &KaiFrame::OnMouseEvent, this);
+	Bind(wxEVT_LEAVE_WINDOW, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_ACTIVATE, &KaiFrame::OnActivate, this);
 	//Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
@@ -179,6 +180,7 @@ void KaiFrame::OnMouseEvent(wxMouseEvent &evt)
 	if(evt.Leaving()){
 		pushedClose = enterClose = pushedMinimize = enterMinimize = pushedMaximize = enterMaximize = false;
 		Refresh(false,&rc);
+		return;
 	}
 	bool leftdown= evt.LeftDown() || evt.LeftDClick();
 	if(leftdown){

@@ -82,6 +82,7 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	Bind(wxEVT_LEFT_UP, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_DCLICK, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiDialog::OnMouseEvent, this);
+	Bind(wxEVT_LEAVE_WINDOW, &KaiDialog::OnMouseEvent, this);
 	//Bind(wxEVT_ACTIVATE, &KaiDialog::OnActivate, this);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEscape, this, escapeId);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter, this, enterId);
@@ -256,6 +257,7 @@ void KaiDialog::OnMouseEvent(wxMouseEvent &evt)
 	if(evt.Leaving()){
 		pushed = enter = false;
 		Refresh(false,&rc);
+		return;
 	}
 	bool leftdown= evt.LeftDown() || evt.LeftDClick();
 	if(leftdown){

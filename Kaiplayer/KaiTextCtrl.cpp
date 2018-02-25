@@ -284,7 +284,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent)
 			size_t j = i;
 			while (podz < i)
 			{
-				GetTextExtent(KText.Mid(podz, j-podz+1), &fw, &fh, &dc);
+				GetTextExtent(KText.Mid(podz, j-podz+1), &fw, &fh);
 
 				allwrap = j;
 				if (fw >= mesureSize){
@@ -320,7 +320,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent)
 				//}
 				size_t wwrap = (nwrap != -1 && i != j) ? nwrap : allwrap + 1;
 				if (stylewrap){
-					GetTextExtent(KText.Mid(podz, wwrap - podz), &fw, &fh, &dc);
+					GetTextExtent(KText.Mid(podz, wwrap - podz), &fw, &fh);
 					pos = (style == 1) ? ((w - fw) / 2) : (w - fw) - 5;
 				}
 				positioning.Add(pos);
@@ -336,7 +336,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent)
 		}
 	}else{
 		wraps.Add(KText.Len());
-		GetTextExtent(KText, &fw, &fh, &dc);
+		GetTextExtent(KText, &fw, &fh);
 		int rightPos = (w - fw);
 		int pos = (style & wxALIGN_CENTER_HORIZONTAL)? (rightPos/2) : 
 			(style & wxALIGN_RIGHT)? rightPos-5 : 5;
@@ -772,15 +772,15 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 				wxString ftext=KText.SubString(wraps[j],fst.x-1);
 				if(wraps[j]>fst.x-1){fw=0;}
 				else{
-					GetTextExtent(ftext, &fw, &fh, &dc);
+					GetTextExtent(ftext, &fw, &fh);
 				}
 				wxString stext=KText.SubString(fst.x,(fst.y==scd.y)? scd.x-1 : wraps[j+1]-1);
-				GetTextExtent(stext, &fww, &fh, &dc);
+				GetTextExtent(stext, &fww, &fh);
 
 			}else{
 				fw=0;
 				wxString selText = KText.SubString(wraps[j], (j==scd.y)? scd.x-1 : wraps[j+1]-1);
-				GetTextExtent(selText, &fww, &fh, &dc);
+				GetTextExtent(selText, &fww, &fh);
 			}
 			dc.DrawRectangle(positioning[j+1] + fw + tmpPosX,(j*Fheight)+tmpPosY,fww,Fheight);
 		}
@@ -794,7 +794,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 			size_t start = wraps[cursorI];
 			size_t end = (cursorPos<wraps[cursorI+1])? cursorPos-1 : wraps[cursorI+1]-1;
 			wxString beforeCursor = KText.SubString(start, end);
-			GetTextExtent(beforeCursor, &fww, &fh, &dc);
+			GetTextExtent(beforeCursor, &fww, &fh);
 		}
 		caret->Move(positioning[cursorI+1] + fww + tmpPosX, tmpPosY + (Fheight * cursorI));
 
@@ -827,7 +827,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 					if (lastto < from-1){
 						if (lastto > linefrom + 1){
 							wxString normalstyle = line.SubString(0, lastto - linefrom - 1);
-							GetTextExtent(normalstyle, &fww, NULL, &dc);
+							GetTextExtent(normalstyle, &fww,0);
 						}
 						else{ fww = 0; }
 						dc.SetTextForeground(fg);
@@ -838,7 +838,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 						dc.DrawText(normalText, positioning[i] + tmpPosX + fww, tmpPosY);
 					}
 					wxString preline = line.SubString(0, newto);
-					GetTextExtent(preline, &drawX, NULL, &dc);
+					GetTextExtent(preline, &drawX,0);
 				}
 				else{ drawX = 0; }
 				dc.SetTextForeground(textStyles[k].color);
@@ -869,7 +869,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 			if (lastto < lineto){
 				if (lastto - 1 >= linefrom){
 					wxString preline = line.SubString(0, (lastto - linefrom) - 1);
-					GetTextExtent(preline, &drawX, NULL, &dc);
+					GetTextExtent(preline, &drawX, NULL);
 				}
 				else{ drawX = 0; }
 				dc.SetTextForeground(fg);
@@ -1198,22 +1198,19 @@ void KaiTextCtrl::OnScroll(wxScrollWinEvent& event)
 	}
 }
 
-void KaiTextCtrl::GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight, wxDC *dc, bool correct/*=false*/)
+void KaiTextCtrl::GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight, bool correct/*=false*/)
 {
 	wxString txt = textToMesure;
 	txt.Replace("\r", "");
 	txt.Replace("\n", "");
 	txt.Replace("\t", "        ");
-	if (dc)
-		dc->GetTextExtent(txt, textWidth, textHeight);
-	else
-		wxWindow::GetTextExtent(txt, textWidth, textHeight, 0, 0, &font);
+	wxWindow::GetTextExtent(txt, textWidth, textHeight, 0, 0, &font);
 
-	if(correct && (textToMesure[0]=='\\' || textToMesure[0]=='j' || textToMesure[0]=='T' 
-		|| textToMesure[0]=='Ł' || textToMesure[0]=='Y')){
-			(*textWidth)--;
-			//if(textToMesure[0]=='j' && textFont &&textFont->GetFaceName()=="Tahoma"){(*textWidth)--;}
-	}
+	//if(correct && (textToMesure[0]=='\\' || textToMesure[0]=='j' || textToMesure[0]=='T' 
+	//	|| textToMesure[0]=='Ł' || textToMesure[0]=='Y')){
+	//		(*textWidth)--;
+	//		//if(textToMesure[0]=='j' && textFont &&textFont->GetFaceName()=="Tahoma"){(*textWidth)--;}
+	//}
 }
 
 void KaiTextCtrl::SetWindowStyle(long _style){

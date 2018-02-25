@@ -381,11 +381,11 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 						err.Trim();
 						if (SpellErrors[k][s]>0){
 							wxString berr = strings[j].Mid(0, SpellErrors[k][s]);
-							tdc.GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &font);
+							GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &font);
 						}
 						else{ bfw = 0; }
 
-						tdc.GetTextExtent(err, &fw, &fh, NULL, NULL, &font);
+						GetTextExtent(err, &fw, &fh, NULL, NULL, &font);
 						tdc.DrawRectangle(posX + bfw + 3, posY, fw, GridHeight);
 					}
 				}
@@ -403,13 +403,12 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 						wxString bcmp;
 						if (Comparison->at(i)[c]>0){
 							bcmp = strings[j].Mid(0, Comparison->at(i)[c]);
-							tdc.GetTextExtent(bcmp, &bfw, &bfh, NULL, NULL, &font);
+							GetTextExtent(bcmp, &bfw, &bfh, NULL, NULL, &font);
 						}
 						else{ bfw = 0; }
 
-						tdc.GetTextExtent(cmp, &fw, &fh, NULL, NULL, &font);
-						if ((cmp.StartsWith("T") || cmp.StartsWith("Y") || cmp.StartsWith(L"Ł"))){ bfw++; }
-
+						GetTextExtent(cmp, &fw, &fh, NULL, NULL, &font);
+						
 						tdc.DrawText(cmp, posX + bfw + 2, posY);
 						tdc.DrawText(cmp, posX + bfw + 4, posY);
 						tdc.DrawText(cmp, posX + bfw + 2, posY + 2);
@@ -430,7 +429,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			else{ isCenter = !(j == 4); }
 
 			tdc.SetTextForeground((isHeadline) ? headerText : (collis) ? collcol : textcol);
-			if (j == ilcol - 1 && (strings[j].StartsWith("T") || strings[j].StartsWith("Y") || strings[j].StartsWith(L"Ł"))){ posX++; }
+
 			cur = wxRect(posX + 3, posY, GridWidth[j] - 6, GridHeight);
 			tdc.SetClippingRegion(cur);
 			tdc.DrawLabel(strings[j], cur, isCenter ? wxALIGN_CENTER : (wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT));

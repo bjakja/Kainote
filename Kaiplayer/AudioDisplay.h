@@ -250,6 +250,7 @@ public:
 	void GetTimesSelection(int &start,int &end, bool rangeEnd = false);
 	void SetSelection(int start, int end);
 	int GetBoundarySnap(int x,int range,bool shiftHeld,bool start=true, bool keysnap=false);
+	void GetTextExtentPixel(const wxString &text, int *x, int *y);
 	DECLARE_EVENT_TABLE()
 };
 
