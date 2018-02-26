@@ -595,11 +595,11 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		for (size_t i = 0; i < files.size(); i++){
 			choices.Add(files[i].AfterLast('\\').BeforeLast('.'));
 		}
-		if (choices.Index("DeepDark", false) == -1){
-			choices.Insert("DeepDark", 0);
+		if (choices.Index("DarkSentro", false) == -1){
+			choices.Insert("DarkSentro", 0);
 		}
-		if (choices.Index("DeepLight", false) == -1){
-			choices.Insert("DeepLight", 1);
+		if (choices.Index("LightSentro", false) == -1){
+			choices.Insert("LightSentro", 1);
 		}
 		KaiChoice *themeList = new KaiChoice(Themes, 14567, wxDefaultPosition, wxDefaultSize, choices);
 		themeList->SetSelection(themeList->FindString(programTheme));
@@ -632,7 +632,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			wxString originalName = themeList->GetString(themeList->GetSelection());
 			wxString dir = Options.pathfull + "\\Themes\\";
 			wxString copyPath = dir + themeName + ".txt";
-			if (originalName == "DeepDark" || originalName == "DeepLight"){
+			if (originalName == "DarkSentro" || originalName == "LightSentro"){
 				Options.SaveColors(copyPath);
 				List->Enable(true);
 				List->Refresh(false);
@@ -661,9 +661,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 				item->col = Options.GetColor((COLOR)item->colOptNum);
 			}
 			ChangeColors();
-			List->Enable(themeName != "DeepDark" && themeName != "DeepLight");
+			List->Enable(themeName != "DarkSentro" && themeName != "LightSentro");
 		}, 14567);
-		if (programTheme == "DeepDark" || programTheme == "DeepLight"){ List->Enable(false); }
+		if (programTheme == "DarkSentro" || programTheme == "LightSentro"){ List->Enable(false); }
 		Themes->SetSizerAndFit(sizer);
 		List->StartEdition();
 		List->SetSelection(0);

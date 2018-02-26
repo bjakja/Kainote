@@ -764,7 +764,6 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				wxColour kol=(val)? cvalues : (slash)? cnames : ctext;
 				dc.SetTextForeground(kol);
-				//if(isfirst && (parttext.StartsWith(L"T") || parttext.StartsWith(L"Y") || parttext.StartsWith(L"Ł"))){fw++;isfirst=false;}
 				mestext<<parttext;
 				dc.DrawText(parttext,fw+3,posY);
 			}
@@ -810,7 +809,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				wxString &tmp=parttext.RemoveLast(1);
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground((val)? cvalues : ctext);
-				if(tmp.StartsWith("T") || tmp.StartsWith("Y") || tmp.StartsWith(L"Ł")){fw--;}
+				//if(tmp.StartsWith("T") || tmp.StartsWith("Y") || tmp.StartsWith(L"Ł")){fw--;}
 				dc.DrawText(tmp,fw+3,posY);
 				//posX+=fw;
 				mestext<<tmp;
@@ -835,7 +834,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				wxString tmp=(tagtest=="fn")? parttext : parttext.RemoveLast(1);
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground(cnames);
-				dc.DrawText(tmp,fw+2,posY);
+				dc.DrawText(tmp,fw+3,posY);
 				//posX+=fw;
 				mestext<<tmp;
 				if(tagtest=="fn"){parttext="";}
