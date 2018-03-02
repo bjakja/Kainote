@@ -381,7 +381,7 @@ done:
 		ColorSpace = RealColorSpace = ColorCatrixDescription(CS, CR);
 		SubsGrid *grid = ((TabPanel*)rend->GetParent())->Grid;
 		const wxString &colormatrix = grid->GetSInfo("YCbCr Matrix");
-		if ((CS == FFMS_CS_BT709 && colormatrix != "TV.601") || (ColorSpace != colormatrix && CS == FFMS_CS_BT470BG)) {
+		if ((CS == FFMS_CS_BT709 && colormatrix == "TV.601") || (ColorSpace != colormatrix && CS == FFMS_CS_BT470BG)) {
 			if (FFMS_SetInputFormatV(videosource, CS, CR, FFMS_GetPixFmt(""), &errinfo)){
 				wxLogStatus(_("Nie można zmienić macierzy YCbCr"));
 			}

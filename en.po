@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2018-02-26 11:43+0100\n"
-"PO-Revision-Date: 2018-02-26 11:44+0100\n"
+"PO-Revision-Date: 2018-02-28 11:33+0100\n"
 "Last-Translator: Bakura, Areki, duplex, Kostek00, Sacredus\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -186,9 +186,8 @@ msgid "Tryb spektrum"
 msgstr "Spectrum mode"
 
 #: AudioBox.cpp:187
-#, fuzzy
 msgid "Uwydatnienie częstotliwości głosu na spektrum"
-msgstr "Spectrum speach frequency enhancement"
+msgstr "Spectrum speech frequency enhancement"
 
 #: AudioDisplay.cpp:233 VideoRenderer.cpp:107
 msgid "Nie można utwożyć objektu Direct3D"
@@ -309,8 +308,8 @@ msgid ""
 "Co najmniej jeden skrypt z pliku napisów zawiera błędy.\n"
 "Zobacz opisy skryptów, by uzyskać więcej informacji."
 msgstr ""
-"At least one script with a subtitle file contains errors.\n"
-"See descriptions of the script for more information."
+"At least one script from a subtitles file contains errors.\n"
+"See description of the script for more information."
 
 #: Automation.cpp:1084
 msgid "Wybierz edytor skryptów"
@@ -442,7 +441,7 @@ msgid ""
 "do czasu wideo"
 msgstr ""
 "Move the marker\n"
-"to time video"
+"to video time"
 
 #: ChangeTime.cpp:229
 msgid ""
@@ -450,7 +449,7 @@ msgid ""
 "do czasu audio"
 msgstr ""
 "Move the marker\n"
-"to time audio"
+"to audio time"
 
 #: ChangeTime.cpp:240
 msgid "Sposób przesuwania czasów"
@@ -591,7 +590,7 @@ msgid ""
 "(spowalnia przesuwanie czasów)"
 msgstr ""
 "Shift tag  \\move, \\t, \\fad times\n"
-"\vthat its video posiotion don't change.\n"
+"that its video position don't change.\n"
 "(slow downs shifting times)"
 
 #: ChangeTime.cpp:421
@@ -1002,7 +1001,7 @@ msgstr "Select the folder where you want to copy fonts"
 
 #: FontCollector.cpp:205
 msgid "Brak wczytanych napisów, wczytaj napisy albo odznacz tę opcję."
-msgstr "No subtitle loaded, load subtitles or deselect this option."
+msgstr "No subtitles loaded. Load subtitles or deselect this option."
 
 #: FontCollector.cpp:210
 msgid "Wybierz nazwę dla archiwum"
@@ -1506,12 +1505,12 @@ msgstr "Add \\N"
 # Zły: nie mam pojęcia jak to przetłumaczyć, zostawiam jak było
 #: Hotkeys.cpp:182
 msgid "Wstaw różnicę początkową"
-msgstr "instert difference from the start"
+msgstr "insert difference from the start"
 
 # Zły: nie mam pojęcia jak to przetłumaczyć, zostawiam jak było
 #: Hotkeys.cpp:183
 msgid "Wstaw różnicę końcową"
-msgstr "instert difference to the end"
+msgstr "insert difference to the end"
 
 #: Hotkeys.cpp:184
 msgid "Następne niepewne"
@@ -1519,7 +1518,7 @@ msgstr "Next not confirmed line"
 
 #: Hotkeys.cpp:185
 msgid "Następne nieprzetłumaczone"
-msgstr "Next nontranslated"
+msgstr "Next non translated"
 
 #: Hotkeys.cpp:186
 msgid "Ustaw jako niepewne i przejdź dalej"
@@ -1644,7 +1643,7 @@ msgstr "Global hotkey"
 
 #: Hotkeys.cpp:502
 msgid "Skrót pola napisów"
-msgstr "Subtitle grid hotkey"
+msgstr "Subtitles grid hotkey"
 
 #: Hotkeys.cpp:502
 msgid "Skrót pola edycji"
@@ -1667,11 +1666,11 @@ msgstr "Please enter a hotkey for \"%s.\""
 msgid ""
 "Skróty globalne i edytora muszą zawierać modyfikatory (np. Shift, Ctrl, Alt)."
 msgstr ""
-"Global Shortcuts and editor must include modifiers (eg. Shift, Ctrl, Alt)."
+"Global Shortcuts and editor must include modifiers (e.g. Shift, Ctrl, Alt)."
 
 #: Hotkeys.cpp:542
 msgid "Nie możesz użyć skrótów do kopiowania, wycinania i wklejania."
-msgstr "You can't use hotkeys for coping, cuting and pasting."
+msgstr "You can't use hotkeys for coping, cutting and pasting."
 
 #: KaiListCtrl.cpp:103 KaiTextCtrl.cpp:1027 MyTextEditor.cpp:1083
 msgid "&Kopiuj"
@@ -1756,11 +1755,11 @@ msgstr " or "
 
 #: MyTextEditor.cpp:444
 msgid "Sugestie poprawy"
-msgstr "Fix sugestion"
+msgstr "Fix suggestions"
 
 #: MyTextEditor.cpp:1091
 msgid "Szukaj synonimu na synonimy.net"
-msgstr "Search for synonims on synonimy.net"
+msgstr "Search for synonyms on synonimy.net"
 
 #: MyTextEditor.cpp:1094
 #, c-format
@@ -1826,7 +1825,7 @@ msgstr "Audio"
 
 #: OptionsDialog.cpp:177 VideoFfmpeg.cpp:52 kainoteMain.cpp:1623
 msgid "Nie można wczytać opcji audio"
-msgstr "Cannot load audio config"
+msgstr "Cannot load audio configuration"
 
 #: OptionsDialog.cpp:183
 msgid "Wczytywanie posortowanych napisów"
@@ -1866,7 +1865,7 @@ msgid ""
 "(wymaga ponownego otwarcia zakładek)"
 msgstr ""
 "Turn off edits preview on video\n"
-"(re-opening tab is requeried)"
+"(re-opening tab is required)"
 
 #: OptionsDialog.cpp:188
 msgid ""
@@ -1890,7 +1889,7 @@ msgstr "Show original in translation mode"
 
 #: OptionsDialog.cpp:190
 msgid "Używaj skróty klawiszowe numpada w polach tekstowych"
-msgstr "Use numpad shourtcuts in text fields"
+msgstr "Use numpad shortcuts in text fields"
 
 #: OptionsDialog.cpp:191
 msgid "Nie ostrzegaj o niezgodności rozdzielczości"
@@ -1942,7 +1941,7 @@ msgstr "ASS tag replacement:"
 
 #: OptionsDialog.cpp:262
 msgid "Ilość przycisków wstawiających tagi ASS:"
-msgstr "Number of mappable tag buttons:"
+msgstr "Number of mapping tag buttons:"
 
 #: OptionsDialog.cpp:264
 msgid "Poziom śledzenia logów skryptów LUA"
@@ -1950,7 +1949,7 @@ msgstr "LUA scripts tracking level"
 
 #: OptionsDialog.cpp:271
 msgid "Czcionka pola napisów:"
-msgstr "Subtitle grid font:"
+msgstr "Subtitles grid font:"
 
 #: OptionsDialog.cpp:274
 msgid "Sposób wczytywania skryptów autoload"
@@ -2060,7 +2059,7 @@ msgstr "Unsafe (always fast)"
 
 #: OptionsDialog.cpp:399
 msgid "Agresywne (szybkie przy cofaniu)"
-msgstr "Agressive (fast in rewind)"
+msgstr "Aggressive (fast in rewind)"
 
 #: OptionsDialog.cpp:411
 msgid "Funkcja"
@@ -2593,7 +2592,7 @@ msgstr "Tab active background"
 
 #: OptionsDialog.cpp:571
 msgid "Zakładki tło nieaktywnej"
-msgstr "Tab inctive background"
+msgstr "Tab inactive background"
 
 #: OptionsDialog.cpp:572
 msgid "Zakładki tło nieaktywnej po najechaniu"
@@ -2805,11 +2804,11 @@ msgstr "Associations"
 
 #: OptionsDialog.cpp:724
 msgid "Właściwości Napisów"
-msgstr "Properties subtitle ASS"
+msgstr "ASS subtitles properties"
 
 #: OptionsPanels.cpp:28 ScriptInfo.cpp:32
 msgid "Informacje o napisach"
-msgstr "Subtitle info"
+msgstr "Subtitles info"
 
 #: OptionsPanels.cpp:31 ScriptInfo.cpp:41 SubsGrid.cpp:1167
 msgid "Tytuł"
@@ -2850,7 +2849,7 @@ msgstr "Time elapsed: %s"
 
 #: ScriptInfo.cpp:23 kainoteMain.cpp:183
 msgid "Właściwości napisów ASS"
-msgstr "Properties subtitle ASS"
+msgstr "ASS subtitles properties"
 
 #: ScriptInfo.cpp:56
 msgid "Rozdzielczość"
@@ -3454,7 +3453,7 @@ msgstr "Setting times as continues"
 
 #: SubsFile.cpp:40
 msgid "Ustawienie FPSu obliczonego z wideo"
-msgstr "Setting FPS from wideo"
+msgstr "Setting FPS from video"
 
 #: SubsFile.cpp:41
 msgid "Ustawienie własnego FPSu"
@@ -3805,7 +3804,7 @@ msgstr "Text without tags"
 
 #: SubsGrid.cpp:610 Videobox.cpp:936 kainoteMain.cpp:587
 msgid "Wybierz plik napisów"
-msgstr "Choose subtitle file"
+msgstr "Choose subtitles file"
 
 #: SubsGrid.cpp:610
 msgid "Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
@@ -3813,7 +3812,7 @@ msgstr "Subtitle files (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
 
 #: SubsGrid.cpp:778
 msgid "Zapisać plik przed wczytaniem napisów z MKV?"
-msgstr "Save the file before loading the subtitle of MKV?"
+msgstr "Save the file before loading the subtitles of MKV?"
 
 #: SubsGrid.cpp:808 kainoteMain.cpp:946
 msgid "Otwieranie napisów nie powiodło się"
@@ -3832,7 +3831,7 @@ msgstr "Choose new FPS"
 
 #: SubsGrid.cpp:1115
 msgid "FPS napisów"
-msgstr "Subtitle FPS"
+msgstr "Subtitles FPS"
 
 #: SubsGrid.cpp:1117
 msgid "Nowy FPS napisów"
@@ -3985,7 +3984,7 @@ msgid ""
 "Dopasować rozdzielczość do wideo?\n"
 msgstr ""
 "Subtitles and video resolution is different.\n"
-"You can change them now or use subtitle resample.\n"
+"You can change them now or use subtitles resample.\n"
 "\n"
 "Video resolution: %i x %i\n"
 "Subtitles resolution: %i x %i\n"
@@ -4192,7 +4191,7 @@ msgstr "Indexing video"
 #: VideoFfmpeg.cpp:198 VideoFfmpeg.cpp:304
 #, c-format
 msgid "Wystąpił błąd indeksowania: %s"
-msgstr "Indexing error occured: %s"
+msgstr "Indexing error occurred: %s"
 
 #: VideoFfmpeg.cpp:261
 msgid "Wybierz ścieżkę"
@@ -4205,7 +4204,7 @@ msgstr "Indexing canceled by the user"
 #: VideoFfmpeg.cpp:315
 #, c-format
 msgid "Nie można zapisać indeksu, wystąpił błąd %s"
-msgstr "Cannot save index, error %s occured"
+msgstr "Cannot save index, error %s occurred"
 
 #: VideoFfmpeg.cpp:338
 msgid "Nie można utworzyć VideoSource."
@@ -4231,12 +4230,12 @@ msgstr "You cannot get information about the video"
 #: VideoFfmpeg.cpp:425
 #, c-format
 msgid "Wystąpił błąd tworzenia źródła audio: %s"
-msgstr "An error occured when creating audio source: %s"
+msgstr "An error occurred when creating audio source: %s"
 
 #: VideoFfmpeg.cpp:434
 #, c-format
 msgid "Wystąpił błąd konwertowania audio: %s"
-msgstr "An error occured when converting audio: %s"
+msgstr "An error occurred when converting audio: %s"
 
 #: VideoFfmpeg.cpp:448
 msgid "Nie można ustawić opóźnienia, przekracza czas trwania audio"
@@ -4358,7 +4357,7 @@ msgstr "Add B-spline"
 
 #: VideoToolbar.cpp:51
 msgid "Dodaj nowy oddzielny punkt"
-msgstr "Add separete point"
+msgstr "Add separate point"
 
 #: VideoToolbar.cpp:52
 msgid "Usuń element"
@@ -4387,8 +4386,8 @@ msgid ""
 "gdy chcemy przesunąć punkty rysunku,\n"
 "nie łączyć z trzema pierwszymi opcjami"
 msgstr ""
-"Move drawnings.\n"
-"Use only if you want to move drawning points.\n"
+"Move drawings.\n"
+"Use only if you want to move drawing points.\n"
 "Do not use with first three options"
 
 #: VideoToolbar.cpp:59
@@ -4595,7 +4594,7 @@ msgstr ""
 #, c-format
 msgid ""
 "W motywie \"%s\" brakowało część kolorów, zostały doczytane z domyślnego."
-msgstr "In theme \"%s\" some colours was missing, and was loaded from default."
+msgstr "In theme \"%s\" some colors was missing, and was loaded from default."
 
 #: config.cpp:518
 msgid "Nie można zaczytać motywu, zostanie przywrócony domyśny"
@@ -4636,7 +4635,7 @@ msgstr "Cannot enumerate renderer pins"
 
 #: dshowplayer.cpp:166
 msgid "Nie można wyliczyć pinów dsound"
-msgstr "Cannot enumerate dsound pins"
+msgstr "Cannot enumerate Direct Sound pins"
 
 #: dshowplayer.cpp:175
 msgid "Nie można pobrać pinu renderera"
@@ -4716,7 +4715,7 @@ msgstr "Cannot get filter name"
 
 #: dshowplayer.cpp:561
 msgid "Nie można pobrać konfiguracji filtra"
-msgstr "Cannot get filter config"
+msgstr "Cannot get filter configuration"
 
 #: findreplace.cpp:25 findreplace.cpp:212
 msgid "Znajdź i zamień"
@@ -5034,7 +5033,7 @@ msgstr "Set audio with video time"
 
 #: kainoteMain.cpp:158
 msgid "Ustaw znacznik audio z czasem wideo"
-msgstr "Set audio marker with wideo time"
+msgstr "Set audio marker with video time"
 
 #: kainoteMain.cpp:159
 msgid "Powiększ wideo"
@@ -5275,7 +5274,7 @@ msgid ""
 msgstr ""
 "Video files (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
 "(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;"
-"*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"
+"*.rm;*.mpg;*.mpeg;*.3gp;*.avs|All files (*.*)|*.*"
 
 #: kainoteMain.cpp:647
 #, c-format
@@ -5305,7 +5304,7 @@ msgid ""
 "automation\n"
 "i kilka innych pojedynczych funkcji wzięte z Aegisuba -\n"
 msgstr ""
-"Color picker, muxingout subs from mkv, audiobox, audio player, automation\n"
+"Color picker, muxing out subs from mkv, audiobox, audio player, automation\n"
 "and some other features taken from Aegisub -\n"
 
 #: kainoteMain.cpp:667
@@ -5362,7 +5361,7 @@ msgid ""
 "- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój spektrum "
 "audio \n"
 msgstr ""
-"- Kostek00 (found many bugs, had really big influance over audio spectrum "
+"- Kostek00 (found many bugs, had really big influence over audio spectrum "
 "development\n"
 
 #: kainoteMain.cpp:678
@@ -5392,7 +5391,7 @@ msgid ""
 "- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga "
 "w debugowaniu crashy).\n"
 msgstr ""
-"- MatiasMovie (found some crashes and sugessted some improvements, helps "
+"- MatiasMovie (found some crashes and suggessted some improvements, helps "
 "with crash debugging).\n"
 
 #: kainoteMain.cpp:682
@@ -5400,14 +5399,14 @@ msgid ""
 "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy, zrobił "
 "drzewko AVL).\n"
 " \n"
-msgstr "- mas1904 (found som bugs, helps degug crashes, made AVL tree).\n"
+msgstr "- mas1904 (found some bugs, helps debugging crashes, made AVL tree).\n"
 
 #: kainoteMain.cpp:683
 msgid ""
 "- bigdo (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n"
 " \n"
 msgstr ""
-"- bigdo (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n"
+"- bigdo (found some bugs, helps debugging crashes).\n"
 "\n"
 
 #: kainoteMain.cpp:684
@@ -5525,7 +5524,7 @@ msgstr "New"
 
 #: stylestore.cpp:66
 msgid "Usuń wybrany katalog stylów"
-msgstr "Delete chosen styles catalogue"
+msgstr "Delete chosen styles catalog"
 
 #: stylestore.cpp:72
 msgid "Style katalogu:"
@@ -5577,7 +5576,7 @@ msgstr "Clear"
 
 #: stylestore.cpp:158
 msgid "Odepnij okno edycji"
-msgstr "Detatch etition window"
+msgstr "Detach edition window"
 
 #: stylestore.cpp:259 stylestore.cpp:287 stylestore.cpp:502
 #, c-format

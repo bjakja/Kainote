@@ -310,10 +310,10 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 {
 	int id = event.GetId();
 	int Modif = event.GetInt();
-
+	MenuItem *item = Menubar->FindItem(id);
+	
 	TabPanel *tab = GetTab();
 	if (Modif == wxMOD_SHIFT){
-		MenuItem *item = Menubar->FindItem(id);
 		//upewnij się, że da się zmienić idy na nazwy, 
 		//może i trochę spowolni operację ale skończy się ciągłe wywalanie hotkeysów
 		//może od razu funkcji onmaphotkey przekazać item by zrobiła co trzeba
@@ -328,6 +328,8 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		}
 		return;
 	}
+	if (item && !item->enabled)
+		return;
 
 
 	if (id == SaveSubs){
