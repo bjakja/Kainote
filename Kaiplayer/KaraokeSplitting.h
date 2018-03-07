@@ -36,9 +36,12 @@ class Karaoke
 		bool GetLetterAtX(int x, int *syl, int *letter);
 		void GetSylTimes(int i, int &start, int &end);
 		void GetSylVisibleTimes(int i, int &start, int &end);
+		void GetLetters(int line, int nletters, wxString &first, wxString &second);
+		void GetTextStripped(int line, wxString &textStripped);
 		void Join(int line);
-		void ChangeSplit(int line, int nletters);
-		void SplitSyl(int line, int nletters);
+		//void ChangeSplit(int line, int nletters);
+		bool SplitSyl(int line, int nletters);
+		wxUniChar GetNextChar(int *i, const wxString &text);
 		void Clearing();
 
 	private:

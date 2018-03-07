@@ -497,14 +497,15 @@ void AudioDisplay::DoUpdateImage() {
 		// Draw karaoke
 		if (hasKara) {
 			int karstart=selStart;
-			//wxFont karafont(10,wxDEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Verdana"));
 			wxString acsyl;
 			D3DXVECTOR2 v2[2]={D3DXVECTOR2(0,0),D3DXVECTOR2(0,h)};
 			for(size_t j=0; j<karaoke->syls.size(); j++)
 			{
-				acsyl=karaoke->syls[j];
-				int fw, fh;
-				GetTextExtentPixel(acsyl,&fw, &fh);
+				karaoke->GetTextStripped(j, acsyl);
+				
+				int fw=0, fh=0;
+				if (!acsyl.empty())
+					GetTextExtentPixel(acsyl,&fw, &fh);
 
 				float XX=GetXAtMS(karaoke->syltimes[j]);
 				if(XX>=0){
@@ -514,34 +515,36 @@ void AudioDisplay::DoUpdateImage() {
 					d3dLine->Draw(v2,2,syllableBondaresColor);
 					d3dLine->End();
 				}
-				int center=((XX-karstart)-fw)/2;
-				D3DXVECTOR2 v5[2]={D3DXVECTOR2(center+karstart-1,(fh/2)+1), D3DXVECTOR2(center+karstart+fw+2,(fh/2+1))};
-				d3dLine->SetWidth(fh);
-				d3dLine->Begin();
-				d3dLine->Draw(v5,2,syllableBondaresColor);
-				d3dLine->End();
-				d3dLine->SetWidth(1);
-				RECT rect={center+karstart,0,center+karstart+fw,fh};
-				d3dFont9->DrawTextW(NULL, acsyl.wchar_str(), -1, &rect, DT_LEFT, syllableTextColor );
-				//obramowanie aktywynej sylaby
-				if(letter>=0 && syll >=0 && syll==j){
-					int start,end;
-					int fwl, fhl;
-					if(letter==0){fwl=0;}
-					else{ 
-						GetTextExtentPixel(acsyl.Mid(0, letter), &fwl, &fhl); 
-					}
-					
-					karaoke->GetSylTimes(j,start,end);
-					
-					start=GetXAtMS(start);
-					end=GetXAtMS(end);
-
-					int center=start+((end-start-fw)/2);
-					D3DXVECTOR2 v3[2]={D3DXVECTOR2(center+fwl,1),D3DXVECTOR2(center+fwl,fh)};
+				if (fh != 0){
+					int center = ((XX - karstart) - fw) / 2;
+					D3DXVECTOR2 v5[2] = { D3DXVECTOR2(center + karstart - 1, (fh / 2) + 1), D3DXVECTOR2(center + karstart + fw + 2, (fh / 2 + 1)) };
+					d3dLine->SetWidth(fh);
 					d3dLine->Begin();
-					d3dLine->Draw(v3,2,syllableTextColor);
+					d3dLine->Draw(v5, 2, syllableBondaresColor);
 					d3dLine->End();
+					d3dLine->SetWidth(1);
+					RECT rect = { center + karstart, 0, center + karstart + fw, fh };
+					d3dFont9->DrawTextW(NULL, acsyl.wchar_str(), -1, &rect, DT_LEFT, syllableTextColor);
+					//obramowanie aktywynej sylaby
+					if (letter >= 0 && syll >= 0 && syll == j){
+						int start, end;
+						int fwl, fhl;
+						if (letter == 0){ fwl = 0; }
+						else{
+							GetTextExtentPixel(acsyl.Mid(0, letter), &fwl, &fhl);
+						}
+
+						karaoke->GetSylTimes(j, start, end);
+
+						start = GetXAtMS(start);
+						end = GetXAtMS(end);
+
+						int center = start + ((end - start - fw) / 2);
+						D3DXVECTOR2 v3[2] = { D3DXVECTOR2(center + fwl, 1), D3DXVECTOR2(center + fwl, fh) };
+						d3dLine->Begin();
+						d3dLine->Draw(v3, 2, syllableTextColor);
+						d3dLine->End();
+					}
 				}
 				if(j==whichsyl){
 					D3DXVECTOR2 v5[5]={D3DXVECTOR2(karstart+2,1),D3DXVECTOR2(karstart+2,h-2),D3DXVECTOR2(XX-2,h-2),D3DXVECTOR2(XX-2,1),D3DXVECTOR2(karstart+2,1)};
@@ -553,6 +556,10 @@ void AudioDisplay::DoUpdateImage() {
 				karstart=XX;
 			}
 		}
+	}
+	// Draw keyframes
+	if (drawKeyframes && provider->KeyFrames.size() > 0) {
+		DrawKeyframes();
 	}
 
 	// Modified text
@@ -616,10 +623,7 @@ void AudioDisplay::DoUpdateImage() {
 		}
 	}
 
-	// Draw keyframes
-	if (drawKeyframes && provider->KeyFrames.size()>0) {
-		DrawKeyframes();
-	}
+	
 
 	if(cursorPaint){
 		D3DXVECTOR2 v2[2]={D3DXVECTOR2(curpos,0),D3DXVECTOR2(curpos,h)};
@@ -1744,9 +1748,10 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 			else if(hasKara && karaoke->GetLetterAtX(x,&syll,&letter))
 			{
 				if (leftDown){
-					karaoke->SplitSyl(syll, letter);
-					whichsyl=syll;
-					Commit();
+					if (karaoke->SplitSyl(syll, letter)){
+						whichsyl = syll;
+						Commit();
+					}
 				}
 
 

@@ -111,6 +111,7 @@
 	XX( SelectLinesDialog,)\
 	XX( SpellcheckerDialog,)\
 	XX( VideoIndexing,)\
+	XX( SaveWithVideoName,)\
 	XX( OpenAudio,)\
 	XX( AudioFromVideo,)\
 	XX( CloseAudio,)\

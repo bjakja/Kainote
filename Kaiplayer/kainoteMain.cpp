@@ -92,7 +92,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	int StatusBarWidths[9] = { -12, 0, 0, 0, 0, 0, 0, 0, -22 };
 	StatusBar->SetFieldsCount(9, StatusBarWidths);
 	wxString tooltips[] = { "", _("Skala obrazu wideo"), _("Powiększenie wideo"), _("Czas trwania wideo"),
-		_("FPS"), _("Rozdzielczość wideo"), _("Proporcje wideo"), _("Rozdzielczość napisów"), _("Nazwa pliku wideo") };
+		_("Klatki na Sekundę"), _("Rozdzielczość wideo"), _("Proporcje wideo"), _("Rozdzielczość napisów"), _("Nazwa pliku wideo") };
 	StatusBar->SetTooltips(tooltips, 9);
 	//StatusBar->SetLabelBackgroundColour(2,"#FF0000");
 	//StatusBar->SetLabelTextColour(2,"#000000");
@@ -104,15 +104,16 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	mains1->Add(StatusBar,0,wxEXPAND,0);*/
 
 	FileMenu = new Menu();
+	SubsRecMenu = new Menu();
 	FileMenu->AppendTool(Toolbar, OpenSubs, _("&Otwórz napisy"), _("Otwórz plik napisów"), PTR_BITMAP_PNG("opensubs"));
 	FileMenu->AppendTool(Toolbar, SaveSubs, _("&Zapisz"), _("Zapisz aktualny plik"), PTR_BITMAP_PNG("save"), false);
 	FileMenu->AppendTool(Toolbar, SaveAllSubs, _("Zapisz &wszystko"), _("Zapisz wszystkie napisy"), PTR_BITMAP_PNG("saveall"));
 	FileMenu->AppendTool(Toolbar, SaveSubsAs, _("Zapisz &jako..."), _("Zapisz jako"), PTR_BITMAP_PNG("saveas"));
 	FileMenu->AppendTool(Toolbar, SaveTranslation, _("Zapisz &tłumaczenie"), _("Zapisz tłumaczenie"), PTR_BITMAP_PNG("savetl"), false);
-	SubsRecMenu = new Menu();
-	//AppendRecent();
 	FileMenu->AppendTool(Toolbar, RecentSubs, _("Ostatnio otwa&rte napisy"), _("Ostatnio otwarte napisy"), PTR_BITMAP_PNG("recentsubs"), true, SubsRecMenu);
 	FileMenu->AppendTool(Toolbar, RemoveSubs, _("Usuń napisy z e&dytora"), _("Usuń napisy z edytora"), PTR_BITMAP_PNG("close"));
+	FileMenu->Append(SaveWithVideoName, _("Zapisuj napisy z nazwą wideo"), _("Zapisuj napisy z nazwą wideo"), true, PTR_BITMAP_PNG("SAVEWITHVIDEONAME"), NULL, ITEM_CHECK)->Check(Options.GetBool(SubsAutonaming));
+	Toolbar->AddID(SaveWithVideoName);
 	FileMenu->Append(9989, _("Pokaż / Ukryj okno logów"));
 	FileMenu->AppendTool(Toolbar, Settings, _("&Ustawienia"), _("Ustawienia programu"), PTR_BITMAP_PNG("SETTINGS"));
 	FileMenu->AppendTool(Toolbar, Quit, _("Wyjści&e\tAlt-F4"), _("Zakończ działanie programu"), PTR_BITMAP_PNG("exit"));
@@ -416,20 +417,21 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			adisp->ChangePosition(time);
 		}
 	}
-	else if (id == VideoIndexing){
-		toolitem *ToolItem = Toolbar->FindItem(VideoIndexing);
-		MenuItem *Item = Menubar->FindItem(VideoIndexing);
+	else if (id == VideoIndexing || id == SaveWithVideoName){
+		toolitem *ToolItem = Toolbar->FindItem(id);
+		MenuItem *Item = Menubar->FindItem(id);
+		CONFIG conf = (id == VideoIndexing) ? VideoIndex : SubsAutonaming;
 		if (Modif == 1000 && ToolItem){
 			if (Item)
 				Item->Check(ToolItem->toggled);
-			Options.SetBool(VideoIndex, ToolItem->toggled);
+			Options.SetBool(conf, ToolItem->toggled);
 		}
 		else if(Item){
 			if (ToolItem){
 				ToolItem->toggled = Item->IsChecked();
 				Toolbar->Refresh(false);
 			}
-			Options.SetBool(VideoIndex, Item->IsChecked());
+			Options.SetBool(conf, Item->IsChecked());
 		}
 	}
 	else if (id == VideoZoom){
@@ -559,8 +561,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	else if (id == ID_MOVE){
 		tab->ShiftTimes->OnOKClick(event);
 	}
-
-
+	
 }
 //Stałe elementy menu które nie ulegają wyłączaniu
 void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
@@ -1715,7 +1716,7 @@ void kainoteFrame::OnMenuOpened(MenuEvent& event)
 	//kolejno numery id
 	char form = tab->Grid->subsFormat;
 	bool tlmode = tab->Grid->hasTLMode;
-	for (int i = SaveSubs; i <= ViewSubs; i++){//po kolejne idy zajrzyj do enuma z pliku h, ostatni jest Automation
+	for (int i = SaveSubs; i <= ViewSubs; i++){//po kolejne idy zajrzyj do enuma z pliku h, ostatnim jest Automation
 		enable = true;
 
 		if (i >= ASSProperties&&i < ConvertToASS){ enable = form < SRT; }//menager stylów i sinfo

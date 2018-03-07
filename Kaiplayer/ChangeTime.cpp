@@ -503,10 +503,7 @@ void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
 		CorTime->SetSelection((secondWindow) ? secondWindow->CorTime->GetSelection() : Options.GetInt(MoveTimesCorrectEndTimes));
 	}
 	int enables = Options.GetInt(PostprocessorEnabling);
-	/*if(((enables & 16) && !LeadIn) || ( !(enables & 16) && LeadIn)){
-		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,22999); 
-		CollapsePane(evt);
-	}*/
+	
 	if(LeadIn && secondWindow && secondWindow->LeadIn){
 		LeadIn->SetValue((secondWindow)? secondWindow->LeadIn->GetValue() : (enables & 1)>0);
 		LeadOut->SetValue((secondWindow)? secondWindow->LeadOut->GetValue() : (enables & 2)>0);

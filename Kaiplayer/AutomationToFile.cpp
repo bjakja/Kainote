@@ -847,78 +847,66 @@ namespace Auto{
 		set_field(L, "text", "");
 		set_field(L, "text_stripped", "");
 		lua_rawseti(L, -2, kcount++);
-
-		wxStringTokenizer ktok(e->adial->Text,"\\",wxTOKEN_STRTOK);
-
-		bool inside=false;
-		bool valid=false;
+		wxString tags[] = { "kf", "ko", "k", "K" };
+		e->adial->ParseTags(tags, 4);
+		ParseData *Data = e->adial->parseData;
+		//wxStringTokenizer ktok(e->adial->Text,"\\",wxTOKEN_STRTOK);
+		const wxString & text = e->adial->Text;
+		size_t lastPosition = 0;
 		wxString rest;
 		//wxString deb;
-		wxRegEx reg(_T("\\{[^\\{]*\\}"),wxRE_ADVANCED);
+		wxRegEx reg(_T("\\{[^\\}]*\\}"),wxRE_ADVANCED);
+		size_t tagssize = Data->tags.size();
+			for (size_t i = 0; i < tagssize; i++) {
 
-		while (ktok.HasMoreTokens()) {
-			wxString tekst = ktok.NextToken();
-			//deb<<tekst<<"@";
-			if(inside){
-				if(IsKtag(tekst, "kf", &ktag, &rest)||IsKtag(tekst, "ko", &ktag, &rest)||
-					IsKtag(tekst, "k", &ktag, &rest)||IsKtag(tekst, "K", &ktag, &rest)){
-						if(rest.Find('}') != -1){tekst="}"+rest.AfterFirst('}');}
-						kdur=wxAtoi(rest);
-						kdur*=10;
-						valid=true;
-
-				}else{
-					ktext << "\\" << tekst.BeforeFirst('}') <<"}";
-					if(tekst.Find('}') != -1){tekst="}"+tekst.AfterFirst('}');}
+			size_t nextKstart = lastPosition;
+			if(i < tagssize-1){
+				nextKstart = Data->tags[i + 1]->startTextPos;
+				wxString newtxt = text.Mid(lastPosition, nextKstart - lastPosition);
+				size_t bracketstartpos = newtxt.Find('{', true);
+				if (bracketstartpos == wxNOT_FOUND){
+					size_t bracketendpos = newtxt.Find('}', true);
+					size_t firstSlash = newtxt.find(L'//', bracketendpos + 1);
+					if (firstSlash != wxNOT_FOUND)
+						nextKstart = firstSlash - 1;
+				}
+				else{
+					nextKstart = lastPosition + bracketstartpos - 1;
 				}
 
-				if(tekst.Find('}') != -1){ 
-					if(tekst.Find('{',true) != -1){ tekst=tekst.BeforeLast('{');}else{inside=false;}
-					if(tekst.StartsWith("}")){tekst=tekst.Mid(1);}
-					ktext+=tekst;
-					if(ktext.StartsWith("\\")){ktext.Prepend("{");}
+			}else 
+				nextKstart = text.Len();
 
-					ktext_stripped = ktext;
-					reg.ReplaceAll(&ktext_stripped,_T(""));
-					//wxLogMessage(ktext_stripped+", "+ktext);
-					//deb << ktext<<"@";
-					if(valid){
-						lua_createtable(L, 0, 6);
-						set_field(L, "duration", kdur);
-						set_field(L, "start_time", ktime);
-						set_field(L, "end_time", ktime+=kdur);
-						set_field(L, "tag", ktag.mb_str(wxConvUTF8).data());
-						set_field(L, "text", ktext.mb_str(wxConvUTF8).data());
-						set_field(L, "text_stripped", ktext_stripped.mb_str(wxConvUTF8).data());
-						lua_rawseti(L, -2, kcount++);
-						valid=false;
-					}
-					ktext_stripped="";
-					ktext="";
-				}
+			TagData * tdata = Data->tags[i];
 
-
-			}
-
-			else if(tekst.Find('{') != -1){
-				inside=true;
-				tekst=tekst.BeforeFirst('{');
-				ktext+=tekst;
-				ktext_stripped=tekst;
-			}
-			else{
-				ktext+=tekst;
-				ktext_stripped=tekst;
-			}
-
-
+			//size_t klen = tdata->value.Len() + tdata->tagName.Len();
+			kdur = wxAtoi(tdata->value);
+			kdur *= 10;
+			ktext = text.Mid(lastPosition, tdata->startTextPos - lastPosition - tdata->tagName.Len()-1);
+			size_t newStart = tdata->startTextPos + tdata->value.Len();
+			ktext += text.Mid(newStart, nextKstart - newStart + 1);
+			ktext.Replace("{}", "");
+			ktext_stripped = ktext;
+			reg.ReplaceAll(&ktext_stripped, _T(""));
+			//wxLogStatus("Ktext = %s,\nktext_stripped = %s", ktext, ktext_stripped);
+			lua_createtable(L, 0, 6);
+			set_field(L, "duration", kdur);
+			set_field(L, "start_time", ktime);
+			set_field(L, "end_time", ktime += kdur);
+			set_field(L, "tag", tdata->tagName.mb_str(wxConvUTF8).data());
+			set_field(L, "text", ktext.mb_str(wxConvUTF8).data());
+			set_field(L, "text_stripped", ktext_stripped.mb_str(wxConvUTF8).data());
+			lua_rawseti(L, -2, kcount++);
+			
+			lastPosition = nextKstart + 1;
+			
 		}
 		if(kcount<2){
 			ktext_stripped = e->adial->Text;
 			reg.ReplaceAll(&ktext_stripped,_T(""));
 
 			lua_createtable(L, 0, 6);
-			set_field(L, "duration", (e->adial->End.mstime-e->adial->Start.mstime));
+			set_field(L, "duration", (e->adial->End.mstime - e->adial->Start.mstime));
 			set_field(L, "start_time", e->adial->Start.mstime);
 			set_field(L, "end_time", e->adial->End.mstime);
 			set_field(L, "tag", "k");

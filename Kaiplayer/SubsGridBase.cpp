@@ -1349,18 +1349,18 @@ bool SubsGridBase::SetTlMode(bool mode)
 			file->subs->sinfo.erase(file->subs->sinfo.begin() + iinf);
 		}
 
-		for (int i = 0; i < GetCount(); i++)
+		for (int i = 0; i < file->GetAllCount(); i++)
 		{
-			Dialogue *dial = GetDialogue(i);
+			Dialogue *dial = file->GetDialogueByKey(i);
 			Dialogue *dialc = NULL;
 			if (dial->TextTl != "")
 			{
-				dialc = CopyDialogue(i);
+				dialc = file->CopyDialogueByKey(i);
 				dialc->Text = dialc->TextTl;
 				dialc->TextTl = "";
 			}
 			if (dial->State >= 4){
-				if (!dialc){ dialc = CopyDialogue(i); }
+				if (!dialc){ dialc = CopyDialogueByKey(i); }
 				dialc->State -= 4;
 			}
 		}

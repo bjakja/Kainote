@@ -454,7 +454,7 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 				wxString tagName = tags[i];
 				int tagLen = tagName.Len();
 				if(tag.StartsWith(tagName) && (tag[tagLen] == '(' || 
-					wxString(tag[tagLen]).IsNumber() || tagName == "fn")){
+					wxIsdigit(tag[tagLen]) || tagName == "fn")){
 
 					TagData *newTag = new TagData(tagName, pos+tagLen);
 					wxString tagValue = tag.Mid(tagLen);
@@ -465,6 +465,15 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 						newTag->startTextPos++;
 						newTag->PutValue(tagValue.After('(').BeforeFirst(')'), true);
 					}else{
+						if (!tagValue.IsNumber()){ 
+							wxString newTagValue;
+							for (auto & ch : tagValue){
+								if (!wxIsdigit(ch))
+									break;
+								newTagValue += ch;
+							}
+							tagValue = newTagValue;
+						}
 						newTag->PutValue(tagValue);
 					}
 					parseData->AddData(newTag);
