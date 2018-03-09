@@ -679,7 +679,8 @@ void VideoCtrl::SetFullscreen(int monitor)
 		block = false;
 		RefreshTime();
 		if(GetState()==Playing && !TD->panel->IsShown()){vtime.Start(1000);}
-		//if(GetState()==Paused){Kp->Render();}
+		if (!Kai->GetTab()->editor)
+			TD->HideToolbar(true);
 		if(monitor && Kai->GetTab()->editor){
 			Hide();
 			GetParent()->Layout();

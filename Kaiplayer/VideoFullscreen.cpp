@@ -104,3 +104,19 @@ void Fullscreen::OnSize()
 	if(vToolbar->IsShown()){vToolbar->SetSize(asize.x, 22);}
 	panel->SetSize(0, asize.y - panelsize, asize.x, panelsize);
 }
+
+void Fullscreen::HideToolbar(bool hide){
+	if (hide && panelsize == 44 || !hide && panelsize == 66)
+		return;
+	Videolabel->Show(!hide);
+	if (hide){
+		panelsize = 44;
+	}
+	else{
+		panelsize = 66;
+	}
+	OnSize();
+	VideoCtrl *vc = (VideoCtrl*)vb;
+	vc->UpdateVideoWindow();
+}
+

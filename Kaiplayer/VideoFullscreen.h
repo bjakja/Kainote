@@ -41,6 +41,7 @@ public:
 	wxPanel* panel;
     VideoToolbar *vToolbar;
 	void OnSize();	
+	void HideToolbar(bool hide);
 private:
 	
     wxWindow *vb;

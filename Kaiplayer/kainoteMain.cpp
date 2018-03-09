@@ -1516,6 +1516,8 @@ void kainoteFrame::HideEditor(bool save)
 		Label();
 		if (cur->Video->GetState() != None){ cur->Video->ChangeVobsub(); }
 		SetSubsResolution(false);
+		if (cur->Video->isFullscreen)
+			cur->Video->TD->HideToolbar(false);
 	}
 	else{//Wyłączanie edytora
 		cur->Video->panelHeight = 44;
@@ -1550,6 +1552,9 @@ void kainoteFrame::HideEditor(bool save)
 		if (cur->Video->GetState() != None){ cur->Video->ChangeVobsub(true); }
 		//cur->Video->vToolbar->Enable(false);
 		SetStatusText("", 7);
+		StatusBar->SetLabelTextColour(5, WindowText);
+		if (cur->Video->isFullscreen)
+			cur->Video->TD->HideToolbar(true);
 	}
 	UpdateToolbar();
 	if (save){ Options.SetBool(EditorOn, cur->editor); Options.SaveOptions(true, false); }

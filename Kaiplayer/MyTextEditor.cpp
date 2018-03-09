@@ -697,14 +697,16 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 		for(int g=0;g<spelllen; g+=2)
 		{
 			int fsty=FindY(errors[g]);
-			wxString ftext=MText.SubString(wraps[fsty],errors[g]-1);
 			if(wraps[fsty]>=errors[g]){fw=0;}
-			else{GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font);}
-			int scndy=FindY(errors[g+1]-1);
-			wxString etext=MText.SubString(errors[g], (fsty==scndy)?errors[g+1]-1 : wraps[fsty+1]-1);
+			else{
+				wxString ftext = MText.SubString(wraps[fsty], errors[g] - 1);
+				GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font);
+			}
+			int scndy=FindY(errors[g+1]);
+			wxString etext=MText.SubString(errors[g], (fsty==scndy)?errors[g+1] : wraps[fsty+1]);
 			GetTextExtent(etext, &fww, &fh, NULL, NULL, &font);
 			for(int q=fsty+1; q<=scndy; q++){
-				int rest= (q==scndy)? errors[g+1]-1 : wraps[q+1]-1;
+				int rest= (q==scndy)? errors[g+1] : wraps[q+1];
 				wxString btext=MText.SubString(wraps[q], rest);
 				GetTextExtent(btext, &fwww, &fh, NULL, NULL, &font);
 				dc.DrawRectangle(3, ((q*Fheight) + 1) - scPos, fwww, Fheight);
@@ -775,7 +777,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			parttext="";
 			mestext="";
 		}
-		if (posY + Fheight<0){
+		/*if (posY + Fheight<0){
 			if (ch == '{')
 				tagi = true;
 			else if (ch == '}')
@@ -783,7 +785,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 
 			wchar++;
 			continue;
-		}
+		}*/
 
 		if (hasFocus && (Cursor.x + Cursor.y == wchar)){
 			if(mestext+parttext==""){fw=0;}
@@ -799,29 +801,22 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				wxString bef=parttext.BeforeLast('{');
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground(ctext);
-				//if(isfirst && (bef.StartsWith("T") || bef.StartsWith("Y") || bef.StartsWith(L"Ł"))){fw++;isfirst=false;}
 				dc.DrawText(bef,fw+3,posY);
-				//posX+=fw;
 				mestext<<bef;
 				parttext="{";
 			}else{
-				//if(val){
 				wxString &tmp=parttext.RemoveLast(1);
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground((val)? cvalues : ctext);
-				//if(tmp.StartsWith("T") || tmp.StartsWith("Y") || tmp.StartsWith(L"Ł")){fw--;}
 				dc.DrawText(tmp,fw+3,posY);
-				//posX+=fw;
 				mestext<<tmp;
 				parttext="}";
-				//}
 				tagi=slash=val=false;
 			}
 			GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 			dc.SetTextForeground(ccurlybraces);
 			dc.DrawText(parttext,fw+3,posY);
 			mestext<<parttext;
-			//posX+=fw;
 			parttext="";
 			val=false;
 			isfirst=false;
@@ -851,7 +846,6 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground(cvalues);
 				dc.DrawText(tmp,fw+3,posY);
-				//posX+=fw;
 				mestext<<tmp;
 				parttext=ch;
 				if(ch!=','){val=false;}
@@ -965,34 +959,67 @@ void MTextEditor::Replace(int start, int end, wxString rep)
 void MTextEditor::CheckText()
 {
 	if(MText==""){return;}
-	wxString notchar="/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{} ";
+	//wxString notchar="/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{} ";
 	wxString text=MText;
 	errors.clear();
 	errs.Clear();
 	text+=" ";
 	bool block=false;
 	wxString word="";
-	bool slash=false;
+	//bool slash=false;
 	int lasti=0;
 	int firsti=0;
+	int lastStartBracket = -1;
+	int lastEndBracket = -1;
+	int lastStartCBracket = -1;
+	int lastStartTBracket = -1;
+	int lastEndCBracket = -1;
 	for(size_t i = 0; i<text.Len();i++)
 	{
 		wxUniChar ch=text.GetChar(i);
-		if(notchar.Find(ch)!=-1&&!block){
+		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT)/*notchar.Find(ch)!=-1*/ && !block){
 			if(word.Len()>1){
 				if(word.StartsWith("'")){word=word.Remove(0,1);}
 				if(word.EndsWith("'")){word=word.RemoveLast(1);}
 				word.Trim(false);word.Trim(true);
 				bool isgood=SpellChecker::Get()->CheckWord(word);
-				if (!isgood){errs.Add(word);errors.push_back(firsti);errors.push_back(lasti+1);}
+				if (!isgood){errs.Add(word);errors.push_back(firsti);errors.push_back(lasti);}
 			}
 			word="";firsti=i+1;
 		}
-		if (ch == '{'){ block = true; continue; }
-		else if (ch == '}'){ block = false; firsti = i + 1; word = ""; continue; }
+		if (block){
+			if (ch == '{'){ errors.push_back(lastStartCBracket); errors.push_back(lastStartCBracket); errs.Add(""); }
+			if (ch == '\\' && text[(i == 0) ? 0 : i - 1] == '\\'){ errors.push_back(i); errors.push_back(i); errs.Add(""); }
+			if (ch == '('){
+				if (i > 1 && text[i - 2] == '\\' && text[i - 1]){ lastStartTBracket = i; continue; }
+				if (lastStartBracket > lastEndBracket){
+					errors.push_back(lastStartBracket); errors.push_back(lastStartBracket); errs.Add("");
+				}
+				lastStartBracket = i;
+			}
+			if (ch == ')'){
+				if (lastStartBracket < lastEndBracket || lastStartBracket < 0){
+					if (lastStartTBracket > 0 && (lastStartTBracket < lastEndBracket || lastStartBracket < lastStartTBracket)){
+						lastStartTBracket = -1; continue;
+					}
+					errors.push_back(i); errors.push_back(i); errs.Add("");
+				}
+				lastEndBracket = i;
+			}
+		}
+		if (!block && ch == '}'){
+			errors.push_back(i); errors.push_back(i); errs.Add("");
+		}
+		if (lastStartTBracket >= 0 && ch == '{' || ch == '}'){
+			errors.push_back(lastStartTBracket); errors.push_back(lastStartTBracket); errs.Add("");
+			lastStartTBracket = -1;
+		}
+		if (ch == '{'){ block = true; lastStartCBracket = i; continue; }
+		else if (ch == '}'){ block = false; lastEndCBracket = i; firsti = i + 1; word = ""; continue; }
 
-		if(notchar.Find(ch)==-1&&text.GetChar((i==0)? 0 : i-1)!='\\'&&!block){word<<ch;lasti=i;}
-		else if(!block&&text.GetChar((i==0)? 0 : i-1)=='\\'){
+		if (!block && /*notchar.Find(ch)==-1*/ !iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) &&
+			text.GetChar((i == 0) ? 0 : i - 1) != '\\'){ word << ch; lasti = i; }
+		else if(!block && text.GetChar((i==0)? 0 : i-1)=='\\'){
 			word="";
 			if(ch == 'N' || ch == 'n' || ch =='h'){
 				firsti=i + 1;
@@ -1002,8 +1029,10 @@ void MTextEditor::CheckText()
 			}
 		}
 	}
-	//Refresh(false);
-
+	
+	if (lastStartCBracket > lastEndCBracket){ errors.push_back(lastStartCBracket); errors.push_back(lastStartCBracket); errs.Add(""); }
+	if (lastStartBracket > lastEndBracket){ errors.push_back(lastStartBracket); errors.push_back(lastStartBracket); errs.Add(""); }
+	if (lastStartTBracket >= 0){ errors.push_back(lastStartTBracket); errors.push_back(lastStartTBracket); errs.Add(""); }
 }
 
 void MTextEditor::OnKillFocus(wxFocusEvent& event)
@@ -1210,11 +1239,8 @@ int MTextEditor::FindError(wxPoint mpos,bool mouse)
 		cpos=mpos;
 	}else if(mouse && !HitTest(mpos, &cpos)){return-1;}
 
-	//wxLogStatus("ht");
 	for(size_t i=0; i<errors.size(); i+=2){
-		//wxLogStatus("not found yet%i %i %i",EB->line.spells[i],EB->line.spells[i+1],cpos.x);
 		if(cpos.x >= errors[i] && cpos.x <= errors[i+1]){
-			//wxLogStatus("found %i",i);
 			return i/2;
 		}
 	}

@@ -929,7 +929,9 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 			spectrumRenderer = new AudioSpectrum(provider);
 		spectrumRenderer->SetScaling(scale);
 		D3DLOCKED_RECT d3dlr;
-		HRN(spectrumSurface->LockRect( &d3dlr,0, D3DLOCK_NOSYSLOCK), _("Nie można zablokować bufora tekstury"));
+		try{
+			HRN(spectrumSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Nie można zablokować bufora tekstury"));
+		} catch (...){}
 		byte *img = static_cast<byte *>(d3dlr.pBits);
 		int dxw=d3dlr.Pitch/4;
 		
@@ -1615,7 +1617,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 		// Zoom or scroll?
 		bool zoom = shiftDown;
 		if (Options.GetBool(AudioWheelDefaultToZoom)) zoom = !zoom;
-
+		wxLogStatus("shift %i, %i", shiftDown, event.ShiftDown());
 		// Zoom
 		if (zoom) {
 
@@ -2360,14 +2362,6 @@ void AudioDisplay::DrawKeyframes() {
 	}
 	d3dLine->End();
 }
-/*
-void AudioDisplay::OnLostCapture(wxMouseCaptureLostEvent &event)
-{
-wxLogStatus("lost capture");
-ReleaseMouse();
-
-}
-*/
 
 ///////////////
 // Event table

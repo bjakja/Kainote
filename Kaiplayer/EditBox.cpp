@@ -1298,15 +1298,9 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		line->Start=StartEdit->GetTime(1);
 		if(line->Start>line->End){
 			if(StartEdit->HasFocus()){
-				//line->End=line->Start;
-				//EndEdit->SetTime(line->End,false,2);
-				//EndEdit->MarkDirty();
 				StartEdit->SetForegroundColour(WindowWarningElements);
 				StartEdit->changedBackGround=true;
 			}else{
-				//line->Start=line->End;
-				//StartEdit->SetTime(line->End,false,1);
-				//StartEdit->MarkDirty();
 				EndEdit->SetForegroundColour(WindowWarningElements);
 				EndEdit->changedBackGround=true;
 			}
@@ -1325,7 +1319,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		EndEdit->SetTime(line->End,false,2);
 		EndEdit->MarkDirty();
 	}
-	if(durFocus || startEndFocus){
+	if (durFocus || startEndFocus){
 		if(ABox && ABox->IsShown()){ABox->audioDisplay->SetDialogue(line,ebrow);}
 		UpdateChars((TextEditOrig->IsShown() && line->TextTl!="")? line->TextTl : line->Text);
 	}
@@ -1336,6 +1330,8 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		Send(EDITBOX_LINE_EDITION, false, false, true);
 		OnVideo = tmpOnVideo;
 		EditCounter=1;
+		if(ABox && ABox->audioDisplay->hasKara)
+			ABox->audioDisplay->SetDialogue(line, ebrow);
 	}else{EditCounter++;}
 
 	if(Visual > 0){

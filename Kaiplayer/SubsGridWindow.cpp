@@ -24,6 +24,7 @@
 #include "SubsGridPreview.h"
 #include <wx/regex.h>
 
+
 SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style)
 	:SubsGridBase(parent, id, pos, size, style)
 {
@@ -278,15 +279,16 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				reg.ReplaceAll(&txt, chtag);
 				if (showOriginal){ reg.ReplaceAll(&txttl, chtag); }
 			}
-			if (txt.Len()>1000){ txt = txt.SubString(0, 1000) + "..."; }
+			
+			if (SpellCheckerOn && (!hasTLMode && txt != "" || hasTLMode && txttl != "")){
+				if (SpellErrors[k].size()<2){
+					CheckText(txt, SpellErrors[k], chtag);
+				}
+			}
+			if (txt.Len() > 1000){ txt = txt.SubString(0, 1000) + "..."; }
 			strings.push_back((!showOriginal && hasTLMode && txttl != "") ? txttl : txt);
 			if (showOriginal){ strings.push_back(txttl); }
 
-			if (SpellCheckerOn && (!hasTLMode && txt != "" || hasTLMode && txttl != "")){
-				if (SpellErrors[k].size()<2){
-					CheckText(strings[strings.size() - 1], SpellErrors[k], chtag);
-				}
-			}
 			isSelected = file->IsSelectedByKey(i);
 			comparison = (Comparison && Comparison->at(i).size()>0);
 			bool comparisonMatch = (Comparison && !Comparison->at(i).differences);
@@ -1106,20 +1108,24 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &tagsReplacement)
 {
 
-	wxString notchar = "/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{} ";
+	//wxString notchar = "/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{} ";
 	bool repltags = hideOverrideTags && tagsReplacement.Len() > 0;
 	text += " ";
 	bool block = false;
-	wxString word = "";
-	//wxString deb;
-	bool slash = false;
+	wxString word;
+	//bool bracket = false;
 	int lasti = 0;
 	int firsti = 0;
+	int lastStartBracket = -1;
+	int lastEndBracket = -1;
+	int lastStartTBracket = -1;
+	int lastStartCBracket = -1;
+	int lastEndCBracket = -1;
+
 	for (size_t i = 0; i<text.Len(); i++)
 	{
-		wxUniChar ch = text.GetChar(i);
-		
-		if (notchar.Find(ch) != -1 && !block){
+		const wxUniChar &ch = text[i];
+		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT)/*notchar.Find(ch) != -1*/ && !block){
 			if (word.Len()>1){
 				if (word.StartsWith("'")){ word = word.Remove(0, 1); }
 				if (word.EndsWith("'")){ word = word.RemoveLast(1); }
@@ -1130,13 +1136,41 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 			}
 			word = ""; firsti = i + 1;
 		}
-		if (ch == '{'){ block = true; continue; }
-		else if (ch == '}'){ block = false; firsti = i + 1; word = ""; continue; }
+		if (block){
+			if (ch == '{'){ errs.push_back(lastStartCBracket); errs.push_back(lastStartCBracket); }
+			if (ch == '\\' && text[(i == 0) ? 0 : i - 1] == '\\'){ errs.push_back(i); errs.push_back(i); }
+			if (ch == '('){
+				if (i > 1 && text[i - 2] == '\\' && text[i - 1]){ lastStartTBracket = i; continue; }
+				if (lastStartBracket > lastEndBracket){
+					errs.push_back(lastStartBracket); errs.push_back(lastStartBracket);
+				}
+				lastStartBracket = i;
+			}
+			if (ch == ')'){
+				if ((lastStartBracket < lastEndBracket || lastStartBracket < 0)){
+					if (lastStartTBracket > 0 && (lastStartTBracket < lastEndBracket || lastStartBracket <lastStartTBracket)){
+						lastStartTBracket = -1; continue;
+					}
+					errs.push_back(i); errs.push_back(i);
+				}
+				
+				lastEndBracket = i;
+			}
+		}
+		if (!block && ch == '}'){
+			errs.push_back(i); errs.push_back(i);
+		}
+		if (lastStartTBracket >= 0 && ch == '{' || ch == '}'){
+			errs.push_back(lastStartTBracket); errs.push_back(lastStartTBracket);
+			lastStartTBracket = -1;
+		}
+		if (ch == '{'){ block = true; lastStartCBracket = i; continue; }
+		else if (ch == '}'){ block = false; lastEndCBracket = i; firsti = i + 1; word = ""; continue; }
 		else if (repltags && tagsReplacement[0] == ch && text.Mid(i, tagsReplacement.Len()) == tagsReplacement){
 			firsti = i + tagsReplacement.Len(); word = ""; continue;
 		}
-
-		if (notchar.Find(ch) == -1 && text.GetChar((i == 0) ? 0 : i - 1) != '\\' && !block){ word << ch; lasti = i; }
+		
+		if (!block && !iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) /*notchar.Find(ch) == -1*/ && text.GetChar((i == 0) ? 0 : i - 1) != '\\'){ word << ch; lasti = i; }
 		else if (!block && text.GetChar((i == 0) ? 0 : i - 1) == '\\'){
 			word = "";
 			if (ch == 'N' || ch == 'n' || ch == 'h'){
@@ -1148,6 +1182,9 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 			}
 		}
 	}
+	if (lastStartCBracket > lastEndCBracket){ errs.push_back(lastStartCBracket); errs.push_back(lastStartCBracket); }
+	if (lastStartBracket > lastEndBracket){ errs.push_back(lastStartBracket); errs.push_back(lastStartBracket); }
+	if (lastStartTBracket >= 0){ errs.push_back(lastStartTBracket); errs.push_back(lastStartTBracket); }
 	if (errs.size()<2){ errs.push_back(0); }
 
 }
