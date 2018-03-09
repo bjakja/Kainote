@@ -1519,7 +1519,7 @@ int VideoRend::GetVolume()
 
 void VideoRend::MovePos(int cpos)
 {	
-	if(vstate==Playing){return;}
+	if (vstate == Playing || vstate == None){ return; }
 	if(!IsDshow){
 		if(!VFF->isBusy){
 			lastframe=MID(0,lastframe+cpos,VFF->NumFrames-1);

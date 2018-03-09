@@ -140,6 +140,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 			int key = evt.GetId() - 10276;
 			wxKeyEvent kevt;
 			kevt.m_uniChar = key;
+			kevt.m_keyCode = key;
 			OnKeyEvent(kevt);
 			if(kevt.GetSkipped()){
 				evt.Skip();

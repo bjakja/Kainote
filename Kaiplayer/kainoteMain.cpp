@@ -392,7 +392,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	else if (id == PlayPauseG){
 		tab->Video->Pause();
 	}
-	else if (id == PreviousFrame || id == NextFrame){
+	else if ((id == PreviousFrame || id == NextFrame)){
 		tab->Video->MovePos((id == PreviousFrame) ? -1 : 1);
 	}
 	else if (id == SetStartTime || id == SetEndTime){
@@ -1551,8 +1551,8 @@ void kainoteFrame::HideEditor(bool save)
 		if (cur->VideoName != ""){ Label(0, true); }
 		if (cur->Video->GetState() != None){ cur->Video->ChangeVobsub(true); }
 		//cur->Video->vToolbar->Enable(false);
-		SetStatusText("", 7);
 		StatusBar->SetLabelTextColour(5, WindowText);
+		SetStatusText("", 7);
 		if (cur->Video->isFullscreen)
 			cur->Video->TD->HideToolbar(true);
 	}

@@ -375,7 +375,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	MarginREdit->SetInt(line->MarginR);
 	MarginVEdit->SetInt(line->MarginV);
 	EffectEdit->ChangeValue(line->Effect);
-
+	TextEdit->SetTemplateColorizing(line->Effect->StartsWith("template") || line->Effect->StartsWith("code"));
 	SetTextWithTags();
 
 	if(DoubtfulTL->IsShown()){

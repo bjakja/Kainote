@@ -28,7 +28,7 @@
 
 wxDEFINE_EVENT(CURSOR_MOVED, wxCommandEvent);
 
-
+wxString MTextEditor::LuaKeywords[] = { "function", "for", "if", "while", "do", "then", "end", "or", "and", "repeat", "until", "math", "local" };
 
 MTextEditor::MTextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos,const wxSize& size, long style)
 	:wxWindow(parent,id,pos,size,style)
@@ -599,42 +599,31 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 		scPos=0;
 	}
 	
-	/*bool direct = false;
-
-	if (direct) {
-		DrawFld(dc,w,h,h);
-	}*/
-
-	/*else {*/
-		// Prepare bitmap
-		if (bmp) {
-			if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
-				delete bmp;
-				bmp = NULL;
-			}
+	if (bmp) {
+		if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
+			delete bmp;
+			bmp = NULL;
 		}
+	}
 
-		if (!bmp) bmp = new wxBitmap(w,h);
+	if (!bmp) bmp = new wxBitmap(w,h);
 
-		// Draw bitmap
-		wxMemoryDC bmpDC;
+	// Draw bitmap
+	wxMemoryDC bmpDC;
 
-		bmpDC.SelectObject(*bmp);
+	bmpDC.SelectObject(*bmp);
 
-		DrawFld(bmpDC,w,h,h);
+	DrawFld(bmpDC,w,h,h);
 
-		dc.Blit(0,0,w,h,&bmpDC,0,0);
+	dc.Blit(0,0,w,h,&bmpDC,0,0);
 
-	//}
-
-	//block=false;
 }
 
 void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 {
 	int fw=0,fh=0;
 
-	const wxColour & ctext = Options.GetColour(EditorText);
+	const wxColour & ctext = (isTemplateLine) ? wxColour("#FFFF00") : Options.GetColour(EditorText);
 	const wxColour & ccurlybraces = Options.GetColour(EditorCurlyBraces);
 	const wxColour & coperators = Options.GetColour(EditorTagOperators);
 	const wxColour & cnames = Options.GetColour(EditorTagNames);
@@ -652,6 +641,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	bool tagi=false;
 	bool slash=false;
 	bool val=false;
+	bool templateString = false;
 	wxString znaki="(0123456789-&+";
 	wxString cyfry="-0123456789ABCDEFabcdef.";
 	wxString tagtest="";
@@ -664,6 +654,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	bool isfirst=true;
 	int wline=0;
 	int wchar=0;
+	bool hasFocus = HasFocus();
 
 	dc.SetFont(font);
 	wxString alltext=MText+" ";
@@ -690,7 +681,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	int fww, fwww;
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	//rysowanie spellcheckera
-	if(spell){
+	if(spell && !isTemplateLine){
 		int spelllen=errors.size();
 
 		dc.SetBrush(cspellerrors);
@@ -721,7 +712,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 		if((Cursor.x + Cursor.y) > (Selend.x + Selend.y)){fst=Selend;scd=Cursor;}
 		else{fst=Cursor, scd=Selend;}
 
-		dc.SetBrush(wxBrush(wxColour((HasFocus())? cselection: cselnofocus)));
+		dc.SetBrush(wxBrush(wxColour(hasFocus? cselection : cselnofocus)));
 		fww=0;
 		//rysowanie zaznaczenia
 		for(int j=fst.y; j<=scd.y; j++){
@@ -745,7 +736,6 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			//if(j==scd.y)break;
 		}
 	}
-	bool hasFocus = HasFocus();
 	bool cursorWasSet = false;
 	//rysowanie liter
 	for (int i = 0; i < len; i++){
@@ -758,13 +748,13 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			if(Cursor.x+Cursor.y==wchar){
 				int fww=0;
 				GetTextExtent(mestext+parttext, &fww, &fh, NULL, NULL, &font);
-				caret->Move(fww+3,posY/*-(scPos)*/);
+				caret->Move(fww+3,posY);
 				cursorWasSet = true;
 			}
 
 			if(parttext!=""){
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
-				wxColour kol=(val)? cvalues : (slash)? cnames : ctext;
+				wxColour kol = (val || isTemplateLine && parttext.IsNumber()) ? cvalues : (slash) ? cnames : (templateString) ? wxColour("#00FF00") : (isTemplateLine && ch == '(') ? wxColour("#00FFFF") : (isTemplateLine && CheckIfKeyword(parttext)) ? wxColour("#0000FF") : ctext;
 				dc.SetTextForeground(kol);
 				mestext<<parttext;
 				dc.DrawText(parttext,fw+3,posY);
@@ -790,11 +780,77 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 		if (hasFocus && (Cursor.x + Cursor.y == wchar)){
 			if(mestext+parttext==""){fw=0;}
 			else{GetTextExtent(mestext+parttext, &fw, &fh, NULL, NULL, &font);}
-			caret->Move(fw+3,posY/*-(scPos)*/);
+			caret->Move(fw+3,posY);
 			cursorWasSet = true;
 		}
-		parttext<<ch;
+		if (hasFocus && (i == Brackets.x || i == Brackets.y)){
+			int bry = FindY(i);
+			wxColour col = bgbraces;
+			if (Brackets.x == -1 || Brackets.y == -1){ col = cspellerrors; }
+			dc.SetBrush(wxBrush(col));
+			//dc.SetPen(wxPen(col));
+			if (i > 0){ GetTextExtent(MText.SubString(wraps[bry], i - 1), &fw, &fh, NULL, NULL, &font); }
+			else{ fw = 0; }
+			GetTextExtent(MText[i], &fww, &fh, NULL, NULL, &font);
+			dc.DrawRectangle(fw + 3, ((bry*Fheight) + 2) - scPos, fww, Fheight);
+			wxFont fnt = dc.GetFont();
+			fnt = fnt.Bold();
+			dc.SetFont(fnt);
+			dc.SetTextForeground(coperators);
+			dc.DrawText(MText[i], fw + 3, ((bry*Fheight) + 2) - scPos);
+			dc.SetFont(font);
 
+		}
+		if (isTemplateLine){
+			if (!templateString && (ch == '!' || ch == '.' || ch == ',' || ch == '+' || ch == '-' || ch == '=' || ch == '(' ||
+				ch == ')' || ch == '>' || ch == '<' || ch == '[' || ch == ']' || ch == '*' || ch == '/' || ch == ':' || ch == ';')){
+				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				dc.SetTextForeground((parttext.IsNumber() || val) ? cvalues : (slash) ? cnames : 
+					(ch == '(' && !slash) ? wxColour("#00FFFF") : (CheckIfKeyword(parttext)) ? wxColour("#0000FF") : ctext);
+				dc.DrawText(parttext, fw + 3, posY);
+				mestext << parttext;
+				parttext = "";
+				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				dc.SetTextForeground(coperators);
+				dc.DrawText(ch, fw + 3, posY);
+				mestext << ch;
+				//templateCode = !templateCode;
+				slash = val = false;
+				wchar++;
+				continue;
+			}
+			
+			if (ch == '"'){
+				if (templateString){
+					parttext << ch;
+					GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+					dc.SetTextForeground("#00FF00");
+					dc.DrawText(parttext, fw + 3, posY);
+					mestext << parttext;
+					parttext = "";
+					templateString = !templateString;
+					wchar++;
+					continue;
+				}
+				templateString = !templateString;
+			}
+			if (!templateString && ch == ' '){
+				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				dc.SetTextForeground((parttext.IsNumber() || val) ? cvalues : (slash) ? cnames : (CheckIfKeyword(parttext)) ? wxColour("#0000FF") : ctext);
+				dc.DrawText(parttext, fw + 3, posY);
+				mestext << parttext;
+				parttext = "";
+				mestext << ch;
+				slash = val = false;
+				wchar++;
+				continue;
+			}
+		}
+		parttext << ch;
+		if (templateString){
+			wchar++;
+			continue;
+		}
 		if(ch=='{'||ch=='}'){
 			if(ch=='{'){
 				tagi=true;
@@ -819,7 +875,6 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			mestext<<parttext;
 			parttext="";
 			val=false;
-			isfirst=false;
 		}
 
 		if(slash){
@@ -830,7 +885,6 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground(cnames);
 				dc.DrawText(tmp,fw+3,posY);
-				//posX+=fw;
 				mestext<<tmp;
 				if(tagtest=="fn"){parttext="";}
 				else{parttext=ch;}
@@ -858,22 +912,6 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			mestext<<parttext;
 			parttext="";
 			//continue;
-		}
-		if(hasFocus&&(i==Brackets.x||i==Brackets.y)){
-			int bry=FindY(i);
-			wxColour col=bgbraces;
-			if(Brackets.x==-1||Brackets.y==-1){col=cspellerrors;}
-			dc.SetBrush(wxBrush(col));
-			//dc.SetPen(wxPen(col));
-			if(i>0){GetTextExtent(MText.SubString(wraps[bry],i-1), &fw, &fh, NULL, NULL, &font);}else{fw=0;}
-			GetTextExtent(MText[i], &fww, &fh, NULL, NULL, &font);
-			dc.DrawRectangle(fw+3,((bry*Fheight)+2)-scPos,fww,Fheight);
-			wxFont fnt=dc.GetFont();
-			fnt=fnt.Bold();
-			dc.SetFont(fnt);
-			dc.DrawText(MText[i], fw + 3, ((bry*Fheight) + 2) - scPos);
-			dc.SetFont(font);
-			
 		}
 
 		wchar++;
@@ -1313,6 +1351,14 @@ void MTextEditor::MakeCursorVisible()
 	Refresh(false);
 }
 
+bool MTextEditor::CheckIfKeyword(const wxString &word)
+{
+	for (int i = 0; i < 13; i++){
+		if (word == LuaKeywords[i]){ return true; }
+	}
+	return false;
+}
+
 
 BEGIN_EVENT_TABLE(MTextEditor,wxWindow)
 	EVT_PAINT(MTextEditor::OnPaint)
@@ -1325,4 +1371,6 @@ BEGIN_EVENT_TABLE(MTextEditor,wxWindow)
 	EVT_SET_FOCUS(MTextEditor::OnKillFocus)
 	EVT_COMMAND_SCROLL(3333,MTextEditor::OnScroll)
 	EVT_MOUSE_CAPTURE_LOST(MTextEditor::OnLostCapture)
-END_EVENT_TABLE()
+	END_EVENT_TABLE()
+
+	
