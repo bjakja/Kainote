@@ -375,7 +375,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	MarginREdit->SetInt(line->MarginR);
 	MarginVEdit->SetInt(line->MarginV);
 	EffectEdit->ChangeValue(line->Effect);
-	TextEdit->SetTemplateColorizing(line->Effect->StartsWith("template") || line->Effect->StartsWith("code"));
+	TextEdit->SetState((!line->IsComment)? 0 : (line->Effect->StartsWith("template"))? 2 : (line->Effect->StartsWith("code")) ? 3 : 1);
 	SetTextWithTags();
 
 	if(DoubtfulTL->IsShown()){
@@ -437,15 +437,22 @@ done:
 
 void EditBox::UpdateChars(const wxString &text)
 {
-	wxString result;
-	bool isbad=false;
-	int ilzn=grid->CalcChars(text,&result,&isbad);
-	Chars->SetLabelText(_("Linie: ")+result+"43");
-	Chars->SetForegroundColour((isbad)? WindowWarningElements : WindowText);
-	int chtime= ilzn / ((line->End.mstime-line->Start.mstime) / 1000.0f);
-	if(chtime<0 || chtime>999){chtime=999;}
-	Chtime->SetLabelText(wxString::Format(_("Znaki na sekundę: %i<=15"),chtime));
-	Chtime->SetForegroundColour((chtime>15)? WindowWarningElements : WindowText);
+	
+	if (line->IsComment){
+		Chars->SetLabelText("");
+		Chtime->SetLabelText("");
+	}
+	else{
+		wxString result;
+		bool isbad = false;
+		int ilzn = grid->CalcChars(text, &result, &isbad);
+		Chars->SetLabelText(_("Linie: ") + result + "43");
+		Chars->SetForegroundColour((isbad) ? WindowWarningElements : WindowText);
+		int chtime = ilzn / ((line->End.mstime - line->Start.mstime) / 1000.0f);
+		if (chtime < 0 || chtime>999){ chtime = 999; }
+		Chtime->SetLabelText(wxString::Format(_("Znaki na sekundę: %i<=15"), chtime));
+		Chtime->SetForegroundColour((chtime > 15) ? WindowWarningElements : WindowText);
+	}
 	BoxSizer5->Layout();
 	Frames->Refresh(false);
 	Frames->Update();

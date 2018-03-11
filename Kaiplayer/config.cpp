@@ -351,7 +351,13 @@ void config::LoadDefaultColors(bool dark, wxColour *table)
 	colours[EditorTagNames].Set((dark)? "#00C3FF" : "#787600");
 	colours[EditorTagValues].Set((dark)? "#0076FF" : "#7B4B17");
 	colours[EditorCurlyBraces].Set((dark)? "#8791FD" : "#331800");
-	colours[EditorTagOperators].Set((dark)? "#00C3FF" : "#787600");
+	colours[EditorTagOperators].Set((dark) ? "#00C3FF" : "#787600");
+	colours[EditorTemplateVariables].Set((dark) ? "#BDB76B" : "#65622B");
+	colours[EditorTemplateCodeMarks].Set((dark) ? "#FB4544" : "#A4190E");
+	colours[EditorTemplateFunctions].Set((dark) ? "#00C3FF" : "#0A7278");
+	colours[EditorTemplateKeywords].Set((dark) ? "#8D80D3" : "#2004A2"); 
+	colours[EditorTemplateStrings].Set((dark) ? "#11A243" : "#046B17");
+	colours[EditorPhraseSearch].Set((dark) ? "#0B5808" : "#06FB22");
 	colours[EditorBracesBackground].Set((dark)? "#F4F4F4" : "#F4F4F4");
 	colours[EditorBackground].Set((dark)? "#50565F" : "#EEEEEE");
 	colours[EditorSelection].Set((dark)? "#646D8A" : "#BBC0FB");

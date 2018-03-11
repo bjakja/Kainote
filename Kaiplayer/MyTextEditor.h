@@ -37,7 +37,8 @@ public:
 	void Paste();
 	wxString GetValue() const;
 	void SpellcheckerOnOff();
-	void SetTemplateColorizing(bool templateColorize){ isTemplateLine = templateColorize; };
+	//0-normal, 1-comment, 2-template line, 3-code template line
+	void SetState(int _state){ state = _state; spell = (!state) ? useSpellchecker : false; };
 	EditBox* EB;
 	bool modified;
 protected:
@@ -63,8 +64,11 @@ protected:
 	int FindBracket(wxUniChar sbrkt, wxUniChar ebrkt, int pos, bool fromback=false);
 	void MakeCursorVisible();
 	bool CheckIfKeyword(const wxString &word);
+	void SeekSelected(const wxString &word);
+	void DrawWordRectangles(int type, wxDC &dc);
 	
 	bool spell;
+	bool useSpellchecker;
     wxString MText;
 	wxBitmap* bmp;
 	KaiScrollbar *scroll;
@@ -73,6 +77,7 @@ protected:
 	wxCaret *caret;
 	wxArrayInt wraps;
 	wxArrayInt errors;
+	wxArrayInt selectionWords;
 	//adding new keywords change its num in CheckIfKeyword
 	static wxString LuaKeywords[13];
 	int oldstart, oldend;
@@ -85,7 +90,7 @@ protected:
 	bool dholding;
 	bool firstdhold;
 	bool wasDoubleClick;
-	bool isTemplateLine = false;
+	int state = 0;
 	int time;
 	int Fheight;
 	int scPos;

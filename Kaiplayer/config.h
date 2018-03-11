@@ -253,6 +253,12 @@ DECLARE_ENUM(CONFIG,CFG)
 	CR(EditorTagValues,)\
 	CR(EditorCurlyBraces,)\
 	CR(EditorTagOperators,)\
+	CR(EditorTemplateVariables,)\
+	CR(EditorTemplateCodeMarks,)\
+	CR(EditorTemplateFunctions,)\
+	CR(EditorTemplateKeywords,)\
+	CR(EditorTemplateStrings,)\
+	CR(EditorPhraseSearch,)\
 	CR(EditorBracesBackground,)\
 	CR(EditorBackground,)\
 	CR(EditorSelection,)\

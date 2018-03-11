@@ -519,7 +519,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 	//Themes
 	{
-		const int numColors = 126;
+		const int numColors = 132;
 		wxString labels[numColors]={
 			//okno
 			_("Okno tło"),_("Okno nieaktywne tło"),_("Okno tekst"),_("Okno nieaktywny tekst"),
@@ -538,7 +538,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Napisy tło komentarza por. zgodność"),
 			//edytor
 			_("Edytor tekst"),_("Edytor nazwy tagów"),_("Edytor wartości tagów"),
-			_("Edytor nawiasy klamrowe"),_("Edytor operatory tagów"),_("Edytor tło nawiasów"),_("Edytor tło"),
+			_("Edytor nawiasy klamrowe"), _("Edytor operatory tagów"), _("Edytor zmienne template"), 
+			_("Edytor znaczniki kodu template"), _("Edytor funkcje template"), _("Edytor słowa kluczowe template"), _("Edytor ciągi znaków template"),
+			_("Edytor zaznaczenie znalezionej frazy"), _("Edytor tło nawiasów"), _("Edytor tło"),
 			_("Edytor zaznaczenie"),_("Edytor zaznaczenie w nieaktywnym oknie"),
 			_("Edytor obramowanie"),_("Edytor obramowanie aktywnego okna"),_("Edytor błędy pisowni"),
 			//audio

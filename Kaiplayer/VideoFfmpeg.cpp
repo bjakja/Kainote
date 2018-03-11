@@ -382,12 +382,15 @@ done:
 		SubsGrid *grid = ((TabPanel*)rend->GetParent())->Grid;
 		const wxString &colormatrix = grid->GetSInfo("YCbCr Matrix");
 		if ((CS == FFMS_CS_BT709 && colormatrix == "TV.601") || (ColorSpace != colormatrix && CS == FFMS_CS_BT470BG)) {
-			if (FFMS_SetInputFormatV(videosource, CS, CR, FFMS_GetPixFmt(""), &errinfo)){
+			if (FFMS_SetInputFormatV(videosource, CS == FFMS_CS_BT709 ? FFMS_CS_BT470BG : FFMS_CS_BT470BG, CR, FFMS_GetPixFmt(""), &errinfo)){
 				wxLogStatus(_("Nie można zmienić macierzy YCbCr"));
 			}
 		}
 		if(colormatrix == "TV.601"){
 			ColorSpace = ColorCatrixDescription(FFMS_CS_BT470BG, CR);
+		}
+		else if (colormatrix == "TV.709"){
+			ColorSpace = ColorCatrixDescription(FFMS_CS_BT709, CR);
 		}
 
 		FFMS_Track *FrameData = FFMS_GetTrackFromVideo(videosource);

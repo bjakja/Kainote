@@ -256,7 +256,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			wxString txt = Dial->Text;
 			wxString txttl = Dial->TextTl;
 
-			if (subsFormat != TMP && !(CNZ & visibleColumns)){
+			if (!isComment && subsFormat != TMP && !(CNZ & visibleColumns)){
 				int chtime;
 				if (SpellErrors[k].size()<1){
 					chtime = CalcChars((hasTLMode && txttl != "") ? txttl : txt) / 
@@ -280,7 +280,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				if (showOriginal){ reg.ReplaceAll(&txttl, chtag); }
 			}
 			
-			if (SpellCheckerOn && (!hasTLMode && txt != "" || hasTLMode && txttl != "")){
+			if (!isComment && SpellCheckerOn && (!hasTLMode && txt != "" || hasTLMode && txttl != "")){
 				if (SpellErrors[k].size()<2){
 					CheckText(txt, SpellErrors[k], chtag);
 				}

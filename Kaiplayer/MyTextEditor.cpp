@@ -23,7 +23,7 @@
 #include "KaiMessageBox.h"
 #include "Stylelistbox.h"
 #include "SubsFile.h"
-//#include <wx/graphics.h>
+#include <regex>
 #undef DrawText
 
 wxDEFINE_EVENT(CURSOR_MOVED, wxCommandEvent);
@@ -33,7 +33,7 @@ wxString MTextEditor::LuaKeywords[] = { "function", "for", "if", "while", "do", 
 MTextEditor::MTextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos,const wxSize& size, long style)
 	:wxWindow(parent,id,pos,size,style)
 {
-	spell=_spell;
+	useSpellchecker = spell = _spell;
 	MText="";
 	bmp=NULL;
 	fsize=10;
@@ -136,6 +136,9 @@ void MTextEditor::SetTextS(const wxString &text, bool modif, bool resetsel,bool 
 void MTextEditor::CalcWrap(bool updatechars, bool sendevent)
 {
 	//Wrapped=MText;
+	if (selectionWords.size())
+		selectionWords.clear();
+
 	wraps.clear();
 	wraps.Add(0);
 	if(MText!=""){
@@ -463,7 +466,12 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 		if(Cursor.x<Selend.x){Selend=Cursor;}else{Cursor=Selend;}
 		HitTest(mpos,&ht);
 		FindWord(ht.x,&start,&end);
-		oldend=tmpend=end;
+		wxString wordstriped = MText.SubString(start, end-1);
+		size_t wlen = wordstriped.Len();
+		wordstriped.Trim();
+		SeekSelected(wordstriped);
+		end -= (wlen - wordstriped.Len());
+		oldend = tmpend = end;
 		oldstart=tmpstart=start;
 		SetSelection(start,end);
 		firstdhold = dholding = true;
@@ -472,6 +480,8 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 	}
 
 	if(click){
+		if (selectionWords.size())
+			selectionWords.clear();
 		wxPoint cur;
 		HitTest(event.GetPosition(),&cur);
 		if(cur!=Cursor){wxCommandEvent evt(CURSOR_MOVED,GetId());AddPendingEvent(evt);}
@@ -623,7 +633,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 {
 	int fw=0,fh=0;
 
-	const wxColour & ctext = (isTemplateLine) ? wxColour("#FFFF00") : Options.GetColour(EditorText);
+	const wxColour & ctext = Options.GetColour(EditorText);
 	const wxColour & ccurlybraces = Options.GetColour(EditorCurlyBraces);
 	const wxColour & coperators = Options.GetColour(EditorTagOperators);
 	const wxColour & cnames = Options.GetColour(EditorTagNames);
@@ -633,22 +643,29 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	const wxColour & cselection = Options.GetColour(EditorSelection);
 	const wxColour & cselnofocus = Options.GetColour(EditorSelectionNoFocus);
 	const wxColour & cspellerrors = Options.GetColour(EditorSpellchecker);
+	const wxColour & ctvariables = Options.GetColour(EditorTemplateVariables);
+	const wxColour & ctcodemarks = Options.GetColour(EditorTemplateCodeMarks);
+	const wxColour & ctfunctions = Options.GetColour(EditorTemplateFunctions);
+	const wxColour & ctkeywords = Options.GetColour(EditorTemplateKeywords);
+	const wxColour & ctstrings = Options.GetColour(EditorTemplateStrings);
+	const wxColour & cphrasesearch = Options.GetColour(EditorPhraseSearch);
 
 	dc.SetBrush(cbackground);
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.DrawRectangle(0,0,w,h);
 
-	bool tagi=false;
+	bool tags=false;
 	bool slash=false;
 	bool val=false;
 	bool templateString = false;
+	bool templateCode = state==3;
+	bool isTemplateLine = state > 1;
 	wxString znaki="(0123456789-&+";
 	wxString cyfry="-0123456789ABCDEFabcdef.";
 	wxString tagtest="";
 	wxString parttext="";
 	wxString mestext="";
 
-	//Contsel=false;
 	posY=2;
 	posY -= scPos;
 	bool isfirst=true;
@@ -678,35 +695,18 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 		Brackets.x=FindBracket(')','(',Cursor.x-1,true);
 	}else{Brackets.x=-1;Brackets.y=-1;}
 
-	int fww, fwww;
+	int fww;
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	//rysowanie spellcheckera
-	if(spell && !isTemplateLine){
-		int spelllen=errors.size();
-
+	if(spell){
 		dc.SetBrush(cspellerrors);
-		for(int g=0;g<spelllen; g+=2)
-		{
-			int fsty=FindY(errors[g]);
-			if(wraps[fsty]>=errors[g]){fw=0;}
-			else{
-				wxString ftext = MText.SubString(wraps[fsty], errors[g] - 1);
-				GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font);
-			}
-			int scndy=FindY(errors[g+1]);
-			wxString etext=MText.SubString(errors[g], (fsty==scndy)?errors[g+1] : wraps[fsty+1]);
-			GetTextExtent(etext, &fww, &fh, NULL, NULL, &font);
-			for(int q=fsty+1; q<=scndy; q++){
-				int rest= (q==scndy)? errors[g+1] : wraps[q+1];
-				wxString btext=MText.SubString(wraps[q], rest);
-				GetTextExtent(btext, &fwww, &fh, NULL, NULL, &font);
-				dc.DrawRectangle(3, ((q*Fheight) + 1) - scPos, fwww, Fheight);
-			}
-			dc.DrawRectangle(fw + 3, ((fsty*Fheight) + 1) - scPos, fww, Fheight);
-		}
+		DrawWordRectangles(0, dc);
 	}
-
-	if(Cursor.x!=Selend.x || Cursor.y != Selend.y){
+	if (selectionWords.size()){
+		dc.SetBrush(cphrasesearch);
+		DrawWordRectangles(1, dc);
+	}
+	else if(Cursor.x!=Selend.x || Cursor.y != Selend.y){
 		Brackets.x=-1;Brackets.y=-1;
 		wxPoint fst, scd;
 		if((Cursor.x + Cursor.y) > (Selend.x + Selend.y)){fst=Selend;scd=Cursor;}
@@ -754,7 +754,9 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 
 			if(parttext!=""){
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
-				wxColour kol = (val || isTemplateLine && parttext.IsNumber()) ? cvalues : (slash) ? cnames : (templateString) ? wxColour("#00FF00") : (isTemplateLine && ch == '(') ? wxColour("#00FFFF") : (isTemplateLine && CheckIfKeyword(parttext)) ? wxColour("#0000FF") : ctext;
+				wxColour kol = (val || (isTemplateLine && parttext.IsNumber())) ? cvalues : (slash) ? cnames : 
+					(templateString) ? ctstrings : (isTemplateLine && ch == '(') ? ctfunctions : 
+					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : ctext;
 				dc.SetTextForeground(kol);
 				mestext<<parttext;
 				dc.DrawText(parttext,fw+3,posY);
@@ -796,7 +798,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			wxFont fnt = dc.GetFont();
 			fnt = fnt.Bold();
 			dc.SetFont(fnt);
-			dc.SetTextForeground(coperators);
+			dc.SetTextForeground((ch=='{' || ch=='}')? ccurlybraces : coperators);
 			dc.DrawText(MText[i], fw + 3, ((bry*Fheight) + 2) - scPos);
 			dc.SetFont(font);
 
@@ -806,15 +808,16 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				ch == ')' || ch == '>' || ch == '<' || ch == '[' || ch == ']' || ch == '*' || ch == '/' || ch == ':' || ch == ';')){
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground((parttext.IsNumber() || val) ? cvalues : (slash) ? cnames : 
-					(ch == '(' && !slash) ? wxColour("#00FFFF") : (CheckIfKeyword(parttext)) ? wxColour("#0000FF") : ctext);
+					(ch == '(' && !slash) ? ctfunctions : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				dc.DrawText(parttext, fw + 3, posY);
 				mestext << parttext;
 				parttext = "";
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
-				dc.SetTextForeground(coperators);
+				dc.SetTextForeground((ch == '!') ? ctcodemarks : coperators);
 				dc.DrawText(ch, fw + 3, posY);
 				mestext << ch;
-				//templateCode = !templateCode;
+				if (state == 2 && ch == '!')
+					templateCode = !templateCode;
 				slash = val = false;
 				wchar++;
 				continue;
@@ -824,7 +827,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				if (templateString){
 					parttext << ch;
 					GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
-					dc.SetTextForeground("#00FF00");
+					dc.SetTextForeground(ctstrings);
 					dc.DrawText(parttext, fw + 3, posY);
 					mestext << parttext;
 					parttext = "";
@@ -836,7 +839,8 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			}
 			if (!templateString && ch == ' '){
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
-				dc.SetTextForeground((parttext.IsNumber() || val) ? cvalues : (slash) ? cnames : (CheckIfKeyword(parttext)) ? wxColour("#0000FF") : ctext);
+				dc.SetTextForeground((!templateCode && !val && !slash) ? ctext : (parttext.IsNumber() || val) ? cvalues : 
+					(slash) ? cnames : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				dc.DrawText(parttext, fw + 3, posY);
 				mestext << parttext;
 				parttext = "";
@@ -853,7 +857,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 		}
 		if(ch=='{'||ch=='}'){
 			if(ch=='{'){
-				tagi=true;
+				tags=true;
 				wxString bef=parttext.BeforeLast('{');
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground(ctext);
@@ -867,7 +871,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				dc.DrawText(tmp,fw+3,posY);
 				mestext<<tmp;
 				parttext="}";
-				tagi=slash=val=false;
+				tags=slash=val=false;
 			}
 			GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 			dc.SetTextForeground(ccurlybraces);
@@ -893,24 +897,21 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			}
 		}
 
-		if((ch=='\\' || ((ch=='('||ch==')'||ch==',') && val)) &&tagi){
-			if(ch=='\\'){slash=true;}
-			if(val&&(ch=='\\'||ch==')'||ch==',')){
-				wxString tmp=parttext.RemoveLast(1);
-				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
-				dc.SetTextForeground(cvalues);
-				dc.DrawText(tmp,fw+3,posY);
-				mestext<<tmp;
-				parttext=ch;
-				if(ch!=','){val=false;}
-
-			}
-			if(ch=='('){val=true;slash=false;}
+		if((ch=='\\' || ((ch=='('||ch==')'||ch==',') && val)) &&tags){
+			wxString tmp=parttext.RemoveLast(1);
+			GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+			dc.SetTextForeground((val && (ch == '\\' || ch == ')' || ch == ',')) ? cvalues : slash ? cnames : ctext);
+			dc.DrawText(tmp,fw+3,posY);
+			mestext<<tmp;
+			parttext=ch;
+			if (ch == '\\'){ slash = true; }
 			GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 			dc.SetTextForeground(coperators);
 			dc.DrawText(parttext,fw+3,posY);
 			mestext<<parttext;
 			parttext="";
+			if (ch == '('){ val = true; slash = false; }
+			else if(ch != ','){ val = false; }
 			//continue;
 		}
 
@@ -1359,6 +1360,54 @@ bool MTextEditor::CheckIfKeyword(const wxString &word)
 	return false;
 }
 
+void MTextEditor::SeekSelected(const wxString &word)
+{
+	if (word.Len() < 1 || (word.Len() < 2 && !wxIsalnum(word[0])))
+		return;
+
+	try{
+		std::wregex r((L"\\b" + word.Lower() + L"\\b").ToStdWstring()); // the pattern \b matches a word boundary
+		std::wsmatch m;
+		std::wstring text = MText.Lower().ToStdWstring();
+		int textPos = 0;
+
+		while (std::regex_search(text, m, r)) {
+			int pos = m.position(0) + textPos;
+			int len = m.length(0);
+			selectionWords.Add(pos);
+			selectionWords.Add(pos + len - 1);
+			text = m.suffix().str();
+			textPos = pos + len;
+		}
+	} catch (...){}
+}
+
+void MTextEditor::DrawWordRectangles(int type, wxDC &dc)
+{
+	const wxArrayInt & words = (type == 0) ? errors : selectionWords;
+	size_t len = words.size();
+	int fw = 0, fh = 0, fww = 0, fwww = 0;
+
+	for (size_t g = 0; g < len; g += 2)
+	{
+		int fsty = FindY(words[g]);
+		if (wraps[fsty] >= words[g]){ fw = 0; }
+		else{
+			wxString ftext = MText.SubString(wraps[fsty], words[g] - 1);
+			GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font);
+		}
+		int scndy = FindY(words[g + 1]);
+		wxString etext = MText.SubString(words[g], (fsty == scndy) ? words[g + 1] : wraps[fsty + 1]);
+		GetTextExtent(etext, &fww, &fh, NULL, NULL, &font);
+		for (int q = fsty + 1; q <= scndy; q++){
+			int rest = (q == scndy) ? words[g + 1] : wraps[q + 1];
+			wxString btext = MText.SubString(wraps[q], rest);
+			GetTextExtent(btext, &fwww, &fh, NULL, NULL, &font);
+			dc.DrawRectangle(3, ((q*Fheight) + 1) - scPos, fwww, Fheight);
+		}
+		dc.DrawRectangle(fw + 3, ((fsty*Fheight) + 1) - scPos, fww, Fheight);
+	}
+}
 
 BEGIN_EVENT_TABLE(MTextEditor,wxWindow)
 	EVT_PAINT(MTextEditor::OnPaint)
@@ -1373,4 +1422,6 @@ BEGIN_EVENT_TABLE(MTextEditor,wxWindow)
 	EVT_MOUSE_CAPTURE_LOST(MTextEditor::OnLostCapture)
 	END_EVENT_TABLE()
 
+	
+	
 	
