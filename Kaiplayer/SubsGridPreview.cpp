@@ -671,7 +671,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			//3-klikniêcie lewym i edycja na pauzie i odtwarzaniu
 
 			if (dclick || (click && previewGrid->lastActiveLine != row && mvtal < 4 && mvtal > 0) && pas < 2){
-				tabp->Grid->SetVideoLineTime(event);
+				tabp->Grid->SetVideoLineTime(event, mvtal);
 			}
 
 			if (click || dclick || left_up)

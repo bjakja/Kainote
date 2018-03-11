@@ -196,6 +196,7 @@ bool Karaoke::GetSylAtX(int x, int *result)
 void Karaoke::Join(int line)
 {
 	syls[line]<<syls[line+1];
+	syls[line].Replace("{}", "");
 	syls.RemoveAt(line+1);
 	syltimes[line]=syltimes[line+1];
 	syltimes.RemoveAt(line+1);

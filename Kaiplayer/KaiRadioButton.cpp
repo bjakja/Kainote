@@ -257,7 +257,7 @@ KaiRadioBox::KaiRadioBox(wxWindow *parent, int id, const wxString& label,
 		wxQueueEvent(GetParent(), evtrb);
 	}, 9876, 9876 + names.size()-1);
 	SetSizerAndFit(box);
-	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
+	//Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
 }
 
 

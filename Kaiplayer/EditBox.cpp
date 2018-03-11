@@ -833,6 +833,9 @@ void EditBox::OnCommit(wxCommandEvent& event)
 		TextEdit->modified = true; TextEditOrig->modified = true; splittedTags = false; 
 	}
 	Send(EDITBOX_LINE_EDITION, false, false, Visual!=0);
+	if (event.GetId() == ID_COMMENT){
+		TextEdit->SetState((!line->IsComment) ? 0 : (line->Effect->StartsWith("template")) ? 2 : (line->Effect->StartsWith("code")) ? 3 : 1, true);
+	}
 	if(Visual){
 		pan->Video->SetVisual(false, true);
 	}

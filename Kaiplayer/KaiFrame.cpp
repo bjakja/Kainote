@@ -269,22 +269,22 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 		 return 0;
 	 }
 	 
-	/*if(uMsg == 28){
-		isActive = !isActive;
+	 if (uMsg == WM_NCACTIVATE /*28*/){
+		isActive = wParam == TRUE;
 		int w, h;
 		GetSize(&w,&h);
-	wxRect rc(0,0,w,ftopBorder);
-	Refresh(false, &rc);
-	if(!IsMaximized()){
-		wxRect rc1(0,ftopBorder,fborder,h-fborder-ftopBorder);
-		Refresh(false, &rc1);
-		wxRect rc2(w-fborder,ftopBorder,fborder,h-fborder-ftopBorder);
-		Refresh(false, &rc2);
-		wxRect rc3(0,h-fborder,w,fborder);
-		Refresh(false, &rc3);
+		wxRect rc(0, 0, w, ftopBorder);
+		Refresh(false, &rc);
+		if (!IsMaximized()){
+			wxRect rc1(0, ftopBorder, fborder, h - fborder - ftopBorder);
+			Refresh(false, &rc1);
+			wxRect rc2(w - fborder, ftopBorder, fborder, h - fborder - ftopBorder);
+			Refresh(false, &rc2);
+			wxRect rc3(0, h - fborder, w, fborder);
+			Refresh(false, &rc3);
+		}
+		return 1;
 	}
-	return 1;
-	}*/
 	if (uMsg == WM_CLOSE){
 		Close();
 		return 0;

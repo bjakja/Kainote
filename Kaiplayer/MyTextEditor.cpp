@@ -1409,6 +1409,17 @@ void MTextEditor::DrawWordRectangles(int type, wxDC &dc)
 	}
 }
 
+void MTextEditor::SetState(int _state, bool refresh){
+	state = _state; 
+	spell = (!state) ? useSpellchecker : false; 
+	if (refresh){
+		if (spell)
+			CheckText();
+		EB->UpdateChars(MText);
+		Refresh(false);
+	}
+};
+
 BEGIN_EVENT_TABLE(MTextEditor,wxWindow)
 	EVT_PAINT(MTextEditor::OnPaint)
 	EVT_SIZE(MTextEditor::OnSize)

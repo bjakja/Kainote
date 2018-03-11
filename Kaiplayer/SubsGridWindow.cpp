@@ -272,6 +272,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			else{
 				if (subsFormat != TMP){ strings.push_back(""); }
 				if (SpellErrors[k].size() == 0){ SpellErrors[k].push_back(0); }
+				shorttime = false;
 			}
 
 			if (hideOverrideTags){
@@ -629,13 +630,14 @@ void SubsGridWindow::AdjustWidths(int cell)
 }
 
 
-void SubsGridWindow::SetVideoLineTime(wxMouseEvent &evt)
+void SubsGridWindow::SetVideoLineTime(wxMouseEvent &evt, int mvtal)
 {
 	TabPanel *tab = (TabPanel*)GetParent();
 	if (tab->Video->GetState() != None){
 		if (tab->Video->GetState() != Paused){
-			if (tab->Video->GetState() == Stopped){ tab->Video->Play(); }
-			tab->Video->Pause();
+			if (tab->Video->GetState() == Stopped){ tab->Video->Play(); tab->Video->Pause(); }
+			else if (mvtal)
+				tab->Video->Pause();
 		}
 		short wh = (subsFormat<SRT) ? 2 : 1;
 		int whh = 2;
@@ -833,7 +835,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 			//3-kliknięcie lewym i edycja na pauzie i odtwarzaniu
 
 			if (dclick || (click && lastActiveLine != row && mvtal < 4 && mvtal > 0) && pas < 2){
-				SetVideoLineTime(event);
+				SetVideoLineTime(event, mvtal);
 			}
 
 			if (click || dclick || left_up)

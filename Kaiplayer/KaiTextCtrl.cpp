@@ -539,6 +539,7 @@ void KaiTextCtrl::OnAccelerator(wxCommandEvent& event)
 		ContextMenu(PosFromCursor(Cursor));
 		break;
 	case ID_TRETURN:
+		if (readOnly){ return; }
 		if(KText.Len()>=maxSize){wxBell();return;}
 		KText.insert(Cursor.x,"\n");
 		MoveStyles(Cursor.x, 1);
@@ -1029,11 +1030,11 @@ void KaiTextCtrl::ContextMenu(wxPoint mpos)
 	menut.Append(TEXT_PASTE,_("&Wklej"))->Enable(!(style & wxTE_READONLY));
 
 	menut.AppendSeparator();
-	menut.Append(TEXT_SEEKWORDL,_("Szukaj tłumaczenia słowa na ling.pl"))->Enable(Selend.x!=Cursor.x);
+	/*menut.Append(TEXT_SEEKWORDL,_("Szukaj tłumaczenia słowa na ling.pl"))->Enable(Selend.x!=Cursor.x);
 	menut.Append(TEXT_SEEKWORDB,_("Szukaj tłumaczenia słowa na pl.ba.bla"))->Enable(Selend.x!=Cursor.x);
-	menut.Append(TEXT_SEEKWORDG,_("Szukaj tłumaczenia słowa w google"))->Enable(Selend.x!=Cursor.x);
+	menut.Append(TEXT_SEEKWORDG,_("Szukaj tłumaczenia słowa w google"))->Enable(Selend.x!=Cursor.x);*/
 
-	menut.Append(TEXT_DEL,_("&Usuń"))->Enable(Selend.x!=Cursor.x);
+	menut.Append(TEXT_DEL, _("&Usuń"))->Enable(Selend.x != Cursor.x && !(style & wxTE_READONLY));
 
 	int id=-1;
 	id=menut.GetPopupMenuSelection(mpos, this);
@@ -1053,25 +1054,25 @@ void KaiTextCtrl::ContextMenu(wxPoint mpos)
 		CalcWrap();
 		//SendEvent();
 		SetSelection(from,from);modified=true;
-	}else if(id>=TEXT_SEEKWORDL && id<=TEXT_SEEKWORDG){
-		wxString page=(id==TEXT_SEEKWORDL)? L"http://ling.pl/" : 
-			(id==TEXT_SEEKWORDB)? L"http://pl.bab.la/slownik/angielski-polski/" : L"https://www.google.com/search?q=";
-		long from, to;
-		GetSelection(&from, &to);
-		wxString word= KText.SubString(from, to-1).Trim();
-		//if(word.IsWord()){
-		word.Replace(" ", "+");
-		wxString url=page+word;
-		WinStruct<SHELLEXECUTEINFO> sei;
-		sei.lpFile = url.c_str();
-		sei.lpVerb = wxT("open");
-		sei.nShow = SW_RESTORE;
-		sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
+	}//else if(id>=TEXT_SEEKWORDL && id<=TEXT_SEEKWORDG){
+	//	wxString page=(id==TEXT_SEEKWORDL)? L"http://ling.pl/" : 
+	//		(id==TEXT_SEEKWORDB)? L"http://pl.bab.la/slownik/angielski-polski/" : L"https://www.google.com/search?q=";
+	//	long from, to;
+	//	GetSelection(&from, &to);
+	//	wxString word= KText.SubString(from, to-1).Trim();
+	//	//if(word.IsWord()){
+	//	word.Replace(" ", "+");
+	//	wxString url=page+word;
+	//	WinStruct<SHELLEXECUTEINFO> sei;
+	//	sei.lpFile = url.c_str();
+	//	sei.lpVerb = wxT("open");
+	//	sei.nShow = SW_RESTORE;
+	//	sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
 
-		ShellExecuteEx(&sei);
-		//}
+	//	ShellExecuteEx(&sei);
+	//	//}
 
-	}
+	//}
 
 
 }

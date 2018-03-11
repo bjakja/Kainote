@@ -38,7 +38,7 @@ public:
 	void SelectRow(int row, bool addToSelected = false, bool select = true, bool norefresh = false);
 	void SelVideoLine(int time = -1);
 	void SetStyle();
-	void SetVideoLineTime(wxMouseEvent &evt);
+	void SetVideoLineTime(wxMouseEvent &evt, int mvtal);
 	void ShowSecondComparedLine(int Line, bool showPreview = false, bool fromPreview = false);
 	SubsGridPreview *preview = NULL;
 	
