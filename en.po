@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2018-02-26 11:43+0100\n"
-"PO-Revision-Date: 2018-03-11 19:56+0100\n"
+"PO-Revision-Date: 2018-03-12 13:23+0100\n"
 "Last-Translator: Bakura, Areki, duplex, Kostek00, Sacredus\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -973,7 +973,7 @@ msgstr "Save to the folder with subtitles"
 
 #: FontCollector.cpp:117
 msgid "Wyciągnij czcionki z wczytanego pliku MKV"
-msgstr "Pulling fonts from a loaded MKV file"
+msgstr "Demux fonts from loaded MKV file"
 
 #: FontCollector.cpp:125
 msgid "Rozpocznij"
@@ -1158,7 +1158,7 @@ msgstr "You can not copy the font \"%s\".\n"
 
 #: FontCollector.cpp:543
 msgid "Wczytany plik MKV nie ma żadnych czcionek."
-msgstr "MKV file loaded does not have any fonts."
+msgstr "Loaded MKV file does not have any fonts."
 
 #: FontCollector.cpp:559
 msgid "Zapisano czcionkę o nazwie \""

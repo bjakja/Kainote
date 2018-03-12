@@ -90,7 +90,17 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	icn.CopyFromBitmap(CreateBitmapFromPngResource("fontcollector"));
 	SetIcon(icn);
 
-	path=new KaiTextCtrl(this,-1,Options.GetString(FontCollectorDirectory),wxDefaultPosition, wxSize(150,-1));
+	KaiTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
+	wxArrayString excludes;
+	excludes.Add("/");
+	excludes.Add("*");
+	excludes.Add("?");
+	excludes.Add("\"");
+	excludes.Add("<");
+	excludes.Add(">");
+	excludes.Add("|");
+	valid.SetExcludes(excludes);
+	path = new KaiTextCtrl(this, -1, Options.GetString(FontCollectorDirectory), wxDefaultPosition, wxSize(150, -1), 0, valid);
 	path->Enable(Options.GetInt(FontCollectorAction)!=0);
 	//path->SetToolTip("Można też wybrać folder napisów wpisując <subs dir>.");
 	choosepath=new MappedButton(this,8799,_("Wybierz folder"));
@@ -109,7 +119,8 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	opts->SetSelection(Options.GetInt(FontCollectorAction));
 	Connect(9987,wxEVT_COMMAND_RADIOBOX_SELECTED, (wxObjectEventFunction)&FontCollectorDialog::OnChangeOpt);
 
-	subsdir=new KaiCheckBox(this,7998,_("Zapisuj do folderu z napisami"));
+	subsdir=new KaiCheckBox(this,7998,_("Zapisuj do folderu z napisami / wideo."));
+	subsdir->SetToolTip(_("Zapisuje do folderu z wideo,\nprzy wyciąganiu czcionek z pliku MKV."));
 	subsdir->Enable(Options.GetInt(FontCollectorAction)!=0);
 	subsdir->SetValue(Options.GetBool(FontCollectorUseSubsDirectory));
 
@@ -129,12 +140,12 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	Buttons->Add(bok,0,wxLEFT|wxTOP|wxRIGHT,3);
 	Buttons->Add(bcancel,0,wxBOTTOM|wxTOP|wxRIGHT,3);
 
-	Main->Add(Pathc,0,wxEXPAND,0);
-	Main->Add(opts,0,wxLEFT|wxRIGHT|wxEXPAND,3);
-	Main->Add(subsdir,0,wxALL|wxEXPAND,3);
-	Main->Add(fromMKV,0,wxALL|wxEXPAND,3);
-	Main->Add(console,1,wxLEFT|wxRIGHT|wxEXPAND,3);
-	Main->Add(Buttons,0,wxALIGN_CENTER,0);
+	Main->Add(Pathc,0,wxEXPAND|wxALL,1);
+	Main->Add(opts,0,wxEXPAND);
+	Main->Add(subsdir,0,wxALL|wxEXPAND,4);
+	Main->Add(fromMKV,0,wxALL|wxEXPAND,4);
+	Main->Add(console,1,wxLEFT|wxRIGHT|wxEXPAND,4);
+	Main->Add(Buttons,0,wxALIGN_CENTER);
 
 	Bind(EVT_APPEND_MESSAGE,[=](wxThreadEvent evt){
 		std::pair<wxString, wxColour> *data = evt.GetPayload<std::pair<wxString, wxColour>*>();
@@ -192,49 +203,80 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 	}
 	else
 	{
+		bool subsfromMkv = fromMKV->GetValue();
+		bool subsDirectory = subsdir->GetValue();
+		Options.SetString(FontCollectorDirectory, path->GetValue());
 		if(opts->GetSelection()==3 && ( Notebook::GetTab()->VideoPath=="" || Notebook::GetTab()->SubsPath=="" )){
-			KaiMessageBox(_("Brak wczytanego wideo bądź napisów"));return;
+			KaiMessageBox(_("Brak wczytanego wideo lub napisów"), "", 4L, this);
+			EnableControls();
+			return;
 		}
-		if(path->GetValue()=="" && !subsdir->GetValue() ){
-			KaiMessageBox(_("Wybierz folder, gdzie mają zostać skopiowane czcionki"));
+		if (path->GetValue() == "" && !subsDirectory){
+			KaiMessageBox(_("Wybierz folder, gdzie mają zostać skopiowane czcionki"), "", 4L, this);
 			EnableControls();
 			path->SetFocus();
 			return;
 		}
-		if(subsdir->GetValue() && Notebook::GetTab()->SubsPath==""){
-			KaiMessageBox(_("Brak wczytanych napisów, wczytaj napisy albo odznacz tę opcję."));
+		if (!subsfromMkv && subsDirectory && Notebook::GetTab()->SubsPath == ""){
+			KaiMessageBox(_("Brak wczytanych napisów, wczytaj napisy albo odznacz tę opcję."), "", 4L, this);
 			EnableControls();
 			return;
 		}
+		/*if (subsfromMkv && subsDirectory && Notebook::GetTab()->VideoPath == ""){
+			KaiMessageBox(_("Brak wczytanych napisów, wczytaj napisy albo odznacz tę opcję."));
+			EnableControls();
+			return;
+		}*/
 		if(opts->GetSelection()==2 && path->GetValue().EndsWith("\\") && !subsdir->GetValue()){
-			KaiMessageBox(_("Wybierz nazwę dla archiwum"));
+			KaiMessageBox(_("Wybierz nazwę dla archiwum"), "", 4L, this);
 			EnableControls();
 			path->SetFocus();
 			return;
 		}
 		if(subsdir->GetValue()){
 			wxString rest;
-			copypath=Notebook::GetTab()->SubsPath.BeforeLast('\\',&rest);
+			copypath = (subsfromMkv) ? Notebook::GetTab()->VideoPath.BeforeLast('\\', &rest) : Notebook::GetTab()->SubsPath.BeforeLast('\\', &rest);
 			copypath<<"\\Czcionki\\";
 			if(opts->GetSelection()==2){copypath<<rest.BeforeLast('.')<<".zip";}
 		}else{
 			copypath=path->GetValue();
+			wxFileName fname(copypath);
+			if (!fname.IsOk() || fname.GetVolume().Len()!=1){
+				KaiMessageBox(_("Wybrana ścieżka zapisu jest niepoprawna."),"",4L,this);
+				EnableControls();
+				return;
+			}
 			if(opts->GetSelection()!=2 && !copypath.EndsWith("\\")){copypath<<"\\";}
 			else if(opts->GetSelection()==2 && !copypath.EndsWith(".zip")){copypath<<".zip";}
 		}
 		if(opts->GetSelection()!=2){
 			wxString extt=copypath.Right(4).Lower();
 			if(extt==".zip"){copypath=copypath.BeforeLast('\\')+"\\";}
-			if(!wxDir::Exists(copypath)){wxDir::Make(copypath);}
+			if(!wxDir::Exists(copypath)){
+				if (!wxDir::Make(copypath, 511, wxPATH_MKDIR_FULL)){
+					KaiMessageBox(_("Nie można utworzyć folderu."), "", 4L, this);
+					EnableControls();
+					return;
+				}
+			}
 		}else{
-			if(!wxDir::Exists(copypath.BeforeLast('\\'))){wxDir::Make(copypath.BeforeLast('\\'));}
+			if (!wxDir::Exists(copypath.BeforeLast('\\'))){ 
+				if (!wxDir::Make(copypath.BeforeLast('\\'), 511, wxPATH_MKDIR_FULL)){
+					KaiMessageBox(_("Nie można utworzyć folderu."), "", 4L, this);
+					EnableControls();
+					return;
+				}
+			}
 			else if(wxFileExists(copypath)){
 				if(KaiMessageBox(_("Plik zip już istnieje, usunąć go?"),_("Potwierdzenie"),wxYES_NO,this)==wxYES){
-					wxRemoveFile(copypath);
+					if (!wxRemoveFile(copypath)){
+						EnableControls();
+						return;
+					}
 				}
 			}
 		}
-		Options.SetString(FontCollectorDirectory,copypath);
+		
 
 		int operation = (fromMKV->GetValue() && fromMKV->IsEnabled())? FontCollector::COPY_MKV_FONTS : 
 			(opts->GetSelection()==3)? FontCollector::MUX_VIDEO_WITH_SUBS : FontCollector::COPY_FONTS;
@@ -244,7 +286,9 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 			if(!wxFileExists(fc->muxerpath)){
 				wxFileDialog *fd = new wxFileDialog(this,_("Wybierz plik mkvmerge.exe"), L"C:\\Program Files",L"mkvmerge.exe",_("Programy (.exe)|*.exe"),wxFD_OPEN|wxFD_FILE_MUST_EXIST);
 				if(fd->ShowModal()!=wxID_OK){
-					KaiMessageBox(_("Muxowanie zostało anulowane, bo nie wybrano mkvmerge.exe"));fd->Destroy();return;
+					EnableControls();
+					KaiMessageBox(_("Muxowanie zostało anulowane, bo nie wybrano mkvmerge.exe"));fd->Destroy();
+					return;
 				}
 				fc->muxerpath=fd->GetPath();
 				fd->Destroy();

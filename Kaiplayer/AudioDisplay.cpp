@@ -952,7 +952,6 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 
 void AudioDisplay::DrawProgress()
 {
-	provider->audioProgress;
 	//koordynaty czarnej ramki
 	D3DXVECTOR2 vectors[16];
 	float halfY = (h + 20) / 2;
@@ -984,22 +983,25 @@ void AudioDisplay::DrawProgress()
 	vectors[15].x = ((provider->audioProgress / 1.f) * (w - 44)) + rw;
 	vectors[15].y = halfY;
 
-	d3dLine->SetWidth(1);
-	d3dLine->Begin();
-	d3dLine->Draw(&vectors[4], 5, 0xFF00FFFF);
-	d3dLine->Draw(&vectors[9], 5, 0xFFFFFFFF);
-	d3dLine->End();
-	d3dLine->SetWidth(37);
-	d3dLine->Begin();
-	d3dLine->Draw(&vectors[14], 2, 0xFFFFFFFF);
-	d3dLine->End();
 	RECT textParcent;
 	textParcent.left = 20;
 	textParcent.right = w - 20;
 	textParcent.top = halfY - 20;
 	textParcent.bottom = halfY + 20;
 	wxString txt = std::to_string((int)(provider->audioProgress * 100.f)) + L"%";
-	DRAWOUTTEXT(d3dFont, txt, textParcent, DT_CENTER | DT_VCENTER, 0xFFFFFFFF)
+	try{
+		d3dLine->SetWidth(1);
+		d3dLine->Begin();
+		d3dLine->Draw(&vectors[4], 5, 0xFF00FFFF);
+		d3dLine->Draw(&vectors[9], 5, 0xFFFFFFFF);
+		d3dLine->End();
+		d3dLine->SetWidth(37);
+		d3dLine->Begin();
+		d3dLine->Draw(&vectors[14], 2, 0xFFFFFFFF);
+		d3dLine->End();
+
+		DRAWOUTTEXT(d3dFont, txt, textParcent, DT_CENTER | DT_VCENTER, 0xFFFFFFFF)
+	} catch (...){}
 }
 
 //////////////////////////
@@ -1617,7 +1619,6 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 		// Zoom or scroll?
 		bool zoom = shiftDown;
 		if (Options.GetBool(AudioWheelDefaultToZoom)) zoom = !zoom;
-		wxLogStatus("shift %i, %i", shiftDown, event.ShiftDown());
 		// Zoom
 		if (zoom) {
 

@@ -35,6 +35,7 @@ private:
 
 	wxDECLARE_ABSTRACT_CLASS(KaiRadioButton);
 };
+class KaiStaticBoxSizer;
 
 class KaiRadioBox : public wxWindow
 {
@@ -48,6 +49,7 @@ public:
 private:
 	int selected;
 	std::vector< KaiRadioButton*> buttons;
+	KaiStaticBoxSizer *box;
 	wxDECLARE_ABSTRACT_CLASS(KaiRadioBox);
 };
 

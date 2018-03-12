@@ -85,9 +85,11 @@ void TabPanel::SetAccels()
 		//editor
 		if(cur->first.Type == EDITBOX_HOTKEY){
 			eentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
+
 		}else if(cur->first.Type == GRID_HOTKEY){//grid
 			gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 			if(id>5000 &&id<=6000){Grid->ConnectAcc(id);}
+
 		}else if(cur->first.Type == VIDEO_HOTKEY){//video
 			ventries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 			if(id>2000 && id<3990){Video->ConnectAcc(id);}

@@ -1031,8 +1031,8 @@ void KaiTextCtrl::ContextMenu(wxPoint mpos)
 
 	menut.AppendSeparator();
 	/*menut.Append(TEXT_SEEKWORDL,_("Szukaj tłumaczenia słowa na ling.pl"))->Enable(Selend.x!=Cursor.x);
-	menut.Append(TEXT_SEEKWORDB,_("Szukaj tłumaczenia słowa na pl.ba.bla"))->Enable(Selend.x!=Cursor.x);
-	menut.Append(TEXT_SEEKWORDG,_("Szukaj tłumaczenia słowa w google"))->Enable(Selend.x!=Cursor.x);*/
+	menut.Append(TEXT_SEEKWORDB,_("Szukaj tłumaczenia słowa na pl.ba.bla"))->Enable(Selend.x!=Cursor.x);*/
+	menut.Append(TEXT_SEEKWORDG,_("Szukaj tłumaczenia słowa w Google"))->Enable(Selend.x!=Cursor.x);
 
 	menut.Append(TEXT_DEL, _("&Usuń"))->Enable(Selend.x != Cursor.x && !(style & wxTE_READONLY));
 

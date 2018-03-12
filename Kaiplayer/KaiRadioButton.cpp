@@ -245,7 +245,7 @@ KaiRadioBox::KaiRadioBox(wxWindow *parent, int id, const wxString& label,
 {
 	SetBackgroundColour(parent->GetBackgroundColour());
 	SetForegroundColour(parent->GetForegroundColour());
-	KaiStaticBoxSizer *box = new KaiStaticBoxSizer(style,this,label);
+	box = new KaiStaticBoxSizer(style,this,label);
 	selected = 0;
 	for (size_t i = 0; i < names.size(); i++){
 		buttons.push_back(new KaiRadioButton(this,9876+i,names[i],wxDefaultPosition, wxDefaultSize, (i==0)? wxRB_GROUP : 0));
@@ -257,7 +257,7 @@ KaiRadioBox::KaiRadioBox(wxWindow *parent, int id, const wxString& label,
 		wxQueueEvent(GetParent(), evtrb);
 	}, 9876, 9876 + names.size()-1);
 	SetSizerAndFit(box);
-	//Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
+	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
 }
 
 
@@ -277,6 +277,7 @@ bool KaiRadioBox::Enable(bool enable)
 	for(size_t i=0; i < buttons.size(); i++){
 		buttons[i]->Enable(enable);
 	}
+	box->Enable(enable);
 	return wxWindow::Enable(enable);
 }
 

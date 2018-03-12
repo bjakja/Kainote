@@ -64,6 +64,13 @@ wxSize KaiStaticBox::CalcBorders()
 	return wxSize(8, heightText+5);
 }
 
+bool KaiStaticBox::Enable(bool enable)
+{
+	bool succ = wxWindow::Enable(enable);
+	Refresh(false);
+	return succ;
+}
+
 KaiStaticBoxSizer::KaiStaticBoxSizer(int orient, wxWindow *parent, const wxString& _label)
 		:wxBoxSizer(orient)
 		,box(new KaiStaticBox(parent, _label))
@@ -126,4 +133,9 @@ bool KaiStaticBoxSizer::Detach( wxWindow *window )
     }
 
     return wxSizer::Detach( window );
+}
+
+bool KaiStaticBoxSizer::Enable(bool enable)
+{
+	return box->Enable(enable);
 }
