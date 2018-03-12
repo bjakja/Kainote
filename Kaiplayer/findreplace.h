@@ -81,6 +81,7 @@ class FindReplace: public KaiDialog
 		
 		bool fromstart;
 		bool blockTextChange;
+		bool findTextReset = false;
 		
         void Find();
 		

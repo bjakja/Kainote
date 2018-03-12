@@ -719,18 +719,24 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 
 			if(j==fst.y){
 				wxString ftext=MText.SubString(wraps[j],fst.x-1);
+				ftext.Replace("\t", "");
 				if(wraps[j]>fst.x-1){fw=0;}
 				else{GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font);}
 				wxString stext=MText.SubString(fst.x,(fst.y==scd.y)? scd.x-1 : wraps[j+1]-1);
+				stext.Replace("\t", "");
 				GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
 			}
 			else if(j==scd.y){
 				fw=0;
-				GetTextExtent(MText.SubString(wraps[j],scd.x-1), &fww, &fh, NULL, NULL, &font);
+				wxString stext = MText.SubString(wraps[j], scd.x - 1);
+				stext.Replace("\t", "");
+				GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
 			}
 			else{
 				fw=0;
-				GetTextExtent(MText.SubString(wraps[j],wraps[j+1]-1), &fww, &fh, NULL, NULL, &font);
+				wxString stext = MText.SubString(wraps[j], wraps[j + 1] - 1);
+				stext.Replace("\t", "");
+				GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
 			}
 			dc.DrawRectangle(fw+3,((j*Fheight)+1)-scPos,fww,Fheight);
 			//if(j==scd.y)break;
@@ -743,6 +749,11 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			break;
 			
 		const wxUniChar &ch=alltext[i];
+		/*if (ch == '\t'){
+			wchar++;
+			continue;
+		}*/
+			
 
 		if(i==wraps[wline+1]){
 			if(Cursor.x+Cursor.y==wchar){
@@ -791,7 +802,9 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			if (Brackets.x == -1 || Brackets.y == -1){ col = cspellerrors; }
 			dc.SetBrush(wxBrush(col));
 			//dc.SetPen(wxPen(col));
-			if (i > 0){ GetTextExtent(MText.SubString(wraps[bry], i - 1), &fw, &fh, NULL, NULL, &font); }
+			wxString text = MText.SubString(wraps[bry], i - 1);
+			text.Replace("\t", "");
+			if (i > 0){ GetTextExtent(text, &fw, &fh, NULL, NULL, &font); }
 			else{ fw = 0; }
 			GetTextExtent(MText[i], &fww, &fh, NULL, NULL, &font);
 			dc.DrawRectangle(fw + 3, ((bry*Fheight) + 2) - scPos, fww, Fheight);
@@ -850,7 +863,11 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				continue;
 			}
 		}
-		parttext << ch;
+		if (ch != '\t'){
+			parttext << ch;
+
+		}
+		
 		if (templateString){
 			wchar++;
 			continue;
@@ -945,8 +962,9 @@ bool MTextEditor::HitTest(wxPoint pos, wxPoint *cur)
 	int fww;
 	for(int i = cur->x;i<wraps[cur->y+1]+1;i++)
 	{
-
-		GetTextExtent(txt.SubString(cur->x,i), &fw, &fh, NULL, NULL, &font);
+		wxString text = txt.SubString(cur->x, i);
+		text.Replace("\t", "");
+		GetTextExtent(text, &fw, &fh, NULL, NULL, &font);
 		GetTextExtent(txt[i], &fww, &fh, NULL, NULL, &font);
 		if(fw+1-(fww/2)>pos.x){cur->x=i; find=true;break;}
 	}
@@ -1394,14 +1412,17 @@ void MTextEditor::DrawWordRectangles(int type, wxDC &dc)
 		if (wraps[fsty] >= words[g]){ fw = 0; }
 		else{
 			wxString ftext = MText.SubString(wraps[fsty], words[g] - 1);
+			ftext.Replace("\t", "");
 			GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font);
 		}
 		int scndy = FindY(words[g + 1]);
 		wxString etext = MText.SubString(words[g], (fsty == scndy) ? words[g + 1] : wraps[fsty + 1]);
+		etext.Replace("\t", "");
 		GetTextExtent(etext, &fww, &fh, NULL, NULL, &font);
 		for (int q = fsty + 1; q <= scndy; q++){
 			int rest = (q == scndy) ? words[g + 1] : wraps[q + 1];
 			wxString btext = MText.SubString(wraps[q], rest);
+			btext.Replace("\t", "");
 			GetTextExtent(btext, &fwww, &fh, NULL, NULL, &font);
 			dc.DrawRectangle(3, ((q*Fheight) + 1) - scPos, fwww, Fheight);
 		}

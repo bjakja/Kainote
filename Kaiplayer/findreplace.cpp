@@ -367,6 +367,7 @@ void FindReplace::OnReplaceAll(wxCommandEvent& event)
 	blockTextChange = true;
 	KaiMessageBox(wxString::Format(_("Zmieniono %i razy."), allreps1), _("Szukaj Zamień"));
 	AddRecent();
+	findTextReset = true;
 }
 
 
@@ -374,6 +375,7 @@ void FindReplace::OnButtonFind(wxCommandEvent& event)
 {
 	Find();
 	fnext = false;
+	findTextReset = true;
 }
 
 void FindReplace::OnButtonRep(wxCommandEvent& event)
@@ -681,21 +683,25 @@ void FindReplace::Reset()
 }
 
 void FindReplace::OnSetFocus(wxActivateEvent& event){
-	if (!event.GetActive() || blockTextChange){ if (event.GetActive()){ blockTextChange = false; } return; }
+	if (!event.GetActive() || blockTextChange){ 
+		if (event.GetActive()){ blockTextChange = false; } return; 
+	}
 	long from, to, fromO, toO;
 	EditBox *edit = Kai->GetTab()->Edit;
 	edit->TextEdit->GetSelection(&from, &to);
 	edit->TextEditOrig->GetSelection(&fromO, &toO);
+	KaiChoice * findOrReplace = (FindText->GetValue().Len() > 0 && repl && !findTextReset) ? RepText : FindText;
 	if (from < to){
 		wxString selected = edit->TextEdit->GetValue().SubString(from, to - 1);
-		if (selected.Lower() != FindText->GetValue().Lower()){ FindText->SetValue(selected); }
+		if (selected.Lower() != findOrReplace->GetValue().Lower()){ findOrReplace->SetValue(selected); }
 	}
 	else if (fromO < toO){
 		wxString selected = edit->TextEditOrig->GetValue().SubString(fromO, toO - 1);
-		if (selected.Lower() != FindText->GetValue().Lower()){ FindText->SetValue(selected); }
+		if (selected.Lower() != findOrReplace->GetValue().Lower()){ findOrReplace->SetValue(selected); }
 	}
-	FindText->SetFocus();
+	findOrReplace->SetFocus();
 	//hasFocus=true;
+	findTextReset = false;
 }
 
 void FindReplace::OnEnterConfirm(wxCommandEvent& event)

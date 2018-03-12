@@ -375,15 +375,16 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			tdc.DrawRectangle(posX, posY, GridWidth[j], GridHeight);
 
 			if (!isHeadline && j == ilcol - 1){
-
 				if (SpellErrors[k].size()>2){
+					wxString & text = strings[j];
+					text.Replace("\t", " ");
 					tdc.SetBrush(wxBrush(SpelcheckerCol));
 					for (size_t s = 1; s < SpellErrors[k].size(); s += 2){
-
-						wxString err = strings[j].SubString(SpellErrors[k][s], SpellErrors[k][s + 1]);
+						wxString err = text.SubString(SpellErrors[k][s], SpellErrors[k][s + 1]);
 						err.Trim();
 						if (SpellErrors[k][s]>0){
-							wxString berr = strings[j].Mid(0, SpellErrors[k][s]);
+							
+							wxString berr = text.Mid(0, SpellErrors[k][s]);
 							GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &font);
 						}
 						else{ bfw = 0; }
@@ -396,16 +397,16 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 				if (comparison){
 					tdc.SetTextForeground(ComparisonCol);
-
+					const wxString & text = strings[j];
 					for (size_t c = 1; c < Comparison->at(i).size(); c += 2){
 						//if(Comparison->at(i-1)[k]==Comparison->at(i-1)[k+1]){continue;}
-						wxString cmp = strings[j].SubString(Comparison->at(i)[c], Comparison->at(i)[c + 1]);
+						wxString cmp = text.SubString(Comparison->at(i)[c], Comparison->at(i)[c + 1]);
 
 						if (cmp == ""){ continue; }
 						if (cmp == " "){ cmp = "_"; }
 						wxString bcmp;
 						if (Comparison->at(i)[c]>0){
-							bcmp = strings[j].Mid(0, Comparison->at(i)[c]);
+							bcmp = text.Mid(0, Comparison->at(i)[c]);
 							GetTextExtent(bcmp, &bfw, &bfh, NULL, NULL, &font);
 						}
 						else{ bfw = 0; }
