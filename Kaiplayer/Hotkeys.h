@@ -38,6 +38,8 @@
 	XX( AudioPlay500MSFirst, ) \
 	XX( AudioPlay500MSLast, ) \
 	XX( AudioPlayToEnd, ) \
+	XX( AudioScrollLeft, ) \
+	XX( AudioScrollRight, ) \
 	XX( AudioGoto, ) \
 	XX( AudioLeadin, ) \
 	XX( AudioLeadout, ) \

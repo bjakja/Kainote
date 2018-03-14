@@ -196,7 +196,9 @@ void Hotkeys::LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio)
 		_hkeys[idAndType(AudioPlay,AUDIO_HOTKEY)] = hdata(_("Odtwarzaj"), "Down");
 		_hkeys[idAndType(AudioPlayAlt,AUDIO_HOTKEY)] = hdata(_("Odtwarzaj zastępcze"), "S");
 		_hkeys[idAndType(AudioStop,AUDIO_HOTKEY)] = hdata(_("Zatrzymaj"), "H");
-		_hkeys[idAndType(AudioGoto,AUDIO_HOTKEY)] = hdata(_("Przejdź do zaznaczenia"), "F");
+		_hkeys[idAndType(AudioGoto,AUDIO_HOTKEY)] = hdata(_("Przejdź do zaznaczenia"), "B");
+		_hkeys[idAndType(AudioScrollRight, AUDIO_HOTKEY)] = hdata(_("Przewiń w lewo"), "A");
+		_hkeys[idAndType(AudioScrollLeft, AUDIO_HOTKEY)] = hdata(_("Przewiń w prawo"), "F");
 		_hkeys[idAndType(AudioPlayBeforeMark,AUDIO_HOTKEY)] = hdata(_("Odtwarzaj przed znacznikem"), "Num 0");
 		_hkeys[idAndType(AudioPlayAfterMark,AUDIO_HOTKEY)] = hdata(_("Odtwarzaj po znaczniku"), "Num .");
 		_hkeys[idAndType(AudioPlay500MSFirst,AUDIO_HOTKEY)] = hdata(_("Odtwarzaj pierwsze 500ms"), "E");

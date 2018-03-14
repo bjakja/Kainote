@@ -601,15 +601,27 @@ void AudioBox::OnMouseEvents(wxMouseEvent &event)
 
 }
 
+void AudioBox::OnScrollSpectrum(wxCommandEvent &event)
+{
+	int64_t pos = audioDisplay->Position;
+	if (event.GetId() == AudioScrollRight)
+		pos -= 50;
+	else
+		pos += 50;
+	audioDisplay->UpdatePosition(pos);
+	audioDisplay->UpdateImage();
+}
+
 void AudioBox::SetAccels()
 {
-
+	if (!Notebook::GetTab()->audioHotkeysLoaded){
+		Notebook::GetTab()->SetAccels(true);
+	}
 	std::vector<wxAcceleratorEntry> entries;
 	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
 		if(cur->first.Type!=AUDIO_HOTKEY){continue;}
 		idAndType itype = cur->first;
 		entries.push_back(Hkeys.GetHKey(itype));
-
 	}
 	wxAcceleratorTable accel(entries.size(), &entries[0]);
 	SetAcceleratorTable(accel);
@@ -672,6 +684,8 @@ BEGIN_EVENT_TABLE(AudioBox,wxPanel)
 	EVT_MENU(AudioGoto, AudioBox::OnGoto)
 	EVT_MENU(AudioLeadin,AudioBox::OnLeadIn)
 	EVT_MENU(AudioLeadout,AudioBox::OnLeadOut)
+	EVT_MENU(AudioScrollLeft, AudioBox::OnScrollSpectrum)
+	EVT_MENU(AudioScrollRight, AudioBox::OnScrollSpectrum)
 
 	EVT_TOGGLEBUTTON(Audio_Vertical_Link, AudioBox::OnVerticalLink)
 	EVT_TOGGLEBUTTON(Audio_Button_Karaoke,AudioBox::OnKaraoke)

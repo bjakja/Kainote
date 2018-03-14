@@ -40,10 +40,11 @@ class TabPanel : public wxWindow
 		wxBoxSizer* BoxSizer2;
 		wxBoxSizer* BoxSizer3;
 
-		void SetAccels();
+		void SetAccels(bool onlyGridAudio = false);
 		void SetVideoWindowSizes(int w, int h);
 
 		bool editor;
+		bool audioHotkeysLoaded = false;
 		
 
 		wxString SubsName;

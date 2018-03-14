@@ -255,11 +255,12 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			}
 			wxString txt = Dial->Text;
 			wxString txttl = Dial->TextTl;
+			bool isTl = (hasTLMode && txttl != "");
 
 			if (!isComment && subsFormat != TMP && !(CNZ & visibleColumns)){
 				int chtime;
 				if (SpellErrors[k].size()<1){
-					chtime = CalcChars((hasTLMode && txttl != "") ? txttl : txt) / 
+					chtime = CalcChars((isTl) ? txttl : txt) /
 						((Dial->End.mstime - Dial->Start.mstime) / 1000.0f);
 					if (chtime<0 || chtime>999){ chtime = 999; }
 					SpellErrors[k].push_back(chtime);
@@ -283,11 +284,12 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			
 			if (!isComment && SpellCheckerOn && (!hasTLMode && txt != "" || hasTLMode && txttl != "")){
 				if (SpellErrors[k].size()<2){
-					CheckText(txt, SpellErrors[k], chtag);
+					CheckText((isTl) ? txttl : txt, SpellErrors[k], chtag);
 				}
 			}
 			if (txt.Len() > 1000){ txt = txt.SubString(0, 1000) + "..."; }
-			strings.push_back((!showOriginal && hasTLMode && txttl != "") ? txttl : txt);
+			if (txttl.Len() > 1000){ txttl = txttl.SubString(0, 1000) + "..."; }
+			strings.push_back((!showOriginal && isTl) ? txttl : txt);
 			if (showOriginal){ strings.push_back(txttl); }
 
 			isSelected = file->IsSelectedByKey(i);
@@ -1128,7 +1130,7 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 	for (size_t i = 0; i<text.Len(); i++)
 	{
 		const wxUniChar &ch = text[i];
-		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT)/*notchar.Find(ch) != -1*/ && !block){
+		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch != '\''/*notchar.Find(ch) != -1*/ && !block){
 			if (word.Len()>1){
 				if (word.StartsWith("'")){ word = word.Remove(0, 1); }
 				if (word.EndsWith("'")){ word = word.RemoveLast(1); }
@@ -1173,7 +1175,7 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 			firsti = i + tagsReplacement.Len(); word = ""; continue;
 		}
 		
-		if (!block && !iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) /*notchar.Find(ch) == -1*/ && text.GetChar((i == 0) ? 0 : i - 1) != '\\'){ word << ch; lasti = i; }
+		if (!block && (!iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) || ch == '\'') /*notchar.Find(ch) == -1*/ && text.GetChar((i == 0) ? 0 : i - 1) != '\\'){ word << ch; lasti = i; }
 		else if (!block && text.GetChar((i == 0) ? 0 : i - 1) == '\\'){
 			word = "";
 			if (ch == 'N' || ch == 'n' || ch == 'h'){

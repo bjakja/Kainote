@@ -1034,7 +1034,7 @@ void MTextEditor::CheckText()
 	for(size_t i = 0; i<text.Len();i++)
 	{
 		wxUniChar ch=text.GetChar(i);
-		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT)/*notchar.Find(ch)!=-1*/ && !block){
+		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch!='\''/*notchar.Find(ch)!=-1*/ && !block){
 			if(word.Len()>1){
 				if(word.StartsWith("'")){word=word.Remove(0,1);}
 				if(word.EndsWith("'")){word=word.RemoveLast(1);}
@@ -1074,7 +1074,7 @@ void MTextEditor::CheckText()
 		if (ch == '{'){ block = true; lastStartCBracket = i; continue; }
 		else if (ch == '}'){ block = false; lastEndCBracket = i; firsti = i + 1; word = ""; continue; }
 
-		if (!block && /*notchar.Find(ch)==-1*/ !iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) &&
+		if (!block && /*notchar.Find(ch)==-1*/ (!iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) || ch == '\'') &&
 			text.GetChar((i == 0) ? 0 : i - 1) != '\\'){ word << ch; lasti = i; }
 		else if(!block && text.GetChar((i==0)? 0 : i-1)=='\\'){
 			word="";

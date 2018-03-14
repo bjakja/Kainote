@@ -602,6 +602,9 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	else if (id > 6000){
 		Kai->OnMenuSelected(event);
 	}
+	else if (id>600 && id < 1700 && Edit->ABox){
+		Edit->ABox->GetEventHandler()->AddPendingEvent(event);
+	}
 }
 
 

@@ -111,6 +111,7 @@ private:
 	void OnSpectrumNonLinear(wxCommandEvent &event);
 	void OnNextLineCommit(wxCommandEvent &event);
 	void OnMouseEvents(wxMouseEvent &event);
+	void OnScrollSpectrum(wxCommandEvent &event);
 
 	bool holding;
 	bool arrows;

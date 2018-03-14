@@ -63,11 +63,8 @@ TabPanel::~TabPanel(){
 }
 
 
-void TabPanel::SetAccels()
+void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 {
-
-	std::vector<wxAcceleratorEntry> ventries;
-   
 	std::vector<wxAcceleratorEntry> gentries;
 	gentries.resize(3);
     gentries[0].Set(wxACCEL_CTRL, (int) 'X', Cut);
@@ -77,18 +74,29 @@ void TabPanel::SetAccels()
 	std::vector<wxAcceleratorEntry> eentries;
 	eentries.resize(2);
 	eentries[0].Set(wxACCEL_CTRL, WXK_NUMPAD_ENTER, MENU_COMMIT);
-    eentries[1].Set(wxACCEL_NORMAL, WXK_NUMPAD_ENTER, MENU_NEWLINE);
+	eentries[1].Set(wxACCEL_NORMAL, WXK_NUMPAD_ENTER, MENU_NEWLINE);
+	std::vector<wxAcceleratorEntry> ventries;
 	
 	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
 		int id=cur->first.id;
-		if(cur->second.Accel=="" || cur->first.Type == AUDIO_HOTKEY || cur->first.Type == GLOBAL_HOTKEY){continue;}
+		if (cur->second.Accel == "" /*|| cur->first.Type == AUDIO_HOTKEY*/ || cur->first.Type == GLOBAL_HOTKEY || 
+			(onlyGridAudio && (cur->first.Type != GRID_HOTKEY && cur->first.Type != AUDIO_HOTKEY))){ continue; }
 		//editor
 		if(cur->first.Type == EDITBOX_HOTKEY){
 			eentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 
-		}else if(cur->first.Type == GRID_HOTKEY){//grid
+		}
+		else if (cur->first.Type == GRID_HOTKEY || cur->first.Type == AUDIO_HOTKEY){//grid
+			if (id >= AudioCommit && id <= AudioNext)
+				continue;
+
 			gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
-			if(id>5000 &&id<=6000){Grid->ConnectAcc(id);}
+			if((id>5000 && id<=6000) || (id < 1700 && id>600)){
+				Grid->ConnectAcc((id<1000)? id+1000 : id);
+				if (id < 1700){ 
+					audioHotkeysLoaded = true; 
+				}
+			}
 
 		}else if(cur->first.Type == VIDEO_HOTKEY){//video
 			ventries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
@@ -103,10 +111,12 @@ void TabPanel::SetAccels()
 	
 	wxAcceleratorTable accelg(gentries.size(), &gentries[0]);
     Grid->SetAcceleratorTable(accelg);
-	wxAcceleratorTable accelv(ventries.size(), &ventries[0]);
-    Video->SetAcceleratorTable(accelv);
-    wxAcceleratorTable accele(eentries.size(), &eentries[0]);
-    Edit->SetAcceleratorTable(accele);
+	if (!onlyGridAudio){
+		wxAcceleratorTable accelv(ventries.size(), &ventries[0]);
+		Video->SetAcceleratorTable(accelv);
+		wxAcceleratorTable accele(eentries.size(), &eentries[0]);
+		Edit->SetAcceleratorTable(accele);
+	}
 	
 }
 
