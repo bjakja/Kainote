@@ -415,12 +415,12 @@ void VideoRend::Render(bool Frame, bool wait)
 
 	if(cross){
 		DRAWOUTTEXT(m_font,coords,crossRect, (crossRect.left < vectors[0].x)? 10 : 8 ,0xFFFFFFFF)
-		lines->SetWidth(3);
+		hr = lines->SetWidth(3);
 		hr=lines->Begin();
 		hr=lines->Draw(&vectors[0], 2, 0xFF000000);
 		hr=lines->Draw(&vectors[2], 2, 0xFF000000);
 		hr=lines->End();
-		lines->SetWidth(1);
+		hr = lines->SetWidth(1);
 		D3DXVECTOR2 v1[4];
 		v1[0]=vectors[0];
 		v1[0].x += 0.5f;

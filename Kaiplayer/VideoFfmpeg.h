@@ -67,6 +67,7 @@ public:
 	volatile bool success;
 	volatile bool isBusy;
 	volatile bool audioNotInitialized = true;
+	volatile bool lockGetFrame = true;
 	volatile float audioProgress = 0;
 	int width;
 	int height;

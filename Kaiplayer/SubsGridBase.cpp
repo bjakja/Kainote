@@ -104,6 +104,7 @@ void SubsGridBase::Clearing()
 	SAFE_DELETE(file);
 	SpellErrors.clear();
 	isFiltered = false;
+	showOriginal = false;
 	first = true;
 	scPos = 0;
 	lastRow = 0;

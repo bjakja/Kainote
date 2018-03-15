@@ -117,7 +117,7 @@ void VideoFfmpeg::Processing()
 					rend->time = Timecodes[rend->lastframe];
 					lastframe = rend->lastframe;
 				}
-				if (audioNotInitialized)
+				if (lockGetFrame)
 					GetFFMSFrame(rend->lastframe);
 				else
 					fframe=FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
@@ -162,7 +162,7 @@ void VideoFfmpeg::Processing()
 		}else if(wait_result == WAIT_OBJECT_0+1){
 			byte *buff = (byte*)rend->datas;
 			if(rend->lastframe != lastframe){
-				if (audioNotInitialized)
+				if (lockGetFrame)
 					GetFFMSFrame(rend->lastframe);
 				else
 					fframe = FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
@@ -507,6 +507,7 @@ void VideoFfmpeg::AudioLoad(VideoFfmpeg *vf, bool newIndex, int audiotrack)
 	vf->audioNotInitialized = false;
 done:
 	if (vf->audiosource){ FFMS_DestroyAudioSource(vf->audiosource); vf->audiosource = NULL; }
+	vf->lockGetFrame = false;
 	SetEvent(vf->eventAudioComplete);
 	if (vf->audioLoadThread){ delete vf->audioLoadThread; vf->audioLoadThread = NULL; }
 	
@@ -916,16 +917,21 @@ wxString VideoFfmpeg::ColorCatrixDescription(int cs, int cr) {
 	}
 }
 
-void VideoFfmpeg::SetColorSpace(const wxString& matrix){
-
-		if (matrix == ColorSpace) return;
-		if (matrix == RealColorSpace || (matrix != "TV.601" && matrix != "TV.709"))
-			FFMS_SetInputFormatV(videosource, CS, CR, FFMS_GetPixFmt(""), nullptr);
-		else if (matrix == "TV.601")
-			FFMS_SetInputFormatV(videosource, FFMS_CS_BT470BG, CR, FFMS_GetPixFmt(""), nullptr);
-		else
-			return;
-		ColorSpace = matrix;
+void VideoFfmpeg::SetColorSpace(const wxString& matrix)
+{
+	wxMutexLocker lock(blockaudio);
+	if (matrix == ColorSpace) return;
+	lockGetFrame = true;
+	if (matrix == RealColorSpace || (matrix != "TV.601" && matrix != "TV.709"))
+		FFMS_SetInputFormatV(videosource, CS, CR, FFMS_GetPixFmt(""), nullptr);
+	else if (matrix == "TV.601")
+		FFMS_SetInputFormatV(videosource, FFMS_CS_BT470BG, CR, FFMS_GetPixFmt(""), nullptr);
+	else{
+		lockGetFrame = false;
+		return;
+	}
+	lockGetFrame = false;
+	ColorSpace = matrix;
 
 }
 

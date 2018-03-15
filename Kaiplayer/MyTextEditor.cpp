@@ -632,8 +632,15 @@ void MTextEditor::OnPaint(wxPaintEvent& event)
 void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 {
 	int fw=0,fh=0;
-
-	const wxColour & ctext = Options.GetColour(EditorText);
+	bool tags = false;
+	bool slash = false;
+	bool val = false;
+	bool templateString = false;
+	bool templateCode = state == 3;
+	bool isTemplateLine = state > 1;
+	
+	const wxColour & ctvariables = Options.GetColour(EditorTemplateVariables);
+	const wxColour & ctext = templateCode ? ctvariables : Options.GetColour(EditorText);
 	const wxColour & ccurlybraces = Options.GetColour(EditorCurlyBraces);
 	const wxColour & coperators = Options.GetColour(EditorTagOperators);
 	const wxColour & cnames = Options.GetColour(EditorTagNames);
@@ -643,7 +650,6 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	const wxColour & cselection = Options.GetColour(EditorSelection);
 	const wxColour & cselnofocus = Options.GetColour(EditorSelectionNoFocus);
 	const wxColour & cspellerrors = Options.GetColour(EditorSpellchecker);
-	const wxColour & ctvariables = Options.GetColour(EditorTemplateVariables);
 	const wxColour & ctcodemarks = Options.GetColour(EditorTemplateCodeMarks);
 	const wxColour & ctfunctions = Options.GetColour(EditorTemplateFunctions);
 	const wxColour & ctkeywords = Options.GetColour(EditorTemplateKeywords);
@@ -654,12 +660,6 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.DrawRectangle(0,0,w,h);
 
-	bool tags=false;
-	bool slash=false;
-	bool val=false;
-	bool templateString = false;
-	bool templateCode = state==3;
-	bool isTemplateLine = state > 1;
 	wxString znaki="(0123456789-&+";
 	wxString cyfry="-0123456789ABCDEFabcdef.";
 	wxString tagtest="";
@@ -749,10 +749,6 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 			break;
 			
 		const wxUniChar &ch=alltext[i];
-		/*if (ch == '\t'){
-			wchar++;
-			continue;
-		}*/
 			
 
 		if(i==wraps[wline+1]){
@@ -767,7 +763,7 @@ void MTextEditor::DrawFld(wxDC &dc,int w, int h, int windowh)
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				wxColour kol = (val || (isTemplateLine && parttext.IsNumber())) ? cvalues : (slash) ? cnames : 
 					(templateString) ? ctstrings : (isTemplateLine && ch == '(') ? ctfunctions : 
-					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : ctext;
+					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : templateCode? ctvariables : ctext;
 				dc.SetTextForeground(kol);
 				mestext<<parttext;
 				dc.DrawText(parttext,fw+3,posY);
