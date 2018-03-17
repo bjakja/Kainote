@@ -452,8 +452,6 @@ void VideoRend::Render(bool Frame, bool wait)
 	// End the scene
 	hr = d3device->EndScene();
 
-
-	hr = d3device->Present(NULL, &windowRect, NULL, NULL );
 	if (D3DERR_DEVICELOST == hr ||
 		D3DERR_DRIVERINTERNALERROR == hr){
 		if (!devicelost){
@@ -461,7 +459,9 @@ void VideoRend::Render(bool Frame, bool wait)
 		}
 		//wxLogMessage("device lost when rendering");
 		Render(true, false);
+		return;
 	}
+	hr = d3device->Present(NULL, &windowRect, NULL, NULL);
 }
 
 
@@ -507,7 +507,7 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 
 	diff=d3dlr.Pitch - (vwidth*bytes);
 	if (!diff){memcpy(texbuf,fdata,(vheight*pitch));}
-	else{
+	else if(diff > 0){
 
 		if(vformat>=YV12){	
 			for(int i=0; i <vheight; i++){
@@ -633,8 +633,8 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 		SAFE_DELETE(vplayer);
 		//VFF=new VideoFfmpeg(fname, Kaia->Frame->Tabs->GetSelection(),&success);
 		VFF=tmpvff;
-		d3dformat=D3DFMT_X8R8G8B8;//D3DFMT_YUY2;//D3DFORMAT('21VN');
-		vformat=RGB32;//YUY2;//NV12;
+		d3dformat=D3DFMT_X8R8G8B8;
+		vformat=RGB32;
 		vwidth=VFF->width;
 		vheight=VFF->height;
 		fps=VFF->fps;

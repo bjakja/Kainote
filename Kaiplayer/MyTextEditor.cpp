@@ -450,7 +450,7 @@ void MTextEditor::OnMouseEvent(wxMouseEvent& event)
 				int from=errors[errn*2];
 				int to=errors[(errn*2)+1];
 				wxString txt=lw.GetSelection();
-				MText.replace(from,to-from,txt);
+				MText.replace(from,to-from+1,txt);
 				modified=true;
 				CalcWrap();
 				if(spell){CheckText();}
@@ -1184,7 +1184,7 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 	if(id>=30200){
 		int from=errors[error*2];
 		int to=errors[(error*2)+1];
-		MText.replace(from,to-from,suggs[id-30200]);
+		MText.replace(from,to-from+1,suggs[id-30200]);
 		modified=true;
 		CalcWrap();
 		if(spell){CheckText();}

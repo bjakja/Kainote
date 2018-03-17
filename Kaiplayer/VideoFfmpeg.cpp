@@ -97,8 +97,7 @@ void VideoFfmpeg::Processing()
 
 	int fplane=height * width * 4;
 	int tdiff=0;
-	//if (!success)
-		//SetEvent(eventAudioComplete);
+	
 	SetEvent(eventComplete);
 	if(width < 0){return;}
 
@@ -170,8 +169,10 @@ void VideoFfmpeg::Processing()
 			}
 			if(!fframe){SetEvent(eventComplete);isBusy = false;continue;}
 			memcpy(&buff[0],fframe->Data[0],fplane);
+			
 			rend->DrawTexture(buff);
 			rend->Render(false);
+
 			SetEvent(eventComplete);
 			isBusy = false;
 		}else{

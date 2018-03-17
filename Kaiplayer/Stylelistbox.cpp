@@ -67,13 +67,13 @@ wxString GetCheckedElements(wxWindow *parent)
 }
 
 
-KaiListBox::KaiListBox(wxWindow *parent, const wxArrayString &suggest, const wxString &title, bool centerOnParent)
+KaiListBox::KaiListBox(wxWindow *parent, const wxArrayString &items, const wxString &title, bool centerOnParent)
 	: KaiDialog(parent,-1,title,wxDefaultPosition)
 	,selection(0)
 {
 	DialogSizer *sizer=new DialogSizer(wxVERTICAL);
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-	list=new KaiListCtrl(this,29886,suggest, wxDefaultPosition, wxSize(220,160));
+	list=new KaiListCtrl(this,29886,items, wxDefaultPosition, wxSize(220,160));
 	list->SetSelection(0);
 	MappedButton *OK = new MappedButton(this, 8888, "OK");
 	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));

@@ -162,7 +162,11 @@ class VideoRend : public wxWindow
 		int GetPreciseTime(bool start = true);
 		void DeleteAudioCache(){if(VFF){VFF->DeleteOldAudioCache();}}
 		void SetColorSpace(const wxString& matrix, bool render=true){
-			if(VFF){VFF->SetColorSpace(matrix);Render();}
+			if(VFF){
+				VFF->SetColorSpace(matrix);
+				if(vstate==Paused)
+					Render();
+			}
 		}
 		virtual void CaptureMouse(){};
 		virtual void ReleaseMouse(){};
