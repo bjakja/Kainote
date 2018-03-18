@@ -24,10 +24,12 @@
 #define IDS(XX) \
 	XX( AudioCommitAlt,=620 ) \
 	XX( AudioPlayAlt, ) \
+	XX( AudioPlayLineAlt, ) \
 	XX( AudioPreviousAlt, ) \
 	XX( AudioNextAlt, ) \
 	XX( AudioCommit,=1620 ) \
 	XX( AudioPlay, ) \
+	XX( AudioPlayLine, ) \
 	XX( AudioPrevious, ) \
 	XX( AudioNext, ) \
 	XX( AudioStop, ) \

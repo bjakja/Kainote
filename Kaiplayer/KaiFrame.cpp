@@ -53,8 +53,14 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title, const
 	Bind(wxEVT_LEAVE_WINDOW, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_ACTIVATE, &KaiFrame::OnActivate, this);
-	//Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
 	SetSize(pos.x,pos.y,size.x, size.y);
+	//DWM_TIMING_INFO ti;
+	//ti.cbSize = sizeof(ti);
+	//WinStruct<DWM_TIMING_INFO> ti;
+	//HRESULT hr = DwmEnableMMCSS(TRUE);//DwmGetCompositionTimingInfo(m_hWnd, &ti);
+	//if (FAILED(hr)){
+		//wxLogStatus("nie mo¿na pobraæ timing info");
+	//}
 }
 
 KaiFrame::~KaiFrame()
@@ -268,6 +274,10 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 	 if (uMsg == WM_ERASEBKGND){
 		 return 0;
 	 }
+	 //if (uMsg == WM_SYNCPAINT){
+		 //Refresh(false);
+		 //return 0;
+	 //}
 	 
 	 if (uMsg == WM_NCACTIVATE /*28*/){
 		isActive = wParam == TRUE;

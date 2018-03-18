@@ -25,6 +25,7 @@ public:
 	~ZipHandler(){};
 	bool UnZipFile(const wchar_t *pathOfZip, const wchar_t *destinationDir);
 	bool ZipFolder(const wchar_t *destinationDir, const wchar_t *pathOfZip, const wchar_t **excludes, int numExcludes);
+	void CheckFiles(const wchar_t *destinationDir, size_t *dirs, size_t *files);
 	const std::string & GetError(){ return log; };
 private:
 	bool ConvertToWchar(char *source, wchar_t *dest);
@@ -33,6 +34,7 @@ private:
 	wchar_t * GetSubstring(wchar_t *string, int numChar);
 	bool ZipFolderFiles(zipFile zf, const wchar_t *destinationDir, const wchar_t *pathOfZip, const wchar_t **excludes, int numExcludes);
 	bool ZipFile(zipFile zf, const wchar_t *name, const wchar_t *filepath);
+	void CheckDirFiles(const wchar_t *destinationDir, size_t *dirs, size_t *files);
 	std::string log;
 	size_t firstFolderStart = 0;
 	char buffer[CHUNK];

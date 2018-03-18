@@ -126,6 +126,11 @@ bool ZipHandler::ZipFolder(const wchar_t *destinationDir, const wchar_t *pathOfZ
 	return returnval;
 }
 
+void ZipHandler::CheckFiles(const wchar_t *destinationDir, size_t *dirs, size_t *files)
+{
+	CheckDirFiles(destinationDir, dirs, files);
+}
+
 bool ZipHandler::ConvertToWchar(char *source, wchar_t *dest)
 {
 	int sourcelen = strlen(source);
@@ -311,4 +316,57 @@ bool ZipHandler::ZipFile(zipFile zf, const wchar_t *name, const wchar_t *filepat
 		fclose(file);
 	}
 	return true;
+}
+
+void ZipHandler::CheckDirFiles(const wchar_t *destinationDir, size_t *dirs, size_t *files)
+{
+	size_t destinationDirLen = wcslen(destinationDir);
+	bool putBackSlash = destinationDir[destinationDirLen - 1] != L'\\';
+	int filterSize = (putBackSlash) ? destinationDirLen + 7 : destinationDirLen + 6;
+	wchar_t * filter = new wchar_t[filterSize];
+	wcscpy(filter, L"\\\\?\\\0");
+	wcscpy(&filter[4], destinationDir);
+	wcscpy(&filter[destinationDirLen + 4], (putBackSlash) ? L"\\*\0" : L"*\0");
+	_WIN32_FIND_DATAW data;
+	HANDLE fileHandle = FindFirstFileW(filter, &data);
+	if (fileHandle == INVALID_HANDLE_VALUE){
+		log += "Cannot open directory to pack\n";
+		delete[] filter;
+		return;
+	}
+
+	//To trzeba przerobiæ, folder pocz¹tkowy musi byæ zawsze taki sam.
+	//const wchar_t *firstFolderName = &destinationDir[firstFolderStart];
+	//size_t firstFolderSize = wcslen(firstFolderName);
+
+	do
+	{
+		if (!wcscmp(data.cFileName, L".") || !wcscmp(data.cFileName, L".."))
+			continue;
+
+
+		size_t fsize = wcslen(data.cFileName);
+
+		size_t ffsize = destinationDirLen;
+		size_t fullFilepathsize = putBackSlash ? fsize + destinationDirLen + 2 : fsize + destinationDirLen + 1;
+		wchar_t * fullfilepath = new wchar_t[fullFilepathsize];
+		wcscpy(fullfilepath, destinationDir);
+
+		if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY){
+			if (putBackSlash){
+				wcscpy(&fullfilepath[ffsize], L"\\");
+				ffsize++;
+			}
+			wcscpy(&fullfilepath[ffsize], data.cFileName);
+			CheckDirFiles(fullfilepath, dirs, files);
+			(*dirs)++;
+			delete[] fullfilepath;
+			continue;
+		}
+		(*files)++;
+		delete[] fullfilepath;
+
+	} while (FindNextFileW(fileHandle, &data) != 0);
+	delete[] filter;
+	FindClose(fileHandle);
 }

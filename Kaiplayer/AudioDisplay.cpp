@@ -989,7 +989,7 @@ void AudioDisplay::DrawProgress()
 	textParcent.top = halfY - 20;
 	textParcent.bottom = halfY + 20;
 	wxString txt = std::to_string((int)(provider->audioProgress * 100.f)) + L"%";
-	try{
+	//try{
 		d3dLine->SetWidth(1);
 		d3dLine->Begin();
 		d3dLine->Draw(&vectors[4], 5, 0xFF00FFFF);
@@ -1001,7 +1001,7 @@ void AudioDisplay::DrawProgress()
 		d3dLine->End();
 
 		DRAWOUTTEXT(d3dFont, txt, textParcent, DT_CENTER | DT_VCENTER, 0xFFFFFFFF)
-	} catch (...){}
+	//} catch (...){}
 }
 
 //////////////////////////
@@ -1421,8 +1421,8 @@ void AudioDisplay::GetTimesDialogue(int &start,int &end) {
 
 ////////////////////////////
 // Get samples of selection
-void AudioDisplay::GetTimesSelection(int &start,int &end, bool rangeEnd /*= false*/) {
-	if(hasKara){
+void AudioDisplay::GetTimesSelection(int &start,int &end, bool rangeEnd /*= false*/, bool ignoreKara /*= false*/) {
+	if (hasKara && !ignoreKara){
 		whichsyl = MID(0,whichsyl,(int)karaoke->syls.size()-1);
 		if (rangeEnd)
 			karaoke->GetSylVisibleTimes(whichsyl, start, end);

@@ -247,7 +247,7 @@ public:
 	}
 	void ChangePosition(int time, bool center = true);
 	void GetTimesDialogue(int &start,int &end);
-	void GetTimesSelection(int &start,int &end, bool rangeEnd = false);
+	void GetTimesSelection(int &start,int &end, bool rangeEnd = false, bool ignoreKara = false);
 	void SetSelection(int start, int end);
 	int GetBoundarySnap(int x,int range,bool shiftHeld,bool start=true, bool keysnap=false);
 	void GetTextExtentPixel(const wxString &text, int *x, int *y);

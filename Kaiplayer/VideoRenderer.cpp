@@ -496,12 +496,12 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 #ifdef byvertices
 	HR(MainStream->LockRect( &d3dlr,0, 0), _("Nie można zablokować bufora tekstury"));//D3DLOCK_NOSYSLOCK
 #else
-	try{
+	//try{
 		HR(MainStream->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Nie można zablokować bufora tekstury"));
-	}
-	catch (...){
-		return false;
-	}
+	//}
+	//catch (...){
+		//return false;
+	//}
 #endif
 	texbuf = static_cast<byte *>(d3dlr.pBits);
 
@@ -548,6 +548,9 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 			}
 		}
 
+	}
+	else{
+		wxLogStatus("zły pitch diff %i pitch %i dxpitch %i", diff, pitch, d3dlr.Pitch);
 	}
 
 	MainStream->UnlockRect();
@@ -641,7 +644,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 		ax=VFF->arwidth;
 		ay=VFF->arheight;
 		if(vwidth % 2 != 0 ){vwidth++;}
-		pitch=vwidth*4;//1.5f;
+		pitch=vwidth*4;
 		if (changeAudio){
 			TabPanel *pan = ((TabPanel*)GetParent());
 			if (VFF->GetSampleRate() > 0){

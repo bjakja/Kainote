@@ -116,75 +116,79 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	// Buttons sizer
 	wxSizer *ButtonSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton *temp;
-	temp = new MappedButton(this,AudioPrevious,"",wxBITMAP_PNG("button_prev"),wxDefaultPosition,wxSize(26,26), AUDIO_HOTKEY);
+	temp = new MappedButton(this,AudioPrevious,"",wxBITMAP_PNG("button_prev"),wxDefaultPosition,wxSize(24,24), AUDIO_HOTKEY);
 	temp->SetTwoHotkeys();
 	temp->SetToolTip(_("Odtwórz poprzednią linijkę"));
 	ButtonSizer->Add(temp,0,wxRIGHT,2);
-	temp = new MappedButton(this,AudioNext,"",wxBITMAP_PNG("button_next"),wxDefaultPosition,wxSize(26,26), AUDIO_HOTKEY);
+	temp = new MappedButton(this,AudioNext,"",wxBITMAP_PNG("button_next"),wxDefaultPosition,wxSize(24,24), AUDIO_HOTKEY);
 	temp->SetTwoHotkeys();
 	temp->SetToolTip(_("Odtwórz następną linijkę"));
 	ButtonSizer->Add(temp,0,wxRIGHT,2);
-	temp = new MappedButton(this,AudioPlay,"",wxBITMAP_PNG("button_playsel"),wxDefaultPosition,wxSize(26,26), AUDIO_HOTKEY);
+	temp = new MappedButton(this,AudioPlay,"",wxBITMAP_PNG("BUTTON_PLAY_LINE"),wxDefaultPosition,wxSize(24,24), AUDIO_HOTKEY);
+	temp->SetTwoHotkeys();
+	temp->SetToolTip(_("Odtwórz aktualną sylabę / linijkę"));
+	ButtonSizer->Add(temp, 0, wxRIGHT, 2);
+	temp = new MappedButton(this, AudioPlayLine, "", wxBITMAP_PNG("button_playsel"), wxDefaultPosition, wxSize(24, 24), AUDIO_HOTKEY);
 	temp->SetTwoHotkeys();
 	temp->SetToolTip(_("Odtwórz aktualną linijkę"));
 	ButtonSizer->Add(temp,0,wxRIGHT,2);
-	temp = new MappedButton(this,AudioStop,_("Zatrzymaj odtwarzanie"),wxBITMAP_PNG("button_stop"),wxDefaultPosition,wxSize(26,26), AUDIO_HOTKEY);
+	temp = new MappedButton(this,AudioStop,_("Zatrzymaj odtwarzanie"),wxBITMAP_PNG("button_stop"),wxDefaultPosition,wxSize(24,24), AUDIO_HOTKEY);
 	ButtonSizer->Add(temp,0,wxRIGHT,8);
 	//ButtonSizer->AddSpacer(2);
-	temp = new MappedButton(this,AudioPlayBeforeMark,_("Odtwórz przed znacznikiem"),wxBITMAP_PNG("button_playbefore"),wxDefaultPosition,wxSize(26,26), AUDIO_HOTKEY);
+	temp = new MappedButton(this,AudioPlayBeforeMark,_("Odtwórz przed znacznikiem"),wxBITMAP_PNG("button_playbefore"),wxDefaultPosition,wxSize(24,24), AUDIO_HOTKEY);
 	ButtonSizer->Add(temp,0,wxRIGHT,2);
-	temp = new MappedButton(this,AudioPlayAfterMark,_("Odtwórz po znaczniku"),wxBITMAP_PNG("button_playafter"),wxDefaultPosition,wxSize(26,26), AUDIO_HOTKEY);
+	temp = new MappedButton(this,AudioPlayAfterMark,_("Odtwórz po znaczniku"),wxBITMAP_PNG("button_playafter"),wxDefaultPosition,wxSize(24,24), AUDIO_HOTKEY);
 	ButtonSizer->Add(temp,0,wxRIGHT,8);
 
-	temp = new MappedButton(this,AudioPlay500MSBefore,_("Odtwórz 500ms przed czasem startowym"),wxBITMAP_PNG("button_playfivehbefore"),wxDefaultPosition,wxSize(26,26), AUDIO_HOTKEY);
+	temp = new MappedButton(this,AudioPlay500MSBefore,_("Odtwórz 500ms przed czasem startowym"),wxBITMAP_PNG("button_playfivehbefore"),wxDefaultPosition,wxSize(24,24), AUDIO_HOTKEY);
 	ButtonSizer->Add(temp,0,wxRIGHT,2);
-	temp = new MappedButton(this,AudioPlay500MSFirst,_("Odtwórz 500ms po czasie startowym"),wxBITMAP_PNG("button_playfirstfiveh"),wxDefaultPosition,wxSize(26,26), AUDIO_HOTKEY);
+	temp = new MappedButton(this,AudioPlay500MSFirst,_("Odtwórz 500ms po czasie startowym"),wxBITMAP_PNG("button_playfirstfiveh"),wxDefaultPosition,wxSize(24,24), AUDIO_HOTKEY);
 	ButtonSizer->Add(temp,0,wxRIGHT,2);
-	temp = new MappedButton(this,AudioPlay500MSLast,_("Odtwórz 500ms przed czasem końcowym"),wxBITMAP_PNG("button_playlastfiveh"),wxDefaultPosition,wxSize(26,26), AUDIO_HOTKEY);
+	temp = new MappedButton(this,AudioPlay500MSLast,_("Odtwórz 500ms przed czasem końcowym"),wxBITMAP_PNG("button_playlastfiveh"),wxDefaultPosition,wxSize(24,24), AUDIO_HOTKEY);
 	ButtonSizer->Add(temp,0,wxRIGHT,2);
-	temp = new MappedButton(this,AudioPlay500MSAfter,_("Odtwórz 500ms po czasie końcowym"),wxBITMAP_PNG("button_playfivehafter"),wxDefaultPosition,wxSize(26,26), AUDIO_HOTKEY);
+	temp = new MappedButton(this,AudioPlay500MSAfter,_("Odtwórz 500ms po czasie końcowym"),wxBITMAP_PNG("button_playfivehafter"),wxDefaultPosition,wxSize(24,24), AUDIO_HOTKEY);
 	ButtonSizer->Add(temp,0,wxRIGHT,2);
-	temp = new MappedButton(this,AudioPlayToEnd,_("Odtwórz do końca"),wxBITMAP_PNG("button_playtoend"),wxDefaultPosition,wxSize(26,26), AUDIO_HOTKEY);
+	temp = new MappedButton(this,AudioPlayToEnd,_("Odtwórz do końca"),wxBITMAP_PNG("button_playtoend"),wxDefaultPosition,wxSize(24,24), AUDIO_HOTKEY);
 	ButtonSizer->Add(temp,0,wxRIGHT,8);
 
-	temp = new MappedButton(this,AudioLeadin,_("Dodaj wstęp do aktywnej linijki"),wxBITMAP_PNG("button_leadin"),wxDefaultPosition,wxSize(26,26), AUDIO_HOTKEY);
+	temp = new MappedButton(this,AudioLeadin,_("Dodaj wstęp do aktywnej linijki"),wxBITMAP_PNG("button_leadin"),wxDefaultPosition,wxSize(24,24), AUDIO_HOTKEY);
 	ButtonSizer->Add(temp,0,wxRIGHT,2);
-	temp = new MappedButton(this,AudioLeadout,_("Dodaj zakończenie do aktywnej linijki"),wxBITMAP_PNG("button_leadout"),wxDefaultPosition,wxSize(26,26), AUDIO_HOTKEY);
+	temp = new MappedButton(this,AudioLeadout,_("Dodaj zakończenie do aktywnej linijki"),wxBITMAP_PNG("button_leadout"),wxDefaultPosition,wxSize(24,24), AUDIO_HOTKEY);
 	ButtonSizer->Add(temp,0,wxRIGHT,8);
 
-	temp = new MappedButton(this,AudioCommit,"",wxBITMAP_PNG("button_audio_commit"),wxDefaultPosition,wxSize(26,26), AUDIO_HOTKEY);
+	temp = new MappedButton(this,AudioCommit,"",wxBITMAP_PNG("button_audio_commit"),wxDefaultPosition,wxSize(24,24), AUDIO_HOTKEY);
 	temp->SetTwoHotkeys();
 	temp->SetToolTip(_("Zatwierdź zmiany"));
 	ButtonSizer->Add(temp,0,wxRIGHT,2);
-	temp = new MappedButton(this,AudioGoto,_("Przejdź do zaznaczenia"),wxBITMAP_PNG("button_audio_goto"),wxDefaultPosition,wxSize(26,26), AUDIO_HOTKEY);
+	temp = new MappedButton(this,AudioGoto,_("Przejdź do zaznaczenia"),wxBITMAP_PNG("button_audio_goto"),wxDefaultPosition,wxSize(24,24), AUDIO_HOTKEY);
 	ButtonSizer->Add(temp,0,wxRIGHT,8);
 
-	KaraSwitch = new ToggleButton(this,Audio_Button_Karaoke,"",_("Włącz / Wyłącz tworzenie karaoke"), wxDefaultPosition,wxSize(26,26));
+	KaraSwitch = new ToggleButton(this,Audio_Button_Karaoke,"",_("Włącz / Wyłącz tworzenie karaoke"), wxDefaultPosition,wxSize(24,24));
 	KaraSwitch->SetBitmap(wxBITMAP_PNG("button_karaoke"));
 	KaraSwitch->SetValue(audioDisplay->hasKara);
 	ButtonSizer->Add(KaraSwitch,0,wxRIGHT,2);
-	KaraMode = new ToggleButton(this,Audio_Button_Split,"",_("Włącz / Wyłącz automatyczne dzielenie sylab"), wxDefaultPosition,wxSize(26,26));
+	KaraMode = new ToggleButton(this,Audio_Button_Split,"",_("Włącz / Wyłącz automatyczne dzielenie sylab"), wxDefaultPosition,wxSize(24,24));
 	KaraMode->SetBitmap(wxBITMAP_PNG("button_auto_split"));
 	KaraMode->SetValue(audioDisplay->karaAuto);
 	ButtonSizer->Add(KaraMode,0,wxRIGHT,8);
 
-	AutoCommit = new ToggleButton(this,Audio_Check_AutoCommit,"",_("Automatycznie zatwierdza zmiany"),wxDefaultPosition,wxSize(26,26));
+	AutoCommit = new ToggleButton(this,Audio_Check_AutoCommit,"",_("Automatycznie zatwierdza zmiany"),wxDefaultPosition,wxSize(24,24));
 	AutoCommit->SetBitmap(wxBITMAP_PNG("button_auto_commit"));
 	AutoCommit->SetValue(Options.GetBool(AudioAutoCommit));
 	ButtonSizer->Add(AutoCommit,0,wxRIGHT,2);
-	NextCommit = new ToggleButton(this,Audio_Check_NextCommit,"",_("Przechodzenie do następnej linijki po zatwierdzeniu zmian"),wxDefaultPosition,wxSize(26,26));
+	NextCommit = new ToggleButton(this,Audio_Check_NextCommit,"",_("Przechodzenie do następnej linijki po zatwierdzeniu zmian"),wxDefaultPosition,wxSize(24,24));
 	NextCommit->SetBitmap(wxBITMAP_PNG("button_next_a_commit"));
 	NextCommit->SetValue(Options.GetBool(AudioNextLineOnCommit));
 	ButtonSizer->Add(NextCommit,0,wxRIGHT,2);
-	AutoScroll = new ToggleButton(this,Audio_Check_AutoGoto,"",_("Automatyczne przewijanie do aktywnej linijki"), wxDefaultPosition,wxSize(26,26));
+	AutoScroll = new ToggleButton(this,Audio_Check_AutoGoto,"",_("Automatyczne przewijanie do aktywnej linijki"), wxDefaultPosition,wxSize(24,24));
 	AutoScroll->SetBitmap(wxBITMAP_PNG("button_auto_go"));
 	AutoScroll->SetValue(Options.GetBool(AudioAutoScroll));
 	ButtonSizer->Add(AutoScroll,0,wxRIGHT,2);
-	SpectrumMode = new ToggleButton(this,Audio_Check_Spectrum,"",_("Tryb spektrum"), wxDefaultPosition,wxSize(26,26));
+	SpectrumMode = new ToggleButton(this,Audio_Check_Spectrum,"",_("Tryb spektrum"), wxDefaultPosition,wxSize(24,24));
 	SpectrumMode->SetBitmap(wxBITMAP_PNG("button_spectrum"));
 	SpectrumMode->SetValue(Options.GetBool(AudioSpectrumOn));
 	ButtonSizer->Add(SpectrumMode, 0, wxRIGHT, 2);
-	SpectrumNonLinear = new ToggleButton(this, Audio_Check_Spectrum_Non_Linear, "", _("Uwydatnienie częstotliwości głosu na spektrum"), wxDefaultPosition, wxSize(26, 26));
+	SpectrumNonLinear = new ToggleButton(this, Audio_Check_Spectrum_Non_Linear, "", _("Uwydatnienie częstotliwości głosu na spektrum"), wxDefaultPosition, wxSize(24, 24));
 	SpectrumNonLinear->SetBitmap(wxBITMAP_PNG("SPECTRUM_NON_LINEAR"));
 	SpectrumNonLinear->SetValue(Options.GetBool(AudioSpectrumNonLinearOn));
 	ButtonSizer->Add(SpectrumNonLinear, 0, wxRIGHT, 2);
@@ -311,7 +315,7 @@ void AudioBox::OnVerticalLink(wxCommandEvent &event) {
 void AudioBox::OnPlaySelection(wxCommandEvent &event) {
 	int start=0,end=0;
 	audioDisplay->SetFocus();
-	audioDisplay->GetTimesSelection(start,end);
+	audioDisplay->GetTimesSelection(start,end,false,event.GetId() == AudioPlayLine);
 	audioDisplay->Play(start,end);
 }
 
@@ -670,6 +674,7 @@ BEGIN_EVENT_TABLE(AudioBox,wxPanel)
 	EVT_COMMAND_SCROLL(Audio_Volume, AudioBox::OnVolume)
 
 	EVT_MENU(AudioPlay, AudioBox::OnPlaySelection)
+	EVT_MENU(AudioPlayLine, AudioBox::OnPlaySelection)
 	EVT_MENU(AudioStop, AudioBox::OnStop)
 	EVT_MENU(AudioNext, AudioBox::OnNext)
 	EVT_MENU(AudioPrevious, AudioBox::OnPrev)
