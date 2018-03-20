@@ -186,6 +186,10 @@
 	CG(TlModeShowOriginal,)\
 	CG(ToolbarIDs,)\
 	CG(ToolbarAlignment,)\
+	CG(UpdaterCheckIntensity,)\
+	CG(UpdaterCheckOptions,)\
+	CG(UpdaterCheckForStable,)\
+	CG(UpdaterLastCheck,)\
 	CG(VideoFullskreenOnStart,)\
 	CG(VideoIndex,)\
 	CG(VideoPauseOnClick,)\

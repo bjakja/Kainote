@@ -10,7 +10,9 @@
 #include <vector>
 
 #include <contrib/minizip/zip.h>
-//#include <vld.h>
+#if _DEBUG
+	#include <vld.h>
+#endif
 
 int check_exist_file(const wchar_t* filename)
 {
@@ -56,8 +58,12 @@ int _tmain(int argc, TCHAR* argv[])
 	}
 	bool isX86 = wcscmp(argv[3], L"x86") == 0;
 	char * prependFolder = (isX86) ? "Kainote" : "Kainote_x64";
-	wchar_t * path = argv[1];//(isX86) ? L"H:\\Kainote\\Win32\\Release\\Kainote x86.zip" : L"H:\\Kainote\\x64\\Release\\Kainote x64.zip";
+	wchar_t * path = argv[1];
 	if (!check_exist_file(path)){ std::wcerr << L"Kainote zip path don't exist " << path; return 1; }
+
+	/*bool isX86 = false;
+	char * prependFolder = (isX86) ? "Kainote" : "Kainote_x64";
+	wchar_t * path = (isX86) ? L"H:\\Kainote\\Win32\\Release\\Kainote x86.zip" : L"H:\\Kainote\\x64\\Release\\Kainote x64.zip";*/
 
 	int filenamessize = (isX86) ? 137 : 139;//tyle policzy³ visual studio
 	wchar_t * filenames[] = { 
@@ -231,8 +237,18 @@ int _tmain(int argc, TCHAR* argv[])
 		
 		size_t size = 0;
 		FILE *file = _wfopen(zipdir, L"rb");
+		zip_fileinfo zfi = { 0 };
+		HANDLE ffile = CreateFile(zipdir, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+		if (ffile!=INVALID_HANDLE_VALUE){
+			FILETIME writeTime;
+			GetFileTime(ffile, 0, 0, &writeTime);
+			CloseHandle(ffile);
+			FILETIME ftLocal;
+			uLong *dt = &zfi.dosDate;
+			FileTimeToLocalFileTime(&writeTime, &ftLocal);
+			FileTimeToDosDateTime(&ftLocal, ((LPWORD)dt) + 1, ((LPWORD)dt) + 0);
+		}
 		if (!file){
-			zip_fileinfo zfi = { 0 };
 			if (S_OK == zipOpenNewFileInZip(zf, charfn, &zfi, NULL, 0, NULL, 0, NULL, Z_DEFLATED, Z_DEFAULT_COMPRESSION)){
 				if (zipCloseFileInZip(zf))
 					_return = false;
@@ -242,7 +258,6 @@ int _tmain(int argc, TCHAR* argv[])
 		}
 		else
 		{
-			zip_fileinfo zfi = { 0 };
 			if (S_OK == zipOpenNewFileInZip(zf, charfn, &zfi, NULL, 0, NULL, 0, NULL, Z_DEFLATED, Z_DEFAULT_COMPRESSION))
 			{
 				while (size = fread(buffer, 1, CHUNK, file))
@@ -273,7 +288,7 @@ int _tmain(int argc, TCHAR* argv[])
 	//wchar_t *dbx = (isX86) ? L"C:\\Users\\Bakura\\Dropbox\\Kainote x86.zip\0" : L"C:\\Users\\Bakura\\Dropbox\\Kainote x64.zip\0";
 
 	wchar_t * dbx = argv[2];
-	
+
 	std::ifstream src(path, std::ios::binary);
 	std::ofstream dst(dbx, std::ios::binary);
 	dst << src.rdbuf();

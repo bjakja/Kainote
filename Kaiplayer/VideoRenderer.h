@@ -208,7 +208,7 @@ class VideoRend : public wxWindow
 		wxMutex mutexProgBar;
 		wxMutex mutexOpenFile;
 		PlaybackState vstate;
-		Visuals *Vclips;
+		Visuals *Visual;
 		int playend;
 		size_t lasttime;
 		std::vector<chapter> chaps;

@@ -251,8 +251,8 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	d3dpp.BackBufferCount	     = 1;
 	d3dpp.SwapEffect			 = D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_DISCARD;//D3DSWAPEFFECT_COPY;//
 	d3dpp.BackBufferFormat       = D3DFMT_X8R8G8B8;
-	d3dpp.Flags					 = D3DPRESENTFLAG_VIDEO;
-	//d3dpp.Flags					 = 0;
+	//d3dpp.Flags					 = D3DPRESENTFLAG_VIDEO;
+	d3dpp.Flags					 = 0;
 	//d3dpp.PresentationInterval   = D3DPRESENT_INTERVAL_DEFAULT;
 
 	if(d3dDevice){
@@ -366,297 +366,297 @@ void AudioDisplay::DoUpdateImage() {
 
 	if (provider->audioNotInitialized){
 		DrawProgress();
-		goto done;
 	}
-	// Option
-	selStart = 0;
-	selEnd = 0;
-	lineStart = 0;
-	lineEnd = 0;
-	selStartCap = 0;
-	selEndCap = 0;
-	int64_t drawSelStart = 0;
-	int64_t drawSelEnd = 0;
+	else{
+		// Option
+		selStart = 0;
+		selEnd = 0;
+		lineStart = 0;
+		lineEnd = 0;
+		selStartCap = 0;
+		selEndCap = 0;
+		int64_t drawSelStart = 0;
+		int64_t drawSelEnd = 0;
 
-	GetDialoguePos(lineStart,lineEnd,false);
-	hasSel = true;
+		GetDialoguePos(lineStart, lineEnd, false);
+		hasSel = true;
 
-	GetDialoguePos(selStartCap,selEndCap,true);
-	selStart = lineStart;
-	selEnd = lineEnd;
-	drawSelStart = lineStart;
-	drawSelEnd = lineEnd;
+		GetDialoguePos(selStartCap, selEndCap, true);
+		selStart = lineStart;
+		selEnd = lineEnd;
+		drawSelStart = lineStart;
+		drawSelEnd = lineEnd;
 
-	if (spectrum) {
-		DrawSpectrum(weak);
-	}
-
-	// Draw selection bg
-	if (hasSel && drawSelStart < drawSelEnd && drawSelectionBackground) {
-		D3DCOLOR fill;
-		if (NeedCommit) fill = selectionBackgroundModified;
-		else fill = selectionBackground;
-		VERTEX v9[4];
-		CreateVERTEX(&v9[0], drawSelStart, 0, fill);
-		CreateVERTEX(&v9[1], drawSelEnd+1, 0, fill);
-		CreateVERTEX(&v9[2], drawSelStart, h, fill);
-		CreateVERTEX(&v9[3], drawSelEnd+1, h, fill);
-		HRN(hr = d3dDevice->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX) ),"primitive failed");
-	
-	}
-
-	HRN(d3dLine->SetWidth(1.0f), L"line set width failed");
-	
-	// Draw spectrum
-	
-
-	if(!spectrum){
-	//// Waveform
-		if (provider) {
-			DrawWaveform(weak);
+		if (spectrum) {
+			DrawSpectrum(weak);
 		}
 
-		// Nothing
-		else {
-			D3DXVECTOR2 v2[2]={D3DXVECTOR2(0,h/2),D3DXVECTOR2(w,h/2)};
-			d3dLine->Begin();
-			d3dLine->Draw(v2,2,waveform);
-			d3dLine->End();
+		// Draw selection bg
+		if (hasSel && drawSelStart < drawSelEnd && drawSelectionBackground) {
+			D3DCOLOR fill;
+			if (NeedCommit) fill = selectionBackgroundModified;
+			else fill = selectionBackground;
+			VERTEX v9[4];
+			CreateVERTEX(&v9[0], drawSelStart, 0, fill);
+			CreateVERTEX(&v9[1], drawSelEnd + 1, 0, fill);
+			CreateVERTEX(&v9[2], drawSelStart, h, fill);
+			CreateVERTEX(&v9[3], drawSelEnd + 1, h, fill);
+			HRN(hr = d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), "primitive failed");
+
 		}
-	}
 
-	//// Draw previous line
-	DrawInactiveLines();
+		HRN(d3dLine->SetWidth(1.0f), L"line set width failed");
 
-	// Draw seconds boundaries
-	if (drawBoundaryLines) {
-		d3dLine->Begin();
-		int64_t start = Position*samples;
-		int rate = provider->GetSampleRate();
-		int pixBounds = rate / samples;
-		D3DXVECTOR2 v2[2]={D3DXVECTOR2(0,0),D3DXVECTOR2(0,h)};
-		if (pixBounds >= 8) {
-			for (int x=0;x<w;x++) {
-				if (((x*samples)+start) % rate < samples) {
-					v2[0].x=x;
-					v2[1].x=x;
-					DrawDashedLine(v2,2,secondBondariesColor);
-				}
+		// Draw spectrum
+
+
+		if (!spectrum){
+			//// Waveform
+			if (provider) {
+				DrawWaveform(weak);
+			}
+
+			// Nothing
+			else {
+				D3DXVECTOR2 v2[2] = { D3DXVECTOR2(0, h / 2), D3DXVECTOR2(w, h / 2) };
+				d3dLine->Begin();
+				d3dLine->Draw(v2, 2, waveform);
+				d3dLine->End();
 			}
 		}
-		d3dLine->End();
-	}
 
+		//// Draw previous line
+		DrawInactiveLines();
 
-
-
-	if (hasSel) {
-		// Draw boundaries
-		// Draw start boundary
-		int startDraw = lineStart+(selWidth/2);
-		//if(selWidth % 2 == 0){startDraw--;}
-		D3DXVECTOR2 v2[2]={D3DXVECTOR2(startDraw,0),D3DXVECTOR2(startDraw,h)};
-		d3dLine->SetWidth(selWidth);
-		d3dLine->Begin();
-		d3dLine->Draw(v2,2,lineStartBondaryColor);
-		d3dLine->End();
-		VERTEX v6[6];
-		CreateVERTEX(&v6[0], startDraw, 0, lineStartBondaryColor);
-		CreateVERTEX(&v6[1], startDraw + 10, 0, lineStartBondaryColor);
-		CreateVERTEX(&v6[2], startDraw, 10, lineStartBondaryColor);
-		CreateVERTEX(&v6[3], startDraw, h-10, lineStartBondaryColor);
-		CreateVERTEX(&v6[4], startDraw + 10, h, lineStartBondaryColor);
-		CreateVERTEX(&v6[5], startDraw, h, lineStartBondaryColor);
-
-		HRN(d3dDevice->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 1, v6, sizeof(VERTEX) ),"primitive failed");
-		HRN(d3dDevice->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(VERTEX) ),"primitive failed");
-		HRN(d3dDevice->DrawPrimitiveUP( D3DPT_LINESTRIP, 1, v6, sizeof(VERTEX) ),"primitive failed");
-		HRN(d3dDevice->DrawPrimitiveUP( D3DPT_LINESTRIP, 1, &v6[3], sizeof(VERTEX) ),"primitive failed");
-
-		// Draw end boundary
-		
-		startDraw = lineEnd+(selWidth/2);
-		v2[0]=D3DXVECTOR2(startDraw,0);
-		v2[1]=D3DXVECTOR2(startDraw,h);
-		d3dLine->Begin();
-		d3dLine->Draw(v2,2,lineEndBondaryColor);
-		d3dLine->End();
-		d3dLine->SetWidth(1.f);
-		CreateVERTEX(&v6[0], startDraw, 0, lineEndBondaryColor);
-		CreateVERTEX(&v6[1], startDraw-10, 0, lineEndBondaryColor);
-		CreateVERTEX(&v6[2], startDraw, 10, lineEndBondaryColor);
-		CreateVERTEX(&v6[3], startDraw, h-10, lineEndBondaryColor);
-		CreateVERTEX(&v6[4], startDraw-10, h, lineEndBondaryColor);
-		CreateVERTEX(&v6[5], startDraw, h, lineEndBondaryColor);
-
-		HRN(d3dDevice->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 1, v6, sizeof(VERTEX) ),"primitive failed");
-		HRN(d3dDevice->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(VERTEX) ),"primitive failed");
-		HRN(d3dDevice->DrawPrimitiveUP( D3DPT_LINESTRIP, 1, v6, sizeof(VERTEX) ),"primitive failed");
-		HRN(d3dDevice->DrawPrimitiveUP( D3DPT_LINESTRIP, 1, &v6[3], sizeof(VERTEX) ),"primitive failed");
-
-		// Draw karaoke
-		if (hasKara) {
-			int karstart=selStart;
-			wxString acsyl;
-			D3DXVECTOR2 v2[2]={D3DXVECTOR2(0,0),D3DXVECTOR2(0,h)};
-			for(size_t j=0; j<karaoke->syls.size(); j++)
-			{
-				karaoke->GetTextStripped(j, acsyl);
-				
-				int fw=0, fh=0;
-				if (!acsyl.empty())
-					GetTextExtentPixel(acsyl,&fw, &fh);
-
-				float XX=GetXAtMS(karaoke->syltimes[j]);
-				if(XX>=0){
-					v2[0].x=XX;
-					v2[1].x=XX;
-					d3dLine->Begin();
-					d3dLine->Draw(v2,2,syllableBondaresColor);
-					d3dLine->End();
-				}
-				if (fh != 0){
-					int center = ((XX - karstart) - fw) / 2;
-					D3DXVECTOR2 v5[2] = { D3DXVECTOR2(center + karstart - 1, (fh / 2) + 1), D3DXVECTOR2(center + karstart + fw + 2, (fh / 2 + 1)) };
-					d3dLine->SetWidth(fh);
-					d3dLine->Begin();
-					d3dLine->Draw(v5, 2, syllableBondaresColor);
-					d3dLine->End();
-					d3dLine->SetWidth(1);
-					RECT rect = { center + karstart, 0, center + karstart + fw, fh };
-					d3dFont9->DrawTextW(NULL, acsyl.wchar_str(), -1, &rect, DT_LEFT, syllableTextColor);
-					//obramowanie aktywynej sylaby
-					if (letter >= 0 && syll >= 0 && syll == j){
-						int start, end;
-						int fwl, fhl;
-						if (letter == 0){ fwl = 0; }
-						else{
-							GetTextExtentPixel(acsyl.Mid(0, letter), &fwl, &fhl);
-						}
-
-						karaoke->GetSylTimes(j, start, end);
-
-						start = GetXAtMS(start);
-						end = GetXAtMS(end);
-
-						int center = start + ((end - start - fw) / 2);
-						D3DXVECTOR2 v3[2] = { D3DXVECTOR2(center + fwl, 1), D3DXVECTOR2(center + fwl, fh) };
-						d3dLine->Begin();
-						d3dLine->Draw(v3, 2, syllableTextColor);
-						d3dLine->End();
+		// Draw seconds boundaries
+		if (drawBoundaryLines) {
+			d3dLine->Begin();
+			int64_t start = Position*samples;
+			int rate = provider->GetSampleRate();
+			int pixBounds = rate / samples;
+			D3DXVECTOR2 v2[2] = { D3DXVECTOR2(0, 0), D3DXVECTOR2(0, h) };
+			if (pixBounds >= 8) {
+				for (int x = 0; x < w; x++) {
+					if (((x*samples) + start) % rate < samples) {
+						v2[0].x = x;
+						v2[1].x = x;
+						DrawDashedLine(v2, 2, secondBondariesColor);
 					}
 				}
-				if(j==whichsyl){
-					D3DXVECTOR2 v5[5]={D3DXVECTOR2(karstart+2,1),D3DXVECTOR2(karstart+2,h-2),D3DXVECTOR2(XX-2,h-2),D3DXVECTOR2(XX-2,1),D3DXVECTOR2(karstart+2,1)};
-					d3dLine->Begin();
-					d3dLine->Draw(v5,5,syllableTextColor);
-					d3dLine->End();
-				}
+			}
+			d3dLine->End();
+		}
 
-				karstart=XX;
+
+
+
+		if (hasSel) {
+			// Draw boundaries
+			// Draw start boundary
+			int startDraw = lineStart + (selWidth / 2);
+			//if(selWidth % 2 == 0){startDraw--;}
+			D3DXVECTOR2 v2[2] = { D3DXVECTOR2(startDraw, 0), D3DXVECTOR2(startDraw, h) };
+			d3dLine->SetWidth(selWidth);
+			d3dLine->Begin();
+			d3dLine->Draw(v2, 2, lineStartBondaryColor);
+			d3dLine->End();
+			VERTEX v6[6];
+			CreateVERTEX(&v6[0], startDraw, 0, lineStartBondaryColor);
+			CreateVERTEX(&v6[1], startDraw + 10, 0, lineStartBondaryColor);
+			CreateVERTEX(&v6[2], startDraw, 10, lineStartBondaryColor);
+			CreateVERTEX(&v6[3], startDraw, h - 10, lineStartBondaryColor);
+			CreateVERTEX(&v6[4], startDraw + 10, h, lineStartBondaryColor);
+			CreateVERTEX(&v6[5], startDraw, h, lineStartBondaryColor);
+
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v6, sizeof(VERTEX)), "primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(VERTEX)), "primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, v6, sizeof(VERTEX)), "primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, &v6[3], sizeof(VERTEX)), "primitive failed");
+
+			// Draw end boundary
+
+			startDraw = lineEnd + (selWidth / 2);
+			v2[0] = D3DXVECTOR2(startDraw, 0);
+			v2[1] = D3DXVECTOR2(startDraw, h);
+			d3dLine->Begin();
+			d3dLine->Draw(v2, 2, lineEndBondaryColor);
+			d3dLine->End();
+			d3dLine->SetWidth(1.f);
+			CreateVERTEX(&v6[0], startDraw, 0, lineEndBondaryColor);
+			CreateVERTEX(&v6[1], startDraw - 10, 0, lineEndBondaryColor);
+			CreateVERTEX(&v6[2], startDraw, 10, lineEndBondaryColor);
+			CreateVERTEX(&v6[3], startDraw, h - 10, lineEndBondaryColor);
+			CreateVERTEX(&v6[4], startDraw - 10, h, lineEndBondaryColor);
+			CreateVERTEX(&v6[5], startDraw, h, lineEndBondaryColor);
+
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v6, sizeof(VERTEX)), "primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(VERTEX)), "primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, v6, sizeof(VERTEX)), "primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, &v6[3], sizeof(VERTEX)), "primitive failed");
+
+			// Draw karaoke
+			if (hasKara) {
+				int karstart = selStart;
+				wxString acsyl;
+				D3DXVECTOR2 v2[2] = { D3DXVECTOR2(0, 0), D3DXVECTOR2(0, h) };
+				for (size_t j = 0; j < karaoke->syls.size(); j++)
+				{
+					karaoke->GetTextStripped(j, acsyl);
+
+					int fw = 0, fh = 0;
+					if (!acsyl.empty())
+						GetTextExtentPixel(acsyl, &fw, &fh);
+
+					float XX = GetXAtMS(karaoke->syltimes[j]);
+					if (XX >= 0){
+						v2[0].x = XX;
+						v2[1].x = XX;
+						d3dLine->Begin();
+						d3dLine->Draw(v2, 2, syllableBondaresColor);
+						d3dLine->End();
+					}
+					if (fh != 0){
+						int center = ((XX - karstart) - fw) / 2;
+						D3DXVECTOR2 v5[2] = { D3DXVECTOR2(center + karstart - 1, (fh / 2) + 1), D3DXVECTOR2(center + karstart + fw + 2, (fh / 2 + 1)) };
+						d3dLine->SetWidth(fh);
+						d3dLine->Begin();
+						d3dLine->Draw(v5, 2, syllableBondaresColor);
+						d3dLine->End();
+						d3dLine->SetWidth(1);
+						RECT rect = { center + karstart, 0, center + karstart + fw, fh };
+						d3dFont9->DrawTextW(NULL, acsyl.wchar_str(), -1, &rect, DT_LEFT, syllableTextColor);
+						//obramowanie aktywynej sylaby
+						if (letter >= 0 && syll >= 0 && syll == j){
+							int start, end;
+							int fwl, fhl;
+							if (letter == 0){ fwl = 0; }
+							else{
+								GetTextExtentPixel(acsyl.Mid(0, letter), &fwl, &fhl);
+							}
+
+							karaoke->GetSylTimes(j, start, end);
+
+							start = GetXAtMS(start);
+							end = GetXAtMS(end);
+
+							int center = start + ((end - start - fw) / 2);
+							D3DXVECTOR2 v3[2] = { D3DXVECTOR2(center + fwl, 1), D3DXVECTOR2(center + fwl, fh) };
+							d3dLine->Begin();
+							d3dLine->Draw(v3, 2, syllableTextColor);
+							d3dLine->End();
+						}
+					}
+					if (j == whichsyl){
+						D3DXVECTOR2 v5[5] = { D3DXVECTOR2(karstart + 2, 1), D3DXVECTOR2(karstart + 2, h - 2), D3DXVECTOR2(XX - 2, h - 2), D3DXVECTOR2(XX - 2, 1), D3DXVECTOR2(karstart + 2, 1) };
+						d3dLine->Begin();
+						d3dLine->Draw(v5, 5, syllableTextColor);
+						d3dLine->End();
+					}
+
+					karstart = XX;
+				}
 			}
 		}
-	}
-	// Draw keyframes
-	if (drawKeyframes && provider->KeyFrames.size() > 0) {
-		DrawKeyframes();
-	}
-
-	// Modified text
-	if (NeedCommit || selStart > selEnd) {
-		RECT rect;
-		rect.left = 4;
-		rect.top = 4;
-		rect.right = rect.left + 300;
-		rect.bottom = rect.top + 100;
-		wxString text;
-		if (selStart <= selEnd) {
-			text=_("Zmodyfikowano");
-			DRAWOUTTEXT(d3dFont9, text, rect, DT_LEFT|DT_TOP, 0xFFFF0000 );
+		// Draw keyframes
+		if (drawKeyframes && provider->KeyFrames.size() > 0) {
+			DrawKeyframes();
 		}
-		else {
-			text=_("Czas ujemny");
-			DRAWOUTTEXT(d3dFont9, text, rect, DT_LEFT|DT_TOP, 0xFFFF0000 );
-		}
-	}
 
-	DrawTimescale();
-
-
-	if(hasMark){
-		selMark=GetXAtMS(curMarkMS);
-		if(selMark>=0&&selMark<w){
-			d3dLine->SetWidth(2.f);
-			d3dLine->Begin();
-			D3DXVECTOR2 v2[2]={D3DXVECTOR2(selMark+1,0),D3DXVECTOR2(selMark+1,h)};
-			d3dLine->Draw(v2,2,lineBondaryMark);
-			d3dLine->End();
-			d3dLine->SetWidth(1.f);
-			//dc.DrawRectangle(selMark,0,2,h);
-			STime time(curMarkMS);
-			wxString text=time.raw();
-			wxFont font(9,wxFONTFAMILY_DEFAULT,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_BOLD,false,_T("Verdana"));
-			int dx,dy;
-			GetTextExtent(text,&dx, &dy, 0, 0, &font);
-			//dx=selMark-(dx/2);
-			dy=h-dy-2;
+		// Modified text
+		if (NeedCommit || selStart > selEnd) {
 			RECT rect;
-			rect.left = selMark-150;
-			rect.top = dy;
+			rect.left = 4;
+			rect.top = 4;
 			rect.right = rect.left + 300;
 			rect.bottom = rect.top + 100;
-			DRAWOUTTEXT(d3dFont9,text,rect,DT_CENTER, 0xFFFFFFFF);
+			wxString text;
+			if (selStart <= selEnd) {
+				text = _("Zmodyfikowano");
+				DRAWOUTTEXT(d3dFont9, text, rect, DT_LEFT | DT_TOP, 0xFFFF0000);
+			}
+			else {
+				text = _("Czas ujemny");
+				DRAWOUTTEXT(d3dFont9, text, rect, DT_LEFT | DT_TOP, 0xFFFF0000);
+			}
 		}
-	}
-	// Draw current frame
-	if (drawVideoPos) {
-		VideoCtrl *Video= Notebook::GetTab()->Video;
-		if (Video->GetState()==Paused) {
+
+		DrawTimescale();
+
+
+		if (hasMark){
+			selMark = GetXAtMS(curMarkMS);
+			if (selMark >= 0 && selMark < w){
+				d3dLine->SetWidth(2.f);
+				d3dLine->Begin();
+				D3DXVECTOR2 v2[2] = { D3DXVECTOR2(selMark + 1, 0), D3DXVECTOR2(selMark + 1, h) };
+				d3dLine->Draw(v2, 2, lineBondaryMark);
+				d3dLine->End();
+				d3dLine->SetWidth(1.f);
+				//dc.DrawRectangle(selMark,0,2,h);
+				STime time(curMarkMS);
+				wxString text = time.raw();
+				wxFont font(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, _T("Verdana"));
+				int dx, dy;
+				GetTextExtent(text, &dx, &dy, 0, 0, &font);
+				//dx=selMark-(dx/2);
+				dy = h - dy - 2;
+				RECT rect;
+				rect.left = selMark - 150;
+				rect.top = dy;
+				rect.right = rect.left + 300;
+				rect.bottom = rect.top + 100;
+				DRAWOUTTEXT(d3dFont9, text, rect, DT_CENTER, 0xFFFFFFFF);
+			}
+		}
+		// Draw current frame
+		if (drawVideoPos) {
+			VideoCtrl *Video = Notebook::GetTab()->Video;
+			if (Video->GetState() == Paused) {
+				d3dLine->SetWidth(2);
+
+				float x = GetXAtMS(Video->Tell());
+				d3dLine->Begin();
+				D3DXVECTOR2 v2[2] = { D3DXVECTOR2(x, 0), D3DXVECTOR2(x, h) };
+				DrawDashedLine(v2, 2, AudioCursor);
+				d3dLine->End();
+				d3dLine->SetWidth(1.f);
+			}
+		}
+
+
+
+		if (cursorPaint){
+			D3DXVECTOR2 v2[2] = { D3DXVECTOR2(curpos, 0), D3DXVECTOR2(curpos, h) };
 			d3dLine->SetWidth(2);
-			
-			float x = GetXAtMS(Video->Tell());
+			d3dLine->SetAntialias(TRUE);
 			d3dLine->Begin();
-			D3DXVECTOR2 v2[2]={D3DXVECTOR2(x,0),D3DXVECTOR2(x,h)};
-			DrawDashedLine(v2,2,AudioCursor);
+			d3dLine->Draw(v2, 2, AudioCursor);
 			d3dLine->End();
-			d3dLine->SetWidth(1.f);
+			d3dLine->SetAntialias(FALSE);
+			d3dLine->SetWidth(1);
+			if (!player->IsPlaying()){
+				STime time;
+				time.NewTime(GetMSAtX(curpos));
+				wxString text = time.GetFormatted(ASS);
+				RECT rect;
+				rect.left = curpos - 150;
+				rect.top = (hasKara) ? 20 : 5;
+				rect.right = rect.left + 300;
+				rect.bottom = rect.top + 100;
+				DRAWOUTTEXT(d3dFont, text, rect, DT_CENTER, 0xFFFFFFFF);
+			}
 		}
-	}
 
-	
 
-	if(cursorPaint){
-		D3DXVECTOR2 v2[2]={D3DXVECTOR2(curpos,0),D3DXVECTOR2(curpos,h)};
-		d3dLine->SetWidth(2);
-		d3dLine->SetAntialias(TRUE);
-		d3dLine->Begin();
-		d3dLine->Draw(v2,2,AudioCursor);
-		d3dLine->End();
-		d3dLine->SetAntialias(FALSE);
-		d3dLine->SetWidth(1);
-		if(!player->IsPlaying()){
-			STime time;
-			time.NewTime(GetMSAtX(curpos));
-			wxString text = time.GetFormatted(ASS);
-			RECT rect;
-			rect.left = curpos-150;
-			rect.top = (hasKara)? 20 : 5;
-			rect.right = rect.left + 300;
-			rect.bottom = rect.top + 100;
-			DRAWOUTTEXT(d3dFont,text,rect,DT_CENTER, 0xFFFFFFFF);
+		// Draw focus border
+		if (hasFocus) {
+			D3DXVECTOR2 v5[5] = { D3DXVECTOR2(0, 0), D3DXVECTOR2(w - 1, 0), D3DXVECTOR2(w - 1, h - 1), D3DXVECTOR2(0, h - 1), D3DXVECTOR2(0, 0) };
+			d3dLine->Begin();
+			d3dLine->Draw(v5, 5, waveform);
+			d3dLine->End();
 		}
+
 	}
-	
-	
-	// Draw focus border
-	if (hasFocus) {
-		D3DXVECTOR2 v5[5]={D3DXVECTOR2(0,0),D3DXVECTOR2(w-1,0),D3DXVECTOR2(w-1,h-1),D3DXVECTOR2(0,h-1),D3DXVECTOR2(0,0)};
-		d3dLine->Begin();
-		d3dLine->Draw(v5,5,waveform);
-		d3dLine->End();
-	}
-	
-done:
 	hr = d3dDevice->EndScene();
 
 	hr = d3dDevice->Present(NULL, NULL, NULL, NULL );

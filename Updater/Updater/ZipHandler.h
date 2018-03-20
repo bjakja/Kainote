@@ -16,6 +16,7 @@
 //#include <windows.h>
 #include <string>
 #include "contrib/minizip/zip.h"
+#include <Windows.h>
 const int CHUNK = 16384;
 
 class ZipHandler
@@ -25,17 +26,21 @@ public:
 	~ZipHandler(){};
 	bool UnZipFile(const wchar_t *pathOfZip, const wchar_t *destinationDir);
 	bool ZipFolder(const wchar_t *destinationDir, const wchar_t *pathOfZip, const wchar_t **excludes, int numExcludes);
-	void CheckFiles(const wchar_t *destinationDir, size_t *dirs, size_t *files);
+	void CheckFiles(const wchar_t *destinationDir, size_t *dirs, size_t *files, const wchar_t *phrase);
 	const std::string & GetError(){ return log; };
+	std::wstring found;
 private:
 	bool ConvertToWchar(char *source, wchar_t *dest);
 	bool ConvertToChar(const wchar_t *source, char **dest);
 	bool CheckExcludes(wchar_t *path, const wchar_t **excludes, int numExcludes);
 	wchar_t * GetSubstring(wchar_t *string, int numChar);
-	bool ZipFolderFiles(zipFile zf, const wchar_t *destinationDir, const wchar_t *pathOfZip, const wchar_t **excludes, int numExcludes);
-	bool ZipFile(zipFile zf, const wchar_t *name, const wchar_t *filepath);
-	void CheckDirFiles(const wchar_t *destinationDir, size_t *dirs, size_t *files);
+	bool ZipFolderFiles(const wchar_t *destinationDir, const wchar_t *pathOfZip, const wchar_t **excludes, int numExcludes);
+	bool ZipFile(const wchar_t *name, const wchar_t *filepath, const FILETIME &writeTime);
+	void CheckDirFiles(const wchar_t *destinationDir, size_t *dirs, size_t *files, const wchar_t *phrase);
+	bool FindPhrase(const wchar_t *name, const wchar_t *phrase);
 	std::string log;
+	zipFile zf=NULL;
 	size_t firstFolderStart = 0;
 	char buffer[CHUNK];
+	size_t phraseSize = 0;
 };

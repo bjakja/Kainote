@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <windows.h>
+//#include <windows.h>
 #include "contrib/minizip/unzip.h"
 
 #include "ZipHandler.h"
@@ -109,7 +109,7 @@ bool ZipHandler::UnZipFile(const wchar_t *pathOfZip, const wchar_t *destinationD
 
 bool ZipHandler::ZipFolder(const wchar_t *destinationDir, const wchar_t *pathOfZip, const wchar_t **excludes, int numExcludes)
 {
-	zipFile zf = zipOpen64(pathOfZip, APPEND_STATUS_CREATE);
+	zf = zipOpen64(pathOfZip, APPEND_STATUS_CREATE);
 	if (zf == NULL)
 		return false;
 
@@ -121,14 +121,15 @@ bool ZipHandler::ZipFolder(const wchar_t *destinationDir, const wchar_t *pathOfZ
 		}
 	}
 	
-	bool returnval = ZipFolderFiles(zf, destinationDir, pathOfZip, excludes, numExcludes);
+	bool returnval = ZipFolderFiles(destinationDir, pathOfZip, excludes, numExcludes);
 	zipClose(zf, NULL);
 	return returnval;
 }
 
-void ZipHandler::CheckFiles(const wchar_t *destinationDir, size_t *dirs, size_t *files)
+void ZipHandler::CheckFiles(const wchar_t *destinationDir, size_t *dirs, size_t *files, const wchar_t *phrase)
 {
-	CheckDirFiles(destinationDir, dirs, files);
+	phraseSize = wcslen(phrase);
+	CheckDirFiles(destinationDir, dirs, files, phrase);
 }
 
 bool ZipHandler::ConvertToWchar(char *source, wchar_t *dest)
@@ -191,7 +192,7 @@ wchar_t * ZipHandler::GetSubstring(wchar_t *string, int numChar)
 	return cpy;
 }
 
-bool ZipHandler::ZipFolderFiles(zipFile zf, const wchar_t *destinationDir, const wchar_t *pathOfZip, const wchar_t **excludes, int numExcludes)
+bool ZipHandler::ZipFolderFiles(const wchar_t *destinationDir, const wchar_t *pathOfZip, const wchar_t **excludes, int numExcludes)
 {
 	size_t destinationDirLen = wcslen(destinationDir);
 	bool putBackSlash = destinationDir[destinationDirLen - 1] != L'\\';
@@ -235,7 +236,7 @@ bool ZipHandler::ZipFolderFiles(zipFile zf, const wchar_t *destinationDir, const
 				ffsize++;
 			}
 			wcscpy(&fullfilepath[ffsize], data.cFileName);
-			ZipFolderFiles(zf, fullfilepath, pathOfZip, excludes, numExcludes);
+			ZipFolderFiles(fullfilepath, pathOfZip, excludes, numExcludes);
 			delete[] fullfilepath;
 			continue;
 		}
@@ -257,8 +258,7 @@ bool ZipHandler::ZipFolderFiles(zipFile zf, const wchar_t *destinationDir, const
 		wcscpy(&filepath[cffs], data.cFileName);
 		wcscpy(&fullfilepath[ffsize], data.cFileName);
 		//filepath[filepathsize - 1] = 0;
-
-		ZipFile(zf, filepath, fullfilepath);
+		ZipFile(filepath, fullfilepath, data.ftLastWriteTime);
 		delete[] filepath;
 		delete[] fullfilepath;
 	} while (FindNextFileW(fileHandle, &data) != 0);
@@ -267,7 +267,7 @@ bool ZipHandler::ZipFolderFiles(zipFile zf, const wchar_t *destinationDir, const
 	return true;
 }
 
-bool ZipHandler::ZipFile(zipFile zf, const wchar_t *name, const wchar_t *filepath)
+bool ZipHandler::ZipFile(const wchar_t *name, const wchar_t *filepath, const FILETIME &writeTime)
 {
 	char *charname = NULL;
 	if (!ConvertToChar(name, &charname)){
@@ -276,8 +276,15 @@ bool ZipHandler::ZipFile(zipFile zf, const wchar_t *name, const wchar_t *filepat
 	}
 	size_t size = 0;
 	FILE *file = _wfopen(filepath, L"rb");
+	zip_fileinfo zfi;
+	FILETIME ftLocal;
+	uLong *dt = &zfi.dosDate;
+	zfi.external_fa = 0;
+	zfi.internal_fa = 0;
+	zfi.tmz_date = { 0 };
+	FileTimeToLocalFileTime(&writeTime, &ftLocal);
+	FileTimeToDosDateTime(&ftLocal, ((LPWORD)dt) + 1, ((LPWORD)dt) + 0);
 	if (!file){
-		zip_fileinfo zfi = { 0 };
 		size_t charnamesize = strlen(charname);
 		char *pseudofile = new char[charnamesize + 2];
 		strcpy(pseudofile, charname);
@@ -285,17 +292,18 @@ bool ZipHandler::ZipFile(zipFile zf, const wchar_t *name, const wchar_t *filepat
 		pseudofile[charnamesize + 1] = 0;
 		delete[] charname;
 		if (S_OK == zipOpenNewFileInZip(zf, pseudofile, &zfi, NULL, 0, NULL, 0, NULL, Z_DEFLATED, Z_DEFAULT_COMPRESSION)){
+			delete[] pseudofile;
 			if (zipCloseFileInZip(zf))
 				log += "Cannot close file in zip\n";
 
 			return true;
 		}
+		delete[] pseudofile;
 		log += "Cannot open file in zip\n";
 		return false;
 	}
 	else
 	{
-		zip_fileinfo zfi = { 0 };
 		if (S_OK == zipOpenNewFileInZip(zf, charname, &zfi, NULL, 0, NULL, 0, NULL, Z_DEFLATED, Z_DEFAULT_COMPRESSION))
 		{
 			while (size = fread(buffer, 1, CHUNK, file))
@@ -318,7 +326,7 @@ bool ZipHandler::ZipFile(zipFile zf, const wchar_t *name, const wchar_t *filepat
 	return true;
 }
 
-void ZipHandler::CheckDirFiles(const wchar_t *destinationDir, size_t *dirs, size_t *files)
+void ZipHandler::CheckDirFiles(const wchar_t *destinationDir, size_t *dirs, size_t *files, const wchar_t *phrase)
 {
 	size_t destinationDirLen = wcslen(destinationDir);
 	bool putBackSlash = destinationDir[destinationDirLen - 1] != L'\\';
@@ -344,29 +352,48 @@ void ZipHandler::CheckDirFiles(const wchar_t *destinationDir, size_t *dirs, size
 		if (!wcscmp(data.cFileName, L".") || !wcscmp(data.cFileName, L".."))
 			continue;
 
-
-		size_t fsize = wcslen(data.cFileName);
-
-		size_t ffsize = destinationDirLen;
-		size_t fullFilepathsize = putBackSlash ? fsize + destinationDirLen + 2 : fsize + destinationDirLen + 1;
-		wchar_t * fullfilepath = new wchar_t[fullFilepathsize];
-		wcscpy(fullfilepath, destinationDir);
+		if (FindPhrase(data.cFileName, phrase)){
+			found += destinationDir;
+			if (putBackSlash){
+				found += L"\\";
+			}
+			found += data.cFileName;
+			found += L"\n";
+		}
+		
 
 		if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY){
+			size_t fsize = wcslen(data.cFileName);
+			size_t ffsize = destinationDirLen;
+			size_t fullFilepathsize = putBackSlash ? fsize + destinationDirLen + 2 : fsize + destinationDirLen + 1;
+			wchar_t * fullfilepath = new wchar_t[fullFilepathsize];
+			wcscpy(fullfilepath, destinationDir);
 			if (putBackSlash){
 				wcscpy(&fullfilepath[ffsize], L"\\");
 				ffsize++;
 			}
 			wcscpy(&fullfilepath[ffsize], data.cFileName);
-			CheckDirFiles(fullfilepath, dirs, files);
+			CheckDirFiles(fullfilepath, dirs, files, phrase);
 			(*dirs)++;
 			delete[] fullfilepath;
 			continue;
 		}
 		(*files)++;
-		delete[] fullfilepath;
+		//delete[] fullfilepath;
 
 	} while (FindNextFileW(fileHandle, &data) != 0);
 	delete[] filter;
 	FindClose(fileHandle);
+}
+
+bool ZipHandler::FindPhrase(const wchar_t *name, const wchar_t *phrase)
+{
+	const wchar_t *pch = wcschr(name, phrase[0]);
+	while (pch != NULL){
+		if (_wcsnicmp(pch + 1, phrase + 1, phraseSize - 1) == 0){
+			return true;
+		}
+		pch = wcschr(pch+1, phrase[0]);
+	}
+	return false;
 }

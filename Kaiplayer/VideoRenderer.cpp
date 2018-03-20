@@ -73,7 +73,7 @@ VideoRend::VideoRend(wxWindow *_parent, const wxSize &size)
 	framee=NULL;
 	format=NULL;
 	lines=NULL;
-	Vclips=NULL;
+	Visual=NULL;
 	resized=seek=block=cross=pbar=VisEdit=false;
 	IsDshow=true;
 	devicelost=false;
@@ -411,7 +411,7 @@ void VideoRend::Render(bool Frame, bool wait)
 	hr = d3device->DrawPrimitive( D3DPT_TRIANGLEFAN, 0, 2 );
 #endif
 
-	if(Vclips){Vclips->Draw(time);}
+	if(Visual){Visual->Draw(time);}
 
 	if(cross){
 		DRAWOUTTEXT(m_font,coords,crossRect, (crossRect.left < vectors[0].x)? 10 : 8 ,0xFFFFFFFF)
@@ -577,7 +577,7 @@ VideoRend::~VideoRend()
 
 	SAFE_DELETE(VFF);
 	Clear();
-	SAFE_DELETE(Vclips);
+	SAFE_DELETE(Visual);
 	SAFE_DELETE(vplayer);
 	SAFE_DELETE(framee);
 	SAFE_DELETE(format);
@@ -710,8 +710,8 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	/*block=false;*/
 	vstate=Stopped;
 	if(IsDshow && vplayer){chaps = vplayer->GetChapters();}
-	if(Vclips){
-		Vclips->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom),lines, m_font, d3device);
+	if(Visual){
+		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom),lines, m_font, d3device);
 	}
 	return true;
 }
@@ -725,7 +725,7 @@ bool VideoRend::Play(int end)
 	if(VisEdit){
 		wxString *txt=pan->Grid->SaveText();
 		OpenSubs(txt, false, true);
-		SAFE_DELETE(Vclips->dummytext);
+		SAFE_DELETE(Visual->dummytext);
 		VisEdit=false;
 	}else if(pan->Edit->OnVideo){
 		OpenSubs(pan->Grid->SaveText(), false, true);
@@ -808,9 +808,9 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 		playend = 0;
 		seek = true; vplayer->SetPosition(time);
 		if(VisEdit){
-			SAFE_DELETE(Vclips->dummytext);
-			if(Vclips->Visual==VECTORCLIP){
-				Vclips->SetClip(Vclips->GetVisual(),true, false, false);
+			SAFE_DELETE(Visual->dummytext);
+			if(Visual->Visual==VECTORCLIP){
+				Visual->SetClip(Visual->GetVisual(),true, false, false);
 			}else{
 				OpenSubs((playing)? pan->Grid->SaveText() : pan->Grid->GetVisible(),true, playing);
 				if(vstate==Playing){ VisEdit=false;}
@@ -833,9 +833,9 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			//lasttime=time;
 			//startTime = std::chrono::steady_clock::now();
 			if(VisEdit){
-				SAFE_DELETE(Vclips->dummytext);
-				if(Vclips->Visual==VECTORCLIP){
-					Vclips->SetClip(Vclips->GetVisual(),true, false, false);
+				SAFE_DELETE(Visual->dummytext);
+				if(Visual->Visual==VECTORCLIP){
+					Visual->SetClip(Visual->GetVisual(),true, false, false);
 				}else{
 					OpenSubs((playing)? pan->Grid->SaveText() : pan->Grid->GetVisible(), true, playing);
 					if(playing){ VisEdit=false;}
@@ -870,8 +870,8 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 
 	if(!textsubs) {return true;}
 	//const char *buffer= textsubs.mb_str(wxConvUTF8).data();
-	if (VisEdit && Vclips->Visual == VECTORCLIP && Vclips->dummytext){
-		wxString toAppend = Vclips->dummytext->Trim().AfterLast('\n');
+	if (VisEdit && Visual->Visual == VECTORCLIP && Visual->dummytext){
+		wxString toAppend = Visual->dummytext->Trim().AfterLast('\n');
 		if (fromFile){
 			OpenWrite ow(*textsubs,false);
 			ow.PartFileWrite(toAppend);
@@ -1088,7 +1088,7 @@ bool VideoRend::UpdateRects(bool changeZoom)
 		zoomRect.y = (mainStreamRect.top * videoToScreenY)+backBufferRect.top;
 		zoomRect.height = (mainStreamRect.bottom * videoToScreenY);
 		zoomRect.width = (mainStreamRect.right * videoToScreenX);
-		if(Vclips){
+		if(Visual){
 			SetVisualZoom();
 		}
 	}
@@ -1119,11 +1119,11 @@ void VideoRend::UpdateVideoWindow()
 
 
 	resized=true;
-	if(Vclips){
-		Vclips->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom),lines, m_font, d3device);
+	if(Visual){
+		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom),lines, m_font, d3device);
 		//SetVisual();
-		SAFE_DELETE(Vclips->dummytext);
-		Vclips->SetCurVisual();
+		SAFE_DELETE(Visual->dummytext);
+		Visual->SetCurVisual();
 		VisEdit=true;
 	}
 	SetScaleAndZoom();
@@ -1164,11 +1164,11 @@ void VideoRend::Zoom(const wxSize &size)
 	mainStreamRect.bottom = (zoomRect.height - backBufferRect.top)/ videoToScreenYY;
 	zoomParcent = size.x / (zoomRect.width - zoomRect.x/* + backBufferRect.left*/);
 	if(isFullscreen){UpdateRects(false);}
-	if(Vclips){
+	if(Visual){
 		SetVisualZoom();
-		if(Vclips && (Vclips->Visual < CLIPRECT || Vclips->Visual > VECTORDRAW)){
-			SAFE_DELETE(Vclips->dummytext);
-			Vclips->SetCurVisual();
+		if(Visual && (Visual->Visual < CLIPRECT || Visual->Visual > VECTORDRAW)){
+			SAFE_DELETE(Visual->dummytext);
+			Visual->SetCurVisual();
 			VisEdit=true;
 		}
 	}
@@ -1184,7 +1184,7 @@ void VideoRend::SetVisualZoom()
 	float zoomY = mainStreamRect.top * videoToScreenY;
 	D3DXVECTOR2 zoomScale((float)vwidth / (float)(mainStreamRect.right - mainStreamRect.left),
 		(float)vheight / (float)(mainStreamRect.bottom - mainStreamRect.top));
-	Vclips->SetZoom(D3DXVECTOR2(zoomX - (backBufferRect.left/ zoomScale.x), 
+	Visual->SetZoom(D3DXVECTOR2(zoomX - (backBufferRect.left/ zoomScale.x), 
 		zoomY-(backBufferRect.top/ zoomScale.y)), zoomScale);
 }
 
@@ -1602,7 +1602,7 @@ void VideoRend::SetVisual(bool remove, bool settext)
 	TabPanel* pan=(TabPanel*)GetParent();
 
 	if(remove){
-		SAFE_DELETE(Vclips); pan->Edit->Visual=0;
+		SAFE_DELETE(Visual); pan->Edit->Visual=0;
 		VisEdit=false;
 		OpenSubs(pan->Grid->GetVisible());
 		pan->Edit->OnVideo = true;
@@ -1610,26 +1610,26 @@ void VideoRend::SetVisual(bool remove, bool settext)
 	}else{
 
 		int vis=pan->Edit->Visual;
-		if(!Vclips){
-			Vclips = Visuals::Get(vis,this);
-		}else if(Vclips->Visual != vis){
-			bool vectorclip = Vclips->Visual == VECTORCLIP;
-			delete Vclips;
-			Vclips = Visuals::Get(vis,this);
+		if(!Visual){
+			Visual = Visuals::Get(vis,this);
+		}else if(Visual->Visual != vis){
+			bool vectorclip = Visual->Visual == VECTORCLIP;
+			delete Visual;
+			Visual = Visuals::Get(vis,this);
 			if(vectorclip && !settext){OpenSubs(pan->Grid->GetVisible());}
-		}else{SAFE_DELETE(Vclips->dummytext);}
+		}else{SAFE_DELETE(Visual->dummytext);}
 		if(settext){OpenSubs(pan->Grid->GetVisible());}
-		Vclips->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom),lines, m_font, d3device);
+		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom),lines, m_font, d3device);
 		SetVisualZoom();
-		Vclips->SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime, pan->Edit->line->IsComment);
+		Visual->SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime, pan->Edit->line->IsComment);
 		VisEdit=true;
 	}
 }
 
 void VideoRend::ResetVisual()
 {
-	SAFE_DELETE(Vclips->dummytext);
-	Vclips->SetCurVisual();
+	SAFE_DELETE(Visual->dummytext);
+	Visual->SetCurVisual();
 	VisEdit=true;
 	Render();
 }
