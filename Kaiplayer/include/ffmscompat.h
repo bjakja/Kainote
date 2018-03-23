@@ -21,6 +21,12 @@
 #ifndef FFMSCOMPAT_H
 #define	FFMSCOMPAT_H
 
+#ifdef __GNUC__
+#	define ffms_used __attribute__((used))
+#else
+#	define ffms_used
+#endif
+
 // Defaults to libav compatibility, uncomment (when building with msvc) to force ffmpeg compatibility.
 //#define FFMS_USE_FFMPEG_COMPAT
 
@@ -39,15 +45,8 @@
 #  define VERSION_CHECK(LIB, cmp, major, minor, micro, u1, u2, u3) ((LIB) cmp (AV_VERSION_INT(major, minor, micro)))
 #endif
 
-#if defined(_WIN32) && !defined(__MINGW64_VERSION_MAJOR)
+#if defined(_WIN32) && !defined(__MINGW64_VERSION_MAJOR) && _MSC_VER < 1900
 #	define snprintf _snprintf
-#	ifdef __MINGW32__
-#		define fseeko fseeko64
-#		define ftello ftello64
-#	else
-#		define fseeko _fseeki64
-#		define ftello _ftelli64
-#	endif
 #endif
 
 // Compatibility with older/newer ffmpegs
@@ -64,16 +63,30 @@
 #	undef SampleFormat
 #	define FFMS_CALCULATE_DELAY (CodecContext->has_b_frames + (CodecContext->thread_count - 1))
 #   if VERSION_CHECK(LIBAVCODEC_VERSION_INT, <, 54, 25, 0, 54, 51, 100)
-#       define FFMS_ID(x) (CODEC_ID_##x)
-#       define FFMS_CodecID CodecID
+#		define FFMS_ID(x) (CODEC_ID_##x)
+#		define FFMS_CodecID CodecID
 #   else
-#       define FFMS_ID(x) (AV_CODEC_ID_##x)
-#       define FFMS_CodecID AVCodecID
-#       undef CodecID
+#		define FFMS_ID(x) (AV_CODEC_ID_##x)
+#		define FFMS_CodecID AVCodecID
+#		undef CodecID
 #   endif
 #   if VERSION_CHECK(LIBAVCODEC_VERSION_INT, <, 54, 28, 0, 54, 59, 100)
-static void avcodec_free_frame(AVFrame **frame) { av_freep(frame); }
+static void av_frame_free(AVFrame **frame) { av_freep(frame); }
+#		define av_frame_unref avcodec_get_frame_defaults
+#   elif VERSION_CHECK(LIBAVCODEC_VERSION_INT, <, 55, 28, 1, 55, 45, 101)
+#		define av_frame_free avcodec_free_frame
+#		define av_frame_unref avcodec_get_frame_defaults
 #   endif
+#	if VERSION_CHECK(LIBAVCODEC_VERSION_INT, <, 57, 8, 0, 57, 12, 100)
+#		define av_packet_unref av_free_packet
+#	endif
+#	if VERSION_CHECK(LIBAVCODEC_VERSION_INT, <, 57, 14, 0, 57, 33, 100)
+#		define FFMSCODEC codec
+static ffms_used int make_context(AVCodecContext *dst, AVStream *src) { return avcodec_copy_context(dst, src->codec); }
+#	else
+#		define FFMSCODEC codecpar
+static ffms_used int make_context(AVCodecContext *dst, AVStream *src) { return avcodec_parameters_to_context(dst, src->codecpar); }
+#	endif
 #endif
 
 #ifdef LIBAVUTIL_VERSION_INT
@@ -81,37 +94,57 @@ static void avcodec_free_frame(AVFrame **frame) { av_freep(frame); }
 #		define av_get_packed_sample_fmt(fmt) (fmt < AV_SAMPLE_FMT_U8P ? fmt : fmt - (AV_SAMPLE_FMT_U8P - AV_SAMPLE_FMT_U8))
 #	endif
 #	if VERSION_CHECK(LIBAVUTIL_VERSION_INT, <, 51, 44, 0, 51, 76, 100)
+		// Needs to be included before the AVPixelFormat define
 #		include <libavutil/pixdesc.h>
+#	endif
 
+#	if VERSION_CHECK(LIBAVUTIL_VERSION_INT, <, 51, 42, 0, 51, 74, 100)
+#		define AVPixelFormat PixelFormat
+#		define FFMS_PIX_FMT(x) PIX_FMT_##x
+#	else
+#		define FFMS_PIX_FMT(x) AV_PIX_FMT_##x
+#	endif
+
+#	if VERSION_CHECK(LIBAVUTIL_VERSION_INT, <, 52, 11, 0, 52, 32, 100)
+#		define FFMS_PIX_FMT_FLAG(x) PIX_FMT_##x
+#	else
+#		define FFMS_PIX_FMT_FLAG(x) AV_PIX_FMT_FLAG_##x
+#	endif
+
+#	if VERSION_CHECK(LIBAVUTIL_VERSION_INT, <, 51, 44, 0, 51, 76, 100)
 static const AVPixFmtDescriptor *av_pix_fmt_desc_get(AVPixelFormat pix_fmt) {
-	if (pix_fmt < 0 || pix_fmt >= AV_PIX_FMT_NB)
+	if (pix_fmt < 0 || pix_fmt >= FFMS_PIX_FMT(NB))
 		return NULL;
 
 	return &av_pix_fmt_descriptors[pix_fmt];
 }
+#	endif
+#	if VERSION_CHECK(LIBAVUTIL_VERSION_INT, <, 52, 9, 0, 52, 20, 100)
+#		define av_frame_alloc avcodec_alloc_frame
+#	endif
 
+#	if VERSION_CHECK(LIBAVUTIL_VERSION_INT, >, 55, 0, 0, 55, 0, 100) || defined(FF_API_PLUS1_MINUS1)
+#		define FFMS_DEPTH(x) ((x).depth)
+#	else
+#		define FFMS_DEPTH(x) ((x).depth_minus1 + 1)
 #	endif
 #endif
 
-enum  	PixelFormat {
-  PIX_FMT_NONE = -1, PIX_FMT_YUV420P, PIX_FMT_YUYV422, PIX_FMT_RGB24,
-  PIX_FMT_BGR24, PIX_FMT_YUV422P, PIX_FMT_YUV444P, PIX_FMT_YUV410P,
-  PIX_FMT_YUV411P, PIX_FMT_GRAY8, PIX_FMT_MONOWHITE, PIX_FMT_MONOBLACK,
-  PIX_FMT_PAL8, PIX_FMT_YUVJ420P, PIX_FMT_YUVJ422P, PIX_FMT_YUVJ444P,
-  PIX_FMT_XVMC_MPEG2_MC, PIX_FMT_XVMC_MPEG2_IDCT, PIX_FMT_UYVY422, PIX_FMT_UYYVYY411,
-  PIX_FMT_BGR8, PIX_FMT_BGR4, PIX_FMT_BGR4_BYTE, PIX_FMT_RGB8,
-  PIX_FMT_RGB4, PIX_FMT_RGB4_BYTE, PIX_FMT_NV12, PIX_FMT_NV21,
-  PIX_FMT_ARGB, PIX_FMT_RGBA, PIX_FMT_ABGR, PIX_FMT_BGRA,
-  PIX_FMT_GRAY16BE, PIX_FMT_GRAY16LE, PIX_FMT_YUV440P, PIX_FMT_YUVJ440P,
-  PIX_FMT_YUVA420P, PIX_FMT_VDPAU_H264, PIX_FMT_VDPAU_MPEG1, PIX_FMT_VDPAU_MPEG2,
-  PIX_FMT_VDPAU_WMV3, PIX_FMT_VDPAU_VC1, PIX_FMT_RGB48BE, PIX_FMT_RGB48LE,
-  PIX_FMT_RGB565BE, PIX_FMT_RGB565LE, PIX_FMT_RGB555BE, PIX_FMT_RGB555LE,
-  PIX_FMT_BGR565BE, PIX_FMT_BGR565LE, PIX_FMT_BGR555BE, PIX_FMT_BGR555LE,
-  PIX_FMT_VAAPI_MOCO, PIX_FMT_VAAPI_IDCT, PIX_FMT_VAAPI_VLD, PIX_FMT_YUV420P16LE,
-  PIX_FMT_YUV420P16BE, PIX_FMT_YUV422P16LE, PIX_FMT_YUV422P16BE, PIX_FMT_YUV444P16LE,
-  PIX_FMT_YUV444P16BE, PIX_FMT_VDPAU_MPEG4, PIX_FMT_DXVA2_VLD, PIX_FMT_RGB444BE,
-  PIX_FMT_RGB444LE, PIX_FMT_BGR444BE, PIX_FMT_BGR444LE, PIX_FMT_Y400A,
-  PIX_FMT_NB
-};
+
+#ifndef WITH_SWRESAMPLE
+#define ffms_convert(AVAudioResampleContext, output, out_plane_size, byte_per_sample_src, out_samples, input, in_plane_size, byte_per_sample_target, in_samples) \
+		avresample_convert(AVAudioResampleContext, output, out_plane_size*byte_per_sample_src, out_samples, input, in_plane_size*byte_per_sample_target, in_samples)
+#define ffms_open_resampler(context) avresample_open(context)
+#define FFMS_ResampleContext         AVAudioResampleContext
+#define ffms_resample_alloc_context  avresample_alloc_context
+#define ffms_resample_free           avresample_free
+#else
+#define ffms_convert(AVAudioResampleContext, output, out_plane_size, byte_per_sample_src, out_samples, input, in_plane_size, bps, in_samples) \
+		swr_convert(AVAudioResampleContext, output, out_samples, (const uint8_t**) input, in_samples)
+#define ffms_open_resampler(context) swr_init(context)
+#define FFMS_ResampleContext         SwrContext
+#define ffms_resample_alloc_context  swr_alloc
+#define ffms_resample_free           swr_free
+#endif
 
 #endif // FFMSCOMPAT_H

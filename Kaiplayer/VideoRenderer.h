@@ -203,7 +203,7 @@ class VideoRend : public wxWindow
 		LPD3DXFONT m_font;
 		VideoFfmpeg *VFF;
 		AudioDisplay *player;
-		wxMutex mutexRender;
+		wxCriticalSection mutexRender;
 		wxMutex mutexLines;
 		wxMutex mutexProgBar;
 		wxMutex mutexOpenFile;
@@ -237,7 +237,7 @@ class VideoRend : public wxWindow
 		
 		HWND hwnd;
 		bool devicelost;
-		bool playblock;
+		//bool playblock;
 		
 		int diff;
 		char grabbed;

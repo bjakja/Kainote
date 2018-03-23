@@ -594,8 +594,9 @@ DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(VideoFfmpeg *provider, int _W
 	last_playback_restart=0;
 
 	this->provider = provider;
-
-	thread_handle.handle = (HANDLE)_beginthreadex(0, 0, ThreadProc, this, 0, 0);
+	unsigned int threadid = 0;
+	thread_handle.handle = (HANDLE)_beginthreadex(0, 0, ThreadProc, this, 0, &threadid);
+	SetThreadName(threadid, "AudioThread");
 
 	if (!thread_handle)
 		throw _T("Failed creating playback thread in DirectSoundPlayer2. This is bad.");

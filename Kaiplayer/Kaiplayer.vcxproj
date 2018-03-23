@@ -146,7 +146,7 @@
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>Vfw32.lib;advapi32.lib;comctl32.lib;comdlg32.lib;Usp10.lib;gdi32.lib;kernel32.lib;ole32.lib;oleaut32.lib;opengl32.lib;rpcrt4.lib;shell32.lib;user32.lib;uuid.lib;wsock32.lib;winspool.lib;odbc32.lib;odbccp32.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;wxzlib.lib;winmm.lib;strmbasd.lib;ffms2D.lib;LuaJit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Boost.lib;libhunspell.lib</AdditionalDependencies>
+      <AdditionalDependencies>Vfw32.lib;advapi32.lib;comctl32.lib;comdlg32.lib;Usp10.lib;gdi32.lib;kernel32.lib;ole32.lib;oleaut32.lib;opengl32.lib;rpcrt4.lib;shell32.lib;user32.lib;uuid.lib;wsock32.lib;winspool.lib;odbc32.lib;odbccp32.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;wxzlib.lib;winmm.lib;strmbasd.lib;ffms2.lib;LuaJit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Boost.lib;libhunspell.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib;..\Thirdparty\BaseClasses\Debug;..\Thirdparty\Hunspell\msvc\Win32\Debug\libhunspell;..\Thirdparty\wxWidgets\build\msw\$(Platform)\$(Configuration);..\Thirdparty\luajit\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\luabins\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\boost_1_61_0\BoostBuild\$(Platform)\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
@@ -176,7 +176,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
       <FloatingPointModel>Precise</FloatingPointModel>
     </ClCompile>
     <ResourceCompile>
@@ -425,7 +425,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="SubsGridWindow.cpp" />
     <ClCompile Include="SubsLoader.cpp" />
     <ClCompile Include="SubsResampleDialog.cpp" />
-    <ClCompile Include="UpdateChecker.cpp" />
     <ClCompile Include="VideoToolbar.cpp" />
     <ClCompile Include="VisualMoveAll.cpp" />
     <ClCompile Include="VisualClipRect.cpp" />
@@ -539,7 +538,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="SubsLoader.h" />
     <ClInclude Include="SubsResampleDialog.h" />
     <ClInclude Include="Toolbar.h" />
-    <ClInclude Include="UpdateChecker.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="VersionKainote.h" />
     <ClInclude Include="Hotkeys.h" />

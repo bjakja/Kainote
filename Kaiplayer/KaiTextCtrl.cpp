@@ -274,7 +274,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent)
 		size_t len = KText.Len();
 		bool seekSpace = true;
 		int mesureSize = w - 10;
-		if (mesureSize <= 10){ for (int i = 1; i < len; i++){ wraps.Add(i);  positioning.Add(5); return; } }
+		if (mesureSize <= 10){ for (size_t i = 1; i < len; i++){ wraps.Add(i);  positioning.Add(5); return; } }
 		int stylewrap = (style & wxALIGN_CENTER_HORIZONTAL) ? 1 : (style & wxALIGN_RIGHT) ? 2 : 0;
 		int pos = 5;
 		while (i < len)

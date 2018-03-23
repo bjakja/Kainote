@@ -432,6 +432,11 @@ wxString MakePolishPlural(int num, const wxString &normal, const wxString &plura
 BOOL __stdcall MonitorEnumProc1(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData);
 wxRect GetMonitorRect(int wmonitor, std::vector<tagRECT> *MonitorRects, const wxPoint &position, bool workArea);
 static const wxString emptyString;
+#ifdef _M_IX86
+void SetThreadName(DWORD id, const char *name);
+#else
+void SetThreadName(size_t id, const char *name);
+#endif
 
 enum{
 	ASS=1,

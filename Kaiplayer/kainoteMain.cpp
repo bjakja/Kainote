@@ -45,6 +45,28 @@
 #define logging 5
 #endif
 
+void EnableCrashingOnCrashes()
+{
+	typedef BOOL(WINAPI *tGetPolicy)(LPDWORD lpFlags);
+	typedef BOOL(WINAPI *tSetPolicy)(DWORD dwFlags);
+	const DWORD EXCEPTION_SWALLOWING = 0x1;
+
+	HMODULE kernel32 = LoadLibraryA("kernel32.dll");
+	tGetPolicy pGetPolicy = (tGetPolicy)GetProcAddress(kernel32,
+		"GetProcessUserModeExceptionPolicy");
+	tSetPolicy pSetPolicy = (tSetPolicy)GetProcAddress(kernel32,
+		"SetProcessUserModeExceptionPolicy");
+	if (pGetPolicy && pSetPolicy)
+	{
+		DWORD dwFlags;
+		if (pGetPolicy(&dwFlags))
+		{
+			// Turn off the filter
+			pSetPolicy(dwFlags & ~EXCEPTION_SWALLOWING);
+		}
+	}
+}
+
 kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	: KaiFrame(0, -1, _("Bez nazwy - ") + Options.progname, pos, size, wxDEFAULT_FRAME_STYLE)
 	, badResolution(false)
@@ -271,6 +293,8 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	FontEnum.StartListening(this);
 	SetSubsResolution(false);
 	Auto = new Auto::Automation();
+
+	EnableCrashingOnCrashes();
 }
 
 kainoteFrame::~kainoteFrame()

@@ -307,7 +307,8 @@ bool VideoRend::InitDX(bool reset)
 void VideoRend::Render(bool Frame, bool wait)
 {
 	if (Frame && !IsDshow && !devicelost){ VFF->Refresh(wait); resized = false; return; }
-	wxMutexLocker lock(mutexRender);
+	wxCriticalSectionLocker lock(mutexRender);
+	//bool isOK = mutexRender.Lock() == wxMUTEX_NO_ERROR;
 	resized = false;
 	HRESULT hr = S_OK;
 
@@ -330,6 +331,7 @@ void VideoRend::Render(bool Frame, bool wait)
 				devicelost = false;
 				Render(true, false);
 				//wxLogMessage("cooperative not reset");
+				return;
 			}
 			return;
 		}
@@ -451,7 +453,7 @@ void VideoRend::Render(bool Frame, bool wait)
 	if(hasZoom){DrawZoom();}
 	// End the scene
 	hr = d3device->EndScene();
-
+	hr = d3device->Present(NULL, &windowRect, NULL, NULL);
 	if (D3DERR_DEVICELOST == hr ||
 		D3DERR_DRIVERINTERNALERROR == hr){
 		if (!devicelost){
@@ -459,16 +461,15 @@ void VideoRend::Render(bool Frame, bool wait)
 		}
 		//wxLogMessage("device lost when rendering");
 		Render(true, false);
-		return;
 	}
-	hr = d3device->Present(NULL, &windowRect, NULL, NULL);
+	
 }
 
 
 bool VideoRend::DrawTexture(byte *nframe, bool copy)
 {
 
-	wxMutexLocker lock(mutexRender);
+	wxCriticalSectionLocker lock(mutexRender);
 	byte *fdata=NULL;
 	byte *texbuf;
 	byte bytes=(vformat==RGB32)? 4 : (vformat==YUY2)? 2 : 1;
@@ -476,9 +477,10 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 	D3DLOCKED_RECT d3dlr;
 
 	if(nframe){	
-		fdata= nframe;
+		fdata = nframe;
 		if(copy){
-			byte *cpy = (byte*) datas; memcpy(cpy,fdata,vheight*pitch);
+			byte *cpy = (byte*) datas; 
+			memcpy(cpy,fdata,vheight*pitch);
 		}
 	}
 	else{
@@ -506,7 +508,9 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 	texbuf = static_cast<byte *>(d3dlr.pBits);
 
 	diff=d3dlr.Pitch - (vwidth*bytes);
-	if (!diff){memcpy(texbuf,fdata,(vheight*pitch));}
+	if (!diff){
+		memcpy(texbuf,fdata,(vheight*pitch));
+	}
 	else if(diff > 0){
 
 		if(vformat>=YV12){	
@@ -864,7 +868,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 
 bool VideoRend::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 {
-	wxMutexLocker lock(mutexRender);
+	wxCriticalSectionLocker lock(mutexRender);
 	if (instance) csri_close(instance);
 	instance = NULL;
 
@@ -1099,7 +1103,7 @@ bool VideoRend::UpdateRects(bool changeZoom)
 void VideoRend::UpdateVideoWindow()
 {
 
-	wxMutexLocker lock(mutexRender);
+	wxCriticalSectionLocker lock(mutexRender);
 	/*block=true;*/
 	if(!UpdateRects()){/*block=false;*/return;}
 

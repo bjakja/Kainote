@@ -56,7 +56,7 @@ public:
 	FFMS_AudioSource *audiosource;
 	FFMS_ErrorInfo errinfo;
 	FFMS_Index *index;
-	const FFMS_Frame *fframe;
+	const FFMS_Frame *fframe = NULL;
 	
 	bool DiskCache(bool newIndex);
 	void Cleardiskc();
@@ -81,12 +81,12 @@ public:
 	int Channels;
 	int lasttime;
 	int lastframe;
+	int fplane=0;
 	double Duration;
 	double Delay;
 	float fps;
 	int64_t NumSamples;
-	wxMutex blockaudio;
-	wxMutex blockvideo;
+	wxCriticalSection blockaudio;
 	HANDLE thread;
 	HANDLE eventStartPlayback,
 		eventRefresh,
@@ -100,7 +100,7 @@ public:
 	wxString indexPath;
 	VideoRend *rend;
 	//wxFile file_cache;
-	FILE *fp;
+	FILE *fp=NULL;
 	wxArrayInt KeyFrames;
 	std::vector<int> Timecodes;
 	std::thread *audioLoadThread = NULL;
@@ -109,7 +109,7 @@ private:
 	char **Cache;
 	int blnum;
 	void GetAudio(void *buf, int64_t start, int64_t count);
-	void GetFFMSFrame(int numframe);
+	void GetFFMSFrame(int numframe, byte *buf);
 	volatile bool stopLoadingAudio = false;
 };
 

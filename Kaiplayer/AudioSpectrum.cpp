@@ -87,7 +87,8 @@ public:
 		unsigned int overlap_offset = doublelen / overlaps;
 
 		//int64_t sample=start;
-		int64_t fftStart = (start * doublelen) / (overlaps);
+		int64_t fftStart = start;
+		fftStart = (fftStart * doublelen) / (overlaps);
 		int64_t sample = fftStart;
 		//float scale_factor = 10 / sqrt(2 * (float)(doublelen));
 
@@ -497,7 +498,7 @@ void AudioSpectrumMultiThreading::AudioPorocessing(int numOfTread)
 		if (wait_result == WAIT_OBJECT_0 + 0){
 			unsigned long threadStart = start + len *numOfTread;
 			unsigned long startcache = lastCachePosition + (len *numOfTread);
-			bool audioSetted = false;
+			bool audioSet = false;
 			size_t sssize = sub_caches->size();
 			for (unsigned long i = threadStart; i < threadStart + len; i++){
 				unsigned long currentCache = i/* / overlaps*/ * subcachelen;
@@ -505,7 +506,7 @@ void AudioSpectrumMultiThreading::AudioPorocessing(int numOfTread)
 					startcache -= sssize;
 				}
 				if ((*sub_caches)[startcache]->start != currentCache){
-					if (!audioSetted){ SetAudio(i, len - (i - threadStart), &cfft); audioSetted = true; }
+					if (!audioSet){ SetAudio(i, len - (i - threadStart), &cfft); audioSet = true; }
 					(*sub_caches)[startcache]->CreateCache(&cfft, currentCache);
 				}
 				startcache++;
@@ -527,9 +528,9 @@ void AudioSpectrumMultiThreading::SetAudio(unsigned long _start, int _len, FFT *
 	//size_t offset = (doublelen / overlaps) ;
 	//size_t sampleend = ((_start + _len - 1) * subcachelen) * doublelen;
 	//sampleend += ((subcachelen-1) * doublelen);
-	size_t samplestart = ((_start /*/ overlaps*/) * orgsubcachelen) * doublelen;
-	size_t offset = (doublelen / overlaps);
-	size_t sampleend = (((_start + _len - 1) /*/ overlaps*/ ) * orgsubcachelen) * doublelen;
+	int64_t samplestart = ((_start /*/ overlaps*/) * orgsubcachelen) * doublelen;
+	int64_t offset = (doublelen / overlaps);
+	int64_t sampleend = (((_start + _len - 1) /*/ overlaps*/) * orgsubcachelen) * doublelen;
 	sampleend += /*((overlaps - 1) * offset) + */((subcachelen - 1) * offset/*doublelen*/);
 
 	fft->SetAudio(samplestart, (sampleend - samplestart) + doublelen);

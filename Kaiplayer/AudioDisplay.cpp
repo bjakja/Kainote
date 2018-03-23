@@ -2317,12 +2317,12 @@ void AudioDisplay::Commit(bool moveToEnd)
 {
 	bool autocommit=Options.GetBool(AudioAutoCommit);
 	if(hasKara){
-		Edit->TextEdit->SetTextS(karaoke->GetText(),true);
+		Edit->TextEdit->SetTextS(karaoke->GetText(), true, true, true);
 	}
 
 	if (autocommit) {
 		CommitChanges(false, true, moveToEnd);
-		return;
+		//return;
 	}else{
 		CommitChanges(false,false, moveToEnd);//UpdateImage(true);
 	}
@@ -2353,7 +2353,6 @@ void AudioDisplay::DrawKeyframes() {
 			//	cur = cur + ((prevFrameTime - cur) / 2);
 			//}
 			int x = GetXAtMS(cur);
-			//dc.DrawLine(x,0,x,h);
 			v2[0]=D3DXVECTOR2(x,0);
 			v2[1]=D3DXVECTOR2(x,h);
 			d3dLine->Draw(v2,2,keyframe);

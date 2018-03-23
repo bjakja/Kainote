@@ -16,6 +16,7 @@
 #pragma once
 
 #include <thread>
+#include <wx/string.h>
 
 class UpdateChecker
 {
@@ -25,7 +26,7 @@ public:
 	//int CheckForUpdate();
 private:
 	static int CheckAsynchronously(UpdateChecker *checker, bool closeProgram = true);
-	int Downloader(const wchar_t *server, const wchar_t *page, const wchar_t *filename, string *output);
+	int Downloader(const wchar_t *server, const wchar_t *page, const wchar_t *filename, std::string *output);
 	int DownloadZip();
 	void Update(bool closeProgram = true);
 	bool CheckForUpdate();

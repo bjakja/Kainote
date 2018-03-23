@@ -1340,7 +1340,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		Send(EDITBOX_LINE_EDITION, false, false, true);
 		OnVideo = tmpOnVideo;
 		EditCounter=1;
-		if(ABox && ABox->audioDisplay->hasKara)
+		if(ABox && ABox->audioDisplay->hasKara && event.GetId()>0)
 			ABox->audioDisplay->SetDialogue(line, ebrow);
 	}else{EditCounter++;}
 

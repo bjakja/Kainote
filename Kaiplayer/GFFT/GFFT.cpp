@@ -247,7 +247,7 @@ void FFT::Set( VideoFfmpeg *_prov){
 	output = new float[doublelen * 2];
 }
 
-void FFT::SetAudio(size_t _from, size_t len)
+void FFT::SetAudio(int64_t _from, int64_t len)
 {
 	from = _from;
 	if (inputSize != len){
@@ -262,11 +262,11 @@ void FFT::SetAudio(size_t _from, size_t len)
 	prov->GetBuffer(input, from, inputSize);
 }
 
-void FFT::Transform(size_t whre){
+void FFT::Transform(int64_t whre){
 	int64_t start = (whre - from);
 	if (start + doublelen > inputSize){
-		//SetAudio(start, start + doublelen);
-		assert(false);
+		//assert(false);
+		return;
 	}
 	//else if (start + doublelen == inputSize){
 		//bool goodCalculation = true;

@@ -45,7 +45,6 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *_s
 	,thread(0)
 	,lastframe(-1)
 	,width(-1)
-	,fp(NULL)
 	,index(NULL)
 	,isBusy(false)
 {
@@ -56,15 +55,14 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *_s
 	fname = filename;
 	kainoteApp *Kaia=(kainoteApp*)wxTheApp;
 	progress = new ProgressSink(Kaia->Frame,_("Indeksowanie pliku wideo"));
-	//listw tracks(Kaia->Frame);
+	
 	if(renderer){
-
-		thread = (HANDLE)_beginthreadex(0, 0, FFMS2Proc, this, 0, 0);//CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)FFMS2Proc, this, 0, 0);
+		unsigned int threadid = 0;
+		thread = (HANDLE)_beginthreadex(0, 0, FFMS2Proc, this, 0, &threadid);//CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)FFMS2Proc, this, 0, 0);
 		SetThreadPriority(thread,THREAD_PRIORITY_TIME_CRITICAL);
+		SetThreadName(threadid, "VideoThread");
 		progress->ShowDialog();
-		//HANDLE events[] = { eventComplete, eventAudioComplete };
 		WaitForSingleObject(eventComplete, INFINITE);
-		//ResetEvent(eventAudioComplete);
 		ResetEvent(eventComplete);
 		*_success = success;
 	}else{
@@ -95,7 +93,7 @@ void VideoFfmpeg::Processing()
 	
 	progress->EndModal();
 
-	int fplane=height * width * 4;
+	fplane=height * width * 4;
 	int tdiff=0;
 	
 	SetEvent(eventComplete);
@@ -117,12 +115,15 @@ void VideoFfmpeg::Processing()
 					lastframe = rend->lastframe;
 				}
 				if (lockGetFrame)
-					GetFFMSFrame(rend->lastframe);
-				else
-					fframe=FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
-				
-				if(!fframe){continue;}
-				memcpy(&buff[0],fframe->Data[0],fplane);
+					GetFFMSFrame(rend->lastframe, buff);
+				else{
+					fframe = FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
+
+					if (!fframe){
+						continue;
+					}
+					memcpy(&buff[0], fframe->Data[0], fplane);
+				}
 
 				rend->DrawTexture(buff);
 				rend->Render(false);
@@ -162,13 +163,16 @@ void VideoFfmpeg::Processing()
 			byte *buff = (byte*)rend->datas;
 			if(rend->lastframe != lastframe){
 				if (lockGetFrame)
-					GetFFMSFrame(rend->lastframe);
-				else
+					GetFFMSFrame(rend->lastframe, buff);
+				else{
 					fframe = FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
+					if (!fframe){
+						SetEvent(eventComplete); isBusy = false; continue;
+					}
+					memcpy(&buff[0], fframe->Data[0], fplane);
+				}
 				lastframe = rend->lastframe;
 			}
-			if(!fframe){SetEvent(eventComplete);isBusy = false;continue;}
-			memcpy(&buff[0],fframe->Data[0],fplane);
 			
 			rend->DrawTexture(buff);
 			rend->Render(false);
@@ -427,7 +431,7 @@ done:
 		audiosource = FFMS_CreateAudioSource(fname.utf8_str(), audiotrack, index, FFMS_DELAY_FIRST_VIDEO_TRACK, &errinfo);
 		if (audiosource == NULL) {
 			wxLogStatus(_("Wystąpił błąd tworzenia źródła audio: %s"), errinfo.Buffer);
-			return false;
+			return 0;
 		}
 
 		FFMS_ResampleOptions *resopts = FFMS_CreateResampleOptions(audiosource);
@@ -436,6 +440,7 @@ done:
 
 		if (FFMS_SetOutputFormatA(audiosource, resopts, &errinfo)){
 			wxLogStatus(_("Wystąpił błąd konwertowania audio: %s"), errinfo.Buffer);
+			return 1;
 		}
 		else{
 			BytesPerSample = 2;
@@ -484,6 +489,13 @@ VideoFfmpeg::~VideoFfmpeg()
 	}
 
 	if(disccache){Cleardiskc();}else{Clearcache();}
+	if (!stopLoadingAudio && disccache && diskCacheFilename.EndsWith(".part")){
+		wxString discCacheNameWithGoodExt = diskCacheFilename;
+		discCacheNameWithGoodExt.RemoveLast(5);
+		if (!wxRenameFile(diskCacheFilename, discCacheNameWithGoodExt)){
+			KaiMessageBox(_("Nie można zmienić nazwy disc cache"));
+		}
+	}
 }
 
 
@@ -523,16 +535,15 @@ void VideoFfmpeg::GetFrame(int ttime, byte *buff)
 	
 }
 
-void VideoFfmpeg::GetFFMSFrame(int numframe)
+void VideoFfmpeg::GetFFMSFrame(int numframe, byte *buff)
 {
-	wxMutexLocker lock(blockaudio);
+	wxCriticalSectionLocker lock(blockaudio);
 	fframe = FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
+	memcpy(&buff[0], fframe->Data[0], fplane);
 }
 
 void VideoFfmpeg::GetAudio(void *buf, int64_t start, int64_t count)
 {
-	wxMutexLocker lock(blockaudio);
-	//wxLogStatus(_("weszło"));
 
 	if (count == 0 || !audiosource) return;
 	if (start+count > NumSamples) {
@@ -548,7 +559,7 @@ void VideoFfmpeg::GetAudio(void *buf, int64_t start, int64_t count)
 		}
 
 	}
-
+	wxCriticalSectionLocker lock(blockaudio);
 	if (FFMS_GetAudio(audiosource, buf, start, count, &errinfo)){ 
 		//sprawdzić co z tym kraszem
 		wxLogStatus("error audio" + wxString(errinfo.Buffer)); 
@@ -574,8 +585,8 @@ void VideoFfmpeg::GetBuffer(void *buf, int64_t start, int64_t count, double volu
 
 	if (count) {
 		if(disccache){
-			if(fp){
-				wxMutexLocker lock(blockaudio);
+			if (fp){
+				wxCriticalSectionLocker lock(blockaudio);
 				_int64 pos = start* BytesPerSample;
 				_fseeki64(fp, pos, SEEK_SET);
 				fread(buf, 1, count* BytesPerSample, fp);
@@ -621,7 +632,7 @@ void VideoFfmpeg::GetBuffer(void *buf, int64_t start, int64_t count, double volu
 void VideoFfmpeg::GetWaveForm(int *min,int *peak,int64_t start,int w,int h,int samples,float scale)
 {
 	if (audioNotInitialized){ return; }
-	wxMutexLocker lock(blockaudio);
+	//wxCriticalSectionLocker lock(blockaudio);
 	int n = w * samples;
 	for (int i=0;i<w;i++) {
 		peak[i] = 0;
@@ -643,7 +654,6 @@ void VideoFfmpeg::GetWaveForm(int *min,int *peak,int64_t start,int w,int h,int s
 	GetBuffer(raw,start,n);
 	int half_h = h/2;
 	int half_amplitude = int(half_h * scale);
-	//wxLogStatus("before for");
 	// Calculate waveform
 	for (int i=0;i<n;i++) {
 		cur = i/samples;
@@ -653,10 +663,8 @@ void VideoFfmpeg::GetWaveForm(int *min,int *peak,int64_t start,int w,int h,int s
 		if (curvalue < min[cur]) min[cur] = curvalue;
 		if (curvalue > peak[cur]) peak[cur] = curvalue;
 	}
-	//wxLogStatus("after for");
 
 	delete[] raw;
-	//wxLogStatus("del");
 
 }
 
@@ -774,15 +782,20 @@ bool VideoFfmpeg::DiskCache(bool newIndex)
 	wxFileName discCacheFile;
 	discCacheFile.Assign(diskCacheFilename);
 	if(!discCacheFile.DirExists()){wxMkdir(diskCacheFilename.BeforeLast('\\'));}
-	if (!newIndex && discCacheFile.FileExists()){
+	bool fileExists = discCacheFile.FileExists();
+	if (!newIndex && fileExists){
 		fp = _wfopen(diskCacheFilename.wc_str(), L"rb");
 		if (fp)
 			return true;
 		else 
 			return false;
 	}else{
+		if (fileExists){
+			wxRemoveFile(diskCacheFilename);
+		}
+		diskCacheFilename << ".part";
 		fp = _wfopen(diskCacheFilename.wc_str(), L"w+b");
-		if(!fp || !audiosource)
+		if(!fp)
 			return false;
 	}
 	int block = 332768;
@@ -853,12 +866,12 @@ int VideoFfmpeg::GetFramefromMS(int MS, int seekfrom)
 void VideoFfmpeg::DeleteOldAudioCache()
 {
 	wxString path = Options.pathfull + "\\AudioCache";
-	size_t tabsSize = Notebook::GetTabs()->Size();
-	size_t maxAudio = (tabsSize < 10)? 10 : tabsSize;
+	//size_t tabsSize = Notebook::GetTabs()->Size();
+	size_t maxAudio = 10;
 	wxDir kat(path);
 	wxArrayString audioCaches;
 	if(kat.IsOpened()){
-		kat.GetAllFiles(path, &audioCaches, "*.w64", wxDIR_FILES);
+		kat.GetAllFiles(path, &audioCaches, "", wxDIR_FILES);
 	}
 	if(audioCaches.size()<=maxAudio){return;}
 	FILETIME ft;
@@ -866,15 +879,18 @@ void VideoFfmpeg::DeleteOldAudioCache()
 	std::map<unsigned __int64, int> dates;
 	unsigned __int64 datetime;
 	for(size_t i = 0; i< audioCaches.size(); i++){
-		HANDLE ffile = CreateFile(audioCaches[i].wc_str(), GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-
-		GetFileTime(ffile,0,&ft,0);
-		CloseHandle(ffile);
-		FileTimeToSystemTime(&ft, &st);
-		if(st.wYear>3000){st.wYear=3000;}
-		datetime= (st.wYear *360000000000000) + (st.wMonth *36000000000) + (st.wDay *360000000) + (st.wHour*3600000)+(st.wMinute*60000)+(st.wSecond*1000)+st.wMilliseconds;
-		dates[datetime]=i;
-
+		HANDLE ffile = CreateFile(audioCaches[i].wc_str(), GENERIC_READ, FILE_SHARE_DELETE, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+		if (ffile != INVALID_HANDLE_VALUE){
+			GetFileTime(ffile, 0, &ft, 0);
+			CloseHandle(ffile);
+			FileTimeToSystemTime(&ft, &st);
+			if (st.wYear > 3000){ st.wYear = 3000; }
+			datetime = (st.wYear * 980294400000) + (st.wMonth * 2678400000) + (st.wDay * 86400000) + (st.wHour * 3600000) + (st.wMinute * 60000) + (st.wSecond * 1000) + st.wMilliseconds;
+			dates[datetime] = i;
+		}
+		//else{
+			//wxLogStatus("nie można otworzyć pliku %s", audioCaches[i]);
+		//}
 	}
 	int count = 0;
 	int diff = audioCaches.size() - maxAudio;
@@ -920,7 +936,7 @@ wxString VideoFfmpeg::ColorCatrixDescription(int cs, int cr) {
 
 void VideoFfmpeg::SetColorSpace(const wxString& matrix)
 {
-	wxMutexLocker lock(blockaudio);
+	wxCriticalSectionLocker lock(blockaudio);
 	if (matrix == ColorSpace) return;
 	lockGetFrame = true;
 	if (matrix == RealColorSpace || (matrix != "TV.601" && matrix != "TV.709"))

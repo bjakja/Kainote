@@ -29,15 +29,15 @@ public:
 	FFT(){};
 	~FFT();
 	void Set(VideoFfmpeg *_prov);
-	void Transform(size_t whre);
+	void Transform(int64_t whre);
 	float Get(int i);
-	void SetAudio(size_t from, size_t to);
+	void SetAudio(int64_t from, int64_t to);
 	float * output;
 private:
 	VideoFfmpeg *prov;
 	short * input;
 	AbstractFFT<float>* gfft;
-	size_t inputSize = 0;
-	size_t from = 0;
+	int64_t inputSize = 0;
+	int64_t from = 0;
 	//size_t lastend = 0;
 };

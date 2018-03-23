@@ -286,6 +286,6 @@ bool UpdateChecker::CheckForUpdate()
 		Options.SetInt(UpdaterLastCheck, lastCheck);
 		Options.SaveOptions(true, false);
 	}
-	thread = new std::thread(UpdateChecker::CheckAsynchronously, this);
+	thread = new std::thread(UpdateChecker::CheckAsynchronously, this, true);
 	return true;
 }
