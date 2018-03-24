@@ -31,11 +31,11 @@ bool DragnDrop::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames
 		wxString ext = filenames[0].AfterLast('.').Lower();
 		bool isLuaScript = ext == "lua" || ext == "moon";
 		int w,h;
-		Kai->GetClientSize(&w,&h);
-		h -= (Kai->Menubar->GetSize().y);
-		x -= iconsize;
+		Kai->Tabs->GetClientSize(&w,&h);
+		//h -= (Kai->Menubar->GetSize().y);
+		//x -= iconsize;
 		if (!isLuaScript){
-			if (y >= h && y <= h + Kai->Tabs->GetHeight()){
+			if (y >= h - Kai->Tabs->GetHeight()){
 				int pixels;
 				int tab = Kai->Tabs->FindTab(x, &pixels);
 				if (tab < 0){ Kai->InsertTab(); }

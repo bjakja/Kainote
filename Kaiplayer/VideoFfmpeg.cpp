@@ -115,15 +115,15 @@ void VideoFfmpeg::Processing()
 					lastframe = rend->lastframe;
 				}
 				if (lockGetFrame)
-					GetFFMSFrame(rend->lastframe, buff);
+					GetFFMSFrame(rend->lastframe);
 				else{
 					fframe = FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
-
-					if (!fframe){
-						continue;
-					}
-					memcpy(&buff[0], fframe->Data[0], fplane);
 				}
+
+				if (!fframe){
+					continue;
+				}
+				memcpy(&buff[0], fframe->Data[0], fplane);
 
 				rend->DrawTexture(buff);
 				rend->Render(false);
@@ -163,17 +163,17 @@ void VideoFfmpeg::Processing()
 			byte *buff = (byte*)rend->datas;
 			if(rend->lastframe != lastframe){
 				if (lockGetFrame)
-					GetFFMSFrame(rend->lastframe, buff);
+					GetFFMSFrame(rend->lastframe);
 				else{
 					fframe = FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
-					if (!fframe){
-						SetEvent(eventComplete); isBusy = false; continue;
-					}
-					memcpy(&buff[0], fframe->Data[0], fplane);
 				}
 				lastframe = rend->lastframe;
 			}
-			
+			if (!fframe){
+				SetEvent(eventComplete); isBusy = false; continue;
+			}
+			memcpy(&buff[0], fframe->Data[0], fplane);
+
 			rend->DrawTexture(buff);
 			rend->Render(false);
 
@@ -535,11 +535,11 @@ void VideoFfmpeg::GetFrame(int ttime, byte *buff)
 	
 }
 
-void VideoFfmpeg::GetFFMSFrame(int numframe, byte *buff)
+void VideoFfmpeg::GetFFMSFrame(int numframe)
 {
 	wxCriticalSectionLocker lock(blockaudio);
 	fframe = FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
-	memcpy(&buff[0], fframe->Data[0], fplane);
+	//memcpy(buff, fframe->Data[0], fplane);
 }
 
 void VideoFfmpeg::GetAudio(void *buf, int64_t start, int64_t count)

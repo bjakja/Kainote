@@ -281,7 +281,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	});
 	Bind(wxEVT_ACTIVATE, &kainoteFrame::OnActivate, this);
 	Connect(SnapWithStart, SnapWithEnd, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
-	SetDropTarget(new DragnDrop(this));
+	Tabs->SetDropTarget(new DragnDrop(this));
 	Bind(wxEVT_SIZE, &kainoteFrame::OnSize, this);
 
 

@@ -109,7 +109,7 @@ private:
 	char **Cache;
 	int blnum;
 	void GetAudio(void *buf, int64_t start, int64_t count);
-	void GetFFMSFrame(int numframe, byte *buf);
+	void GetFFMSFrame(int numframe);
 	volatile bool stopLoadingAudio = false;
 };
 
