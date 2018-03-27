@@ -1169,7 +1169,7 @@ void MTextEditor::ContextMenu(wxPoint mpos, int error)
 	menut.AppendSeparator();
 	menut.Append(TEXTM_SEEKWORDL,_("Szukaj tłumaczenia słowa na ling.pl"))->Enable(Selend.x!=Cursor.x);
 	menut.Append(TEXTM_SEEKWORDB,_("Szukaj tłumaczenia słowa na pl.ba.bla"))->Enable(Selend.x!=Cursor.x);
-	menut.Append(TEXTM_SEEKWORDG,_("Szukaj tłumaczenia słowa w Google"))->Enable(Selend.x!=Cursor.x);
+	menut.Append(TEXTM_SEEKWORDG,_("Szukaj zaznaczonej frazy w Google"))->Enable(Selend.x!=Cursor.x);
 	menut.Append(TEXTM_SEEKWORDS,_("Szukaj synonimu na synonimy.net"))->Enable(Selend.x!=Cursor.x);
 
 	if(!err.IsEmpty()){

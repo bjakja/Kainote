@@ -120,7 +120,7 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	Connect(9987,wxEVT_COMMAND_RADIOBOX_SELECTED, (wxObjectEventFunction)&FontCollectorDialog::OnChangeOpt);
 
 	subsdir=new KaiCheckBox(this,7998,_("Zapisuj do folderu z napisami / wideo."));
-	subsdir->SetToolTip(_("Zapisuje do folderu z wideo,\nprzy wyciąganiu czcionek z pliku MKV."));
+	subsdir->SetToolTip(_("Zapisuje do folderu z wideo\nprzy wyciąganiu czcionek z pliku MKV."));
 	subsdir->Enable(Options.GetInt(FontCollectorAction)!=0);
 	subsdir->SetValue(Options.GetBool(FontCollectorUseSubsDirectory));
 
