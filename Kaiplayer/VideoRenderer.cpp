@@ -327,7 +327,9 @@ void VideoRend::Render(bool Frame, bool wait)
 				Clear();
 				InitDX();
 				if (IsDshow){ RecreateSurface(); }
-				//else{}
+				if (Visual){
+					Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
+				}
 				devicelost = false;
 				Render(true, false);
 				//wxLogMessage("cooperative not reset");
@@ -1125,7 +1127,6 @@ void VideoRend::UpdateVideoWindow()
 	resized=true;
 	if(Visual){
 		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom),lines, m_font, d3device);
-		//SetVisual();
 		SAFE_DELETE(Visual->dummytext);
 		Visual->SetCurVisual();
 		VisEdit=true;
