@@ -835,7 +835,7 @@ void MoveToMousePosition(wxWindow *win)
 	wxPoint mst=wxGetMousePosition();
 	wxSize siz=win->GetSize();
 	siz.x;
-	wxRect rc = GetMonitorRect(0, NULL, mst, true);//wxGetClientDisplayRect();
+	wxRect rc = GetMonitorRect(0, NULL, mst, true);
 	mst.x-=(siz.x/2);
 	mst.x = MID(rc.x, mst.x, (rc.width + rc.x) - siz.x);
 	mst.y+=15;

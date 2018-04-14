@@ -624,6 +624,9 @@ void PopupList::Popup(const wxPoint &pos, const wxSize &controlSize, int selecte
 	orgY = size.y;
 	Show();
 	Bind(wxEVT_IDLE,&PopupList::OnIdle, this);
+	if (scroll){
+		scroll->SetSize(size.x - 18, 1, 17, size.y - 2);
+	}
 }
 
 void PopupList::CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &controlSize)
