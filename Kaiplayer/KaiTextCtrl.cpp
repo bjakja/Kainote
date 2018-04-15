@@ -1054,25 +1054,24 @@ void KaiTextCtrl::ContextMenu(wxPoint mpos)
 		CalcWrap();
 		//SendEvent();
 		SetSelection(from,from);modified=true;
-	}//else if(id>=TEXT_SEEKWORDL && id<=TEXT_SEEKWORDG){
-	//	wxString page=(id==TEXT_SEEKWORDL)? L"http://ling.pl/" : 
-	//		(id==TEXT_SEEKWORDB)? L"http://pl.bab.la/slownik/angielski-polski/" : L"https://www.google.com/search?q=";
-	//	long from, to;
-	//	GetSelection(&from, &to);
-	//	wxString word= KText.SubString(from, to-1).Trim();
-	//	//if(word.IsWord()){
-	//	word.Replace(" ", "+");
-	//	wxString url=page+word;
-	//	WinStruct<SHELLEXECUTEINFO> sei;
-	//	sei.lpFile = url.c_str();
-	//	sei.lpVerb = wxT("open");
-	//	sei.nShow = SW_RESTORE;
-	//	sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
+	}else if(id==TEXT_SEEKWORDG){
+		wxString page = L"https://www.google.com/search?q=";
+		long from, to;
+		GetSelection(&from, &to);
+		wxString word= KText.SubString(from, to-1).Trim();
+		
+		word.Replace(" ", "+");
+		wxString url=page+word;
+		WinStruct<SHELLEXECUTEINFO> sei;
+		sei.lpFile = url.c_str();
+		sei.lpVerb = wxT("open");
+		sei.nShow = SW_RESTORE;
+		sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
 
-	//	ShellExecuteEx(&sei);
-	//	//}
+		ShellExecuteEx(&sei);
+		
 
-	//}
+	}
 
 
 }
