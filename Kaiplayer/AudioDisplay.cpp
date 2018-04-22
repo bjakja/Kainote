@@ -1502,7 +1502,9 @@ void AudioDisplay::CommitChanges (bool nextLine, bool Save, bool moveToEnd) {
 	if(Save){
 		Edit->Send(AUDIO_CHANGE_TIME, nextLine);
 		if(!nextLine){Edit->UpdateChars(Edit->TextEdit->GetValue());}
-		((TabPanel *)Edit->GetParent())->Video->RefreshTime();
+		VideoCtrl *vb = ((TabPanel *)Edit->GetParent())->Video;
+		if(vb && vb->vstate!=None)
+			vb->RefreshTime();
 	}
 	blockUpdate = false;
 
