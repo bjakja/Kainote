@@ -192,8 +192,7 @@ int VideoFfmpeg::Init()
 
 	FFMS_Init(0, 1);
 
-	char errmsg[1024];
-	errinfo.Buffer      = errmsg;
+	errinfo.Buffer = errmsg;
 	errinfo.BufferSize  = sizeof(errmsg);
 	errinfo.ErrorType   = FFMS_ERROR_SUCCESS;
 	errinfo.SubType     = FFMS_ERROR_SUCCESS;

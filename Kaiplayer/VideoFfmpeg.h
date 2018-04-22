@@ -105,7 +105,7 @@ public:
 	std::vector<int> Timecodes;
 	std::thread *audioLoadThread = NULL;
 private:
-	
+	char errmsg[1024];
 	char **Cache;
 	int blnum;
 	void GetAudio(void *buf, int64_t start, int64_t count);
