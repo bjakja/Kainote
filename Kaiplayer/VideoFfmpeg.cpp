@@ -327,13 +327,15 @@ done:
 	if(videotrack!=-1 && rend){	
 		SYSTEM_INFO sysinfo;
 		GetSystemInfo( &sysinfo );
-		videosource = FFMS_CreateVideoSource(
-			fname.utf8_str(), 
-			videotrack, 
-			index, 
-			sysinfo.dwNumberOfProcessors*2,
-			Options.GetInt(FFMS2VideoSeeking),//FFMS_SEEK_NORMAL, // FFMS_SEEK_UNSAFE/*FFMS_SEEK_AGGRESSIVE*/
-			&errinfo);
+		try{
+			videosource = FFMS_CreateVideoSource(
+				fname.utf8_str(),
+				videotrack,
+				index,
+				sysinfo.dwNumberOfProcessors * 2,
+				Options.GetInt(FFMS2VideoSeeking),//FFMS_SEEK_NORMAL, // FFMS_SEEK_UNSAFE/*FFMS_SEEK_AGGRESSIVE*/
+				&errinfo);
+		} catch (...){}
 		//Since the index is copied into the video source object upon its creation,
 		//we can and should now destroy the index object. 
 

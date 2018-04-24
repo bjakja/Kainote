@@ -628,17 +628,17 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 			IsDshow = false;
 			SAFE_DELETE(tmpvff);/*block=false;*/return false;
 		}
+		//when loading only audio do not remove video
+		if (tmpvff->width < 0 && tmpvff->GetSampleRate() > 0){
+			VideoFfmpeg *tmp = VFF;
+			VFF = tmpvff;
+			TabPanel *pan = ((TabPanel*)GetParent());
+			Kaia->Frame->OpenAudioInTab(pan, 40000, fname);
+			player = pan->Edit->ABox->audioDisplay;
+			VFF = tmp;
+			return false;
+		}
 	}
-	//when loading only audio do not remove video
-	if (tmpvff->width < 0 && tmpvff->GetSampleRate() > 0){
-		VideoFfmpeg *tmp = VFF;
-		VFF = tmpvff;
-		TabPanel *pan = ((TabPanel*)GetParent());
-		Kaia->Frame->OpenAudioInTab(pan, 40000, fname);
-		player = pan->Edit->ABox->audioDisplay;
-		VFF = tmp;
-		return false;
-	}	
 	SAFE_DELETE(VFF);
 
 	if(vstate!=None){
