@@ -629,7 +629,18 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 			SAFE_DELETE(tmpvff);/*block=false;*/return false;
 		}
 	}
+	//when loading only audio do not remove video
+	if (tmpvff->width < 0 && tmpvff->GetSampleRate() > 0){
+		VideoFfmpeg *tmp = VFF;
+		VFF = tmpvff;
+		TabPanel *pan = ((TabPanel*)GetParent());
+		Kaia->Frame->OpenAudioInTab(pan, 40000, fname);
+		player = pan->Edit->ABox->audioDisplay;
+		VFF = tmp;
+		return false;
+	}	
 	SAFE_DELETE(VFF);
+
 	if(vstate!=None){
 		resized=seek=cross=pbar=false;
 		vstate=None;Clear();
@@ -640,7 +651,6 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 
 	if(!Dshow){
 		SAFE_DELETE(vplayer);
-		//VFF=new VideoFfmpeg(fname, Kaia->Frame->Tabs->GetSelection(),&success);
 		VFF=tmpvff;
 		d3dformat=D3DFMT_X8R8G8B8;
 		vformat=RGB32;
@@ -659,7 +669,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 			}
 			else if (player){ Kaia->Frame->OpenAudioInTab(pan, CloseAudio, ""); }
 		}
-		if(VFF->width<0){return false;}
+		if(!VFF || VFF->width<0){return false;}
 	}else{
 
 		if(!vplayer){vplayer= new DShowPlayer(this);}

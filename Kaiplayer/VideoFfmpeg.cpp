@@ -214,10 +214,9 @@ int VideoFfmpeg::Init()
 		else if (FFMS_GetTrackTypeI(Indexer, i) == FFMS_TYPE_AUDIO) {
 			audiotable.Add(i);
 		}
-		//else if(audiotrack!=-1 && videotrack !=-1)
-		//{break;}
 	}
-	bool ismkv=(fname.AfterLast('.').Lower()=="mkv");
+	wxString ext = fname.AfterLast('.').Lower();
+	bool ismkv=(ext=="mkv");
 
 	if(audiotable.size()>1 || ismkv){
 
@@ -339,8 +338,12 @@ done:
 		//we can and should now destroy the index object. 
 
 		if (videosource == NULL) {
-			wxLogStatus(_("Nie można utworzyć VideoSource."));
-			return 0;
+			if (audiotrack == -1){
+				wxLogStatus(_("Nie można utworzyć VideoSource."));
+				return 0;
+			}
+			else
+				goto audio;
 		}
 
 		const FFMS_VideoProperties *videoprops = FFMS_GetVideoProperties(videosource);
@@ -425,7 +428,8 @@ done:
 		}
 
 	}
-	//if(audiotrack==-1){ SampleRate=-1; return 1;}
+audio:
+
 	if (audiotrack != -1){
 		audiosource = FFMS_CreateAudioSource(fname.utf8_str(), audiotrack, index, FFMS_DELAY_FIRST_VIDEO_TRACK, &errinfo);
 		if (audiosource == NULL) {
