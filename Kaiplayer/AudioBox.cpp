@@ -228,9 +228,10 @@ void AudioBox::SetFile(wxString file, bool fromvideo) {
 	audioDisplay->SetFile(file, fromvideo);
 	if (file != "") loaded = audioDisplay->loaded;
 	audioName = file;
-	//SetVolume(Options.GetInt(AudioVolume));
-	float value = pow(float(Options.GetInt(AudioVolume)) / 50.0f, 3);
-	audioDisplay->player->SetVolume(value);
+	if (loaded && audioDisplay->player){
+		float value = pow(float(Options.GetInt(AudioVolume)) / 50.0f, 3);
+		audioDisplay->player->SetVolume(value);
+	}
 }
 
 

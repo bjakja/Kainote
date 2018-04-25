@@ -523,25 +523,26 @@ void FontCollector::CopyFonts()
 
 	if(nfound||!allglyphs){
 		if((operation & CHECK_FONTS)){
-			SendMessageD(wxString::Format(_("Zakończono, znaleziono %s.\nNie znaleziono %s. "), 
+			SendMessageD("\n" + wxString::Format(_("Zakończono, znaleziono %s.\nNie znaleziono %s. "), 
 				MakePolishPlural(found,_("czcionkę"),_("czcionki"),_("czcionek")), 
 				MakePolishPlural(nfound,_("czcionki"),_("czcionki"),_("czcionek"))) + noglyphs, fcd->warning );
 		}else{
-			SendMessageD(wxString::Format(_("Zakończono, skopiowano %s.\nNie znaleziono/nie udało się skopiować %s."),
+			SendMessageD("\n" + wxString::Format(_("Zakończono, skopiowano %s.\nNie znaleziono/nie udało się skopiować %s."),
 				MakePolishPlural((int)fontnames.size(),_("czcionkę"),_("czcionki"),_("czcionek")), 
 				MakePolishPlural(nfound,_("czcionki"),_("czcionki"),_("czcionek"))) + noglyphs, fcd->warning);
 		}
 	}else{
 		if((operation & CHECK_FONTS)){
-			SendMessageD(wxString::Format(_("Zakończono powodzeniem, znaleziono %s."), 
+			SendMessageD("\n" + wxString::Format(_("Zakończono powodzeniem, znaleziono %s."),
 				MakePolishPlural(found,_("czcionkę"),_("czcionki"),_("czcionek"))), wxColour("#008000"));
 		}else{
-			SendMessageD(wxString::Format(_("Zakończono powodzeniem, skopiowano %s."), 
+			SendMessageD("\n" + wxString::Format(_("Zakończono powodzeniem, skopiowano %s."),
 				MakePolishPlural((int)fontnames.size(),_("czcionkę"),_("czcionki"),_("czcionek"))), wxColour("#008000"));
 		}
 	}
 	fontnames.clear();
 }
+
 bool FontCollector::SaveFont(const wxString &fontPath)
 {
 	wxString fn = fontPath.AfterLast('\\');

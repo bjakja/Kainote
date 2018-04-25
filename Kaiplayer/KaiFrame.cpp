@@ -52,7 +52,8 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title, const
 	Bind(wxEVT_LEFT_DCLICK, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiFrame::OnMouseEvent, this);
-	Bind(wxEVT_ACTIVATE, &KaiFrame::OnActivate, this);
+	//do not needed implement in main loop
+	//Bind(wxEVT_ACTIVATE, &KaiFrame::OnActivate, this);
 	SetSize(pos.x,pos.y,size.x, size.y);
 	//DWM_TIMING_INFO ti;
 	//ti.cbSize = sizeof(ti);
