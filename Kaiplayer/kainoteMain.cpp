@@ -919,9 +919,10 @@ bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 			wxString videopath = tab->Grid->GetSInfo(L"Video File");
 			wxString audiopath = tab->Grid->GetSInfo(L"Audio File");
 			if (audiopath.StartsWith("?")){ audiopath = videopath; }
-			bool hasVideoPath = (!videopath.empty() && (wxFileExists(videopath) ||
+			//fix for wxFileExists which working without path when program run from command line
+			bool hasVideoPath = (!videopath.empty() && ((wxFileExists(videopath) && videopath.find(':') == 1) ||
 				wxFileExists(videopath.Prepend(filename.BeforeLast('\\') + "\\"))));
-			bool hasAudioPath = (!audiopath.empty() && (wxFileExists(audiopath) ||
+			bool hasAudioPath = (!audiopath.empty() && ((wxFileExists(audiopath) && audiopath.find(':') == 1) ||
 				wxFileExists(audiopath.Prepend(filename.BeforeLast('\\') + "\\"))));
 			int flags = wxNO;
 			wxString prompt;

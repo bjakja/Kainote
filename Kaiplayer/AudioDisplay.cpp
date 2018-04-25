@@ -1184,7 +1184,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 		catch (const wxChar *e) {
 			wxLogError(e);
 		}
-		if(ownProvider && provider){delete provider;provider = NULL;}
+		if(ownProvider && provider){delete provider; provider = NULL;}
 		delete player;
 		if(spectrumRenderer){delete spectrumRenderer; spectrumRenderer = NULL;}
 
