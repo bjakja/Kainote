@@ -37,6 +37,10 @@
 #include "Automation.h"
 #include "Toolbar.h"
 #include "KaiStatusBar.h"
+
+//struct CommandLineData{
+	//wxArrayString paths;
+//};
 class FontCollector;
 
 class kainoteFrame: public KaiFrame
@@ -75,7 +79,7 @@ class kainoteFrame: public KaiFrame
 
 		TabPanel* GetTab();
 		
-		void InsertTab(bool sel=true);
+		void InsertTab(bool refresh=true);
 		void OpenFiles(wxArrayString &files,bool intab=false, bool nofreeze=false, bool newtab=false);
 		void OpenAudioInTab(TabPanel *pan, int id, const wxString &path);
 		void HideEditor(bool save = true);

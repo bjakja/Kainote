@@ -37,55 +37,6 @@
 IMPLEMENT_APP(kainoteApp);
 
 
-class KaiConnection : public wxConnection
-{
-
-public:
-     KaiConnection() : wxConnection() {}
-	 ~KaiConnection(){ }
- 
-	 bool OnExec (const wxString &topic, const wxString &data)
-     {
-         bool result = wxGetApp().OnSecondInstance(data);
- 
-         return result;
-     }
- 
-
- };
-
-class KaiServer : public wxServer
- {
-public:
-     virtual wxConnectionBase *OnAcceptConnection (const wxString& topic)
-     {
-         if (topic != "NewStart")
-             return NULL;
-         else
-             return new KaiConnection;
-     }
- };
-
-
-
-
-
-bool kainoteApp::OnSecondInstance(wxString _paths)
-{
-	//wxMutexLocker lock(mutex);
-	//isopening=true;
-	if(Frame->IsIconized()){Frame->Iconize(false);}
-	Frame->Raise();
-	if(_paths==""){return true;}
-	wxStringTokenizer tkn(_paths,"|");
-	
-	while(tkn.HasMoreTokens()){
-		paths.Add(tkn.NextToken());
-	}
-	timer.Start(500,true);
-
-	return true; 
-}
 
 bool kainoteApp::OnInit()
 {
@@ -93,8 +44,6 @@ bool kainoteApp::OnInit()
 	m_checker = new wxSingleInstanceChecker();
         
     bool wxsOK = true;
-
-	wxString server="4242";
 
 	if (!m_checker->IsAnotherRunning())
     {
@@ -109,7 +58,6 @@ bool kainoteApp::OnInit()
 		if ( wxsOK )
 		{
 		//wxHandleFatalExceptions(true);
-			
 
 			if(!Options.LoadOptions()){KaiMessageBox(_("Nie udało się wczytać opcji.\nDziałanie programu zostanie zakończone."),_("Uwaga"));return false;}
 
@@ -123,7 +71,6 @@ bool kainoteApp::OnInit()
 				if(!locale->AddCatalog(L"en",wxLANGUAGE_POLISH,L"UTF-8")){//
 					KaiMessageBox("Cannot find translation, language change failed");
 				}
-				//KaiMessageBox(wxString::Format("isload%i", locale->IsLoaded(L"en")));
 			}
 
 			if(!Hkeys.LoadHkeys()){
@@ -131,14 +78,6 @@ bool kainoteApp::OnInit()
 				wxDELETE(locale);return false;
 			}
 
-			MyServer=new KaiServer();
-			if(MyServer){
-				if (!(MyServer->Create(server))){
-					delete MyServer;
-					MyServer = NULL;
-				}
-			}
-			
 			for (int i=1;i<argc;i++) { paths.Add(argv[i]); }
 
 			int posx,posy,sizex,sizey;
@@ -188,17 +127,15 @@ bool kainoteApp::OnInit()
 
 		delete m_checker; // OnExit() won't be called if we return false
         m_checker = NULL;
-		    
-		wxClient *Client=new wxClient;
-        KaiConnection * Connection = (KaiConnection*)Client->MakeConnection("", server, "NewStart");
-
-		if (Connection){
-			Connection->Execute(subs);
-			delete Connection;
+		//damn wxwidgets, why class name is not customizable?    
+		HWND hWnd = FindWindow(L"wxWindowNR",0);
+		if (hWnd && subs!=""){
+			const wchar_t *text = subs.wc_str();
+			COPYDATASTRUCT cds;
+			cds.cbData = (subs.Len() + 1) * sizeof(wchar_t);
+			cds.lpData = (void *)text;
+			SendMessage(hWnd, WM_COPYDATA, 0, (LPARAM)&cds);
 		}
-		delete Client;
-			
-			
         return false;
 	}
     
@@ -209,7 +146,6 @@ bool kainoteApp::OnInit()
 int kainoteApp::OnExit()
 {
 	if (m_checker){ delete m_checker; }
-	if (MyServer){ delete MyServer; }
 	wxDELETE(locale);	
     return 0;
 }
@@ -248,6 +184,8 @@ void kainoteApp::OnFatalException()
 void kainoteApp::OnOpen(wxTimerEvent &evt)
 {
 	if(!IsBusy()){
+		if (Frame->IsIconized()){ Frame->Iconize(false); }
+		Frame->Raise();
 		Frame->OpenFiles(paths,false);
 	}
 }

@@ -23,7 +23,7 @@
 class KaiFrame : public wxTopLevelWindow
 {
 public:
-	KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title="", const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
+	KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title="", const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0, const wxString &name = "");
 	virtual ~KaiFrame();
 	void SetLabel(const wxString &text);
 	virtual void SetStatusText(const wxString &label, int field){};
@@ -36,7 +36,7 @@ private:
 	void OnPaint(wxPaintEvent &evt);
 	void OnSize(wxSizeEvent &evt);
 	void OnMouseEvent(wxMouseEvent &evt);
-	void OnActivate(wxActivateEvent &evt);
+	//void OnActivate(wxActivateEvent &evt);
 	WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
 	void OnEraseBackground(wxEraseEvent()){}
 	
@@ -49,6 +49,7 @@ private:
 	bool enterMinimize;
 	bool pushedMinimize;
 	bool isActive;
+	//wxMutex mutex;
 	wxDECLARE_ABSTRACT_CLASS(KaiFrame);
 };
 

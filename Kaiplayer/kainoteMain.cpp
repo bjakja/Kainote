@@ -68,7 +68,7 @@ void EnableCrashingOnCrashes()
 }
 
 kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
-	: KaiFrame(0, -1, _("Bez nazwy - ") + Options.progname, pos, size, wxDEFAULT_FRAME_STYLE)
+	: KaiFrame(0, -1, _("Bez nazwy - ") + Options.progname, pos, size, wxDEFAULT_FRAME_STYLE, "Kainote_main_window")
 	, badResolution(false)
 	, fc(NULL)
 {
@@ -671,9 +671,10 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		Close();
 	}
 	else if (id == About){
-		KaiMessageBox(wxString::Format(_("Edytor napisów by Bjakja aka Bakura (bjakja7@gmail.com),\nwersja %s z dnia %s"),
+		KaiMessageBox(wxString::Format(_("Edytor napisów by Marcin Drob aka Bakura lub Bjakja (bjakja7@gmail.com),\nwersja %s z dnia %s"),
 			Options.progname.AfterFirst('v'), Options.GetReleaseDate()) + " \n\n" +
-			_("Ten program to jakby moje zaplecze do nauki C++, więc mogą zdarzyć się różne błędy.\n\n") +
+			_("Ten program powstał z myślą, aby zastąpić dwa programy Bestplayer oraz Aegisub.\n\n") +
+			_("Jeśli zauważyłeś jakieś błędy bądź brakuje Ci jakichś funkcji możesz napisać\no tym na forum ANSI, Githubie, bądź mailowo.\n\n") +
 			_("Kainote zawiera w sobie części następujących projeków:\n") +
 			L"wxWidgets - Copyright © Julian Smart, Robert Roebling et al;\n" +
 			_("Color picker, wymuxowywanie napsów z mkv, audiobox, audio player, automation\ni kilka innych pojedynczych funkcji wzięte z Aegisuba -\n") +
@@ -690,7 +691,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 				//L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.\n"
 	}
 	else if (id == Helpers){
-		wxString Testers = L"Nyah2211, Wincenty271, Ksenoform,\nVessin, Xandros.";
+		wxString Testers = L"Ognisty321, Nyah2211, dark, Ksenoform, Vessin, Xandros.";
 		wxString Credits = _("Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n") +
 			_("- Kostek00 (przyciski do audio i narzędzi wizualnych).\n") +
 			_("- Xandros (nowe przyciski do wideo).\n") +
@@ -707,7 +708,9 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_("pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych usprawnień).\n") +
 			_("- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w debugowaniu crashy).\n") +
 			_("- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy, zrobił drzewko AVL).\n \n") +/* i jar do Language Tool*/
-			_("- bigdo (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n \n") +
+			_("- bigdo (wyłapał trochę błędów, pomagał w debugowaniu crashy).\n \n") +
+			_("- Senami (stworzył nowe motywy a także wyłapał parę błędów).\n \n") +
+			_("- Wincenty271 (wyłapał trochę błędów, a także pomaga w debugowaniu kraszy).\n \n") +
 			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n");
 		KaiMessageBox(Credits + Testers, _("Lista osób pomocnych przy tworzeniu programu"));
 
@@ -919,6 +922,7 @@ bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 			wxString videopath = tab->Grid->GetSInfo(L"Video File");
 			wxString audiopath = tab->Grid->GetSInfo(L"Audio File");
 			if (audiopath.StartsWith("?")){ audiopath = videopath; }
+			if (videopath.StartsWith("?dummy")){ videopath = ""; }
 			//fix for wxFileExists which working without path when program run from command line
 			bool hasVideoPath = (!videopath.empty() && ((wxFileExists(videopath) && videopath.find(':') == 1) ||
 				wxFileExists(videopath.Prepend(filename.BeforeLast('\\') + "\\"))));
@@ -949,6 +953,7 @@ bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 				else if (result == wxOK){
 					if (!audiopath.empty()){
 						if (hasAudioPath && audiopath != videopath){
+							audiopath.Replace("/", "\\");
 							OpenAudioInTab(tab, 30040, audiopath);
 							found = changeAudio = false;
 						}
@@ -962,7 +967,11 @@ bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 							}
 						}
 					}
-					if (hasVideoPath){ secondFileName = videopath; found = true; }
+					if (hasVideoPath){ 
+						videopath.Replace("/", "\\");
+						secondFileName = videopath; 
+						found = true; 
+					}
 				}
 			}
 		}
@@ -1322,9 +1331,9 @@ void kainoteFrame::SetAccels(bool _all)
 }
 
 
-void kainoteFrame::InsertTab(bool sel)
+void kainoteFrame::InsertTab(bool refresh/*=true*/)
 {
-	Tabs->AddPage(sel);
+	Tabs->AddPage(refresh);
 }
 
 bool comp(wxString first, wxString second)

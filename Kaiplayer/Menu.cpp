@@ -139,6 +139,7 @@ void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool cli
 	wxRect workArea = GetMonitorRect(0, NULL, wxPoint(pos->x + size->x, pos->y), true);
 	w = workArea.width + workArea.x;
 	h = workArea.height + workArea.y;
+	//wxLogStatus("workarea x %i %i y %i %i", workArea.x, workArea.width, workArea.y, workArea.height);
 	if(size->y > h){ size->y = h; }
 	if((pos->x + size->x) > w){
 		pos->x -= size->x;
@@ -148,8 +149,16 @@ void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool cli
 		}
 	}
 	if((pos->y + size->y) > h){
-		if(size->y > h/2){pos->y -= size->y;if(pos->y<0){pos->y=0;}}
-		else{pos->y = h - size->y;}
+		if (size->y > h / 2){ 
+			pos->y -= size->y; 
+			//wxLogStatus("pos x %i %i", pos->y, workArea.y);
+			if (pos->y < workArea.y){ pos->y = workArea.y; } 
+			//wxLogStatus("pos1 x %i %i", pos->y, workArea.y);
+		}
+		else{
+			pos->y = h - size->y;
+			//wxLogStatus("pos x %i %i", pos->y, size->y);
+		}
 	}
 	
 }

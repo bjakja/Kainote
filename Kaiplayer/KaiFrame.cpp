@@ -18,6 +18,7 @@
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include "config.h"
+#include "kainoteApp.h"
 #include "wx/msw/private.h"
 #include <Dwmapi.h>
 #pragma comment(lib, "Dwmapi.lib")
@@ -27,8 +28,8 @@ int fborder = 7;
 int ftopBorder = 26;
 
 
-KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long _style)
-	:wxTopLevelWindow(parent, id, title, wxDefaultPosition, wxDefaultSize,/*wxBORDER_NONE|*/wxMAXIMIZE_BOX|wxSYSTEM_MENU|wxMINIMIZE_BOX|wxCLOSE_BOX|wxRESIZE_BORDER|wxCAPTION)
+KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title/*=""*/, const wxPoint& pos/*=wxDefaultPosition*/, const wxSize& size/*=wxDefaultSize*/, long _style/*=0*/, const wxString &name /*= ""*/)
+:wxTopLevelWindow(parent, id, title, wxDefaultPosition, wxDefaultSize,/*wxBORDER_NONE|*/wxMAXIMIZE_BOX|wxSYSTEM_MENU|wxMINIMIZE_BOX|wxCLOSE_BOX|wxRESIZE_BORDER|wxCAPTION, name)
 	,style(_style)
 	,enterClose(false)
 	,pushedClose(false)
@@ -40,6 +41,29 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title, const
 {
 	//AdjustWindowRectEx(&rcFrame, WS_OVERLAPPEDWINDOW & ~WS_CAPTION, FALSE, NULL);
 	//SetWindowLong( m_hWnd, GWL_STYLE, /*GetWindowLong(m_hWnd, GWL_STYLE) | */WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+	//wxSize sizeReal = size;
+	//if (!sizeReal.IsFullySpecified())
+	//{
+	//	sizeReal.SetDefaults(GetDefaultSize());
+	//}
+
+	//// notice that we should append this window to wxTopLevelWindows list
+	//// before calling CreateBase() as it behaves differently for TLW and
+	//// non-TLW windows
+	//wxTopLevelWindows.Append(this);
+
+	//bool ret = CreateBase(parent, id, pos, sizeReal, style, name);
+	//if (!ret)
+	//	return;
+
+	//if (parent)
+	//	parent->AddChild(this);
+
+	//WXDWORD exflags;
+	//WXDWORD flags = MSWGetCreateWindowFlags(&exflags);
+
+	//MSWCreate(name.c_str(), title.c_str(), wxDefaultPosition, wxDefaultSize, flags, exflags);
+
 	MARGINS borderless = {0,0,0,0};
 	DwmExtendFrameIntoClientArea(m_hWnd, &borderless);
 	SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
@@ -54,7 +78,7 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title, const
 	Bind(wxEVT_MOTION, &KaiFrame::OnMouseEvent, this);
 	//do not needed implement in main loop
 	//Bind(wxEVT_ACTIVATE, &KaiFrame::OnActivate, this);
-	SetSize(pos.x,pos.y,size.x, size.y);
+	SetSize(pos.x, pos.y, size.x, size.y);
 	//DWM_TIMING_INFO ti;
 	//ti.cbSize = sizeof(ti);
 	//WinStruct<DWM_TIMING_INFO> ti;
@@ -232,23 +256,23 @@ void KaiFrame::OnMouseEvent(wxMouseEvent &evt)
 }
 
 
-void KaiFrame::OnActivate(wxActivateEvent &evt)
-{
-	isActive = evt.GetActive();
-	int w, h;
-	GetSize(&w,&h);
-	wxRect rc(0,0,w,ftopBorder);
-	Refresh(false, &rc);
-	if(!IsMaximized()){
-		wxRect rc1(0,ftopBorder,fborder,h-fborder-ftopBorder);
-		Refresh(false, &rc1);
-		wxRect rc2(w-fborder,ftopBorder,fborder,h-fborder-ftopBorder);
-		Refresh(false, &rc2);
-		wxRect rc3(0,h-fborder,w,fborder);
-		Refresh(false, &rc3);
-	}
-	Update();
-}
+//void KaiFrame::OnActivate(wxActivateEvent &evt)
+//{
+//	isActive = evt.GetActive();
+//	int w, h;
+//	GetSize(&w,&h);
+//	wxRect rc(0,0,w,ftopBorder);
+//	Refresh(false, &rc);
+//	if(!IsMaximized()){
+//		wxRect rc1(0,ftopBorder,fborder,h-fborder-ftopBorder);
+//		Refresh(false, &rc1);
+//		wxRect rc2(w-fborder,ftopBorder,fborder,h-fborder-ftopBorder);
+//		Refresh(false, &rc2);
+//		wxRect rc3(0,h-fborder,w,fborder);
+//		Refresh(false, &rc3);
+//	}
+//	Update();
+//}
 
 WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
@@ -354,6 +378,21 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 			//Update();
 		}
 		return result;
+	}
+	if (uMsg == WM_COPYDATA){
+		PCOPYDATASTRUCT pMyCDS = (PCOPYDATASTRUCT)lParam;
+		wxArrayString paths;
+		wchar_t * _paths = (wchar_t*)pMyCDS->lpData;
+		wxStringTokenizer tkn(_paths, "|");
+		while (tkn.HasMoreTokens()){
+			paths.Add(tkn.NextToken());
+		}
+		kainoteApp *Kai = (kainoteApp *)wxTheApp;
+		if (Kai){
+			Kai->paths.insert(Kai->paths.end(), paths.begin(), paths.end());
+			Kai->timer.Start(400,true);
+		}
+		return true;
 	}
 
 	return wxTopLevelWindow::MSWWindowProc(uMsg, wParam, lParam);

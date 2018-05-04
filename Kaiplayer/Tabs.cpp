@@ -273,18 +273,22 @@ void Notebook::CalcSizes(bool makeActiveVisible)
 	allTabsVisible=(all<w-22);
 	if(allTabsVisible){firstVisibleTab=0;}
 	if (makeActiveVisible && !allTabsVisible){
-		if (iter < firstVisibleTab){ firstVisibleTab = iter; return; }
+		//if (iter < firstVisibleTab){ firstVisibleTab = iter; return; }
+		//firstVisibleTab = 0;
 		int tabsWidth = 0;
-		for (int i = 0; i < Size(); i++){
-			if (i == firstVisibleTab){
-				tabsWidth = 0;
-			}
+		//int lastVisibleTab = -1;
+		for (int i = iter; i >= 0; i--){
+			//if (i == firstVisibleTab){
+				//tabsWidth = 0;
+			//}
 			tabsWidth += Tabsizes[i];
-			if (tabsWidth > w - 52){
-				if (iter >= i){
-					firstVisibleTab = i+1;
+			if (tabsWidth > w - 52 || i == 0){
+				if (firstVisibleTab < i || firstVisibleTab > iter){
+					firstVisibleTab = i + ((iter - i) / 2);
 				}
+				break;
 			}
+			
 		}
 	}
 }
