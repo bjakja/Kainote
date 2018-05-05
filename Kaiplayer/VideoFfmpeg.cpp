@@ -497,7 +497,7 @@ VideoFfmpeg::~VideoFfmpeg()
 	if (!stopLoadingAudio && disccache && diskCacheFilename.EndsWith(".part")){
 		wxString discCacheNameWithGoodExt = diskCacheFilename;
 		discCacheNameWithGoodExt.RemoveLast(5);
-		if (!wxRenameFile(diskCacheFilename, discCacheNameWithGoodExt)){
+		if (_wrename(diskCacheFilename.wc_str(), discCacheNameWithGoodExt.wc_str())){
 			KaiMessageBox(_("Nie można zmienić nazwy disc cache"));
 		}
 	}
@@ -796,7 +796,7 @@ bool VideoFfmpeg::DiskCache(bool newIndex)
 			return false;
 	}else{
 		if (fileExists){
-			wxRemoveFile(diskCacheFilename);
+			_wremove(diskCacheFilename.wc_str());
 		}
 		diskCacheFilename << ".part";
 		fp = _wfopen(diskCacheFilename.wc_str(), L"w+b");

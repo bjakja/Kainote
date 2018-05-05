@@ -832,10 +832,6 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 				if(vstate==Playing){ VisEdit=false;}
 			}
 		}else if(pan->Edit->OnVideo){
-			//if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
-			//	wxCommandEvent evt;pan->Edit->OnEdit(evt);
-			//	//pan->Edit->OnVideo=false;
-			//}
 			OpenSubs((playing)? pan->Grid->SaveText() : pan->Grid->GetVisible(), true, playing);
 			if(playing){ pan->Edit->OnVideo=false;}
 		}	
@@ -846,8 +842,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 			time = VFF->Timecodes[lastframe];
 			lasttime=timeGetTime()-time;
 			playend = GetDuration();
-			//lasttime=time;
-			//startTime = std::chrono::steady_clock::now();
+			
 			if(VisEdit){
 				SAFE_DELETE(Visual->dummytext);
 				if(Visual->Visual==VECTORCLIP){
@@ -856,12 +851,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 					OpenSubs((playing)? pan->Grid->SaveText() : pan->Grid->GetVisible(), true, playing);
 					if(playing){ VisEdit=false;}
 				}
-				//VisEdit=false;
 			}else if(pan->Edit->OnVideo){
-				//if(time >= pan->Edit->line->Start.mstime && time <= pan->Edit->line->End.mstime){
-				//	wxCommandEvent evt;pan->Edit->OnEdit(evt);
-				//	//pan->Edit->OnVideo=false;
-				//}
 				OpenSubs((playing)? pan->Grid->SaveText() : pan->Grid->GetVisible(), true, playing);
 				if(playing){ pan->Edit->OnVideo=false;}
 			}	

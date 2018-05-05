@@ -525,11 +525,11 @@ void FontCollector::CopyFonts()
 		if((operation & CHECK_FONTS)){
 			SendMessageD("\n" + wxString::Format(_("Zakończono, znaleziono %s.\nNie znaleziono %s. "), 
 				MakePolishPlural(found,_("czcionkę"),_("czcionki"),_("czcionek")), 
-				MakePolishPlural(nfound,_("czcionki"),_("czcionki"),_("czcionek"))) + noglyphs, fcd->warning );
+				MakePolishPlural(nfound,_("czcionki"),_("czcionek"),_("czcionek"))) + noglyphs, fcd->warning );
 		}else{
 			SendMessageD("\n" + wxString::Format(_("Zakończono, skopiowano %s.\nNie znaleziono/nie udało się skopiować %s."),
 				MakePolishPlural((int)fontnames.size(),_("czcionkę"),_("czcionki"),_("czcionek")), 
-				MakePolishPlural(nfound,_("czcionki"),_("czcionki"),_("czcionek"))) + noglyphs, fcd->warning);
+				MakePolishPlural(nfound,_("czcionki"),_("czcionek"),_("czcionek"))) + noglyphs, fcd->warning);
 		}
 	}else{
 		if((operation & CHECK_FONTS)){

@@ -673,8 +673,8 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	else if (id == About){
 		KaiMessageBox(wxString::Format(_("Edytor napisów by Marcin Drob aka Bakura lub Bjakja (bjakja7@gmail.com),\nwersja %s z dnia %s"),
 			Options.progname.AfterFirst('v'), Options.GetReleaseDate()) + " \n\n" +
-			_("Ten program powstał z myślą, aby zastąpić dwa programy Bestplayer oraz Aegisub.\n\n") +
-			_("Jeśli zauważyłeś jakieś błędy bądź brakuje Ci jakichś funkcji możesz napisać\no tym na forum ANSI, Githubie, bądź mailowo.\n\n") +
+			_("Ten program powstał w celu zastąpiienia dwóch programów Bestplayera i Aegisuba.\n\n") +
+			_("Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub nowych funkcji,\nmożesz napisać o tym na: forum ANSI, Githubie, bądź mailowo.\n\n") +
 			_("Kainote zawiera w sobie części następujących projeków:\n") +
 			L"wxWidgets - Copyright © Julian Smart, Robert Roebling et al;\n" +
 			_("Color picker, wymuxowywanie napsów z mkv, audiobox, audio player, automation\ni kilka innych pojedynczych funkcji wzięte z Aegisuba -\n") +
@@ -707,9 +707,9 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy,\n") +
 			_("pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych usprawnień).\n") +
 			_("- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w debugowaniu crashy).\n") +
-			_("- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy, zrobił drzewko AVL).\n \n") +/* i jar do Language Tool*/
-			_("- bigdo (wyłapał trochę błędów, pomagał w debugowaniu crashy).\n \n") +
-			_("- Senami (stworzył nowe motywy a także wyłapał parę błędów).\n \n") +
+			_("- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy, zrobił drzewko AVL).\n") +/* i jar do Language Tool*/
+			_("- bigdo (wyłapał trochę błędów, pomagał w debugowaniu crashy).\n") +
+			_("- Senami (stworzył nowe motywy a także wyłapał parę błędów).\n") +
 			_("- Wincenty271 (wyłapał trochę błędów, a także pomaga w debugowaniu kraszy).\n \n") +
 			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n");
 		KaiMessageBox(Credits + Testers, _("Lista osób pomocnych przy tworzeniu programu"));

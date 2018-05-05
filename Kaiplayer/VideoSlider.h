@@ -36,13 +36,16 @@ protected:
 	void OnSize(wxSizeEvent& event);
 	int position;
 	int labelpos;
+	int chapterTime = 0;
+	int chapterPos = 0;
 	wxString label;
+	bool isChapter = false;
 	bool showlabel;
 	bool block;
 	bool holding;
+	bool onslider;
 	wxBitmap prb;
 	wxBitmap prbh;
-	bool onslider;
 	DECLARE_EVENT_TABLE()
 };
 
