@@ -325,11 +325,11 @@ PlaybackState VideoCtrl::GetState()
 	return vstate; 
 }
 
-bool VideoCtrl::Seek(int whre,bool starttime, bool disp, bool reloadSubs)
+bool VideoCtrl::Seek(int whre,bool starttime/*=true*/, bool disp/*=true*/, bool reloadSubs/*=true*/, bool correct /*= true*/)
 {
 	wxMutexLocker lock(vbmutex);
 	if(GetState()==None){return false;}
-	SetPosition(whre, starttime, true, reloadSubs);
+	SetPosition(whre, starttime, correct, reloadSubs);
 	if(disp && !IsDshow){RefreshTime();}
 	return true;
 }
@@ -1252,7 +1252,7 @@ void VideoCtrl::NextChap()
 
 			int jj=(j>=(int)chaps.size()-1 || (j==0 && chaps[0].time>=vrtime))? 0 : j+1;
 			if(jj==prevchap){if(jj>=(int)chaps.size()-1){jj=0;}else{jj++;}}
-			Seek(chaps[jj].time,false);
+			Seek(chaps[jj].time,true,true,true,false);
 
 			prevchap=jj;
 			break;
@@ -1269,7 +1269,7 @@ void VideoCtrl::PrevChap()
 		if(ntime>=vrtime){
 			int jj=(j<1)? 0 : j-1;
 			if(jj==prevchap){if(jj<1){jj=chaps.size()-1;}else{jj--;}}
-			Seek(chaps[jj].time,false);
+			Seek(chaps[jj].time,true,true,true, false);
 			prevchap=jj;
 			break;
 		}

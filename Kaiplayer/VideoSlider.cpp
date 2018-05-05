@@ -69,7 +69,7 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 				chapterTime = ch.time;
 				chapterPos = chpos-15;
 				STime kkk; 
-				kkk.mstime = ((float)(chpos - 15) / (float)(w - 30)) * duration;
+				kkk.mstime = chapterTime;
 				wxString time = kkk.raw(SRT);
 				time.Prepend(ch.name + " ");
 				label = time;
@@ -239,7 +239,7 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 void VideoSlider::SendTime(float pos)
 {
 	float dur = VB->GetDuration();
-	VB->Seek(pos*dur);
+	VB->Seek(pos*dur, true, true, true, false);
 }
 void VideoSlider::OnMouseLeave(wxMouseCaptureLostEvent& event)
 {

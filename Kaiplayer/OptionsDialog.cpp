@@ -605,8 +605,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		}
 		KaiChoice *themeList = new KaiChoice(Themes, 14567, wxDefaultPosition, wxDefaultSize, choices);
 		themeList->SetSelection(themeList->FindString(programTheme));
-
+		themeList->SetToolTip(_("Nazwa motywu:"));
 		KaiTextCtrl *newTheme = new KaiTextCtrl(Themes, -1, "");
+		newTheme->SetToolTip(_("Nazwa kopiowanego motywu.\nMotywów domyślnych: DarkSentro i LightSentro\nnie można edytować, należy je skopiować."));
 		MappedButton *copyTheme = new MappedButton(Themes, 14566, _("Kopiuj"));
 
 
