@@ -55,7 +55,7 @@ namespace Auto{
 	class AutoToFile{
 
 	public:
-		AutoToFile(lua_State *_L, File *subsfile, bool _can_modify);
+		AutoToFile(lua_State *_L, File *subsfile, bool _can_modify, char subsFormat);
 		~AutoToFile();
 		static bool LineToLua(lua_State *L, int i); 
 		static SubsEntry *LuaToLine(lua_State *L);
@@ -67,6 +67,7 @@ namespace Auto{
 		lua_State *L;
 
 		bool can_modify;
+		char subsFormat = ASS;
 		void CheckAllowModify(); // throws an error if modification is disallowed
 
 			// keep a cursor of last accessed item to avoid walking over the entire file on every access

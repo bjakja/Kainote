@@ -742,7 +742,7 @@ namespace Auto{
 		lua_pushcclosure(L, add_stack_trace, 0);
 
 		GetFeatureFunction("validate");
-		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true);
+		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true, c->Grid->subsFormat);
 
 		push_value(L, selected_rows(c));
 		push_value(L, c->Grid->file->GetElementById(c->Edit->ebrow) + c->Grid->SInfoSize() + c->Grid->StylesSize() + 1);
@@ -777,7 +777,7 @@ namespace Auto{
 
 		GetFeatureFunction("run");
 		File *subs = c->Grid->file->GetSubs();
-		auto subsobj = new AutoToFile(L, subs, true);
+		auto subsobj = new AutoToFile(L, subs, true, c->Grid->subsFormat);
 
 		int original_offset = c->Grid->SInfoSize() + c->Grid->StylesSize()+1;
 		auto original_sel = selected_rows(c);
@@ -865,7 +865,7 @@ namespace Auto{
 		stackcheck.check_stack(0);
 
 		GetFeatureFunction("isactive");
-		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true);
+		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true, c->Grid->subsFormat);
 		push_value(L, selected_rows(c));
 		push_value(L, c->Grid->file->GetElementById(c->Edit->ebrow) + c->Grid->SInfoSize() + c->Grid->StylesSize() + 1);
 

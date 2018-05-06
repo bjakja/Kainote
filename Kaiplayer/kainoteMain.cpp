@@ -304,7 +304,7 @@ kainoteFrame::~kainoteFrame()
 	if (!im && !IsIconized()){
 		int posx, posy, sizex, sizey;
 		GetPosition(&posx, &posy);
-		if (posx < 2000){
+		if (posx < 4000 && posx> -200){
 			Options.SetCoords(WindowPosition, posx, posy);
 		}
 		GetSize(&sizex, &sizey);

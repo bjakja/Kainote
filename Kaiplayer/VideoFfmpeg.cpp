@@ -497,9 +497,7 @@ VideoFfmpeg::~VideoFfmpeg()
 	if (!stopLoadingAudio && disccache && diskCacheFilename.EndsWith(".part")){
 		wxString discCacheNameWithGoodExt = diskCacheFilename;
 		discCacheNameWithGoodExt.RemoveLast(5);
-		if (_wrename(diskCacheFilename.wc_str(), discCacheNameWithGoodExt.wc_str())){
-			KaiMessageBox(_("Nie można zmienić nazwy disc cache"));
-		}
+		_wrename(diskCacheFilename.wc_str(), discCacheNameWithGoodExt.wc_str());
 	}
 }
 

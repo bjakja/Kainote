@@ -237,8 +237,13 @@ namespace Auto{
 			lua_pushstring(L, adial->Effect.mb_str(wxConvUTF8).data());
 			lua_setfield(L, -2, "effect");
 
-			lua_pushstring(L, adial->Text.mb_str(wxConvUTF8).data());
+			bool isTl = false;
+			const StoreTextHelper & text = (isTl = adial->TextTl != "") ? adial->TextTl : adial->Text;
+			lua_pushstring(L, text.mb_str(wxConvUTF8).data());
 			lua_setfield(L, -2, "text");
+
+			lua_pushboolean(L, isTl);
+			lua_setfield(L, -2, "is_translation");
 
 			lua_newtable(L);
 			lua_setfield(L, -2, "extra");
@@ -321,18 +326,28 @@ namespace Auto{
 			GETINT(margt, "margin_t", "dialogue")
 			GETSTRING(Effect, "effect", "dialogue")
 			GETSTRING(Text , "text", "dialogue")
+			GETBOOL(IsTranslation, "is_translation", "dialogue")
+
 			e->adial=new Dialogue();
 			e->adial->IsComment=IsComment;
 			e->adial->Layer=Layer;
 			e->adial->Start=Start;
 			e->adial->End=End;
+			if (laf->subsFormat != ASS){
+				e->adial->Form = laf->subsFormat;
+				e->adial->Start.ChangeFormat(laf->subsFormat);
+				e->adial->End.ChangeFormat(laf->subsFormat);
+			}
 			e->adial->Style=Style;
 			e->adial->Actor=Actor;
 			e->adial->MarginL=MarginL;
 			e->adial->MarginR=MarginR;
 			e->adial->MarginV=margt;
 			e->adial->Effect=Effect;
-			e->adial->Text=Text;
+			if (IsTranslation)
+				e->adial->TextTl = Text;
+			else
+				e->adial->Text = Text;
 			e->adial->State=1;
 		}
 
@@ -1005,11 +1020,12 @@ namespace Auto{
 		return 2;
 	}
 
-	AutoToFile::AutoToFile(lua_State *_L, File *subsfile, bool _can_modify)
+	AutoToFile::AutoToFile(lua_State *_L, File *subsfile, bool _can_modify, char _subsFormat)
 	{
 		L=_L;
 		can_modify=_can_modify;
 		file =subsfile;
+		subsFormat = _subsFormat;
 		// prepare userdata object
 		*static_cast<AutoToFile**>(lua_newuserdata(L, sizeof(AutoToFile*))) = this;
 		laf=this;
