@@ -134,7 +134,8 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 			type=2;
 			diffs.x = x;
 			diffs.y = y;
-			to.x=from.x;to.y=from.y;
+			to.x=from.x;
+			to.y=from.y;
 			to.x+=(addx*scale.x);
 			to.y+=(addy*scale.y);
 			return;
@@ -157,11 +158,19 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 
 			D3DXVECTOR2 copyto = to;
 			wxPoint copydiffs = diffs;
-			to.x=to.x+move;
-			to.y=to.y-move;
+			bool an3 = AN % 3 == 0;
+			if (AN>3 && !an3)
+				to.x = to.x - move;
+			else
+				to.x = to.x + move;
+
+			to.y = to.y - move;
 			diffs.x=x;
 			diffs.y=y;
-			if(to.x-from.x<1){diffs=copydiffs; to = copyto;}
+			if ((!an3 && to.x - from.x<1) || (an3 && to.x - from.x>-1)){
+				diffs=copydiffs; 
+				to = copyto;
+			}
 		}else{
 			if(type!=1){
 				to.x=x+diffs.x;

@@ -228,7 +228,8 @@ int VideoFfmpeg::Init()
 				if(audiotable.size()>1){
 					for (size_t j=0;j<audiotable.size();j++){
 						TrackInfo* ti=mkv_GetTrackInfo(mw.file,audiotable[j]);
-
+						if (!ti)
+							continue;
 						wxString all;
 						char *opis = (ti->Name)? ti->Name : ti->Language;
 						all<<audiotable[j]<<": "<<opis;
