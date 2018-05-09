@@ -1554,6 +1554,9 @@ void kainoteFrame::HideEditor(bool save)
 			cur->Video->TD->HideToolbar(false);
 	}
 	else{//Wyłączanie edytora
+		if (cur->Video->Visual){
+			cur->Video->SetVisual(true);
+		}
 		cur->Video->panelHeight = 44;
 		cur->ShiftTimes->Hide();
 

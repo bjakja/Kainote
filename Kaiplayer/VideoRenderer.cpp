@@ -743,7 +743,8 @@ bool VideoRend::Play(int end)
 		OpenSubs(txt, false, true);
 		SAFE_DELETE(Visual->dummytext);
 		VisEdit=false;
-	}else if(pan->Edit->OnVideo){
+	}
+	else if (pan->Edit->OnVideo && pan->editor){
 		OpenSubs(pan->Grid->SaveText(), false, true);
 		pan->Edit->OnVideo=false;
 	}
@@ -831,7 +832,8 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 				OpenSubs((playing)? pan->Grid->SaveText() : pan->Grid->GetVisible(),true, playing);
 				if(vstate==Playing){ VisEdit=false;}
 			}
-		}else if(pan->Edit->OnVideo){
+		}
+		else if (pan->Edit->OnVideo && pan->editor){
 			OpenSubs((playing)? pan->Grid->SaveText() : pan->Grid->GetVisible(), true, playing);
 			if(playing){ pan->Edit->OnVideo=false;}
 		}	
