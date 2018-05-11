@@ -673,7 +673,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	else if (id == About){
 		KaiMessageBox(wxString::Format(_("Edytor napisów by Marcin Drob aka Bakura lub Bjakja (bjakja7@gmail.com),\nwersja %s z dnia %s"),
 			Options.progname.AfterFirst('v'), Options.GetReleaseDate()) + " \n\n" +
-			_("Ten program powstał w celu zastąpiienia dwóch programów Bestplayera i Aegisuba.\n\n") +
+			_("Ten program powstał w celu zastąpienia dwóch programów Bestplayera i Aegisuba.\n\n") +
 			_("Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub nowych funkcji,\nmożesz napisać o tym na: forum ANSI, Githubie, bądź mailowo.\n\n") +
 			_("Kainote zawiera w sobie części następujących projeków:\n") +
 			L"wxWidgets - Copyright © Julian Smart, Robert Roebling et al;\n" +
