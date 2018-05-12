@@ -248,25 +248,26 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 	}
 	if(holding)
 	{
+		bool changed = false;
 		if((oldpos+5)<posy){
 			double nval=value-1;
 			if(value<=rfrom){return;}
 			SetValue(getdouble(nval),true,false);
 			oldpos=posy;value=nval;
-			//SetSelection(curpos,curpos);
+			changed = true;
 		}else if((oldpos-5)>posy){
 			double nval=value+1;
 			if(value>=rto){return;}
 			SetValue(getdouble(nval),true,false);
 			oldpos=posy;value=nval;
-			//SetSelection(curpos,curpos);
+			changed = true;
 		}else if((oldposx+10)<posx){
 			double nval=value-10;
 			if(value==rfrom){return;}
 			if(nval<rfrom){nval=rfrom;}
 			SetValue(getdouble(nval),true,false);
 			oldposx=posx;value=nval;
-			//SetSelection(curpos,curpos);
+			changed = true;
 		}
 		else if((oldposx-10)>posx){
 			double nval=value+10;
@@ -274,9 +275,9 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 			if(nval>rto){nval=rto;}
 			SetValue(getdouble(nval),true,false);
 			oldposx=posx;value=nval;
-			//SetSelection(curpos,curpos);
+			changed = true;
 		}
-		if(IsModified()){wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);}
+		if (changed){ wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2); }
 	}
 
 	if(rclick)

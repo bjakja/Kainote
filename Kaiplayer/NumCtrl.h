@@ -53,7 +53,6 @@ class NumCtrl : public KaiTextCtrl
 		int oldpos;
 		int oldposx;
 		int curpos;
-		/*bool isbad;*/
 		DECLARE_EVENT_TABLE()
 	};
 

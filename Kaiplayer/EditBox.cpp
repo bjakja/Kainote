@@ -719,8 +719,8 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 {
 	char form=grid->subsFormat;
 	Styles *mstyle=(form<SRT)? grid->GetStyle(0,line->Style)->Copy() : new Styles();
-
 	wxString tmp;
+	int tmpIter = grid->file->Iter();
 	if(form<SRT){
 
 		if(FindVal("b(0|1)",&tmp)){if(mstyle->Bold&&tmp=="0"){mstyle->Bold=false;}else if(!mstyle->Bold&&tmp=="1"){mstyle->Bold=true;}}
@@ -730,51 +730,90 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 		if(FindVal("fs([0-9]+)",&tmp)){mstyle->Fontsize=tmp;}
 		if(FindVal("fn(.*)",&tmp)){mstyle->Fontname=tmp;}
 	}
-	FontDialog FD(this,mstyle);
-	if (FD.ShowModal() == wxID_OK) {
-		//Getfont należy bezwzględnie zwolinić
-		Styles *retstyl=FD.GetFont();
-		if (retstyl->Fontname!=mstyle->Fontname)
-		{
-			if(form<SRT){PutinText("\\fn"+retstyl->Fontname);}
-			else{PutinNonass("F:"+retstyl->Fontname, "f:([^}]*)");}
+	FontDialog *FD = FontDialog::Get(this, mstyle);
+	FD->Bind(FONT_CHANGED, &EditBox::OnFontChange, this, FD->GetId());
+	if (FD->ShowModal() == wxID_OK) {
+		wxString txt = TextEdit->GetValue();
+		MTextEditor * Editor = TextEdit;
+		if (grid->hasTLMode && txt == ""){
+			Editor = TextEditOrig;
+			txt = TextEditOrig->GetValue();
 		}
-		if (retstyl->Fontsize!=mstyle->Fontsize)
-		{
-			if(form<SRT){
-				FindVal("fs([0-9]+)",&tmp);
-				PutinText("\\fs"+retstyl->Fontsize);}
-			else{PutinNonass("S:"+retstyl->Fontname, "s:([^}]*)");}
+
+		if (txt[Placed.x] != '}'){
+			int bracketPos = txt.find("}", Placed.x);
+			if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
 		}
-		if (retstyl->Bold!=mstyle->Bold)
-		{
-			if(form<SRT){wxString bld=(retstyl->Bold)?"1":"0";
-			FindVal("b(0|1)",&tmp);
-			PutinText("\\b"+bld);}
-			else{PutinNonass("y:b",(retstyl->Bold)?"Y:b" : "");}
-		}
-		if (retstyl->Italic!=mstyle->Italic)
-		{
-			if(form<SRT){wxString ital=(retstyl->Italic)?"1":"0";
-			FindVal("i(0|1)",&tmp);
-			PutinText("\\i"+ital);}
-			else{PutinNonass("y:i", (retstyl->Italic)?"Y:i" : "");}
-		}
-		if (retstyl->Underline!=mstyle->Underline)
-		{
-			FindVal("u(0|1)",&tmp);
-			wxString under=(retstyl->Underline)?"1":"0";
-			PutinText("\\u"+under);
-		}
-		if (retstyl->StrikeOut!=mstyle->StrikeOut)
-		{
-			FindVal("s(0|1)",&tmp);
-			wxString strike=(retstyl->StrikeOut)?"1":"0";
-			PutinText("\\s"+strike);
-		}
-		delete retstyl;
+		Editor->SetSelection(Placed.x, Placed.x);
+		Editor->SetFocus();
 	}
-	delete mstyle;
+	else if (tmpIter<grid->file->Iter()){
+		grid->DummyUndo(tmpIter);
+	}
+	
+}
+
+void EditBox::OnFontChange(wxCommandEvent& event){
+	FontDialog *FD = (FontDialog *)event.GetClientData();
+	if (!FD)
+		return;
+	Styles * input = NULL;
+	Styles * output = NULL;
+	FD->GetStyles(&input, &output);
+	if (input && output)
+		ChangeFont(output, input);
+}
+
+void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
+{
+	char form = grid->subsFormat;
+	wxString tmp;
+	if (retStyle->Fontname != editedStyle->Fontname)
+	{
+		if (form < SRT){ 
+			FindVal("fn(.*)", &tmp);
+			PutinText("\\fn" + retStyle->Fontname,false); 
+		}
+		else{ PutinNonass("F:" + retStyle->Fontname, "f:([^}]*)"); }
+	}
+	if (retStyle->Fontsize != editedStyle->Fontsize)
+	{
+		if (form < SRT){
+			FindVal("fs([0-9]+)", &tmp);
+			PutinText("\\fs" + retStyle->Fontsize, false);
+		}
+		else{ PutinNonass("S:" + retStyle->Fontname, "s:([^}]*)"); }
+	}
+	if (retStyle->Bold != editedStyle->Bold)
+	{
+		if (form < SRT){
+			wxString bld = (retStyle->Bold) ? "1" : "0";
+			FindVal("b(0|1)", &tmp);
+			PutinText("\\b" + bld, false);
+		}
+		else{ PutinNonass("y:b", (retStyle->Bold) ? "Y:b" : ""); }
+	}
+	if (retStyle->Italic != editedStyle->Italic)
+	{
+		if (form < SRT){
+			wxString ital = (retStyle->Italic) ? "1" : "0";
+			FindVal("i(0|1)", &tmp);
+			PutinText("\\i" + ital, false);
+		}
+		else{ PutinNonass("y:i", (retStyle->Italic) ? "Y:i" : ""); }
+	}
+	if (retStyle->Underline != editedStyle->Underline)
+	{
+		FindVal("u(0|1)", &tmp);
+		wxString under = (retStyle->Underline) ? "1" : "0";
+		PutinText("\\u" + under, false);
+	}
+	if (retStyle->StrikeOut != editedStyle->StrikeOut)
+	{
+		FindVal("s(0|1)", &tmp);
+		wxString strike = (retStyle->StrikeOut) ? "1" : "0";
+		PutinText("\\s" + strike, false);
+	}
 }
 
 void EditBox::AllColorClick(int kol)
@@ -813,8 +852,8 @@ void EditBox::AllColorClick(int kol)
 			if (bracketPos != -1){ Placed.x = Placed.y = bracketPos+1; }
 		}
 		Editor->SetSelection(Placed.x,Placed.x);
-	}else{
-		//Editor->SetTextS(tmptext);
+	}
+	else if (tmpIter < grid->file->Iter()){
 		grid->DummyUndo(tmpIter);
 	}
 	Editor->SetFocus();

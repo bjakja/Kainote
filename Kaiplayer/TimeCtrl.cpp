@@ -42,7 +42,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 
 	form=ASS;
 	showFrames=false;
-	pastes=false;
+	//pastes=false;
 	holding=false;
 	changedBackGround=false;
 	oldpos=0;
@@ -88,7 +88,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 					SetSelection(0,whatpaste.Length());
 					wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);
 					timeUnchanged=false;
-					pastes=true;
+					//pastes=true;
 				}else{
 					wxBell();
 				}
@@ -162,7 +162,7 @@ void TimeCtrl::OnTimeWrite(wxCommandEvent& event)
 	long selst=0, seled=0;
 	GetSelection(&selst,&seled);
 
-	if(!pastes && selst==seled && (selst>0) && selst<(long)txt.Len() && form<MDVD && !showFrames){
+	if(selst==seled && (selst>0) && selst<(long)txt.Len() && form<MDVD && !showFrames){
 
 		wxString nChar = txt.Mid(selst,1);
 		
@@ -186,7 +186,7 @@ void TimeCtrl::OnTimeWrite(wxCommandEvent& event)
 		SetSelection(selst,seled);
 
 	}
-	pastes=false;
+	//pastes=false;
 	if(IsModified()){wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);}
 	timeUnchanged=false;
 }

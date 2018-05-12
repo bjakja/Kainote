@@ -161,6 +161,7 @@ private:
 	wxBoxSizer* BoxSizer5;
 	wxBoxSizer* BoxSizer6;
 
+	void ChangeFont(Styles *retStyle, Styles *editedStyle);
 	void OnNewline(wxCommandEvent& event);
 	void OnCommit(wxCommandEvent& event);
 	void OnFontClick(wxCommandEvent& event);
@@ -186,6 +187,7 @@ private:
 	void OnAutoMoveTags(wxCommandEvent& event);
 	void OnChangeTimeDisplay(wxCommandEvent& event);
 	void OnStyleEdit(wxCommandEvent& event);
+	void OnFontChange(wxCommandEvent& event);
 	void SetTagButtons();
 	void DoTooltips();
 

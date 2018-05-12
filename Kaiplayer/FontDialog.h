@@ -23,6 +23,8 @@
 #include "StylePreview.h"
 #include "KaiDialog.h"
 
+wxDECLARE_EVENT(FONT_CHANGED, wxCommandEvent);
+
 class FontList : public wxWindow
 {
 public:
@@ -59,15 +61,20 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
+//for realtime change connect with event FONT_CHANGED
 class FontDialog : public KaiDialog
 {
 public:
-	FontDialog(wxWindow *parent, Styles *acstyl);
 	virtual ~FontDialog();
 
+	void GetStyles(Styles **inputStyle, Styles **outputStyle);
 	Styles *GetFont();
-
+	// class gets style and release it later
+	static FontDialog *Get(wxWindow *parent, Styles *acstyl);
 private:
+	FontDialog(wxWindow *parent, Styles *acstyl);
+	FontDialog(const FontDialog & copy) = delete;
+	void SetStyle();
 	FontList *Fonts;
 	StylePreview *Preview;
 	NumCtrl *FontSize;
@@ -78,13 +85,16 @@ private:
 	MappedButton *Buttok;
 	MappedButton *Buttcancel;
 	KaiTextCtrl *FontName;
+	Styles *editedStyle = NULL;
+	Styles *resultStyle = NULL;
+	wxTimer fontChangedTimer;
 
 	void OnUpdatePreview(wxCommandEvent& event);
 	void OnFontChanged(wxCommandEvent& event);
 	void OnUpdateText(wxCommandEvent& event);
 	void OnScrollList(wxCommandEvent& event);
 	void UpdatePreview();
-
+	static FontDialog *FDialog;
 
 };
 

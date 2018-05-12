@@ -21,6 +21,8 @@
 #include "SubsGrid.h"
 #include "KaiStaticBoxSizer.h"
 
+wxDEFINE_EVENT(FONT_CHANGED, wxCommandEvent);
+
 FontList::FontList(wxWindow *parent,long id,const wxPoint &pos, const wxSize &size)
 	:wxWindow(parent,id,pos,size)
 {
@@ -292,17 +294,20 @@ void FontList::Scroll(int step)
 	Refresh(false);
 }
 
-BEGIN_EVENT_TABLE(FontList,wxWindow)
-	EVT_PAINT(FontList::OnPaint)
-	EVT_SIZE(FontList::OnSize)
-	EVT_COMMAND_SCROLL(ID_SCROLL1,FontList::OnScroll)
-	EVT_MOUSE_EVENTS(FontList::OnMouseEvent)
-	//EVT_KEY_DOWN(FontList::OnKeyPress)
-	END_EVENT_TABLE()
+BEGIN_EVENT_TABLE(FontList, wxWindow)
+EVT_PAINT(FontList::OnPaint)
+EVT_SIZE(FontList::OnSize)
+EVT_COMMAND_SCROLL(ID_SCROLL1, FontList::OnScroll)
+EVT_MOUSE_EVENTS(FontList::OnMouseEvent)
+//EVT_KEY_DOWN(FontList::OnKeyPress)
+END_EVENT_TABLE()
 
-	FontDialog::FontDialog(wxWindow *parent, Styles *acst)
+FontDialog *FontDialog::FDialog = NULL;
+
+FontDialog::FontDialog(wxWindow *parent, Styles *acst)
 	:KaiDialog(parent,-1,_("Wybierz czcionkę"))
 {
+	editedStyle = acst;
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
 	wxAcceleratorEntry entries[4];
@@ -338,8 +343,10 @@ BEGIN_EVENT_TABLE(FontList,wxWindow)
 	Underl->SetValue(acst->Underline);
 	Strike= new KaiCheckBox(this,ID_FONTATTR,_("Przekreślenie"));
 	Strike->SetValue(acst->StrikeOut);
+	//MappedButton *ButtApply = new MappedButton(this, wxID_APPLY, "Zastosuj");
 	Buttok= new MappedButton(this,wxID_OK,"OK");
-	Buttcancel= new MappedButton(this,wxID_CANCEL,_("Anuluj"));
+	Buttcancel= new MappedButton(this,8999,_("Anuluj"));
+	SetEscapeId(8999);
 	Fattr->Add(FontName,0,wxEXPAND|wxLEFT|wxRIGHT,5);
 	Fattr->Add(FontSize,0,wxEXPAND|wxALL,5);
 	Fattr->Add(Bold,1,wxEXPAND|wxALL,5);
@@ -352,6 +359,7 @@ BEGIN_EVENT_TABLE(FontList,wxWindow)
 
 	prev->Add(Preview,0,wxEXPAND|wxALL,5);
 
+	//Bsizer->Add(ButtApply, 1, wxALL, 5);
 	Bsizer->Add(Buttok,1,wxALL,5);
 	Bsizer->Add(Buttcancel,1,wxALL,5);
 
@@ -363,31 +371,118 @@ BEGIN_EVENT_TABLE(FontList,wxWindow)
 
 	UpdatePreview();
 
+	fontChangedTimer.SetOwner(this, 12345);
+	Bind(wxEVT_TIMER, [=](wxTimerEvent & event){
+		wxCommandEvent evt(FONT_CHANGED, GetId());
+		evt.SetClientData(this);
+		AddPendingEvent(evt);
+	}, 12345);
+
 	Connect(ID_FONTLIST,wxEVT_COMMAND_LISTBOX_SELECTED,(wxObjectEventFunction)&FontDialog::OnFontChanged);
 	Connect(ID_FONT_NAME,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&FontDialog::OnUpdateText);
 	Connect(ID_FONTSIZE1, NUMBER_CHANGED, (wxObjectEventFunction)&FontDialog::OnUpdatePreview);
 	Connect(ID_FONTATTR,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&FontDialog::OnUpdatePreview);
 	Connect(ID_SCROLLUP,ID_SCROLLDOWN,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&FontDialog::OnScrollList);
+	//Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent & evt){
+	//	//fontChangedTimer.Start()
+	//}, wxID_APPLY);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent & evt){
+		if (editedStyle){
+			delete editedStyle;
+			editedStyle = NULL;
+		}
+		if (resultStyle){
+			delete resultStyle;
+			resultStyle = NULL;
+		}
+		if (IsModal())
+			EndModal(wxID_CANCEL);
+		else
+			Show(false);
+
+	}, 8999);
+
 	MoveToMousePosition(this);
+}
+
+void FontDialog::SetStyle()
+{
+	FontName->SetValue(editedStyle->Fontname);
+	Fonts->SetSelectionByName(editedStyle->Fontname);
+	FontSize->SetValue(editedStyle->Fontsize);
+	Bold->SetValue(editedStyle->Bold);
+	Italic->SetValue(editedStyle->Italic);
+	Underl->SetValue(editedStyle->Underline);
+	Strike->SetValue(editedStyle->StrikeOut);
+	Preview->DrawPreview(editedStyle);
 }
 
 FontDialog::~FontDialog()
 {
-	//Options.SetString("Preview Text",Preview->GetValue());
+	if (editedStyle){
+		delete editedStyle;
+		editedStyle = NULL;
+	}
+	if (resultStyle){
+		delete resultStyle;
+		resultStyle = NULL;
+	}
+	FDialog = NULL;
 }
 
-Styles *FontDialog::GetFont()
+void FontDialog::GetStyles(Styles **inputStyle, Styles **outputStyle)
 {
-	Styles *val=new Styles();
-	val->Bold=Bold->GetValue();
-	val->Italic=Italic->GetValue();
-	val->Underline=Underl->GetValue();
-	val->StrikeOut=Strike->GetValue();
-	val->Fontname=Fonts->GetString(Fonts->GetSelection());
+	if (inputStyle != NULL && outputStyle != NULL){
+		*inputStyle = editedStyle;
+		if (!resultStyle)
+			bool thisisbad = true;
+		*outputStyle = (resultStyle) ? resultStyle : GetFont();
+	}
+}
+
+Styles * FontDialog::GetFont()
+{
+	if (resultStyle){
+		if (editedStyle){
+			delete editedStyle;
+			editedStyle = resultStyle;
+		}
+		else{
+			delete resultStyle;
+		}
+		resultStyle = NULL;
+	}
+	resultStyle = new Styles();
+	resultStyle->Bold = Bold->GetValue();
+	resultStyle->Italic = Italic->GetValue();
+	resultStyle->Underline = Underl->GetValue();
+	resultStyle->StrikeOut = Strike->GetValue();
+	resultStyle->Fontname = Fonts->GetString(Fonts->GetSelection());
 	wxString kkk;
-	kkk<<FontSize->GetValue();
-	if(kkk!=""){val->Fontsize=kkk;}
-	return val;
+	kkk << FontSize->GetValue();
+	if (kkk != ""){ resultStyle->Fontsize = kkk; }
+	return resultStyle;
+}
+
+FontDialog * FontDialog::Get(wxWindow *parent, Styles *acstyl)
+{
+	if (FDialog && FDialog->GetParent() != parent){
+		FDialog->Destroy();
+		FDialog = NULL;
+	}
+	if (!FDialog)
+		FDialog = new FontDialog(parent, acstyl);
+	else{
+		if (FDialog->editedStyle){
+			delete FDialog->editedStyle;
+			FDialog->editedStyle = NULL;
+		}
+		FDialog->editedStyle = acstyl;
+		FDialog->SetStyle();
+		MoveToMousePosition(FDialog);
+	}
+
+	return FDialog;
 }
 
 void FontDialog::OnFontChanged(wxCommandEvent& event)
@@ -405,7 +500,7 @@ void FontDialog::UpdatePreview()
 {
 	Styles *styl=GetFont();
 	Preview->DrawPreview(styl);
-	delete styl;
+	fontChangedTimer.Start(200, true);
 }
 
 void FontDialog::OnUpdateText(wxCommandEvent& event)
@@ -458,16 +553,16 @@ wxFont FontPickerButton::GetSelectedFont(){
 void FontPickerButton::OnClick(wxCommandEvent &evt)
 {
 	wxFont font = GetFont();
-	Styles mstyle;
-	mstyle.Fontname = font.GetFaceName();
-	mstyle.Fontsize = std::to_string(font.GetPointSize());
-	FontDialog FD(this, &mstyle);
-	if(FD.ShowModal()==wxID_OK){
-		Styles *retstyle = FD.GetFont();
+	Styles *mstyle=new Styles();
+	mstyle->Fontname = font.GetFaceName();
+	mstyle->Fontsize = std::to_string(font.GetPointSize());
+	FontDialog * FD = FontDialog::Get(this, mstyle);
+	if(FD->ShowModal()==wxID_OK){
+		Styles *retstyle = FD->GetFont();
 		font.SetFaceName(retstyle->Fontname);
 		font.SetPointSize(wxAtoi(retstyle->Fontsize));
 		ChangeFont(font);
-		delete retstyle;
+		//delete retstyle;
 	}
 }
 
