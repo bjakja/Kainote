@@ -149,7 +149,7 @@ class VideoRend : public wxWindow
 		void MovePos(int cpos);
 		void ChangeVobsub(bool vobsub=false);
 		wxArrayString GetStreams();
-		void SetVisual(bool remove=false, bool settext=false);
+		void SetVisual(bool remove=false, bool settext=false, bool noRefreshAfterRemove = false);
 		void ResetVisual();
 		byte *GetFramewithSubs(bool subs, bool *del);
 		bool UpdateRects(bool changeZoom=true);

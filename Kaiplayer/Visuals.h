@@ -84,6 +84,9 @@ public:
 	void SetClip(wxString clip,bool dummy, bool redraw=true, bool changeEditorText = true);
 	void SetVisual(bool dummy,int type);
 	void ChangeOrg(wxString *text, Dialogue *_dial, float coordx, float coordy);
+	bool IsInPos(wxPoint pos, wxPoint secondPos, int diff){
+		return (abs(pos.x - secondPos.x) < diff && abs(pos.y - secondPos.y) < diff) ? true : false;
+	};
 	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
 	D3DXVECTOR2 CalcMovePos();
 	D3DXVECTOR2 GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);
@@ -91,7 +94,6 @@ public:
 	D3DXVECTOR2 lastmove;
 	D3DXVECTOR2 firstmove;
 	D3DXVECTOR2 from;
-	
 	
 	double tbl[7];
 	// wspw i h - potrzebne s¹ do przejœcia z rozdzielczoœci napisów i do niej
@@ -151,6 +153,9 @@ public:
 	void ChangeTool(int _tool){};
 	//void SetVisual(int _start,int _end);
 	std::vector<PosData> data;
+	wxPoint helperLinePos;
+	bool hasHelperLine = false;
+	bool movingHelperLine = false;
 };
 
 class Move : public Visuals
@@ -171,6 +176,9 @@ public:
 	D3DXVECTOR2 lastFrom;
 	D3DXVECTOR2 lastTo;
 	D3DXVECTOR2 moveDistance;
+	wxPoint helperLinePos;
+	bool hasHelperLine = false;
+	bool movingHelperLine = false;
 };
 
 struct moveElems

@@ -994,6 +994,8 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 
 void SubsGridBase::DummyUndo(int newIter)
 {
+	if (newIter >= file->Iter())
+		return;
 	file->DummyUndo(newIter);
 	SpellErrors[Edit->ebrow].clear();
 	Edit->SetLine(Edit->ebrow, false, false);
@@ -1200,8 +1202,8 @@ void SubsGridBase::SwapRows(int frst, int scnd, bool sav)
 	if (sav){ SetModified(GRID_SWAP_LINES); }
 }
 
-void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext){
-
+void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
+{
 	bool oldHasTlMode = hasTLMode;
 	int active = 0;
 

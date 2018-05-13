@@ -159,6 +159,7 @@ public:
 	bool CanSave(){ return iter != lastSave; }
 	bool edited;
 	AVLtree *IdConverter;
+	wxString *historyNames=NULL;
 };
 
 class HistoryDialog : public KaiDialog

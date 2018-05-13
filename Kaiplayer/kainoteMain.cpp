@@ -377,13 +377,21 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			tab->SubsName = _("Bez tytułu");
 			tab->SubsPath = "";
 			Label();
+
 			tab->Grid->Clearing();
 			tab->Grid->file = new SubsFile();
 			tab->Grid->LoadDefault();
 			tab->Edit->RefreshStyle(true);
 			tab->Grid->RefreshColumns();
 
-			if (tab->Video->GetState() != None){ tab->Video->OpenSubs(NULL); tab->Video->Render(); }
+			if (tab->Video->GetState() != None){ 
+				if (tab->Video->Visual)
+					tab->Video->SetVisual(true);
+				else{
+					tab->Video->OpenSubs(NULL);
+					tab->Video->Render();
+				}
+			}
 			SetSubsResolution(false);
 		}
 	}
@@ -733,7 +741,7 @@ void kainoteFrame::OnConversion(char form)
 	TabPanel *tab = GetTab();
 	if (tab->Grid->GetSInfo("TLMode") == "Yes"){ return; }
 	if (form != ASS && tab->Edit->Visual){
-		tab->Video->SetVisual(true);
+		tab->Video->SetVisual(true,false,true);
 	}
 	tab->Grid->Convert(form);
 	tab->ShiftTimes->Contents();
@@ -902,6 +910,9 @@ bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 		if (nonewtab){
 			if (SavePrompt(2)){ tab->Thaw(); return true; }
 		}
+		if (tab->Video->Visual)
+			tab->Video->SetVisual(true,false,true);
+
 		OpenWrite ow;
 		wxString s;
 		if (!ow.FileOpen(fname, &s)){ tab->Thaw(); return false; }
@@ -981,11 +992,9 @@ bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 				tab->Edit->OnVideo = true;
 				bool isgood = tab->Video->OpenSubs((tab->editor) ? tab->Grid->GetVisible() : 0);
 				if (!isgood){ KaiMessageBox(_("Otwieranie napisów nie powiodło się"), "Uwaga"); }
+				else{ tab->Video->Render(); }
 			}
 			tab->Video->vToolbar->DisableVisuals(ext != "ass");
-			if (ext != "ass" && tab->Edit->Visual){
-				tab->Video->SetVisual(true);
-			}
 		}
 		SetRecent();
 
@@ -1381,6 +1390,9 @@ void kainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 		if ((i >= Tabs->Size() || Tabs->Page(Tabs->iter)->SubsPath != "" ||
 			Tabs->Page(Tabs->iter)->VideoPath != "") && !intab){
 			InsertTab(false);
+		}
+		else if (GetTab()->Video->Visual){
+			GetTab()->Video->SetVisual(true);
 		}
 		TabPanel *tab = GetTab();
 		if (i < subs.size()){

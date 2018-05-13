@@ -876,8 +876,13 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 	if (instance) csri_close(instance);
 	instance = NULL;
 
-	if(!textsubs) {return true;}
-	//const char *buffer= textsubs.mb_str(wxConvUTF8).data();
+	if(!textsubs) {
+		if (redraw && vstate != None && IsDshow && datas){
+			RecreateSurface();
+		}
+		return true;
+	}
+	
 	if (VisEdit && Visual->Visual == VECTORCLIP && Visual->dummytext){
 		wxString toAppend = Visual->dummytext->Trim().AfterLast('\n');
 		if (fromFile){
@@ -1604,16 +1609,18 @@ void VideoRend::ChangeVobsub(bool vobsub)
 	pan->Video->ChangeStream();
 }
 
-void VideoRend::SetVisual(bool remove, bool settext)
+void VideoRend::SetVisual(bool remove/*=false*/, bool settext/*=false*/, bool noRefreshAfterRemove /*= false*/)
 {
 	TabPanel* pan=(TabPanel*)GetParent();
 
 	if(remove){
 		SAFE_DELETE(Visual); pan->Edit->Visual=0;
 		VisEdit=false;
-		OpenSubs(pan->Grid->GetVisible());
-		pan->Edit->OnVideo = true;
-		Render();
+		if (!noRefreshAfterRemove){
+			OpenSubs(pan->Grid->GetVisible());
+			pan->Edit->OnVideo = true;
+			Render();
+		}
 	}else{
 
 		int vis=pan->Edit->Visual;

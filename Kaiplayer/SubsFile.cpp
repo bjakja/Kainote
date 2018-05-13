@@ -19,58 +19,7 @@
 #include "MappedButton.h"
 
 //pamiętaj ilość elementów tablicy musi być równ ilości enumów
-wxString historyNames[] = {
-	"",//pierwszy element którego nie używamy a musi być ostatni enum weszedł a także ochronić nas przed potencjalnym 0
-	_("Otwarcie napisów"),
-	_("Nowe napisy"),
-	_("Edycja linii"),
-	_("Edycja wielu linii"),
-	_("Poprawa błędu pisowni w polu tekstowym"),
-	_("Powielenie linijek"),
-	_("Połączenie linijek"),
-	_("Połączenie linijki z poprzednią"),
-	_("Połączenie linijki z następną"),
-	/*10*/_("Połączenie linijek pozostawienie pierszej"),
-	_("Połączenie linijek pozostawienie ostatniej"),
-	_("Wklejenie linijek"),
-	_("Wklejenie kolumn"),
-	_("Wklejenie tłumaczenia"),
-	_("Przesunięcie tekstu tłumaczenia"),
-	_("Ustawienie czasów linii jako ciągłych"),
-	_("Ustawienie FPSu obliczonego z wideo"),
-	_("Ustawienie własnego FPSu"),
-	_("Zamiana linijek"),
-	/*20*/_("Konwersja napisów"),
-	_("Sortowanie napisów"),
-	_("Usunięcie linijek"),
-	_("Usunięcie tekstu"),
-	_("Ustawienie czasu początkowego"),
-	_("Ustawienie czasu końcowego"),
-	_("Włączenie trybu tłumaczenia"),
-	_("Wyłączenie trybu tłumaczenia"),
-	_("Dodanie nowej linii"),
-	_("Wstawienie linii"),
-	/*30*/_("Zmiana czasu na wykresie audio"),
-	_("Przyklejenie do klatki kluczowej"),
-	_("Zmiana nagłówku napisów"),
-	_("Akcja zaznacz linijki"),
-	_("Przesunięcie czasów"),
-	_("Poprawa błędu pisowni"),
-	_("Edycja stylów"),
-	_("Zmiana rozdzielczości napisów"),
-	_("Narzędzie pozycjonowania"),
-	_("Narzędzie ruchu"),
-	/*40*/_("Narzędzie skalowania"),
-	_("Narzędzie obrotów w osi Z"),
-	_("Narzędzie obrotów w osiach X i Y"),
-	_("Narzędzie wycinów prostokątnych"),
-	_("Narzędzie wycinów wektorowych"),
-	_("Narzędzie rysunków wektorowych"),
-	_("Narzędzie zmieniacz pozycji"),
-	_("Zamień"),
-	_("Zamień wszystko"),
-	_("Skrypt automatyzacji"),
-};
+//wxString 
 
 HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<void(int)> func )
 	: KaiDialog(parent, -1, _("Historia"),wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
@@ -166,6 +115,58 @@ File *File::Copy(bool copySelections)
 
 SubsFile::SubsFile()
 {
+	historyNames = new wxString[50]{
+		"",//pierwszy element którego nie używamy a musi być ostatni enum weszedł a także ochronić nas przed potencjalnym 0
+		_("Otwarcie napisów"),
+		_("Nowe napisy"),
+		_("Edycja linii"),
+		_("Edycja wielu linii"),
+		_("Poprawa błędu pisowni w polu tekstowym"),
+		_("Powielenie linijek"),
+		_("Połączenie linijek"),
+		_("Połączenie linijki z poprzednią"),
+		_("Połączenie linijki z następną"),
+		/*10*/_("Połączenie linijek pozostawienie pierszej"),
+		_("Połączenie linijek pozostawienie ostatniej"),
+		_("Wklejenie linijek"),
+		_("Wklejenie kolumn"),
+		_("Wklejenie tłumaczenia"),
+		_("Przesunięcie tekstu tłumaczenia"),
+		_("Ustawienie czasów linii jako ciągłych"),
+		_("Ustawienie FPSu obliczonego z wideo"),
+		_("Ustawienie własnego FPSu"),
+		_("Zamiana linijek"),
+		/*20*/_("Konwersja napisów"),
+		_("Sortowanie napisów"),
+		_("Usunięcie linijek"),
+		_("Usunięcie tekstu"),
+		_("Ustawienie czasu początkowego"),
+		_("Ustawienie czasu końcowego"),
+		_("Włączenie trybu tłumaczenia"),
+		_("Wyłączenie trybu tłumaczenia"),
+		_("Dodanie nowej linii"),
+		_("Wstawienie linii"),
+		/*30*/_("Zmiana czasu na wykresie audio"),
+		_("Przyklejenie do klatki kluczowej"),
+		_("Zmiana nagłówku napisów"),
+		_("Akcja zaznacz linijki"),
+		_("Przesunięcie czasów"),
+		_("Poprawa błędu pisowni"),
+		_("Edycja stylów"),
+		_("Zmiana rozdzielczości napisów"),
+		_("Narzędzie pozycjonowania"),
+		_("Narzędzie ruchu"),
+		/*40*/_("Narzędzie skalowania"),
+		_("Narzędzie obrotów w osi Z"),
+		_("Narzędzie obrotów w osiach X i Y"),
+		_("Narzędzie wycinów prostokątnych"),
+		_("Narzędzie wycinów wektorowych"),
+		_("Narzędzie rysunków wektorowych"),
+		_("Narzędzie zmieniacz pozycji"),
+		_("Zamień"),
+		_("Zamień wszystko"),
+		_("Skrypt automatyzacji"),
+	};
     iter=0;
 	edited=false;
 	subs = new File();
@@ -183,6 +184,7 @@ SubsFile::~SubsFile()
 	}
     undo.clear();
 	delete IdConverter;
+	delete[] historyNames;
 }
 
 

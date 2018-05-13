@@ -747,7 +747,7 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 		Editor->SetSelection(Placed.x, Placed.x);
 		Editor->SetFocus();
 	}
-	else if (tmpIter<grid->file->Iter()){
+	else{
 		grid->DummyUndo(tmpIter);
 	}
 	
@@ -853,7 +853,7 @@ void EditBox::AllColorClick(int kol)
 		}
 		Editor->SetSelection(Placed.x,Placed.x);
 	}
-	else if (tmpIter < grid->file->Iter()){
+	else{
 		grid->DummyUndo(tmpIter);
 	}
 	Editor->SetFocus();

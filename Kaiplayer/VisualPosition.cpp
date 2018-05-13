@@ -43,7 +43,21 @@ void Position::Draw(int time)
 	line->SetAntialias(FALSE);
 	oldtime=time;
 	if (nothintoshow){ DrawWarning(notDialogue); blockevents = true; }
-	else if (blockevents){ blockevents = false; }
+	else { 
+		if (blockevents)
+			blockevents = false; 
+
+		if(hasHelperLine){
+			D3DXVECTOR2 v2[2] = { D3DXVECTOR2(helperLinePos.x, 0), D3DXVECTOR2(helperLinePos.x, this->VideoSize.GetHeight()) };
+			D3DXVECTOR2 v21[2] = { D3DXVECTOR2(0, helperLinePos.y), D3DXVECTOR2(this->VideoSize.GetWidth(), helperLinePos.y) };
+			line->Begin();
+			DrawDashedLine(v2, 2, 4, 0xFFFF00FF);
+			DrawDashedLine(v21, 2, 4, 0xFFFF00FF);
+			line->End();
+			DrawRect(D3DXVECTOR2(helperLinePos.x, helperLinePos.y),false, 4.f);
+		}
+
+	}
 }
 
 void Position::OnMouseEvent(wxMouseEvent &evt)
@@ -84,19 +98,30 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 			data[i].lastpos = data[i].pos;
 		}
 		if(!hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
+		movingHelperLine = false;
+	}
+	if (movingHelperLine){
+		helperLinePos = evt.GetPosition();
+		tab->Video->Render(false);
+		return;
 	}
 
 	if(click){
 		if (!tab->Video->HasCapture()){ tab->Video->CaptureMouse(); }
+		if (IsInPos(evt.GetPosition(), helperLinePos, 4)){
+			movingHelperLine = true;
+			return;
+		}
 		tab->Video->SetCursor(wxCURSOR_SIZING);
-		hasArrow=false;
+		hasArrow = false;
 		wxArrayInt sels;
 		tab->Grid->file->GetSelections(sels);
 		if(sels.size()!=data.size()){SetCurVisual();tab->Video->Render();}
 		firstmove.x=x;
 		firstmove.y=y;
 		axis=0;
-	}else if(holding){
+	}
+	else if (holding){
 		for(size_t i=0; i < data.size(); i++ ){
 			data[i].pos.x = data[i].lastpos.x - (firstmove.x-x);
 			data[i].pos.y = data[i].lastpos.y - (firstmove.y-y);
@@ -115,6 +140,12 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 			}
 		}
 		ChangeMultiline(false);
+	}
+	if (evt.MiddleDown()){
+		wxPoint mousePos = evt.GetPosition();
+		hasHelperLine = (hasHelperLine && IsInPos(mousePos, helperLinePos, 4))? false : true;
+		helperLinePos = mousePos;
+		tab->Video->Render(false);
 	}
 }
 	

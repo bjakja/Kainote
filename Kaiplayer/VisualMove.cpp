@@ -27,6 +27,16 @@ Move::Move()
 
 void Move::DrawVisual(int time)
 {
+	if (hasHelperLine){
+		D3DXVECTOR2 v2[2] = { D3DXVECTOR2(helperLinePos.x, 0), D3DXVECTOR2(helperLinePos.x, this->VideoSize.GetHeight()) };
+		D3DXVECTOR2 v21[2] = { D3DXVECTOR2(0, helperLinePos.y), D3DXVECTOR2(this->VideoSize.GetWidth(), helperLinePos.y) };
+		line->Begin();
+		DrawDashedLine(v2, 2, 4, 0xFFFF00FF);
+		DrawDashedLine(v21, 2, 4, 0xFFFF00FF);
+		line->End();
+		DrawRect(D3DXVECTOR2(helperLinePos.x, helperLinePos.y), false, 4.f);
+	}
+
 	D3DXVECTOR2 v4[6];
 	v4[0].x=from.x;
 	v4[0].y=from.y;
@@ -72,8 +82,8 @@ wxString Move::GetVisual()
 void Move::OnMouseEvent(wxMouseEvent &evt)
 {
 	if(blockevents){return;}
-	bool click = evt.LeftDown()||evt.RightDown()||evt.MiddleDown();
-	bool holding = (evt.LeftIsDown()||evt.RightIsDown()||evt.MiddleIsDown());
+	bool click = evt.LeftDown();
+	bool holding = evt.LeftIsDown();
 	bool leftc = evt.LeftDown();
 	bool rightc = evt.RightDown();
 	bool shift = evt.ShiftDown();
@@ -87,10 +97,21 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 		if(!hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 		grabbed = -1;
 		moveDistance = to - from;
+		movingHelperLine = false;
+	}
+
+	if (movingHelperLine){
+		helperLinePos = evt.GetPosition();
+		tab->Video->Render(false);
+		return;
 	}
 
 	if(click){
 		tab->Video->CaptureMouse();
+		if (IsInPos(evt.GetPosition(), helperLinePos, 4)){
+			movingHelperLine = true;
+			return;
+		}
 		tab->Video->SetCursor(wxCURSOR_SIZING );
 		hasArrow=false;
 		if(leftc){type=0;}
@@ -154,7 +175,12 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 		}
 		SetVisual(true,type);
 	}
-
+	if (evt.MiddleDown()){
+		wxPoint mousePos = evt.GetPosition();
+		hasHelperLine = (hasHelperLine && IsInPos(mousePos, helperLinePos, 4)) ? false : true;
+		helperLinePos = mousePos;
+		tab->Video->Render(false);
+	}
 }
 
 void Move::SetCurVisual()
