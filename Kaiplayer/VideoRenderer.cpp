@@ -899,10 +899,8 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 
 
 	// Select renderer
-	//if(!vobsub){
 	vobsub = csri_renderer_default();
 	if(!vobsub){wxLogStatus(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false;}
-	//}
 
 	instance = (fromFile)? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub,buffer,size,NULL);
 	if(!instance){wxLogStatus(_("Instancja VobSuba nie utworzyła się.")); delete textsubs; return false;}

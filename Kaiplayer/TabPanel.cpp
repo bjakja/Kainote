@@ -212,13 +212,14 @@ void TabPanel::SetVideoWindowSizes(int w, int h)
 {
 	Notebook *nb = Notebook::GetTabs(); 
 	for(int i = 0; i < nb->Size(); i++){
-		if(i == nb->iter){continue;}
 		TabPanel *tab = nb->Page(i);
-		if(tab->Video->GetState()!=None && tab->Video->IsShown()){
+		if (tab == this){ continue; }
+		if(tab->Video->GetState()!=None/* && tab->Video->IsShown()*/){
 			int ww,hh;
 			tab->Video->CalcSize(&ww, &hh, w, h, false, true);
 			tab->Video->SetMinSize(wxSize(ww,hh+tab->Video->panelHeight));
-		}else{tab->Edit->SetMinSize(wxSize(-1, h));}
+		}
+		tab->Edit->SetMinSize(wxSize(-1, h));
 		tab->BoxSizer1->Layout();
 	}
 }
