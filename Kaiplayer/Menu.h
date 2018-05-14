@@ -96,7 +96,7 @@ public:
 	bool IsChecked(){
 		return check;
 	}
-
+	wxString GetAccel();
 	void SetAccel(wxAcceleratorEntry *entry);
 	wxBitmap *icon;
 	wxString label;
@@ -106,7 +106,7 @@ public:
 	bool enabled;
 	Menu* submenu;
 	bool check;
-	wxAcceleratorEntry *accel;
+	//wxAcceleratorEntry *accel;
 };
 
 class MenuDialog : public wxPopupWindow{
@@ -210,7 +210,7 @@ class Menu : public Mnemonics
 private:
 	void CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool clientPos);
 	void DestroyDialog();
-	void GetAccelerators(std::vector <wxAcceleratorEntry> *entries);
+	//void GetAccelerators(std::vector <wxAcceleratorEntry> *entries);
 	std::vector< MenuItem* > items;
 	wxString title;
 	Menu *parentMenu;
@@ -234,7 +234,7 @@ public:
 	void Insert(int position, Menu *menu, const wxString &title);
 	MenuItem *FindItem(int id); 
 	void Enable(int id, bool enable=true);
-	void AppendAccelerators(std::vector <wxAcceleratorEntry> *entries);
+	//void AppendAccelerators(std::vector <wxAcceleratorEntry> *entries);
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnCharHook(wxKeyEvent &evt);

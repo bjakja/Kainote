@@ -628,3 +628,19 @@ int SubsFile::GetActualHistoryIter()
 		return iter;
 	return iter - lastSave;
 }
+
+const wxString & SubsFile::GetUndoName()
+{
+	if (iter < 1)
+		return emptyString;
+
+	return historyNames[undo[iter - 1]->editionType];
+}
+
+const wxString & SubsFile::GetRedoName()
+{
+	if (iter >= maxx())
+		return emptyString;
+
+	return historyNames[undo[iter + 1]->editionType];
+}

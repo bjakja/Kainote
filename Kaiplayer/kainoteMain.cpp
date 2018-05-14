@@ -1734,7 +1734,7 @@ void kainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 void kainoteFrame::OnMenuOpened(MenuEvent& event)
 {
 	Menu *curMenu = event.GetMenu();
-	//wxLogStatus("opened " + curMenu->GetTitle());
+	TabPanel *tab = GetTab();
 
 	if (curMenu == FileMenu)
 	{
@@ -1754,7 +1754,36 @@ void kainoteFrame::OnMenuOpened(MenuEvent& event)
 		Auto->BuildMenu(&AutoMenu);
 		SetAccels();
 	}
-	TabPanel *tab = GetTab();
+	else if (curMenu == EditMenu){
+		const wxString &undoName = tab->Grid->file->GetUndoName();
+		const wxString &redoName = tab->Grid->file->GetRedoName();
+		MenuItem *undoItem = EditMenu->FindItem(Undo);
+		MenuItem *redoItem = EditMenu->FindItem(Redo);
+		if (undoItem){
+			wxString accel = undoItem->GetAccel();
+			wxString accelName = (accel.empty()) ? "" : "\t" + accel;
+			accelName.Replace("+", "-");
+			if (!undoName.empty()){
+				wxString lowerUndoName = wxString(undoName[0]).Lower() + undoName.Mid(1);
+				undoItem->label = _("&Cofnij do ") + lowerUndoName + accelName;
+			}else{
+				undoItem->label = _("&Cofnij") + accelName;
+			}
+		}
+		if (redoItem){
+			wxString accel = redoItem->GetAccel();
+			wxString accelName = (accel.empty()) ? "" : "\t" + accel;
+			accelName.Replace("+", "-");
+			if (!redoName.empty()){
+				wxString lowerRedoName = wxString(redoName[0]).Lower() + redoName.Mid(1);
+				redoItem->label = _("&Ponów do ") + lowerRedoName + accelName;
+			}
+			else{
+				redoItem->label = _("&Ponów") + accelName;
+			}
+		}
+	}
+	
 	bool enable = (tab->Video->GetState() != None);
 	bool editor = tab->editor;
 	for (int i = PlayPauseG; i <= SetVideoAtEnd; i++)

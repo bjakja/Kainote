@@ -157,6 +157,8 @@ public:
 	int GetActualHistoryIter();
 	int GetLastSaveIter(){ return lastSave; }
 	bool CanSave(){ return iter != lastSave; }
+	const wxString &GetUndoName();
+	const wxString &GetRedoName();
 	bool edited;
 	AVLtree *IdConverter;
 	wxString *historyNames=NULL;

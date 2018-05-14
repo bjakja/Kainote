@@ -50,7 +50,7 @@ MenuItem::MenuItem(int _id, const wxString& _label, const wxString& _help, bool 
 	submenu=Submenu; 
 	check=false;
 	help = _help;
-	accel=NULL;
+	//accel=NULL;
 }
 MenuItem::~MenuItem()
 {
@@ -73,11 +73,18 @@ wxBitmap MenuItem::GetBitmap()
 
 void MenuItem::SetAccel(wxAcceleratorEntry *entry)
 {
-	accel = entry;
+	//accel = entry;
 	if(label.find("\t")!=-1){label = label.BeforeFirst('\t');}
 	label += "\t" + entry->ToString();
 	label.Replace("+","-");
 	//if(MenuBar::Menubar){MenuBar::Menubar->SetAccelerators();}
+}
+
+wxString MenuItem::GetAccel(){
+	if (label.find("\t") == -1)
+		return emptyString;
+
+	return label.AfterFirst('\t');
 }
 
 Menu::Menu(char window)
@@ -118,7 +125,7 @@ void Menu::PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos, bool 
 	if(center){npos.x -= (size.x/2);}
 	
 	dialog = new MenuDialog(this, parent, npos, size, showIcons);
-	dialog->Show();//Show();
+	dialog->Show();
 }
 
 void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool clientPos)
@@ -139,8 +146,11 @@ void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool cli
 	wxRect workArea = GetMonitorRect(0, NULL, wxPoint(pos->x + size->x, pos->y), true);
 	w = workArea.width + workArea.x;
 	h = workArea.height + workArea.y;
+	//zostawiê jeszcze te logi, gdyby jeszcze jakiœ b³¹d tego typu siê przypl¹ta³.
 	//wxLogStatus("workarea x %i %i y %i %i", workArea.x, workArea.width, workArea.y, workArea.height);
-	if(size->y > h){ size->y = h; }
+	if (size->y > workArea.height){
+		size->y = workArea.height;
+	}
 	if((pos->x + size->x) > w){
 		pos->x -= size->x;
 		if(parentMenu && parentMenu->dialog){
@@ -148,6 +158,7 @@ void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool cli
 			pos->x -= size.x;
 		}
 	}
+	//wxLogStatus("pos y + size y %i > h %i, posy %i", pos->y + size->y, h, pos->y);
 	if((pos->y + size->y) > h){
 		if (size->y > h / 2){ 
 			pos->y -= size->y; 
@@ -369,17 +380,17 @@ MenuItem *Menu::SetAccMenu(MenuItem *menuitem, const wxString &name)
 	return Append(menuitem);
 }
 
-void Menu::GetAccelerators(std::vector <wxAcceleratorEntry> *entries)
-{
-	for(auto item : items){
-		if(item->submenu){
-			item->submenu->GetAccelerators(entries);
-		}else if(item->accel){
-			entries->push_back(*item->accel);
-		}
-
-	}
-}
+//void Menu::GetAccelerators(std::vector <wxAcceleratorEntry> *entries)
+//{
+//	for(auto item : items){
+//		if(item->submenu){
+//			item->submenu->GetAccelerators(entries);
+//		}else if(item->accel){
+//			entries->push_back(*item->accel);
+//		}
+//
+//	}
+//}
 
 MenuDialog* MenuDialog::ParentMenu=NULL;
 MenuDialog* MenuDialog::lastActiveMenu=NULL;
@@ -1113,12 +1124,12 @@ void MenuBar::Enable(int id, bool enable)
 	else{wxLogStatus("Cannot enable item with id %i", id);}
 }
 
-void MenuBar::AppendAccelerators(std::vector <wxAcceleratorEntry> *entries)
-{
-	for(size_t i = 0; i<Menus.size(); i++){
-		Menus[i]->GetAccelerators(entries);
-	}
-}
+//void MenuBar::AppendAccelerators(std::vector <wxAcceleratorEntry> *entries)
+//{
+//	for(size_t i = 0; i<Menus.size(); i++){
+//		Menus[i]->GetAccelerators(entries);
+//	}
+//}
 
 LRESULT CALLBACK MenuBar::OnKey( int code, WPARAM wParam, LPARAM lParam ){
 	
