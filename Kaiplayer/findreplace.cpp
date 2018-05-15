@@ -38,7 +38,8 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	StartLine = EndLine = NULL;
 	tcstyle = NULL;
 	wxArrayString wfind;
-	Options.GetTable(FindRecent, wfind, "\f");
+	Options.GetTable(FindRecent, wfind, "\f", wxTOKEN_RET_EMPTY_ALL);
+	int options = Options.GetInt(FindReplaceOptions);
 	if (wfind.size() > 20){ wfind.RemoveAt(19, wfind.size() - 20); }
 
 	wxIcon icn;
@@ -61,7 +62,7 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	mainfrbsizer1->Add(frsbsizer, 0, wxEXPAND | wxALL, 3);
 
 	wxArrayString wrepl;
-	Options.GetTable(ReplaceRecent, wrepl, "\f");
+	Options.GetTable(ReplaceRecent, wrepl, "\f", wxTOKEN_RET_EMPTY_ALL);
 	if (wrepl.size() > 20){ wrepl.RemoveAt(19, wrepl.size() - 20); }
 	wxBoxSizer *ReplaceStaticSizer = new wxBoxSizer(wxHORIZONTAL);
 	//ReplaceStaticSizer=new KaiStaticBoxSizer(wxVERTICAL,this,_("Zamień"));
@@ -75,13 +76,13 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 
 	wxBoxSizer* frbsizer1 = new wxBoxSizer(wxVERTICAL);
 	MatchCase = new KaiCheckBox(this, -1, _("Uwzględniaj wielkość liter"));
-	MatchCase->SetValue(false);
+	MatchCase->SetValue(options & CASE_SENSITIVE);
 	RegEx = new KaiCheckBox(this, -1, _("Wyrażenia regularne"));
-	RegEx->SetValue(false);
+	RegEx->SetValue(options & REG_EX);
 	StartLine = new KaiCheckBox(this, ID_SLINE, _("Początek tekstu"));
-	StartLine->SetValue(false);
+	StartLine->SetValue(options & START_OF_TEXT);
 	EndLine = new KaiCheckBox(this, ID_ELINE, _("Koniec tekstu"));
-	EndLine->SetValue(false);
+	EndLine->SetValue(options & END_OF_TEXT);
 	frbsizer1->Add(MatchCase, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	frbsizer1->Add(RegEx, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	frbsizer1->Add(StartLine, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
@@ -91,17 +92,25 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	KaiStaticBoxSizer* frsbsizer2 = new KaiStaticBoxSizer(wxVERTICAL, this, _("W polu"));
 	wxBoxSizer* frbsizer2 = new wxBoxSizer(wxHORIZONTAL);
 	CollumnText = new KaiRadioButton(this, -1, _("Tekst"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	if (options & IN_FIELD_TEXT)
+		CollumnText->SetValue(true);
 	CollumnTextOriginal = new KaiRadioButton(this, -1, _("Tekst oryginału"));
 	CollumnTextOriginal->Enable(Kai->GetTab()->Grid->hasTLMode);
-
+	if (options & IN_FIELD_TEXT_ORIGINAL && CollumnTextOriginal->IsEnabled())
+		CollumnTextOriginal->SetValue(true);
 	frbsizer2->Add(CollumnText, 1, wxALL, 1);
 	frbsizer2->Add(CollumnTextOriginal, 2, wxALL, 1);
 
 	wxBoxSizer* frbsizer3 = new wxBoxSizer(wxHORIZONTAL);
 	CollumnStyle = new KaiRadioButton(this, -1, _("Styl"));
+	if (options & IN_FIELD_STYLE)
+		CollumnStyle->SetValue(true);
 	CollumnActor = new KaiRadioButton(this, -1, _("Aktor"));
+	if (options & IN_FIELD_ACTOR)
+		CollumnActor->SetValue(true);
 	CollumnEffect = new KaiRadioButton(this, -1, _("Efekt"));
-
+	if (options & IN_FIELD_EFFECT)
+		CollumnEffect->SetValue(true);
 
 	frbsizer3->Add(CollumnStyle, 1, wxEXPAND | wxLEFT, 1);
 	frbsizer3->Add(CollumnActor, 1, wxEXPAND | wxLEFT, 1);
@@ -142,8 +151,15 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	KaiStaticBoxSizer* frsbsizer3 = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Linijki"));
 
 	AllLines = new KaiRadioButton(this, 23156, _("Wszystkie linijki"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	if (options & IN_LINES_ALL)
+		AllLines->SetValue(true);
 	SelectedLines = new KaiRadioButton(this, 23157, _("Zaznaczone linijki"));
+	if (options & IN_LINES_SELECTED)
+		SelectedLines->SetValue(true);
 	FromSelection = new KaiRadioButton(this, 23158, _("Od zaznaczonej"));
+	if (options & IN_LINES_FROM_SELECTION)
+		FromSelection->SetValue(true);
+
 	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, [=](wxCommandEvent &evt){Reset(); }, 23156);
 	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, [=](wxCommandEvent &evt){Reset(); }, 23157);
 	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, [=](wxCommandEvent &evt){Reset(); }, 23158);
@@ -202,8 +218,35 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 
 }
 
-FindReplace::~FindReplace()
+void FindReplace::SaveOptions()
 {
+	int options = 0;
+	if (MatchCase->GetValue())
+		options |= CASE_SENSITIVE;
+	if (RegEx->GetValue())
+		options |= REG_EX;
+	if (StartLine->GetValue())
+		options |= START_OF_TEXT;
+	if (EndLine->GetValue())
+		options |= END_OF_TEXT;
+	if (CollumnText->GetValue())
+		options |= IN_FIELD_TEXT;
+	if (CollumnTextOriginal->GetValue())
+		options |= IN_FIELD_TEXT_ORIGINAL;
+	if (CollumnStyle->GetValue())
+		options |= IN_FIELD_STYLE;
+	if (CollumnActor->GetValue())
+		options |= IN_FIELD_ACTOR;
+	if (CollumnEffect->GetValue())
+		options |= IN_FIELD_EFFECT;
+	if (AllLines->GetValue())
+		options |= IN_LINES_ALL;
+	if (SelectedLines->GetValue())
+		options |= IN_LINES_SELECTED;
+	if (FromSelection->GetValue())
+		options |= IN_LINES_FROM_SELECTION;
+
+	Options.SetInt(FindReplaceOptions, options);
 }
 
 void FindReplace::ChangeContents(bool replace)
@@ -625,7 +668,7 @@ void FindReplace::AddRecent(){
 
 
 	wxArrayString wfind;
-	Options.GetTable(FindRecent, wfind, "\f");
+	Options.GetTable(FindRecent, wfind, "\f", wxTOKEN_RET_EMPTY_ALL);
 	if (wfind.size() > 20){ wfind.RemoveAt(20, wfind.size() - 20); }
 	for (size_t i = 0; i < wfind.GetCount(); i++)
 	{
@@ -642,8 +685,7 @@ void FindReplace::AddRecent(){
 	if (repl){
 		wxString text = RepText->GetValue();
 		wxArrayString wrepl;
-		Options.GetTable(ReplaceRecent, wrepl, "\f");
-		if (wrepl.size() > 20){ wrepl.RemoveAt(20, wrepl.size() - 20); }
+		Options.GetTable(ReplaceRecent, wrepl, "\f", wxTOKEN_RET_EMPTY_ALL);
 
 		for (size_t i = 0; i < wrepl.GetCount(); i++)
 		{
@@ -651,6 +693,12 @@ void FindReplace::AddRecent(){
 				wrepl.RemoveAt(i);
 				RepText->Delete(i);
 			}
+		}
+
+		size_t replaceSize = wrepl.size();
+		if (replaceSize > 20){
+			RepText->Delete(20, replaceSize - 20);
+			wrepl.RemoveAt(20, replaceSize - 20);
 		}
 
 		wrepl.Insert(text, 0);

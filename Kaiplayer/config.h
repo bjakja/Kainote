@@ -120,6 +120,7 @@
 	CG(EditboxSugestionsOnDoubleClick,)\
 	CG(EditorOn,)\
 	CG(FindRecent,)\
+	CG(FindReplaceOptions,)\
 	CG(FontCollectorAction,)\
 	CG(FontCollectorDirectory,)\
 	CG(FontCollectorFromMKV,)\
@@ -172,6 +173,7 @@
 	CG(ProgramTheme,)\
 	CG(ReplaceRecent,)\
 	CG(SelectionsRecent,)\
+	CG(SelectionsOptions,)\
 	CG(SelectVisibleLineAfterFullscreen,)\
 	CG(SpellcheckerOn,)\
 	CG(StyleEditFilterText,)\

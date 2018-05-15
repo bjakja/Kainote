@@ -457,7 +457,7 @@ int KaiChoice::FindString(const wxString &text, bool caseSensitive)
 	return list->Index(text, caseSensitive);
 }
 
-void KaiChoice::Delete(int num)
+void KaiChoice::Delete(int num, int nRemove/*=1*/)
 {
 	list->RemoveAt(num);
 }

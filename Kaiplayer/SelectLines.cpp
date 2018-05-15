@@ -28,13 +28,18 @@ SelectLines::SelectLines(kainoteFrame* kfparent)
 	Kai = kfparent;
 	wxArrayString selsRecent;
 	Options.GetTable(SelectionsRecent,selsRecent,"\f");
+	int options = Options.GetInt(SelectionsOptions);
 	if(selsRecent.size()>20){selsRecent.RemoveAt(19,selsRecent.size()-20);}
 
 	DialogSizer *slsizer= new DialogSizer(wxVERTICAL);
 	wxBoxSizer *slrbsizer= new wxBoxSizer(wxHORIZONTAL);
 	Contains = new KaiRadioButton(this, -1, _("Zawiera"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
 	NotContains = new KaiRadioButton(this, -1, _("Nie zawiera"));
-	Contains->SetValue(true);
+	if (options & NOT_CONTAINS)
+		NotContains->SetValue(true);
+	else
+		Contains->SetValue(true);
+
 	slrbsizer->Add(Contains,1,wxALL|wxEXPAND,3);
 	slrbsizer->Add(NotContains,1,wxALL|wxEXPAND,3);
 
@@ -48,7 +53,9 @@ SelectLines::SelectLines(kainoteFrame* kfparent)
 	sltpsizer->Add(ChooseStyles,0,wxALL,3);
 
 	MatchCase = new KaiCheckBox(this, -1, _("Uwzględniaj wielkość liter"));
+	MatchCase->SetValue(options & MATCH_CASE);
 	RegEx = new KaiCheckBox(this, -1, _("Wyrażenia regularne"));
+	RegEx->SetValue(options & REGULAR_EXPRESSIONS);
 
 	slsbsizer->Add(slrbsizer,0,wxEXPAND,0);
 	slsbsizer->Add(sltpsizer,0,wxEXPAND,0);
@@ -64,6 +71,19 @@ SelectLines::SelectLines(kainoteFrame* kfparent)
 	CollumnEffect = new KaiRadioButton(this, -1, _("Efekt"));
 	CollumnStartTime = new KaiRadioButton(this, -1, _("Czas Początkowy"));
 	CollumnEndTime = new KaiRadioButton(this, -1, _("Czas Końcowy"));
+	//catch first options, when there is more options it means that I did a bug or sameone change options
+	if (options & FIELD_TEXT)
+		CollumnText->SetValue(true);
+	else if (options & FIELD_STYLE)
+		CollumnStyle->SetValue(true);
+	else if (options & FIELD_ACTOR)
+		CollumnActor->SetValue(true);
+	else if (options & FIELD_EFFECT)
+		CollumnEffect->SetValue(true);
+	else if (options & FIELD_START_TIME)
+		CollumnStartTime->SetValue(true);
+	else if (options & FIELD_END_TIME)
+		CollumnEndTime->SetValue(true);
 		
 	sizer->Add(CollumnText,1,wxALL,3);
 	sizer->Add(CollumnStyle,1,wxALL,3);
@@ -76,8 +96,10 @@ SelectLines::SelectLines(kainoteFrame* kfparent)
 	KaiStaticBoxSizer* slsbsizer2=new KaiStaticBoxSizer(wxHORIZONTAL,this,_("Dialogi / komentarze"));
 
 	Dialogues = new KaiCheckBox(this, -1, _("Dialogi"));
+	Dialogues->SetValue(options & DIALOGUES || !(options & COMMENTS));
 	Comments = new KaiCheckBox(this, -1, _("Komentarze"));
-	Dialogues->SetValue(true);
+	Comments->SetValue(options & COMMENTS);
+
 	slsbsizer2->Add(Dialogues,0,wxALL,3);
 	slsbsizer2->Add(Comments,0,wxALL,3);
 
@@ -87,6 +109,8 @@ SelectLines::SelectLines(kainoteFrame* kfparent)
 	sels.Add(_("Odznacz"));
 
 	Selections = new KaiRadioBox(this,-1,_("Zaznaczenie"),wxDefaultPosition,wxDefaultSize,sels,2);
+	int SelettionsOption = options & ADD_TO_SELECTION ? 1 : options & DESELECT ? 2 : 0;
+	Selections->SetSelection(SelettionsOption);
 
 	wxArrayString action;
 	action.Add(_("Nie rób nic"));
@@ -98,6 +122,13 @@ SelectLines::SelectLines(kainoteFrame* kfparent)
 	action.Add(_("Usuń"));
 
 	Actions = new KaiRadioBox(this,-1,_("Akcja"),wxDefaultPosition,wxDefaultSize,action,2);
+	int ActionsOption = options & DO_COPY ? 1 : 
+		options & DO_CUT ? 2 : 
+		options & DO_MOVE_ON_START ? 3 : 
+		options & DO_MOVE_ON_END ? 4 : 
+		options & DO_SET_ASS_COMMENT ? 5 : 
+		options & DO_DELETE ? 6 : 0;
+	Actions->SetSelection(ActionsOption);
 
 	wxBoxSizer *slbtsizer=new wxBoxSizer(wxHORIZONTAL);
 	Select = new MappedButton(this, ID_SELECTIONS, _("Zaznacz"));
@@ -122,6 +153,48 @@ SelectLines::SelectLines(kainoteFrame* kfparent)
 	//SetEscapeId(ID_CLOSE_SELECTIONS);
 	SetEnterId(ID_SELECTIONS);
 	CenterOnParent();
+}
+
+void SelectLines::SaveOptions()
+{
+	int options = 0;
+	if (Contains->GetValue())
+		options |= CONTAINS;
+	if (NotContains->GetValue())
+		options |= NOT_CONTAINS;
+	if (MatchCase->GetValue())
+		options |= MATCH_CASE;
+	if (RegEx->GetValue())
+		options |= REGULAR_EXPRESSIONS;
+	if (CollumnText->GetValue())
+		options |= FIELD_TEXT;
+	if (CollumnStyle->GetValue())
+		options |= FIELD_STYLE;
+	if (CollumnActor->GetValue())
+		options |= FIELD_ACTOR;
+	if (CollumnEffect->GetValue())
+		options |= FIELD_EFFECT;
+	if (CollumnStartTime->GetValue())
+		options |= FIELD_START_TIME;
+	if (CollumnEndTime->GetValue())
+		options |= FIELD_END_TIME;
+	if (Dialogues->GetValue())
+		options |= DIALOGUES;
+	if (Comments->GetValue())
+		options |= COMMENTS;
+
+	int SelectResult = SELECT;
+	for (int i = 0; i < Selections->GetSelection(); i++)
+		SelectResult <<= 1;
+
+	options |= SelectResult;
+
+	int ActionsResult = DO_NOTHING;
+	for (int i = 0; i < Actions->GetSelection(); i++)
+		ActionsResult <<= 1;
+
+	options |= ActionsResult;
+	Options.SetInt(SelectionsOptions, options);
 }
 
 void SelectLines::OnSelect(wxCommandEvent & evt)

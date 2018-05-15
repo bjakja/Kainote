@@ -85,7 +85,7 @@ public:
 	int Append(const wxString &item);
 	void Append(const wxArrayString &itemsArray);
 	void PutArray(wxArrayString *arr);
-	void Delete(int num);
+	void Delete(int num, int nRemove=1);
 	void SetToolTip(const wxString &tooltip="");
 	void Sort();
 	bool SetBackgroundColour(COLOR col);

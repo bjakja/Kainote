@@ -32,10 +32,10 @@ class FindReplace: public KaiDialog
 	public:
 
 		FindReplace(kainoteFrame* kfparent, bool replace);
-		virtual ~FindReplace();
+		virtual ~FindReplace(){};
+		void SaveOptions();
 
         kainoteFrame* Kai;
-		
 		
 		MappedButton* Button4;
 		KaiRadioButton* CollumnText;
@@ -95,6 +95,18 @@ class FindReplace: public KaiDialog
 
 enum
 {
+	CASE_SENSITIVE = 1,
+	REG_EX,
+	START_OF_TEXT = 4,
+	END_OF_TEXT = 8,
+	IN_FIELD_TEXT = 16,
+	IN_FIELD_TEXT_ORIGINAL = 32,
+	IN_FIELD_STYLE = 64,
+	IN_FIELD_ACTOR = 128,
+	IN_FIELD_EFFECT = 256,
+	IN_LINES_ALL = 512,
+	IN_LINES_SELECTED = 1024,
+	IN_LINES_FROM_SELECTION = 2048,
 	ID_BREP=13737,
 	ID_BREPALL,
 	ID_BFIND,

@@ -319,10 +319,12 @@ kainoteFrame::~kainoteFrame()
 	Options.SetTable(AudioRecent, audsrec);
 	Options.SetInt(VideoVolume, GetTab()->Video->volslider->GetValue());
 
+	//destroy findreplace before saving options it saving findreplace options in destructor
+	if (FR){ FR->SaveOptions(); FR->Destroy(); FR = NULL; }
+	if (SL){ SL->SaveOptions(); SL->Destroy(); SL = NULL; }
 	Options.SaveOptions();
 
 	StyleStore::DestroyStore();
-	if (FR){ FR->Destroy(); FR = NULL; }
 	if (Auto){ delete Auto; Auto = NULL; }
 	if (fc){ delete fc; fc = NULL; }
 	SpellChecker::Destroy();
