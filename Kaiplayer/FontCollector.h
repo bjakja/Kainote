@@ -59,6 +59,7 @@ public:
 	KaiRadioBox *opts;
 	KaiTextCtrl *console;
 	MappedButton *bok;
+	MappedButton *bOpenFontFolder;
 	MappedButton *bcancel;
 	KaiCheckBox *fromMKV;
 	KaiCheckBox *subsdir;

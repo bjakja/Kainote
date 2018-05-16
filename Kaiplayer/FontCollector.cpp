@@ -26,6 +26,7 @@
 
 wxDEFINE_EVENT(EVT_APPEND_MESSAGE, wxThreadEvent);
 wxDEFINE_EVENT(EVT_ENABLE_BUTTONS, wxThreadEvent);
+wxDEFINE_EVENT(EVT_ENABLE_OPEN_FOLDER, wxThreadEvent);
 
 SubsFont::SubsFont(const wxString &_name, const LOGFONTW &_logFont, int _bold, bool _italic){
 	name           = _name; 
@@ -135,9 +136,12 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	//console->SetBackgroundColour(Options.GetColour(WindowBackground));
 	bok=new MappedButton(this,9879,_("Rozpocznij"));
 	bok->SetFocus();
+	bOpenFontFolder = new MappedButton(this, 9877, _("Folder zapisu"));
+	bOpenFontFolder->Enable(false);
 	bcancel=new MappedButton(this,wxID_CANCEL,_("Zamknij"));
 	Connect(9879,wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&FontCollectorDialog::OnButtonStart);
 	Buttons->Add(bok,0,wxLEFT|wxTOP|wxRIGHT,3);
+	Buttons->Add(bOpenFontFolder, wxTOP | wxRIGHT, 3);
 	Buttons->Add(bcancel,0,wxBOTTOM|wxTOP|wxRIGHT,3);
 
 	Main->Add(Pathc,0,wxEXPAND|wxALL,1);
@@ -155,6 +159,18 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	});
 	Bind(EVT_ENABLE_BUTTONS,[=](wxThreadEvent evt){
 		EnableControls();
+	});
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent evt){
+		wxWCharBuffer buf = (copypath.Right(4).MakeLower() == L".zip") ? copypath.BeforeLast('\\').c_str() : copypath.c_str();
+		WinStruct<SHELLEXECUTEINFO> sei;
+		sei.lpFile = buf;
+		sei.lpVerb = wxT("explore");
+		sei.nShow = SW_RESTORE;
+		sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
+		if (!ShellExecuteEx(&sei)){ wxLogStatus(_("Nie można otworzyć folderu")); }
+	}, 9877);
+	Bind(EVT_ENABLE_OPEN_FOLDER, [=](wxThreadEvent evt){
+		bOpenFontFolder->Enable();
 	});
 	SetSizerAndFit(Main);
 	CenterOnParent();
@@ -203,6 +219,9 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 	}
 	else
 	{
+		if (bOpenFontFolder->IsEnabled())
+			bOpenFontFolder->Enable(false);
+
 		bool subsfromMkv = fromMKV->GetValue();
 		bool subsDirectory = subsdir->GetValue();
 		Options.SetString(FontCollectorDirectory, path->GetValue());
@@ -861,9 +880,13 @@ wxThread::ExitCode FontCollectorThread::Entry()
 	}
 
 	wxThreadEvent *evt = new wxThreadEvent(EVT_ENABLE_BUTTONS, fc->fcd->GetId());
-	wxQueueEvent(fc->fcd, evt);
 	STime processTime(fc->sw.Time());
 	fc->SendMessageD(wxString::Format(_("\n\nZakończono w %sms"), processTime.GetFormatted(SRT)), fc->fcd->normal);
 	fc->sw.Pause();
+	wxQueueEvent(fc->fcd, evt);
+	if (fc->operation & FontCollector::COPY_FONTS || fc->operation & FontCollector::COPY_MKV_FONTS){
+		wxThreadEvent *evtof = new wxThreadEvent(EVT_ENABLE_OPEN_FOLDER, fc->fcd->GetId());
+		wxQueueEvent(fc->fcd, evtof);
+	}
 	return 0;
 }
