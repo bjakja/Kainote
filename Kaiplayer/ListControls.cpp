@@ -200,6 +200,9 @@ void KaiChoice::SetToolTip(const wxString &tooltip)
 {
 	if(tooltip!=""){toolTip=tooltip;}
 	wxString tt = (choice>=0)? toolTip + "\n" + GetString(choice) : tooltip;
+	if (tt.Len() > 1000){
+		tt = tt.Mid(0, 1000) + "...";
+	}
 	wxWindow::SetToolTip(tt);
 	if(choiceText){choiceText->SetToolTip(tt);}
 }
@@ -744,6 +747,9 @@ void PopupList::OnPaint(wxPaintEvent &event)
 			tdc.DrawRectangle(2, (height*i)+2,w-4,height-2);
 		}
 		wxString desc=(*itemsList)[scrollPos];
+		if (desc.Len() > 1000)
+			desc = desc.Mid(0, 1000);
+
 		tdc.SetTextForeground((disabledItems->find(scrollPos) != disabledItems->end())? graytext : text);
 		tdc.DrawText(desc,4,(height*i)+3);
 	}

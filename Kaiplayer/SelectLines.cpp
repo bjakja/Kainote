@@ -26,8 +26,7 @@ SelectLines::SelectLines(kainoteFrame* kfparent)
 	: KaiDialog((wxWindow*)kfparent,-1,_("Zaznacz"))
 {
 	Kai = kfparent;
-	wxArrayString selsRecent;
-	Options.GetTable(SelectionsRecent,selsRecent,"\f");
+	Options.GetTable(SelectionsRecent, selsRecent, "\f", wxTOKEN_RET_EMPTY_ALL);
 	int options = Options.GetInt(SelectionsOptions);
 	if(selsRecent.size()>20){selsRecent.RemoveAt(19,selsRecent.size()-20);}
 
@@ -329,15 +328,18 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 void SelectLines::AddRecent(){
 	wxString text=FindText->GetValue();
 
-	wxArrayString selsRecent;
-	Options.GetTable(SelectionsRecent,selsRecent,"\f");
-	if(selsRecent.size()>20){selsRecent.RemoveAt(20,selsRecent.size()-20);}
 	for(size_t i=0;i<selsRecent.GetCount();i++)
 	{
 		if(selsRecent[i]==text){
 			selsRecent.RemoveAt(i);
 			FindText->Delete(i);
 		}
+	}
+
+	size_t selsSize = selsRecent.size();
+	if (selsSize > 20){
+		FindText->Delete(20, selsSize - 20);
+		selsRecent.RemoveAt(20, selsSize - 20);
 	}
 	selsRecent.Insert(text,0);
 	FindText->Insert(text,0);

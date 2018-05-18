@@ -57,6 +57,7 @@ private:
 	void OnSelect(wxCommandEvent& event);
 	void OnChooseStyles(wxCommandEvent& event);
 	void AddRecent();
+	wxArrayString selsRecent;
 };
 
 enum{

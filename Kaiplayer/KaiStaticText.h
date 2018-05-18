@@ -37,9 +37,12 @@ private:
 	bool AcceptsFocusRecursively () const{return false;}
 	void OnScroll(wxScrollEvent& event);
 	void OnMouseScroll(wxMouseEvent &evt);
+	//void OnSize(wxSizeEvent& event);
 	
 	int textHeight;
 	int scPos;
+	wxSize originalSize;
+	//wxSize lastSize;
 	COLOR textColour;
 	wxString text;
 	KaiScrollbar *textScroll;

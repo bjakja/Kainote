@@ -49,7 +49,7 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	mstimes->SetWindowStyle(wxBORDER_NONE);
 	mstimes->SetCursor(wxCURSOR_ARROW);
 	mstimes->SetBackgroundColour(WindowBackground);
-	Videolabel = new KaiStaticText(panel, -1, "", wxPoint(644, 22));
+	Videolabel = new KaiStaticText(panel, -1, "", wxPoint(644, 22),wxSize(1200,-1));
 	Videolabel->Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){
 		panel->SetFocus();
 		evt.Skip();

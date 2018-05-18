@@ -37,10 +37,10 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	RepText = NULL;
 	StartLine = EndLine = NULL;
 	tcstyle = NULL;
-	wxArrayString wfind;
-	Options.GetTable(FindRecent, wfind, "\f", wxTOKEN_RET_EMPTY_ALL);
+
+	Options.GetTable(FindRecent, findRecent, "\f", wxTOKEN_RET_EMPTY_ALL);
 	int options = Options.GetInt(FindReplaceOptions);
-	if (wfind.size() > 20){ wfind.RemoveAt(19, wfind.size() - 20); }
+	if (findRecent.size() > 20){ findRecent.RemoveAt(19, findRecent.size() - 20); }
 
 	wxIcon icn;
 	icn.CopyFromBitmap(CreateBitmapFromPngResource("SEARCH"));
@@ -54,19 +54,18 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	//pionowy sizer kolumna 1
 	//KaiStaticBoxSizer* frsbsizer=new KaiStaticBoxSizer(wxVERTICAL,this,_("Znajdź"));
 	wxBoxSizer* frsbsizer = new wxBoxSizer(wxHORIZONTAL);
-	FindText = new KaiChoice(this, ID_FINDTEXT, "", wxDefaultPosition, wxDefaultSize, wfind);
+	FindText = new KaiChoice(this, ID_FINDTEXT, "", wxDefaultPosition, wxDefaultSize, findRecent);
 	FindText->SetToolTip(_("Szukany tekst:"));
 	FindText->SetMaxLength(MAXINT);
 	frsbsizer->Add(new KaiStaticText(this, -1, _("Szukany tekst:")), 1, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxRIGHT, 4, 0);
 	frsbsizer->Add(FindText, 4, wxEXPAND, 0);
 	mainfrbsizer1->Add(frsbsizer, 0, wxEXPAND | wxALL, 3);
 
-	wxArrayString wrepl;
-	Options.GetTable(ReplaceRecent, wrepl, "\f", wxTOKEN_RET_EMPTY_ALL);
-	if (wrepl.size() > 20){ wrepl.RemoveAt(19, wrepl.size() - 20); }
+	Options.GetTable(ReplaceRecent, replaceRecent, "\f", wxTOKEN_RET_EMPTY_ALL);
+	if (replaceRecent.size() > 20){ replaceRecent.RemoveAt(19, replaceRecent.size() - 20); }
 	wxBoxSizer *ReplaceStaticSizer = new wxBoxSizer(wxHORIZONTAL);
 	//ReplaceStaticSizer=new KaiStaticBoxSizer(wxVERTICAL,this,_("Zamień"));
-	RepText = new KaiChoice(this, ID_REPTEXT, "", wxDefaultPosition, wxDefaultSize, wrepl);
+	RepText = new KaiChoice(this, ID_REPTEXT, "", wxDefaultPosition, wxDefaultSize, replaceRecent);
 	RepText->SetToolTip(_("Zamień na:"));
 	RepText->SetMaxLength(MAXINT);
 	repDescText = new KaiStaticText(this, -1, _("Zamień na:"));
@@ -628,12 +627,13 @@ void FindReplace::Find()
 		}
 		else{ postxt = 0; posrow++; }
 		if (!foundsome && posrow > Subs->dials.size() - 1){
-			blockTextChange = true;
+			/*blockTextChange = true;
 			if (KaiMessageBox(_("Wyszukiwanie zakończone, rozpocząć od początku?"), _("Potwierdzenie"),
-				wxICON_QUESTION | wxYES_NO, this) == wxYES){
-				posrow = 0;//foundsome=true;
+			wxICON_QUESTION | wxYES_NO, this) == wxYES){
+			posrow = 0;
 			}
-			else{ posrow = 0; foundsome = true; break; }
+			else{ posrow = 0; foundsome = true; break; }*/
+			break;
 		}
 	}
 	if (!foundsome){
@@ -666,46 +666,47 @@ void FindReplace::OnStylesWin(wxCommandEvent& event)
 void FindReplace::AddRecent(){
 	wxString text = FindText->GetValue();
 
-
-	wxArrayString wfind;
-	Options.GetTable(FindRecent, wfind, "\f", wxTOKEN_RET_EMPTY_ALL);
-	if (wfind.size() > 20){ wfind.RemoveAt(20, wfind.size() - 20); }
-	for (size_t i = 0; i < wfind.GetCount(); i++)
+	for (size_t i = 0; i < findRecent.GetCount(); i++)
 	{
-		if (wfind[i] == text){
-			wfind.RemoveAt(i);
+		if (findRecent[i] == text){
+			findRecent.RemoveAt(i);
 			FindText->Delete(i);
 		}
 	}
-	wfind.Insert(text, 0);
+
+	size_t findSize = findRecent.size();
+	if (findSize > 20){ 
+		FindText->Delete(20, findSize - 20);
+		findRecent.RemoveAt(20, findSize - 20);
+	}
+
+	findRecent.Insert(text, 0);
 	FindText->Insert(text, 0);
 
 	FindText->SetSelection(0);
-	Options.SetTable(FindRecent, wfind, "\f");
+	Options.SetTable(FindRecent, findRecent, "\f");
 	if (repl){
 		wxString text = RepText->GetValue();
-		wxArrayString wrepl;
-		Options.GetTable(ReplaceRecent, wrepl, "\f", wxTOKEN_RET_EMPTY_ALL);
 
-		for (size_t i = 0; i < wrepl.GetCount(); i++)
+		for (size_t i = 0; i < replaceRecent.GetCount(); i++)
 		{
-			if (wrepl[i] == text){
-				wrepl.RemoveAt(i);
+			if (replaceRecent[i] == text){
+				replaceRecent.RemoveAt(i);
 				RepText->Delete(i);
 			}
 		}
 
-		size_t replaceSize = wrepl.size();
+		size_t replaceSize = replaceRecent.size();
 		if (replaceSize > 20){
 			RepText->Delete(20, replaceSize - 20);
-			wrepl.RemoveAt(20, replaceSize - 20);
+			replaceRecent.RemoveAt(20, replaceSize - 20);
 		}
 
-		wrepl.Insert(text, 0);
+		replaceRecent.Insert(text, 0);
 		RepText->Insert(text, 0);
 
 		RepText->SetSelection(0);
-		Options.SetTable(ReplaceRecent, wrepl, "\f");
+		Options.SetTable(ReplaceRecent, replaceRecent, "\f");
 	}
 
 }

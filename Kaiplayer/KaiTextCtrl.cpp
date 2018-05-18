@@ -303,21 +303,6 @@ void KaiTextCtrl::CalcWrap(bool sendevent)
 				else if (0 >= j - podz + 1){ 
 					j = allwrap = podz + 1; 
 				}
-				//else if (i != j){
-				//	size_t res = KText.find(' ', j);
-				//	if (res != -1 && res>podz && res<i){
-				//		nwrap = j;
-				//		j = res;
-				//		//if (KText[j] == ' ' || KText[j] == '\n'){ nwrap++; }
-				//	}
-				//	else{
-				//		j++; 
-				//	}
-				//	continue;
-				//}
-				//if (nwrap < 0 && allwrap < 0){
-					//j++; continue;
-				//}
 				size_t wwrap = (nwrap != -1 && i != j) ? nwrap : allwrap + 1;
 				if (stylewrap){
 					GetTextExtent(KText.Mid(podz, wwrap - podz), &fw, &fh);
@@ -885,7 +870,23 @@ void KaiTextCtrl::DrawFld(wxDC &dc,int w, int h, int windoww, int windowh)
 			line.Replace("\n", "");
 			line.Replace("\t", "        ");
 			dc.SetTextForeground((enabled) ? fg : textInactive);
-			dc.DrawText(line, positioning[i] + tmpPosX, tmpPosY);
+			size_t tlen = line.Len();
+			int posx = positioning[i] + tmpPosX;
+			if (posx > -100){
+				dc.DrawText(line.Mid(0, (1000 < tlen) ? 1000 : wxString::npos), posx, tmpPosY);
+			}
+			else{
+				int tmpfw = 0;
+				size_t startPos = 0;
+				while (posx < -200){
+					GetTextExtent(line.Mid(startPos, 50), &tmpfw, NULL);
+					if (posx + tmpfw > 0)
+						break;
+					posx += tmpfw;
+					startPos += 50;
+				}
+				dc.DrawText(line.Mid(startPos, (startPos + 1000 < tlen) ? 1000 : wxString::npos), posx, tmpPosY);
+			}
 		}
 
 		tmpPosY+=Fheight;

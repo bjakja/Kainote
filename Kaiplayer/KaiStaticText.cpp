@@ -26,9 +26,9 @@ KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, co
 	, textScroll(NULL)
 	, scPos(0)
 {
-	int fullw=0;
-	int windowHeight = 0;
-	wxSize newSize = size;
+	int fullw = size.x;
+	int windowHeight = size.y;
+	wxSize newSize = originalSize = size;
 	CalculateSize(&fullw, &windowHeight);
 	
 	if(size.x <1){
@@ -48,41 +48,84 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 {
 	int fullw = 0;
 	textHeight = 0;
-	int mainTextPos = 0;
-	int textDiff = 0;
-	wxStringTokenizer tokenizer(text, "\n", wxTOKEN_RET_EMPTY_ALL);
-	while (tokenizer.HasMoreTokens()){
-		wxString token = tokenizer.GetNextToken();
+	if (text.empty())
+		GetTextExtent(L"|", &fullw, &textHeight, 0, 0, &GetFont());
+	else{
 		int fw, fh;
-		GetTextExtent((token == "") ? L"|" : token, &fw, &fh, 0, 0, &GetFont());
-		textHeight += fh;
-		if (fw > 600){
-			wxStringTokenizer tokenizer1(token, " \\/,.-()[]", wxTOKEN_STRTOK);
-			int lastPosition = 0; fw = 0;
-			while (tokenizer1.HasMoreTokens()){
-				if (fw > 500){
-					text.insert(mainTextPos + lastPosition + textDiff, '\n');
-					textDiff++;
+		int newWrap = -1;
+		//int allwrap = -1;
+		int currentPosition = 0;
+		bool seekSpace = true;
+		int mesureSize = (*w > 10)? *w : 600;
+		size_t i = 0;
+		size_t len = text.Len();
+		while (i < len){
+			size_t nfound = text.find(wxUniChar('\n'), i);
+			i = (nfound != -1) ? nfound : len - 1;
+			GetTextExtent(text.Mid(currentPosition, i - currentPosition + 1), &fw, &fh);
+			if (fw > mesureSize){
+				size_t j = currentPosition+1;
+				bool foundWrap = false;
+				fullw = mesureSize;
+				size_t textPosition = currentPosition;
+				int currentFW = 0;
+				while (currentPosition < i)
+				{
+					size_t spacePos = text.find(wxUniChar(' '), j);
+					if (spacePos == -1 || currentPosition >= spacePos)
+						spacePos = i;
+
+					j = spacePos + 1;
+					GetTextExtent(text.Mid(textPosition, spacePos - textPosition + 1), &fw, &fh);
+					textPosition = spacePos+1;
+					currentFW += fw;
+					if (currentFW <= mesureSize){
+						newWrap = j;
+						foundWrap = true;
+						if (j<i)
+							continue;
+					}
+					else if (currentFW > mesureSize && !foundWrap){
+						j = (currentPosition + 30 < i) ? currentPosition + 30 : currentPosition + 1;
+						fw = 0;
+						while (fw <= mesureSize){
+							GetTextExtent(text.Mid(currentPosition, j - currentPosition + 1), &fw, &fh);
+							j++;
+						}
+						j--;
+						newWrap = j;
+					}
+					currentPosition = textPosition = newWrap;
+					currentFW = 0;
+					text.insert(newWrap, 1, L'\n');
+					currentPosition++;
+					i++;
+					j = currentPosition+1;
+					foundWrap = false;
 					textHeight += fh;
-					break;
 				}
-				tokenizer1.GetNextToken();
-				lastPosition = tokenizer1.GetPosition();
-				GetTextExtent(token.SubString(0, lastPosition), &fw, &fh, 0, 0, &GetFont());
+				
 			}
+			else{
+				if (fullw < fw){ 
+					fullw = fw; 
+				}
+				textHeight += fh;
+			}
+			i++;
 		}
-		mainTextPos = tokenizer.GetPosition();
-		if (fullw < fw){ fullw = fw; }
+			
 	}
+	int heightMesure = (*h>0) ? *h : 600;
 	*h = textHeight;
-	if (textHeight > 400){ *h = 400; fullw += 20; }
+	if (textHeight > heightMesure){ *h = heightMesure; fullw += 20; }
 	*w = fullw;
 }
 
 void KaiStaticText::SetLabelText(const wxString &_text){
 	text = _text; 
-	int fullw=0;
-	int windowHeight = 0;
+	int fullw = originalSize.x;
+	int windowHeight = originalSize.y;
 	wxSize size=GetClientSize();
 	CalculateSize(&fullw, &windowHeight);
 	if (size.x != fullw || size.y != windowHeight){
@@ -164,7 +207,21 @@ void KaiStaticText::OnMouseScroll(wxMouseEvent &evt)
 	evt.Skip();
 }
 
+//void KaiStaticText::OnSize(wxSizeEvent& event)
+//{
+//	if (lastSize != event.GetSize()){
+//		int fullw = originalSize.x;
+//		int windowHeight = originalSize.y;
+//		CalculateSize(&fullw, &windowHeight);
+//		
+//		Refresh(false);
+//		lastSize = event.GetSize();
+//	}
+//}
+
 BEGIN_EVENT_TABLE(KaiStaticText, wxWindow)
 EVT_COMMAND_SCROLL(9999, KaiStaticText::OnScroll)
 EVT_MOUSEWHEEL(KaiStaticText::OnMouseScroll)
 END_EVENT_TABLE()
+
+//EVT_SIZE(KaiStaticText::OnSize)
