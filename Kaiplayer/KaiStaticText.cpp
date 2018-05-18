@@ -111,6 +111,7 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 					fullw = fw; 
 				}
 				textHeight += fh;
+				currentPosition = i + 1;
 			}
 			i++;
 		}

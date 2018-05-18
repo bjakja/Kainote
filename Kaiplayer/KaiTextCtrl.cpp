@@ -169,8 +169,10 @@ void KaiTextCtrl::AppendText(const wxString &text)
 		KText.Replace("\r","");
 		KText.Replace("\n","");
 	}
-	//CalcWrap(false, len); Refresh(false);
-	timer.Start(10, true);
+	CalcWrap(false, (len<1) ? 0 : (KText[len - 1] == L'\n')? len : len - 1); 
+	Cursor.x = Selend.x = KText.Len() - 1;
+	Cursor.y = Selend.y = FindY(Cursor.x);
+	MakeCursorVisible();
 }
 
 void KaiTextCtrl::AppendTextWithStyle(const wxString &text, const wxColour &color)
@@ -253,74 +255,118 @@ void KaiTextCtrl::DeleteStyles(size_t textStart, size_t textEnd)
 	}
 }
 
-void KaiTextCtrl::CalcWrap(bool sendevent)
+void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 {
 	//Wrapped=KText;
 	long multiline = (style & wxTE_MULTILINE);
-	wraps.clear();
-	wraps.Add(0);
-	positioning.clear();
-	positioning.Add(0);
+	
 	int w,h,fw=0,fh=0;
 	GetSize(&w,&h);
 	wxMemoryDC dc((bmp) ? *bmp : wxBitmap(10, 10));
 	dc.SetFont(font);
 	if(KText!="" && multiline){
-		int podz = 0;
-		//wxString wrapchars=" \\,;}{()\n\r";
-		size_t i = 0;
-		int nwrap=-1;
-		int allwrap=-1;
+		for (size_t p = 1; p < wraps.size(); p++){
+			if (position <= wraps[p]){
+				wraps.erase(wraps.begin() + p, wraps.end());
+				break;
+			}
+		}
+		size_t currentPosition = wraps[wraps.size()-1];
+		size_t i = currentPosition;
+		int newWrap=-1;
 		size_t len = KText.Len();
-		bool seekSpace = true;
-		int mesureSize = w - 10;
-		if (mesureSize <= 10){ for (size_t i = 1; i < len; i++){ wraps.Add(i);  positioning.Add(5); return; } }
+		int mesureSize = w - 20;
+		if (mesureSize <= 10){ for (size_t t = 1; t < len; t++){ wraps.push_back(t);  positioning.push_back(5); return; } }
 		int stylewrap = (style & wxALIGN_CENTER_HORIZONTAL) ? 1 : (style & wxALIGN_RIGHT) ? 2 : 0;
 		int pos = 5;
 		while (i < len)
 		{
 			size_t nfound = KText.find(wxUniChar('\n'), i);
 			i = (nfound != -1) ? nfound : len - 1;
-			size_t j = i;
-			while (podz < i)
-			{
-				GetTextExtent(KText.Mid(podz, j-podz+1), &fw, &fh);
+			GetTextExtent(KText.Mid(currentPosition, i - currentPosition + 1), &fw, &fh);
+			if (fw > mesureSize){
+				size_t j = currentPosition + 1;
+				bool foundWrap = false;
+				size_t textPosition = currentPosition;
+				int currentFW = 0;
+				while (currentPosition < i)
+				{
+					size_t spacePos = KText.find(wxUniChar(' '), j);
+					if (spacePos == -1 || currentPosition >= spacePos)
+						spacePos = i;
 
-				allwrap = j;
-				if (fw >= mesureSize){
-					if (seekSpace){
-						size_t res = KText.rfind(wxUniChar(' '), j);
-						if (res != -1 && res > podz){
-							j = res-1;
-							nwrap = j+2;
+					j = spacePos + 1;
+					GetTextExtent(KText.Mid(textPosition, spacePos - textPosition + 1), &fw, &fh);
+					textPosition = spacePos + 1;
+					currentFW += fw;
+					if (currentFW <= mesureSize){
+						newWrap = j;
+						foundWrap = true;
+						if (j<i)
 							continue;
-						}
 					}
-					seekSpace = false;
-					j--;
-					continue;
+					else if (currentFW > mesureSize && !foundWrap){
+						j = (currentPosition + 30 < i) ? currentPosition + 30 : currentPosition + 1;
+						int step = 10;
+						fw = 0;
+						int newmessure = mesureSize-12;
+						while (j <= spacePos){
+							GetTextExtent(KText.Mid(currentPosition, j - currentPosition + 1), &fw, &fh);
+							if (fw > newmessure){
+								if (step == 10){
+									step = 1;
+									j -= 10;
+								}
+								else if (j< spacePos){
+									if (stylewrap){
+										GetTextExtent(KText.Mid(currentPosition, j - currentPosition + 1), &fw, &fh);
+										pos = (stylewrap == 1) ? ((w - fw) / 2) : (w - fw) - 5;
+									}
+									positioning.Add(pos);
+									wraps.push_back(j);
+									currentPosition = j+1;
+									step = 10;
+								}
+								else{
+									break;
+								}
+							}
+							j += step;
+						}
+						//j--;
+						newWrap = spacePos+1;
+					}
+					currentPosition = textPosition = newWrap;
+					currentFW = 0;
+					if (stylewrap){
+						GetTextExtent(KText.Mid(currentPosition, newWrap - currentPosition + 1), &fw, &fh);
+						pos = (stylewrap == 1) ? ((w - fw) / 2) : (w - fw) - 5;
+					}
+					positioning.Add(pos);
+					wraps.push_back((newWrap > len) ? len : newWrap);
+					currentPosition = newWrap;
+					foundWrap = false;
+					j = currentPosition + 1;
 				}
-				else if (0 >= j - podz + 1){ 
-					j = allwrap = podz + 1; 
-				}
-				size_t wwrap = (nwrap != -1 && i != j) ? nwrap : allwrap + 1;
+			}
+			else{
+				size_t wrap = i + 1;
 				if (stylewrap){
-					GetTextExtent(KText.Mid(podz, wwrap - podz), &fw, &fh);
-					pos = (style == 1) ? ((w - fw) / 2) : (w - fw) - 5;
+					GetTextExtent(KText.Mid(currentPosition, wrap - currentPosition + 1), &fw, &fh);
+					pos = (stylewrap == 1) ? ((w - fw) / 2) : (w - fw) - 5;
 				}
 				positioning.Add(pos);
-				wraps.Add((wwrap > len) ? len : wwrap);
-				podz = wwrap;
-				nwrap = -1;
-				allwrap = -1;
-				seekSpace = true;
-				j = i;
+				wraps.push_back(wrap);
+				currentPosition = wrap;
 			}
 			i++;
-			
 		}
 	}else{
-		wraps.Add(KText.Len());
+		wraps.clear();
+		wraps.push_back(0);
+		positioning.clear();
+		positioning.Add(0);
+		wraps.push_back(KText.Len());
 		GetTextExtent(KText, &fw, &fh);
 		int rightPos = (w - fw);
 		int pos = (style & wxALIGN_CENTER_HORIZONTAL)? (rightPos/2) : 

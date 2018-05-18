@@ -81,7 +81,7 @@ protected:
 	void OnScroll(wxScrollWinEvent& event);
 	void DrawFld(wxDC &dc,int w, int h, int windoww, int windowh);
 	bool HitTest(wxPoint pos, wxPoint *cur);
-	void CalcWrap(bool sendevent=true);
+	void CalcWrap(bool sendevent=true, size_t position = 0);
 	void SendEvent();
 	void FindWord(int pos,int *start, int *end);
 	void GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight, bool correct=false);
@@ -104,7 +104,7 @@ protected:
 	int fsize;
 	int tmpstart, tmpend;
 	size_t maxSize;
-	wxArrayInt wraps;
+	std::vector<int> wraps;
 	wxArrayInt positioning;
 	std::vector<TextStyle> textStyles;
 	std::vector<int> charmap;

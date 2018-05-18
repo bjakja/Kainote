@@ -140,9 +140,9 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	bOpenFontFolder->Enable(false);
 	bcancel=new MappedButton(this,wxID_CANCEL,_("Zamknij"));
 	Connect(9879,wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&FontCollectorDialog::OnButtonStart);
-	Buttons->Add(bok,0,wxLEFT|wxTOP|wxRIGHT,3);
-	Buttons->Add(bOpenFontFolder, wxTOP | wxRIGHT, 3);
-	Buttons->Add(bcancel,0,wxBOTTOM|wxTOP|wxRIGHT,3);
+	Buttons->Add(bok,0,wxALL,5);
+	Buttons->Add(bOpenFontFolder, wxTOP | wxBOTTOM , 5);
+	Buttons->Add(bcancel,0,wxBOTTOM|wxTOP|wxLEFT,5);
 
 	Main->Add(Pathc,0,wxEXPAND|wxALL,1);
 	Main->Add(opts,0,wxEXPAND);

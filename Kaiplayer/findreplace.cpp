@@ -40,7 +40,7 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 
 	Options.GetTable(FindRecent, findRecent, "\f", wxTOKEN_RET_EMPTY_ALL);
 	int options = Options.GetInt(FindReplaceOptions);
-	if (findRecent.size() > 20){ findRecent.RemoveAt(19, findRecent.size() - 20); }
+	if (findRecent.size() > 20){ findRecent.RemoveAt(20, findRecent.size() - 20); }
 
 	wxIcon icn;
 	icn.CopyFromBitmap(CreateBitmapFromPngResource("SEARCH"));
@@ -59,10 +59,10 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	FindText->SetMaxLength(MAXINT);
 	frsbsizer->Add(new KaiStaticText(this, -1, _("Szukany tekst:")), 1, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxRIGHT, 4, 0);
 	frsbsizer->Add(FindText, 4, wxEXPAND, 0);
-	mainfrbsizer1->Add(frsbsizer, 0, wxEXPAND | wxALL, 3);
+	mainfrbsizer1->Add(frsbsizer, 0, wxEXPAND | wxALL, 4);
 
 	Options.GetTable(ReplaceRecent, replaceRecent, "\f", wxTOKEN_RET_EMPTY_ALL);
-	if (replaceRecent.size() > 20){ replaceRecent.RemoveAt(19, replaceRecent.size() - 20); }
+	if (replaceRecent.size() > 20){ replaceRecent.RemoveAt(20, replaceRecent.size() - 20); }
 	wxBoxSizer *ReplaceStaticSizer = new wxBoxSizer(wxHORIZONTAL);
 	//ReplaceStaticSizer=new KaiStaticBoxSizer(wxVERTICAL,this,_("Zamień"));
 	RepText = new KaiChoice(this, ID_REPTEXT, "", wxDefaultPosition, wxDefaultSize, replaceRecent);
@@ -71,7 +71,7 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	repDescText = new KaiStaticText(this, -1, _("Zamień na:"));
 	ReplaceStaticSizer->Add(repDescText, 1, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxRIGHT, 4);
 	ReplaceStaticSizer->Add(RepText, 4, wxEXPAND, 0);
-	mainfrbsizer1->Add(ReplaceStaticSizer, 0, wxEXPAND | wxALL, 3);
+	mainfrbsizer1->Add(ReplaceStaticSizer, 0, wxEXPAND | wxALL, 4);
 
 	wxBoxSizer* frbsizer1 = new wxBoxSizer(wxVERTICAL);
 	MatchCase = new KaiCheckBox(this, -1, _("Uwzględniaj wielkość liter"));
@@ -125,7 +125,7 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	//połączenie wcześniejszego sizera z znajdź i zmień
 	//dwie poniższe linijki są na samym początku
 
-	mainfrbsizer1->Add(mainfrbsizer2, 0, wxEXPAND | wxLEFT | wxRIGHT, 3);
+	mainfrbsizer1->Add(mainfrbsizer2, 0, wxEXPAND | wxLEFT, 1);
 
 	//pionowy sizer kolumna 2
 	wxBoxSizer* frbsizer = new wxBoxSizer(wxVERTICAL);
@@ -143,7 +143,7 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	frbsizer->Add(Button4, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
 
 	//łączenie całości znajdowania i opcji z przyciskami
-	mainfrbsizer3->Add(mainfrbsizer1, 0, wxEXPAND | wxRIGHT, 3);
+	mainfrbsizer3->Add(mainfrbsizer1, 0, wxEXPAND | wxRIGHT, 2);
 	mainfrbsizer3->Add(frbsizer, 0, wxEXPAND | wxLEFT, 3);
 
 	//poziomy sizer spód
@@ -175,7 +175,7 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	frsbsizer3->Add(frbsizer4, 0, wxALL, 2);
 
 	mainfrbsizer->Add(mainfrbsizer3, 0, wxEXPAND | wxALL, 5);
-	mainfrbsizer->Add(frsbsizer3, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 8);
+	mainfrbsizer->Add(frsbsizer3, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
 
 	//Ustawienie sizera
 	//SetSizerAndFit(mainfrbsizer);
@@ -675,15 +675,16 @@ void FindReplace::AddRecent(){
 	}
 
 	size_t findSize = findRecent.size();
-	if (findSize > 20){ 
+
+	findRecent.Insert(text, 0);
+	FindText->Insert(text, 0);
+	FindText->SetSelection(0);
+
+	if (findSize >= 20){
 		FindText->Delete(20, findSize - 20);
 		findRecent.RemoveAt(20, findSize - 20);
 	}
 
-	findRecent.Insert(text, 0);
-	FindText->Insert(text, 0);
-
-	FindText->SetSelection(0);
 	Options.SetTable(FindRecent, findRecent, "\f");
 	if (repl){
 		wxString text = RepText->GetValue();
@@ -697,15 +698,16 @@ void FindReplace::AddRecent(){
 		}
 
 		size_t replaceSize = replaceRecent.size();
+		
+		replaceRecent.Insert(text, 0);
+		RepText->Insert(text, 0);
+		RepText->SetSelection(0);
+
 		if (replaceSize > 20){
 			RepText->Delete(20, replaceSize - 20);
 			replaceRecent.RemoveAt(20, replaceSize - 20);
 		}
 
-		replaceRecent.Insert(text, 0);
-		RepText->Insert(text, 0);
-
-		RepText->SetSelection(0);
 		Options.SetTable(ReplaceRecent, replaceRecent, "\f");
 	}
 

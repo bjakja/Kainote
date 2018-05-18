@@ -28,7 +28,7 @@ SelectLines::SelectLines(kainoteFrame* kfparent)
 	Kai = kfparent;
 	Options.GetTable(SelectionsRecent, selsRecent, "\f", wxTOKEN_RET_EMPTY_ALL);
 	int options = Options.GetInt(SelectionsOptions);
-	if(selsRecent.size()>20){selsRecent.RemoveAt(19,selsRecent.size()-20);}
+	if(selsRecent.size()>20){selsRecent.RemoveAt(20,selsRecent.size()-20);}
 
 	DialogSizer *slsizer= new DialogSizer(wxVERTICAL);
 	wxBoxSizer *slrbsizer= new wxBoxSizer(wxHORIZONTAL);
@@ -337,14 +337,15 @@ void SelectLines::AddRecent(){
 	}
 
 	size_t selsSize = selsRecent.size();
+	
+	selsRecent.Insert(text,0);
+	FindText->Insert(text,0);
+	FindText->SetSelection(0);
+
 	if (selsSize > 20){
 		FindText->Delete(20, selsSize - 20);
 		selsRecent.RemoveAt(20, selsSize - 20);
 	}
-	selsRecent.Insert(text,0);
-	FindText->Insert(text,0);
-
-	FindText->SetSelection(0);
 	Options.SetTable(SelectionsRecent,selsRecent,"\f");
 }
 
