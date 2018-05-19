@@ -17,7 +17,7 @@
 #include "KainoteMain.h"
 #include "KaiMessageBox.h"
 #include "Stylelistbox.h"
-#include <wx/regex.h>
+//#include <wx/regex.h>
 #include <wx/clipbrd.h>
 
 
@@ -27,8 +27,8 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
 	Kai = kfparent;
-	lastActive = reprow = posrow = 0;
-	postxt = 0;
+	lastActive = reprow = linePosition = 0;
+	textPosition = 0;
 	findstart = -1;
 	findend = -1;
 	fnext = blockTextChange = false;
@@ -438,30 +438,65 @@ void FindReplace::OnButtonRep(wxCommandEvent& event)
 	SubsGrid *grid = tab->Grid;
 
 	Dialogue *Dialc = grid->CopyDialogueByKey(reprow);
+	bool hasRegEx = RegEx->GetValue();
 
 	if (wrep == STYLE){
 		wxString oldstyle = Dialc->Style;
-		oldstyle.Remove(findstart, findend - findstart);
-		oldstyle.insert(findstart, rep);
+		if (hasRegEx && rgx.IsValid()){
+			wxString place = oldstyle.Mid(findstart, findend - findstart);
+			int reps = rgx.Replace(&place, rep, 1);
+			oldstyle.replace(findstart, findend - findstart, (reps)? place : rep);
+		}
+		else{
+			oldstyle.replace(findstart, findend - findstart, rep);
+		}
+		tab->Edit->StyleChoice->SetSelection(tab->Edit->StyleChoice->FindString(oldstyle));
 		Dialc->Style = oldstyle;
 	}
 	else if (wrep == TXT || wrep == TXTTL){
 		MTextEditor *tmp = (searchInOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
-		tmp->Replace(findstart, findend, rep);
-		Dialc->Text = tmp->GetValue();
+		wxString oldtext = tmp->GetValue();
+		if (hasRegEx && rgx.IsValid()){
+			wxString place = oldtext.Mid(findstart, findend - findstart);
+			int reps = rgx.Replace(&place, rep, 1);
+			oldtext.replace(findstart, findend - findstart, (reps) ? place : rep);
+		}
+		else{
+			oldtext.replace(findstart, findend - findstart, rep);
+		}
+		tmp->SetTextS(oldtext);
+		Dialc->Text = oldtext;
 	}
 	else if (wrep == ACTOR){
-		tab->Edit->ActorEdit->choiceText->Replace(findstart, findend, rep);
-		Dialc->Actor = tab->Edit->ActorEdit->GetValue();
+		wxString oldtext = tab->Edit->ActorEdit->choiceText->GetValue();
+		if (hasRegEx && rgx.IsValid()){
+			wxString place = oldtext.Mid(findstart, findend - findstart);
+			int reps = rgx.Replace(&place, rep, 1);
+			oldtext.replace(findstart, findend - findstart, (reps) ? place : rep);
+		}
+		else{
+			oldtext.replace(findstart, findend - findstart, rep);
+		}
+		tab->Edit->ActorEdit->choiceText->SetValue(oldtext);
+		Dialc->Actor = oldtext;
 	}
 	else if (wrep == EFFECT){
-		tab->Edit->EffectEdit->choiceText->Replace(findstart, findend, rep);
-		Dialc->Effect = tab->Edit->EffectEdit->GetValue();
+		wxString oldtext = tab->Edit->EffectEdit->choiceText->GetValue();
+		if (hasRegEx && rgx.IsValid()){
+			wxString place = oldtext.Mid(findstart, findend - findstart);
+			int reps = rgx.Replace(&place, rep, 1);
+			oldtext.replace(findstart, findend - findstart, (reps) ? place : rep);
+		}
+		else{
+			oldtext.replace(findstart, findend - findstart, rep);
+		}
+		tab->Edit->EffectEdit->choiceText->SetValue(oldtext);
+		Dialc->Effect = oldtext;
 	}
 
 	grid->SetModified(REPLACE_SINGLE);
 	grid->Refresh(false);
-	postxt = findstart + rep.Len();
+	textPosition = findstart + rep.Len();
 	Find();
 }
 
@@ -493,13 +528,13 @@ void FindReplace::Find()
 	//Kai->Freeze();
 
 	wxString txt;
-	int mwhere = -1;
+	int foundPosition = -1;
 	size_t mlen = 0;
 	bool foundsome = false;
 	if (fromstart){
 		int fsel = tab->Grid->FirstSelection();
-		posrow = (!AllLines->GetValue() && fsel >= 0) ? fsel : 0;
-		postxt = 0;
+		linePosition = (!AllLines->GetValue() && fsel >= 0) ? fsel : 0;
+		textPosition = 0;
 	}
 	wxString styll = tcstyle->GetValue();
 	bool styles = false;
@@ -510,14 +545,14 @@ void FindReplace::Find()
 	bool onlysel = SelectedLines->GetValue();
 	File *Subs = tab->Grid->file->GetSubs();
 
-	while (posrow < Subs->dials.size())
+	while (linePosition < Subs->dials.size())
 	{
-		Dialogue *Dial = Subs->dials[posrow];
-		if (!Dial->isVisible){ posrow++; postxt = 0; continue; }
+		Dialogue *Dial = Subs->dials[linePosition];
+		if (!Dial->isVisible){ linePosition++; textPosition = 0; continue; }
 
 		if ((!styles && !onlysel) ||
 			(styles && styll.Find(";" + Dial->Style + ";") != -1) ||
-			(onlysel && tab->Grid->file->IsSelectedByKey(posrow))){
+			(onlysel && tab->Grid->file->IsSelectedByKey(linePosition))){
 			if (wrep == STYLE){
 				txt = Dial->Style;
 			}
@@ -535,26 +570,29 @@ void FindReplace::Find()
 			if (!(startline || endline) && (find1.empty() || txt.empty()))
 			{
 				if (txt.empty() && find1.empty()){
-					mwhere = 0; mlen = 0;
+					foundPosition = 0; mlen = 0;
 				}
-				else{ postxt = 0; posrow++; continue; }
+				else{ textPosition = 0; linePosition++; continue; }
 
 			}
 			else if (regex){
 				int rxflags = wxRE_ADVANCED;
 				if (!matchcase){ rxflags |= wxRE_ICASE; }
-				wxRegEx rgx(find1, rxflags);
+				rgx.Compile(find1, rxflags);
 				if (rgx.IsValid()) {
-					wxString cuttext = txt.Mid(postxt);
+					wxString cuttext = txt.Mid(textPosition);
 					if (rgx.Matches(cuttext)) {
-						wxString reslt = rgx.GetMatch(cuttext, 0);
+						/*wxString reslt = rgx.GetMatch(cuttext, 0);
 						if (reslt == ""){ mwhere = -1; mlen = 0; }
 						else{
 							mwhere = cuttext.Find(reslt) + postxt;
 							mlen = reslt.Len();
-						}
+						}*/
+						size_t regexStart = 0;
+						rgx.GetMatch(&regexStart, &mlen, 0);
+						foundPosition = regexStart + textPosition;
 					}
-					else{ postxt = 0; posrow++; continue; }
+					else{ textPosition = 0; linePosition++; continue; }
 
 				}
 
@@ -564,34 +602,34 @@ void FindReplace::Find()
 				wxString lfind = (!matchcase) ? find1.Lower() : find1;
 				if (startline){
 					if (ltext.StartsWith(lfind) || lfind.empty()){
-						mwhere = 0;
-						postxt = 0;
+						foundPosition = 0;
+						textPosition = 0;
 					}
 					else{
-						mwhere = -1;
+						foundPosition = -1;
 					}
 				}
 				if (endline){
 					if (ltext.EndsWith(lfind) || lfind.empty()){
-						mwhere = txt.Len() - lfind.Len();
-						postxt = 0;
+						foundPosition = txt.Len() - lfind.Len();
+						textPosition = 0;
 					}
 					else{
-						mwhere = -1;
+						foundPosition = -1;
 					}
 				}
 				else{
-					mwhere = ltext.find(lfind, postxt);
+					foundPosition = ltext.find(lfind, textPosition);
 				}
 				mlen = lfind.Len();
 			}
 
-			if (mwhere != -1){
-				postxt = mwhere + mlen;
-				findstart = mwhere;
-				findend = postxt;
-				lastActive = reprow = posrow;
-				int posrowId = tab->Grid->file->GetElementByKey(posrow);
+			if (foundPosition != -1){
+				textPosition = foundPosition + mlen;
+				findstart = foundPosition;
+				findend = textPosition;
+				lastActive = reprow = linePosition;
+				int posrowId = tab->Grid->file->GetElementByKey(linePosition);
 				if (!onlysel){ tab->Grid->SelectRow(posrowId, false, true); }
 				tab->Edit->SetLine(posrowId);
 				tab->Grid->ScrollTo(posrowId, true);
@@ -602,44 +640,52 @@ void FindReplace::Find()
 				else if (wrep == TXT || wrep == TXTTL){
 					MTextEditor *tmp = (searchInOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
 					//tmp->SetFocus();
-					tmp->SetSelection(mwhere, findend);
+					tmp->SetSelection(foundPosition, findend);
 				}
 				if (wrep == ACTOR){
 					//pan->Edit->ActorEdit->SetFocus();
-					tab->Edit->ActorEdit->choiceText->SetSelection(mwhere, findend);
+					tab->Edit->ActorEdit->choiceText->SetSelection(foundPosition, findend);
 				}
 				if (wrep == EFFECT){
 					//pan->Edit->EffectEdit->SetFocus();
-					tab->Edit->EffectEdit->choiceText->SetSelection(mwhere, findend);
+					tab->Edit->EffectEdit->choiceText->SetSelection(foundPosition, findend);
 				}
 
 				foundsome = true;
-				if ((size_t)postxt >= txt.Len() || startline){
-					posrow++; postxt = 0;
+				if ((size_t)textPosition >= txt.Len() || startline){
+					linePosition++; textPosition = 0;
 				}
 				break;
 			}
 			else{
-				postxt = 0;
-				posrow++;
+				textPosition = 0;
+				linePosition++;
 			}
 
 		}
-		else{ postxt = 0; posrow++; }
-		if (!foundsome && posrow > Subs->dials.size() - 1){
-			/*blockTextChange = true;
-			if (KaiMessageBox(_("Wyszukiwanie zakończone, rozpocząć od początku?"), _("Potwierdzenie"),
-			wxICON_QUESTION | wxYES_NO, this) == wxYES){
-			posrow = 0;
+		else{ textPosition = 0; linePosition++; }
+		if (!foundsome && linePosition > Subs->dials.size() - 1){
+			blockTextChange = true;
+			if (wasResetToStart){
+				wasResetToStart = false;
+				break;
 			}
-			else{ posrow = 0; foundsome = true; break; }*/
-			break;
+			else if (KaiMessageBox(_("Wyszukiwanie zakończone, rozpocząć od początku?"), _("Potwierdzenie"),
+			wxICON_QUESTION | wxYES_NO, this) == wxYES){
+				linePosition = 0;
+				wasResetToStart = true;
+			}
+			else{ 
+				linePosition = 0; 
+				foundsome = true; 
+				break;
+			}
 		}
 	}
 	if (!foundsome){
 		blockTextChange = true;
 		KaiMessageBox(_("Nie znaleziono podanej frazy \"") + FindText->GetValue() + "\".", _("Potwierdzenie"));
-		posrow = 0;
+		linePosition = 0;
 		fromstart = true;
 	}
 	if (fromstart){ AddRecent(); fromstart = false; }
@@ -650,7 +696,6 @@ void FindReplace::Find()
 void FindReplace::OnClose(wxCommandEvent& event)
 {
 	Hide();
-	//Destroy();
 }
 
 void FindReplace::ReloadStyle()
@@ -680,7 +725,7 @@ void FindReplace::AddRecent(){
 	FindText->Insert(text, 0);
 	FindText->SetSelection(0);
 
-	if (findSize >= 20){
+	if (findSize > 20){
 		FindText->Delete(20, findSize - 20);
 		findRecent.RemoveAt(20, findSize - 20);
 	}
@@ -743,15 +788,21 @@ void FindReplace::OnSetFocus(wxActivateEvent& event){
 	edit->TextEditOrig->GetSelection(&fromO, &toO);
 	KaiChoice * findOrReplace = (FindText->GetValue().Len() > 0 && repl && !findTextReset) ? RepText : FindText;
 	if (from < to){
+		if (from == findstart && to == findend)
+			return;
 		wxString selected = edit->TextEdit->GetValue().SubString(from, to - 1);
 		if (selected.Lower() != findOrReplace->GetValue().Lower()){ findOrReplace->SetValue(selected); }
+		//when someone changed selection, then restore textposition to 0 maybe restore lineposition too? It's different seeking
+		textPosition = linePosition = 0;
 	}
 	else if (fromO < toO){
+		if (fromO == findstart && toO == findend)
+			return;
 		wxString selected = edit->TextEditOrig->GetValue().SubString(fromO, toO - 1);
 		if (selected.Lower() != findOrReplace->GetValue().Lower()){ findOrReplace->SetValue(selected); }
+		textPosition = linePosition = 0;
 	}
 	findOrReplace->SetFocus();
-	//hasFocus=true;
 	findTextReset = false;
 }
 

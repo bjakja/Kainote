@@ -15,7 +15,7 @@
 
 
 #pragma once
-
+#include <wx/regex.h>
 #include "ListControls.h"
 #include "KaiTextCtrl.h"
 #include "KaiRadioButton.h"
@@ -70,9 +70,9 @@ class FindReplace: public KaiDialog
 		void Reset();
 		bool repl;
 	private:
-        int posrow;
+        int linePosition;
 		int reprow;
-        int postxt;
+        int textPosition;
 		int findstart;
 		int findend;
 		int lastActive;
@@ -82,8 +82,10 @@ class FindReplace: public KaiDialog
 		bool fromstart;
 		bool blockTextChange;
 		bool findTextReset = false;
+		bool wasResetToStart = false;
 		wxArrayString findRecent;
 		wxArrayString replaceRecent;
+		wxRegEx rgx;
 		
         void Find();
 		

@@ -284,6 +284,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 			size_t nfound = KText.find(wxUniChar('\n'), i);
 			i = (nfound != -1) ? nfound : len - 1;
 			GetTextExtent(KText.Mid(currentPosition, i - currentPosition + 1), &fw, &fh);
+			//check text to \n
 			if (fw > mesureSize){
 				size_t j = currentPosition + 1;
 				bool foundWrap = false;
@@ -299,25 +300,31 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 					GetTextExtent(KText.Mid(textPosition, spacePos - textPosition + 1), &fw, &fh);
 					textPosition = spacePos + 1;
 					currentFW += fw;
+					//check text to space
 					if (currentFW <= mesureSize){
 						newWrap = j;
 						foundWrap = true;
 						if (j<i)
 							continue;
-					}
+					}//check text without spaces
 					else if (currentFW > mesureSize && !foundWrap){
 						j = (currentPosition + 30 < i) ? currentPosition + 30 : currentPosition + 1;
+						textPosition = currentPosition+1;
 						int step = 10;
-						fw = 0;
+						fw = currentFW = 0;
 						int newmessure = mesureSize-12;
 						while (j <= spacePos){
-							GetTextExtent(KText.Mid(currentPosition, j - currentPosition + 1), &fw, &fh);
-							if (fw > newmessure){
+							GetTextExtent(KText.Mid(textPosition, j - textPosition + 1), &fw, &fh);
+							textPosition = j + 1;
+							currentFW += fw;
+							if (currentFW > newmessure){
 								if (step == 10){
 									step = 1;
 									j -= 10;
+									textPosition -= 10;
+									currentFW -= fw;
 								}
-								else if (j< spacePos){
+								else if (j < spacePos){
 									if (stylewrap){
 										GetTextExtent(KText.Mid(currentPosition, j - currentPosition + 1), &fw, &fh);
 										pos = (stylewrap == 1) ? ((w - fw) / 2) : (w - fw) - 5;
@@ -326,14 +333,11 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 									wraps.push_back(j);
 									currentPosition = j+1;
 									step = 10;
-								}
-								else{
-									break;
+									currentFW = 0;
 								}
 							}
 							j += step;
-						}
-						//j--;
+						}//now it's missing last wrap adding it in normal way set tu character after space or len
 						newWrap = spacePos+1;
 					}
 					currentPosition = textPosition = newWrap;
