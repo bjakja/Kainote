@@ -332,7 +332,10 @@ void KaiDialog::SetEscapeId(int _escapeId, bool setFocus)
 
 void KaiDialog::OnEnter(wxCommandEvent &evt)
 {
-	EndModal(enterId); evt.Skip();
+	if(IsModal())
+		EndModal(enterId); 
+
+	evt.Skip();
 }
 void KaiDialog::OnEscape(wxCommandEvent &evt)
 {

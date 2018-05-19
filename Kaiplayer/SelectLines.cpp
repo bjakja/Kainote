@@ -312,14 +312,14 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 	tab->Edit->SetLine(wset);
 	tab->Grid->SetModified(SELECT_LINES, false);
 	tab->Grid->RefreshColumns();
-	wxString messagetxt= (sopt==0)? wxString::Format(_("Zaznaczono %i linijek."), allreps) :
-		(sopt==1)? wxString::Format(_("Dodano do zaznaczenia %i linijek."), allreps) : 
+	wxString messagetxt = (sopt == 0) ? wxString::Format(_("Zaznaczono %i linijek."), allreps) :
+		(sopt == 1) ? wxString::Format(_("Dodano do zaznaczenia %i linijek."), allreps) :
 		wxString::Format(_("Odznaczono %i linijek."), allreps);
 	KaiMessageDialog dlg(this, messagetxt, _("Zaznacz"), wxYES_NO);
 	dlg.SetYesLabel("Zamknij");
 	dlg.SetNoLabel("Ok");
 	int result = dlg.ShowModal();
-	if(result == wxYES){
+	if (result == wxYES){
 		Hide();
 	}
 	AddRecent();
@@ -351,9 +351,9 @@ void SelectLines::AddRecent(){
 
 void SelectLines::OnChooseStyles(wxCommandEvent& event)
 {
-	wxString kkk=GetCheckedElements(Kai);
-	kkk.Replace(";","|");
+	wxString styles=GetCheckedElements(Kai);
+	int numreps = styles.Replace(",", "|");
 	CollumnStyle->SetValue(true);
-	RegEx->SetValue(true);
-	FindText->SetValue(kkk);
+	RegEx->SetValue(numreps > 0);
+	FindText->SetValue(styles);
 }

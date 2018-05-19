@@ -58,12 +58,12 @@ wxString GetCheckedElements(wxWindow *parent)
 		{
 
 			if(slx.CheckListBox->GetItem(v, 0)->modified){
-				styletext<<slx.CheckListBox->GetItem(v, 0)->name<<";";
+				styletext<<slx.CheckListBox->GetItem(v, 0)->name<<",";
 			}
 		}
 	}
 	delete [] elems;
-	return styletext.BeforeLast(';');
+	return styletext.BeforeLast(',');
 }
 
 

@@ -549,7 +549,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 		return;
 	}
 	else{
-		styles = ";" + styles + ";";
+		styles = "," + styles + ",";
 	}
 	bool changeTagTimes = (moveTimeOptions & 32) > 0;
 
@@ -617,7 +617,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 			|| (whichLines == 1 && file->IsSelectedByKey(i))
 			|| (whichLines == 3 && firsttime <= Dial->Start.mstime)
 			|| (whichLines == 2 && i >= fs)
-			|| (whichLines == 4 && styles.Find(";" + Dial->Style + ";") != -1))
+			|| (whichLines == 4 && styles.Find("," + Dial->Style + ",") != -1))
 		{
 
 			dialc = file->CopyDialogueByKey(i, true, true);

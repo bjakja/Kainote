@@ -292,7 +292,7 @@ void FindReplace::OnReplaceAll(wxCommandEvent& event)
 	wxString styll = tcstyle->GetValue();
 	bool notstyles = false;
 	if (styll == ""){ notstyles = true; }
-	else{ styll = ";" + styll + ";"; }
+	else{ styll = "," + styll + ","; }
 	bool onlysel = SelectedLines->GetValue();
 
 	int fsel = tab->Grid->FirstSelection();
@@ -304,7 +304,7 @@ void FindReplace::OnReplaceAll(wxCommandEvent& event)
 		Dialogue *Dial = Subs->dials[i];
 		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue){ continue; }
 
-		if ((notstyles || styll.Find(";" + Dial->Style + ";") != -1) &&
+		if ((notstyles || styll.Find("," + Dial->Style + ",") != -1) &&
 			!(onlysel && !(tab->Grid->file->IsSelectedByKey(i)))){
 
 			if (wrep == STYLE){
@@ -536,11 +536,11 @@ void FindReplace::Find()
 		linePosition = (!AllLines->GetValue() && fsel >= 0) ? fsel : 0;
 		textPosition = 0;
 	}
-	wxString styll = tcstyle->GetValue();
+	wxString stylesList = tcstyle->GetValue();
 	bool styles = false;
-	if (styll != ""){
+	if (stylesList != ""){
 		styles = true;
-		styll = ";" + styll + ";";
+		stylesList = "," + stylesList + ",";
 	}
 	bool onlysel = SelectedLines->GetValue();
 	File *Subs = tab->Grid->file->GetSubs();
@@ -551,7 +551,7 @@ void FindReplace::Find()
 		if (!Dial->isVisible){ linePosition++; textPosition = 0; continue; }
 
 		if ((!styles && !onlysel) ||
-			(styles && styll.Find(";" + Dial->Style + ";") != -1) ||
+			(styles && stylesList.Find("," + Dial->Style + ",") != -1) ||
 			(onlysel && tab->Grid->file->IsSelectedByKey(linePosition))){
 			if (wrep == STYLE){
 				txt = Dial->Style;
