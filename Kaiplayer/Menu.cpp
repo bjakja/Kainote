@@ -360,7 +360,7 @@ MenuItem *Menu::SetAccMenu(int id, const wxString &txt, const wxString &help, bo
 	idAndType itype(id, wnd);
 	wxString txtcopy = txt;
 	txtcopy.Replace("&","");
-	wxString hkey=Hkeys.GetMenuH(itype, txtcopy);
+	wxString hkey=Hkeys.GetStringHotkey(itype, txtcopy);
 	wxString mtext=(hkey!="")? txt.BeforeFirst('\t')+"\t"+hkey : txt;
 	return Append(id, mtext, help, enable, 0, 0, kind);
 }

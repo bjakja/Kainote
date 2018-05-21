@@ -208,22 +208,28 @@ MappedButton::~MappedButton()
 void MappedButton::SetToolTip(const wxString &_toolTip)
 {
 	if(Window>=0){
-		wxString toolTip = (_toolTip=="")? GetToolTipText().BeforeFirst('(').Trim() : _toolTip;
+		wxString toolTip = (_toolTip == "") ? GetToolTipText().BeforeFirst('(').BeforeFirst('\n').Trim() : _toolTip;
 		wxString desc = name;
-		if(toolTip.empty()){toolTip=desc;}
-		if(desc.empty()){desc=toolTip;}
+		if (toolTip.empty()){ toolTip = desc; }
+		if (desc.empty()){ desc = toolTip; }
 	
 		idAndType itype(GetId(), Window);
-		wxString key = Hkeys.GetMenuH(itype, desc);
+		wxString key = Hkeys.GetStringHotkey(itype, desc);
 		if(twoHotkeys){
 			idAndType itype(GetId()-1000, Window);
-			key += _(" lub ") + Hkeys.GetMenuH(itype);
+			key += _(" lub ") + Hkeys.GetStringHotkey(itype);
 		}
 
 	
 		if(key!="")
 		{
 			toolTip = toolTip + " ("+key+")";
+		}
+		toolTip << L"\n";
+		toolTip << _("Skrót mo¿na ustawiæ Shift + Klik");
+		if (twoHotkeys){
+			toolTip << L"\n";
+			toolTip << _("Drugi skrót mo¿na ustawiæ Control + Klik");
 		}
 		wxWindow::SetToolTip(toolTip);
 	}else{
@@ -318,7 +324,7 @@ void MappedButton::OnMouseEvent(wxMouseEvent &event)
 		//mo¿e od razu funkcji onmaphotkey przekazaæ item by zrobi³a co trzeba
 		int id= GetId(); 
 		if(event.ControlDown()){ id -= 1000; }
-		wxString buttonName = (name!="")? name : GetToolTipText().BeforeFirst('(').Trim();
+		wxString buttonName = (name != "") ? name : GetToolTipText().BeforeFirst('(').BeforeFirst('\n').Trim();
 		Hkeys.OnMapHkey( GetId(), buttonName, this, Window, false);
 		SetToolTip();
 		Hkeys.SetAccels(true);

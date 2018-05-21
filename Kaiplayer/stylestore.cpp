@@ -292,7 +292,7 @@ void StyleStore::OnAddToAss(wxCommandEvent& event)
 			}else{delete stylc;}
 		}else{grid->AddStyle(stylc);ASS->SetSelection(grid->StylesSize()-1);}
 	}
-	modif();
+	SetModified();
 }
 
 void StyleStore::OnStoreDelete(wxCommandEvent& event)
@@ -320,7 +320,7 @@ void StyleStore::OnAssDelete(wxCommandEvent& event)
 	}
 
 	ASS->SetSelection(0,true);
-	modif();
+	SetModified();
 }
 
 void StyleStore::StylesWindow(wxString newname)
@@ -374,6 +374,7 @@ bool StyleStore::changestyle(Styles *cstyl)
 		else{Options.ChangeStyle(cstyl,selnum);Store->Refresh(false);}
 	}
 	Mainall->Fit(this);
+	bool refreshActiveLine = false;
 	if(oldname!=cstyl->Name && stass && !dummy){
 		int res=KaiMessageBox(_("Nazwa stylu została zmieniona, czy chcesz zmienić ją także w napisach?"), _("Potwierdzenie"), wxYES_NO);
 		if(res==wxYES){
@@ -384,11 +385,12 @@ bool StyleStore::changestyle(Styles *cstyl)
 				}
 			}
 			grid->AdjustWidths(STYLE);
+			refreshActiveLine = true;
 		}
 	}
 	oldname=cstyl->Name;
 	dummy=false;
-	modif();
+	SetModified(refreshActiveLine);
 	return true;
 }
 
@@ -441,7 +443,7 @@ void StyleStore::OnAssSort(wxCommandEvent& event)
 	std::sort(grid->GetStyleTable()->begin(), grid->GetStyleTable()->end(),sortfunc);
 	ASS->SetSelection(0,true);
 
-	modif();
+	SetModified();
 }
 
 void StyleStore::OnAssLoad(wxCommandEvent& event)
@@ -522,7 +524,7 @@ void StyleStore::LoadStylesS(bool isass)
 		tmps.clear();
 	}
 	openFileDialog->Destroy();
-	if(isass){modif();}
+	if(isass){SetModified();}
 }
 
 void StyleStore::OnAssCopy(wxCommandEvent& event)
@@ -536,7 +538,7 @@ void StyleStore::OnAssCopy(wxCommandEvent& event)
 	stass=true;
 	dummy=true;
 	StylesWindow(_("Kopia ")+kstyle->Name);
-	modif();
+	SetModified();
 }
 void StyleStore::OnStoreCopy(wxCommandEvent& event)
 {
@@ -581,7 +583,7 @@ void StyleStore::OnAssNew(wxCommandEvent& event)
 		wxString nss=(count==0)?ns:ns<<count;
 		if(grid->FindStyle(nss)==-1){StylesWindow(nss);break;}else{count++;}
 	}
-	modif();
+	SetModified();
 }
 
 void StyleStore::OnCleanStyles(wxCommandEvent& event)
@@ -612,7 +614,7 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 	}
 
 	if(!delStyles.empty()){
-		modif();
+		SetModified();
 	}
 	if(existsStyles.IsEmpty()){existsStyles=_("Brak");}
 	if(delStyles.IsEmpty()){delStyles=_("Brak");}
@@ -711,14 +713,14 @@ void StyleStore::DoTooltips()
 {
 	catalogList->SetToolTip(_("Katalog styli"));
 	newCatalog->SetToolTip(_("Nowy katalog styli"));
-	//ASS->SetToolTip(_("Style napisów"));
-	//Store->SetToolTip(_("Style magazynu"));
 	storeNew->SetToolTip(_("Utwórz nowy styl magazynu"));
+	storeEdit->SetToolTip(_("Edytuj zaznaczony styl magazynu"));
 	storeCopy->SetToolTip(_("Kopiuj styl magazynu"));
 	storeLoad->SetToolTip(_("Wczytaj do magazynu styl z pliku ass"));
 	storeDelete->SetToolTip(_("Usuń styl z magazynu"));
 	storeSort->SetToolTip(_("Sortuj style w magazynie"));
 	assNew->SetToolTip(_("Utwórz nowy styl napisów"));
+	assEdit->SetToolTip(_("Edytuj zaznaczony styl napisów"));
 	assCopy->SetToolTip(_("Kopiuj styl napisów"));
 	assLoad->SetToolTip(_("Wczytaj do napisów styl z pliku ass"));
 	assDelete->SetToolTip(_("Usuń styl z napisów"));
@@ -731,9 +733,13 @@ void StyleStore::DoTooltips()
 void StyleStore::OnConfirm(wxCommandEvent& event)
 {
 
-	if(cc->IsShown())
-	{cc->OnOKClick(event);}
-	else{modif();OnClose(event);}
+	if(cc->IsShown()){
+		cc->OnOKClick(event);
+	}
+	else{
+		SetModified();
+		OnClose(event);
+	}
 }
 
 void StyleStore::OnClose(wxCommandEvent& event)
@@ -742,20 +748,15 @@ void StyleStore::OnClose(wxCommandEvent& event)
 	int ww,hh;
 	GetPosition(&ww,&hh);
 	Options.SetCoords(StyleManagerPosition,ww,hh);
-	/*if(stayOnTop){
-		TabPanel* pan=Notebook::GetTab();
-		this->Reparent(pan->GetParent());
-		stayOnTop=false;
-	}*/
 	Hide();
 	if(detachedEtit){cc->Show(false);}
 }
 
-void StyleStore::modif()
+void StyleStore::SetModified(bool refreshActiveLine /*= false*/)
 {
 	SubsGrid* grid=Notebook::GetTab()->Grid;
 	Notebook::GetTab()->Edit->RefreshStyle();
-	grid->SetModified(STYLE_MANAGER,false);
+	grid->SetModified(STYLE_MANAGER, refreshActiveLine);
 	grid->Refresh(false);
 	ASS->SetArray(grid->GetStyleTable());
 }
@@ -928,7 +929,7 @@ void StyleStore::OnStyleMove(wxCommandEvent& event)
 		if(moveUp){i++; lastUpSelection++;}
 		else{i--; lastDownSelection--;}
 	}
-	if(action < 4){ASS->SetSelections(sels); Notebook::GetTab()->Grid->file->edited = true; modif();}
+	if(action < 4){ASS->SetSelections(sels); Notebook::GetTab()->Grid->file->edited = true; SetModified();}
 	else{Store->SetSelections(sels);}
 }
 

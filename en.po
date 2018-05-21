@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2018-05-09 21:59+0200\n"
-"PO-Revision-Date: 2018-05-10 14:50+0200\n"
+"PO-Revision-Date: 2018-05-20 14:29+0200\n"
 "Last-Translator: Bakura, Areki, duplex, Kostek00, Sacredus\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -297,7 +297,7 @@ msgstr ""
 #: Automation.cpp:1028 Automation.cpp:1070
 #, c-format
 msgid "Nieznany błąd wczytywania skryptu Lua: %s."
-msgstr "Unknown error loading the script Lua: %s"
+msgstr "Unknown error loading the script Lua: %s."
 
 #: Automation.cpp:1035
 msgid ""
@@ -1651,7 +1651,7 @@ msgid ""
 "Ten skrót już istnieje jako skrót do \"%s\".\n"
 "Co zrobić?"
 msgstr ""
-"This hotkey already exists for \"%s.\"\n"
+"This hotkey already exists for \"%s\".\n"
 "What to do?"
 
 #: Hotkeys.cpp:408 Hotkeys.cpp:454 OptionsDialog.cpp:73 OptionsDialog.cpp:319
@@ -1696,7 +1696,7 @@ msgstr "Audio hotkey"
 #: Hotkeys.cpp:512
 #, c-format
 msgid "Proszę wcisnąć klawisze skrótu dla \"%s\"."
-msgstr "Please enter a hotkey for \"%s.\""
+msgstr "Please enter a hotkey for \"%s\"."
 
 #: Hotkeys.cpp:544
 msgid ""

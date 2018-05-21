@@ -160,7 +160,7 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 	}
 	else if(sel!=elem && tools[elem]->type<3 && !event.LeftIsDown()){
 		wxString shkeyadd;
-		wxString shkey=Hkeys.GetMenuH(tools[elem]->id);
+		wxString shkey=Hkeys.GetStringHotkey(tools[elem]->id);
 		if (shkey!=""){shkeyadd<<" ("<<shkey<<")";}
 		SetToolTip(tools[elem]->label+shkeyadd);
 		sel=elem;

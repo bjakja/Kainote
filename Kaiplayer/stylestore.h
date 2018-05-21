@@ -105,7 +105,7 @@ class StyleStore: public KaiDialog
 		int prompt;
 		bool stayOnTop;
 		wxString oldname;
-		void modif();
+		void SetModified(bool refreshActiveLine = false);
 		static StyleStore *SS;
 };
 

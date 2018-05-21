@@ -24,11 +24,22 @@ wxDEFINE_EVENT(LIST_ITEM_LEFT_CLICK, wxCommandEvent);
 wxDEFINE_EVENT(LIST_ITEM_DOUBLECLICKED, wxCommandEvent);
 wxDEFINE_EVENT(LIST_ITEM_RIGHT_CLICK, wxCommandEvent);
 
+void ItemText::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /*= NULL*/)
+{
+	if (enter){
+		if (needTooltip)
+			theList->SetToolTip(name);
+		else if (theList->HasToolTips())
+			theList->UnsetToolTip();
+	}
+}
+
 void ItemText::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
 {
 	wxSize ex = dc->GetTextExtent(name);
 	
 	if(modified){dc->SetTextForeground(Options.GetColour(WindowWarningElements));}
+	needTooltip = ex.x > width - 8;
 	wxRect cur(x, y, width - 8, height);
 	dc->SetClippingRegion(cur);
 	dc->DrawLabel(name,cur,wxALIGN_CENTER_VERTICAL);
@@ -445,9 +456,10 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 
 	int elemY = ((cursor.y-headerHeight)/lineHeight) + scPosV;
 	if(elemY<0 || cursor.y <= headerHeight){
-		//tu napisz chwytanie headera
 		//if header < 5 wtedy nic nie robimy
 		if(headerHeight > 5){
+			if (HasToolTips())
+				UnsetToolTip();
 			if(!hasArrow && evt.LeftDown()){
 				if(!HasCapture()){CaptureMouse();}
 				diffX = cursor.x;
@@ -474,12 +486,15 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 			}
 			
 		}
+		lastSelX = -1; lastSelY = -1;
 		if(!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow=true;}
 		return;
 	}
 	if(!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow=true;}
 	Item *copy=NULL;
 	if((size_t)elemY>=itemList->size()){
+		if (HasToolTips())
+			UnsetToolTip();
 		//tu ju¿ nic nie zrobimy, jesteœmy poza elemetami na samym dole
 		if(lastSelX != -1 && lastSelY !=-1 && lastSelY < itemList->size() && lastSelX < (*itemList)[lastSelY]->row.size()){
 			(*itemList)[lastSelY]->row[lastSelX]->OnMouseEvent(wxMouseEvent(), false, true, this, &copy);

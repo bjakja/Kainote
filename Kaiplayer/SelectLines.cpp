@@ -52,9 +52,9 @@ SelectLines::SelectLines(kainoteFrame* kfparent)
 	sltpsizer->Add(ChooseStyles,0,wxALL,3);
 
 	MatchCase = new KaiCheckBox(this, -1, _("Uwzględniaj wielkość liter"));
-	MatchCase->SetValue(options & MATCH_CASE);
+	MatchCase->SetValue((options & MATCH_CASE) > 0);
 	RegEx = new KaiCheckBox(this, -1, _("Wyrażenia regularne"));
-	RegEx->SetValue(options & REGULAR_EXPRESSIONS);
+	RegEx->SetValue((options & REGULAR_EXPRESSIONS) > 0);
 
 	slsbsizer->Add(slrbsizer,0,wxEXPAND,0);
 	slsbsizer->Add(sltpsizer,0,wxEXPAND,0);
@@ -97,7 +97,7 @@ SelectLines::SelectLines(kainoteFrame* kfparent)
 	Dialogues = new KaiCheckBox(this, -1, _("Dialogi"));
 	Dialogues->SetValue(options & DIALOGUES || !(options & COMMENTS));
 	Comments = new KaiCheckBox(this, -1, _("Komentarze"));
-	Comments->SetValue(options & COMMENTS);
+	Comments->SetValue((options & COMMENTS) > 0);
 
 	slsbsizer2->Add(Dialogues,0,wxALL,3);
 	slsbsizer2->Add(Comments,0,wxALL,3);

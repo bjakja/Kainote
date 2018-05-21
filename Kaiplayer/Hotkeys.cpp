@@ -1,4 +1,4 @@
-﻿//  Copyright (c) 2016, Marcin Drob
+﻿//  Copyright (c) 2016-2018, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,6 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#pragma once
 #include "Hotkeys.h"
 #include "OpennWrite.h"
 #include "KainoteMain.h"
@@ -296,8 +295,10 @@ void Hotkeys::SaveHkeys(bool Audio)
 	wxString gnewa = "GNEWA";
 	wxString Texthk="["+Options.progname+"]\r\n";
 	for (std::map<idAndType, hdata>::iterator cur = hkeys.begin();cur != hkeys.end();cur++) {
-		if((!Audio && cur->first.Type==AUDIO_HOTKEY) || (Audio && !(cur->first.Type==AUDIO_HOTKEY)) ) {continue;}
-		if(cur->first >= 30100){Texthk << cur->second.Name << "=" << cur->second.Accel << "\r\n";}
+		if ((!Audio && cur->first.Type == AUDIO_HOTKEY) || 
+			(Audio && !(cur->first.Type == AUDIO_HOTKEY)) || 
+			cur->first.id < 100 || cur->second.Accel.empty()) { continue; }
+		if (cur->first >= 30100){ Texthk << cur->second.Name << "=" << cur->second.Accel << "\r\n"; }
 		else{
 			wxString idstring = GetString((Id)cur->first.id);
 			if(idstring==""){idstring<<cur->first.id;}
@@ -362,7 +363,7 @@ void Hotkeys::SetHKey(const idAndType &itype, wxString name, wxString hotkey)
 	hkeys[itype] = hdata( name, hotkey);
 }
 
-wxString Hotkeys::GetMenuH(const idAndType &itype, const wxString &name)
+wxString Hotkeys::GetStringHotkey(const idAndType &itype, const wxString &name)
 {
 	auto it=hkeys.find(itype);
 	if(it!=hkeys.end()){if(name!=""){it->second.Name = name;} return it->second.Accel;}
@@ -378,7 +379,9 @@ void Hotkeys::ResetKey(const idAndType *itype, int id, char type)
 	if(it!= tmphkeys.end())
 	{
 		hkeys[tmpitype] = it->second;
-	}else{wxLogStatus(_("Nie można przywrócić skrótu, bo nie ma domyślnego ustawienia o id %i"), tmpitype.id);}
+	}else{
+		wxLogStatus(_("Nie można przywrócić skrótu, bo nie ma domyślnego ustawienia o id %i"), tmpitype.id);
+	}
 }
 
 wxString Hotkeys::GetDefaultKey(const idAndType &itype)

@@ -16,7 +16,7 @@
 #include "MenuButton.h"
 
 MenuButton::MenuButton(wxWindow *parent, int id, const wxString &tooltip, const wxPoint &pos, const wxSize &size)
-	: MappedButton(parent, id, tooltip, wxBITMAP_PNG("ARROW_LIST_DOUBLE"), pos, size)
+	: MappedButton(parent, id, tooltip, wxBITMAP_PNG("ARROW_LIST_DOUBLE"), pos, size, -1)
 	, IsMenuShown(false)
 	, menu(NULL)
 {

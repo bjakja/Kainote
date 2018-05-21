@@ -37,6 +37,7 @@ void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, Ka
 	wxSize ex = dc->GetTextExtent(accel);
 	
 	if(modified){dc->SetTextForeground(Options.GetColour(WindowWarningElements));}
+	needTooltip = ex.x > width - 8;
 	wxRect cur(x, y, width - 8, height);
 	dc->SetClippingRegion(cur);
 	dc->DrawLabel(accel,cur,wxALIGN_CENTER_VERTICAL);
@@ -44,14 +45,15 @@ void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, Ka
 	if(modified){dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled()? WindowText : WindowTextInactive));}
 }
 
-//void ItemHotkey::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed)
-//{
-//	if(event.LeftDClick()){
-//		int inum=theList->GetSelection();
-//		if(inum<0){return;}
-//		OnMapHotkey(theList, inum);
-//	}
-//}
+void ItemHotkey::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed)
+{
+	if (enter){
+		if (needTooltip)
+			theList->SetToolTip(accel);
+		else if (theList->HasToolTips())
+			theList->UnsetToolTip();
+	}
+}
 
 void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 {

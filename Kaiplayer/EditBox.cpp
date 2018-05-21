@@ -91,6 +91,7 @@ txtdialog::txtdialog(wxWindow *parent, int id, const wxString &txtt, const wxStr
 	MoveToMousePosition(this);
 
 }
+wxDEFINE_EVENT(TAG_BUTTON_EDITION, wxCommandEvent);
 
 TagButton::TagButton(wxWindow *parent, int id, const wxString &_name, const wxString &_tag, int _type, const wxSize &size)
 	: MappedButton(parent,id,_name,"", wxDefaultPosition,size,EDITBOX_HOTKEY)
@@ -109,7 +110,7 @@ TagButton::TagButton(wxWindow *parent, int id, const wxString &_name, const wxSt
 void TagButton::OnMouseEvent(wxMouseEvent& event)
 {
 	if(event.RightUp()||(tag=="" && event.LeftUp())){
-		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, GetId());
+		wxCommandEvent evt(TAG_BUTTON_EDITION, GetId());
 		ProcessEvent(evt);
 		SetFocus();
 		return;
@@ -118,7 +119,7 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 		clicked=false;
 		Refresh(false);
 		if(oldclicked){
-			wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
+			wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, GetId());
 			ProcessEvent(evt);
 		}
 		return;
@@ -416,7 +417,7 @@ done:
 		if(pas==1){
 			if(ABox){
 				wxWindow *focused= wxWindow::FindFocus();
-				wxCommandEvent evt;ABox->OnPlaySelection(evt);
+				wxCommandEvent evt; ABox->OnPlaySelection(evt);
 				focused->SetFocus();
 			}
 		}else{
@@ -1810,8 +1811,8 @@ void EditBox::SetTagButtons()
 				}else if (i >= numofButtons){
 					BoxSizer4->Insert(10+i,new TagButton(this, 15000+i, name, tag, type, wxSize((name.Len())>3? -1 : 24, 24)),0,wxALL,2);
 				}
-				Connect(15000+i,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnEditTag);
-				Connect(15000+i,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnButtonTag);
+				Connect(15000+i,TAG_BUTTON_EDITION,(wxObjectEventFunction)&EditBox::OnEditTag);
+				Connect(15000+i,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnButtonTag);
 			}
 			menu->Append(15000+i, name);
 		}

@@ -2008,6 +2008,11 @@ void kainoteFrame::OnRunScript(wxCommandEvent& event)
 	int wmacro = 0;
 	if (path.IsEmpty()){ path = name; }
 	else{ wmacro = wxAtoi(name.AfterLast('-')); }
+	if (!wxFileExists(path)){
+		Hkeys.SetHKey(idAndType(event.GetId()), "Script " + name, "");
+		Hkeys.SaveHkeys(false);
+		return;
+	}
 	Auto::LuaScript *script = Auto->FindScript(path);
 	if (!script){
 		Auto->Add(path);

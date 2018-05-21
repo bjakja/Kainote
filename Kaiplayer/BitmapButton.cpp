@@ -101,18 +101,18 @@ void BitmapButton::OnLeftDown(wxMouseEvent& event)
 	
 void BitmapButton::SetToolTip(const wxString &_toolTip)
 {
-	wxString toolTip = (_toolTip=="")? GetToolTipText().BeforeFirst('(').Trim() : _toolTip;
-	wxString desc = name;
-	if(toolTip.empty()){toolTip=desc;}
-	if(desc.empty()){desc=toolTip;}
+	wxString toolTip = (_toolTip == "") ? name : _toolTip;
+	if (!_toolTip.empty()){ name = _toolTip; }
 	
 	idAndType itype(hotkeyId, window);
-	wxString key = Hkeys.GetMenuH(itype, desc);
+	wxString key = Hkeys.GetStringHotkey(itype, name);
 	
 	if(key!="")
 	{
 		toolTip = toolTip + " ("+key+")";
 	}
+	toolTip << L"\n";
+	toolTip << _("Skrót mo¿na ustawiæ Shift + Klik");
 	wxWindow::SetToolTip(toolTip);
 	
 }

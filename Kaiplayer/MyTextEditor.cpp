@@ -355,9 +355,7 @@ void MTextEditor::OnAccelerator(wxCommandEvent& event)
 			Cursor.x+=wraps[Cursor.y];
 			if(Cursor.x>len){Cursor.x=len;}
 		}
-		//wxLogStatus("%i %i",Cursor.x, Cursor.y);
-
-
+		
 		if(ID<ID_SDOWN){Selend=Cursor;}
 		Refresh(false);
 		break;
@@ -415,7 +413,7 @@ void MTextEditor::OnAccelerator(wxCommandEvent& event)
 
 		break;
 	}
-	if(ID!=ID_CTLV||ID!=ID_WMENU){wxCommandEvent evt(CURSOR_MOVED,GetId());AddPendingEvent(evt);}
+	if(ID!=ID_CTLC||ID!=ID_WMENU){wxCommandEvent evt(CURSOR_MOVED,GetId());AddPendingEvent(evt);}
 }
 
 void MTextEditor::OnMouseEvent(wxMouseEvent& event)

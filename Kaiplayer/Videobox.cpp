@@ -767,9 +767,9 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 {
 	ismenu=true;
 	Menu* menu=new Menu();
-	wxString txt;
-	if(GetState()!=Playing){txt=_("Odtwórz\t")+Hkeys.GetMenuH(PlayPause);}
-	else if(GetState()==Playing){txt=_("Pauza\t")+Hkeys.GetMenuH(PlayPause);}
+	wxString txt = L"\t" + Hkeys.GetStringHotkey(PlayPause);
+	if (GetState() != Playing){ txt.Prepend(_("Odtwórz")); }
+	else if (GetState() == Playing){ txt.Prepend(_("Pauza")); }
 	if(!isFullscreen && ((TabPanel*)GetParent())->editor)
 	{
 		menu->SetAccMenu(CopyCoords,_("Kopiuj pozycję na wideo"));

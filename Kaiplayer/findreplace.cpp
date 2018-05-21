@@ -77,11 +77,11 @@ FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
 	MatchCase = new KaiCheckBox(this, -1, _("Uwzględniaj wielkość liter"));
 	MatchCase->SetValue(options & CASE_SENSITIVE);
 	RegEx = new KaiCheckBox(this, -1, _("Wyrażenia regularne"));
-	RegEx->SetValue(options & REG_EX);
+	RegEx->SetValue((options & REG_EX) > 0);
 	StartLine = new KaiCheckBox(this, ID_SLINE, _("Początek tekstu"));
-	StartLine->SetValue(options & START_OF_TEXT);
+	StartLine->SetValue((options & START_OF_TEXT) > 0);
 	EndLine = new KaiCheckBox(this, ID_ELINE, _("Koniec tekstu"));
-	EndLine->SetValue(options & END_OF_TEXT);
+	EndLine->SetValue((options & END_OF_TEXT) > 0);
 	frbsizer1->Add(MatchCase, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	frbsizer1->Add(RegEx, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	frbsizer1->Add(StartLine, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);

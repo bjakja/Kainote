@@ -345,6 +345,9 @@
     <ClCompile Include="Registry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HotkeysNaming.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -633,6 +636,9 @@
       <Filter>Header Files\Windows &amp; Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="Registry.h">
+      <Filter>Header Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="HotkeysNaming.h">
       <Filter>Header Files\Utils &amp; Config</Filter>
     </ClInclude>
   </ItemGroup>

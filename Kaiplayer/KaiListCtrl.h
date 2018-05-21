@@ -34,7 +34,7 @@ class KaiListCtrl;
 
 class Item{
 public:
-	Item(byte _type=TYPE_TEXT){type=_type;modified=false;}
+	Item(byte _type=TYPE_TEXT){type=_type; modified=false;}
 	virtual ~Item(){	
 	}
 	virtual void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL){};
@@ -42,6 +42,7 @@ public:
 	virtual void Save(){};
 	virtual Item* Copy(){return NULL;}
 	bool modified;
+	bool needTooltip = false;
 	byte type;
 	wxString name;
 };
@@ -51,7 +52,7 @@ public:
 	ItemText(const wxString &txt) : Item(){name = txt;}
 	virtual ~ItemText(){		
 	}
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL){};
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	wxString GetName(){return name;}
 	void Save(){};
@@ -201,7 +202,7 @@ private:
 	int iter;
 	bool modified;
 	bool hasArrow;
-
+	//bool hasTooltip = false;
 	DECLARE_EVENT_TABLE()
 	wxDECLARE_ABSTRACT_CLASS(KaiListCtrl);
 };

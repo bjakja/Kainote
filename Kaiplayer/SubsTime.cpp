@@ -110,11 +110,13 @@ wxString STime::raw(char ft)//,float custfps
 
 void STime::Change(int ms)
 {
-	mstime+=ms;if(mstime<0){mstime=0;}
+	mstime+=ms;
+	if(mstime<0){mstime=0;}
 }
 void STime::ChangeFrame(int frame)
 {
-	orgframe+=frame;if(orgframe<0){orgframe=0;}
+	orgframe+=frame;
+	if(orgframe<0){orgframe=0;}
 }
 void STime::NewTime(int ms)
 {
@@ -190,6 +192,8 @@ STime STime::operator- (const STime &comp)
 	STime tmp = STime(comp);
 	tmp.mstime = mstime - comp.mstime;
 	tmp.orgframe = orgframe - comp.orgframe;
+	if (tmp.mstime<0){ tmp.mstime = 0; }
+	if (tmp.orgframe<0){ tmp.orgframe = 0; }
 	return tmp;
 }
 

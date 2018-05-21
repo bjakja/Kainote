@@ -263,7 +263,7 @@ public:
 	void SaveHkeys(bool Audio=false);
 	void SetHKey(const idAndType &itype, wxString name, wxString hotkey);
 	wxAcceleratorEntry GetHKey(const idAndType itype, const hdata *hkey=0);
-	wxString GetMenuH(const idAndType &itype, const wxString &name="");
+	wxString GetStringHotkey(const idAndType &itype, const wxString &name="");
 	void FillTable();
 	void ResetKey(const idAndType *itype, int id=0, char type=GLOBAL_HOTKEY);
 	wxString GetDefaultKey(const idAndType &itype);
