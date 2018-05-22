@@ -163,23 +163,23 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, kainoteFrame* kaif,int idd)
 	ans.Add("an9");
 
 
-	Bfont = new MappedButton(this, ID_FONT, "", _("Wybór czcionki"), wxDefaultPosition, wxSize(24,24));
+	Bfont = new MappedButton(this, EDITBOX_CHANGE_FONT, "", _("Wybór czcionki"), wxDefaultPosition, wxSize(24,24));
 	Bfont->SetBitmap(wxBITMAP_PNG ("FONTS"));
-	Bcol1 = new MappedButton(this, ID_COL1, "", _("Kolor podstawowy"), wxDefaultPosition, wxSize(24,24));
+	Bcol1 = new MappedButton(this, EDITBOX_CHANGE_COLOR_PRIMARY, "", _("Kolor podstawowy"), wxDefaultPosition, wxSize(24,24));
 	Bcol1->SetBitmap(wxBITMAP_PNG ("Kolor1"));
-	Bcol2 = new MappedButton(this, ID_COL2, "", _("Kolor zastępczy do karaoke"), wxDefaultPosition, wxSize(24,24));
+	Bcol2 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SECONDARY, "", _("Kolor zastępczy do karaoke"), wxDefaultPosition, wxSize(24,24));
 	Bcol2->SetBitmap(wxBITMAP_PNG ("Kolor2"));
-	Bcol3 = new MappedButton(this, ID_COL3, "", _("Kolor obwódki"), wxDefaultPosition, wxSize(24,24));
+	Bcol3 = new MappedButton(this, EDITBOX_CHANGE_COLOR_OUTLINE, "", _("Kolor obwódki"), wxDefaultPosition, wxSize(24,24));
 	Bcol3->SetBitmap(wxBITMAP_PNG ("Kolor3"));
-	Bcol4 = new MappedButton(this, ID_COL4, "", _("Kolor cienia"), wxDefaultPosition, wxSize(24,24));
+	Bcol4 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SHADOW, "", _("Kolor cienia"), wxDefaultPosition, wxSize(24, 24));
 	Bcol4->SetBitmap(wxBITMAP_PNG ("Kolor4"));
 	Bbold = new MappedButton(this, PutBold, "", _("Pogrubienie"), wxDefaultPosition, wxSize(24,24));
 	Bbold->SetBitmap(wxBITMAP_PNG ("BOLD"));
 	Bital = new MappedButton(this, PutItalic, "", _("Pochylenie"), wxDefaultPosition, wxSize(24,24));
 	Bital->SetBitmap(wxBITMAP_PNG ("ITALIC"));
-	Bund = new MappedButton(this, ID_UND, "", _("Podkreślenie"), wxDefaultPosition, wxSize(24,24));
+	Bund = new MappedButton(this, EDITBOX_CHANGE_UNDERLINE, "", _("Podkreślenie"), wxDefaultPosition, wxSize(24,24));
 	Bund->SetBitmap(wxBITMAP_PNG ("UNDER"));
-	Bstrike = new MappedButton(this, ID_STRIKE, "", _("Przekreślenie"), wxDefaultPosition, wxSize(24,24));
+	Bstrike = new MappedButton(this, EDITBOX_CHANGE_STRIKEOUT, "", _("Przekreślenie"), wxDefaultPosition, wxSize(24,24));
 	Bstrike->SetBitmap(wxBITMAP_PNG ("STRIKE"));
 	Ban = new KaiChoice(this, ID_AN, wxDefaultPosition, wxSize(48,24),ans);
 	Ban->Select(1);
@@ -218,11 +218,11 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, kainoteFrame* kaif,int idd)
 	BoxSizer5->Add(Frames,0,wxALIGN_CENTER|wxLEFT,2);
 
 
-	Bcpall = new MappedButton(this, ID_CPALL, _("Wklej wszystko"),EDITBOX_HOTKEY);
+	Bcpall = new MappedButton(this, EDITBOX_PASTE_ALL_TO_TRANSLATION, _("Wklej wszystko"),EDITBOX_HOTKEY);
 	Bcpall->Hide();
-	Bcpsel = new MappedButton(this, ID_CPSEL, _("Wklej zaznaczone"),EDITBOX_HOTKEY);
+	Bcpsel = new MappedButton(this, EDITBOX_PASTE_SELECTION_TO_TRANSLATION, _("Wklej zaznaczone"),EDITBOX_HOTKEY);
 	Bcpsel->Hide();
-	Bhide = new MappedButton(this, ID_HIDE, _("Ukryj oryginał"),EDITBOX_HOTKEY);
+	Bhide = new MappedButton(this, EDITBOX_HIDE_ORIGINAL, _("Ukryj oryginał"),EDITBOX_HOTKEY);
 	Bhide->Hide();
 	DoubtfulTL = new ToggleButton(this, ID_DOUBTFULTL, _("Niepewne"));
 	DoubtfulTL ->Hide();
@@ -291,27 +291,25 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, kainoteFrame* kaif,int idd)
 
 	SetSizer(BoxSizer1);
 
-
-
 	Connect(ID_COMMENT,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&EditBox::OnCommit);
 	Connect(ID_TLMODE,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&EditBox::OnTlMode); //16658
 	Connect(16658,wxEVT_COMMAND_COMBOBOX_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);
 	Connect(ID_STYLE,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);
 	Connect(PutBold,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnBoldClick);
 	Connect(PutItalic,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnItalicClick);
-	Connect(ID_UND,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnUnderlineClick);
-	Connect(ID_STRIKE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnStrikeClick);
+	Connect(EDITBOX_CHANGE_UNDERLINE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnUnderlineClick);
+	Connect(EDITBOX_CHANGE_STRIKEOUT,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnStrikeClick);
 	Connect(ID_AN,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&EditBox::OnAnChoice);
-	Connect(ID_FONT,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnFontClick);
-	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnColorClick,this,ID_COL1,ID_COL4);
+	Connect(EDITBOX_CHANGE_FONT,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnFontClick);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnColorClick, this, EDITBOX_CHANGE_COLOR_PRIMARY, EDITBOX_CHANGE_COLOR_SHADOW);
 	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnStyleEdit, this, 19989);
-	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnCopyAll, this, ID_CPALL);
-	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnCopySelection, this, ID_CPSEL);
-	Connect(ID_HIDE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnHideOriginal);
+	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnCopyAll, this, EDITBOX_PASTE_ALL_TO_TRANSLATION);
+	Bind(wxEVT_COMMAND_MENU_SELECTED,&EditBox::OnCopySelection, this, EDITBOX_PASTE_SELECTION_TO_TRANSLATION);
+	Connect(EDITBOX_HIDE_ORIGINAL,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnHideOriginal);
 	Connect(ID_DOUBTFULTL,wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnDoubtfulTl);
 	Connect(ID_AUTOMOVETAGS,wxEVT_COMMAND_TOGGLEBUTTON_CLICKED,(wxObjectEventFunction)&EditBox::OnAutoMoveTags);
-	Connect(MENU_COMMIT,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);
-	Connect(MENU_NEWLINE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnNewline);
+	Connect(EDITBOX_COMMIT,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnCommit);
+	Connect(EDITBOX_COMMIT_GO_NEXT_LINE,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnNewline);
 	Connect(FindNextDoubtful,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::FindNextDoubtfulTl);
 	Connect(FindNextUntranslated,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::FindNextUnTranslated);
 	Connect(SetDoubtful,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnDoubtfulTl);
@@ -862,7 +860,7 @@ void EditBox::AllColorClick(int kol)
 
 void EditBox::OnColorClick(wxCommandEvent& event)
 {
-	AllColorClick(event.GetId()-ID_COL1+1);
+	AllColorClick(event.GetId()-EDITBOX_CHANGE_COLOR_PRIMARY+1);
 }
 
 void EditBox::OnCommit(wxCommandEvent& event)
@@ -1448,7 +1446,7 @@ void EditBox::OnColorChange(wxCommandEvent& event)
 void EditBox::OnButtonTag(wxCommandEvent& event)
 {
 	wxString type;
-	wxString tag = Options.GetString((CONFIG)(event.GetId() - 15000 + EditboxTagButton1)).BeforeFirst('\f', &type);
+	wxString tag = Options.GetString((CONFIG)(event.GetId() - EDITBOX_TAG_BUTTON1 + EditboxTagButton1)).BeforeFirst('\f', &type);
 	if(tag.IsEmpty()){wxBell(); return;}
 	type = type.BeforeFirst('\f');
 
@@ -1575,7 +1573,7 @@ void EditBox::OnEditTag(wxCommandEvent &event)
 			}
 		}
 		wxString svtag = tb->tag;
-		Options.SetString((CONFIG)(id - 15000 + EditboxTagButton1), svtag << "\f" << tb->type << "\f" << tb->name);
+		Options.SetString((CONFIG)(id - EDITBOX_TAG_BUTTON1 + EditboxTagButton1), svtag << "\f" << tb->type << "\f" << tb->name);
 		Options.SaveOptions(true,false);
 		if(tb->tag!=""){tb->SetToolTip(tb->tag);}
 	}
@@ -1807,14 +1805,14 @@ void EditBox::SetTagButtons()
 			}
 			if (i >= numofButtons){
 				if(!TagButtonManager){
-					BoxSizer4->Add(new TagButton(this, 15000+i, name, tag, type, wxSize((name.Len())>2? -1 : 24, 24)),0,wxALL,2);
+					BoxSizer4->Add(new TagButton(this, EDITBOX_TAG_BUTTON1+i, name, tag, type, wxSize((name.Len())>2? -1 : 24, 24)),0,wxALL,2);
 				}else if (i >= numofButtons){
-					BoxSizer4->Insert(10+i,new TagButton(this, 15000+i, name, tag, type, wxSize((name.Len())>3? -1 : 24, 24)),0,wxALL,2);
+					BoxSizer4->Insert(10+i,new TagButton(this, EDITBOX_TAG_BUTTON1+i, name, tag, type, wxSize((name.Len())>3? -1 : 24, 24)),0,wxALL,2);
 				}
-				Connect(15000+i,TAG_BUTTON_EDITION,(wxObjectEventFunction)&EditBox::OnEditTag);
-				Connect(15000+i,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnButtonTag);
+				Connect(EDITBOX_TAG_BUTTON1+i,TAG_BUTTON_EDITION,(wxObjectEventFunction)&EditBox::OnEditTag);
+				Connect(EDITBOX_TAG_BUTTON1+i,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&EditBox::OnButtonTag);
 			}
-			menu->Append(15000+i, name);
+			menu->Append(EDITBOX_TAG_BUTTON1+i, name);
 		}
 		menu->Append(16000, _("Zmień ilość przycisków"));
 		if(!TagButtonManager){

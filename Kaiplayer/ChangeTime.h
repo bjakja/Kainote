@@ -119,7 +119,6 @@ enum{
 	ID_BSTYLE,
 	ID_CLOSE,
 	ID_SCROLL,
-	ID_MOVE,
 	ID_VIDEO,
 	ID_AUDIO
 };

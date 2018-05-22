@@ -49,7 +49,7 @@ SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, cons
 			Options.SetInt(GridHideCollums, visibleColumns);
 			RefreshColumns();
 		}
-		else if (id == 4446){
+		else if (id == GRID_FILTER_INVERTED){
 			Options.SetBool(GridFilterInverted, !Options.GetBool(GridFilterInverted));
 		}
 		else if (id >= FilterByStyles && id <= FilterByUntranslated){
@@ -62,7 +62,7 @@ SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, cons
 				filterBy ^= addToFilterBy;
 			}
 			Options.SetInt(GridFilterBy, filterBy);
-		}
+		}//styles checking
 		else if (id == 4448){
 			int filterBy = Options.GetInt(GridFilterBy);
 			wxString &name = item->label;
@@ -75,7 +75,7 @@ SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, cons
 				}
 			}
 			if (!found && item->check){ filterStyles.Add(name); }
-			Options.SetTable(GridFilterStyles, filterStyles, ";");
+			Options.SetTable(GridFilterStyles, filterStyles, ",");
 			if (filterStyles.size() > 0 && !(filterBy & FILTER_BY_STYLES)){
 				Options.SetInt(GridFilterBy, filterBy | FILTER_BY_STYLES);
 				Menu *parentMenu = NULL;
@@ -97,13 +97,13 @@ SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, cons
 				}
 			}
 		}
-		else if (id == 4449){
+		else if (id == GRID_FILTER_DO_NOT_RESET){
 			Options.SetBool(GridAddToFilter, item->check);
 		}
-		else if (id == 4450){
+		else if (id == GRID_FILTER_AFTER_SUBS_LOAD){
 			Options.SetBool(GridFilterAfterLoad, item->check);
 		}
-		else if (id == 4451){
+		else if (id == GRID_FILTER_IGNORE_IN_ACTIONS){
 			Options.SetBool(GridIgnoreFiltering, item->check);
 			ignoreFiltered = item->check;
 		}
@@ -126,22 +126,22 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	Menu *hidemenu = new Menu(GRID_HOTKEY);
 	Menu *filterMenu = new Menu(GRID_HOTKEY);
 	//hide submenu
-	hidemenu->SetAccMenu(5000 + LAYER, _("Ukryj warstwę"), _("Ukryj warstwę"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & LAYER) != 0);
-	hidemenu->SetAccMenu(5000 + START, _("Ukryj czas początkowy"), _("Ukryj czas początkowy"), true, ITEM_CHECK)->Check((visibleColumns & START) != 0);
-	hidemenu->SetAccMenu(5000 + END, _("Ukryj czas końcowy"), _("Ukryj czas końcowy"), subsFormat != TMP, ITEM_CHECK)->Check((visibleColumns & END) != 0);
-	hidemenu->SetAccMenu(5000 + ACTOR, _("Ukryj aktora"), _("Ukryj aktora"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & ACTOR) != 0);
-	hidemenu->SetAccMenu(5000 + STYLE, _("Ukryj styl"), _("Ukryj styl"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & STYLE) != 0);
-	hidemenu->SetAccMenu(5000 + MARGINL, _("Ukryj lewy margines"), _("Ukryj lewy margines"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & MARGINL) != 0);
-	hidemenu->SetAccMenu(5000 + MARGINR, _("Ukryj prawy margines"), _("Ukryj prawy margines"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & MARGINR) != 0);
-	hidemenu->SetAccMenu(5000 + MARGINV, _("Ukryj pionowy margines"), _("Ukryj pionowy margines"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & MARGINV) != 0);
-	hidemenu->SetAccMenu(5000 + EFFECT, _("Ukryj efekt"), _("Ukryj efekt"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & EFFECT) != 0);
-	hidemenu->SetAccMenu(5000 + CNZ, _("Ukryj znaki na sekundę"), _("Ukryj znaki na sekundę"), true, ITEM_CHECK)->Check((visibleColumns & CNZ) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_LAYER, _("Ukryj warstwę"), _("Ukryj warstwę"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & LAYER) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_START, _("Ukryj czas początkowy"), _("Ukryj czas początkowy"), true, ITEM_CHECK)->Check((visibleColumns & START) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_END, _("Ukryj czas końcowy"), _("Ukryj czas końcowy"), subsFormat != TMP, ITEM_CHECK)->Check((visibleColumns & END) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_ACTOR, _("Ukryj aktora"), _("Ukryj aktora"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & ACTOR) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_STYLE, _("Ukryj styl"), _("Ukryj styl"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & STYLE) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_MARGINL, _("Ukryj lewy margines"), _("Ukryj lewy margines"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & MARGINL) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_MARGINR, _("Ukryj prawy margines"), _("Ukryj prawy margines"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & MARGINR) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_MARGINV, _("Ukryj pionowy margines"), _("Ukryj pionowy margines"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & MARGINV) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_EFFECT, _("Ukryj efekt"), _("Ukryj efekt"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & EFFECT) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_CPS, _("Ukryj znaki na sekundę"), _("Ukryj znaki na sekundę"), true, ITEM_CHECK)->Check((visibleColumns & CPS) != 0);
 
 	//styles menu
 	Menu *stylesMenu = new Menu();
 	std::vector<Styles*> &styles = file->GetSubs()->styles;
 	wxArrayString optionsFilterStyles;
-	Options.GetTable(GridFilterStyles, optionsFilterStyles, ";");
+	Options.GetTable(GridFilterStyles, optionsFilterStyles, ",");
 	filterStyles.clear();
 	for (int i = 0; i < StylesSize(); i++){
 		MenuItem * styleItem = stylesMenu->Append(4448, styles[i]->Name, "", true, NULL, NULL, ITEM_CHECK);
@@ -150,16 +150,16 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	//filter submenu
 	int filterBy = Options.GetInt(GridFilterBy);
 	bool isASS = subsFormat == ASS;
-	filterMenu->SetAccMenu(4450, _("Filtruj po wczytaniu napisów"), _("Nie obejmuje zaznaczonych linii"), isASS, ITEM_CHECK)->Check(Options.GetBool(GridFilterAfterLoad));
-	filterMenu->SetAccMenu(4446, _("Filtrowanie odwrócone"), _("Filtrowanie odwrócone"), true, ITEM_CHECK)->Check(Options.GetBool(GridFilterInverted));
-	filterMenu->SetAccMenu(4449, _("Nie resetuj wcześniejszego filtrowania"), _("Nie resetuj wcześniejszego filtrowania"), true, ITEM_CHECK)->Check(Options.GetBool(GridAddToFilter));
+	filterMenu->SetAccMenu(GRID_FILTER_AFTER_SUBS_LOAD, _("Filtruj po wczytaniu napisów"), _("Nie obejmuje zaznaczonych linii"), isASS, ITEM_CHECK)->Check(Options.GetBool(GridFilterAfterLoad));
+	filterMenu->SetAccMenu(GRID_FILTER_INVERTED, _("Filtrowanie odwrócone"), _("Filtrowanie odwrócone"), true, ITEM_CHECK)->Check(Options.GetBool(GridFilterInverted));
+	filterMenu->SetAccMenu(GRID_FILTER_DO_NOT_RESET, _("Nie resetuj wcześniejszego filtrowania"), _("Nie resetuj wcześniejszego filtrowania"), true, ITEM_CHECK)->Check(Options.GetBool(GridAddToFilter));
 	MenuItem *Item = new MenuItem(FilterByStyles, _("Ukryj linie ze stylami"), _("Ukryj linie ze stylami"), isASS, NULL, stylesMenu, ITEM_CHECK);
 	filterMenu->SetAccMenu(Item, Item->label)->Check(filterStyles.size() > 0);
 	filterMenu->SetAccMenu(FilterBySelections, _("Ukryj zaznaczone linie"), _("Ukryj zaznaczone linie"), sels > 0, ITEM_CHECK)->Check(filterBy & FILTER_BY_SELECTIONS && sels > 0);
 	filterMenu->SetAccMenu(FilterByDialogues, _("Ukryj komentarze"), _("Ukryj komentarze"), isASS, ITEM_CHECK)->Check((filterBy & FILTER_BY_DIALOGUES) != 0);
 	filterMenu->SetAccMenu(FilterByDoubtful, _("Pokaż niepewne"), _("Pokaż niepewne"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_DOUBTFUL && hasTLMode);
 	filterMenu->SetAccMenu(FilterByUntranslated, _("Pokaż nieprzetłumaczone"), _("Pokaż nieprzetłumaczone"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_UNTRANSLATED && hasTLMode);
-	filterMenu->SetAccMenu(4447, _("Filtruj"), _("Filtruj"));
+	filterMenu->SetAccMenu(GRID_FILTER, _("Filtruj"), _("Filtruj"));
 	filterMenu->SetAccMenu(FilterByNothing, _("Wyłącz filtrowanie"), _("Wyłącz filtrowanie"))->Enable(isFiltered);
 
 	bool isen;
@@ -183,15 +183,15 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	isen = (sels > 0);
 	menu->SetAccMenu(ContinousPrevious, _("Ustaw czasy jako ciągłe (poprzednia linijka)"))->Enable(isen);
 	menu->SetAccMenu(ContinousNext, _("Ustaw czasy jako ciągłe (następna linijka)"))->Enable(isen);
-	menu->SetAccMenu(Cut, _("Wytnij\tCtrl-X"))->Enable(isen);
 	menu->SetAccMenu(Copy, _("Kopiuj\tCtrl-C"))->Enable(isen);
+	menu->SetAccMenu(Cut, _("Wytnij\tCtrl-X"))->Enable(isen);
 	menu->SetAccMenu(Paste, _("Wklej\tCtrl-V"));
 	menu->SetAccMenu(CopyCollumns, _("Kopiuj kolumny"))->Enable(isen);
 	menu->SetAccMenu(PasteCollumns, _("Wklej kolumny"));
 	menu->Append(4444, _("Ukryj kolumny"), hidemenu);
 	menu->SetAccMenu(HideSelected, _("Ukryj zaznaczone linijki"))->Enable(sels > 0);
 	menu->Append(4445, _("Filtrowanie"), filterMenu);
-	menu->Append(4451, _("Ignoruj filtrowanie przy akcjach"), NULL, "", ITEM_CHECK)->Check(ignoreFiltered);
+	menu->SetAccMenu(GRID_FILTER_IGNORE_IN_ACTIONS, _("Ignoruj filtrowanie przy akcjach"), "", true, ITEM_CHECK)->Check(ignoreFiltered);
 	menu->SetAccMenu(ShowPreview, _("Pokaż podgląd napisów"))->Enable(Notebook::GetTabs()->Size()>1 && !preview);
 	menu->SetAccMenu(NewFPS, _("Ustaw nowy FPS"));
 	menu->SetAccMenu(FPSFromVideo, _("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState() != None && sels == 2);
@@ -581,7 +581,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 		isFiltered = true;
 		break;
 	}
-	case 4447:
+	case GRID_FILTER:
 	case FilterByNothing:
 		Filter(id); break;
 	case PasteTranslation: if (subsFormat < SRT && ((TabPanel*)GetParent())->SubsPath != ""){ OnPasteTextTl(); } break;

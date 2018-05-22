@@ -257,7 +257,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			wxString txttl = Dial->TextTl;
 			bool isTl = (hasTLMode && txttl != "");
 
-			if (!isComment && subsFormat != TMP && !(CNZ & visibleColumns)){
+			if (!isComment && subsFormat != TMP && !(CPS & visibleColumns)){
 				int chtime;
 				if (SpellErrors[k].size()<1){
 					chtime = CalcChars((isTl) ? txttl : txt) /
@@ -611,7 +611,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 		}
 	}
 
-	if (CNZ & cell){
+	if (CPS & cell){
 		dc.GetTextExtent(_("ZNS"), &fw, &fh, NULL, NULL, &font);
 		GridWidth[(subsFormat<SRT) ? 10 : 3] = fw + 5;
 	}
@@ -620,14 +620,14 @@ void SubsGridWindow::AdjustWidths(int cell)
 	if (subsFormat>ASS){ GridWidth[4] = 0; GridWidth[5] = 0; GridWidth[6] = 0; GridWidth[7] = 0; GridWidth[8] = 0; GridWidth[9] = 0; }
 	if ((subsFormat<SRT) ? (LAYER & visibleColumns) : (START & visibleColumns)){ GridWidth[1] = 0; }
 	if ((subsFormat<SRT) ? (START & visibleColumns) : (END & visibleColumns)){ GridWidth[2] = 0; }
-	if ((subsFormat<SRT) ? (END & visibleColumns) : (CNZ & visibleColumns)){ GridWidth[3] = 0; }
+	if ((subsFormat<SRT) ? (END & visibleColumns) : (CPS & visibleColumns)){ GridWidth[3] = 0; }
 	if (STYLE & visibleColumns){ GridWidth[4] = 0; }
 	if (ACTOR & visibleColumns){ GridWidth[5] = 0; }
 	if (MARGINL & visibleColumns){ GridWidth[6] = 0; }
 	if (MARGINR & visibleColumns){ GridWidth[7] = 0; }
 	if (MARGINV & visibleColumns){ GridWidth[8] = 0; }
 	if (EFFECT & visibleColumns){ GridWidth[9] = 0; }
-	if (CNZ & visibleColumns){ GridWidth[10] = 0; }
+	if (CPS & visibleColumns){ GridWidth[10] = 0; }
 	first = false;
 
 }

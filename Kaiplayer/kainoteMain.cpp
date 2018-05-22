@@ -151,12 +151,12 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Menu *SortMenu[2];
 	for (int i = 0; i < 2; i++){
 		SortMenu[i] = new Menu();
-		SortMenu[i]->Append(7000 + (6 * i), _("Czas początkowy"), _("Sortuj według czasu początkowego"));
-		SortMenu[i]->Append(7001 + (6 * i), _("Czas końcowy"), _("Sortuj według czasu końcowego"));
-		SortMenu[i]->Append(7002 + (6 * i), _("Style"), _("Sortuj według styli"));
-		SortMenu[i]->Append(7003 + (6 * i), _("Aktor"), _("Sortuj według aktora"));
-		SortMenu[i]->Append(7004 + (6 * i), _("Efekt"), _("Sortuj według efektu"));
-		SortMenu[i]->Append(7005 + (6 * i), _("Warstwa"), _("Sortuj według warstwy"));
+		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_START_TIMES + (6 * i), _("Czas początkowy"), _("Sortuj według czasu początkowego"));
+		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_END_TIMES + (6 * i), _("Czas końcowy"), _("Sortuj według czasu końcowego"));
+		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_STYLE + (6 * i), _("Style"), _("Sortuj według styli"));
+		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_ACTOR + (6 * i), _("Aktor"), _("Sortuj według aktora"));
+		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_EFFECT + (6 * i), _("Efekt"), _("Sortuj według efektu"));
+		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_LAYER + (6 * i), _("Warstwa"), _("Sortuj według warstwy"));
 	}
 
 	EditMenu->AppendTool(Toolbar, SortLines, _("Sort&uj wszystkie linie"), _("Sortuje wszystkie linie napisów ASS"), PTR_BITMAP_PNG("sort"), true, SortMenu[0]);
@@ -247,7 +247,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	//tutaj dodawaj nowe idy
 	Connect(SaveSubs, History, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
 	Connect(7000, 7011, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
-	Connect(ID_MOVE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
+	Connect(GLOBAL_SHIFT_TIMES, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
 	Connect(OpenSubs, ANSI, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
 	Connect(SelectFromVideo, PlayActualLine, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
 	Connect(Plus5SecondG, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnP5Sec);
@@ -592,7 +592,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	else if (id == UndoToLastSave){
 		tab->Grid->GetUndo(false, tab->Grid->file->GetLastSaveIter());
 	}
-	else if (id == ID_MOVE){
+	else if (id == GLOBAL_SHIFT_TIMES){
 		tab->ShiftTimes->OnOKClick(event);
 	}
 	

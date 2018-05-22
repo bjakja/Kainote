@@ -73,8 +73,8 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 
 	std::vector<wxAcceleratorEntry> eentries;
 	eentries.resize(2);
-	eentries[0].Set(wxACCEL_CTRL, WXK_NUMPAD_ENTER, MENU_COMMIT);
-	eentries[1].Set(wxACCEL_NORMAL, WXK_NUMPAD_ENTER, MENU_NEWLINE);
+	eentries[0].Set(wxACCEL_CTRL, WXK_NUMPAD_ENTER, EDITBOX_COMMIT);
+	eentries[1].Set(wxACCEL_NORMAL, WXK_NUMPAD_ENTER, EDITBOX_COMMIT_GO_NEXT_LINE);
 	std::vector<wxAcceleratorEntry> ventries;
 	
 	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){

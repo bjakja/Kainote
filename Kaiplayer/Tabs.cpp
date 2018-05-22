@@ -74,7 +74,7 @@ Notebook::Notebook(wxWindow *parent, int id)
 				}
 			}
 			if (!found && item->check){ SubsGridBase::compareStyles.Add(name); }
-			Options.SetTable(SubsComparisonStyles, SubsGridBase::compareStyles, ";");
+			Options.SetTable(SubsComparisonStyles, SubsGridBase::compareStyles, ",");
 			if ((SubsGridBase::compareStyles.size() > 0 && !(compareBy & COMPARE_BY_CHOSEN_STYLES)) ||
 				(SubsGridBase::compareStyles.size() < 1 && compareBy & COMPARE_BY_CHOSEN_STYLES)){
 				compareBy ^= COMPARE_BY_CHOSEN_STYLES;
@@ -526,7 +526,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			wxArrayString availableStyles;
 			Pages[iter]->Grid->GetCommonStyles(Pages[i]->Grid, availableStyles);
 			wxArrayString optionsCompareStyles;
-			Options.GetTable(SubsComparisonStyles, optionsCompareStyles, ";");
+			Options.GetTable(SubsComparisonStyles, optionsCompareStyles, ",");
 			for (int i = 0; i < availableStyles.size(); i++){
 				MenuItem * styleItem = styleComparisonMenu->Append(4448, availableStyles[i], "", true, NULL, NULL, ITEM_CHECK);
 				if (optionsCompareStyles.Index(availableStyles[i]) != -1){ styleItem->Check(); SubsGridBase::compareStyles.Add(availableStyles[i]); }

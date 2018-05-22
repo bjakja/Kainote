@@ -183,8 +183,8 @@ void Hotkeys::LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio)
 		_hkeys[idAndType(FindNextDoubtful,EDITBOX_HOTKEY)] = hdata(_("Następne niepewne"), "Ctrl-D");
 		_hkeys[idAndType(FindNextUntranslated,EDITBOX_HOTKEY)] = hdata(_("Następne nieprzetłumaczone"), "Ctrl-R");
 		_hkeys[idAndType(SetDoubtful,EDITBOX_HOTKEY)] = hdata(_("Ustaw jako niepewne i przejdź dalej"), "Alt-Down");
-		_hkeys[idAndType(MENU_COMMIT,EDITBOX_HOTKEY)] = hdata(_("Zatwierdź zmiany"), "Ctrl-Enter");
-		_hkeys[idAndType(MENU_NEWLINE,EDITBOX_HOTKEY)] = hdata(_("Zatwierdź zmiany idź do następnej linii"), "Enter");
+		_hkeys[idAndType(EDITBOX_COMMIT,EDITBOX_HOTKEY)] = hdata(_("Zatwierdź zmiany"), "Ctrl-Enter");
+		_hkeys[idAndType(EDITBOX_COMMIT_GO_NEXT_LINE,EDITBOX_HOTKEY)] = hdata(_("Zatwierdź zmiany idź do następnej linii"), "Enter");
 	}else{
 		_hkeys[idAndType(AudioCommit,AUDIO_HOTKEY)] = hdata(_("Zatwierdź"), "Enter");
 		_hkeys[idAndType(AudioCommitAlt,AUDIO_HOTKEY)] = hdata(_("Zatwierdź zastępcze"), "G");

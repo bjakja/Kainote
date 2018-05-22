@@ -268,7 +268,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			wxString txt = Dial->Text;
 			wxString txttl = Dial->TextTl;
 
-			if (previewGrid->subsFormat != TMP && !(CNZ & previewGrid->visibleColumns)){
+			if (previewGrid->subsFormat != TMP && !(CPS & previewGrid->visibleColumns)){
 				int chtime;
 				if (previewGrid->SpellErrors[k].size() < 1){
 					chtime = previewGrid->CalcChars((previewGrid->hasTLMode && txttl != "") ? txttl : txt) /

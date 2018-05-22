@@ -38,7 +38,7 @@ ShiftTimesWindow::ShiftTimesWindow(wxWindow* parent,kainoteFrame* kfparent,wxWin
 	scPos=0;
 	
 	wxAcceleratorEntry ctentries[1];
-    ctentries[0].Set(wxACCEL_NORMAL, WXK_RETURN, ID_MOVE);
+    ctentries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GLOBAL_SHIFT_TIMES);
 	
     wxAcceleratorTable ctaccel(1, ctentries);
     SetAcceleratorTable(ctaccel);
@@ -197,7 +197,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		//ramka czasu
 		KaiStaticBoxSizer *timesizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Czas"));
 		wxGridSizer *timegrid = new wxGridSizer(2, 0, 0);
-		MoveTime = new MappedButton(panel, ID_MOVE, _("Przesuń"), _("Przesuń czas napisów"), wxDefaultPosition, wxSize(60, 22), GLOBAL_HOTKEY);
+		MoveTime = new MappedButton(panel, GLOBAL_SHIFT_TIMES, _("Przesuń"), _("Przesuń czas napisów"), wxDefaultPosition, wxSize(60, 22), GLOBAL_HOTKEY);
 		TimeText = new TimeCtrl(panel, -1, "0:00:00.00", wxDefaultPosition, wxSize(60, 20), wxALIGN_CENTER | wxTE_PROCESS_ENTER);
 		Forward = new KaiRadioButton(panel, -1, _("W przód"));
 		Backward = new KaiRadioButton(panel, -1, _("W tył"));
@@ -272,7 +272,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 	else{
 		int pe = Options.GetInt(PostprocessorEnabling);
 		liosizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Wstęp i zakończenie"));
-		MoveTime = new MappedButton(panel, ID_MOVE, _("Uruchom postprocessor"), _("Uruchom postprocessor"), wxDefaultPosition, wxDefaultSize, GLOBAL_HOTKEY);
+		MoveTime = new MappedButton(panel, GLOBAL_SHIFT_TIMES, _("Uruchom postprocessor"), _("Uruchom postprocessor"), wxDefaultPosition, wxDefaultSize, GLOBAL_HOTKEY);
 		Main->Add(MoveTime, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 6);
 		wxBoxSizer *leadinSizer = new wxBoxSizer(wxHORIZONTAL);
 		wxBoxSizer *leadoutSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -346,7 +346,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		panel->SetSizerAndFit(Main);
 	}
 	DoTooltips(normal);
-	Connect(ID_MOVE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&ShiftTimesWindow::OnOKClick);
+	Connect(GLOBAL_SHIFT_TIMES, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&ShiftTimesWindow::OnOKClick);
 	Connect(ID_BSTYLE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&ShiftTimesWindow::OnAddStyles);
 	Connect(22999, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&ShiftTimesWindow::CollapsePane);
 }
@@ -356,7 +356,7 @@ void ShiftTimesWindow::OnOKClick(wxCommandEvent& event)
 	SaveOptions();
 	int acid=event.GetId();
 	TabPanel *tab = Kai->GetTab();
-	if (acid==ID_MOVE){
+	if (acid==GLOBAL_SHIFT_TIMES){
 		tab->Grid->ChangeTimes((!LeadIn)? TimeText->HasShownFrames() : false);
 	}else if(acid==ID_CLOSE){
 		Hide();
