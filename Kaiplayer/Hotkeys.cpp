@@ -497,6 +497,22 @@ wxString Hotkeys::GetName(const idAndType itype)
 	return "";
 }
 
+const wxString & Hotkeys::GetName(int id)
+{
+	if (!hotkeysNaming)
+		hotkeysNaming = new HotkeysNaming();
+
+	return hotkeysNaming->GetName(id);
+}
+
+const std::map<int, wxString> & Hotkeys::GetNamesTable()
+{
+	if (!hotkeysNaming)
+		hotkeysNaming = new HotkeysNaming();
+
+	return hotkeysNaming->GetNamesTable();
+}
+
 //Okno dialogowe przechwytujące skróty klawiszowe
 //blokujące przy okazji dostęp do opcji
 HkeysDialog::HkeysDialog( wxWindow *parent, wxString name, char hotkeyWindow, bool showWindowSelection)

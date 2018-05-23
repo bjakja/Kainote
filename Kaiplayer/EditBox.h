@@ -201,7 +201,7 @@ private:
 
 //uwaga nie zmieniaæ kolejnoœci bo szlag trafi¹ skróty zapisane w hotkeys.txt
 enum{
-	ID_COMMENT=3989,
+	ID_COMMENT=3979,
 	ID_STYLE,
 	ID_AN,
 	ID_TLMODE,

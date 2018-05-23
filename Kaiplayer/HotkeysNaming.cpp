@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "HotkeysNaming.h"
-#include "KainoteMain.h"
+#include "hotkeys.h"
 
 HotkeysNaming::HotkeysNaming()
 {
@@ -45,6 +45,7 @@ void HotkeysNaming::CreateNamesMap()
 	names[About] = _("O programie");
 	names[ANSI] = _("W¹tek programu na forum AnimeSub.info");
 	names[AspectRatio] = _("Zmieñ proporcje wideo");
+	names[ASSProperties] = _("W³aœciwoœci ASS");
 	names[AudioCommit] = _("ZatwierdŸ");
 	names[AudioCommitAlt] = _("ZatwierdŸ zastêpcze");
 	names[AudioFromVideo] = _("Otwórz audio z wideo");
@@ -180,6 +181,7 @@ void HotkeysNaming::CreateNamesMap()
 	names[OpenVideo] = _("Otwórz wideo");
 	names[PasteCollumns] = _("Wklej kolumny");
 	names[PasteTranslation] = _("Wklej tekst t³umaczenia");
+	names[PlayActualLine] = _("Odtwórz aktywn¹ linijkê");
 	names[PlayPause] = _("Odtwórz / Pauza");
 	names[PlayPauseG] = _("Odtwórz / Pauza");
 	names[Plus5SecondG] = _("Wideo plus 5 sekund");

@@ -16,6 +16,7 @@
 #pragma once
 
 #include <map>
+#include "HotkeysNaming.h"
 #include "ListControls.h"
 #include "KaiDialog.h"
 #include "EnumFactory.h"
@@ -66,16 +67,16 @@
 	XX( FrameToClipboard, ) \
 	XX( SubbedFrameToPNG, ) \
 	XX( SubbedFrameToClipboard, ) \
-	XX( EDITBOX_CHANGE_FONT,=4100) \
+	XX( EDITBOX_CHANGE_FONT,=3991) \
 	XX( EDITBOX_CHANGE_UNDERLINE,) \
 	XX( EDITBOX_CHANGE_STRIKEOUT,) \
+	XX( EDITBOX_PASTE_ALL_TO_TRANSLATION,=3996) \
+	XX( EDITBOX_PASTE_SELECTION_TO_TRANSLATION,) \
+	XX( EDITBOX_HIDE_ORIGINAL,) \
 	XX( EDITBOX_CHANGE_COLOR_PRIMARY,) \
 	XX( EDITBOX_CHANGE_COLOR_SECONDARY,) \
 	XX( EDITBOX_CHANGE_COLOR_OUTLINE,) \
 	XX( EDITBOX_CHANGE_COLOR_SHADOW,) \
-	XX( EDITBOX_PASTE_ALL_TO_TRANSLATION,) \
-	XX( EDITBOX_PASTE_SELECTION_TO_TRANSLATION,) \
-	XX( EDITBOX_HIDE_ORIGINAL,) \
 	XX( EDITBOX_COMMIT,) \
 	XX( EDITBOX_COMMIT_GO_NEXT_LINE,) \
 	XX( PutBold,) \
@@ -321,10 +322,13 @@ public:
 	int OnMapHkey(int *returnId, wxString name,wxWindow *parent);
 	void SetAccels(bool all=false);
 	wxString GetName(const idAndType itype);
+	const std::map<int, wxString> &GetNamesTable();
+	const wxString &GetName(int id);
 	std::map<idAndType, hdata> hkeys;
 	std::map<int, wxString> keys;
 	bool AudioKeys;
 	int lastScirptId;
+	HotkeysNaming *hotkeysNaming=NULL;
 };
 
 

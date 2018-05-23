@@ -15,8 +15,8 @@
 
 #pragma once
 
-#include "hotkeys.h"
 #include <map>
+#include <wx/string.h>
 
 //class HotkeyName{
 //	HotkeyName(); 

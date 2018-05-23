@@ -217,15 +217,16 @@ int VideoFfmpeg::Init()
 	}
 	wxString ext = fname.AfterLast('.').Lower();
 	bool ismkv=(ext=="mkv");
+	bool hasMoreAudioTracks = audiotable.size() > 1;
 
-	if(audiotable.size()>1 || ismkv){
+	if (hasMoreAudioTracks || ismkv){
 
 		wxArrayString tracks;
 
 		if(ismkv){
 			MatroskaWrapper mw;
 			if(mw.Open(fname,false)){
-				if(audiotable.size()>1){
+				if (hasMoreAudioTracks){
 					for (size_t j=0;j<audiotable.size();j++){
 						TrackInfo* ti=mkv_GetTrackInfo(mw.file,audiotable[j]);
 						if (!ti)
@@ -250,8 +251,9 @@ int VideoFfmpeg::Init()
 				}
 				mw.Close();
 			}
-			if(audiotable.size()<2){audiotrack= (audiotable.size()>0)? audiotable[0] : -1; goto done;}
-		}else{
+			if (!hasMoreAudioTracks){ audiotrack = (audiotable.size()>0) ? audiotable[0] : -1; goto done; }
+		}
+		if (!tracks.size() && hasMoreAudioTracks){
 			for (size_t j=0;j<audiotable.size();j++){
 				wxString CodecName(FFMS_GetCodecNameI(Indexer, audiotable[j]), wxConvUTF8);
 				wxString all;
