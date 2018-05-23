@@ -324,6 +324,7 @@ public:
 	wxString GetName(const idAndType itype);
 	const std::map<int, wxString> &GetNamesTable();
 	const wxString &GetName(int id);
+	int GetType(int id);
 	std::map<idAndType, hdata> hkeys;
 	std::map<int, wxString> keys;
 	bool AudioKeys;

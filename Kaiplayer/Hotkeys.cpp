@@ -216,7 +216,10 @@ Hotkeys::~Hotkeys()
 {
 	keys.clear();
 	hkeys.clear();
-
+	if (hotkeysNaming){
+		delete hotkeysNaming;
+		hotkeysNaming = NULL;
+	}
 }
 
 int Hotkeys::LoadHkeys(bool Audio)
@@ -503,6 +506,20 @@ const wxString & Hotkeys::GetName(int id)
 		hotkeysNaming = new HotkeysNaming();
 
 	return hotkeysNaming->GetName(id);
+}
+
+int Hotkeys::GetType(int id)
+{
+	if (id < PlayPause)
+		return AUDIO_HOTKEY;
+	else if (id < EDITBOX_CHANGE_FONT )
+		return VIDEO_HOTKEY;
+	else if (id < GRID_HIDE_LAYER || (id >= EDITBOX_TAG_BUTTON1 && id <= EDITBOX_TAG_BUTTON10))
+		return EDITBOX_HOTKEY;
+	else if (id < SaveSubs)
+		return GRID_HOTKEY;
+
+	return GLOBAL_HOTKEY;
 }
 
 const std::map<int, wxString> & Hotkeys::GetNamesTable()

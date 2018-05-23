@@ -62,12 +62,12 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 	if(hkd.ShowModal()==wxID_OK){
 		
 		wxString hotkey = accel;
-		const idAndType *itype=NULL;
+		const idAndType *itype = new idAndType(hotkeyId.id, hkd.type);
 		for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
-			if(cur->second.Name == name){
+			/*if(cur->second.Name == name){
 				if(itype){delete itype;}
 				itype= new idAndType(cur->first.id, hkd.type);
-			}
+			}*/
 
 			if(cur->second.Accel == hkd.hotkey && (cur->first.Type == hkd.type) ){
 				KaiMessageDialog msg(theList, 
@@ -417,38 +417,25 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){KaiMessageBox(_("Nie można wczytać skrótów klawiszowych audio"), _("Błąd"));}
 
-		std::map<idAndType, hdata> _hkeys;
-		Hkeys.LoadDefault(_hkeys);
+		//std::map<idAndType, hdata> _hkeys;
+		/*Hkeys.LoadDefault(_hkeys);
 		Hkeys.LoadDefault(_hkeys,true);
 		Notebook::GetTab()->Video->ContextMenu(wxPoint(0,0),true);
-		Notebook::GetTab()->Grid->ContextMenu(wxPoint(0,0),true);
+		Notebook::GetTab()->Grid->ContextMenu(wxPoint(0,0),true);*/
+		const std::map<int, wxString> &_hkeys = Hkeys.GetNamesTable();
 
 		long ii=0;
 
-		for (auto cur = Hkeys.hkeys.begin();cur != Hkeys.hkeys.end();cur++) {
-			if(cur->second.Name==""){
-				auto tmpkey = _hkeys.find(cur->first);
-				if(tmpkey!=_hkeys.end()){
-					cur->second.Name = tmpkey->second.Name;
-				}else{
-					for(int window=0; window<5; window++){
-						if(window == cur->first.Type){
-							continue;
-						}else{
-							auto tmpkey = _hkeys.find(idAndType(cur->first.id, window));
-							if(tmpkey!=_hkeys.end()){
-								cur->second.Name = tmpkey->second.Name;
-								break;
-							}
-						}
-					}
-				}
-
+		for (auto cur = _hkeys.begin(); cur != _hkeys.end(); cur++) {
+			int htype = Hkeys.GetType(cur->first);
+			wxString name = windowNames[htype] + " " + cur->second;
+			wxString accel;
+			auto & it = Hkeys.hkeys.find(idAndType(cur->first, htype));
+			if (it != Hkeys.hkeys.end()){
+				accel = it->second.Accel;
 			}
-
-			wxString name= windowNames[cur->first.Type]+" "+cur->second.Name;
 			long pos = Shortcuts->AppendItem(new ItemText(name));
-			Shortcuts->SetItem(pos,1,new ItemHotkey(cur->second.Name, cur->second.Accel, cur->first));
+			Shortcuts->SetItem(pos, 1, new ItemHotkey(name, accel, idAndType(cur->first,htype)));
 			ii++;
 		}
 		Shortcuts->StartEdition();
