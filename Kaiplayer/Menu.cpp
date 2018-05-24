@@ -48,6 +48,7 @@ MenuItem::MenuItem(int _id, const wxString& _label, const wxString& _help, bool 
 	enabled=_enable;
 	type=_type;
 	submenu=Submenu; 
+	if (Submenu){ disableMapping = true; }
 	check=false;
 	help = _help;
 	//accel=NULL;
@@ -557,17 +558,19 @@ bool MenuDialog::SendEvent(MenuItem *item, int accel)
 {
 	if (!ParentMenu){ Destroy(); return false; }
 	if (!item->enabled && accel != wxMOD_SHIFT){ return false; }
-	if(item->type == ITEM_CHECK){
+	if (item->disableMapping && accel == wxMOD_SHIFT){ return false; }
+
+	if (item->type == ITEM_CHECK && accel != wxMOD_SHIFT){
 		item->check = !item->check;
 		Refresh(false);
-		int evtid = (ParentMenu->isPartialModal)? ID_CHECK_EVENT : item->id;
+		int evtid = (ParentMenu->isPartialModal) ? ID_CHECK_EVENT : item->id;
 		wxCommandEvent *evt= new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, evtid);
 		evt->SetClientData(item);
 		evt->SetInt(accel);
 		wxQueueEvent(ParentMenu->GetParent(),evt);
 		return true;
 	}
-	//id = item->id;
+
 	if(!ParentMenu->isPartialModal){
 		wxCommandEvent *evt= new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, item->id);
 		evt->SetClientData(item);

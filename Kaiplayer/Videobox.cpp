@@ -779,15 +779,16 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 	wxString txt1;
 	if(!isFullscreen){txt1=_("Pełny ekran\tF");}
 	else{txt1=_("Wyłącz pełny ekran\tEscape");}
-	menu->SetAccMenu(FullScreen,txt1)->Enable(GetState()!=None);
-
+	MenuItem *Item = menu->Append(FullScreen, txt1);
+	Item->Enable(GetState() != None);
+	Item->DisableMapping();
 	GetMonitorRect(-1);
 	for(size_t i=1; i<MonRects.size(); i++)
 	{
 		wxString txt2;
 		if(isFullscreen){txt2 = wxString::Format(_("Przełącz pełny ekran na %i monitor"), (int)(i+1));}
 		else{txt2 = wxString::Format(_("Włącz pełny ekran na %i monitorze"), (int)(i+1));}
-		menu->SetAccMenu(MENU_MONITORS+i,txt2)->Enable(GetState()!=None);
+		menu->Append(MENU_MONITORS+i,txt2)->Enable(GetState()!=None);
 	}
 
 	menu->SetAccMenu(Editor,_("Otwórz edytor"))->Enable(isFullscreen);

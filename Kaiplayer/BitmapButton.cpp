@@ -105,7 +105,7 @@ void BitmapButton::SetToolTip(const wxString &_toolTip)
 	if (!_toolTip.empty()){ name = _toolTip; }
 	
 	idAndType itype(hotkeyId, window);
-	wxString key = Hkeys.GetStringHotkey(itype, name);
+	wxString key = Hkeys.GetStringHotkey(itype);
 	
 	if(key!="")
 	{

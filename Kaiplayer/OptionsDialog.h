@@ -61,6 +61,7 @@ public:
 	MappedButton *okok;
 	void ConOpt(wxWindow *ctrl,CONFIG option);
 	static wxString *windowNames;
+	static std::map<idAndType, hdata> hotkeysCopy;
 private:
 	std::vector<OptionsBind> handles;
 

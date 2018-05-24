@@ -76,6 +76,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 	eentries[0].Set(wxACCEL_CTRL, WXK_NUMPAD_ENTER, EDITBOX_COMMIT);
 	eentries[1].Set(wxACCEL_NORMAL, WXK_NUMPAD_ENTER, EDITBOX_COMMIT_GO_NEXT_LINE);
 	std::vector<wxAcceleratorEntry> ventries;
+	int numTagButtons = Options.GetInt(EditboxTagButtons);
 	
 	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
 		int id=cur->first.id;
@@ -83,6 +84,9 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 			(onlyGridAudio && (cur->first.Type != GRID_HOTKEY && cur->first.Type != AUDIO_HOTKEY))){ continue; }
 		//editor
 		if(cur->first.Type == EDITBOX_HOTKEY){
+			//do not map hotkeys for hidden tag buttons
+			if (cur->first.id >= numTagButtons + EDITBOX_TAG_BUTTON1 && cur->first.id <= EDITBOX_TAG_BUTTON10)
+				continue;
 			eentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 
 		}

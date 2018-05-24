@@ -60,30 +60,44 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 	HkeysDialog hkd(theList,name, hotkeyId.Type, !name.StartsWith("Script") );
 	
 	if(hkd.ShowModal()==wxID_OK){
-		
+		if (OptionsDialog::hotkeysCopy.size() == 0)
+			OptionsDialog::hotkeysCopy = std::map<idAndType, hdata>(Hkeys.hkeys);
+
 		wxString hotkey = accel;
 		const idAndType *itype = new idAndType(hotkeyId.id, hkd.type);
-		for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++){
-			/*if(cur->second.Name == name){
-				if(itype){delete itype;}
-				itype= new idAndType(cur->first.id, hkd.type);
-			}*/
-
-			if(cur->second.Accel == hkd.hotkey && (cur->first.Type == hkd.type) ){
-				KaiMessageDialog msg(theList, 
-					wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
-					cur->second.Name), _("Uwaga"), wxYES_NO|wxCANCEL);
-				msg.SetYesLabel (_("Zamień skróty"));
-				msg.SetNoLabel (_("Usuń skrót"));
-				int result = msg.ShowModal();
-				if(result!=wxCANCEL){
-					if(result==wxNO){hotkey="";}
-					int nitem = theList->FindItem(0, OptionsDialog::windowNames[cur->first.Type] + " " + cur->second.Name);
+		for (auto cur = OptionsDialog::hotkeysCopy.begin(); cur != OptionsDialog::hotkeysCopy.end(); cur++){
+			
+			if(cur->second.Accel == hkd.hotkey){
+				int result = wxCANCEL;
+				wxString doubledHkName = Hkeys.GetName(cur->first.id);
+				if (cur->first.Type == hkd.type){
+					KaiMessageDialog msg(theList,
+						wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
+						doubledHkName), _("Uwaga"), wxYES| wxOK | wxCANCEL);
+					msg.SetOkLabel(_("Zamień skróty"));
+					msg.SetYesLabel(_("Usuń skrót"));
+					result = msg.ShowModal();
+				}
+				else{
+					KaiMessageDialog msg(theList,
+						wxString::Format(_("Ten skrót już istnieje w innym oknie jako skrót do \"%s\".\nCo zrobić?"),
+						OptionsDialog::windowNames[cur->first.Type] + " " + doubledHkName), _("Uwaga"), wxYES_NO | wxOK | wxCANCEL);
+					msg.SetOkLabel(_("Zamień skróty"));
+					msg.SetYesLabel(_("Usuń skrót"));
+					msg.SetNoLabel(_("Ustaw mimo to"));
+					result = msg.ShowModal();
+				}
+				if (result == wxNO){
+					break;
+				}else if(result!=wxCANCEL){
+					if(result==wxYES){hotkey="";}
+					int nitem = theList->FindItem(0, OptionsDialog::windowNames[cur->first.Type] + " " + doubledHkName);
 					if(nitem>=0){
 						ItemHotkey* item = (ItemHotkey*)theList->CopyRow(nitem, 1);
 						item->accel = hotkey;
 						item->modified = true;
 						theList->Refresh(false);
+						cur->second.Accel = hotkey;
 					}
 				}else{ if(itype){delete itype; itype = NULL;} return;}
 			}
@@ -98,9 +112,11 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 				itemtext->name = OptionsDialog::windowNames[hkd.type] + " " + name;
 				itemcopied->accel = hkd.hotkey;
 				itemcopied->modified = true;
+				itemcopied->hotkeyId = idAndType(hotkeyId.id, hkd.type);
 				int pos = theList->GetCount();
 				theList->ScrollTo(pos);
 				theList->SetSelection(pos);
+				OptionsDialog::hotkeysCopy[idAndType(hotkeyId.id, hkd.type)] = hdata(name, hkd.hotkey);
 				goto done;
 			}
 			ItemHotkey* item = (ItemHotkey*)theList->CopyRow(nitem, 1);
@@ -108,12 +124,14 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 			item->modified = true;
 			theList->ScrollTo(nitem+1);
 			theList->SetSelection(nitem);
+			OptionsDialog::hotkeysCopy[idAndType(hotkeyId.id, hkd.type)] = hdata(name, hkd.hotkey);
 			goto done;
 		}
 		ItemHotkey* item = (ItemHotkey*)theList->CopyRow(y, 1);
 		item->accel = hkd.hotkey;
 		item->modified = true;
 		theList->Refresh(false);
+		OptionsDialog::hotkeysCopy[hotkeyId] = hdata(name, hkd.hotkey);
 done:
 		delete itype; itype = NULL;
 		theList->SetModified(true);
@@ -130,6 +148,7 @@ void ItemHotkey::OnResetHotkey(KaiListCtrl *theList, int y)
 	theList->SetModified(true);
 	theList->Refresh(false);
 	theList->PushHistory();
+	OptionsDialog::hotkeysCopy[hotkeyId] = hdata(name, defKet);
 }
 	
 void ItemHotkey::OnDeleteHotkey(KaiListCtrl *theList, int y)
@@ -140,6 +159,7 @@ void ItemHotkey::OnDeleteHotkey(KaiListCtrl *theList, int y)
 	theList->SetModified(true);
 	theList->Refresh(false);
 	theList->PushHistory();
+	OptionsDialog::hotkeysCopy[hotkeyId] = hdata(name, "");
 }
 
 void ItemHotkey::Save()
@@ -150,6 +170,7 @@ void ItemHotkey::Save()
 	}
 }
 wxString *OptionsDialog::windowNames = NULL;
+std::map<idAndType, hdata> OptionsDialog::hotkeysCopy;
 
 OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	: KaiDialog(parent,-1,_("Opcje"))
@@ -417,26 +438,47 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){KaiMessageBox(_("Nie można wczytać skrótów klawiszowych audio"), _("Błąd"));}
 
-		//std::map<idAndType, hdata> _hkeys;
-		/*Hkeys.LoadDefault(_hkeys);
-		Hkeys.LoadDefault(_hkeys,true);
-		Notebook::GetTab()->Video->ContextMenu(wxPoint(0,0),true);
-		Notebook::GetTab()->Grid->ContextMenu(wxPoint(0,0),true);*/
-		const std::map<int, wxString> &_hkeys = Hkeys.GetNamesTable();
+		std::map<idAndType, hdata> mappedhkeys = std::map<idAndType, hdata>(Hkeys.hkeys);
+		const std::map<int, wxString> &hkeysNames = Hkeys.GetNamesTable();
 
-		long ii=0;
+		//long ii=0;
+		int lastType = -1;
 
-		for (auto cur = _hkeys.begin(); cur != _hkeys.end(); cur++) {
+		for (auto cur = hkeysNames.rbegin(); cur != hkeysNames.rend(); cur++) {
 			int htype = Hkeys.GetType(cur->first);
-			wxString name = windowNames[htype] + " " + cur->second;
+			wxString name;
 			wxString accel;
-			auto & it = Hkeys.hkeys.find(idAndType(cur->first, htype));
-			if (it != Hkeys.hkeys.end()){
+			if ((lastType != htype && lastType != -1) || !(cur != hkeysNames.rend())){
+				int numdelete = 0;
+				for (auto curmhk = mappedhkeys.begin(); curmhk != mappedhkeys.end(); curmhk++) {
+					if (lastType != curmhk->first.Type)
+						break;
+					
+					wxString windowName = windowNames[lastType] + " ";
+					auto & it = hkeysNames.find(curmhk->first.id);
+					if (it != hkeysNames.end()){
+						name = it->second;
+					}
+					else{
+						name = curmhk->second.Name;
+					}
+					long pos = Shortcuts->AppendItem(new ItemText(windowName + name));
+					Shortcuts->SetItem(pos, 1, new ItemHotkey(name, curmhk->second.Accel, curmhk->first));
+					numdelete++;
+				}
+				for (int p = 0; p < numdelete; p++)
+					mappedhkeys.erase(mappedhkeys.begin());
+			}
+			name = windowNames[htype] + " " + cur->second;
+			auto & it = mappedhkeys.find(idAndType(cur->first, htype));
+			if (it != mappedhkeys.end()){
 				accel = it->second.Accel;
+				mappedhkeys.erase(it);
 			}
 			long pos = Shortcuts->AppendItem(new ItemText(name));
-			Shortcuts->SetItem(pos, 1, new ItemHotkey(name, accel, idAndType(cur->first,htype)));
-			ii++;
+			Shortcuts->SetItem(pos, 1, new ItemHotkey(cur->second, accel, idAndType(cur->first, htype)));
+			lastType = htype;
+			//ii++;
 		}
 		Shortcuts->StartEdition();
 		Shortcuts->SetSelection(0);

@@ -407,22 +407,38 @@ int Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow,
 		
 		for(auto cur=hkeys.begin(); cur!=hkeys.end(); cur++)
 		{
-			if(cur->second.Accel == hkd.hotkey && (cur->first.Type == hkd.type) ){
+			if(cur->second.Accel == hkd.hotkey){
+				int result = wxCANCEL;
+				if (cur->first.Type == hkd.type){
 
-				KaiMessageDialog msg(parent, 
-					wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
-					cur->second.Name), _("Uwaga"), wxYES_NO|wxCANCEL);
-				msg.SetYesLabel (_("Zamień skróty"));
-				msg.SetNoLabel (_("Usuń skrót"));
-				int result = msg.ShowModal();
-				if(result == wxYES){
+					KaiMessageDialog msg(parent,
+						wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
+						Hkeys.GetName(cur->first.id)), _("Uwaga"), wxYES | wxOK | wxCANCEL);
+					msg.SetOkLabel(_("Zamień skróty"));
+					msg.SetYesLabel(_("Usuń skrót"));
+					result = msg.ShowModal();
+				}
+				else{
+					wxString windowNames[] = { _("Globalny"), _("Napisy"), _("Edytor"), _("Wideo"), _("Audio") };
+					KaiMessageDialog msg(parent,
+						wxString::Format(_("Ten skrót już istnieje w innym oknie jako skrót do \"%s\".\nCo zrobić?"),
+						windowNames[cur->first.Type] + " " + Hkeys.GetName(cur->first.id)), _("Uwaga"), wxYES_NO | wxOK | wxCANCEL);
+					msg.SetOkLabel(_("Zamień skróty"));
+					msg.SetYesLabel(_("Usuń skrót"));
+					msg.SetNoLabel(_("Ustaw mimo to"));
+					result = msg.ShowModal();
+				}
+				if (result == wxNO){
+					break;
+				}
+				else if(result == wxOK){
 					auto finditer = hkeys.find(idAndType(id,hkd.type));
 					cur->second.Accel="";
 					if(finditer!=hkeys.end()){
 						cur->second.Accel = finditer->second.Accel;
 					}
 					resitem = -cur->first.id;
-				}else if(result == wxNO){
+				}else if(result == wxYES){
 					hkeys.erase(cur->first);
 					resitem = cur->first.id;
 				}else{ return resitem;}
@@ -457,7 +473,7 @@ int Hotkeys::OnMapHkey(int *returnId, wxString name,wxWindow *parent)
 
 				KaiMessageDialog msg(parent, 
 					wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
-					cur->second.Name), _("Uwaga"), wxYES_NO|wxCANCEL);
+					GetName(cur->first.id)), _("Uwaga"), wxYES_NO | wxCANCEL);
 				msg.SetYesLabel (_("Zamień skróty"));
 				msg.SetNoLabel (_("Usuń skrót"));
 				int result = msg.ShowModal();

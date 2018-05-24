@@ -88,7 +88,9 @@ void HotkeysNaming::CreateNamesMap()
 	names[EDITBOX_CHANGE_COLOR_PRIMARY] = _("Kolor podstawowy");
 	names[EDITBOX_CHANGE_COLOR_SECONDARY] = _("Kolor zastêpczy do karaoke");
 	names[EDITBOX_CHANGE_COLOR_SHADOW] = _("Kolor cienia");
-	names[EDITBOX_CHANGE_UNDERLINE] = _("Wybór czcionki");
+	names[EDITBOX_CHANGE_FONT] = _("Wybór czcionki");
+	names[EDITBOX_CHANGE_STRIKEOUT] = _("Przekreœlenie");
+	names[EDITBOX_CHANGE_UNDERLINE] = _("Podkreœlenie");
 	names[EDITBOX_COMMIT] = _("ZatwierdŸ zmiany");
 	names[EDITBOX_COMMIT_GO_NEXT_LINE] = _("ZatwierdŸ zmiany idŸ do nastêpnej linii");
 	names[EDITBOX_HIDE_ORIGINAL] = _("Ukryj orygina³");

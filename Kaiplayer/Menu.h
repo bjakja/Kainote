@@ -96,6 +96,9 @@ public:
 	bool IsChecked(){
 		return check;
 	}
+	void DisableMapping(bool disable = true){
+		disableMapping = disable;
+	}
 	wxString GetAccel();
 	void SetAccel(wxAcceleratorEntry *entry);
 	wxBitmap *icon;
@@ -106,6 +109,7 @@ public:
 	bool enabled;
 	Menu* submenu;
 	bool check;
+	bool disableMapping = false;
 	//wxAcceleratorEntry *accel;
 };
 

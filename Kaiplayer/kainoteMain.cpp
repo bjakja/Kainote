@@ -136,9 +136,9 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	FileMenu->AppendTool(Toolbar, RemoveSubs, _("Usuń napisy z e&dytora"), _("Usuń napisy z edytora"), PTR_BITMAP_PNG("close"));
 	FileMenu->Append(SaveWithVideoName, _("Zapisuj napisy z nazwą wideo"), _("Zapisuj napisy z nazwą wideo"), true, PTR_BITMAP_PNG("SAVEWITHVIDEONAME"), NULL, ITEM_CHECK)->Check(Options.GetBool(SubsAutonaming));
 	Toolbar->AddID(SaveWithVideoName);
-	FileMenu->Append(9989, _("Pokaż / Ukryj okno logów"));
+	FileMenu->Append(9989, _("Pokaż / Ukryj okno logów"))->DisableMapping();
 	FileMenu->AppendTool(Toolbar, Settings, _("&Ustawienia"), _("Ustawienia programu"), PTR_BITMAP_PNG("SETTINGS"));
-	FileMenu->AppendTool(Toolbar, Quit, _("Wyjści&e\tAlt-F4"), _("Zakończ działanie programu"), PTR_BITMAP_PNG("exit"));
+	FileMenu->AppendTool(Toolbar, Quit, _("Wyjści&e"), _("Zakończ działanie programu"), PTR_BITMAP_PNG("exit"));
 	Menubar->Append(FileMenu, _("&Plik"));
 
 	EditMenu = new Menu();
@@ -453,7 +453,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}
 	else if (id == VideoIndexing || id == SaveWithVideoName){
 		toolitem *ToolItem = Toolbar->FindItem(id);
-		MenuItem *Item = Menubar->FindItem(id);
+		MenuItem *Item = (item)? item : Menubar->FindItem(id);
 		CONFIG conf = (id == VideoIndexing) ? VideoIndex : SubsAutonaming;
 		if (Modif == 1000 && ToolItem){
 			if (Item)
@@ -462,9 +462,12 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		}
 		else if(Item){
 			if (ToolItem){
-				ToolItem->toggled = Item->IsChecked();
+				ToolItem->toggled = (id == Modif) ? !ToolItem->toggled : Item->IsChecked();
 				Toolbar->Refresh(false);
 			}
+			if (id == Modif && Item)
+				Item->Check(!Item->IsChecked());
+
 			Options.SetBool(conf, Item->IsChecked());
 		}
 	}
@@ -1321,7 +1324,7 @@ void kainoteFrame::SetAccels(bool _all)
 		else if (id > 6000){
 			MenuItem *item = Menubar->FindItem(id);
 			if (!item){ wxLogStatus("no id %i", id); continue; }
-			cur->second.Name = item->GetLabelText();
+			//cur->second.Name = item->GetLabelText();
 			wxAcceleratorEntry accel = Hkeys.GetHKey(cur->first, &cur->second);
 			item->SetAccel(&accel);
 			entries.push_back(accel);
