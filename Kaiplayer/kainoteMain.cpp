@@ -222,8 +222,9 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	AutoMenu = new Menu();
 	AutoMenu->AppendTool(Toolbar, AutoLoadScript, _("Wczytaj skrypt"), _("Wczytaj skrypt"), PTR_BITMAP_PNG("automation"));
-	AutoMenu->AppendTool(Toolbar, AutoReloadAutoload, _("Odśwież skrypty autoload"), _("Odśwież skrypty autoload"), PTR_BITMAP_PNG("automation"));
+	AutoMenu->Append(AutoReloadAutoload, _("Odśwież skrypty autoload"), _("Odśwież skrypty autoload"), true, PTR_BITMAP_PNG("automation"));
 	AutoMenu->Append(LoadLastScript, _("Uruchom ostatnio zaczytany skrypt"), _("Uruchom ostatnio zaczytany skrypt"));
+	AutoMenu->Append(AUTOMATION_OPEN_HOTKEYS_WINDOW, _("Otwórz okno mapowania skrótów"), _("Otwórz okno mapowania skrótów"));
 	Menubar->Append(AutoMenu, _("Au&tomatyzacja"));
 
 	HelpMenu = new Menu();
@@ -521,7 +522,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->Layout();
 	}
 	else if (id == AutoLoadScript){
-		if (!Auto){ Auto = new Auto::Automation(); }
+		//if (!Auto){ Auto = new Auto::Automation(); }
 		if (Auto->ASSScripts.size() < 1)
 			Auto->AddFromSubs();
 		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz sktypt"),
@@ -537,12 +538,12 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 
 	}
 	else if (id == AutoReloadAutoload){
-		if (!Auto){ Auto = new Auto::Automation(); }
-		else{ Auto->ReloadScripts(); }
+		/*if (!Auto){ Auto = new Auto::Automation(); }
+		else{ */Auto->ReloadScripts(); //}
 		//Auto->BuildMenu(&AutoMenu);
 	}
 	else if (id == LoadLastScript){
-		if (!Auto){ Auto = new Auto::Automation(true); }
+		//if (!Auto){ Auto = new Auto::Automation(true); }
 		if (Auto->ASSScripts.size() < 1)
 			Auto->AddFromSubs();
 		int size = Auto->ASSScripts.size();
@@ -562,6 +563,9 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			KaiMessageBox(wxString::Format(_("Błąd wczytywania skryptu Lua: %s\n%s"), script->GetPrettyFilename(), script->GetDescription()), _("Błąd"));
 			Auto->OnEdit(script->GetFilename());
 		}
+	}
+	else if (id == AUTOMATION_OPEN_HOTKEYS_WINDOW){
+		Auto->ShowScriptHotkeysWindow(this);
 	}
 	else if (id == GoToPrewKeyframe){
 		tab->Video->GoToPrevKeyframe();
@@ -854,7 +858,7 @@ bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 	wxString ext = filename.AfterLast('.').Lower();
 	if (ext == "exe" || ext == "zip" || ext == "rar" || ext == "7z"){ return false; }
 	if (ext == "lua" || ext == "moon"){ 
-		if (!Auto){ Auto = new Auto::Automation(false); }
+		//if (!Auto){ Auto = new Auto::Automation(false); }
 		if (Auto->ASSScripts.size() < 1)
 			Auto->AddFromSubs();
 		Auto->Add(filename); 
@@ -1348,7 +1352,7 @@ void kainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 			subs.Add(files[i]);
 		}
 		else if (ext == "lua" || ext == "moon"){
-			if (!Auto){ Auto = new Auto::Automation(false); }
+			//if (!Auto){ Auto = new Auto::Automation(false); }
 			if (Auto->ASSScripts.size() < 1)
 				Auto->AddFromSubs();
 			Auto->Add(files[i]);
@@ -1735,7 +1739,7 @@ void kainoteFrame::OnMenuOpened(MenuEvent& event)
 	}
 	else if (curMenu == AutoMenu)
 	{
-		if (!Auto){ Auto = new Auto::Automation(); }
+		//if (!Auto){ Auto = new Auto::Automation(); }
 		Auto->BuildMenu(&AutoMenu);
 	}
 	else if (curMenu == EditMenu){
@@ -1981,8 +1985,9 @@ void kainoteFrame::OnOutofMemory()
 
 void kainoteFrame::OnRunScript(wxCommandEvent& event)
 {
-	if (!Auto){ Auto = new Auto::Automation(true, true); }
-	else if (Auto->Scripts.size() < 1){ Auto->ReloadScripts(true); }
+	//if (!Auto){ Auto = new Auto::Automation(true, true); }
+	//else 
+	if (Auto->Scripts.size() < 1){ Auto->ReloadScripts(true); }
 	wxString name = Hkeys.GetName(idAndType(event.GetId()));
 	if (!name.StartsWith("Script ")){ KaiMessageBox(wxString::Format(_("Skrót o nazwie '%s' nie należy do skrypru.")), _("Błąd")); return; }
 	else{ name = name.Mid(7); }

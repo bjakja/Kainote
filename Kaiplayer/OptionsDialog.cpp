@@ -179,6 +179,8 @@ void ItemHotkey::OnResetHotkey(KaiListCtrl *theList, int y)
 	ItemHotkey *itemKey = (ItemHotkey*)theList->CopyRow(y,1);
 	itemKey->accel = defKet;
 	itemKey->modified = true;
+	ItemText* textitem = (ItemText*)theList->GetItem(y, 0);
+	textitem->modified = true;
 	theList->SetModified(true);
 	theList->Refresh(false);
 	theList->PushHistory();
@@ -465,7 +467,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	{
 		wxBoxSizer *HkeysSizer=new wxBoxSizer(wxVERTICAL);
 		Shortcuts = new KaiListCtrl(Hotkeyss,26667, wxDefaultPosition);
-		Shortcuts->InsertColumn(0,_("Funkcja"),TYPE_TEXT,260);
+		Shortcuts->InsertColumn(0,_("Funkcja"),TYPE_TEXT,290);
 		Shortcuts->InsertColumn(1,_("Skrót"),TYPE_TEXT,80);
 		Connect(26667,LIST_ITEM_DOUBLECLICKED,(wxObjectEventFunction)&OptionsDialog::OnMapHkey);
 		//Connect(26667,LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);

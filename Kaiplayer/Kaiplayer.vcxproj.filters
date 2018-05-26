@@ -348,6 +348,9 @@
     <ClCompile Include="HotkeysNaming.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AutomationHotkeysDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -640,6 +643,9 @@
     </ClInclude>
     <ClInclude Include="HotkeysNaming.h">
       <Filter>Header Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationHotkeysDialog.h">
+      <Filter>Header Files\Automation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

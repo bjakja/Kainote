@@ -42,7 +42,7 @@ void SubsGridFiltering::Filter(bool autoFiltering)
 	}
 	File *Subs = grid->file->GetSubs();
 	if (filterBy & FILTER_BY_STYLES){
-		Options.GetTable(GridFilterStyles, styles, ";");
+		Options.GetTable(GridFilterStyles, styles, ",");
 		
 		size_t i = 0;
 		while (i < styles.size()){

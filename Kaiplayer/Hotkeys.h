@@ -175,6 +175,7 @@
 	XX( AutoLoadScript,)\
 	XX( AutoReloadAutoload,)\
 	XX( LoadLastScript,)\
+	XX( AUTOMATION_OPEN_HOTKEYS_WINDOW,)\
 	XX( PlayPauseG,)\
 	XX( PreviousFrame,)\
 	XX( NextFrame,)\

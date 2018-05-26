@@ -501,7 +501,7 @@ void Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow
 			}
 		}
 		SetHKey(idAndType(id,hkd.type), hkd.hkname, hkd.hotkey);
-		SetAccels(hotkeyWindow != GLOBAL_HOTKEY);
+		SetAccels();
 		SaveHkeys();
 	}
 }

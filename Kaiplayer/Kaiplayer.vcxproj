@@ -380,6 +380,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="Automation.cpp" />
     <ClCompile Include="AutomationDialog.cpp" />
     <ClCompile Include="AutomationFileSystem.cpp" />
+    <ClCompile Include="AutomationHotkeysDialog.cpp" />
     <ClCompile Include="AutomationLPeg.c" />
     <ClCompile Include="AutomationProgress.cpp" />
     <ClCompile Include="AutomationScriptReader.cpp" />
@@ -483,6 +484,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="AudioSpectrum.h" />
     <ClInclude Include="Automation.h" />
     <ClInclude Include="AutomationDialog.h" />
+    <ClInclude Include="AutomationHotkeysDialog.h" />
     <ClInclude Include="AutomationLPeg.h" />
     <ClInclude Include="AutomationProgress.h" />
     <ClInclude Include="AutomationScriptReader.h" />

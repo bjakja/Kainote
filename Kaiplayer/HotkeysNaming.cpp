@@ -71,6 +71,7 @@ void HotkeysNaming::CreateNamesMap()
 	names[AudioLeadin] = _("Dodaj wstêp");
 	names[AudioLeadout] = _("Dodaj zakoñczenie");
 	names[AutoLoadScript] = _("Wczytaj skrypt");
+	names[AUTOMATION_OPEN_HOTKEYS_WINDOW] = _("Otwórz okno mapowania skrótów");
 	names[AutoReloadAutoload] = _("Odœwie¿ skrypty autoload");
 	names[ChangeTime] = _("Okno zmiany czasów");
 	names[CloseAudio] = _("Zamknij audio");

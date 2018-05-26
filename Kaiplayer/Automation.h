@@ -185,13 +185,12 @@ namespace Auto {
 		void RemoveAll(bool autoload=false);
 		void ReloadMacro(int script, bool autoload=false);
 		void ReloadScripts(bool first=false);
-		//void RunScript(int script, int macro);
 		bool AddFromSubs();
 		static void OnEdit(wxString &Filename);
 		bool CheckChanges();
+		// make menu with all macros or error message
 		void BuildMenu(Menu **bar, bool all=false);
-		// Get all managed scripts (both loaded and invalid)
-		//void OnMenuClick(wxCommandEvent &event);
+		void ShowScriptHotkeysWindow(wxWindow *parent);
 		LuaScript *FindScript(const wxString &path);
 
 		std::vector<Auto::LuaScript*> Scripts;

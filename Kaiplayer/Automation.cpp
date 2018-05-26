@@ -43,6 +43,7 @@
 #include "AutomationUtils.h"
 #include "AutomationScriptReader.h"
 #include "KaiMessageBox.h"
+#include "AutomationHotkeysDialog.h"
 
 #include <algorithm>
 #include <cassert>
@@ -1115,7 +1116,7 @@ namespace Auto{
 	{
 		TabPanel* c = Notebook::GetTab();
 		kainoteFrame *Kai = (kainoteFrame*)c->GetGrandParent();
-		for(int j=(*bar)->GetMenuItemCount()-1; j>=3; j--){
+		for(int j=(*bar)->GetMenuItemCount()-1; j>=4; j--){
 			(*bar)->Delete(j);
 		}
 		if(!initialized){
@@ -1234,6 +1235,12 @@ namespace Auto{
 		
 		
 		HasChanges=false;
+	}
+
+	void Automation::ShowScriptHotkeysWindow(wxWindow *parent)
+	{
+		AutomationHotkeysDialog AHD(parent, this);
+		AHD.ShowModal();
 	}
 
 	LuaScript *Automation::FindScript(const wxString &path)
