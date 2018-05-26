@@ -107,7 +107,6 @@ SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, cons
 			Options.SetBool(GridIgnoreFiltering, item->check);
 			ignoreFiltered = item->check;
 		}
-
 	}, ID_CHECK_EVENT);
 }
 
@@ -192,7 +191,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	menu->SetAccMenu(HideSelected, _("Ukryj zaznaczone linijki"))->Enable(sels > 0);
 	menu->Append(4445, _("Filtrowanie"), filterMenu);
 	menu->SetAccMenu(GRID_FILTER_IGNORE_IN_ACTIONS, _("Ignoruj filtrowanie przy akcjach"), "", true, ITEM_CHECK)->Check(ignoreFiltered);
-	menu->SetAccMenu(ShowPreview, _("Pokaż podgląd napisów"))->Enable(Notebook::GetTabs()->Size()>1 && !preview);
+	menu->SetAccMenu(ShowPreview, _("Pokaż podgląd napisów"))->Enable(Notebook::GetTabs()->Size() > 1 && !preview);
 	menu->SetAccMenu(NewFPS, _("Ustaw nowy FPS"));
 	menu->SetAccMenu(FPSFromVideo, _("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState() != None && sels == 2);
 	menu->SetAccMenu(PasteTranslation, _("Wklej tekst tłumaczenia"))->Enable(subsFormat < SRT && ((TabPanel*)GetParent())->SubsPath != "");
@@ -216,14 +215,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 
 	if (Modifiers == wxMOD_SHIFT){
 		if (id <= 5000){ goto done; }
-		MenuItem *item = menu->FindItem(id);
-		int ret = -1;
-		wxString name = item->GetLabelText();
-		ret = Hkeys.OnMapHkey(id, name, this, GRID_HOTKEY);
-		if (ret != -2){
-			Hkeys.SetAccels(true);
-			Hkeys.SaveHkeys();
-		}
+		Hkeys.OnMapHkey(id, "", this, GRID_HOTKEY);
 		goto done;
 	}
 	OnAccelerator(wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, id));
@@ -302,7 +294,7 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	}
 	else if (idd == JoinWithNext){
 		int sizegrid = GetCount();
-		if (Edit->ebrow >= sizegrid-1 || sizegrid < 2){ return; }
+		if (Edit->ebrow >= sizegrid - 1 || sizegrid < 2){ return; }
 		selections.Clear();
 		selections.Add(Edit->ebrow);
 		selections.Add(Edit->ebrow + 1);
@@ -591,6 +583,49 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 		if (Notebook::GetTabs()->Size()>1 && !preview)
 			OnShowPreview();
 		break;
+	case GRID_HIDE_LAYER:
+	case GRID_HIDE_START:
+	case GRID_HIDE_END:
+	case GRID_HIDE_ACTOR:
+	case GRID_HIDE_STYLE:
+	case GRID_HIDE_MARGINL:
+	case GRID_HIDE_MARGINR:
+	case GRID_HIDE_MARGINV:
+	case GRID_HIDE_EFFECT:
+	case GRID_HIDE_CPS:
+	{
+		int id5000 = (id - 5000);
+		visibleColumns ^= id5000;
+		SpellErrors.clear();
+		Options.SetInt(GridHideCollums, visibleColumns);
+		RefreshColumns();
+		break;
+	}
+	case GRID_FILTER_INVERTED:
+		Options.SetBool(GridFilterInverted, !Options.GetBool(GridFilterInverted));
+		break;
+	case FilterByStyles:
+	case FilterBySelections:
+	case FilterByDialogues:
+	case FilterByDoubtful:
+	case FilterByUntranslated:
+	{
+		int filterBy = Options.GetInt(GridFilterBy);
+		int addToFilterBy = pow(2, (id - FilterByStyles));
+		filterBy ^= addToFilterBy;
+		Options.SetInt(GridFilterBy, filterBy);
+		break;
+	}//styles checking
+	case GRID_FILTER_DO_NOT_RESET:
+		Options.SetBool(GridAddToFilter, !Options.GetBool(GridAddToFilter));
+		break;
+	case GRID_FILTER_AFTER_SUBS_LOAD:
+		Options.SetBool(GridFilterAfterLoad, !Options.GetBool(GridFilterAfterLoad));
+		break;
+	case GRID_FILTER_IGNORE_IN_ACTIONS:
+		ignoreFiltered = !Options.GetBool(GridIgnoreFiltering);
+		Options.SetBool(GridIgnoreFiltering, ignoreFiltered);
+		break;
 	default:
 		break;
 	}
@@ -602,7 +637,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	else if (id > 6000){
 		Kai->OnMenuSelected(event);
 	}
-	else if (id>600 && id < 1700 && Edit->ABox){
+	else if (id > 600 && id < 1700 && Edit->ABox){
 		Edit->ABox->GetEventHandler()->AddPendingEvent(event);
 	}
 }
@@ -785,7 +820,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 	}
 	TabPanel *tab = Kai->GetTab();
 	wxString mkvpath = (idd == SubsFromMKV) ? tab->VideoPath : event.GetString();
-	
+
 	MatroskaWrapper mw;
 	if (!mw.Open(mkvpath, false)){ return; }
 	int isgood = (int)mw.GetSubtitles(this);

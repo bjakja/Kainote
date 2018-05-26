@@ -64,52 +64,83 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 			OptionsDialog::hotkeysCopy = std::map<idAndType, hdata>(Hkeys.hkeys);
 
 		wxString hotkey = accel;
-		const idAndType *itype = new idAndType(hotkeyId.id, hkd.type);
+		//const idAndType *itype = new idAndType(hotkeyId.id, hkd.type);
+		std::vector< std::map<idAndType, hdata>::iterator> idtypes;
 		for (auto cur = OptionsDialog::hotkeysCopy.begin(); cur != OptionsDialog::hotkeysCopy.end(); cur++){
-			
-			if(cur->second.Accel == hkd.hotkey){
-				int result = wxCANCEL;
-				wxString doubledHkName = Hkeys.GetName(cur->first.id);
-				if (cur->first.Type == hkd.type){
-					KaiMessageDialog msg(theList,
-						wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
-						doubledHkName), _("Uwaga"), wxYES| wxOK | wxCANCEL);
-					msg.SetOkLabel(_("Zamień skróty"));
-					msg.SetYesLabel(_("Usuń skrót"));
-					result = msg.ShowModal();
+			if (cur->second.Accel == hkd.hotkey && cur->first.id != hotkeyId.id){
+				idtypes.push_back(cur);
+			}
+		}
+		if (idtypes.size()){
+			bool doubledHotkey = false;
+			wxString doubledHkName;
+			for (auto &idtype : idtypes){
+				if (idtype->first.Type == hkd.type){
+					doubledHotkey = true;
+					doubledHkName = Hkeys.GetName(idtype->first.id);
+					if (doubledHkName.empty())
+						doubledHkName = idtype->second.Name;
+					break;
 				}
 				else{
-					KaiMessageDialog msg(theList,
-						wxString::Format(_("Ten skrót już istnieje w innym oknie jako skrót do \"%s\".\nCo zrobić?"),
-						OptionsDialog::windowNames[cur->first.Type] + " " + doubledHkName), _("Uwaga"), wxYES_NO | wxOK | wxCANCEL);
-					msg.SetOkLabel(_("Zamień skróty"));
-					msg.SetYesLabel(_("Usuń skrót"));
-					msg.SetNoLabel(_("Ustaw mimo to"));
-					result = msg.ShowModal();
+					if (!doubledHkName.empty())
+						doubledHkName += L", ";
+
+					wxString hotkeyName = Hkeys.GetName(idtype->first.id);
+					if (hotkeyName.empty())
+						hotkeyName = idtype->second.Name;
+					doubledHkName += OptionsDialog::windowNames[idtype->first.Type] + L" " + hotkeyName;
 				}
-				if (result == wxNO){
-					break;
-				}else if(result!=wxCANCEL){
-					if(result==wxYES){hotkey="";}
-					int nitem = theList->FindItem(0, OptionsDialog::windowNames[cur->first.Type] + " " + doubledHkName);
-					if(nitem>=0){
+			}
+
+			int result = wxCANCEL;
+			if (doubledHotkey){
+				KaiMessageDialog msg(theList,
+					wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
+					doubledHkName), _("Uwaga"), wxYES | wxOK | wxCANCEL);
+				msg.SetOkLabel(_("Zamień skróty"));
+				msg.SetYesLabel(_("Usuń skrót"));
+				result = msg.ShowModal();
+			}
+			else{
+				int buttonFlag = (idtypes.size() < 2)? wxOK : 0;
+				KaiMessageDialog msg(theList,
+					wxString::Format(_("Ten skrót już istnieje w %s jako skrót do \"%s\".\nCo zrobić?"),
+					(idtypes.size()>1) ? _("innych oknach") : _("innym oknie"), doubledHkName), _("Uwaga"), wxYES_NO | buttonFlag | wxCANCEL);
+				if(idtypes.size() < 2)
+					msg.SetOkLabel(_("Zamień skróty"));
+				msg.SetYesLabel(_("Usuń skrót"));
+				msg.SetNoLabel(_("Ustaw mimo to"));
+				result = msg.ShowModal();
+			}
+			if (result == wxYES || result == wxOK){
+				if (result == wxYES){ hotkey = ""; }
+				for (auto &idtype : idtypes){
+					if (doubledHotkey && idtype->first.Type != hkd.type)
+						continue;
+
+					int nitem = theList->FindItem(0, OptionsDialog::windowNames[idtype->first.Type] + L" " + Hkeys.GetName(idtype->first.id));
+					if (nitem >= 0){
 						ItemHotkey* item = (ItemHotkey*)theList->CopyRow(nitem, 1);
 						item->accel = hotkey;
 						item->modified = true;
+						ItemText* textitem = (ItemText*)theList->GetItem(nitem, 0);
+						textitem->modified = true;
 						theList->Refresh(false);
-						cur->second.Accel = hotkey;
+						idtype->second.Accel = hotkey;
 					}
-				}else{ if(itype){delete itype; itype = NULL;} return;}
+				}
 			}
+			else if (result == wxCANCEL){ return; }
 		}
-
-		if(!itype){return;}
+		
 		if(hotkeyId.Type != hkd.type){
 			int nitem = theList->FindItem(0, OptionsDialog::windowNames[hkd.type] + " " + name);
 			if(nitem<0){
 				ItemHotkey* itemcopied = (ItemHotkey*)theList->CopyRow(y, 1, true);
 				ItemText *itemtext = (ItemText*)theList->GetItem(theList->GetCount()-1, 0);
 				itemtext->name = OptionsDialog::windowNames[hkd.type] + " " + name;
+				itemtext->modified = true;
 				itemcopied->accel = hkd.hotkey;
 				itemcopied->modified = true;
 				itemcopied->hotkeyId = idAndType(hotkeyId.id, hkd.type);
@@ -122,6 +153,8 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 			ItemHotkey* item = (ItemHotkey*)theList->CopyRow(nitem, 1);
 			item->accel = hkd.hotkey;
 			item->modified = true;
+			ItemText* textitem = (ItemText*)theList->GetItem(nitem, 0);
+			textitem->modified = true;
 			theList->ScrollTo(nitem+1);
 			theList->SetSelection(nitem);
 			OptionsDialog::hotkeysCopy[idAndType(hotkeyId.id, hkd.type)] = hdata(name, hkd.hotkey);
@@ -130,10 +163,11 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 		ItemHotkey* item = (ItemHotkey*)theList->CopyRow(y, 1);
 		item->accel = hkd.hotkey;
 		item->modified = true;
+		ItemText* textitem = (ItemText*)theList->GetItem(y, 0);
+		textitem->modified = true;
 		theList->Refresh(false);
 		OptionsDialog::hotkeysCopy[hotkeyId] = hdata(name, hkd.hotkey);
 done:
-		delete itype; itype = NULL;
 		theList->SetModified(true);
 		theList->PushHistory();
 	}
@@ -201,10 +235,10 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 	//Main
 	{
-		const int optsSize = 15;
+		const int optsSize = 14;
 		wxBoxSizer *MainSizer=new wxBoxSizer(wxVERTICAL);
 		wxString labels[optsSize]={_("Wczytywanie posortowanych napisów"),_("Włącz sprawdzanie pisowni"),
-			_("Zaznaczaj linijkę z czasem aktywnej\nlinijki poprzedniej zakładki"),_("Zapisuj napisy z nazwą wideo"),
+			_("Zaznaczaj linijkę z czasem aktywnej\nlinijki poprzedniej zakładki"),
 			_("Pokaż sugestie po dwukrotnym klininięciu na błąd"),_("Otwieraj napisy zawsze w nowej karcie"),
 			_("Nie przechodź do następnej linii przy edycji czasów"),
 			_("Wyłącz pokazywanie edycji na wideo\n(wymaga ponownego otwarcia zakładek)"),
@@ -213,7 +247,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 			_("Pokazuj oryginał w trybie tłumaczenia"), _("Używaj skróty klawiszowe numpada w polach tekstowych"),
 			_("Nie ostrzegaj o niezgodności rozdzielczości"),
 			_("Kompatybilność ze starymi skryptami Kainote")};
-		CONFIG opts[optsSize]={GridLoadSortedSubs,SpellcheckerOn,AutoSelectLinesFromLastTab,SubsAutonaming,
+		CONFIG opts[optsSize]={GridLoadSortedSubs,SpellcheckerOn,AutoSelectLinesFromLastTab,
 			EditboxSugestionsOnDoubleClick,OpenSubsInNewCard,NoNewLineAfterTimesEdition,
 			DisableLiveVideoEditing,SelectVisibleLineAfterFullscreen,MoveTimesLoadSetTabOptions,
 			GridChangeActiveOnSelection,TlModeShowOriginal, TextFieldAllowNumpadHotkeys,DontAskForBadResolution,

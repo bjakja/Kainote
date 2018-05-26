@@ -340,19 +340,8 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	MenuItem *item = Menubar->FindItem(id);
 	
 	TabPanel *tab = GetTab();
-	if (Modif == wxMOD_SHIFT){
-		//upewnij się, że da się zmienić idy na nazwy, 
-		//może i trochę spowolni operację ale skończy się ciągłe wywalanie hotkeysów
-		//może od razu funkcji onmaphotkey przekazać item by zrobiła co trzeba
-		int ret = -1;
-		wxString name = item->GetLabelText();
-		ret = Hkeys.OnMapHkey(id, name, this, GLOBAL_HOTKEY);
-		if (ret > -2){
-			idAndType itype(id);
-			item->SetAccel(&Hkeys.GetHKey(itype));
-			SetAccels(false);
-			Hkeys.SaveHkeys();
-		}
+	if (Modif == wxMOD_SHIFT && item){
+		Hkeys.OnMapHkey(id, "", this, GLOBAL_HOTKEY);
 		return;
 	}
 	if (item && !item->enabled)
@@ -608,16 +597,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	TabPanel *pan = GetTab();
 
 	if (Modif == wxMOD_SHIFT){
-		MenuItem *item = Menubar->FindItem(id);
-		int ret = -1;
-		wxString name = item->GetLabelText();
-		ret = Hkeys.OnMapHkey(id, name, this, GLOBAL_HOTKEY);
-		if (ret > -2){
-			idAndType itype(id);
-			item->SetAccel(&Hkeys.GetHKey(itype));
-			SetAccels(false);
-			Hkeys.SaveHkeys();
-		}
+		Hkeys.OnMapHkey(id, "", this, GLOBAL_HOTKEY);
 		return;
 	}
 	if (id == OpenSubs){
@@ -1757,7 +1737,6 @@ void kainoteFrame::OnMenuOpened(MenuEvent& event)
 	{
 		if (!Auto){ Auto = new Auto::Automation(); }
 		Auto->BuildMenu(&AutoMenu);
-		SetAccels();
 	}
 	else if (curMenu == EditMenu){
 		const wxString &undoName = tab->Grid->file->GetUndoName();

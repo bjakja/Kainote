@@ -55,7 +55,7 @@ public:
 	static TabPanel *GetTab();
 
 private:
-
+	void ContextMenu(const wxPoint &pos, int i);
 	void OnTabSel(int id);
 	void OnMouseEvent(wxMouseEvent& event);
 	void OnPaint(wxPaintEvent& event);

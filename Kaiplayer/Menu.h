@@ -100,7 +100,7 @@ public:
 		disableMapping = disable;
 	}
 	wxString GetAccel();
-	void SetAccel(wxAcceleratorEntry *entry);
+	void SetAccel(wxAcceleratorEntry *entry, const wxString &stringAccel = "");
 	wxBitmap *icon;
 	wxString label;
 	wxString help;

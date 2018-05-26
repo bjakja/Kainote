@@ -864,14 +864,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 	}
 	//ismenu=false;
 	if((Modifiers == wxMOD_SHIFT) && id<2100 && id>=2000){
-		MenuItem *item=menu->FindItem(id);
-		int ret=-1;
-		wxString name=item->GetLabelText();
-		ret=Hkeys.OnMapHkey(id, name, this, VIDEO_HOTKEY);
-		if(ret!=-2){
-			Hkeys.SetAccels(true);
-			Hkeys.SaveHkeys();
-		}
+		Hkeys.OnMapHkey(id, "", this, VIDEO_HOTKEY);
 		delete menu;
 		ismenu=false;
 		return;

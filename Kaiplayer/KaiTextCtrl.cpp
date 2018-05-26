@@ -109,7 +109,7 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	caret->Move(3,(newSize.y-fh)/2);
 	caret->Show();
 	SetMinSize(newSize);
-
+	
 	CalcWrap(false);
 	SetValidator(validator);
 
@@ -265,9 +265,14 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 	wxMemoryDC dc((bmp) ? *bmp : wxBitmap(10, 10));
 	dc.SetFont(font);
 	if(KText!="" && multiline){
+		if (wraps.size() == 0){
+			wraps.push_back(0);
+			positioning.push_back(0);
+		}
 		for (size_t p = 1; p < wraps.size(); p++){
 			if (position <= wraps[p]){
 				wraps.erase(wraps.begin() + p, wraps.end());
+				positioning.erase(positioning.begin() + p, positioning.end());
 				break;
 			}
 		}

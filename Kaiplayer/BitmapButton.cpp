@@ -81,11 +81,11 @@ void BitmapButton::OnLeftDown(wxMouseEvent& event)
 			
 	if(event.LeftDown()){
 		if(event.ShiftDown()){
-			wxString buttonName = (name!="")? name : GetToolTipText().BeforeFirst('(').Trim();
-			Hkeys.OnMapHkey( hotkeyId, buttonName, this, window);
+			//wxString buttonName = (name!="")? name : GetToolTipText().BeforeFirst('(').Trim();
+			Hkeys.OnMapHkey( hotkeyId, "", this, window);
 			SetToolTip();
-			Hkeys.SetAccels(true);
-			Hkeys.SaveHkeys();
+			//Hkeys.SetAccels(true);
+			//Hkeys.SaveHkeys();
 			SetFocus();
 			return;
 

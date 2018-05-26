@@ -72,13 +72,13 @@ wxBitmap MenuItem::GetBitmap()
 	return *icon;
 }
 
-void MenuItem::SetAccel(wxAcceleratorEntry *entry)
+void MenuItem::SetAccel(wxAcceleratorEntry *entry, const wxString &stringAccel /*= ""*/)
 {
-	//accel = entry;
 	if(label.find("\t")!=-1){label = label.BeforeFirst('\t');}
-	label += "\t" + entry->ToString();
+	label += "\t";
+	label += (entry && entry->IsOk()) ? entry->ToString() : stringAccel;
 	label.Replace("+","-");
-	//if(MenuBar::Menubar){MenuBar::Menubar->SetAccelerators();}
+	//wxLogStatus("setAccel %s", label);
 }
 
 wxString MenuItem::GetAccel(){

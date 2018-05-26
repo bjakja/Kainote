@@ -501,69 +501,11 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		if(i!=-1 && i!= oldtab){SetToolTip(Pages[i]->SubsName+"\n"+Pages[i]->VideoName); oldtab=i;}
 	}
 
-	//menu kontekstowe		
+	//Context menu		
 	if(event.RightUp()){
-
-		Menu menu1;
-
-		for(int g=0;g<Size();g++)
-		{
-			menu1.Append(MENU_CHOOSE+g,Page(g)->SubsName,"",true,0,0,(g==iter)? ITEM_RADIO : ITEM_NORMAL);
-		}
-		//menu1.Check(MENU_CHOOSE+iter,true);
-		//może to jednak przerobić na checki, tak by pokazywało nam jednak dwie wyświetlone zakładki
-		menu1.AppendSeparator();
-		if(i>=0){menu1.Append(MENU_SAVE+i,_("Zapisz"),_("Zapisz"));}
-		menu1.Append(MENU_SAVE-1,_("Zapisz wszystko"),_("Zapisz wszystko"));
-		menu1.Append(MENU_CHOOSE-1,_("Zamknij wszystkie zakładki"),_("Zamknij wszystkie zakładki"));
-		if((i!=iter && Size()>1 && i!=-1) || split){
-			wxString txt=(split)? _("Wyświetl jedną zakładkę") : _("Wyświetl dwie zakładki");
-			menu1.Append((MENU_CHOOSE-2)-i, txt);
-		}
-		bool canCompare = (i != iter && Size() > 1 && i != -1);
-		Menu *styleComparisonMenu = new Menu();
-		if (canCompare){
-			wxArrayString availableStyles;
-			Pages[iter]->Grid->GetCommonStyles(Pages[i]->Grid, availableStyles);
-			wxArrayString optionsCompareStyles;
-			Options.GetTable(SubsComparisonStyles, optionsCompareStyles, ",");
-			for (int i = 0; i < availableStyles.size(); i++){
-				MenuItem * styleItem = styleComparisonMenu->Append(4448, availableStyles[i], "", true, NULL, NULL, ITEM_CHECK);
-				if (optionsCompareStyles.Index(availableStyles[i]) != -1){ styleItem->Check(); SubsGridBase::compareStyles.Add(availableStyles[i]); }
-			}
-		}
-		int compareBy = Options.GetInt(SubsComparisonType);
-		Menu *comparisonMenu = new Menu();
-		comparisonMenu->Append(MENU_COMPARE + 1, _("Porównaj według czasów"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_TIMES);
-		comparisonMenu->Append(MENU_COMPARE + 2, _("Porównaj według widocznych linijek"), NULL, "", ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_VISIBLE)>0);
-		comparisonMenu->Append(MENU_COMPARE + 3, _("Porównaj według zaznaczeń"), NULL, "", ITEM_CHECK, canCompare && Pages[iter]->Grid->file->SelectionsSize()>0 && Pages[i]->Grid->file->SelectionsSize()>0)->Check((compareBy & COMPARE_BY_SELECTIONS)>0);
-		comparisonMenu->Append(MENU_COMPARE + 4, _("Porównaj według stylów"), NULL, "", ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_STYLES)>0);
-		comparisonMenu->Append(MENU_COMPARE + 5, _("Porównaj według wybranych stylów"), styleComparisonMenu, "", ITEM_CHECK, canCompare)->Check(SubsGridBase::compareStyles.size() > 0);
-		comparisonMenu->Append(MENU_COMPARE, _("Porównaj"))->Enable(canCompare);
-		comparisonMenu->Append(MENU_COMPARE - 1, _("Wyłącz porównanie"))->Enable(SubsGridBase::hasCompare);
-		menu1.Append(MENU_COMPARE + 6, _("Porównanie napisów"), comparisonMenu, _("Porównanie napisów"))->Enable(canCompare || SubsGridBase::hasCompare);
-
-		int id=menu1.GetPopupMenuSelection(event.GetPosition(),this);
-		
-		if(id<0){return;}
-		if(id >= MENU_CHOOSE-101 && id <= MENU_CHOOSE+99){
-			OnTabSel(id);
-		}
-		else if (id == MENU_COMPARE){
-			SubsGridBase::CG1 = Pages[iter]->Grid;
-			SubsGridBase::CG2 = Pages[i]->Grid;
-			SubsGridBase::SubsComparison();
-			SubsGridBase::hasCompare = true;
-		}
-		else if (id == MENU_COMPARE - 1){
-			SubsGridBase::RemoveComparison();
-		}else{
-			OnSave(id);
-		}
-
+		ContextMenu(event.GetPosition(), i);
 	}
 	
-
 }
 
 void Notebook::OnSize(wxSizeEvent& event)
@@ -773,6 +715,66 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	if(gc){delete gc;}
 }
 
+
+void Notebook::ContextMenu(const wxPoint &pos, int i)
+{
+	Menu tabsMenu;
+
+	for (int g = 0; g < Size(); g++)
+	{
+		tabsMenu.Append(MENU_CHOOSE + g, Page(g)->SubsName, "", true, 0, 0, (g == iter) ? ITEM_RADIO : ITEM_NORMAL);
+	}
+	//może to jednak przerobić na checki, tak by pokazywało nam jednak dwie wyświetlone zakładki
+	tabsMenu.AppendSeparator();
+	tabsMenu.Append(MENU_SAVE + i, _("Zapisz"), _("Zapisz"))->Enable(i >= 0 && Pages[i]->Grid->file->CanSave());
+	tabsMenu.Append(MENU_SAVE - 1, _("Zapisz wszystko"), _("Zapisz wszystko"));
+	tabsMenu.Append(MENU_CHOOSE - 1, _("Zamknij wszystkie zakładki"), _("Zamknij wszystkie zakładki"));
+	if ((i != iter && Size()>1 && i != -1) || split){
+		wxString txt = (split) ? _("Wyświetl jedną zakładkę") : _("Wyświetl dwie zakładki");
+		tabsMenu.Append((MENU_CHOOSE - 2) - i, txt);
+	}
+	bool canCompare = (i != iter && Size() > 1 && i != -1);
+	Menu *styleComparisonMenu = new Menu();
+	if (canCompare){
+		wxArrayString availableStyles;
+		Pages[iter]->Grid->GetCommonStyles(Pages[i]->Grid, availableStyles);
+		wxArrayString optionsCompareStyles;
+		Options.GetTable(SubsComparisonStyles, optionsCompareStyles, ",");
+		for (int i = 0; i < availableStyles.size(); i++){
+			MenuItem * styleItem = styleComparisonMenu->Append(4448, availableStyles[i], "", true, NULL, NULL, ITEM_CHECK);
+			if (optionsCompareStyles.Index(availableStyles[i]) != -1){ styleItem->Check(); SubsGridBase::compareStyles.Add(availableStyles[i]); }
+		}
+	}
+	int compareBy = Options.GetInt(SubsComparisonType);
+	Menu *comparisonMenu = new Menu();
+	comparisonMenu->Append(MENU_COMPARE + 1, _("Porównaj według czasów"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_TIMES);
+	comparisonMenu->Append(MENU_COMPARE + 2, _("Porównaj według widocznych linijek"), NULL, "", ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_VISIBLE)>0);
+	comparisonMenu->Append(MENU_COMPARE + 3, _("Porównaj według zaznaczeń"), NULL, "", ITEM_CHECK, canCompare && Pages[iter]->Grid->file->SelectionsSize() > 0 && Pages[i]->Grid->file->SelectionsSize() > 0)->Check((compareBy & COMPARE_BY_SELECTIONS) > 0);
+	comparisonMenu->Append(MENU_COMPARE + 4, _("Porównaj według stylów"), NULL, "", ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_STYLES) > 0);
+	comparisonMenu->Append(MENU_COMPARE + 5, _("Porównaj według wybranych stylów"), styleComparisonMenu, "", ITEM_CHECK, canCompare)->Check(SubsGridBase::compareStyles.size() > 0);
+	comparisonMenu->Append(MENU_COMPARE, _("Porównaj"))->Enable(canCompare);
+	comparisonMenu->Append(MENU_COMPARE - 1, _("Wyłącz porównanie"))->Enable(SubsGridBase::hasCompare);
+	tabsMenu.Append(MENU_COMPARE + 6, _("Porównanie napisów"), comparisonMenu, _("Porównanie napisów"))->Enable(canCompare || SubsGridBase::hasCompare);
+
+	int id = tabsMenu.GetPopupMenuSelection(pos, this);
+
+	if (id < 0){ return; }
+	if (id >= MENU_CHOOSE - 101 && id <= MENU_CHOOSE + 99){
+		OnTabSel(id);
+	}
+	else if (id == MENU_COMPARE){
+		SubsGridBase::CG1 = Pages[iter]->Grid;
+		SubsGridBase::CG2 = Pages[i]->Grid;
+		SubsGridBase::SubsComparison();
+		SubsGridBase::hasCompare = true;
+	}
+	else if (id == MENU_COMPARE - 1){
+		SubsGridBase::RemoveComparison();
+	}
+	else if (id == MENU_SAVE - 1 && (i >= 0 && id == MENU_SAVE + i)){
+		OnSave(id);
+	}
+}
 
 void Notebook::OnTabSel(int id)
 {

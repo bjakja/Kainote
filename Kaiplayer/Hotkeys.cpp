@@ -399,110 +399,118 @@ wxString Hotkeys::GetDefaultKey(const idAndType &itype)
 	return "";
 }
 //return -2 anulowano zmianę skrótów, -1 nowy skrót, 1+ id do zmiany skrótu.
-int Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow, bool showWindowSelection)
+void Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow /*= GLOBAL_HOTKEY*/, bool showWindowSelection/*=true*/)
 {
-	HkeysDialog hkd(parent, name, hotkeyWindow, showWindowSelection);
-	int resitem = -2;
+	//sanity check
+	if (id < 0 && name.empty())
+		return;
+
+	HkeysDialog hkd(parent, (name.empty())? GetName(id) : name, hotkeyWindow, showWindowSelection);
 	if(hkd.ShowModal()==wxID_OK){
-		
+		std::vector< std::map<idAndType, hdata>::iterator> idtypes;
 		for(auto cur=hkeys.begin(); cur!=hkeys.end(); cur++)
 		{
-			if(cur->second.Accel == hkd.hotkey){
-				int result = wxCANCEL;
-				if (cur->first.Type == hkd.type){
-
-					KaiMessageDialog msg(parent,
-						wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
-						Hkeys.GetName(cur->first.id)), _("Uwaga"), wxYES | wxOK | wxCANCEL);
-					msg.SetOkLabel(_("Zamień skróty"));
-					msg.SetYesLabel(_("Usuń skrót"));
-					result = msg.ShowModal();
-				}
-				else{
-					wxString windowNames[] = { _("Globalny"), _("Napisy"), _("Edytor"), _("Wideo"), _("Audio") };
-					KaiMessageDialog msg(parent,
-						wxString::Format(_("Ten skrót już istnieje w innym oknie jako skrót do \"%s\".\nCo zrobić?"),
-						windowNames[cur->first.Type] + " " + Hkeys.GetName(cur->first.id)), _("Uwaga"), wxYES_NO | wxOK | wxCANCEL);
-					msg.SetOkLabel(_("Zamień skróty"));
-					msg.SetYesLabel(_("Usuń skrót"));
-					msg.SetNoLabel(_("Ustaw mimo to"));
-					result = msg.ShowModal();
-				}
-				if (result == wxNO){
-					break;
-				}
-				else if(result == wxOK){
-					auto finditer = hkeys.find(idAndType(id,hkd.type));
-					cur->second.Accel="";
-					if(finditer!=hkeys.end()){
-						cur->second.Accel = finditer->second.Accel;
-					}
-					resitem = -cur->first.id;
-				}else if(result == wxYES){
-					hkeys.erase(cur->first);
-					resitem = cur->first.id;
-				}else{ return resitem;}
-			}
-		}
-		
-		Hkeys.SetHKey(idAndType(id,hkd.type), hkd.hkname, hkd.hotkey);
-		if(hkd.type==hotkeyWindow) return -1;
-	}
-	return resitem;
-}
-
-int Hotkeys::OnMapHkey(int *returnId, wxString name,wxWindow *parent)
-{
-	HkeysDialog hkd(parent, name, GLOBAL_HOTKEY, false);
-	int resitem = -2;
-	if(hkd.ShowModal()==wxID_OK){
-		int id = lastScirptId;
-		for(auto cur=hkeys.begin(); cur!=hkeys.end(); cur++)
-		{
-			if(cur->first.id>=30100){
-				if(cur->second.Name == name){
+			if (id < 0 && cur->first.id >= 30100){
+				if (cur->second.Name == name){
 					id = cur->first.id;
 				}
 			}
-		}
-		if(id == lastScirptId){lastScirptId++;}
-		*returnId = id;
-		for(auto cur=hkeys.begin(); cur!=hkeys.end(); cur++)
-		{
-			if(cur->second.Accel == hkd.hotkey && (cur->first.Type == hkd.type) ){
-
-				KaiMessageDialog msg(parent, 
-					wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
-					GetName(cur->first.id)), _("Uwaga"), wxYES_NO | wxCANCEL);
-				msg.SetYesLabel (_("Zamień skróty"));
-				msg.SetNoLabel (_("Usuń skrót"));
-				int result = msg.ShowModal();
-				if(result == wxYES){
-					auto finditer = hkeys.find(idAndType(id,hkd.type));
-					cur->second.Accel="";
-					if(finditer!=hkeys.end()){
-						cur->second.Accel = finditer->second.Accel;
-					}
-					resitem = -cur->first.id;
-				}else if(result == wxNO){
-					hkeys.erase(cur->first);
-					resitem = cur->first.id;
-				}else{ return resitem;}
+			if(cur->second.Accel == hkd.hotkey){
+				idtypes.push_back(cur);
 			}
 		}
 		
-		Hkeys.SetHKey(idAndType(id,hkd.type), hkd.hkname, hkd.hotkey);
-		//pamiętaj, jeśli użyjesz nie niszczonego menu to zwracaj resitem, bo inaczej nie zmieni skrótów w menu.
-		return -1;
+		if (id < 0){
+			id = lastScirptId;
+			lastScirptId++;
+		}
+
+		if (idtypes.size()){
+			bool doubledHotkey = false;
+			wxString doubledHkName;
+			wxString windowNames[] = { _("Globalny"), _("Napisy"), _("Edytor"), _("Wideo"), _("Audio") };
+			for (auto &idtype : idtypes){
+				if (idtype->first.Type == hkd.type){
+					doubledHotkey = true;
+					doubledHkName = Hkeys.GetName(idtype->first.id);
+					if (doubledHkName.empty())
+						doubledHkName = idtype->second.Name;
+					break;
+				}
+				else{
+					if (!doubledHkName.empty())
+						doubledHkName += L", ";
+
+					wxString hotkeyName = Hkeys.GetName(idtype->first.id);
+					if (hotkeyName.empty())
+						hotkeyName = idtype->second.Name;
+					doubledHkName += windowNames[idtype->first.Type] + L" " + hotkeyName;
+				}
+			}
+			int result = wxCANCEL;
+			if (doubledHotkey){
+				KaiMessageDialog msg(parent,
+					wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
+					doubledHkName), _("Uwaga"), wxYES | wxOK | wxCANCEL);
+				msg.SetOkLabel(_("Zamień skróty"));
+				msg.SetYesLabel(_("Usuń skrót"));
+				result = msg.ShowModal();
+			}
+			else{
+				int buttonFlag = (idtypes.size() < 2) ? wxOK : 0;
+				KaiMessageDialog msg(parent,
+					wxString::Format(_("Ten skrót już istnieje w %s jako skrót do \"%s\".\nCo zrobić?"),
+					(idtypes.size() > 1) ? _("innych oknach") : _("innym oknie"), doubledHkName), 
+					_("Uwaga"), wxYES_NO | buttonFlag | wxCANCEL);
+				if (idtypes.size() < 2)
+					msg.SetOkLabel(_("Zamień skróty"));
+				msg.SetYesLabel(_("Usuń skrót"));
+				msg.SetNoLabel(_("Ustaw mimo to"));
+				result = msg.ShowModal();
+			}
+			if (result == wxCANCEL){ return; }
+			else if (result != wxNO){
+				Notebook *Tabs = Notebook::GetTabs();
+				kainoteFrame * frame = (kainoteFrame *)Tabs->GetParent();
+				MenuBar * mb = NULL;
+				if (frame)
+					mb = frame->Menubar;
+				for (auto &idtype : idtypes){
+					if (doubledHotkey && idtype->first.Type != hkd.type)
+						continue;
+
+					if (result == wxOK){
+						auto finditer = hkeys.find(idAndType(id, hkd.type));
+						idtype->second.Accel = "";
+						idtype->second.Accel = (finditer != hkeys.end())? finditer->second.Accel : "";
+						if (mb){
+							MenuItem *Item = mb->FindItem(idtype->first.id);
+							if (Item)//do not use finditer it maybe end when elem don't have hotkey
+								Item->SetAccel(NULL, idtype->second.Accel);
+						}
+					}
+					else if (result == wxYES){
+						if (mb){
+							MenuItem *Item = mb->FindItem(idtype->first.id);
+							if (Item)
+								Item->SetAccel(NULL, "");
+						}
+						hkeys.erase(idtype->first);
+					}
+				}
+			}
+		}
+		SetHKey(idAndType(id,hkd.type), hkd.hkname, hkd.hotkey);
+		SetAccels(hotkeyWindow != GLOBAL_HOTKEY);
+		SaveHkeys();
 	}
-	return resitem;
 }
 
 void Hotkeys::SetAccels(bool all){
 	Notebook *Tabs=Notebook::GetTabs();
-	
 	kainoteFrame * frame = (kainoteFrame *)Tabs->GetParent();
-	frame->SetAccels(all);
+	if (frame)
+		frame->SetAccels(all);
 }
 
 wxString Hotkeys::GetName(const idAndType itype)

@@ -319,8 +319,7 @@ public:
 	void FillTable();
 	void ResetKey(const idAndType *itype, int id=0, char type=GLOBAL_HOTKEY);
 	wxString GetDefaultKey(const idAndType &itype);
-	int OnMapHkey(int id, wxString name,wxWindow *parent, char hotkeyWindow = GLOBAL_HOTKEY, bool showWindowSelection=true);
-	int OnMapHkey(int *returnId, wxString name,wxWindow *parent);
+	void OnMapHkey(int id, wxString name,wxWindow *parent, char hotkeyWindow = GLOBAL_HOTKEY, bool showWindowSelection=true);
 	void SetAccels(bool all=false);
 	wxString GetName(const idAndType itype);
 	const std::map<int, wxString> &GetNamesTable();

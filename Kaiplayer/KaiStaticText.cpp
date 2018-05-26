@@ -56,7 +56,7 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 		//int allwrap = -1;
 		int currentPosition = 0;
 		bool seekSpace = true;
-		int mesureSize = (*w > 10)? *w : 600;
+		int mesureSize = (*w > 10)? *w : 1000;
 		size_t i = 0;
 		size_t len = text.Len();
 		while (i < len){
@@ -66,7 +66,7 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 			if (fw > mesureSize){
 				size_t j = currentPosition+1;
 				bool foundWrap = false;
-				fullw = mesureSize;
+				//fullw = mesureSize;
 				size_t textPosition = currentPosition;
 				int currentFW = 0;
 				while (currentPosition < i)
@@ -102,6 +102,9 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 					i++;
 					j = currentPosition+1;
 					foundWrap = false;
+					if (fullw < fw){
+						fullw = fw;
+					}
 					textHeight += fh;
 				}
 				
