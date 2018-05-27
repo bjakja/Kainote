@@ -24,15 +24,14 @@ class AutomationHotkeysDialog : public KaiDialog
 public:
 	AutomationHotkeysDialog(wxWindow *parent, Auto::Automation *Auto);
 	~AutomationHotkeysDialog();
-
+	static std::map<idAndType, hdata> allHotkeys;
 private:
 	void OnOK(wxCommandEvent &evt);
 	void OnMapHkey(wxCommandEvent &evt);
 	void OnDeleteHkey(wxCommandEvent &evt);
-	void ChangeHotkey(int row, const wxString &hotkey);
+	void ChangeHotkey(int row, int id, const wxString &hotkey);
 	Auto::Automation *automation;
 	KaiListCtrl *hotkeysList;
-	std::map<idAndType, hdata> allHotkeys;
 	int lastScriptId = 30100;
 };
 

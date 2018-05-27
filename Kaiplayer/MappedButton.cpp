@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+ï»¿//  Copyright (c) 2016, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ wxString AddText(int id)
 	return label;
 }
 
-//w tooltipach nie nale¿y ustawiaæ () bo zostan¹ usuniête
+//w tooltipach nie naleÅ¼y ustawiaÄ‡ () bo zostanÄ… usuniÄ™te
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, const wxString& toolTip,
              const wxPoint& pos, const wxSize& size, int window, long style)
 			 :wxWindow(parent, id, pos, size, style|wxWANTS_CHARS)
@@ -226,10 +226,10 @@ void MappedButton::SetToolTip(const wxString &_toolTip)
 			toolTip = toolTip + " ("+key+")";
 		}
 		toolTip << L"\n";
-		toolTip << _("Skrót mo¿na ustawiæ Shift + Klik");
+		toolTip << _("SkrÃ³t moÅ¼na ustawiÄ‡ Shift + Klik");
 		if (twoHotkeys){
 			toolTip << L"\n";
-			toolTip << _("Drugi skrót mo¿na ustawiæ Control + Klik");
+			toolTip << _("Drugi skrÃ³t moÅ¼na ustawiÄ‡ Control + Klik");
 		}
 		wxWindow::SetToolTip(toolTip);
 	}else{
@@ -319,9 +319,9 @@ void MappedButton::OnMouseEvent(wxMouseEvent &event)
 		return;
 	}
 	if(Window>=0 && event.LeftDown() && (event.ShiftDown() || (twoHotkeys && event.ControlDown()))){
-		//upewnij siê, ¿e da siê zmieniæ idy na nazwy, 
-		//mo¿e i trochê spowolni operacjê ale skoñczy siê ci¹g³e wywalanie hotkeysów
-		//mo¿e od razu funkcji onmaphotkey przekazaæ item by zrobi³a co trzeba
+		//upewnij siÄ™, Å¼e da siÄ™ zmieniÄ‡ idy na nazwy, 
+		//moÅ¼e i trochÄ™ spowolni operacjÄ™ ale skoÅ„czy siÄ™ ciÄ…gÅ‚e wywalanie hotkeysÃ³w
+		//moÅ¼e od razu funkcji onmaphotkey przekazaÄ‡ item by zrobiÅ‚a co trzeba
 		int id= GetId(); 
 		if(event.ControlDown()){ id -= 1000; }
 		//wxString buttonName = Hkeys.GetName(id);//(name != "") ? name : GetToolTipText().BeforeFirst('(').BeforeFirst('\n').Trim();

@@ -29,7 +29,7 @@ int ftopBorder = 26;
 
 
 KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title/*=""*/, const wxPoint& pos/*=wxDefaultPosition*/, const wxSize& size/*=wxDefaultSize*/, long _style/*=0*/, const wxString &name /*= ""*/)
-:wxTopLevelWindow(parent, id, title, wxDefaultPosition, wxDefaultSize,/*wxBORDER_NONE|*/wxMAXIMIZE_BOX|wxSYSTEM_MENU|wxMINIMIZE_BOX|wxCLOSE_BOX|wxRESIZE_BORDER|wxCAPTION, name)
+:wxTopLevelWindow(parent, id, title, wxDefaultPosition, wxDefaultSize,/*wxBORDER_NONE|*/wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxCLOSE_BOX|wxRESIZE_BORDER|wxCAPTION, name)
 	,style(_style)
 	,enterClose(false)
 	,pushedClose(false)

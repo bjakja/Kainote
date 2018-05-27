@@ -614,9 +614,9 @@ void KaiListCtrl::SaveAll(int col)
 	modified = false;
 }
 
-int KaiListCtrl::FindItem(int column, const wxString &textItem)
+int KaiListCtrl::FindItem(int column, const wxString &textItem, int row /*= 0*/)
 {
-	for(size_t i = 0; i<itemList->size(); i++){
+	for (size_t i = row; i<itemList->size(); i++){
 		if(column < 0){
 			for(size_t j = 0; j < (*itemList)[i]->row.size(); j++){
 				if((*itemList)[i]->row[j]->name == textItem){
@@ -666,7 +666,7 @@ void KaiListCtrl::Undo(wxCommandEvent &evt)
 		for (size_t i = 0; i < itemList->size(); i++){
 			if (i < actual->size() && (*itemList)[i] != (*actual)[i]){
 				for (size_t j = 0; j < (*actual)[i]->row.size(); j++)
-					(*actual)[i]->row[j]->modified = true;
+					(*actual)[i]->row[j]->OnChangeHistory();
 
 				modified = true;
 			}
@@ -685,7 +685,7 @@ void KaiListCtrl::Redo(wxCommandEvent &evt)
 		for (size_t i = 0; i < itemList->size(); i++){
 			if (i < actual->size() && (*itemList)[i] != (*actual)[i]){
 				for (size_t j = 0; j < (*actual)[i]->row.size(); j++)
-					(*actual)[i]->row[j]->modified = true;
+					(*actual)[i]->row[j]->OnChangeHistory();
 
 				modified = true;
 			}

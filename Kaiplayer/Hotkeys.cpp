@@ -62,7 +62,7 @@ bool operator != ( const int match1, const idAndType &match){
 };
 
 Hotkeys::Hotkeys()
-	:lastScirptId(30100)
+	:lastScriptId(30100)
 {	
 }
 
@@ -256,7 +256,7 @@ int Hotkeys::LoadHkeys(bool Audio)
 	}
 
 	int g=0;
-	lastScirptId=30100;
+	lastScriptId=30100;
 	while(hk.HasMoreTokens())
 	{
 		wxString token=hk.NextToken();
@@ -267,8 +267,8 @@ int Hotkeys::LoadHkeys(bool Audio)
 			wxString name = token.BeforeFirst('=', &rest).Trim(false).Trim(true);
 			rest = rest.Trim(false).Trim(true);
 			if(rest.IsEmpty()){continue;}
-			hkeys[idAndType(lastScirptId,GLOBAL_HOTKEY)] = hdata(name, rest);
-			lastScirptId++;
+			hkeys[idAndType(lastScriptId,GLOBAL_HOTKEY)] = hdata(name, rest);
+			lastScriptId++;
 			g++;
 			continue;
 		} 
@@ -407,6 +407,7 @@ void Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow
 
 	HkeysDialog hkd(parent, (name.empty())? GetName(id) : name, hotkeyWindow, showWindowSelection);
 	if(hkd.ShowModal()==wxID_OK){
+		lastScriptId = 30100;
 		std::vector< std::map<idAndType, hdata>::iterator> idtypes;
 		for(auto cur=hkeys.begin(); cur!=hkeys.end(); cur++)
 		{
@@ -414,6 +415,7 @@ void Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow
 				if (cur->second.Name == name){
 					id = cur->first.id;
 				}
+				lastScriptId++;
 			}
 			if(cur->second.Accel == hkd.hotkey){
 				idtypes.push_back(cur);
@@ -421,10 +423,11 @@ void Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow
 		}
 		
 		if (id < 0){
-			id = lastScirptId;
-			lastScirptId++;
+			id = lastScriptId;
+			lastScriptId++;
 		}
 
+		bool saveAudioHotkeys = (hkd.type == AUDIO_HOTKEY);
 		if (idtypes.size()){
 			bool doubledHotkey = false;
 			wxString doubledHkName;
@@ -445,6 +448,8 @@ void Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow
 					if (hotkeyName.empty())
 						hotkeyName = idtype->second.Name;
 					doubledHkName += windowNames[idtype->first.Type] + L" " + hotkeyName;
+					if (idtype->first.Type == AUDIO_HOTKEY)
+						saveAudioHotkeys = true;
 				}
 			}
 			int result = wxCANCEL;
@@ -501,8 +506,10 @@ void Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow
 			}
 		}
 		SetHKey(idAndType(id,hkd.type), hkd.hkname, hkd.hotkey);
-		SetAccels();
+		SetAccels(true);
 		SaveHkeys();
+		if (saveAudioHotkeys)
+			SaveHkeys(true);
 	}
 }
 
@@ -603,11 +610,19 @@ void HkeysDialog::OnKeyPress(wxKeyEvent& event)
 		{
 			KaiMessageBox(_("Skróty globalne i edytora muszą zawierać modyfikatory (np. Shift, Ctrl, Alt)."));return;
 		}else if( event.GetModifiers() == wxMOD_CONTROL && (key == 'V' || key == 'C' || key == 'X' || key == 'Z')){
-			KaiMessageBox(_("Nie możesz użyć skrótów do kopiowania, wycinania i wklejania.")); return;
+			KaiMessageBox(_("Nie można używać skrótów do kopiowania, wycinania i wklejania.")); return;
+		}
+		else if (event.AltDown() && !event.ControlDown() && key == WXK_F4){
+			KaiMessageBox(_("Nie można używać skrótu zamykania programu.")); return;
 		}
 
 		wxString keytxt=Hkeys.keys[key];
-		if(keytxt==""){keytxt=wchar_t(key);}
+		if(keytxt==""){
+			if (key >= 36 && key <= 96)
+				keytxt = wchar_t(key);
+			else
+				return;
+		}
 		hotkey<<keytxt;
 
 		EndModal(wxID_OK);

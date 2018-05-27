@@ -503,8 +503,11 @@ void SubsGridWindow::AdjustWidths(int cell)
 	File *Subs = file->GetSubs();
 	int maxx = Subs->dials.size();
 
-	dc.GetTextExtent(wxString::Format("%i", maxx), &fw, &fh, NULL, NULL, &font);
+	dc.GetTextExtent(wxString::Format("%i", maxx), &fw, &fh);
 	GridWidth[0] = fw + 10;
+	if (!cell)
+		return;
+
 	Dialogue *dial;
 	for (int i = 0; i<maxx; i++){
 		dial = Subs->dials[i];
@@ -525,19 +528,19 @@ void SubsGridWindow::AdjustWidths(int cell)
 
 		if (subsFormat<SRT){
 			if ((LAYER & cell) && dial->Layer != 0){
-				dc.GetTextExtent(wxString::Format("%i", dial->Layer), &fw, &fh, NULL, NULL, &font);
+				dc.GetTextExtent(wxString::Format("%i", dial->Layer), &fw, &fh);
 				if (fw + 10>law){ law = fw + 10; }
 			}
 			if (STYLE & cell){
-				dc.GetTextExtent(dial->Style, &fw, &fh, NULL, NULL, &font);
+				dc.GetTextExtent(dial->Style, &fw, &fh);
 				if (fw + 10>syw){ syw = fw + 10; }
 			}
 			if ((ACTOR & cell) && dial->Actor != ""){
-				dc.GetTextExtent(dial->Actor, &fw, &fh, NULL, NULL, &font);
+				dc.GetTextExtent(dial->Actor, &fw, &fh);
 				if (fw + 10>acw){ acw = fw + 10; }
 			}
 			if ((EFFECT & cell) && dial->Effect != ""){
-				dc.GetTextExtent(dial->Effect, &fw, &fh, NULL, NULL, &font);
+				dc.GetTextExtent(dial->Effect, &fw, &fh);
 				if (fw + 10>efw){ efw = fw + 10; }
 			}
 			if ((MARGINL & cell) && dial->MarginL != 0){ shml = true; }
@@ -552,7 +555,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 			VideoFfmpeg *VFF = ((TabPanel*)GetParent())->Video->VFF;
 			start.orgframe = VFF->GetFramefromMS(start.mstime);
 		}
-		dc.GetTextExtent(start.raw(showFrames ? FRAME : subsFormat), &fw, &fh, NULL, NULL, &font);
+		dc.GetTextExtent(start.raw(showFrames ? FRAME : subsFormat), &fw, &fh);
 		stw = fw + 10;
 	}
 	if (END & cell){
@@ -561,58 +564,58 @@ void SubsGridWindow::AdjustWidths(int cell)
 			VideoFfmpeg *VFF = ((TabPanel*)GetParent())->Video->VFF;
 			end.orgframe = VFF->GetFramefromMS(end.mstime);
 		}
-		dc.GetTextExtent(end.raw(showFrames ? FRAME : subsFormat), &fw, &fh, NULL, NULL, &font);
+		dc.GetTextExtent(end.raw(showFrames ? FRAME : subsFormat), &fw, &fh);
 		edw = fw + 10;
 	}
 
 	if ((subsFormat<SRT) ? (LAYER & cell) : (START & cell)){
 		wxString frst = (subsFormat<SRT) ? _("W.") : _("Start");
-		dc.GetTextExtent(frst, &fw, &fh, NULL, NULL, &font);
+		dc.GetTextExtent(frst, &fw, &fh);
 		GridWidth[1] = (subsFormat<SRT) ? law : stw;
 		if (fw + 10>GridWidth[1] && GridWidth[1] != 0){ GridWidth[1] = fw + 10; }
 	}
 
 	if ((subsFormat<SRT) ? (START & cell) : (END & cell)){
 		wxString scnd = (subsFormat<SRT) ? _("Start") : _("Koniec");
-		dc.GetTextExtent(scnd, &fw, &fh, NULL, NULL, &font);
+		dc.GetTextExtent(scnd, &fw, &fh);
 		GridWidth[2] = (subsFormat<SRT) ? stw : edw;
 		if (fw + 10>GridWidth[2]){ GridWidth[2] = fw + 10; };
 	}
 	if (subsFormat<SRT){
 		if (END & cell){
-			dc.GetTextExtent(_("Koniec"), &fw, &fh, NULL, NULL, &font);
+			dc.GetTextExtent(_("Koniec"), &fw, &fh);
 			GridWidth[3] = edw;
 			if (fw + 10>GridWidth[3]){ GridWidth[3] = fw + 10; };
 		}
 
 		if (STYLE & cell){
-			dc.GetTextExtent(_("Styl"), &fw, &fh, NULL, NULL, &font);
+			dc.GetTextExtent(_("Styl"), &fw, &fh);
 			GridWidth[4] = syw;
 			if (fw + 10>GridWidth[4]){ GridWidth[4] = fw + 10; }
 		}
 
 		if (ACTOR & cell){
-			dc.GetTextExtent(_("Aktor"), &fw, &fh, NULL, NULL, &font);
+			dc.GetTextExtent(_("Aktor"), &fw, &fh);
 			if (fw + 10>acw&&acw != 0){ acw = fw + 10; };
 			GridWidth[5] = (acw == 0) ? 0 : acw;
 		}
 
 		if (224 & cell){
-			dc.GetTextExtent(_("M.Pi."), &fw, &fh, NULL, NULL, &font);
+			dc.GetTextExtent(_("M.Pi."), &fw, &fh);
 			if (MARGINL & cell){ GridWidth[6] = (!shml) ? 0 : fw + 10; }
 			if (MARGINR & cell){ GridWidth[7] = (!shmr) ? 0 : fw + 10; }
 			if (MARGINV & cell){ GridWidth[8] = (!shmv) ? 0 : fw + 10; }
 		}
 
 		if (EFFECT & cell){
-			dc.GetTextExtent(_("Efekt"), &fw, &fh, NULL, NULL, &font);
+			dc.GetTextExtent(_("Efekt"), &fw, &fh);
 			if (fw + 10>efw&&efw != 0){ efw = fw + 10; };
 			GridWidth[9] = (efw == 0) ? 0 : efw;
 		}
 	}
 
 	if (CPS & cell){
-		dc.GetTextExtent(_("ZNS"), &fw, &fh, NULL, NULL, &font);
+		dc.GetTextExtent(_("ZNS"), &fw, &fh);
 		GridWidth[(subsFormat<SRT) ? 10 : 3] = fw + 5;
 	}
 

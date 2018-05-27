@@ -37,6 +37,7 @@ public:
 	void OnResetHotkey(KaiListCtrl *theList, int y);
 	void OnDeleteHotkey(KaiListCtrl *theList, int y);
 	void Save();
+	void OnChangeHistory();
 	Item* Copy(){return new ItemHotkey(*this);}
 	idAndType hotkeyId;
 	wxString accel;

@@ -61,7 +61,7 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 	
 	if(hkd.ShowModal()==wxID_OK){
 		if (OptionsDialog::hotkeysCopy.size() == 0)
-			OptionsDialog::hotkeysCopy = std::map<idAndType, hdata>(Hkeys.hkeys);
+			OptionsDialog::hotkeysCopy = std::map<idAndType, hdata>(Hkeys.GetHotkeysMap());
 
 		wxString hotkey = accel;
 		//const idAndType *itype = new idAndType(hotkeyId.id, hkd.type);
@@ -175,6 +175,8 @@ done:
 
 void ItemHotkey::OnResetHotkey(KaiListCtrl *theList, int y)
 {
+	if (OptionsDialog::hotkeysCopy.size() == 0)
+		OptionsDialog::hotkeysCopy = std::map<idAndType, hdata>(Hkeys.GetHotkeysMap());
 	const wxString &defKet = Hkeys.GetDefaultKey(hotkeyId);
 	ItemHotkey *itemKey = (ItemHotkey*)theList->CopyRow(y,1);
 	itemKey->accel = defKet;
@@ -189,6 +191,8 @@ void ItemHotkey::OnResetHotkey(KaiListCtrl *theList, int y)
 	
 void ItemHotkey::OnDeleteHotkey(KaiListCtrl *theList, int y)
 {
+	if (OptionsDialog::hotkeysCopy.size() == 0)
+		OptionsDialog::hotkeysCopy = std::map<idAndType, hdata>(Hkeys.GetHotkeysMap());
 	ItemHotkey *itemKey = (ItemHotkey*)theList->CopyRow(y,1);
 	itemKey->accel = "";
 	itemKey->modified = true;
@@ -201,10 +205,15 @@ void ItemHotkey::OnDeleteHotkey(KaiListCtrl *theList, int y)
 void ItemHotkey::Save()
 {
 	if(modified){
-		Hkeys.SetHKey(hotkeyId, name, accel);
 		modified=false;
 	}
 }
+
+void ItemHotkey::OnChangeHistory(){
+	OptionsDialog::hotkeysCopy[hotkeyId] = hdata(name, accel);
+	//modified = true;
+}
+
 wxString *OptionsDialog::windowNames = NULL;
 std::map<idAndType, hdata> OptionsDialog::hotkeysCopy;
 
@@ -474,7 +483,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 
 		if(!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){KaiMessageBox(_("Nie można wczytać skrótów klawiszowych audio"), _("Błąd"));}
 
-		std::map<idAndType, hdata> mappedhkeys = std::map<idAndType, hdata>(Hkeys.hkeys);
+		std::map<idAndType, hdata> mappedhkeys = std::map<idAndType, hdata>(Hkeys.GetHotkeysMap());
 		const std::map<int, wxString> &hkeysNames = Hkeys.GetNamesTable();
 
 		//long ii=0;
@@ -489,6 +498,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 				for (auto curmhk = mappedhkeys.begin(); curmhk != mappedhkeys.end(); curmhk++) {
 					if (lastType != curmhk->first.Type)
 						break;
+					if (curmhk->first.id == Quit)
+						continue;
 					
 					wxString windowName = windowNames[lastType] + " ";
 					auto & it = hkeysNames.find(curmhk->first.id);
@@ -940,13 +951,12 @@ void OptionsDialog::SetOptions(bool saveall)
 					ChangeColors();
 				}
 				else if (OB.option == 2000){
-					list->SaveAll(1);
-					Hkeys.SaveHkeys();Kai->SetAccels();
-					Hkeys.SaveHkeys(true);
-					Notebook *tabs = Kai->Tabs; 
-					for(size_t j = 0; j < tabs->Size(); j++){
-						TabPanel *tab = tabs->Page(j);
-						if(tab->Edit->ABox){tab->Edit->ABox->SetAccels();}
+					if (list->GetModified() && hotkeysCopy.size()){
+						list->SaveAll(1);
+						Hkeys.SetHotkeysMap(hotkeysCopy);
+						Hkeys.SaveHkeys();
+						Hkeys.SaveHkeys(true);
+						Kai->SetAccels();
 					}
 				}
 				else{

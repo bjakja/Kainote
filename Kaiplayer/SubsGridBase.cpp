@@ -1394,8 +1394,7 @@ void SubsGridBase::NextLine(int dir)
 		tmp->TextTl = "";
 		AddLine(tmp);
 		SetModified(GRID_APPEND_LINE, false);
-		if(subsFormat>TMP)
-			AdjustWidths(START|END);
+		AdjustWidths(subsFormat>TMP? (START | END) : 0);
 	}
 	int h, w;
 	GetClientSize(&w, &h);

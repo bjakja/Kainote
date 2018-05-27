@@ -138,7 +138,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	Toolbar->AddID(SaveWithVideoName);
 	FileMenu->Append(9989, _("Pokaż / Ukryj okno logów"))->DisableMapping();
 	FileMenu->AppendTool(Toolbar, Settings, _("&Ustawienia"), _("Ustawienia programu"), PTR_BITMAP_PNG("SETTINGS"));
-	FileMenu->AppendTool(Toolbar, Quit, _("Wyjści&e"), _("Zakończ działanie programu"), PTR_BITMAP_PNG("exit"));
+	FileMenu->AppendTool(Toolbar, Quit, _("Wyjści&e\tAlt-F4"), _("Zakończ działanie programu"), PTR_BITMAP_PNG("exit"))->DisableMapping();
 	Menubar->Append(FileMenu, _("&Plik"));
 
 	EditMenu = new Menu();
@@ -1295,8 +1295,8 @@ void kainoteFrame::SetAccels(bool _all)
 	entries.resize(2);
 	entries[0].Set(wxACCEL_CTRL, (int) 'T', ID_ADDPAGE);
 	entries[1].Set(wxACCEL_CTRL, (int) 'W', ID_CLOSEPAGE);
-
-	for (auto cur = Hkeys.hkeys.begin(); cur != Hkeys.hkeys.end(); cur++){
+	const std::map<idAndType, hdata> &hkeys = Hkeys.GetHotkeysMap();
+	for (auto cur = hkeys.begin(); cur != hkeys.end(); cur++){
 		if (cur->second.Accel == "" || cur->first.Type != GLOBAL_HOTKEY){ continue; }
 		int id = cur->first.id;
 		if (id >= 6850){

@@ -307,7 +307,7 @@ class HkeysDialog : public KaiDialog
 class Hotkeys
 {
 private:
-
+	std::map<idAndType, hdata> hkeys;
 public:
 	Hotkeys();
 	~Hotkeys();
@@ -326,10 +326,11 @@ public:
 	const std::map<int, wxString> &GetNamesTable();
 	const wxString &GetName(int id);
 	int GetType(int id);
-	std::map<idAndType, hdata> hkeys;
+	const std::map<idAndType, hdata> &GetHotkeysMap(){ return hkeys; }
+	void SetHotkeysMap(const std::map<idAndType, hdata> &hotkeys){ hkeys = std::map<idAndType, hdata>(hotkeys); }
 	std::map<int, wxString> keys;
 	bool AudioKeys;
-	int lastScirptId;
+	int lastScriptId;
 	HotkeysNaming *hotkeysNaming=NULL;
 };
 

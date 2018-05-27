@@ -35,11 +35,11 @@ class KaiListCtrl;
 class Item{
 public:
 	Item(byte _type=TYPE_TEXT){type=_type; modified=false;}
-	virtual ~Item(){	
-	}
+	virtual ~Item(){}
 	virtual void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL){};
 	virtual void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList){};
 	virtual void Save(){};
+	virtual void OnChangeHistory(){/* modified = true;*/ };
 	virtual Item* Copy(){return NULL;}
 	bool modified;
 	bool needTooltip = false;
@@ -50,20 +50,18 @@ public:
 class ItemText : public Item{
 public:
 	ItemText(const wxString &txt) : Item(){name = txt;}
-	virtual ~ItemText(){		
-	}
+	virtual ~ItemText(){}
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	wxString GetName(){return name;}
-	void Save(){};
-	Item* Copy(){return new ItemText(*this);}
+	virtual void Save(){};
+	virtual Item* Copy(){return new ItemText(*this);}
 };
 
 class ItemColor : public Item{
 public:
 	ItemColor(const AssColor &color, int i) : Item(TYPE_COLOR){col = color;colOptNum=i;}
-	virtual ~ItemColor(){	
-	}
+	virtual ~ItemColor(){}
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	void Save();
@@ -166,7 +164,7 @@ public:
 	void SaveAll(int col);
 	void SetModified(bool modif){modified = modif; /*if(modif){PushHistory();}*/}
 	bool GetModified(){return modified;}
-	int FindItem(int column, const wxString &textItem);
+	int FindItem(int column, const wxString &textItem, int row = 0);
 	void ScrollTo(int row);
 	size_t GetCount(){return itemList->size();}
 	void SetSelection(int selection, bool center = false);

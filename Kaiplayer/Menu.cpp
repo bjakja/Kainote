@@ -369,7 +369,8 @@ MenuItem *Menu::SetAccMenu(int id, const wxString &txt, const wxString &help, bo
 MenuItem *Menu::SetAccMenu(MenuItem *menuitem, const wxString &name)
 {
 	int id=0;
-	for(auto cur=Hkeys.hkeys.begin(); cur!=Hkeys.hkeys.end(); cur++)
+	const std::map<idAndType, hdata> &hkeys = Hkeys.GetHotkeysMap();
+	for(auto cur=hkeys.begin(); cur!=hkeys.end(); cur++)
 	{
 		if(cur->first < 30100){continue;}
 		if(cur->second.Name == name ){
@@ -577,7 +578,7 @@ bool MenuDialog::SendEvent(MenuItem *item, int accel)
 		evt->SetInt(accel);
 		wxQueueEvent(ParentMenu->GetParent(),evt);
 	}else{
-		this->accel=accel;
+		ParentMenu->accel = accel;
 	}
 	HideMenus(item->id);	
 	

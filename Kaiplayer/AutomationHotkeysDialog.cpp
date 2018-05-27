@@ -23,6 +23,11 @@ class AutomationHotkeyItem : public ItemText{
 public:
 	AutomationHotkeyItem(const wxString &txt, const wxString &hotkeyName, int _id) :ItemText(txt){ scriptHotkeyName = hotkeyName; id = _id; };
 	void Save();
+	Item* Copy(){ return new AutomationHotkeyItem(*this); }
+	void OnChangeHistory(){
+		AutomationHotkeysDialog::allHotkeys[idAndType(id, GLOBAL_HOTKEY)] = hdata(scriptHotkeyName, name);
+		//modified = true;
+	}
 	wxString scriptHotkeyName;
 	int id;
 };
@@ -30,10 +35,11 @@ public:
 void AutomationHotkeyItem::Save()
 {
 	if (modified){
-		Hkeys.SetHKey(idAndType(id, GLOBAL_HOTKEY), scriptHotkeyName, name);
 		modified = false;
 	}
 }
+
+std::map<idAndType, hdata> AutomationHotkeysDialog::allHotkeys;
 
 AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automation *Auto)
 	: KaiDialog(parent, -1, _("Lista skrótów klawiszowych skryptów automatyzacji"))
@@ -46,11 +52,16 @@ AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automat
 	hotkeysList->InsertColumn(2, _("Makro"), TYPE_TEXT, 300);
 	hotkeysList->InsertColumn(3, _("Skrót"), TYPE_TEXT, 80);
 
-	allHotkeys = std::map<idAndType, hdata>(Hkeys.hkeys);
+	allHotkeys = std::map<idAndType, hdata>(Hkeys.GetHotkeysMap());
 	std::map<idAndType, hdata> mappedhkeys;
-	auto cur = allHotkeys.find(idAndType(30100));
-	if (cur != allHotkeys.end()){
-		mappedhkeys.insert(cur, allHotkeys.end());
+	std::map<idAndType, hdata>::iterator end;
+	auto cur = end = allHotkeys.find(idAndType(30100));
+	while(cur != allHotkeys.end()){
+		if (end->first.id < 30100){
+			mappedhkeys.insert(cur, end);
+			break;
+		}
+		end++;
 	}
 	lastScriptId = 30100 + mappedhkeys.size();
 
@@ -135,6 +146,7 @@ void AutomationHotkeysDialog::OnOK(wxCommandEvent &evt)
 {
 	if (hotkeysList->GetModified()){
 		hotkeysList->SaveAll(3);
+		Hkeys.SetHotkeysMap(allHotkeys);
 		Hkeys.SetAccels(true);
 		Hkeys.SaveHkeys();
 		EndModal(wxID_OK);
@@ -157,12 +169,14 @@ void AutomationHotkeysDialog::OnMapHkey(wxCommandEvent &evt)
 	HkeysDialog hkd(this, name, GLOBAL_HOTKEY, false);
 
 	if (hkd.ShowModal() == wxID_OK){
-		if (allHotkeys.size() == 0)
-			allHotkeys = std::map<idAndType, hdata>(Hkeys.hkeys);
 
 		wxString hotkey = hitem->name;
 		std::vector< std::map<idAndType, hdata>::iterator> idtypes;
+		lastScriptId = 30100;
 		for (auto cur = allHotkeys.begin(); cur != allHotkeys.end(); cur++){
+			if (id < 0 && cur->first.id >= 30100){
+				lastScriptId++;
+			}
 			if (cur->second.Accel == hkd.hotkey && cur->second.Name != name){
 				idtypes.push_back(cur);
 			}
@@ -229,7 +243,7 @@ void AutomationHotkeysDialog::OnMapHkey(wxCommandEvent &evt)
 
 					int nitem = hotkeysList->FindItem(0, windowNames[idtype->first.Type] + L" " + Hkeys.GetName(idtype->first.id));
 					if (nitem >= 0){
-						ChangeHotkey(nitem, hotkey);
+						ChangeHotkey(nitem, id, hotkey);
 						idtype->second.Accel = hotkey;
 						if (mb){
 							MenuItem *Item = mb->FindItem(idtype->first.id);
@@ -241,7 +255,7 @@ void AutomationHotkeysDialog::OnMapHkey(wxCommandEvent &evt)
 			}
 			else if (result == wxCANCEL){ return; }
 		}
-		ChangeHotkey(inum, hkd.hotkey);
+		ChangeHotkey(inum, id, hkd.hotkey);
 		hotkeysList->Refresh(false);
 		allHotkeys[idAndType(id,GLOBAL_HOTKEY)] = hdata(name, hkd.hotkey);
 		hotkeysList->SetModified(true);
@@ -263,18 +277,19 @@ void AutomationHotkeysDialog::OnDeleteHkey(wxCommandEvent &evt)
 	if (id < 0)
 		return;
 
-	ChangeHotkey(inum, "");
+	ChangeHotkey(inum, id, "");
 	hotkeysList->SetModified(true);
 	hotkeysList->PushHistory();
 	allHotkeys[idAndType(id, GLOBAL_HOTKEY)] = hdata(name, "");
 }
 
-void AutomationHotkeysDialog::ChangeHotkey(int row, const wxString &hotkey)
+void AutomationHotkeysDialog::ChangeHotkey(int row, int id, const wxString &hotkey)
 {
 	AutomationHotkeyItem* item = (AutomationHotkeyItem*)hotkeysList->CopyRow(row, 3);
 	if (!item)
 		return;
 	item->name = hotkey;
+	item->id = id;
 	item->modified = true;
 	ItemText* textitem = (ItemText*)hotkeysList->GetItem(row, 0);
 	textitem->modified = true;
