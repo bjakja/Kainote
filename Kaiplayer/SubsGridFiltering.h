@@ -28,6 +28,7 @@ public:
 	void Filter(bool autoFiltering = false);
 	void FilterPartial(int from);
 	void HideSelections();
+	void MakeTree();
 	void RemoveFiltering();
 
 private:

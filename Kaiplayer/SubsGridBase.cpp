@@ -1081,9 +1081,9 @@ void SubsGridBase::SetSubsFormat(wxString ext)
 	while (rw<GetCount())
 	{
 		Dialogue *dial = GetDialogue(rw);
-		if (dial->NonDialogue || dial->Form == 0){ rw++; }
-		else if (!ext.empty() && (subsext != dial->Form || (subsext == TMP && dial->Form>SRT))){ rw++; }//form=dial->Form; 
-		else{ subsFormat = dial->Form; break; }
+		if (dial->NonDialogue || dial->Format == 0){ rw++; }
+		else if (!ext.empty() && (subsext != dial->Format || (subsext == TMP && dial->Format>SRT))){ rw++; }//form=dial->Form; 
+		else{ subsFormat = dial->Format; break; }
 	}
 }
 

@@ -54,7 +54,7 @@ ParseData::~ParseData()
 
 Dialogue::Dialogue()
 {
-	Form=ASS;
+	Format=ASS;
 	Layer=0;
 	End.mstime=5000;
 	Style=_T("Default");
@@ -101,9 +101,9 @@ void Dialogue::SetRaw(const wxString &ldial)
 			if(token.StartsWith("Dialogue")){IsComment=false;}else{IsComment=true;}
 			if(token.Find("arked=")==-1){Layer=wxAtoi(token.AfterFirst(' '));}
 			else{Layer=wxAtoi(token.AfterLast('='));}
-			Form=ASS;
-			Start.SetRaw(assdal.GetNextToken(),Form);
-			End.SetRaw(assdal.GetNextToken(),Form);
+			Format=ASS;
+			Start.SetRaw(assdal.GetNextToken(),Format);
+			End.SetRaw(assdal.GetNextToken(),Format);
 			Style=assdal.GetNextToken();
 			Actor=assdal.GetNextToken();
 			MarginL=wxAtoi(assdal.GetNextToken());
@@ -124,10 +124,10 @@ void Dialogue::SetRaw(const wxString &ldial)
 	if(ldial.Find(" --> ")!=-1){
 		wxString eend;
 		wxString ttext;
-		Form=SRT;
-		Start.SetRaw(ldial.BeforeFirst(' ',&eend),Form);
+		Format=SRT;
+		Start.SetRaw(ldial.BeforeFirst(' ',&eend),Format);
 		eend=eend.AfterFirst(' ');
-		End.SetRaw(eend.BeforeFirst('\r',&ttext),Form);
+		End.SetRaw(eend.BeforeFirst('\r',&ttext),Format);
 		Text = ttext.AfterFirst('\n');
 		Text->Replace("\r","");
 		Text->Replace("\n","\\N");
@@ -138,9 +138,9 @@ void Dialogue::SetRaw(const wxString &ldial)
 	{
 		NonDialogue=false;
 		IsComment=false;
-		Form=MDVD;
-		Start.SetRaw(expresion1.GetMatch( ldial, 1 ),Form);
-		End.SetRaw(expresion1.GetMatch( ldial, 2 ),Form);
+		Format=MDVD;
+		Start.SetRaw(expresion1.GetMatch( ldial, 1 ),Format);
+		End.SetRaw(expresion1.GetMatch( ldial, 2 ),Format);
 		Text = expresion1.GetMatch( ldial, 3 );
 		Text.Trim(false);
 		return;
@@ -148,9 +148,9 @@ void Dialogue::SetRaw(const wxString &ldial)
 	{
 		NonDialogue=false;
 		IsComment=false;
-		Form=MPL2;
-		Start.SetRaw(expresion2.GetMatch( ldial, 1 ),Form);
-		End.SetRaw(expresion2.GetMatch( ldial, 2 ),Form);
+		Format=MPL2;
+		Start.SetRaw(expresion2.GetMatch( ldial, 1 ),Format);
+		End.SetRaw(expresion2.GetMatch( ldial, 2 ),Format);
 		Text = expresion2.GetMatch( ldial, 3 );
 		Text.Trim(false);
 		return;
@@ -158,9 +158,9 @@ void Dialogue::SetRaw(const wxString &ldial)
 	{
 		NonDialogue=false;
 		IsComment=false;
-		Form=TMP;
+		Format=TMP;
 		wxString timeparts;
-		Start.SetRaw(timeparts<<expresion.GetMatch( ldial, 1 )<<_T(":")<<expresion.GetMatch( ldial, 2 )<<_T(":")<<expresion.GetMatch( ldial, 3 ),Form);
+		Start.SetRaw(timeparts<<expresion.GetMatch( ldial, 1 )<<_T(":")<<expresion.GetMatch( ldial, 2 )<<_T(":")<<expresion.GetMatch( ldial, 3 ),Format);
 		Text = expresion.GetMatch( ldial, 4 );
 		Text.Trim(false);
 		return;
@@ -171,12 +171,12 @@ void Dialogue::SetRaw(const wxString &ldial)
 		Style="Default";
 		Text=ldial;
 		Text.Trim(true);
-		Form=ASS;
+		Format=ASS;
 		isVisible = NOT_VISIBLE;
 		return;
 	}
 	else{
-		Form=0;
+		Format=0;
 		NonDialogue=false;
 		IsComment=false;
 		Style="Default";
@@ -191,14 +191,14 @@ void Dialogue::SetRaw(const wxString &ldial)
 void Dialogue::GetRaw(wxString *txt, bool tl, const wxString &style)
 {
 	wxString line;
-	if (Form<SRT){
+	if (Format<SRT){
 		if (NonDialogue){ (*txt) << Text << "\r\n"; return; }
 		if(IsComment){line=_T("Comment: ");}else{line=_T("Dialogue: ");}
 		bool styleTl = style!="";
 		const wxString &Styletl=(styleTl)?style : Style;
 		const wxString &EffectTl = (State & 4 && styleTl)? wxString("\fD") : Effect;
-		line<<Layer<<_T(",")<<Start.raw(Form)<<_T(",")
-			<<End.raw(Form)<<_T(",")<<Styletl<<_T(",")<<Actor<<_T(",")
+		line<<Layer<<_T(",")<<Start.raw(Format)<<_T(",")
+			<<End.raw(Format)<<_T(",")<<Styletl<<_T(",")<<Actor<<_T(",")
 			<<MarginL<<_T(",")
 			<<MarginR<<_T(",")
 			<<MarginV<<_T(",")
@@ -206,19 +206,19 @@ void Dialogue::GetRaw(wxString *txt, bool tl, const wxString &style)
 			line += (tl)? TextTl : Text;
 		//line+=wxString::Format("%i,%s,%s,%s,%s,%i,%i,%i,%s,%s",(int)Layer,Start.raw().data(),End.raw().data(),Styletl.data(),Actor.data(),(int)MarginL,(int)MarginR,(int)MarginV,Effect.data(),txttl.data());
 
-	}else if(Form==MDVD){
-		line<<_T("{")<<Start.raw(Form)<<_T("}{")<<End.raw(Form)<<_T("}")<<Text;
+	}else if(Format==MDVD){
+		line<<_T("{")<<Start.raw(Format)<<_T("}{")<<End.raw(Format)<<_T("}")<<Text;
 	}
-	else if(Form==MPL2){
-		line<<_T("[")<<Start.raw(Form)<<_T("][")<<End.raw(Form)<<_T("]")<<Text;
+	else if(Format==MPL2){
+		line<<_T("[")<<Start.raw(Format)<<_T("][")<<End.raw(Format)<<_T("]")<<Text;
 	}
-	else if(Form==TMP){
-		line<<Start.raw(Form)<<_T(":")<<Text;
+	else if(Format==TMP){
+		line<<Start.raw(Format)<<_T(":")<<Text;
 	}
-	else if(Form==SRT){
+	else if(Format==SRT){
 		wxString txt = Text;
 		txt.Replace("\\N","\r\n");
-		line<<Start.raw(Form)<<" --> "<<End.raw(Form)<<"\r\n"<<txt<<"\r\n";
+		line<<Start.raw(Format)<<" --> "<<End.raw(Format)<<"\r\n"<<txt<<"\r\n";
 	}
 	line<<_T("\r\n");
 	(*txt)<<line;
@@ -234,7 +234,7 @@ wxString Dialogue::GetCols(int cols, bool tl, const wxString &style)
 		reg.ReplaceAll(&txttl,_T(""));
 		cols |= 1024;
 	}
-	if (Form<SRT){
+	if (Format<SRT){
 		wxString Styletl=(style!="")?style:Style;
 		if(cols & 1){line<<Layer<<_T(",");}
 		if(cols & 2){line<<Start.raw()<<_T(",");}
@@ -248,21 +248,21 @@ wxString Dialogue::GetCols(int cols, bool tl, const wxString &style)
 		if(cols & 1024){line<<txttl;}
 		//line+=wxString::Format("%i,%s,%s,%s,%s,%i,%i,%i,%s,%s",(int)Layer,Start.raw().data(),End.raw().data(),Styletl.data(),Actor.data(),(int)MarginL,(int)MarginR,(int)MarginV,Effect.data(),txttl.data());
 
-	}else if(Form==MDVD){
+	}else if(Format==MDVD){
 		if(cols & 2){line<<_T("{")<<Start.raw()<<"}";}
 		if(cols & 4){line<<_T("{")<<End.raw()<<"}";}
 		if(cols & 1024){line<<txttl;}
 	}
-	else if(Form==MPL2){
+	else if(Format==MPL2){
 		if(cols & 2){line<<_T("[")<<Start.raw()<<"]";}
 		if(cols & 4){line<<_T("[")<<End.raw()<<"]";}
 		if(cols & 1024){line<<txttl;}
 	}
-	else if(Form==TMP){
+	else if(Format==TMP){
 		if(cols & 2){line<<Start.raw()<<":";}
 		if(cols & 1024){line<<txttl;}
 	}
-	else if(Form==SRT){
+	else if(Format==SRT){
 		txttl.Replace("\\N","\r\n");
 		line<<Start.raw()<<" --> "<<End.raw()<<"\r\n"<<txttl<<"\r\n";
 		if(cols & 2){line<<Start.raw();}
@@ -276,8 +276,8 @@ wxString Dialogue::GetCols(int cols, bool tl, const wxString &style)
 
 void Dialogue::Convert(char type, const wxString &pref)
 {
-	if(!Form){Form=0;if(type==ASS){return;}}
-	if(Form == TMP && End.mstime==0){End=Start;End.mstime+=2000;}
+	if(!Format){Format=0;if(type==ASS){return;}}
+	if(Format == TMP && End.mstime==0){End=Start;End.mstime+=2000;}
 	Start.ChangeFormat(type);
 	End.ChangeFormat(type);
 	if (type<SRT){
@@ -289,7 +289,7 @@ void Dialogue::Convert(char type, const wxString &pref)
 		MarginV=0;
 		Effect=_T("");
 		wxString tmp=Text;
-		if(Form!=SRT){
+		if(Format!=SRT){
 			wxRegEx regib(_T("\\{y[:+]([ib])\\}"),wxRE_ADVANCED);
 			wxRegEx reg(_T("\\{[^\\\\]([^}]*)\\}"),wxRE_ADVANCED);
 			reg.ReplaceAll(&tmp,_T(""));
@@ -319,11 +319,11 @@ void Dialogue::Convert(char type, const wxString &pref)
 			Text=pref+tmp;
 		}
 
-	}else if(Form<SRT){
+	}else if(Format<SRT){
 		wxString tmp=Text;
 		tmp.Replace(_T("\\h"),_T(" "));
 		wxRegEx regp(_T("\\\\p[0-9]+"),wxRE_ADVANCED);
-		if(regp.Matches(tmp)){Text="";Form=type; return;}
+		if(regp.Matches(tmp)){Text="";Format=type; return;}
 		if(type==SRT){
 			wxRegEx regibu(_T("\\\\([ibu])1"),wxRE_ADVANCED);
 			wxRegEx regibu0(_T("\\\\([ibu])0"),wxRE_ADVANCED);
@@ -337,7 +337,7 @@ void Dialogue::Convert(char type, const wxString &pref)
 		Text=tmp;
 		
 	}
-	else if (Form == SRT){
+	else if (Format == SRT){
 		wxString tmp = Text;
 		tmp.Replace("\\N", "|");
 		tmp.Replace("<br>", "|");
@@ -366,29 +366,29 @@ void Dialogue::Convert(char type, const wxString &pref)
 		}
 		Text = tmp;
 	}
-	else if (Form == MDVD && type == MPL2){
+	else if (Format == MDVD && type == MPL2){
 		wxString tmp = Text;
 		tmp.Replace("{y:i}", "/");
 		wxRegEx reg("\\{[^}]*\\}", wxRE_ADVANCED);
 		reg.ReplaceAll(&tmp, "");
 		Text = tmp;
 	}
-	else if (Form == MPL2 && type == MDVD){
+	else if (Format == MPL2 && type == MDVD){
 		Text->Replace("/", "{y:i}");
 	}
 	else{
-		if (Form == MDVD){
+		if (Format == MDVD){
 			wxString tmp = Text;
 			wxRegEx reg("\\{[^}]*\\}", wxRE_ADVANCED);
 			reg.ReplaceAll(&tmp, "");
 			Text = tmp;
 		}
-		else if (Form == MPL2){
+		else if (Format == MPL2){
 			Text->Replace("/", "");
 		}
 	}
 
-	Form=type;
+	Format=type;
 }
 
 Dialogue *Dialogue::Copy(bool keepstate, bool copyIsVisible)
@@ -398,7 +398,7 @@ Dialogue *Dialogue::Copy(bool keepstate, bool copyIsVisible)
 	dial->Actor=Actor;
 	dial->Effect=Effect;
 	dial->End=End;
-	dial->Form=Form;
+	dial->Format=Format;
 	dial->IsComment=IsComment;
 	dial->Layer=Layer;
 	dial->MarginL=MarginL;

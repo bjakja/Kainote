@@ -1,4 +1,4 @@
-//  Copyright (c) 2018, Marcin Drob
+Ôªø//  Copyright (c) 2018, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -19,38 +19,56 @@
 #include "KainoteMain.h"
 #include <map>
 
-class AutomationHotkeyItem : public ItemText{
+class AutomationHotkeyItem : public Item{
 public:
-	AutomationHotkeyItem(const wxString &txt, const wxString &hotkeyName, int _id) :ItemText(txt){ scriptHotkeyName = hotkeyName; id = _id; };
-	void Save();
+	AutomationHotkeyItem(const wxString &_accelerator, const wxString &_name, int _id) 
+		:Item(ITEM_NORMAL){ accelerator = _accelerator; id = _id; name = _name; };
+	void Save(){
+		if (modified){
+			modified = false;
+		}
+	}
 	Item* Copy(){ return new AutomationHotkeyItem(*this); }
 	void OnChangeHistory(){
-		AutomationHotkeysDialog::allHotkeys[idAndType(id, GLOBAL_HOTKEY)] = hdata(scriptHotkeyName, name);
+		AutomationHotkeysDialog::allHotkeys[idAndType(id, GLOBAL_HOTKEY)] = hdata(name, accelerator);
 		//modified = true;
 	}
-	wxString scriptHotkeyName;
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /*= NULL*/)
+	{
+		if (enter){
+			if (needTooltip)
+				theList->SetToolTip(accelerator);
+			else if (theList->HasToolTips())
+				theList->UnsetToolTip();
+		}
+	}
+	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
+	{
+		wxSize ex = dc->GetTextExtent(accelerator);
+
+		if (modified){ dc->SetTextForeground(Options.GetColour(WindowWarningElements)); }
+		needTooltip = ex.x > width - 8;
+		wxRect cur(x, y, width - 8, height);
+		dc->SetClippingRegion(cur);
+		dc->DrawLabel(accelerator, cur, wxALIGN_CENTER_VERTICAL);
+		dc->DestroyClippingRegion();
+		if (modified){ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WindowText : WindowTextInactive)); }
+	}
+	wxString accelerator;
 	int id;
 };
-
-void AutomationHotkeyItem::Save()
-{
-	if (modified){
-		modified = false;
-	}
-}
 
 std::map<idAndType, hdata> AutomationHotkeysDialog::allHotkeys;
 
 AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automation *Auto)
-	: KaiDialog(parent, -1, _("Lista skrÛtÛw klawiszowych skryptÛw automatyzacji"))
+	: KaiDialog(parent, -1, _("Lista skr√≥t√≥w klawiszowych skrypt√≥w automatyzacji"))
 	, automation(Auto)
 {
 	DialogSizer *mainSizer = new DialogSizer(wxVERTICAL);
 	hotkeysList = new KaiListCtrl(this, ID_HOTKEYS_LIST, wxDefaultPosition, wxSize(800,300));
-	hotkeysList->InsertColumn(0, _("Rodzaj"), TYPE_TEXT, 80);
-	hotkeysList->InsertColumn(1, _("åcieøka i nazwa skryptu"), TYPE_TEXT, 300);
+	hotkeysList->InsertColumn(1, _("≈öcie≈ºka i nazwa skryptu"), TYPE_TEXT, 400);
 	hotkeysList->InsertColumn(2, _("Makro"), TYPE_TEXT, 300);
-	hotkeysList->InsertColumn(3, _("SkrÛt"), TYPE_TEXT, 80);
+	hotkeysList->InsertColumn(3, _("Skr√≥t"), TYPE_TEXT, 80);
 
 	allHotkeys = std::map<idAndType, hdata>(Hkeys.GetHotkeysMap());
 	std::map<idAndType, hdata> mappedhkeys;
@@ -77,39 +95,38 @@ AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automat
 		}
 	};
 
-	
+	hotkeysList->AppendItem(new ItemText(_("Folder automatycznego wczytywania")));
 	for (int i = 0; i < automation->Scripts.size(); i++){
 		Auto::LuaScript * script = automation->Scripts[i];
 		auto macros = script->GetMacros();
 
 		for (int k = 0; k < macros.size(); k++){
 			auto macro = macros[k];
-			long pos = hotkeysList->AppendItem(new ItemText(_("Wbudowany")));
-			hotkeysList->SetItem(pos, 1, new ItemText(script->GetFilename()));
-			hotkeysList->SetItem(pos, 2, new ItemText(macro->StrDisplay()));
+			long pos = hotkeysList->AppendItem(new ItemText(script->GetFilename()));
+			hotkeysList->SetItem(pos, 1, new ItemText(macro->StrDisplay()));
 			int id = -1;
 			wxString accel;
 			wxString scriptHotkeyName;
 			scriptHotkeyName << "Script " << script->GetFilename() << "-" << k;
 			findHotkey(scriptHotkeyName, &accel, &id);
-			hotkeysList->SetItem(pos, 3, new AutomationHotkeyItem(accel, scriptHotkeyName, id));
+			hotkeysList->SetItem(pos, 2, new AutomationHotkeyItem(accel, scriptHotkeyName, id));
 		}
 	}
+	hotkeysList->AppendItem(new ItemText(_("Z napis√≥w")));
 	for (int i = 0; i < automation->ASSScripts.size(); i++){
 		Auto::LuaScript * script = automation->ASSScripts[i];
 		auto macros = script->GetMacros();
 
 		for (int k = 0; k < macros.size(); k++){
 			auto macro = macros[k];
-			long pos = hotkeysList->AppendItem(new ItemText(_("Z napisÛw")));
-			hotkeysList->SetItem(pos, 1, new ItemText(script->GetFilename()));
-			hotkeysList->SetItem(pos, 2, new ItemText(macro->StrDisplay()));
+			long pos = hotkeysList->AppendItem(new ItemText(script->GetFilename()));
+			hotkeysList->SetItem(pos, 1, new ItemText(macro->StrDisplay()));
 			int id = -1;
 			wxString accel;
 			wxString scriptHotkeyName;
 			scriptHotkeyName << "Script " << script->GetFilename() << "-" << k;
 			findHotkey(scriptHotkeyName, &accel, &id);
-			hotkeysList->SetItem(pos, 3, new AutomationHotkeyItem(accel, scriptHotkeyName, id));
+			hotkeysList->SetItem(pos, 2, new AutomationHotkeyItem(accel, scriptHotkeyName, id));
 		}
 	}
 	hotkeysList->StartEdition();
@@ -119,9 +136,9 @@ AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automat
 	wxBoxSizer *buttonsSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton *OK = new MappedButton(this, ID_HOTKEYS_OK, "OK");
 	Connect(ID_HOTKEYS_OK, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&AutomationHotkeysDialog::OnOK);
-	MappedButton *setHotkey = new MappedButton(this, ID_HOTKEYS_MAP, _("Mapuj skrÛt"));
+	MappedButton *setHotkey = new MappedButton(this, ID_HOTKEYS_MAP, _("Mapuj skr√≥t"));
 	Connect(ID_HOTKEYS_MAP, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&AutomationHotkeysDialog::OnMapHkey);
-	MappedButton *deleteHotkey = new MappedButton(this, ID_HOTKEYS_DELETE, _("UsuÒ skrÛt"));
+	MappedButton *deleteHotkey = new MappedButton(this, ID_HOTKEYS_DELETE, _("Usu≈Ñ skr√≥t"));
 	Connect(ID_HOTKEYS_DELETE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&AutomationHotkeysDialog::OnDeleteHkey);
 	MappedButton *cancel= new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 
@@ -145,7 +162,7 @@ AutomationHotkeysDialog::~AutomationHotkeysDialog()
 void AutomationHotkeysDialog::OnOK(wxCommandEvent &evt)
 {
 	if (hotkeysList->GetModified()){
-		hotkeysList->SaveAll(3);
+		hotkeysList->SaveAll(2);
 		Hkeys.SetHotkeysMap(allHotkeys);
 		Hkeys.SetAccels(true);
 		Hkeys.SaveHkeys();
@@ -160,17 +177,18 @@ void AutomationHotkeysDialog::OnMapHkey(wxCommandEvent &evt)
 	if (inum < 0)
 		return;
 
-	AutomationHotkeyItem *hitem = (AutomationHotkeyItem *)hotkeysList->GetItem(inum, 3);
+	AutomationHotkeyItem *hitem = (AutomationHotkeyItem *)hotkeysList->GetItem(inum, 2);
 	if (!hitem)
 		return;
+
 	int id = hitem->id;
-	wxString name = hitem->scriptHotkeyName;
+	wxString name = hitem->name;
 
 	HkeysDialog hkd(this, name, GLOBAL_HOTKEY, false);
 
 	if (hkd.ShowModal() == wxID_OK){
 
-		wxString hotkey = hitem->name;
+		wxString hotkey = hitem->accelerator;
 		std::vector< std::map<idAndType, hdata>::iterator> idtypes;
 		lastScriptId = 30100;
 		for (auto cur = allHotkeys.begin(); cur != allHotkeys.end(); cur++){
@@ -213,20 +231,20 @@ void AutomationHotkeysDialog::OnMapHkey(wxCommandEvent &evt)
 			int result = wxCANCEL;
 			if (doubledHotkey){
 				KaiMessageDialog msg(this,
-					wxString::Format(_("Ten skrÛt juø istnieje jako skrÛt do \"%s\".\nCo zrobiÊ?"),
+					wxString::Format(_("Ten skr√≥t ju≈º istnieje jako skr√≥t do \"%s\".\nCo zrobiƒá?"),
 					doubledHkName), _("Uwaga"), wxYES | wxOK | wxCANCEL);
-				msg.SetOkLabel(_("ZamieÒ skrÛty"));
-				msg.SetYesLabel(_("UsuÒ skrÛt"));
+				msg.SetOkLabel(_("Zamie≈Ñ skr√≥ty"));
+				msg.SetYesLabel(_("Usu≈Ñ skr√≥t"));
 				result = msg.ShowModal();
 			}
 			else{
 				int buttonFlag = (idtypes.size() < 2) ? wxOK : 0;
 				KaiMessageDialog msg(this,
-					wxString::Format(_("Ten skrÛt juø istnieje w %s jako skrÛt do \"%s\".\nCo zrobiÊ?"),
+					wxString::Format(_("Ten skr√≥t ju≈º istnieje w %s jako skr√≥t do \"%s\".\nCo zrobiƒá?"),
 					(idtypes.size() > 1) ? _("innych oknach") : _("innym oknie"), doubledHkName), _("Uwaga"), wxYES_NO | buttonFlag | wxCANCEL);
 				if (idtypes.size() < 2)
-					msg.SetOkLabel(_("ZamieÒ skrÛty"));
-				msg.SetYesLabel(_("UsuÒ skrÛt"));
+					msg.SetOkLabel(_("Zamie≈Ñ skr√≥ty"));
+				msg.SetYesLabel(_("Usu≈Ñ skr√≥t"));
 				msg.SetNoLabel(_("Ustaw mimo to"));
 				result = msg.ShowModal();
 			}
@@ -240,16 +258,15 @@ void AutomationHotkeysDialog::OnMapHkey(wxCommandEvent &evt)
 				for (auto &idtype : idtypes){
 					if (doubledHotkey && idtype->first.Type != hkd.type)
 						continue;
-
-					int nitem = hotkeysList->FindItem(0, windowNames[idtype->first.Type] + L" " + Hkeys.GetName(idtype->first.id));
+					int nitem = hotkeysList->FindItem(2, idtype->second.Name);
 					if (nitem >= 0){
 						ChangeHotkey(nitem, id, hotkey);
 						idtype->second.Accel = hotkey;
-						if (mb){
-							MenuItem *Item = mb->FindItem(idtype->first.id);
-							if (Item)
-								Item->SetAccel(NULL, hotkey);
-						}
+					}
+					if (mb && idtype->first.Type == GLOBAL_HOTKEY){
+						MenuItem *Item = mb->FindItem(idtype->first.id);
+						if (Item)
+							Item->SetAccel(NULL, hotkey);
 					}
 				}
 			}
@@ -269,11 +286,11 @@ void AutomationHotkeysDialog::OnDeleteHkey(wxCommandEvent &evt)
 	if (inum < 0)
 		return;
 
-	AutomationHotkeyItem *hitem = (AutomationHotkeyItem *)hotkeysList->GetItem(inum, 3);
+	AutomationHotkeyItem *hitem = (AutomationHotkeyItem *)hotkeysList->GetItem(inum, 2);
 	if (!hitem)
 		return;
 	int id = hitem->id;
-	wxString name = hitem->scriptHotkeyName;
+	wxString name = hitem->name;
 	if (id < 0)
 		return;
 
@@ -285,17 +302,15 @@ void AutomationHotkeysDialog::OnDeleteHkey(wxCommandEvent &evt)
 
 void AutomationHotkeysDialog::ChangeHotkey(int row, int id, const wxString &hotkey)
 {
-	AutomationHotkeyItem* item = (AutomationHotkeyItem*)hotkeysList->CopyRow(row, 3);
+	AutomationHotkeyItem* item = (AutomationHotkeyItem*)hotkeysList->CopyRow(row, 2);
 	if (!item)
 		return;
-	item->name = hotkey;
+	item->accelerator = hotkey;
 	item->id = id;
 	item->modified = true;
 	ItemText* textitem = (ItemText*)hotkeysList->GetItem(row, 0);
 	textitem->modified = true;
 	textitem = (ItemText*)hotkeysList->GetItem(row, 1);
-	textitem->modified = true;
-	textitem = (ItemText*)hotkeysList->GetItem(row, 2);
 	textitem->modified = true;
 	hotkeysList->Refresh(false);
 }

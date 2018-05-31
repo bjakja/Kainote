@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-05-27 19:23+0200\n"
-"PO-Revision-Date: 2018-05-27 19:39+0200\n"
+"POT-Creation-Date: 2018-05-28 15:22+0200\n"
+"PO-Revision-Date: 2018-05-30 19:37+0200\n"
 "Last-Translator: Bakura, Areki, duplex, Kostek00, Sacredus\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -81,6 +81,7 @@ msgstr ""
 "X-Poedit-SearchPath-64: VisualPosition.cpp\n"
 "X-Poedit-SearchPath-65: VisualRotationXY.cpp\n"
 "X-Poedit-SearchPath-66: HotkeysNaming.cpp\n"
+"X-Poedit-SearchPath-67: AutomationHotkeysDialog.cpp\n"
 
 #: AudioBox.cpp:62
 msgid "Pasek szukania"
@@ -352,14 +353,118 @@ msgstr "Edit"
 msgid "Odśwież"
 msgstr "Refresh"
 
-#: AutomationProgress.cpp:330 ColorPicker.cpp:582 EditBox.cpp:88
-#: EditBox.cpp:1533 FontDialog.cpp:348 KaiMessageBox.cpp:62 MappedButton.cpp:36
-#: NewCatalog.cpp:42 OptionsDialog.cpp:813 ProgressDialog.cpp:38
-#: ScriptInfo.cpp:113 StyleChange.cpp:250 Stylelistbox.cpp:29
-#: Stylelistbox.cpp:79 SubsFile.cpp:45 SubsGrid.cpp:1159 SubsGrid.cpp:1215
-#: SubsResampleDialog.cpp:142
+#: AutomationHotkeysDialog.cpp:45
+msgid "Lista skrótów klawiszowych skryptów automatyzacji"
+msgstr "List of automation shortcuts"
+
+#: AutomationHotkeysDialog.cpp:50
+msgid "Rodzaj"
+msgstr "Kind"
+
+#: AutomationHotkeysDialog.cpp:51
+msgid "Ścieżka i nazwa skryptu"
+msgstr "Path and script name"
+
+#: AutomationHotkeysDialog.cpp:52
+msgid "Makro"
+msgstr "Macro"
+
+#: AutomationHotkeysDialog.cpp:53 OptionsDialog.cpp:480
+msgid "Skrót"
+msgstr "Hotkey"
+
+#: AutomationHotkeysDialog.cpp:87
+msgid "Wbudowany"
+msgstr "Autoload"
+
+#: AutomationHotkeysDialog.cpp:104
+msgid "Z napisów"
+msgstr "From subs"
+
+#: AutomationHotkeysDialog.cpp:122 OptionsDialog.cpp:535
+msgid "Mapuj skrót"
+msgstr "Map hotkey"
+
+#: AutomationHotkeysDialog.cpp:124 AutomationHotkeysDialog.cpp:219
+#: AutomationHotkeysDialog.cpp:229 Hotkeys.cpp:461 Hotkeys.cpp:472
+#: OptionsDialog.cpp:102 OptionsDialog.cpp:112 OptionsDialog.cpp:539
+msgid "Usuń skrót"
+msgstr "Delete hotkey"
+
+#: AutomationHotkeysDialog.cpp:126 AutomationProgress.cpp:330
+#: ColorPicker.cpp:582 EditBox.cpp:88 EditBox.cpp:1533 FontDialog.cpp:348
+#: KaiMessageBox.cpp:62 MappedButton.cpp:36 NewCatalog.cpp:42
+#: OptionsDialog.cpp:813 ProgressDialog.cpp:38 ScriptInfo.cpp:113
+#: StyleChange.cpp:250 Stylelistbox.cpp:29 Stylelistbox.cpp:79 SubsFile.cpp:45
+#: SubsGrid.cpp:1159 SubsGrid.cpp:1215 SubsResampleDialog.cpp:142
 msgid "Anuluj"
 msgstr "Cancel"
+
+#: AutomationHotkeysDialog.cpp:191 Hotkeys.cpp:434 OptionsDialog.cpp:223
+msgid "Globalny"
+msgstr "Global"
+
+#: AutomationHotkeysDialog.cpp:191 Hotkeys.cpp:434 OptionsDialog.cpp:223
+msgid "Napisy"
+msgstr "Subtitles"
+
+#: AutomationHotkeysDialog.cpp:191 Hotkeys.cpp:434 OptionsDialog.cpp:223
+#: OptionsDialog.cpp:797
+msgid "Edytor"
+msgstr "Editor"
+
+#: AutomationHotkeysDialog.cpp:191 Hotkeys.cpp:434 OptionsDialog.cpp:223
+#: OptionsDialog.cpp:800
+msgid "Wideo"
+msgstr "Video"
+
+#: AutomationHotkeysDialog.cpp:191 Hotkeys.cpp:434 OptionsDialog.cpp:223
+#: OptionsDialog.cpp:801
+msgid "Audio"
+msgstr "Audio"
+
+#: AutomationHotkeysDialog.cpp:216 Hotkeys.cpp:458 OptionsDialog.cpp:99
+#, c-format
+msgid ""
+"Ten skrót już istnieje jako skrót do \"%s\".\n"
+"Co zrobić?"
+msgstr ""
+"This hotkey already exists for \"%s\".\n"
+"What to do?"
+
+#: AutomationHotkeysDialog.cpp:217 AutomationHotkeysDialog.cpp:226
+#: Hotkeys.cpp:459 Hotkeys.cpp:469 OptionsDialog.cpp:100 OptionsDialog.cpp:109
+#: OptionsDialog.cpp:387 SpellCheckerDialog.cpp:130 SubsGrid.cpp:846
+#: SubsGridBase.cpp:548 SubsGridBase.cpp:577 VisualClips.cpp:693
+#: kainoteApp.cpp:62 kainoteApp.cpp:77 kainoteMain.cpp:1412
+msgid "Uwaga"
+msgstr "Warning"
+
+#: AutomationHotkeysDialog.cpp:218 AutomationHotkeysDialog.cpp:228
+#: Hotkeys.cpp:460 Hotkeys.cpp:471 OptionsDialog.cpp:101 OptionsDialog.cpp:111
+msgid "Zamień skróty"
+msgstr "Switch hotkeys"
+
+#: AutomationHotkeysDialog.cpp:225 Hotkeys.cpp:467 OptionsDialog.cpp:108
+#, c-format
+msgid ""
+"Ten skrót już istnieje w %s jako skrót do \"%s\".\n"
+"Co zrobić?"
+msgstr ""
+"This shortcut exist in %s as shortcut to \"%s\".\n"
+"What to do?"
+
+#: AutomationHotkeysDialog.cpp:226 Hotkeys.cpp:468 OptionsDialog.cpp:109
+msgid "innych oknach"
+msgstr "another window"
+
+#: AutomationHotkeysDialog.cpp:226 Hotkeys.cpp:468 OptionsDialog.cpp:109
+msgid "innym oknie"
+msgstr "another windows"
+
+#: AutomationHotkeysDialog.cpp:230 Hotkeys.cpp:473 OptionsDialog.cpp:113
+msgid "Ustaw mimo to"
+msgstr "Set still"
 
 #: AutomationProgress.cpp:419 FontCollector.cpp:141 SelectLines.cpp:134
 #: SpellCheckerDialog.cpp:54 Tabs.cpp:493 findreplace.cpp:142
@@ -435,8 +540,8 @@ msgstr "Shift by video / audio"
 msgid "Początek"
 msgstr "Start"
 
-#: ChangeTime.cpp:222 SubsGridWindow.cpp:204 SubsGridWindow.cpp:576
-#: SubsGridWindow.cpp:583
+#: ChangeTime.cpp:222 SubsGridWindow.cpp:204 SubsGridWindow.cpp:579
+#: SubsGridWindow.cpp:586
 msgid "Koniec"
 msgstr "End"
 
@@ -834,13 +939,13 @@ msgid "Komentarz"
 msgstr "Comment"
 
 #: EditBox.cpp:260 SelectLines.cpp:69 SubsGrid.cpp:363 SubsGrid.cpp:456
-#: SubsGridWindow.cpp:208 SubsGridWindow.cpp:595 findreplace.cpp:107
+#: SubsGridWindow.cpp:208 SubsGridWindow.cpp:598 findreplace.cpp:107
 #: kainoteMain.cpp:157
 msgid "Aktor"
 msgstr "Actor"
 
 #: EditBox.cpp:264 SelectLines.cpp:70 SubsGrid.cpp:363 SubsGrid.cpp:456
-#: SubsGridWindow.cpp:212 SubsGridWindow.cpp:608 findreplace.cpp:110
+#: SubsGridWindow.cpp:212 SubsGridWindow.cpp:611 findreplace.cpp:110
 #: kainoteMain.cpp:158
 msgid "Efekt"
 msgstr "Effect"
@@ -1675,112 +1780,46 @@ msgstr "Key \"%s\" is not valid"
 msgid "Nie można przywrócić skrótu, bo nie ma domyślnego ustawienia o id %i"
 msgstr "This setting does not have a default hotkey with id %i to revert to"
 
-#: Hotkeys.cpp:434 OptionsDialog.cpp:223
-msgid "Globalny"
-msgstr "Global"
-
-#: Hotkeys.cpp:434 OptionsDialog.cpp:223
-msgid "Napisy"
-msgstr "Subtitles"
-
-#: Hotkeys.cpp:434 OptionsDialog.cpp:223 OptionsDialog.cpp:797
-msgid "Edytor"
-msgstr "Editor"
-
-#: Hotkeys.cpp:434 OptionsDialog.cpp:223 OptionsDialog.cpp:800
-msgid "Wideo"
-msgstr "Video"
-
-#: Hotkeys.cpp:434 OptionsDialog.cpp:223 OptionsDialog.cpp:801
-msgid "Audio"
-msgstr "Audio"
-
-#: Hotkeys.cpp:458 OptionsDialog.cpp:99
-#, c-format
-msgid ""
-"Ten skrót już istnieje jako skrót do \"%s\".\n"
-"Co zrobić?"
-msgstr ""
-"This hotkey already exists for \"%s\".\n"
-"What to do?"
-
-#: Hotkeys.cpp:459 Hotkeys.cpp:469 OptionsDialog.cpp:100 OptionsDialog.cpp:109
-#: OptionsDialog.cpp:387 SpellCheckerDialog.cpp:130 SubsGrid.cpp:846
-#: SubsGridBase.cpp:548 SubsGridBase.cpp:577 VisualClips.cpp:693
-#: kainoteApp.cpp:62 kainoteApp.cpp:77 kainoteMain.cpp:1412
-msgid "Uwaga"
-msgstr "Warning"
-
-#: Hotkeys.cpp:460 Hotkeys.cpp:471 OptionsDialog.cpp:101 OptionsDialog.cpp:111
-msgid "Zamień skróty"
-msgstr "Switch hotkeys"
-
-#: Hotkeys.cpp:461 Hotkeys.cpp:472 OptionsDialog.cpp:102 OptionsDialog.cpp:112
-#: OptionsDialog.cpp:539
-msgid "Usuń skrót"
-msgstr "Delete hotkey"
-
-#: Hotkeys.cpp:467 OptionsDialog.cpp:108
-#, c-format
-msgid ""
-"Ten skrót już istnieje w %s jako skrót do \"%s\".\n"
-"Co zrobić?"
-msgstr ""
-"This shortcut exist in %s as shortcut to \"%s\".\n"
-"What to do?"
-
-#: Hotkeys.cpp:468 OptionsDialog.cpp:109
-msgid "innych oknach"
-msgstr "another window"
-
-#: Hotkeys.cpp:468 OptionsDialog.cpp:109
-msgid "innym oknie"
-msgstr "another windows"
-
-#: Hotkeys.cpp:473 OptionsDialog.cpp:113
-msgid "Ustaw mimo to"
-msgstr "Set still"
-
-#: Hotkeys.cpp:567
+#: Hotkeys.cpp:568
 msgid "Mapowanie przycisków"
 msgstr "Hotkey mapping"
 
-#: Hotkeys.cpp:573
+#: Hotkeys.cpp:574
 msgid "Skrót globalny"
 msgstr "Global hotkey"
 
-#: Hotkeys.cpp:573
+#: Hotkeys.cpp:574
 msgid "Skrót pola napisów"
 msgstr "Subtitles grid hotkey"
 
-#: Hotkeys.cpp:573
+#: Hotkeys.cpp:574
 msgid "Skrót pola edycji"
 msgstr "Edit box hotkey"
 
-#: Hotkeys.cpp:573
+#: Hotkeys.cpp:574
 msgid "Skrót wideo"
 msgstr "Video hotkey"
 
-#: Hotkeys.cpp:573
+#: Hotkeys.cpp:574
 msgid "Skrót audio"
 msgstr "Audio hotkey"
 
-#: Hotkeys.cpp:579
+#: Hotkeys.cpp:580
 #, c-format
 msgid "Proszę wcisnąć klawisze skrótu dla \"%s\"."
 msgstr "Please enter a hotkey for \"%s\"."
 
-#: Hotkeys.cpp:611
+#: Hotkeys.cpp:612
 msgid ""
 "Skróty globalne i edytora muszą zawierać modyfikatory (np. Shift, Ctrl, Alt)."
 msgstr ""
 "Global Shortcuts and editor must include modifiers (e.g. Shift, Ctrl, Alt)."
 
-#: Hotkeys.cpp:613
+#: Hotkeys.cpp:614
 msgid "Nie można używać skrótów do kopiowania, wycinania i wklejania."
 msgstr "You can not use shortcuts for copying, cutting and pasting."
 
-#: Hotkeys.cpp:616
+#: Hotkeys.cpp:617
 msgid "Nie można używać skrótu zamykania programu."
 msgstr "You can not use shortcut for program close."
 
@@ -1810,7 +1849,7 @@ msgstr "Load script"
 
 #: HotkeysNaming.cpp:74 kainoteMain.cpp:227
 msgid "Otwórz okno mapowania skrótów"
-msgstr "Open shortcut mappin window"
+msgstr "Open shortcut mapping window"
 
 #: HotkeysNaming.cpp:75 kainoteMain.cpp:225
 msgid "Odśwież skrypty autoload"
@@ -2551,17 +2590,9 @@ msgstr "Aggressive (fast in rewind)"
 msgid "Funkcja"
 msgstr "Function"
 
-#: OptionsDialog.cpp:480
-msgid "Skrót"
-msgstr "Hotkey"
-
 #: OptionsDialog.cpp:484 kainoteMain.cpp:1668
 msgid "Nie można wczytać skrótów klawiszowych audio"
 msgstr "Cannot load audio hotkeys"
-
-#: OptionsDialog.cpp:535
-msgid "Mapuj skrót"
-msgstr "Map hotkey"
 
 #: OptionsDialog.cpp:537
 msgid "Przywróć skrót domyślny"
@@ -3480,7 +3511,7 @@ msgid "Tekst"
 msgstr "Text"
 
 #: SelectLines.cpp:68 SubsGrid.cpp:363 SubsGrid.cpp:456 SubsGridWindow.cpp:207
-#: SubsGridWindow.cpp:589 findreplace.cpp:104
+#: SubsGridWindow.cpp:592 findreplace.cpp:104
 msgid "Styl"
 msgstr "Style"
 
@@ -4272,15 +4303,15 @@ msgstr ""
 "Are you sure you want to disable translation mode?\n"
 "Original text of translated lines will be deleted."
 
-#: SubsGridBase.cpp:1577
+#: SubsGridBase.cpp:1576
 msgid "Autozapis"
 msgstr "Autosave"
 
-#: SubsGridWindow.cpp:200 SubsGridWindow.cpp:569
+#: SubsGridWindow.cpp:200 SubsGridWindow.cpp:572
 msgid "W."
 msgstr "L."
 
-#: SubsGridWindow.cpp:202 SubsGridWindow.cpp:569 SubsGridWindow.cpp:576
+#: SubsGridWindow.cpp:202 SubsGridWindow.cpp:572 SubsGridWindow.cpp:579
 msgid "Start"
 msgstr "Start"
 
@@ -4292,11 +4323,11 @@ msgstr "Left"
 msgid "M.P."
 msgstr "Right"
 
-#: SubsGridWindow.cpp:211 SubsGridWindow.cpp:601
+#: SubsGridWindow.cpp:211 SubsGridWindow.cpp:604
 msgid "M.Pi."
 msgstr "Vert."
 
-#: SubsGridWindow.cpp:214 SubsGridWindow.cpp:615
+#: SubsGridWindow.cpp:214 SubsGridWindow.cpp:618
 msgid "ZNS"
 msgstr "CPS"
 
@@ -4308,7 +4339,7 @@ msgstr "Original text"
 msgid "Tekst tłumaczenia"
 msgstr "Translation"
 
-#: SubsGridWindow.cpp:1362
+#: SubsGridWindow.cpp:1365
 msgid ""
 "Nie można wyświetlić podglądu, ponieważ wielkość okna napisów jest zbyt mała"
 msgstr "Cannot show preview cause grid height is too low"

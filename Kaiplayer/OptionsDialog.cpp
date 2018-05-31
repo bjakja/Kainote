@@ -75,7 +75,11 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 			bool doubledHotkey = false;
 			wxString doubledHkName;
 			for (auto &idtype : idtypes){
-				if (idtype->first.Type == hkd.type){
+				if (idtype->first.Type == hkd.type || 
+					(idtype->first.Type >= VIDEO_HOTKEY && hkd.type >= VIDEO_HOTKEY) ||
+					((hotkeyId.id >= PlayPause && hotkeyId.id <= Minus5Second || 
+					idtype->first.id >= PlayPause && idtype->first.id <= Minus5Second) &&
+					(idtype->first.Type >= GRID_HOTKEY || hkd.type >= GRID_HOTKEY))){
 					doubledHotkey = true;
 					doubledHkName = Hkeys.GetName(idtype->first.id);
 					if (doubledHkName.empty())

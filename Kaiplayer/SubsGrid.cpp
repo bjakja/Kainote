@@ -425,7 +425,7 @@ void SubsGrid::OnPaste(int id)
 		if (collumns & TXTTL){
 			newdial->TextTl = newdial->Text;
 		}
-		if (newdial->Form != subsFormat){ newdial->Convert(subsFormat); }
+		if (newdial->Format != subsFormat){ newdial->Convert(subsFormat); }
 		if (newdial->NonDialogue){ newdial->NonDialogue = false; newdial->IsComment = false; }
 		if (id == Paste){
 			tmpdial.push_back(newdial);

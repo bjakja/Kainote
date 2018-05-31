@@ -405,8 +405,8 @@ void Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow
 	if (id < 0 && name.empty())
 		return;
 
-	HkeysDialog hkd(parent, (name.empty())? GetName(id) : name, hotkeyWindow, showWindowSelection);
-	if(hkd.ShowModal()==wxID_OK){
+	HkeysDialog *hkd= new HkeysDialog(parent, (name.empty())? GetName(id) : name, hotkeyWindow, showWindowSelection);
+	if(hkd->ShowModal()==wxID_OK){
 		lastScriptId = 30100;
 		std::vector< std::map<idAndType, hdata>::iterator> idtypes;
 		for(auto cur=hkeys.begin(); cur!=hkeys.end(); cur++)
@@ -417,7 +417,7 @@ void Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow
 				}
 				lastScriptId++;
 			}
-			if(cur->second.Accel == hkd.hotkey){
+			if(cur->second.Accel == hkd->hotkey){
 				idtypes.push_back(cur);
 			}
 		}
@@ -427,13 +427,13 @@ void Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow
 			lastScriptId++;
 		}
 
-		bool saveAudioHotkeys = (hkd.type == AUDIO_HOTKEY);
+		bool saveAudioHotkeys = (hkd->type == AUDIO_HOTKEY);
 		if (idtypes.size()){
 			bool doubledHotkey = false;
 			wxString doubledHkName;
 			wxString windowNames[] = { _("Globalny"), _("Napisy"), _("Edytor"), _("Wideo"), _("Audio") };
 			for (auto &idtype : idtypes){
-				if (idtype->first.Type == hkd.type){
+				if (idtype->first.Type == hkd->type){
 					doubledHotkey = true;
 					doubledHkName = Hkeys.GetName(idtype->first.id);
 					if (doubledHkName.empty())
@@ -481,11 +481,11 @@ void Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow
 				if (frame)
 					mb = frame->Menubar;
 				for (auto &idtype : idtypes){
-					if (doubledHotkey && idtype->first.Type != hkd.type)
+					if (doubledHotkey && idtype->first.Type != hkd->type)
 						continue;
 
 					if (result == wxOK){
-						auto finditer = hkeys.find(idAndType(id, hkd.type));
+						auto finditer = hkeys.find(idAndType(id, hkd->type));
 						idtype->second.Accel = "";
 						idtype->second.Accel = (finditer != hkeys.end())? finditer->second.Accel : "";
 						if (mb){
@@ -505,12 +505,13 @@ void Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow
 				}
 			}
 		}
-		SetHKey(idAndType(id,hkd.type), hkd.hkname, hkd.hotkey);
+		SetHKey(idAndType(id,hkd->type), hkd->hkname, hkd->hotkey);
 		SetAccels(true);
 		SaveHkeys();
 		if (saveAudioHotkeys)
 			SaveHkeys(true);
 	}
+	hkd->Destroy();
 }
 
 void Hotkeys::SetAccels(bool all){

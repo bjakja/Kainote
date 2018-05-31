@@ -334,7 +334,7 @@ namespace Auto{
 			e->adial->Start=Start;
 			e->adial->End=End;
 			if (laf->subsFormat != ASS){
-				e->adial->Form = laf->subsFormat;
+				e->adial->Format = laf->subsFormat;
 				e->adial->Start.ChangeFormat(laf->subsFormat);
 				e->adial->End.ChangeFormat(laf->subsFormat);
 			}

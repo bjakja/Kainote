@@ -18,6 +18,7 @@
 #include <wx/wx.h>
 #include <vector>
 #include "KaiScrollbar.h"
+#include "SubsDialogue.h"
 #include "Styles.h"
 
 wxDECLARE_EVENT(LIST_ITEM_LEFT_CLICK, wxCommandEvent);
@@ -40,6 +41,7 @@ public:
 	virtual void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList){};
 	virtual void Save(){};
 	virtual void OnChangeHistory(){/* modified = true;*/ };
+	virtual int OnVisibilityChange(){ return VISIBLE; }
 	virtual Item* Copy(){return NULL;}
 	bool modified;
 	bool needTooltip = false;
@@ -105,7 +107,7 @@ public:
 		return NULL;
 	}
 	std::vector< Item*> row;
-
+	StoreHelper isVisible;
 };
 class List{
 public:
@@ -183,6 +185,11 @@ private:
 	void OnEraseBackground(wxEraseEvent &evt){};
 	int GetMaxWidth();
 	void SetWidth(size_t i=0);
+	int FindItemsRow(int elemX, size_t &startI);
+//return 0 nothing, 1 hidden block, 2 visible block
+	int CheckIfHasHiddenBlock(int elemX, size_t startI = 0);
+	void ShowOrHideBlock(int elemRealX);
+	size_t GetVisibleSize();
 	ItemRow header;
 	List *itemList;
 	std::vector<List*> historyList;
@@ -200,6 +207,7 @@ private:
 	int iter;
 	bool modified;
 	bool hasArrow;
+	bool isFiltered = false;
 	//bool hasTooltip = false;
 	DECLARE_EVENT_TABLE()
 	wxDECLARE_ABSTRACT_CLASS(KaiListCtrl);

@@ -84,6 +84,18 @@ public:
 		assert(stored);
 		return !(*stored);
 	}
+	void operator ^=(const unsigned char value){
+		assert(stored);
+		 *stored ^= value;
+	}
+	void operator |=(const unsigned char value){
+		assert(stored);
+		*stored |= value;
+	}
+	int operator &(const unsigned char value){
+		assert(stored);
+		return *stored & value;
+	}
 	unsigned char &operator *(){ 
 		assert(stored);
 		return *stored; 
@@ -245,7 +257,7 @@ public:
 	STime Start, End;
 	int Layer;
 	short MarginL, MarginR, MarginV;
-	char State, Form;
+	char State, Format, treeState = 0;
 	bool NonDialogue, IsComment;
 	StoreHelper isVisible;
 	ParseData *parseData;
@@ -264,7 +276,10 @@ public:
 };
 
 enum{
+	TREE_NOT_VISIBLE = -1,
 	NOT_VISIBLE = 0,
 	VISIBLE,
 	VISIBLE_BLOCK,
+	TREE_DESCRIPTION,
+	TREE_VISIBLE_BLOCK
 };

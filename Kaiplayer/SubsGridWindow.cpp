@@ -513,7 +513,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 		dial = Subs->dials[i];
 		if (!dial->isVisible){ continue; }
 		if (first){
-			if (dial->Form != subsFormat){ dial->Convert(subsFormat); }
+			if (dial->Format != subsFormat){ dial->Convert(subsFormat); }
 			if (dial->Start.mstime > dial->End.mstime){
 				dial->End.mstime = dial->Start.mstime;
 			}

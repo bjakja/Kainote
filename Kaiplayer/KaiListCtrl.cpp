@@ -37,21 +37,21 @@ void ItemText::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiList
 void ItemText::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
 {
 	wxSize ex = dc->GetTextExtent(name);
-	
-	if(modified){dc->SetTextForeground(Options.GetColour(WindowWarningElements));}
+
+	if (modified){ dc->SetTextForeground(Options.GetColour(WindowWarningElements)); }
 	needTooltip = ex.x > width - 8;
 	wxRect cur(x, y, width - 8, height);
 	dc->SetClippingRegion(cur);
-	dc->DrawLabel(name,cur,wxALIGN_CENTER_VERTICAL);
+	dc->DrawLabel(name, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
-	if(modified){dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled()? WindowText : WindowTextInactive));}
+	if (modified){ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WindowText : WindowTextInactive)); }
 }
 
 void ItemColor::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
 {
-	if(col.a){
-		const wxColour & col1=Options.GetColour(StylePreviewColor1);
-		const wxColour & col2=Options.GetColour(StylePreviewColor2);
+	if (col.a){
+		const wxColour & col1 = Options.GetColour(StylePreviewColor1);
+		const wxColour & col2 = Options.GetColour(StylePreviewColor2);
 		int r2 = col.r, g2 = col.g, b2 = col.b;
 		int r = col1.Red(), g = col1.Green(), b = col1.Blue();
 		int r1 = col2.Red(), g1 = col2.Green(), b1 = col2.Blue();
@@ -59,48 +59,48 @@ void ItemColor::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, Kai
 		int fr = (r2* inv_a / 0xFF) + (r - inv_a * r / 0xFF);
 		int fg = (g2* inv_a / 0xFF) + (g - inv_a * g / 0xFF);
 		int fb = (b2* inv_a / 0xFF) + (b - inv_a * b / 0xFF);
-		wxColour firstMask(fr,fg,fb);
+		wxColour firstMask(fr, fg, fb);
 		fr = (r2* inv_a / 0xFF) + (r1 - inv_a * r1 / 0xFF);
 		fg = (g2* inv_a / 0xFF) + (g1 - inv_a * g1 / 0xFF);
 		fb = (b2* inv_a / 0xFF) + (b1 - inv_a * b1 / 0xFF);
-		wxColour secondMask(fr,fg,fb);
-		int squareSize = (height-3)/4;
-		for(int i = 0; i< 4; i++){
-			for(int j = 0; j< 4; j++){
-				dc->SetBrush(((i+j) % 2 == 0)? firstMask : secondMask);
+		wxColour secondMask(fr, fg, fb);
+		int squareSize = (height - 3) / 4;
+		for (int i = 0; i < 4; i++){
+			for (int j = 0; j < 4; j++){
+				dc->SetBrush(((i + j) % 2 == 0) ? firstMask : secondMask);
 				dc->SetPen(*wxTRANSPARENT_PEN);
-				dc->DrawRectangle(x+2+(i*squareSize),y+2+(j*squareSize),squareSize,squareSize);
+				dc->DrawRectangle(x + 2 + (i*squareSize), y + 2 + (j*squareSize), squareSize, squareSize);
 			}
 		}
 	}
-	dc->SetBrush(wxBrush(col.a? *wxTRANSPARENT_BRUSH : col.GetWX()));
+	dc->SetBrush(wxBrush(col.a ? *wxTRANSPARENT_BRUSH : col.GetWX()));
 	dc->SetPen(wxPen(Options.GetColour(WindowTextInactive)));
-	dc->DrawRectangle(x+1,y+1,height-3,height-3);
-	
+	dc->DrawRectangle(x + 1, y + 1, height - 3, height - 3);
+
 	int fw, fh;
 	wxString hextext = col.GetHex(true);
 	dc->GetTextExtent(hextext, &fw, &fh);
 
-	if(modified){dc->SetTextForeground(Options.GetColour(WindowWarningElements));}
-	wxRect cur(x+height+2, y, width - (height+8), height);
+	if (modified){ dc->SetTextForeground(Options.GetColour(WindowWarningElements)); }
+	wxRect cur(x + height + 2, y, width - (height + 8), height);
 	dc->SetClippingRegion(cur);
-	dc->DrawLabel(hextext,cur,wxALIGN_CENTER_VERTICAL);
+	dc->DrawLabel(hextext, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
-	if(modified){dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled()? WindowText : WindowTextInactive));}
+	if (modified){ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WindowText : WindowTextInactive)); }
 }
 
 void ItemColor::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed)
 {
-	if(event.LeftDClick()){
-		DialogColorPicker *dcp = DialogColorPicker::Get(theList,col);
-		wxPoint mst=wxGetMousePosition();
-		wxSize siz=dcp->GetSize();
+	if (event.LeftDClick()){
+		DialogColorPicker *dcp = DialogColorPicker::Get(theList, col);
+		wxPoint mst = wxGetMousePosition();
+		wxSize siz = dcp->GetSize();
 		siz.x;
 		wxRect rc = wxGetClientDisplayRect();
-		mst.x-=(siz.x/2);
-		mst.x=MID(rc.x, mst.x, rc.width-siz.x);
-		mst.y+=15;
-		mst.y=MID(rc.y, mst.y , rc.height-siz.y);
+		mst.x -= (siz.x / 2);
+		mst.x = MID(rc.x, mst.x, rc.width - siz.x);
+		mst.y += 15;
+		mst.y = MID(rc.y, mst.y, rc.height - siz.y);
 		dcp->Move(mst);
 		if (dcp->ShowModal() == wxID_OK) {
 			ItemColor *copy = new ItemColor(*this);
@@ -109,24 +109,26 @@ void ItemColor::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiLis
 			copy->modified = true;
 			(*changed) = copy;
 		}
-	}else if(event.RightUp()){
+	}
+	else if (event.RightUp()){
 		Menu menut;
-		menut.Append(7786,_("&Kopiuj"));
-		menut.Append(7787,_("&Wklej"));
+		menut.Append(7786, _("&Kopiuj"));
+		menut.Append(7787, _("&Wklej"));
 		int id = menut.GetPopupMenuSelection(event.GetPosition(), theList);
-		if(id == 7786){
+		if (id == 7786){
 			wxString whatcopy = col.GetHex(true);
 			if (wxTheClipboard->Open())
 			{
-				wxTheClipboard->SetData( new wxTextDataObject(whatcopy) );
+				wxTheClipboard->SetData(new wxTextDataObject(whatcopy));
 				wxTheClipboard->Close();
 				wxTheClipboard->Flush();
 			}
-		}else if(id == 7787){
+		}
+		else if (id == 7787){
 			if (wxTheClipboard->Open()){
-				if (wxTheClipboard->IsSupported( wxDF_TEXT )){
+				if (wxTheClipboard->IsSupported(wxDF_TEXT)){
 					wxTextDataObject data;
-					wxTheClipboard->GetData( data );
+					wxTheClipboard->GetData(data);
 					ItemColor *copy = new ItemColor(*this);
 					copy->col.SetAss(data.GetText());
 					theList->SetModified(true);
@@ -141,67 +143,67 @@ void ItemColor::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiLis
 };
 
 void ItemColor::Save(){
-	if(modified){
+	if (modified){
 		Options.SetColor((COLOR)colOptNum, col);
-		modified=false;
+		modified = false;
 	}
 }
 
 void ItemCheckBox::OnPaint(wxMemoryDC *dc, int x, int y, int w, int h, KaiListCtrl *theList)
 {
-	wxString bitmapName = (modified)? "checkbox_selected" :  "checkbox" ;
+	wxString bitmapName = (modified) ? "checkbox_selected" : "checkbox";
 	wxBitmap checkboxBmp = wxBITMAP_PNG(bitmapName);
-	if(enter){BlueUp(&checkboxBmp);}
-	dc->DrawBitmap(checkboxBmp, x+1, y + (h-13)/2);
+	if (enter){ BlueUp(&checkboxBmp); }
+	dc->DrawBitmap(checkboxBmp, x + 1, y + (h - 13) / 2);
 
-	if(w>18){
+	if (w > 18){
 		int fw, fh;
 		dc->GetTextExtent(name, &fw, &fh);
-		wxRect cur(x+18, y, w - 20, h);
+		wxRect cur(x + 18, y, w - 20, h);
 		dc->SetClippingRegion(cur);
-		dc->DrawLabel(name,cur,wxALIGN_CENTER_VERTICAL);
+		dc->DrawLabel(name, cur, wxALIGN_CENTER_VERTICAL);
 		dc->DestroyClippingRegion();
-		
-		
+
+
 	}
 }
 
 
 void ItemCheckBox::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **copy){
-	if(event.LeftDown()){
+	if (event.LeftDown()){
 		modified = !modified;
 		theList->Refresh(false);
 		theList->SetModified(true);
 	}
-	if(!enter && _enter){
+	if (!enter && _enter){
 		enter = _enter; theList->Refresh(false);
 	}
-	if(enter && leave){
+	if (enter && leave){
 		enter = false; theList->Refresh(false);
 	}
 };
 
 //custom multilist
 KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxSize &size, int style)
-	:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL|wxHORIZONTAL)
-	,bmp(NULL)
-	,sel(-1)
-	,lastSelX(-1)
-	,lastSelY(-1)
-	,scPosV(0)
-	,scPosH(0)
-	,lineHeight(17)
-	,headerHeight(25)
-	,lastCollumn(0)
-	,modified(false)
-	,hasArrow(true)
-	,iter(0)
-	,itemList(new List())
+	:KaiScrolledWindow(parent, id, pos, size, style | wxVERTICAL | wxHORIZONTAL)
+	, bmp(NULL)
+	, sel(-1)
+	, lastSelX(-1)
+	, lastSelY(-1)
+	, scPosV(0)
+	, scPosH(0)
+	, lineHeight(17)
+	, headerHeight(25)
+	, lastCollumn(0)
+	, modified(false)
+	, hasArrow(true)
+	, iter(0)
+	, itemList(new List())
 {
 	SetBackgroundColour(parent->GetBackgroundColour());
 	SetForegroundColour(parent->GetForegroundColour());
 	SetMinSize(size);
-	SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT));
+	SetFont(wxFont(9, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT));
 	wxAcceleratorEntry entries[2];
 	entries[0].Set(wxACCEL_CTRL, 'Z', 11642);
 	entries[1].Set(wxACCEL_CTRL, 'Y', 11643);
@@ -212,30 +214,30 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 }
 
 //checkboxList
-KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, const wxPoint &pos, 
-		const wxSize &size, int style)
-	:KaiScrolledWindow(parent, id, pos, size, style|wxVERTICAL)
-	,bmp(NULL)
-	,sel(-1)
-	,lastSelX(-1)
-	,lastSelY(-1)
-	,scPosV(0)
-	,scPosH(0)
-	,lineHeight(17)
-	,headerHeight(3)
-	,lastCollumn(0)
-	,modified(false)
-	,hasArrow(true)
-	,iter(0)
-	,itemList(new List())
+KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, const wxPoint &pos,
+	const wxSize &size, int style)
+	:KaiScrolledWindow(parent, id, pos, size, style | wxVERTICAL)
+	, bmp(NULL)
+	, sel(-1)
+	, lastSelX(-1)
+	, lastSelY(-1)
+	, scPosV(0)
+	, scPosH(0)
+	, lineHeight(17)
+	, headerHeight(3)
+	, lastCollumn(0)
+	, modified(false)
+	, hasArrow(true)
+	, iter(0)
+	, itemList(new List())
 {
 	SetBackgroundColour(parent->GetBackgroundColour());
 	SetForegroundColour(parent->GetForegroundColour());
 	SetMinSize(size);
-	SetFont(wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT));
+	SetFont(wxFont(9, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT));
 	InsertColumn(0, "", TYPE_CHECKBOX, -1);
 	int maxwidth = -1;
-	for(int i = 0; i < numelem; i++){
+	for (int i = 0; i < numelem; i++){
 		AppendItem(new ItemCheckBox(false, list[i]));
 		wxSize textSize = GetTextExtent(list[i]);
 		if (textSize.x > maxwidth){ maxwidth = textSize.x; }
@@ -274,7 +276,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, co
 		if (textSize.x > maxwidth){ maxwidth = textSize.x; }
 	}
 	if (list.size())
-		widths[0] = maxwidth+10;
+		widths[0] = maxwidth + 10;
 }
 
 void KaiListCtrl::SetTextArray(const wxArrayString &Array)
@@ -282,19 +284,19 @@ void KaiListCtrl::SetTextArray(const wxArrayString &Array)
 	delete itemList;
 	itemList = new List();
 	int maxwidth = -1;
-	for(size_t i = 0; i < Array.size(); i++){
+	for (size_t i = 0; i < Array.size(); i++){
 		AppendItem(new ItemText(Array[i]));
 		wxSize textSize = GetTextExtent(Array[i]);
 		if (textSize.x > maxwidth){ maxwidth = textSize.x; }
 	}
-	widths[0] = maxwidth+10;
+	widths[0] = maxwidth + 10;
 	sel = -1;
 	Refresh(false);
 }
 
 int KaiListCtrl::InsertColumn(size_t col, const wxString &name, byte type, int width)
 {
-	if(col>= widths.size()){
+	if (col >= widths.size()){
 		header.Insert(col, new ItemText(name));
 		widths.push_back(width);
 		return col;
@@ -303,28 +305,28 @@ int KaiListCtrl::InsertColumn(size_t col, const wxString &name, byte type, int w
 	widths.Insert(col, width);
 	return col;
 }
-	
+
 int KaiListCtrl::AppendItem(Item *item)
 {
 	ItemRow *newitem = new ItemRow(0, item);
 	itemList->push_back(newitem);
-	return itemList->size()-1;
+	return itemList->size() - 1;
 }
-	
+
 
 int KaiListCtrl::SetItem(size_t row, size_t col, Item *item)
 {
-	if(col>=(*itemList)[row]->row.size()){
+	if (col >= (*itemList)[row]->row.size()){
 		(*itemList)[row]->row.push_back(item);
 		return row;
 	}
-	(*itemList)[row]->row.insert((*itemList)[row]->row.begin()+col, item);
+	(*itemList)[row]->row.insert((*itemList)[row]->row.begin() + col, item);
 	return row;
 }
-	
+
 Item *KaiListCtrl::GetItem(size_t row, size_t col)
 {
-	if(row<0 || row >= itemList->size() || col<0 || col >= (*itemList)[row]->row.size()){return NULL;}
+	if (row < 0 || row >= itemList->size() || col < 0 || col >= (*itemList)[row]->row.size()){ return NULL; }
 	return (*itemList)[row]->row[col];
 }
 
@@ -333,45 +335,45 @@ void KaiListCtrl::OnSize(wxSizeEvent& evt)
 {
 	/*if(headerHeight<5 && widths.size()==1){
 		widths[0] = -1;
-	}*/
+		}*/
 	Refresh(false);
 }
-	
+
 void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 {
-	int w=0;
-	int h=0;
-	GetClientSize (&w, &h);
-	if(w==0||h==0){return;}
-	size_t maxVisible = ((h-headerHeight)/lineHeight)+1;
-	size_t itemsize = itemList->size()+1;
-	if((size_t)scPosV>=itemsize-maxVisible){
-		scPosV=itemsize-maxVisible;
+	int w = 0;
+	int h = 0;
+	GetClientSize(&w, &h);
+	if (w == 0 || h == 0){ return; }
+	size_t maxVisible = ((h - headerHeight) / lineHeight) + 1;
+	size_t itemsize = itemList->size() + 1;
+	if ((size_t)scPosV >= itemsize - maxVisible){
+		scPosV = itemsize - maxVisible;
 	}
-	if(scPosV<0){scPosV=0;}
-	size_t maxsize=itemsize-1;
-	if(itemsize>maxVisible){
-		maxsize=MIN(maxVisible+scPosV, itemsize-1);
-		if(SetScrollBar(wxVERTICAL, scPosV, maxVisible, itemsize, maxVisible-2)){
-			GetClientSize (&w, &h);
+	if (scPosV < 0){ scPosV = 0; }
+	size_t maxsize = itemsize - 1;
+	if (itemsize > maxVisible){
+		maxsize = MIN(maxVisible + scPosV, itemsize - 1);
+		if (SetScrollBar(wxVERTICAL, scPosV, maxVisible, itemsize, maxVisible - 2)){
+			GetClientSize(&w, &h);
 		}
 	}
 	int maxWidth = GetMaxWidth();
 	if (widths.size() > 1){ maxWidth += 10; }
 	else if (maxWidth < w - 1){ maxWidth = w - 1; if (widths.size() == 1){ widths[0] = w - 4; } }
 	int bitmapw = w;
-	
-	if(SetScrollBar(wxHORIZONTAL, scPosH, w, maxWidth, w-2)){
-		GetClientSize (&w, &h);
-		if(maxWidth <= w){scPosH=0;SetScrollPos(wxHORIZONTAL,0);}
+
+	if (SetScrollBar(wxHORIZONTAL, scPosH, w, maxWidth, w - 2)){
+		GetClientSize(&w, &h);
+		if (maxWidth <= w){ scPosH = 0; SetScrollPos(wxHORIZONTAL, 0); }
 	}
-	
+
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < bitmapw || bmp->GetHeight() < h)) {
 		delete bmp;
 		bmp = NULL;
 	}
-	if(!bmp){bmp=new wxBitmap(bitmapw, h);}
+	if (!bmp){ bmp = new wxBitmap(bitmapw, h); }
 	tdc.SelectObject(*bmp);
 	bool enabled = IsThisEnabled();
 	const wxColour & highlight = Options.GetColour(StaticListSelection);
@@ -379,104 +381,106 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	const wxColour & inactivetxt = Options.GetColour(WindowTextInactive);
 	const wxColour & border = Options.GetColour(StaticListBorder);
 	tdc.SetPen(wxPen(border));
-	tdc.SetBrush(wxBrush(enabled? Options.GetColour(StaticListBackground) : Options.GetColour(WindowBackgroundInactive)));
-	tdc.DrawRectangle(0,0,w,h);
-	tdc.SetTextForeground(enabled? txt : inactivetxt);
+	tdc.SetBrush(wxBrush(enabled ? Options.GetColour(StaticListBackground) : Options.GetColour(WindowBackgroundInactive)));
+	tdc.DrawRectangle(0, 0, w, h);
+	tdc.SetTextForeground(enabled ? txt : inactivetxt);
 	tdc.SetFont(GetFont());
 	//header
-	
-	int posX= 5-scPosH;
-	int posY=headerHeight;
-	for(size_t i = scPosV; i < maxsize; i++){
+
+	int posX = 5 - scPosH;
+	int posY = headerHeight;
+	for (size_t i = scPosV; i < maxsize; i++){
 		auto row = (*itemList)[i]->row;
-		for(size_t j = 0; j < widths.size(); j++){
-			if(j>=row.size()){
+		for (size_t j = 0; j < widths.size(); j++){
+			int rowsize = row.size();
+			if (j >= rowsize){
 				continue;
 			}
 			//drawing
-			if(i==sel){
+			if (i == sel){
 				tdc.SetPen(wxPen(highlight));
 				tdc.SetBrush(wxBrush(highlight));
-				tdc.DrawRectangle(posX-5, posY, widths[j], lineHeight);
+				tdc.DrawRectangle(posX - 5, posY, widths[j]+2, lineHeight);
 			}
 			row[j]->OnPaint(&tdc, posX, posY, widths[j], lineHeight, this);
 			posX += widths[j];
-			
+
 		}
 		posY += lineHeight;
-		posX = posX=5-scPosH;
-		
+		posX = posX = 5 - scPosH;
+
 	}
-	posX=5-scPosH;
-	
+	posX = 5 - scPosH;
+
 	tdc.SetPen(wxPen(border));
-	
-	if(headerHeight>4){
-		tdc.SetTextForeground(enabled? Options.GetColour(StaticListTextHeadline) : inactivetxt);
+
+	if (headerHeight > 4){
+		tdc.SetTextForeground(enabled ? Options.GetColour(StaticListTextHeadline) : inactivetxt);
 		tdc.SetBrush(Options.GetColour(StaticListBackgroundHeadline));
-		tdc.DrawRectangle(0,0,w,headerHeight-2);
-		for(size_t j = 0; j < widths.size(); j++){
+		tdc.DrawRectangle(0, 0, w, headerHeight - 2);
+		for (size_t j = 0; j < widths.size(); j++){
 			wxString headerTxt = ((ItemText*)header.row[j])->GetName();
 			wxSize ex = tdc.GetTextExtent(headerTxt);
-			tdc.DrawText(headerTxt, posX, ((headerHeight - ex.y)/2) );
+			tdc.DrawText(headerTxt, posX, ((headerHeight - ex.y) / 2));
 
 			posX += widths[j];
-			tdc.DrawLine(posX-3, 0, posX-3, h);
+			tdc.DrawLine(posX - 3, 0, posX - 3, h);
 		}
 		//tdc.DrawLine(0, headerHeight-2, w, headerHeight-2);
 	}
 	tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-	tdc.DrawRectangle(0,0,w,h);
+	tdc.DrawRectangle(0, 0, w, h);
 
 	wxPaintDC dc(this);
-	dc.Blit(0,0,w,h,&tdc,0,0);
+	dc.Blit(0, 0, w, h, &tdc, 0, 0);
 }
-	
+
 void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 {
 	if (evt.LeftUp() && HasCapture()){
 		ReleaseMouse();
 	}
-	if(evt.ButtonDown()){
+	if (evt.ButtonDown()){
 		SetFocus();
 	}
 	if (evt.GetWheelRotation() != 0) {
-		int w=0;
-		int h=0;
-		GetClientSize (&w, &h);
+		int w = 0;
+		int h = 0;
+		GetClientSize(&w, &h);
 		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
-		scPosV -=step;
-		size_t maxVisible = ((h-headerHeight)/lineHeight)+1;
-		if(scPosV<0){scPosV=0;}
-		else if((size_t)scPosV > itemList->size()+1-maxVisible){scPosV = itemList->size()+1-maxVisible;}
+		scPosV -= step;
+		size_t maxVisible = ((h - headerHeight) / lineHeight) + 1;
+		if (scPosV<0){ scPosV = 0; }
+		else if ((size_t)scPosV > itemList->size() + 1 - maxVisible){ scPosV = itemList->size() + 1 - maxVisible; }
 		Refresh(false);
 		return;
 	}
 	wxPoint cursor = evt.GetPosition();
 
-	int elemY = ((cursor.y-headerHeight)/lineHeight) + scPosV;
-	if(elemY<0 || cursor.y <= headerHeight){
+	int elemY = ((cursor.y - headerHeight) / lineHeight) + scPosV;
+	if (elemY < 0 || cursor.y <= headerHeight){
 		//if header < 5 wtedy nic nie robimy
-		if(headerHeight > 5){
+		if (headerHeight > 5){
 			if (HasToolTips())
 				UnsetToolTip();
-			if(!hasArrow && evt.LeftDown()){
-				if(!HasCapture()){CaptureMouse();}
+			if (!hasArrow && evt.LeftDown()){
+				if (!HasCapture()){ CaptureMouse(); }
 				diffX = cursor.x;
 				return;
-			}else if(!hasArrow && evt.LeftIsDown()){
+			}
+			else if (!hasArrow && evt.LeftIsDown()){
 				widths[lastCollumn] += (cursor.x - diffX);
-				if(widths[lastCollumn]<20){widths[lastCollumn]=20;}
+				if (widths[lastCollumn] < 20){ widths[lastCollumn] = 20; }
 				diffX = cursor.x;
 				Refresh(false);
 				return;
 			}
-			int maxwidth=5-scPosH;
+			int maxwidth = 5 - scPosH;
 			//bool isonpos= false;
-			for(size_t i = 0; i < widths.size(); i++){
+			for (size_t i = 0; i < widths.size(); i++){
 				maxwidth += widths[i];
-				if(abs(maxwidth - cursor.x)<5){
-					if(hasArrow){
+				if (abs(maxwidth - cursor.x) < 5){
+					if (hasArrow){
 						SetCursor(wxCURSOR_SIZEWE);
 						hasArrow = false;
 						lastCollumn = i;
@@ -484,36 +488,36 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 					return;
 				}
 			}
-			
+
 		}
 		lastSelX = -1; lastSelY = -1;
-		if(!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow=true;}
+		if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 		return;
 	}
-	if(!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow=true;}
-	Item *copy=NULL;
-	if((size_t)elemY>=itemList->size()){
+	if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+	Item *copy = NULL;
+	if ((size_t)elemY >= itemList->size()){
 		if (HasToolTips())
 			UnsetToolTip();
 		//tu ju¿ nic nie zrobimy, jesteœmy poza elemetami na samym dole
-		if(lastSelX != -1 && lastSelY !=-1 && lastSelY < itemList->size() && lastSelX < (*itemList)[lastSelY]->row.size()){
+		if (lastSelX != -1 && lastSelY != -1 && lastSelY < itemList->size() && lastSelX < (*itemList)[lastSelY]->row.size()){
 			(*itemList)[lastSelY]->row[lastSelX]->OnMouseEvent(wxMouseEvent(), false, true, this, &copy);
-			lastSelX=-1;lastSelY=-1;
+			lastSelX = -1; lastSelY = -1;
 		}
-		if(copy){delete copy;}
+		if (copy){ delete copy; }
 		return;
 	}
 	int elemX = -1;
-	int startX = 5-scPosH; 
-	for(size_t i = 0; i < widths.size(); i++){
-		if(cursor.x > startX && cursor.x <= startX + widths[i]){
-			elemX=i;
+	int startX = 5 - scPosH;
+	for (size_t i = 0; i < widths.size(); i++){
+		if (cursor.x > startX && cursor.x <= startX + widths[i] && i < (*itemList)[elemY]->row.size()){
+			elemX = i;
 			bool enter = (elemX != lastSelX || elemY != lastSelY) || evt.Entering();
 			(*itemList)[elemY]->row[elemX]->OnMouseEvent(evt, enter, false, this, &copy);
-			if(copy!=NULL){
+			if (copy != NULL){
 				ItemRow *newRow = new ItemRow();
-				for(size_t g = 0; g < (*itemList)[elemY]->row.size(); g++){
-					if(g==elemX){
+				for (size_t g = 0; g < (*itemList)[elemY]->row.size(); g++){
+					if (g == elemX){
 						newRow->row.push_back(copy);
 						continue;
 					}
@@ -530,29 +534,31 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 		}
 		startX += widths[i];
 	}
-	if((elemX != lastSelX || elemY != lastSelY || evt.Leaving()) 
-		&& lastSelX != -1 && lastSelY !=-1 && lastSelY < itemList->size()  
+	if ((elemX != lastSelX || elemY != lastSelY || evt.Leaving())
+		&& lastSelX != -1 && lastSelY != -1 && lastSelY < itemList->size()
 		&& lastSelX < (*itemList)[lastSelY]->row.size()){
-			(*itemList)[lastSelY]->row[lastSelX]->OnMouseEvent(wxMouseEvent(), false, true, this, &copy);
-			if(copy){delete copy; copy = NULL;}
+		(*itemList)[lastSelY]->row[lastSelX]->OnMouseEvent(wxMouseEvent(), false, true, this, &copy);
+		if (copy){ delete copy; copy = NULL; }
 	}
-	
-	if(evt.LeftDown()){
-		
+
+	if (evt.LeftDown()){
+
 		sel = elemY;
 
 		Refresh(false);
 	}
-	if(evt.LeftDown()){
-		wxCommandEvent evt2(LIST_ITEM_LEFT_CLICK, GetId()); 
+	if (evt.LeftDown()){
+		wxCommandEvent evt2(LIST_ITEM_LEFT_CLICK, GetId());
 		evt2.SetInt(elemY);
 		AddPendingEvent(evt2);
-	}else if(evt.LeftDClick()){
-		wxCommandEvent evt2(LIST_ITEM_DOUBLECLICKED, GetId()); 
+	}
+	else if (evt.LeftDClick()){
+		wxCommandEvent evt2(LIST_ITEM_DOUBLECLICKED, GetId());
 		evt2.SetInt(elemY);
 		AddPendingEvent(evt2);
-	}else if(evt.RightDown()){
-		wxCommandEvent evt2(LIST_ITEM_RIGHT_CLICK, GetId()); 
+	}
+	else if (evt.RightDown()){
+		wxCommandEvent evt2(LIST_ITEM_RIGHT_CLICK, GetId());
 		evt2.SetInt(elemY);
 		AddPendingEvent(evt2);
 	}
@@ -562,14 +568,15 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 
 void KaiListCtrl::OnScroll(wxScrollWinEvent& event)
 {
-	size_t newPos=0;
+	size_t newPos = 0;
 	int orient = event.GetOrientation();
-	size_t scPos = (orient == wxVERTICAL)? scPosV : scPosH;
+	size_t scPos = (orient == wxVERTICAL) ? scPosV : scPosH;
 	newPos = event.GetPosition();
 	if (scPos != newPos) {
-		if(orient == wxVERTICAL){
+		if (orient == wxVERTICAL){
 			scPosV = newPos;
-		}else{
+		}
+		else{
 			scPosH = newPos;
 		}
 		Refresh(false);
@@ -578,9 +585,9 @@ void KaiListCtrl::OnScroll(wxScrollWinEvent& event)
 
 int KaiListCtrl::GetMaxWidth()
 {
-	
-	int maxWidth=0;
-	for(size_t i = 0; i < widths.size(); i++){
+
+	int maxWidth = 0;
+	for (size_t i = 0; i < widths.size(); i++){
 		if (widths[i] == -1){ SetWidth(i); }
 		maxWidth += widths[i];
 	}
@@ -599,11 +606,76 @@ void KaiListCtrl::SetWidth(size_t j)
 	}
 	widths[j] = maxwidth + 28;
 }
+//when startI > 0 pass elemX decreased of elems before startI
+//startI increases automatically
+int KaiListCtrl::FindItemsRow(int elemX, size_t &startI /*= 0*/)
+{
+	int visibleElemX = 0;
+	for (size_t i = startI; i < itemList->size(); i++){
+		ItemRow * irow = (*itemList)[i];
+		if (irow->isVisible != NOT_VISIBLE){
+			visibleElemX++;
+			if (visibleElemX == elemX){
+				startI = i;
+				return i;
+			}
+		}
+	}
+	startI = itemList->size();
+	return -1;
+}
+
+int KaiListCtrl::CheckIfHasHiddenBlock(int elemX, size_t startI /*= 0*/)
+{
+	size_t newStartI = startI;
+	int lineMinusOne = FindItemsRow(elemX, newStartI);
+	// now we need only one lines as elemX
+	int lineActual = FindItemsRow(1, newStartI);
+	int linePlusOne = FindItemsRow(1, newStartI);
+	if (lineActual < 0)
+		return 0;
+
+	if ((*itemList)[lineMinusOne]->isVisible == VISIBLE && (*itemList)[lineActual]->isVisible == NOT_VISIBLE)
+		return 1;
+
+	if (linePlusOne < 0)
+		return 0;
+
+	if ((*itemList)[lineActual]->isVisible != VISIBLE_BLOCK && (*itemList)[linePlusOne]->isVisible == VISIBLE)
+		return 2;
+
+	return 0;
+}
+
+void KaiListCtrl::ShowOrHideBlock(int elemRealX)
+{
+	for (size_t i = elemRealX; i < itemList->size(); i++){
+		ItemRow * irow = (*itemList)[i];
+		if (irow->isVisible == NOT_VISIBLE)
+			irow->isVisible = VISIBLE;
+		else if (VISIBLE_BLOCK)
+			irow->isVisible = NOT_VISIBLE;
+		else
+			break;
+	}
+}
+
+size_t KaiListCtrl::GetVisibleSize()
+{
+	int visibleElemX = 0;
+	for (size_t i = 0; i < itemList->size(); i++){
+		ItemRow * irow = (*itemList)[i];
+		if (irow->isVisible != NOT_VISIBLE){
+			visibleElemX++;
+		}
+	}
+	return visibleElemX;
+}
 
 void KaiListCtrl::SaveAll(int col)
 {
-	if(!modified){return;}
-	for(size_t i = 0; i<itemList->size(); i++){
+	if (!modified){ return; }
+	for (size_t i = 0; i < itemList->size(); i++){
 		for (size_t j = 0; j < (*itemList)[i]->row.size(); j++){
 			if (j == col)
 				(*itemList)[i]->row[j]->Save();
@@ -616,16 +688,16 @@ void KaiListCtrl::SaveAll(int col)
 
 int KaiListCtrl::FindItem(int column, const wxString &textItem, int row /*= 0*/)
 {
-	for (size_t i = row; i<itemList->size(); i++){
-		if(column < 0){
-			for(size_t j = 0; j < (*itemList)[i]->row.size(); j++){
-				if((*itemList)[i]->row[j]->name == textItem){
+	for (size_t i = row; i < itemList->size(); i++){
+		if (column < 0){
+			for (size_t j = 0; j < (*itemList)[i]->row.size(); j++){
+				if ((*itemList)[i]->row[j]->name == textItem){
 					return i;
 				}
 			}
 		}
-		else if((*itemList)[i]->row.size()<=(size_t)column){continue;}
-		else if((*itemList)[i]->row[column]->name == textItem){
+		else if ((*itemList)[i]->row.size() <= (size_t)column){ continue; }
+		else if ((*itemList)[i]->row[column]->name == textItem){
 			return i;
 		}
 	}
@@ -634,18 +706,18 @@ int KaiListCtrl::FindItem(int column, const wxString &textItem, int row /*= 0*/)
 
 void KaiListCtrl::ScrollTo(int row){
 	scPosV = row;
-	SetScrollpos(wxVERTICAL,row);
+	SetScrollpos(wxVERTICAL, row);
 	Refresh(false);
 }
 
 void KaiListCtrl::PushHistory()
 {
-	if(iter != historyList.size()){
-		for(auto it = historyList.begin()+iter+1; it != historyList.end(); it++)
+	if (iter != historyList.size()){
+		for (auto it = historyList.begin() + iter + 1; it != historyList.end(); it++)
 		{
 			delete (*it);
 		}
-		historyList.erase(historyList.begin()+iter+1, historyList.end());
+		historyList.erase(historyList.begin() + iter + 1, historyList.end());
 	}
 	historyList.push_back(itemList);
 	itemList = itemList->Copy();
@@ -660,7 +732,7 @@ void KaiListCtrl::StartEdition()
 
 void KaiListCtrl::Undo(wxCommandEvent &evt)
 {
-	if(iter>0){
+	if (iter > 0){
 		iter--;
 		List * actual = historyList[iter]->Copy();
 		for (size_t i = 0; i < itemList->size(); i++){
@@ -676,10 +748,10 @@ void KaiListCtrl::Undo(wxCommandEvent &evt)
 		Refresh(false);
 	}
 }
-	
+
 void KaiListCtrl::Redo(wxCommandEvent &evt)
 {
-	if(iter< (int)historyList.size()-1){
+	if (iter < (int)historyList.size() - 1){
 		iter++;
 		List * actual = historyList[iter]->Copy();
 		for (size_t i = 0; i < itemList->size(); i++){
@@ -699,41 +771,42 @@ void KaiListCtrl::Redo(wxCommandEvent &evt)
 Item *KaiListCtrl::CopyRow(int y, int x, bool pushBack)
 {
 	ItemRow *newRow = new ItemRow();
-	for(size_t g = 0; g < (*itemList)[y]->row.size(); g++){
+	for (size_t g = 0; g < (*itemList)[y]->row.size(); g++){
 		newRow->row.push_back((*itemList)[y]->row[g]->Copy());
 	}
-	if(pushBack){
+	if (pushBack){
 		itemList->push_back(newRow);
-		int newy = itemList->size()-1;
-		if(x < 0 || x >= (int)(*itemList)[newy]->row.size()){return NULL;}
+		int newy = itemList->size() - 1;
+		if (x < 0 || x >= (int)(*itemList)[newy]->row.size()){ return NULL; }
 		return (*itemList)[newy]->row[x];
-	}else{
+	}
+	else{
 		itemList->Change(y, newRow);
 	}
-	if(x < 0 || x >= (int)(*itemList)[y]->row.size()){return NULL;}
+	if (x < 0 || x >= (int)(*itemList)[y]->row.size()){ return NULL; }
 	return (*itemList)[y]->row[x];
 }
 
 void KaiListCtrl::SetSelection(int selection, bool center)
 {
-	sel = selection; 
-	if(center){
-		int w=0;
-		int h=0;
-		GetClientSize (&w, &h);
-		int visibleElems = ((h - headerHeight)/lineHeight);
-		int elemY = sel - (visibleElems/2);
+	sel = selection;
+	if (center){
+		int w = 0;
+		int h = 0;
+		GetClientSize(&w, &h);
+		int visibleElems = ((h - headerHeight) / lineHeight);
+		int elemY = sel - (visibleElems / 2);
 		scPosV = MID(0, elemY, itemList->size() - visibleElems + 2);
 	}
 	Refresh(false);
 }
 
-BEGIN_EVENT_TABLE(KaiListCtrl,KaiScrolledWindow)
-	EVT_PAINT(KaiListCtrl::OnPaint)
-	EVT_SIZE(KaiListCtrl::OnSize)
-	EVT_SCROLLWIN(KaiListCtrl::OnScroll)
-	EVT_MOUSE_EVENTS(KaiListCtrl::OnMouseEvent)
-	EVT_ERASE_BACKGROUND(KaiListCtrl::OnEraseBackground)
+BEGIN_EVENT_TABLE(KaiListCtrl, KaiScrolledWindow)
+EVT_PAINT(KaiListCtrl::OnPaint)
+EVT_SIZE(KaiListCtrl::OnSize)
+EVT_SCROLLWIN(KaiListCtrl::OnScroll)
+EVT_MOUSE_EVENTS(KaiListCtrl::OnMouseEvent)
+EVT_ERASE_BACKGROUND(KaiListCtrl::OnEraseBackground)
 END_EVENT_TABLE()
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiListCtrl, wxWindow);
