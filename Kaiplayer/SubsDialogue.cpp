@@ -410,6 +410,7 @@ Dialogue *Dialogue::Copy(bool keepstate, bool copyIsVisible)
 	dial->Style=Style;
 	dial->Text=Text;
 	dial->TextTl=TextTl;
+	dial->treeState = treeState;
 	dial->isVisible.Store(isVisible, copyIsVisible);
 	dial->parseData=NULL;
 	return dial;

@@ -217,6 +217,31 @@ void ItemHotkey::OnChangeHistory(){
 	OptionsDialog::hotkeysCopy[hotkeyId] = hdata(name, accel);
 	//modified = true;
 }
+//modes 0 All
+//1 setted
+//2 global
+//3 subs
+//4 editor
+//5 video
+//6 audio
+int ItemHotkey::OnVisibilityChange(int mode){
+	switch (mode){
+	case 1:
+		return (accel != "")? VISIBLE : NOT_VISIBLE;
+	case 2:
+		return (hotkeyId.Type == GLOBAL_HOTKEY) ? VISIBLE : NOT_VISIBLE;
+	case 3:
+		return (hotkeyId.Type == GRID_HOTKEY) ? VISIBLE : NOT_VISIBLE;
+	case 4:
+		return (hotkeyId.Type == EDITBOX_HOTKEY) ? VISIBLE : NOT_VISIBLE;
+	case 5:
+		return (hotkeyId.Type == VIDEO_HOTKEY) ? VISIBLE : NOT_VISIBLE;
+	case 6:
+		return (hotkeyId.Type == AUDIO_HOTKEY) ? VISIBLE : NOT_VISIBLE;
+	default:
+		return VISIBLE;
+	}
+}
 
 wxString *OptionsDialog::windowNames = NULL;
 std::map<idAndType, hdata> OptionsDialog::hotkeysCopy;
@@ -479,6 +504,16 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 	//Hotkeys
 	{
 		wxBoxSizer *HkeysSizer=new wxBoxSizer(wxVERTICAL);
+		KaiStaticBoxSizer *filterMode = new KaiStaticBoxSizer(wxHORIZONTAL, Hotkeyss, _("Wybierz rodzaj filtrowania"));
+		wxString filteringModes[] = { _("Wszystko"), _("Ustawione skróty"), _("Skróty Globalne"), 
+			_("Skróty napisów"), _("Skróty edytora"), _("Skróty wideo"), _("Skróty audio"), };
+		KaiChoice *filterList = new KaiChoice(Hotkeyss, 14568, wxDefaultPosition, wxDefaultSize, 7, filteringModes);
+		filterList->SetSelection(0);
+		filterList->SetToolTip(_("Rodzaj filtrowania:"));
+
+		filterMode->Add(filterList, 1, wxALL | wxEXPAND, 2);
+		HkeysSizer->Add(filterMode, 0, wxEXPAND);
+		
 		Shortcuts = new KaiListCtrl(Hotkeyss,26667, wxDefaultPosition);
 		Shortcuts->InsertColumn(0,_("Funkcja"),TYPE_TEXT,290);
 		Shortcuts->InsertColumn(1,_("Skrót"),TYPE_TEXT,80);
@@ -546,6 +581,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
 		buttonsSizer->Add(resetHotkey,0,wxALL,2);
 		buttonsSizer->Add(deleteHotkey,0,wxALL,2);
 		HkeysSizer->Add(buttonsSizer,0,wxALL|wxALIGN_CENTER,2);
+		// filter list it need created list
+		Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
+			//we check to second collumn that contain shortcut
+			Shortcuts->FilterList(1, filterList->GetSelection());
+		}, 14568);
+
 		Hotkeyss->SetSizerAndFit(HkeysSizer);
 		ConOpt(Shortcuts,(CONFIG)2000);
 	}

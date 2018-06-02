@@ -436,7 +436,20 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 			tdc.SetTextForeground((isHeadline) ? headerText : (collis) ? collcol : textcol);
 
-			cur = wxRect(posX + 3, posY, GridWidth[j] - 6, GridHeight);
+			int treeState = (Dial)? Dial->treeState : 0;
+			int posXaddition = 3;
+			if (((!showOriginal && j == ilcol - 1) || (showOriginal && j == ilcol - 2)) && treeState >= TREE_DESCRIPTION_CLOSED){
+				posXaddition = 23;
+				if (treeState == TREE_DESCRIPTION_CLOSED)
+					tdc.DrawBitmap(wxBITMAP_PNG("arrow_list"),posX + 6, posY + 5);
+				else{
+					wxBitmap bmp(wxBITMAP_PNG("arrow_list"));
+					wxImage img = bmp.ConvertToImage();
+					img = img.Rotate180();
+					tdc.DrawBitmap(img, posX + 6, posY + 5);
+				}
+			}
+			cur = wxRect(posX + posXaddition, posY, GridWidth[j] - 6, GridHeight);
 			tdc.SetClippingRegion(cur);
 			tdc.DrawLabel(strings[j], cur, isCenter ? wxALIGN_CENTER : (wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT));
 			tdc.DestroyClippingRegion();
@@ -705,6 +718,27 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	// Get focus
 	if (event.ButtonDown()) {
 		SetFocus();
+	}
+
+	if (file->CheckIfIsTree(row)){
+		if (event.GetModifiers() == 0){
+			if (click){
+				int diff = file->OpenCloseTree(row);
+				RefreshColumns();
+				SpellErrors.erase(SpellErrors.begin() + (row + 1), SpellErrors.end());
+				if (Edit->ebrow > row){
+					int firstSel = FirstSelection();
+					if(firstSel<0){
+						file->InsertSelection(Edit->ebrow);
+					}else
+						Edit->SetLine(firstSel);
+				}
+			}
+			else if (dclick){
+				Edit->SetLine(row, true, true, true, false);
+			}
+		}
+		return;
 	}
 
 	// Seeking video by click on numeration column

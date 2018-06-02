@@ -104,12 +104,6 @@ void SubsGridFiltering::FilterPartial(int from)
 			}
 			if (!dial->isVisible){ hide = false; }
 			dial->isVisible = !hide ? VISIBLE_BLOCK : NOT_VISIBLE;
-			/*if (hide && i <= activeLine){
-				activeLineDiff--;
-			}
-			else if (!hide && i <= activeLine){
-				activeLineDiff++;
-			}*/
 			lastDial = dial;
 		}
 	}
@@ -153,22 +147,26 @@ void SubsGridFiltering::MakeTree()
 	int j = 0;
 	int treeDiff = 0;
 	bool startSelection = true;
-	for (int i = 0; i < Subs->dials.size(); i++){
+	for (int i = 0; i < Subs->dials.size() - treeDiff; i++){
 		Dialogue *dial = Subs->dials[i + treeDiff];
-		if (dial->NonDialogue) continue;
+		if (dial->NonDialogue || !dial->isVisible) continue;
 		bool isSelected = false;
-		if (j < selssize){ isSelected = keySelections[j] == i + treeDiff; if (isSelected){ j++; } }
+		if (j < selssize){ isSelected = keySelections[j] == i; if (isSelected){ j++; } }
 		if (isSelected){
 			if (startSelection){
-				Dialogue *treeStart = new Dialogue();
+				Dialogue *treeStart = dial->Copy();
 				treeStart->IsComment = true;
 				treeStart->isVisible = TREE_DESCRIPTION;
+				treeStart->treeState = TREE_DESCRIPTION_CLOSED;
+				treeStart->Text = "";
+				treeStart->TextTl = "";
 				grid->InsertRows(i + treeDiff, 1, treeStart, true, false, true);
 				treeDiff++;
 				startSelection = false;
 			}
 			dial->isVisible = NOT_VISIBLE;
-		}if (!startSelection)
+			dial->treeState = TREE;
+		}else if (!startSelection)
 			startSelection = true;
 
 		//if (lastDial && lastDial->isVisible == VISIBLE_BLOCK && dial->isVisible == NOT_VISIBLE){ dial->isVisible = VISIBLE_BLOCK; }

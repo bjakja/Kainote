@@ -31,48 +31,49 @@
 
 VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *_success)
 	: rend(renderer)
-	, eventStartPlayback (CreateEvent(0, FALSE, FALSE, 0))
-	, eventRefresh (CreateEvent(0, FALSE, FALSE, 0))
-	, eventKillSelf (CreateEvent(0, FALSE, FALSE, 0))
-	, eventComplete (CreateEvent(0, FALSE, FALSE, 0))
-	, eventAudioComplete (CreateEvent(0, FALSE, FALSE, 0))
-	,blnum(0)
-	,Cache(0)
-	,Delay(0)
-	,audiosource(0)
-	,videosource(0)
-	,progress(0)
-	,thread(0)
-	,lastframe(-1)
-	,width(-1)
-	,index(NULL)
-	,isBusy(false)
+	, eventStartPlayback(CreateEvent(0, FALSE, FALSE, 0))
+	, eventRefresh(CreateEvent(0, FALSE, FALSE, 0))
+	, eventKillSelf(CreateEvent(0, FALSE, FALSE, 0))
+	, eventComplete(CreateEvent(0, FALSE, FALSE, 0))
+	, eventAudioComplete(CreateEvent(0, FALSE, FALSE, 0))
+	, blnum(0)
+	, Cache(0)
+	, Delay(0)
+	, audiosource(0)
+	, videosource(0)
+	, progress(0)
+	, thread(0)
+	, lastframe(-1)
+	, width(-1)
+	, index(NULL)
+	, isBusy(false)
 {
-	if(!Options.AudioOpts && !Options.LoadAudioOpts()){KaiMessageBox(_("Nie można wczytać opcji audio"), _("Błąd"));}
+	if (!Options.AudioOpts && !Options.LoadAudioOpts()){ KaiMessageBox(_("Nie można wczytać opcji audio"), _("Błąd")); }
 	disccache = !Options.GetBool(AudioRAMCache);
 
-	success=false;
+	success = false;
 	fname = filename;
-	kainoteApp *Kaia=(kainoteApp*)wxTheApp;
-	progress = new ProgressSink(Kaia->Frame,_("Indeksowanie pliku wideo"));
-	
-	if(renderer){
+	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
+	progress = new ProgressSink(Kaia->Frame, _("Indeksowanie pliku wideo"));
+
+	if (renderer){
 		unsigned int threadid = 0;
 		thread = (HANDLE)_beginthreadex(0, 0, FFMS2Proc, this, 0, &threadid);//CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)FFMS2Proc, this, 0, 0);
-		SetThreadPriority(thread,THREAD_PRIORITY_TIME_CRITICAL);
+		SetThreadPriority(thread, THREAD_PRIORITY_TIME_CRITICAL);
 		SetThreadName(threadid, "VideoThread");
 		progress->ShowDialog();
 		WaitForSingleObject(eventComplete, INFINITE);
 		ResetEvent(eventComplete);
 		*_success = success;
-	}else{
-		progress->SetAndRunTask([=](){return Init();});
+	}
+	else{
+		progress->SetAndRunTask([=](){return Init(); });
 		progress->ShowDialog();
-		*_success=((int)progress->Wait() == 1 );
+		*_success = ((int)progress->Wait() == 1);
 	}
 	SAFE_DELETE(progress);
-	if(index){FFMS_DestroyIndex(index);}
-	
+	if (index){ FFMS_DestroyIndex(index); }
+
 }
 
 unsigned int __stdcall VideoFfmpeg::FFMS2Proc(void* cls)
@@ -89,28 +90,28 @@ void VideoFfmpeg::Processing()
 		eventKillSelf
 	};
 
-	success=(Init()==1);
-	
+	success = (Init() == 1);
+
 	progress->EndModal();
 
-	fplane=height * width * 4;
-	int tdiff=0;
-	
+	fplane = height * width * 4;
+	int tdiff = 0;
+
 	SetEvent(eventComplete);
-	if(width < 0){return;}
+	if (width < 0){ return; }
 
-	while(1){
-		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait)/sizeof(HANDLE), events_to_wait, FALSE, INFINITE);
+	while (1){
+		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait) / sizeof(HANDLE), events_to_wait, FALSE, INFINITE);
 
-		if(wait_result == WAIT_OBJECT_0+0)
+		if (wait_result == WAIT_OBJECT_0 + 0)
 		{
 			byte *buff = (byte*)rend->datas;
 			int acttime;
 			isBusy = false;
-			while(1){
+			while (1){
 
 				//rend->lastframe = GetFramefromMS(timeGetTime() - rend->lasttime, rend->lastframe);
-				if(rend->lastframe != lastframe){
+				if (rend->lastframe != lastframe){
 					rend->time = Timecodes[rend->lastframe];
 					lastframe = rend->lastframe;
 				}
@@ -127,15 +128,15 @@ void VideoFfmpeg::Processing()
 
 				rend->DrawTexture(buff);
 				rend->Render(false);
-				
-				if(rend->time>=rend->playend || rend->lastframe >= NumFrames-1){
-					wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED,23333);
+
+				if (rend->time >= rend->playend || rend->lastframe >= NumFrames - 1){
+					wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, 23333);
 					wxQueueEvent(rend, evt);
 					break;
 				}
-				else if(rend->vstate!=Playing){
+				else if (rend->vstate != Playing){
 					break;
-				}	
+				}
 				acttime = timeGetTime() - rend->lasttime; //rend->player->player->GetCurPositionMS();//
 				//acttime = rend->lasttime + std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - rend->startTime).count();
 
@@ -143,25 +144,27 @@ void VideoFfmpeg::Processing()
 				rend->time = Timecodes[rend->lastframe];
 
 				tdiff = rend->time - acttime;
-				
-				if(tdiff>0){Sleep(tdiff);}
+
+				if (tdiff > 0){ Sleep(tdiff); }
 				else{
-					while(1){
+					while (1){
 						int frameTime = Timecodes[rend->lastframe];
-						if(frameTime>=acttime || frameTime>=rend->playend || rend->lastframe>=NumFrames){
-							if(rend->lastframe>=NumFrames){rend->lastframe = NumFrames-1; rend->time = rend->playend;}
+						if (frameTime >= acttime || frameTime >= rend->playend || rend->lastframe >= NumFrames){
+							if (rend->lastframe >= NumFrames){ rend->lastframe = NumFrames - 1; rend->time = rend->playend; }
 							break;
-						}else{
+						}
+						else{
 							rend->lastframe++;
 						}
 					}
-					
+
 				}
 
 			}
-		}else if(wait_result == WAIT_OBJECT_0+1){
+		}
+		else if (wait_result == WAIT_OBJECT_0 + 1){
 			byte *buff = (byte*)rend->datas;
-			if(rend->lastframe != lastframe){
+			if (rend->lastframe != lastframe){
 				if (lockGetFrame)
 					GetFFMSFrame(rend->lastframe);
 				else{
@@ -179,7 +182,8 @@ void VideoFfmpeg::Processing()
 
 			SetEvent(eventComplete);
 			isBusy = false;
-		}else{
+		}
+		else{
 			break;
 		}
 
@@ -193,59 +197,59 @@ int VideoFfmpeg::Init()
 	FFMS_Init(0, 1);
 
 	errinfo.Buffer = errmsg;
-	errinfo.BufferSize  = sizeof(errmsg);
-	errinfo.ErrorType   = FFMS_ERROR_SUCCESS;
-	errinfo.SubType     = FFMS_ERROR_SUCCESS;
+	errinfo.BufferSize = sizeof(errmsg);
+	errinfo.ErrorType = FFMS_ERROR_SUCCESS;
+	errinfo.SubType = FFMS_ERROR_SUCCESS;
 
 	FFMS_Indexer *Indexer = FFMS_CreateIndexer(fname.utf8_str(), &errinfo);
-	if(!Indexer){
+	if (!Indexer){
 		wxLogStatus(_("Wystąpił błąd indeksowania: %s"), errinfo.Buffer); return 0;
 	}
 
 	int NumTracks = FFMS_GetNumTracksI(Indexer);
-	int audiotrack=-1;
+	int audiotrack = -1;
 	wxArrayInt audiotable;
-	int videotrack=-1;
+	int videotrack = -1;
 
-	for (int i=0; i<NumTracks; i++) {
-		if (FFMS_GetTrackTypeI(Indexer, i) == FFMS_TYPE_VIDEO && videotrack==-1) {
-			videotrack=i;
+	for (int i = 0; i < NumTracks; i++) {
+		if (FFMS_GetTrackTypeI(Indexer, i) == FFMS_TYPE_VIDEO && videotrack == -1) {
+			videotrack = i;
 		}
 		else if (FFMS_GetTrackTypeI(Indexer, i) == FFMS_TYPE_AUDIO) {
 			audiotable.Add(i);
 		}
 	}
 	wxString ext = fname.AfterLast('.').Lower();
-	bool ismkv=(ext=="mkv");
+	bool ismkv = (ext == "mkv");
 	bool hasMoreAudioTracks = audiotable.size() > 1;
 
 	if (hasMoreAudioTracks || ismkv){
 
 		wxArrayString tracks;
 
-		if(ismkv){
+		if (ismkv){
 			MatroskaWrapper mw;
-			if(mw.Open(fname,false)){
+			if (mw.Open(fname, false)){
 				if (hasMoreAudioTracks){
-					for (size_t j=0;j<audiotable.size();j++){
-						TrackInfo* ti=mkv_GetTrackInfo(mw.file,audiotable[j]);
+					for (size_t j = 0; j < audiotable.size(); j++){
+						TrackInfo* ti = mkv_GetTrackInfo(mw.file, audiotable[j]);
 						if (!ti)
 							continue;
 						wxString all;
-						char *opis = (ti->Name)? ti->Name : ti->Language;
-						all<<audiotable[j]<<": "<<opis;
+						char *opis = (ti->Name) ? ti->Name : ti->Language;
+						all << audiotable[j] << ": " << wxString(opis, wxConvUTF8);
 						tracks.Add(all);
 					}
 				}
-				Chapter *chap=NULL;
-				UINT nchap=0;
-				mkv_GetChapters(mw.file,&chap,&nchap);
-				
-				if(chap && nchap && rend){
-					for(int i=0; i<(int)chap->nChildren; i++){
+				Chapter *chap = NULL;
+				UINT nchap = 0;
+				mkv_GetChapters(mw.file, &chap, &nchap);
+
+				if (chap && nchap && rend){
+					for (int i = 0; i < (int)chap->nChildren; i++){
 						chapter ch;
-						ch.name=wxString(chap->Children[i].Display->String);
-						ch.time=(int)(chap->Children[i].Start/1000000.0);
+						ch.name = wxString(chap->Children[i].Display->String, wxConvUTF8);
+						ch.time = (int)(chap->Children[i].Start / 1000000.0);
 						rend->chaps.push_back(ch);
 					}
 				}
@@ -254,56 +258,58 @@ int VideoFfmpeg::Init()
 			if (!hasMoreAudioTracks){ audiotrack = (audiotable.size()>0) ? audiotable[0] : -1; goto done; }
 		}
 		if (!tracks.size() && hasMoreAudioTracks){
-			for (size_t j=0;j<audiotable.size();j++){
+			for (size_t j = 0; j < audiotable.size(); j++){
 				wxString CodecName(FFMS_GetCodecNameI(Indexer, audiotable[j]), wxConvUTF8);
 				wxString all;
-				all<<audiotable[j]<<": "<<CodecName;
+				all << audiotable[j] << ": " << CodecName;
 				tracks.Add(all);
 			}
 		}
 		audiotrack = progress->ShowSecondaryDialog([=](){
-			kainoteApp *Kaia=(kainoteApp*)wxTheApp;
+			kainoteApp *Kaia = (kainoteApp*)wxTheApp;
 
-			KaiListBox tracks(Kaia->Frame, tracks, _("Wybierz ścieżkę"),true);
-			if(tracks.ShowModal()==wxID_OK){
-				int result=wxAtoi(tracks.GetSelection().BeforeFirst(':'));
+			KaiListBox tracks(Kaia->Frame, tracks, _("Wybierz ścieżkę"), true);
+			if (tracks.ShowModal() == wxID_OK){
+				int result = wxAtoi(tracks.GetSelection().BeforeFirst(':'));
 				return result;
 			}
 			return -1;
 		});
 
-		if(audiotrack == -1){
+		if (audiotrack == -1){
 			FFMS_CancelIndexing(Indexer);
 			return 0;
 		}
 
-	}else if(audiotable.size()>0){
-		audiotrack=audiotable[0];
+	}
+	else if (audiotable.size() > 0){
+		audiotrack = audiotable[0];
 	}
 done:
 
-	indexPath=Options.pathfull + "\\Indices\\" + fname.AfterLast('\\').BeforeLast('.') + wxString::Format("_%i.ffindex",audiotrack);
+	indexPath = Options.pathfull + "\\Indices\\" + fname.AfterLast('\\').BeforeLast('.') + wxString::Format("_%i.ffindex", audiotrack);
 
 	if (wxFileExists(indexPath)){
 		index = FFMS_ReadIndex(indexPath.utf8_str(), &errinfo);
 
-		if(FFMS_IndexBelongsToFile(index, fname.utf8_str(), &errinfo))
+		if (FFMS_IndexBelongsToFile(index, fname.utf8_str(), &errinfo))
 		{
 			FFMS_DestroyIndex(index);
-			index=NULL;
-		}else{
+			index = NULL;
+		}
+		else{
 			FFMS_CancelIndexing(Indexer);
 		}
 
 	}
-	bool newIndex=false;
-	if(!index){
+	bool newIndex = false;
+	if (!index){
 		FFMS_TrackIndexSettings(Indexer, audiotrack, 1, 0);
 		FFMS_SetProgressCallback(Indexer, UpdateProgress, (void*)progress);
 		index = FFMS_DoIndexing2(Indexer, FFMS_IEH_IGNORE, &errinfo);
 		//in this moment indexer was released, there no need to release it
 		if (index == NULL) {
-			if(wxString(errinfo.Buffer).StartsWith("Cancelled")){
+			if (wxString(errinfo.Buffer).StartsWith("Cancelled")){
 				wxLogStatus(_("Indeksowanie anulowane przez użytkownika"));
 			}
 			else{
@@ -323,13 +329,13 @@ done:
 			//FFMS_CancelIndexing(Indexer);
 			//return 0;
 		}
-		newIndex=true;
+		newIndex = true;
 	}
-	
-	
-	if(videotrack!=-1 && rend){	
+
+
+	if (videotrack != -1 && rend){
 		SYSTEM_INFO sysinfo;
-		GetSystemInfo( &sysinfo );
+		GetSystemInfo(&sysinfo);
 		try{
 			videosource = FFMS_CreateVideoSource(
 				fname.utf8_str(),
@@ -338,7 +344,8 @@ done:
 				sysinfo.dwNumberOfProcessors * 2,
 				Options.GetInt(FFMS2VideoSeeking),//FFMS_SEEK_NORMAL, // FFMS_SEEK_UNSAFE/*FFMS_SEEK_AGGRESSIVE*/
 				&errinfo);
-		} catch (...){}
+		}
+		catch (...){}
 		//Since the index is copied into the video source object upon its creation,
 		//we can and should now destroy the index object. 
 
@@ -354,26 +361,26 @@ done:
 		const FFMS_VideoProperties *videoprops = FFMS_GetVideoProperties(videosource);
 
 		NumFrames = videoprops->NumFrames;
-		Duration=videoprops->LastTime;
+		Duration = videoprops->LastTime;
 		//Delay = videoprops->FirstTime + (Options.GetInt("Audio Delay")/1000);
-		fps=(float)videoprops->FPSNumerator/(float)videoprops->FPSDenominator;
+		fps = (float)videoprops->FPSNumerator / (float)videoprops->FPSDenominator;
 
 		const FFMS_Frame *propframe = FFMS_GetFrame(videosource, 0, &errinfo);
 
-		width=propframe->EncodedWidth;
-		height=propframe->EncodedHeight; 
-		arwidth=(videoprops->SARNum==0)? width : (float)width*((float)videoprops->SARNum/(float)videoprops->SARDen);
-		arheight= height;
-		while(1){
-			bool divided=false;
-			for (int i = 10; i>1; i--){
-				if((arwidth % i)==0 && (arheight % i)==0){
-					arwidth/=i; arheight /=i;
-					divided=true;
+		width = propframe->EncodedWidth;
+		height = propframe->EncodedHeight;
+		arwidth = (videoprops->SARNum == 0) ? width : (float)width*((float)videoprops->SARNum / (float)videoprops->SARDen);
+		arheight = height;
+		while (1){
+			bool divided = false;
+			for (int i = 10; i > 1; i--){
+				if ((arwidth % i) == 0 && (arheight % i) == 0){
+					arwidth /= i; arheight /= i;
+					divided = true;
 					break;
 				}
 			}
-			if(!divided){break;}
+			if (!divided){ break; }
 		}
 
 		int pixfmt[2];
@@ -398,7 +405,7 @@ done:
 				wxLogStatus(_("Nie można zmienić macierzy YCbCr"));
 			}
 		}
-		if(colormatrix == "TV.601"){
+		if (colormatrix == "TV.601"){
 			ColorSpace = ColorCatrixDescription(FFMS_CS_BT470BG, CR);
 		}
 		else if (colormatrix == "TV.709"){
@@ -408,11 +415,13 @@ done:
 		FFMS_Track *FrameData = FFMS_GetTrackFromVideo(videosource);
 		if (FrameData == NULL){
 			wxLogStatus(_("Nie można pobrać ścieżki wideo"));
-			return 0;}
+			return 0;
+		}
 		const FFMS_TrackTimeBase *TimeBase = FFMS_GetTimeBase(FrameData);
 		if (TimeBase == NULL){
 			wxLogStatus(_("Nie można pobrać informacji o wideo"));
-			return 0;}
+			return 0;
+		}
 
 		const FFMS_FrameInfo *CurFrameData;
 
@@ -427,7 +436,7 @@ done:
 			// keyframe?
 
 			int Timestamp = ((CurFrameData->PTS * TimeBase->Num) / TimeBase->Den);
-			if (CurFrameData->KeyFrame){KeyFrames.Add(Timestamp);}
+			if (CurFrameData->KeyFrame){ KeyFrames.Add(Timestamp); }
 			Timecodes.push_back(Timestamp);
 
 		}
@@ -475,16 +484,16 @@ audio:
 
 VideoFfmpeg::~VideoFfmpeg()
 {
-	if(thread){ 
+	if (thread){
 		SetEvent(eventKillSelf);
-		WaitForSingleObject(thread,2000);
+		WaitForSingleObject(thread, 2000);
 		CloseHandle(thread);
 		CloseHandle(eventStartPlayback);
 		CloseHandle(eventRefresh);
 		CloseHandle(eventKillSelf);
 	}
 
-	if (audioLoadThread){ 
+	if (audioLoadThread){
 		stopLoadingAudio = true;
 		WaitForSingleObject(eventAudioComplete, INFINITE);
 		CloseHandle(eventAudioComplete);
@@ -492,11 +501,12 @@ VideoFfmpeg::~VideoFfmpeg()
 	KeyFrames.Clear();
 	Timecodes.clear();
 
-	if(videosource){
-		FFMS_DestroyVideoSource(videosource);videosource=NULL;
+	if (videosource){
+		FFMS_DestroyVideoSource(videosource); videosource = NULL;
 	}
 
-	if(disccache){Cleardiskc();}else{Clearcache();}
+	if (disccache){ Cleardiskc(); }
+	else{ Clearcache(); }
 	if (!stopLoadingAudio && disccache && diskCacheFilename.EndsWith(".part")){
 		wxString discCacheNameWithGoodExt = diskCacheFilename;
 		discCacheNameWithGoodExt.RemoveLast(5);
@@ -508,8 +518,8 @@ VideoFfmpeg::~VideoFfmpeg()
 
 int FFMS_CC VideoFfmpeg::UpdateProgress(int64_t Current, int64_t Total, void *ICPrivate)
 {
-	ProgressSink *progress= (ProgressSink*)ICPrivate;
-	progress->Progress(((double)Current/(double)Total)*100);
+	ProgressSink *progress = (ProgressSink*)ICPrivate;
+	progress->Progress(((double)Current / (double)Total) * 100);
 	return progress->WasCancelled();
 }
 
@@ -529,16 +539,16 @@ done:
 	vf->lockGetFrame = false;
 	SetEvent(vf->eventAudioComplete);
 	if (vf->audioLoadThread){ delete vf->audioLoadThread; vf->audioLoadThread = NULL; }
-	
+
 }
 
 void VideoFfmpeg::GetFrame(int ttime, byte *buff)
 {
 	//if(lastframe!=ttime){fframe=FFMS_GetFrame(videosource, ttime, &errinfo);}//fframe=FFMS_GetFrameByTime(videosource, (double)ttime/1000.0, &errinfo);}
 	//lastframe=ttime;
-	byte* cpy= (byte *)fframe->Data[0];
-	memcpy(&buff[0],cpy,height*width*4);
-	
+	byte* cpy = (byte *)fframe->Data[0];
+	memcpy(&buff[0], cpy, height*width * 4);
+
 }
 
 void VideoFfmpeg::GetFFMSFrame(int numframe)
@@ -552,23 +562,23 @@ void VideoFfmpeg::GetAudio(void *buf, int64_t start, int64_t count)
 {
 
 	if (count == 0 || !audiosource) return;
-	if (start+count > NumSamples) {
+	if (start + count > NumSamples) {
 		int64_t oldcount = count;
-		count = NumSamples-start;
+		count = NumSamples - start;
 		if (count < 0) count = 0;
 
 		// Fill beyond with zero
 
-		short *temp = (short *) buf;
-		for (int64_t i=count;i<oldcount;i++) {
+		short *temp = (short *)buf;
+		for (int64_t i = count; i < oldcount; i++) {
 			temp[i] = 0;
 		}
 
 	}
 	wxCriticalSectionLocker lock(blockaudio);
-	if (FFMS_GetAudio(audiosource, buf, start, count, &errinfo)){ 
+	if (FFMS_GetAudio(audiosource, buf, start, count, &errinfo)){
 		//sprawdzić co z tym kraszem
-		wxLogStatus("error audio" + wxString(errinfo.Buffer)); 
+		wxLogStatus("error audio" + wxString(errinfo.Buffer));
 	}
 
 }
@@ -576,21 +586,21 @@ void VideoFfmpeg::GetAudio(void *buf, int64_t start, int64_t count)
 void VideoFfmpeg::GetBuffer(void *buf, int64_t start, int64_t count, double volume)
 {
 	if (audioNotInitialized){ return; }
-	
-	if (start+count > NumSamples) {
+
+	if (start + count > NumSamples) {
 		int64_t oldcount = count;
-		count = NumSamples-start;
+		count = NumSamples - start;
 		if (count < 0) count = 0;
 
 
-		short *temp = (short *) buf;
-		for (int i=count;i<oldcount;i++) {
+		short *temp = (short *)buf;
+		for (int i = count; i < oldcount; i++) {
 			temp[i] = 0;
 		}
 	}
 
 	if (count) {
-		if(disccache){
+		if (disccache){
 			if (fp){
 				wxCriticalSectionLocker lock(blockaudio);
 				_int64 pos = start* BytesPerSample;
@@ -599,33 +609,33 @@ void VideoFfmpeg::GetBuffer(void *buf, int64_t start, int64_t count, double volu
 			}
 		}
 		else{
-			if(!Cache){return;}
+			if (!Cache){ return; }
 			char *tmpbuf = (char *)buf;
 			int i = (start* BytesPerSample) >> 22;
-			int blsize=(1<<22);
-			int offset = (start* BytesPerSample) & (blsize-1);
+			int blsize = (1 << 22);
+			int offset = (start* BytesPerSample) & (blsize - 1);
 			int64_t remaining = count* BytesPerSample;
-			int readsize=remaining;
+			int readsize = remaining;
 
-			while(remaining){
-				readsize = MIN(remaining,blsize - offset);
+			while (remaining){
+				readsize = MIN(remaining, blsize - offset);
 
-				memcpy(tmpbuf,(char *)(Cache[i++]+offset),readsize);
-				tmpbuf+=readsize;
-				offset=0;
-				remaining-=readsize;
+				memcpy(tmpbuf, (char *)(Cache[i++] + offset), readsize);
+				tmpbuf += readsize;
+				offset = 0;
+				remaining -= readsize;
 			}
 		}
 		if (volume == 1.0) return;
 
 
 		// Read raw samples
-		short *buffer = (short*) buf;
+		short *buffer = (short*)buf;
 		int value;
 
 		// Modify
-		for (int64_t i=0;i<count;i++) {
-			value = (int)(buffer[i]*volume+0.5);
+		for (int64_t i = 0; i < count; i++) {
+			value = (int)(buffer[i] * volume + 0.5);
 			if (value < -0x8000) value = -0x8000;
 			if (value > 0x7FFF) value = 0x7FFF;
 			buffer[i] = value;
@@ -635,12 +645,12 @@ void VideoFfmpeg::GetBuffer(void *buf, int64_t start, int64_t count, double volu
 }
 
 
-void VideoFfmpeg::GetWaveForm(int *min,int *peak,int64_t start,int w,int h,int samples,float scale)
+void VideoFfmpeg::GetWaveForm(int *min, int *peak, int64_t start, int w, int h, int samples, float scale)
 {
 	if (audioNotInitialized){ return; }
 	//wxCriticalSectionLocker lock(blockaudio);
 	int n = w * samples;
-	for (int i=0;i<w;i++) {
+	for (int i = 0; i < w; i++) {
 		peak[i] = 0;
 		min[i] = h;
 	}
@@ -656,14 +666,14 @@ void VideoFfmpeg::GetWaveForm(int *min,int *peak,int64_t start,int w,int h,int s
 	raw = new char[needLen];
 
 
-	short *raw_short = (short*) raw;
-	GetBuffer(raw,start,n);
-	int half_h = h/2;
+	short *raw_short = (short*)raw;
+	GetBuffer(raw, start, n);
+	int half_h = h / 2;
 	int half_amplitude = int(half_h * scale);
 	// Calculate waveform
-	for (int i=0;i<n;i++) {
-		cur = i/samples;
-		curvalue = half_h - (int(raw_short[i])*half_amplitude)/0x8000;
+	for (int i = 0; i < n; i++) {
+		cur = i / samples;
+		curvalue = half_h - (int(raw_short[i])*half_amplitude) / 0x8000;
 		if (curvalue > h) curvalue = h;
 		if (curvalue < 0) curvalue = 0;
 		if (curvalue < min[cur]) min[cur] = curvalue;
@@ -698,40 +708,41 @@ bool VideoFfmpeg::RAMCache()
 {
 	//progress->Title(_("Zapisywanie do pamięci RAM"));
 	audioProgress = 0;
-	int64_t end=NumSamples*BytesPerSample;
+	int64_t end = NumSamples*BytesPerSample;
 
-	int blsize=(1<<22);
-	blnum=((float)end/(float)blsize)+1;
-	Cache=NULL;
-	Cache=new char*[blnum];
-	if(Cache==NULL){KaiMessageBox(_("Za mało pamięci RAM"));return false;}
+	int blsize = (1 << 22);
+	blnum = ((float)end / (float)blsize) + 1;
+	Cache = NULL;
+	Cache = new char*[blnum];
+	if (Cache == NULL){ KaiMessageBox(_("Za mało pamięci RAM")); return false; }
 
-	int64_t pos= (Delay<0)? -(SampleRate * Delay * BytesPerSample) : 0;
-	int halfsize=(blsize/BytesPerSample);
+	int64_t pos = (Delay < 0) ? -(SampleRate * Delay * BytesPerSample) : 0;
+	int halfsize = (blsize / BytesPerSample);
 
 
-	for(int i = 0; i< blnum; i++)
+	for (int i = 0; i < blnum; i++)
 	{
-		if(i >= blnum-1){blsize=end-pos; halfsize=(blsize/BytesPerSample);}
-		Cache[i]= new char[blsize];
-		if(Delay>0 && i == 0){
-			int delaysize=SampleRate*Delay*BytesPerSample;
-			if(delaysize%2==1){delaysize++;}
-			int halfdiff= halfsize - (delaysize/BytesPerSample);
-			memset(Cache[i],0,delaysize);
+		if (i >= blnum - 1){ blsize = end - pos; halfsize = (blsize / BytesPerSample); }
+		Cache[i] = new char[blsize];
+		if (Delay > 0 && i == 0){
+			int delaysize = SampleRate*Delay*BytesPerSample;
+			if (delaysize % 2 == 1){ delaysize++; }
+			int halfdiff = halfsize - (delaysize / BytesPerSample);
+			memset(Cache[i], 0, delaysize);
 			GetAudio(&Cache[i][delaysize], 0, halfdiff);
-			pos+=halfdiff;
-		}else{
+			pos += halfdiff;
+		}
+		else{
 			GetAudio(Cache[i], pos, halfsize);
-			pos+=halfsize;
+			pos += halfsize;
 		}
 		audioProgress = ((float)i / (float)(blnum - 1));
-		if (stopLoadingAudio) { 
+		if (stopLoadingAudio) {
 			blnum = i + 1;
-			break; 
+			break;
 		}
 	}
-	if(Delay<0){NumSamples += (SampleRate * Delay * BytesPerSample);}
+	if (Delay < 0){ NumSamples += (SampleRate * Delay * BytesPerSample); }
 	audioProgress = 1.f;
 	return true;
 }
@@ -740,43 +751,43 @@ bool VideoFfmpeg::RAMCache()
 
 void VideoFfmpeg::Clearcache()
 {
-	if(!Cache){return;}
-	for(int i=0; i<blnum; i++)
+	if (!Cache){ return; }
+	for (int i = 0; i < blnum; i++)
 	{
-		delete[ ] Cache[i];
+		delete[] Cache[i];
 	}
-	delete[ ] Cache;
-	Cache=0;
-	blnum=0;
+	delete[] Cache;
+	Cache = 0;
+	blnum = 0;
 }
 
 int VideoFfmpeg::TimefromFrame(int nframe)
 {
-	if(nframe<0){nframe=0;}
-	if(nframe>=NumFrames){nframe=NumFrames-1;}
+	if (nframe < 0){ nframe = 0; }
+	if (nframe >= NumFrames){ nframe = NumFrames - 1; }
 	return Timecodes[nframe];
 }
 
 int VideoFfmpeg::FramefromTime(int time)
 {
-	if(time<=0){return 0;}
-	int start=lastframe;
-	if(lasttime>time)
+	if (time <= 0){ return 0; }
+	int start = lastframe;
+	if (lasttime > time)
 	{
-		start=0;
+		start = 0;
 	}
-	int wframe=NumFrames-1;	
-	for(int i=start;i<NumFrames-1;i++)
+	int wframe = NumFrames - 1;
+	for (int i = start; i < NumFrames - 1; i++)
 	{
-		if(Timecodes[i]>=time && time<Timecodes[i+1])
+		if (Timecodes[i] >= time && time < Timecodes[i + 1])
 		{
-			wframe= i;
+			wframe = i;
 			break;
 		}
 	}
 	//if(lastframe==wframe){return-1;}
-	lastframe=wframe;
-	lasttime=time;	
+	lastframe = wframe;
+	lasttime = time;
 	return lastframe;
 }
 
@@ -784,83 +795,84 @@ bool VideoFfmpeg::DiskCache(bool newIndex)
 {
 	audioProgress = 0;
 
-	bool good=true;
+	bool good = true;
 	wxFileName discCacheFile;
 	discCacheFile.Assign(diskCacheFilename);
-	if(!discCacheFile.DirExists()){wxMkdir(diskCacheFilename.BeforeLast('\\'));}
+	if (!discCacheFile.DirExists()){ wxMkdir(diskCacheFilename.BeforeLast('\\')); }
 	bool fileExists = discCacheFile.FileExists();
 	if (!newIndex && fileExists){
 		fp = _wfopen(diskCacheFilename.wc_str(), L"rb");
 		if (fp)
 			return true;
-		else 
+		else
 			return false;
-	}else{
+	}
+	else{
 		if (fileExists){
 			_wremove(diskCacheFilename.wc_str());
 		}
 		diskCacheFilename << ".part";
 		fp = _wfopen(diskCacheFilename.wc_str(), L"w+b");
-		if(!fp)
+		if (!fp)
 			return false;
 	}
 	int block = 332768;
-	if(Delay>0){
+	if (Delay > 0){
 
-		int size=(SampleRate*Delay*BytesPerSample);
-		if(size%2==1){size++;}
-		char *silence=new char[size];
-		memset(silence,0,size);
-		fwrite(silence, 1 ,size, fp);
+		int size = (SampleRate*Delay*BytesPerSample);
+		if (size % 2 == 1){ size++; }
+		char *silence = new char[size];
+		memset(silence, 0, size);
+		fwrite(silence, 1, size, fp);
 		delete[] silence;
 	}
 	try {
-		char *data= new char[block*BytesPerSample];
-		int all=(NumSamples/block)+1;
+		char *data = new char[block*BytesPerSample];
+		int all = (NumSamples / block) + 1;
 		//int64_t pos=0;
-		int64_t pos= (Delay<0)? -(SampleRate * Delay * BytesPerSample) : 0;
-		for (int i=0;i<all; i++) {
-			if (block+pos > NumSamples) block = NumSamples - pos;
-			GetAudio(data,pos,block);
-			fwrite(data, 1 ,block * BytesPerSample, fp);
-			pos+=block;
+		int64_t pos = (Delay < 0) ? -(SampleRate * Delay * BytesPerSample) : 0;
+		for (int i = 0; i < all; i++) {
+			if (block + pos > NumSamples) block = NumSamples - pos;
+			GetAudio(data, pos, block);
+			fwrite(data, 1, block * BytesPerSample, fp);
+			pos += block;
 			audioProgress = ((float)pos / (float)(NumSamples));
 			if (stopLoadingAudio) break;
 		}
 		delete[] data;
-		
+
 		rewind(fp);
-		if(Delay<0){NumSamples += (SampleRate * Delay * BytesPerSample);}
+		if (Delay < 0){ NumSamples += (SampleRate * Delay * BytesPerSample); }
 	}
 	catch (...) {
-		good=false;
+		good = false;
 	}
 
-	if(!good){Cleardiskc();}
+	if (!good){ Cleardiskc(); }
 	else{ audioProgress = 1.f; }
 	return good;
 }
 
 void VideoFfmpeg::Cleardiskc()
 {
-	if(fp){fclose(fp);fp=NULL;}
+	if (fp){ fclose(fp); fp = NULL; }
 }
 
 int VideoFfmpeg::GetMSfromFrame(int frame)
 {
-	if(frame >= NumFrames){return frame * (1000.f / fps);}
-	else if(frame < 0){return 0;}
+	if (frame >= NumFrames){ return frame * (1000.f / fps); }
+	else if (frame < 0){ return 0; }
 	return Timecodes[frame];
 }
 
 int VideoFfmpeg::GetFramefromMS(int MS, int seekfrom)
 {
-	if (MS<=0) return 0;
+	if (MS <= 0) return 0;
 	//else if(MS>=Duration) return NumFrames-1;
-	int result=NumFrames-1;
-	for(int i=seekfrom; i<NumFrames; i++)
+	int result = NumFrames - 1;
+	for (int i = seekfrom; i < NumFrames; i++)
 	{
-		if(Timecodes[i]>=MS)
+		if (Timecodes[i] >= MS)
 		{
 			result = i;
 			break;
@@ -876,15 +888,15 @@ void VideoFfmpeg::DeleteOldAudioCache()
 	size_t maxAudio = 10;
 	wxDir kat(path);
 	wxArrayString audioCaches;
-	if(kat.IsOpened()){
+	if (kat.IsOpened()){
 		kat.GetAllFiles(path, &audioCaches, "", wxDIR_FILES);
 	}
-	if(audioCaches.size()<=maxAudio){return;}
+	if (audioCaches.size() <= maxAudio){ return; }
 	FILETIME ft;
 	SYSTEMTIME st;
 	std::map<unsigned __int64, int> dates;
 	unsigned __int64 datetime;
-	for(size_t i = 0; i< audioCaches.size(); i++){
+	for (size_t i = 0; i < audioCaches.size(); i++){
 		HANDLE ffile = CreateFile(audioCaches[i].wc_str(), GENERIC_READ, FILE_SHARE_DELETE, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 		if (ffile != INVALID_HANDLE_VALUE){
 			GetFileTime(ffile, 0, &ft, 0);
@@ -895,13 +907,13 @@ void VideoFfmpeg::DeleteOldAudioCache()
 			dates[datetime] = i;
 		}
 		//else{
-			//wxLogStatus("nie można otworzyć pliku %s", audioCaches[i]);
+		//wxLogStatus("nie można otworzyć pliku %s", audioCaches[i]);
 		//}
 	}
 	int count = 0;
 	int diff = audioCaches.size() - maxAudio;
-	for(auto cur = dates.begin(); cur != dates.end(); cur++){
-		if(count >= diff){break;}
+	for (auto cur = dates.begin(); cur != dates.end(); cur++){
+		if (count >= diff){ break; }
 		int isgood = _wremove(audioCaches[cur->second].wchar_str());
 		//wxLogStatus("usuwa plik %i "+audioCaches[cur->second], isgood);
 		count++;
@@ -914,7 +926,7 @@ void VideoFfmpeg::Refresh(bool wait){
 	isBusy = true;
 	ResetEvent(eventComplete);
 	SetEvent(eventRefresh);
-	if(rend->vstate==Paused && wait){
+	if (rend->vstate == Paused && wait){
 		WaitForSingleObject(eventComplete, 4000);
 	}
 };
@@ -924,19 +936,19 @@ wxString VideoFfmpeg::ColorCatrixDescription(int cs, int cr) {
 	wxString str = cr == FFMS_CR_JPEG ? "PC" : "TV";
 
 	switch (cs) {
-		case FFMS_CS_RGB:
-			return _("Brak");
-		case FFMS_CS_BT709:
-			return str + ".709";
-		case FFMS_CS_FCC:
-			return str + ".FCC";
-		case FFMS_CS_BT470BG:
-		case FFMS_CS_SMPTE170M:
-			return str + ".601";
-		case FFMS_CS_SMPTE240M:
-			return str + ".240M";
-		default:
-			return _("Brak");
+	case FFMS_CS_RGB:
+		return _("Brak");
+	case FFMS_CS_BT709:
+		return str + ".709";
+	case FFMS_CS_FCC:
+		return str + ".FCC";
+	case FFMS_CS_BT470BG:
+	case FFMS_CS_SMPTE170M:
+		return str + ".601";
+	case FFMS_CS_SMPTE240M:
+		return str + ".240M";
+	default:
+		return _("Brak");
 	}
 }
 

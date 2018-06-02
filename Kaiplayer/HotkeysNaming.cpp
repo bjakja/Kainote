@@ -152,6 +152,7 @@ void HotkeysNaming::CreateNamesMap()
 	names[GRID_HIDE_MARGINV] = _("Ukryj pionowy margines");
 	names[GRID_HIDE_START] = _("Ukryj czas początkowy");
 	names[GRID_HIDE_STYLE] = _("Ukryj styl");
+	names[GRID_TREE_MAKE] = _("Stwórz drzewko");
 	names[Help] = _("Pomoc (niekompletna, ale jednak)");
 	names[Helpers] = _("Lista osób pomocnych przy tworzeniu programu");
 	names[HideProgressBar] = _("Ukryj / pokaż pasek postępu");
@@ -229,7 +230,7 @@ void HotkeysNaming::CreateNamesMap()
 	names[SubbedFrameToPNG] = _("Zapisz klatkę z napisami jako PNG");
 	names[SubsResample] = _("Zmień rozdzielczość napisów");
 	names[SubsFromMKV] = _("Wczytaj napisy z pliku MKV");
-	names[Swap] = _("Zamień");
+	names[Swap] = _("Zamień linie");
 	names[TranslationDialog] = _("Okno przesuwania dialogów");
 	names[Undo] = _("Cofnij");
 	names[UndoToLastSave] = _("Cofnij do ostatniego zapisu");

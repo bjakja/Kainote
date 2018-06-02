@@ -134,6 +134,7 @@
 	XX( GRID_FILTER_INVERTED, ) \
 	XX( GRID_FILTER_DO_NOT_RESET, ) \
 	XX( GRID_FILTER_IGNORE_IN_ACTIONS, ) \
+	XX( GRID_TREE_MAKE, ) \
 	XX( PasteTranslation, ) \
 	XX( TranslationDialog, ) \
 	XX( SubsFromMKV, ) \

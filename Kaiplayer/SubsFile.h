@@ -144,6 +144,8 @@ public:
 	int GetElementById(int Id);
 	int GetElementByKey(int Key);
 	unsigned char CheckIfHasHiddenBlock(int i);
+	bool CheckIfIsTree(int i);
+	int OpenCloseTree(int i);
 	void GetURStatus(bool *_undo, bool *_redo);
 	bool IsNotSaved();
 	int maxx();

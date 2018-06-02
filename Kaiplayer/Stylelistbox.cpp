@@ -30,8 +30,8 @@ Stylelistbox::Stylelistbox(wxWindow* parent, bool styles, int numelem, wxString 
 	sizer->Add(Button1, 1, wxALL, 2);
 	sizer->Add(Button2, 1, wxALL, 2);
 	sizer1->Add(CheckListBox,0, wxEXPAND);
-	Main->Add(sizer1,0, wxEXPAND);
-	Main->Add(sizer,0, wxEXPAND);
+	Main->Add(sizer1, 0, wxEXPAND | wxALL, 2);
+	Main->Add(sizer,0, wxEXPAND | wxALL, 4);
 	SetSizerAndFit(Main);
 	MoveToMousePosition(this);
 }

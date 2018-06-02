@@ -603,6 +603,37 @@ unsigned char SubsFile::CheckIfHasHiddenBlock(int i){
 	return 0;
 }
 
+bool SubsFile::CheckIfIsTree(int i){
+	int ikey = GetElementById(i);
+	if (ikey < 0)
+		return 0;
+
+	Dialogue *dial = subs->dials[ikey];
+	return dial->treeState >= TREE_DESCRIPTION_CLOSED;
+}
+
+int SubsFile::OpenCloseTree(int i){
+	int ikey = GetElementById(i);
+	Dialogue *dial = subs->dials[ikey];
+	int visibility = (dial->treeState == TREE_DESCRIPTION_OPENED) ? NOT_VISIBLE : VISIBLE;
+	dial->treeState = (visibility) ? TREE_DESCRIPTION_OPENED : TREE_DESCRIPTION_CLOSED;
+	int endOfTree = 0;
+	for (int k = ikey+1; k < subs->dials.size(); k++){
+		Dialogue *dial = subs->dials[k];
+		if (dial->treeState != TREE){
+			endOfTree = k - 1;
+			break;
+		}
+		dial->isVisible = visibility;
+	}
+	if (ikey + 1 < endOfTree){
+		ReloadVisibleDialogues(ikey + 1, endOfTree);
+		int diff = endOfTree - (ikey + 1);
+		return (visibility)? diff : -diff;
+	}
+	return 0;
+}
+
 void SubsFile::GetHistoryTable(wxArrayString *history)
 {
 	for(size_t i = 0; i < undo.size(); i++){

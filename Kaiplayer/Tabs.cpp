@@ -771,7 +771,7 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 	else if (id == MENU_COMPARE - 1){
 		SubsGridBase::RemoveComparison();
 	}
-	else if (id == MENU_SAVE - 1 && (i >= 0 && id == MENU_SAVE + i)){
+	else if (id == MENU_SAVE - 1 || (i >= 0 && id == MENU_SAVE + i)){
 		OnSave(id);
 	}
 }

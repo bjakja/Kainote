@@ -41,7 +41,7 @@ public:
 	virtual void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList){};
 	virtual void Save(){};
 	virtual void OnChangeHistory(){/* modified = true;*/ };
-	virtual int OnVisibilityChange(){ return VISIBLE; }
+	virtual int OnVisibilityChange(int mode){ return VISIBLE; }
 	virtual Item* Copy(){return NULL;}
 	bool modified;
 	bool needTooltip = false;
@@ -167,10 +167,12 @@ public:
 	void SetModified(bool modif){modified = modif; /*if(modif){PushHistory();}*/}
 	bool GetModified(){return modified;}
 	int FindItem(int column, const wxString &textItem, int row = 0);
+	//collumn must be set
+	void FilterList(int column, int mode);
 	void ScrollTo(int row);
 	size_t GetCount(){return itemList->size();}
 	void SetSelection(int selection, bool center = false);
-	int GetSelection(){return sel;}
+	int GetSelection();
 	void PushHistory();
 	void Undo(wxCommandEvent &evt);
 	void Redo(wxCommandEvent &evt);

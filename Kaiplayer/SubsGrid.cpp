@@ -190,7 +190,8 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	menu->Append(4444, _("Ukryj kolumny"), hidemenu);
 	menu->SetAccMenu(HideSelected, _("Ukryj zaznaczone linijki"))->Enable(sels > 0);
 	menu->Append(4445, _("Filtrowanie"), filterMenu);
-	menu->SetAccMenu(GRID_FILTER_IGNORE_IN_ACTIONS, _("Ignoruj filtrowanie przy akcjach"), "", true, ITEM_CHECK)->Check(ignoreFiltered);
+	menu->SetAccMenu(GRID_FILTER_IGNORE_IN_ACTIONS, _("Ignoruj filtrowanie przy akcjach"), "", true, ITEM_CHECK)->Check(ignoreFiltered); 
+	menu->SetAccMenu(GRID_TREE_MAKE, _("Stwórz drzewko"))->Enable(sels > 0);
 	menu->SetAccMenu(ShowPreview, _("Pokaż podgląd napisów"))->Enable(Notebook::GetTabs()->Size() > 1 && !preview);
 	menu->SetAccMenu(NewFPS, _("Ustaw nowy FPS"));
 	menu->SetAccMenu(FPSFromVideo, _("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState() != None && sels == 2);
@@ -571,6 +572,12 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 		SubsGridFiltering filter(this, Edit->ebrow);
 		filter.HideSelections();
 		isFiltered = true;
+		break;
+	}
+	case GRID_TREE_MAKE:
+	{
+		SubsGridFiltering filter(this, Edit->ebrow);
+		filter.MakeTree();
 		break;
 	}
 	case GRID_FILTER:

@@ -84,18 +84,6 @@ public:
 		assert(stored);
 		return !(*stored);
 	}
-	void operator ^=(const unsigned char value){
-		assert(stored);
-		 *stored ^= value;
-	}
-	void operator |=(const unsigned char value){
-		assert(stored);
-		*stored |= value;
-	}
-	int operator &(const unsigned char value){
-		assert(stored);
-		return *stored & value;
-	}
 	unsigned char &operator *(){ 
 		assert(stored);
 		return *stored; 
@@ -276,10 +264,11 @@ public:
 };
 
 enum{
-	TREE_NOT_VISIBLE = -1,
 	NOT_VISIBLE = 0,
 	VISIBLE,
 	VISIBLE_BLOCK,
 	TREE_DESCRIPTION,
-	TREE_VISIBLE_BLOCK
+	TREE,
+	TREE_DESCRIPTION_CLOSED,
+	TREE_DESCRIPTION_OPENED
 };

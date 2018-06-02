@@ -345,8 +345,11 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	int h = 0;
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
+	if (isFiltered)
+		w -= 12;
+	int visibleSize = GetVisibleSize();
 	size_t maxVisible = ((h - headerHeight) / lineHeight) + 1;
-	size_t itemsize = itemList->size() + 1;
+	size_t itemsize = visibleSize + 1;
 	if ((size_t)scPosV >= itemsize - maxVisible){
 		scPosV = itemsize - maxVisible;
 	}
@@ -354,6 +357,12 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	size_t maxsize = itemsize - 1;
 	if (itemsize > maxVisible){
 		maxsize = MIN(maxVisible + scPosV, itemsize - 1);
+		if (SetScrollBar(wxVERTICAL, scPosV, maxVisible, itemsize, maxVisible - 2)){
+			GetClientSize(&w, &h);
+		}
+	}
+	else{
+		scPosV = 0;
 		if (SetScrollBar(wxVERTICAL, scPosV, maxVisible, itemsize, maxVisible - 2)){
 			GetClientSize(&w, &h);
 		}
@@ -375,46 +384,39 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	}
 	if (!bmp){ bmp = new wxBitmap(bitmapw, h); }
 	tdc.SelectObject(*bmp);
+	wxMemoryDC fdc;
 	bool enabled = IsThisEnabled();
 	const wxColour & highlight = Options.GetColour(StaticListSelection);
 	const wxColour & txt = Options.GetColour(WindowText);
 	const wxColour & inactivetxt = Options.GetColour(WindowTextInactive);
 	const wxColour & border = Options.GetColour(StaticListBorder);
+
 	tdc.SetPen(wxPen(border));
 	tdc.SetBrush(wxBrush(enabled ? Options.GetColour(StaticListBackground) : Options.GetColour(WindowBackgroundInactive)));
 	tdc.DrawRectangle(0, 0, w, h);
 	tdc.SetTextForeground(enabled ? txt : inactivetxt);
 	tdc.SetFont(GetFont());
-	//header
-
-	int posX = 5 - scPosH;
-	int posY = headerHeight;
-	for (size_t i = scPosV; i < maxsize; i++){
-		auto row = (*itemList)[i]->row;
-		for (size_t j = 0; j < widths.size(); j++){
-			int rowsize = row.size();
-			if (j >= rowsize){
-				continue;
-			}
-			//drawing
-			if (i == sel){
-				tdc.SetPen(wxPen(highlight));
-				tdc.SetBrush(wxBrush(highlight));
-				tdc.DrawRectangle(posX - 5, posY, widths[j]+2, lineHeight);
-			}
-			row[j]->OnPaint(&tdc, posX, posY, widths[j], lineHeight, this);
-			posX += widths[j];
-
-		}
-		posY += lineHeight;
-		posX = posX = 5 - scPosH;
-
+	if (isFiltered){
+		fdc.SelectObject(wxBitmap(13, h));
+		fdc.SetBrush(wxBrush(enabled ? Options.GetColour(StaticListBackground) : Options.GetColour(WindowBackgroundInactive)));
+		fdc.SetPen(wxPen(border));
+		fdc.DrawRectangle(0, 0, 13, h);
 	}
-	posX = 5 - scPosH;
 
-	tdc.SetPen(wxPen(border));
+	//header
+	int filteringHeader = 5;
+	int posX = filteringHeader - scPosH;
+	int posY = headerHeight;
+	bool startBlock = false;
+	int startDrawPosYFromPlus = 0;
+	size_t startI = 0;
+	int visibleStart = FindItemsRow(scPosV, startI);
+	if (visibleStart < 0)
+		visibleStart = 0;
+	size_t visibleI = 0;
 
 	if (headerHeight > 4){
+		tdc.SetPen(wxPen(border));
 		tdc.SetTextForeground(enabled ? Options.GetColour(StaticListTextHeadline) : inactivetxt);
 		tdc.SetBrush(Options.GetColour(StaticListBackgroundHeadline));
 		tdc.DrawRectangle(0, 0, w, headerHeight - 2);
@@ -428,11 +430,101 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 		}
 		//tdc.DrawLine(0, headerHeight-2, w, headerHeight-2);
 	}
+
+	posX = filteringHeader - scPosH;
+	if (isFiltered){
+		unsigned char hasHiddenBlock = CheckIfHasHiddenBlock(scPosV-1);
+		if (hasHiddenBlock){
+			fdc.SetBrush(*wxTRANSPARENT_BRUSH);
+			fdc.SetPen(txt);
+			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
+			tdc.SetPen(txt);
+			int halfLineHeight = (lineHeight / 2);
+			int newPosY = posY + 1;
+			int startDrawPosY = newPosY + ((lineHeight - 10) / 2) - halfLineHeight;
+			fdc.DrawRectangle(2, startDrawPosY, 9, 9);
+			fdc.DrawLine(4, newPosY - 1, 9, newPosY - 1);
+			if (hasHiddenBlock == 1){
+				fdc.DrawLine(6, startDrawPosY + 2, 6, startDrawPosY + 7);
+			}
+			fdc.DrawLine(10, newPosY - 1, 13, newPosY - 1);
+			tdc.DrawLine(0, newPosY - 1, w + scPosH, newPosY - 1);
+		}
+	}
+
+	for (size_t i = visibleStart; visibleI < maxsize && i < itemList->size(); i++){
+		if (!(*itemList)[i]->isVisible)
+			continue;
+		
+		auto row = (*itemList)[i]->row;
+		
+		for (size_t j = 0; j < widths.size(); j++){
+			int rowsize = row.size();
+			if (j >= rowsize){
+				continue;
+			}
+			//drawing
+			if (visibleI + scPosV == sel){
+				tdc.SetPen(wxPen(highlight));
+				tdc.SetBrush(wxBrush(highlight));
+				tdc.DrawRectangle(posX - 5, posY, widths[j]+2, lineHeight);
+			}
+			row[j]->OnPaint(&tdc, posX, posY, widths[j], lineHeight, this);
+			posX += widths[j];
+
+		}
+
+		if (isFiltered){
+			unsigned char hasHiddenBlock = CheckIfHasHiddenBlock(visibleI + scPosV);
+			if (hasHiddenBlock){
+				fdc.SetBrush(*wxTRANSPARENT_BRUSH);
+				fdc.SetPen(txt);
+				tdc.SetBrush(*wxTRANSPARENT_BRUSH);
+				tdc.SetPen(txt);
+				int halfLineHeight = (lineHeight / 2);
+				int newPosY = posY + lineHeight + 1;
+				int startDrawPosY = newPosY + ((lineHeight - 10) / 2) - halfLineHeight;
+				fdc.DrawRectangle(2, startDrawPosY, 9, 9);
+				fdc.DrawLine(4, newPosY - 1, 9, newPosY - 1);
+				if (hasHiddenBlock == 1){
+					fdc.DrawLine(6, startDrawPosY + 2, 6, startDrawPosY + 7);
+				}
+				fdc.DrawLine(10, newPosY - 1, 13, newPosY - 1);
+				tdc.DrawLine(0, newPosY - 1, w + scPosH, newPosY - 1);
+			}
+			if (!startBlock && (*itemList)[i]->isVisible == VISIBLE_BLOCK){
+				startDrawPosYFromPlus = posY + 4; startBlock = true;
+			}
+			bool isLastLine = (visibleI + scPosV >= maxsize - 1);
+			bool notVisibleBlock = (*itemList)[i]->isVisible != VISIBLE_BLOCK;
+			if (startBlock && (notVisibleBlock || isLastLine)){
+				tdc.SetBrush(*wxTRANSPARENT_BRUSH);
+				tdc.SetPen(txt);
+				fdc.SetBrush(*wxTRANSPARENT_BRUSH);
+				fdc.SetPen(txt);
+				int halfLine = posY - 1;
+				if (isLastLine && !notVisibleBlock){ halfLine = posY + lineHeight; }
+				fdc.DrawLine(6, startDrawPosYFromPlus, 6, halfLine);
+				fdc.DrawLine(6, halfLine, 13, halfLine);
+				tdc.DrawLine(0, halfLine, w + scPosH, halfLine);
+				startBlock = false;
+			}
+		}
+		posY += lineHeight;
+		posX = filteringHeader - scPosH;
+		visibleI++;
+	}
+	
+	tdc.SetPen(wxPen(border));
 	tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 	tdc.DrawRectangle(0, 0, w, h);
 
 	wxPaintDC dc(this);
-	dc.Blit(0, 0, w, h, &tdc, 0, 0);
+	if (isFiltered){
+		dc.Blit(0, 0, 13, h, &fdc, 0, 0);
+	}
+
+	dc.Blit((isFiltered) ? 13 : 0, 0, w, h, &tdc, (isFiltered) ? 1 : 0, 0);
 }
 
 void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
@@ -450,15 +542,34 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
 		scPosV -= step;
 		size_t maxVisible = ((h - headerHeight) / lineHeight) + 1;
+		size_t visibleSize = GetVisibleSize();
 		if (scPosV<0){ scPosV = 0; }
-		else if ((size_t)scPosV > itemList->size() + 1 - maxVisible){ scPosV = itemList->size() + 1 - maxVisible; }
+		else if ((size_t)scPosV > visibleSize + 1 - maxVisible){ scPosV = visibleSize + 1 - maxVisible; }
 		Refresh(false);
 		return;
 	}
 	wxPoint cursor = evt.GetPosition();
+	if (isFiltered && cursor.x < 18 && cursor.y > headerHeight - 7){
+		if (evt.LeftDown()){
+			int elemYID = ((cursor.y - headerHeight - (lineHeight / 2)) / lineHeight) + scPosV;
+			if (cursor.y < headerHeight + 7)
+				elemYID = scPosV - 1;
 
-	int elemY = ((cursor.y - headerHeight) / lineHeight) + scPosV;
-	if (elemY < 0 || cursor.y <= headerHeight){
+			int mode = CheckIfHasHiddenBlock(elemYID);
+			if (mode){
+				size_t startI = 0;
+				int elemY = FindItemsRow(elemYID, startI);
+				ShowOrHideBlock(elemY);
+				return;
+			}
+		}
+		return;
+	}
+
+	int elemYID = ((cursor.y - headerHeight) / lineHeight) + scPosV;
+	size_t startI = 0;
+	int elemY = FindItemsRow(elemYID, startI);
+	if ((elemY < 0 && startI == 0) || cursor.y <= headerHeight){
 		//if header < 5 wtedy nic nie robimy
 		if (headerHeight > 5){
 			if (HasToolTips())
@@ -475,7 +586,7 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 				Refresh(false);
 				return;
 			}
-			int maxwidth = 5 - scPosH;
+			int maxwidth = (isFiltered) ? 13 - scPosH : 1 - scPosH;
 			//bool isonpos= false;
 			for (size_t i = 0; i < widths.size(); i++){
 				maxwidth += widths[i];
@@ -496,7 +607,7 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 	}
 	if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 	Item *copy = NULL;
-	if ((size_t)elemY >= itemList->size()){
+	if (elemY < 0){
 		if (HasToolTips())
 			UnsetToolTip();
 		//tu ju¿ nic nie zrobimy, jesteœmy poza elemetami na samym dole
@@ -508,7 +619,7 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 		return;
 	}
 	int elemX = -1;
-	int startX = 5 - scPosH;
+	int startX = (isFiltered) ? 17 - scPosH : 5 - scPosH;
 	for (size_t i = 0; i < widths.size(); i++){
 		if (cursor.x > startX && cursor.x <= startX + widths[i] && i < (*itemList)[elemY]->row.size()){
 			elemX = i;
@@ -542,12 +653,8 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 	}
 
 	if (evt.LeftDown()){
-
-		sel = elemY;
-
+		sel = elemYID;
 		Refresh(false);
-	}
-	if (evt.LeftDown()){
 		wxCommandEvent evt2(LIST_ITEM_LEFT_CLICK, GetId());
 		evt2.SetInt(elemY);
 		AddPendingEvent(evt2);
@@ -606,19 +713,45 @@ void KaiListCtrl::SetWidth(size_t j)
 	}
 	widths[j] = maxwidth + 28;
 }
+
+//collumn must be set
+void KaiListCtrl::FilterList(int column, int mode)
+{
+	if (column < 0)
+		return;
+
+	scPosV = 0;
+	sel = 0;
+	isFiltered = false;
+
+	for (size_t i = 0; i < itemList->size(); i++){
+		if ((*itemList)[i]->row.size() <= (size_t)column){ continue; }
+		else{
+			int visibility = (*itemList)[i]->row[column]->OnVisibilityChange(mode);
+			if (!visibility){
+				isFiltered = true;
+			}
+			(*itemList)[i]->isVisible = visibility;
+		}
+	}
+	Refresh(false);
+}
 //when startI > 0 pass elemX decreased of elems before startI
 //startI increases automatically
 int KaiListCtrl::FindItemsRow(int elemX, size_t &startI /*= 0*/)
 {
+	if (elemX < 0)
+		return elemX;
+
 	int visibleElemX = 0;
 	for (size_t i = startI; i < itemList->size(); i++){
 		ItemRow * irow = (*itemList)[i];
 		if (irow->isVisible != NOT_VISIBLE){
-			visibleElemX++;
 			if (visibleElemX == elemX){
-				startI = i;
+				startI = i + 1;
 				return i;
 			}
+			visibleElemX++;
 		}
 	}
 	startI = itemList->size();
@@ -628,20 +761,18 @@ int KaiListCtrl::FindItemsRow(int elemX, size_t &startI /*= 0*/)
 int KaiListCtrl::CheckIfHasHiddenBlock(int elemX, size_t startI /*= 0*/)
 {
 	size_t newStartI = startI;
-	int lineMinusOne = FindItemsRow(elemX, newStartI);
 	// now we need only one lines as elemX
-	int lineActual = FindItemsRow(1, newStartI);
-	int linePlusOne = FindItemsRow(1, newStartI);
-	if (lineActual < 0)
-		return 0;
+	int lineActual = FindItemsRow(elemX, newStartI);
+	int linePlusOne = FindItemsRow(0, newStartI);
+	int linePlusOneSafe = (linePlusOne < 0) ? itemList->size() : linePlusOne;
 
-	if ((*itemList)[lineMinusOne]->isVisible == VISIBLE && (*itemList)[lineActual]->isVisible == NOT_VISIBLE)
+	if (lineActual + 1 < linePlusOneSafe)
 		return 1;
 
 	if (linePlusOne < 0)
 		return 0;
 
-	if ((*itemList)[lineActual]->isVisible != VISIBLE_BLOCK && (*itemList)[linePlusOne]->isVisible == VISIBLE)
+	if ((lineActual < 0 || (*itemList)[lineActual]->isVisible != VISIBLE_BLOCK) && (*itemList)[linePlusOne]->isVisible == VISIBLE_BLOCK)
 		return 2;
 
 	return 0;
@@ -649,15 +780,17 @@ int KaiListCtrl::CheckIfHasHiddenBlock(int elemX, size_t startI /*= 0*/)
 
 void KaiListCtrl::ShowOrHideBlock(int elemRealX)
 {
-	for (size_t i = elemRealX; i < itemList->size(); i++){
+	for (size_t i = elemRealX+1; i < itemList->size(); i++){
 		ItemRow * irow = (*itemList)[i];
 		if (irow->isVisible == NOT_VISIBLE)
-			irow->isVisible = VISIBLE;
-		else if (VISIBLE_BLOCK)
+			irow->isVisible = VISIBLE_BLOCK;
+		else if (irow->isVisible == VISIBLE_BLOCK)
 			irow->isVisible = NOT_VISIBLE;
 		else
 			break;
 	}
+
+	Refresh(false);
 }
 
 size_t KaiListCtrl::GetVisibleSize()
@@ -799,6 +932,12 @@ void KaiListCtrl::SetSelection(int selection, bool center)
 		scPosV = MID(0, elemY, itemList->size() - visibleElems + 2);
 	}
 	Refresh(false);
+}
+
+int KaiListCtrl::GetSelection()
+{
+	size_t startI = 0;
+	return FindItemsRow(sel, startI);
 }
 
 BEGIN_EVENT_TABLE(KaiListCtrl, KaiScrolledWindow)
