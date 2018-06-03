@@ -60,7 +60,9 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 	evt.GetPosition(&x,&y);
 
 	if(evt.ButtonUp()){
-		if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}
+		if(tab->Video->HasCapture()){
+			tab->Video->ReleaseMouse();
+		}
 		if(numElem>=0){ChangeInLines(true);}
 		if(!hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
 		numElem=-1;
@@ -75,7 +77,9 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 				beforeMove = lastmove = elems[i].elem;
 				diffs.x=elems[i].elem.x-x;
 				diffs.y=elems[i].elem.y-y;
-				tab->Video->CaptureMouse();
+				if (!tab->Video->HasCapture()){
+					tab->Video->CaptureMouse();
+				}
 			}
 		}
 		firstmove = D3DXVECTOR2(x,y);
@@ -88,7 +92,9 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 			beforeMove = lastmove = elems[i].elem;
 			diffs.x = elems[i].elem.x - x;
 			diffs.y = elems[i].elem.y - y;
-			tab->Video->CaptureMouse();
+			if (!tab->Video->HasCapture()){
+				tab->Video->CaptureMouse();
+			}
 			break;
 		}
 		firstmove = D3DXVECTOR2(x, y);

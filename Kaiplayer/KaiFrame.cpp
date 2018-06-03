@@ -29,7 +29,7 @@ int ftopBorder = 26;
 
 
 KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title/*=""*/, const wxPoint& pos/*=wxDefaultPosition*/, const wxSize& size/*=wxDefaultSize*/, long _style/*=0*/, const wxString &name /*= ""*/)
-:wxTopLevelWindow(parent, id, title, wxDefaultPosition, wxDefaultSize,/*wxBORDER_NONE|*/wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxCLOSE_BOX|wxRESIZE_BORDER|wxCAPTION, name)
+:wxTopLevelWindow(parent, id, title, wxDefaultPosition, wxDefaultSize,/*wxBORDER_NONE|*/wxMAXIMIZE_BOX|/*wxMINIMIZE_BOX|wxCLOSE_BOX|*/wxRESIZE_BORDER|wxCAPTION, name)
 	,style(_style)
 	,enterClose(false)
 	,pushedClose(false)
@@ -256,24 +256,6 @@ void KaiFrame::OnMouseEvent(wxMouseEvent &evt)
 }
 
 
-//void KaiFrame::OnActivate(wxActivateEvent &evt)
-//{
-//	isActive = evt.GetActive();
-//	int w, h;
-//	GetSize(&w,&h);
-//	wxRect rc(0,0,w,ftopBorder);
-//	Refresh(false, &rc);
-//	if(!IsMaximized()){
-//		wxRect rc1(0,ftopBorder,fborder,h-fborder-ftopBorder);
-//		Refresh(false, &rc1);
-//		wxRect rc2(w-fborder,ftopBorder,fborder,h-fborder-ftopBorder);
-//		Refresh(false, &rc2);
-//		wxRect rc3(0,h-fborder,w,fborder);
-//		Refresh(false, &rc3);
-//	}
-//	Update();
-//}
-
 WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
 	 if (uMsg == WM_SIZE)
@@ -299,10 +281,6 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 	 if (uMsg == WM_ERASEBKGND){
 		 return 0;
 	 }
-	 //if (uMsg == WM_SYNCPAINT){
-		 //Refresh(false);
-		 //return 0;
-	 //}
 	 
 	 if (uMsg == WM_NCACTIVATE /*28*/){
 		isActive = wParam == TRUE;

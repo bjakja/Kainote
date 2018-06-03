@@ -188,14 +188,12 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 		if(icons[i]->icon->IsOk()){
 			bool toggled = i==Toggled || i==clipToggled || (i >= moveToolsStart && MoveToggled[i-moveToolsStart]);
 			if(i==sel){
-				tdc.SetBrush(wxBrush((toggled)? Options.GetColour(TogglebuttonBackgroundToggled) : Options.GetColour(MenuBackgroundSelection) ));
-				tdc.SetPen(wxPen(Options.GetColour(MenuBorderSelection)));
+				tdc.SetBrush(wxBrush(Options.GetColour((toggled || clicked) ? ButtonBackgroundPushed : ButtonBackgroundHover)));
+				tdc.SetPen(wxPen(Options.GetColour((toggled || clicked) ? ButtonBorderPushed : ButtonBorderHover)));
 				tdc.DrawRoundedRectangle(posX, 1, h-2, h-2, 2.0);
 			}else if(toggled){
-				tdc.SetBrush(wxBrush((clicked && i==sel)? Options.GetColour(ButtonBackgroundPushed) : 
-					Options.GetColour(TogglebuttonBackgroundToggled)));
-				tdc.SetPen(wxPen((clicked && i==sel)? Options.GetColour(ButtonBorderPushed) : 
-					Options.GetColour(TogglebuttonBorderToggled)));
+				tdc.SetBrush(wxBrush(Options.GetColour(ButtonBackgroundPushed)));
+				tdc.SetPen(wxPen(Options.GetColour(ButtonBorderPushed)));
 				tdc.DrawRoundedRectangle(posX, 1, h-2, h-2, 2.0);
 			}
 			wxBitmap &icon = *(icons[i]->icon);

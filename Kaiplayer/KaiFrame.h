@@ -16,7 +16,6 @@
 #pragma once
 
 #include <wx/toplevel.h>
-//#include <wx/frame.h>
 #include <wx/sizer.h>
 
 
@@ -36,7 +35,6 @@ private:
 	void OnPaint(wxPaintEvent &evt);
 	void OnSize(wxSizeEvent &evt);
 	void OnMouseEvent(wxMouseEvent &evt);
-	//void OnActivate(wxActivateEvent &evt);
 	WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
 	void OnEraseBackground(wxEraseEvent()){}
 	
@@ -49,7 +47,7 @@ private:
 	bool enterMinimize;
 	bool pushedMinimize;
 	bool isActive;
-	//wxMutex mutex;
+
 	wxDECLARE_ABSTRACT_CLASS(KaiFrame);
 };
 

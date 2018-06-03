@@ -1164,7 +1164,7 @@ LRESULT CALLBACK MenuBar::OnKey( int code, WPARAM wParam, LPARAM lParam ){
 		}
 		Menubar->altDown=false;
 	}else if(showMnemonics){
-		if( (wParam >= 0x41 && wParam <= 0x5A) && !(lParam & 2147483648)){//lparam mówi o keyup
+		if((wParam >= 0x41 && wParam <= 0x5A) && !(lParam & 2147483648)){//lparam mówi o keyup
 			auto mn = (Menubar->md)? Menubar->md->mnemonics : Menubar->mnemonics;
 			auto foundmnemonics = mn.find(wParam);
 			
@@ -1194,7 +1194,7 @@ LRESULT CALLBACK MenuBar::OnKey( int code, WPARAM wParam, LPARAM lParam ){
 			}
 			
 		}
-		if(wParam != VK_MENU){Menubar -> altDown=false;}
+		if(wParam != VK_MENU){Menubar->altDown=false;}
 	}
 	
 	if((wParam == VK_DOWN || wParam == VK_UP || wParam == VK_LEFT || wParam == VK_RIGHT) && !(lParam & 2147483648)){
