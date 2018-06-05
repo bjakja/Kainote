@@ -114,7 +114,7 @@ SubsGrid::~SubsGrid()
 {
 }
 
-void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
+void SubsGrid::ContextMenu(const wxPoint &pos)
 {
 	VideoCtrl *VB = ((TabPanel*)GetParent())->Video;
 	VB->blockpaint = true;
@@ -205,10 +205,6 @@ void SubsGrid::ContextMenu(const wxPoint &pos, bool dummy)
 	menu->SetAccMenu(FontCollectorID, _("Kolekcjoner czcionek"))->Enable(subsFormat < SRT);
 	menu->SetAccMenu(SubsFromMKV, _("Wczytaj napisy z pliku MKV"))->Enable(Kai->GetTab()->VideoName.EndsWith(".mkv"));
 
-	if (dummy){
-		goto done;
-	}
-
 	int Modifiers = 0;
 	int id = menu->GetPopupMenuSelection(pos, this, &Modifiers);
 
@@ -225,6 +221,36 @@ done:
 	VB->blockpaint = false;
 }
 
+
+void SubsGrid::ContextMenuTree(const wxPoint &pos)
+{
+	int sels = selections.GetCount();
+	Menu *menu = new Menu();
+	int isen = sels > 0;
+	menu->SetAccMenu(6789, _("Dodaj linie"))->Enable(isen);
+	menu->SetAccMenu(6790, _("Kopiuj drzewko"));
+	menu->SetAccMenu(6791, _("Zmień opis"));
+	menu->SetAccMenu(6792, _("Usuń"));
+	int id = menu->GetPopupMenuSelection(pos, this);
+	switch (id)
+	{
+	case 6789:
+
+		break;
+	case 6790:
+
+		break;
+	case 6791:
+
+		break;
+	case 6792:
+
+		break;
+
+	default:
+		break;
+	}
+}
 
 void SubsGrid::OnInsertBefore()
 {
@@ -420,8 +446,8 @@ void SubsGrid::OnPaste(int id)
 
 		}
 		newdial = new Dialogue(token);
-		newdial->State = 1;
 		if (!newdial){ continue; }
+		newdial->ChangeDialogueState(1);
 		//TODO przetestować czy wstawia poprawnie w text tłumaczenia
 		if (collumns & TXTTL){
 			newdial->TextTl = newdial->Text;
@@ -1298,6 +1324,26 @@ void SubsGrid::Filter(int id)
 	if (id != FilterByNothing){ isFiltered = true; }
 	else{ Options.SetInt(GridFilterBy, 0); }
 	filter.Filter();
+}
+
+void SubsGrid::TreeAddLines()
+{
+
+}
+
+void SubsGrid::TreeCopy()
+{
+
+}
+
+void SubsGrid::TreeChangeName()
+{
+
+}
+
+void SubsGrid::TreeRemove()
+{
+
 }
 
 void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)

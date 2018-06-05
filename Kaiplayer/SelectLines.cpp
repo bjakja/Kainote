@@ -281,10 +281,12 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 
 		if (tab->Grid->file->IsSelectedByKey(i) && act != 0){
 			if(act<3){Dial->GetRaw(&whatcopy, tab->Grid->hasTLMode && Dial->TextTl!="");}
-			else if(act<5){Dial->State= 1 + (Dial->State & 4); mdial.push_back(Dial);}
+			else if(act<5){
+				Dial->ChangeDialogueState(1);
+				mdial.push_back(Dial);}
 			else if(act<6){
 				Dialogue *dialc = tab->Grid->file->CopyDialogueByKey(i); 
-				dialc->State=1 + (dialc->State & 4);
+				dialc->ChangeDialogueState(1);
 				dialc->IsComment=true;
 			}
 		}	

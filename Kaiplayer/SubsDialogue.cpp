@@ -77,7 +77,7 @@ void Dialogue::ClearParse()
 	if(parseData){delete parseData; parseData=NULL;}
 }
 
-Dialogue::Dialogue(const wxString &ldial,const wxString &txttl)
+Dialogue::Dialogue(const wxString &ldial, const wxString &txttl)
 {
 	parseData = NULL;
 	TextTl=txttl;
@@ -87,6 +87,29 @@ Dialogue::Dialogue(const wxString &ldial,const wxString &txttl)
 static wxRegEx expresion1(_T("^\\{([0-9-]+)\\}{([0-9-]*)\\}([^\r\n]*)"), wxRE_ADVANCED);
 static wxRegEx expresion2(_T("^\\[([0-9-]+)\\]\\[([0-9-]*)\\]([^\r\n]*)"), wxRE_ADVANCED);
 static wxRegEx expresion(_T("^([0-9]+)[:;]([0-9]+)[:;]([0-9]+)[:;, ]([^\r\n]*)"), wxRE_ADVANCED);
+
+char Dialogue::GetState()
+{
+	return State;
+}
+
+void Dialogue::ChangeState(char state)
+{
+	State ^= state;
+}
+
+void Dialogue::AddState(char state)
+{
+	State |= state;
+}
+
+void Dialogue::ChangeDialogueState(char state)
+{
+	//first thing reset state 1 and 2
+	State >>= 2;
+	State <<= 2;
+	State |= state;
+}
 
 void Dialogue::SetRaw(const wxString &ldial)
 {
@@ -106,6 +129,21 @@ void Dialogue::SetRaw(const wxString &ldial)
 			End.SetRaw(assdal.GetNextToken(),Format);
 			Style=assdal.GetNextToken();
 			Actor=assdal.GetNextToken();
+			if (Actor->StartsWith("[")){
+				if (Actor->Replace(L"[bookmark]", L"")){
+					State |= 8;
+				}
+				else if (Actor->Replace(L"[tree_closed]", L"")){
+					treeState = TREE_CLOSED;
+					isVisible = NOT_VISIBLE;
+				}
+				else if (Actor->Replace(L"[tree_opened]", L"")){
+					treeState = TREE_OPENED;
+				}
+				else if (Actor->Replace(L"[tree_descritpion]", L"")){
+					treeState = TREE_DESCRIPTION;
+				}
+			}
 			MarginL=wxAtoi(assdal.GetNextToken());
 			MarginR=wxAtoi(assdal.GetNextToken());
 			MarginV=wxAtoi(assdal.GetNextToken());
@@ -197,13 +235,23 @@ void Dialogue::GetRaw(wxString *txt, bool tl, const wxString &style)
 		bool styleTl = style!="";
 		const wxString &Styletl=(styleTl)?style : Style;
 		const wxString &EffectTl = (State & 4 && styleTl)? wxString("\fD") : Effect;
-		line<<Layer<<_T(",")<<Start.raw(Format)<<_T(",")
-			<<End.raw(Format)<<_T(",")<<Styletl<<_T(",")<<Actor<<_T(",")
-			<<MarginL<<_T(",")
-			<<MarginR<<_T(",")
-			<<MarginV<<_T(",")
-			<<EffectTl<<_T(",");
-			line += (tl)? TextTl : Text;
+		// state 8 - bookmarks
+		wxString ActorWithStates = (State & 8) ? L"[bookmark]" + Actor : Actor;
+		if (treeState){
+			ActorWithStates.Prepend((treeState == TREE_DESCRIPTION) ? L"[tree_descritpion]" :
+				(treeState == TREE_OPENED) ? L"[tree_opened]" :
+				(treeState == TREE_CLOSED) ? L"[tree_closed]" : L"");
+		}
+		line<<Layer<<_T(",")
+		<<Start.raw(Format)<<_T(",")
+		<<End.raw(Format)<<_T(",")
+		<<Styletl<<_T(",")
+		<< ActorWithStates << _T(",")
+		<<MarginL<<_T(",")
+		<<MarginR<<_T(",")
+		<<MarginV<<_T(",")
+		<<EffectTl<<_T(",");
+		line += (tl)? TextTl : Text;
 		//line+=wxString::Format("%i,%s,%s,%s,%s,%i,%i,%i,%s,%s",(int)Layer,Start.raw().data(),End.raw().data(),Styletl.data(),Actor.data(),(int)MarginL,(int)MarginR,(int)MarginV,Effect.data(),txttl.data());
 
 	}else if(Format==MDVD){
@@ -406,7 +454,10 @@ Dialogue *Dialogue::Copy(bool keepstate, bool copyIsVisible)
 	dial->MarginV=MarginV;
 	dial->NonDialogue=NonDialogue;
 	dial->Start=Start;
-	dial->State= (keepstate) ? State : 1 + (State & 4);
+	dial->State=State;
+	if (!keepstate)
+		dial->ChangeDialogueState(1);
+
 	dial->Style=Style;
 	dial->Text=Text;
 	dial->TextTl=TextTl;

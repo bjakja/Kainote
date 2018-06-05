@@ -64,7 +64,8 @@ protected:
 	wxFont font;
 	SubsGridPreview *thisPreview = NULL;
 private:
-	virtual void ContextMenu(const wxPoint &pos, bool dummy = false){};
+	virtual void ContextMenu(const wxPoint &pos){};
+	virtual void ContextMenuTree(const wxPoint &pos){};
 	//DECLARE_EVENT_TABLE();
 };
 

@@ -222,7 +222,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 			isComment = Dial->IsComment;
 			//gdy zrobisz inaczej niepewne to użyj ^ 4 by wywalić 4 ze state.
-			states = Dial->State;
+			states = Dial->GetState();
 			if (subsFormat<SRT){
 				strings.push_back(wxString::Format("%i", Dial->Layer));
 			}
@@ -355,7 +355,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		wxColour label = (states == 0) ? labelBkColN : (states == 2) ? labelBkCol :
 			(states == 1) ? labelBkColM : labelBkColD;
 		for (int j = 0; j<ilcol; j++){
-			if (showOriginal&&j == ilcol - 2){
+			if (showOriginal && j == ilcol - 2){
 				int podz = (w + scHor - posX) / 2;
 				GridWidth[j] = podz;
 				GridWidth[j + 1] = podz;
@@ -437,10 +437,13 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			tdc.SetTextForeground((isHeadline) ? headerText : (collis) ? collcol : textcol);
 
 			int treeState = (Dial)? Dial->treeState : 0;
-			int posXaddition = 3;
-			if (((!showOriginal && j == ilcol - 1) || (showOriginal && j == ilcol - 2)) && treeState >= TREE_DESCRIPTION_CLOSED){
-				posXaddition = 23;
-				if (treeState == TREE_DESCRIPTION_CLOSED)
+			if (j > 0 && treeState == TREE_DESCRIPTION){
+				tdc.SetBrush(comm);
+				tdc.SetPen(*wxTRANSPARENT_PEN);
+				tdc.DrawRectangle(posX + 1, posY, w - 1, GridHeight);
+				// GetDialogueKey was made for loops no checks
+				Dialogue *nextDial = (i < file->GetAllCount() - 1)? file->GetDialogueByKey(i + 1) : NULL;
+				if (nextDial && nextDial->treeState == TREE_CLOSED)
 					tdc.DrawBitmap(wxBITMAP_PNG("arrow_list"),posX + 6, posY + 5);
 				else{
 					wxBitmap bmp(wxBITMAP_PNG("arrow_list"));
@@ -448,8 +451,10 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					img = img.Rotate180();
 					tdc.DrawBitmap(img, posX + 6, posY + 5);
 				}
+				tdc.DrawText(Dial->Text, posX + 23, posY + 1);
+				break;
 			}
-			cur = wxRect(posX + posXaddition, posY, GridWidth[j] - 6, GridHeight);
+			cur = wxRect(posX + 3, posY, GridWidth[j] - 6, GridHeight);
 			tdc.SetClippingRegion(cur);
 			tdc.DrawLabel(strings[j], cur, isCenter ? wxALIGN_CENTER : (wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT));
 			tdc.DestroyClippingRegion();

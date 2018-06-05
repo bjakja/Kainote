@@ -234,7 +234,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 
 			isComment = Dial->IsComment;
 			//gdy zrobisz inaczej niepewne to u¿yj ^ 4 by wywaliæ 4 ze state.
-			states = Dial->State;
+			states = Dial->GetState();
 			if (previewGrid->subsFormat < SRT){
 				strings.push_back(wxString::Format("%i", Dial->Layer));
 			}

@@ -378,7 +378,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	SetTextWithTags();
 
 	if(DoubtfulTL->IsShown()){
-		DoubtfulTL->SetValue((line->State & 4) > 0);
+		DoubtfulTL->SetValue(line->IsDoubtful());
 	}
 
 	if(setaudio && ABox && ABox->IsShown()){ABox->audioDisplay->SetDialogue(line,ebrow);}
@@ -1721,20 +1721,12 @@ bool EditBox::IsCursorOnStart()
 void EditBox::OnDoubtfulTl(wxCommandEvent& event)
 {
 	if(!grid->hasTLMode){wxBell();return;}
-	if(line->State & 4){
-		line->State ^= 4;
-	}else{
-		line->State |= 4;
-	}
+	line->ChangeState(4);
 	wxArrayInt sels; 
 	grid->file->GetSelectionsAsKeys(sels);
 	for(size_t i = 0; i<sels.size(); i++){
 		Dialogue *dial = grid->file->CopyDialogueByKey(sels[i]);
-		if(dial->State & 4){
-			dial->State ^= 4;
-		}else{
-			dial->State |= 4;
-		}
+		dial->ChangeState(4);
 	}
 	if(event.GetId() == SetDoubtful){
 		grid->NextLine();
@@ -1749,7 +1741,7 @@ void EditBox::FindNextDoubtfulTl(wxCommandEvent& event)
 SeekDoubtful:
 	for(int i = CurrentDoubtful; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDialogue(i);
-		if((dial->State & 4) > 0){
+		if(dial->IsDoubtful()){
 			SetLine(i);
 			grid->SelectRow(i);
 			grid->ScrollTo(i, true);

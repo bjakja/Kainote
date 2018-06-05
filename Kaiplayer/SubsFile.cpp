@@ -609,22 +609,27 @@ bool SubsFile::CheckIfIsTree(int i){
 		return 0;
 
 	Dialogue *dial = subs->dials[ikey];
-	return dial->treeState >= TREE_DESCRIPTION_CLOSED;
+	return dial->treeState == TREE_DESCRIPTION;
 }
 
 int SubsFile::OpenCloseTree(int i){
 	int ikey = GetElementById(i);
-	Dialogue *dial = subs->dials[ikey];
-	int visibility = (dial->treeState == TREE_DESCRIPTION_OPENED) ? NOT_VISIBLE : VISIBLE;
-	dial->treeState = (visibility) ? TREE_DESCRIPTION_OPENED : TREE_DESCRIPTION_CLOSED;
 	int endOfTree = 0;
+	int visibility = NOT_VISIBLE;
 	for (int k = ikey+1; k < subs->dials.size(); k++){
 		Dialogue *dial = subs->dials[k];
-		if (dial->treeState != TREE){
+		if (dial->treeState < TREE_CLOSED){
 			endOfTree = k - 1;
 			break;
 		}
-		dial->isVisible = visibility;
+		if(dial->treeState == TREE_CLOSED){
+			dial->isVisible = visibility = VISIBLE;
+			dial->treeState = TREE_OPENED;
+		}
+		else{
+			dial->isVisible = visibility;
+			dial->treeState = TREE_CLOSED;
+		}
 	}
 	if (ikey + 1 < endOfTree){
 		ReloadVisibleDialogues(ikey + 1, endOfTree);

@@ -348,7 +348,7 @@ namespace Auto{
 				e->adial->TextTl = Text;
 			else
 				e->adial->Text = Text;
-			e->adial->State=1;
+			e->adial->ChangeDialogueState(1);
 		}
 
 		else if(e->lclass=="style"){

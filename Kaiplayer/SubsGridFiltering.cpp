@@ -156,8 +156,8 @@ void SubsGridFiltering::MakeTree()
 			if (startSelection){
 				Dialogue *treeStart = dial->Copy();
 				treeStart->IsComment = true;
-				treeStart->isVisible = TREE_DESCRIPTION;
-				treeStart->treeState = TREE_DESCRIPTION_CLOSED;
+				treeStart->isVisible = VISIBLE;
+				treeStart->treeState = TREE_DESCRIPTION;
 				treeStart->Text = "";
 				treeStart->TextTl = "";
 				grid->InsertRows(i + treeDiff, 1, treeStart, true, false, true);
@@ -165,7 +165,7 @@ void SubsGridFiltering::MakeTree()
 				startSelection = false;
 			}
 			dial->isVisible = NOT_VISIBLE;
-			dial->treeState = TREE;
+			dial->treeState = TREE_CLOSED;
 		}else if (!startSelection)
 			startSelection = true;
 
@@ -226,7 +226,7 @@ inline bool SubsGridFiltering::CheckHiding(Dialogue *dial, int i)
 	if (filterBy & FILTER_BY_DIALOGUES && !dial->IsComment){
 		result ^= FILTER_BY_DIALOGUES;
 	}
-	if (filterBy & FILTER_BY_DOUBTFUL && (dial->State & 4)){
+	if (filterBy & FILTER_BY_DOUBTFUL && dial->IsDoubtful()){
 		result ^= FILTER_BY_DOUBTFUL;
 		if (filterBy &FILTER_BY_UNTRANSLATED) 
 			result ^= FILTER_BY_UNTRANSLATED;

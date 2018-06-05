@@ -237,19 +237,28 @@ public:
 	std::vector<TagData*> tags;
 };
 
+//states 0-2 editstate, 4 doubtful, 8 bookmark
 class Dialogue
 {
-
+private:
+	char State;
 public:
 	StoreTextHelper Style, Actor, Effect, Text, TextTl;
 	STime Start, End;
 	int Layer;
 	short MarginL, MarginR, MarginV;
-	char State, Format, treeState = 0;
+	char Format, treeState = 0;
 	bool NonDialogue, IsComment;
 	StoreHelper isVisible;
 	ParseData *parseData;
 
+	char GetState();
+	//it works like XOR
+	void ChangeState(char state);
+	void AddState(char state);
+	//Made for main dialogue state not change it with ChangeState
+	void ChangeDialogueState(char state);
+	bool IsDoubtful(){ return (State & 4) > 0; };
 	void SetRaw(const wxString &ldial);
 	void GetRaw(wxString *txt,bool tl=false,const wxString &style="");
 	wxString GetCols(int cols, bool tl=false,const wxString &style="");
@@ -268,7 +277,6 @@ enum{
 	VISIBLE,
 	VISIBLE_BLOCK,
 	TREE_DESCRIPTION,
-	TREE,
-	TREE_DESCRIPTION_CLOSED,
-	TREE_DESCRIPTION_OPENED
+	TREE_CLOSED,
+	TREE_OPENED
 };

@@ -763,7 +763,7 @@ void VideoCtrl::OnVolume(wxScrollEvent& event)
 	SetVolume(-(pos*pos));
 }
 
-void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
+void VideoCtrl::ContextMenu(const wxPoint &pos)
 {
 	ismenu=true;
 	Menu* menu=new Menu();
@@ -820,11 +820,6 @@ void VideoCtrl::ContextMenu(const wxPoint &pos, bool dummy)
 	menu->AppendSeparator();
 
 	menu->SetAccMenu(DeleteVideo,_("Usuń plik wideo"))->Enable(GetState()!=None);
-	if(dummy){
-		delete menu;
-		ismenu=false;
-		return;
-	}
 
 	Menu* menu3=NULL;
 	int numfilters=0;

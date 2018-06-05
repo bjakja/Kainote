@@ -131,33 +131,8 @@ void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, int wl
 		for (size_t i = 0; i < sels.size(); i++){
 			ChangeCell(cells, sels[i], line1);
 		}
-		//if (selline){ wline = sels[sels.size() - 1]; }
 	}
-	/*if (wline >= GetCount() - 1 && selline){
-		Dialogue *tmp = new Dialogue();
-		tmp->State = 1;
-		int eend = line1->End.mstime;
-		tmp->Start.NewTime(eend);
-		tmp->End.NewTime(eend + 5000);
-		tmp->Style = line1->Style;
-		if (subsFormat != ASS){ tmp->Convert(subsFormat); }
-		AddLine(tmp);
-	}
-	AdjustWidths(cells);
-
-	if (selline){
-		SaveSelections(true);
-		lastRow = wline + 1;
-		file->InsertSelection(lastRow);
-		int h, w;
-		GetClientSize(&w, &h);
-		scPos = MID(0, lastRow - ((h / (GridHeight + 1)) / 2), GetCount() - 1);
-
-	}
-	Refresh(false);
-	if (selline){
-		Edit->SetLine(lastRow, true, true, false, true);
-	}*/
+	
 	AdjustWidths(cells);
 	if (selline)
 		NextLine();
@@ -372,7 +347,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 
 			if (tlmodeOn){
 				bool hasTextTl = dial->TextTl != "";
-				if (!translated && (hasTextTl || dial->State & 4)){
+				if (!translated && (hasTextTl || dial->IsDoubtful())){
 					dial->GetRaw(&raw, false, txt);
 					dial->GetRaw(&raw, true);
 				}
@@ -400,7 +375,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 
 			if (tlmodeOn){
 				bool hasTextTl = dial->TextTl != "";
-				if (!translated && (hasTextTl || dial->State & 4)){
+				if (!translated && (hasTextTl || dial->IsDoubtful())){
 					dial->GetRaw(&raw, false, txt);
 					dial->GetRaw(&raw, true);
 				}
@@ -419,7 +394,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 			ow.PartFileWrite(raw);
 			raw.Empty();
 
-			if (dial->State & 1 && cstat){ dial->State++; }
+			if (cstat && dial->GetState() & 1){ dial->ChangeDialogueState(2); }
 
 		}
 	}
@@ -628,7 +603,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 			if (time != 0){
 				if (whichTimes != 2){ dialc->Start.Change(time); }
 				if (whichTimes != 1){ dialc->End.Change(time); }
-				dialc->State = 1 + (dialc->State & 4);
+				dialc->ChangeDialogueState(1);
 			}
 			else if (frame != 0){
 				if (whichTimes == 0){
@@ -644,7 +619,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 					dialc->End.NewTime(ZEROIT(vb->GetFrameTimeFromFrame(endFrame)));
 					//endDiff = dialc->End.mstime - endDiff;
 				}
-				dialc->State = 1 + (dialc->State & 4);
+				dialc->ChangeDialogueState(1);
 			}
 			if (changeTagTimes){
 				int newStartTrimed = 0, newEndTrimed = 0;
@@ -661,8 +636,8 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 					newend += dialc->Start.mstime;
 					dialc->End.NewTime(newend);
 				}
-				if (PostprocessorOptions & 1){ dialc->Start.Change(-li); dialc->State = 1 + (dialc->State & 4); }
-				if (PostprocessorOptions & 2){ dialc->End.Change(lo); dialc->State = 1 + (dialc->State & 4); }
+				if (PostprocessorOptions & 1){ dialc->Start.Change(-li); dialc->ChangeDialogueState(1); }
+				if (PostprocessorOptions & 2){ dialc->End.Change(lo); dialc->ChangeDialogueState(1); }
 				if (correctEndTimes > 0 || PostprocessorOptions > 19){
 					tmpmap[dialc] = i;
 
@@ -689,7 +664,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 			if (!(it != tmpmap.end())){ it = cur; hasend = true; }
 			if (correctEndTimes > 0 && dialc->End > it->first->Start && !hasend){
 				dialc->End = it->first->Start;
-				dialc->State = 1 + (dialc->State & 4);
+				dialc->ChangeDialogueState(1);
 			}
 			if (PostprocessorOptions & 4){
 				int cdiff = (te + ts);
@@ -697,14 +672,14 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 				if (newstarttime != -1){
 					dialc->Start.NewTime(newstarttime);
 					newstarttime = -1;
-					dialc->State = 1 + (dialc->State & 4);
+					dialc->ChangeDialogueState(1);
 				}
 				if (tdiff <= cdiff && tdiff > 0){
 					int wsp = ((float)tdiff / (float)cdiff)*te;
 					int newtime = ZEROIT(wsp);
 					dialc->End.Change(newtime);
 					newstarttime = dialc->End.mstime;
-					dialc->State = 1 + (dialc->State & 4);
+					dialc->ChangeDialogueState(1);
 
 				}
 
@@ -739,11 +714,11 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 				}
 				if (strtres != INT_MAX && strtres >= pors){
 					dialc->Start.NewTime(strtres);
-					dialc->State = 1 + (dialc->State & 4);
+					dialc->ChangeDialogueState(1);
 				}
 				if (endres != -1 && endres <= pore){
 					dialc->End.NewTime(endres);
-					dialc->State = 1 + (dialc->State & 4);
+					dialc->ChangeDialogueState(1);
 				}
 			}
 			dialc->ClearParse();
@@ -768,12 +743,12 @@ void SubsGridBase::SortIt(short what, bool all)
 	SaveSelections();
 	std::vector<Dialogue*> selected;
 	if (all){
-		for (int i = 0; i < GetCount(); i++){ file->GetDialogue(i)->State = 1 + (file->GetDialogue(i)->State & 4); }
+		for (int i = 0; i < GetCount(); i++){ file->GetDialogue(i)->ChangeDialogueState(1); }
 	}
 	else{
 		for (auto cur = file->subs->Selections.begin(); cur != file->subs->Selections.end(); cur++){
 			Dialogue *dial = file->subs->dials[*cur];
-			dial->State = 1 + (dial->State & 4);
+			dial->ChangeDialogueState(1);
 			selected.push_back(dial);
 		}
 	}
@@ -1362,9 +1337,9 @@ bool SubsGridBase::SetTlMode(bool mode)
 				dialc->Text = dialc->TextTl;
 				dialc->TextTl = "";
 			}
-			if (dial->State >= 4){
+			if (dial->IsDoubtful()){
 				if (!dialc){ dialc = CopyDialogueByKey(i); }
-				dialc->State -= 4;
+				dialc->ChangeState(4);
 			}
 		}
 

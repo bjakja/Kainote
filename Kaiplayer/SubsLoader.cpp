@@ -106,7 +106,7 @@ bool SubsLoader::LoadASS(const wxString &text)
 				dl->Style = tl.Style;
 				dl->TextTl = tl.Text;
 				if (dl->Effect == "\fD"){
-					dl->State |= 4;
+					dl->ChangeState(4);
 				}
 				dl->Effect = tl.Effect;
 				grid->AddLine(dl);
