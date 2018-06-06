@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-06-02 09:26+0200\n"
-"PO-Revision-Date: 2018-06-02 09:43+0200\n"
+"POT-Creation-Date: 2018-06-06 13:18+0200\n"
+"PO-Revision-Date: 2018-06-06 13:22+0200\n"
 "Last-Translator: Bakura, Areki, duplex, Kostek00, Sacredus\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -392,7 +392,7 @@ msgstr "Delete hotkey"
 #: KaiMessageBox.cpp:62 MappedButton.cpp:36 NewCatalog.cpp:42
 #: OptionsDialog.cpp:858 ProgressDialog.cpp:38 ScriptInfo.cpp:113
 #: StyleChange.cpp:250 Stylelistbox.cpp:29 Stylelistbox.cpp:79 SubsFile.cpp:45
-#: SubsGrid.cpp:1166 SubsGrid.cpp:1222 SubsResampleDialog.cpp:142
+#: SubsGrid.cpp:1192 SubsGrid.cpp:1248 SubsResampleDialog.cpp:142
 msgid "Anuluj"
 msgstr "Cancel"
 
@@ -430,8 +430,8 @@ msgstr ""
 
 #: AutomationHotkeysDialog.cpp:235 AutomationHotkeysDialog.cpp:244
 #: Hotkeys.cpp:459 Hotkeys.cpp:469 OptionsDialog.cpp:104 OptionsDialog.cpp:113
-#: OptionsDialog.cpp:416 SpellCheckerDialog.cpp:130 SubsGrid.cpp:853
-#: SubsGridBase.cpp:548 SubsGridBase.cpp:577 VisualClips.cpp:693
+#: OptionsDialog.cpp:416 SpellCheckerDialog.cpp:130 SubsGrid.cpp:879
+#: SubsGridBase.cpp:523 SubsGridBase.cpp:552 VisualClips.cpp:693
 #: kainoteApp.cpp:62 kainoteApp.cpp:77 kainoteMain.cpp:1412
 msgid "Uwaga"
 msgstr "Warning"
@@ -536,8 +536,8 @@ msgstr "Shift by video / audio"
 msgid "Początek"
 msgstr "Start"
 
-#: ChangeTime.cpp:222 SubsGridWindow.cpp:204 SubsGridWindow.cpp:592
-#: SubsGridWindow.cpp:599
+#: ChangeTime.cpp:222 SubsGridWindow.cpp:204 SubsGridWindow.cpp:597
+#: SubsGridWindow.cpp:604
 msgid "Koniec"
 msgstr "End"
 
@@ -565,11 +565,11 @@ msgstr "A method of time shift"
 msgid "Obydwa czasy"
 msgstr "Both times"
 
-#: ChangeTime.cpp:245 SubsGrid.cpp:364 SubsGrid.cpp:457 kainoteMain.cpp:154
+#: ChangeTime.cpp:245 SubsGrid.cpp:390 SubsGrid.cpp:483 kainoteMain.cpp:154
 msgid "Czas początkowy"
 msgstr "The starting time"
 
-#: ChangeTime.cpp:246 SubsGrid.cpp:364 SubsGrid.cpp:457 kainoteMain.cpp:155
+#: ChangeTime.cpp:246 SubsGrid.cpp:390 SubsGrid.cpp:483 kainoteMain.cpp:155
 msgid "Czas końcowy"
 msgstr "End time"
 
@@ -828,7 +828,7 @@ msgstr "In theme \"%s\" some colors was missing, and was loaded from default."
 msgid "Nie można zaczytać motywu, zostanie przywrócony domyśny"
 msgstr "Cannot load theme, reset to default"
 
-#: Config.cpp:874 Videobox.cpp:1324
+#: Config.cpp:874 Videobox.cpp:1319
 msgid "Nie można pobrać informacji o monitorze"
 msgstr "Unable to retrieve information about the monitor"
 
@@ -934,14 +934,14 @@ msgstr "Moving tags"
 msgid "Komentarz"
 msgstr "Comment"
 
-#: EditBox.cpp:260 SelectLines.cpp:69 SubsGrid.cpp:364 SubsGrid.cpp:457
-#: SubsGridWindow.cpp:208 SubsGridWindow.cpp:611 findreplace.cpp:107
+#: EditBox.cpp:260 SelectLines.cpp:69 SubsGrid.cpp:390 SubsGrid.cpp:483
+#: SubsGridWindow.cpp:208 SubsGridWindow.cpp:616 findreplace.cpp:107
 #: kainoteMain.cpp:157
 msgid "Aktor"
 msgstr "Actor"
 
-#: EditBox.cpp:264 SelectLines.cpp:70 SubsGrid.cpp:364 SubsGrid.cpp:457
-#: SubsGridWindow.cpp:212 SubsGridWindow.cpp:624 findreplace.cpp:110
+#: EditBox.cpp:264 SelectLines.cpp:70 SubsGrid.cpp:390 SubsGrid.cpp:483
+#: SubsGridWindow.cpp:212 SubsGridWindow.cpp:629 findreplace.cpp:110
 #: kainoteMain.cpp:158
 msgid "Efekt"
 msgstr "Effect"
@@ -1044,19 +1044,19 @@ msgstr ""
 "Characters per second.\n"
 "Should not exceed 15 characters per second."
 
-#: EditBox.cpp:1527 EditBox.cpp:1817
+#: EditBox.cpp:1527 EditBox.cpp:1809
 msgid "Zmień ilość przycisków"
 msgstr "Change amount of buttons"
 
-#: EditBox.cpp:1760
+#: EditBox.cpp:1752
 msgid "Nie znaleziono niepewnych"
 msgstr "Not confirmed not found"
 
-#: EditBox.cpp:1779
+#: EditBox.cpp:1771
 msgid "Nie znaleziono nieprzetłumaczonych"
 msgstr "Untranslated not found"
 
-#: EditBox.cpp:1819
+#: EditBox.cpp:1811
 msgid "Zarządzaj przyciskami tagów"
 msgstr "Manage tag buttons"
 
@@ -1158,8 +1158,8 @@ msgstr "Cannot create folder."
 msgid "Plik zip już istnieje, usunąć go?"
 msgstr "The zip file already exists, delete it?"
 
-#: FontCollector.cpp:290 SubsGrid.cpp:824 SubsGrid.cpp:1208
-#: SubsGridBase.cpp:567 SubsGridBase.cpp:1337 Videobox.cpp:725 Videobox.cpp:734
+#: FontCollector.cpp:290 SubsGrid.cpp:850 SubsGrid.cpp:1234
+#: SubsGridBase.cpp:542 SubsGridBase.cpp:1312 Videobox.cpp:725 Videobox.cpp:734
 #: findreplace.cpp:673 findreplace.cpp:687 kainoteMain.cpp:881
 #: kainoteMain.cpp:943 kainoteMain.cpp:1635 stylestore.cpp:260
 #: stylestore.cpp:288 stylestore.cpp:379 stylestore.cpp:505
@@ -1992,7 +1992,6 @@ msgid "Nie resetuj wcześniejszego filtrowania"
 msgstr "Don't reset previous filtering"
 
 #: HotkeysNaming.cpp:143 SubsGrid.cpp:193
-#, fuzzy
 msgid "Ignoruj filtrowanie przy akcjach"
 msgstr "Ignore filtering in some actions"
 
@@ -2682,8 +2681,8 @@ msgstr "Move syllable line after click"
 msgid "Wczytuj audio do pamięci RAM"
 msgstr "Load audio into RAM"
 
-#: OptionsDialog.cpp:619 ScriptInfo.cpp:74 VideoFfmpeg.cpp:928
-#: VideoFfmpeg.cpp:939 kainoteMain.cpp:1131 stylestore.cpp:619
+#: OptionsDialog.cpp:619 ScriptInfo.cpp:74 VideoFfmpeg.cpp:940
+#: VideoFfmpeg.cpp:951 kainoteMain.cpp:1131 stylestore.cpp:619
 #: stylestore.cpp:620
 msgid "Brak"
 msgstr "None"
@@ -3401,27 +3400,27 @@ msgstr "ASS subtitles properties"
 msgid "Informacje o napisach"
 msgstr "Subtitles info"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:41 SubsGrid.cpp:1212
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:41 SubsGrid.cpp:1238
 msgid "Tytuł"
 msgstr "Title"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:43 SubsGrid.cpp:1212
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:43 SubsGrid.cpp:1238
 msgid "Autor"
 msgstr "Author"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:45 SubsGrid.cpp:1212
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:45 SubsGrid.cpp:1238
 msgid "Tłumaczenie"
 msgstr "Translator"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:47 SubsGrid.cpp:1212
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:47 SubsGrid.cpp:1238
 msgid "Korekta"
 msgstr "Editor"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:49 SubsGrid.cpp:1212
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:49 SubsGrid.cpp:1238
 msgid "Timing"
 msgstr "Timer"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:51 SubsGrid.cpp:1212
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:51 SubsGrid.cpp:1238
 msgid "Edycja"
 msgstr "Updated by"
 
@@ -3513,7 +3512,7 @@ msgid "Skalowana obwódka i cień"
 msgstr "Scale border and shadow"
 
 #: SelectLines.cpp:26 SelectLines.cpp:106 SelectLines.cpp:133
-#: SelectLines.cpp:318
+#: SelectLines.cpp:320
 msgid "Zaznacz"
 msgstr "Select"
 
@@ -3541,13 +3540,13 @@ msgstr "Regular expressions"
 msgid "W polu"
 msgstr "In field"
 
-#: SelectLines.cpp:67 SubsGrid.cpp:363 SubsGrid.cpp:457 SubsGridWindow.cpp:215
+#: SelectLines.cpp:67 SubsGrid.cpp:389 SubsGrid.cpp:483 SubsGridWindow.cpp:215
 #: findreplace.cpp:93
 msgid "Tekst"
 msgstr "Text"
 
-#: SelectLines.cpp:68 SubsGrid.cpp:364 SubsGrid.cpp:457 SubsGridWindow.cpp:207
-#: SubsGridWindow.cpp:605 findreplace.cpp:104
+#: SelectLines.cpp:68 SubsGrid.cpp:390 SubsGrid.cpp:483 SubsGridWindow.cpp:207
+#: SubsGridWindow.cpp:610 findreplace.cpp:104
 msgid "Styl"
 msgstr "Style"
 
@@ -3603,8 +3602,8 @@ msgstr "Move to end"
 msgid "Ustaw jako komentarz"
 msgstr "Comment"
 
-#: SelectLines.cpp:121 SubsGrid.cpp:203 stylestore.cpp:65 stylestore.cpp:83
-#: stylestore.cpp:129
+#: SelectLines.cpp:121 SubsGrid.cpp:203 SubsGrid.cpp:233 stylestore.cpp:65
+#: stylestore.cpp:83 stylestore.cpp:129
 msgid "Usuń"
 msgstr "Delete"
 
@@ -3612,17 +3611,17 @@ msgstr "Delete"
 msgid "Akcja"
 msgstr "Action"
 
-#: SelectLines.cpp:315
+#: SelectLines.cpp:317
 #, c-format
 msgid "Zaznaczono %i linijek."
 msgstr "%i lines selected."
 
-#: SelectLines.cpp:316
+#: SelectLines.cpp:318
 #, c-format
 msgid "Dodano do zaznaczenia %i linijek."
 msgstr "%i lines added to selection."
 
-#: SelectLines.cpp:317
+#: SelectLines.cpp:319
 #, c-format
 msgid "Odznaczono %i linijek."
 msgstr "%i lines deselected."
@@ -3893,11 +3892,11 @@ msgstr "Spacing in pixels (negative values permitted)"
 msgid "Prostokątna obwódka"
 msgstr "Rectangular border"
 
-#: StyleChange.cpp:522 SubsGrid.cpp:364 SubsGrid.cpp:457
+#: StyleChange.cpp:522 SubsGrid.cpp:390 SubsGrid.cpp:483
 msgid "Margines prawy"
 msgstr "Right margin"
 
-#: StyleChange.cpp:523 SubsGrid.cpp:364 SubsGrid.cpp:457
+#: StyleChange.cpp:523 SubsGrid.cpp:390 SubsGrid.cpp:483
 msgid "Margines lewy"
 msgstr "Left margin"
 
@@ -4180,7 +4179,7 @@ msgstr "Visual tool position shifting"
 msgid "Skrypt automatyzacji"
 msgstr "Automation script"
 
-#: SubsFile.cpp:641
+#: SubsFile.cpp:646
 #, c-format
 msgid ", aktywna linia %i"
 msgstr ", active line %i"
@@ -4238,104 +4237,116 @@ msgstr "Hide columns"
 msgid "Filtrowanie"
 msgstr "Filter"
 
-#: SubsGrid.cpp:363
+#: SubsGrid.cpp:230
+msgid "Dodaj linie"
+msgstr "Add lines"
+
+#: SubsGrid.cpp:231
+msgid "Kopiuj drzewko"
+msgstr "Copy tree"
+
+#: SubsGrid.cpp:232
+msgid "Zmień opis"
+msgstr "Change decription"
+
+#: SubsGrid.cpp:389
 msgid "Tekst do oryginału"
 msgstr "Text into original"
 
-#: SubsGrid.cpp:364 SubsGrid.cpp:457 kainoteMain.cpp:159
+#: SubsGrid.cpp:390 SubsGrid.cpp:483 kainoteMain.cpp:159
 msgid "Warstwa"
 msgstr "Layer"
 
-#: SubsGrid.cpp:364 SubsGrid.cpp:457
+#: SubsGrid.cpp:390 SubsGrid.cpp:483
 msgid "Margines pionowy"
 msgstr "Vertical margin"
 
-#: SubsGrid.cpp:364
+#: SubsGrid.cpp:390
 msgid "Tekst do tłumaczenia"
 msgstr "Text into translation"
 
-#: SubsGrid.cpp:457
+#: SubsGrid.cpp:483
 msgid "Tekst bez tagów"
 msgstr "Text without tags"
 
-#: SubsGrid.cpp:655 Videobox.cpp:931 kainoteMain.cpp:611
+#: SubsGrid.cpp:681 Videobox.cpp:926 kainoteMain.cpp:611
 msgid "Wybierz plik napisów"
 msgstr "Choose subtitles file"
 
-#: SubsGrid.cpp:655
+#: SubsGrid.cpp:681
 msgid "Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
 msgstr "Subtitle files (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
 
-#: SubsGrid.cpp:823
+#: SubsGrid.cpp:849
 msgid "Zapisać plik przed wczytaniem napisów z MKV?"
 msgstr "Save the file before loading the subtitles of MKV?"
 
-#: SubsGrid.cpp:853 kainoteMain.cpp:983
+#: SubsGrid.cpp:879 kainoteMain.cpp:983
 msgid "Otwieranie napisów nie powiodło się"
 msgstr "Cannot open subtitles"
 
-#: SubsGrid.cpp:989 SubsGrid.cpp:1017 SubsGrid.cpp:1035
+#: SubsGrid.cpp:1015 SubsGrid.cpp:1043 SubsGrid.cpp:1061
 #, c-format
 msgid ""
 "W linii %i nie można przeskalować wartości '%s'\n"
 "w tagu '%s'"
 msgstr "In line %i can't scale '%s' in tag '%s'"
 
-#: SubsGrid.cpp:1135
+#: SubsGrid.cpp:1161
 msgid "Wybierz nowy FPS"
 msgstr "Choose new FPS"
 
-#: SubsGrid.cpp:1160
+#: SubsGrid.cpp:1186
 msgid "FPS napisów"
 msgstr "Subtitles FPS"
 
-#: SubsGrid.cpp:1162
+#: SubsGrid.cpp:1188
 msgid "Nowy FPS napisów"
 msgstr "New FPS"
 
-#: SubsGrid.cpp:1164
+#: SubsGrid.cpp:1190
 msgid "Zmień fps"
 msgstr "Change FPS"
 
-#: SubsGrid.cpp:1180
+#: SubsGrid.cpp:1206
 msgid "Niewłaściwy fps"
 msgstr "Incorrect FPS"
 
-#: SubsGrid.cpp:1223
+#: SubsGrid.cpp:1249
 msgid "Wyłącz potwierdzenie"
 msgstr "Turn-off warning"
 
-#: SubsGridBase.cpp:223
+#: SubsGridBase.cpp:198
 msgid "Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."
 msgstr "Invalid FPS. Correct it in options and try again."
 
-#: SubsGridBase.cpp:521
+#: SubsGridBase.cpp:496
 msgid "Wideo nie zostało wczytane przez FFMS2"
 msgstr "Video wasn't loaded using FFMS2"
 
-#: SubsGridBase.cpp:548
+#: SubsGridBase.cpp:523
 #, fuzzy
 msgid "Nie wybrano stylów do przesunięcia"
 msgstr "Do not choose styles to shift time with"
 
-#: SubsGridBase.cpp:566
+#: SubsGridBase.cpp:541
 #, c-format
 msgid "Czy naprawdę chcesz przesuwać tylko czasy %s?"
 msgstr "Do you really want to shift only %s times?"
 
-#: SubsGridBase.cpp:567
+#: SubsGridBase.cpp:542
 msgid "początkowe"
 msgstr "start"
 
-#: SubsGridBase.cpp:567
+#: SubsGridBase.cpp:542
 msgid "końcowe"
 msgstr "end"
 
-#: SubsGridBase.cpp:577
+#: SubsGridBase.cpp:552
 msgid "Nie zaznaczono linii do przesunięcia"
 msgstr "No lines selected for shifting"
 
-#: SubsGridBase.cpp:1337
+#: SubsGridBase.cpp:1312
 msgid ""
 "Czy na pewno chcesz wyłączyć tryb tłumaczenia?\n"
 "Obcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."
@@ -4343,15 +4354,15 @@ msgstr ""
 "Are you sure you want to disable translation mode?\n"
 "Original text of translated lines will be deleted."
 
-#: SubsGridBase.cpp:1576
+#: SubsGridBase.cpp:1551
 msgid "Autozapis"
 msgstr "Autosave"
 
-#: SubsGridWindow.cpp:200 SubsGridWindow.cpp:585
+#: SubsGridWindow.cpp:200 SubsGridWindow.cpp:590
 msgid "W."
 msgstr "L."
 
-#: SubsGridWindow.cpp:202 SubsGridWindow.cpp:585 SubsGridWindow.cpp:592
+#: SubsGridWindow.cpp:202 SubsGridWindow.cpp:590 SubsGridWindow.cpp:597
 msgid "Start"
 msgstr "Start"
 
@@ -4363,11 +4374,11 @@ msgstr "Left"
 msgid "M.P."
 msgstr "Right"
 
-#: SubsGridWindow.cpp:211 SubsGridWindow.cpp:617
+#: SubsGridWindow.cpp:211 SubsGridWindow.cpp:622
 msgid "M.Pi."
 msgstr "Vert."
 
-#: SubsGridWindow.cpp:214 SubsGridWindow.cpp:631
+#: SubsGridWindow.cpp:214 SubsGridWindow.cpp:636
 msgid "ZNS"
 msgstr "CPS"
 
@@ -4379,7 +4390,7 @@ msgstr "Original text"
 msgid "Tekst tłumaczenia"
 msgstr "Translation"
 
-#: SubsGridWindow.cpp:1399
+#: SubsGridWindow.cpp:1404
 msgid ""
 "Nie można wyświetlić podglądu, ponieważ wielkość okna napisów jest zbyt mała"
 msgstr "Cannot show preview cause grid height is too low"
@@ -4644,60 +4655,60 @@ msgstr "Toolbar alignment"
 msgid "Indeksowanie pliku wideo"
 msgstr "Indexing video"
 
-#: VideoFfmpeg.cpp:202 VideoFfmpeg.cpp:310
+#: VideoFfmpeg.cpp:206 VideoFfmpeg.cpp:316
 #, c-format
 msgid "Wystąpił błąd indeksowania: %s"
 msgstr "Indexing error occurred: %s"
 
-#: VideoFfmpeg.cpp:267
+#: VideoFfmpeg.cpp:271
 msgid "Wybierz ścieżkę"
 msgstr "Choose the track"
 
-#: VideoFfmpeg.cpp:307
+#: VideoFfmpeg.cpp:313
 msgid "Indeksowanie anulowane przez użytkownika"
 msgstr "Indexing canceled by the user"
 
-#: VideoFfmpeg.cpp:321
+#: VideoFfmpeg.cpp:327
 #, c-format
 msgid "Nie można zapisać indeksu, wystąpił błąd %s"
 msgstr "Cannot save index, error %s occurred"
 
-#: VideoFfmpeg.cpp:347
+#: VideoFfmpeg.cpp:354
 msgid "Nie można utworzyć VideoSource."
 msgstr "Cannot create VideoSource."
 
-#: VideoFfmpeg.cpp:384
+#: VideoFfmpeg.cpp:391
 msgid "Nie można przekonwertować wideo na RGBA"
 msgstr "Cannot convert video to RGBA"
 
 # Zły: nie rozumiem
-#: VideoFfmpeg.cpp:398
+#: VideoFfmpeg.cpp:405
 msgid "Nie można zmienić macierzy YCbCr"
 msgstr "Cannot change YCbCr matrix"
 
-#: VideoFfmpeg.cpp:410
+#: VideoFfmpeg.cpp:417
 msgid "Nie można pobrać ścieżki wideo"
 msgstr "You cannot load the video track"
 
-#: VideoFfmpeg.cpp:414
+#: VideoFfmpeg.cpp:422
 msgid "Nie można pobrać informacji o wideo"
 msgstr "You cannot get information about the video"
 
-#: VideoFfmpeg.cpp:441
+#: VideoFfmpeg.cpp:450
 #, c-format
 msgid "Wystąpił błąd tworzenia źródła audio: %s"
 msgstr "An error occurred when creating audio source: %s"
 
-#: VideoFfmpeg.cpp:450
+#: VideoFfmpeg.cpp:459
 #, c-format
 msgid "Wystąpił błąd konwertowania audio: %s"
 msgstr "An error occurred when converting audio: %s"
 
-#: VideoFfmpeg.cpp:465
+#: VideoFfmpeg.cpp:474
 msgid "Nie można ustawić opóźnienia, przekracza czas trwania audio"
 msgstr "Delay failed, it's longer than audio duration time"
 
-#: VideoFfmpeg.cpp:707
+#: VideoFfmpeg.cpp:717
 msgid "Za mało pamięci RAM"
 msgstr "Not enough RAM"
 
@@ -4954,27 +4965,27 @@ msgstr "Recently opened subtitles"
 msgid "Ostatnio otwarte wideo"
 msgstr "Recently opened videos"
 
-#: Videobox.cpp:835
+#: Videobox.cpp:830
 msgid "Filtry"
 msgstr "Filters"
 
-#: Videobox.cpp:835
+#: Videobox.cpp:830
 msgid "Wyświetla użyte filtry"
 msgstr "Shows used filters"
 
-#: Videobox.cpp:909
+#: Videobox.cpp:904
 msgid "Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"
 msgstr "Are you sure you want to move loaded video to recycle bin?"
 
-#: Videobox.cpp:909
+#: Videobox.cpp:904
 msgid "Usuwanie"
 msgstr "Deleting"
 
-#: Videobox.cpp:918 kainoteMain.cpp:636
+#: Videobox.cpp:913 kainoteMain.cpp:636
 msgid "Wybierz plik wideo"
 msgstr "Choose video file"
 
-#: Videobox.cpp:920
+#: Videobox.cpp:915
 msgid ""
 "Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
 "(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
@@ -4984,7 +4995,7 @@ msgstr ""
 "(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
 "All files (*.*)|*.*"
 
-#: Videobox.cpp:933
+#: Videobox.cpp:928
 msgid "Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 msgstr "Subtitle files (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 
@@ -4994,7 +5005,7 @@ msgid ""
 "została zablokowana."
 msgstr "Double \"m\" was blocked because of Vsfilter bug"
 
-#: VisualMoveAll.cpp:332 VisualPosition.cpp:237 Visuals.cpp:430 Visuals.cpp:566
+#: VisualMoveAll.cpp:338 VisualPosition.cpp:237 Visuals.cpp:430 Visuals.cpp:566
 #: Visuals.cpp:655 Visuals.cpp:695
 msgid "Nie można otworzyć napisów"
 msgstr "Cannot open subtitle file"

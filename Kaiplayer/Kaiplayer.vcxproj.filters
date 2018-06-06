@@ -351,6 +351,9 @@
     <ClCompile Include="AutomationHotkeysDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SubsGridDialogs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -646,6 +649,9 @@
     </ClInclude>
     <ClInclude Include="AutomationHotkeysDialog.h">
       <Filter>Header Files\Automation</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridDialogs.h">
+      <Filter>Header Files\Subs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

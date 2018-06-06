@@ -1331,6 +1331,13 @@ bool KaiTextCtrl::Enable(bool enable)
 //	
 //}
 
+void KaiTextCtrl::SetMaxLength(int maxLen){
+	if (maxLen < 1) 
+		maxLen = MAXINT;
+
+	maxSize = maxLen;
+}
+
 wxIMPLEMENT_ABSTRACT_CLASS(KaiTextCtrl, wxWindow);
 
 BEGIN_EVENT_TABLE(KaiTextCtrl,wxWindow)

@@ -30,6 +30,7 @@
 #include <wx/regex.h>
 #include "KaiMessageBox.h"
 #include "SubsGridFiltering.h"
+#include "SubsGridDialogs.h"
 
 SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 	:SubsGridWindow(parent, id, pos, size, style)
@@ -174,7 +175,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	menu->SetAccMenu(Duplicate, _("&Duplikuj linie"))->Enable(isen);
 	isen = (sels == 2);
 	menu->SetAccMenu(Swap, _("Za&mień"))->Enable(isen);
-	isen = (sels >= 2 && sels <= 5);
+	isen = (sels >= 2 && sels <= 20);
 	menu->SetAccMenu(Join, _("Złącz &linijki"))->Enable(isen);
 	isen = (sels >= 2 && sels <= 50);
 	menu->SetAccMenu(JoinToFirst, _("Złącz linijki zostaw pierwszą"))->Enable(isen);
@@ -222,12 +223,11 @@ done:
 }
 
 
-void SubsGrid::ContextMenuTree(const wxPoint &pos)
+void SubsGrid::ContextMenuTree(const wxPoint &pos, int treeLine)
 {
 	int sels = selections.GetCount();
 	Menu *menu = new Menu();
-	int isen = sels > 0;
-	menu->SetAccMenu(6789, _("Dodaj linie"))->Enable(isen);
+	menu->SetAccMenu(6789, _("Dodaj linie"))->Enable(sels > 0);
 	menu->SetAccMenu(6790, _("Kopiuj drzewko"));
 	menu->SetAccMenu(6791, _("Zmień opis"));
 	menu->SetAccMenu(6792, _("Usuń"));
@@ -235,16 +235,16 @@ void SubsGrid::ContextMenuTree(const wxPoint &pos)
 	switch (id)
 	{
 	case 6789:
-
+		TreeAddLines(treeLine);
 		break;
 	case 6790:
-
+		TreeCopy(treeLine);
 		break;
 	case 6791:
-
+		TreeChangeName(treeLine);
 		break;
 	case 6792:
-
+		TreeRemove(treeLine);
 		break;
 
 	default:
@@ -590,9 +590,9 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	case ContinousNext: if (sels > 0) OnMakeContinous(id); break;
 	case Swap: if (sels == 2){ SwapRows(selections[0], selections[1], true); } break;
 	case FPSFromVideo: if (hasVideo && sels == 2){ OnSetFPSFromVideo(); } break;
-	case Join: if (sels > 1){ OnJoin(event); } break;
+	case Join: if (sels > 1 && sels <= 20){ OnJoin(event); } break;
 	case JoinToFirst:
-	case JoinToLast: if (sels > 1){ OnJoinToFirst(id); } break;
+	case JoinToLast: if (sels > 1 && sels <= 50){ OnJoinToFirst(id); } break;
 	case HideSelected:
 	{
 		SubsGridFiltering filter(this, Edit->ebrow);
@@ -1154,65 +1154,9 @@ void SubsGrid::OnSetFPSFromVideo()
 	else{ Refresh(false); }
 }
 
-class fpsdial : public KaiDialog
-{
-public:
-	fpsdial(wxWindow *parent)
-		:KaiDialog(parent, -1, _("Wybierz nowy FPS"))
-	{
-		DialogSizer* siz = new DialogSizer(wxHORIZONTAL);
-		wxFlexGridSizer *sizer = new wxFlexGridSizer(2, 2, 2);
-		wxArrayString fpsy;
-		wxTextValidator valid(wxFILTER_INCLUDE_CHAR_LIST);
-		wxArrayString includes;
-		includes.Add("0");
-		includes.Add("1");
-		includes.Add("2");
-		includes.Add("3");
-		includes.Add("4");
-		includes.Add("5");
-		includes.Add("6");
-		includes.Add("7");
-		includes.Add("8");
-		includes.Add("9");
-		includes.Add(".");
-		valid.SetIncludes(includes);
-
-		fpsy.Add("23.976"); fpsy.Add("24"); fpsy.Add("25"); fpsy.Add("29.97"); fpsy.Add("30"); fpsy.Add("60");
-		oldfps = new KaiChoice(this, -1, "", wxDefaultPosition, wxDefaultSize, fpsy, 0, valid);
-		oldfps->SetSelection(0);
-		newfps = new KaiChoice(this, -1, "", wxDefaultPosition, wxSize(80, -1), fpsy, 0, valid);
-		newfps->SetSelection(2);
-		sizer->Add(new KaiStaticText(this, -1, _("FPS napisów")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 4);
-		sizer->Add(oldfps, 0, wxEXPAND | wxALL, 4);
-		sizer->Add(new KaiStaticText(this, -1, _("Nowy FPS napisów")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 4);
-		sizer->Add(newfps, 0, wxEXPAND | wxALL, 4);
-		MappedButton *ok = new MappedButton(this, 15555, _("Zmień fps"));
-		Connect(15555, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&fpsdial::OkClick);
-		MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
-		sizer->Add(ok, 0, wxEXPAND | wxALL, 4);
-		sizer->Add(cancel, 0, wxEXPAND | wxALL, 4);
-		siz->Add(sizer, 0, wxEXPAND);
-		SetSizerAndFit(siz);
-		CenterOnParent();
-	}
-	virtual ~fpsdial(){};
-	void OkClick(wxCommandEvent &evt)
-	{
-
-		if (oldfps->GetValue().ToDouble(&ofps) && newfps->GetValue().ToDouble(&nfps)){
-			EndModal(1);
-		}
-		else{ KaiMessageBox(_("Niewłaściwy fps")); }
-	}
-	double ofps, nfps;
-	KaiChoice *oldfps;
-	KaiChoice *newfps;
-};
-
 void SubsGrid::OnSetNewFPS()
 {
-	fpsdial nfps(this);
+	FPSDialog nfps(this);
 	if (nfps.ShowModal() == 1){
 		double sub = nfps.ofps / nfps.nfps;
 
@@ -1326,24 +1270,71 @@ void SubsGrid::Filter(int id)
 	filter.Filter();
 }
 
-void SubsGrid::TreeAddLines()
+void SubsGrid::TreeAddLines(int treeLine)
 {
+	if (selections.GetCount() < 1) return;
+
+	int keystart = file->GetElementById(treeLine);
+	std::vector<Dialogue*> beforeTreeLines;
+	std::vector<Dialogue*> afterTreeLines;
+	int beforeLinesDiff = 0;
+
+	for (int i = keystart; i < file->GetAllCount(); i++){
+		Dialogue *dial = file->GetDialogueByKey(i);
+		//we must deselect lines from this tree;
+		if (i >= keystart && !(!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart)))
+			file->EraseSelectionKey(i);
+		else if (i > keystart)//adding after lines
+			afterTreeLines.push_back(dial);
+		else if (i < keystart){//adding before lines
+			beforeTreeLines.push_back(dial);
+			beforeLinesDiff++;
+		}
+	}
+	DeleteRows();
+	keystart -= beforeLinesDiff;
 
 }
 
-void SubsGrid::TreeCopy()
+void SubsGrid::TreeCopy(int treeLine)
 {
-
+	wxString whattocopy;
+	int keystart = file->GetElementById(treeLine);
+	for (int i = keystart; i < file->GetAllCount(); i++){
+		Dialogue *dial = file->GetDialogueByKey(i);
+		if (!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart))
+			break;
+		dial->GetRaw(&whattocopy, hasTLMode && dial->TextTl != "");
+	}
+	if(wxTheClipboard->Open())
+	{
+		wxTheClipboard->SetData(new wxTextDataObject(whattocopy));
+		wxTheClipboard->Close();
+		wxTheClipboard->Flush();
+	}
 }
 
-void SubsGrid::TreeChangeName()
+void SubsGrid::TreeChangeName(int treeLine)
 {
-
+	Dialogue *dial = file->GetDialogue(treeLine);
+	TreeDialog td(this, dial->Text);
+	if (td.ShowModal() == wxID_OK){
+		dial->Text = td.GetDescription();
+		SetModified(TREE_SET_DESCRIPTION);
+	}
 }
 
-void SubsGrid::TreeRemove()
+void SubsGrid::TreeRemove(int treeLine)
 {
-
+	int keystart = file->GetElementById(treeLine);
+	for (int i = keystart; i < file->GetAllCount(); i++){
+		Dialogue *dial = file->GetDialogueByKey(i);
+		if (!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart))
+			break;
+		dial->treeState = 0;
+	}
+	DeleteRow(treeLine, 1);
+	SetModified(TREE_REMOVE);
 }
 
 void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)

@@ -35,7 +35,7 @@ public:
 	void OnAccelerator(wxCommandEvent &event);
 	void OnJoin(wxCommandEvent &event);
 	void ContextMenu(const wxPoint &pos);
-	void ContextMenuTree(const wxPoint &pos);
+	void ContextMenuTree(const wxPoint &pos, int treeLine);
 	bool SwapAssProperties(); 
 	void RefreshSubsOnVideo(int newActiveLine, bool scroll = true);
 	void LoadStyleCatalog();
@@ -61,10 +61,10 @@ private:
 	void OnMakeContinous(int id);
 	void OnShowPreview();
 	void Filter(int id);
-	void TreeAddLines();
-	void TreeCopy();
-	void TreeChangeName();
-	void TreeRemove();
+	void TreeAddLines(int treeLine);
+	void TreeCopy(int treeLine);
+	void TreeChangeName(int treeLine);
+	void TreeRemove(int treeLine);
 
 	DECLARE_EVENT_TABLE()
 };

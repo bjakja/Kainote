@@ -55,7 +55,7 @@ public:
 	COLOR GetForegroundColour() const {return foreground;}
 	COLOR GetBackgroundColour() const {return background;}
 	void SetModified(bool modif){modified = modif;}
-	void SetMaxLength(int maxLen){maxSize = maxLen;}
+	void SetMaxLength(int maxLen);
 	void AppendText(const wxString &text);
 	//now only color;font later
 	void AppendTextWithStyle(const wxString &text, const wxColour &color);

@@ -18,7 +18,7 @@
 #include "KaiListCtrl.h"
 #include "MappedButton.h"
 
-//pamiętaj ilość elementów tablicy musi być równ ilości enumów
+//pamiętaj ilość elementów tablicy musi być równa ilości enumów
 //wxString 
 
 HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<void(int)> func )
@@ -115,7 +115,7 @@ File *File::Copy(bool copySelections)
 
 SubsFile::SubsFile()
 {
-	historyNames = new wxString[50]{
+	historyNames = new wxString[54]{
 		"",//pierwszy element którego nie używamy a musi być ostatni enum weszedł a także ochronić nas przed potencjalnym 0
 		_("Otwarcie napisów"),
 		_("Nowe napisy"),
@@ -165,6 +165,9 @@ SubsFile::SubsFile()
 		_("Narzędzie zmieniacz pozycji"),
 		_("Zamień"),
 		_("Zamień wszystko"),
+		/*50*/_("Wstawienie drzewka"),
+		_("Dodanie linii do drzewka"),
+		_("Usunięcie drzewka"),
 		_("Skrypt automatyzacji"),
 	};
     iter=0;

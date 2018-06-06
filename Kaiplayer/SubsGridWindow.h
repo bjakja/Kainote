@@ -65,7 +65,7 @@ protected:
 	SubsGridPreview *thisPreview = NULL;
 private:
 	virtual void ContextMenu(const wxPoint &pos){};
-	virtual void ContextMenuTree(const wxPoint &pos){};
+	virtual void ContextMenuTree(const wxPoint &pos, int treeLine){};
 	//DECLARE_EVENT_TABLE();
 };
 
