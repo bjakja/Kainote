@@ -417,7 +417,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->Video->Pause();
 	}
 	else if ((id == PreviousFrame || id == NextFrame)){
-		tab->Video->MovePos((id == PreviousFrame) ? -1 : 1);
+		tab->Video->ChangePositionByFrame((id == PreviousFrame) ? -1 : 1);
 	}
 	else if (id == SetStartTime || id == SetEndTime){
 		if (tab->Video->GetState() != None){

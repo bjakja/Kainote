@@ -1530,7 +1530,7 @@ int VideoRend::GetVolume()
 	return 0;
 }
 
-void VideoRend::MovePos(int cpos)
+void VideoRend::ChangePositionByFrame(int cpos)
 {	
 	if (vstate == Playing || vstate == None){ return; }
 	if(!IsDshow){

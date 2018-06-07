@@ -225,7 +225,7 @@ done:
 
 void SubsGrid::ContextMenuTree(const wxPoint &pos, int treeLine)
 {
-	int sels = selections.GetCount();
+	int sels = file->SelectionsSize();
 	Menu *menu = new Menu();
 	menu->SetAccMenu(6789, _("Dodaj linie"))->Enable(sels > 0);
 	menu->SetAccMenu(6790, _("Kopiuj drzewko"));
@@ -250,6 +250,8 @@ void SubsGrid::ContextMenuTree(const wxPoint &pos, int treeLine)
 	default:
 		break;
 	}
+
+	delete menu;
 }
 
 void SubsGrid::OnInsertBefore()
@@ -1272,28 +1274,77 @@ void SubsGrid::Filter(int id)
 
 void SubsGrid::TreeAddLines(int treeLine)
 {
+	file->GetSelectionsAsKeys(selections);
 	if (selections.GetCount() < 1) return;
 
 	int keystart = file->GetElementById(treeLine);
+	//need collect selected dialogues before and after tree
+	//in tree all dialogues are deselected
 	std::vector<Dialogue*> beforeTreeLines;
 	std::vector<Dialogue*> afterTreeLines;
 	int beforeLinesDiff = 0;
+	Dialogue *dialwithstate = file->GetDialogueByKey(keystart+1);
+	bool closed = (dialwithstate->treeState == TREE_CLOSED);
 
-	for (int i = keystart; i < file->GetAllCount(); i++){
-		Dialogue *dial = file->GetDialogueByKey(i);
+	for (int i = 0; i < selections.GetCount(); i++){
+		int sel = selections[i];
+		Dialogue *dial = file->GetDialogueByKey(sel);
 		//we must deselect lines from this tree;
-		if (i >= keystart && !(!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart)))
-			file->EraseSelectionKey(i);
-		else if (i > keystart)//adding after lines
+		if (sel >= keystart && !(!dial->treeState || (dial->treeState == TREE_DESCRIPTION && sel != keystart)))
+			file->EraseSelectionKey(sel);
+		else if (sel > keystart){//adding after lines
+			dial = CopyDialogueByKey(sel);
+			dial->treeState = closed ? TREE_CLOSED : TREE_OPENED;
+			if (closed)
+				dial->isVisible = NOT_VISIBLE;
 			afterTreeLines.push_back(dial);
-		else if (i < keystart){//adding before lines
+		}
+		else if (sel < keystart){//adding before lines
+			dial = CopyDialogueByKey(sel);
+			dial->treeState = closed ? TREE_CLOSED : TREE_OPENED;
+			if (closed)
+				dial->isVisible = NOT_VISIBLE;
 			beforeTreeLines.push_back(dial);
 			beforeLinesDiff++;
 		}
-	}
-	DeleteRows();
-	keystart -= beforeLinesDiff;
 
+	}
+	//Delete selected rows
+	File *subs = file->GetSubs();
+	for (auto i = subs->Selections.rbegin(); i != subs->Selections.rend(); i++)
+	{
+		int sel = *i;
+		subs->dials.erase(subs->dials.begin() + sel);
+		file->IdConverter->deleteItemByKey(sel);
+	}
+	//decrease keystart by num of selected lines before of tree
+	keystart -= beforeLinesDiff;
+	//insert before lines on tree start 
+	if (beforeTreeLines.size()){
+		InsertRows(keystart + 1, beforeTreeLines, false, true);
+	}
+	//insert after lines need to find end of tree
+	if (afterTreeLines.size()){
+		for (int i = keystart; i < file->GetAllCount(); i++){
+			Dialogue *dial = file->GetDialogueByKey(i);
+			if ((!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart))){
+				InsertRows(i, afterTreeLines, false, true);
+				break;
+			}
+		}
+	}
+	//if something changed set modified and stuff
+	if (beforeTreeLines.size() || afterTreeLines.size()){
+		SaveSelections();
+		file->ClearSelections();
+		SpellErrors.clear();
+		//file->ReloadVisibleDialogues();
+		SetModified(TREE_ADD_LINES, true, false, keystart + 1);
+	}
+	else{
+		file->InsertSelection(Edit->ebrow);
+	}
+	Refresh(false);
 }
 
 void SubsGrid::TreeCopy(int treeLine)
@@ -1319,22 +1370,32 @@ void SubsGrid::TreeChangeName(int treeLine)
 	Dialogue *dial = file->GetDialogue(treeLine);
 	TreeDialog td(this, dial->Text);
 	if (td.ShowModal() == wxID_OK){
-		dial->Text = td.GetDescription();
+		file->CopyDialogue(treeLine)->Text = td.GetDescription();
 		SetModified(TREE_SET_DESCRIPTION);
+		Refresh(false);
 	}
 }
 
 void SubsGrid::TreeRemove(int treeLine)
 {
 	int keystart = file->GetElementById(treeLine);
+	int keyend = keystart;
+	//tree changing need to be save to history instead of visibility
 	for (int i = keystart; i < file->GetAllCount(); i++){
 		Dialogue *dial = file->GetDialogueByKey(i);
-		if (!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart))
+		if (!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart)){
+			keyend = i - 1;
 			break;
+		}
+		dial = file->CopyDialogueByKey(i);
 		dial->treeState = 0;
+		if (!dial->isVisible)
+			dial->isVisible = VISIBLE;
 	}
+	file->ReloadVisibleDialogues(keystart, keyend);
 	DeleteRow(treeLine, 1);
 	SetModified(TREE_REMOVE);
+	Refresh(false);
 }
 
 void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)

@@ -725,6 +725,14 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		SetFocus();
 	}
 
+	// Mouse wheel
+	if (event.GetWheelRotation() != 0) {
+		int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();
+		ScrollTo(scPos - step);
+		return;
+	}
+
+	//Check if it is tree description line
 	if (file->CheckIfIsTree(row)){
 		if (event.GetModifiers() == 0){
 			if (click){
@@ -734,13 +742,16 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 				if (Edit->ebrow > row){
 					int firstSel = FirstSelection();
 					if(firstSel<0){
-						file->InsertSelection(Edit->ebrow);
+						if (Edit->ebrow < GetCount())
+							file->InsertSelection(Edit->ebrow);
+						else
+							Edit->SetLine(GetCount()-1);
 					}else
 						Edit->SetLine(firstSel);
 				}
 			}
-			else if (dclick){
-				Edit->SetLine(row, true, true, true, false);
+			else if (right){
+				ContextMenuTree(event.GetPosition(), row);
 			}
 		}
 		return;
@@ -768,7 +779,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		}
 		return;
 	}
-	// Popup
+	// Changing marked line & popup
 	if (right && !ctrl) {
 		if (isNumerizeColumn){
 			markedLine = row;
@@ -782,14 +793,6 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		return;
 	}
 	
-	// Mouse wheel
-	if (event.GetWheelRotation() != 0) {
-		int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();
-		ScrollTo(scPos - step);
-		return;
-	}
-
-
 
 	if (left_up && holding) {
 		holding = false;

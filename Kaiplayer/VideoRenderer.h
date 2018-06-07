@@ -146,7 +146,7 @@ class VideoRend : public wxWindow
 		bool DrawTexture(byte *nframe=NULL, bool copy=false);
 		void RecreateSurface();
 		void EnableStream(long index);
-		void MovePos(int cpos);
+		void ChangePositionByFrame(int cpos);
 		void ChangeVobsub(bool vobsub=false);
 		wxArrayString GetStreams();
 		void SetVisual(bool remove=false, bool settext=false, bool noRefreshAfterRemove = false);

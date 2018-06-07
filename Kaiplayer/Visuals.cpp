@@ -250,8 +250,9 @@ void Visuals::DrawWarning(bool comment)
 	LPD3DXFONT warningFont;
 	HRN(D3DXCreateFont(device, (VideoSize.width - VideoSize.x) / 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &warningFont), _("Nie można stworzyć czcionki D3DX"));
 	RECT rt = { 0, 0, VideoSize.width, VideoSize.height };
-	DRAWOUTTEXT(warningFont, comment ? _("Narzędzia edycji wizualnej\nnie działają na komentarzach") :
-		_("Linia nie jest widoczna na wideo\nalbo ma zerowy czas trwania"), rt, DT_CENTER | DT_VCENTER, 0xFFFF0000);
+	wxString text = (comment)? _("Narzędzia edycji wizualnej\nnie działają na komentarzach") :
+		_("Linia nie jest widoczna na wideo\nalbo ma zerowy czas trwania");
+	DRAWOUTTEXT(warningFont, text, rt, DT_CENTER | DT_VCENTER, 0xFFFF0000);
 	SAFE_RELEASE(warningFont);
 }
 

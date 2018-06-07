@@ -140,7 +140,7 @@ void Dialogue::SetRaw(const wxString &ldial)
 				else if (Actor->Replace(L"[tree_opened]", L"")){
 					treeState = TREE_OPENED;
 				}
-				else if (Actor->Replace(L"[tree_descritpion]", L"")){
+				else if (Actor->Replace(L"[tree_description]", L"")){
 					treeState = TREE_DESCRIPTION;
 				}
 			}
@@ -238,7 +238,7 @@ void Dialogue::GetRaw(wxString *txt, bool tl, const wxString &style)
 		// state 8 - bookmarks
 		wxString ActorWithStates = (State & 8) ? L"[bookmark]" + Actor : Actor;
 		if (treeState){
-			ActorWithStates.Prepend((treeState == TREE_DESCRIPTION) ? L"[tree_descritpion]" :
+			ActorWithStates.Prepend((treeState == TREE_DESCRIPTION) ? L"[tree_description]" :
 				(treeState == TREE_OPENED) ? L"[tree_opened]" :
 				(treeState == TREE_CLOSED) ? L"[tree_closed]" : L"");
 		}

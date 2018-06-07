@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2018-06-06 13:18+0200\n"
-"PO-Revision-Date: 2018-06-06 13:22+0200\n"
+"PO-Revision-Date: 2018-06-06 19:40+0200\n"
 "Last-Translator: Bakura, Areki, duplex, Kostek00, Sacredus\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -4089,12 +4089,10 @@ msgid "Ustawienie czasu końcowego"
 msgstr "Setting end time"
 
 #: SubsFile.cpp:145
-#, fuzzy
 msgid "Włączenie trybu tłumaczenia"
 msgstr "Turn on translation mode"
 
 #: SubsFile.cpp:146
-#, fuzzy
 msgid "Wyłączenie trybu tłumaczenia"
 msgstr "Turn off translation mode"
 
@@ -4127,7 +4125,6 @@ msgid "Przesunięcie czasów"
 msgstr "Shifting times"
 
 #: SubsFile.cpp:154
-#, fuzzy
 msgid "Poprawa błędu pisowni"
 msgstr "Correcting spell errors"
 
@@ -4185,7 +4182,6 @@ msgid ", aktywna linia %i"
 msgstr ", active line %i"
 
 #: SubsGrid.cpp:152
-#, fuzzy
 msgid "Nie obejmuje zaznaczonych linii"
 msgstr "Don't take into account selected lines"
 
@@ -4247,7 +4243,7 @@ msgstr "Copy tree"
 
 #: SubsGrid.cpp:232
 msgid "Zmień opis"
-msgstr "Change decription"
+msgstr "Change description"
 
 #: SubsGrid.cpp:389
 msgid "Tekst do oryginału"
@@ -4325,7 +4321,6 @@ msgid "Wideo nie zostało wczytane przez FFMS2"
 msgstr "Video wasn't loaded using FFMS2"
 
 #: SubsGridBase.cpp:523
-#, fuzzy
 msgid "Nie wybrano stylów do przesunięcia"
 msgstr "Do not choose styles to shift time with"
 
@@ -5017,7 +5012,6 @@ msgid ""
 msgstr "Visual tools not working on comments"
 
 #: Visuals.cpp:254
-#, fuzzy
 msgid ""
 "Linia nie jest widoczna na wideo\n"
 "albo ma zerowy czas trwania"
@@ -5627,7 +5621,6 @@ msgstr ""
 "I wrote this program to replace two programs: Bestplayer and Aegisub.\n"
 
 #: kainoteMain.cpp:674
-#, fuzzy
 msgid ""
 "Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub "
 "nowych funkcji,\n"
@@ -5890,22 +5883,18 @@ msgid "Sortuj"
 msgstr "Sort"
 
 #: stylestore.cpp:93 stylestore.cpp:141
-#, fuzzy
 msgid "Przesuń zaznaczone style na sam początek"
 msgstr "Move selected styles to beginning"
 
 #: stylestore.cpp:94 stylestore.cpp:142
-#, fuzzy
 msgid "Przesuń zaznaczone style w górę"
 msgstr "Move selected styles up"
 
 #: stylestore.cpp:95 stylestore.cpp:143
-#, fuzzy
 msgid "Przesuń zaznaczone style w dół"
 msgstr "Move selected styles down"
 
 #: stylestore.cpp:96 stylestore.cpp:144
-#, fuzzy
 msgid "Przesuń zaznaczone style na sam koniec"
 msgstr "Move selected styles to end"
 

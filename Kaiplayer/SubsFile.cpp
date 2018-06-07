@@ -617,7 +617,7 @@ bool SubsFile::CheckIfIsTree(int i){
 
 int SubsFile::OpenCloseTree(int i){
 	int ikey = GetElementById(i);
-	int endOfTree = 0;
+	int endOfTree = -1;
 	int visibility = NOT_VISIBLE;
 	for (int k = ikey+1; k < subs->dials.size(); k++){
 		Dialogue *dial = subs->dials[k];
@@ -633,6 +633,9 @@ int SubsFile::OpenCloseTree(int i){
 			dial->isVisible = visibility;
 			dial->treeState = TREE_CLOSED;
 		}
+	}
+	if (endOfTree < 0){
+		endOfTree = subs->dials.size() - 1;
 	}
 	if (ikey + 1 < endOfTree){
 		ReloadVisibleDialogues(ikey + 1, endOfTree);
