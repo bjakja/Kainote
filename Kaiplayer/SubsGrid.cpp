@@ -434,6 +434,7 @@ void SubsGrid::OnPaste(int id)
 	wxString token;
 	wxString tmptoken;
 	int startline = rws;
+	bool hasTree = false;
 	while (wpaste.HasMoreTokens())
 	{
 		Dialogue *newdial = NULL;
@@ -457,6 +458,15 @@ void SubsGrid::OnPaste(int id)
 		if (newdial->Format != subsFormat){ newdial->Convert(subsFormat); }
 		if (newdial->NonDialogue){ newdial->NonDialogue = false; newdial->IsComment = false; }
 		if (id == Paste){
+			if (newdial->treeState == TREE_DESCRIPTION)
+				hasTree = true;
+			else if (!hasTree && newdial->treeState > TREE_DESCRIPTION){
+				newdial->treeState = 0;
+				newdial->isVisible = VISIBLE;
+			}
+			else if (hasTree)
+				hasTree = true;
+
 			tmpdial.push_back(newdial);
 		}
 		else{
@@ -513,7 +523,8 @@ void SubsGrid::CopyRows(int id)
 	{
 		if (id != CopyCollumns){
 			//tłumaczenie ma pierwszeństwo w kopiowaniu
-			GetDialogue(selections[i])->GetRaw(&whatcopy, hasTLMode && GetDialogue(selections[i])->TextTl != "");
+			Dialogue *dial = GetDialogue(selections[i]);
+			dial->GetRaw(&whatcopy, hasTLMode && dial->TextTl != "");
 		}
 		else{
 			whatcopy << GetDialogue(selections[i])->GetCols(cols, hasTLMode && GetDialogue(selections[i])->TextTl != "");

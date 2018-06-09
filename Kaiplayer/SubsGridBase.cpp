@@ -34,36 +34,48 @@
 
 
 bool sortstart(Dialogue *i, Dialogue *j){
+	if (i->treeState != j->treeState)
+		return i->treeState < j->treeState;
 	if (i->Start.mstime != j->Start.mstime){
 		return (i->Start.mstime < j->Start.mstime);
 	}
 	return i->End.mstime < j->End.mstime;
 }
 bool sortend(Dialogue *i, Dialogue *j){
+	if (i->treeState != j->treeState)
+		return i->treeState < j->treeState;
 	if (i->End.mstime != j->End.mstime){
 		return (i->End.mstime < j->End.mstime);
 	}
 	return i->Start.mstime < j->Start.mstime;
 }
 bool sortstyle(Dialogue *i, Dialogue *j){
+	if (i->treeState != j->treeState)
+		return i->treeState < j->treeState;
 	if (i->Style != j->Style){
 		return (i->Style.CmpNoCase(j->Style) < 0);
 	}
 	return i->Start.mstime < j->Start.mstime;
 }
 bool sortactor(Dialogue *i, Dialogue *j){
+	if (i->treeState != j->treeState)
+		return i->treeState < j->treeState;
 	if (i->Actor != j->Actor){
 		return (i->Actor.CmpNoCase(j->Actor) < 0);
 	}
 	return i->Start.mstime < j->Start.mstime;
 }
 bool sorteffect(Dialogue *i, Dialogue *j){
+	if (i->treeState != j->treeState)
+		return i->treeState < j->treeState;
 	if (i->Effect != j->Effect){
 		return (i->Effect.CmpNoCase(j->Effect) < 0);
 	}
 	return i->Start.mstime < j->Start.mstime;
 }
 bool sortlayer(Dialogue *i, Dialogue *j){
+	if (i->treeState != j->treeState)
+		return i->treeState < j->treeState;
 	if (i->Layer != j->Layer){
 		return (i->Layer < j->Layer);
 	}

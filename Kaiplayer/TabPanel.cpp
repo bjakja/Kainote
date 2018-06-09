@@ -141,7 +141,7 @@ void TabPanel::OnMouseEvent(wxMouseEvent& event)
 		SetCursor(wxCURSOR_ARROW);
 	}
 	else if (npos < h && !click && !holding && !left_up){
-		SetCursor(wxCURSOR_NO_ENTRY); return;
+		SetCursor(wxCURSOR_SIZENS);/*SetCursor(wxCURSOR_NO_ENTRY);*/ return;
 	}
 	else{
 		SetCursor(wxCURSOR_SIZENS);

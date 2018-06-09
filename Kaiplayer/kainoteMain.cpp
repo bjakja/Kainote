@@ -1297,22 +1297,30 @@ void kainoteFrame::SetAccels(bool _all)
 	entries[1].Set(wxACCEL_CTRL, (int) 'W', ID_CLOSEPAGE);
 	const std::map<idAndType, hdata> &hkeys = Hkeys.GetHotkeysMap();
 	for (auto cur = hkeys.begin(); cur != hkeys.end(); cur++){
-		if (cur->second.Accel == "" || cur->first.Type != GLOBAL_HOTKEY){ continue; }
+		if (cur->first.Type != GLOBAL_HOTKEY){ continue; }
 		int id = cur->first.id;
-		if (id >= 6850){
+		bool emptyAccel = cur->second.Accel == "";
+		if (id > 6000 && id < 6850){
+			MenuItem *item = Menubar->FindItem(id);
+			if (!item){ wxLogStatus("no id %i", id); continue; }
+			if (emptyAccel){
+				item->SetAccel(NULL);
+				continue;
+			}
+			else{
+				wxAcceleratorEntry accel = Hkeys.GetHKey(cur->first, &cur->second);
+				item->SetAccel(&accel);
+				entries.push_back(accel);
+			}
+		}
+		else if (emptyAccel)
+			continue;
+		else if (id >= 6850){
 			if (id >= 30100){
 				Bind(wxEVT_COMMAND_MENU_SELECTED, &kainoteFrame::OnRunScript, this, id);
 			}
 			entries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 		}
-		else if (id > 6000){
-			MenuItem *item = Menubar->FindItem(id);
-			if (!item){ wxLogStatus("no id %i", id); continue; }
-			//cur->second.Name = item->GetLabelText();
-			wxAcceleratorEntry accel = Hkeys.GetHKey(cur->first, &cur->second);
-			item->SetAccel(&accel);
-			entries.push_back(accel);
-		}//else if(id<6001){break;}
 		if (!entries[entries.size() - 1].IsOk()){
 			entries.pop_back();
 		}

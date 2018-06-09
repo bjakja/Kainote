@@ -249,11 +249,6 @@ void AutomationHotkeysDialog::OnMapHkey(wxCommandEvent &evt)
 				result = msg.ShowModal();
 			}
 			if (result == wxYES || result == wxOK){
-				Notebook *Tabs = Notebook::GetTabs();
-				kainoteFrame * frame = (kainoteFrame *)Tabs->GetParent();
-				MenuBar * mb = NULL;
-				if (frame)
-					mb = frame->Menubar;
 				if (result == wxYES){ hotkey = ""; }
 				for (auto &idtype : idtypes){
 					if (doubledHotkey && idtype->first.Type != hkd.type)
@@ -262,11 +257,6 @@ void AutomationHotkeysDialog::OnMapHkey(wxCommandEvent &evt)
 					if (nitem >= 0){
 						ChangeHotkey(nitem, id, hotkey);
 						idtype->second.Accel = hotkey;
-					}
-					if (mb && idtype->first.Type == GLOBAL_HOTKEY){
-						MenuItem *Item = mb->FindItem(idtype->first.id);
-						if (Item)
-							Item->SetAccel(NULL, hotkey);
 					}
 				}
 			}

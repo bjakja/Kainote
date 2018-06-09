@@ -52,7 +52,7 @@ public:
 	wxWindow* panel;
 	bool seekfiles;
 	bool eater;
-	bool fullarrow;
+	//bool fullarrow;
 	bool blockpaint;
 	wxMutex vbmutex;
 	wxMutex nextmutex;
@@ -82,7 +82,7 @@ public:
 	bool HasCapture(){if(isFullscreen && TD){return TD->HasCapture();}else{return wxWindow::HasCapture();}}
 	bool SetCursor(const wxCursor &cursor){if(isFullscreen && TD){return TD->SetCursor(cursor);}else{return wxWindow::SetCursor(cursor);}};
 	bool SetBackgroundColour(const wxColour &col);
-	float wspx,wspy;
+	float coeffX,coeffY;
 	wxSize lastSize;
 	Fullscreen *TD;
 	bool hasArrow;
@@ -103,7 +103,7 @@ private:
 	int actfile;
 	int id;
 	int prevchap;
-	wxArrayString pliki;
+	wxArrayString files;
 	bool ismenu;
 	
 	void OnSize(wxSizeEvent& event);

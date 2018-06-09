@@ -475,11 +475,6 @@ void Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow
 			}
 			if (result == wxCANCEL){ return; }
 			else if (result != wxNO){
-				Notebook *Tabs = Notebook::GetTabs();
-				kainoteFrame * frame = (kainoteFrame *)Tabs->GetParent();
-				MenuBar * mb = NULL;
-				if (frame)
-					mb = frame->Menubar;
 				for (auto &idtype : idtypes){
 					if (doubledHotkey && idtype->first.Type != hkd->type)
 						continue;
@@ -488,19 +483,9 @@ void Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow
 						auto finditer = hkeys.find(idAndType(id, hkd->type));
 						idtype->second.Accel = "";
 						idtype->second.Accel = (finditer != hkeys.end())? finditer->second.Accel : "";
-						if (mb){
-							MenuItem *Item = mb->FindItem(idtype->first.id);
-							if (Item)//do not use finditer it maybe end when elem don't have hotkey
-								Item->SetAccel(NULL, idtype->second.Accel);
-						}
 					}
 					else if (result == wxYES){
-						if (mb){
-							MenuItem *Item = mb->FindItem(idtype->first.id);
-							if (Item)
-								Item->SetAccel(NULL, "");
-						}
-						hkeys.erase(idtype->first);
+						idtype->second.Accel = "";
 					}
 				}
 			}
