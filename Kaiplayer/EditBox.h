@@ -85,9 +85,6 @@ public:
 	void HideControls();
 	void UpdateChars(const wxString &text);
 
-	SubsGrid *grid;
-	int ebrow;
-
 	AudioBox* ABox;
 	MTextEditor* TextEdit;
 	MTextEditor* TextEditOrig;
@@ -137,6 +134,10 @@ public:
 	void FindNextDoubtfulTl(wxCommandEvent& event);
 	void FindNextUnTranslated(wxCommandEvent& event);
 	void SetActiveLineToDoubtful();
+	void SetGrid(SubsGrid *_grid, bool isPreview = false){
+		grid = _grid;
+		hasPreviewGrid = isPreview;
+	}
 
 	wxBoxSizer* BoxSizer1;
 
@@ -192,10 +193,13 @@ private:
 	void DoTooltips();
 
 	bool isdetached;
+	bool hasPreviewGrid = false;
 	wxMutex mutex;
-	wxString num;
+	wxString colorNumber;
 	int CurrentDoubtful;
 	int CurrentUntranslated;
+	int currentLine;
+	SubsGrid *grid;
 };
 
 

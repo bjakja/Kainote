@@ -310,7 +310,7 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 		}
 	}
 	int fsel=tab->Grid->FirstSelection();
-	int wset=(fsel<0)? tab->Edit->ebrow : fsel;
+	int wset=(fsel<0)? tab->Grid->currentLine : fsel;
 	tab->Edit->SetLine(wset);
 	tab->Grid->SetModified(SELECT_LINES, false);
 	tab->Grid->RefreshColumns();

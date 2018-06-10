@@ -114,6 +114,7 @@ public:
 	char subsFormat = ASS;
 	char originalFormat = ASS;
 	int markedLine = 0;
+	int currentLine = 0;
 	bool showFrames = false;
 	bool savedSelections = false;
 	bool isFiltered = false;

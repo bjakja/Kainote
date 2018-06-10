@@ -227,8 +227,12 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 			int totalTime = int(double(segInfo->Duration) / timecodeScale);
 
 			// Load blocks
+			// Mask is unsigned int works wrong with files with num of tracks above 32
 			mkv_SetTrackMask(file, ~(1 << trackToRead));
-			while (mkv_ReadFrame(file,0,&rt,&startTime,&endTime,&filePos,&frameSize,&frameFlags) != EOF) {
+			while (mkv_ReadFrame(file, 0, &rt, &startTime, &endTime, &filePos, &frameSize, &frameFlags) != EOF) {
+				//This check prevents loading bad tracks when num of tracks is above 32
+				if (trackToRead != rt)
+					continue;
 				// Canceled			
 				if (progress->WasCancelled()) {
 					subList.clear();
@@ -244,7 +248,6 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 					tmp=new char[oscfs+1];
 					cs_NextFrame(cs,filePos,frameSize);
 					int rdata= cs_ReadData(cs,tmp,oscfs);
-					//wxLogStatus("pos %i, %i, %i", (int)filePos, oscfs, rdata);
 					tmp[rdata] = 0;
 				}else{
 					tmp=new char[frameSize+1];
@@ -311,6 +314,9 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 				int prog=((double(startTime))/double(totalTime))*100;
 				progress->Progress(prog);
 			}
+
+			if (!subList.size())
+				return 0;
 
 			target->Clearing();
 			target->file=new SubsFile();

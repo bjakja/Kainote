@@ -162,31 +162,31 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	filterMenu->SetAccMenu(GRID_FILTER, _("Filtruj"), _("Filtruj"));
 	filterMenu->SetAccMenu(FilterByNothing, _("Wyłącz filtrowanie"), _("Wyłącz filtrowanie"))->Enable(isFiltered);
 
-	bool isen;
-	isen = (sels == 1);
-	menu->SetAccMenu(InsertBefore, _("Wstaw &przed"))->Enable(isen);
-	menu->SetAccMenu(InsertAfter, _("Wstaw p&o"))->Enable(isen);
-	isen = (isen && Kai->GetTab()->Video->GetState() != None);
-	menu->SetAccMenu(InsertBeforeVideo, _("Wstaw przed z &czasem wideo"))->Enable(isen);
-	menu->SetAccMenu(InsertAfterVideo, _("Wstaw po z c&zasem wideo"))->Enable(isen);
-	menu->SetAccMenu(InsertBeforeWithVideoFrame, _("Wstaw przed z czasem klatki wideo"))->Enable(isen);
-	menu->SetAccMenu(InsertAfterWithVideoFrame, _("Wstaw po z czasem klatki wideo"))->Enable(isen);
-	isen = (sels > 0);
-	menu->SetAccMenu(Duplicate, _("&Duplikuj linie"))->Enable(isen);
-	isen = (sels == 2);
-	menu->SetAccMenu(Swap, _("Za&mień"))->Enable(isen);
-	isen = (sels >= 2 && sels <= 20);
-	menu->SetAccMenu(Join, _("Złącz &linijki"))->Enable(isen);
-	isen = (sels >= 2 && sels <= 50);
-	menu->SetAccMenu(JoinToFirst, _("Złącz linijki zostaw pierwszą"))->Enable(isen);
-	menu->SetAccMenu(JoinToLast, _("Złącz linijki zostaw ostatnią"))->Enable(isen);
-	isen = (sels > 0);
-	menu->SetAccMenu(ContinousPrevious, _("Ustaw czasy jako ciągłe (poprzednia linijka)"))->Enable(isen);
-	menu->SetAccMenu(ContinousNext, _("Ustaw czasy jako ciągłe (następna linijka)"))->Enable(isen);
-	menu->SetAccMenu(Copy, _("Kopiuj\tCtrl-C"))->Enable(isen);
-	menu->SetAccMenu(Cut, _("Wytnij\tCtrl-X"))->Enable(isen);
+	bool isEnabled;
+	isEnabled = (sels > 0);
+	menu->SetAccMenu(InsertBefore, _("Wstaw &przed"))->Enable(isEnabled);
+	menu->SetAccMenu(InsertAfter, _("Wstaw p&o"))->Enable(isEnabled);
+	isEnabled = (isEnabled && Kai->GetTab()->Video->GetState() != None);
+	menu->SetAccMenu(InsertBeforeVideo, _("Wstaw przed z &czasem wideo"))->Enable(isEnabled);
+	menu->SetAccMenu(InsertAfterVideo, _("Wstaw po z c&zasem wideo"))->Enable(isEnabled);
+	menu->SetAccMenu(InsertBeforeWithVideoFrame, _("Wstaw przed z czasem klatki wideo"))->Enable(isEnabled);
+	menu->SetAccMenu(InsertAfterWithVideoFrame, _("Wstaw po z czasem klatki wideo"))->Enable(isEnabled);
+	isEnabled = (sels > 0);
+	menu->SetAccMenu(Duplicate, _("&Duplikuj linie"))->Enable(isEnabled);
+	isEnabled = (sels == 2);
+	menu->SetAccMenu(Swap, _("Za&mień"))->Enable(isEnabled);
+	isEnabled = (sels >= 2 && sels <= 20);
+	menu->SetAccMenu(Join, _("Złącz &linijki"))->Enable(isEnabled);
+	isEnabled = (sels >= 2 && sels <= 50);
+	menu->SetAccMenu(JoinToFirst, _("Złącz linijki zostaw pierwszą"))->Enable(isEnabled);
+	menu->SetAccMenu(JoinToLast, _("Złącz linijki zostaw ostatnią"))->Enable(isEnabled);
+	isEnabled = (sels > 0);
+	menu->SetAccMenu(ContinousPrevious, _("Ustaw czasy jako ciągłe (poprzednia linijka)"))->Enable(isEnabled);
+	menu->SetAccMenu(ContinousNext, _("Ustaw czasy jako ciągłe (następna linijka)"))->Enable(isEnabled);
+	menu->SetAccMenu(Copy, _("Kopiuj\tCtrl-C"))->Enable(isEnabled);
+	menu->SetAccMenu(Cut, _("Wytnij\tCtrl-X"))->Enable(isEnabled);
 	menu->SetAccMenu(Paste, _("Wklej\tCtrl-V"));
-	menu->SetAccMenu(CopyCollumns, _("Kopiuj kolumny"))->Enable(isen);
+	menu->SetAccMenu(CopyCollumns, _("Kopiuj kolumny"))->Enable(isEnabled);
 	menu->SetAccMenu(PasteCollumns, _("Wklej kolumny"));
 	menu->Append(4444, _("Ukryj kolumny"), hidemenu);
 	menu->SetAccMenu(HideSelected, _("Ukryj zaznaczone linijki"))->Enable(sels > 0);
@@ -200,8 +200,8 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	menu->SetAccMenu(TranslationDialog, _("Okno przesuwania dialogów"))->Enable(showOriginal);
 	menu->AppendSeparator();
 
-	menu->SetAccMenu(RemoveText, _("Usuń tekst"))->Enable(isen);
-	menu->SetAccMenu(Remove, _("Usuń"))->Enable(isen);
+	menu->SetAccMenu(RemoveText, _("Usuń tekst"))->Enable(isEnabled);
+	menu->SetAccMenu(Remove, _("Usuń"))->Enable(isEnabled);
 	menu->AppendSeparator();
 	menu->SetAccMenu(FontCollectorID, _("Kolekcjoner czcionek"))->Enable(subsFormat < SRT);
 	menu->SetAccMenu(SubsFromMKV, _("Wczytaj napisy z pliku MKV"))->Enable(Kai->GetTab()->VideoName.EndsWith(".mkv"));
@@ -257,7 +257,7 @@ void SubsGrid::ContextMenuTree(const wxPoint &pos, int treeLine)
 void SubsGrid::OnInsertBefore()
 {
 	SaveSelections(true);
-	int rw = selections[0];
+	int rw = currentLine;
 	Dialogue *dialog = CopyDialogue(rw, false);
 	dialog->Text = "";
 	dialog->TextTl = "";
@@ -266,13 +266,14 @@ void SubsGrid::OnInsertBefore()
 		dialog->Start = GetDialogue(rw - 1)->End;
 	}
 	else{ dialog->Start.Change(-4000); }
+	markedLine = currentLine;
 	InsertRows(rw, 1, dialog, false, true);
 }
 
 void SubsGrid::OnInsertAfter()
 {
 	SaveSelections(true);
-	int rw = selections[0];
+	int rw = currentLine;
 	Dialogue *dialog = CopyDialogue(rw, false);
 	dialog->Text = "";
 	dialog->TextTl = "";
@@ -281,7 +282,7 @@ void SubsGrid::OnInsertAfter()
 		dialog->End = GetDialogue(rw + 1)->Start;
 	}
 	else{ dialog->End.Change(4000); }
-	Edit->ebrow = rw + 1;
+	currentLine = markedLine = rw + 1;
 	InsertRows(rw + 1, 1, dialog, false, true);
 }
 
@@ -315,25 +316,25 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	wxString en1;
 	int idd = event.GetId();
 	if (idd == JoinWithPrevious){
-		if (Edit->ebrow == 0){ return; }
+		if (currentLine == 0){ return; }
 		selections.Clear();
-		selections.Add(Edit->ebrow - 1);
-		selections.Add(Edit->ebrow);
+		selections.Add(currentLine - 1);
+		selections.Add(currentLine);
 		en1 = " ";
 	}
 	else if (idd == JoinWithNext){
 		int sizegrid = GetCount();
-		if (Edit->ebrow >= sizegrid - 1 || sizegrid < 2){ return; }
+		if (currentLine >= sizegrid - 1 || sizegrid < 2){ return; }
 		selections.Clear();
-		selections.Add(Edit->ebrow);
-		selections.Add(Edit->ebrow + 1);
+		selections.Add(currentLine);
+		selections.Add(currentLine + 1);
 		en1 = " ";
 	}
 	else{ en1 = "\\N"; }
 
 
 	Dialogue *dialc = file->CopyDialogue(selections[0]);
-	Edit->ebrow = selections[0];
+	currentLine = selections[0];
 	int start = INT_MAX, end = 0;
 	for (size_t i = 0; i < selections.size(); i++)
 	{
@@ -370,7 +371,7 @@ void SubsGrid::OnJoinToFirst(int id)
 		dialc->Text = ldial->Text;
 		dialc->TextTl = ldial->TextTl;
 	}
-	Edit->ebrow = selections[0];
+	currentLine = selections[0];
 	DeleteRow(selections[1], selections[selections.size() - 1] - selections[1] + 1);
 
 	file->InsertSelection(selections[0]);
@@ -523,6 +524,9 @@ void SubsGrid::CopyRows(int id)
 	{
 		if (id != CopyCollumns){
 			//tłumaczenie ma pierwszeństwo w kopiowaniu
+			if (subsFormat == SRT)
+				whatcopy << (selections[i] + 1) << "\r\n";
+
 			Dialogue *dial = GetDialogue(selections[i]);
 			dial->GetRaw(&whatcopy, hasTLMode && dial->TextTl != "");
 		}
@@ -540,8 +544,8 @@ void SubsGrid::CopyRows(int id)
 
 void SubsGrid::OnInsertBeforeVideo(bool frameTime)
 {
-	SaveSelections();
-	int rw = selections[0];
+	SaveSelections(true);
+	int rw = currentLine;
 	file->EraseSelection(rw);
 	Dialogue *dialog = CopyDialogue(rw, false);
 	if (!frameTime){
@@ -551,13 +555,14 @@ void SubsGrid::OnInsertBeforeVideo(bool frameTime)
 	int time = Kai->GetTab()->Video->GetFrameTime();
 	dialog->Start.NewTime(time);
 	dialog->End.NewTime(frameTime ? Kai->GetTab()->Video->GetFrameTime(false) : time + 4000);
+	markedLine = currentLine;
 	InsertRows(rw, 1, dialog, false, true);
 }
 
 void SubsGrid::OnInsertAfterVideo(bool frameTime)
 {
-	SaveSelections();
-	int rw = selections[0];
+	SaveSelections(true);
+	int rw = currentLine;
 	file->EraseSelection(rw);
 	Dialogue *dialog = CopyDialogue(rw, false);
 	if (!frameTime){
@@ -567,7 +572,7 @@ void SubsGrid::OnInsertAfterVideo(bool frameTime)
 	int time = Kai->GetTab()->Video->GetFrameTime();
 	dialog->Start.NewTime(time);
 	dialog->End.NewTime(frameTime ? Kai->GetTab()->Video->GetFrameTime(false) : time + 4000);
-	Edit->ebrow = rw + 1;
+	currentLine = markedLine = rw + 1;
 	InsertRows(rw + 1, 1, dialog, false, true);
 }
 
@@ -608,14 +613,14 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	case JoinToLast: if (sels > 1 && sels <= 50){ OnJoinToFirst(id); } break;
 	case HideSelected:
 	{
-		SubsGridFiltering filter(this, Edit->ebrow);
+		SubsGridFiltering filter(this, currentLine);
 		filter.HideSelections();
 		isFiltered = true;
 		break;
 	}
 	case GRID_TREE_MAKE:
 	{
-		SubsGridFiltering filter(this, Edit->ebrow);
+		SubsGridFiltering filter(this, currentLine);
 		filter.MakeTree();
 		break;
 	}
@@ -895,7 +900,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 
 		if (!tab->editor&&!tab->Video->isFullscreen){ Kai->HideEditor(); }
 		tab->ShiftTimes->Contents();
-		file->InsertSelection(Edit->ebrow);
+		file->InsertSelection(currentLine);
 		RefreshColumns();
 		Edit->HideControls();
 		if (StyleStore::HasStore() && subsFormat == ASS){ StyleStore::Get()->LoadAssStyles(); }
@@ -1134,10 +1139,10 @@ void SubsGrid::OnMakeContinous(int idd)
 void SubsGrid::OnShowPreview()
 {
 	if (CG1 == this || CG2 == this){
-		ShowSecondComparedLine(Edit->ebrow, true);
+		ShowSecondComparedLine(currentLine, true);
 	}
 	else{
-		ShowPreviewWindow(NULL, this, Edit->ebrow, Edit->ebrow - scPos);
+		ShowPreviewWindow(NULL, this, currentLine, currentLine - scPos);
 	}
 }
 
@@ -1272,7 +1277,7 @@ bool SubsGrid::SwapAssProperties()
 
 void SubsGrid::Filter(int id)
 {
-	SubsGridFiltering filter((SubsGrid*)this, Edit->ebrow);
+	SubsGridFiltering filter((SubsGrid*)this, currentLine);
 	const wxString & styles = Options.GetString(GridFilterStyles);
 	if (!styles.empty()){
 		int filterBy = Options.GetInt(GridFilterBy);
@@ -1353,7 +1358,7 @@ void SubsGrid::TreeAddLines(int treeLine)
 		SetModified(TREE_ADD_LINES, true, false, keystart + 1);
 	}
 	else{
-		file->InsertSelection(Edit->ebrow);
+		file->InsertSelection(currentLine);
 	}
 	Refresh(false);
 }
@@ -1419,8 +1424,8 @@ void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 		newActiveLineKey = corrected;
 	}
 	//newActiveLine = MID(0, newActiveLine, GetCount()-1);
-	if (Edit->ebrow != newActiveLine){
-		Edit->ebrow = newActiveLine;
+	if (currentLine != newActiveLine){
+		currentLine = newActiveLine;
 		if (scroll){ ScrollTo(newActiveLine, true); }
 	}
 	file->InsertSelectionKey(newActiveLineKey);

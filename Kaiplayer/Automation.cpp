@@ -746,7 +746,7 @@ namespace Auto{
 		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true, c->Grid->subsFormat);
 
 		push_value(L, selected_rows(c));
-		push_value(L, c->Grid->file->GetElementById(c->Edit->ebrow) + c->Grid->SInfoSize() + c->Grid->StylesSize() + 1);
+		push_value(L, c->Grid->file->GetElementById(c->Grid->currentLine) + c->Grid->SInfoSize() + c->Grid->StylesSize() + 1);
 
 		int err = lua_pcall(L, 3, 2, -5 /* three args, function, error handler */);
 		SAFE_DELETE(subsobj);
@@ -783,7 +783,7 @@ namespace Auto{
 		int original_offset = c->Grid->SInfoSize() + c->Grid->StylesSize()+1;
 		auto original_sel = selected_rows(c);
 		// original active do not have offset
-		int original_active = c->Grid->file->GetElementById(c->Edit->ebrow);
+		int original_active = c->Grid->file->GetElementById(c->Grid->currentLine);
 
 		push_value(L, original_sel);
 		push_value(L, original_active + original_offset);
@@ -868,7 +868,7 @@ namespace Auto{
 		GetFeatureFunction("isactive");
 		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true, c->Grid->subsFormat);
 		push_value(L, selected_rows(c));
-		push_value(L, c->Grid->file->GetElementById(c->Edit->ebrow) + c->Grid->SInfoSize() + c->Grid->StylesSize() + 1);
+		push_value(L, c->Grid->file->GetElementById(c->Grid->currentLine) + c->Grid->SInfoSize() + c->Grid->StylesSize() + 1);
 
 		int err = lua_pcall(L, 3, 1, 0);
 

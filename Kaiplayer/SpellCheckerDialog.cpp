@@ -93,8 +93,8 @@ wxString SpellCheckerDialog::FindNextMisspell()
 	bool noComments = ignoreComments->GetValue();
 	
 	tab = Kai->GetTab();
-	if(lastActiveLine != tab->Edit->ebrow){
-		lastLine = lastActiveLine = tab->Edit->ebrow;
+	if(lastActiveLine != tab->Grid->currentLine){
+		lastLine = lastActiveLine = tab->Grid->currentLine;
 		lastMisspell = 0;
 	}
 	for(int i = lastLine; i < tab->Grid->GetCount(); i++){
@@ -276,7 +276,7 @@ void SpellCheckerDialog::OnActive(wxActivateEvent &evt)
 		if (blockOnActive){ blockOnActive = false; return; }
 		TabPanel *tab1 = Kai->GetTab();
 		wxString &ActualText = tab1->Edit->line->Text.CheckTlRef(tab1->Edit->line->TextTl, tab->Grid->hasTLMode);
-		if(tab != tab1 || lastActiveLine != tab1->Edit->ebrow || lastText != ActualText){
+		if(tab != tab1 || lastActiveLine != tab1->Grid->currentLine || lastText != ActualText){
 			lastMisspell=0;
 			SetNextMisspell();
 		}

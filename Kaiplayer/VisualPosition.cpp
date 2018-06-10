@@ -72,7 +72,7 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 	
 	if(evt.RightDown() || evt.LeftDClick()){
 		for(size_t i = 0; i < data.size(); i++){
-			if(data[i].numpos == tab->Edit->ebrow){
+			if(data[i].numpos == tab->Grid->currentLine){
 				data[i].pos.x = x;
 				data[i].pos.y = y;
 				data[i].lastpos = data[i].pos;
@@ -165,7 +165,7 @@ void Position::SetCurVisual()
 	bool pib; wxPoint tp;
 	for(size_t i = 0; i < sels.size(); i++){
 		//fix by uzyskać reakcję na edycję w editboxie
-		Dialogue *dial = (sels[i]==tab->Edit->ebrow)? tab->Edit->line : tab->Grid->GetDialogue(sels[i]);
+		Dialogue *dial = (sels[i]==tab->Grid->currentLine)? tab->Edit->line : tab->Grid->GetDialogue(sels[i]);
 		if(dial->IsComment){continue;}
 		D3DXVECTOR2 pos = GetPos(dial,&pib,&tp);
 		data.push_back(PosData(dial, sels[i], D3DXVECTOR2(((pos.x/wspw)-zoomMove.x)*zoomScale.x, 

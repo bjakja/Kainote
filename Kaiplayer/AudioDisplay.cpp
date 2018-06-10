@@ -1261,7 +1261,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 		ProgressTimer.Start(50);
 	}
 	// Set default selection
-	int n = Edit->ebrow;
+	int n = grid->currentLine;
 	SetDialogue(grid->GetDialogue(n),n);
 }
 
@@ -1802,7 +1802,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 					curEndMS = ZEROIT(curEndMS);
 					selStart = MAX(0, selStart);
 					selEnd = MAX(0, selEnd);
-					int nn = Edit->ebrow;
+					int nn = grid->currentLine;
 					//automatyczne ustawianie czasów następnej linijki (Chwyt myszą end + ctrl)
 					if(hold==2 && nn<grid->GetCount()-1 && event.ControlDown() && event.AltDown()){
 						Dialogue *dialc=grid->CopyDialogue(nn+1);

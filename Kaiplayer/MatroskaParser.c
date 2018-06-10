@@ -68,7 +68,7 @@
 
 #define	MAX_STRING_LEN	      1023
 #define	QSEGSIZE	      512
-#define	MAX_TRACKS	      32
+#define	MAX_TRACKS	      128//32
 #define	MAX_READAHEAD	      (256*1024)
 
 #define	MAXCLUSTER	      (64*1048576)

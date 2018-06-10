@@ -171,7 +171,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		SpellErrors.resize(size);
 	}
 
-	Dialogue *acdial = (size>0)? GetDialogue(MID(0, Edit->ebrow, size - 1)) : NULL;
+	Dialogue *acdial = (size>0)? GetDialogue(MID(0, currentLine, size - 1)) : NULL;
 	Dialogue *Dial=NULL;
 	TabPanel *tab = (TabPanel*)GetParent();
 	int VideoPos = tab->Video->vstate !=None? tab->Video->Tell() : -1;
@@ -426,9 +426,10 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			}
 
 
-			bool collis = (!isHeadline && k != Edit->ebrow &&
-				(Dial->Start >= acdial->Start && Dial->Start < acdial->End ||
-				Dial->End > acdial->Start && Dial->Start <= acdial->End));
+			bool collis = (!isHeadline && acdial && k != currentLine &&
+				//(Dial->Start >= acdial->Start && Dial->Start < acdial->End ||
+				//Dial->End > acdial->Start && Dial->Start <= acdial->End)
+				(Dial->Start < acdial->End && Dial->End > acdial->Start));
 
 			if (subsFormat<SRT){ isCenter = !(j == 4 || j == 5 || j == 9 || j == 11 || j == 12); }
 			else if (subsFormat == TMP){ isCenter = !(j == 2); }
@@ -490,10 +491,10 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			tdc.DrawRectangle(posX + 1, ypos - 1, (GridWidth[0] - 1), GridHeight + 2);
 		}
 
-		if (Edit->ebrow >= scPos && Edit->ebrow <= scrows){
+		if (currentLine >= scPos && currentLine <= scrows){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine)));
-			int ypos = ((Edit->ebrow - scPos + 1)*(GridHeight + 1));
+			int ypos = ((currentLine - scPos + 1)*(GridHeight + 1));
 			if (preview && ypos >= previewpos.y-2){ ypos += previewsize.y + 5; }
 			tdc.DrawRectangle(posX, ypos - 1, w + scHor - posX, GridHeight + 2);
 		}
@@ -701,6 +702,9 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	bool right = event.RightDown();
 	int curY = event.GetY();
 	if (preview){
+		if (event.ButtonDown())
+			Edit->SetGrid((SubsGrid*)this);
+
 		wxPoint previewpos = preview->GetPosition();
 		wxSize previewsize = preview->GetSize();
 		if (curY >= previewpos.y - 2 && curY <= previewpos.y + previewsize.y + 1){ return; }
@@ -739,11 +743,11 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 				int diff = file->OpenCloseTree(row);
 				RefreshColumns();
 				SpellErrors.erase(SpellErrors.begin() + (row + 1), SpellErrors.end());
-				if (Edit->ebrow > row){
+				if (currentLine > row){
 					int firstSel = FirstSelection();
 					if(firstSel<0){
-						if (Edit->ebrow < GetCount())
-							file->InsertSelection(Edit->ebrow);
+						if (currentLine < GetCount())
+							file->InsertSelection(currentLine);
 						else
 							Edit->SetLine(GetCount()-1);
 					}else
@@ -808,7 +812,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		int filterRow = (curY + (GridHeight / 2)) / (GridHeight + 1) + scPos - 2;
 		if (!(filterRow < scPos || filterRow >= GetCount()) || filterRow == -1) {
 			if ((click || dclick) && file->CheckIfHasHiddenBlock(filterRow)){
-				SubsGridFiltering filter((SubsGrid*)this, Edit->ebrow);
+				SubsGridFiltering filter((SubsGrid*)this, currentLine);
 				filter.FilterPartial(filterRow);
 			}
 		}
@@ -851,9 +855,9 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 		// Toggle selected
 		if (left_up && ctrl && !shift && !alt) {
-			if (!(Edit->ebrow == row && file->SelectionsSize() == 1 && file->IsSelected(row))){
+			if (!(currentLine == row && file->SelectionsSize() == 1 && file->IsSelected(row))){
 				SelectRow(row, true, !file->IsSelected(row));
-				if (file->SelectionsSize() < 1){ SelectRow(Edit->ebrow); }
+				if (file->SelectionsSize() < 1){ SelectRow(currentLine); }
 				return;
 			}
 
@@ -866,7 +870,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 			//jakbym chciał znów dać zmianę edytowanej linii z ctrl to muszę dorobić mu refresh
 			if (click && (changeActive || !ctrl) || (dclick && ctrl)) {
-				lastActiveLine = Edit->ebrow;
+				lastActiveLine = currentLine;
 				Edit->SetLine(row, true, true, true, !ctrl);
 				if (hasTLMode){ Edit->SetActiveLineToDoubtful(); }
 				if (changeActive){ Refresh(false); }
@@ -945,7 +949,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 			// Toggle each
 			file->InsertSelections(i1, i2, !ctrl);
 			if (changeActive){
-				lastActiveLine = Edit->ebrow;
+				lastActiveLine = currentLine;
 				Edit->SetLine(row, true, true, false);
 				if (hasTLMode){ Edit->SetActiveLineToDoubtful(); }
 			}
@@ -1040,7 +1044,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 	if (key == WXK_WINDOWS_MENU) {
 		wxPoint pos;
 		pos.x = w / 2;
-		pos.y = (Edit->ebrow + 1 - scPos) * GridHeight + GridHeight / 2;
+		pos.y = (currentLine + 1 - scPos) * GridHeight + GridHeight / 2;
 		ContextMenu(pos);
 		return;
 	}
@@ -1076,7 +1080,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 		// Move selection
 		if (!ctrl && !shift && !alt) {
 			// Move to extent first
-			int curLine = Edit->ebrow;
+			int curLine = currentLine;
 			if (extendRow != -1) {
 				curLine = extendRow;
 				extendRow = -1;
@@ -1118,10 +1122,10 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 		// Shift-selection
 		else if (shift && !ctrl && !alt) {
 			// Find end
-			if (extendRow == -1) extendRow = Edit->ebrow;
+			if (extendRow == -1) extendRow = currentLine;
 			extendRow = lastRow = MID(0, extendRow + dir, GetCount() - 1);
 			// Set range
-			int i1 = Edit->ebrow;
+			int i1 = currentLine;
 			int i2 = extendRow;
 			if (i2 < i1) {
 				int aux = i1;
@@ -1394,6 +1398,12 @@ void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fro
 	else{
 		secondgrid->Refresh(false);
 	}
+}
+
+void SubsGridWindow::RefreshPreview()
+{
+	if (preview)
+		preview->Refresh(false);
 }
 
 bool SubsGridWindow::ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowToDraw, int activeLine, int diffPosition)

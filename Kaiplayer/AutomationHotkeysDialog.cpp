@@ -256,8 +256,8 @@ void AutomationHotkeysDialog::OnMapHkey(wxCommandEvent &evt)
 					int nitem = hotkeysList->FindItem(2, idtype->second.Name);
 					if (nitem >= 0){
 						ChangeHotkey(nitem, id, hotkey);
-						idtype->second.Accel = hotkey;
 					}
+					idtype->second.Accel = hotkey;
 				}
 			}
 			else if (result == wxCANCEL){ return; }

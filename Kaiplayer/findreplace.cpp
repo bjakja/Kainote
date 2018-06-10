@@ -423,7 +423,7 @@ void FindReplace::OnButtonFind(wxCommandEvent& event)
 void FindReplace::OnButtonRep(wxCommandEvent& event)
 {
 	TabPanel *tab = Kai->GetTab();
-	if (lastActive != tab->Edit->ebrow){ Find(); }
+	if (lastActive != tab->Grid->currentLine){ Find(); }
 	bool searchInOriginal = CollumnTextOriginal->GetValue();
 	long wrep = (tab->Grid->hasTLMode && !searchInOriginal) ? TXTTL : TXT;
 	if (CollumnStyle->GetValue()){ wrep = STYLE; }
@@ -516,7 +516,7 @@ void FindReplace::Find()
 
 	wxString find1 = FindText->GetValue();
 	if (find1 != oldfind){ fromstart = true; fnext = false; oldfind = find1; }
-	if (!fromstart && lastActive != tab->Edit->ebrow){ lastActive = tab->Edit->ebrow; }
+	if (!fromstart && lastActive != tab->Grid->currentLine){ lastActive = tab->Grid->currentLine; }
 
 	if (startline && regex){
 		find1 = "^" + find1;

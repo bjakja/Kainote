@@ -1916,7 +1916,7 @@ void kainoteFrame::OnAudioSnap(wxCommandEvent& event)
 
 		// Get range
 		if (inactiveType == 1) {
-			shadeFrom = MAX(0, tab->Edit->ebrow - 1);
+			shadeFrom = MAX(0, tab->Grid->currentLine - 1);
 			shadeTo = MIN(shadeFrom + 3, tab->Grid->GetCount());
 		}
 		else {
@@ -1925,7 +1925,7 @@ void kainoteFrame::OnAudioSnap(wxCommandEvent& event)
 		}
 
 		for (int j = shadeFrom; j < shadeTo; j++) {
-			if (j == tab->Edit->ebrow) continue;
+			if (j == tab->Grid->currentLine) continue;
 			shade = tab->Grid->GetDialogue(j);
 
 			int start = shade->Start.mstime;
@@ -1960,7 +1960,7 @@ void kainoteFrame::OnAudioSnap(wxCommandEvent& event)
 		if (durTime.mstime < 0){ durTime.mstime = 0; }
 		tab->Edit->DurEdit->SetTime(durTime, false, 1);
 		tab->Edit->Send(SNAP_TO_KEYFRAME_OR_LINE_TIME, false);
-		tab->Edit->ABox->audioDisplay->SetDialogue(tab->Edit->line, tab->Edit->ebrow, !snapStartTime);
+		tab->Edit->ABox->audioDisplay->SetDialogue(tab->Edit->line, tab->Grid->currentLine, !snapStartTime);
 		tab->Video->RefreshTime();
 	}
 }

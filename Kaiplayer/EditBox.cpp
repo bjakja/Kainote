@@ -146,7 +146,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, kainoteFrame* kaif, int idd)
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
 	SetFont(wxFont(9, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma"));
-	ebrow = 0;
+	currentLine = 0;
 	grid = grid1;
 	grid->Edit = this;
 	isdetached = OnVideo = splittedTags = false;
@@ -335,12 +335,12 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	//if (!grid->GetCount()){ Enable(false); return; }
 	//else if (!IsEnabled()){ Enable(); }
 	TabPanel* pan = (TabPanel*)GetParent();
-	bool rowChanged = ebrow != Row;
+	bool rowChanged = currentLine != Row;
 	if (nochangeline && !rowChanged){ goto done; }
 	if (Options.GetInt(GridSaveAfterCharacterCount) > 1 && rowChanged && save){
 		Send(EDITBOX_LINE_EDITION, false);
 	}
-	Dialogue *prevDial = grid->GetDialogue(ebrow);
+	Dialogue *prevDial = grid->GetDialogue(currentLine);
 	if (prevDial && prevDial->Start.mstime > prevDial->End.mstime){
 		prevDial->End = prevDial->Start;
 		grid->Refresh(false);
@@ -354,10 +354,11 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	if (DurEdit->changedBackGround){
 		DurEdit->SetForegroundColour(WindowText);
 	}
-	ebrow = Row;
+	currentLine = Row;
 	grid->markedLine = Row;
+	grid->currentLine = Row;
 	wxDELETE(line);
-	line = grid->GetDialogue(ebrow)->Copy();
+	line = grid->GetDialogue(currentLine)->Copy();
 	Comment->SetValue(line->IsComment);
 	LayerEdit->SetInt(line->Layer);
 	StartEdit->SetTime(line->Start, false, 1);
@@ -383,7 +384,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 		DoubtfulTL->SetValue(line->IsDoubtful());
 	}
 
-	if (setaudio && ABox && ABox->IsShown()){ ABox->audioDisplay->SetDialogue(line, ebrow); }
+	if (setaudio && ABox && ABox->IsShown()){ ABox->audioDisplay->SetDialogue(line, currentLine); }
 
 	//ustawia znaki na sekundę i ilość linii
 	UpdateChars((TextEditOrig->IsShown() && line->TextTl != "") ? line->TextTl : line->Text);
@@ -423,7 +424,7 @@ done:
 		}
 		else{
 			if (pan->Video->IsShown() || pan->Video->isFullscreen){
-				Dialogue *next = grid->GetDialogue(MIN(ebrow + 1, grid->GetCount() - 1));
+				Dialogue *next = grid->GetDialogue(MIN(currentLine + 1, grid->GetCount() - 1));
 				int ed = line->End.mstime, nst = next->Start.mstime;
 				int playend = (nst > ed && pas > 2) ? nst : ed;
 				pan->Video->PlayLine(line->Start.mstime, pan->Video->GetPlayEndTime(playend));
@@ -557,9 +558,9 @@ void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool vis
 	}
 
 	if (cellm){
-		if (ebrow < grid->GetCount() && !dummy){
+		if (currentLine < grid->GetCount() && !dummy){
 			//OnVideo=false;
-			grid->ChangeLine(editionType, line, ebrow, cellm, selline, visualdummy);
+			grid->ChangeLine(editionType, line, currentLine, cellm, selline, visualdummy);
 			if (cellm & ACTOR || cellm & EFFECT){
 				grid->RebuildActorEffectLists();
 			}
@@ -826,8 +827,8 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 
 void EditBox::AllColorClick(int kol)
 {
-	num = "";
-	num << kol;
+	colorNumber = "";
+	colorNumber << kol;
 	wxString iskol;
 	wxString tmptext = TextEdit->GetValue();
 	MTextEditor *Editor = TextEdit;
@@ -845,8 +846,8 @@ void EditBox::AllColorClick(int kol)
 		(kol == 3) ? style->OutlineColour :
 		style->BackColour;
 
-	acol = (!FindVal(num + tag, &iskol)) ? acol : (grid->subsFormat < SRT) ? AssColor("&" + iskol) : AssColor(wxString("#FFFFFF"));
-	if (FindVal(num + taga, &iskol)){ acol.SetAlphaString(iskol); }
+	acol = (!FindVal(colorNumber + tag, &iskol)) ? acol : (grid->subsFormat < SRT) ? AssColor("&" + iskol) : AssColor(wxString("#FFFFFF"));
+	if (FindVal(colorNumber + taga, &iskol)){ acol.SetAlphaString(iskol); }
 	else if (FindVal(tagal, &iskol)){ acol.SetAlphaString(iskol); }
 	DialogColorPicker *ColourDialog = DialogColorPicker::Get(this, acol.GetWX());
 	MoveToMousePosition(ColourDialog);
@@ -887,7 +888,7 @@ void EditBox::OnCommit(wxCommandEvent& event)
 		pan->Video->SetVisual(false, true);
 	}
 	if (StyleChoice->HasFocus() || Comment->HasFocus()){ grid->SetFocus(); }
-	if (ABox){ ABox->audioDisplay->SetDialogue(line, ebrow); }
+	if (ABox){ ABox->audioDisplay->SetDialogue(line, currentLine); }
 	pan->Video->blockpaint = false;
 }
 
@@ -896,7 +897,7 @@ void EditBox::OnNewline(wxCommandEvent& event)
 	if (Visual){ TextEdit->modified = true; }
 	if (splittedTags && (TextEdit->modified || TextEditOrig->modified)){ TextEdit->modified = true; TextEditOrig->modified = true; }
 	bool noNewLine = !(StartEdit->HasFocus() || EndEdit->HasFocus() || DurEdit->HasFocus()) || !Options.GetBool(NoNewLineAfterTimesEdition);
-	if (!noNewLine && ABox){ ABox->audioDisplay->SetDialogue(line, ebrow); }
+	if (!noNewLine && ABox){ ABox->audioDisplay->SetDialogue(line, currentLine); }
 	Send(EDITBOX_LINE_EDITION, noNewLine);
 	splittedTags = false;
 }
@@ -983,7 +984,7 @@ void EditBox::OnTlMode(wxCommandEvent& event)
 	bool show = !TextEditOrig->IsShown();
 	if (grid->SetTlMode(show)){ TlMode->SetValue(true); return; }
 	SetTl(show);
-	SetLine(ebrow);
+	SetLine(currentLine);
 }
 
 void EditBox::SetTl(bool tl)
@@ -1038,7 +1039,7 @@ void EditBox::RefreshStyle(bool resetline)
 		if (grid->GetCount() > 0){
 			SetLine(0);
 		}
-		else{ ebrow = 0; }
+		else{ currentLine = 0; }
 	}
 }
 
@@ -1352,7 +1353,8 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 
 void EditBox::OnEdit(wxCommandEvent& event)
 {
-	TabPanel* panel = (TabPanel*)GetParent();
+	//subs preview will switch grid to preview grid that's why we need to change its video, we dont want to change subtitles
+	TabPanel* panel = (TabPanel*)grid->GetParent();
 	//Start time - halfframe / end time + halfframe
 	bool startEndFocus = StartEdit->HasFocus() || EndEdit->HasFocus();
 	bool durFocus = DurEdit->HasFocus();
@@ -1388,7 +1390,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		EndEdit->MarkDirty();
 	}
 	if (durFocus || startEndFocus){
-		if (ABox && ABox->IsShown()){ ABox->audioDisplay->SetDialogue(line, ebrow); }
+		if (ABox && ABox->IsShown()){ ABox->audioDisplay->SetDialogue(line, currentLine); }
 		UpdateChars((TextEditOrig->IsShown() && line->TextTl != "") ? line->TextTl : line->Text);
 	}
 
@@ -1396,12 +1398,19 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	if (saveAfter && EditCounter >= saveAfter){
 		bool tmpOnVideo = OnVideo;
 		Send(EDITBOX_LINE_EDITION, false, false, true);
+		if (hasPreviewGrid){
+			TabPanel* thisTab = (TabPanel*)GetParent();
+			thisTab->Grid->RefreshPreview();
+		}
 		OnVideo = tmpOnVideo;
 		EditCounter = 1;
 		if (ABox && ABox->audioDisplay->hasKara && event.GetId()>0)
-			ABox->audioDisplay->SetDialogue(line, ebrow);
+			ABox->audioDisplay->SetDialogue(line, currentLine);
 	}
 	else{ EditCounter++; }
+
+	if (hasPreviewGrid)
+		return;
 
 	if (Visual > 0){
 		panel->Video->SetVisual(false, true);
@@ -1429,33 +1438,28 @@ void EditBox::OnEdit(wxCommandEvent& event)
 void EditBox::OnColorChange(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
-		wxString iskol;
-		wxString tag = (num == "1") ? "?c&(.*)" : "c&(.*)";
+		wxString colorString;
+		wxString tag = (colorNumber == "1") ? "?c&(.*)" : "c&(.*)";
 		Styles *style = grid->GetStyle(0, line->Style);
-		AssColor col = (num == "1") ? style->PrimaryColour :
-			(num == "2") ? style->SecondaryColour :
-			(num == "3") ? style->OutlineColour :
+		AssColor col = (colorNumber == "1") ? style->PrimaryColour :
+			(colorNumber == "2") ? style->SecondaryColour :
+			(colorNumber == "3") ? style->OutlineColour :
 			style->BackColour;
 
 		int alpha = col.a;
-		//wxString strcol = col.GetAss(false,true);
 		wxString chooseColor = event.GetString();
-		FindVal(num + tag, &iskol);
-		//if(chooseColor == strcol){
-		//if(iskol!=""){PutinText("", false);}
-		/*}else */if (iskol != chooseColor){
-			PutinText("\\" + num + "c" + event.GetString() + "&", false);
+		FindVal(colorNumber + tag, &colorString);
+		if (colorString != chooseColor){
+			PutinText("\\" + colorNumber + "c" + event.GetString() + "&", false);
 		}
 
-		if (FindVal(num + "a&(.*)", &iskol)){
-			iskol.Replace("H", "");
-			iskol.Replace("&", "");
-			alpha = wcstol(iskol.wc_str(), NULL, 16);//wxAtoi(iskol);
+		if (FindVal(colorNumber + "a&(.*)", &colorString)){
+			colorString.Replace("H", "");
+			colorString.Replace("&", "");
+			alpha = wcstol(colorString.wc_str(), NULL, 16);
 		}
-		/*if(alpha != -1 && stylealpha == event.GetInt()){
-		PutinText("", false);
-		}else */if (alpha != event.GetInt()/* && stylealpha != event.GetInt()*/){
-			PutinText("\\" + num + wxString::Format("a&H%02X&", event.GetInt()), false);
+		if (alpha != event.GetInt()){
+			PutinText("\\" + colorNumber + wxString::Format("a&H%02X&", event.GetInt()), false);
 
 		}
 
@@ -1663,7 +1667,7 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 			goto done;
 		}
 	}
-	if (splittedTags){ delete line; line = grid->GetDialogue(ebrow)->Copy(); }
+	if (splittedTags){ delete line; line = grid->GetDialogue(currentLine)->Copy(); }
 	splittedTags = false;
 	TextEdit->SetTextS((TextEditOrig->IsShown()) ? line->TextTl : line->Text, TextEdit->modified, true);
 	if (TextEditOrig->IsShown()){ TextEditOrig->SetTextS(line->Text, TextEditOrig->modified, true); }
@@ -1681,6 +1685,8 @@ done:
 void EditBox::OnCursorMoved(wxCommandEvent& event)
 {
 	if (Visual == SCALE || Visual == ROTATEZ || Visual == ROTATEXY || Visual == CLIPRECT){
+		//here grid has nothing to do if someone would want to make effect by visual on this video, 
+		//he can without problems
 		TabPanel* pan = (TabPanel*)GetParent();
 		pan->Video->ResetVisual();
 	}
@@ -1691,7 +1697,7 @@ void EditBox::OnChangeTimeDisplay(wxCommandEvent& event)
 	bool frame = Frames->GetValue();
 	grid->ChangeTimeDisplay(frame);
 	wxDELETE(line);
-	line = grid->GetDialogue(ebrow)->Copy();
+	line = grid->GetDialogue(currentLine)->Copy();
 	StartEdit->ShowFrames(frame);
 	EndEdit->ShowFrames(frame);
 	DurEdit->ShowFrames(frame);
@@ -1717,10 +1723,9 @@ bool EditBox::SetBackgroundColour(const wxColour &col)
 	return true;
 }
 
+//shows style editing window without style manager, window is non modal.
 void EditBox::OnStyleEdit(wxCommandEvent& event)
 {
-	//napisz tu coś później by ten przycisk w ogóle działał, 
-	//a może na dobry początek chociaż managera w całości pokazać?
 	StyleStore::ShowStyleEdit();
 }
 
@@ -1866,6 +1871,6 @@ void EditBox::SetTagButtons()
 
 void EditBox::SetActiveLineToDoubtful()
 {
-	CurrentDoubtful = ebrow;
-	CurrentUntranslated = ebrow;
+	CurrentDoubtful = currentLine;
+	CurrentUntranslated = currentLine;
 };

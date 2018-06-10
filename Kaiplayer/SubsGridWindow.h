@@ -40,6 +40,7 @@ public:
 	void SetStyle();
 	void SetVideoLineTime(wxMouseEvent &evt, int mvtal);
 	void ShowSecondComparedLine(int Line, bool showPreview = false, bool fromPreview = false);
+	void RefreshPreview();
 	SubsGridPreview *preview = NULL;
 	
 protected:

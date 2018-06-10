@@ -518,7 +518,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 			}
 			if (istl){ aline->TextTl = ltext; }
 			else{ aline->Text = ltext; }
-			tab->Grid->ChangeCell((istl) ? TXTTL : TXT, tab->Edit->ebrow, aline);
+			tab->Grid->ChangeCell((istl) ? TXTTL : TXT, tab->Grid->currentLine, aline);
 			tab->Grid->Refresh(false);
 			tab->Grid->SetModified(VISUAL_POSITION);
 		}

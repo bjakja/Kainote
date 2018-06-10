@@ -46,6 +46,7 @@ SubsGridPreview::SubsGridPreview(SubsGrid *_previewGrid, SubsGrid *windowToDraw,
 	Bind(wxEVT_MIDDLE_DOWN, &SubsGridPreview::OnMouseEvent, this);
 	Bind(wxEVT_RIGHT_DOWN, &SubsGridPreview::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &SubsGridPreview::OnMouseEvent, this);
+	Bind(wxEVT_ENTER_WINDOW, &SubsGridPreview::OnMouseEvent, this);
 	MakeVisible();
 }
 
@@ -59,7 +60,7 @@ void SubsGridPreview::MakeVisible()
 	int w, h;
 	GetClientSize(&w, &h);
 	TabPanel *tab = (TabPanel*)previewGrid->GetParent();
-	int erow = tab->Edit->ebrow;
+	int erow = tab->Grid->currentLine;
 	if ((scPos > erow || scPos + (h / (previewGrid->GridHeight + 1)) < erow + 2)){
 		scPos = MAX(0, erow - ((h / (previewGrid->GridHeight + 1)) / 2) + 1);
 	}
@@ -182,7 +183,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 
 	TabPanel *tab = (TabPanel*)previewGrid->GetParent();
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
-	Dialogue *acdial = (size > 0) ? previewGrid->GetDialogue(MID(0, tab->Edit->ebrow, size - 1)) : NULL;
+	Dialogue *acdial = (size > 0) ? previewGrid->GetDialogue(MID(0, previewGrid->currentLine, size - 1)) : NULL;
 	Dialogue *Dial = NULL;
 	
 	int VideoPos = tab->Video->vstate != None ? tab->Video->Tell() : -1;
@@ -434,7 +435,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			}
 
 
-			bool collis = (!isHeadline && k != tab->Edit->ebrow &&
+			bool collis = (!isHeadline && acdial && k != previewGrid->currentLine &&
 				(Dial->Start < acdial->End && Dial->End > acdial->Start));
 
 			if (previewGrid->subsFormat < SRT){ isCenter = !(j == 4 || j == 5 || j == 9 || j == 11 || j == 12); }
@@ -471,10 +472,10 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			tdc.DrawRectangle(posX + 1, ((previewGrid->markedLine - scPos + 1)*(previewGrid->GridHeight + 1)) - 1, (previewGrid->GridWidth[0] - 1), previewGrid->GridHeight + 2);
 		}
 
-		if (tab->Edit->ebrow >= scPos && tab->Edit->ebrow <= scrows){
+		if (previewGrid->currentLine >= scPos && previewGrid->currentLine <= scrows){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine)));
-			tdc.DrawRectangle(posX, ((tab->Edit->ebrow - scPos + 1)*(previewGrid->GridHeight + 1)) - 1, w + scHor - posX - 21, previewGrid->GridHeight + 2);
+			tdc.DrawRectangle(posX, ((previewGrid->currentLine - scPos + 1)*(previewGrid->GridHeight + 1)) - 1, w + scHor - posX - 21, previewGrid->GridHeight + 2);
 		}
 	}
 	tdc.SetBrush(wxBrush(Options.GetColour(WindowBorderBackground)));
@@ -508,6 +509,13 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	//border on left 4px
 	int curY = (event.GetY());
 	int curX = (event.GetX())-4;
+
+	TabPanel *tab = (TabPanel*)previewGrid->GetParent();
+	TabPanel *tabp = (TabPanel*)parent->GetParent();
+
+	if (event.ButtonDown())
+		tabp->Edit->SetGrid(previewGrid, true);
+
 	if (onX){
 		onX = false;
 		wxRect rect(w - 21, 2, 20, previewGrid->GridHeight - 4);
@@ -555,10 +563,33 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	if (event.ButtonDown()) {
 		SetFocus();
 	}
-	TabPanel *tab = (TabPanel*)previewGrid->GetParent();
-	TabPanel *tabp = (TabPanel*)parent->GetParent();
-
 	
+	
+	//Check if it is tree description line
+	if (previewGrid->file->CheckIfIsTree(row)){
+		if (event.GetModifiers() == 0){
+			if (click){
+				int diff = previewGrid->file->OpenCloseTree(row);
+				previewGrid->RefreshColumns();
+				previewGrid->SpellErrors.erase(previewGrid->SpellErrors.begin() + (row + 1), previewGrid->SpellErrors.end());
+				if (previewGrid->currentLine > row){
+					int firstSel = previewGrid->FirstSelection();
+					if (firstSel < 0){
+						if (previewGrid->currentLine < previewGrid->GetCount())
+							previewGrid->file->InsertSelection(previewGrid->currentLine);
+						else
+							tab->Edit->SetLine(previewGrid->GetCount() - 1);
+					}
+					else
+						tab->Edit->SetLine(firstSel);
+				}
+			}
+			else if (right){
+				previewGrid->ContextMenuTree(event.GetPosition(), row);
+			}
+		}
+		return;
+	}
 	// Seeking video by click on numeration column
 	if (click && isNumerizeColumn){
 		if (tabp->Video->GetState() != None && !(row < scPos || row >= previewGrid->GetCount())){
@@ -605,7 +636,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 		int filterRow = (curY /*+ headerHeight*/ + (previewGrid->GridHeight / 2)) / (previewGrid->GridHeight + 1) + scPos - 2;
 		if (!(filterRow < scPos || filterRow >= previewGrid->GetCount()) || filterRow == -1) {
 			if ((click || dclick) && previewGrid->file->CheckIfHasHiddenBlock(filterRow)){
-				SubsGridFiltering filter((SubsGrid*)this, tab->Edit->ebrow);
+				SubsGridFiltering filter((SubsGrid*)this, previewGrid->currentLine);
 				filter.FilterPartial(filterRow);
 			}
 		}
@@ -638,9 +669,9 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 		
 		// Toggle selected
 		if (left_up && ctrl && !shift && !alt) {
-			if (!(tab->Edit->ebrow == row && previewGrid->file->SelectionsSize() == 1 && previewGrid->file->IsSelected(row))){
+			if (!(previewGrid->currentLine == row && previewGrid->file->SelectionsSize() == 1 && previewGrid->file->IsSelected(row))){
 				previewGrid->SelectRow(row, true, !previewGrid->file->IsSelected(row));
-				if (previewGrid->file->SelectionsSize() < 1){ previewGrid->SelectRow(tab->Edit->ebrow); }
+				if (previewGrid->file->SelectionsSize() < 1){ previewGrid->SelectRow(previewGrid->currentLine); }
 				Refresh(false);
 				return;
 			}
@@ -654,7 +685,8 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 
 			//jakbym chcia³ znów daæ zmianê edytowanej linii z ctrl to muszê dorobiæ mu refresh
 			if (click && (changeActive || !ctrl) || (dclick && ctrl)) {
-				previewGrid->lastActiveLine = tab->Edit->ebrow;
+				previewGrid->lastActiveLine = previewGrid->currentLine;
+				tabp->Edit->SetLine(row, true, true, true, !ctrl);
 				tab->Edit->SetLine(row, true, true, true, !ctrl);
 				if (previewGrid->hasTLMode){ tab->Edit->SetActiveLineToDoubtful(); }
 				if (changeActive){ Refresh(false); }
@@ -670,9 +702,9 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			//2-klikniêcie lewym i edycja na pauzie
 			//3-klikniêcie lewym i edycja na pauzie i odtwarzaniu
 
-			if (dclick || (click && previewGrid->lastActiveLine != row && mvtal < 4 && mvtal > 0) && pas < 2){
-				tabp->Grid->SetVideoLineTime(event, mvtal);
-			}
+			//if (dclick || (click && previewGrid->lastActiveLine != row && mvtal < 4 && mvtal > 0) && pas < 2){
+				//tabp->Grid->SetVideoLineTime(event, mvtal);
+			//}
 
 			if (click || dclick || left_up)
 				return;
@@ -728,7 +760,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			// Toggle each
 			previewGrid->file->InsertSelections(i1, i2, !ctrl);
 			if (changeActive){
-				previewGrid->lastActiveLine = tab->Edit->ebrow;
+				previewGrid->lastActiveLine = previewGrid->currentLine;
 				tab->Edit->SetLine(row, true, true, false);
 				if (previewGrid->hasTLMode){ tab->Edit->SetActiveLineToDoubtful(); }
 				
@@ -759,7 +791,7 @@ void SubsGridPreview::SeekForOccurences()
 {
 	if (lastData.grid){ lastData.grid->thisPreview = NULL; }
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
-	Dialogue * actualDial = parent->GetDialogue(tabp->Edit->ebrow);
+	Dialogue * actualDial = parent->GetDialogue(tabp->Grid->currentLine);
 	int startTime = actualDial->Start.mstime;
 	int endTime = actualDial->End.mstime;
 	Notebook * nb = Notebook::GetTabs();

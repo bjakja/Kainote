@@ -303,7 +303,7 @@ void SubsGridBase::Convert(char type)
 
 	subsFormat = type;
 	file->ReloadVisibleDialogues();
-	Edit->SetLine((Edit->ebrow < GetCount()) ? Edit->ebrow : 0);
+	Edit->SetLine((currentLine < GetCount()) ? currentLine : 0);
 	SpellErrors.clear();
 	SetModified(GRID_CONVERT);
 	RefreshColumns();
@@ -328,7 +328,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 	if (subsFormat < SRT){
 		if (cstat){
 			AddSInfo("Last Style Storage", Options.actualStyleDir, false);
-			AddSInfo("Active Line", std::to_string(Edit->ebrow), false);
+			AddSInfo("Active Line", std::to_string(currentLine), false);
 			if (Edit->ABox){
 				AddSInfo("Audio File", Edit->ABox->audioName, false);
 			}
@@ -349,7 +349,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 	txt = GetSInfo("TLMode Style");
 	wxString raw;
 	if (loadFromEditbox){
-		int activeLineKey = file->GetElementById(Edit->ebrow);
+		int activeLineKey = file->GetElementById(currentLine);
 		for (int i = 0; i < file->subs->dials.size(); i++)
 		{
 			Dialogue *dial = file->subs->dials[i];
@@ -984,8 +984,8 @@ void SubsGridBase::DummyUndo(int newIter)
 	if (newIter >= file->Iter())
 		return;
 	file->DummyUndo(newIter);
-	SpellErrors[Edit->ebrow].clear();
-	Edit->SetLine(Edit->ebrow, false, false);
+	SpellErrors[currentLine].clear();
+	Edit->SetLine(currentLine, false, false);
 	RefreshColumns();
 	UpdateUR();
 	Kai->Label(file->GetActualHistoryIter());
@@ -1124,7 +1124,7 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 			SaveSelections();
 		}
 		savedSelections = false;
-		int ebrow = Edit->ebrow;
+		int ebrow = currentLine;
 		if (redit){
 			int erow = (SetEditBoxLine >= 0) ? SetEditBoxLine : ebrow;
 			if (erow >= GetCount()){ erow = GetCount() - 1; }
@@ -1243,7 +1243,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 	if (subsFormat == ASS){
 		if (Options.GetBool(GridFilterAfterLoad)){
 			isFiltered = true;
-			SubsGridFiltering filter((SubsGrid*)this, Edit->ebrow);
+			SubsGridFiltering filter((SubsGrid*)this, currentLine);
 			filter.Filter(true);
 		}
 		RebuildActorEffectLists();
@@ -1362,7 +1362,7 @@ void SubsGridBase::NextLine(int dir)
 	if (Edit->ABox && Edit->ABox->audioDisplay->hold != 0){ return; }
 	int size = GetCount();
 	if (size < 1){ dir = 0; }
-	int nebrow = Edit->ebrow + dir;
+	int nebrow = currentLine + dir;
 	if (nebrow < 0){ return; }
 	if (nebrow >= size){
 		Dialogue *tmp = GetDialogue(size - 1)->Copy();
@@ -1499,7 +1499,7 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 	bool isTlmode = GetSInfo("TLMode") == "Yes";
 	const wxString &tlStyle = GetSInfo("TLMode Style");
 	int j = 1;
-	int activeLineKey = file->GetElementById(Edit->ebrow);
+	int activeLineKey = file->GetElementById(currentLine);
 
 	for (int i = 0; i < file->subs->dials.size(); i++)
 	{
@@ -1524,7 +1524,7 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 				}
 				dial->GetRaw(txt);
 			}
-			if (point && i == Edit->ebrow){
+			if (point && i == currentLine){
 				int all = txt->Len(); point->x = all - 2;
 				int len = (isTlmode && dial->TextTl != "") ?
 					dial->TextTl.Len() : dial->Text.Len();
@@ -1617,7 +1617,7 @@ void SubsGridBase::SaveSelections(bool clear)
 {
 	file->undo[file->iter]->Selections = file->subs->Selections;
 	//tutaj muszą być przeróbki na klucze
-	file->undo[file->iter]->activeLine = file->GetElementById(Edit->ebrow);
+	file->undo[file->iter]->activeLine = file->GetElementById(currentLine);
 	file->undo[file->iter]->markerLine = file->GetElementById(markedLine);
 	file->undo[file->iter]->scrollPosition = file->GetElementById(scPos);
 	if (clear){ file->ClearSelections(); }
