@@ -409,6 +409,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="KaiStaticBoxSizer.cpp" />
     <ClCompile Include="KaiStaticText.cpp" />
     <ClCompile Include="KaiStatusBar.cpp" />
+    <ClCompile Include="KaiTabBar.cpp" />
     <ClCompile Include="KaiTextCtrl.cpp" />
     <ClCompile Include="KaiTextValidator.cpp" />
     <ClCompile Include="KaiTreeBook.cpp" />
@@ -514,6 +515,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="KaiStaticBoxSizer.h" />
     <ClInclude Include="KaiStaticText.h" />
     <ClInclude Include="KaiStatusBar.h" />
+    <ClInclude Include="KaiTabBar.h" />
     <ClInclude Include="KaiTextCtrl.h" />
     <ClInclude Include="KaiTextValidator.h" />
     <ClInclude Include="KaiTreebook.h" />
