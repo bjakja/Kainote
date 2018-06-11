@@ -277,7 +277,6 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 	if (isFullscreen){
 		UpdateVideoWindow();
 		wxSize size = GetVideoSize();
-		wxString res;
 		Kai->SetVideoResolution(size.x, size.y, !Options.GetBool(DontAskForBadResolution));
 	}
 	//block = false;
@@ -788,10 +787,11 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 {
 	ismenu = true;
 	Menu* menu = new Menu();
+	bool editor = ((TabPanel*)GetParent())->editor;
 	wxString txt = L"\t" + Hkeys.GetStringHotkey(PlayPause);
 	if (GetState() != Playing){ txt.Prepend(_("Odtwórz")); }
 	else if (GetState() == Playing){ txt.Prepend(_("Pauza")); }
-	if (!isFullscreen && ((TabPanel*)GetParent())->editor)
+	if (!isFullscreen && editor)
 	{
 		menu->SetAccMenu(CopyCoords, _("Kopiuj pozycję na wideo"));
 	}
@@ -858,6 +858,8 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 	for (size_t i = 0; i < streams.size(); i++){
 		wxString ident = streams[i].BeforeFirst(':');
 		name = streams[i].BeforeLast(' ', &enable);
+		if ((ident == "S" || ident == "s") && editor)
+			break;
 		if (ident != prev){ menu->AppendSeparator(); }
 		menu->Append(MENU_STREAMS + i, name, "", true, 0, 0, (enable == "1") ? ITEM_RADIO : ITEM_NORMAL);//->Check(enable=="1");
 		prev = ident;
@@ -871,7 +873,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 	}
 	id = 0;
 	int Modifiers = 0;
-	menu->SetMaxVisible(50);
+	menu->SetMaxVisible(40);
 	//ismenu=true;
 	if (isFullscreen){
 		id = menu->GetPopupMenuSelection(pos, TD, &Modifiers, true);

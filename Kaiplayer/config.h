@@ -199,6 +199,7 @@
 	CG(VideoRecent,)\
 	CG(VideoVolume,)\
 	CG(VideoWindowSize,)\
+	CG(VisualWarningsOff,)\
 	CG(WindowMaximized,)\
 	CG(WindowPosition,)\
 	CG(WindowSize,)\
