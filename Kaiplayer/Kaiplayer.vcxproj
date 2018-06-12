@@ -393,6 +393,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DShowPlayer.cpp" />
     <ClCompile Include="FindReplace.cpp" />
+    <ClCompile Include="FindReplaceDialog.cpp" />
     <ClCompile Include="FontEnumerator.cpp" />
     <ClCompile Include="GFFT\GFFT.cpp" />
     <ClCompile Include="HotkeysNaming.cpp" />
@@ -499,6 +500,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="Config.h" />
     <ClInclude Include="DShowPlayer.h" />
     <ClInclude Include="FindReplace.h" />
+    <ClInclude Include="FindReplaceDialog.h" />
     <ClInclude Include="FontEnumerator.h" />
     <ClInclude Include="GFFT\GFFT.h" />
     <ClInclude Include="HotkeysNaming.h" />

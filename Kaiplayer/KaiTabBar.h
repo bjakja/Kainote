@@ -18,6 +18,9 @@
 #include <wx/window.h>
 #include <vector>
 
+wxDECLARE_EVENT(BEFORE_CHANGING_TAB, wxCommandEvent);
+wxDECLARE_EVENT(TAB_CHANGED, wxCommandEvent);
+
 class TabData
 {
 public:
@@ -35,9 +38,10 @@ class KaiTabBar : public wxWindow
 public:
 	KaiTabBar(wxWindow * parent, int id, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize);
 	virtual ~KaiTabBar();
-
+	//After adding tabs have to call Fit() method to setup sizes
 	void AddTab(wxWindow * tab, const wxString & tabName);
 	void SetTab(int tabNum);
+	wxWindow *GetTab(int i);
 	void Fit();
 
 private:
@@ -46,7 +50,12 @@ private:
 	void OnMouseEvent(wxMouseEvent &event);
 	void RefreshTabBar();
 	void SetColours(const wxColour &bgcol, const wxColour &fgcol);
+	int FindCurrentTab(const wxPoint &pos);
+
 	std::vector<TabData *> tabs;
 	int tabHeader = 15;
 	int currentTab = 0;
+	int lastTab = -1;
+	int textHeight = 0;
+	int tabHighlighted = -1;
 };

@@ -384,6 +384,9 @@
     <ClCompile Include="SpellChecker.cpp">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClCompile>
+    <ClCompile Include="FindReplaceDialog.cpp">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -685,6 +688,9 @@
     </ClInclude>
     <ClInclude Include="KaiTabBar.h">
       <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplaceDialog.h">
+      <Filter>Header Files\Windows &amp; Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
