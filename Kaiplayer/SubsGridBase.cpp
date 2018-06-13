@@ -1020,7 +1020,13 @@ void SubsGridBase::InsertRows(int Row,
 	int convertedRow = (asKey) ? Row : file->IdConverter->getElementById(Row);
 	if (convertedRow < 0){ convertedRow = file->subs->dials.size(); }
 	file->subs->dials.insert(file->subs->dials.begin() + convertedRow, RowsTable.begin(), RowsTable.end());
-	file->ReloadVisibleDialogues(convertedRow, convertedRow + RowsTable.size());
+	//file->ReloadVisibleDialogues(convertedRow, convertedRow + RowsTable.size());
+	for (int i = 0; i < RowsTable.size(); i++){
+		file->IdConverter->insert(i + convertedRow);
+		if (!RowsTable[i]->isVisible){
+			file->IdConverter->deleteItemByKey(i + convertedRow, false);
+		}
+	}
 	if (asKey){ Row = file->IdConverter->getElementByKey(Row); }
 	if (Row >= 0){
 		wxArrayInt emptyarray;
@@ -1038,7 +1044,13 @@ void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddTo
 	int convertedRow = (asKey) ? Row : file->IdConverter->getElementById(Row);
 	if (convertedRow < 0){ convertedRow = file->subs->dials.size(); }
 	file->subs->dials.insert(file->subs->dials.begin() + convertedRow, NumRows, Dialog);
-	file->ReloadVisibleDialogues(convertedRow, convertedRow + NumRows);
+	for (int i = convertedRow; i < convertedRow + NumRows; i++){
+		file->IdConverter->insert(i);
+		if (!file->subs->dials[i]->isVisible){
+			file->IdConverter->deleteItemByKey(i, false);
+		}
+	}
+	//file->ReloadVisibleDialogues(convertedRow, convertedRow + NumRows);
 	if (asKey){ Row = file->IdConverter->getElementByKey(Row); }
 	if (Row >= 0){
 		wxArrayInt emptyarray;
