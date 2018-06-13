@@ -34,7 +34,7 @@ Notebook::Notebook(wxWindow *parent, int id)
 	font=wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 	sthis=this;
 
-	Pages.push_back(new TabPanel(this,(kainoteFrame*)parent));
+	Pages.push_back(new TabPanel(this,(KainoteFrame*)parent));
 
 	wxString name=Pages[0]->SubsName;
 
@@ -118,7 +118,7 @@ void Notebook::AddPage(bool refresh)
 	int w,h;
 	GetClientSize(&w,&h);
 	//if(refresh){Freeze();}
-	Pages.push_back(new TabPanel(this,(kainoteFrame*)GetParent(),wxPoint(0,0), wxSize(0,0)));
+	Pages.push_back(new TabPanel(this,(KainoteFrame*)GetParent(),wxPoint(0,0), wxSize(0,0)));
 	olditer=iter;
 	iter=Size()-1;
 	if(refresh){
@@ -134,7 +134,7 @@ void Notebook::AddPage(bool refresh)
 	Pages[iter]->SetSize(Pages[olditer]->GetSize());
 	CalcSizes(true);
 	if(refresh){
-		if(!Options.GetBool(EditorOn)){kainoteFrame *kai=(kainoteFrame *)GetParent();kai->HideEditor(false);}
+		if(!Options.GetBool(EditorOn)){KainoteFrame *kai=(KainoteFrame *)GetParent();kai->HideEditor(false);}
 		wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 		AddPendingEvent(evt2);
 		//Thaw();
@@ -174,7 +174,7 @@ TabPanel *Notebook::Page(size_t i)
 void Notebook::DeletePage(int page)
 {
 	Freeze();
-	kainoteFrame *Kai=(kainoteFrame*)GetParent();
+	KainoteFrame *Kai=(KainoteFrame*)GetParent();
 	block=true;
 	if(Kai->SavePrompt(1,page)){
 		block=false; 
@@ -786,7 +786,7 @@ void Notebook::OnTabSel(int id)
 		Split(wtab);
 	}
 	else if(wtab<0){
-		kainoteFrame *Kai=(kainoteFrame*)GetParent();
+		KainoteFrame *Kai=(KainoteFrame*)GetParent();
 		int tmpiter=iter;
 		Pages[iter]->Hide();
 		for(int i=(int)Pages.size()-1; i>=0; i--)
@@ -807,7 +807,7 @@ void Notebook::OnTabSel(int id)
 		firstVisibleTab = 0;
 		int w=-1,h=-1;
 		if (pagesSize < 1){
-			Pages.push_back(new TabPanel(this,(kainoteFrame*)GetParent()));
+			Pages.push_back(new TabPanel(this,(KainoteFrame*)GetParent()));
 			wxString name=Pages[0]->SubsName;
 			Names.Add(name);
 			GetClientSize(&w,&h);
@@ -927,7 +927,7 @@ void Notebook::RefreshBar()
 void Notebook::OnSave(int id)
 {
 	id-=MENU_SAVE;
-	kainoteFrame *Kai=(kainoteFrame*) GetParent();
+	KainoteFrame *Kai=(KainoteFrame*) GetParent();
 	if(id<0){
 		Kai->SaveAll();
 	}else{

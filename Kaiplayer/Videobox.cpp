@@ -99,7 +99,7 @@ void bars1::OnSlider(wxCommandEvent &event)
 }
 
 
-VideoCtrl::VideoCtrl(wxWindow *parent, kainoteFrame *kfpar, const wxSize &size)
+VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	: VideoRend(parent, size)
 	, Kai(kfpar)
 	, hasArrow(true)

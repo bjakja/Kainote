@@ -20,7 +20,7 @@
 #include "KainoteMain.h"
 
 
-TabPanel::TabPanel(wxWindow *parent, kainoteFrame *kai, const wxPoint &pos, const wxSize &size)
+TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, const wxSize &size)
 	: wxWindow(parent, -1, pos, size)
 	, sline(NULL)
 	, editor(true)

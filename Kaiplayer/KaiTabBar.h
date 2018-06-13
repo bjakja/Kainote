@@ -41,7 +41,7 @@ public:
 	//After adding tabs have to call Fit() method to setup sizes
 	void AddTab(wxWindow * tab, const wxString & tabName);
 	void SetTab(int tabNum);
-	wxWindow *GetTab(int i);
+	wxWindow *GetTab(int i = -1);
 	void Fit();
 
 private:

@@ -57,6 +57,8 @@ void KaiTabBar::SetTab(int tabNum)
 
 wxWindow * KaiTabBar::GetTab(int i)
 {
+	if (i < 0)
+		i = currentTab;
 	if (i < 0 || i >= tabs.size())
 		return NULL;
 

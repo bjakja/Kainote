@@ -20,7 +20,7 @@
 #include "KaiScrollbar.h"
 
 class EditBox;
-class kainoteFrame;
+class KainoteFrame;
 wxDECLARE_EVENT(CURSOR_MOVED, wxCommandEvent);
 
 class MTextEditor : public wxWindow

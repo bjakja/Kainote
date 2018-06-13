@@ -16,28 +16,22 @@
 
 #pragma once
 #include <wx/regex.h>
-#include "FindReplaceDialog.h"
 
-class kainoteFrame;
-
+class KainoteFrame;
+class TabWindow;
+class FindReplaceDialog;
 
 class FindReplace
 {
 	friend class TabWindow;
+	friend class FindReplaceDialog;
 	public:
 
-		FindReplace(kainoteFrame* kfparent, bool replace);
+		FindReplace(KainoteFrame* kfparent, FindReplaceDialog *FRD);
 		virtual ~FindReplace(){};
-		void SaveOptions();
-	
-		void ReloadStyle();
-		void AddRecent(TabWindow *window);
-		void ChangeContents(bool replace);
-		void OnStylesWin(wxCommandEvent& event);
-		void OnSetFocus(wxActivateEvent& event);
-		void Reset();
+		
 	private:
-		kainoteFrame *Kai;
+		KainoteFrame *Kai;
         int linePosition;
 		int reprow;
         int textPosition;
@@ -66,8 +60,10 @@ class FindReplace
 		void ReplaceAll(TabWindow *window);
 		void ReplaceInAllOpenedSubs(TabWindow *window);
 		void ReplaceInSubs(TabWindow *window);
-		//void OnRecheck(wxCommandEvent& event);
-		//void OnEnterConfirm(wxCommandEvent& event);
+		void AddRecent(TabWindow *window);
+		void OnClose();
+
+		FindReplaceDialog *FRD;
 };
 
 enum
@@ -84,6 +80,5 @@ enum
 	IN_LINES_ALL = 512,
 	IN_LINES_SELECTED = 1024,
 	IN_LINES_FROM_SELECTION = 2048,
-	ID_ENTER_CONFIRM
 };
 

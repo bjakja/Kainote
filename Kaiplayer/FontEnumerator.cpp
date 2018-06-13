@@ -43,7 +43,7 @@ FontEnumerator::~FontEnumerator()
 	wxDELETE(FilteredFontsTmp);
 }
 
-void FontEnumerator::StartListening(kainoteFrame* _parent)
+void FontEnumerator::StartListening(KainoteFrame* _parent)
 {
 	parent = _parent;
 	checkFontsThread = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)CheckFontsProc, this, 0, 0);

@@ -17,7 +17,7 @@
 #include "DropFiles.h"
 #include "kainoteMain.h"
 
-DragnDrop::DragnDrop(kainoteFrame* kfparent)
+DragnDrop::DragnDrop(KainoteFrame* kfparent)
 {
 	Kai=kfparent;
 }

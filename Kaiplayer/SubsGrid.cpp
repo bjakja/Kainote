@@ -32,7 +32,7 @@
 #include "SubsGridFiltering.h"
 #include "SubsGridDialogs.h"
 
-SubsGrid::SubsGrid(wxWindow* parent, kainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 	:SubsGridWindow(parent, id, pos, size, style)
 {
 	Kai = kfparent;

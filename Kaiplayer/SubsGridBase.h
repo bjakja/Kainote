@@ -26,7 +26,7 @@
 #include <set>
 
 class EditBox;
-class kainoteFrame;
+class KainoteFrame;
 class SubsGrid;
 
 class compareData{
@@ -146,7 +146,7 @@ protected:
 	int scPos = 0;
 	int scHor = 0;
 	int GridHeight = 0;
-	kainoteFrame* Kai;
+	KainoteFrame* Kai;
 	std::vector<bool> visibleLines;
 	wxTimer timer;
 	wxTimer nullifyTimer;

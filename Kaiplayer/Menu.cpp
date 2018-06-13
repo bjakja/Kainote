@@ -507,7 +507,7 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 			subMenuIsShown=false;
 		}
 		if(sel!=submenuToHide){sel=-1; Refresh(false);}
-		kainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
+		KainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
 		frame->SetStatusText("",0);
 		return;
 	}else if(evt.Entering()){
@@ -539,11 +539,11 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 		}
 		
 		Refresh(false);
-		kainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
+		KainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
 		frame->SetStatusText(item->help, 0);
 	}
 	if (evt.Entering()){
-		kainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
+		KainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
 		frame->SetStatusText(item->help, 0);
 	}
 	if(evt.LeftUp() && !item->submenu){
@@ -715,7 +715,7 @@ void MenuDialog::OnScroll(wxScrollEvent& event)
 void MenuDialog::HideMenus(int id)
 {
 	if(!ParentMenu){return;}
-	kainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
+	KainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
 	frame->SetStatusText("",0);
 	MenuBar::Menubar->md=NULL;
 	int subMenu=ParentMenu->submenuToHide;

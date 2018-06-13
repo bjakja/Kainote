@@ -21,18 +21,18 @@
 #include "MappedButton.h"
 #include "KaiDialog.h"
 
-class kainoteFrame;
+class KainoteFrame;
 
 
 class SelectLines: public KaiDialog
 {
 public:
 
-	SelectLines(kainoteFrame* kfparent);
+	SelectLines(KainoteFrame* kfparent);
 	virtual ~SelectLines(){};
 	void SaveOptions();
 
-    kainoteFrame* Kai;
+    KainoteFrame* Kai;
 
 	KaiRadioButton* Contains;
 	KaiRadioButton* NotContains;

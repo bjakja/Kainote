@@ -117,7 +117,7 @@ void HotkeysNaming::CreateNamesMap()
 	names[FilterByUntranslated] = _("Pokaż nieprzetłumaczone");
 	names[FindNextDoubtful] = _("Następne niepewne");
 	names[FindNextUntranslated] = _("Następne nieprzetłumaczone");
-	names[FindReplaceDialog] = _("Znajdź i zmień");
+	names[GLOBAL_FIND_REPLACE] = _("Znajdź i zmień");
 	names[FontCollectorID] = _("Kolekcjoner czcionek");
 	names[FPSFromVideo] = _("Ustaw FPS z wideo");
 	names[FrameToClipboard] = _("Kopiuj klatkę do schowka");

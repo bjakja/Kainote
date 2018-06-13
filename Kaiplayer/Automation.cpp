@@ -1115,7 +1115,7 @@ namespace Auto{
 	void Automation::BuildMenu(Menu **bar, bool all)
 	{
 		TabPanel* c = Notebook::GetTab();
-		kainoteFrame *Kai = (kainoteFrame*)c->GetGrandParent();
+		KainoteFrame *Kai = (KainoteFrame*)c->GetGrandParent();
 		for(int j=(*bar)->GetMenuItemCount()-1; j>=4; j--){
 			(*bar)->Delete(j);
 		}

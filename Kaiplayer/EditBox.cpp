@@ -131,7 +131,7 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 
 
 
-EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, kainoteFrame* kaif, int idd)
+EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, KainoteFrame* kaif, int idd)
 	: wxWindow(parent, idd, wxDefaultPosition, wxDefaultSize/*, wxBORDER_SIMPLE*/)//|wxCLIP_CHILDREN
 	, EditCounter(1)
 	, ABox(NULL)
@@ -998,7 +998,7 @@ void EditBox::SetTl(bool tl)
 	AutoMoveTags->SetValue(Options.GetBool(AutoMoveTagsFromOriginal));
 	BoxSizer1->Layout();
 	if (TlMode->GetValue() != tl){ TlMode->SetValue(tl); }
-	kainoteFrame *Kai = (kainoteFrame*)Notebook::GetTabs()->GetParent();
+	KainoteFrame *Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	Kai->Toolbar->UpdateId(SaveTranslation, tl);
 }
 

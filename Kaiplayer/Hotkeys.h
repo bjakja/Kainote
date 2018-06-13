@@ -150,7 +150,7 @@
 	XX( SaveTranslation,)\
 	XX( RemoveSubs,)\
 	XX( Search,)\
-	XX( FindReplaceDialog,)\
+	XX( GLOBAL_FIND_REPLACE,)\
 	XX( SelectLinesDialog,)\
 	XX( SpellcheckerDialog,)\
 	XX( VideoIndexing,)\

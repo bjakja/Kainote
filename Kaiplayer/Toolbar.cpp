@@ -64,7 +64,7 @@ void KaiToolbar::InitToolbar()
 	if(IDS.size()<1){
 		IDS.Add(OpenSubs);IDS.Add(RecentSubs);IDS.Add(OpenVideo);IDS.Add(RecentVideo);
 		IDS.Add(SaveSubs);IDS.Add(SaveSubsAs);IDS.Add(SaveAllSubs);
-		IDS.Add(RemoveSubs);IDS.Add(Editor);IDS.Add(FindReplaceDialog);
+		IDS.Add(RemoveSubs);IDS.Add(Editor);IDS.Add(GLOBAL_FIND_REPLACE);
 		IDS.Add(StyleManager); IDS.Add(ASSProperties); IDS.Add(ChangeTime); 
 		IDS.Add(ConvertToASS); IDS.Add(ConvertToSRT); IDS.Add(VideoZoom); 
 		IDS.Add(SubsResample); IDS.Add(Settings);
@@ -190,7 +190,7 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 				Menu * smenu=item->GetSubMenu();
 				//Menu * shmenu;
 				if(tools[elem]->id!=SortLines && tools[elem]->id!=SortSelected){
-					kainoteFrame *Kai = (kainoteFrame*) GetParent();
+					KainoteFrame *Kai = (KainoteFrame*) GetParent();
 					int what= (smenu==Kai->SubsRecMenu)? 0 : (smenu==Kai->VidsRecMenu)? 1 : 2;
 					Kai->AppendRecent(what, smenu);
 				}
@@ -292,7 +292,7 @@ void KaiToolbar::OnSize(wxSizeEvent &evt)
 	if(maxxwh!=wh){
 		thickness = wh;
 		SetSize(wxSize(wh,-1));
-		kainoteFrame *Kai= (kainoteFrame*)GetParent();
+		KainoteFrame *Kai= (KainoteFrame*)GetParent();
 		//Kai->Layout();
 		wxSizeEvent evt;
 		Kai->OnSize(evt);
@@ -403,7 +403,7 @@ ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos)
 	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
 		parent->alignment = alignments->GetSelection();
 		Options.SetInt(ToolbarAlignment, parent->alignment);
-		kainoteFrame *win = (kainoteFrame*)parent->GetParent();
+		KainoteFrame *win = (KainoteFrame*)parent->GetParent();
 		if (win){
 			wxSizeEvent evt;
 			win->OnSize(evt);

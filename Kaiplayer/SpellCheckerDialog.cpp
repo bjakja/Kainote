@@ -21,7 +21,7 @@
 #include "KaiMessageBox.h"
 #include <regex>
 
-SpellCheckerDialog::SpellCheckerDialog(kainoteFrame *parent)
+SpellCheckerDialog::SpellCheckerDialog(KainoteFrame *parent)
 	:KaiDialog((wxWindow*)parent,-1, _("Sprawdzanie pisowni"))
 	,Kai(parent)
 	,lastLine(0)

@@ -88,7 +88,7 @@ bool kainoteApp::OnInit()
 			}
 
 			Frame=NULL;
-    		Frame = new kainoteFrame(wxPoint(posx,posy),wxSize(sizex,sizey));
+    		Frame = new KainoteFrame(wxPoint(posx,posy),wxSize(sizex,sizey));
 			bool opevent=false;
 			if(paths.GetCount()>0){
 				if(Options.GetBool(VideoFullskreenOnStart)){

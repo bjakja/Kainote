@@ -136,7 +136,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 			resamplingOptions->GetSelection() == 1);
 		grid->SetModified(SUBTITLES_RESAMPLE);
 		grid->Refresh(false);
-		((kainoteFrame *)parent)->SetSubsResolution();
+		((KainoteFrame *)parent)->SetSubsResolution();
 		EndModal(0);
 	},6548);
 	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
@@ -184,7 +184,7 @@ SubsMismatchResolutionDialog::SubsMismatchResolutionDialog(wxWindow *parent, con
 			grid->ResizeSubs(resizeX,resizeY, resamplingOptions->GetSelection() == 2);
 		}
 		grid->SetModified(SUBTITLES_RESAMPLE);
-		((kainoteFrame *)parent)->SetSubsResolution();
+		((KainoteFrame *)parent)->SetSubsResolution();
 		EndModal(0);
 	},26548);
 	buttonSizer->Add(OK, 0, wxALL, 2);

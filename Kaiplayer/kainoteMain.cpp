@@ -67,7 +67,7 @@ void EnableCrashingOnCrashes()
 	}
 }
 
-kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
+KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	: KaiFrame(0, -1, _("Bez nazwy - ") + Options.progname, pos, size, wxDEFAULT_FRAME_STYLE, "Kainote_main_window")
 	, badResolution(false)
 	, fc(NULL)
@@ -146,7 +146,7 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	EditMenu->AppendTool(Toolbar, UndoToLastSave, _("Cofnij do ostatniego zapisu"), _("Cofnij do ostatniego zapisu"), PTR_BITMAP_PNG("UNDOTOLASTSAVE"), false);
 	EditMenu->AppendTool(Toolbar, Redo, _("&Ponów"), _("Ponów"), PTR_BITMAP_PNG("redo"), false);
 	EditMenu->AppendTool(Toolbar, History, _("&Historia"), _("Historia"), PTR_BITMAP_PNG("history"), true);
-	EditMenu->AppendTool(Toolbar, FindReplaceDialog, _("Znajdź i za&mień"), _("Szuka i podmienia dane frazy tekstu"), PTR_BITMAP_PNG("findreplace"));
+	EditMenu->AppendTool(Toolbar, GLOBAL_FIND_REPLACE, _("Znajdź i za&mień"), _("Szuka i podmienia dane frazy tekstu"), PTR_BITMAP_PNG("findreplace"));
 	EditMenu->AppendTool(Toolbar, Search, _("Z&najdź"), _("Szuka dane frazy tekstu"), PTR_BITMAP_PNG("search"));
 	Menu *SortMenu[2];
 	for (int i = 0; i < 2; i++){
@@ -241,24 +241,24 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	SetAccels(false);
 
 
-	Connect(ID_TABS, wxEVT_COMMAND_CHOICE_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnPageChanged, 0, this);
-	Connect(ID_ADDPAGE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnPageAdd);
-	Connect(ID_CLOSEPAGE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnPageClose);
-	Connect(NextTab, PreviousTab, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnPageChange);
+	Connect(ID_TABS, wxEVT_COMMAND_CHOICE_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageChanged, 0, this);
+	Connect(ID_ADDPAGE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageAdd);
+	Connect(ID_CLOSEPAGE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageClose);
+	Connect(NextTab, PreviousTab, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageChange);
 	//tutaj dodawaj nowe idy
-	Connect(SaveSubs, History, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
-	Connect(7000, 7011, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
-	Connect(GLOBAL_SHIFT_TIMES, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected);
-	Connect(OpenSubs, ANSI, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
-	Connect(SelectFromVideo, PlayActualLine, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
-	Connect(Plus5SecondG, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnP5Sec);
-	Connect(Minus5SecondG, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnM5Sec);
-	Connect(PreviousLine, JoinWithNext, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnChangeLine);
-	Connect(Remove, RemoveText, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnDelete);
-	Menubar->Connect(EVT_MENU_OPENED, (wxObjectEventFunction)&kainoteFrame::OnMenuOpened, 0, this);
-	Connect(wxEVT_CLOSE_WINDOW, (wxObjectEventFunction)&kainoteFrame::OnClose1);
-	Connect(30000, 30059, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnRecent);
-	Connect(PlayActualLine, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&kainoteFrame::OnMenuSelected1);
+	Connect(SaveSubs, History, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected);
+	Connect(7000, 7011, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected);
+	Connect(GLOBAL_SHIFT_TIMES, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected);
+	Connect(OpenSubs, ANSI, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
+	Connect(SelectFromVideo, PlayActualLine, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
+	Connect(Plus5SecondG, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnP5Sec);
+	Connect(Minus5SecondG, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnM5Sec);
+	Connect(PreviousLine, JoinWithNext, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnChangeLine);
+	Connect(Remove, RemoveText, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnDelete);
+	Menubar->Connect(EVT_MENU_OPENED, (wxObjectEventFunction)&KainoteFrame::OnMenuOpened, 0, this);
+	Connect(wxEVT_CLOSE_WINDOW, (wxObjectEventFunction)&KainoteFrame::OnClose1);
+	Connect(30000, 30059, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnRecent);
+	Connect(PlayActualLine, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
 		if (!mylog){
 			mylog = new wxLogWindow(this, "Logi", true, false);
@@ -280,10 +280,10 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 			tab->Video->SetFocus();
 		}
 	});
-	Bind(wxEVT_ACTIVATE, &kainoteFrame::OnActivate, this);
-	Connect(SnapWithStart, SnapWithEnd, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&kainoteFrame::OnAudioSnap);
+	Bind(wxEVT_ACTIVATE, &KainoteFrame::OnActivate, this);
+	Connect(SnapWithStart, SnapWithEnd, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnAudioSnap);
 	Tabs->SetDropTarget(new DragnDrop(this));
-	Bind(wxEVT_SIZE, &kainoteFrame::OnSize, this);
+	Bind(wxEVT_SIZE, &KainoteFrame::OnSize, this);
 
 
 	bool im = Options.GetBool(WindowMaximized);
@@ -298,9 +298,9 @@ kainoteFrame::kainoteFrame(const wxPoint &pos, const wxSize &size)
 	EnableCrashingOnCrashes();
 }
 
-kainoteFrame::~kainoteFrame()
+KainoteFrame::~KainoteFrame()
 {
-	Unbind(wxEVT_ACTIVATE, &kainoteFrame::OnActivate, this);
+	Unbind(wxEVT_ACTIVATE, &KainoteFrame::OnActivate, this);
 	bool im = IsMaximized();
 	if (!im && !IsIconized()){
 		int posx, posy, sizex, sizey;
@@ -334,7 +334,7 @@ kainoteFrame::~kainoteFrame()
 
 
 //elementy menu które ulegają wyłączaniu
-void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
+void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 {
 	int id = event.GetId();
 	int Modif = event.GetInt();
@@ -398,16 +398,9 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			tab->Grid->GetUndo(false, iter);
 		});
 	}
-	else if (id == Search || id == FindReplaceDialog){
-		if (FR && FR->IsShown() && FR->repl && id == FindReplaceDialog){ FR->Hide(); return; }
-		if (!FR){ FR = new FindReplace(this, id == FindReplaceDialog); }
-		if ((FR->repl && id != FindReplaceDialog) || (!FR->repl && id == FindReplaceDialog)){
-			FR->ChangeContents(id == FindReplaceDialog);
-		}
-		FR->Show();
-		FR->ReloadStyle();
-		wxActivateEvent evt;
-		FR->OnSetFocus(evt);
+	else if (id == Search || id == GLOBAL_FIND_REPLACE){
+		if (!FR){ FR = new FindReplaceDialog(this, (id == GLOBAL_FIND_REPLACE) ? WINDOW_REPLACE : WINDOW_FIND); }
+		else{ FR->ShowDialog((id == GLOBAL_FIND_REPLACE) ? WINDOW_REPLACE : WINDOW_FIND); }
 	}
 	else if (id == SelectLinesDialog){
 		if (!SL){ SL = new SelectLines(this); }
@@ -594,7 +587,7 @@ void kainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	
 }
 //Stałe elementy menu które nie ulegają wyłączaniu
-void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
+void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 {
 	int id = event.GetId();
 	int Modif = event.GetInt();
@@ -725,7 +718,7 @@ void kainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 }
 
 
-void kainoteFrame::OnConversion(char form)
+void KainoteFrame::OnConversion(char form)
 {
 	TabPanel *tab = GetTab();
 	if (tab->Grid->GetSInfo("TLMode") == "Yes"){ return; }
@@ -740,7 +733,7 @@ void kainoteFrame::OnConversion(char form)
 }
 
 
-void kainoteFrame::OnAssProps()
+void KainoteFrame::OnAssProps()
 {
 	int x = -1, y = -1;
 	if (GetTab()->Video->GetState() != None){ GetTab()->Video->GetVideoSize(&x, &y); }
@@ -808,7 +801,7 @@ void kainoteFrame::OnAssProps()
 	}
 }
 
-void kainoteFrame::Save(bool dial, int wtab, bool changeLabel)
+void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 {
 	TabPanel* atab = (wtab < 0) ? GetTab() : Tabs->Page(wtab);
 	if (atab->Grid->originalFormat != atab->Grid->subsFormat
@@ -852,7 +845,7 @@ void kainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 #endif
 }
 
-bool kainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
+bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 {
 	wxMutexLocker lock(blockOpen);
 	wxString ext = filename.AfterLast('.').Lower();
@@ -1015,7 +1008,7 @@ done:
 	return true;
 }
 
-void kainoteFrame::SetSubsResolution(bool showDialog)
+void KainoteFrame::SetSubsResolution(bool showDialog)
 {
 	TabPanel *cur = GetTab();
 	if (cur->Grid->subsFormat != ASS){ return; }
@@ -1047,7 +1040,7 @@ void kainoteFrame::SetSubsResolution(bool showDialog)
 
 }
 
-void kainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
+void KainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
 {
 	TabPanel *cur = GetTab();
 	wxString resolution;
@@ -1071,14 +1064,14 @@ void kainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
 	}
 }
 
-void kainoteFrame::ShowBadResolutionDialog(const wxSize &videoRes, const wxSize &subsRes)
+void KainoteFrame::ShowBadResolutionDialog(const wxSize &videoRes, const wxSize &subsRes)
 {
 	SubsMismatchResolutionDialog badResDialog(this, subsRes, videoRes);
 	badResDialog.ShowModal();
 }
 
 //0 - subs, 1 - vids, 2 - auds
-void kainoteFrame::SetRecent(short what)
+void KainoteFrame::SetRecent(short what)
 {
 	int idd = 30000 + (20 * what);
 	Menu *wmenu = (what == 0) ? SubsRecMenu : (what == 1) ? VidsRecMenu : AudsRecMenu;
@@ -1100,7 +1093,7 @@ void kainoteFrame::SetRecent(short what)
 }
 
 //0 - subs, 1 - vids, 2 - auds
-void kainoteFrame::AppendRecent(short what, Menu *_Menu)
+void KainoteFrame::AppendRecent(short what, Menu *_Menu)
 {
 	Menu *wmenu;
 	if (_Menu){
@@ -1139,7 +1132,7 @@ void kainoteFrame::AppendRecent(short what, Menu *_Menu)
 	}
 }
 
-void kainoteFrame::OnRecent(wxCommandEvent& event)
+void KainoteFrame::OnRecent(wxCommandEvent& event)
 {
 	int id = event.GetId();
 	int numItem = 0;
@@ -1187,7 +1180,7 @@ void kainoteFrame::OnRecent(wxCommandEvent& event)
 }
 
 
-void kainoteFrame::OnSize(wxSizeEvent& event)
+void KainoteFrame::OnSize(wxSizeEvent& event)
 {
 	wxSize size = GetSize();
 	int fborder = borders.left = borders.right = borders.bottom = 7;
@@ -1229,7 +1222,7 @@ void kainoteFrame::OnSize(wxSizeEvent& event)
 }
 
 
-bool kainoteFrame::FindFile(const wxString &fn, wxString &foundFile, bool video)
+bool KainoteFrame::FindFile(const wxString &fn, wxString &foundFile, bool video)
 {
 	wxString filespec;
 	wxString path = fn.BeforeLast('\\', &filespec);
@@ -1254,23 +1247,23 @@ bool kainoteFrame::FindFile(const wxString &fn, wxString &foundFile, bool video)
 }
 
 
-void kainoteFrame::OnP5Sec(wxCommandEvent& event)
+void KainoteFrame::OnP5Sec(wxCommandEvent& event)
 {
 	GetTab()->Video->Seek(GetTab()->Video->Tell() + 5000);
 }
 
-void kainoteFrame::OnM5Sec(wxCommandEvent& event)
+void KainoteFrame::OnM5Sec(wxCommandEvent& event)
 {
 	GetTab()->Video->Seek(GetTab()->Video->Tell() - 5000);
 
 }
 
-TabPanel* kainoteFrame::GetTab()
+TabPanel* KainoteFrame::GetTab()
 {
 	return Tabs->GetPage();
 }
 
-void kainoteFrame::Label(int iter, bool video, int wtab)
+void KainoteFrame::Label(int iter, bool video, int wtab)
 {
 	TabPanel* atab = (wtab < 0) ? GetTab() : Tabs->Page(wtab);
 	wxString whiter;
@@ -1289,7 +1282,7 @@ void kainoteFrame::Label(int iter, bool video, int wtab)
 	Tabs->SetPageText((wtab < 0) ? Tabs->GetSelection() : wtab, name);
 }
 
-void kainoteFrame::SetAccels(bool _all)
+void KainoteFrame::SetAccels(bool _all)
 {
 	std::vector<wxAcceleratorEntry> entries;
 	entries.resize(2);
@@ -1317,7 +1310,7 @@ void kainoteFrame::SetAccels(bool _all)
 			continue;
 		else if (id >= 6850){
 			if (id >= 30100){
-				Bind(wxEVT_COMMAND_MENU_SELECTED, &kainoteFrame::OnRunScript, this, id);
+				Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnRunScript, this, id);
 			}
 			entries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 		}
@@ -1337,7 +1330,7 @@ void kainoteFrame::SetAccels(bool _all)
 }
 
 
-void kainoteFrame::InsertTab(bool refresh/*=true*/)
+void KainoteFrame::InsertTab(bool refresh/*=true*/)
 {
 	Tabs->AddPage(refresh);
 }
@@ -1348,7 +1341,7 @@ bool comp(wxString first, wxString second)
 }
 
 //OpenFiles automatically cleares files table
-void kainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bool newtab)
+void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bool newtab)
 {
 	wxMutexLocker lock(blockOpen);
 	std::sort(files.begin(), files.end(), comp);
@@ -1445,7 +1438,7 @@ void kainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 	Options.SaveOptions(true, false);
 }
 
-void kainoteFrame::OnPageChange(wxCommandEvent& event)
+void KainoteFrame::OnPageChange(wxCommandEvent& event)
 {
 	if (Tabs->Size() < 2){ return; }
 	int step = (event.GetId() == NextTab) ? Tabs->iter + 1 : Tabs->iter - 1;
@@ -1455,7 +1448,7 @@ void kainoteFrame::OnPageChange(wxCommandEvent& event)
 }
 
 
-void kainoteFrame::OnPageChanged(wxCommandEvent& event)
+void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 {
 	wxString whiter;
 	TabPanel *cur = Tabs->GetPage();
@@ -1528,7 +1521,7 @@ void kainoteFrame::OnPageChanged(wxCommandEvent& event)
 	if (FR){ FR->Reset(); FR->ReloadStyle(); }
 }
 
-void kainoteFrame::HideEditor(bool save)
+void KainoteFrame::HideEditor(bool save)
 {
 	TabPanel *cur = GetTab();
 
@@ -1606,19 +1599,19 @@ void kainoteFrame::HideEditor(bool save)
 	if (save){ Options.SetBool(EditorOn, cur->editor); Options.SaveOptions(true, false); }
 }
 
-void kainoteFrame::OnPageAdd(wxCommandEvent& event)
+void KainoteFrame::OnPageAdd(wxCommandEvent& event)
 {
 	InsertTab();
 }
 
-void kainoteFrame::OnPageClose(wxCommandEvent& event)
+void KainoteFrame::OnPageClose(wxCommandEvent& event)
 {
 	Tabs->DeletePage(Tabs->GetSelection());
 	OnPageChanged(event);
 }
 
 
-void kainoteFrame::SaveAll()
+void KainoteFrame::SaveAll()
 {
 	for (size_t i = 0; i < Tabs->Size(); i++)
 	{
@@ -1630,7 +1623,7 @@ void kainoteFrame::SaveAll()
 }
 
 //return anulowanie operacji
-bool kainoteFrame::SavePrompt(char mode, int wtab)
+bool KainoteFrame::SavePrompt(char mode, int wtab)
 {
 	TabPanel* atab = (wtab < 0) ? GetTab() : Tabs->Page(wtab);
 	if (atab->Grid->IsModified()){
@@ -1650,19 +1643,19 @@ bool kainoteFrame::SavePrompt(char mode, int wtab)
 }
 
 
-void kainoteFrame::UpdateToolbar()
+void KainoteFrame::UpdateToolbar()
 {//disejblowanie rzeczy niepotrzebnych przy wyłączonym edytorze
 	MenuEvent evt;
 	OnMenuOpened(evt);
 	Toolbar->Updatetoolbar();
 }
 
-void kainoteFrame::OnOpenAudio(wxCommandEvent& event)
+void KainoteFrame::OnOpenAudio(wxCommandEvent& event)
 {
 	OpenAudioInTab(GetTab(), event.GetId(), event.GetString());
 }
 
-void kainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
+void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 {
 
 	if (id == CloseAudio && tab->Edit->ABox){
@@ -1728,7 +1721,7 @@ void kainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 
 
 //uses before menu is shown
-void kainoteFrame::OnMenuOpened(MenuEvent& event)
+void KainoteFrame::OnMenuOpened(MenuEvent& event)
 {
 	Menu *curMenu = event.GetMenu();
 	TabPanel *tab = GetTab();
@@ -1833,7 +1826,7 @@ void kainoteFrame::OnMenuOpened(MenuEvent& event)
 
 
 
-void kainoteFrame::OnChangeLine(wxCommandEvent& event)
+void KainoteFrame::OnChangeLine(wxCommandEvent& event)
 {
 
 	int idd = event.GetId();
@@ -1845,7 +1838,7 @@ void kainoteFrame::OnChangeLine(wxCommandEvent& event)
 	}
 }
 
-void kainoteFrame::OnDelete(wxCommandEvent& event)
+void KainoteFrame::OnDelete(wxCommandEvent& event)
 {
 	int idd = event.GetId();
 	if (idd == Remove){
@@ -1857,7 +1850,7 @@ void kainoteFrame::OnDelete(wxCommandEvent& event)
 
 }
 
-void kainoteFrame::OnClose1(wxCloseEvent& event)
+void KainoteFrame::OnClose1(wxCloseEvent& event)
 {
 	size_t curit = Tabs->iter;
 	for (size_t i = 0; i < Tabs->Size(); i++)
@@ -1869,7 +1862,7 @@ void kainoteFrame::OnClose1(wxCloseEvent& event)
 	event.Skip();
 }
 
-void kainoteFrame::OnActivate(wxActivateEvent &evt)
+void KainoteFrame::OnActivate(wxActivateEvent &evt)
 {
 	if (!evt.GetActive() && Tabs->Size()){
 		TabPanel *tab = GetTab();
@@ -1880,7 +1873,7 @@ void kainoteFrame::OnActivate(wxActivateEvent &evt)
 	}
 }
 
-void kainoteFrame::OnAudioSnap(wxCommandEvent& event)
+void KainoteFrame::OnAudioSnap(wxCommandEvent& event)
 {
 	TabPanel *tab = GetTab();
 	if (!tab->Edit->ABox){ return; }
@@ -1966,7 +1959,7 @@ void kainoteFrame::OnAudioSnap(wxCommandEvent& event)
 }
 
 
-void kainoteFrame::OnOutofMemory()
+void KainoteFrame::OnOutofMemory()
 {
 	TabPanel *tab = Notebook::GetTab();
 
@@ -1991,7 +1984,7 @@ void kainoteFrame::OnOutofMemory()
 	std::exit(1);
 }
 
-void kainoteFrame::OnRunScript(wxCommandEvent& event)
+void KainoteFrame::OnRunScript(wxCommandEvent& event)
 {
 	//if (!Auto){ Auto = new Auto::Automation(true, true); }
 	//else 

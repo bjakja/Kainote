@@ -246,7 +246,7 @@ int ItemHotkey::OnVisibilityChange(int mode){
 wxString *OptionsDialog::windowNames = NULL;
 std::map<idAndType, hdata> OptionsDialog::hotkeysCopy;
 
-OptionsDialog::OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent)
+OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	: KaiDialog(parent, -1, _("Opcje"))
 {
 	windowNames = new wxString[5]{ _("Globalny"), _("Napisy"), _("Edytor"), _("Wideo"), _("Audio") };

@@ -24,6 +24,7 @@
 #include "KaiStaticText.h"
 
 class FindReplace;
+class KainoteFrame;
 
 class TabWindow : public wxWindow
 {
@@ -60,12 +61,18 @@ public:
 
 class FindReplaceDialog : public KaiDialog
 {
+	friend class FindReplace;
 public:
-	FindReplaceDialog(wxWindow *parent, int id, int whichWindow);
+	FindReplaceDialog(KainoteFrame *Kai, int whichWindow);
 	virtual ~FindReplaceDialog();
+	void ShowDialog(int whichWindow);
 private:
 	void OnActivate(wxActivateEvent& event);
+	void OnEnterConfirm(wxCommandEvent& event);
+	TabWindow *GetTab();
 	FindReplace *FR = NULL;
+	KainoteFrame *Kai = NULL;
+	KaiTabBar * findReplaceTabs = NULL;
 };
 
 enum{

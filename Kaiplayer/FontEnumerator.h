@@ -26,14 +26,14 @@
 
 
 
-class kainoteFrame;
+class KainoteFrame;
 
 class FontEnumerator
 {
 public:
 	FontEnumerator();
 	~FontEnumerator();
-	void StartListening(kainoteFrame* parent);
+	void StartListening(KainoteFrame* parent);
 	void EnumerateFonts(bool reenumerate = false);
 	wxArrayString *GetFonts(const wxWindow *client, std::function<void()> func);
 	wxArrayString *GetFilteredFonts(const wxWindow *client, std::function<void()> func, const wxString &filter);
@@ -53,7 +53,7 @@ private:
 	wxArrayString *FilteredFontsTmp;
 	wxString filter;
 	std::map<const wxWindow*, std::function<void()>> observers;
-	kainoteFrame* parent;
+	KainoteFrame* parent;
 	HANDLE eventKillSelf;
 	HANDLE checkFontsThread;
 	wxMutex enumerateMutex;

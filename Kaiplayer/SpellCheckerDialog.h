@@ -21,13 +21,13 @@
 #include "KaiDialog.h"
 #include "KaiListCtrl.h"
 
-class kainoteFrame;
+class KainoteFrame;
 class TabPanel;
 
 class SpellCheckerDialog : public KaiDialog
 {
 public:
-	SpellCheckerDialog(kainoteFrame *parent);
+	SpellCheckerDialog(KainoteFrame *parent);
 	virtual ~SpellCheckerDialog(){};
 
 private:
@@ -63,7 +63,7 @@ private:
 	wxArrayString ignored;
 	wxArrayInt errors;
 	wxString lastText;
-	kainoteFrame *Kai;
+	KainoteFrame *Kai;
 	TabPanel *tab;
 };
 

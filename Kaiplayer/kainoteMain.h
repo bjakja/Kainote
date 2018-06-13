@@ -32,7 +32,7 @@
 #include "TabPanel.h"
 #include "SpellChecker.h"
 #include "StyleStore.h"
-#include "FindReplace.h"
+#include "FindReplaceDialog.h"
 #include "SelectLines.h"
 #include "Automation.h"
 #include "Toolbar.h"
@@ -43,11 +43,11 @@
 //};
 class FontCollector;
 
-class kainoteFrame: public KaiFrame
+class KainoteFrame: public KaiFrame
 {
     public:
-        kainoteFrame(const wxPoint &pos, const wxSize &size);
-        virtual ~kainoteFrame();
+        KainoteFrame(const wxPoint &pos, const wxSize &size);
+        virtual ~KainoteFrame();
 
 		Notebook* Tabs;
 
@@ -93,7 +93,7 @@ class kainoteFrame: public KaiFrame
 		void SetVideoResolution(int w, int h, bool dialog=false);
 		void ShowBadResolutionDialog(const wxSize &videoRes, const wxSize &subsRes);
 		void OnSize(wxSizeEvent& event);
-		FindReplace *FR;
+		FindReplaceDialog *FR;
 		SelectLines *SL;
 		Auto::Automation *Auto;
 		FontCollector *fc;

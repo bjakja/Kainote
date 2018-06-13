@@ -17,14 +17,14 @@
 
 #include <wx/dnd.h>
 #include <wx/wxprec.h>
-class kainoteFrame;
+class KainoteFrame;
 
 class DragnDrop : public wxFileDropTarget
 {
     private:
-    kainoteFrame* Kai;
+    KainoteFrame* Kai;
     public:
-    DragnDrop(kainoteFrame* kfparent);
+    DragnDrop(KainoteFrame* kfparent);
 	virtual ~DragnDrop(){ };
     bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
 

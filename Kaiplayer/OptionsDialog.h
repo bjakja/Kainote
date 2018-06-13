@@ -23,7 +23,7 @@
 #include "KaiDialog.h"
 #include "config.h"
 #include <vector>
-class kainoteFrame;
+class KainoteFrame;
 
 class ItemHotkey : public Item{
 public:
@@ -54,7 +54,7 @@ public:
 class OptionsDialog : public KaiDialog
 {
 public:
-	OptionsDialog(wxWindow *parent, kainoteFrame *kaiparent);
+	OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent);
 	virtual ~OptionsDialog();
 	KaiTreebook *OptionsTree;
 	KaiListCtrl *Shortcuts;
@@ -76,7 +76,7 @@ private:
 	void ChangeColors();
 	void OnChangeCatalog(wxCommandEvent& event);
 
-	kainoteFrame *Kai;
+	KainoteFrame *Kai;
 
 	unsigned char hkeymodif;
 	std::vector<bool> registeredExts;

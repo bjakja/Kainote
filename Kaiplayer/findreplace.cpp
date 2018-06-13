@@ -18,9 +18,9 @@
 #include "KaiMessageBox.h"
 //#include <wx/regex.h>
 #include <wx/clipbrd.h>
+#include "FindReplaceDialog.h"
 
-
-FindReplace::FindReplace(kainoteFrame* kfparent, bool replace)
+FindReplace::FindReplace(KainoteFrame* kfparent, FindReplaceDialog *FRD)
 {
 	Kai = kfparent;
 	lastActive = reprow = linePosition = 0;
@@ -198,6 +198,16 @@ void FindReplace::ReplaceAll(TabWindow *window)
 }
 
 
+void FindReplace::ReplaceInAllOpenedSubs(TabWindow *window)
+{
+
+}
+
+void FindReplace::ReplaceInSubs(TabWindow *window)
+{
+
+}
+
 void FindReplace::OnFind(TabWindow *window)
 {
 	Find(window);
@@ -205,8 +215,27 @@ void FindReplace::OnFind(TabWindow *window)
 	findTextReset = true;
 }
 
+void FindReplace::FindInAllOpenedSubs(TabWindow *window)
+{
+
+}
+
+void FindReplace::FindAllInCurrentSubs(TabWindow *window)
+{
+
+}
+
+void FindReplace::FindInSubs(TabWindow *window)
+{
+
+}
+
 void FindReplace::Replace(TabWindow *window)
 {
+	if (window->windowType != WINDOW_REPLACE){
+		wxLogStatus("chujnia replace all wywołane nie z okna replace");
+		return;
+	}
 	TabPanel *tab = Kai->GetTab();
 	if (lastActive != tab->Grid->currentLine){ Find(window); }
 	bool searchInOriginal = window->CollumnTextOriginal->GetValue();
@@ -292,6 +321,10 @@ void FindReplace::Replace(TabWindow *window)
 
 void FindReplace::Find(TabWindow *window)
 {
+	if (window->windowType == WINDOW_FIND_IN_SUBS){
+		wxLogStatus("chujnia replace all wywołane z okna find in subs");
+		return;
+	}
 	TabPanel *tab = Kai->GetTab();
 	bool searchInOriginal = window->CollumnTextOriginal->GetValue();
 	long wrep = (tab->Grid->hasTLMode && !searchInOriginal) ? TXTTL : TXT;
@@ -457,7 +490,7 @@ void FindReplace::Find(TabWindow *window)
 				break;
 			}
 			else if (KaiMessageBox(_("Wyszukiwanie zakończone, rozpocząć od początku?"), _("Potwierdzenie"),
-			wxICON_QUESTION | wxYES_NO, this) == wxYES){
+				wxICON_QUESTION | wxYES_NO, FRD) == wxYES){
 				linePosition = 0;
 				wasResetToStart = true;
 			}
@@ -531,41 +564,7 @@ void FindReplace::AddRecent(TabWindow *window)
 	}
 }
 
-void FindReplace::OnSetFocus(wxActivateEvent& event){
-	if (!event.GetActive() || blockTextChange){ 
-		if (event.GetActive()){ blockTextChange = false; } return; 
-	}
-	long from, to, fromO, toO;
-	EditBox *edit = Kai->GetTab()->Edit;
-	edit->TextEdit->GetSelection(&from, &to);
-	edit->TextEditOrig->GetSelection(&fromO, &toO);
-	KaiChoice * findOrReplace = (FindText->GetValue().Len() > 0 && repl && !findTextReset) ? RepText : FindText;
-	if (from < to){
-		if (from == findstart && to == findend)
-			return;
-		wxString selected = edit->TextEdit->GetValue().SubString(from, to - 1);
-		if (selected.Lower() != findOrReplace->GetValue().Lower()){ findOrReplace->SetValue(selected); }
-		//when someone changed selection, then restore textposition to 0 maybe restore lineposition too? It's different seeking
-		textPosition = linePosition = 0;
-	}
-	else if (fromO < toO){
-		if (fromO == findstart && toO == findend)
-			return;
-		wxString selected = edit->TextEditOrig->GetValue().SubString(fromO, toO - 1);
-		if (selected.Lower() != findOrReplace->GetValue().Lower()){ findOrReplace->SetValue(selected); }
-		textPosition = linePosition = 0;
-	}
-	findOrReplace->SetFocus();
-	findTextReset = false;
-}
-
-void FindReplace::OnEnterConfirm(wxCommandEvent& event)
-{
-	if (RepText && RepText->HasFocus()){
-		OnButtonRep(event);
-	}
-	else{
-		Find();
-		fnext = false;
-	}
+void FindReplace::OnClose()
+{ 
+	FRD->Hide(); 
 }

@@ -22,7 +22,7 @@
 #include <wx/regex.h>
 #include <wx/clipbrd.h>
 
-SelectLines::SelectLines(kainoteFrame* kfparent)
+SelectLines::SelectLines(KainoteFrame* kfparent)
 	: KaiDialog((wxWindow*)kfparent,-1,_("Zaznacz"))
 {
 	Kai = kfparent;

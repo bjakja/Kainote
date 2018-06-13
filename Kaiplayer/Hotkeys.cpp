@@ -134,7 +134,7 @@ void Hotkeys::LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio)
 		_hkeys[idAndType(Editor,GLOBAL_HOTKEY)] = hdata(_("Włącz / Wyłącz edytor"), "Ctrl-E");
 		_hkeys[idAndType(OpenVideo,GLOBAL_HOTKEY)] = hdata(_("Otwórz wideo"), "Ctrl-Shift-O");
 		_hkeys[idAndType(Search,GLOBAL_HOTKEY)] = hdata(_("Znajdź"), "Ctrl-F");
-		_hkeys[idAndType(FindReplaceDialog,GLOBAL_HOTKEY)] = hdata(_("Znajdź i zmień"), "Ctrl-H");
+		_hkeys[idAndType(GLOBAL_FIND_REPLACE,GLOBAL_HOTKEY)] = hdata(_("Znajdź i zmień"), "Ctrl-H");
 		_hkeys[idAndType(Undo,GLOBAL_HOTKEY)] = hdata(_("Cofnij"), "Ctrl-Z");
 		_hkeys[idAndType(Redo,GLOBAL_HOTKEY)] = hdata(_("Ponów"), "Ctrl-Y");
 		_hkeys[idAndType(History,GLOBAL_HOTKEY)] = hdata(_("Historia"), "Ctrl-Shift-H");
@@ -501,7 +501,7 @@ void Hotkeys::OnMapHkey(int id, wxString name,wxWindow *parent,char hotkeyWindow
 
 void Hotkeys::SetAccels(bool all){
 	Notebook *Tabs=Notebook::GetTabs();
-	kainoteFrame * frame = (kainoteFrame *)Tabs->GetParent();
+	KainoteFrame * frame = (KainoteFrame *)Tabs->GetParent();
 	if (frame)
 		frame->SetAccels(all);
 }

@@ -22,7 +22,7 @@
 //#include "ColorPicker.h"
 
 
-ShiftTimesWindow::ShiftTimesWindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id,const wxPoint& pos,const wxSize& size,long style)
+ShiftTimesWindow::ShiftTimesWindow(wxWindow* parent,KainoteFrame* kfparent,wxWindowID id,const wxPoint& pos,const wxSize& size,long style)
 	: wxWindow/*wxScrolled<wxWindow>*/(parent, id, pos, size, style|wxVERTICAL)
 {
     Kai=kfparent;

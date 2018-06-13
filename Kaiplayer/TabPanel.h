@@ -26,7 +26,7 @@
 class TabPanel : public wxWindow
 	{
 	public:
-		TabPanel(wxWindow *parent,kainoteFrame *kai, const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize);
+		TabPanel(wxWindow *parent,KainoteFrame *kai, const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize);
 		virtual ~TabPanel();
 		bool Hide();
 		//bool Show(bool show=true);

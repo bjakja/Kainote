@@ -25,7 +25,7 @@
 #include <wx/collpane.h>
 #include "KaiStaticBoxSizer.h"
 
-class kainoteFrame;
+class KainoteFrame;
 
 
 
@@ -33,7 +33,7 @@ class ShiftTimesWindow: public wxWindow//wxScrolled<wxWindow>
 {
 public:
 	
-	ShiftTimesWindow(wxWindow* parent,kainoteFrame* kfparent,wxWindowID id=-1,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize,long style=0);
+	ShiftTimesWindow(wxWindow* parent,KainoteFrame* kfparent,wxWindowID id=-1,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize,long style=0);
 	virtual ~ShiftTimesWindow();
 	KaiRadioButton* StartVAtime;
 	KaiRadioButton* EndVAtime;
@@ -79,7 +79,7 @@ public:
 private:
 
 	char form;
-	kainoteFrame* Kai;
+	KainoteFrame* Kai;
 	bool isscrollbar;
 	int scPos;
 	MappedButton *coll;

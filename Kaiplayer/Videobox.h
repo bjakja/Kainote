@@ -24,13 +24,13 @@
 #include "VideoToolbar.h"
 #include "KaiTextCtrl.h"
 
-class kainoteFrame;
+class KainoteFrame;
 
 class VideoCtrl : public VideoRend
 {
 public:
 
-    VideoCtrl(wxWindow *parent, kainoteFrame *kfparent, const wxSize &size=wxDefaultSize);
+    VideoCtrl(wxWindow *parent, KainoteFrame *kfparent, const wxSize &size=wxDefaultSize);
     virtual ~VideoCtrl();
     bool Play();
 	void PlayLine(int start, int end);
@@ -99,7 +99,7 @@ private:
 	
     
 
-    kainoteFrame *Kai;
+    KainoteFrame *Kai;
 	int actfile;
 	int id;
 	int prevchap;
