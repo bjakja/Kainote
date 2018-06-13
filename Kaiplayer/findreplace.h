@@ -16,60 +16,28 @@
 
 #pragma once
 #include <wx/regex.h>
-#include "ListControls.h"
-#include "KaiTextCtrl.h"
-#include "KaiRadioButton.h"
-#include "MappedButton.h"
-#include "KaiDialog.h"
-#include "KaiStaticBoxSizer.h"
-#include "KaiStaticText.h"
+#include "FindReplaceDialog.h"
 
 class kainoteFrame;
 
 
-class FindReplace: public KaiDialog
+class FindReplace
 {
+	friend class TabWindow;
 	public:
 
 		FindReplace(kainoteFrame* kfparent, bool replace);
 		virtual ~FindReplace(){};
 		void SaveOptions();
-
-        kainoteFrame* Kai;
-		
-		MappedButton* Button4;
-		KaiRadioButton* CollumnText;
-		KaiRadioButton* CollumnTextOriginal;
-		KaiRadioButton* CollumnStyle;
-		KaiRadioButton* AllLines;
-		KaiRadioButton* SelectedLines;
-		KaiRadioButton* CollumnActor;
-		KaiRadioButton* CollumnEffect;
-		KaiRadioButton* FromSelection;
-		MappedButton* Button1;
-		MappedButton* Bplus;
-		
-		KaiCheckBox* MatchCase;
-		KaiCheckBox* RegEx;
-		KaiCheckBox* StartLine;
-		KaiCheckBox* EndLine;
-		MappedButton* Button2;
-		MappedButton* Button3;
-		KaiChoice* FindText;
-		KaiChoice* RepText;
-		KaiTextCtrl* tcstyle;
-		//KaiStaticBoxSizer* ReplaceStaticSizer;
-		KaiStaticText *repDescText;
-		DialogSizer* mainfrbsizer;
 	
 		void ReloadStyle();
-		void AddRecent();
+		void AddRecent(TabWindow *window);
 		void ChangeContents(bool replace);
 		void OnStylesWin(wxCommandEvent& event);
 		void OnSetFocus(wxActivateEvent& event);
 		void Reset();
-		bool repl;
 	private:
+		kainoteFrame *Kai;
         int linePosition;
 		int reprow;
         int textPosition;
@@ -85,16 +53,21 @@ class FindReplace: public KaiDialog
 		bool wasResetToStart = false;
 		wxArrayString findRecent;
 		wxArrayString replaceRecent;
+		wxArrayString subsFindingFilters;
+		wxArrayString subsFindingPaths;
 		wxRegEx rgx;
 		
-        void Find();
-		
-		void OnReplaceAll(wxCommandEvent& event);
-		void OnButtonFind(wxCommandEvent& event);
-		void OnButtonRep(wxCommandEvent& event);
-		void OnClose(wxCommandEvent& event);
-		void OnRecheck(wxCommandEvent& event);
-		void OnEnterConfirm(wxCommandEvent& event);
+		void Find(TabWindow *window);
+		void OnFind(TabWindow *window);
+		void FindInAllOpenedSubs(TabWindow *window);
+		void FindAllInCurrentSubs(TabWindow *window);
+		void FindInSubs(TabWindow *window);
+		void Replace(TabWindow *window);
+		void ReplaceAll(TabWindow *window);
+		void ReplaceInAllOpenedSubs(TabWindow *window);
+		void ReplaceInSubs(TabWindow *window);
+		//void OnRecheck(wxCommandEvent& event);
+		//void OnEnterConfirm(wxCommandEvent& event);
 };
 
 enum
@@ -111,16 +84,6 @@ enum
 	IN_LINES_ALL = 512,
 	IN_LINES_SELECTED = 1024,
 	IN_LINES_FROM_SELECTION = 2048,
-	ID_BREP=13737,
-	ID_BREPALL,
-	ID_BFIND,
-	ID_BCLOSE,
-	ID_BPLUS,
-	ID_TCSTYLE,
-	ID_FINDTEXT,
-	ID_REPTEXT,
-	ID_SLINE,
-	ID_ELINE,
 	ID_ENTER_CONFIRM
 };
 

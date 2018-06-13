@@ -45,11 +45,14 @@ void KaiTabBar::SetTab(int tabNum)
 	if (tabNum < 0 || tabNum >= tabs.size())
 		return;
 
-
+	wxCommandEvent evt(BEFORE_CHANGING_TAB, GetId());
+	ProcessEvent(evt);
 	tabs[currentTab]->tab->Show(false);
 	currentTab = tabNum;
 	RefreshTabBar();
 	tabs[currentTab]->tab->Show();
+	wxCommandEvent evt1(TAB_CHANGED, GetId());
+	ProcessEvent(evt1);
 }
 
 wxWindow * KaiTabBar::GetTab(int i)

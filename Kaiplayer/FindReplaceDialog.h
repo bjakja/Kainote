@@ -24,38 +24,68 @@
 #include "KaiStaticText.h"
 
 class FindReplace;
-//It's faster make one tab with showing/hiding elements then change its values everytime
+
 class TabWindow : public wxWindow
 {
+	friend class FindReplace;
 public:
 	TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * FR);
-	virtual ~TabWindow();
+	virtual ~TabWindow(){};
 	void SaveValues(int tabNum);
 	void SetValues(int tabNum);
 
+	void OnRecheck(wxCommandEvent& event);
+	void Reset(wxCommandEvent& evt);
+	void OnStylesChoose(wxCommandEvent& event);
 	KaiChoice* FindText;
-	KaiChoice* ReplaceText;
-	KaiChoice* FindInSubsPattern;
-	KaiChoice* FindInSubsPath;
+	KaiChoice* ReplaceText = NULL;
+	KaiChoice* FindInSubsPattern = NULL;
+	KaiChoice* FindInSubsPath = NULL;
 	KaiRadioButton* CollumnText;
 	KaiRadioButton* CollumnTextOriginal;
 	KaiRadioButton* CollumnStyle;
 	KaiRadioButton* CollumnActor;
 	KaiRadioButton* CollumnEffect;
-	KaiRadioButton* AllLines;
-	KaiRadioButton* SelectedLines;
-	KaiRadioButton* FromSelection;
-	MappedButton* ChooseStyles;
-	KaiTextCtrl* ChooseStylesText;
+	KaiRadioButton* AllLines = NULL;
+	KaiRadioButton* SelectedLines = NULL;
+	KaiRadioButton* FromSelection = NULL;
+	KaiTextCtrl *ChoosenStyleText = NULL;
 	KaiCheckBox* MatchCase;
 	KaiCheckBox* RegEx;
 	KaiCheckBox* StartLine;
 	KaiCheckBox* EndLine;
+	FindReplace *FR;
+	int windowType = 0;
 };
 
 class FindReplaceDialog : public KaiDialog
 {
 public:
-	FindReplaceDialog(wxWindow *parent, int id);
+	FindReplaceDialog(wxWindow *parent, int id, int whichWindow);
 	virtual ~FindReplaceDialog();
+private:
+	void OnActivate(wxActivateEvent& event);
+	FindReplace *FR = NULL;
+};
+
+enum{
+	WINDOW_FIND = 0,
+	WINDOW_REPLACE,
+	WINDOW_FIND_IN_SUBS,
+	ID_BUTTON_REPLACE = 13737,
+	ID_BUTTON_REPLACE_ALL,
+	ID_BUTTON_REPLACE_IN_ALL_OPENED_SUBS,
+	ID_BUTTON_FIND,
+	ID_BUTTON_FIND_IN_ALL_OPENED_SUBS,
+	ID_BUTTON_FIND_ALL_IN_CURRENT_SUBS,
+	ID_BUTTON_FIND_IN_SUBS,
+	ID_BUTTON_REPLACE_IN_SUBS,
+	ID_BUTTON_CLOSE,
+	ID_BUTTON_CHOOSE_STYLE,
+	ID_CHOOSEN_STYLE_TEXT,
+	ID_FIND_TEXT,
+	ID_REPLACE_TEXT,
+	ID_START_OF_LINE,
+	ID_END_OF_LINE,
+	ID_ENTER_CONFIRM
 };
