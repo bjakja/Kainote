@@ -32,8 +32,8 @@ class TabWindow : public wxWindow
 public:
 	TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * FR);
 	virtual ~TabWindow(){};
-	void SaveValues(int tabNum);
-	void SetValues(int tabNum);
+	void SaveValues();
+	void SetValues();
 
 	void OnRecheck(wxCommandEvent& event);
 	void Reset(wxCommandEvent& evt);

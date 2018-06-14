@@ -16,6 +16,7 @@
 
 #pragma once
 #include <wx/regex.h>
+#include <wx/arrstr.h>
 
 class KainoteFrame;
 class TabWindow;
@@ -28,7 +29,7 @@ class FindReplace
 	public:
 
 		FindReplace(KainoteFrame* kfparent, FindReplaceDialog *FRD);
-		virtual ~FindReplace(){};
+		~FindReplace(){};
 		
 	private:
 		KainoteFrame *Kai;

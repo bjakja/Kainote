@@ -58,14 +58,14 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	name.Replace("&","");
 	wxSize newSize=size;
 	SetFont(parent->GetFont());
-	int fw, fh;
-	GetTextExtent((name=="")? "TEXT" : name, &fw, &fh, 0, 0);
+	int fw;
+	CalculateSize(&fw, &textHeight);
 	if(size.x <1){
 		newSize.x = fw+10;
 		//if(newSize.x<60){newSize.x=60;}
 	}
 	if(size.y <1){
-		newSize.y = fh+10;
+		newSize.y = textHeight + 10;
 	}
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
@@ -109,14 +109,14 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	name.Replace("&","");
 	wxSize newSize=size;
 	SetFont(parent->GetFont());
-	int fw, fh;
-	GetTextExtent((name=="")? "TEXT" : name, &fw, &fh, 0, 0);
+	int fw;
+	CalculateSize(&fw, &textHeight);
 	if(size.x <1){
 		newSize.x = fw+16;
 		//if(newSize.x<60){newSize.x=60;}
 	}
 	if(size.y <1){
-		newSize.y = fh+10;
+		newSize.y = textHeight + 10;
 	}
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
@@ -160,10 +160,10 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 {
 	icon = bitmap;
 	wxSize newSize=size;
-	int fw=0, fh=0;
+	int fw=0;
 	if(text!=""){
 		name = text;
-		GetTextExtent(name, &fw, &fh, 0, 0);
+		CalculateSize(&fw, &textHeight);
 		fw+=15;
 	}
 	if(size.x <1){
@@ -171,8 +171,8 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 		newSize.x = fw+10;
 	}
 	if(size.y <1){
-		fh = (fh> icon.GetHeight())? fh : icon.GetHeight();
-		newSize.y = fh+10;
+		textHeight = (textHeight > icon.GetHeight()) ? textHeight : icon.GetHeight();
+		newSize.y = textHeight + 10;
 	}
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
@@ -291,9 +291,9 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 			Options.GetColour(WindowTextInactive));
 		if(name != ""){
 			if(iw){
-				tdc.DrawText(name, ((w- (fw))/2) + iw + 5, ((h-fh)/2));
+				tdc.DrawText(name, ((w - textHeight) / 2) + iw + 5, ((h - textHeight) / 2));
 			}else{
-				wxRect cur(5, ((h-fh)/2), w - 10, fh);
+				wxRect cur(5, ((h - textHeight) / 2), w - 10, textHeight);
 				tdc.SetClippingRegion(cur);
 				tdc.DrawLabel(name,cur, iw? wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL : wxALIGN_CENTER);
 				tdc.DestroyClippingRegion();
@@ -354,14 +354,32 @@ void MappedButton::SendEvent()
 	ProcessEvent(evt);
 }
 
+void MappedButton::CalculateSize(int *w, int *h)
+{
+	int fw, fh;
+	int resultw = 0, resulth = 0;
+	wxArrayString namewraps = wxStringTokenize(name, "\n", wxTOKEN_RET_EMPTY_ALL);
+	for (auto &token : namewraps){
+		GetTextExtent((token == "") ? "TEXT" : token, &fw, &fh);
+		resulth += fh;
+		if (resultw < fw)
+			resultw = fw;
+	}
+	if (w)
+		*w = resultw;
+	if (h)
+		*h = resulth;
+}
+
 void MappedButton::SetLabelText(const wxString &label) 
 {
 	name = label; 
-	int fw, fh;
-	GetTextExtent((name=="")? "TEXT" : name, &fw, &fh);
+	int fw;
+	CalculateSize(&fw, &textHeight);
 	wxSize minSize = GetMinSize();
-	if(minSize.x != fw + 16){
+	if (minSize.x != fw + 16 || minSize.y != (textHeight + 10)){
 		minSize.x = fw+16;
+		minSize.y = textHeight + 10;
 		SetMinSize(minSize);
 		GetParent()->Layout();
 		return;
@@ -391,14 +409,14 @@ ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, cons
 	name.Replace("&","");
 	wxSize newSize=size;
 	SetFont(parent->GetFont());
-	int fw, fh;
-	GetTextExtent((name=="")? "TEXT" : name, &fw, &fh, 0, 0);
+	int fw;
+	CalculateSize(&fw, &textHeight);
 	if(size.x <1){
 		newSize.x = fw+10;
 		if(newSize.x<60){newSize.x=60;}
 	}
 	if(size.y <1){
-		newSize.y = fh+10;
+		newSize.y = textHeight + 10;
 	}
 	SetMinSize(newSize);
 	Bind(wxEVT_LEFT_DOWN, &ToggleButton::OnMouseEvent, this);
@@ -466,8 +484,8 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 			tdc.SetTextForeground((enabled && changedForeground)? GetForegroundColour() : 
 			(enabled)? Options.GetColour(WindowText) : 
 			Options.GetColour(WindowTextInactive));
-			tdc.GetTextExtent(name, &fw, &fh);
-			wxRect cur(5, (h-fh)/2, w - 10, fh);
+			//tdc.GetTextExtent(name, &fw, &fh);
+			wxRect cur(5, (h - textHeight) / 2, w - 10, textHeight);
 			tdc.SetClippingRegion(cur);
 			tdc.DrawLabel(name,cur,wxALIGN_CENTER);
 			tdc.DestroyClippingRegion();
@@ -516,6 +534,23 @@ bool ToggleButton::Enable(bool enable)
 	Refresh(false);
 	//Update();
 	return true;
+}
+
+void ToggleButton::CalculateSize(int *w, int *h)
+{
+	int fw, fh;
+	int resultw = 0, resulth = 0;
+	wxArrayString namewraps = wxStringTokenize(name, "\n", wxTOKEN_RET_EMPTY_ALL);
+	for (auto &token : namewraps){
+		GetTextExtent((token == "") ? "TEXT" : token, &fw, &fh);
+		resulth += fh;
+		if (resultw < fw)
+			resultw = fw;
+	}
+	if (w)
+		*w = resultw;
+	if (h)
+		*h = resulth;
 }
 
 wxIMPLEMENT_ABSTRACT_CLASS(MappedButton, wxWindow);

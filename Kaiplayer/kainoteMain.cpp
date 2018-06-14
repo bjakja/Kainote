@@ -321,7 +321,7 @@ KainoteFrame::~KainoteFrame()
 	Options.SetInt(VideoVolume, GetTab()->Video->volslider->GetValue());
 
 	//destroy findreplace before saving options it saving findreplace options in destructor
-	if (FR){ FR->SaveOptions(); FR->Destroy(); FR = NULL; }
+	//if (FR){ FR->SaveOptions(); FR->Destroy(); FR = NULL; }
 	if (SL){ SL->SaveOptions(); SL->Destroy(); SL = NULL; }
 	Options.SaveOptions();
 
@@ -1518,7 +1518,7 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 		}
 	}
 	if (StyleStore::HasStore() && StyleStore::Get()->IsShown()){ StyleStore::Get()->LoadAssStyles(); }
-	if (FR){ FR->Reset(); FR->ReloadStyle(); }
+	//if (FR){ FR->Reset(); FR->ReloadStyle(); }
 }
 
 void KainoteFrame::HideEditor(bool save)

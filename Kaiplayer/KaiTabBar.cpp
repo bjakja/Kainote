@@ -20,11 +20,13 @@ wxDEFINE_EVENT(BEFORE_CHANGING_TAB, wxCommandEvent);
 wxDEFINE_EVENT(TAB_CHANGED, wxCommandEvent);
 
 KaiTabBar::KaiTabBar(wxWindow * parent, int id, const wxPoint & position /*= wxDefaultPosition*/, const wxSize & size /*= wxDefaultSize*/)
+	:wxWindow(parent, id, position, size)
 {
 	Bind(wxEVT_PAINT, &KaiTabBar::OnPaint, this);
 	Bind(wxEVT_LEFT_DOWN, &KaiTabBar::OnMouseEvent, this);
 	//Bind(wxEVT_LEFT_UP, &KaiTabBar::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiTabBar::OnMouseEvent, this);
+	Bind(wxEVT_LEAVE_WINDOW, &KaiTabBar::OnMouseEvent, this);
 }
 
 KaiTabBar::~KaiTabBar()
@@ -65,6 +67,16 @@ wxWindow * KaiTabBar::GetTab(int i)
 	return tabs[i]->tab;
 }
 
+wxString KaiTabBar::GetTabName(int i /*= -1*/)
+{
+	if (i < 0)
+		i = currentTab;
+	if (i < 0 || i >= tabs.size())
+		return "";
+
+	return tabs[i]->tabName;
+}
+
 void KaiTabBar::Fit()
 {
 	CalculateTabsSizes();
@@ -77,7 +89,7 @@ void KaiTabBar::Fit()
 		if (pageSize.y > height){
 			height = pageSize.y;
 		}
-		tabs[i]->tab->SetPosition(wxPoint(0, 0));
+		tabs[i]->tab->SetPosition(wxPoint(0, tabHeader));
 	}
 	SetMinSize(wxSize(width, height+tabHeader));
 	SetColours(Options.GetColour(WindowBackground), Options.GetColour(WindowText));
@@ -103,14 +115,17 @@ void KaiTabBar::OnPaint(wxPaintEvent& event)
 	wxMemoryDC tdc;
 	tdc.SelectObject(wxBitmap(w, tabHeader));
 	tdc.SetFont(GetFont());
-	const wxColour & tabsBarBackground = Options.GetColour(TabsBarBackground1);
+	const wxColour & tabsBarBackground = Options.GetColour(TabsBarBackground2);
 	const wxColour & tabsBarBackgroundHover = Options.GetColour(TabsBackgroundInactiveHover);
 	const wxColour & activeLines = Options.GetColour(TabsBorderActive);
 	const wxColour & tabsBarBorderInactive = Options.GetColour(TabsBorderInactive); 
 	const wxColour & activeText = Options.GetColour(TabsTextActive);
 	const wxColour & inactiveText = Options.GetColour(TabsTextInactive);
 	const wxColour & tabsBarBackgroundActive = Options.GetColour(TabsBackgroundActive);
-	
+
+	tdc.SetPen(*wxTRANSPARENT_PEN);
+	tdc.SetBrush(Options.GetColour(WindowBackground));
+	tdc.DrawRectangle(0, 0, w, tabHeader);
 	tdc.SetTextForeground(inactiveText);
 	tdc.SetPen(tabsBarBorderInactive);
 
@@ -120,41 +135,45 @@ void KaiTabBar::OnPaint(wxPaintEvent& event)
 	for (size_t i = 0; i < tabs.size(); i++){
 		//bottom line to width of window
 		if (i >= tabs.size()-1)
-			tdc.DrawLine(posX + tabs[i]->tabSize, tabHeader - posY, w - 2, tabHeader - posY);
+			tdc.DrawLine(posX + tabs[i]->tabSize, tabHeader - 1, w - 2, tabHeader - 1);
 		//first vertical line not needed if first tab is current tab
 		if (i == 0 && i != currentTab)
-			tdc.DrawLine(posX, posY, posX, tabHeader - posY);
+			tdc.DrawLine(posX, posY, posX, tabHeader - 1);
 		//save current tab position and continue
 		if (i == currentTab){
 			currentTabPos = posX;
+			posX += tabs[i]->tabSize;
 			continue;
 		}
+		tdc.SetPen(*wxTRANSPARENT_PEN);
 		tdc.SetBrush((i == tabHighlighted) ? tabsBarBackgroundHover : tabsBarBackground);
 		//fill of tab
-		tdc.DrawRectangle(posX + 1, posY + 1, tabs[i]->tabSize - 2, tabHeader - posY - 2);
+		tdc.DrawRectangle(posX + 1, posY + 1, tabs[i]->tabSize - 1, tabHeader - posY - 2);
+		tdc.SetPen(tabsBarBorderInactive);
 		//top tab line
 		tdc.DrawLine(posX, posY, posX + tabs[i]->tabSize, posY);
 		//bottom tab line
-		tdc.DrawLine(posX, tabHeader - posY, posX + tabs[i]->tabSize, tabHeader - posY);
+		tdc.DrawLine(posX, tabHeader - 1, posX + tabs[i]->tabSize, tabHeader - 1);
 		//right tab line
-		tdc.DrawLine(posX + tabs[i]->tabSize, posY, posX + tabs[i]->tabSize, tabHeader - posY);
+		tdc.DrawLine(posX + tabs[i]->tabSize, posY, posX + tabs[i]->tabSize, tabHeader - 1);
 		//text of tab
-		tdc.DrawText(tabs[i]->tabName, posX + 5, posY + ((tabHeader - textHeight) / 2));
+		tdc.DrawText(tabs[i]->tabName, posX + 5, posY + ((tabHeader - textHeight) / 2) - 2);
 		posX += tabs[i]->tabSize;
 	}
 
 	if (currentTab < 0 || currentTab >= tabs.size())
 		return;
 	//current tab
-	tdc.SetTextForeground(inactiveText);
-	tdc.SetBrush(tabsBarBackground);
-	tdc.SetPen(tabsBarBorderInactive);
-	tdc.DrawRectangle(currentTabPos, 2, tabs[currentTab]->tabSize - 2, tabHeader - 2);
+	tdc.SetTextForeground(activeText);
+	tdc.SetBrush(tabsBarBackgroundActive);
+	tdc.SetPen(tabsBarBackgroundActive);
+	tdc.DrawRectangle(currentTabPos, 2, tabs[currentTab]->tabSize, tabHeader - 2);
+	tdc.SetPen(activeLines);
 	tdc.DrawText(tabs[currentTab]->tabName, currentTabPos + 5, 2 + ((tabHeader - textHeight) / 2));
 	currentTabPos -= 1;
-	tdc.DrawLine(currentTabPos, 2, currentTabPos, tabHeader - 2);
-	tdc.DrawLine(currentTabPos, 2, currentTabPos + tabs[currentTab]->tabSize + 2, 2);
-	tdc.DrawLine(currentTabPos + tabs[currentTab]->tabSize + 2, 2, currentTabPos + tabs[currentTab]->tabSize + 2, tabHeader - 2);
+	tdc.DrawLine(currentTabPos, 2, currentTabPos, tabHeader - 1);
+	tdc.DrawLine(currentTabPos, 2, currentTabPos + tabs[currentTab]->tabSize + 1, 2);
+	tdc.DrawLine(currentTabPos + tabs[currentTab]->tabSize + 1, 2, currentTabPos + tabs[currentTab]->tabSize + 1, tabHeader - 1);
 
 	//blit
 	wxPaintDC dc(this);
@@ -165,8 +184,9 @@ void KaiTabBar::OnMouseEvent(wxMouseEvent &event)
 {
 	int numTab = FindCurrentTab(event.GetPosition());
 	//remove highlight if have one
-	if (numTab < 0){
+	if (tabHighlighted != -1 && (numTab < 0 || event.Leaving())){
 		tabHighlighted = -1;
+		RefreshTabBar();
 	}
 	//clicking tab
 	if (event.LeftDown()){
@@ -200,7 +220,7 @@ int KaiTabBar::FindCurrentTab(const wxPoint &pos)
 {
 	int posX = 2;
 	int posY = 2;
-	if (pos.y > posY)
+	if (pos.y <= posY || pos.y > tabHeader)
 		return -1;
 
 	for (size_t i = 0; i < tabs.size(); i++){

@@ -47,7 +47,9 @@ private:
 	void OnPaint(wxPaintEvent& evt);
 	void OnMouseEvent(wxMouseEvent &evt);
 	void SendEvent();
+	void CalculateSize(int *w, int *h);
 	int Window;
+	int textHeight = 0;
 	bool twoHotkeys;
 	bool enter;
 	bool isColorButton;
@@ -79,9 +81,11 @@ private:
 	void OnPaint(wxPaintEvent& evt);
 	void OnMouseEvent(wxMouseEvent &evt);
 	void SendEvent();
+	void CalculateSize(int *w, int *h);
 	wxBitmap *bmp;
 	wxBitmap icon;
 	wxString name;
 	bool enter;
 	bool toggled;
+	int textHeight = 0;
 };

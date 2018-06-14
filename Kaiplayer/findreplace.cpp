@@ -20,7 +20,8 @@
 #include <wx/clipbrd.h>
 #include "FindReplaceDialog.h"
 
-FindReplace::FindReplace(KainoteFrame* kfparent, FindReplaceDialog *FRD)
+FindReplace::FindReplace(KainoteFrame* kfparent, FindReplaceDialog *_FRD)
+	:FRD(_FRD)
 {
 	Kai = kfparent;
 	lastActive = reprow = linePosition = 0;

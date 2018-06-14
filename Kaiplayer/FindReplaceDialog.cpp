@@ -19,7 +19,8 @@
 #include "Stylelistbox.h"
 
 TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
-	:windowType(tabNum)
+	: wxWindow(parent, id)
+	, windowType(tabNum)
 	, FR(_FR)
 {
 	int options = Options.GetInt(FindReplaceOptions);
@@ -127,8 +128,8 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	//pionowy sizer kolumna 2
 	wxBoxSizer* frbsizer = new wxBoxSizer(wxVERTICAL);
 	if (tabNum != WINDOW_FIND_IN_SUBS){
-		MappedButton *ButtonFind = new MappedButton(this, ID_BUTTON_FIND, _("ZnajdŸ"), -1, wxDefaultPosition, wxSize(124, -1));
-		frbsizer->Add(ButtonFind, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
+		MappedButton *ButtonFind = new MappedButton(this, ID_BUTTON_FIND, _("ZnajdŸ")/*, -1, wxDefaultPosition, wxSize(124, -1)*/);
+		frbsizer->Add(ButtonFind, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, (tabNum == WINDOW_REPLACE) ? 2 : 4);
 		
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){FR->OnFind(this); }, ID_BUTTON_FIND);
 	}
@@ -136,8 +137,8 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		MappedButton *ButtonFindInAllOpenedSubs = new MappedButton(this, ID_BUTTON_FIND_IN_ALL_OPENED_SUBS, _("ZnajdŸ we wszystkich\notwartych napisach"));
 		MappedButton *ButtonFindAllInCurrentSubs = new MappedButton(this, ID_BUTTON_FIND_ALL_IN_CURRENT_SUBS, _("Zamieñ wszystko\nw bierz¹cych napisach"));
 		
-		frbsizer->Add(ButtonFindInAllOpenedSubs, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
-		frbsizer->Add(ButtonFindAllInCurrentSubs, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
+		frbsizer->Add(ButtonFindInAllOpenedSubs, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
+		frbsizer->Add(ButtonFindAllInCurrentSubs, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
 
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ FR->FindInAllOpenedSubs(this); }, ID_BUTTON_FIND_IN_ALL_OPENED_SUBS);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ FR->FindAllInCurrentSubs(this); }, ID_BUTTON_FIND_ALL_IN_CURRENT_SUBS);
@@ -147,17 +148,17 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		MappedButton *ButtonReplaceAll = new MappedButton(this, ID_BUTTON_REPLACE_ALL, _("Zamieñ wszystko"));
 		MappedButton *ButtonReplaceOnAllTabs = new MappedButton(this, ID_BUTTON_REPLACE_IN_ALL_OPENED_SUBS, _("Zamieñ we wszystkich\notwartch napisach"));
 
-		frbsizer->Add(ButtonReplaceNext, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
-		frbsizer->Add(ButtonReplaceAll, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
-		frbsizer->Add(ButtonReplaceOnAllTabs, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
+		frbsizer->Add(ButtonReplaceNext, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 2);
+		frbsizer->Add(ButtonReplaceAll, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 2);
+		frbsizer->Add(ButtonReplaceOnAllTabs, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 2);
 
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ FR->Replace(this); }, ID_BUTTON_REPLACE);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ FR->ReplaceAll(this); }, ID_BUTTON_REPLACE_ALL);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ FR->ReplaceInAllOpenedSubs(this); }, ID_BUTTON_REPLACE_IN_ALL_OPENED_SUBS);
 	}
 	else if (tabNum == WINDOW_FIND_IN_SUBS){
-		MappedButton *ButtonFindInSubs = new MappedButton(this, ID_BUTTON_FIND_IN_SUBS, _("ZnajdŸ w napisach"), -1, wxDefaultPosition, wxSize(124, -1));
-		MappedButton *ButtonReplaceInSubs = new MappedButton(this, ID_BUTTON_REPLACE_IN_SUBS, _("Zamieñ w napisach"), -1, wxDefaultPosition, wxSize(124, -1));
+		MappedButton *ButtonFindInSubs = new MappedButton(this, ID_BUTTON_FIND_IN_SUBS, _("ZnajdŸ w napisach")/*, -1, wxDefaultPosition, wxSize(124, -1)*/);
+		MappedButton *ButtonReplaceInSubs = new MappedButton(this, ID_BUTTON_REPLACE_IN_SUBS, _("Zamieñ w napisach")/*, -1, wxDefaultPosition, wxSize(124, -1)*/);
 		frbsizer->Add(ButtonFindInSubs, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
 		frbsizer->Add(ButtonReplaceInSubs, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
 
@@ -166,12 +167,12 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	}
 
 	MappedButton *ButtonClose = new MappedButton(this, ID_BUTTON_CLOSE, _("Zamknij"));
-	frbsizer->Add(ButtonClose, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
+	frbsizer->Add(ButtonClose, 1, wxEXPAND | wxTOP | wxRIGHT, (tabNum == WINDOW_REPLACE) ? 2 : 4);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ FR->OnClose(); }, ID_BUTTON_CLOSE);
 
 	//³¹czenie ca³oœci znajdowania i opcji z przyciskami
 	mainfrbsizer3->Add(mainfrbsizer1, 0, wxEXPAND | wxRIGHT, 2);
-	mainfrbsizer3->Add(frbsizer, 0, wxEXPAND | wxLEFT, 3);
+	mainfrbsizer3->Add(frbsizer, 1, wxEXPAND | wxLEFT, 3);
 	mainfrbsizer->Add(mainfrbsizer3, 0, wxEXPAND | wxALL, 5);
 
 	if (tabNum != WINDOW_FIND_IN_SUBS){
@@ -215,9 +216,12 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &TabWindow::OnRecheck, this, ID_END_OF_LINE);
 }
 
-void TabWindow::SaveValues(int tabNum)
+void TabWindow::SaveValues()
 {
-	int options = 0;
+	int options = Options.GetInt(FindReplaceOptions);
+	options = options >> 9;
+	options = options << 9;
+
 	if (MatchCase->GetValue())
 		options |= CASE_SENSITIVE;
 	if (RegEx->GetValue())
@@ -246,7 +250,7 @@ void TabWindow::SaveValues(int tabNum)
 	Options.SetInt(FindReplaceOptions, options);
 }
 
-void TabWindow::SetValues(int tabNum)
+void TabWindow::SetValues()
 {
 	int options = Options.GetInt(FindReplaceOptions);
 	MatchCase->SetValue((options & CASE_SENSITIVE) > 0);
@@ -310,6 +314,15 @@ FindReplaceDialog::FindReplaceDialog(KainoteFrame *_Kai, int whichWindow)
 	findReplaceTabs->AddTab(new TabWindow(findReplaceTabs, -1, WINDOW_REPLACE, FR), _("ZnajdŸ i zamieñ"));
 	findReplaceTabs->AddTab(new TabWindow(findReplaceTabs, -1, WINDOW_FIND_IN_SUBS, FR), _("ZnajdŸ w napisach"));
 	findReplaceTabs->Fit();
+	findReplaceTabs->Bind(BEFORE_CHANGING_TAB, [=](wxCommandEvent &evt){
+		TabWindow *currentTab = GetTab();
+		currentTab->SaveValues();
+	});
+	findReplaceTabs->Bind(TAB_CHANGED, [=](wxCommandEvent &evt){
+		TabWindow *currentTab = GetTab();
+		currentTab->SetValues();
+		SetLabel(findReplaceTabs->GetTabName());
+	});
 	mainfrbsizer->Add(findReplaceTabs, 0, wxEXPAND | wxALL, 2);
 	SetSizerAndFit(mainfrbsizer);
 
@@ -336,6 +349,11 @@ FindReplaceDialog::FindReplaceDialog(KainoteFrame *_Kai, int whichWindow)
 		else{ Hide(); }
 	}, GLOBAL_FIND_REPLACE);
 	Show();
+}
+
+FindReplaceDialog::~FindReplaceDialog()
+{
+	delete FR;
 }
 
 void FindReplaceDialog::ShowDialog(int whichWindow)

@@ -42,6 +42,7 @@ public:
 	void AddTab(wxWindow * tab, const wxString & tabName);
 	void SetTab(int tabNum);
 	wxWindow *GetTab(int i = -1);
+	wxString GetTabName(int i = -1);
 	void Fit();
 
 private:
@@ -53,7 +54,7 @@ private:
 	int FindCurrentTab(const wxPoint &pos);
 
 	std::vector<TabData *> tabs;
-	int tabHeader = 15;
+	int tabHeader = 28;
 	int currentTab = 0;
 	int lastTab = -1;
 	int textHeight = 0;
