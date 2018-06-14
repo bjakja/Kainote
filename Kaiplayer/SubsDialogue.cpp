@@ -517,7 +517,7 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 						newTag->startTextPos++;
 						newTag->PutValue(tagValue.After('(').BeforeFirst(')'), true);
 					}else{
-						if (!tagValue.IsNumber()){ 
+						if (!tagValue.IsNumber() && tagName != "fn"){
 							wxString newTagValue;
 							for (auto & ch : tagValue){
 								if (!wxIsdigit(ch))
