@@ -387,6 +387,9 @@
     <ClCompile Include="FindReplaceDialog.cpp">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClCompile>
+    <ClCompile Include="FindReplaceResultsDialog.cpp">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -690,6 +693,9 @@
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
     <ClInclude Include="FindReplaceDialog.h">
+      <Filter>Header Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplaceResultsDialog.h">
       <Filter>Header Files\Windows &amp; Dialogs</Filter>
     </ClInclude>
   </ItemGroup>

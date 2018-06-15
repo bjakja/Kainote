@@ -294,6 +294,14 @@ void KaiListCtrl::SetTextArray(const wxArrayString &Array)
 	Refresh(false);
 }
 
+void KaiListCtrl::FilterRow(int row, int visibility)
+{
+	if (row < 0 || row >= itemList->size())
+		return;
+
+	(*itemList)[row]->isVisible = visibility;
+}
+
 int KaiListCtrl::InsertColumn(size_t col, const wxString &name, byte type, int width)
 {
 	if (col >= widths.size()){
@@ -313,6 +321,17 @@ int KaiListCtrl::AppendItem(Item *item)
 	return itemList->size() - 1;
 }
 
+
+int KaiListCtrl::AppendItemWithExtent(Item *item)
+{
+	ItemRow *newitem = new ItemRow(0, item);
+	itemList->push_back(newitem);
+	wxSize textSize = GetTextExtent(item->name);
+	if (!widths.size())
+		widths.push_back(textSize.x);
+	else if (textSize.x > widths[0]){ widths[0] = textSize.x; }
+	return itemList->size() - 1;
+}
 
 int KaiListCtrl::SetItem(size_t row, size_t col, Item *item)
 {

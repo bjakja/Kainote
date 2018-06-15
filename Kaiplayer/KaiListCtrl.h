@@ -161,6 +161,7 @@ public:
 	};
 	int InsertColumn(size_t col, const wxString &name, byte type, int width);
 	int AppendItem(Item *item); 
+	int AppendItemWithExtent(Item *item);
 	int SetItem(size_t row, size_t col, Item *item); 
 	Item *GetItem(size_t row, size_t col);
 	void SaveAll(int col);
@@ -179,6 +180,15 @@ public:
 	void StartEdition();
 	Item *CopyRow(int y, int x, bool pushBack = false);
 	void SetTextArray(const wxArrayString &Array);
+	void FilterRow(int row, int visibility);
+	void ClearList(){
+		for (auto it = historyList.begin(); it != historyList.end(); it++){
+			delete *it;
+		}
+		historyList.clear();
+		delete itemList;
+		itemList = new List();
+	}
 private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);

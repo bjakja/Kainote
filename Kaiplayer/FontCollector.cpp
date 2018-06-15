@@ -437,7 +437,7 @@ void FontCollector::GetAssFonts(std::vector<bool> &found, bool check)
 							if(log->second.EndsWith("\n")){
 								log->second<<wxString::Format(_("W linijkach:\n%i,"),(int)(i+1));
 							}else{
-								log->second<<(i+1)<<",";
+								log->second<<(i+1)<<", ";
 							}
 						}
 						newFont=false;

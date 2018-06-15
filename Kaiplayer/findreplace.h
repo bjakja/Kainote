@@ -21,6 +21,8 @@
 class KainoteFrame;
 class TabWindow;
 class FindReplaceDialog;
+class FindReplaceResultsDialog;
+class TabPanel;
 
 class FindReplace
 {
@@ -30,8 +32,7 @@ class FindReplace
 
 		FindReplace(KainoteFrame* kfparent, FindReplaceDialog *FRD);
 		~FindReplace(){};
-		
-	private:
+		void ShowResult(TabPanel *tab, int keyLine);
 		KainoteFrame *Kai;
         int linePosition;
 		int reprow;
@@ -61,10 +62,12 @@ class FindReplace
 		void ReplaceAll(TabWindow *window);
 		void ReplaceInAllOpenedSubs(TabWindow *window);
 		void ReplaceInSubs(TabWindow *window);
+		void FindAllInTab(TabPanel *tab, TabWindow *window);
 		void AddRecent(TabWindow *window);
 		void OnClose();
 
 		FindReplaceDialog *FRD;
+		FindReplaceResultsDialog *FRRD;
 };
 
 enum

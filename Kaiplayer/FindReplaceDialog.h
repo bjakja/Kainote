@@ -66,6 +66,7 @@ public:
 	FindReplaceDialog(KainoteFrame *Kai, int whichWindow);
 	virtual ~FindReplaceDialog();
 	void ShowDialog(int whichWindow);
+	
 private:
 	void OnActivate(wxActivateEvent& event);
 	void OnEnterConfirm(wxCommandEvent& event);
