@@ -302,6 +302,11 @@ void KaiListCtrl::FilterRow(int row, int visibility)
 	(*itemList)[row]->isVisible = visibility;
 }
 
+void KaiListCtrl::SetHeaderHeight(int height)
+{
+	headerHeight = height;
+}
+
 int KaiListCtrl::InsertColumn(size_t col, const wxString &name, byte type, int width)
 {
 	if (col >= widths.size()){
@@ -327,6 +332,7 @@ int KaiListCtrl::AppendItemWithExtent(Item *item)
 	ItemRow *newitem = new ItemRow(0, item);
 	itemList->push_back(newitem);
 	wxSize textSize = GetTextExtent(item->name);
+	textSize.x += 10;
 	if (!widths.size())
 		widths.push_back(textSize.x);
 	else if (textSize.x > widths[0]){ widths[0] = textSize.x; }
@@ -747,7 +753,7 @@ void KaiListCtrl::FilterList(int column, int mode)
 		if ((*itemList)[i]->row.size() <= (size_t)column){ continue; }
 		else{
 			int visibility = (*itemList)[i]->row[column]->OnVisibilityChange(mode);
-			if (!visibility){
+			if (visibility != VISIBLE){
 				isFiltered = true;
 			}
 			(*itemList)[i]->isVisible = visibility;

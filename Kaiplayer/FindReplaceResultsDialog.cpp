@@ -19,15 +19,21 @@
 wxDEFINE_EVENT(CHOOSE_RESULT, wxCommandEvent);
 
 FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace *FR)
-	: KaiDialog(parent, -1, _("Wyniki szukania"))
+	: KaiDialog(parent, -1, _("Wyniki szukania"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 {
 	DialogSizer * main = new DialogSizer(wxVERTICAL);
-	resultsList = new KaiListCtrl(this, 23323, wxDefaultPosition, wxSize(600,400));
+	resultsList = new KaiListCtrl(this, 23323, wxDefaultPosition, wxSize(700,300));
 	resultsList->InsertColumn(0, "", TYPE_TEXT, -1);
-	main->Add(resultsList, 0, wxEXPAND | wxALL, 2);
+	resultsList->SetHeaderHeight(0);
+	main->Add(resultsList, 1, wxEXPAND | wxALL, 2);
 	SetSizerAndFit(main);
 	Bind(CHOOSE_RESULT, [=](wxCommandEvent &evt){
 		SeekResults *results = (SeekResults*)evt.GetClientData();
+		if (!results){
+			wxLogStatus("chujnia, ktoœ rezultat wyszukiwania ukrad³");
+			return;
+		}
+
 		FR->ShowResult(results->tab, results->keyLine);
 	}, 23323);
 }
@@ -58,6 +64,14 @@ void FindReplaceResultsDialog::ClearList()
 {
 	resultsCounter = 0;
 	resultsList->ClearList();
+}
+
+void FindReplaceResultsDialog::FilterList()
+{
+	//mode here is 1 visible blocks 0 hidden blocks
+	if (header)
+		header->SetLastFilteredLine(resultsCounter);
+	resultsList->FilterList(0, 1);
 }
 
 void ResultsHeader::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
@@ -105,7 +119,7 @@ void SeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, K
 	dc->SetClippingRegion(cur);
 	dc->DrawLabel(name, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
-	dc->SetTextForeground("#00BB00");
+	dc->SetTextForeground("#FF0000");
 	dc->SetTextBackground("#BBBB00");
 	dc->SetBackgroundMode(wxSOLID);
 	dc->DrawText(name.Mid(findPosition.x, findPosition.y), x + exOfFound.x, y + ((height - exOfFound.y) / 2));

@@ -321,7 +321,7 @@ KainoteFrame::~KainoteFrame()
 	Options.SetInt(VideoVolume, GetTab()->Video->volslider->GetValue());
 
 	//destroy findreplace before saving options it saving findreplace options in destructor
-	//if (FR){ FR->SaveOptions(); FR->Destroy(); FR = NULL; }
+	if (FR){ FR->SaveOptions(); FR->Destroy(); FR = NULL; }
 	if (SL){ SL->SaveOptions(); SL->Destroy(); SL = NULL; }
 	Options.SaveOptions();
 
@@ -1263,7 +1263,7 @@ TabPanel* KainoteFrame::GetTab()
 	return Tabs->GetPage();
 }
 
-void KainoteFrame::Label(int iter, bool video, int wtab)
+void KainoteFrame::Label(int iter/*=0*/, bool video/*=false*/, int wtab/*=-1*/, bool onlyTabs /*= false*/)
 {
 	TabPanel* atab = (wtab < 0) ? GetTab() : Tabs->Page(wtab);
 	wxString whiter;
@@ -1277,7 +1277,8 @@ void KainoteFrame::Label(int iter, bool video, int wtab)
 	int totalmem=statex.ullTotalVirtual/div;
 	wxString memtxt= wxString::Format(" RAM: %i KB / %i KB", totalmem-availmem, totalmem);*/
 	wxString name = (video) ? atab->VideoName : whiter + atab->SubsName;
-	SetLabel(name + " - " + Options.progname /*+ memtxt*/);
+	if (!onlyTabs)
+		SetLabel(name + " - " + Options.progname /*+ memtxt*/);
 	if (name.Len()>35){ name = name.SubString(0, 35) + "..."; }
 	Tabs->SetPageText((wtab < 0) ? Tabs->GetSelection() : wtab, name);
 }

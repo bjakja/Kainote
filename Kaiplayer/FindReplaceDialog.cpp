@@ -35,6 +35,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	FindText = new KaiChoice(this, ID_FIND_TEXT, "", wxDefaultPosition, wxDefaultSize, FR->findRecent);
 	FindText->SetToolTip(_("Szukany tekst:"));
 	FindText->SetMaxLength(MAXINT);
+	FindText->SetSelection(0);
 	frsbsizer->Add(new KaiStaticText(this, -1, _("Szukany tekst:")), 1, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxRIGHT, 4, 0);
 	frsbsizer->Add(FindText, 4, wxEXPAND, 0);
 	mainfrbsizer1->Add(frsbsizer, 0, wxEXPAND | wxALL, 4);
@@ -47,6 +48,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		ReplaceText = new KaiChoice(this, ID_REPLACE_TEXT, "", wxDefaultPosition, wxDefaultSize, FR->replaceRecent);
 		ReplaceText->SetToolTip(_("Zamieñ na:"));
 		ReplaceText->SetMaxLength(MAXINT);
+		ReplaceText->SetSelection(0);
 		KaiStaticText *repDescText = new KaiStaticText(this, -1, _("Zamieñ na:"));
 		ReplaceStaticSizer->Add(repDescText, 1, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxRIGHT, 4);
 		ReplaceStaticSizer->Add(ReplaceText, 4, wxEXPAND, 0);
@@ -57,6 +59,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		FindInSubsPattern = new KaiChoice(this, ID_REPLACE_TEXT, "", wxDefaultPosition, wxDefaultSize, FR->subsFindingFilters);
 		FindInSubsPattern->SetToolTip(_("Filtry wyszukiwania windows:"));
 		FindInSubsPattern->SetMaxLength(1000);
+		FindInSubsPattern->SetSelection(0);
 		SubsFilterStaticSizer->Add(new KaiStaticText(this, -1, _("Filtry:")), 1, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxRIGHT, 4);
 		SubsFilterStaticSizer->Add(FindInSubsPattern, 4, wxEXPAND, 0);
 		mainfrbsizer1->Add(SubsFilterStaticSizer, 0, wxEXPAND | wxALL, 4);
@@ -65,6 +68,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		FindInSubsPath = new KaiChoice(this, ID_REPLACE_TEXT, "", wxDefaultPosition, wxDefaultSize, FR->subsFindingPaths);
 		FindInSubsPath->SetToolTip(_("Katalog szukania napisów:"));
 		FindInSubsPath->SetMaxLength(MAXINT);
+		FindInSubsPath->SetSelection(0);
 		FindInSubsPathStaticSizer->Add(new KaiStaticText(this, -1, _("Katalog:")), 1, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxRIGHT, 4);
 		FindInSubsPathStaticSizer->Add(FindInSubsPath, 4, wxEXPAND, 0);
 		mainfrbsizer1->Add(FindInSubsPathStaticSizer, 0, wxEXPAND | wxALL, 4);
@@ -135,7 +139,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	}
 	if (tabNum == WINDOW_FIND){
 		MappedButton *ButtonFindInAllOpenedSubs = new MappedButton(this, ID_BUTTON_FIND_IN_ALL_OPENED_SUBS, _("ZnajdŸ we wszystkich\notwartych napisach"));
-		MappedButton *ButtonFindAllInCurrentSubs = new MappedButton(this, ID_BUTTON_FIND_ALL_IN_CURRENT_SUBS, _("Zamieñ wszystko\nw bierz¹cych napisach"));
+		MappedButton *ButtonFindAllInCurrentSubs = new MappedButton(this, ID_BUTTON_FIND_ALL_IN_CURRENT_SUBS, _("ZnajdŸ wszystko\nw bierz¹cych napisach"));
 		
 		frbsizer->Add(ButtonFindInAllOpenedSubs, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
 		frbsizer->Add(ButtonFindAllInCurrentSubs, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
@@ -218,9 +222,12 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 
 void TabWindow::SaveValues()
 {
-	int options = Options.GetInt(FindReplaceOptions);
-	options = options >> 9;
-	options = options << 9;
+	int options = 0;
+	if (!AllLines){
+		options = Options.GetInt(FindReplaceOptions);
+		options = options >> 9;
+		options = options << 9;
+	}
 
 	if (MatchCase->GetValue())
 		options |= CASE_SENSITIVE;
@@ -248,6 +255,19 @@ void TabWindow::SaveValues()
 		options |= IN_LINES_FROM_SELECTION;
 
 	Options.SetInt(FindReplaceOptions, options);
+
+	FR->actualFind = FindText->GetString(0);
+	//FindText->GetArray(&FR->findRecent);
+	if (ReplaceText){
+		FR->actualReplace = ReplaceText->GetString(0);
+		//ReplaceText->GetArray(&FR->replaceRecent);
+	}
+	if (FindInSubsPattern){
+		FR->actualFilters = FindInSubsPattern->GetString(0);
+		//FindInSubsPattern->GetArray(&FR->subsFindingFilters);
+		FR->actualPaths = FindInSubsPath->GetString(0);
+		//FindInSubsPath->GetArray(&FR->subsFindingPaths);
+	}
 }
 
 void TabWindow::SetValues()
@@ -269,6 +289,19 @@ void TabWindow::SetValues()
 		SelectedLines->SetValue((options & IN_LINES_SELECTED) > 0);
 	if (FromSelection)
 		FromSelection->SetValue((options & IN_LINES_FROM_SELECTION) > 0);
+
+	FindText->SetValue(FR->actualFind);
+	FindText->PutArray(&FR->findRecent);
+	if (ReplaceText){
+		ReplaceText->SetValue(FR->actualReplace);
+		ReplaceText->PutArray(&FR->replaceRecent);
+	}
+	if (FindInSubsPattern){
+		FindInSubsPattern->SetValue(FR->actualFilters);
+		FindInSubsPattern->PutArray(&FR->subsFindingFilters);
+		FindInSubsPath->SetValue(FR->actualPaths);
+		FindInSubsPath->PutArray(&FR->subsFindingPaths);
+	}
 }
 
 void TabWindow::OnRecheck(wxCommandEvent& event)
@@ -348,6 +381,9 @@ FindReplaceDialog::FindReplaceDialog(KainoteFrame *_Kai, int whichWindow)
 		if (currentTab->windowType != WINDOW_REPLACE){ findReplaceTabs->SetTab(1); }
 		else{ Hide(); }
 	}, GLOBAL_FIND_REPLACE);
+	if (whichWindow != WINDOW_FIND)
+		findReplaceTabs->SetTab(whichWindow);
+
 	Show();
 }
 
@@ -365,6 +401,12 @@ void FindReplaceDialog::ShowDialog(int whichWindow)
 	findReplaceTabs->SetTab(whichWindow);
 	if (!IsShown())
 		Show();
+}
+
+void FindReplaceDialog::SaveOptions()
+{
+	TabWindow *currentTab = GetTab();
+	currentTab->SaveValues();
 }
 
 void FindReplaceDialog::OnActivate(wxActivateEvent& event)

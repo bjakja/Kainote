@@ -366,9 +366,6 @@
     <ClCompile Include="HotkeysNaming.cpp">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClCompile>
-    <ClCompile Include="ListControls.cpp">
-      <Filter>Source Files\Utils &amp; Config</Filter>
-    </ClCompile>
     <ClCompile Include="MatroskaParser.c">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClCompile>
@@ -389,6 +386,9 @@
     </ClCompile>
     <ClCompile Include="FindReplaceResultsDialog.cpp">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="ListControls.cpp">
+      <Filter>Source Files\Controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

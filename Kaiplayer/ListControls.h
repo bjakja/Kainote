@@ -85,6 +85,7 @@ public:
 	int Append(const wxString &item);
 	void Append(const wxArrayString &itemsArray);
 	void PutArray(wxArrayString *arr);
+	void GetArray(wxArrayString *arr){ if (arr) *arr = *list; }
 	void Delete(int num, int nRemove=1);
 	void SetToolTip(const wxString &tooltip="");
 	void Sort();

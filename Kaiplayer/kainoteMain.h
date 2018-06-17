@@ -56,7 +56,7 @@ class KainoteFrame: public KaiFrame
 		void SaveAll();
 
         bool OpenFile(const wxString &filename,bool fulls=false);
-		void Label(int iter=0,bool video=false, int wtab=-1);
+		void Label(int iter=0,bool video=false, int wtab=-1, bool onlyTabs = false);
 		
 		void SetRecent(short what=0);
 		void AppendRecent(short what=0,Menu *Menu=0);

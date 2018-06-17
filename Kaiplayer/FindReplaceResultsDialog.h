@@ -32,6 +32,7 @@ public:
 	void SetLastFilteredLine(int lastfiltered){ lastFilteredLine = lastfiltered; }
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
+	Item* Copy(){ return new ResultsHeader(*this); }
 private:
 	int firstFilteredLine = 0;
 	int lastFilteredLine = 0;
@@ -54,6 +55,13 @@ public:
 private:
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
+	Item* Copy(){ return new SeekResults(*this); }
+	int OnVisibilityChange(int mode){
+		if (mode == 1)
+			return VISIBLE_BLOCK;
+		else
+			return NOT_VISIBLE;
+	}
 	wxPoint findPosition;
 	
 	wxString path;
@@ -70,6 +78,7 @@ public:
 	void SetHeader(const wxString &text);
 	void SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _keyLine, const wxString &_path);
 	void ClearList();
+	void FilterList();
 private:
 	KaiListCtrl *resultsList;
 	ResultsHeader *header = NULL;

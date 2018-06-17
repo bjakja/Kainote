@@ -51,6 +51,10 @@ class FindReplace
 		wxArrayString replaceRecent;
 		wxArrayString subsFindingFilters;
 		wxArrayString subsFindingPaths;
+		wxString actualFind;
+		wxString actualReplace;
+		wxString actualFilters;
+		wxString actualPaths;
 		wxRegEx rgx;
 		
 		void Find(TabWindow *window);
@@ -59,15 +63,16 @@ class FindReplace
 		void FindAllInCurrentSubs(TabWindow *window);
 		void FindInSubs(TabWindow *window);
 		void Replace(TabWindow *window);
+		int ReplaceAllInTab(TabPanel *tab, TabWindow *window, long replaceColumn);
 		void ReplaceAll(TabWindow *window);
 		void ReplaceInAllOpenedSubs(TabWindow *window);
 		void ReplaceInSubs(TabWindow *window);
-		void FindAllInTab(TabPanel *tab, TabWindow *window);
+		bool FindAllInTab(TabPanel *tab, TabWindow *window);
 		void AddRecent(TabWindow *window);
 		void OnClose();
 
-		FindReplaceDialog *FRD;
-		FindReplaceResultsDialog *FRRD;
+		FindReplaceDialog *FRD = NULL;
+		FindReplaceResultsDialog *FRRD = NULL;
 };
 
 enum

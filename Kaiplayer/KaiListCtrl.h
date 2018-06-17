@@ -189,6 +189,7 @@ public:
 		delete itemList;
 		itemList = new List();
 	}
+	void SetHeaderHeight(int height);
 private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);

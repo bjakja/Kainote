@@ -291,7 +291,7 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 			Options.GetColour(WindowTextInactive));
 		if(name != ""){
 			if(iw){
-				tdc.DrawText(name, ((w - textHeight) / 2) + iw + 5, ((h - textHeight) / 2));
+				tdc.DrawText(name, ((w - fw) / 2) + iw + 5, ((h - textHeight) / 2));
 			}else{
 				wxRect cur(5, ((h - textHeight) / 2), w - 10, textHeight);
 				tdc.SetClippingRegion(cur);

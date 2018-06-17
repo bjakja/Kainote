@@ -115,7 +115,7 @@ void KaiTabBar::OnPaint(wxPaintEvent& event)
 	wxMemoryDC tdc;
 	tdc.SelectObject(wxBitmap(w, tabHeader));
 	tdc.SetFont(GetFont());
-	const wxColour & tabsBarBackground = Options.GetColour(TabsBarBackground2);
+	const wxColour & tabsBarBackground = Options.GetColour(TabsBackgroundInactive);
 	const wxColour & tabsBarBackgroundHover = Options.GetColour(TabsBackgroundInactiveHover);
 	const wxColour & activeLines = Options.GetColour(TabsBorderActive);
 	const wxColour & tabsBarBorderInactive = Options.GetColour(TabsBorderInactive); 

@@ -45,434 +45,17 @@ void FindReplace::ShowResult(TabPanel *tab, int keyLine)
 	for (size_t i = 0; i < Kai->Tabs->Size(); i++){
 		if (Kai->Tabs->Page(i) == tab){
 			if (keyLine < tab->Grid->file->GetAllCount()){
+				if (i != Kai->Tabs->iter)
+					Kai->Tabs->ChangePage(i);
+
 				int lineId = tab->Grid->file->GetElementByKey(keyLine);
 				tab->Edit->SetLine(lineId);
+				tab->Grid->SelectRow(lineId);
+				tab->Grid->ScrollTo(lineId, true);
 			}
 			break;
 		}
 	}
-}
-
-void FindReplace::ReplaceAll(TabWindow *window)
-{
-	if (window->windowType != WINDOW_REPLACE){
-		wxLogStatus("chujnia replace all wywołane nie z okna replace");
-		return;
-	}
-
-	TabPanel *tab = Kai->GetTab();
-	long wrep = (tab->Grid->hasTLMode && !window->CollumnTextOriginal->GetValue()) ? TXTTL : TXT;
-	if (window->CollumnStyle->GetValue()){ wrep = STYLE; }
-	else if (window->CollumnActor->GetValue()){ wrep = ACTOR; }
-	else if (window->CollumnEffect->GetValue()){ wrep = EFFECT; }
-
-	bool matchcase = window->MatchCase->GetValue();
-	bool regex = window->RegEx->GetValue();
-	bool startline = window->StartLine->GetValue();
-	bool endline = window->EndLine->GetValue();
-
-	wxString find = window->FindText->GetValue(), 
-		rep = window->ReplaceText->GetValue();
-	if (startline && regex){
-		find = "^" + find;
-	}
-	if (endline && regex){
-		if (find == ""){
-			find = "^(.*)$";
-			rep = "\\1" + rep;
-		}
-		else{
-			find << "$";
-		}
-	}
-
-	int allreps1 = 0;
-	int allreps = 0;
-	wxString txt;
-	wxString stylesAsText = window->ChoosenStyleText->GetValue();
-	bool notstyles = false;
-	if (stylesAsText == ""){ notstyles = true; }
-	else{ stylesAsText = "," + stylesAsText + ","; }
-	bool onlysel = window->SelectedLines->GetValue();
-
-	int fsel = tab->Grid->FirstSelection();
-	File *Subs = tab->Grid->file->GetSubs();
-	bool skipFiltered = !tab->Grid->ignoreFiltered;
-
-	for (int i = (!window->AllLines->GetValue() && fsel >= 0) ? fsel : 0; i < Subs->dials.size(); i++)
-	{
-		Dialogue *Dial = Subs->dials[i];
-		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue){ continue; }
-
-		if ((notstyles || stylesAsText.Find("," + Dial->Style + ",") != -1) &&
-			!(onlysel && !(tab->Grid->file->IsSelectedByKey(i)))){
-
-			if (wrep == STYLE){
-				txt = Dial->Style;
-			}
-			else if (wrep == TXT){
-				txt = Dial->Text;
-			}
-			else if (wrep == TXTTL){
-				txt = Dial->TextTl;
-			}
-			else if (wrep == ACTOR){
-				txt = Dial->Actor;
-			}
-			else if (wrep == EFFECT){
-				txt = Dial->Effect;
-			}
-			if (!(startline || endline) && (find.empty() || txt.empty()))
-			{
-				if (txt.empty() && find.empty())
-				{
-					txt = rep; allreps = 1;
-				}
-				else{ continue; }
-			}
-			else if (regex){
-				int rxflags = wxRE_ADVANCED;
-				if (!matchcase){ rxflags |= wxRE_ICASE; }
-				wxRegEx nfind(find, rxflags);
-				allreps = nfind.ReplaceAll(&txt, rep);
-			}
-			else if (startline || endline){
-
-				wxString ltext = (!matchcase) ? txt.Lower() : txt;
-				wxString lfind = (!matchcase) ? find.Lower() : find;
-				if (startline){
-					if (ltext.StartsWith(lfind) || lfind.empty()){
-						txt.replace(0, lfind.Len(), rep);
-						allreps = 1;
-					}
-				}
-				if (endline){
-					if (ltext.EndsWith(lfind) || lfind.empty()){
-						int lenn = txt.Len();
-						txt.replace(lenn - lfind.Len(), lenn, rep);
-						allreps = 1;
-					}
-				}
-
-			}
-			else if (!matchcase){
-				wxString lfind = find.Lower();
-				wxString ltext = txt;
-				ltext.MakeLower();
-
-				bool isfind = true;
-				int newpos = 0;
-				int flen = lfind.Len();
-				allreps = 0;
-				while (isfind){
-					size_t poss = ltext.find(lfind, newpos);
-					if (poss == -1){ isfind = false; break; }
-					else{
-						if (poss < 0){ poss = 0; }
-						if (poss > txt.Len()){ poss = txt.Len(); }
-						wxString hhh;
-						ltext.Remove(poss, flen);
-						ltext.insert(poss, rep);
-						txt.Remove(poss, flen);
-						txt.insert(poss, rep);
-						allreps++;
-						newpos = poss + rep.Len();
-					}
-
-				}
-			}
-			else{ allreps = txt.Replace(find, rep); }
-			if (allreps > 0){
-				Dialogue *Dialc = tab->Grid->file->CopyDialogueByKey(i);
-				if (wrep == TXT){ Dialc->Text = txt; }
-				else if (wrep == TXTTL){ Dialc->TextTl = txt; }
-				else if (wrep == STYLE){ Dialc->Style = txt; }
-				else if (wrep == ACTOR){ Dialc->Actor = txt; }
-				else if (wrep == EFFECT){ Dialc->Effect = txt; }
-				allreps1 += allreps;
-
-			}
-
-		}
-
-	}
-	if (allreps1){
-		tab->Grid->SpellErrors.clear();
-		tab->Grid->SetModified(REPLACE_ALL);
-		if (wrep < TXT){
-			tab->Grid->RefreshColumns(wrep);
-		}
-		else{
-			tab->Grid->Refresh(false);
-		}
-	}
-	blockTextChange = true;
-	KaiMessageBox(wxString::Format(_("Zmieniono %i razy."), allreps1), _("Szukaj Zamień"));
-	AddRecent(window);
-	findTextReset = true;
-}
-
-
-void FindReplace::ReplaceInAllOpenedSubs(TabWindow *window)
-{
-
-}
-
-void FindReplace::ReplaceInSubs(TabWindow *window)
-{
-
-}
-
-void FindReplace::FindAllInTab(TabPanel *tab, TabWindow *window)
-{
-	bool isfirst = true;
-	bool searchInOriginal = window->CollumnTextOriginal->GetValue();
-	long wrep = (tab->Grid->hasTLMode && !searchInOriginal) ? TXTTL : TXT;
-	if (window->CollumnStyle->GetValue()){ wrep = STYLE; }
-	else if (window->CollumnActor->GetValue()){ wrep = ACTOR; }
-	else if (window->CollumnEffect->GetValue()){ wrep = EFFECT; }
-
-	bool matchcase = window->MatchCase->GetValue();
-	bool regex = window->RegEx->GetValue();
-	bool startline = window->StartLine->GetValue();
-	bool endline = window->EndLine->GetValue();
-
-	wxString find1 = window->FindText->GetValue();
-
-	if (startline && regex){
-		find1 = "^" + find1;
-	}
-	if (endline && regex){
-		find1 << "$";
-	}
-
-	wxString txt;
-	int foundPosition = -1;
-	size_t foundLength = 0;
-	bool foundsome = false;
-	int positionId = 0;
-	if (fromstart){
-		int firstSelectedId = tab->Grid->FirstSelection();
-		linePosition = (!window->AllLines->GetValue() && firstSelectedId >= 0) ? tab->Grid->file->GetElementById(firstSelectedId) : 0;
-		textPosition = 0;
-		if (linePosition > 0)
-			positionId = firstSelectedId;
-	}
-	wxString stylesList = window->ChoosenStyleText->GetValue();
-	bool styles = false;
-	if (stylesList != ""){
-		styles = true;
-		stylesList = "," + stylesList + ",";
-	}
-	bool onlysel = window->SelectedLines->GetValue();
-	File *Subs = tab->Grid->file->GetSubs();
-
-	while (linePosition < Subs->dials.size())
-	{
-		Dialogue *Dial = Subs->dials[linePosition];
-		if (!Dial->isVisible){ linePosition++; textPosition = 0; continue; }
-		//good option we have line numbers from 1
-		else{ positionId++; }
-
-		if ((!styles && !onlysel) ||
-			(styles && stylesList.Find("," + Dial->Style + ",") != -1) ||
-			(onlysel && tab->Grid->file->IsSelectedByKey(linePosition))){
-			if (wrep == STYLE){
-				txt = Dial->Style;
-			}
-			else if (wrep == TXT || wrep == TXTTL){
-				txt = (wrep == TXTTL) ? Dial->TextTl : Dial->Text;
-			}
-			else if (wrep == ACTOR){
-				txt = Dial->Actor;
-			}
-			else if (wrep == EFFECT){
-				txt = Dial->Effect;
-			}
-
-			//no to szukamy
-			if (!(startline || endline) && (find1.empty() || txt.empty()))
-			{
-				if (txt.empty() && find1.empty()){
-					foundPosition = 0; foundLength = 0;
-				}
-				else{ textPosition = 0; linePosition++; continue; }
-
-			}
-			else if (regex){
-				int rxflags = wxRE_ADVANCED;
-				if (!matchcase){ rxflags |= wxRE_ICASE; }
-				rgx.Compile(find1, rxflags);
-				if (rgx.IsValid()) {
-					wxString cuttext = txt.Mid(textPosition);
-					if (rgx.Matches(cuttext)) {
-						size_t regexStart = 0;
-						rgx.GetMatch(&regexStart, &foundLength, 0);
-						foundPosition = regexStart + textPosition;
-					}
-					else{ textPosition = 0; linePosition++; continue; }
-
-				}
-
-			}
-			else{
-				wxString ltext = (!matchcase) ? txt.Lower() : txt;
-				wxString lfind = (!matchcase) ? find1.Lower() : find1;
-				if (startline){
-					if (ltext.StartsWith(lfind) || lfind.empty()){
-						foundPosition = 0;
-						textPosition = 0;
-					}
-					else{
-						foundPosition = -1;
-					}
-				}
-				if (endline){
-					if (ltext.EndsWith(lfind) || lfind.empty()){
-						foundPosition = txt.Len() - lfind.Len();
-						textPosition = 0;
-					}
-					else{
-						foundPosition = -1;
-					}
-				}
-				else{
-					foundPosition = ltext.find(lfind, textPosition);
-				}
-				foundLength = lfind.Len();
-			}
-
-			if (foundPosition != -1){
-				if (isfirst){
-					FRRD->SetHeader(tab->SubsPath);
-					isfirst = false;
-				}
-				wxString lineNum = wxString::Format(_("Linia %i:"), positionId);
-				FRRD->SetResults(lineNum + txt, wxPoint(foundPosition + lineNum.Len(), foundLength), tab, linePosition, L"");
-				
-				if ((size_t)textPosition >= txt.Len() || startline){
-					linePosition++; textPosition = 0;
-				}
-			}
-			else{
-				textPosition = 0;
-				linePosition++;
-			}
-
-		}
-		else{ textPosition = 0; linePosition++; }
-	}
-}
-
-void FindReplace::OnFind(TabWindow *window)
-{
-	Find(window);
-	fnext = false;
-	findTextReset = true;
-}
-
-void FindReplace::FindInAllOpenedSubs(TabWindow *window)
-{
-
-}
-
-void FindReplace::FindAllInCurrentSubs(TabWindow *window)
-{
-
-}
-
-void FindReplace::FindInSubs(TabWindow *window)
-{
-
-}
-
-void FindReplace::Replace(TabWindow *window)
-{
-	if (window->windowType != WINDOW_REPLACE){
-		wxLogStatus("chujnia replace all wywołane nie z okna replace");
-		return;
-	}
-	TabPanel *tab = Kai->GetTab();
-	if (lastActive != tab->Grid->currentLine){ Find(window); }
-	bool searchInOriginal = window->CollumnTextOriginal->GetValue();
-	long wrep = (tab->Grid->hasTLMode && !searchInOriginal) ? TXTTL : TXT;
-	if (window->CollumnStyle->GetValue()){ wrep = STYLE; }
-	else if (window->CollumnActor->GetValue()){ wrep = ACTOR; }
-	else if (window->CollumnEffect->GetValue()){ wrep = EFFECT; }
-
-	wxString find1 = window->FindText->GetValue();
-	if (find1 != oldfind || findstart == -1 || findend == -1){ 
-		fromstart = true; 
-		fnext = false; 
-		oldfind = find1; 
-		Find(window); 
-	}
-	if (findstart == -1 || findend == -1){ return; }
-	fnext = true;
-	wxString rep = window->ReplaceText->GetValue();
-	SubsGrid *grid = tab->Grid;
-
-	Dialogue *Dialc = grid->CopyDialogueByKey(reprow);
-	bool hasRegEx = window->RegEx->GetValue();
-
-	if (wrep == STYLE){
-		wxString oldstyle = Dialc->Style;
-		if (hasRegEx && rgx.IsValid()){
-			wxString place = oldstyle.Mid(findstart, findend - findstart);
-			int reps = rgx.Replace(&place, rep, 1);
-			oldstyle.replace(findstart, findend - findstart, (reps)? place : rep);
-		}
-		else{
-			oldstyle.replace(findstart, findend - findstart, rep);
-		}
-		tab->Edit->StyleChoice->SetSelection(tab->Edit->StyleChoice->FindString(oldstyle));
-		Dialc->Style = oldstyle;
-	}
-	else if (wrep == TXT || wrep == TXTTL){
-		MTextEditor *tmp = (searchInOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
-		wxString oldtext = tmp->GetValue();
-		if (hasRegEx && rgx.IsValid()){
-			wxString place = oldtext.Mid(findstart, findend - findstart);
-			int reps = rgx.Replace(&place, rep, 1);
-			oldtext.replace(findstart, findend - findstart, (reps) ? place : rep);
-		}
-		else{
-			oldtext.replace(findstart, findend - findstart, rep);
-		}
-		tmp->SetTextS(oldtext);
-		Dialc->Text = oldtext;
-	}
-	else if (wrep == ACTOR){
-		wxString oldtext = tab->Edit->ActorEdit->choiceText->GetValue();
-		if (hasRegEx && rgx.IsValid()){
-			wxString place = oldtext.Mid(findstart, findend - findstart);
-			int reps = rgx.Replace(&place, rep, 1);
-			oldtext.replace(findstart, findend - findstart, (reps) ? place : rep);
-		}
-		else{
-			oldtext.replace(findstart, findend - findstart, rep);
-		}
-		tab->Edit->ActorEdit->choiceText->SetValue(oldtext);
-		Dialc->Actor = oldtext;
-	}
-	else if (wrep == EFFECT){
-		wxString oldtext = tab->Edit->EffectEdit->choiceText->GetValue();
-		if (hasRegEx && rgx.IsValid()){
-			wxString place = oldtext.Mid(findstart, findend - findstart);
-			int reps = rgx.Replace(&place, rep, 1);
-			oldtext.replace(findstart, findend - findstart, (reps) ? place : rep);
-		}
-		else{
-			oldtext.replace(findstart, findend - findstart, rep);
-		}
-		tab->Edit->EffectEdit->choiceText->SetValue(oldtext);
-		Dialc->Effect = oldtext;
-	}
-
-	grid->SetModified(REPLACE_SINGLE);
-	grid->Refresh(false);
-	textPosition = findstart + rep.Len();
-	Find(window);
 }
 
 void FindReplace::Find(TabWindow *window)
@@ -495,8 +78,8 @@ void FindReplace::Find(TabWindow *window)
 
 	wxString find1 = window->FindText->GetValue();
 	if (find1 != oldfind){ fromstart = true; fnext = false; oldfind = find1; }
-	if (!fromstart && lastActive != tab->Grid->currentLine){ 
-		lastActive = tab->Grid->currentLine; 
+	if (!fromstart && lastActive != tab->Grid->currentLine){
+		lastActive = tab->Grid->currentLine;
 	}
 
 	if (startline && regex){
@@ -513,8 +96,9 @@ void FindReplace::Find(TabWindow *window)
 	size_t mlen = 0;
 	bool foundsome = false;
 	if (fromstart){
-		int fsel = tab->Grid->FirstSelection();
-		linePosition = (!window->AllLines->GetValue() && fsel >= 0) ? fsel : 0;
+		int firstSelectionId = tab->Grid->FirstSelection();
+		//is it possible to get it -1 if id exists, key also should exist
+		linePosition = (!window->AllLines->GetValue() && firstSelectionId >= 0) ? tab->Grid->file->GetElementById(firstSelectionId) : 0;
 		textPosition = 0;
 	}
 	wxString stylesList = window->ChoosenStyleText->GetValue();
@@ -650,9 +234,9 @@ void FindReplace::Find(TabWindow *window)
 				linePosition = 0;
 				wasResetToStart = true;
 			}
-			else{ 
-				linePosition = 0; 
-				foundsome = true; 
+			else{
+				linePosition = 0;
+				foundsome = true;
 				break;
 			}
 		}
@@ -665,6 +249,519 @@ void FindReplace::Find(TabWindow *window)
 	}
 	if (fromstart){ AddRecent(window); fromstart = false; }
 	//Kai->Thaw();
+}
+
+void FindReplace::OnFind(TabWindow *window)
+{
+	Find(window);
+	fnext = false;
+	findTextReset = true;
+}
+
+//returns true if regex is not valid
+//it will inform if pattern is not valid
+//instead of ignoring all seeking
+bool FindReplace::FindAllInTab(TabPanel *tab, TabWindow *window)
+{
+	bool isfirst = true;
+	bool searchInOriginal = window->CollumnTextOriginal->GetValue();
+	long wrep = (tab->Grid->hasTLMode && !searchInOriginal) ? TXTTL : TXT;
+	if (window->CollumnStyle->GetValue()){ wrep = STYLE; }
+	else if (window->CollumnActor->GetValue()){ wrep = ACTOR; }
+	else if (window->CollumnEffect->GetValue()){ wrep = EFFECT; }
+
+	bool matchcase = window->MatchCase->GetValue();
+	bool regex = window->RegEx->GetValue();
+	bool startline = window->StartLine->GetValue();
+	bool endline = window->EndLine->GetValue();
+
+	wxString findString = window->FindText->GetValue();
+
+	if (startline && regex){
+		findString = "^" + findString;
+	}
+	if (endline && regex){
+		findString << "$";
+	}
+
+	wxString txt;
+	int foundPosition = -1;
+	size_t foundLength = 0;
+	bool foundsome = false;
+	int positionId = 0;
+	
+	int firstSelectedId = tab->Grid->FirstSelection();
+	int tabLinePosition = (!window->AllLines->GetValue() && firstSelectedId >= 0) ? tab->Grid->file->GetElementById(firstSelectedId) : 0;
+	int tabTextPosition = 0;
+	if (tabLinePosition > 0)
+		positionId = firstSelectedId;
+	
+	wxString stylesList = window->ChoosenStyleText->GetValue();
+	bool styles = false;
+	if (stylesList != ""){
+		styles = true;
+		stylesList = "," + stylesList + ",";
+	}
+	bool onlySelections = window->SelectedLines->GetValue();
+	File *Subs = tab->Grid->file->GetSubs();
+	wxRegEx seekRegex;
+	if (regex){
+		int rxflags = wxRE_ADVANCED;
+		if (!matchcase){ rxflags |= wxRE_ICASE; }
+		seekRegex.Compile(findString, rxflags);
+		if (!seekRegex.IsValid()) {
+			KaiMessageBox(_("Szablon wyrażeń regularnych jest nieprawidłowy"));
+			return true;
+		}
+	}
+
+	while (tabLinePosition < Subs->dials.size())
+	{
+		Dialogue *Dial = Subs->dials[tabLinePosition];
+		if (!Dial->isVisible){ tabLinePosition++; tabTextPosition = 0; continue; }
+
+		if ((!styles && !onlySelections) ||
+			(styles && stylesList.Find("," + Dial->Style + ",") != -1) ||
+			(onlySelections && tab->Grid->file->IsSelectedByKey(tabLinePosition))){
+			if (wrep == STYLE){
+				txt = Dial->Style;
+			}
+			else if (wrep == TXT || wrep == TXTTL){
+				txt = (wrep == TXTTL) ? Dial->TextTl : Dial->Text;
+			}
+			else if (wrep == ACTOR){
+				txt = Dial->Actor;
+			}
+			else if (wrep == EFFECT){
+				txt = Dial->Effect;
+			}
+
+			//no to szukamy
+			if (!(startline || endline) && (findString.empty() || txt.empty()))
+			{
+				if (txt.empty() && findString.empty()){
+					foundPosition = 0; foundLength = 0;
+				}
+				else{ tabTextPosition = 0; tabLinePosition++; positionId++; continue; }
+
+			}
+			else if (regex){
+				wxString cuttext = txt.Mid(tabTextPosition);
+				if (seekRegex.Matches(cuttext)) {
+					size_t regexStart = 0;
+					seekRegex.GetMatch(&regexStart, &foundLength, 0);
+					foundPosition = regexStart + tabTextPosition;
+				}
+				else{ tabTextPosition = 0; tabLinePosition++; positionId++; continue; }
+			}
+			else{
+				wxString ltext = (!matchcase) ? txt.Lower() : txt;
+				wxString lfind = (!matchcase) ? findString.Lower() : findString;
+				if (startline){
+					if (ltext.StartsWith(lfind) || lfind.empty()){
+						foundPosition = 0;
+						tabTextPosition = 0;
+					}
+					else{
+						foundPosition = -1;
+					}
+				}
+				if (endline){
+					if (ltext.EndsWith(lfind) || lfind.empty()){
+						foundPosition = txt.Len() - lfind.Len();
+						tabTextPosition = 0;
+					}
+					else{
+						foundPosition = -1;
+					}
+				}
+				else{
+					foundPosition = ltext.find(lfind, tabTextPosition);
+				}
+				foundLength = lfind.Len();
+			}
+
+			if (foundPosition != -1){
+				if (isfirst){
+					FRRD->SetHeader(tab->SubsPath);
+					isfirst = false;
+				}
+				wxString lineNum = wxString::Format(_("Linia %i: "), positionId + 1);
+				FRRD->SetResults(lineNum + txt, wxPoint(foundPosition + lineNum.Len(), foundLength), tab, tabLinePosition, L"");
+				
+				if ((size_t)tabTextPosition >= txt.Len() || startline){
+					tabLinePosition++; 
+					positionId++;
+					tabTextPosition = 0;
+				}
+				else
+					tabTextPosition = foundPosition + 1;
+
+				foundPosition = -1;
+			}
+			else{
+				tabTextPosition = 0;
+				tabLinePosition++;
+				positionId++;
+			}
+
+		}
+		else{ tabTextPosition = 0; tabLinePosition++; positionId++; }
+	}
+	return false;
+}
+
+void FindReplace::FindInAllOpenedSubs(TabWindow *window)
+{
+	if (!FRRD)
+		FRRD = new FindReplaceResultsDialog(Kai, this);
+	else
+		FRRD->ClearList();
+
+	for (size_t i = 0; i < Kai->Tabs->Size(); i++){
+		if (FindAllInTab(Kai->Tabs->Page(i), window)){
+			return;
+		}
+	}
+	FRRD->FilterList();
+	if (!FRRD->IsShown())
+		FRRD->Show();
+
+	AddRecent(window);
+}
+
+void FindReplace::FindAllInCurrentSubs(TabWindow *window)
+{
+	if (!FRRD)
+		FRRD = new FindReplaceResultsDialog(Kai, this);
+	else
+		FRRD->ClearList();
+
+	TabPanel *tab = Kai->GetTab();
+	if (FindAllInTab(tab, window)){
+		return;
+	}
+
+	FRRD->FilterList();
+	if (!FRRD->IsShown())
+		FRRD->Show();
+
+	AddRecent(window);
+}
+
+void FindReplace::FindInSubs(TabWindow *window)
+{
+
+}
+
+void FindReplace::Replace(TabWindow *window)
+{
+	if (window->windowType != WINDOW_REPLACE){
+		wxLogStatus("chujnia replace all wywołane nie z okna replace");
+		return;
+	}
+	TabPanel *tab = Kai->GetTab();
+	if (lastActive != tab->Grid->currentLine){ Find(window); }
+	bool searchInOriginal = window->CollumnTextOriginal->GetValue();
+	long wrep = (tab->Grid->hasTLMode && !searchInOriginal) ? TXTTL : TXT;
+	if (window->CollumnStyle->GetValue()){ wrep = STYLE; }
+	else if (window->CollumnActor->GetValue()){ wrep = ACTOR; }
+	else if (window->CollumnEffect->GetValue()){ wrep = EFFECT; }
+
+	wxString find1 = window->FindText->GetValue();
+	if (find1 != oldfind || findstart == -1 || findend == -1){ 
+		fromstart = true; 
+		fnext = false; 
+		oldfind = find1; 
+		Find(window); 
+	}
+	if (findstart == -1 || findend == -1){ return; }
+	fnext = true;
+	wxString rep = window->ReplaceText->GetValue();
+	SubsGrid *grid = tab->Grid;
+
+	Dialogue *Dialc = grid->CopyDialogueByKey(reprow);
+	bool hasRegEx = window->RegEx->GetValue();
+
+	if (wrep == STYLE){
+		wxString oldstyle = Dialc->Style;
+		if (hasRegEx && rgx.IsValid()){
+			wxString place = oldstyle.Mid(findstart, findend - findstart);
+			int reps = rgx.Replace(&place, rep, 1);
+			oldstyle.replace(findstart, findend - findstart, (reps)? place : rep);
+		}
+		else{
+			oldstyle.replace(findstart, findend - findstart, rep);
+		}
+		tab->Edit->StyleChoice->SetSelection(tab->Edit->StyleChoice->FindString(oldstyle));
+		Dialc->Style = oldstyle;
+	}
+	else if (wrep == TXT || wrep == TXTTL){
+		MTextEditor *tmp = (searchInOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
+		wxString oldtext = tmp->GetValue();
+		if (hasRegEx && rgx.IsValid()){
+			wxString place = oldtext.Mid(findstart, findend - findstart);
+			int reps = rgx.Replace(&place, rep, 1);
+			oldtext.replace(findstart, findend - findstart, (reps) ? place : rep);
+		}
+		else{
+			oldtext.replace(findstart, findend - findstart, rep);
+		}
+		tmp->SetTextS(oldtext);
+		Dialc->Text = oldtext;
+	}
+	else if (wrep == ACTOR){
+		wxString oldtext = tab->Edit->ActorEdit->choiceText->GetValue();
+		if (hasRegEx && rgx.IsValid()){
+			wxString place = oldtext.Mid(findstart, findend - findstart);
+			int reps = rgx.Replace(&place, rep, 1);
+			oldtext.replace(findstart, findend - findstart, (reps) ? place : rep);
+		}
+		else{
+			oldtext.replace(findstart, findend - findstart, rep);
+		}
+		tab->Edit->ActorEdit->choiceText->SetValue(oldtext);
+		Dialc->Actor = oldtext;
+	}
+	else if (wrep == EFFECT){
+		wxString oldtext = tab->Edit->EffectEdit->choiceText->GetValue();
+		if (hasRegEx && rgx.IsValid()){
+			wxString place = oldtext.Mid(findstart, findend - findstart);
+			int reps = rgx.Replace(&place, rep, 1);
+			oldtext.replace(findstart, findend - findstart, (reps) ? place : rep);
+		}
+		else{
+			oldtext.replace(findstart, findend - findstart, rep);
+		}
+		tab->Edit->EffectEdit->choiceText->SetValue(oldtext);
+		Dialc->Effect = oldtext;
+	}
+
+	grid->SetModified(REPLACE_SINGLE);
+	grid->Refresh(false);
+	textPosition = findstart + rep.Len();
+	Find(window);
+}
+
+int FindReplace::ReplaceAllInTab(TabPanel *tab, TabWindow *window, long replaceColumn)
+{
+	bool matchcase = window->MatchCase->GetValue();
+	bool regex = window->RegEx->GetValue();
+	bool startline = window->StartLine->GetValue();
+	bool endline = window->EndLine->GetValue();
+
+	wxString find = window->FindText->GetValue(),
+		rep = window->ReplaceText->GetValue();
+	if (startline && regex){
+		find = "^" + find;
+	}
+	if (endline && regex){
+		if (find == ""){
+			find = "^(.*)$";
+			rep = "\\1" + rep;
+		}
+		else{
+			find << "$";
+		}
+	}
+
+	int allRelpacements = 0;
+	int allreps = 0;
+	wxString txt;
+	wxString stylesAsText = window->ChoosenStyleText->GetValue();
+	bool notstyles = false;
+	if (stylesAsText == ""){ notstyles = true; }
+	else{ stylesAsText = "," + stylesAsText + ","; }
+	bool onlysel = window->SelectedLines->GetValue();
+
+	int firstSelectionId = tab->Grid->FirstSelection();
+	File *Subs = tab->Grid->file->GetSubs();
+	bool skipFiltered = !tab->Grid->ignoreFiltered;
+	wxRegEx nfind;
+	if (regex){
+		int rxflags = wxRE_ADVANCED;
+		if (!matchcase){ rxflags |= wxRE_ICASE; }
+		nfind.Compile(find, rxflags);
+		if (!nfind.IsValid()) {
+			KaiMessageBox(_("Szablon wyrażeń regularnych jest nieprawidłowy"));
+			return -1;
+		}
+	}
+
+	for (int i = (!window->AllLines->GetValue() && firstSelectionId >= 0) ?
+		tab->Grid->file->GetElementById(firstSelectionId) : 0; i < Subs->dials.size(); i++)
+	{
+		Dialogue *Dial = Subs->dials[i];
+		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue){ continue; }
+
+		if ((notstyles || stylesAsText.Find("," + Dial->Style + ",") != -1) &&
+			!(onlysel && !(tab->Grid->file->IsSelectedByKey(i)))){
+
+			if (replaceColumn == STYLE){
+				txt = Dial->Style;
+			}
+			else if (replaceColumn == TXT){
+				txt = Dial->Text;
+			}
+			else if (replaceColumn == TXTTL){
+				txt = Dial->TextTl;
+			}
+			else if (replaceColumn == ACTOR){
+				txt = Dial->Actor;
+			}
+			else if (replaceColumn == EFFECT){
+				txt = Dial->Effect;
+			}
+			if (!(startline || endline) && (find.empty() || txt.empty()))
+			{
+				if (txt.empty() && find.empty())
+				{
+					txt = rep; allreps = 1;
+				}
+				else{ continue; }
+			}
+			else if (regex){
+				allreps = nfind.ReplaceAll(&txt, rep);
+			}
+			else if (startline || endline){
+
+				wxString ltext = (!matchcase) ? txt.Lower() : txt;
+				wxString lfind = (!matchcase) ? find.Lower() : find;
+				if (startline){
+					if (ltext.StartsWith(lfind) || lfind.empty()){
+						txt.replace(0, lfind.Len(), rep);
+						allreps = 1;
+					}
+				}
+				if (endline){
+					if (ltext.EndsWith(lfind) || lfind.empty()){
+						int lenn = txt.Len();
+						txt.replace(lenn - lfind.Len(), lenn, rep);
+						allreps = 1;
+					}
+				}
+
+			}
+			else if (!matchcase){
+				wxString lfind = find.Lower();
+				wxString ltext = txt;
+				ltext.MakeLower();
+
+				bool isfind = true;
+				int newpos = 0;
+				int flen = lfind.Len();
+				allreps = 0;
+				while (isfind){
+					size_t poss = ltext.find(lfind, newpos);
+					if (poss == -1){ isfind = false; break; }
+					else{
+						if (poss < 0){ poss = 0; }
+						if (poss > txt.Len()){ poss = txt.Len(); }
+						wxString hhh;
+						ltext.Remove(poss, flen);
+						ltext.insert(poss, rep);
+						txt.Remove(poss, flen);
+						txt.insert(poss, rep);
+						allreps++;
+						newpos = poss + rep.Len();
+					}
+
+				}
+			}
+			else{ allreps = txt.Replace(find, rep); }
+			if (allreps > 0){
+				Dialogue *Dialc = tab->Grid->file->CopyDialogueByKey(i);
+				if (replaceColumn == TXT){ Dialc->Text = txt; }
+				else if (replaceColumn == TXTTL){ Dialc->TextTl = txt; }
+				else if (replaceColumn == STYLE){ Dialc->Style = txt; }
+				else if (replaceColumn == ACTOR){ Dialc->Actor = txt; }
+				else if (replaceColumn == EFFECT){ Dialc->Effect = txt; }
+				allRelpacements += allreps;
+
+			}
+
+		}
+
+	}
+
+	return allRelpacements;
+}
+
+void FindReplace::ReplaceAll(TabWindow *window)
+{
+	if (window->windowType != WINDOW_REPLACE){
+		wxLogStatus("chujnia replace all wywołane nie z okna replace");
+		return;
+	}
+
+	TabPanel *tab = Kai->GetTab();
+	long replaceColumn = (tab->Grid->hasTLMode && !window->CollumnTextOriginal->GetValue()) ? TXTTL : TXT;
+	if (window->CollumnStyle->GetValue()){ replaceColumn = STYLE; }
+	else if (window->CollumnActor->GetValue()){ replaceColumn = ACTOR; }
+	else if (window->CollumnEffect->GetValue()){ replaceColumn = EFFECT; }
+	
+	int allReplacements = ReplaceAllInTab(tab, window, replaceColumn);
+	if (allReplacements < 0){
+		return;
+	}
+	else if (allReplacements){
+		tab->Grid->SpellErrors.clear();
+		tab->Grid->SetModified(REPLACE_ALL);
+		if (replaceColumn < TXT){
+			tab->Grid->RefreshColumns(replaceColumn);
+		}
+		else{
+			tab->Grid->Refresh(false);
+		}
+	}
+	blockTextChange = true;
+	KaiMessageBox(wxString::Format(_("Zmieniono %i razy."), allReplacements), _("Szukaj Zamień"));
+	AddRecent(window);
+	findTextReset = true;
+}
+
+
+void FindReplace::ReplaceInAllOpenedSubs(TabWindow *window)
+{
+	if (window->windowType != WINDOW_REPLACE){
+		wxLogStatus("chujnia replace all we wszystkich otwartch subach wywołane nie z okna replace");
+		return;
+	}
+
+	int allTabsReplacements = 0;
+	for (size_t i = 0; i < Kai->Tabs->Size(); i++){
+		TabPanel *tab = Kai->Tabs->Page(i);
+		long replaceColumn = (tab->Grid->hasTLMode && !window->CollumnTextOriginal->GetValue()) ? TXTTL : TXT;
+		if (window->CollumnStyle->GetValue()){ replaceColumn = STYLE; }
+		else if (window->CollumnActor->GetValue()){ replaceColumn = ACTOR; }
+		else if (window->CollumnEffect->GetValue()){ replaceColumn = EFFECT; }
+		int allReplacements = ReplaceAllInTab(tab, window, replaceColumn);
+		if (allReplacements < 0){
+			return;
+		}
+		if (allReplacements){
+			tab->Grid->SpellErrors.clear();
+			tab->Grid->SetModified(REPLACE_ALL);
+			if (replaceColumn < TXT){
+				tab->Grid->RefreshColumns(replaceColumn);
+			}
+			else{
+				tab->Grid->Refresh(false);
+			}
+			Kai->Label(tab->Grid->file->GetActualHistoryIter(), false, i, i != Kai->Tabs->iter);
+			allTabsReplacements += allReplacements;
+		}
+	}
+	
+	blockTextChange = true;
+	KaiMessageBox(wxString::Format(_("Zmieniono %i razy."), allTabsReplacements), _("Szukaj Zamień"));
+	AddRecent(window);
+	findTextReset = true;
+}
+
+void FindReplace::ReplaceInSubs(TabWindow *window)
+{
+
 }
 
 void FindReplace::AddRecent(TabWindow *window)
