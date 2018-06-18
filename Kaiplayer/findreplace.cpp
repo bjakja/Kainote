@@ -16,10 +16,11 @@
 #include "FindReplace.h"
 #include "KainoteMain.h"
 #include "KaiMessageBox.h"
-//#include <wx/regex.h>
 #include <wx/clipbrd.h>
+#include <wx/dir.h>
 #include "FindReplaceDialog.h"
 #include "FindReplaceResultsDialog.h"
+#include "OpennWrite.h"
 
 FindReplace::FindReplace(KainoteFrame* kfparent, FindReplaceDialog *_FRD)
 	:FRD(_FRD)
@@ -38,22 +39,51 @@ FindReplace::FindReplace(KainoteFrame* kfparent, FindReplaceDialog *_FRD)
 	Options.GetTable(ReplaceRecent, replaceRecent, "\f", wxTOKEN_RET_EMPTY_ALL);
 	if (replaceRecent.size() > 20){ replaceRecent.RemoveAt(20, replaceRecent.size() - 20); }
 	
+	Options.GetTable(FIND_IN_SUBS_FILTERS_RECENT, subsFindingFilters, "\f", wxTOKEN_RET_EMPTY_ALL);
+	if (subsFindingFilters.size() > 20){ subsFindingFilters.RemoveAt(20, subsFindingFilters.size() - 20); }
+
+	Options.GetTable(FIND_IN_SUBS_PATHS_RECENT, subsFindingPaths, "\f", wxTOKEN_RET_EMPTY_ALL);
+	if (subsFindingPaths.size() > 20){ subsFindingPaths.RemoveAt(20, subsFindingPaths.size() - 20); }
 }
 
-void FindReplace::ShowResult(TabPanel *tab, int keyLine)
+void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine)
 {
-	for (size_t i = 0; i < Kai->Tabs->Size(); i++){
-		if (Kai->Tabs->Page(i) == tab){
-			if (keyLine < tab->Grid->file->GetAllCount()){
-				if (i != Kai->Tabs->iter)
-					Kai->Tabs->ChangePage(i);
+	if (tab){
+		for (size_t i = 0; i < Kai->Tabs->Size(); i++){
+			if (Kai->Tabs->Page(i) == tab){
+				if (keyLine < tab->Grid->file->GetAllCount()){
+					if (i != Kai->Tabs->iter)
+						Kai->Tabs->ChangePage(i);
 
-				int lineId = tab->Grid->file->GetElementByKey(keyLine);
-				tab->Edit->SetLine(lineId);
-				tab->Grid->SelectRow(lineId);
-				tab->Grid->ScrollTo(lineId, true);
+					int lineId = tab->Grid->file->GetElementByKey(keyLine);
+					tab->Edit->SetLine(lineId);
+					tab->Grid->SelectRow(lineId);
+					tab->Grid->ScrollTo(lineId, true);
+				}
+				break;
 			}
-			break;
+		}
+	}
+	else if(wxFileExists(path)){
+		bool foundSubs = false;
+		for (size_t i = 0; i < Kai->Tabs->Size(); i++){
+			if (Kai->Tabs->Page(i)->SubsPath == path){
+				Kai->Tabs->ChangePage(i);
+				foundSubs = true;
+			}
+		}
+		if (!foundSubs){
+			if (!Kai->GetTab()->SubsPath.empty())
+				Kai->InsertTab();
+
+			Kai->OpenFile(path);
+		}
+		TabPanel *ntab = Kai->GetTab();
+		if (keyLine < ntab->Grid->GetCount()){
+			int lineId = ntab->Grid->file->GetElementByKey(keyLine);
+			ntab->Edit->SetLine(lineId);
+			ntab->Grid->SelectRow(lineId);
+			ntab->Grid->ScrollTo(lineId, true);
 		}
 	}
 }
@@ -275,7 +305,7 @@ bool FindReplace::FindAllInTab(TabPanel *tab, TabWindow *window)
 	bool startline = window->StartLine->GetValue();
 	bool endline = window->EndLine->GetValue();
 
-	wxString findString = window->FindText->GetValue();
+	findString = window->FindText->GetValue();
 
 	if (startline && regex){
 		findString = "^" + findString;
@@ -451,7 +481,345 @@ void FindReplace::FindAllInCurrentSubs(TabWindow *window)
 
 void FindReplace::FindInSubs(TabWindow *window)
 {
+	FindReplaceInSubs(window, true);
+}
 
+void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
+{
+	wxString path = window->FindInSubsPath->GetValue();
+	wxArrayString paths;
+	GetFolderFiles(path, window->FindInSubsPattern->GetValue(), &paths, window->SeekInSubFolders->GetValue());
+
+	if (!paths.size())
+		return;
+
+	wxString CopyPath = Options.pathfull + "\\ReplaceBackup\\";
+	bool onlyAss = !(window->CollumnText->GetValue() || window->CollumnTextOriginal->GetValue());
+	bool plainText = (window->CollumnTextOriginal->GetValue());
+	long replaceColumn = TXT;
+	if (window->CollumnStyle->GetValue()){ replaceColumn = STYLE; }
+	else if (window->CollumnActor->GetValue()){ replaceColumn = ACTOR; }
+	else if (window->CollumnEffect->GetValue()){ replaceColumn = EFFECT; }
+	else if (plainText){ replaceColumn = 0; }
+
+	matchCase = window->MatchCase->GetValue();
+	regEx = window->RegEx->GetValue();
+	startLine = window->StartLine->GetValue();
+	endLine = window->EndLine->GetValue();
+
+	findString = window->FindText->GetValue();
+	if (!find)
+		replaceString = window->ReplaceText->GetValue();
+
+	if (startLine && regEx && !findString.StartsWith(L"^")){
+		findString = "^" + findString;
+	}
+	if (endLine && regEx && !findString.EndsWith(L"$")){
+		if (findString == "" && !find){
+			findString = "^(.*)$";
+			replaceString = "\\1" + replaceString;
+		}
+		else{
+			findString << "$";
+		}
+	}
+	if (regEx){
+		int rxflags = wxRE_ADVANCED;
+		if (!matchCase){ rxflags |= wxRE_ICASE; }
+		findReplaceRegEx.Compile(findString, rxflags);
+		if (!findReplaceRegEx.IsValid()) {
+			KaiMessageBox(_("Szablon wyrażeń regularnych jest nieprawidłowy"));
+			return;
+		}
+	}
+	if (find){
+		if (!FRRD)
+			FRRD = new FindReplaceResultsDialog(Kai, this);
+		else
+			FRRD->ClearList();
+	}
+	int AllReplacements = 0;
+
+	OpenWrite ow;
+	for (size_t i = 0; i < paths.size(); i++){
+		int SubsAllReplacements = 0;
+		wxString subsText;
+		subsPath = paths[i];
+		ow.FileOpen(subsPath, &subsText);
+
+		wxString ext = subsPath.AfterLast('.').Lower();
+		if (onlyAss && ext != "ass" && ext != "ssa")
+			continue;
+		else if (ext == "ass" && ext == "ssa" && ext == "srt" && ext == "mpl2" && ext == "sub" && ext == "txt")
+			continue;
+
+		wxString replacedText;
+		int replaceLastPosition = 0;
+		tabLinePosition = positionId = 0;
+
+		if ((ext == "ass" || ext == "ssa") && !plainText){
+			size_t result = subsText.find((ext == "ass") ? L"Dialogue:" : L"Marked=");
+			size_t result1 = subsText.find((ext == "ass") ? L"Comment:" : L"Marked=");
+			if (result == -1 && result1 == -1)// no dialogues;
+				continue;
+			else{
+				if (result1 < result)
+					result = result1;
+				if (!find){
+					replaceLastPosition = result;
+					replacedText = subsText.Mid(0, result - 1);
+				}
+				//tabLinePosition = positionId = replacedText.Freq('\n');
+				subsText = subsText.Mid(result);
+			}
+		}
+
+		wxStringTokenizer tokenizer(subsText, "\n", wxTOKEN_STRTOK);
+		wxString token;
+		Dialogue *dial = NULL;
+		int replaceStartPosition = 0;
+		int tokenLen = 0;
+		bool isFirst = true;
+		bool isFirstStringSRT = true;
+
+		while (tokenizer.HasMoreTokens()){
+
+			if (ext == "srt"){
+				wxString text = tokenizer.GetNextToken();
+				if (IsNumber(text)){
+					if (token != ""){
+						tokenLen = token.Len();
+						if (!plainText)
+							dial = new Dialogue(token.Trim());
+
+						isFirstStringSRT = true;
+					}
+					else{
+						//tabLinePosition++;
+						//positionId++;
+						continue;
+					}
+				}
+				else{ 
+					if (isFirstStringSRT){
+						replaceStartPosition = tokenizer.GetPosition();
+						isFirstStringSRT = false;
+					}
+					token << text << L"\n"; 
+					//tabLinePosition++;
+					//positionId++;
+					continue;
+				}
+			}
+			else{
+				token = tokenizer.GetNextToken();
+				//we have to skip \n
+				tokenLen = token.Len() + 1;
+				replaceStartPosition = tokenizer.GetPosition();
+				if (!plainText)
+					dial = new Dialogue(token.Trim());
+			}
+			if (!dial || (plainText && token.empty())){
+				//tabLinePosition++;
+				//positionId++;
+				continue;
+			}
+				
+			//here we got dial or plain text
+			//we have to get only text
+			if (replaceColumn == TXT){
+				token = dial->Text;
+			}
+			else if (replaceColumn == STYLE){
+				token = dial->Style;
+			}
+			else if (replaceColumn == ACTOR){
+				token = dial->Actor;
+			}
+			else if (replaceColumn == EFFECT){
+				token = dial->Effect;
+			}
+
+			if (find){
+				FindInSubsLine(&token, &isFirst);
+			}
+			else{
+				int numOfReps = ReplaceInSubsLine(&token);
+				if (numOfReps){
+					if (replaceStartPosition > replaceLastPosition){
+						replacedText << subsText.Mid(replaceStartPosition, replaceLastPosition - replaceStartPosition + 1);
+					}
+					if (replaceColumn == TXT){ dial->Text = token; }
+					else if (replaceColumn == STYLE){ dial->Style = token; }
+					else if (replaceColumn == ACTOR){ dial->Actor = token; }
+					else if (replaceColumn == EFFECT){ dial->Effect = token; }
+					else{ replacedText << token; }
+					if (replaceColumn)
+						dial->GetRaw(&replacedText);
+
+					replaceLastPosition = replaceStartPosition + tokenLen;
+					SubsAllReplacements += numOfReps;
+				}
+			}
+
+			tabLinePosition++;
+			positionId++;
+
+			if (dial){
+				delete dial;
+				dial = NULL;
+			}
+			token = "";
+		}//while
+		if (SubsAllReplacements){
+			wxCopyFile(subsPath, CopyPath + subsPath.AfterLast('\\'));
+			ow.FileWrite(subsPath, replacedText);
+			AllReplacements += SubsAllReplacements;
+		}
+	}//for
+	if (!find && AllReplacements){
+		blockTextChange = true;
+		KaiMessageBox(wxString::Format(_("Zmieniono %i razy."), AllReplacements), _("Szukaj Zamień"));
+		AddRecent(window);
+		findTextReset = true;
+	}
+	else if (find){
+		FRRD->FilterList();
+		if (!FRRD->IsShown())
+			FRRD->Show();
+	}
+	AddRecent(window);
+}
+
+void FindReplace::FindInSubsLine(wxString *txt, bool *isFirst)
+{
+	int foundPosition = 0;
+	size_t foundLength = 0;
+	tabTextPosition = 0;
+
+	while (1){
+		foundPosition = -1;
+
+		if (!(startLine || endLine) && (findString.empty() || txt->empty()))
+		{
+			if (txt->empty() && findString.empty()){
+				foundPosition = 0; foundLength = 0;
+			}
+			else{ break; }
+
+		}
+		else if (regEx){
+			wxString cuttext = txt->Mid(tabTextPosition);
+			if (findReplaceRegEx.Matches(cuttext)) {
+				size_t regexStart = 0;
+				findReplaceRegEx.GetMatch(&regexStart, &foundLength, 0);
+				foundPosition = regexStart + tabTextPosition;
+			}
+			else{ break; }
+		}
+		else{
+			wxString ltext = (!matchCase) ? txt->Lower() : *txt;
+			wxString lfind = (!matchCase) ? findString.Lower() : findString;
+			if (startLine){
+				if (ltext.StartsWith(lfind) || lfind.empty()){
+					foundPosition = 0;
+					tabTextPosition = 0;
+				}
+			}
+			if (endLine){
+				if (ltext.EndsWith(lfind) || lfind.empty()){
+					foundPosition = txt->Len() - lfind.Len();
+					tabTextPosition = 0;
+				}
+			}
+			else{
+				foundPosition = ltext.find(lfind, tabTextPosition);
+			}
+			foundLength = lfind.Len();
+		}
+
+		if (foundPosition != -1){
+			if (*isFirst){
+				FRRD->SetHeader(subsPath);
+				*isFirst = false;
+			}
+			wxString lineNum = wxString::Format(_("Linia %i: "), positionId + 1);
+			FRRD->SetResults(lineNum + (*txt), wxPoint(foundPosition + lineNum.Len(), foundLength), NULL, tabLinePosition, subsPath);
+
+			if ((size_t)tabTextPosition >= txt->Len() || startLine){
+				tabTextPosition = 0;
+			}
+			else
+				tabTextPosition = foundPosition + 1;
+
+		}
+		else{
+			break;
+		}
+	}
+}
+
+int FindReplace::ReplaceInSubsLine(wxString *onlyString)
+{
+	int allreps = 0;
+	if (!(startLine || endLine) && (findString.empty() || onlyString->empty()))
+	{
+		if (onlyString->empty() && findString.empty())
+		{
+			*onlyString = replaceString; allreps = 1;
+		}
+		else{ return 0; }
+	}
+	else if (regEx){
+		allreps = findReplaceRegEx.ReplaceAll(onlyString, replaceString);
+	}
+	else if (startLine || endLine){
+
+		wxString ltext = (!matchCase) ? onlyString->Lower() : *onlyString;
+		wxString lfind = (!matchCase) ? findString.Lower() : findString;
+		if (startLine){
+			if (ltext.StartsWith(lfind) || lfind.empty()){
+				onlyString->replace(0, lfind.Len(), replaceString);
+				allreps = 1;
+			}
+		}
+		if (endLine){
+			if (ltext.EndsWith(lfind) || lfind.empty()){
+				int lenn = onlyString->Len();
+				onlyString->replace(lenn - lfind.Len(), lenn, replaceString);
+				allreps = 1;
+			}
+		}
+
+	}
+	else if (!matchCase){
+		wxString lfind = findString.Lower();
+		wxString ltext = *onlyString;
+		ltext.MakeLower();
+
+		bool isfind = true;
+		int newpos = 0;
+		int flen = lfind.Len();
+		allreps = 0;
+		while (isfind){
+			size_t poss = ltext.find(lfind, newpos);
+			if (poss == -1){ isfind = false; break; }
+			else{
+				if (poss < 0){ poss = 0; }
+				if (poss > onlyString->Len()){ poss = onlyString->Len(); }
+				wxString hhh;
+				ltext.Remove(poss, flen);
+				ltext.insert(poss, replaceString);
+				onlyString->Remove(poss, flen);
+				onlyString->insert(poss, replaceString);
+				allreps++;
+				newpos = poss + replaceString.Len();
+			}
+
+		}
+	}
+	else{ allreps = onlyString->Replace(findString, replaceString); }
+	return allreps;
 }
 
 void FindReplace::Replace(TabWindow *window)
@@ -761,7 +1129,7 @@ void FindReplace::ReplaceInAllOpenedSubs(TabWindow *window)
 
 void FindReplace::ReplaceInSubs(TabWindow *window)
 {
-
+	FindReplaceInSubs(window, false);
 }
 
 void FindReplace::AddRecent(TabWindow *window)
@@ -813,11 +1181,69 @@ void FindReplace::AddRecent(TabWindow *window)
 		Options.SetTable(ReplaceRecent, replaceRecent, "\f");
 	}
 	if (window->windowType == WINDOW_FIND_IN_SUBS){
+		wxString filter = window->FindInSubsPattern->GetValue();
+		wxString path = window->FindInSubsPath->GetValue();
+		for (size_t i = 0; i < subsFindingFilters.GetCount(); i++)
+		{
+			if (subsFindingFilters[i] == filter){
+				subsFindingFilters.RemoveAt(i);
+				window->FindInSubsPattern->Delete(i);
+			}
+		}
+		for (size_t i = 0; i < subsFindingPaths.GetCount(); i++)
+		{
+			if (subsFindingPaths[i] == path){
+				subsFindingPaths.RemoveAt(i);
+				window->FindInSubsPath->Delete(i);
+			}
+		}
+		size_t filtersSize = subsFindingFilters.size();
+		size_t pathsSize = subsFindingPaths.size();
 
+		subsFindingFilters.Insert(filter, 0);
+		window->FindInSubsPattern->Insert(filter, 0);
+		window->FindInSubsPattern->SetSelection(0);
+		subsFindingPaths.Insert(path, 0);
+		window->FindInSubsPath->Insert(path, 0);
+		window->FindInSubsPath->SetSelection(0);
+
+		if (filtersSize > 20){
+			window->FindInSubsPattern->Delete(20, filtersSize - 20);
+			subsFindingFilters.RemoveAt(20, filtersSize - 20);
+		}
+
+		if (pathsSize > 20){
+			window->FindInSubsPath->Delete(20, pathsSize - 20);
+			subsFindingPaths.RemoveAt(20, pathsSize - 20);
+		}
+
+		Options.SetTable(FIND_IN_SUBS_FILTERS_RECENT, subsFindingFilters, "\f");
+		Options.SetTable(FIND_IN_SUBS_PATHS_RECENT, subsFindingPaths, "\f");
 	}
 }
 
 void FindReplace::OnClose()
 { 
 	FRD->Hide(); 
+}
+
+void FindReplace::GetFolderFiles(const wxString &path, const wxString &filters, wxArrayString *paths, bool subFolders)
+{
+	wxDir subsDir(path);
+	if (subsDir.IsOpened()){
+		subsDir.GetAllFiles(path, paths, filters, wxDIR_FILES);
+		if (subFolders){
+			wxArrayString dirs;
+			wxDir subDir(path);
+			if (subDir.IsOpened()){
+				subDir.GetAllFiles(path, &dirs, "", wxDIR_DIRS);
+				for (size_t i = 0; i < dirs.size(); i++){
+					GetFolderFiles(dirs[i], filters, paths, subFolders);
+				}
+			}
+		}
+	}
+	else{
+		KaiMessageBox(_("Ścieżka szukania jest nieprawidłowa"));
+	}
 }

@@ -69,8 +69,15 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		FindInSubsPath->SetToolTip(_("Katalog szukania napisów:"));
 		FindInSubsPath->SetMaxLength(MAXINT);
 		FindInSubsPath->SetSelection(0);
+		MappedButton *selectFolder = new MappedButton(this, 21345, " ... ");
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+			wxString destdir = wxDirSelector(_("Wybierz folder zapisu"), FindInSubsPath->GetValue(), 0, wxDefaultPosition, this);
+			if (!destdir.empty())
+				FindInSubsPath->SetValue(destdir);
+		}, 21345);
 		FindInSubsPathStaticSizer->Add(new KaiStaticText(this, -1, _("Katalog:")), 1, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxRIGHT, 4);
 		FindInSubsPathStaticSizer->Add(FindInSubsPath, 4, wxEXPAND, 0);
+		FindInSubsPathStaticSizer->Add(selectFolder, 0, wxEXPAND | wxLEFT, 4);
 		mainfrbsizer1->Add(FindInSubsPathStaticSizer, 0, wxEXPAND | wxALL, 4);
 	}
 	wxBoxSizer* frbsizer1 = new wxBoxSizer(wxVERTICAL);
@@ -96,7 +103,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	if (options & IN_FIELD_TEXT)
 		CollumnText->SetValue(true);
 	CollumnTextOriginal = new KaiRadioButton(this, -1, (tabNum == WINDOW_FIND_IN_SUBS) ? _("Zwyk³y tekst") : _("Tekst orygina³u"));
-	CollumnTextOriginal->Enable((tabNum == WINDOW_FIND_IN_SUBS) ? true : FR->Kai->GetTab()->Grid->hasTLMode);
+	CollumnTextOriginal->Enable((tabNum == WINDOW_FIND_IN_SUBS) ? false/*true*/ : FR->Kai->GetTab()->Grid->hasTLMode);
 	if (options & IN_FIELD_TEXT_ORIGINAL && CollumnTextOriginal->IsEnabled())
 		CollumnTextOriginal->SetValue(true);
 	frbsizer2->Add(CollumnText, 1, wxALL, 1);
@@ -163,11 +170,22 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	else if (tabNum == WINDOW_FIND_IN_SUBS){
 		MappedButton *ButtonFindInSubs = new MappedButton(this, ID_BUTTON_FIND_IN_SUBS, _("ZnajdŸ w napisach")/*, -1, wxDefaultPosition, wxSize(124, -1)*/);
 		MappedButton *ButtonReplaceInSubs = new MappedButton(this, ID_BUTTON_REPLACE_IN_SUBS, _("Zamieñ w napisach")/*, -1, wxDefaultPosition, wxSize(124, -1)*/);
+		SeekInSubFolders = new KaiCheckBox(this, -1, _("Szukaj w podfolderach"));
+		SeekInSubFolders->SetValue((options & SEARCH_SUBFOLDERS) > 0);
+		wxBoxSizer* frbsizer4 = new wxBoxSizer(wxHORIZONTAL);
+		MappedButton *ButtonChooseStyle = new MappedButton(this, ID_BUTTON_CHOOSE_STYLE, "+", -1, wxDefaultPosition, wxSize(22, 22));
+		ChoosenStyleText = new KaiTextCtrl(this, ID_CHOOSEN_STYLE_TEXT, "", wxDefaultPosition, wxSize(-1, 22));
+		frbsizer4->Add(ButtonChooseStyle, 0, 0, 0);
+		frbsizer4->Add(ChoosenStyleText, 1, wxLEFT | wxEXPAND, 3);
+
 		frbsizer->Add(ButtonFindInSubs, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
 		frbsizer->Add(ButtonReplaceInSubs, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
+		frbsizer->Add(SeekInSubFolders, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
+		frbsizer->Add(frbsizer4, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
 
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ FR->FindInSubs(this); }, ID_BUTTON_FIND_IN_SUBS);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ FR->ReplaceInSubs(this); }, ID_BUTTON_REPLACE_IN_SUBS);
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TabWindow::OnStylesChoose, this, ID_BUTTON_CHOOSE_STYLE);
 	}
 
 	MappedButton *ButtonClose = new MappedButton(this, ID_BUTTON_CLOSE, _("Zamknij"));

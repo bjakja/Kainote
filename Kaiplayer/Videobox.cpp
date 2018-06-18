@@ -580,21 +580,17 @@ void VideoCtrl::OnIdle(wxTimerEvent& event)
 void VideoCtrl::NextFile(bool next)
 {
 	wxMutexLocker lock(nextmutex);
-	//if(vstate==Playing){Pause(false);}
 	wxString path;
 	if (Kai->GetTab()->VideoPath != ""){
 		path = Kai->GetTab()->VideoPath;
 	}
 	else{ path = Kai->videorec[Kai->videorec.size() - 1]; }
 	wxString pathwn = path.BeforeLast('\\');
-	//if(pathwn!=oldpath){
 	wxDir kat(pathwn);
 	if (kat.IsOpened()){
 		files.Clear();
 		kat.GetAllFiles(pathwn, &files, "", wxDIR_FILES);
 	}
-	//oldpath=pathwn;
-	//}
 	for (int j = 0; j < (int)files.GetCount(); j++)
 	{
 		if (files[j] == path){ actfile = j; break; }

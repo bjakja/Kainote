@@ -1166,9 +1166,9 @@ void EditBox::ClearErrs()
 void EditBox::OnSplit(wxCommandEvent& event)
 {
 	wxString Splitchar = (grid->subsFormat <= SRT) ? "\\N" : "|";
-	bool istl = (grid->hasTLMode && TextEdit->GetValue() == "");
+	bool isOriginal = (grid->hasTLMode && TextEdit->GetValue() == "" && !TextEdit->HasFocus());
 	//Editor
-	MTextEditor *tedit = (istl) ? TextEditOrig : TextEdit;
+	MTextEditor *tedit = (isOriginal) ? TextEditOrig : TextEdit;
 	wxString txt = tedit->GetValue();
 	long strt, ennd;
 	tedit->GetSelection(&strt, &ennd);

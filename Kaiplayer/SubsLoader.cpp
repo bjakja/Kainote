@@ -154,7 +154,7 @@ bool SubsLoader::LoadSRT(const wxString &text)
 	wxString text1;
 	while (tokenizer.HasMoreTokens()){
 		wxString text = tokenizer.GetNextToken().Trim();
-		if (grid->IsNumber(text)){
+		if (IsNumber(text)){
 			if (text1 != ""){
 				grid->AddLine(new Dialogue(text1.Trim())); text1 = "";
 			}

@@ -51,6 +51,7 @@ public:
 	}
 	virtual ~SeekResults(){};
 	TabPanel *tab = NULL;
+	wxString path;
 	int keyLine;
 private:
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);
@@ -63,8 +64,6 @@ private:
 			return NOT_VISIBLE;
 	}
 	wxPoint findPosition;
-	
-	wxString path;
 	
 };
 

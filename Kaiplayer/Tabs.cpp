@@ -985,6 +985,8 @@ LRESULT CALLBACK Notebook::PauseOnMinimalize( int code, WPARAM wParam, LPARAM lP
 
 void Notebook::ChangePage(int i)
 {
+	if (i == iter)
+		return;
 
 	olditer=iter;
 	if(split && splititer==i){

@@ -34,7 +34,7 @@ FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace
 			return;
 		}
 
-		FR->ShowResult(results->tab, results->keyLine);
+		FR->ShowResult(results->tab, results->path, results->keyLine);
 	}, 23323);
 }
 

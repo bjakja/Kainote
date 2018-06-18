@@ -50,11 +50,12 @@ public:
 	KaiRadioButton* AllLines = NULL;
 	KaiRadioButton* SelectedLines = NULL;
 	KaiRadioButton* FromSelection = NULL;
-	KaiTextCtrl *ChoosenStyleText = NULL;
+	KaiTextCtrl *ChoosenStyleText;
 	KaiCheckBox* MatchCase;
 	KaiCheckBox* RegEx;
 	KaiCheckBox* StartLine;
 	KaiCheckBox* EndLine;
+	KaiCheckBox *SeekInSubFolders = NULL;
 	FindReplace *FR;
 	int windowType = 0;
 };

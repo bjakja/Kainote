@@ -914,6 +914,16 @@ wxRect GetMonitorRect(int wmonitor, std::vector<tagRECT> *MonitorRects, const wx
 	return rt;
 }
 
+bool IsNumber(const wxString &test) {
+	bool isnumber = true;
+	wxString testchars = "0123456789";
+	for (size_t i = 0; i < test.Len(); i++){
+		wxUniChar ch = test.GetChar(i);
+		if (testchars.Find(ch) == -1){ isnumber = false; break; }
+	}
+	return isnumber;
+}
+
 #ifdef _M_IX86
 
 typedef struct tagTHREADNAME_INFO
