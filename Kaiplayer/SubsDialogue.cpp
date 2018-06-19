@@ -165,8 +165,8 @@ void Dialogue::SetRaw(const wxString &ldial)
 		Format=SRT;
 		Start.SetRaw(ldial.BeforeFirst(' ',&eend),Format);
 		eend=eend.AfterFirst(' ');
-		End.SetRaw(eend.BeforeFirst('\r',&ttext),Format);
-		Text = ttext.AfterFirst('\n');
+		End.SetRaw(eend.BeforeFirst('\n',&ttext).Trim(),Format);
+		Text = ttext;
 		Text->Replace("\r","");
 		Text->Replace("\n","\\N");
 		NonDialogue=false;

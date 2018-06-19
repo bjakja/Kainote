@@ -494,6 +494,11 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 		return;
 
 	wxString CopyPath = Options.pathfull + "\\ReplaceBackup\\";
+	DWORD ftyp = GetFileAttributesW(CopyPath.wc_str());
+	if (ftyp == INVALID_FILE_ATTRIBUTES){
+		wxMkDir(CopyPath);
+	}
+	
 	bool onlyAss = !(window->CollumnText->GetValue() || window->CollumnTextOriginal->GetValue());
 	bool plainText = (window->CollumnTextOriginal->GetValue());
 	long replaceColumn = TXT;
@@ -548,25 +553,24 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 		ow.FileOpen(subsPath, &subsText);
 
 		wxString ext = subsPath.AfterLast('.').Lower();
-		if (onlyAss && ext != "ass" && ext != "ssa")
+		if (onlyAss && ext != "ass"/* && ext != "ssa"*/)
 			continue;
-		else if (ext == "ass" && ext == "ssa" && ext == "srt" && ext == "mpl2" && ext == "sub" && ext == "txt")
+		else if (ext == "ass"/* && ext == "ssa"*/ && ext == "srt" && ext == "mpl2" && ext == "sub" && ext == "txt")
 			continue;
 
 		wxString replacedText;
-		int replaceLastPosition = 0;
 		tabLinePosition = positionId = 0;
+		bool isSRT = (ext == "srt");
 
-		if ((ext == "ass" || ext == "ssa") && !plainText){
-			size_t result = subsText.find((ext == "ass") ? L"Dialogue:" : L"Marked=");
-			size_t result1 = subsText.find((ext == "ass") ? L"Comment:" : L"Marked=");
+		if ((ext == "ass"/* || ext == "ssa"*/) && !plainText){
+			size_t result = subsText.find(/*(ext == "ass") ? */L"Dialogue:"/* : L"Marked="*/);
+			size_t result1 = subsText.find(/*(ext == "ass") ? */L"Comment:"/* : L"Marked="*/);
 			if (result == -1 && result1 == -1)// no dialogues;
 				continue;
 			else{
 				if (result1 < result)
 					result = result1;
 				if (!find){
-					replaceLastPosition = result;
 					replacedText = subsText.Mid(0, result - 1);
 				}
 				//tabLinePosition = positionId = replacedText.Freq('\n');
@@ -576,23 +580,24 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 
 		wxStringTokenizer tokenizer(subsText, "\n", wxTOKEN_STRTOK);
 		wxString token;
+		wxString dialtxt;
 		Dialogue *dial = NULL;
-		int replaceStartPosition = 0;
-		int tokenLen = 0;
 		bool isFirst = true;
-		bool isFirstStringSRT = true;
-
+		
 		while (tokenizer.HasMoreTokens()){
 
-			if (ext == "srt"){
+			if (isSRT){
 				wxString text = tokenizer.GetNextToken();
-				if (IsNumber(text)){
-					if (token != ""){
-						tokenLen = token.Len();
-						if (!plainText)
-							dial = new Dialogue(token.Trim());
+				bool noMoreTokens = !tokenizer.HasMoreTokens();
+				if (IsNumber(text) || noMoreTokens){
+					if (noMoreTokens)
+						token << text << L"\r\n";
 
-						isFirstStringSRT = true;
+					if (token != ""){
+						token.Trim();
+						if (!plainText)
+							dial = new Dialogue(token);
+
 					}
 					else{
 						//tabLinePosition++;
@@ -601,11 +606,9 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 					}
 				}
 				else{ 
-					if (isFirstStringSRT){
-						replaceStartPosition = tokenizer.GetPosition();
-						isFirstStringSRT = false;
-					}
-					token << text << L"\n"; 
+					//lol why I got text without \r?
+					//I have to put it myself
+					token << text << L"\r\n"; 
 					//tabLinePosition++;
 					//positionId++;
 					continue;
@@ -613,11 +616,9 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 			}
 			else{
 				token = tokenizer.GetNextToken();
-				//we have to skip \n
-				tokenLen = token.Len() + 1;
-				replaceStartPosition = tokenizer.GetPosition();
+				token.Trim();
 				if (!plainText)
-					dial = new Dialogue(token.Trim());
+					dial = new Dialogue(token);
 			}
 			if (!dial || (plainText && token.empty())){
 				//tabLinePosition++;
@@ -628,37 +629,48 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 			//here we got dial or plain text
 			//we have to get only text
 			if (replaceColumn == TXT){
-				token = dial->Text;
+				dialtxt = dial->Text;
 			}
 			else if (replaceColumn == STYLE){
-				token = dial->Style;
+				dialtxt = dial->Style;
 			}
 			else if (replaceColumn == ACTOR){
-				token = dial->Actor;
+				dialtxt = dial->Actor;
 			}
 			else if (replaceColumn == EFFECT){
-				token = dial->Effect;
+				dialtxt = dial->Effect;
+			}
+			else{
+				dialtxt = token;
 			}
 
 			if (find){
-				FindInSubsLine(&token, &isFirst);
+				FindInSubsLine(&dialtxt, &isFirst);
 			}
 			else{
-				int numOfReps = ReplaceInSubsLine(&token);
+				int numOfReps = ReplaceInSubsLine(&dialtxt);
 				if (numOfReps){
-					if (replaceStartPosition > replaceLastPosition){
-						replacedText << subsText.Mid(replaceStartPosition, replaceLastPosition - replaceStartPosition + 1);
-					}
-					if (replaceColumn == TXT){ dial->Text = token; }
-					else if (replaceColumn == STYLE){ dial->Style = token; }
-					else if (replaceColumn == ACTOR){ dial->Actor = token; }
-					else if (replaceColumn == EFFECT){ dial->Effect = token; }
-					else{ replacedText << token; }
+					if (isSRT)
+						replacedText << (tabLinePosition + 1) << L"\r\n";
+
+					if (replaceColumn == TXT){ dial->Text = dialtxt; }
+					else if (replaceColumn == STYLE){ dial->Style = dialtxt; }
+					else if (replaceColumn == ACTOR){ dial->Actor = dialtxt; }
+					else if (replaceColumn == EFFECT){ dial->Effect = dialtxt; }
+					else{ replacedText << dialtxt << L"\r\n"; }
 					if (replaceColumn)
 						dial->GetRaw(&replacedText);
 
-					replaceLastPosition = replaceStartPosition + tokenLen;
 					SubsAllReplacements += numOfReps;
+				}
+				else{
+					if (isSRT)
+						replacedText << (tabLinePosition + 1) << L"\r\n";
+
+					replacedText << token << L"\r\n";
+
+					if (isSRT)
+						replacedText << L"\r\n";
 				}
 			}
 
@@ -1230,18 +1242,12 @@ void FindReplace::OnClose()
 void FindReplace::GetFolderFiles(const wxString &path, const wxString &filters, wxArrayString *paths, bool subFolders)
 {
 	wxDir subsDir(path);
+	long flag = wxDIR_FILES | wxDIR_HIDDEN;
+	if (subFolders)
+		flag |= wxDIR_DIRS;
+
 	if (subsDir.IsOpened()){
-		subsDir.GetAllFiles(path, paths, filters, wxDIR_FILES);
-		if (subFolders){
-			wxArrayString dirs;
-			wxDir subDir(path);
-			if (subDir.IsOpened()){
-				subDir.GetAllFiles(path, &dirs, "", wxDIR_DIRS);
-				for (size_t i = 0; i < dirs.size(); i++){
-					GetFolderFiles(dirs[i], filters, paths, subFolders);
-				}
-			}
-		}
+		subsDir.GetAllFiles(path, paths, filters, flag);
 	}
 	else{
 		KaiMessageBox(_("Ścieżka szukania jest nieprawidłowa"));

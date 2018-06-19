@@ -83,7 +83,6 @@ void STime::ParseMS(wxString raw)
 wxString STime::raw(char ft)//,float custfps
 {
 	wxString rawtxt;
-	if(form==SRT){mstime=ZEROIT(mstime);}
 	if(ft==0){ft=form;}
 	if(ft<SRT){
 		int csec=mstime/10;
@@ -140,6 +139,7 @@ char STime::GetFormat()
 }
 void STime::ChangeFormat(char format,float fps)
 {
+	if (form == SRT){ mstime = ZEROIT(mstime); }
 	if(form==MDVD && format!=FRAME){
 		float fpsa=(fps)?fps:Options.GetFloat(ConvertFPS);
 		if(fpsa<1){fpsa=23.976f;}
