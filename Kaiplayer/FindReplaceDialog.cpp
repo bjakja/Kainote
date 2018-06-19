@@ -271,6 +271,8 @@ void TabWindow::SaveValues()
 		options |= IN_LINES_SELECTED;
 	if (FromSelection && FromSelection->GetValue())
 		options |= IN_LINES_FROM_SELECTION;
+	if (SeekInSubFolders && SeekInSubFolders->GetValue())
+		options |= SEARCH_SUBFOLDERS;
 
 	Options.SetInt(FindReplaceOptions, options);
 
@@ -307,6 +309,8 @@ void TabWindow::SetValues()
 		SelectedLines->SetValue((options & IN_LINES_SELECTED) > 0);
 	if (FromSelection)
 		FromSelection->SetValue((options & IN_LINES_FROM_SELECTION) > 0);
+	//if (SeekInSubFolders)
+		//SeekInSubFolders->SetValue((options & SEARCH_SUBFOLDERS) > 0);
 
 	FindText->SetValue(FR->actualFind);
 	FindText->PutArray(&FR->findRecent);

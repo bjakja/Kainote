@@ -35,15 +35,23 @@ FindReplace::FindReplace(KainoteFrame* kfparent, FindReplaceDialog *_FRD)
 
 	Options.GetTable(FindRecent, findRecent, "\f", wxTOKEN_RET_EMPTY_ALL);
 	if (findRecent.size() > 20){ findRecent.RemoveAt(20, findRecent.size() - 20); }
+	if (findRecent.size())
+		actualFind = findRecent[0];
 
 	Options.GetTable(ReplaceRecent, replaceRecent, "\f", wxTOKEN_RET_EMPTY_ALL);
 	if (replaceRecent.size() > 20){ replaceRecent.RemoveAt(20, replaceRecent.size() - 20); }
+	if (replaceRecent.size())
+		actualReplace = replaceRecent[0];
 	
 	Options.GetTable(FIND_IN_SUBS_FILTERS_RECENT, subsFindingFilters, "\f", wxTOKEN_RET_EMPTY_ALL);
 	if (subsFindingFilters.size() > 20){ subsFindingFilters.RemoveAt(20, subsFindingFilters.size() - 20); }
+	if (subsFindingFilters.size())
+		actualFilters = subsFindingFilters[0];
 
 	Options.GetTable(FIND_IN_SUBS_PATHS_RECENT, subsFindingPaths, "\f", wxTOKEN_RET_EMPTY_ALL);
 	if (subsFindingPaths.size() > 20){ subsFindingPaths.RemoveAt(20, subsFindingPaths.size() - 20); }
+	if (subsFindingPaths.size())
+		actualPaths = subsFindingPaths[0];
 }
 
 void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine)
