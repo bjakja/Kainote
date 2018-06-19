@@ -54,7 +54,7 @@ class StyleStore: public KaiDialog
 		ToggleButton* detachEnable;
 		StyleList* Store;
 		KaiChoice* catalogList;
-		StyleList* ASS;
+		StyleList* ASSList;
 		DialogSizer *Mainall;
 		StyleChange* cc;
         bool changestyle(Styles *cstyl);
@@ -77,6 +77,7 @@ class StyleStore: public KaiDialog
 		void OnAssStyleChange(wxCommandEvent& event);
 		void OnAddToStore(wxCommandEvent& event);
 		void OnAddToAss(wxCommandEvent& event);
+		void OnAddToAssInAllTabs(wxCommandEvent& event);
 		void OnStoreStyleChange(wxCommandEvent& event);
 		void OnChangeCatalog(wxCommandEvent& event);
 		void OnNewCatalog(wxCommandEvent& event);
@@ -123,6 +124,7 @@ enum{
 	ID_STORESORT,
 	ID_ADDTOSTORE,
 	ID_ADDTOASS,
+	ID_ADD_TO_ALL_ASS,
 	ID_ASSNEW,
 	ID_ASSCOPY,
 	ID_ASSEDIT,

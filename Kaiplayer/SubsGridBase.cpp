@@ -923,8 +923,8 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 
 	if (StyleStore::HasStore()){
 		StyleStore *SS = StyleStore::Get();
-		SS->ASS->SetArray(&file->subs->styles);
-		SS->ASS->Refresh(false);
+		SS->ASSList->SetArray(&file->subs->styles);
+		SS->ASSList->Refresh(false);
 	}
 	SpellErrors.clear();
 
