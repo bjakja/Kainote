@@ -41,7 +41,7 @@ inline void KaiChoice::CalcMaxWidth(wxSize *result, bool changex, bool changey){
 		if(tx > result->x && changex){result->x = tx;}
 		else if(!changex){break;}
 	}
-	if(changex){result->x += 26;if(result->x>400){result->x=400;}}
+	if(changex){result->x += 26;if(result->x>300){result->x=300;}}
 	if(changey){
 		GetTextExtent("TEX{}", &tx, &ty);
 		result->y = ty+10;

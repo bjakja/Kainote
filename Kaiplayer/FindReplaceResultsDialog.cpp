@@ -102,7 +102,6 @@ void ResultsHeader::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height,
 void SeekResults::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
 {
 	if (event.LeftDClick()){
-		//TODO If i write function for it call it here
 		wxCommandEvent *evt = new wxCommandEvent(CHOOSE_RESULT, theList->GetId());
 		evt->SetClientData(this);
 		wxQueueEvent(theList->GetParent(), evt);
@@ -120,9 +119,12 @@ void SeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, K
 	dc->DrawLabel(name, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
 	dc->SetTextForeground("#FF0000");
-	dc->SetTextBackground("#BBBB00");
-	dc->SetBackgroundMode(wxSOLID);
-	dc->DrawText(name.Mid(findPosition.x, findPosition.y), x + exOfFound.x, y + ((height - exOfFound.y) / 2));
-	dc->SetBackgroundMode(wxTRANSPARENT);
+	dc->SetBrush(wxBrush("#BBBB00"));
+	dc->SetPen(wxPen("#BBBB00"));
+	wxString foundText = name.Mid(findPosition.x, findPosition.y);
+	wxSize exFoundText = theList->GetTextExtent(foundText);
+	dc->DrawRectangle(x + exOfFound.x, y + ((height - exOfFound.y) / 2), exFoundText.x, height);
+	dc->DrawText(foundText, x + exOfFound.x, y + ((height - exOfFound.y) / 2));
+
 	dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WindowText : WindowTextInactive));
 }

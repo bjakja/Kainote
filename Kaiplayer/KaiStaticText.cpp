@@ -58,11 +58,12 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 		bool seekSpace = true;
 		int mesureSize = (*w > 10)? *w : 1000;
 		size_t i = 0;
-		size_t len = text.Len();
-		while (i < len){
+		//size_t len = text.Len();
+		while (i < text.Len()){
 			size_t nfound = text.find(wxUniChar('\n'), i);
-			i = (nfound != -1) ? nfound : len - 1;
-			GetTextExtent(text.Mid(currentPosition, i - currentPosition + 1), &fw, &fh);
+			i = (nfound != -1) ? nfound : text.Len() - 1;
+			wxString stringToMesure = text.Mid(currentPosition, i - currentPosition + 1);
+			GetTextExtent((stringToMesure.Len()) ? stringToMesure : L"|", &fw, &fh);
 			if (fw > mesureSize){
 				size_t j = currentPosition+1;
 				bool foundWrap = false;
@@ -72,7 +73,7 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 				while (currentPosition < i)
 				{
 					size_t spacePos = text.find(wxUniChar(' '), j);
-					if (spacePos == -1 || currentPosition >= spacePos)
+					if (spacePos == -1 || i < spacePos)
 						spacePos = i;
 
 					j = spacePos + 1;
@@ -95,11 +96,17 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 						j--;
 						newWrap = j;
 					}
+					if (newWrap > i){
+						newWrap = i;
+					}
+					GetTextExtent(text.Mid(currentPosition, newWrap - currentPosition + 1), &fw, &fh);
 					currentPosition = textPosition = newWrap;
 					currentFW = 0;
-					text.insert(newWrap, 1, L'\n');
-					currentPosition++;
-					i++;
+					if (newWrap < i){
+						text.insert(newWrap, 1, L'\n');
+						currentPosition++;
+						i++;
+					}
 					j = currentPosition+1;
 					foundWrap = false;
 					if (fullw < fw){

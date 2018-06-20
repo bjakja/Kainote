@@ -110,7 +110,7 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 
 	addToStore = new MappedButton(this, ID_ADDTOSTORE, _("Dodaj do magazynu"), arrowUp, wxDefaultPosition, wxDefaultSize, -1, 0, _("Dodaj do magazynu"));
 	addToAss = new MappedButton(this, ID_ADDTOASS, _("Dodaj do ASS"), arrowDown, wxDefaultPosition, wxDefaultSize, -1, 0, _("Dodaj do ASS"));
-	MappedButton* addToAllAss = new MappedButton(this, ID_ADD_TO_ALL_ASS, _("Dodaj do wszystkich otwartych ASS"), arrowDownDouble, wxDefaultPosition, wxDefaultSize, -1, 0, _("Dodaj do ASS"));
+	MappedButton* addToAllAss = new MappedButton(this, ID_ADD_TO_ALL_ASS, _("Dodaj do wszystkich otwartych ASS"), arrowDownDouble, wxDefaultPosition, wxDefaultSize, -1, 0, _("Dodaj do wszystkich otwartych ASS"));
 	addToButtons->Add(addToStore, 1, wxEXPAND | wxALL, 5);
 	addToButtons->Add(addToAss, 1, wxEXPAND | wxALL, 5);
 	//addToButtons->AddStretchSpacer(3);
@@ -302,6 +302,7 @@ void StyleStore::OnAddToAss(wxCommandEvent& event)
 void StyleStore::OnAddToAssInAllTabs(wxCommandEvent& event)
 {
 	Notebook *tabs = Notebook::GetTabs();
+	KainoteFrame *Kai = (KainoteFrame*)tabs->GetParent();
 	wxArrayInt sels;
 	int numSelections = Store->GetSelections(sels);
 	if (numSelections < 1){ wxBell(); return; }
@@ -337,6 +338,7 @@ void StyleStore::OnAddToAssInAllTabs(wxCommandEvent& event)
 		grid->SetModified(STYLE_MANAGER, false);
 		grid->Refresh(false);
 		ASSList->SetArray(grid->GetStyleTable());
+		Kai->Label(tab->Grid->file->GetActualHistoryIter(), false, k, k != Kai->Tabs->iter);
 	}
 }
 
