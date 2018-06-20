@@ -417,7 +417,8 @@ void ShiftTimesWindow::DoTooltips(bool normal /*= true*/)
 		audiotime->SetToolTip(_("Przesuwanie zaznaczonej linijki do czasu\nznacznika audio ± czas przesunięcia"));
 		StartVAtime->SetToolTip(_("Przesuwa czas początkowy do czasu wideo / audio"));
 		EndVAtime->SetToolTip(_("Przesuwa czas końcowy do czasu wideo / audio"));
-		Forward->SetToolTip(_("Przesunięcie w przód / w tył"));
+		Forward->SetToolTip(_("Opóźnia napisy"));
+		Backward->SetToolTip(_("Przyspiesza napisy"));
 		DisplayFrames->SetToolTip(_("Przesuwa napisy o ustawiony czas / klatki"));
 		MoveTagTimes->SetToolTip(_("Przesuwa czasy tagów \\move, \\t, \\fad tak,\nby ich pozycja na wideo się nie zmieniła\n(spowalnia przesuwanie czasów)"));
 		WhichTimes->SetToolTip(_("Wybór czasów do przesunięcia"));

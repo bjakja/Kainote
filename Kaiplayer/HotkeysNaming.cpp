@@ -238,8 +238,9 @@ void HotkeysNaming::CreateNamesMap()
 	names[VideoZoom] = _("Powiększ wideo");
 	names[ViewAll] = _("Widok wszystko");
 	names[ViewAudio] = _("Widok audio i napisy");
-	names[ViewSubs] = _("Widok tylko napisy");
+	names[ViewSubs] = _("Widok tylko napisy"); 
 	names[ViewVideo] = _("Widok wideo i napisy");
+	names[GLOBAL_VIEW_ONLY_VIDEO] = _("Widok tylko wideo");
 	names[VolumePlus] = _("Dźwięk głośniej"); 
 	names[VolumeMinus] = _("Dźwięk ciszej"); 
 	

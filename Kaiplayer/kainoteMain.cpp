@@ -198,6 +198,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	ViewMenu->Append(ViewAll, _("Wszystko"), _("Wszystkie okna są widoczne"));
 	ViewMenu->Append(ViewVideo, _("Wideo i napisy"), _("Widoczne tylko okno wideo i napisów"));
 	ViewMenu->Append(ViewAudio, _("Audio i napisy"), _("Widoczne tylko okno audio i napisów"));
+	ViewMenu->Append(GLOBAL_VIEW_ONLY_VIDEO, _("Tylko wideo"), _("Widoczne tylko okno wideo"));
 	ViewMenu->Append(ViewSubs, _("Tylko napisy"), _("Widoczne tylko okno napisów"));
 	Menubar->Append(ViewMenu, _("Wido&k"));
 
@@ -500,7 +501,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->Grid->SortIt(id - difid, all);
 	}
 	else if (id >= ViewAll&&id <= ViewSubs){
-		bool vidshow = (id == ViewAll || id == ViewVideo) && tab->Video->GetState() != None;
+		bool vidshow = (id == ViewAll || id == ViewVideo || id == GLOBAL_VIEW_ONLY_VIDEO) && tab->Video->GetState() != None;
 		bool vidvis = tab->Video->IsShown();
 		if (!vidshow && tab->Video->GetState() == Playing){ tab->Video->Pause(); }
 		tab->Video->Show(vidshow);
@@ -511,6 +512,21 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if (tab->Edit->ABox){
 			tab->Edit->ABox->Show((id == ViewAll || id == ViewAudio));
 			if (id == ViewAudio){ tab->Edit->SetMinSize(wxSize(500, 350)); }
+		}
+		if (id == GLOBAL_VIEW_ONLY_VIDEO){
+			tab->Edit->Show(false);
+			tab->Grid->Show(false);
+			tab->ShiftTimes->Show(false);
+			wxSize tabSize = tab->GetClientSize();
+			tab->Video->SetMinSize(tabSize);
+		}
+		else if (!tab->Edit->IsShown()){
+			tab->Edit->Show();
+			tab->Grid->Show();
+			tab->ShiftTimes->Show();
+			int x = 0, y = 0;
+			Options.GetCoords(VideoWindowSize, &x, &y);
+			tab->Video->SetMinSize(wxSize(x, y));
 		}
 		tab->Layout();
 	}
@@ -1800,7 +1816,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 		else if (i == ConvertToTMP){ enable = form != TMP; }//konwersja na tmp
 		if ((i >= ConvertToASS && i <= ConvertToMPL2) && tlmode){ enable = false; }
 		else if (i == ViewAudio || i == CloseAudio){ enable = tab->Edit->ABox != 0; }
-		else if ((i == ViewVideo || i == ViewAll) || i == AudioFromVideo){
+		else if ((i == ViewVideo || i == ViewAll) || i == AudioFromVideo || i == GLOBAL_VIEW_ONLY_VIDEO){
 			enable = tab->Video->GetState() != None;
 			if (i != AudioFromVideo){ enable = (enable && !tab->Video->isOnAnotherMonitor); }
 		}

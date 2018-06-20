@@ -579,7 +579,8 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 				if (result1 < result)
 					result = result1;
 				if (!find){
-					replacedText = subsText.Mid(0, result - 1);
+					replacedText = subsText.Mid(0, result);
+					replacedText.Replace(L"\n", L"\r\n");
 				}
 				//tabLinePosition = positionId = replacedText.Freq('\n');
 				subsText = subsText.Mid(result);

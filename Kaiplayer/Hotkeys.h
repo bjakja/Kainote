@@ -172,6 +172,7 @@
 	XX( ViewAll,)\
 	XX( ViewAudio,)\
 	XX( ViewVideo,)\
+	XX( GLOBAL_VIEW_ONLY_VIDEO,)\
 	XX( ViewSubs,)\
 	XX( AutoLoadScript,)\
 	XX( AutoReloadAutoload,)\
