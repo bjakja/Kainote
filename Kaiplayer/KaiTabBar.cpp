@@ -187,6 +187,7 @@ void KaiTabBar::OnMouseEvent(wxMouseEvent &event)
 	if (tabHighlighted != -1 && (numTab < 0 || event.Leaving())){
 		tabHighlighted = -1;
 		RefreshTabBar();
+		return;
 	}
 	//clicking tab
 	if (event.LeftDown()){

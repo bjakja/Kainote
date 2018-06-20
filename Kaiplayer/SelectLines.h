@@ -22,6 +22,7 @@
 #include "KaiDialog.h"
 
 class KainoteFrame;
+class TabPanel;
 
 
 class SelectLines: public KaiDialog
@@ -55,9 +56,22 @@ public:
 
 private:
 	void OnSelect(wxCommandEvent& event);
+	void OnSelectInAllTabs(wxCommandEvent& event);
+	int SelectOnTab(TabPanel *tab, bool *refreshTabLabel);
 	void OnChooseStyles(wxCommandEvent& event);
 	void AddRecent();
 	wxArrayString selsRecent;
+	long selectColumn;
+	bool matchcase;
+	bool regex;
+	bool contain;
+	bool notcont;
+	bool selectDialogues;
+	bool selectComments;
+	int selectOptions;
+	int action;
+	wxString find;
+
 };
 
 enum{
@@ -85,6 +99,7 @@ enum{
 	DO_DELETE = 1 << 21,
 	ID_CHOOSE_STYLES=7090,
 	ID_CLOSE_SELECTIONS,
-	ID_SELECTIONS
+	ID_SELECTIONS,
+	ID_SELECT_ON_ALL_TABS
 };
 
