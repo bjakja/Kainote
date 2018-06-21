@@ -40,9 +40,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	frsbsizer->Add(new KaiStaticText(this, -1, _("Szukany tekst:"), wxDefaultPosition, wxSize(90, -1)), 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxRIGHT, 4, 0);
 	frsbsizer->Add(FindText, 0, wxEXPAND, 0);
 	mainfrbsizer1->Add(frsbsizer, 0, wxEXPAND | wxALL, 4);
-	///TODO: add event function
-	//Bind(wxEVT_COMMAND_TEXT_UPDATED, [=](wxCommandEvent &evt){}, ID_FIND_TEXT);
-
+	
 	if (tabNum != WINDOW_FIND){
 		//replace list and description blocked on window find
 		wxBoxSizer *ReplaceStaticSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -56,6 +54,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		mainfrbsizer1->Add(ReplaceStaticSizer, 0, wxEXPAND | wxALL, 4);
 	}
 	if (tabNum == WINDOW_FIND_IN_SUBS){
+		//find in subs filters and path
 		wxBoxSizer *SubsFilterStaticSizer = new wxBoxSizer(wxHORIZONTAL);
 		FindInSubsPattern = new KaiChoice(this, ID_REPLACE_TEXT, "", wxDefaultPosition, wxSize(376, -1), FR->subsFindingFilters);
 		FindInSubsPattern->SetToolTip(_("Filtry wyszukiwania windows:"));
@@ -81,6 +80,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		FindInSubsPathStaticSizer->Add(selectFolder, 0, wxEXPAND | wxLEFT, 4);
 		mainfrbsizer1->Add(FindInSubsPathStaticSizer, 0, wxEXPAND | wxALL, 4);
 	}
+	//checkboxes
 	wxBoxSizer* frbsizer1 = new wxBoxSizer(wxVERTICAL);
 	MatchCase = new KaiCheckBox(this, -1, _("Uwzglêdniaj wielkoœæ liter"));
 	MatchCase->SetValue(options & CASE_SENSITIVE);
@@ -125,27 +125,26 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	frbsizer3->Add(CollumnActor, 1, wxEXPAND | wxLEFT, 1);
 	frbsizer3->Add(CollumnEffect, 1, wxEXPAND | wxLEFT, 1);
 
-	//static box sizer dodanie pierwszego i drugiego rzêdu
+	//static box sizer adding first and second row
 	frsbsizer2->Add(frbsizer2, 1, wxEXPAND | wxLEFT, 2);
 	frsbsizer2->Add(frbsizer3, 1, wxEXPAND | wxLEFT, 2);
-	//po³¹czenie chceckboxów i radiobutonów z wyborem pola
+	//link checkboxes and in field radiobuttons
 	mainfrbsizer2->Add(frbsizer1, 1, wxEXPAND, 0);
 	mainfrbsizer2->Add(frsbsizer2, 1, wxEXPAND, 0);
 
-	//po³¹czenie wczeœniejszego sizera z znajdŸ i zmieñ
-	//dwie poni¿sze linijki s¹ na samym pocz¹tku
-
 	mainfrbsizer1->Add(mainfrbsizer2, 0, wxEXPAND | wxLEFT, 1);
 	//buttons
-	//pionowy sizer kolumna 2
+	//vertical sizer column 2
 	wxBoxSizer* frbsizer = new wxBoxSizer(wxVERTICAL);
 	if (tabNum != WINDOW_FIND_IN_SUBS){
+		//find button
 		MappedButton *ButtonFind = new MappedButton(this, ID_BUTTON_FIND, _("ZnajdŸ"), -1, wxDefaultPosition, wxSize(140, -1));
 		frbsizer->Add(ButtonFind, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, (tabNum == WINDOW_REPLACE) ? 2 : 4);
 		
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){FR->OnFind(this); }, ID_BUTTON_FIND);
 	}
 	if (tabNum == WINDOW_FIND){
+		//find in all opened subs or in active subs buttons
 		MappedButton *ButtonFindInAllOpenedSubs = new MappedButton(this, ID_BUTTON_FIND_IN_ALL_OPENED_SUBS, _("ZnajdŸ we wszystkich\notwartych napisach"), -1, wxDefaultPosition, wxSize(124, -1));
 		MappedButton *ButtonFindAllInCurrentSubs = new MappedButton(this, ID_BUTTON_FIND_ALL_IN_CURRENT_SUBS, _("ZnajdŸ wszystko\nw bierz¹cych napisach"), -1, wxDefaultPosition, wxSize(124, -1));
 		
@@ -156,6 +155,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ FR->FindAllInCurrentSubs(this); }, ID_BUTTON_FIND_ALL_IN_CURRENT_SUBS);
 	}
 	else if (tabNum == WINDOW_REPLACE){
+		//replace buttons
 		MappedButton *ButtonReplaceNext = new MappedButton(this, ID_BUTTON_REPLACE, _("Zamieñ nastêpne"), -1, wxDefaultPosition, wxSize(140, -1));
 		MappedButton *ButtonReplaceAll = new MappedButton(this, ID_BUTTON_REPLACE_ALL, _("Zamieñ wszystko"), -1, wxDefaultPosition, wxSize(140, -1));
 		MappedButton *ButtonReplaceOnAllTabs = new MappedButton(this, ID_BUTTON_REPLACE_IN_ALL_OPENED_SUBS, _("Zamieñ we wszystkich\notwartch napisach"));
@@ -201,7 +201,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	mainfrbsizer->Add(mainfrbsizer3, 0, wxEXPAND | wxALL, 5);
 
 	if (tabNum != WINDOW_FIND_IN_SUBS){
-		//poziomy sizer spód
+		//horizontal sizer bottom static box
 		KaiStaticBoxSizer* frsbsizer3 = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Linijki"));
 
 		AllLines = new KaiRadioButton(this, 23156, _("Wszystkie linijki"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
@@ -235,7 +235,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TabWindow::OnStylesChoose, this, ID_BUTTON_CHOOSE_STYLE);
 	}
 	
-	//Ustawienie sizera
+	//setting sizera
 	SetSizerAndFit(mainfrbsizer);
 
 	//commands
