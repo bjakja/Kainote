@@ -496,7 +496,8 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 {
 	wxString path = window->FindInSubsPath->GetValue();
 	wxArrayString paths;
-	GetFolderFiles(path, window->FindInSubsPattern->GetValue(), &paths, window->SeekInSubFolders->GetValue());
+	GetFolderFiles(path, window->FindInSubsPattern->GetValue(), &paths, 
+		window->SeekInSubFolders->GetValue(), window->SeekInHiddenFolders->GetValue());
 
 	if (!paths.size())
 		return;
@@ -545,6 +546,16 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 			return;
 		}
 	}
+
+	//chosing by style have no sense cause every file can have 
+	//different styles and we choose styles from opened file
+	/*wxString stylesList = window->ChoosenStyleText->GetValue();
+	bool styles = false;
+	if (stylesList != "" && !plainText){
+		styles = true;
+		stylesList = "," + stylesList + ",";
+	}*/
+
 	if (find){
 		if (!FRRD)
 			FRRD = new FindReplaceResultsDialog(Kai, this);
@@ -582,7 +593,6 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 					replacedText = subsText.Mid(0, result);
 					replacedText.Replace(L"\n", L"\r\n");
 				}
-				//tabLinePosition = positionId = replacedText.Freq('\n');
 				subsText = subsText.Mid(result);
 			}
 		}
@@ -609,8 +619,6 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 
 					}
 					else{
-						//tabLinePosition++;
-						//positionId++;
 						continue;
 					}
 				}
@@ -618,8 +626,6 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 					//lol why I got text without \r?
 					//I have to put it myself
 					token << text << L"\r\n"; 
-					//tabLinePosition++;
-					//positionId++;
 					continue;
 				}
 			}
@@ -630,11 +636,10 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 					dial = new Dialogue(token);
 			}
 			if (!dial || (plainText && token.empty())){
-				//tabLinePosition++;
-				//positionId++;
 				continue;
 			}
-				
+			//if (styles && stylesList.find(L"," + dial->Style + L",") == -1)
+				//continue;
 			//here we got dial or plain text
 			//we have to get only text
 			if (replaceColumn == TXT){
@@ -1248,15 +1253,17 @@ void FindReplace::OnClose()
 	FRD->Hide(); 
 }
 
-void FindReplace::GetFolderFiles(const wxString &path, const wxString &filters, wxArrayString *paths, bool subFolders)
+void FindReplace::GetFolderFiles(const wxString &path, const wxString &filters, wxArrayString *paths, bool subFolders, bool hiddenFolders)
 {
 	wxDir subsDir(path);
-	long flag = wxDIR_FILES | wxDIR_HIDDEN;
+	long flags = wxDIR_FILES;
 	if (subFolders)
-		flag |= wxDIR_DIRS;
+		flags |= wxDIR_DIRS;
+	if (hiddenFolders)
+		flags |= wxDIR_HIDDEN;
 
 	if (subsDir.IsOpened()){
-		subsDir.GetAllFiles(path, paths, filters, flag);
+		subsDir.GetAllFiles(path, paths, filters, flags);
 	}
 	else{
 		KaiMessageBox(_("Ścieżka szukania jest nieprawidłowa"));

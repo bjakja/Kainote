@@ -87,7 +87,7 @@ class FindReplace
 		bool FindAllInTab(TabPanel *tab, TabWindow *window);
 		void AddRecent(TabWindow *window);
 		void OnClose();
-		void GetFolderFiles(const wxString &path, const wxString &filters, wxArrayString *paths, bool subFolders);
+		void GetFolderFiles(const wxString &path, const wxString &filters, wxArrayString *paths, bool subFolders, bool hiddenFolders);
 
 		FindReplaceDialog *FRD = NULL;
 		FindReplaceResultsDialog *FRRD = NULL;
@@ -107,6 +107,7 @@ enum
 	IN_LINES_ALL = 512,
 	IN_LINES_SELECTED = 1024,
 	IN_LINES_FROM_SELECTION = 2048,
-	SEARCH_SUBFOLDERS = 4096
+	SEARCH_SUBFOLDERS = 4096,
+	SEARCH_HIDDEN_FOLDERS = 8192,
 };
 
