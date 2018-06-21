@@ -1611,6 +1611,13 @@ void KainoteFrame::HideEditor(bool save)
 		SetStatusText("", 7);
 		if (cur->Video->isFullscreen)
 			cur->Video->TD->HideToolbar(true);
+
+		if (FR && FR->IsShown())
+			FR->Show(false);
+		if (SL && SL->IsShown())
+			SL->Show(false);
+		if (StyleStore::HasStore() && StyleStore::Get()->IsShown())
+			StyleStore::Get()->Show(false);
 	}
 	UpdateToolbar();
 	if (save){ Options.SetBool(EditorOn, cur->editor); Options.SaveOptions(true, false); }
