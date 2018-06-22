@@ -109,12 +109,12 @@ class DShowPlayer;
 struct csri_fmt;
 struct csri_frame;
 
-class VideoRend : public wxWindow
+class VideoRenderer : public wxWindow
 {
 	
 	public:
-		VideoRend(wxWindow *parent, const wxSize &size=wxDefaultSize);
-		virtual ~VideoRend();
+		VideoRenderer(wxWindow *parent, const wxSize &size=wxDefaultSize);
+		virtual ~VideoRenderer();
 
 		bool OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, bool vobsub, bool changeAudio = true);
 		bool OpenSubs(wxString *textsubs, bool redraw=true, bool fromFile = false);
@@ -168,6 +168,7 @@ class VideoRend : public wxWindow
 					Render();
 			}
 		}
+		void OpenKeyframes(const wxString &filename);
 		virtual void CaptureMouse(){};
 		virtual void ReleaseMouse(){};
 		virtual bool HasCapture(){return true;};
@@ -213,6 +214,7 @@ class VideoRend : public wxWindow
 		size_t lasttime;
 		std::vector<chapter> chaps;
 		FloatRect zoomRect;
+		wxString keyframesFileName;
 		//std::chrono::system_clock::time_point startTime;
 		bool EnumFilters(Menu *menu);
 		bool FilterConfig(wxString name, int idx, wxPoint pos);

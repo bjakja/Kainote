@@ -66,6 +66,7 @@ class KainoteFrame: public KaiFrame
 		Menu* VidsRecMenu;
 		Menu* SubsRecMenu;
 		Menu* AudsRecMenu;
+		Menu* KeyframesRecentMenu;
 		MenuBar* Menubar;
 
 		KaiStatusBar* StatusBar;
@@ -73,6 +74,7 @@ class KainoteFrame: public KaiFrame
 		wxArrayString subsrec;
 		wxArrayString videorec;
 		wxArrayString audsrec;
+		wxArrayString keyframesRecent;
 		void OnMenuSelected(wxCommandEvent& event);
 		void OnMenuSelected1(wxCommandEvent& event);
 		void OnRecent(wxCommandEvent& event);

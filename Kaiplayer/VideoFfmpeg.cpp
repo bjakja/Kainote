@@ -19,6 +19,7 @@
 #include "Config.h"
 #include "MKVWrap.h"
 #include "KaiMessageBox.h"
+#include "KeyframesLoader.h"
 #include <objbase.h>
 #include <algorithm>
 #include <process.h>
@@ -29,7 +30,7 @@
 
 
 
-VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *_success)
+VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRenderer *renderer, bool *_success)
 	: rend(renderer)
 	, eventStartPlayback(CreateEvent(0, FALSE, FALSE, 0))
 	, eventRefresh(CreateEvent(0, FALSE, FALSE, 0))
@@ -433,14 +434,16 @@ done:
 				continue;
 			}
 
-			// keyframe?
-
 			int Timestamp = ((CurFrameData->PTS * TimeBase->Num) / TimeBase->Den);
+			// keyframe?
 			if (CurFrameData->KeyFrame){ KeyFrames.Add(Timestamp); }
 			Timecodes.push_back(Timestamp);
 
 		}
-
+		if (!rend->keyframesFileName.empty()){
+			OpenKeyframes(rend->keyframesFileName);
+			rend->keyframesFileName = "";
+		}
 	}
 audio:
 
@@ -968,5 +971,21 @@ void VideoFfmpeg::SetColorSpace(const wxString& matrix)
 	lockGetFrame = false;
 	ColorSpace = matrix;
 
+}
+
+void VideoFfmpeg::OpenKeyframes(const wxString & filename)
+{
+	wxArrayInt keyframes;
+	KeyframeLoader kfl(filename, &keyframes, this);
+	if (keyframes.size()){
+		KeyFrames = keyframes;
+		TabPanel *tab = (rend) ? (TabPanel*)rend->GetParent() : Notebook::GetTab();
+		if (tab->Edit->ABox){
+			tab->Edit->ABox->SetKeyframes(keyframes);
+		}
+	}
+	else{
+		KaiMessageBox(_("Nieprawidłowy format klatek kluczowych"), _("Błąd"), 4L, Notebook::GetTab());
+	}
 }
 

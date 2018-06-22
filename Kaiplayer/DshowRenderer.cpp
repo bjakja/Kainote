@@ -21,7 +21,7 @@
 static const GUID CLSID_KVideoRenderer = 
 { 0x269ba141, 0x1fde, 0x494b, { 0x91, 0x24, 0x45, 0x3a, 0x17, 0x83, 0x8b, 0x9f } };
 
-CD2DVideoRender::CD2DVideoRender(VideoRend *_Vrend, HRESULT* phr)
+CD2DVideoRender::CD2DVideoRender(VideoRenderer *_Vrend, HRESULT* phr)
 	: CBaseVideoRenderer(CLSID_KVideoRenderer, L"Video Renderer", NULL, phr)
 {
 	Vrend=_Vrend;

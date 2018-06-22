@@ -51,6 +51,7 @@ class TabPanel : public wxWindow
 		wxString VideoName;
 		wxString SubsPath;
 		wxString VideoPath;
+		wxString KeyframesPath;
 		wxWindow *lastFocusedWindow = NULL;
 
 	private:

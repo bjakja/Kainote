@@ -236,6 +236,19 @@ void AudioBox::SetFile(wxString file, bool fromvideo) {
 
 
 
+void AudioBox::SetKeyframes(const wxArrayInt &keyframes)
+{
+	if (!audioDisplay->loaded || !audioDisplay->provider)
+		return;
+
+	if (audioDisplay->ownProvider){
+		audioDisplay->provider->KeyFrames = keyframes;
+		audioDisplay->provider->NumFrames = keyframes.size();
+	}
+
+	Refresh(false);
+}
+
 /////////////////////
 // Scrollbar changed
 void AudioBox::OnScrollbar(wxScrollEvent &event) {

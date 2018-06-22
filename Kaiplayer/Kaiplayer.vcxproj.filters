@@ -390,6 +390,9 @@
     <ClCompile Include="ListControls.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="KeyframesLoader.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -697,6 +700,9 @@
     </ClInclude>
     <ClInclude Include="FindReplaceResultsDialog.h">
       <Filter>Header Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyframesLoader.h">
+      <Filter>Header Files\Video</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

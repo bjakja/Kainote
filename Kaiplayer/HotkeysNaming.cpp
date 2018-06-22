@@ -170,6 +170,7 @@ void HotkeysNaming::CreateNamesMap()
 	names[JoinToLast] = _("Złącz linijki zostaw ostatnią");
 	names[JoinWithPrevious] = _("Scal z poprzednią linijką");
 	names[JoinWithNext] = _("Scal z następną linijką");
+	names[GLOBAL_KEYFRAMES_OPEN] = _("Otwórz klatki kluczowe");
 	names[LoadLastScript] = _("Uruchom ostatnio zaczytany skrypt");
 	names[Minus5Second] = _("5 sekund do tyłu");
 	names[Minus5SecondG] = _("Wideo minus 5 sekund");

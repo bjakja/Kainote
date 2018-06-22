@@ -1245,7 +1245,8 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 			VideoCtrl *vb = pan->Video;
 			bool success = true;
 			if (vb->VFF && fromvideo){
-				provider = vb->VFF; ownProvider = (provider->videosource == NULL);
+				provider = vb->VFF; 
+				ownProvider = (provider->videosource == NULL);
 				if (ownProvider){ vb->VFF = NULL; }
 			}
 			else{

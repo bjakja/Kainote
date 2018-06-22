@@ -47,7 +47,7 @@ void CreateVERTEX(VERTEX *v, float X, float Y, D3DCOLOR Color, float Z)
 	v->Color = Color;
 }
 
-VideoRend::VideoRend(wxWindow *_parent, const wxSize &size)
+VideoRenderer::VideoRenderer(wxWindow *_parent, const wxSize &size)
 	:wxWindow(_parent, -1, wxDefaultPosition, size)//wxFULL_REPAINT_ON_RESIZE
 	, panelHeight(66)
 	, AR(0.0)
@@ -99,7 +99,7 @@ VideoRend::VideoRend(wxWindow *_parent, const wxSize &size)
 	dxvaService = NULL;
 }
 
-bool VideoRend::InitDX(bool reset)
+bool VideoRenderer::InitDX(bool reset)
 {
 
 	if (!reset){
@@ -307,7 +307,7 @@ bool VideoRend::InitDX(bool reset)
 //w stosuj false tylko w przypadku gdy odświeżasz coś namalowanego na wideo, 
 //w reszcie przypadków ma być pełne odświeżanie klatki
 
-void VideoRend::Render(bool Frame, bool wait)
+void VideoRenderer::Render(bool Frame, bool wait)
 {
 	if (Frame && !IsDshow && !devicelost){ VFF->Refresh(wait); resized = false; return; }
 	wxCriticalSectionLocker lock(mutexRender);
@@ -472,7 +472,7 @@ void VideoRend::Render(bool Frame, bool wait)
 }
 
 
-bool VideoRend::DrawTexture(byte *nframe, bool copy)
+bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 {
 
 	wxCriticalSectionLocker lock(mutexRender);
@@ -568,7 +568,7 @@ bool VideoRend::DrawTexture(byte *nframe, bool copy)
 	return true;
 }
 
-void VideoRend::RecreateSurface()
+void VideoRenderer::RecreateSurface()
 {
 	int all = vheight*pitch;
 	char *cpy = new char[all];
@@ -579,7 +579,7 @@ void VideoRend::RecreateSurface()
 	delete[] cpy;
 }
 
-VideoRend::~VideoRend()
+VideoRenderer::~VideoRenderer()
 {
 	Stop();
 
@@ -598,7 +598,7 @@ VideoRend::~VideoRend()
 
 }
 
-void VideoRend::Clear()
+void VideoRenderer::Clear()
 {
 	SAFE_RELEASE(MainStream);
 	SAFE_RELEASE(bars);
@@ -617,7 +617,7 @@ void VideoRend::Clear()
 
 
 
-bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, bool vobsub, bool changeAudio)
+bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, bool vobsub, bool changeAudio)
 {
 	wxMutexLocker lock(mutexOpenFile);
 	//block=true;
@@ -745,7 +745,7 @@ bool VideoRend::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, 
 	return true;
 }
 
-bool VideoRend::Play(int end)
+bool VideoRenderer::Play(int end)
 {
 	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
 	VideoCtrl *vb = ((VideoCtrl*)this);
@@ -781,7 +781,7 @@ bool VideoRend::Play(int end)
 	return true;
 }
 
-bool VideoRend::PlayLine(int start, int eend)
+bool VideoRenderer::PlayLine(int start, int eend)
 {
 	int duration = GetDuration();
 	if (vstate == None || start >= eend || start >= duration){ return false; }
@@ -791,7 +791,7 @@ bool VideoRend::PlayLine(int start, int eend)
 	return true;
 }
 
-bool VideoRend::Pause()
+bool VideoRenderer::Pause()
 {
 	if (vstate == Playing){
 		SetThreadExecutionState(ES_CONTINUOUS);
@@ -810,7 +810,7 @@ bool VideoRend::Pause()
 	return true;
 }
 
-bool VideoRend::Stop()
+bool VideoRenderer::Stop()
 {
 	if (vstate == Playing){
 		SetThreadExecutionState(ES_CONTINUOUS);
@@ -826,7 +826,7 @@ bool VideoRend::Stop()
 	return false;
 }
 
-void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadSubs)
+void VideoRenderer::SetPosition(int _time, bool starttime, bool corect, bool reloadSubs)
 {
 	TabPanel* pan = (TabPanel*)GetParent();
 	bool playing = vstate == Playing;
@@ -891,7 +891,7 @@ void VideoRend::SetPosition(int _time, bool starttime, bool corect, bool reloadS
 	}
 }
 
-bool VideoRend::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
+bool VideoRenderer::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 {
 	wxCriticalSectionLocker lock(mutexRender);
 	if (instance) csri_close(instance);
@@ -941,17 +941,17 @@ bool VideoRend::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 	return true;
 }
 
-int VideoRend::GetCurrentPosition()
+int VideoRenderer::GetCurrentPosition()
 {
 	return time;
 }
 
-int VideoRend::GetCurrentFrame()
+int VideoRenderer::GetCurrentFrame()
 {
 	return lastframe;
 }
 
-int VideoRend::GetFrameTime(bool start)
+int VideoRenderer::GetFrameTime(bool start)
 {
 	if (VFF){
 		if (start){
@@ -969,7 +969,7 @@ int VideoRend::GetFrameTime(bool start)
 	}
 }
 
-void VideoRend::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
+void VideoRenderer::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
 {
 	if (!retStart || !retEnd){ return; }
 	if (VFF){
@@ -988,7 +988,7 @@ void VideoRend::GetStartEndDelay(int startTime, int endTime, int *retStart, int 
 	}
 }
 
-int VideoRend::GetFrameTimeFromTime(int _time, bool start)
+int VideoRenderer::GetFrameTimeFromTime(int _time, bool start)
 {
 	if (VFF){
 		if (start){
@@ -1010,7 +1010,7 @@ int VideoRend::GetFrameTimeFromTime(int _time, bool start)
 	}
 }
 
-int VideoRend::GetFrameTimeFromFrame(int frame, bool start)
+int VideoRenderer::GetFrameTimeFromFrame(int frame, bool start)
 {
 	if (VFF){
 		if (start){
@@ -1030,7 +1030,7 @@ int VideoRend::GetFrameTimeFromFrame(int frame, bool start)
 	}
 }
 
-int VideoRend::GetPlayEndTime(int _time)
+int VideoRenderer::GetPlayEndTime(int _time)
 {
 	if (VFF){
 		int frameFromTime = VFF->GetFramefromMS(_time);
@@ -1046,7 +1046,7 @@ int VideoRend::GetPlayEndTime(int _time)
 	}
 }
 
-int VideoRend::GetDuration()
+int VideoRenderer::GetDuration()
 {
 	if (IsDshow){ return vplayer->GetDuration(); }
 	return VFF->Duration*1000.0;
@@ -1054,7 +1054,7 @@ int VideoRend::GetDuration()
 
 
 //ustawia nowe recty po zmianie rozdzielczości wideo
-bool VideoRend::UpdateRects(bool changeZoom)
+bool VideoRenderer::UpdateRects(bool changeZoom)
 {
 
 	VideoCtrl* Video = (VideoCtrl*) this;
@@ -1137,7 +1137,7 @@ bool VideoRend::UpdateRects(bool changeZoom)
 }
 
 //funkcja zmiany rozdziałki okna wideo
-void VideoRend::UpdateVideoWindow()
+void VideoRenderer::UpdateVideoWindow()
 {
 
 	wxCriticalSectionLocker lock(mutexRender);
@@ -1169,14 +1169,14 @@ void VideoRend::UpdateVideoWindow()
 	SetScaleAndZoom();
 	/*block=false;*/
 }
-void VideoRend::SetZoom(){
+void VideoRenderer::SetZoom(){
 	if (vstate == None){ return; }
 	hasZoom = !hasZoom;
 	if (zoomRect.width < 1){ zoomRect = FloatRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom); }
 	Render();
 }
 
-void VideoRend::ResetZoom()
+void VideoRenderer::ResetZoom()
 {
 	if (vstate == None){ return; }
 	zoomRect = FloatRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom);
@@ -1192,7 +1192,7 @@ void VideoRend::ResetZoom()
 	SetScaleAndZoom();
 }
 
-void VideoRend::Zoom(const wxSize &size)
+void VideoRenderer::Zoom(const wxSize &size)
 {
 	//wxSize s1(backBufferRect.right - backBufferRect.left, backBufferRect.bottom - backBufferRect.top);
 	hasZoom = true;
@@ -1216,7 +1216,7 @@ void VideoRend::Zoom(const wxSize &size)
 	SetScaleAndZoom();
 }
 
-void VideoRend::SetVisualZoom()
+void VideoRenderer::SetVisualZoom()
 {
 	float videoToScreenX = (float)(backBufferRect.right - backBufferRect.left) / (float)(vwidth);
 	float videoToScreenY = (float)(backBufferRect.bottom - backBufferRect.top) / (float)(vheight);
@@ -1228,7 +1228,17 @@ void VideoRend::SetVisualZoom()
 		zoomY - (backBufferRect.top / zoomScale.y)), zoomScale);
 }
 
-void VideoRend::DrawZoom()
+void VideoRenderer::OpenKeyframes(const wxString &filename)
+{
+	if (VFF){
+		VFF->OpenKeyframes(filename);
+		return;
+	}
+	//if there is no FFMS2 we store keyframes path;
+	keyframesFileName = filename;
+}
+
+void VideoRenderer::DrawZoom()
 {
 	D3DXVECTOR2 v2[5];
 	wxSize s(backBufferRect.right, backBufferRect.bottom);
@@ -1268,7 +1278,7 @@ void VideoRend::DrawZoom()
 
 }
 
-void VideoRend::ZoomMouseHandle(wxMouseEvent &evt)
+void VideoRenderer::ZoomMouseHandle(wxMouseEvent &evt)
 {
 	int x = evt.GetX();
 	int y = evt.GetY();
@@ -1438,7 +1448,7 @@ void VideoRend::ZoomMouseHandle(wxMouseEvent &evt)
 
 }
 
-void VideoRend::GetFpsnRatio(float *fps, long *arx, long *ary)
+void VideoRenderer::GetFpsnRatio(float *fps, long *arx, long *ary)
 {
 	if (IsDshow){ vplayer->GetFpsnRatio(fps, arx, ary); return; }
 	*fps = VFF->fps;
@@ -1446,7 +1456,7 @@ void VideoRend::GetFpsnRatio(float *fps, long *arx, long *ary)
 	*ary = VFF->arheight;
 }
 
-void VideoRend::GetVideoSize(int *width, int *height)
+void VideoRenderer::GetVideoSize(int *width, int *height)
 {
 	if (IsDshow){
 		wxSize sz = vplayer->GetVideoSize();
@@ -1458,7 +1468,7 @@ void VideoRend::GetVideoSize(int *width, int *height)
 	*height = VFF->height;
 }
 
-wxSize VideoRend::GetVideoSize()
+wxSize VideoRenderer::GetVideoSize()
 {
 	wxSize sz;
 	if (IsDshow){ sz = vplayer->GetVideoSize(); return sz; }
@@ -1467,7 +1477,7 @@ wxSize VideoRend::GetVideoSize()
 	return sz;
 }
 
-void VideoRend::DrawLines(wxPoint point)
+void VideoRenderer::DrawLines(wxPoint point)
 {
 	wxMutexLocker lock(mutexLines);
 	int w, h;
@@ -1492,7 +1502,7 @@ void VideoRend::DrawLines(wxPoint point)
 	}
 }
 
-void VideoRend::DrawProgBar()
+void VideoRenderer::DrawProgBar()
 {
 	//pozycja zegara
 	wxMutexLocker lock(mutexProgBar);
@@ -1533,7 +1543,7 @@ void VideoRend::DrawProgBar()
 	vectors[15].y = 10.5;
 }
 
-void VideoRend::SetVolume(int vol)
+void VideoRenderer::SetVolume(int vol)
 {
 	if (vstate == None){ return; }
 	if (!IsDshow){
@@ -1553,7 +1563,7 @@ void VideoRend::SetVolume(int vol)
 	}
 }
 
-int VideoRend::GetVolume()
+int VideoRenderer::GetVolume()
 {
 	if (vstate == None){ return 0; }
 	if (!IsDshow && player){
@@ -1569,7 +1579,7 @@ int VideoRend::GetVolume()
 	return 0;
 }
 
-void VideoRend::ChangePositionByFrame(int cpos)
+void VideoRenderer::ChangePositionByFrame(int cpos)
 {
 	if (vstate == Playing || vstate == None){ return; }
 	if (!IsDshow){
@@ -1597,14 +1607,14 @@ void VideoRend::ChangePositionByFrame(int cpos)
 }
 
 
-wxArrayString VideoRend::GetStreams()
+wxArrayString VideoRenderer::GetStreams()
 {
 	if (vplayer){ return vplayer->GetStreams(); }
 	wxArrayString streams;
 	return streams;
 }
 
-void VideoRend::EnableStream(long index)
+void VideoRenderer::EnableStream(long index)
 {
 	if (vplayer->stream){
 		seek = true;
@@ -1617,7 +1627,7 @@ void VideoRend::EnableStream(long index)
 
 
 
-void VideoRend::ChangeVobsub(bool vobsub)
+void VideoRenderer::ChangeVobsub(bool vobsub)
 {
 	if (!vplayer){ return; }
 	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
@@ -1646,7 +1656,7 @@ void VideoRend::ChangeVobsub(bool vobsub)
 	pan->Video->ChangeStream();
 }
 
-void VideoRend::SetVisual(bool remove/*=false*/, bool settext/*=false*/, bool noRefreshAfterRemove /*= false*/)
+void VideoRenderer::SetVisual(bool remove/*=false*/, bool settext/*=false*/, bool noRefreshAfterRemove /*= false*/)
 {
 	TabPanel* pan = (TabPanel*)GetParent();
 
@@ -1680,7 +1690,7 @@ void VideoRend::SetVisual(bool remove/*=false*/, bool settext/*=false*/, bool no
 	}
 }
 
-void VideoRend::ResetVisual()
+void VideoRenderer::ResetVisual()
 {
 	SAFE_DELETE(Visual->dummytext);
 	Visual->SetCurVisual();
@@ -1688,19 +1698,19 @@ void VideoRend::ResetVisual()
 	Render();
 }
 
-bool VideoRend::EnumFilters(Menu *menu)
+bool VideoRenderer::EnumFilters(Menu *menu)
 {
 	if (vplayer){ return vplayer->EnumFilters(menu); }
 	return false;
 }
 
-bool VideoRend::FilterConfig(wxString name, int idx, wxPoint pos)
+bool VideoRenderer::FilterConfig(wxString name, int idx, wxPoint pos)
 {
 	if (vplayer){ return vplayer->FilterConfig(name, idx, pos); }
 	return false;
 }
 
-byte *VideoRend::GetFramewithSubs(bool subs, bool *del)
+byte *VideoRenderer::GetFramewithSubs(bool subs, bool *del)
 {
 	bool dssubs = (IsDshow && subs && Notebook::GetTab()->editor);
 	bool ffnsubs = (!IsDshow && !subs);
@@ -1726,7 +1736,7 @@ byte *VideoRend::GetFramewithSubs(bool subs, bool *del)
 	return (dssubs || ffnsubs) ? cpy1 : (byte*)datas;
 }
 
-void VideoRend::GoToNextKeyframe()
+void VideoRenderer::GoToNextKeyframe()
 {
 	if (!VFF){ return; }
 	for (size_t i = 0; i < VFF->KeyFrames.size(); i++){
@@ -1737,7 +1747,7 @@ void VideoRend::GoToNextKeyframe()
 	}
 	SetPosition(VFF->KeyFrames[0]);
 }
-void VideoRend::GoToPrevKeyframe()
+void VideoRenderer::GoToPrevKeyframe()
 {
 	if (!VFF){ return; }
 	for (int i = VFF->KeyFrames.size() - 1; i >= 0; i--){

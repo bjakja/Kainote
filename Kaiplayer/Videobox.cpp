@@ -100,7 +100,7 @@ void bars1::OnSlider(wxCommandEvent &event)
 
 
 VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
-	: VideoRend(parent, size)
+	: VideoRenderer(parent, size)
 	, Kai(kfpar)
 	, hasArrow(true)
 	, seekfiles(true)
@@ -164,7 +164,7 @@ bool VideoCtrl::Play()
 {
 	wxMutexLocker lock(vbmutex);
 	if (time >= GetDuration()){ return false; }
-	if (!VideoRend::Play()){ return false; }
+	if (!VideoRenderer::Play()){ return false; }
 	int ms = (isFullscreen && !TD->panel->IsShown()) ? 1000 : 100;
 	vtime.Start(ms);
 	ChangeButtonBMP(false);
@@ -174,7 +174,7 @@ bool VideoCtrl::Play()
 void VideoCtrl::PlayLine(int start, int end)
 {
 	//wxMutexLocker lock(vbmutex);
-	if (!VideoRend::PlayLine(start, end)){ return; }
+	if (!VideoRenderer::PlayLine(start, end)){ return; }
 	int ms = (isFullscreen && !TD->panel->IsShown()) ? 1000 : 100;
 	vtime.Start(ms);
 	ChangeButtonBMP(false);
@@ -198,7 +198,7 @@ bool VideoCtrl::Pause(bool burstbl)
 		return true;
 	}
 	if (time >= GetDuration() && burstbl){ return false; }
-	if (!VideoRend::Pause()){ return false; }
+	if (!VideoRenderer::Pause()){ return false; }
 	if (GetState() == Paused){
 		vtime.Stop(); RefreshTime();
 	}
@@ -215,7 +215,7 @@ bool VideoCtrl::Stop()
 {
 	wxMutexLocker lock(vbmutex);
 
-	if (!VideoRend::Stop()){ return false; }
+	if (!VideoRenderer::Stop()){ return false; }
 	vtime.Stop();
 	Seek(0);
 	RefreshTime();

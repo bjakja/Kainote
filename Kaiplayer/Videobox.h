@@ -26,7 +26,7 @@
 
 class KainoteFrame;
 
-class VideoCtrl : public VideoRend
+class VideoCtrl : public VideoRenderer
 {
 public:
 

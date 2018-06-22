@@ -196,6 +196,7 @@
 	XX( History,)\
 	XX( OpenSubs,=6800)\
 	XX( OpenVideo,)\
+	XX( GLOBAL_KEYFRAMES_OPEN,)\
 	XX( Settings,)\
 	XX( Quit,)\
 	XX( Editor,)\
@@ -220,6 +221,7 @@
 	XX( RecentAudio,)\
 	XX( RecentVideo,)\
 	XX( RecentSubs,)\
+	XX( GLOBAL_KEYFRAMES_RECENT,)\
 	XX( SelectFromVideo,)\
 	XX( PlayActualLine,)\
 	XX( GLOBAL_SORT_ALL_BY_START_TIMES,=7000)\

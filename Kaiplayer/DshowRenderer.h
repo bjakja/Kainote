@@ -51,7 +51,7 @@ class CD2DVideoRender : public CBaseVideoRenderer
 {
 public:
 
-	CD2DVideoRender(VideoRend *_Vrend, HRESULT* phr);
+	CD2DVideoRender(VideoRenderer *_Vrend, HRESULT* phr);
 	virtual ~CD2DVideoRender();
 
 	HRESULT Render(IMediaSample *pMediaSample);
@@ -65,7 +65,7 @@ public:
 	HRESULT GetVidInfo(VideoInf &vi);
 
 private:
-	VideoRend *Vrend;
+	VideoRenderer *Vrend;
 	VideoInf Vinfo;
 	int time;
 	bool norender;

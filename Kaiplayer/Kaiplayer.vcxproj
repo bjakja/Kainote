@@ -415,6 +415,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="KaiTextCtrl.cpp" />
     <ClCompile Include="KaiTextValidator.cpp" />
     <ClCompile Include="KaiTreeBook.cpp" />
+    <ClCompile Include="KeyframesLoader.cpp" />
     <ClCompile Include="ListControls.cpp" />
     <ClCompile Include="MappedButton.cpp" />
     <ClCompile Include="Menu.cpp" />
@@ -505,6 +506,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="FindReplaceResultsDialog.h" />
     <ClInclude Include="FontEnumerator.h" />
     <ClInclude Include="GFFT\GFFT.h" />
+    <ClInclude Include="KeyframesLoader.h" />
     <ClInclude Include="HotkeysNaming.h" />
     <ClInclude Include="KaiCheckBox.h" />
     <ClInclude Include="KaiDialog.h" />

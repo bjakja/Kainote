@@ -22,15 +22,13 @@
 #include "include\ffms.h"
 #include "ProgressDialog.h"
 
-class VideoRend;
+class VideoRenderer;
 
 class VideoFfmpeg
 {
 public:
-	VideoFfmpeg(const wxString &filename, VideoRend *renderer, bool *success);
+	VideoFfmpeg(const wxString &filename, VideoRenderer *renderer, bool *success);
 	~VideoFfmpeg();
-	static unsigned int __stdcall FFMS2Proc(void* cls);
-	void Processing();
 	void Refresh(bool wait=true);
 	void Play(){SetEvent(eventStartPlayback);};
 	void GetFrame(int frame, byte* buff);
@@ -63,6 +61,7 @@ public:
 	void DeleteOldAudioCache();
 	wxString ColorCatrixDescription(int cs, int cr);
 	void SetColorSpace(const wxString& matrix);
+	void OpenKeyframes(const wxString & filename);
 	bool disccache;
 	volatile bool success;
 	volatile bool isBusy;
@@ -98,7 +97,7 @@ public:
 	wxString RealColorSpace;
 	wxString fname;
 	wxString indexPath;
-	VideoRend *rend;
+	VideoRenderer *rend;
 	//wxFile file_cache;
 	FILE *fp=NULL;
 	wxArrayInt KeyFrames;
@@ -110,6 +109,8 @@ private:
 	int blnum;
 	void GetAudio(void *buf, int64_t start, int64_t count);
 	void GetFFMSFrame(int numframe);
+	static unsigned int __stdcall FFMS2Proc(void* cls);
+	void Processing();
 	volatile bool stopLoadingAudio = false;
 };
 

@@ -144,6 +144,7 @@
 	CG(GridTagsSwapChar,)\
 	CG(InsertEndOffset,)\
 	CG(InsertStartOffset,)\
+	CG(KEYFRAMES_RECENT,)\
 	CG(MoveTimesByTime,)\
 	CG(MoveTimesLoadSetTabOptions,)\
 	CG(MoveTimesCorrectEndTimes,)\

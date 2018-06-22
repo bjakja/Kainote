@@ -128,6 +128,7 @@ public:
 	virtual ~AudioBox();
 
 	void SetFile(wxString file,bool fromvideo);
+	void SetKeyframes(const wxArrayInt &keyframes);
 	void SetAccels();
 	void OnPlaySelection(wxCommandEvent &event);
 	void SetVolume(int vol);

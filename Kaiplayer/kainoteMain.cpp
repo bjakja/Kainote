@@ -39,6 +39,7 @@
 #include "FontEnumerator.h"
 #include "SubsResampleDialog.h"
 #include "SpellCheckerDialog.h"
+#include <ShlObj.h>
 
 #undef IsMaximized
 #if _DEBUG
@@ -168,6 +169,9 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	VidMenu->AppendTool(Toolbar, OpenVideo, _("Otwórz wideo"), _("Otwiera wybrane wideo"), PTR_BITMAP_PNG("openvideo"));
 	VidsRecMenu = new Menu();
 	VidMenu->AppendTool(Toolbar, RecentVideo, _("Ostatnio otwarte wideo"), _("Ostatnio otwarte video"), PTR_BITMAP_PNG("recentvideo"), true, VidsRecMenu);
+	VidMenu->AppendTool(Toolbar, GLOBAL_KEYFRAMES_OPEN, _("Otwórz klatki kluczowe"), _("Otwórz klatki kluczowe"), PTR_BITMAP_PNG("openvideo"));
+	KeyframesRecentMenu = new Menu();
+	VidMenu->AppendTool(Toolbar, GLOBAL_KEYFRAMES_RECENT, _("Ostatnio otwarte klatki kluczowe"), _("Ostatnio otwarte klatki kluczowe"), PTR_BITMAP_PNG("recentvideo"), true, KeyframesRecentMenu);
 	VidMenu->AppendTool(Toolbar, SetStartTime, _("Wstaw czas początkowy z wideo"), _("Wstawia czas początkowy z wideo"), PTR_BITMAP_PNG("setstarttime"), false);
 	VidMenu->AppendTool(Toolbar, SetEndTime, _("Wstaw czas końcowy z wideo"), _("Wstawia czas końcowy z wideo"), PTR_BITMAP_PNG("setendtime"), false);
 	VidMenu->AppendTool(Toolbar, PreviousFrame, _("Klatka w tył"), _("Przechodzi o jedną klatkę w tył"), PTR_BITMAP_PNG("prevframe"), false);
@@ -248,7 +252,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(NextTab, PreviousTab, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageChange);
 	//tutaj dodawaj nowe idy
 	Connect(SaveSubs, History, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected);
-	Connect(7000, 7011, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected);
+	Connect(GLOBAL_SORT_ALL_BY_START_TIMES, GLOBAL_SORT_SELECTED_BY_LAYER, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected);
 	Connect(GLOBAL_SHIFT_TIMES, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected);
 	Connect(OpenSubs, ANSI, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
 	Connect(SelectFromVideo, PlayActualLine, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
@@ -258,7 +262,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(Remove, RemoveText, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnDelete);
 	Menubar->Connect(EVT_MENU_OPENED, (wxObjectEventFunction)&KainoteFrame::OnMenuOpened, 0, this);
 	Connect(wxEVT_CLOSE_WINDOW, (wxObjectEventFunction)&KainoteFrame::OnClose1);
-	Connect(30000, 30059, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnRecent);
+	Connect(30000, 30079, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnRecent);
 	Connect(PlayActualLine, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
 		if (!mylog){
@@ -652,6 +656,19 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 				OpenFile(paths[0]);
 			else
 				OpenFiles(paths);
+		}
+		FileDialog2->Destroy();
+	}
+	else if (id == GLOBAL_KEYFRAMES_OPEN){
+		wxFileDialog* FileDialog2 = new wxFileDialog(this, _("Wybierz plik wideo"),
+			(keyframesRecent.size() > 0) ? keyframesRecent[0].BeforeLast('\\') : "",
+			"", _("Pliki klatek kluczowych(*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|Wszystkie pliki (*.*)|*.*"), 
+			wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "wxFileDialog");
+		if (FileDialog2->ShowModal() == wxID_OK){
+			wxString path = FileDialog2->GetPath();
+			GetTab()->KeyframesPath = path;
+			GetTab()->Video->OpenKeyframes(path);
+			SetRecent(3);
 		}
 		FileDialog2->Destroy();
 	}
@@ -1090,10 +1107,10 @@ void KainoteFrame::ShowBadResolutionDialog(const wxSize &videoRes, const wxSize 
 void KainoteFrame::SetRecent(short what)
 {
 	int idd = 30000 + (20 * what);
-	Menu *wmenu = (what == 0) ? SubsRecMenu : (what == 1) ? VidsRecMenu : AudsRecMenu;
-	int size = (what == 0) ? subsrec.size() : (what == 1) ? videorec.size() : audsrec.size();
-	wxArrayString &recs = (what == 0) ? subsrec : (what == 1) ? videorec : audsrec;
-	wxString path = (what == 0) ? GetTab()->SubsPath : (what == 1) ? GetTab()->VideoPath : GetTab()->Edit->ABox->audioName;
+	Menu *wmenu = (what == 0) ? SubsRecMenu : (what == 1) ? VidsRecMenu : (what == 2) ? AudsRecMenu : KeyframesRecentMenu;
+	int size = (what == 0) ? subsrec.size() : (what == 1) ? videorec.size() : (what == 2) ? audsrec.size() : keyframesRecent.size();
+	wxArrayString &recs = (what == 0) ? subsrec : (what == 1) ? videorec : (what == 2) ? audsrec : keyframesRecent;
+	wxString path = (what == 0) ? GetTab()->SubsPath : (what == 1) ? GetTab()->VideoPath : (what == 2) ? GetTab()->Edit->ABox->audioName : GetTab()->KeyframesPath;
 
 	for (int i = 0; i < size; i++){
 		if (recs[i] == path){
@@ -1105,7 +1122,8 @@ void KainoteFrame::SetRecent(short what)
 	if (recs.size() > 20){ recs.pop_back(); }
 	if (what == 0){ Options.SetTable(SubsRecent, recs); }
 	else if (what == 1){ Options.SetTable(VideoRecent, recs); }
-	else{ Options.SetTable(AudioRecent, recs); }
+	else if (what == 2){ Options.SetTable(AudioRecent, recs); }
+	else{ Options.SetTable(KEYFRAMES_RECENT, recs); }
 }
 
 //0 - subs, 1 - vids, 2 - auds
@@ -1116,12 +1134,12 @@ void KainoteFrame::AppendRecent(short what, Menu *_Menu)
 		wmenu = _Menu;
 	}
 	else{
-		wmenu = (what == 0) ? SubsRecMenu : (what == 1) ? VidsRecMenu : AudsRecMenu;
+		wmenu = (what == 0) ? SubsRecMenu : (what == 1) ? VidsRecMenu : (what == 2) ? AudsRecMenu : KeyframesRecentMenu;
 	}
 	int idd = 30000 + (20 * what);
 	//int size= (what==0)?subsrec.size() : (what==1)? videorec.size() : audsrec.size();
 
-	wxArrayString &recs = (what == 0) ? subsrec : (what == 1) ? videorec : audsrec;
+	wxArrayString &recs = (what == 0) ? subsrec : (what == 1) ? videorec : (what == 2) ? audsrec : keyframesRecent;
 
 	for (int j = wmenu->GetMenuItemCount() - 1; j >= 0; j--){
 		wmenu->Destroy(wmenu->FindItemByPosition(j));
@@ -1130,8 +1148,12 @@ void KainoteFrame::AppendRecent(short what, Menu *_Menu)
 	bool changedRecent = false;
 	while (i < recs.size())
 	{
-		if (!wxFileExists(recs[i])){ recs.erase(recs.begin() + i); continue; }
-		MenuItem* MI = new MenuItem(idd + i, std::to_string(i + 1) + " " + recs[i].AfterLast('\\'), _("Otwórz ") + recs[i]);
+		if (!wxFileExists(recs[i])){ 
+			recs.erase(recs.begin() + i); 
+			changedRecent = true;
+			continue; 
+		}
+		MenuItem* MI = new MenuItem(idd + i, std::to_string(i + 1) + L" " + recs[i].AfterLast('\\'), _("Otwórz") + L" " + recs[i]);
 		wmenu->Append(MI);
 		i++;
 	}
@@ -1144,7 +1166,8 @@ void KainoteFrame::AppendRecent(short what, Menu *_Menu)
 	if (changedRecent){
 		if (what == 0){ Options.SetTable(SubsRecent, recs); }
 		else if (what == 1){ Options.SetTable(VideoRecent, recs); }
-		else{ Options.SetTable(AudioRecent, recs); }
+		else if (what == 2){ Options.SetTable(AudioRecent, recs); }
+		else{ Options.SetTable(KEYFRAMES_RECENT, recs); }
 	}
 }
 
@@ -1153,45 +1176,62 @@ void KainoteFrame::OnRecent(wxCommandEvent& event)
 	int id = event.GetId();
 	int numItem = 0;
 	int Modif = event.GetInt();
-	//MenuItem* MI=0;
 	wxString filename;
 	if (id < 30020){
 		numItem = id - 30000;
 		if (numItem < 0){ return; }
 		filename = subsrec[numItem];
-		//MI=SubsRecMenu->FindItem(id);
 	}
 	else if (id < 30040){
 		numItem = id - 30020;
 		filename = videorec[numItem];
-		//MI=VidsRecMenu->FindItem(id);
+	}
+	else if (id < 30060){
+		numItem = id - 30040;
+		filename = audsrec[numItem];
+	}
+	else if(id < 30080){
+		numItem = id - 30060;
+		if (numItem >= keyframesRecent.size()){ return; }
+		filename = keyframesRecent[numItem];
 	}
 	else{
-		numItem = id - 30040;
-		if (numItem > 20){ return; }
-		filename = audsrec[numItem];
-		//MI=AudsRecMenu->FindItem(id);
+		return;
 	}
-	//if(!MI){wxLogStatus("Item Menu Przepadł");return;}
-	//wxString filename=MI->GetHelp().AfterFirst(' ');
+	
 	if (Modif == wxMOD_CONTROL){
-		wxWCharBuffer buf = filename.BeforeLast('\\').c_str();
-		WinStruct<SHELLEXECUTEINFO> sei;
-		sei.lpFile = buf;
-		sei.lpVerb = wxT("explore");
-		sei.nShow = SW_RESTORE;
-		sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
+		//wxWCharBuffer buf = filename.BeforeLast('\\').c_str();
+		//WinStruct<SHELLEXECUTEINFO> sei;
+		//sei.lpFile = buf;
+		//sei.lpVerb = wxT("explore");
+		//sei.nShow = SW_RESTORE;
+		//sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
 
 
-		if (!ShellExecuteEx(&sei)){ wxLogStatus(_("Nie można otworzyć folderu")); }
+		//if (!ShellExecuteEx(&sei)){ wxLogStatus(_("Nie można otworzyć folderu")); }
+
+		//wxString path = L"/n,/select,\"" + filename.BeforeLast('\\') + L"\"";
+		//const wchar_t * wcharPath = path.wc_str();.BeforeLast('\\')
+		CoInitialize(0);
+		ITEMIDLIST *pidl = ILCreateFromPathW(filename.wc_str());
+		if (pidl) {
+			SHOpenFolderAndSelectItems(pidl, 0, 0, 0);
+			ILFree(pidl);
+		}
+		CoUninitialize();
 		return;
 	}
 	if (id < 30040){
 		OpenFile(filename);
 	}
-	else{
+	else if (id < 30060){
 		event.SetString(filename);
 		OnOpenAudio(event);
+	}
+	else{
+		GetTab()->KeyframesPath = filename;
+		GetTab()->Video->OpenKeyframes(filename);
+		SetRecent(3);
 	}
 }
 
@@ -1756,7 +1796,10 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 	}
 	else if (curMenu == VidMenu)
 	{
+		//video recent
 		AppendRecent(1);
+		//keyframes recent;
+		AppendRecent(3);
 	}
 	else if (curMenu == AudMenu)
 	{
@@ -1764,7 +1807,6 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 	}
 	else if (curMenu == AutoMenu)
 	{
-		//if (!Auto){ Auto = new Auto::Automation(); }
 		Auto->BuildMenu(&AutoMenu);
 	}
 	else if (curMenu == EditMenu){
@@ -1815,7 +1857,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 	for (int i = SaveSubs; i <= ViewSubs; i++){//po kolejne idy zajrzyj do enuma z pliku h, ostatnim jest Automation
 		enable = true;
 
-		if (i >= ASSProperties&&i < ConvertToASS){ enable = form < SRT; }//menager stylów i sinfo
+		if (i >= ASSProperties && i < ConvertToASS){ enable = form < SRT; }//menager stylów i sinfo
 		else if (i == ConvertToASS){ enable = form > ASS; }//konwersja na ass
 		else if (i == ConvertToSRT){ enable = form != SRT; }//konwersja na srt
 		else if (i == ConvertToMDVD){ enable = form != MDVD; }//konwersja na mdvd
