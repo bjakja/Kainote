@@ -314,6 +314,8 @@ void StyleStore::OnAddToAssInAllTabs(wxCommandEvent& event)
 		if (grid->subsFormat != ASS)
 			continue;
 
+		bool isActive = (k == Kai->Tabs->iter);
+
 		for (int i = 0; i < numSelections; i++){
 			Styles *stylc = Options.GetStyle(sels[i])->Copy();
 			int found = grid->FindStyle(stylc->Name);
@@ -324,21 +326,24 @@ void StyleStore::OnAddToAssInAllTabs(wxCommandEvent& event)
 				}
 				if (prompt == wxYES || prompt == wxYES_TO_ALL){
 					grid->ChangeStyle(stylc, found); 
-					ASSList->SetSelection(found);
+					if (isActive)
+						ASSList->SetSelection(found);
 				}
 				else{ delete stylc; }
 			}
 			else{ 
 				grid->AddStyle(stylc); 
-				ASSList->SetSelection(grid->StylesSize() - 1); 
+				if (isActive)
+					ASSList->SetSelection(grid->StylesSize() - 1); 
 			}
 		}
-		//SetModified();
 		tab->Edit->RefreshStyle();
 		grid->SetModified(STYLE_MANAGER, false);
+		//refresh to remove missing styles indicators
 		grid->Refresh(false);
-		ASSList->SetArray(grid->GetStyleTable());
-		Kai->Label(tab->Grid->file->GetActualHistoryIter(), false, k, k != Kai->Tabs->iter);
+		if (isActive)
+			ASSList->SetArray(grid->GetStyleTable());
+		Kai->Label(tab->Grid->file->GetActualHistoryIter(), false, k, !isActive);
 	}
 }
 
