@@ -220,7 +220,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 
 		wxBoxSizer* frbsizer4 = new wxBoxSizer(wxHORIZONTAL);
 		MappedButton *ButtonChooseStyle = new MappedButton(this, ID_BUTTON_CHOOSE_STYLE, "+", -1, wxDefaultPosition, wxSize(22, 22));
-		ChoosenStyleText = new KaiTextCtrl(this, ID_CHOOSEN_STYLE_TEXT, "", wxDefaultPosition, wxSize(-1, 22));
+		ChoosenStyleText = new KaiTextCtrl(this, ID_CHOOSEN_STYLE_TEXT, Options.GetString(FIND_REPLACE_STYLES), wxDefaultPosition, wxSize(-1, 22));
 		frbsizer4->Add(ButtonChooseStyle, 0, 0, 0);
 		frbsizer4->Add(ChoosenStyleText, 0, wxLEFT, 3);
 
@@ -284,16 +284,15 @@ void TabWindow::SaveValues()
 	Options.SetInt(FindReplaceOptions, options);
 
 	FR->actualFind = FindText->GetString(0);
-	//FindText->GetArray(&FR->findRecent);
 	if (ReplaceText){
 		FR->actualReplace = ReplaceText->GetString(0);
-		//ReplaceText->GetArray(&FR->replaceRecent);
 	}
 	if (FindInSubsPattern){
 		FR->actualFilters = FindInSubsPattern->GetString(0);
-		//FindInSubsPattern->GetArray(&FR->subsFindingFilters);
 		FR->actualPaths = FindInSubsPath->GetString(0);
-		//FindInSubsPath->GetArray(&FR->subsFindingPaths);
+	}
+	if (ChoosenStyleText){
+		Options.SetString(FIND_REPLACE_STYLES, ChoosenStyleText->GetValue());
 	}
 }
 
@@ -330,6 +329,9 @@ void TabWindow::SetValues()
 		FindInSubsPattern->PutArray(&FR->subsFindingFilters);
 		FindInSubsPath->SetValue(FR->actualPaths);
 		FindInSubsPath->PutArray(&FR->subsFindingPaths);
+	}
+	if (ChoosenStyleText){
+		ChoosenStyleText->SetValue(Options.GetString(FIND_REPLACE_STYLES));
 	}
 }
 
