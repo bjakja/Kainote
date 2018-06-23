@@ -686,9 +686,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	else if (id == PlayActualLine){
 		TabPanel *tab = GetTab();
 		tab->Edit->TextEdit->SetFocus();
-		tab->Video->PlayLine(tab->Edit->line->Start.mstime, tab->Video->GetPlayEndTime(tab->Edit->line->End.mstime)/* - tab->Video->avtpf*/);
-		//wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED,ID_BPLINE);
-		//GetTab()->Video->OnAccelerator(evt);
+		tab->Video->PlayLine(tab->Edit->line->Start.mstime, tab->Video->GetPlayEndTime(tab->Edit->line->End.mstime));
 	}
 	else if (id == Quit){
 		Close();
