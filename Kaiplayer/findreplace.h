@@ -29,68 +29,71 @@ class FindReplace
 {
 	friend class TabWindow;
 	friend class FindReplaceDialog;
-	public:
+public:
 
-		FindReplace(KainoteFrame* kfparent, FindReplaceDialog *FRD);
-		~FindReplace(){};
-		void ShowResult(TabPanel *tab, const wxString &path, int keyLine);
-		KainoteFrame *Kai;
-        int linePosition;
-		int reprow;
-        int textPosition;
-		int findstart;
-		int findend;
-		int lastActive;
-		wxString oldfind;
-        bool fnext;
-		bool fromstart;
-		bool blockTextChange;
-		bool findTextReset = false;
-		bool wasResetToStart = false;
-		wxArrayString findRecent;
-		wxArrayString replaceRecent;
-		wxArrayString subsFindingFilters;
-		wxArrayString subsFindingPaths;
-		wxString actualFind;
-		wxString actualReplace;
-		wxString actualFilters;
-		wxString actualPaths;
-		wxRegEx rgx;
+	FindReplace(KainoteFrame* kfparent, FindReplaceDialog *FRD);
+	~FindReplace(){};
+	void ShowResult(TabPanel *tab, const wxString &path, int keyLine);
+	KainoteFrame *Kai;
+	int linePosition;
+	int reprow;
+	int textPosition;
+	int findstart;
+	int findend;
+	int lastActive;
+	wxString oldfind;
+	bool fnext;
+	bool fromstart;
+	bool blockTextChange;
+	bool findTextReset = false;
+	bool wasResetToStart = false;
+	wxArrayString findRecent;
+	wxArrayString replaceRecent;
+	wxArrayString subsFindingFilters;
+	wxArrayString subsFindingPaths;
+	wxString actualFind;
+	wxString actualReplace;
+	wxString actualFilters;
+	wxString actualPaths;
+	wxRegEx rgx;
+	// find replace styles
+	wxString stylesAsText;
+	bool wasIngored = false;
+	// find replace in tab / subs config
+	bool startLine;
+	bool endLine;
+	bool regEx;
+	bool matchCase;
+	int tabTextPosition;
+	int tabLinePosition;
+	int positionId;
+	wxString findString;
+	wxString replaceString;
+	wxString subsPath;
+	wxRegEx findReplaceRegEx;
+	// everythin should be set before FindInSubsLine or ReplaceInSubsLine called
 
-		// find replace in tab / subs config
-		bool startLine;
-		bool endLine;
-		bool regEx;
-		bool matchCase;
-		int tabTextPosition;
-		int tabLinePosition;
-		int positionId;
-		wxString findString;
-		wxString replaceString;
-		wxString subsPath;
-		wxRegEx findReplaceRegEx;
-		// everythin should be set before FindInSubsLine or ReplaceInSubsLine called
-		
-		void Find(TabWindow *window);
-		void OnFind(TabWindow *window);
-		void FindInAllOpenedSubs(TabWindow *window);
-		void FindAllInCurrentSubs(TabWindow *window);
-		void FindInSubs(TabWindow *window);
-		void FindReplaceInSubs(TabWindow *window, bool find);
-		void FindInSubsLine(wxString *onlyString, bool *isFirst);
-		int ReplaceInSubsLine(wxString *onlyString);
-		void Replace(TabWindow *window);
-		int ReplaceAllInTab(TabPanel *tab, TabWindow *window, long replaceColumn);
-		void ReplaceAll(TabWindow *window);
-		void ReplaceInAllOpenedSubs(TabWindow *window);
-		void ReplaceInSubs(TabWindow *window);
-		bool FindAllInTab(TabPanel *tab, TabWindow *window);
-		void AddRecent(TabWindow *window);
-		void OnClose();
-		void GetFolderFiles(const wxString &path, const wxString &filters, wxArrayString *paths, bool subFolders, bool hiddenFolders);
-
-		FindReplaceDialog *FRD = NULL;
-		FindReplaceResultsDialog *FRRD = NULL;
+	void Find(TabWindow *window);
+	void OnFind(TabWindow *window);
+	void FindInAllOpenedSubs(TabWindow *window);
+	void FindAllInCurrentSubs(TabWindow *window);
+	void FindInSubs(TabWindow *window);
+	void FindReplaceInSubs(TabWindow *window, bool find);
+	void FindInSubsLine(wxString *onlyString, bool *isFirst);
+	int ReplaceInSubsLine(wxString *onlyString);
+	void Replace(TabWindow *window);
+	int ReplaceAllInTab(TabPanel *tab, TabWindow *window, long replaceColumn);
+	void ReplaceAll(TabWindow *window);
+	void ReplaceInAllOpenedSubs(TabWindow *window);
+	void ReplaceInSubs(TabWindow *window);
+	bool FindAllInTab(TabPanel *tab, TabWindow *window);
+	void AddRecent(TabWindow *window);
+	void OnClose();
+	void GetFolderFiles(const wxString &path, const wxString &filters, wxArrayString *paths, bool subFolders, bool hiddenFolders);
+private:
+	bool CheckStyles(TabWindow *window, TabPanel *tab);
+	FindReplaceDialog *FRD = NULL;
+	FindReplaceResultsDialog *FRRD = NULL;
 };
 
 enum

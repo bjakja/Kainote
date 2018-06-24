@@ -121,6 +121,7 @@
 	CG(EditorOn,)\
 	CG(FIND_IN_SUBS_FILTERS_RECENT,)\
 	CG(FIND_IN_SUBS_PATHS_RECENT,)\
+	CG(FIND_REPLACE_STYLES,)\
 	CG(FindRecent,)\
 	CG(FindReplaceOptions,)\
 	CG(FontCollectorAction,)\

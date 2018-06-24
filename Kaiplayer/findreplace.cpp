@@ -139,12 +139,10 @@ void FindReplace::Find(TabWindow *window)
 		linePosition = (!window->AllLines->GetValue() && firstSelectionId >= 0) ? tab->Grid->file->GetElementById(firstSelectionId) : 0;
 		textPosition = 0;
 	}
-	wxString stylesList = window->ChoosenStyleText->GetValue();
-	bool styles = false;
-	if (stylesList != ""){
-		styles = true;
-		stylesList = "," + stylesList + ",";
-	}
+	if (CheckStyles(window, tab))
+		return;
+	bool styles = !stylesAsText.empty();
+		
 	bool onlysel = window->SelectedLines->GetValue();
 	File *Subs = tab->Grid->file->GetSubs();
 
@@ -154,7 +152,7 @@ void FindReplace::Find(TabWindow *window)
 		if (!Dial->isVisible){ linePosition++; textPosition = 0; continue; }
 
 		if ((!styles && !onlysel) ||
-			(styles && stylesList.Find("," + Dial->Style + ",") != -1) ||
+			(styles && stylesAsText.Find("," + Dial->Style + ",") != -1) ||
 			(onlysel && tab->Grid->file->IsSelectedByKey(linePosition))){
 			if (wrep == STYLE){
 				txt = Dial->Style;
@@ -334,12 +332,8 @@ bool FindReplace::FindAllInTab(TabPanel *tab, TabWindow *window)
 	if (tabLinePosition > 0)
 		positionId = firstSelectedId;
 	
-	wxString stylesList = window->ChoosenStyleText->GetValue();
-	bool styles = false;
-	if (stylesList != ""){
-		styles = true;
-		stylesList = "," + stylesList + ",";
-	}
+	bool styles = !stylesAsText.empty();
+
 	bool onlySelections = window->SelectedLines->GetValue();
 	File *Subs = tab->Grid->file->GetSubs();
 	wxRegEx seekRegex;
@@ -359,7 +353,7 @@ bool FindReplace::FindAllInTab(TabPanel *tab, TabWindow *window)
 		if (!Dial->isVisible){ tabLinePosition++; tabTextPosition = 0; continue; }
 
 		if ((!styles && !onlySelections) ||
-			(styles && stylesList.Find("," + Dial->Style + ",") != -1) ||
+			(styles && stylesAsText.Find("," + Dial->Style + ",") != -1) ||
 			(onlySelections && tab->Grid->file->IsSelectedByKey(tabLinePosition))){
 			if (wrep == STYLE){
 				txt = Dial->Style;
@@ -456,6 +450,9 @@ void FindReplace::FindInAllOpenedSubs(TabWindow *window)
 	else
 		FRRD->ClearList();
 
+	if (CheckStyles(window, Kai->GetTab()))
+		return;
+
 	for (size_t i = 0; i < Kai->Tabs->Size(); i++){
 		if (FindAllInTab(Kai->Tabs->Page(i), window)){
 			return;
@@ -476,6 +473,9 @@ void FindReplace::FindAllInCurrentSubs(TabWindow *window)
 		FRRD->ClearList();
 
 	TabPanel *tab = Kai->GetTab();
+	if (CheckStyles(window, tab))
+		return;
+
 	if (FindAllInTab(tab, window)){
 		return;
 	}
@@ -962,10 +962,9 @@ int FindReplace::ReplaceAllInTab(TabPanel *tab, TabWindow *window, long replaceC
 	int allRelpacements = 0;
 	int allreps = 0;
 	wxString txt;
-	wxString stylesAsText = window->ChoosenStyleText->GetValue();
-	bool notstyles = false;
-	if (stylesAsText == ""){ notstyles = true; }
-	else{ stylesAsText = "," + stylesAsText + ","; }
+	
+	bool notstyles = stylesAsText.empty();
+
 	bool onlysel = window->SelectedLines->GetValue();
 
 	int firstSelectionId = tab->Grid->FirstSelection();
@@ -1093,6 +1092,9 @@ void FindReplace::ReplaceAll(TabWindow *window)
 	if (window->CollumnStyle->GetValue()){ replaceColumn = STYLE; }
 	else if (window->CollumnActor->GetValue()){ replaceColumn = ACTOR; }
 	else if (window->CollumnEffect->GetValue()){ replaceColumn = EFFECT; }
+
+	if (CheckStyles(window, tab))
+		return;
 	
 	int allReplacements = ReplaceAllInTab(tab, window, replaceColumn);
 	if (allReplacements < 0){
@@ -1121,6 +1123,9 @@ void FindReplace::ReplaceInAllOpenedSubs(TabWindow *window)
 		wxLogStatus("chujnia replace all we wszystkich otwartch subach wywołane nie z okna replace");
 		return;
 	}
+
+	if (CheckStyles(window, Kai->GetTab()))
+		return;
 
 	int allTabsReplacements = 0;
 	for (size_t i = 0; i < Kai->Tabs->Size(); i++){
@@ -1268,4 +1273,62 @@ void FindReplace::GetFolderFiles(const wxString &path, const wxString &filters, 
 	else{
 		KaiMessageBox(_("Ścieżka szukania jest nieprawidłowa"));
 	}
+}
+
+//no const cause styles will be changed when user choose it
+bool FindReplace::CheckStyles(TabWindow *window, TabPanel *tab)
+{
+	stylesAsText = window->ChoosenStyleText->GetValue();
+	if (stylesAsText.empty())
+		return false;
+
+	wxStringTokenizer tknzr(stylesAsText, ",", wxTOKEN_STRTOK);
+	wxString notFoundStyles;
+	wxString foundStyles;
+
+	while (tknzr.HasMoreTokens()){
+		wxString styleName = tknzr.GetNextToken();
+		int result = tab->Grid->FindStyle(styleName);
+		if (result == -1){
+			notFoundStyles << styleName << L", ";
+		}
+		else{
+			foundStyles << styleName << L",";
+		}
+	}
+	if ((!notFoundStyles.empty() && !wasIngored) || foundStyles.empty()){
+		notFoundStyles.RemoveLast();
+		KaiMessageDialog *KMD;
+		if (foundStyles.empty()){
+			KMD = new KaiMessageDialog(FRD, _("Wszystkich wybranych stylów nie ma w przeszukiwanych napisach,\nprzez co nic nie zostanie znalezione.\nCo zrobić?"), _("Potwierdzenie"), wxYES | wxCANCEL);
+			KMD->SetYesLabel(_("Wyczyść style"));
+		}
+		else{
+			KMD = new KaiMessageDialog(FRD, wxString::Format(_("Stylów o nazwach \"%s\" nie ma w przeszukiwanych napisach,\nco może znacząco zmniejszyć ilość wyników szukania.\nCo zrobić?"), notFoundStyles), _("Potwierdzenie"), wxOK | wxYES_NO | wxCANCEL);
+			KMD->SetOkLabel(_("Usuń nieistniejące style"));
+			KMD->SetYesLabel(_("Wyczyść style"));
+			KMD->SetNoLabel(_("Ignoruj"));
+		}
+		int result = KMD->ShowModal();
+		if (result == wxOK){
+			stylesAsText = L"," + foundStyles;
+			window->ChoosenStyleText->SetValue(foundStyles.RemoveLast());
+		}
+		else if (result == wxYES){
+			stylesAsText = L"";
+			window->ChoosenStyleText->SetValue(stylesAsText);
+		}
+		else if (result == wxNO){
+			wasIngored = true;
+		}
+		else if (result == wxCANCEL){
+			return true;
+		}
+		//if (result != wxNO)
+			//wasIngored = false;
+	}
+	if (!stylesAsText.empty() && !stylesAsText.StartsWith(","))
+		stylesAsText = L"," + stylesAsText + L",";
+
+	return false;
 }
