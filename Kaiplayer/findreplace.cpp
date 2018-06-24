@@ -1300,12 +1300,12 @@ bool FindReplace::CheckStyles(TabWindow *window, TabPanel *tab)
 		notFoundStyles.RemoveLast();
 		KaiMessageDialog *KMD;
 		if (foundStyles.empty()){
-			KMD = new KaiMessageDialog(FRD, _("Wszystkich wybranych stylów nie ma w szukanych napisach,\nprzez co nic nie zostanie znalezione\nCo zrobić?"), _("Potwierdzenie"), wxYES | wxCANCEL);
+			KMD = new KaiMessageDialog(FRD, _("Wszystkich wybranych stylów nie ma w przeszukiwanych napisach,\nprzez co nic nie zostanie znalezione.\nCo zrobić?"), _("Potwierdzenie"), wxYES | wxCANCEL);
 			KMD->SetYesLabel(_("Wyczyść style"));
 		}
 		else{
-			KMD = new KaiMessageDialog(FRD, wxString::Format(_("Stylów o nazwach \"%s\" nie ma w szukanych napisach,\nco może znacząco zmniejszyć ilość wyników szukania\nCo zrobić?"), notFoundStyles), _("Potwierdzenie"), wxOK | wxYES_NO | wxCANCEL);
-			KMD->SetOkLabel(_("Usuń nie istniejące style"));
+			KMD = new KaiMessageDialog(FRD, wxString::Format(_("Stylów o nazwach \"%s\" nie ma w przeszukiwanych napisach,\nco może znacząco zmniejszyć ilość wyników szukania.\nCo zrobić?"), notFoundStyles), _("Potwierdzenie"), wxOK | wxYES_NO | wxCANCEL);
+			KMD->SetOkLabel(_("Usuń nieistniejące style"));
 			KMD->SetYesLabel(_("Wyczyść style"));
 			KMD->SetNoLabel(_("Ignoruj"));
 		}
