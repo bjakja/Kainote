@@ -344,7 +344,6 @@ void DirectSoundPlayer2Thread::Run()
 		case WAIT_OBJECT_0+2:
 			{
 				// Set end frame
-				//wxLogStatus("end %i, next %i", end_frame, next_input_frame);
 				if (end_frame <= next_input_frame)
 				{
 					bfr->Stop();

@@ -237,7 +237,7 @@ void MoveAll::ChangeInLines(bool all)
 			bool visible=false; 
 			dummytext = tab->Grid->GetVisible(&visible,0,&selPositions);
 			if(selPositions.size() != sels.size()){
-				wxLogStatus("Sizes mismatch");
+				KaiLog("Sizes mismatch");
 				return;
 			}
 		}
@@ -335,7 +335,7 @@ void MoveAll::ChangeInLines(bool all)
 		tab->Grid->SetModified(VISUAL_POSITION_SHIFTER,true);
 		tab->Grid->Refresh();
 	}else{
-		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
+		if(!tab->Video->OpenSubs(dtxt)){KaiLog(_("Nie można otworzyć napisów"));}
 		tab->Video->VisEdit=true;
 		tab->Video->Render();
 

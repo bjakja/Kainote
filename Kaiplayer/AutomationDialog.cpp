@@ -209,7 +209,6 @@ namespace Auto{
 			, alpha(alpha)
 		{
 			//wxString col = get_field(L, "value");
-			//wxLogStatus("col "+col);
 			//color = AssColor(col);
 		}
 
@@ -218,7 +217,6 @@ namespace Auto{
 		void UnserialiseValue(const wxString &serialised) { color = wxColour(wxString(inline_string_decode(serialised))); }
 
 		wxWindow *Create(wxWindow *parent) {
-			//wxLogStatus("color %i %i %i %i", color.r, color.g, color.b, color.a);
 			cw = new ButtonColorPicker(parent, color.GetWX(), wxDefaultSize);
 			cw->SetToolTip(wxString(hint));
 			return cw;
@@ -447,7 +445,6 @@ namespace Auto{
 				wxString butt = check_string(L, -2);
 				int id = string_wxString_id(butt);
 				//if (id<0){id = idstart; idstart++;}
-				//wxLogStatus("button %s %i", butt, id);
 				wxString label = check_string(L, -1);
 				auto btn = find_if(buttons.begin(), buttons.end(),
 					[&](std::pair<int, wxString>& btn) { return btn.second == label; });
@@ -519,7 +516,6 @@ namespace Auto{
 		if (use_buttons) {
 			if (button_pushed < 0 || buttons[button_pushed].first == wxID_CANCEL){
 				lua_pushboolean(L, false);
-				//wxLogStatus("cancelled %i", button_pushed);
 			}
 			else
 				lua_pushstring(L, buttons[button_pushed].second.utf8_str().data());

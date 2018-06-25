@@ -58,7 +58,6 @@ namespace Auto {
 				size = f.Length();
 				f.Read(buff,size);
 			}*/
-			//wxLogStatus("sizes %i, %i", size, size1);
 			if (size >= 3 && buff[0] == -17 && buff[1] == -69 && buff[2] == -65) {
 				buff += 3;
 				size -= 3;
@@ -66,16 +65,13 @@ namespace Auto {
 		}
 		wxString name = filename.AfterLast('\\');
 		if (!filename.EndsWith("moon")){
-			//wxLogStatus("file nie jest moonem");
 			//LuaScriptReader script_reader(filename);
 			bool ret = luaL_loadbuffer(L, (compatybility)? constbuff : buff, size, name.utf8_str().data()) == 0;
 
 			if(!compatybility){delete[] cpybuff;}
-			//wxLogStatus("file nie jest moonem %i", (int)ret);
 			return ret;
 			
 		}
-		//wxLogStatus("file jednak jest moonem");
 		// We have a MoonScript file, so we need to load it with that
 		// It might be nice to have a dedicated lua state for compiling
 		// MoonScript to Lua
@@ -146,7 +142,7 @@ namespace Auto {
 		// set the module load path to include_path
 		//if(LoadFile(L,include_path[include_path.size()-1]+"\\moonscript.lua"))
 		//{
-			//wxLogStatus("moonscript not loaded");
+			
 		//}
 		lua_getglobal(L, "package");
 		push_value(L, "path");

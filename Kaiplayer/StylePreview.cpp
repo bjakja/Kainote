@@ -57,7 +57,7 @@ void StylePreview::DrawPreview(Styles *style)
 	// Select renderer
 	//if(!vobsub){
 	vobsub = csri_renderer_default();
-	if(!vobsub){wxLogStatus(_("CSRI odmówiło posłuszeństwa."));return;}
+	if(!vobsub){KaiLog(_("CSRI odmówiło posłuszeństwa."));return;}
 	//}
 	
 	GetClientSize(&width,&height);
@@ -68,7 +68,7 @@ void StylePreview::DrawPreview(Styles *style)
 	int size = strlen(buffer);
 	instance = csri_open_mem(vobsub,buffer,size,NULL);
 	if(!instance){
-		wxLogStatus(_("Instancja VobSuba nie utworzyła się."));return;}
+		KaiLog(_("Instancja VobSuba nie utworzyła się."));return;}
 
 	const wxColour & kol1 = Options.GetColour(StylePreviewColor1);
 	const wxColour & kol2 = Options.GetColour(StylePreviewColor2);
@@ -115,7 +115,7 @@ void StylePreview::DrawPreview(Styles *style)
 	format.height = height;
 	format.pixfmt = frame.pixfmt;
 	int error = csri_request_fmt(instance,&format);
-	if (error) {wxLogStatus(_("CSRI nie obsługuje tego formatu."));return;}
+	if (error) {KaiLog(_("CSRI nie obsługuje tego formatu."));return;}
 
 	// Render
 	csri_render(instance,&frame,0);

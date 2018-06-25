@@ -132,7 +132,7 @@ HRESULT CD2DVideoRender::CheckMediaType(const CMediaType *pmt)
 	}
 	/*OLECHAR bstrGuid[100];
 	StringFromGUID2(*SubType,bstrGuid,100);
-	wxLogStatus(wxString(bstrGuid));*/
+	wLogStatus(wxString(bstrGuid));*/
     return S_OK;
 }
 
@@ -178,7 +178,6 @@ HRESULT CD2DVideoRender::SetMediaType(const CMediaType *pmt)
 		Vinfo.height=vInfo->bmiHeader.biHeight;
 		Vinfo.ARatioX=Vinfo.width;
 		Vinfo.ARatioY=Vinfo.height;
-		//wxLogStatus("Bitcount %i", (int)vInfo->bmiHeader.biBitCount);
 	}
 	else if(pmt->formattype == FORMAT_VideoInfo2)
 	{
@@ -222,13 +221,11 @@ HRESULT CD2DVideoRender::SetMediaType(const CMediaType *pmt)
 
 	if(tpf<1){tpf=417083;}
 	Vinfo.fps=(float)(10000000.0/tpf);
-	//wxLogStatus("format %i", (int)Vinfo.CT);
 	return S_OK;
 }
 
  HRESULT CD2DVideoRender::EndOfStream()
  {
-	 //wxLogStatus("End of stream");
 	 HRESULT hr=CBaseRenderer::EndOfStream();
 	 wxCommandEvent *evt=new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED,23333);
 	 wxQueueEvent(Vrend, evt);//EndofStream();

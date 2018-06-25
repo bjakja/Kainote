@@ -513,7 +513,6 @@ void FontDialog::OnScrollList(wxCommandEvent& event)
 
 	int step=(event.GetId()==ID_SCROLLUP)? -1 : 1;
 	Fonts->Scroll(step);
-	//wxLogStatus("weszło");
 	FontName->SetValue(Fonts->GetString(Fonts->GetSelection()));
 	UpdatePreview();
 }

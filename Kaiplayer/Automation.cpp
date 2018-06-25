@@ -149,7 +149,6 @@ namespace Auto{
 		VideoCtrl *video=Notebook::GetTab()->Video;
 		if (video->GetState()!=None) {
 			int ms=(video->IsDshow)? ((frame*1000)/video->fps) : video->VFF->GetMSfromFrame(frame);
-			//wxLogStatus("ms %i %i %i", ms , (int)((frame*1000)/video->fps), video->VFF->GetMSfromFrame(frame));
 			lua_pushnumber(L, ms);
 		} else {
 			lua_pushnil(L);
@@ -192,7 +191,6 @@ namespace Auto{
 	int decode_path(lua_State *L)
 	{
 		wxString path = check_string(L, 1);
-		//wxLogStatus("path before "+path);
 		TabPanel *pan=Notebook::GetTab();
 		path.Replace('/','\\');
 		wxString firstAutomation = Options.pathfull+"\\Automation";
@@ -206,7 +204,6 @@ namespace Auto{
 			else if(path[1]=='u' && path[4]=='r') path.replace(0,5,firstAutomation);
 			else if(path[1]=='v' && path[4]=='e') path.replace(0,6,pan->VideoPath.BeforeLast('\\'));
 		}
-		//wxLogStatus("path after "+path);
 		push_value(L, path);
 		return 1;
 	}
@@ -481,7 +478,6 @@ namespace Auto{
 	void LuaScript::Destroy()
 	{
 		// Assume the script object is clean if there's no Lua state
-		//wxLogStatus("L %i", (int)L);
 		if (!L) return;
 
 		// loops backwards because commands remove themselves from macros when
@@ -537,7 +533,6 @@ namespace Auto{
 		if (!wxFileExists(*filepath)) { // Plain filename
 			if(fullpath){*filepath=filepath->AfterLast('\\');}
 			for (auto const& dir : s->include_path) {
-				//wxLogStatus("dir: \""+dir+"\" name: \""+filename);
 				*filepath = dir + *filename;
 				if (wxFileExists(*filepath))
 					break;
@@ -625,8 +620,6 @@ namespace Auto{
 		lua_gc(L, LUA_GCCOLLECT, 0);
 		if(ps->Log=="" && !hasMessage){ps->lpd->closedialog=true;}else{ps->lpd->finished=true;}
 
-		//wxLogStatus("failed %i and debug out \'"+ps->Log+"\'", failed);
-		
 		if (failed){ return (wxThread::ExitCode) 1;}
 		return 0;
 	}
@@ -682,7 +675,6 @@ namespace Auto{
 		
 		lua_getfield(L, LUA_REGISTRYINDEX, "filename");
 		//cmd_name = wxString::Format("automation/lua/%s/%s", check_string(L, -1), check_string(L, 1));
-		//wxLogStatus(cmd_name);
 		if (!lua_isfunction(L, 3))
 			error(L, "The macro processing function must be a function");
 
@@ -947,7 +939,6 @@ namespace Auto{
 			grid->SetModified(ASS_PROPERTIES, false, true, -1, false);
 		}
 		HasChanges=true;
-		//wxLogStatus("description: " + ls->GetDescription());
 		return true;
 	}
 
@@ -985,8 +976,8 @@ namespace Auto{
 	void Automation::ReloadScripts(bool first)
 	{
 		initialized = true;
-		wxStopWatch sw;
-		sw.Start();
+		//wxStopWatch sw;
+		//sw.Start();
 		//initialized =false;
 		if(!first){RemoveAll(true);}
 		int error_count = 0;
@@ -1037,8 +1028,8 @@ namespace Auto{
 		}
 
 		
-		STime countTime(sw.Time());
-		wxLogStatus("Upłynęło %sms",countTime.GetFormatted(SRT));
+		//STime countTime(sw.Time());
+		//KaiLog("Upłynęło %sms",countTime.GetFormatted(SRT));
 	}
 
 	bool Automation::AddFromSubs()
@@ -1054,7 +1045,6 @@ namespace Auto{
 		{
 			wxString onepath=token.GetNextToken();
 			onepath.Trim(false);
-			//wxLogStatus(onepath);
 			if(!wxFileExists(onepath)){continue;}
 
 			try {
@@ -1146,7 +1136,6 @@ namespace Auto{
 				if(script->CheckLastModified(true)){script->Reload();}
 				Menu *submenu=new Menu();
 				auto macros = script->GetMacros();
-				//wxLogStatus("size %i", macros.size());
 				for(size_t p = 0; p < macros.size(); p++){
 					auto macro = macros[p];
 					wxString text; text<<"Script "<<script->GetFilename()<<"-"<<p;
@@ -1193,7 +1182,6 @@ namespace Auto{
 			if(script->CheckLastModified(true)){script->Reload();}
 			Menu *submenu=new Menu();
 			auto macros = script->GetMacros();
-			//wxLogStatus("size %i", macros.size());
 			for(size_t p = 0; p < macros.size(); p++){
 				auto macro = macros[p];
 				wxString text; text<<"Script "<<script->GetFilename()<<"-"<<p;

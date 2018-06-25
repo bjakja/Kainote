@@ -167,7 +167,7 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 		sei.lpVerb = wxT("explore");
 		sei.nShow = SW_RESTORE;
 		sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
-		if (!ShellExecuteEx(&sei)){ wxLogStatus(_("Nie można otworzyć folderu")); }
+		if (!ShellExecuteEx(&sei)){ KaiLog(_("Nie można otworzyć folderu")); }
 	}, 9877);
 	Bind(EVT_ENABLE_OPEN_FOLDER, [=](wxThreadEvent evt){
 		bOpenFontFolder->Enable();
@@ -419,7 +419,6 @@ void FontCollector::GetAssFonts(std::vector<bool> &found, bool check)
 				}
 				else
 				{
-					//wxLogStatus(textHavingFont);
 					textHavingFont.Replace("\\N","");
 					textHavingFont.Replace("\\n","");
 					textHavingFont.Replace("\\h"," ");
@@ -825,12 +824,11 @@ void FontCollector::MuxVideoWithSubs()
 	command.Replace("\\","/");
 	command << L"\"--track-order\" \"0:0,0:1,1:0\"";
 	wxString fullcommand = L"\"" + muxerpath + L"\"" + command;
-	//wxLogStatus(command);
-
+	
 	STARTUPINFO si = { sizeof( si ) };
 	PROCESS_INFORMATION pi;
 	if(!CreateProcessW(NULL, (LPWSTR)fullcommand.wc_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi )){
-		wxLogStatus(_("Nie można stworzyć procesu, muxowanie przerwane"));
+		KaiLog(_("Nie można stworzyć procesu, muxowanie przerwane"));
 	}
 
 

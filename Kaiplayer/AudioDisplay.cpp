@@ -262,7 +262,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 
 	if (d3dDevice){
 		hr = d3dDevice->Reset(&d3dpp);
-		if (FAILED(hr)){ wxLogStatus(_("Nie można zresetować Direct3D")); }
+		if (FAILED(hr)){ KaiLog(_("Nie można zresetować Direct3D")); }
 	}
 	else{
 		hr = d3dObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
@@ -924,7 +924,6 @@ void AudioDisplay::DrawWaveform(bool weak) {
 		v2[0] = D3DXVECTOR2(i, peak[i]);
 		v2[1] = D3DXVECTOR2(i, min[i] - 1);
 		hr = d3dLine->Draw(v2, 2, waveform);
-		//wxLogStatus("drawWaveform %i", (int)FAILED(hr));
 	}
 
 	if (hasSel) {
@@ -977,7 +976,7 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 	wxRect crc = GetClientRect();
 	RECT rc = { crc.x, crc.y, crc.width - crc.x, crc.height - crc.y };
 	if (FAILED(d3dDevice->StretchRect(spectrumSurface, &rc, backBuffer, &rc, D3DTEXF_LINEAR))){
-		wxLogStatus(_("Nie można nałożyć powierzchni spectrum na siebie"));
+		KaiLog(_("Nie można nałożyć powierzchni spectrum na siebie"));
 	}
 
 }
@@ -1835,7 +1834,6 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 			// Release
 			if (buttonUP) {
 				// Prevent negative times
-				//wxLogStatus(" hold1 %i", Grabbed);
 				if (Grabbed == -1)
 				{
 					curStartMS = MAX(0, curStartMS);
@@ -1990,7 +1988,6 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 				int64_t slend;
 				if (hasKara && Grabbed >= 0){
 					slend = GetSampleAtMS(karaoke->syltimes[Grabbed]);
-					//wxLogStatus("cur %i end %i", (int)player->GetCurrentPosition(), (int)slend);
 				}
 				else{
 					slend = GetSampleAtX(selEnd);
@@ -2199,7 +2196,6 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 		needImageUpdateWeak = true;
 		needImageUpdate = true;
 		int64_t curPos = player->GetCurrentPosition();
-		//wxLogStatus("Cur %i", curPos);
 		if (curPos > player->GetStartPosition() && curPos < player->GetEndPosition()) {
 			// Scroll if needed
 			int posX = GetXAtSample(curPos);

@@ -749,7 +749,6 @@ wxString getfloat(float num, const wxString &format, bool Truncate)
 		else{/*if(trim){int tmpc=static_cast < int >(strnum.GetChar(i));tmpc++;strnum[i]=(wxUniChar)tmpc;}*/break;}
 	}
 	if(rmv){strnum.RemoveLast(rmv);}
-	//wxLogStatus("strnum %s num %f", strnum, num);
 	return strnum.Trim(false);
 }
 
@@ -871,7 +870,7 @@ BOOL CALLBACK MonitorEnumProc1(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMon
 	monitorinfo.cbSize = sizeof(monitorinfo);
 
 	if (!GetMonitorInfo(hMonitor, &monitorinfo)){
-		wxLogStatus(_("Nie można pobrać informacji o monitorze"));
+		KaiLog(_("Nie można pobrać informacji o monitorze"));
 		return TRUE;
 	}
 	//podstawowy monitor ma być pierwszy w tablicy

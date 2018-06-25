@@ -96,7 +96,7 @@ bool MatroskaWrapper::Open(const wxString &filename,bool parse) {
 		if (!file) {
 			delete input;
 			//throw wxString("MatroskaParser error: " + wxString(err,wxConvUTF8)).c_str();
-			wxLogStatus(_("Błąd MatroskaParsera: ") + wxString(err,wxConvUTF8));
+			KaiLog(_("Błąd MatroskaParsera: ") + wxString(err,wxConvUTF8));
 			return false;
 		}
 
@@ -108,7 +108,7 @@ bool MatroskaWrapper::Open(const wxString &filename,bool parse) {
 	else {
 		delete input;
 		//throw "Unable to open Matroska file for parsing.";
-		wxLogStatus(_("Nie można otworzyć pliku Matroska."));
+		KaiLog(_("Nie można otworzyć pliku Matroska."));
 		return false;
 	}
 	return true;
@@ -192,13 +192,12 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 
 		// Get codec type (0 = ASS/SSA, 1 = SRT)
 		trackInfo = mkv_GetTrackInfo(file,trackToRead);
-		//wxLogStatus("track infos %i %i", (int)trackInfo->CompEnabled, trackInfo->CompMethod);
 		CompressedStream *cs=NULL;
 		if(trackInfo->CompEnabled && trackInfo->CompMethod==0){
 			char msg[201];
 			msg[200]=0;
 			cs=cs_Create(file,trackToRead,msg,200);
-			if(!cs){wxLogStatus(_("Błąd zlib: %s"), msg);}
+			if (!cs){ KaiLog(wxString::Format(_("Błąd zlib: %s"), msg)); }
 		}
 		wxString CodecID = wxString(trackInfo->CodecID,*wxConvCurrent);
 		int codecType = 0;

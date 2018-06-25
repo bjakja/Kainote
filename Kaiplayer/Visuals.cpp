@@ -304,7 +304,6 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 		while(tkz.HasMoreTokens()&& ipos<6){
 			wxString token=tkz.GetNextToken();
 			if(!token.ToDouble(&tbl[ipos])){tbl[ipos]=0;}
-			//wxLogStatus("move %i, %f",ipos, tbl[ipos]);
 			ipos++;
 		}
 		tbl[4]+=edit->line->Start.mstime; tbl[5]+=edit->line->Start.mstime;
@@ -431,7 +430,7 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 			return;
 		}
 		tab->Video->VisEdit=false;
-		if(!tab->Video->OpenSubs(tab->Grid->GetVisible())){wxLogStatus(_("Nie można otworzyć napisów"));}
+		if(!tab->Video->OpenSubs(tab->Grid->GetVisible())){KaiLog(_("Nie można otworzyć napisów"));}
 		tab->Video->VisEdit=true;
 		if(redraw){tab->Video->Render();}
 		
@@ -565,9 +564,8 @@ void Visuals::SetClip(wxString clip,bool dummy, bool redraw, bool changeEditorTe
 		}
 		
 		tab->Video->VisEdit=false;
-		//wxLogStatus(*dummytext);
 		wxString *dtxt=new wxString(*dummytext);
-		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
+		if(!tab->Video->OpenSubs(dtxt)){KaiLog(_("Nie można otworzyć napisów"));}
 		tab->Video->VisEdit=true;
 		if(redraw){
 			tab->Video->Render();
@@ -595,7 +593,6 @@ void Visuals::SetVisual(bool dummy, int type)
 	MTextEditor *Editor=(isOriginal)? edit->TextEditOrig : edit->TextEdit;
 	//działanie dwuetapowe, pierwszy etap podmieniamy w wielu linijkach
 	if(edit->IsCursorOnStart()){
-		//wxLogStatus("multiple lines");
 		wxString *dtxt;
 		wxArrayInt sels; 
 		tab->Grid->file->GetSelections(sels);
@@ -605,7 +602,7 @@ void Visuals::SetVisual(bool dummy, int type)
 			selPositions.clear();
 			dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
 			if(selPositions.size() != sels.size()){
-				wxLogStatus("Sizes mismatch");
+				KaiLog("Sizes mismatch");
 				return;
 			}
 		}
@@ -656,7 +653,7 @@ void Visuals::SetVisual(bool dummy, int type)
 			tab->Grid->Refresh();
 		}else{
 		
-			if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
+			if(!tab->Video->OpenSubs(dtxt)){KaiLog(_("Nie można otworzyć napisów"));}
 			tab->Video->VisEdit=true;
 			tab->Video->Render();
 		}
@@ -696,7 +693,7 @@ void Visuals::SetVisual(bool dummy, int type)
 		dummytext->replace(dumplaced.x,dumplaced.y,txt);
 		dumplaced.y=txt.Len();
 		wxString *dtxt=new wxString(*dummytext);
-		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
+		if(!tab->Video->OpenSubs(dtxt)){KaiLog(_("Nie można otworzyć napisów"));}
 		tab->Video->VisEdit=true;
 		tab->Video->Render();
 	}else{

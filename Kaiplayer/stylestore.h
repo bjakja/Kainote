@@ -57,7 +57,7 @@ class StyleStore: public KaiDialog
 		StyleList* ASSList;
 		DialogSizer *Mainall;
 		StyleChange* cc;
-        bool changestyle(Styles *cstyl);
+        bool ChangeStyle(Styles *cstyl);
 		void StylesWindow(wxString newname="");
         void LoadStylesS(bool ass);
 		void StyleonVideo(Styles *styl, bool fullskreen=false);

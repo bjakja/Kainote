@@ -174,7 +174,6 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0,0,w,h);
-	//wxLogStatus("Paint");
 	int posX = startDrawPos;
 	int i = 0;
 	while(i < toolsSize + clipToolsSize + moveToolsSize){

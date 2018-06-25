@@ -204,7 +204,7 @@ int VideoFfmpeg::Init()
 
 	FFMS_Indexer *Indexer = FFMS_CreateIndexer(fname.utf8_str(), &errinfo);
 	if (!Indexer){
-		wxLogStatus(_("Wystąpił błąd indeksowania: %s"), errinfo.Buffer); return 0;
+		KaiLog(wxString::Format(_("Wystąpił błąd indeksowania: %s"), errinfo.Buffer)); return 0;
 	}
 
 	int NumTracks = FFMS_GetNumTracksI(Indexer);
@@ -311,10 +311,10 @@ done:
 		//in this moment indexer was released, there no need to release it
 		if (index == NULL) {
 			if (wxString(errinfo.Buffer).StartsWith("Cancelled")){
-				wxLogStatus(_("Indeksowanie anulowane przez użytkownika"));
+				KaiLog(_("Indeksowanie anulowane przez użytkownika"));
 			}
 			else{
-				wxLogStatus(_("Wystąpił błąd indeksowania: %s"), errinfo.Buffer);
+				KaiLog(wxString::Format(_("Wystąpił błąd indeksowania: %s"), errinfo.Buffer));
 			}
 			//FFMS_CancelIndexing(Indexer);
 			return 0;
@@ -325,7 +325,7 @@ done:
 		}
 		if (FFMS_WriteIndex(indexPath.utf8_str(), index, &errinfo))
 		{
-			wxLogStatus(_("Nie można zapisać indeksu, wystąpił błąd %s"), errinfo.Buffer);
+			KaiLog(wxString::Format(_("Nie można zapisać indeksu, wystąpił błąd %s"), errinfo.Buffer));
 			//FFMS_DestroyIndex(index);
 			//FFMS_CancelIndexing(Indexer);
 			//return 0;
@@ -352,7 +352,7 @@ done:
 
 		if (videosource == NULL) {
 			if (audiotrack == -1){
-				wxLogStatus(_("Nie można utworzyć VideoSource."));
+				KaiLog(_("Nie można utworzyć VideoSource."));
 				return 0;
 			}
 			else
@@ -389,7 +389,7 @@ done:
 		pixfmt[1] = -1;
 
 		if (FFMS_SetOutputFormatV2(videosource, pixfmt, width, height, FFMS_RESIZER_BILINEAR, &errinfo)) {
-			wxLogStatus(_("Nie można przekonwertować wideo na RGBA"));
+			KaiLog(_("Nie można przekonwertować wideo na RGBA"));
 			return 0;
 		}
 
@@ -403,7 +403,7 @@ done:
 		const wxString &colormatrix = grid->GetSInfo("YCbCr Matrix");
 		if ((CS == FFMS_CS_BT709 && colormatrix == "TV.601") || (ColorSpace != colormatrix && CS == FFMS_CS_BT470BG)) {
 			if (FFMS_SetInputFormatV(videosource, CS == FFMS_CS_BT709 ? FFMS_CS_BT470BG : FFMS_CS_BT470BG, CR, FFMS_GetPixFmt(""), &errinfo)){
-				wxLogStatus(_("Nie można zmienić macierzy YCbCr"));
+				KaiLog(_("Nie można zmienić macierzy YCbCr"));
 			}
 		}
 		if (colormatrix == "TV.601"){
@@ -415,12 +415,12 @@ done:
 
 		FFMS_Track *FrameData = FFMS_GetTrackFromVideo(videosource);
 		if (FrameData == NULL){
-			wxLogStatus(_("Nie można pobrać ścieżki wideo"));
+			KaiLog(_("Nie można pobrać ścieżki wideo"));
 			return 0;
 		}
 		const FFMS_TrackTimeBase *TimeBase = FFMS_GetTimeBase(FrameData);
 		if (TimeBase == NULL){
-			wxLogStatus(_("Nie można pobrać informacji o wideo"));
+			KaiLog(_("Nie można pobrać informacji o wideo"));
 			return 0;
 		}
 
@@ -450,7 +450,7 @@ audio:
 	if (audiotrack != -1){
 		audiosource = FFMS_CreateAudioSource(fname.utf8_str(), audiotrack, index, FFMS_DELAY_FIRST_VIDEO_TRACK, &errinfo);
 		if (audiosource == NULL) {
-			wxLogStatus(_("Wystąpił błąd tworzenia źródła audio: %s"), errinfo.Buffer);
+			KaiLog(wxString::Format(_("Wystąpił błąd tworzenia źródła audio: %s"), errinfo.Buffer));
 			return 0;
 		}
 
@@ -459,7 +459,7 @@ audio:
 		resopts->SampleFormat = FFMS_FMT_S16;
 
 		if (FFMS_SetOutputFormatA(audiosource, resopts, &errinfo)){
-			wxLogStatus(_("Wystąpił błąd konwertowania audio: %s"), errinfo.Buffer);
+			KaiLog(wxString::Format(_("Wystąpił błąd konwertowania audio: %s"), errinfo.Buffer));
 			return 1;
 		}
 		else{
@@ -474,7 +474,7 @@ audio:
 		NumSamples = audioprops->NumSamples;
 
 		if (abs(Delay) >= (SampleRate * NumSamples * BytesPerSample)){
-			wxLogStatus(_("Nie można ustawić opóźnienia, przekracza czas trwania audio"));
+			KaiLog(_("Nie można ustawić opóźnienia, przekracza czas trwania audio"));
 			Delay = 0;
 		}
 		audioLoadThread = new std::thread(AudioLoad, this, newIndex, audiotrack);
@@ -581,7 +581,7 @@ void VideoFfmpeg::GetAudio(void *buf, int64_t start, int64_t count)
 	wxCriticalSectionLocker lock(blockaudio);
 	if (FFMS_GetAudio(audiosource, buf, start, count, &errinfo)){
 		//sprawdzić co z tym kraszem
-		wxLogStatus("error audio" + wxString(errinfo.Buffer));
+		KaiLog("error audio" + wxString(errinfo.Buffer));
 	}
 
 }
@@ -909,16 +909,13 @@ void VideoFfmpeg::DeleteOldAudioCache()
 			datetime = (st.wYear * 980294400000) + (st.wMonth * 2678400000) + (st.wDay * 86400000) + (st.wHour * 3600000) + (st.wMinute * 60000) + (st.wSecond * 1000) + st.wMilliseconds;
 			dates[datetime] = i;
 		}
-		//else{
-		//wxLogStatus("nie można otworzyć pliku %s", audioCaches[i]);
-		//}
+		
 	}
 	int count = 0;
 	int diff = audioCaches.size() - maxAudio;
 	for (auto cur = dates.begin(); cur != dates.end(); cur++){
 		if (count >= diff){ break; }
 		int isgood = _wremove(audioCaches[cur->second].wchar_str());
-		//wxLogStatus("usuwa plik %i "+audioCaches[cur->second], isgood);
 		count++;
 	}
 

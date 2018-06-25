@@ -159,7 +159,6 @@ namespace Auto{
 
 	int LuaProgressSink::LuaSetProgress(lua_State *L)
 	{
-		//wxLogStatus("setprogress");
 		//LuaProgressSink *ps = GetObjPointer(L, lua_upvalueindex(1));
 		int progress = lua_tonumber(L, 1);
 		ps->SafeQueue(EVT_PROGRESS,progress);
@@ -168,7 +167,6 @@ namespace Auto{
 
 	int LuaProgressSink::LuaSetTask(lua_State *L)
 	{
-		//wxLogStatus("settask");
 		//LuaProgressSink *ps = GetObjPointer(L, lua_upvalueindex(1));
 		wxString task(lua_tostring(L, 1), wxConvUTF8);
 		ps->SafeQueue(EVT_TASK,task);
@@ -177,7 +175,6 @@ namespace Auto{
 
 	int LuaProgressSink::LuaSetTitle(lua_State *L)
 	{
-		//wxLogStatus("settitle");
 		//LuaProgressSink *ps = GetObjPointer(L, lua_upvalueindex(1));
 		wxString title(lua_tostring(L, 1), wxConvUTF8);
 		ps->SafeQueue(EVT_TITLE,title);
@@ -186,7 +183,6 @@ namespace Auto{
 
 	int LuaProgressSink::LuaGetCancelled(lua_State *L)
 	{
-		//wxLogStatus("getcanceled");
 		//LuaProgressSink *ps = GetObjPointer(L, lua_upvalueindex(1));
 		bool val=(ps->lpd)? ps->lpd->cancelled : false;
 		lua_pushboolean(L, val);
@@ -221,7 +217,6 @@ namespace Auto{
 			// call format function
 			lua_call(L, lua_gettop(L)-1, 1);
 		}
-		//wxLogStatus("msg");
 		// Top of stack is now a string to output
 		wxString msg(lua_tostring(L, 1), wxConvUTF8);
 		ps->Log<<msg;
@@ -401,7 +396,6 @@ namespace Auto{
 	{
 		wxMutexLocker lock(data_mutex);
 		int prg=evt.GetPayload<int>();
-		//wxLogStatus("prg %i", prg);
 		progress_display->SetValue(prg);
 		//progress_display->Pulse();
 	}

@@ -62,9 +62,8 @@ DShowPlayer::DShowPlayer(wxWindow*_parent) :
 {
 	parent=_parent;
 
-	//wxLogStatus("constructed");
 	HRESULT hr = CoInitialize(NULL);
-	if(FAILED(hr)){wxLogStatus(_("Nie można zainicjalizować COM"));}
+	if(FAILED(hr)){KaiLog(_("Nie można zainicjalizować COM"));}
 }
 
 
@@ -80,9 +79,7 @@ DShowPlayer::~DShowPlayer()
 bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 {
 	//MessageBeep(MB_ICONERROR);
-	//wxLogStatus("weszło");
 	PTR(InitializeGraph(), _("Błąd inicjalizacji Direct Show"));
-	//wxLogStatus("graph");
 	VideoCtrl *Video =(VideoCtrl*)parent;
 	
 	
@@ -97,18 +94,14 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 	/*if(SUCCEEDED(CoCreateInstance(CLSID_LAVVIDEO, NULL, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID *)&LAVVideo.obj)))
 	{
 		HR(m_pGraph->AddFilter(LAVVideo.obj, L"LAV Video Decoder"), L"Nie można dodać LAV Video Decodera");
-	}else{wxLogStatus("Jeśli masz zieloną plamę zamiast wideo zainstaluj Lav filter");}
+	}else{wLogStatus("Jeśli masz zieloną plamę zamiast wideo zainstaluj Lav filter");}
 	*/
-	//wxLogStatus("trend");
 	HRESULT hr;
 	CD2DVideoRender *renderer=new CD2DVideoRender(Video, &hr);
-	//wxLogStatus("querry interface");
 	renderer->QueryInterface(IID_IBaseFilter,(void**)&frend.obj);
-	//wxLogStatus("add video renderer");
 	HR(m_pGraph->AddFilter(frend.obj, L"Kainote Video Renderer"), _("Nie można dodać renderera wideo"));
 	HR(CoCreateInstance(CLSID_DSoundRender, NULL, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID *)&pAudioRenderer.obj), _("Nie można utworzyć instancji renderera dźwięku"));
 	
-	//wxLogStatus("audio");
 	HR(m_pGraph->AddFilter(pAudioRenderer.obj, L"Direct Sound Renderer"), _("Nie można dodać renderera Direct Sound"));
 
 	bool hasstream=false;
@@ -249,7 +242,7 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 		PIN_INFO pinfo;
 		HR(strpin.obj->QueryPinInfo(&pinfo),_("Nie można pobrać informacji o pinie splittera"));
 		if(FAILED(pinfo.pFilter->QueryInterface(IID_IAMStreamSelect, (void**)&stream)))
-		{wxLogStatus(_("Błąd interfejsu wyboru ścieżek"));}
+		{KaiLog(_("Błąd interfejsu wyboru ścieżek"));}
 	}
 	hr=pSource->QueryInterface(IID_IAMExtendedSeeking, (void**)&chapters);
 	
@@ -407,28 +400,20 @@ bool DShowPlayer::InitializeGraph()
 
 void DShowPlayer::TearDownGraph()
 {
-	//wxLogStatus("stop");
-    if (m_pControl && m_state!=Stopped)
+	if (m_pControl && m_state!=Stopped)
     {
         m_pControl->Stop();
     }
 	
-	//wxLogStatus("stream");
 	SAFE_RELEASE(stream);
-	//wxLogStatus("chaps");
 	SAFE_RELEASE(chapters);
-	//wxLogStatus("control");
 	SAFE_RELEASE(m_pControl);
-	//wxLogStatus("audio");
 	SAFE_RELEASE(m_pBA);
-	//wxLogStatus("seak");
 	
 	SAFE_RELEASE(m_pSeek);
 	
-	//wxLogStatus("graph");
 	SAFE_RELEASE(m_pGraph);
 	
-	//wxLogStatus("all");
 	m_state = None;
 }
 

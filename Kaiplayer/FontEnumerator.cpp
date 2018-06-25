@@ -147,7 +147,6 @@ int CALLBACK FontEnumerator::FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lpt
 		auto hfont = CreateFontIndirectW(lplf);
 		SelectObject(Enum->hdc, hfont);
 		if(Enum->CheckGlyphsExists(Enum->hdc, Enum->filter, missing) && missing.empty()){
-			//if(!missing.IsEmpty()){wxLogStatus(missing);}
 			Enum->FilteredFontsTmp->Add(lplf->lfFaceName);
 		}
 		SelectObject(Enum->hdc, NULL);
@@ -200,7 +199,7 @@ DWORD FontEnumerator::CheckFontsProc(void* fontEnum)
 			fe->RefreshClientsFonts();
 			fe->RefreshVideo();
 			if( FindNextChangeNotification( hDir ) == 0 ){
-				wxLogStatus(_("Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."));
+				KaiLog(_("Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."));
 				return 0;
 			}
 		}else {

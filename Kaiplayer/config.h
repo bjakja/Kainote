@@ -28,6 +28,7 @@
 #include <wx/utils.h> 
 #include "EnumFactory.h"
 #include <wx/wx.h>
+#include "LogHandler.h"
 #undef wxBITMAP_PNG
 
 

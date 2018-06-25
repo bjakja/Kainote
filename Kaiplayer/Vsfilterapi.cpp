@@ -35,6 +35,7 @@
 #include <string.h>
 #include <mutex>
 #include "Vsfilterapi.h"
+#include "LogHandler.h"
 //enumerate
 static void csrilib_enum_dir(const wchar_t *dir);
 
@@ -84,13 +85,13 @@ static void csrilib_do_load(const wchar_t *filename)
 	if (!dlhandle) {
 		//subhelp_log(CSRI_LOG_ERROR, "LoadLibraryEx(\"%ls\") failed: "
 			//"%s", filename, get_errstr());
-		wxLogStatus(_("LoadLibraryEx(\"%s, %s\") failed: "),filename, get_errstr());
+		KaiLog(wxString::Format(_("LoadLibraryEx(\"%s, %s\") failed: "),filename, get_errstr()));
 		return;
 	}
 	if (GetProcAddress(dlhandle, "csri_library")) {
 		//subhelp_log(CSRI_LOG_ERROR, "ignoring library %ls",
 			//filename);
-		wxLogStatus(_("ignoring library(\"%s, %s\")"),filename, get_errstr());
+		KaiLog(wxString::Format(_("ignoring library(\"%s, %s\")"), filename, get_errstr()));
 		goto out_freelib;
 	}
 	//subhelp_log(CSRI_LOG_INFO, "loading %ls", filename);
@@ -131,7 +132,7 @@ static void csrilib_do_load(const wchar_t *filename)
 	return;
 
 out_dlfail:
-	wxLogStatus(_("%s symbol %s not found %s"),filename, sym, get_errstr());
+	KaiLog(wxString::Format(_("%s symbol %s not found %s"), filename, sym, get_errstr()));
 out_freelib:
 	FreeLibrary(dlhandle);
 }
@@ -159,7 +160,7 @@ static void csrilib_enum_dir(const wchar_t *dir)
 	_snwprintf(buf, sizeof(buf) / sizeof(buf[0]), L"%ls\\*", dir);
 	res = FindFirstFileW(buf, &data);
 	if (res == INVALID_HANDLE_VALUE) {
-		wxLogStatus(_("ignoring directory %s : %s"),dir, get_errstr());
+		KaiLog(wxString::Format(_("ignoring directory %s : %s"), dir, get_errstr()));
 		return;
 	}
 

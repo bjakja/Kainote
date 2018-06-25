@@ -300,7 +300,6 @@ void KaiDialog::SetSizerAndFit1(wxSizer *sizer, bool deleteOld)
 
 //void KaiDialog::OnActivate(wxActivateEvent &evt)
 //{
-//	wxLogStatus("focus");
 //	isActive = evt.GetActive();
 //	int w, h;
 //	GetClientSize(&w,&h);

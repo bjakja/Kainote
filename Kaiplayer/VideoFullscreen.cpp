@@ -79,9 +79,6 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	//sprawdzić jeszcze co się dzieje z focusem gdy klikamy w wideo a później w slider albo w static text
 	wxAcceleratorTable *VBaccels = parent->GetAcceleratorTable();
 	panel->SetAcceleratorTable(*VBaccels);
-	/*panel->Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
-		wxLogStatus("panel focus");
-	});*/
 }
 
 Fullscreen::~Fullscreen()

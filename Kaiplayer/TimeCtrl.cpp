@@ -195,7 +195,6 @@ void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
 {
 	int key = event.GetKeyCode();
 	bool astmp=(form<MDVD && !showFrames);
-	//wxLogStatus("key %i", key);
 	if (astmp){
 		long from=0,to=0;
 		GetSelection(&from,&to);
@@ -333,7 +332,6 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 
 	if(rclick)
 	{
-		//wxLogStatus("tc right");
 		holding=true;
 		oldpos=posy;
 		oldposx=posx;

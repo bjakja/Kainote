@@ -325,7 +325,6 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 		thumbPos = coord - diff;
 		thumbPos = MID(17, thumbPos, thumbRange+17);
 		unitPos = ((thumbPos-17) / (float)thumbRange) * allVisibleSize;
-		//wxLogStatus("unitpos %i %i", unitPos, allVisibleSize);
 		SendEvent();
 	}
 }

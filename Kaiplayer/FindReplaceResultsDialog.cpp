@@ -30,7 +30,7 @@ FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace
 	Bind(CHOOSE_RESULT, [=](wxCommandEvent &evt){
 		SeekResults *results = (SeekResults*)evt.GetClientData();
 		if (!results){
-			wxLogStatus("chujnia, ktoœ rezultat wyszukiwania ukrad³");
+			KaiLogDebug("chujnia, ktoœ ukrad³ rezultat wyszukiwania");
 			return;
 		}
 

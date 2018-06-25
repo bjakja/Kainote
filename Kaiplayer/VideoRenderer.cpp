@@ -139,7 +139,7 @@ bool VideoRenderer::InitDX(bool reset)
 	if (reset){
 		hr = d3device->Reset(&d3dpp);
 		if (FAILED(hr)){
-			wxLogStatus(_("Nie można zresetować Direct3D"));
+			KaiLog(_("Nie można zresetować Direct3D"));
 			return false;
 		}
 	}
@@ -221,7 +221,7 @@ bool VideoRenderer::InitDX(bool reset)
 #endif
 
 	//if (d3dformat != ddsd.Format) {
-	//wxLogStatus("Textura ma niewłaściwy format"); return false;	
+	//wLogStatus("Textura ma niewłaściwy format"); return false;	
 	//}
 	if (IsDshow){
 		HR(d3device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &bars), _("Nie można stworzyć powierzchni"));
@@ -244,8 +244,7 @@ bool VideoRenderer::InitDX(bool reset)
 
 		UINT count, count1;//, count2;
 		GUID* guids = NULL;
-		//wxLogStatus("desc");
-
+		
 		HR(dxvaService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids), _("Nie moźna pobrać GUIDów DXVA"));
 		D3DFORMAT* formats = NULL;
 		//D3DFORMAT* formats2 = NULL;
@@ -253,9 +252,8 @@ bool VideoRenderer::InitDX(bool reset)
 		GUID dxvaGuid;
 		DXVA2_VideoProcessorCaps DXVAcaps;
 		for (UINT i = 0; i < count; i++){
-			//wxLogStatus("guid: %i",(int)i);
 			hr = dxvaService->GetVideoProcessorRenderTargets(guids[i], &videoDesc, &count1, &formats);
-			if (FAILED(hr)){ wxLogStatus(_("Nie można uzyskać formatów DXVA")); continue; }
+			if (FAILED(hr)){ KaiLog(_("Nie można uzyskać formatów DXVA")); continue; }
 			for (UINT j = 0; j < count1; j++)
 			{
 				if (formats[j] == D3DFMT_X8R8G8B8)
@@ -266,22 +264,22 @@ bool VideoRenderer::InitDX(bool reset)
 			}
 
 			CoTaskMemFree(formats);
-			if (!isgood){ wxLogStatus(_("Ten format nie jest obsługiwany przez DXVA")); continue; }
+			if (!isgood){ KaiLog(_("Ten format nie jest obsługiwany przez DXVA")); continue; }
 			isgood = false;
 
 			hr = dxvaService->GetVideoProcessorCaps(guids[i], &videoDesc, D3DFMT_X8R8G8B8, &DXVAcaps);
-			if (FAILED(hr)){ wxLogStatus(_("GetVideoProcessorCaps zawiodło")); continue; }
+			if (FAILED(hr)){ KaiLog(_("GetVideoProcessorCaps zawiodło")); continue; }
 			if (DXVAcaps.NumForwardRefSamples > 0 || DXVAcaps.NumBackwardRefSamples > 0)
 			{
-				/*wxLogStatus(L"NumForwardRefSamples albo NumBackwardRefSample jest większe od zera");*/continue;
+				/*wLogStatus(L"NumForwardRefSamples albo NumBackwardRefSample jest większe od zera");*/continue;
 			}
 
 			//if(DXVAcaps.DeviceCaps!=4){continue;}//DXVAcaps.InputPool
 			hr = dxvaService->CreateSurface(vwidth, vheight, 0, d3dformat, D3DPOOL_DEFAULT, 0, DXVA2_VideoSoftwareRenderTarget, &MainStream, NULL);
-			if (FAILED(hr)){ wxLogStatus(_("Nie można stworzyć powierzchni DXVA %i"), (int)i); continue; }
+			if (FAILED(hr)){ KaiLog(wxString::Format(_("Nie można stworzyć powierzchni DXVA %i"), (int)i)); continue; }
 
 			hr = dxvaService->CreateVideoProcessor(guids[i], &videoDesc, D3DFMT_X8R8G8B8, 0, &dxvaProcessor);
-			if (FAILED(hr)){ wxLogStatus(_("Nie można stworzyć processora DXVA")); continue; }
+			if (FAILED(hr)){ KaiLog(_("Nie można stworzyć processora DXVA")); continue; }
 			dxvaGuid = guids[i]; isgood = true;
 			break;
 		}
@@ -403,7 +401,7 @@ void VideoRenderer::Render(bool Frame, bool wait)
 	}
 	else{
 		hr = d3device->StretchRect(MainStream, &mainStreamRect, bars, &backBufferRect, D3DTEXF_LINEAR);
-		if (FAILED(hr)){ wxLogStatus(_("Nie można nałożyć powierzchni na siebie")); }
+		if (FAILED(hr)){ KaiLog(_("Nie można nałożyć powierzchni na siebie")); }
 	}
 
 	hr = d3device->BeginScene();
@@ -490,7 +488,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 		}
 	}
 	else{
-		wxLogStatus(_("Brak bufora klatki")); return false;
+		KaiLog(_("Brak bufora klatki")); return false;
 	}
 
 
@@ -560,7 +558,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 
 	}
 	else{
-		wxLogStatus("zły pitch diff %i pitch %i dxpitch %i", diff, pitch, d3dlr.Pitch);
+		KaiLog(wxString::Format("zły pitch diff %i pitch %i dxpitch %i", diff, pitch, d3dlr.Pitch));
 	}
 
 	MainStream->UnlockRect();
@@ -921,13 +919,13 @@ bool VideoRenderer::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 
 	// Select renderer
 	vobsub = csri_renderer_default();
-	if (!vobsub){ wxLogStatus(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false; }
+	if (!vobsub){ KaiLog(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false; }
 
 	instance = (fromFile) ? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub, buffer, size, NULL);
-	if (!instance){ wxLogStatus(_("Instancja VobSuba nie utworzyła się.")); delete textsubs; return false; }
+	if (!instance){ KaiLog(_("Instancja VobSuba nie utworzyła się.")); delete textsubs; return false; }
 
 	if (!format || csri_request_fmt(instance, format)){
-		wxLogStatus(_("CSRI nie obsługuje tego formatu."));
+		KaiLog(_("CSRI nie obsługuje tego formatu."));
 		csri_close(instance);
 		instance = NULL;
 		delete textsubs; return false;
@@ -1094,7 +1092,7 @@ bool VideoRenderer::UpdateRects(bool changeZoom)
 		/*if(zoomParcent>1){
 			int zoomARHeight = ((zoomRect.width - zoomRect.x)) * AR;
 			onebar = (zoomRect.width - zoomRect.x > rt.width)? (rt.height - zoomARHeight)/2 : 0;
-			wxLogStatus("height %i %i %i, %i", zoomARHeight,arheight,rt.height,onebar);
+			wLogStatus("height %i %i %i, %i", zoomARHeight,arheight,rt.height,onebar);
 			}*/
 		backBufferRect.bottom = arheight + onebar;
 		//if(backBufferRect.bottom % 2 != 0){backBufferRect.bottom++;}
@@ -1108,7 +1106,7 @@ bool VideoRenderer::UpdateRects(bool changeZoom)
 		/*if(zoomParcent>1){
 			int zoomARWidth = ((zoomRect.height - zoomRect.y)) / AR;
 			onebar = (zoomRect.height - zoomRect.y > rt.height)? (rt.width - zoomARWidth)/2 : 0;
-			wxLogStatus("width %i %i %i, %i", zoomARWidth,arwidth,rt.width,onebar);
+			wLogStatus("width %i %i %i, %i", zoomARWidth,arwidth,rt.width,onebar);
 			}*/
 		backBufferRect.bottom = rt.height;//zostaje bez zmian
 		backBufferRect.right = arwidth + onebar;
@@ -1146,10 +1144,8 @@ void VideoRenderer::UpdateVideoWindow()
 
 	if (!InitDX(true)){
 		//need tests, if lost device return any error when reseting or not
-		//wxLogStatus("lost device");
 		Clear();
 		if (!InitDX()){
-			//wxLogStatus("Total lost device");
 			return;
 		}
 	}
@@ -1403,7 +1399,7 @@ void VideoRenderer::ZoomMouseHandle(wxMouseEvent &evt)
 			}
 		}
 		else{
-			//wxLogStatus("zoom1 %f %f %f %f", zoomRect.x, zoomRect.y, zoomRect.width, zoomRect.height);
+			//wLogStatus("zoom1 %f %f %f %f", zoomRect.x, zoomRect.y, zoomRect.width, zoomRect.height);
 			if (grabbed == 2){
 				//if(zoomRect.width - zoomRect.x < 100 || (zoomRect.width - zoomRect.x == 100 && zoomRect.x < x - zoomDiff.x) ){return;}
 				float oldzw = zoomRect.width;
@@ -1418,7 +1414,7 @@ void VideoRenderer::ZoomMouseHandle(wxMouseEvent &evt)
 			}
 
 		}
-		////wxLogStatus("zoom1 %f %f %f %f", zoomRect.x, zoomRect.y, zoomRect.width, zoomRect.height);
+		////wLogStatus("zoom1 %f %f %f %f", zoomRect.x, zoomRect.y, zoomRect.width, zoomRect.height);
 		if (zoomRect.width > s.x){
 			zoomRect.x -= zoomRect.width - s.x;
 			zoomRect.width = s.x;
@@ -1620,7 +1616,7 @@ void VideoRenderer::EnableStream(long index)
 		seek = true;
 		auto hr = vplayer->stream->Enable(index, AMSTREAMSELECTENABLE_ENABLE);
 		if (FAILED(hr)){
-			wxLogStatus("Cannot change stream");
+			KaiLog("Cannot change stream");
 		}
 	}
 }

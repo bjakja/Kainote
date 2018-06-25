@@ -17,6 +17,7 @@
 
 #include "AutomationUtils.h"
 #include "AutomationLPeg.h"
+#include "LogHandler.h"
 
 
 #include <cstdlib>
@@ -249,7 +250,6 @@ int exception_wrapper(lua_State *L, int (*func)(lua_State *L)) {
 void LuaStackcheck::check_stack(int additional) {
 	int top = lua_gettop(L);
 	if (top - additional != startstack) {
-		//wxLogStatus("automation/lua: lua stack size mismatch." );
 		dump();
 		//assert(top - additional == startstack); 
 	}
@@ -257,17 +257,11 @@ void LuaStackcheck::check_stack(int additional) {
 
 void LuaStackcheck::dump() {
 	int top = lua_gettop(L);
-	//wxLogStatus("automation/lua/stackdump: dumping lua stack...");
 	for (int i = top; i > 0; i--) {
 		lua_pushvalue(L, i);
 		wxString type(lua_typename(L, lua_type(L, -1)));
-		//if (lua_isstring(L, i))
-			//wxLogStatus("automation/lua/stackdump %s: %s",type, lua_tostring(L, -1));
-		//else
-			//wxLogStatus("automation/lua/stackdump: %s", type);
 		lua_pop(L, 1);
 	}
-	//wxLogStatus("automation/lua: --- end dump");
 }
 
 #endif
@@ -323,7 +317,7 @@ char *wrapu(const char *str, char **err) {
 	try {
 		return strndup(boost::locale::to_upper(str));
 	} catch (std::exception const& e) {
-		wxLogStatus("uppercase error: " + wxString(e.what()));
+		KaiLog(wxString::Format("uppercase error: " + wxString(e.what())));
 		*err = _strdup(e.what());
 		return nullptr;
 	}
@@ -333,7 +327,7 @@ char *wrapl(const char *str, char **err) {
 	try {
 		return strndup(boost::locale::to_lower(str));
 	} catch (std::exception const& e) {
-		wxLogStatus("lowercase error: " + wxString(e.what()));
+		KaiLog(wxString::Format("lowercase error: " + wxString(e.what())));
 		*err = _strdup(e.what());
 		return nullptr;
 	}
@@ -342,7 +336,7 @@ char *wrapf(const char *str, char **err) {
 	try {
 		return strndup(boost::locale::fold_case(str));
 	} catch (std::exception const& e) {
-		wxLogStatus("foldcase error: " + wxString(e.what()));
+		KaiLog(wxString::Format("foldcase error: " + wxString(e.what())));
 		*err = _strdup(e.what());
 		return nullptr;
 	}

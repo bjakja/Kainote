@@ -369,7 +369,6 @@ void MTextEditor::OnAccelerator(wxCommandEvent& event)
 		if(Cursor.y<1){Cursor.y=0;Cursor.x=0;}
 		else{Cursor.x+=wraps[Cursor.y];}
 
-		//wxLogStatus("%i %i",Cursor.x, Cursor.y);
 		if(ID<ID_SUP){Selend=Cursor;}
 		Refresh(false);
 

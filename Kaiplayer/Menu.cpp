@@ -78,7 +78,6 @@ void MenuItem::SetAccel(wxAcceleratorEntry *entry, const wxString &stringAccel /
 	label += "\t";
 	label += (entry && entry->IsOk()) ? entry->ToString() : stringAccel;
 	label.Replace("+","-");
-	//wxLogStatus("setAccel %s", label);
 }
 
 wxString MenuItem::GetAccel(){
@@ -148,7 +147,7 @@ void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool cli
 	w = workArea.width + workArea.x;
 	h = workArea.height + workArea.y;
 	//zostawiê jeszcze te logi, gdyby jeszcze jakiœ b³¹d tego typu siê przypl¹ta³.
-	//wxLogStatus("workarea x %i %i y %i %i", workArea.x, workArea.width, workArea.y, workArea.height);
+	//wLogStatus("workarea x %i %i y %i %i", workArea.x, workArea.width, workArea.y, workArea.height);
 	if (size->y > workArea.height){
 		size->y = workArea.height;
 	}
@@ -159,17 +158,13 @@ void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool cli
 			pos->x -= size.x;
 		}
 	}
-	//wxLogStatus("pos y + size y %i > h %i, posy %i", pos->y + size->y, h, pos->y);
 	if((pos->y + size->y) > h){
 		if (size->y > h / 2){ 
 			pos->y -= size->y; 
-			//wxLogStatus("pos x %i %i", pos->y, workArea.y);
 			if (pos->y < workArea.y){ pos->y = workArea.y; } 
-			//wxLogStatus("pos1 x %i %i", pos->y, workArea.y);
 		}
 		else{
 			pos->y = h - size->y;
-			//wxLogStatus("pos x %i %i", pos->y, size->y);
 		}
 	}
 	
@@ -449,7 +444,6 @@ MenuDialog::~MenuDialog()
 
 void MenuDialog::OnShowSubmenu(wxTimerEvent &evt)
 {
-	//wxLogStatus("show %i %i",submenuShown,sel);
 	if(submenuShown == -1 || sel == -1 || sel != submenuShown || submenuShown == submenuToHide){return;}//
 	
 	int scrollPos = submenuShown-scPos;
@@ -724,7 +718,6 @@ void MenuDialog::HideMenus(int id)
 	ParentMenu->submenuShown=-1;
 	while(subMenu!= -1 && menu->items[subMenu]->submenu){
 		menu = menu->items[subMenu]->submenu;
-		//wxLogStatus("menu %i, %i", subMenu, (int)menu);
 		if(menu->dialog){
 			subMenu = menu->dialog->submenuToHide;
 			menu->dialog->submenuToHide=-1;
@@ -857,7 +850,7 @@ MenuBar::~MenuBar(){
 //void MenuBar::OnCharHook(wxKeyEvent &event)
 //{
 //	int key = event.GetKeyCode();
-//	if(event.GetEventType()== wxEVT_KEY_UP){wxLogStatus("key up");}
+//	if(event.GetEventType()== wxEVT_KEY_UP){}
 //	if(event.GetModifiers() == wxMOD_ALT){//536870912 1073741824 lparam mówi nam o altup, który ma specjalny bajt 
 //		if(Menubar->md && showMnemonics){Menubar->md->HideMenu();/*return 1;*/}
 //		showMnemonics = !showMnemonics;
@@ -938,7 +931,6 @@ MenuBar::~MenuBar(){
 //			if(key == WXK_RIGHT || key == WXK_LEFT){
 //				int step = (key == WXK_RIGHT)? 1 : -1;
 //				Menubar->sel += step;
-//				//wxLogStatus("menubar strza³ka left right %i", Menubar->sel);
 //				if(Menubar->sel >= (int)Menubar->Menus.size()){
 //					Menubar->sel=0;
 //				}else if(Menubar->sel<0){
@@ -1125,7 +1117,7 @@ void MenuBar::Enable(int id, bool enable)
 {
 	MenuItem * item = FindItem(id);
 	if(item){item->Enable(enable);}
-	else{wxLogStatus("Cannot enable item with id %i", id);}
+	else{KaiLog(wxString::Format("Cannot enable item with id %i", id));}
 }
 
 //void MenuBar::AppendAccelerators(std::vector <wxAcceleratorEntry> *entries)
@@ -1233,7 +1225,6 @@ LRESULT CALLBACK MenuBar::OnKey( int code, WPARAM wParam, LPARAM lParam ){
 			if(wParam == VK_RIGHT || wParam == VK_LEFT){
 				int step = (wParam == VK_RIGHT)? 1 : -1;
 				Menubar->sel += step;
-				//wxLogStatus("menubar strza³ka left right %i", Menubar->sel);
 				if(Menubar->sel >= (int)Menubar->Menus.size()){
 					Menubar->sel=0;
 				}else if(Menubar->sel<0){

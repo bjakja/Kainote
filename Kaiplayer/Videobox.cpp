@@ -754,7 +754,6 @@ void VideoCtrl::OnNext()
 //void VideoCtrl::OnVButton(wxCommandEvent& event)
 //{
 //	int id=event.GetId();
-//	wxLogStatus("id %i", id);
 //	if(id==ID_BPAUSE){Pause();}
 //	else if(id==ID_BSTOP){
 //		if(!Kai->GetTab()->editor){Stop();}
@@ -1343,7 +1342,7 @@ BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMoni
 	VideoCtrl *vb = (VideoCtrl *)dwData;
 	WinStruct<MONITORINFO> monitorinfo;
 	if (!GetMonitorInfo(hMonitor, &monitorinfo)){
-		wxLogStatus(_("Nie można pobrać informacji o monitorze"));
+		KaiLog(_("Nie można pobrać informacji o monitorze"));
 		return TRUE;
 	}
 	//podstawowy monitor ma być pierwszy w tablicy

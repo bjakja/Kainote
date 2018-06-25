@@ -72,7 +72,6 @@ File::~File()
 	dstyles.clear();
 	dsinfo.clear();
 	Selections.clear();
-	//wxLogStatus("Clearing");
 }
 void File::Clear()
 {
@@ -319,10 +318,10 @@ Dialogue *SubsFile::GetDialogue(int i, int *key)
 	int Key = IdConverter->getElementById(i);
 	if (Key < 0){
 		Key = (*IdConverter)[IdConverter->size() - 1];
-		wxLogStatus("przekroczone drzewko %i, %i", i, IdConverter->size());
+		//KaiLog(wxString::Format("przekroczone drzewko %i, %i", i, IdConverter->size()));
 	}
 	if (Key >= subs->dials.size()){
-		wxLogStatus("tablica dialogów przekroczona %i, %i", Key, (int)subs->dials.size());
+		//KaiLog(wxString::Format("tablica dialogów przekroczona %i, %i", Key, (int)subs->dials.size()));
 		Key = subs->dials.size() - 1;
 	}
 	if (key){ *key = Key; }
@@ -339,10 +338,10 @@ Dialogue *&SubsFile::operator[](int i)
 	int Key = IdConverter->getElementById(i);
 	if (Key < 0){
 		Key = (*IdConverter)[IdConverter->size() - 1];
-		wxLogStatus("przekroczone drzewko %i, %i", i, IdConverter->size());
+		//KaiLog(wxString::Format("przekroczone drzewko %i, %i", i, IdConverter->size()));
 	}
 	if (Key >= subs->dials.size()){
-		wxLogStatus("tablica dialogów przekroczona %i, %i", Key, (int)subs->dials.size());
+		//KaiLog(wxString::Format("tablica dialogów przekroczona %i, %i", Key, (int)subs->dials.size()));
 		Key = subs->dials.size() - 1;
 	}
 	return subs->dials[Key];

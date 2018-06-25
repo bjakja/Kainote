@@ -230,7 +230,6 @@ void StyleStore::OnAssStyleChange(wxCommandEvent& event)
 	stass = true;
 	dummy = false;
 	StylesWindow();
-	//modif();
 }
 void StyleStore::OnStoreStyleChange(wxCommandEvent& event)
 {
@@ -241,7 +240,6 @@ void StyleStore::OnStoreStyleChange(wxCommandEvent& event)
 	stass = false;
 	dummy = false;
 	StylesWindow();
-	//modif();
 }
 
 void StyleStore::OnAddToStore(wxCommandEvent& event)
@@ -388,7 +386,7 @@ void StyleStore::StylesWindow(wxString newname)
 
 }
 
-bool StyleStore::changestyle(Styles *cstyl)
+bool StyleStore::ChangeStyle(Styles *cstyl)
 {
 	Update();
 	SubsGrid* grid = Notebook::GetTab()->Grid;
@@ -509,8 +507,6 @@ void StyleStore::OnStoreSort(wxCommandEvent& event)
 {
 	Options.Sortstyles();
 	Store->SetSelection(0, true);
-
-	//modif();
 }
 
 void StyleStore::LoadStylesS(bool isass)
@@ -595,7 +591,6 @@ void StyleStore::OnAssCopy(wxCommandEvent& event)
 	stass = true;
 	dummy = true;
 	StylesWindow(_("Kopia ") + kstyle->Name);
-	SetModified();
 }
 void StyleStore::OnStoreCopy(wxCommandEvent& event)
 {
@@ -607,7 +602,6 @@ void StyleStore::OnStoreCopy(wxCommandEvent& event)
 	stass = false;
 	dummy = true;
 	StylesWindow(_("Kopia ") + kstyle->Name);
-	//modif();
 }
 
 void StyleStore::OnStoreNew(wxCommandEvent& event)
@@ -623,7 +617,6 @@ void StyleStore::OnStoreNew(wxCommandEvent& event)
 		if (Options.FindStyle(nss) == -1){ StylesWindow(nss); break; }
 		else{ count++; }
 	}
-	//modif();
 }
 
 void StyleStore::OnAssNew(wxCommandEvent& event)
@@ -642,7 +635,6 @@ void StyleStore::OnAssNew(wxCommandEvent& event)
 		if (grid->FindStyle(nss) == -1){ StylesWindow(nss); break; }
 		else{ count++; }
 	}
-	SetModified();
 }
 
 void StyleStore::OnCleanStyles(wxCommandEvent& event)
@@ -847,7 +839,7 @@ void StyleStore::ReloadFonts()
 	Store->Refresh(false);
 	ASSList->Refresh(false);
 	cc->UpdatePreview();
-	//wxLogStatus(_("Czcionki zaczytane ponownie."));
+	//wLogStatus(_("Czcionki zaczytane ponownie."));
 }
 
 bool StyleStore::SetForegroundColour(const wxColour &col)

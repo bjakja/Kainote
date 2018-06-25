@@ -84,7 +84,7 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title/*=""*/
 	//WinStruct<DWM_TIMING_INFO> ti;
 	//HRESULT hr = DwmEnableMMCSS(TRUE);//DwmGetCompositionTimingInfo(m_hWnd, &ti);
 	//if (FAILED(hr)){
-		//wxLogStatus("nie mo¿na pobraæ timing info");
+		//wLogStatus("nie mo¿na pobraæ timing info");
 	//}
 }
 

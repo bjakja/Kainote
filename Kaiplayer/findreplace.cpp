@@ -99,7 +99,7 @@ void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine)
 void FindReplace::Find(TabWindow *window)
 {
 	if (window->windowType == WINDOW_FIND_IN_SUBS){
-		wxLogStatus("chujnia replace all wywołane z okna find in subs");
+		KaiLog("chujnia replace all wywołane z okna find in subs");
 		return;
 	}
 	TabPanel *tab = Kai->GetTab();
@@ -851,7 +851,7 @@ int FindReplace::ReplaceInSubsLine(wxString *onlyString)
 void FindReplace::Replace(TabWindow *window)
 {
 	if (window->windowType != WINDOW_REPLACE){
-		wxLogStatus("chujnia replace all wywołane nie z okna replace");
+		KaiLog("chujnia replace all wywołane nie z okna replace");
 		return;
 	}
 	TabPanel *tab = Kai->GetTab();
@@ -1083,7 +1083,7 @@ int FindReplace::ReplaceAllInTab(TabPanel *tab, TabWindow *window, long replaceC
 void FindReplace::ReplaceAll(TabWindow *window)
 {
 	if (window->windowType != WINDOW_REPLACE){
-		wxLogStatus("chujnia replace all wywołane nie z okna replace");
+		KaiLog("chujnia replace all wywołane nie z okna replace");
 		return;
 	}
 
@@ -1120,7 +1120,7 @@ void FindReplace::ReplaceAll(TabWindow *window)
 void FindReplace::ReplaceInAllOpenedSubs(TabWindow *window)
 {
 	if (window->windowType != WINDOW_REPLACE){
-		wxLogStatus("chujnia replace all we wszystkich otwartch subach wywołane nie z okna replace");
+		KaiLog("chujnia replace all we wszystkich otwartch subach wywołane nie z okna replace");
 		return;
 	}
 

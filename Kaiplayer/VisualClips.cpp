@@ -355,7 +355,6 @@ void DrawingAndClip::DrawLine(int i)
 			j--;
 		}
 		diff = (i-j) - 2;
-		//wxLogStatus("diff %i", diff);
 	}
 	D3DXVECTOR2 v2[2]={Points[i-diff].GetVector(this),Points[i].GetVector(this)};
 	line->Draw(v2, 2, 0xFFBB0000);
@@ -406,7 +405,6 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 		line->Draw(v2, pts+2, 0xFFAA33AA);
 		int iplus1= (i+bssize-2 < (int)Points.size()-1)? i+1 : 0;
 		if(i-1 != 0 || iplus1 != 0){
-			//wxLogStatus("line %i, %i", i-1, iplus1);
 			D3DXVECTOR2 v3[3]={Points[i-1].GetVector(this), v4[0], Points[iplus1].GetVector(this)};
 			line->Draw(v3, 3, 0xFFBB0000);
 		}
@@ -537,7 +535,6 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 				//acpoint=Points[lastpos];
 				//Points[lastpos].isSelected=false;
 				lastpos = -1;
-				//wxLogStatus("znikanie podświetlenia");
 				tab->Video->Render(false);
 				//Points[lastpos]=acpoint;
 			}
@@ -545,7 +542,6 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		if(tool>=1 && tool<=3 && pos == -1 && !event.Leaving()){
 			if(psize<1){return;}
 			drawToolLines=true;
-			//wxLogStatus("guidelines");
 			tab->Video->Render(false);
 		}else if(drawToolLines){
 			drawToolLines=false;
@@ -617,7 +613,6 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 				
 				if (Points[j].type=="b"|| er==2){
 					er=2; 
-					//wxLogStatus("ij %i %i %i", i, j, er);
 					if(j+2 == i || isM){
 						er=3;
 
@@ -669,7 +664,6 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 
 		if(tool>=1 && tool<=3 && (grabbed==-1 || ctrl))
 		{
-			//wxLogStatus("point");
 			if(Points.empty()){AddMove(xy,0); SetClip(GetVisual(),true); return;}
 			int pos = CheckPos(xy, true);
 			switch(tool){
@@ -778,7 +772,6 @@ D3DXVECTOR2 DrawingAndClip::CalcWH()
 		dc.GetTextExtent(textwithclip, &ex, &ey, &eb, &et, &stylefont);
 		offx = ex / wspw;
 		offy = eb / wsph;
-		//wxLogStatus("textextent %i %i %i %i", ex, ey, eb, et);
 	}
 	//no i tutaj jeszcze zostało dopisać obliczanie rozmiaru
 	float minx = FLT_MAX;
@@ -794,7 +787,6 @@ D3DXVECTOR2 DrawingAndClip::CalcWH()
 		if(p.y>maxy){maxy=p.y;}
 	}
 	D3DXVECTOR2 sizes((maxx-minx)+offx,(maxy-miny)+offy);
-	//wxLogStatus("sizes %f, %f, %i", sizes.x, sizes.y, (int)alignment);
 	D3DXVECTOR2 result = D3DXVECTOR2(0,0);
 	if(alignment % 3==2){
 		result.x = sizes.x/2.0;
@@ -806,7 +798,6 @@ D3DXVECTOR2 DrawingAndClip::CalcWH()
 	}else if(alignment < 7){
 		result.y = sizes.y/2.0;
 	}
-	//wxLogStatus("sizes2 %f, %f", result.x, result.y);
 	return result;
 }
 

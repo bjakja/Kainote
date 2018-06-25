@@ -350,7 +350,7 @@ void StyleChange::OnOKClick(wxCommandEvent& event)
 {
 	UpdateStyle();
 	//kopiujemy, bo by zapobiec wyciekom należy tab niezwłocznie usunąć. 
-	if (SS->changestyle(tab->Copy())){
+	if (SS->ChangeStyle(tab->Copy())){
 		Hide();
 		if (SCD){ SCD->Hide(); }
 		wxDELETE(tab);
@@ -430,7 +430,7 @@ void StyleChange::OnStyleVideo(wxCommandEvent& event)
 {
 	UpdateStyle();
 	//tu tab zostaje bo w przeciwnym wypadku dialog straci swoją klasę a przecież jest jeszcze widoczny.
-	SS->changestyle(tab->Copy());
+	SS->ChangeStyle(tab->Copy());
 }
 
 void StyleChange::OnStyleFull(wxCommandEvent& event)

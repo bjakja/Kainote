@@ -126,7 +126,6 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 			data[i].pos.x = data[i].lastpos.x - (firstmove.x-x);
 			data[i].pos.y = data[i].lastpos.y - (firstmove.y-y);
 			if(evt.ShiftDown()){
-				//wxLogStatus("diff %i, %i", (int)(firstmove.x-x), (int)(firstmove.y-y));
 				//if(axis == 0){
 					int diffx = abs(firstmove.x-x);
 					int diffy = abs(firstmove.y-y);
@@ -181,7 +180,7 @@ void Position::ChangeMultiline(bool all)
 		selPositions.clear();
 		dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
 		if(selPositions.size() != data.size()){
-			wxLogStatus("Sizes mismatch");
+			KaiLog("Sizes mismatch");
 			return;
 		}
 	}
@@ -234,7 +233,7 @@ void Position::ChangeMultiline(bool all)
 		tab->Grid->Refresh();
 	}else{
 		
-		if(!tab->Video->OpenSubs(dtxt)){wxLogStatus(_("Nie można otworzyć napisów"));}
+		if(!tab->Video->OpenSubs(dtxt)){KaiLog(_("Nie można otworzyć napisów"));}
 		tab->Video->VisEdit=true;
 		tab->Video->Render();
 	}

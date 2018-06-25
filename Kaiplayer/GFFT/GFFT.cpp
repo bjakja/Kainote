@@ -268,10 +268,7 @@ void FFT::Transform(int64_t whre){
 		//assert(false);
 		return;
 	}
-	//else if (start + doublelen == inputSize){
-		//bool goodCalculation = true;
-		//wxLogStatus("GoodCalculation %i", (int)inputSize);
-	//}
+	
 	for (int i = 0; i < doublelen; i++){
 		output[i * 2] = (float)input[i + start];
 		output[(i * 2) + 1] = 0.f;

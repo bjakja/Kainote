@@ -594,7 +594,6 @@ void ShiftTimesWindow::CollapsePane(wxCommandEvent &event)
 void ShiftTimesWindow::OnScroll(wxScrollEvent& event)
 {
 	int newPos = event.GetPosition();
-	//wxLogStatus("scroll %i %i", newPos, scPos);
 	if (scPos != newPos) {
 		scPos = newPos;
 		panel->SetPosition(wxPoint(0,-scPos));

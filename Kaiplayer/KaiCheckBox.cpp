@@ -57,7 +57,6 @@ KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
 	}
 	if(size.x <1){
 		newSize.x = fullw+20;
-		//wxLogStatus("text %i "+ label, newSize.x);
 	}
 	if(size.y <1){
 		newSize.y = fontHeight+2;

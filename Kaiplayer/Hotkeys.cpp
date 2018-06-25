@@ -355,7 +355,9 @@ wxAcceleratorEntry Hotkeys::GetHKey(const idAndType itype, const hdata *data)
 	}
 
 	if(key==0 && akey.Len()<2){key=static_cast<int>(akey[0]);}
-	else if(key==0){wxLogStatus(_("Skrót \"%s\" nie jest prawidłowy"),akey);}
+	else if (key == 0){ 
+		KaiLog(wxString::Format(_("Skrót \"%s\" nie jest prawidłowy"), akey)); 
+	}
 	accelkey.Set(modif,key,(itype.id<1000)? itype.id+1000 : itype.id);
 
 	return accelkey;
@@ -383,7 +385,7 @@ void Hotkeys::ResetKey(const idAndType *itype, int id, char type)
 	{
 		hkeys[tmpitype] = it->second;
 	}else{
-		wxLogStatus(_("Nie można przywrócić skrótu, bo nie ma domyślnego ustawienia o id %i"), tmpitype.id);
+		KaiLog(wxString::Format(_("Nie można przywrócić skrótu, bo nie ma domyślnego ustawienia o id %i"), tmpitype.id));
 	}
 }
 

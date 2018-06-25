@@ -60,7 +60,6 @@ namespace Auto{
 
 	AutoToFile::~AutoToFile()
 	{
-		////wxLogStatus("auto to file dest");
 		if (spectrum){
 			delete spectrum;
 			spectrum = NULL;
@@ -86,14 +85,12 @@ namespace Auto{
 		int sinfo=Subs->sinfo.size();
 		int styles=sinfo+Subs->styles.size();
 		int dials=styles+Subs->dials.size();
-		//wxLogStatus("iii %i %i %i %i", i, sinfo, styles, dials);
 		if(i<0||i>=dials){
 			return false;
 		}
 
 		lua_newtable(L);
 		if(i<sinfo){
-			//wxLogStatus("sinfo %i %i", i, sinfo );
 			//to jest odczyt wiêc nie kopiujemy
 			SInfo *info=Subs->sinfo[i];
 
@@ -115,7 +112,6 @@ namespace Auto{
 		}
 		else if(i<styles)
 		{
-			//wxLogStatus("styles %i %i", i-sinfo, dials-sinfo );
 			//to jest odczyt wiêc nie kopiujemy
 			Styles *astyle=Subs->styles[i-sinfo];
 
@@ -196,7 +192,6 @@ namespace Auto{
 		}
 		else if(i<dials)
 		{
-			//wxLogStatus("dials %i %i", i-styles, dials-styles );
 			//to jest odczyt wiêc nie kopiujemy
 			Dialogue *adial=Subs->dials[i-styles];
 
@@ -537,7 +532,6 @@ namespace Auto{
 			lua_pushinteger(L, -n);
 			lua_pushvalue(L, 3);
 			lua_call(L, 2, 0);
-			//wxLogStatus("n mniejsze od zera");
 			return 0;
 
 		} else if (n == 0) {
@@ -546,7 +540,6 @@ namespace Auto{
 			lua_pushcclosure(L, ObjectAppend, 1);
 			lua_pushvalue(L, 3);
 			lua_call(L, 1, 0);
-			//wxLogStatus("n = 0");
 			return 0;
 
 		} else {
@@ -599,7 +592,6 @@ namespace Auto{
 				lua_pushcclosure(L, ObjectDelete, 1);
 				lua_pushvalue(L, 2);
 				lua_call(L, 1, 0);
-				//wxLogStatus("delete");
 				return 0;
 
 			}
@@ -630,7 +622,6 @@ namespace Auto{
 
 		// get number of items to delete
 		int itemcount = lua_gettop(L);
-		//wxLogStatus("itemcount %i", itemcount);
 		std::vector<int> ids;
 		//ids.reserve(itemcount);
 
@@ -662,25 +653,15 @@ namespace Auto{
 		}
 		std::sort(ids.begin(), ids.end());
 
-		//for(size_t i=0;i<ids.size();i++)
-		//{
-		//kkk<<ids[i]<<", ";
-		//}
-		//wxLogStatus(kkk);
-
-
 		for(int i= ids.size()-1 ; i>=0; i--)
 		{
 			if(ids[i]<sinfo){
-				//wxLogStatus("delete si %i %i", ids[i], sinfo);
 				Subs->sinfo.erase(Subs->sinfo.begin()+ids[i]);
 			}
 			else if(ids[i]<styles){
-				//wxLogStatus("delete st %i %i", ids[i], styles);
 				Subs->styles.erase(Subs->styles.begin()+(ids[i]-sinfo));
 			}
 			else if(ids[i]<dials){
-				//wxLogStatus("delete dial %i %i", ids[i]-styles, dials-styles);
 				Subs->dials.erase(Subs->dials.begin()+(ids[i]-styles));
 			}
 		}
@@ -826,7 +807,6 @@ namespace Auto{
 			start++;
 			SAFE_DELETE(e);
 		}
-		//wxLogStatus("inserted");
 		return 0;
 	}
 
@@ -903,7 +883,6 @@ namespace Auto{
 			ktext.Replace("{}", "");
 			ktext_stripped = ktext;
 			reg.ReplaceAll(&ktext_stripped, _T(""));
-			//wxLogStatus("Ktext = %s,\nktext_stripped = %s", ktext, ktext_stripped);
 			lua_createtable(L, 0, 6);
 			set_field(L, "duration", kdur);
 			set_field(L, "start_time", ktime);

@@ -137,11 +137,9 @@ void StyleList::OnScroll(wxScrollWinEvent& event)
 
 	//if(newPos<0 || newPos>(int)stylenames->size()-1){return;}
 	if (scPos != newPos) {
-		//wxLogStatus("%i %i",scPos,newPos);
 		scPos = newPos;
 		Refresh(false);
 	}*/
-	//wxLogStatus("scroll");
 	int newPos=0;
 	if(event.GetEventType()==wxEVT_SCROLLWIN_LINEUP)
 	{
@@ -248,7 +246,6 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 				}
 			}else{
 				for(int i=0; i<(int)sels.size(); i++){
-					//wxLogStatus("sels-1 %i",sels[i]);
 					if((sels[i]+diff)<0){break;}
 					//int fst=sels[i]-1;
 					//int snd=sels[i];

@@ -72,7 +72,7 @@ void KaiToolbar::InitToolbar()
 	for(size_t i=0; i<IDS.size();i++)
 	{
 		MenuItem *item=mb->FindItem(IDS[i]);
-		if(!item){wxLogStatus(_("Nie można znaleźć elementu o id %i"), IDS[i]);continue;}
+		if (!item){ KaiLog(wxString::Format(_("Nie można znaleźć elementu o id %i"), IDS[i])); continue; }
 		wxString desc=item->GetLabelText();
 		bool isToogleButton = item->type == ITEM_CHECK;
 		AddItem(IDS[i], desc, item->icon, item->IsEnabled(), (isToogleButton) ? 2 : (item->GetSubMenu() != NULL) ? 1 : 0, (isToogleButton)?item->check : false);
@@ -468,7 +468,6 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 
 void ToolbarMenu::OnPaint(wxPaintEvent &event)
 {
-	//wxLogStatus("paint");
 	int w=0;
 	int h=0;
 	GetClientSize (&w, &h);

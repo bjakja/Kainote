@@ -73,13 +73,13 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	, badResolution(false)
 	, fc(NULL)
 {
-
-#if logging
-	mylog = new wxLogWindow(this, "Logi", true, false);
-	mylog->PassMessages(true);
-#else
-	mylog=NULL;
-#endif
+	LogHandler::Create(this);
+//#if logging
+//	mylog = new wxLogWindow(this, "Logi", true, false);
+//	mylog->PassMessages(true);
+//#else
+//	mylog=NULL;
+//#endif
 	FR = NULL;
 	SL = NULL;
 	Auto = NULL;
@@ -265,13 +265,16 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(30000, 30079, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnRecent);
 	Connect(PlayActualLine, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
-		if (!mylog){
+		/*if (!mylog){
 			mylog = new wxLogWindow(this, "Logi", true, false);
 			mylog->PassMessages(true);
 		}
 		else{
 			delete mylog; mylog = NULL;
-		}
+		}*/
+		//for (int i = 0; i < 10000; i++)
+			//KaiLog(wxString::Format("testy logów %i", i));
+		LogHandler::ShowLogWindow();
 	}, 9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
 		TabPanel *tab = GetTab();
@@ -335,6 +338,7 @@ KainoteFrame::~KainoteFrame()
 	if (fc){ delete fc; fc = NULL; }
 	SpellChecker::Destroy();
 	VideoToolbar::DestroyIcons();
+	LogHandler::Destroy();
 }
 
 
@@ -945,6 +949,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 		if (issubs && !fulls && !tab->Video->isFullscreen){
 			wxString videopath = tab->Grid->GetSInfo(L"Video File");
 			wxString audiopath = tab->Grid->GetSInfo(L"Audio File");
+			wxString keyframespath = tab->Grid->GetSInfo(L"Keyframes File");
 			if (audiopath.StartsWith("?")){ audiopath = videopath; }
 			if (videopath.StartsWith("?dummy")){ videopath = ""; }
 			//fix for wxFileExists which working without path when program run from command line
@@ -952,12 +957,15 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 				wxFileExists(videopath.Prepend(filename.BeforeLast('\\') + "\\"))));
 			bool hasAudioPath = (!audiopath.empty() && ((wxFileExists(audiopath) && audiopath.find(':') == 1) ||
 				wxFileExists(audiopath.Prepend(filename.BeforeLast('\\') + "\\"))));
+			bool hasKeyframePath = (!keyframespath.empty() && ((wxFileExists(keyframespath) && keyframespath.find(':') == 1) ||
+				wxFileExists(keyframespath.Prepend(filename.BeforeLast('\\') + "\\"))));
 			int flags = wxNO;
 			wxString prompt;
 			if (hasVideoPath || hasAudioPath){
 				prompt = _("Skojarzone pliki:\n"); flags |= wxOK;
 				if (hasVideoPath){ prompt += _("Wideo: ") + videopath + "\n"; }
 				if (hasAudioPath){ prompt += _("Audio: ") + audiopath + "\n"; }
+				if (hasAudioPath){ prompt += _("Klatki kluczowe: ") + keyframespath + "\n"; }
 			}
 			if (!secondFileName.empty()){
 				if (!prompt.empty()){ prompt += "\n"; }
@@ -995,6 +1003,9 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 						videopath.Replace("/", "\\");
 						secondFileName = videopath; 
 						found = true; 
+					}
+					if (hasKeyframePath){
+						tab->Video->OpenKeyframes(keyframespath);
 					}
 				}
 			}
@@ -1206,7 +1217,7 @@ void KainoteFrame::OnRecent(wxCommandEvent& event)
 		//sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
 
 
-		//if (!ShellExecuteEx(&sei)){ wxLogStatus(_("Nie można otworzyć folderu")); }
+		//if (!ShellExecuteEx(&sei)){ KaiLog(_("Nie można otworzyć folderu")); }
 
 		//wxString path = L"/n,/select,\"" + filename.BeforeLast('\\') + L"\"";
 		//const wchar_t * wcharPath = path.wc_str();.BeforeLast('\\')
@@ -1350,7 +1361,7 @@ void KainoteFrame::SetAccels(bool _all)
 		bool emptyAccel = cur->second.Accel == "";
 		if (id > 6000 && id < 6850){
 			MenuItem *item = Menubar->FindItem(id);
-			if (!item){ wxLogStatus("no id %i", id); continue; }
+			if (!item){ /*KaiLog(wxString::Format("no id %i", id));*/ continue; }
 			if (emptyAccel){
 				item->SetAccel(NULL);
 				continue;
@@ -1879,16 +1890,6 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 	//if(curMenu){Menubar->ShowMenu();}
 }
 
-//void kainoteFrame::OnMenuClick(wxCommandEvent &event)
-//{
-//	wxLogStatus("menu click %i", event.GetId());
-//	auto action =  Auto->Actions.find(event.GetId());
-//	if(action!=Auto->Actions.end()){
-//		action->second.Run();
-//	}
-//}
-
-
 
 void KainoteFrame::OnChangeLine(wxCommandEvent& event)
 {
@@ -2029,7 +2030,7 @@ void KainoteFrame::OnOutofMemory()
 
 	if (tab->Grid->file->maxx()>3){
 		tab->Grid->file->RemoveFirst(2);
-		wxLogStatus(_("Zabrakło pamięci RAM, usunięto część historii"));
+		KaiLog(_("Zabrakło pamięci RAM, usunięto część historii"));
 		return;
 	}
 	else if (Notebook::GetTabs()->Size() > 1){
@@ -2038,7 +2039,7 @@ void KainoteFrame::OnOutofMemory()
 			if (i != Notebook::GetTabs()->GetSelection()){
 				if (Notebook::GetTabs()->Page(i)->Grid->file->maxx()>3){
 					Notebook::GetTabs()->Page(i)->Grid->file->RemoveFirst(2);
-					wxLogStatus(_("Zabrakło pamięci RAM, usunięto część historii"));
+					KaiLog(_("Zabrakło pamięci RAM, usunięto część historii"));
 					return;
 				}
 			}

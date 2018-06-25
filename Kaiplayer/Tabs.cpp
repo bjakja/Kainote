@@ -532,12 +532,9 @@ void Notebook::OnSize(wxSizeEvent& event)
 
 void Notebook::OnPaint(wxPaintEvent& event)
 {
-	//wxLogStatus("paint %i", (int)block);
 	if(block){return;}
-	//wxLogStatus("paint iter %i splititer %i", (int)iter, splititer);
 	int w,h;
 	GetClientSize(&w,&h);
-	//wxLogStatus("paint %i %i", w, h);
 	//h-=TabHeight;
 	wxClientDC cdc(this);
 	wxMemoryDC dc;
@@ -780,7 +777,6 @@ void Notebook::OnTabSel(int id)
 {
 	int wtab=id - MENU_CHOOSE;
 	if(Pages[iter]->Video->GetState()==Playing){Pages[iter]->Video->Pause();}
-	//wxLogStatus("wtab %i", wtab);
 	if(wtab<-1){
 		wtab=abs(wtab+2);
 		Split(wtab);
@@ -961,14 +957,7 @@ int Notebook::FindPanel(TabPanel* pan)
 
 LRESULT CALLBACK Notebook::PauseOnMinimalize( int code, WPARAM wParam, LPARAM lParam )
 {
-	/*if(code == HCBT_ACTIVATE){
-	wxLogStatus("Czyżby aktywacja okna?");
-	return 0;
-	}
-	if(wParam == SC_PREVWINDOW || wParam == SC_NEXTWINDOW){
-	wxLogStatus("następne/poprzednie okno?");
-	return 0;
-	}*/
+	
 	if (code == HCBT_MINMAX){
 		if (lParam==7 && sthis->GetTab()->Video->vstate == Playing){ 
 			sthis->GetTab()->Video->Pause(); 
@@ -977,7 +966,6 @@ LRESULT CALLBACK Notebook::PauseOnMinimalize( int code, WPARAM wParam, LPARAM lP
 	//if (wParam == SC_RESTORE){
 		//sthis->GetTab()->Refresh(false);
 	//}
-	//wxLogStatus("jakiś event %i %i", code, (int)wParam);
 	return CallNextHookEx( 0, code, wParam, lParam );
 }
 

@@ -19,6 +19,7 @@
 #include <wx/ffile.h>
 #include <wx/filefn.h>
 #include <wx/log.h>
+#include "LogHandler.h"
 
 OpenWrite::OpenWrite()
 {
@@ -32,10 +33,10 @@ OpenWrite::OpenWrite(const wxString &fileName, bool clear)
 	if(!fname.DirExists()){wxMkdir(fileName.BeforeLast('\\'));}
 	if(fname.FileExists()&&!fname.IsFileReadable()){return;}
 	if(!file.Exists(fileName)){
-		if(!file.Create(fileName,false,wxS_DEFAULT)){wxLogStatus(_("Nie można utworzyć pliku."));}
+		if(!file.Create(fileName,false,wxS_DEFAULT)){KaiLog(_("Nie można utworzyć pliku."));}
 	}
 	else{
-		if(!file.Open(fileName,(clear)?wxFile::write : wxFile::write_append,wxS_DEFAULT)){wxLogStatus(_("Nie można otworzyć pliku."));};
+		if(!file.Open(fileName,(clear)?wxFile::write : wxFile::write_append,wxS_DEFAULT)){KaiLog(_("Nie można otworzyć pliku."));};
 	}
 	isfirst=clear;
 }
@@ -88,7 +89,7 @@ void OpenWrite::FileWrite(const wxString &fileName, const wxString &textfile, bo
 	wxFileName fname;
 	fname.Assign(fileName);
 	if(!fname.DirExists()){wxMkdir(fileName.BeforeLast('\\'));}
-	if(fname.FileExists()&&!fname.IsFileReadable()){wxLogStatus(_("Nie można odczytać pliku."));return;}
+	if(fname.FileExists()&&!fname.IsFileReadable()){KaiLog(_("Nie można odczytać pliku."));return;}
 	
 	wxFile file;
 	if(!file.Exists(fileName)){
@@ -107,14 +108,14 @@ void OpenWrite::FileWrite(const wxString &fileName, const wxString &textfile, bo
 }
 void OpenWrite::PartFileWrite(const wxString &parttext)
 {
-	if(!file.IsOpened()){wxLogStatus(_("Plik nie został otwarty."));return;}
+	if(!file.IsOpened()){KaiLog(_("Plik nie został otwarty."));return;}
 	if(isfirst){
 		wchar_t bom = 0xFEFF;
-		if(!file.Write(wxString(bom) + parttext/*,wxConvUTF8*/)){wxLogStatus(_("Nie można zapisać do pliku."));};
+		if(!file.Write(wxString(bom) + parttext/*,wxConvUTF8*/)){KaiLog(_("Nie można zapisać do pliku."));};
 		isfirst=false;
 		return;
 	}
-	if(!file.Write(parttext/*,wxConvUTF8*/)){wxLogStatus(_("Nie można zapisać do pliku."));};
+	if(!file.Write(parttext/*,wxConvUTF8*/)){KaiLog(_("Nie można zapisać do pliku."));};
 }
 
 void OpenWrite::CloseFile()
@@ -130,30 +131,29 @@ bool OpenWrite::IsUTF8withoutBOM(const char* buf, size_t size)
 	while (pos < size)
 	{
 		unsigned char ch = buf[pos++];
-		//wxLogStatus("nch %i", (int)ch);
 		if (ch <= 127)
 		{
 			// 1 byte
 			more_chars = 0;
-			//wxLogStatus("ch < 127");
+			
 		}
 		else if (ch >= 194 && ch <= 223)
 		{
 			// 2 Byte
 			more_chars = 1;
-			//wxLogStatus("ch >= 194 && ch <= 223");
+			
 		}
 		else if (ch >= 224 && ch <= 239)
 		{
 			// 3 Byte
 			more_chars = 2;
-			//wxLogStatus("ch >= 224 && ch <= 239");
+			
 		}
 		else if (ch >= 240 && ch <= 244)
 		{
 			// 4 Byte
 			more_chars = 3;
-			//wxLogStatus("ch >= 240 && ch <= 244");
+			
 		}
 		else
 		{
@@ -164,7 +164,6 @@ bool OpenWrite::IsUTF8withoutBOM(const char* buf, size_t size)
 		{
 			only_saw_ascii_range = false; // Seen non-ascii chars now
 			ch = buf[pos++];
-			//wxLogStatus("more chars %i", (int)ch);
 			if (ch < 128 || ch > 205) {return false;} // Not utf8
 			--more_chars;
 		}

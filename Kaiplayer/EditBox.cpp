@@ -1033,8 +1033,10 @@ void EditBox::RefreshStyle(bool resetline)
 	for (int i = 0; i < grid->StylesSize(); i++)
 	{
 		StyleChoice->Append(grid->GetStyle(i)->Name);
-		if (grid->GetStyle(i)->Name == line->Style){ StyleChoice->SetSelection(i); }
 	}
+	int selection = grid->FindStyle(line->Style);
+	StyleChoice->SetSelection(selection);
+
 	if (resetline){
 		if (grid->GetCount() > 0){
 			SetLine(0);

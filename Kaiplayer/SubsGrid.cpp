@@ -1012,9 +1012,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 				int mPos = tag->value.find('m');
 				resizedTag = tag->value.Left(mPos) + "m ";
 				wxStringTokenizer tknzr(tag->value.AfterFirst('m'), " ", wxTOKEN_STRTOK);
-				/*if(tag->tagName.EndsWith("clip")){
-					wxLogStatus(tag->value);
-					}*/
+				
 				float xscale = (tag->tagName == "p") ? vectorXScale : xnsize;
 
 				while (tknzr.HasMoreTokens()){

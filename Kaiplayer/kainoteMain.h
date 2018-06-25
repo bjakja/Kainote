@@ -37,10 +37,8 @@
 #include "Automation.h"
 #include "Toolbar.h"
 #include "KaiStatusBar.h"
+#include "LogHandler.h"
 
-//struct CommandLineData{
-	//wxArrayString paths;
-//};
 class FontCollector;
 
 class KainoteFrame: public KaiFrame
@@ -129,10 +127,9 @@ class KainoteFrame: public KaiFrame
 		Menu* ViewMenu;
 		Menu* AutoMenu;
 		
-		wxLogWindow *mylog;
+		//wxLogWindow *mylog;
 		bool badResolution;
-		/*int fontlastmodif;
-		int fontlastmodifl;*/
+		
 		wxMutex blockOpen;
 };
 

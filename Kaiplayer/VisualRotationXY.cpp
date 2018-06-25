@@ -52,7 +52,6 @@ void RotationXY::DrawVisual(int time)
 	if(from!=org){
 		float txx=((from.x/s.x)*60)-30;
 		float tyy=((from.y/s.y)*60)-30;
-		//wxLogStatus(" %f %f %f %f", from.x-org.x, from.y-org.y, txx, tyy);
 		D3DXMatrixTranslation(&matTramsate,txx-(xxx),-(tyy-(yyy*30)),0.0f);
 		matRotate=matTramsate*matRotate;
 	}
@@ -252,7 +251,6 @@ void RotationXY::SetCurVisual()
 		oldAngle.y= result;
 	}
 	if(tab->Edit->FindVal("fry([^\\\\}]+)", &res)){
-		//wxLogStatus("fry "+res);
 		double result=0; res.ToDouble(&result);
 		oldAngle.x= result;
 	}

@@ -169,14 +169,12 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 	}, 27789);
 	//Connect(ID_TDEL,ID_TRETURN,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&KaiTextCtrl::OnAccelerator);
 	choiceText->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		//wxLogStatus("on accelerator up");
 		wxKeyEvent kevt;
 		kevt.m_keyCode = WXK_UP;
 		if(itemList&&itemList->IsShown()){itemList->OnKeyPress(kevt);}
 		else{evt.SetId(7865); OnArrow(evt);}
 	},ID_TUP);
 	choiceText->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		//wxLogStatus("on accelerator down");
 		wxKeyEvent kevt;
 		kevt.m_keyCode = WXK_DOWN;
 		if(itemList&&itemList->IsShown()){itemList->OnKeyPress(kevt);}
@@ -658,7 +656,6 @@ void PopupList::OnMouseEvent(wxMouseEvent &evt)
 {
 	
 	//if(evt.MiddleUp()){return;}
-	//wxLogStatus("Mouse");
 	bool leftdown=evt.LeftDown();
 	int x=evt.GetX();
 	int y=evt.GetY();

@@ -393,6 +393,9 @@
     <ClCompile Include="KeyframesLoader.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
+    <ClCompile Include="LogHandler.cpp">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -703,6 +706,9 @@
     </ClInclude>
     <ClInclude Include="KeyframesLoader.h">
       <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="LogHandler.h">
+      <Filter>Header Files\Utils &amp; Config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

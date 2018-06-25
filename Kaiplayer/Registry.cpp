@@ -14,6 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Registry.h"
+#include "LogHandler.h"
 #include <wx/stdpaths.h>
 #include <ShlObj.h>
 
@@ -30,12 +31,10 @@ bool Registry::OpenNewRegistry(HKEY hKey, const wxString &strKey, bool canWrite 
 	{
 		nError = RegCreateKeyEx(hKey, strKey.wc_str(), NULL, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &regHKey, NULL);
 		if (nError){
-			//wxLogStatus("cannot create key %s", strKey);
 			return false;
 		}
 	}
 	else if (nError){
-		//wxLogStatus("cannot open key %s", strKey);
 		return false;
 	}
 	//else success!!!
@@ -62,7 +61,7 @@ void Registry::SetStringValue(const wxString &strKey, const wxString &value)
 	const wchar_t *data = value.wc_str();
 	LONG nError = RegSetValueExW(regHKey, (strKey!="")? strKey.wc_str() : NULL, NULL, REG_SZ, (LPBYTE)data, (wcslen(data) + 1) * 2);
 	if (nError){
-		wxLogStatus("cannot create key %s", strKey);
+		KaiLog(wxString::Format("cannot create key %s", strKey));
 	}
 }
 
@@ -74,7 +73,6 @@ bool Registry::GetStringValue(const wxString &strKey, wxString &outValue)
 	DWORD size = 20048;
 	LONG nError = RegQueryValueExW(regHKey, (strKey!="") ? strKey.wc_str() : NULL, NULL, &type, (LPBYTE)&data, &size);
 	if (nError){
-		//wxLogStatus("cannot create key %s", strKey);
 		return false;
 	}
 	outValue = wxString(data);
@@ -93,27 +91,27 @@ bool Registry::AddFileAssociation(const wxString &extension, const wxString &ext
 		reg.SetStringValue("", progName + extension);
 		reg.CloseRegistry();
 	}
-	else{ wxLogStatus("Nie mo¿na utowrzyæ rozszerzenia %s", extension); return false; }
+	else{ KaiLog(wxString::Format("Nie mo¿na utowrzyæ rozszerzenia %s", extension)); return false; }
 	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension, true)){
 		reg.SetStringValue("", extName);
 		reg.CloseRegistry();
 	}
 	else{
-		wxLogStatus("Nie mo¿na otowrzyæ klasy rozszerzenia %s"); return false;
+		KaiLog("Nie mo¿na otowrzyæ klasy rozszerzenia"); return false;
 	}
 	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension + "\\DefaultIcon", true)){
 		reg.SetStringValue("", pathfull.BeforeLast('\\') + "\\Icons.dll," + std::to_string(icon));
 		reg.CloseRegistry();
 	}
 	else{
-		wxLogStatus("Nie mo¿na dodaæ ikony"); return false;
+		KaiLog("Nie mo¿na dodaæ ikony"); return false;
 	}
 	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension + "\\Shell\\Open\\Command", true)){
 		reg.SetStringValue("", "\""+pathfull + "\" \"%1\"");
 		reg.CloseRegistry();
 	}
 	else{
-		wxLogStatus("Nie mo¿na dodaæ otwierania za pomoc¹ %s", progName); return false;
+		KaiLog(wxString::Format("Nie mo¿na dodaæ otwierania za pomoc¹ %s", progName)); return false;
 	}
 	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, NULL, NULL);
 	return true;
@@ -128,7 +126,7 @@ bool Registry::RemoveFileAssociation(const wxString &extension)
 		reg.SetStringValue("", "");
 		reg.CloseRegistry();
 	}
-	else{ wxLogStatus("Nie mo¿na usun¹æ rozszerzenia %s", extension); return false; }
+	else{ KaiLog(wxString::Format("Nie mo¿na usun¹æ rozszerzenia %s", extension)); return false; }
 	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, NULL, NULL);
 	return true;
 }
