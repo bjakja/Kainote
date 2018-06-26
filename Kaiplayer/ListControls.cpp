@@ -197,7 +197,7 @@ KaiChoice::~KaiChoice()
 void KaiChoice::SetToolTip(const wxString &tooltip)
 {
 	if(tooltip!=""){toolTip=tooltip;}
-	wxString tt = (choice>=0)? toolTip + "\n" + GetString(choice) : tooltip;
+	wxString tt = (choice >= 0 || (choiceText && !choiceText->GetValue().empty())) ? toolTip + "\n" + GetString(choice) : tooltip;
 	if (tt.Len() > 1000){
 		tt = tt.Mid(0, 1000) + "...";
 	}
@@ -485,7 +485,11 @@ void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool chan
 {
 	wxCommandEvent evt(wxEVT_COMMAND_COMBOBOX_SELECTED, GetId());
 	this->ProcessEvent(evt);
-	if(PartialName==""){SetSelection(0, false);return;}
+	if(PartialName==""){
+		SetSelection(0, false);
+		SetToolTip();
+		return;
+	}
 	int sell= (changeText)? 0 : -1;
 	wxString PrtName = PartialName.Lower();
 
@@ -499,6 +503,9 @@ void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool chan
 
 	if(sell!=-1){
 		SetSelection(sell, changeText);
+	}
+	else{
+		SetToolTip();
 	}
 }
 
@@ -654,8 +661,6 @@ void PopupList::CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &control
 
 void PopupList::OnMouseEvent(wxMouseEvent &evt)
 {
-	
-	//if(evt.MiddleUp()){return;}
 	bool leftdown=evt.LeftDown();
 	int x=evt.GetX();
 	int y=evt.GetY();
