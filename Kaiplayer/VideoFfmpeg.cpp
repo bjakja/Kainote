@@ -334,7 +334,7 @@ done:
 	}
 
 
-	if (videotrack != -1 && rend){
+	if (videotrack != -1){
 		SYSTEM_INFO sysinfo;
 		GetSystemInfo(&sysinfo);
 		try{
@@ -393,24 +393,26 @@ done:
 			return 0;
 		}
 
-		CS = propframe->ColorSpace;
-		CR = propframe->ColorRange;
+		if (rend){
+			CS = propframe->ColorSpace;
+			CR = propframe->ColorRange;
 
-		if (CS == FFMS_CS_UNSPECIFIED)
-			CS = width > 1024 || height >= 600 ? FFMS_CS_BT709 : FFMS_CS_BT470BG;
-		ColorSpace = RealColorSpace = ColorCatrixDescription(CS, CR);
-		SubsGrid *grid = ((TabPanel*)rend->GetParent())->Grid;
-		const wxString &colormatrix = grid->GetSInfo("YCbCr Matrix");
-		if ((CS == FFMS_CS_BT709 && colormatrix == "TV.601") || (ColorSpace != colormatrix && CS == FFMS_CS_BT470BG)) {
-			if (FFMS_SetInputFormatV(videosource, CS == FFMS_CS_BT709 ? FFMS_CS_BT470BG : FFMS_CS_BT470BG, CR, FFMS_GetPixFmt(""), &errinfo)){
-				KaiLog(_("Nie można zmienić macierzy YCbCr"));
+			if (CS == FFMS_CS_UNSPECIFIED)
+				CS = width > 1024 || height >= 600 ? FFMS_CS_BT709 : FFMS_CS_BT470BG;
+			ColorSpace = RealColorSpace = ColorCatrixDescription(CS, CR);
+			SubsGrid *grid = ((TabPanel*)rend->GetParent())->Grid;
+			const wxString &colormatrix = grid->GetSInfo("YCbCr Matrix");
+			if ((CS == FFMS_CS_BT709 && colormatrix == "TV.601") || (ColorSpace != colormatrix && CS == FFMS_CS_BT470BG)) {
+				if (FFMS_SetInputFormatV(videosource, CS == FFMS_CS_BT709 ? FFMS_CS_BT470BG : FFMS_CS_BT470BG, CR, FFMS_GetPixFmt(""), &errinfo)){
+					KaiLog(_("Nie można zmienić macierzy YCbCr"));
+				}
 			}
-		}
-		if (colormatrix == "TV.601"){
-			ColorSpace = ColorCatrixDescription(FFMS_CS_BT470BG, CR);
-		}
-		else if (colormatrix == "TV.709"){
-			ColorSpace = ColorCatrixDescription(FFMS_CS_BT709, CR);
+			if (colormatrix == "TV.601"){
+				ColorSpace = ColorCatrixDescription(FFMS_CS_BT470BG, CR);
+			}
+			else if (colormatrix == "TV.709"){
+				ColorSpace = ColorCatrixDescription(FFMS_CS_BT709, CR);
+			}
 		}
 
 		FFMS_Track *FrameData = FFMS_GetTrackFromVideo(videosource);
@@ -440,7 +442,7 @@ done:
 			Timecodes.push_back(Timestamp);
 
 		}
-		if (!rend->keyframesFileName.empty()){
+		if (rend && !rend->keyframesFileName.empty()){
 			OpenKeyframes(rend->keyframesFileName);
 			rend->keyframesFileName = "";
 		}

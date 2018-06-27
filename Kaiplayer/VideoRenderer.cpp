@@ -502,12 +502,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 #ifdef byvertices
 	HR(MainStream->LockRect( &d3dlr,0, 0), _("Nie można zablokować bufora tekstury"));//D3DLOCK_NOSYSLOCK
 #else
-	//try{
 	HR(MainStream->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Nie można zablokować bufora tekstury"));
-	//}
-	//catch (...){
-	//return false;
-	//}
 #endif
 	texbuf = static_cast<byte *>(d3dlr.pBits);
 
@@ -558,7 +553,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 
 	}
 	else{
-		KaiLog(wxString::Format("zły pitch diff %i pitch %i dxpitch %i", diff, pitch, d3dlr.Pitch));
+		KaiLog(wxString::Format("bad pitch diff %i pitch %i dxpitch %i", diff, pitch, d3dlr.Pitch));
 	}
 
 	MainStream->UnlockRect();
@@ -1230,7 +1225,13 @@ void VideoRenderer::OpenKeyframes(const wxString &filename)
 		VFF->OpenKeyframes(filename);
 		return;
 	}
-	//if there is no FFMS2 we store keyframes path;
+	else if (((TabPanel*)GetParent())->Edit->ABox){
+		// skip return when audio do not have own provider or file didn't have video for take timecodes.
+		if (((TabPanel*)GetParent())->Edit->ABox->OpenKeyframes(filename)){
+			return;
+		}
+	}
+	//if there is no FFMS2 or audiobox we store keyframes path;
 	keyframesFileName = filename;
 }
 

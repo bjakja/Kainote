@@ -41,6 +41,8 @@
 #include "Config.h"
 #include "MappedButton.h"
 #include <math.h>
+#include "KeyframesLoader.h"
+#include "KaiMessageBox.h"
 
 ///////////////
 // Constructor
@@ -247,6 +249,26 @@ void AudioBox::SetKeyframes(const wxArrayInt &keyframes)
 	}
 
 	Refresh(false);
+}
+
+bool AudioBox::OpenKeyframes(const wxString & filename)
+{
+	//false when we do not have own provider, 
+	//or was loaded file without video, 
+	//without timecodes we can't do anything
+	//keyframe loader load pseudotimecodes from fps that's a random float number.
+	if (!audioDisplay->ownProvider && audioDisplay->provider && audioDisplay->provider->Timecodes.size())
+		return false;
+
+	wxArrayInt keyframes;
+	KeyframeLoader kfl(filename, &keyframes, audioDisplay->provider);
+	if (keyframes.size()){
+		SetKeyframes(keyframes);
+	}
+	else{
+		KaiMessageBox(_("Nieprawidłowy format klatek kluczowych"), _("Błąd"), 4L, Notebook::GetTab());
+	}
+	return true;
 }
 
 /////////////////////

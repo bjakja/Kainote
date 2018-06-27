@@ -75,9 +75,11 @@ void ShiftTimesWindow::Contents(bool addopts)
 		state=true;
 		WhichLines->EnableItem(3);
 		WhichLines->EnableItem(4);
+		WhichLines->EnableItem(5);
 	}else{
 		WhichLines->EnableItem(3,false);
 		WhichLines->EnableItem(4,false);
+		WhichLines->EnableItem(5, false);
 		state=false;
 	}
 	if (!LeadIn){
@@ -122,7 +124,7 @@ void ShiftTimesWindow::OnAddStyles(wxCommandEvent& event)
 {
 	wxString result = GetCheckedElements(Kai);
 	Stylestext->SetValue(result);
-	if(result != ""){WhichLines->SetSelection(4);}
+	if(result != ""){WhichLines->SetSelection(5);}
 }
 
 void ShiftTimesWindow::SaveOptions()
@@ -181,6 +183,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 	choices.Add(_("Zaznaczone linijki"));
 	choices.Add(_("Od zaznaczonej linijki"));
 	choices.Add(_("Czasy wyższe i równe"));
+	choices.Add(_("Czasy niższe i równe"));
 	choices.Add(_("Według wybranych stylów"));
 	WhichLines = new KaiChoice(panel, -1, wxDefaultPosition, wxDefaultSize, choices, KAI_SCROLL_ON_FOCUS);
 

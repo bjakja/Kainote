@@ -560,10 +560,10 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 	if (subsFormat == TMP){ whichTimes = 1; }
 
-	bool fromstyl = false;
+	//bool fromStyle = false;
 
-	int fs = FirstSelection();
-	if (fs == -1 && whichLines != 0 && whichLines != 4){
+	int firstSelection = FirstSelection();
+	if (firstSelection == -1 && whichLines != 0 && whichLines != 4){
 		KaiMessageBox(_("Nie zaznaczono linii do przesunięcia"), _("Uwaga")); return;
 	}
 
@@ -592,7 +592,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 	}
 
 	File *Subs = file->GetSubs();
-	int firsttime = GetDialogue(fs)->Start.mstime;
+	int firsttime = GetDialogue(firstSelection)->Start.mstime;
 	Dialogue *dialc;
 	Dialogue *Dial;
 	bool skipFiltered = !ignoreFiltered;
@@ -604,10 +604,11 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue){ continue; }
 
 		if (whichLines == 0
-			|| (whichLines == 1 && file->IsSelectedByKey(i))
-			|| (whichLines == 3 && firsttime <= Dial->Start.mstime)
-			|| (whichLines == 2 && i >= fs)
-			|| (whichLines == 4 && styles.Find("," + Dial->Style + ",") != -1))
+			|| (whichLines == 1 && file->IsSelectedByKey(i))//selected lines
+			|| (whichLines == 3 && firsttime <= Dial->Start.mstime)//times higher or equal
+			|| (whichLines == 2 && i >= firstSelection)//from selection
+			|| (whichLines == 4 && firsttime >= Dial->Start.mstime)//times lower or equal
+			|| (whichLines == 5 && styles.Find("," + Dial->Style + ",") != -1))//by choosen styles
 		{
 
 			dialc = file->CopyDialogueByKey(i, true, true);
@@ -629,10 +630,8 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 					dialc->Start.NewTime(ZEROIT(vb->GetFrameTimeFromFrame(startFrame)));
 				}
 				if (whichTimes != 1){
-					//endDiff = dialc->End.mstime;
 					int endFrame = vb->VFF->GetFramefromMS(dialc->End.mstime) + frame;
 					dialc->End.NewTime(ZEROIT(vb->GetFrameTimeFromFrame(endFrame)));
-					//endDiff = dialc->End.mstime - endDiff;
 				}
 				dialc->ChangeDialogueState(1);
 			}
@@ -662,9 +661,9 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 				dialc->ClearParse();
 			}
 
-		}// if przesuwana linia
+		}// if shifted line
 
-	}//pętla for
+	}//loop for
 
 	// tu jeszcze należy poprawić uwzględniając linijkę z czasem przed tablicą i czasem po niej
 	// a może to w ogóle nie jest potrzebne?
