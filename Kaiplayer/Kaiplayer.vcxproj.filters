@@ -396,6 +396,9 @@
     <ClCompile Include="LogHandler.cpp">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClCompile>
+    <ClCompile Include="VisualScaleRotation.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">

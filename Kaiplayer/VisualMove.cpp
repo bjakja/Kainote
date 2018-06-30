@@ -38,27 +38,27 @@ void Move::DrawVisual(int time)
 	}
 
 	D3DXVECTOR2 v4[6];
-	v4[0].x=from.x;
-	v4[0].y=from.y;
-	v4[1].x=to.x;
-	v4[1].y=to.y;
+	v4[0].x = from.x;
+	v4[0].y = from.y;
+	v4[1].x = to.x;
+	v4[1].y = to.y;
 	//drawarrow od razu przesuwa punkt tak by linia koñczy³a siê przed strza³k¹
 	DrawArrow(from, &v4[1], 6);
 
 
-	float tmpt=time-moveStart;
-	float tmpt1=moveEnd-moveStart;
-	float actime= tmpt/tmpt1;
+	float tmpt = time - moveStart;
+	float tmpt1 = moveEnd - moveStart;
+	float actime = tmpt / tmpt1;
 	D3DXVECTOR2 dist;
-	if(time < moveStart){dist.x=from.x, dist.y= from.y;}
-	else if(time > moveEnd){dist.x=to.x, dist.y= to.y;}
+	if (time < moveStart){ dist.x = from.x, dist.y = from.y; }
+	else if (time > moveEnd){ dist.x = to.x, dist.y = to.y; }
 	else {
-		dist.x= from.x -((from.x-to.x)*actime); 
-		dist.y = from.y -((from.y-to.y)*actime);
+		dist.x = from.x - ((from.x - to.x)*actime);
+		dist.y = from.y - ((from.y - to.y)*actime);
 	}
 
 	line->Begin();
-	line->Draw(v4,2,0xFFBB0000);
+	line->Draw(v4, 2, 0xFFBB0000);
 	DrawCross(dist, 0xFFBB0000, false);
 	line->End();
 
@@ -71,17 +71,17 @@ void Move::DrawVisual(int time)
 wxString Move::GetVisual()
 {
 	int startTime = ZEROIT(tab->Edit->line->Start.mstime);
-	return "\\move("+getfloat(((from.x/zoomScale.x)+zoomMove.x)*wspw) + "," +
-		getfloat(((from.y/zoomScale.y)+zoomMove.y)*wsph) + "," +
-		getfloat(((to.x/zoomScale.x)+zoomMove.x)*wspw) + "," +
-		getfloat(((to.y/zoomScale.y)+zoomMove.y)*wsph) + "," +
+	return "\\move(" + getfloat(((from.x / zoomScale.x) + zoomMove.x)*coeffW) + "," +
+		getfloat(((from.y / zoomScale.y) + zoomMove.y)*coeffH) + "," +
+		getfloat(((to.x / zoomScale.x) + zoomMove.x)*coeffW) + "," +
+		getfloat(((to.y / zoomScale.y) + zoomMove.y)*coeffH) + "," +
 		getfloat(tbl[4] - startTime) + "," +
 		getfloat(tbl[5] - startTime) + ")";
 }
 
 void Move::OnMouseEvent(wxMouseEvent &evt)
 {
-	if(blockevents){return;}
+	if (blockevents){ return; }
 	bool click = evt.LeftDown();
 	bool holding = evt.LeftIsDown();
 	bool leftc = evt.LeftDown();
@@ -89,12 +89,12 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 	bool shift = evt.ShiftDown();
 
 	int x, y;
-	evt.GetPosition(&x,&y);
+	evt.GetPosition(&x, &y);
 
-	if(evt.ButtonUp()){
-		if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}
-		SetVisual(false,type);
-		if(!hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
+	if (evt.ButtonUp()){
+		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
+		SetVisual(false, type);
+		if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 		grabbed = -1;
 		moveDistance = to - from;
 		movingHelperLine = false;
@@ -106,74 +106,79 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 		return;
 	}
 
-	if(click){
+	if (click){
 		tab->Video->CaptureMouse();
 		if (IsInPos(evt.GetPosition(), helperLinePos, 4)){
 			movingHelperLine = true;
 			return;
 		}
-		tab->Video->SetCursor(wxCURSOR_SIZING );
-		hasArrow=false;
-		if(leftc){type=0;}
-		if(rightc){type=1;}
+		tab->Video->SetCursor(wxCURSOR_SIZING);
+		hasArrow = false;
+		if (leftc){ type = 0; }
+		if (rightc){ type = 1; }
 
-		if(abs(to.x-x)<8 && abs(to.y-y)<8){
-			grabbed=1; type=1;
+		if (abs(to.x - x) < 8 && abs(to.y - y) < 8){
+			grabbed = 1; type = 1;
 			//lastTo = to;
-			diffs.x=to.x-x;
-			diffs.y=to.y-y;
-		}else if(abs(from.x-x)<8 && abs(from.y-y)<8){
-			grabbed=0; type=0;
-			diffs.x=from.x-x;
-			diffs.y=from.y-y;
-		}else if(!shift){
-			grabbed= -1;
-			if(type==1){
-				to.x=x;
-				to.y=y;
+			diffs.x = to.x - x;
+			diffs.y = to.y - y;
+		}
+		else if (abs(from.x - x) < 8 && abs(from.y - y) < 8){
+			grabbed = 0; type = 0;
+			diffs.x = from.x - x;
+			diffs.y = from.y - y;
+		}
+		else if (!shift){
+			grabbed = -1;
+			if (type == 1){
+				to.x = x;
+				to.y = y;
 				//lastTo = to;
-			}else{
-				from.x=x;
-				from.y=y;
 			}
-			diffs=wxPoint(0,0);
+			else{
+				from.x = x;
+				from.y = y;
+			}
+			diffs = wxPoint(0, 0);
 		}
 		lastmove = lastTo = to;
 		firstmove = lastFrom = from;
-		SetVisual(true,type);
+		SetVisual(true, type);
 		axis = 0;
 	}
-	if(holding){
-		if(type==0){
-			from.x=x+diffs.x;
-			from.y=y+diffs.y;
-		}else{
-			to.x=x+diffs.x;
-			to.y=y+diffs.y;
+	if (holding){
+		if (type == 0){
+			from.x = x + diffs.x;
+			from.y = y + diffs.y;
 		}
-		if(shift){
+		else{
+			to.x = x + diffs.x;
+			to.y = y + diffs.y;
+		}
+		if (shift){
 			//if(axis == 0){
-				int diffx = abs((type==0)? firstmove.x-x : lastmove.x-x);
-				int diffy = abs((type==0)? firstmove.y-y : lastmove.y-y);
-				if(diffx != diffy){if(diffx > diffy){axis = 2;}else{axis = 1;}}
+			int diffx = abs((type == 0) ? firstmove.x - x : lastmove.x - x);
+			int diffy = abs((type == 0) ? firstmove.y - y : lastmove.y - y);
+			if (diffx != diffy){ if (diffx > diffy){ axis = 2; } else{ axis = 1; } }
 			//}
-			if(type==0){
-				if(axis==1){
+			if (type == 0){
+				if (axis == 1){
 					from.x = firstmove.x;
 				}
-				if(axis==2){
+				if (axis == 2){
 					from.y = firstmove.y;
 				}
-			}else{
-				if(axis==1){
+			}
+			else{
+				if (axis == 1){
 					to.x = lastmove.x;
 				}
-				if(axis==2){
+				if (axis == 2){
 					to.y = lastmove.y;
 				}
 			}
 		}
-		SetVisual(true,type);
+		SetVisual(true, type);
 	}
 	if (evt.MiddleDown()){
 		wxPoint mousePos = evt.GetPosition();
@@ -186,55 +191,56 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 void Move::SetCurVisual()
 {
 	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, tbl);
-	from = to = D3DXVECTOR2(((linepos.x/wspw)-zoomMove.x)*zoomScale.x,
-		((linepos.y/wsph)-zoomMove.y)*zoomScale.y);
+	from = to = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x)*zoomScale.x,
+		((linepos.y / coeffH) - zoomMove.y)*zoomScale.y);
 
-	if(tbl[6]>3){
-		to.x=((tbl[2]/wspw)-zoomMove.x)*zoomScale.x; 
-		to.y=((tbl[3]/wsph)-zoomMove.y)*zoomScale.y;
+	if (tbl[6] > 3){
+		to.x = ((tbl[2] / coeffW) - zoomMove.x)*zoomScale.x;
+		to.y = ((tbl[3] / coeffH) - zoomMove.y)*zoomScale.y;
 	}
 	moveDistance = to - from;
 	int startIter = 4, endIter = 5;
-	if(tbl[4]>tbl[5]){startIter = 5; endIter = 4;}
-	moveStart=(int)tbl[startIter];
-	moveEnd=(int)tbl[endIter];
+	if (tbl[4] > tbl[5]){ startIter = 5; endIter = 4; }
+	moveStart = (int)tbl[startIter];
+	moveEnd = (int)tbl[endIter];
 
 }
 
 void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 {
-	bool putinbracket=false;
+	bool putinbracket = false;
 	wxPoint tagPos;
 	D3DXVECTOR2 textPosition = GetPos(_dial, &putinbracket, &tagPos);
 	D3DXVECTOR2 moveFrom = lastFrom - from;
 	D3DXVECTOR2 moveTo = lastTo - to;
-	int moveStartTime=0, moveEndTime=0;
-	wxString tagBefore = putinbracket? L"" : txt->SubString(tagPos.x, tagPos.y);
-	wxArrayString values = wxStringTokenize(tagBefore, ",",wxTOKEN_STRTOK);
-	if(putinbracket || values.size() < 6){
+	int moveStartTime = 0, moveEndTime = 0;
+	wxString tagBefore = putinbracket ? L"" : txt->SubString(tagPos.x, tagPos.y);
+	wxArrayString values = wxStringTokenize(tagBefore, ",", wxTOKEN_STRTOK);
+	if (putinbracket || values.size() < 6){
 		VideoCtrl *video = tab->Video;
 		float fps = video->fps;
 		bool dshow = video->IsDshow;
 		int startTime = ZEROIT(_dial->Start.mstime);
 		int endTime = ZEROIT(_dial->End.mstime);
-		int framestart = (dshow)? (((float)startTime/1000.f) * fps)+1 : video->VFF->GetFramefromMS(startTime);
-		int frameend = (dshow)? (((float)endTime/1000.f) * fps) : video->VFF->GetFramefromMS(endTime)-1;
-		int msstart = (dshow)? ((framestart*1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(framestart);
-		int msend = (dshow)? ((frameend*1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(frameend);
+		int framestart = (dshow) ? (((float)startTime / 1000.f) * fps) + 1 : video->VFF->GetFramefromMS(startTime);
+		int frameend = (dshow) ? (((float)endTime / 1000.f) * fps) : video->VFF->GetFramefromMS(endTime) - 1;
+		int msstart = (dshow) ? ((framestart * 1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(framestart);
+		int msend = (dshow) ? ((frameend * 1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(frameend);
 		int diff = endTime - startTime;
 		moveStartTime = abs(msstart - startTime);
 		moveEndTime = (diff - abs(endTime - msend));
-	}else{
+	}
+	else{
 		wxString t2 = values[5];
 		wxString t1 = values[4];
-		t2.Replace(")","");
+		t2.Replace(")", "");
 		moveStartTime = wxAtoi(t1);
 		moveEndTime = wxAtoi(t2);
 	}
-	wxString tag = "\\move("+getfloat(textPosition.x - ((moveFrom.x/zoomScale.x)+zoomMove.x)*wspw) + "," +
-		getfloat(textPosition.y - ((moveFrom.y/zoomScale.y)+zoomMove.y)*wsph) + "," +
-		getfloat(textPosition.x + (((moveDistance.x - moveTo.x)/zoomScale.x)+zoomMove.x)*wspw) + "," +
-		getfloat(textPosition.y + (((moveDistance.y - moveTo.y)/zoomScale.y)+zoomMove.y)*wsph) + "," +
+	wxString tag = "\\move(" + getfloat(textPosition.x - ((moveFrom.x / zoomScale.x) + zoomMove.x)*coeffW) + "," +
+		getfloat(textPosition.y - ((moveFrom.y / zoomScale.y) + zoomMove.y)*coeffH) + "," +
+		getfloat(textPosition.x + (((moveDistance.x - moveTo.x) / zoomScale.x) + zoomMove.x)*coeffW) + "," +
+		getfloat(textPosition.y + (((moveDistance.y - moveTo.y) / zoomScale.y) + zoomMove.y)*coeffH) + "," +
 		std::to_string(moveStartTime) + "," +
 		std::to_string(moveEndTime) + ")";
 	//jako ¿e pozycje zwracaj¹ len to potrzeba dodaæ jeszcze start;

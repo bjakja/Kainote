@@ -19,12 +19,12 @@
 
 
 enum {
-	TAGPOS=1,
+	TAGPOS = 1,
 	TAGMOVES,
-	TAGMOVEE=4,
-	TAGCLIP=8,
-	TAGP=16,
-	TAGORG=32
+	TAGMOVEE = 4,
+	TAGCLIP = 8,
+	TAGP = 16,
+	TAGORG = 32
 };
 
 MoveAll::MoveAll()
@@ -36,55 +36,58 @@ MoveAll::MoveAll()
 
 void MoveAll::DrawVisual(int time)
 {
-	for(size_t i = 0; i <elems.size(); i++){
-		if(!(selectedTags & elems[i].type)){continue;}
-		if( elems[i].type == TAGPOS || elems[i].type == TAGMOVES){
+	for (size_t i = 0; i < elems.size(); i++){
+		if (!(selectedTags & elems[i].type)){ continue; }
+		if (elems[i].type == TAGPOS || elems[i].type == TAGMOVES){
 			DrawRect(elems[i].elem);
-		}else if( elems[i].type == TAGMOVEE ){
+		}
+		else if (elems[i].type == TAGMOVEE){
 			DrawCircle(elems[i].elem);
-		}else{
-			D3DXCOLOR col= (elems[i].type == TAGCLIP)? 0xFF0000FF : (elems[i].type == TAGP)? 0xFFFF00FF : 0xFF8800FF;
+		}
+		else{
+			D3DXCOLOR col = (elems[i].type == TAGCLIP) ? 0xFF0000FF : (elems[i].type == TAGP) ? 0xFFFF00FF : 0xFF8800FF;
 			DrawCross(elems[i].elem, col);
 		}
 	}
-	
+
 }
 
 void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 {
-	if(blockevents){return;}
+	if (blockevents){ return; }
 	bool click = evt.LeftDown();
-	bool holding = (evt.LeftIsDown()||evt.RightIsDown());
+	bool holding = (evt.LeftIsDown() || evt.RightIsDown());
 
 	int x, y;
-	evt.GetPosition(&x,&y);
+	evt.GetPosition(&x, &y);
 
-	if(evt.ButtonUp()){
-		if(tab->Video->HasCapture()){
+	if (evt.ButtonUp()){
+		if (tab->Video->HasCapture()){
 			tab->Video->ReleaseMouse();
 		}
-		if(numElem>=0){ChangeInLines(true);}
-		if(!hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
-		numElem=-1;
+		if (numElem >= 0){ ChangeInLines(true); }
+		if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		numElem = -1;
 	}
-	
+
 	if (click){
 
-		for(size_t i = 0; i <elems.size(); i++){
-			if(!(selectedTags & elems[i].type)){continue;}
-			if(abs(elems[i].elem.x - x) < 8 && abs(elems[i].elem.y - y) < 8 || i == elems.size()-1){
-				numElem=i;
+		for (size_t i = 0; i < elems.size(); i++){
+			if (!(selectedTags & elems[i].type)){ continue; }
+			if (abs(elems[i].elem.x - x) < 8 && abs(elems[i].elem.y - y) < 8 || i == elems.size() - 1){
+				numElem = i;
 				beforeMove = lastmove = elems[i].elem;
-				diffs.x=elems[i].elem.x-x;
-				diffs.y=elems[i].elem.y-y;
+				diffs.x = elems[i].elem.x - x;
+				diffs.y = elems[i].elem.y - y;
 				if (!tab->Video->HasCapture()){
 					tab->Video->CaptureMouse();
 				}
 			}
 		}
-		firstmove = D3DXVECTOR2(x,y);
+		firstmove = D3DXVECTOR2(x, y);
 		axis = 0;
-	}else if (evt.RightDown()){
+	}
+	else if (evt.RightDown()){
 
 		for (size_t i = 0; i < elems.size(); i++){
 			if (!(selectedTags & elems[i].type)){ continue; }
@@ -101,17 +104,17 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 		axis = 0;
 	}
 	else if (holding && numElem >= 0){
-		
 
-		if(evt.ShiftDown()){
+
+		if (evt.ShiftDown()){
 			//if(axis == 0){
-				int diffx = abs(firstmove.x-x);
-				int diffy = abs(firstmove.y-y);
-				if(diffx != diffy){if(diffx > diffy){axis = 1;}else{axis = 2;}}
-				//return;
+			int diffx = abs(firstmove.x - x);
+			int diffy = abs(firstmove.y - y);
+			if (diffx != diffy){ if (diffx > diffy){ axis = 1; } else{ axis = 2; } }
+			//return;
 			//}
 			lastmove = elems[numElem].elem;
-			if(axis==1){
+			if (axis == 1){
 				elems[numElem].elem.x = x + diffs.x;
 				elems[numElem].elem.y = beforeMove.y;
 			}
@@ -120,23 +123,24 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 				elems[numElem].elem.x = beforeMove.x;
 			}
 			D3DXVECTOR2 moving = elems[numElem].elem - lastmove;
-			for(size_t j = 0; j < elems.size(); j++){
-				if(j == numElem || !(selectedTags & elems[j].type)){continue;}
-				if(axis==1){
+			for (size_t j = 0; j < elems.size(); j++){
+				if (j == numElem || !(selectedTags & elems[j].type)){ continue; }
+				if (axis == 1){
 					elems[j].elem.x += moving.x;
 				}
 				else if (axis == 2){
 					elems[j].elem.y += moving.y;
 				}
 			}
-		}else{
+		}
+		else{
 			lastmove = elems[numElem].elem;
 			elems[numElem].elem.x = x + diffs.x;
 			elems[numElem].elem.y = y + diffs.y;
 
 			D3DXVECTOR2 moving = elems[numElem].elem - lastmove;
-			for(size_t j = 0; j < elems.size(); j++){
-				if(j == numElem || !(selectedTags & elems[j].type)){continue;}
+			for (size_t j = 0; j < elems.size(); j++){
+				if (j == numElem || !(selectedTags & elems[j].type)){ continue; }
 				elems[j].elem.x += moving.x;
 				elems[j].elem.y += moving.y;
 			}
@@ -150,69 +154,70 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 void MoveAll::SetCurVisual()
 {
 	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, tbl);
-	if(tbl[6]>3){linepos=CalcMovePos();}
-	from = to = D3DXVECTOR2(((linepos.x/wspw)-zoomMove.x)*zoomScale.x,
-		((linepos.y/wsph)-zoomMove.y)*zoomScale.y);
+	if (tbl[6] > 3){ linepos = CalcMovePos(); }
+	from = to = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x)*zoomScale.x,
+		((linepos.y / coeffH) - zoomMove.y)*zoomScale.y);
 	elems.clear();
 
 	wxString res;
-	if(tab->Edit->FindVal("org\\(([^\\)]+)", &res, "", 0, true)){
+	if (tab->Edit->FindVal("org\\(([^\\)]+)", &res, "", 0, true)){
 		wxString rest;
-		double orx,ory;
-		
+		double orx, ory;
+
 		moveElems elem;
-		if(res.BeforeFirst(',',&rest).ToDouble(&orx)){elem.elem.x=((orx/wspw)-zoomMove.x)*zoomScale.x;}
-		if(rest.ToDouble(&ory)){elem.elem.y=((ory/wsph)-zoomMove.y)*zoomScale.y;}
-		elem.type=TAGORG;
+		if (res.BeforeFirst(',', &rest).ToDouble(&orx)){ elem.elem.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; }
+		if (rest.ToDouble(&ory)){ elem.elem.y = ((ory / coeffH) - zoomMove.y)*zoomScale.y; }
+		elem.type = TAGORG;
 		elems.push_back(elem);
 	}
-	if(tab->Edit->FindVal("(i?clip[^\\)]+)", &res, "", 0, true)){
+	if (tab->Edit->FindVal("(i?clip[^\\)]+)", &res, "", 0, true)){
 		wxRegEx re("m ([0-9.-]+) ([0-9.-]+)", wxRE_ADVANCED);
 		moveElems elem;
-		if(re.Matches(res)){
-			elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res,1))/wspw)-zoomMove.x)*zoomScale.x, 
-				((wxAtoi(re.GetMatch(res,2))/wsph)-zoomMove.y)*zoomScale.y);
-		}else{
+		if (re.Matches(res)){
+			elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res, 1)) / coeffW) - zoomMove.x)*zoomScale.x,
+				((wxAtoi(re.GetMatch(res, 2)) / coeffH) - zoomMove.y)*zoomScale.y);
+		}
+		else{
 			//wxString txt = tab->Edit->TextEdit->GetValue();
 			int repl = res.Replace(",", ",");
 			wxRegEx re("\\(([0-9.-]+)[, ]*([0-9.-]+)", wxRE_ADVANCED);
-			if(repl>=3 && re.Matches(res)){
-				elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res,1))/wspw)-zoomMove.x)*zoomScale.x, 
-					((wxAtoi(re.GetMatch(res,2))/wsph)-zoomMove.y)*zoomScale.y);
+			if (repl >= 3 && re.Matches(res)){
+				elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res, 1)) / coeffW) - zoomMove.x)*zoomScale.x,
+					((wxAtoi(re.GetMatch(res, 2)) / coeffH) - zoomMove.y)*zoomScale.y);
 			}
 		}
-		elem.type=TAGCLIP;
+		elem.type = TAGCLIP;
 		elems.push_back(elem);
 	}
-	if(tab->Edit->FindVal("p([0-9]+)", &res, "", 0, true)){
-		res=tab->Edit->TextEdit->GetValue();
+	if (tab->Edit->FindVal("p([0-9]+)", &res, "", 0, true)){
+		res = tab->Edit->TextEdit->GetValue();
 		wxRegEx re("} ?m ([.0-9-]+) ([.0-9-]+)", wxRE_ADVANCED);
-		if(re.Matches(res)){
+		if (re.Matches(res)){
 			moveElems elem;
 
-			elem.elem= D3DXVECTOR2(((wxAtoi(re.GetMatch(res,1))/wspw)-zoomMove.x)*zoomScale.x, 
-				((wxAtoi(re.GetMatch(res,2))/wsph)-zoomMove.y)*zoomScale.y);
-			elem.type=TAGP;
+			elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res, 1)) / coeffW) - zoomMove.x)*zoomScale.x,
+				((wxAtoi(re.GetMatch(res, 2)) / coeffH) - zoomMove.y)*zoomScale.y);
+			elem.type = TAGP;
 			elems.push_back(elem);
 		}
 
 	}
-	if(tbl[6]==2){
+	if (tbl[6] == 2){
 		moveElems elem;
-		elem.elem= D3DXVECTOR2(((tbl[0] / wspw)-zoomMove.x)*zoomScale.x, 
-			((tbl[1] / wsph)-zoomMove.y)*zoomScale.y);
-		elem.type=TAGPOS;
+		elem.elem = D3DXVECTOR2(((tbl[0] / coeffW) - zoomMove.x)*zoomScale.x,
+			((tbl[1] / coeffH) - zoomMove.y)*zoomScale.y);
+		elem.type = TAGPOS;
 		elems.push_back(elem);
 	}
-	if(tbl[6]>=4){
+	if (tbl[6] >= 4){
 		moveElems elem;
-		elem.elem= D3DXVECTOR2(((tbl[0] / wspw)-zoomMove.x)*zoomScale.x, 
-			((tbl[1] / wsph)-zoomMove.y)*zoomScale.y);
-		elem.type=TAGMOVES;
+		elem.elem = D3DXVECTOR2(((tbl[0] / coeffW) - zoomMove.x)*zoomScale.x,
+			((tbl[1] / coeffH) - zoomMove.y)*zoomScale.y);
+		elem.type = TAGMOVES;
 		elems.push_back(elem);
-		elem.type=TAGMOVEE;
-		elem.elem= D3DXVECTOR2(((tbl[2] / wspw)-zoomMove.x)*zoomScale.x, 
-			((tbl[3] / wsph)-zoomMove.y)*zoomScale.y);
+		elem.type = TAGMOVEE;
+		elem.elem = D3DXVECTOR2(((tbl[2] / coeffW) - zoomMove.x)*zoomScale.x,
+			((tbl[3] / coeffH) - zoomMove.y)*zoomScale.y);
 		elems.push_back(elem);
 	}
 
@@ -231,18 +236,18 @@ void MoveAll::ChangeInLines(bool all)
 	wxArrayInt sels;
 	tab->Grid->file->GetSelections(sels);
 	wxString *dtxt;
-	if(!all){
-		if(!dummytext){
+	if (!all){
+		if (!dummytext){
 			selPositions.clear();
-			bool visible=false; 
-			dummytext = tab->Grid->GetVisible(&visible,0,&selPositions);
-			if(selPositions.size() != sels.size()){
+			bool visible = false;
+			dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
+			if (selPositions.size() != sels.size()){
 				KaiLog("Sizes mismatch");
 				return;
 			}
 		}
-		
-		dtxt=new wxString(*dummytext);
+
+		dtxt = new wxString(*dummytext);
 	}
 	bool skipInvisible = !all && tab->Video->GetState() != Playing;
 	wxString tmp;
@@ -251,92 +256,98 @@ void MoveAll::ChangeInLines(bool all)
 	//wxString origText=Editor->GetValue();
 	const wxString &tlModeStyle = tab->Grid->GetSInfo("TLMode Style");
 	int moveLength = 0;
-	
-	for(size_t i = 0; i< sels.size(); i++){
+
+	for (size_t i = 0; i < sels.size(); i++){
 		wxString txt;
 		Dialogue *Dial = tab->Grid->GetDialogue(sels[i]);
 
-		if(skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){continue;}
-		bool istexttl=(tab->Grid->hasTLMode && Dial->TextTl!="");
-		txt = (istexttl)? Dial->TextTl : Dial->Text;
+		if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){ continue; }
+		bool istexttl = (tab->Grid->hasTLMode && Dial->TextTl != "");
+		txt = (istexttl) ? Dial->TextTl : Dial->Text;
 
-		for(int k = 0; k < 6; k++){
+		for (int k = 0; k < 6; k++){
 			byte type = selectedTags & (1 << k);
-			if(!type){continue;}
-			bool vector= type==TAGCLIP||type==TAGP;
-			wxString delimiter= (vector)? " " : ",";
-			wxString tagpattern = (type==TAGPOS)? "pos\\(([^\\)]+)" : (type==TAGORG)? "org\\(([^\\)]+)" : (type==TAGCLIP)? "i?clip\\(([^\\)]+)" : (type==TAGP)? "p[0-9-]+[^}]*} ?m ([^{]+)" : "move\\(([^\\)]+)"; 
+			if (!type){ continue; }
+			bool vector = type == TAGCLIP || type == TAGP;
+			wxString delimiter = (vector) ? " " : ",";
+			wxString tagpattern = (type == TAGPOS) ? "pos\\(([^\\)]+)" : (type == TAGORG) ? "org\\(([^\\)]+)" : (type == TAGCLIP) ? "i?clip\\(([^\\)]+)" : (type == TAGP) ? "p[0-9-]+[^}]*} ?m ([^{]+)" : "move\\(([^\\)]+)";
 			wxRegEx re(tagpattern, wxRE_ADVANCED);
-			size_t startMatch=0, lenMatch=0;
-			if(re.Matches(txt)){
+			size_t startMatch = 0, lenMatch = 0;
+			if (re.Matches(txt)){
 				wxString visual;
 				//wxString tag=re.GetMatch(txt, 1); tag też nigdzie nie jest potrzebny, bo wycinamy tylko jego wartość.
-				tmp= re.GetMatch(txt, 1);
-				if(type==TAGCLIP){
-					int replacements = tmp.Replace(',',',');
-					if(replacements==1){
-						tmp=tmp.After(',');
-					}else if(replacements>1){
-						delimiter=",";
+				tmp = re.GetMatch(txt, 1);
+				if (type == TAGCLIP){
+					int replacements = tmp.Replace(',', ',');
+					if (replacements == 1){
+						tmp = tmp.After(',');
+					}
+					else if (replacements > 1){
+						delimiter = ",";
 					}
 				}
 				//re.GetMatch(&startMatch, &lenMatch, 2); niepotrzebny drugi raz użycie tego samego
-				wxStringTokenizer tkn(tmp, delimiter,wxTOKEN_STRTOK);
-				int count=0;
-				while(tkn.HasMoreTokens()){
-					wxString token=tkn.GetNextToken().Trim().Trim(false);
+				wxStringTokenizer tkn(tmp, delimiter, wxTOKEN_STRTOK);
+				int count = 0;
+				while (tkn.HasMoreTokens()){
+					wxString token = tkn.GetNextToken().Trim().Trim(false);
 					double val;
-					if(token.ToDouble(&val)){
-						if(count % 2 == 0){val += (((moving.x/zoomScale.x)) * wspw);}else{val += (((moving.y/zoomScale.y)) * wsph);}
-						if(type==TAGMOVES && count > 1 ){visual+=token+delimiter; continue;}
-						else if(type==TAGMOVEE && count != 2 && count != 3){visual+=token+delimiter; count++; continue;}
-						if(vector){visual<<getfloat(val,(type==TAGCLIP)? "6.0f" : "6.2f")<<delimiter;}
-						else{visual += getfloat(val) + delimiter;}
+					if (token.ToDouble(&val)){
+						if (count % 2 == 0){ val += (((moving.x / zoomScale.x)) * coeffW); }
+						else{ val += (((moving.y / zoomScale.y)) * coeffH); }
+						if (type == TAGMOVES && count > 1){ visual += token + delimiter; continue; }
+						else if (type == TAGMOVEE && count != 2 && count != 3){ visual += token + delimiter; count++; continue; }
+						if (vector){ visual << getfloat(val, (type == TAGCLIP) ? "6.0f" : "6.2f") << delimiter; }
+						else{ visual += getfloat(val) + delimiter; }
 						count++;
-					}else{
-						visual+=token+delimiter;
-						if(!vector){count++;}
+					}
+					else{
+						visual += token + delimiter;
+						if (!vector){ count++; }
 					}
 				}
-				if(re.GetMatch(&startMatch, &lenMatch, 1)){
+				if (re.GetMatch(&startMatch, &lenMatch, 1)){
 					visual.RemoveLast();
-					if(lenMatch){txt.erase(txt.begin()+startMatch, txt.begin()+startMatch+lenMatch);}
-					txt.insert(startMatch,visual);
+					if (lenMatch){ txt.erase(txt.begin() + startMatch, txt.begin() + startMatch + lenMatch); }
+					txt.insert(startMatch, visual);
 
 				}
 			}
-		
+
 		}
-		if(all){
-			tab->Grid->CopyDialogue(sels[i])->Text=txt;
-		}else{
-			Dialogue Cpy=Dialogue(*Dial);
-			if(istexttl) {
+		if (all){
+			tab->Grid->CopyDialogue(sels[i])->Text = txt;
+		}
+		else{
+			Dialogue Cpy = Dialogue(*Dial);
+			if (istexttl) {
 				Cpy.TextTl = txt;
 				wxString tlLines;
 				Cpy.GetRaw(&tlLines, true);
-				Cpy.GetRaw(&tlLines,false,tlModeStyle);
-				dtxt->insert(selPositions[i] + moveLength,tlLines);
+				Cpy.GetRaw(&tlLines, false, tlModeStyle);
+				dtxt->insert(selPositions[i] + moveLength, tlLines);
 				moveLength += tlLines.Len();
-			}else{
+			}
+			else{
 				Cpy.Text = txt;
 				wxString thisLine;
 				Cpy.GetRaw(&thisLine);
-				dtxt->insert(selPositions[i] + moveLength,thisLine);
+				dtxt->insert(selPositions[i] + moveLength, thisLine);
 				moveLength += thisLine.Len();
 			}
 
-			
+
 		}
 	}
-	if(all){
-		tab->Video->VisEdit=true;
-		if(tab->Edit->splittedTags){tab->Edit->TextEditOrig->modified=true;}
-		tab->Grid->SetModified(VISUAL_POSITION_SHIFTER,true);
+	if (all){
+		tab->Video->VisEdit = true;
+		if (tab->Edit->splittedTags){ tab->Edit->TextEditOrig->modified = true; }
+		tab->Grid->SetModified(VISUAL_POSITION_SHIFTER, true);
 		tab->Grid->Refresh();
-	}else{
-		if(!tab->Video->OpenSubs(dtxt)){KaiLog(_("Nie można otworzyć napisów"));}
-		tab->Video->VisEdit=true;
+	}
+	else{
+		if (!tab->Video->OpenSubs(dtxt)){ KaiLog(_("Nie można otworzyć napisów")); }
+		tab->Video->VisEdit = true;
 		tab->Video->Render();
 
 	}
@@ -346,7 +357,7 @@ void MoveAll::ChangeInLines(bool all)
 void MoveAll::ChangeTool(int _tool)
 {
 	selectedTags = _tool;
-	if((_tool & TAGPOS || _tool & TAGMOVES || _tool & TAGMOVEE) && _tool & TAGP){
+	if ((_tool & TAGPOS || _tool & TAGMOVES || _tool & TAGMOVEE) && _tool & TAGP){
 		selectedTags ^= TAGP;
 	}
 	tab->Video->Render(false);

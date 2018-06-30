@@ -1384,20 +1384,12 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 	if (vis == eb->Visual){ return; }
 	if (Visual && vis == 0){
 		SetVisual(true);
-		if (vTB->ClipToolsShown() || vTB->MoveToolsShown()){ vTB->ShowTools(false, vTB->ClipToolsShown()); }
 	}
 	else if (vis != eb->Visual){
 		if (hasZoom){ SetZoom(); }
-		if (vis == VECTORCLIP || vis == VECTORDRAW || eb->Visual == VECTORCLIP
-			|| eb->Visual == VECTORDRAW || vis == MOVEALL || eb->Visual == MOVEALL){
-			bool vector = (vis == VECTORCLIP || vis == VECTORDRAW || vis == MOVEALL);
-			bool isMove = (vis == MOVEALL || (eb->Visual == MOVEALL && vis != VECTORCLIP && vis != VECTORDRAW));
-			if (isFullscreen && TD){ TD->vToolbar->ShowTools(vector, !isMove); }
-			else{ vTB->ShowTools(vector, !isMove); }
-		}
 		eb->Visual = vis;
 		SetVisual();
-		if (vis == MOVEALL){ Visual->ChangeTool(vTB->GetMoveToggled()); }
+		if (vis == MOVEALL){ Visual->ChangeTool(vTB->GetItemToggled()); }
 		if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 	}
 

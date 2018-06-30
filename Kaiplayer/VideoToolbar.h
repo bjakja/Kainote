@@ -19,11 +19,6 @@
 #include <vector>
 #include "ListControls.h"
 
-const static int toolsSize = 10;
-const static int clipToolsSize = 6;
-const static int moveToolsStart= toolsSize + clipToolsSize;
-const static int moveToolsSize = 6;
-
 class itemdata{
 public:
 	itemdata(wxBitmap *_icon, const wxString& _help){icon=_icon; help=_help;}
@@ -33,32 +28,109 @@ public:
 	wxString help;
 };
 
+class VisualItem
+{
+public:
+	VisualItem();
+	virtual void OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt){};
+	virtual void OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt){};
+	virtual void Synchronize(VisualItem * item){};
+	virtual int GetItemToggled(){};
+	virtual void SetItemToggled(int item){};
+
+	int startIconNumber;
+	bool clicked = false;
+	int selection = -1;
+};
+
+class MoveAllItem : public VisualItem
+{
+public:
+	MoveAllItem() : VisualItem() { 
+		startIconNumber = 16; 
+		MoveToggled[0] = true;
+		for (int i = 1; i < numMoveIcons; i++){
+			MoveToggled[i] = false;
+		}
+	};
+	void OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt);
+	void OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt);
+	void Synchronize(VisualItem * item){
+		MoveAllItem *mai = (MoveAllItem*)item;
+		for (int i = 0; i < numMoveIcons; i++)
+			MoveToggled[i] = mai->MoveToggled[i];
+	};
+	int GetItemToggled(){
+		int result = 0;
+		for (int i = 0; i < numMoveIcons; i++){
+			if (MoveToggled[i]){ result |= 1 << i; }
+		}
+		return result;
+	};
+	//virtual void SetItemToggled(int item){};
+private:
+	static const int numMoveIcons = 6;
+	bool MoveToggled[numMoveIcons];
+};
+
+class VectorItem : public VisualItem
+{
+public:
+	VectorItem() : VisualItem() { startIconNumber = 10; };
+	void OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt);
+	void OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt);
+	void Synchronize(VisualItem * item){
+		VectorItem *ci = (VectorItem*)item;
+		toggled = ci->toggled;
+	};
+	int GetItemToggled(){ return toggled; };
+	void SetItemToggled(int item){ 
+		toggled = item;
+		if (toggled < 0)
+			toggled = numIcons - 1;
+		else if (toggled >= numIcons)
+			toggled = 0;
+	};
+	int numIcons = 6;
+	int toggled = 0;
+};
+
+class ScaleRotationItem : public VisualItem
+{
+public:
+	ScaleRotationItem() : VisualItem() { startIconNumber = 3; };
+	void OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt);
+	void OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt);
+	void Synchronize(VisualItem * item){
+		ScaleRotationItem *sri = (ScaleRotationItem*)item;
+		toggled = sri->toggled;
+	};
+	int GetItemToggled(){ return toggled; };
+	void SetItemToggled(int item){ 
+		toggled = item; 
+		if (toggled < 0)
+			toggled = numIcons - 1;
+		else if (toggled >= numIcons)
+			toggled = 0;
+	};
+	int numIcons = 3;
+	int toggled = 0;
+};
+
 class VideoToolbar: public wxWindow {
 public:
 	VideoToolbar (wxWindow *parent, const wxPoint &pos);
 	virtual ~VideoToolbar(){
+		for (auto cur = visualItems.begin(); cur != visualItems.end(); cur++){
+			delete (*cur);
+		}
 		if(bmp)delete bmp; bmp=NULL;
 	};
 
 	int GetToggled();
-	int GetClipToggled(){return clipToggled-Toggled;};
-	int GetMoveToggled(){
-		int result = 0;
-		for(int i = 0; i < moveToolsSize; i++){
-			if(MoveToggled[i]){ result |= 1<<i; }
-		}
-		return result;
-	};
-	void SetClipToggled(int newtool){ clipToggled = toolsSize + newtool; Refresh(false);};
+	int GetItemToggled();
+	void SetItemToggled(int toggled);
 	void Synchronize(VideoToolbar *vtoolbar);
-	void ShowTools(bool show, bool IsClip){
-		if(IsClip){clipToggled = toolsSize+1; showClipTools=show; showMoveTools=false;}
-		else {showMoveTools=show; showClipTools=false;}
-		Refresh(false);
-	}
-	//void ShowMoveTools(bool show){showMoveTools=show; Refresh(false);}
-	bool ClipToolsShown(){return showClipTools;}
-	bool MoveToolsShown(){return showMoveTools;}
 	static void DestroyIcons(){
 		for(auto cur = icons.begin(); cur != icons.end(); cur++){
 			delete (*cur);
@@ -67,32 +139,27 @@ public:
 	void DisableVisuals(bool Disable){ 
 		iconsEnabled = !Disable; 
 		Toggled = 0;
-		clipToggled = toolsSize + 1;
 		sel = -1;
 		clicked = false;
-		showClipTools = false;
-		showMoveTools = false;
 		blockScroll = false;
 		Refresh(false); 
 	}
 	KaiChoice *videoSeekAfter;
 	KaiChoice *videoPlayAfter;
+	static std::vector<itemdata*> icons;
+	bool blockScroll;
 private:
 	
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent &evt);
 	void OnSize(wxSizeEvent &evt);
 	int Toggled;
-	int clipToggled;
-	bool MoveToggled[moveToolsSize];
 	int sel;
+	const static int toolsSize = 11;
 	bool clicked;
-	bool showClipTools;
-	bool showMoveTools;
-	bool blockScroll;
 	bool iconsEnabled = true;
 	wxBitmap *bmp;
-	static std::vector< itemdata*> icons;
+	std::vector<VisualItem*> visualItems;
 };
 
 enum{
@@ -105,6 +172,7 @@ enum{
 	ID_VIDEO_TOOLBAR_EVENT=21909,
 	ID_VECTOR_TOOLBAR_EVENT,
 	ID_MOVE_TOOLBAR_EVENT,
+	ID_SCALE_ROTATE_TOOLBAR_EVENT,
 	ID_SEEK_AFTER=22222,
 	ID_PLAY_AFTER
 };

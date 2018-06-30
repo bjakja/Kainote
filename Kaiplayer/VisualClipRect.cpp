@@ -18,12 +18,12 @@
 #include <wx/regex.h>
 
 enum{
-	LEFT=1,
+	LEFT = 1,
 	RIGHT,
-	TOP=4,
-	BOTTOM=8,
-	INSIDE=16,
-	OUTSIDE=32
+	TOP = 4,
+	BOTTOM = 8,
+	INSIDE = 16,
+	OUTSIDE = 32
 };
 
 ClipRect::ClipRect()
@@ -36,19 +36,21 @@ ClipRect::ClipRect()
 
 void ClipRect::DrawVisual(int time)
 {
-	if(!showClip){return;}
-	int x1, x2, y1, y2; 
-	if(Corner[0].x < Corner[1].x){
+	if (!showClip){ return; }
+	int x1, x2, y1, y2;
+	if (Corner[0].x < Corner[1].x){
 		x1 = Corner[0].x;
 		x2 = Corner[1].x;
-	}else{
+	}
+	else{
 		x1 = Corner[1].x;
 		x2 = Corner[0].x;
 	}
-	if(Corner[0].y < Corner[1].y){
+	if (Corner[0].y < Corner[1].y){
 		y1 = Corner[0].y;
 		y2 = Corner[1].y;
-	}else{
+	}
+	else{
 		y1 = Corner[1].y;
 		y2 = Corner[0].y;
 	}
@@ -56,156 +58,164 @@ void ClipRect::DrawVisual(int time)
 
 	D3DXVECTOR2 v2[5];
 	wxSize s = VideoSize.GetSize();
-	v2[0].x=((x1/wspw)-zoomMove.x)*zoomScale.x;
-	v2[0].y=((y1/wsph)-zoomMove.y)*zoomScale.y;
-	v2[1].x=v2[0].x;
-	v2[1].y=(((y2/wsph)-zoomMove.y)*zoomScale.y)-1;
-	v2[2].x=(((x2/wspw)-zoomMove.x)*zoomScale.x)-1;
-	v2[2].y=v2[1].y;
-	v2[3].x=v2[2].x;
-	v2[3].y=v2[0].y;
-	v2[4].x=v2[0].x;
-	v2[4].y=v2[0].y;
-	if(v2[0].x > v2[2].x){
-		v2[2].x = v2[3].x = v2[0].x;}
-	if(v2[0].y > v2[1].y){
-		v2[1].y = v2[2].y = v2[0].y;}
+	v2[0].x = ((x1 / coeffW) - zoomMove.x)*zoomScale.x;
+	v2[0].y = ((y1 / coeffH) - zoomMove.y)*zoomScale.y;
+	v2[1].x = v2[0].x;
+	v2[1].y = (((y2 / coeffH) - zoomMove.y)*zoomScale.y) - 1;
+	v2[2].x = (((x2 / coeffW) - zoomMove.x)*zoomScale.x) - 1;
+	v2[2].y = v2[1].y;
+	v2[3].x = v2[2].x;
+	v2[3].y = v2[0].y;
+	v2[4].x = v2[0].x;
+	v2[4].y = v2[0].y;
+	if (v2[0].x > v2[2].x){
+		v2[2].x = v2[3].x = v2[0].x;
+	}
+	if (v2[0].y > v2[1].y){
+		v2[1].y = v2[2].y = v2[0].y;
+	}
 
-	if(!invClip){
+	if (!invClip){
 
 
 		VERTEX v24[12];
-		CreateVERTEX(&v24[0],0, 0, 0x88000000);
-		CreateVERTEX(&v24[1],s.x, 0, 0x88000000);
-		CreateVERTEX(&v24[2],v2[2].x, v2[0].y, 0x88000000);
-		CreateVERTEX(&v24[3],v2[0].x, v2[0].y, 0x88000000);
-		CreateVERTEX(&v24[4],v2[0].x, v2[2].y, 0x88000000);
-		CreateVERTEX(&v24[5],0, s.y, 0x88000000);
-		CreateVERTEX(&v24[6],s.x, s.y, 0x88000000);
-		CreateVERTEX(&v24[7],0, s.y, 0x88000000);
-		CreateVERTEX(&v24[8],v2[0].x, v2[2].y, 0x88000000);
-		CreateVERTEX(&v24[9],v2[2].x, v2[2].y, 0x88000000);
-		CreateVERTEX(&v24[10],v2[2].x, v2[0].y, 0x88000000);
-		CreateVERTEX(&v24[11],s.x, 0, 0x88000000);
+		CreateVERTEX(&v24[0], 0, 0, 0x88000000);
+		CreateVERTEX(&v24[1], s.x, 0, 0x88000000);
+		CreateVERTEX(&v24[2], v2[2].x, v2[0].y, 0x88000000);
+		CreateVERTEX(&v24[3], v2[0].x, v2[0].y, 0x88000000);
+		CreateVERTEX(&v24[4], v2[0].x, v2[2].y, 0x88000000);
+		CreateVERTEX(&v24[5], 0, s.y, 0x88000000);
+		CreateVERTEX(&v24[6], s.x, s.y, 0x88000000);
+		CreateVERTEX(&v24[7], 0, s.y, 0x88000000);
+		CreateVERTEX(&v24[8], v2[0].x, v2[2].y, 0x88000000);
+		CreateVERTEX(&v24[9], v2[2].x, v2[2].y, 0x88000000);
+		CreateVERTEX(&v24[10], v2[2].x, v2[0].y, 0x88000000);
+		CreateVERTEX(&v24[11], s.x, 0, 0x88000000);
 
-		HRN(device->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE), "fvf failed");
-		HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLEFAN, 4, v24, sizeof(VERTEX) ),"primitive failed");
-		HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(VERTEX) ),"primitive failed");
-	}else{
+		HRN(device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), "fvf failed");
+		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, v24, sizeof(VERTEX)), "primitive failed");
+		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(VERTEX)), "primitive failed");
+	}
+	else{
 		VERTEX v24[4];
-		CreateVERTEX(&v24[0],v2[0].x, v2[0].y, 0x88000000);
-		CreateVERTEX(&v24[1],v2[2].x, v2[0].y, 0x88000000);
-		CreateVERTEX(&v24[2],v2[0].x, v2[2].y, 0x88000000);
-		CreateVERTEX(&v24[3],v2[2].x, v2[2].y, 0x88000000);
-		HRN(device->DrawPrimitiveUP( D3DPT_TRIANGLESTRIP, 2, v24, sizeof(VERTEX) ),"primitive failed");
+		CreateVERTEX(&v24[0], v2[0].x, v2[0].y, 0x88000000);
+		CreateVERTEX(&v24[1], v2[2].x, v2[0].y, 0x88000000);
+		CreateVERTEX(&v24[2], v2[0].x, v2[2].y, 0x88000000);
+		CreateVERTEX(&v24[3], v2[2].x, v2[2].y, 0x88000000);
+		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v24, sizeof(VERTEX)), "primitive failed");
 	}
 	line->SetWidth(1);
 	line->Begin();
-	line->Draw(v2,5,0xFFBB0000);
+	line->Draw(v2, 5, 0xFFBB0000);
 	line->End();
 }
 
 wxString ClipRect::GetVisual()
 {
-	int x1, x2, y1, y2; 
-	if(Corner[0].x < Corner[1].x){
+	int x1, x2, y1, y2;
+	if (Corner[0].x < Corner[1].x){
 		x1 = Corner[0].x;
 		x2 = Corner[1].x;
-	}else{
+	}
+	else{
 		x1 = Corner[1].x;
 		x2 = Corner[0].x;
 	}
-	if(Corner[0].y < Corner[1].y){
+	if (Corner[0].y < Corner[1].y){
 		y1 = Corner[0].y;
 		y2 = Corner[1].y;
-	}else{
+	}
+	else{
 		y1 = Corner[1].y;
 		y2 = Corner[0].y;
 	}
-	return wxString::Format("\\%sclip(%i,%i,%i,%i)",(invClip)? "i" : "", x1, y1, x2, y2);
+	return wxString::Format("\\%sclip(%i,%i,%i,%i)", (invClip) ? "i" : "", x1, y1, x2, y2);
 }
 
 void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 {
-	if(blockevents){return;}
+	if (blockevents){ return; }
 	bool click = evt.LeftDown();
 	bool holding = (evt.LeftIsDown());
 
 	int x, y;
-	evt.GetPosition(&x,&y);
+	evt.GetPosition(&x, &y);
 
-	if(evt.ButtonUp()){
-		if(tab->Video->HasCapture()){tab->Video->ReleaseMouse();}
-		SetVisual(false,0);
-		if(!hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
+	if (evt.ButtonUp()){
+		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
+		SetVisual(false, 0);
+		if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 	}
 
-	if(!holding && showClip){
+	if (!holding && showClip){
 
-		bool setarrow=false;
-		int test = HitTest(D3DXVECTOR2(x,y),false);
-		if(test < INSIDE){
-			setarrow=true;
-			tab->Video->SetCursor((test < 4)? wxCURSOR_SIZEWE : 
-				(test >= 4 && test % 4 == 0)? wxCURSOR_SIZENS : 
-				(test == (TOP+LEFT) || test == (BOTTOM+RIGHT))? wxCURSOR_SIZENWSE : wxCURSOR_SIZENESW);
-			hasArrow=false;
+		bool setarrow = false;
+		int test = HitTest(D3DXVECTOR2(x, y), false);
+		if (test < INSIDE){
+			setarrow = true;
+			tab->Video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
+				(test >= 4 && test % 4 == 0) ? wxCURSOR_SIZENS :
+				(test == (TOP + LEFT) || test == (BOTTOM + RIGHT)) ? wxCURSOR_SIZENWSE : wxCURSOR_SIZENESW);
+			hasArrow = false;
 		}
-		if(!setarrow && !hasArrow){tab->Video->SetCursor(wxCURSOR_ARROW);hasArrow=true;}
+		if (!setarrow && !hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 	}
-	if(click){
-		grabbed=OUTSIDE;
-		int pointx = ((x/zoomScale.x)+zoomMove.x) *wspw, 
-			pointy = ((y/zoomScale.y)+zoomMove.y) *wsph;
-		if(showClip){
-			grabbed = HitTest(D3DXVECTOR2(x,y));
-			if(grabbed == INSIDE){
-				if(Corner[0].x <= pointx && Corner[1].x >= pointx && Corner[0].y <= pointy && Corner[1].y >= pointy){
-					diffs.x=x;
-					diffs.y=y;
+	if (click){
+		grabbed = OUTSIDE;
+		int pointx = ((x / zoomScale.x) + zoomMove.x) *coeffW,
+			pointy = ((y / zoomScale.y) + zoomMove.y) *coeffH;
+		if (showClip){
+			grabbed = HitTest(D3DXVECTOR2(x, y));
+			if (grabbed == INSIDE){
+				if (Corner[0].x <= pointx && Corner[1].x >= pointx && Corner[0].y <= pointy && Corner[1].y >= pointy){
+					diffs.x = x;
+					diffs.y = y;
 					grabbed = 100;
 				}
 			}
 		}
-		if(!showClip || grabbed == OUTSIDE){
+		if (!showClip || grabbed == OUTSIDE){
 			Corner[0].x = Corner[1].x = pointx;
 			Corner[0].y = Corner[1].y = pointy;
 			grabbed = 1000;
 			showClip = true;
 		}
 
-	}else if(holding && grabbed!=-1){
+	}
+	else if (holding && grabbed != -1){
 
-		if(grabbed<16){
-			if(grabbed & LEFT || grabbed & RIGHT){
-				x=MID(VideoSize.x, x, VideoSize.width);
-				Corner[(grabbed & RIGHT)? 1 : 0].x=((((x+diffs.x)/zoomScale.x)+zoomMove.x) *wspw);
-				if(grabbed & LEFT && Corner[0].x > Corner[1].x){Corner[0].x = Corner[1].x;}
-				if(grabbed & RIGHT && Corner[1].x < Corner[0].x){Corner[1].x = Corner[0].x;}	
+		if (grabbed<16){
+			if (grabbed & LEFT || grabbed & RIGHT){
+				x = MID(VideoSize.x, x, VideoSize.width);
+				Corner[(grabbed & RIGHT) ? 1 : 0].x = ((((x + diffs.x) / zoomScale.x) + zoomMove.x) *coeffW);
+				if (grabbed & LEFT && Corner[0].x > Corner[1].x){ Corner[0].x = Corner[1].x; }
+				if (grabbed & RIGHT && Corner[1].x < Corner[0].x){ Corner[1].x = Corner[0].x; }
 			}
-			if(grabbed & TOP || grabbed & BOTTOM){
-				y=MID(VideoSize.y, y, VideoSize.height);
-				Corner[(grabbed & BOTTOM)? 1 : 0].y=((((y+diffs.y)/zoomScale.y)+zoomMove.y) *wsph);
-				if(grabbed & TOP && Corner[0].y > Corner[1].y){Corner[0].y = Corner[1].y;}
-				if(grabbed & BOTTOM && Corner[1].y < Corner[0].y){Corner[1].y = Corner[0].y;}	
+			if (grabbed & TOP || grabbed & BOTTOM){
+				y = MID(VideoSize.y, y, VideoSize.height);
+				Corner[(grabbed & BOTTOM) ? 1 : 0].y = ((((y + diffs.y) / zoomScale.y) + zoomMove.y) *coeffH);
+				if (grabbed & TOP && Corner[0].y > Corner[1].y){ Corner[0].y = Corner[1].y; }
+				if (grabbed & BOTTOM && Corner[1].y < Corner[0].y){ Corner[1].y = Corner[0].y; }
 			}
-		}else if(grabbed == 100){
-			float movex=(((x-diffs.x)/zoomScale.x) *wspw),
-				movey=(((y-diffs.y)/zoomScale.y) *wsph);
+		}
+		else if (grabbed == 100){
+			float movex = (((x - diffs.x) / zoomScale.x) *coeffW),
+				movey = (((y - diffs.y) / zoomScale.y) *coeffH);
 			Corner[0].x += movex;
 			Corner[0].y += movey;
 			Corner[1].x += movex;
 			Corner[1].y += movey;
 			diffs.x = x;
 			diffs.y = y;
-		}else if(grabbed == 1000){
-			int pointx = ((x/zoomScale.x)+zoomMove.x) *wspw, 
-				pointy = ((y/zoomScale.y)+zoomMove.y) *wsph;
+		}
+		else if (grabbed == 1000){
+			int pointx = ((x / zoomScale.x) + zoomMove.x) *coeffW,
+				pointy = ((y / zoomScale.y) + zoomMove.y) *coeffH;
 			//if(Corner[0].x == pointx || Corner[0].y == pointy){return;}
 			Corner[1].x = pointx;
 			Corner[1].y = pointy;
 		}
-		SetVisual(true,0);
+		SetVisual(true, 0);
 	}
 
 
@@ -213,23 +223,24 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 
 void ClipRect::SetCurVisual()
 {
-	int x1=0,x2=SubsSize.x,y1=0,y2=SubsSize.y;
+	int x1 = 0, x2 = SubsSize.x, y1 = 0, y2 = SubsSize.y;
 	wxString clip;
-	bool found =tab->Edit->FindVal("(i?clip[^\\)]+)", &clip);
-	if(found && clip.Freq(',') == 3){
-		int match=1;
+	bool found = tab->Edit->FindVal("(i?clip[^\\)]+)", &clip);
+	if (found && clip.Freq(',') == 3){
+		int match = 1;
 		wxRegEx re("\\(([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)", wxRE_ADVANCED);
 
-		if(re.Matches(clip)){
-			x1=wxAtoi(re.GetMatch(clip,match));
-			y1=wxAtoi(re.GetMatch(clip,match+1));
-			x2=wxAtoi(re.GetMatch(clip,match+2));
-			y2=wxAtoi(re.GetMatch(clip,match+3));
-			showClip=true;
+		if (re.Matches(clip)){
+			x1 = wxAtoi(re.GetMatch(clip, match));
+			y1 = wxAtoi(re.GetMatch(clip, match + 1));
+			x2 = wxAtoi(re.GetMatch(clip, match + 2));
+			y2 = wxAtoi(re.GetMatch(clip, match + 3));
+			showClip = true;
 		}
-		
-	}else{
-		showClip=false;
+
+	}
+	else{
+		showClip = false;
 	}
 
 	Corner[0] = D3DXVECTOR2(x1, y1);
@@ -239,64 +250,67 @@ void ClipRect::SetCurVisual()
 
 int ClipRect::HitTest(D3DXVECTOR2 pos, bool diff)
 {
-	int resultX=0, resultY=0, resultInside=0, resultFinal=0, oldpointx = 0, oldpointy = 0;
-	for(int i = 0; i<2; i++){
-		int pointx = ((Corner[i].x/wspw)-zoomMove.x)*zoomScale.x, 
-			pointy = ((Corner[i].y/wsph)-zoomMove.y)*zoomScale.y;
+	int resultX = 0, resultY = 0, resultInside = 0, resultFinal = 0, oldpointx = 0, oldpointy = 0;
+	for (int i = 0; i < 2; i++){
+		int pointx = ((Corner[i].x / coeffW) - zoomMove.x)*zoomScale.x,
+			pointy = ((Corner[i].y / coeffH) - zoomMove.y)*zoomScale.y;
 		bool hasResult = false;
-		if(abs(pos.x-pointx)<5){
-			if(diff){
-				diffs.x=(pointx)-pos.x; 
+		if (abs(pos.x - pointx) < 5){
+			if (diff){
+				diffs.x = (pointx)-pos.x;
 			}
-			resultX|=(i+1);
+			resultX |= (i + 1);
 		}
-		if(abs(pos.y-pointy)<5){
-			if(diff){
-				diffs.y=(pointy)-pos.y; 
+		if (abs(pos.y - pointy) < 5){
+			if (diff){
+				diffs.y = (pointy)-pos.y;
 			}
-			resultY|=((i+1)*4);
+			resultY |= ((i + 1) * 4);
 		}
-		if(i){
-			resultInside |= (resultX || 
-				(oldpointx<=pointx && oldpointx <= pos.x && pointx >= pos.x) ||
-				(oldpointx>=pointx && oldpointx >= pos.x && pointx <= pos.x))? INSIDE : OUTSIDE;
-			resultInside |= (resultY || 
-				(oldpointx<=pointx && oldpointy <= pos.y && pointy >= pos.y) ||
-				(oldpointx>=pointx && oldpointy >= pos.y && pointy <= pos.y))? INSIDE : OUTSIDE;
-		}else{
+		if (i){
+			resultInside |= (resultX ||
+				(oldpointx <= pointx && oldpointx <= pos.x && pointx >= pos.x) ||
+				(oldpointx >= pointx && oldpointx >= pos.x && pointx <= pos.x)) ? INSIDE : OUTSIDE;
+			resultInside |= (resultY ||
+				(oldpointx <= pointx && oldpointy <= pos.y && pointy >= pos.y) ||
+				(oldpointx >= pointx && oldpointy >= pos.y && pointy <= pos.y)) ? INSIDE : OUTSIDE;
+		}
+		else{
 			oldpointx = pointx;
 			oldpointy = pointy;
 		}
 	}
 
-	resultFinal = (resultInside & OUTSIDE)? OUTSIDE : INSIDE;
-	if(resultFinal == INSIDE){
+	resultFinal = (resultInside & OUTSIDE) ? OUTSIDE : INSIDE;
+	if (resultFinal == INSIDE){
 		resultFinal |= resultX;
 		resultFinal |= resultY;
-		if(resultFinal > INSIDE){resultFinal ^= INSIDE;}
+		if (resultFinal > INSIDE){ resultFinal ^= INSIDE; }
 	}
 	return resultFinal;
 }
 
 void ClipRect::ChangeVisual(wxString *txt, Dialogue *dial)
 {
-	int x1, x2, y1, y2; 
-	if(Corner[0].x < Corner[1].x){
+	int x1, x2, y1, y2;
+	if (Corner[0].x < Corner[1].x){
 		x1 = Corner[0].x;
 		x2 = Corner[1].x;
-	}else{
+	}
+	else{
 		x1 = Corner[1].x;
 		x2 = Corner[0].x;
 	}
-	if(Corner[0].y < Corner[1].y){
+	if (Corner[0].y < Corner[1].y){
 		y1 = Corner[0].y;
 		y2 = Corner[1].y;
-	}else{
+	}
+	else{
 		y1 = Corner[1].y;
 		y2 = Corner[0].y;
 	}
 	wxString val;
-	wxString tag = wxString::Format("\\%sclip(%i,%i,%i,%i)",(invClip)? "i" : "", x1, y1, x2, y2);
+	wxString tag = wxString::Format("\\%sclip(%i,%i,%i,%i)", (invClip) ? "i" : "", x1, y1, x2, y2);
 	tab->Edit->FindVal("i?clip(.+)", &val, *txt, 0, true);
 	ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 }

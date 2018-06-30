@@ -481,6 +481,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="VisualRotationZ.cpp" />
     <ClCompile Include="Visuals.cpp" />
     <ClCompile Include="VisualScale.cpp" />
+    <ClCompile Include="VisualScaleRotation.cpp" />
     <ClCompile Include="Vsfilterapi.cpp" />
   </ItemGroup>
   <ItemGroup>

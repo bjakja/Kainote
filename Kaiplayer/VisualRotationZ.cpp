@@ -27,8 +27,8 @@ void RotationZ::DrawVisual(int time)
 {
 	if (time != oldtime && tbl[6] > 3){
 		from = CalcMovePos();
-		from.x = ((from.x / wspw) - zoomMove.x)*zoomScale.x;
-		from.y = ((from.y / wsph) - zoomMove.y)*zoomScale.y;
+		from.x = ((from.x / coeffW) - zoomMove.x)*zoomScale.x;
+		from.y = ((from.y / coeffH) - zoomMove.y)*zoomScale.y;
 		to = from;
 		if (org == from){ org = from; }
 		else{
@@ -113,8 +113,8 @@ void RotationZ::DrawVisual(int time)
 wxString RotationZ::GetVisual()
 {
 	if (isOrg){
-		return "\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x)*wspw) + "," +
-			getfloat(((org.y / zoomScale.y) + zoomMove.y)*wsph) + ")";
+		return "\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x)*coeffW) + "," +
+			getfloat(((org.y / zoomScale.y) + zoomMove.y)*coeffH) + ")";
 	}
 
 	float angle = lastmove.x - atan2((org.y - to.y), (org.x - to.x)) * (180.f / 3.1415926536f);
@@ -181,8 +181,8 @@ void RotationZ::SetCurVisual()
 {
 	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, tbl);
 	if (tbl[6] > 3){ linepos = CalcMovePos(); }
-	from = D3DXVECTOR2(((linepos.x / wspw) - zoomMove.x) * zoomScale.x,
-		((linepos.y / wsph) - zoomMove.y) * zoomScale.y);
+	from = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x) * zoomScale.x,
+		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);
 	lastmove = D3DXVECTOR2(0, 0);
 	wxString res;
 	if (tab->Edit->FindVal("frz?([0-9.-]+)", &res)){
@@ -193,8 +193,8 @@ void RotationZ::SetCurVisual()
 	if (tab->Edit->FindVal("org\\(([^\\)]+)", &res)){
 		wxString rest;
 		double orx, ory;
-		if (res.BeforeFirst(',', &rest).ToDouble(&orx)){ org.x = ((orx / wspw) - zoomMove.x)*zoomScale.x; }
-		if (rest.ToDouble(&ory)){ org.y = ((ory / wsph) - zoomMove.y)*zoomScale.y; }
+		if (res.BeforeFirst(',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; }
+		if (rest.ToDouble(&ory)){ org.y = ((ory / coeffH) - zoomMove.y)*zoomScale.y; }
 	}
 	else{ org = from; }
 	to = org;
@@ -204,8 +204,8 @@ void RotationZ::SetCurVisual()
 void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 {
 	if (isOrg){
-		ChangeOrg(txt, dial, (((org.x - lastOrg.x) / zoomScale.x) + zoomMove.x)*wspw,
-			(((org.y - lastOrg.y) / zoomScale.y) + zoomMove.y)*wsph);
+		ChangeOrg(txt, dial, (((org.x - lastOrg.x) / zoomScale.x) + zoomMove.x)*coeffW,
+			(((org.y - lastOrg.y) / zoomScale.y) + zoomMove.y)*coeffH);
 		return;
 	}
 

@@ -96,8 +96,8 @@ public:
 	D3DXVECTOR2 from;
 	
 	double tbl[7];
-	// wspw i h - potrzebne s¹ do przejœcia z rozdzielczoœci napisów i do niej
-	float wspw, wsph;
+	// coeffw i h - needed to convert from video to subs or subs to video resolution
+	float coeffW, coeffH;
 
 	LPD3DXLINE line;
 	LPD3DXFONT font;
@@ -333,6 +333,44 @@ public:
 	float _x, _y;
 	D3DXVECTOR2 offsetxy;
 	wxString textwithclip;
+};
+
+class ScaleRotation : public Visuals
+{
+public:
+	ScaleRotation();
+	~ScaleRotation(){};
+	void DrawVisual(int time);
+	void OnMouseEvent(wxMouseEvent &event);
+	void SetCurVisual();
+	void ChangeTool(int _tool);
+	//wxString GetVisual();
+
+private:
+	void DrawScale(int time);
+	void DrawRotationZ(int time);
+	void DrawRotationXY(int time);
+	void ChangeInLines(bool dummy = true);
+	void OnHoldingRotation(int x, int y);
+	void OnHoldingScaling(int x, int y, bool hasShift);
+	void OnClickRotationZ(int x, int y);
+	void OnClickRotationXY(int x, int y, bool leftClick, bool rightClick, bool middleClick);
+	void OnClickScaling(int x, int y, bool leftClick, bool rightClick, bool middleClick, bool shiftDown);
+	bool isOrg = false;
+	bool onlyFirst = false;
+	D3DXVECTOR2 angle;
+	D3DXVECTOR2 oldAngle;
+	D3DXVECTOR2 org;
+	D3DXVECTOR2 lastOrg;
+	D3DXVECTOR2 scale;
+	//tagvalues needed to calculate value change
+	//add defferent from this two values
+	D3DXVECTOR2 beforeMove;//tagvalue
+	D3DXVECTOR2 afterMove;//tagvalue
+	byte type = 0;
+	byte AN;
+	wxPoint diffs;
+	byte selectedTool = 0;
 };
 
 int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoint &pos);
