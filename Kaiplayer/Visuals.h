@@ -24,7 +24,7 @@
 
 
 enum{
-	CHANGEPOS=1,//w przypadku zmiany, zmieniæ w subsgridzie w selectrow;
+	CHANGEPOS = 1,//w przypadku zmiany, zmieniæ w subsgridzie w selectrow;
 	MOVE,
 	SCALE,
 	ROTATEZ,
@@ -32,7 +32,8 @@ enum{
 	CLIPRECT,
 	VECTORCLIP,
 	VECTORDRAW,
-	MOVEALL
+	MOVEALL,
+	SCALE_ROTATION
 };
 
 class Dialogue;
@@ -62,27 +63,27 @@ public:
 	virtual ~Visuals();
 	static Visuals *Get(int Visual, wxWindow *_parent);
 	void SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device);
-	void DrawRect(D3DXVECTOR2 vector, bool sel=false, float size=5.0f);
-	void DrawCircle(D3DXVECTOR2 vector, bool sel=false, float size=6.0f);
-	void DrawCross(D3DXVECTOR2 position, D3DCOLOR color = 0xFFFF0000, bool useBegin=true);
-	void DrawArrow(D3DXVECTOR2 vector, D3DXVECTOR2 *vector1, int diff=0);
+	void DrawRect(D3DXVECTOR2 vector, bool sel = false, float size = 5.0f);
+	void DrawCircle(D3DXVECTOR2 vector, bool sel = false, float size = 6.0f);
+	void DrawCross(D3DXVECTOR2 position, D3DCOLOR color = 0xFFFF0000, bool useBegin = true);
+	void DrawArrow(D3DXVECTOR2 vector, D3DXVECTOR2 *vector1, int diff = 0);
 	void DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen = 4, unsigned int color = 0xFFBB0000);
 	void SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 scale){
 		zoomMove = move;
 		zoomScale = scale;
 	};
 
-	virtual void SetVisual(int _start,int _end, bool notDial);
+	virtual void SetVisual(int _start, int _end, bool notDial);
 	virtual void Draw(int time);
 	virtual void DrawVisual(int time){};
 	virtual void SetCurVisual(){};
 	virtual void ChangeTool(int _tool){};
 	virtual void OnMouseEvent(wxMouseEvent &evt){};
-	virtual wxString GetVisual(){return "";};
+	virtual wxString GetVisual(){ return ""; };
 	virtual void ChangeVisual(wxString *txt, Dialogue *_dial){};
 	void DrawWarning(bool comment);
-	void SetClip(wxString clip,bool dummy, bool redraw=true, bool changeEditorText = true);
-	void SetVisual(bool dummy,int type);
+	void SetClip(wxString clip, bool dummy, bool redraw = true, bool changeEditorText = true);
+	void SetVisual(bool dummy, int type);
 	void ChangeOrg(wxString *text, Dialogue *_dial, float coordx, float coordy);
 	bool IsInPos(wxPoint pos, wxPoint secondPos, int diff){
 		return (abs(pos.x - secondPos.x) < diff && abs(pos.y - secondPos.y) < diff) ? true : false;
@@ -94,7 +95,7 @@ public:
 	D3DXVECTOR2 lastmove;
 	D3DXVECTOR2 firstmove;
 	D3DXVECTOR2 from;
-	
+
 	double tbl[7];
 	// coeffw i h - needed to convert from video to subs or subs to video resolution
 	float coeffW, coeffH;
@@ -103,14 +104,14 @@ public:
 	LPD3DXFONT font;
 	LPDIRECT3DDEVICE9 device;
 	wxMutex clipmutex;
-	
+
 	int start;
 	int end;
 	int oldtime;
-	
+
 	unsigned char Visual;
 	unsigned char axis;
-	
+
 	wxSize SubsSize;
 	wxRect VideoSize;
 	TabPanel *tab;
@@ -128,7 +129,7 @@ public:
 class PosData{
 public:
 	PosData(Dialogue *_dial, int _numpos, D3DXVECTOR2 _pos, wxPoint _TextPos, bool _putinBracket){
-		dial = _dial; numpos = _numpos; pos=_pos; lastpos=pos; TextPos=_TextPos; putinBracket= _putinBracket;
+		dial = _dial; numpos = _numpos; pos = _pos; lastpos = pos; TextPos = _TextPos; putinBracket = _putinBracket;
 	}
 	D3DXVECTOR2 pos;
 	D3DXVECTOR2 lastpos;
@@ -144,7 +145,7 @@ public:
 	Position();
 	//~Position();
 	void OnMouseEvent(wxMouseEvent &event);
-	wxString GetVisual(){return "";};
+	wxString GetVisual(){ return ""; };
 	void ChangeVisual(wxString *txt, Dialogue *_dial){};
 	wxString GetVisual(int datapos);
 	void ChangeMultiline(bool all);
@@ -290,22 +291,24 @@ public:
 	void ChangeVisual(wxString *txt, int line){};
 	void SetCurVisual();
 	void SetPos(int x, int y);
-	int CheckPos(D3DXVECTOR2 pos, bool retlast=false, bool wsp=true);
+	int CheckPos(D3DXVECTOR2 pos, bool retlast = false, bool wsp = true);
 	void MovePoint(D3DXVECTOR2 pos, int point);
-	void AddCurve(D3DXVECTOR2 pos, int whereis, wxString type="b");
+	void AddCurve(D3DXVECTOR2 pos, int whereis, wxString type = "b");
 	void AddCurvePoint(D3DXVECTOR2 pos, int whereis);
 	void AddLine(D3DXVECTOR2 pos, int whereis);
 	void AddMove(D3DXVECTOR2 pos, int whereis);
 	void DrawLine(int coord);
 	void DrawRect(int coord);
 	void DrawCircle(int coord);
-	int DrawCurve(int i,bool bspline=false);
-	void Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bspline, int spoints=4, int acpt=0);
+	int DrawCurve(int i, bool bspline = false);
+	void Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bspline, int spoints = 4, int acpt = 0);
 	D3DXVECTOR2 CalcWH();
 	void SelectPoints();
 	void ChangeSelection(bool select = false);
-	void ChangeTool(int _tool){tool = _tool;};
-	int FindPoint(int pos, wxString type, bool nextStart =false, bool fromEnd=false);
+	void ChangeTool(int _tool){
+		tool = _tool;
+	};
+	int FindPoint(int pos, wxString type, bool nextStart = false, bool fromEnd = false);
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
 	ClipPoint lastpoint;
@@ -357,7 +360,9 @@ private:
 	void OnClickRotationXY(int x, int y, bool leftClick, bool rightClick, bool middleClick);
 	void OnClickScaling(int x, int y, bool leftClick, bool rightClick, bool middleClick, bool shiftDown);
 	bool isOrg = false;
+	bool hasOrg = false;
 	bool onlyFirst = false;
+	//with rotation xy angle.x = fry and angle.y = frx
 	D3DXVECTOR2 angle;
 	D3DXVECTOR2 oldAngle;
 	D3DXVECTOR2 org;
@@ -371,6 +376,7 @@ private:
 	byte AN;
 	wxPoint diffs;
 	byte selectedTool = 0;
+	bool tagNotFound = false;
 };
 
 int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoint &pos);

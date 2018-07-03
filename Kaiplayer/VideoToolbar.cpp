@@ -111,7 +111,7 @@ int VideoToolbar::GetItemToggled()
 	return 0;
 }
 
-void VideoToolbar::SetItemToggled(int toggled)
+void VideoToolbar::SetItemToggled(int *toggled)
 {
 	if (visualItems[Toggled])
 		visualItems[Toggled]->SetItemToggled(toggled);
@@ -129,8 +129,8 @@ void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
 	int elem = (x - startDrawPos) / h;
 	if (elem < 0){ noelem = true; }
 	else if (elem >= toolsSize){
-		if (visualItems[sel])
-			visualItems[sel]->OnMouseEvent(evt, w, h, this);
+		if (visualItems[Toggled])
+			visualItems[Toggled]->OnMouseEvent(evt, w, h, this);
 		noelem = true;
 	}
 	if (evt.Leaving() || noelem){ sel = -1; Refresh(false); if (HasToolTips()){ UnsetToolTip(); } return; }
@@ -184,7 +184,7 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 				tdc.SetPen(wxPen(Options.GetColour((toggled || clicked) ? ButtonBorderPushed : ButtonBorderHover)));
 				tdc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
-			else if (i == Toggled){
+			else if (toggled){
 				tdc.SetBrush(wxBrush(Options.GetColour(ButtonBackgroundPushed)));
 				tdc.SetPen(wxPen(Options.GetColour(ButtonBorderPushed)));
 				tdc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
@@ -195,8 +195,8 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 		}
 		i++;
 	}
-	if (visualItems[sel])
-		visualItems[sel]->OnPaint(tdc, w, h, this);
+	if (visualItems[Toggled])
+		visualItems[Toggled]->OnPaint(tdc, w, h, this);
 
 	wxPaintDC dc(this);
 	dc.Blit(0, 0, w, h, &tdc, 0, 0);
@@ -225,13 +225,18 @@ void MoveAllItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt
 	int x, y;
 	evt.GetPosition(&x, &y);
 	int elem = ((x - startDrawPos) / h);
-	if (elem < 0 || elem >= numMoveIcons)
+	if (evt.Leaving() || elem < 0){
+		selection = -1;
+		clicked = false;
+		vt->Refresh(false);
 		return;
-	elem += startIconNumber;
-
+	}
+	if (elem >= numMoveIcons)
+		return;
+	
 	if (elem != selection){
 		selection = elem;
-		vt->SetToolTip(vt->icons[elem]->help);
+		vt->SetToolTip(vt->icons[elem + startIconNumber]->help);
 		vt->Refresh(false);
 	}
 	if (evt.LeftDown()){
@@ -280,10 +285,15 @@ void VectorItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt)
 	int x, y;
 	evt.GetPosition(&x, &y);
 	int elem = ((x - startDrawPos) / h);
-	if (elem < 0 || elem >= numIcons)
+	if (evt.Leaving() || elem < 0){
+		selection = -1;
+		clicked = false;
+		vt->Refresh(false);
 		return;
-	elem += startIconNumber;
-
+	}
+	if (elem >= numIcons)
+		return;
+	
 	if (evt.GetWheelRotation() != 0) {
 		if (vt->blockScroll){ evt.Skip(); return; }
 		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
@@ -296,7 +306,7 @@ void VectorItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt)
 
 	if (elem != selection){
 		selection = elem;
-		vt->SetToolTip(vt->icons[elem]->help);
+		vt->SetToolTip(vt->icons[elem + startIconNumber]->help);
 		vt->Refresh(false);
 	}
 	if (evt.LeftDown()){
@@ -344,10 +354,14 @@ void ScaleRotationItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolb
 	int x, y;
 	evt.GetPosition(&x, &y);
 	int elem = ((x - startDrawPos) / h);
-	if (elem < 0 || elem >= numIcons)
+	if (evt.Leaving() || elem < 0){
+		selection = -1;
+		clicked = false;
+		vt->Refresh(false);
 		return;
-
-	elem += startIconNumber;
+	}
+	if (elem >= numIcons)
+		return;
 
 	if (evt.GetWheelRotation() != 0) {
 		if (vt->blockScroll){ evt.Skip(); return; }
@@ -361,7 +375,7 @@ void ScaleRotationItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolb
 
 	if (elem != selection){
 		selection = elem;
-		vt->SetToolTip(vt->icons[elem]->help);
+		vt->SetToolTip(vt->icons[elem + startIconNumber]->help);
 		vt->Refresh(false);
 	}
 	if (evt.LeftDown()){

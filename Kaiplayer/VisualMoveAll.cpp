@@ -356,6 +356,9 @@ void MoveAll::ChangeInLines(bool all)
 
 void MoveAll::ChangeTool(int _tool)
 {
+	if (selectedTags == _tool)
+		return;
+
 	selectedTags = _tool;
 	if ((_tool & TAGPOS || _tool & TAGMOVES || _tool & TAGMOVEE) && _tool & TAGP){
 		selectedTags ^= TAGP;

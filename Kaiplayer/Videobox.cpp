@@ -138,11 +138,17 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnChangeVisual, this, ID_VIDEO_TOOLBAR_EVENT);
 
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		Visual->ChangeTool(evt.GetInt());
+		if (Visual)
+			Visual->ChangeTool(evt.GetInt());
 	}, ID_VECTOR_TOOLBAR_EVENT);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		Visual->ChangeTool(evt.GetInt());
+		if (Visual)
+			Visual->ChangeTool(evt.GetInt());
 	}, ID_MOVE_TOOLBAR_EVENT);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		if (Visual)
+			Visual->ChangeTool(evt.GetInt());
+	}, ID_SCALE_ROTATE_TOOLBAR_EVENT);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		RefreshTime();
 	}, 23334);
@@ -1389,7 +1395,7 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 		if (hasZoom){ SetZoom(); }
 		eb->Visual = vis;
 		SetVisual();
-		if (vis == MOVEALL){ Visual->ChangeTool(vTB->GetItemToggled()); }
+		if (vis >= VECTORCLIP){ Visual->ChangeTool(vTB->GetItemToggled()); }
 		if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 	}
 

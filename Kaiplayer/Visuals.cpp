@@ -51,6 +51,9 @@ Visuals *Visuals::Get(int Visual, wxWindow *_parent)
 	case VECTORDRAW:
 		visual = new DrawingAndClip();
 		break;
+	case SCALE_ROTATION:
+		visual = new ScaleRotation();
+		break;
 	default:
 		visual = new Position();
 		break;

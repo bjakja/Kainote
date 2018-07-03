@@ -28,15 +28,17 @@ public:
 	wxString help;
 };
 
+class VideoToolbar;
+
 class VisualItem
 {
 public:
-	VisualItem();
+	VisualItem(){};
 	virtual void OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt){};
 	virtual void OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt){};
 	virtual void Synchronize(VisualItem * item){};
-	virtual int GetItemToggled(){};
-	virtual void SetItemToggled(int item){};
+	virtual int GetItemToggled(){ return 0; };
+	virtual void SetItemToggled(int *item){};
 
 	int startIconNumber;
 	bool clicked = false;
@@ -47,7 +49,7 @@ class MoveAllItem : public VisualItem
 {
 public:
 	MoveAllItem() : VisualItem() { 
-		startIconNumber = 16; 
+		startIconNumber = 17; 
 		MoveToggled[0] = true;
 		for (int i = 1; i < numMoveIcons; i++){
 			MoveToggled[i] = false;
@@ -76,7 +78,7 @@ private:
 class VectorItem : public VisualItem
 {
 public:
-	VectorItem() : VisualItem() { startIconNumber = 10; };
+	VectorItem() : VisualItem() { startIconNumber = 11; };
 	void OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt);
 	void OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt);
 	void Synchronize(VisualItem * item){
@@ -84,15 +86,15 @@ public:
 		toggled = ci->toggled;
 	};
 	int GetItemToggled(){ return toggled; };
-	void SetItemToggled(int item){ 
-		toggled = item;
+	void SetItemToggled(int *item){ 
+		toggled = *item;
 		if (toggled < 0)
-			toggled = numIcons - 1;
+			toggled = (*item) = numIcons - 1;
 		else if (toggled >= numIcons)
-			toggled = 0;
+			toggled = (*item) = 0;
 	};
 	int numIcons = 6;
-	int toggled = 0;
+	int toggled = 1;
 };
 
 class ScaleRotationItem : public VisualItem
@@ -106,12 +108,12 @@ public:
 		toggled = sri->toggled;
 	};
 	int GetItemToggled(){ return toggled; };
-	void SetItemToggled(int item){ 
-		toggled = item; 
+	void SetItemToggled(int *item){ 
+		toggled = (*item); 
 		if (toggled < 0)
-			toggled = numIcons - 1;
+			toggled = (*item) = numIcons - 1;
 		else if (toggled >= numIcons)
-			toggled = 0;
+			toggled = (*item) = 0;
 	};
 	int numIcons = 3;
 	int toggled = 0;
@@ -129,7 +131,8 @@ public:
 
 	int GetToggled();
 	int GetItemToggled();
-	void SetItemToggled(int toggled);
+	//item change toggled automatically when less than 0 or greater than size
+	void SetItemToggled(int *toggled);
 	void Synchronize(VideoToolbar *vtoolbar);
 	static void DestroyIcons(){
 		for(auto cur = icons.begin(); cur != icons.end(); cur++){

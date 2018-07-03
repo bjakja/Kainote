@@ -265,15 +265,6 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(30000, 30079, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnRecent);
 	Connect(PlayActualLine, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
-		/*if (!mylog){
-			mylog = new wxLogWindow(this, "Logi", true, false);
-			mylog->PassMessages(true);
-		}
-		else{
-			delete mylog; mylog = NULL;
-		}*/
-		//for (int i = 0; i < 10000; i++)
-			//KaiLog(wxString::Format("testy logów %i", i));
 		LogHandler::ShowLogWindow();
 	}, 9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){

@@ -25,25 +25,30 @@ Scale::Scale()
 
 void Scale::DrawVisual(int time)
 {
+	int addy = (AN > 3) ? 60 : -60, addx = (AN % 3 == 0) ? -60 : 60;
+
 	if (time != oldtime && tbl[6] > 3){
 		from = CalcMovePos();
-		//from.x/=wspw; from.y/=wsph;
 		from.x = ((from.x / coeffW) - zoomMove.x)*zoomScale.x;
 		from.y = ((from.y / coeffH) - zoomMove.y)*zoomScale.y;
-		to = from;
+		to.x = from.x + (scale.x*addx);
+		to.y = from.y + (scale.y*addy);
 	}
 
 	D3DXVECTOR2 v4[15];
-	int addy = (AN > 3) ? 60 : -60, addx = (AN % 3 == 0) ? -60 : 60;
-
+	
 	float movex = from.x + addx, movey = from.y + addy;
 
 	if (type != 1){ movex = to.x; }//strza³ka w poziomie i czêœæ strza³ki po skosie
 	else{ movex = from.x + (scale.x*addx); }
 	if (type > 0){ movey = to.y; }//strza³ka w pionie i czêœæ strza³ki po skosie
 	else{ movey = from.y + (scale.y*addy); }
-	if (movex == from.x){ movex = from.x + addx; }
-	else if (movey == from.y){ movey = from.y + addy; }
+	if (movex == from.x){ 
+		movex = from.x + addx; 
+	}
+	else if (movey == from.y){ 
+		movey = from.y + addy; 
+	}
 
 	lastmove.x = movex;
 	lastmove.y = movey;
