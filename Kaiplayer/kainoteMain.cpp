@@ -1343,8 +1343,9 @@ void KainoteFrame::SetAccels(bool _all)
 {
 	std::vector<wxAcceleratorEntry> entries;
 	entries.resize(2);
-	entries[0].Set(wxACCEL_CTRL, (int) 'T', ID_ADDPAGE);
+	entries[0].Set(wxACCEL_CTRL, (int) 'T', ID_ADDPAGE); 
 	entries[1].Set(wxACCEL_CTRL, (int) 'W', ID_CLOSEPAGE);
+	
 	const std::map<idAndType, hdata> &hkeys = Hkeys.GetHotkeysMap();
 	for (auto cur = hkeys.begin(); cur != hkeys.end(); cur++){
 		if (cur->first.Type != GLOBAL_HOTKEY){ continue; }

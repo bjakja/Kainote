@@ -29,16 +29,15 @@ RotationXY::RotationXY()
 void RotationXY::DrawVisual(int time)
 {
 	if (time != oldtime && tbl[6] > 3){
+		bool noOrg = org == from;
 		from = CalcMovePos();
 		from.x = ((from.x / coeffW) - zoomMove.x)*zoomScale.x;
 		from.y = ((from.y / coeffH) - zoomMove.y)*zoomScale.y;
 		to = from;
-		if (org == from){
+		if (noOrg)
 			org = from;
-		}
-		else{
+		else
 			to = org;
-		}
 	}
 	//FloatRect rc1 = tab->Video->zoomRect;
 	wxSize s = VideoSize.GetSize();

@@ -42,17 +42,10 @@ void ScaleRotation::DrawVisual(int time)
 			to.y = from.y + (scale.y*addy);
 		}
 		else{
-			to = from;
 			if (!hasOrg)
 				org = from;
-		}
-		if (selectedTool != 0){
-			if (org == from){
-				org = from;
-			}
-			else{
+			else
 				to = org;
-			}
 		}
 	}
 	if (selectedTool == 0)

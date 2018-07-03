@@ -15,6 +15,7 @@
 
 #include "KaiTabBar.h"
 #include "config.h"
+#include "hotkeys.h"
 
 wxDEFINE_EVENT(BEFORE_CHANGING_TAB, wxCommandEvent);
 wxDEFINE_EVENT(TAB_CHANGED, wxCommandEvent);
@@ -27,6 +28,22 @@ KaiTabBar::KaiTabBar(wxWindow * parent, int id, const wxPoint & position /*= wxD
 	//Bind(wxEVT_LEFT_UP, &KaiTabBar::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiTabBar::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &KaiTabBar::OnMouseEvent, this);
+	wxAcceleratorEntry entries[2];
+	
+	entries[0] = Hkeys.GetHKey(idAndType(NextTab));
+	entries[1] = Hkeys.GetHKey(idAndType(PreviousTab));
+
+	wxAcceleratorTable accel(2, entries);
+	SetAcceleratorTable(accel);
+
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		if (tabs.size() < 2){ return; }
+		int newTab = (evt.GetId() == NextTab) ? currentTab + 1 : currentTab - 1;
+		if (newTab < 0){ newTab = tabs.size() - 1; }
+		else if (newTab >= (int)tabs.size()){ newTab = 0; }
+		SetTab(newTab);
+	}, NextTab, PreviousTab);
+
 }
 
 KaiTabBar::~KaiTabBar()

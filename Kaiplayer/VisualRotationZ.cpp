@@ -26,14 +26,15 @@ RotationZ::RotationZ()
 void RotationZ::DrawVisual(int time)
 {
 	if (time != oldtime && tbl[6] > 3){
+		bool noOrg = org == from;
 		from = CalcMovePos();
 		from.x = ((from.x / coeffW) - zoomMove.x)*zoomScale.x;
 		from.y = ((from.y / coeffH) - zoomMove.y)*zoomScale.y;
 		to = from;
-		if (org == from){ org = from; }
-		else{
+		if (noOrg)
+			org = from;
+		else
 			to = org;
-		}
 	}
 	float rad = 0.01745329251994329576923690768489f;
 	float radius = sqrt(pow(abs(org.x - from.x), 2) + pow(abs(org.y - from.y), 2)) + 40;
