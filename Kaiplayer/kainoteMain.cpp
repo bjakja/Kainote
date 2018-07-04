@@ -169,9 +169,9 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	VidMenu->AppendTool(Toolbar, OpenVideo, _("Otwórz wideo"), _("Otwiera wybrane wideo"), PTR_BITMAP_PNG("openvideo"));
 	VidsRecMenu = new Menu();
 	VidMenu->AppendTool(Toolbar, RecentVideo, _("Ostatnio otwarte wideo"), _("Ostatnio otwarte video"), PTR_BITMAP_PNG("recentvideo"), true, VidsRecMenu);
-	VidMenu->AppendTool(Toolbar, GLOBAL_KEYFRAMES_OPEN, _("Otwórz klatki kluczowe"), _("Otwórz klatki kluczowe"), PTR_BITMAP_PNG("openvideo"));
+	VidMenu->AppendTool(Toolbar, GLOBAL_KEYFRAMES_OPEN, _("Otwórz klatki kluczowe"), _("Otwórz klatki kluczowe"), PTR_BITMAP_PNG("OPEN_KEYFRAMES"));
 	KeyframesRecentMenu = new Menu();
-	VidMenu->AppendTool(Toolbar, GLOBAL_KEYFRAMES_RECENT, _("Ostatnio otwarte klatki kluczowe"), _("Ostatnio otwarte klatki kluczowe"), PTR_BITMAP_PNG("recentvideo"), true, KeyframesRecentMenu);
+	VidMenu->AppendTool(Toolbar, GLOBAL_KEYFRAMES_RECENT, _("Ostatnio otwarte klatki kluczowe"), _("Ostatnio otwarte klatki kluczowe"), PTR_BITMAP_PNG("RECENT_KEYFRAMES"), true, KeyframesRecentMenu);
 	VidMenu->AppendTool(Toolbar, SetStartTime, _("Wstaw czas początkowy z wideo"), _("Wstawia czas początkowy z wideo"), PTR_BITMAP_PNG("setstarttime"), false);
 	VidMenu->AppendTool(Toolbar, SetEndTime, _("Wstaw czas końcowy z wideo"), _("Wstawia czas końcowy z wideo"), PTR_BITMAP_PNG("setendtime"), false);
 	VidMenu->AppendTool(Toolbar, PreviousFrame, _("Klatka w tył"), _("Przechodzi o jedną klatkę w tył"), PTR_BITMAP_PNG("prevframe"), false);

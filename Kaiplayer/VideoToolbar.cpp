@@ -40,7 +40,7 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos)
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("clip"), _("Wycinki wektorowe")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("drawing"), _("Rysunki wektorowe")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEAll"), _("Zmieniacz pozycji")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEAll"), _("Zmieniacz skali i obrotów")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG("SCALE_ROTATION"), _("Zmieniacz skali i obrotów")));
 		//tutaj mamy ikony dla clipa
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorDrag"), _("Przesuń punkty")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorLine"), _("Dodaj linię")));
