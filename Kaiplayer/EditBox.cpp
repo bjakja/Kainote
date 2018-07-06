@@ -137,7 +137,6 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, KainoteFrame* kaif, int idd)
 	, ABox(NULL)
 	, line(NULL)
 	, lastVisible(true)
-	, OnVideo(true)
 	, CurrentDoubtful(0)
 	, CurrentUntranslated(0)
 	, TagButtonManager(NULL)
@@ -149,7 +148,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, KainoteFrame* kaif, int idd)
 	currentLine = 0;
 	grid = grid1;
 	grid->Edit = this;
-	isdetached = OnVideo = splittedTags = false;
+	isdetached = splittedTags = false;
 	Visual = 0;
 
 	wxArrayString ans;
@@ -559,7 +558,6 @@ void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool vis
 
 	if (cellm){
 		if (currentLine < grid->GetCount() && !dummy){
-			//OnVideo=false;
 			grid->ChangeLine(editionType, line, currentLine, cellm, selline, visualdummy);
 			if (cellm & ACTOR || cellm & EFFECT){
 				grid->RebuildActorEffectLists();
@@ -1398,13 +1396,11 @@ void EditBox::OnEdit(wxCommandEvent& event)
 
 	int saveAfter = Options.GetInt(GridSaveAfterCharacterCount);
 	if (saveAfter && EditCounter >= saveAfter){
-		bool tmpOnVideo = OnVideo;
 		Send(EDITBOX_LINE_EDITION, false, false, true);
 		if (hasPreviewGrid){
 			TabPanel* thisTab = (TabPanel*)GetParent();
 			thisTab->Grid->RefreshPreview();
 		}
-		OnVideo = tmpOnVideo;
 		EditCounter = 1;
 		if (ABox && ABox->audioDisplay->hasKara && event.GetId()>0)
 			ABox->audioDisplay->SetDialogue(line, currentLine);
@@ -1425,7 +1421,6 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		text = grid->GetVisible(&visible);
 		if (!visible && lastVisible != visible){ visible = true; lastVisible = false; }
 		else{ lastVisible = visible; }
-		OnVideo = true;
 	}
 
 	if (visible && (panel->Video->IsShown() || panel->Video->isFullscreen)){
@@ -1679,7 +1674,6 @@ done:
 		if (vb->GetState() != None){
 			vb->OpenSubs(grid->GetVisible());
 			vb->Render();
-			OnVideo = true;
 		}
 	}
 }

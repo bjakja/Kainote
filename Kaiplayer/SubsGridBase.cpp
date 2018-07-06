@@ -314,9 +314,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 	int saveAfterCharacterCount = Options.GetInt(GridSaveAfterCharacterCount);
 	bool dummyEditboxChanges = (loadFromEditbox && !saveAfterCharacterCount);
 	if (dummyEditboxChanges || saveAfterCharacterCount > 1){
-		bool oldOnVideo = Edit->OnVideo;
 		Edit->Send(EDITBOX_LINE_EDITION, false, dummyEditboxChanges, true);
-		Edit->OnVideo = oldOnVideo;
 	}
 	wxString txt;
 	const wxString &tlmode = GetSInfo("TLMode");
@@ -948,11 +946,21 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 
 	RefreshColumns();
 	Edit->RefreshStyle();
-
 	VideoCtrl *vb = tab->Video;
+
+	const wxString &newResolution = GetSInfo("PlayResX") + " x " + GetSInfo("PlayResY");
+	if (resolution != newResolution){ 
+		Kai->SetSubsResolution(); 
+		vb->ChangeOnScreenResolution(tab);
+	}
+	const wxString &newmatrix = GetSInfo("YCbCr Matrix");
+	if (matrix != newmatrix){
+		vb->SetColorSpace(newmatrix);
+	}
+
 	if (Edit->Visual < CHANGEPOS){
 
-		if (vb->IsShown() || vb->isFullscreen){ vb->OpenSubs(GetVisible()); Edit->OnVideo = true; }
+		if (vb->IsShown() || vb->isFullscreen){ vb->OpenSubs(GetVisible());}
 		int opt = vb->vToolbar->videoSeekAfter->GetSelection();
 		if (opt > 1){
 			if (vb->GetState() == Paused || (vb->GetState() == Playing && (opt == 3 || opt == 5))){
@@ -966,12 +974,7 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	else if (Edit->Visual == CHANGEPOS){
 		vb->SetVisual(false, true);
 	}
-	const wxString &newResolution = GetSInfo("PlayResX") + " x " + GetSInfo("PlayResY");
-	if (resolution != newResolution){ Kai->SetSubsResolution(); }
-	const wxString &newmatrix = GetSInfo("YCbCr Matrix");
-	if (matrix != newmatrix){
-		vb->SetColorSpace(newmatrix);
-	}
+	
 
 
 	if (makebackup){
@@ -1159,7 +1162,7 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 				vb->SetVisual(false, true);
 			}
 			else{
-				if (vb->IsShown() || vb->isFullscreen){ vb->OpenSubs(GetVisible()); Edit->OnVideo = true; }
+				if (vb->IsShown() || vb->isFullscreen){ vb->OpenSubs(GetVisible());}
 
 				int opt = vb->vToolbar->videoSeekAfter->GetSelection();
 				if (opt > 1){
@@ -1248,7 +1251,6 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 	file->EndLoad(OPEN_SUBTITLES, active);
 
 	RefreshColumns();
-	Edit->OnVideo = true;
 	Edit->SetLine(active, false, false);
 
 	Edit->HideControls();

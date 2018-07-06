@@ -505,7 +505,6 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if (!vidshow && tab->Video->GetState() == Playing){ tab->Video->Pause(); }
 		tab->Video->Show(vidshow);
 		if (vidshow && !vidvis){
-			tab->Edit->OnVideo = true;
 			tab->Video->OpenSubs(tab->Grid->GetVisible());
 		}
 		if (tab->Edit->ABox){
@@ -1004,7 +1003,6 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 
 		if (tab->Video->GetState() != None){
 			if (!found){
-				tab->Edit->OnVideo = true;
 				bool isgood = tab->Video->OpenSubs((tab->editor) ? tab->Grid->GetVisible() : 0);
 				if (!isgood){ KaiMessageBox(_("Otwieranie napisów nie powiodło się"), "Uwaga"); }
 				else{ tab->Video->Render(); }
@@ -1025,7 +1023,6 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 	}
 
 	const wxString &fnname = (found && issubs) ? secondFileName : filename;
-	tab->Edit->OnVideo = true;
 	bool isload = tab->Video->LoadVideo(fnname, tab->Grid->GetVisible(), fulls, changeAudio);
 	if (!isload){ tab->Thaw(); return false; }
 	tab->Video->seekfiles = true;

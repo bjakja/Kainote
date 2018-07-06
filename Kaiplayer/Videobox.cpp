@@ -107,7 +107,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	//, fullarrow(true)
 	, ismenu(false)
 	, eater(false)
-	, actfile(0)
+	, actualFile(0)
 	, prevchap(-1)
 	, coeffX(0.0f)
 	, coeffY(0.0f)
@@ -383,7 +383,8 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		ZoomMouseHandle(event);
 		return;
 	}
-	int x = event.GetX(), y = event.GetY();
+	x = event.GetX(); 
+	y = event.GetY();
 	TabPanel *tab = Kai->GetTab();
 	if (event.GetWheelRotation() != 0) {
 
@@ -400,6 +401,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 				int ww, hh;
 				CalcSize(&ww, &hh, w, incr, false, true);
 				SetMinSize(wxSize(ww, hh + panelHeight));
+				tab->Edit->SetMinSize(wxSize(-1, hh + panelHeight));
 				Options.SetCoords(VideoWindowSize, ww, hh + panelHeight);
 				tab->BoxSizer1->Layout();
 				if (event.ShiftDown()){
@@ -477,15 +479,11 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 			coeffY = (float)ny / (float)(h - panelHeight - 1);
 
 		}
-		int curX = event.GetX();
-		int curY = event.GetY();
-		int posx = (float)curX*coeffX;
-		int posy = (float)curY*coeffY;
+		int posx = (float)x * coeffX;
+		int posy = (float)y * coeffY;
 		coords = "";
 		coords << posx << ", " << posy;
-		DrawLines(wxPoint(curX, curY));
-
-
+		DrawLines(wxPoint(x, y));
 	}
 	else if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 
@@ -512,8 +510,8 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 			posmov.ReplaceAll(&ltext, "");
 
 			wxString postxt;
-			float posx = (float)event.GetX()*coeffX;
-			float posy = (float)event.GetY()*coeffY;
+			float posx = (float)x * coeffX;
+			float posy = (float)y * coeffY;
 			postxt = "\\pos(" + getfloat(posx) + "," + getfloat(posy) + ")";
 			if (ltext.StartsWith("{")){
 				ltext.insert(1, postxt);
@@ -558,7 +556,7 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 		}
 		if (key == 'B'){ if (GetState() == Playing){ Pause(); }ShowWindow(Kai->GetHWND(), SW_SHOWMINNOACTIVE); }
 	}
-	else if (key == 'S'&&event.m_controlDown){ Kai->Save(false); }
+	else if (key == 'S' && event.m_controlDown){ Kai->Save(false); }
 	else if (key == WXK_RETURN && hasZoom){
 		SetZoom();
 	}
@@ -599,12 +597,12 @@ void VideoCtrl::NextFile(bool next)
 	}
 	for (int j = 0; j < (int)files.GetCount(); j++)
 	{
-		if (files[j] == path){ actfile = j; break; }
+		if (files[j] == path){ actualFile = j; break; }
 	}
-	if (next && actfile >= (int)files.GetCount() - 1){ Seek(0); Pause(false); actfile = files.GetCount() - 1; return; }
-	else if (!next && actfile <= 0){ Seek(0); Pause(false); actfile = 0; return; }
+	if (next && actualFile >= (int)files.GetCount() - 1){ Seek(0); Pause(false); actualFile = files.GetCount() - 1; return; }
+	else if (!next && actualFile <= 0){ Seek(0); Pause(false); actualFile = 0; return; }
 
-	int k = (next) ? actfile + 1 : actfile - 1;
+	int k = (next) ? actualFile + 1 : actualFile - 1;
 	while ((next) ? k < (int)files.GetCount() : k >= 0)
 	{
 
@@ -616,7 +614,7 @@ void VideoCtrl::NextFile(bool next)
 
 			bool isload = Kai->OpenFile(files[k]);
 			if (isload){
-				actfile = k;
+				actualFile = k;
 				seekfiles = false;
 				if (isFullscreen){ SetFocus(); }
 				return;
@@ -1113,7 +1111,7 @@ void VideoCtrl::OnSPlus()
 
 void VideoCtrl::OnPaint(wxPaintEvent& event)
 {
-	if (!block /*&& !blockpaint*/&& vstate == Paused){
+	if (!block && vstate == Paused){
 		Render(true, false);
 	}
 	else if (vstate == None){
@@ -1161,6 +1159,24 @@ void VideoCtrl::SetScaleAndZoom()
 	wxString zoom;
 	zoom << (int)(zoomParcent * 100) << "%";
 	Kai->SetStatusText(zoom, 2);
+}
+
+void VideoCtrl::ChangeOnScreenResolution(TabPanel *tab)
+{
+	if (!cross)
+		return;
+
+	int nx = 0, ny = 0;
+	tab->Grid->GetASSRes(&nx, &ny);
+	int w = 0, h = 0;
+	GetClientSize(&w, &h);
+	coeffX = (float)nx / (float)(w - 1);
+	coeffY = (float)ny / (float)(h - panelHeight - 1);
+	int posx = (float)x * coeffX;
+	int posy = (float)y * coeffY;
+	coords = "";
+	coords << posx << ", " << posy;
+	DrawLines(wxPoint(x, y));
 }
 
 void VideoCtrl::RefreshTime()

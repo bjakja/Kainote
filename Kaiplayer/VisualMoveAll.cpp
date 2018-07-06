@@ -340,14 +340,14 @@ void MoveAll::ChangeInLines(bool all)
 		}
 	}
 	if (all){
-		tab->Video->VisEdit = true;
+		tab->Video->hasVisualEdition = true;
 		if (tab->Edit->splittedTags){ tab->Edit->TextEditOrig->modified = true; }
 		tab->Grid->SetModified(VISUAL_POSITION_SHIFTER, true);
 		tab->Grid->Refresh();
 	}
 	else{
 		if (!tab->Video->OpenSubs(dtxt)){ KaiLog(_("Nie można otworzyć napisów")); }
-		tab->Video->VisEdit = true;
+		tab->Video->hasVisualEdition = true;
 		tab->Video->Render();
 
 	}

@@ -209,8 +209,9 @@ void Move::SetCurVisual()
 void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 {
 	bool putinbracket = false;
+	bool hasPositioning = false;
 	wxPoint tagPos;
-	D3DXVECTOR2 textPosition = GetPos(_dial, &putinbracket, &tagPos);
+	D3DXVECTOR2 textPosition = GetPos(_dial, &putinbracket, &tagPos, &hasPositioning);
 	D3DXVECTOR2 moveFrom = lastFrom - from;
 	D3DXVECTOR2 moveTo = lastTo - to;
 	int moveStartTime = 0, moveEndTime = 0;

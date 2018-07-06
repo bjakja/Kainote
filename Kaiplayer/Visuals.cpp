@@ -96,7 +96,7 @@ void Visuals::SetVisual(int _start, int _end, bool notDial)
 
 	coeffW = ((float)SubsSize.x / (float)(VideoSize.width - VideoSize.x));
 	coeffH = ((float)SubsSize.y / (float)(VideoSize.height - VideoSize.y));
-	tab->Video->VisEdit = true;
+	tab->Video->hasVisualEdition = true;
 
 	SetCurVisual();
 	if (Visual == VECTORCLIP){
@@ -437,9 +437,9 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 			}
 			return;
 		}
-		tab->Video->VisEdit = false;
+		tab->Video->hasVisualEdition = false;
 		if (!tab->Video->OpenSubs(tab->Grid->GetVisible())){ KaiLog(_("Nie można otworzyć napisów")); }
-		tab->Video->VisEdit = true;
+		tab->Video->hasVisualEdition = true;
 		if (redraw){ tab->Video->Render(); }
 
 		return;
@@ -574,10 +574,10 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 			}
 		}
 
-		tab->Video->VisEdit = false;
+		tab->Video->hasVisualEdition = false;
 		wxString *dtxt = new wxString(*dummytext);
 		if (!tab->Video->OpenSubs(dtxt)){ KaiLog(_("Nie można otworzyć napisów")); }
-		tab->Video->VisEdit = true;
+		tab->Video->hasVisualEdition = true;
 		if (redraw){
 			tab->Video->Render();
 		}
@@ -587,7 +587,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 
 		Editor->modified = true;
 		edit->UpdateChars(Editor->GetValue());
-		tab->Video->VisEdit = true;
+		tab->Video->hasVisualEdition = true;
 		if (edit->splittedTags){ edit->TextEditOrig->modified = true; }
 		edit->Send((Visual == VECTORCLIP) ? VISUAL_VECTOR_CLIP : VISUAL_DRAWING, false, false, true);
 	}
@@ -660,7 +660,7 @@ void Visuals::SetVisual(bool dummy, int type)
 		}
 
 		if (!dummy){
-			tab->Video->VisEdit = true;
+			tab->Video->hasVisualEdition = true;
 			if (tab->Edit->splittedTags){ tab->Edit->TextEditOrig->modified = true; }
 			tab->Grid->SetModified((Visual == MOVE) ? VISUAL_MOVE :
 				(Visual == SCALE) ? VISUAL_SCALE : (Visual == ROTATEZ) ? VISUAL_ROTATION_Z :
@@ -670,7 +670,7 @@ void Visuals::SetVisual(bool dummy, int type)
 		else{
 
 			if (!tab->Video->OpenSubs(dtxt)){ KaiLog(_("Nie można otworzyć napisów")); }
-			tab->Video->VisEdit = true;
+			tab->Video->hasVisualEdition = true;
 			tab->Video->Render();
 		}
 		return;
@@ -710,13 +710,13 @@ void Visuals::SetVisual(bool dummy, int type)
 		dumplaced.y = txt.Len();
 		wxString *dtxt = new wxString(*dummytext);
 		if (!tab->Video->OpenSubs(dtxt)){ KaiLog(_("Nie można otworzyć napisów")); }
-		tab->Video->VisEdit = true;
+		tab->Video->hasVisualEdition = true;
 		tab->Video->Render();
 	}
 	else{
 		//Editor->Refresh(false);
 		Editor->modified = true;
-		tab->Video->VisEdit = true;
+		tab->Video->hasVisualEdition = true;
 		if (edit->splittedTags){ edit->TextEditOrig->modified = true; }
 		edit->Send((Visual == MOVE) ? VISUAL_MOVE :
 			(Visual == SCALE) ? VISUAL_SCALE : (Visual == ROTATEZ) ? VISUAL_ROTATION_Z :
@@ -725,9 +725,9 @@ void Visuals::SetVisual(bool dummy, int type)
 	}
 }
 
-D3DXVECTOR2 Visuals::GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos){
-	//no i zadanie na jutro, napisać tę funkcję i najlepiej jeszcze getmove i getscale, 
-	//ładnie to ogarnąć w samych visualach a z editboxa wszystko wywalić, łącznie z clipami.
+D3DXVECTOR2 Visuals::GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos, bool *hasPositioning){
+	//aby w miarę naprawić błąd pozycjonowania wielu linii bez pos należy zrobić funkcję, która przeszuka napisy na obecność tych linii
+	//obliczyć w niej właściwą pozycję i zastosować do pozycjonowania i move.
 	*putinBracket = false;
 	D3DXVECTOR2 result;
 	Styles *acstyl = tab->Grid->GetStyle(0, Dial->Style);
@@ -747,12 +747,18 @@ D3DXVECTOR2 Visuals::GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos
 			TextPos->y = lenMatch;
 		}
 		result = D3DXVECTOR2(posx, posy);
-		if (res1&&res2){ return result; }
+		if (res1 && res2){ 
+			if (hasPositioning)
+				*hasPositioning = true;
+			return result; 
+		}
 	}
-	else{
-		result.x = (tab->Edit->line->MarginL != 0) ? tab->Edit->line->MarginL : wxAtoi(acstyl->MarginL);
-		result.y = (tab->Edit->line->MarginV != 0) ? tab->Edit->line->MarginV : wxAtoi(acstyl->MarginV);
-	}
+
+	result.x = (tab->Edit->line->MarginL != 0) ? tab->Edit->line->MarginL : wxAtoi(acstyl->MarginL);
+	result.y = (tab->Edit->line->MarginV != 0) ? tab->Edit->line->MarginV : wxAtoi(acstyl->MarginV);
+	if (hasPositioning)
+		*hasPositioning = false;
+	
 
 	if (txt != "" && txt[0] == '{'){
 		TextPos->x = 1;
@@ -805,7 +811,7 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 		strPos = tab->Edit->Placed;
 	}
 	else{
-		D3DXVECTOR2 pos = GetPos(_dial, &PutinBrackets, &strPos);
+		D3DXVECTOR2 pos = GetPos(_dial, &PutinBrackets, &strPos, NULL);
 		orgx = pos.x;
 		orgy = pos.y;
 		if (strPos.y == 0){

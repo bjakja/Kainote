@@ -873,7 +873,6 @@ int VideoFfmpeg::GetMSfromFrame(int frame)
 int VideoFfmpeg::GetFramefromMS(int MS, int seekfrom)
 {
 	if (MS <= 0) return 0;
-	//else if(MS>=Duration) return NumFrames-1;
 	int result = NumFrames - 1;
 	for (int i = seekfrom; i < NumFrames; i++)
 	{
@@ -889,7 +888,6 @@ int VideoFfmpeg::GetFramefromMS(int MS, int seekfrom)
 void VideoFfmpeg::DeleteOldAudioCache()
 {
 	wxString path = Options.pathfull + "\\AudioCache";
-	//size_t tabsSize = Notebook::GetTabs()->Size();
 	size_t maxAudio = 10;
 	wxDir kat(path);
 	wxArrayString audioCaches;
@@ -924,13 +922,29 @@ void VideoFfmpeg::DeleteOldAudioCache()
 }
 
 void VideoFfmpeg::Refresh(bool wait){
-	if (isBusy) return;
+	/*if (isBusy) return;
 	isBusy = true;
 	ResetEvent(eventComplete);
 	SetEvent(eventRefresh);
 	if (rend->vstate == Paused && wait){
 		WaitForSingleObject(eventComplete, 4000);
+	}*/
+	byte *buff = (byte*)rend->datas;
+	if (rend->lastframe != lastframe){
+		if (lockGetFrame)
+			GetFFMSFrame(rend->lastframe);
+		else{
+			fframe = FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
+		}
+		lastframe = rend->lastframe;
 	}
+	if (!fframe){
+		return;
+	}
+	memcpy(&buff[0], fframe->Data[0], fplane);
+
+	rend->DrawTexture(buff);
+	rend->Render(false);
 };
 
 wxString VideoFfmpeg::ColorCatrixDescription(int cs, int cr) {

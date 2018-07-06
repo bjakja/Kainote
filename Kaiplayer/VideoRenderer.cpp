@@ -74,7 +74,7 @@ VideoRenderer::VideoRenderer(wxWindow *_parent, const wxSize &size)
 	format = NULL;
 	lines = NULL;
 	Visual = NULL;
-	resized = seek = block = cross = pbar = VisEdit = false;
+	resized = seek = block = cross = pbar = hasVisualEdition = false;
 	IsDshow = true;
 	devicelost = false;
 	panelOnFullscreen = false;
@@ -744,15 +744,14 @@ bool VideoRenderer::Play(int end)
 	VideoCtrl *vb = ((VideoCtrl*)this);
 	if (!(IsShown() || (vb->TD && vb->TD->IsShown()))){ return false; }
 	TabPanel* pan = (TabPanel*)GetParent();
-	if (VisEdit){
+	if (hasVisualEdition){
 		wxString *txt = pan->Grid->SaveText();
 		OpenSubs(txt, false, true);
 		SAFE_DELETE(Visual->dummytext);
-		VisEdit = false;
+		hasVisualEdition = false;
 	}
-	else if (pan->Edit->OnVideo && pan->editor){
+	else if (hasDummySubs && pan->editor){
 		OpenSubs(pan->Grid->SaveText(), false, true);
-		pan->Edit->OnVideo = false;
 	}
 
 	if (end > 0){ playend = end; }
@@ -821,7 +820,7 @@ bool VideoRenderer::Stop()
 
 void VideoRenderer::SetPosition(int _time, bool starttime, bool corect, bool reloadSubs)
 {
-	TabPanel* pan = (TabPanel*)GetParent();
+	TabPanel* tab = (TabPanel*)GetParent();
 	bool playing = vstate == Playing;
 	if (IsDshow){
 		time = MID(0, _time, GetDuration());
@@ -834,19 +833,18 @@ void VideoRenderer::SetPosition(int _time, bool starttime, bool corect, bool rel
 		//przy wielu plikach jednocześnie, był zawsze po seekingu
 		playend = 0;
 		seek = true; vplayer->SetPosition(time);
-		if (VisEdit){
+		if (hasVisualEdition){
 			SAFE_DELETE(Visual->dummytext);
 			if (Visual->Visual == VECTORCLIP){
 				Visual->SetClip(Visual->GetVisual(), true, false, false);
 			}
 			else{
-				OpenSubs((playing) ? pan->Grid->SaveText() : pan->Grid->GetVisible(), true, playing);
-				if (vstate == Playing){ VisEdit = false; }
+				OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
+				if (vstate == Playing){ hasVisualEdition = false; }
 			}
 		}
-		else if (pan->Edit->OnVideo && pan->editor){
-			OpenSubs((playing) ? pan->Grid->SaveText() : pan->Grid->GetVisible(), true, playing);
-			if (playing){ pan->Edit->OnVideo = false; }
+		else if (hasDummySubs && tab->editor){
+			OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
 		}
 	}
 	else{
@@ -857,19 +855,18 @@ void VideoRenderer::SetPosition(int _time, bool starttime, bool corect, bool rel
 			lasttime = timeGetTime() - time;
 			playend = GetDuration();
 
-			if (VisEdit){
+			if (hasVisualEdition){
 				SAFE_DELETE(Visual->dummytext);
 				if (Visual->Visual == VECTORCLIP){
 					Visual->SetClip(Visual->GetVisual(), true, false, false);
 				}
 				else{
-					OpenSubs((playing) ? pan->Grid->SaveText() : pan->Grid->GetVisible(), true, playing);
-					if (playing){ VisEdit = false; }
+					OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
+					if (playing){ hasVisualEdition = false; }
 				}
 			}
-			else if (pan->Edit->OnVideo){
-				OpenSubs((playing) ? pan->Grid->SaveText() : pan->Grid->GetVisible(), true, playing);
-				if (playing){ pan->Edit->OnVideo = false; }
+			else if (hasDummySubs){
+				OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
 			}
 			if (vstate == Playing){
 				if (player){
@@ -894,10 +891,11 @@ bool VideoRenderer::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 		if (redraw && vstate != None && IsDshow && datas){
 			RecreateSurface();
 		}
+		hasDummySubs = false;
 		return true;
 	}
 
-	if (VisEdit && Visual->Visual == VECTORCLIP && Visual->dummytext){
+	if (hasVisualEdition && Visual->Visual == VECTORCLIP && Visual->dummytext){
 		wxString toAppend = Visual->dummytext->Trim().AfterLast('\n');
 		if (fromFile){
 			OpenWrite ow(*textsubs, false);
@@ -908,6 +906,9 @@ bool VideoRenderer::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 			(*textsubs) << toAppend;
 		}
 	}
+	
+	hasDummySubs = !fromFile;
+
 	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
 	int size = strlen(buffer);
 
@@ -1155,7 +1156,7 @@ void VideoRenderer::UpdateVideoWindow()
 		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
 		SAFE_DELETE(Visual->dummytext);
 		Visual->SetCurVisual();
-		VisEdit = true;
+		hasVisualEdition = true;
 	}
 	SetScaleAndZoom();
 	/*block=false;*/
@@ -1200,7 +1201,7 @@ void VideoRenderer::Zoom(const wxSize &size)
 		if (Visual && (Visual->Visual < CLIPRECT || Visual->Visual > VECTORDRAW)){
 			SAFE_DELETE(Visual->dummytext);
 			Visual->SetCurVisual();
-			VisEdit = true;
+			hasVisualEdition = true;
 		}
 	}
 	Render(false);
@@ -1584,13 +1585,11 @@ void VideoRenderer::ChangePositionByFrame(int cpos)
 			lastframe = MID(0, lastframe + cpos, VFF->NumFrames - 1);
 			time = VFF->Timecodes[lastframe];
 			TabPanel* pan = (TabPanel*)GetParent();
-			if (VisEdit || pan->Edit->OnVideo){
+			if (hasVisualEdition || hasDummySubs){
 				OpenSubs(pan->Grid->SaveText(), false, true);
-				pan->Edit->OnVideo = false;
-				VisEdit = false;
+				hasVisualEdition = false;
 			}
 			if (player){ player->UpdateImage(true, true); }
-			//std::thread([=](){Render();}).detach();
 			Render(true, false);
 		}
 	}
@@ -1659,10 +1658,9 @@ void VideoRenderer::SetVisual(bool remove/*=false*/, bool settext/*=false*/, boo
 
 	if (remove){
 		SAFE_DELETE(Visual); pan->Edit->Visual = 0;
-		VisEdit = false;
+		hasVisualEdition = false;
 		if (!noRefreshAfterRemove){
 			OpenSubs(pan->Grid->GetVisible());
-			pan->Edit->OnVideo = true;
 			Render();
 		}
 	}
@@ -1683,7 +1681,7 @@ void VideoRenderer::SetVisual(bool remove/*=false*/, bool settext/*=false*/, boo
 		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
 		SetVisualZoom();
 		Visual->SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime, pan->Edit->line->IsComment);
-		VisEdit = true;
+		hasVisualEdition = true;
 	}
 }
 
@@ -1691,7 +1689,7 @@ void VideoRenderer::ResetVisual()
 {
 	SAFE_DELETE(Visual->dummytext);
 	Visual->SetCurVisual();
-	VisEdit = true;
+	hasVisualEdition = true;
 	Render();
 }
 

@@ -702,11 +702,11 @@ void ScaleRotation::ChangeInLines(bool dummy)
 	}
 	if (dummy){
 		if (!tab->Video->OpenSubs(dtxt)){ KaiLog(_("Nie mo¿na otworzyæ napisów")); }
-		tab->Video->VisEdit = true;
+		tab->Video->hasVisualEdition = true;
 		tab->Video->Render();
 	}
 	else{
-		tab->Video->VisEdit = true;
+		tab->Video->hasVisualEdition = true;
 		if (tab->Edit->splittedTags){ tab->Edit->TextEditOrig->modified = true; }
 		tab->Grid->SetModified(VISUAL_POSITION_SHIFTER, true);
 		tab->Grid->Refresh();

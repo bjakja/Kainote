@@ -162,14 +162,17 @@ void Position::SetCurVisual()
 	data.clear();
 	wxArrayInt sels;
 	tab->Grid->file->GetSelections(sels);
-	bool pib; wxPoint tp;
+	bool putInBracket; 
+	bool hasPositioning = false;
+	wxPoint textPosition;
+
 	for (size_t i = 0; i < sels.size(); i++){
 		//fix by uzyskać reakcję na edycję w editboxie
 		Dialogue *dial = (sels[i] == tab->Grid->currentLine) ? tab->Edit->line : tab->Grid->GetDialogue(sels[i]);
 		if (dial->IsComment){ continue; }
-		D3DXVECTOR2 pos = GetPos(dial, &pib, &tp);
+		D3DXVECTOR2 pos = GetPos(dial, &putInBracket, &textPosition, &hasPositioning);
 		data.push_back(PosData(dial, sels[i], D3DXVECTOR2(((pos.x / coeffW) - zoomMove.x)*zoomScale.x,
-			((pos.y / coeffH) - zoomMove.y)*zoomScale.y), tp, pib));
+			((pos.y / coeffH) - zoomMove.y)*zoomScale.y), textPosition, putInBracket));
 	}
 }
 
@@ -231,15 +234,14 @@ void Position::ChangeMultiline(bool all)
 	}
 
 	if (all){
-		tab->Video->VisEdit = true;
+		tab->Video->hasVisualEdition = true;
 		if (tab->Edit->splittedTags){ tab->Edit->TextEditOrig->modified = true; }
 		tab->Grid->SetModified(VISUAL_POSITION, true);
 		tab->Grid->Refresh();
 	}
 	else{
-
 		if (!tab->Video->OpenSubs(dtxt)){ KaiLog(_("Nie można otworzyć napisów")); }
-		tab->Video->VisEdit = true;
+		tab->Video->hasVisualEdition = true;
 		tab->Video->Render();
 	}
 

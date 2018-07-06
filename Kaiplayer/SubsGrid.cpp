@@ -1433,7 +1433,6 @@ void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 	if (vb->GetState() != None){
 		vb->OpenSubs(GetVisible());
 		vb->Render();
-		Edit->OnVideo = true;
 	}
 }
 

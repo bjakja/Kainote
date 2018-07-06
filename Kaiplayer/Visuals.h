@@ -90,7 +90,7 @@ public:
 	};
 	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
 	D3DXVECTOR2 CalcMovePos();
-	D3DXVECTOR2 GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);
+	D3DXVECTOR2 GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos, bool *hasPositioning);
 	D3DXVECTOR2 to;
 	D3DXVECTOR2 lastmove;
 	D3DXVECTOR2 firstmove;

@@ -180,7 +180,8 @@ class VideoRenderer : public wxWindow
 		volatile bool block;
 		bool IsDshow;
 		bool seek;
-		bool VisEdit;
+		bool hasVisualEdition;
+		bool hasDummySubs = true;
 		bool cross;
 		bool pbar;
 		bool resized;

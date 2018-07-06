@@ -683,8 +683,6 @@ void StyleStore::StyleonVideo(Styles *styl, bool fullskreen)
 	int wl = -1;
 	int time = pan->Video->Tell();
 
-
-
 	if (stass){
 
 		int prevtime = 0;
@@ -758,7 +756,6 @@ void StyleStore::StyleonVideo(Styles *styl, bool fullskreen)
 	else{
 		pan->Video->Render();
 	}
-	pan->Edit->OnVideo = true;
 }
 
 void StyleStore::DoTooltips()

@@ -145,7 +145,6 @@ public:
 	wxPoint Placed;
 	bool InBracket;
 	bool splittedTags;
-	bool OnVideo;
 	bool lastVisible;
 	int Visual;
 	int EditCounter;

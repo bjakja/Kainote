@@ -48,6 +48,7 @@ public:
 	void SetFullscreen(int wmonitor=0);
 	void SetAspectRatio(float AR);
 	void SetScaleAndZoom();
+	void ChangeOnScreenResolution(TabPanel *tab);
 	VideoSlider* vslider;
 	wxWindow* panel;
 	bool seekfiles;
@@ -91,18 +92,19 @@ public:
 	std::vector<RECT> MonRects;
 	bool isOnAnotherMonitor;
 private:
+
     BitmapButton* bprev;
 	BitmapButton* bpause;
 	BitmapButton* bstop;
 	BitmapButton* bnext;
 	BitmapButton* bpline;
 	
-    
-
     KainoteFrame *Kai;
-	int actfile;
+	int actualFile;
 	int id;
 	int prevchap;
+	int x;
+	int y;
 	wxArrayString files;
 	bool ismenu;
 	
