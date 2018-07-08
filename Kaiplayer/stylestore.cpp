@@ -227,7 +227,7 @@ void StyleStore::OnAssStyleChange(wxCommandEvent& event)
 	int numSelections = ASSList->GetSelections(selects);
 	if (numSelections < 1){ wxBell(); return; }
 	selnum = selects[0];
-	stass = true;
+	ASSStyle = true;
 	dummy = false;
 	StylesWindow();
 }
@@ -237,7 +237,7 @@ void StyleStore::OnStoreStyleChange(wxCommandEvent& event)
 	int numSelections = Store->GetSelections(selects);
 	if (numSelections < 1){ wxBell(); return; }
 	selnum = selects[0];
-	stass = false;
+	ASSStyle = false;
 	dummy = false;
 	StylesWindow();
 }
@@ -377,70 +377,108 @@ void StyleStore::StylesWindow(wxString newname)
 	SubsGrid* grid = Notebook::GetTab()->Grid;
 	Styles *tab = NULL;
 	if (selnum < 0){ tab = new Styles(); }
-	else if (stass){ tab = grid->GetStyle(selnum)->Copy(); }
+	else if (ASSStyle){ tab = grid->GetStyle(selnum)->Copy(); }
 	else{ tab = Options.GetStyle(selnum)->Copy(); }
 	if (newname != ""){ tab->Name = newname; }
 	oldname = tab->Name;
-	cc->UpdateValues(tab);
+	cc->UpdateValues(tab, !dummy);
 	if (!detachedEtit){ Mainall->Fit(this); }
 
 }
 
-bool StyleStore::ChangeStyle(Styles *cstyl)
+bool StyleStore::ChangeStyle(Styles *changedStyle, int cellsToChange /*= -1*/)
 {
 	Update();
 	SubsGrid* grid = Notebook::GetTab()->Grid;
-	int mult = 0;
-	int fres = (stass) ? grid->FindStyle(cstyl->Name, &mult) : Options.FindStyle(cstyl->Name, &mult);
-	if (fres != -1) mult = 1;
+	int multiplication = 0;
+	int foundStyle = (ASSStyle) ? grid->FindStyle(changedStyle->Name, &multiplication) : 
+		Options.FindStyle(changedStyle->Name, &multiplication);
+	if (foundStyle != -1) 
+		multiplication = 1;
+
 	if (!dummy){
-		if (stass && selnum >= grid->StylesSize()){ dummy = true; }
-		else if (!stass && selnum >= Options.StoreSize()){ dummy = true; }
-		//selnum=(stass)? grid->FindStyle(oldname) : Options.FindStyle(oldname); if(selnum<0){dummy=true;}
+		if (ASSStyle && selnum >= grid->StylesSize()){ dummy = true; }
+		else if (!ASSStyle && selnum >= Options.StoreSize()){ dummy = true; }
 	}
 
-	if (fres != -1 && dummy || (mult > 1 || mult == 1 && oldname != cstyl->Name) && !dummy)
+	if (foundStyle != -1 && dummy || (multiplication > 1 || multiplication == 1 && oldname != changedStyle->Name) && !dummy)
 	{
 		Mainall->Fit(this);
-		KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" jest już na liście."), cstyl->Name));
-		delete cstyl;
+		KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" jest już na liście."), changedStyle->Name));
+		delete changedStyle;
 		return false;
 	}
-	if (fres != -1){ selnum = fres; }
-	else if (!dummy){ selnum = (stass) ? grid->FindStyle(oldname) : Options.FindStyle(oldname); }
+
+	if (foundStyle != -1){ selnum = foundStyle; }
+	else if (!dummy){ selnum = (ASSStyle) ? grid->FindStyle(oldname) : Options.FindStyle(oldname); }
+	if (selnum < 0){ dummy = true; }
+
+	if (cellsToChange != -1){
+		wxArrayInt stylesSelection;
+		if (ASSStyle)
+			ASSList->GetSelections(stylesSelection);
+		else
+			Store->GetSelections(stylesSelection);
+
+		for (size_t i = 0; i < stylesSelection.size(); i++){
+			int numStyle = stylesSelection[i];
+			//don't change edited line
+			if (numStyle == selnum)
+				continue;
+
+			if (ASSStyle){
+				//when numStyle is greater then size something was wrong
+				if (numStyle >= grid->StylesSize())
+					break;
+
+				Styles *copy = grid->GetStyle(numStyle)->Copy();
+				copy->CopyChanges(changedStyle, cellsToChange);
+				grid->ChangeStyle(changedStyle, numStyle);
+			}
+			else{
+				if (numStyle >= Options.StoreSize())
+					break;
+
+				Styles *copy = Options.GetStyle(numStyle)->Copy();
+				copy->CopyChanges(changedStyle, cellsToChange);
+				Options.ChangeStyle(changedStyle, numStyle);
+			}
+		}
+	}
+
 	if (dummy){
-		if (stass){
-			grid->AddStyle(cstyl);
-			ASSList->SetSelection(grid->StylesSize() - 1, true);
+		if (ASSStyle){
+			grid->AddStyle(changedStyle);
+			ASSList->SetSelection(grid->StylesSize() - 1, cellsToChange == -1);
 			selnum = grid->StylesSize() - 1;
 		}
 		else{
-			Options.AddStyle(cstyl);
-			Store->SetSelection(Options.StoreSize() - 1, true);
+			Options.AddStyle(changedStyle);
+			Store->SetSelection(Options.StoreSize() - 1, cellsToChange == -1);
 			selnum = Options.StoreSize() - 1;
 		}
-		//dummy=false;
 	}
 	else{
-		if (stass){ grid->ChangeStyle(cstyl, selnum); ASSList->Refresh(false); }
-		else{ Options.ChangeStyle(cstyl, selnum); Store->Refresh(false); }
+		if (ASSStyle){ grid->ChangeStyle(changedStyle, selnum); ASSList->Refresh(false); }
+		else{ Options.ChangeStyle(changedStyle, selnum); Store->Refresh(false); }
 	}
+
 	Mainall->Fit(this);
 	bool refreshActiveLine = false;
-	if (oldname != cstyl->Name && stass && !dummy){
+	if (oldname != changedStyle->Name && ASSStyle && !dummy){
 		int res = KaiMessageBox(_("Nazwa stylu została zmieniona, czy chcesz zmienić ją także w napisach?"), _("Potwierdzenie"), wxYES_NO);
 		if (res == wxYES){
 			for (int i = 0; i < grid->GetCount(); i++){
 				if (grid->GetDialogue(i)->Style == oldname)
 				{
-					grid->CopyDialogue(i)->Style = cstyl->Name;
+					grid->CopyDialogue(i)->Style = changedStyle->Name;
 				}
 			}
 			grid->AdjustWidths(STYLE);
 			refreshActiveLine = true;
 		}
 	}
-	oldname = cstyl->Name;
+	oldname = changedStyle->Name;
 	dummy = false;
 	SetModified(refreshActiveLine);
 	return true;
@@ -588,7 +626,7 @@ void StyleStore::OnAssCopy(wxCommandEvent& event)
 	if (numSelections < 1){ wxBell(); return; }
 	Styles *kstyle = grid->GetStyle(selects[0]);
 	selnum = selects[0];
-	stass = true;
+	ASSStyle = true;
 	dummy = true;
 	StylesWindow(_("Kopia ") + kstyle->Name);
 }
@@ -599,7 +637,7 @@ void StyleStore::OnStoreCopy(wxCommandEvent& event)
 	if (numSelections < 1){ wxBell(); return; }
 	Styles *kstyle = Options.GetStyle(selects[0]);
 	selnum = selects[0];
-	stass = false;
+	ASSStyle = false;
 	dummy = true;
 	StylesWindow(_("Kopia ") + kstyle->Name);
 }
@@ -609,7 +647,7 @@ void StyleStore::OnStoreNew(wxCommandEvent& event)
 	bool gname = true;
 	int count = 0;
 	selnum = -1;
-	stass = false;
+	ASSStyle = false;
 	dummy = true;
 	while (gname){
 		wxString ns = _("Nowy Styl");
@@ -626,7 +664,7 @@ void StyleStore::OnAssNew(wxCommandEvent& event)
 	bool gname = true;
 	int count = 0;
 	selnum = -1;
-	stass = true;
+	ASSStyle = true;
 	dummy = true;
 
 	while (gname){
@@ -674,89 +712,89 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 	KaiMessageBox(wxString::Format(_("Używane style:\n%s\nUsunięte style:\n%s"), existsStyles, delStyles), _("Status usuniętych stylów"));
 }
 
-void StyleStore::StyleonVideo(Styles *styl, bool fullskreen)
-{
-	TabPanel* pan = Notebook::GetTab();
-	SubsGrid *grid = pan->Grid;
-	if (pan->Video->GetState() == None || pan->Video->GetState() == Stopped){ return; }
-
-	int wl = -1;
-	int time = pan->Video->Tell();
-
-	if (stass){
-
-		int prevtime = 0;
-		int durtime = pan->Video->GetDuration();
-		int ip = -1;
-		int idr = -1;
-		for (int i = 0; i < grid->GetCount(); i++)
-		{
-			Dialogue *dial = grid->GetDialogue(i);
-			if (!dial->IsComment && (dial->Text != "" || dial->TextTl != "") && dial->Style == styl->Name){
-				if (time >= dial->Start.mstime && time <= dial->End.mstime){
-					pan->Edit->SetLine(i);
-					grid->SelectRow(i);
-					grid->ScrollTo(i - 4);
-					wl = i; ip = -1; idr = -1;
-					break;
-				}
-				if (dial->Start.mstime > prevtime && dial->Start.mstime < time){ prevtime = dial->Start.mstime; ip = i; }
-				if (dial->Start.mstime<durtime && dial->Start.mstime>time){ durtime = dial->Start.mstime; idr = i; }
-			}
-
-		}
-		if (ip >= 0){
-			pan->Edit->SetLine(ip);
-			grid->SelectRow(ip);
-			grid->ScrollTo(ip - 4);
-			wl = ip;
-		}
-		else if (idr >= 0){
-			pan->Edit->SetLine(idr);
-			grid->SelectRow(idr);
-			grid->ScrollTo(idr - 4);
-			wl = idr;
-		}
-
-		//wxString kkk;
-		//KaiMessageBox(kkk<<"ip "<<ip<<"idr "<<idr);
-
-	}
-
-
-	wxString *txt = new wxString();
-	(*txt) << "[Script Info]\r\n";
-	grid->GetSInfos(*txt);
-	(*txt) << "\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
-	(*txt) << styl->styletext();
-	(*txt) << " \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
-
-	if (wl < 0){
-		Dialogue tmpdial;
-		tmpdial.Style = styl->Name;
-		tmpdial.Text = _("Linijka testowa stylu");
-		tmpdial.Start.NewTime(time - 200);
-		tmpdial.End.NewTime(time + 200);
-		tmpdial.GetRaw(txt);
-	}
-	else{
-		grid->GetDialogue(wl)->GetRaw(txt);
-
-	}
-	//grid->SaveFile(Kai->GetTab()->tnppath,false);
-	pan->Video->OpenSubs(txt);
-	if (fullskreen&&!pan->Video->isFullscreen){
-		pan->Video->SetFullscreen();
-		this->SetWindowStyle(GetWindowStyle() | wxSTAY_ON_TOP);
-	}
-	//if(!fullskreen&&pan->Video->isFullscreen){pan->Video->SetFullskreen();this->SetWindowStyle(GetWindowStyle()|~wxSTAY_ON_TOP);}
-	if (wl >= 0){
-		pan->Video->Seek(grid->GetDialogue(wl)->Start.mstime + 5);
-	}
-	else{
-		pan->Video->Render();
-	}
-}
+//void StyleStore::StyleonVideo(Styles *styl, bool fullskreen)
+//{
+//	TabPanel* pan = Notebook::GetTab();
+//	SubsGrid *grid = pan->Grid;
+//	if (pan->Video->GetState() == None || pan->Video->GetState() == Stopped){ return; }
+//
+//	int wl = -1;
+//	int time = pan->Video->Tell();
+//
+//	if (ASSStyle){
+//
+//		int prevtime = 0;
+//		int durtime = pan->Video->GetDuration();
+//		int ip = -1;
+//		int idr = -1;
+//		for (int i = 0; i < grid->GetCount(); i++)
+//		{
+//			Dialogue *dial = grid->GetDialogue(i);
+//			if (!dial->IsComment && (dial->Text != "" || dial->TextTl != "") && dial->Style == styl->Name){
+//				if (time >= dial->Start.mstime && time <= dial->End.mstime){
+//					pan->Edit->SetLine(i);
+//					grid->SelectRow(i);
+//					grid->ScrollTo(i - 4);
+//					wl = i; ip = -1; idr = -1;
+//					break;
+//				}
+//				if (dial->Start.mstime > prevtime && dial->Start.mstime < time){ prevtime = dial->Start.mstime; ip = i; }
+//				if (dial->Start.mstime<durtime && dial->Start.mstime>time){ durtime = dial->Start.mstime; idr = i; }
+//			}
+//
+//		}
+//		if (ip >= 0){
+//			pan->Edit->SetLine(ip);
+//			grid->SelectRow(ip);
+//			grid->ScrollTo(ip - 4);
+//			wl = ip;
+//		}
+//		else if (idr >= 0){
+//			pan->Edit->SetLine(idr);
+//			grid->SelectRow(idr);
+//			grid->ScrollTo(idr - 4);
+//			wl = idr;
+//		}
+//
+//		//wxString kkk;
+//		//KaiMessageBox(kkk<<"ip "<<ip<<"idr "<<idr);
+//
+//	}
+//
+//
+//	wxString *txt = new wxString();
+//	(*txt) << "[Script Info]\r\n";
+//	grid->GetSInfos(*txt);
+//	(*txt) << "\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
+//	(*txt) << styl->GetRaw();
+//	(*txt) << " \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
+//
+//	if (wl < 0){
+//		Dialogue tmpdial;
+//		tmpdial.Style = styl->Name;
+//		tmpdial.Text = _("Linijka testowa stylu");
+//		tmpdial.Start.NewTime(time - 200);
+//		tmpdial.End.NewTime(time + 200);
+//		tmpdial.GetRaw(txt);
+//	}
+//	else{
+//		grid->GetDialogue(wl)->GetRaw(txt);
+//
+//	}
+//	//grid->SaveFile(Kai->GetTab()->tnppath,false);
+//	pan->Video->OpenSubs(txt);
+//	if (fullskreen&&!pan->Video->isFullscreen){
+//		pan->Video->SetFullscreen();
+//		this->SetWindowStyle(GetWindowStyle() | wxSTAY_ON_TOP);
+//	}
+//	//if(!fullskreen&&pan->Video->isFullscreen){pan->Video->SetFullskreen();this->SetWindowStyle(GetWindowStyle()|~wxSTAY_ON_TOP);}
+//	if (wl >= 0){
+//		pan->Video->Seek(grid->GetDialogue(wl)->Start.mstime + 5);
+//	}
+//	else{
+//		pan->Video->Render();
+//	}
+//}
 
 void StyleStore::DoTooltips()
 {

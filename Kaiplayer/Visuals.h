@@ -56,7 +56,7 @@ public:
 	bool isSelected;
 };
 
-class Visuals /* : public wxEvtHandler*/
+class Visuals
 {
 public:
 	Visuals();
@@ -72,6 +72,9 @@ public:
 		zoomMove = move;
 		zoomScale = scale;
 	};
+	void GetDialoguesWithoutPosition();
+	int GetDialoguePosition();
+	void RenderSubs(wxString *subs, bool redraw = true);
 
 	virtual void SetVisual(int _start, int _end, bool notDial);
 	virtual void Draw(int time);
@@ -90,14 +93,14 @@ public:
 	};
 	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
 	D3DXVECTOR2 CalcMovePos();
-	D3DXVECTOR2 GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos, bool *hasPositioning);
+	D3DXVECTOR2 GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);
 	D3DXVECTOR2 to;
 	D3DXVECTOR2 lastmove;
 	D3DXVECTOR2 firstmove;
 	D3DXVECTOR2 from;
 
-	double tbl[7];
-	// coeffw i h - needed to convert from video to subs or subs to video resolution
+	double moveValues[7];
+	// coeffw and h - needed to convert from video to subs or subs to video resolution
 	float coeffW, coeffH;
 
 	LPD3DXLINE line;
@@ -124,6 +127,9 @@ public:
 	D3DXVECTOR2 zoomMove;
 	D3DXVECTOR2 zoomScale;
 	wxArrayInt selPositions;
+	//Dialogue adresses are valid only for one modification
+	//need recreate on every checking
+	std::vector<Dialogue*> dialoguesWithoutPosition;
 };
 
 class PosData{
@@ -359,6 +365,7 @@ private:
 	void OnClickRotationZ(int x, int y);
 	void OnClickRotationXY(int x, int y, bool leftClick, bool rightClick, bool middleClick);
 	void OnClickScaling(int x, int y, bool leftClick, bool rightClick, bool middleClick, bool shiftDown);
+	bool SeekTags(const wxString &text, const wxString &pattern, wxString *result);
 	bool isOrg = false;
 	bool hasOrg = false;
 	bool onlyFirst = false;
@@ -372,11 +379,12 @@ private:
 	//add defferent from this two values
 	D3DXVECTOR2 beforeMove;//tagvalue
 	D3DXVECTOR2 afterMove;//tagvalue
-	byte type = 0;
+	byte type = 255;
 	byte AN;
 	wxPoint diffs;
 	byte selectedTool = 0;
-	bool tagNotFound = false;
+	bool tagXFound = false;
+	bool tagYFound = false;
 };
 
 int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoint &pos);

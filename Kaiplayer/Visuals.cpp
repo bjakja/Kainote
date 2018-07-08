@@ -85,6 +85,59 @@ Visuals::~Visuals()
 	SAFE_DELETE(dummytext);
 }
 
+void Visuals::GetDialoguesWithoutPosition()
+{
+	int time = tab->Video->Tell();
+	SubsGrid *grid = tab->Grid;
+
+	wxRegEx pos("\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
+	bool tlMode = tab->Grid->hasTLMode;
+	int activeLineKey = tab->Grid->file->GetElementById(tab->Grid->currentLine);
+
+	for (int i = 0; i < grid->file->GetAllCount(); i++){
+		Dialogue *dial = grid->file->GetDialogueByKey(i);
+		if (!grid->ignoreFiltered && !dial->isVisible || dial->NonDialogue || activeLineKey == i){ continue; }
+
+		if (time >= dial->Start.mstime && time < dial->End.mstime){
+			const wxString &text = (tlMode && dial->TextTl != "") ? dial->TextTl : dial->Text;
+			if (!pos.Matches(text)){
+				dialoguesWithoutPosition.push_back(dial);
+			}
+		}
+	}
+}
+
+int Visuals::GetDialoguePosition()
+{
+	if (!dialoguesWithoutPosition.size())
+		return 0;
+
+	bool tlMode = tab->Grid->hasTLMode;
+
+	for (size_t i = 0; i < dialoguesWithoutPosition.size(); i++){
+		Dialogue *dial = dialoguesWithoutPosition[i];
+		Styles *acstyle = tab->Grid->GetStyle(0, dial->Style);
+		const wxString &txt = (tlMode && dial->TextTl != "") ? dial->TextTl : dial->Text;
+		int newan = wxAtoi(acstyle->Alignment);
+		wxRegEx an("\\\\an([0-9]+)", wxRE_ADVANCED);
+		if (an.Matches(txt)){
+			newan = wxAtoi(an.GetMatch(txt, 1));
+		}
+		//if (((AN - 1) / 3) == ((newan - 1) / 3)){
+
+		//}
+		
+	}
+
+}
+
+void Visuals::RenderSubs(wxString *subs, bool redraw /*= true*/)
+{
+	if (!tab->Video->OpenSubs(subs)){ KaiLog(_("Nie można otworzyć napisów")); }
+	tab->Video->hasVisualEdition = true;
+	if (redraw){ tab->Video->Render(); }
+}
+
 void Visuals::SetVisual(int _start, int _end, bool notDial)
 {
 	int nx = 0, ny = 0;
@@ -266,16 +319,16 @@ D3DXVECTOR2 Visuals::CalcMovePos()
 {
 	D3DXVECTOR2 ppos;
 	int time = tab->Video->Tell();
-	if (tbl[6] < 6){ tbl[4] = start; tbl[5] = end; }
-	float tmpt = time - tbl[4];
-	float tmpt1 = tbl[5] - tbl[4];
+	if (moveValues[6] < 6){ moveValues[4] = start; moveValues[5] = end; }
+	float tmpt = time - moveValues[4];
+	float tmpt1 = moveValues[5] - moveValues[4];
 	float actime = tmpt / tmpt1;
 	float distx, disty;
-	if (time < tbl[4]){ distx = tbl[0], disty = tbl[1]; }
-	else if (time > tbl[5]){ distx = tbl[2], disty = tbl[3]; }
+	if (time < moveValues[4]){ distx = moveValues[0], disty = moveValues[1]; }
+	else if (time > moveValues[5]){ distx = moveValues[2], disty = moveValues[3]; }
 	else {
-		distx = tbl[0] - ((tbl[0] - tbl[2])*actime);
-		disty = tbl[1] - ((tbl[1] - tbl[3])*actime);
+		distx = moveValues[0] - ((moveValues[0] - moveValues[2])*actime);
+		disty = moveValues[1] - ((moveValues[1] - moveValues[3])*actime);
 	}
 	ppos.x = distx, ppos.y = disty;
 	return ppos;
@@ -438,10 +491,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 			return;
 		}
 		tab->Video->hasVisualEdition = false;
-		if (!tab->Video->OpenSubs(tab->Grid->GetVisible())){ KaiLog(_("Nie można otworzyć napisów")); }
-		tab->Video->hasVisualEdition = true;
-		if (redraw){ tab->Video->Render(); }
-
+		RenderSubs(tab->Grid->GetVisible(), redraw);
 		return;
 	}
 	if (dummy){
@@ -576,11 +626,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 
 		tab->Video->hasVisualEdition = false;
 		wxString *dtxt = new wxString(*dummytext);
-		if (!tab->Video->OpenSubs(dtxt)){ KaiLog(_("Nie można otworzyć napisów")); }
-		tab->Video->hasVisualEdition = true;
-		if (redraw){
-			tab->Video->Render();
-		}
+		RenderSubs(dtxt, redraw);
 
 	}
 	else{
@@ -668,10 +714,7 @@ void Visuals::SetVisual(bool dummy, int type)
 			tab->Grid->Refresh();
 		}
 		else{
-
-			if (!tab->Video->OpenSubs(dtxt)){ KaiLog(_("Nie można otworzyć napisów")); }
-			tab->Video->hasVisualEdition = true;
-			tab->Video->Render();
+			RenderSubs(dtxt);
 		}
 		return;
 	}
@@ -709,9 +752,7 @@ void Visuals::SetVisual(bool dummy, int type)
 		dummytext->replace(dumplaced.x, dumplaced.y, txt);
 		dumplaced.y = txt.Len();
 		wxString *dtxt = new wxString(*dummytext);
-		if (!tab->Video->OpenSubs(dtxt)){ KaiLog(_("Nie można otworzyć napisów")); }
-		tab->Video->hasVisualEdition = true;
-		tab->Video->Render();
+		RenderSubs(dtxt);
 	}
 	else{
 		//Editor->Refresh(false);
@@ -725,7 +766,7 @@ void Visuals::SetVisual(bool dummy, int type)
 	}
 }
 
-D3DXVECTOR2 Visuals::GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos, bool *hasPositioning){
+D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos){
 	//aby w miarę naprawić błąd pozycjonowania wielu linii bez pos należy zrobić funkcję, która przeszuka napisy na obecność tych linii
 	//obliczyć w niej właściwą pozycję i zastosować do pozycjonowania i move.
 	*putinBracket = false;
@@ -748,17 +789,12 @@ D3DXVECTOR2 Visuals::GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos
 		}
 		result = D3DXVECTOR2(posx, posy);
 		if (res1 && res2){ 
-			if (hasPositioning)
-				*hasPositioning = true;
 			return result; 
 		}
 	}
 
 	result.x = (tab->Edit->line->MarginL != 0) ? tab->Edit->line->MarginL : wxAtoi(acstyl->MarginL);
 	result.y = (tab->Edit->line->MarginV != 0) ? tab->Edit->line->MarginV : wxAtoi(acstyl->MarginV);
-	if (hasPositioning)
-		*hasPositioning = false;
-	
 
 	if (txt != "" && txt[0] == '{'){
 		TextPos->x = 1;
@@ -775,7 +811,6 @@ D3DXVECTOR2 Visuals::GetPos(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos
 	if (an.Matches(txt)){
 		tmpan = wxAtoi(an.GetMatch(txt, 1));
 	}
-	//D3DXVECTOR2 dsize = Notebook::GetTab()->Video->Vclips->CalcWH();
 	int x, y;
 	tab->Grid->GetASSRes(&x, &y);
 	if (tmpan % 3 == 2){
@@ -811,7 +846,7 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 		strPos = tab->Edit->Placed;
 	}
 	else{
-		D3DXVECTOR2 pos = GetPos(_dial, &PutinBrackets, &strPos, NULL);
+		D3DXVECTOR2 pos = GetPosition(_dial, &PutinBrackets, &strPos);
 		orgx = pos.x;
 		orgy = pos.y;
 		if (strPos.y == 0){
@@ -824,4 +859,3 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 	strPos.y += strPos.x - 1;
 	ChangeText(txt, "\\org(" + getfloat(orgx + coordx) + "," + getfloat(orgy + coordy) + ")", !PutinBrackets, strPos);
 }
-

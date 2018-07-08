@@ -153,8 +153,8 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 
 void MoveAll::SetCurVisual()
 {
-	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, tbl);
-	if (tbl[6] > 3){ linepos = CalcMovePos(); }
+	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, moveValues);
+	if (moveValues[6] > 3){ linepos = CalcMovePos(); }
 	from = to = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x)*zoomScale.x,
 		((linepos.y / coeffH) - zoomMove.y)*zoomScale.y);
 	elems.clear();
@@ -202,22 +202,22 @@ void MoveAll::SetCurVisual()
 		}
 
 	}
-	if (tbl[6] == 2){
+	if (moveValues[6] == 2){
 		moveElems elem;
-		elem.elem = D3DXVECTOR2(((tbl[0] / coeffW) - zoomMove.x)*zoomScale.x,
-			((tbl[1] / coeffH) - zoomMove.y)*zoomScale.y);
+		elem.elem = D3DXVECTOR2(((moveValues[0] / coeffW) - zoomMove.x)*zoomScale.x,
+			((moveValues[1] / coeffH) - zoomMove.y)*zoomScale.y);
 		elem.type = TAGPOS;
 		elems.push_back(elem);
 	}
-	if (tbl[6] >= 4){
+	if (moveValues[6] >= 4){
 		moveElems elem;
-		elem.elem = D3DXVECTOR2(((tbl[0] / coeffW) - zoomMove.x)*zoomScale.x,
-			((tbl[1] / coeffH) - zoomMove.y)*zoomScale.y);
+		elem.elem = D3DXVECTOR2(((moveValues[0] / coeffW) - zoomMove.x)*zoomScale.x,
+			((moveValues[1] / coeffH) - zoomMove.y)*zoomScale.y);
 		elem.type = TAGMOVES;
 		elems.push_back(elem);
 		elem.type = TAGMOVEE;
-		elem.elem = D3DXVECTOR2(((tbl[2] / coeffW) - zoomMove.x)*zoomScale.x,
-			((tbl[3] / coeffH) - zoomMove.y)*zoomScale.y);
+		elem.elem = D3DXVECTOR2(((moveValues[2] / coeffW) - zoomMove.x)*zoomScale.x,
+			((moveValues[3] / coeffH) - zoomMove.y)*zoomScale.y);
 		elems.push_back(elem);
 	}
 
@@ -346,10 +346,7 @@ void MoveAll::ChangeInLines(bool all)
 		tab->Grid->Refresh();
 	}
 	else{
-		if (!tab->Video->OpenSubs(dtxt)){ KaiLog(_("Nie można otworzyć napisów")); }
-		tab->Video->hasVisualEdition = true;
-		tab->Video->Render();
-
+		RenderSubs(dtxt);
 	}
 
 }

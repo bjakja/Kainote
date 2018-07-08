@@ -75,8 +75,8 @@ wxString Move::GetVisual()
 		getfloat(((from.y / zoomScale.y) + zoomMove.y)*coeffH) + "," +
 		getfloat(((to.x / zoomScale.x) + zoomMove.x)*coeffW) + "," +
 		getfloat(((to.y / zoomScale.y) + zoomMove.y)*coeffH) + "," +
-		getfloat(tbl[4] - startTime) + "," +
-		getfloat(tbl[5] - startTime) + ")";
+		getfloat(moveValues[4] - startTime) + "," +
+		getfloat(moveValues[5] - startTime) + ")";
 }
 
 void Move::OnMouseEvent(wxMouseEvent &evt)
@@ -190,28 +190,27 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 
 void Move::SetCurVisual()
 {
-	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, tbl);
+	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, moveValues);
 	from = to = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x)*zoomScale.x,
 		((linepos.y / coeffH) - zoomMove.y)*zoomScale.y);
 
-	if (tbl[6] > 3){
-		to.x = ((tbl[2] / coeffW) - zoomMove.x)*zoomScale.x;
-		to.y = ((tbl[3] / coeffH) - zoomMove.y)*zoomScale.y;
+	if (moveValues[6] > 3){
+		to.x = ((moveValues[2] / coeffW) - zoomMove.x)*zoomScale.x;
+		to.y = ((moveValues[3] / coeffH) - zoomMove.y)*zoomScale.y;
 	}
 	moveDistance = to - from;
 	int startIter = 4, endIter = 5;
-	if (tbl[4] > tbl[5]){ startIter = 5; endIter = 4; }
-	moveStart = (int)tbl[startIter];
-	moveEnd = (int)tbl[endIter];
+	if (moveValues[4] > moveValues[5]){ startIter = 5; endIter = 4; }
+	moveStart = (int)moveValues[startIter];
+	moveEnd = (int)moveValues[endIter];
 
 }
 
 void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 {
 	bool putinbracket = false;
-	bool hasPositioning = false;
 	wxPoint tagPos;
-	D3DXVECTOR2 textPosition = GetPos(_dial, &putinbracket, &tagPos, &hasPositioning);
+	D3DXVECTOR2 textPosition = GetPosition(_dial, &putinbracket, &tagPos);
 	D3DXVECTOR2 moveFrom = lastFrom - from;
 	D3DXVECTOR2 moveTo = lastTo - to;
 	int moveStartTime = 0, moveEndTime = 0;

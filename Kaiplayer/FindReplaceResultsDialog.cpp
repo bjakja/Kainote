@@ -1,4 +1,4 @@
-//  Copyright (c) 2018, Marcin Drob
+Ôªø//  Copyright (c) 2018, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace
 	Bind(CHOOSE_RESULT, [=](wxCommandEvent &evt){
 		SeekResults *results = (SeekResults*)evt.GetClientData();
 		if (!results){
-			KaiLogDebug("chujnia, ktoú ukrad≥ rezultat wyszukiwania");
+			KaiLogDebug("chujnia, kto≈õ ukrad≈Ç rezultat wyszukiwania");
 			return;
 		}
 

@@ -37,22 +37,22 @@
 
 config::config()
 {
-	wxString gitVersion ;
+	wxString gitVersion;
 #ifdef GIT_CUR_COMMIT
 	gitVersion = "  " + wxString(ADD_QUOTES(GIT_BRANCH)) + " " + wxString(ADD_QUOTES(GIT_CUR_COMMIT)).Left(7);
 #endif
 	progname = _T("Kainote v") + wxString(VersionKainote) + gitVersion;
 #if _DEBUG
-	progname+= " DEBUG";
+	progname += " DEBUG";
 #endif
-	AudioOpts=false;
+	AudioOpts = false;
 	defaultColour = wxColour();
 }
 
 
 config::~config()
 {
-	for(std::vector<Styles*>::iterator it=assstore.begin(); it!=assstore.end(); it++)
+	for (std::vector<Styles*>::iterator it = assstore.begin(); it != assstore.end(); it++)
 	{
 		delete (*it);
 	}
@@ -61,22 +61,22 @@ config::~config()
 
 wxString config::GetReleaseDate()
 {
-	return wxString(__DATE__)+"  "+wxString(__TIME__);
+	return wxString(__DATE__) + "  " + wxString(__TIME__);
 }
 
 
 bool config::SetRawOptions(const wxString &textconfig)
 {
-	wxStringTokenizer cfg(textconfig,_T("\n"));
-	int g=0;
-	while(cfg.HasMoreTokens())
+	wxStringTokenizer cfg(textconfig, _T("\n"));
+	int g = 0;
+	while (cfg.HasMoreTokens())
 	{
-		wxString token=cfg.NextToken();
+		wxString token = cfg.NextToken();
 		token.Trim(false);
 		token.Trim(true);
-		if (token.Len()>0){CatchValsLabs(token);g++;}
+		if (token.Len() > 0){ CatchValsLabs(token); g++; }
 	}
-	if (g>10){return true;};
+	if (g > 10){ return true; };
 	return false;
 }
 
@@ -90,7 +90,7 @@ const wxString & config::GetString(CONFIG opt)
 
 
 bool config::GetBool(CONFIG opt)
-{   
+{
 	if (opt >= 0 && opt < configSize){
 		wxString ropt = stringConfig[opt];
 		if (ropt == _T("true")){ return true; }
@@ -100,7 +100,7 @@ bool config::GetBool(CONFIG opt)
 
 const wxColour &config::GetColour(COLOR opt)
 {
-	if (opt >=0 && opt < colorsSize)
+	if (opt >= 0 && opt < colorsSize)
 		return colors[opt];
 
 	return defaultColour;
@@ -110,7 +110,7 @@ AssColor config::GetColor(COLOR opt)
 {
 	if (opt >= 0 && opt < colorsSize)
 		return AssColor(colors[opt]);
-		
+
 	return AssColor();
 }
 
@@ -122,7 +122,7 @@ int config::GetInt(CONFIG opt)
 	return 0;
 }
 float config::GetFloat(CONFIG opt)
-{   
+{
 	if (opt >= 0 && opt < configSize){
 		double fl;
 		wxString rawfloat = stringConfig[opt];
@@ -135,7 +135,7 @@ float config::GetFloat(CONFIG opt)
 void config::SetString(CONFIG opt, const wxString &sopt)
 {
 	if (opt >= 0 && opt < configSize)
-		stringConfig[opt]=sopt;
+		stringConfig[opt] = sopt;
 }
 
 void config::SetBool(CONFIG opt, bool bopt)
@@ -187,10 +187,10 @@ void config::GetRawOptions(wxString &options, bool Audio/*=false*/)
 
 void config::CatchValsLabs(const wxString &line)
 {
-	wxString Values=line.AfterFirst('=');
+	wxString Values = line.AfterFirst('=');
 	//Values.Trim(false);
 	//Values.Trim(true);
-	wxString Labels=line.BeforeFirst('=');
+	wxString Labels = line.BeforeFirst('=');
 	//Labels.Trim(false);
 	Labels.Trim(true);
 	stringConfig[GetCONFIGValue(Labels)] = Values;
@@ -201,11 +201,11 @@ void config::AddStyle(Styles *styl)
 
 }
 
-Styles *config::GetStyle(int i,const wxString &name, Styles* _styl)
+Styles *config::GetStyle(int i, const wxString &name, Styles* _styl)
 {
-	if(name!=_T("")){
-		for(unsigned int j=0;j<assstore.size();j++){
-			if(name==assstore[j]->Name){if(_styl){_styl=assstore[j];} return assstore[j];}
+	if (name != _T("")){
+		for (unsigned int j = 0; j < assstore.size(); j++){
+			if (name == assstore[j]->Name){ if (_styl){ _styl = assstore[j]; } return assstore[j]; }
 		}
 
 	}
@@ -214,13 +214,15 @@ Styles *config::GetStyle(int i,const wxString &name, Styles* _styl)
 
 int config::FindStyle(const wxString &name, int *multiplication)
 {
-	int isfound=-1;
-	for(unsigned int j=0;j<assstore.size();j++)
+	int isfound = -1;
+	for (unsigned int j = 0; j < assstore.size(); j++)
 	{
-		if(name==assstore[j]->Name){isfound=j;
-		if(multiplication){
-			*multiplication++;
-		}else{break;}
+		if (name == assstore[j]->Name){
+			isfound = j;
+			if (multiplication){
+				*multiplication++;
+			}
+			else{ break; }
 		}
 	}
 	return isfound;
@@ -231,38 +233,38 @@ int config::StoreSize()
 	return assstore.size();
 }
 
-void config::ChangeStyle(Styles *styl,int i)
+void config::ChangeStyle(Styles *styl, int i)
 {
-	Styles *style= assstore[i];
+	Styles *style = assstore[i];
 	delete style;
-	assstore[i]=styl;
+	assstore[i] = styl;
 }
 
 void config::DelStyle(int i)
 {
-	Styles *styl= assstore[i];
+	Styles *styl = assstore[i];
 	delete styl;
-	assstore.erase(assstore.begin()+i);
+	assstore.erase(assstore.begin() + i);
 }
 
 void config::SaveOptions(bool cfg, bool style)
 {
 	OpenWrite ow;
-	if(cfg){
+	if (cfg){
 		wxString textfile;
 		GetRawOptions(textfile);
 		wxString path;
-		path<<pathfull<<_T("\\Config.txt");
+		path << pathfull << _T("\\Config.txt");
 		ow.FileWrite(path, textfile);
 	}
 
-	if(style){
+	if (style){
 		wxString stylefile;
-		for (int j=0;j<StoreSize();j++){
-			stylefile<<GetStyle(j)->styletext();
+		for (int j = 0; j < StoreSize(); j++){
+			stylefile << GetStyle(j)->GetRaw();
 		}
 		wxString path;
-		path<<pathfull<<_T("\\Catalog\\")<<actualStyleDir<<_T(".sty");
+		path << pathfull << _T("\\Catalog\\") << actualStyleDir << _T(".sty");
 		ow.FileWrite(path, stylefile);
 	}
 }
@@ -312,63 +314,63 @@ void config::LoadDefaultConfig()
 void config::LoadDefaultColors(bool dark, wxColour *table)
 {
 	wxColour *colours = (table) ? table : colors;
-	colours[WindowBackground].Set((dark)? "#202225" : "#BFBFBF");
-	colours[WindowBackgroundInactive].Set((dark)? "#101113" : "#A0A0A0");
-	colours[WindowText].Set((dark)? "#AEAFB2" : "#000000");
-	colours[WindowTextInactive].Set((dark)? "#7D7F83" : "#242424");
-	colours[WindowBorder].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[WindowBorderInactive].Set((dark)? "#36393E" : "#BFBFBF");
-	colours[WindowBorderBackground].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[WindowBorderBackgroundInactive].Set((dark)? "#36393E" : "#BFBFBF");
-	colours[WindowHeaderText].Set((dark)? "#AEAFB2" : "#000000");
-	colours[WindowHeaderTextInactive].Set((dark)? "#7D7F83" : "#242424");
-	colours[WindowHoverHeaderElement].Set((dark)? "#5D636D" : "#BFBFBF");
-	colours[WindowPushedHeaderElement].Set((dark)? "#788291" : "#EEEEEE");
-	colours[WindowHoverCloseButton].Set((dark)? "#A22525" : "#925B1F");
-	colours[WindowPushedCloseButton].Set((dark)? "#E24443" : "#FF6968");
-	colours[WindowWarningElements].Set((dark)? "#8791FD" : "#3600AA");
-	colours[GridText].Set((dark)? "#FFFFFF" : "#000000");
-	colours[GridBackground].Set((dark)? "#50565F" : "#EEEEEE");
-	colours[GridDialogue].Set((dark)? "#50565F" : "#EEEEEE");
-	colours[GridComment].Set((dark)? "#4880D0" : "#4880D0");
+	colours[WindowBackground].Set((dark) ? "#202225" : "#BFBFBF");
+	colours[WindowBackgroundInactive].Set((dark) ? "#101113" : "#A0A0A0");
+	colours[WindowText].Set((dark) ? "#AEAFB2" : "#000000");
+	colours[WindowTextInactive].Set((dark) ? "#7D7F83" : "#242424");
+	colours[WindowBorder].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[WindowBorderInactive].Set((dark) ? "#36393E" : "#BFBFBF");
+	colours[WindowBorderBackground].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[WindowBorderBackgroundInactive].Set((dark) ? "#36393E" : "#BFBFBF");
+	colours[WindowHeaderText].Set((dark) ? "#AEAFB2" : "#000000");
+	colours[WindowHeaderTextInactive].Set((dark) ? "#7D7F83" : "#242424");
+	colours[WindowHoverHeaderElement].Set((dark) ? "#5D636D" : "#BFBFBF");
+	colours[WindowPushedHeaderElement].Set((dark) ? "#788291" : "#EEEEEE");
+	colours[WindowHoverCloseButton].Set((dark) ? "#A22525" : "#925B1F");
+	colours[WindowPushedCloseButton].Set((dark) ? "#E24443" : "#FF6968");
+	colours[WindowWarningElements].Set((dark) ? "#8791FD" : "#3600AA");
+	colours[GridText].Set((dark) ? "#FFFFFF" : "#000000");
+	colours[GridBackground].Set((dark) ? "#50565F" : "#EEEEEE");
+	colours[GridDialogue].Set((dark) ? "#50565F" : "#EEEEEE");
+	colours[GridComment].Set((dark) ? "#4880D0" : "#4880D0");
 	colours[GridSelection] = (dark) ? wxColour(0x87, 0x91, 0xFD, 75) : wxColour(0x1A, 0x23, 0x7E, 75);//#4B8791FD #4B1A237E//#4C5AD693 #4C8EF8B5 new wxColour((dark)? "#B6D5C5" : "#EBF5EF");
-	colours[GridVisibleOnVideo].Set((dark)? "#202225" : "#BFBFBF");
-	colours[GridCollisions].Set((dark)? "#F1FF00" : "#3600AA");
-	colours[GridLines].Set((dark)? "#202225" : "#BFBFBF");
-	colours[GridActiveLine].Set((dark)? "#8791FD" : "#000000");
-	colours[GridHeader].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[GridHeaderText].Set((dark)? "#8791FD" : "#000000");
-	colours[GridLabelNormal].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[GridLabelModified].Set((dark)? "#322F4E" : "#B0ADD8");
-	colours[GridLabelSaved].Set((dark)? "#202225" : "#BFBFBF");
-	colours[GridLabelDoubtful].Set((dark)? "#925B1F" : "#925B1F");
-	colours[GridSpellchecker].Set((dark)? "#940000" : "#FF6968");
-	colours[GridComparisonOutline].Set((dark)? "#000000" : "#FFFFFF");
-	colours[GridComparisonBackgroundNotMatch].Set((dark)? "#FF000C" : "#FF000C");
-	colours[GridComparisonBackgroundMatch].Set((dark)? "#B7AC00" : "#B7AC00");
-	colours[GridComparisonCommentBackgroundNotMatch].Set((dark)? "#9C0000" : "#9C0000");
-	colours[GridComparisonCommentBackgroundMatch].Set((dark)? "#817900" : "#817900");
-	colours[EditorText].Set((dark)? "#F4F4F4" : "#000000");
-	colours[EditorTagNames].Set((dark)? "#00C3FF" : "#787600");
-	colours[EditorTagValues].Set((dark)? "#0076FF" : "#34C200");
-	colours[EditorCurlyBraces].Set((dark)? "#8791FD" : "#7E3B00");
+	colours[GridVisibleOnVideo].Set((dark) ? "#202225" : "#BFBFBF");
+	colours[GridCollisions].Set((dark) ? "#F1FF00" : "#3600AA");
+	colours[GridLines].Set((dark) ? "#202225" : "#BFBFBF");
+	colours[GridActiveLine].Set((dark) ? "#8791FD" : "#000000");
+	colours[GridHeader].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[GridHeaderText].Set((dark) ? "#8791FD" : "#000000");
+	colours[GridLabelNormal].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[GridLabelModified].Set((dark) ? "#322F4E" : "#B0ADD8");
+	colours[GridLabelSaved].Set((dark) ? "#202225" : "#BFBFBF");
+	colours[GridLabelDoubtful].Set((dark) ? "#925B1F" : "#925B1F");
+	colours[GridSpellchecker].Set((dark) ? "#940000" : "#FF6968");
+	colours[GridComparisonOutline].Set((dark) ? "#000000" : "#FFFFFF");
+	colours[GridComparisonBackgroundNotMatch].Set((dark) ? "#FF000C" : "#FF000C");
+	colours[GridComparisonBackgroundMatch].Set((dark) ? "#B7AC00" : "#B7AC00");
+	colours[GridComparisonCommentBackgroundNotMatch].Set((dark) ? "#9C0000" : "#9C0000");
+	colours[GridComparisonCommentBackgroundMatch].Set((dark) ? "#817900" : "#817900");
+	colours[EditorText].Set((dark) ? "#F4F4F4" : "#000000");
+	colours[EditorTagNames].Set((dark) ? "#00C3FF" : "#787600");
+	colours[EditorTagValues].Set((dark) ? "#0076FF" : "#34C200");
+	colours[EditorCurlyBraces].Set((dark) ? "#8791FD" : "#7E3B00");
 	colours[EditorTagOperators].Set((dark) ? "#00C3FF" : "#787600");
 	colours[EditorTemplateVariables].Set((dark) ? "#BDB76B" : "#BDB76B");
 	colours[EditorTemplateCodeMarks].Set((dark) ? "#FB4544" : "#FB4544");
 	colours[EditorTemplateFunctions].Set((dark) ? "#00C3FF" : "#00C3FF");
-	colours[EditorTemplateKeywords].Set((dark) ? "#8D80D3" : "#8D80D3"); 
+	colours[EditorTemplateKeywords].Set((dark) ? "#8D80D3" : "#8D80D3");
 	colours[EditorTemplateStrings].Set((dark) ? "#11A243" : "#11A243");
 	colours[EditorPhraseSearch].Set((dark) ? "#0B5808" : "#0B5808");
-	colours[EditorBracesBackground].Set((dark)? "#F4F4F4" : "#F4F4F4");
-	colours[EditorBackground].Set((dark)? "#50565F" : "#EEEEEE");
-	colours[EditorSelection].Set((dark)? "#646D8A" : "#BBC0FB");
-	colours[EditorSelectionNoFocus].Set((dark)? "#646D8A" : "#BBC0FB");
-	colours[EditorBorder].Set((dark)? "#36393E" : "#EEEEEE");
-	colours[EditorBorderOnFocus].Set((dark)? "#8791FD" : "#000000");
-	colours[EditorSpellchecker].Set((dark)? "#940000" : "#FF6968");
-	colours[AudioBackground].Set((dark)? "#36393E" : "#36393E");
-	colours[AudioLineBoundaryStart].Set((dark)? "#940000" : "#940000");
-	colours[AudioLineBoundaryEnd].Set((dark)? "#940000" : "#940000");
+	colours[EditorBracesBackground].Set((dark) ? "#F4F4F4" : "#F4F4F4");
+	colours[EditorBackground].Set((dark) ? "#50565F" : "#EEEEEE");
+	colours[EditorSelection].Set((dark) ? "#646D8A" : "#BBC0FB");
+	colours[EditorSelectionNoFocus].Set((dark) ? "#646D8A" : "#BBC0FB");
+	colours[EditorBorder].Set((dark) ? "#36393E" : "#EEEEEE");
+	colours[EditorBorderOnFocus].Set((dark) ? "#8791FD" : "#000000");
+	colours[EditorSpellchecker].Set((dark) ? "#940000" : "#FF6968");
+	colours[AudioBackground].Set((dark) ? "#36393E" : "#36393E");
+	colours[AudioLineBoundaryStart].Set((dark) ? "#940000" : "#940000");
+	colours[AudioLineBoundaryEnd].Set((dark) ? "#940000" : "#940000");
 	colours[AudioLineBoundaryMark].Set("#FFFFFF");
 	colours[AudioLineBoundaryInactiveLine].Set("#00D77D");
 	colours[AudioPlayCursor].Set("#8791FD");
@@ -376,7 +378,7 @@ void config::LoadDefaultColors(bool dark, wxColour *table)
 	colours[AudioKeyframes].Set("#F4F4F4");
 	colours[AudioSyllableBoundaries].Set("#202225");
 	colours[AudioSyllableText].Set("#8791FD");
-	colours[AudioSelectionBackground].Set(0xFF,0xFF,0xFF,0x37);//wxColour((dark)? "#37FFFFFF" : "");
+	colours[AudioSelectionBackground].Set(0xFF, 0xFF, 0xFF, 0x37);//wxColour((dark)? "#37FFFFFF" : "");
 	colours[AudioSelectionBackgroundModified].Set(0xFF, 0xFF, 0xFF, 0x37);//wxColour((dark)? "#37D60000" : "");
 	colours[AudioInactiveLinesBackground].Set(0x00, 0x00, 0x00, 0x55);//wxColour((dark)? "#55373564" : "");
 	colours[AudioWaveform].Set("#202225");
@@ -386,62 +388,62 @@ void config::LoadDefaultColors(bool dark, wxColour *table)
 	colours[AudioSpectrumBackground].Set("#000000");
 	colours[AudioSpectrumEcho].Set("#674FD7");
 	colours[AudioSpectrumInner].Set("#F4F4F4");
-	colours[TextFieldBackground].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[TextFieldBorder].Set((dark)? "#36393E" : "#A0A0A0");
-	colours[TextFieldBorderOnFocus].Set((dark)? "#8791FD" : "#000000");
-	colours[TextFieldSelection].Set((dark)? "#646D8A" : "#BBDEFB");
-	colours[TextFieldSelectionNoFocus].Set((dark)? "#383E4F" : "#93B2CC");
-	colours[ButtonBackground].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[ButtonBackgroundHover].Set((dark)? "#5E636F" : "#EEEEEE");
-	colours[ButtonBackgroundPushed].Set((dark)? "#8890A3" : "#FFFFFF");
-	colours[ButtonBackgroundOnFocus].Set((dark)? "#22253A" : "#A0A0A0");
-	colours[ButtonBorder].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[ButtonBorderHover].Set((dark)? "#8791FD" : "#A0A0A0");
-	colours[ButtonBorderPushed].Set((dark)? "#8791FD" : "#A0A0A0");
-	colours[ButtonBorderOnFocus].Set((dark)? "#8791FD" : "#000000");
-	colours[ButtonBorderInactive].Set((dark)? "#8791FD" : "#A0A0A0");
-	colours[TogglebuttonBackgroundToggled].Set((dark)? "#5C5889" : "#BBDEFB");
-	colours[TogglebuttonBorderToggled].Set((dark)? "#5C5889" : "#BBDEFB");
-	colours[ScrollbarBackground].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[ScrollbarScroll].Set((dark)? "#484B51" : "#DDDDDD");
-	colours[ScrollbarScrollHover].Set((dark)? "#878E9C" : "#ECECEC");
-	colours[ScrollbarScrollPushed].Set((dark)? "#484B51" : "#FFFFFF");
-	colours[StaticboxBorder].Set((dark)? "#36393E" : "#A0A0A0");
-	colours[StaticListBorder].Set((dark)? "#36393E" : "#EEEEEE");
-	colours[StaticListBackground].Set((dark)? "#36393E" : "#EEEEEE");
-	colours[StaticListSelection].Set((dark)? "#22253A" : "#BFBFBF");
-	colours[StaticListBackgroundHeadline].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[StaticListTextHeadline].Set((dark)? "#AEAFB2" : "#000000");
-	colours[StatusBarBorder].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[MenuBarBackground1].Set((dark)? "#202225" : "#BFBFBF");
-	colours[MenuBarBackground2].Set((dark)? "#202225" : "#BFBFBF");
-	colours[MenuBarBorderSelection].Set((dark)? "#8791FD" : "#000000");
-	colours[MenuBarBackgroundSelection].Set((dark)? "#5B5689" : "#BBDEFB");
-	colours[MenuBackground].Set((dark)? "#202225" : "#BFBFBF");
-	colours[MenuBorderSelection].Set((dark)? "#39374B" : "#EEEEEE");
-	colours[MenuBackgroundSelection].Set((dark)? "#39374B" : "#EEEEEE");
-	colours[TabsBarBackground1].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[TabsBarBackground2].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[TabsBorderActive].Set((dark)? "#202225" : "#BFBFBF");
-	colours[TabsBorderInactive].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[TabsBackgroundActive].Set((dark)? "#202225" : "#BFBFBF");
-	colours[TabsBackgroundInactive].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[TabsBackgroundInactiveHover].Set((dark) ? "#202225" : "#BFBFBF"); 
+	colours[TextFieldBackground].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[TextFieldBorder].Set((dark) ? "#36393E" : "#A0A0A0");
+	colours[TextFieldBorderOnFocus].Set((dark) ? "#8791FD" : "#000000");
+	colours[TextFieldSelection].Set((dark) ? "#646D8A" : "#BBDEFB");
+	colours[TextFieldSelectionNoFocus].Set((dark) ? "#383E4F" : "#93B2CC");
+	colours[ButtonBackground].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[ButtonBackgroundHover].Set((dark) ? "#5E636F" : "#EEEEEE");
+	colours[ButtonBackgroundPushed].Set((dark) ? "#8890A3" : "#FFFFFF");
+	colours[ButtonBackgroundOnFocus].Set((dark) ? "#22253A" : "#A0A0A0");
+	colours[ButtonBorder].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[ButtonBorderHover].Set((dark) ? "#8791FD" : "#A0A0A0");
+	colours[ButtonBorderPushed].Set((dark) ? "#8791FD" : "#A0A0A0");
+	colours[ButtonBorderOnFocus].Set((dark) ? "#8791FD" : "#000000");
+	colours[ButtonBorderInactive].Set((dark) ? "#8791FD" : "#A0A0A0");
+	colours[TogglebuttonBackgroundToggled].Set((dark) ? "#5C5889" : "#BBDEFB");
+	colours[TogglebuttonBorderToggled].Set((dark) ? "#5C5889" : "#BBDEFB");
+	colours[ScrollbarBackground].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[ScrollbarScroll].Set((dark) ? "#484B51" : "#DDDDDD");
+	colours[ScrollbarScrollHover].Set((dark) ? "#878E9C" : "#ECECEC");
+	colours[ScrollbarScrollPushed].Set((dark) ? "#484B51" : "#FFFFFF");
+	colours[StaticboxBorder].Set((dark) ? "#36393E" : "#A0A0A0");
+	colours[StaticListBorder].Set((dark) ? "#36393E" : "#EEEEEE");
+	colours[StaticListBackground].Set((dark) ? "#36393E" : "#EEEEEE");
+	colours[StaticListSelection].Set((dark) ? "#22253A" : "#BFBFBF");
+	colours[StaticListBackgroundHeadline].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[StaticListTextHeadline].Set((dark) ? "#AEAFB2" : "#000000");
+	colours[StatusBarBorder].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[MenuBarBackground1].Set((dark) ? "#202225" : "#BFBFBF");
+	colours[MenuBarBackground2].Set((dark) ? "#202225" : "#BFBFBF");
+	colours[MenuBarBorderSelection].Set((dark) ? "#8791FD" : "#000000");
+	colours[MenuBarBackgroundSelection].Set((dark) ? "#5B5689" : "#BBDEFB");
+	colours[MenuBackground].Set((dark) ? "#202225" : "#BFBFBF");
+	colours[MenuBorderSelection].Set((dark) ? "#39374B" : "#EEEEEE");
+	colours[MenuBackgroundSelection].Set((dark) ? "#39374B" : "#EEEEEE");
+	colours[TabsBarBackground1].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[TabsBarBackground2].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[TabsBorderActive].Set((dark) ? "#202225" : "#BFBFBF");
+	colours[TabsBorderInactive].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[TabsBackgroundActive].Set((dark) ? "#202225" : "#BFBFBF");
+	colours[TabsBackgroundInactive].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[TabsBackgroundInactiveHover].Set((dark) ? "#202225" : "#BFBFBF");
 	colours[TabsBackgroundSecondWindow].Set((dark) ? "#202225" : "#BFBFBF");
-	colours[TabsTextActive].Set((dark)? "#8791FD" : "#000000");
-	colours[TabsTextInactive].Set((dark)? "#76777B" : "#EEEEEE");
-	colours[TabsCloseHover].Set((dark)? "#A22525" : "#925B1F");
-	colours[TabsBarArrow].Set((dark)? "#202225" : "#BFBFBF");
-	colours[TabsBarArrowBackground].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[TabsBarArrowBackgroundHover].Set((dark)? "#76777B" : "#797979");
-	colours[SliderPathBackground].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[SliderPathBorder].Set((dark)? "#2F3136" : "#A0A0A0");
-	colours[SliderBorder].Set((dark)? "#5C5889" : "#DDDDDD");
-	colours[SliderBorderHover].Set((dark)? "#8982D5" : "#ECECEC");
-	colours[SliderBorderPushed].Set((dark)? "#9E96FF" : "#FFFFFF");
-	colours[SliderBackground].Set((dark)? "#5C5889" : "#DDDDDD");
-	colours[SliderBackgroundHover].Set((dark)? "#8982D5" : "#ECECEC");
-	colours[SliderBackgroundPushed].Set((dark)? "#9E96FF" : "#FFFFFF");
+	colours[TabsTextActive].Set((dark) ? "#8791FD" : "#000000");
+	colours[TabsTextInactive].Set((dark) ? "#76777B" : "#EEEEEE");
+	colours[TabsCloseHover].Set((dark) ? "#A22525" : "#925B1F");
+	colours[TabsBarArrow].Set((dark) ? "#202225" : "#BFBFBF");
+	colours[TabsBarArrowBackground].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[TabsBarArrowBackgroundHover].Set((dark) ? "#76777B" : "#797979");
+	colours[SliderPathBackground].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[SliderPathBorder].Set((dark) ? "#2F3136" : "#A0A0A0");
+	colours[SliderBorder].Set((dark) ? "#5C5889" : "#DDDDDD");
+	colours[SliderBorderHover].Set((dark) ? "#8982D5" : "#ECECEC");
+	colours[SliderBorderPushed].Set((dark) ? "#9E96FF" : "#FFFFFF");
+	colours[SliderBackground].Set((dark) ? "#5C5889" : "#DDDDDD");
+	colours[SliderBackgroundHover].Set((dark) ? "#8982D5" : "#ECECEC");
+	colours[SliderBackgroundPushed].Set((dark) ? "#9E96FF" : "#FFFFFF");
 	colours[StylePreviewColor1].Set("#434343");
 	colours[StylePreviewColor2].Set("#626262");
 
@@ -450,35 +452,36 @@ void config::LoadDefaultColors(bool dark, wxColour *table)
 int config::LoadOptions()
 {
 	wxStandardPathsBase &paths = wxStandardPaths::Get();
-	pathfull=paths.GetExecutablePath().BeforeLast('\\');
+	pathfull = paths.GetExecutablePath().BeforeLast('\\');
 	wxString path;
-	path<<pathfull<<_T("\\Config.txt");
+	path << pathfull << _T("\\Config.txt");
 	OpenWrite ow;
 	wxString txt;
-	bool isgood=false;
-	bool diffVersions=false;
-	if(!ow.FileOpen(path,&txt,false)){
+	bool isgood = false;
+	bool diffVersions = false;
+	if (!ow.FileOpen(path, &txt, false)){
 		LoadDefaultConfig();
 		isgood = true;
-	}else{
-		wxString ver= txt.BeforeFirst(']').Mid(1);
-		if(ver!=progname){LoadDefaultConfig();diffVersions=true;}
+	}
+	else{
+		wxString ver = txt.BeforeFirst(']').Mid(1);
+		if (ver != progname){ LoadDefaultConfig(); diffVersions = true; }
 		isgood = SetRawOptions(txt.AfterFirst('\n'));
 	}
 
 	actualStyleDir = _T("Default");
-	path=_T("");
-	path<<pathfull<<_T("\\Catalog\\");
+	path = _T("");
+	path << pathfull << _T("\\Catalog\\");
 	wxDir kat(path);
-	if(!kat.IsOpened()){
-		ow.FileWrite(path<<actualStyleDir<<_T(".sty"),_T("Style: Default,Garamond,30,&H00FFFFFF,&H000000FF,&H00FF0000,&H00000000,0,0,0,0,100,100,0,0,0,2,2,2,10,10,10,1"));
-		AddStyle(new Styles());dirs.Add(actualStyleDir);
+	if (!kat.IsOpened()){
+		ow.FileWrite(path << actualStyleDir << _T(".sty"), _T("Style: Default,Garamond,30,&H00FFFFFF,&H000000FF,&H00FF0000,&H00000000,0,0,0,0,100,100,0,0,0,2,2,2,10,10,10,1"));
+		AddStyle(new Styles()); dirs.Add(actualStyleDir);
 	}
 	else{
-		wxArrayString tmp;kat.GetAllFiles(path,&tmp,_T(""), wxDIR_FILES);
-		for(size_t i=0;i<tmp.GetCount();i++){
-			wxString fullpath=tmp[i].AfterLast('\\');
-			if(fullpath.EndsWith(_T(".sty"))){dirs.Add(fullpath.BeforeLast('.'));}
+		wxArrayString tmp; kat.GetAllFiles(path, &tmp, _T(""), wxDIR_FILES);
+		for (size_t i = 0; i < tmp.GetCount(); i++){
+			wxString fullpath = tmp[i].AfterLast('\\');
+			if (fullpath.EndsWith(_T(".sty"))){ dirs.Add(fullpath.BeforeLast('.')); }
 		}
 	}
 	LoadStyles(actualStyleDir);
@@ -488,28 +491,29 @@ int config::LoadOptions()
 
 void config::LoadColors(const wxString &_themeName){
 	wxString themeName;
-	if(_themeName.IsEmpty()){
+	if (_themeName.IsEmpty()){
 		themeName = Options.GetString(ProgramTheme);
-	}else{
+	}
+	else{
 		themeName = _themeName;
 		Options.SetString(ProgramTheme, _themeName);
 	}
 	bool failed = false;
-	if(themeName!="DarkSentro" && themeName!="LightSentro"){
-		wxString path = pathfull + L"\\Themes\\"+ themeName + L".txt";
+	if (themeName != "DarkSentro" && themeName != "LightSentro"){
+		wxString path = pathfull + L"\\Themes\\" + themeName + L".txt";
 		OpenWrite ow;
 		wxString txtColors;
-		if(ow.FileOpen(path, &txtColors, false)){
-			wxStringTokenizer cfg(txtColors,_T("\n"));
-			int g=0;
-			while(cfg.HasMoreTokens())
+		if (ow.FileOpen(path, &txtColors, false)){
+			wxStringTokenizer cfg(txtColors, _T("\n"));
+			int g = 0;
+			while (cfg.HasMoreTokens())
 			{
-				wxString token=cfg.NextToken();
+				wxString token = cfg.NextToken();
 				token.Trim(false);
 				token.Trim(true);
-				if (token.Len()>6){SetHexColor(token);g++;}
+				if (token.Len() > 6){ SetHexColor(token); g++; }
 			}
-			if(g>10){
+			if (g > 10){
 				if (colors[0].IsOk() || g < StylePreviewColor2){
 					LoadMissingColours(path);
 					KaiMessageBox(wxString::Format(_("W motywie \"%s\" brakowało część kolorów, zostały doczytane z domyślnego."), themeName));
@@ -519,8 +523,8 @@ void config::LoadColors(const wxString &_themeName){
 		}
 		failed = true;
 	}
-	LoadDefaultColors(themeName!="LightSentro");	
-	if(failed){
+	LoadDefaultColors(themeName != "LightSentro");
+	if (failed){
 		Options.SetString(ProgramTheme, "DarkSentro");
 		KaiMessageBox(_("Nie można zaczytać motywu, zostanie przywrócony domyśny"));
 	}
@@ -540,19 +544,19 @@ void config::LoadMissingColours(const wxString &path)
 
 void config::LoadStyles(const wxString &katalog)
 {
-	actualStyleDir=katalog;
+	actualStyleDir = katalog;
 	wxString path;
-	path<<pathfull<<_T("\\Catalog\\")<<katalog<<_T(".sty");
+	path << pathfull << _T("\\Catalog\\") << katalog << _T(".sty");
 	OpenWrite ow;
-	for(std::vector<Styles*>::iterator it=assstore.begin(); it!=assstore.end(); it++){
+	for (std::vector<Styles*>::iterator it = assstore.begin(); it != assstore.end(); it++){
 		delete (*it);
 	}
 	assstore.clear();
 	wxString stylee;
-	if(ow.FileOpen(path, &stylee,false)){
-		wxStringTokenizer cfg(stylee,_T("\n"));
-		while(cfg.HasMoreTokens()){
-			wxString token=cfg.NextToken();
+	if (ow.FileOpen(path, &stylee, false)){
+		wxStringTokenizer cfg(stylee, _T("\n"));
+		while (cfg.HasMoreTokens()){
+			wxString token = cfg.NextToken();
 			if (token.StartsWith(_T("Style: "))){
 				AddStyle(new Styles(token));
 			}
@@ -562,7 +566,7 @@ void config::LoadStyles(const wxString &katalog)
 
 void config::clearstyles()
 {
-	for(std::vector<Styles*>::iterator it=assstore.begin(); it!=assstore.end(); it++){
+	for (std::vector<Styles*>::iterator it = assstore.begin(); it != assstore.end(); it++){
 		delete (*it);
 	}
 	assstore.clear();
@@ -570,72 +574,72 @@ void config::clearstyles()
 
 void config::SetCoords(CONFIG opt, int coordx, int coordy)
 {
-	wxString iopt1=_T("");
-	stringConfig[opt]=iopt1<<coordx<<","<<coordy;
+	wxString iopt1 = _T("");
+	stringConfig[opt] = iopt1 << coordx << "," << coordy;
 }
 
 void config::GetCoords(CONFIG opt, int *coordx, int *coordy)
 {
-	wxString sopt=stringConfig[opt];
-	*coordx=wxAtoi(sopt.BeforeFirst(','));
-	*coordy=wxAtoi(sopt.AfterFirst(','));
+	wxString sopt = stringConfig[opt];
+	*coordx = wxAtoi(sopt.BeforeFirst(','));
+	*coordy = wxAtoi(sopt.AfterFirst(','));
 }
 
-void config::SetTable(CONFIG opt, wxArrayString &asopt,wxString split)
+void config::SetTable(CONFIG opt, wxArrayString &asopt, wxString split)
 {
 	wxString sresult;
 	wxString ES;
-	for(size_t i=0;i<asopt.size();i++)
+	for (size_t i = 0; i < asopt.size(); i++)
 	{
-		wxString endchar=(i==asopt.size()-1)? ES : split;
-		sresult<<asopt[i]<<endchar;
+		wxString endchar = (i == asopt.size() - 1) ? ES : split;
+		sresult << asopt[i] << endchar;
 	}
-	stringConfig[opt]=sresult;
+	stringConfig[opt] = sresult;
 }
 
-void config::SetIntTable(CONFIG opt, wxArrayInt &asopt,wxString split)
+void config::SetIntTable(CONFIG opt, wxArrayInt &asopt, wxString split)
 {
 	wxString sresult;
 	wxString ES;
-	for(size_t i=0;i<asopt.size();i++)
+	for (size_t i = 0; i < asopt.size(); i++)
 	{
-		wxString endchar=(i==asopt.size()-1)? ES : split;
-		sresult<<asopt[i]<<endchar;
+		wxString endchar = (i == asopt.size() - 1) ? ES : split;
+		sresult << asopt[i] << endchar;
 	}
-	stringConfig[opt]=sresult;
+	stringConfig[opt] = sresult;
 }
 
 void config::GetTable(CONFIG opt, wxArrayString &tbl, wxString split, int mode)
 {
-	wxString strtbl=stringConfig[opt];
-	if(strtbl!=""){
-		wxStringTokenizer cfgtable(strtbl,split,(wxStringTokenizerMode)mode);
-		while(cfgtable.HasMoreTokens()){
+	wxString strtbl = stringConfig[opt];
+	if (strtbl != ""){
+		wxStringTokenizer cfgtable(strtbl, split, (wxStringTokenizerMode)mode);
+		while (cfgtable.HasMoreTokens()){
 			tbl.Add(cfgtable.NextToken());
-		}  
+		}
 	}
 }
 
 void config::GetIntTable(CONFIG opt, wxArrayInt &tbl, wxString split, int mode)
 {
-	wxString strtbl=stringConfig[opt];
-	if(strtbl!=""){
-		wxStringTokenizer cfgtable(strtbl,split,(wxStringTokenizerMode)mode);
-		while(cfgtable.HasMoreTokens()){
+	wxString strtbl = stringConfig[opt];
+	if (strtbl != ""){
+		wxStringTokenizer cfgtable(strtbl, split, (wxStringTokenizerMode)mode);
+		while (cfgtable.HasMoreTokens()){
 			tbl.Add(wxAtoi(cfgtable.NextToken()));
-		}  
+		}
 	}
 }
 
-bool sortfunc(Styles *styl1,Styles *styl2){
-	wxString str1=styl1->Name;
-	wxString str2=styl2->Name;
-	return (str1.CmpNoCase(str2)<0);
+bool sortfunc(Styles *styl1, Styles *styl2){
+	wxString str1 = styl1->Name;
+	wxString str2 = styl2->Name;
+	return (str1.CmpNoCase(str2) < 0);
 }
 
 void config::Sortstyles()
 {
-	std::sort(assstore.begin(),assstore.end(),sortfunc);
+	std::sort(assstore.begin(), assstore.end(), sortfunc);
 }
 
 void config::LoadDefaultAudioConfig()
@@ -677,14 +681,15 @@ bool config::LoadAudioOpts()
 {
 	OpenWrite ow;
 	wxString txt;
-	if(!ow.FileOpen(pathfull+_T("\\AudioConfig.txt"), &txt ,false)){
+	if (!ow.FileOpen(pathfull + _T("\\AudioConfig.txt"), &txt, false)){
 		LoadDefaultAudioConfig();
 		return true;
-	}else{
-		wxString ver= txt.BeforeFirst(']').Mid(1);
-		if(ver!=progname){LoadDefaultAudioConfig();}
 	}
-	return (AudioOpts=SetRawOptions(txt.AfterFirst('\n')));
+	else{
+		wxString ver = txt.BeforeFirst(']').Mid(1);
+		if (ver != progname){ LoadDefaultAudioConfig(); }
+	}
+	return (AudioOpts = SetRawOptions(txt.AfterFirst('\n')));
 }
 
 void config::SaveAudioOpts()
@@ -697,21 +702,21 @@ void config::SaveAudioOpts()
 
 void config::SetHexColor(const wxString &nameAndColor)
 {
-	wxString kol=nameAndColor.AfterFirst('=');
+	wxString kol = nameAndColor.AfterFirst('=');
 	kol.Trim(false);
 	kol.Trim(true);
-	wxString name=nameAndColor.BeforeFirst('=');
+	wxString name = nameAndColor.BeforeFirst('=');
 	name.Trim(false);
 	name.Trim(true);
-	long a=0xFF, r, g, b;
+	long a = 0xFF, r, g, b;
 	int diff = 0;
-	if(kol.Len()>=9){
-		kol.SubString(1,2).ToLong(&a, 16);
-		diff=2;
+	if (kol.Len() >= 9){
+		kol.SubString(1, 2).ToLong(&a, 16);
+		diff = 2;
 	}
-	kol.SubString(diff+1,diff+2).ToLong(&r, 16);
-	kol.SubString(diff+3,diff+4).ToLong(&g, 16);
-	kol.SubString(diff+5,diff+6).ToLong(&b, 16);
+	kol.SubString(diff + 1, diff + 2).ToLong(&r, 16);
+	kol.SubString(diff + 3, diff + 4).ToLong(&g, 16);
+	kol.SubString(diff + 5, diff + 6).ToLong(&b, 16);
 	colors[GetCOLORValue(name)].Set(r, g, b, a);
 }
 
@@ -725,10 +730,10 @@ wxString config::GetStringColor(size_t optionName)
 
 void config::SaveColors(const wxString &path){
 	wxString finalpath = path;
-	if(path.IsEmpty()){
+	if (path.IsEmpty()){
 		finalpath = pathfull + "\\Themes\\" + GetString(ProgramTheme) + ".txt";
 	}
-	OpenWrite ow(finalpath,true);
+	OpenWrite ow(finalpath, true);
 	for (size_t i = 1; i < colorsSize; i++){
 		ow.PartFileWrite(wxString(::GetString((COLOR)i)) + "=" + GetStringColor(i) + "\r\n");
 	}
@@ -736,32 +741,32 @@ void config::SaveColors(const wxString &path){
 
 wxString getfloat(float num, const wxString &format, bool Truncate)
 {
-	wxString strnum=wxString::Format(_T("%"+format),num);
+	wxString strnum = wxString::Format(_T("%" + format), num);
 	//if(strnum.find('.')!= -1){return strnum.Trim(false);}
-	if(!Truncate || format.EndsWith(".0f")){return strnum.Trim(false);}
-	int rmv=0;
-	bool trim=false;
-	for(int i=strnum.Len()-1;i>0;i--)
+	if (!Truncate || format.EndsWith(".0f")){ return strnum.Trim(false); }
+	int rmv = 0;
+	bool trim = false;
+	for (int i = strnum.Len() - 1; i > 0; i--)
 	{
-		if(strnum[i]=='0'){rmv++;}//&&!trim
+		if (strnum[i] == '0'){ rmv++; }//&&!trim
 		//else if(strnum[i]=='9'){rmv++;trim=true;}
-		else if(strnum[i]=='.'){rmv++;break;}//}if(!trim){
-		else{/*if(trim){int tmpc=static_cast < int >(strnum.GetChar(i));tmpc++;strnum[i]=(wxUniChar)tmpc;}*/break;}
+		else if (strnum[i] == '.'){ rmv++; break; }//}if(!trim){
+		else{/*if(trim){int tmpc=static_cast < int >(strnum.GetChar(i));tmpc++;strnum[i]=(wxUniChar)tmpc;}*/break; }
 	}
-	if(rmv){strnum.RemoveLast(rmv);}
+	if (rmv){ strnum.RemoveLast(rmv); }
 	return strnum.Trim(false);
 }
 
 
 bool LoadDataFromResource(char*& t_data, DWORD& t_dataSize, const wxString& t_name)
 {
-	bool     r_result    = false;
+	bool     r_result = false;
 	HGLOBAL  a_resHandle = 0;
 	HRSRC    a_resource;
 
 	a_resource = FindResource(0, t_name.wchar_str(), RT_RCDATA);
 
-	if(0 != a_resource)
+	if (0 != a_resource)
 	{
 		a_resHandle = LoadResource(NULL, a_resource);
 		if (0 != a_resHandle)
@@ -786,10 +791,10 @@ wxBitmap CreateBitmapFromPngResource(const wxString& t_name)
 {
 	wxBitmap   r_bitmapPtr;
 
-	char*       a_data      = 0;
-	DWORD       a_dataSize  = 0;
+	char*       a_data = 0;
+	DWORD       a_dataSize = 0;
 
-	if(LoadDataFromResource(a_data, a_dataSize, t_name))
+	if (LoadDataFromResource(a_data, a_dataSize, t_name))
 	{
 		r_bitmapPtr = GetBitmapFromMemory(a_data, a_dataSize);
 	}
@@ -801,10 +806,10 @@ wxBitmap *CreateBitmapPointerFromPngResource(const wxString& t_name)
 {
 	wxBitmap  *r_bitmapPtr = NULL;
 
-	char*       a_data      = 0;
-	DWORD       a_dataSize  = 0;
+	char*       a_data = 0;
+	DWORD       a_dataSize = 0;
 
-	if(LoadDataFromResource(a_data, a_dataSize, t_name))
+	if (LoadDataFromResource(a_data, a_dataSize, t_name))
 	{
 		wxMemoryInputStream a_is(a_data, a_dataSize);
 		r_bitmapPtr = new wxBitmap(wxImage(a_is, wxBITMAP_TYPE_PNG, -1), -1);
@@ -817,13 +822,13 @@ wxImage CreateImageFromPngResource(const wxString& t_name)
 {
 	wxImage   image;
 
-	char*       a_data      = 0;
-	DWORD       a_dataSize  = 0;
+	char*       a_data = 0;
+	DWORD       a_dataSize = 0;
 
-	if(LoadDataFromResource(a_data, a_dataSize, t_name))
+	if (LoadDataFromResource(a_data, a_dataSize, t_name))
 	{
 		wxMemoryInputStream a_is(a_data, a_dataSize);
-		image=wxImage(a_is, wxBITMAP_TYPE_PNG, -1);
+		image = wxImage(a_is, wxBITMAP_TYPE_PNG, -1);
 	}
 
 	return image;
@@ -831,16 +836,16 @@ wxImage CreateImageFromPngResource(const wxString& t_name)
 
 void MoveToMousePosition(wxWindow *win)
 {
-	wxPoint mst=wxGetMousePosition();
-	wxSize siz=win->GetSize();
+	wxPoint mst = wxGetMousePosition();
+	wxSize siz = win->GetSize();
 	siz.x;
 	wxRect rc = GetMonitorRect(0, NULL, mst, true);
-	mst.x-=(siz.x/2);
+	mst.x -= (siz.x / 2);
 	mst.x = MID(rc.x, mst.x, (rc.width + rc.x) - siz.x);
-	mst.y+=15;
-	if(mst.y + siz.y > rc.height + rc.y){
+	mst.y += 15;
+	if (mst.y + siz.y > rc.height + rc.y){
 		mst.y = mst.y - siz.y - 30;
-		if (mst.y<rc.y){
+		if (mst.y < rc.y){
 			mst.y = (rc.height + rc.y) - siz.y;
 		}
 	}
@@ -853,13 +858,14 @@ wxString MakePolishPlural(int num, const wxString &normal, const wxString &plura
 	int div10mod = (num % 10);
 	int div100mod = (num % 100);
 	if (num == 1 || num == -1){ result = normal; }
-	else if((div10mod >=2 && div10mod <= 4) && (div100mod<10 || div100mod>20)){
+	else if ((div10mod >= 2 && div10mod <= 4) && (div100mod < 10 || div100mod>20)){
 		result = plural2to4;
-	}else{
+	}
+	else{
 		result = pluralRest;
 	}
 	wxString finalResult;
-	return finalResult<<num<<" "<<result;
+	return finalResult << num << " " << result;
 }
 
 BOOL CALLBACK MonitorEnumProc1(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
@@ -888,7 +894,7 @@ wxRect GetMonitorRect(int wmonitor, std::vector<tagRECT> *MonitorRects, const wx
 	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc1, (LPARAM)pair);
 	MonRects = pair->first;
 	delete pair;
-	if (MonRects.size()==0){
+	if (MonRects.size() == 0){
 		bool ktos_ukradl_ci_monitor = false;
 		assert(ktos_ukradl_ci_monitor);
 	}
@@ -976,9 +982,9 @@ void SetThreadName(size_t dwThreadID, LPCSTR szThreadName)
 }
 #endif
 
-DEFINE_ENUM(CONFIG,CFG);
+DEFINE_ENUM(CONFIG, CFG);
 
-DEFINE_ENUM(COLOR,CLR);
+DEFINE_ENUM(COLOR, CLR);
 
 config Options;
 

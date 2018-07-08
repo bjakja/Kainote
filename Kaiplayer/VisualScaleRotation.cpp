@@ -32,7 +32,10 @@ ScaleRotation::ScaleRotation()
 
 void ScaleRotation::DrawVisual(int time)
 {
-	if (time != oldtime && tbl[6] > 3){
+	if (!tagXFound && !tagYFound)
+		return;
+
+	if (time != oldtime && moveValues[6] > 3){
 		from = CalcMovePos();
 		from.x = ((from.x / coeffW) - zoomMove.x)*zoomScale.x;
 		from.y = ((from.y / coeffH) - zoomMove.y)*zoomScale.y;
@@ -162,16 +165,19 @@ void ScaleRotation::DrawRotationZ(int time)
 	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 360, v5, sizeof(VERTEX)), "primitive failed");
 	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[364], sizeof(VERTEX)), "primitive failed");
 	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[545], sizeof(VERTEX)), "primitive failed");
+
 	line->SetWidth(2.f);
-	line->Begin();
-	line->Draw(&v2[2], 2, 0xFFBB0000);
-	line->End();
-	line->Begin();
-	line->Draw(&v2[4], 2, 0xFFBB0000);
-	line->End();
-	line->Begin();
-	line->Draw(&v2[0], 2, 0xFFBB0000);
-	line->End();
+	if (hasOrg){
+		line->Begin();
+		line->Draw(&v2[2], 2, 0xFFBB0000);
+		line->End();
+		line->Begin();
+		line->Draw(&v2[4], 2, 0xFFBB0000);
+		line->End();
+		line->Begin();
+		line->Draw(&v2[0], 2, 0xFFBB0000);
+		line->End();
+	}
 }
 
 void ScaleRotation::DrawRotationXY(int time)
@@ -285,6 +291,9 @@ void ScaleRotation::DrawRotationXY(int time)
 	HRN(device->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie mo¿na ustawiæ macierzy projekcji"));
 	HRN(device->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie mo¿na ustawiæ macierzy œwiata"));
 	HRN(device->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie mo¿na ustawiæ macierzy widoku"));
+	if (!hasOrg)
+		return;
+
 	D3DXVECTOR2 v2[4];
 	v2[0].x = org.x - 10.0f;
 	v2[0].y = org.y;
@@ -315,7 +324,7 @@ void ScaleRotation::OnMouseEvent(wxMouseEvent &evt)
 	int x, y;
 	evt.GetPosition(&x, &y);
 
-	if (evt.ButtonUp()){
+	if (evt.ButtonUp() && type != 255){
 		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
 		ChangeInLines(false);
 		if (selectedTool == 1){
@@ -335,15 +344,22 @@ void ScaleRotation::OnMouseEvent(wxMouseEvent &evt)
 			beforeMove = afterMove;
 	}
 	if (selectedTool == 0 && !holding){
-		if (abs(lastmove.x - x) < 8 && abs(lastmove.y - y) < 8){ if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZING); hasArrow = false; } }
-		else if (abs(lastmove.x - x) < 8 && abs(from.y - y) < 8){ if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZEWE); hasArrow = false; } }
-		else if (abs(lastmove.y - y) < 8 && abs(from.x - x) < 8){ if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZENS); hasArrow = false; } }
+		if (abs(lastmove.x - x) < 8 && abs(lastmove.y - y) < 8 && (tagXFound || tagYFound)){
+			if (hasArrow){ 
+				tab->Video->SetCursor((tagXFound && tagYFound) ? wxCURSOR_SIZING : tagYFound ? wxCURSOR_SIZENS : wxCURSOR_SIZEWE);
+				hasArrow = false; 
+			}
+		}
+		else if (abs(lastmove.x - x) < 8 && abs(from.y - y) < 8 && tagXFound){
+			if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZEWE); hasArrow = false; } }
+		else if (abs(lastmove.y - y) < 8 && abs(from.x - x) < 8 && tagYFound){
+			if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZENS); hasArrow = false; } }
 		else if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 	}
 	if (click){
 		tab->Video->CaptureMouse();
 		afterMove = beforeMove;
-
+		type = 255;
 		if (selectedTool == 0)
 			OnClickScaling(x, y, leftc, rightc, middlec, evt.ShiftDown());
 		else if (selectedTool == 1)
@@ -351,7 +367,7 @@ void ScaleRotation::OnMouseEvent(wxMouseEvent &evt)
 		else if (selectedTool == 2)
 			OnClickRotationXY(x, y, leftc, rightc, middlec);
 	}
-	else if (holding){
+	else if (holding && type != 255){
 		if (selectedTool == 0)
 			OnHoldingScaling(x, y, evt.ShiftDown());
 		else
@@ -361,29 +377,33 @@ void ScaleRotation::OnMouseEvent(wxMouseEvent &evt)
 
 void ScaleRotation::OnClickRotationZ(int x, int y)
 {
-	tab->Video->SetCursor(wxCURSOR_SIZING);
-	hasArrow = false;
-	if (abs(org.x - x) < 8 && abs(org.y - y) < 8){
+	if (tagXFound){
+		tab->Video->SetCursor(wxCURSOR_SIZING);
+		hasArrow = false;
+	}
+	if (abs(org.x - x) < 8 && abs(org.y - y) < 8 && hasOrg){
 		isOrg = true;
 		lastOrg = org;
 		diffs.x = org.x - x;
 		diffs.y = org.y - y;
 		return;
 	}
-	else{
+	else if(tagXFound){
+		type = 0;
 		lastmove.x = atan2((org.y - y), (org.x - x)) * (180.f / 3.1415926536f);
 		lastmove.x += lastmove.y;
-
 	}
 }
 
 void ScaleRotation::OnClickRotationXY(int x, int y, bool leftClick, bool rightClick, bool middleClick)
 {
 	//by simplify code I have to set frx as type 0 and fry as type 1 even on left click is fry
-	if (leftClick){ type = 1; tab->Video->SetCursor(wxCURSOR_SIZEWE); }//fry
-	if (rightClick){ type = 0; tab->Video->SetCursor(wxCURSOR_SIZENS); }//frx
-	if (middleClick){ type = 2; tab->Video->SetCursor(wxCURSOR_SIZING); }//frx + fry
-	if (abs(org.x - x) < 8 && abs(org.y - y) < 8){
+	if (leftClick && tagYFound){ type = 1; }//fry
+	if (rightClick && tagXFound){ type = 0; }//frx
+	if (middleClick && (tagXFound || tagYFound)){ 
+		type = (tagXFound && tagYFound) ? 2 : tagYFound? 1 : 0;
+	}//frx + fry
+	if (abs(org.x - x) < 8 && abs(org.y - y) < 8 && hasOrg){
 		isOrg = true;
 		lastOrg = org;
 		diffs.x = org.x - x;
@@ -391,17 +411,24 @@ void ScaleRotation::OnClickRotationXY(int x, int y, bool leftClick, bool rightCl
 	}
 	firstmove = D3DXVECTOR2(x, y);
 	hasArrow = false;
+	if (type == 0){ tab->Video->SetCursor(wxCURSOR_SIZENS); }
+	if (type == 1){ tab->Video->SetCursor(wxCURSOR_SIZEWE); }
+	if (type == 2){ tab->Video->SetCursor(wxCURSOR_SIZING); }
 }
 
 void ScaleRotation::OnClickScaling(int x, int y, bool leftClick, bool rightClick, bool middleClick, bool shiftDown)
 {
 	int grabbed = -1;
-	if (leftClick){ type = 0; }//fscx
-	if (rightClick){ type = 1; }//fscy
-	if (middleClick || leftClick && shiftDown){ type = 2; }//fscx + fscy
-	if (abs(lastmove.x - x) < 8 && abs(from.y - y) < 8){ grabbed = 0; type = 0; }
-	else if (abs(lastmove.y - y) < 8 && abs(from.x - x) < 8){ grabbed = 1; type = 1; }
-	else if (abs(lastmove.x - x) < 8 && abs(lastmove.y - y) < 8){ grabbed = 2; type = 2; }
+	if (leftClick && tagXFound){ type = 0; }//fscx
+	if (rightClick && tagYFound){ type = 1; }//fscy
+	if ((middleClick || (leftClick && shiftDown)) && (tagXFound || tagYFound)){ 
+		type = (tagXFound && tagYFound) ? 2 : tagYFound ? 1 : 0; 
+	}//fscx + fscy
+	if (abs(lastmove.x - x) < 8 && abs(from.y - y) < 8 && tagXFound){ grabbed = type = 0; }
+	else if (abs(lastmove.y - y) < 8 && abs(from.x - x) < 8 && tagYFound){ grabbed = type = 1; }
+	else if (abs(lastmove.x - x) < 8 && abs(lastmove.y - y) < 8 && (tagXFound || tagYFound)){ 
+		grabbed = type = (tagXFound && tagYFound) ? 2 : tagYFound ? 1 : 0; 
+	}
 	diffs.x = lastmove.x - x;
 	diffs.y = lastmove.y - y;
 	if (type == 0){ tab->Video->SetCursor(wxCURSOR_SIZEWE); }
@@ -450,7 +477,7 @@ void ScaleRotation::OnHoldingRotation(int x, int y)
 			float angx = (to.y - firstmove.y) - oldAngle.x;
 			angle.x = fmodf((-angx) + 360.f, 360.f);
 		}
-		if (type != 0){
+		if (type > 0){
 			// fry use x axis moving mouse left right
 			float angy = (to.x - firstmove.x) + oldAngle.y;// zmieniony plus na minus by nie trzeba by³o 
 			angle.y = fmodf(angy + 360.f, 360.f);//przetrzymywaæ oldAngle i angle w minusach.
@@ -481,7 +508,7 @@ void ScaleRotation::OnHoldingScaling(int x, int y, bool hasShift)
 		to.y = to.y - move;
 		diffs.x = x;
 		diffs.y = y;
-		if ((!an3 && to.x - from.x<1) || (an3 && to.x - from.x>-1)){
+		if ((!an3 && to.x - from.x < 1) || (an3 && to.x - from.x > -1)){
 			diffs = copydiffs;
 			to = copyto;
 		}
@@ -505,7 +532,7 @@ void ScaleRotation::OnHoldingScaling(int x, int y, bool hasShift)
 		float resx = (abs(to.x - from.x)) / 60.f;
 		afterMove.x = (resx * 100);
 		scale.x = resx;
-	}if (type != 0){
+	}if (type > 0){
 		float resy = (abs(to.y - from.y)) / 60.f;
 		afterMove.y = (resy * 100);
 		scale.y = resy;
@@ -516,13 +543,22 @@ void ScaleRotation::OnHoldingScaling(int x, int y, bool hasShift)
 
 void ScaleRotation::SetCurVisual()
 {
-	D3DXVECTOR2 linepos = GetPosnScale(&scale, &AN, tbl);
-	if (tbl[6] > 3){ linepos = CalcMovePos(); }
+	D3DXVECTOR2 linepos = GetPosnScale(&scale, &AN, moveValues);
+	if (moveValues[6] > 3){ linepos = CalcMovePos(); }
 	from = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x)*zoomScale.x,
 		((linepos.y / coeffH) - zoomMove.y)*zoomScale.y);
 
+	wxString lineText = (tab->Grid->hasTLMode && tab->Edit->line->TextTl != "") ? tab->Edit->line->TextTl : tab->Edit->line->Text;
+	wxString foundTag;
+	tagXFound = tagYFound = false;
+
 	if (selectedTool == 0){//scale
 		int addy = (AN > 3) ? 60 : -60, addx = (AN % 3 == 0) ? -60 : 60;
+		if (SeekTags(lineText, "fscx([0-9.-]+)", &foundTag))
+			tagXFound = true;
+		if (SeekTags(lineText, "fscy([0-9.-]+)", &foundTag))
+			tagYFound = true;
+
 		to.x = from.x + (scale.x*addx);
 		to.y = from.y + (scale.y*addy);
 		beforeMove.x = scale.x * 100;
@@ -530,41 +566,48 @@ void ScaleRotation::SetCurVisual()
 	}
 	else if (selectedTool == 1){//rotationz
 		lastmove = beforeMove = D3DXVECTOR2(0, 0);
-		wxString res;
-		if (tab->Edit->FindVal("frz?([0-9.-]+)", &res, "", 0, true)){
-			double result = 0; res.ToDouble(&result);
-			lastmove.y = result;
-			lastmove.x += lastmove.y;
-			beforeMove.x = result;
-			beforeMove.y = result;
+		if (SeekTags(lineText, "frz?([0-9.-]+)", &foundTag)){
+			double result = 0; 
+			if (foundTag.ToDouble(&result)){
+				lastmove.y = result;
+				lastmove.x += lastmove.y;
+				beforeMove.x = result;
+				beforeMove.y = result;
+				tagXFound = true;
+			}
 		}
-		if (tab->Edit->FindVal("org\\(([^\\)]+)", &res, "", 0, true)){
+		if (SeekTags(lineText, "org\\(([^\\)]+)", &foundTag)){
 			wxString rest;
 			double orx, ory;
-			if (res.BeforeFirst(',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; hasOrg = true; }
+			if (foundTag.BeforeFirst(',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; hasOrg = true; }
 			if (rest.ToDouble(&ory)){ org.y = ((ory / coeffH) - zoomMove.y)*zoomScale.y; hasOrg = true; }
 		}
 		else{ org = from; }
 		to = org;
 	}
 	else if (selectedTool == 2){//rotationxy
-		wxString res;
 		oldAngle = beforeMove = D3DXVECTOR2(0, 0);
-		if (tab->Edit->FindVal("frx([^\\\\}]+)", &res, "", 0, true)){
-			double result = 0; res.ToDouble(&result);
-			//beforeMove and afterMove have to be x for frx and y for fry
-			//it needs normalization to avoid bugs
-			oldAngle.x = beforeMove.x = result;
+		if (SeekTags(lineText, "frx([^\\\\}]+)", &foundTag)){
+			double result = 0; 
+			if (foundTag.ToDouble(&result)){
+				//beforeMove and afterMove have to be x for frx and y for fry
+				//it needs normalization to avoid bugs
+				oldAngle.x = beforeMove.x = result;
+				tagXFound = true;
+			}
 		}
-		if (tab->Edit->FindVal("fry([^\\\\}]+)", &res, "", 0, true)){
-			double result = 0; res.ToDouble(&result);
-			//beforeMove and afterMove have to be x for frx and y for fry
-			oldAngle.y = beforeMove.y = result;
+		if (SeekTags(lineText, "fry([^\\\\}]+)", &foundTag)){
+			double result = 0; 
+			if (foundTag.ToDouble(&result)){
+				//beforeMove and afterMove have to be x for frx and y for fry
+				oldAngle.y = beforeMove.y = result;
+				tagYFound = true;
+			}
 		}
-		if (tab->Edit->FindVal("org\\(([^\\)]+)", &res, "", 0, true)){
+		if (SeekTags(lineText, "org\\(([^\\)]+)", &foundTag)){
 			wxString rest;
 			double orx, ory;
-			if (res.BeforeFirst(',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; hasOrg = true; }
+			if (foundTag.BeforeFirst(',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; hasOrg = true; }
 			if (rest.ToDouble(&ory)){ org.y = ((ory / coeffH) - zoomMove.y)*zoomScale.y; hasOrg = true; }
 		}
 		else{ org = from; }
@@ -574,6 +617,17 @@ void ScaleRotation::SetCurVisual()
 	}
 
 }
+
+bool ScaleRotation::SeekTags(const wxString &text, const wxString &pattern, wxString *result)
+{
+	wxRegEx re(pattern, wxRE_ADVANCED);
+	if (re.Matches(text)){
+		*result = re.GetMatch(text, 1);
+		return true;
+	}
+	return false;
+}
+
 
 void ScaleRotation::ChangeInLines(bool dummy)
 {
@@ -701,9 +755,7 @@ void ScaleRotation::ChangeInLines(bool dummy)
 		}
 	}
 	if (dummy){
-		if (!tab->Video->OpenSubs(dtxt)){ KaiLog(_("Nie mo¿na otworzyæ napisów")); }
-		tab->Video->hasVisualEdition = true;
-		tab->Video->Render();
+		RenderSubs(dtxt);
 	}
 	else{
 		tab->Video->hasVisualEdition = true;

@@ -27,7 +27,7 @@ void Scale::DrawVisual(int time)
 {
 	int addy = (AN > 3) ? 60 : -60, addx = (AN % 3 == 0) ? -60 : 60;
 
-	if (time != oldtime && tbl[6] > 3){
+	if (time != oldtime && moveValues[6] > 3){
 		from = CalcMovePos();
 		from.x = ((from.x / coeffW) - zoomMove.x)*zoomScale.x;
 		from.y = ((from.y / coeffH) - zoomMove.y)*zoomScale.y;
@@ -193,8 +193,8 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 
 void Scale::SetCurVisual()
 {
-	D3DXVECTOR2 linepos = GetPosnScale(&scale, &AN, tbl);
-	if (tbl[6] > 3){ linepos = CalcMovePos(); }
+	D3DXVECTOR2 linepos = GetPosnScale(&scale, &AN, moveValues);
+	if (moveValues[6] > 3){ linepos = CalcMovePos(); }
 	from = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x)*zoomScale.x,
 		((linepos.y / coeffH) - zoomMove.y)*zoomScale.y);
 

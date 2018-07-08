@@ -57,6 +57,7 @@ public:
 
 	int FindStyle(const wxString &name,int *multiplication=NULL);
 	void GetStyles(wxString &stylesText, bool tld=false);
+	//this function is safe, do not return NULL, when failed returns i
 	Styles *GetStyle(int i, const wxString &name="");
 	std::vector<Styles*> *GetStyleTable();
 	bool IsModified();

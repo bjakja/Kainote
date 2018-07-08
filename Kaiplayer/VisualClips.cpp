@@ -102,7 +102,7 @@ void DrawingAndClip::DrawVisual(int time)
 			line->End();
 		}
 	}
-	if (Visual == VECTORDRAW && tbl[6]>2){ D3DXVECTOR2 movePos = CalcMovePos(); _x = movePos.x; _y = movePos.y; }
+	if (Visual == VECTORDRAW && moveValues[6]>2){ D3DXVECTOR2 movePos = CalcMovePos(); _x = movePos.x; _y = movePos.y; }
 	//nie należy dopuścić przypadków typu brak "m" na początku by weszło zamiast tego l bądź b
 	if (Points[0].type != "m"){ Points[0].type = "m"; }
 	size_t g = (size < 2) ? 0 : 1;
@@ -164,7 +164,7 @@ void DrawingAndClip::DrawVisual(int time)
 void DrawingAndClip::SetCurVisual()
 {
 	wxString clip;
-	D3DXVECTOR2 linepos = GetPosnScale(&scale, &alignment, (Visual == VECTORDRAW) ? tbl : NULL);
+	D3DXVECTOR2 linepos = GetPosnScale(&scale, &alignment, (Visual == VECTORDRAW) ? moveValues : NULL);
 
 	if (Visual != VECTORDRAW){
 		bool found = tab->Edit->FindVal("(i?clip[^)]+\\))", &clip, "", 0, true);
@@ -528,23 +528,16 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		int pos = CheckPos(xy);
 		if (pos != -1 && hasArrow/* && !ctrl*/){
 			acpoint = Points[pos];
-			//if(!Points[pos].isSelected){
 			hasArrow = false;
-			//Points[pos].isSelected=true;
 			lastpos = pos;
 			tab->Video->Render(false);
-			//Points[pos]=acpoint;
-			//}
-
+			
 		}
 		else if (pos == -1 && !hasArrow/* && !ctrl*/){
 			hasArrow = true;
 			if (lastpos >= 0 && lastpos < (int)psize){
-				//acpoint=Points[lastpos];
-				//Points[lastpos].isSelected=false;
 				lastpos = -1;
 				tab->Video->Render(false);
-				//Points[lastpos]=acpoint;
 			}
 		}
 		if (tool >= 1 && tool <= 3 && pos == -1 && !event.Leaving()){
@@ -653,7 +646,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		return;
 	}
 
-	if (click){
+	if (click || right){
 		grabbed = -1;
 		axis = 0;
 		for (size_t i = 0; i < psize; i++)
@@ -674,7 +667,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			}
 		}
 
-		if (tool >= 1 && tool <= 3 && (grabbed == -1 || ctrl))
+		if (tool >= 1 && tool <= 3 && (grabbed == -1 || right))
 		{
 			if (Points.empty()){ AddMove(xy, 0); SetClip(GetVisual(), true); return; }
 			int pos = CheckPos(xy, true);

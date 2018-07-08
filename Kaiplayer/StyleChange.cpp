@@ -247,13 +247,14 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 
 	wxBoxSizer *buttons=new wxBoxSizer(wxHORIZONTAL);
 	btnOk = new MappedButton(this, ID_BOK, "Ok");
+	btnCommit = new MappedButton(this, ID_B_COMMIT, _("Zastosuj"));
+	btnCommitOnStyles = new MappedButton(this, ID_B_CHANGE_ALL_SELECTED_STYLES, _("Zastosuj na wszystkich"));
 	btnCancel = new MappedButton(this, ID_BCANCEL, _("Anuluj"));
-	btnCommit = new MappedButton(this, ID_BONVID, _("Zastosuj"));
-	btnFullscreen = new MappedButton(this, ID_BONFULL, _("Zobacz na pełnym ekranie"));
+
 	buttons->Add(btnOk,1,wxEXPAND|wxALL,2);
 	buttons->Add(btnCommit,1,wxEXPAND|wxALL,2);
-	buttons->Add(btnCancel,1,wxEXPAND|wxALL,2);
-	buttons->Add(btnFullscreen,0,wxEXPAND|wxALL,2);
+	buttons->Add(btnCommitOnStyles,0,wxEXPAND|wxALL,2);
+	buttons->Add(btnCancel, 1, wxEXPAND | wxALL, 2);
 
 	//Main sizer
 	if(window){
@@ -287,8 +288,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 	Connect(ID_BCOLOR4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::Ons4Click);
 	Connect(ID_BOK,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::OnOKClick);
 	Connect(ID_BCANCEL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::OnCancelClick);
-	Connect(ID_BONVID,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::OnStyleVideo);
-	Connect(ID_BONFULL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::OnStyleFull);
+	Connect(ID_B_CHANGE_ALL_SELECTED_STYLES, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleChange::OnCommit);
+	Connect(ID_B_COMMIT, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleChange::OnChangeAllSelectedStyles);
 	Connect(ID_FONTNAME,wxEVT_COMMAND_COMBOBOX_SELECTED,(wxObjectEventFunction)&StyleChange::OnUpdatePreview);
 	Connect(ID_TOUTLINE,NUMBER_CHANGED,(wxObjectEventFunction)&StyleChange::OnUpdatePreview);
 	Connect(ID_CBOLD,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&StyleChange::OnUpdatePreview);
@@ -349,7 +350,7 @@ void StyleChange::Ons4Click(wxCommandEvent& event)
 void StyleChange::OnOKClick(wxCommandEvent& event)
 {
 	UpdateStyle();
-	//kopiujemy, bo by zapobiec wyciekom należy tab niezwłocznie usunąć. 
+	//copied style, to avoid memory leaks release after using. 
 	if (SS->ChangeStyle(tab->Copy())){
 		Hide();
 		if (SCD){ SCD->Hide(); }
@@ -367,11 +368,11 @@ void StyleChange::OnCancelClick(wxCommandEvent& event)
 	SS->Mainall->Fit(SS);
 }
 
-void StyleChange::UpdateValues(Styles *styless)
+void StyleChange::UpdateValues(Styles *styl, bool _allowMultiEdition)
 {
 	block=true;
 	wxDELETE(tab);
-	tab=styless;
+	tab=styl;
 	sname->SetValue(tab->Name);
 	int sell=sfont->FindString(tab->Fontname);
 	if(sell==-1){
@@ -420,24 +421,38 @@ void StyleChange::UpdateValues(Styles *styless)
 		if(encs[i].StartsWith(tab->Encoding+" ")){choice=i;break;}
 	}
     if(choice==-1){choice=1;}
+	if (allowMultiEdition != _allowMultiEdition){
+		btnCommitOnStyles->Enable(_allowMultiEdition);
+		allowMultiEdition = _allowMultiEdition;
+	}
     senc->SetSelection(choice);
 	block=false;
 	UpdatePreview();
 	Show();
 }
 
-void StyleChange::OnStyleVideo(wxCommandEvent& event)
+void StyleChange::OnChangeAllSelectedStyles(wxCommandEvent& event)
+{
+	if (!tab){
+		KaiLog("Style was released");
+		return;
+	}
+	Styles *CompareStyle = tab->Copy();
+	UpdateStyle();
+	int changes = CompareStyle->Compare(tab);
+	if (!changes)
+		changes = -1;
+	//tab stays not released cause dialog lose its style but is still visible
+	SS->ChangeStyle(CompareStyle, changes);
+}
+
+void StyleChange::OnCommit(wxCommandEvent& event)
 {
 	UpdateStyle();
-	//tu tab zostaje bo w przeciwnym wypadku dialog straci swoją klasę a przecież jest jeszcze widoczny.
+	//tab stays not released cause dialog lose its style but is still visible
 	SS->ChangeStyle(tab->Copy());
 }
 
-void StyleChange::OnStyleFull(wxCommandEvent& event)
-{
-	UpdateStyle();
-	SS->StyleonVideo(tab,true);
-}
 
 void StyleChange::UpdateStyle()
 {

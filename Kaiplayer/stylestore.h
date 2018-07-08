@@ -57,10 +57,10 @@ class StyleStore: public KaiDialog
 		StyleList* ASSList;
 		DialogSizer *Mainall;
 		StyleChange* cc;
-        bool ChangeStyle(Styles *cstyl);
+		bool ChangeStyle(Styles *cstyl, int cellsToChange = -1);
 		void StylesWindow(wxString newname="");
         void LoadStylesS(bool ass);
-		void StyleonVideo(Styles *styl, bool fullskreen=false);
+		//void StyleonVideo(Styles *styl, bool fullskreen=false);
 		void DoTooltips();
 		void LoadAssStyles();
 		void ReloadFonts();
@@ -99,7 +99,7 @@ class StyleStore: public KaiDialog
 		void OnDetachEdit(wxCommandEvent& event);
 		void OnStyleMove(wxCommandEvent& event);
 
-		bool stass;
+		bool ASSStyle;
 		bool dummy;
 		bool detachedEtit;
 		int selnum;

@@ -476,7 +476,7 @@ void SubsGridBase::GetStyles(wxString &stylesText, bool tld/*=false*/)
 	for (size_t i = 0; i < file->subs->styles.size(); i++)
 	{
 		if (!(tld&&file->subs->styles[i]->Name == tmpst)){
-			stylesText << file->subs->styles[i]->styletext();
+			stylesText << file->subs->styles[i]->GetRaw();
 		}
 	}
 }
@@ -1516,7 +1516,7 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 	const wxString &tlStyle = GetSInfo("TLMode Style");
 	int j = 1;
 	int activeLineKey = file->GetElementById(currentLine);
-
+	
 	for (int i = 0; i < file->subs->dials.size(); i++)
 	{
 		Dialogue *dial = file->subs->dials[i];
@@ -1540,7 +1540,7 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 				}
 				dial->GetRaw(txt);
 			}
-			if (point && i == currentLine){
+			if (point && i == activeLineKey){
 				int all = txt->Len(); point->x = all - 2;
 				int len = (isTlmode && dial->TextTl != "") ?
 					dial->TextTl.Len() : dial->Text.Len();

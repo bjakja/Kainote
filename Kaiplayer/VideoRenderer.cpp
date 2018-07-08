@@ -891,7 +891,7 @@ bool VideoRenderer::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 		if (redraw && vstate != None && IsDshow && datas){
 			RecreateSurface();
 		}
-		hasDummySubs = false;
+		hasDummySubs = true;
 		return true;
 	}
 

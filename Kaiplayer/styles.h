@@ -47,11 +47,16 @@ public:
 	//wxString Scomment;
 	AssColor PrimaryColour, SecondaryColour, OutlineColour, BackColour;
 	bool Bold, Italic, Underline, StrikeOut, BorderStyle;
-	wxString styletext();
+	wxString GetRaw();
     Styles();
     Styles(wxString styledata,char format=1);
     ~Styles();
-    bool stylesplit(wxString styledata, char form);
+    bool parseStyle(const wxString &styledata, char form);
+	//no releasing here changes of style is copied to multiple styles
+	//int list of changes needed
+	//also enum with style element names 
+	bool CopyChanges(Styles *changedStyle, int whatToChange);
+	int Compare(Styles *changedStyle);
 	Styles *Copy();
 };
 
@@ -66,3 +71,27 @@ public:
 	SInfo *Copy();
 };
 
+enum{
+	STYLE_FONT_NAME = 1,
+	STYLE_FONT_SIZE,
+	STYLE_FONT_BOLD = 4,
+	STYLE_FONT_ITALIC = 8,
+	STYLE_FONT_UNDERLINE = 16,
+	STYLE_FONT_STRIKEOUT = 32,
+	STYLE_COLOR_PRIMARY = 64,
+	STYLE_COLOR_SECONDARY = 128,
+	STYLE_COLOR_OUTLINE = 1 << 8,
+	STYLE_COLOR_SHADOW = 1 << 9,
+	STYLE_OUTLINE = 1 << 10,
+	STYLE_SHADOW = 1 << 11,
+	STYLE_SCALE_X = 1 << 12,
+	STYLE_SCALE_Y = 1 << 13,
+	STYLE_ANGLE = 1 << 14,
+	STYLE_SPACING = 1 << 15,
+	STYLE_BORDER_STYLE = 1 << 16,
+	STYLE_ALIGNMENT = 1 << 17,
+	STYLE_MARGIN_LEFT = 1 << 18,
+	STYLE_MARGIN_RIGHT = 1 << 19,
+	STYLE_MARGIN_VERTICAL = 1 << 20,
+	STYLE_ENCODING = 1 << 21,
+};

@@ -25,7 +25,7 @@ RotationZ::RotationZ()
 
 void RotationZ::DrawVisual(int time)
 {
-	if (time != oldtime && tbl[6] > 3){
+	if (time != oldtime && moveValues[6] > 3){
 		BOOL noOrg = (org == from);
 		from = CalcMovePos();
 		from.x = ((from.x / coeffW) - zoomMove.x)*zoomScale.x;
@@ -180,8 +180,8 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 
 void RotationZ::SetCurVisual()
 {
-	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, tbl);
-	if (tbl[6] > 3){ linepos = CalcMovePos(); }
+	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, moveValues);
+	if (moveValues[6] > 3){ linepos = CalcMovePos(); }
 	from = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x) * zoomScale.x,
 		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);
 	lastmove = D3DXVECTOR2(0, 0);

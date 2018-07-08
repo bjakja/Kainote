@@ -1,4 +1,4 @@
-//  Copyright (c) 2018, Marcin Drob
+ï»¿//  Copyright (c) 2018, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -38,12 +38,12 @@ private:
 };
 
 LogWindow::LogWindow(wxWindow *parent, LogHandler *_handler)
-	:KaiDialog(parent,-1,_("Okno Logów"), wxDefaultPosition, wxDefaultSize)
+	:KaiDialog(parent,-1,_("Okno LogÃ³w"), wxDefaultPosition, wxDefaultSize)
 	,handler(_handler)
 {
 	sizer = new DialogSizer(wxVERTICAL);
 	lastLogText = new KaiStaticText(this, -1, "", wxDefaultPosition, wxSize(500, -1));
-	//MappedButton *collapse = new MappedButton(this, 12456, _("Poka¿ resztê logów"));
+	//MappedButton *collapse = new MappedButton(this, 12456, _("PokaÅ¼ resztÄ™ logÃ³w"));
 	logText = new KaiTextCtrl(this, -1, "", wxDefaultPosition, wxSize(500, 300), wxTE_MULTILINE);
 	logText->Show(false);
 	MappedButton *OK = new MappedButton(this, 12457, _("Zamknij"));

@@ -163,14 +163,13 @@ void Position::SetCurVisual()
 	wxArrayInt sels;
 	tab->Grid->file->GetSelections(sels);
 	bool putInBracket; 
-	bool hasPositioning = false;
 	wxPoint textPosition;
 
 	for (size_t i = 0; i < sels.size(); i++){
 		//fix by uzyskać reakcję na edycję w editboxie
 		Dialogue *dial = (sels[i] == tab->Grid->currentLine) ? tab->Edit->line : tab->Grid->GetDialogue(sels[i]);
 		if (dial->IsComment){ continue; }
-		D3DXVECTOR2 pos = GetPos(dial, &putInBracket, &textPosition, &hasPositioning);
+		D3DXVECTOR2 pos = GetPosition(dial, &putInBracket, &textPosition);
 		data.push_back(PosData(dial, sels[i], D3DXVECTOR2(((pos.x / coeffW) - zoomMove.x)*zoomScale.x,
 			((pos.y / coeffH) - zoomMove.y)*zoomScale.y), textPosition, putInBracket));
 	}
@@ -240,9 +239,7 @@ void Position::ChangeMultiline(bool all)
 		tab->Grid->Refresh();
 	}
 	else{
-		if (!tab->Video->OpenSubs(dtxt)){ KaiLog(_("Nie można otworzyć napisów")); }
-		tab->Video->hasVisualEdition = true;
-		tab->Video->Render();
+		RenderSubs(dtxt);
 	}
 
 }

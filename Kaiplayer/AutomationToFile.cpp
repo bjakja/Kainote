@@ -118,7 +118,7 @@ namespace Auto{
 			lua_pushstring(L, "[V4+ Styles]");
 			lua_setfield(L, -2, "section");
 
-			wxString raw=astyle->styletext();
+			wxString raw=astyle->GetRaw();
 			lua_pushstring(L, raw.mb_str(wxConvUTF8).data());
 			lua_setfield(L, -2, "raw");
 

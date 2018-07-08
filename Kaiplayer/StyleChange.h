@@ -52,7 +52,7 @@ class StyleChange: public wxWindow
 		NumCtrl* ssize;
 		MappedButton* btnCommit;
 		MappedButton* btnCancel;
-		MappedButton* btnFullscreen;
+		MappedButton* btnCommitOnStyles;
 		KaiChoice* sfont;
 		KaiTextCtrl *fontFilter;
 		ToggleButton *Filter;
@@ -77,7 +77,7 @@ class StyleChange: public wxWindow
 		NumCtrl* sml;
 		StylePreview* Preview;
 
-		void UpdateValues(Styles *styl);
+		void UpdateValues(Styles *styl, bool allowMultiEdition);
 		void UpdatePreview();
 
 		StyleStore* SS;
@@ -95,16 +95,16 @@ class StyleChange: public wxWindow
 		void Ons2Click(wxCommandEvent& event);
 		void Ons3Click(wxCommandEvent& event);
 		void Ons4Click(wxCommandEvent& event);
-		void OnStyleVideo(wxCommandEvent& event);
-		void OnStyleFull(wxCommandEvent& event);
+		void OnChangeAllSelectedStyles(wxCommandEvent& event);
+		void OnCommit(wxCommandEvent& event);
 		void UpdateStyle();
 		void OnUpdatePreview(wxCommandEvent& event);
 		
 		void OnSetFocus(wxFocusEvent& event);
 
 		void DoTooltips();
-        //DialogColorPicker* ColourDialog1;
-
+        
+		bool allowMultiEdition = true;
 		Styles *tab;
 		wxArrayString encs;
 		KaiDialog *SCD;
@@ -149,8 +149,8 @@ enum{
 	ID_CENCODING,
 	ID_BOK,
 	ID_BCANCEL,
-	ID_BONVID,
-	ID_BONFULL
+	ID_B_CHANGE_ALL_SELECTED_STYLES,
+	ID_B_COMMIT
 	};
 
 
