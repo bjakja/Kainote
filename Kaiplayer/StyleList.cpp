@@ -267,30 +267,7 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 	    //return;
 	}
 
-	if (holding) {
-		// Find direction
-		int minVis = scPos+1;
-		int maxVis = scPos+(h/Height)-2;
-		int delta = 0;
-		if (row < minVis && row!=0) delta = -1;
-		if (row > maxVis) delta = 1;
-
-		if (delta) {
-			scPos=(MID(row - (h / Height), scPos + delta, row));
-			Refresh(false);
-			// End the hold if this was a mousedown to avoid accidental
-			// selection of extra lines
-			/*if (click) {
-				holding = false;
-				left_up = true;
-				ReleaseMouse();
-			}*/
-		}
-	}
-	
-	
-
-	if ((left_up && shift && !alt) || (holding && !ctrl && !alt && !shift && lastsel!=row)) {
+	if ((click && shift && !alt) || (holding && !ctrl && !alt && !shift && lastsel != row)) {
 		if (lastRow != -1) {
 			// Keyboard selection continues from where the mouse was last used
 			//extendRow = lastRow;
@@ -318,7 +295,7 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 	}
 
 		// Toggle selected
-	if (left_up && ctrl && !shift && !alt) {
+	if (click && ctrl && !shift && !alt) {
 		int idx=sels.Index(row);
 		if(idx!=-1){
 			sels.RemoveAt(idx);
@@ -339,6 +316,19 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 		}
 	}
 
+	if (holding) {
+		// Find direction
+		int minVis = scPos + 1;
+		int maxVis = scPos + (h / Height) - 2;
+		int delta = 0;
+		if (row < minVis && row != 0) delta = -1;
+		if (row > maxVis) delta = 1;
+
+		if (delta) {
+			scPos = (MID(row - (h / Height), scPos + delta, row));
+			Refresh(false);
+		}
+	}
 	
 
 }
