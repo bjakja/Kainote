@@ -248,7 +248,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 	wxBoxSizer *buttons=new wxBoxSizer(wxHORIZONTAL);
 	btnOk = new MappedButton(this, ID_BOK, "Ok");
 	btnCommit = new MappedButton(this, ID_B_COMMIT, _("Zastosuj"));
-	btnCommitOnStyles = new MappedButton(this, ID_B_CHANGE_ALL_SELECTED_STYLES, _("Zastosuj na wszystkich"));
+	btnCommitOnStyles = new MappedButton(this, ID_B_CHANGE_ALL_SELECTED_STYLES, _("Zastosuj na zaznaczonych"));
 	btnCancel = new MappedButton(this, ID_BCANCEL, _("Anuluj"));
 
 	buttons->Add(btnOk,1,wxEXPAND|wxALL,2);
@@ -288,8 +288,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 	Connect(ID_BCOLOR4,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::Ons4Click);
 	Connect(ID_BOK,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::OnOKClick);
 	Connect(ID_BCANCEL,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&StyleChange::OnCancelClick);
-	Connect(ID_B_CHANGE_ALL_SELECTED_STYLES, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleChange::OnCommit);
-	Connect(ID_B_COMMIT, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleChange::OnChangeAllSelectedStyles);
+	Connect(ID_B_CHANGE_ALL_SELECTED_STYLES, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleChange::OnChangeAllSelectedStyles);
+	Connect(ID_B_COMMIT, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleChange::OnCommit);
 	Connect(ID_FONTNAME,wxEVT_COMMAND_COMBOBOX_SELECTED,(wxObjectEventFunction)&StyleChange::OnUpdatePreview);
 	Connect(ID_TOUTLINE,NUMBER_CHANGED,(wxObjectEventFunction)&StyleChange::OnUpdatePreview);
 	Connect(ID_CBOLD,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&StyleChange::OnUpdatePreview);
@@ -307,7 +307,7 @@ StyleChange::~StyleChange()
 {
 	FontEnum.RemoveClient(this);
 	wxDELETE(tab);
-	//if(SCD){SCD->Destroy();}
+	wxDELETE(CompareStyle);
 }
 
 void StyleChange::OnAllCols(int kol)
@@ -368,11 +368,11 @@ void StyleChange::OnCancelClick(wxCommandEvent& event)
 	SS->Mainall->Fit(SS);
 }
 
-void StyleChange::UpdateValues(Styles *styl, bool _allowMultiEdition)
+void StyleChange::UpdateValues(Styles *style, bool _allowMultiEdition)
 {
 	block=true;
 	wxDELETE(tab);
-	tab=styl;
+	tab=style;
 	sname->SetValue(tab->Name);
 	int sell=sfont->FindString(tab->Fontname);
 	if(sell==-1){
@@ -425,6 +425,12 @@ void StyleChange::UpdateValues(Styles *styl, bool _allowMultiEdition)
 		btnCommitOnStyles->Enable(_allowMultiEdition);
 		allowMultiEdition = _allowMultiEdition;
 	}
+	if (allowMultiEdition){
+		if (CompareStyle)
+			delete CompareStyle;
+
+		CompareStyle = style->Copy();
+	}
     senc->SetSelection(choice);
 	block=false;
 	UpdatePreview();
@@ -433,17 +439,16 @@ void StyleChange::UpdateValues(Styles *styl, bool _allowMultiEdition)
 
 void StyleChange::OnChangeAllSelectedStyles(wxCommandEvent& event)
 {
-	if (!tab){
-		KaiLog("Style was released");
+	if (!tab || !allowMultiEdition || !CompareStyle){
+		KaiLog("Style was released or not allowed");
 		return;
 	}
-	Styles *CompareStyle = tab->Copy();
 	UpdateStyle();
 	int changes = CompareStyle->Compare(tab);
 	if (!changes)
 		changes = -1;
 	//tab stays not released cause dialog lose its style but is still visible
-	SS->ChangeStyle(CompareStyle, changes);
+	SS->ChangeStyle(tab->Copy(), changes);
 }
 
 void StyleChange::OnCommit(wxCommandEvent& event)

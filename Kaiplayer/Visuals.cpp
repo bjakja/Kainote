@@ -128,7 +128,7 @@ int Visuals::GetDialoguePosition()
 		//}
 		
 	}
-
+	return 0;
 }
 
 void Visuals::RenderSubs(wxString *subs, bool redraw /*= true*/)

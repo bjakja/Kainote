@@ -44,7 +44,7 @@ class StylePreview : public wxWindow
 
 		wxBitmap *bmpframe;
 		KaiTextCtrl *PrevText;
-		Styles *style;
+		Styles *previewStyle;
 
 		void OnPaint(wxPaintEvent& event);
 		void SubsText(wxString *text);

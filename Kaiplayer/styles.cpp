@@ -291,7 +291,7 @@ bool Styles::parseStyle(const wxString &styledata, char form)
 	return true;
 }
 
-bool Styles::CopyChanges(Styles *changedStyle, int whatToChange)
+void Styles::CopyChanges(Styles *changedStyle, int whatToChange)
 {
 	if (whatToChange & STYLE_FONT_NAME){
 		Fontname = changedStyle->Fontname;
@@ -364,70 +364,70 @@ bool Styles::CopyChanges(Styles *changedStyle, int whatToChange)
 int Styles::Compare(Styles *changedStyle)
 {
 	int compareResult = 0;
-	if (Fontname == changedStyle->Fontname){
+	if (Fontname != changedStyle->Fontname){
 		compareResult |= STYLE_FONT_NAME;
 	}
-	if (Fontsize == changedStyle->Fontsize){
+	if (Fontsize != changedStyle->Fontsize){
 		compareResult |= STYLE_FONT_SIZE;
 	}
-	if (Bold == changedStyle->Bold){
+	if (Bold != changedStyle->Bold){
 		compareResult |= STYLE_FONT_BOLD;
 	}
-	if (Italic == changedStyle->Italic){
+	if (Italic != changedStyle->Italic){
 		compareResult |= STYLE_FONT_ITALIC;
 	}
-	if (Underline == changedStyle->Underline){
+	if (Underline != changedStyle->Underline){
 		compareResult |= STYLE_FONT_UNDERLINE;
 	}
-	if (StrikeOut == changedStyle->StrikeOut){
+	if (StrikeOut != changedStyle->StrikeOut){
 		compareResult |= STYLE_FONT_STRIKEOUT;
 	}
-	if (PrimaryColour == changedStyle->PrimaryColour){
+	if (PrimaryColour != changedStyle->PrimaryColour){
 		compareResult |= STYLE_COLOR_PRIMARY;
 	}
-	if (SecondaryColour == changedStyle->SecondaryColour){
+	if (SecondaryColour != changedStyle->SecondaryColour){
 		compareResult |= STYLE_COLOR_SECONDARY;
 	}
-	if (OutlineColour == changedStyle->OutlineColour){
+	if (OutlineColour != changedStyle->OutlineColour){
 		compareResult |= STYLE_COLOR_OUTLINE;
 	}
-	if (BackColour == changedStyle->BackColour){
+	if (BackColour != changedStyle->BackColour){
 		compareResult |= STYLE_COLOR_SHADOW;
 	}
-	if (Outline == changedStyle->Outline){
+	if (Outline != changedStyle->Outline){
 		compareResult |= STYLE_OUTLINE;
 	}
-	if (Shadow == changedStyle->Shadow){
+	if (Shadow != changedStyle->Shadow){
 		compareResult |= STYLE_SHADOW;
 	}
-	if (ScaleX == changedStyle->ScaleX){
+	if (ScaleX != changedStyle->ScaleX){
 		compareResult |= STYLE_SCALE_X;
 	}
-	if (ScaleY == changedStyle->ScaleY){
+	if (ScaleY != changedStyle->ScaleY){
 		compareResult |= STYLE_SCALE_Y;
 	}
-	if (Angle == changedStyle->Angle){
+	if (Angle != changedStyle->Angle){
 		compareResult |= STYLE_ANGLE;
 	}
-	if (Spacing == changedStyle->Spacing){
+	if (Spacing != changedStyle->Spacing){
 		compareResult |= STYLE_SPACING;
 	}
-	if (BorderStyle == changedStyle->BorderStyle){
+	if (BorderStyle != changedStyle->BorderStyle){
 		compareResult |= STYLE_BORDER_STYLE;
 	}
-	if (Alignment == changedStyle->Alignment){
+	if (Alignment != changedStyle->Alignment){
 		compareResult |= STYLE_ALIGNMENT;
 	}
-	if (MarginL == changedStyle->MarginL){
+	if (MarginL != changedStyle->MarginL){
 		compareResult |= STYLE_MARGIN_LEFT;
 	}
-	if (MarginR == changedStyle->MarginR){
+	if (MarginR != changedStyle->MarginR){
 		compareResult |= STYLE_MARGIN_RIGHT;
 	}
-	if (MarginV == changedStyle->MarginV){
+	if (MarginV != changedStyle->MarginV){
 		compareResult |= STYLE_MARGIN_VERTICAL;
 	}
-	if (Encoding == changedStyle->Encoding){
+	if (Encoding != changedStyle->Encoding){
 		compareResult |= STYLE_ENCODING;
 	}
 	return compareResult;

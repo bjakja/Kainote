@@ -27,7 +27,7 @@ StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const w
 	instance = NULL;
 	PrevText = NULL;
 	vobsub = NULL;
-	style = NULL;
+	previewStyle = NULL;
 	Bind(wxEVT_SIZE, [=](wxSizeEvent &evt){DrawPreview(0); });
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
 }
@@ -36,7 +36,7 @@ StylePreview::~StylePreview()
 	if (instance) csri_close(instance);
 	if (vobsub) csri_close_renderer(vobsub);//csri_renderer_byname(0,0);
 
-	wxDELETE(style);
+	wxDELETE(previewStyle);
 	wxDELETE(bmpframe);
 }
 
@@ -44,10 +44,10 @@ void StylePreview::DrawPreview(Styles *style)
 {
 	wxMutexLocker lock(mutex);
 	if (style){
-		wxDELETE(style);
-		style = style->Copy();
+		wxDELETE(previewStyle);
+		previewStyle = style->Copy();
 	}
-	else if (!style){
+	else if (!previewStyle){
 		return;
 	}
 	if (instance) csri_close(instance);
@@ -153,11 +153,11 @@ void StylePreview::OnPaint(wxPaintEvent& event)
 
 void StylePreview::SubsText(wxString *text)
 {
-	style->Alignment = "5";
+	previewStyle->Alignment = "5";
 	*text << ((wchar_t)0xFEFF);
 	*text << "[Script Info]\r\nPlayResX: " << width << "\r\nPlayResY: " << height << "\r\nScaledBorderAndShadow: Yes\r\nScriptType: v4.00+\r\nWrapStyle: 0"
 		<< "\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\r\n"
-		<< style->GetRaw() << "\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,0:01:26.00," << style->Name << ",,0000,0000,0000,," << Options.GetString(PreviewText);
+		<< previewStyle->GetRaw() << "\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,0:01:26.00," << previewStyle->Name << ",,0000,0000,0000,," << Options.GetString(PreviewText);
 
 }
 

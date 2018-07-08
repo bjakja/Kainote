@@ -106,6 +106,7 @@ class StyleChange: public wxWindow
         
 		bool allowMultiEdition = true;
 		Styles *tab;
+		Styles *CompareStyle = NULL;
 		wxArrayString encs;
 		KaiDialog *SCD;
 		

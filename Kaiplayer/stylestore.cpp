@@ -433,7 +433,7 @@ bool StyleStore::ChangeStyle(Styles *changedStyle, int cellsToChange /*= -1*/)
 
 				Styles *copy = grid->GetStyle(numStyle)->Copy();
 				copy->CopyChanges(changedStyle, cellsToChange);
-				grid->ChangeStyle(changedStyle, numStyle);
+				grid->ChangeStyle(copy, numStyle);
 			}
 			else{
 				if (numStyle >= Options.StoreSize())
@@ -441,7 +441,7 @@ bool StyleStore::ChangeStyle(Styles *changedStyle, int cellsToChange /*= -1*/)
 
 				Styles *copy = Options.GetStyle(numStyle)->Copy();
 				copy->CopyChanges(changedStyle, cellsToChange);
-				Options.ChangeStyle(changedStyle, numStyle);
+				Options.ChangeStyle(copy, numStyle);
 			}
 		}
 	}

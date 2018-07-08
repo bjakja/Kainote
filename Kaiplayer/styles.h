@@ -55,7 +55,7 @@ public:
 	//no releasing here changes of style is copied to multiple styles
 	//int list of changes needed
 	//also enum with style element names 
-	bool CopyChanges(Styles *changedStyle, int whatToChange);
+	void CopyChanges(Styles *changedStyle, int whatToChange);
 	int Compare(Styles *changedStyle);
 	Styles *Copy();
 };
