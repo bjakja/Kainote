@@ -21,6 +21,8 @@
 #include "ListControls.h"
 #include "KaiScrollbar.h"
 
+wxDECLARE_EVENT(SELECTION_CHANGED, wxCommandEvent);
+
 class StyleList : public KaiScrolledWindow
 {
 	public:
@@ -31,7 +33,9 @@ class StyleList : public KaiScrolledWindow
 		void SetSelections(const wxArrayInt &sels);
 		void Scroll(int step);
 		int GetSelections(wxArrayInt &sels);
+		int GetNumSelections(){ return sels.size(); }
 		void SetArray(std::vector<Styles*> *stylearray);
+		void SendSelectionEvent();
 
 	private:
 

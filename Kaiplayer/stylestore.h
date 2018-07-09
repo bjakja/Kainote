@@ -98,6 +98,7 @@ class StyleStore: public KaiDialog
 		void OnCleanStyles(wxCommandEvent& event);
 		void OnDetachEdit(wxCommandEvent& event);
 		void OnStyleMove(wxCommandEvent& event);
+		void OnSelectionChanged(wxCommandEvent& event);
 
 		bool ASSStyle;
 		bool dummy;

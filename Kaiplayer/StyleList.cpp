@@ -20,6 +20,8 @@
 #include <algorithm>
 #include "FontEnumerator.h"
 
+wxDEFINE_EVENT(SELECTION_CHANGED, wxCommandEvent);
+
 bool sortf(int i,int j){ return (i < j);}
 
 StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, const wxPoint &pos, const wxSize &size, long style)
@@ -290,6 +292,7 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 			}
 			lastsel=row;
 			Refresh(false);
+			SendSelectionEvent();
 		}
 		return;
 	}
@@ -303,6 +306,7 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 			sels.Add(row);}
 		std::sort(sels.begin(),sels.end(),sortf);
 		Refresh(false);
+		SendSelectionEvent();
 		return;
 	}
 
@@ -312,7 +316,8 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 			
 			sels.Add(row);
 			Refresh(false);
-		return;
+			SendSelectionEvent();
+			return;
 		}
 	}
 
@@ -339,6 +344,13 @@ void StyleList::SetArray(std::vector<Styles*> *stylearray)
 	Refresh(false);
 }
 
+void StyleList::SendSelectionEvent()
+{
+	wxCommandEvent evt(SELECTION_CHANGED, GetId());
+	evt.SetInt(sels.size());
+	ProcessEvent(evt);
+}
+
 //Ta funkcja dodaje do zaznaczenia albo resetuje
 //i zaznacza nowe odœwie¿aj¹c przy okazji
 void StyleList::SetSelection(int _sel,bool reset)
@@ -349,6 +361,7 @@ void StyleList::SetSelection(int _sel,bool reset)
 	if(sels.size()>0){
 		scPos=MAX(0,sels[0]-2);}
 	Refresh(false);
+	SendSelectionEvent();
 }
 
 void StyleList::SetSelections(const wxArrayInt &_sels)
@@ -360,12 +373,16 @@ void StyleList::SetSelections(const wxArrayInt &_sels)
 	if(sels.size()>0){
 		scPos=MAX(0,sels[0]-2);}
 	Refresh(false);
+	SendSelectionEvent();
 }
 
 
 int StyleList::GetSelections(wxArrayInt &_sels)
 {
-	if(stylenames->size()<1){sels.Clear();}
+	if(stylenames->size()<1){
+		sels.Clear();
+		SendSelectionEvent();
+	}
 	std::sort(sels.begin(),sels.end(),sortf);
 	_sels=sels;
 	return sels.size();

@@ -203,11 +203,16 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, KainoteFrame* kaif, int idd)
 	TlMode->Enable(false);
 	Chars = new KaiStaticText(this, -1, _("Linie: 0/86"));
 	Chtime = new KaiStaticText(this, -1, _("Znaki na sekundę: 0<=15"));
+	bool asFrames = false;//Options.GetBool(EDITBOX_TIMES_TO_FRAMES_SWITCH);
 	Times = new KaiRadioButton(this, ID_TIMES_FRAMES, _("Czas"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	Times->SetValue(true);
+	Times->SetValue(!asFrames);
 	Times->Enable(false);
 	Frames = new KaiRadioButton(this, ID_TIMES_FRAMES, _("Klatki"));
 	Frames->Enable(false);
+	if (asFrames){
+		Frames->SetValue(asFrames);
+	}
+
 	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, &EditBox::OnChangeTimeDisplay, this, ID_TIMES_FRAMES);
 
 	BoxSizer5 = new wxBoxSizer(wxHORIZONTAL);
@@ -322,6 +327,12 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, KainoteFrame* kaif, int idd)
 	}
 	Connect(16667, CURSOR_MOVED, (wxObjectEventFunction)&EditBox::OnCursorMoved);
 	DoTooltips();
+	/*if (asFrames){
+		grid->ChangeTimeDisplay(asFrames);
+		StartEdit->ShowFrames(asFrames);
+		EndEdit->ShowFrames(asFrames);
+		DurEdit->ShowFrames(asFrames);
+	}*/
 }
 
 EditBox::~EditBox()

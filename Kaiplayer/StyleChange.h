@@ -76,8 +76,10 @@ class StyleChange: public wxWindow
 		NumCtrl* smv;
 		NumCtrl* sml;
 		StylePreview* Preview;
+		bool allowMultiEdition = true;
 
-		void UpdateValues(Styles *styl, bool allowMultiEdition);
+
+		void UpdateValues(Styles *styl, bool allowMultiEdition, bool enableNow);
 		void UpdatePreview();
 
 		StyleStore* SS;
@@ -104,7 +106,6 @@ class StyleChange: public wxWindow
 
 		void DoTooltips();
         
-		bool allowMultiEdition = true;
 		Styles *tab;
 		Styles *CompareStyle = NULL;
 		wxArrayString encs;

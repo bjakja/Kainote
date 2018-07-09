@@ -368,11 +368,11 @@ void StyleChange::OnCancelClick(wxCommandEvent& event)
 	SS->Mainall->Fit(SS);
 }
 
-void StyleChange::UpdateValues(Styles *style, bool _allowMultiEdition)
+void StyleChange::UpdateValues(Styles *styl, bool allowMultiEdition, bool enableNow)
 {
 	block=true;
 	wxDELETE(tab);
-	tab=style;
+	tab=styl;
 	sname->SetValue(tab->Name);
 	int sell=sfont->FindString(tab->Fontname);
 	if(sell==-1){
@@ -421,15 +421,18 @@ void StyleChange::UpdateValues(Styles *style, bool _allowMultiEdition)
 		if(encs[i].StartsWith(tab->Encoding+" ")){choice=i;break;}
 	}
     if(choice==-1){choice=1;}
-	if (allowMultiEdition != _allowMultiEdition){
-		btnCommitOnStyles->Enable(_allowMultiEdition);
-		allowMultiEdition = _allowMultiEdition;
+	if (allowMultiEdition != allowMultiEdition){
+		btnCommitOnStyles->Enable(allowMultiEdition);
+		allowMultiEdition = allowMultiEdition;
 	}
 	if (allowMultiEdition){
 		if (CompareStyle)
 			delete CompareStyle;
 
-		CompareStyle = style->Copy();
+		CompareStyle = styl->Copy();
+		if (!enableNow){
+			btnCommitOnStyles->Enable(false);
+		}
 	}
     senc->SetSelection(choice);
 	block=false;

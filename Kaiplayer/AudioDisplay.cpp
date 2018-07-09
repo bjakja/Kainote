@@ -1524,7 +1524,6 @@ void AudioDisplay::CommitChanges(bool nextLine, bool Save, bool moveToEnd) {
 	// Loaded?
 	if (!loaded) return;
 
-
 	if (Save){ NeedCommit = false; }
 
 	// Update dialogues
@@ -1544,8 +1543,6 @@ void AudioDisplay::CommitChanges(bool nextLine, bool Save, bool moveToEnd) {
 			vb->RefreshTime();
 	}
 	blockUpdate = false;
-
-
 
 	Update(moveToEnd);
 }
@@ -2376,10 +2373,10 @@ void AudioDisplay::Commit(bool moveToEnd)
 
 	if (autocommit) {
 		CommitChanges(false, true, moveToEnd);
-		//return;
 	}
 	else{
 		CommitChanges(false, false, moveToEnd);//UpdateImage(true);
+		return;
 	}
 	if (!Options.GetBool(DisableLiveVideoEditing)){ Edit->OnEdit(wxCommandEvent()); }
 }

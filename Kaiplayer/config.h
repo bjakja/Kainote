@@ -119,6 +119,7 @@
 	CG(DisableLiveVideoEditing,)\
 	CG(DontAskForBadResolution,)\
 	CG(EditboxSugestionsOnDoubleClick,)\
+	CG(EDITBOX_TIMES_TO_FRAMES_SWITCH,)\
 	CG(EditorOn,)\
 	CG(FIND_IN_SUBS_FILTERS_RECENT,)\
 	CG(FIND_IN_SUBS_PATHS_RECENT,)\

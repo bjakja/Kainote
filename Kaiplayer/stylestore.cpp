@@ -181,7 +181,9 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 
 	Connect(ID_ASSSTYLES, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, (wxObjectEventFunction)&StyleStore::OnAssStyleChange);
 	Connect(ID_ASSSTYLES, wxEVT_COMMAND_LISTBOX_SELECTED, (wxObjectEventFunction)&StyleStore::OnSwitchLines);
+	Connect(ID_ASSSTYLES, SELECTION_CHANGED, (wxObjectEventFunction)&StyleStore::OnSelectionChanged);
 	Connect(ID_STORESTYLES, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, (wxObjectEventFunction)&StyleStore::OnStoreStyleChange);
+	Connect(ID_STORESTYLES, SELECTION_CHANGED, (wxObjectEventFunction)&StyleStore::OnSelectionChanged);
 	Connect(ID_ADDTOSTORE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnAddToStore);
 	Connect(ID_ADDTOASS, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnAddToAss);
 	Connect(ID_ADD_TO_ALL_ASS, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnAddToAssInAllTabs);
@@ -381,7 +383,7 @@ void StyleStore::StylesWindow(wxString newname)
 	else{ tab = Options.GetStyle(selnum)->Copy(); }
 	if (newname != ""){ tab->Name = newname; }
 	oldname = tab->Name;
-	cc->UpdateValues(tab, !dummy);
+	cc->UpdateValues(tab, !dummy, (ASSStyle && ASSList->GetNumSelections() > 1) || (!ASSStyle && Store->GetNumSelections() > 1));
 	if (!detachedEtit){ Mainall->Fit(this); }
 
 }
@@ -1021,5 +1023,18 @@ void StyleStore::OnStyleMove(wxCommandEvent& event)
 	}
 	if (action < 4){ ASSList->SetSelections(sels); Notebook::GetTab()->Grid->file->edited = true; SetModified(); }
 	else{ Store->SetSelections(sels); }
+}
+
+void StyleStore::OnSelectionChanged(wxCommandEvent& event)
+{
+	if (cc && cc->IsShown()){
+		int id = event.GetId();
+		bool enableCommitOnSelected = event.GetInt() > 1 && cc->allowMultiEdition;
+		if ((id == ID_ASSSTYLES && ASSStyle) || (id == ID_STORESTYLES && !ASSStyle)){
+			bool commitOnSelectedEnabled = cc->btnCommitOnStyles->IsEnabled();
+			if ((commitOnSelectedEnabled && !enableCommitOnSelected) || (!commitOnSelectedEnabled && enableCommitOnSelected))
+				cc->btnCommitOnStyles->Enable(enableCommitOnSelected);
+		}
+	}
 }
 

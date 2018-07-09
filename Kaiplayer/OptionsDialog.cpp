@@ -516,7 +516,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		HkeysSizer->Add(filterMode, 0, wxEXPAND);
 
 		Shortcuts = new KaiListCtrl(Hotkeyss, 26667, wxDefaultPosition);
-		Shortcuts->InsertColumn(0, _("Funkcja"), TYPE_TEXT, 290);
+		Shortcuts->InsertColumn(0, _("Funkcja"), TYPE_TEXT, 275);
 		Shortcuts->InsertColumn(1, _("Skrót"), TYPE_TEXT, 80);
 		Connect(26667, LIST_ITEM_DOUBLECLICKED, (wxObjectEventFunction)&OptionsDialog::OnMapHkey);
 		//Connect(26667,LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);

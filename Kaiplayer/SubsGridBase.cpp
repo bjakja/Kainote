@@ -532,7 +532,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 		kae = Options.GetInt(PostprocessorKeyframeAfterEnd);
 	}
 	wxString styles = Options.GetString(MoveTimesStyles);
-	if (styles.empty() && whichLines == 4){
+	if (styles.empty() && whichLines == 5){
 		KaiMessageBox(_("Nie wybrano stylów do przesunięcia"), _("Uwaga"));
 		return;
 	}
