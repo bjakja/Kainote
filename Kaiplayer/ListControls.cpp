@@ -492,14 +492,31 @@ void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool chan
 	}
 	int sell= (changeText)? 0 : -1;
 	wxString PrtName = PartialName.Lower();
+	size_t k = 0;
 
 	for(size_t i=0; i<list->size(); i++){
 		wxString fontname = (*list)[i].Lower();
-		if(fontname.StartsWith(PrtName)){
-			sell=i;
-			break;
+		if (fontname.Len() < 1 || fontname[0] < PrtName[0])
+			continue;
+
+		while(k < PrtName.Len() && k < fontname.Len()){
+			if (fontname[k] == PrtName[k]){
+				k++;
+				if (k >= PrtName.Len()){
+					sell = i;
+					goto done;
+				}
+			}
+			else if (fontname[k] > PrtName[k]){
+				sell = i;
+				goto done;
+			}
+			else
+				break;
 		}
 	}
+
+done:
 
 	if(sell!=-1){
 		SetSelection(sell, changeText);

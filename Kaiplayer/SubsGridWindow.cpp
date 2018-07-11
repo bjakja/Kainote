@@ -1265,9 +1265,7 @@ void SubsGridWindow::RefreshIfVisible(int time)
 
 void SubsGridWindow::ChangeTimeDisplay(bool frame)
 {
-	TabPanel *tab = (TabPanel*)GetParent();
-	VideoFfmpeg *VFF = tab->Video->VFF;
-	if (frame && VFF){
+	if (frame){
 		showFrames = true;
 	}
 	else{

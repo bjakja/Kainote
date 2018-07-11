@@ -22,6 +22,7 @@
 #include "KaiStaticBoxSizer.h"
 
 wxDEFINE_EVENT(FONT_CHANGED, wxCommandEvent);
+wxDEFINE_EVENT(SELECTION_CHANGED, wxCommandEvent);
 
 FontList::FontList(wxWindow *parent,long id,const wxPoint &pos, const wxSize &size)
 	:wxWindow(parent,id,pos,size)
@@ -246,6 +247,8 @@ void FontList::SetSelection(int pos)
 	sel=pos;
 
 	Refresh(false);
+	wxCommandEvent evt(SELECTION_CHANGED, GetId());
+	AddPendingEvent(evt);
 }
 
 void FontList::SetSelectionByName(wxString name)
@@ -261,14 +264,31 @@ void FontList::SetSelectionByPartialName(wxString PartialName)
 	int sell=-1;
 	PartialName=PartialName.Lower();
 
-	for(size_t i=0; i<fonts->size(); i++){
-		wxString fontname = (*fonts)[i].Lower();
+	size_t k = 0;
 
-		if(fontname.StartsWith(PartialName)){
-			sell=i;
-			break;
+	for (size_t i = 0; i < fonts->size(); i++){
+		wxString fontname = (*fonts)[i].Lower();
+		if (fontname.Len() < 1 || fontname[0] < PartialName[0])
+			continue;
+
+		while (k < PartialName.Len() && k < fontname.Len()){
+			if (fontname[k] == PartialName[k]){
+				k++;
+				if (k >= PartialName.Len()){
+					sell = i;
+					goto done;
+				}
+			}
+			else if (fontname[k] > PartialName[k]){
+				sell = i;
+				goto done;
+			}
+			else
+				break;
 		}
 	}
+
+done:
 
 	if(sell!=-1){
 		SetSelection(sell);
@@ -379,6 +399,7 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst)
 	}, 12345);
 
 	Connect(ID_FONTLIST,wxEVT_COMMAND_LISTBOX_SELECTED,(wxObjectEventFunction)&FontDialog::OnFontChanged);
+	Connect(ID_FONTLIST, SELECTION_CHANGED, (wxObjectEventFunction)&FontDialog::OnUpdatePreview);
 	Connect(ID_FONT_NAME,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&FontDialog::OnUpdateText);
 	Connect(ID_FONTSIZE1, NUMBER_CHANGED, (wxObjectEventFunction)&FontDialog::OnUpdatePreview);
 	Connect(ID_FONTATTR,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&FontDialog::OnUpdatePreview);

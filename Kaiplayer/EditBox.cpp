@@ -195,7 +195,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, KainoteFrame* kaif, int idd)
 	BoxSizer4->Add(Bcol3, 0, wxALL, 2);
 	BoxSizer4->Add(Bcol4, 0, wxALL, 2);
 	BoxSizer4->Add(Ban, 0, wxALL, 2);
-	//
+
 	SetTagButtons();
 
 	TlMode = new KaiCheckBox(this, ID_TLMODE, _("Tryb tłumaczenia"));
@@ -281,9 +281,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, KainoteFrame* kaif, int idd)
 	BoxSizer2->Add(MarginREdit, 0, wxLEFT, 2);
 	BoxSizer2->Add(MarginVEdit, 0, wxLEFT, 2);
 	BoxSizer2->Add(EffectEdit, 3, wxLEFT | wxRIGHT | wxEXPAND, 2);
-	//BoxSizer1->AddSpacer(5);
-	//BoxSizer2->Add(BoxSizer3,0,wxEXPAND,0);
-
+	
 	BoxSizer1 = new wxBoxSizer(wxVERTICAL);
 	BoxSizer1->Add(BoxSizer4, 0, wxLEFT | wxRIGHT | wxTOP, 2);
 	BoxSizer1->Add(BoxSizer5, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, 2);
@@ -327,12 +325,12 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, KainoteFrame* kaif, int idd)
 	}
 	Connect(16667, CURSOR_MOVED, (wxObjectEventFunction)&EditBox::OnCursorMoved);
 	DoTooltips();
-	/*if (asFrames){
+	if (asFrames){
 		grid->ChangeTimeDisplay(asFrames);
 		StartEdit->ShowFrames(asFrames);
 		EndEdit->ShowFrames(asFrames);
 		DurEdit->ShowFrames(asFrames);
-	}*/
+	}
 }
 
 EditBox::~EditBox()
@@ -1710,7 +1708,6 @@ void EditBox::OnChangeTimeDisplay(wxCommandEvent& event)
 	DurEdit->ShowFrames(frame);
 	StartEdit->SetTime(line->Start, false, 1);
 	EndEdit->SetTime(line->End, false, 2);
-	//DurEdit->SetTime(line->End - line->Start, false, 2);
 	if (frame){
 		STime durationTime = EndEdit->GetTime() - StartEdit->GetTime();
 		durationTime.orgframe++;
@@ -1721,6 +1718,7 @@ void EditBox::OnChangeTimeDisplay(wxCommandEvent& event)
 	}
 
 	grid->RefreshColumns(START | END);
+	Options.SetBool(EDITBOX_TIMES_TO_FRAMES_SWITCH, frame);
 }
 
 bool EditBox::SetBackgroundColour(const wxColour &col)

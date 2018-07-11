@@ -74,12 +74,11 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	, fc(NULL)
 {
 	LogHandler::Create(this);
-//#if logging
-//	mylog = new wxLogWindow(this, "Logi", true, false);
-//	mylog->PassMessages(true);
-//#else
-//	mylog=NULL;
-//#endif
+	//when need log window on start uncomment this
+#ifdef _DEBUG
+	//LogHandler::ShowLogWindow();
+#endif
+
 	FR = NULL;
 	SL = NULL;
 	Auto = NULL;

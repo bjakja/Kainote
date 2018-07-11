@@ -330,8 +330,9 @@ void AudioDisplay::DoUpdateImage() {
 	int displayH = h + timelineHeight;
 
 	if (LastSize.x != w || LastSize.y != h || !d3dDevice) {
-		InitDX(wxSize(w, displayH));
 		LastSize = wxSize(w, h);
+		if (!InitDX(wxSize(w, displayH)))
+			return;
 	}
 
 	// Invalid dimensions
@@ -354,7 +355,9 @@ void AudioDisplay::DoUpdateImage() {
 			if (D3DERR_DEVICENOTRESET == hr)
 			{
 				ClearDX();
-				InitDX(wxSize(w, displayH));
+				if (!InitDX(wxSize(w, displayH)))
+					return;
+
 				UpdateImage(false, true);
 			}
 			return;

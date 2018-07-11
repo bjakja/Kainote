@@ -191,6 +191,7 @@ void Position::ChangeMultiline(bool all)
 	bool skipInvisible = !all && tab->Video->GetState() != Playing;
 	int _time = tab->Video->Tell();
 	int moveLength = 0;
+	const wxString &tlStyle = tab->Grid->GetSInfo("TLMode Style");
 	for (size_t i = 0; i < data.size(); i++){
 
 		Dialogue *Dial = data[i].dial;
@@ -216,7 +217,7 @@ void Position::ChangeMultiline(bool all)
 				Cpy.TextTl = txt;
 				wxString tlLines;
 				Cpy.GetRaw(&tlLines, true);
-				Cpy.GetRaw(&tlLines, false, tab->Grid->GetSInfo("TLMode Style"));
+				Cpy.GetRaw(&tlLines, false, tlStyle);
 				dtxt->insert(selPositions[i] + moveLength, tlLines);
 				moveLength += tlLines.Len();
 			}
