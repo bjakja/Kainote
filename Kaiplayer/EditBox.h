@@ -30,7 +30,6 @@
 #include "KaiStaticText.h"
 #include "MenuButton.h"
 
-class KainoteFrame;
 class SubsGrid;
 
 
@@ -75,7 +74,7 @@ private:
 class EditBox : public wxWindow
 {
 public:
-	EditBox(wxWindow *parent, SubsGrid *grid1, KainoteFrame *kaif, int idd);
+	EditBox(wxWindow *parent, SubsGrid *grid, int idd);
 	virtual ~EditBox();
 	void SetLine(int Row, bool setaudio=true, bool save=true, bool nochangeline=false, bool autoPlay = false);
 	void SetTl(bool tl);

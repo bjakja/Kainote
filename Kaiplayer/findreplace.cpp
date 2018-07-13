@@ -99,7 +99,7 @@ void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine)
 void FindReplace::Find(TabWindow *window)
 {
 	if (window->windowType == WINDOW_FIND_IN_SUBS){
-		KaiLog("chujnia replace all wywołane z okna find in subs");
+		KaiLogDebug("chujnia replace all wywołane z okna find in subs");
 		return;
 	}
 	TabPanel *tab = Kai->GetTab();
@@ -127,11 +127,12 @@ void FindReplace::Find(TabWindow *window)
 		find1 << "$";
 	}
 
-	//Kai->Freeze();
-
 	wxString txt;
 	int foundPosition = -1;
 	size_t mlen = 0;
+
+seekFromStart:
+
 	bool foundsome = false;
 	if (fromstart){
 		int firstSelectionId = tab->Grid->FirstSelection();
@@ -260,31 +261,26 @@ void FindReplace::Find(TabWindow *window)
 		}
 		else{ textPosition = 0; linePosition++; }
 		if (!foundsome && linePosition > Subs->dials.size() - 1){
-			blockTextChange = true;
-			if (wasResetToStart){
-				wasResetToStart = false;
-				break;
-			}
-			else if (KaiMessageBox(_("Wyszukiwanie zakończone, rozpocząć od początku?"), _("Potwierdzenie"),
-				wxICON_QUESTION | wxYES_NO, FRD) == wxYES){
-				linePosition = 0;
-				wasResetToStart = true;
-			}
-			else{
-				linePosition = 0;
-				foundsome = true;
-				break;
-			}
+			break;
 		}
 	}
 	if (!foundsome){
 		blockTextChange = true;
-		KaiMessageBox(_("Nie znaleziono podanej frazy \"") + window->FindText->GetValue() + "\".", _("Potwierdzenie"));
 		linePosition = 0;
 		fromstart = true;
+		if (!wasResetToStart){
+			if (KaiMessageBox(_("Wyszukiwanie zakończone, rozpocząć od początku?"), _("Potwierdzenie"),
+				wxICON_QUESTION | wxYES_NO, FRD) == wxYES){
+				wasResetToStart = true;
+				goto seekFromStart;
+			}
+		}
+		else{
+			KaiMessageBox(_("Nie znaleziono podanej frazy \"") + window->FindText->GetValue() + "\".", _("Potwierdzenie"));
+			wasResetToStart = false;
+		}
 	}
 	if (fromstart){ AddRecent(window); fromstart = false; }
-	//Kai->Thaw();
 }
 
 void FindReplace::OnFind(TabWindow *window)

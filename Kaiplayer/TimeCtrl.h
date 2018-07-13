@@ -19,11 +19,14 @@
 #include "SubsTime.h"
 #include "KaiTextCtrl.h"
 
+class VideoCtrl;
+
 class TimeCtrl : public KaiTextCtrl
 {
    public:
 	TimeCtrl(wxWindow* parent, const long int id, const wxString& val="0:00:00.00", const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=0,const wxValidator& validator=wxDefaultValidator, const wxString& name=wxTextCtrlNameStr);
 	virtual ~TimeCtrl();
+	void SetVideoCtrl(VideoCtrl *_vb){ vb = _vb; };
 	//0 dont setup frame, 1 start frame, 2 end frame,
 	void SetTime(const STime &newtime, bool stillModified=false, int opt = 0);
 	//0 nothing, 1 -halframe (start), 2 +halfframe (end),
@@ -53,6 +56,7 @@ private:
 	void OnKeyEvent(wxKeyEvent& event);
 	//void OnPaste(wxCommandEvent &event);
 	//void OnCopy(wxCommandEvent &event);
+	VideoCtrl *vb = NULL;
 
 	DECLARE_EVENT_TABLE()
 };

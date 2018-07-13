@@ -132,6 +132,9 @@ class VideoRenderer : public wxWindow
 		void GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd);
 		int GetFrameTimeFromTime(int time, bool start = true);
 		int GetFrameTimeFromFrame(int frame, bool start = true);
+		//if nothing loaded or loaded via Direct Show VFF is NULL
+		//return true if VFF is present
+		//bool GetStartEndDurationFromMS(Dialogue *dial, STime &duration);
 		int GetPlayEndTime(int time);
 		int GetDuration();
 		int GetVolume();

@@ -568,22 +568,31 @@ void SubsGridWindow::AdjustWidths(int cell)
 		}
 	}
 
+	
 	if (START & cell){
 		STime start(startMax);
+		bool canShowFrames = showFrames;
 		if (showFrames){
 			VideoFfmpeg *VFF = ((TabPanel*)GetParent())->Video->VFF;
-			start.orgframe = VFF->GetFramefromMS(start.mstime);
+			if (VFF)
+				start.orgframe = VFF->GetFramefromMS(start.mstime);
+			else
+				canShowFrames = false;
 		}
-		dc.GetTextExtent(start.raw(showFrames ? FRAME : subsFormat), &fw, &fh);
+		dc.GetTextExtent(start.raw(canShowFrames ? FRAME : subsFormat), &fw, &fh);
 		stw = fw + 10;
 	}
 	if (END & cell){
 		STime end(endMax);
+		bool canShowFrames = showFrames;
 		if (showFrames){
 			VideoFfmpeg *VFF = ((TabPanel*)GetParent())->Video->VFF;
-			end.orgframe = VFF->GetFramefromMS(end.mstime);
+			if (VFF)
+				end.orgframe = VFF->GetFramefromMS(end.mstime);
+			else
+				canShowFrames = false;
 		}
-		dc.GetTextExtent(end.raw(showFrames ? FRAME : subsFormat), &fw, &fh);
+		dc.GetTextExtent(end.raw(canShowFrames ? FRAME : subsFormat), &fw, &fh);
 		edw = fw + 10;
 	}
 

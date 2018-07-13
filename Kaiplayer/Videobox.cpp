@@ -240,7 +240,9 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 	bool shown = true;
 	block = true;
 	if (!OpenFile(fileName, subsName, !byFFMS2, !Kai->GetTab()->editor, changeAudio)){
-		delete subsName; block = false; return false;
+		delete subsName; block = false; 
+		if (!byFFMS2){ KaiMessageBox(_("Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\nbądź brakuje kodeków czy też splittera"), _("Uwaga")); }
+		return false;
 	}
 	if (!(IsShown() || (TD && TD->IsShown()))){
 		shown = false; Show();
@@ -248,10 +250,11 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 
 	eater = IsDshow;
 
+	TabPanel *tab = (TabPanel*)GetParent();
 	if (!isFullscreen&&!fulls){
 		int sx, sy;
 		//wyłączony edytor
-		if (!Kai->GetTab()->editor){
+		if (!tab->editor){
 			if (!Kai->IsMaximized()){
 				int sizex, sizey;
 				Kai->GetSize(&sizex, &sizey);
@@ -263,7 +266,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 				}
 				else{
 					Kai->SetClientSize(sx, sy);
-					Kai->GetTab()->BoxSizer1->Layout();
+					tab->BoxSizer1->Layout();
 				}
 			}
 			//załączony edytor
@@ -274,7 +277,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 			bool ischanged = CalcSize(&sx, &sy, kw, kh, true, true);
 			if (ischanged || !shown){
 				SetMinSize(wxSize(sx, sy + panelHeight));
-				Kai->GetTab()->BoxSizer1->Layout();
+				tab->BoxSizer1->Layout();
 			}
 			Options.SetCoords(VideoWindowSize, sx, sy + panelHeight);
 		}
@@ -288,7 +291,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 	//block = false;
 	if (IsDshow){
 		Play();
-		if (Kai->GetTab()->editor && !isFullscreen){ Pause(); }
+		if (tab->editor && !isFullscreen){ Pause(); }
 		if (!volslider->IsShown()){ volslider->Show(); mstimes->SetSize(lastSize.x - 290, -1); }
 	}
 	else{
@@ -307,11 +310,11 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 		SetVolume(-(pos*pos));
 	}
 	//SetFocus();
-	Kai->GetTab()->VideoPath = fileName;
-	Kai->GetTab()->VideoName = fileName.AfterLast('\\');
-	Kai->SetStatusText(Kai->GetTab()->VideoName, 8);
-	if (TD){ TD->Videolabel->SetLabelText(Kai->GetTab()->VideoName); }
-	if (!Kai->GetTab()->editor){ Kai->Label(0, true); }
+	tab->VideoPath = fileName;
+	tab->VideoName = fileName.AfterLast('\\');
+	Kai->SetStatusText(tab->VideoName, 8);
+	if (TD){ TD->Videolabel->SetLabelText(tab->VideoName); }
+	if (!tab->editor){ Kai->Label(0, true); }
 	Kai->SetStatusText(getfloat(fps) + " FPS", 4);
 	wxString tar;
 	tar << ax << " : " << ay;
@@ -320,9 +323,14 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 	kkk1.mstime = GetDuration();
 	Kai->SetStatusText(kkk1.raw(SRT), 3);
 	Kai->SetRecent(1);
-	if (Kai->GetTab()->editor && (!isFullscreen || IsShown()) &&
-		Kai->GetTab()->SubsPath != "" && Options.GetBool(OpenVideoAtActiveLine)){
-		Seek(Kai->GetTab()->Edit->line->Start.mstime);
+	
+	if (tab->editor && (!isFullscreen || IsShown()) &&
+		tab->SubsPath != "" && Options.GetBool(OpenVideoAtActiveLine)){
+		Seek(tab->Edit->line->Start.mstime);
+	}
+	if (Options.GetBool(EDITBOX_TIMES_TO_FRAMES_SWITCH)){
+		tab->Edit->SetLine(tab->Grid->currentLine);
+		tab->Grid->RefreshColumns(START | END);
 	}
 	SetScaleAndZoom();
 	ChangeStream();

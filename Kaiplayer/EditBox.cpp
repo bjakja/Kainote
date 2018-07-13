@@ -131,7 +131,7 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 
 
 
-EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, KainoteFrame* kaif, int idd)
+EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	: wxWindow(parent, idd, wxDefaultPosition, wxDefaultSize/*, wxBORDER_SIMPLE*/)//|wxCLIP_CHILDREN
 	, EditCounter(1)
 	, ABox(NULL)
@@ -203,7 +203,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, KainoteFrame* kaif, int idd)
 	TlMode->Enable(false);
 	Chars = new KaiStaticText(this, -1, _("Linie: 0/86"));
 	Chtime = new KaiStaticText(this, -1, _("Znaki na sekundę: 0<=15"));
-	bool asFrames = false;//Options.GetBool(EDITBOX_TIMES_TO_FRAMES_SWITCH);
+	bool asFrames = Options.GetBool(EDITBOX_TIMES_TO_FRAMES_SWITCH);
 	Times = new KaiRadioButton(this, ID_TIMES_FRAMES, _("Czas"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
 	Times->SetValue(!asFrames);
 	Times->Enable(false);
@@ -342,7 +342,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 {
 	//if (!grid->GetCount()){ Enable(false); return; }
 	//else if (!IsEnabled()){ Enable(); }
-	TabPanel* pan = (TabPanel*)GetParent();
+	TabPanel* tab = (TabPanel*)GetParent();
 	bool rowChanged = currentLine != Row;
 	if (nochangeline && !rowChanged){ goto done; }
 	if (Options.GetInt(GridSaveAfterCharacterCount) > 1 && rowChanged && save){
@@ -398,20 +398,11 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	UpdateChars((TextEditOrig->IsShown() && line->TextTl != "") ? line->TextTl : line->Text);
 	//ustawia clip/inny visual gdy jest włączony
 	if (Visual > CHANGEPOS){
-		pan->Video->SetVisual(false, true);
+		tab->Video->SetVisual(false, true);
 	}
 
-	//resetuje edycję na wideo
-	//if(OnVideo){
-	//	if(pan->Video->IsShown() || pan->Video->isFullscreen){
-	//		pan->Video->OpenSubs(grid->GetVisible()/*SaveText()*/); 
-	//		if(pan->Video->GetState()==Paused){pan->Video->Render();}
-	//	}
-	//	//OnVideo=false;
-	//}
-
 done:
-	VideoCtrl *vb = pan->Video;
+	VideoCtrl *vb = tab->Video;
 	int pas = vb->vToolbar->videoPlayAfter->GetSelection();
 	int vsa = vb->vToolbar->videoSeekAfter->GetSelection();
 	if (vsa == 1 && pas < 2 && !nochangeline && rowChanged){
@@ -431,17 +422,17 @@ done:
 			}
 		}
 		else{
-			if (pan->Video->IsShown() || pan->Video->isFullscreen){
+			if (tab->Video->IsShown() || tab->Video->isFullscreen){
 				Dialogue *next = grid->GetDialogue(MIN(currentLine + 1, grid->GetCount() - 1));
 				int ed = line->End.mstime, nst = next->Start.mstime;
 				int playend = (nst > ed && pas > 2) ? nst : ed;
-				pan->Video->PlayLine(line->Start.mstime, pan->Video->GetPlayEndTime(playend));
+				tab->Video->PlayLine(line->Start.mstime, tab->Video->GetPlayEndTime(playend));
 			}
 		}
 	}
 	//ustawia czas i msy na polu tekstowym wideo
-	if (pan->Video->IsShown() && pan->Video->GetState() != None && vsa == 0){
-		pan->Video->RefreshTime();
+	if (tab->Video->IsShown() && tab->Video->GetState() != None && vsa == 0){
+		tab->Video->RefreshTime();
 	}
 
 }
@@ -1364,7 +1355,6 @@ void EditBox::OnEdit(wxCommandEvent& event)
 {
 	//subs preview will switch grid to preview grid that's why we need to change its video, we dont want to change subtitles
 	TabPanel* panel = (TabPanel*)grid->GetParent();
-	//Start time - halfframe / end time + halfframe
 	bool startEndFocus = StartEdit->HasFocus() || EndEdit->HasFocus();
 	bool durFocus = DurEdit->HasFocus();
 

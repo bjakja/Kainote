@@ -495,3 +495,13 @@ TabWindow * FindReplaceDialog::GetTab()
 {
 	return (TabWindow *)findReplaceTabs->GetTab();
 }
+
+void FindReplaceDialog::Reset()
+{
+	FR->fromstart = true;
+	FR->fnext = false;
+	TabWindow *tab = GetTab();
+	bool tlMode = Kai->GetTab()->Grid->hasTLMode;
+	tab->CollumnTextOriginal->Enable(tlMode);
+	if (!tlMode && tab->CollumnTextOriginal->GetValue()){ tab->CollumnText->SetValue(true); }
+}

@@ -632,6 +632,7 @@ void ShiftTimesWindow::ChangeDisplayUnits(bool times)
 		TimeText->SetTime(ct);
 	}
 }
+
 BEGIN_EVENT_TABLE(ShiftTimesWindow,wxWindow)
 EVT_SIZE(ShiftTimesWindow::OnSize)
 EVT_COMMAND_SCROLL_THUMBTRACK(5558,ShiftTimesWindow::OnScroll)

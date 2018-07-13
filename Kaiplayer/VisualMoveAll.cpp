@@ -230,6 +230,7 @@ wxString MoveAll::GetVisual()
 
 void MoveAll::ChangeInLines(bool all)
 {
+	bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 	//D3DXVECTOR2 moving;
 	D3DXVECTOR2 moving = elems[numElem].elem - beforeMove;
 	int _time = tab->Video->Tell();
@@ -323,8 +324,10 @@ void MoveAll::ChangeInLines(bool all)
 			if (istexttl) {
 				Cpy.TextTl = txt;
 				wxString tlLines;
+				if(showOriginalOnVideo)
+					Cpy.GetRaw(&tlLines, false, tlModeStyle);
+
 				Cpy.GetRaw(&tlLines, true);
-				Cpy.GetRaw(&tlLines, false, tlModeStyle);
 				dtxt->insert(selPositions[i] + moveLength, tlLines);
 				moveLength += tlLines.Len();
 			}

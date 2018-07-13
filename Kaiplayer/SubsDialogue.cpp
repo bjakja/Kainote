@@ -229,12 +229,12 @@ void Dialogue::SetRaw(const wxString &ldial)
 
 }
 
-void Dialogue::GetRaw(wxString *txt, bool tl, const wxString &style)
+void Dialogue::GetRaw(wxString *txt, bool tl/*=false*/, const wxString &style/*=""*/, bool hideOriginalOnVideo /*= false*/)
 {
 	wxString line;
 	if (Format < SRT){
 		if (NonDialogue){ (*txt) << Text << "\r\n"; return; }
-		if (IsComment){ line = _T("Comment: "); }
+		if (IsComment || hideOriginalOnVideo){ line = _T("Comment: "); }
 		else{ line = _T("Dialogue: "); }
 		bool styleTl = style != "";
 		const wxString &Styletl = (styleTl) ? style : Style;

@@ -651,6 +651,7 @@ void Visuals::SetVisual(bool dummy, int type)
 	MTextEditor *Editor = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
 	//działanie dwuetapowe, pierwszy etap podmieniamy w wielu linijkach
 	if (edit->IsCursorOnStart()){
+		bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 		wxString *dtxt;
 		wxArrayInt sels;
 		tab->Grid->file->GetSelections(sels);
@@ -689,8 +690,10 @@ void Visuals::SetVisual(bool dummy, int type)
 				if (istxttl) {
 					Cpy.TextTl = txt;
 					wxString tlLines;
+					if (showOriginalOnVideo)
+						Cpy.GetRaw(&tlLines, false, tlStyle);
+
 					Cpy.GetRaw(&tlLines, true);
-					Cpy.GetRaw(&tlLines, false, tlStyle);
 					dtxt->insert(selPositions[i] + moveLength, tlLines);
 					moveLength += tlLines.Len();
 				}

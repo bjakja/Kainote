@@ -1003,7 +1003,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 		if (tab->Video->GetState() != None){
 			if (!found){
 				bool isgood = tab->Video->OpenSubs((tab->editor) ? tab->Grid->GetVisible() : 0);
-				if (!isgood){ KaiMessageBox(_("Otwieranie napisów nie powiodło się"), "Uwaga"); }
+				if (!isgood){ KaiMessageBox(_("Nie można otworzyć napisów"), _("Uwaga")); }
 				else{ tab->Video->Render(); }
 			}
 			tab->Video->vToolbar->DisableVisuals(ext != "ass");
@@ -1464,7 +1464,6 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 			bool isload = tab->Video->LoadVideo(videos[i], (tab->editor) ? tab->Grid->GetVisible() : 0);
 
 			if (!isload){
-				if (tab->Video->IsDshow){ KaiMessageBox(_("Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\nbądź brakuje kodeków czy też splittera"), _("Uwaga")); }
 				break;
 			}
 			tab->Edit->Frames->Enable(!tab->Video->IsDshow);
@@ -1572,7 +1571,7 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 		}
 	}
 	if (StyleStore::HasStore() && StyleStore::Get()->IsShown()){ StyleStore::Get()->LoadAssStyles(); }
-	//if (FR){ FR->Reset(); FR->ReloadStyle(); }
+	if (FR){ FR->Reset(); }
 }
 
 void KainoteFrame::HideEditor(bool save)

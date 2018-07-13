@@ -1753,3 +1753,17 @@ void VideoRenderer::GoToPrevKeyframe()
 	}
 	SetPosition(VFF->KeyFrames[VFF->KeyFrames.size() - 1]);
 }
+
+//bool VideoRenderer::GetStartEndDurationFromMS(Dialogue *dial, STime &duration)
+//{
+//	duration = dial->End - dial->Start;
+//	if (VFF){
+//		//start frame
+//		dial->Start.orgframe = VFF->GetFramefromMS(dial->Start.mstime);
+//		//end frame
+//		dial->End.orgframe = VFF->GetFramefromMS(dial->End.mstime);
+//		dial->End.orgframe--;
+//		//duration frame
+//		duration.orgframe = dial->End.orgframe - dial->Start.orgframe + 1;
+//	}
+//}

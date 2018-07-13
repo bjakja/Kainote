@@ -229,20 +229,16 @@ void TimeCtrl::SetTime(const STime &newtime, bool stillModified, int opt)
 	timeUnchanged = true;
 	mTime = newtime;
 	form = mTime.GetFormat();
-	bool useFrame = showFrames;
-	if (showFrames && opt){
-		VideoCtrl *vb = ((TabPanel *)Notebook::GetTab())->Video;
-		if (vb->VFF){
-			mTime.orgframe = vb->VFF->GetFramefromMS(mTime.mstime);
-			//opt 2 = end frame
-			if (opt == 2) 
-				mTime.orgframe--; 
-		}
-		else
-			useFrame = false;
-		//no else, when no FFMS2 there is no frames
+	bool canShowFrames = showFrames && vb && vb->VFF;
+
+	if (canShowFrames && opt){
+		mTime.orgframe = vb->VFF->GetFramefromMS(mTime.mstime);
+		//opt 2 = end frame
+		if (opt == 2) 
+			mTime.orgframe--; 
 	}
-	SetValue(mTime.raw(useFrame ? FRAME : form), stillModified);
+
+	SetValue(mTime.raw(canShowFrames ? FRAME : form), stillModified);
 	if (stillModified){
 		SetForegroundColour(WindowWarningElements);
 		changedBackGround = true;
@@ -251,17 +247,15 @@ void TimeCtrl::SetTime(const STime &newtime, bool stillModified, int opt)
 //0 nothing, 1 -halframe (start), 2 +halfframe (end)
 STime TimeCtrl::GetTime(char opt)
 {
-	mTime.SetRaw(GetValue(), showFrames ? FRAME : form);
-	if (showFrames && !timeUnchanged){
+	bool canShowFrames = showFrames && vb && vb->VFF;
+	mTime.SetRaw(GetValue(), canShowFrames ? FRAME : form);
+	if (canShowFrames && !timeUnchanged){
 		STime cpy = STime(mTime);
 		cpy.ChangeFormat(form);
-		VideoCtrl *vb = ((TabPanel *)Notebook::GetTab())->Video;
-		if (vb->VFF){
+		int time = (!opt) ? vb->VFF->GetMSfromFrame(cpy.orgframe) :
+			vb->GetFrameTimeFromFrame(cpy.orgframe, opt == 1);
 
-			int time = (!opt) ? vb->VFF->GetMSfromFrame(cpy.orgframe) :
-				vb->GetFrameTimeFromFrame(cpy.orgframe, opt == 1);
-			cpy.mstime = ZEROIT(time);
-		}
+		cpy.mstime = ZEROIT(time);
 		return cpy;
 	}
 	else{

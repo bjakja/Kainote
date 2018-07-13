@@ -32,14 +32,14 @@ public:
 		Store(sh, false);
 	}
 	~StoreHelper(){
-		if (*deleteReference < 1 && stored){ 
-			delete stored; stored = NULL; delete deleteReference; deleteReference = NULL; 
+		if (*deleteReference < 1 && stored){
+			delete stored; stored = NULL; delete deleteReference; deleteReference = NULL;
 		}
-		else{ 
-			(*deleteReference)--; 
+		else{
+			(*deleteReference)--;
 		}
 	};
-	void Store(const StoreHelper &sh, bool copy){ 
+	void Store(const StoreHelper &sh, bool copy){
 		assert(sh.stored);
 		if (*deleteReference < 1 && stored != sh.stored){
 			delete stored; stored = NULL;
@@ -84,9 +84,9 @@ public:
 		assert(stored);
 		return !(*stored);
 	}
-	unsigned char &operator *(){ 
+	unsigned char &operator *(){
 		assert(stored);
-		return *stored; 
+		return *stored;
 	};
 private:
 	unsigned char *stored = new unsigned char(1);
@@ -102,13 +102,13 @@ public:
 	}
 	/*StoreTextHelper(const wxString &txt){
 		StoreText(txt);
-	}
-	StoreTextHelper(const char *txt){
+		}
+		StoreTextHelper(const char *txt){
 		StoreText(txt);
-	}
-	StoreTextHelper(const wchar_t *txt){
+		}
+		StoreTextHelper(const wchar_t *txt){
 		StoreText(txt);
-	}*/
+		}*/
 	~StoreTextHelper(){
 		if (*deleteReference < 1){
 			delete stored; stored = NULL;
@@ -129,7 +129,7 @@ public:
 		stored = sh.stored;
 		deleteReference = sh.deleteReference;
 		(*deleteReference)++;
-		
+
 	};
 	void StoreText(const wxString &txt){
 		if (*deleteReference < 1){
@@ -146,13 +146,13 @@ public:
 		Store(sh);
 		return *this;
 	}
-	
+
 	StoreTextHelper &operator =(const wxString &newString){
 		StoreText(newString);
 		return *this;
 	}
-	operator const wxString&(){ 
-		return *stored; 
+	operator const wxString&(){
+		return *stored;
 	}
 	bool operator !=(const wxString &comptext) const{ return comptext != (*stored); };
 	bool operator !=(const char *comptext) const{ return comptext != (*stored); };
@@ -173,12 +173,12 @@ public:
 		return *stored;
 	};
 	//Operator kopiuje wskaŸnik gdy mamy dodatkowe u¿ycia w przeciwnym razie to nie jest w ogóle potrzebne.
-	wxString *operator ->(){ 
+	wxString *operator ->(){
 		if ((*deleteReference) > 0){ StoreText(*stored); }
-		return stored; 
+		return stored;
 	}
-	wxString &CheckTlRef(StoreTextHelper &TextTl, bool condition){ 
-		if (condition) { 
+	wxString &CheckTlRef(StoreTextHelper &TextTl, bool condition){
+		if (condition) {
 			return *TextTl.Copy();
 		}
 		else {
@@ -193,8 +193,8 @@ public:
 			return *stored;
 		}
 	}
-	size_t Len() const{ 
-		return stored->Len(); 
+	size_t Len() const{
+		return stored->Len();
 	}
 	int CmpNoCase(const StoreTextHelper &TextTl) const{
 		return stored->CmpNoCase(*TextTl.stored);
@@ -209,7 +209,7 @@ public:
 		return stored->mb_str(conv);
 	}
 	wxString *Copy(){
-		if ((*deleteReference) > 0){ StoreText(*stored); } 
+		if ((*deleteReference) > 0){ StoreText(*stored); }
 		return stored;
 	}
 private:
@@ -260,15 +260,15 @@ public:
 	void ChangeDialogueState(char state);
 	bool IsDoubtful(){ return (State & 4) > 0; };
 	void SetRaw(const wxString &ldial);
-	void GetRaw(wxString *txt,bool tl=false,const wxString &style="");
-	wxString GetCols(int cols, bool tl=false,const wxString &style="");
-	void Convert(char type,const wxString &pref="");
-	Dialogue *Copy(bool keepstate=false, bool copyIsVisible = true);
+	void GetRaw(wxString *txt, bool tl = false, const wxString &style = "", bool hideOriginalOnVideo = false);
+	wxString GetCols(int cols, bool tl = false, const wxString &style = "");
+	void Convert(char type, const wxString &pref = "");
+	Dialogue *Copy(bool keepstate = false, bool copyIsVisible = true);
 	void ParseTags(wxString *tags, size_t n, bool plainText = false);
 	void ChangeTimes(int start, int end);
 	void ClearParse();
 	Dialogue();
-	Dialogue(const wxString &ldial,const wxString &txttl="");
+	Dialogue(const wxString &ldial, const wxString &txttl = "");
 	~Dialogue();
 };
 

@@ -312,6 +312,7 @@ void SubsGridBase::Convert(char type)
 void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromEditbox)
 {
 	int saveAfterCharacterCount = Options.GetInt(GridSaveAfterCharacterCount);
+	bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 	bool dummyEditboxChanges = (loadFromEditbox && !saveAfterCharacterCount);
 	if (dummyEditboxChanges || saveAfterCharacterCount > 1){
 		Edit->Send(EDITBOX_LINE_EDITION, false, dummyEditboxChanges, true);
@@ -361,7 +362,9 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 			if (tlmodeOn){
 				bool hasTextTl = dial->TextTl != "";
 				if (!translated && (hasTextTl || dial->IsDoubtful())){
-					dial->GetRaw(&raw, false, txt);
+					if (showOriginalOnVideo)
+						dial->GetRaw(&raw, false, txt);
+
 					dial->GetRaw(&raw, true);
 				}
 				else{
@@ -389,7 +392,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 			if (tlmodeOn){
 				bool hasTextTl = dial->TextTl != "";
 				if (!translated && (hasTextTl || dial->IsDoubtful())){
-					dial->GetRaw(&raw, false, txt);
+					dial->GetRaw(&raw, false, txt, showOriginalOnVideo);
 					dial->GetRaw(&raw, true);
 				}
 				else{
@@ -1493,6 +1496,7 @@ wxString *SubsGridBase::SaveText()
 
 wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *selected)
 {
+	bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 	TabPanel *pan = (TabPanel*)GetParent();
 	int _time = pan->Video->Tell();
 	bool toEnd = pan->Video->GetState() == Playing;
@@ -1530,7 +1534,9 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 		}
 		if ((toEnd && _time <= dial->Start.mstime) || (_time >= dial->Start.mstime && _time < dial->End.mstime)){
 			if (isTlmode && dial->TextTl != ""){
-				dial->GetRaw(txt, false, tlStyle);
+				if (showOriginalOnVideo)
+					dial->GetRaw(txt, false, tlStyle);
+
 				dial->GetRaw(txt, true);
 			}
 			else{

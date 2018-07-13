@@ -631,6 +631,7 @@ bool ScaleRotation::SeekTags(const wxString &text, const wxString &pattern, wxSt
 
 void ScaleRotation::ChangeInLines(bool dummy)
 {
+	bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 	if (isOrg && selectedTool < 1)
 		isOrg = false;
 
@@ -728,8 +729,10 @@ void ScaleRotation::ChangeInLines(bool dummy)
 			if (istexttl) {
 				Cpy.TextTl = txt;
 				wxString tlLines;
+				if (showOriginalOnVideo)
+					Cpy.GetRaw(&tlLines, false, tlModeStyle);
+
 				Cpy.GetRaw(&tlLines, true);
-				Cpy.GetRaw(&tlLines, false, tlModeStyle);
 				dtxt->insert(selPositions[i] + moveLength, tlLines);
 				moveLength += tlLines.Len();
 			}

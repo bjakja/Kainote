@@ -192,6 +192,7 @@
 	CG(SubsRecent,)\
 	CG(TextFieldAllowNumpadHotkeys,)\
 	CG(TlModeShowOriginal,)\
+	CG(TL_MODE_HIDE_ORIGINAL_ON_VIDEO,)\
 	CG(ToolbarIDs,)\
 	CG(ToolbarAlignment,)\
 	CG(UpdaterCheckIntensity,)\

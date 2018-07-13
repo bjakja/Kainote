@@ -275,7 +275,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 	//Main
 	{
-		const int optsSize = 15;
+		const int optsSize = 16;
 		wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
 		wxString labels[optsSize] = { _("Wczytywanie posortowanych napisów"), _("Włącz sprawdzanie pisowni"),
 			_("Zaznaczaj linijkę z czasem aktywnej\nlinijki poprzedniej zakładki"),
@@ -284,13 +284,15 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			_("Wyłącz pokazywanie edycji na wideo\n(wymaga ponownego otwarcia zakładek)"),
 			_("Włącz szukanie widocznej linii\npo wyjściu z pełnego ekranu"),
 			_("Włącz przenoszenie wartości pola przesuwania czasów"), _("Zmieniaj aktywną linię przy zaznaczaniu"),
-			_("Pokazuj oryginał w trybie tłumaczenia"), _("Używaj skróty klawiszowe numpada w polach tekstowych"),
+			_("Pokazuj oryginał w trybie tłumaczenia"), _("Ukryj oryginał na wideo w trybie tłumaczenia"),
+			_("Używaj skróty klawiszowe numpada w polach tekstowych"),
 			_("Wyłącz ostrzerzenia w narzędziach edycji wizualnej"), _("Nie ostrzegaj o niezgodności rozdzielczości"),
 			_("Kompatybilność ze starymi skryptami Kainote") };
 		CONFIG opts[optsSize] = { GridLoadSortedSubs, SpellcheckerOn, AutoSelectLinesFromLastTab,
 			EditboxSugestionsOnDoubleClick, OpenSubsInNewCard, NoNewLineAfterTimesEdition,
 			DisableLiveVideoEditing, SelectVisibleLineAfterFullscreen, MoveTimesLoadSetTabOptions,
-			GridChangeActiveOnSelection, TlModeShowOriginal, TextFieldAllowNumpadHotkeys, VisualWarningsOff,
+			GridChangeActiveOnSelection, TlModeShowOriginal, TL_MODE_HIDE_ORIGINAL_ON_VIDEO,
+			TextFieldAllowNumpadHotkeys, VisualWarningsOff,
 			DontAskForBadResolution, AutomationOldScriptsCompatybility };
 
 		wxString langopts[2] = { "Polski", "English" };

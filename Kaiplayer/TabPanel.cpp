@@ -34,7 +34,11 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	Video = new VideoCtrl(this, kai, wxSize(vw, vh));
 	Video->Hide();
 	Grid = new SubsGrid(this, kai, -1, wxDefaultPosition, wxSize(400, 200),/*wxBORDER_SIMPLE|*/wxWANTS_CHARS);//
-	Edit = new EditBox(this, Grid, kai, -1);
+	Edit = new EditBox(this, Grid, -1);
+	//check if there is nothing in constructor that crash or get something wrong when construct
+	Edit->StartEdit->SetVideoCtrl(Video);
+	Edit->EndEdit->SetVideoCtrl(Video);
+	Edit->DurEdit->SetVideoCtrl(Video);
 	Edit->SetMinSize(wxSize(-1, 200));
 	Edit->SetLine(0);
 

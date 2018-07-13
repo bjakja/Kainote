@@ -69,6 +69,7 @@ public:
 	virtual ~FindReplaceDialog();
 	void ShowDialog(int whichWindow);
 	void SaveOptions();
+	void Reset();
 private:
 	void OnActivate(wxActivateEvent& event);
 	void OnEnterConfirm(wxCommandEvent& event);
