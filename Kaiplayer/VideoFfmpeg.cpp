@@ -231,17 +231,6 @@ int VideoFfmpeg::Init()
 		if (ismkv){
 			MatroskaWrapper mw;
 			if (mw.Open(fname, false)){
-				if (hasMoreAudioTracks){
-					for (size_t j = 0; j < audiotable.size(); j++){
-						TrackInfo* ti = mkv_GetTrackInfo(mw.file, audiotable[j]);
-						if (!ti)
-							continue;
-						wxString all;
-						char *opis = (ti->Name) ? ti->Name : ti->Language;
-						all << audiotable[j] << ": " << wxString(opis, wxConvUTF8);
-						tracks.Add(all);
-					}
-				}
 				Chapter *chap = NULL;
 				UINT nchap = 0;
 				mkv_GetChapters(mw.file, &chap, &nchap);
@@ -252,6 +241,35 @@ int VideoFfmpeg::Init()
 						ch.name = wxString(chap->Children[i].Display->String, wxConvUTF8);
 						ch.time = (int)(chap->Children[i].Start / 1000000.0);
 						rend->chaps.push_back(ch);
+					}
+				}
+				if (hasMoreAudioTracks){
+					wxArrayString enabled;
+					Options.GetTable(AcceptedAudioStream, enabled, ";");
+					int enabledSize = enabled.GetCount();
+					int lowestIndex = enabledSize;
+					for (size_t j = 0; j < audiotable.GetCount(); j++){
+						TrackInfo* ti = mkv_GetTrackInfo(mw.file, audiotable[j]);
+						if (!ti)
+							continue;
+						if (enabledSize){
+							int index = enabled.Index(ti->Language, false);
+							if (index > -1 && index < lowestIndex){
+								lowestIndex = index;
+								audiotrack = audiotable[j];
+								continue;
+							}
+						}
+						wxString all;
+						char *description = (ti->Name) ? ti->Name : ti->Language;
+						all << audiotable[j] << ": " << wxString(description, wxConvUTF8);
+						tracks.Add(all);
+					}
+					if (lowestIndex < enabledSize){
+						tracks.Clear();
+						hasMoreAudioTracks = false;
+						mw.Close();
+						goto done;
 					}
 				}
 				mw.Close();

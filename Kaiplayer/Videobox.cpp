@@ -1336,7 +1336,7 @@ void VideoCtrl::ChangeStream()
 	//int firstSubsStream = -1;
 	int numofastreams = 0;
 	for (int i = streams.size() - 1; i >= 0; i--){
-		if (streams[i][0] == 'A' && streams[i][0] == 'a'){
+		if (streams[i][0] == 'A'){
 			streams[i] = streams[i].AfterFirst(' ').Lower();
 			numofastreams++;
 			continue;
@@ -1347,15 +1347,23 @@ void VideoCtrl::ChangeStream()
 		streams[i] = "";
 	}
 	if (numofastreams > 1){
+		long streamToChange = 0;
+		int enabledSize = enabled.size();
+		int lowestIndex = enabledSize;
+
 		for (int i = 0; i < (int)streams.size(); i++){
 			if (streams[i] == ""){ continue; }
-			for (int j = 0; j < (int)enabled.size(); j++){
-				if (streams[i].Lower().find(enabled[j]) != -1){
-					if (streams[i].AfterLast(' ') == "0"){
-						EnableStream((long)i);
-					}
-					return;
+			for (int j = 0; j < (int)enabledSize; j++){
+				size_t result = streams[i].Lower().find(L"[" + enabled[j] + L"]");
+				if (result != wxNOT_FOUND && j < lowestIndex){
+					lowestIndex = j;
+					streamToChange = i;
 				}
+			}
+		}
+		if (lowestIndex < enabledSize){
+			if (streams[streamToChange].AfterLast(' ') == "0"){
+				EnableStream(streamToChange);
 			}
 		}
 	}
