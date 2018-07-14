@@ -954,7 +954,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 				prompt = _("Skojarzone pliki:\n"); flags |= wxOK;
 				if (hasVideoPath){ prompt += _("Wideo: ") + videopath + "\n"; }
 				if (hasAudioPath){ prompt += _("Audio: ") + audiopath + "\n"; }
-				if (hasAudioPath){ prompt += _("Klatki kluczowe: ") + keyframespath + "\n"; }
+				if (hasKeyframePath){ prompt += _("Klatki kluczowe: ") + keyframespath + "\n"; }
 			}
 			if (!secondFileName.empty()){
 				if (!prompt.empty()){ prompt += "\n"; }

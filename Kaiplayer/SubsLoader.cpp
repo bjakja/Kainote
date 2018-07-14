@@ -102,14 +102,14 @@ bool SubsLoader::LoadASS(const wxString &text)
 			}
 			else if (tlmode && dl->Style == tlstyle){
 				wxString ntoken = tokenizer.GetNextToken();
-				Dialogue tl(ntoken);
-				dl->Style = tl.Style;
-				dl->TextTl = tl.Text;
+				Dialogue *tl = new Dialogue(ntoken);
+				tl->TextTl = tl->Text;
+				tl->Text = dl->Text;
 				if (dl->Effect == "\fD"){
-					dl->ChangeState(4);
+					tl->ChangeState(4);
 				}
-				dl->Effect = tl.Effect;
-				grid->AddLine(dl);
+				grid->AddLine(tl);
+				delete dl;
 			}
 			else{
 				//stary tryb tłumaczenia nie istnieje od 2 lat, nie ma sensu usuwać pustych linii, zważywszy na to, że to może usunąć coś ważnego.

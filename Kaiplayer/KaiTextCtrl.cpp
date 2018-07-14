@@ -508,7 +508,7 @@ void KaiTextCtrl::OnAccelerator(wxCommandEvent& event)
 	case ID_TSRIGHT:
 	case ID_TCSRIGHT:
 		if (ID == ID_TRIGHT && Selend.x>Cursor.x){ Cursor = Selend; MakeCursorVisible(); return; }
-		if (Cursor.x >= (int)KText.Len()){ return; }
+		if (Cursor.x >= (int)KText.Len()){ Selend = Cursor; MakeCursorVisible(); return; }
 		if (ID == ID_TCRIGHT || ID == ID_TCSRIGHT){
 			if (Cursor.x == KText.Len() - 1){
 				Cursor.x++;
@@ -1008,7 +1008,7 @@ void KaiTextCtrl::GetSelection(long *start, long *end)
 	*end = (iscur) ? Cursor.x : Selend.x;
 }
 
-void KaiTextCtrl::SetSelection(int start, int end, bool noEvent)
+void KaiTextCtrl::SetSelection(unsigned int start, unsigned int end, bool noEvent)
 {
 	//if((Cursor.x!=end || Selend.x!=start) && !noEvent){wxCommandEvent evt(CURSOR_MOVED,GetId());AddPendingEvent(evt);}
 	int len = KText.Len();

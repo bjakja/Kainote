@@ -41,7 +41,7 @@ public:
 	void SetValue(const wxString &text,bool modif=false, bool newSel = true);
 	bool Modified();
 	void GetSelection(long *start, long* end);
-	void SetSelection(int start, int end, bool noEvent=false);
+	void SetSelection(unsigned int start, unsigned int end, bool noEvent = false);
 	void SetWindowStyle(long style);
 	void Replace(int start, int end, const wxString & rep, bool sendEvent = true);
 	void Copy(bool cut=false);
@@ -64,6 +64,7 @@ public:
 	void MoveStyles(size_t textPos, int moveIndex);
 	void DeleteStyles(size_t textStart, size_t textEnd);
 	//void SetValidator(const wxValidator &validator){};
+	size_t GetLength(){ return KText.Len(); }
 	bool Enable(bool enable=true);
 protected:
 	void ContextMenu(wxPoint mpos);

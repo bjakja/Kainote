@@ -678,12 +678,10 @@ void Visuals::SetVisual(bool dummy, int type)
 			wxString txt = (istxttl) ? Dial->TextTl : Dial->Text;
 			ChangeVisual(&txt, Dial);
 			if (!dummy){
-				if (istxttl){
+				if (istxttl)
 					tab->Grid->CopyDialogue(sels[i])->TextTl = txt;
-				}
-				else{
+				else
 					tab->Grid->CopyDialogue(sels[i])->Text = txt;
-				}
 			}
 			else{
 				Dialogue Cpy = Dialogue(*Dial);

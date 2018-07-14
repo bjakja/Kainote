@@ -392,7 +392,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 			if (tlmodeOn){
 				bool hasTextTl = dial->TextTl != "";
 				if (!translated && (hasTextTl || dial->IsDoubtful())){
-					dial->GetRaw(&raw, false, txt, showOriginalOnVideo);
+					dial->GetRaw(&raw, false, txt, !showOriginalOnVideo);
 					dial->GetRaw(&raw, true);
 				}
 				else{

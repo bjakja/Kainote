@@ -73,10 +73,12 @@ public:
 private:
 	void OnActivate(wxActivateEvent& event);
 	void OnEnterConfirm(wxCommandEvent& event);
+	void SetSelection(TabWindow *tab);
 	TabWindow *GetTab();
 	FindReplace *FR = NULL;
 	KainoteFrame *Kai = NULL;
 	KaiTabBar * findReplaceTabs = NULL;
+	int lastFocusedId = -1;
 };
 
 enum{

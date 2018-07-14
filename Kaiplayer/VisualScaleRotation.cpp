@@ -754,7 +754,10 @@ void ScaleRotation::ChangeInLines(bool dummy)
 
 		}
 		else{
-			tab->Grid->CopyDialogue(sels[i])->Text = txt;
+			if (istexttl)
+				tab->Grid->CopyDialogue(sels[i])->TextTl = txt;
+			else
+				tab->Grid->CopyDialogue(sels[i])->Text = txt;
 		}
 	}
 	if (dummy){

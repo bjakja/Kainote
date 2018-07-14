@@ -379,6 +379,10 @@ FindReplaceDialog::FindReplaceDialog(KainoteFrame *_Kai, int whichWindow)
 	findReplaceTabs->AddTab(new TabWindow(findReplaceTabs, -1, WINDOW_FIND_IN_SUBS, FR), _("Znajdź w napisach"));
 	findReplaceTabs->Fit();
 	findReplaceTabs->Bind(BEFORE_CHANGING_TAB, [=](wxCommandEvent &evt){
+		wxWindow *win = FindFocus();
+		if (win)
+			lastFocusedId = win->GetId();
+
 		TabWindow *currentTab = GetTab();
 		currentTab->SaveValues();
 	});
@@ -386,6 +390,7 @@ FindReplaceDialog::FindReplaceDialog(KainoteFrame *_Kai, int whichWindow)
 		TabWindow *currentTab = GetTab();
 		currentTab->SetValues();
 		SetLabel(findReplaceTabs->GetTabName());
+		SetSelection(currentTab);
 	});
 	mainfrbsizer->Add(findReplaceTabs, 0, wxEXPAND | wxALL, 2);
 	SetSizerAndFit(mainfrbsizer);
@@ -416,6 +421,7 @@ FindReplaceDialog::FindReplaceDialog(KainoteFrame *_Kai, int whichWindow)
 		findReplaceTabs->SetTab(whichWindow);
 
 	Show();
+	SetSelection(GetTab());
 }
 
 FindReplaceDialog::~FindReplaceDialog()
@@ -432,6 +438,8 @@ void FindReplaceDialog::ShowDialog(int whichWindow)
 	findReplaceTabs->SetTab(whichWindow);
 	if (!IsShown())
 		Show();
+
+	SetSelection(GetTab());
 }
 
 void FindReplaceDialog::SaveOptions()
@@ -488,6 +496,18 @@ void FindReplaceDialog::OnEnterConfirm(wxCommandEvent& event)
 	else{
 		FR->Find(currentTab);
 		FR->fnext = false;
+	}
+}
+
+void FindReplaceDialog::SetSelection(TabWindow *tab)
+{
+	if (lastFocusedId == ID_REPLACE_TEXT && tab->ReplaceText){
+		tab->ReplaceText->choiceText->SetSelection(0, -1);
+		tab->ReplaceText->SetFocus();
+	}
+	else{
+		tab->FindText->choiceText->SetSelection(0, -1);
+		tab->FindText->SetFocus();
 	}
 }
 

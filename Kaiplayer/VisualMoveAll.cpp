@@ -317,7 +317,10 @@ void MoveAll::ChangeInLines(bool all)
 
 		}
 		if (all){
-			tab->Grid->CopyDialogue(sels[i])->Text = txt;
+			if (istexttl)
+				tab->Grid->CopyDialogue(sels[i])->TextTl = txt;
+			else
+				tab->Grid->CopyDialogue(sels[i])->Text = txt;
 		}
 		else{
 			Dialogue Cpy = Dialogue(*Dial);
