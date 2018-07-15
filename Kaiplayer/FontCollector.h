@@ -26,9 +26,8 @@
 #include "KaiDialog.h"
 #include <wx/zipstrm.h>
 #include <wx/thread.h>
-//enum{
-//	COLOR_WARNING = 
-//}
+
+class File;
 
 class SubsFont{
 public:
@@ -59,8 +58,9 @@ public:
 	KaiRadioBox *opts;
 	KaiTextCtrl *console;
 	MappedButton *bok;
+	MappedButton *bStartOnAllTabs;
 	MappedButton *bOpenFontFolder;
-	MappedButton *bcancel;
+	MappedButton *bClose;
 	KaiCheckBox *fromMKV;
 	KaiCheckBox *subsdir;
 	wxString destdir;
@@ -71,8 +71,10 @@ private:
 	void OnButtonStart(wxCommandEvent &event);
 	void OnChangeOpt(wxCommandEvent &event);
 	void OnButtonPath(wxCommandEvent &event);
-	void EnableControls();
+	void EnableControls(bool enable = true);
+
 	FontCollector *fc;
+	wxWindowDisabler *disabler = NULL;
 };
 
 class FontCollector
@@ -82,29 +84,31 @@ class FontCollector
 public:
 	FontCollector(wxWindow *parent);
 	~FontCollector();
-	void CopyFonts();
+	void CheckOrCopyFonts();
 	void CopyMKVFonts();
 	void MuxVideoWithSubs();
 	void StartCollect(int operation);
 	void ShowDialog(wxWindow *parent);
 	FontCollectorDialog *fcd;
 	enum{
-		CHECK_FONTS=1,
+		CHECK_FONTS = 1,
 		COPY_FONTS,
-		COPY_MKV_FONTS=4,
-		MUX_VIDEO_WITH_SUBS=8,
-		AS_ZIP=16
+		COPY_MKV_FONTS = 4,
+		MUX_VIDEO_WITH_SUBS = 8,
+		AS_ZIP = 16,
+		ON_ALL_TABS = 32
 	};
 private:
 	typedef std::set<wxUniChar> CharMap;
-	std::map<wxString,CharMap> FontMap;
+	std::map<wxString, CharMap> FontMap;
 	void PutChars(const wxString &txt, const wxString &fn);
-	void GetAssFonts(std::vector<bool> &found, bool check=false);
-	bool CheckPathAndGlyphs(std::vector<bool> &found);
+	void GetAssFonts(File *subs);
+	bool CheckPathAndGlyphs(int *found, int *notfound, int *notcopied);
 	bool SaveFont(const wxString &fontname);
 	void EnumerateFonts();
-	void SendMessageD(wxString string, wxColour col);
+	void SendMessageD(const wxString &string, const wxColour &col);
 	bool AddFont(const wxString &string);
+	void CopyMKVFontsFromTab(const wxString &path);
 
 	wxArrayString facenames;
 	wxArrayString fontnames;
@@ -117,7 +121,6 @@ private:
 	wxString muxerpath;
 	wxZipOutputStream *zip;
 	wxStopWatch sw;
-	//wxString copypath;
 	int operation;
 	bool reloadFonts;
 };
