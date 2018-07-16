@@ -561,7 +561,7 @@ void FontCollector::CheckOrCopyFonts()
 		delete zip;
 		zip = NULL;
 	}
-	wxString noglyphs = (allglyphs) ? L"" : _("\nNiektóre czcionki nie mają wszystkich znaków użytych w tekście.");
+	wxString noglyphs = (allglyphs) ? L"" : _("Niektóre czcionki nie mają wszystkich znaków użytych w tekście.");
 
 	bool checkFonts = (operation & CHECK_FONTS);
 
@@ -571,11 +571,11 @@ void FontCollector::CheckOrCopyFonts()
 		message += "\n" + wxString::Format(_("Zakończono, %s %s.\n"), (checkFonts) ? _("znaleziono") : _("skopiowano"),
 			MakePolishPlural(found, _("czcionkę"), _("czcionki"), _("czcionek")));
 		if (notFound){
-			message += wxString::Format(_("Nie znaleziono %s."),
+			message += wxString::Format(_("Nie znaleziono %s.\n"),
 				MakePolishPlural(notFound, _("czcionki"), _("czcionek"), _("czcionek")));
 		}
 		if (notCopied){
-			message += wxString::Format(_("Nie udało się skopiować %s."),
+			message += wxString::Format(_("Nie udało się skopiować %s.\n"),
 				MakePolishPlural(notCopied, _("czcionki"), _("czcionek"), _("czcionek")));
 		}
 		
@@ -583,7 +583,7 @@ void FontCollector::CheckOrCopyFonts()
 		SendMessageD(message, fcd->warning);
 	}
 	else{
-		SendMessageD("\n" + wxString::Format(_("Zakończono powodzeniem, %s %s."),
+		SendMessageD("\n" + wxString::Format(_("Zakończono powodzeniem, %s %s.\n"),
 			(checkFonts) ? _("znaleziono") : _("skopiowano"),
 			MakePolishPlural(found, _("czcionkę"), _("czcionki"), _("czcionek"))), wxColour("#008000"));
 	}
@@ -736,7 +736,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 		wxString fn = it->second.name;
 		bool isNewFont = lastfn != fn;
 		if (isNewFont){
-			SendMessageD("\n \n" + findFontsLog[fn].RemoveLast() + "\n", fcd->normal);
+			SendMessageD("\n" + findFontsLog[fn].RemoveLast() + "\n", fcd->normal);
 		}
 		lastfn = fn;
 		SubsFont &font = it->second;
@@ -818,6 +818,8 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 						if (operation & COPY_FONTS){ 
 							if (!SaveFont(fullpath))
 								(*notCopied)++;
+							else
+								(*found)++;
 						}
 						wxString ext = it->second.AfterLast('.').Lower();
 						if (ext == "pfm" || ext == "pfb"){
@@ -829,6 +831,8 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 							if (operation & COPY_FONTS){
 								if (!SaveFont(fullpath))
 									(*notCopied)++;
+								else
+									(*found)++;
 							}
 						}
 					}
@@ -842,13 +846,12 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 			if (!succeeded){
 				SendMessageD(wxString::Format(_("Nie można znaleźć czcionki \"%s\" w folderze fonts.\n"), fn), fcd->warning);
 				(*notFound)++;
+				(*found)--;
 			}
-			else
-				(*found)++;
-
-		}else
+				
+		} else if (isNewFont)
 			(*found)++;
-
+		//rest fonts it's just bold/italic version not count it
 	done:
 
 		SelectObject(dc, NULL);

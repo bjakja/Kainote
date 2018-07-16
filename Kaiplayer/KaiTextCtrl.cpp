@@ -1046,7 +1046,7 @@ void KaiTextCtrl::OnKillFocus(wxFocusEvent& event)
 
 void KaiTextCtrl::FindWord(int pos, int *start, int *end)
 {
-	wxString wfind = " }])-—'`\"\\;:,.({[><?!*~@#$%^&/+=\t";
+	wxString wfind = " }])-—'`\"\\;:,.({[><?!*~@#$%^&/+=\t\n";
 	int len = KText.Len();
 	if (len < 1){ Cursor.x = Cursor.y = 0; *start = 0; *end = 0; return; }
 	bool fromend = (start != NULL);
@@ -1065,7 +1065,7 @@ void KaiTextCtrl::FindWord(int pos, int *start, int *end)
 				*start = i + 1;
 				break;
 			}
-			else if (hasres&&res == -1){
+			else if (hasres && res == -1){
 				if (i + 1 == pos){ continue; }
 				else if (lastres < 1 && i + 2 == pos){ hasres = false; continue; }
 				*start = (lastres>0 && (KText[pos] == ' ' || i + 2 < pos)) ? i + 1 : i + 2;
@@ -1082,7 +1082,7 @@ void KaiTextCtrl::FindWord(int pos, int *start, int *end)
 			*end = (res < 1) ? i + 1 : i;
 			break;
 		}
-		else if (hasres&&res == -1){
+		else if (hasres && res == -1){
 			*end = i;
 			break;
 		}
