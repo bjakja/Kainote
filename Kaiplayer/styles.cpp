@@ -23,28 +23,28 @@ AssColor::AssColor()
 	r = g = b = a = 0;
 
 }
-AssColor::AssColor(wxColour kol, int alpha)
+AssColor::AssColor(const wxColour &col, int alpha)
 {
-	a = (alpha != -1) ? alpha : 0xFF - kol.Alpha();
-	b = kol.Blue();
-	g = kol.Green();
-	r = kol.Red();
+	a = (alpha != -1) ? alpha : 0xFF - col.Alpha();
+	b = col.Blue();
+	g = col.Green();
+	r = col.Red();
 }
 AssColor::~AssColor()
 {
 }
 
-AssColor::AssColor(wxString kol)
+AssColor::AssColor(const wxString &col)
 {
 	a = b = g = r = 0;
-	SetAss(kol);
+	SetAss(col);
 }
 
-void AssColor::SetAss(wxString kol)
+void AssColor::SetAss(wxString color)
 {
-	if (kol.IsNumber()){
+	if (color.IsNumber()){
 		long ssakol = 0;
-		kol.ToLong(&ssakol, 10);
+		color.ToLong(&ssakol, 10);
 		r = ssakol & 0xFF;
 		g = (ssakol >> 8) & 0xFF;
 		b = (ssakol >> 16) & 0xFF;
@@ -52,12 +52,14 @@ void AssColor::SetAss(wxString kol)
 
 	}
 	else{
-		kol.Upper();
-		bool ishtml = kol.StartsWith("#");
+		color.Upper();
+		bool ishtml = color.StartsWith("#");
 		wxString astr, rstr, gstr, bstr;
-		kol.Replace("&", ""); kol.Replace("H", ""); kol.Replace("#", "");
-		if (kol.Len() > 7){ astr = kol.SubString(0, 1); astr.ToLong(&a, 16); kol = kol.Mid(2); }
-		rstr = kol.SubString(4, 5), gstr = kol.SubString(2, 3), bstr = kol.SubString(0, 1);
+		color.Replace("&", ""); 
+		color.Replace("H", ""); 
+		color.Replace("#", "");
+		if (color.Len() > 7){ astr = color.SubString(0, 1); astr.ToLong(&a, 16); color = color.Mid(2); }
+		rstr = color.SubString(4, 5), gstr = color.SubString(2, 3), bstr = color.SubString(0, 1);
 		if (ishtml){ wxString tmp = rstr; rstr = bstr; bstr = tmp; }
 		rstr.ToLong(&r, 16);
 		gstr.ToLong(&g, 16);
@@ -72,16 +74,16 @@ void AssColor::SetAlphaString(wxString alpha)
 	alpha.Replace("H", "");
 	alpha.ToLong(&a, 16);
 }
-void AssColor::SetWX(wxColour kol1, int alpha)
+void AssColor::SetWX(const wxColour &kolor, int alpha)
 {
 	a = alpha;
-	b = kol1.Blue();
-	g = kol1.Green();
-	r = kol1.Red();
+	b = kolor.Blue();
+	g = kolor.Green();
+	r = kolor.Red();
 }
 
 
-wxString AssColor::GetAss(bool alpha, bool style) {
+wxString AssColor::GetAss(bool alpha, bool style) const {
 
 	wxString k1 = _T("&H");
 	if (alpha) k1 << wxString::Format(_T("%02X"), a);
@@ -90,7 +92,7 @@ wxString AssColor::GetAss(bool alpha, bool style) {
 	return k1;
 }
 
-wxColour AssColor::GetWX()
+wxColour AssColor::GetWX() const
 {
 	wxColour kol;
 	kol.Set(r, g, b, 0xFF - a);

@@ -50,8 +50,17 @@ public:
 	bool IsModified(){return modified;};
 	void MarkDirty(){modified=true;}
 	bool modified;
-	bool SetForegroundColour(COLOR color){foreground = color; Refresh(false);return true;}
-	bool SetBackgroundColour(COLOR color){background = color; Refresh(false);return true;}
+	bool SetForegroundColour(COLOR color){ foreground = color; Refresh(false); return true; }
+	bool SetBackgroundColour(COLOR color){ background = color; Refresh(false); return true; }
+	bool SetBackgroundColour(const wxColour & color){
+		wxWindowBase::SetBackgroundColour(color);
+		Refresh(false); return true;
+	}
+	bool SetForegroundColour(const wxColour & color){
+		wxWindowBase::SetForegroundColour(color);
+		foreground = (COLOR)0;
+		Refresh(false); return true;
+	}
 	COLOR GetForegroundColour() const {return foreground;}
 	COLOR GetBackgroundColour() const {return background;}
 	void SetModified(bool modif){modified = modif;}

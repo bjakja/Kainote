@@ -29,6 +29,7 @@
 #include "KaiDialog.h"
 #include "KaiStaticText.h"
 #include "MenuButton.h"
+#include "ColorPicker.h"
 
 class SubsGrid;
 
@@ -165,7 +166,9 @@ private:
 	void OnCommit(wxCommandEvent& event);
 	void OnFontClick(wxCommandEvent& event);
 	void OnColorClick(wxCommandEvent& event);
-	void AllColorClick(int kol);
+	void OnColorRightClick(wxMouseEvent& event);
+	void AllColorClick(int kol, bool leftClick = true);
+	bool GetColor(AssColor *col, int numColor);
 	void OnBoldClick(wxCommandEvent& event);
 	void OnItalicClick(wxCommandEvent& event);
 	void OnUnderlineClick(wxCommandEvent& event);
@@ -179,7 +182,7 @@ private:
 	void OnSplit(wxCommandEvent& event);
 	void OnHideOriginal(wxCommandEvent& event);
 	void OnPasteDifferents(wxCommandEvent& event);
-	void OnColorChange(wxCommandEvent& event);
+	void OnColorChange(ColorEvent& event);
 	void OnButtonTag(wxCommandEvent& event);
 	void OnEditTag(wxCommandEvent& event);
 	void OnCursorMoved(wxCommandEvent& event);
@@ -193,7 +196,6 @@ private:
 	bool isdetached;
 	bool hasPreviewGrid = false;
 	wxMutex mutex;
-	wxString colorNumber;
 	int CurrentDoubtful;
 	int CurrentUntranslated;
 	int currentLine;

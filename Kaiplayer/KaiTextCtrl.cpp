@@ -773,8 +773,9 @@ void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h, int windoww, int windowh)
 {
 	int fw = 0, fh = 0;
 	bool enabled = IsThisEnabled();
-	const wxColour & bg = (enabled) ? Options.GetColour(background) : Options.GetColour(WindowBackgroundInactive);
-	const wxColour & fg = Options.GetColour(foreground);
+	wxColour bg = (enabled && UseBgCol()) ? wxWindowBase::GetBackgroundColour() : 
+		(enabled)? Options.GetColour(background) : Options.GetColour(WindowBackgroundInactive);
+	wxColour fg = (foreground) ? Options.GetColour(foreground) : wxWindowBase::GetForegroundColour();
 	wxColour border = (style & wxBORDER_NONE) ? bg :
 		(HasFocus()) ? Options.GetColour(TextFieldBorderOnFocus) :
 		(enabled) ? Options.GetColour(TextFieldBorder) :
@@ -1011,7 +1012,7 @@ void KaiTextCtrl::GetSelection(long *start, long *end)
 void KaiTextCtrl::SetSelection(unsigned int start, unsigned int end, bool noEvent)
 {
 	//if((Cursor.x!=end || Selend.x!=start) && !noEvent){wxCommandEvent evt(CURSOR_MOVED,GetId());AddPendingEvent(evt);}
-	int len = KText.Len();
+	unsigned int len = KText.Len();
 	Cursor.x = MID(0, end, len);
 	Selend.x = MID(0, start, len);
 	Selend.y = FindY(Selend.x);

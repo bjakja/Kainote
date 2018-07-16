@@ -324,11 +324,8 @@ void MappedButton::OnMouseEvent(wxMouseEvent &event)
 		//może od razu funkcji onmaphotkey przekazać item by zrobiła co trzeba
 		int id= GetId(); 
 		if(event.ControlDown()){ id -= 1000; }
-		//wxString buttonName = Hkeys.GetName(id);//(name != "") ? name : GetToolTipText().BeforeFirst('(').BeforeFirst('\n').Trim();
 		Hkeys.OnMapHkey( GetId(), "", this, Window, false);
 		SetToolTip();
-		//Hkeys.SetAccels(true);
-		//Hkeys.SaveHkeys();
 		SetFocus();
 		return;
 	}		

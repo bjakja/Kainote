@@ -23,15 +23,17 @@ class AssColor
 {
     public:
     long r,g,b,a;
-    wxString GetAss(bool alpha, bool style=false);
-    wxColour GetWX();
-    void SetAss(wxString kolor);
-    void SetWX(wxColour kolor, int alpha);
+	wxString GetAss(bool alpha, bool style = false) const;
+	wxColour GetWX() const;
+	//no const cause it replaces this string
+    void SetAss(wxString color);
+    void SetWX(const wxColour &color, int alpha);
 	wxString GetHex(bool alpha) const;
+	//no const cause it replaces this string
 	void SetAlphaString(wxString alpha);
     AssColor();
-	AssColor(wxString kol);
-	AssColor(wxColour kol, int alpha = -1);
+	AssColor(const wxString &col);
+	AssColor(const wxColour &col, int alpha = -1);
     ~AssColor();
 	bool operator == (const AssColor &col){return (a==col.a && r==col.r && g==col.g && b==col.b);}
 	bool operator != (const AssColor &col){return (a!=col.a || r!=col.r || g!=col.g || b!=col.b);}

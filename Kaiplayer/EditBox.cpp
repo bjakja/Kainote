@@ -20,7 +20,6 @@
 #include <wx/regex.h>
 #include <wx/tglbtn.h>
 #include "FontDialog.h"
-#include "ColorPicker.h"
 #include "Visuals.h"
 #include "KaiMessageBox.h"
 
@@ -167,12 +166,16 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	Bfont->SetBitmap(wxBITMAP_PNG("FONTS"));
 	Bcol1 = new MappedButton(this, EDITBOX_CHANGE_COLOR_PRIMARY, "", _("Kolor podstawowy"), wxDefaultPosition, wxSize(24, 24));
 	Bcol1->SetBitmap(wxBITMAP_PNG("Kolor1"));
+	Bcol1->Bind(wxEVT_RIGHT_DOWN, &EditBox::OnColorRightClick, this);
 	Bcol2 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SECONDARY, "", _("Kolor zastępczy do karaoke"), wxDefaultPosition, wxSize(24, 24));
 	Bcol2->SetBitmap(wxBITMAP_PNG("Kolor2"));
+	Bcol2->Bind(wxEVT_RIGHT_DOWN, &EditBox::OnColorRightClick, this);
 	Bcol3 = new MappedButton(this, EDITBOX_CHANGE_COLOR_OUTLINE, "", _("Kolor obwódki"), wxDefaultPosition, wxSize(24, 24));
 	Bcol3->SetBitmap(wxBITMAP_PNG("Kolor3"));
+	Bcol3->Bind(wxEVT_RIGHT_DOWN, &EditBox::OnColorRightClick, this);
 	Bcol4 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SHADOW, "", _("Kolor cienia"), wxDefaultPosition, wxSize(24, 24));
 	Bcol4->SetBitmap(wxBITMAP_PNG("Kolor4"));
+	Bcol4->Bind(wxEVT_RIGHT_DOWN, &EditBox::OnColorRightClick, this);
 	Bbold = new MappedButton(this, PutBold, "", _("Pogrubienie"), wxDefaultPosition, wxSize(24, 24));
 	Bbold->SetBitmap(wxBITMAP_PNG("BOLD"));
 	Bital = new MappedButton(this, PutItalic, "", _("Pochylenie"), wxDefaultPosition, wxSize(24, 24));
@@ -823,11 +826,8 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	}
 }
 
-void EditBox::AllColorClick(int kol)
+void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 {
-	colorNumber = "";
-	colorNumber << kol;
-	wxString iskol;
 	wxString tmptext = TextEdit->GetValue();
 	MTextEditor *Editor = TextEdit;
 	int tmpIter = grid->file->Iter();
@@ -835,40 +835,90 @@ void EditBox::AllColorClick(int kol)
 		tmptext = TextEditOrig->GetValue();
 		Editor = TextEditOrig;
 	}
-	wxString tag = (kol == 1) ? "?c&(.*)" : "c&(.*)";
-	wxString taga = (kol == 1) ? "?a&(.*)" : "a&(.*)";
-	wxString tagal = "alpha(.*)";
-	Styles *style = grid->GetStyle(0, line->Style);
-	AssColor acol = (kol == 1) ? style->PrimaryColour :
-		(kol == 2) ? style->SecondaryColour :
-		(kol == 3) ? style->OutlineColour :
-		style->BackColour;
+	
+	AssColor actualColor = AssColor(wxString("#FFFFFF"));
+	GetColor(&actualColor, numColor);
 
-	acol = (!FindVal(colorNumber + tag, &iskol)) ? acol : (grid->subsFormat < SRT) ? AssColor("&" + iskol) : AssColor(wxString("#FFFFFF"));
-	if (FindVal(colorNumber + taga, &iskol)){ acol.SetAlphaString(iskol); }
-	else if (FindVal(tagal, &iskol)){ acol.SetAlphaString(iskol); }
-	DialogColorPicker *ColourDialog = DialogColorPicker::Get(this, acol.GetWX());
-	MoveToMousePosition(ColourDialog);
-	ColourDialog->Connect(11111, wxEVT_COMMAND_CHOICE_SELECTED, (wxObjectEventFunction)&EditBox::OnColorChange, 0, this);
-	if (ColourDialog->ShowModal() == wxID_OK) {
-		//wywołane tylko by dodać kolor do recent;
-		ColourDialog->GetColor();
-		wxString txt = Editor->GetValue();
-		if (txt[Placed.x] != '}'){
-			int bracketPos = txt.find("}", Placed.x);
-			if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
+	if (leftClick){
+		DialogColorPicker *ColourDialog = DialogColorPicker::Get(this, actualColor.GetWX(), numColor);
+		MoveToMousePosition(ColourDialog);
+		ColourDialog->Connect(11111, COLOR_CHANGED, (wxObjectEventFunction)&EditBox::OnColorChange, 0, this);
+		ColourDialog->Bind(COLOR_CHANGED, [=](wxCommandEvent &evt){
+			AssColor col; 
+			GetColor(&col, numColor);
+			ColourDialog->SetColor(col);
+		}, 11111);
+		if (ColourDialog->ShowModal() == wxID_OK) {
+			//wywołane tylko by dodać kolor do recent;
+			ColourDialog->GetColor();
+			wxString txt = Editor->GetValue();
+			if (txt[Placed.x] != '}'){
+				int bracketPos = txt.find("}", Placed.x);
+				if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
+			}
+			Editor->SetSelection(Placed.x, Placed.x);
 		}
-		Editor->SetSelection(Placed.x, Placed.x);
+		else{
+			grid->DummyUndo(tmpIter);
+		}
 	}
 	else{
-		grid->DummyUndo(tmpIter);
+		SimpleColorPicker scp(this, actualColor, numColor);
+		SimpleColorPickerDialog *scpd = scp.GetDialog();
+		int spcdId = scpd->GetId();
+		scpd->Bind(COLOR_CHANGED, &EditBox::OnColorChange, this, spcdId);
+		scpd->Bind(COLOR_CHANGED, [=](wxCommandEvent &evt){
+			AssColor col;
+			GetColor(&col, numColor);
+			scpd->SetColor(col);
+		}, spcdId);
+
+		AssColor ret;
+		if (scp.PickColor(&ret)){
+			wxString txt = Editor->GetValue();
+			if (txt[Placed.x] != '}'){
+				int bracketPos = txt.find("}", Placed.x);
+				if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
+			}
+			Editor->SetSelection(Placed.x, Placed.x);
+		}
+		else{
+			grid->DummyUndo(tmpIter);
+		}
 	}
 	Editor->SetFocus();
+}
+
+bool EditBox::GetColor(AssColor *actualColor, int numColor)
+{
+	if ((grid->subsFormat < SRT)){
+		wxString colorNumber;
+		colorNumber << numColor;
+		wxString retTag;
+		wxString tag = (numColor == 1) ? "?c&(.*)" : "c&(.*)";
+		wxString taga = (numColor == 1) ? "?a&(.*)" : "a&(.*)";
+		wxString tagal = "alpha(.*)";
+		Styles *style = grid->GetStyle(0, line->Style);
+		*actualColor = (numColor == 1) ? style->PrimaryColour :
+			(numColor == 2) ? style->SecondaryColour :
+			(numColor == 3) ? style->OutlineColour :
+			style->BackColour;
+		if (FindVal(colorNumber + tag, &retTag))
+			*actualColor = AssColor("&" + retTag);
+		if (FindVal(colorNumber + taga, &retTag)){ actualColor->SetAlphaString(retTag); }
+		else if (FindVal(tagal, &retTag)){ actualColor->SetAlphaString(retTag); return true; }
+	}
+	return false;
 }
 
 void EditBox::OnColorClick(wxCommandEvent& event)
 {
 	AllColorClick(event.GetId() - EDITBOX_CHANGE_COLOR_PRIMARY + 1);
+}
+
+void EditBox::OnColorRightClick(wxMouseEvent& event)
+{
+	AllColorClick(event.GetId() - EDITBOX_CHANGE_COLOR_PRIMARY + 1, false);
 }
 
 void EditBox::OnCommit(wxCommandEvent& event)
@@ -1431,11 +1481,15 @@ void EditBox::OnEdit(wxCommandEvent& event)
 
 }
 
-void EditBox::OnColorChange(wxCommandEvent& event)
+void EditBox::OnColorChange(ColorEvent& event)
 {
+	AssColor choosenColor = event.GetColor();
+	wxString choosenColorAsString = choosenColor.GetAss(false, true);
 	if (grid->subsFormat < SRT){
+		wxString colorNumber;
+		colorNumber << event.GetColorType();
 		wxString colorString;
-		wxString tag = (colorNumber == "1") ? "?c&(.*)" : "c&(.*)";
+		wxString tag = (colorNumber == "1") ? "?c&(.*)&" : "c&(.*)&";
 		Styles *style = grid->GetStyle(0, line->Style);
 		AssColor col = (colorNumber == "1") ? style->PrimaryColour :
 			(colorNumber == "2") ? style->SecondaryColour :
@@ -1443,10 +1497,9 @@ void EditBox::OnColorChange(wxCommandEvent& event)
 			style->BackColour;
 
 		int alpha = col.a;
-		wxString chooseColor = event.GetString();
 		FindVal(colorNumber + tag, &colorString);
-		if (colorString != chooseColor){
-			PutinText("\\" + colorNumber + "c" + event.GetString() + "&", false);
+		if (colorString != choosenColorAsString){
+			PutinText("\\" + colorNumber + "c" + choosenColorAsString + "&", false);
 		}
 
 		if (FindVal(colorNumber + "a&(.*)", &colorString)){
@@ -1454,15 +1507,14 @@ void EditBox::OnColorChange(wxCommandEvent& event)
 			colorString.Replace("&", "");
 			alpha = wcstol(colorString.wc_str(), NULL, 16);
 		}
-		if (alpha != event.GetInt()){
-			PutinText("\\" + colorNumber + wxString::Format("a&H%02X&", event.GetInt()), false);
+		if (alpha != choosenColor.a){
+			PutinText("\\" + colorNumber + wxString::Format("a&H%02X&", choosenColor.a), false);
 
 		}
 
-
 	}
-	else{ PutinNonass("C:" + event.GetString().Mid(2), "C:([^}]*)"); }
-	OnEdit(event);
+	else{ PutinNonass("C:" + choosenColorAsString.Mid(2), "C:([^}]*)"); }
+	//OnEdit(wxCommandEvent());
 }
 
 void EditBox::OnButtonTag(wxCommandEvent& event)

@@ -41,6 +41,7 @@
 #include "NumCtrl.h"
 #include "Styles.h"
 #include "MappedButton.h"
+#include "KaiCheckBox.h"
 
 class ColorPickerSpectrum : public wxControl {
 private:
@@ -122,10 +123,44 @@ public:
 	DECLARE_EVENT_TABLE()
 };
 
-DECLARE_EVENT_TYPE(wxDROPPER_SELECT, -1)
+wxDECLARE_EVENT(wxDROPPER_SELECT, wxCommandEvent);
 
 
 AssColor GetColorFromUser(wxWindow *parent, AssColor original);
+
+class ColorEvent;
+
+wxDECLARE_EVENT(COLOR_CHANGED, ColorEvent);
+wxDECLARE_EVENT(COLOR_TYPE_CHANGED, wxCommandEvent);
+
+class  ColorEvent : public wxEvent
+{
+public:
+	ColorEvent(wxEventType type, int winid, const AssColor &_color, int _colorType)
+		: wxEvent(winid, type)
+	{
+		colorType = _colorType; color = _color;
+	}
+	ColorEvent(const ColorEvent& event)
+		: wxEvent(event)
+	{
+		colorType = event.colorType; color = event.color;
+	}
+
+	// get color type as int 
+	int GetColorType() const {
+		return colorType;
+	}
+
+	// getColor as AssColor
+	AssColor GetColor() const { return color; }
+
+	virtual wxEvent *Clone() const { return new ColorEvent(*this); }
+
+private:
+	int colorType;
+	AssColor color;
+};
 
 class DialogColorPicker : public KaiDialog {
 private:
@@ -165,6 +200,7 @@ private:
 	ColorPickerRecent *recent_box;
 	ColorPickerScreenDropper *screen_dropper;
 	wxStaticBitmap *screen_dropper_icon;
+	KaiChoice *colorType;
 
 	void UpdateFromRGB();			// Update all other controls as a result of modifying an RGB control
 	void UpdateFromHSL();			// Update all other controls as a result of modifying an HSL control
@@ -192,14 +228,14 @@ private:
 	
 
 public:
-	DialogColorPicker(wxWindow *parent, AssColor initial_color);
+	DialogColorPicker(wxWindow *parent, AssColor initial_color, int colorType = -1);
 	virtual ~DialogColorPicker();
 
-	void SetColor(AssColor new_color);
+	void SetColor(AssColor new_color, int numColor = 0);
 	AssColor GetColor();
 
 	static DialogColorPicker *DCP;
-	static DialogColorPicker *Get(wxWindow *parent, AssColor color = wxColour("#000000"));
+	static DialogColorPicker *Get(wxWindow *parent, AssColor color = wxColour("#000000"), int colorType = -1);
 
 	DECLARE_EVENT_TABLE()
 };
@@ -231,6 +267,34 @@ private:
 	void OnSize(wxSizeEvent &evt);
 	void OnErase(wxEraseEvent &evt){};
 	AssColor color;
+};
+
+class SimpleColorPickerDialog : public KaiDialog
+{
+public:
+	SimpleColorPickerDialog(wxWindow *parent, const AssColor &actualColor, int colorType = -1);
+	KaiChoice *colorType;
+	KaiTextCtrl *HexColor;
+	ColorPickerScreenDropper *dropper;
+	KaiCheckBox *moveWindowToMousePosition;
+	const AssColor &GetColor(){ return color; };
+	void SetColor(const AssColor &color);
+	void Colorize();
+private:
+	void OnIdle(wxIdleEvent& event);
+	AssColor color;
+};
+
+class SimpleColorPicker
+{
+	SimpleColorPickerDialog *scpd = NULL;
+public:
+	SimpleColorPicker(wxWindow *parent, const AssColor &actualColor, int colorType = -1);
+	~SimpleColorPicker();
+	SimpleColorPickerDialog *GetDialog(){
+		return scpd;
+	};
+	bool PickColor(AssColor *returnColor);
 };
 
 //Uwa¿aj aby nie stosowaæ idów
