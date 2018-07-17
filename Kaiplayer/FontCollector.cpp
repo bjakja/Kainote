@@ -532,6 +532,9 @@ void FontCollector::CheckOrCopyFonts()
 	}
 	bool allglyphs = CheckPathAndGlyphs(&found, &notFound, &notCopied);
 
+	//checking glyphs not work on not existed fonts, 
+	notFound += notFindFontsLog.size();
+
 	for (auto cur = notFindFontsLog.begin(); cur != notFindFontsLog.end(); cur++){
 		wxString list = cur->second;
 		wxStringTokenizer token(list, ",", wxTOKEN_STRTOK);
@@ -549,7 +552,7 @@ void FontCollector::CheckOrCopyFonts()
 			}
 		}
 
-		SendMessageD("\n" + result + "\n", fcd->warning);
+		SendMessageD("\n" + result, fcd->warning);
 	}
 	
 	FontMap.clear();
@@ -949,7 +952,7 @@ wxThread::ExitCode FontCollectorThread::Entry()
 
 	wxThreadEvent *evt = new wxThreadEvent(EVT_ENABLE_BUTTONS, fc->fcd->GetId());
 	STime processTime(fc->sw.Time());
-	fc->SendMessageD(wxString::Format(_("\n\nZakończono w %sms"), processTime.GetFormatted(SRT)), fc->fcd->normal);
+	fc->SendMessageD(wxString::Format(_("\nZakończono w %sms"), processTime.GetFormatted(SRT)), fc->fcd->normal);
 	fc->sw.Pause();
 	wxQueueEvent(fc->fcd, evt);
 	if (fc->operation & FontCollector::COPY_FONTS || fc->operation & FontCollector::COPY_MKV_FONTS){

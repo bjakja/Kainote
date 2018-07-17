@@ -115,6 +115,14 @@ void AssColor::Copy(const AssColor& color, bool alpha)
 		a = color.a;
 }
 
+bool AssColor::NotEqual(const AssColor& color, bool alpha /*= false*/)
+{
+	if (alpha)
+		return a != color.a || r != color.r || g != color.g || b != color.b;
+
+	return r != color.r || g != color.g || b != color.b;
+}
+
 Styles::Styles()
 {
 	Name = _T("Default");

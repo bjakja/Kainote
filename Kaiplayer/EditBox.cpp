@@ -889,15 +889,15 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 	Editor->SetFocus();
 }
 
-bool EditBox::GetColor(AssColor *actualColor, int numColor)
+void EditBox::GetColor(AssColor *actualColor, int numColor)
 {
 	if ((grid->subsFormat < SRT)){
 		wxString colorNumber;
 		colorNumber << numColor;
 		wxString retTag;
 		wxString tag = (numColor == 1) ? "?c&(.*)" : "c&(.*)";
-		wxString taga = (numColor == 1) ? "?a&(.*)" : "a&(.*)";
-		wxString tagal = "alpha(.*)";
+		/*wxString taga = (numColor == 1) ? "?a&(.*)" : "a&(.*)";
+		wxString tagal = "alpha(.*)";*/
 		Styles *style = grid->GetStyle(0, line->Style);
 		*actualColor = (numColor == 1) ? style->PrimaryColour :
 			(numColor == 2) ? style->SecondaryColour :
@@ -906,10 +906,11 @@ bool EditBox::GetColor(AssColor *actualColor, int numColor)
 		if (FindVal(colorNumber + tag, &retTag)){
 			actualColor->Copy(AssColor("&" + retTag));
 		}
-		if (FindVal(colorNumber + taga, &retTag)){ actualColor->SetAlphaString(retTag); }
-		else if (FindVal(tagal, &retTag)){ actualColor->SetAlphaString(retTag); return true; }
+		//when knowing about alpha tag will be needed You must change it like in method OnColorChange
+		if (FindVal(colorNumber + L"a&|alpha(.*)", &retTag)){ actualColor->SetAlphaString(retTag); }
+		//else if (FindVal(tagal, &retTag)){ actualColor->SetAlphaString(retTag); return true; }
 	}
-	return false;
+	//return false;
 }
 
 void EditBox::OnColorClick(wxCommandEvent& event)
@@ -1487,8 +1488,9 @@ void EditBox::OnColorChange(ColorEvent& event)
 	AssColor choosenColor = event.GetColor();
 	wxString choosenColorAsString = choosenColor.GetAss(false, true);
 	if (grid->subsFormat < SRT){
+		int intColorNumber = event.GetColorType();
 		wxString colorNumber;
-		colorNumber << event.GetColorType();
+		colorNumber << intColorNumber;
 		wxString colorString;
 		wxString tag = (colorNumber == "1") ? "?c&(.*)&" : "c&(.*)&";
 		Styles *style = grid->GetStyle(0, line->Style);
@@ -1497,20 +1499,24 @@ void EditBox::OnColorChange(ColorEvent& event)
 			(colorNumber == "3") ? style->OutlineColour :
 			style->BackColour;
 
-		int alpha = col.a;
 		FindVal(colorNumber + tag, &colorString);
 		if (colorString != choosenColorAsString){
 			PutinText("\\" + colorNumber + "c" + choosenColorAsString + "&", false);
 		}
 
-		if (FindVal(colorNumber + "a&(.*)", &colorString)){
-			colorString.Replace("H", "");
-			colorString.Replace("&", "");
-			alpha = wcstol(colorString.wc_str(), NULL, 16);
+		if (FindVal(L"(" +colorNumber + L"a&|alpha.*)", &colorString)){
+			if (colorString.StartsWith(colorNumber + "a&"))
+				colorString = colorString.Mid(2);
+			else{
+				colorString = colorString.Mid(5);
+				Placed.y++;
+				Placed.x = Placed.y;
+			}
+			col.SetAlphaString(colorString);
 		}
-		if (alpha != choosenColor.a){
-			PutinText("\\" + colorNumber + wxString::Format("a&H%02X&", choosenColor.a), false);
 
+		if (col.a != choosenColor.a){
+			PutinText("\\" + colorNumber + wxString::Format("a&H%02X&", choosenColor.a), false);
 		}
 
 	}

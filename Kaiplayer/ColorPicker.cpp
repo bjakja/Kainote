@@ -517,7 +517,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	screen_dropper = new ColorPickerScreenDropper(this, SELECTOR_DROPPER_PICK, 7, 7, 8, false);
 
 	wxString types[] = { _("Kolor podstawowy"), _("Kolor zastępczy"), _("Kolor obwódki"), _("Kolor cienia") };
-	colorType = new KaiChoice(this, 9766, wxDefaultPosition, wxDefaultSize, 4, types);
+	colorType = new KaiChoice(this, 9766, wxDefaultPosition, wxSize(120, -1), 4, types);
 	if (colorNum == -1)
 		colorType->Enable(false);
 	else
@@ -532,8 +532,8 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 
 	// Arrange the controls in a nice way
 	wxSizer *spectop_sizer = new wxBoxSizer(wxHORIZONTAL);
-	spectop_sizer->Add(colorType, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 20);
-	spectop_sizer->Add(new KaiStaticText(this, -1, _("Wybrany kolor:")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+	spectop_sizer->Add(colorType, 1, wxALIGN_CENTER_VERTICAL | wxLEFT | wxEXPAND, 2);
+	spectop_sizer->Add(new KaiStaticText(this, -1, _("Wybrany kolor:")), 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 17);
 	spectop_sizer->Add(preview_box);
 	wxSizer *spectrum_sizer = new wxBoxSizer(wxHORIZONTAL);
 	//spectrum_sizer->Add(spectop_sizer, wxALIGN_CENTER_HORIZONTAL);
@@ -1327,10 +1327,10 @@ SimpleColorPickerDialog::SimpleColorPickerDialog(wxWindow *parent, const AssColo
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton *OK = new MappedButton(this, wxID_OK, "OK");
 	MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
-	ds->Add(colorType, 0, wxALL | wxEXPAND, 2);
-	ds->Add(HexColor, 0, wxALL | wxEXPAND, 2);
-	ds->Add(dropper, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, 2);
-	ds->Add(moveWindowToMousePosition, 0, wxALL, 2);
+	ds->Add(colorType, 0, wxALL | wxEXPAND, 4);
+	ds->Add(HexColor, 0, wxLEFT | wxRIGHT | wxEXPAND, 4);
+	ds->Add(dropper, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, 4);
+	ds->Add(moveWindowToMousePosition, 0, wxLEFT | wxRIGHT, 4);
 	buttonSizer->Add(OK, 1, wxALL, 2);
 	buttonSizer->Add(cancel, 1, wxALL, 2);
 	ds->Add(buttonSizer, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, 2);

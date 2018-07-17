@@ -168,7 +168,7 @@ private:
 	void OnColorClick(wxCommandEvent& event);
 	void OnColorRightClick(wxMouseEvent& event);
 	void AllColorClick(int kol, bool leftClick = true);
-	bool GetColor(AssColor *col, int numColor);
+	void GetColor(AssColor *col, int numColor);
 	void OnBoldClick(wxCommandEvent& event);
 	void OnItalicClick(wxCommandEvent& event);
 	void OnUnderlineClick(wxCommandEvent& event);
