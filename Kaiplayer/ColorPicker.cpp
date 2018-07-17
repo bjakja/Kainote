@@ -429,16 +429,16 @@ void ColorPickerScreenDropper::DropFromScreenXY(int x, int y)
 
 
 
-AssColor GetColorFromUser(wxWindow *parent, AssColor original)
-{
-	DialogColorPicker dialog(parent, original);
-	if (dialog.ShowModal() == wxID_OK) {
-		return dialog.GetColor();
-	}
-	else {
-		return original;
-	}
-}
+//AssColor GetColorFromUser(wxWindow *parent, AssColor original)
+//{
+//	DialogColorPicker dialog(parent, original);
+//	if (dialog.ShowModal() == wxID_OK) {
+//		return dialog.GetColor();
+//	}
+//	else {
+//		return original;
+//	}
+//}
 
 wxDEFINE_EVENT(COLOR_TYPE_CHANGED, wxCommandEvent);
 wxDEFINE_EVENT(COLOR_CHANGED, ColorEvent);
@@ -517,11 +517,18 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	screen_dropper = new ColorPickerScreenDropper(this, SELECTOR_DROPPER_PICK, 7, 7, 8, false);
 
 	wxString types[] = { _("Kolor podstawowy"), _("Kolor zastępczy"), _("Kolor obwódki"), _("Kolor cienia") };
-	colorType = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, 4, types);
+	colorType = new KaiChoice(this, 9766, wxDefaultPosition, wxDefaultSize, 4, types);
 	if (colorNum == -1)
 		colorType->Enable(false);
 	else
 		colorType->SetSelection(colorNum - 1);
+
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
+		wxCommandEvent ctcevt(COLOR_TYPE_CHANGED, GetId());
+		//selections starts from 0, colors from 1
+		ctcevt.SetInt(colorType->GetSelection() + 1);
+		ProcessEvent(ctcevt);
+	}, 9766);
 
 	// Arrange the controls in a nice way
 	wxSizer *spectop_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -653,7 +660,7 @@ DialogColorPicker::~DialogColorPicker()
 
 
 // Sets the currently selected color, and updates all controls
-void DialogColorPicker::SetColor(AssColor new_color, int numColor)
+void DialogColorPicker::SetColor(AssColor new_color, int numColor /*= 0*/, bool SendVideoEvent /*= true*/)
 {
 	cur_color = new_color.GetWX();
 	rgb_input[0]->SetInt(new_color.r);
@@ -666,7 +673,7 @@ void DialogColorPicker::SetColor(AssColor new_color, int numColor)
 		colorType->SetSelection(numColor - 1);
 		colorType->Enable(numColor != -1);
 	}
-	UpdateFromRGB();
+	UpdateFromRGB(SendVideoEvent);
 }
 
 
@@ -680,7 +687,7 @@ AssColor DialogColorPicker::GetColor()
 
 
 // Use the values entered in the RGB controls to update the other controls
-void DialogColorPicker::UpdateFromRGB()
+void DialogColorPicker::UpdateFromRGB(bool SendVideoEvent /*= true*/)
 {
 	if (updating_controls) return;
 	updating_controls = true;
@@ -700,7 +707,7 @@ void DialogColorPicker::UpdateFromRGB()
 	cur_color = wxColour(r, g, b, 0xFF - alpha_input->GetInt());
 	ass_input->SetValue(AssColor(cur_color).GetAss(false, false));
 	html_input->SetValue(color_to_html(cur_color));
-	UpdateSpectrumDisplay();
+	UpdateSpectrumDisplay(SendVideoEvent);
 
 	updating_controls = false;
 }
@@ -820,7 +827,7 @@ void DialogColorPicker::UpdateFromHTML()
 }
 
 
-void DialogColorPicker::UpdateSpectrumDisplay()
+void DialogColorPicker::UpdateSpectrumDisplay(bool SendVideoEvent /*= true*/)
 {
 	if (spectrum_dirty){
 		slider->SetBackground(hsv_slider);
@@ -843,7 +850,7 @@ void DialogColorPicker::UpdateSpectrumDisplay()
 		previewdc.DrawRectangle(0, 0, 40, 40);
 	}
 	preview_box->SetBitmap(tempBmp);
-	if (IsShown()){
+	if (IsShown() && SendVideoEvent){
 		updatecols.Start(100, true);
 	}
 }
@@ -1172,116 +1179,116 @@ void ButtonColorPicker::OnClick(wxCommandEvent &event)
 	}
 }
 
-TextColorPicker::TextColorPicker(wxWindow *parent, int id, const AssColor &_color, const wxPoint &pos, const wxSize &size, int style)
-	:wxWindow(parent, id, pos, size, style)
-{
-	color = _color;
-	wxSize newSize = size;
-	SetFont(parent->GetFont());
-	int fw, fh;
-	GetTextExtent(color.GetHex(true), &fw, &fh);
-	if (size.x < 1){
-		newSize.x = fw + 16;
-		if (newSize.x < 60){ newSize.x = 60; }
-	}
-	if (size.y < 1){
-		newSize.y = fh + 6;
-	}
-	SetMinSize(newSize);
-	//SetBestSize(newSize);
-	Bind(wxEVT_LEFT_DCLICK, &TextColorPicker::OnDoubleClick, this);
-	Bind(wxEVT_SIZE, &TextColorPicker::OnSize, this);
-	Bind(wxEVT_PAINT, &TextColorPicker::OnPaint, this);
-	Bind(wxEVT_ERASE_BACKGROUND, &TextColorPicker::OnErase, this);
-	SetFont(parent->GetFont());
-	SetBackgroundColour(parent->GetBackgroundColour());
-}
-
-AssColor TextColorPicker::GetColor()
-{
-	return color;
-}
-
-void TextColorPicker::SetColor(const AssColor& _color)
-{
-	color = _color;
-}
-
-
-void TextColorPicker::OnDoubleClick(wxMouseEvent &evt)
-{
-	DialogColorPicker *dcp = DialogColorPicker::Get(this, color);
-	wxPoint mst = wxGetMousePosition();
-	wxSize siz = dcp->GetSize();
-	siz.x;
-	wxRect rc = wxGetClientDisplayRect();
-	mst.x -= (siz.x / 2);
-	mst.x = MID(rc.x, mst.x, rc.width - siz.x);
-	mst.y += 15;
-	mst.y = MID(rc.y, mst.y, rc.height - siz.y);
-	dcp->Move(mst);
-	if (dcp->ShowModal() == wxID_OK) {
-		color = dcp->GetColor();
-		Refresh(false);
-	}
-}
-
-void TextColorPicker::OnPaint(wxPaintEvent &evt)
-{
-	int w = 0;
-	int h = 0;
-	GetClientSize(&w, &h);
-	if (w == 0 || h == 0){ return; }
-	wxMemoryDC tdc;
-	tdc.SelectObject(wxBitmap(w, h));
-	tdc.SetFont(GetFont());
-	wxColour background = GetBackgroundColour();
-	tdc.SetBrush(wxBrush(background));
-	tdc.SetPen(wxPen(background));
-	tdc.DrawRectangle(0, 0, w, h);
-
-	if (color.a){
-		const wxColour & col1 = Options.GetColour(StylePreviewColor1);
-		const wxColour & col2 = Options.GetColour(StylePreviewColor2);
-		int r2 = color.r, g2 = color.g, b2 = color.b;
-		int r = col1.Red(), g = col1.Green(), b = col1.Blue();
-		int r1 = col2.Red(), g1 = col2.Green(), b1 = col2.Blue();
-		int inv_a = 0xFF - color.a;
-		int fr = (r2* inv_a / 0xFF) + (r - inv_a * r / 0xFF);
-		int fg = (g2* inv_a / 0xFF) + (g - inv_a * g / 0xFF);
-		int fb = (b2* inv_a / 0xFF) + (b - inv_a * b / 0xFF);
-		wxColour firstMask(fr, fg, fb);
-		fr = (r2* inv_a / 0xFF) + (r1 - inv_a * r1 / 0xFF);
-		fg = (g2* inv_a / 0xFF) + (g1 - inv_a * g1 / 0xFF);
-		fb = (b2* inv_a / 0xFF) + (b1 - inv_a * b1 / 0xFF);
-		wxColour secondMask(fr, fg, fb);
-		int squareSize = (h - 3) / 4;
-		for (int i = 0; i < 4; i++){
-			for (int j = 0; j < 4; j++){
-				tdc.SetBrush(((i + j) % 2 == 0) ? firstMask : secondMask);
-				tdc.SetPen(*wxTRANSPARENT_PEN);
-				tdc.DrawRectangle(2 + (i*squareSize), 2 + (j*squareSize), squareSize, squareSize);
-			}
-		}
-	}
-	tdc.SetBrush(wxBrush(color.a ? *wxTRANSPARENT_BRUSH : color.GetWX()));
-	tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT)));
-	tdc.DrawRectangle(1, 1, h - 3, h - 3);
-
-	int fw, fh;
-	wxString hextext = color.GetHex(true);
-	GetTextExtent(hextext, &fw, &fh);
-	tdc.SetTextForeground(GetForegroundColour());
-	tdc.DrawText(hextext, h + 2, (h - fh) / 2);
-
-	wxPaintDC dc(this);
-	dc.Blit(0, 0, w, h, &tdc, 0, 0);
-}
-
-void TextColorPicker::OnSize(wxSizeEvent &evt)
-{
-	Refresh(false);
-}
+//TextColorPicker::TextColorPicker(wxWindow *parent, int id, const AssColor &_color, const wxPoint &pos, const wxSize &size, int style)
+//	:wxWindow(parent, id, pos, size, style)
+//{
+//	color = _color;
+//	wxSize newSize = size;
+//	SetFont(parent->GetFont());
+//	int fw, fh;
+//	GetTextExtent(color.GetHex(true), &fw, &fh);
+//	if (size.x < 1){
+//		newSize.x = fw + 16;
+//		if (newSize.x < 60){ newSize.x = 60; }
+//	}
+//	if (size.y < 1){
+//		newSize.y = fh + 6;
+//	}
+//	SetMinSize(newSize);
+//	//SetBestSize(newSize);
+//	Bind(wxEVT_LEFT_DCLICK, &TextColorPicker::OnDoubleClick, this);
+//	Bind(wxEVT_SIZE, &TextColorPicker::OnSize, this);
+//	Bind(wxEVT_PAINT, &TextColorPicker::OnPaint, this);
+//	Bind(wxEVT_ERASE_BACKGROUND, &TextColorPicker::OnErase, this);
+//	SetFont(parent->GetFont());
+//	SetBackgroundColour(parent->GetBackgroundColour());
+//}
+//
+//AssColor TextColorPicker::GetColor()
+//{
+//	return color;
+//}
+//
+//void TextColorPicker::SetColor(const AssColor& _color)
+//{
+//	color = _color;
+//}
+//
+//
+//void TextColorPicker::OnDoubleClick(wxMouseEvent &evt)
+//{
+//	DialogColorPicker *dcp = DialogColorPicker::Get(this, color);
+//	wxPoint mst = wxGetMousePosition();
+//	wxSize siz = dcp->GetSize();
+//	siz.x;
+//	wxRect rc = wxGetClientDisplayRect();
+//	mst.x -= (siz.x / 2);
+//	mst.x = MID(rc.x, mst.x, rc.width - siz.x);
+//	mst.y += 15;
+//	mst.y = MID(rc.y, mst.y, rc.height - siz.y);
+//	dcp->Move(mst);
+//	if (dcp->ShowModal() == wxID_OK) {
+//		color = dcp->GetColor();
+//		Refresh(false);
+//	}
+//}
+//
+//void TextColorPicker::OnPaint(wxPaintEvent &evt)
+//{
+//	int w = 0;
+//	int h = 0;
+//	GetClientSize(&w, &h);
+//	if (w == 0 || h == 0){ return; }
+//	wxMemoryDC tdc;
+//	tdc.SelectObject(wxBitmap(w, h));
+//	tdc.SetFont(GetFont());
+//	wxColour background = GetBackgroundColour();
+//	tdc.SetBrush(wxBrush(background));
+//	tdc.SetPen(wxPen(background));
+//	tdc.DrawRectangle(0, 0, w, h);
+//
+//	if (color.a){
+//		const wxColour & col1 = Options.GetColour(StylePreviewColor1);
+//		const wxColour & col2 = Options.GetColour(StylePreviewColor2);
+//		int r2 = color.r, g2 = color.g, b2 = color.b;
+//		int r = col1.Red(), g = col1.Green(), b = col1.Blue();
+//		int r1 = col2.Red(), g1 = col2.Green(), b1 = col2.Blue();
+//		int inv_a = 0xFF - color.a;
+//		int fr = (r2* inv_a / 0xFF) + (r - inv_a * r / 0xFF);
+//		int fg = (g2* inv_a / 0xFF) + (g - inv_a * g / 0xFF);
+//		int fb = (b2* inv_a / 0xFF) + (b - inv_a * b / 0xFF);
+//		wxColour firstMask(fr, fg, fb);
+//		fr = (r2* inv_a / 0xFF) + (r1 - inv_a * r1 / 0xFF);
+//		fg = (g2* inv_a / 0xFF) + (g1 - inv_a * g1 / 0xFF);
+//		fb = (b2* inv_a / 0xFF) + (b1 - inv_a * b1 / 0xFF);
+//		wxColour secondMask(fr, fg, fb);
+//		int squareSize = (h - 3) / 4;
+//		for (int i = 0; i < 4; i++){
+//			for (int j = 0; j < 4; j++){
+//				tdc.SetBrush(((i + j) % 2 == 0) ? firstMask : secondMask);
+//				tdc.SetPen(*wxTRANSPARENT_PEN);
+//				tdc.DrawRectangle(2 + (i*squareSize), 2 + (j*squareSize), squareSize, squareSize);
+//			}
+//		}
+//	}
+//	tdc.SetBrush(wxBrush(color.a ? *wxTRANSPARENT_BRUSH : color.GetWX()));
+//	tdc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT)));
+//	tdc.DrawRectangle(1, 1, h - 3, h - 3);
+//
+//	int fw, fh;
+//	wxString hextext = color.GetHex(true);
+//	GetTextExtent(hextext, &fw, &fh);
+//	tdc.SetTextForeground(GetForegroundColour());
+//	tdc.DrawText(hextext, h + 2, (h - fh) / 2);
+//
+//	wxPaintDC dc(this);
+//	dc.Blit(0, 0, w, h, &tdc, 0, 0);
+//}
+//
+//void TextColorPicker::OnSize(wxSizeEvent &evt)
+//{
+//	Refresh(false);
+//}
 
 SimpleColorPickerDialog::SimpleColorPickerDialog(wxWindow *parent, const AssColor &actualColor, int colorNum)
 	: KaiDialog(parent, -1, _("Próbnik koloru"))
@@ -1289,11 +1296,17 @@ SimpleColorPickerDialog::SimpleColorPickerDialog(wxWindow *parent, const AssColo
 {
 	DialogSizer *ds = new DialogSizer(wxVERTICAL);
 	wxString types[] = { _("Kolor podstawowy"), _("Kolor zastępczy"), _("Kolor obwódki"), _("Kolor cienia") };
-	colorType = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, 4, types);
+	colorType = new KaiChoice(this, 9764, wxDefaultPosition, wxDefaultSize, 4, types);
 	if (colorNum == -1)
 		colorType->Enable(false);
 	else
 		colorType->SetSelection(colorNum - 1);
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
+		wxCommandEvent ctcevt(COLOR_TYPE_CHANGED, GetId());
+		//selections starts from 0, colors from 1
+		ctcevt.SetInt(colorType->GetSelection() + 1);
+		ProcessEvent(ctcevt);
+	}, 9764);
 
 	HexColor = new KaiTextCtrl(this, -1, actualColor.GetAss(false, false));
 	dropper = new ColorPickerScreenDropper(this, 9765, 7, 7, 8, false);
@@ -1303,9 +1316,7 @@ SimpleColorPickerDialog::SimpleColorPickerDialog(wxWindow *parent, const AssColo
 	}, 9765);
 	Bind(wxDROPPER_SELECT, [=](wxCommandEvent &evt){
 		wxString stringColor = evt.GetString();
-		int alpha = color.a;
-		color.SetAss(stringColor);
-		color.a = alpha;
+		color.Copy(stringColor);
 		HexColor->SetValue(stringColor);
 		Colorize();
 		ColorEvent colorevt(COLOR_CHANGED, GetId(), color, colorType->GetSelection() + 1);

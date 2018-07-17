@@ -106,6 +106,14 @@ wxString AssColor::GetHex(bool alpha) const
 	return wxString::Format("#%02X%02X%02X", r, g, b);
 }
 
+void AssColor::Copy(const AssColor& color, bool alpha)
+{
+	r = color.r;
+	g = color.g;
+	b = color.b;
+	if (alpha)
+		a = color.a;
+}
 
 Styles::Styles()
 {

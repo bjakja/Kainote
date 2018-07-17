@@ -126,7 +126,7 @@ public:
 wxDECLARE_EVENT(wxDROPPER_SELECT, wxCommandEvent);
 
 
-AssColor GetColorFromUser(wxWindow *parent, AssColor original);
+//AssColor GetColorFromUser(wxWindow *parent, AssColor original);
 
 class ColorEvent;
 
@@ -202,12 +202,12 @@ private:
 	wxStaticBitmap *screen_dropper_icon;
 	KaiChoice *colorType;
 
-	void UpdateFromRGB();			// Update all other controls as a result of modifying an RGB control
+	void UpdateFromRGB(bool SendVideoEvent = true);			// Update all other controls as a result of modifying an RGB control
 	void UpdateFromHSL();			// Update all other controls as a result of modifying an HSL control
 	void UpdateFromHSV();			// Update all other controls as a result of modifying an HSV control
 	void UpdateFromASS();			// Update all other controls as a result of modifying the ASS format control
 	void UpdateFromHTML();			// Update all other controls as a result of modifying the HTML format control
-	void UpdateSpectrumDisplay();	// Redraw the spectrum display
+	void UpdateSpectrumDisplay(bool SendVideoEvent = true);	// Redraw the spectrum display
 
 	wxBitmap *MakeSVSpectrum();
 	wxBitmap *MakeAlphaSlider();
@@ -231,7 +231,7 @@ public:
 	DialogColorPicker(wxWindow *parent, AssColor initial_color, int colorType = -1);
 	virtual ~DialogColorPicker();
 
-	void SetColor(AssColor new_color, int numColor = 0);
+	void SetColor(AssColor new_color, int numColor = 0, bool SendVideoEvent = true);
 	AssColor GetColor();
 
 	static DialogColorPicker *DCP;
@@ -254,20 +254,20 @@ private:
 };
 typedef ButtonColorPicker ColorButton;
 
-class TextColorPicker : public wxWindow
-{
-public:
-	TextColorPicker(wxWindow *parent, int id, const AssColor &color, const wxPoint &pos = wxDefaultPosition, const wxSize &size=wxDefaultSize, int style = 0);
-	virtual ~TextColorPicker(){};
-	AssColor GetColor();
-	void SetColor(const AssColor& color);
-private:
-	void OnDoubleClick(wxMouseEvent &evt);
-	void OnPaint(wxPaintEvent &evt);
-	void OnSize(wxSizeEvent &evt);
-	void OnErase(wxEraseEvent &evt){};
-	AssColor color;
-};
+//class TextColorPicker : public wxWindow
+//{
+//public:
+//	TextColorPicker(wxWindow *parent, int id, const AssColor &color, const wxPoint &pos = wxDefaultPosition, const wxSize &size=wxDefaultSize, int style = 0);
+//	virtual ~TextColorPicker(){};
+//	AssColor GetColor();
+//	void SetColor(const AssColor& color);
+//private:
+//	void OnDoubleClick(wxMouseEvent &evt);
+//	void OnPaint(wxPaintEvent &evt);
+//	void OnSize(wxSizeEvent &evt);
+//	void OnErase(wxEraseEvent &evt){};
+//	AssColor color;
+//};
 
 class SimpleColorPickerDialog : public KaiDialog
 {

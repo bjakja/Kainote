@@ -29,6 +29,7 @@ class AssColor
     void SetAss(wxString color);
     void SetWX(const wxColour &color, int alpha);
 	wxString GetHex(bool alpha) const;
+	void Copy(const AssColor& color, bool alpha = false);
 	//no const cause it replaces this string
 	void SetAlphaString(wxString alpha);
     AssColor();

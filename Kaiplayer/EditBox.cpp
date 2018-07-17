@@ -843,10 +843,10 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		DialogColorPicker *ColourDialog = DialogColorPicker::Get(this, actualColor.GetWX(), numColor);
 		MoveToMousePosition(ColourDialog);
 		ColourDialog->Connect(11111, COLOR_CHANGED, (wxObjectEventFunction)&EditBox::OnColorChange, 0, this);
-		ColourDialog->Bind(COLOR_CHANGED, [=](wxCommandEvent &evt){
+		ColourDialog->Bind(COLOR_TYPE_CHANGED, [=](wxCommandEvent &evt){
 			AssColor col; 
-			GetColor(&col, numColor);
-			ColourDialog->SetColor(col);
+			GetColor(&col, evt.GetInt());
+			ColourDialog->SetColor(col, 0, false);
 		}, 11111);
 		if (ColourDialog->ShowModal() == wxID_OK) {
 			//wywołane tylko by dodać kolor do recent;
@@ -867,9 +867,9 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		SimpleColorPickerDialog *scpd = scp.GetDialog();
 		int spcdId = scpd->GetId();
 		scpd->Bind(COLOR_CHANGED, &EditBox::OnColorChange, this, spcdId);
-		scpd->Bind(COLOR_CHANGED, [=](wxCommandEvent &evt){
+		scpd->Bind(COLOR_TYPE_CHANGED, [=](wxCommandEvent &evt){
 			AssColor col;
-			GetColor(&col, numColor);
+			GetColor(&col, evt.GetInt());
 			scpd->SetColor(col);
 		}, spcdId);
 
@@ -903,8 +903,9 @@ bool EditBox::GetColor(AssColor *actualColor, int numColor)
 			(numColor == 2) ? style->SecondaryColour :
 			(numColor == 3) ? style->OutlineColour :
 			style->BackColour;
-		if (FindVal(colorNumber + tag, &retTag))
-			*actualColor = AssColor("&" + retTag);
+		if (FindVal(colorNumber + tag, &retTag)){
+			actualColor->Copy(AssColor("&" + retTag));
+		}
 		if (FindVal(colorNumber + taga, &retTag)){ actualColor->SetAlphaString(retTag); }
 		else if (FindVal(tagal, &retTag)){ actualColor->SetAlphaString(retTag); return true; }
 	}
