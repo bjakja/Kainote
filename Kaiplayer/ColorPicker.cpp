@@ -346,11 +346,12 @@ void ColorPickerScreenDropper::OnMouse(wxMouseEvent &evt)
 	x = evt.GetX() / magnification;
 	y = evt.GetY() / magnification;
 
-	if (HasCapture() && evt.LeftIsDown()) {
+	if (HasCapture() && (evt.LeftIsDown() || evt.RightIsDown())) {
 
 		wxPoint pos = ClientToScreen(evt.GetPosition());
 		DropFromScreenXY(pos.x, pos.y);
-
+		if (evt.RightIsDown())
+			SendGetColorEvent(resx / 2, resy / 2);
 	}
 	else if (evt.LeftDown()) {
 
@@ -359,22 +360,14 @@ void ColorPickerScreenDropper::OnMouse(wxMouseEvent &evt)
 
 		}
 		else if (x >= 0 && y >= 0 && x < resx && y < resy) {
-			wxColour color;
-
-			wxMemoryDC capdc(capture);
-			capdc.GetPixel(x, y, &color);
-			color = wxColour(color.Red(), color.Green(), color.Blue(), wxALPHA_OPAQUE);
-			AssColor ass(color);
-			wxCommandEvent evt(wxDROPPER_SELECT, GetId());
-			evt.SetString(ass.GetAss(false, false));
-			AddPendingEvent(evt);
+			SendGetColorEvent(x, y);
 		}
 
 	}
 	else if (HasCapture() && evt.LeftUp()) {
 		ReleaseMouse();
-		wxCommandEvent evt(wxDROPPER_MOUSE_UP, GetId());
-		AddPendingEvent(evt);
+		wxCommandEvent dropperevt(wxDROPPER_MOUSE_UP, GetId());
+		AddPendingEvent(dropperevt);
 	}
 }
 
@@ -427,7 +420,17 @@ void ColorPickerScreenDropper::DropFromScreenXY(int x, int y)
 	Refresh(false);
 }
 
-
+void ColorPickerScreenDropper::SendGetColorEvent(int x, int y)
+{
+	wxColour color;
+	wxMemoryDC capdc(capture);
+	capdc.GetPixel(x, y, &color);
+	color = wxColour(color.Red(), color.Green(), color.Blue(), wxALPHA_OPAQUE);
+	AssColor ass(color);
+	wxCommandEvent evt(wxDROPPER_SELECT, GetId());
+	evt.SetString(ass.GetAss(false, false));
+	AddPendingEvent(evt);
+}
 
 //AssColor GetColorFromUser(wxWindow *parent, AssColor original)
 //{
@@ -633,6 +636,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	screen_dropper_icon->Connect(wxEVT_MOTION, wxMouseEventHandler(DialogColorPicker::OnDropperMouse), 0, this);
 	screen_dropper_icon->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DialogColorPicker::OnDropperMouse), 0, this);
 	screen_dropper_icon->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(DialogColorPicker::OnDropperMouse), 0, this);
+	screen_dropper_icon->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(DialogColorPicker::OnDropperMouse), 0, this);
 	Connect(SELECTOR_RGB_R, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeRGB);
 	Connect(SELECTOR_RGB_G, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeRGB);
 	Connect(SELECTOR_RGB_B, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeRGB);
@@ -1086,6 +1090,13 @@ void DialogColorPicker::OnDropperMouse(wxMouseEvent &evt)
 	if (screen_dropper_icon->HasCapture()) {
 		wxPoint scrpos = screen_dropper_icon->ClientToScreen(evt.GetPosition());
 		screen_dropper->DropFromScreenXY(scrpos.x, scrpos.y);
+		if (evt.RightUp()){//we do not have access to resx and resy, it's 7, after change needs to be fix
+			screen_dropper->SendGetColorEvent(3, 3);
+			screen_dropper_icon->ReleaseMouse();
+			eyedropper_is_grabbed = false;
+			screen_dropper_icon->SetCursor(wxNullCursor);
+			screen_dropper_icon->SetBitmap(eyedropper_bitmap);
+		}
 	}
 }
 
@@ -1310,6 +1321,7 @@ SimpleColorPickerDialog::SimpleColorPickerDialog(wxWindow *parent, const AssColo
 
 	HexColor = new KaiTextCtrl(this, -1, actualColor.GetAss(false, false));
 	dropper = new ColorPickerScreenDropper(this, 9765, 7, 7, 8, false);
+	dropper->Bind(wxEVT_MOUSE_CAPTURE_LOST, [=](wxMouseCaptureLostEvent &evt){ ReleaseMouse(); });
 	Bind(wxDROPPER_MOUSE_UP, [=](wxCommandEvent &evt){
 		if (moveWindowToMousePosition->GetValue())
 			MoveToMousePosition(this);

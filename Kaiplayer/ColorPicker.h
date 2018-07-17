@@ -119,6 +119,7 @@ public:
 	ColorPickerScreenDropper(wxWindow *parent, wxWindowID id, int _resx, int _resy, int _magnification, bool _integrated_dropper);
 	virtual ~ColorPickerScreenDropper(){ };
 	void DropFromScreenXY(int x, int y);
+	void SendGetColorEvent(int x, int y);
 
 	DECLARE_EVENT_TABLE()
 };
