@@ -46,6 +46,42 @@ public:
 
 class FontCollector;
 
+class FontLogContent{
+public:
+	FontLogContent();
+	FontLogContent(int tab, const wxString &style, int line = -1){
+		if (line >= 0){
+			lines[line] << tab << L", ";
+		}else
+			styles[style] << tab << L", ";
+	}
+	void SetStyle(int tab, const wxString &style){
+		styles[style] << tab << L", ";
+	}
+	void SetLine(int tab, int line){
+		lines[line] << tab << L", ";
+	}
+	void AppendInfo(const wxString &_info){
+		info << _info << L"\n";
+	}
+	void AppendWarnings(const wxString &warning){
+		warnings << warning << L"\n";
+	}
+	void DoLog(FontCollector *fc);
+	void SetNotFound(bool _notFound = true){
+		notFound = _notFound;
+	}
+
+	std::map<wxString, wxString> styles;
+	std::map<int, wxString> lines;
+	wxString info;
+	wxString warnings;
+	bool notFound = false;
+	wxPoint stylesArea = wxPoint(-1, -1);
+	wxPoint linesArea = wxPoint(-1, -1);
+};
+
+
 class FontCollectorDialog : public KaiDialog
 {
 	friend class FontCollector;
@@ -89,6 +125,8 @@ public:
 	void MuxVideoWithSubs();
 	void StartCollect(int operation);
 	void ShowDialog(wxWindow *parent);
+	void SendMessageD(const wxString &string, const wxColour &col);
+
 	FontCollectorDialog *fcd;
 	enum{
 		CHECK_FONTS = 1,
@@ -98,24 +136,25 @@ public:
 		AS_ZIP = 16,
 		ON_ALL_TABS = 32
 	};
+	int currentTextPosition = 0;
 private:
 	typedef std::set<wxUniChar> CharMap;
 	std::map<wxString, CharMap> FontMap;
 	void PutChars(const wxString &txt, const wxString &fn);
-	void GetAssFonts(File *subs);
+	void GetAssFonts(File *subs, int tab);
 	bool CheckPathAndGlyphs(int *found, int *notfound, int *notcopied);
 	bool SaveFont(const wxString &fontname);
 	void EnumerateFonts();
-	void SendMessageD(const wxString &string, const wxColour &col);
 	bool AddFont(const wxString &string);
 	void CopyMKVFontsFromTab(const wxString &path);
+	void ClearTables();
 
 	wxArrayString facenames;
 	wxArrayString fontnames;
 	std::vector<LOGFONTW> logFonts;
-	std::map<wxString, wxString> notFindFontsLog;
-	std::map<wxString, wxString> findFontsLog;
-	std::map<wxString, SubsFont> foundFonts;
+	std::map<wxString, FontLogContent*> notFindFontsLog;
+	std::map<wxString, FontLogContent*> findFontsLog;
+	std::map<wxString, SubsFont*> foundFonts;
 	std::multimap<long, wxString> fontSizes;
 	wxString fontfolder;
 	wxString muxerpath;
@@ -123,6 +162,7 @@ private:
 	wxStopWatch sw;
 	int operation;
 	bool reloadFonts;
+	
 };
 
 class FontCollectorThread : public wxThread

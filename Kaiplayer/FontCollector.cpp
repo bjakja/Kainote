@@ -79,6 +79,36 @@ LOGFONTW &SubsFont::GetLogFont(HDC dc)
 	return logFont;
 }
 
+void FontLogContent::DoLog(FontCollector *fc){
+	fc->SendMessageD(info, (notFound) ? fc->fcd->warning : fc->fcd->normal);
+	
+	wxString messageText;
+	if (lines.size())
+		messageText << _("W stylach:\n");
+	stylesArea.x = fc->currentTextPosition;
+	for (auto &cur = styles.begin(); cur != styles.end(); cur++){
+		messageText << " - " << cur->first;
+		if (cur->second.Freq(',') > 1){
+			messageText << _(" zakładki: ") << cur->second;
+		}
+
+	}
+	stylesArea.y = fc->currentTextPosition + messageText.length();
+	if (lines.size())
+		messageText << _("W linijkach: ");
+	linesArea.x = fc->currentTextPosition + messageText.length();
+	for (auto &cur = lines.begin(); cur != lines.end(); cur++){
+		messageText << cur->first << L", ";
+	}
+	if (lines.size())
+		messageText.RemoveLast(2);
+	linesArea.y = fc->currentTextPosition + messageText.length();
+	messageText << L"\n";
+	fc->SendMessageD(messageText, (notFound) ? fc->fcd->warning : fc->fcd->normal);
+	fc->SendMessageD(warnings, fc->fcd->warning);
+
+}
+
 FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	: KaiDialog(parent, -1, _("Kolekcjoner czcionek"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	, fc(_fc)
@@ -277,7 +307,7 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 		else{
 			copypath = path->GetValue();
 			wxFileName fname(copypath);
-			if (!fname.IsOk() || fname.GetVolume().Len() != 1){
+			if (!fname.IsOk() || fname.GetVolume().length() != 1){
 				KaiMessageBox(_("Wybrana ścieżka zapisu jest niepoprawna."), "", 4L, this);
 				EnableControls();
 				return;
@@ -359,7 +389,7 @@ FontCollector::~FontCollector()
 	//fcd->Destroy();
 };
 
-void FontCollector::GetAssFonts(File * subs)
+void FontCollector::GetAssFonts(File *subs, int tab)
 {
 	std::map<wxString, Styles*> stylesfonts;
 
@@ -371,22 +401,21 @@ void FontCollector::GetAssFonts(File * subs)
 		wxString fnl = fn.Lower() << (int)bold << (int)italic;
 		int iresult = facenames.Index(fn, false);
 		if (iresult == -1){
-			notFindFontsLog[fn] << subs->styles[i]->Name << ",";
+			FontLogContent *nflc = notFindFontsLog[fn];
+			nflc->info = (_("Nie znaleziono czcionki \"") + fn + "\".\n");
+			nflc->SetNotFound();
+			nflc->SetStyle(tab, subs->styles[i]->Name);
 			//continue;
 		}
 		else
 		{
 			//pamiętaj, dodaj jeszcze boldy i itaici
 			if (!(foundFonts.find(fnl) != foundFonts.end())){
-				foundFonts[fnl] = SubsFont(fn, logFonts[iresult], (int)bold, italic);
+				foundFonts[fnl] = new SubsFont(fn, logFonts[iresult], (int)bold, italic);
 			}
-			if (!(findFontsLog.find(fn) != findFontsLog.end())){
-				findFontsLog[fn] << wxString::Format(_("Znaleziono czcionkę \"%s\" w stylach:\n- %s\n"),
-					fn, subs->styles[i]->Name);
-			}
-			else{
-				findFontsLog[fn] << "- " << subs->styles[i]->Name << "\n";
-			}
+			FontLogContent *flc = findFontsLog[fn];
+			flc->info = (wxString::Format(_("Znaleziono czcionkę \"%s\"\n"), fn));
+			flc->SetStyle(tab, subs->styles[i]->Name);
 		}
 		stylesfonts[subs->styles[i]->Name] = subs->styles[i];
 
@@ -427,7 +456,10 @@ void FontCollector::GetAssFonts(File * subs)
 				wxString fnl = ifont.Lower() << bold << italic;
 				int iresult = facenames.Index(ifont, false);
 				if (iresult == -1){
-					notFindFontsLog[ifont] << (i + 1) << ",";
+					FontLogContent *nflc = notFindFontsLog[ifont];
+					nflc->info = (_("Nie znaleziono czcionki \"") + ifont + "\".\n");
+					nflc->SetNotFound();
+					nflc->SetLine(tab, i + 1);
 				}
 				else
 				{
@@ -436,22 +468,12 @@ void FontCollector::GetAssFonts(File * subs)
 					textHavingFont.Replace("\\h", " ");
 					PutChars(textHavingFont, ifont);
 					if (!(foundFonts.find(fnl) != foundFonts.end())){
-						foundFonts[fnl] = SubsFont(ifont, logFonts[iresult], bold, (italic != 0));
+						foundFonts[fnl] = new SubsFont(ifont, logFonts[iresult], bold, (italic != 0));
 					}
 					if (newFont){
-						auto log = findFontsLog.find(ifont);
-						if (!(log != findFontsLog.end())){
-							findFontsLog[ifont] << wxString::Format(_("Znaleziono czcionkę \"%s\" w linijkach:\n%i,"),
-								ifont, (int)(i + 1));
-						}
-						else{
-							if (log->second.EndsWith("\n")){
-								log->second << wxString::Format(_("W linijkach:\n%i,"), (int)(i + 1));
-							}
-							else{
-								log->second << (i + 1) << ", ";
-							}
-						}
+						FontLogContent *flc = findFontsLog[ifont];
+						flc->info = (wxString::Format(_("Znaleziono czcionkę \"%s\"\n"), ifont));
+						flc->SetLine(tab, (i + 1));
 						newFont = false;
 					}
 				}
@@ -524,41 +546,23 @@ void FontCollector::CheckOrCopyFonts()
 	if (operation & ON_ALL_TABS){
 		Notebook * tabs = Notebook::GetTabs();
 		for (size_t i = 0; i < tabs->Size(); i++){
-			GetAssFonts(tabs->Page(i)->Grid->file->GetSubs());
+			GetAssFonts(tabs->Page(i)->Grid->file->GetSubs(), i);
 		}
 	}
 	else{
-		GetAssFonts(Notebook::GetTab()->Grid->file->GetSubs());
+		GetAssFonts(Notebook::GetTab()->Grid->file->GetSubs(), Notebook::GetTabs()->iter);
 	}
 	bool allglyphs = CheckPathAndGlyphs(&found, &notFound, &notCopied);
 
 	//checking glyphs not work on not existed fonts, 
 	notFound += notFindFontsLog.size();
-
+	for (auto cur = findFontsLog.begin(); cur != findFontsLog.end(); cur++){
+		cur->second->DoLog(this);
+	}
 	for (auto cur = notFindFontsLog.begin(); cur != notFindFontsLog.end(); cur++){
-		wxString list = cur->second;
-		wxStringTokenizer token(list, ",", wxTOKEN_STRTOK);
-		wxString result = _("Nie znaleziono czcionki \"") + cur->first + "\".\n";
-		bool first = true;
-		while (token.HasMoreTokens()){
-			wxString tkn = token.GetNextToken();
-			if (tkn.IsNumber()){
-				result += _("Użytej w linijkach: ") + list.Mid(token.GetPosition() - tkn.Len() - 1) + "\n";
-				break;
-			}
-			else{
-				if (first){ result += _("Użytej w stylach:\n"); first = false; }
-				result += " - " + tkn + "\n";
-			}
-		}
-
-		SendMessageD("\n" + result, fcd->warning);
+		cur->second->DoLog(this);
 	}
 	
-	FontMap.clear();
-	notFindFontsLog.clear();
-	findFontsLog.clear();
-	foundFonts.clear();
 	if (zip){
 		zip->Close();
 		delete zip;
@@ -699,11 +703,25 @@ void FontCollector::CopyMKVFontsFromTab(const wxString &mkvpath)
 }
 
 
+void FontCollector::ClearTables()
+{
+	FontMap.clear();
+	for (auto cur = notFindFontsLog.begin(); cur != notFindFontsLog.end(); cur++)
+		delete cur->second;
+	notFindFontsLog.clear();
+	for (auto cur = findFontsLog.begin(); cur != findFontsLog.end(); cur++)
+		delete cur->second;
+	findFontsLog.clear();
+	for (auto cur = foundFonts.begin(); cur != foundFonts.end(); cur++)
+		delete cur->second;
+	foundFonts.clear();
+}
+
 void FontCollector::PutChars(const wxString &txt, const wxString &fn)
 {
 	CharMap &ch = FontMap[fn];
 
-	for (size_t i = 0; i < txt.Len(); i++)
+	for (size_t i = 0; i < txt.length(); i++)
 	{
 		if (!(ch.find(txt[i]) != ch.end())){
 			ch.insert(txt[i]);
@@ -735,28 +753,26 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 	auto it = foundFonts.begin();
 	wxString lastfn;
 	for (size_t k = 0; k < foundFonts.size(); k++){
-		LOGFONTW mlf = it->second.GetLogFont(dc);
-		wxString fn = it->second.name;
+		LOGFONTW mlf = it->second->GetLogFont(dc);
+		wxString fn = it->second->name;
 		bool isNewFont = lastfn != fn;
-		if (isNewFont){
-			SendMessageD("\n" + findFontsLog[fn].RemoveLast() + "\n", fcd->normal);
-		}
 		lastfn = fn;
-		SubsFont &font = it->second;
+		SubsFont *font = it->second;
+		FontLogContent *flc = findFontsLog[fn];
 		it++;
 		auto hfont = CreateFontIndirectW(&mlf);
 		SelectObject(dc, hfont);
-		if (font.fakeNormal){
-			SendMessageD(wxString::Format(_("Czcionka \"%s\" nie ma stylu normalnego.\n"), fn), fcd->warning);
+		if (font->fakeNormal){
+			flc->AppendWarnings(wxString::Format(_("Czcionka \"%s\" nie ma stylu normalnego.\n"), fn));
 		}
-		else if (font.fakeBoldItalic){
-			SendMessageD(wxString::Format(_("Czcionka \"%s\" nie ma pogrubienia z kursywą.\n"), fn), fcd->warning);
+		else if (font->fakeBoldItalic){
+			flc->AppendWarnings(wxString::Format(_("Czcionka \"%s\" nie ma pogrubienia z kursywą.\n"), fn));
 		}
-		else if (font.fakeBold){
-			SendMessageD(wxString::Format(_("Czcionka \"%s\" nie ma pogrubienia.\n"), fn), fcd->warning);
+		else if (font->fakeBold){
+			flc->AppendWarnings(wxString::Format(_("Czcionka \"%s\" nie ma pogrubienia.\n"), fn));
 		}
-		else if (font.fakeItalic){
-			SendMessageD(wxString::Format(_("Czcionka \"%s\" nie ma kursywy.\n"), fn), fcd->warning);
+		else if (font->fakeItalic){
+			flc->AppendWarnings(wxString::Format(_("Czcionka \"%s\" nie ma kursywy.\n"), fn));
 		}
 		if (isNewFont){
 			wxString text;
@@ -768,11 +784,11 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 			}
 			if (!FontEnum.CheckGlyphsExists(dc, text, missing))
 			{
-				SendMessageD(wxString::Format(_("Nie można sprawdzić znaków czcionki \"%s\".\n"), fn), fcd->warning);
+				flc->AppendWarnings(wxString::Format(_("Nie można sprawdzić znaków czcionki \"%s\".\n"), fn));
 			}
-			if (missing.Len() > 0){
+			if (missing.length() > 0){
 				allfound = false;
-				SendMessageD(wxString::Format(_("Czcionka \"%s\" nie zawiera znaków: \"%s\".\n"), fn, missing), fcd->warning);
+				flc->AppendWarnings(wxString::Format(_("Czcionka \"%s\" nie zawiera znaków: \"%s\".\n"), fn, missing));
 			}
 		}
 		
@@ -784,7 +800,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 				size = GetFontData(dc, 0, 0, nullptr, 0);
 			}
 			if (size == GDI_ERROR || size == 0){
-				SendMessageD(wxString::Format(_("Nie można pobrać zawartości czcionki \"%s\".\n"), fn), fcd->warning);
+				flc->AppendWarnings(wxString::Format(_("Nie można pobrać zawartości czcionki \"%s\".\n"), fn));
 				if (isNewFont)
 					(*notFound)++;
 
@@ -805,19 +821,19 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 				long lSize = ftell(fp);
 				rewind(fp);
 				if (lSize != size){
-					SendMessageD(wxString::Format(_("Rozmiar czcionki \"%s\" się różni.\n"), fn), fcd->warning);
+					flc->AppendWarnings(wxString::Format(_("Rozmiar czcionki \"%s\" się różni.\n"), fn));
 					fclose(fp);
 					goto done;
 				}
 				int result = fread(&file_buffer[0], 1, size, fp);
 				if (result != size){
-					SendMessageD(wxString::Format(_("Nie można odczytać czcionki \"%s\" z folderu fonts.\n"), fn), fcd->warning);
+					flc->AppendWarnings(wxString::Format(_("Nie można odczytać czcionki \"%s\" z folderu fonts.\n"), fn));
 				}
 				fclose(fp);
 				if (memcmp(&file_buffer[0], &buffer[0], size) == 0) {
 					if (fontnames.Index(fullpath, true) == -1){
 						fontnames.Add(fullpath);
-						SendMessageD(wxString::Format(_("Znaleziono plik czcionki \"%s\".\n"), fullpath), fcd->normal);
+						flc->AppendInfo(wxString::Format(_("Znaleziono plik czcionki \"%s\".\n"), fullpath));
 						if (operation & COPY_FONTS){ 
 							if (!SaveFont(fullpath))
 								(*notCopied)++;
@@ -827,10 +843,10 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 						wxString ext = it->second.AfterLast('.').Lower();
 						if (ext == "pfm" || ext == "pfb"){
 							wxString repl = (ext == "pfm") ? "pfb" : "pfm";
-							if (fullpath[fullpath.Len() - 1] < 'Z'){ repl = repl.Upper(); }
+							if (fullpath[fullpath.length() - 1] < 'Z'){ repl = repl.Upper(); }
 							wxString secondPath = fullpath.RemoveLast(3) + repl;
 							fontnames.Add(secondPath);
-							SendMessageD(wxString::Format(_("Znaleziono plik czcionki \"%s\".\n"), secondPath), fcd->normal);
+							flc->AppendInfo(wxString::Format(_("Znaleziono plik czcionki \"%s\".\n"), secondPath));
 							if (operation & COPY_FONTS){
 								if (!SaveFont(fullpath))
 									(*notCopied)++;
@@ -847,7 +863,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 				}
 			}
 			if (!succeeded){
-				SendMessageD(wxString::Format(_("Nie można znaleźć czcionki \"%s\" w folderze fonts.\n"), fn), fcd->warning);
+				flc->AppendWarnings(wxString::Format(_("Nie można znaleźć czcionki \"%s\" w folderze fonts.\n"), fn));
 				(*notFound)++;
 				(*found)--;
 			}
@@ -922,6 +938,7 @@ void FontCollector::SendMessageD(const wxString &string, const wxColour &col)
 {
 	wxThreadEvent *evt = new wxThreadEvent(EVT_APPEND_MESSAGE, fcd->GetId());
 	evt->SetPayload(new std::pair<wxString, wxColour>(string, col));
+	currentTextPosition += string.length();
 	wxQueueEvent(fcd, evt);
 }
 
@@ -936,6 +953,7 @@ FontCollectorThread::FontCollectorThread(FontCollector *_fc)
 wxThread::ExitCode FontCollectorThread::Entry()
 {
 	fc->sw.Start();
+	fc->ClearTables();
 	if (fc->operation &FontCollector::CHECK_FONTS || fc->operation &FontCollector::COPY_FONTS){
 		fc->CheckOrCopyFonts();
 	}
