@@ -533,6 +533,15 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 		ProcessEvent(ctcevt);
 	}, 9766);
 
+	KaiCheckBox *SwitchClicks = new KaiCheckBox(this, 9456, _("Zamień ze sobą skróty próbnika i okna wyboru kolorów"));
+	SwitchClicks->SetValue(Options.GetBool(COLORPICKER_SWITCH_CLICKS));
+	SwitchClicks->SetToolTip(_("Zahaczenie tej opcji uruchamia próbnik po kliknięciu lewym przyciskiem,\na okno wyboru koloru po kliknięciu prawym przyciskiem."));
+	if (colorNum == -1)
+		SwitchClicks->Enable(false);
+	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, [=](wxCommandEvent &evt){
+		Options.SetBool(COLORPICKER_SWITCH_CLICKS, SwitchClicks->GetValue());
+	}, 9456);
+
 	// Arrange the controls in a nice way
 	wxSizer *spectop_sizer = new wxBoxSizer(wxHORIZONTAL);
 	spectop_sizer->Add(colorType, 1, wxALIGN_CENTER_VERTICAL | wxLEFT | wxEXPAND, 2);
@@ -546,6 +555,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	spectrum_sizer->Add(alphaslider, 0, wxALL, 2);
 	spectrum_box->Add(spectop_sizer, 0, wxALL, 3);
 	spectrum_box->Add(spectrum_sizer, 0, wxALL, 3);
+
 	wxFlexGridSizer *rgb_sizer = new wxFlexGridSizer(2, 5, 5);
 	rgb_sizer->Add(new KaiStaticText(this, -1, _("Czerwony:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	rgb_sizer->Add(rgb_input[0], 0);
@@ -615,9 +625,12 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	input_sizer->Add(picker_sizer, 0, wxALIGN_CENTER | wxEXPAND);
 	input_sizer->AddStretchSpacer(2);
 	input_sizer->Add(button_sizer, 0, wxALIGN_RIGHT | wxALIGN_BOTTOM);
+	wxBoxSizer *secondSpectrumBox = new wxBoxSizer(wxVERTICAL);
+	secondSpectrumBox->Add(spectrum_box, 0, wxBOTTOM, 5);
+	secondSpectrumBox->Add(SwitchClicks, 0, wxLEFT | wxBOTTOM, 3);
 
 	DialogSizer *main_sizer = new DialogSizer(wxHORIZONTAL);
-	main_sizer->Add(spectrum_box, 1, wxALL | wxEXPAND, 5);
+	main_sizer->Add(secondSpectrumBox, 1, wxALL | wxEXPAND, 5);
 	main_sizer->Add(input_sizer, 0, (wxALL&~wxLEFT) | wxEXPAND, 5);
 
 	SetSizerAndFit(main_sizer);

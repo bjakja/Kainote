@@ -828,6 +828,10 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 
 void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 {
+	//check if need to switch hotkeys
+	if (Options.GetBool(COLORPICKER_SWITCH_CLICKS))
+		leftClick = !leftClick;
+
 	wxString tmptext = TextEdit->GetValue();
 	MTextEditor *Editor = TextEdit;
 	int tmpIter = grid->file->Iter();

@@ -104,6 +104,7 @@
 	CG(AutoSaveMaxFiles,)\
 	CG(AutoSelectLinesFromLastTab,)\
 	CG(ColorpickerRecent,)\
+	CG(COLORPICKER_SWITCH_CLICKS,)\
 	CG(ConvertASSTagsOnLineStart,)\
 	CG(ConvertFPS,)\
 	CG(ConvertFPSFromVideo,)\
