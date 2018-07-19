@@ -62,12 +62,12 @@ class StyleStore: public KaiDialog
         void LoadStylesS(bool ass);
 		//void StyleonVideo(Styles *styl, bool fullskreen=false);
 		void DoTooltips();
-		void LoadAssStyles();
+		void LoadAssStyles(const wxString &styleName = "");
 		void ReloadFonts();
 		bool SetForegroundColour(const wxColour &col);
 		bool SetBackgroundColour(const wxColour &col);
 		static void ShowStore();
-		static void ShowStyleEdit();
+		static void ShowStyleEdit(const wxString &styleName = "");
 		static StyleStore *Get();
 		static void DestroyStore();
 		static bool HasStore(){return (SS!=NULL);}

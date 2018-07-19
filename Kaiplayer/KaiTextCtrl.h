@@ -75,6 +75,9 @@ public:
 	//void SetValidator(const wxValidator &validator){};
 	size_t GetLength(){ return KText.Len(); }
 	bool Enable(bool enable=true);
+	bool HitTest(wxPoint pos, wxPoint *cur);
+	void FindWord(int pos, int *start, int *end);
+
 protected:
 	void ContextMenu(wxPoint mpos);
 	inline int FindY(int x);
@@ -90,10 +93,8 @@ protected:
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
 	void OnScroll(wxScrollWinEvent& event);
 	void DrawFld(wxDC &dc,int w, int h, int windoww, int windowh);
-	bool HitTest(wxPoint pos, wxPoint *cur);
 	void CalcWrap(bool sendevent=true, size_t position = 0);
 	void SendEvent();
-	void FindWord(int pos,int *start, int *end);
 	void GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight, bool correct=false);
 	void MakeCursorVisible(bool refresh=true);
     wxString KText;

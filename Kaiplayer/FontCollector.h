@@ -49,17 +49,15 @@ class FontCollector;
 class FontLogContent{
 public:
 	FontLogContent();
-	FontLogContent(int tab, const wxString &style, int line = -1){
-		if (line >= 0){
-			lines[line] << tab << L", ";
-		}else
-			styles[style] << tab << L", ";
+	FontLogContent(const wxString &_info, bool _notFound = false){
+		info = _info;
+		notFound = _notFound;
 	}
 	void SetStyle(int tab, const wxString &style){
-		styles[style] << tab << L", ";
+		styles[style].Add(tab);
 	}
 	void SetLine(int tab, int line){
-		lines[line] << tab << L", ";
+		lines[line].Add(tab);
 	}
 	void AppendInfo(const wxString &_info){
 		info << _info << L"\n";
@@ -71,9 +69,21 @@ public:
 	void SetNotFound(bool _notFound = true){
 		notFound = _notFound;
 	}
+	// no pointer checking
+	bool CheckPosition(int position, bool *isStyle){
+		if (position >= stylesArea.x && position <= stylesArea.y){
+			*isStyle = true;
+			return true;
+		}
+		if (position >= linesArea.x && position <= linesArea.y){
+			*isStyle = false;
+			return true;
+		}
+		return false;
+	}
 
-	std::map<wxString, wxString> styles;
-	std::map<int, wxString> lines;
+	std::map<wxString, wxArrayInt> styles;
+	std::map<int, wxArrayInt> lines;
 	wxString info;
 	wxString warnings;
 	bool notFound = false;
@@ -108,6 +118,10 @@ private:
 	void OnChangeOpt(wxCommandEvent &event);
 	void OnButtonPath(wxCommandEvent &event);
 	void EnableControls(bool enable = true);
+	void OnConsoleDoubleClick(wxMouseEvent &evt);
+	void ParseDoubleClickResults(FontLogContent *flc, int start, int end, bool isStyle);
+	void OpenStyle(int tab, const wxString &style);
+	void SetLine(int tab, int line);
 
 	FontCollector *fc;
 	wxWindowDisabler *disabler = NULL;
@@ -143,7 +157,7 @@ private:
 	void PutChars(const wxString &txt, const wxString &fn);
 	void GetAssFonts(File *subs, int tab);
 	bool CheckPathAndGlyphs(int *found, int *notfound, int *notcopied);
-	bool SaveFont(const wxString &fontname);
+	bool SaveFont(const wxString &fontname, FontLogContent *flc);
 	void EnumerateFonts();
 	bool AddFont(const wxString &string);
 	void CopyMKVFontsFromTab(const wxString &path);

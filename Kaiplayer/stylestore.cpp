@@ -850,14 +850,14 @@ void StyleStore::SetModified(bool refreshActiveLine /*= false*/)
 	ASSList->SetArray(grid->GetStyleTable());
 }
 
-void StyleStore::LoadAssStyles()
+void StyleStore::LoadAssStyles(const wxString &styleName /*= ""*/)
 {
 	SubsGrid* grid = Notebook::GetTab()->Grid;
 	if (grid->StylesSize() < 1){
 		grid->AddStyle(new Styles());
 	}
 	ASSList->SetArray(grid->GetStyleTable());
-	int wstyle = MAX(0, grid->FindStyle(Notebook::GetTab()->Edit->line->Style));
+	int wstyle = MAX(0, grid->FindStyle((styleName.empty())? Notebook::GetTab()->Edit->line->Style : styleName));
 	ASSList->SetSelection(wstyle, true);
 	if (cc->IsShown())
 	{
@@ -958,7 +958,7 @@ void StyleStore::ShowStore()
 	SS->Show();
 }
 
-void StyleStore::ShowStyleEdit()
+void StyleStore::ShowStyleEdit(const wxString &styleName /*= ""*/)
 {
 	StyleStore *SS = Get();
 	if (!SS->detachedEtit){
@@ -968,7 +968,7 @@ void StyleStore::ShowStyleEdit()
 		SS->detachedEtit = true;
 	}
 	SS->cc->Show();
-	SS->LoadAssStyles();
+	SS->LoadAssStyles(styleName);
 
 }
 
