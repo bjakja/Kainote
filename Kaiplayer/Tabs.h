@@ -32,7 +32,7 @@ public:
 	TabPanel *GetPage();
 	void AddPage(bool refresh = true);
 	void SetPageText(int page, const wxString &label);
-	void ChangePage(int page);
+	void ChangePage(int page, bool makeActiveVisible = false);
 	TabPanel *GetSecondPage();
 	int GetIterByPos(const wxPoint &pos);
 	int GetSelection();

@@ -119,7 +119,7 @@ private:
 	void OnButtonPath(wxCommandEvent &event);
 	void EnableControls(bool enable = true);
 	void OnConsoleDoubleClick(wxMouseEvent &evt);
-	void ParseDoubleClickResults(FontLogContent *flc, int start, int end, bool isStyle);
+	void ParseDoubleClickResults(FontLogContent *flc, int cursorPos, bool isStyle);
 	void OpenStyle(int tab, const wxString &style);
 	void SetLine(int tab, int line);
 

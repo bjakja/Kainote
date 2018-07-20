@@ -85,13 +85,13 @@ void FontLogContent::DoLog(FontCollector *fc){
 	wxString messageText;
 	if (styles.size())
 		messageText << _("W stylach:\n");
-	stylesArea.x = fc->currentTextPosition;
+	stylesArea.x = fc->currentTextPosition + messageText.length();
 	for (auto &cur = styles.begin(); cur != styles.end(); cur++){
 		messageText << L" - " << cur->first;
 		if (cur->second.GetCount() > 1){
 			messageText << _(" zakładki: ");
 			for (auto & tab : cur->second)
-				messageText << tab << ", ";
+				messageText << (tab + 1) << ", ";
 			messageText.RemoveLast(2);
 		}
 		messageText << L"\n";
@@ -101,14 +101,18 @@ void FontLogContent::DoLog(FontCollector *fc){
 		messageText << _("W linijkach: ");
 	linesArea.x = fc->currentTextPosition + messageText.length();
 	for (auto &cur = lines.begin(); cur != lines.end(); cur++){
-		messageText << cur->first << L", ";
+		messageText << (cur->first + 1) << L", ";
 	}
 	if (lines.size()){
 		messageText.RemoveLast(2);
 		messageText << L"\n";
 	}
 	linesArea.y = fc->currentTextPosition + messageText.length();
-	messageText << L"\n";
+	if (warnings.empty())
+		messageText << L"\n";
+	else
+		warnings << L"\n";
+
 	fc->SendMessageD(messageText, (notFound) ? fc->fcd->warning : fc->fcd->normal);
 	fc->SendMessageD(warnings, fc->fcd->warning);
 
@@ -251,17 +255,15 @@ void FontCollectorDialog::OnConsoleDoubleClick(wxMouseEvent &evt)
 {
 	auto flc = fc->findFontsLog;
 	auto nflc = fc->notFindFontsLog;
-	int start, end;
 	bool isStyle = false;
 	wxPoint ht;
 	console->HitTest(evt.GetPosition(), &ht);
-	console->FindWord(ht.x, &start, &end);
 	for (auto cur = flc.begin(); cur != flc.end(); cur++){
 		if (!cur->second)
 			continue;
 
 		if (cur->second->CheckPosition(ht.x, &isStyle)){
-			ParseDoubleClickResults(cur->second, start, end, isStyle);
+			ParseDoubleClickResults(cur->second, ht.x, isStyle);
 			return;
 		}
 	}
@@ -270,7 +272,7 @@ void FontCollectorDialog::OnConsoleDoubleClick(wxMouseEvent &evt)
 			continue;
 
 		if (cur->second->CheckPosition(ht.x, &isStyle)){
-			ParseDoubleClickResults(cur->second, start, end, isStyle);
+			ParseDoubleClickResults(cur->second, ht.x, isStyle);
 			return;
 		}
 	}
@@ -278,13 +280,29 @@ void FontCollectorDialog::OnConsoleDoubleClick(wxMouseEvent &evt)
 	evt.Skip();
 }
 
-void FontCollectorDialog::ParseDoubleClickResults(FontLogContent *flc, int start, int end, bool isStyle)
+void FontCollectorDialog::ParseDoubleClickResults(FontLogContent *flc, int cursorPos, bool isStyle)
 {
 	wxString text = console->GetValue();
-	wxString word = text.Mid(start, end - start + 1).Trim();
-	//need to write own find word between space or \n
-	word.Replace(",", "");
+	wxString delim = " \n,";
+	int start = 0, end = 0;
+	for (size_t i = cursorPos; i > 0; i--){
+		if (delim.find(text[i]) != -1){
+			start = i + 1;
+			break;
+		}
+	}
+	for (size_t i = cursorPos; i < text.length(); i++){
+		if (delim.find(text[i]) != -1){
+			end = i - 1;
+			if (end < start)
+				end = start - 1;
+			break;
+		}
+	}
 
+	wxString word = text.Mid(start, end - start + 1);
+	//need to write own find word between space or \n
+	
 	if (word.IsNumber()){
 		if (isStyle){
 			//find style name
@@ -292,15 +310,19 @@ void FontCollectorDialog::ParseDoubleClickResults(FontLogContent *flc, int start
 			wxString line = text.Mid(0, end).AfterLast('\n');
 			wxString styleName;
 			if (line.StartsWith(" - ", &styleName)){
-				styleName = styleName.BeforeFirst(' ');
-				auto cur = flc->styles.find(word);
+				int result = styleName.find(_(" zakładki: "));
+				if (result == -1)
+					return;
+
+				styleName = styleName.Mid(0, result);
+
+				auto cur = flc->styles.find(styleName);
 				if (cur != flc->styles.end() && cur->second.size()){
 					//wonder if it's possible that this table was empty
 					//better to check
-					int numtab = atoi(word);
-					int tab = cur->second[(numtab < cur->second.GetCount())? numtab : 0];
+					int numtab = atoi(word) - 1;
 					//we have style and tab number, now only open it
-					OpenStyle(tab, word);
+					OpenStyle(numtab, styleName);
 				}
 			}
 			// else wtf?
@@ -310,7 +332,8 @@ void FontCollectorDialog::ParseDoubleClickResults(FontLogContent *flc, int start
 		}
 		else{
 			//line number
-			int line = atoi(word);
+			//line in text field is increased
+			int line = atoi(word) - 1;
 			auto cur = flc->lines.find(line);
 			if (cur != flc->lines.end() && cur->second.size()){
 				int tab = cur->second[0];
@@ -318,31 +341,49 @@ void FontCollectorDialog::ParseDoubleClickResults(FontLogContent *flc, int start
 			}
 		}
 	}
-	else{
+	else if(!word.empty()){
 		//style name or shit like tabs: or - maybe even ,
-		auto cur = flc->styles.find(word);
-		if (cur != flc->styles.end() && cur->second.size()){
-			//wonder if it's possible that this table was empty
-			//better to check
-			int tab = cur->second[0];
-			//we have style and tab number, now only open it
-			OpenStyle(tab, word);
-		}
-		//else shit
+		//auto cur = flc->styles.find(word);
+		//if (cur != flc->styles.end() && cur->second.size()){
+		//	//wonder if it's possible that this table was empty
+		//	//better to check
+		//	int tab = cur->second[0];
+		//	//we have style and tab number, now only open it
+		//	OpenStyle(tab, word);
+		//}
+		//else{ 
+			wxString lineFromStart = text.Mid(0, end).AfterLast('\n');
+			wxString lineFromEnd = text.Mid(end).BeforeFirst('\n');
+			wxString line = lineFromStart + lineFromEnd;
+			wxString styleName;
+			if (line.StartsWith(" - ", &styleName)){
+				size_t result = styleName.find(_(" zakładki: "));
+				if (result != -1){
+					styleName = styleName.Mid(0, result);
+				}
+
+				auto cur = flc->styles.find(styleName);
+				if (cur != flc->styles.end() && cur->second.size()){
+					int tab = cur->second[0];
+					//we have style and tab number, now only open it
+					OpenStyle(tab, styleName);
+				}
+			}
+		//}
 	}
 }
 
 void FontCollectorDialog::OpenStyle(int numtab, const wxString &style)
 {
 	Notebook * tabs = Notebook::GetTabs();
-	tabs->ChangePage(numtab);
+	tabs->ChangePage(numtab, true);
 	TabPanel *tab = tabs->GetTab();
 	SubsGrid *grid = tab->Grid;
 	bool lineSet = false;
 	for (size_t i = 0; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDialogue(i);
 		if (dial->Style == style){
-			grid->ChangeActiveLine(i, true);
+			grid->ChangeActiveLine(i, false, true);
 			lineSet = true;
 			break;
 		}
@@ -354,9 +395,9 @@ void FontCollectorDialog::OpenStyle(int numtab, const wxString &style)
 void FontCollectorDialog::SetLine(int numtab, int line)
 {
 	Notebook * tabs = Notebook::GetTabs();
-	tabs->ChangePage(numtab);
+	tabs->ChangePage(numtab, true);
 	TabPanel *tab = tabs->GetTab();
-	tab->Grid->ChangeActiveLine(line, true);
+	tab->Grid->ChangeActiveLine(line, false, true);
 }
 
 void FontCollectorDialog::OnButtonPath(wxCommandEvent &event)
@@ -587,7 +628,7 @@ void FontCollector::GetAssFonts(File *subs, int tab)
 						notFindFontsLog[ifont] = nflc;
 					}
 					if (newFont){
-						nflc->SetLine(tab, i + 1);
+						nflc->SetLine(tab, i);
 					}
 				}
 				else
@@ -605,7 +646,7 @@ void FontCollector::GetAssFonts(File *subs, int tab)
 							flc = new FontLogContent(wxString::Format(_("Znaleziono czcionkę \"%s\"\n"), ifont));
 							findFontsLog[ifont] = flc;
 						}
-						flc->SetLine(tab, (i + 1));
+						flc->SetLine(tab, i);
 						newFont = false;
 					}
 				}
@@ -700,7 +741,7 @@ void FontCollector::CheckOrCopyFonts()
 		delete zip;
 		zip = NULL;
 	}
-	wxString noglyphs = (allglyphs) ? L"" : _("Niektóre czcionki nie mają wszystkich znaków użytych w tekście.");
+	wxString noglyphs = (allglyphs) ? L"" : _("Niektóre czcionki nie mają wszystkich znaków użytych w tekście.\n");
 
 	bool checkFonts = (operation & CHECK_FONTS);
 
@@ -837,6 +878,7 @@ void FontCollector::CopyMKVFontsFromTab(const wxString &mkvpath)
 
 void FontCollector::ClearTables()
 {
+	currentTextPosition = 0;
 	FontMap.clear();
 	for (auto cur = notFindFontsLog.begin(); cur != notFindFontsLog.end(); cur++)
 		delete cur->second;

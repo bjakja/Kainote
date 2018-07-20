@@ -257,14 +257,12 @@ void Notebook::DeletePage(int page)
 
 void Notebook::CalcSizes(bool makeActiveVisible)
 {
-	wxClientDC dc(this);
-	dc.SetFont(font);
 	int all=2;
 	int w,h;
 	GetClientSize(&w,&h);
 	for(size_t i=0;i<Size();i++){
 		int fw,fh;
-		dc.GetTextExtent(Names[i], &fw, &fh, NULL, NULL, &font);
+		GetTextExtent(Names[i], &fw, &fh, NULL, NULL, &font);
 		if(i==iter){fw+=18;}
 		if(i<Tabsizes.size()){Tabsizes[i]=fw+10;}
 		else{Tabsizes.Add(fw+10);}
@@ -971,26 +969,29 @@ LRESULT CALLBACK Notebook::PauseOnMinimalize( int code, WPARAM wParam, LPARAM lP
 
 
 
-void Notebook::ChangePage(int i)
+void Notebook::ChangePage(int page, bool makeActiveVisible /*= false*/)
 {
-	if (i == iter)
+	if (page == iter || page < 0 || page >= Pages.size())
 		return;
 
 	olditer=iter;
-	if(split && splititer==i){
+	if(split && splititer==page){
 		ChangeActive();return;
 	}
 	if(Pages[olditer]->Video->GetState()==Playing){Pages[olditer]->Video->Pause();}
 	if(split){
-		Pages[i]->SetPosition(Pages[iter]->GetPosition());
-		Pages[i]->SetSize(Pages[iter]->GetSize());
+		Pages[page]->SetPosition(Pages[iter]->GetPosition());
+		Pages[page]->SetSize(Pages[iter]->GetSize());
 	}
-	Pages[i]->Show();
-	Tabsizes[i]+=18;
+	Pages[page]->Show();
+	Tabsizes[page]+=18;
 	Pages[iter]->Hide();
 	Tabsizes[iter]-=18;
-	iter=i;
+	iter=page;
 	over=-1;
+	if (makeActiveVisible)
+		CalcSizes(true);
+
 	RefreshBar();
 	wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 	AddPendingEvent(evt2);

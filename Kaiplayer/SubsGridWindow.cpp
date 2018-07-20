@@ -1335,12 +1335,14 @@ int SubsGridWindow::CalcChars(const wxString &txt, wxString *lines, bool *bad)
 	return chars;
 }
 
-void SubsGridWindow::ChangeActiveLine(int newActiveLine, bool refresh /*= false*/)
+void SubsGridWindow::ChangeActiveLine(int newActiveLine, bool refresh /*= false*/, bool scroll /*= false*/)
 {
 	Edit->SetLine(newActiveLine);
 	SelectRow(newActiveLine, false, true, true);
-	if (refresh)
+	if (refresh && !scroll)
 		Refresh(false);
+	else if(scroll)
+		ScrollTo(newActiveLine, true);
 }
 
 void SubsGridWindow::SelVideoLine(int curtime)
