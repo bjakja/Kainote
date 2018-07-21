@@ -45,7 +45,7 @@ public:
 	void GetFpsnRatio(float *fps, long *arx, long *ary);
 	bool EnumFilters(Menu *menu);
 	bool FilterConfig(wxString name, int idx, wxPoint pos);
-	std::vector<chapter> GetChapters();
+	void GetChapters(std::vector<chapter> *chapters);
 	wxSize GetVideoSize();
 	void TearDownGraph();
 	PlaybackState m_state;

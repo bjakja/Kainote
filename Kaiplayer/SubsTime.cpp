@@ -19,15 +19,15 @@
 #include <wx/log.h>
 
 STime::STime(){
-	mstime=0;
-	form=ASS;
-	orgframe=0;
+	mstime = 0;
+	form = ASS;
+	orgframe = 0;
 }
 
 STime::STime(int ms, int orgFrame){
-	mstime=ms;
-	form=ASS;
-	orgframe=orgFrame;
+	mstime = ms;
+	form = ASS;
+	orgframe = orgFrame;
 }
 
 STime::~STime(){
@@ -35,46 +35,51 @@ STime::~STime(){
 
 void STime::SetRaw(wxString rawtime, char format)
 {
-	form=format;
+	form = format;
 	ParseMS(rawtime);
 }
 
 void STime::ParseMS(wxString raw)
-{   
+{
 
-	int csec1=0,sec1,min1,godz1;
-	if(raw.Trim()==""){mstime=0;orgframe=0;}
-	else if (form<MDVD){
-		wxString csec,sec,min,godz;
-		size_t godz11=raw.find(_T(":"),0);
-		godz=raw.SubString(0,godz11-1);
+	int csec1 = 0, sec1, min1, godz1;
+	if (raw.Trim() == ""){ mstime = 0; orgframe = 0; }
+	else if (form < MDVD){
+		wxString csec, sec, min, godz;
+		size_t godz11 = raw.find(_T(":"), 0);
+		godz = raw.SubString(0, godz11 - 1);
 		//kkk<<godz;
-		godz1=wxAtoi(godz);
-		min=raw.SubString(godz11+1,godz11+2);
+		godz1 = wxAtoi(godz);
+		min = raw.SubString(godz11 + 1, godz11 + 2);
 		//kkk<<min;
-		min1=wxAtoi(min);
-		sec=raw.SubString(godz11+4,godz11+5);
+		min1 = wxAtoi(min);
+		sec = raw.SubString(godz11 + 4, godz11 + 5);
 		//kkk<<sec;
-		sec1=wxAtoi(sec);
-		if(form<SRT){
-			csec=raw.SubString(godz11+7,godz11+8);
+		sec1 = wxAtoi(sec);
+		if (form < SRT){
+			csec = raw.SubString(godz11 + 7, godz11 + 8);
 			//kkk<<csec;
-			csec1=wxAtoi(csec)*10;}
-		else if(form==SRT){
-			csec=raw.SubString(godz11+7,godz11+9);
+			csec1 = wxAtoi(csec) * 10;
+		}
+		else if (form == SRT){
+			csec = raw.SubString(godz11 + 7, godz11 + 9);
 			//kkk<<csec;
-			csec1=wxAtoi(csec);}
+			csec1 = wxAtoi(csec);
+		}
 
-		mstime=(godz1*3600000)+(min1*60000)+(sec1*1000)+csec1;
-	}else{   
-		int ress=wxAtoi(raw);
-		if(form==FRAME){
-			orgframe=ress;
-		}else if(form==MDVD){
-			orgframe=ress;
-			mstime=(ress/Options.GetFloat(ConvertFPS))*(1000);
-			if(orgframe<0){orgframe=0;}
-		}else{mstime=(ress/10)*(1000);}
+		mstime = (godz1 * 3600000) + (min1 * 60000) + (sec1 * 1000) + csec1;
+	}
+	else{
+		int ress = wxAtoi(raw);
+		if (form == FRAME){
+			orgframe = ress;
+		}
+		else if (form == MDVD){
+			orgframe = ress;
+			mstime = (ress / 25.f)*(1000.f);
+			if (orgframe < 0){ orgframe = 0; }
+		}
+		else{ mstime = (ress / 10)*(1000); }
 	}
 
 
@@ -83,25 +88,31 @@ void STime::ParseMS(wxString raw)
 wxString STime::raw(char ft)//,float custfps
 {
 	wxString rawtxt;
-	if(ft==0){ft=form;}
-	if(ft<SRT){
-		int csec=mstime/10;
-		int sec=mstime/1000;
-		int min=mstime/60000;
-		int godz=mstime/3600000;
-		rawtxt = wxString::Format(_T("%01i:%02i:%02i.%02i"),godz,(min%60),(sec%60),(csec%100));
-	}else if(ft==TMP){
-		int sec=mstime/1000;
-		int min=mstime/60000;
-		int godz=mstime/3600000;
-		rawtxt = wxString::Format(_T("%02i:%02i:%02i"),godz,(min%60),(sec%60));
-	}else if(ft==SRT){
-		int sec=mstime/1000;
-		int min=mstime/60000;
-		int godz=mstime/3600000;
-		rawtxt = wxString::Format(_T("%02i:%02i:%02i,%03i"),godz,(min%60),(sec%60),(mstime%1000));
-	}else{
-		rawtxt = wxString::Format(_T("%i"),(ft!=MPL2)? orgframe : (int)ceil(mstime*(10.0f/1000.0f)));
+	if (ft == 0){ ft = form; }
+	if (ft < SRT){
+		int csec = mstime / 10;
+		int sec = mstime / 1000;
+		int min = mstime / 60000;
+		int godz = mstime / 3600000;
+		rawtxt = wxString::Format(_T("%01i:%02i:%02i.%02i"), godz, (min % 60), (sec % 60), (csec % 100));
+	}
+	else if (ft == TMP){
+		int sec = mstime / 1000;
+		int min = mstime / 60000;
+		int godz = mstime / 3600000;
+		rawtxt = wxString::Format(_T("%02i:%02i:%02i"), godz, (min % 60), (sec % 60));
+	}
+	else if (ft == SRT){
+		int sec = mstime / 1000;
+		int min = mstime / 60000;
+		int godz = mstime / 3600000;
+		rawtxt = wxString::Format(_T("%02i:%02i:%02i,%03i"), godz, (min % 60), (sec % 60), (mstime % 1000));
+	}
+	else{
+		if (ft == MDVD && !orgframe && mstime){
+			orgframe = ceil(mstime * (25.f / 1000.f));
+		}
+		rawtxt = wxString::Format(_T("%i"), (ft != MPL2) ? orgframe : (int)ceil(mstime*(10.0f / 1000.0f)));
 	}
 	//form=ft;
 	return rawtxt;
@@ -109,47 +120,52 @@ wxString STime::raw(char ft)//,float custfps
 
 void STime::Change(int ms)
 {
-	mstime+=ms;
-	if(mstime<0){mstime=0;}
+	mstime += ms;
+	if (mstime < 0){ mstime = 0; }
+	if (form == MDVD){
+		//MDVD format normally will take 25fps same as in Vobsub
+		orgframe = ceil(mstime*(25.f / 1000.f));
+	}
 }
 void STime::ChangeFrame(int frame)
 {
-	orgframe+=frame;
-	if(orgframe<0){orgframe=0;}
+	orgframe += frame;
+	if (orgframe < 0){ orgframe = 0; }
 }
 void STime::NewTime(int ms)
 {
-	mstime=ms;if(mstime<0){mstime=0;}
-	if(form==MDVD){
-		float fpsa=Options.GetFloat(ConvertFPS);
-		if(fpsa<1){fpsa=23.976f;}
-		orgframe=ceil(mstime*(fpsa/1000));
+	mstime = ms; if (mstime < 0){ mstime = 0; }
+	if (form == MDVD){
+		//MDVD format normally will take 25fps same as in Vobsub
+		orgframe = ceil(mstime*(25.f / 1000.f));
 	}
-	
+
 }
 
 void STime::NewFrame(int frame)
 {
-	orgframe=frame;if(orgframe<0){orgframe=0;}
+	orgframe = frame;
+	if (orgframe < 0){ orgframe = 0; }
 }
 
 char STime::GetFormat()
 {
 	return form;
 }
-void STime::ChangeFormat(char format,float fps)
+void STime::ChangeFormat(char format, float fps)
 {
 	if (form == SRT){ mstime = ZEROIT(mstime); }
-	if(form==MDVD && format!=FRAME){
-		float fpsa=(fps)?fps:Options.GetFloat(ConvertFPS);
-		if(fpsa<1){fpsa=23.976f;}
-		mstime=(orgframe/fpsa)*(1000);
-	}else if(format==MDVD && form!=FRAME){
-		float fpsa=(fps)?fps:Options.GetFloat(ConvertFPS);
-		if(fpsa<1){fpsa=23.976f;}
-		orgframe=ceil(mstime*(fpsa/1000));
+	if (form == MDVD && format != FRAME){
+		float fpsa = (fps) ? fps : Options.GetFloat(ConvertFPS);
+		if (fpsa < 1){ fpsa = 23.976f; }
+		mstime = (orgframe / fpsa)*(1000);
 	}
-	form=format;
+	else if (format == MDVD && form != FRAME){
+		float fpsa = (fps) ? fps : Options.GetFloat(ConvertFPS);
+		if (fpsa<1){ fpsa = 23.976f; }
+		orgframe = ceil(mstime*(fpsa / 1000));
+	}
+	form = format;
 }
 
 wxString STime::GetFormatted(char format)
@@ -159,27 +175,27 @@ wxString STime::GetFormatted(char format)
 
 bool STime::operator> (const STime &comp)
 {
-	return mstime>comp.mstime;
+	return mstime > comp.mstime;
 }
 
 bool STime::operator< (const STime &comp)
 {
-	return mstime<comp.mstime;
+	return mstime < comp.mstime;
 }
 
 bool STime::operator>= (const STime &comp)
 {
-	return mstime>comp.mstime;
+	return mstime > comp.mstime;
 }
 
 bool STime::operator<= (const STime &comp)
 {
-	return mstime<comp.mstime;
+	return mstime < comp.mstime;
 }
 
 bool STime::operator== (const STime &comp)
 {
-	return mstime==comp.mstime;
+	return mstime == comp.mstime;
 }
 
 bool STime::operator!= (const STime &comp)
@@ -192,8 +208,8 @@ STime STime::operator- (const STime &comp)
 	STime tmp = STime(comp);
 	tmp.mstime = mstime - comp.mstime;
 	tmp.orgframe = orgframe - comp.orgframe;
-	if (tmp.mstime<0){ tmp.mstime = 0; }
-	if (tmp.orgframe<0){ tmp.orgframe = 0; }
+	if (tmp.mstime < 0){ tmp.mstime = 0; }
+	if (tmp.orgframe < 0){ tmp.orgframe = 0; }
 	return tmp;
 }
 

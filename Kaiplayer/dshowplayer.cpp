@@ -489,12 +489,13 @@ wxArrayString DShowPlayer::GetStreams()
 	return streamnames;
 }
 
-std::vector<chapter> DShowPlayer::GetChapters()
+void DShowPlayer::GetChapters(std::vector<chapter> *chaps)
 {
-	std::vector<chapter> chaps;
-	if (!chapters){ return chaps; }
+	if (!chapters || !chaps){ return; }
 	long mcount = 0;
-	if (FAILED(chapters->get_MarkerCount(&mcount))){ return chaps; }
+	if (FAILED(chapters->get_MarkerCount(&mcount))){ return; }
+	chaps->clear();
+
 	for (long i = 1; i <= mcount; i++)
 	{
 		LPWSTR string;
@@ -504,11 +505,9 @@ std::vector<chapter> DShowPlayer::GetChapters()
 		chapter ch;
 		ch.name = wxString(string);
 		ch.time = time * 1000;
-		chaps.push_back(ch);
+		chaps->push_back(ch);
 		SysFreeString(string);
 	}
-
-	return chaps;
 }
 
 bool DShowPlayer::EnumFilters(Menu *menu)

@@ -330,8 +330,8 @@ namespace Auto{
 			e->adial->End=End;
 			if (laf->subsFormat != ASS){
 				e->adial->Format = laf->subsFormat;
-				e->adial->Start.ChangeFormat(laf->subsFormat);
-				e->adial->End.ChangeFormat(laf->subsFormat);
+				e->adial->Start.ChangeFormat(laf->subsFormat, 25.f);
+				e->adial->End.ChangeFormat(laf->subsFormat, 25.f);
 			}
 			e->adial->Style=Style;
 			e->adial->Actor=Actor;

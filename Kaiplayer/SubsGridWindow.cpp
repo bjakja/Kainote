@@ -1339,10 +1339,10 @@ void SubsGridWindow::ChangeActiveLine(int newActiveLine, bool refresh /*= false*
 {
 	Edit->SetLine(newActiveLine);
 	SelectRow(newActiveLine, false, true, true);
-	if (refresh && !scroll)
-		Refresh(false);
-	else if(scroll)
+	if(scroll)
 		ScrollTo(newActiveLine, true);
+	if (refresh)
+		Refresh(false);
 }
 
 void SubsGridWindow::SelVideoLine(int curtime)

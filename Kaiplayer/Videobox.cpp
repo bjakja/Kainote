@@ -872,11 +872,11 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 		prev = ident;
 	}
 	STime timee;
-	for (size_t j = 0; j < chaps.size(); j++){
+	for (size_t j = 0; j < chapters.size(); j++){
 		if (j == 0){ menu->AppendSeparator(); }
-		timee.NewTime(chaps[j].time);
-		int ntime = (j >= chaps.size() - 1) ? INT_MAX : chaps[(j + 1)].time;
-		menu->Append(MENU_CHAPTERS + j, chaps[j].name + "\t[" + timee.raw() + "]", "", true, 0, 0, (ntime >= time) ? ITEM_RADIO : ITEM_NORMAL);
+		timee.NewTime(chapters[j].time);
+		int ntime = (j >= chapters.size() - 1) ? INT_MAX : chapters[(j + 1)].time;
+		menu->Append(MENU_CHAPTERS + j, chapters[j].name + "\t[" + timee.raw() + "]", "", true, 0, 0, (ntime >= time) ? ITEM_RADIO : ITEM_NORMAL);
 	}
 	id = 0;
 	int Modifiers = 0;
@@ -907,8 +907,8 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 		int wstream = id - MENU_STREAMS;
 		EnableStream((long)wstream);
 	}
-	else if (id >= MENU_CHAPTERS && id < MENU_CHAPTERS + (int)chaps.size()){
-		Seek(chaps[id - MENU_CHAPTERS].time);
+	else if (id >= MENU_CHAPTERS && id < MENU_CHAPTERS + (int)chapters.size()){
+		Seek(chapters[id - MENU_CHAPTERS].time);
 	}
 	else if (id >= 13000 && id < 13000 + numfilters && menu3){
 		MenuItem *item = menu3->FindItem(id);
@@ -1288,16 +1288,16 @@ void VideoCtrl::ChangeButtonBMP(bool play)
 
 void VideoCtrl::NextChap()
 {
-	if (chaps.size() < 1){ return; }
+	if (chapters.size() < 1){ return; }
 	int vrtime = Tell();
-	for (int j = 0; j < (int)chaps.size(); j++){
+	for (int j = 0; j < (int)chapters.size(); j++){
 
-		int ntime = (j >= (int)chaps.size() - 1) ? INT_MAX : chaps[(j + 1)].time;
+		int ntime = (j >= (int)chapters.size() - 1) ? INT_MAX : chapters[(j + 1)].time;
 		if (ntime >= vrtime){
 
-			int jj = (j >= (int)chaps.size() - 1 || (j == 0 && chaps[0].time >= vrtime)) ? 0 : j + 1;
-			if (jj == prevchap){ if (jj >= (int)chaps.size() - 1){ jj = 0; } else{ jj++; } }
-			Seek(chaps[jj].time, true, true, true, false);
+			int jj = (j >= (int)chapters.size() - 1 || (j == 0 && chapters[0].time >= vrtime)) ? 0 : j + 1;
+			if (jj == prevchap){ if (jj >= (int)chapters.size() - 1){ jj = 0; } else{ jj++; } }
+			Seek(chapters[jj].time, true, true, true, false);
 
 			prevchap = jj;
 			break;
@@ -1307,14 +1307,14 @@ void VideoCtrl::NextChap()
 
 void VideoCtrl::PrevChap()
 {
-	if (chaps.size() < 1){ return; }
+	if (chapters.size() < 1){ return; }
 	int vrtime = Tell();
-	for (int j = 0; j < (int)chaps.size(); j++){
-		int ntime = (j >= (int)chaps.size() - 1) ? INT_MAX : chaps[(j + 1)].time;
+	for (int j = 0; j < (int)chapters.size(); j++){
+		int ntime = (j >= (int)chapters.size() - 1) ? INT_MAX : chapters[(j + 1)].time;
 		if (ntime >= vrtime){
 			int jj = (j < 1) ? 0 : j - 1;
-			if (jj == prevchap){ if (jj < 1){ jj = chaps.size() - 1; } else{ jj--; } }
-			Seek(chaps[jj].time, true, true, true, false);
+			if (jj == prevchap){ if (jj < 1){ jj = chapters.size() - 1; } else{ jj--; } }
+			Seek(chapters[jj].time, true, true, true, false);
 			prevchap = jj;
 			break;
 		}

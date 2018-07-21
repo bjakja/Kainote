@@ -22,6 +22,12 @@
 #include "include\ffms.h"
 #include "ProgressDialog.h"
 
+struct chapter
+{
+	wxString name;
+	int time;
+};
+
 class VideoRenderer;
 
 class VideoFfmpeg
@@ -45,6 +51,11 @@ public:
 	int GetMSfromFrame(int frame);
 	int GetFramefromMS(int MS, int seekfrom=0);
 	int Init();
+	void GetChapters(std::vector<chapter> *_chapters){
+		if (_chapters){
+			*_chapters = chapters;
+		}
+	};
 
 	ProgressSink *progress;
 	static int __stdcall UpdateProgress(int64_t Current, int64_t Total, void *ICPrivate);
@@ -102,6 +113,7 @@ public:
 	FILE *fp=NULL;
 	wxArrayInt KeyFrames;
 	std::vector<int> Timecodes;
+	std::vector<chapter> chapters;
 	std::thread *audioLoadThread = NULL;
 private:
 	char errmsg[1024];

@@ -259,7 +259,7 @@ STime TimeCtrl::GetTime(char opt)
 		return cpy;
 	}
 	else{
-		mTime.ChangeFormat(form);
+		mTime.ChangeFormat(form, 25.f);
 	}
 	return mTime;
 }

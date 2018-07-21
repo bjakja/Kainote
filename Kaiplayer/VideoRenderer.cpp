@@ -615,6 +615,7 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 	wxMutexLocker lock(mutexOpenFile);
 	//block=true;
 	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
+	TabPanel *tab = ((TabPanel*)GetParent());
 	VideoFfmpeg *tmpvff = NULL;
 	if (vstate == Playing){ ((VideoCtrl*)this)->Stop(); }
 
@@ -631,9 +632,9 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		if (tmpvff->width < 0 && tmpvff->GetSampleRate() > 0){
 			VideoFfmpeg *tmp = VFF;
 			VFF = tmpvff;
-			TabPanel *pan = ((TabPanel*)GetParent());
-			Kaia->Frame->OpenAudioInTab(pan, 40000, fname);
-			player = pan->Edit->ABox->audioDisplay;
+			//TabPanel *pan = ((TabPanel*)GetParent());
+			Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
+			player = tab->Edit->ABox->audioDisplay;
 			VFF = tmp;
 			return false;
 		}
@@ -661,12 +662,12 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		if (vwidth % 2 != 0){ vwidth++; }
 		pitch = vwidth * 4;
 		if (changeAudio){
-			TabPanel *pan = ((TabPanel*)GetParent());
+			//TabPanel *pan = ((TabPanel*)GetParent());
 			if (VFF->GetSampleRate() > 0){
-				Kaia->Frame->OpenAudioInTab(pan, 40000, fname);
-				player = pan->Edit->ABox->audioDisplay;
+				Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
+				player = tab->Edit->ABox->audioDisplay;
 			}
-			else if (player){ Kaia->Frame->OpenAudioInTab(pan, CloseAudio, ""); }
+			else if (player){ Kaia->Frame->OpenAudioInTab(tab, CloseAudio, ""); }
 		}
 		if (!VFF || VFF->width < 0){ 
 			return false; 
@@ -720,7 +721,7 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 	format->width = vwidth;
 	format->height = vheight;
 	format->pixfmt = framee->pixfmt;
-	format->fps = (!IsDshow) ? 25.0f : fps;
+	format->fps = 25.0f;
 
 	if (!vobsub){
 		OpenSubs(textsubs, false);
@@ -731,7 +732,11 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 	}
 	/*block=false;*/
 	vstate = Stopped;
-	if (IsDshow && vplayer){ chaps = vplayer->GetChapters(); }
+	if (IsDshow && vplayer) 
+		vplayer->GetChapters(&chapters); 
+	else if (!IsDshow)
+		VFF->GetChapters(&chapters);
+
 	if (Visual){
 		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
 	}

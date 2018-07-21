@@ -75,11 +75,7 @@ enum PlaybackState
 	Stopped,
 	None
 };
-struct chapter
-{
-	wxString name;
-	int time;
-};
+
 
 struct VERTEX
 {	
@@ -217,7 +213,7 @@ class VideoRenderer : public wxWindow
 		Visuals *Visual;
 		int playend;
 		size_t lasttime;
-		std::vector<chapter> chaps;
+		std::vector<chapter> chapters;
 		FloatRect zoomRect;
 		wxString keyframesFileName;
 		//std::chrono::system_clock::time_point startTime;

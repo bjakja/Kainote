@@ -60,7 +60,7 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 		tdc.SetPen(wxPen("#2EA6E2"));
 		int duration = VB->GetDuration();
 		float factor = (float)(w - 30) / (float)duration;
-		const std::vector<chapter> &chapters = VB->chaps;
+		const std::vector<chapter> &chapters = VB->chapters;
 		isChapter = false;
 		for (auto & ch : chapters){
 			int chpos = (ch.time * factor) + 15;

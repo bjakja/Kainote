@@ -383,7 +383,7 @@ void FontCollectorDialog::OpenStyle(int numtab, const wxString &style)
 	for (size_t i = 0; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDialogue(i);
 		if (dial->Style == style){
-			grid->ChangeActiveLine(i, false, true);
+			grid->ChangeActiveLine(i, true, true);
 			lineSet = true;
 			break;
 		}
@@ -397,7 +397,7 @@ void FontCollectorDialog::SetLine(int numtab, int line)
 	Notebook * tabs = Notebook::GetTabs();
 	tabs->ChangePage(numtab, true);
 	TabPanel *tab = tabs->GetTab();
-	tab->Grid->ChangeActiveLine(line, false, true);
+	tab->Grid->ChangeActiveLine(line, true, true);
 }
 
 void FontCollectorDialog::OnButtonPath(wxCommandEvent &event)

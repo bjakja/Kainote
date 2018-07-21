@@ -240,7 +240,7 @@ int VideoFfmpeg::Init()
 						chapter ch;
 						ch.name = wxString(chap->Children[i].Display->String, wxConvUTF8);
 						ch.time = (int)(chap->Children[i].Start / 1000000.0);
-						rend->chaps.push_back(ch);
+						chapters.push_back(ch);
 					}
 				}
 				if (hasMoreAudioTracks){
