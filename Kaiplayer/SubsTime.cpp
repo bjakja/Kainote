@@ -154,7 +154,9 @@ char STime::GetFormat()
 }
 void STime::ChangeFormat(char format, float fps)
 {
-	if (form == SRT){ mstime = ZEROIT(mstime); }
+	if (format == form)
+		return;
+	if (format == ASS){ mstime = ZEROIT(mstime); }
 	if (form == MDVD && format != FRAME){
 		float fpsa = (fps) ? fps : Options.GetFloat(ConvertFPS);
 		if (fpsa < 1){ fpsa = 23.976f; }

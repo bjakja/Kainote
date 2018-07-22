@@ -940,14 +940,14 @@ void VideoFfmpeg::DeleteOldAudioCache()
 }
 
 void VideoFfmpeg::Refresh(bool wait){
-	/*if (isBusy) return;
+	if (isBusy) return;
 	isBusy = true;
 	ResetEvent(eventComplete);
 	SetEvent(eventRefresh);
 	if (rend->vstate == Paused && wait){
 		WaitForSingleObject(eventComplete, 4000);
-	}*/
-	byte *buff = (byte*)rend->datas;
+	}
+	/*byte *buff = (byte*)rend->datas;
 	if (rend->lastframe != lastframe){
 		if (lockGetFrame)
 			GetFFMSFrame(rend->lastframe);
@@ -962,7 +962,7 @@ void VideoFfmpeg::Refresh(bool wait){
 	memcpy(&buff[0], fframe->Data[0], fplane);
 
 	rend->DrawTexture(buff);
-	rend->Render(false);
+	rend->Render(false);*/
 };
 
 wxString VideoFfmpeg::ColorCatrixDescription(int cs, int cr) {
