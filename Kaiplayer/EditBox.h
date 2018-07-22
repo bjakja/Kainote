@@ -102,6 +102,7 @@ public:
 	NumCtrl* MarginREdit;
 	NumCtrl* MarginVEdit;
 	DescTxtCtrl* EffectEdit;
+	KaiStaticText *LineNumber;
 	KaiStaticText *Chars;
 	KaiStaticText *Chtime;
 	MappedButton* StyleEdit;

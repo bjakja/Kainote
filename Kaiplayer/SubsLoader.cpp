@@ -131,7 +131,7 @@ bool SubsLoader::LoadASS(const wxString &text)
 			//żeby później źle tego nie zinterpretować
 			section = 1;
 		}
-		else if (!token.StartsWith(";") && !token.StartsWith("[") && token.Find(':') != wxNOT_FOUND){
+		else if (token[0] != ';' && token[0] != '[' && token.Find(':') != wxNOT_FOUND && !token.StartsWith("Format")){
 			grid->AddSInfo(token);
 		}
 		else if(token.StartsWith("[Eve")){

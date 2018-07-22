@@ -851,7 +851,7 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 			wxString path = saveFileDialog.GetPath();
 			DWORD attributes = ::GetFileAttributesW(path.wc_str());
 			if (attributes != -1 && attributes & FILE_ATTRIBUTE_READONLY){
-				KaiMessageBox(_("Wybrany plik jest tylko do odczytu, proszę wybrać inny"), _("Uwaga"), 4L, this);
+				KaiMessageBox(_("Wybrany plik jest tylko do odczytu,\nproszę zapisać pod inną nazwą lub zmienić atrybuty pliku"), _("Uwaga"), 4L, this);
 				goto repeatOpening;
 			}
 
@@ -866,7 +866,7 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 	else{
 		DWORD attributes = ::GetFileAttributesW(atab->SubsPath.wc_str());
 		if (attributes != -1 && attributes & FILE_ATTRIBUTE_READONLY){
-			KaiMessageBox(_("Wybrany plik jest tylko do odczytu, proszę wybrać inny"), _("Uwaga"), 4L, this);
+			KaiMessageBox(_("Wybrany plik jest tylko do odczytu,\nproszę zapisać pod inną nazwą lub zmienić atrybuty pliku"), _("Uwaga"), 4L, this);
 			goto repeatOpening;
 		}
 	}

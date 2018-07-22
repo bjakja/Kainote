@@ -204,7 +204,8 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	TlMode = new KaiCheckBox(this, ID_TLMODE, _("Tryb tłumaczenia"));
 	TlMode->SetValue(false);
 	TlMode->Enable(false);
-	Chars = new KaiStaticText(this, -1, _("Linie: 0/86"));
+	LineNumber = new KaiStaticText(this, -1, _("Linia: 0"));
+	Chars = new KaiStaticText(this, -1, _("Łamania: 0/86"));
 	Chtime = new KaiStaticText(this, -1, _("Znaki na sekundę: 0<=15"));
 	bool asFrames = Options.GetBool(EDITBOX_TIMES_TO_FRAMES_SWITCH);
 	Times = new KaiRadioButton(this, ID_TIMES_FRAMES, _("Czas"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
@@ -219,7 +220,8 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, &EditBox::OnChangeTimeDisplay, this, ID_TIMES_FRAMES);
 
 	BoxSizer5 = new wxBoxSizer(wxHORIZONTAL);
-	BoxSizer5->Add(Chars, 0, wxALIGN_CENTER | wxLEFT | wxEXPAND, 2);
+	BoxSizer5->Add(LineNumber, 0, wxALIGN_CENTER | wxLEFT | wxEXPAND, 2);
+	BoxSizer5->Add(Chars, 0, wxALIGN_CENTER | wxLEFT | wxEXPAND, 6);
 	BoxSizer5->Add(Chtime, 0, wxALIGN_CENTER | wxLEFT | wxEXPAND, 6);
 	BoxSizer5->Add(TlMode, 0, wxALIGN_CENTER | wxLEFT, 6);
 	BoxSizer5->Add(Times, 0, wxALIGN_CENTER | wxLEFT, 2);
@@ -370,6 +372,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	grid->currentLine = Row;
 	wxDELETE(line);
 	line = grid->GetDialogue(currentLine)->Copy();
+	LineNumber->SetLabelText(wxString::Format(_("Linia: %i"), currentLine + 1));
 	Comment->SetValue(line->IsComment);
 	LayerEdit->SetInt(line->Layer);
 	StartEdit->SetTime(line->Start, false, 1);
@@ -451,7 +454,7 @@ void EditBox::UpdateChars(const wxString &text)
 		wxString result;
 		bool isbad = false;
 		int ilzn = grid->CalcChars(text, &result, &isbad);
-		Chars->SetLabelText(_("Linie: ") + result + "43");
+		Chars->SetLabelText(_("Łamania: ") + result + "43");
 		Chars->SetForegroundColour((isbad) ? WindowWarningElements : WindowText);
 		int chtime = ilzn / ((line->End.mstime - line->Start.mstime) / 1000.0f);
 		if (chtime < 0 || chtime>999){ chtime = 999; }
