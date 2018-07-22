@@ -1295,40 +1295,45 @@ void SubsGridWindow::HideOverrideTags()
 int SubsGridWindow::CalcChars(const wxString &txt, wxString *lines, bool *bad)
 {
 	int len = txt.Len();
-	bool block = false; bool slash = false;
+	bool block = false; 
+	bool slash = false;
 	bool drawing = false;
+	bool hasLineSplit = (subsFormat > SRT);
+	wxUniChar split = (subsFormat > SRT) ? L'|' : L'\\';
 	int chars = 0, lastchars = 0, ns = 0;
-	wxUniChar brs = (subsFormat == SRT) ? '<' : '{';
-	wxUniChar bre = (subsFormat == SRT) ? '>' : '}';
+	wxUniChar brs = (subsFormat == SRT) ? L'<' : L'{';
+	wxUniChar bre = (subsFormat == SRT) ? L'>' : L'}';
 	for (int i = 0; i < len; i++)
 	{
 		if (txt[i] == brs){ block = true; }
 		else if (txt[i] == bre){ block = false; }
-		else if (block && txt[i] == 'p' && txt[i - 1] == '\\' && (i + 1 < len && wxIsdigit(txt[i + 1]))){
-			if (txt[i + 1] == '0'){ drawing = false; }
+		else if (block && txt[i] == L'p' && txt[i - 1] == L'\\' && (i + 1 < len && wxIsdigit(txt[i + 1]))){
+			if (txt[i + 1] == L'0'){ drawing = false; }
 			else{ drawing = true; }
 		}
-		else if (txt[i] == '\\' && !block && !drawing){ slash = true; continue; }
+		else if (txt[i] == split && !block && !drawing){ slash = true; continue; }
 		else if (slash){
-			if (txt[i] == 'N'){
+			if (txt[i] == L'N' || hasLineSplit){
 				if (lines){
 					ns++;
 					int linechars = (chars - lastchars);
 					if (!(*bad)){ *bad = (linechars > 43 || ns > 1); }
 					(*lines) << linechars << "/";
 					lastchars = chars;
+					if (hasLineSplit)
+						chars++;
 				}
 			}
-			else if (txt[i] != 'h'){ chars += 2; }
+			else if (txt[i] != L'h'){ chars += 2; }
 			slash = false;
 		}
-		else if (!block && !drawing && txt[i] != ' '){ chars++; }
+		else if (!block && !drawing && txt[i] != L' '){ chars++; }
 
 	}
 	if (lines){
 		int linechars = (chars - lastchars);
 		if (!(*bad)){ *bad = (linechars > 43 || ns > 1); }
-		(*lines) << linechars << "/";
+		(*lines) << linechars << L"/";
 	}
 
 

@@ -70,16 +70,16 @@ void STime::ParseMS(wxString raw)
 		mstime = (godz1 * 3600000) + (min1 * 60000) + (sec1 * 1000) + csec1;
 	}
 	else{
-		int ress = wxAtoi(raw);
+		int result = wxAtoi(raw);
 		if (form == FRAME){
-			orgframe = ress;
+			orgframe = result;
 		}
 		else if (form == MDVD){
-			orgframe = ress;
-			mstime = (ress / 25.f)*(1000.f);
+			orgframe = result;
+			mstime = (result / 25.f)*(1000.f);
 			if (orgframe < 0){ orgframe = 0; }
 		}
-		else{ mstime = (ress / 10)*(1000); }
+		else{ mstime = result * 100; }
 	}
 
 
@@ -112,7 +112,7 @@ wxString STime::raw(char ft)//,float custfps
 		if (ft == MDVD && !orgframe && mstime){
 			orgframe = ceil(mstime * (25.f / 1000.f));
 		}
-		rawtxt = wxString::Format(_T("%i"), (ft != MPL2) ? orgframe : (int)ceil(mstime*(10.0f / 1000.0f)));
+		rawtxt = wxString::Format(_T("%i"), (ft != MPL2) ? orgframe : (int)ceil(mstime * (10.0f / 1000.0f)));
 	}
 	//form=ft;
 	return rawtxt;
