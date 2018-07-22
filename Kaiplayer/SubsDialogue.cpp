@@ -344,24 +344,20 @@ void Dialogue::Convert(char type, const wxString &pref)
 		Effect = _T("");
 		wxString tmp = Text;
 		if (Format != SRT){
-			wxRegEx regib(_T("\\{y[:+]([ib])\\}"), wxRE_ADVANCED);
-			wxRegEx reg(_T("\\{[^\\\\]([^}]*)\\}"), wxRE_ADVANCED);
-			reg.ReplaceAll(&tmp, _T(""));
-			wxString ital;
-			if (type != SRT){
-				regib.ReplaceAll(&tmp, _T("{\\\\\\1\t1}"));
-				tmp.Replace("\t", "");
-				ital = _T("{\\i1}");
-			}
-			else{
-				regib.ReplaceAll(&tmp, _T("<\\1>"));
-				ital = "<i>";
-			}
+			wxRegEx regib(_T("\\{y[:+]([ib])\\}"), wxRE_ADVANCED | wxRE_ICASE);
+			wxRegEx regf(_T("\\{f:([^}]*)\\}"), wxRE_ADVANCED | wxRE_ICASE);
+			wxRegEx regs(_T("\\{s:([^}]*)\\}"), wxRE_ADVANCED | wxRE_ICASE);
+			wxRegEx regc(_T("\\{c:\\$([^}]*)\\}"), wxRE_ADVANCED | wxRE_ICASE);
+			
+			regib.ReplaceAll(&tmp, _T("{\\\\\\1\t1}"));
+			tmp.Replace("\t", "");
+			regf.ReplaceAll(&tmp, _T("{\\\\fn\\1}"));
+			regs.ReplaceAll(&tmp, _T("{\\\\fs\\1}"));
+			regc.ReplaceAll(&tmp, _T("{\\\\1c\\&H\\1\\&}"));
 			tmp.Replace(_T("|"), _T("\\N"));
 			size_t il = tmp.Replace(_T("/"), _T(""));
-			if (type < SRT){ Text = pref; }
-			else{ Text = ""; }
-			if (il > 0){ Text << ital; }
+			Text = pref;
+			if (il > 0){ Text << wxString(L"{\\i1}"); }
 			Text << tmp;
 			Text->Replace("}{", "");
 		}

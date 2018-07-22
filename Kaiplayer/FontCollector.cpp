@@ -604,7 +604,6 @@ void FontCollector::GetAssFonts(File *subs, int tab)
 		wxString ifont = (lstyle) ? lstyle->Fontname : L"";
 		int bold = (lstyle) ? (int)lstyle->Bold : 0;
 		int italic = (lstyle) ? (int)lstyle->Italic : 0;
-		int wlet = 0;
 		bool newFont = false;
 		bool lastPlain = false;
 		wxString textHavingFont;

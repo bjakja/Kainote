@@ -53,7 +53,7 @@ class KainoteFrame: public KaiFrame
         void Save(bool dial, int wtab=-1, bool changeLabel = true);
 		void SaveAll();
 
-        bool OpenFile(const wxString &filename,bool fulls=false);
+        bool OpenFile(const wxString &filename,bool fulls=false, bool noFreeze = false);
 		void Label(int iter=0,bool video=false, int wtab=-1, bool onlyTabs = false);
 		
 		void SetRecent(short what=0);

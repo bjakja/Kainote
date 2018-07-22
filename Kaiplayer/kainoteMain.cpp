@@ -832,6 +832,7 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 		|| (Options.GetBool(SubsAutonaming) && atab->SubsName.BeforeLast('.') != atab->VideoName.BeforeLast('.') && atab->VideoName != "")
 		|| atab->SubsPath == "" || dial)
 	{
+		repeatOpening:
 		wxString extens = _("Plik napisów ");
 
 		if (atab->Grid->subsFormat < SRT){ extens += "(*.ass)|*.ass"; }
@@ -847,14 +848,27 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 			path, name, extens, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
 		if (saveFileDialog.ShowModal() == wxID_OK){
+			wxString path = saveFileDialog.GetPath();
+			DWORD attributes = ::GetFileAttributesW(path.wc_str());
+			if (attributes != -1 && attributes & FILE_ATTRIBUTE_READONLY){
+				KaiMessageBox(_("Wybrany plik jest tylko do odczytu, proszę wybrać inny"), _("Uwaga"), 4L, this);
+				goto repeatOpening;
+			}
 
-			atab->SubsPath = saveFileDialog.GetPath();
+			atab->SubsPath = path;
 			wxString ext = (atab->Grid->subsFormat < SRT) ? "ass" : (atab->Grid->subsFormat == SRT) ? "srt" : "txt";
 			if (!atab->SubsPath.EndsWith(ext)){ atab->SubsPath << "." << ext; }
 			atab->SubsName = atab->SubsPath.AfterLast('\\');
 			SetRecent();
 		}
 		else{ return; }
+	}
+	else{
+		DWORD attributes = ::GetFileAttributesW(atab->SubsPath.wc_str());
+		if (attributes != -1 && attributes & FILE_ATTRIBUTE_READONLY){
+			KaiMessageBox(_("Wybrany plik jest tylko do odczytu, proszę wybrać inny"), _("Uwaga"), 4L, this);
+			goto repeatOpening;
+		}
 	}
 	if (atab->Grid->SwapAssProperties()){ return; }
 	atab->Grid->SaveFile(atab->SubsPath);
@@ -869,7 +883,7 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 #endif
 }
 
-bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
+bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool noFreeze /*= false*/)
 {
 	wxMutexLocker lock(blockOpen);
 	wxString ext = filename.AfterLast('.').Lower();
@@ -910,7 +924,9 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 		nonewtab = false;
 	}
 
-	tab->Freeze();
+	if (noFreeze)
+		tab->Freeze();
+
 	if (issubs || found){
 		const wxString &fname = (found && !issubs) ? secondFileName : filename;
 		if (nonewtab){
@@ -1032,7 +1048,9 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/)
 done:
 	tab->ShiftTimes->Contents();
 	UpdateToolbar();
-	tab->Thaw();
+	if (noFreeze)
+		tab->Thaw();
+
 	Options.SaveOptions(true, false);
 	return true;
 }
@@ -1426,7 +1444,9 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 	bool askForRes = !Options.GetBool(DontAskForBadResolution);
 	Freeze();
 	GetTab()->Hide();
-	size_t maxx = (subs.size() > videos.size()) ? subs.size() : videos.size();
+	size_t subsSize = subs.size();
+	size_t videosSize = videos.size();
+	size_t maxx = (subsSize > videosSize) ? subsSize : videosSize;
 
 	for (size_t i = 0; i < maxx; i++)
 	{
@@ -1439,7 +1459,19 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 			GetTab()->Video->SetVisual(true);
 		}
 		TabPanel *tab = GetTab();
-		if (i < subs.size()){
+		if (i >= videosSize){
+			if (!OpenFile(subs[i], false, true))
+				break;
+
+			continue;
+		}
+		else if (i >= subsSize){
+			if (!OpenFile(videos[i], false, true))
+				break;
+
+			continue;
+		}
+		if (i < subsSize){
 			wxString ext = subs[i].AfterLast('.').Lower();
 			OpenWrite ow;
 			wxString s;
@@ -1460,7 +1492,7 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 			SetSubsResolution(askForRes);
 			tab->Video->vToolbar->DisableVisuals(ext != "ass");
 		}
-		if (i < videos.size()){
+		if (i < videosSize){
 			bool isload = tab->Video->LoadVideo(videos[i], (tab->editor) ? tab->Grid->GetVisible() : 0);
 
 			if (!isload){

@@ -328,15 +328,22 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 		if (cstat){
 			AddSInfo("Last Style Storage", Options.actualStyleDir, false);
 			AddSInfo("Active Line", std::to_string(currentLine), false);
-			if (Edit->ABox){
-				AddSInfo("Audio File", Edit->ABox->audioName, false);
-			}
 			TabPanel *tab = (TabPanel*)GetParent();
+			wxString subsPath = tab->SubsPath.BeforeLast('\\');
+			if (Edit->ABox){
+				wxString path = (Edit->ABox->audioName.StartsWith(subsPath)) ? 
+					Edit->ABox->audioName.AfterLast('\\') : Edit->ABox->audioName;
+				AddSInfo("Audio File", path, false);
+			}
 			if (!tab->VideoPath.empty()){
-				AddSInfo("Video File", tab->VideoPath, false);
+				wxString path = (tab->VideoPath.StartsWith(subsPath)) ?
+					tab->VideoPath.AfterLast('\\') : tab->VideoPath;
+				AddSInfo("Video File", path, false);
 			}
 			if (!tab->KeyframesPath.empty()){
-				AddSInfo("Keyframes File", tab->KeyframesPath, false);
+				wxString path = (tab->KeyframesPath.StartsWith(subsPath)) ?
+					tab->KeyframesPath.AfterLast('\\') : tab->KeyframesPath;
+				AddSInfo("Keyframes File", path, false);
 			}
 		}
 		
