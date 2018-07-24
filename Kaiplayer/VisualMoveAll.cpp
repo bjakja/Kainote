@@ -347,7 +347,7 @@ void MoveAll::ChangeInLines(bool all)
 	}
 	if (all){
 		tab->Video->hasVisualEdition = true;
-		if (tab->Edit->splittedTags){ tab->Edit->TextEditOrig->modified = true; }
+		if (tab->Edit->splittedTags){ tab->Edit->TextEditOrig->SetModified(); }
 		tab->Grid->SetModified(VISUAL_POSITION_SHIFTER, true);
 		tab->Grid->Refresh();
 	}

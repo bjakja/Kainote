@@ -35,7 +35,7 @@ public:
 	void RefreshColumns(int cell = 8191);
 	void RefreshIfVisible(int time);
 	void ScrollTo(int y, bool center = false);
-	void SelectRow(int row, bool addToSelected = false, bool select = true, bool norefresh = false);
+	void SelectRow(int row, bool addToSelected = false, bool select = true, bool norefresh = false, bool refreshOnVisual = true);
 	void SelVideoLine(int time = -1);
 	void SetStyle();
 	void SetVideoLineTime(wxMouseEvent &evt, int mvtal);

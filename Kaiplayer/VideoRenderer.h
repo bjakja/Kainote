@@ -149,7 +149,7 @@ class VideoRenderer : public wxWindow
 		void ChangePositionByFrame(int cpos);
 		void ChangeVobsub(bool vobsub=false);
 		wxArrayString GetStreams();
-		void SetVisual(bool remove=false, bool settext=false, bool noRefreshAfterRemove = false);
+		void SetVisual(bool remove=false, bool settext=false, bool noRefresh = false);
 		void ResetVisual();
 		byte *GetFramewithSubs(bool subs, bool *del);
 		bool UpdateRects(bool changeZoom=true);

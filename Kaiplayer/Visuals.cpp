@@ -138,7 +138,7 @@ void Visuals::RenderSubs(wxString *subs, bool redraw /*= true*/)
 	if (redraw){ tab->Video->Render(); }
 }
 
-void Visuals::SetVisual(int _start, int _end, bool notDial)
+void Visuals::SetVisual(int _start, int _end, bool notDial, bool noRefresh)
 {
 	int nx = 0, ny = 0;
 	tab->Grid->GetASSRes(&nx, &ny);
@@ -153,10 +153,10 @@ void Visuals::SetVisual(int _start, int _end, bool notDial)
 
 	SetCurVisual();
 	if (Visual == VECTORCLIP){
-		SetClip(GetVisual(), true, true, false); return;
+		SetClip(GetVisual(), true, true, false); 
+		return;
 	}
-
-	tab->Video->Render(true, false);
+	tab->Video->Render(!noRefresh, false);
 }
 
 void Visuals::SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device)
@@ -485,7 +485,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 			txt.Replace("{}", "");
 			if (changeEditorText){
 				Editor->SetTextS(txt, false, true);
-				Editor->modified = true;
+				Editor->SetModified();
 				edit->Send((Visual == VECTORCLIP) ? VISUAL_VECTOR_CLIP : VISUAL_DRAWING, false);
 			}
 			return;
@@ -524,7 +524,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				delete visdl;
 				if (changeEditorText){
 					Editor->SetTextS(txt, false, true);
-					Editor->modified = true;
+					Editor->SetModified();
 				}
 
 			}
@@ -593,7 +593,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 
 				if (changeEditorText){
 					Editor->SetTextS(txt, false, true);
-					Editor->modified = true;
+					Editor->SetModified();
 				}
 
 				dummytext->replace(textplaced.x, textplaced.y, txt);
@@ -620,7 +620,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 			//wstawiamy w edytor
 			if (changeEditorText){
 				Editor->SetTextS(txt, false, true);
-				Editor->modified = true;
+				Editor->SetModified();
 			}
 		}
 
@@ -631,10 +631,10 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 	}
 	else{
 
-		Editor->modified = true;
+		Editor->SetModified();
 		edit->UpdateChars(Editor->GetValue());
 		tab->Video->hasVisualEdition = true;
-		if (edit->splittedTags){ edit->TextEditOrig->modified = true; }
+		if (edit->splittedTags){ edit->TextEditOrig->SetModified(); }
 		edit->Send((Visual == VECTORCLIP) ? VISUAL_VECTOR_CLIP : VISUAL_DRAWING, false, false, true);
 	}
 }
@@ -709,7 +709,7 @@ void Visuals::SetVisual(bool dummy, int type)
 
 		if (!dummy){
 			tab->Video->hasVisualEdition = true;
-			if (tab->Edit->splittedTags){ tab->Edit->TextEditOrig->modified = true; }
+			if (tab->Edit->splittedTags){ tab->Edit->TextEditOrig->SetModified(); }
 			tab->Grid->SetModified((Visual == MOVE) ? VISUAL_MOVE :
 				(Visual == SCALE) ? VISUAL_SCALE : (Visual == ROTATEZ) ? VISUAL_ROTATION_Z :
 				(Visual == ROTATEXY) ? VISUAL_ROTATION_X_Y : VISUAL_RECT_CLIP, true);
@@ -758,9 +758,9 @@ void Visuals::SetVisual(bool dummy, int type)
 	}
 	else{
 		//Editor->Refresh(false);
-		Editor->modified = true;
+		Editor->SetModified();
 		tab->Video->hasVisualEdition = true;
-		if (edit->splittedTags){ edit->TextEditOrig->modified = true; }
+		if (edit->splittedTags){ edit->TextEditOrig->SetModified(); }
 		edit->Send((Visual == MOVE) ? VISUAL_MOVE :
 			(Visual == SCALE) ? VISUAL_SCALE : (Visual == ROTATEZ) ? VISUAL_ROTATION_Z :
 			(Visual == ROTATEXY) ? VISUAL_ROTATION_X_Y : VISUAL_RECT_CLIP, false, false, true);

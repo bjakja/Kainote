@@ -24,52 +24,53 @@ class KainoteFrame;
 wxDECLARE_EVENT(CURSOR_MOVED, wxCommandEvent);
 
 class MTextEditor : public wxWindow
-	{
+{
 public:
-	MTextEditor(wxWindow *parent, int id, bool spell, const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=wxWANTS_CHARS); 
+	MTextEditor(wxWindow *parent, int id, bool spell, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxWANTS_CHARS);
 	virtual ~MTextEditor();
-	void SetTextS(const wxString &text,bool modif=false, bool resetsel = true, bool noevent=false);
-	bool Modified();
+	void SetTextS(const wxString &text, bool modif = false, bool resetsel = true, bool noevent = false);
+	bool IsModified();
+	void SetModified(bool _modified = true);
 	void GetSelection(long *start, long* end);
-	void SetSelection(int start, int end, bool noEvent=false);
+	void SetSelection(int start, int end, bool noEvent = false);
 	void Replace(int start, int end, wxString rep);
-	void Copy(bool cut=false);
+	void Copy(bool cut = false);
 	void Paste();
 	wxString GetValue() const;
 	void SpellcheckerOnOff();
 	//0-normal, 1-comment, 2-template line, 3-code template line
 	void SetState(int _state, bool refresh = false);
 	EditBox* EB;
-	bool modified;
+
 protected:
 	void CheckText();
 	void ContextMenu(wxPoint mpos, int error);
 	inline int FindY(int x);
-	int FindError(wxPoint mpos,bool mouse=true);
+	int FindError(wxPoint mpos, bool mouse = true);
 	wxPoint PosFromCursor(wxPoint cur);
 	void OnKeyPress(wxKeyEvent& event);
 	void OnAccelerator(wxCommandEvent& event);
 	void OnCharPress(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
-    void OnSize(wxSizeEvent& event);
+	void OnSize(wxSizeEvent& event);
 	void OnPaint(wxPaintEvent& event);
 	void OnKillFocus(wxFocusEvent& event);
 	void OnEraseBackground(wxEraseEvent& event){};
-	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
 	void OnScroll(wxScrollEvent& event);
-	void DrawFld(wxDC &dc,int w, int h, int windowh);
+	void DrawFld(wxDC &dc, int w, int h, int windowh);
 	bool HitTest(wxPoint pos, wxPoint *cur);
-	void CalcWrap(bool updatechars=true, bool sendevent=true);
-	void FindWord(int pos,int *start, int *end);
-	int FindBracket(wxUniChar sbrkt, wxUniChar ebrkt, int pos, bool fromback=false);
+	void CalcWrap(bool updatechars = true, bool sendevent = true);
+	void FindWord(int pos, int *start, int *end);
+	int FindBracket(wxUniChar sbrkt, wxUniChar ebrkt, int pos, bool fromback = false);
 	void MakeCursorVisible();
 	bool CheckIfKeyword(const wxString &word);
 	void SeekSelected(const wxString &word);
 	void DrawWordRectangles(int type, wxDC &dc);
-	
+
 	bool spell;
 	bool useSpellchecker;
-    wxString MText;
+	wxString MText;
 	wxBitmap* bmp;
 	KaiScrollbar *scroll;
 	wxFont font;
@@ -90,6 +91,7 @@ protected:
 	bool dholding;
 	bool firstdhold;
 	bool wasDoubleClick;
+	bool modified;
 	int state = 0;
 	int time;
 	int Fheight;
@@ -98,10 +100,10 @@ protected:
 	int tmpstart, tmpend;
 
 	DECLARE_EVENT_TABLE()
-	};
+};
 
 enum{
-	TEXTM_COPY=16545,
+	TEXTM_COPY = 16545,
 	TEXTM_PASTE,
 	TEXTM_CUT,
 	TEXTM_DEL,

@@ -238,7 +238,7 @@ void TimeCtrl::SetTime(const STime &newtime, bool stillModified, int opt)
 			mTime.orgframe--; 
 	}
 
-	SetValue(mTime.raw(canShowFrames ? FRAME : form), stillModified);
+	SetValue(mTime.raw(canShowFrames || (showFrames && !vb) ? FRAME : form), stillModified);
 	if (stillModified){
 		SetForegroundColour(WindowWarningElements);
 		changedBackGround = true;
@@ -248,7 +248,7 @@ void TimeCtrl::SetTime(const STime &newtime, bool stillModified, int opt)
 STime TimeCtrl::GetTime(char opt)
 {
 	bool canShowFrames = showFrames && vb && vb->VFF;
-	mTime.SetRaw(GetValue(), canShowFrames ? FRAME : form);
+	mTime.SetRaw(GetValue(), canShowFrames || (showFrames && !vb)? FRAME : form);
 	if (canShowFrames && !timeUnchanged){
 		STime cpy = STime(mTime);
 		cpy.ChangeFormat(form);

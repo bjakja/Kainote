@@ -1657,14 +1657,14 @@ void VideoRenderer::ChangeVobsub(bool vobsub)
 	pan->Video->ChangeStream();
 }
 
-void VideoRenderer::SetVisual(bool remove/*=false*/, bool settext/*=false*/, bool noRefreshAfterRemove /*= false*/)
+void VideoRenderer::SetVisual(bool remove/*=false*/, bool settext/*=false*/, bool noRefresh /*= false*/)
 {
 	TabPanel* pan = (TabPanel*)GetParent();
 
 	if (remove){
 		SAFE_DELETE(Visual); pan->Edit->Visual = 0;
 		hasVisualEdition = false;
-		if (!noRefreshAfterRemove){
+		if (!noRefresh){
 			OpenSubs(pan->Grid->GetVisible());
 			Render();
 		}
@@ -1685,7 +1685,7 @@ void VideoRenderer::SetVisual(bool remove/*=false*/, bool settext/*=false*/, boo
 		if (settext){ OpenSubs(pan->Grid->GetVisible()); }
 		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
 		SetVisualZoom();
-		Visual->SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime, pan->Edit->line->IsComment);
+		Visual->SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime, pan->Edit->line->IsComment, noRefresh);
 		hasVisualEdition = true;
 	}
 }

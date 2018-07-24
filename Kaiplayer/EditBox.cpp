@@ -402,21 +402,18 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 
 	//ustawia znaki na sekundę i ilość linii
 	UpdateChars((TextEditOrig->IsShown() && line->TextTl != "") ? line->TextTl : line->Text);
-	//ustawia clip/inny visual gdy jest włączony
-	if (Visual > CHANGEPOS){
-		tab->Video->SetVisual(false, true);
-	}
 
 done:
 	VideoCtrl *vb = tab->Video;
 	int pas = vb->vToolbar->videoPlayAfter->GetSelection();
 	int vsa = vb->vToolbar->videoSeekAfter->GetSelection();
+
 	if (vsa == 1 && pas < 2 && !nochangeline && rowChanged){
 		if (vb->GetState() != None){
 			if (vb->GetState() == Playing){ vb->Pause(); }
 			vb->Seek(line->Start.mstime);
 		}
-		return;
+		//return;
 	}
 
 	if (pas > 0 && autoPlay){
@@ -436,6 +433,11 @@ done:
 			}
 		}
 	}
+
+	if (Visual > CHANGEPOS && rowChanged && !nochangeline){
+		tab->Video->SetVisual(false, true, true);
+	}
+	
 	//ustawia czas i msy na polu tekstowym wideo
 	if (tab->Video->IsShown() && tab->Video->GetState() != None && vsa == 0){
 		tab->Video->RefreshTime();
@@ -545,7 +547,7 @@ void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool vis
 		EffectEdit->choiceText->SetModified(dummy);
 	}
 
-	if (TextEdit->Modified() || splittedTags){
+	if (TextEdit->IsModified() || splittedTags){
 		if (TextEditOrig->IsShown()){
 			line->TextTl = TextEdit->GetValue();
 			cellm |= TXTTL;
@@ -554,12 +556,12 @@ void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool vis
 			line->Text = TextEdit->GetValue();
 			cellm |= TXT;
 		}
-		TextEdit->modified = dummy;
+		TextEdit->SetModified(dummy);
 	}
-	if ((TextEditOrig->Modified() || splittedTags) && TextEditOrig->IsShown()){
+	if (TextEditOrig->IsShown() && (TextEditOrig->IsModified() || splittedTags)){
 		line->Text = TextEditOrig->GetValue();
 		cellm |= TXT;
-		TextEditOrig->modified = dummy;
+		TextEditOrig->SetModified(dummy);
 	}
 
 	if (cellm){
@@ -934,8 +936,8 @@ void EditBox::OnCommit(wxCommandEvent& event)
 {
 	TabPanel* pan = (TabPanel*)GetParent();
 	pan->Video->blockpaint = true;
-	if (splittedTags && (TextEdit->modified || TextEditOrig->modified)){
-		TextEdit->modified = true; TextEditOrig->modified = true; splittedTags = false;
+	if (splittedTags && (TextEdit->IsModified() || TextEditOrig->IsModified())){
+		TextEdit->SetModified(); TextEditOrig->SetModified(); splittedTags = false;
 	}
 	Send(EDITBOX_LINE_EDITION, false, false, Visual != 0);
 	if (event.GetId() == ID_COMMENT){
@@ -951,11 +953,14 @@ void EditBox::OnCommit(wxCommandEvent& event)
 
 void EditBox::OnNewline(wxCommandEvent& event)
 {
-	if (Visual){ TextEdit->modified = true; }
-	if (splittedTags && (TextEdit->modified || TextEditOrig->modified)){ TextEdit->modified = true; TextEditOrig->modified = true; }
+	if (splittedTags && (TextEdit->IsModified() || TextEditOrig->IsModified())){ TextEdit->SetModified(); TextEditOrig->SetModified(); }
 	bool noNewLine = !(StartEdit->HasFocus() || EndEdit->HasFocus() || DurEdit->HasFocus()) || !Options.GetBool(NoNewLineAfterTimesEdition);
 	if (!noNewLine && ABox){ ABox->audioDisplay->SetDialogue(line, currentLine); }
 	Send(EDITBOX_LINE_EDITION, noNewLine);
+	if (Visual == CHANGEPOS){
+		TabPanel *tab = (TabPanel *)GetParent();
+		tab->Video->SetVisual(false, true, true);
+	}
 	splittedTags = false;
 }
 
@@ -1720,8 +1725,8 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 
 
 
-			TextEdit->SetTextS(txtTl, TextEdit->modified, true);
-			TextEditOrig->SetTextS(txtOrg, TextEditOrig->modified, true);
+			TextEdit->SetTextS(txtTl, TextEdit->IsModified(), true);
+			TextEditOrig->SetTextS(txtOrg, TextEditOrig->IsModified(), true);
 			splittedTags = true;
 
 			TextEdit->SetSelection(pos, pos);
@@ -1731,8 +1736,8 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 	}
 	if (splittedTags){ delete line; line = grid->GetDialogue(currentLine)->Copy(); }
 	splittedTags = false;
-	TextEdit->SetTextS((TextEditOrig->IsShown()) ? line->TextTl : line->Text, TextEdit->modified, true);
-	if (TextEditOrig->IsShown()){ TextEditOrig->SetTextS(line->Text, TextEditOrig->modified, true); }
+	TextEdit->SetTextS((TextEditOrig->IsShown()) ? line->TextTl : line->Text, TextEdit->IsModified(), true);
+	if (TextEditOrig->IsShown()){ TextEditOrig->SetTextS(line->Text, TextEditOrig->IsModified(), true); }
 done:
 	if (RefreshVideo){
 		VideoCtrl *vb = ((TabPanel*)GetParent())->Video;

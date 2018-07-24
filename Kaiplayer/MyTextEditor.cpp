@@ -984,10 +984,16 @@ bool MTextEditor::HitTest(wxPoint pos, wxPoint *cur)
 	return find;
 }
 
-bool MTextEditor::Modified()
+bool MTextEditor::IsModified()
 {
 	return modified;
 }
+
+void MTextEditor::SetModified(bool _modified)
+{
+	modified = _modified; 
+};
+
 void MTextEditor::GetSelection(long *start, long *end)
 {
 	bool iscur = ((Cursor.x + Cursor.y) > (Selend.x + Selend.y));

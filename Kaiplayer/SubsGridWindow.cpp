@@ -690,6 +690,9 @@ void SubsGridWindow::SetVideoLineTime(wxMouseEvent &evt, int mvtal)
 		if (evt.LeftDClick() && evt.ControlDown()){ vczas -= 1000; }
 		tab->Video->Seek(MAX(0, vczas), isstart, true, false);
 		if (Edit->ABox){ Edit->ABox->audioDisplay->Update(getEndTime); }
+		if (Edit->Visual > CHANGEPOS){
+			tab->Video->SetVisual(false, true, true);
+		}
 	}
 }
 
@@ -789,6 +792,9 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 			if (ctrl){ vtime -= 1000; }
 			tab->Video->Seek(MAX(0, vtime), isstart, true, false);
 			if (Edit->ABox){ Edit->ABox->audioDisplay->Update(shift && subsFormat != TMP); }
+			if (Edit->Visual > CHANGEPOS){
+				tab->Video->SetVisual(false, true, true);
+			}
 		}
 		return;
 	}
@@ -965,8 +971,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 			lastsel = row;
 			Refresh(false);
 			if (Edit->Visual == CHANGEPOS){
-				video->SetVisual();
-				video->Render();
+				video->SetVisual(false, false, true);
 			}
 		}
 	}
@@ -992,7 +997,7 @@ void SubsGridWindow::OnSize(wxSizeEvent& event)
 	Refresh(false);
 }
 
-void SubsGridWindow::SelectRow(int row, bool addToSelected, bool select, bool norefresh)
+void SubsGridWindow::SelectRow(int row, bool addToSelected /*= false*/, bool select /*= true*/, bool norefresh /*= false*/, bool refreshOnVisual /*= true*/)
 {
 	row = MID(0, row, GetCount() - 1);
 	int rowKey = file->GetElementById(row);
@@ -1015,8 +1020,7 @@ void SubsGridWindow::SelectRow(int row, bool addToSelected, bool select, bool no
 	}
 	//done:
 	if (Edit->Visual == CHANGEPOS){
-		Kai->GetTab()->Video->SetVisual();
-		Kai->GetTab()->Video->Render();
+		Kai->GetTab()->Video->SetVisual(false, false, true);
 	}
 }
 

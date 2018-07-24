@@ -76,7 +76,7 @@ public:
 	int GetDialoguePosition();
 	void RenderSubs(wxString *subs, bool redraw = true);
 
-	virtual void SetVisual(int _start, int _end, bool notDial);
+	virtual void SetVisual(int _start, int _end, bool notDial, bool noRefresh = false);
 	virtual void Draw(int time);
 	virtual void DrawVisual(int time){};
 	virtual void SetCurVisual(){};
