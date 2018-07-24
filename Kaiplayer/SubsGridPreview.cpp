@@ -47,6 +47,8 @@ SubsGridPreview::SubsGridPreview(SubsGrid *_previewGrid, SubsGrid *windowToDraw,
 	Bind(wxEVT_RIGHT_DOWN, &SubsGridPreview::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &SubsGridPreview::OnMouseEvent, this);
 	Bind(wxEVT_ENTER_WINDOW, &SubsGridPreview::OnMouseEvent, this);
+	Bind(wxEVT_SET_FOCUS, &SubsGridPreview::OnFocus, this);
+	Bind(wxEVT_KILL_FOCUS, &SubsGridPreview::OnFocus, this);
 	MakeVisible();
 }
 
@@ -174,6 +176,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	bool unkstyle = false;
 	bool shorttime = false;
 	bool startBlock = false;
+	bool hasFocus = HasFocus();
 	int states = 0;
 	int startDrawPosYFromPlus = 0;
 
@@ -206,7 +209,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		strings.clear();
 
 		if (isHeadline){
-			tdc.SetBrush(wxBrush(Options.GetColour(WindowBorderBackground)));
+			tdc.SetBrush(wxBrush(Options.GetColour(hasFocus ? WindowBorderBackground : WindowBorderBackgroundInactive)));
 			tdc.SetPen(*wxTRANSPARENT_PEN);
 			tdc.DrawRectangle(0, posY, w + scHor, previewGrid->GridHeight);
 			tdc.GetTextExtent(tab->SubsName, &fw, &fh, NULL, NULL, &previewGrid->font);
@@ -478,13 +481,13 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			tdc.DrawRectangle(posX, ((previewGrid->currentLine - scPos + 1)*(previewGrid->GridHeight + 1)) - 1, w + scHor - posX - 21, previewGrid->GridHeight + 2);
 		}
 	}
-	tdc.SetBrush(wxBrush(Options.GetColour(WindowBorderBackground)));
+	tdc.SetBrush(wxBrush(Options.GetColour(hasFocus ? WindowBorderBackground : WindowBorderBackgroundInactive)));
 	tdc.SetPen(*wxTRANSPARENT_PEN);
 	tdc.DrawRectangle(0, h - 4, w + scHor, 4);
 	tdc.DrawRectangle(0, 0, 4, h);
 	tdc.DrawRectangle(w + scHor - 4, 0, 4, h);
 	tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-	tdc.SetPen(wxPen(Options.GetColour(WindowBorder)));
+	tdc.SetPen(wxPen(Options.GetColour(hasFocus ? WindowBorder : WindowBorderInactive)));
 	tdc.DrawRectangle(0, 0, w + scHor, h);
 
 	wxPaintDC dc(this);
@@ -798,7 +801,6 @@ void SubsGridPreview::SeekForOccurences()
 	File *thisSubs = parent->file->GetSubs();
 	previewData.clear();
 	int tabI = 0;
-	int lastSel = 0;
 	for (int i = 0; i < nb->Size(); i++){
 		TabPanel *tab = nb->Page(i);
 		File *subs = tab->Grid->file->GetSubs();
@@ -855,14 +857,19 @@ void SubsGridPreview::SeekForOccurences()
 			//bestJ jest naszym wynikiem w tym przypadku, nie potrzebujemy samego czasu który jest najlepszy
 			previewData.push_back(MultiPreviewData(tab, tab->Grid, bestJ, 0));
 		}
-		if (lastData.grid == tab->Grid){ lastSel = tabI; }
 		tabI++;
 	}
-	//assert(previewData.size() < 1);
-	previewGrid = previewData[lastSel].grid;
-	previewGrid->thisPreview = this;
-	lastData = previewData[lastSel];
-	//teraz powinno byæ neverfailed ale assert nie zaszkodzi
+	size_t previewDataSize = previewData.size();
+	for (size_t i = 0; i < previewDataSize; i++){
+		if (lastData.grid == previewData[i].grid || i >= previewDataSize - 1){
+			size_t position = (lastData.grid == previewData[i].grid) ? i : 0;
+			previewGrid = previewData[position].grid;
+			previewGrid->thisPreview = this;
+			lastData = previewData[position];
+			break;
+		}
+	}
+	
 }
 
 void SubsGridPreview::ContextMenu(const wxPoint &pos)
@@ -885,4 +892,11 @@ void SubsGridPreview::ContextMenu(const wxPoint &pos)
 	MakeVisible();
 }
 
+void SubsGridPreview::OnFocus(wxFocusEvent &evt)
+{
+	/*if (this == evt.GetWindow()){
+
+	}*/
+	Refresh(false);
+}
 

@@ -100,7 +100,6 @@ public:
 	Dialogue *CopyDialogueByKey(int i, bool push = true);
 	Dialogue *GetDialogue(int i);
 	wxString *GetVisible(bool *visible=0, wxPoint *point = NULL, wxArrayInt *selected = NULL);
-	void RebuildActorEffectLists();
 	
 	void DummyUndo(int newIter);
 	void GetCommonStyles(SubsGridBase *grid, wxArrayString &styleTable);

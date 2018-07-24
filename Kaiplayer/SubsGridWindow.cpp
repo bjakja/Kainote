@@ -901,7 +901,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 			//2-kliknięcie lewym i edycja na pauzie
 			//3-kliknięcie lewym i edycja na pauzie i odtwarzaniu
 
-			if (dclick || (click && lastActiveLine != row && mvtal < 4 && mvtal > 0) && pas < 2){
+			if (dclick || (click && lastActiveLine != row && (changeActive || !ctrl) && mvtal < 4 && mvtal > 0) && pas < 2){
 				SetVideoLineTime(event, mvtal);
 			}
 

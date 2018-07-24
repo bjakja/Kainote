@@ -1272,7 +1272,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 			SubsGridFiltering filter((SubsGrid*)this, currentLine);
 			filter.Filter(true);
 		}
-		RebuildActorEffectLists();
+		Edit->RebuildActorEffectLists();
 	}
 
 }
@@ -1624,23 +1624,6 @@ void SubsGridBase::GetASSRes(int *x, int *y)
 	//if(changed){SetModified(ASS_PROPERTIES, false, true, -1, false);}
 }
 
-
-void SubsGridBase::RebuildActorEffectLists()
-{
-	Edit->ActorEdit->Clear();
-	Edit->EffectEdit->Clear();
-	for (int i = 0; i < GetCount(); i++){
-		Dialogue *dial = GetDialogue(i);
-		if (!dial->Actor.empty() && Edit->ActorEdit->FindString(dial->Actor, true) < 0){
-			Edit->ActorEdit->Append(dial->Actor);
-		}
-		if (!dial->Effect.empty() && Edit->EffectEdit->FindString(dial->Effect, true) < 0){
-			Edit->EffectEdit->Append(dial->Effect);
-		}
-	}
-	Edit->ActorEdit->Sort();
-	Edit->EffectEdit->Sort();
-}
 
 void SubsGridBase::SaveSelections(bool clear)
 {

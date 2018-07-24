@@ -309,7 +309,6 @@ void VideoRenderer::Render(bool Frame, bool wait)
 {
 	if (Frame && !IsDshow && !devicelost){ VFF->Refresh(wait); resized = false; return; }
 	wxCriticalSectionLocker lock(mutexRender);
-	//bool isOK = mutexRender.Lock() == wxMUTEX_NO_ERROR;
 	resized = false;
 	HRESULT hr = S_OK;
 
@@ -333,12 +332,10 @@ void VideoRenderer::Render(bool Frame, bool wait)
 				}
 				devicelost = false;
 				Render(true, false);
-				//wxLogMessage("cooperative not reset");
 				return;
 			}
 			return;
 		}
-		//wxLogMessage("device was lost but is ok now");
 		devicelost = false;
 	}
 
@@ -463,7 +460,6 @@ void VideoRenderer::Render(bool Frame, bool wait)
 		if (!devicelost){
 			devicelost = true;
 		}
-		//wxLogMessage("device lost when rendering");
 		Render(true, false);
 	}
 

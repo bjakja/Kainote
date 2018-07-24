@@ -1719,9 +1719,14 @@ bool KainoteFrame::SavePrompt(char mode, int wtab)
 {
 	TabPanel* atab = (wtab < 0) ? GetTab() : Tabs->Page(wtab);
 	if (atab->Grid->IsModified()){
+		wxString ext = (atab->Grid->subsFormat == ASS) ? L"ass" : (atab->Grid->subsFormat == SRT) ? L"srt" : L"txt";
+		wxString subsExt = atab->SubsName.AfterLast('.').Lower();
+		wxString subsPath = (ext != subsExt && !(ext == L"txt" && subsExt == L"sub")) ?
+			atab->SubsName.BeforeLast('.') + L"." + ext : atab->SubsName;
+
 		wxWindow *_parent = (atab->Video->isFullscreen) ? (wxWindow*)atab->Video->TD : this;
 		int answer = KaiMessageBox(wxString::Format(_("Zapisać napisy o nazwie \"%s\" przed %s?"),
-			atab->SubsName, (mode == 0) ? _("zamknięciem programu") :
+			subsPath, (mode == 0) ? _("zamknięciem programu") :
 			(mode == 1) ? _("zamknięciem zakładki") :
 			(mode == 2) ? _("wczytaniem nowych napisów") :
 			_("usunięciem napisów")),

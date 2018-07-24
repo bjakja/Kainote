@@ -55,6 +55,7 @@ private:
 	void OnOccurenceChanged(wxCommandEvent &evt);
 	void SeekForOccurences();
 	void ContextMenu(const wxPoint &pos);
+	void OnFocus(wxFocusEvent &evt);
 
 	SubsGrid *previewGrid;
 	SubsGrid *parent;

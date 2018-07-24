@@ -134,11 +134,9 @@ public:
 	bool IsCursorOnStart();
 	void FindNextDoubtfulTl(wxCommandEvent& event);
 	void FindNextUnTranslated(wxCommandEvent& event);
+	void RebuildActorEffectLists();
 	void SetActiveLineToDoubtful();
-	void SetGrid(SubsGrid *_grid, bool isPreview = false){
-		grid = _grid;
-		hasPreviewGrid = isPreview;
-	}
+	void SetGrid(SubsGrid *_grid, bool isPreview = false);
 
 	wxBoxSizer* BoxSizer1;
 

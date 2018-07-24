@@ -568,7 +568,7 @@ void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool vis
 		if (currentLine < grid->GetCount() && !dummy){
 			grid->ChangeLine(editionType, line, currentLine, cellm, selline, visualdummy);
 			if (cellm & ACTOR || cellm & EFFECT){
-				grid->RebuildActorEffectLists();
+				RebuildActorEffectLists();
 			}
 		}
 	}
@@ -1092,8 +1092,7 @@ void EditBox::OnCopySelection(wxCommandEvent& event)
 void EditBox::RefreshStyle(bool resetline)
 {
 	StyleChoice->Clear();
-	for (int i = 0; i < grid->StylesSize(); i++)
-	{
+	for (int i = 0; i < grid->StylesSize(); i++){
 		StyleChoice->Append(grid->GetStyle(i)->Name);
 	}
 	int selection = grid->FindStyle(line->Style);
@@ -1940,3 +1939,29 @@ void EditBox::SetActiveLineToDoubtful()
 	CurrentDoubtful = currentLine;
 	CurrentUntranslated = currentLine;
 };
+
+void EditBox::RebuildActorEffectLists()
+{
+	ActorEdit->Clear();
+	EffectEdit->Clear();
+	for (int i = 0; i < grid->GetCount(); i++){
+		Dialogue *dial = grid->GetDialogue(i);
+		if (!dial->Actor.empty() && ActorEdit->FindString(dial->Actor, true) < 0){
+			ActorEdit->Append(dial->Actor);
+		}
+		if (!dial->Effect.empty() && EffectEdit->FindString(dial->Effect, true) < 0){
+			EffectEdit->Append(dial->Effect);
+		}
+	}
+	ActorEdit->Sort();
+	EffectEdit->Sort();
+}
+
+void EditBox::SetGrid(SubsGrid *_grid, bool isPreview){
+	if (grid != _grid){
+		grid = _grid;
+		hasPreviewGrid = isPreview;
+		RebuildActorEffectLists();
+		RefreshStyle();
+	}
+}
