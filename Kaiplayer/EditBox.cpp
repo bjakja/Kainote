@@ -247,10 +247,10 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	BoxSizer6->Add(AutoMoveTags, 0, wxALIGN_CENTER | wxLEFT | wxTOP | wxBOTTOM, 2);
 
 
-	TextEdit = new MTextEditor(this, 16667, Options.GetBool(SpellcheckerOn), wxDefaultPosition, wxSize(-1, 30));
+	TextEdit = new TextEditor(this, 16667, Options.GetBool(SpellcheckerOn), wxDefaultPosition, wxSize(-1, 30));
 	TextEdit->EB = this;
 
-	TextEditOrig = new MTextEditor(this, 16667, false, wxDefaultPosition, wxSize(-1, 30));
+	TextEditOrig = new TextEditor(this, 16667, false, wxDefaultPosition, wxSize(-1, 30));
 	TextEditOrig->EB = this;
 
 	TextEditOrig->Hide();
@@ -582,7 +582,7 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 	if (oneline && !onlysel){
 		long whre;
 		wxString txt = TextEdit->GetValue();
-		MTextEditor *Editor = TextEdit;
+		TextEditor *Editor = TextEdit;
 		if (grid->hasTLMode && txt == ""){
 			txt = TextEditOrig->GetValue();
 			Editor = TextEditOrig;
@@ -749,7 +749,7 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 	FD->Bind(FONT_CHANGED, &EditBox::OnFontChange, this, FD->GetId());
 	if (FD->ShowModal() == wxID_OK) {
 		wxString txt = TextEdit->GetValue();
-		MTextEditor * Editor = TextEdit;
+		TextEditor * Editor = TextEdit;
 		if (grid->hasTLMode && txt == ""){
 			Editor = TextEditOrig;
 			txt = TextEditOrig->GetValue();
@@ -838,7 +838,7 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		leftClick = !leftClick;
 
 	wxString tmptext = TextEdit->GetValue();
-	MTextEditor *Editor = TextEdit;
+	TextEditor *Editor = TextEdit;
 	int tmpIter = grid->file->Iter();
 	if (grid->hasTLMode && tmptext == ""){
 		tmptext = TextEditOrig->GetValue();
@@ -1231,7 +1231,7 @@ void EditBox::OnSplit(wxCommandEvent& event)
 	wxString Splitchar = (grid->subsFormat <= SRT) ? "\\N" : "|";
 	bool isOriginal = (grid->hasTLMode && TextEdit->GetValue() == "" && !TextEdit->HasFocus());
 	//Editor
-	MTextEditor *tedit = (isOriginal) ? TextEditOrig : TextEdit;
+	TextEditor *tedit = (isOriginal) ? TextEditOrig : TextEdit;
 	wxString txt = tedit->GetValue();
 	long strt, ennd;
 	tedit->GetSelection(&strt, &ennd);
@@ -1288,7 +1288,7 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 	else{ txt = text; }
 	if (txt == ""){ Placed.x = 0; Placed.y = 0; InBracket = false; cursorpos = 0; if (endsel){ *endsel = false; } return false; }
 	if (grid->file->SelectionsSize() < 2){
-		MTextEditor *Editor = (fromOriginal) ? TextEditOrig : TextEdit;
+		TextEditor *Editor = (fromOriginal) ? TextEditOrig : TextEdit;
 		if (!fromStart){ Editor->GetSelection(&from, &to); }
 	}
 
@@ -1571,7 +1571,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 
 		long from, to;
 		wxString txt = TextEdit->GetValue();
-		MTextEditor *Editor = TextEdit;
+		TextEditor *Editor = TextEdit;
 		if (grid->hasTLMode && txt == ""){ txt = TextEditOrig->GetValue(); Editor = TextEditOrig; }
 		Editor->GetSelection(&from, &to);
 		if (oneline){

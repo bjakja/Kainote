@@ -86,8 +86,8 @@ public:
 	void UpdateChars(const wxString &text);
 
 	AudioBox* ABox;
-	MTextEditor* TextEdit;
-	MTextEditor* TextEditOrig;
+	TextEditor* TextEdit;
+	TextEditor* TextEditOrig;
 	KaiCheckBox* TlMode;
 	KaiRadioButton* Times;
 	KaiRadioButton* Frames;

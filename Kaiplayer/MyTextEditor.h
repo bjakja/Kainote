@@ -23,11 +23,11 @@ class EditBox;
 class KainoteFrame;
 wxDECLARE_EVENT(CURSOR_MOVED, wxCommandEvent);
 
-class MTextEditor : public wxWindow
+class TextEditor : public wxWindow
 {
 public:
-	MTextEditor(wxWindow *parent, int id, bool spell, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxWANTS_CHARS);
-	virtual ~MTextEditor();
+	TextEditor(wxWindow *parent, int id, bool spell, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxWANTS_CHARS);
+	virtual ~TextEditor();
 	void SetTextS(const wxString &text, bool modif = false, bool resetsel = true, bool noevent = false);
 	bool IsModified();
 	void SetModified(bool _modified = true);
@@ -58,7 +58,7 @@ protected:
 	void OnEraseBackground(wxEraseEvent& event){};
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
 	void OnScroll(wxScrollEvent& event);
-	void DrawFld(wxDC &dc, int w, int h, int windowh);
+	void DrawFld(wxDC &dc, int w, int h, int windoww);
 	bool HitTest(wxPoint pos, wxPoint *cur);
 	void CalcWrap(bool updatechars = true, bool sendevent = true);
 	void FindWord(int pos, int *start, int *end);
@@ -98,7 +98,7 @@ protected:
 	int scPos;
 	int fsize;
 	int tmpstart, tmpend;
-
+	int statusBarHeight = 22;
 	DECLARE_EVENT_TABLE()
 };
 

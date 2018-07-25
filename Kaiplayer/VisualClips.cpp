@@ -181,7 +181,7 @@ void DrawingAndClip::SetCurVisual()
 	else{
 		bool isOriginal = (tab->Grid->hasTLMode && tab->Edit->TextEdit->GetValue() == "");
 		//Editor
-		MTextEditor *Editor = (isOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
+		TextEditor *Editor = (isOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
 		wxString tags[] = { "p" };
 		tab->Edit->line->ParseTags(tags, 1);
 		ParseData *pdata = tab->Edit->line->parseData;

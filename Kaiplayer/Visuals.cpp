@@ -345,7 +345,7 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	EditBox *edit = tab->Edit;
 	SubsGrid *grid = tab->Grid;
 	wxString txt = edit->TextEdit->GetValue();
-	MTextEditor *Editor = edit->TextEdit;
+	TextEditor *Editor = edit->TextEdit;
 	if (grid->hasTLMode && txt == ""){ txt = edit->TextEditOrig->GetValue(); Editor = edit->TextEditOrig; }
 
 
@@ -475,7 +475,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 	SubsGrid *grid = tab->Grid;
 	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == "");
 	//Editor
-	MTextEditor *Editor = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
+	TextEditor *Editor = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
 	if (clip == ""){
 
 		wxString tmp;
@@ -648,7 +648,7 @@ void Visuals::SetVisual(bool dummy, int type)
 
 	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == "");
 	//Editor
-	MTextEditor *Editor = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
+	TextEditor *Editor = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
 	//działanie dwuetapowe, pierwszy etap podmieniamy w wielu linijkach
 	if (edit->IsCursorOnStart()){
 		bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);

@@ -234,7 +234,7 @@ seekFromStart:
 					//pan->Edit->StyleChoice->SetFocus();
 				}
 				else if (wrep == TXT || wrep == TXTTL){
-					MTextEditor *tmp = (searchInOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
+					TextEditor *tmp = (searchInOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
 					//tmp->SetFocus();
 					tmp->SetSelection(foundPosition, findend);
 				}
@@ -887,7 +887,7 @@ void FindReplace::Replace(TabWindow *window)
 		Dialc->Style = oldstyle;
 	}
 	else if (wrep == TXT || wrep == TXTTL){
-		MTextEditor *tmp = (searchInOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
+		TextEditor *tmp = (searchInOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
 		wxString oldtext = tmp->GetValue();
 		if (hasRegEx && rgx.IsValid()){
 			wxString place = oldtext.Mid(findstart, findend - findstart);
