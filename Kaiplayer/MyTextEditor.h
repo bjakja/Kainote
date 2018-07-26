@@ -58,7 +58,7 @@ protected:
 	void OnEraseBackground(wxEraseEvent& event){};
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
 	void OnScroll(wxScrollEvent& event);
-	void DrawFld(wxDC &dc, int w, int h, int windoww);
+	void DrawFld(wxDC &dc, int w, int h, int windowh);
 	bool HitTest(wxPoint pos, wxPoint *cur);
 	void CalcWrap(bool updatechars = true, bool sendevent = true);
 	void FindWord(int pos, int *start, int *end);
@@ -98,7 +98,7 @@ protected:
 	int scPos;
 	int fsize;
 	int tmpstart, tmpend;
-	int statusBarHeight = 22;
+	int statusBarHeight;
 	DECLARE_EVENT_TABLE()
 };
 
@@ -112,6 +112,7 @@ enum{
 	TEXTM_SEEKWORDB,
 	TEXTM_SEEKWORDG,
 	TEXTM_SEEKWORDS,
+	MENU_SHOW_STATUS_BAR,
 	ID_DEL,
 	ID_BACK,
 	ID_CBACK,
@@ -128,17 +129,10 @@ enum{
 	ID_SUP,
 	ID_DOWN,
 	ID_SDOWN,
-	ID_HOME,
-	ID_END,
-	ID_SHOME,
-	ID_SEND,
-	ID_CSEND,
 	ID_CTLA,
 	ID_CTLV,
 	ID_CTLC,
 	ID_CTLX,
 	ID_WMENU,
-	ID_PDOWN,
-	ID_PUP
 };
 

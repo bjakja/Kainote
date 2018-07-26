@@ -40,7 +40,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	posY = 0;
 	scPos = 0;
 	SetCursor(wxCURSOR_IBEAM);
-	wxAcceleratorEntry entries[40];
+	wxAcceleratorEntry entries[31];
 	entries[0].Set(wxACCEL_NORMAL, WXK_DELETE, ID_DEL);
 	entries[1].Set(wxACCEL_NORMAL, WXK_BACK, ID_BACK);
 	entries[2].Set(wxACCEL_CTRL, WXK_BACK, ID_CBACK);
@@ -49,44 +49,37 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	entries[5].Set(wxACCEL_NORMAL, WXK_RIGHT, ID_RIGHT);
 	entries[6].Set(wxACCEL_NORMAL, WXK_UP, ID_UP);
 	entries[7].Set(wxACCEL_NORMAL, WXK_DOWN, ID_DOWN);
-	entries[8].Set(wxACCEL_NORMAL, WXK_HOME, ID_HOME);
-	entries[9].Set(wxACCEL_NORMAL, WXK_END, ID_END);
-	entries[10].Set(wxACCEL_CTRL, WXK_LEFT, ID_CLEFT);
-	entries[11].Set(wxACCEL_CTRL, WXK_RIGHT, ID_CRIGHT);
-	entries[12].Set(wxACCEL_SHIFT, WXK_LEFT, ID_SLEFT);
-	entries[13].Set(wxACCEL_SHIFT, WXK_RIGHT, ID_SRIGHT);
-	entries[14].Set(wxACCEL_SHIFT, WXK_UP, ID_SUP);
-	entries[15].Set(wxACCEL_SHIFT, WXK_DOWN, ID_SDOWN);
-	entries[16].Set(wxACCEL_SHIFT | wxACCEL_CTRL, WXK_LEFT, ID_CSLEFT);
-	entries[17].Set(wxACCEL_SHIFT | wxACCEL_CTRL, WXK_RIGHT, ID_CSRIGHT);
-	entries[18].Set(wxACCEL_SHIFT, WXK_HOME, ID_SHOME);
-	entries[19].Set(wxACCEL_SHIFT, WXK_END, ID_SEND);
-	entries[20].Set(wxACCEL_CTRL, 'A', ID_CTLA);
-	entries[21].Set(wxACCEL_CTRL, 'V', ID_CTLV);
-	entries[22].Set(wxACCEL_CTRL, 'C', ID_CTLC);
-	entries[23].Set(wxACCEL_CTRL, 'X', ID_CTLX);
-	entries[24].Set(wxACCEL_NORMAL, WXK_WINDOWS_MENU, ID_WMENU);
-	entries[25].Set(wxACCEL_NORMAL, WXK_PAGEDOWN, ID_PDOWN);
-	entries[26].Set(wxACCEL_NORMAL, WXK_PAGEUP, ID_PUP);
-	entries[27].Set(wxACCEL_SHIFT | wxACCEL_CTRL, WXK_END, ID_CSEND);
-	int numEntries = 28;
+	entries[8].Set(wxACCEL_CTRL, WXK_LEFT, ID_CLEFT);
+	entries[9].Set(wxACCEL_CTRL, WXK_RIGHT, ID_CRIGHT);
+	entries[10].Set(wxACCEL_SHIFT, WXK_LEFT, ID_SLEFT);
+	entries[11].Set(wxACCEL_SHIFT, WXK_RIGHT, ID_SRIGHT);
+	entries[12].Set(wxACCEL_SHIFT, WXK_UP, ID_SUP);
+	entries[13].Set(wxACCEL_SHIFT, WXK_DOWN, ID_SDOWN);
+	entries[14].Set(wxACCEL_SHIFT | wxACCEL_CTRL, WXK_LEFT, ID_CSLEFT);
+	entries[15].Set(wxACCEL_SHIFT | wxACCEL_CTRL, WXK_RIGHT, ID_CSRIGHT);
+	entries[16].Set(wxACCEL_CTRL, 'A', ID_CTLA);
+	entries[17].Set(wxACCEL_CTRL, 'V', ID_CTLV);
+	entries[18].Set(wxACCEL_CTRL, 'C', ID_CTLC);
+	entries[19].Set(wxACCEL_CTRL, 'X', ID_CTLX);
+	entries[20].Set(wxACCEL_NORMAL, WXK_WINDOWS_MENU, ID_WMENU);
+	int numEntries = 21;
 	bool setNumpadAccels = !Options.GetBool(TextFieldAllowNumpadHotkeys);
 	if (setNumpadAccels){
-		entries[28].Set(wxACCEL_NORMAL, WXK_NUMPAD0, WXK_NUMPAD0 + 10000);
-		entries[29].Set(wxACCEL_NORMAL, WXK_NUMPAD1, WXK_NUMPAD1 + 10000);
-		entries[30].Set(wxACCEL_NORMAL, WXK_NUMPAD2, WXK_NUMPAD2 + 10000);
-		entries[31].Set(wxACCEL_NORMAL, WXK_NUMPAD3, WXK_NUMPAD3 + 10000);
-		entries[32].Set(wxACCEL_NORMAL, WXK_NUMPAD4, WXK_NUMPAD4 + 10000);
-		entries[33].Set(wxACCEL_NORMAL, WXK_NUMPAD5, WXK_NUMPAD5 + 10000);
-		entries[34].Set(wxACCEL_NORMAL, WXK_NUMPAD6, WXK_NUMPAD6 + 10000);
-		entries[35].Set(wxACCEL_NORMAL, WXK_NUMPAD7, WXK_NUMPAD7 + 10000);
-		entries[36].Set(wxACCEL_NORMAL, WXK_NUMPAD8, WXK_NUMPAD8 + 10000);
-		entries[37].Set(wxACCEL_NORMAL, WXK_NUMPAD9, WXK_NUMPAD9 + 10000);
-		numEntries = 38;
+		entries[21].Set(wxACCEL_NORMAL, WXK_NUMPAD0, WXK_NUMPAD0 + 10000);
+		entries[22].Set(wxACCEL_NORMAL, WXK_NUMPAD1, WXK_NUMPAD1 + 10000);
+		entries[23].Set(wxACCEL_NORMAL, WXK_NUMPAD2, WXK_NUMPAD2 + 10000);
+		entries[24].Set(wxACCEL_NORMAL, WXK_NUMPAD3, WXK_NUMPAD3 + 10000);
+		entries[25].Set(wxACCEL_NORMAL, WXK_NUMPAD4, WXK_NUMPAD4 + 10000);
+		entries[26].Set(wxACCEL_NORMAL, WXK_NUMPAD5, WXK_NUMPAD5 + 10000);
+		entries[27].Set(wxACCEL_NORMAL, WXK_NUMPAD6, WXK_NUMPAD6 + 10000);
+		entries[28].Set(wxACCEL_NORMAL, WXK_NUMPAD7, WXK_NUMPAD7 + 10000);
+		entries[29].Set(wxACCEL_NORMAL, WXK_NUMPAD8, WXK_NUMPAD8 + 10000);
+		entries[30].Set(wxACCEL_NORMAL, WXK_NUMPAD9, WXK_NUMPAD9 + 10000);
+		numEntries = 31;
 	}
 	wxAcceleratorTable accel(numEntries, entries);
 	SetAcceleratorTable(accel);
-	Connect(ID_DEL, ID_PUP, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&TextEditor::OnAccelerator);
+	Connect(ID_DEL, ID_WMENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&TextEditor::OnAccelerator);
 	if (setNumpadAccels){
 		Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 			int key = evt.GetId() - 10276;
@@ -105,12 +98,11 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	Fheight = fh;
 	scroll = new KaiScrollbar(this, 3333, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
 	scroll->SetCursor(wxCURSOR_DEFAULT);
+	statusBarHeight = (Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR)) ? 0 : 22;
 	caret = new wxCaret(this, 1, Fheight);
 	SetCaret(caret);
 	caret->Move(3, 2);
 	caret->Show();
-	//SetMinSize(wxSize(100,100));
-	//Refresh(false);
 }
 
 TextEditor::~TextEditor()
@@ -251,8 +243,10 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 void TextEditor::OnKeyPress(wxKeyEvent& event)
 {
 	int key = event.GetKeyCode();
-	if (!(event.ControlDown() && !event.AltDown()) && (key > 30 || key == 0)){ event.Skip(); return; }
-	if (event.ControlDown() && key == '0'){
+	bool ctrl = event.ControlDown();
+	bool alt = event.AltDown();
+	bool shift = event.ShiftDown();
+	if (ctrl && key == '0'){
 		font.SetPointSize(10);
 		int fw, fh;
 		GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
@@ -261,6 +255,18 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 		CalcWrap(false, false);
 		Refresh(false);
 	}
+
+	if ((key == WXK_HOME || key == WXK_END) && !alt){
+		Cursor.x = wraps[(key == WXK_END && !ctrl) ? Cursor.y + 1 : Cursor.y];
+		if (key == WXK_END && ctrl){ Cursor.x = MText.Len(); Cursor.y = wraps.size() - 2; }
+		else if (key == WXK_HOME && ctrl){ Cursor.x = 0; Cursor.y = 0; }
+		if (!shift){ Selend = Cursor; }
+		Refresh(false);
+	}
+	if (key == WXK_PAGEDOWN || key == WXK_PAGEUP || key == WXK_INSERT){
+		return;
+	}
+	if (!(ctrl && !alt) && (key > 30 || key == 0)){ event.Skip(); return; }
 }
 
 void TextEditor::OnAccelerator(wxCommandEvent& event)
@@ -379,16 +385,6 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		Refresh(false);
 
 		break;
-	case ID_HOME:
-	case ID_END:
-	case ID_SHOME:
-	case ID_SEND:
-	case ID_CSEND:
-		Cursor.x = wraps[(ID == ID_END || ID == ID_SEND) ? Cursor.y + 1 : Cursor.y];
-		if (ID == ID_CSEND){ Cursor.x = MText.Len(); Cursor.y = wraps.size() - 2; }
-		if (ID < ID_SHOME){ Selend = Cursor; }
-		Refresh(false);
-		break;
 	case ID_CTLA:
 
 		Cursor.x = Cursor.y = 0;
@@ -407,11 +403,6 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 	case ID_WMENU:
 		//Selend=Cursor;
 		ContextMenu(PosFromCursor(Cursor), FindError(Cursor, false));
-		break;
-
-	case ID_PDOWN:
-	case ID_PUP:
-
 		break;
 
 	default:
@@ -563,7 +554,7 @@ void TextEditor::OnSize(wxSizeEvent& event)
 	wxSize size = GetClientSize();
 	if (size.y < 80 && statusBarHeight > 0)
 		statusBarHeight = 0;
-	else if (size.y >= 80 && !statusBarHeight)
+	else if (size.y >= 80 && !Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR))
 		statusBarHeight = 22;
 
 	CalcWrap(false, false);
@@ -580,11 +571,9 @@ int TextEditor::FindY(int x)
 
 void TextEditor::OnPaint(wxPaintEvent& event)
 {
-	//if(block){return;} 
 	int w = 0, h = 0;
 	GetClientSize(&w, &h);
 	if (w < 1 || h < 1){ return; }
-	//block=true;
 	wxPaintDC dc(this);
 	int bitmaph = (wraps.size()*Fheight) + 4;
 	int windoww = w;
@@ -631,13 +620,13 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 
 	bmpDC.SelectObject(*bmp);
 
-	DrawFld(bmpDC, w, h - statusBarHeight, windoww);
+	DrawFld(bmpDC, w, h - statusBarHeight, h);
 
 	dc.Blit(0, 0, w, h, &bmpDC, 0, 0);
 	
 }
 
-void TextEditor::DrawFld(wxDC &dc, int w, int h, int windoww)
+void TextEditor::DrawFld(wxDC &dc, int w, int h, int windowh)
 {
 	int fw = 0, fh = 0;
 	bool tags = false;
@@ -958,13 +947,13 @@ void TextEditor::DrawFld(wxDC &dc, int w, int h, int windoww)
 		dc.DrawText(wxString::Format("Lines: %i", (int)wraps.GetCount() - 1), 105, ypos);
 		dc.DrawText(wxString::Format("Ln: %i", Cursor.y + 1), 185, ypos);
 		dc.DrawText(wxString::Format("Col: %i", Cursor.x - wraps[Cursor.y] + 1), 245, ypos);
-		dc.DrawText(wxString::Format("Sel: %i", abs(Selend.x - Cursor.x)), 305, ypos);
+		dc.DrawText(wxString::Format("Sel: %i", abs(Selend.x - Cursor.x)), 290, ypos);
 		dc.DrawText(wxString::Format("Ch: %i", Cursor.x + 1), 365, ypos);
 	}
 	//text field border
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
 	dc.SetPen(wxPen(border));
-	dc.DrawRectangle(0, 0, w, h + 1);
+	dc.DrawRectangle(0, 0, w, windowh);
 }
 
 bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
@@ -1219,6 +1208,18 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	}
 
 	menut.Append(TEXTM_DEL, _("&Usuń"))->Enable(Selend.x != Cursor.x);
+	menut.Append(MENU_SHOW_STATUS_BAR, _("Pokaż pasek stanu"), NULL, L"", ITEM_CHECK)->Check(!Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR));
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		MenuItem * item = (MenuItem*)evt.GetClientData();
+		if (!item)
+			return;
+		//value swapped for working without default config
+		bool showStatusBar = item->IsChecked();
+		Options.SetBool(TEXT_EDITOR_HIDE_STATUS_BAR, !showStatusBar);
+		Options.SaveOptions(true, false);
+		statusBarHeight = (showStatusBar) ? 22 : 0;
+		Refresh(false);
+	}, ID_CHECK_EVENT);
 
 	int id = -1;
 	id = menut.GetPopupMenuSelection(mpos, this);
