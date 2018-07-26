@@ -98,6 +98,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	Fheight = fh;
 	scroll = new KaiScrollbar(this, 3333, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
 	scroll->SetCursor(wxCURSOR_DEFAULT);
+	scroll->SetScrollRate(30);
 	statusBarHeight = (Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR)) ? 0 : 22;
 	caret = new wxCaret(this, 1, Fheight);
 	SetCaret(caret);
@@ -261,7 +262,7 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 		if (key == WXK_END && ctrl){ Cursor.x = MText.Len(); Cursor.y = wraps.size() - 2; }
 		else if (key == WXK_HOME && ctrl){ Cursor.x = 0; Cursor.y = 0; }
 		if (!shift){ Selend = Cursor; }
-		Refresh(false);
+		MakeCursorVisible();
 	}
 	if (key == WXK_PAGEDOWN || key == WXK_PAGEUP || key == WXK_INSERT){
 		return;
@@ -947,8 +948,8 @@ void TextEditor::DrawFld(wxDC &dc, int w, int h, int windowh)
 		dc.DrawText(wxString::Format("Lines: %i", (int)wraps.GetCount() - 1), 105, ypos);
 		dc.DrawText(wxString::Format("Ln: %i", Cursor.y + 1), 185, ypos);
 		dc.DrawText(wxString::Format("Col: %i", Cursor.x - wraps[Cursor.y] + 1), 245, ypos);
-		dc.DrawText(wxString::Format("Sel: %i", abs(Selend.x - Cursor.x)), 290, ypos);
-		dc.DrawText(wxString::Format("Ch: %i", Cursor.x + 1), 365, ypos);
+		dc.DrawText(wxString::Format("Sel: %i", abs(Selend.x - Cursor.x)), 305, ypos);
+		dc.DrawText(wxString::Format("Ch: %i", Cursor.x + 1), 375, ypos);
 	}
 	//text field border
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
