@@ -262,7 +262,11 @@ int VideoFfmpeg::Init()
 						}
 						wxString all;
 						char *description = (ti->Name) ? ti->Name : ti->Language;
-						all << audiotable[j] << ": " << wxString(description, wxConvUTF8);
+						wxString codec = wxString(ti->CodecID, wxConvUTF8);
+						if (codec.StartsWith("A_"))
+							codec = codec.Mid(2);
+						all << audiotable[j] << L": " << wxString(description, wxConvUTF8) << 
+							L" (" << codec << L")";
 						tracks.Add(all);
 					}
 					if (lowestIndex < enabledSize){

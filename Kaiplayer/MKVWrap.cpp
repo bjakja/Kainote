@@ -150,9 +150,9 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 
 		// Subtitle track
 		if (trackInfo->Type == 0x11) {
-			wxString CodecID = wxString(trackInfo->CodecID,*wxConvCurrent);
-			wxString TrackName = wxString(trackInfo->Name,*wxConvCurrent);
-			wxString TrackLanguage = wxString(trackInfo->Language,*wxConvCurrent);
+			wxString CodecID = wxString(trackInfo->CodecID, wxConvUTF8);
+			wxString TrackName = wxString(trackInfo->Name, wxConvUTF8);
+			wxString TrackLanguage = wxString(trackInfo->Language, wxConvUTF8);
 
 			// Known subtitle format
 			if (CodecID == "S_TEXT/SSA" || CodecID == "S_TEXT/ASS" || CodecID == "S_TEXT/UTF8") {

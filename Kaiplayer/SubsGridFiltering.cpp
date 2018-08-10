@@ -109,7 +109,7 @@ void SubsGridFiltering::FilterPartial(int from)
 	}
 	if (!changed){
 		keyTo = Subs->dials.size() - 1; 
-		KaiLog("Something went wrong with partially hiding it is better to check it for potencial bugs."); 
+		KaiLogDebug("Something went wrong with partially hiding it is better to check it for potencial bugs."); 
 	}
 	grid->file->ReloadVisibleDialogues(keyFrom, keyTo);
 	grid->RefreshSubsOnVideo(activeLine, false);

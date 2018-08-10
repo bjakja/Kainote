@@ -920,7 +920,8 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 
 	if (Options.GetBool(OpenSubsInNewCard) && tab->SubsPath != "" &&
 		!tab->Video->isFullscreen && issubs){
-		Tabs->AddPage(true); tab = Tabs->Page(Tabs->Size() - 1);
+		Tabs->AddPage(true); 
+		tab = Tabs->Page(Tabs->Size() - 1);
 		nonewtab = false;
 	}
 
@@ -930,14 +931,22 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 	if (issubs || found){
 		const wxString &fname = (found && !issubs) ? secondFileName : filename;
 		if (nonewtab){
-			if (SavePrompt(2)){ tab->Thaw(); return true; }
+			if (SavePrompt(2)){ 
+				if (noFreeze)
+					tab->Thaw(); 
+				return true; 
+			}
 		}
 		if (tab->Video->Visual)
 			tab->Video->SetVisual(true,false,true);
 
 		OpenWrite ow;
 		wxString s;
-		if (!ow.FileOpen(fname, &s)){ tab->Thaw(); return false; }
+		if (!ow.FileOpen(fname, &s)){ 
+			if (noFreeze)
+				tab->Thaw(); 
+			return false; 
+		}
 		//remove comparison after every subs load or delete 
 		else if (nonewtab && tab->Grid->Comparison){
 			SubsGridBase::RemoveComparison();
@@ -1039,7 +1048,11 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 
 	const wxString &fnname = (found && issubs) ? secondFileName : filename;
 	bool isload = tab->Video->LoadVideo(fnname, tab->Grid->GetVisible(), fulls, changeAudio);
-	if (!isload){ tab->Thaw(); return false; }
+	if (!isload){ 
+		if (noFreeze)
+			tab->Thaw(); 
+		return false; 
+	}
 	tab->Video->seekfiles = true;
 	tab->Edit->Frames->Enable(!tab->Video->IsDshow);
 	tab->Edit->Times->Enable(!tab->Video->IsDshow);
