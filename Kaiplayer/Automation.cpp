@@ -62,8 +62,8 @@ namespace Auto{
 
 	int get_file_name(lua_State *L)
 	{
-		TabPanel *pan=Notebook::GetTab();
-		if (pan->SubsPath!="")
+		TabPanel *pan = Notebook::GetTab();
+		if (pan->SubsPath != "")
 			push_value(L, pan->SubsName);
 		else
 			lua_pushnil(L);
@@ -131,11 +131,12 @@ namespace Auto{
 	{
 		int ms = (int)lua_tonumber(L, -1);
 		lua_pop(L, 1);
-		VideoCtrl *video=Notebook::GetTab()->Video;
-		if (video->GetState()!=None) {
-			int frame=(video->IsDshow)? ((float)ms/1000.0)*video->fps : video->VFF->GetFramefromMS(ms);
+		VideoCtrl *video = Notebook::GetTab()->Video;
+		if (video->GetState() != None) {
+			int frame = (video->IsDshow) ? ((float)ms / 1000.f) * video->fps : video->VFF->GetFramefromMS(ms);
 			lua_pushnumber(L, frame);
-		} else {
+		}
+		else {
 			lua_pushnil(L);
 		}
 
@@ -146,11 +147,12 @@ namespace Auto{
 	{
 		int frame = (int)lua_tonumber(L, -1);
 		lua_pop(L, 1);
-		VideoCtrl *video=Notebook::GetTab()->Video;
-		if (video->GetState()!=None) {
-			int ms=(video->IsDshow)? ((frame*1000)/video->fps) : video->VFF->GetMSfromFrame(frame);
+		VideoCtrl *video = Notebook::GetTab()->Video;
+		if (video->GetState() != None) {
+			int ms = (video->IsDshow) ? ((frame * 1000) / video->fps) : video->VFF->GetMSfromFrame(frame);
 			lua_pushnumber(L, ms);
-		} else {
+		}
+		else {
 			lua_pushnil(L);
 		}
 		return 1;
@@ -158,16 +160,17 @@ namespace Auto{
 
 	int video_size(lua_State *L)
 	{
-		VideoCtrl *video=Notebook::GetTab()->Video;
-		if (video->GetState()!=None) {
-			wxSize sz= video->GetVideoSize();
-			float AR=(float)video->ax/video->ay;
+		VideoCtrl *video = Notebook::GetTab()->Video;
+		if (video->GetState() != None) {
+			wxSize sz = video->GetVideoSize();
+			float AR = (float)video->ax / video->ay;
 			lua_pushnumber(L, sz.x);
 			lua_pushnumber(L, sz.y);
 			lua_pushnumber(L, AR);
-			lua_pushnumber(L, (AR==1.0f)? 0: (AR<1.34f && AR>1.33f)? 1 : (AR<1.78f && AR>1.77f)? 2 : (AR<2.35f && AR>2.36f)? 3 : 4 );
+			lua_pushnumber(L, (AR == 1.0f) ? 0 : (AR<1.34f && AR>1.33f) ? 1 : (AR<1.78f && AR>1.77f) ? 2 : (AR<2.35f && AR>2.36f) ? 3 : 4);
 			return 4;
-		} else {
+		}
+		else {
 			lua_pushnil(L);
 			return 1;
 		}
@@ -175,15 +178,16 @@ namespace Auto{
 
 	int get_keyframes(lua_State *L)
 	{
-		VideoCtrl *video=Notebook::GetTab()->Video;
-		if (video->GetState()!=None && video->VFF){
+		VideoCtrl *video = Notebook::GetTab()->Video;
+		if (video->GetState() != None && video->VFF){
 			wxArrayInt & value = video->VFF->KeyFrames;
 			lua_createtable(L, value.size(), 0);
 			for (size_t i = 0; i < value.size(); ++i) {
 				push_value(L, value[i]);
 				lua_rawseti(L, -2, i + 1);
 			}
-		}else
+		}
+		else
 			lua_pushnil(L);
 		return 1;
 	}
@@ -191,18 +195,18 @@ namespace Auto{
 	int decode_path(lua_State *L)
 	{
 		wxString path = check_string(L, 1);
-		TabPanel *pan=Notebook::GetTab();
-		path.Replace('/','\\');
-		wxString firstAutomation = Options.pathfull+"\\Automation";
-		if(path[0]=='?'){
-			if(path[1]=='a'&&path[4]=='i') path.replace(0,6,pan->VideoPath.BeforeLast('\\'));
-			else if(path[1]=='d' && path[4]=='a') path.replace(0,5,firstAutomation);
-			else if(path[1]=='d' && path[4]=='t') path.replace(0,11,Options.pathfull+"\\Dictionary");
-			else if(path[1]=='l' && path[4]=='a') path.replace(0,6,firstAutomation);
-			else if(path[1]=='s' && path[4]=='i') path.replace(0,7,pan->SubsPath.BeforeLast('\\'));
-			else if(path[1]=='t' && path[4]=='p') path.replace(0,5,firstAutomation+"\\temp");
-			else if(path[1]=='u' && path[4]=='r') path.replace(0,5,firstAutomation);
-			else if(path[1]=='v' && path[4]=='e') path.replace(0,6,pan->VideoPath.BeforeLast('\\'));
+		TabPanel *pan = Notebook::GetTab();
+		path.Replace('/', '\\');
+		wxString firstAutomation = Options.pathfull + "\\Automation";
+		if (path[0] == '?'){
+			if (path[1] == 'a'&&path[4] == 'i') path.replace(0, 6, pan->VideoPath.BeforeLast('\\'));
+			else if (path[1] == 'd' && path[4] == 'a') path.replace(0, 5, firstAutomation);
+			else if (path[1] == 'd' && path[4] == 't') path.replace(0, 11, Options.pathfull + "\\Dictionary");
+			else if (path[1] == 'l' && path[4] == 'a') path.replace(0, 6, firstAutomation);
+			else if (path[1] == 's' && path[4] == 'i') path.replace(0, 7, pan->SubsPath.BeforeLast('\\'));
+			else if (path[1] == 't' && path[4] == 'p') path.replace(0, 5, firstAutomation + "\\temp");
+			else if (path[1] == 'u' && path[4] == 'r') path.replace(0, 5, firstAutomation);
+			else if (path[1] == 'v' && path[4] == 'e') path.replace(0, 6, pan->VideoPath.BeforeLast('\\'));
 		}
 		push_value(L, path);
 		return 1;
@@ -227,21 +231,21 @@ namespace Auto{
 
 		lua_pushvalue(L, 1);
 		SubsEntry *e = AutoToFile::LuaToLine(L);
-		if(!e){return 0;}
-		if(e->lclass!="style"){SAFE_DELETE(e);return 0;}
-		Styles *st= e->astyle;
+		if (!e){ return 0; }
+		if (e->lclass != "style"){ SAFE_DELETE(e); return 0; }
+		Styles *st = e->astyle;
 		lua_pop(L, 1);
 		//lua_pushstring(L, "Not a style entry");
 		//lua_error(L);
 
 
 		wxString text(lua_tostring(L, 2), wxConvUTF8);
-		
+
 		//if(text==""){return 0;}
 
-		double width = 0, height =0, descent =0, extlead=0;
-		double fontsize = wxAtoi( st->Fontsize ) * 32;
-		double spacing = wxAtoi( st->Spacing ) * 32;
+		double width = 0, height = 0, descent = 0, extlead = 0;
+		double fontsize = wxAtoi(st->Fontsize) * 32;
+		double spacing = wxAtoi(st->Spacing) * 32;
 
 
 
@@ -260,7 +264,7 @@ namespace Auto{
 		lf.lfOutPrecision = OUT_TT_PRECIS;
 		lf.lfClipPrecision = CLIP_DEFAULT_PRECIS;
 		lf.lfQuality = ANTIALIASED_QUALITY;
-		lf.lfPitchAndFamily = DEFAULT_PITCH|FF_DONTCARE;
+		lf.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
 		_tcsncpy(lf.lfFaceName, st->Fontname.c_str(), 32);
 
 		HFONT thefont = CreateFontIndirect(&lf);
@@ -270,14 +274,15 @@ namespace Auto{
 		SIZE sz;
 		size_t thetextlen = text.length();
 		const TCHAR *thetext = text.wc_str();
-		if (spacing != 0 ) {
+		if (spacing != 0) {
 			width = 0;
 			for (unsigned int i = 0; i < thetextlen; i++) {
 				GetTextExtentPoint32(thedc, &thetext[i], 1, &sz);
 				width += sz.cx + spacing;
 				height = sz.cy;
 			}
-		} else {
+		}
+		else {
 			GetTextExtentPoint32(thedc, thetext, (int)thetextlen, &sz);
 			width = sz.cx;
 			height = sz.cy;
@@ -287,11 +292,10 @@ namespace Auto{
 		TEXTMETRIC tm;
 		GetTextMetrics(thedc, &tm);
 		descent = tm.tmDescent;
-		extlead= tm.tmExternalLeading;
+		extlead = tm.tmExternalLeading;
 
 		DeleteObject(thedc);
 		DeleteObject(thefont);
-		//wxLogMessage("style: %f, %f, %s, %s, %s", (float)width, (float)height, text.utf8_str().data(), st.ScaleX.utf8_str().data(), st.ScaleY.utf8_str().data());
 		width = (wxAtoi(st->ScaleX) / 100.0) * (width / 32);
 		height = (wxAtoi(st->ScaleY) / 100.0) * (height / 32);
 		descent = (wxAtoi(st->ScaleY) / 100.0) * (descent / 32);
@@ -307,7 +311,7 @@ namespace Auto{
 
 	int project_properties(lua_State *L)
 	{
-		const TabPanel *c=Notebook::GetTab();
+		const TabPanel *c = Notebook::GetTab();
 		if (!c)
 			lua_pushnil(L);
 		else {
@@ -322,7 +326,7 @@ namespace Auto{
 			PUSH_FIELD(scroll_position, "Active Line");
 			PUSH_FIELD(active_row, "Active Line");
 			PUSH_FIELD(ar_mode, "");
-			set_field(L, "video_position", (c->Video->VFF)? c->Video->VFF->GetFramefromMS(c->Video->Tell()) : NULL);
+			set_field(L, "video_position", (c->Video->VFF) ? c->Video->VFF->GetFramefromMS(c->Video->Tell()) : NULL);
 #undef PUSH_FIELD
 			set_field(L, "audio_file", c->VideoPath);
 			set_field(L, "video_file", c->VideoPath);
@@ -337,15 +341,15 @@ namespace Auto{
 		return 0;
 	}
 
-	
+
 
 
 	LuaScript::LuaScript(wxString const& filename)
 		: filename(filename)
-		,L(NULL)
+		, L(NULL)
 	{
-		include_path.push_back(filename.BeforeLast('\\')+"\\");
-		include_path.push_back(Options.pathfull+"\\Automation\\automation\\Include\\");
+		include_path.push_back(filename.BeforeLast('\\') + "\\");
+		include_path.push_back(Options.pathfull + "\\Automation\\automation\\Include\\");
 		//include_path[0].Replace("\\","/");
 		//include_path[1].Replace("\\","/");
 		Create();
@@ -356,7 +360,7 @@ namespace Auto{
 		Destroy();
 
 		name = GetPrettyFilename();
-		
+
 		// create lua environment
 		L = luaL_newstate();
 		if (!L) {
@@ -523,15 +527,15 @@ namespace Auto{
 		const LuaScript *s = GetScriptObject(L);
 		//no i trzeba wskaźniki stringów, z powodu braku zwalniania owych stringów przy błędzie skryptu.
 		const wxString *filename(new wxString(check_string(L, 1)));
-		wxString *filepath=new wxString();
-		bool fullpath=false;
+		wxString *filepath = new wxString();
+		bool fullpath = false;
 		// Relative or absolute path
-		if (filename->find("\\")!=-1 || filename->find("/")!=-1){
+		if (filename->find("\\") != -1 || filename->find("/") != -1){
 			*filepath = *filename;//s->GetFilename().BeforeLast('//') + filename;
-			fullpath=true;
+			fullpath = true;
 		}
 		if (!wxFileExists(*filepath)) { // Plain filename
-			if(fullpath){*filepath=filepath->AfterLast('\\');}
+			if (fullpath){ *filepath = filepath->AfterLast('\\'); }
 			for (auto const& dir : s->include_path) {
 				*filepath = dir + *filename;
 				if (wxFileExists(*filepath))
@@ -540,7 +544,7 @@ namespace Auto{
 		}
 
 		if (!wxFileExists(*filepath)){
-			
+
 			lua_pushfstring(L, "Lua include not found: %s", filepath->mb_str(wxConvUTF8).data());
 			delete filename; delete filepath;
 			//int res = error(L, "Lua include not found");// error(L, "Lua include not found: %s", filepath->mb_str(wxConvUTF8).data());
@@ -563,18 +567,18 @@ namespace Auto{
 
 		HANDLE ffile = CreateFile(GetFilename().wc_str(), GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
-		GetFileTime(ffile,0,0,&ft);
+		GetFileTime(ffile, 0, 0, &ft);
 		CloseHandle(ffile);
-		if(check){
-			if(LowTime!=(int)ft.dwLowDateTime || HighTime != ft.dwHighDateTime){
-				LowTime=ft.dwLowDateTime;
-				HighTime=ft.dwHighDateTime;
+		if (check){
+			if (LowTime != (int)ft.dwLowDateTime || HighTime != ft.dwHighDateTime){
+				LowTime = ft.dwLowDateTime;
+				HighTime = ft.dwHighDateTime;
 				return true;
 			}
 		}
 
-		LowTime=ft.dwLowDateTime;
-		HighTime=ft.dwHighDateTime;
+		LowTime = ft.dwLowDateTime;
+		HighTime = ft.dwHighDateTime;
 
 		return false;
 	}
@@ -584,20 +588,20 @@ namespace Auto{
 		, L(_L)
 	{
 		Create();
-		
+
 		SetPriority(50);
-		
+
 		Run();
 	}
 
 	wxThread::ExitCode LuaThreadedCall::Entry()
 	{
-	
+
 		bool failed = false;
 		bool hasMessage = false;
-		int nargs=3, nresults=2;
+		int nargs = 3, nresults = 2;
 		LuaProgressSink *ps = LuaProgressSink::ps;
-		
+
 		// Insert our error handler under the function to call
 		lua_pushcclosure(L, add_stack_trace, 0);
 		lua_insert(L, -nargs - 2);
@@ -607,8 +611,8 @@ namespace Auto{
 				// if the call failed, log the error here
 				wxString errmsg(get_string_or_default(L, -1));
 				errmsg.Prepend(_("Wystąpił błąd podczas wykonywania skryptu Lua:\n"));
-				ps->SafeQueue(Auto::EVT_MESSAGE,errmsg);
-				hasMessage=true;
+				ps->SafeQueue(Auto::EVT_MESSAGE, errmsg);
+				hasMessage = true;
 			}
 			lua_pop(L, 2);
 			failed = true;
@@ -618,9 +622,10 @@ namespace Auto{
 
 
 		lua_gc(L, LUA_GCCOLLECT, 0);
-		if(ps->Log=="" && !hasMessage){ps->lpd->closedialog=true;}else{ps->lpd->finished=true;}
+		if (ps->Log == "" && !hasMessage){ ps->lpd->closedialog = true; }
+		else{ ps->lpd->finished = true; }
 
-		if (failed){ return (wxThread::ExitCode) 1;}
+		if (failed){ return (wxThread::ExitCode) 1; }
 		return 0;
 	}
 
@@ -653,8 +658,8 @@ namespace Auto{
 		//static std::mutex mutex;
 		auto command = new LuaCommand(L);
 		//{
-			//std::lock_guard<std::mutex> lock(mutex);
-			//Command::reg(std::move(command));
+		//std::lock_guard<std::mutex> lock(mutex);
+		//Command::reg(std::move(command));
 		//}
 
 		return 0;
@@ -667,12 +672,12 @@ namespace Auto{
 		, cmd_type(COMMAND_NORMAL)
 		//, wxMenuItem(NULL,-1,display,help)
 	{
-		
-		
+
+
 		display = check_string(L, 1);
-		
-		help=get_string(L, 2);
-		
+
+		help = get_string(L, 2);
+
 		lua_getfield(L, LUA_REGISTRYINDEX, "filename");
 		//cmd_name = wxString::Format("automation/lua/%s/%s", check_string(L, -1), check_string(L, 1));
 		if (!lua_isfunction(L, 3))
@@ -704,9 +709,9 @@ namespace Auto{
 
 		// store the table in the registry
 		RegisterFeature();
-		
+
 		LuaScript::GetScriptObject(L)->RegisterCommand(this);
-		
+
 	}
 
 	LuaCommand::~LuaCommand()
@@ -718,7 +723,7 @@ namespace Auto{
 	static std::vector<int> selected_rows(const TabPanel *c)
 	{
 		auto const& sels = c->Grid->file->GetSubs()->Selections;
-		int offset = c->Grid->SInfoSize() + c->Grid->StylesSize()+1;
+		int offset = c->Grid->SInfoSize() + c->Grid->StylesSize() + 1;
 		std::vector<int> rows;
 		rows.reserve(sels.size());
 		for (auto line : sels)
@@ -744,7 +749,7 @@ namespace Auto{
 		SAFE_DELETE(subsobj);
 
 		if (err) {
-			wxLogWarning("Runtime error in Lua macro validation function:\n%s", get_string(L, -1));
+			KaiLog(wxString::Format("Runtime error in Lua macro validation function:\n%s", get_string(L, -1)));
 			lua_pop(L, 2);
 			return false;
 		}
@@ -772,7 +777,7 @@ namespace Auto{
 		File *subs = c->Grid->file->GetSubs();
 		auto subsobj = new AutoToFile(L, subs, true, c->Grid->subsFormat);
 
-		int original_offset = c->Grid->SInfoSize() + c->Grid->StylesSize()+1;
+		int original_offset = c->Grid->SInfoSize() + c->Grid->StylesSize() + 1;
 		auto original_sel = selected_rows(c);
 		// original active do not have offset
 		int original_active = c->Grid->file->GetElementById(c->Grid->currentLine);
@@ -784,21 +789,21 @@ namespace Auto{
 
 		LuaProgressSink *ps = new LuaProgressSink(L, c);
 
-		
+
 		LuaThreadedCall call(L);
-		
+
 		ps->ShowDialog(StrDisplay());
 		wxThread::ExitCode code = call.Wait();
 		bool failed = (int)code == 1;
-		
-		if(ps->lpd->cancelled || failed){
+
+		if (ps->lpd->cancelled || failed){
 			SAFE_DELETE(subsobj);
 			c->Grid->file->DummyUndo();
-			
+
 			delete ps;
 			return;
 		}
-		
+
 		c->Grid->file->ReloadVisibleDialogues();
 		//if(ps->lpd->cancelled && ps->lpd->IsModal()){ps->lpd->EndModal(0);}
 		//c->Grid->SaveSelections(true);
@@ -809,12 +814,13 @@ namespace Auto{
 		if (lua_isnumber(L, -1)) {
 			active_idx = lua_tointeger(L, -1) - original_offset;
 			if (active_idx < 0 || active_idx >= subs->dials.size()) {
-				wxLogError("Active row %d is out of bounds (must be 1-%u)", active_idx, subs->dials.size());
+				KaiLog(wxString::Format("Active row %d is out of bounds (must be 1-%u)", active_idx, subs->dials.size()));
 				active_idx = original_active;
-			}else
+			}
+			else
 				c->Grid->file->ClearSelections();
 		}
-		
+
 		//stackcheck.check_stack(2);
 		lua_pop(L, 1);
 
@@ -826,7 +832,7 @@ namespace Auto{
 					return;
 				int cur = lua_tointeger(L, -1) - original_offset;
 				if (cur < 0 || cur >= subs->dials.size()) {
-					wxLogError("Selected row %d is out of bounds (must be 1-%u)", cur, subs->dials.size());
+					KaiLog(wxString::Format("Selected row %d is out of bounds (must be 1-%u)", cur, subs->dials.size()));
 					throw LuaForEachBreak();
 				}
 				if (active_idx == -1)
@@ -866,7 +872,7 @@ namespace Auto{
 
 		bool result = false;
 		if (err)
-			wxLogWarning("Runtime error in Lua macro IsActive function:\n%s", get_string(L, -1));
+			KaiLog(wxString::Format("Runtime error in Lua macro IsActive function:\n%s", get_string(L, -1)));
 		else
 			result = !!lua_toboolean(L, -1);
 
@@ -880,34 +886,35 @@ namespace Auto{
 	void LuaCommand::RunScript()
 	{
 		//LuaScript *script = LuaScript::GetScriptObject(L);
-		
-	
+
+
 		TabPanel *pan = Notebook::GetTab();
-		if(Validate(pan)){Run(pan);}
-		
+		if (Validate(pan)){ Run(pan); }
+
 
 
 	}
 
-	VOID CALLBACK callbackfunc ( PVOID   lpParameter, BOOLEAN TimerOrWaitFired) {
+	VOID CALLBACK callbackfunc(PVOID   lpParameter, BOOLEAN TimerOrWaitFired) {
 		Automation *auto_ = (Automation*)lpParameter;
 		auto_->ReloadScripts(true);
-		DeleteTimerQueueTimer(auto_->handle,0,0);
+		DeleteTimerQueueTimer(auto_->handle, 0, 0);
 		SetEvent(auto_->eventEndAutoload);
 	}
 
 	Automation::Automation(bool loadSubsScripts, bool loadNow)
 	{
 		initialized = false;
-		AutoloadPath=Options.pathfull+"\\Automation\\automation\\Autoload";
-		if(loadSubsScripts){return;}
+		AutoloadPath = Options.pathfull + "\\Automation\\automation\\Autoload";
+		if (loadSubsScripts){ return; }
 		int loadMethod = Options.GetInt(AutomationLoadingMethod);
-		if(loadMethod < 2){
+		if (loadMethod < 2){
 			initialized = true;
-			if(loadMethod == 0 && !loadNow){
+			if (loadMethod == 0 && !loadNow){
 				eventEndAutoload = CreateEvent(NULL, FALSE, FALSE, NULL);
-				CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,20,0,0);
-			}else{
+				CreateTimerQueueTimer(&handle, NULL, callbackfunc, this, 20, 0, 0);
+			}
+			else{
 				ReloadScripts(true);
 			}
 		}
@@ -917,59 +924,60 @@ namespace Auto{
 	{
 		breakLoading = true;
 		if (eventEndAutoload){
-			WaitForSingleObject(eventEndAutoload,50000);
+			WaitForSingleObject(eventEndAutoload, 50000);
 		}
 		RemoveAll(true);
 	}
 
 	bool Automation::Add(wxString filename, bool addToSinfo, bool autoload)
 	{
-		std::vector<Auto::LuaScript*> &scripts = (autoload)? Scripts : ASSScripts;
-		Auto::LuaScript *ls= new Auto::LuaScript(filename);
+		std::vector<Auto::LuaScript*> &scripts = (autoload) ? Scripts : ASSScripts;
+		Auto::LuaScript *ls = new Auto::LuaScript(filename);
 		for (size_t i = 0; i < scripts.size(); i++) {
-			if (ls->GetFilename() == scripts[i]->GetFilename()){delete ls; ls=NULL; return false;}
+			if (ls->GetFilename() == scripts[i]->GetFilename()){ delete ls; ls = NULL; return false; }
 		}
 		ls->CheckLastModified(false);
 		scripts.push_back(ls);
-		if(!autoload && addToSinfo){
+		if (!autoload && addToSinfo){
 			SubsGrid *grid = Notebook::GetTab()->Grid;
 			wxString scriptpaths = grid->GetSInfo("Automation Scripts");
-			scriptpaths<<"|"<<filename;
+			scriptpaths << "|" << filename;
 			grid->AddSInfo("Automation Scripts", scriptpaths);
 			grid->SetModified(ASS_PROPERTIES, false, true, -1, false);
 		}
-		HasChanges=true;
+		HasChanges = true;
 		return true;
 	}
 
 	void Automation::Remove(int script)
 	{
-		HasChanges=true;
-		std::vector<Auto::LuaScript*>::iterator i= ASSScripts.begin()+script;
+		HasChanges = true;
+		std::vector<Auto::LuaScript*>::iterator i = ASSScripts.begin() + script;
 		delete *i;
 		ASSScripts.erase(i);
 	}
 
 	void Automation::RemoveAll(bool autoload)
 	{
-		
-		if(autoload){
+
+		if (autoload){
 			for (auto i = Scripts.begin(); i != Scripts.end(); i++) {
 				delete *i;
 			}
-			Scripts.clear();}
+			Scripts.clear();
+		}
 		//if(!autoload){
-			for (auto i = ASSScripts.begin(); i != ASSScripts.end(); i++) {
-				delete *i;
-			}
-			ASSScripts.clear();
+		for (auto i = ASSScripts.begin(); i != ASSScripts.end(); i++) {
+			delete *i;
+		}
+		ASSScripts.clear();
 		//}
 	}
 
 	void Automation::ReloadMacro(int script, bool autoload)
 	{
-		if(autoload){Scripts[script]->Reload();}
-		else{ASSScripts[script]->Reload();}
+		if (autoload){ Scripts[script]->Reload(); }
+		else{ ASSScripts[script]->Reload(); }
 	}
 
 
@@ -979,7 +987,7 @@ namespace Auto{
 		//wxStopWatch sw;
 		//sw.Start();
 		//initialized =false;
-		if(!first){RemoveAll(true);}
+		if (!first){ RemoveAll(true); }
 		int error_count = 0;
 
 		//wxStringTokenizer tok(path, "|", wxTOKEN_STRTOK);
@@ -997,72 +1005,72 @@ namespace Auto{
 		bool more = dir.GetFirst(&fn, wxEmptyString, wxDIR_FILES);
 
 		while (more) {
-			if (breakLoading){ 
-				break; 
+			if (breakLoading){
+				break;
 			}
 			script_path.SetName(fn);
 			try {
 				wxString fullpath = script_path.GetFullPath();
 				wxString ext = fullpath.AfterLast('.').Lower();
 
-				if((ext != "lua" && ext != "moon") || !Add(fullpath, false, true)){more = dir.GetNext(&fn);continue;}
+				if ((ext != "lua" && ext != "moon") || !Add(fullpath, false, true)){ more = dir.GetNext(&fn); continue; }
 
-				if (!Scripts[Scripts.size()-1]->GetLoadedState()) {error_count++;}
+				if (!Scripts[Scripts.size() - 1]->GetLoadedState()) { error_count++; }
 
 
 			}
 			catch (const wchar_t *e) {
 				error_count++;
-				wxLogError(_("Błąd wczytywania skryptu Lua: %s\n%s"), fn.c_str(), e);
+				KaiLog(wxString::Format(_("Błąd wczytywania skryptu Lua: %s\n%s"), fn.c_str(), e));
 			}
 			catch (...) {
 				error_count++;
-				wxLogError(_("Nieznany błąd wczytywania skryptu Lua: %s."), fn.c_str());
+				KaiLog(wxString::Format(_("Nieznany błąd wczytywania skryptu Lua: %s."), fn.c_str()));
 			}
 
 			more = dir.GetNext(&fn);
 		}
 
 		if (error_count > 0) {
-			wxLogWarning(_("Jeden bądź więcej skryptów autoload zawiera błędy.\nObejrzyj opisy skryptów, by uzyskać więcej informacji."));
+			KaiLog(_("Jeden bądź więcej skryptów autoload zawiera błędy.\nObejrzyj opisy skryptów, by uzyskać więcej informacji."));
 		}
 
-		
+
 		//STime countTime(sw.Time());
 		//KaiLog("Upłynęło %sms",countTime.GetFormatted(SRT));
 	}
 
 	bool Automation::AddFromSubs()
 	{
-		wxString paths=Notebook::GetTab()->Grid->GetSInfo("Automation Scripts");
+		wxString paths = Notebook::GetTab()->Grid->GetSInfo("Automation Scripts");
 
-		if(paths==""){return false;}
-		if(paths==scriptpaths && ASSScripts.size()>0){return false;}
+		if (paths == ""){ return false; }
+		if (paths == scriptpaths && ASSScripts.size() > 0){ return false; }
 		paths.Trim(false);
-		wxStringTokenizer token(paths,"|~$",wxTOKEN_RET_EMPTY_ALL);
-		int error_count=0;
-		while(token.HasMoreTokens())
+		wxStringTokenizer token(paths, "|~$", wxTOKEN_RET_EMPTY_ALL);
+		int error_count = 0;
+		while (token.HasMoreTokens())
 		{
-			wxString onepath=token.GetNextToken();
+			wxString onepath = token.GetNextToken();
 			onepath.Trim(false);
-			if(!wxFileExists(onepath)){continue;}
+			if (!wxFileExists(onepath)){ continue; }
 
 			try {
-				if(!Add(onepath, false)){continue;}
-				int last=Scripts.size()-1;
+				if (!Add(onepath, false)){ continue; }
+				int last = Scripts.size() - 1;
 
 			}
 			catch (const wchar_t *e) {
 				error_count++;
-				wxLogError(_("Błąd wczytywania skryptu Lua: %s\n%s"), onepath.c_str(), e);
+				KaiLog(wxString::Format(_("Błąd wczytywania skryptu Lua: %s\n%s"), onepath.c_str(), e));
 			}
 			catch (...) {
 				error_count++;
-				wxLogError(_("Nieznany błąd wczytywania skryptu Lua: %s."), onepath.c_str());
+				KaiLog(wxString::Format(_("Nieznany błąd wczytywania skryptu Lua: %s."), onepath.c_str()));
 			}
 		}
 		if (error_count > 0) {
-			wxLogWarning(_("Co najmniej jeden skrypt z pliku napisów zawiera błędy.\nZobacz opisy skryptów, by uzyskać więcej informacji."));
+			KaiLog(_("Co najmniej jeden skrypt z pliku napisów zawiera błędy.\nZobacz opisy skryptów, by uzyskać więcej informacji."));
 		}
 		scriptpaths = paths;
 		return true;
@@ -1070,15 +1078,15 @@ namespace Auto{
 
 	void Automation::OnEdit(wxString &Filename)
 	{
-		wxString editor=Options.GetString(AutomationScriptEditor);
-		if(editor=="" || wxGetKeyState(WXK_SHIFT)){
+		wxString editor = Options.GetString(AutomationScriptEditor);
+		if (editor == "" || wxGetKeyState(WXK_SHIFT)){
 			editor = wxFileSelector(_("Wybierz edytor skryptów"), "",
-				"C:\\Windows\\Notepad.exe", "exe", _("Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
-			if(!wxFileExists(editor)){return;}
-			Options.SetString(AutomationScriptEditor,editor);
+				"C:\\Windows\\Notepad.exe", "exe", _("Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+			if (!wxFileExists(editor)){ return; }
+			Options.SetString(AutomationScriptEditor, editor);
 			Options.SaveOptions();
 		}
-		
+
 		wxWCharBuffer editorbuf = editor.c_str(), sfnamebuf = Filename.c_str();
 		wchar_t **cmdline = new wchar_t*[3];
 		cmdline[0] = editorbuf.data();
@@ -1089,32 +1097,33 @@ namespace Auto{
 		delete cmdline;
 
 		if (!res) {
-			KaiMessageBox(_("Nie można uruchomić edytora."), _("Błąd automatyzacji"), wxOK|wxICON_ERROR);
+			KaiMessageBox(_("Nie można uruchomić edytora."), _("Błąd automatyzacji"), wxOK | wxICON_ERROR);
 		}
 	}
 
 	bool Automation::CheckChanges()
 	{
-		for(auto script : Scripts){
-			if(script->CheckLastModified()){HasChanges=true; break;}
+		for (auto script : Scripts){
+			if (script->CheckLastModified()){ HasChanges = true; break; }
 		}
 		return HasChanges;
 	}
 
-		
+
 	void Automation::BuildMenu(Menu **bar, bool all)
 	{
 		TabPanel* c = Notebook::GetTab();
 		KainoteFrame *Kai = (KainoteFrame*)c->GetGrandParent();
-		for(int j=(*bar)->GetMenuItemCount()-1; j>=4; j--){
+		for (int j = (*bar)->GetMenuItemCount() - 1; j >= 4; j--){
 			(*bar)->Delete(j);
 		}
-		if(!initialized){
+		if (!initialized){
 			int loadMethod = Options.GetInt(AutomationLoadingMethod);
-			if(loadMethod % 2 == 0){
+			if (loadMethod % 2 == 0){
 				eventEndAutoload = CreateEvent(NULL, FALSE, FALSE, NULL);
-				CreateTimerQueueTimer(&handle,NULL,callbackfunc,this,5,0,0);
-			}else{
+				CreateTimerQueueTimer(&handle, NULL, callbackfunc, this, 5, 0, 0);
+			}
+			else{
 				ReloadScripts(true);
 			}
 		}
@@ -1122,107 +1131,109 @@ namespace Auto{
 
 		/*if(!changes){
 			for(int j=0; j < (*bar)->GetMenuItemCount(); j++){
-				(*bar)->FindItemByPosition(j)->Enable();
+			(*bar)->FindItemByPosition(j)->Enable();
 			}
 
-		}
+			}
 
-		int (all)? 2 : Scripts.size()+2;*/
-		
-		int start=34000, i=0;
+			int (all)? 2 : Scripts.size()+2;*/
+
+		int start = 34000, i = 0;
 		//if(all){
-			for(size_t g = 0; g < Scripts.size(); g++){
-				auto script = Scripts[g];
-				if(script->CheckLastModified(true)){script->Reload();}
-				Menu *submenu=new Menu();
-				auto macros = script->GetMacros();
-				for(size_t p = 0; p < macros.size(); p++){
-					auto macro = macros[p];
-					wxString text; text<<"Script "<<script->GetFilename()<<"-"<<p;
-					MenuItem *mi = submenu->SetAccMenu(new MenuItem(start,macro->StrDisplay(),macro->StrHelp()), text);
-					mi->Enable(macro->Validate(c));
-					Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-						if(evt.GetInt() == wxMOD_SHIFT/*wxGetKeyState(WXK_SHIFT)*/){
-							Hkeys.OnMapHkey(-1, text, Kai, GLOBAL_HOTKEY, false);
-						}else{
-							macro->RunScript();
-						}	
-					}, start);
-					start++;
-				}
-				if( macros.size()<1){
-					wxString strippedbug = script->GetDescription();
-					strippedbug.Replace("\n","");
-					if(strippedbug.Len()>100){strippedbug = strippedbug.SubString(0,100)+"...";}
-					submenu->Append(start,strippedbug,_("Błąd"));
-					Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-						KaiMessageBox(script->GetDescription(),_("Pełny opis błędu Lua"));
-					}, start);
-					start++;
-				}
-				submenu->AppendSeparator();
-				submenu->Append(start,_("Edytuj"),_("Edytuj"));
-				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-					Automation::OnEdit(script->GetFilename());	
-				}, start);
-				start++;
-				submenu->Append(start,_("Odśwież"),_("Odśwież"));
-				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-					script->Reload();
-				}, start);
-				start++;
-				(*bar)->Append(-1, script->GetName(), submenu,script->GetDescription());
-				//if(i%20==19){(*bar)->Break();}
-				i++;
-			}
-		//}
-
-		for(size_t g = 0; g < ASSScripts.size(); g++){
-			auto script = ASSScripts[g];
-			if(script->CheckLastModified(true)){script->Reload();}
-			Menu *submenu=new Menu();
+		for (size_t g = 0; g < Scripts.size(); g++){
+			auto script = Scripts[g];
+			if (script->CheckLastModified(true)){ script->Reload(); }
+			Menu *submenu = new Menu();
 			auto macros = script->GetMacros();
-			for(size_t p = 0; p < macros.size(); p++){
+			for (size_t p = 0; p < macros.size(); p++){
 				auto macro = macros[p];
-				wxString text; text<<"Script "<<script->GetFilename()<<"-"<<p;
-				MenuItem *mi = submenu->SetAccMenu(new MenuItem(start,macro->StrDisplay(),macro->StrHelp()), text);
+				wxString text; text << "Script " << script->GetFilename() << "-" << p;
+				MenuItem *mi = submenu->SetAccMenu(new MenuItem(start, macro->StrDisplay(), macro->StrHelp()), text);
 				mi->Enable(macro->Validate(c));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 					if (evt.GetInt() == wxMOD_SHIFT/*wxGetKeyState(WXK_SHIFT)*/){
 						Hkeys.OnMapHkey(-1, text, Kai, GLOBAL_HOTKEY, false);
-					}else{
+					}
+					else{
 						macro->RunScript();
-					}	
+					}
 				}, start);
 				start++;
 			}
-			if( macros.size()<1){
+			if (macros.size() < 1){
 				wxString strippedbug = script->GetDescription();
-				strippedbug.Replace("\n","");
-				if(strippedbug.Len()>100){strippedbug = strippedbug.SubString(0,100)+"...";}
-				submenu->Append(start,strippedbug,_("Błąd"));
+				strippedbug.Replace("\n", "");
+				if (strippedbug.Len() > 100){ strippedbug = strippedbug.SubString(0, 100) + "..."; }
+				submenu->Append(start, strippedbug, _("Błąd"));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-					KaiMessageBox(script->GetDescription(),_("Pełny opis błędu Lua"));
+					KaiMessageBox(script->GetDescription(), _("Pełny opis błędu Lua"));
 				}, start);
 				start++;
 			}
 			submenu->AppendSeparator();
-			submenu->Append(start,_("Edytuj"),_("Edytuj"));
+			submenu->Append(start, _("Edytuj"), _("Edytuj"));
 			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-				Automation::OnEdit(script->GetFilename());	
+				Automation::OnEdit(script->GetFilename());
 			}, start);
 			start++;
-			submenu->Append(start,_("Odśwież"),_("Odśwież"));
+			submenu->Append(start, _("Odśwież"), _("Odśwież"));
 			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 				script->Reload();
 			}, start);
 			start++;
-			(*bar)->Append(-1, script->GetName(), submenu,script->GetDescription());
+			(*bar)->Append(-1, script->GetName(), submenu, script->GetDescription());
+			//if(i%20==19){(*bar)->Break();}
 			i++;
 		}
-		
-		
-		HasChanges=false;
+		//}
+
+		for (size_t g = 0; g < ASSScripts.size(); g++){
+			auto script = ASSScripts[g];
+			if (script->CheckLastModified(true)){ script->Reload(); }
+			Menu *submenu = new Menu();
+			auto macros = script->GetMacros();
+			for (size_t p = 0; p < macros.size(); p++){
+				auto macro = macros[p];
+				wxString text; text << "Script " << script->GetFilename() << "-" << p;
+				MenuItem *mi = submenu->SetAccMenu(new MenuItem(start, macro->StrDisplay(), macro->StrHelp()), text);
+				mi->Enable(macro->Validate(c));
+				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+					if (evt.GetInt() == wxMOD_SHIFT/*wxGetKeyState(WXK_SHIFT)*/){
+						Hkeys.OnMapHkey(-1, text, Kai, GLOBAL_HOTKEY, false);
+					}
+					else{
+						macro->RunScript();
+					}
+				}, start);
+				start++;
+			}
+			if (macros.size() < 1){
+				wxString strippedbug = script->GetDescription();
+				strippedbug.Replace("\n", "");
+				if (strippedbug.Len() > 100){ strippedbug = strippedbug.SubString(0, 100) + "..."; }
+				submenu->Append(start, strippedbug, _("Błąd"));
+				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+					KaiMessageBox(script->GetDescription(), _("Pełny opis błędu Lua"));
+				}, start);
+				start++;
+			}
+			submenu->AppendSeparator();
+			submenu->Append(start, _("Edytuj"), _("Edytuj"));
+			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+				Automation::OnEdit(script->GetFilename());
+			}, start);
+			start++;
+			submenu->Append(start, _("Odśwież"), _("Odśwież"));
+			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
+				script->Reload();
+			}, start);
+			start++;
+			(*bar)->Append(-1, script->GetName(), submenu, script->GetDescription());
+			i++;
+		}
+
+
+		HasChanges = false;
 	}
 
 	void Automation::ShowScriptHotkeysWindow(wxWindow *parent)
@@ -1233,11 +1244,11 @@ namespace Auto{
 
 	LuaScript *Automation::FindScript(const wxString &path)
 	{
-		for(size_t g = 0; g < Scripts.size(); g++){
-			if(Scripts[g]->GetFilename() == path){return Scripts[g];}
+		for (size_t g = 0; g < Scripts.size(); g++){
+			if (Scripts[g]->GetFilename() == path){ return Scripts[g]; }
 		}
-		for(size_t g = 0; g < ASSScripts.size(); g++){
-			if(ASSScripts[g]->GetFilename() == path){return ASSScripts[g];}
+		for (size_t g = 0; g < ASSScripts.size(); g++){
+			if (ASSScripts[g]->GetFilename() == path){ return ASSScripts[g]; }
 		}
 		return NULL;
 	}
