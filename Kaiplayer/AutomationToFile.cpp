@@ -45,9 +45,9 @@ namespace Auto{
 
 	SubsEntry::SubsEntry()
 	{
-		adial=NULL;
-		astyle=NULL;
-		info= NULL;
+		adial = NULL;
+		astyle = NULL;
+		info = NULL;
 	}
 	SubsEntry::~SubsEntry()
 	{
@@ -80,24 +80,24 @@ namespace Auto{
 	bool AutoToFile::LineToLua(lua_State *L, int i)
 	{
 		//AutoToFile *laf = GetObjPointer(L, 1);
-		File *Subs=laf->file;
+		File *Subs = laf->file;
 
-		int sinfo=Subs->sinfo.size();
-		int styles=sinfo+Subs->styles.size();
-		int dials=styles+Subs->dials.size();
-		if(i<0||i>=dials){
+		int sinfo = Subs->sinfo.size();
+		int styles = sinfo + Subs->styles.size();
+		int dials = styles + Subs->dials.size();
+		if (i < 0 || i >= dials){
 			return false;
 		}
 
 		lua_newtable(L);
-		if(i<sinfo){
+		if (i < sinfo){
 			//to jest odczyt wiêc nie kopiujemy
-			SInfo *info=Subs->sinfo[i];
+			SInfo *info = Subs->sinfo[i];
 
 			lua_pushstring(L, "[Script Info]");
 			lua_setfield(L, -2, "section");
 
-			wxString raw=info->Name+": "+info->Val;
+			wxString raw = info->Name + ": " + info->Val;
 			lua_pushstring(L, raw.mb_str(wxConvUTF8).data());
 			lua_setfield(L, -2, "raw");
 
@@ -110,15 +110,15 @@ namespace Auto{
 
 			lua_pushstring(L, "info");
 		}
-		else if(i<styles)
+		else if (i < styles)
 		{
 			//to jest odczyt wiêc nie kopiujemy
-			Styles *astyle=Subs->styles[i-sinfo];
+			Styles *astyle = Subs->styles[i - sinfo];
 
 			lua_pushstring(L, "[V4+ Styles]");
 			lua_setfield(L, -2, "section");
 
-			wxString raw=astyle->GetRaw();
+			wxString raw = astyle->GetRaw();
 			lua_pushstring(L, raw.mb_str(wxConvUTF8).data());
 			lua_setfield(L, -2, "raw");
 
@@ -153,7 +153,7 @@ namespace Auto{
 			lua_pushnumber(L, wxAtoi(astyle->ScaleY));
 			lua_setfield(L, -2, "scale_y");
 
-			double fl=0.0;
+			double fl = 0.0;
 			astyle->Spacing.ToDouble(&fl);
 			lua_pushnumber(L, fl);
 			lua_setfield(L, -2, "spacing");
@@ -190,10 +190,10 @@ namespace Auto{
 			lua_pushstring(L, "style");
 
 		}
-		else if(i<dials)
+		else if (i < dials)
 		{
 			//to jest odczyt wiêc nie kopiujemy
-			Dialogue *adial=Subs->dials[i-styles];
+			Dialogue *adial = Subs->dials[i - styles];
 
 			lua_pushstring(L, "[Events]");
 			lua_setfield(L, -2, "section");
@@ -237,7 +237,7 @@ namespace Auto{
 			lua_pushstring(L, text.mb_str(wxConvUTF8).data());
 			lua_setfield(L, -2, "text");
 
-			lua_pushboolean(L, isTl);
+			lua_pushboolean(L, (int)isTl);
 			lua_setfield(L, -2, "is_translation");
 
 			lua_newtable(L);
@@ -253,7 +253,7 @@ namespace Auto{
 
 	SubsEntry *AutoToFile::LuaToLine(lua_State *L)
 	{
-		SubsEntry *e=NULL;
+		SubsEntry *e = NULL;
 
 		if (!lua_istable(L, -1)) {
 			lua_pushstring(L, "Cannot convert non table value");//nie mo¿na przekonwertowaæ wartoœci która nie jest tablic¹");
@@ -267,7 +267,7 @@ namespace Auto{
 			lua_error(L);
 			return e;
 		}
-		e=new SubsEntry();
+		e = new SubsEntry();
 		e->lclass = wxString(lua_tostring(L, -1), wxConvUTF8);
 		e->lclass.MakeLower();
 		lua_pop(L, 1);
@@ -278,7 +278,7 @@ namespace Auto{
 	lua_pushstring(L, "Invalid string '" fieldname "' field in '" lineclass "' class subtitle line"); \
 	lua_error(L);									\
 	return e;										\
-	}													\
+		}													\
 	wxString varname (lua_tostring(L, -1), wxConvUTF8);	\
 	lua_pop(L, 1);
 #define GETFLOAT(varname, fieldname, lineclass)			\
@@ -287,7 +287,7 @@ namespace Auto{
 	lua_pushstring(L, "Invalid number '" fieldname "' field in '" lineclass "' class subtitle line"); \
 	lua_error(L);									\
 	return e;										\
-	}													\
+		}													\
 	float varname = lua_tonumber(L, -1);				\
 	lua_pop(L, 1);
 #define GETINT(varname, fieldname, lineclass)			\
@@ -296,7 +296,7 @@ namespace Auto{
 	lua_pushstring(L, "Invalid number '" fieldname "' field in '" lineclass "' class subtitle line"); \
 	lua_error(L);									\
 	return e;										\
-	}													\
+		}													\
 	int varname = lua_tointeger(L, -1);					\
 	lua_pop(L, 1);
 #define GETBOOL(varname, fieldname, lineclass)			\
@@ -305,40 +305,46 @@ namespace Auto{
 	lua_pushstring(L, "Invalid boolean '" fieldname "' field in '" lineclass "' class subtitle line"); \
 	lua_error(L);									\
 	return e;										\
-	}													\
+		}													\
 	bool varname = !!lua_toboolean(L, -1);				\
 	lua_pop(L, 1);
 
-		if(e->lclass=="dialogue"){
-			GETBOOL(IsComment, "comment","dialogue")
-			GETINT(Layer, "layer", "dialogue")
-			GETINT(Start, "start_time", "dialogue")
-			GETINT(End, "end_time", "dialogue")
-			GETSTRING(Style, "style", "dialogue")
-			GETSTRING(Actor, "actor", "dialogue")
-			GETINT(MarginL, "margin_l", "dialogue")
-			GETINT(MarginR, "margin_r", "dialogue")
-			GETINT(margt, "margin_t", "dialogue")
-			GETSTRING(Effect, "effect", "dialogue")
-			GETSTRING(Text , "text", "dialogue")
-			GETBOOL(IsTranslation, "is_translation", "dialogue")
+		if (e->lclass == "dialogue"){
+			GETBOOL(IsComment, "comment", "dialogue")
+				GETINT(Layer, "layer", "dialogue")
+				GETINT(Start, "start_time", "dialogue")
+				GETINT(End, "end_time", "dialogue")
+				GETSTRING(Style, "style", "dialogue")
+				GETSTRING(Actor, "actor", "dialogue")
+				GETINT(MarginL, "margin_l", "dialogue")
+				GETINT(MarginR, "margin_r", "dialogue")
+				GETINT(margt, "margin_t", "dialogue")
+				GETSTRING(Effect, "effect", "dialogue")
+				GETSTRING(Text, "text", "dialogue")
 
-			e->adial=new Dialogue();
-			e->adial->IsComment=IsComment;
-			e->adial->Layer=Layer;
-			e->adial->Start=Start;
-			e->adial->End=End;
+			bool IsTranslation = false;
+			lua_getfield(L, -1, "is_translation");
+			if (lua_isboolean(L, -1)) {
+				IsTranslation = !!lua_toboolean(L, -1);
+			}
+			lua_pop(L, 1);
+
+			e->adial = new Dialogue();
+			e->adial->IsComment = IsComment;
+			e->adial->Layer = Layer;
+			e->adial->Start = Start;
+			e->adial->End = End;
 			if (laf->subsFormat != ASS){
 				e->adial->Format = laf->subsFormat;
 				e->adial->Start.ChangeFormat(laf->subsFormat, 25.f);
 				e->adial->End.ChangeFormat(laf->subsFormat, 25.f);
 			}
-			e->adial->Style=Style;
-			e->adial->Actor=Actor;
-			e->adial->MarginL=MarginL;
-			e->adial->MarginR=MarginR;
-			e->adial->MarginV=margt;
-			e->adial->Effect=Effect;
+			e->adial->Style = Style;
+			e->adial->Actor = Actor;
+			e->adial->MarginL = MarginL;
+			e->adial->MarginR = MarginR;
+			e->adial->MarginV = margt;
+			e->adial->Effect = Effect;
 			if (IsTranslation)
 				e->adial->TextTl = Text;
 			else
@@ -346,7 +352,7 @@ namespace Auto{
 			e->adial->ChangeDialogueState(1);
 		}
 
-		else if(e->lclass=="style"){
+		else if (e->lclass == "style"){
 
 			GETSTRING(name, "name", "style")
 				GETSTRING(fontname, "fontname", "style")
@@ -372,51 +378,52 @@ namespace Auto{
 				GETINT(margin_t, "margin_t", "style")
 				GETINT(margin_b, "margin_b", "style")
 				GETINT(encoding, "encoding", "style")
-				e->astyle=new Styles();
+				e->astyle = new Styles();
 			e->astyle->Name = name;
 			e->astyle->Fontname = fontname;
-			e->astyle->Fontsize ="";
+			e->astyle->Fontsize = "";
 			e->astyle->Fontsize << fontsize;
-			e->astyle->PrimaryColour=color1;
-			e->astyle->SecondaryColour=color2;
-			e->astyle->OutlineColour=color3;
-			e->astyle->BackColour =color4;
+			e->astyle->PrimaryColour = color1;
+			e->astyle->SecondaryColour = color2;
+			e->astyle->OutlineColour = color3;
+			e->astyle->BackColour = color4;
 			e->astyle->Bold = bold;
 			e->astyle->Italic = italic;
 			e->astyle->Underline = underline;
 			e->astyle->StrikeOut = strikeout;
 			e->astyle->ScaleX = "";
-			e->astyle->ScaleX<<scale_x;
+			e->astyle->ScaleX << scale_x;
 			e->astyle->ScaleY = "";
-			e->astyle->ScaleY<< scale_y;
+			e->astyle->ScaleY << scale_y;
 			e->astyle->Spacing = "";
-			e->astyle->Spacing<< spacing;
+			e->astyle->Spacing << spacing;
 			e->astyle->Angle = "";
 			e->astyle->Angle << angle;
-			e->astyle->BorderStyle = (borderstyle==-3);
-			e->astyle->Outline = ""; 
-			e->astyle->Outline<< outline;
+			e->astyle->BorderStyle = (borderstyle == -3);
+			e->astyle->Outline = "";
+			e->astyle->Outline << outline;
 			e->astyle->Shadow = "";
 			e->astyle->Shadow << shadow;
 			e->astyle->Alignment = "";
-			e->astyle->Alignment<< align;
+			e->astyle->Alignment << align;
 			e->astyle->MarginL = "";
-			e->astyle->MarginL<<margin_l;
+			e->astyle->MarginL << margin_l;
 			e->astyle->MarginR = "";
-			e->astyle->MarginR<<margin_r;
+			e->astyle->MarginR << margin_r;
 			e->astyle->MarginV = "";
-			int marg=(margin_t>margin_b)?margin_t:margin_b;
-			e->astyle->MarginV<<marg;
+			int marg = (margin_t > margin_b) ? margin_t : margin_b;
+			e->astyle->MarginV << marg;
 			e->astyle->Encoding = "";
-			e->astyle->Encoding<<encoding;
+			e->astyle->Encoding << encoding;
 
-		}else if(e->lclass=="info"){
+		}
+		else if (e->lclass == "info"){
 
-			GETSTRING(key, "key","info");
-			GETSTRING(value, "value","info");
-			e->info=new SInfo();
-			e->info->Name=key;
-			e->info->Val=value;
+			GETSTRING(key, "key", "info");
+			GETSTRING(value, "value", "info");
+			e->info = new SInfo();
+			e->info->Name = key;
+			e->info->Val = value;
 		}
 #undef GETSTRING
 #undef GETFLOAT
@@ -430,79 +437,88 @@ namespace Auto{
 
 	int AutoToFile::ObjectIndexRead(lua_State *L)
 	{
-		File *Subs=laf->file;
+		File *Subs = laf->file;
 		switch (lua_type(L, 2)) {
 
 		case LUA_TNUMBER:
-			{
+		{
 
-				// get requested index
-				int reqid = lua_tointeger(L, 2);
-				if(laf->LineToLua(L,reqid-1)){
-					return 1;}
-				else{
-					return 0;}
+			// get requested index
+			int reqid = lua_tointeger(L, 2);
+			if (laf->LineToLua(L, reqid - 1)){
+				return 1;
 			}
+			else{
+				return 0;
+			}
+		}
 
 		case LUA_TSTRING:
-			{
-				// either return n or a function doing further stuff
-				const char *idx = lua_tostring(L, 2);
+		{
+			// either return n or a function doing further stuff
+			const char *idx = lua_tostring(L, 2);
 
-				if (strcmp(idx, "n") == 0) {
-					// get number of items
-					lua_pushnumber(L, Subs->dials.size()+Subs->sinfo.size()+Subs->styles.size());
-					return 1;
+			if (strcmp(idx, "n") == 0) {
+				// get number of items
+				lua_pushnumber(L, Subs->dials.size() + Subs->sinfo.size() + Subs->styles.size());
+				return 1;
 
-				} else if (strcmp(idx, "delete") == 0) {
-					// make a "delete" function
-					lua_pushvalue(L, 1);
-					lua_pushcclosure(L, ObjectDelete, 1);
-					return 1;
-
-				} else if (strcmp(idx, "deleterange") == 0) {
-					// make a "deleterange" function
-					lua_pushvalue(L, 1);
-					lua_pushcclosure(L, ObjectDeleteRange, 1);
-					return 1;
-
-				} else if (strcmp(idx, "insert") == 0) {
-					// make an "insert" function
-					lua_pushvalue(L, 1);
-					lua_pushcclosure(L, ObjectInsert, 1);
-					return 1;
-
-				} else if (strcmp(idx, "append") == 0) {
-					// make an "append" function
-					lua_pushvalue(L, 1);
-					lua_pushcclosure(L, ObjectAppend, 1);
-					return 1;
-
-				} else if (strcmp(idx, "lengths") == 0) {
-					// make an "append" function
-					lua_pushvalue(L, 1);
-					lua_pushcclosure(L, ObjectLens, 1);
-					return 1;
-
-				}else if (strcmp(idx, "script_resolution") == 0) {
-					lua_pushvalue(L, 1);
-					lua_pushcclosure(L, LuaGetScriptResolution, 1);
-					return 1;
-				} else {
-					// idiot
-					lua_pushfstring(L, "Subtitles object do not have index: '%s'", idx);
-					lua_error(L);
-					// should never return
-				}
-				assert(false);
 			}
+			else if (strcmp(idx, "delete") == 0) {
+				// make a "delete" function
+				lua_pushvalue(L, 1);
+				lua_pushcclosure(L, ObjectDelete, 1);
+				return 1;
+
+			}
+			else if (strcmp(idx, "deleterange") == 0) {
+				// make a "deleterange" function
+				lua_pushvalue(L, 1);
+				lua_pushcclosure(L, ObjectDeleteRange, 1);
+				return 1;
+
+			}
+			else if (strcmp(idx, "insert") == 0) {
+				// make an "insert" function
+				lua_pushvalue(L, 1);
+				lua_pushcclosure(L, ObjectInsert, 1);
+				return 1;
+
+			}
+			else if (strcmp(idx, "append") == 0) {
+				// make an "append" function
+				lua_pushvalue(L, 1);
+				lua_pushcclosure(L, ObjectAppend, 1);
+				return 1;
+
+			}
+			else if (strcmp(idx, "lengths") == 0) {
+				// make an "append" function
+				lua_pushvalue(L, 1);
+				lua_pushcclosure(L, ObjectLens, 1);
+				return 1;
+
+			}
+			else if (strcmp(idx, "script_resolution") == 0) {
+				lua_pushvalue(L, 1);
+				lua_pushcclosure(L, LuaGetScriptResolution, 1);
+				return 1;
+			}
+			else {
+				// idiot
+				lua_pushfstring(L, "Subtitles object do not have index: '%s'", idx);
+				lua_error(L);
+				// should never return
+			}
+			assert(false);
+		}
 
 		default:
-			{
-				// crap, user is stupid!
-				lua_pushfstring(L, "Subtitles object do not have index type: '%s'.", lua_typename(L, lua_type(L, 2)));
-				lua_error(L);
-			}
+		{
+			// crap, user is stupid!
+			lua_pushfstring(L, "Subtitles object do not have index type: '%s'.", lua_typename(L, lua_type(L, 2)));
+			lua_error(L);
+		}
 		}
 
 		assert(false);
@@ -520,7 +536,7 @@ namespace Auto{
 			return 0;
 		}
 
-		File *Subs=laf->file;
+		File *Subs = laf->file;
 		laf->CheckAllowModify();
 
 		int n = lua_tointeger(L, 2);
@@ -534,7 +550,8 @@ namespace Auto{
 			lua_call(L, 2, 0);
 			return 0;
 
-		} else if (n == 0) {
+		}
+		else if (n == 0) {
 			// append line to list
 			lua_pushvalue(L, 1);
 			lua_pushcclosure(L, ObjectAppend, 1);
@@ -542,51 +559,54 @@ namespace Auto{
 			lua_call(L, 1, 0);
 			return 0;
 
-		} else {
+		}
+		else {
 			// replace line at index n or delete
 			if (!lua_isnil(L, 3)) {
 				// insert
-				SubsEntry *e=LuaToLine(L);
-				if(!e){return 0;}
-				int i=n-1;
-				int sinfo=Subs->sinfo.size();
-				int styles=sinfo+Subs->styles.size();
-				int dials=styles+Subs->dials.size();
-				if(i<0 || i>=dials){
+				SubsEntry *e = LuaToLine(L);
+				if (!e){ return 0; }
+				int i = n - 1;
+				int sinfo = Subs->sinfo.size();
+				int styles = sinfo + Subs->styles.size();
+				int dials = styles + Subs->dials.size();
+				if (i < 0 || i >= dials){
 					SAFE_DELETE(e);
 					lua_pushstring(L, "Line index is out of range");
 					lua_error(L);
-					return 0;}
-				if(i<sinfo && e->lclass=="info"){
-					SInfo *inf=e->info->Copy();
-					Subs->dsinfo.push_back(inf);
-					Subs->sinfo[i]=inf;
+					return 0;
 				}
-				else if(i<styles && e->lclass=="style")
+				if (i < sinfo && e->lclass == "info"){
+					SInfo *inf = e->info->Copy();
+					Subs->dsinfo.push_back(inf);
+					Subs->sinfo[i] = inf;
+				}
+				else if (i < styles && e->lclass == "style")
 				{
 					Styles *styl = e->astyle->Copy();
 					Subs->dstyles.push_back(styl);
-					Subs->styles[i-sinfo]=styl;
+					Subs->styles[i - sinfo] = styl;
 				}
-				else if(i<dials && e->lclass=="dialogue")
+				else if (i < dials && e->lclass == "dialogue")
 				{
-					Dialogue *dial=e->adial->Copy(false,false);
+					Dialogue *dial = e->adial->Copy(false, false);
 					Subs->ddials.push_back(dial);
-					Subs->dials[i-styles]=dial;
+					Subs->dials[i - styles] = dial;
 				}
 				else
 				{
-					wxString fclass=(e->lclass=="info")? L"info" : (e->lclass=="style")? L"styli" : L"dialogów";
-					wxString sclass=(i<sinfo)? L"info" : (i<styles)? L"styli" : L"dialogów";
+					wxString fclass = (e->lclass == "info") ? L"info" : (e->lclass == "style") ? L"styli" : L"dialogów";
+					wxString sclass = (i < sinfo) ? L"info" : (i < styles) ? L"styli" : L"dialogów";
 					wxString all = wxString::Format(_("Nie mo¿na dodaæ linii klasy: %s w pole klasy: %s"), fclass, sclass);
 					SAFE_DELETE(e);
-					lua_pushstring(L,all.mb_str(wxConvUTF8).data());
+					lua_pushstring(L, all.mb_str(wxConvUTF8).data());
 					lua_error(L);
 				}
 				SAFE_DELETE(e);
 				return 0;
 
-			} else {
+			}
+			else {
 				// delete
 				lua_pushvalue(L, 1);
 				lua_pushcclosure(L, ObjectDelete, 1);
@@ -600,14 +620,14 @@ namespace Auto{
 
 	int AutoToFile::ObjectGetLen(lua_State *L)
 	{
-		File *Subs=laf->file;
-		lua_pushnumber(L, Subs->dials.size()+Subs->sinfo.size()+Subs->styles.size());
+		File *Subs = laf->file;
+		lua_pushnumber(L, Subs->dials.size() + Subs->sinfo.size() + Subs->styles.size());
 		return 1;
 	}
 
 	int AutoToFile::ObjectLens(lua_State *L)
 	{
-		File *Subs=laf->file;
+		File *Subs = laf->file;
 		lua_pushinteger(L, (int)Subs->sinfo.size());
 		lua_pushinteger(L, (int)Subs->styles.size());
 		lua_pushinteger(L, (int)Subs->dials.size());
@@ -617,7 +637,7 @@ namespace Auto{
 
 	int AutoToFile::ObjectDelete(lua_State *L)
 	{
-		File *Subs=laf->file;
+		File *Subs = laf->file;
 		laf->CheckAllowModify();
 
 		// get number of items to delete
@@ -626,9 +646,9 @@ namespace Auto{
 		//ids.reserve(itemcount);
 
 		//dorobiæ wstawianie do tablic spellerrors i charspersec podczas rysowania
-		int sinfo=Subs->sinfo.size();
-		int styles=sinfo+Subs->styles.size();
-		int dials=styles+Subs->dials.size();
+		int sinfo = Subs->sinfo.size();
+		int styles = sinfo + Subs->styles.size();
+		int dials = styles + Subs->dials.size();
 		// sort the item id's so we can delete from last to first to preserve original numbering
 		if (itemcount == 1 && lua_istable(L, 1)) {
 			lua_pushvalue(L, 1);
@@ -637,7 +657,8 @@ namespace Auto{
 				argcheck(L, n > 0 && n <= dials, 1, "Line index is out of range");
 				ids.push_back(n - 1);
 			});
-		}else{
+		}
+		else{
 			while (itemcount > 0) {
 				if (!lua_isnumber(L, itemcount)) {
 					wxString err("You trying to delete non number line");
@@ -653,16 +674,16 @@ namespace Auto{
 		}
 		std::sort(ids.begin(), ids.end());
 
-		for(int i= ids.size()-1 ; i>=0; i--)
+		for (int i = ids.size() - 1; i >= 0; i--)
 		{
-			if(ids[i]<sinfo){
-				Subs->sinfo.erase(Subs->sinfo.begin()+ids[i]);
+			if (ids[i] < sinfo){
+				Subs->sinfo.erase(Subs->sinfo.begin() + ids[i]);
 			}
-			else if(ids[i]<styles){
-				Subs->styles.erase(Subs->styles.begin()+(ids[i]-sinfo));
+			else if (ids[i] < styles){
+				Subs->styles.erase(Subs->styles.begin() + (ids[i] - sinfo));
 			}
-			else if(ids[i]<dials){
-				Subs->dials.erase(Subs->dials.begin()+(ids[i]-styles));
+			else if (ids[i] < dials){
+				Subs->dials.erase(Subs->dials.begin() + (ids[i] - styles));
 			}
 		}
 
@@ -671,7 +692,7 @@ namespace Auto{
 
 	int AutoToFile::ObjectDeleteRange(lua_State *L)
 	{
-		File *Subs=laf->file;
+		File *Subs = laf->file;
 
 		laf->CheckAllowModify();
 
@@ -682,34 +703,36 @@ namespace Auto{
 		}
 
 		int a = lua_tointeger(L, 1), b = lua_tointeger(L, 2);
-		int sinfo=Subs->sinfo.size();
-		int styles=sinfo+Subs->styles.size();
-		int dials=styles+Subs->dials.size();
-		int all = dials+1;
+		int sinfo = Subs->sinfo.size();
+		int styles = sinfo + Subs->styles.size();
+		int dials = styles + Subs->dials.size();
+		int all = dials + 1;
 
 		if (a < 1) a = 1;
-		if (b > all ) b = all;
+		if (b > all) b = all;
 
 		if (b < a) return 0;
-		a--;b--;
+		a--; b--;
 
 
 
-		for(int i=b; i >= a; i--){
-			if(i<sinfo){
-				Subs->sinfo.erase(Subs->sinfo.begin()+i);
-			}else if(i<styles){
-				Subs->styles.erase(Subs->styles.begin()+(i-sinfo));
-			}else{
-				Subs->dials.erase(Subs->dials.begin()+(i-styles));
+		for (int i = b; i >= a; i--){
+			if (i < sinfo){
+				Subs->sinfo.erase(Subs->sinfo.begin() + i);
 			}
-		}	
+			else if (i < styles){
+				Subs->styles.erase(Subs->styles.begin() + (i - sinfo));
+			}
+			else{
+				Subs->dials.erase(Subs->dials.begin() + (i - styles));
+			}
+		}
 		return 0;
 	}
 
 	int AutoToFile::ObjectAppend(lua_State *L)
 	{
-		File *Subs=laf->file;
+		File *Subs = laf->file;
 
 		laf->CheckAllowModify();
 
@@ -718,21 +741,21 @@ namespace Auto{
 		for (int i = 1; i <= n; i++) {
 			lua_pushvalue(L, i);
 			SubsEntry *e = LuaToLine(L);
-			if(!e){return 0;}
-			if(e->lclass=="info")
+			if (!e){ return 0; }
+			if (e->lclass == "info")
 			{
-				SInfo *inf=e->info->Copy();
+				SInfo *inf = e->info->Copy();
 				Subs->sinfo.push_back(inf);
 				Subs->dsinfo.push_back(inf);
 			}
-			else if(e->lclass=="style")
+			else if (e->lclass == "style")
 			{
-				Styles *styl=e->astyle->Copy();
+				Styles *styl = e->astyle->Copy();
 				Subs->styles.push_back(styl);
 				Subs->dstyles.push_back(styl);
 			}
-			if(e->lclass=="dialogue"){
-				Dialogue *dial=e->adial->Copy();
+			if (e->lclass == "dialogue"){
+				Dialogue *dial = e->adial->Copy();
 				Subs->ddials.push_back(dial);
 				Subs->dials.push_back(dial);
 			}
@@ -744,7 +767,7 @@ namespace Auto{
 
 	int AutoToFile::ObjectInsert(lua_State *L)
 	{
-		File *Subs=laf->file;
+		File *Subs = laf->file;
 
 		laf->CheckAllowModify();
 
@@ -756,9 +779,9 @@ namespace Auto{
 
 		int n = lua_gettop(L);
 
-		int start = int(lua_tonumber(L, 1)-1);
+		int start = int(lua_tonumber(L, 1) - 1);
 
-		if(start<0 || start>(int)(Subs->sinfo.size()+Subs->styles.size()+Subs->dials.size()))
+		if (start<0 || start>(int)(Subs->sinfo.size() + Subs->styles.size() + Subs->dials.size()))
 		{
 			lua_pushstring(L, "Out of range line index");
 			lua_error(L);
@@ -768,29 +791,29 @@ namespace Auto{
 		for (int i = 2; i <= n; i++) {
 			lua_pushvalue(L, i);
 			SubsEntry *e = LuaToLine(L);
-			if(!e){return 0;}
+			if (!e){ return 0; }
 			lua_pop(L, 1);
-			int sinfo=Subs->sinfo.size();
-			int stylsize=Subs->styles.size();
-			int styles=sinfo+stylsize;
-			int dialsize=Subs->dials.size();
-			int dials=styles+dialsize;
+			int sinfo = Subs->sinfo.size();
+			int stylsize = Subs->styles.size();
+			int styles = sinfo + stylsize;
+			int dialsize = Subs->dials.size();
+			int dials = styles + dialsize;
 
-			if(e->lclass=="info")
+			if (e->lclass == "info")
 			{
-				SInfo *inf=e->info->Copy();
-				if(start >= sinfo){Subs->sinfo.push_back(inf);}
-				else{Subs->sinfo.insert(Subs->sinfo.begin()+start, inf);}
+				SInfo *inf = e->info->Copy();
+				if (start >= sinfo){ Subs->sinfo.push_back(inf); }
+				else{ Subs->sinfo.insert(Subs->sinfo.begin() + start, inf); }
 				Subs->dsinfo.push_back(inf);
 			}
-			else if(e->lclass=="style")
+			else if (e->lclass == "style")
 			{
-				Styles *styl=e->astyle->Copy();
-				if(start-sinfo >= stylsize){Subs->styles.push_back(styl);}
-				else{Subs->styles.insert(Subs->styles.begin()+(start-sinfo), styl);}
+				Styles *styl = e->astyle->Copy();
+				if (start - sinfo >= stylsize){ Subs->styles.push_back(styl); }
+				else{ Subs->styles.insert(Subs->styles.begin() + (start - sinfo), styl); }
 				Subs->dstyles.push_back(styl);
 			}
-			else if(e->lclass=="dialogue")
+			else if (e->lclass == "dialogue")
 			{
 				int newStart = start - styles;
 				Dialogue *dial = e->adial->Copy(false, newStart >= dialsize);
@@ -800,7 +823,7 @@ namespace Auto{
 			}
 			else{
 				SAFE_DELETE(e);
-				wxString sclass= "You trying to put line of unknown class";
+				wxString sclass = "You trying to put line of unknown class";
 				lua_pushstring(L, sclass.mb_str(wxConvUTF8).data());
 				lua_error(L);
 			}
@@ -812,16 +835,16 @@ namespace Auto{
 
 	bool static inline IsKtag(wxString text, wxString tag, wxString *ktag, wxString *rest)
 	{
-		bool isk=text.StartsWith(tag,rest);
-		if(isk){*ktag=tag;}
+		bool isk = text.StartsWith(tag, rest);
+		if (isk){ *ktag = tag; }
 		return isk;
 	}
 
 	int AutoToFile::LuaParseKaraokeData(lua_State *L)
 	{
 		SubsEntry *e = LuaToLine(L);
-		if(!e){return 0;}
-		else if(e->lclass!="dialogue"){
+		if (!e){ return 0; }
+		else if (e->lclass != "dialogue"){
 			lua_pushstring(L, "You try to parse karaoke from non dialogue line");
 			lua_error(L);
 			return 0;
@@ -850,12 +873,12 @@ namespace Auto{
 		size_t lastPosition = 0;
 		wxString rest;
 		//wxString deb;
-		wxRegEx reg(_T("\\{[^\\}]*\\}"),wxRE_ADVANCED);
+		wxRegEx reg(_T("\\{[^\\}]*\\}"), wxRE_ADVANCED);
 		size_t tagssize = Data->tags.size();
-			for (size_t i = 0; i < tagssize; i++) {
+		for (size_t i = 0; i < tagssize; i++) {
 
 			size_t nextKstart = lastPosition;
-			if(i < tagssize-1){
+			if (i < tagssize - 1){
 				nextKstart = Data->tags[i + 1]->startTextPos;
 				wxString newtxt = text.Mid(lastPosition, nextKstart - lastPosition);
 				size_t bracketstartpos = newtxt.Find('{', true);
@@ -869,7 +892,8 @@ namespace Auto{
 					nextKstart = lastPosition + bracketstartpos - 1;
 				}
 
-			}else 
+			}
+			else
 				nextKstart = text.Len();
 
 			TagData * tdata = Data->tags[i];
@@ -877,7 +901,7 @@ namespace Auto{
 			//size_t klen = tdata->value.Len() + tdata->tagName.Len();
 			kdur = wxAtoi(tdata->value);
 			kdur *= 10;
-			ktext = text.Mid(lastPosition, tdata->startTextPos - lastPosition - tdata->tagName.Len()-1);
+			ktext = text.Mid(lastPosition, tdata->startTextPos - lastPosition - tdata->tagName.Len() - 1);
 			size_t newStart = tdata->startTextPos + tdata->value.Len();
 			ktext += text.Mid(newStart, nextKstart - newStart + 1);
 			ktext.Replace("{}", "");
@@ -891,13 +915,13 @@ namespace Auto{
 			set_field(L, "text", ktext.mb_str(wxConvUTF8).data());
 			set_field(L, "text_stripped", ktext_stripped.mb_str(wxConvUTF8).data());
 			lua_rawseti(L, -2, kcount++);
-			
+
 			lastPosition = nextKstart + 1;
-			
+
 		}
-		if(kcount<2){
+		if (kcount < 2){
 			ktext_stripped = e->adial->Text;
-			reg.ReplaceAll(&ktext_stripped,_T(""));
+			reg.ReplaceAll(&ktext_stripped, _T(""));
 
 			lua_createtable(L, 0, 6);
 			set_field(L, "duration", (e->adial->End.mstime - e->adial->Start.mstime));
@@ -924,9 +948,9 @@ namespace Auto{
 
 	int AutoToFile::IterNext(lua_State *L)
 	{
-		File *Subs=laf->file;
+		File *Subs = laf->file;
 		size_t i = check_uint(L, 2);
-		if (i >= Subs->dials.size()+Subs->sinfo.size()+Subs->styles.size()) {
+		if (i >= Subs->dials.size() + Subs->sinfo.size() + Subs->styles.size()) {
 			lua_pushnil(L);
 			return 1;
 		}
@@ -968,11 +992,11 @@ namespace Auto{
 			}
 		}
 
-		int start = lua_tointeger(L, 1), 
-			end = lua_tointeger(L, 2), 
+		int start = lua_tointeger(L, 1),
+			end = lua_tointeger(L, 2),
 			freqstart = lua_tointeger(L, 3),
 			freqend = lua_tointeger(L, 4),
-			peek = MID(0,lua_tointeger(L, 5),1000);
+			peek = MID(0, lua_tointeger(L, 5), 1000);
 
 		std::vector<int> output;
 		std::vector<int> intensities;
@@ -985,12 +1009,12 @@ namespace Auto{
 			push_value(L, output);
 			return 1;
 		}
-			
-		
+
+
 		if (!laf->spectrum)
 			laf->spectrum = new AudioSpectrum(VFF);
 
-		laf->spectrum->CreateRange(output, intensities, start, end, wxPoint(freqstart,freqend), peek);
+		laf->spectrum->CreateRange(output, intensities, start, end, wxPoint(freqstart, freqend), peek);
 		push_value(L, output);
 		if (peek > 0){
 			return 1;
@@ -1001,13 +1025,13 @@ namespace Auto{
 
 	AutoToFile::AutoToFile(lua_State *_L, File *subsfile, bool _can_modify, char _subsFormat)
 	{
-		L=_L;
-		can_modify=_can_modify;
-		file =subsfile;
+		L = _L;
+		can_modify = _can_modify;
+		file = subsfile;
 		subsFormat = _subsFormat;
 		// prepare userdata object
 		*static_cast<AutoToFile**>(lua_newuserdata(L, sizeof(AutoToFile*))) = this;
-		laf=this;
+		laf = this;
 
 		// make the metatable
 		lua_createtable(L, 0, 5);
