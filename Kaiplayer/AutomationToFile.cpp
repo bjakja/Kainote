@@ -877,7 +877,9 @@ namespace Auto{
 		size_t tagssize = Data->tags.size();
 		for (size_t i = 0; i < tagssize; i++) {
 
-			size_t nextKstart = lastPosition;
+			TagData * tdata = Data->tags[i];
+			long long nextKstart = lastPosition;
+			//bool notext = false;
 			if (i < tagssize - 1){
 				nextKstart = Data->tags[i + 1]->startTextPos;
 				wxString newtxt = text.Mid(lastPosition, nextKstart - lastPosition);
@@ -896,15 +898,17 @@ namespace Auto{
 			else
 				nextKstart = text.Len();
 
-			TagData * tdata = Data->tags[i];
-
 			//size_t klen = tdata->value.Len() + tdata->tagName.Len();
 			kdur = wxAtoi(tdata->value);
 			kdur *= 10;
-			ktext = text.Mid(lastPosition, tdata->startTextPos - lastPosition - tdata->tagName.Len() - 1);
-			size_t newStart = tdata->startTextPos + tdata->value.Len();
-			ktext += text.Mid(newStart, nextKstart - newStart + 1);
-			ktext.Replace("{}", "");
+			if (nextKstart < 0)
+				ktext = "";
+			else{
+				ktext = text.Mid(lastPosition, tdata->startTextPos - lastPosition - tdata->tagName.Len() - 1);
+				size_t newStart = tdata->startTextPos + tdata->value.Len();
+				ktext += text.Mid(newStart, nextKstart - newStart + 1);
+				ktext.Replace("{}", "");
+			}
 			ktext_stripped = ktext;
 			reg.ReplaceAll(&ktext_stripped, _T(""));
 			lua_createtable(L, 0, 6);
