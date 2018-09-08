@@ -66,7 +66,7 @@ class AudioDisplay: public wxWindow {
 	friend class Karaoke;
 	friend class AudioBox;
 private:
-	int line_n;
+	int line_n = 0;
 	Dialogue *dialogue;
 	
 

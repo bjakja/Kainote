@@ -1489,6 +1489,7 @@ void AudioDisplay::SetSelection(int start, int end) {
 void AudioDisplay::SetDialogue(Dialogue *diag, int n, bool moveToEnd) {
 	// Actual parameters
 	// Set variables
+	bool isNextLine = (line_n + 1 == n);
 	line_n = n;
 	//dialog jest tylko odczytywany, jest on własnością editboxa, usuwać go nie można.
 	dialogue = diag;
@@ -1497,14 +1498,23 @@ void AudioDisplay::SetDialogue(Dialogue *diag, int n, bool moveToEnd) {
 	// Set flags
 	// Set times
 	if (Options.GetBool(AudioGrabTimesOnSelect)) {
-		curStartMS = dialogue->Start.mstime;
-		curEndMS = dialogue->End.mstime;
+		int s = dialogue->Start.mstime;
+		int e = dialogue->End.mstime;
 
 		// Never do it for 0:00:00.00->0:00:00.00 lines
-		/*if (s != 0 || e != 0) {
+		if (s != 0 || e != 0) {
 			curStartMS = s;
 			curEndMS = e;
-			}*/
+		}
+		else{
+			if (isNextLine && line_n > 0){
+				Dialogue *pdial = grid->GetDialogue(line_n - 1);
+				curStartMS = pdial->End.mstime;
+			}
+			else
+				curStartMS = s;
+			curEndMS = curStartMS + 5000;
+		}
 	}
 
 
