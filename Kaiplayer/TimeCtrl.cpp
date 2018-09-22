@@ -364,9 +364,8 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 		int step = (event.GetWheelRotation() / event.GetWheelDelta())*grad;
 		if (form == FRAME){ mTime.orgframe += step; }
 		else{ mTime.mstime += step; }
-		if (form == ASS && (mstime < 0 || mstime>35999999)){ return; }
+		if (mTime.mstime < 0 || mTime.mstime > 35999999 || mTime.orgframe < 0){ return; }
 		SetValue(mTime.raw(showFrames ? FRAME : form), true, false);
-
 		wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);
 		timeUnchanged = false;
 		return;
