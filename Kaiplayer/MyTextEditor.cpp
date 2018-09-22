@@ -255,6 +255,7 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 		caret->SetSize(1, fh);
 		CalcWrap(false, false);
 		Refresh(false);
+		return;
 	}
 
 	if ((key == WXK_HOME || key == WXK_END) && !alt){
@@ -262,6 +263,8 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 		if (key == WXK_END && ctrl){ Cursor.x = MText.Len(); Cursor.y = wraps.size() - 2; }
 		else if (key == WXK_HOME && ctrl){ Cursor.x = 0; Cursor.y = 0; }
 		if (!shift){ Selend = Cursor; }
+		if (selectionWords.size())
+			selectionWords.clear();
 		MakeCursorVisible();
 	}
 	if (key == WXK_PAGEDOWN || key == WXK_PAGEUP || key == WXK_INSERT){
@@ -275,6 +278,8 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 	int step = 0;
 	int len;
 	int ID = event.GetId();
+	if (selectionWords.size())
+		selectionWords.clear();
 	switch (ID){
 	case ID_CDELETE:
 	case ID_CBACK:
