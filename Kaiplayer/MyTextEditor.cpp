@@ -228,13 +228,16 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 			else{ Cursor = Selend; }
 		}
 		int len = MText.Len();
+		if (wkey == L'"' && changeQuotes)
+			wkey = CheckQuotes();
+
 		if (Cursor.x >= len){ MText << wkey; }
 		else{ MText.insert(Cursor.x, 1, wkey); }
 		CalcWrap();
 		if (Cursor.x + 1>wraps[Cursor.y + 1]){ Cursor.y++; }
 		Cursor.x++;
 		Selend = Cursor;
-		if (spell){ CheckText();/*if(wkey==' '){CheckText();return;} else {spblock.Start(1000);}*/ }
+		if (spell){ CheckText();}
 		Refresh(false);
 		modified = true;
 	}
@@ -1123,6 +1126,17 @@ void TextEditor::CheckText()
 	if (lastStartTBracket >= 0){ errors.push_back(lastStartTBracket); errors.push_back(lastStartTBracket); errs.Add(""); }
 }
 
+wxUniChar TextEditor::CheckQuotes()
+{
+	wxString beforeCursor = MText.Mid(0, Cursor.x);
+	long long startQuote = beforeCursor.find(L'„');
+	long long endQuote = beforeCursor.find(L'”');
+	if (startQuote > endQuote && startQuote != -1)
+		return L'”';
+
+	return L'„';
+}
+
 void TextEditor::OnKillFocus(wxFocusEvent& event)
 {
 	Refresh(false);
@@ -1215,16 +1229,26 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 
 	menut.Append(TEXTM_DEL, _("&Usuń"))->Enable(Selend.x != Cursor.x);
 	menut.Append(MENU_SHOW_STATUS_BAR, _("Pokaż pasek stanu"), NULL, L"", ITEM_CHECK)->Check(!Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR));
+	menut.Append(MENU_CHANGE_QUOTES, _("Automatycznie zamieniaj cydzysłów"), NULL, L"", ITEM_CHECK)->Check(!Options.GetBool(TEXT_EDITOR_CHANGE_QUOTES));
+	
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		MenuItem * item = (MenuItem*)evt.GetClientData();
 		if (!item)
 			return;
+		CONFIG optionName = (item->GetId() == MENU_SHOW_STATUS_BAR) ? TEXT_EDITOR_HIDE_STATUS_BAR : TEXT_EDITOR_CHANGE_QUOTES;
 		//value swapped for working without default config
-		bool showStatusBar = item->IsChecked();
-		Options.SetBool(TEXT_EDITOR_HIDE_STATUS_BAR, !showStatusBar);
+		bool itemChecked = item->IsChecked();
+		if (optionName == TEXT_EDITOR_HIDE_STATUS_BAR){
+			statusBarHeight = (itemChecked) ? 22 : 0;
+			Options.SetBool(optionName, !itemChecked);
+			Refresh(false);
+		}
+		else{
+			Options.SetBool(optionName, itemChecked);
+			changeQuotes = itemChecked;
+		}
 		Options.SaveOptions(true, false);
-		statusBarHeight = (showStatusBar) ? 22 : 0;
-		Refresh(false);
+
 	}, ID_CHECK_EVENT);
 
 	int id = -1;

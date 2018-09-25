@@ -44,6 +44,7 @@ public:
 
 protected:
 	void CheckText();
+	wxUniChar CheckQuotes();
 	void ContextMenu(wxPoint mpos, int error);
 	inline int FindY(int x);
 	int FindError(wxPoint mpos, bool mouse = true);
@@ -70,6 +71,7 @@ protected:
 
 	bool spell;
 	bool useSpellchecker;
+	bool changeQuotes;
 	wxString MText;
 	wxBitmap* bmp;
 	KaiScrollbar *scroll;
@@ -113,6 +115,7 @@ enum{
 	TEXTM_SEEKWORDG,
 	TEXTM_SEEKWORDS,
 	MENU_SHOW_STATUS_BAR,
+	MENU_CHANGE_QUOTES,
 	ID_DEL,
 	ID_BACK,
 	ID_CBACK,

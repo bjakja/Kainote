@@ -192,6 +192,7 @@
 	CG(SubsComparisonStyles,)\
 	CG(SubsRecent,)\
 	CG(TEXT_EDITOR_HIDE_STATUS_BAR,)\
+	CG(TEXT_EDITOR_CHANGE_QUOTES,)\
 	CG(TextFieldAllowNumpadHotkeys,)\
 	CG(TlModeShowOriginal,)\
 	CG(TL_MODE_HIDE_ORIGINAL_ON_VIDEO,)\

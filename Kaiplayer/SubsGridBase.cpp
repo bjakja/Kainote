@@ -762,6 +762,9 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 					dialc->End.NewTime(endResult);
 					dialc->ChangeDialogueState(1);
 				}
+				//make sure that start is greater or even then end time of previous line
+				//and correct times but only when previous line end time was not greater than start time on start
+				//then discard correction.
 				if (dialc->Start.mstime < previousEnd && !isPreviousEndGreater && previousEnd < dialc->End.mstime){
 					dialc->Start.NewTime(previousEnd);
 					dialc->ChangeDialogueState(1);
