@@ -528,18 +528,20 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 	int correctEndTimes = Options.GetInt(MoveTimesCorrectEndTimes);
 	//1 Lead In, 2 Lead Out, 4 Make times continous, 8 Snap to keyframe;
 	int PostprocessorOptions = Options.GetInt(PostprocessorEnabling);
-	int li = 0, lo = 0, ts = 0, te = 0, kbs = 0, kas = 0, kbe = 0, kae = 0;
+	int LeadIn = 0, LeadOut = 0, ThresholdStart = 0, ThresholdEnd = 0, 
+		KeyframeBeforeStart = 0, KeyframeAfterStart = 0, KeyframeBeforeEnd = 0, KeyframeAfterEnd = 0;
+
 	if (PostprocessorOptions){
 		if (subsFormat == TMP || PostprocessorOptions < 16){ PostprocessorOptions = 0; }
 		else if (PostprocessorOptions & 8 && !vb->VFF){ PostprocessorOptions ^= 8; }
-		li = Options.GetInt(PostprocessorLeadIn);
-		lo = Options.GetInt(PostprocessorLeadOut);
-		ts = Options.GetInt(PostprocessorThresholdStart);
-		te = Options.GetInt(PostprocessorThresholdEnd);
-		kbs = Options.GetInt(PostprocessorKeyframeBeforeStart);
-		kas = Options.GetInt(PostprocessorKeyframeAfterStart);
-		kbe = Options.GetInt(PostprocessorKeyframeBeforeEnd);
-		kae = Options.GetInt(PostprocessorKeyframeAfterEnd);
+		LeadIn = Options.GetInt(PostprocessorLeadIn);
+		LeadOut = Options.GetInt(PostprocessorLeadOut);
+		ThresholdStart = Options.GetInt(PostprocessorThresholdStart);
+		ThresholdEnd = Options.GetInt(PostprocessorThresholdEnd);
+		KeyframeBeforeStart = Options.GetInt(PostprocessorKeyframeBeforeStart);
+		KeyframeAfterStart = Options.GetInt(PostprocessorKeyframeAfterStart);
+		KeyframeBeforeEnd = Options.GetInt(PostprocessorKeyframeBeforeEnd);
+		KeyframeAfterEnd = Options.GetInt(PostprocessorKeyframeAfterEnd);
 	}
 	wxString styles = Options.GetString(MoveTimesStyles);
 	if (styles.empty() && whichLines == 5){
@@ -651,15 +653,15 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 			}
 
 			if (correctEndTimes > 0 || PostprocessorOptions > 16){
-				if (correctEndTimes > 1){
+				/*if (correctEndTimes > 1){
 					int endt = Options.GetInt(ConvertTimePerLetter);
 					int newend = (endt*dialc->Text.Len());
 					if (newend < 1000){ newend = 1000; }
 					newend += dialc->Start.mstime;
 					dialc->End.NewTime(newend);
-				}
-				if (PostprocessorOptions & 1){ dialc->Start.Change(-li); dialc->ChangeDialogueState(1); }
-				if (PostprocessorOptions & 2){ dialc->End.Change(lo); dialc->ChangeDialogueState(1); }
+				}*/
+				if (PostprocessorOptions & 1){ dialc->Start.Change(-LeadIn); dialc->ChangeDialogueState(1); }
+				if (PostprocessorOptions & 2){ dialc->End.Change(LeadOut); dialc->ChangeDialogueState(1); }
 				if (correctEndTimes > 0 || PostprocessorOptions > 19){
 					tmpmap[dialc] = i;
 
@@ -678,18 +680,34 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 	if (correctEndTimes > 0 || PostprocessorOptions > 19){
 		bool hasend = false;
 		int newstarttime = -1;
-
+		int endt = Options.GetInt(ConvertTimePerLetter);
+		bool isPreviousEndGreater = false;
+		bool isEndGreater = false;
 		for (auto cur = tmpmap.begin(); cur != tmpmap.end(); cur++){
 			auto it = cur;
 			dialc = cur->first;
 			it++;
 			if (!(it != tmpmap.end())){ it = cur; hasend = true; }
-			if (correctEndTimes > 0 && dialc->End > it->first->Start && !hasend){
-				dialc->End = it->first->Start;
-				dialc->ChangeDialogueState(1);
+			else{
+				isEndGreater = dialc->End > it->first->Start;
+				if (correctEndTimes > 1){
+					if (isEndGreater)
+						goto postprocessor;
+
+					int newend = (endt * dialc->Text.Len());
+					if (newend < 1000){ newend = 1000; }
+					newend += dialc->Start.mstime;
+					dialc->End.NewTime(newend);
+					dialc->ChangeDialogueState(1);
+				}
+				if (correctEndTimes > 0 && dialc->End > it->first->Start/* && dialc->Start < it->first->Start*/){
+					dialc->End = it->first->Start;
+					dialc->ChangeDialogueState(1);
+				}
 			}
+			postprocessor:
 			if (PostprocessorOptions & 4){
-				int cdiff = (te + ts);
+				int cdiff = (ThresholdEnd + ThresholdStart);
 				int tdiff = it->first->Start.mstime - dialc->End.mstime;
 				if (newstarttime != -1){
 					dialc->Start.NewTime(newstarttime);
@@ -697,8 +715,8 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 					dialc->ChangeDialogueState(1);
 				}
 				if (tdiff <= cdiff && tdiff > 0){
-					int wsp = ((float)tdiff / (float)cdiff)*te;
-					int newtime = ZEROIT(wsp);
+					int coeff = ((float)tdiff / (float)cdiff) * ThresholdEnd;
+					int newtime = ZEROIT(coeff);
 					dialc->End.Change(newtime);
 					newstarttime = dialc->End.mstime;
 					dialc->ChangeDialogueState(1);
@@ -707,42 +725,49 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 			}
 			if (PostprocessorOptions & 8){
-				int strtrng = dialc->Start.mstime - kbs;
-				int strtrng1 = dialc->Start.mstime + kas;
-				int endrng = dialc->End.mstime - kbe;
-				int endrng1 = dialc->End.mstime + kae;
-				int pors = 0;
-				int pore = (hasend) ? INT_MAX : it->first->Start.mstime + kas;
+				int startRange = dialc->Start.mstime - KeyframeBeforeStart;
+				int startRange1 = dialc->Start.mstime + KeyframeAfterStart;
+				int endRange = dialc->End.mstime - KeyframeBeforeEnd;
+				int endRange1 = dialc->End.mstime + KeyframeAfterEnd;
+				int previousEnd = 0;
 
 				if (cur != tmpmap.begin()){
 					it--;
 					if (!hasend){ it--; }
-					pors = it->first->End.mstime - kbe;
+					previousEnd = it->first->End.mstime;
 				}
 
 				int keyMS = 0;
-				int strtres = INT_MAX;
-				int endres = -1;
-				for (unsigned int g = 0; g < vb->VFF->KeyFrames.Count(); g++) {
+				int startResult = INT_MAX;
+				int endResult = -1;
+				for (size_t g = 0; g < vb->VFF->KeyFrames.Count(); g++) {
 					keyMS = vb->VFF->KeyFrames[g];
-					if (keyMS > strtrng && keyMS < strtrng1) {
+					if (keyMS > startRange && keyMS < startRange1) {
 						keyMS = ZEROIT(vb->GetFrameTimeFromTime(keyMS));
-						if (strtres > keyMS && keyMS != dialc->Start.mstime){ strtres = keyMS; }
+						if (startResult > keyMS && keyMS != dialc->Start.mstime){ startResult = keyMS; }
 					}
-					if (keyMS > endrng && keyMS < endrng1) {
+					if (keyMS > endRange && keyMS < endRange1) {
 						keyMS = ZEROIT(vb->GetFrameTimeFromTime(keyMS));
-						if (endres<keyMS && keyMS > dialc->Start.mstime){ endres = keyMS; }
+						if (endResult < keyMS && keyMS > dialc->Start.mstime){ endResult = keyMS; }
 					}
 				}
-				if (strtres != INT_MAX && strtres >= pors){
-					dialc->Start.NewTime(strtres);
+				//here is main problem we do not know if next start will be changed
+				//and it makes mess here but changing only start should be enough
+				//startResult >= compareStart and endResult <= compareEnd should be changed or even remove
+				if (startResult != INT_MAX){
+					dialc->Start.NewTime(startResult);
 					dialc->ChangeDialogueState(1);
 				}
-				if (endres != -1 && endres <= pore){
-					dialc->End.NewTime(endres);
+				if (endResult != -1){
+					dialc->End.NewTime(endResult);
+					dialc->ChangeDialogueState(1);
+				}
+				if (dialc->Start.mstime < previousEnd && !isPreviousEndGreater && previousEnd < dialc->End.mstime){
+					dialc->Start.NewTime(previousEnd);
 					dialc->ChangeDialogueState(1);
 				}
 			}
+			isPreviousEndGreater = isEndGreater;
 			dialc->ClearParse();
 		}
 

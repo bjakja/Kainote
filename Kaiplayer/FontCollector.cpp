@@ -88,12 +88,12 @@ void FontLogContent::DoLog(FontCollector *fc){
 	stylesArea.x = fc->currentTextPosition + messageText.length();
 	for (auto &cur = styles.begin(); cur != styles.end(); cur++){
 		messageText << L" - " << cur->first;
-		if (cur->second.GetCount() > 1){
+		//if (cur->second.GetCount() > 1){
 			messageText << _(" zakładki: ");
 			for (auto & tab : cur->second)
 				messageText << (tab + 1) << ", ";
 			messageText.RemoveLast(2);
-		}
+		//}
 		messageText << L"\n";
 	}
 	stylesArea.y = fc->currentTextPosition + messageText.length();
