@@ -100,6 +100,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	scroll->SetCursor(wxCURSOR_DEFAULT);
 	scroll->SetScrollRate(30);
 	statusBarHeight = (Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR)) ? 0 : 22;
+	changeQuotes = Options.GetBool(TEXT_EDITOR_CHANGE_QUOTES);
 	caret = new wxCaret(this, 1, Fheight);
 	SetCaret(caret);
 	caret->Move(3, 2);
@@ -1129,8 +1130,8 @@ void TextEditor::CheckText()
 wxUniChar TextEditor::CheckQuotes()
 {
 	wxString beforeCursor = MText.Mid(0, Cursor.x);
-	long long startQuote = beforeCursor.find(L'„');
-	long long endQuote = beforeCursor.find(L'”');
+	long long startQuote = beforeCursor.Find(L'„', true);
+	long long endQuote = beforeCursor.Find(L'”', true);
 	if (startQuote > endQuote && startQuote != -1)
 		return L'”';
 
@@ -1229,7 +1230,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 
 	menut.Append(TEXTM_DEL, _("&Usuń"))->Enable(Selend.x != Cursor.x);
 	menut.Append(MENU_SHOW_STATUS_BAR, _("Pokaż pasek stanu"), NULL, L"", ITEM_CHECK)->Check(!Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR));
-	menut.Append(MENU_CHANGE_QUOTES, _("Automatycznie zamieniaj cydzysłów"), NULL, L"", ITEM_CHECK)->Check(!Options.GetBool(TEXT_EDITOR_CHANGE_QUOTES));
+	menut.Append(MENU_CHANGE_QUOTES, _("Automatycznie zamieniaj cydzysłów"), NULL, L"", ITEM_CHECK)->Check(Options.GetBool(TEXT_EDITOR_CHANGE_QUOTES));
 	
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		MenuItem * item = (MenuItem*)evt.GetClientData();

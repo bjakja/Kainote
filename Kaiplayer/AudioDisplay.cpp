@@ -258,7 +258,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
 	//d3dpp.Flags					 = D3DPRESENTFLAG_VIDEO;
 	d3dpp.Flags = 0;
-	//d3dpp.PresentationInterval   = D3DPRESENT_INTERVAL_DEFAULT;
+	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;//D3DPRESENT_INTERVAL_DEFAULT;
 
 	if (d3dDevice){
 		hr = d3dDevice->Reset(&d3dpp);

@@ -134,7 +134,7 @@ bool VideoRenderer::InitDX(bool reset)
 	d3dpp.SwapEffect = D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_DISCARD;//D3DSWAPEFFECT_COPY;//
 	d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
 	d3dpp.Flags = D3DPRESENTFLAG_VIDEO;
-	//d3dpp.PresentationInterval   = D3DPRESENT_INTERVAL_DEFAULT;
+	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;//D3DPRESENT_INTERVAL_DEFAULT;
 
 	if (reset){
 		hr = d3device->Reset(&d3dpp);

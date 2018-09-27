@@ -203,10 +203,6 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 		delete data;
 	});
 	Bind(EVT_ENABLE_BUTTONS, [=](wxThreadEvent evt){
-		if (disabler){
-			delete disabler;
-			disabler = NULL;
-		}
 		EnableControls();
 	});
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent evt){
@@ -241,6 +237,15 @@ FontCollectorDialog::~FontCollectorDialog()
 
 void FontCollectorDialog::EnableControls(bool enable)
 {
+	if (enable){
+		if (disabler){
+			delete disabler;
+			disabler = NULL;
+		}
+	}
+	else{
+		disabler = new wxWindowDisabler(this);
+	}
 	opts->Enable(enable);
 	bool enablePathChoose = enable && (opts->GetSelection() != 0);
 	path->Enable(enablePathChoose);
@@ -420,7 +425,7 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 {
 	console->SetValue("");
 	EnableControls(false);
-	disabler = new wxWindowDisabler(this);
+	
 	int operation = (fromMKV->GetValue() && fromMKV->IsEnabled()) ? FontCollector::COPY_MKV_FONTS :
 		/*(opts->GetSelection() == 3) ? FontCollector::MUX_VIDEO_WITH_SUBS : */
 		(opts->GetSelection() == 0) ? FontCollector::CHECK_FONTS: FontCollector::COPY_FONTS;
