@@ -128,7 +128,7 @@ bool kainoteApp::OnInit()
 		delete m_checker; // OnExit() won't be called if we return false
         m_checker = NULL;
 		//damn wxwidgets, why class name is not customizable?    
-		HWND hWnd = FindWindow(L"wxWindowNR",0);
+		HWND hWnd = FindWindow(L"Kainote_main_windowNR",0);/**///wxWindow
 		if (hWnd && subs!=""){
 			const wchar_t *text = subs.wc_str();
 			COPYDATASTRUCT cds;

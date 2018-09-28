@@ -843,7 +843,7 @@ void FontCollector::CopyMKVFontsFromTab(const wxString &mkvpath)
 {
 	wxString ext = mkvpath.AfterLast('.').Lower();
 	
-	if (mkvpath != L"mkv"){
+	if (ext != L"mkv"){
 		SendMessageD(_("To wideo nie jest plikiem MKV."), fcd->warning);
 		return;
 	}

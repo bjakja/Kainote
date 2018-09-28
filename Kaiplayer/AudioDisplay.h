@@ -158,6 +158,7 @@ private:
 	void OnMouseEvent(wxMouseEvent &event);
 	void OnSize(wxSizeEvent &event);
 	void OnUpdateTimer(wxTimerEvent &event);
+	//static VOID CALLBACK OnUpdateTimer(PVOID pointer, BOOLEAN timerOrWaitFaired);
 	void OnGetFocus(wxFocusEvent &event);
 	void OnLoseFocus(wxFocusEvent &event);
 	void OnEraseBackground(wxEraseEvent &event){};
@@ -201,6 +202,7 @@ public:
 	KaiScrollbar *ScrollBar;
 	wxTimer UpdateTimer;
 	wxTimer ProgressTimer;
+	//HANDLE UpdateTimerHandle;
 	float lastProgress = -1.f;
 	bool cursorPaint;
 

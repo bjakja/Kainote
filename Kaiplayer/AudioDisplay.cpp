@@ -1423,6 +1423,7 @@ void AudioDisplay::Play(int start, int end, bool pause) {
 	// Call play
 	player->Play(start, end - start);
 	if (!UpdateTimer.IsRunning()) UpdateTimer.Start(10);
+	//CreateTimerQueueTimer(&UpdateTimerHandle, 0, WAITORTIMERCALLBACK(OnUpdateTimer), this, 1, 16, WT_EXECUTELONGFUNCTION);
 }
 
 
@@ -1433,6 +1434,7 @@ void AudioDisplay::Stop(bool stopVideo) {
 	else if (player) {
 		player->Stop();
 		if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
+		//DeleteTimerQueueTimer(NULL, UpdateTimerHandle, INVALID_HANDLE_VALUE);
 		cursorPaint = false;
 		Refresh(false);
 	}
@@ -2194,10 +2196,10 @@ void AudioDisplay::OnSize(wxSizeEvent &event) {
 ///////////////
 // Timer event
 void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
-
+//VOID CALLBACK AudioDisplay::OnUpdateTimer(PVOID pointer, BOOLEAN timerOrWaitFaired){
 
 	//wxMutexLocker lock(mutex);
-
+	//AudioDisplay * ad = (AudioDisplay *)pointer;
 
 	// Draw cursor
 	curpos = -1;
@@ -2213,10 +2215,10 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 			bool centerLock = false;
 			bool scrollToCursor = Options.GetBool(AudioLockScrollOnCursor);
 			if (centerLock) {
-				int goTo = MAX(0, curPos - w*samples / 2);
+				int goTo = MAX(0, curPos - w * samples / 2);
 				if (goTo >= 0) {
 					UpdatePosition(goTo, true);
-					UpdateImage();
+					UpdateImage(false, true);
 					fullDraw = true;
 				}
 			}
@@ -2226,7 +2228,7 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 						int goTo = MAX(0, curPos - 80 * samples);
 						if (goTo >= 0) {
 							UpdatePosition(goTo, true);
-							UpdateImage();
+							UpdateImage(false, true);
 							fullDraw = true;
 						}
 					}
@@ -2237,21 +2239,28 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 			curpos = GetXAtSample(curPos);
 			if (curpos >= 0.f && curpos < GetClientSize().GetWidth()) {
 
-				Refresh(false);
-
+				//Refresh(false);
+				//UpdateImage(false, true);
+				DoUpdateImage();
 			}
 			else if (cursorPaint){
 				cursorPaint = false;
-				Refresh(false);
+				//Refresh(false);
+				//UpdateImage(false, true);
+				DoUpdateImage();
 			}
 		}
 		else {
 
 			cursorPaint = false;
-			Refresh(false);
+			//Refresh(false);
+			//UpdateImage(false, true);
+			DoUpdateImage();
 			if (curPos > player->GetEndPosition() + 8192) {
 				player->Stop();
 				if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
+				//DeleteTimerQueueTimer(NULL, UpdateTimerHandle, INVALID_HANDLE_VALUE);
+				//DeleteTimerQueueTimer(NULL, UpdateTimerHandle, NULL);
 			}
 		}
 
@@ -2263,7 +2272,9 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 		//needImageUpdate=true;
 		//cursorPaint=false;
 		//Refresh(false);
-		//if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
+		//KaiLog("Uuu update timer was not stopped");
+		//if (UpdateTimer.IsRunning()) 
+			//UpdateTimer.Stop();
 	}
 	oldCurPos = curpos;
 	if (oldCurPos < 0) oldCurPos = 0;

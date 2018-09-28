@@ -29,8 +29,8 @@ int ftopBorder = 26;
 
 
 KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title/*=""*/, const wxPoint& pos/*=wxDefaultPosition*/, const wxSize& size/*=wxDefaultSize*/, long _style/*=0*/, const wxString &name /*= ""*/)
-	:wxTopLevelWindow(parent, id, title, wxDefaultPosition, wxDefaultSize,/*wxBORDER_NONE|*/wxMAXIMIZE_BOX | wxMINIMIZE_BOX |/*wxCLOSE_BOX|*/wxRESIZE_BORDER | wxCAPTION, name)
-	, style(_style)
+	//:wxTopLevelWindow(parent, id, title, wxDefaultPosition, wxDefaultSize,/*wxBORDER_NONE|*/wxMAXIMIZE_BOX | wxMINIMIZE_BOX |/*wxCLOSE_BOX|*/wxRESIZE_BORDER | wxCAPTION, name)
+	: style(_style)
 	, enterClose(false)
 	, pushedClose(false)
 	, enterMaximize(false)
@@ -39,30 +39,35 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title/*=""*/
 	, pushedMinimize(false)
 	, isActive(true)
 {
-	//AdjustWindowRectEx(&rcFrame, WS_OVERLAPPEDWINDOW & ~WS_CAPTION, FALSE, NULL);
-	//SetWindowLong( m_hWnd, GWL_STYLE, /*GetWindowLong(m_hWnd, GWL_STYLE) | */WS_OVERLAPPEDWINDOW | WS_THICKFRAME | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
-	//wxSize sizeReal = size;
-	//if (!sizeReal.IsFullySpecified())
-	//{
-	//	sizeReal.SetDefaults(GetDefaultSize());
-	//}
+	wxSize sizeReal = size;
+	if (!sizeReal.IsFullySpecified())
+	{
+		sizeReal.SetDefaults(GetDefaultSize());
+	}
 
-	//// notice that we should append this window to wxTopLevelWindows list
-	//// before calling CreateBase() as it behaves differently for TLW and
-	//// non-TLW windows
-	//wxTopLevelWindows.Append(this);
+	// notice that we should append this window to wxTopLevelWindows list
+	// before calling CreateBase() as it behaves differently for TLW and
+	// non-TLW windows
+	wxTopLevelWindows.Append(this);
 
-	//bool ret = CreateBase(parent, id, pos, sizeReal, style, name);
-	//if (!ret)
-	//	return;
+	bool ret = CreateBase(parent, id, pos, sizeReal, style, name);
+	if (!ret)
+		return;
 
-	//if (parent)
-	//	parent->AddChild(this);
+	if (parent)
+		parent->AddChild(this);
 
-	//WXDWORD exflags;
-	//WXDWORD flags = MSWGetCreateWindowFlags(&exflags);
+	WXDWORD exflags;
+	WXDWORD flags = MSWGetCreateWindowFlags(&exflags);
+	const wxChar *registredName = wxApp::GetRegisteredClassName(name.c_str(), COLOR_BTNFACE);
 
-	//MSWCreate(name.c_str(), title.c_str(), wxDefaultPosition, wxDefaultSize, flags, exflags);
+	ret = MSWCreate(registredName, title.c_str(), wxDefaultPosition, wxDefaultSize, flags, exflags);
+
+	if (ret)
+	{
+		MSWUpdateUIState(UIS_INITIALIZE);
+	}
+
 
 	MARGINS borderless = { 0, 0, 0, 0 };
 	DwmExtendFrameIntoClientArea(m_hWnd, &borderless);
