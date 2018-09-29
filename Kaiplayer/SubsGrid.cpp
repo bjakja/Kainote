@@ -66,12 +66,14 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 		}//styles checking
 		else if (id == 4448){
 			int filterBy = Options.GetInt(GridFilterBy);
+			if (!filterStyles.size() && (filterBy & FILTER_BY_STYLES))
+				filterBy ^= FILTER_BY_STYLES;
+
 			wxString &name = item->label;
 			bool found = false;
 			for (int i = 0; i < filterStyles.size(); i++){
 				if (filterStyles[i] == name){
-					if (!item->check){ filterStyles.RemoveAt(i); }
-					found = true;
+					if (!item->check){ filterStyles.RemoveAt(i); found = true; }
 					break;
 				}
 			}
@@ -87,7 +89,7 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 						parentMenu->RefreshMenu();
 				}
 			}
-			if (filterStyles.size() < 1 && (filterBy & FILTER_BY_STYLES)){
+			else if (filterStyles.size() < 1 && (filterBy & FILTER_BY_STYLES)){
 				Options.SetInt(GridFilterBy, filterBy ^ FILTER_BY_STYLES);
 				Menu *parentMenu = NULL;
 				MenuItem * parentItem = Menu::FindItemGlobally(FilterByStyles, &parentMenu);
