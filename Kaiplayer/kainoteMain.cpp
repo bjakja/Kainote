@@ -884,7 +884,7 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 #endif
 }
 
-bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool noFreeze /*= false*/)
+bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool freeze /*= true*/)
 {
 	wxMutexLocker lock(blockOpen);
 	wxString ext = filename.AfterLast('.').Lower();
@@ -926,14 +926,14 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		nonewtab = false;
 	}
 
-	if (noFreeze)
+	if (freeze)
 		tab->Freeze();
 
 	if (issubs || found){
 		const wxString &fname = (found && !issubs) ? secondFileName : filename;
 		if (nonewtab){
 			if (SavePrompt(2)){ 
-				if (noFreeze)
+				if (freeze)
 					tab->Thaw(); 
 				return true; 
 			}
@@ -944,7 +944,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		OpenWrite ow;
 		wxString s;
 		if (!ow.FileOpen(fname, &s)){ 
-			if (noFreeze)
+			if (freeze)
 				tab->Thaw(); 
 			return false; 
 		}
@@ -1050,7 +1050,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 	const wxString &fnname = (found && issubs) ? secondFileName : filename;
 	bool isload = tab->Video->LoadVideo(fnname, tab->Grid->GetVisible(), fulls, changeAudio);
 	if (!isload){ 
-		if (noFreeze)
+		if (freeze)
 			tab->Thaw(); 
 		return false; 
 	}
@@ -1058,11 +1058,13 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 	tab->Edit->Frames->Enable(!tab->Video->IsDshow);
 	tab->Edit->Times->Enable(!tab->Video->IsDshow);
 
-	Tabs->GetTab()->Video->DeleteAudioCache();
+	//fix to not delete audiocache when using from OpenFiles
+	if (freeze)
+		Tabs->GetTab()->Video->DeleteAudioCache();
 done:
 	tab->ShiftTimes->Contents();
 	UpdateToolbar();
-	if (noFreeze)
+	if (freeze)
 		tab->Thaw();
 
 	Options.SaveOptions(true, false);
@@ -1474,13 +1476,13 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 		}
 		TabPanel *tab = GetTab();
 		if (i >= videosSize){
-			if (!OpenFile(subs[i], false, true))
+			if (!OpenFile(subs[i], false, false))
 				break;
 
 			continue;
 		}
 		else if (i >= subsSize){
-			if (!OpenFile(videos[i], false, true))
+			if (!OpenFile(videos[i], false, false))
 				break;
 
 			continue;

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-09-29 09:42+0200\n"
-"PO-Revision-Date: 2018-09-29 10:11+0200\n"
+"POT-Creation-Date: 2018-09-29 11:49+0200\n"
+"PO-Revision-Date: 2018-09-29 11:51+0200\n"
 "Last-Translator: Bakura, Areki, duplex, Kostek00, Sacredus\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -198,13 +198,13 @@ msgstr "Spectrum mode"
 msgid "Uwydatnienie częstotliwości głosu na spektrum"
 msgstr "Spectrum speech frequency enhancement"
 
-#: AudioBox.cpp:269 VideoFfmpeg.cpp:1023
+#: AudioBox.cpp:269 VideoFfmpeg.cpp:1026
 msgid "Nieprawidłowy format klatek kluczowych"
 msgstr "Invalid keyframes format"
 
 #: AudioBox.cpp:269 Automation.cpp:1167 Automation.cpp:1214
 #: OptionsDialog.cpp:274 OptionsDialog.cpp:526 VideoFfmpeg.cpp:52
-#: VideoFfmpeg.cpp:1023 kainoteMain.cpp:566 kainoteMain.cpp:570
+#: VideoFfmpeg.cpp:1026 kainoteMain.cpp:566 kainoteMain.cpp:570
 #: kainoteMain.cpp:1784 kainoteMain.cpp:1785 kainoteMain.cpp:2100
 #: kainoteMain.cpp:2126 kainoteMain.cpp:2130
 msgid "Błąd"
@@ -398,7 +398,7 @@ msgstr "Delete hotkey"
 #: AutomationHotkeysDialog.cpp:143 AutomationProgress.cpp:325
 #: ColorPicker.cpp:618 ColorPicker.cpp:1354 EditBox.cpp:87 EditBox.cpp:1631
 #: FontDialog.cpp:368 KaiMessageBox.cpp:62 MappedButton.cpp:36
-#: NewCatalog.cpp:42 OptionsDialog.cpp:861 ProgressDialog.cpp:38
+#: NewCatalog.cpp:42 OptionsDialog.cpp:869 ProgressDialog.cpp:38
 #: ScriptInfo.cpp:113 StyleChange.cpp:252 Stylelistbox.cpp:29
 #: Stylelistbox.cpp:79 SubsFile.cpp:45 SubsGrid.cpp:1208
 #: SubsResampleDialog.cpp:142
@@ -414,17 +414,17 @@ msgid "Napisy"
 msgstr "Subtitles"
 
 #: AutomationHotkeysDialog.cpp:209 Hotkeys.cpp:436 OptionsDialog.cpp:252
-#: OptionsDialog.cpp:845
+#: OptionsDialog.cpp:853
 msgid "Edytor"
 msgstr "Editor"
 
 #: AutomationHotkeysDialog.cpp:209 Hotkeys.cpp:436 OptionsDialog.cpp:252
-#: OptionsDialog.cpp:848
+#: OptionsDialog.cpp:856
 msgid "Wideo"
 msgstr "Video"
 
 #: AutomationHotkeysDialog.cpp:209 Hotkeys.cpp:436 OptionsDialog.cpp:252
-#: OptionsDialog.cpp:849
+#: OptionsDialog.cpp:857
 msgid "Audio"
 msgstr "Audio"
 
@@ -2441,7 +2441,7 @@ msgstr "Zlib error: %s"
 msgid "Odczyt napisów z pliku Matroska."
 msgstr "Loading subtitles from Matroska."
 
-#: MappedButton.cpp:37 OptionsDialog.cpp:860 StyleChange.cpp:250
+#: MappedButton.cpp:37 OptionsDialog.cpp:868 StyleChange.cpp:250
 msgid "Zastosuj"
 msgstr "Apply"
 
@@ -2825,7 +2825,7 @@ msgstr "Show seconds markers"
 msgid "Wyświetlaj tło zaznaczenia"
 msgstr "Show background selection"
 
-#: OptionsDialog.cpp:602
+#: OptionsDialog.cpp:603
 msgid "Wyświetlaj pozycję wideo"
 msgstr "Show video position"
 
@@ -2837,11 +2837,11 @@ msgstr "Show keyframes"
 msgid "Przewijaj wykres audio przy odtwarzaniu"
 msgstr "Follow audio during playback"
 
-#: OptionsDialog.cpp:603
+#: OptionsDialog.cpp:604
 msgid "Aktywuj okno audio po najechaniu"
 msgstr "Activate the audio when hover"
 
-#: OptionsDialog.cpp:603
+#: OptionsDialog.cpp:604
 msgid "Przyklejaj do klatek kluczowych"
 msgstr "Snap to keyframe"
 
@@ -2849,584 +2849,596 @@ msgstr "Snap to keyframe"
 msgid "Przyklejaj do pozostałych linii"
 msgstr "Snap to other lines"
 
-#: OptionsDialog.cpp:604
+#: OptionsDialog.cpp:605
 msgid "Scalaj wszystkie \"n\" z poprzednią sylabą"
 msgstr "Merge all the \"n\" with the previous syllable"
 
-#: OptionsDialog.cpp:604
+#: OptionsDialog.cpp:605
 msgid "Przenoś linie sylab po kliknięciu"
 msgstr "Move syllable line after click"
 
-#: OptionsDialog.cpp:604
+#: OptionsDialog.cpp:606
 msgid "Wczytuj audio do pamięci RAM"
 msgstr "Load audio into RAM"
 
-#: OptionsDialog.cpp:622 ScriptInfo.cpp:74 VideoFfmpeg.cpp:978
-#: VideoFfmpeg.cpp:989 kainoteMain.cpp:1190 stylestore.cpp:712
+#: OptionsDialog.cpp:625
+msgid ""
+"Przedział od 0 do 10000, gdzie 0 wyłącza\n"
+"całkowicie usuwanie plików audio cache."
+msgstr ""
+"Range from 0 to 10000, where 0 turns off\n"
+"removing audio cache files."
+
+#: OptionsDialog.cpp:626 ScriptInfo.cpp:74 VideoFfmpeg.cpp:981
+#: VideoFfmpeg.cpp:992 kainoteMain.cpp:1190 stylestore.cpp:712
 #: stylestore.cpp:713
 msgid "Brak"
 msgstr "None"
 
-#: OptionsDialog.cpp:622
+#: OptionsDialog.cpp:626
 msgid "Przed i po aktywnej"
 msgstr "Before and after the active"
 
-#: OptionsDialog.cpp:622
+#: OptionsDialog.cpp:626
 msgid "Wszystkie widoczne"
 msgstr "All visible"
 
-#: OptionsDialog.cpp:629
+#: OptionsDialog.cpp:634
 msgid "Opóźnienie audio w ms"
 msgstr "Audio delay in milliseconds:"
 
-#: OptionsDialog.cpp:630
+#: OptionsDialog.cpp:635
 msgid "Czas odtwarzania audio przed i po znaczniku w ms"
 msgstr "Audio to play before and after the marker in milliseconds"
 
-#: OptionsDialog.cpp:631
+#: OptionsDialog.cpp:636
 msgid "Grubość linii znaczników"
 msgstr "Line boundaries thickness"
 
-#: OptionsDialog.cpp:632
+#: OptionsDialog.cpp:637
+msgid "Limit plików audio cache"
+msgstr "Audio cache files limit"
+
+#: OptionsDialog.cpp:638
 msgid "Sposób wyświetlania nieaktywnych linijek"
 msgstr "The way to display inactive lines"
 
-#: OptionsDialog.cpp:651
+#: OptionsDialog.cpp:659
 msgid "Okno tło"
 msgstr "Window background"
 
-#: OptionsDialog.cpp:651
+#: OptionsDialog.cpp:659
 msgid "Okno nieaktywne tło"
 msgstr "Inactive window background"
 
-#: OptionsDialog.cpp:651
+#: OptionsDialog.cpp:659
 msgid "Okno tekst"
 msgstr "Window text"
 
-#: OptionsDialog.cpp:651
+#: OptionsDialog.cpp:659
 msgid "Okno nieaktywny tekst"
 msgstr "Inactive window text"
 
-#: OptionsDialog.cpp:652
+#: OptionsDialog.cpp:660
 msgid "Okno obramowanie"
 msgstr "Window border"
 
-#: OptionsDialog.cpp:652
+#: OptionsDialog.cpp:660
 msgid "Okno obramowanie nieaktywne"
 msgstr "Inactive window border"
 
-#: OptionsDialog.cpp:652
+#: OptionsDialog.cpp:660
 msgid "Okno tło obramowania"
 msgstr "Window border background"
 
-#: OptionsDialog.cpp:653
+#: OptionsDialog.cpp:661
 msgid "Okno tło obramowania nieaktywne"
 msgstr "Inactive window border background"
 
-#: OptionsDialog.cpp:653
+#: OptionsDialog.cpp:661
 msgid "Okno tekst nagłówka"
 msgstr "Window header text"
 
-#: OptionsDialog.cpp:653
+#: OptionsDialog.cpp:661
 msgid "Okno tekst nagłówka nieaktywny"
 msgstr "Inactive window header text"
 
-#: OptionsDialog.cpp:654
+#: OptionsDialog.cpp:662
 msgid "Okno najechany element nagłówka"
 msgstr "Window invaded element header"
 
-#: OptionsDialog.cpp:654
+#: OptionsDialog.cpp:662
 msgid "Okno wciśnięty element nagłówka"
 msgstr "Window pressed element header"
 
-#: OptionsDialog.cpp:655
+#: OptionsDialog.cpp:663
 msgid "Okno najechane zamykanie"
 msgstr "Window closing upon hover"
 
-#: OptionsDialog.cpp:655
+#: OptionsDialog.cpp:663
 msgid "Okno wciśnięte zamykanie"
 msgstr "Window pressed closing"
 
-#: OptionsDialog.cpp:655
+#: OptionsDialog.cpp:663
 msgid "Okno elementy ostrzegające"
 msgstr "Window elements warning"
 
-#: OptionsDialog.cpp:657
+#: OptionsDialog.cpp:665
 msgid "Napisy tekst"
 msgstr "Subtitles text"
 
-#: OptionsDialog.cpp:657
+#: OptionsDialog.cpp:665
 msgid "Napisy tło"
 msgstr "Subtitles background"
 
-#: OptionsDialog.cpp:657
+#: OptionsDialog.cpp:665
 msgid "Napisy tło dialogów"
 msgstr "Subtitles dialogue background"
 
-#: OptionsDialog.cpp:657
+#: OptionsDialog.cpp:665
 msgid "Napisy tło komentarzy"
 msgstr "Subtitles comment background"
 
-#: OptionsDialog.cpp:658
+#: OptionsDialog.cpp:666
 msgid "Napisy zaznaczenia (przezroczystość)"
 msgstr "Subtitles selections (transparency)"
 
-#: OptionsDialog.cpp:658
+#: OptionsDialog.cpp:666
 msgid "Napisy linijki widoczne na wideo"
 msgstr "Subtitles lines visible on video"
 
-#: OptionsDialog.cpp:659
+#: OptionsDialog.cpp:667
 msgid "Napisy kolidujące linie"
 msgstr "Subtitles colliding lines"
 
-#: OptionsDialog.cpp:659
+#: OptionsDialog.cpp:667
 msgid "Napisy obramowanie linijki"
 msgstr "Subtitles line boarder"
 
-#: OptionsDialog.cpp:659
+#: OptionsDialog.cpp:667
 msgid "Napisy obramowanie aktywnej linijki"
 msgstr "Subtitles active line border"
 
-#: OptionsDialog.cpp:660
+#: OptionsDialog.cpp:668
 msgid "Napisy nagłówek"
 msgstr "Subtitles header background"
 
-#: OptionsDialog.cpp:660
+#: OptionsDialog.cpp:668
 msgid "Napisy tekst nagłówka"
 msgstr "Subtitles header text"
 
-#: OptionsDialog.cpp:661
+#: OptionsDialog.cpp:669
 msgid "Napisy etykieta"
 msgstr "Subtitles line label"
 
-#: OptionsDialog.cpp:661
+#: OptionsDialog.cpp:669
 msgid "Napisy etykieta zmodyfikowanej linii"
 msgstr "Subtitles tag the modified line"
 
-#: OptionsDialog.cpp:661
+#: OptionsDialog.cpp:669
 msgid "Napisy etykieta zapisanej linii"
 msgstr "Subtitles tag the saved line"
 
-#: OptionsDialog.cpp:662
+#: OptionsDialog.cpp:670
 msgid "Napisy etykieta niepewnej linii"
 msgstr "Subtitles tag the not confirmed line"
 
-#: OptionsDialog.cpp:662
+#: OptionsDialog.cpp:670
 msgid "Napisy tło błędów pisowni"
 msgstr "Subtitles spelling error background"
 
-#: OptionsDialog.cpp:662
+#: OptionsDialog.cpp:670
 msgid "Napisy obramowanie porównania"
 msgstr "Subtitles comparison border"
 
-#: OptionsDialog.cpp:663
+#: OptionsDialog.cpp:671
 msgid "Napisy tło porównania brak zgodności"
 msgstr "Subtitles comparison background no match"
 
-#: OptionsDialog.cpp:663
+#: OptionsDialog.cpp:671
 msgid "Napisy tło porównania zgodność"
 msgstr "Subtitles comparison background match"
 
-#: OptionsDialog.cpp:663
+#: OptionsDialog.cpp:671
 msgid "Napisy tło komentarza por. brak zgodności"
 msgstr "Subtitles comp. comment background no match"
 
-#: OptionsDialog.cpp:664
+#: OptionsDialog.cpp:672
 msgid "Napisy tło komentarza por. zgodność"
 msgstr "Subtitles comp. comment background match"
 
-#: OptionsDialog.cpp:666
+#: OptionsDialog.cpp:674
 msgid "Edytor tekst"
 msgstr "Editor text"
 
-#: OptionsDialog.cpp:666
+#: OptionsDialog.cpp:674
 msgid "Edytor nazwy tagów"
 msgstr "Editor tag names"
 
-#: OptionsDialog.cpp:666
+#: OptionsDialog.cpp:674
 msgid "Edytor wartości tagów"
 msgstr "Editor tag values"
 
-#: OptionsDialog.cpp:667
+#: OptionsDialog.cpp:675
 msgid "Edytor nawiasy klamrowe"
 msgstr "Editor curly braces"
 
 # Zły: jednak nie wiem co z tym zrobić...
-#: OptionsDialog.cpp:667
+#: OptionsDialog.cpp:675
 msgid "Edytor operatory tagów"
 msgstr "Editor tags operators"
 
-#: OptionsDialog.cpp:667
+#: OptionsDialog.cpp:675
 msgid "Edytor zmienne template"
 msgstr "Editor template variables"
 
-#: OptionsDialog.cpp:668
+#: OptionsDialog.cpp:676
 msgid "Edytor znaczniki kodu template"
 msgstr "Editor template code marks"
 
-#: OptionsDialog.cpp:668
+#: OptionsDialog.cpp:676
 msgid "Edytor funkcje template"
 msgstr "Editor template functions"
 
-#: OptionsDialog.cpp:668
+#: OptionsDialog.cpp:676
 msgid "Edytor słowa kluczowe template"
 msgstr "Editor template keywords"
 
-#: OptionsDialog.cpp:668
+#: OptionsDialog.cpp:676
 msgid "Edytor ciągi znaków template"
 msgstr "Editor template strings"
 
-#: OptionsDialog.cpp:669
+#: OptionsDialog.cpp:677
 msgid "Edytor zaznaczenie znalezionej frazy"
 msgstr "Editor found words selection"
 
-#: OptionsDialog.cpp:669
+#: OptionsDialog.cpp:677
 msgid "Edytor tło nawiasów"
 msgstr "Editor brackets background"
 
-#: OptionsDialog.cpp:669
+#: OptionsDialog.cpp:677
 msgid "Edytor tło"
 msgstr "Editor background"
 
-#: OptionsDialog.cpp:670
+#: OptionsDialog.cpp:678
 msgid "Edytor zaznaczenie"
 msgstr "Editor selection"
 
-#: OptionsDialog.cpp:670
+#: OptionsDialog.cpp:678
 msgid "Edytor zaznaczenie w nieaktywnym oknie"
 msgstr "Editor inactive window selection"
 
-#: OptionsDialog.cpp:671
+#: OptionsDialog.cpp:679
 msgid "Edytor obramowanie"
 msgstr "Editor border"
 
-#: OptionsDialog.cpp:671
+#: OptionsDialog.cpp:679
 msgid "Edytor obramowanie aktywnego okna"
 msgstr "Editor border on focus"
 
-#: OptionsDialog.cpp:671
+#: OptionsDialog.cpp:679
 msgid "Edytor błędy pisowni"
 msgstr "Editor spelling error background"
 
-#: OptionsDialog.cpp:673
+#: OptionsDialog.cpp:681
 msgid "Audio tło"
 msgstr "Audio background"
 
-#: OptionsDialog.cpp:673
+#: OptionsDialog.cpp:681
 msgid "Audio znacznik start"
 msgstr "Audio start marker"
 
-#: OptionsDialog.cpp:673
+#: OptionsDialog.cpp:681
 msgid "Audio znacznik koniec"
 msgstr "Audio end marker"
 
-#: OptionsDialog.cpp:673
+#: OptionsDialog.cpp:681
 msgid "Audio znacznik przesuwania czasów"
 msgstr "Audio time shift marker"
 
-#: OptionsDialog.cpp:674
+#: OptionsDialog.cpp:682
 msgid "Audio znaczniki nieaktywnej linijki"
 msgstr "Audio inactive line marker"
 
-#: OptionsDialog.cpp:674
+#: OptionsDialog.cpp:682
 msgid "Audio kursor"
 msgstr "Audio cursor"
 
-#: OptionsDialog.cpp:674
+#: OptionsDialog.cpp:682
 msgid "Audio znaczniki sekund"
 msgstr "Audio seconds boundaries"
 
-#: OptionsDialog.cpp:674
+#: OptionsDialog.cpp:682
 msgid "Audio klatki kluczowe"
 msgstr "Audio keyframes"
 
-#: OptionsDialog.cpp:675
+#: OptionsDialog.cpp:683
 msgid "Audio znaczniki sylab"
 msgstr "Audio syllable marker"
 
-#: OptionsDialog.cpp:675
+#: OptionsDialog.cpp:683
 msgid "Audio tekst sylab"
 msgstr "Audio syllable text"
 
-#: OptionsDialog.cpp:675
+#: OptionsDialog.cpp:683
 msgid "Audio zaznaczenie"
 msgstr "Audio selection"
 
-#: OptionsDialog.cpp:676
+#: OptionsDialog.cpp:684
 msgid "Audio zaznaczenie po modyfikacji"
 msgstr "Audio the selection after modification"
 
-#: OptionsDialog.cpp:676
+#: OptionsDialog.cpp:684
 msgid "Audio tło nieaktywnych linijek"
 msgstr "Audio inactive line background"
 
-#: OptionsDialog.cpp:676
+#: OptionsDialog.cpp:684
 msgid "Audio wykres falowy"
 msgstr "Audio waveform"
 
-#: OptionsDialog.cpp:677
+#: OptionsDialog.cpp:685
 msgid "Audio nieaktywny wykres falowy"
 msgstr "Audio Inactive waveform"
 
-#: OptionsDialog.cpp:677
+#: OptionsDialog.cpp:685
 msgid "Audio zmodyfikowany wykres falowy"
 msgstr "Audio modified waveform"
 
-#: OptionsDialog.cpp:677
+#: OptionsDialog.cpp:685
 msgid "Audio zaznaczony wykres falowy"
 msgstr "Audio selected waveform"
 
-#: OptionsDialog.cpp:678
+#: OptionsDialog.cpp:686
 msgid "Audio tło spektrum"
 msgstr "Audio spectrum background"
 
-#: OptionsDialog.cpp:678
+#: OptionsDialog.cpp:686
 msgid "Audio echo spektrum"
 msgstr "Audio spectrum echo"
 
-#: OptionsDialog.cpp:678
+#: OptionsDialog.cpp:686
 msgid "Audio spektrum"
 msgstr "Audio spectrum"
 
-#: OptionsDialog.cpp:680
+#: OptionsDialog.cpp:688
 msgid "Pole tekstowe tło"
 msgstr "Text field background"
 
-#: OptionsDialog.cpp:680
+#: OptionsDialog.cpp:688
 msgid "Pole tekstowe obramowanie"
 msgstr "Text field border"
 
-#: OptionsDialog.cpp:681
+#: OptionsDialog.cpp:689
 msgid "Pole tekstowe obramowanie aktywnego okna"
 msgstr "Text field border on focus"
 
-#: OptionsDialog.cpp:681
+#: OptionsDialog.cpp:689
 msgid "Pole tekstowe zaznaczenie"
 msgstr "Text field selection"
 
-#: OptionsDialog.cpp:682
+#: OptionsDialog.cpp:690
 msgid "Pole tekstowe zaznaczenie w nieaktywnym oknie"
 msgstr "Text field inactive window selection"
 
-#: OptionsDialog.cpp:683
+#: OptionsDialog.cpp:691
 msgid "Przycisk i lista tło"
 msgstr "Button and list background"
 
-#: OptionsDialog.cpp:683
+#: OptionsDialog.cpp:691
 msgid "Przycisk i lista tło po najechaniu"
 msgstr "Button and list background upon hover"
 
-#: OptionsDialog.cpp:684
+#: OptionsDialog.cpp:692
 msgid "Przycisk i lista tło po wciśnięciu"
 msgstr "Button and list pushed background"
 
-#: OptionsDialog.cpp:684
+#: OptionsDialog.cpp:692
 msgid "Przycisk i lista tło aktywnego"
 msgstr "Button and list background on focus"
 
-#: OptionsDialog.cpp:685
+#: OptionsDialog.cpp:693
 msgid "Przycisk i lista obramowanie"
 msgstr "Button and list border"
 
-#: OptionsDialog.cpp:685
+#: OptionsDialog.cpp:693
 msgid "Przycisk i lista obramowanie po najechaniu"
 msgstr "Button and list border upon hover"
 
-#: OptionsDialog.cpp:686
+#: OptionsDialog.cpp:694
 msgid "Przycisk i lista obramowanie po wciśnięciu"
 msgstr "Button and list border of pushed"
 
-#: OptionsDialog.cpp:686
+#: OptionsDialog.cpp:694
 msgid "Przycisk i lista obramowanie aktywnego"
 msgstr "Button and list border on focus"
 
-#: OptionsDialog.cpp:687
+#: OptionsDialog.cpp:695
 msgid "Przycisk i lista obramowanie nieaktywne"
 msgstr "Button and list inactive border"
 
 # Zły: eee... co to w ogóle jest?
-#: OptionsDialog.cpp:687
+#: OptionsDialog.cpp:695
 msgid "Przełącznik tło włączonego"
 msgstr "Togglebutton toggled background"
 
 # Zły: eee... co to w ogóle jest?
-#: OptionsDialog.cpp:688
+#: OptionsDialog.cpp:696
 msgid "Przełącznik obramowanie włączonego"
 msgstr "Togglebutton toggled border"
 
-#: OptionsDialog.cpp:688
+#: OptionsDialog.cpp:696
 msgid "Pasek przewijania tło"
 msgstr "Scroll bar background"
 
-#: OptionsDialog.cpp:688
+#: OptionsDialog.cpp:696
 msgid "Pasek przewijania suwak"
 msgstr "Scroll bar slider"
 
-#: OptionsDialog.cpp:689
+#: OptionsDialog.cpp:697
 msgid "Pasek przewijania suwak po najechaniu"
 msgstr "Scroll bar slider upon hover"
 
-#: OptionsDialog.cpp:689
+#: OptionsDialog.cpp:697
 msgid "Pasek przewijania suwak po wciśnięciu"
 msgstr "Scroll bar pushed slider"
 
-#: OptionsDialog.cpp:690
+#: OptionsDialog.cpp:698
 msgid "Ramka z opisem obramowanie"
 msgstr "Staticbox border"
 
-#: OptionsDialog.cpp:690
+#: OptionsDialog.cpp:698
 msgid "Lista statyczna obramowanie"
 msgstr "Static list border"
 
-#: OptionsDialog.cpp:690
+#: OptionsDialog.cpp:698
 msgid "Lista statyczna tło"
 msgstr "Static list background"
 
-#: OptionsDialog.cpp:691
+#: OptionsDialog.cpp:699
 msgid "Lista statyczna zaznaczenie"
 msgstr "Static list selection"
 
-#: OptionsDialog.cpp:691
+#: OptionsDialog.cpp:699
 msgid "Lista statyczna tło nagłówka"
 msgstr "Static list header background"
 
-#: OptionsDialog.cpp:691
+#: OptionsDialog.cpp:699
 msgid "Lista statyczna tekst nagłówka"
 msgstr "Static list header text"
 
-#: OptionsDialog.cpp:692
+#: OptionsDialog.cpp:700
 msgid "Pasek statusu obramowanie"
 msgstr "Status bar border"
 
-#: OptionsDialog.cpp:694
+#: OptionsDialog.cpp:702
 msgid "Pasek menu tło 1"
 msgstr "Menu bar background 1"
 
-#: OptionsDialog.cpp:694
+#: OptionsDialog.cpp:702
 msgid "Pasek menu tło 2"
 msgstr "Menu bar background 2"
 
-#: OptionsDialog.cpp:694
+#: OptionsDialog.cpp:702
 msgid "Pasek menu obramowanie zaznaczenia"
 msgstr "Menu bar selection border"
 
-#: OptionsDialog.cpp:695
+#: OptionsDialog.cpp:703
 msgid "Pasek menu tło zaznaczenia"
 msgstr "Menu bar selection background"
 
-#: OptionsDialog.cpp:695
+#: OptionsDialog.cpp:703
 msgid "Menu tło"
 msgstr "Menu background"
 
-#: OptionsDialog.cpp:695
+#: OptionsDialog.cpp:703
 msgid "Menu obramowanie zaznaczenia"
 msgstr "Menu selection border"
 
-#: OptionsDialog.cpp:696
+#: OptionsDialog.cpp:704
 msgid "Menu tło zaznaczenia"
 msgstr "Menu selection background"
 
-#: OptionsDialog.cpp:698
+#: OptionsDialog.cpp:706
 msgid "Pasek zakładek tło 1"
 msgstr "Tab bar background 1"
 
-#: OptionsDialog.cpp:698
+#: OptionsDialog.cpp:706
 msgid "Pasek zakładek tło 2"
 msgstr "Tab bar background 2"
 
-#: OptionsDialog.cpp:698
+#: OptionsDialog.cpp:706
 msgid "Zakładki obramowanie aktywnej"
 msgstr "Tab active border"
 
-#: OptionsDialog.cpp:699
+#: OptionsDialog.cpp:707
 msgid "Zakładki obramowanie nieaktywnej"
 msgstr "Tab inactive border"
 
-#: OptionsDialog.cpp:699
+#: OptionsDialog.cpp:707
 msgid "Zakładki tło aktywnej"
 msgstr "Tab active background"
 
-#: OptionsDialog.cpp:699
+#: OptionsDialog.cpp:707
 msgid "Zakładki tło nieaktywnej"
 msgstr "Tab inactive background"
 
-#: OptionsDialog.cpp:700
+#: OptionsDialog.cpp:708
 msgid "Zakładki tło nieaktywnej po najechaniu"
 msgstr "Tab inactive background upon hover"
 
-#: OptionsDialog.cpp:700
+#: OptionsDialog.cpp:708
 msgid "Zakładki tło drugiej widocznej zakładki"
 msgstr "Tab background of second visible tab"
 
-#: OptionsDialog.cpp:701
+#: OptionsDialog.cpp:709
 msgid "Zakładki tekst aktywnej"
 msgstr "Tab active text"
 
-#: OptionsDialog.cpp:701
+#: OptionsDialog.cpp:709
 msgid "Zakładki tekst nieaktywnej"
 msgstr "Tab inactive background"
 
-#: OptionsDialog.cpp:701
+#: OptionsDialog.cpp:709
 msgid "Zakładki zamknięcie po najechaniu"
 msgstr "Tab close upon hover"
 
-#: OptionsDialog.cpp:702
+#: OptionsDialog.cpp:710
 msgid "Pasek zakładek strzałka"
 msgstr "Tab bar arrow"
 
-#: OptionsDialog.cpp:702
+#: OptionsDialog.cpp:710
 msgid "Pasek zakładek strzałka tło"
 msgstr "Tab bar arrow background"
 
-#: OptionsDialog.cpp:703
+#: OptionsDialog.cpp:711
 msgid "Pasek zakładek strzałka tło po najechaniu"
 msgstr "Tab bar arrow background upon hover"
 
-#: OptionsDialog.cpp:705
+#: OptionsDialog.cpp:713
 msgid "Suwak ścieżka tło"
 msgstr "Slider path background"
 
-#: OptionsDialog.cpp:705
+#: OptionsDialog.cpp:713
 msgid "Suwak ścieżka obramowanie"
 msgstr "Slider path border"
 
-#: OptionsDialog.cpp:705
+#: OptionsDialog.cpp:713
 msgid "Suwak obramowanie"
 msgstr "Slider border"
 
-#: OptionsDialog.cpp:706
+#: OptionsDialog.cpp:714
 msgid "Suwak obramowanie po najechaniu"
 msgstr "Slider border upon hover"
 
-#: OptionsDialog.cpp:706
+#: OptionsDialog.cpp:714
 msgid "Suwak obramowanie po wciśnięciu"
 msgstr "Slider border of pushed"
 
-#: OptionsDialog.cpp:706
+#: OptionsDialog.cpp:714
 msgid "Suwak tło"
 msgstr "Slider background"
 
-#: OptionsDialog.cpp:707
+#: OptionsDialog.cpp:715
 msgid "Suwak tło po najechaniu"
 msgstr "Slider background upon hover"
 
-#: OptionsDialog.cpp:707
+#: OptionsDialog.cpp:715
 msgid "Suwak tło po wciśnięciu"
 msgstr "Slider background of pushed"
 
-#: OptionsDialog.cpp:709
+#: OptionsDialog.cpp:717
 msgid "Pierwszy kolor podglądu styli"
 msgstr "First color of style preview background"
 
-#: OptionsDialog.cpp:709
+#: OptionsDialog.cpp:717
 msgid "Drugi kolor podglądu styli"
 msgstr "Second color of style preview background"
 
-#: OptionsDialog.cpp:734
+#: OptionsDialog.cpp:742
 msgid "Nazwa motywu:"
 msgstr "Theme name:"
 
-#: OptionsDialog.cpp:736
+#: OptionsDialog.cpp:744
 msgid ""
 "Nazwa kopiowanego motywu.\n"
 "Motywów domyślnych: DarkSentro i LightSentro\n"
@@ -3436,12 +3448,12 @@ msgstr ""
 "Default themes: DarkSentro & LightSentro\n"
 "cannot be edited. It have to be copied."
 
-#: OptionsDialog.cpp:737 SelectLines.cpp:116 stylestore.cpp:80
+#: OptionsDialog.cpp:745 SelectLines.cpp:116 stylestore.cpp:80
 #: stylestore.cpp:127
 msgid "Kopiuj"
 msgstr "Copy"
 
-#: OptionsDialog.cpp:746
+#: OptionsDialog.cpp:754
 msgid ""
 "UWAGA! Przezroczystość działa tylko na wykresie audio\n"
 "i zaznaczeniach w napisach."
@@ -3449,130 +3461,130 @@ msgstr ""
 "WARNING! Transparency works only on audio spectrum \\ waveform,\n"
 "and grid selections."
 
-#: OptionsDialog.cpp:749
+#: OptionsDialog.cpp:757
 msgid "Nazwa"
 msgstr "Name"
 
-#: OptionsDialog.cpp:750
+#: OptionsDialog.cpp:758
 msgid "Kolor"
 msgstr "Color"
 
-#: OptionsDialog.cpp:804
+#: OptionsDialog.cpp:812
 msgid "Napisy ASS"
 msgstr "Subtitles ASS"
 
-#: OptionsDialog.cpp:804
+#: OptionsDialog.cpp:812
 msgid "Napisy SSA"
 msgstr "Subtitles SSA"
 
-#: OptionsDialog.cpp:804
+#: OptionsDialog.cpp:812
 msgid "Napisy SRT"
 msgstr "Subtitles SRT"
 
-#: OptionsDialog.cpp:804
+#: OptionsDialog.cpp:812
 msgid "Napisy SUB"
 msgstr "Subtitles SUB"
 
-#: OptionsDialog.cpp:804
+#: OptionsDialog.cpp:812
 msgid "Napisy TXT"
 msgstr "Subtitles TXT"
 
-#: OptionsDialog.cpp:804
+#: OptionsDialog.cpp:812
 msgid "Wideo MKV"
 msgstr "Video MKV"
 
-#: OptionsDialog.cpp:804
+#: OptionsDialog.cpp:812
 msgid "Wideo MP4"
 msgstr "Video MP4"
 
-#: OptionsDialog.cpp:804
+#: OptionsDialog.cpp:812
 msgid "Wideo AVI"
 msgstr "Video AVI"
 
-#: OptionsDialog.cpp:804
+#: OptionsDialog.cpp:812
 msgid "Wideo OGM"
 msgstr "Video OGM"
 
-#: OptionsDialog.cpp:805
+#: OptionsDialog.cpp:813
 msgid "Wideo WMV"
 msgstr "Video WMV"
 
-#: OptionsDialog.cpp:805
+#: OptionsDialog.cpp:813
 msgid "Wideo ASF"
 msgstr "Video ASF"
 
-#: OptionsDialog.cpp:805
+#: OptionsDialog.cpp:813
 msgid "Wideo RMVB"
 msgstr "Video RMVB"
 
-#: OptionsDialog.cpp:805
+#: OptionsDialog.cpp:813
 msgid "Wideo RM"
 msgstr "Video RM"
 
-#: OptionsDialog.cpp:805
+#: OptionsDialog.cpp:813
 msgid "Wideo 3GP"
 msgstr "Video 3GP"
 
-#: OptionsDialog.cpp:805
+#: OptionsDialog.cpp:813
 msgid "Wideo MPG"
 msgstr "Video MPG"
 
-#: OptionsDialog.cpp:805
+#: OptionsDialog.cpp:813
 msgid "Wideo MPEG"
 msgstr "Video MPEG"
 
-#: OptionsDialog.cpp:805
+#: OptionsDialog.cpp:813
 msgid "Wideo TS"
 msgstr "Video TS"
 
-#: OptionsDialog.cpp:805
+#: OptionsDialog.cpp:813
 msgid "Wideo M2TS"
 msgstr "Video M2TS"
 
-#: OptionsDialog.cpp:811
+#: OptionsDialog.cpp:819
 msgid ""
 "UWAGA! Działanie na każdym Windowsie jest inne.\n"
 "Przykładowo na Windows7 WMP zablokował\n"
 "możliwość zmiany skojarzeń wideo."
 msgstr "WARNING! It works different on every Windows."
 
-#: OptionsDialog.cpp:828
+#: OptionsDialog.cpp:836
 msgid "Zaznacz wszystko"
 msgstr "Select all"
 
-#: OptionsDialog.cpp:828
+#: OptionsDialog.cpp:836
 msgid "Zaznacz napisy"
 msgstr "Select subtitles"
 
-#: OptionsDialog.cpp:828
+#: OptionsDialog.cpp:836
 msgid "Zaznacz wideo"
 msgstr "Select video"
 
-#: OptionsDialog.cpp:828
+#: OptionsDialog.cpp:836
 msgid "Odznacz wszystko"
 msgstr "Deselect all"
 
-#: OptionsDialog.cpp:846 kainoteMain.cpp:220
+#: OptionsDialog.cpp:854 kainoteMain.cpp:220
 msgid "Konwersja"
 msgstr "Conversion"
 
-#: OptionsDialog.cpp:847
+#: OptionsDialog.cpp:855
 msgid "Edytor1"
 msgstr "Editor1"
 
-#: OptionsDialog.cpp:850
+#: OptionsDialog.cpp:858
 msgid "Motywy"
 msgstr "Themes"
 
-#: OptionsDialog.cpp:851
+#: OptionsDialog.cpp:859
 msgid "Skróty klawiszowe"
 msgstr "Hotkeys"
 
-#: OptionsDialog.cpp:852
+#: OptionsDialog.cpp:860
 msgid "Skojarzenia"
 msgstr "Associations"
 
-#: OptionsDialog.cpp:853
+#: OptionsDialog.cpp:861
 msgid "Właściwości Napisów"
 msgstr "ASS subtitles properties"
 
@@ -5148,7 +5160,7 @@ msgstr ""
 msgid "Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 msgstr "Subtitle files (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 
-#: Videobox.cpp:1383 config.cpp:879
+#: Videobox.cpp:1383 config.cpp:880
 msgid "Nie można pobrać informacji o monitorze"
 msgstr "Unable to retrieve information about the monitor"
 

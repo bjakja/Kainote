@@ -622,6 +622,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		NumCtrl *sc = new NumCtrl(AudioMain, 20000, Options.GetString(opts1[1]), 400, 5000, true, wxDefaultPosition, wxSize(300, -1), 0);
 		NumCtrl *lineThickness = new NumCtrl(AudioMain, 20000, Options.GetString(opts1[3]), 1, 5, true, wxDefaultPosition, wxSize(300, -1), 0);
 		NumCtrl *audioCacheFilesLimit = new NumCtrl(AudioMain, 20000, Options.GetString(opts1[4]), 0, 10000, true, wxDefaultPosition, wxSize(300, -1), 0);
+		audioCacheFilesLimit->SetToolTip(_("Przedział od 0 do 10000, gdzie 0 wyłącza\ncałkowicie usuwanie plików audio cache."));
 		wxString inact[3] = { _("Brak"), _("Przed i po aktywnej"), _("Wszystkie widoczne") };
 		KaiChoice *sc1 = new KaiChoice(AudioMain, 10000, wxDefaultPosition, wxSize(300, -1), 3, inact);
 		sc1->SetSelection(Options.GetInt(opts1[2]));

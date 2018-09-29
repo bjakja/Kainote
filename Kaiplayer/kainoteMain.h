@@ -43,17 +43,17 @@ class FontCollector;
 
 class KainoteFrame: public KaiFrame
 {
-    public:
-        KainoteFrame(const wxPoint &pos, const wxSize &size);
-        virtual ~KainoteFrame();
+	public:
+		KainoteFrame(const wxPoint &pos, const wxSize &size);
+		virtual ~KainoteFrame();
 
 		Notebook* Tabs;
 
 		//wxBoxSizer *mains;
-        void Save(bool dial, int wtab=-1, bool changeLabel = true);
+		void Save(bool dial, int wtab=-1, bool changeLabel = true);
 		void SaveAll();
 
-        bool OpenFile(const wxString &filename,bool fulls=false, bool noFreeze = false);
+		bool OpenFile(const wxString &filename,bool fulls=false, bool freeze = true);
 		void Label(int iter=0,bool video=false, int wtab=-1, bool onlyTabs = false);
 		
 		void SetRecent(short what=0);
@@ -98,11 +98,11 @@ class KainoteFrame: public KaiFrame
 		Auto::Automation *Auto;
 		FontCollector *fc;
 		RECT borders;
-    private:
+	private:
 
 		
-        void OnConversion(char form);
-        void OnAssProps();
+		void OnConversion(char form);
+		void OnAssProps();
 		void OnMenuOpened(MenuEvent& event);
 		void OnP5Sec(wxCommandEvent& event);
 		void OnM5Sec(wxCommandEvent& event);
@@ -117,10 +117,10 @@ class KainoteFrame: public KaiFrame
 		void OnClose1(wxCloseEvent& event);
 		void OnActivate(wxActivateEvent &evt);
 		static void OnOutofMemory();
-        Menu* ConvMenu;
-        Menu* FileMenu;
+		Menu* ConvMenu;
+		Menu* FileMenu;
 		Menu* HelpMenu;
-        Menu* SubsMenu;
+		Menu* SubsMenu;
 		Menu* EditMenu;
 		Menu* VidMenu;
 		Menu* AudMenu;

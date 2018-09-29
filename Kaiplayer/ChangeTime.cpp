@@ -22,29 +22,29 @@
 //#include "ColorPicker.h"
 
 
-ShiftTimesWindow::ShiftTimesWindow(wxWindow* parent,KainoteFrame* kfparent,wxWindowID id,const wxPoint& pos,const wxSize& size,long style)
-	: wxWindow/*wxScrolled<wxWindow>*/(parent, id, pos, size, style|wxVERTICAL)
+ShiftTimesWindow::ShiftTimesWindow(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+	: wxWindow/*wxScrolled<wxWindow>*/(parent, id, pos, size, style | wxVERTICAL)
 {
-    Kai=kfparent;
-    form=ASS;
-    panel = new wxWindow(this,1);
+	Kai = kfparent;
+	form = ASS;
+	panel = new wxWindow(this, 1);
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
-	scroll=new KaiScrollbar(this,5558,wxDefaultPosition, wxDefaultSize, wxVERTICAL);
+	scroll = new KaiScrollbar(this, 5558, wxDefaultPosition, wxDefaultSize, wxVERTICAL);
 	scroll->Hide();
 	scroll->SetScrollRate(30);
-	isscrollbar=false;
+	isscrollbar = false;
 	//SetScrollRate(0,5);
-	scPos=0;
-	
+	scPos = 0;
+
 	wxAcceleratorEntry ctentries[1];
-    ctentries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GLOBAL_SHIFT_TIMES);
-	
-    wxAcceleratorTable ctaccel(1, ctentries);
-    SetAcceleratorTable(ctaccel);
+	ctentries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GLOBAL_SHIFT_TIMES);
+
+	wxAcceleratorTable ctaccel(1, ctentries);
+	SetAcceleratorTable(ctaccel);
 	CreateControls(Options.GetInt(PostprocessorEnabling) < 16);
 	RefVals();
-	
+
 }
 
 ShiftTimesWindow::~ShiftTimesWindow()
@@ -69,18 +69,19 @@ bool ShiftTimesWindow::SetForegroundColour(const wxColour &col)
 void ShiftTimesWindow::Contents(bool addopts)
 {
 	bool state;
-	form=Kai->GetTab()->Grid->subsFormat;
+	form = Kai->GetTab()->Grid->subsFormat;
 	VideoCtrl *vb = Kai->GetTab()->Video;
-	if(form<SRT){
-		state=true;
+	if (form < SRT){
+		state = true;
 		WhichLines->EnableItem(3);
 		WhichLines->EnableItem(4);
 		WhichLines->EnableItem(5);
-	}else{
-		WhichLines->EnableItem(3,false);
-		WhichLines->EnableItem(4,false);
+	}
+	else{
+		WhichLines->EnableItem(3, false);
+		WhichLines->EnableItem(4, false);
 		WhichLines->EnableItem(5, false);
-		state=false;
+		state = false;
 	}
 	if (!LeadIn){
 		bool lastEnable = DisplayFrames->IsEnabled();
@@ -107,15 +108,15 @@ void ShiftTimesWindow::Contents(bool addopts)
 		state = (Kai->GetTab()->Edit->ABox && Kai->GetTab()->Edit->ABox->audioDisplay->hasMark);
 		audiotime->Enable(state);
 	}
-	if(LeadIn){
-		state=(form!=TMP);
+	if (LeadIn){
+		state = (form != TMP);
 		LeadIn->Enable(state);
 		LeadOut->Enable(state);
 		Continous->Enable(state);
 		SnapKF->Enable(state && vb->VFF);
 	}
 	//if(addopts){RefVals();}
-	
+
 }
 
 
@@ -124,7 +125,7 @@ void ShiftTimesWindow::OnAddStyles(wxCommandEvent& event)
 {
 	wxString result = GetCheckedElements(Kai);
 	Stylestext->SetValue(result);
-	if(result != ""){WhichLines->SetSelection(5);}
+	if (result != ""){ WhichLines->SetSelection(5); }
 }
 
 void ShiftTimesWindow::SaveOptions()
@@ -151,18 +152,18 @@ void ShiftTimesWindow::SaveOptions()
 		wxString sstyles = Stylestext->GetValue();
 		Options.SetString(MoveTimesStyles, sstyles);
 	}
-	if(LeadIn){
-		Options.SetInt(PostprocessorLeadIn,LITime->GetInt());
-		Options.SetInt(PostprocessorLeadOut,LOTime->GetInt());
-		Options.SetInt(PostprocessorThresholdStart,ThresStart->GetInt());
-		Options.SetInt(PostprocessorThresholdEnd,ThresEnd->GetInt());
-		Options.SetInt(PostprocessorKeyframeBeforeStart,BeforeStart->GetInt());
-		Options.SetInt(PostprocessorKeyframeAfterStart,AfterStart->GetInt());
-		Options.SetInt(PostprocessorKeyframeBeforeEnd,BeforeEnd->GetInt());
-		Options.SetInt(PostprocessorKeyframeAfterEnd,AfterEnd->GetInt());
+	if (LeadIn){
+		Options.SetInt(PostprocessorLeadIn, LITime->GetInt());
+		Options.SetInt(PostprocessorLeadOut, LOTime->GetInt());
+		Options.SetInt(PostprocessorThresholdStart, ThresStart->GetInt());
+		Options.SetInt(PostprocessorThresholdEnd, ThresEnd->GetInt());
+		Options.SetInt(PostprocessorKeyframeBeforeStart, BeforeStart->GetInt());
+		Options.SetInt(PostprocessorKeyframeAfterStart, AfterStart->GetInt());
+		Options.SetInt(PostprocessorKeyframeBeforeEnd, BeforeEnd->GetInt());
+		Options.SetInt(PostprocessorKeyframeAfterEnd, AfterEnd->GetInt());
 		//1 Lead In, 2 Lead Out, 4 Make times continous, 8 Snap to keyframe;
 		//int peres= (LeadIn->GetValue())? 1 : 0
-		Options.SetInt(PostprocessorEnabling,(int)LeadIn->GetValue()+((int)LeadOut->GetValue()*2)+((int)Continous->GetValue()*4)+((int)SnapKF->GetValue()*8)+16);
+		Options.SetInt(PostprocessorEnabling, (int)LeadIn->GetValue() + ((int)LeadOut->GetValue() * 2) + ((int)Continous->GetValue() * 4) + ((int)SnapKF->GetValue() * 8) + 16);
 	}
 }
 
@@ -174,7 +175,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 	panel->SetBackgroundColour(Options.GetColour(WindowBackground));
 	Main = new wxBoxSizer(wxVERTICAL);
 
-	coll = new MappedButton(panel, 22999, (normal)? _("Post processor") : _("Przesuwanie czasów"));
+	coll = new MappedButton(panel, 22999, (normal) ? _("Post processor") : _("Przesuwanie czasów"));
 	Main->Add(coll, 0, wxEXPAND | wxLEFT | wxRIGHT, 6);
 
 	wxArrayString choices;
@@ -241,7 +242,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		VAtiming->Add(videotime, 1, wxEXPAND | wxLEFT, 2);
 		VAtiming->Add(audiotime, 1, wxEXPAND | wxLEFT, 2);
 		//VAtiming->Add(picker,0,wxEXPAND|wxLEFT,2);
-		
+
 		KaiStaticBoxSizer *timessizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Sposób przesuwania czasów"));
 		choices.clear();
 		choices.Add(_("Obydwa czasy"));
@@ -261,7 +262,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		CorTime = new KaiChoice(panel, -1, wxDefaultPosition, wxSize(130, -1), choices, KAI_SCROLL_ON_FOCUS);
 		CorTime->SetSelection(0);
 		cesizer->Add(CorTime, 0, wxEXPAND | wxLEFT | wxRIGHT, 2);
-		
+
 		LeadIn = NULL;
 
 		Main->Add(timesizer, 0, wxEXPAND | wxALL, 2);
@@ -288,7 +289,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 
 		leadinSizer->Add(LeadIn, 1, wxEXPAND, 0);
 		leadinSizer->Add(LITime, 0);
-		leadoutSizer->Add(LeadOut, 1, wxEXPAND , 0);
+		leadoutSizer->Add(LeadOut, 1, wxEXPAND, 0);
 		leadoutSizer->Add(LOTime, 0);
 
 		liosizer->Add(leadinSizer, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 2);
@@ -357,11 +358,12 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 void ShiftTimesWindow::OnOKClick(wxCommandEvent& event)
 {
 	SaveOptions();
-	int acid=event.GetId();
+	int acid = event.GetId();
 	TabPanel *tab = Kai->GetTab();
-	if (acid==GLOBAL_SHIFT_TIMES){
-		tab->Grid->ChangeTimes((!LeadIn)? TimeText->HasShownFrames() : false);
-	}else if(acid==ID_CLOSE){
+	if (acid == GLOBAL_SHIFT_TIMES){
+		tab->Grid->ChangeTimes((!LeadIn) ? TimeText->HasShownFrames() : false);
+	}
+	else if (acid == ID_CLOSE){
 		Hide();
 		tab->BoxSizer1->Layout();
 	}
@@ -371,42 +373,43 @@ void ShiftTimesWindow::OnOKClick(wxCommandEvent& event)
 
 void ShiftTimesWindow::OnSize(wxSizeEvent& event)
 {
-	int h,gw,gh;
-	TabPanel* cur=(TabPanel*)GetParent();
-	cur->Grid->GetClientSize(&gw,&gh);
+	int h, gw, gh;
+	TabPanel* cur = (TabPanel*)GetParent();
+	cur->Grid->GetClientSize(&gw, &gh);
 	int w;
-	panel->GetBestSize(&w,&h);
+	panel->GetBestSize(&w, &h);
 	int ctw, cth;
-	GetSize(&ctw,&cth);
-	if(!isscrollbar && gh < h)//pojawianie scrollbara
+	GetSize(&ctw, &cth);
+	if (!isscrollbar && gh < h)//pojawianie scrollbara
 	{
-		isscrollbar=true;
-		SetMinSize(wxSize(w+17,h));
+		isscrollbar = true;
+		SetMinSize(wxSize(w + 17, h));
 		cur->BoxSizer3->Layout();
-		scroll->SetSize(w-1, 0, 17, gh);
-		scroll->SetScrollbar(scPos, gh, h, gh-10);
+		scroll->SetSize(w - 1, 0, 17, gh);
+		scroll->SetScrollbar(scPos, gh, h, gh - 10);
 		scroll->Show();
-		
+
 	}
-	else if(isscrollbar && gh >= h )//znikanie scrollbara
+	else if (isscrollbar && gh >= h)//znikanie scrollbara
 	{
-		isscrollbar=false;
-		scPos=0;
+		isscrollbar = false;
+		scPos = 0;
 		scroll->Hide();
-		scroll->SetScrollbar(scPos, gh, h, gh-10);
-		SetMinSize(wxSize(w,h));
-		panel->SetPosition(wxPoint(0,scPos));
+		scroll->SetScrollbar(scPos, gh, h, gh - 10);
+		SetMinSize(wxSize(w, h));
+		panel->SetPosition(wxPoint(0, scPos));
 		cur->BoxSizer3->Layout();
-	}else if(scroll->IsShown()){
-		scroll->SetSize(ctw-18, 0, 17, gh);
-		scroll->SetScrollbar(scPos, gh, h, gh-10);
-		if(scPos != scroll->GetScrollPos()){
+	}
+	else if (scroll->IsShown()){
+		scroll->SetSize(ctw - 18, 0, 17, gh);
+		scroll->SetScrollbar(scPos, gh, h, gh - 10);
+		if (scPos != scroll->GetScrollPos()){
 			scPos = scroll->GetScrollPos();
-			panel->SetPosition(wxPoint(0,-scPos));
+			panel->SetPosition(wxPoint(0, -scPos));
 			//panel->Refresh(false);
 		}
 	}
-	
+
 }
 
 void ShiftTimesWindow::DoTooltips(bool normal /*= true*/)
@@ -443,11 +446,11 @@ void ShiftTimesWindow::DoTooltips(bool normal /*= true*/)
 
 void ShiftTimesWindow::AudioVideoTime(wxCommandEvent &event)
 {
-	int id=event.GetId();
-	if (id==ID_VIDEO && videotime->GetValue()){
+	int id = event.GetId();
+	if (id == ID_VIDEO && videotime->GetValue()){
 		audiotime->SetValue(false);
 	}
-	else if (id==ID_AUDIO && audiotime->GetValue()){
+	else if (id == ID_AUDIO && audiotime->GetValue()){
 		videotime->SetValue(false);
 	}
 }
@@ -461,11 +464,12 @@ void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
 		evt.SetId(22999);
 		evt.SetInt(1000);
 		CollapsePane(evt);
+		Contents();
 	}
 	int mto = Options.GetInt(MoveTimesOptions);
-	
+
 	if (!LeadIn){
-		
+
 		STime ct = (secondWindow) ? secondWindow->TimeText->GetTime() : STime(Options.GetInt(MoveTimesTime), Options.GetInt(MoveTimesFrames));
 		bool dispTimes = DisplayFrames->GetValue();
 		DisplayFrames->SetValue((secondWindow) ? secondWindow->DisplayFrames->GetValue() : (mto & 16) > 0);
@@ -493,10 +497,10 @@ void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
 		DisplayFrames->SetValue((secondWindow) ? secondWindow->DisplayFrames->GetValue() : (mto & 16) > 0);
 		MoveTagTimes->SetValue((secondWindow) ? secondWindow->MoveTagTimes->GetValue() : (mto & 32) > 0);
 	}
-	Stylestext->SetValue( (secondWindow)? secondWindow->Stylestext->GetValue() : Options.GetString(MoveTimesStyles) );
+	Stylestext->SetValue((secondWindow) ? secondWindow->Stylestext->GetValue() : Options.GetString(MoveTimesStyles));
 
-	int cm= (secondWindow)? secondWindow->WhichLines->GetSelection() : Options.GetInt(MoveTimesWhichLines);
-	if(cm>(int)WhichLines->GetCount()){cm=0;}
+	int cm = (secondWindow) ? secondWindow->WhichLines->GetSelection() : Options.GetInt(MoveTimesWhichLines);
+	if (cm > (int)WhichLines->GetCount()){ cm = 0; }
 	WhichLines->SetSelection(cm);
 	if (!LeadIn){
 		WhichTimes->SetSelection((secondWindow) ? secondWindow->WhichTimes->GetSelection() : Options.GetInt(MoveTimesWhichTimes));
@@ -507,27 +511,27 @@ void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
 		CorTime->SetSelection((secondWindow) ? secondWindow->CorTime->GetSelection() : Options.GetInt(MoveTimesCorrectEndTimes));
 	}
 	int enables = Options.GetInt(PostprocessorEnabling);
-	
-	if(LeadIn && secondWindow && secondWindow->LeadIn){
-		LeadIn->SetValue((secondWindow)? secondWindow->LeadIn->GetValue() : (enables & 1)>0);
-		LeadOut->SetValue((secondWindow)? secondWindow->LeadOut->GetValue() : (enables & 2)>0);
-		Continous->SetValue((secondWindow)? secondWindow->Continous->GetValue() : (enables & 4)>0);
-		SnapKF->SetValue((secondWindow)? secondWindow->SnapKF->GetValue() : (enables & 8)>0);
-		LITime->SetInt((secondWindow)? secondWindow->LITime->GetInt() : Options.GetInt(PostprocessorLeadIn));
-		LOTime->SetInt((secondWindow)? secondWindow->LOTime->GetInt() : Options.GetInt(PostprocessorLeadOut));
-		ThresStart->SetInt((secondWindow)? secondWindow->ThresStart->GetInt() : Options.GetInt(PostprocessorThresholdStart));
-		ThresEnd->SetInt((secondWindow)? secondWindow->ThresEnd->GetInt() : Options.GetInt(PostprocessorThresholdEnd));
-		BeforeStart->SetInt((secondWindow)? secondWindow->BeforeStart->GetInt() : Options.GetInt(PostprocessorKeyframeBeforeStart));
-		AfterStart->SetInt((secondWindow)? secondWindow->AfterStart->GetInt() : Options.GetInt(PostprocessorKeyframeAfterStart));
-		BeforeEnd->SetInt((secondWindow)? secondWindow->BeforeEnd->GetInt() : Options.GetInt(PostprocessorKeyframeBeforeEnd));
-		AfterEnd->SetInt((secondWindow)? secondWindow->AfterEnd->GetInt() : Options.GetInt(PostprocessorKeyframeAfterEnd));
+
+	if (LeadIn && secondWindow && secondWindow->LeadIn){
+		LeadIn->SetValue((secondWindow) ? secondWindow->LeadIn->GetValue() : (enables & 1) > 0);
+		LeadOut->SetValue((secondWindow) ? secondWindow->LeadOut->GetValue() : (enables & 2) > 0);
+		Continous->SetValue((secondWindow) ? secondWindow->Continous->GetValue() : (enables & 4) > 0);
+		SnapKF->SetValue((secondWindow) ? secondWindow->SnapKF->GetValue() : (enables & 8) > 0);
+		LITime->SetInt((secondWindow) ? secondWindow->LITime->GetInt() : Options.GetInt(PostprocessorLeadIn));
+		LOTime->SetInt((secondWindow) ? secondWindow->LOTime->GetInt() : Options.GetInt(PostprocessorLeadOut));
+		ThresStart->SetInt((secondWindow) ? secondWindow->ThresStart->GetInt() : Options.GetInt(PostprocessorThresholdStart));
+		ThresEnd->SetInt((secondWindow) ? secondWindow->ThresEnd->GetInt() : Options.GetInt(PostprocessorThresholdEnd));
+		BeforeStart->SetInt((secondWindow) ? secondWindow->BeforeStart->GetInt() : Options.GetInt(PostprocessorKeyframeBeforeStart));
+		AfterStart->SetInt((secondWindow) ? secondWindow->AfterStart->GetInt() : Options.GetInt(PostprocessorKeyframeAfterStart));
+		BeforeEnd->SetInt((secondWindow) ? secondWindow->BeforeEnd->GetInt() : Options.GetInt(PostprocessorKeyframeBeforeEnd));
+		AfterEnd->SetInt((secondWindow) ? secondWindow->AfterEnd->GetInt() : Options.GetInt(PostprocessorKeyframeAfterEnd));
 	}
-   
+
 }
 
 void ShiftTimesWindow::CollapsePane(wxCommandEvent &event)
 {
-	bool collapsed = (LeadIn==NULL);
+	bool collapsed = (LeadIn == NULL);
 	int pe = Options.GetInt(PostprocessorEnabling);
 	Options.SetInt(PostprocessorEnabling, pe ^ 16);
 	if (!collapsed){
@@ -548,43 +552,44 @@ void ShiftTimesWindow::CollapsePane(wxCommandEvent &event)
 	panel = new wxWindow(this, 1);
 	CreateControls(!collapsed);
 
-	if(collapsed){
-		
-		if(event.GetId()==22999){
+	if (collapsed){
+
+		if (event.GetId() == 22999){
 			//((TabPanel*)GetParent())->BoxSizer3->Layout();
-			isscrollbar=false;
+			isscrollbar = false;
 			wxSizeEvent evt;
 			OnSize(evt);
 		}
 		//wxSizeEvent evt;
 		//OnSize(evt);
-	}else{
-		
+	}
+	else{
+
 		//wxSizeEvent evt;
 		//OnSize(evt);
-		int w, h,gw,gh;
-		TabPanel* cur=(TabPanel*)GetParent();
-		cur->Grid->GetClientSize(&gw,&gh);
-		panel->GetBestSize(&w,&h);
+		int w, h, gw, gh;
+		TabPanel* cur = (TabPanel*)GetParent();
+		cur->Grid->GetClientSize(&gw, &gh);
+		panel->GetBestSize(&w, &h);
 		scPos = 0;
-		if(gh < h)//pojawianie scrollbara
+		if (gh < h)//pojawianie scrollbara
 		{
-			SetMinSize(wxSize(w+17,h));
+			SetMinSize(wxSize(w + 17, h));
 			cur->BoxSizer3->Layout();
 			scroll->SetSize(w, 0, 17, gh);
-			scroll->SetScrollbar(scPos, gh, h, gh-10);
-		
+			scroll->SetScrollbar(scPos, gh, h, gh - 10);
+
 		}
-		else if(gh >= h )//znikanie scrollbara
+		else if (gh >= h)//znikanie scrollbara
 		{
-			isscrollbar=false;
+			isscrollbar = false;
 			scroll->Hide();
-			scroll->SetScrollbar(scPos, gh, h, gh-10);
-			SetMinSize(wxSize(w,h));
+			scroll->SetScrollbar(scPos, gh, h, gh - 10);
+			SetMinSize(wxSize(w, h));
 			cur->BoxSizer3->Layout();
 		}
-		
-		panel->SetPosition(wxPoint(0,-scPos));
+
+		panel->SetPosition(wxPoint(0, -scPos));
 		//panel->Update();
 	}
 	//trick to prevent recursive stack overflow
@@ -599,17 +604,17 @@ void ShiftTimesWindow::OnScroll(wxScrollEvent& event)
 	int newPos = event.GetPosition();
 	if (scPos != newPos) {
 		scPos = newPos;
-		panel->SetPosition(wxPoint(0,-scPos));
+		panel->SetPosition(wxPoint(0, -scPos));
 		panel->Update();
 	}
 }
 
 void ShiftTimesWindow::OnMouseScroll(wxMouseEvent& event)
 {
-	if(event.GetWheelRotation() != 0){
+	if (event.GetWheelRotation() != 0){
 		int step = 30 * event.GetWheelRotation() / event.GetWheelDelta();
-		scPos = scroll->SetScrollPos(scPos-step); 
-		panel->SetPosition(wxPoint(0,-scPos));
+		scPos = scroll->SetScrollPos(scPos - step);
+		panel->SetPosition(wxPoint(0, -scPos));
 		panel->Update();
 	}
 }
@@ -618,23 +623,24 @@ void ShiftTimesWindow::OnChangeDisplayUnits(wxCommandEvent& event)
 {
 	ChangeDisplayUnits(!DisplayFrames->GetValue());
 }
-	
+
 void ShiftTimesWindow::ChangeDisplayUnits(bool times)
 {
 	STime ct = TimeText->GetTime();
-	if(times){
+	if (times){
 		TimeText->ShowFrames(false);
 		ct.mstime = Options.GetInt(MoveTimesTime);
 		TimeText->SetTime(ct);
-	}else{
+	}
+	else{
 		TimeText->ShowFrames(true);
 		ct.orgframe = Options.GetInt(MoveTimesFrames);
 		TimeText->SetTime(ct);
 	}
 }
 
-BEGIN_EVENT_TABLE(ShiftTimesWindow,wxWindow)
+BEGIN_EVENT_TABLE(ShiftTimesWindow, wxWindow)
 EVT_SIZE(ShiftTimesWindow::OnSize)
-EVT_COMMAND_SCROLL_THUMBTRACK(5558,ShiftTimesWindow::OnScroll)
+EVT_COMMAND_SCROLL_THUMBTRACK(5558, ShiftTimesWindow::OnScroll)
 EVT_MOUSEWHEEL(ShiftTimesWindow::OnMouseScroll)
 END_EVENT_TABLE()
