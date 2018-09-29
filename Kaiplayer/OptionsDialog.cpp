@@ -599,9 +599,11 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	{
 		wxBoxSizer *audio = new wxBoxSizer(wxVERTICAL);
 
-		wxString names[] = { _("Wyświetlaj czas przy kursorze"), _("Wyświetlaj znaczniki sekund"), _("Wyświetlaj tło zaznaczenia"), _("Wyświetlaj pozycję wideo"),
-			_("Wyświetlaj klatki kluczowe"), _("Przewijaj wykres audio przy odtwarzaniu"), _("Aktywuj okno audio po najechaniu"), _("Przyklejaj do klatek kluczowych"),
-			_("Przyklejaj do pozostałych linii"), _("Scalaj wszystkie \"n\" z poprzednią sylabą"), _("Przenoś linie sylab po kliknięciu"), _("Wczytuj audio do pamięci RAM") };
+		wxString names[] = { _("Wyświetlaj czas przy kursorze"), _("Wyświetlaj znaczniki sekund"), _("Wyświetlaj tło zaznaczenia"), 
+			_("Wyświetlaj pozycję wideo"),_("Wyświetlaj klatki kluczowe"), _("Przewijaj wykres audio przy odtwarzaniu"), 
+			_("Aktywuj okno audio po najechaniu"), _("Przyklejaj do klatek kluczowych"), _("Przyklejaj do pozostałych linii"), 
+			_("Scalaj wszystkie \"n\" z poprzednią sylabą"), _("Przenoś linie sylab po kliknięciu"), 
+			_("Wczytuj audio do pamięci RAM") };
 
 		CONFIG opts[] = { AudioDrawTimeCursor, AudioDrawSecondaryLines, AudioDrawSelectionBackground, AudioDrawVideoPosition,
 			AudioDrawKeyframes, AudioLockScrollOnCursor, AudioAutoFocus, AudioSnapToKeyframes, AudioSnapToOtherLines,
@@ -614,11 +616,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			ConOpt(opt, opts[i]);
 			audio->Add(opt, 0, wxALL, 2);
 		}
-
-		CONFIG opts1[4] = { AudioDelay, AudioMarkPlayTime, AudioInactiveLinesDisplayMode, AudioLineBoundariesThickness };
+		
+		CONFIG opts1[5] = { AudioDelay, AudioMarkPlayTime, AudioInactiveLinesDisplayMode, AudioLineBoundariesThickness, AUDIO_CACHE_FILES_LIMIT };
 		NumCtrl *Delay = new NumCtrl(AudioMain, 20000, Options.GetString(opts1[0]), -50000000, 50000000, true, wxDefaultPosition, wxSize(300, -1), 0);
 		NumCtrl *sc = new NumCtrl(AudioMain, 20000, Options.GetString(opts1[1]), 400, 5000, true, wxDefaultPosition, wxSize(300, -1), 0);
 		NumCtrl *lineThickness = new NumCtrl(AudioMain, 20000, Options.GetString(opts1[3]), 1, 5, true, wxDefaultPosition, wxSize(300, -1), 0);
+		NumCtrl *audioCacheFilesLimit = new NumCtrl(AudioMain, 20000, Options.GetString(opts1[4]), 0, 10000, true, wxDefaultPosition, wxSize(300, -1), 0);
 		wxString inact[3] = { _("Brak"), _("Przed i po aktywnej"), _("Wszystkie widoczne") };
 		KaiChoice *sc1 = new KaiChoice(AudioMain, 10000, wxDefaultPosition, wxSize(300, -1), 3, inact);
 		sc1->SetSelection(Options.GetInt(opts1[2]));
@@ -626,17 +629,21 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		ConOpt(sc, opts1[1]);
 		ConOpt(lineThickness, opts1[3]);
 		ConOpt(sc1, opts1[2]);
+		ConOpt(audioCacheFilesLimit, opts1[4]);
 		KaiStaticBoxSizer *DelaySizer = new KaiStaticBoxSizer(wxVERTICAL, AudioMain, _("Opóźnienie audio w ms"));
 		KaiStaticBoxSizer *audiocols = new KaiStaticBoxSizer(wxVERTICAL, AudioMain, _("Czas odtwarzania audio przed i po znaczniku w ms"));
 		KaiStaticBoxSizer *lineThicknessSizer = new KaiStaticBoxSizer(wxVERTICAL, AudioMain, _("Grubość linii znaczników"));
+		KaiStaticBoxSizer *audioCacheFilesLimitSizer = new KaiStaticBoxSizer(wxVERTICAL, AudioMain, _("Limit plików audio cache"));
 		KaiStaticBoxSizer *audiocols1 = new KaiStaticBoxSizer(wxVERTICAL, AudioMain, _("Sposób wyświetlania nieaktywnych linijek"));
 		DelaySizer->Add(Delay, 1, wxALL | wxEXPAND, 2);
 		audiocols->Add(sc, 1, wxALL | wxEXPAND, 2);
 		lineThicknessSizer->Add(lineThickness, 1, wxALL | wxEXPAND, 2);
+		audioCacheFilesLimitSizer->Add(audioCacheFilesLimit, 1, wxALL | wxEXPAND, 2);
 		audiocols1->Add(sc1, 1, wxALL | wxEXPAND, 2);
 		audio->Add(DelaySizer, 0, wxRIGHT | wxEXPAND, 5);
 		audio->Add(audiocols, 0, wxRIGHT | wxEXPAND, 5);
 		audio->Add(lineThicknessSizer, 0, wxRIGHT | wxEXPAND, 5);
+		audio->Add(audioCacheFilesLimitSizer, 0, wxRIGHT | wxEXPAND, 5);
 		audio->Add(audiocols1, 0, wxRIGHT | wxEXPAND, 5);
 
 

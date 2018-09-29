@@ -910,7 +910,10 @@ int VideoFfmpeg::GetFramefromMS(int MS, int seekfrom)
 void VideoFfmpeg::DeleteOldAudioCache()
 {
 	wxString path = Options.pathfull + "\\AudioCache";
-	size_t maxAudio = 10;
+	size_t maxAudio = Options.GetInt(AUDIO_CACHE_FILES_LIMIT);
+	if (maxAudio < 1)
+		return;
+
 	wxDir kat(path);
 	wxArrayString audioCaches;
 	if (kat.IsOpened()){

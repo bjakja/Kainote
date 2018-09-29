@@ -648,6 +648,7 @@ void config::LoadDefaultAudioConfig()
 	stringConfig[AudioAutoFocus] = "true";
 	stringConfig[AudioAutoScroll] = "true";
 	stringConfig[AudioBoxHeight] = "169";
+	stringConfig[AUDIO_CACHE_FILES_LIMIT] = "10";
 	stringConfig[AudioDelay] = "0";
 	stringConfig[AudioDrawTimeCursor] = "true";
 	stringConfig[AudioDrawKeyframes] = "true";

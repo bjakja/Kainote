@@ -51,6 +51,7 @@
 	CG(AudioAutoFocus,)\
 	CG(AudioAutoScroll,)\
 	CG(AudioBoxHeight,)\
+	CG(AUDIO_CACHE_FILES_LIMIT,)\
 	CG(AudioDelay,)\
 	CG(AudioDrawKeyframes,)\
 	CG(AudioDrawSecondaryLines,)\
