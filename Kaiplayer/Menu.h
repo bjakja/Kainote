@@ -33,29 +33,29 @@ wxDECLARE_EVENT(EVT_MENU_OPENED, MenuEvent);
 class  MenuEvent : public wxEvent
 {
 public:
-    MenuEvent(wxEventType type = wxEVT_NULL, int winid = 0, Menu* menu = NULL)
-        : wxEvent(winid, type)
-        { m_menuId = winid; m_menu = menu; }
-    MenuEvent(const MenuEvent& event)
-        : wxEvent(event)
-    { m_menuId = event.m_menuId; m_menu = event.m_menu; }
+	MenuEvent(wxEventType type = wxEVT_NULL, int winid = 0, Menu* menu = NULL)
+		: wxEvent(winid, type)
+		{ m_menuId = winid; m_menu = menu; }
+	MenuEvent(const MenuEvent& event)
+		: wxEvent(event)
+	{ m_menuId = event.m_menuId; m_menu = event.m_menu; }
 
-    // only for wxEVT_MENU_HIGHLIGHT
-    int GetMenuId() const { return m_menuId; }
+	// only for wxEVT_MENU_HIGHLIGHT
+	int GetMenuId() const { return m_menuId; }
 
-    // only for wxEVT_MENU_OPEN/CLOSE
-    bool IsPopup() const { return m_menuId == wxID_ANY; }
+	// only for wxEVT_MENU_OPEN/CLOSE
+	bool IsPopup() const { return m_menuId == wxID_ANY; }
 
-    // only for wxEVT_MENU_OPEN/CLOSE
-    Menu* GetMenu() const { return m_menu; }
+	// only for wxEVT_MENU_OPEN/CLOSE
+	Menu* GetMenu() const { return m_menu; }
 
-    virtual wxEvent *Clone() const { return new MenuEvent(*this); }
+	virtual wxEvent *Clone() const { return new MenuEvent(*this); }
 
 private:
-    int     m_menuId;
-    Menu* m_menu;
+	int     m_menuId;
+	Menu* m_menu;
 
-    //DECLARE_DYNAMIC_CLASS_NO_ASSIGN(MenuEvent)
+	//DECLARE_DYNAMIC_CLASS_NO_ASSIGN(MenuEvent)
 };
 
 class MenuItem
@@ -247,13 +247,14 @@ private:
 	//bool CheckMouse();
 	int CalcMousePos(wxPoint *pos);
 	void HideMnemonics();
+	void ShowMenu();
 	
 	std::vector< Menu* > Menus;
 	wxBitmap *bmp;
 	int sel;
 	bool clicked;
 	bool altDown;
-	wxTimer showMenuTimer;
+	//wxTimer showMenuTimer;
 	int shownMenu;
 	int oldelem;
 	Menu *md;

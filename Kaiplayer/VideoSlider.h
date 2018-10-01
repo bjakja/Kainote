@@ -27,17 +27,19 @@ public:
 
 	void SetValue(float pos);
 	VideoCtrl* VB;
-	void SendTime(float pos);
+	void SendTime(int msTimePos);
 protected:
 	void OnPaint(wxPaintEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
 	void OnMouseLeave(wxMouseCaptureLostEvent& event);
 	void OnKeyPress(wxKeyEvent& event);
 	void OnSize(wxSizeEvent& event);
-	int position;
+	int position = 0;
+	int msTimePosition = 0;
 	int labelpos;
 	int chapterTime = 0;
 	int chapterPos = 0;
+	int positionDiff = 0;
 	wxString label;
 	bool isChapter = false;
 	bool showlabel;

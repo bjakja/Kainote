@@ -828,7 +828,7 @@ MenuBar::MenuBar(wxWindow *_parent)
 {
 	SetFont(font);
 	Refresh(false);
-	Bind(wxEVT_TIMER, [=](wxTimerEvent &event){
+	/*Bind(wxEVT_TIMER, [=](wxTimerEvent &event){
 
 		if (shownMenu == -1){ return; }
 		MenuEvent evt(EVT_MENU_OPENED, GetId(), Menus[shownMenu]);
@@ -847,7 +847,7 @@ MenuBar::MenuBar(wxWindow *_parent)
 		Menus[shownMenu]->PopupMenu(pos1, this->GetParent());
 		selectOnStart = -1;
 	}, 56432);
-	showMenuTimer.SetOwner(this, 56432);
+	showMenuTimer.SetOwner(this, 56432);*/
 	Menubar = this;
 	HookKey = NULL;
 	HookKey = SetWindowsHookEx(WH_KEYBOARD, &OnKey, NULL, GetCurrentThreadId());
@@ -866,6 +866,24 @@ MenuBar::~MenuBar(){
 	Menubar = NULL;
 }
 
+void MenuBar::ShowMenu(){
+	if (shownMenu == -1){ return; }
+	MenuEvent evt(EVT_MENU_OPENED, GetId(), Menus[shownMenu]);
+	ProcessEvent(evt);
+	wxSize rc = GetClientSize();
+	wxPoint pos = GetPosition();
+	int posX = halfIndent;
+	for (int i = 0; i < shownMenu; i++){
+		Menu *menu = Menus[i];
+		wxString desc = menu->GetTitle();
+		desc.Replace("&", "");
+		wxSize te = GetTextExtent(desc);
+		posX += te.x + menuIndent;
+	}
+	wxPoint pos1(posX + pos.x, rc.y + pos.y);
+	Menus[shownMenu]->PopupMenu(pos1, this->GetParent());
+	selectOnStart = -1;
+}
 //void MenuBar::OnCharHook(wxKeyEvent &event)
 //{
 //	int key = event.GetKeyCode();
@@ -1027,8 +1045,8 @@ void MenuBar::OnMouseEvent(wxMouseEvent &evt)
 		if (shownMenu != -1){
 			if (Menus[shownMenu]->dialog){ Menus[shownMenu]->dialog->HideMenus(); }
 			shownMenu = elem;
-			showMenuTimer.Start(50, true);
-
+			//showMenuTimer.Start(50, true);
+			ShowMenu();
 		}
 
 	}
@@ -1041,7 +1059,8 @@ void MenuBar::OnMouseEvent(wxMouseEvent &evt)
 			return;
 		}
 		shownMenu = elem;
-		showMenuTimer.Start(10, true);
+		//showMenuTimer.Start(10, true);
+		Menubar->ShowMenu();
 	}
 
 }
@@ -1204,7 +1223,8 @@ LRESULT CALLBACK MenuBar::OnKey(int code, WPARAM wParam, LPARAM lParam){
 					Menubar->sel = Menubar->shownMenu = foundmnemonics->second;
 					Menubar->Refresh(false);
 					selectOnStart = 0;
-					Menubar->showMenuTimer.Start(10, true);
+					//Menubar->showMenuTimer.Start(10, true);
+					Menubar->ShowMenu();
 				}
 				return 1;
 			}
@@ -1266,7 +1286,8 @@ LRESULT CALLBACK MenuBar::OnKey(int code, WPARAM wParam, LPARAM lParam){
 			}
 			Menubar->shownMenu = Menubar->sel;
 			selectOnStart = 0;
-			Menubar->showMenuTimer.Start(1, true);
+			//Menubar->showMenuTimer.Start(1, true);
+			Menubar->ShowMenu();
 			return 1;
 		}
 

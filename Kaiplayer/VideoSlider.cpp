@@ -67,8 +67,8 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 			if (abs(labelpos - chpos) < 3){
 				isChapter = true;
 				chapterTime = ch.time;
-				chapterPos = chpos-15;
-				STime kkk; 
+				chapterPos = chpos - 15;
+				STime kkk;
 				kkk.mstime = chapterTime;
 				wxString time = kkk.raw(SRT);
 				time.Prepend(ch.name + " ");
@@ -140,24 +140,31 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 	int curX = (event.GetX());
 	float calc = (w - 30);
 
-	if (left_up && holding) {
-		holding = false;
-		if (block){
-			if (VB->VFF){
-				while (VB->VFF->isBusy){
-					Sleep(10);
-				}
-			}
-			SendTime(position / calc);
-			block = false;
-		}
-		ReleaseMouse();
-	}
+	
 
 	if (VB->GetState() != None){
 
+		bool isOnSlider = curX > position + 4 && curX < position + 25;
+		bool isInSliderRange = curX > 4 && curX < w - 6;
+		float dur = VB->GetDuration();
+		msTimePosition = (MID(0, curX - 15, calc) / calc) * dur;
+		
+		if (left_up && holding) {
+			holding = false;
+			if (block){
+				if (VB->VFF){
+					while (VB->VFF->isBusy){
+						Sleep(10);
+					}
+				}
+				SendTime(msTimePosition);
+				block = false;
+			}
+			ReleaseMouse();
+			//return;
+		}
 		//najazd na uchwyt suwaka
-		if (!onslider && curX > position + 4 && curX < position + 25){
+		if (!onslider && isOnSlider){
 			wxImage img = prbh.ConvertToImage();
 			int size = prbh.GetWidth()*prbh.GetHeight() * 3;
 			byte *data = img.GetData();
@@ -167,53 +174,64 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 			}
 			prbh = wxBitmap(img);
 			onslider = true;
-			Refresh(false);
+			//Refresh(false);
 		}//zjazd z uchwytu suwaka
-		else if (onslider && ((curX<position + 5 || curX>position + 24) || event.Leaving())){
+		else if (onslider && (!isOnSlider || event.Leaving())){
 			prbh = CreateBitmapFromPngResource("pbarhandle");
 			onslider = false;
-			Refresh(false);
+			//Refresh(false);
 		}
 		//przesuwanie suwaka chwytaj¹c go mysz¹
-		if (holding&&curX > position + 4 && curX < position + 30 || (holding&&block)){
+		if (holding && isOnSlider || (holding && block)){
 			block = true;
-			position = MID(0, curX - 15, w - 30);
-			if (!VB->IsDshow){ SendTime(position / calc); }
-			Refresh(false);
+			position = MID(0, curX - 15 + positionDiff, w - 30);
+			if (!VB->IsDshow){ SendTime(msTimePosition); }
+			//Refresh(false);
 		}
 		//przesuwanie suwaka klikniêciem
-		else if (click && curX > 4 && curX < w - 6 && (curX < position + 6 || curX > position + 30)){
-			block = true;
-			if (isChapter){
-				float dur = VB->GetDuration();
-				SendTime(chapterTime / dur);
-				position = chapterPos;
+		else if (click && isInSliderRange){
+			if (!isOnSlider){
+				block = true;
+				if (isChapter){
+					//float dur = VB->GetDuration();
+					SendTime(chapterTime);
+					position = chapterPos;
+				}
+				else{
+					position = MID(0, curX - 15, w - 30);
+					SendTime(msTimePosition);
+				}
+
+				Refresh(false);
+				block = false;
+				return;
 			}
 			else{
-				position = MID(0, curX - 15, w - 30);
-				SendTime(position / calc);
+				positionDiff = position - (curX - 15);
 			}
-			
-			Refresh(false);
-			block = false;
-			return;
 		}
 		//ukrywanie etykiety czasu
-		if (((curX<5 || curX>w - 6)/* || (curY < 2 || curY>14)*/ || event.Leaving()) && !holding){
+		if ((!isInSliderRange || event.Leaving()) && !holding){
 			showlabel = false;
 			Refresh(false);
 			return;
 		}
 		//umiejscawianie etykiety czasu
-		else if (curX > 4 && curX < w - 6){
+		else if (isInSliderRange){
 			showlabel = true;
 			labelpos = curX;
-			float dur = VB->GetDuration();
-			STime kkk; kkk.mstime = (MID(0, curX - 15, calc) / calc)*dur;
+
+			STime kkk;
+			kkk.mstime = msTimePosition;
 			label = kkk.raw(SRT);
 			Refresh(false);
 		}
 
+	}
+	// Click type
+	if (click) {
+		holding = true;
+		CaptureMouse();
 	}
 
 	if (left_up && !holding) {
@@ -226,20 +244,15 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 	}
 
 
-	// Click type
-	if (click) {
-		holding = true;
-		CaptureMouse();
-	}
+	
 	if (event.GetWheelRotation() != 0){ event.Skip(); }
 
 
 }
 
-void VideoSlider::SendTime(float pos)
+void VideoSlider::SendTime(int msTimePos)
 {
-	float dur = VB->GetDuration();
-	VB->Seek(pos*dur, true, true, true, false);
+	VB->Seek(msTimePos, true, true, true, false);
 }
 void VideoSlider::OnMouseLeave(wxMouseCaptureLostEvent& event)
 {
