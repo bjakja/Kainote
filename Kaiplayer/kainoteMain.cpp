@@ -1074,7 +1074,11 @@ done:
 void KainoteFrame::SetSubsResolution(bool showDialog)
 {
 	TabPanel *cur = GetTab();
-	if (cur->Grid->subsFormat != ASS){ return; }
+	if (cur->Grid->subsFormat != ASS){ 
+		StatusBar->SetLabelTextColour(5, WindowText);
+		SetStatusText(L"", 7);
+		return; 
+	}
 	int x = 0, y = 0;
 	cur->Grid->GetASSRes(&x, &y);
 	wxString resolution = std::to_string(x) + " x " + std::to_string(y);
@@ -1589,13 +1593,8 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 		SetStatusText("", 2);
 		SetStatusText("", 1);
 	}
-	if (cur->Grid->subsFormat == ASS){
-		SetSubsResolution();
-	}
-	else{
-		SetStatusText("", 7);
-	}
-
+	SetSubsResolution();
+	
 	cur->Grid->UpdateUR(false);
 
 	UpdateToolbar();

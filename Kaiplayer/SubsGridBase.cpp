@@ -264,7 +264,6 @@ void SubsGridBase::Convert(char type)
 		}
 		else{ AddStyle(Options.GetStyle(stind)->Copy()); }
 		Edit->RefreshStyle();
-		Kai->SetSubsResolution();
 	}
 	if (subsFormat == ASS){
 		std::sort(file->subs->dials.begin(), file->subs->dials.end(), [](Dialogue *i, Dialogue *j){
@@ -294,14 +293,13 @@ void SubsGridBase::Convert(char type)
 			lastDialogue = actualDialogue;
 			i++;
 		}
-		Kai->SetStatusText("", 5);
-
+		
 	}
-	else if (type == ASS){
+	char oldSubsFormat = subsFormat;
+	subsFormat = type;
+	if (type == ASS || oldSubsFormat == ASS){
 		Kai->SetSubsResolution();
 	}
-
-	subsFormat = type;
 	file->ReloadVisibleDialogues();
 	Edit->SetLine((currentLine < GetCount()) ? currentLine : 0);
 	SpellErrors.clear();

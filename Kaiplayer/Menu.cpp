@@ -1027,7 +1027,7 @@ void MenuBar::OnMouseEvent(wxMouseEvent &evt)
 		if (shownMenu != -1){
 			if (Menus[shownMenu]->dialog){ Menus[shownMenu]->dialog->HideMenus(); }
 			shownMenu = elem;
-			showMenuTimer.Start(200, true);
+			showMenuTimer.Start(50, true);
 
 		}
 

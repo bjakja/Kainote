@@ -23,6 +23,7 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 	grid->Clearing();
 	grid->file = new SubsFile();
 	grid->originalFormat = 0;
+	grid->hasTLMode = false;
 	bool succeeded = false;
 	bool validFormat = false;
 	if (ext == "ass" || ext == "ssa"){

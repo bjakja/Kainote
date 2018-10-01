@@ -927,6 +927,7 @@ void FontCollector::EnumerateFonts()
 bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied)
 {
 	bool allfound = true;
+	bool copyFonts = !(operation & CHECK_FONTS);
 	HDC dc = ::CreateCompatibleDC(NULL);
 	auto it = foundFonts.begin();
 	wxString lastfn;
@@ -943,6 +944,15 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 			// chyba potencjalnie niemożliwe, ale różne błędy się zdarzają
 		}
 		it++;
+		//skip not used font before it make any other messages
+		CharMap &ch = FontMap[fn];
+		if (!ch.size()){
+			if(isNewFont)
+				flc->AppendWarnings(wxString::Format(_("Czcionka \"%s\" należy do stylu,\nktóry nie jest wykorzystywany.%s"), fn, (copyFonts) ? _("\nNie zostanie skopiowana.") : L""));
+			
+			continue;
+			//no goto cause font is not created yet
+		}
 		auto hfont = CreateFontIndirectW(&mlf);
 		SelectObject(dc, hfont);
 		if (font->fakeNormal){
@@ -960,10 +970,10 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 		if (isNewFont){
 			wxString text;
 			wxString missing;
-			CharMap ch = FontMap[fn];
-			for (auto it = ch.begin(); it != ch.end(); it++)
+			
+			for (auto character = ch.begin(); character != ch.end(); character++)
 			{
-				text << (*it);
+				text << (*character);
 			}
 			if (!FontEnum.CheckGlyphsExists(dc, text, missing))
 			{
@@ -975,7 +985,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 			}
 		}
 		
-		if (!(operation & CHECK_FONTS)){
+		if (copyFonts){
 			DWORD ttcf = 0x66637474;
 			auto size = GetFontData(dc, ttcf, 0, nullptr, 0);
 			if (size == GDI_ERROR) {
@@ -996,8 +1006,8 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 			file_buffer.resize(size);
 			bool succeeded = false;
 
-			for (auto it = fontSizes.equal_range(size).first; it != fontSizes.equal_range(size).second; ++it){
-				wxString fullpath = fontfolder + it->second;
+			for (auto fontSize = fontSizes.equal_range(size).first; fontSize != fontSizes.equal_range(size).second; ++fontSize){
+				wxString fullpath = fontfolder + fontSize->second;
 				FILE *fp = _wfopen(fullpath.wc_str(), L"rb");
 				if (!fp){ goto done; }
 				fseek(fp, 0, SEEK_END);
@@ -1023,7 +1033,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 							else
 								(*found)++;
 						}
-						wxString ext = it->second.AfterLast('.').Lower();
+						wxString ext = fontSize->second.AfterLast('.').Lower();
 						if (ext == "pfm" || ext == "pfb"){
 							wxString repl = (ext == "pfm") ? "pfb" : "pfm";
 							if (fullpath[fullpath.length() - 1] < 'Z'){ repl = repl.Upper(); }
