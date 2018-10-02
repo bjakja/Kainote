@@ -254,7 +254,6 @@ private:
 	int sel;
 	bool clicked;
 	bool altDown;
-	//wxTimer showMenuTimer;
 	int shownMenu;
 	int oldelem;
 	Menu *md;

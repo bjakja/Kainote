@@ -828,32 +828,13 @@ MenuBar::MenuBar(wxWindow *_parent)
 {
 	SetFont(font);
 	Refresh(false);
-	/*Bind(wxEVT_TIMER, [=](wxTimerEvent &event){
-
-		if (shownMenu == -1){ return; }
-		MenuEvent evt(EVT_MENU_OPENED, GetId(), Menus[shownMenu]);
-		ProcessEvent(evt);
-		wxSize rc = GetClientSize();
-		wxPoint pos = GetPosition();
-		int posX = halfIndent;
-		for (int i = 0; i < shownMenu; i++){
-			Menu *menu = Menus[i];
-			wxString desc = menu->GetTitle();
-			desc.Replace("&", "");
-			wxSize te = GetTextExtent(desc);
-			posX += te.x + menuIndent;
-		}
-		wxPoint pos1(posX + pos.x, rc.y + pos.y);
-		Menus[shownMenu]->PopupMenu(pos1, this->GetParent());
-		selectOnStart = -1;
-	}, 56432);
-	showMenuTimer.SetOwner(this, 56432);*/
+	
 	Menubar = this;
 	HookKey = NULL;
 	HookKey = SetWindowsHookEx(WH_KEYBOARD, &OnKey, NULL, GetCurrentThreadId());
 	HookMouse = NULL;
 	HookMouse = SetWindowsHookEx(WH_GETMESSAGE, &OnMouseClick, NULL, GetCurrentThreadId());
-	//_parent->Bind(wxEVT_CHAR_HOOK,&MenuBar::OnCharHook,this);
+	
 }
 
 MenuBar::~MenuBar(){
@@ -884,123 +865,6 @@ void MenuBar::ShowMenu(){
 	Menus[shownMenu]->PopupMenu(pos1, this->GetParent());
 	selectOnStart = -1;
 }
-//void MenuBar::OnCharHook(wxKeyEvent &event)
-//{
-//	int key = event.GetKeyCode();
-//	if(event.GetEventType()== wxEVT_KEY_UP){}
-//	if(event.GetModifiers() == wxMOD_ALT){//536870912 1073741824 lparam mówi nam o altup, który ma specjalny bajt 
-//		if(Menubar->md && showMnemonics){Menubar->md->HideMenu();/*return 1;*/}
-//		showMnemonics = !showMnemonics;
-//		if(Menubar->md){
-//			Menubar->md->dialog->Refresh(false);
-//			if(Menubar->shownMenu==-1){return;}
-//		}
-//		if(Menubar->sel==-1 || !showMnemonics){
-//			Menubar->sel = (showMnemonics)? 0 : -1;
-//		}
-//		Menubar->Refresh(false);
-//		return;
-//	}else if(showMnemonics){
-//		if( (key >= 0x41 && key <= 0x5A) ){//lparam mówi o keyup
-//			auto mn = (Menubar->md)? Menubar->md->mnemonics : Menubar->mnemonics;
-//			auto foundmnemonics = mn.find(key);
-//			
-//			if(foundmnemonics != mn.end()){
-//				if (Menubar->md){
-//					if(Menubar->md->items[foundmnemonics->second]->submenu){
-//						Menubar->md->dialog->sel = Menubar->md->dialog->submenuShown = foundmnemonics->second;
-//						if(Menubar->md->dialog->submenuToHide == -1){
-//							selectOnStart=0;
-//							Menubar->md->dialog->showSubmenuTimer.Start(1,true);
-//						}
-//					}else{
-//						MenuItem *item=Menubar->md->items[foundmnemonics->second];
-//						if(!Menubar->md->dialog->SendEvent(item, 0)){return;}
-//						Menubar->HideMnemonics();
-//					}
-//				}else{
-//					if(Menubar->shownMenu != -1 && Menubar->Menus[Menubar->shownMenu]->dialog){
-//						Menubar->Menus[Menubar->shownMenu]->dialog->HideMenus();
-//					}
-//					Menubar->sel = Menubar->shownMenu = foundmnemonics->second;
-//					Menubar->Refresh(false);
-//					selectOnStart=0;
-//					Menubar->showMenuTimer.Start(10,true);
-//				}
-//				return;
-//			}
-//			
-//		}
-//	}
-//	if((key == WXK_DOWN || key == WXK_UP || key == WXK_LEFT || key == WXK_RIGHT)){
-//		if(Menubar->md){
-//			if(key == WXK_LEFT && Menubar->md->dialog != MenuDialog::ParentMenu){
-//				Menubar->md->DestroyDialog();
-//				MenuBar::Menubar->md = Menubar->md->parentMenu;
-//				Menubar->md->dialog->submenuToHide = -1;
-//				Menubar->md->dialog->subMenuIsShown = false;
-//				return ;
-//			}else if(key == WXK_LEFT && Menubar->md->dialog->sel>=0 
-//				&& Menubar->md->items[Menubar->md->dialog->sel]->submenu){
-//				Menubar->md->dialog->submenuShown = Menubar->md->dialog->sel;
-//				if(Menubar->md->dialog->submenuToHide == -1){
-//					selectOnStart=0;
-//					Menubar->md->dialog->showSubmenuTimer.Start(1,true);
-//					return ;
-//				}
-//			}
-//			if(key == WXK_DOWN || key == WXK_UP){
-//				int step = (key == WXK_DOWN)? 1 : -1;
-//				do{
-//					Menubar->md->dialog->sel += step;
-//					if(Menubar->md->dialog->sel >= (int)Menubar->md->items.size()){
-//						Menubar->md->dialog->sel=0;
-//					}else if(Menubar->md->dialog->sel<0){
-//						Menubar->md->dialog->sel = Menubar->md->items.size()-1;
-//					}
-//				}while(Menubar->md->items[Menubar->md->dialog->sel]->type == ITEM_SEPARATOR);
-//				Menubar->md->dialog->Refresh(false);
-//				return ;
-//			}
-//		}
-//			
-//		if (Menubar->sel!=-1){
-//			if(key == WXK_RIGHT || key == WXK_LEFT){
-//				int step = (key == WXK_RIGHT)? 1 : -1;
-//				Menubar->sel += step;
-//				if(Menubar->sel >= (int)Menubar->Menus.size()){
-//					Menubar->sel=0;
-//				}else if(Menubar->sel<0){
-//					Menubar->sel = Menubar->Menus.size()-1;
-//				}
-//				Menubar->Refresh(false);
-//				if(!Menubar->md){return;}
-//					
-//			}
-//			if(Menubar->shownMenu != -1 && Menubar->Menus[Menubar->shownMenu]->dialog){
-//				Menubar->Menus[Menubar->shownMenu]->dialog->HideMenus();
-//			}
-//			Menubar->shownMenu = Menubar->sel;
-//			selectOnStart=0;
-//			Menubar->showMenuTimer.Start(1,true);
-//			return ;
-//		}
-//			
-//	}else if(key == WXK_ESCAPE && Menubar->md){
-//		MenuDialog::ParentMenu->HideMenus();
-//		Menubar->HideMnemonics();
-//		return ;
-//	}else if(key == WXK_RETURN && Menubar->md){
-//		if(Menubar->md->dialog->sel>=0){
-//			MenuItem *item = Menubar->md->items[Menubar->md->dialog->sel];
-//			if(!Menubar->md->dialog->SendEvent(item, 0)){event.Skip();return;}
-//			Menubar->HideMnemonics();
-//			return;
-//		}
-//	}
-//	if(showMnemonics && key != WXK_ALT){Menubar->HideMnemonics();}
-//	event.Skip();
-//}
 
 void MenuBar::Append(Menu *menu, const wxString &title)
 {
@@ -1029,25 +893,29 @@ void MenuBar::OnMouseEvent(wxMouseEvent &evt)
 
 	wxPoint pos = evt.GetPosition();
 	int elem = CalcMousePos(&pos);
-	if (evt.Leaving() && !md){
-		sel = -1; Refresh(false);
+	if ((evt.Leaving() || elem == -1) && shownMenu == -1/*!md*/){
+		oldelem = sel = -1; Refresh(false);
 		return;
 	}
-	if (evt.Entering()){
+	if (evt.Entering() || elem == -1){
 		if (shownMenu != -1 && Menus[shownMenu]->dialog == NULL){ shownMenu = -1; }
 		oldelem = -1;
 		if (shownMenu == elem){ oldelem = sel = elem; Refresh(false); return; }
 	}
-	if (elem != oldelem && elem != -1){
+	//poprawiæ to nieszczêsne menu by nie odpala³o siê wiele razy ani te¿ obwódka z helpa nie znika³a.
+	if (elem != oldelem){
+		
 		oldelem = elem;
-		sel = elem;
-		Refresh(false);
-		if (shownMenu != -1){
-			if (Menus[shownMenu]->dialog){ Menus[shownMenu]->dialog->HideMenus(); }
-			shownMenu = elem;
-			//showMenuTimer.Start(50, true);
-			ShowMenu();
+		if (elem != -1 && shownMenu != elem){
+			sel = elem;
+			Refresh(false);
+			if (shownMenu != -1/* && elem != -1*/){
+				if (Menus[shownMenu]->dialog){ Menus[shownMenu]->dialog->HideMenus(); }
+				shownMenu = elem;
+				ShowMenu();
+			}
 		}
+		
 
 	}
 
@@ -1059,8 +927,7 @@ void MenuBar::OnMouseEvent(wxMouseEvent &evt)
 			return;
 		}
 		shownMenu = elem;
-		//showMenuTimer.Start(10, true);
-		Menubar->ShowMenu();
+		ShowMenu();
 	}
 
 }
