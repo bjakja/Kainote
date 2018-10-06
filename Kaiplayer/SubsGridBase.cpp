@@ -830,9 +830,10 @@ void SubsGridBase::DeleteRow(int rw, int len)
 void SubsGridBase::DeleteRows()
 {
 	Freeze();
+	int sel = 0;
 	for (auto i = file->subs->Selections.rbegin(); i != file->subs->Selections.rend(); i++)
 	{
-		int sel = *i;
+		sel = *i;
 		file->subs->dials.erase(file->subs->dials.begin() + sel);
 		file->IdConverter->deleteItemByKey(sel);
 	}
@@ -840,7 +841,7 @@ void SubsGridBase::DeleteRows()
 	if (file->subs->Selections.size() > 0){ file->edited = true; }
 	SaveSelections(true);
 	if (GetCount() < 1){ AddLine(new Dialogue()); }
-	SetModified(GRID_DELETE_LINES);
+	SetModified(GRID_DELETE_LINES, true, false, file->GetElementByKey(sel));
 	Thaw();
 	RefreshColumns();
 }

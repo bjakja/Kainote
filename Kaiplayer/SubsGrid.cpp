@@ -313,6 +313,9 @@ void SubsGrid::OnDuplicate()
 void SubsGrid::OnJoin(wxCommandEvent &event)
 {
 	SaveSelections(true);
+	long startTl = 0, endTl = 0, startOrg = 0, endOrg = 0;
+	Edit->TextEdit->GetSelection(&startTl, &endTl);
+	Edit->TextEditOrig->GetSelection(&startOrg, &endOrg);
 	wxString ntext;
 	wxString ntltext;
 	wxString en1;
@@ -360,6 +363,8 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	SetModified((idd == JoinWithPrevious) ? GRID_JOIN_WITH_PREVIOUS :
 		(idd == JoinWithNext) ? GRID_JOIN_WITH_NEXT : GRID_JOIN_LINES);
 	RefreshColumns();
+	Edit->TextEditOrig->SetSelection(startOrg, endOrg);
+	Edit->TextEdit->SetSelection(startTl, endTl);
 }
 
 void SubsGrid::OnJoinToFirst(int id)

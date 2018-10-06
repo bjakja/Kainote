@@ -688,18 +688,18 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	else if (id == About){
 		KaiMessageBox(wxString::Format(_("Edytor napisów by Marcin Drob aka Bakura lub Bjakja (bjakja7@gmail.com),\nwersja %s z dnia %s"),
 			Options.progname.AfterFirst('v'), Options.GetReleaseDate()) + " \n\n" +
-			_("Ten program powstał w celu zastąpienia dwóch programów Bestplayera i Aegisuba.\n\n") +
+			_("Ten program powstał w celu zastąpienia dwóch programów: Bestplayera i Aegisuba.\n\n") +
 			_("Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub nowych funkcji,\nmożesz napisać o tym na: forum ANSI, Githubie, bądź mailowo.\n\n") +
 			_("Kainote zawiera w sobie części następujących projeków:\n") +
-			L"wxWidgets - Copyright © Julian Smart, Robert Roebling et al;\n" +
+			L"wxWidgets - Copyright © Julian Smart, Robert Roebling et al.\n" +
 			_("Color picker, wymuxowywanie napsów z mkv, audiobox, audio player, automation\ni kilka innych pojedynczych funkcji wzięte z Aegisuba -\n") +
-			L"Copyright © Rodrigo Braz Monteiro;\n"\
-			L"Hunspell - Copyright © Kevin Hendricks;\n"\
-			L"Matroska Parser - Copyright © Mike Matsnev;\n"\
-			L"CSRI - Copyright © David Lamparter;\n"\
-			L"Vsfilter - Copyright © Gabest;\n"\
-			L"FFMPEGSource2 - Copyright © Fredrik Mellbin;\n"\
-			L"ICU - Copyright © 1995-2016 International Business Machines Corporation and others\n"\
+			L"Copyright © Rodrigo Braz Monteiro.\n"\
+			L"Hunspell - Copyright © Kevin Hendricks.\n"\
+			L"Matroska Parser - Copyright © Mike Matsnev.\n"\
+			L"CSRI - Copyright © David Lamparter.\n"\
+			L"Vsfilter - Copyright © Gabest.\n"\
+			L"FFMPEGSource2 - Copyright © Fredrik Mellbin.\n"\
+			L"ICU - Copyright © 1995-2016 International Business Machines Corporation and others.\n"\
 			L"Boost - Copyright © Joe Coder 2004 - 2006.",
 			"O Kainote");
 		//L"FreeType - Copyright ©  David Turner, Robert Wilhelm, and Werner Lemberg;\n"\
