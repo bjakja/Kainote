@@ -2383,8 +2383,8 @@ bool AudioDisplay::UpdateTimeEditCtrls() {
 	// this is why binary OR instead of logical OR is used.
 	// All three time edits must always be updated.
 
-	Edit->StartEdit->SetTime(curStartMS);
-	Edit->EndEdit->SetTime(curEndMS);
+	Edit->StartEdit->SetTime(curStartMS, true, 1);
+	Edit->EndEdit->SetTime(curEndMS, true, 2);
 	return true;
 }
 
