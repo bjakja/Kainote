@@ -1629,12 +1629,13 @@ void KainoteFrame::HideEditor(bool save)
 	cur->Grid->Show(cur->editor);
 
 	cur->Edit->Show(cur->editor);
+	cur->windowResizer->Show(cur->editor);
 
 	if (cur->editor){//Załączanie Edytora
 
 		cur->BoxSizer1->Detach(cur->Video);
 		cur->BoxSizer2->Prepend(cur->Video, 0, wxEXPAND | wxALIGN_TOP, 0);
-		cur->BoxSizer1->InsertSpacer(1, 3);
+
 		cur->Video->panelHeight = 66;
 		cur->Video->vToolbar->Show();
 		if (cur->Video->GetState() != None&&!cur->Video->isFullscreen){
@@ -1662,7 +1663,7 @@ void KainoteFrame::HideEditor(bool save)
 		cur->Video->panelHeight = 44;
 		cur->ShiftTimes->Hide();
 
-		cur->BoxSizer1->Remove(1);
+		//cur->BoxSizer1->Remove(1);
 
 		if (!cur->Video->IsShown()){ cur->Video->Show(); }
 

@@ -54,9 +54,9 @@ class TabPanel : public wxWindow
 		wxString VideoPath;
 		wxString KeyframesPath;
 		wxWindow *lastFocusedWindow = NULL;
-
-	private:
 		KaiWindowResizer* windowResizer;
+	private:
+		
 		bool holding;
 		//void OnMouseEvent(wxMouseEvent& event);
 		void OnFocus(wxChildFocusEvent& event);
