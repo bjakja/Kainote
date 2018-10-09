@@ -1011,6 +1011,9 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	else if (Edit->Visual == CHANGEPOS){
 		vb->SetVisual(false, true);
 	}
+	else {
+		vb->SetVisual(false, true, true);
+	}
 	
 
 
