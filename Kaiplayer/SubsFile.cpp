@@ -169,7 +169,7 @@ SubsFile::SubsFile()
 		_("Usunięcie drzewka"),
 		_("Skrypt automatyzacji"),
 	};
-    iter=0;
+	iter=0;
 	edited=false;
 	subs = new File();
 	IdConverter = new AVLtree();
@@ -184,7 +184,7 @@ SubsFile::~SubsFile()
 		(*it)->Clear();
 		delete (*it);
 	}
-    undo.clear();
+	undo.clear();
 	delete IdConverter;
 	delete[] historyNames;
 }
@@ -213,7 +213,7 @@ void SubsFile::SaveUndo(unsigned char editionType, int activeLine, int markerLin
 
 bool SubsFile::Redo()
 {
-    if(iter<maxx()){
+	if(iter<maxx()){
 		iter++;
 		subs->Clear();
 		delete subs;
@@ -226,7 +226,7 @@ bool SubsFile::Redo()
 
 bool SubsFile::Undo()
 {
-    if(iter>0){
+	if(iter>0){
 		iter--;
 		subs->Clear();
 		delete subs;
@@ -239,7 +239,7 @@ bool SubsFile::Undo()
 
 bool SubsFile::SetHistory(int _iter)
 {
-    if(_iter < undo.size() && _iter>=0){
+	if(_iter < undo.size() && _iter>=0){
 		iter = _iter;
 		subs->Clear();
 		delete subs;
@@ -278,18 +278,18 @@ void SubsFile::DummyUndo(int newIter)
 
 bool SubsFile::IsNotSaved()
 {
-    if((subs->ddials.size()==0 && subs->dstyles.size()==0 && subs->dsinfo.size()==0 && !edited)){return false;}
-    return true;
+	if((subs->ddials.size()==0 && subs->dstyles.size()==0 && subs->dsinfo.size()==0 && !edited)){return false;}
+	return true;
 }
 
 int SubsFile::maxx()
 {
-    return undo.size()-1;
+	return undo.size()-1;
 }
 
 int SubsFile::Iter()
 {
-    return iter;
+	return iter;
 }
 
 int SubsFile::GetAllCount()
