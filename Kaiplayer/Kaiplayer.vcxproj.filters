@@ -399,6 +399,9 @@
     <ClCompile Include="VisualScaleRotation.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
+    <ClCompile Include="KaiWindowResizer.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -712,6 +715,9 @@
     </ClInclude>
     <ClInclude Include="LogHandler.h">
       <Filter>Header Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiWindowResizer.h">
+      <Filter>Header Files\Controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

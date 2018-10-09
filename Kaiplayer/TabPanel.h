@@ -22,6 +22,7 @@
 #include "EditBox.h"
 #include "ChangeTime.h"
 #include <wx/statline.h>
+#include "KaiWindowResizer.h"
 
 class TabPanel : public wxWindow
 	{
@@ -32,7 +33,7 @@ class TabPanel : public wxWindow
 		//bool Show(bool show=true);
 
 		SubsGrid* Grid;
-        EditBox* Edit;
+		EditBox* Edit;
 		VideoCtrl* Video;
 		ShiftTimesWindow* ShiftTimes;
 
@@ -55,9 +56,9 @@ class TabPanel : public wxWindow
 		wxWindow *lastFocusedWindow = NULL;
 
 	private:
-		wxDialog* sline;
+		KaiWindowResizer* windowResizer;
 		bool holding;
-		void OnMouseEvent(wxMouseEvent& event);
+		//void OnMouseEvent(wxMouseEvent& event);
 		void OnFocus(wxChildFocusEvent& event);
 		DECLARE_EVENT_TABLE()
 	};

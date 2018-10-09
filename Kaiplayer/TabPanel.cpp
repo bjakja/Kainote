@@ -22,7 +22,7 @@
 
 TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, const wxSize &size)
 	: wxWindow(parent, -1, pos, size)
-	, sline(NULL)
+	, windowResizer(NULL)
 	, editor(true)
 	, holding(false)
 {
@@ -50,9 +50,32 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	BoxSizer2->Add(Video, 0, wxEXPAND | wxALIGN_TOP, 0);
 	BoxSizer2->Add(Edit, 1, wxEXPAND | wxALIGN_TOP, 0);
 
+	windowResizer = new KaiWindowResizer(this, [=](int newpos){
+		int mw, mh;
+		GetClientSize(&mw, &mh);
+		int limit = (Video->GetState() != None && Video->IsShown()) ? 350 : 150;
+		return newpos > limit && newpos < mh - 5;
+	}, [=](int newpos, bool shiftDown){
+		int w, h;
+		Edit->GetClientSize(&w, &h);
+		
+		if (Video->GetState() != None&&Video->IsShown()){
+			Options.GetCoords(VideoWindowSize, &w, &h);
+			int ww, hh;
+			Video->CalcSize(&ww, &hh, w, newpos, false, true);
+			Video->SetMinSize(wxSize(ww, hh + Video->panelHeight));
+			Options.SetCoords(VideoWindowSize, ww, hh + Video->panelHeight);
+		}
+		Edit->SetMinSize(wxSize(-1, newpos));
+		BoxSizer1->Layout();
+		if (shiftDown){
+			SetVideoWindowSizes(w, newpos);
+		}
+	});
+
 	BoxSizer1 = new wxBoxSizer(wxVERTICAL);
 	BoxSizer1->Add(BoxSizer2, 0, wxEXPAND | wxALIGN_TOP, 0);
-	BoxSizer1->AddSpacer(3);
+	BoxSizer1->Add(windowResizer, 0, wxEXPAND, 0);//AddSpacer(3);
 	BoxSizer1->Add(BoxSizer3, 1, wxEXPAND, 0);
 	SetSizerAndFit(BoxSizer1);
 
@@ -134,82 +157,83 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 		Edit->ABox->SetAccels();
 }
 
-void TabPanel::OnMouseEvent(wxMouseEvent& event)
-{
-	bool click = event.LeftDown();
-	bool left_up = event.LeftUp();
-	int w, h;
-	Edit->GetClientSize(&w, &h);
-	int npos = event.GetY();
-	if (event.Leaving()){
-		SetCursor(wxCURSOR_ARROW);
-	}
-	else if (npos < h && !click && !holding && !left_up){
-		SetCursor(wxCURSOR_SIZENS);/*SetCursor(wxCURSOR_NO_ENTRY);*/ return;
-	}
-	else{
-		SetCursor(wxCURSOR_SIZENS);
-	}
-
-	if (!holding && HasCapture())
-		ReleaseMouse();
-
-	if (left_up && holding) {
-		holding = false;
-		ReleaseMouse();
-		if (sline){
-			int x;
-			sline->GetPosition(&x, &npos);
-			ScreenToClient(&x, &npos);
-			sline->Destroy();
-			sline = NULL;
-		}
-
-		int mw, mh;
-		GetClientSize(&mw, &mh);
-		if (npos >= mh){
-			npos = mh - 3;
-		}
-
-		if (Video->GetState() != None&&Video->IsShown()){
-			Options.GetCoords(VideoWindowSize, &w, &h);
-			int ww, hh;
-			Video->CalcSize(&ww, &hh, w, npos, false, true);
-			Video->SetMinSize(wxSize(ww, hh + Video->panelHeight));
-			Options.SetCoords(VideoWindowSize, ww, hh + Video->panelHeight);
-		}/*else{*/Edit->SetMinSize(wxSize(-1, npos));/*}*/
-		BoxSizer1->Layout();
-		if (event.ShiftDown()){
-			SetVideoWindowSizes(w, npos);
-		}
-	}
-
-	if (left_up && !holding) {
-		return;
-	}
-
-	if (click && !holding) {
-		holding = true;
-		CaptureMouse();
-		int px = 2, py = npos;
-		ClientToScreen(&px, &py);
-		sline = new wxDialog(this, -1, "", wxPoint(px, py), wxSize(GetSize().GetWidth(), 2), wxSTAY_ON_TOP | wxBORDER_NONE);
-		sline->SetBackgroundColour(Options.GetColour(WindowText));
-		sline->Show();
-	}
-
-	if (holding){
-		int w = 0, h = 0;
-		Video->GetClientSize(&w, &h);
-		int limit = (Video->GetState() != None && Video->IsShown()) ? 350 : 150;
-		if (npos != h&&npos > limit){
-			int px = 2, py = npos;
-			ClientToScreen(&px, &py);
-			sline->SetPosition(wxPoint(px, py));
-		}
-
-	}
-}
+//void TabPanel::OnMouseEvent(wxMouseEvent& event)
+//{
+//	bool click = event.LeftDown();
+//	bool left_up = event.LeftUp();
+//	int w, h;
+//	Edit->GetClientSize(&w, &h);
+//	int npos = event.GetY();
+//	if (event.Leaving()){
+//		SetCursor(wxCURSOR_ARROW);
+//	}
+//	else if (npos < h && !click && !holding && !left_up){
+//		SetCursor(wxCURSOR_SIZENS);/*SetCursor(wxCURSOR_NO_ENTRY);*/ return;
+//	}
+//	else{
+//		SetCursor(wxCURSOR_SIZENS);
+//	}
+//
+//	if (!holding && HasCapture())
+//		ReleaseMouse();
+//
+//	if (left_up && holding) {
+//		holding = false;
+//		ReleaseMouse();
+//		if (sline){
+//			int x;
+//			sline->GetPosition(&x, &npos);
+//			ScreenToClient(&x, &npos);
+//			sline->Destroy();
+//			sline = NULL;
+//		}
+//
+//		int mw, mh;
+//		GetClientSize(&mw, &mh);
+//		if (npos >= mh){
+//			npos = mh - 3;
+//		}
+//
+//		if (Video->GetState() != None&&Video->IsShown()){
+//			Options.GetCoords(VideoWindowSize, &w, &h);
+//			int ww, hh;
+//			Video->CalcSize(&ww, &hh, w, npos, false, true);
+//			Video->SetMinSize(wxSize(ww, hh + Video->panelHeight));
+//			Options.SetCoords(VideoWindowSize, ww, hh + Video->panelHeight);
+//		}
+//		Edit->SetMinSize(wxSize(-1, npos));
+//		BoxSizer1->Layout();
+//		if (event.ShiftDown()){
+//			SetVideoWindowSizes(w, npos);
+//		}
+//	}
+//
+//	if (left_up && !holding) {
+//		return;
+//	}
+//
+//	if (click && !holding) {
+//		holding = true;
+//		CaptureMouse();
+//		int px = 2, py = npos;
+//		ClientToScreen(&px, &py);
+//		sline = new wxDialog(this, -1, "", wxPoint(px, py), wxSize(GetSize().GetWidth(), 2), wxSTAY_ON_TOP | wxBORDER_NONE);
+//		sline->SetBackgroundColour(Options.GetColour(WindowText));
+//		sline->Show();
+//	}
+//
+//	if (holding){
+//		int w = 0, h = 0;
+//		Video->GetClientSize(&w, &h);
+//		int limit = (Video->GetState() != None && Video->IsShown()) ? 350 : 150;
+//		if (npos != h&&npos > limit){
+//			int px = 2, py = npos;
+//			ClientToScreen(&px, &py);
+//			sline->SetPosition(wxPoint(px, py));
+//		}
+//
+//	}
+//}
 
 void TabPanel::OnFocus(wxChildFocusEvent& event)
 {
@@ -272,6 +296,6 @@ bool TabPanel::Hide()
 //}
 
 BEGIN_EVENT_TABLE(TabPanel, wxWindow)
-EVT_MOUSE_EVENTS(TabPanel::OnMouseEvent)
+//EVT_MOUSE_EVENTS(TabPanel::OnMouseEvent)
 EVT_CHILD_FOCUS(TabPanel::OnFocus)
 END_EVENT_TABLE()

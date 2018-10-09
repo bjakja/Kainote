@@ -1776,9 +1776,7 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 
 	if (id == CloseAudio && tab->Edit->ABox){
 		tab->Video->player = NULL;
-		tab->Edit->ABox->Destroy();
-		tab->Edit->ABox = NULL;
-		tab->Edit->Layout();
+		tab->Edit->CloseAudio();
 	}
 	else{
 
@@ -1804,33 +1802,10 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 		if (Path.IsEmpty()){ Path = tab->VideoPath; }
 		if (Path.IsEmpty()){ return; }
 
-
-		if (tab->Edit->ABox){
-			tab->Edit->ABox->SetFile(Path, (id == 40000));
-			if (!tab->Edit->ABox->audioDisplay->loaded){
-				tab->Edit->ABox->Destroy();
-				tab->Edit->ABox = NULL;
-			}
-			else{ SetRecent(2); }
+		if (tab->Edit->LoadAudio(Path, (id == 40000))){
+			SetRecent(2);
 		}
-		else{
-			tab->Edit->ABox = new AudioBox(tab->Edit, tab->Grid);
-			tab->Edit->ABox->SetFile(Path, (id == 40000));
 
-			if (tab->Edit->ABox->audioDisplay->loaded){
-				tab->Edit->BoxSizer1->Prepend(tab->Edit->ABox, 0, wxLEFT | wxRIGHT | wxEXPAND, 4);
-				//int sizew,sizeh;
-				//Options.GetCoords("Video Window Size",&sizew,&sizeh);
-				if (!tab->Video->IsShown()){
-					tab->Edit->SetMinSize(wxSize(500, 350));
-				}
-				tab->Layout();
-				Tabs->Refresh(false);
-				tab->Edit->ABox->audioDisplay->SetFocus();
-				SetRecent(2);
-			}
-			else{ tab->Edit->ABox->Destroy(); tab->Edit->ABox = NULL; }
-		}
 	}
 }
 

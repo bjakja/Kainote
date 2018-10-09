@@ -46,12 +46,11 @@
 #include "KaiSlider.h"
 #include <wx/button.h>
 #include <wx/bmpbuttn.h>
-//#include <wx/sashwin.h>
 #include <wx/slider.h>
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
 #include "AudioDisplay.h"
-//#include "Hotkeys.h"
+
 //////////////
 // Prototypes
 
@@ -110,13 +109,12 @@ private:
 	void OnSpectrumMode(wxCommandEvent &event);
 	void OnSpectrumNonLinear(wxCommandEvent &event);
 	void OnNextLineCommit(wxCommandEvent &event);
-	void OnMouseEvents(wxMouseEvent &event);
+	//void OnMouseEvents(wxMouseEvent &event);
 	void OnScrollSpectrum(wxCommandEvent &event);
 
 	bool holding;
 	bool arrows;
 	int oldy;
-	wxDialog *sline;
 
 public:
 	AudioDisplay *audioDisplay;
@@ -147,7 +145,6 @@ enum {
 	Audio_Horizontal_Zoom,
 	Audio_Vertical_Zoom,
 	Audio_Volume,
-	//Audio_Sash,
 	Audio_Vertical_Link,
 
 	Audio_Button_Split,

@@ -30,6 +30,8 @@
 #include "KaiStaticText.h"
 #include "MenuButton.h"
 #include "ColorPicker.h"
+#include "KaiWindowResizer.h"
+
 
 class SubsGrid;
 
@@ -137,6 +139,8 @@ public:
 	void RebuildActorEffectLists();
 	void SetActiveLineToDoubtful();
 	void SetGrid(SubsGrid *_grid, bool isPreview = false);
+	bool LoadAudio(const wxString &audioFileName, bool fromVideo);
+	void CloseAudio();
 
 	wxBoxSizer* BoxSizer1;
 
@@ -199,6 +203,7 @@ private:
 	int CurrentUntranslated;
 	int currentLine;
 	SubsGrid *grid;
+	KaiWindowResizer *windowResizer;
 };
 
 

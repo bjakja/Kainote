@@ -1968,3 +1968,58 @@ void EditBox::SetGrid(SubsGrid *_grid, bool isPreview){
 		RefreshStyle();
 	}
 }
+
+bool EditBox::LoadAudio(const wxString &audioFileName, bool fromVideo)
+{
+	if (ABox){
+		ABox->SetFile(audioFileName, fromVideo);
+	}
+	else{
+		ABox = new AudioBox(this, grid);
+		ABox->SetFile(audioFileName, fromVideo);
+
+		if (ABox->audioDisplay->loaded){
+			windowResizer = new KaiWindowResizer(this,
+				[=](int newpos){//canSize
+				wxSize size = GetClientSize();
+				int minEBSize = (TextEditOrig->IsShown()) ? 200 : 150;
+				return (newpos > 150 && size.y - newpos > minEBSize);
+			}, [=](int newpos, bool shiftDown){//doSize
+				ABox->SetMinSize(wxSize(-1, newpos));
+				BoxSizer1->Layout();
+				TextEdit->Refresh(false);
+				TlMode->Refresh(false);
+				Options.SetInt(AudioBoxHeight, newpos);
+				Options.SaveAudioOpts();
+			});
+			BoxSizer1->Prepend(windowResizer, 0, wxEXPAND);
+			BoxSizer1->Prepend(ABox, 0, wxLEFT | wxRIGHT | wxEXPAND, 4);
+
+			if (!((TabPanel*)GetParent())->Video->IsShown()){
+				SetMinSize(wxSize(500, 350));
+			}
+			Layout();
+			//Tabs->Refresh(false);
+			ABox->audioDisplay->SetFocus();
+		}
+		else{ ABox->Destroy(); ABox = NULL; }
+	}
+	if (!ABox->audioDisplay->loaded){
+		ABox->Destroy();
+		ABox = NULL;
+		return false;
+	}
+
+	return true;
+}
+
+void EditBox::CloseAudio()
+{
+	BoxSizer1->Remove(0);
+	BoxSizer1->Remove(1);
+	windowResizer->Destroy();
+	windowResizer = NULL;
+	ABox->Destroy();
+	ABox = NULL;
+	Layout();
+}
