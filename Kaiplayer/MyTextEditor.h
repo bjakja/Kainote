@@ -69,7 +69,7 @@ protected:
 	void SeekSelected(const wxString &word);
 	void DrawWordRectangles(int type, wxDC &dc);
 
-	bool spell;
+	bool SpellCheckerOnOff;
 	bool useSpellchecker;
 	bool changeQuotes;
 	wxString MText;
@@ -116,6 +116,7 @@ enum{
 	TEXTM_SEEKWORDS,
 	MENU_SHOW_STATUS_BAR,
 	MENU_CHANGE_QUOTES,
+	MENU_SPELLCHECKER_ON = 18000,
 	ID_DEL,
 	ID_BACK,
 	ID_CBACK,

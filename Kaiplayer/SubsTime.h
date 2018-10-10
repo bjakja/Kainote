@@ -23,8 +23,8 @@ class STime
 {
 private:
 
-    char form;
-    
+	char form;
+	
 public:
 	int orgframe;
 	//wxString raw;

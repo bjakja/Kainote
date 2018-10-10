@@ -209,23 +209,24 @@ DWORD FontEnumerator::CheckFontsProc(void* fontEnum)
 	return FindCloseChangeNotification( hDir );
 }
 
-//w Dc ma być ustawiona czcionka
+//in Dc must be setted font
+//disabled usp10 code cause it shows in some fonts lack of almost all glyphs.
 bool FontEnumerator::CheckGlyphsExists(HDC dc, const wxString &textForCheck, wxString &missing)
 {
 	std::wstring utf16characters = textForCheck.wc_str();
 	
 	bool succeeded = true;
 	//code taken from Aegisub, fixed by me.
-	SCRIPT_CACHE cache = NULL;
+	//SCRIPT_CACHE cache = NULL;
 	WORD *indices = new WORD[utf16characters.size()];
 
 	// First try to check glyph coverage with Uniscribe, since it
 	// handles non-BMP unicode characters
-	HRESULT hr = ScriptGetCMap(dc, &cache, utf16characters.data(),
-		utf16characters.size(), 0, indices);
+	//HRESULT hr = ScriptGetCMap(dc, &cache, utf16characters.data(),
+		//utf16characters.size(), 0, indices);
 
 	// Uniscribe doesn't like some types of fonts, so fall back to GDI
-	if (hr == E_HANDLE) {
+	//if (hr == E_HANDLE) {
 		succeeded = (GetGlyphIndicesW(dc, utf16characters.data(), utf16characters.size(),
 			indices, GGI_MARK_NONEXISTING_GLYPHS)!=GDI_ERROR);
 		for (size_t i = 0; i < utf16characters.size(); ++i) {
@@ -234,28 +235,28 @@ bool FontEnumerator::CheckGlyphsExists(HDC dc, const wxString &textForCheck, wxS
 			if (indices[i] == 65535)
 				missing<<utf16characters[i];
 		}
-	}
-	else if (hr == S_FALSE) {
-		for (size_t i = 0; i < utf16characters.size(); ++i) {
-			// Uniscribe doesn't report glyph indexes for non-BMP characters,
-			// so we have to call ScriptGetCMap on each individual pair to
-			// determine if it's the missing one
-			if (U16_IS_SURROGATE(utf16characters[i])) {
-				hr = ScriptGetCMap(dc, &cache, &utf16characters[i], 2, 0, &indices[i]);
-				if (hr == S_FALSE) {
-					missing<<utf16characters[i];
-					missing<<utf16characters[i+1];
-				}
-				++i;
-			}
-			else if (indices[i] == 0) {
-				missing<<utf16characters[i];
-			}
-		}
-	}else if(hr != S_OK){
-		succeeded=false;
-	}
-	ScriptFreeCache(&cache);
+	//}
+	//else if (hr == S_FALSE) {
+	//	for (size_t i = 0; i < utf16characters.size(); ++i) {
+	//		// Uniscribe doesn't report glyph indexes for non-BMP characters,
+	//		// so we have to call ScriptGetCMap on each individual pair to
+	//		// determine if it's the missing one
+	//		if (U16_IS_SURROGATE(utf16characters[i])) {
+	//			hr = ScriptGetCMap(dc, &cache, &utf16characters[i], 2, 0, &indices[i]);
+	//			if (hr == S_FALSE) {
+	//				missing<<utf16characters[i];
+	//				missing<<utf16characters[i+1];
+	//			}
+	//			++i;
+	//		}
+	//		else if (indices[i] == 0) {
+	//			missing<<utf16characters[i];
+	//		}
+	//	}
+	//}else if(hr != S_OK){
+	//	succeeded=false;
+	//}
+	//ScriptFreeCache(&cache);
 	delete[] indices;
 	return succeeded;
 }

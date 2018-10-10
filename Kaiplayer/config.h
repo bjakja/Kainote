@@ -374,44 +374,44 @@ private:
 	wxColour colors[colorsSize];
 	
 
-    public:
+	public:
 	std::vector<Styles*> assstore;
-    wxString progname;
+	wxString progname;
 	//aktualny katalog --- œcie¿ka do folderu programu
-    wxString actualStyleDir, pathfull;
-    wxArrayString dirs;
+	wxString actualStyleDir, pathfull;
+	wxArrayString dirs;
 	bool AudioOpts;
 
 
-    const wxString &GetString(CONFIG opt);
-    bool GetBool(CONFIG opt);
-    const wxColour &GetColour(COLOR opt);
+	const wxString &GetString(CONFIG opt);
+	bool GetBool(CONFIG opt);
+	const wxColour &GetColour(COLOR opt);
 	AssColor GetColor(COLOR opt);
-    int GetInt(CONFIG opt);
-    float GetFloat(CONFIG opt);
+	int GetInt(CONFIG opt);
+	float GetFloat(CONFIG opt);
 	void GetTable(CONFIG opt, wxArrayString &tbl, wxString split="|", int mode = 4);
 	void GetIntTable(CONFIG opt, wxArrayInt &tbl, wxString split="|", int mode = 4);
 	void GetCoords(CONFIG opt, int* coordx, int* coordy);
 
-    void SetString(CONFIG opt, const wxString &sopt);
-    void SetBool(CONFIG opt, bool bopt);
-    void SetColour(COLOR opt, wxColour &copt);
+	void SetString(CONFIG opt, const wxString &sopt);
+	void SetBool(CONFIG opt, bool bopt);
+	void SetColour(COLOR opt, wxColour &copt);
 	void SetColor(COLOR opt, AssColor &copt);
-    void SetInt(CONFIG opt, int iopt);
-    void SetFloat(CONFIG opt, float fopt);
+	void SetInt(CONFIG opt, int iopt);
+	void SetFloat(CONFIG opt, float fopt);
 	void SetTable(CONFIG opt, wxArrayString &iopt,wxString split="|");
 	void SetIntTable(CONFIG opt, wxArrayInt &iopt,wxString split="|");
 	void SetCoords(CONFIG opt, int coordx, int coordy);
-    void GetRawOptions(wxString &options, bool Audio=false);
-    void AddStyle(Styles *styl);
-    void ChangeStyle(Styles *styl,int i);
-    Styles *GetStyle(int i,const wxString &name=_T(""), Styles* styl=NULL);
-    int FindStyle(const wxString &name, int *multiplication=NULL);
-    void DelStyle(int i);
-    int StoreSize();
-    void CatchValsLabs(const wxString &rawoptions);
-    bool SetRawOptions(const wxString &textconfig);
-    int LoadOptions();
+	void GetRawOptions(wxString &options, bool Audio=false);
+	void AddStyle(Styles *styl);
+	void ChangeStyle(Styles *styl,int i);
+	Styles *GetStyle(int i,const wxString &name=_T(""), Styles* styl=NULL);
+	int FindStyle(const wxString &name, int *multiplication=NULL);
+	void DelStyle(int i);
+	int StoreSize();
+	void CatchValsLabs(const wxString &rawoptions);
+	bool SetRawOptions(const wxString &textconfig);
+	int LoadOptions();
 	void LoadColors(const wxString &themeName="");
 	void LoadDefaultConfig();
 	void LoadDefaultColors(bool dark = true, wxColour *table = NULL);
@@ -419,17 +419,17 @@ private:
 	void LoadMissingColours(const wxString &path);
 	bool LoadAudioOpts();
 	void SaveAudioOpts();
-    void SaveOptions(bool cfg=true, bool style=true);
+	void SaveOptions(bool cfg=true, bool style=true);
 	void SaveColors(const wxString &path="");
-    void LoadStyles(const wxString &katalog);
-    void clearstyles();
+	void LoadStyles(const wxString &katalog);
+	void clearstyles();
 	void Sortstyles();
 	void SetHexColor(const wxString &nameAndColor);
 	//wxString GetStringColor(unsigned int);
 	wxString GetStringColor(size_t optionName);
 	wxString GetReleaseDate();
-    config();
-    ~config();
+	config();
+	~config();
 	wxColour defaultColour;
 };
 bool sortfunc(Styles *styl1,Styles *styl2);

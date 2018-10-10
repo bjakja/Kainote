@@ -537,6 +537,10 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 	elem += scPos;
 	if (elem >= (int)parent->items.size() || elem < 0){ return; }
 	MenuItem *item = parent->items[elem];
+	if (leftdown && item->type == ITEM_CHECK_AND_HIDE){
+		item->check = !item->check;
+		Refresh(false);
+	}
 	if (subMenuIsShown && elem != submenuToHide){
 		hideSubmenuTimer.Start(400, true);
 		subMenuIsShown = false;
@@ -669,7 +673,7 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 		//tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 
 		if (showIcons){
-			if (item->type == ITEM_CHECK){
+			if (item->type == ITEM_CHECK || item->type == ITEM_CHECK_AND_HIDE){
 				if (item->check) tdc.DrawBitmap(checkbmp, 5, (height*i) + 5);
 			}
 			else if (item->type == ITEM_RADIO && noRadio){

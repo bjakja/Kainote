@@ -247,7 +247,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	BoxSizer6->Add(AutoMoveTags, 0, wxALIGN_CENTER | wxLEFT | wxTOP | wxBOTTOM, 2);
 
 
-	TextEdit = new TextEditor(this, 16667, Options.GetBool(SpellcheckerOn), wxDefaultPosition, wxSize(-1, 30));
+	TextEdit = new TextEditor(this, 16667, true, wxDefaultPosition, wxSize(-1, 30));
 	TextEdit->EB = this;
 
 	TextEditOrig = new TextEditor(this, 16667, false, wxDefaultPosition, wxSize(-1, 30));

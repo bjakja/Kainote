@@ -33,7 +33,8 @@ wxString TextEditor::LuaKeywords[] = { "function", "for", "if", "while", "do", "
 TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos, const wxSize& size, long style)
 	:wxWindow(parent, id, pos, size, style)
 {
-	useSpellchecker = spell = _spell;
+	useSpellchecker = _spell;
+	SpellCheckerOnOff = Options.GetBool(SpellcheckerOn);
 	MText = "";
 	bmp = NULL;
 	fsize = 10;
@@ -117,7 +118,7 @@ void TextEditor::SetTextS(const wxString &text, bool modif, bool resetsel, bool 
 	modified = modif;
 	MText = text;
 	CalcWrap(modif, (noevent) ? false : modif);
-	if (spell){ CheckText(); }
+	if (SpellCheckerOnOff){ CheckText(); }
 	if (resetsel){ SetSelection(0, 0); }
 	else{
 		if ((size_t)Cursor.x > MText.Len()){ Cursor.x = MText.Len(); Cursor.y = FindY(Cursor.x); }
@@ -238,7 +239,7 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 		if (Cursor.x + 1>wraps[Cursor.y + 1]){ Cursor.y++; }
 		Cursor.x++;
 		Selend = Cursor;
-		if (spell){ CheckText();}
+		if (SpellCheckerOnOff){ CheckText();}
 		Refresh(false);
 		modified = true;
 	}
@@ -306,7 +307,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 			MText.Remove(curx, selx - curx);
 			Selend = Cursor;
 			CalcWrap();
-			if (spell){ CheckText(); }
+			if (SpellCheckerOnOff){ CheckText(); }
 			SetSelection(curx, curx);
 		}
 		else
@@ -324,7 +325,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		if (Cursor.x<wraps[Cursor.y] || (Cursor.x == wraps[Cursor.y] && len != wraps.size())){ Cursor.y--; }
 		else if (Cursor.x>wraps[Cursor.y + 1]){ Cursor.y++; }
 		Selend = Cursor;
-		if (spell){ CheckText(); }
+		if (SpellCheckerOnOff){ CheckText(); }
 		Refresh(false);
 		modified = true;
 		break;
@@ -458,7 +459,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 				MText.replace(from, to - from + 1, txt);
 				modified = true;
 				CalcWrap();
-				if (spell){ CheckText(); }
+				if (SpellCheckerOnOff){ CheckText(); }
 				int newto = from + txt.Len();
 				SetSelection(newto, newto);
 				EB->Send(EDITBOX_SPELL_CHECKER, false);
@@ -709,7 +710,7 @@ void TextEditor::DrawFld(wxDC &dc, int w, int h, int windowh)
 	int fww;
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	//rysowanie spellcheckera
-	if (spell){
+	if (SpellCheckerOnOff){
 		dc.SetBrush(cspellerrors);
 		DrawWordRectangles(0, dc);
 	}
@@ -1224,6 +1225,20 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	menut.Append(TEXTM_SEEKWORDG, _("Szukaj zaznaczonej frazy w Google"))->Enable(Selend.x != Cursor.x);
 	menut.Append(TEXTM_SEEKWORDS, _("Szukaj synonimu na synonimy.net"))->Enable(Selend.x != Cursor.x);
 
+	int numOfLanguages = 0;
+	if (useSpellchecker){
+		wxArrayString dics;
+		SpellChecker::AvailableDics(dics);
+		numOfLanguages = dics.size();
+		const wxString &language = Options.GetString(DictionaryLanguage);
+		Menu *languageMenu = new Menu();
+		menut.Append(MENU_SPELLCHECKER_ON, _("Sprawdzanie pisowni"), "", true, NULL, NULL, ITEM_CHECK_AND_HIDE)->Check(SpellCheckerOnOff);
+		for (int k = 0; k < numOfLanguages; k++){
+			languageMenu->Append(MENU_SPELLCHECKER_ON + k + 1, dics[k], "", true, NULL, NULL, (language == dics[k])? ITEM_RADIO : ITEM_NORMAL);
+		}
+		menut.Append(MENU_SPELLCHECKER_ON - 1, _("Zainstalowane języki"), languageMenu);
+	}
+
 	if (!err.IsEmpty()){
 		menut.Append(TEXTM_ADD, wxString::Format(_("&Dodaj słowo \"%s\" do słownika"), err));
 	}
@@ -1261,7 +1276,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 		MText.replace(from, to - from + 1, suggs[id - 30200]);
 		modified = true;
 		CalcWrap();
-		if (spell){ CheckText(); }
+		if (SpellCheckerOnOff){ CheckText(); }
 		int newto = from + suggs[id - 30200].Len();
 		SetSelection(newto, newto);
 		EB->Send(EDITBOX_SPELL_CHECKER, false);
@@ -1308,6 +1323,28 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 		ShellExecuteEx(&sei);
 
 	}
+	else if (id >= MENU_SPELLCHECKER_ON && useSpellchecker && id <= (MENU_SPELLCHECKER_ON + numOfLanguages)){
+		if (id == MENU_SPELLCHECKER_ON){
+			MenuItem * item = menut.FindItem(id);
+			if (item){
+				SpellCheckerOnOff = item->IsChecked();
+				Options.SetBool(SpellcheckerOn, SpellCheckerOnOff);
+			}
+		}
+		else{
+			MenuItem * item = menut.FindItem(id);
+			if (item){
+				Options.SetString(DictionaryLanguage, item->GetLabel());
+				SpellChecker::Destroy();
+			}
+		}
+		if (SpellCheckerOnOff)
+			CheckText();
+		else
+			errors.Clear();
+		EB->ClearErrs();
+		Refresh(false);
+	}
 
 
 }
@@ -1327,7 +1364,7 @@ void TextEditor::Copy(bool cut)
 	if (cut){
 		MText.Remove(curx, selx - curx);
 		CalcWrap();
-		if (spell){ CheckText(); }
+		if (SpellCheckerOnOff){ CheckText(); }
 		SetSelection(curx, curx);
 		modified = true;
 	}
@@ -1355,7 +1392,7 @@ void TextEditor::Paste()
 			MText.insert(curx, whatpaste);
 			modified = true;
 			CalcWrap();
-			if (spell){ CheckText(); }
+			if (SpellCheckerOnOff){ CheckText(); }
 			int whre = curx + whatpaste.Len();
 			SetSelection(whre, whre);
 
@@ -1424,7 +1461,7 @@ int TextEditor::FindBracket(wxUniChar sbrkt, wxUniChar ebrkt, int pos, bool from
 
 void TextEditor::SpellcheckerOnOff()
 {
-	spell = !spell;
+	SpellCheckerOnOff = !SpellCheckerOnOff;
 	Refresh(false);
 }
 
@@ -1511,11 +1548,15 @@ void TextEditor::DrawWordRectangles(int type, wxDC &dc)
 	}
 }
 
+//state here is for template and for disable spellchecker and wraps
 void TextEditor::SetState(int _state, bool refresh){
+	if (state == _state)
+		return;
+
 	state = _state;
-	spell = (!state) ? useSpellchecker : false;
 	if (refresh){
-		if (spell)
+		SpellCheckerOnOff = (!state) ? Options.GetBool(SpellcheckerOn) : false;
+		if (SpellCheckerOnOff)
 			CheckText();
 		EB->UpdateChars(MText);
 		Refresh(false);

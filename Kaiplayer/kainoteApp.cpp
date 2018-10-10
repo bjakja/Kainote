@@ -40,13 +40,13 @@ IMPLEMENT_APP(kainoteApp);
 
 bool kainoteApp::OnInit()
 {
-    
+	
 	m_checker = new wxSingleInstanceChecker();
-        
-    bool wxsOK = true;
+		
+	bool wxsOK = true;
 
 	if (!m_checker->IsAnotherRunning())
-    {
+	{
 		
 		setlocale(LC_NUMERIC, "C");
 		setlocale(LC_CTYPE, "C");
@@ -88,7 +88,7 @@ bool kainoteApp::OnInit()
 			}
 
 			Frame=NULL;
-    		Frame = new KainoteFrame(wxPoint(posx,posy),wxSize(sizex,sizey));
+			Frame = new KainoteFrame(wxPoint(posx,posy),wxSize(sizex,sizey));
 			bool opevent=false;
 			if(paths.GetCount()>0){
 				if(Options.GetBool(VideoFullskreenOnStart)){
@@ -103,7 +103,7 @@ bool kainoteApp::OnInit()
 			
 			
 			Frame->Show();
-    		SetTopWindow(Frame);
+			SetTopWindow(Frame);
 			timer.SetOwner(this,1199);
 			Connect(1199,wxEVT_TIMER,(wxObjectEventFunction)&kainoteApp::OnOpen);
 			if(opevent){
@@ -118,7 +118,7 @@ bool kainoteApp::OnInit()
 #endif
 			
 		}
-    }else{
+	}else{
 		wxString subs;
 		for (int i=1;i<argc;i++) {
 			subs.Append(argv[i]);
@@ -126,7 +126,7 @@ bool kainoteApp::OnInit()
 		}
 
 		delete m_checker; // OnExit() won't be called if we return false
-        m_checker = NULL;
+		m_checker = NULL;
 		//damn wxwidgets, why class name is not customizable?    
 		HWND hWnd = FindWindow(L"Kainote_main_windowNR",0);/**///wxWindow
 		if (hWnd && subs!=""){
@@ -136,10 +136,10 @@ bool kainoteApp::OnInit()
 			cds.lpData = (void *)text;
 			SendMessage(hWnd, WM_COPYDATA, 0, (LPARAM)&cds);
 		}
-        return false;
+		return false;
 	}
-    
-    return wxsOK;
+	
+	return wxsOK;
 
 }
 
@@ -147,7 +147,7 @@ int kainoteApp::OnExit()
 {
 	if (m_checker){ delete m_checker; }
 	wxDELETE(locale);	
-    return 0;
+	return 0;
 }
 
 //void kainoteApp::OnUnhandledException()
@@ -194,8 +194,8 @@ bool kainoteApp::IsBusy()
 {
 	wxWindowList children = Frame->GetChildren();
 	for (wxWindowList::Node *node=children.GetFirst(); node; node = node->GetNext()) {
-            wxWindow *current = (wxWindow *)node->GetData();
-            if ((current->IsKindOf(CLASSINFO(KaiDialog)) && ((KaiDialog*)current)->IsModal()) || 
+			wxWindow *current = (wxWindow *)node->GetData();
+			if ((current->IsKindOf(CLASSINFO(KaiDialog)) && ((KaiDialog*)current)->IsModal()) || 
 				(current->IsKindOf(CLASSINFO(wxDialog)) && ((wxDialog*)current)->IsModal()) || current->GetId() == 31555 )
 		{
 			return true;
