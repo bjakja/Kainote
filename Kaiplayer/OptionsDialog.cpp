@@ -948,10 +948,11 @@ void OptionsDialog::SetOptions(bool saveall)
 				if (OB.option <= AudioWheelDefaultToZoom){ audio = true; }
 				if (OB.option == SpellcheckerOn){
 					for (size_t i = 0; i < Kai->Tabs->Size(); i++){
-						Kai->Tabs->Page(i)->Grid->SpellErrors.clear();
+						TabPanel *tab = Kai->Tabs->Page(i);
+						tab->Grid->SpellErrors.clear();
+						tab->Edit->TextEdit->SpellcheckerOnOff();
 					}
 					Kai->Tabs->GetTab()->Grid->Refresh(false);
-					Kai->Tabs->GetTab()->Edit->TextEdit->SpellcheckerOnOff();
 				}
 			}
 		}
@@ -981,8 +982,7 @@ void OptionsDialog::SetOptions(bool saveall)
 					Options.SetString(OB.option, kol);
 					if (cbx->GetId() == 10001){
 						SpellChecker::Destroy();
-						colmod = true;
-						Kai->GetTab()->Grid->SpellErrors.clear();
+						Kai->Tabs->GetTab()->Edit->ClearErrs();
 					}
 				}
 			}
@@ -1001,7 +1001,10 @@ void OptionsDialog::SetOptions(bool saveall)
 				if (Options.GetString(OB.option) != str){
 					Options.SetString(OB.option, str);
 					if (OB.option == GridTagsSwapChar){
-						Kai->GetTab()->Grid->SpellErrors.clear();
+						for (size_t i = 0; i < Kai->Tabs->Size(); i++){
+							TabPanel *tab = Kai->Tabs->Page(i);
+							tab->Grid->SpellErrors.clear();
+						}
 					}
 				}
 				if (sc->GetId() == 22001){

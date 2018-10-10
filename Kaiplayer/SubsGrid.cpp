@@ -786,44 +786,45 @@ void SubsGrid::OnPasteTextTl()
 
 void SubsGrid::MoveTextTL(char mode)
 {
+	file->GetSelections(selections);
 	if (selections.GetCount() < 1 || !showOriginal || !hasTLMode) return;
-	SaveSelections();
-	int first = selections[0];
-	int mrow = 1;
+	SaveSelections(true);
+	int firstSelected = selections[0];
+	int numSelected = 1;
 	if (selections.GetCount() > 1){
-		mrow = selections[1] - first;
+		numSelected = selections[1] - firstSelected;
 	}
 
 	if (mode < 3){// w górę ^
 		//tryb 2 gdzie dodaje puste linijki a tekst pl pozostaje bez zmian
 		if (mode == 2){
-			Dialogue *insdial = GetDialogue(first)->Copy();
+			Dialogue *insdial = GetDialogue(firstSelected)->Copy();
 			insdial->Text = "";
-			InsertRows(first, mrow, insdial);
+			InsertRows(firstSelected, numSelected, insdial);
 		}
-		file->InsertSelection(first);
-		for (int i = first; i < GetCount(); i++)
+		file->InsertSelection(firstSelected);
+		for (int i = firstSelected; i < GetCount(); i++)
 		{
-			if (i < first + mrow){
+			if (i < firstSelected + numSelected){
 				//tryb1 gdzie łączy wszystkie nachodzące linijki w jedną
 				if (mode == 1){
-					wxString mid = (GetDialogue(first)->TextTl != "" && GetDialogue(i + 1)->TextTl != "") ? "\\N" : "";
-					CopyDialogue(first)->TextTl << mid << GetDialogue(i + 1)->TextTl;
-					if (i != first){ CopyDialogue(i)->TextTl = GetDialogue(i + mrow)->TextTl; }
+					wxString mid = (GetDialogue(firstSelected)->TextTl != "" && GetDialogue(i + 1)->TextTl != "") ? "\\N" : "";
+					CopyDialogue(firstSelected)->TextTl << mid << GetDialogue(i + 1)->TextTl;
+					if (i != firstSelected){ CopyDialogue(i)->TextTl = GetDialogue(i + numSelected)->TextTl; }
 				}
-				else if (i + mrow < GetCount()){
-					CopyDialogue(i)->TextTl = GetDialogue(i + mrow)->TextTl;
+				else if (i + numSelected < GetCount()){
+					CopyDialogue(i)->TextTl = GetDialogue(i + numSelected)->TextTl;
 				}
 			}
-			else if (i < GetCount() - mrow){
-				CopyDialogue(i)->TextTl = GetDialogue(i + mrow)->TextTl;
+			else if (i < GetCount() - numSelected){
+				CopyDialogue(i)->TextTl = GetDialogue(i + numSelected)->TextTl;
 			}
-			else if (GetDialogue(i)->Text != ""){ mrow--; }
+			else if (GetDialogue(i)->Text != ""){ numSelected--; }
 
 		}
 
-		if (mrow > 0){
-			DeleteRow(GetCount() - mrow, mrow);
+		if (numSelected > 0){
+			DeleteRow(GetCount() - numSelected, numSelected);
 		}
 
 	}
@@ -832,36 +833,36 @@ void SubsGrid::MoveTextTL(char mode)
 		Dialogue diall;
 		diall.End.NewTime(0);
 		diall.Style = GetSInfo("TLMode Style");
-		for (int i = 0; i < mrow; i++)
+		for (int i = 0; i < numSelected; i++)
 		{
 			AddLine(diall.Copy());
 		}
 
 		bool onlyo = true;
 		//sel.insert(first+mrow);
-		for (int i = GetCount() - 1; i >= first; i--)
+		for (int i = GetCount() - 1; i >= firstSelected; i--)
 		{
-			if (i < first + mrow){
+			if (i < firstSelected + numSelected){
 				if (mode == 3){
 					CopyDialogue(i)->TextTl = "";
 				}
 				else if (mode == 4 || mode == 5){
 					if (mode == 4){
-						if (onlyo){ CopyDialogue(first + mrow)->Start = GetDialogue(first)->Start; onlyo = false; }
-						CopyDialogue(first + mrow)->Text->Prepend(GetDialogue(i)->Text + "\\N"); mrow--;
+						if (onlyo){ CopyDialogue(firstSelected + numSelected)->Start = GetDialogue(firstSelected)->Start; onlyo = false; }
+						CopyDialogue(firstSelected + numSelected)->Text->Prepend(GetDialogue(i)->Text + "\\N"); numSelected--;
 					}
 					DeleteRow(i);
 				}
 			}
 			else{
-				CopyDialogue(i)->TextTl = GetDialogue(i - mrow)->TextTl;
+				CopyDialogue(i)->TextTl = GetDialogue(i - numSelected)->TextTl;
 			}
 
 
 		}
 
 	}
-	SetModified(GRID_TRANSLATION_TEXT_MOVE, true);
+	SetModified(GRID_TRANSLATION_TEXT_MOVE, true, false, firstSelected);
 	Refresh(false);
 
 }

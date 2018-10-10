@@ -38,6 +38,7 @@ public:
 	void Paste();
 	wxString GetValue() const;
 	void SpellcheckerOnOff();
+	void ClearSpellcheckerTable();
 	//0-normal, 1-comment, 2-template line, 3-code template line
 	void SetState(int _state, bool refresh = false);
 	EditBox* EB;

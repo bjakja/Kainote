@@ -1338,10 +1338,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 				SpellChecker::Destroy();
 			}
 		}
-		if (SpellCheckerOnOff)
-			CheckText();
-		else
-			errors.Clear();
+		
 		EB->ClearErrs();
 		Refresh(false);
 	}
@@ -1462,6 +1459,16 @@ int TextEditor::FindBracket(wxUniChar sbrkt, wxUniChar ebrkt, int pos, bool from
 void TextEditor::SpellcheckerOnOff()
 {
 	SpellCheckerOnOff = !SpellCheckerOnOff;
+	ClearSpellcheckerTable();
+}
+
+void TextEditor::ClearSpellcheckerTable()
+{
+	if (SpellCheckerOnOff)
+		CheckText();
+	else
+		errors.Clear();
+
 	Refresh(false);
 }
 

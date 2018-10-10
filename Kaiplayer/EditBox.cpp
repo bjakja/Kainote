@@ -1221,7 +1221,9 @@ void EditBox::ClearErrs()
 	Notebook *nb = Notebook::GetTabs();
 	for (size_t i = 0; i < nb->Size(); i++)
 	{
-		nb->Page(i)->Grid->SpellErrors.clear();
+		TabPanel* tab = nb->Page(i);
+		tab->Grid->SpellErrors.clear();
+		tab->Edit->TextEdit->ClearSpellcheckerTable();
 	}
 	grid->Refresh(false);
 }
