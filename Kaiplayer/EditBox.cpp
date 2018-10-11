@@ -1216,16 +1216,20 @@ void EditBox::HideControls()
 	if (state){ BoxSizer4->Layout(); }
 }
 
-void EditBox::ClearErrs()
+void EditBox::ClearErrs(bool spellcheckerOnOff/*=false*/, bool enableSpellchecker /*= false*/)
 {
 	Notebook *nb = Notebook::GetTabs();
 	for (size_t i = 0; i < nb->Size(); i++)
 	{
 		TabPanel* tab = nb->Page(i);
 		tab->Grid->SpellErrors.clear();
-		tab->Edit->TextEdit->ClearSpellcheckerTable();
+		if (spellcheckerOnOff)
+			tab->Edit->TextEdit->SpellcheckerOnOff(enableSpellchecker);
+		else
+			tab->Edit->TextEdit->ClearSpellcheckerTable();
 	}
 	grid->Refresh(false);
+	TextEdit->Refresh(false);
 }
 
 void EditBox::OnSplit(wxCommandEvent& event)

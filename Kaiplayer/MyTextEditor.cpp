@@ -34,7 +34,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	:wxWindow(parent, id, pos, size, style)
 {
 	useSpellchecker = _spell;
-	SpellCheckerOnOff = Options.GetBool(SpellcheckerOn);
+	SpellCheckerOnOff = (_spell)? Options.GetBool(SpellcheckerOn) : false;
 	MText = "";
 	bmp = NULL;
 	fsize = 10;
@@ -1329,6 +1329,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 			if (item){
 				SpellCheckerOnOff = item->IsChecked();
 				Options.SetBool(SpellcheckerOn, SpellCheckerOnOff);
+				EB->ClearErrs(true, SpellCheckerOnOff);
 			}
 		}
 		else{
@@ -1336,11 +1337,10 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 			if (item){
 				Options.SetString(DictionaryLanguage, item->GetLabel());
 				SpellChecker::Destroy();
+				EB->ClearErrs();
 			}
 		}
 		
-		EB->ClearErrs();
-		Refresh(false);
 	}
 
 
@@ -1456,10 +1456,12 @@ int TextEditor::FindBracket(wxUniChar sbrkt, wxUniChar ebrkt, int pos, bool from
 	return -1;
 }
 
-void TextEditor::SpellcheckerOnOff()
+void TextEditor::SpellcheckerOnOff(bool on)
 {
-	SpellCheckerOnOff = !SpellCheckerOnOff;
-	ClearSpellcheckerTable();
+	if (useSpellchecker){
+		SpellCheckerOnOff = on;
+		ClearSpellcheckerTable();
+	}
 }
 
 void TextEditor::ClearSpellcheckerTable()

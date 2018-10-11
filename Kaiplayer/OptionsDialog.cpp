@@ -943,16 +943,12 @@ void OptionsDialog::SetOptions(bool saveall)
 
 		if (OB.ctrl->IsKindOf(CLASSINFO(KaiCheckBox))){
 			KaiCheckBox *cb = (KaiCheckBox*)OB.ctrl;
-			if (Options.GetBool(OB.option) != cb->GetValue()){
-				Options.SetBool(OB.option, cb->GetValue());
+			bool value = cb->GetValue();
+			if (Options.GetBool(OB.option) != value){
+				Options.SetBool(OB.option, value);
 				if (OB.option <= AudioWheelDefaultToZoom){ audio = true; }
 				if (OB.option == SpellcheckerOn){
-					for (size_t i = 0; i < Kai->Tabs->Size(); i++){
-						TabPanel *tab = Kai->Tabs->Page(i);
-						tab->Grid->SpellErrors.clear();
-						tab->Edit->TextEdit->SpellcheckerOnOff();
-					}
-					Kai->Tabs->GetTab()->Grid->Refresh(false);
+					Kai->Tabs->GetTab()->Edit->ClearErrs(true, value);
 				}
 			}
 		}

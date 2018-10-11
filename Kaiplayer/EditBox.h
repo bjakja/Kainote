@@ -130,7 +130,8 @@ public:
 	void PutinNonass(const wxString &text, const wxString &tag);
 	//ustawia tekst i gdy trzeba wstawia tagi z orygina³u ustawiaj¹c w³aœciw¹ pozycjê kursora.
 	void SetTextWithTags(bool RefreshVideo = false);
-	void ClearErrs();
+	//second bool works only when spellcheckeronoff is true
+	void ClearErrs(bool spellcheckerOnOff=false, bool enableSpellchecker = false);
 	void OnEdit(wxCommandEvent& event);
 	bool SetBackgroundColour(const wxColour &col);
 	bool IsCursorOnStart();
