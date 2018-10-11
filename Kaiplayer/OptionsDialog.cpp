@@ -667,7 +667,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 	//Themes
 	{
-		const int numColors = 132;
+		const int numColors = 138;
 		wxString labels[numColors] = {
 			//okno
 			_("Okno tło"), _("Okno nieaktywne tło"), _("Okno tekst"), _("Okno nieaktywny tekst"),
@@ -713,9 +713,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			_("Lista statyczna zaznaczenie"), _("Lista statyczna tło nagłówka"), _("Lista statyczna tekst nagłówka"),
 			_("Pasek statusu obramowanie"),
 			//pasek menu
-			_("Pasek menu tło 1"), _("Pasek menu tło 2"), _("Pasek menu obramowanie zaznaczenia"),
-			_("Pasek menu tło zaznaczenia"), _("Menu tło"), _("Menu obramowanie zaznaczenia"),
-			_("Menu tło zaznaczenia"),
+			_("Pasek menu tło 1"), _("Pasek menu tło 2"), _("Pasek menu obramowanie zaznaczenia"), 
+			_("Pasek menu najechane tło zaznaczenia"), _("Pasek menu kliknięte tło zaznaczenia"), 
+			_("Menu tło"), _("Menu obramowanie zaznaczenia"), _("Menu tło zaznaczenia"),
 			//zakładki
 			_("Pasek zakładek tło 1"), _("Pasek zakładek tło 2"), _("Zakładki obramowanie aktywnej"),
 			_("Zakładki obramowanie nieaktywnej"), _("Zakładki tło aktywnej"), _("Zakładki tło nieaktywnej"),
@@ -727,6 +727,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			_("Suwak ścieżka tło"), _("Suwak ścieżka obramowanie"), _("Suwak obramowanie"),
 			_("Suwak obramowanie po najechaniu"), _("Suwak obramowanie po wciśnięciu"), _("Suwak tło"),
 			_("Suwak tło po najechaniu"), _("Suwak tło po wciśnięciu"),
+			//miscellanous
+			_("Linia zmiany rozdzielczości kropki"), _("Wynik szukania czcionka nazwy pliku"), _("Wynik szukania tło nazwy pliku"),
+			_("Wynik szukania czcionka znalezionej frazy"), _("Wynik szukania tło znalezionej frazy"),
 			//podgląd styli
 			_("Pierwszy kolor podglądu styli"), _("Drugi kolor podglądu styli")
 		};

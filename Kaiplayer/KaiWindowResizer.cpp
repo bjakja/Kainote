@@ -96,7 +96,7 @@ void KaiWindowResizer::OnMouseEvent(wxMouseEvent &evt)
 void KaiWindowResizer::OnPaint(wxPaintEvent& evt)
 {
 	//for now line will only horizontal
-	const wxColour & pointColor = Options.GetColour(WindowText);
+	const wxColour & pointColor = Options.GetColour(WINDOW_RESIZER_DOTS);
 	const wxColour & backgroundColor = Options.GetColour(WindowBackground);
 
 	wxSize size = GetClientSize();

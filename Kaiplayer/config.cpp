@@ -417,6 +417,7 @@ void config::LoadDefaultColors(bool dark, wxColour *table)
 	colours[StatusBarBorder].Set((dark) ? "#2F3136" : "#A0A0A0");
 	colours[MenuBarBackground1].Set((dark) ? "#202225" : "#BFBFBF");
 	colours[MenuBarBackground2].Set((dark) ? "#202225" : "#BFBFBF");
+	colours[MENU_BAR_BACKGROUND_HOVER].Set((dark) ? "#8791FD" : "#000000");
 	colours[MenuBarBorderSelection].Set((dark) ? "#8791FD" : "#000000");
 	colours[MenuBarBackgroundSelection].Set((dark) ? "#5B5689" : "#BBDEFB");
 	colours[MenuBackground].Set((dark) ? "#202225" : "#BFBFBF");
@@ -444,6 +445,11 @@ void config::LoadDefaultColors(bool dark, wxColour *table)
 	colours[SliderBackground].Set((dark) ? "#5C5889" : "#DDDDDD");
 	colours[SliderBackgroundHover].Set((dark) ? "#8982D5" : "#ECECEC");
 	colours[SliderBackgroundPushed].Set((dark) ? "#9E96FF" : "#FFFFFF");
+	colours[WINDOW_RESIZER_DOTS].Set((dark) ? "#AEAFB2" : "#000000");
+	colours[FIND_RESULT_FILENAME_FOREGROUND].Set((dark) ? "#BB0099" : "#BB0099");
+	colours[FIND_RESULT_FILENAME_BACKGROUND].Set((dark) ? "#440033" : "#440033");
+	colours[FIND_RESULT_FOUND_PHRASE_FOREGROUND].Set((dark) ? "#FF0000" : "#FF0000");
+	colours[FIND_RESULT_FOUND_PHRASE_BACKGROUND].Set((dark) ? "#BBBB00" : "#BBBB00");
 	colours[StylePreviewColor1].Set("#434343");
 	colours[StylePreviewColor2].Set("#626262");
 

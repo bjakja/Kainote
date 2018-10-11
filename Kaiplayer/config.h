@@ -334,6 +334,7 @@ DECLARE_ENUM(CONFIG,CFG)
 	CR(MenuBarBackground1,)\
 	CR(MenuBarBackground2,)\
 	CR(MenuBarBorderSelection,)\
+	CR(MENU_BAR_BACKGROUND_HOVER,)\
 	CR(MenuBarBackgroundSelection,)\
 	CR(MenuBackground,)\
 	CR(MenuBorderSelection,)\
@@ -360,6 +361,11 @@ DECLARE_ENUM(CONFIG,CFG)
 	CR(SliderBackground,)\
 	CR(SliderBackgroundHover,)\
 	CR(SliderBackgroundPushed,)\
+	CR(WINDOW_RESIZER_DOTS,)\
+	CR(FIND_RESULT_FILENAME_FOREGROUND,)\
+	CR(FIND_RESULT_FILENAME_BACKGROUND,)\
+	CR(FIND_RESULT_FOUND_PHRASE_FOREGROUND,)\
+	CR(FIND_RESULT_FOUND_PHRASE_BACKGROUND,)\
 	CR(StylePreviewColor1,)\
 	CR(StylePreviewColor2,)\
 	//jeœli tu coœ dopiszesz, to musisz zmieniæ przy porównaniu (504 cpp) czy rozmiar tablicy kolorów jest w³aœciwy

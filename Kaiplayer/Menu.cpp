@@ -980,7 +980,7 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 		wxSize te = tdc.GetTextExtent(desc);
 
 		if (i == sel){
-			tdc.SetBrush(clicked ? wxBrush(Options.GetColour(MenuBarBackgroundSelection)) : *wxTRANSPARENT_BRUSH);
+			tdc.SetBrush(wxBrush(Options.GetColour(clicked ? MenuBarBackgroundSelection : MENU_BAR_BACKGROUND_HOVER)));
 			tdc.SetPen(wxPen(Options.GetColour(MenuBarBorderSelection)));
 			tdc.DrawRoundedRectangle(posX - 4, 1, te.x + 8, h - 3, 3.0);
 		}

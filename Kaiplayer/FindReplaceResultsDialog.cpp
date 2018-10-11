@@ -87,8 +87,8 @@ void ResultsHeader::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, Ka
 void ResultsHeader::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
 {
 	wxSize ex = theList->GetTextExtent(name);
-	dc->SetTextForeground("#BB0099");
-	dc->SetTextBackground("#440033");
+	dc->SetTextForeground(Options.GetColour(FIND_RESULT_FILENAME_FOREGROUND));
+	dc->SetTextBackground(Options.GetColour(FIND_RESULT_FILENAME_BACKGROUND));
 	dc->SetBackgroundMode(wxSOLID);
 	needTooltip = ex.x > width - 8;
 	wxRect cur(x, y, width - 8, height);
@@ -118,9 +118,10 @@ void SeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, K
 	dc->SetClippingRegion(cur);
 	dc->DrawLabel(name, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
-	dc->SetTextForeground("#FF0000");
-	dc->SetBrush(wxBrush("#BBBB00"));
-	dc->SetPen(wxPen("#BBBB00"));
+	dc->SetTextForeground(Options.GetColour(FIND_RESULT_FOUND_PHRASE_FOREGROUND));
+	const wxColour &background = Options.GetColour(FIND_RESULT_FOUND_PHRASE_BACKGROUND);
+	dc->SetBrush(wxBrush(background));
+	dc->SetPen(wxPen(background));
 	wxString foundText = name.Mid(findPosition.x, findPosition.y);
 	wxSize exFoundText = theList->GetTextExtent(foundText);
 	dc->DrawRectangle(x + exOfFound.x, y + ((height - exOfFound.y) / 2), exFoundText.x, height);
