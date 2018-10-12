@@ -339,30 +339,26 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		NumCtrl *sc = new NumCtrl(EditorAdvanced, 20000, Options.GetString(InsertStartOffset), -100000, 100000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc1 = new NumCtrl(EditorAdvanced, 20000, Options.GetString(InsertEndOffset), -100000, 100000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
 		KaiTextCtrl *sc2 = new KaiTextCtrl(EditorAdvanced, 22001, Options.GetString(GridTagsSwapChar), wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
-		NumCtrl *sc3 = new NumCtrl(EditorAdvanced, 20000, Options.GetString(EditboxTagButtons), 0, 9, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
-
+		
 		ConOpt(gridSaveAfter, GridSaveAfterCharacterCount);
 		ConOpt(autoSaveMax, AutoSaveMaxFiles);
 		ConOpt(ltl, AutomationTraceLevel);
 		ConOpt(sc, InsertStartOffset);
 		ConOpt(sc1, InsertEndOffset);
 		ConOpt(sc2, GridTagsSwapChar);
-		ConOpt(sc3, EditboxTagButtons);
-
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Ilość edycji do zapisu"), wxDefaultPosition, wxSize(240, -1)), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
-		MainSizer2->Add(gridSaveAfter, 1, wxEXPAND);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Maksymalna ilość plików autozapisu"), wxDefaultPosition, wxSize(240, -1)), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
-		MainSizer2->Add(autoSaveMax, 1, wxEXPAND);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Opóźnienie klatek początkowych w ms:"), wxDefaultPosition, wxSize(240, -1)), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
-		MainSizer2->Add(sc, 1, wxEXPAND);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Opóźnienie klatek końcowych w ms:")), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
-		MainSizer2->Add(sc1, 1, wxEXPAND);
+		
+		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Ilość edycji do zapisu"), wxDefaultPosition, wxSize(256, -1)), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
+		MainSizer2->Add(gridSaveAfter, 0, wxEXPAND);
+		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Maksymalna ilość plików autozapisu"), wxDefaultPosition, wxSize(256, -1)), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
+		MainSizer2->Add(autoSaveMax, 0, wxEXPAND);
+		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Przyspieszenie klatek początkowych w ms:"), wxDefaultPosition, wxSize(256, -1)), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
+		MainSizer2->Add(sc, 0, wxEXPAND);
+		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Przyspieszenie klatek końcowych w ms:")), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
+		MainSizer2->Add(sc1, 0, wxEXPAND);
 		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Znak podmiany tagów ASS:")), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
-		MainSizer2->Add(sc2, 1, wxEXPAND);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Ilość przycisków wstawiających tagi ASS:")), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
-		MainSizer2->Add(sc3, 1, wxEXPAND);
+		MainSizer2->Add(sc2, 0, wxEXPAND);
 		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Poziom śledzenia logów skryptów LUA")), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
-		MainSizer2->Add(ltl, 1, wxEXPAND);
+		MainSizer2->Add(ltl, 0, wxEXPAND);
 
 		//MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
 
@@ -377,8 +373,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		cmb->SetSelection(Options.GetInt(AutomationLoadingMethod));
 		ConOpt(cmb, AutomationLoadingMethod);
 		alm->Add(cmb, 1, wxCENTER | wxEXPAND | wxALL, 2);
-		Main1Sizer->Add(MainSizer2, 0, wxRIGHT | wxEXPAND, 5);
-		Main1Sizer->Add(alm, 0, wxRIGHT | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer2, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
+		Main1Sizer->Add(alm, 0, wxRIGHT | wxEXPAND, 4);
 
 		EditorAdvanced->SetSizerAndFit(Main1Sizer);
 	}
@@ -573,7 +569,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		Shortcuts->StartEdition();
 		Shortcuts->SetSelection(0);
 
-		HkeysSizer->Add(Shortcuts, 1, wxALL | wxEXPAND, 2);
+		HkeysSizer->Add(Shortcuts, 1, wxALL | wxEXPAND, 4);
 		wxBoxSizer *buttonsSizer = new wxBoxSizer(wxHORIZONTAL);
 		MappedButton *setHotkey = new MappedButton(Hotkeyss, 23232, _("Mapuj skrót"));
 		Connect(23232, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&OptionsDialog::OnMapHkey);
@@ -860,8 +856,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		}
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, changeSelections, 17777, 17780);
 		sizer->Add(CheckListBox, 1, wxEXPAND | wxALL, 4);
-		sizer->Add(buttonSizer, 0, wxEXPAND | wxALIGN_CENTER);
-		sizer->Add(buttonSizer1, 0, wxEXPAND | wxALIGN_CENTER);
+		sizer->Add(buttonSizer, 0, wxEXPAND | wxALIGN_CENTER | wxALL,2);
+		sizer->Add(buttonSizer1, 0, wxEXPAND | wxALIGN_CENTER | wxALL, 2);
 		ConOpt(CheckListBox, (CONFIG)3000);
 		Assocs->SetSizerAndFit(sizer);
 	}

@@ -159,7 +159,7 @@ void AudioSpectrum::SetupSpectrum(int _overlaps)
 
 void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, unsigned char *img, int imgwidth, int imgpitch, int imgheight, int percent)
 {
-    wxCriticalSectionLocker locker(CritSec);
+	wxCriticalSectionLocker locker(CritSec);
 	int newOverlaps = ceil(((float)imgwidth / ((float)(range_end - range_start) / (float)doublelen)) * ((100 - percent) / 100.f))+1;
 	if(newOverlaps<1){newOverlaps=1;}
 	if(newOverlaps>24){
