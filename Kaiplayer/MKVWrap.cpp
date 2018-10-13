@@ -332,19 +332,22 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 				delete[] privData;
 
 				// Load into file
-				wxString group = "[Script Info]";
+				int type = 0;
 				if (CodecID == "S_TEXT/SSA") form = 2;
 				wxStringTokenizer token(privString,"\r\n",wxTOKEN_STRTOK);
 				while (token.HasMoreTokens()) {
 					wxString next = token.GetNextToken();
-					if (next[0] == '[') group = next;
-					if(group=="[Script Info]"&&!next.StartsWith(";")){
+					if(next.StartsWith("Style:")){
+						target->AddStyle(new Styles(next,form));
+						type = 1;
+					}
+					else if(next.StartsWith("Comment:")){
+						target->AddLine(new Dialogue(next));
+						type = 2;
+					}
+					else if(type == 0 && !next.StartsWith(";") && !next.StartsWith("[") && !next.StartsWith("Format:")){
 						target->AddSInfo(next);
 					}
-					else if(next.StartsWith("Style:")){
-						target->AddStyle(new Styles(next,form));}
-					else if(next.StartsWith("Comment")){
-						target->AddLine(new Dialogue(next));}
 				}
 
 

@@ -422,10 +422,12 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="MappedButton.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MenuButton.cpp" />
+    <ClCompile Include="MispellReplacerDialog.cpp" />
     <ClCompile Include="OptionsPanels.cpp" />
     <ClCompile Include="Registry.cpp" />
     <ClCompile Include="SelectLines.cpp" />
     <ClCompile Include="SpellCheckerDialog.cpp" />
+    <ClCompile Include="MisspellReplacer.cpp" />
     <ClCompile Include="Styles.cpp" />
     <ClCompile Include="StyleStore.cpp" />
     <ClCompile Include="SubsGridDialogs.cpp" />
@@ -534,10 +536,12 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="MappedButton.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuButton.h" />
+    <ClInclude Include="MispellReplacerDialog.h" />
     <ClInclude Include="OptionsPanels.h" />
     <ClInclude Include="Registry.h" />
     <ClInclude Include="SelectLines.h" />
     <ClInclude Include="SpellCheckerDialog.h" />
+    <ClInclude Include="MisspellReplacer.h" />
     <ClInclude Include="StyleChange.h" />
     <ClInclude Include="ColorSpaceConverter.h" />
     <ClInclude Include="ColorPicker.h" />

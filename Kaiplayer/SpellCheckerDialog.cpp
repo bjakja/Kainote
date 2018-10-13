@@ -178,39 +178,42 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 	if(replaceTxt.IsEmpty() || misspellTxt.IsEmpty()){return;}
 	tab = Kai->GetTab();
 	bool noComments = ignoreComments->GetValue();
-	std::wregex r("\\b" + misspellTxt.Lower().ToStdWstring() + "\\b"); // the pattern \b matches a word boundary
-	std::wsmatch m;
-	std::wstring text;
-	int lenMismatch = 0;
-	int textPos = 0;
-	
-	for(int i = 0; i < tab->Grid->GetCount(); i++){
-		Dialogue *Dial = tab->Grid->GetDialogue(i);
-		if(Dial->IsComment && noComments){continue;}
-		wxString Text = (tab->Grid->hasTLMode)? Dial->TextTl : Dial->Text;
-		text = Text.Lower().ToStdWstring();
-		lenMismatch = 0;
-		textPos = 0;
-		bool changed = false;
-		while(std::regex_search(text, m, r)) {
-			int pos = m.position(0) + textPos;
-			int len = m.length(0);
-			//zrób coś z tymi danymi
-			wxString misspellToReplace = Text.Mid(pos - lenMismatch, len);
-			Text.replace(pos - lenMismatch, len, GetRightCase(replaceTxt, misspellToReplace));
-			lenMismatch += (len - replaceTxt.Len()) + 1;
-			text = m.suffix().str();
-			text.insert(0, L" ");
-			textPos = pos + len;
-			changed=true;
-		}
-		if(changed){
-			Dialogue *Dialc = tab->Grid->CopyDialogue(i);
-			wxString &TextToChange = Dialc->Text.CheckTlRef(Dialc->TextTl, tab->Grid->hasTLMode);
-			TextToChange=Text;
-			tab->Grid->SpellErrors[i].clear();
+	try{
+		std::wregex r("\\b" + misspellTxt.Lower().ToStdWstring() + "\\b"); // the pattern \b matches a word boundary
+		std::wsmatch m;
+		std::wstring text;
+		int lenMismatch = 0;
+		int textPos = 0;
+
+		for (int i = 0; i < tab->Grid->GetCount(); i++){
+			Dialogue *Dial = tab->Grid->GetDialogue(i);
+			if (Dial->IsComment && noComments){ continue; }
+			wxString Text = (tab->Grid->hasTLMode) ? Dial->TextTl : Dial->Text;
+			text = Text.Lower().ToStdWstring();
+			lenMismatch = 0;
+			textPos = 0;
+			bool changed = false;
+			while (std::regex_search(text, m, r)) {
+				int pos = m.position(0) + textPos;
+				int len = m.length(0);
+				//zrób coś z tymi danymi
+				wxString misspellToReplace = Text.Mid(pos - lenMismatch, len);
+				Text.replace(pos - lenMismatch, len, GetRightCase(replaceTxt, misspellToReplace));
+				lenMismatch += (len - replaceTxt.Len()) + 1;
+				text = m.suffix().str();
+				text.insert(0, L" ");
+				textPos = pos + len;
+				changed = true;
+			}
+			if (changed){
+				Dialogue *Dialc = tab->Grid->CopyDialogue(i);
+				wxString &TextToChange = Dialc->Text.CheckTlRef(Dialc->TextTl, tab->Grid->hasTLMode);
+				TextToChange = Text;
+				tab->Grid->SpellErrors[i].clear();
+			}
 		}
 	}
+	catch (...){ return; }
 	tab->Grid->SetModified(SPELL_CHECKER);
 	tab->Grid->Refresh(false);
 	//if(SpellChecker::Get()->CheckWord(replaceTxt)){

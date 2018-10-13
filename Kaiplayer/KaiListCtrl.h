@@ -170,6 +170,7 @@ public:
 	int FindItem(int column, const wxString &textItem, int row = 0);
 	//collumn must be set
 	void FilterList(int column, int mode);
+	int GetType(int row, int column);
 	void ScrollTo(int row);
 	size_t GetCount(){return itemList->size();}
 	void SetSelection(int selection, bool center = false);

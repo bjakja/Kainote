@@ -402,6 +402,12 @@
     <ClCompile Include="KaiWindowResizer.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="MispellReplacerDialog.cpp">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="MisspellReplacer.cpp">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -718,6 +724,12 @@
     </ClInclude>
     <ClInclude Include="KaiWindowResizer.h">
       <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="MispellReplacerDialog.h">
+      <Filter>Header Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="MisspellReplacer.h">
+      <Filter>Header Files\Windows &amp; Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -33,7 +33,7 @@ void BlueUp(wxBitmap *bmp)
 }
 
 KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
-            const wxPoint& pos, const wxSize& size, long style)
+			const wxPoint& pos, const wxSize& size, long style)
 			:wxWindow(parent, id, pos, size, style)
 			 ,enter(false)
 			 ,clicked(false)

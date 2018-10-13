@@ -761,6 +761,20 @@ void KaiListCtrl::FilterList(int column, int mode)
 	}
 	Refresh(false);
 }
+
+int KaiListCtrl::GetType(int row, int column)
+{
+	if (row < 0 || row >= itemList->size())
+		return -1;
+
+	ItemRow *il = (*itemList)[row];
+	if (il->row.size() > column){
+		return il->row[column]->type;
+	}
+
+	return -1;
+}
+
 //when startI > 0 pass elemX decreased of elems before startI
 //startI increases automatically
 int KaiListCtrl::FindItemsRow(int elemX, size_t &startI /*= 0*/)

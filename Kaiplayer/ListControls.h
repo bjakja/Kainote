@@ -58,16 +58,16 @@ class KaiChoice :public wxWindow
 	friend class PopupList;
 public:
 	KaiChoice(wxWindow *parent, int id, const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, int n = 0, const wxString choices[] = NULL,
-        long style = 0, const wxValidator& validator = wxDefaultValidator);
+		const wxSize& size = wxDefaultSize, int n = 0, const wxString choices[] = NULL,
+		long style = 0, const wxValidator& validator = wxDefaultValidator);
 
 	KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
-        const wxSize& size, const wxArrayString &choices,
-        long style = 0, const wxValidator& validator = wxDefaultValidator);
+		const wxSize& size, const wxArrayString &choices,
+		long style = 0, const wxValidator& validator = wxDefaultValidator);
 
 	KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, const wxPoint& pos,
-        const wxSize& size, const wxArrayString &choices,
-        long style = 0, const wxValidator& validator = wxDefaultValidator);
+		const wxSize& size, const wxArrayString &choices,
+		long style = 0, const wxValidator& validator = wxDefaultValidator);
 
 	virtual ~KaiChoice();
 	void SetSelection(int sel, bool changeText=true);
