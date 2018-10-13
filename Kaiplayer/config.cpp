@@ -463,11 +463,11 @@ int config::LoadOptions()
 	path << pathfull << _T("\\Config.txt");
 	OpenWrite ow;
 	wxString txt;
-	bool isgood = false;
+	int isgood = 0;
 	bool diffVersions = false;
 	if (!ow.FileOpen(path, &txt, false)){
 		LoadDefaultConfig();
-		isgood = true;
+		isgood = 2;
 	}
 	else{
 		wxString ver = txt.BeforeFirst(']').Mid(1);

@@ -41,13 +41,15 @@ private:
 	void EditRule();
 	void AddRule();
 	void SeekOnce();
-	void SeekOnTab(TabPanel *tab, bool seekOnce);
+	void SeekOnTab(TabPanel *tab);
 	void SeekOnActualTab();
 	void SeekOnAllTabs();
 	void ReplaceOnce();
-	void ReplaceOnTab(TabPanel *tab, bool seekOnce);
+	void ReplaceOnTab(TabPanel *tab);
 	void ReplaceOnActualTab();
 	void ReplaceOnAllTabs();
+	void GetCheckedRules(std::vector<int> &checkedRules);
+	void SaveRules();
 	KaiCheckBox *PutWordBoundary;
 	KaiCheckBox *ShowBuiltInRules;
 	KaiTextCtrl *PhraseToFind;

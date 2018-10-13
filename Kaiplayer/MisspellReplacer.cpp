@@ -18,6 +18,7 @@
 #include "OpennWrite.h"
 #include "KaiStaticBoxSizer.h"
 #include "Tabs.h"
+#include <regex>
 
 
 MisspellReplacer::MisspellReplacer(wxWindow *parent)
@@ -45,8 +46,10 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	KaiStaticBoxSizer *WhichLinesSizer = new KaiStaticBoxSizer(wxVERTICAL, this, _("Które linijki"));
 	wxString choices[] = { _("Wszystkie linijki"), _("Zaznaczone linijki"), _("Od zaznaczonej linijki"), _("Wed³ug wybranych stylów") };
 	WhichLines = new KaiChoice(this, ID_WHICH_LINES_LIST, wxDefaultPosition, wxDefaultSize, 4, choices);
+	WhichLines->SetSelection(0);
 	wxBoxSizer *styleChooseSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton *ChooseStylesButton = new MappedButton(this, ID_STYLES_CHOOSE, L"+");
+	
 	ChoosenStyles = new KaiTextCtrl(this, -1);
 	styleChooseSizer->Add(ChooseStylesButton, 0, wxRIGHT, 2);
 	styleChooseSizer->Add(ChoosenStyles, 0);
@@ -124,9 +127,63 @@ void MisspellReplacer::SeekOnce()
 
 }
 
-void MisspellReplacer::SeekOnTab(TabPanel *tab, bool seekOnce)
+void MisspellReplacer::SeekOnTab(TabPanel *tab)
 {
+	std::vector<int> checkedRules;
+	GetCheckedRules(checkedRules);
+	if (checkedRules.size() == 0)
+		return;
+	//maybe some info needed
 
+	//0-all lines 1-selected lines 2-from selected 3-by styles
+	wxString stylesAsText = L"," + ChoosenStyles->GetValue() + L",";
+	int selectedOption = WhichLines->GetSelection();
+	int firstSelectedId = tab->Grid->FirstSelection();
+	int positionId = 0;
+	int tabLinePosition = (selectedOption == 2 && firstSelectedId >= 0) ? tab->Grid->file->GetElementById(firstSelectedId) : 0;
+	int tabTextPosition = 0;
+	if (tabLinePosition > 0)
+		positionId = firstSelectedId;
+
+	File *Subs = tab->Grid->file->GetSubs();
+
+	bool isfirst = true;
+
+	while (tabLinePosition < Subs->dials.size())
+	{
+		Dialogue *Dial = Subs->dials[tabLinePosition];
+		if (!Dial->isVisible){ tabLinePosition++; tabTextPosition = 0; continue; }
+
+		if ((!selectedOption) ||
+			(selectedOption == 3 && stylesAsText.Find("," + Dial->Style + ",") != -1) ||
+			(selectedOption == 1 && tab->Grid->file->IsSelectedByKey(tabLinePosition))){
+			const wxString & lineText = (Dial->TextTl != "") ? Dial->TextTl : Dial->Text;
+
+			for (size_t k = 0; k < checkedRules.size(); k++){
+				try{
+					std::wregex r(rules[checkedRules[k]].first.ToStdWstring()); // the pattern \b matches a word boundary
+					std::wsmatch m;
+					std::wstring text = lineText.Lower().ToStdWstring();
+					int textPos = 0;
+
+					while (std::regex_search(text, m, r)) {
+						int pos = m.position(0) + textPos;
+						int len = m.length(0);
+						//selectionWords.Add(pos);
+						//selectionWords.Add(pos + len - 1);
+						if (isfirst){
+							resultDialog->SetHeader(tab->SubsPath);
+							isfirst = false;
+						}
+						text = m.suffix().str();
+						textPos = pos + len;
+					}
+				}
+				catch (...){}
+			}
+		}
+		positionId++;
+	}
 }
 
 void MisspellReplacer::SeekOnActualTab()
@@ -144,8 +201,9 @@ void MisspellReplacer::ReplaceOnce()
 
 }
 
-void MisspellReplacer::ReplaceOnTab(TabPanel *tab, bool seekOnce)
+void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 {
+	
 
 }
 
@@ -157,4 +215,24 @@ void MisspellReplacer::ReplaceOnActualTab()
 void MisspellReplacer::ReplaceOnAllTabs()
 {
 
+}
+
+void MisspellReplacer::GetCheckedRules(std::vector<int> &checkedRules)
+{
+	for (size_t i = 0; i < RulesList->GetCount(); i++){
+		Item *item = RulesList->GetItem(i, 0);
+		if (item && item->modified){
+			checkedRules.push_back(i);
+		}
+	}
+}
+
+void MisspellReplacer::SaveRules()
+{
+	wxString rulesText;
+	for (auto & rule : rules){
+		rulesText << rule.first << "\f" << rule.second << "\r\n";
+	}
+	OpenWrite ow;
+	ow.FileWrite(Options.pathfull + L"\\rules.txt", rulesText);
 }
