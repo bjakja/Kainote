@@ -127,7 +127,7 @@ bool OpenWrite::IsUTF8withoutBOM(const char* buf, size_t size)
 {
 	bool	only_saw_ascii_range = true;
 	size_t	pos = 0;
-	int	more_chars;
+	int	more_chars = 0;
 	while (pos < size)
 	{
 		unsigned char ch = buf[pos++];
@@ -157,6 +157,8 @@ bool OpenWrite::IsUTF8withoutBOM(const char* buf, size_t size)
 		}
 		else
 		{
+			//if this will not work, maybe set continue;
+			continue;
 			//return false; // Not utf8
 		}
 		// Check secondary chars are in range if we are expecting any

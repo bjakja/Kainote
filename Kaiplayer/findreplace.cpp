@@ -492,7 +492,11 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 {
 	wxString path = window->FindInSubsPath->GetValue();
 	wxArrayString paths;
-	GetFolderFiles(path, window->FindInSubsPattern->GetValue(), &paths, 
+	wxString filters = window->FindInSubsPattern->GetValue();
+	//if (filters.empty())
+		//filters = L"*.ass;*.srt;*.sub;*.txt";
+
+	GetFolderFiles(path, filters, &paths,
 		window->SeekInSubFolders->GetValue(), window->SeekInHiddenFolders->GetValue());
 
 	if (!paths.size())
@@ -504,7 +508,7 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 		wxMkDir(CopyPath);
 	}
 	
-	bool onlyAss = !(window->CollumnText->GetValue() || window->CollumnTextOriginal->GetValue());
+	bool onlyAss = !(window->CollumnText->GetValue());
 	bool plainText = (window->CollumnTextOriginal->GetValue());
 	long replaceColumn = TXT;
 	if (window->CollumnStyle->GetValue()){ replaceColumn = STYLE; }
@@ -565,13 +569,14 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 		int SubsAllReplacements = 0;
 		wxString subsText;
 		subsPath = paths[i];
-		ow.FileOpen(subsPath, &subsText);
 
 		wxString ext = subsPath.AfterLast('.').Lower();
 		if (onlyAss && ext != "ass"/* && ext != "ssa"*/)
 			continue;
-		else if (ext == "ass"/* && ext == "ssa"*/ && ext == "srt" && ext == "mpl2" && ext == "sub" && ext == "txt")
+		else if (ext != "ass"/* && ext == "ssa"*/ && ext != "srt" && ext != "mpl2" && ext != "sub" && ext != "txt")
 			continue;
+
+		ow.FileOpen(subsPath, &subsText);
 
 		wxString replacedText;
 		tabLinePosition = positionId = 0;
