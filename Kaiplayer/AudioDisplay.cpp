@@ -318,6 +318,11 @@ bool AudioDisplay::InitDX(const wxSize &size)
 }
 
 void AudioDisplay::DoUpdateImage() {
+	// Prepare bitmap
+	int timelineHeight = 20;
+	int displayH = h + timelineHeight;
+	// Invalid dimensions
+	if (w < 1 || displayH < 1 || isHidden) return;
 	// Loaded?
 	if (!loaded || !provider) return;
 	wxMutexLocker lock(mutex);
@@ -325,18 +330,12 @@ void AudioDisplay::DoUpdateImage() {
 	//if (!needImageUpdate) return;
 	bool weak = needImageUpdateWeak;
 
-	// Prepare bitmap
-	int timelineHeight = 20;
-	int displayH = h + timelineHeight;
-
 	if (LastSize.x != w || LastSize.y != h || !d3dDevice) {
 		LastSize = wxSize(w, h);
 		if (!InitDX(wxSize(w, displayH)))
 			return;
 	}
 
-	// Invalid dimensions
-	if (w == 0 || displayH == 0) return;
 
 	// Is spectrum?
 	bool spectrum = false;
@@ -1590,7 +1589,7 @@ void AudioDisplay::AddLead(bool in, bool out) {
 /////////
 // Paint
 void AudioDisplay::OnPaint(wxPaintEvent& event) {
-	if (w == 0 || h == 0) return;
+	//if (w == 0 || h == 0) return;
 	DoUpdateImage();
 }
 

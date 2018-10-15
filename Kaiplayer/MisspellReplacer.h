@@ -32,14 +32,17 @@ class MisspellReplacer : public KaiDialog
 {
 public:
 	MisspellReplacer(wxWindow *parent);
-	virtual ~MisspellReplacer(){};
+	virtual ~MisspellReplacer();
 	void ReplaceChecked();
 	void ShowResult(TabPanel *tab, int keyLine);
+	void RemoveDialog(){ resultDialog = NULL; };
 private:
 	typedef std::pair<wxString, wxString> Rule;
+
 	void FillRulesList();
 	void EditRule();
 	void AddRule();
+	void RemoveRule();
 	void SeekOnce();
 	void SeekOnTab(TabPanel *tab);
 	void SeekOnActualTab();
@@ -50,6 +53,7 @@ private:
 	void ReplaceOnAllTabs();
 	void GetCheckedRules(std::vector<int> &checkedRules);
 	void SaveRules();
+	void MoveCase(const wxString &originalCase, wxString *result);
 	KaiCheckBox *PutWordBoundary;
 	KaiCheckBox *ShowBuiltInRules;
 	KaiTextCtrl *PhraseToFind;
@@ -70,6 +74,9 @@ enum{
 	ID_RULES_LIST,
 	ID_WHICH_LINES_LIST,
 	ID_STYLES_CHOOSE,
+	ID_ADD_RULE,
+	ID_EDIT_RULE,
+	ID_REMOVE_RULE,
 	ID_FIND_RULE,
 	ID_FIND_ALL_RULES,
 	ID_FIND_ALL_RULES_ON_ALL_TABS,

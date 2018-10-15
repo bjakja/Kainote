@@ -114,7 +114,7 @@ File *File::Copy(bool copySelections)
 
 SubsFile::SubsFile()
 {
-	historyNames = new wxString[54]{
+	historyNames = new wxString[AUTOMATION_SCRIPT+1]{
 		"",//pierwszy element którego nie używamy a musi być ostatni enum weszedł a także ochronić nas przed potencjalnym 0
 		_("Otwarcie napisów"),
 		_("Nowe napisy"),
@@ -162,12 +162,15 @@ SubsFile::SubsFile()
 		_("Narzędzie wycinów wektorowych"),
 		_("Narzędzie rysunków wektorowych"),
 		_("Narzędzie zmieniacz pozycji"),
+		_("Narzędzie zmieniacz skali i obrotów"),
 		_("Zamień"),
 		_("Zamień wszystko"),
-		/*50*/_("Wstawienie drzewka"),
+		/*50*/_("Poprawa drobnych błędów"),
+		_("Wstawienie drzewka"),
+		_("Ustawienie opisu"),
 		_("Dodanie linii do drzewka"),
 		_("Usunięcie drzewka"),
-		_("Skrypt automatyzacji"),
+		_("Skrypt automatyzacji")
 	};
 	iter=0;
 	edited=false;

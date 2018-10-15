@@ -15,15 +15,29 @@
 
 #include "MispellReplacerDialog.h"
 #include "MisspellReplacer.h"
+#include "KainoteMain.h"
 
 
 
 void ReplacerResultsHeader::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
 {
-	if (event.LeftDown()){
-		int i = positionInTable + 1;
+	if (event.GetX() < 19 && event.LeftDown() || event.LeftDClick()){
+		modified = !modified;
+		int i = positionInTable;
+		while (theList->GetType(i, 0) == TYPE_TEXT){
+			Item *item = theList->GetItem(i, 0);
+			if (item){
+				item->modified = modified;
+			}
+			i++;
+		}
+		theList->Refresh(false);
+	}
+	else if (event.LeftDown() || event.LeftDClick()){
+		int i = positionInTable;
 		while(theList->GetType(i, 0) == TYPE_TEXT){
 			theList->FilterRow(i, (isVisible) ? NOT_VISIBLE : VISIBLE_BLOCK);
+			i++;
 		}
 		isVisible = !isVisible;
 	}
@@ -50,7 +64,12 @@ void ReplacerResultsHeader::OnPaint(wxMemoryDC *dc, int x, int y, int width, int
 
 void ReplacerSeekResults::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
 {
-	if (event.LeftDClick()){
+	if (event.GetX() < 19 && event.LeftDown() || event.LeftDClick()){
+		modified = !modified;
+		theList->Refresh(false);
+		//here should be a function that will change state of header
+	}
+	else if (event.LeftDClick()){
 		wxCommandEvent *evt = new wxCommandEvent(CHOOSE_RESULT, theList->GetId());
 		evt->SetClientData(this);
 		wxQueueEvent(theList->GetParent(), evt);
@@ -59,8 +78,10 @@ void ReplacerSeekResults::OnMouseEvent(wxMouseEvent &event, bool enter, bool lea
 
 void ReplacerSeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
 {
-	wxSize ex = theList->GetTextExtent(name);
-	wxSize exOfFound = theList->GetTextExtent(name.Mid(0, findPosition.x));
+	wxString lineNum = wxString::Format(_("Linia %i: "), idLine);
+	wxString lineAndNum = lineNum + name;
+	wxSize ex = theList->GetTextExtent(lineAndNum);
+	wxSize exOfFound = theList->GetTextExtent(lineAndNum.Mid(0, findPosition.x + lineNum.length()));
 	wxString bitmapName = (modified) ? "checkbox_selected" : "checkbox";
 	wxBitmap checkboxBmp = wxBITMAP_PNG(bitmapName);
 	if (enter){ BlueUp(&checkboxBmp); }
@@ -69,13 +90,13 @@ void ReplacerSeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int h
 	needTooltip = ex.x + 18 > width - 8;
 	wxRect cur(x + 18, y, width - 8, height);
 	dc->SetClippingRegion(cur);
-	dc->DrawLabel(name, cur, wxALIGN_CENTER_VERTICAL);
+	dc->DrawLabel(lineAndNum, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
 	dc->SetTextForeground(Options.GetColour(FIND_RESULT_FOUND_PHRASE_FOREGROUND));
 	const wxColour &background = Options.GetColour(FIND_RESULT_FOUND_PHRASE_BACKGROUND);
 	dc->SetBrush(wxBrush(background));
 	dc->SetPen(wxPen(background));
-	wxString foundText = name.Mid(findPosition.x, findPosition.y);
+	wxString foundText = lineAndNum.Mid(findPosition.x + lineNum.length(), findPosition.y);
 	wxSize exFoundText = theList->GetTextExtent(foundText);
 	dc->DrawRectangle(x + exOfFound.x + 18, y + ((height - exOfFound.y) / 2), exFoundText.x, height);
 	dc->DrawText(foundText, x + exOfFound.x + 18, y + ((height - exOfFound.y) / 2));
@@ -83,8 +104,9 @@ void ReplacerSeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int h
 	dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WindowText : WindowTextInactive));
 }
 
-FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *MR)
+FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
 	:KaiDialog(parent, -1, _("Wyniki szukania"))
+	,MR(_MR)
 {
 	DialogSizer * main = new DialogSizer(wxVERTICAL);
 	ResultsList = new KaiListCtrl(this, 23323, wxDefaultPosition, wxSize(700, 300));
@@ -119,7 +141,7 @@ FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *MR)
 	buttonsSizer->Add(checkAll, 1, wxALL, 2);
 	buttonsSizer->Add(unCheckAll, 1, wxALL, 2);
 	buttonsSizer->Add(replaceChecked, 1, wxALL, 2);
-	main->Add(ResultsList, 0, wxALL, 2);
+	main->Add(buttonsSizer, 0, wxALL, 2);
 	SetSizerAndFit(main);
 }
 
@@ -130,10 +152,10 @@ void FindResultDialog::SetHeader(const wxString &text)
 	ResultsList->AppendItemWithExtent(header);
 }
 
-void FindResultDialog::SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _keyLine, const wxString &_path)
+void FindResultDialog::SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _keyLine, int idLine, int numOfRule)
 {
 	resultsCounter++;
-	ReplacerSeekResults *results = new ReplacerSeekResults(text, pos, _tab, _keyLine, _path);
+	ReplacerSeekResults *results = new ReplacerSeekResults(text, pos, _tab, _keyLine, idLine, numOfRule);
 	ResultsList->AppendItemWithExtent(results);
 }
 

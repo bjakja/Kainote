@@ -18,28 +18,42 @@
 #include "OpennWrite.h"
 #include "KaiStaticBoxSizer.h"
 #include "Tabs.h"
+#include "KainoteMain.h"
 #include <regex>
+#include <wx/regex.h>
 
 
 MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	:KaiDialog(parent, -1, _("Korekcja drobnych b³êdów"))
+	, resultDialog(NULL)
 {
 	DialogSizer *MainSizer = new DialogSizer(wxHORIZONTAL);
 	wxBoxSizer *ListSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *PhrasesSizer = new wxBoxSizer(wxHORIZONTAL);
-	PutWordBoundary = new KaiCheckBox(this, ID_PUT_WORD_BOUNDARY, _("Wstawiaj automatycznie granice s³ów \b"));
+	PutWordBoundary = new KaiCheckBox(this, ID_PUT_WORD_BOUNDARY, _("Wstawiaj automatycznie granice s³ów \\b"));
 	ShowBuiltInRules = new KaiCheckBox(this, ID_SHOW_BUILT_IN_RULES, _("Poka¿ wbudowane zasady"));
 	PhraseToFind = new KaiTextCtrl(this, ID_PHRASE_TO_FIND);
+	PhraseToFind->SetMaxLength(MAXINT);
 	PhraseToReplace = new KaiTextCtrl(this, ID_PHRASE_TO_REPLACE);
-	PhrasesSizer->Add(PhraseToFind, 1, wxALL, 2);
-	PhrasesSizer->Add(PhraseToReplace, 1, wxALL, 2);
-	RulesList = new KaiListCtrl(this, ID_RULES_LIST,wxDefaultPosition, wxSize(320,-1));
-	RulesList->InsertColumn(0, L"", TYPE_TEXT, 20);
-	RulesList->InsertColumn(1, _("Opis / szukana fraza"), TYPE_COLOR, 200);
-	RulesList->InsertColumn(2, _("Zmieniania fraza"), TYPE_COLOR, 90);
+	PhraseToReplace->SetMaxLength(MAXINT);
+	PhrasesSizer->Add(PhraseToFind, 1, wxALL | wxEXPAND, 2);
+	PhrasesSizer->Add(PhraseToReplace, 1, wxALL | wxEXPAND, 2);
+	RulesList = new KaiListCtrl(this, ID_RULES_LIST,wxDefaultPosition, wxSize(320, 400));
+	RulesList->InsertColumn(0, L"", TYPE_CHECKBOX, 20);
+	RulesList->InsertColumn(1, _("Opis / szukana fraza"), TYPE_TEXT, 200);
+	RulesList->InsertColumn(2, _("Zmieniania fraza"), TYPE_TEXT, 90);
+	Bind(LIST_ITEM_LEFT_CLICK, [=](wxCommandEvent &evt){
+		int sel = RulesList->GetSelection();
+		if (sel < 0 || sel >= rules.size())
+			return;
+
+		const std::pair<wxString, wxString> & rulepair = rules[sel];
+		PhraseToFind->SetValue(rulepair.first);
+		PhraseToReplace->SetValue(rulepair.second);
+	}, ID_RULES_LIST);
 	FillRulesList();
-	ListSizer->Add(PhrasesSizer, 0);
-	ListSizer->Add(RulesList, 0, wxALL | wxEXPAND, 2);
+	ListSizer->Add(PhrasesSizer, 0, wxEXPAND);
+	ListSizer->Add(RulesList, 1, wxALL | wxEXPAND, 2);
 	ListSizer->Add(PutWordBoundary, 0, wxALL, 2);
 	ListSizer->Add(ShowBuiltInRules, 0, wxALL, 2);
 
@@ -52,30 +66,42 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	
 	ChoosenStyles = new KaiTextCtrl(this, -1);
 	styleChooseSizer->Add(ChooseStylesButton, 0, wxRIGHT, 2);
-	styleChooseSizer->Add(ChoosenStyles, 0);
+	styleChooseSizer->Add(ChoosenStyles, 0, wxEXPAND);
 
-	WhichLinesSizer->Add(WhichLines, 0);
+	WhichLinesSizer->Add(WhichLines, 0, wxBOTTOM, 2);
 	WhichLinesSizer->Add(styleChooseSizer, 0);
 
 	wxBoxSizer *ButtonsSizer = new wxBoxSizer(wxVERTICAL);
-	//dodaæ brakuj¹ce przyciski i poprawiæ opisy.
-	MappedButton *AddRuleToList = new MappedButton(this, ID_FIND_RULE, _("Dodaj zasadê"));
-	MappedButton *RemoveRuleFromList = new MappedButton(this, ID_FIND_RULE, _("Usuñ zasadê"));
+	MappedButton *AddRuleToList = new MappedButton(this, ID_ADD_RULE, _("Dodaj regu³ê"));
+	MappedButton *EditRuleFromList = new MappedButton(this, ID_EDIT_RULE, _("Edytuj regu³ê"));
+	MappedButton *RemoveRuleFromList = new MappedButton(this, ID_REMOVE_RULE, _("Usuñ regu³ê"));
 	MappedButton *FindRule = new MappedButton(this, ID_FIND_RULE, _("ZnajdŸ b³¹d"));
+	FindRule->Enable(false);
 	MappedButton *FindRulesOnTab = new MappedButton(this, ID_FIND_ALL_RULES, _("ZnajdŸ b³êdy\nw bie¿¹cej zak³adce"));
 	MappedButton *FindRulesOnAllTabs = new MappedButton(this, ID_FIND_ALL_RULES_ON_ALL_TABS, _("ZnajdŸ b³êdy\nwe wszystkich zak³adkach"));
 	MappedButton *ReplaceRule = new MappedButton(this, ID_REPLACE_RULE, _("Zmieñ b³¹d"));
+	ReplaceRule->Enable(false);
 	MappedButton *ReplaceRules = new MappedButton(this, ID_REPLACE_ALL_RULES, _("Zamieñ wszystkie b³êdy\nw bie¿¹cej zak³adce"));
 	MappedButton *ReplaceRulesOnAllTabs = new MappedButton(this, ID_REPLACE_ALL_RULES_ON_ALL_TABS, _("Zamieñ wszystkie b³êdy\nwe wszystkich zak³adkach"));
-	ButtonsSizer->Add(WhichLinesSizer, 0, wxALL, 2);
-	ButtonsSizer->Add(AddRuleToList, 0, wxALL, 2);
-	ButtonsSizer->Add(RemoveRuleFromList, 0, wxALL, 2);
-	ButtonsSizer->Add(FindRule, 0, wxALL, 2);
-	ButtonsSizer->Add(FindRulesOnTab, 0, wxALL, 2);
-	ButtonsSizer->Add(FindRulesOnAllTabs, 0, wxALL, 2);
-	ButtonsSizer->Add(ReplaceRule, 0, wxALL, 2);
-	ButtonsSizer->Add(ReplaceRules, 0, wxALL, 2);
-	ButtonsSizer->Add(ReplaceRulesOnAllTabs, 0, wxALL, 2);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){AddRule(); }, ID_ADD_RULE);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EditRule(); }, ID_EDIT_RULE);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){RemoveRule(); }, ID_REMOVE_RULE);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){SeekOnce(); }, ID_FIND_RULE);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){SeekOnActualTab(); }, ID_FIND_ALL_RULES);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){SeekOnAllTabs(); }, ID_FIND_ALL_RULES_ON_ALL_TABS);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ReplaceOnce(); }, ID_REPLACE_RULE);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ReplaceOnActualTab(); }, ID_REPLACE_ALL_RULES);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ReplaceOnAllTabs(); }, ID_REPLACE_ALL_RULES_ON_ALL_TABS);
+	ButtonsSizer->Add(WhichLinesSizer, 0, wxALL | wxEXPAND, 2);
+	ButtonsSizer->Add(AddRuleToList, 0, wxALL | wxEXPAND, 2);
+	ButtonsSizer->Add(EditRuleFromList, 0, wxALL | wxEXPAND, 2);
+	ButtonsSizer->Add(RemoveRuleFromList, 0, wxALL | wxEXPAND, 2);
+	ButtonsSizer->Add(FindRule, 0, wxALL | wxEXPAND, 2);
+	ButtonsSizer->Add(FindRulesOnTab, 0, wxALL | wxEXPAND, 2);
+	ButtonsSizer->Add(FindRulesOnAllTabs, 0, wxALL | wxEXPAND, 2);
+	ButtonsSizer->Add(ReplaceRule, 0, wxALL | wxEXPAND, 2);
+	ButtonsSizer->Add(ReplaceRules, 0, wxALL | wxEXPAND, 2);
+	ButtonsSizer->Add(ReplaceRulesOnAllTabs, 0, wxALL | wxEXPAND, 2);
 
 	MainSizer->Add(ListSizer, 0, wxALL, 2);
 	MainSizer->Add(ButtonsSizer, 0, wxALL, 2);
@@ -84,21 +110,102 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	CenterOnParent();
 }
 
+MisspellReplacer::~MisspellReplacer()
+{
+	if (rules.size())
+		SaveRules();
+}
+
 void MisspellReplacer::ReplaceChecked()
 {
+	std::vector<wxRegEx*> rxrules;
+	for (size_t i = 0; i < rules.size(); i++){
+		wxRegEx *rule = new wxRegEx(rules[i].first, wxRE_ADVANCED | wxRE_ICASE);
+		if (!rule->IsValid()){
+			//KaiLog(wxString::Format("Szablon wyra¿eñ regularnych \"%s\" jest nieprawid³owy", rules[checkedRules[i]].first));
+			delete rule;
+			continue;
+		}
+		rxrules.push_back(rule);
+	}
+	
+
+	KaiListCtrl *List = resultDialog->ResultsList;
+	TabPanel *oldtab = NULL;
+	TabPanel *tab = NULL;
+	int oldKeyLine = -1;
+	int replaceDiff = 0;
+	for (size_t tt = 0; tt < List->GetCount(); tt++){
+		Item *item = List->GetItem(tt, 0);
+		if (!item || item->type != TYPE_TEXT || !item->modified)
+			continue;
+
+		ReplacerSeekResults *SeekResult = (ReplacerSeekResults *)item;
+		tab = SeekResult->tab;
+
+		Dialogue *Dialc = tab->Grid->file->CopyDialogueByKey(SeekResult->keyLine);
+		
+		wxString & lineText = Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != "");
+
+		//replace differents for not matching sizes in one line
+		if (SeekResult->keyLine != oldKeyLine)
+			replaceDiff = 0;
+	
+		size_t pos = SeekResult->findPosition.x + replaceDiff;
+		size_t len = SeekResult->findPosition.y;
+		wxString replacedResult;
+		wxString matchResult = replacedResult = lineText.Mid(pos, len);
+		int reps = rxrules[SeekResult->numOfRule]->Replace(&replacedResult, rules[SeekResult->numOfRule].second);
+
+		MoveCase(matchResult, &replacedResult);
+
+		lineText.replace(pos, len, replacedResult);
+
+		replaceDiff += replacedResult.length() - matchResult.length();
+
+		if (oldtab && oldtab != tab){
+			oldtab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
+			oldtab->Grid->Refresh(false);
+		}
+
+		oldtab = tab;
+		oldKeyLine = SeekResult->keyLine;
+	}
+	if (tab){
+		tab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
+		tab->Grid->Refresh(false);
+	}
+
+	for (auto cur = rxrules.begin(); cur != rxrules.end(); cur++){
+		delete *cur;
+	}
 
 }
 
 void MisspellReplacer::ShowResult(TabPanel *tab, int keyLine)
 {
+	Notebook *nb = Notebook::GetTabs();
+	for (size_t i = 0; i < nb->Size(); i++){
+		if (nb->Page(i) == tab){
+			if (keyLine < tab->Grid->file->GetAllCount()){
+				if (i != nb->iter)
+					nb->ChangePage(i);
 
+				int lineId = tab->Grid->file->GetElementByKey(keyLine);
+				tab->Edit->SetLine(lineId);
+				tab->Grid->SelectRow(lineId);
+				tab->Grid->ScrollTo(lineId, true);
+			}
+			break;
+		}
+	}
 }
 
 void MisspellReplacer::FillRulesList()
 {
 	wxString rulesText;
 	OpenWrite ow;
-	ow.FileOpen(Options.pathfull + L"\\rules.txt", &rulesText);
+	ow.FileOpen(Options.pathfull + L"\\Rules.txt", &rulesText);
 	if (rulesText.empty())
 		return;
 
@@ -122,12 +229,181 @@ void MisspellReplacer::FillRulesList()
 	}
 }
 
+void MisspellReplacer::EditRule()
+{
+	if (resultDialog && resultDialog->IsShown()){
+		KaiLog(_("Nie mo¿na zmieniaæ regu³,\ngdy okno wyników szukania jest otwarte"));
+		return;
+	}
+	int sel = RulesList->GetSelection();
+	if (sel < 0 || sel >= rules.size()){
+		KaiLog(wxString::Format(L"Edit rule - bad selection of rule %i - %llu", sel, (unsigned long long)rules.size()));
+		return;
+	}
+
+	rules[sel] = std::make_pair(PhraseToFind->GetValue(), PhraseToReplace->GetValue());
+	Item * itemF = RulesList->GetItem(sel, 1);
+	Item * itemR = RulesList->GetItem(sel, 2);
+	if (itemF)
+		itemF->name = PhraseToFind->GetValue();
+	if (itemR)
+		itemR->name = PhraseToReplace->GetValue();
+	RulesList->Refresh(false);
+}
+
+void MisspellReplacer::AddRule()
+{
+	if (resultDialog && resultDialog->IsShown()){
+		KaiLog(_("Nie mo¿na zmieniaæ regu³,\ngdy okno wyników szukania jest otwarte"));
+		return;
+	}
+	wxString phraseToFind = PhraseToFind->GetValue();
+	wxString phraseToReplace = PhraseToReplace->GetValue();
+	if (PutWordBoundary->GetValue())
+		phraseToFind = L"\\b" + phraseToFind + L"\\b";
+
+	rules.push_back(std::make_pair(phraseToFind, phraseToReplace));
+	int row = RulesList->AppendItem(new ItemCheckBox(false, L""));
+	RulesList->SetItem(row, 1, new ItemText(phraseToFind));
+	RulesList->SetItem(row, 2, new ItemText(phraseToReplace));
+	RulesList->Refresh(false);
+}
+
+void MisspellReplacer::RemoveRule()
+{
+	if (resultDialog && resultDialog->IsShown()){
+		KaiLog(_("Nie mo¿na zmieniaæ regu³,\ngdy okno wyników szukania jest otwarte"));
+		return;
+	}
+	int sel = RulesList->GetSelection();
+	if (sel < 0 || sel >= rules.size()){
+		KaiLog(wxString::Format(L"Edit rule - bad selection of rule %i - %llu", sel, (unsigned long long)rules.size()));
+		return;
+	}
+	rules.erase(rules.begin() + sel);
+	RulesList->DeleteItem(sel, false);
+}
+
 void MisspellReplacer::SeekOnce()
 {
-
+	//:todo seek once
 }
 
 void MisspellReplacer::SeekOnTab(TabPanel *tab)
+{
+	std::vector<int> checkedRules;
+	GetCheckedRules(checkedRules);
+	if (checkedRules.size() == 0)
+		return;
+	//maybe some info needed
+
+	std::vector<wxRegEx*> rxrules;
+	for (size_t i = 0; i < checkedRules.size(); i++){
+		wxRegEx *rule = new wxRegEx(rules[checkedRules[i]].first, wxRE_ADVANCED | wxRE_ICASE);
+		if (!rule->IsValid()){
+			//KaiLog(wxString::Format("Szablon wyra¿eñ regularnych \"%s\" jest nieprawid³owy", rules[checkedRules[i]].first));
+			delete rule;
+			continue;
+		}
+		rxrules.push_back(rule);
+	}
+
+	//0-all lines 1-selected lines 2-from selected 3-by styles
+	wxString stylesAsText = L"," + ChoosenStyles->GetValue() + L",";
+	int selectedOption = WhichLines->GetSelection();
+	int firstSelectedId = tab->Grid->FirstSelection();
+	int positionId = 0;
+	int tabLinePosition = (selectedOption == 2 && firstSelectedId >= 0) ? tab->Grid->file->GetElementById(firstSelectedId) : 0;
+	if (tabLinePosition > 0)
+		positionId = firstSelectedId;
+
+	File *Subs = tab->Grid->file->GetSubs();
+	
+
+	bool isfirst = true;
+
+	while (tabLinePosition < Subs->dials.size())
+	{
+		Dialogue *Dial = Subs->dials[tabLinePosition];
+		if (!Dial->isVisible){ tabLinePosition++; continue; }
+
+		if ((!selectedOption) ||
+			(selectedOption == 3 && stylesAsText.Find("," + Dial->Style + ",") != -1) ||
+			(selectedOption == 1 && tab->Grid->file->IsSelectedByKey(tabLinePosition))){
+			const wxString & lineText = (Dial->TextTl != "") ? Dial->TextTl : Dial->Text;
+
+			for (size_t k = 0; k < rxrules.size(); k++){
+				
+
+				int textPos = 0;
+				wxString text = lineText;
+				wxRegEx *r = rxrules[k];
+
+				while (r->Matches(text)) {
+					size_t matchstart=0, matchlen=0;
+					if (r->GetMatch(&matchstart, &matchlen)){
+						if (matchlen == 0)
+							matchlen++;
+
+						if (isfirst){
+							resultDialog->SetHeader(tab->SubsPath);
+							isfirst = false;
+						}
+
+						resultDialog->SetResults(lineText, wxPoint(matchstart + textPos, matchlen), tab, tabLinePosition, positionId + 1, checkedRules[k]);
+					}
+					else
+						break;
+						
+					textPos += (matchstart + matchlen);
+					text = lineText.Mid(textPos);
+				}
+				
+			}
+		}
+		positionId++;
+		tabLinePosition++;
+	}
+	for (auto cur = rxrules.begin(); cur != rxrules.end(); cur++){
+		delete *cur;
+	}
+}
+
+void MisspellReplacer::SeekOnActualTab()
+{
+	if (resultDialog){
+		resultDialog->ClearList();
+	}
+	else{
+		resultDialog = new FindResultDialog(GetParent(), this);
+	}
+	SeekOnTab(Notebook::GetTab());
+	if (!resultDialog->IsShown())
+		resultDialog->Show();
+}
+
+void MisspellReplacer::SeekOnAllTabs()
+{
+	if (resultDialog){
+		resultDialog->ClearList();
+	}
+	else{
+		resultDialog = new FindResultDialog(GetParent(), this);
+	}
+	Notebook *nb = Notebook::GetTabs();
+	for (size_t i = 0; i < nb->Size(); i++){
+		SeekOnTab(nb->Page(i));
+	}
+	if (!resultDialog->IsShown())
+		resultDialog->Show();
+}
+
+void MisspellReplacer::ReplaceOnce()
+{
+	//:todo replace once
+}
+
+void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 {
 	std::vector<int> checkedRules;
 	GetCheckedRules(checkedRules);
@@ -141,80 +417,49 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 	int firstSelectedId = tab->Grid->FirstSelection();
 	int positionId = 0;
 	int tabLinePosition = (selectedOption == 2 && firstSelectedId >= 0) ? tab->Grid->file->GetElementById(firstSelectedId) : 0;
-	int tabTextPosition = 0;
 	if (tabLinePosition > 0)
 		positionId = firstSelectedId;
 
 	File *Subs = tab->Grid->file->GetSubs();
 
-	bool isfirst = true;
-
 	while (tabLinePosition < Subs->dials.size())
 	{
 		Dialogue *Dial = Subs->dials[tabLinePosition];
-		if (!Dial->isVisible){ tabLinePosition++; tabTextPosition = 0; continue; }
+		if (!Dial->isVisible){ tabLinePosition++; continue; }
 
 		if ((!selectedOption) ||
 			(selectedOption == 3 && stylesAsText.Find("," + Dial->Style + ",") != -1) ||
 			(selectedOption == 1 && tab->Grid->file->IsSelectedByKey(tabLinePosition))){
-			const wxString & lineText = (Dial->TextTl != "") ? Dial->TextTl : Dial->Text;
-
+			wxString & lineText = Dial->Text.CheckTlRef(Dial->TextTl, Dial->TextTl != "");
+			std::wstring text = lineText.ToStdWstring();
 			for (size_t k = 0; k < checkedRules.size(); k++){
+				
 				try{
-					std::wregex r(rules[checkedRules[k]].first.ToStdWstring()); // the pattern \b matches a word boundary
-					std::wsmatch m;
-					std::wstring text = lineText.Lower().ToStdWstring();
-					int textPos = 0;
-
-					while (std::regex_search(text, m, r)) {
-						int pos = m.position(0) + textPos;
-						int len = m.length(0);
-						//selectionWords.Add(pos);
-						//selectionWords.Add(pos + len - 1);
-						if (isfirst){
-							resultDialog->SetHeader(tab->SubsPath);
-							isfirst = false;
-						}
-						text = m.suffix().str();
-						textPos = pos + len;
-					}
+					std::wregex r(rules[checkedRules[k]].first.ToStdWstring(), std::regex_constants::icase); // the pattern \b matches a word boundary
+					
+					std::wstring replacedText = std::regex_replace(text, r, rules[checkedRules[k]].second.ToStdWstring());
+					text = replacedText;
 				}
 				catch (...){}
 			}
+			lineText = wxString(text);
 		}
 		positionId++;
+		tabLinePosition++;
 	}
-}
-
-void MisspellReplacer::SeekOnActualTab()
-{
-
-}
-
-void MisspellReplacer::SeekOnAllTabs()
-{
-
-}
-
-void MisspellReplacer::ReplaceOnce()
-{
-
-}
-
-void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
-{
-	
-
 }
 
 void MisspellReplacer::ReplaceOnActualTab()
 {
-
+	ReplaceOnTab(Notebook::GetTab());
 }
 
 void MisspellReplacer::ReplaceOnAllTabs()
 {
-
+	Notebook *nb = Notebook::GetTabs();
+	for (size_t i = 0; i < nb->Size(); i++){
+		ReplaceOnTab(nb->Page(i));
+	}
 }
 
 void MisspellReplacer::GetCheckedRules(std::vector<int> &checkedRules)
@@ -229,10 +474,35 @@ void MisspellReplacer::GetCheckedRules(std::vector<int> &checkedRules)
 
 void MisspellReplacer::SaveRules()
 {
-	wxString rulesText;
+	wxString rulesText = L"#Kainote rules file\r\n";
+	for (int i = 0; i < RulesList->GetCount(); i++){
+		Item *item = RulesList->GetItem(i, 0);
+		if (item)
+			rulesText << (int)item->modified << L"|";
+		else
+			rulesText << L"0|";
+	}
+	if (rulesText.EndsWith('|'))
+		rulesText.RemoveLast() += L"\r\n";
+
 	for (auto & rule : rules){
 		rulesText << rule.first << "\f" << rule.second << "\r\n";
 	}
 	OpenWrite ow;
-	ow.FileWrite(Options.pathfull + L"\\rules.txt", rulesText);
+	ow.FileWrite(Options.pathfull + L"\\Rules.txt", rulesText);
+}
+
+void MisspellReplacer::MoveCase(const wxString &originalCase, wxString *result)
+{
+	int upperCase = 0;
+	size_t len = originalCase.length();
+	for (size_t i = 0; i < len; i++){
+		if (iswupper(WXWCHAR_T_CAST(originalCase[i])) != 0)
+			upperCase++;
+	}
+	if (upperCase > 1)
+		result->MakeUpper();
+	else if (upperCase > 0)
+		result->at(0) = wxToupper(result->at(0));
+
 }

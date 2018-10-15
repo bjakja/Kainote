@@ -134,6 +134,9 @@ public:
 		itemList[pos] = row;
 		garbage.push_back(row);
 	}
+	void Erase(size_t pos){
+		itemList.erase(itemList.begin() + pos);
+	}
 	const std::vector< ItemRow*> & GetGarbage(){ return garbage; }
 private:
 	std::vector< ItemRow*> itemList;
@@ -182,6 +185,7 @@ public:
 	Item *CopyRow(int y, int x, bool pushBack = false);
 	void SetTextArray(const wxArrayString &Array);
 	void FilterRow(int row, int visibility);
+	void DeleteItem(int row, bool save);
 	void ClearList(){
 		for (auto it = historyList.begin(); it != historyList.end(); it++){
 			delete *it;

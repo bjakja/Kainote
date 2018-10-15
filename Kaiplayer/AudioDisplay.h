@@ -193,6 +193,7 @@ public:
 	bool NeedCommit;
 	bool loaded;
 	bool hasMark;
+	bool isHidden = false;
 	int curMarkMS;
 	int Grabbed;
 	int hold;

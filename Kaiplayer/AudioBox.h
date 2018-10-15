@@ -133,6 +133,14 @@ public:
 	void OnPlaySelection(wxCommandEvent &event);
 	void SetVolume(int vol);
 	int GetVolume();
+	bool Show(bool show = true){
+		audioDisplay->isHidden = !show;
+		return wxWindow::Show(show);
+	}
+	bool Hide(){
+		audioDisplay->isHidden = true;
+		return wxWindow::Show(false);
+	}
 	DECLARE_EVENT_TABLE()
 };
 

@@ -596,7 +596,6 @@ bool MenuDialog::SendEvent(MenuItem *item, int accel)
 		ParentMenu->accel = accel;
 	}
 	HideMenus(item->id);
-
 	return true;
 }
 

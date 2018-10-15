@@ -151,6 +151,7 @@
 	XX( RemoveSubs,)\
 	XX( Search,)\
 	XX( GLOBAL_FIND_REPLACE,)\
+	XX(	GLOBAL_MISSPELLS_REPLACER,)\
 	XX( SelectLinesDialog,)\
 	XX( SpellcheckerDialog,)\
 	XX( VideoIndexing,)\

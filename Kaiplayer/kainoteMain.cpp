@@ -162,6 +162,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	EditMenu->AppendTool(Toolbar, SortLines, _("Sort&uj wszystkie linie"), _("Sortuje wszystkie linie napisów ASS"), PTR_BITMAP_PNG("sort"), true, SortMenu[0]);
 	EditMenu->AppendTool(Toolbar, SortSelected, _("Sortu&j zaznaczone linie"), _("Sortuje zaznaczone linie napisów ASS"), PTR_BITMAP_PNG("sortsel"), true, SortMenu[1]);
+	EditMenu->AppendTool(Toolbar, GLOBAL_MISSPELLS_REPLACER, _("Popraw drobne błędy"), _("Włącza okno poprawiania błędów"), PTR_BITMAP_PNG("sellines"));
 	EditMenu->AppendTool(Toolbar, SelectLinesDialog, _("Zaznacz &linijki"), _("Zaznacza linijki wg danej frazy tekstu"), PTR_BITMAP_PNG("sellines"));
 	Menubar->Append(EditMenu, _("&Edycja"));
 
@@ -477,6 +478,10 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if (!fc){ fc = new FontCollector(this); }
 		fc->ShowDialog(this);
 	}
+	else if (id == GLOBAL_MISSPELLS_REPLACER){
+		if (!MR){ MR = new MisspellReplacer(this); }
+		MR->Show(!MR->IsShown());
+	}
 	else if (id >= ConvertToASS && id <= ConvertToMPL2){
 		if (tab->Grid->GetSInfo("TLMode") != "Yes"){
 			OnConversion((id - ConvertToASS) + 1);
@@ -510,11 +515,17 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if (tab->Edit->ABox){
 			tab->Edit->ABox->Show((id == ViewAll || id == ViewAudio));
 			if (id == ViewAudio){ tab->Edit->SetMinSize(wxSize(500, 350)); }
+			if (id != ViewAudio && id != ViewAll){
+				tab->Edit->windowResizer->Show(false);
+			}
+			else if (!tab->Edit->windowResizer->IsShown())
+				tab->Edit->windowResizer->Show();
 		}
 		if (id == GLOBAL_VIEW_ONLY_VIDEO){
 			tab->Edit->Show(false);
 			tab->Grid->Show(false);
 			tab->ShiftTimes->Show(false);
+			tab->windowResizer->Show(false);
 			wxSize tabSize = tab->GetClientSize();
 			tab->Video->SetMinSize(tabSize);
 		}
@@ -522,6 +533,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			tab->Edit->Show();
 			tab->Grid->Show();
 			tab->ShiftTimes->Show();
+			tab->windowResizer->Show();
 			int x = 0, y = 0;
 			Options.GetCoords(VideoWindowSize, &x, &y);
 			tab->Video->SetMinSize(wxSize(x, y));

@@ -302,6 +302,17 @@ void KaiListCtrl::FilterRow(int row, int visibility)
 	(*itemList)[row]->isVisible = visibility;
 }
 
+void KaiListCtrl::DeleteItem(int row, bool save)
+{
+	if (row < 0 || row >= itemList->size())
+		return;
+
+	ItemRow *ir = (*itemList)[row];
+	itemList->Erase(row);
+	if (save)
+		PushHistory();
+}
+
 void KaiListCtrl::SetHeaderHeight(int height)
 {
 	headerHeight = height;

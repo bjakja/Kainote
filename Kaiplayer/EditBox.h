@@ -152,7 +152,7 @@ public:
 	bool lastVisible;
 	int Visual;
 	int EditCounter;
-
+	KaiWindowResizer *windowResizer;
 private:
 	
 	
@@ -204,7 +204,6 @@ private:
 	int CurrentUntranslated;
 	int currentLine;
 	SubsGrid *grid;
-	KaiWindowResizer *windowResizer;
 };
 
 

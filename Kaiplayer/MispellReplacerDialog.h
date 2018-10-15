@@ -17,7 +17,7 @@
 
 #include "KaiDialog.h"
 #include "KaiListCtrl.h"
-#include "KainoteMain.h"
+
 
 wxDECLARE_EVENT(CHOOSE_RESULT, wxCommandEvent);
 
@@ -27,6 +27,8 @@ enum{
 	ID_UNCHECK_ALL,
 	ID_REPLACE_CHECKED
 };
+
+class TabPanel;
 
 class ReplacerResultsHeader : public Item
 {
@@ -48,17 +50,23 @@ private:
 class ReplacerSeekResults : public Item
 {
 public:
-	ReplacerSeekResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _keyLine, const wxString &_path) : Item(TYPE_TEXT){
+	ReplacerSeekResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _keyLine, int _idLine , int _numOfRule/*const wxString &_path*/) : Item(TYPE_TEXT){
 		name = text;
 		findPosition = pos;
 		tab = _tab;
-		path = _path;
+		//path = _path;
+		idLine = _idLine;
 		keyLine = _keyLine;
+		numOfRule = _numOfRule;
+		modified = true;
 	}
 	virtual ~ReplacerSeekResults(){};
 	TabPanel *tab = NULL;
-	wxString path;
+	//wxString path;
+	int idLine;
 	int keyLine;
+	int numOfRule;
+	wxPoint findPosition;
 private:
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
@@ -69,7 +77,6 @@ private:
 		else
 			return NOT_VISIBLE;
 	}
-	wxPoint findPosition;
 	bool enter = false;
 };
 
@@ -81,11 +88,12 @@ public:
 	FindResultDialog(wxWindow *parent, MisspellReplacer *MR);
 	virtual ~FindResultDialog(){};
 	void SetHeader(const wxString &text);
-	void SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _keyLine, const wxString &_path);
+	void SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _keyLine, int idLine, int numOfRule);
 	void ClearList();
 	void CheckUncheckAll(bool check = true);
 	KaiListCtrl *ResultsList;
 private:
 	int resultsCounter = 0;
+	MisspellReplacer *MR;
 };
 

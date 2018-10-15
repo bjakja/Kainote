@@ -44,7 +44,7 @@
 class kainoteApp : public wxApp
 {
 public:
-    bool OnInit();
+	bool OnInit();
 	int OnExit();
 	//bool OnSecondInstance(wxString _paths);
 	//void OnUnhandledException();

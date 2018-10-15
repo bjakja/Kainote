@@ -38,6 +38,7 @@
 #include "Toolbar.h"
 #include "KaiStatusBar.h"
 #include "LogHandler.h"
+#include "MisspellReplacer.h"
 
 class FontCollector;
 
@@ -97,6 +98,7 @@ class KainoteFrame: public KaiFrame
 		SelectLines *SL;
 		Auto::Automation *Auto;
 		FontCollector *fc;
+		MisspellReplacer *MR = NULL;
 		RECT borders;
 	private:
 
