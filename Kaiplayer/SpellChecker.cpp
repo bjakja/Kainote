@@ -124,7 +124,6 @@ bool SpellChecker::Initialize()
 				if (curLine.IsEmpty() || curLine.IsNumber()) continue;
 
 				hunspell->add(curLine.mb_str(*conv));
-
 			}
 
 		}
@@ -180,4 +179,39 @@ bool SpellChecker::AddWord(wxString word)
 	ow.FileWrite(pathhh,txt);
 
 	return true;
+}
+
+bool SpellChecker::RemoveWords(const wxArrayString &words)
+{
+	if (!words.size())
+		return false;
+
+	int succeded = 0;
+	int counter = 0;
+	wxString userpath = Options.pathfull + "\\Dictionary\\UserDic.udic";
+	if (wxFileExists(userpath)) {
+		OpenWrite op;
+		wxString txt;
+		if (!op.FileOpen(userpath, &txt, false)) { return false; }
+		wxStringTokenizer textIn(txt, "\n");
+		bool found = false;
+		wxString newTxt;
+		while (textIn.HasMoreTokens()) {
+			// Read line
+			wxString curLine = textIn.NextToken();
+			curLine.Trim();
+			int foundWord = words.Index(curLine);
+			if (foundWord != -1){
+				found = true;
+				succeded = hunspell->remove(words[foundWord].mb_str(*conv));
+				continue;
+			}
+			newTxt << curLine << L"\r\n";
+		}
+		if (found){
+			op.FileWrite(userpath, newTxt);
+			return true;
+		}
+	}
+	return succeded > 0;
 }

@@ -1509,22 +1509,29 @@ void TextEditor::SeekSelected(const wxString &word)
 	if (word.Len() < 1 || (word.Len() < 2 && !wxIsalnum(word[0])))
 		return;
 
-	try{
-		std::wregex r((L"\\b" + word.Lower() + L"\\b").ToStdWstring()); // the pattern \b matches a word boundary
-		std::wsmatch m;
-		std::wstring text = MText.Lower().ToStdWstring();
-		int textPos = 0;
+	
+	wxRegEx r(L"\\m" + word + L"\\M", wxRE_ADVANCED | wxRE_ICASE); // the pattern \b matches a word boundary
+	if (!r.IsValid())
+		return;
+		
+	int textPos = 0;
+	wxString text = MText;
 
-		while (std::regex_search(text, m, r)) {
-			int pos = m.position(0) + textPos;
-			int len = m.length(0);
+	while (r.Matches(text)) {
+		size_t pos = 0, len = 0;
+		if (r.GetMatch(&pos, &len)){
+			pos += textPos;
 			selectionWords.Add(pos);
 			selectionWords.Add(pos + len - 1);
-			text = m.suffix().str();
-			textPos = pos + len;
 		}
+		else
+			break;
+
+		
+		textPos = pos + len;
+		text = MText.Mid(textPos);
 	}
-	catch (...){}
+	
 }
 
 void TextEditor::DrawWordRectangles(int type, wxDC &dc)

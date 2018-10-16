@@ -18,17 +18,17 @@
 #include "KainoteMain.h"
 
 
-Stylelistbox::Stylelistbox(wxWindow* parent, bool styles, int numelem, wxString *arr,const wxPoint& pos, int style, int type)
+Stylelistbox::Stylelistbox(wxWindow* parent, bool styles, int numelem, wxString *arr,const wxPoint& pos, int style)
 	: KaiDialog(parent, -1, (styles)?_("Wybór styli") : _("Wybór kolumn"))
 {
 	DialogSizer *Main = new DialogSizer(wxVERTICAL);
 	KaiStaticBoxSizer *sizer1 = new KaiStaticBoxSizer(wxVERTICAL, this, (styles)?_("Wybierz style") : _("Wybierz kolumny"));
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 	CheckListBox = new KaiListCtrl(this, -1,numelem, arr, wxDefaultPosition, wxSize(200,300), style);
-	Button1 = new MappedButton(this, wxID_OK, "Ok");
-	Button2 = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
-	sizer->Add(Button1, 1, wxALL, 2);
-	sizer->Add(Button2, 1, wxALL, 2);
+	OK = new MappedButton(this, wxID_OK, "Ok");
+	Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	sizer->Add(OK, 1, wxALL, 2);
+	sizer->Add(Cancel, 1, wxALL, 2);
 	sizer1->Add(CheckListBox,0, wxEXPAND);
 	Main->Add(sizer1, 0, wxEXPAND | wxALL, 2);
 	Main->Add(sizer,0, wxEXPAND | wxALL, 4);
@@ -64,6 +64,44 @@ wxString GetCheckedElements(wxWindow *parent)
 	}
 	delete [] elems;
 	return styletext.BeforeLast(',');
+}
+
+CustomCheckListBox::CustomCheckListBox(wxWindow* parent, const wxArrayString &listElems, const wxString &title, const wxPoint& pos, int style)
+	: KaiDialog(parent, -1, title)
+{
+	DialogSizer *Main = new DialogSizer(wxVERTICAL);
+	KaiStaticBoxSizer *sizer1 = new KaiStaticBoxSizer(wxVERTICAL, this, title);
+	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
+	int numelem = listElems.size();
+	wxString *arr = new wxString[numelem];
+	for (size_t i = 0; i < numelem; i++){
+		arr[i] = listElems[i];
+	}
+	CheckListBox = new KaiListCtrl(this, -1, numelem, arr, wxDefaultPosition, wxSize(200, 300), style);
+	OK = new MappedButton(this, wxID_OK, "Ok");
+	Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	sizer->Add(OK, 1, wxALL, 2);
+	sizer->Add(Cancel, 1, wxALL, 2);
+	sizer1->Add(CheckListBox, 0, wxEXPAND);
+	Main->Add(sizer1, 0, wxEXPAND | wxALL, 2);
+	Main->Add(sizer, 0, wxEXPAND | wxALL, 4);
+	SetSizerAndFit(Main);
+	MoveToMousePosition(this);
+}
+
+
+void CustomCheckListBox::GetCheckedElements(wxArrayString &checkedElements)
+{
+
+	
+	for (size_t v = 0; v < CheckListBox->GetCount(); v++)
+	{
+
+		if (CheckListBox->GetItem(v, 0)->modified){
+			checkedElements.Add(CheckListBox->GetItem(v, 0)->name);
+		}
+	}
+	
 }
 
 

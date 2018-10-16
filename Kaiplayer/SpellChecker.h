@@ -47,6 +47,7 @@ public:
 	void Cleaning();
 	bool CheckWord(wxString word);
 	bool AddWord(wxString word);
+	bool RemoveWords(const wxArrayString &word);
 	wxArrayString Suggestions(wxString word);
 	static SpellChecker *Get();
 	static void Destroy();

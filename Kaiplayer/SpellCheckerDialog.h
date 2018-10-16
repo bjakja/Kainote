@@ -42,6 +42,9 @@ private:
 	void OnSelectSuggestion(wxCommandEvent &evt);
 	void OnActive(wxActivateEvent &evt);
 	wxString GetRightCase(const wxString &replaceWord, const wxString &misspellWord);
+	bool IsAllUpperCase(const wxString &word);
+	void CheckText(wxString Text);
+	void LoadAddedMisspels();
 
 	KaiTextCtrl *misSpell;
 	KaiTextCtrl *replaceWord;
@@ -65,6 +68,7 @@ private:
 	wxString lastText;
 	KainoteFrame *Kai;
 	TabPanel *tab;
+	wxArrayString addedMisspels;
 };
 
 enum

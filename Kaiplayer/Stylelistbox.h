@@ -24,14 +24,29 @@ class Stylelistbox: public KaiDialog
 {
 	public:
 
-		Stylelistbox(wxWindow* parent, bool styles=true, int numelem = 0, wxString *arr=0, const wxPoint& pos=wxDefaultPosition, int style=0, int type = TYPE_CHECKBOX);
+		Stylelistbox(wxWindow* parent, bool styles=true, int numelem = 0, wxString *arr=0, const wxPoint& pos=wxDefaultPosition, int style=0);
 		virtual ~Stylelistbox();
 
 		
-		MappedButton* Button1;
+		MappedButton* OK;
 		KaiListCtrl* CheckListBox;
-		MappedButton* Button2;
+		MappedButton* Cancel;
 		
+};
+
+class CustomCheckListBox : public KaiDialog
+{
+public:
+
+	CustomCheckListBox(wxWindow* parent, const wxArrayString &listElems, const wxString &title, const wxPoint& pos = wxDefaultPosition, int style = 0);
+	virtual ~CustomCheckListBox(){};
+
+	void GetCheckedElements(wxArrayString &checkedElements);
+
+	MappedButton* OK;
+	KaiListCtrl* CheckListBox;
+	MappedButton* Cancel;
+
 };
 
 wxString GetCheckedElements(wxWindow *parent);

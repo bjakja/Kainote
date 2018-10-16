@@ -69,7 +69,7 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	styleChooseSizer->Add(ChoosenStyles, 0, wxEXPAND);
 
 	WhichLinesSizer->Add(WhichLines, 0, wxBOTTOM, 2);
-	WhichLinesSizer->Add(styleChooseSizer, 0);
+	WhichLinesSizer->Add(styleChooseSizer, 0, wxEXPAND);
 
 	wxBoxSizer *ButtonsSizer = new wxBoxSizer(wxVERTICAL);
 	MappedButton *AddRuleToList = new MappedButton(this, ID_ADD_RULE, _("Dodaj regu³ê"));
@@ -134,6 +134,7 @@ void MisspellReplacer::ReplaceChecked()
 	TabPanel *oldtab = NULL;
 	TabPanel *tab = NULL;
 	int oldKeyLine = -1;
+	int oldNumOfRule = -1;
 	int replaceDiff = 0;
 	for (size_t tt = 0; tt < List->GetCount(); tt++){
 		Item *item = List->GetItem(tt, 0);
@@ -165,14 +166,17 @@ void MisspellReplacer::ReplaceChecked()
 
 		if (oldtab && oldtab != tab){
 			oldtab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
+			oldtab->Grid->SpellErrors.clear();
 			oldtab->Grid->Refresh(false);
 		}
 
 		oldtab = tab;
 		oldKeyLine = SeekResult->keyLine;
+		oldNumOfRule = SeekResult->numOfRule;
 	}
 	if (tab){
 		tab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
+		tab->Grid->SpellErrors.clear();
 		tab->Grid->Refresh(false);
 	}
 
@@ -282,6 +286,7 @@ void MisspellReplacer::RemoveRule()
 	}
 	rules.erase(rules.begin() + sel);
 	RulesList->DeleteItem(sel, false);
+	RulesList->Refresh(false);
 }
 
 void MisspellReplacer::SeekOnce()
@@ -299,7 +304,7 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 
 	std::vector<wxRegEx*> rxrules;
 	for (size_t i = 0; i < checkedRules.size(); i++){
-		wxRegEx *rule = new wxRegEx(rules[checkedRules[i]].first, wxRE_ADVANCED | wxRE_ICASE);
+		wxRegEx *rule = new wxRegEx(rules[checkedRules[i]].first, wxRE_ADVANCED/* | wxRE_ICASE*/);
 		if (!rule->IsValid()){
 			//KaiLog(wxString::Format("Szablon wyra¿eñ regularnych \"%s\" jest nieprawid³owy", rules[checkedRules[i]].first));
 			delete rule;
@@ -411,6 +416,17 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 		return;
 	//maybe some info needed
 
+	std::vector<std::pair<wxRegEx*, wxString>> rxrules;
+	for (size_t i = 0; i < checkedRules.size(); i++){
+		wxRegEx *rule = new wxRegEx(rules[checkedRules[i]].first, wxRE_ADVANCED | wxRE_ICASE);
+		if (!rule->IsValid()){
+			//KaiLog(wxString::Format("Szablon wyra¿eñ regularnych \"%s\" jest nieprawid³owy", rules[checkedRules[i]].first));
+			delete rule;
+			continue;
+		}
+		rxrules.push_back(std::make_pair(rule, rules[checkedRules[i]].second));
+	}
+
 	//0-all lines 1-selected lines 2-from selected 3-by styles
 	wxString stylesAsText = L"," + ChoosenStyles->GetValue() + L",";
 	int selectedOption = WhichLines->GetSelection();
@@ -419,6 +435,8 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 	int tabLinePosition = (selectedOption == 2 && firstSelectedId >= 0) ? tab->Grid->file->GetElementById(firstSelectedId) : 0;
 	if (tabLinePosition > 0)
 		positionId = firstSelectedId;
+
+	bool changedAnything = false;
 
 	File *Subs = tab->Grid->file->GetSubs();
 
@@ -430,22 +448,58 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 		if ((!selectedOption) ||
 			(selectedOption == 3 && stylesAsText.Find("," + Dial->Style + ",") != -1) ||
 			(selectedOption == 1 && tab->Grid->file->IsSelectedByKey(tabLinePosition))){
-			wxString & lineText = Dial->Text.CheckTlRef(Dial->TextTl, Dial->TextTl != "");
-			std::wstring text = lineText.ToStdWstring();
-			for (size_t k = 0; k < checkedRules.size(); k++){
-				
-				try{
-					std::wregex r(rules[checkedRules[k]].first.ToStdWstring(), std::regex_constants::icase); // the pattern \b matches a word boundary
-					
-					std::wstring replacedText = std::regex_replace(text, r, rules[checkedRules[k]].second.ToStdWstring());
-					text = replacedText;
+			const wxString & lineText = Dial->Text.CheckTl(Dial->TextTl, Dial->TextTl != "");
+			wxString stringChanged = lineText;
+			bool changed = false;
+			for (size_t k = 0; k < rxrules.size(); k++){
+				int textPos = 0;
+				//int replaceDiff = 0;
+				wxString text = lineText;
+				wxRegEx *r = rxrules[k].first;
+
+				while (r->Matches(text)) {
+					size_t matchstart = 0, matchlen = 0;
+					if (r->GetMatch(&matchstart, &matchlen)){
+						if (matchlen == 0)
+							matchlen++;
+
+						wxString replacedResult;
+						wxString matchResult = replacedResult = stringChanged.Mid(matchstart + textPos, matchlen);
+						int reps = r->Replace(&replacedResult, rxrules[k].second);
+
+						MoveCase(matchResult, &replacedResult);
+
+						stringChanged.replace(matchstart + textPos, matchlen, replacedResult);
+
+						matchlen = replacedResult.length();
+
+						changed = true;
+						
+					}
+					else
+						break;
+
+					textPos += (matchstart + matchlen);
+					text = stringChanged.Mid(textPos);
 				}
-				catch (...){}
+				
 			}
-			lineText = wxString(text);
+			if (changed){
+				Dialogue *Dialc = tab->Grid->file->CopyDialogueByKey(tabLinePosition);
+				Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != "") = stringChanged;
+				changedAnything = true;
+			}
 		}
 		positionId++;
 		tabLinePosition++;
+	}
+	for (auto cur = rxrules.begin(); cur != rxrules.end(); cur++){
+		delete cur->first;
+	}
+	if (changedAnything){
+		tab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
+		tab->Grid->SpellErrors.clear();
+		tab->Grid->Refresh(false);
 	}
 }
 
