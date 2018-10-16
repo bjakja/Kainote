@@ -162,7 +162,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	EditMenu->AppendTool(Toolbar, SortLines, _("Sort&uj wszystkie linie"), _("Sortuje wszystkie linie napisów ASS"), PTR_BITMAP_PNG("sort"), true, SortMenu[0]);
 	EditMenu->AppendTool(Toolbar, SortSelected, _("Sortu&j zaznaczone linie"), _("Sortuje zaznaczone linie napisów ASS"), PTR_BITMAP_PNG("sortsel"), true, SortMenu[1]);
-	EditMenu->AppendTool(Toolbar, GLOBAL_MISSPELLS_REPLACER, _("Popraw drobne błędy"), _("Włącza okno poprawiania błędów"), PTR_BITMAP_PNG("sellines"));
+	EditMenu->AppendTool(Toolbar, GLOBAL_MISSPELLS_REPLACER, _("Popraw drobne błędy (eksperymentalne)"), _("Włącza okno poprawiania błędów"), PTR_BITMAP_PNG("sellines"));
 	EditMenu->AppendTool(Toolbar, SelectLinesDialog, _("Zaznacz &linijki"), _("Zaznacza linijki wg danej frazy tekstu"), PTR_BITMAP_PNG("sellines"));
 	Menubar->Append(EditMenu, _("&Edycja"));
 

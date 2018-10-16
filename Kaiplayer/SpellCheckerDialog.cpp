@@ -262,7 +262,8 @@ void SpellCheckerDialog::AddWord(wxCommandEvent &evt)
 	
 void SpellCheckerDialog::RemoveWord(wxCommandEvent &evt)
 {
-	LoadAddedMisspels();
+	wxArrayString addedMisspels;
+	LoadAddedMisspels(addedMisspels);
 	CustomCheckListBox *listOfAddedWords = new CustomCheckListBox(this, addedMisspels, _("Słowa dodane do słownika"));
 	if (listOfAddedWords->ShowModal() == wxID_OK){
 		wxArrayString checkedWords;
@@ -362,7 +363,7 @@ void SpellCheckerDialog::CheckText(wxString Text)
 	if (errors.size() < 2){ errors.push_back(0); }
 }
 
-void SpellCheckerDialog::LoadAddedMisspels()
+void SpellCheckerDialog::LoadAddedMisspels(wxArrayString &addedMisspels)
 {
 	wxString userpath = Options.pathfull + "\\Dictionary\\UserDic.udic";
 	if (wxFileExists(userpath)){

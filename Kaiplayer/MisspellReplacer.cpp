@@ -30,7 +30,7 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	DialogSizer *MainSizer = new DialogSizer(wxHORIZONTAL);
 	wxBoxSizer *ListSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *PhrasesSizer = new wxBoxSizer(wxHORIZONTAL);
-	PutWordBoundary = new KaiCheckBox(this, ID_PUT_WORD_BOUNDARY, _("Wstawiaj automatycznie granice s³ów \\b"));
+	PutWordBoundary = new KaiCheckBox(this, ID_PUT_WORD_BOUNDARY, _("Wstawiaj automatycznie granice\npocz¹tku s³owa \\m i koñca s³owa \\M"));
 	ShowBuiltInRules = new KaiCheckBox(this, ID_SHOW_BUILT_IN_RULES, _("Poka¿ wbudowane zasady"));
 	PhraseToFind = new KaiTextCtrl(this, ID_PHRASE_TO_FIND);
 	PhraseToFind->SetMaxLength(MAXINT);
@@ -66,7 +66,7 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	
 	ChoosenStyles = new KaiTextCtrl(this, -1);
 	styleChooseSizer->Add(ChooseStylesButton, 0, wxRIGHT, 2);
-	styleChooseSizer->Add(ChoosenStyles, 0, wxEXPAND);
+	styleChooseSizer->Add(ChoosenStyles, 1, wxEXPAND);
 
 	WhichLinesSizer->Add(WhichLines, 0, wxBOTTOM, 2);
 	WhichLinesSizer->Add(styleChooseSizer, 0, wxEXPAND);
@@ -92,16 +92,17 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ReplaceOnce(); }, ID_REPLACE_RULE);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ReplaceOnActualTab(); }, ID_REPLACE_ALL_RULES);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ReplaceOnAllTabs(); }, ID_REPLACE_ALL_RULES_ON_ALL_TABS);
-	ButtonsSizer->Add(WhichLinesSizer, 0, wxALL | wxEXPAND, 2);
-	ButtonsSizer->Add(AddRuleToList, 0, wxALL | wxEXPAND, 2);
-	ButtonsSizer->Add(EditRuleFromList, 0, wxALL | wxEXPAND, 2);
-	ButtonsSizer->Add(RemoveRuleFromList, 0, wxALL | wxEXPAND, 2);
-	ButtonsSizer->Add(FindRule, 0, wxALL | wxEXPAND, 2);
-	ButtonsSizer->Add(FindRulesOnTab, 0, wxALL | wxEXPAND, 2);
-	ButtonsSizer->Add(FindRulesOnAllTabs, 0, wxALL | wxEXPAND, 2);
-	ButtonsSizer->Add(ReplaceRule, 0, wxALL | wxEXPAND, 2);
-	ButtonsSizer->Add(ReplaceRules, 0, wxALL | wxEXPAND, 2);
-	ButtonsSizer->Add(ReplaceRulesOnAllTabs, 0, wxALL | wxEXPAND, 2);
+	int withoutBottom = wxLEFT | wxTOP | wxRIGHT;
+	ButtonsSizer->Add(WhichLinesSizer, 0, wxTOP | wxEXPAND, 2);
+	ButtonsSizer->Add(AddRuleToList, 0, withoutBottom | wxEXPAND, 4);
+	ButtonsSizer->Add(EditRuleFromList, 0, withoutBottom | wxEXPAND, 4);
+	ButtonsSizer->Add(RemoveRuleFromList, 0, withoutBottom | wxEXPAND, 4);
+	ButtonsSizer->Add(FindRule, 0, withoutBottom | wxEXPAND, 4);
+	ButtonsSizer->Add(FindRulesOnTab, 0, withoutBottom | wxEXPAND, 4);
+	ButtonsSizer->Add(FindRulesOnAllTabs, 0, withoutBottom | wxEXPAND, 4);
+	ButtonsSizer->Add(ReplaceRule, 0, withoutBottom | wxEXPAND, 4);
+	ButtonsSizer->Add(ReplaceRules, 0, withoutBottom | wxEXPAND, 4);
+	ButtonsSizer->Add(ReplaceRulesOnAllTabs, 0, withoutBottom | wxEXPAND, 4);
 
 	MainSizer->Add(ListSizer, 0, wxALL, 2);
 	MainSizer->Add(ButtonsSizer, 0, wxALL, 2);
@@ -210,9 +211,22 @@ void MisspellReplacer::FillRulesList()
 	wxString rulesText;
 	OpenWrite ow;
 	ow.FileOpen(Options.pathfull + L"\\Rules.txt", &rulesText);
-	if (rulesText.empty())
-		return;
-
+	if (rulesText.empty()){
+		rulesText = L"#Kainote rules file\n"\
+			L"0|0|0|0|0|0|0|0|0|0|0|0\n"\
+			L"\\msie\\M\fsiê\n"\
+			L"\\mnie mo¿liwe\\M\fniemo¿liwe\n"\
+			L" ([,.!?%])\f\\1\n"\
+			L"(  +)\f \n"\
+			L" ?- ?(san|chan|kun|sama|nee|dono|senpai|sensei)\\M\f\n"\
+			L"\\.{4,}\f...\n"\
+			L"([^.])\\.\\.([^.])\f\\1...\\2\n"\
+			L"([^.])([,.!?%])([^ ,.!?%\\\"\\\\0-9-])\f\\1\\2 \\3\n"\
+			L"\\mw ?og[uo]le\\M\fw ogóle\n"\
+			L"\\mbed[eê]\\M\fbêdê\n"\
+			L"\\mbêde\\M\fbêdê\n"\
+			L"\\mwogóle\\M\fw ogóle";
+	}
 	wxStringTokenizer tokenizer(rulesText, "\n", wxTOKEN_STRTOK);
 	wxString headertoken = tokenizer.GetNextToken();
 	if (headertoken.StartsWith(L"#Kainote rules file"))
@@ -264,7 +278,7 @@ void MisspellReplacer::AddRule()
 	wxString phraseToFind = PhraseToFind->GetValue();
 	wxString phraseToReplace = PhraseToReplace->GetValue();
 	if (PutWordBoundary->GetValue())
-		phraseToFind = L"\\b" + phraseToFind + L"\\b";
+		phraseToFind = L"\\m" + phraseToFind + L"\\M";
 
 	rules.push_back(std::make_pair(phraseToFind, phraseToReplace));
 	int row = RulesList->AppendItem(new ItemCheckBox(false, L""));

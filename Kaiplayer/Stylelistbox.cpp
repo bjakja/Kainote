@@ -78,6 +78,7 @@ CustomCheckListBox::CustomCheckListBox(wxWindow* parent, const wxArrayString &li
 		arr[i] = listElems[i];
 	}
 	CheckListBox = new KaiListCtrl(this, -1, numelem, arr, wxDefaultPosition, wxSize(200, 300), style);
+	delete[] arr;
 	OK = new MappedButton(this, wxID_OK, "Ok");
 	Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	sizer->Add(OK, 1, wxALL, 2);
