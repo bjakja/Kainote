@@ -1266,12 +1266,12 @@ void EditBox::OnPasteDifferents(wxCommandEvent& event)
 	int vidtime = Notebook::GetTab()->Video->Tell();
 	if (vidtime < line->Start.mstime || vidtime > line->End.mstime){ wxBell(); return; }
 	int diff = (idd == StartDifference) ? vidtime - ZEROIT(line->Start.mstime) : abs(vidtime - ZEROIT(line->End.mstime));
-	long poss, pose;
-	TextEdit->GetSelection(&poss, &pose);
-	wxString kkk;
-	kkk << diff;
-	TextEdit->Replace(poss, pose, kkk);
-	int npos = poss + kkk.Len();
+	long startPosition, endPosition;
+	TextEdit->GetSelection(&startPosition, &endPosition);
+	wxString diffAsString;
+	diffAsString << diff;
+	TextEdit->Replace(startPosition, endPosition, diffAsString);
+	int npos = startPosition + diffAsString.length();
 	TextEdit->SetSelection(npos, npos);
 }
 //znajduje tagi w polu tekstowym

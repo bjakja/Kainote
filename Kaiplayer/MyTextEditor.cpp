@@ -433,6 +433,9 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 	wxPoint mousePosition = event.GetPosition();
 	bool isInField = (size.y >= mousePosition.y);
 
+	if (numberChangingMousePos != -1 && !event.ShiftDown())
+		numberChangingMousePos = -1;
+
 	if (leftup && (holding || dholding)){
 		holding = dholding = false;
 		if (HasCapture()){ ReleaseMouse(); }
@@ -538,25 +541,67 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 		MakeCursorVisible();
 	}
 
-	if (event.RightUp() && isInField)
+	if (event.RightUp() && isInField && event.GetModifiers() == 0)
 		ContextMenu(mousePosition, FindError(mousePosition));
+	if (event.RightUp() && HasCapture())
+		ReleaseMouse();
 
-	if (event.GetWheelRotation() != 0 && event.ControlDown()) {
-		fsize += event.GetWheelRotation() / event.GetWheelDelta();
-		if (fsize < 7 || fsize>70){ fsize = MID(7, fsize, 70); return; }
-		font.SetPointSize(fsize);
-		int fw, fh;
-		GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
-		Fheight = fh;
-		caret->SetSize(1, fh);
-		CalcWrap(false, false);
-		Refresh(false);
+	bool mouseWheel = event.GetWheelRotation() != 0;
+	bool rightdown = event.RightDown();
+	if (event.ShiftDown() && (mouseWheel || rightdown || event.RightIsDown())){
+		//if some number existing
+		if (rightdown){
+			dclickCurPos = mousePosition;
+			CaptureMouse();
+			return;
+		}
+		else if (!mouseWheel && (dclickCurPos.y < mousePosition.y + 5 && dclickCurPos.y > mousePosition.y - 5)){
+			return;
+		}
+		wxPoint CursorPos(numberChangingMousePos, -1);
+		if (numberChangingMousePos != -1 || HitTest(mousePosition, &CursorPos)){
+			numberChangingMousePos = CursorPos.x;
+			wxPoint numberPos;
+			float floatNumber;
+			float step;
+			if (GetNumberFromCursor(CursorPos.x, numberPos, floatNumber, step)){
+				if (mouseWheel){
+					int mouseStep = event.GetWheelRotation() / event.GetWheelDelta();
+					if (mouseStep < 0)
+						step = -step;
+				}
+				else{
+					if(dclickCurPos.y < mousePosition.y)
+						step = -step;
+
+					dclickCurPos = mousePosition;
+				}
+
+				floatNumber += step;
+
+				Replace(numberPos.x, numberPos.y + 1, getfloat(floatNumber, "10.3f"));
+			}
+		}
 	}
-	else if (event.GetWheelRotation() != 0){
-		int step = 30 * event.GetWheelRotation() / event.GetWheelDelta();
-		if (step > 0 && scPos == 0){ return; }
-		scPos = MAX(scPos - step, 0);
-		Refresh(false);
+
+	if (mouseWheel) {
+		if (event.ControlDown()){
+			fsize += event.GetWheelRotation() / event.GetWheelDelta();
+			if (fsize < 7 || fsize>70){ fsize = MID(7, fsize, 70); return; }
+			font.SetPointSize(fsize);
+			int fw, fh;
+			GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
+			Fheight = fh;
+			caret->SetSize(1, fh);
+			CalcWrap(false, false);
+			Refresh(false);
+		}
+		else if (event.GetModifiers() == 0){
+			int step = 30 * event.GetWheelRotation() / event.GetWheelDelta();
+			if (step > 0 && scPos == 0){ return; }
+			scPos = MAX(scPos - step, 0);
+			Refresh(false);
+		}
 	}
 }
 
@@ -1041,8 +1086,11 @@ void TextEditor::Replace(int start, int end, wxString rep)
 	modified = true;
 	MText.replace(start, end - start, rep);
 	CalcWrap();
-	Cursor.x = 0; Cursor.y = 0;
-	Selend = Cursor;
+	if (SpellCheckerOnOff){ CheckText(); }
+	//Cursor.x = 0; Cursor.y = 0;
+	//Selend = Cursor;
+	if ((size_t)Cursor.x > MText.length()){ Cursor.x = MText.length(); Cursor.y = FindY(Cursor.x); }
+	if ((size_t)Selend.x > MText.length()){ Selend.x = MText.length(); Selend.y = FindY(Selend.x); }
 	Refresh(false);
 }
 
@@ -1562,6 +1610,44 @@ void TextEditor::DrawWordRectangles(int type, wxDC &dc)
 		}
 		dc.DrawRectangle(fw + 3, ((fsty*Fheight) + 1) - scPos, fww, Fheight);
 	}
+}
+
+bool TextEditor::GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &number, float &step)
+{
+	wxString digits = "0123456789.-";
+	int endPos = cursorPos;
+	for (size_t i = endPos; i < MText.length(); i++){
+		if (digits.find(MText[i]) == -1)
+			break;
+		else
+			endPos = i;
+	}
+	int startPos = cursorPos;
+	for (int i = startPos; i >= 0; i--){
+		if (digits.find(MText[i]) == -1)
+			break;
+		else
+			startPos = i;
+	}
+	if (startPos <= endPos){
+		wxString strNum = MText.Mid(startPos, endPos - startPos + 1);
+		if (strNum != "." && strNum != "-"){
+			double result = 0.;
+			if (!strNum.ToCDouble(&result))
+				return false;
+
+			number = result;
+			numberPos = wxPoint(startPos, endPos);
+			int dotfind = strNum.find(L'.');
+			if (dotfind != -1 && startPos + dotfind < cursorPos)
+				step = 0.1f;
+			else
+				step = 1.f;
+
+			return true;
+		}
+	}
+	return false;
 }
 
 //state here is for template and for disable spellchecker and wraps

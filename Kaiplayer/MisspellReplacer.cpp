@@ -29,27 +29,46 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 {
 	DialogSizer *MainSizer = new DialogSizer(wxHORIZONTAL);
 	wxBoxSizer *ListSizer = new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer *PhrasesSizer = new wxBoxSizer(wxHORIZONTAL);
 	PutWordBoundary = new KaiCheckBox(this, ID_PUT_WORD_BOUNDARY, _("Wstawiaj automatycznie granice\npocz¹tku s³owa \\m i koñca s³owa \\M"));
 	ShowBuiltInRules = new KaiCheckBox(this, ID_SHOW_BUILT_IN_RULES, _("Poka¿ wbudowane zasady"));
+
+	KaiStaticBoxSizer *RuleEdition = new KaiStaticBoxSizer(wxVERTICAL, this, _("Edycja regu³y"));
+	wxBoxSizer *PhrasesDescriptionSizer = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *PhrasesSizer = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *PhrasesOptionsSizer = new wxBoxSizer(wxHORIZONTAL);
+	RuleDescription = new KaiTextCtrl(this, ID_RULE_DESCRIPTION);
 	PhraseToFind = new KaiTextCtrl(this, ID_PHRASE_TO_FIND);
 	PhraseToFind->SetMaxLength(MAXINT);
 	PhraseToReplace = new KaiTextCtrl(this, ID_PHRASE_TO_REPLACE);
 	PhraseToReplace->SetMaxLength(MAXINT);
+	MatchCase = new KaiCheckBox(this, ID_MATCH_CASE, _("Rozró¿niaj wielkoœæ znaków"));
+	ReplaceAsLower = new KaiCheckBox(this, ID_REPLACE_LOWER, _("Zmieniaj na tekst z ma³ej litery"));
+	ReplaceAsUpper = new KaiCheckBox(this, ID_REPLACE_UPPER, _("Zmieniaj na tekst z du¿ej litery"));
+
+	PhrasesDescriptionSizer->Add(new KaiStaticText(this,-1,_("Szukana fraza (wyra¿enia regularne)")), 1, wxALL | wxEXPAND, 2);
+	PhrasesDescriptionSizer->Add(new KaiStaticText(this, -1, _("Zmieniana fraza")), 1, wxALL | wxEXPAND, 2);
 	PhrasesSizer->Add(PhraseToFind, 1, wxALL | wxEXPAND, 2);
 	PhrasesSizer->Add(PhraseToReplace, 1, wxALL | wxEXPAND, 2);
+	PhrasesOptionsSizer->Add(MatchCase, 1, wxALL | wxEXPAND, 2);
+	PhrasesOptionsSizer->Add(ReplaceAsLower, 1, wxALL | wxEXPAND, 2);
+	RuleEdition->Add(new KaiStaticText(this, -1, _("Opis regu³y")), 0);
+	RuleEdition->Add(RuleDescription, 0);
+	RuleEdition->Add(PhrasesDescriptionSizer);
+	RuleEdition->Add(PhrasesSizer, 0);
+	RuleEdition->Add(PhrasesOptionsSizer, 0);
+	RuleEdition->Add(ReplaceAsUpper, 0, wxALL | wxEXPAND, 2);
 	RulesList = new KaiListCtrl(this, ID_RULES_LIST,wxDefaultPosition, wxSize(320, 400));
 	RulesList->InsertColumn(0, L"", TYPE_CHECKBOX, 20);
-	RulesList->InsertColumn(1, _("Opis / szukana fraza"), TYPE_TEXT, 200);
-	RulesList->InsertColumn(2, _("Zmieniania fraza"), TYPE_TEXT, 90);
+	RulesList->InsertColumn(1, _("Opis"), TYPE_TEXT, 290);
 	Bind(LIST_ITEM_LEFT_CLICK, [=](wxCommandEvent &evt){
 		int sel = RulesList->GetSelection();
 		if (sel < 0 || sel >= rules.size())
 			return;
 
-		const std::pair<wxString, wxString> & rulepair = rules[sel];
-		PhraseToFind->SetValue(rulepair.first);
-		PhraseToReplace->SetValue(rulepair.second);
+		const Rule & ruleclass = rules[sel];
+		//add description and option objects and add here set value etc.
+		PhraseToFind->SetValue(ruleclass.findRule);
+		PhraseToReplace->SetValue(ruleclass.replaceRule);
 	}, ID_RULES_LIST);
 	FillRulesList();
 	ListSizer->Add(PhrasesSizer, 0, wxEXPAND);
@@ -121,7 +140,11 @@ void MisspellReplacer::ReplaceChecked()
 {
 	std::vector<wxRegEx*> rxrules;
 	for (size_t i = 0; i < rules.size(); i++){
-		wxRegEx *rule = new wxRegEx(rules[i].first, wxRE_ADVANCED | wxRE_ICASE);
+		int flags = wxRE_ADVANCED;
+		if (!(rules[i].options & OPTION_MATCH_CASE))
+			flags |= wxRE_ICASE;
+
+		wxRegEx *rule = new wxRegEx(rules[i].findRule, flags);
 		if (!rule->IsValid()){
 			//KaiLog(wxString::Format("Szablon wyra¿eñ regularnych \"%s\" jest nieprawid³owy", rules[checkedRules[i]].first));
 			delete rule;
@@ -157,7 +180,7 @@ void MisspellReplacer::ReplaceChecked()
 		size_t len = SeekResult->findPosition.y;
 		wxString replacedResult;
 		wxString matchResult = replacedResult = lineText.Mid(pos, len);
-		int reps = rxrules[SeekResult->numOfRule]->Replace(&replacedResult, rules[SeekResult->numOfRule].second);
+		int reps = rxrules[SeekResult->numOfRule]->Replace(&replacedResult, rules[SeekResult->numOfRule].replaceRule);
 
 		MoveCase(matchResult, &replacedResult);
 
@@ -212,20 +235,7 @@ void MisspellReplacer::FillRulesList()
 	OpenWrite ow;
 	ow.FileOpen(Options.pathfull + L"\\Rules.txt", &rulesText);
 	if (rulesText.empty()){
-		rulesText = L"#Kainote rules file\n"\
-			L"0|0|0|0|0|0|0|0|0|0|0|0\n"\
-			L"\\msie\\M\fsiê\n"\
-			L"\\mnie mo¿liwe\\M\fniemo¿liwe\n"\
-			L" ([,.!?%])\f\\1\n"\
-			L"(  +)\f \n"\
-			L" ?- ?(san|chan|kun|sama|nee|dono|senpai|sensei)\\M\f\n"\
-			L"\\.{4,}\f...\n"\
-			L"([^.])\\.\\.([^.])\f\\1...\\2\n"\
-			L"([^.])([,.!?%])([^ ,.!?%\\\"\\\\0-9-])\f\\1\\2 \\3\n"\
-			L"\\mw ?og[uo]le\\M\fw ogóle\n"\
-			L"\\mbed[eê]\\M\fbêdê\n"\
-			L"\\mbêde\\M\fbêdê\n"\
-			L"\\mwogóle\\M\fw ogóle";
+		FillWithDefaultRules(rulesText);
 	}
 	wxStringTokenizer tokenizer(rulesText, "\n", wxTOKEN_STRTOK);
 	wxString headertoken = tokenizer.GetNextToken();
@@ -236,14 +246,12 @@ void MisspellReplacer::FillRulesList()
 	while(tokenizer.HasMoreTokens())
 	{
 		wxString token = tokenizer.GetNextToken();
-		wxString replaceRule;
-		wxString findrule = token.BeforeFirst('\f', &replaceRule);
+		wxString ruleDescription = token.BeforeFirst('\f');
 		wxString OnOff = (tokenizerOnOff.HasMoreTokens())? tokenizerOnOff.GetNextToken() : "0";
-		rules.push_back(std::make_pair(findrule, replaceRule));
+		rules.push_back(Rule(token));
 
 		int row = RulesList->AppendItem(new ItemCheckBox(OnOff == "1", L""));
-		RulesList->SetItem(row, 1, new ItemText(findrule));
-		RulesList->SetItem(row, 2, new ItemText(replaceRule));
+		RulesList->SetItem(row, 1, new ItemText(ruleDescription));
 	}
 }
 
@@ -259,13 +267,13 @@ void MisspellReplacer::EditRule()
 		return;
 	}
 
-	rules[sel] = std::make_pair(PhraseToFind->GetValue(), PhraseToReplace->GetValue());
+	rules[sel] = Rule(RuleDescription->GetValue(), PhraseToFind->GetValue(), PhraseToReplace->GetValue(), GetRuleOptions());
 	Item * itemF = RulesList->GetItem(sel, 1);
-	Item * itemR = RulesList->GetItem(sel, 2);
+	//Item * itemR = RulesList->GetItem(sel, 2);
 	if (itemF)
-		itemF->name = PhraseToFind->GetValue();
-	if (itemR)
-		itemR->name = PhraseToReplace->GetValue();
+		itemF->name = RuleDescription->GetValue();
+	//if (itemR)
+		//itemR->name = PhraseToReplace->GetValue();
 	RulesList->Refresh(false);
 }
 
@@ -280,10 +288,10 @@ void MisspellReplacer::AddRule()
 	if (PutWordBoundary->GetValue())
 		phraseToFind = L"\\m" + phraseToFind + L"\\M";
 
-	rules.push_back(std::make_pair(phraseToFind, phraseToReplace));
+	rules.push_back(Rule(RuleDescription->GetValue(), phraseToFind, phraseToReplace, GetRuleOptions()));
 	int row = RulesList->AppendItem(new ItemCheckBox(false, L""));
-	RulesList->SetItem(row, 1, new ItemText(phraseToFind));
-	RulesList->SetItem(row, 2, new ItemText(phraseToReplace));
+	RulesList->SetItem(row, 1, new ItemText(RuleDescription->GetValue()));
+	//RulesList->SetItem(row, 2, new ItemText(phraseToReplace));
 	RulesList->Refresh(false);
 }
 
@@ -318,7 +326,11 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 
 	std::vector<wxRegEx*> rxrules;
 	for (size_t i = 0; i < checkedRules.size(); i++){
-		wxRegEx *rule = new wxRegEx(rules[checkedRules[i]].first, wxRE_ADVANCED/* | wxRE_ICASE*/);
+		int flags = wxRE_ADVANCED;
+		if (!(rules[checkedRules[i]].options & OPTION_MATCH_CASE))
+			flags |= wxRE_ICASE;
+
+		wxRegEx *rule = new wxRegEx(rules[checkedRules[i]].findRule, flags);
 		if (!rule->IsValid()){
 			//KaiLog(wxString::Format("Szablon wyra¿eñ regularnych \"%s\" jest nieprawid³owy", rules[checkedRules[i]].first));
 			delete rule;
@@ -432,13 +444,17 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 
 	std::vector<std::pair<wxRegEx*, wxString>> rxrules;
 	for (size_t i = 0; i < checkedRules.size(); i++){
-		wxRegEx *rule = new wxRegEx(rules[checkedRules[i]].first, wxRE_ADVANCED | wxRE_ICASE);
+		int flags = wxRE_ADVANCED;
+		if (!(rules[checkedRules[i]].options & OPTION_MATCH_CASE))
+			flags |= wxRE_ICASE;
+
+		wxRegEx *rule = new wxRegEx(rules[checkedRules[i]].findRule, flags);
 		if (!rule->IsValid()){
 			//KaiLog(wxString::Format("Szablon wyra¿eñ regularnych \"%s\" jest nieprawid³owy", rules[checkedRules[i]].first));
 			delete rule;
 			continue;
 		}
-		rxrules.push_back(std::make_pair(rule, rules[checkedRules[i]].second));
+		rxrules.push_back(std::make_pair(rule, rules[checkedRules[i]].replaceRule));
 	}
 
 	//0-all lines 1-selected lines 2-from selected 3-by styles
@@ -554,7 +570,7 @@ void MisspellReplacer::SaveRules()
 		rulesText.RemoveLast() += L"\r\n";
 
 	for (auto & rule : rules){
-		rulesText << rule.first << "\f" << rule.second << "\r\n";
+		rulesText << rule.description << L"\f" << rule.findRule << L"\f" << rule.replaceRule << rule.options << L"\r\n";
 	}
 	OpenWrite ow;
 	ow.FileWrite(Options.pathfull + L"\\Rules.txt", rulesText);
@@ -574,3 +590,100 @@ void MisspellReplacer::MoveCase(const wxString &originalCase, wxString *result)
 		result->at(0) = wxToupper(result->at(0));
 
 }
+
+int MisspellReplacer::GetRuleOptions()
+{
+	int result = 0;
+		
+	result |= (1 * (int)MatchCase->GetValue());
+	result |= (2 * (int)ReplaceAsLower->GetValue());
+	result |= (4 * (int)ReplaceAsUpper->GetValue());
+
+	return result;
+}
+
+void MisspellReplacer::FillWithDefaultRules(wxString &rules)
+{
+	rules = wxString::Format(L"#Kainote rules file v2\n"\
+		L"0|0|0|0|0|0|0|0|0|0|0|0\n"\
+		L"%s\f ([,.!?%])\f\\1\f0\n"\
+		L"%s\f(  +)\f \f0\n"\
+		L"%s\f\\.{4,}\f...\f0\n"\
+		L"%s\f([^.])\\.\\.([^.])\f\\1...\\2\f0\n"\
+		L"%s\f([^.])([,.!?%])([^ ,.!?%\\\"\\\\0-9-])\f\\1\\2 \\3\f0\n"\
+		L"%s\f ?- ?(san|chan|kun|sama|nee|dono|senpai|sensei)\\M\f\f0\n"\
+		L"%s\f\\msie\\M\fsiê\f0\n"\
+		L"%s\f\\mnie mo¿liwe\\M\fniemo¿liwe\f0\n"\
+		L"%s\f\\mw ?og[uo]le\\M\fw ogóle\f0\n"\
+		L"%s\f\\mwogóle\\M\fw ogóle\f0"\
+		L"%s\f\\mbed[eê]\\M\fbêdê\f0\n"\
+		L"%s\f\\mbêde\\M\fbêdê\f0\n", 
+		_("Usuwanie spacji przed przecinkiem b¹dŸ kropk¹"),
+		_("Usuwanie podwójnych spacji"),
+		_("Zmiana \"....\" i wiêcej na wielokropek"),
+		_("Zmiana \"..\" na wielokropek"),
+		_("Zmiana braku spacji po przecinku czy kropce"),
+		_("Usuwanie japoñskich zwrotów grzecznoœciowych"),
+		_("Zamiana \"sie\" na \"siê\""),
+		_("Zamiana \"nie mo¿liwe\" na \"niemo¿liwe\""),
+		_("Zamiana b³êdów wyra¿enia \"w ogóle\""),
+		_("Zamiana b³êdów wyra¿enia \"w ogóle\""),
+		_("Zamiana b³êdów wyrazu \"bêdê\""),
+		_("Zamiana b³êdów wyrazu \"bêdê\""));
+
+}
+
+Rule::Rule(const wxString & stringRule)
+{
+	wxStringTokenizer ruleTokenizer(stringRule, "\f", wxTOKEN_RET_EMPTY_ALL);
+	wxString ruleToken = ruleTokenizer.GetNextToken();
+	description = ruleToken;
+	if (!ruleTokenizer.HasMoreTokens())
+		goto fail;
+
+	ruleToken = ruleTokenizer.GetNextToken();
+	findRule = ruleToken;
+	if (!ruleTokenizer.HasMoreTokens())
+		goto fail;
+
+	ruleToken = ruleTokenizer.GetNextToken();
+	replaceRule = ruleToken;
+	if (!ruleTokenizer.HasMoreTokens())
+		goto fail;
+
+	ruleToken = ruleTokenizer.GetNextToken();
+	options = wxAtoi(ruleToken);
+	return;
+
+fail:
+	KaiLog(wxString::Format(("Regu³a \"%s\" jest nieprawid³owa."), stringRule));
+}
+
+//CheckBoxListButton::CheckBoxListButton(wxWindow *parent, int id, const wxString &name, const wxArrayString &listElements, const wxPoint &pos, const wxSize &size, long style) 
+//	:MappedButton(parent, id, name, -1, pos, size, style)
+//{
+//	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+//		if (!checkList)
+//			checkList = new CustomCheckListBox(this, listElements, name);
+//
+//		if (checkList->ShowModal() != wxID_OK){
+//			for (size_t i = 0; i < checkList->CheckListBox->GetCount(); i++){
+//				Item *item = checkList->CheckListBox->GetItem(i, 0);
+//				if (item)
+//					item->modified = false;
+//			}
+//		}
+//		
+//	}, GetId());
+//}
+//
+//void CheckBoxListButton::GetChecked(wxArrayInt & checks)
+//{
+//	if (checkList){
+//		for (size_t i = 0; i < checkList->CheckListBox->GetCount(); i++){
+//			Item *item = checkList->CheckListBox->GetItem(i, 0);
+//			if (item)
+//				checks.Add(i);
+//		}
+//	}
+//}

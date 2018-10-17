@@ -69,6 +69,7 @@ protected:
 	bool CheckIfKeyword(const wxString &word);
 	void SeekSelected(const wxString &word);
 	void DrawWordRectangles(int type, wxDC &dc);
+	bool GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &number, float &step);
 
 	bool SpellCheckerOnOff;
 	bool useSpellchecker;
@@ -95,6 +96,7 @@ protected:
 	bool firstdhold;
 	bool wasDoubleClick;
 	bool modified;
+	int numberChangingMousePos = -1;
 	int state = 0;
 	int time;
 	int Fheight;

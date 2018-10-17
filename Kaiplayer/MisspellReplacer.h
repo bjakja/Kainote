@@ -22,11 +22,36 @@
 #include "KaiTextCtrl.h"
 #include "ListControls.h"
 #include "MispellReplacerDialog.h"
+#include "Stylelistbox.h"
 #include <vector>
 #include <utility>
 
 class TabPanel;
 
+//class CheckBoxListButton : public MappedButton
+//{
+//public:
+//	CheckBoxListButton(wxWindow *parent, int id, const wxString &name, const wxArrayString &listElements, const wxPoint &pos, const wxSize &size, long style);
+//	virtual ~CheckBoxListButton(){};
+//	void GetChecked(wxArrayInt & checks);
+//private:
+//	CustomCheckListBox *checkList = NULL;
+//};
+
+class Rule{
+public:
+	Rule(const wxString & _description, const wxString & _findRule, const wxString & _replaceRule, int _options){
+		description = _description;
+		findRule = _findRule;
+		replaceRule = _replaceRule;
+		options = _options;
+	}
+	Rule(const wxString & stringRule);
+	wxString replaceRule;
+	wxString findRule;
+	wxString description;
+	int options;
+};
 
 class MisspellReplacer : public KaiDialog
 {
@@ -37,8 +62,7 @@ public:
 	void ShowResult(TabPanel *tab, int keyLine);
 	void RemoveDialog(){ resultDialog = NULL; };
 private:
-	typedef std::pair<wxString, wxString> Rule;
-
+	
 	void FillRulesList();
 	void EditRule();
 	void AddRule();
@@ -54,8 +78,14 @@ private:
 	void GetCheckedRules(std::vector<int> &checkedRules);
 	void SaveRules();
 	void MoveCase(const wxString &originalCase, wxString *result);
+	int GetRuleOptions();
+	void FillWithDefaultRules(wxString &rules);
 	KaiCheckBox *PutWordBoundary;
 	KaiCheckBox *ShowBuiltInRules;
+	KaiCheckBox *MatchCase;
+	KaiCheckBox *ReplaceAsLower;
+	KaiCheckBox *ReplaceAsUpper;
+	KaiTextCtrl *RuleDescription;
 	KaiTextCtrl *PhraseToFind;
 	KaiTextCtrl *PhraseToReplace;
 	KaiTextCtrl *ChoosenStyles;
@@ -67,10 +97,17 @@ private:
 };
 
 enum{
+	OPTION_MATCH_CASE = 1,
+	OPTION_REPLACE_AS_LOWER,
+	OPTION_REPLACE_AS_UPPER = 4,
 	ID_PUT_WORD_BOUNDARY = 6000,
 	ID_SHOW_BUILT_IN_RULES,
+	ID_RULE_DESCRIPTION,
 	ID_PHRASE_TO_FIND,
 	ID_PHRASE_TO_REPLACE,
+	ID_MATCH_CASE,
+	ID_REPLACE_UPPER,
+	ID_REPLACE_LOWER,
 	ID_RULES_LIST,
 	ID_WHICH_LINES_LIST,
 	ID_STYLES_CHOOSE,

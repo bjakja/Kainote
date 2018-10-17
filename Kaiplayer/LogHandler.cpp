@@ -27,7 +27,7 @@ class LogWindow : public KaiDialog
 public:
 	LogWindow(wxWindow *parent, LogHandler *handler);
 	virtual ~LogWindow(){};
-	volatile bool isReady;
+	volatile bool isReady = true;
 private:
 	void OnGetLog(wxThreadEvent &evt);
 	LogHandler *handler;

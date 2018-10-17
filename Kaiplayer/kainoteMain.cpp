@@ -267,6 +267,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(PlayActualLine, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
 		LogHandler::ShowLogWindow();
+		//KaiLog("testowy tekst");
 	}, 9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
 		TabPanel *tab = GetTab();
@@ -499,9 +500,9 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->ShiftTimes->Show(show);
 		tab->BoxSizer3->Layout();
 	}
-	else if (id > 6999 && id < 7012){
-		bool all = id < 7006;
-		int difid = (all) ? 7000 : 7006;
+	else if (id >= GLOBAL_SORT_ALL_BY_START_TIMES && id <= GLOBAL_SORT_SELECTED_BY_LAYER){
+		bool all = id < GLOBAL_SORT_SELECTED_BY_START_TIMES;
+		int difid = (all) ? GLOBAL_SORT_ALL_BY_START_TIMES : GLOBAL_SORT_SELECTED_BY_START_TIMES;
 		tab->Grid->SortIt(id - difid, all);
 	}
 	else if (id >= ViewAll&&id <= ViewSubs){
