@@ -80,12 +80,15 @@ private:
 	void MoveCase(const wxString &originalCase, wxString *result, int options);
 	int GetRuleOptions();
 	void FillWithDefaultRules(wxString &rules);
+	bool SkipFinding(const wxString &text, int textPos, int options);
 	KaiCheckBox *PutWordBoundary;
 	KaiCheckBox *ShowBuiltInRules;
 	KaiCheckBox *MatchCase;
 	KaiCheckBox *ReplaceAsLower;
 	KaiCheckBox *ReplaceAsUpper;
 	KaiCheckBox *ReplaceWithUnchangedCase;
+	KaiCheckBox *ReplaceOnlyTags;
+	KaiCheckBox *ReplaceOnlyText;
 	KaiTextCtrl *RuleDescription;
 	KaiTextCtrl *PhraseToFind;
 	KaiTextCtrl *PhraseToReplace;
@@ -102,6 +105,8 @@ enum{
 	OPTION_REPLACE_AS_LOWER,
 	OPTION_REPLACE_AS_UPPER = 4,
 	OPTION_REPLACE_WITH_UNCHANGED_CASE = 8,
+	OPTION_REPLACE_ONLY_TAGS = 16,
+	OPTION_REPLACE_ONLY_TEXT = 32,
 	ID_PUT_WORD_BOUNDARY = 6000,
 	ID_SHOW_BUILT_IN_RULES,
 	ID_RULE_DESCRIPTION,
@@ -111,6 +116,8 @@ enum{
 	ID_REPLACE_UPPER,
 	ID_REPLACE_LOWER,
 	ID_REPLACE_WITH_UNCHANGED_CASE,
+	ID_REPLACE_ONLY_TAGS,
+	ID_REPLACE_ONLY_TEXT,
 	ID_RULES_LIST,
 	ID_WHICH_LINES_LIST,
 	ID_STYLES_CHOOSE,

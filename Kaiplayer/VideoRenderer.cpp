@@ -473,6 +473,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 	byte *fdata = NULL;
 	byte *texbuf;
 	byte bytes = (vformat == RGB32) ? 4 : (vformat == YUY2) ? 2 : 1;
+	DWORD black = (vformat == RGB32) ? 0 : (vformat == YUY2) ? 0x80108010 : 0x10101010;
 
 	D3DLOCKED_RECT d3dlr;
 
@@ -513,7 +514,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 				memcpy(texbuf, fdata, vwidth);
 				texbuf += vwidth;
 				fdata += vwidth;
-				memset(texbuf, 0, diff);
+				memset(texbuf, black, diff);
 				texbuf += diff;
 			}
 			int hheight = vheight / 2;
@@ -524,7 +525,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 				memcpy(texbuf, fdata, fwidth);
 				texbuf += fwidth;
 				fdata += fwidth;
-				memset(texbuf, 0, fdiff);
+				memset(texbuf, black, fdiff);
 				texbuf += fdiff;
 			}
 			if (vformat < NV12){
@@ -532,7 +533,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 					memcpy(texbuf, fdata, fwidth);
 					texbuf += fwidth;
 					fdata += fwidth;
-					memset(texbuf, 0, fdiff);
+					memset(texbuf, black, fdiff);
 					texbuf += fdiff;
 				}
 			}

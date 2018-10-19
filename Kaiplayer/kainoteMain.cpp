@@ -922,7 +922,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 	if (tab->editor){
 		found = FindFile(filename, secondFileName, issubs);
 		if (!issubs && found && !fulls && !tab->Video->isFullscreen){
-			if (tab->SubsPath == secondFileName && KaiMessageBox(wxString::Format(_("Wczytać napisy o nazwie \"%s\"?"), secondFileName.AfterLast('\\')),
+			if (tab->SubsPath == secondFileName || KaiMessageBox(wxString::Format(_("Wczytać napisy o nazwie \"%s\"?"), secondFileName.AfterLast('\\')),
 				_("Potwierdzenie"), wxICON_QUESTION | wxYES_NO, this) == wxNO){
 				found = false;
 			}
@@ -990,10 +990,10 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 			int flags = wxNO;
 			wxString prompt;
 			if (hasVideoPath || hasAudioPath || hasKeyframePath){
-				prompt = _("Skojarzone pliki:\n"); flags |= wxOK;
 				if (hasVideoPath && tab->VideoPath != videopath){ prompt += _("Wideo: ") + videopath + "\n"; }
-				if (hasAudioPath){ prompt += _("Audio: ") + audiopath + "\n"; }
+				if (hasAudioPath && tab->AudioPath != audiopath){ prompt += _("Audio: ") + audiopath + "\n"; }
 				if (hasKeyframePath && tab->KeyframesPath != keyframespath){ prompt += _("Klatki kluczowe: ") + keyframespath + "\n"; }
+				if (!prompt.empty()){ prompt.Prepend(_("Skojarzone pliki:\n")); flags |= wxOK; }
 			}
 			if (!secondFileName.empty()){
 				if (tab->VideoPath != secondFileName){
@@ -1038,6 +1038,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 					}
 					if (hasKeyframePath){
 						tab->Video->OpenKeyframes(keyframespath);
+						tab->KeyframesPath = keyframespath;
 					}
 				}
 			}
@@ -1795,6 +1796,7 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 	if (id == CloseAudio && tab->Edit->ABox){
 		tab->Video->player = NULL;
 		tab->Edit->CloseAudio();
+		tab->AudioPath = "";
 	}
 	else{
 
@@ -1822,6 +1824,7 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 
 		if (tab->Edit->LoadAudio(Path, (id == 40000))){
 			SetRecent(2);
+			tab->AudioPath = path;
 		}
 
 	}

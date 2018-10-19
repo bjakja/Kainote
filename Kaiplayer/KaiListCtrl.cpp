@@ -28,7 +28,11 @@ void ItemText::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiList
 {
 	if (enter){
 		if (needTooltip)
-			theList->SetToolTip(name);
+			if (name.length() > 1000)
+				theList->SetToolTip(name.Mid(0, 1000));
+			else
+				theList->SetToolTip(name);
+
 		else if (theList->HasToolTips())
 			theList->UnsetToolTip();
 	}

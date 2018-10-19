@@ -37,6 +37,7 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	wxBoxSizer *PhrasesSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *PhrasesOptionsSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *PhrasesOptionsSizer1 = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *PhrasesOptionsSizer2 = new wxBoxSizer(wxHORIZONTAL);
 	RuleDescription = new KaiTextCtrl(this, ID_RULE_DESCRIPTION);
 	PhraseToFind = new KaiTextCtrl(this, ID_PHRASE_TO_FIND);
 	PhraseToFind->SetMaxLength(MAXINT);
@@ -46,6 +47,8 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	ReplaceAsLower = new KaiCheckBox(this, ID_REPLACE_LOWER, _("Zmieniaj na tekst z ma³ej litery"));
 	ReplaceAsUpper = new KaiCheckBox(this, ID_REPLACE_UPPER, _("Zmieniaj na tekst z du¿ej litery"));
 	ReplaceWithUnchangedCase = new KaiCheckBox(this, ID_REPLACE_UPPER, _("Nie zmieniaj wielkoœci liter"));
+	ReplaceOnlyTags = new KaiCheckBox(this, ID_REPLACE_ONLY_TAGS, _("Zmieniaj tylko w tagach"));
+	ReplaceOnlyText = new KaiCheckBox(this, ID_REPLACE_ONLY_TEXT, _("Zmieniaj tylko w tekœcie"));
 
 	PhrasesDescriptionSizer->Add(new KaiStaticText(this,-1,_("Szukana fraza (wyra¿enia regularne)")), 1, wxALL | wxEXPAND, 2);
 	PhrasesDescriptionSizer->Add(new KaiStaticText(this, -1, _("Zmieniana fraza")), 1, wxALL | wxEXPAND, 2);
@@ -55,12 +58,15 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	PhrasesOptionsSizer->Add(ReplaceAsLower, 1, wxALL | wxEXPAND, 2);
 	PhrasesOptionsSizer1->Add(ReplaceAsUpper, 1, wxALL | wxEXPAND, 2);
 	PhrasesOptionsSizer1->Add(ReplaceWithUnchangedCase, 1, wxALL | wxEXPAND, 2);
-	RuleEdition->Add(new KaiStaticText(this, -1, _("Opis regu³y")), 0);
-	RuleEdition->Add(RuleDescription, 0, wxEXPAND);
+	PhrasesOptionsSizer2->Add(ReplaceOnlyTags, 1, wxALL | wxEXPAND, 2);
+	PhrasesOptionsSizer2->Add(ReplaceOnlyText, 1, wxALL | wxEXPAND, 2);
+	RuleEdition->Add(new KaiStaticText(this, -1, _("Opis regu³y")), wxALL | wxEXPAND, 2);
+	RuleEdition->Add(RuleDescription, 0, wxALL | wxEXPAND, 2);
 	RuleEdition->Add(PhrasesDescriptionSizer, 0, wxEXPAND);
 	RuleEdition->Add(PhrasesSizer, 0, wxEXPAND);
 	RuleEdition->Add(PhrasesOptionsSizer, 0, wxEXPAND);
-	RuleEdition->Add(PhrasesOptionsSizer1, 0, wxALL | wxEXPAND, 2);
+	RuleEdition->Add(PhrasesOptionsSizer1, 0, wxEXPAND);
+	RuleEdition->Add(PhrasesOptionsSizer2, 0, wxEXPAND);
 	RulesList = new KaiListCtrl(this, ID_RULES_LIST,wxDefaultPosition, wxSize(320, 300));
 	RulesList->InsertColumn(0, L"", TYPE_CHECKBOX, 20);
 	RulesList->InsertColumn(1, _("Opis"), TYPE_TEXT, 290);
@@ -81,6 +87,8 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 		ReplaceAsLower->SetValue((options & OPTION_REPLACE_AS_LOWER) != 0);
 		ReplaceAsUpper->SetValue((options & OPTION_REPLACE_AS_UPPER) != 0);
 		ReplaceWithUnchangedCase->SetValue((options & OPTION_REPLACE_WITH_UNCHANGED_CASE) != 0);
+		ReplaceOnlyTags->SetValue((options & OPTION_REPLACE_ONLY_TAGS) != 0);
+		ReplaceOnlyText->SetValue((options & OPTION_REPLACE_ONLY_TEXT) != 0);
 	}, ID_RULES_LIST);
 	FillRulesList();
 	ListSizer->Add(RuleEdition, 0, wxEXPAND);
@@ -343,19 +351,20 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 		return;
 	//maybe some info needed
 
-	std::vector<wxRegEx*> rxrules;
+	std::vector<std::pair<wxRegEx*, int>> rxrules;
 	for (size_t i = 0; i < checkedRules.size(); i++){
+		const Rule &actualRule = rules[checkedRules[i]];
 		int flags = wxRE_ADVANCED;
-		if (!(rules[checkedRules[i]].options & OPTION_MATCH_CASE))
+		if (!(actualRule.options & OPTION_MATCH_CASE))
 			flags |= wxRE_ICASE;
 
-		wxRegEx *rule = new wxRegEx(rules[checkedRules[i]].findRule, flags);
+		wxRegEx *rule = new wxRegEx(actualRule.findRule, flags);
 		if (!rule->IsValid()){
 			//KaiLog(wxString::Format("Szablon wyra¿eñ regularnych \"%s\" jest nieprawid³owy", rules[checkedRules[i]].first));
 			delete rule;
 			continue;
 		}
-		rxrules.push_back(rule);
+		rxrules.push_back(std::make_pair(rule, actualRule.options));
 	}
 
 	//0-all lines 1-selected lines 2-from selected 3-by styles
@@ -387,14 +396,18 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 
 				int textPos = 0;
 				wxString text = lineText;
-				wxRegEx *r = rxrules[k];
+				wxRegEx *r = rxrules[k].first;
 
 				while (r->Matches(text)) {
 					size_t matchstart=0, matchlen=0;
 					if (r->GetMatch(&matchstart, &matchlen)){
 						if (matchlen == 0)
 							matchlen++;
-
+						int options = rxrules[k].second;
+						if ((options & ID_REPLACE_ONLY_TAGS || options & ID_REPLACE_ONLY_TEXT) && SkipFinding(text, matchstart, options)){
+							continue;
+						}
+						
 						if (isfirst){
 							resultDialog->SetHeader(tab->SubsPath);
 							isfirst = false;
@@ -415,7 +428,7 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 		tabLinePosition++;
 	}
 	for (auto cur = rxrules.begin(); cur != rxrules.end(); cur++){
-		delete *cur;
+		delete cur->first;
 	}
 }
 
@@ -513,6 +526,10 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 							matchlen++;
 
 						const Rule & actualrule = rules[rxrules[k].second];
+						int options = actualrule.options;
+						if ((options & ID_REPLACE_ONLY_TAGS || options & ID_REPLACE_ONLY_TEXT) && SkipFinding(text, matchstart, options)){
+							continue;
+						}
 						wxString replacedResult;
 						wxString matchResult = replacedResult = stringChanged.Mid(matchstart + textPos, matchlen);
 						int reps = r->Replace(&replacedResult, actualrule.replaceRule);
@@ -630,6 +647,8 @@ int MisspellReplacer::GetRuleOptions()
 	result |= (2 * (int)ReplaceAsLower->GetValue());
 	result |= (4 * (int)ReplaceAsUpper->GetValue());
 	result |= (8 * (int)ReplaceWithUnchangedCase->GetValue());
+	result |= (16 * (int)ReplaceOnlyTags->GetValue());
+	result |= (32 * (int)ReplaceOnlyText->GetValue());
 
 	return result;
 }
@@ -650,6 +669,37 @@ void MisspellReplacer::FillWithDefaultRules(wxString &rules)
 		_("Zamiana b³êdów wyrazu \"bêdê\"") + L"\f\\mbed[eê]\\M\fbêdê\f0\n" +
 		_("Zamiana b³êdów wyrazu \"bêdê\"") + L"\f\\mbêde\\M\fbêdê\f0";
 		
+}
+
+//true skipping this find
+bool MisspellReplacer::SkipFinding(const wxString &text, int textPos, int options)
+{
+	bool findStart = false;
+	//I don't even need to check end cause when there's no end start will take all line
+	/*bool findEnd = false;
+	for (size_t i = textPos.y; i < text.length(); i++){
+		if (text[i] == L'{')
+			break;
+		if (text[i] == L'}'){
+			findEnd = true;
+			break;
+		}
+	}*/
+	for (int i = textPos; i >= 0; i--){
+		if (text[i] == L'}')
+			break;
+		if (text[i] == L'{'){
+			findStart = true;
+			break;
+		}
+	}
+	if (options & OPTION_REPLACE_ONLY_TAGS && findStart)
+		return false;
+
+	if (options & OPTION_REPLACE_ONLY_TEXT && !findStart)
+		return false;
+
+	return true;
 }
 
 Rule::Rule(const wxString & stringRule)

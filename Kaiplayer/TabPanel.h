@@ -52,6 +52,7 @@ class TabPanel : public wxWindow
 		wxString VideoName;
 		wxString SubsPath;
 		wxString VideoPath;
+		wxString AudioPath;
 		wxString KeyframesPath;
 		wxWindow *lastFocusedWindow = NULL;
 		KaiWindowResizer* windowResizer;
