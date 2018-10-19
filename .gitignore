@@ -4,7 +4,9 @@ Kainote setup.*
 *.rar
 *.7z
 *.psd
+*.lst
 Trash/
+LanguageTool/
 gitparams.h
 
 
@@ -76,6 +78,7 @@ artifacts/
 *.tmp
 *.tmp_proj
 *.log
+*.lib
 *.vspscc
 *.vssscc
 .builds

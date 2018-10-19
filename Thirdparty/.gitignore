@@ -9,5 +9,9 @@ SubInspector-0.5.1/
 Video rendering/
 objs/
 freetype-2.6/
+FFmpeg/
+ffms2000/
+xy-VSFilter-master-old/
 Hunspell new/
+zlib/
 *.gz

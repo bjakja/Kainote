@@ -1,12 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release log|Win32">
-      <Configuration>Release log</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
@@ -15,10 +11,6 @@
     </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release log|x64">
-      <Configuration>Release log</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
@@ -30,6 +22,7 @@
     <ProjectName>vsfilter</ProjectName>
     <ProjectGuid>{530890F8-CBCB-4DAB-BEDF-9FB667D0AFEE}</ProjectGuid>
     <RootNamespace>$(ProjectName)</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="..\..\..\configuration.props" />
@@ -45,6 +38,18 @@
   <PropertyGroup Condition="'$(Configuration)'=='Release log'" Label="Configuration">
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -64,11 +69,24 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
+    <ClCompile>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ResourceCompile Include="VSFilter.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\xy-VSFilter-master\src\filters\transform\vsfilter\csriapi.cpp" />
     <ClCompile Include="..\..\..\thirdparty\mfc\afxctrlcontainer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)'=='Debug' Or '$(VisualStudioVersion)'&gt;'10.0'">true</ExcludedFromBuild>
     </ClCompile>
@@ -80,9 +98,9 @@
     </ClCompile>
     <ClCompile Include="Copy.cpp">
     </ClCompile>
-    <ClCompile Include="csriapi.cpp" />
     <ClCompile Include="DirectVobSub.cpp" />
     <ClCompile Include="DirectVobSubFilter.cpp" />
+    <ClCompile Include="DirectVobSubFilterDll.cpp" />
     <ClCompile Include="DirectVobSubPropPage.cpp" />
     <ClCompile Include="once_logger.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -92,13 +110,13 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="StyleEditorDialog.cpp" />
+    <ClCompile Include="SubRenderOptionsImpl.cpp" />
     <ClCompile Include="Systray.cpp" />
     <ClCompile Include="TextInputPin.cpp" />
     <ClCompile Include="vfr.cpp" />
     <ClCompile Include="VSFilter.cpp" />
-    <ClCompile Include="xy_logger.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="XyOptionsImpl.cpp" />
+    <ClCompile Include="xy_logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CAutoTiming.h" />
@@ -112,12 +130,14 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="StyleEditorDialog.h" />
+    <ClInclude Include="SubRenderOptionsImpl.h" />
     <ClInclude Include="Systray.h" />
     <ClInclude Include="TextInputPin.h" />
     <ClInclude Include="Timing_Logger.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="vfr.h" />
     <ClInclude Include="VSFilter.h" />
+    <ClInclude Include="XyOptionsImpl.h" />
     <ClInclude Include="XySubRenderIntf.h" />
     <ClInclude Include="xy_logger.h" />
   </ItemGroup>

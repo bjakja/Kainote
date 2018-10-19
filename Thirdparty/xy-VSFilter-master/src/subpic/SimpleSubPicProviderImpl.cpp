@@ -12,7 +12,7 @@
 // 
 
 
-SimpleSubPicProvider::SimpleSubPicProvider( int alpha_blt_dst_type, SIZE spd_size, RECT video_rect, IDirectVobSubXy *consumer
+SimpleSubPicProvider::SimpleSubPicProvider( int alpha_blt_dst_type, SIZE spd_size, RECT video_rect, IXyOptions *consumer
     , HRESULT* phr/*=NULL*/ )
     : CUnknown(NAME("CSubPicQueueImpl"), NULL)
     , m_alpha_blt_dst_type(alpha_blt_dst_type)
@@ -22,9 +22,9 @@ SimpleSubPicProvider::SimpleSubPicProvider( int alpha_blt_dst_type, SIZE spd_siz
     , m_fps(25.0)
     , m_consumer(consumer)
 {
-    /*if(phr) {
-        *phr = consumer ? S_OK : E_INVALIDARG;
-    }*/
+    //if(phr) {
+        //*phr = consumer ? S_OK : E_INVALIDARG;
+   // }
 
     m_prefered_colortype.AddTail(MSP_AYUV_PLANAR);
     m_prefered_colortype.AddTail(MSP_AYUV);
@@ -129,7 +129,7 @@ STDMETHODIMP_(bool) SimpleSubPicProvider::LookupSubPic( REFERENCE_TIME now /*[in
         bool result = LookupSubPicEx(now, &temp);
         if (result && temp)
         {
-            (*output_subpic = new SimpleSubpic(temp, m_alpha_blt_dst_type))->AddRef();
+            (*output_subpic = DEBUG_NEW SimpleSubpic(temp, m_alpha_blt_dst_type))->AddRef();
         }
         return result;
     }
@@ -246,9 +246,9 @@ HRESULT SimpleSubPicProvider::RenderTo( IXySubRenderFrame** pSubPic, REFERENCE_T
     CAtlList<CRect> rectList;
 
     CComPtr<IXySubRenderFrame> sub_render_frame;
-    SIZE size_render_with=m_spd_size;
+	SIZE size_render_with = m_spd_size;
     //ASSERT(m_consumer);
-	if(m_consumer){
+	if (m_consumer){
 		hr = m_consumer->XyGetSize(DirectVobSubXyOptions::SIZE_LAYOUT_WITH, &size_render_with);
 		if (FAILED(hr))
 		{
@@ -256,13 +256,24 @@ HRESULT SimpleSubPicProvider::RenderTo( IXySubRenderFrame** pSubPic, REFERENCE_T
 		}
 	}
 
-    hr = pSubPicProviderEx->RenderEx(pSubPic, m_spd_type, m_spd_size, 
-        size_render_with, CRect(0,0,size_render_with.cx,size_render_with.cy), 
+    ASSERT(size_render_with.cx != 0 && size_render_with.cy != 0); // PF debug
+
+    hr = pSubPicProviderEx->RenderEx(pSubPic, m_spd_type,
+        CRect(CPoint(),m_spd_size), CRect(CPoint(),m_spd_size),
+        size_render_with, 
         bIsAnimated ? rtStart : ((rtStart+rtStop)/2), fps);
 
     POSITION pos = pSubPicProviderEx->GetStartPosition(rtStart, fps);
 
-    pSubPicProviderEx->GetStartStop(pos, fps, m_subpic_start, m_subpic_stop);
+    if (!pSubPicProviderEx->IsAnimated(pos))
+    {
+        pSubPicProviderEx->GetStartStop(pos, fps, m_subpic_start, m_subpic_stop);
+    }
+    else
+    {
+        m_subpic_start = rtStart;
+        m_subpic_stop = rtStart+1;
+    }
 
     pSubPicProviderEx->Unlock();
 
@@ -295,7 +306,7 @@ bool SimpleSubPicProvider::IsSpdColorTypeSupported( int type )
 //
 
 SimpleSubPicProvider2::SimpleSubPicProvider2( int alpha_blt_dst_type, SIZE max_size, SIZE cur_size, RECT video_rect, 
-    IDirectVobSubXy *consumer, HRESULT* phr/*=NULL*/)
+    IXyOptions *consumer, HRESULT* phr/*=NULL*/)
     : CUnknown(NAME("SimpleSubPicProvider2"), NULL)
     , m_alpha_blt_dst_type(alpha_blt_dst_type)
     , m_max_size(max_size)
@@ -305,10 +316,10 @@ SimpleSubPicProvider2::SimpleSubPicProvider2( int alpha_blt_dst_type, SIZE max_s
     , m_fps(25.0)
     , m_consumer(consumer)
 {
-    if (phr)
-    {
-        *phr= consumer ? S_OK : E_INVALIDARG;
-    }
+    //if (phr)
+    //{
+       // *phr= consumer ? S_OK : E_INVALIDARG;
+   // }
     m_ex_provider = NULL;
     m_old_provider = NULL;
     m_cur_provider = NULL;
@@ -342,7 +353,7 @@ STDMETHODIMP SimpleSubPicProvider2::SetSubPicProvider( IUnknown* subpic_provider
             m_old_provider = NULL;
             if (!m_ex_provider)
             {
-                m_ex_provider = new SimpleSubPicProvider(m_alpha_blt_dst_type, m_cur_size, m_video_rect, m_consumer, &hr);
+                m_ex_provider = DEBUG_NEW SimpleSubPicProvider(m_alpha_blt_dst_type, m_cur_size, m_video_rect, m_consumer, &hr);
                 m_ex_provider->SetFPS(m_fps);
                 m_ex_provider->SetTime(m_now);
             }
@@ -360,12 +371,12 @@ STDMETHODIMP SimpleSubPicProvider2::SetSubPicProvider( IUnknown* subpic_provider
             m_ex_provider = NULL;
             if (!m_old_provider)
             {
-                CComPtr<ISubPicExAllocator> pSubPicAllocator = new CPooledSubPicAllocator(m_alpha_blt_dst_type, 
+                CComPtr<ISubPicExAllocator> pSubPicAllocator = DEBUG_NEW CPooledSubPicAllocator(m_alpha_blt_dst_type, 
                     m_max_size, MAX_SUBPIC_QUEUE_LENGTH + 1);
                 ASSERT(pSubPicAllocator);
                 pSubPicAllocator->SetCurSize(m_cur_size);
                 pSubPicAllocator->SetCurVidRect(m_video_rect);
-                m_old_provider = new CSubPicQueueNoThread(pSubPicAllocator, &hr);
+                m_old_provider = DEBUG_NEW CSubPicQueueNoThread(pSubPicAllocator, &hr);
                 m_old_provider->SetFPS(m_fps);
                 m_old_provider->SetTime(m_now);
                 if (FAILED(hr) || m_old_provider==NULL)
