@@ -922,7 +922,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 	if (tab->editor){
 		found = FindFile(filename, secondFileName, issubs);
 		if (!issubs && found && !fulls && !tab->Video->isFullscreen){
-			if (KaiMessageBox(wxString::Format(_("Wczytać napisy o nazwie \"%s\"?"), secondFileName.AfterLast('\\')),
+			if (tab->SubsPath == secondFileName && KaiMessageBox(wxString::Format(_("Wczytać napisy o nazwie \"%s\"?"), secondFileName.AfterLast('\\')),
 				_("Potwierdzenie"), wxICON_QUESTION | wxYES_NO, this) == wxNO){
 				found = false;
 			}
@@ -989,15 +989,19 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 				wxFileExists(keyframespath.Prepend(filename.BeforeLast('\\') + "\\"))));
 			int flags = wxNO;
 			wxString prompt;
-			if (hasVideoPath || hasAudioPath){
+			if (hasVideoPath || hasAudioPath || hasKeyframePath){
 				prompt = _("Skojarzone pliki:\n"); flags |= wxOK;
-				if (hasVideoPath){ prompt += _("Wideo: ") + videopath + "\n"; }
+				if (hasVideoPath && tab->VideoPath != videopath){ prompt += _("Wideo: ") + videopath + "\n"; }
 				if (hasAudioPath){ prompt += _("Audio: ") + audiopath + "\n"; }
-				if (hasKeyframePath){ prompt += _("Klatki kluczowe: ") + keyframespath + "\n"; }
+				if (hasKeyframePath && tab->KeyframesPath != keyframespath){ prompt += _("Klatki kluczowe: ") + keyframespath + "\n"; }
 			}
 			if (!secondFileName.empty()){
-				if (!prompt.empty()){ prompt += "\n"; }
-				prompt += _("Wideo z folderu:\n") + secondFileName.AfterLast('\\'); flags |= wxYES;
+				if (tab->VideoPath != secondFileName){
+					if (!prompt.empty()){ prompt += "\n"; }
+					prompt += _("Wideo z folderu:\n") + secondFileName.AfterLast('\\'); flags |= wxYES;
+				}
+				else
+					found = false;
 			}
 			if (!prompt.empty()){
 				KaiMessageDialog dlg(this, prompt, _("Potwierdzenie"), flags);

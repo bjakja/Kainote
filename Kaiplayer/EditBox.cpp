@@ -2021,8 +2021,11 @@ bool EditBox::LoadAudio(const wxString &audioFileName, bool fromVideo)
 
 void EditBox::CloseAudio()
 {
-	BoxSizer1->Remove(0);
+	if (!windowResizer || !ABox)
+		return;
+
 	BoxSizer1->Remove(1);
+	BoxSizer1->Remove(0);
 	windowResizer->Destroy();
 	windowResizer = NULL;
 	ABox->Destroy();

@@ -82,7 +82,7 @@ void StylePreview::DrawPreview(Styles *style)
 	g1 = kol2.Green();
 	r1 = kol2.Red();
 
-	unsigned char *data = (unsigned char *)malloc(width * height * 4);
+	unsigned char *data = new unsigned char[width * height * 4];
 
 
 	bool ch = false;
@@ -115,6 +115,7 @@ void StylePreview::DrawPreview(Styles *style)
 	csri_fmt format;
 	format.width = width;
 	format.height = height;
+	format.fps = 25.f;
 	format.pixfmt = frame.pixfmt;
 	int error = csri_request_fmt(instance, &format);
 	if (error) { KaiLog(_("CSRI nie obsługuje tego formatu.")); return; }
@@ -135,7 +136,7 @@ void StylePreview::DrawPreview(Styles *style)
 
 	bmpframe = new wxBitmap(preview);
 	Refresh(false);
-	free(data);
+	delete[] data;
 	data = 0;
 }
 
@@ -154,10 +155,10 @@ void StylePreview::OnPaint(wxPaintEvent& event)
 void StylePreview::SubsText(wxString *text)
 {
 	previewStyle->Alignment = "5";
-	*text << ((wchar_t)0xFEFF);
 	*text << "[Script Info]\r\nPlayResX: " << width << "\r\nPlayResY: " << height << "\r\nScaledBorderAndShadow: Yes\r\nScriptType: v4.00+\r\nWrapStyle: 0"
 		<< "\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\r\n"
-		<< previewStyle->GetRaw() << "\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,0:01:26.00," << previewStyle->Name << ",,0000,0000,0000,," << Options.GetString(PreviewText);
+		<< previewStyle->GetRaw() << "\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,1:01:26.00," << previewStyle->Name << ",,0000,0000,0000,," << Options.GetString(PreviewText)<<
+		"\r\n"/*Dialogue: 0,0:00:01.00,1:01:26.00,jakistamstyl,,0000,0000,0000,,Jakiśtam testowy tekst"*/;
 
 }
 

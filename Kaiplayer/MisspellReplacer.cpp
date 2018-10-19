@@ -36,6 +36,7 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	wxBoxSizer *PhrasesDescriptionSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *PhrasesSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *PhrasesOptionsSizer = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *PhrasesOptionsSizer1 = new wxBoxSizer(wxHORIZONTAL);
 	RuleDescription = new KaiTextCtrl(this, ID_RULE_DESCRIPTION);
 	PhraseToFind = new KaiTextCtrl(this, ID_PHRASE_TO_FIND);
 	PhraseToFind->SetMaxLength(MAXINT);
@@ -44,6 +45,7 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	MatchCase = new KaiCheckBox(this, ID_MATCH_CASE, _("Rozró¿niaj wielkoœæ znaków"));
 	ReplaceAsLower = new KaiCheckBox(this, ID_REPLACE_LOWER, _("Zmieniaj na tekst z ma³ej litery"));
 	ReplaceAsUpper = new KaiCheckBox(this, ID_REPLACE_UPPER, _("Zmieniaj na tekst z du¿ej litery"));
+	ReplaceWithUnchangedCase = new KaiCheckBox(this, ID_REPLACE_UPPER, _("Nie zmieniaj wielkoœci liter"));
 
 	PhrasesDescriptionSizer->Add(new KaiStaticText(this,-1,_("Szukana fraza (wyra¿enia regularne)")), 1, wxALL | wxEXPAND, 2);
 	PhrasesDescriptionSizer->Add(new KaiStaticText(this, -1, _("Zmieniana fraza")), 1, wxALL | wxEXPAND, 2);
@@ -51,15 +53,19 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	PhrasesSizer->Add(PhraseToReplace, 1, wxALL | wxEXPAND, 2);
 	PhrasesOptionsSizer->Add(MatchCase, 1, wxALL | wxEXPAND, 2);
 	PhrasesOptionsSizer->Add(ReplaceAsLower, 1, wxALL | wxEXPAND, 2);
+	PhrasesOptionsSizer1->Add(ReplaceAsUpper, 1, wxALL | wxEXPAND, 2);
+	PhrasesOptionsSizer1->Add(ReplaceWithUnchangedCase, 1, wxALL | wxEXPAND, 2);
 	RuleEdition->Add(new KaiStaticText(this, -1, _("Opis regu³y")), 0);
-	RuleEdition->Add(RuleDescription, 0);
-	RuleEdition->Add(PhrasesDescriptionSizer);
-	RuleEdition->Add(PhrasesSizer, 0);
-	RuleEdition->Add(PhrasesOptionsSizer, 0);
-	RuleEdition->Add(ReplaceAsUpper, 0, wxALL | wxEXPAND, 2);
-	RulesList = new KaiListCtrl(this, ID_RULES_LIST,wxDefaultPosition, wxSize(320, 400));
+	RuleEdition->Add(RuleDescription, 0, wxEXPAND);
+	RuleEdition->Add(PhrasesDescriptionSizer, 0, wxEXPAND);
+	RuleEdition->Add(PhrasesSizer, 0, wxEXPAND);
+	RuleEdition->Add(PhrasesOptionsSizer, 0, wxEXPAND);
+	RuleEdition->Add(PhrasesOptionsSizer1, 0, wxALL | wxEXPAND, 2);
+	RulesList = new KaiListCtrl(this, ID_RULES_LIST,wxDefaultPosition, wxSize(320, 300));
 	RulesList->InsertColumn(0, L"", TYPE_CHECKBOX, 20);
 	RulesList->InsertColumn(1, _("Opis"), TYPE_TEXT, 290);
+	RulesList->InsertColumn(2, _("Regu³a znajdŸ"), TYPE_TEXT, 100);
+	RulesList->InsertColumn(3, _("Regu³a zamieñ"), TYPE_TEXT, 100);
 	Bind(LIST_ITEM_LEFT_CLICK, [=](wxCommandEvent &evt){
 		int sel = RulesList->GetSelection();
 		if (sel < 0 || sel >= rules.size())
@@ -67,11 +73,17 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 
 		const Rule & ruleclass = rules[sel];
 		//add description and option objects and add here set value etc.
+		RuleDescription->SetValue(ruleclass.description);
 		PhraseToFind->SetValue(ruleclass.findRule);
 		PhraseToReplace->SetValue(ruleclass.replaceRule);
+		int options = ruleclass.options;
+		MatchCase->SetValue((options & OPTION_MATCH_CASE) != 0);
+		ReplaceAsLower->SetValue((options & OPTION_REPLACE_AS_LOWER) != 0);
+		ReplaceAsUpper->SetValue((options & OPTION_REPLACE_AS_UPPER) != 0);
+		ReplaceWithUnchangedCase->SetValue((options & OPTION_REPLACE_WITH_UNCHANGED_CASE) != 0);
 	}, ID_RULES_LIST);
 	FillRulesList();
-	ListSizer->Add(PhrasesSizer, 0, wxEXPAND);
+	ListSizer->Add(RuleEdition, 0, wxEXPAND);
 	ListSizer->Add(RulesList, 1, wxALL | wxEXPAND, 2);
 	ListSizer->Add(PutWordBoundary, 0, wxALL, 2);
 	ListSizer->Add(ShowBuiltInRules, 0, wxALL, 2);
@@ -178,11 +190,12 @@ void MisspellReplacer::ReplaceChecked()
 	
 		size_t pos = SeekResult->findPosition.x + replaceDiff;
 		size_t len = SeekResult->findPosition.y;
+		const Rule & actualrule = rules[SeekResult->numOfRule];
 		wxString replacedResult;
 		wxString matchResult = replacedResult = lineText.Mid(pos, len);
-		int reps = rxrules[SeekResult->numOfRule]->Replace(&replacedResult, rules[SeekResult->numOfRule].replaceRule);
+		int reps = rxrules[SeekResult->numOfRule]->Replace(&replacedResult, actualrule.replaceRule);
 
-		MoveCase(matchResult, &replacedResult);
+		MoveCase(matchResult, &replacedResult, actualrule.options);
 
 		lineText.replace(pos, len, replacedResult);
 
@@ -246,12 +259,14 @@ void MisspellReplacer::FillRulesList()
 	while(tokenizer.HasMoreTokens())
 	{
 		wxString token = tokenizer.GetNextToken();
-		wxString ruleDescription = token.BeforeFirst('\f');
 		wxString OnOff = (tokenizerOnOff.HasMoreTokens())? tokenizerOnOff.GetNextToken() : "0";
-		rules.push_back(Rule(token));
+		Rule newRule(token);
+		rules.push_back(newRule);
 
 		int row = RulesList->AppendItem(new ItemCheckBox(OnOff == "1", L""));
-		RulesList->SetItem(row, 1, new ItemText(ruleDescription));
+		RulesList->SetItem(row, 1, new ItemText(newRule.description));
+		RulesList->SetItem(row, 2, new ItemText(newRule.findRule));
+		RulesList->SetItem(row, 3, new ItemText(newRule.replaceRule));
 	}
 }
 
@@ -268,12 +283,15 @@ void MisspellReplacer::EditRule()
 	}
 
 	rules[sel] = Rule(RuleDescription->GetValue(), PhraseToFind->GetValue(), PhraseToReplace->GetValue(), GetRuleOptions());
-	Item * itemF = RulesList->GetItem(sel, 1);
-	//Item * itemR = RulesList->GetItem(sel, 2);
+	Item * itemD = RulesList->GetItem(sel, 1);
+	Item * itemF = RulesList->GetItem(sel, 2);
+	Item * itemR = RulesList->GetItem(sel, 3);
+	if (itemD)
+		itemD->name = RuleDescription->GetValue();
 	if (itemF)
-		itemF->name = RuleDescription->GetValue();
-	//if (itemR)
-		//itemR->name = PhraseToReplace->GetValue();
+		itemF->name = PhraseToFind->GetValue();
+	if (itemR)
+		itemR->name = PhraseToReplace->GetValue();
 	RulesList->Refresh(false);
 }
 
@@ -291,7 +309,8 @@ void MisspellReplacer::AddRule()
 	rules.push_back(Rule(RuleDescription->GetValue(), phraseToFind, phraseToReplace, GetRuleOptions()));
 	int row = RulesList->AppendItem(new ItemCheckBox(false, L""));
 	RulesList->SetItem(row, 1, new ItemText(RuleDescription->GetValue()));
-	//RulesList->SetItem(row, 2, new ItemText(phraseToReplace));
+	RulesList->SetItem(row, 2, new ItemText(phraseToFind));
+	RulesList->SetItem(row, 3, new ItemText(phraseToReplace));
 	RulesList->Refresh(false);
 }
 
@@ -442,7 +461,7 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 		return;
 	//maybe some info needed
 
-	std::vector<std::pair<wxRegEx*, wxString>> rxrules;
+	std::vector<std::pair<wxRegEx*, int>> rxrules;
 	for (size_t i = 0; i < checkedRules.size(); i++){
 		int flags = wxRE_ADVANCED;
 		if (!(rules[checkedRules[i]].options & OPTION_MATCH_CASE))
@@ -454,7 +473,7 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 			delete rule;
 			continue;
 		}
-		rxrules.push_back(std::make_pair(rule, rules[checkedRules[i]].replaceRule));
+		rxrules.push_back(std::make_pair(rule, checkedRules[i]));
 	}
 
 	//0-all lines 1-selected lines 2-from selected 3-by styles
@@ -493,11 +512,12 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 						if (matchlen == 0)
 							matchlen++;
 
+						const Rule & actualrule = rules[rxrules[k].second];
 						wxString replacedResult;
 						wxString matchResult = replacedResult = stringChanged.Mid(matchstart + textPos, matchlen);
-						int reps = r->Replace(&replacedResult, rxrules[k].second);
+						int reps = r->Replace(&replacedResult, actualrule.replaceRule);
 
-						MoveCase(matchResult, &replacedResult);
+						MoveCase(matchResult, &replacedResult, actualrule.options);
 
 						stringChanged.replace(matchstart + textPos, matchlen, replacedResult);
 
@@ -576,8 +596,19 @@ void MisspellReplacer::SaveRules()
 	ow.FileWrite(Options.pathfull + L"\\Rules.txt", rulesText);
 }
 
-void MisspellReplacer::MoveCase(const wxString &originalCase, wxString *result)
+void MisspellReplacer::MoveCase(const wxString &originalCase, wxString *result, int options)
 {
+	if (options & OPTION_REPLACE_WITH_UNCHANGED_CASE)
+		return;
+	if (options & OPTION_REPLACE_AS_LOWER){
+		result->MakeLower();
+		return;
+	}
+	if (options & OPTION_REPLACE_AS_LOWER){
+		result->MakeUpper();
+		return;
+	}
+
 	int upperCase = 0;
 	size_t len = originalCase.length();
 	for (size_t i = 0; i < len; i++){
@@ -598,39 +629,27 @@ int MisspellReplacer::GetRuleOptions()
 	result |= (1 * (int)MatchCase->GetValue());
 	result |= (2 * (int)ReplaceAsLower->GetValue());
 	result |= (4 * (int)ReplaceAsUpper->GetValue());
+	result |= (8 * (int)ReplaceWithUnchangedCase->GetValue());
 
 	return result;
 }
 
 void MisspellReplacer::FillWithDefaultRules(wxString &rules)
 {
-	rules = wxString::Format(L"#Kainote rules file v2\n"\
-		L"0|0|0|0|0|0|0|0|0|0|0|0\n"\
-		L"%s\f ([,.!?%])\f\\1\f0\n"\
-		L"%s\f(  +)\f \f0\n"\
-		L"%s\f\\.{4,}\f...\f0\n"\
-		L"%s\f([^.])\\.\\.([^.])\f\\1...\\2\f0\n"\
-		L"%s\f([^.])([,.!?%])([^ ,.!?%\\\"\\\\0-9-])\f\\1\\2 \\3\f0\n"\
-		L"%s\f ?- ?(san|chan|kun|sama|nee|dono|senpai|sensei)\\M\f\f0\n"\
-		L"%s\f\\msie\\M\fsiê\f0\n"\
-		L"%s\f\\mnie mo¿liwe\\M\fniemo¿liwe\f0\n"\
-		L"%s\f\\mw ?og[uo]le\\M\fw ogóle\f0\n"\
-		L"%s\f\\mwogóle\\M\fw ogóle\f0"\
-		L"%s\f\\mbed[eê]\\M\fbêdê\f0\n"\
-		L"%s\f\\mbêde\\M\fbêdê\f0\n", 
-		_("Usuwanie spacji przed przecinkiem b¹dŸ kropk¹"),
-		_("Usuwanie podwójnych spacji"),
-		_("Zmiana \"....\" i wiêcej na wielokropek"),
-		_("Zmiana \"..\" na wielokropek"),
-		_("Zmiana braku spacji po przecinku czy kropce"),
-		_("Usuwanie japoñskich zwrotów grzecznoœciowych"),
-		_("Zamiana \"sie\" na \"siê\""),
-		_("Zamiana \"nie mo¿liwe\" na \"niemo¿liwe\""),
-		_("Zamiana b³êdów wyra¿enia \"w ogóle\""),
-		_("Zamiana b³êdów wyra¿enia \"w ogóle\""),
-		_("Zamiana b³êdów wyrazu \"bêdê\""),
-		_("Zamiana b³êdów wyrazu \"bêdê\""));
-
+	rules = L"#Kainote rules file\n0|0|0|0|0|0|0|0|0|0|0|0\n" +
+		_("Usuwanie spacji przed przecinkiem b¹dŸ kropk¹") + L"\f ([,.!?%])\f\\1\f0\n" +
+		_("Usuwanie podwójnych spacji") + L"\f(  +)\f \f0\n" +
+		_("Zmiana \"....\" i wiêcej na wielokropek") + L"\f\\.{4,}\f...\f0\n" +
+		_("Zmiana \"..\" na wielokropek") + L"\f([^.])\\.\\.([^.])\f\\1...\\2\f0\n" +
+		_("Zmiana braku spacji po przecinku czy kropce") + L"\f([^.])([,.!?%])([^ ,.!?%\\\"\\\\0-9-])\f\\1\\2 \\3\f0\n" +
+		_("Usuwanie japoñskich zwrotów grzecznoœciowych") + L"\f ?- ?(san|chan|kun|sama|nee|dono|senpai|sensei)\\M\f\f0\n" +
+		_("Zamiana \"sie\" na \"siê\"") + L"\f\\msie\\M\fsiê\f0\n" +
+		_("Zamiana \"nie mo¿liwe\" na \"niemo¿liwe\"") + L"\f\\mnie mo¿liwe\\M\fniemo¿liwe\f0\n" +
+		_("Zamiana b³êdów wyra¿enia \"w ogóle\"") + L"\f\\mw ?og[uo]le\\M\fw ogóle\f0\n" +
+		_("Zamiana b³êdów wyra¿enia \"w ogóle\"") + L"\f\\mwogóle\\M\fw ogóle\f0\n" +
+		_("Zamiana b³êdów wyrazu \"bêdê\"") + L"\f\\mbed[eê]\\M\fbêdê\f0\n" +
+		_("Zamiana b³êdów wyrazu \"bêdê\"") + L"\f\\mbêde\\M\fbêdê\f0";
+		
 }
 
 Rule::Rule(const wxString & stringRule)
