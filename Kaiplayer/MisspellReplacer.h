@@ -80,7 +80,7 @@ private:
 	void MoveCase(const wxString &originalCase, wxString *result, int options);
 	int GetRuleOptions();
 	void FillWithDefaultRules(wxString &rules);
-	bool SkipFinding(const wxString &text, int textPos, int options);
+	bool KeepFinding(const wxString &text, int textPos, int options);
 	KaiCheckBox *PutWordBoundary;
 	KaiCheckBox *ShowBuiltInRules;
 	KaiCheckBox *MatchCase;

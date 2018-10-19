@@ -404,16 +404,15 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 						if (matchlen == 0)
 							matchlen++;
 						int options = rxrules[k].second;
-						if ((options & ID_REPLACE_ONLY_TAGS || options & ID_REPLACE_ONLY_TEXT) && SkipFinding(text, matchstart, options)){
-							continue;
-						}
-						
-						if (isfirst){
-							resultDialog->SetHeader(tab->SubsPath);
-							isfirst = false;
-						}
+						if ((options < 16) || KeepFinding(text, matchstart, options)){
 
-						resultDialog->SetResults(lineText, wxPoint(matchstart + textPos, matchlen), tab, tabLinePosition, positionId + 1, checkedRules[k]);
+							if (isfirst){
+								resultDialog->SetHeader(tab->SubsPath);
+								isfirst = false;
+							}
+
+							resultDialog->SetResults(lineText, wxPoint(matchstart + textPos, matchlen), tab, tabLinePosition, positionId + 1, checkedRules[k]);
+						}
 					}
 					else
 						break;
@@ -527,21 +526,19 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 
 						const Rule & actualrule = rules[rxrules[k].second];
 						int options = actualrule.options;
-						if ((options & ID_REPLACE_ONLY_TAGS || options & ID_REPLACE_ONLY_TEXT) && SkipFinding(text, matchstart, options)){
-							continue;
+						if ((options < 16) || KeepFinding(text, matchstart, options)){
+							wxString replacedResult;
+							wxString matchResult = replacedResult = stringChanged.Mid(matchstart + textPos, matchlen);
+							int reps = r->Replace(&replacedResult, actualrule.replaceRule);
+
+							MoveCase(matchResult, &replacedResult, actualrule.options);
+
+							stringChanged.replace(matchstart + textPos, matchlen, replacedResult);
+
+							matchlen = replacedResult.length();
+
+							changed = true;
 						}
-						wxString replacedResult;
-						wxString matchResult = replacedResult = stringChanged.Mid(matchstart + textPos, matchlen);
-						int reps = r->Replace(&replacedResult, actualrule.replaceRule);
-
-						MoveCase(matchResult, &replacedResult, actualrule.options);
-
-						stringChanged.replace(matchstart + textPos, matchlen, replacedResult);
-
-						matchlen = replacedResult.length();
-
-						changed = true;
-						
 					}
 					else
 						break;
@@ -607,7 +604,7 @@ void MisspellReplacer::SaveRules()
 		rulesText.RemoveLast() += L"\r\n";
 
 	for (auto & rule : rules){
-		rulesText << rule.description << L"\f" << rule.findRule << L"\f" << rule.replaceRule << rule.options << L"\r\n";
+		rulesText << rule.description << L"\f" << rule.findRule << L"\f" << rule.replaceRule << L"\f" << rule.options << L"\r\n";
 	}
 	OpenWrite ow;
 	ow.FileWrite(Options.pathfull + L"\\Rules.txt", rulesText);
@@ -672,7 +669,7 @@ void MisspellReplacer::FillWithDefaultRules(wxString &rules)
 }
 
 //true skipping this find
-bool MisspellReplacer::SkipFinding(const wxString &text, int textPos, int options)
+bool MisspellReplacer::KeepFinding(const wxString &text, int textPos, int options)
 {
 	bool findStart = false;
 	//I don't even need to check end cause when there's no end start will take all line
@@ -694,12 +691,12 @@ bool MisspellReplacer::SkipFinding(const wxString &text, int textPos, int option
 		}
 	}
 	if (options & OPTION_REPLACE_ONLY_TAGS && findStart)
-		return false;
+		return true;
 
 	if (options & OPTION_REPLACE_ONLY_TEXT && !findStart)
-		return false;
+		return true;
 
-	return true;
+	return false;
 }
 
 Rule::Rule(const wxString & stringRule)
