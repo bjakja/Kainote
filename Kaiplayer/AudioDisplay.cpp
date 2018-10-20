@@ -1651,7 +1651,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	}
 
 
-	if (leftDown && event.ControlDown() && !event.AltDown() && !onScale)
+	if (((leftDown && event.GetModifiers() == wxMOD_CONTROL) || middleDown) && !onScale)
 	{
 		int pos = GetMSAtX(x);
 		Notebook::GetTab()->Video->Seek(pos);
@@ -1670,12 +1670,27 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 		// Zoom or scroll?
 		bool zoom = shiftDown;
 		if (Options.GetBool(AudioWheelDefaultToZoom)) zoom = !zoom;
+		if (event.GetModifiers() == wxMOD_CONTROL){
+			int step = event.GetWheelRotation() / event.GetWheelDelta();
+
+			int pos = box->VerticalZoom->GetValue() - step;
+			box->VerticalZoom->SetValue(pos);
+			float value = pow(float(pos) / 50.0f, 3);
+			SetScale(value);
+			if (box->VerticalLink->GetValue()) {
+				player->SetVolume(value);
+				box->VolumeBar->SetThumbPosition(box->VerticalZoom->GetThumbPosition());
+				Options.SetInt(AudioVolume, pos);
+			}
+			Options.SetInt(AudioVerticalZoom, pos);
+			Options.SaveAudioOpts();
+		}
 		// Zoom
-		if (zoom) {
+		else if (zoom) {
 
 			int step = event.GetWheelRotation() / event.GetWheelDelta();
 
-			int value = box->HorizontalZoom->GetValue() + step;
+			int value = box->HorizontalZoom->GetValue() - step;
 			box->HorizontalZoom->SetValue(value);
 			SetSamplesPercent(value, true, float(x) / float(w));
 		}
@@ -2032,7 +2047,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	}
 
 	// Middle click
-	if (middleDown) {
+	if (event.MiddleDClick()) {
 		SetFocus();
 		int start = 0, end = 0;
 		GetTimesSelection(start, end);

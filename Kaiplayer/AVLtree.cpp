@@ -23,8 +23,8 @@ AVLtree::AVLtree()
 
 AVLtree::~AVLtree()
 {
-    del Del;
-    rightToLeftOrder(root,Del);
+	del Del;
+	rightToLeftOrder(root,Del);
 }
 
 int AVLtree::operator[](int id){
@@ -77,9 +77,9 @@ AVLtree::Node *AVLtree::getElementByKey(Node *root, int key){
 }
 
 int AVLtree::getElementById(int id){
-    Node *t = getElementById(root, id);
-    if(t!=NULL) return t->key;
-    else return -1;
+	Node *t = getElementById(root, id);
+	if(t!=NULL) return t->key;
+	else return -1;
 }
 
 AVLtree::Node *AVLtree::getElementById(Node *node, int id){
@@ -93,10 +93,10 @@ AVLtree::Node *AVLtree::getElementById(Node *node, int id){
 
 void AVLtree::insert(int key, bool moveKeys){
 	if (moveKeys){ addIndex(1, key, root); }
-    if(root!=NULL)
+	if(root!=NULL)
 		root = insert(root, key);
-    else
-        root=new Node(key, NULL);
+	else
+		root=new Node(key, NULL);
 	previous = NULL;
 }
 
@@ -161,7 +161,7 @@ AVLtree::Node* AVLtree::insert(Node* node, int key)
 
 int AVLtree::deleteItemByNode(int key, Node *node, bool moveKeys){
 
-    //int key = node->key;
+	//int key = node->key;
 	if (node->left == NULL && node->right == NULL){
 		if (node->previous != NULL){
 			if (node->previous->left == node){
@@ -173,60 +173,60 @@ int AVLtree::deleteItemByNode(int key, Node *node, bool moveKeys){
 				--node->previous->num_of_elements_on_right;
 			}
 			node->previous->height = 1 + max(height(node->previous->left),
-                height(node->previous->right));
+				height(node->previous->right));
 			root = repairNumOf(node->previous);
 		}
 		if(node==root){
-            delete root;
-            root=NULL;
-            node=NULL;
+			delete root;
+			root=NULL;
+			node=NULL;
 		} else {
-            delete node;
-            node = NULL;
+			delete node;
+			node = NULL;
 		}
 
 	}
 	else if (node->left == NULL && node->right != NULL){
-        if(node->previous!=NULL){
-            if (node->previous->left == node){
-                node->previous->left = node->right;
-                node->right->previous = node->previous;
-                --node->previous->num_of_elements_on_left;
-            }
-            else{
-                node->previous->right = node->right;
-                node->right->previous = node->previous;
-                --node->previous->num_of_elements_on_right;
-            }
-            node->previous->height = 1 + max(height(node->previous->left),
-                    height(node->previous->right));
-            root = repairNumOf(node->previous);
-        } else {
-            root = node->right;
-            root->previous=NULL;
-        }
+		if(node->previous!=NULL){
+			if (node->previous->left == node){
+				node->previous->left = node->right;
+				node->right->previous = node->previous;
+				--node->previous->num_of_elements_on_left;
+			}
+			else{
+				node->previous->right = node->right;
+				node->right->previous = node->previous;
+				--node->previous->num_of_elements_on_right;
+			}
+			node->previous->height = 1 + max(height(node->previous->left),
+					height(node->previous->right));
+			root = repairNumOf(node->previous);
+		} else {
+			root = node->right;
+			root->previous=NULL;
+		}
 		delete node;
 		node = NULL;
 	}
 	else if (node->left != NULL && node->right == NULL){
-        if(node->previous!=NULL){
-            if (node->previous->left == node){
-                node->previous->left = node->left;
-                node->left->previous = node->previous;
-                --node->previous->num_of_elements_on_left;
-            }
-            else{
-                node->previous->right = node->left;
-                node->left->previous = node->previous;
-                --node->previous->num_of_elements_on_right;
-            }
-            node->previous->height = 1 + max(height(node->previous->left),
-                    height(node->previous->right));
-            root = repairNumOf(node->previous);
-        } else {
-            root = node->left;
-            root->previous=NULL;
-        }
+		if(node->previous!=NULL){
+			if (node->previous->left == node){
+				node->previous->left = node->left;
+				node->left->previous = node->previous;
+				--node->previous->num_of_elements_on_left;
+			}
+			else{
+				node->previous->right = node->left;
+				node->left->previous = node->previous;
+				--node->previous->num_of_elements_on_right;
+			}
+			node->previous->height = 1 + max(height(node->previous->left),
+					height(node->previous->right));
+			root = repairNumOf(node->previous);
+		} else {
+			root = node->left;
+			root->previous=NULL;
+		}
 		delete node;
 		node = NULL;
 	}
@@ -235,20 +235,20 @@ int AVLtree::deleteItemByNode(int key, Node *node, bool moveKeys){
 
 		node->key = temp->key;
 
-        if (temp->previous->left == temp){
-            temp->previous->left = temp->right;
-            --temp->previous->num_of_elements_on_left;
-        }
-        else {
-            temp->previous->right = temp->right;
-            --temp->previous->num_of_elements_on_right;
-        }
+		if (temp->previous->left == temp){
+			temp->previous->left = temp->right;
+			--temp->previous->num_of_elements_on_left;
+		}
+		else {
+			temp->previous->right = temp->right;
+			--temp->previous->num_of_elements_on_right;
+		}
 
 		if (temp->right != NULL){
 			temp->right->previous = temp->previous;
 		}
 		temp->previous->height = 1 + max(height(temp->previous->left),
-                height(temp->previous->right));
+				height(temp->previous->right));
 		root = repairNumOf(temp->previous);
 		delete temp;
 		temp = NULL;
@@ -261,19 +261,19 @@ int AVLtree::deleteItemByNode(int key, Node *node, bool moveKeys){
 }
 
 AVLtree::Node *AVLtree::getNext(Node *right_node){
-    if(right_node!=NULL){
-        if (right_node->left != NULL)
-            return getNext(right_node->left);
-        return right_node;
-    }
-    return NULL;
+	if(right_node!=NULL){
+		if (right_node->left != NULL)
+			return getNext(right_node->left);
+		return right_node;
+	}
+	return NULL;
 }
 
 AVLtree::Node *AVLtree::repairNumOf(Node *node){
 
-    int balance = getBalance(node);
+	int balance = getBalance(node);
 
-    if (balance > 1 && node->left->left != NULL)
+	if (balance > 1 && node->left->left != NULL)
 		node = rightRotate(node);
 
 	else if (balance < -1 && node->right->right != NULL)
@@ -292,21 +292,21 @@ AVLtree::Node *AVLtree::repairNumOf(Node *node){
 	}
 
 	if(node->previous!=NULL){
-        node->previous->height = 1 + max(height(node->previous->left),
-                    height(node->previous->right));
-        if (node->key < node->previous->key){
-            node->previous->left = node;
-            --node->previous->num_of_elements_on_left;
-            node = repairNumOf(node->previous);
-        }
-        else if (node->key > node->previous->key){
-            node->previous->right = node;
-            --node->previous->num_of_elements_on_right;
-            node = repairNumOf(node->previous);
-        }
-    }
+		node->previous->height = 1 + max(height(node->previous->left),
+					height(node->previous->right));
+		if (node->key < node->previous->key){
+			node->previous->left = node;
+			--node->previous->num_of_elements_on_left;
+			node = repairNumOf(node->previous);
+		}
+		else if (node->key > node->previous->key){
+			node->previous->right = node;
+			--node->previous->num_of_elements_on_right;
+			node = repairNumOf(node->previous);
+		}
+	}
 
-    return node;
+	return node;
 }
 
 AVLtree::Node *AVLtree::rightRotate(Node *y)
@@ -362,17 +362,17 @@ int AVLtree::getBalance(Node *N)
 /// na poszczegolnych wierzcholkach drzewa
 
 void AVLtree::leftToRightOrder(const func &f){
-    leftToRightOrder(root, f);
+	leftToRightOrder(root, f);
 }
 
 void AVLtree::addIndex(int i, int from, Node *node)
 {
 	if (node != NULL)
 	{
-        addIndex(i, from, node->right);
-        if(node->key<from)return;
-        node->key+=i;
-        addIndex(i, from, node->left);
+		addIndex(i, from, node->right);
+		if(node->key<from)return;
+		node->key+=i;
+		addIndex(i, from, node->left);
 	}
 }
 
@@ -399,8 +399,8 @@ void AVLtree::rightToLeftOrder(Node *node, const func &f)
 
 
 void AVLtree::fromTo(int from, int to, const func &f){
-    id=0;
-    fromTo(root, from, to, f);
+	id=0;
+	fromTo(root, from, to, f);
 }
 
 void AVLtree::fromTo(Node *node, int from, int to, const func &f){
@@ -419,7 +419,7 @@ void AVLtree::fromTo(Node *node, int from, int to, const func &f){
 }
 
 void AVLtree::fromToKey(int from, int to, const func &f ){
-    fromTo(root, from, to, f);
+	fromTo(root, from, to, f);
 }
 
 void AVLtree::fromToKey(Node *node, int from, int to, const func &f){

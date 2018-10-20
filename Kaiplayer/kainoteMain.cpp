@@ -40,6 +40,7 @@
 #include "SubsResampleDialog.h"
 #include "SpellCheckerDialog.h"
 #include <ShlObj.h>
+#include "PngTest.h"
 
 #undef IsMaximized
 #if _DEBUG
@@ -267,7 +268,6 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(PlayActualLine, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
 		LogHandler::ShowLogWindow();
-		//KaiLog("testowy tekst");
 	}, 9989);
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
 		TabPanel *tab = GetTab();
