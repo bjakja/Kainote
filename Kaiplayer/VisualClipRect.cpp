@@ -225,7 +225,7 @@ void ClipRect::SetCurVisual()
 {
 	int x1 = 0, x2 = SubsSize.x, y1 = 0, y2 = SubsSize.y;
 	wxString clip;
-	bool found = tab->Edit->FindVal("(i?clip[^\\)]+)", &clip);
+	bool found = tab->Edit->FindValue("(i?clip[^\\)]+)", &clip);
 	if (found && clip.Freq(',') == 3){
 		int match = 1;
 		wxRegEx re("\\(([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)", wxRE_ADVANCED);
@@ -311,6 +311,6 @@ void ClipRect::ChangeVisual(wxString *txt, Dialogue *dial)
 	}
 	wxString val;
 	wxString tag = wxString::Format("\\%sclip(%i,%i,%i,%i)", (invClip) ? "i" : "", x1, y1, x2, y2);
-	tab->Edit->FindVal("i?clip(.+)", &val, *txt, 0, true);
+	tab->Edit->FindValue("i?clip(.+)", &val, *txt, 0, true);
 	ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 }

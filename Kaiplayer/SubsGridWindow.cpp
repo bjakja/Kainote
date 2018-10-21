@@ -893,8 +893,10 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 					SelectRow(row);
 					extendRow = -1;
 				}
-				if (Comparison){ ShowSecondComparedLine(row); }
-				else if (preview){ preview->NewSeeking(); }
+				if (!ctrl){
+					if (Comparison){ ShowSecondComparedLine(row); }
+					else if (preview){ preview->NewSeeking(); }
+				}
 			}
 
 			//1-kliknięcie lewym
@@ -1344,9 +1346,13 @@ int SubsGridWindow::CalcChars(const wxString &txt, wxString *lines, bool *bad)
 	return chars;
 }
 
-void SubsGridWindow::ChangeActiveLine(int newActiveLine, bool refresh /*= false*/, bool scroll /*= false*/)
+void SubsGridWindow::ChangeActiveLine(int newActiveLine, bool refresh /*= false*/, bool scroll /*= false*/, bool changeEditboxLine /*= true*/)
 {
-	Edit->SetLine(newActiveLine);
+	if (changeEditboxLine)
+		Edit->SetLine(newActiveLine);
+	//there is no editbox change cause of loaded in editbox preview
+	else
+		currentLine = markedLine = newActiveLine;
 	SelectRow(newActiveLine, false, true, true);
 	if(scroll)
 		ScrollTo(newActiveLine, true);
@@ -1403,7 +1409,7 @@ void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fro
 	if (secondGridLine < 0){ return; }
 	int diffPosition = Line - scPos;
 	secondgrid->scPos = secondGridLine - diffPosition;
-	secondgrid->ChangeActiveLine(secondGridLine);
+	secondgrid->ChangeActiveLine(secondGridLine, fromPreview, fromPreview, !fromPreview);
 	if (!fromPreview && hiddenSecondGrid){
 		if (!preview){
 			ShowPreviewWindow(secondgrid, thisgrid, Line, diffPosition);
@@ -1413,9 +1419,9 @@ void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fro
 			preview->Refresh(false);
 		}
 	}
-	else{
-		secondgrid->Refresh(false);
-	}
+	//else{
+		//secondgrid->Refresh(false);
+	//}
 }
 
 void SubsGridWindow::RefreshPreview()

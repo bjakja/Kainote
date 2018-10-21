@@ -390,8 +390,8 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	}
 
 	wxString sxfd, syfd;
-	bool scx = edit->FindVal("fscx([.0-9-]+)", &sxfd, "", 0, !beforeCursor);
-	bool scy = edit->FindVal("fscy([.0-9-]+)", &syfd, "", 0, !beforeCursor);
+	bool scx = edit->FindValue("fscx([.0-9-]+)", &sxfd, "", 0, !beforeCursor);
+	bool scy = edit->FindValue("fscy([.0-9-]+)", &syfd, "", 0, !beforeCursor);
 	double fscx = 100.0, fscy = 100.0;
 	if (scx){
 		sxfd.ToDouble(&fscx);
@@ -480,7 +480,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 
 		wxString tmp;
 		wxString txt = Editor->GetValue();
-		if (edit->FindVal("(i?clip.)[^)]*\\)", &tmp, txt, 0, true)){
+		if (edit->FindValue("(i?clip.)[^)]*\\)", &tmp, txt, 0, true)){
 			ChangeText(&txt, "", edit->InBracket, edit->Placed);
 			txt.Replace("{}", "");
 			if (changeEditorText){
@@ -505,7 +505,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				//wxPoint pos;
 				wxString tmp = "clip(";
 				wxString txt = Editor->GetValue();
-				bool fv = edit->FindVal("(i?clip.)[^)]*\\)", &tmp, txt, 0, true);
+				bool fv = edit->FindValue("(i?clip.)[^)]*\\)", &tmp, txt, 0, true);
 				wxString tmp1 = (tmp[0] == 'c') ? "iclip(" : "clip(";
 				wxString tclip = "\\" + tmp + clip + ")";
 				edit->Placed.x += tmp.Len() + 1 + ChangeText(&txt, tclip, edit->InBracket, edit->Placed);
@@ -534,19 +534,19 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				bool hasP1 = true;
 				size_t cliplen = clip.Len();
 				wxString txt = Editor->GetValue();
-				isf = edit->FindVal("p([0-9]+)", &tmp, txt, 0, true);
+				isf = edit->FindValue("p([0-9]+)", &tmp, txt, 0, true);
 				if (!isf){
 					ChangeText(&txt, "\\p1", edit->InBracket, edit->Placed);
 					hasP1 = false;
 				}
-				isf = edit->FindVal("pos\\(([,. 0-9-]+)\\)", &tmp, txt, 0, true);
+				isf = edit->FindValue("pos\\(([,. 0-9-]+)\\)", &tmp, txt, 0, true);
 				if (!isf){
 					DrawingAndClip *drawing = (DrawingAndClip*)this;
 					float xx = drawing->_x * drawing->scale.x;
 					float yy = drawing->_y * drawing->scale.y;
 					ChangeText(&txt, "\\pos(" + getfloat(xx) + "," + getfloat(yy) + ")", edit->InBracket, edit->Placed);
 				}
-				isf = edit->FindVal("an([0-9])", &tmp, txt, 0, true);
+				isf = edit->FindValue("an([0-9])", &tmp, txt, 0, true);
 				if (!isf){
 					DrawingAndClip *drawing = (DrawingAndClip*)this;
 					ChangeText(&txt, "\\an" + getfloat(drawing->alignment, "1.0f"), edit->InBracket, edit->Placed);
@@ -735,12 +735,12 @@ void Visuals::SetVisual(bool dummy, int type)
 			(Visual == ROTATEZ) ? "(frz?)[0-9-]+" :
 			(Visual == ROTATEXY) ? "(fr" + frxytype + ").+" :
 			"(i?clip).+";
-		edit->FindVal(tagpattern, &tmp, txt, 0, fromStart);
+		edit->FindValue(tagpattern, &tmp, txt, 0, fromStart);
 
 		if (type == 2 && Visual > 0){
 			if (edit->Placed.x < edit->Placed.y){ txt.erase(txt.begin() + edit->Placed.x, txt.begin() + edit->Placed.y + 1); }
 			wxString tagpattern = (Visual == SCALE) ? "(fscx).+" : (Visual == ROTATEZ) ? "(frz?)[0-9-]+" : "(frx).+";
-			edit->FindVal(tagpattern, &tmp, txt, 0, fromStart);
+			edit->FindValue(tagpattern, &tmp, txt, 0, fromStart);
 		}
 
 		ChangeText(&txt, GetVisual(), edit->InBracket, edit->Placed);
@@ -839,7 +839,7 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 	double orgx = 0, orgy = 0;
 	bool PutinBrackets = false;
 	wxPoint strPos;
-	if (tab->Edit->FindVal("org\\((.+)\\)", &val, *txt, 0, true)){
+	if (tab->Edit->FindValue("org\\((.+)\\)", &val, *txt, 0, true)){
 		wxString orgystr;
 		wxString orgxstr = val.BeforeFirst(',', &orgystr);
 		orgxstr.ToCDouble(&orgx);

@@ -1673,7 +1673,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 		if (event.GetModifiers() == wxMOD_CONTROL){
 			int step = event.GetWheelRotation() / event.GetWheelDelta();
 
-			int pos = box->VerticalZoom->GetValue() - step;
+			int pos = box->VerticalZoom->GetValue() + step;
 			box->VerticalZoom->SetValue(pos);
 			float value = pow(float(pos) / 50.0f, 3);
 			SetScale(value);

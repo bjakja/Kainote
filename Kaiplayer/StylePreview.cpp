@@ -17,7 +17,7 @@
 #include "StylePreview.h"
 #include "config.h"
 
-#include "Vsfilterapi.h"
+#include "CsriMod.h"
 
 
 StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const wxSize& size)

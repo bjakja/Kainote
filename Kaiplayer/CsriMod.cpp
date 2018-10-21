@@ -34,7 +34,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <mutex>
-#include "Vsfilterapi.h"
+#include "CsriMod.h"
 #include "LogHandler.h"
 //enumerate
 static void csrilib_enum_dir(const wchar_t *dir);

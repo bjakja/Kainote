@@ -485,7 +485,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="Visuals.cpp" />
     <ClCompile Include="VisualScale.cpp" />
     <ClCompile Include="VisualScaleRotation.cpp" />
-    <ClCompile Include="Vsfilterapi.cpp" />
+    <ClCompile Include="CsriMod.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h" />
@@ -594,7 +594,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="VideoSlider.h" />
     <ClInclude Include="VideoToolbar.h" />
     <ClInclude Include="Visuals.h" />
-    <ClInclude Include="Vsfilterapi.h" />
+    <ClInclude Include="CsriMod.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

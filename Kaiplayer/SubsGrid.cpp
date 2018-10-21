@@ -773,7 +773,7 @@ void SubsGrid::OnPasteTextTl()
 
 
 
-		Edit->SetTl(true);
+		Edit->SetTlMode(true);
 		SetTlMode(true);
 		AddSInfo("TLMode Showtl", "Yes");
 		showOriginal = true;
@@ -886,7 +886,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 	mw.Close();
 
 	if (isgood){
-		if (hasTLMode){ Edit->SetTl(false); hasTLMode = false; showOriginal = false; Kai->Menubar->Enable(SaveTranslation, false); }
+		if (hasTLMode){ Edit->SetTlMode(false); hasTLMode = false; showOriginal = false; Kai->Menubar->Enable(SaveTranslation, false); }
 		SetSubsFormat();
 		wxString ext = (subsFormat < SRT) ? "ass" : "srt";
 		if (subsFormat < SRT){ Edit->TlMode->Enable(); }

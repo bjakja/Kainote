@@ -186,12 +186,12 @@ void RotationZ::SetCurVisual()
 		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);
 	lastmove = D3DXVECTOR2(0, 0);
 	wxString res;
-	if (tab->Edit->FindVal("frz?([0-9.-]+)", &res)){
+	if (tab->Edit->FindValue("frz?([0-9.-]+)", &res)){
 		double result = 0; res.ToDouble(&result);
 		lastmove.y = result;
 		lastmove.x += lastmove.y;
 	}
-	if (tab->Edit->FindVal("org\\(([^\\)]+)", &res)){
+	if (tab->Edit->FindValue("org\\(([^\\)]+)", &res)){
 		wxString rest;
 		double orx, ory;
 		if (res.BeforeFirst(',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; }
@@ -216,6 +216,6 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 
 	wxString tag = "\\frz" + getfloat(angle);
 	wxString val;
-	tab->Edit->FindVal("frz?([0-9.-]+)", &val, *txt, 0, true);
+	tab->Edit->FindValue("frz?([0-9.-]+)", &val, *txt, 0, true);
 	ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 }

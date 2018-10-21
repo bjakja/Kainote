@@ -21,7 +21,7 @@
 #include "KainoteApp.h"
 
 #include <Dvdmedia.h>
-#include "Vsfilterapi.h"
+#include "CsriMod.h"
 #include <thread>
 #include "OpennWrite.h"
 

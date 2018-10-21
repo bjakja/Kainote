@@ -80,10 +80,10 @@ public:
 	EditBox(wxWindow *parent, SubsGrid *grid, int idd);
 	virtual ~EditBox();
 	void SetLine(int Row, bool setaudio=true, bool save=true, bool nochangeline=false, bool autoPlay = false);
-	void SetTl(bool tl);
+	void SetTlMode(bool tl, bool dummyTlMode = false);
 	void Send(unsigned char editionType, bool selline=true, bool dummy=false, bool visualdummy=false);
 	void RefreshStyle(bool resetline=false);
-	bool FindVal(const wxString &wval, wxString *returnval, const wxString &text="", bool *endsel=0, bool fromstart=false);
+	bool FindValue(const wxString &wval, wxString *returnval, const wxString &text="", bool *endsel=0, bool fromstart=false);
 	void HideControls();
 	void UpdateChars(const wxString &text);
 

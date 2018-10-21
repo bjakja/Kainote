@@ -288,9 +288,6 @@
     <ClCompile Include="VisualScale.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
-    <ClCompile Include="Vsfilterapi.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
     <ClCompile Include="DShowPlayer.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
@@ -407,6 +404,9 @@
     </ClCompile>
     <ClCompile Include="MisspellReplacer.cpp">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="CsriMod.cpp">
+      <Filter>Source Files\Video</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -543,9 +543,6 @@
       <Filter>Header Files\Video</Filter>
     </ClInclude>
     <ClInclude Include="Visuals.h">
-      <Filter>Header Files\Video</Filter>
-    </ClInclude>
-    <ClInclude Include="Vsfilterapi.h">
       <Filter>Header Files\Video</Filter>
     </ClInclude>
     <ClInclude Include="StyleChange.h">
@@ -730,6 +727,9 @@
     </ClInclude>
     <ClInclude Include="MisspellReplacer.h">
       <Filter>Header Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="CsriMod.h">
+      <Filter>Header Files\Video</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

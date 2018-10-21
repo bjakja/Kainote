@@ -28,13 +28,13 @@ public:
 		tab = _tab;
 		grid = _grid;
 		lineRangeStart = _lineRangeStart;
-		lineRangeEnd = _lineRangeEnd;
+		lineRangeLen = _lineRangeEnd;
 	};
 	bool operator ==(const MultiPreviewData &data){ return data.grid == grid && data.lineRangeStart == lineRangeStart; }
 	TabPanel *tab = NULL;
 	SubsGrid *grid = NULL;
 	int lineRangeStart = 0;
-	int lineRangeEnd = 1;
+	int lineRangeLen = 1;
 };
 
 class SubsGridPreview : public wxWindow

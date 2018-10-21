@@ -969,7 +969,7 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	if (newtlmode != tlmode){
 		hasTLMode = (newtlmode == "Yes");
 		showOriginal = (GetSInfo("TLMode Showtl") == "Yes" || (hasTLMode && Options.GetBool(TlModeShowOriginal) != 0));
-		Edit->SetTl(hasTLMode);
+		Edit->SetTlMode(hasTLMode);
 	}
 	//Odtąd nie będzie trzeba tego zabezpieczać, FindIdFromKey nie zwróci -1;
 	int corrected = -1;
@@ -1246,7 +1246,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 	SubsLoader SL((SubsGrid*)this, str, ext);
 
 	if (oldHasTlMode != hasTLMode){
-		Edit->SetTl(hasTLMode);
+		Edit->SetTlMode(hasTLMode);
 		Kai->Menubar->Enable(SaveTranslation, hasTLMode);
 	}
 	if (hasTLMode && (GetSInfo("TLMode Showtl") == "Yes" || Options.GetBool(TlModeShowOriginal))){ showOriginal = true; }

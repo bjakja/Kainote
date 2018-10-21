@@ -18,83 +18,83 @@
 
 class AVLtree
 {
-    class func;
-    private:
-        class Node{
-            public:
-                int key;
-                int num_of_elements_on_left;
-                int num_of_elements_on_right;
-                Node *left;
-                Node *right;
-                Node *previous;
-                int height;
+	class func;
+	private:
+		class Node{
+			public:
+				int key;
+				int num_of_elements_on_left;
+				int num_of_elements_on_right;
+				Node *left;
+				Node *right;
+				Node *previous;
+				int height;
 
-                Node();
-                Node(int key, Node *previous);
-                ~Node();
-        };
+				Node();
+				Node(int key, Node *previous);
+				~Node();
+		};
 
-        bool tt = false;
-        int id = 0;
+		bool tt = false;
+		int id = 0;
 
-        Node *previous;
+		Node *previous;
 
-        Node *repairNumOf(Node*);
+		Node *repairNumOf(Node*);
 		Node *insert(Node *node, int key);
-        Node *getElementByKey(Node *node, int key);
+		Node *getElementByKey(Node *node, int key);
 		int getIdByKey(Node *node, int key);
-        Node *getElementById(Node *node, int id);
-        Node *getNext(Node *right_node);
-        Node *rightRotate(Node*);
-        Node *leftRotate(Node*);
+		Node *getElementById(Node *node, int id);
+		Node *getNext(Node *right_node);
+		Node *rightRotate(Node*);
+		Node *leftRotate(Node*);
 		int deleteItemByNode(int key, Node *node, bool addIndex);
-        int height(Node*);
-        int getBalance(Node*);
+		int height(Node*);
+		int getBalance(Node*);
 
-        void rightToLeftOrder(Node*, const func&);
-        void leftToRightOrder(Node*, const func&);
-        void fromTo(Node*, int from, int to, const func&);
-        void fromToKey(Node*, int from, int to, const func&);
+		void rightToLeftOrder(Node*, const func&);
+		void leftToRightOrder(Node*, const func&);
+		void fromTo(Node*, int from, int to, const func&);
+		void fromToKey(Node*, int from, int to, const func&);
 
 
-        class func{
-            public:
+		class func{
+			public:
 				virtual void operator()(Node *node) const{};
 				virtual void operator()(Node *node, int i) const{};
-        };
+		};
 
-        class del : public func{
-            void operator()(Node *node, int i) const {}
-            void operator()(Node *node) const {
-                delete node;
-            };
-        };
+		class del : public func{
+			void operator()(Node *node, int i) const {}
+			void operator()(Node *node) const {
+				delete node;
+			};
+		};
 
 
 
-    public:
-        AVLtree();
-        virtual ~AVLtree();
+	public:
+		AVLtree();
+		virtual ~AVLtree();
 
-        Node *root;
+		Node *root;
 
 		void insert(int key, bool moveKeys = true);
-        int getElementByKey(int key);
-        int getElementById(int id);
+		int getElementByKey(int key);
+		int getElementById(int id);
 		int deleteItemByKey(int key, bool moveKeys = true);
 		int  deleteItemById(int id, bool moveKeys = true);
-        void leftToRightOrder(const func&);
-        void fromTo(int from, int to, const func&);
-        void fromToKey(int from, int to, const func&);
+		void leftToRightOrder(const func&);
+		void fromTo(int from, int to, const func&);
+		void fromToKey(int from, int to, const func&);
 
-        void addIndex(int i, int from, Node *root );
+		void addIndex(int i, int from, Node *root );
 		int size();
 
 
-        int operator[](const int key);
+		int operator[](const int key);
 
-    protected:
+	protected:
 
 
 };

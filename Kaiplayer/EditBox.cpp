@@ -345,11 +345,16 @@ EditBox::~EditBox()
 
 void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool autoPlay)
 {
-	//if (!grid->GetCount()){ Enable(false); return; }
-	//else if (!IsEnabled()){ Enable(); }
 	TabPanel* tab = (TabPanel*)GetParent();
 	bool rowChanged = currentLine != Row;
-	if (nochangeline && !rowChanged){ goto done; }
+	//when preview is shown do not block setline 
+	//cause after click on preview and click back on original shit happens
+	if (nochangeline && !rowChanged && !tab->Grid->preview){ goto done; }
+	//showing / hiding tlmode controls when subs preview is on
+	//it must hide it after return to original grid
+	if (tab->Grid->preview && TextEditOrig->IsShown() != grid->hasTLMode){
+		SetTlMode(grid->hasTLMode, true);
+	}
 	if (Options.GetInt(GridSaveAfterCharacterCount) > 1 && rowChanged && save){
 		Send(EDITBOX_LINE_EDITION, false);
 	}
@@ -615,7 +620,7 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 		for (size_t i = 0; i < sels.size(); i++){
 			Dialogue *dialc = grid->CopyDialogueByKey(sels[i]);
 			wxString txt = (grid->hasTLMode && dialc->TextTl != "") ? dialc->TextTl : dialc->Text;
-			FindVal(lasttag, &tmp, txt);
+			FindValue(lasttag, &tmp, txt);
 
 			if (InBracket && txt != ""){
 				if (Placed.x < Placed.y){ txt.erase(txt.begin() + Placed.x, txt.begin() + Placed.y + 1); }
@@ -738,12 +743,12 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 	int tmpIter = grid->file->Iter();
 	if (form < SRT){
 
-		if (FindVal("b(0|1)", &tmp)){ if (mstyle->Bold&&tmp == "0"){ mstyle->Bold = false; } else if (!mstyle->Bold&&tmp == "1"){ mstyle->Bold = true; } }
-		if (FindVal("i(0|1)", &tmp)){ if (mstyle->Italic&&tmp == "0"){ mstyle->Italic = false; } else if (!mstyle->Italic&&tmp == "1"){ mstyle->Italic = true; } }
-		if (FindVal("u(0|1)", &tmp)){ if (mstyle->Underline&&tmp == "0"){ mstyle->Underline = false; } else if (!mstyle->Underline&&tmp == "1"){ mstyle->Underline = true; } }
-		if (FindVal("s(0|1)", &tmp)){ if (mstyle->StrikeOut&&tmp == "0"){ mstyle->StrikeOut = false; } else if (!mstyle->StrikeOut&&tmp == "1"){ mstyle->StrikeOut = true; } }
-		if (FindVal("fs([0-9]+)", &tmp)){ mstyle->Fontsize = tmp; }
-		if (FindVal("fn(.*)", &tmp)){ mstyle->Fontname = tmp; }
+		if (FindValue("b(0|1)", &tmp)){ if (mstyle->Bold&&tmp == "0"){ mstyle->Bold = false; } else if (!mstyle->Bold&&tmp == "1"){ mstyle->Bold = true; } }
+		if (FindValue("i(0|1)", &tmp)){ if (mstyle->Italic&&tmp == "0"){ mstyle->Italic = false; } else if (!mstyle->Italic&&tmp == "1"){ mstyle->Italic = true; } }
+		if (FindValue("u(0|1)", &tmp)){ if (mstyle->Underline&&tmp == "0"){ mstyle->Underline = false; } else if (!mstyle->Underline&&tmp == "1"){ mstyle->Underline = true; } }
+		if (FindValue("s(0|1)", &tmp)){ if (mstyle->StrikeOut&&tmp == "0"){ mstyle->StrikeOut = false; } else if (!mstyle->StrikeOut&&tmp == "1"){ mstyle->StrikeOut = true; } }
+		if (FindValue("fs([0-9]+)", &tmp)){ mstyle->Fontsize = tmp; }
+		if (FindValue("fn(.*)", &tmp)){ mstyle->Fontname = tmp; }
 	}
 	FontDialog *FD = FontDialog::Get(this, mstyle);
 	FD->Bind(FONT_CHANGED, &EditBox::OnFontChange, this, FD->GetId());
@@ -786,7 +791,7 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	if (retStyle->Fontname != editedStyle->Fontname)
 	{
 		if (form < SRT){
-			FindVal("fn(.*)", &tmp);
+			FindValue("fn(.*)", &tmp);
 			PutinText("\\fn" + retStyle->Fontname, false);
 		}
 		else{ PutinNonass("F:" + retStyle->Fontname, "f:([^}]*)"); }
@@ -794,7 +799,7 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	if (retStyle->Fontsize != editedStyle->Fontsize)
 	{
 		if (form < SRT){
-			FindVal("fs([0-9]+)", &tmp);
+			FindValue("fs([0-9]+)", &tmp);
 			PutinText("\\fs" + retStyle->Fontsize, false);
 		}
 		else{ PutinNonass("S:" + retStyle->Fontname, "s:([^}]*)"); }
@@ -803,7 +808,7 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	{
 		if (form < SRT){
 			wxString bld = (retStyle->Bold) ? "1" : "0";
-			FindVal("b(0|1)", &tmp);
+			FindValue("b(0|1)", &tmp);
 			PutinText("\\b" + bld, false);
 		}
 		else{ PutinNonass("y:b", (retStyle->Bold) ? "Y:b" : ""); }
@@ -812,20 +817,20 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	{
 		if (form < SRT){
 			wxString ital = (retStyle->Italic) ? "1" : "0";
-			FindVal("i(0|1)", &tmp);
+			FindValue("i(0|1)", &tmp);
 			PutinText("\\i" + ital, false);
 		}
 		else{ PutinNonass("y:i", (retStyle->Italic) ? "Y:i" : ""); }
 	}
 	if (retStyle->Underline != editedStyle->Underline)
 	{
-		FindVal("u(0|1)", &tmp);
+		FindValue("u(0|1)", &tmp);
 		wxString under = (retStyle->Underline) ? "1" : "0";
 		PutinText("\\u" + under, false);
 	}
 	if (retStyle->StrikeOut != editedStyle->StrikeOut)
 	{
-		FindVal("s(0|1)", &tmp);
+		FindValue("s(0|1)", &tmp);
 		wxString strike = (retStyle->StrikeOut) ? "1" : "0";
 		PutinText("\\s" + strike, false);
 	}
@@ -912,11 +917,11 @@ void EditBox::GetColor(AssColor *actualColor, int numColor)
 			(numColor == 2) ? style->SecondaryColour :
 			(numColor == 3) ? style->OutlineColour :
 			style->BackColour;
-		if (FindVal(colorNumber + tag, &retTag)){
+		if (FindValue(colorNumber + tag, &retTag)){
 			actualColor->Copy(AssColor("&" + retTag));
 		}
 		//when knowing about alpha tag will be needed You must change it like in method OnColorChange
-		if (FindVal(colorNumber + L"a&|alpha(.*)", &retTag)){ actualColor->SetAlphaString(retTag); }
+		if (FindValue(colorNumber + L"a&|alpha(.*)", &retTag)){ actualColor->SetAlphaString(retTag); }
 		//else if (FindVal(tagal, &retTag)){ actualColor->SetAlphaString(retTag); return true; }
 	}
 	//return false;
@@ -970,11 +975,11 @@ void EditBox::OnBoldClick(wxCommandEvent& event)
 		Styles *mstyle = grid->GetStyle(0, line->Style);
 		wxString wart = (mstyle->Bold) ? "0" : "1";
 		bool issel = true;
-		if (FindVal("b(0|1)", &wart, "", &issel)){ wart = (wart == "1") ? "0" : "1"; }
+		if (FindValue("b(0|1)", &wart, "", &issel)){ wart = (wart == "1") ? "0" : "1"; }
 		PutinText("\\b" + wart);
 		if (!issel)return;
 		wart = (mstyle->Bold) ? "1" : "0";
-		if (FindVal("b(0|1)", &wart)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
+		if (FindValue("b(0|1)", &wart)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
 		PutinText("\\b" + wart);
 	}
 	else if (grid->subsFormat == SRT){ PutinNonass("b", "b"); }
@@ -987,11 +992,11 @@ void EditBox::OnItalicClick(wxCommandEvent& event)
 		Styles *mstyle = grid->GetStyle(0, line->Style);
 		wxString wart = (mstyle->Italic) ? "0" : "1";
 		bool issel = true;
-		if (FindVal("i(0|1)", &wart, "", &issel)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
+		if (FindValue("i(0|1)", &wart, "", &issel)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
 		PutinText("\\i" + wart);
 		if (!issel)return;
 		wart = (mstyle->Italic) ? "1" : "0";
-		if (FindVal("i(0|1)", &wart)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
+		if (FindValue("i(0|1)", &wart)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
 		PutinText("\\i" + wart);
 	}
 	else if (grid->subsFormat == SRT){ PutinNonass("i", "i"); }
@@ -1005,11 +1010,11 @@ void EditBox::OnUnderlineClick(wxCommandEvent& event)
 		Styles *mstyle = grid->GetStyle(0, line->Style);
 		wxString wart = (mstyle->Underline) ? "0" : "1";
 		bool issel = true;
-		if (FindVal("u(0|1)", &wart, "", &issel)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
+		if (FindValue("u(0|1)", &wart, "", &issel)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
 		PutinText("\\u" + wart);
 		if (!issel)return;
 		wart = (mstyle->Underline) ? "1" : "0";
-		if (FindVal("u(0|1)", &wart)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
+		if (FindValue("u(0|1)", &wart)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
 		PutinText("\\u" + wart);
 	}
 	else if (grid->subsFormat == SRT){ PutinNonass("u", "u"); }
@@ -1021,11 +1026,11 @@ void EditBox::OnStrikeClick(wxCommandEvent& event)
 		Styles *mstyle = grid->GetStyle(0, line->Style);
 		wxString wart = (mstyle->StrikeOut) ? "0" : "1";
 		bool issel = true;
-		if (FindVal("s(0|1)", &wart, "", &issel)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
+		if (FindValue("s(0|1)", &wart, "", &issel)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
 		PutinText("\\s" + wart);
 		if (!issel)return;
 		wart = (mstyle->StrikeOut) ? "0" : "1";
-		if (FindVal("s(0|1)", &wart)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
+		if (FindValue("s(0|1)", &wart)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
 		PutinText("\\s" + wart);
 	}
 	else if (grid->subsFormat == SRT){ PutinNonass("s", "s"); }
@@ -1037,7 +1042,7 @@ void EditBox::OnAnChoice(wxCommandEvent& event)
 	if (grid->hasTLMode){ TextEditOrig->SetSelection(0, 0); }
 	lasttag = "an([0-9])";
 	wxString tag;
-	FindVal("an([0-9])", &tag);
+	FindValue("an([0-9])", &tag);
 	PutinText("\\" + Ban->GetString(Ban->GetSelection()), true);
 }
 
@@ -1045,11 +1050,12 @@ void EditBox::OnTlMode(wxCommandEvent& event)
 {
 	bool show = !TextEditOrig->IsShown();
 	if (grid->SetTlMode(show)){ TlMode->SetValue(true); return; }
-	SetTl(show);
+	SetTlMode(show);
 	SetLine(currentLine);
 }
 
-void EditBox::SetTl(bool tl)
+//dummy tlmode is used on preview when 
+void EditBox::SetTlMode(bool tl, bool dummyTlMode /*= false*/)
 {
 	TextEditOrig->Show(tl);
 	Bcpall->Show(tl);
@@ -1059,9 +1065,11 @@ void EditBox::SetTl(bool tl)
 	AutoMoveTags->Show(tl);
 	AutoMoveTags->SetValue(Options.GetBool(AutoMoveTagsFromOriginal));
 	BoxSizer1->Layout();
-	if (TlMode->GetValue() != tl){ TlMode->SetValue(tl); }
-	KainoteFrame *Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
-	Kai->Toolbar->UpdateId(SaveTranslation, tl);
+	if (!dummyTlMode){
+		if (TlMode->GetValue() != tl){ TlMode->SetValue(tl); }
+		KainoteFrame *Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
+		Kai->Toolbar->UpdateId(SaveTranslation, tl);
+	}
 }
 
 void EditBox::OnCopyAll(wxCommandEvent& event)
@@ -1276,7 +1284,7 @@ void EditBox::OnPasteDifferents(wxCommandEvent& event)
 }
 //znajduje tagi w polu tekstowym
 //w wyszukiwaniu nie używać // a także szukać tylko do końca taga, nie do następnego taga
-bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text, bool *endsel, bool fromStart)
+bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &text, bool *endsel, bool fromStart)
 {
 	lasttag = tag;
 	long from = 0, to = 0;
@@ -1302,39 +1310,41 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 	wxRegEx rex("^" + tag, wxRE_ADVANCED);
 
 
-	int klamras = txt.SubString(0, from).Find('{', true);
-	int klamrae = txt.SubString(0, (from - 2 < 1) ? 1 : (from - 2)).Find('}', true);
-	if (klamras == -1 || (klamras < klamrae&&klamrae != -1)){ InBracket = false; inbrkt = false; klamrae = from; brkt = false; }
+	int bracketStart = txt.SubString(0, from).Find('{', true);
+	int bracketEnd = txt.SubString(0, (from - 2 < 1) ? 1 : (from - 2)).Find('}', true);
+	if (bracketStart == -1 || (bracketStart < bracketEnd&&bracketEnd != -1)){ InBracket = false; inbrkt = false; bracketEnd = from; brkt = false; }
 	else{
 		InBracket = true;
 		int tmpfrom = from - 2;
 		do{
-			klamrae = txt.find('}', (tmpfrom < 1) ? 1 : tmpfrom);
-			tmpfrom = klamrae + 1;
-		} while (klamrae != -1 && klamrae < (int)txt.Len() - 1 && txt[klamrae + 1] == '{');
-		if (klamrae < 0){ klamrae = txt.Len() - 1; }
+			bracketEnd = txt.find('}', (tmpfrom < 1) ? 1 : tmpfrom);
+			tmpfrom = bracketEnd + 1;
+		} while (bracketEnd != -1 && bracketEnd < (int)txt.Len() - 1 && txt[bracketEnd + 1] == '{');
+		if (bracketEnd < 0){ bracketEnd = txt.Len() - 1; }
 	}
 
-	Placed.x = klamrae;
-	Placed.y = klamrae;
+	Placed.x = bracketEnd;
+	Placed.y = bracketEnd;
 	if (endsel && *endsel){
 		cursorpos = to;
 		if (InBracket){ cursorpos--; }
 	}
 	else{
-		cursorpos = klamrae;
+		cursorpos = bracketEnd;
 	}
 	bool isT = false;
 	bool firstT = false;
 	bool hasR = false;
+	// maybe this name is wrong, it's for end posiotion for \t without end bracket
 	int endT;
-	int lslash = endT = klamrae + 1;
+	int lastT = endT = bracketEnd - 1;
+	int lslash = bracketEnd + 1;
 	int lastTag = -1;
 	wxString found[2];
 	wxPoint fpoints[2];
-	if (klamrae == txt.Len()){ klamrae--; }
+	if (bracketEnd == txt.Len()){ bracketEnd--; }
 
-	for (int i = klamrae; i >= 0; i--){
+	for (int i = bracketEnd; i >= 0; i--){
 		wxUniChar ch = txt[i];
 		if (ch == '\\' && brkt){
 			if (lastTag < 0){ lastTag = lslash; }
@@ -1349,8 +1359,10 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 				}
 			}
 			if (ftag.StartsWith("t(")){
+				if (endT == -1)
+					endT = lastT;
 
-				if (i <= from && from < endT){
+				if (i <= from && from <= endT){
 
 					if (found[1] != "" && fpoints[1].y <= endT){
 						Placed = fpoints[1]; *Found = found[1]; return true;
@@ -1359,12 +1371,18 @@ bool EditBox::FindVal(const wxString &tag, wxString *Found, const wxString &text
 						if (fpoints[0].y <= endT){ break; }
 					}
 					else{
-						Placed.x = endT; Placed.y = Placed.x; InBracket = true; return false;
+						Placed.x = endT; 
+						Placed.y = Placed.x; 
+						InBracket = true; 
+						return false;
 					}
 
 				}
 				isT = false;
 				lslash = i;
+				endT = -1;
+				// maybe this name is wrong, it's for end posiotion for \t without end bracket
+				lastT = i;
 				continue;
 			}
 
@@ -1519,12 +1537,12 @@ void EditBox::OnColorChange(ColorEvent& event)
 			(colorNumber == "3") ? style->OutlineColour :
 			style->BackColour;
 
-		FindVal(colorNumber + tag, &colorString);
+		FindValue(colorNumber + tag, &colorString);
 		if (colorString != choosenColorAsString){
 			PutinText("\\" + colorNumber + "c" + choosenColorAsString + "&", false);
 		}
 
-		if (FindVal(L"(" +colorNumber + L"a&|alpha.*)", &colorString)){
+		if (FindValue(L"(" +colorNumber + L"a&|alpha.*)", &colorString)){
 			if (colorString.StartsWith(colorNumber + "a&"))
 				colorString = colorString.Mid(2);
 			else{
@@ -1571,7 +1589,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		//fn and r do not have number value we have to treat it special \r works good only when return itself as a value
 		//we did not need this value at all.
 		wxString pattern = (findtag.StartsWith("fn")) ? L"fn(.*)" : (findtag.StartsWith("r")) ? L"(r.*)" : findtag + "([0-9\\(&-].*)";
-		FindVal(pattern, &result, "", 0, type == "1");
+		FindValue(pattern, &result, "", 0, type == "1");
 
 		PutinText(tag);
 	}

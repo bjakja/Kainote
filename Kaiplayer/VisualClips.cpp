@@ -167,7 +167,7 @@ void DrawingAndClip::SetCurVisual()
 	D3DXVECTOR2 linepos = GetPosnScale(&scale, &alignment, (Visual == VECTORDRAW) ? moveValues : NULL);
 
 	if (Visual != VECTORDRAW){
-		bool found = tab->Edit->FindVal("(i?clip[^)]+\\))", &clip, "", 0, true);
+		bool found = tab->Edit->FindValue("(i?clip[^)]+\\))", &clip, "", 0, true);
 		if (found){
 			int rres = clip.Replace(",", ",");
 			if (rres >= 3) { clip = ""; scale = D3DXVECTOR2(1.f, 1.f); vectorScale = 1; }

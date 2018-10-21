@@ -367,7 +367,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		bool isCenter;
 		wxColour label = (states == 0) ? labelBkColN : (states == 2) ? labelBkCol :
 			(states == 1) ? labelBkColM : labelBkColD;
-		if (i >= lastData.lineRangeStart && i< lastData.lineRangeStart + lastData.lineRangeEnd){ label = GetColorWithAlpha(wxColour(0,0,255,60), kol); }
+		if (i >= lastData.lineRangeStart && i< lastData.lineRangeStart + lastData.lineRangeLen){ label = GetColorWithAlpha(wxColour(0,0,255,60), kol); }
 		for (int j = 0; j < ilcol; j++){
 			if (previewGrid->showOriginal&&j == ilcol - 2){
 				int podz = (w + scHor - posX) / 2;
@@ -692,15 +692,22 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			if (click && (changeActive || !ctrl) || (dclick && ctrl)) {
 				previewGrid->lastActiveLine = previewGrid->currentLine;
 				tabp->Edit->SetLine(row, true, true, true, !ctrl);
-				tab->Edit->SetLine(row, true, true, true, !ctrl);
+				if (!previewGrid->Comparison)
+					tab->Edit->SetLine(row, true, true, true, !ctrl);
+				
 				if (previewGrid->hasTLMode){ tab->Edit->SetActiveLineToDoubtful(); }
-				if (changeActive){ Refresh(false); }
+				if (changeActive)
+					Refresh(false);
 				if (!ctrl || dclick){
 					previewGrid->SelectRow(row);
 					previewGrid->extendRow = -1;
 					Refresh(false);
 				}
-				if (previewGrid->Comparison){ previewGrid->ShowSecondComparedLine(row,false,true); }
+				if (previewGrid->Comparison && !ctrl){
+					lastData.lineRangeStart = row;
+					lastData.lineRangeLen = 1;
+					previewGrid->ShowSecondComparedLine(row, false, true);
+				}
 			}
 
 			//1-klikniêcie lewym
@@ -820,7 +827,7 @@ void SubsGridPreview::SeekForOccurences()
 				if (lastLine+1 == j){
 					lastLine = j;
 					int lastData = previewData.size() - 1;
-					previewData[lastData].lineRangeEnd = (j - previewData[lastData].lineRangeStart) + 1;
+					previewData[lastData].lineRangeLen = (j - previewData[lastData].lineRangeStart) + 1;
 				}
 				else{
 					lastLine = j;
@@ -879,7 +886,7 @@ void SubsGridPreview::ContextMenu(const wxPoint &pos)
 	Menu *menu = new Menu();
 	SeekForOccurences();
 	for (int i = 0; i < previewData.size(); i++){
-		wxString name = previewData[i].tab->SubsName + " (" + std::to_string(previewData[i].lineRangeStart) + " " + std::to_string(previewData[i].lineRangeEnd) + ")";
+		wxString name = previewData[i].tab->SubsName + " (" + std::to_string(previewData[i].lineRangeStart) + " " + std::to_string(previewData[i].lineRangeLen) + ")";
 		MenuItem * Item = menu->Append(4880 + i, name, "", true, NULL, NULL, (lastData == previewData[i]) ? ITEM_RADIO : ITEM_NORMAL);
 	}
 	int result = menu->GetPopupMenuSelection(pos, this);
