@@ -151,7 +151,7 @@ void NumCtrl::SetString(wxString val)
 	}
 	if(val.IsEmpty()){val = getdouble(value);}
 	oldval=val;
-	SetValue(val, false);
+	KaiTextCtrl::SetValue(val, false);
 }
 
 void NumCtrl::SetInt(int val)
@@ -161,7 +161,7 @@ void NumCtrl::SetInt(int val)
 	value=(double)val;
 	wxString kkk;
 	oldval=kkk<<val;
-	SetValue(kkk,false);
+	KaiTextCtrl::SetValue(kkk,false);
 }
 
 void NumCtrl::SetDouble(double val)
@@ -170,7 +170,12 @@ void NumCtrl::SetDouble(double val)
 	else if(val<rfrom){val=rfrom;}
 	value=val;
 	oldval=getdouble(val);
-	SetValue(oldval,false);
+	KaiTextCtrl::SetValue(oldval,false);
+}
+// function to block setvalue from kaitextctrl
+void NumCtrl::SetValue(const wxString &text, bool modif/* =false */, bool newSel /* = true */)
+{
+	SetString(text);
 }
 
 wxString NumCtrl::GetString()
@@ -221,8 +226,8 @@ void NumCtrl::OnNumWrite(wxCommandEvent& event)
 	wxString val=GetValue();
 	val.Replace(",",".");
 	if(val=="-"||val==""){}
-	else if(val.EndsWith(".")){if(val.Replace(".","")>1){SetValue(oldval);wxBell();}}
-	else if(val.StartsWith(".")){if(val.Replace(".","")>1){SetValue(oldval);wxBell();}}
+	else if(val.EndsWith(".")){if(val.Replace(".","")>1){KaiTextCtrl::SetValue(oldval);wxBell();}}
+	else if(val.StartsWith(".")){if(val.Replace(".","")>1){KaiTextCtrl::SetValue(oldval);wxBell();}}
 	else if(!val.ToCDouble(&value)||value>rto||value<rfrom){
 		/*SetValue(oldval);wxBell();*/
 		//if(!isbad){SetForegroundColour(*wxRED);isbad=true;}
@@ -252,20 +257,20 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 		if((oldpos+5)<posy){
 			double nval=value-1;
 			if(value<=rfrom){return;}
-			SetValue(getdouble(nval),true,false);
+			KaiTextCtrl::SetValue(getdouble(nval),true,false);
 			oldpos=posy;value=nval;
 			changed = true;
 		}else if((oldpos-5)>posy){
 			double nval=value+1;
 			if(value>=rto){return;}
-			SetValue(getdouble(nval),true,false);
+			KaiTextCtrl::SetValue(getdouble(nval),true,false);
 			oldpos=posy;value=nval;
 			changed = true;
 		}else if((oldposx+10)<posx){
 			double nval=value-10;
 			if(value==rfrom){return;}
 			if(nval<rfrom){nval=rfrom;}
-			SetValue(getdouble(nval),true,false);
+			KaiTextCtrl::SetValue(getdouble(nval),true,false);
 			oldposx=posx;value=nval;
 			changed = true;
 		}
@@ -273,7 +278,7 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 			double nval=value+10;
 			if(value==rto){return;}
 			if(nval>rto){nval=rto;}
-			SetValue(getdouble(nval),true,false);
+			KaiTextCtrl::SetValue(getdouble(nval),true,false);
 			oldposx=posx;value=nval;
 			changed = true;
 		}
@@ -299,7 +304,7 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 		int step = event.GetWheelRotation() / event.GetWheelDelta();
 		value+=step;
 		if(value<rfrom||value>rto){return;}
-		SetValue(getdouble(value), true, false);//MarkDirty();
+		KaiTextCtrl::SetValue(getdouble(value), true, false);//MarkDirty();
 		if(IsModified()){wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2);}
 		return;
 	}

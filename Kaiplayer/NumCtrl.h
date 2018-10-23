@@ -34,6 +34,7 @@ class NumCtrl : public KaiTextCtrl
 		void SetString(wxString val);
 		void SetInt(int val);
 		void SetDouble(double val);
+		void SetValue(const wxString &text, bool modif = false, bool newSel = true);
 		wxString GetString();
 		int GetInt();
 		double GetDouble();
@@ -41,8 +42,8 @@ class NumCtrl : public KaiTextCtrl
 	private:
 
 		void OnNumWrite(wxCommandEvent& event);
-        void OnMouseEvent(wxMouseEvent &event);
-        void OnPaste(wxCommandEvent& event);
+		void OnMouseEvent(wxMouseEvent &event);
+		void OnPaste(wxCommandEvent& event);
 		void OnMouseLost(wxMouseCaptureLostEvent& event);
 		double rfrom;
 		double rto;

@@ -379,9 +379,9 @@ void StyleChange::UpdateValues(Styles *styl, bool allowMultiEdition, bool enable
 		sfont->SetValue(tab->Fontname);}
 	else{sfont->SetSelection(sell);}
 	  
-    ssize->SetString(tab->Fontsize);
+	ssize->SetString(tab->Fontsize);
 	wxColour kol=tab->PrimaryColour.GetWX();
-    s1->SetBackgroundColour(kol);
+	s1->SetBackgroundColour(kol);
 	s1->SetForegroundColour(Blackorwhite(kol));
 	kol = tab->SecondaryColour.GetWX();
 	s2->SetBackgroundColour(kol);
@@ -392,35 +392,35 @@ void StyleChange::UpdateValues(Styles *styl, bool allowMultiEdition, bool enable
 	kol = tab->BackColour.GetWX();
 	s4->SetBackgroundColour(kol);
 	s4->SetForegroundColour(Blackorwhite(kol));
-     
-    alpha1->SetInt(tab->PrimaryColour.a);
-    alpha2->SetInt(tab->SecondaryColour.a);
-    alpha3->SetInt(tab->OutlineColour.a);
-    alpha4->SetInt(tab->BackColour.a);
-    sb->SetValue(tab->Bold);
-    si->SetValue(tab->Italic);
-    su->SetValue(tab->Underline);
-    ss->SetValue(tab->StrikeOut);
-    san->SetString(tab->Angle);
-    ssp->SetString(tab->Spacing);
-    sou->SetString(tab->Outline);
-    ssh->SetString(tab->Shadow);
-    sob->SetValue(tab->BorderStyle);
-    //if(tab->BorderStyle){sob->SetValue(true);}else{sob->SetValue(false);};
-    wxString an=tab->Alignment;
-    if(an=="1"){rb1->SetValue(true);}else if(an=="2"){rb2->SetValue(true);}else if(an=="3"){rb3->SetValue(true);}else if(an=="4"){rb4->SetValue(true);}
-    else if(an=="5"){rb5->SetValue(true);}else if(an=="6"){rb6->SetValue(true);}else if(an=="7"){rb7->SetValue(true);}
-    else if(an=="8"){rb8->SetValue(true);}else if(an=="9"){rb9->SetValue(true);};
-    ssx->SetString(tab->ScaleX);
-    ssy->SetString(tab->ScaleY);
-    sml->SetString(tab->MarginL);
-    smr->SetString(tab->MarginR);
-    smv->SetString(tab->MarginV);
-    int choice=-1;
+	 
+	alpha1->SetInt(tab->PrimaryColour.a);
+	alpha2->SetInt(tab->SecondaryColour.a);
+	alpha3->SetInt(tab->OutlineColour.a);
+	alpha4->SetInt(tab->BackColour.a);
+	sb->SetValue(tab->Bold);
+	si->SetValue(tab->Italic);
+	su->SetValue(tab->Underline);
+	ss->SetValue(tab->StrikeOut);
+	san->SetString(tab->Angle);
+	ssp->SetString(tab->Spacing);
+	sou->SetString(tab->Outline);
+	ssh->SetString(tab->Shadow);
+	sob->SetValue(tab->BorderStyle);
+	//if(tab->BorderStyle){sob->SetValue(true);}else{sob->SetValue(false);};
+	wxString an=tab->Alignment;
+	if(an=="1"){rb1->SetValue(true);}else if(an=="2"){rb2->SetValue(true);}else if(an=="3"){rb3->SetValue(true);}else if(an=="4"){rb4->SetValue(true);}
+	else if(an=="5"){rb5->SetValue(true);}else if(an=="6"){rb6->SetValue(true);}else if(an=="7"){rb7->SetValue(true);}
+	else if(an=="8"){rb8->SetValue(true);}else if(an=="9"){rb9->SetValue(true);};
+	ssx->SetString(tab->ScaleX);
+	ssy->SetString(tab->ScaleY);
+	sml->SetString(tab->MarginL);
+	smr->SetString(tab->MarginR);
+	smv->SetString(tab->MarginV);
+	int choice=-1;
 	for(size_t i=0; i<encs.size();i++){
 		if(encs[i].StartsWith(tab->Encoding+" ")){choice=i;break;}
 	}
-    if(choice==-1){choice=1;}
+	if(choice==-1){choice=1;}
 	if (allowMultiEdition != allowMultiEdition){
 		btnCommitOnStyles->Enable(allowMultiEdition);
 		allowMultiEdition = allowMultiEdition;
@@ -434,7 +434,7 @@ void StyleChange::UpdateValues(Styles *styl, bool allowMultiEdition, bool enable
 			btnCommitOnStyles->Enable(false);
 		}
 	}
-    senc->SetSelection(choice);
+	senc->SetSelection(choice);
 	block=false;
 	UpdatePreview();
 	Show();
