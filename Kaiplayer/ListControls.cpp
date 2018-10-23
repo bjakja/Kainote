@@ -809,8 +809,8 @@ void PopupList::OnScroll(wxScrollEvent& event)
 void PopupList::EndPartialModal(int ReturnId)
 {
 	((KaiChoice*)Parent)->SendEvent(ReturnId);
-	if (HasCapture()){ ReleaseMouse(); }
 	Unbind(wxEVT_IDLE, &PopupList::OnIdle, this);
+	if (HasCapture()){ ReleaseMouse(); }
 	Hide();
 	((KaiChoice*)Parent)->SetFocus();
 }

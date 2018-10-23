@@ -78,6 +78,10 @@ void SubsGridPreview::DestroyPreview(bool refresh)
 	previewGrid->thisPreview = NULL;
 	TabPanel *tab = (TabPanel*)parent->GetParent();
 	tab->Edit->SetGrid(tab->Grid);
+	if (tab->Edit->TextEditOrig->IsShown())
+		tab->Edit->SetTlMode(false, true);
+	tab->Edit->SetLine(tab->Grid->currentLine);
+
 	if(refresh)
 		parent->Refresh(false);
 	Destroy();

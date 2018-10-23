@@ -552,6 +552,14 @@ void wxWindowBase::SendDestroyEvent()
     GetEventHandler()->ProcessEvent(event);
 }
 
+struct WXDLLEXPORT wxWindowNext
+{
+	wxWindow *win;
+	wxWindowNext *next;
+} *wxWindowBase::ms_winCaptureNext = NULL;
+wxWindow *wxWindowBase::ms_winCaptureCurrent = NULL;
+bool wxWindowBase::ms_winCaptureChanging = false;
+
 bool wxWindowBase::Destroy()
 {
     // If our handle is invalid, it means that this window has never been
@@ -560,6 +568,20 @@ bool wxWindowBase::Destroy()
     // never been called. As we didn't send wxWindowCreateEvent in this case
     // (which is sent after successful creation), don't send the matching
     // wxWindowDestroyEvent neither.
+
+	// Release window that has capture and capture before it has one of its 
+	// controls make it crash cause ms_winCaptureNext have already released pointers
+	if (HasCapture()){
+		while (ms_winCaptureNext)
+		{
+			wxWindowNext *item = ms_winCaptureNext;
+			ms_winCaptureNext = item->next;
+
+			delete item;
+		}
+		ms_winCaptureNext = NULL;
+		ReleaseMouse();
+	}
     if ( GetHandle() )
         SendDestroyEvent();
 
@@ -3115,13 +3137,6 @@ wxHitTest wxWindowBase::DoHitTest(wxCoord x, wxCoord y) const
 // mouse capture
 // ----------------------------------------------------------------------------
 
-struct WXDLLEXPORT wxWindowNext
-{
-    wxWindow *win;
-    wxWindowNext *next;
-} *wxWindowBase::ms_winCaptureNext = NULL;
-wxWindow *wxWindowBase::ms_winCaptureCurrent = NULL;
-bool wxWindowBase::ms_winCaptureChanging = false;
 
 void wxWindowBase::CaptureMouse()
 {
@@ -3166,7 +3181,7 @@ void wxWindowBase::ReleaseMouse()
     DoReleaseMouse();
     ms_winCaptureCurrent = NULL;
 
-    if ( ms_winCaptureNext )
+	if (ms_winCaptureNext)
     {
         ((wxWindowBase*)ms_winCaptureNext->win)->DoCaptureMouse();
         ms_winCaptureCurrent = ms_winCaptureNext->win;

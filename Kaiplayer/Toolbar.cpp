@@ -426,7 +426,10 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 	GetSize(&w, &h);
 	if ((x<0 || y<0 || x>w || y>h)){
 		if (leftdown){
-			if (HasCapture()){ ReleaseMouse(); }
+			Unbind(wxEVT_IDLE, &ToolbarMenu::OnIdle, this);
+			if (HasCapture()){
+				ReleaseMouse();
+			}
 			Destroy();
 		}
 		return;

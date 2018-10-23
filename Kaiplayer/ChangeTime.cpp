@@ -176,6 +176,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 	Main = new wxBoxSizer(wxVERTICAL);
 
 	coll = new MappedButton(panel, 22999, (normal) ? _("Post processor") : _("Przesuwanie czasów"));
+	Main->AddSpacer(2);
 	Main->Add(coll, 0, wxEXPAND | wxLEFT | wxRIGHT, 6);
 
 	wxArrayString choices;
