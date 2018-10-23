@@ -1393,7 +1393,9 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 
 				if (found[0] == ""&&!isT){ found[0] = ftag; fpoints[0].x = i; fpoints[0].y = lslash - 1; }
 				else{ found[1] = ftag; fpoints[1].x = i; fpoints[1].y = lslash - 1; }
-				if (!isT && found[0] != ""){
+				//block break till i <= from cause of test if cursor is in \t tag
+				//else it will fail if there is value without \t on the end
+				if (!isT && found[0] != "" && i <= from){
 					break;
 				}
 			}
