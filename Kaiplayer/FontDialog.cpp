@@ -479,26 +479,29 @@ Styles * FontDialog::GetFont()
 	resultStyle->Underline = Underl->GetValue();
 	resultStyle->StrikeOut = Strike->GetValue();
 	resultStyle->Fontname = Fonts->GetString(Fonts->GetSelection());
-	wxString kkk;
-	kkk << FontSize->GetValue();
-	if (kkk != ""){ resultStyle->Fontsize = kkk; }
+	wxString fontSize;
+	fontSize << FontSize->GetValue();
+	if (fontSize != ""){ resultStyle->Fontsize = fontSize; }
 	return resultStyle;
 }
 
-FontDialog * FontDialog::Get(wxWindow *parent, Styles *acstyl)
+FontDialog * FontDialog::Get(wxWindow *parent, Styles *actualStyle)
 {
 	if (FDialog && FDialog->GetParent() != parent){
 		FDialog->Destroy();
 		FDialog = NULL;
 	}
 	if (!FDialog)
-		FDialog = new FontDialog(parent, acstyl);
+		FDialog = new FontDialog(parent, actualStyle);
 	else{
 		if (FDialog->editedStyle){
 			delete FDialog->editedStyle;
 			FDialog->editedStyle = NULL;
 		}
-		FDialog->editedStyle = acstyl;
+		FDialog->editedStyle = actualStyle;
+		if (FDialog->resultStyle)
+			delete FDialog->resultStyle;
+		FDialog->resultStyle = NULL;//actualStyle->Copy();
 		FDialog->SetStyle();
 		MoveToMousePosition(FDialog);
 	}
