@@ -1013,6 +1013,7 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	}
 	else {
 		vb->SetVisual(false, true, true);
+		if (vb->GetState() == Paused){ vb->Render(); }
 	}
 	
 

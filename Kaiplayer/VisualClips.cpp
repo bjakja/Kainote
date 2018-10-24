@@ -560,11 +560,9 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 
 
 
-	if (event.LeftUp() || event.MiddleUp()){
+	if (event.LeftUp() || event.RightUp() || event.MiddleUp()){
 		if (!drawSelection){
-			if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
 			SetClip(GetVisual(), false);
-
 		}
 		else{
 			drawSelection = false;
@@ -656,7 +654,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			{
 				if (!acpoint.isSelected && !ctrl){ ChangeSelection(); }
 				lastpoint = acpoint = Points[i];
-				Points[i].isSelected = (ctrl) ? !Points[i].isSelected : true;
+				Points[i].isSelected = (right)? false : (ctrl) ? !Points[i].isSelected : true;
 				grabbed = i;
 				diffs.x = pointx - zx;
 				diffs.y = pointy - zy;

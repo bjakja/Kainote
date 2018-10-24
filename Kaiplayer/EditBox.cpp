@@ -286,7 +286,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	BoxSizer2->Add(MarginREdit, 0, wxLEFT, 2);
 	BoxSizer2->Add(MarginVEdit, 0, wxLEFT, 2);
 	BoxSizer2->Add(EffectEdit, 3, wxLEFT | wxRIGHT | wxEXPAND, 2);
-	
+
 	BoxSizer1 = new wxBoxSizer(wxVERTICAL);
 	BoxSizer1->Add(BoxSizer4, 0, wxLEFT | wxRIGHT | wxTOP, 2);
 	BoxSizer1->Add(BoxSizer5, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, 2);
@@ -442,7 +442,7 @@ done:
 	if (Visual > CHANGEPOS && rowChanged && !nochangeline){
 		tab->Video->SetVisual(false, true, true);
 	}
-	
+
 	//ustawia czas i msy na polu tekstowym wideo
 	if (tab->Video->IsShown() && tab->Video->GetState() != None && vsa == 0){
 		tab->Video->RefreshTime();
@@ -849,7 +849,7 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		tmptext = TextEditOrig->GetValue();
 		Editor = TextEditOrig;
 	}
-	
+
 	AssColor actualColor = AssColor(wxString("#FFFFFF"));
 	GetColor(&actualColor, numColor);
 
@@ -858,7 +858,7 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		MoveToMousePosition(ColourDialog);
 		ColourDialog->Connect(11111, COLOR_CHANGED, (wxObjectEventFunction)&EditBox::OnColorChange, 0, this);
 		ColourDialog->Bind(COLOR_TYPE_CHANGED, [=](wxCommandEvent &evt){
-			AssColor col; 
+			AssColor col;
 			GetColor(&col, evt.GetInt());
 			ColourDialog->SetColor(col, 0, false);
 		}, 11111);
@@ -1347,7 +1347,7 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 	for (int i = bracketEnd; i >= 0; i--){
 		wxUniChar ch = txt[i];
 		if (ch == '\\' && brkt){
-			if (lastTag < 0){ lastTag = lslash; }
+			/*if (lastTag < 0){ */lastTag = i;//lslash; //}
 			wxString ftag = txt.SubString(i + 1, lslash - 1);
 			if (ftag == "r"){
 				hasR = true;
@@ -1365,15 +1365,17 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 				if (i <= from && from <= endT){
 
 					if (found[1] != "" && fpoints[1].y <= endT){
-						Placed = fpoints[1]; *Found = found[1]; return true;
+						Placed = fpoints[1]; 
+						*Found = found[1]; 
+						return true;
 					}
 					else if (found[0] != ""){
 						if (fpoints[0].y <= endT){ break; }
 					}
 					else{
-						Placed.x = endT; 
-						Placed.y = Placed.x; 
-						InBracket = true; 
+						Placed.x = endT;
+						Placed.y = Placed.x;
+						InBracket = true;
 						return false;
 					}
 
@@ -1389,10 +1391,21 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 			int reps = rex.ReplaceAll(&ftag, "\\1");
 			if (reps > 0){
 
-				if ((ftag.EndsWith(")") && !ftag.StartsWith("(")) || ftag.EndsWith("}")){ ftag.RemoveLast(1); lslash--; }
+				if ((ftag.EndsWith(")") && !ftag.StartsWith("(")) || ftag.EndsWith("}")){ 
+					ftag.RemoveLast(1); 
+					lslash--; 
+				}
 
-				if (found[0] == ""&&!isT){ found[0] = ftag; fpoints[0].x = i; fpoints[0].y = lslash - 1; }
-				else{ found[1] = ftag; fpoints[1].x = i; fpoints[1].y = lslash - 1; }
+				if (found[0] == "" && !isT){ 
+					found[0] = ftag; 
+					fpoints[0].x = i; 
+					fpoints[0].y = lslash - 1; 
+				}
+				else{ 
+					found[1] = ftag; 
+					fpoints[1].x = i; 
+					fpoints[1].y = lslash - 1; 
+				}
 				//block break till i <= from cause of test if cursor is in \t tag
 				//else it will fail if there is value without \t on the end
 				if (!isT && found[0] != "" && i <= from){
@@ -1490,7 +1503,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 			thisTab->Grid->RefreshPreview();
 		}
 		EditCounter = 1;
-		if (ABox && ABox->audioDisplay->hasKara && event.GetId()>0)
+		if (ABox && ABox->audioDisplay->hasKara && event.GetId() > 0)
 			ABox->audioDisplay->SetDialogue(line, currentLine);
 	}
 	else{ EditCounter++; }
@@ -1544,7 +1557,7 @@ void EditBox::OnColorChange(ColorEvent& event)
 			PutinText("\\" + colorNumber + "c" + choosenColorAsString + "&", false);
 		}
 
-		if (FindValue(L"(" +colorNumber + L"a&|alpha.*)", &colorString)){
+		if (FindValue(L"(" + colorNumber + L"a&|alpha.*)", &colorString)){
 			if (colorString.StartsWith(colorNumber + "a&"))
 				colorString = colorString.Mid(2);
 			else{
