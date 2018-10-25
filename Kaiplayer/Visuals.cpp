@@ -732,14 +732,14 @@ void Visuals::SetVisual(bool dummy, int type)
 		wxString tagpattern = (type == 100) ? "(org).+" :
 			(Visual == MOVE) ? "(move|pos).+" :
 			(Visual == SCALE) ? "(fsc" + xytype + ").+" :
-			(Visual == ROTATEZ) ? "(frz?)[0-9-]+" :
+			(Visual == ROTATEZ) ? "(frz?)[.0-9-]+" :
 			(Visual == ROTATEXY) ? "(fr" + frxytype + ").+" :
 			"(i?clip).+";
 		edit->FindValue(tagpattern, &tmp, txt, 0, fromStart);
 
 		if (type == 2 && Visual > 0){
 			if (edit->Placed.x < edit->Placed.y){ txt.erase(txt.begin() + edit->Placed.x, txt.begin() + edit->Placed.y + 1); }
-			wxString tagpattern = (Visual == SCALE) ? "(fscx).+" : (Visual == ROTATEZ) ? "(frz?)[0-9-]+" : "(frx).+";
+			wxString tagpattern = (Visual == SCALE) ? "(fscx).+" : (Visual == ROTATEZ) ? "(frz?)[.0-9-]+" : "(frx).+";
 			edit->FindValue(tagpattern, &tmp, txt, 0, fromStart);
 		}
 

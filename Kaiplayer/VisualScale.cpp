@@ -215,7 +215,7 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 		float res = (abs(to.x - from.x)) / 60.f;
 		tag = "\\fscx" + getfloat(res * 100);
 
-		tab->Edit->FindValue("fscx(.+)", &val, *txt, 0, true);
+		tab->Edit->FindValue("fscx([0-9.-]+)", &val, *txt, 0, true);
 		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 		scale.x = res;
 	}
@@ -223,7 +223,7 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 		float res = (abs(to.y - from.y)) / 60.f;
 		tag = "\\fscy" + getfloat(res * 100);
 
-		tab->Edit->FindValue("fscy(.+)", &val, *txt, 0, true);
+		tab->Edit->FindValue("fscy([0-9.-]+)", &val, *txt, 0, true);
 		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 		scale.y = res;
 	}

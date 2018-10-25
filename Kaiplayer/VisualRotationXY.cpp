@@ -248,11 +248,11 @@ void RotationXY::SetCurVisual()
 
 	wxString res;
 	oldAngle = D3DXVECTOR2(0, 0);
-	if (tab->Edit->FindValue("frx([^\\\\}]+)", &res)){
+	if (tab->Edit->FindValue("frx([0-9.-]+)", &res)){
 		double result = 0; res.ToDouble(&result);
 		oldAngle.y = result;
 	}
-	if (tab->Edit->FindValue("fry([^\\\\}]+)", &res)){
+	if (tab->Edit->FindValue("fry([0-9.-]+)", &res)){
 		double result = 0; res.ToDouble(&result);
 		oldAngle.x = result;
 	}
@@ -283,14 +283,14 @@ void RotationXY::ChangeVisual(wxString *txt, Dialogue *dial)
 		angle.x = (to.x - firstmove.x) + oldAngle.x;
 		angle.x = fmodf(angle.x + 360.f, 360.f);
 		tag = "\\fry" + getfloat(angle.x);
-		tab->Edit->FindValue("fry(.+)", &val, *txt, 0, true);
+		tab->Edit->FindValue("fry([0-9.-]+)", &val, *txt, 0, true);
 		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 	}
 	if (type != 0){
 		float angy = (to.y - firstmove.y) - oldAngle.y;// zmieniony plus na minus by nie trzeba było 
 		angle.y = fmodf((-angy) + 360.f, 360.f);//przetrzymywać oldAngle i angle w minusach.
 		tag = "\\frx" + getfloat(angle.y);
-		tab->Edit->FindValue("frx(.+)", &val, *txt, 0, true);
+		tab->Edit->FindValue("frx([0-9.-]+)", &val, *txt, 0, true);
 		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 	}
 

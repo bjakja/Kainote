@@ -439,7 +439,7 @@ done:
 		}
 	}
 
-	if (Visual > CHANGEPOS && rowChanged && !nochangeline){
+	if (Visual > CHANGEPOS && rowChanged/* && !nochangeline*/){
 		tab->Video->SetVisual(false, true, true);
 	}
 
@@ -1312,7 +1312,12 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 
 	int bracketStart = txt.SubString(0, from).Find('{', true);
 	int bracketEnd = txt.SubString(0, (from - 2 < 1) ? 1 : (from - 2)).Find('}', true);
-	if (bracketStart == -1 || (bracketStart < bracketEnd&&bracketEnd != -1)){ InBracket = false; inbrkt = false; bracketEnd = from; brkt = false; }
+	if (bracketStart == -1 || (bracketStart < bracketEnd && bracketEnd != -1)){ 
+		InBracket = false; 
+		inbrkt = false; 
+		bracketEnd = from; 
+		brkt = false; 
+	}
 	else{
 		InBracket = true;
 		int tmpfrom = from - 2;
@@ -1347,7 +1352,8 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 	for (int i = bracketEnd; i >= 0; i--){
 		wxUniChar ch = txt[i];
 		if (ch == '\\' && brkt){
-			/*if (lastTag < 0){ */lastTag = i;//lslash; //}
+			//tag is placed on begining of tags in bracket
+			lastTag = i;
 			wxString ftag = txt.SubString(i + 1, lslash - 1);
 			if (ftag == "r"){
 				hasR = true;
@@ -1440,7 +1446,13 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 	}
 
 	if (!isT && found[0] != ""){
-		if (inbrkt){ Placed = fpoints[0]; } *Found = found[0]; return true;
+		//In bracket here blocks changing position of tag putting in plain text
+		//inbrkt here changing value when plain text is on start, not use it here
+		if (InBracket){
+			Placed = fpoints[0]; 
+		} 
+		*Found = found[0]; 
+		return true;
 	}
 	else if (lastTag >= 0 && InBracket){
 		Placed.x = lastTag;
