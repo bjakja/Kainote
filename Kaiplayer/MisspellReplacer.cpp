@@ -673,15 +673,6 @@ bool MisspellReplacer::KeepFinding(const wxString &text, int textPos, int option
 {
 	bool findStart = false;
 	//I don't even need to check end cause when there's no end start will take all line
-	/*bool findEnd = false;
-	for (size_t i = textPos.y; i < text.length(); i++){
-		if (text[i] == L'{')
-			break;
-		if (text[i] == L'}'){
-			findEnd = true;
-			break;
-		}
-	}*/
 	for (int i = textPos; i >= 0; i--){
 		if (text[i] == L'}')
 			break;

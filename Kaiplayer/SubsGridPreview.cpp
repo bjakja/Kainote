@@ -218,7 +218,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			tdc.SetBrush(wxBrush(Options.GetColour(hasFocus ? WindowBorderBackground : WindowBorderBackgroundInactive)));
 			tdc.SetPen(*wxTRANSPARENT_PEN);
 			tdc.DrawRectangle(0, posY, w + scHor, previewGrid->GridHeight);
-			tdc.GetTextExtent(tab->SubsName, &fw, &fh, NULL, NULL, &previewGrid->font);
+			GetTextExtent(tab->SubsName, &fw, &fh, NULL, NULL, &previewGrid->font);
 			int center = ((w - fw) / 2) + scHor;
 			tdc.SetTextForeground(Options.GetColour(WindowHeaderText));
 			tdc.DrawText(tab->SubsName, center, 1);
@@ -404,11 +404,11 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 						err.Trim();
 						if (previewGrid->SpellErrors[k][s]>0){
 							wxString berr = strings[j].Mid(0, previewGrid->SpellErrors[k][s]);
-							tdc.GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &previewGrid->font);
+							GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &previewGrid->font);
 						}
 						else{ bfw = 0; }
 
-						tdc.GetTextExtent(err, &fw, &fh, NULL, NULL, &previewGrid->font);
+						GetTextExtent(err, &fw, &fh, NULL, NULL, &previewGrid->font);
 						tdc.DrawRectangle(posX + bfw + 3, posY, fw, previewGrid->GridHeight);
 					}
 				}
@@ -426,11 +426,11 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 						wxString bcmp;
 						if (previewGrid->Comparison->at(i)[c]>0){
 							bcmp = strings[j].Mid(0, previewGrid->Comparison->at(i)[c]);
-							tdc.GetTextExtent(bcmp, &bfw, &bfh, NULL, NULL, &previewGrid->font);
+							GetTextExtent(bcmp, &bfw, &bfh, NULL, NULL, &previewGrid->font);
 						}
 						else{ bfw = 0; }
 
-						tdc.GetTextExtent(cmp, &fw, &fh, NULL, NULL, &previewGrid->font);
+						GetTextExtent(cmp, &fw, &fh, NULL, NULL, &previewGrid->font);
 						if ((cmp.StartsWith("T") || cmp.StartsWith("Y") || cmp.StartsWith(L"£"))){ bfw++; }
 
 						tdc.DrawText(cmp, posX + bfw + 2, posY);

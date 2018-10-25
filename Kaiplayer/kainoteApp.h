@@ -39,8 +39,6 @@
 
 
 
-//class KaiServer;
-
 class kainoteApp : public wxApp
 {
 public:
@@ -56,7 +54,6 @@ public:
 	wxArrayString paths;
 private:
 	wxSingleInstanceChecker* m_checker;
-	//KaiServer *MyServer;
 	wxLocale *locale;
 };
 

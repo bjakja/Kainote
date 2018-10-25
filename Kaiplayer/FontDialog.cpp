@@ -501,7 +501,7 @@ FontDialog * FontDialog::Get(wxWindow *parent, Styles *actualStyle)
 		FDialog->editedStyle = actualStyle;
 		if (FDialog->resultStyle)
 			delete FDialog->resultStyle;
-		FDialog->resultStyle = NULL;//actualStyle->Copy();
+		FDialog->resultStyle = NULL;
 		FDialog->SetStyle();
 		MoveToMousePosition(FDialog);
 	}
