@@ -436,6 +436,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="SubsGridWindow.cpp" />
     <ClCompile Include="SubsLoader.cpp" />
     <ClCompile Include="SubsResampleDialog.cpp" />
+    <ClCompile Include="TextEditorTagList.cpp" />
     <ClCompile Include="VideoToolbar.cpp" />
     <ClCompile Include="VisualMoveAll.cpp" />
     <ClCompile Include="VisualClipRect.cpp" />
@@ -560,6 +561,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="SubsGridWindow.h" />
     <ClInclude Include="SubsLoader.h" />
     <ClInclude Include="SubsResampleDialog.h" />
+    <ClInclude Include="TextEditorTagList.h" />
     <ClInclude Include="Toolbar.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="VersionKainote.h" />

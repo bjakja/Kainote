@@ -45,7 +45,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 	//pastes=false;
 	holding = false;
 	changedBackGround = false;
-	oldpos = 0;
+	oldposy = 0;
 	oldposx = 0;
 	curpos = 0;
 	grad = 10;
@@ -282,7 +282,7 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 	int posy = event.GetY();
 	int posx = event.GetX();
 
-	if (holding&&right_up)
+	if (holding && right_up)
 	{
 		holding = false;
 		SetFocus();
@@ -292,34 +292,36 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 	if (holding)
 	{
 		bool changed = false;
-		if ((oldpos + 5) < posy){
-			mstime -= grad;
-			if (mstime == (-grad)){ mstime = 0; return; }
-			if (mstime<0){ mstime = 0; }
-			changed = true;
-			oldpos = posy;
+		int absy = abs(posy - oldposy);
+		int absx = abs(posx - oldposx);
+		int tmpgrad = grad;
+		if (absy >= absx){
+			if (absy >= 8){
+				mstime = (oldposy < posy) ? mstime - grad : mstime + grad;
+				//KaiLog(wxString::Format("nval+-1: %f", (float)nval));
+				oldposy = posy;
+				//reset oldposx cause next time it will change it by 10 
+				//even if it's still moved in one direction
+				oldposx = posx;
+				changed = true;
+			}
 		}
-		else if ((oldpos - 5)>posy){
-			mstime += grad;
-			if (mstime == (35999999 + grad)){ mstime = 35999999; return; }
-			if (mstime > 35999999){ mstime = 35999999; }
-			changed = true;
-			oldpos = posy;
+		else{
+			if (absx >= 10){
+				tmpgrad = grad * 10;
+				mstime = (oldposx < posx) ? mstime - tmpgrad : mstime + tmpgrad;
+				oldposx = posx;
+				//reset oldposx cause next time it will change it by 1
+				//even if it's still moved in one direction
+				oldposy = posy;
+				changed = true;
+			}
 		}
-		if ((oldposx + 10) < posx){
-			mstime -= (grad * 10);
-			if (mstime == (-(grad * 10))){ mstime = 0; return; }
-			if (mstime<0){ mstime = 0; }
-			changed = true;
-			oldposx = posx;
-		}
-		else if ((oldposx - 10)>posx){
-			mstime += (grad * 10);
-			if (mstime == 35999999 + (grad * 10)){ mstime = 35999999; return; }
-			if (mstime > 35999999){ mstime = 35999999; }
-			changed = true;
-			oldposx = posx;
-		}
+		if (mstime < 0){ mstime = 0; }
+		else if (mstime > 35999999){ mstime = 35999999; }
+		if (mstime == (-tmpgrad)){ mstime = 0; return; }
+		else if (mstime == (35999999 + tmpgrad)){ mstime = 35999999; return; }
+		
 		if (changed){
 			if (showFrames){ mTime.orgframe = mstime; }
 			else{ mTime.mstime = mstime; }
@@ -332,7 +334,7 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 	if (rclick)
 	{
 		holding = true;
-		oldpos = posy;
+		oldposy = posy;
 		oldposx = posx;
 		wxPoint pos;
 		HitTest(wxPoint(posx, posy), &pos);

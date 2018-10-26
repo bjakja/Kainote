@@ -408,6 +408,9 @@
     <ClCompile Include="CsriMod.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
+    <ClCompile Include="TextEditorTagList.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -730,6 +733,9 @@
     </ClInclude>
     <ClInclude Include="CsriMod.h">
       <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="TextEditorTagList.h">
+      <Filter>Header Files\Controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

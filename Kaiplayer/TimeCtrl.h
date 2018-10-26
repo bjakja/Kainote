@@ -44,7 +44,7 @@ private:
 	STime mTime;
 	bool pastes;
 	bool holding;
-	int oldpos;
+	int oldposy;
 	int oldposx;
 	int curpos;
 	int mstime;

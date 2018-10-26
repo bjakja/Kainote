@@ -187,15 +187,23 @@ void RotationZ::SetCurVisual()
 	lastmove = D3DXVECTOR2(0, 0);
 	wxString res;
 	if (tab->Edit->FindValue("frz?([0-9.-]+)", &res)){
-		double result = 0; res.ToDouble(&result);
+		double result = 0.; 
+		res.ToDouble(&result);
+		lastmove.y = result;
+		lastmove.x += lastmove.y;
+	}
+	else{
+		Styles *actualStyle = tab->Grid->GetStyle(0, tab->Edit->line->Style);
+		double result = 0.; 
+		actualStyle->Angle.ToDouble(&result);
 		lastmove.y = result;
 		lastmove.x += lastmove.y;
 	}
 	if (tab->Edit->FindValue("org\\(([^\\)]+)", &res)){
 		wxString rest;
 		double orx, ory;
-		if (res.BeforeFirst(',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; }
-		if (rest.ToDouble(&ory)){ org.y = ((ory / coeffH) - zoomMove.y)*zoomScale.y; }
+		if (res.BeforeFirst(',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x) * zoomScale.x; }
+		if (rest.ToDouble(&ory)){ org.y = ((ory / coeffH) - zoomMove.y) * zoomScale.y; }
 	}
 	else{ org = from; }
 	to = org;
@@ -205,8 +213,8 @@ void RotationZ::SetCurVisual()
 void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 {
 	if (isOrg){
-		ChangeOrg(txt, dial, (((org.x - lastOrg.x) / zoomScale.x) + zoomMove.x)*coeffW,
-			(((org.y - lastOrg.y) / zoomScale.y) + zoomMove.y)*coeffH);
+		ChangeOrg(txt, dial, (((org.x - lastOrg.x) / zoomScale.x) + zoomMove.x) * coeffW,
+			(((org.y - lastOrg.y) / zoomScale.y) + zoomMove.y) * coeffH);
 		return;
 	}
 

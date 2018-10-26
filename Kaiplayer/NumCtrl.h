@@ -51,7 +51,7 @@ class NumCtrl : public KaiTextCtrl
 		double value;
 		wxString oldval;
 		bool holding;
-		int oldpos;
+		int oldposy;
 		int oldposx;
 		int curpos;
 		DECLARE_EVENT_TABLE()
