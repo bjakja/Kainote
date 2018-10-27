@@ -41,7 +41,11 @@ inline void KaiChoice::CalcMaxWidth(wxSize *result, bool changex, bool changey){
 		if (tx > result->x && changex){ result->x = tx; }
 		else if (!changex){ break; }
 	}
-	if (changex){ result->x += 26; if (result->x > 300){ result->x = 300; } }
+	if (changex){ 
+		// there is needed more space to keep gap between text and arrow
+		result->x += 30/*26*/; 
+		if (result->x > 300){ result->x = 300; } 
+	}
 	if (changey){
 		GetTextExtent("TEX{}", &tx, &ty);
 		result->y = ty + 10;
@@ -52,7 +56,7 @@ inline void KaiChoice::CalcMaxWidth(wxSize *result, bool changex, bool changey){
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	const wxSize& size, int n, const wxString choices[],
 	long style, const wxValidator& validator)
-	:wxWindow(parent, id, pos, size, style)
+	:wxWindow(parent, id, pos, size, style | wxWANTS_CHARS)
 	, bmp(NULL)
 	, list(NULL)
 	, itemList(NULL)
@@ -84,7 +88,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	const wxSize& size, const wxArrayString &choices,
 	long style, const wxValidator& validator)
-	:wxWindow(parent, id, pos, size, style)
+	:wxWindow(parent, id, pos, size, style | wxWANTS_CHARS)
 	, bmp(NULL)
 	, list(NULL)
 	, itemList(NULL)
@@ -116,7 +120,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, const wxPoint& pos,
 	const wxSize& size, const wxArrayString &choices,
 	long style, const wxValidator& validator)
-	:wxWindow(parent, id, pos, size, style | KAI_COMBO_BOX)
+	:wxWindow(parent, id, pos, size, style | KAI_COMBO_BOX | wxWANTS_CHARS)
 	, bmp(NULL)
 	, list(NULL)
 	, itemList(NULL)
@@ -204,7 +208,7 @@ void KaiChoice::SetToolTip(const wxString &tooltip)
 {
 	if (tooltip != ""){ toolTip = tooltip; }
 	wxString tt = (choice >= 0 || (choiceText && !choiceText->GetValue().empty())) ? toolTip + "\n" + GetString(choice) : tooltip;
-	if (tt.Len() > 1000){
+	if (tt.length() > 1000){
 		tt = tt.Mid(0, 1000) + "...";
 	}
 	wxWindow::SetToolTip(tt);
@@ -311,7 +315,7 @@ void KaiChoice::OnMouseEvent(wxMouseEvent &event)
 
 			if (choiceText){
 				choiceText->SetFocus();
-				choiceText->SetSelection(0, choiceText->GetValue().Len(), true);
+				choiceText->SetSelection(0, choiceText->GetValue().length(), true);
 			}
 
 			return;
@@ -368,7 +372,9 @@ void KaiChoice::OnKeyPress(wxKeyEvent &event)
 
 void KaiChoice::OnArrow(wxCommandEvent &evt)
 {
-	bool up = evt.GetId() == 7865;
+	int id = evt.GetId();
+	
+	bool up = id == 7865;
 	if (choice <= 0 && up || choice >= (int)list->size() - 1 && !up)return;
 	if (choiceText){
 		int result = FindString(choiceText->GetValue(), true);
@@ -495,30 +501,32 @@ void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool chan
 {
 	wxCommandEvent evt(wxEVT_COMMAND_COMBOBOX_SELECTED, GetId());
 	this->ProcessEvent(evt);
-	if (PartialName == ""){
-		SetSelection(0, false);
-		SetToolTip();
-		return;
-	}
-	int sell = (changeText) ? 0 : -1;
+	int scrollTo = -1;//(changeText) ? 0 : -1;
 	wxString PrtName = PartialName.Lower();
 	size_t k = 0;
-
+	int lastMatch = 0;
+	if (PartialName == ""){
+		goto done;
+	}
 	for (size_t i = 0; i < list->size(); i++){
 		wxString fontname = (*list)[i].Lower();
-		if (fontname.Len() < 1 || fontname[0] < PrtName[0])
+		if (fontname.length() < 1 || fontname[0] < PrtName[0])
 			continue;
 
-		while (k < PrtName.Len() && k < fontname.Len()){
+		while (k < PrtName.length() && k < fontname.length()){
 			if (fontname[k] == PrtName[k]){
 				k++;
-				if (k >= PrtName.Len()){
-					sell = i;
+				lastMatch = i;
+				if (k >= PrtName.length()){
+					scrollTo = i;
 					goto done;
 				}
 			}
+			else if (k > 0 && fontname.Mid(0, k) != PrtName.Mid(0, k)){
+				goto done;
+			}
 			else if (fontname[k] > PrtName[k]){
-				sell = i;
+				scrollTo = i;
 				goto done;
 			}
 			else
@@ -526,14 +534,24 @@ void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool chan
 		}
 	}
 
+	
 done:
+	if (itemList && itemList->IsShown()){
+		if (scrollTo < 0)
+			scrollTo = lastMatch;
 
-	if (sell != -1){
+		itemList->sel = -1;
+		itemList->ScrollTo(scrollTo);
+	}
+	/*if (sell != -1){
 		SetSelection(sell, changeText);
 	}
 	else{
 		SetToolTip();
-	}
+	}*/
+	choice = -1;
+	SetToolTip();
+	Refresh(false);
 }
 
 void KaiChoice::SetValue(const wxString &text){
@@ -556,7 +574,7 @@ void KaiChoice::SelectChoice(int _choice, bool select, bool sendEvent){
 		choiceText->SetValue((*list)[choice], true);
 		if (select){
 			choiceText->SetFocus();
-			choiceText->SetSelection(0, choiceText->GetValue().Len(), true);
+			choiceText->SetSelection(0, choiceText->GetValue().length(), true);
 		}
 	}
 	else{
@@ -628,7 +646,7 @@ static int maxVisible = 20;
 
 PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, bool> *disabled)
 /*:wxFrame(DialogParent,-1,"",wxDefaultPosition, wxDefaultSize, wxFRAME_NO_TASKBAR|wxSTAY_ON_TOP|wxWS_EX_TRANSIENT)*/
-: wxPopupWindow(DialogParent)
+: wxPopupWindow(DialogParent, wxBORDER_NONE | wxWANTS_CHARS)
 , sel(0)
 , scPos(0)
 , scroll(NULL)
@@ -642,6 +660,15 @@ PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, 
 	SetFont(DialogParent->GetFont());
 	GetTextExtent("#TWFfGH", &fw, &height);
 	height += 6;
+	wxAcceleratorEntry entries[1];
+	entries[0].Set(wxACCEL_NORMAL, WXK_RETURN, 7867);
+	wxAcceleratorTable accel(1, entries);
+	SetAcceleratorTable(accel);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent & event){
+		EndPartialModal(sel);
+		wxCommandEvent evt((HasFlag(KAI_COMBO_BOX)) ? wxEVT_COMMAND_COMBOBOX_SELECTED : wxEVT_COMMAND_CHOICE_SELECTED, GetId());
+		this->ProcessEvent(evt);
+	}, 7867);
 }
 
 PopupList::~PopupList()
@@ -777,7 +804,7 @@ void PopupList::OnPaint(wxPaintEvent &event)
 			tdc.DrawRectangle(2, (height*i) + 2, w - 4, height - 2);
 		}
 		wxString desc = (*itemsList)[scrollPos];
-		if (desc.Len() > 1000)
+		if (desc.length() > 1000)
 			desc = desc.Mid(0, 1000);
 
 		tdc.SetTextForeground((disabledItems->find(scrollPos) != disabledItems->end()) ? graytext : text);
@@ -790,9 +817,12 @@ void PopupList::OnPaint(wxPaintEvent &event)
 
 void PopupList::SetSelection(int pos){
 	sel = pos;
-	scPos = pos;
-	if (sel < scPos && sel != -1){ scPos = sel; }
-	else if (sel >= scPos + maxVisible && (sel - maxVisible + 1) >= 0){ scPos = sel - maxVisible + 1; }
+	if (sel < scPos && sel != -1){ 
+		scPos = sel; 
+	}
+	else if (sel >= scPos + maxVisible && (sel - maxVisible + 1) >= 0){ 
+		scPos = sel - maxVisible + 1; 
+	}
 	Refresh(false);
 };
 
@@ -829,7 +859,12 @@ void PopupList::OnKeyPress(wxKeyEvent &event)
 	else if (event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_DOWN){
 		int step = (event.GetKeyCode() == WXK_DOWN) ? 1 : -1;
 		sel += step;
-		scPos += step;
+		if (sel < scPos && sel != -1){
+			scPos = sel;
+		}
+		else if (sel >= scPos + maxVisible && (sel - maxVisible + 1) >= 0){
+			scPos = sel - maxVisible + 1;
+		}
 		if (sel >= (int)itemsList->size()){
 			sel = 0;
 			scPos = 0;

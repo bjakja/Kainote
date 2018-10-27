@@ -33,6 +33,10 @@ public:
 	void CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &controlSize);
 	void EndPartialModal(int ReturnId);
 	void SetSelection(int pos);
+	void ScrollTo(int pos){
+		scPos = pos; 
+		Refresh(false);
+	}
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnKeyPress(wxKeyEvent &event);

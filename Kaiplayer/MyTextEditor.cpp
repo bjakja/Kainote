@@ -39,7 +39,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	bmp = NULL;
 	fsize = 10;
 	posY = 0;
-	scPos = 0;
+	scrollPositionV = 0;
 	SetCursor(wxCURSOR_IBEAM);
 	wxAcceleratorEntry entries[31];
 	entries[0].Set(wxACCEL_NORMAL, WXK_DELETE, ID_DEL);
@@ -63,20 +63,21 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	entries[18].Set(wxACCEL_CTRL, 'C', ID_CTLC);
 	entries[19].Set(wxACCEL_CTRL, 'X', ID_CTLX);
 	entries[20].Set(wxACCEL_NORMAL, WXK_WINDOWS_MENU, ID_WMENU);
-	int numEntries = 21;
+	entries[21].Set(wxACCEL_NORMAL, WXK_RETURN, ID_ENTER);
+	int numEntries = 22;
 	bool setNumpadAccels = !Options.GetBool(TextFieldAllowNumpadHotkeys);
 	if (setNumpadAccels){
-		entries[21].Set(wxACCEL_NORMAL, WXK_NUMPAD0, WXK_NUMPAD0 + 10000);
-		entries[22].Set(wxACCEL_NORMAL, WXK_NUMPAD1, WXK_NUMPAD1 + 10000);
-		entries[23].Set(wxACCEL_NORMAL, WXK_NUMPAD2, WXK_NUMPAD2 + 10000);
-		entries[24].Set(wxACCEL_NORMAL, WXK_NUMPAD3, WXK_NUMPAD3 + 10000);
-		entries[25].Set(wxACCEL_NORMAL, WXK_NUMPAD4, WXK_NUMPAD4 + 10000);
-		entries[26].Set(wxACCEL_NORMAL, WXK_NUMPAD5, WXK_NUMPAD5 + 10000);
-		entries[27].Set(wxACCEL_NORMAL, WXK_NUMPAD6, WXK_NUMPAD6 + 10000);
-		entries[28].Set(wxACCEL_NORMAL, WXK_NUMPAD7, WXK_NUMPAD7 + 10000);
-		entries[29].Set(wxACCEL_NORMAL, WXK_NUMPAD8, WXK_NUMPAD8 + 10000);
-		entries[30].Set(wxACCEL_NORMAL, WXK_NUMPAD9, WXK_NUMPAD9 + 10000);
-		numEntries = 31;
+		entries[22].Set(wxACCEL_NORMAL, WXK_NUMPAD0, WXK_NUMPAD0 + 10000);
+		entries[23].Set(wxACCEL_NORMAL, WXK_NUMPAD1, WXK_NUMPAD1 + 10000);
+		entries[24].Set(wxACCEL_NORMAL, WXK_NUMPAD2, WXK_NUMPAD2 + 10000);
+		entries[25].Set(wxACCEL_NORMAL, WXK_NUMPAD3, WXK_NUMPAD3 + 10000);
+		entries[26].Set(wxACCEL_NORMAL, WXK_NUMPAD4, WXK_NUMPAD4 + 10000);
+		entries[27].Set(wxACCEL_NORMAL, WXK_NUMPAD5, WXK_NUMPAD5 + 10000);
+		entries[28].Set(wxACCEL_NORMAL, WXK_NUMPAD6, WXK_NUMPAD6 + 10000);
+		entries[29].Set(wxACCEL_NORMAL, WXK_NUMPAD7, WXK_NUMPAD7 + 10000);
+		entries[30].Set(wxACCEL_NORMAL, WXK_NUMPAD8, WXK_NUMPAD8 + 10000);
+		entries[31].Set(wxACCEL_NORMAL, WXK_NUMPAD9, WXK_NUMPAD9 + 10000);
+		numEntries = 32;
 	}
 	wxAcceleratorTable accel(numEntries, entries);
 	SetAcceleratorTable(accel);
@@ -96,13 +97,13 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	font = wxFont(10, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT);
 	int fw, fh;
 	GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
-	Fheight = fh;
+	fontHeight = fh;
 	scroll = new KaiScrollbar(this, 3333, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
 	scroll->SetCursor(wxCURSOR_DEFAULT);
 	scroll->SetScrollRate(30);
 	statusBarHeight = (Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR)) ? 0 : 22;
 	changeQuotes = Options.GetBool(TEXT_EDITOR_CHANGE_QUOTES);
-	caret = new wxCaret(this, 1, Fheight);
+	caret = new wxCaret(this, 1, fontHeight);
 	SetCaret(caret);
 	caret->Move(3, 2);
 	caret->Show();
@@ -236,12 +237,46 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 		if (Cursor.x >= len){ MText << wkey; }
 		else{ MText.insert(Cursor.x, 1, wkey); }
 		CalcWrap();
-		if (Cursor.x + 1>wraps[Cursor.y + 1]){ Cursor.y++; }
+		if (Cursor.x + 1 > wraps[Cursor.y + 1]){ Cursor.y++; }
 		Cursor.x++;
 		Selend = Cursor;
 		if (SpellCheckerOnOff){ CheckText();}
 		Refresh(false);
 		modified = true;
+		//tag list
+		if (wkey == L'\\' || (Cursor.x - 2 >= 0 && MText[Cursor.x - 2] == L'\\')){
+			//No need to check end cause when there's no end start will take all line
+			//No need to show list when it's plain text, someone want to write \h or \N
+			for (int i = Cursor.x - 1; i >= 0; i--){
+				if (MText[i] == L'}')
+					break;
+				if (MText[i] == L'{'){
+					tagList = new PopupTagList(this);
+					if (wkey != L'\\')
+						tagList->FilterListViaKeyword(wkey);
+					//calculate position of popup list
+					wxPoint pos;
+					pos.y = (Cursor.y * fontHeight) + fontHeight + 5;
+					// it should be changed to constant int for avoid bugs
+					pos.x = 3;
+					int wrap = wraps[Cursor.y];
+					if (wrap < Cursor.x){
+						wxString textBeforeCursor = MText.Mid(wrap, Cursor.x - wrap + 1);
+						wxSize te = GetTextExtent(textBeforeCursor);
+						pos.x += te.x;
+					}
+					tagList->Popup(pos, wxSize(100, fontHeight+10), 0);
+					Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
+						PutTag();
+					}, tagList->GetId());
+					break;
+				}
+			}
+			
+		}
+		else if (tagList){
+			tagList->AppendToKeyword(wkey);
+		}
 	}
 
 }
@@ -256,7 +291,7 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 		font.SetPointSize(10);
 		int fw, fh;
 		GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
-		Fheight = fh;
+		fontHeight = fh;
 		caret->SetSize(1, fh);
 		CalcWrap(false, false);
 		Refresh(false);
@@ -275,6 +310,12 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 	if (key == WXK_PAGEDOWN || key == WXK_PAGEUP || key == WXK_INSERT){
 		return;
 	}
+	if (tagList){
+		if (key == WXK_ESCAPE || key == WXK_HOME || key == WXK_END || (ctrl && key == '0')){
+			tagList->Destroy();
+			tagList = NULL;
+		}
+	}
 	if (!(ctrl && !alt) && (key > 30 || key == 0)){ event.Skip(); return; }
 }
 
@@ -285,6 +326,11 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 	int ID = event.GetId();
 	if (selectionWords.size())
 		selectionWords.clear();
+	//maybe only for now
+	if (tagList && ID != ID_DOWN && ID != ID_UP && ID != ID_ENTER){
+		tagList->Destroy();
+		tagList = NULL;
+	}
 	switch (ID){
 	case ID_CDELETE:
 	case ID_CBACK:
@@ -370,6 +416,12 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 
 	case ID_DOWN:
 	case ID_SDOWN:
+		if (tagList && ID == ID_DOWN){
+			int sel = tagList->GetSelection();
+			sel += 1;
+			tagList->SetSelection(sel);
+			break;
+		}
 		len = MText.Len();
 		if (Cursor.y >= (int)wraps.size() - 2){ Cursor.y = wraps.size() - 2; Cursor.x = len; }
 		else{
@@ -385,7 +437,12 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 
 	case ID_UP:
 	case ID_SUP:
-
+		if (tagList && ID == ID_UP){
+			int sel = tagList->GetSelection();
+			sel -= 1;
+			tagList->SetSelection(sel);
+			break;
+		}
 		//if(Cursor.y<1){return;}
 		Cursor.x -= wraps[Cursor.y];
 		Cursor.y--;
@@ -415,7 +472,11 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		//Selend=Cursor;
 		ContextMenu(PosFromCursor(Cursor), FindError(Cursor, false));
 		break;
-
+	case ID_ENTER:
+		if (tagList)
+			PutTag();
+		else
+			event.Skip();
 	default:
 
 		break;
@@ -427,7 +488,14 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 {
 	bool click = event.LeftDown();
 	bool leftup = event.LeftUp();
-	if (event.ButtonDown()){ SetFocus(); if (!click){ Refresh(false); } }
+	if (event.ButtonDown()){ 
+		if (tagList){
+			tagList->Destroy();
+			tagList = NULL;
+		}
+		SetFocus(); 
+		if (!click){ Refresh(false); } 
+	}
 	wxSize size = GetClientSize();
 	size.y -= statusBarHeight;
 	wxPoint mousePosition = event.GetPosition();
@@ -449,7 +517,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 		time = timeGetTime();
 		int errn = FindError(mousePosition);
 		if (Options.GetBool(EditboxSugestionsOnDoubleClick) && errn >= 0){
-			wxString err = errs[errn];
+			wxString err = misspels[errn];
 
 			wxArrayString suggs = SpellChecker::Get()->Suggestions(err);
 
@@ -591,15 +659,15 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 			font.SetPointSize(fsize);
 			int fw, fh;
 			GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
-			Fheight = fh;
+			fontHeight = fh;
 			caret->SetSize(1, fh);
 			CalcWrap(false, false);
 			Refresh(false);
 		}
 		else if (event.GetModifiers() == 0){
 			int step = 30 * event.GetWheelRotation() / event.GetWheelDelta();
-			if (step > 0 && scPos == 0){ return; }
-			scPos = MAX(scPos - step, 0);
+			if (step > 0 && scrollPositionV == 0){ return; }
+			scrollPositionV = MAX(scrollPositionV - step, 0);
 			Refresh(false);
 		}
 	}
@@ -631,7 +699,7 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 	GetClientSize(&w, &h);
 	if (w < 1 || h < 1){ return; }
 	wxPaintDC dc(this);
-	int bitmaph = (wraps.size()*Fheight) + 4;
+	int bitmaph = (wraps.size()*fontHeight) + 4;
 	int windoww = w;
 	if (bitmaph > h){
 		if (!scroll->IsShown()){
@@ -639,15 +707,15 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 			CalcWrap(false, false);
 			Cursor.y = FindY(Cursor.x);
 			Selend.y = FindY(Selend.x);
-			bitmaph = (wraps.size()*Fheight) + 4;
+			bitmaph = (wraps.size()*fontHeight) + 4;
 		}
 		int sw = 0, sh = 0;
 		scroll->GetSize(&sw, &sh);
 		scroll->SetSize(w - sw, 0, sw, h);
 		int diff = h - statusBarHeight;
 		int diff2 = bitmaph;
-		if (scPos > diff2 - diff){ scPos = diff2 - diff; }
-		scroll->SetScrollbar(scPos, diff, diff2, diff - 2);
+		if (scrollPositionV > diff2 - diff){ scrollPositionV = diff2 - diff; }
+		scroll->SetScrollbar(scrollPositionV, diff, diff2, diff - 2);
 		w -= sw;
 		if (w < 0){ return; }
 	}
@@ -659,7 +727,7 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 			Selend.y = FindY(Selend.x);
 		}
 		bitmaph = h;
-		scPos = 0;
+		scrollPositionV = 0;
 	}
 
 	if (bmp) {
@@ -676,13 +744,13 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 
 	bmpDC.SelectObject(*bmp);
 
-	DrawFld(bmpDC, w, h - statusBarHeight, h);
+	DrawField(bmpDC, w, h - statusBarHeight, h);
 
 	dc.Blit(0, 0, w, h, &bmpDC, 0, 0);
 	
 }
 
-void TextEditor::DrawFld(wxDC &dc, int w, int h, int windowh)
+void TextEditor::DrawField(wxDC &dc, int w, int h, int windowh)
 {
 	int fw = 0, fh = 0;
 	bool tags = false;
@@ -720,7 +788,7 @@ void TextEditor::DrawFld(wxDC &dc, int w, int h, int windowh)
 	wxString mestext = "";
 
 	posY = 2;
-	posY -= scPos;
+	posY -= scrollPositionV;
 	bool isfirst = true;
 	int wline = 0;
 	int wchar = 0;
@@ -795,7 +863,7 @@ void TextEditor::DrawFld(wxDC &dc, int w, int h, int windowh)
 				stext.Replace("\t", "");
 				GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
 			}
-			dc.DrawRectangle(fw + 3, ((j*Fheight) + 1) - scPos, fww, Fheight);
+			dc.DrawRectangle(fw + 3, ((j*fontHeight) + 1) - scrollPositionV, fww, fontHeight);
 			//if(j==scd.y)break;
 		}
 	}
@@ -827,7 +895,7 @@ void TextEditor::DrawFld(wxDC &dc, int w, int h, int windowh)
 			}
 
 			//posX=4;
-			posY += Fheight;
+			posY += fontHeight;
 			wline++;
 			wchar++;
 			parttext = "";
@@ -860,12 +928,12 @@ void TextEditor::DrawFld(wxDC &dc, int w, int h, int windowh)
 			if (i > 0){ GetTextExtent(text, &fw, &fh, NULL, NULL, &font); }
 			else{ fw = 0; }
 			GetTextExtent(MText[i], &fww, &fh, NULL, NULL, &font);
-			dc.DrawRectangle(fw + 3, ((bry*Fheight) + 2) - scPos, fww, Fheight);
+			dc.DrawRectangle(fw + 3, ((bry*fontHeight) + 2) - scrollPositionV, fww, fontHeight);
 			wxFont fnt = dc.GetFont();
 			fnt = fnt.Bold();
 			dc.SetFont(fnt);
 			dc.SetTextForeground((ch == '{' || ch == '}') ? ccurlybraces : coperators);
-			dc.DrawText(MText[i], fw + 3, ((bry*Fheight) + 2) - scPos);
+			dc.DrawText(MText[i], fw + 3, ((bry*fontHeight) + 2) - scrollPositionV);
 			dc.SetFont(font);
 
 		}
@@ -998,7 +1066,7 @@ void TextEditor::DrawFld(wxDC &dc, int w, int h, int windowh)
 		dc.SetPen(wxPen(border));
 		dc.SetTextForeground(ctext);
 		dc.DrawRectangle(0, h, w, statusBarHeight);
-		int ypos = ((statusBarHeight - Fheight) / 2) + h;
+		int ypos = ((statusBarHeight - fontHeight) / 2) + h;
 		dc.DrawText(wxString::Format("Length: %i", (int)MText.length()), 5, ypos);
 		dc.DrawText(wxString::Format("Lines: %i", (int)wraps.GetCount() - 1), 105, ypos);
 		dc.DrawText(wxString::Format("Ln: %i", Cursor.y + 1), 185, ypos);
@@ -1016,10 +1084,10 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 {
 	int /*w, h, */fw = 0, fh = 0;
 	//GetClientSize(&w, &h);
-	pos.y += (scPos);
+	pos.y += (scrollPositionV);
 	pos.x -= 2;
 
-	cur->y = (pos.y / Fheight);
+	cur->y = (pos.y / fontHeight);
 	if (cur->y < 0 || wraps.size() < 2){ cur->y = 0; cur->x = 0; return false; }
 	if (cur->y >= (int)wraps.size() - 1)
 	{
@@ -1081,7 +1149,7 @@ wxString TextEditor::GetValue() const
 	return MText;
 }
 
-void TextEditor::Replace(int start, int end, wxString rep)
+void TextEditor::Replace(int start, int end, const wxString &rep)
 {
 	modified = true;
 	MText.replace(start, end - start, rep);
@@ -1100,7 +1168,7 @@ void TextEditor::CheckText()
 	//wxString notchar="/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{} ";
 	wxString text = MText;
 	errors.clear();
-	errs.Clear();
+	misspels.Clear();
 	text += " ";
 	bool block = false;
 	wxString word = "";
@@ -1121,17 +1189,17 @@ void TextEditor::CheckText()
 				if (word.EndsWith("'")){ word = word.RemoveLast(1); }
 				word.Trim(false); word.Trim(true);
 				bool isgood = SpellChecker::Get()->CheckWord(word);
-				if (!isgood){ errs.Add(word); errors.push_back(firsti); errors.push_back(lasti); }
+				if (!isgood){ misspels.Add(word); errors.push_back(firsti); errors.push_back(lasti); }
 			}
 			word = ""; firsti = i + 1;
 		}
 		if (block){
-			if (ch == '{'){ errors.push_back(lastStartCBracket); errors.push_back(lastStartCBracket); errs.Add(""); }
-			if (ch == '\\' && text[(i == 0) ? 0 : i - 1] == '\\'){ errors.push_back(i); errors.push_back(i); errs.Add(""); }
+			if (ch == '{'){ errors.push_back(lastStartCBracket); errors.push_back(lastStartCBracket); misspels.Add(""); }
+			if (ch == '\\' && text[(i == 0) ? 0 : i - 1] == '\\'){ errors.push_back(i); errors.push_back(i); misspels.Add(""); }
 			if (ch == '('){
 				if (i > 1 && text[i - 2] == '\\' && text[i - 1]){ lastStartTBracket = i; continue; }
 				if (lastStartBracket > lastEndBracket){
-					errors.push_back(lastStartBracket); errors.push_back(lastStartBracket); errs.Add("");
+					errors.push_back(lastStartBracket); errors.push_back(lastStartBracket); misspels.Add("");
 				}
 				lastStartBracket = i;
 			}
@@ -1140,16 +1208,16 @@ void TextEditor::CheckText()
 					if (lastStartTBracket > 0 && (lastStartTBracket < lastEndBracket || lastStartBracket < lastStartTBracket)){
 						lastStartTBracket = -1; continue;
 					}
-					errors.push_back(i); errors.push_back(i); errs.Add("");
+					errors.push_back(i); errors.push_back(i); misspels.Add("");
 				}
 				lastEndBracket = i;
 			}
 		}
 		if (!block && ch == '}'){
-			errors.push_back(i); errors.push_back(i); errs.Add("");
+			errors.push_back(i); errors.push_back(i); misspels.Add("");
 		}
 		if (lastStartTBracket >= 0 && ch == '{' || ch == '}'){
-			errors.push_back(lastStartTBracket); errors.push_back(lastStartTBracket); errs.Add("");
+			errors.push_back(lastStartTBracket); errors.push_back(lastStartTBracket); misspels.Add("");
 			lastStartTBracket = -1;
 		}
 		if (ch == '{'){ block = true; lastStartCBracket = i; continue; }
@@ -1171,9 +1239,9 @@ void TextEditor::CheckText()
 		}
 	}
 
-	if (lastStartCBracket > lastEndCBracket){ errors.push_back(lastStartCBracket); errors.push_back(lastStartCBracket); errs.Add(""); }
-	if (lastStartBracket > lastEndBracket){ errors.push_back(lastStartBracket); errors.push_back(lastStartBracket); errs.Add(""); }
-	if (lastStartTBracket >= 0){ errors.push_back(lastStartTBracket); errors.push_back(lastStartTBracket); errs.Add(""); }
+	if (lastStartCBracket > lastEndCBracket){ errors.push_back(lastStartCBracket); errors.push_back(lastStartCBracket); misspels.Add(""); }
+	if (lastStartBracket > lastEndBracket){ errors.push_back(lastStartBracket); errors.push_back(lastStartBracket); misspels.Add(""); }
+	if (lastStartTBracket >= 0){ errors.push_back(lastStartTBracket); errors.push_back(lastStartTBracket); misspels.Add(""); }
 }
 
 wxUniChar TextEditor::CheckQuotes()
@@ -1189,6 +1257,10 @@ wxUniChar TextEditor::CheckQuotes()
 
 void TextEditor::OnKillFocus(wxFocusEvent& event)
 {
+	if (tagList){
+		tagList->Destroy();
+		tagList = NULL;
+	}
 	Refresh(false);
 }
 
@@ -1252,7 +1324,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	Menu menut;
 	wxString err;
 	wxArrayString suggs;
-	if (error >= 0){ err = errs[error]; }
+	if (error >= 0){ err = misspels[error]; }
 	if (!err.IsEmpty()){
 		suggs = SpellChecker::Get()->Suggestions(err);
 		for (size_t i = 0; i < suggs.size(); i++){
@@ -1474,7 +1546,7 @@ wxPoint TextEditor::PosFromCursor(wxPoint cur)
 	else{ GetTextExtent(MText.SubString(wraps[cur.y], cur.x), &fw, &fh, NULL, NULL, &font); }
 	wxPoint result;
 	result.x = fw + 3;
-	result.y = (cur.y + 1)*Fheight;
+	result.y = (cur.y + 1)*fontHeight;
 	return result;
 }
 
@@ -1482,8 +1554,8 @@ void TextEditor::OnScroll(wxScrollEvent& event)
 {
 	if (scroll->IsShown()){
 		int newPos = event.GetPosition();
-		if (scPos != newPos) {
-			scPos = newPos;
+		if (scrollPositionV != newPos) {
+			scrollPositionV = newPos;
 			Refresh(false);
 		}
 	}
@@ -1527,19 +1599,19 @@ void TextEditor::MakeCursorVisible()
 	wxSize size = GetClientSize();
 	size.y -= statusBarHeight;
 	wxPoint pixelPos = PosFromCursor(Cursor);
-	pixelPos.y -= scPos;
+	pixelPos.y -= scrollPositionV;
 
 	if (pixelPos.y < 3){
-		scPos -= (pixelPos.y > -Fheight) ? Fheight : (abs(pixelPos.y) + 10);
-		scPos = ((scPos / Fheight)*Fheight) - Fheight;
-		if (scPos<0){ scPos = 0; }
+		scrollPositionV -= (pixelPos.y > -fontHeight) ? fontHeight : (abs(pixelPos.y) + 10);
+		scrollPositionV = ((scrollPositionV / fontHeight)*fontHeight) - fontHeight;
+		if (scrollPositionV<0){ scrollPositionV = 0; }
 	}
 	else if (pixelPos.y > size.y - 4){
-		int bitmaph = (wraps.size()*Fheight) + 4;
+		int bitmaph = (wraps.size()*fontHeight) + 4;
 		int moving = pixelPos.y - (size.y - 10);
-		scPos += (moving < Fheight) ? Fheight : moving + Fheight;
-		scPos = ((scPos / Fheight)*Fheight) + Fheight;
-		if (scPos > bitmaph){ scPos = bitmaph; }
+		scrollPositionV += (moving < fontHeight) ? fontHeight : moving + fontHeight;
+		scrollPositionV = ((scrollPositionV / fontHeight)*fontHeight) + fontHeight;
+		if (scrollPositionV > bitmaph){ scrollPositionV = bitmaph; }
 	}
 	Refresh(false);
 }
@@ -1606,9 +1678,9 @@ void TextEditor::DrawWordRectangles(int type, wxDC &dc)
 			wxString btext = MText.SubString(wraps[q], rest);
 			btext.Replace("\t", "");
 			GetTextExtent(btext, &fwww, &fh, NULL, NULL, &font);
-			dc.DrawRectangle(3, ((q*Fheight) + 1) - scPos, fwww, Fheight);
+			dc.DrawRectangle(3, ((q*fontHeight) + 1) - scrollPositionV, fwww, fontHeight);
 		}
-		dc.DrawRectangle(fw + 3, ((fsty*Fheight) + 1) - scPos, fww, Fheight);
+		dc.DrawRectangle(fw + 3, ((fsty*fontHeight) + 1) - scrollPositionV, fww, fontHeight);
 	}
 }
 
@@ -1648,6 +1720,30 @@ bool TextEditor::GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &n
 		}
 	}
 	return false;
+}
+
+void TextEditor::PutTag()
+{
+	TagListItem *item = tagList->GetItem(tagList->GetSelection());
+	if (item){
+		for (int i = Cursor.x - 1; i >= 0; i--){
+			if (MText[i] == L'\\'){
+				//It would be nice to add brackets or some else elements;
+				//Looks like it have to be added for all tags separely
+				wxString tag;
+				item->GetTag(&tag);
+				int newPosition = Cursor.x + tag.length() - (Cursor.x - 1 - i);
+				if (tag.EndsWith(L')'))
+					newPosition--;
+
+				Replace(i + 1, Cursor.x, tag);
+				SetSelection(newPosition, newPosition);
+				tagList->Destroy();
+				tagList = NULL;
+				return;
+			}
+		}
+	}
 }
 
 //state here is for template and for disable spellchecker and wraps

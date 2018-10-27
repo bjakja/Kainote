@@ -527,6 +527,8 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 		colorType->SetSelection(colorNum - 1);
 
 	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
+		//not good fix for recent, it must check edition
+		GetColor();
 		wxCommandEvent ctcevt(COLOR_TYPE_CHANGED, GetId());
 		//selections starts from 0, colors from 1
 		ctcevt.SetInt(colorType->GetSelection() + 1);
@@ -677,13 +679,14 @@ DialogColorPicker::~DialogColorPicker()
 
 
 // Sets the currently selected color, and updates all controls
-void DialogColorPicker::SetColor(AssColor new_color, int numColor /*= 0*/, bool SendVideoEvent /*= true*/)
+void DialogColorPicker::SetColor(AssColor new_color, int numColor /*= 0*/, bool SendVideoEvent /*= true*/, bool setAlpha /*= true*/)
 {
 	cur_color = new_color.GetWX();
 	rgb_input[0]->SetInt(new_color.r);
 	rgb_input[1]->SetInt(new_color.g);
 	rgb_input[2]->SetInt(new_color.b);
-	alpha_input->SetInt(new_color.a);
+	if (setAlpha)
+		alpha_input->SetInt(new_color.a);
 	updating_controls = false;
 	spectrum_dirty = true;
 	if (numColor){
@@ -691,6 +694,7 @@ void DialogColorPicker::SetColor(AssColor new_color, int numColor /*= 0*/, bool 
 		colorType->Enable(numColor != -1);
 	}
 	UpdateFromRGB(SendVideoEvent);
+	wasUpdated = false;
 }
 
 
@@ -870,6 +874,7 @@ void DialogColorPicker::UpdateSpectrumDisplay(bool SendVideoEvent /*= true*/)
 	if (IsShown() && SendVideoEvent){
 		updatecols.Start(100, true);
 	}
+	wasUpdated = true;
 }
 
 
@@ -1070,7 +1075,8 @@ void DialogColorPicker::OnRecentSelect(wxCommandEvent &evt)
 	// Ugly hack?
 	AssColor color;
 	color.SetAss(evt.GetString());
-	SetColor(color.GetWX());
+	SetColor(color.GetWX(), 0, true, false);
+	wasUpdated = true;
 }
 
 

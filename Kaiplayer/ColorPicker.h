@@ -168,6 +168,7 @@ private:
 	wxColour cur_color;
 	bool updating_controls;
 	bool spectrum_dirty;
+	bool wasUpdated = false;
 	wxTimer updatecols;
 
 	ColorPickerSpectrum *spectrum;
@@ -232,7 +233,7 @@ public:
 	DialogColorPicker(wxWindow *parent, AssColor initial_color, int colorType = -1);
 	virtual ~DialogColorPicker();
 
-	void SetColor(AssColor new_color, int numColor = 0, bool SendVideoEvent = true);
+	void SetColor(AssColor new_color, int numColor = 0, bool SendVideoEvent = true, bool setAlpha = true);
 	AssColor GetColor();
 
 	static DialogColorPicker *DCP;

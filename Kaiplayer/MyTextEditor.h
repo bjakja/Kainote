@@ -18,6 +18,7 @@
 #include <wx/wx.h>
 #include <wx/caret.h>
 #include "KaiScrollbar.h"
+#include "TextEditorTagList.h"
 
 class EditBox;
 class KainoteFrame;
@@ -33,7 +34,7 @@ public:
 	void SetModified(bool _modified = true);
 	void GetSelection(long *start, long* end);
 	void SetSelection(int start, int end, bool noEvent = false);
-	void Replace(int start, int end, wxString rep);
+	void Replace(int start, int end, const wxString &rep);
 	void Copy(bool cut = false);
 	void Paste();
 	wxString GetValue() const;
@@ -60,7 +61,7 @@ protected:
 	void OnEraseBackground(wxEraseEvent& event){};
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
 	void OnScroll(wxScrollEvent& event);
-	void DrawFld(wxDC &dc, int w, int h, int windowh);
+	void DrawField(wxDC &dc, int w, int h, int windowh);
 	bool HitTest(wxPoint pos, wxPoint *cur);
 	void CalcWrap(bool updatechars = true, bool sendevent = true);
 	void FindWord(int pos, int *start, int *end);
@@ -70,6 +71,7 @@ protected:
 	void SeekSelected(const wxString &word);
 	void DrawWordRectangles(int type, wxDC &dc);
 	bool GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &number, float &step);
+	void PutTag();
 
 	bool SpellCheckerOnOff;
 	bool useSpellchecker;
@@ -77,8 +79,9 @@ protected:
 	wxString MText;
 	wxBitmap* bmp;
 	KaiScrollbar *scroll;
+	PopupTagList *tagList = NULL;
 	wxFont font;
-	wxArrayString errs;
+	wxArrayString misspels;
 	wxCaret *caret;
 	wxArrayInt wraps;
 	wxArrayInt errors;
@@ -99,8 +102,8 @@ protected:
 	int numberChangingMousePos = -1;
 	int state = 0;
 	int time;
-	int Fheight;
-	int scPos;
+	int fontHeight;
+	int scrollPositionV;
 	int fsize;
 	int tmpstart, tmpend;
 	int statusBarHeight;
@@ -140,6 +143,7 @@ enum{
 	ID_CTLV,
 	ID_CTLC,
 	ID_CTLX,
+	ID_ENTER,
 	ID_WMENU,
 };
 

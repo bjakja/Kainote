@@ -431,8 +431,6 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 						else{ bfw = 0; }
 
 						GetTextExtent(cmp, &fw, &fh, NULL, NULL, &previewGrid->font);
-						if ((cmp.StartsWith("T") || cmp.StartsWith("Y") || cmp.StartsWith(L"£"))){ bfw++; }
-
 						tdc.DrawText(cmp, posX + bfw + 2, posY);
 						tdc.DrawText(cmp, posX + bfw + 4, posY);
 						tdc.DrawText(cmp, posX + bfw + 2, posY + 2);
@@ -452,7 +450,6 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			else{ isCenter = !(j == 4); }
 
 			tdc.SetTextForeground((isHeadline) ? headerText : (collis) ? collcol : textcol);
-			if (j == ilcol - 1 && (strings[j].StartsWith("T") || strings[j].StartsWith("Y") || strings[j].StartsWith(L"£"))){ posX++; }
 			cur = wxRect(posX + 3, posY, previewGrid->GridWidth[j] - 6, previewGrid->GridHeight);
 			tdc.SetClippingRegion(cur);
 			tdc.DrawLabel(strings[j], cur, isCenter ? wxALIGN_CENTER : (wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT));

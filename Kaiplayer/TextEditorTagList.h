@@ -25,33 +25,51 @@ enum{
 	TYPE_NORMAL = 0,
 	TYPE_TAG_USED_IN_VISUAL,
 	TYPE_TAG_VSFILTER_MOD,
-	SHOW_DESCRIPTION = 4
+	SHOW_DESCRIPTION = 4,
+	ID_SHOW_ALL_TAGS = 5667,
+	ID_SHOW_VSFILTER_MOD_TAGS,
+	ID_SHOW_DESCRIPTION
+
 };
 
 class TagListItem
 {
 public:
-	TagListItem(const wxString & _tag, const wxString &_description, unsigned char _type){
-		tag = _tag;
-		description = _description;
-		type = _type;
-	}
 	void ShowItem(int option){
 		showDescription = (option & SHOW_DESCRIPTION) != 0;
 
-		isVisible = ((option & TYPE_TAG_USED_IN_VISUAL) == (type & TYPE_TAG_USED_IN_VISUAL) &&
-			(option & TYPE_TAG_VSFILTER_MOD) == (type & TYPE_TAG_VSFILTER_MOD));
+		isVisible = (type == 0 || ((option & TYPE_TAG_USED_IN_VISUAL) && (type & TYPE_TAG_USED_IN_VISUAL)) ||
+			((option & TYPE_TAG_VSFILTER_MOD) && (type & TYPE_TAG_VSFILTER_MOD)));
+	};
+	void ShowItem(const wxString &keyWord){
+		if (isVisible)
+			isVisible = tag.StartsWith(keyWord);
 	};
 	void GetTagText(wxString *text){
 		*text = tag;
 		if (showDescription)
 			*text << L" - " << description;
 	}
+	void GetTag(wxString *text){
+		//maybe for now only add brackets when tag need it;
+		if (needBrackets)
+			*text = tag + L"()";
+		else
+			*text = tag;
+	}
+	TagListItem(const wxString & _tag, const wxString &_description, unsigned char _type, int option, bool _needBrackets = false){
+		tag = _tag;
+		description = _description;
+		type = _type;
+		needBrackets = _needBrackets;
+		ShowItem(option);
+	}
 	wxString tag;
 	wxString description;
 	unsigned char type;
 	bool isVisible = true;
 	bool showDescription = false;
+	bool needBrackets = false;
 };
 
 class PopupTagList : public wxPopupWindow{
@@ -62,21 +80,29 @@ public:
 	void Popup(const wxPoint &pos, const wxSize &controlSize, int selectedItem);
 	void CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &controlSize);
 	void SetSelection(int pos);
+	int GetSelection(){ return sel; }
+	void FilterListViaOptions(int otptions);
+	void FilterListViaKeyword(const wxString &keyWord);
+	size_t GetCount();
+	int FindItemById(int id);
+	void AppendToKeyword(wxUniChar ch);
+	TagListItem *GetItem(int pos);
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
-	void OnKeyPress(wxKeyEvent &event);
 	void OnPaint(wxPaintEvent &event);
 	void OnScroll(wxScrollEvent& event);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()) ReleaseMouse(); };
-	void InitList();
+	void InitList(int option);
 	int sel;
-	int scPos;
+	int scrollPositionV;
 
 protected:
 	wxBitmap *bmp;
 	std::vector<TagListItem*> itemsList;
 	wxWindow *Parent;
-	int orgY;
+	wxString keyWord;
 	int height;
 	KaiScrollbar *scroll;
+	wxSize controlSize;
+	bool blockMouseEvent = true;
 };

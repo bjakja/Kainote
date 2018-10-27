@@ -299,6 +299,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 	if(ds){
 		ds->Add(this,1,wxEXPAND);
 		SCD->SetSizerAndFit(ds);
+		SCD->SetEnterId(ID_BOK);
+		SCD->SetEscapeId(ID_BCANCEL);
 	}
 	block=false;
 }
