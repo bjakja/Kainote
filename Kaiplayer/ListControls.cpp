@@ -56,7 +56,7 @@ inline void KaiChoice::CalcMaxWidth(wxSize *result, bool changex, bool changey){
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	const wxSize& size, int n, const wxString choices[],
 	long style, const wxValidator& validator)
-	:wxWindow(parent, id, pos, size, style | wxWANTS_CHARS)
+	:wxWindow(parent, id, pos, size, style/* | wxWANTS_CHARS*/)
 	, bmp(NULL)
 	, list(NULL)
 	, itemList(NULL)
@@ -82,13 +82,13 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	entries[1].Set(wxACCEL_NORMAL, WXK_DOWN, 7866);
 	wxAcceleratorTable accel(2, entries);
 	SetAcceleratorTable(accel);
-
+	//Bind(wxEVT_CHAR_HOOK, &KaiChoice::OnKeyHook, this);
 }
 
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	const wxSize& size, const wxArrayString &choices,
 	long style, const wxValidator& validator)
-	:wxWindow(parent, id, pos, size, style | wxWANTS_CHARS)
+	:wxWindow(parent, id, pos, size, style/* | wxWANTS_CHARS*/)
 	, bmp(NULL)
 	, list(NULL)
 	, itemList(NULL)
@@ -115,12 +115,13 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	entries[1].Set(wxACCEL_NORMAL, WXK_DOWN, 7866);
 	wxAcceleratorTable accel(2, entries);
 	SetAcceleratorTable(accel);
+	//Bind(wxEVT_CHAR_HOOK, &KaiChoice::OnKeyHook, this);
 }
 
 KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, const wxPoint& pos,
 	const wxSize& size, const wxArrayString &choices,
 	long style, const wxValidator& validator)
-	:wxWindow(parent, id, pos, size, style | KAI_COMBO_BOX | wxWANTS_CHARS)
+	:wxWindow(parent, id, pos, size, style | KAI_COMBO_BOX /*| wxWANTS_CHARS*/)
 	, bmp(NULL)
 	, list(NULL)
 	, itemList(NULL)
@@ -195,6 +196,8 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 	entries[1].Set(wxACCEL_NORMAL, WXK_DOWN, 7866);
 	wxAcceleratorTable accel(2, entries);
 	SetAcceleratorTable(accel);
+	choiceText->Bind(wxEVT_KEY_DOWN, &KaiChoice::OnKeyHook, this);
+	//Bind(wxEVT_CHAR_HOOK, &KaiChoice::OnKeyHook, this);
 }
 
 KaiChoice::~KaiChoice()
@@ -370,6 +373,23 @@ void KaiChoice::OnKeyPress(wxKeyEvent &event)
 	}
 }
 
+void KaiChoice::OnKeyHook(wxKeyEvent &event)
+{
+	if (event.GetKeyCode() == WXK_RETURN && itemList && itemList->IsShown()){
+
+		itemList->EndPartialModal(itemList->sel);
+		wxCommandEvent evt((HasFlag(KAI_COMBO_BOX)) ? wxEVT_COMMAND_COMBOBOX_SELECTED : wxEVT_COMMAND_CHOICE_SELECTED, GetId());
+		this->ProcessEvent(evt);
+		return;
+	}
+	else if (event.GetKeyCode() == WXK_ESCAPE && itemList && itemList->IsShown()){
+		itemList->EndPartialModal(-3);
+		listIsShown = false;
+		return;
+	}
+	event.Skip();
+}
+
 void KaiChoice::OnArrow(wxCommandEvent &evt)
 {
 	int id = evt.GetId();
@@ -392,7 +412,7 @@ void KaiChoice::ShowList()
 	listIsShown = true;
 	wxSize listSize = GetSize();
 	if (!itemList){ itemList = new PopupList(this, list, disabled); }
-	if (choiceText){ SetSelectionByPartialName(choiceText->GetValue()); }
+	if (choiceText){ SetSelectionByPartialName(choiceText->GetValue(), false, true); }
 	itemList->Popup(wxPoint(0, listSize.GetY()), listSize, choice);
 
 }
@@ -497,7 +517,7 @@ void KaiChoice::SendEvent(int _choice)
 
 }
 
-void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool changeText)
+void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool setText/* = false*/, bool selectOnList/*=false*/)
 {
 	wxCommandEvent evt(wxEVT_COMMAND_COMBOBOX_SELECTED, GetId());
 	this->ProcessEvent(evt);
@@ -536,20 +556,19 @@ void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool chan
 
 	
 done:
-	if (itemList && itemList->IsShown()){
-		if (scrollTo < 0)
-			scrollTo = lastMatch;
+	if (scrollTo < 0)
+		scrollTo = lastMatch;
 
-		itemList->sel = -1;
+	if (itemList){
+		itemList->sel = (selectOnList) ? scrollTo : - 1;
 		itemList->ScrollTo(scrollTo);
 	}
-	/*if (sell != -1){
-		SetSelection(sell, changeText);
+	if (setText){
+		SetSelection(scrollTo, true);
+		return;
 	}
-	else{
-		SetToolTip();
-	}*/
-	choice = -1;
+
+	choice = (selectOnList) ? scrollTo : -1;
 	SetToolTip();
 	Refresh(false);
 }
@@ -646,7 +665,7 @@ static int maxVisible = 20;
 
 PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, bool> *disabled)
 /*:wxFrame(DialogParent,-1,"",wxDefaultPosition, wxDefaultSize, wxFRAME_NO_TASKBAR|wxSTAY_ON_TOP|wxWS_EX_TRANSIENT)*/
-: wxPopupWindow(DialogParent, wxBORDER_NONE | wxWANTS_CHARS)
+: wxPopupWindow(DialogParent/*, wxBORDER_NONE | wxWANTS_CHARS*/)
 , sel(0)
 , scPos(0)
 , scroll(NULL)
@@ -660,15 +679,6 @@ PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, 
 	SetFont(DialogParent->GetFont());
 	GetTextExtent("#TWFfGH", &fw, &height);
 	height += 6;
-	wxAcceleratorEntry entries[1];
-	entries[0].Set(wxACCEL_NORMAL, WXK_RETURN, 7867);
-	wxAcceleratorTable accel(1, entries);
-	SetAcceleratorTable(accel);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent & event){
-		EndPartialModal(sel);
-		wxCommandEvent evt((HasFlag(KAI_COMBO_BOX)) ? wxEVT_COMMAND_COMBOBOX_SELECTED : wxEVT_COMMAND_CHOICE_SELECTED, GetId());
-		this->ProcessEvent(evt);
-	}, 7867);
 }
 
 PopupList::~PopupList()
@@ -847,7 +857,7 @@ void PopupList::EndPartialModal(int ReturnId)
 
 void PopupList::OnKeyPress(wxKeyEvent &event)
 {
-	if (event.GetKeyCode() == WXK_RETURN){
+	/*if (event.GetKeyCode() == WXK_RETURN){
 		EndPartialModal(sel);
 		wxCommandEvent evt((HasFlag(KAI_COMBO_BOX)) ? wxEVT_COMMAND_COMBOBOX_SELECTED : wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 		this->ProcessEvent(evt);
@@ -856,7 +866,7 @@ void PopupList::OnKeyPress(wxKeyEvent &event)
 		EndPartialModal(-3);
 		((KaiChoice*)Parent)->listIsShown = false;
 	}
-	else if (event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_DOWN){
+	else */if (event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_DOWN){
 		int step = (event.GetKeyCode() == WXK_DOWN) ? 1 : -1;
 		sel += step;
 		if (sel < scPos && sel != -1){

@@ -520,7 +520,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	screen_dropper = new ColorPickerScreenDropper(this, SELECTOR_DROPPER_PICK, 7, 7, 8, false);
 
 	wxString types[] = { _("Kolor podstawowy"), _("Kolor zastępczy"), _("Kolor obwódki"), _("Kolor cienia") };
-	colorType = new KaiChoice(this, 9766, wxDefaultPosition, wxSize(120, -1), 4, types);
+	colorType = new KaiChoice(this, 9766, wxDefaultPosition, wxSize(-1, -1), 4, types);
 	if (colorNum == -1)
 		colorType->Enable(false);
 	else

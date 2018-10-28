@@ -155,7 +155,7 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 
 	ASSStylesSizer->Add(ASSMainSizer, 1, wxEXPAND | wxALL, 2);
 	wxBoxSizer * buttons = new wxBoxSizer(wxHORIZONTAL);
-	close = new MappedButton(this, ID_CLOSE, _("Zamknij"));
+	close = new MappedButton(this, ID_CLOSE_STYLE_MANAGER, _("Zamknij"));
 	detachEnable = new ToggleButton(this, ID_DETACH, _("Odepnij okno edycji"));
 	detachEnable->SetValue(isDetached);
 	buttons->Add(close, 0, wxRIGHT, 2);
@@ -174,8 +174,8 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 		wxSize bs = wxSize(-1, cc->GetBestSize().y + 29);
 		Mainall->SetMinSize(bs);
 	}
-	SetEscapeId(ID_CLOSE, true);
-	SetEnterId(ID_CONF);
+	SetEscapeId(ID_CLOSE_STYLE_MANAGER, true);
+	SetEnterId(ID_CONFIRM);
 
 	SetSizerAndFit(Mainall);
 
@@ -203,8 +203,8 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 	Connect(ID_ASSDEL, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnAssDelete);
 	Connect(ID_ASSSORT, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnAssSort);
 	Connect(ID_ASSCLEAN, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnCleanStyles);
-	Connect(ID_CONF, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnConfirm);
-	Connect(ID_CLOSE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnClose);
+	Connect(ID_CONFIRM, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnConfirm);
+	Connect(ID_CLOSE_STYLE_MANAGER, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnClose);
 	Connect(ID_DETACH, wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnDetachEdit);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &StyleStore::OnStyleMove, this, ID_ASS_MOVE_TO_START, ID_STORE_MOVE_TO_END);
 

@@ -59,7 +59,7 @@ class StyleStore: public KaiDialog
 		StyleChange* cc;
 		bool ChangeStyle(Styles *cstyl, int cellsToChange = -1);
 		void StylesWindow(wxString newname="");
-        void LoadStylesS(bool ass);
+		void LoadStylesS(bool ass);
 		//void StyleonVideo(Styles *styl, bool fullskreen=false);
 		void DoTooltips();
 		void LoadAssStyles(const wxString &styleName = "");
@@ -133,8 +133,8 @@ enum{
 	ID_ASSDEL,
 	ID_ASSSORT,
 	ID_ASSCLEAN,
-	ID_CONF,
-	ID_CLOSEE,
+	ID_CONFIRM,
+	ID_CLOSE_STYLE_MANAGER,
 	ID_ASS_MOVE_TO_START,
 	ID_ASS_MOVE_UP,
 	ID_ASS_MOVE_DOWN,

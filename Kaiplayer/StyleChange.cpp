@@ -52,7 +52,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 		Create(parent,-1);
 	}
 	Preview=NULL;
-	tab=NULL;
+	updateStyle=NULL;
 	block=true;
 	wxFont font(8,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
 	SetFont(font);
@@ -300,7 +300,10 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 		ds->Add(this,1,wxEXPAND);
 		SCD->SetSizerAndFit(ds);
 		SCD->SetEnterId(ID_BOK);
-		SCD->SetEscapeId(ID_BCANCEL);
+		//SCD->SetEscapeId(ID_BCANCEL);
+		SCD->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+			OnOKClick(evt);
+		}, ID_BOK);
 	}
 	block=false;
 }
@@ -308,7 +311,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window,const wxPoint& pos)
 StyleChange::~StyleChange()
 {
 	FontEnum.RemoveClient(this);
-	wxDELETE(tab);
+	wxDELETE(updateStyle);
 	wxDELETE(CompareStyle);
 }
 
@@ -353,10 +356,11 @@ void StyleChange::OnOKClick(wxCommandEvent& event)
 {
 	UpdateStyle();
 	//copied style, to avoid memory leaks release after using. 
-	if (SS->ChangeStyle(tab->Copy())){
+	//double enter can crash it
+	if (updateStyle && SS->ChangeStyle(updateStyle->Copy())){
 		Hide();
 		if (SCD){ SCD->Hide(); }
-		wxDELETE(tab);
+		wxDELETE(updateStyle);
 		SS->Mainall->Fit(SS);
 	}
 	
@@ -366,61 +370,61 @@ void StyleChange::OnCancelClick(wxCommandEvent& event)
 {
 	Hide();
 	if(SCD){SCD->Hide();}
-	wxDELETE(tab);
+	wxDELETE(updateStyle);
 	SS->Mainall->Fit(SS);
 }
 
-void StyleChange::UpdateValues(Styles *styl, bool allowMultiEdition, bool enableNow)
+void StyleChange::UpdateValues(Styles *style, bool allowMultiEdition, bool enableNow)
 {
 	block=true;
-	wxDELETE(tab);
-	tab=styl;
-	sname->SetValue(tab->Name);
-	int sell=sfont->FindString(tab->Fontname);
+	wxDELETE(updateStyle);
+	updateStyle=style;
+	sname->SetValue(updateStyle->Name);
+	int sell=sfont->FindString(updateStyle->Fontname);
 	if(sell==-1){
-		sfont->SetValue(tab->Fontname);}
+		sfont->SetValue(updateStyle->Fontname);}
 	else{sfont->SetSelection(sell);}
 	  
-	ssize->SetString(tab->Fontsize);
-	wxColour kol=tab->PrimaryColour.GetWX();
+	ssize->SetString(updateStyle->Fontsize);
+	wxColour kol=updateStyle->PrimaryColour.GetWX();
 	s1->SetBackgroundColour(kol);
 	s1->SetForegroundColour(Blackorwhite(kol));
-	kol = tab->SecondaryColour.GetWX();
+	kol = updateStyle->SecondaryColour.GetWX();
 	s2->SetBackgroundColour(kol);
 	s2->SetForegroundColour(Blackorwhite(kol));
-	kol = tab->OutlineColour.GetWX();
+	kol = updateStyle->OutlineColour.GetWX();
 	s3->SetBackgroundColour(kol);
 	s3->SetForegroundColour(Blackorwhite(kol));
-	kol = tab->BackColour.GetWX();
+	kol = updateStyle->BackColour.GetWX();
 	s4->SetBackgroundColour(kol);
 	s4->SetForegroundColour(Blackorwhite(kol));
 	 
-	alpha1->SetInt(tab->PrimaryColour.a);
-	alpha2->SetInt(tab->SecondaryColour.a);
-	alpha3->SetInt(tab->OutlineColour.a);
-	alpha4->SetInt(tab->BackColour.a);
-	sb->SetValue(tab->Bold);
-	si->SetValue(tab->Italic);
-	su->SetValue(tab->Underline);
-	ss->SetValue(tab->StrikeOut);
-	san->SetString(tab->Angle);
-	ssp->SetString(tab->Spacing);
-	sou->SetString(tab->Outline);
-	ssh->SetString(tab->Shadow);
-	sob->SetValue(tab->BorderStyle);
+	alpha1->SetInt(updateStyle->PrimaryColour.a);
+	alpha2->SetInt(updateStyle->SecondaryColour.a);
+	alpha3->SetInt(updateStyle->OutlineColour.a);
+	alpha4->SetInt(updateStyle->BackColour.a);
+	sb->SetValue(updateStyle->Bold);
+	si->SetValue(updateStyle->Italic);
+	su->SetValue(updateStyle->Underline);
+	ss->SetValue(updateStyle->StrikeOut);
+	san->SetString(updateStyle->Angle);
+	ssp->SetString(updateStyle->Spacing);
+	sou->SetString(updateStyle->Outline);
+	ssh->SetString(updateStyle->Shadow);
+	sob->SetValue(updateStyle->BorderStyle);
 	//if(tab->BorderStyle){sob->SetValue(true);}else{sob->SetValue(false);};
-	wxString an=tab->Alignment;
+	wxString an=updateStyle->Alignment;
 	if(an=="1"){rb1->SetValue(true);}else if(an=="2"){rb2->SetValue(true);}else if(an=="3"){rb3->SetValue(true);}else if(an=="4"){rb4->SetValue(true);}
 	else if(an=="5"){rb5->SetValue(true);}else if(an=="6"){rb6->SetValue(true);}else if(an=="7"){rb7->SetValue(true);}
 	else if(an=="8"){rb8->SetValue(true);}else if(an=="9"){rb9->SetValue(true);};
-	ssx->SetString(tab->ScaleX);
-	ssy->SetString(tab->ScaleY);
-	sml->SetString(tab->MarginL);
-	smr->SetString(tab->MarginR);
-	smv->SetString(tab->MarginV);
+	ssx->SetString(updateStyle->ScaleX);
+	ssy->SetString(updateStyle->ScaleY);
+	sml->SetString(updateStyle->MarginL);
+	smr->SetString(updateStyle->MarginR);
+	smv->SetString(updateStyle->MarginV);
 	int choice=-1;
 	for(size_t i=0; i<encs.size();i++){
-		if(encs[i].StartsWith(tab->Encoding+" ")){choice=i;break;}
+		if(encs[i].StartsWith(updateStyle->Encoding+" ")){choice=i;break;}
 	}
 	if(choice==-1){choice=1;}
 	if (allowMultiEdition != allowMultiEdition){
@@ -431,7 +435,7 @@ void StyleChange::UpdateValues(Styles *styl, bool allowMultiEdition, bool enable
 		if (CompareStyle)
 			delete CompareStyle;
 
-		CompareStyle = styl->Copy();
+		CompareStyle = style->Copy();
 		if (!enableNow){
 			btnCommitOnStyles->Enable(false);
 		}
@@ -444,63 +448,63 @@ void StyleChange::UpdateValues(Styles *styl, bool allowMultiEdition, bool enable
 
 void StyleChange::OnChangeAllSelectedStyles(wxCommandEvent& event)
 {
-	if (!tab || !allowMultiEdition || !CompareStyle){
+	if (!updateStyle || !allowMultiEdition || !CompareStyle){
 		KaiLog("Style was released or not allowed");
 		return;
 	}
 	UpdateStyle();
-	int changes = CompareStyle->Compare(tab);
+	int changes = CompareStyle->Compare(updateStyle);
 	if (!changes)
 		changes = -1;
 	//tab stays not released cause dialog lose its style but is still visible
-	SS->ChangeStyle(tab->Copy(), changes);
+	SS->ChangeStyle(updateStyle->Copy(), changes);
 }
 
 void StyleChange::OnCommit(wxCommandEvent& event)
 {
 	UpdateStyle();
 	//tab stays not released cause dialog lose its style but is still visible
-	SS->ChangeStyle(tab->Copy());
+	SS->ChangeStyle(updateStyle->Copy());
 }
 
 
 void StyleChange::UpdateStyle()
 {
-	if(!tab){return;}
-	tab->Name = sname->GetValue();
-	tab->Fontname = sfont->GetValue();
-	tab->Fontsize = ssize->GetString();
-	tab->PrimaryColour.SetWX(s1->GetBackgroundColour(),alpha1->GetInt());
-	tab->SecondaryColour.SetWX(s2->GetBackgroundColour(),alpha2->GetInt());
-	tab->OutlineColour.SetWX(s3->GetBackgroundColour(),alpha3->GetInt());
-	tab->BackColour.SetWX(s4->GetBackgroundColour(),alpha4->GetInt());
-	tab->Bold = sb->GetValue();
-	tab->Italic = si->GetValue();
-	tab->Underline = su->GetValue();
-	tab->StrikeOut = ss->GetValue();
-	tab->Angle = san->GetString();
-	tab->Spacing = ssp->GetString();
-	tab->Outline = sou->GetString();
-	tab->Shadow = ssh->GetString();
-	tab->BorderStyle = sob->GetValue();
+	if(!updateStyle){return;}
+	updateStyle->Name = sname->GetValue();
+	updateStyle->Fontname = sfont->GetValue();
+	updateStyle->Fontsize = ssize->GetString();
+	updateStyle->PrimaryColour.SetWX(s1->GetBackgroundColour(),alpha1->GetInt());
+	updateStyle->SecondaryColour.SetWX(s2->GetBackgroundColour(),alpha2->GetInt());
+	updateStyle->OutlineColour.SetWX(s3->GetBackgroundColour(),alpha3->GetInt());
+	updateStyle->BackColour.SetWX(s4->GetBackgroundColour(),alpha4->GetInt());
+	updateStyle->Bold = sb->GetValue();
+	updateStyle->Italic = si->GetValue();
+	updateStyle->Underline = su->GetValue();
+	updateStyle->StrikeOut = ss->GetValue();
+	updateStyle->Angle = san->GetString();
+	updateStyle->Spacing = ssp->GetString();
+	updateStyle->Outline = sou->GetString();
+	updateStyle->Shadow = ssh->GetString();
+	updateStyle->BorderStyle = sob->GetValue();
 	wxString an;
 	if(rb1->GetValue()){an="1";}else if(rb2->GetValue()){an="2";}else if(rb3->GetValue()){an="3";}else if(rb4->GetValue()){an="4";}
 	else if(rb5->GetValue()){an="5";}else if(rb6->GetValue()){an="6";}else if(rb7->GetValue()){an="7";}
 	else if(rb8->GetValue()){an="8";}else if(rb9->GetValue()){an="9";};
-	tab->Alignment = an;
-	tab->ScaleX = ssx->GetString();
-	tab->ScaleY = ssy->GetString();
-	tab->MarginL = sml->GetString();
-	tab->MarginR = smr->GetString();
-	tab->MarginV = smv->GetString();
-	tab->Encoding = senc->GetString(senc->GetSelection()).BeforeFirst(' ');
+	updateStyle->Alignment = an;
+	updateStyle->ScaleX = ssx->GetString();
+	updateStyle->ScaleY = ssy->GetString();
+	updateStyle->MarginL = sml->GetString();
+	updateStyle->MarginR = smr->GetString();
+	updateStyle->MarginV = smv->GetString();
+	updateStyle->Encoding = senc->GetString(senc->GetSelection()).BeforeFirst(' ');
 }
 
 void StyleChange::UpdatePreview()
 {
 	if(!Preview)return;
 	UpdateStyle();
-	Preview->DrawPreview(tab);
+	Preview->DrawPreview(updateStyle);
 }
 
 void StyleChange::OnUpdatePreview(wxCommandEvent& event)

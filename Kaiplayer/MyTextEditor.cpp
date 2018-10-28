@@ -244,7 +244,7 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 		Refresh(false);
 		modified = true;
 		//tag list
-		if (wkey == L'\\' || (Cursor.x - 2 >= 0 && MText[Cursor.x - 2] == L'\\')){
+		if (!tagList && (wkey == L'\\' || (Cursor.x - 2 >= 0 && MText[Cursor.x - 2] == L'\\'))){
 			//No need to check end cause when there's no end start will take all line
 			//No need to show list when it's plain text, someone want to write \h or \N
 			for (int i = Cursor.x - 1; i >= 0; i--){

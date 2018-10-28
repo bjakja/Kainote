@@ -174,6 +174,10 @@ void PopupTagList::OnPaint(wxPaintEvent &event)
 		scroll->SetScrollbar(scrollPositionV, maxVisible, itemsize, maxVisible - 1);
 		w -= 18;
 	}
+	else if (scroll){
+		scroll->Destroy();
+		scroll = NULL;
+	}
 
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < ow || bmp->GetHeight() < h)) {
@@ -368,7 +372,7 @@ void PopupTagList::InitList(int option)
 	itemsList.push_back(new TagListItem(L"fsvp", _("Odstêp miêdzy znakami w pionie"), TYPE_TAG_VSFILTER_MOD, option));
 	itemsList.push_back(new TagListItem(L"i", _("Pochylenie tekstu"), TYPE_TAG_USED_IN_VISUAL, option));
 	itemsList.push_back(new TagListItem(L"iclip", _("Odwrócone wycinki wektorowe / prostok¹tne"), TYPE_TAG_USED_IN_VISUAL, option, true));
-	itemsList.push_back(new TagListItem(L"jitter", _("Trzêsienie tekstu"), TYPE_TAG_USED_IN_VISUAL, option, true));
+	itemsList.push_back(new TagListItem(L"jitter", _("Trzêsienie tekstu"), TYPE_TAG_VSFILTER_MOD, option, true));
 	itemsList.push_back(new TagListItem(L"k", _("Timing karaoke"), TYPE_TAG_USED_IN_VISUAL, option));
 	itemsList.push_back(new TagListItem(L"K", _("Timing karaoke p³ynne przejœcie"), TYPE_TAG_USED_IN_VISUAL, option));
 	itemsList.push_back(new TagListItem(L"ko", _("Timing karaoke obwódka"), TYPE_TAG_USED_IN_VISUAL, option));
@@ -390,7 +394,7 @@ void PopupTagList::InitList(int option)
 	itemsList.push_back(new TagListItem(L"rndy", _("Losowoœæ punktów czcionki oœ Y"), TYPE_TAG_VSFILTER_MOD, option));
 	itemsList.push_back(new TagListItem(L"rndz", _("Losowoœæ punktów czcionki oœ Z"), TYPE_TAG_VSFILTER_MOD, option));
 	itemsList.push_back(new TagListItem(L"s", _("Przekreœlenie tekstu"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"shad", _("Cieñ tekstu"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"shad", _("Cieñ tekstu"), TYPE_NORMAL, option));
 	itemsList.push_back(new TagListItem(L"t", _("Animacja tekstu"), TYPE_NORMAL, option, true));
 	itemsList.push_back(new TagListItem(L"u", _("Podkreœlenie tekstu"), TYPE_NORMAL, option));
 	itemsList.push_back(new TagListItem(L"xbord", _("Obwódka w osi X"), TYPE_NORMAL, option));

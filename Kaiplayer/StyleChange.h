@@ -15,14 +15,14 @@
 
 #pragma once
 
-	#include <wx/stattext.h>
-	#include "ListControls.h"
-	#include "MappedButton.h"
-    #include "StylePreview.h"
-    #include "StyleStore.h"
-    #include "NumCtrl.h"
-	#include "KaiRadioButton.h"
-	#include "KaiDialog.h"
+#include <wx/stattext.h>
+#include "ListControls.h"
+#include "MappedButton.h"
+#include "StylePreview.h"
+#include "StyleStore.h"
+#include "NumCtrl.h"
+#include "KaiRadioButton.h"
+#include "KaiDialog.h"
 
 //bool sortf(wxString name1,wxString name2);
 
@@ -39,7 +39,7 @@ class StyleChange: public wxWindow
 		KaiRadioButton* rb2;
 		KaiRadioButton* rb3;
 		KaiRadioButton* rb4;
-        KaiRadioButton* rb5;
+		KaiRadioButton* rb5;
 		KaiRadioButton* rb6;
 		KaiRadioButton* rb7;
 		KaiRadioButton* rb8;
@@ -105,8 +105,8 @@ class StyleChange: public wxWindow
 		void OnSetFocus(wxFocusEvent& event);
 
 		void DoTooltips();
-        
-		Styles *tab;
+		
+		Styles *updateStyle;
 		Styles *CompareStyle = NULL;
 		wxArrayString encs;
 		KaiDialog *SCD;
