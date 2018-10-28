@@ -261,26 +261,31 @@ void FontList::SetSelectionByName(wxString name)
 void FontList::SetSelectionByPartialName(wxString PartialName)
 {
 	if(PartialName==""){SetSelection(0);return;}
-	int sell=-1;
+	int newSelection=-1;
 	PartialName=PartialName.Lower();
 
 	size_t k = 0;
+	int lastMatch = 0;
 
 	for (size_t i = 0; i < fonts->size(); i++){
 		wxString fontname = (*fonts)[i].Lower();
-		if (fontname.Len() < 1 || fontname[0] < PartialName[0])
+		if (fontname.length() < 1 || fontname[0] < PartialName[0])
 			continue;
 
-		while (k < PartialName.Len() && k < fontname.Len()){
+		while (k < PartialName.length() && k < fontname.length()){
 			if (fontname[k] == PartialName[k]){
 				k++;
-				if (k >= PartialName.Len()){
-					sell = i;
+				lastMatch = i;
+				if (k >= PartialName.length()){
+					newSelection = i;
 					goto done;
 				}
 			}
+			else if (k > 0 && fontname.Mid(0, k) != PartialName.Mid(0, k)){
+				goto done;
+			}
 			else if (fontname[k] > PartialName[k]){
-				sell = i;
+				newSelection = i;
 				goto done;
 			}
 			else
@@ -290,9 +295,13 @@ void FontList::SetSelectionByPartialName(wxString PartialName)
 
 done:
 
-	if(sell!=-1){
-		SetSelection(sell);
-	}
+
+	if (newSelection == -1)
+		newSelection = lastMatch;
+
+		
+	SetSelection(newSelection);
+	
 }
 
 wxString FontList::GetString(int line)

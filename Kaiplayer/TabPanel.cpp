@@ -106,10 +106,13 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 	int numTagButtons = Options.GetInt(EditboxTagButtons);
 	const std::map<idAndType, hdata> &hkeys = Hkeys.GetHotkeysMap();
 
+	// if onlygridaudio than it can pud everything it tables but not need to set this accelerators
+	// extended filtering has less performance
 	for (auto cur = hkeys.begin(); cur != hkeys.end(); cur++){
 		int id = cur->first.id;
-		if (cur->second.Accel == "" /*|| cur->first.Type == AUDIO_HOTKEY*/ || cur->first.Type == GLOBAL_HOTKEY ||
-			(onlyGridAudio && (cur->first.Type != GRID_HOTKEY && cur->first.Type != AUDIO_HOTKEY))){
+		if (cur->second.Accel == "" /*|| cur->first.Type == AUDIO_HOTKEY*/ || cur->first.Type == GLOBAL_HOTKEY ){/*||
+			(onlyGridAudio && ((cur->first.Type != GRID_HOTKEY && cur->first.Type != AUDIO_HOTKEY) || 
+			(id < PlayPause && id <= Minus5Second)))){*/
 			continue;
 		}
 		//editor
@@ -153,7 +156,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 		Edit->SetAcceleratorTable(accele);
 	}
 
-	if (Edit->ABox)
+	if (Edit->ABox && !onlyGridAudio)
 		Edit->ABox->SetAccels();
 }
 
