@@ -202,17 +202,21 @@ void MisspellReplacer::ReplaceChecked()
 		wxString replacedResult;
 		wxString matchResult = replacedResult = lineText.Mid(pos, len);
 		int reps = rxrules[SeekResult->numOfRule]->Replace(&replacedResult, actualrule.replaceRule);
+		if (reps < 1){
+			MoveCase(matchResult, &replacedResult, actualrule.options);
 
-		MoveCase(matchResult, &replacedResult, actualrule.options);
+			lineText.replace(pos, len, replacedResult);
 
-		lineText.replace(pos, len, replacedResult);
+			replaceDiff += replacedResult.length() - matchResult.length();
 
-		replaceDiff += replacedResult.length() - matchResult.length();
-
-		if (oldtab && oldtab != tab){
-			oldtab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
-			oldtab->Grid->SpellErrors.clear();
-			oldtab->Grid->Refresh(false);
+			if (oldtab && oldtab != tab){
+				oldtab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
+				oldtab->Grid->SpellErrors.clear();
+				oldtab->Grid->Refresh(false);
+			}
+		}
+		else{
+			KaiLog("Cannot replace: \"" + matchResult + "\" to \"" + actualrule.replaceRule + "\" using rule: \"" + actualrule.findRule + "\"");
 		}
 
 		oldtab = tab;

@@ -194,7 +194,7 @@ public:
 		}
 	}
 	size_t Len() const{
-		return stored->Len();
+		return stored->length();
 	}
 	int CmpNoCase(const StoreTextHelper &TextTl) const{
 		return stored->CmpNoCase(*TextTl.stored);
@@ -267,6 +267,7 @@ public:
 	void ParseTags(wxString *tags, size_t n, bool plainText = false);
 	void ChangeTimes(int start, int end);
 	void ClearParse();
+	void AddResetOnMDVDWraps();
 	Dialogue();
 	Dialogue(const wxString &ldial, const wxString &txttl = "");
 	~Dialogue();

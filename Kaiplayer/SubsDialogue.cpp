@@ -77,6 +77,28 @@ void Dialogue::ClearParse()
 	if (parseData){ delete parseData; parseData = NULL; }
 }
 
+void Dialogue::AddResetOnMDVDWraps()
+{
+	size_t textPos = 0;
+	wxString copyText = Text;
+	size_t diff = 0;
+	while (textPos < Text->length()){
+		textPos = copyText.find(L"\\N");
+		if (textPos == -1)
+			break;
+		
+		if (copyText.StartsWith(L"{")){
+			Text->insert(textPos + diff, L"{\\r}");
+			//{\r} 4 characters + \N 2 characters;
+			diff += (textPos + 6);
+		}
+		//skip \N
+		textPos += 2;
+		copyText = copyText.Mid(textPos);
+	
+	}
+}
+
 Dialogue::Dialogue(const wxString &ldial, const wxString &txttl)
 {
 	parseData = NULL;
@@ -360,6 +382,7 @@ void Dialogue::Convert(char type, const wxString &pref)
 			if (il > 0){ Text << wxString(L"{\\i1}"); }
 			Text << tmp;
 			Text->Replace("}{", "");
+			AddResetOnMDVDWraps();
 		}
 		else{
 			wxRegEx regibu(_T("\\<([ibu])\\>"), wxRE_ADVANCED);
