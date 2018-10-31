@@ -548,15 +548,15 @@ void ScaleRotation::SetCurVisual()
 	from = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x)*zoomScale.x,
 		((linepos.y / coeffH) - zoomMove.y)*zoomScale.y);
 
-	wxString lineText = (tab->Grid->hasTLMode && tab->Edit->line->TextTl != "") ? tab->Edit->line->TextTl : tab->Edit->line->Text;
+	wxString lineText = (tab->Grid->hasTLMode && tab->Edit->line->TextTl != L"") ? tab->Edit->line->TextTl : tab->Edit->line->Text;
 	wxString foundTag;
 	tagXFound = tagYFound = false;
 
 	if (selectedTool == 0){//scale
 		int addy = (AN > 3) ? 60 : -60, addx = (AN % 3 == 0) ? -60 : 60;
-		if (SeekTags(lineText, "fscx([0-9.-]+)", &foundTag))
+		if (SeekTags(lineText, L"fscx([0-9.-]+)", &foundTag))
 			tagXFound = true;
-		if (SeekTags(lineText, "fscy([0-9.-]+)", &foundTag))
+		if (SeekTags(lineText, L"fscy([0-9.-]+)", &foundTag))
 			tagYFound = true;
 
 		to.x = from.x + (scale.x*addx);
@@ -566,7 +566,7 @@ void ScaleRotation::SetCurVisual()
 	}
 	else if (selectedTool == 1){//rotationz
 		lastmove = beforeMove = D3DXVECTOR2(0, 0);
-		if (SeekTags(lineText, "frz?([0-9.-]+)", &foundTag)){
+		if (SeekTags(lineText, L"frz?([0-9.-]+)", &foundTag)){
 			double result = 0; 
 			if (foundTag.ToDouble(&result)){
 				lastmove.y = result;
@@ -576,7 +576,7 @@ void ScaleRotation::SetCurVisual()
 				tagXFound = true;
 			}
 		}
-		if (SeekTags(lineText, "org\\(([^\\)]+)", &foundTag)){
+		if (SeekTags(lineText, L"org\\(([^\\)]+)", &foundTag)){
 			wxString rest;
 			double orx, ory;
 			if (foundTag.BeforeFirst(',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; hasOrg = true; }
@@ -587,7 +587,7 @@ void ScaleRotation::SetCurVisual()
 	}
 	else if (selectedTool == 2){//rotationxy
 		oldAngle = beforeMove = D3DXVECTOR2(0, 0);
-		if (SeekTags(lineText, "frx([^\\\\}]+)", &foundTag)){
+		if (SeekTags(lineText, L"frx([^\\\\}]+)", &foundTag)){
 			double result = 0; 
 			if (foundTag.ToDouble(&result)){
 				//beforeMove and afterMove have to be x for frx and y for fry
@@ -596,7 +596,7 @@ void ScaleRotation::SetCurVisual()
 				tagXFound = true;
 			}
 		}
-		if (SeekTags(lineText, "fry([^\\\\}]+)", &foundTag)){
+		if (SeekTags(lineText, L"fry([^\\\\}]+)", &foundTag)){
 			double result = 0; 
 			if (foundTag.ToDouble(&result)){
 				//beforeMove and afterMove have to be x for frx and y for fry
@@ -604,7 +604,7 @@ void ScaleRotation::SetCurVisual()
 				tagYFound = true;
 			}
 		}
-		if (SeekTags(lineText, "org\\(([^\\)]+)", &foundTag)){
+		if (SeekTags(lineText, L"org\\(([^\\)]+)", &foundTag)){
 			wxString rest;
 			double orx, ory;
 			if (foundTag.BeforeFirst(',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; hasOrg = true; }
@@ -650,7 +650,7 @@ void ScaleRotation::ChangeInLines(bool dummy)
 			bool visible = false;
 			dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
 			if (selPositions.size() != sels.size()){
-				KaiLog("Sizes mismatch");
+				KaiLog(L"Sizes mismatch");
 				return;
 			}
 		}
@@ -660,7 +660,7 @@ void ScaleRotation::ChangeInLines(bool dummy)
 	bool skipInvisible = dummy && tab->Video->GetState() != Playing;
 	wxString tmp;
 
-	const wxString &tlModeStyle = tab->Grid->GetSInfo("TLMode Style");
+	const wxString &tlModeStyle = tab->Grid->GetSInfo(L"TLMode Style");
 	int moveLength = 0;
 
 	wxString typeString = (type == 0) ? L"x" : (type == 1) ? L"y" : L"([xy])";
@@ -671,7 +671,7 @@ void ScaleRotation::ChangeInLines(bool dummy)
 
 	wxRegEx re(L"\\\\" + tagpattern, wxRE_ADVANCED);
 	if (!re.IsValid()){
-		KaiLog("Bad pattern " + tagpattern);
+		KaiLog(L"Bad pattern " + tagpattern);
 	}
 	bool hasTlMode = tab->Grid->hasTLMode;
 
@@ -681,7 +681,7 @@ void ScaleRotation::ChangeInLines(bool dummy)
 		Dialogue *Dial = tab->Grid->GetDialogue(lineI);
 
 		if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){ continue; }
-		bool istexttl = (hasTlMode && Dial->TextTl != "");
+		bool istexttl = (hasTlMode && Dial->TextTl != L"");
 		txt = (istexttl) ? Dial->TextTl : Dial->Text;
 		
 		size_t startMatch = 0, lenMatch = 0;
@@ -704,15 +704,15 @@ void ScaleRotation::ChangeInLines(bool dummy)
 						lenMatch = (startSecondOrg - startMatch) + tmp2.Len();
 					}
 					else
-						changedValue = "";
+						changedValue = L"";
 				}
 				else if (type == 0){ changedValue << (value + moving.x); }
 				else if (type == 1){ changedValue << (value + moving.y); }
 				else if (type == 2){
 					wxString XorY = re.GetMatch(txt.Mid(textPosition), 1);
-					if (XorY == "x")
+					if (XorY == L"x")
 						changedValue << (value + moving.x);
-					else if (XorY == "y")
+					else if (XorY == L"y")
 						changedValue << (value + moving.y);
 				}
 			}

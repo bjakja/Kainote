@@ -25,7 +25,7 @@
 
 
 DescTxtCtrl::DescTxtCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc, const wxValidator &validator)
-	:KaiChoice(parent, id, "", wxDefaultPosition, size, wxArrayString(), 0, validator)
+	:KaiChoice(parent, id, L"", wxDefaultPosition, size, wxArrayString(), 0, validator)
 {
 	description = desc;
 	choiceText->Bind(wxEVT_SET_FOCUS, &DescTxtCtrl::OnFocus, this);
@@ -34,7 +34,7 @@ DescTxtCtrl::DescTxtCtrl(wxWindow *parent, int id, const wxSize &size, const wxS
 
 void DescTxtCtrl::ChangeValue(const wxString &val)
 {
-	if (val == "" && !choiceText->HasFocus()){
+	if (val == L"" && !choiceText->HasFocus()){
 		SetForegroundColour(WindowTextInactive);
 		SetValue(description);
 		Refresh(false);
@@ -49,14 +49,14 @@ void DescTxtCtrl::ChangeValue(const wxString &val)
 void DescTxtCtrl::OnFocus(wxFocusEvent &evt)
 {
 	if (choiceText->GetForegroundColour() == WindowTextInactive){
-		SetValue("");
+		SetValue(L"");
 		SetForegroundColour(WindowText);
 	}
 	evt.Skip();
 }
 void DescTxtCtrl::OnKillFocus(wxFocusEvent &evt)
 {
-	if (GetValue() == ""){
+	if (GetValue() == L""){
 		SetForegroundColour(WindowTextInactive);
 		SetValue(description);
 	}
@@ -93,12 +93,12 @@ txtdialog::txtdialog(wxWindow *parent, int id, const wxString &txtt, const wxStr
 wxDEFINE_EVENT(TAG_BUTTON_EDITION, wxCommandEvent);
 
 TagButton::TagButton(wxWindow *parent, int id, const wxString &_name, const wxString &_tag, int _type, const wxSize &size)
-	: MappedButton(parent, id, _name, "", wxDefaultPosition, size, EDITBOX_HOTKEY)
+	: MappedButton(parent, id, _name, L"", wxDefaultPosition, size, EDITBOX_HOTKEY)
 {
 	wxString rest;
 	type = _type;
 	tag = _tag;
-	if (tag != ""){
+	if (tag != L""){
 		SetToolTip(tag);
 	}
 	name = _name;
@@ -108,7 +108,7 @@ TagButton::TagButton(wxWindow *parent, int id, const wxString &_name, const wxSt
 
 void TagButton::OnMouseEvent(wxMouseEvent& event)
 {
-	if (event.RightUp() || (tag == "" && event.LeftUp())){
+	if (event.RightUp() || (tag == L"" && event.LeftUp())){
 		wxCommandEvent evt(TAG_BUTTON_EDITION, GetId());
 		ProcessEvent(evt);
 		SetFocus();
@@ -143,7 +143,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
-	SetFont(wxFont(9, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma"));
+	SetFont(wxFont(9, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, L"Tahoma"));
 	currentLine = 0;
 	grid = grid1;
 	grid->Edit = this;
@@ -151,39 +151,39 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	Visual = 0;
 
 	wxArrayString ans;
-	ans.Add("an1");
-	ans.Add("an2");
-	ans.Add("an3");
-	ans.Add("an4");
-	ans.Add("an5");
-	ans.Add("an6");
-	ans.Add("an7");
-	ans.Add("an8");
-	ans.Add("an9");
+	ans.Add(L"an1");
+	ans.Add(L"an2");
+	ans.Add(L"an3");
+	ans.Add(L"an4");
+	ans.Add(L"an5");
+	ans.Add(L"an6");
+	ans.Add(L"an7");
+	ans.Add(L"an8");
+	ans.Add(L"an9");
 
 
-	Bfont = new MappedButton(this, EDITBOX_CHANGE_FONT, "", _("Wybór czcionki"), wxDefaultPosition, wxSize(24, 24));
-	Bfont->SetBitmap(wxBITMAP_PNG("FONTS"));
-	Bcol1 = new MappedButton(this, EDITBOX_CHANGE_COLOR_PRIMARY, "", _("Kolor podstawowy"), wxDefaultPosition, wxSize(24, 24));
-	Bcol1->SetBitmap(wxBITMAP_PNG("Kolor1"));
+	Bfont = new MappedButton(this, EDITBOX_CHANGE_FONT, L"", _("Wybór czcionki"), wxDefaultPosition, wxSize(24, 24));
+	Bfont->SetBitmap(wxBITMAP_PNG(L"FONTS"));
+	Bcol1 = new MappedButton(this, EDITBOX_CHANGE_COLOR_PRIMARY, L"", _("Kolor podstawowy"), wxDefaultPosition, wxSize(24, 24));
+	Bcol1->SetBitmap(wxBITMAP_PNG(L"Kolor1"));
 	Bcol1->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
-	Bcol2 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SECONDARY, "", _("Kolor zastępczy do karaoke"), wxDefaultPosition, wxSize(24, 24));
-	Bcol2->SetBitmap(wxBITMAP_PNG("Kolor2"));
+	Bcol2 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SECONDARY, L"", _("Kolor zastępczy do karaoke"), wxDefaultPosition, wxSize(24, 24));
+	Bcol2->SetBitmap(wxBITMAP_PNG(L"Kolor2"));
 	Bcol2->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
-	Bcol3 = new MappedButton(this, EDITBOX_CHANGE_COLOR_OUTLINE, "", _("Kolor obwódki"), wxDefaultPosition, wxSize(24, 24));
-	Bcol3->SetBitmap(wxBITMAP_PNG("Kolor3"));
+	Bcol3 = new MappedButton(this, EDITBOX_CHANGE_COLOR_OUTLINE, L"", _("Kolor obwódki"), wxDefaultPosition, wxSize(24, 24));
+	Bcol3->SetBitmap(wxBITMAP_PNG(L"Kolor3"));
 	Bcol3->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
-	Bcol4 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SHADOW, "", _("Kolor cienia"), wxDefaultPosition, wxSize(24, 24));
-	Bcol4->SetBitmap(wxBITMAP_PNG("Kolor4"));
+	Bcol4 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SHADOW, L"", _("Kolor cienia"), wxDefaultPosition, wxSize(24, 24));
+	Bcol4->SetBitmap(wxBITMAP_PNG(L"Kolor4"));
 	Bcol4->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
-	Bbold = new MappedButton(this, PutBold, "", _("Pogrubienie"), wxDefaultPosition, wxSize(24, 24));
-	Bbold->SetBitmap(wxBITMAP_PNG("BOLD"));
-	Bital = new MappedButton(this, PutItalic, "", _("Pochylenie"), wxDefaultPosition, wxSize(24, 24));
-	Bital->SetBitmap(wxBITMAP_PNG("ITALIC"));
-	Bund = new MappedButton(this, EDITBOX_CHANGE_UNDERLINE, "", _("Podkreślenie"), wxDefaultPosition, wxSize(24, 24));
-	Bund->SetBitmap(wxBITMAP_PNG("UNDER"));
-	Bstrike = new MappedButton(this, EDITBOX_CHANGE_STRIKEOUT, "", _("Przekreślenie"), wxDefaultPosition, wxSize(24, 24));
-	Bstrike->SetBitmap(wxBITMAP_PNG("STRIKE"));
+	Bbold = new MappedButton(this, PutBold, L"", _("Pogrubienie"), wxDefaultPosition, wxSize(24, 24));
+	Bbold->SetBitmap(wxBITMAP_PNG(L"BOLD"));
+	Bital = new MappedButton(this, PutItalic, L"", _("Pochylenie"), wxDefaultPosition, wxSize(24, 24));
+	Bital->SetBitmap(wxBITMAP_PNG(L"ITALIC"));
+	Bund = new MappedButton(this, EDITBOX_CHANGE_UNDERLINE, L"", _("Podkreślenie"), wxDefaultPosition, wxSize(24, 24));
+	Bund->SetBitmap(wxBITMAP_PNG(L"UNDER"));
+	Bstrike = new MappedButton(this, EDITBOX_CHANGE_STRIKEOUT, L"", _("Przekreślenie"), wxDefaultPosition, wxSize(24, 24));
+	Bstrike->SetBitmap(wxBITMAP_PNG(L"STRIKE"));
 	Ban = new KaiChoice(this, ID_AN, wxDefaultPosition, wxSize(48, 24), ans);
 	Ban->Select(1);
 
@@ -256,21 +256,21 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	TextEditOrig->Hide();
 	Comment = new KaiCheckBox(this, ID_COMMENT, _("Komentarz"), wxDefaultPosition, wxSize(82, -1));
 	Comment->SetValue(false);
-	LayerEdit = new NumCtrl(this, 16668, "", -10000000, 10000000, true, wxDefaultPosition, wxSize(50, -1));
-	StartEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(82, -1), wxTE_CENTER);
-	EndEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(82, -1), wxTE_CENTRE);
-	DurEdit = new TimeCtrl(this, 16668, "", wxDefaultPosition, wxSize(82, -1), wxTE_CENTRE);
+	LayerEdit = new NumCtrl(this, 16668, L"", -10000000, 10000000, true, wxDefaultPosition, wxSize(50, -1));
+	StartEdit = new TimeCtrl(this, 16668, L"", wxDefaultPosition, wxSize(82, -1), wxTE_CENTER);
+	EndEdit = new TimeCtrl(this, 16668, L"", wxDefaultPosition, wxSize(82, -1), wxTE_CENTRE);
+	DurEdit = new TimeCtrl(this, 16668, L"", wxDefaultPosition, wxSize(82, -1), wxTE_CENTRE);
 	wxArrayString styles;
-	styles.Add("Default");
+	styles.Add(L"Default");
 	StyleChoice = new KaiChoice(this, ID_STYLE, wxDefaultPosition, wxSize(100, -1), styles);//wxSize(145,-1)
 	StyleEdit = new MappedButton(this, 19989, _("Edytuj"), EDITBOX_HOTKEY, wxDefaultPosition, wxSize(45, -1));
 	//druga linia
 	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
-	valid.SetCharExcludes(",");
+	valid.SetCharExcludes(L",");
 	ActorEdit = new DescTxtCtrl(this, 16658, wxSize(90, -1), _("Aktor"), valid);
-	MarginLEdit = new NumCtrl(this, 16668, "", 0, 9999, true, wxDefaultPosition, wxSize(42, -1), wxTE_CENTRE);
-	MarginREdit = new NumCtrl(this, 16668, "", 0, 9999, true, wxDefaultPosition, wxSize(42, -1), wxTE_CENTRE);
-	MarginVEdit = new NumCtrl(this, 16668, "", 0, 9999, true, wxDefaultPosition, wxSize(42, -1), wxTE_CENTRE);
+	MarginLEdit = new NumCtrl(this, 16668, L"", 0, 9999, true, wxDefaultPosition, wxSize(42, -1), wxTE_CENTRE);
+	MarginREdit = new NumCtrl(this, 16668, L"", 0, 9999, true, wxDefaultPosition, wxSize(42, -1), wxTE_CENTRE);
+	MarginVEdit = new NumCtrl(this, 16668, L"", 0, 9999, true, wxDefaultPosition, wxSize(42, -1), wxTE_CENTRE);
 	EffectEdit = new DescTxtCtrl(this, 16658, wxSize(90, -1), _("Efekt"), valid);
 
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
@@ -396,7 +396,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	MarginREdit->SetInt(line->MarginR);
 	MarginVEdit->SetInt(line->MarginV);
 	EffectEdit->ChangeValue(line->Effect);
-	TextEdit->SetState((!line->IsComment) ? 0 : (line->Effect->StartsWith("template")) ? 2 : (line->Effect->StartsWith("code")) ? 3 : 1);
+	TextEdit->SetState((!line->IsComment) ? 0 : (line->Effect->StartsWith(L"template")) ? 2 : (line->Effect->StartsWith(L"code")) ? 3 : 1);
 	SetTextWithTags();
 
 	if (DoubtfulTL->IsShown()){
@@ -406,7 +406,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	if (setaudio && ABox && ABox->IsShown()){ ABox->audioDisplay->SetDialogue(line, currentLine); }
 
 	//ustawia znaki na sekundę i ilość linii
-	UpdateChars((TextEditOrig->IsShown() && line->TextTl != "") ? line->TextTl : line->Text);
+	UpdateChars((TextEditOrig->IsShown() && line->TextTl != L"") ? line->TextTl : line->Text);
 
 done:
 	VideoCtrl *vb = tab->Video;
@@ -454,14 +454,14 @@ void EditBox::UpdateChars(const wxString &text)
 {
 
 	if (line->IsComment){
-		Chars->SetLabelText("");
-		Chtime->SetLabelText("");
+		Chars->SetLabelText(L"");
+		Chtime->SetLabelText(L"");
 	}
 	else{
 		wxString result;
 		bool isbad = false;
 		int ilzn = grid->CalcChars(text, &result, &isbad);
-		Chars->SetLabelText(_("Łamania: ") + result + "43");
+		Chars->SetLabelText(_("Łamania: ") + result + L"43");
 		Chars->SetForegroundColour((isbad) ? WindowWarningElements : WindowText);
 		int chtime = ilzn / ((line->End.mstime - line->Start.mstime) / 1000.0f);
 		if (chtime < 0 || chtime>999){ chtime = 999; }
@@ -522,7 +522,7 @@ void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool vis
 	}
 
 	wxString checkstyle = StyleChoice->GetString(StyleChoice->GetSelection());
-	if (line->Style != checkstyle && checkstyle != "" || StyleChoice->HasFocus()){
+	if (line->Style != checkstyle && checkstyle != L"" || StyleChoice->HasFocus()){
 		line->Style = checkstyle;
 		cellm |= STYLE;
 	}
@@ -588,12 +588,12 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 		long whre;
 		wxString txt = TextEdit->GetValue();
 		TextEditor *Editor = TextEdit;
-		if (grid->hasTLMode && txt == ""){
+		if (grid->hasTLMode && txt == L""){
 			txt = TextEditOrig->GetValue();
 			Editor = TextEditOrig;
 		}
 		if (!InBracket){
-			txt.insert(Placed.x, "{" + text + "}");
+			txt.insert(Placed.x, L"{" + text + L"}");
 			whre = cursorpos + text.Len() + 2;
 		}
 		else{
@@ -604,7 +604,7 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 			else{ whre = (focus) ? cursorpos + 1 + text.Len() : Placed.x; }
 			txt.insert(Placed.x, text);
 		}
-		if (text == ""){ txt.Replace("{}", ""); }
+		if (text == L""){ txt.Replace(L"{}", L""); }
 		if (texttoPutin){
 			*texttoPutin = txt;
 			return;
@@ -619,22 +619,22 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 		grid->file->GetSelectionsAsKeys(sels);
 		for (size_t i = 0; i < sels.size(); i++){
 			Dialogue *dialc = grid->CopyDialogueByKey(sels[i]);
-			wxString txt = (grid->hasTLMode && dialc->TextTl != "") ? dialc->TextTl : dialc->Text;
+			wxString txt = (grid->hasTLMode && dialc->TextTl != L"") ? dialc->TextTl : dialc->Text;
 			FindValue(lasttag, &tmp, txt);
 
-			if (InBracket && txt != ""){
+			if (InBracket && txt != L""){
 				if (Placed.x < Placed.y){ txt.erase(txt.begin() + Placed.x, txt.begin() + Placed.y + 1); }
 				txt.insert(Placed.x, text);
-				if (grid->hasTLMode && dialc->TextTl != ""){
+				if (grid->hasTLMode && dialc->TextTl != L""){
 					dialc->TextTl = txt;
 				}
 				else{ dialc->Text = txt; }
 			}
 			else{
-				if (grid->hasTLMode && dialc->TextTl != ""){
-					dialc->TextTl->Prepend("{" + text + "}");
+				if (grid->hasTLMode && dialc->TextTl != L""){
+					dialc->TextTl->Prepend(L"{" + text + L"}");
 				}
-				else{ dialc->Text->Prepend("{" + text + "}"); }
+				else{ dialc->Text->Prepend(L"{" + text + L"}"); }
 			}
 		}
 		grid->SetModified(EDITBOX_MULTILINE_EDITION);
@@ -655,19 +655,19 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 	if (oneline){//zmiany tylko w editboxie
 		if (grid->subsFormat == SRT){
 
-			wxRegEx srttag("\\</?" + text + "\\>", wxRE_ADVANCED | wxRE_ICASE);
+			wxRegEx srttag(L"\\</?" + text + L"\\>", wxRE_ADVANCED | wxRE_ICASE);
 			if (srttag.Matches(txt.SubString(from - 4, from + 4))){
 				srttag.GetMatch(&start, &len, 0);
 				if (len + start >= 4 && start <= 4)
 				{
 					whre = from - 4 + start;
 					txt.Remove(whre, len);
-					txt.insert(whre, "<" + tag + ">");
+					txt.insert(whre, L"<" + tag + L">");
 					whre += 3;
 					match = true;
 				}
 			}
-			if (!match){ txt.insert(from, "<" + tag + ">"); from += 3; to += 3; whre = from; }
+			if (!match){ txt.insert(from, L"<" + tag + L">"); from += 3; to += 3; whre = from; }
 			if (from != to){
 				match = false;
 				if (srttag.Matches(txt.SubString(to - 4, to + 4))){
@@ -675,19 +675,19 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 					if (len + start >= 4 && start <= 4)
 					{
 						txt.Remove(to - 4 + start, len);
-						txt.insert(to - 4 + start, "</" + tag + ">");
+						txt.insert(to - 4 + start, L"</" + tag + L">");
 						whre = to + start;
 						match = true;
 					}
 				}
-				if (!match){ txt.insert(to, "</" + tag + ">"); whre = to + 4; }
+				if (!match){ txt.insert(to, L"</" + tag + L">"); whre = to + 4; }
 			}
 
 		}
 		else if (grid->subsFormat == MDVD){
 
 
-			wxRegEx srttag("\\{" + text + "}", wxRE_ADVANCED | wxRE_ICASE);
+			wxRegEx srttag(L"\\{" + text + L"}", wxRE_ADVANCED | wxRE_ICASE);
 			int wheres = txt.SubString(0, from).Find('|', true);
 			if (wheres == -1){ wheres = 0; }
 			if (srttag.Matches(txt.Mid(wheres))){
@@ -695,11 +695,11 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 				{
 					whre = wheres + start;
 					txt.Remove(whre, len);
-					txt.insert(whre, "{" + tag + "}");
+					txt.insert(whre, L"{" + tag + L"}");
 					match = true;
 				}
 			}
-			if (!match){ txt.insert(wheres, "{" + tag + "}"); }
+			if (!match){ txt.insert(wheres, L"{" + tag + L"}"); }
 
 		}
 
@@ -709,8 +709,8 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 	}
 	else
 	{//zmiany wszystkich zaznaczonych linijek
-		wxString chars = (grid->subsFormat == SRT) ? "<" : "{";
-		wxString chare = (grid->subsFormat == SRT) ? ">" : "}";
+		wxString chars = (grid->subsFormat == SRT) ? L"<" : L"{";
+		wxString chare = (grid->subsFormat == SRT) ? L">" : L"}";
 		wxArrayInt sels;
 		grid->file->GetSelectionsAsKeys(sels);
 		for (size_t i = 0; i < sels.size(); i++)
@@ -721,7 +721,7 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 			if (txt.StartsWith(chars))
 			{
 				wxRegEx rex(chars + tag + chare, wxRE_ADVANCED | wxRE_ICASE);
-				rex.ReplaceAll(&txt, "");
+				rex.ReplaceAll(&txt, L"");
 				dialc->Text = chars + text + chare + txt;
 			}
 			else
@@ -743,25 +743,25 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 	int tmpIter = grid->file->Iter();
 	if (form < SRT){
 
-		if (FindValue("b(0|1)", &tmp)){ if (mstyle->Bold&&tmp == "0"){ mstyle->Bold = false; } else if (!mstyle->Bold&&tmp == "1"){ mstyle->Bold = true; } }
-		if (FindValue("i(0|1)", &tmp)){ if (mstyle->Italic&&tmp == "0"){ mstyle->Italic = false; } else if (!mstyle->Italic&&tmp == "1"){ mstyle->Italic = true; } }
-		if (FindValue("u(0|1)", &tmp)){ if (mstyle->Underline&&tmp == "0"){ mstyle->Underline = false; } else if (!mstyle->Underline&&tmp == "1"){ mstyle->Underline = true; } }
-		if (FindValue("s(0|1)", &tmp)){ if (mstyle->StrikeOut&&tmp == "0"){ mstyle->StrikeOut = false; } else if (!mstyle->StrikeOut&&tmp == "1"){ mstyle->StrikeOut = true; } }
-		if (FindValue("fs([0-9]+)", &tmp)){ mstyle->Fontsize = tmp; }
-		if (FindValue("fn(.*)", &tmp)){ mstyle->Fontname = tmp; }
+		if (FindValue(L"b(0|1)", &tmp)){ if (mstyle->Bold&&tmp == L"0"){ mstyle->Bold = false; } else if (!mstyle->Bold&&tmp == L"1"){ mstyle->Bold = true; } }
+		if (FindValue(L"i(0|1)", &tmp)){ if (mstyle->Italic&&tmp == L"0"){ mstyle->Italic = false; } else if (!mstyle->Italic&&tmp == L"1"){ mstyle->Italic = true; } }
+		if (FindValue(L"u(0|1)", &tmp)){ if (mstyle->Underline&&tmp == L"0"){ mstyle->Underline = false; } else if (!mstyle->Underline&&tmp == L"1"){ mstyle->Underline = true; } }
+		if (FindValue(L"s(0|1)", &tmp)){ if (mstyle->StrikeOut&&tmp == L"0"){ mstyle->StrikeOut = false; } else if (!mstyle->StrikeOut&&tmp == L"1"){ mstyle->StrikeOut = true; } }
+		if (FindValue(L"fs([0-9]+)", &tmp)){ mstyle->Fontsize = tmp; }
+		if (FindValue(L"fn(.*)", &tmp)){ mstyle->Fontname = tmp; }
 	}
 	FontDialog *FD = FontDialog::Get(this, mstyle);
 	FD->Bind(FONT_CHANGED, &EditBox::OnFontChange, this, FD->GetId());
 	if (FD->ShowModal() == wxID_OK) {
 		wxString txt = TextEdit->GetValue();
 		TextEditor * Editor = TextEdit;
-		if (grid->hasTLMode && txt == ""){
+		if (grid->hasTLMode && txt == L""){
 			Editor = TextEditOrig;
 			txt = TextEditOrig->GetValue();
 		}
 
 		if (txt[Placed.x] != '}'){
-			int bracketPos = txt.find("}", Placed.x);
+			int bracketPos = txt.find(L"}", Placed.x);
 			if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
 		}
 		Editor->SetSelection(Placed.x, Placed.x);
@@ -791,48 +791,48 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	if (retStyle->Fontname != editedStyle->Fontname)
 	{
 		if (form < SRT){
-			FindValue("fn(.*)", &tmp);
-			PutinText("\\fn" + retStyle->Fontname, false);
+			FindValue(L"fn(.*)", &tmp);
+			PutinText(L"\\fn" + retStyle->Fontname, false);
 		}
-		else{ PutinNonass("F:" + retStyle->Fontname, "f:([^}]*)"); }
+		else{ PutinNonass(L"F:" + retStyle->Fontname, L"f:([^}]*)"); }
 	}
 	if (retStyle->Fontsize != editedStyle->Fontsize)
 	{
 		if (form < SRT){
-			FindValue("fs([0-9]+)", &tmp);
-			PutinText("\\fs" + retStyle->Fontsize, false);
+			FindValue(L"fs([0-9]+)", &tmp);
+			PutinText(L"\\fs" + retStyle->Fontsize, false);
 		}
-		else{ PutinNonass("S:" + retStyle->Fontname, "s:([^}]*)"); }
+		else{ PutinNonass(L"S:" + retStyle->Fontname, L"s:([^}]*)"); }
 	}
 	if (retStyle->Bold != editedStyle->Bold)
 	{
 		if (form < SRT){
-			wxString bld = (retStyle->Bold) ? "1" : "0";
-			FindValue("b(0|1)", &tmp);
-			PutinText("\\b" + bld, false);
+			wxString bld = (retStyle->Bold) ? L"1" : L"0";
+			FindValue(L"b(0|1)", &tmp);
+			PutinText(L"\\b" + bld, false);
 		}
-		else{ PutinNonass("y:b", (retStyle->Bold) ? "Y:b" : ""); }
+		else{ PutinNonass(L"y:b", (retStyle->Bold) ? L"Y:b" : L""); }
 	}
 	if (retStyle->Italic != editedStyle->Italic)
 	{
 		if (form < SRT){
-			wxString ital = (retStyle->Italic) ? "1" : "0";
-			FindValue("i(0|1)", &tmp);
-			PutinText("\\i" + ital, false);
+			wxString ital = (retStyle->Italic) ? L"1" : L"0";
+			FindValue(L"i(0|1)", &tmp);
+			PutinText(L"\\i" + ital, false);
 		}
-		else{ PutinNonass("y:i", (retStyle->Italic) ? "Y:i" : ""); }
+		else{ PutinNonass(L"y:i", (retStyle->Italic) ? L"Y:i" : L""); }
 	}
 	if (retStyle->Underline != editedStyle->Underline)
 	{
-		FindValue("u(0|1)", &tmp);
-		wxString under = (retStyle->Underline) ? "1" : "0";
-		PutinText("\\u" + under, false);
+		FindValue(L"u(0|1)", &tmp);
+		wxString under = (retStyle->Underline) ? L"1" : L"0";
+		PutinText(L"\\u" + under, false);
 	}
 	if (retStyle->StrikeOut != editedStyle->StrikeOut)
 	{
-		FindValue("s(0|1)", &tmp);
-		wxString strike = (retStyle->StrikeOut) ? "1" : "0";
-		PutinText("\\s" + strike, false);
+		FindValue(L"s(0|1)", &tmp);
+		wxString strike = (retStyle->StrikeOut) ? L"1" : L"0";
+		PutinText(L"\\s" + strike, false);
 	}
 }
 
@@ -845,12 +845,12 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 	wxString tmptext = TextEdit->GetValue();
 	TextEditor *Editor = TextEdit;
 	int tmpIter = grid->file->Iter();
-	if (grid->hasTLMode && tmptext == ""){
+	if (grid->hasTLMode && tmptext == L""){
 		tmptext = TextEditOrig->GetValue();
 		Editor = TextEditOrig;
 	}
 
-	AssColor actualColor = AssColor(wxString("#FFFFFF"));
+	AssColor actualColor = AssColor(wxString(L"#FFFFFF"));
 	GetColor(&actualColor, numColor);
 
 	if (leftClick){
@@ -867,7 +867,7 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 			ColourDialog->GetColor();
 			wxString txt = Editor->GetValue();
 			if (txt[Placed.x] != '}'){
-				int bracketPos = txt.find("}", Placed.x);
+				int bracketPos = txt.find(L"}", Placed.x);
 				if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
 			}
 			Editor->SetSelection(Placed.x, Placed.x);
@@ -891,7 +891,7 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		if (scp.PickColor(&ret)){
 			wxString txt = Editor->GetValue();
 			if (txt[Placed.x] != '}'){
-				int bracketPos = txt.find("}", Placed.x);
+				int bracketPos = txt.find(L"}", Placed.x);
 				if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
 			}
 			Editor->SetSelection(Placed.x, Placed.x);
@@ -909,16 +909,16 @@ void EditBox::GetColor(AssColor *actualColor, int numColor)
 		wxString colorNumber;
 		colorNumber << numColor;
 		wxString retTag;
-		wxString tag = (numColor == 1) ? "?c&(.*)" : "c&(.*)";
-		/*wxString taga = (numColor == 1) ? "?a&(.*)" : "a&(.*)";
-		wxString tagal = "alpha(.*)";*/
+		wxString tag = (numColor == 1) ? L"?c&(.*)" : L"c&(.*)";
+		/*wxString taga = (numColor == 1) ? L"?a&(.*)" : L"a&(.*)";
+		wxString tagal = L"alpha(.*)";*/
 		Styles *style = grid->GetStyle(0, line->Style);
 		*actualColor = (numColor == 1) ? style->PrimaryColour :
 			(numColor == 2) ? style->SecondaryColour :
 			(numColor == 3) ? style->OutlineColour :
 			style->BackColour;
 		if (FindValue(colorNumber + tag, &retTag)){
-			actualColor->Copy(AssColor("&" + retTag));
+			actualColor->Copy(AssColor(L"&" + retTag));
 		}
 		//when knowing about alpha tag will be needed You must change it like in method OnColorChange
 		if (FindValue(colorNumber + L"a&|alpha(.*)", &retTag)){ actualColor->SetAlphaString(retTag); }
@@ -946,7 +946,7 @@ void EditBox::OnCommit(wxCommandEvent& event)
 	}
 	Send(EDITBOX_LINE_EDITION, false, false, Visual != 0);
 	if (event.GetId() == ID_COMMENT){
-		TextEdit->SetState((!line->IsComment) ? 0 : (line->Effect->StartsWith("template")) ? 2 : (line->Effect->StartsWith("code")) ? 3 : 1, true);
+		TextEdit->SetState((!line->IsComment) ? 0 : (line->Effect->StartsWith(L"template")) ? 2 : (line->Effect->StartsWith(L"code")) ? 3 : 1, true);
 	}
 	if (Visual){
 		pan->Video->SetVisual(false, true);
@@ -973,63 +973,63 @@ void EditBox::OnBoldClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
 		Styles *mstyle = grid->GetStyle(0, line->Style);
-		wxString wart = (mstyle->Bold) ? "0" : "1";
+		wxString wart = (mstyle->Bold) ? L"0" : L"1";
 		bool issel = true;
-		if (FindValue("b(0|1)", &wart, "", &issel)){ wart = (wart == "1") ? "0" : "1"; }
-		PutinText("\\b" + wart);
+		if (FindValue(L"b(0|1)", &wart, L"", &issel)){ wart = (wart == L"1") ? L"0" : L"1"; }
+		PutinText(L"\\b" + wart);
 		if (!issel)return;
-		wart = (mstyle->Bold) ? "1" : "0";
-		if (FindValue("b(0|1)", &wart)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
-		PutinText("\\b" + wart);
+		wart = (mstyle->Bold) ? L"1" : L"0";
+		if (FindValue(L"b(0|1)", &wart)){ if (wart == L"1"){ wart = L"0"; } else{ wart = L"1"; } }
+		PutinText(L"\\b" + wart);
 	}
-	else if (grid->subsFormat == SRT){ PutinNonass("b", "b"); }
-	else { PutinNonass("y:b", "Y:b"); }
+	else if (grid->subsFormat == SRT){ PutinNonass(L"b", L"b"); }
+	else { PutinNonass(L"y:b", L"Y:b"); }
 }
 
 void EditBox::OnItalicClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
 		Styles *mstyle = grid->GetStyle(0, line->Style);
-		wxString wart = (mstyle->Italic) ? "0" : "1";
+		wxString wart = (mstyle->Italic) ? L"0" : L"1";
 		bool issel = true;
-		if (FindValue("i(0|1)", &wart, "", &issel)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
-		PutinText("\\i" + wart);
+		if (FindValue(L"i(0|1)", &wart, L"", &issel)){ if (wart == L"1"){ wart = L"0"; } else{ wart = L"1"; } }
+		PutinText(L"\\i" + wart);
 		if (!issel)return;
-		wart = (mstyle->Italic) ? "1" : "0";
-		if (FindValue("i(0|1)", &wart)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
-		PutinText("\\i" + wart);
+		wart = (mstyle->Italic) ? L"1" : L"0";
+		if (FindValue(L"i(0|1)", &wart)){ if (wart == L"1"){ wart = L"0"; } else{ wart = L"1"; } }
+		PutinText(L"\\i" + wart);
 	}
-	else if (grid->subsFormat == SRT){ PutinNonass("i", "i"); }
-	else if (grid->subsFormat == MDVD){ PutinNonass("y:i", "Y:i"); }
-	else{ PutinNonass("/", "/"); }
+	else if (grid->subsFormat == SRT){ PutinNonass(L"i", L"i"); }
+	else if (grid->subsFormat == MDVD){ PutinNonass(L"y:i", L"Y:i"); }
+	else{ PutinNonass(L"/", L"/"); }
 }
 
 void EditBox::OnUnderlineClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
 		Styles *mstyle = grid->GetStyle(0, line->Style);
-		wxString wart = (mstyle->Underline) ? "0" : "1";
+		wxString wart = (mstyle->Underline) ? L"0" : L"1";
 		bool issel = true;
-		if (FindValue("u(0|1)", &wart, "", &issel)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
-		PutinText("\\u" + wart);
+		if (FindValue(L"u(0|1)", &wart, L"", &issel)){ if (wart == L"1"){ wart = L"0"; } else{ wart = L"1"; } }
+		PutinText(L"\\u" + wart);
 		if (!issel)return;
-		wart = (mstyle->Underline) ? "1" : "0";
-		if (FindValue("u(0|1)", &wart)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
-		PutinText("\\u" + wart);
+		wart = (mstyle->Underline) ? L"1" : L"0";
+		if (FindValue(L"u(0|1)", &wart)){ if (wart == L"1"){ wart = L"0"; } else{ wart = L"1"; } }
+		PutinText(L"\\u" + wart);
 	}
-	else if (grid->subsFormat == SRT){ PutinNonass("u", "u"); }
+	else if (grid->subsFormat == SRT){ PutinNonass(L"u", L"u"); }
 }
 
 void EditBox::OnStrikeClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
 		Styles *mstyle = grid->GetStyle(0, line->Style);
-		wxString wart = (mstyle->StrikeOut) ? "0" : "1";
+		wxString wart = (mstyle->StrikeOut) ? L"0" : L"1";
 		bool issel = true;
-		if (FindValue("s(0|1)", &wart, "", &issel)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
-		PutinText("\\s" + wart);
+		if (FindValue(L"s(0|1)", &wart, L"", &issel)){ if (wart == L"1"){ wart = L"0"; } else{ wart = L"1"; } }
+		PutinText(L"\\s" + wart);
 		if (!issel)return;
-		wart = (mstyle->StrikeOut) ? "0" : "1";
+		wart = (mstyle->StrikeOut) ? L"0" : L"1";
 		if (FindValue("s(0|1)", &wart)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
 		PutinText("\\s" + wart);
 	}
@@ -1504,7 +1504,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	}
 	if (durFocus || startEndFocus){
 		if (ABox && ABox->IsShown()){ ABox->audioDisplay->SetDialogue(line, currentLine); }
-		UpdateChars((TextEditOrig->IsShown() && line->TextTl != "") ? line->TextTl : line->Text);
+		UpdateChars((TextEditOrig->IsShown() && line->TextTl != L"") ? line->TextTl : line->Text);
 	}
 
 	int saveAfter = Options.GetInt(GridSaveAfterCharacterCount);
@@ -1557,20 +1557,20 @@ void EditBox::OnColorChange(ColorEvent& event)
 		wxString colorNumber;
 		colorNumber << intColorNumber;
 		wxString colorString;
-		wxString tag = (colorNumber == "1") ? "?c&(.*)&" : "c&(.*)&";
+		wxString tag = (colorNumber == L"1") ? L"?c&(.*)&" : L"c&(.*)&";
 		Styles *style = grid->GetStyle(0, line->Style);
-		AssColor col = (colorNumber == "1") ? style->PrimaryColour :
-			(colorNumber == "2") ? style->SecondaryColour :
-			(colorNumber == "3") ? style->OutlineColour :
+		AssColor col = (colorNumber == L"1") ? style->PrimaryColour :
+			(colorNumber == L"2") ? style->SecondaryColour :
+			(colorNumber == L"3") ? style->OutlineColour :
 			style->BackColour;
 
 		FindValue(colorNumber + tag, &colorString);
 		if (colorString != choosenColorAsString){
-			PutinText("\\" + colorNumber + "c" + choosenColorAsString + "&", false);
+			PutinText(L"\\" + colorNumber + L"c" + choosenColorAsString + L"&", false);
 		}
 
 		if (FindValue(L"(" + colorNumber + L"a&|alpha.*)", &colorString)){
-			if (colorString.StartsWith(colorNumber + "a&"))
+			if (colorString.StartsWith(colorNumber + L"a&"))
 				colorString = colorString.Mid(2);
 			else{
 				colorString = colorString.Mid(5);
@@ -1581,11 +1581,11 @@ void EditBox::OnColorChange(ColorEvent& event)
 		}
 
 		if (col.a != choosenColor.a){
-			PutinText("\\" + colorNumber + wxString::Format("a&H%02X&", choosenColor.a), false);
+			PutinText(L"\\" + colorNumber + wxString::Format(L"a&H%02X&", choosenColor.a), false);
 		}
 
 	}
-	else{ PutinNonass("C:" + choosenColorAsString.Mid(2), "C:([^}]*)"); }
+	else{ PutinNonass(L"C:" + choosenColorAsString.Mid(2), L"C:([^}]*)"); }
 	//OnEdit(wxCommandEvent());
 }
 
@@ -1596,10 +1596,10 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 	if (tag.IsEmpty()){ wxBell(); return; }
 	type = type.BeforeFirst('\f');
 
-	if (type != "2"){
-		//if(type=="1"){TextEdit->SetSelection(0,0);}
-		if (!tag.StartsWith("\\")){ tag.Prepend("\\"); }
-		wxString delims = "1234567890-&()[]";
+	if (type != L"2"){
+		//if(type==L"1"){TextEdit->SetSelection(0,0);}
+		if (!tag.StartsWith(L"\\")){ tag.Prepend(L"\\"); }
+		wxString delims = L"1234567890-&()[]";
 		bool found = false;
 		wxString findtag;
 		for (int i = 2; i < (int)tag.Len(); i++)
@@ -1615,8 +1615,8 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		wxString result;
 		//fn and r do not have number value we have to treat it special \r works good only when return itself as a value
 		//we did not need this value at all.
-		wxString pattern = (findtag.StartsWith("fn")) ? L"fn(.*)" : (findtag.StartsWith("r")) ? L"(r.*)" : findtag + "([0-9\\(&-].*)";
-		FindValue(pattern, &result, "", 0, type == "1");
+		wxString pattern = (findtag.StartsWith(L"fn")) ? L"fn(.*)" : (findtag.StartsWith(L"r")) ? L"(r.*)" : findtag + L"([0-9\\(&-].*)";
+		FindValue(pattern, &result, L"", 0, type == L"1");
 
 		PutinText(tag);
 	}
@@ -1626,7 +1626,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		long from, to;
 		wxString txt = TextEdit->GetValue();
 		TextEditor *Editor = TextEdit;
-		if (grid->hasTLMode && txt == ""){ txt = TextEditOrig->GetValue(); Editor = TextEditOrig; }
+		if (grid->hasTLMode && txt == L""){ txt = TextEditOrig->GetValue(); Editor = TextEditOrig; }
 		Editor->GetSelection(&from, &to);
 		if (oneline){
 			if (from != to){
@@ -1649,7 +1649,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 			for (size_t i = 0; i < sels.size(); i++){
 				long cpyfrom = from;
 				Dialogue *dialc = grid->CopyDialogueByKey(sels[i]);
-				wxString &txt = dialc->Text.CheckTlRef(dialc->TextTl, grid->hasTLMode && dialc->TextTl != "");
+				wxString &txt = dialc->Text.CheckTlRef(dialc->TextTl, grid->hasTLMode && dialc->TextTl != L"");
 				int klamras = txt.Mid(from).Find('{');
 				int klamrae = txt.Mid(from).Find('}');
 
@@ -1678,7 +1678,7 @@ public:
 		DialogSizer *sizer = new DialogSizer(wxVERTICAL);
 		wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 		numTagButtons = new NumCtrl(this, -1, Options.GetString(EditboxTagButtons), 0, 10, true);
-		MappedButton *ok = new MappedButton(this, wxID_OK, "OK");
+		MappedButton *ok = new MappedButton(this, wxID_OK, L"OK");
 		MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 		buttonSizer->Add(ok, 1, wxEXPAND | wxALL, 4);
 		buttonSizer->Add(cancel, 1, wxEXPAND | wxALL, 4);
@@ -1722,9 +1722,9 @@ void EditBox::OnEditTag(wxCommandEvent &event)
 			}
 		}
 		wxString svtag = tb->tag;
-		Options.SetString((CONFIG)(id - EDITBOX_TAG_BUTTON1 + EditboxTagButton1), svtag << "\f" << tb->type << "\f" << tb->name);
+		Options.SetString((CONFIG)(id - EDITBOX_TAG_BUTTON1 + EditboxTagButton1), svtag << L"\f" << tb->type << L"\f" << tb->name);
 		Options.SaveOptions(true, false);
-		if (tb->tag != ""){ tb->SetToolTip(tb->tag); }
+		if (tb->tag != L""){ tb->SetToolTip(tb->tag); }
 	}
 
 }
@@ -1738,18 +1738,18 @@ void EditBox::OnAutoMoveTags(wxCommandEvent& event)
 
 void EditBox::SetTextWithTags(bool RefreshVideo)
 {
-	if (grid->hasTLMode && line->TextTl == "" && AutoMoveTags->GetValue()){
+	if (grid->hasTLMode && line->TextTl == L"" && AutoMoveTags->GetValue()){
 		wxString Text = line->Text;
-		Text.Replace("}{", "");
+		Text.Replace(L"}{", L"");
 		int getr = Text.Find('}');
 		if (getr > -1){
-			int brackets = Text.find("{");
+			int brackets = Text.find(L"{");
 			wxString restText;
 			if (Text.Len() > (size_t)getr + 1){ restText = Text.Mid(getr + 1); }
 			int pos = 0;
 			wxString txtOrg;
 			wxString txtTl;
-			if (Text.StartsWith("{")){
+			if (Text.StartsWith(L"{")){
 				txtTl = Text.substr(0, getr + 1);
 				pos = txtTl.Len();
 			}
@@ -1762,7 +1762,7 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 			}
 
 			while (1){
-				brackets = restText.find("{");
+				brackets = restText.find(L"{");
 				getr = restText.Find('}');
 				if (brackets != -1 && getr != -1){
 					txtOrg += restText.substr(0, brackets);
@@ -1914,7 +1914,7 @@ void EditBox::FindNextUnTranslated(wxCommandEvent& event)
 SeekUntranslated:
 	for (int i = CurrentUntranslated; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDialogue(i);
-		if (dial->TextTl == ""/* && !dial->IsComment*/){
+		if (dial->TextTl == L""/* && !dial->IsComment*/){
 			SetLine(i);
 			grid->SelectRow(i);
 			grid->ScrollTo(i, true);
@@ -1937,12 +1937,12 @@ void EditBox::SetTagButtons()
 		for (int i = 0; i < numTagButtons; i++)
 		{
 			wxArrayString tagOption;
-			Options.GetTable((CONFIG)(i + EditboxTagButton1), tagOption, "\f", wxTOKEN_RET_EMPTY_ALL);
+			Options.GetTable((CONFIG)(i + EditboxTagButton1), tagOption, L"\f", wxTOKEN_RET_EMPTY_ALL);
 			wxString name;
 			wxString tag;
 			int type = 0;
 			if (tagOption.size() > 2){ name = tagOption[2]; }
-			else{ name = wxString::Format("T%i", i + 1); }
+			else{ name = wxString::Format(L"T%i", i + 1); }
 			if (tagOption.size() > 1){
 				type = wxAtoi(tagOption[1]);
 			}

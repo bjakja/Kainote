@@ -78,7 +78,7 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 				}
 			}
 			if (!found && item->check){ filterStyles.Add(name); }
-			Options.SetTable(GridFilterStyles, filterStyles, ",");
+			Options.SetTable(GridFilterStyles, filterStyles, L",");
 			if (filterStyles.size() > 0 && !(filterBy & FILTER_BY_STYLES)){
 				Options.SetInt(GridFilterBy, filterBy | FILTER_BY_STYLES);
 				Menu *parentMenu = NULL;
@@ -143,10 +143,10 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	Menu *stylesMenu = new Menu();
 	std::vector<Styles*> &styles = file->GetSubs()->styles;
 	wxArrayString optionsFilterStyles;
-	Options.GetTable(GridFilterStyles, optionsFilterStyles, ",");
+	Options.GetTable(GridFilterStyles, optionsFilterStyles, L",");
 	filterStyles.clear();
 	for (int i = 0; i < StylesSize(); i++){
-		MenuItem * styleItem = stylesMenu->Append(4448, styles[i]->Name, "", true, NULL, NULL, ITEM_CHECK);
+		MenuItem * styleItem = stylesMenu->Append(4448, styles[i]->Name, L"", true, NULL, NULL, ITEM_CHECK);
 		if (optionsFilterStyles.Index(styles[i]->Name) != -1){ styleItem->Check(); filterStyles.Add(styles[i]->Name); }
 	}
 	//filter submenu
@@ -215,7 +215,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 
 	if (Modifiers == wxMOD_SHIFT){
 		if (id <= 5000){ goto done; }
-		Hkeys.OnMapHkey(id, "", this, GRID_HOTKEY);
+		Hkeys.OnMapHkey(id, L"", this, GRID_HOTKEY);
 		goto done;
 	}
 	OnAccelerator(wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, id));
@@ -261,8 +261,8 @@ void SubsGrid::OnInsertBefore()
 	SaveSelections(true);
 	int rw = currentLine;
 	Dialogue *dialog = CopyDialogue(rw, false);
-	dialog->Text = "";
-	dialog->TextTl = "";
+	dialog->Text = L"";
+	dialog->TextTl = L"";
 	dialog->End = dialog->Start;
 	if (rw > 0 && GetDialogue(rw - 1)->End > dialog->Start){
 		dialog->Start = GetDialogue(rw - 1)->End;
@@ -277,8 +277,8 @@ void SubsGrid::OnInsertAfter()
 	SaveSelections(true);
 	int rw = currentLine;
 	Dialogue *dialog = CopyDialogue(rw, false);
-	dialog->Text = "";
-	dialog->TextTl = "";
+	dialog->Text = L"";
+	dialog->TextTl = L"";
 	dialog->Start = dialog->End;
 	if (rw<GetCount() - 1 && GetDialogue(rw + 1)->End > dialog->Start){
 		dialog->End = GetDialogue(rw + 1)->Start;
@@ -325,7 +325,7 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 		selections.Clear();
 		selections.Add(currentLine - 1);
 		selections.Add(currentLine);
-		en1 = " ";
+		en1 = L" ";
 	}
 	else if (idd == JoinWithNext){
 		int sizegrid = GetCount();
@@ -333,9 +333,9 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 		selections.Clear();
 		selections.Add(currentLine);
 		selections.Add(currentLine + 1);
-		en1 = " ";
+		en1 = L" ";
 	}
-	else{ en1 = "\\N"; }
+	else{ en1 = L"\\N"; }
 
 
 	Dialogue *dialc = file->CopyDialogue(selections[0]);
@@ -343,14 +343,14 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	int start = INT_MAX, end = 0;
 	for (size_t i = 0; i < selections.size(); i++)
 	{
-		wxString en = (i == 0) ? "" : en1;
+		wxString en = (i == 0) ? L"" : en1;
 		Dialogue *dial = GetDialogue(selections[i]);
 		if (dial->Start.mstime < start){ start = dial->Start.mstime; }
 		if (dial->End.mstime > end){ end = dial->End.mstime; }
-		if (ntext == ""){ ntext = dial->Text; }
-		else if (dial->Text != ""){ ntext << en << dial->Text; }
-		if (ntltext == ""){ ntltext = dial->TextTl; }
-		else if (dial->TextTl != ""){ ntltext << en << dial->TextTl; }
+		if (ntext == L""){ ntext = dial->Text; }
+		else if (dial->Text != L""){ ntext << en << dial->Text; }
+		if (ntltext == L""){ ntltext = dial->TextTl; }
+		else if (dial->TextTl != L""){ ntltext << en << dial->TextTl; }
 	}
 
 	DeleteRow(selections[1], selections[selections.size() - 1] - selections[1] + 1);
@@ -433,9 +433,9 @@ void SubsGrid::OnPaste(int id)
 			whatpaste = data.GetText();
 		}
 		wxTheClipboard->Close();
-		if (whatpaste == ""){ Thaw(); return; }
+		if (whatpaste == L""){ Thaw(); return; }
 	}
-	wxStringTokenizer wpaste(whatpaste, "\n", wxTOKEN_STRTOK);
+	wxStringTokenizer wpaste(whatpaste, L"\n", wxTOKEN_STRTOK);
 	int cttkns = wpaste.CountTokens();
 	int rws = (id == PasteCollumns) ? 0 : row;
 	std::vector<Dialogue*> tmpdial;
@@ -452,7 +452,7 @@ void SubsGrid::OnPaste(int id)
 			while (wpaste.HasMoreTokens()){
 				tmptoken = wpaste.NextToken().Trim(false).Trim();
 				if (IsNumber(tmptoken)){ break; }
-				token += "\r\n" + tmptoken;
+				token += L"\r\n" + tmptoken;
 			}
 
 		}
@@ -532,13 +532,13 @@ void SubsGrid::CopyRows(int id)
 		if (id != CopyCollumns){
 			//tłumaczenie ma pierwszeństwo w kopiowaniu
 			if (subsFormat == SRT)
-				whatcopy << (selections[i] + 1) << "\r\n";
+				whatcopy << (selections[i] + 1) << L"\r\n";
 
 			Dialogue *dial = GetDialogue(selections[i]);
-			dial->GetRaw(&whatcopy, hasTLMode && dial->TextTl != "");
+			dial->GetRaw(&whatcopy, hasTLMode && dial->TextTl != L"");
 		}
 		else{
-			whatcopy << GetDialogue(selections[i])->GetCols(cols, hasTLMode && GetDialogue(selections[i])->TextTl != "");
+			whatcopy << GetDialogue(selections[i])->GetCols(cols, hasTLMode && GetDialogue(selections[i])->TextTl != L"");
 		}
 	}
 	if (wxTheClipboard->Open())
@@ -556,8 +556,8 @@ void SubsGrid::OnInsertBeforeVideo(bool frameTime)
 	file->EraseSelection(rw);
 	Dialogue *dialog = CopyDialogue(rw, false);
 	if (!frameTime){
-		dialog->Text = "";
-		dialog->TextTl = "";
+		dialog->Text = L"";
+		dialog->TextTl = L"";
 	}
 	int time = Kai->GetTab()->Video->GetFrameTime();
 	dialog->Start.NewTime(time);
@@ -573,8 +573,8 @@ void SubsGrid::OnInsertAfterVideo(bool frameTime)
 	file->EraseSelection(rw);
 	Dialogue *dialog = CopyDialogue(rw, false);
 	if (!frameTime){
-		dialog->Text = "";
-		dialog->TextTl = "";
+		dialog->Text = L"";
+		dialog->TextTl = L"";
 	}
 	int time = Kai->GetTab()->Video->GetFrameTime();
 	dialog->Start.NewTime(time);
@@ -634,8 +634,8 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	case GRID_FILTER:
 	case FilterByNothing:
 		Filter(id); break;
-	case PasteTranslation: if (subsFormat < SRT && ((TabPanel*)GetParent())->SubsPath != ""){ OnPasteTextTl(); } break;
-	case SubsFromMKV: if (Kai->GetTab()->VideoName.EndsWith(".mkv")){ OnMkvSubs(event); } break;
+	case PasteTranslation: if (subsFormat < SRT && ((TabPanel*)GetParent())->SubsPath != L""){ OnPasteTextTl(); } break;
+	case SubsFromMKV: if (Kai->GetTab()->VideoName.EndsWith(L".mkv")){ OnMkvSubs(event); } break;
 	case NewFPS: OnSetNewFPS(); break;
 	case ShowPreview:
 		if (Notebook::GetTabs()->Size()>1 && !preview)
@@ -703,7 +703,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 
 void SubsGrid::OnPasteTextTl()
 {
-	wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"), Kai->GetTab()->SubsPath.BeforeLast('\\'), "", _("Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"), wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "wxFileDialog");
+	wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"), Kai->GetTab()->SubsPath.BeforeLast('\\'), L"", _("Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"), wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, L"wxFileDialog");
 	if (FileDialog1->ShowModal() == wxID_OK){
 		OpenWrite op;
 		wxString pathh = FileDialog1->GetPath();
@@ -714,16 +714,16 @@ void SubsGrid::OnPasteTextTl()
 
 		//for(int i=0;i<GetCount();i++){file->subs.dials[i]->spells.Clear();}
 
-		if (ext == "srt"){
+		if (ext == L"srt"){
 			//wxString dbg;
-			wxStringTokenizer tokenizer(txt, "\n", wxTOKEN_STRTOK);
+			wxStringTokenizer tokenizer(txt, L"\n", wxTOKEN_STRTOK);
 			tokenizer.GetNextToken();
 			wxString text1;
 			while (tokenizer.HasMoreTokens())
 			{
 				wxString text = tokenizer.GetNextToken().Trim();
 				if (IsNumber(text)){
-					if (text1 != ""){
+					if (text1 != L""){
 						Dialogue diall = Dialogue(text1.Trim());
 						if (iline < GetCount()){
 							diall.Convert(subsFormat);
@@ -733,25 +733,25 @@ void SubsGrid::OnPasteTextTl()
 							diall.Convert(subsFormat);
 							diall.Start.NewTime(0);
 							diall.End.NewTime(0);
-							diall.Style = GetSInfo("TLMode Style");
+							diall.Style = GetSInfo(L"TLMode Style");
 							diall.TextTl = diall.Text;
-							diall.Text = "";
+							diall.Text = L"";
 							AddLine(diall.Copy());
 						}
-						iline++; text1 = "";
+						iline++; text1 = L"";
 					}
 				}
-				else{ text1 << text << "\r\n"; }
+				else{ text1 << text << L"\r\n"; }
 
 			}
 		}
 		else{
 
-			wxStringTokenizer tokenizer(txt, "\n", wxTOKEN_STRTOK);
+			wxStringTokenizer tokenizer(txt, L"\n", wxTOKEN_STRTOK);
 			while (tokenizer.HasMoreTokens())
 			{
 				wxString token = tokenizer.GetNextToken();
-				if (!(ext == "ass" && !token.StartsWith("Dialogue"))){
+				if (!(ext == L"ass" && !token.StartsWith(L"Dialogue"))){
 					Dialogue diall = Dialogue(token);
 					if (iline < GetCount()){
 						diall.Convert(subsFormat);
@@ -761,9 +761,9 @@ void SubsGrid::OnPasteTextTl()
 						diall.Convert(subsFormat);
 						diall.Start.NewTime(0);
 						diall.End.NewTime(0);
-						diall.Style = GetSInfo("TLMode Style");
+						diall.Style = GetSInfo(L"TLMode Style");
 						diall.TextTl = diall.Text;
-						diall.Text = "";
+						diall.Text = L"";
 						AddLine(diall.Copy());
 					}
 					iline++;
@@ -775,7 +775,7 @@ void SubsGrid::OnPasteTextTl()
 
 		Edit->SetTlMode(true);
 		SetTlMode(true);
-		AddSInfo("TLMode Showtl", "Yes");
+		AddSInfo(L"TLMode Showtl", L"Yes");
 		showOriginal = true;
 		//Edit->SetIt(Edit->ebrow);
 		SetModified(GRID_PASTE_TRANSLATION);
@@ -799,7 +799,7 @@ void SubsGrid::MoveTextTL(char mode)
 		//tryb 2 gdzie dodaje puste linijki a tekst pl pozostaje bez zmian
 		if (mode == 2){
 			Dialogue *insdial = GetDialogue(firstSelected)->Copy();
-			insdial->Text = "";
+			insdial->Text = L"";
 			InsertRows(firstSelected, numSelected, insdial);
 		}
 		file->InsertSelection(firstSelected);
@@ -808,7 +808,7 @@ void SubsGrid::MoveTextTL(char mode)
 			if (i < firstSelected + numSelected){
 				//tryb1 gdzie łączy wszystkie nachodzące linijki w jedną
 				if (mode == 1){
-					wxString mid = (GetDialogue(firstSelected)->TextTl != "" && GetDialogue(i + 1)->TextTl != "") ? "\\N" : "";
+					wxString mid = (GetDialogue(firstSelected)->TextTl != L"" && GetDialogue(i + 1)->TextTl != L"") ? L"\\N" : L"";
 					CopyDialogue(firstSelected)->TextTl << mid << GetDialogue(i + 1)->TextTl;
 					if (i != firstSelected){ CopyDialogue(i)->TextTl = GetDialogue(i + numSelected)->TextTl; }
 				}
@@ -819,7 +819,7 @@ void SubsGrid::MoveTextTL(char mode)
 			else if (i < GetCount() - numSelected){
 				CopyDialogue(i)->TextTl = GetDialogue(i + numSelected)->TextTl;
 			}
-			else if (GetDialogue(i)->Text != ""){ numSelected--; }
+			else if (GetDialogue(i)->Text != L""){ numSelected--; }
 
 		}
 
@@ -832,7 +832,7 @@ void SubsGrid::MoveTextTL(char mode)
 		int oldgc = GetCount();
 		Dialogue diall;
 		diall.End.NewTime(0);
-		diall.Style = GetSInfo("TLMode Style");
+		diall.Style = GetSInfo(L"TLMode Style");
 		for (int i = 0; i < numSelected; i++)
 		{
 			AddLine(diall.Copy());
@@ -844,12 +844,12 @@ void SubsGrid::MoveTextTL(char mode)
 		{
 			if (i < firstSelected + numSelected){
 				if (mode == 3){
-					CopyDialogue(i)->TextTl = "";
+					CopyDialogue(i)->TextTl = L"";
 				}
 				else if (mode == 4 || mode == 5){
 					if (mode == 4){
 						if (onlyo){ CopyDialogue(firstSelected + numSelected)->Start = GetDialogue(firstSelected)->Start; onlyo = false; }
-						CopyDialogue(firstSelected + numSelected)->Text->Prepend(GetDialogue(i)->Text + "\\N"); numSelected--;
+						CopyDialogue(firstSelected + numSelected)->Text->Prepend(GetDialogue(i)->Text + L"\\N"); numSelected--;
 					}
 					DeleteRow(i);
 				}
@@ -888,11 +888,11 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 	if (isgood){
 		if (hasTLMode){ Edit->SetTlMode(false); hasTLMode = false; showOriginal = false; Kai->Menubar->Enable(SaveTranslation, false); }
 		SetSubsFormat();
-		wxString ext = (subsFormat < SRT) ? "ass" : "srt";
+		wxString ext = (subsFormat < SRT) ? L"ass" : L"srt";
 		if (subsFormat < SRT){ Edit->TlMode->Enable(); }
 		else{ Edit->TlMode->Enable(false); }
 
-		tab->SubsPath = mkvpath.BeforeLast('.') + "." + ext;
+		tab->SubsPath = mkvpath.BeforeLast('.') + L"." + ext;
 		tab->SubsName = tab->SubsPath.AfterLast('\\');
 		//Kai->SetRecent();
 		Kai->UpdateToolbar();
@@ -945,15 +945,15 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		Styles *resized = file->CopyStyle(i);
 		int ml = wxAtoi(resized->MarginL);
 		ml *= xnsize;
-		resized->MarginL = "";
+		resized->MarginL = L"";
 		resized->MarginL << ml;
 		int mr = wxAtoi(resized->MarginR);
 		mr *= xnsize;
-		resized->MarginR = "";
+		resized->MarginR = L"";
 		resized->MarginR << mr;
 		int mv = wxAtoi(resized->MarginV);
 		mv *= ynsize;
-		resized->MarginV = "";
+		resized->MarginV = L"";
 		resized->MarginV << mv;
 		if (resizeScale == 1){
 			double fscx = 100;
@@ -982,9 +982,9 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 
 	//dialogi, największy hardkor, wszystkie tagi zależne od rozdzielczości trzeba zmienić
 	//tu zacznie się potęga szukaczki tagów
-	//wxRegEx onenum("\\\\(fax|fay|fs|bord|shad|pos|move|iclip|clip|org)([^\\\\}\\)]*)",wxRE_ADVANCED);
-	//wxRegEx drawing("\\\\p([0-9]+)[\\\\}\\)]",wxRE_ADVANCED);
-	wxString tags[] = { "pos", "move", "bord", "shad", "org", "fsp", "fscx", "fs", "clip", "iclip", "p", "xbord", "ybord", "xshad", "yshad" };
+	//wxRegEx onenum(L"\\\\(fax|fay|fs|bord|shad|pos|move|iclip|clip|org)([^\\\\}\\)]*)",wxRE_ADVANCED);
+	//wxRegEx drawing(L"\\\\p([0-9]+)[\\\\}\\)]",wxRE_ADVANCED);
+	wxString tags[] = { L"pos", L"move", L"bord", L"shad", L"org", L"fsp", L"fscx", L"fs", L"clip", L"iclip", L"p", L"xbord", L"ybord", L"xshad", L"yshad" };
 	File *Subs = file->GetSubs();
 	for (int i = 0; i < Subs->dials.size(); i++){
 		//zaczniemy od najłatwiejszego, marginesy
@@ -998,7 +998,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		if (diall->MarginR){ diall->MarginR *= xnsize; marginChanged = true; }
 		if (diall->MarginV){ diall->MarginV *= ynsize; marginChanged = true; }
 
-		wxString txt = (diall->TextTl != "") ? diall->TextTl : diall->Text;
+		wxString txt = (diall->TextTl != L"") ? diall->TextTl : diall->Text;
 		/*long long replaceMismatch = 0;*/
 		size_t pos = 0;
 
@@ -1016,40 +1016,40 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 			double tagValue = 0.0;
 			int ii = 0;
 			wxString resizedTag;
-			if (tag->tagName != "fsp" && tag->tagName.EndsWith('p') && tag->value.find('m') != -1){
+			if (tag->tagName != L"fsp" && tag->tagName.EndsWith('p') && tag->value.find('m') != -1){
 				int mPos = tag->value.find('m');
-				resizedTag = tag->value.Left(mPos) + "m ";
-				wxStringTokenizer tknzr(tag->value.AfterFirst('m'), " ", wxTOKEN_STRTOK);
+				resizedTag = tag->value.Left(mPos) + L"m ";
+				wxStringTokenizer tknzr(tag->value.AfterFirst('m'), L" ", wxTOKEN_STRTOK);
 				
-				float xscale = (tag->tagName == "p") ? vectorXScale : xnsize;
+				float xscale = (tag->tagName == L"p") ? vectorXScale : xnsize;
 
 				while (tknzr.HasMoreTokens()){
 					wxString tkn = tknzr.NextToken();
-					if (tkn != "m" && tkn != "l" && tkn != "b" && tkn != "s" && tkn != "c"){
+					if (tkn != L"m" && tkn != L"l" && tkn != L"b" && tkn != L"s" && tkn != L"c"){
 						wxString lastC;
-						if (tkn.EndsWith("c")){
+						if (tkn.EndsWith(L"c")){
 							tkn.RemoveLast(1);
-							lastC = "c";
+							lastC = L"c";
 						}
 						if (tkn.ToCDouble(&tagValue)){
 							tagValue *= (ii % 2 == 0) ? xscale : ynsize;
-							resizedTag << getfloat(tagValue) << lastC << " ";
+							resizedTag << getfloat(tagValue) << lastC << L" ";
 						}
 						else{
 							wxLogMessage(_("W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"), i + 1, tkn, tag->tagName);
-							resizedTag << tkn << lastC << " ";
+							resizedTag << tkn << lastC << L" ";
 						}
 
 						ii++;
 					}
 					else{
-						resizedTag << tkn << " ";
+						resizedTag << tkn << L" ";
 					}
 				}
 				resizedTag.Trim();
 			}
 			else if (tag->multiValue){
-				wxStringTokenizer tknzr(tag->value, ",", wxTOKEN_STRTOK);
+				wxStringTokenizer tknzr(tag->value, L",", wxTOKEN_STRTOK);
 				while (tknzr.HasMoreTokens()){
 					wxString tkn = tknzr.NextToken();
 					tkn.Trim();
@@ -1058,7 +1058,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 					if (ii < 4 && tkn.ToCDouble(&tagValue))
 					{
 						tagValue *= (ii % 2 == 0) ? xnsize : ynsize;
-						resizedTag << getfloat(tagValue) << ",";
+						resizedTag << getfloat(tagValue) << L",";
 						ii++;
 					}
 					else
@@ -1066,17 +1066,17 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 						if (ii < 4){
 							wxLogMessage(_("W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"), i + 1, tkn, tag->tagName);
 						}
-						resizedTag << tkn << ",";
+						resizedTag << tkn << L",";
 						ii++;
 					}
 				}
 				resizedTag = resizedTag.BeforeLast(',');
 
 			}
-			else if (tag->tagName != "p"){
+			else if (tag->tagName != L"p"){
 				if (tag->value.ToCDouble(&tagValue)){
-					tagValue *= (tag->tagName == "fscx") ? valFscx :
-						(tag->tagName == "fs") ? val1 :
+					tagValue *= (tag->tagName == L"fscx") ? valFscx :
+						(tag->tagName == L"fs") ? val1 :
 						(tag->tagName.StartsWith('x')) ? xnsize :
 						(tag->tagName.StartsWith('y')) ? ynsize : val;
 					resizedTag = getfloat(tagValue);
@@ -1097,7 +1097,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		if (marginChanged || textChanged){
 			if (textChanged){
 				if (SpellErrors.size() >= (size_t)i) SpellErrors[i].clear();
-				if (diall->TextTl != ""){
+				if (diall->TextTl != L""){
 					diall->TextTl = txt;
 				}
 				else{
@@ -1212,7 +1212,7 @@ public:
 			main->Add(fields[i], 0, wxEXPAND | wxALL, 3);
 		}
 		wxBoxSizer *buttons = new wxBoxSizer(wxHORIZONTAL);
-		MappedButton *Ok = new MappedButton(this, wxID_OK, "OK");
+		MappedButton *Ok = new MappedButton(this, wxID_OK, L"OK");
 		MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 		MappedButton *TurnOf = new MappedButton(this, 19921, _("Wyłącz potwierdzenie"));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
@@ -1247,8 +1247,8 @@ bool SubsGrid::SwapAssProperties()
 		ASSPropertiesEditingOn, ASSPropertiesTimingOn, ASSPropertiesUpdateOn };
 	CONFIG fieldValues[numFields] = { ASSPropertiesTitle, ASSPropertiesScript, ASSPropertiesTranslation,
 		ASSPropertiesEditing, ASSPropertiesTiming, ASSPropertiesUpdate };
-	wxString fieldNames[numFields] = { "Title", "Original Script", "Original Translation",
-		"Original Editing", "Original Timing", "Script Updated By" };
+	wxString fieldNames[numFields] = { L"Title", L"Original Script", L"Original Translation",
+		L"Original Editing", L"Original Timing", L"Script Updated By" };
 	if (Options.GetBool(ASSPropertiesAskForChange)){
 		bool hasSomethingToChange = false;
 		for (int i = 0; i < numFields; i++){
@@ -1377,7 +1377,7 @@ void SubsGrid::TreeCopy(int treeLine)
 		Dialogue *dial = file->GetDialogueByKey(i);
 		if (!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart))
 			break;
-		dial->GetRaw(&whattocopy, hasTLMode && dial->TextTl != "");
+		dial->GetRaw(&whattocopy, hasTLMode && dial->TextTl != L"");
 	}
 	if(wxTheClipboard->Open())
 	{
@@ -1447,7 +1447,7 @@ void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 void SubsGrid::LoadStyleCatalog()
 {
 	if (subsFormat != ASS){ return; }
-	const wxString &catalog = GetSInfo("Last Style Storage");
+	const wxString &catalog = GetSInfo(L"Last Style Storage");
 
 	if (catalog.empty()){ return; }
 	for (size_t i = 0; i < Options.dirs.size(); i++){

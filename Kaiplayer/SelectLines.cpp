@@ -26,7 +26,7 @@ SelectLines::SelectLines(KainoteFrame* kfparent)
 	: KaiDialog((wxWindow*)kfparent, -1, _("Zaznacz"))
 {
 	Kai = kfparent;
-	Options.GetTable(SelectionsRecent, selsRecent, "\f", wxTOKEN_RET_EMPTY_ALL);
+	Options.GetTable(SelectionsRecent, selsRecent, L"\f", wxTOKEN_RET_EMPTY_ALL);
 	int options = Options.GetInt(SelectionsOptions);
 	if (selsRecent.size() > 20){ selsRecent.RemoveAt(20, selsRecent.size() - 20); }
 
@@ -44,10 +44,10 @@ SelectLines::SelectLines(KainoteFrame* kfparent)
 
 	KaiStaticBoxSizer* slsbsizer = new KaiStaticBoxSizer(wxVERTICAL, this, _("Znajdź"));
 	wxBoxSizer *sltpsizer = new wxBoxSizer(wxHORIZONTAL);
-	FindText = new KaiChoice(this, -1, "", wxDefaultPosition, wxSize(-1, 24), selsRecent);
+	FindText = new KaiChoice(this, -1, L"", wxDefaultPosition, wxSize(-1, 24), selsRecent);
 	FindText->SetToolTip(_("Szukany tekst:"));
 	FindText->SetMaxLength(MAXINT);
-	ChooseStyles = new MappedButton(this, ID_CHOOSE_STYLES, "+", -1, wxDefaultPosition, wxSize(24, 24));
+	ChooseStyles = new MappedButton(this, ID_CHOOSE_STYLES, L"+", -1, wxDefaultPosition, wxSize(24, 24));
 	sltpsizer->Add(FindText, 1, wxALL | wxEXPAND, 3);
 	sltpsizer->Add(ChooseStyles, 0, wxALL, 3);
 
@@ -227,8 +227,8 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 		(selectOptions == 1) ? wxString::Format(_("Dodano do zaznaczenia %i linijek."), allSelections) :
 		wxString::Format(_("Odznaczono %i linijek."), allSelections);
 	KaiMessageDialog dlg(this, messagetxt, _("Zaznacz"), wxYES_NO);
-	dlg.SetYesLabel("Zamknij");
-	dlg.SetNoLabel("Ok");
+	dlg.SetYesLabel(_("Zamknij"));
+	dlg.SetNoLabel(L"Ok");
 	int result = dlg.ShowModal();
 	if (result == wxYES){
 		Hide();
@@ -269,8 +269,8 @@ void SelectLines::OnSelectInAllTabs(wxCommandEvent& event)
 		(selectOptions == 1) ? wxString::Format(_("Dodano do zaznaczenia %i linijek."), selectionsOnAllTabs) :
 		wxString::Format(_("Odznaczono %i linijek."), selectionsOnAllTabs);
 	KaiMessageDialog dlg(this, messagetxt, _("Zaznacz"), wxYES_NO);
-	dlg.SetYesLabel("Zamknij");
-	dlg.SetNoLabel("Ok");
+	dlg.SetYesLabel(_("Zamknij"));
+	dlg.SetNoLabel(L"Ok");
 	int result = dlg.ShowModal();
 	if (result == wxYES){
 		Hide();
@@ -297,7 +297,7 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 			txt = Dial->Style;
 		}
 		else if (selectColumn == TXT){
-			txt = (tab->Grid->hasTLMode && Dial->TextTl != "") ? Dial->TextTl : Dial->Text;
+			txt = (tab->Grid->hasTLMode && Dial->TextTl != L"") ? Dial->TextTl : Dial->Text;
 		}
 		else if (selectColumn == ACTOR){
 			txt = Dial->Actor;
@@ -315,7 +315,7 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 		bool isfound = false;
 
 
-		if (txt != "" && find != ""){
+		if (txt != L"" && find != L""){
 			if (regex){
 				int rxflags = wxRE_ADVANCED;
 				if (!matchcase){ rxflags |= wxRE_ICASE; }
@@ -332,7 +332,7 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 
 			}
 		}
-		else if (find == "" && txt == ""){ isfound = true; }
+		else if (find == L"" && txt == L""){ isfound = true; }
 
 		if (((isfound && contain) || (!isfound && !contain))
 			&& ((selectDialogues && !Dial->IsComment) || (selectComments && Dial->IsComment))){
@@ -350,7 +350,7 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 		}
 
 		if (tab->Grid->file->IsSelectedByKey(i) && action != 0){
-			if (action < 3){ Dial->GetRaw(&whatcopy, tab->Grid->hasTLMode && Dial->TextTl != ""); }
+			if (action < 3){ Dial->GetRaw(&whatcopy, tab->Grid->hasTLMode && Dial->TextTl != L""); }
 			else if (action < 5){
 				Dial->ChangeDialogueState(1);
 				mdial.push_back(Dial);
@@ -416,13 +416,13 @@ void SelectLines::AddRecent(){
 		FindText->Delete(20, selsSize - 20);
 		selsRecent.RemoveAt(20, selsSize - 20);
 	}
-	Options.SetTable(SelectionsRecent, selsRecent, "\f");
+	Options.SetTable(SelectionsRecent, selsRecent, L"\f");
 }
 
 void SelectLines::OnChooseStyles(wxCommandEvent& event)
 {
 	wxString styles = GetCheckedElements(Kai);
-	int numreps = styles.Replace(",", "|");
+	int numreps = styles.Replace(L",", L"|");
 	styles = L"^" + styles + L"$";
 	CollumnStyle->SetValue(true);
 	RegEx->SetValue(true);

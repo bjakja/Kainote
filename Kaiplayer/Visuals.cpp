@@ -90,7 +90,7 @@ void Visuals::GetDialoguesWithoutPosition()
 	int time = tab->Video->Tell();
 	SubsGrid *grid = tab->Grid;
 
-	wxRegEx pos("\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
+	wxRegEx pos(L"\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
 	bool tlMode = tab->Grid->hasTLMode;
 	int activeLineKey = tab->Grid->file->GetElementById(tab->Grid->currentLine);
 
@@ -99,7 +99,7 @@ void Visuals::GetDialoguesWithoutPosition()
 		if (!grid->ignoreFiltered && !dial->isVisible || dial->NonDialogue || activeLineKey == i){ continue; }
 
 		if (time >= dial->Start.mstime && time < dial->End.mstime){
-			const wxString &text = (tlMode && dial->TextTl != "") ? dial->TextTl : dial->Text;
+			const wxString &text = (tlMode && dial->TextTl != L"") ? dial->TextTl : dial->Text;
 			if (!pos.Matches(text)){
 				dialoguesWithoutPosition.push_back(dial);
 			}
@@ -117,9 +117,9 @@ int Visuals::GetDialoguePosition()
 	for (size_t i = 0; i < dialoguesWithoutPosition.size(); i++){
 		Dialogue *dial = dialoguesWithoutPosition[i];
 		Styles *acstyle = tab->Grid->GetStyle(0, dial->Style);
-		const wxString &txt = (tlMode && dial->TextTl != "") ? dial->TextTl : dial->Text;
+		const wxString &txt = (tlMode && dial->TextTl != L"") ? dial->TextTl : dial->Text;
 		int newan = wxAtoi(acstyle->Alignment);
-		wxRegEx an("\\\\an([0-9]+)", wxRE_ADVANCED);
+		wxRegEx an(L"\\\\an([0-9]+)", wxRE_ADVANCED);
 		if (an.Matches(txt)){
 			newan = wxAtoi(an.GetMatch(txt, 1));
 		}
@@ -168,7 +168,7 @@ void Visuals::SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDI
 	coeffW = ((float)SubsSize.x / (float)(wsize.width - wsize.x));
 	coeffH = ((float)SubsSize.y / (float)(wsize.height - wsize.y));
 
-	HRN(device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), "fvf failed");
+	HRN(device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"fvf failed");
 }
 
 //drawarrow od razu przesuwa punkt tak by linia kończyła się przed strzałką
@@ -197,8 +197,8 @@ void Visuals::DrawArrow(D3DXVECTOR2 from, D3DXVECTOR2 *to, int diff)
 	CreateVERTEX(&v4[5], v3[2].x, v3[2].y, 0xFFBB0000);
 	CreateVERTEX(&v4[6], v3[0].x, v3[0].y, 0xFFBB0000);
 
-	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v4, sizeof(VERTEX)), "primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 3, &v4[3], sizeof(VERTEX)), "primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v4, sizeof(VERTEX)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 3, &v4[3], sizeof(VERTEX)), L"primitive failed");
 	*to = pend;
 }
 
@@ -234,8 +234,8 @@ void Visuals::DrawRect(D3DXVECTOR2 pos, bool sel, float rcsize)
 	CreateVERTEX(&v9[7], pos.x - rcsize, pos.y + rcsize, 0xFFBB0000);
 	CreateVERTEX(&v9[8], pos.x - rcsize, pos.y - rcsize, 0xFFBB0000);
 
-	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), "primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, &v9[4], sizeof(VERTEX)), "primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, &v9[4], sizeof(VERTEX)), L"primitive failed");
 }
 
 
@@ -259,8 +259,8 @@ void Visuals::DrawCircle(D3DXVECTOR2 pos, bool sel, float crsize)
 
 	}
 
-	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 18, v5, sizeof(VERTEX)), "primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 18, &v5[21], sizeof(VERTEX)), "primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 18, v5, sizeof(VERTEX)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 18, &v5[21], sizeof(VERTEX)), L"primitive failed");
 }
 
 void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen, unsigned int color)
@@ -346,16 +346,16 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	SubsGrid *grid = tab->Grid;
 	wxString txt = edit->TextEdit->GetValue();
 	TextEditor *Editor = edit->TextEdit;
-	if (grid->hasTLMode && txt == ""){ txt = edit->TextEditOrig->GetValue(); Editor = edit->TextEditOrig; }
+	if (grid->hasTLMode && txt == L""){ txt = edit->TextEditOrig->GetValue(); Editor = edit->TextEditOrig; }
 
 
 	Styles *acstyl = grid->GetStyle(0, edit->line->Style);
 	bool foundpos = false;
-	wxRegEx pos("\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
+	wxRegEx pos(L"\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
 	if (pos.Matches(txt) && tbl){
 		wxString type = pos.GetMatch(txt, 1);
 		wxString txtpos = pos.GetMatch(txt, 2);
-		wxStringTokenizer tkz(txtpos, ",");
+		wxStringTokenizer tkz(txtpos, L",");
 		int ipos = 0; //tbl[4]=0; tbl[5]=0;
 		while (tkz.HasMoreTokens() && ipos < 6){
 			wxString token = tkz.GetNextToken();
@@ -390,8 +390,8 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	}
 
 	wxString sxfd, syfd;
-	bool scx = edit->FindValue("fscx([.0-9-]+)", &sxfd, "", 0, !beforeCursor);
-	bool scy = edit->FindValue("fscy([.0-9-]+)", &syfd, "", 0, !beforeCursor);
+	bool scx = edit->FindValue(L"fscx([.0-9-]+)", &sxfd, L"", 0, !beforeCursor);
+	bool scy = edit->FindValue(L"fscy([.0-9-]+)", &syfd, L"", 0, !beforeCursor);
 	double fscx = 100.0, fscy = 100.0;
 	if (scx){
 		sxfd.ToDouble(&fscx);
@@ -413,10 +413,10 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 		wxRegEx drawscale;
 		if (Visual == VECTORCLIP){
 			*scale = D3DXVECTOR2(1.f, 1.f);
-			drawscale.Compile("\\\\i?clip\\(([0-9]+),", wxRE_ADVANCED);
+			drawscale.Compile(L"\\\\i?clip\\(([0-9]+),", wxRE_ADVANCED);
 		}
 		else{
-			drawscale.Compile("\\\\p([0-9]+)", wxRE_ADVANCED);
+			drawscale.Compile(L"\\\\p([0-9]+)", wxRE_ADVANCED);
 		}
 		int dscale = 1;
 		if (drawscale.Matches(txt)){
@@ -429,7 +429,7 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	if (Visual != VECTORCLIP){
 		int tmpan;
 		tmpan = wxAtoi(acstyl->Alignment);
-		wxRegEx an("\\\\an([0-9]+)", wxRE_ADVANCED);
+		wxRegEx an(L"\\\\an([0-9]+)", wxRE_ADVANCED);
 		if (an.Matches(txt)){
 			tmpan = wxAtoi(an.GetMatch(txt, 1));
 		}
@@ -460,7 +460,7 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoint &pos)
 {
 	if (!inbracket){
-		txt->insert(pos.x, "{" + what + "}");
+		txt->insert(pos.x, L"{" + what + L"}");
 		return 1;
 	}
 	if (pos.x < pos.y){ txt->erase(txt->begin() + pos.x, txt->begin() + pos.y + 1); }
@@ -473,16 +473,16 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 
 	EditBox *edit = tab->Edit;
 	SubsGrid *grid = tab->Grid;
-	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == "");
+	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == L"");
 	//Editor
 	TextEditor *Editor = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
-	if (clip == ""){
+	if (clip == L""){
 
 		wxString tmp;
 		wxString txt = Editor->GetValue();
-		if (edit->FindValue("(i?clip.)[^)]*\\)", &tmp, txt, 0, true)){
-			ChangeText(&txt, "", edit->InBracket, edit->Placed);
-			txt.Replace("{}", "");
+		if (edit->FindValue(L"(i?clip.)[^)]*\\)", &tmp, txt, 0, true)){
+			ChangeText(&txt, L"", edit->InBracket, edit->Placed);
+			txt.Replace(L"{}", L"");
 			if (changeEditorText){
 				Editor->SetTextS(txt, false, true);
 				Editor->SetModified();
@@ -503,11 +503,11 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 
 			if (Visual == VECTORCLIP){
 				//wxPoint pos;
-				wxString tmp = "clip(";
+				wxString tmp = L"clip(";
 				wxString txt = Editor->GetValue();
-				bool fv = edit->FindValue("(i?clip.)[^)]*\\)", &tmp, txt, 0, true);
-				wxString tmp1 = (tmp[0] == 'c') ? "iclip(" : "clip(";
-				wxString tclip = "\\" + tmp + clip + ")";
+				bool fv = edit->FindValue(L"(i?clip.)[^)]*\\)", &tmp, txt, 0, true);
+				wxString tmp1 = (tmp[0] == 'c') ? L"iclip(" : L"clip(";
+				wxString tclip = L"\\" + tmp + clip + L")";
 				edit->Placed.x += tmp.Len() + 1 + ChangeText(&txt, tclip, edit->InBracket, edit->Placed);
 				edit->Placed.y = edit->Placed.x + clip.Len();
 
@@ -516,9 +516,9 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				int nx = 0, ny = 0;
 				grid->GetASSRes(&nx, &ny);
 				Dialogue *visdl = edit->line->Copy();
-				visdl->Text = "";
-				visdl->Text << "{\\p1\\bord0\\shad0\\fscx100\\fscy100\\1c&H000000&\\1a&H77&\\pos(0,0)\\an7\\" << tmp1 << clip << ")}m 0 0 l " <<
-					nx << " 0 " << nx << " " << ny << " 0 " << ny;
+				visdl->Text = L"";
+				visdl->Text << L"{\\p1\\bord0\\shad0\\fscx100\\fscy100\\1c&H000000&\\1a&H77&\\pos(0,0)\\an7\\" << tmp1 << clip << L")}m 0 0 l " <<
+					nx << L" 0 " << nx << L" " << ny << L" 0 " << ny;
 				visdl->GetRaw(dummytext);
 				dumplaced.x = edit->Placed.x + textplaced.x; dumplaced.y = edit->Placed.y + textplaced.x;
 				delete visdl;
@@ -529,65 +529,65 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 
 			}
 			else{//rysunki wektorowe
-				wxString tmp = "";
+				wxString tmp = L"";
 				bool isf;
 				bool hasP1 = true;
 				size_t cliplen = clip.Len();
 				wxString txt = Editor->GetValue();
-				isf = edit->FindValue("p([0-9]+)", &tmp, txt, 0, true);
+				isf = edit->FindValue(L"p([0-9]+)", &tmp, txt, 0, true);
 				if (!isf){
-					ChangeText(&txt, "\\p1", edit->InBracket, edit->Placed);
+					ChangeText(&txt, L"\\p1", edit->InBracket, edit->Placed);
 					hasP1 = false;
 				}
-				isf = edit->FindValue("pos\\(([,. 0-9-]+)\\)", &tmp, txt, 0, true);
+				isf = edit->FindValue(L"pos\\(([,. 0-9-]+)\\)", &tmp, txt, 0, true);
 				if (!isf){
 					DrawingAndClip *drawing = (DrawingAndClip*)this;
 					float xx = drawing->_x * drawing->scale.x;
 					float yy = drawing->_y * drawing->scale.y;
-					ChangeText(&txt, "\\pos(" + getfloat(xx) + "," + getfloat(yy) + ")", edit->InBracket, edit->Placed);
+					ChangeText(&txt, L"\\pos(" + getfloat(xx) + L"," + getfloat(yy) + L")", edit->InBracket, edit->Placed);
 				}
-				isf = edit->FindValue("an([0-9])", &tmp, txt, 0, true);
+				isf = edit->FindValue(L"an([0-9])", &tmp, txt, 0, true);
 				if (!isf){
 					DrawingAndClip *drawing = (DrawingAndClip*)this;
-					ChangeText(&txt, "\\an" + getfloat(drawing->alignment, "1.0f"), edit->InBracket, edit->Placed);
+					ChangeText(&txt, L"\\an" + getfloat(drawing->alignment, L"1.0f"), edit->InBracket, edit->Placed);
 				}
 
 				int bracketPos = 0;
 				while (1){
-					bracketPos = txt.find("}", bracketPos);
+					bracketPos = txt.find(L"}", bracketPos);
 					if (bracketPos < 0 || bracketPos == txt.Len() - 1){
 						break;
 					}
 					bracketPos++;
 					wxString mcheck = txt.Mid(bracketPos, 2);
-					if (!mcheck.StartsWith("m ") && !mcheck.StartsWith("{")){
-						txt.insert(bracketPos, "{");
+					if (!mcheck.StartsWith(L"m ") && !mcheck.StartsWith(L"{")){
+						txt.insert(bracketPos, L"{");
 						bracketPos++;
-						bracketPos = txt.find("{", bracketPos);
+						bracketPos = txt.find(L"{", bracketPos);
 						if (bracketPos < 0){
-							txt << "}";
+							txt << L"}";
 							break;
 						}
-						txt.insert(bracketPos, "}");
+						txt.insert(bracketPos, L"}");
 					}
 				}
-				//isf = edit->FindVal("p([0-9]+)", &tmp, txt, 0, true);
+				//isf = edit->FindVal(L"p([0-9]+)", &tmp, txt, 0, true);
 
 				wxString afterP1 = txt.Mid(edit->Placed.y);
 				int Mpos = -1;
 				//do poprawki usuwanie pierwszego nawiasu
 
-				if (hasP1){ Mpos = afterP1.find("m "); }
-				if (Mpos == -1){ Mpos = afterP1.find("}") + 1; }
+				if (hasP1){ Mpos = afterP1.find(L"m "); }
+				if (Mpos == -1){ Mpos = afterP1.find(L"}") + 1; }
 				wxString startM = afterP1.Mid(Mpos);
-				int endClip = startM.find("{");
+				int endClip = startM.find(L"{");
 				if (endClip == -1){
 					if (isf){ endClip = startM.Len(); }
 					else{ endClip = 0; }
-					clip += "{\\p0}";
+					clip += L"{\\p0}";
 				}
 				else if (!hasP1){
-					clip += "{\\p0}";
+					clip += L"{\\p0}";
 				}
 				txt.replace(Mpos + edit->Placed.y, endClip, clip);
 
@@ -646,7 +646,7 @@ void Visuals::SetVisual(bool dummy, int type)
 	EditBox *edit = tab->Edit;
 	SubsGrid *grid = tab->Grid;
 
-	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == "");
+	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == L"");
 	//Editor
 	TextEditor *Editor = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
 	//działanie dwuetapowe, pierwszy etap podmieniamy w wielu linijkach
@@ -661,20 +661,20 @@ void Visuals::SetVisual(bool dummy, int type)
 			selPositions.clear();
 			dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
 			if (selPositions.size() != sels.size()){
-				KaiLog("Sizes mismatch");
+				KaiLog(L"Sizes mismatch");
 				return;
 			}
 		}
 		if (dummy){ dtxt = new wxString(*dummytext); }
 		int _time = tab->Video->Tell();
 		int moveLength = 0;
-		const wxString &tlStyle = tab->Grid->GetSInfo("TLMode Style");
+		const wxString &tlStyle = tab->Grid->GetSInfo(L"TLMode Style");
 		for (size_t i = 0; i < sels.size(); i++){
 
 			Dialogue *Dial = grid->GetDialogue(sels[i]);
 			if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){ continue; }
 
-			bool istxttl = (tab->Grid->hasTLMode && Dial->TextTl != "");
+			bool istxttl = (tab->Grid->hasTLMode && Dial->TextTl != L"");
 			wxString txt = (istxttl) ? Dial->TextTl : Dial->Text;
 			ChangeVisual(&txt, Dial);
 			if (!dummy){
@@ -726,20 +726,20 @@ void Visuals::SetVisual(bool dummy, int type)
 		bool fromStart = false;
 		if (Visual == MOVE || Visual == CLIPRECT){ fromStart = true; }
 		wxString tmp;
-		wxString xytype = (type == 0) ? "x" : "y";
-		wxString frxytype = (type == 1) ? "x" : "y";
+		wxString xytype = (type == 0) ? L"x" : L"y";
+		wxString frxytype = (type == 1) ? L"x" : L"y";
 
-		wxString tagpattern = (type == 100) ? "(org).+" :
-			(Visual == MOVE) ? "(move|pos).+" :
-			(Visual == SCALE) ? "(fsc" + xytype + ").+" :
-			(Visual == ROTATEZ) ? "(frz?)[.0-9-]+" :
-			(Visual == ROTATEXY) ? "(fr" + frxytype + ").+" :
-			"(i?clip).+";
+		wxString tagpattern = (type == 100) ? L"(org).+" :
+			(Visual == MOVE) ? L"(move|pos).+" :
+			(Visual == SCALE) ? L"(fsc" + xytype + L").+" :
+			(Visual == ROTATEZ) ? L"(frz?)[.0-9-]+" :
+			(Visual == ROTATEXY) ? L"(fr" + frxytype + L").+" :
+			L"(i?clip).+";
 		edit->FindValue(tagpattern, &tmp, txt, 0, fromStart);
 
 		if (type == 2 && Visual > 0){
 			if (edit->Placed.x < edit->Placed.y){ txt.erase(txt.begin() + edit->Placed.x, txt.begin() + edit->Placed.y + 1); }
-			wxString tagpattern = (Visual == SCALE) ? "(fscx).+" : (Visual == ROTATEZ) ? "(frz?)[.0-9-]+" : "(frx).+";
+			wxString tagpattern = (Visual == SCALE) ? L"(fscx).+" : (Visual == ROTATEZ) ? L"(frz?)[.0-9-]+" : L"(frx).+";
 			edit->FindValue(tagpattern, &tmp, txt, 0, fromStart);
 		}
 
@@ -774,10 +774,10 @@ D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *Te
 	*putinBracket = false;
 	D3DXVECTOR2 result;
 	Styles *acstyl = tab->Grid->GetStyle(0, Dial->Style);
-	bool istxttl = (tab->Grid->hasTLMode && Dial->TextTl != "");
+	bool istxttl = (tab->Grid->hasTLMode && Dial->TextTl != L"");
 	wxString txt = (istxttl) ? Dial->TextTl : Dial->Text;
 	bool foundpos = false;
-	wxRegEx pos("\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
+	wxRegEx pos(L"\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
 	if (pos.Matches(txt)){
 		wxString txtpos = pos.GetMatch(txt, 2);
 		double posx = 0, posy = 0;
@@ -798,7 +798,7 @@ D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *Te
 	result.x = (tab->Edit->line->MarginL != 0) ? tab->Edit->line->MarginL : wxAtoi(acstyl->MarginL);
 	result.y = (tab->Edit->line->MarginV != 0) ? tab->Edit->line->MarginV : wxAtoi(acstyl->MarginV);
 
-	if (txt != "" && txt[0] == '{'){
+	if (txt != L"" && txt[0] == '{'){
 		TextPos->x = 1;
 		TextPos->y = 0;
 	}
@@ -809,7 +809,7 @@ D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *Te
 	}
 	int tmpan;
 	tmpan = wxAtoi(acstyl->Alignment);
-	wxRegEx an("\\\\an([0-9]+)", wxRE_ADVANCED);
+	wxRegEx an(L"\\\\an([0-9]+)", wxRE_ADVANCED);
 	if (an.Matches(txt)){
 		tmpan = wxAtoi(an.GetMatch(txt, 1));
 	}
@@ -839,7 +839,7 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 	double orgx = 0, orgy = 0;
 	bool PutinBrackets = false;
 	wxPoint strPos;
-	if (tab->Edit->FindValue("org\\((.+)\\)", &val, *txt, 0, true)){
+	if (tab->Edit->FindValue(L"org\\((.+)\\)", &val, *txt, 0, true)){
 		wxString orgystr;
 		wxString orgxstr = val.BeforeFirst(',', &orgystr);
 		orgxstr.ToCDouble(&orgx);
@@ -852,12 +852,12 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 		orgx = pos.x;
 		orgy = pos.y;
 		if (strPos.y == 0){
-			wxString posTag = "\\pos(" + getfloat(pos.x) + "," + getfloat(pos.y) + ")";
+			wxString posTag = L"\\pos(" + getfloat(pos.x) + L"," + getfloat(pos.y) + L")";
 			int append = ChangeText(txt, posTag, !PutinBrackets, strPos);
 			strPos.x += posTag.Len() + append;
 			PutinBrackets = false;
 		}
 	}
 	strPos.y += strPos.x - 1;
-	ChangeText(txt, "\\org(" + getfloat(orgx + coordx) + "," + getfloat(orgy + coordy) + ")", !PutinBrackets, strPos);
+	ChangeText(txt, L"\\org(" + getfloat(orgx + coordx) + L"," + getfloat(orgy + coordy) + L")", !PutinBrackets, strPos);
 }

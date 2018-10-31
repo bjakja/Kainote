@@ -43,20 +43,20 @@ void Karaoke::Split()
 	bool Everyn = Options.GetBool(AudioMergeEveryNWithSyllable);
 	bool block = false;
 	Dialogue *dial = AD->dialogue;
-	wxString Text = (dial->TextTl != "") ? dial->TextTl : dial->Text;
+	wxString Text = (dial->TextTl != L"") ? dial->TextTl : dial->Text;
 	int len = Text.Len();
-	wxString aoi = "aeioun ";
-	wxString aoi1 = "aeiouy";
-	wxString aoi2 = "aeiou";
-	//wxString aoi3="aeiou ";
-	wxString chars = "!@#$%^&*()_+=-,./?'{}[]:;<> ";
+	wxString aoi = L"aeioun ";
+	wxString aoi1 = L"aeiouy";
+	wxString aoi2 = L"aeiou";
+	//wxString aoi3=L"aeiou ";
+	wxString chars = L"!@#$%^&*()_+=-,./?'{}[]:;<> ";
 	wxString achars = aoi + chars;
 	int stime = dial->Start.mstime;
 
 	wxString textlow = Text;
 	textlow = textlow.Lower();
-	if (textlow.Find("\\k") != -1){
-		Text << "{";
+	if (textlow.Find(L"\\k") != -1){
+		Text << L"{";
 
 		size_t strt = 0;
 		size_t lastStartBracket = 0;
@@ -85,12 +85,12 @@ void Karaoke::Split()
 				continue;
 			}
 			else if (kpart){
-				if ((nch == 'o' || nch == 'f') && ch == 'k'){ kaas.Add("k" + wxString(nch)); continue; }
+				if ((nch == 'o' || nch == 'f') && ch == 'k'){ kaas.Add(L"k" + wxString(nch)); continue; }
 				else if (ch == 'k' || ch == 'K'){ kaas.Add(ch); }
 				if (nch == '}' || nch == '\\'){
 					stime += (wxAtoi(kres) * 10);
 					syltimes.Add(stime);
-					kres = "";
+					kres = L"";
 					kpart = false;
 					syll = true;
 					continue;
@@ -107,7 +107,7 @@ void Karaoke::Split()
 	}
 	else
 	{
-		textlow += " ";
+		textlow += L" ";
 		len = textlow.Len();
 		int start = 0;
 		int i = 0;
@@ -127,7 +127,7 @@ void Karaoke::Split()
 					continue;
 				}
 				syls.Add(Text.SubString(start, i - 1));
-				kaas.Add("k");
+				kaas.Add(L"k");
 				start = i;
 			}
 
@@ -136,7 +136,7 @@ void Karaoke::Split()
 		int times = (float)dur / (float)syls.size();
 		if (syls.size() == 0){
 			syls.Add(Text);
-			kaas.Add("k");
+			kaas.Add(L"k");
 		}
 
 		for (size_t i = 0; i < syls.size(); i++)
@@ -161,10 +161,10 @@ wxString Karaoke::GetText()
 		time /= 10;
 		const wxString & sylText = syls[i];
 		if (sylText.Len() && sylText[0] == L'{' && sylText.find(L'}', 1) != -1){
-			text << "{\\" << kaas[i] << time << sylText.After('{');
+			text << L"{\\" << kaas[i] << time << sylText.After('{');
 		}
 		else
-			text << "{\\" << kaas[i] << time << "}" << sylText;
+			text << L"{\\" << kaas[i] << time << L"}" << sylText;
 	}
 	return text;
 }
@@ -201,7 +201,7 @@ bool Karaoke::GetSylAtX(int x, int *result)
 void Karaoke::Join(int line)
 {
 	syls[line] << syls[line + 1];
-	syls[line].Replace("{}", "");
+	syls[line].Replace(L"{}", L"");
 	syls.RemoveAt(line + 1);
 	syltimes[line] = syltimes[line + 1];
 	syltimes.RemoveAt(line + 1);
@@ -225,7 +225,7 @@ bool Karaoke::SplitSyl(int line, int nletters)
 	GetLetters(line, nletters, tmp, tmp1);
 	syls[line] = tmp;
 	syls.Insert(tmp1, line + 1);
-	kaas.Insert("k", line + 1);
+	kaas.Insert(L"k", line + 1);
 	int start, end;
 	GetSylTimes(line, start, end);
 	int ttmp = start + ((end - start) / 2);
@@ -297,7 +297,7 @@ void Karaoke::GetLetters(int line, int nletters, wxString &first, wxString &seco
 	const wxString & sylText = syls[line];
 	size_t len = sylText.Len();
 	if (nletters == 0){
-		first = "";
+		first = L"";
 		second = sylText;
 		return;
 	}
@@ -345,5 +345,5 @@ void Karaoke::GetTextStripped(int line, wxString &textStripped)
 	if (block && lastBlock < len - 1){
 		textStripped += sylText.Mid(lastBlock);
 	}
-	textStripped.Replace("\\N", "");
+	textStripped.Replace(L"\\N", L"");
 }

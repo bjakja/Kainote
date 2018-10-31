@@ -71,7 +71,7 @@ void SubsGridWindow::SetStyle()
 		wxClientDC dc(this);
 		dc.SetFont(font);
 		int fw, fh;
-		dc.GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
+		dc.GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 		GridHeight = fh + 2;
 	}
 
@@ -195,7 +195,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		strings.clear();
 		
 		if (isHeadline){
-			strings.push_back("#");
+			strings.push_back(L"#");
 			if (subsFormat<SRT){
 				strings.push_back(_("W."));
 			}
@@ -218,13 +218,13 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		}
 		else{
 			
-			strings.push_back(wxString::Format("%i", k+1));
+			strings.push_back(wxString::Format(L"%i", k+1));
 
 			isComment = Dial->IsComment;
 			//gdy zrobisz inaczej niepewne to użyj ^ 4 by wywalić 4 ze state.
 			states = Dial->GetState();
 			if (subsFormat<SRT){
-				strings.push_back(wxString::Format("%i", Dial->Layer));
+				strings.push_back(wxString::Format(L"%i", Dial->Layer));
 			}
 
 			if (showFrames && tab->Video->VFF){
@@ -233,7 +233,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				frame << VFF->GetFramefromMS(Dial->Start.mstime);
 				strings.push_back(frame);
 				if (subsFormat != TMP){
-					frame = "";
+					frame = L"";
 					frame << VFF->GetFramefromMS(Dial->End.mstime) - 1;
 					strings.push_back(frame);
 				}
@@ -248,14 +248,14 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				else{ unkstyle = false; }
 				strings.push_back(Dial->Style);
 				strings.push_back(Dial->Actor);
-				strings.push_back(wxString::Format("%i", Dial->MarginL));
-				strings.push_back(wxString::Format("%i", Dial->MarginR));
-				strings.push_back(wxString::Format("%i", Dial->MarginV));
+				strings.push_back(wxString::Format(L"%i", Dial->MarginL));
+				strings.push_back(wxString::Format(L"%i", Dial->MarginR));
+				strings.push_back(wxString::Format(L"%i", Dial->MarginV));
 				strings.push_back(Dial->Effect);
 			}
 			wxString txt = Dial->Text;
 			wxString txttl = Dial->TextTl;
-			bool isTl = (hasTLMode && txttl != "");
+			bool isTl = (hasTLMode && txttl != L"");
 
 			if (!isComment && subsFormat != TMP && !(CPS & visibleColumns)){
 				int chtime;
@@ -267,28 +267,28 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 				}
 				else{ chtime = SpellErrors[k][0]; }
-				strings.push_back(wxString::Format("%i", chtime));
+				strings.push_back(wxString::Format(L"%i", chtime));
 				shorttime = chtime>15;
 			}
 			else{
-				if (subsFormat != TMP){ strings.push_back(""); }
+				if (subsFormat != TMP){ strings.push_back(L""); }
 				if (SpellErrors[k].size() == 0){ SpellErrors[k].push_back(0); }
 				shorttime = false;
 			}
 
 			if (hideOverrideTags){
-				wxRegEx reg("\\{[^\\{]*\\}", wxRE_ADVANCED);
+				wxRegEx reg(L"\\{[^\\{]*\\}", wxRE_ADVANCED);
 				reg.ReplaceAll(&txt, chtag);
 				if (showOriginal){ reg.ReplaceAll(&txttl, chtag); }
 			}
 			
-			if (!isComment && SpellCheckerOn && (!hasTLMode && txt != "" || hasTLMode && txttl != "")){
+			if (!isComment && SpellCheckerOn && (!hasTLMode && txt != L"" || hasTLMode && txttl != L"")){
 				if (SpellErrors[k].size()<2){
 					CheckText((isTl) ? txttl : txt, SpellErrors[k], chtag);
 				}
 			}
-			if (txt.Len() > 1000){ txt = txt.SubString(0, 1000) + "..."; }
-			if (txttl.Len() > 1000){ txttl = txttl.SubString(0, 1000) + "..."; }
+			if (txt.Len() > 1000){ txt = txt.SubString(0, 1000) + L"..."; }
+			if (txttl.Len() > 1000){ txttl = txttl.SubString(0, 1000) + L"..."; }
 			strings.push_back((!showOriginal && isTl) ? txttl : txt);
 			if (showOriginal){ strings.push_back(txttl); }
 
@@ -379,7 +379,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			if (!isHeadline && j == ilcol - 1){
 				if (SpellErrors[k].size()>2){
 					wxString & text = strings[j];
-					text.Replace("\t", " ");
+					text.Replace(L"\t", L" ");
 					tdc.SetBrush(wxBrush(SpelcheckerCol));
 					for (size_t s = 1; s < SpellErrors[k].size(); s += 2){
 						wxString err = text.SubString(SpellErrors[k][s], SpellErrors[k][s + 1]);
@@ -404,8 +404,8 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 						//if(Comparison->at(i-1)[k]==Comparison->at(i-1)[k+1]){continue;}
 						wxString cmp = text.SubString(Comparison->at(i)[c], Comparison->at(i)[c + 1]);
 
-						if (cmp == ""){ continue; }
-						if (cmp == " "){ cmp = "_"; }
+						if (cmp == L""){ continue; }
+						if (cmp == L" "){ cmp = L"_"; }
 						wxString bcmp;
 						if (Comparison->at(i)[c]>0){
 							bcmp = text.Mid(0, Comparison->at(i)[c]);
@@ -445,9 +445,9 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				// GetDialogueKey was made for loops no checks
 				Dialogue *nextDial = (i < file->GetAllCount() - 1)? file->GetDialogueByKey(i + 1) : NULL;
 				if (nextDial && nextDial->treeState == TREE_CLOSED)
-					tdc.DrawBitmap(wxBITMAP_PNG("arrow_list"),posX + 6, posY + 5);
+					tdc.DrawBitmap(wxBITMAP_PNG(L"arrow_list"),posX + 6, posY + 5);
 				else{
-					wxBitmap bmp(wxBITMAP_PNG("arrow_list"));
+					wxBitmap bmp(wxBITMAP_PNG(L"arrow_list"));
 					wxImage img = bmp.ConvertToImage();
 					img = img.Rotate180();
 					tdc.DrawBitmap(img, posX + 6, posY + 5);
@@ -522,7 +522,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 	File *Subs = file->GetSubs();
 	int maxx = Subs->dials.size();
 
-	dc.GetTextExtent(wxString::Format("%i", maxx), &fw, &fh);
+	dc.GetTextExtent(wxString::Format(L"%i", maxx), &fw, &fh);
 	GridWidth[0] = fw + 10;
 	if (!cell)
 		return;
@@ -547,18 +547,18 @@ void SubsGridWindow::AdjustWidths(int cell)
 
 		if (subsFormat<SRT){
 			if ((LAYER & cell) && dial->Layer != 0){
-				dc.GetTextExtent(wxString::Format("%i", dial->Layer), &fw, &fh);
+				dc.GetTextExtent(wxString::Format(L"%i", dial->Layer), &fw, &fh);
 				if (fw + 10>law){ law = fw + 10; }
 			}
 			if (STYLE & cell){
 				dc.GetTextExtent(dial->Style, &fw, &fh);
 				if (fw + 10>syw){ syw = fw + 10; }
 			}
-			if ((ACTOR & cell) && dial->Actor != ""){
+			if ((ACTOR & cell) && dial->Actor != L""){
 				dc.GetTextExtent(dial->Actor, &fw, &fh);
 				if (fw + 10>acw){ acw = fw + 10; }
 			}
-			if ((EFFECT & cell) && dial->Effect != ""){
+			if ((EFFECT & cell) && dial->Effect != L""){
 				dc.GetTextExtent(dial->Effect, &fw, &fh);
 				if (fw + 10>efw){ efw = fw + 10; }
 			}
@@ -1179,7 +1179,7 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 
 	//wxString notchar = "/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{} ";
 	bool repltags = hideOverrideTags && tagsReplacement.Len() > 0;
-	text += " ";
+	text += L" ";
 	bool block = false;
 	wxString word;
 	//bool bracket = false;
@@ -1196,14 +1196,14 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 		const wxUniChar &ch = text[i];
 		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch != '\''/*notchar.Find(ch) != -1*/ && !block){
 			if (word.Len()>1){
-				if (word.StartsWith("'")){ word = word.Remove(0, 1); }
-				if (word.EndsWith("'")){ word = word.RemoveLast(1); }
+				if (word.StartsWith(L"'")){ word = word.Remove(0, 1); }
+				if (word.EndsWith(L"'")){ word = word.RemoveLast(1); }
 				word.Trim(false);
 				word.Trim(true);
 				bool isgood = SpellChecker::Get()->CheckWord(word);
 				if (!isgood){ errs.push_back(firsti); errs.push_back(lasti); }
 			}
-			word = ""; firsti = i + 1;
+			word = L""; firsti = i + 1;
 		}
 		if (block){
 			if (ch == '{'){ errs.push_back(lastStartCBracket); errs.push_back(lastStartCBracket); }
@@ -1234,14 +1234,14 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 			lastStartTBracket = -1;
 		}
 		if (ch == '{'){ block = true; lastStartCBracket = i; continue; }
-		else if (ch == '}'){ block = false; lastEndCBracket = i; firsti = i + 1; word = ""; continue; }
+		else if (ch == '}'){ block = false; lastEndCBracket = i; firsti = i + 1; word = L""; continue; }
 		else if (repltags && tagsReplacement[0] == ch && text.Mid(i, tagsReplacement.Len()) == tagsReplacement){
-			firsti = i + tagsReplacement.Len(); word = ""; continue;
+			firsti = i + tagsReplacement.Len(); word = L""; continue;
 		}
 		
 		if (!block && (!iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) || ch == '\'') /*notchar.Find(ch) == -1*/ && text.GetChar((i == 0) ? 0 : i - 1) != '\\'){ word << ch; lasti = i; }
 		else if (!block && text.GetChar((i == 0) ? 0 : i - 1) == '\\'){
-			word = "";
+			word = L"";
 			if (ch == 'N' || ch == 'n' || ch == 'h'){
 				firsti = i + 1;
 			}
@@ -1324,7 +1324,7 @@ int SubsGridWindow::CalcChars(const wxString &txt, wxString *lines, bool *bad)
 					ns++;
 					int linechars = (chars - lastchars);
 					if (!(*bad)){ *bad = (linechars > 43 || ns > 1); }
-					(*lines) << linechars << "/";
+					(*lines) << linechars << L"/";
 					lastchars = chars;
 					if (hasLineSplit)
 						chars++;
@@ -1372,7 +1372,7 @@ void SubsGridWindow::SelVideoLine(int curtime)
 	for (int i = 0; i < GetCount(); i++)
 	{
 		Dialogue *dial = GetDialogue(i);
-		if (!dial->IsComment && (dial->Text != "" || dial->TextTl != "")){
+		if (!dial->IsComment && (dial->Text != L"" || dial->TextTl != L"")){
 			if (time >= dial->Start.mstime&&time <= dial->End.mstime)
 			{
 				Edit->SetLine(i); SelectRow(i); ScrollTo(i - 4);

@@ -38,7 +38,7 @@ SpellCheckerDialog::SpellCheckerDialog(KainoteFrame *parent)
 	ignoreComments = new KaiCheckBox(this, -1, _("Ignoruj komentarze"));
 	ignoreUpper = new KaiCheckBox(this, -1, _("Ignoruj słowa całe pisane\nz duzej litery"));
 	//wxString misspellWord = FindNextMisspell();
-	misSpell = new KaiTextCtrl(this, -1, "", wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+	misSpell = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	replaceWord = new KaiTextCtrl(this,-1);
 	
 	misspellSizer->Add(new KaiStaticText(this,-1, _("Błędne słowo:")), 1, wxEXPAND|wxALL, 2);
@@ -124,7 +124,7 @@ wxString SpellCheckerDialog::FindNextMisspell()
 		}
 		lastLine = i;
 	}
-	return "";
+	return L"";
 }
 	
 void SpellCheckerDialog::SetNextMisspell()
@@ -135,7 +135,7 @@ void SpellCheckerDialog::SetNextMisspell()
 		//mamy brak błędów trzeba poinformować użyszkodnika i zablokować jakiekolwiek akcje.
 		suggestionsList->SetTextArray(wxArrayString());
 		blockOnActive=true;
-		replaceWord->SetValue("", true);
+		replaceWord->SetValue(L"", true);
 		KaiMessageBox(_("Nie znaleziono więcej błędów pisowni"), _("Uwaga"), wxOK, this);
 		return;
 	}else{
@@ -191,7 +191,7 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 	bool noComments = ignoreComments->GetValue();
 	//usunąć to nieszczęsne std regex które ć widzi jako word boundary
 	
-		wxRegEx r("\\m" + misspellTxt.Lower() + "\\M", wxRE_ADVANCED | wxRE_ICASE); // the pattern \m \M matches a word boundary
+		wxRegEx r(L"\\m" + misspellTxt.Lower() + L"\\M", wxRE_ADVANCED | wxRE_ICASE); // the pattern \m \M matches a word boundary
 		if (!r.IsValid())
 			return;
 		
@@ -202,7 +202,7 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 		for (int i = 0; i < tab->Grid->GetCount(); i++){
 			Dialogue *Dial = tab->Grid->GetDialogue(i);
 			if (Dial->IsComment && noComments){ continue; }
-			wxString lineText = (tab->Grid->hasTLMode && Dial->TextTl != "") ? Dial->TextTl : Dial->Text;
+			wxString lineText = (tab->Grid->hasTLMode && Dial->TextTl != L"") ? Dial->TextTl : Dial->Text;
 			text = lineText;
 			//lenMismatch = 0;
 			textPos = 0;
@@ -312,7 +312,7 @@ bool SpellCheckerDialog::IsAllUpperCase(const wxString &word)
 
 void SpellCheckerDialog::CheckText(wxString Text)
 {
-	Text += " ";
+	Text += L" ";
 	bool block = false;
 	wxString word;
 	int lasti = 0;
@@ -323,8 +323,8 @@ void SpellCheckerDialog::CheckText(wxString Text)
 		const wxUniChar &ch = Text[i];
 		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch != '\''/*notchar.Find(ch) != -1*/ && !block){
 			if (word.Len() > 1){
-				if (word.StartsWith("'")){ word = word.Remove(0, 1); }
-				if (word.EndsWith("'")){ word = word.RemoveLast(1); }
+				if (word.StartsWith(L"'")){ word = word.Remove(0, 1); }
+				if (word.EndsWith(L"'")){ word = word.RemoveLast(1); }
 				word.Trim(false);
 				word.Trim(true);
 				bool isgood = SpellChecker::Get()->CheckWord(word);
@@ -333,7 +333,7 @@ void SpellCheckerDialog::CheckText(wxString Text)
 					errors.push_back(lasti); 
 				}
 			}
-			word = ""; firsti = i + 1;
+			word = L""; firsti = i + 1;
 		}
 		
 		if (ch == '{'){ 
@@ -343,14 +343,14 @@ void SpellCheckerDialog::CheckText(wxString Text)
 		else if (ch == '}'){ 
 			block = false; 
 			firsti = i + 1; 
-			word = "";
+			word = L"";
 			continue; 
 		}
 
 		if (!block && (!iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) || ch == '\'') /*notchar.Find(ch) == -1*/ 
 			&& Text.GetChar((i == 0) ? 0 : i - 1) != '\\'){ word << ch; lasti = i; }
 		else if (!block && Text.GetChar((i == 0) ? 0 : i - 1) == '\\'){
-			word = "";
+			word = L"";
 			if (ch == 'N' || ch == 'n' || ch == 'h'){
 				firsti = i + 1;
 			}
@@ -365,12 +365,12 @@ void SpellCheckerDialog::CheckText(wxString Text)
 
 void SpellCheckerDialog::LoadAddedMisspels(wxArrayString &addedMisspels)
 {
-	wxString userpath = Options.pathfull + "\\Dictionary\\UserDic.udic";
+	wxString userpath = Options.pathfull + L"\\Dictionary\\UserDic.udic";
 	if (wxFileExists(userpath)){
 		OpenWrite op;
 		wxString txt;
 		if (!op.FileOpen(userpath, &txt, false)) { return; }
-		wxStringTokenizer textIn(txt, "\n");
+		wxStringTokenizer textIn(txt, L"\n");
 		while (textIn.HasMoreTokens()) {
 			// Read line
 			wxString curLine = textIn.NextToken();

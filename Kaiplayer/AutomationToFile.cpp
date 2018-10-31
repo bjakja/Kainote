@@ -233,7 +233,7 @@ namespace Auto{
 			lua_setfield(L, -2, "effect");
 
 			bool isTl = false;
-			const StoreTextHelper & text = (isTl = adial->TextTl != "") ? adial->TextTl : adial->Text;
+			const StoreTextHelper & text = (isTl = adial->TextTl != L"") ? adial->TextTl : adial->Text;
 			lua_pushstring(L, text.mb_str(wxConvUTF8).data());
 			lua_setfield(L, -2, "text");
 
@@ -381,7 +381,7 @@ namespace Auto{
 				e->astyle = new Styles();
 			e->astyle->Name = name;
 			e->astyle->Fontname = fontname;
-			e->astyle->Fontsize = "";
+			e->astyle->Fontsize = L"";
 			e->astyle->Fontsize << fontsize;
 			e->astyle->PrimaryColour = color1;
 			e->astyle->SecondaryColour = color2;
@@ -391,33 +391,33 @@ namespace Auto{
 			e->astyle->Italic = italic;
 			e->astyle->Underline = underline;
 			e->astyle->StrikeOut = strikeout;
-			e->astyle->ScaleX = "";
+			e->astyle->ScaleX = L"";
 			e->astyle->ScaleX << scale_x;
-			e->astyle->ScaleY = "";
+			e->astyle->ScaleY = L"";
 			e->astyle->ScaleY << scale_y;
-			e->astyle->Spacing = "";
+			e->astyle->Spacing = L"";
 			e->astyle->Spacing << spacing;
-			e->astyle->Angle = "";
+			e->astyle->Angle = L"";
 			e->astyle->Angle << angle;
 			e->astyle->BorderStyle = (borderstyle == -3);
-			e->astyle->Outline = "";
+			e->astyle->Outline = L"";
 			e->astyle->Outline << outline;
-			e->astyle->Shadow = "";
+			e->astyle->Shadow = L"";
 			e->astyle->Shadow << shadow;
-			e->astyle->Alignment = "";
+			e->astyle->Alignment = L"";
 			e->astyle->Alignment << align;
-			e->astyle->MarginL = "";
+			e->astyle->MarginL = L"";
 			e->astyle->MarginL << margin_l;
-			e->astyle->MarginR = "";
+			e->astyle->MarginR = L"";
 			e->astyle->MarginR << margin_r;
-			e->astyle->MarginV = "";
+			e->astyle->MarginV = L"";
 			int marg = (margin_t > margin_b) ? margin_t : margin_b;
 			e->astyle->MarginV << marg;
-			e->astyle->Encoding = "";
+			e->astyle->Encoding = L"";
 			e->astyle->Encoding << encoding;
 
 		}
-		else if (e->lclass == "info"){
+		else if (e->lclass == L"info"){
 
 			GETSTRING(key, "key", "info");
 			GETSTRING(value, "value", "info");
@@ -576,18 +576,18 @@ namespace Auto{
 					lua_error(L);
 					return 0;
 				}
-				if (i < sinfo && e->lclass == "info"){
+				if (i < sinfo && e->lclass == L"info"){
 					SInfo *inf = e->info->Copy();
 					Subs->dsinfo.push_back(inf);
 					Subs->sinfo[i] = inf;
 				}
-				else if (i < styles && e->lclass == "style")
+				else if (i < styles && e->lclass == L"style")
 				{
 					Styles *styl = e->astyle->Copy();
 					Subs->dstyles.push_back(styl);
 					Subs->styles[i - sinfo] = styl;
 				}
-				else if (i < dials && e->lclass == "dialogue")
+				else if (i < dials && e->lclass == L"dialogue")
 				{
 					Dialogue *dial = e->adial->Copy(false, false);
 					Subs->ddials.push_back(dial);
@@ -595,8 +595,8 @@ namespace Auto{
 				}
 				else
 				{
-					wxString fclass = (e->lclass == "info") ? L"info" : (e->lclass == "style") ? L"styli" : L"dialogów";
-					wxString sclass = (i < sinfo) ? L"info" : (i < styles) ? L"styli" : L"dialogów";
+					wxString fclass = (e->lclass == L"info") ? L"info" : (e->lclass == L"style") ? _("stylów") : _("dialogów");
+					wxString sclass = (i < sinfo) ? L"info" : (i < styles) ? L"stylów" : _("dialogów");
 					wxString all = wxString::Format(_("Nie mo¿na dodaæ linii klasy: %s w pole klasy: %s"), fclass, sclass);
 					SAFE_DELETE(e);
 					lua_pushstring(L, all.mb_str(wxConvUTF8).data());
@@ -742,19 +742,19 @@ namespace Auto{
 			lua_pushvalue(L, i);
 			SubsEntry *e = LuaToLine(L);
 			if (!e){ return 0; }
-			if (e->lclass == "info")
+			if (e->lclass == L"info")
 			{
 				SInfo *inf = e->info->Copy();
 				Subs->sinfo.push_back(inf);
 				Subs->dsinfo.push_back(inf);
 			}
-			else if (e->lclass == "style")
+			else if (e->lclass == L"style")
 			{
 				Styles *styl = e->astyle->Copy();
 				Subs->styles.push_back(styl);
 				Subs->dstyles.push_back(styl);
 			}
-			if (e->lclass == "dialogue"){
+			if (e->lclass == L"dialogue"){
 				Dialogue *dial = e->adial->Copy();
 				Subs->ddials.push_back(dial);
 				Subs->dials.push_back(dial);
@@ -799,21 +799,21 @@ namespace Auto{
 			int dialsize = Subs->dials.size();
 			int dials = styles + dialsize;
 
-			if (e->lclass == "info")
+			if (e->lclass == L"info")
 			{
 				SInfo *inf = e->info->Copy();
 				if (start >= sinfo){ Subs->sinfo.push_back(inf); }
 				else{ Subs->sinfo.insert(Subs->sinfo.begin() + start, inf); }
 				Subs->dsinfo.push_back(inf);
 			}
-			else if (e->lclass == "style")
+			else if (e->lclass == L"style")
 			{
 				Styles *styl = e->astyle->Copy();
 				if (start - sinfo >= stylsize){ Subs->styles.push_back(styl); }
 				else{ Subs->styles.insert(Subs->styles.begin() + (start - sinfo), styl); }
 				Subs->dstyles.push_back(styl);
 			}
-			else if (e->lclass == "dialogue")
+			else if (e->lclass == L"dialogue")
 			{
 				int newStart = start - styles;
 				Dialogue *dial = e->adial->Copy(false, newStart >= dialsize);
@@ -844,7 +844,7 @@ namespace Auto{
 	{
 		SubsEntry *e = LuaToLine(L);
 		if (!e){ return 0; }
-		else if (e->lclass != "dialogue"){
+		else if (e->lclass != L"dialogue"){
 			lua_pushstring(L, "You try to parse karaoke from non dialogue line");
 			lua_error(L);
 			return 0;
@@ -865,7 +865,7 @@ namespace Auto{
 		set_field(L, "text", "");
 		set_field(L, "text_stripped", "");
 		lua_rawseti(L, -2, kcount++);
-		wxString tags[] = { "kf", "ko", "k", "K" };
+		wxString tags[] = { L"kf", L"ko", L"k", L"K" };
 		e->adial->ParseTags(tags, 4);
 		ParseData *Data = e->adial->parseData;
 		//wxStringTokenizer ktok(e->adial->Text,"\\",wxTOKEN_STRTOK);
@@ -902,12 +902,12 @@ namespace Auto{
 			kdur = wxAtoi(tdata->value);
 			kdur *= 10;
 			if (nextKstart < 0)
-				ktext = "";
+				ktext = L"";
 			else{
 				ktext = text.Mid(lastPosition, tdata->startTextPos - lastPosition - tdata->tagName.Len() - 1);
 				size_t newStart = tdata->startTextPos + tdata->value.Len();
 				ktext += text.Mid(newStart, nextKstart - newStart + 1);
-				ktext.Replace("{}", "");
+				ktext.Replace(L"{}", L"");
 			}
 			ktext_stripped = ktext;
 			reg.ReplaceAll(&ktext_stripped, _T(""));

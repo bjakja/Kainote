@@ -152,8 +152,8 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 
 wxString Position::GetVisual(int datapos)
 {
-	return "\\pos(" + getfloat(((data[datapos].pos.x / zoomScale.x) + zoomMove.x) * coeffW) + "," +
-		getfloat(((data[datapos].pos.y / zoomScale.y) + zoomMove.y) * coeffH) + ")";
+	return L"\\pos(" + getfloat(((data[datapos].pos.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+		getfloat(((data[datapos].pos.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
 }
 
 
@@ -184,7 +184,7 @@ void Position::ChangeMultiline(bool all)
 		selPositions.clear();
 		dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
 		if (selPositions.size() != data.size()){
-			KaiLog("Sizes mismatch");
+			KaiLog(L"Sizes mismatch");
 			return;
 		}
 	}
@@ -192,17 +192,17 @@ void Position::ChangeMultiline(bool all)
 	bool skipInvisible = !all && tab->Video->GetState() != Playing;
 	int _time = tab->Video->Tell();
 	int moveLength = 0;
-	const wxString &tlStyle = tab->Grid->GetSInfo("TLMode Style");
+	const wxString &tlStyle = tab->Grid->GetSInfo(L"TLMode Style");
 	for (size_t i = 0; i < data.size(); i++){
 
 		Dialogue *Dial = data[i].dial;
 		if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){ continue; }
 		wxString visual = GetVisual(i);
 
-		bool istxttl = (tab->Grid->hasTLMode && Dial->TextTl != "");
+		bool istxttl = (tab->Grid->hasTLMode && Dial->TextTl != L"");
 		wxString txt = (istxttl) ? Dial->TextTl : Dial->Text;
 
-		if (data[i].putinBracket){ visual = "{" + visual + "}"; }
+		if (data[i].putinBracket){ visual = L"{" + visual + L"}"; }
 		txt.replace(data[i].TextPos.x, data[i].TextPos.y, visual);
 		if (all){
 			if (istxttl){

@@ -106,7 +106,7 @@ bool SubsLoader::LoadASS(const wxString &text)
 				Dialogue *tl = new Dialogue(ntoken);
 				tl->TextTl = tl->Text;
 				tl->Text = dl->Text;
-				if (dl->Effect == "\fD"){
+				if (dl->Effect == L"\fD"){
 					tl->ChangeState(4);
 				}
 				grid->AddLine(tl);

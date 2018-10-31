@@ -190,7 +190,7 @@ void MisspellReplacer::ReplaceChecked()
 
 		Dialogue *Dialc = tab->Grid->file->CopyDialogueByKey(SeekResult->keyLine);
 		
-		wxString & lineText = Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != "");
+		wxString & lineText = Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != L"");
 
 		//replace differents for not matching sizes in one line
 		if (SeekResult->keyLine != oldKeyLine)
@@ -216,7 +216,7 @@ void MisspellReplacer::ReplaceChecked()
 			}
 		}
 		else{
-			KaiLog("Cannot replace: \"" + matchResult + "\" to \"" + actualrule.replaceRule + "\" using rule: \"" + actualrule.findRule + "\"");
+			KaiLog(L"Cannot replace: \"" + matchResult + L"\" to \"" + actualrule.replaceRule + L"\" using rule: \"" + actualrule.findRule + L"\"");
 		}
 
 		oldtab = tab;
@@ -262,20 +262,20 @@ void MisspellReplacer::FillRulesList()
 	if (rulesText.empty()){
 		FillWithDefaultRules(rulesText);
 	}
-	wxStringTokenizer tokenizer(rulesText, "\n", wxTOKEN_STRTOK);
+	wxStringTokenizer tokenizer(rulesText, L"\n", wxTOKEN_STRTOK);
 	wxString headertoken = tokenizer.GetNextToken();
 	if (headertoken.StartsWith(L"#Kainote rules file"))
 		headertoken = tokenizer.GetNextToken();
-	wxStringTokenizer tokenizerOnOff(headertoken, "|", wxTOKEN_STRTOK);
+	wxStringTokenizer tokenizerOnOff(headertoken, L"|", wxTOKEN_STRTOK);
 
 	while(tokenizer.HasMoreTokens())
 	{
 		wxString token = tokenizer.GetNextToken();
-		wxString OnOff = (tokenizerOnOff.HasMoreTokens())? tokenizerOnOff.GetNextToken() : "0";
+		wxString OnOff = (tokenizerOnOff.HasMoreTokens())? tokenizerOnOff.GetNextToken() : L"0";
 		Rule newRule(token);
 		rules.push_back(newRule);
 
-		int row = RulesList->AppendItem(new ItemCheckBox(OnOff == "1", L""));
+		int row = RulesList->AppendItem(new ItemCheckBox(OnOff == L"1", L""));
 		RulesList->SetItem(row, 1, new ItemText(newRule.description));
 		RulesList->SetItem(row, 2, new ItemText(newRule.findRule));
 		RulesList->SetItem(row, 3, new ItemText(newRule.replaceRule));
@@ -391,9 +391,9 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 		if (!Dial->isVisible){ tabLinePosition++; continue; }
 
 		if ((!selectedOption) ||
-			(selectedOption == 3 && stylesAsText.Find("," + Dial->Style + ",") != -1) ||
+			(selectedOption == 3 && stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
 			(selectedOption == 1 && tab->Grid->file->IsSelectedByKey(tabLinePosition))){
-			const wxString & lineText = (Dial->TextTl != "") ? Dial->TextTl : Dial->Text;
+			const wxString & lineText = (Dial->TextTl != L"") ? Dial->TextTl : Dial->Text;
 
 			for (size_t k = 0; k < rxrules.size(); k++){
 				
@@ -511,9 +511,9 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 		if (!Dial->isVisible){ tabLinePosition++; continue; }
 
 		if ((!selectedOption) ||
-			(selectedOption == 3 && stylesAsText.Find("," + Dial->Style + ",") != -1) ||
+			(selectedOption == 3 && stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
 			(selectedOption == 1 && tab->Grid->file->IsSelectedByKey(tabLinePosition))){
-			const wxString & lineText = Dial->Text.CheckTl(Dial->TextTl, Dial->TextTl != "");
+			const wxString & lineText = Dial->Text.CheckTl(Dial->TextTl, Dial->TextTl != L"");
 			wxString stringChanged = lineText;
 			bool changed = false;
 			for (size_t k = 0; k < rxrules.size(); k++){
@@ -554,7 +554,7 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 			}
 			if (changed){
 				Dialogue *Dialc = tab->Grid->file->CopyDialogueByKey(tabLinePosition);
-				Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != "") = stringChanged;
+				Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != L"") = stringChanged;
 				changedAnything = true;
 			}
 		}
@@ -696,7 +696,7 @@ bool MisspellReplacer::KeepFinding(const wxString &text, int textPos, int option
 
 Rule::Rule(const wxString & stringRule)
 {
-	wxStringTokenizer ruleTokenizer(stringRule, "\f", wxTOKEN_RET_EMPTY_ALL);
+	wxStringTokenizer ruleTokenizer(stringRule, L"\f", wxTOKEN_RET_EMPTY_ALL);
 	wxString ruleToken = ruleTokenizer.GetNextToken();
 	description = ruleToken;
 	if (!ruleTokenizer.HasMoreTokens())
@@ -717,7 +717,7 @@ Rule::Rule(const wxString & stringRule)
 	return;
 
 fail:
-	KaiLog(wxString::Format(("Regu³a \"%s\" jest nieprawid³owa."), stringRule));
+	KaiLog(wxString::Format(_("Regu³a \"%s\" jest nieprawid³owa."), stringRule));
 }
 
 //CheckBoxListButton::CheckBoxListButton(wxWindow *parent, int id, const wxString &name, const wxArrayString &listElements, const wxPoint &pos, const wxSize &size, long style) 

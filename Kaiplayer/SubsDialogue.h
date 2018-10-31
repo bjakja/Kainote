@@ -155,9 +155,11 @@ public:
 		return *stored;
 	}
 	bool operator !=(const wxString &comptext) const{ return comptext != (*stored); };
-	bool operator !=(const char *comptext) const{ return comptext != (*stored); };
+	//bool operator !=(const char *comptext) const{ return comptext != (*stored); };
+	bool operator !=(const wchar_t *comptext) const{ return comptext != (*stored); };
 	bool operator ==(const wxString &comptext) const{ return comptext == (*stored); };
-	bool operator ==(const char *comptext) const{ return comptext == (*stored); };
+	//bool operator ==(const char *comptext) const{ return comptext == (*stored); };
+	bool operator ==(const wchar_t *comptext) const{ return comptext == (*stored); };
 	wxString &operator <<(wxString &text){
 		if ((*deleteReference) > 0){
 			StoreText(*stored + text);
@@ -165,7 +167,14 @@ public:
 		else{ *stored << text; }
 		return *stored;
 	};
-	wxString &operator <<(const char *text){
+	/*wxString &operator <<(const char *text){
+		if ((*deleteReference) > 0){
+			StoreText(*stored + text);
+		}
+		else{ *stored << text; }
+		return *stored;
+	};*/
+	wxString &operator <<(const wchar_t *text){
 		if ((*deleteReference) > 0){
 			StoreText(*stored + text);
 		}
@@ -267,7 +276,11 @@ public:
 	void ParseTags(wxString *tags, size_t n, bool plainText = false);
 	void ChangeTimes(int start, int end);
 	void ClearParse();
-	void AddResetOnMDVDWraps();
+	void AddResetOnMDVDWraps(const wxString & prefix);
+	void ReplaceSlashesToItalics();
+	bool StartsWith(const wxString &text, wxUniChar ch, size_t *pos);
+	bool StartsWithNoBlock(const wxString &text, wxUniChar ch, size_t *pos);
+	bool EndsWith(const wxString &text, wxUniChar ch, size_t *pos);
 	Dialogue();
 	Dialogue(const wxString &ldial, const wxString &txttl = "");
 	~Dialogue();

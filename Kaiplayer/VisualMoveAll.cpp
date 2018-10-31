@@ -160,7 +160,7 @@ void MoveAll::SetCurVisual()
 	elems.clear();
 
 	wxString res;
-	if (tab->Edit->FindValue("org\\(([^\\)]+)", &res, "", 0, true)){
+	if (tab->Edit->FindValue(L"org\\(([^\\)]+)", &res, L"", 0, true)){
 		wxString rest;
 		double orx, ory;
 
@@ -170,8 +170,8 @@ void MoveAll::SetCurVisual()
 		elem.type = TAGORG;
 		elems.push_back(elem);
 	}
-	if (tab->Edit->FindValue("(i?clip[^\\)]+)", &res, "", 0, true)){
-		wxRegEx re("m ([0-9.-]+) ([0-9.-]+)", wxRE_ADVANCED);
+	if (tab->Edit->FindValue(L"(i?clip[^\\)]+)", &res, L"", 0, true)){
+		wxRegEx re(L"m ([0-9.-]+) ([0-9.-]+)", wxRE_ADVANCED);
 		moveElems elem;
 		if (re.Matches(res)){
 			elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res, 1)) / coeffW) - zoomMove.x)*zoomScale.x,
@@ -179,8 +179,8 @@ void MoveAll::SetCurVisual()
 		}
 		else{
 			//wxString txt = tab->Edit->TextEdit->GetValue();
-			int repl = res.Replace(",", ",");
-			wxRegEx re("\\(([0-9.-]+)[, ]*([0-9.-]+)", wxRE_ADVANCED);
+			int repl = res.Replace(L",", L",");
+			wxRegEx re(L"\\(([0-9.-]+)[, ]*([0-9.-]+)", wxRE_ADVANCED);
 			if (repl >= 3 && re.Matches(res)){
 				elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res, 1)) / coeffW) - zoomMove.x)*zoomScale.x,
 					((wxAtoi(re.GetMatch(res, 2)) / coeffH) - zoomMove.y)*zoomScale.y);
@@ -189,9 +189,9 @@ void MoveAll::SetCurVisual()
 		elem.type = TAGCLIP;
 		elems.push_back(elem);
 	}
-	if (tab->Edit->FindValue("p([0-9]+)", &res, "", 0, true)){
+	if (tab->Edit->FindValue(L"p([0-9]+)", &res, L"", 0, true)){
 		res = tab->Edit->TextEdit->GetValue();
-		wxRegEx re("} ?m ([.0-9-]+) ([.0-9-]+)", wxRE_ADVANCED);
+		wxRegEx re(L"} ?m ([.0-9-]+) ([.0-9-]+)", wxRE_ADVANCED);
 		if (re.Matches(res)){
 			moveElems elem;
 
@@ -225,7 +225,7 @@ void MoveAll::SetCurVisual()
 
 wxString MoveAll::GetVisual()
 {
-	return "";
+	return L"";
 }
 
 void MoveAll::ChangeInLines(bool all)
@@ -243,7 +243,7 @@ void MoveAll::ChangeInLines(bool all)
 			bool visible = false;
 			dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
 			if (selPositions.size() != sels.size()){
-				KaiLog("Sizes mismatch");
+				KaiLog(L"Sizes mismatch");
 				return;
 			}
 		}
@@ -252,10 +252,10 @@ void MoveAll::ChangeInLines(bool all)
 	}
 	bool skipInvisible = !all && tab->Video->GetState() != Playing;
 	wxString tmp;
-	//bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()=="");
+	//bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()==L"");
 	//MTextEditor *Editor=(isOriginal)? tab->Edit->TextEditTl : tab->Edit->TextEdit;
 	//wxString origText=Editor->GetValue();
-	const wxString &tlModeStyle = tab->Grid->GetSInfo("TLMode Style");
+	const wxString &tlModeStyle = tab->Grid->GetSInfo(L"TLMode Style");
 	int moveLength = 0;
 
 	for (size_t i = 0; i < sels.size(); i++){
@@ -263,15 +263,15 @@ void MoveAll::ChangeInLines(bool all)
 		Dialogue *Dial = tab->Grid->GetDialogue(sels[i]);
 
 		if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){ continue; }
-		bool istexttl = (tab->Grid->hasTLMode && Dial->TextTl != "");
+		bool istexttl = (tab->Grid->hasTLMode && Dial->TextTl != L"");
 		txt = (istexttl) ? Dial->TextTl : Dial->Text;
 
 		for (int k = 0; k < 6; k++){
 			byte type = selectedTags & (1 << k);
 			if (!type){ continue; }
 			bool vector = type == TAGCLIP || type == TAGP;
-			wxString delimiter = (vector) ? " " : ",";
-			wxString tagpattern = (type == TAGPOS) ? "pos\\(([^\\)]+)" : (type == TAGORG) ? "org\\(([^\\)]+)" : (type == TAGCLIP) ? "i?clip\\(([^\\)]+)" : (type == TAGP) ? "p[0-9-]+[^}]*} ?m ([^{]+)" : "move\\(([^\\)]+)";
+			wxString delimiter = (vector) ? L" " : L",";
+			wxString tagpattern = (type == TAGPOS) ? L"pos\\(([^\\)]+)" : (type == TAGORG) ? L"org\\(([^\\)]+)" : (type == TAGCLIP) ? L"i?clip\\(([^\\)]+)" : (type == TAGP) ? L"p[0-9-]+[^}]*} ?m ([^{]+)" : L"move\\(([^\\)]+)";
 			wxRegEx re(tagpattern, wxRE_ADVANCED);
 			size_t startMatch = 0, lenMatch = 0;
 			if (re.Matches(txt)){
@@ -284,7 +284,7 @@ void MoveAll::ChangeInLines(bool all)
 						tmp = tmp.After(',');
 					}
 					else if (replacements > 1){
-						delimiter = ",";
+						delimiter = L",";
 					}
 				}
 				//re.GetMatch(&startMatch, &lenMatch, 2); niepotrzebny drugi raz użycie tego samego
@@ -298,7 +298,7 @@ void MoveAll::ChangeInLines(bool all)
 						else{ val += (((moving.y / zoomScale.y)) * coeffH); }
 						if (type == TAGMOVES && count > 1){ visual += token + delimiter; continue; }
 						else if (type == TAGMOVEE && count != 2 && count != 3){ visual += token + delimiter; count++; continue; }
-						if (vector){ visual << getfloat(val, (type == TAGCLIP) ? "6.0f" : "6.2f") << delimiter; }
+						if (vector){ visual << getfloat(val, (type == TAGCLIP) ? L"6.0f" : L"6.2f") << delimiter; }
 						else{ visual += getfloat(val) + delimiter; }
 						count++;
 					}
