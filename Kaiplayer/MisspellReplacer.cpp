@@ -19,8 +19,7 @@
 #include "KaiStaticBoxSizer.h"
 #include "Tabs.h"
 #include "KainoteMain.h"
-#include <regex>
-#include <wx/regex.h>
+#include <algorithm>
 
 
 MisspellReplacer::MisspellReplacer(wxWindow *parent)
@@ -29,8 +28,8 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 {
 	DialogSizer *MainSizer = new DialogSizer(wxHORIZONTAL);
 	wxBoxSizer *ListSizer = new wxBoxSizer(wxVERTICAL);
-	PutWordBoundary = new KaiCheckBox(this, ID_PUT_WORD_BOUNDARY, _("Wstawiaj automatycznie granice\npocz¹tku s³owa \\m i koñca s³owa \\M"));
-	ShowBuiltInRules = new KaiCheckBox(this, ID_SHOW_BUILT_IN_RULES, _("Poka¿ wbudowane zasady"));
+	//PutWordBoundary = new KaiCheckBox(this, ID_PUT_WORD_BOUNDARY, _("Wstawiaj automatycznie granice\npocz¹tku s³owa \\m i koñca s³owa \\M"));
+	//ShowBuiltInRules = new KaiCheckBox(this, ID_SHOW_BUILT_IN_RULES, _("Poka¿ wbudowane zasady"));
 
 	KaiStaticBoxSizer *RuleEdition = new KaiStaticBoxSizer(wxVERTICAL, this, _("Edycja regu³y"));
 	wxBoxSizer *PhrasesDescriptionSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -60,7 +59,7 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	PhrasesOptionsSizer1->Add(ReplaceWithUnchangedCase, 1, wxALL | wxEXPAND, 2);
 	PhrasesOptionsSizer2->Add(ReplaceOnlyTags, 1, wxALL | wxEXPAND, 2);
 	PhrasesOptionsSizer2->Add(ReplaceOnlyText, 1, wxALL | wxEXPAND, 2);
-	RuleEdition->Add(new KaiStaticText(this, -1, _("Opis regu³y")), wxALL | wxEXPAND, 2);
+	RuleEdition->Add(new KaiStaticText(this, -1, _("Opis regu³y")), 0, wxLEFT | wxBOTTOM | wxEXPAND, 2);
 	RuleEdition->Add(RuleDescription, 0, wxALL | wxEXPAND, 2);
 	RuleEdition->Add(PhrasesDescriptionSizer, 0, wxEXPAND);
 	RuleEdition->Add(PhrasesSizer, 0, wxEXPAND);
@@ -93,8 +92,8 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	FillRulesList();
 	ListSizer->Add(RuleEdition, 0, wxEXPAND);
 	ListSizer->Add(RulesList, 1, wxALL | wxEXPAND, 2);
-	ListSizer->Add(PutWordBoundary, 0, wxALL, 2);
-	ListSizer->Add(ShowBuiltInRules, 0, wxALL, 2);
+	//ListSizer->Add(PutWordBoundary, 0, wxALL, 2);
+	//ListSizer->Add(ShowBuiltInRules, 0, wxALL, 2);
 
 	KaiStaticBoxSizer *WhichLinesSizer = new KaiStaticBoxSizer(wxVERTICAL, this, _("Które linijki"));
 	wxString choices[] = { _("Wszystkie linijki"), _("Zaznaczone linijki"), _("Od zaznaczonej linijki"), _("Wed³ug wybranych stylów") };
@@ -159,6 +158,7 @@ MisspellReplacer::~MisspellReplacer()
 void MisspellReplacer::ReplaceChecked()
 {
 	std::vector<wxRegEx*> rxrules;
+	std::vector<ReplacerSeekResults *> results;
 	for (size_t i = 0; i < rules.size(); i++){
 		int flags = wxRE_ADVANCED;
 		if (!(rules[i].options & OPTION_MATCH_CASE))
@@ -178,9 +178,9 @@ void MisspellReplacer::ReplaceChecked()
 	TabPanel *oldtab = NULL;
 	TabPanel *tab = NULL;
 	int oldKeyLine = -1;
-	int oldNumOfRule = -1;
-	int replaceDiff = 0;
-	for (size_t tt = 0; tt < List->GetCount(); tt++){
+	bool somethingWasChanged = false;
+	size_t size = List->GetCount();
+	for (size_t tt = 0; tt < size; tt++){
 		Item *item = List->GetItem(tt, 0);
 		if (!item || item->type != TYPE_TEXT || !item->modified)
 			continue;
@@ -188,42 +188,33 @@ void MisspellReplacer::ReplaceChecked()
 		ReplacerSeekResults *SeekResult = (ReplacerSeekResults *)item;
 		tab = SeekResult->tab;
 
-		Dialogue *Dialc = tab->Grid->file->CopyDialogueByKey(SeekResult->keyLine);
-		
-		wxString & lineText = Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != L"");
-
-		//replace differents for not matching sizes in one line
-		if (SeekResult->keyLine != oldKeyLine)
-			replaceDiff = 0;
+		if (SeekResult->keyLine != oldKeyLine){
+			std::sort(results.begin(), results.end(), [=](ReplacerSeekResults *i, ReplacerSeekResults *j){
+				return i->findPosition.x > j->findPosition.x;
+			});
+			somethingWasChanged |= ReplaceBlock(results, rxrules);
+			results.clear();
+		}
+			
+		results.push_back(SeekResult);
+		if (tab != oldtab && oldtab && somethingWasChanged){
+			tab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
+			tab->Grid->SpellErrors.clear();
+			tab->Grid->Refresh(false);
+			somethingWasChanged = false;
+		}
 	
-		size_t pos = SeekResult->findPosition.x + replaceDiff;
-		size_t len = SeekResult->findPosition.y;
-		const Rule & actualrule = rules[SeekResult->numOfRule];
-		wxString replacedResult;
-		wxString matchResult = replacedResult = lineText.Mid(pos, len);
-		int reps = rxrules[SeekResult->numOfRule]->Replace(&replacedResult, actualrule.replaceRule);
-		if (reps < 1){
-			MoveCase(matchResult, &replacedResult, actualrule.options);
-
-			lineText.replace(pos, len, replacedResult);
-
-			replaceDiff += replacedResult.length() - matchResult.length();
-
-			if (oldtab && oldtab != tab){
-				oldtab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
-				oldtab->Grid->SpellErrors.clear();
-				oldtab->Grid->Refresh(false);
-			}
-		}
-		else{
-			KaiLog(L"Cannot replace: \"" + matchResult + L"\" to \"" + actualrule.replaceRule + L"\" using rule: \"" + actualrule.findRule + L"\"");
-		}
-
 		oldtab = tab;
 		oldKeyLine = SeekResult->keyLine;
-		oldNumOfRule = SeekResult->numOfRule;
 	}
-	if (tab){
+	if (results.size()){
+		std::sort(results.begin(), results.end(), [=](ReplacerSeekResults *i, ReplacerSeekResults *j){
+			return i->findPosition.x > j->findPosition.x;
+		});
+		somethingWasChanged |= ReplaceBlock(results, rxrules);
+	}
+
+	if (tab && somethingWasChanged){
 		tab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
 		tab->Grid->SpellErrors.clear();
 		tab->Grid->Refresh(false);
@@ -315,8 +306,8 @@ void MisspellReplacer::AddRule()
 	}
 	wxString phraseToFind = PhraseToFind->GetValue();
 	wxString phraseToReplace = PhraseToReplace->GetValue();
-	if (PutWordBoundary->GetValue())
-		phraseToFind = L"\\m" + phraseToFind + L"\\M";
+	//if (PutWordBoundary->GetValue())
+		//phraseToFind = L"\\m" + phraseToFind + L"\\M";
 
 	rules.push_back(Rule(RuleDescription->GetValue(), phraseToFind, phraseToReplace, GetRuleOptions()));
 	int row = RulesList->AppendItem(new ItemCheckBox(false, L""));
@@ -408,7 +399,7 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 						if (matchlen == 0)
 							matchlen++;
 						int options = rxrules[k].second;
-						if ((options < 16) || KeepFinding(text, matchstart, options)){
+						if ((options < 16) || KeepFinding(lineText, matchstart + textPos, options)){
 
 							if (isfirst){
 								resultDialog->SetHeader(tab->SubsPath);
@@ -584,6 +575,44 @@ void MisspellReplacer::ReplaceOnAllTabs()
 	}
 }
 
+bool MisspellReplacer::ReplaceBlock(std::vector<ReplacerSeekResults *> &results, std::vector<wxRegEx*> &rxrules)
+{
+	if (!results.size())
+		return false;
+
+	Dialogue *Dialc = results[0]->tab->Grid->file->CopyDialogueByKey(results[0]->keyLine, true, true);
+
+	wxString & lineText = Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != L"");
+	//method maybe not too good but even if there is a 6 replaces in one place then 
+	//one of it should be changed.
+	//It means that dialogue will be changed and no need to read and change if needed
+
+	bool somethingChanged = false;
+	for (auto & SeekResult : results){
+
+		size_t pos = SeekResult->findPosition.x;
+		size_t len = SeekResult->findPosition.y;
+		const Rule & actualrule = rules[SeekResult->numOfRule];
+		wxString replacedResult;
+		wxString matchResult = replacedResult = lineText.Mid(pos, len);
+		int reps = rxrules[SeekResult->numOfRule]->Replace(&replacedResult, actualrule.replaceRule);
+		if (reps > 0){
+			MoveCase(matchResult, &replacedResult, actualrule.options);
+
+			lineText.replace(pos, len, replacedResult);
+			somethingChanged = true;
+		}
+		else{
+			KaiLog(L"Cannot replace: \"" + matchResult + L"\" to \"" + actualrule.replaceRule + L"\" using rule: \"" + actualrule.findRule + L"\"");
+		}
+	}
+
+	if (somethingChanged)
+		Dialc->ChangeDialogueState(1);
+
+	return somethingChanged;
+}
+
 void MisspellReplacer::GetCheckedRules(std::vector<int> &checkedRules)
 {
 	for (size_t i = 0; i < RulesList->GetCount(); i++){
@@ -604,7 +633,7 @@ void MisspellReplacer::SaveRules()
 		else
 			rulesText << L"0|";
 	}
-	if (rulesText.EndsWith('|'))
+	if (rulesText.EndsWith(L'|'))
 		rulesText.RemoveLast() += L"\r\n";
 
 	for (auto & rule : rules){
@@ -616,13 +645,13 @@ void MisspellReplacer::SaveRules()
 
 void MisspellReplacer::MoveCase(const wxString &originalCase, wxString *result, int options)
 {
-	if (options & OPTION_REPLACE_WITH_UNCHANGED_CASE)
+	if (options & OPTION_REPLACE_WITH_UNCHANGED_CASE || !originalCase.length() || !result->length())
 		return;
 	if (options & OPTION_REPLACE_AS_LOWER){
 		result->MakeLower();
 		return;
 	}
-	if (options & OPTION_REPLACE_AS_LOWER){
+	if (options & OPTION_REPLACE_AS_UPPER){
 		result->MakeUpper();
 		return;
 	}

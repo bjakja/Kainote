@@ -321,7 +321,7 @@ void SpellCheckerDialog::CheckText(wxString Text)
 	for (size_t i = 0; i < Text.Len(); i++)
 	{
 		const wxUniChar &ch = Text[i];
-		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch != '\''/*notchar.Find(ch) != -1*/ && !block){
+		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch != L'\''/*notchar.Find(ch) != -1*/ && !block){
 			if (word.Len() > 1){
 				if (word.StartsWith(L"'")){ word = word.Remove(0, 1); }
 				if (word.EndsWith(L"'")){ word = word.RemoveLast(1); }
@@ -336,22 +336,22 @@ void SpellCheckerDialog::CheckText(wxString Text)
 			word = L""; firsti = i + 1;
 		}
 		
-		if (ch == '{'){ 
+		if (ch == L'{'){ 
 			block = true; 
 			continue; 
 		}
-		else if (ch == '}'){ 
+		else if (ch == L'}'){ 
 			block = false; 
 			firsti = i + 1; 
 			word = L"";
 			continue; 
 		}
 
-		if (!block && (!iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) || ch == '\'') /*notchar.Find(ch) == -1*/ 
-			&& Text.GetChar((i == 0) ? 0 : i - 1) != '\\'){ word << ch; lasti = i; }
-		else if (!block && Text.GetChar((i == 0) ? 0 : i - 1) == '\\'){
+		if (!block && (!iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) || ch == L'\'') /*notchar.Find(ch) == -1*/ 
+			&& Text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){ word << ch; lasti = i; }
+		else if (!block && Text.GetChar((i == 0) ? 0 : i - 1) == L'\\'){
 			word = L"";
-			if (ch == 'N' || ch == 'n' || ch == 'h'){
+			if (ch == L'N' || ch == L'n' || ch == L'h'){
 				firsti = i + 1;
 			}
 			else{

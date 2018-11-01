@@ -62,18 +62,18 @@ class EditBox;
 
 /////////////////
 // Display class
-class AudioDisplay: public wxWindow {
+class AudioDisplay : public wxWindow {
 	friend class Karaoke;
 	friend class AudioBox;
 private:
 	int line_n = 0;
 	Dialogue *dialogue;
-	
+
 
 	AudioSpectrum *spectrumRenderer;
 	wxSize LastSize;
 	float curpos;
-	
+
 	int64_t PositionSample;
 	float scale;
 	int samples;
@@ -99,12 +99,12 @@ private:
 	int64_t selStartCap;
 	int64_t selEndCap;
 	int64_t selMark;
-	
+
 	int lastX;
 	int lastDragX;
 	int curStartMS;
 	int curEndMS;
-	
+
 	int holdSyl;
 
 	int *peak;
@@ -162,7 +162,7 @@ private:
 	void OnGetFocus(wxFocusEvent &event);
 	void OnLoseFocus(wxFocusEvent &event);
 	void OnEraseBackground(wxEraseEvent &event){};
-	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();Grabbed=-1;hold=0;holding=false;}};
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); Grabbed = -1; hold = 0; holding = false; } };
 
 	bool InitDX(const wxSize &size);
 	void ClearDX();
@@ -175,9 +175,9 @@ private:
 	void DrawWaveform(bool weak);
 	void DrawSpectrum(bool weak);
 	void DrawProgress();
-	void GetDialoguePos(int64_t &start,int64_t &end,bool cap);
-	void GetKaraokePos(int64_t &start,int64_t &end,bool cap);
-	void UpdatePosition(int pos,bool IsSample=false);
+	void GetDialoguePos(int64_t &start, int64_t &end, bool cap);
+	void GetKaraokePos(int64_t &start, int64_t &end, bool cap);
+	void UpdatePosition(int pos, bool IsSample = false);
 
 	void DoUpdateImage();
 
@@ -198,7 +198,7 @@ public:
 	int Grabbed;
 	int hold;
 
-	int w,h;
+	int w, h;
 	AudioBox *box;
 	KaiScrollbar *ScrollBar;
 	wxTimer UpdateTimer;
@@ -210,29 +210,29 @@ public:
 	AudioDisplay(wxWindow *parent);
 	virtual ~AudioDisplay();
 
-	void UpdateImage(bool weak=false, bool updateImmediately=false);
+	void UpdateImage(bool weak = false, bool updateImmediately = false);
 	void Update(bool moveToEnd = false);
 	void RecreateImage();
 	void SetPosition(int pos);
-	void SetSamplesPercent(int percent,bool update=true,float pivot=0.5);
+	void SetSamplesPercent(int percent, bool update = true, float pivot = 0.5);
 	void SetScale(float scale);
 	void UpdateScrollbar();
-	void SetDialogue(Dialogue *diag, int n=-1, bool moveToEnd = false);
-	void MakeDialogueVisible(bool force=false, bool moveToEnd = false);
-	void ChangeLine(int delta, bool block=false);
+	void SetDialogue(Dialogue *diag, int n = -1, bool moveToEnd = false);
+	void MakeDialogueVisible(bool force = false, bool moveToEnd = false);
+	void ChangeLine(int delta, bool block = false);
 	void SetMark(int time);
-	void Next(bool play=true);
-	void Prev(bool play=true);
+	void Next(bool play = true);
+	void Prev(bool play = true);
 
 	bool UpdateTimeEditCtrls();
-	void CommitChanges(bool nextLine=false, bool Save=true, bool moveToEnd = false);
+	void CommitChanges(bool nextLine = false, bool Save = true, bool moveToEnd = false);
 	void Commit(bool moveToEnd = false);
-	void AddLead(bool in,bool out);
+	void AddLead(bool in, bool out);
 
 	void SetFile(wxString file, bool fromvideo);
 	void Reload();
 
-	void Play(int start,int end,bool pause=true);
+	void Play(int start, int end, bool pause = true);
 	void Stop(bool stopVideo = true);
 
 	int64_t GetSampleAtX(int x);
@@ -243,16 +243,16 @@ public:
 	int64_t GetSampleAtMS(int64_t ms);
 	void ChangeOptions();
 	void ChangeColours(){
-		if(spectrumRenderer){
+		if (spectrumRenderer){
 			spectrumRenderer->ChangeColours();
 		}
 		UpdateImage();
 	}
 	void ChangePosition(int time, bool center = true);
-	void GetTimesDialogue(int &start,int &end);
-	void GetTimesSelection(int &start,int &end, bool rangeEnd = false, bool ignoreKara = false);
+	void GetTimesDialogue(int &start, int &end);
+	void GetTimesSelection(int &start, int &end, bool rangeEnd = false, bool ignoreKara = false);
 	void SetSelection(int start, int end);
-	int GetBoundarySnap(int x,int range,bool shiftHeld,bool start=true, bool keysnap=false);
+	int GetBoundarySnap(int x, int range, bool shiftHeld, bool start = true, bool keysnap = false);
 	void GetTextExtentPixel(const wxString &text, int *x, int *y);
 	DECLARE_EVENT_TABLE()
 };

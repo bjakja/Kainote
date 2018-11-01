@@ -248,8 +248,8 @@ void Dialogue::SetRaw(const wxString &ldial)
 			wxString token = assdal.GetNextToken();
 			if (token.StartsWith(L"Dialogue")){ IsComment = false; }
 			else{ IsComment = true; }
-			if (token.Find(L"arked=") == -1){ Layer = wxAtoi(token.AfterFirst(' ')); }
-			else{ Layer = wxAtoi(token.AfterLast('=')); }
+			if (token.Find(L"arked=") == -1){ Layer = wxAtoi(token.AfterFirst(L' ')); }
+			else{ Layer = wxAtoi(token.AfterLast(L'=')); }
 			Format = ASS;
 			Start.SetRaw(assdal.GetNextToken(), Format);
 			End.SetRaw(assdal.GetNextToken(), Format);
@@ -289,9 +289,9 @@ void Dialogue::SetRaw(const wxString &ldial)
 		wxString eend;
 		wxString ttext;
 		Format = SRT;
-		Start.SetRaw(ldial.BeforeFirst(' ', &eend), Format);
-		eend = eend.AfterFirst(' ');
-		End.SetRaw(eend.BeforeFirst('\n', &ttext).Trim(), Format);
+		Start.SetRaw(ldial.BeforeFirst(L' ', &eend), Format);
+		eend = eend.AfterFirst(L' ');
+		End.SetRaw(eend.BeforeFirst(L'\n', &ttext).Trim(), Format);
 		Text = ttext;
 		Text->Replace(L"\r", L"");
 		Text->Replace(L"\n", L"\\N");
@@ -331,7 +331,7 @@ void Dialogue::SetRaw(const wxString &ldial)
 		Text.Trim(false);
 		return;
 	}
-	else if (ldial.StartsWith(L";") || (ldial.StartsWith(L"{") && ldial.EndsWith(L"}") && ldial.Freq('{') == 1 && ldial.Freq('}') == 1)){
+	else if (ldial.StartsWith(L";") || (ldial.StartsWith(L"{") && ldial.EndsWith(L"}") && ldial.Freq(L'{') == 1 && ldial.Freq(L'}') == 1)){
 		NonDialogue = true;
 		IsComment = true;
 		Style = L"Default";
@@ -616,8 +616,8 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 	if (len < 1){ return; }
 	while (pos < len){
 		wxUniChar ch = txt[pos];
-		if (ch == '}'){ tagsBlock = false; plainStart = pos + 1; }
-		else if (ch == '{' || pos >= len - 1){
+		if (ch == L'}'){ tagsBlock = false; plainStart = pos + 1; }
+		else if (ch == L'{' || pos >= len - 1){
 			tagsBlock = true;
 			if (pos >= len - 1){ pos++; }
 			//aby nie skraszowaæ programu odejmuj¹c od 0 przy unsigned dodam 1 do plain start
@@ -627,20 +627,20 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 				parseData->AddData(newTag);
 			}
 		}
-		else if (tagsBlock && ch == '\\'){
+		else if (tagsBlock && ch == L'\\'){
 			pos++;
 			//wxString tag;
-			int slashPos = txt.find('\\', pos);
-			int bracketPos = txt.find('}', pos);
+			int slashPos = txt.find(L'\\', pos);
+			int bracketPos = txt.find(L'}', pos);
 			int tagEnd = (slashPos == -1 && bracketPos == -1) ? len :
 				(slashPos == -1) ? bracketPos : (bracketPos == -1) ? slashPos :
 				(bracketPos < slashPos) ? bracketPos : slashPos;
 			wxString tag = txt.SubString(pos, tagEnd - 1);
-			if (tag.EndsWith(')')){ tag.RemoveLast(); }
+			if (tag.EndsWith(L')')){ tag.RemoveLast(); }
 			for (size_t i = 0; i < ntags; i++){
 				wxString tagName = tags[i];
 				int tagLen = tagName.Len();
-				if (tag.StartsWith(tagName) && (tag[tagLen] == '(' ||
+				if (tag.StartsWith(tagName) && (tag[tagLen] == L'(' ||
 					wxIsdigit(tag[tagLen]) || tagName == L"fn")){
 
 					TagData *newTag = new TagData(tagName, pos + tagLen);
@@ -649,9 +649,9 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 						hasDrawing = (tagValue.Trim().Trim(false) == L"0") ? false : true;
 						newTag->PutValue(tagValue);
 					}
-					else if (tag[tagLen] == '('){
+					else if (tag[tagLen] == L'('){
 						newTag->startTextPos++;
-						newTag->PutValue(tagValue.After('(').BeforeFirst(')'), true);
+						newTag->PutValue(tagValue.After(L'(').BeforeFirst(L')'), true);
 					}
 					else{
 						if (!tagValue.IsNumber() && tagName != L"fn"){

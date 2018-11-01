@@ -105,7 +105,7 @@ void ReplacerSeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int h
 }
 
 FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
-	:KaiDialog(parent, -1, _("Wyniki szukania"))
+	:KaiDialog(parent, -1, _("Wyniki szukania"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 	,MR(_MR)
 {
 	DialogSizer * main = new DialogSizer(wxVERTICAL);

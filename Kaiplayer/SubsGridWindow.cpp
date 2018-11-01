@@ -1065,7 +1065,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 	}
 
 	// Select all
-	if (key == 'A' && ctrl && !alt && !shift) {
+	if (key == L'A' && ctrl && !alt && !shift) {
 		file->InsertKeySelections(0, -1);
 		Refresh(false);
 	}
@@ -1194,7 +1194,7 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 	for (size_t i = 0; i<text.Len(); i++)
 	{
 		const wxUniChar &ch = text[i];
-		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch != '\''/*notchar.Find(ch) != -1*/ && !block){
+		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch != L'\''/*notchar.Find(ch) != -1*/ && !block){
 			if (word.Len()>1){
 				if (word.StartsWith(L"'")){ word = word.Remove(0, 1); }
 				if (word.EndsWith(L"'")){ word = word.RemoveLast(1); }
@@ -1206,16 +1206,16 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 			word = L""; firsti = i + 1;
 		}
 		if (block){
-			if (ch == '{'){ errs.push_back(lastStartCBracket); errs.push_back(lastStartCBracket); }
-			if (ch == '\\' && text[(i == 0) ? 0 : i - 1] == '\\'){ errs.push_back(i); errs.push_back(i); }
-			if (ch == '('){
-				if (i > 1 && text[i - 2] == '\\' && text[i - 1]){ lastStartTBracket = i; continue; }
+			if (ch == L'{'){ errs.push_back(lastStartCBracket); errs.push_back(lastStartCBracket); }
+			if (ch == L'\\' && text[(i == 0) ? 0 : i - 1] == L'\\'){ errs.push_back(i); errs.push_back(i); }
+			if (ch == L'('){
+				if (i > 1 && text[i - 2] == L'\\' && text[i - 1]){ lastStartTBracket = i; continue; }
 				if (lastStartBracket > lastEndBracket){
 					errs.push_back(lastStartBracket); errs.push_back(lastStartBracket);
 				}
 				lastStartBracket = i;
 			}
-			if (ch == ')'){
+			if (ch == L')'){
 				if ((lastStartBracket < lastEndBracket || lastStartBracket < 0)){
 					if (lastStartTBracket > 0 && (lastStartTBracket < lastEndBracket || lastStartBracket <lastStartTBracket)){
 						lastStartTBracket = -1; continue;
@@ -1226,23 +1226,23 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 				lastEndBracket = i;
 			}
 		}
-		if (!block && ch == '}'){
+		if (!block && ch == L'}'){
 			errs.push_back(i); errs.push_back(i);
 		}
-		if (lastStartTBracket >= 0 && ch == '{' || ch == '}'){
+		if (lastStartTBracket >= 0 && ch == L'{' || ch == L'}'){
 			errs.push_back(lastStartTBracket); errs.push_back(lastStartTBracket);
 			lastStartTBracket = -1;
 		}
-		if (ch == '{'){ block = true; lastStartCBracket = i; continue; }
-		else if (ch == '}'){ block = false; lastEndCBracket = i; firsti = i + 1; word = L""; continue; }
+		if (ch == L'{'){ block = true; lastStartCBracket = i; continue; }
+		else if (ch == L'}'){ block = false; lastEndCBracket = i; firsti = i + 1; word = L""; continue; }
 		else if (repltags && tagsReplacement[0] == ch && text.Mid(i, tagsReplacement.Len()) == tagsReplacement){
 			firsti = i + tagsReplacement.Len(); word = L""; continue;
 		}
 		
-		if (!block && (!iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) || ch == '\'') /*notchar.Find(ch) == -1*/ && text.GetChar((i == 0) ? 0 : i - 1) != '\\'){ word << ch; lasti = i; }
-		else if (!block && text.GetChar((i == 0) ? 0 : i - 1) == '\\'){
+		if (!block && (!iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) || ch == L'\'') /*notchar.Find(ch) == -1*/ && text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){ word << ch; lasti = i; }
+		else if (!block && text.GetChar((i == 0) ? 0 : i - 1) == L'\\'){
 			word = L"";
-			if (ch == 'N' || ch == 'n' || ch == 'h'){
+			if (ch == L'N' || ch == L'n' || ch == L'h'){
 				firsti = i + 1;
 			}
 			else{
@@ -1300,7 +1300,7 @@ void SubsGridWindow::HideOverrideTags()
 
 int SubsGridWindow::CalcChars(const wxString &txt, wxString *lines, bool *bad)
 {
-	int len = txt.Len();
+	int len = txt.length();
 	bool block = false; 
 	bool slash = false;
 	bool drawing = false;

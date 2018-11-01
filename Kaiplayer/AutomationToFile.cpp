@@ -883,9 +883,9 @@ namespace Auto{
 			if (i < tagssize - 1){
 				nextKstart = Data->tags[i + 1]->startTextPos;
 				wxString newtxt = text.Mid(lastPosition, nextKstart - lastPosition);
-				size_t bracketstartpos = newtxt.Find('{', true);
+				size_t bracketstartpos = newtxt.Find(L'{', true);
 				if (bracketstartpos == wxNOT_FOUND){
-					size_t bracketendpos = newtxt.Find('}', true);
+					size_t bracketendpos = newtxt.Find(L'}', true);
 					size_t firstSlash = newtxt.find(L'//', bracketendpos + 1);
 					if (firstSlash != wxNOT_FOUND)
 						nextKstart = firstSlash - 1;

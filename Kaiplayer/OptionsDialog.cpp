@@ -742,7 +742,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			kat.GetAllFiles(pathwn, &files, "*.txt", wxDIR_FILES);
 		}
 		for (size_t i = 0; i < files.size(); i++){
-			choices.Add(files[i].AfterLast('\\').BeforeLast('.'));
+			choices.Add(files[i].AfterLast(L'\\').BeforeLast(L'.'));
 		}
 		if (choices.Index("DarkSentro", false) == -1){
 			choices.Insert("DarkSentro", 0);

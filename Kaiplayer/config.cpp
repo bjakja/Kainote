@@ -187,10 +187,10 @@ void config::GetRawOptions(wxString &options, bool Audio/*=false*/)
 
 void config::CatchValsLabs(const wxString &line)
 {
-	wxString Values = line.AfterFirst('=');
+	wxString Values = line.AfterFirst(L'=');
 	//Values.Trim(false);
 	//Values.Trim(true);
-	wxString Labels = line.BeforeFirst('=');
+	wxString Labels = line.BeforeFirst(L'=');
 	//Labels.Trim(false);
 	Labels.Trim(true);
 	stringConfig[GetCONFIGValue(Labels)] = Values;
@@ -458,7 +458,7 @@ void config::LoadDefaultColors(bool dark, wxColour *table)
 int config::LoadOptions()
 {
 	wxStandardPathsBase &paths = wxStandardPaths::Get();
-	pathfull = paths.GetExecutablePath().BeforeLast('\\');
+	pathfull = paths.GetExecutablePath().BeforeLast(L'\\');
 	wxString path;
 	path << pathfull << _T("\\Config.txt");
 	OpenWrite ow;
@@ -470,9 +470,9 @@ int config::LoadOptions()
 		isgood = 2;
 	}
 	else{
-		wxString ver = txt.BeforeFirst(']').Mid(1);
+		wxString ver = txt.BeforeFirst(L']').Mid(1);
 		if (ver != progname){ LoadDefaultConfig(); diffVersions = true; }
-		isgood = SetRawOptions(txt.AfterFirst('\n'));
+		isgood = SetRawOptions(txt.AfterFirst(L'\n'));
 	}
 
 	actualStyleDir = _T("Default");
@@ -486,8 +486,8 @@ int config::LoadOptions()
 	else{
 		wxArrayString tmp; kat.GetAllFiles(path, &tmp, _T(""), wxDIR_FILES);
 		for (size_t i = 0; i < tmp.GetCount(); i++){
-			wxString fullpath = tmp[i].AfterLast('\\');
-			if (fullpath.EndsWith(_T(".sty"))){ dirs.Add(fullpath.BeforeLast('.')); }
+			wxString fullpath = tmp[i].AfterLast(L'\\');
+			if (fullpath.EndsWith(_T(".sty"))){ dirs.Add(fullpath.BeforeLast(L'.')); }
 		}
 	}
 	LoadStyles(actualStyleDir);
@@ -587,8 +587,8 @@ void config::SetCoords(CONFIG opt, int coordx, int coordy)
 void config::GetCoords(CONFIG opt, int *coordx, int *coordy)
 {
 	wxString sopt = stringConfig[opt];
-	*coordx = wxAtoi(sopt.BeforeFirst(','));
-	*coordy = wxAtoi(sopt.AfterFirst(','));
+	*coordx = wxAtoi(sopt.BeforeFirst(L','));
+	*coordy = wxAtoi(sopt.AfterFirst(L','));
 }
 
 void config::SetTable(CONFIG opt, wxArrayString &asopt, wxString split)
@@ -693,10 +693,10 @@ bool config::LoadAudioOpts()
 		return true;
 	}
 	else{
-		wxString ver = txt.BeforeFirst(']').Mid(1);
+		wxString ver = txt.BeforeFirst(L']').Mid(1);
 		if (ver != progname){ LoadDefaultAudioConfig(); }
 	}
-	return (AudioOpts = SetRawOptions(txt.AfterFirst('\n')));
+	return (AudioOpts = SetRawOptions(txt.AfterFirst(L'\n')));
 }
 
 void config::SaveAudioOpts()
@@ -709,10 +709,10 @@ void config::SaveAudioOpts()
 
 void config::SetHexColor(const wxString &nameAndColor)
 {
-	wxString kol = nameAndColor.AfterFirst('=');
+	wxString kol = nameAndColor.AfterFirst(L'=');
 	kol.Trim(false);
 	kol.Trim(true);
-	wxString name = nameAndColor.BeforeFirst('=');
+	wxString name = nameAndColor.BeforeFirst(L'=');
 	name.Trim(false);
 	name.Trim(true);
 	long a = 0xFF, r, g, b;
@@ -749,15 +749,15 @@ void config::SaveColors(const wxString &path){
 wxString getfloat(float num, const wxString &format, bool Truncate)
 {
 	wxString strnum = wxString::Format(_T("%" + format), num);
-	//if(strnum.find('.')!= -1){return strnum.Trim(false);}
+	//if(strnum.find(L'.')!= -1){return strnum.Trim(false);}
 	if (!Truncate || format.EndsWith(".0f")){ return strnum.Trim(false); }
 	int rmv = 0;
 	bool trim = false;
 	for (int i = strnum.Len() - 1; i > 0; i--)
 	{
-		if (strnum[i] == '0'){ rmv++; }//&&!trim
-		//else if(strnum[i]=='9'){rmv++;trim=true;}
-		else if (strnum[i] == '.'){ rmv++; break; }//}if(!trim){
+		if (strnum[i] == L'0'){ rmv++; }//&&!trim
+		//else if(strnum[i]==L'9'){rmv++;trim=true;}
+		else if (strnum[i] == L'.'){ rmv++; break; }//}if(!trim){
 		else{/*if(trim){int tmpc=static_cast < int >(strnum.GetChar(i));tmpc++;strnum[i]=(wxUniChar)tmpc;}*/break; }
 	}
 	if (rmv){ strnum.RemoveLast(rmv); }

@@ -336,6 +336,27 @@ Dialogue *SubsFile::GetDialogueByKey(int Key)
 	return subs->dials[Key];
 }
 
+void SubsFile::SetDialogue(int i, Dialogue *dial)
+{
+	int Key = IdConverter->getElementById(i);
+	if (Key < 0){
+		Key = (*IdConverter)[IdConverter->size() - 1];
+		//KaiLog(wxString::Format("przekroczone drzewko %i, %i", i, IdConverter->size()));
+	}
+	if (Key >= subs->dials.size()){
+		//KaiLog(wxString::Format("tablica dialogów przekroczona %i, %i", Key, (int)subs->dials.size()));
+		Key = subs->dials.size() - 1;
+	}
+	subs->ddials.push_back(dial);
+	subs->dials[Key] = dial;
+}
+
+void SubsFile::SetDialogueByKey(int i, Dialogue *dial)
+{
+	subs->ddials.push_back(dial);
+	subs->dials[i] = dial;
+}
+
 Dialogue *&SubsFile::operator[](int i)
 {
 	int Key = IdConverter->getElementById(i);

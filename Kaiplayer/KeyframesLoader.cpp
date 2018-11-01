@@ -33,7 +33,7 @@ KeyframeLoader::KeyframeLoader(const wxString &filename, wxArrayInt *_keyframes,
 	wxStringTokenizer kftokenizer(kftext, L"\n", wxTOKEN_STRTOK);
 	wxString header = kftokenizer.GetNextToken();
 
-	if (header == "# keyframe format v1")
+	if (header == L"# keyframe format v1")
 		OpenAegisubKeyframes(&kftokenizer);
 	else if (header.StartsWith(L"# XviD 2pass stat file"))
 		OpenOtherKeyframes(TYPE_XVID, &kftokenizer);
@@ -80,9 +80,9 @@ void KeyframeLoader::OpenOtherKeyframes(int type, wxStringTokenizer *kftokenizer
 			if (result != -1 && result + 5 < token.size())
 				frameType = tolower(token[result + 5]);
 		}
-		if (frameType == 'i')
+		if (frameType == L'i')
 			keyframes->push_back(receiver->GetMSfromFrame(frameCounter++));
-		else if (frameType == 'p' || frameType == 'b')
+		else if (frameType == L'p' || frameType == L'b')
 			frameCounter++;
 	}
 }

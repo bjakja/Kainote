@@ -205,7 +205,7 @@ void SubsGridBase::Convert(char type)
 		if (od.ShowModal() == wxID_CANCEL){ return; }
 	}
 	if (Options.GetBool(ConvertFPSFromVideo) && Kai->GetTab()->VideoPath != L""){
-		Options.SetString(ConvertFPS, Kai->GetStatusText(4).BeforeFirst(' '));
+		Options.SetString(ConvertFPS, Kai->GetStatusText(4).BeforeFirst(L' '));
 	}
 	if (Options.GetFloat(ConvertFPS) < 1){ KaiMessageBox(_("Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie.")); return; }
 
@@ -327,20 +327,20 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 			AddSInfo(L"Last Style Storage", Options.actualStyleDir, false);
 			AddSInfo(L"Active Line", std::to_string(currentLine), false);
 			TabPanel *tab = (TabPanel*)GetParent();
-			wxString subsPath = tab->SubsPath.BeforeLast('\\');
+			wxString subsPath = tab->SubsPath.BeforeLast(L'\\');
 			if (Edit->ABox){
 				wxString path = (Edit->ABox->audioName.StartsWith(subsPath)) ? 
-					Edit->ABox->audioName.AfterLast('\\') : Edit->ABox->audioName;
+					Edit->ABox->audioName.AfterLast(L'\\') : Edit->ABox->audioName;
 				AddSInfo(L"Audio File", path, false);
 			}
 			if (!tab->VideoPath.empty()){
 				wxString path = (tab->VideoPath.StartsWith(subsPath)) ?
-					tab->VideoPath.AfterLast('\\') : tab->VideoPath;
+					tab->VideoPath.AfterLast(L'\\') : tab->VideoPath;
 				AddSInfo(L"Video File", path, false);
 			}
 			if (!tab->KeyframesPath.empty()){
 				wxString path = (tab->KeyframesPath.StartsWith(subsPath)) ?
-					tab->KeyframesPath.AfterLast('\\') : tab->KeyframesPath;
+					tab->KeyframesPath.AfterLast(L'\\') : tab->KeyframesPath;
 				AddSInfo(L"Keyframes File", path, false);
 			}
 		}
@@ -1129,10 +1129,10 @@ void SubsGridBase::AddSInfo(const wxString &SI, wxString val, bool save)
 {
 	wxString key;
 	if (val == L""){
-		key = SI.BeforeFirst(':');
+		key = SI.BeforeFirst(L':');
 		key.Trim(false);
 		key.Trim(true);
-		val = SI.AfterFirst(':');
+		val = SI.AfterFirst(L':');
 		val.Trim(false);
 		val.Trim(true);
 	}
@@ -1616,7 +1616,7 @@ void SubsGridBase::OnBackupTimer(wxTimerEvent &event)
 	wxString path;
 	wxString ext = (subsFormat < SRT) ? L"ass" : (subsFormat == SRT) ? L"srt" : L"txt";
 
-	path << Options.pathfull << L"\\Subs\\" << pan->SubsName.BeforeLast('.')
+	path << Options.pathfull << L"\\Subs\\" << pan->SubsName.BeforeLast(L'.')
 		<< L"_" << Notebook::GetTabs()->FindPanel(pan) << L"_" << numsave << L"." << ext;
 
 	SaveFile(path, false);

@@ -94,9 +94,9 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 {
 	std::vector<wxAcceleratorEntry> gentries;
 	gentries.resize(3);
-	gentries[0].Set(wxACCEL_CTRL, (int) 'X', Cut);
-	gentries[1].Set(wxACCEL_CTRL, (int) 'C', Copy);
-	gentries[2].Set(wxACCEL_CTRL, (int) 'V', Paste);
+	gentries[0].Set(wxACCEL_CTRL, (int) L'X', Cut);
+	gentries[1].Set(wxACCEL_CTRL, (int) L'C', Copy);
+	gentries[2].Set(wxACCEL_CTRL, (int) L'V', Paste);
 
 	std::vector<wxAcceleratorEntry> eentries;
 	eentries.resize(2);

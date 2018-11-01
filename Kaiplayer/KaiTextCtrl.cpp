@@ -58,10 +58,10 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	entries[16].Set(wxACCEL_SHIFT | wxACCEL_CTRL, WXK_RIGHT, ID_TCSRIGHT);
 	entries[17].Set(wxACCEL_SHIFT, WXK_HOME, ID_TSHOME);
 	entries[18].Set(wxACCEL_SHIFT, WXK_END, ID_TSEND);
-	entries[19].Set(wxACCEL_CTRL, 'A', ID_TCTLA);
-	entries[20].Set(wxACCEL_CTRL, 'V', ID_TCTLV);
-	entries[21].Set(wxACCEL_CTRL, 'C', ID_TCTLC);
-	entries[22].Set(wxACCEL_CTRL, 'X', ID_TCTLX);
+	entries[19].Set(wxACCEL_CTRL, L'A', ID_TCTLA);
+	entries[20].Set(wxACCEL_CTRL, L'V', ID_TCTLV);
+	entries[21].Set(wxACCEL_CTRL, L'C', ID_TCTLC);
+	entries[22].Set(wxACCEL_CTRL, L'X', ID_TCTLX);
 	entries[23].Set(wxACCEL_NORMAL, 395, ID_TWMENU);
 	entries[24].Set(wxACCEL_NORMAL, WXK_PAGEDOWN, ID_TPDOWN);
 	entries[25].Set(wxACCEL_NORMAL, WXK_PAGEUP, ID_TPUP);
@@ -289,7 +289,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 		int pos = 5;
 		while (i < len)
 		{
-			size_t nfound = KText.find(wxUniChar('\n'), i);
+			size_t nfound = KText.find(wxUniChar(L'\n'), i);
 			i = (nfound != -1) ? nfound : len - 1;
 			GetTextExtent(KText.Mid(currentPosition, i - currentPosition + 1), &fw, &fh);
 			//check text to \n
@@ -300,7 +300,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 				int currentFW = 0;
 				while (currentPosition < i)
 				{
-					size_t spacePos = KText.find(wxUniChar(' '), j);
+					size_t spacePos = KText.find(wxUniChar(L' '), j);
 					if (spacePos == -1 || currentPosition >= spacePos)
 						spacePos = i;
 
@@ -447,7 +447,7 @@ void KaiTextCtrl::OnAccelerator(wxCommandEvent& event)
 		if (Cursor.x == 0 || readOnly){ return; }
 		Selend.x = Cursor.x;
 		FindWord((Cursor.x < 2) ? 0 : Cursor.x - 1, &Cursor.x, &len);
-		if (Cursor.x == 1 && KText[0] == ' '){ Cursor.x--; }
+		if (Cursor.x == 1 && KText[0] == L' '){ Cursor.x--; }
 	case ID_TDEL:
 	case ID_TBACK:
 		if (readOnly){ return; }
@@ -1069,7 +1069,7 @@ void KaiTextCtrl::FindWord(int pos, int *start, int *end)
 			else if (hasres && res == -1){
 				if (i + 1 == pos){ continue; }
 				else if (lastres < 1 && i + 2 == pos){ hasres = false; continue; }
-				*start = (lastres>0 && (KText[pos] == ' ' || i + 2 < pos)) ? i + 1 : i + 2;
+				*start = (lastres>0 && (KText[pos] == L' ' || i + 2 < pos)) ? i + 1 : i + 2;
 				break;
 			}
 		}
@@ -1280,11 +1280,6 @@ void KaiTextCtrl::GetTextExtent(const wxString &textToMesure, int *textWidth, in
 	txt.Replace("\t", "        ");
 	wxWindow::GetTextExtent(txt, textWidth, textHeight, 0, 0, &font);
 
-	//if(correct && (textToMesure[0]=='\\' || textToMesure[0]=='j' || textToMesure[0]=='T' 
-	//	|| textToMesure[0]=='Ł' || textToMesure[0]=='Y')){
-	//		(*textWidth)--;
-	//		//if(textToMesure[0]=='j' && textFont &&textFont->GetFaceName()=="Tahoma"){(*textWidth)--;}
-	//}
 }
 
 void KaiTextCtrl::SetWindowStyle(long _style){

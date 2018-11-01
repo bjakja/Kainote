@@ -36,6 +36,7 @@ public:
 	ReplacerResultsHeader(const wxString &text, int _positionInTable) : Item(TYPE_HEADER){
 		name = text;
 		positionInTable = _positionInTable;
+		modified = true;
 	}
 	virtual ~ReplacerResultsHeader(){};
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);

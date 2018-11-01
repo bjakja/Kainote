@@ -579,7 +579,7 @@ void ScaleRotation::SetCurVisual()
 		if (SeekTags(lineText, L"org\\(([^\\)]+)", &foundTag)){
 			wxString rest;
 			double orx, ory;
-			if (foundTag.BeforeFirst(',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; hasOrg = true; }
+			if (foundTag.BeforeFirst(L',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; hasOrg = true; }
 			if (rest.ToDouble(&ory)){ org.y = ((ory / coeffH) - zoomMove.y)*zoomScale.y; hasOrg = true; }
 		}
 		else{ org = from; }
@@ -607,7 +607,7 @@ void ScaleRotation::SetCurVisual()
 		if (SeekTags(lineText, L"org\\(([^\\)]+)", &foundTag)){
 			wxString rest;
 			double orx, ory;
-			if (foundTag.BeforeFirst(',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; hasOrg = true; }
+			if (foundTag.BeforeFirst(L',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; hasOrg = true; }
 			if (rest.ToDouble(&ory)){ org.y = ((ory / coeffH) - zoomMove.y)*zoomScale.y; hasOrg = true; }
 		}
 		else{ org = from; }

@@ -206,7 +206,7 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 		EnableControls();
 	});
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent evt){
-		//wxWCharBuffer buf = (copypath.Right(4).MakeLower() == L".zip") ? copypath.BeforeLast('\\').c_str() : copypath.c_str();
+		//wxWCharBuffer buf = (copypath.Right(4).MakeLower() == L".zip") ? copypath.BeforeLast(L'\\').c_str() : copypath.c_str();
 		//WinStruct<SHELLEXECUTEINFO> sei;
 		//sei.lpFile = buf;
 		//sei.lpVerb = wxT("explore");
@@ -312,7 +312,7 @@ void FontCollectorDialog::ParseDoubleClickResults(FontLogContent *flc, int curso
 		if (isStyle){
 			//find style name
 			//it's on start of line
-			wxString line = text.Mid(0, end).AfterLast('\n');
+			wxString line = text.Mid(0, end).AfterLast(L'\n');
 			wxString styleName;
 			if (line.StartsWith(L" - ", &styleName)){
 				int result = styleName.find(_(" zakładki: "));
@@ -357,8 +357,8 @@ void FontCollectorDialog::ParseDoubleClickResults(FontLogContent *flc, int curso
 		//	OpenStyle(tab, word);
 		//}
 		//else{ 
-			wxString lineFromStart = text.Mid(0, end).AfterLast('\n');
-			wxString lineFromEnd = text.Mid(end).BeforeFirst('\n');
+			wxString lineFromStart = text.Mid(0, end).AfterLast(L'\n');
+			wxString lineFromEnd = text.Mid(end).BeforeFirst(L'\n');
 			wxString line = lineFromStart + lineFromEnd;
 			wxString styleName;
 			if (line.StartsWith(L" - ", &styleName)){
@@ -413,8 +413,8 @@ void FontCollectorDialog::OnButtonPath(wxCommandEvent &event)
 	}
 	else{
 		destdir = wxFileSelector(_("Wybierz nazwę archiwum"), (path->GetValue().EndsWith(L"zip")) ? 
-			path->GetValue().BeforeLast('\\') : path->GetValue(),
-			(path->GetValue().EndsWith(L"zip")) ? path->GetValue().AfterLast('\\') : L"",
+			path->GetValue().BeforeLast(L'\\') : path->GetValue(),
+			(path->GetValue().EndsWith(L"zip")) ? path->GetValue().AfterLast(L'\\') : L"",
 			L"zip", _("Pliki archiwum (*.zip)|*.zip"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
 	}
 	Options.SetString(FontCollectorDirectory, destdir);
@@ -467,9 +467,9 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 		}
 		if (subsdir->GetValue()){
 			wxString rest;
-			copypath = (subsfromMkv) ? Notebook::GetTab()->VideoPath.BeforeLast('\\', &rest) : Notebook::GetTab()->SubsPath.BeforeLast('\\', &rest);
+			copypath = (subsfromMkv) ? Notebook::GetTab()->VideoPath.BeforeLast(L'\\', &rest) : Notebook::GetTab()->SubsPath.BeforeLast(L'\\', &rest);
 			copypath << L"\\Czcionki\\";
-			if (opts->GetSelection() == 2){ copypath << rest.BeforeLast('.') << L".zip"; }
+			if (opts->GetSelection() == 2){ copypath << rest.BeforeLast(L'.') << L".zip"; }
 		}
 		else{
 			copypath = path->GetValue();
@@ -484,7 +484,7 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 		}
 		if (opts->GetSelection() != 2){
 			wxString extt = copypath.Right(4).Lower();
-			if (extt == L".zip"){ copypath = copypath.BeforeLast('\\') + L"\\"; }
+			if (extt == L".zip"){ copypath = copypath.BeforeLast(L'\\') + L"\\"; }
 			if (!wxDir::Exists(copypath)){
 				if (!wxDir::Make(copypath, 511, wxPATH_MKDIR_FULL)){
 					KaiMessageBox(_("Nie można utworzyć folderu."), L"", 4L, this);
@@ -494,8 +494,8 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 			}
 		}
 		else{
-			if (!wxDir::Exists(copypath.BeforeLast('\\'))){
-				if (!wxDir::Make(copypath.BeforeLast('\\'), 511, wxPATH_MKDIR_FULL)){
+			if (!wxDir::Exists(copypath.BeforeLast(L'\\'))){
+				if (!wxDir::Make(copypath.BeforeLast(L'\\'), 511, wxPATH_MKDIR_FULL)){
 					KaiMessageBox(_("Nie można utworzyć folderu."), L"", 4L, this);
 					EnableControls();
 					return;
@@ -777,7 +777,7 @@ void FontCollector::CheckOrCopyFonts()
 
 bool FontCollector::SaveFont(const wxString &fontPath, FontLogContent *flc)
 {
-	wxString fn = fontPath.AfterLast('\\');
+	wxString fn = fontPath.AfterLast(L'\\');
 	if (zip){
 		wxFFileInputStream in(fontPath);
 		bool isgood = in.IsOk();
@@ -842,7 +842,7 @@ void FontCollector::CopyMKVFonts()
 
 void FontCollector::CopyMKVFontsFromTab(const wxString &mkvpath)
 {
-	wxString ext = mkvpath.AfterLast('.').Lower();
+	wxString ext = mkvpath.AfterLast(L'.').Lower();
 	
 	if (ext != L"mkv"){
 		SendMessageD(_("To wideo nie jest plikiem MKV."), fcd->warning);
@@ -859,7 +859,7 @@ void FontCollector::CopyMKVFontsFromTab(const wxString &mkvpath)
 	size_t cpfonts = names.size();
 
 	for (auto fontI : names){
-		if (mw.SaveFont(fontI.first, fcd->copypath.BeforeLast('\\') + "\\" + fontI.second, zip))
+		if (mw.SaveFont(fontI.first, fcd->copypath.BeforeLast(L'\\') + "\\" + fontI.second, zip))
 		{
 			SendMessageD(_("Zapisano czcionkę o nazwie \"") + fontI.second + "\".\n \n", fcd->normal);
 		}
@@ -1034,10 +1034,10 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 							else
 								(*found)++;
 						}
-						wxString ext = fontSize->second.AfterLast('.').Lower();
+						wxString ext = fontSize->second.AfterLast(L'.').Lower();
 						if (ext == L"pfm" || ext == L"pfb"){
 							wxString repl = (ext == L"pfm") ? L"pfb" : L"pfm";
-							if (fullpath[fullpath.length() - 1] < 'Z'){ repl = repl.Upper(); }
+							if (fullpath[fullpath.length() - 1] < L'Z'){ repl = repl.Upper(); }
 							wxString secondPath = fullpath.RemoveLast(3) + repl;
 							fontnames.Add(secondPath);
 							flc->AppendInfo(wxString::Format(_("Znaleziono plik czcionki \"%s\"."), secondPath));
@@ -1078,19 +1078,19 @@ void FontCollector::MuxVideoWithSubs()
 {
 
 
-	wxString command = L"\"--ui-language\" \"pl\" \"--output\" \"" + Notebook::GetTab()->VideoPath.BeforeLast('.') + L" (1).mkv\" " +
+	wxString command = L"\"--ui-language\" \"pl\" \"--output\" \"" + Notebook::GetTab()->VideoPath.BeforeLast(L'.') + L" (1).mkv\" " +
 		L"\"--language\" \"0:und\" \"--language\" \"1:und\" ( \""\
 		+ Notebook::GetTab()->VideoPath +
 		L"\" ) \"--language\" \"0:und\" ( \"" + Notebook::GetTab()->SubsPath +
 		L"\" ) ";// odtąd trzeba dodać czcionki
 	for (size_t i = 0; i < fontnames.size(); i++){
-		wxString ext = fontnames[i].AfterLast('.').Lower();
+		wxString ext = fontnames[i].AfterLast(L'.').Lower();
 		/*if(ext!="ttf" && ext!="ttc" && ext!="otf"){
 		KaiMessageBox(wxString::Format(_("Rozszerzenie czcionki \"%s\" nie jest obsługiwane"),ext));
 		continue;
 		}*/
 		command << L"\"--attachment-name\" \"";
-		wxString name = fontnames[i].AfterLast('\\');
+		wxString name = fontnames[i].AfterLast(L'\\');
 		command << name << L"\" ";
 		command << L"\"--attachment-mime-type\" ";
 		//if(ext=="ttf" || ext=="ttc"){

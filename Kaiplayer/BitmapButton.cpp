@@ -18,20 +18,20 @@
 #include "Hotkeys.h"
 
 BitmapButton::BitmapButton(wxWindow* parent, wxBitmap bitmap, wxBitmap bitmap1, int hkeyId, const wxString &tooltip, const wxPoint& pos, const wxSize& size, int _window)
-	:  wxStaticBitmap(parent, hkeyId+300, bitmap,pos,size)
+	: wxStaticBitmap(parent, hkeyId + 300, bitmap, pos, size)
 	, window(_window)
 	, hotkeyId(hkeyId)
 {
-	enter=false;
-	bmp=bitmap;
-	bmp1=bitmap1;
+	enter = false;
+	bmp = bitmap;
+	bmp1 = bitmap1;
 	Bind(wxEVT_LEFT_DOWN, &BitmapButton::OnLeftDown, this);
 	Bind(wxEVT_LEFT_UP, &BitmapButton::OnLeftDown, this);
 	Bind(wxEVT_LEAVE_WINDOW, &BitmapButton::OnLeftDown, this);
 	Bind(wxEVT_ENTER_WINDOW, &BitmapButton::OnLeftDown, this);
 	SetToolTip(tooltip);
 }
-    
+
 BitmapButton::~BitmapButton()
 {
 }
@@ -39,19 +39,20 @@ BitmapButton::~BitmapButton()
 
 void BitmapButton::ChangeBitmap(bool play)
 {
-	wxString fbmp=(play)? "play" : "pause";
+	wxString fbmp = (play) ? "play" : "pause";
 	bmp = CreateBitmapFromPngResource(fbmp);
-	bmp1 = CreateBitmapFromPngResource(fbmp+"1");
-	if(enter){
-		img=bmp.ConvertToImage();
-		int size=bmp.GetWidth()*bmp.GetHeight()*3;
-		byte *data=img.GetData();
-		for(int i=0; i<size; i++)
+	bmp1 = CreateBitmapFromPngResource(fbmp + "1");
+	if (enter){
+		img = bmp.ConvertToImage();
+		int size = bmp.GetWidth()*bmp.GetHeight() * 3;
+		byte *data = img.GetData();
+		for (int i = 0; i < size; i++)
 		{
-			if(data[i]<226){data[i]+=30;}
+			if (data[i] < 226){ data[i] += 30; }
 		}
 		SetBitmap(wxBitmap(img));
-	}else{
+	}
+	else{
 		SetBitmap(bmp);
 	}
 }
@@ -59,30 +60,30 @@ void BitmapButton::ChangeBitmap(bool play)
 
 void BitmapButton::OnLeftDown(wxMouseEvent& event)
 {
-	if(event.Entering()){
-		enter=true;
-		img=bmp.ConvertToImage();
-		int size=bmp.GetWidth()*bmp.GetHeight()*3;
-		byte *data=img.GetData();
-			
-		for(int i=0; i<size; i++)
+	if (event.Entering()){
+		enter = true;
+		img = bmp.ConvertToImage();
+		int size = bmp.GetWidth()*bmp.GetHeight() * 3;
+		byte *data = img.GetData();
+
+		for (int i = 0; i < size; i++)
 		{
-			if(data[i]<226){data[i]+=30;}
+			if (data[i] < 226){ data[i] += 30; }
 		}
 		SetBitmap(wxBitmap(img));
-		
+
 		return;
 	}
-	if(event.Leaving() && enter){
-		enter=false;
+	if (event.Leaving() && enter){
+		enter = false;
 		SetBitmap(bmp);
 		return;
 	}
-			
-	if(event.LeftDown()){
-		if(event.ShiftDown()){
+
+	if (event.LeftDown()){
+		if (event.ShiftDown()){
 			//wxString buttonName = (name!="")? name : GetToolTipText().BeforeFirst('(').Trim();
-			Hkeys.OnMapHkey( hotkeyId, "", this, window);
+			Hkeys.OnMapHkey(hotkeyId, "", this, window);
 			SetToolTip();
 			//Hkeys.SetAccels(true);
 			//Hkeys.SaveHkeys();
@@ -92,27 +93,27 @@ void BitmapButton::OnLeftDown(wxMouseEvent& event)
 		}
 		SetBitmap(bmp1);
 	}
-	if(event.LeftUp()){
-		
+	if (event.LeftUp()){
+
 		SetBitmap(wxBitmap(img));
-		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,hotkeyId);this->ProcessEvent(evt);
+		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, hotkeyId); this->ProcessEvent(evt);
 	}
 }
-	
+
 void BitmapButton::SetToolTip(const wxString &_toolTip)
 {
 	wxString toolTip = (_toolTip == "") ? name : _toolTip;
 	if (!_toolTip.empty()){ name = _toolTip; }
-	
+
 	idAndType itype(hotkeyId, window);
 	wxString key = Hkeys.GetStringHotkey(itype);
-	
-	if(key!="")
+
+	if (key != "")
 	{
-		toolTip = toolTip + " ("+key+")";
+		toolTip = toolTip + " (" + key + ")";
 	}
 	toolTip << L"\n";
 	toolTip << _("Skrót mo¿na ustawiæ Shift + Klik");
 	wxWindow::SetToolTip(toolTip);
-	
+
 }

@@ -898,7 +898,7 @@ bool VideoRenderer::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 	}
 
 	if (hasVisualEdition && Visual->Visual == VECTORCLIP && Visual->dummytext){
-		wxString toAppend = Visual->dummytext->Trim().AfterLast('\n');
+		wxString toAppend = Visual->dummytext->Trim().AfterLast(L'\n');
 		if (fromFile){
 			OpenWrite ow(*textsubs, false);
 			ow.PartFileWrite(toAppend);

@@ -168,7 +168,7 @@ bool Styles::parseStyle(const wxString &styledata, char form)
 
 	if (!assstyle.HasMoreTokens())return false;
 	wxString token2 = assstyle.GetNextToken();
-	Name = token2.AfterFirst(' ');
+	Name = token2.AfterFirst(L' ');
 
 
 	if (!assstyle.HasMoreTokens())return false;

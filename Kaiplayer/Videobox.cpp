@@ -311,7 +311,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 	}
 	//SetFocus();
 	tab->VideoPath = fileName;
-	tab->VideoName = fileName.AfterLast('\\');
+	tab->VideoName = fileName.AfterLast(L'\\');
 	Kai->SetStatusText(tab->VideoName, 8);
 	if (TD){ TD->Videolabel->SetLabelText(tab->VideoName); }
 	if (!tab->editor){ Kai->Label(0, true); }
@@ -548,13 +548,13 @@ void VideoCtrl::OnPlaytime(wxTimerEvent& event)
 void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 {
 	int key = event.GetKeyCode();
-	if (key == 'F'){ SetFullscreen(); }
+	if (key == L'F'){ SetFullscreen(); }
 	else if (key == WXK_WINDOWS_MENU){
 		wxWindow *owner = (isFullscreen && TD) ? (wxWindow *)TD : this;
 		wxPoint poss = owner->ScreenToClient(wxGetMousePosition());
 		ContextMenu(poss);
 	}
-	else if ((key == 'B' || key == WXK_ESCAPE) && isFullscreen){
+	else if ((key == L'B' || key == WXK_ESCAPE) && isFullscreen){
 		SetFullscreen();
 		//if(Kai->GetTab()->SubsPath!=L""){
 		//Kai->GetTab()->Grid->SelVideoLine();}
@@ -562,16 +562,16 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 			Kai->GetTab()->Edit->Send(EDITBOX_LINE_EDITION, false);
 			Kai->GetTab()->Grid->SelVideoLine();
 		}
-		if (key == 'B'){ if (GetState() == Playing){ Pause(); }ShowWindow(Kai->GetHWND(), SW_SHOWMINNOACTIVE); }
+		if (key == L'B'){ if (GetState() == Playing){ Pause(); }ShowWindow(Kai->GetHWND(), SW_SHOWMINNOACTIVE); }
 	}
-	else if (key == 'S' && event.m_controlDown){ Kai->Save(false); }
+	else if (key == L'S' && event.m_controlDown){ Kai->Save(false); }
 	else if (key == WXK_RETURN && hasZoom){
 		SetZoom();
 	}
-	else if (key == 'Z' && event.ControlDown() && event.ShiftDown()){
+	else if (key == L'Z' && event.ControlDown() && event.ShiftDown()){
 		ResetZoom();
 	}
-	else if (event.ControlDown() && key == 'A' && Visual && (Visual->Visual == VECTORCLIP || Visual->Visual == VECTORDRAW)){
+	else if (event.ControlDown() && key == L'A' && Visual && (Visual->Visual == VECTORCLIP || Visual->Visual == VECTORDRAW)){
 		((DrawingAndClip*)Visual)->ChangeSelection(true);
 		Render(false);
 	}
@@ -597,7 +597,7 @@ void VideoCtrl::NextFile(bool next)
 		path = Kai->GetTab()->VideoPath;
 	}
 	else{ path = Kai->videorec[Kai->videorec.size() - 1]; }
-	wxString pathwn = path.BeforeLast('\\');
+	wxString pathwn = path.BeforeLast(L'\\');
 	wxDir kat(pathwn);
 	if (kat.IsOpened()){
 		files.Clear();
@@ -614,7 +614,7 @@ void VideoCtrl::NextFile(bool next)
 	while ((next) ? k < (int)files.GetCount() : k >= 0)
 	{
 
-		wxString ext = files[k].AfterLast('.').Lower();
+		wxString ext = files[k].AfterLast(L'.').Lower();
 		if (ext == L"avi" || ext == L"mp4" || ext == L"mkv" || ext == L"ogm" || ext == L"wmv" ||
 			ext == L"asf" || ext == L"rmvb" || ext == L"rm" || ext == L"3gp" ||//||ext==L"avs" przynajmniej do momentu dodania otwierania avs przy włączonym ffms2
 			ext == L"ts" || ext == L"m2ts" || ext == L"mpg" || ext == L"mpeg"){
@@ -826,11 +826,11 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 	{
 		if (i < Kai->subsrec.size()){
 			if (!wxFileExists(Kai->subsrec[i])){ continue; }
-			menu1->Append(30000 + i, Kai->subsrec[i].AfterLast('\\'));
+			menu1->Append(30000 + i, Kai->subsrec[i].AfterLast(L'\\'));
 		}
 		if (i < Kai->videorec.size()){
 			if (!wxFileExists(Kai->videorec[i])){ continue; }
-			menu2->Append(30020 + i, Kai->videorec[i].AfterLast('\\'));
+			menu2->Append(30020 + i, Kai->videorec[i].AfterLast(L'\\'));
 		}
 
 	}
@@ -863,8 +863,8 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 	wxString prev;
 	wxString name, enable;
 	for (size_t i = 0; i < streams.size(); i++){
-		wxString ident = streams[i].BeforeFirst(':');
-		name = streams[i].BeforeLast(' ', &enable);
+		wxString ident = streams[i].BeforeFirst(L':');
+		name = streams[i].BeforeLast(L' ', &enable);
 		if ((ident == L"S" || ident == L"s") && editor)
 			break;
 		if (ident != prev){ menu->AppendSeparator(); }
@@ -944,7 +944,7 @@ void VideoCtrl::OnDeleteVideo()
 void VideoCtrl::OnOpVideo()
 {
 	wxFileDialog* FileDialog2 = new wxFileDialog(this, _("Wybierz plik wideo"),
-		(Kai->videorec.size() > 0) ? Kai->videorec[Kai->videorec.size() - 1].BeforeLast('\\') : L"",
+		(Kai->videorec.size() > 0) ? Kai->videorec[Kai->videorec.size() - 1].BeforeLast(L'\\') : L"",
 		L"", _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"),
 		wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, L"wxFileDialog");
 	if (FileDialog2->ShowModal() == wxID_OK){
@@ -957,7 +957,7 @@ void VideoCtrl::OnOpSubs()
 {
 	if (Kai->SavePrompt(2)){ return; }
 	wxFileDialog* FileDialog2 = new wxFileDialog(Kai, _("Wybierz plik napisów"),
-		(Kai->subsrec.size() > 0) ? Kai->subsrec[Kai->subsrec.size() - 1].BeforeLast('\\') : L"", L"",
+		(Kai->subsrec.size() > 0) ? Kai->subsrec[Kai->subsrec.size() - 1].BeforeLast(L'\\') : L"", L"",
 		_("Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"),
 		wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, L"wxFileDialog");
 
@@ -972,7 +972,7 @@ void VideoCtrl::OpenEditor(bool esc)
 
 	if (isFullscreen){
 		if (GetState() == Playing){ Pause(); }
-		//if(Kai->GetTab()->SubsPath.BeforeLast('.')!=Kai->GetTab()->VideoPath.BeforeLast('.'))
+		//if(Kai->GetTab()->SubsPath.BeforeLast(L'.')!=Kai->GetTab()->VideoPath.BeforeLast(L'.'))
 		//{wxString fn=Kai->FindFile(Kai->GetTab()->VideoPath,false,false);
 		//bool isgood=false;
 		//if(fn!=""){bool isgood=Kai->OpenFile(fn);}
@@ -1036,11 +1036,11 @@ void VideoCtrl::OnAccelerator(wxCommandEvent& event)
 			int num = 1;
 			wxArrayString paths;
 			wxString filespec;
-			wxString dirpath = pan->VideoPath.BeforeLast('\\', &filespec);
+			wxString dirpath = pan->VideoPath.BeforeLast(L'\\', &filespec);
 			wxDir kat(dirpath);
 			path = pan->VideoPath;
 			if (kat.IsOpened()){
-				kat.GetAllFiles(dirpath, &paths, filespec.BeforeLast('.') << L"_*_*.png", wxDIR_FILES);
+				kat.GetAllFiles(dirpath, &paths, filespec.BeforeLast(L'.') << L"_*_*.png", wxDIR_FILES);
 			}
 			for (wxString &file : paths){
 				if (file.find(L"_" + std::to_string(num) + L"_") == wxNOT_FOUND){
@@ -1048,7 +1048,7 @@ void VideoCtrl::OnAccelerator(wxCommandEvent& event)
 				}
 				num++;
 			}
-			path = pan->VideoPath.BeforeLast('.');
+			path = pan->VideoPath.BeforeLast(L'.');
 			STime currentTime;
 			currentTime.mstime = time;
 			wxString timestring = currentTime.raw(SRT);
@@ -1336,12 +1336,12 @@ void VideoCtrl::ChangeStream()
 	//int firstSubsStream = -1;
 	int numofastreams = 0;
 	for (int i = streams.size() - 1; i >= 0; i--){
-		if (streams[i][0] == 'A'){
-			streams[i] = streams[i].AfterFirst(' ').Lower();
+		if (streams[i][0] == L'A'){
+			streams[i] = streams[i].AfterFirst(L' ').Lower();
 			numofastreams++;
 			continue;
 		}
-		/*else if (firstSubsStream == -1 && streams[i][0] == 'S' || streams[i][0] == 's'){
+		/*else if (firstSubsStream == -1 && streams[i][0] == L'S' || streams[i][0] == L's'){
 			firstSubsStream = i;
 			}*/
 		streams[i] = L"";
@@ -1362,7 +1362,7 @@ void VideoCtrl::ChangeStream()
 			}
 		}
 		if (lowestIndex < enabledSize){
-			if (streams[streamToChange].AfterLast(' ') == L"0"){
+			if (streams[streamToChange].AfterLast(L' ') == L"0"){
 				EnableStream(streamToChange);
 			}
 		}

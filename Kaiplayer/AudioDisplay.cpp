@@ -1624,7 +1624,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 			inside = true;
 
 			// Get focus
-			if (wxWindow::FindFocus() != this && Options.GetBool(AudioAutoFocus)) SetFocus();
+			if (Options.GetBool(AudioAutoFocus) && wxWindow::FindFocus() != this) SetFocus();
 		}
 		else if (y < h + timelineHeight){
 			onScale = true;
@@ -1634,6 +1634,13 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 		if (inside && onScale){ UpdateImage(true); inside = false; }
 	}
 	else{ inside = false; }
+
+	// All buttons click
+	if (event.ButtonDown()) {
+		SetFocus();
+		if (!player->IsPlaying())
+			cursorPaint = false;
+	}
 
 	// Buttons
 	bool leftDown = event.LeftDown();
@@ -1731,13 +1738,6 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 
 	// Outside
 	if (!inside && hold == 0) return;
-
-	// Left click - focus trzeba nadawać wszystkimi przyciskami
-	if (event.ButtonDown()) {
-		SetFocus();
-		if (!player->IsPlaying())
-			cursorPaint = false;
-	}
 
 
 	// Timing

@@ -165,7 +165,7 @@ void MoveAll::SetCurVisual()
 		double orx, ory;
 
 		moveElems elem;
-		if (res.BeforeFirst(',', &rest).ToDouble(&orx)){ elem.elem.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; }
+		if (res.BeforeFirst(L',', &rest).ToDouble(&orx)){ elem.elem.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; }
 		if (rest.ToDouble(&ory)){ elem.elem.y = ((ory / coeffH) - zoomMove.y)*zoomScale.y; }
 		elem.type = TAGORG;
 		elems.push_back(elem);
@@ -279,9 +279,9 @@ void MoveAll::ChangeInLines(bool all)
 				//wxString tag=re.GetMatch(txt, 1); tag też nigdzie nie jest potrzebny, bo wycinamy tylko jego wartość.
 				tmp = re.GetMatch(txt, 1);
 				if (type == TAGCLIP){
-					int replacements = tmp.Replace(',', ',');
+					int replacements = tmp.Replace(L',', L',');
 					if (replacements == 1){
-						tmp = tmp.After(',');
+						tmp = tmp.After(L',');
 					}
 					else if (replacements > 1){
 						delimiter = L",";

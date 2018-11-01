@@ -96,7 +96,7 @@ bool SubsLoader::LoadASS(const wxString &text)
 	{
 		wxString token = tokenizer.GetNextToken().Trim(false);
 		if (token.empty()){ continue; }
-		if ((token.StartsWith("Dial") || token.StartsWith("Comm") || (token[0] == ';' && section > 2))){
+		if ((token.StartsWith("Dial") || token.StartsWith("Comm") || (token[0] == L';' && section > 2))){
 			Dialogue *dl = new Dialogue(token);
 			if (!tlmode){
 				grid->AddLine(dl);
@@ -132,7 +132,7 @@ bool SubsLoader::LoadASS(const wxString &text)
 			//żeby później źle tego nie zinterpretować
 			section = 1;
 		}
-		else if (token[0] != ';' && token[0] != '[' && token.Find(':') != wxNOT_FOUND && !token.StartsWith("Format")){
+		else if (token[0] != L';' && token[0] != L'[' && token.Find(L':') != wxNOT_FOUND && !token.StartsWith("Format")){
 			grid->AddSInfo(token);
 		}
 		else if(token.StartsWith("[Eve")){

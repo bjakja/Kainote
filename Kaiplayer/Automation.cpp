@@ -196,17 +196,17 @@ namespace Auto{
 	{
 		wxString path = check_string(L, 1);
 		TabPanel *pan = Notebook::GetTab();
-		path.Replace('/', '\\');
+		path.Replace(L'/', L'\\');
 		wxString firstAutomation = Options.pathfull + "\\Automation";
-		if (path[0] == '?'){
-			if (path[1] == 'a'&&path[4] == 'i') path.replace(0, 6, pan->VideoPath.BeforeLast('\\'));
-			else if (path[1] == 'd' && path[4] == 'a') path.replace(0, 5, firstAutomation);
-			else if (path[1] == 'd' && path[4] == 't') path.replace(0, 11, Options.pathfull + "\\Dictionary");
-			else if (path[1] == 'l' && path[4] == 'a') path.replace(0, 6, firstAutomation);
-			else if (path[1] == 's' && path[4] == 'i') path.replace(0, 7, pan->SubsPath.BeforeLast('\\'));
-			else if (path[1] == 't' && path[4] == 'p') path.replace(0, 5, firstAutomation + "\\temp");
-			else if (path[1] == 'u' && path[4] == 'r') path.replace(0, 5, firstAutomation);
-			else if (path[1] == 'v' && path[4] == 'e') path.replace(0, 6, pan->VideoPath.BeforeLast('\\'));
+		if (path[0] == L'?'){
+			if (path[1] == L'a'&&path[4] == L'i') path.replace(0, 6, pan->VideoPath.BeforeLast(L'\\'));
+			else if (path[1] == L'd' && path[4] == L'a') path.replace(0, 5, firstAutomation);
+			else if (path[1] == L'd' && path[4] == L't') path.replace(0, 11, Options.pathfull + "\\Dictionary");
+			else if (path[1] == L'l' && path[4] == L'a') path.replace(0, 6, firstAutomation);
+			else if (path[1] == L's' && path[4] == L'i') path.replace(0, 7, pan->SubsPath.BeforeLast(L'\\'));
+			else if (path[1] == L't' && path[4] == L'p') path.replace(0, 5, firstAutomation + "\\temp");
+			else if (path[1] == L'u' && path[4] == L'r') path.replace(0, 5, firstAutomation);
+			else if (path[1] == L'v' && path[4] == L'e') path.replace(0, 6, pan->VideoPath.BeforeLast(L'\\'));
 		}
 		push_value(L, path);
 		return 1;
@@ -225,7 +225,7 @@ namespace Auto{
 			lua_error(L);
 		}
 		if (!lua_isstring(L, 2)) {
-			lua_pushfstring(L, "Second argument of text_extents must be a stringiem but is of type %s", lua_typename(L, lua_type(L, 2)));
+			lua_pushfstring(L, "Second argument of text_extents must be a string but is of type %s", lua_typename(L, lua_type(L, 2)));
 			lua_error(L);
 		}
 
@@ -265,7 +265,7 @@ namespace Auto{
 		lf.lfClipPrecision = CLIP_DEFAULT_PRECIS;
 		lf.lfQuality = ANTIALIASED_QUALITY;
 		lf.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
-		_tcsncpy(lf.lfFaceName, st->Fontname.c_str(), 32);
+		_tcsncpy(lf.lfFaceName, st->Fontname.wc_str(), 32);
 
 		HFONT thefont = CreateFontIndirect(&lf);
 		if (!thefont) return false;
@@ -348,7 +348,7 @@ namespace Auto{
 		: filename(filename)
 		, L(NULL)
 	{
-		include_path.push_back(filename.BeforeLast('\\') + "\\");
+		include_path.push_back(filename.BeforeLast(L'\\') + "\\");
 		include_path.push_back(Options.pathfull + "\\Automation\\automation\\Include\\");
 		//include_path[0].Replace("\\","/");
 		//include_path[1].Replace("\\","/");
@@ -425,7 +425,7 @@ namespace Auto{
 		set_field<get_translation>(L, "gettext");
 		set_field<project_properties>(L, "project_properties");
 
-		// store kainote table to globals
+		// store aegisub table to globals
 		lua_settable(L, LUA_GLOBALSINDEX);
 		stackcheck.check_stack(0);
 
@@ -535,7 +535,7 @@ namespace Auto{
 			fullpath = true;
 		}
 		if (!wxFileExists(*filepath)) { // Plain filename
-			if (fullpath){ *filepath = filepath->AfterLast('\\'); }
+			if (fullpath){ *filepath = filepath->AfterLast(L'\\'); }
 			for (auto const& dir : s->include_path) {
 				*filepath = dir + *filename;
 				if (wxFileExists(*filepath))
@@ -1011,7 +1011,7 @@ namespace Auto{
 			script_path.SetName(fn);
 			try {
 				wxString fullpath = script_path.GetFullPath();
-				wxString ext = fullpath.AfterLast('.').Lower();
+				wxString ext = fullpath.AfterLast(L'.').Lower();
 
 				if ((ext != "lua" && ext != "moon") || !Add(fullpath, false, true)){ more = dir.GetNext(&fn); continue; }
 
@@ -1151,7 +1151,7 @@ namespace Auto{
 				MenuItem *mi = submenu->SetAccMenu(new MenuItem(start, macro->StrDisplay(), macro->StrHelp()), text);
 				mi->Enable(macro->Validate(c));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-					if (evt.GetInt() == wxMOD_SHIFT/*wxGetKeyState(WXK_SHIFT)*/){
+					if (evt.GetInt() == wxMOD_SHIFT){
 						Hkeys.OnMapHkey(-1, text, Kai, GLOBAL_HOTKEY, false);
 					}
 					else{
@@ -1198,7 +1198,7 @@ namespace Auto{
 				MenuItem *mi = submenu->SetAccMenu(new MenuItem(start, macro->StrDisplay(), macro->StrHelp()), text);
 				mi->Enable(macro->Validate(c));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-					if (evt.GetInt() == wxMOD_SHIFT/*wxGetKeyState(WXK_SHIFT)*/){
+					if (evt.GetInt() == wxMOD_SHIFT){
 						Hkeys.OnMapHkey(-1, text, Kai, GLOBAL_HOTKEY, false);
 					}
 					else{

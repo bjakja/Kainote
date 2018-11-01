@@ -119,11 +119,11 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 		for (long i = from; i < to; i++)
 		{
 			wxUniChar nChar = timetxt[i];
-			if (nChar != ':' && nChar != '.' && nChar != ','){
-				timetxt[i] = '0';
+			if (nChar != L':' && nChar != L'.' && nChar != L','){
+				timetxt[i] = L'0';
 			}
 		}
-		if (from > 0 && (timetxt[from - 1] == ':' || timetxt[from - 1] == '.' || timetxt[from - 1] == ',')){
+		if (from > 0 && (timetxt[from - 1] == L':' || timetxt[from - 1] == L'.' || timetxt[from - 1] == L',')){
 			from--;
 		}
 		SetValue(timetxt);
@@ -181,7 +181,7 @@ void TimeCtrl::OnTimeWrite(wxCommandEvent& event)
 		}
 		else if (nChar.IsEmpty()) { txt.Remove(selst - 1, 1); }
 		else{ txt.Remove(selst, 1); }
-		if (selst > 1 && txt[selst - 2] == ':' &&  wxAtoi(wxString(txt[selst - 1])) > 5){ txt = txt.replace(selst - 1, 1, "5"); }
+		if (selst > 1 && txt[selst - 2] == L':' &&  wxAtoi(wxString(txt[selst - 1])) > 5){ txt = txt.replace(selst - 1, 1, "5"); }
 
 
 		SetValue(txt, true, false);

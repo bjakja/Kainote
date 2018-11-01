@@ -58,10 +58,10 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	entries[13].Set(wxACCEL_SHIFT, WXK_DOWN, ID_SDOWN);
 	entries[14].Set(wxACCEL_SHIFT | wxACCEL_CTRL, WXK_LEFT, ID_CSLEFT);
 	entries[15].Set(wxACCEL_SHIFT | wxACCEL_CTRL, WXK_RIGHT, ID_CSRIGHT);
-	entries[16].Set(wxACCEL_CTRL, 'A', ID_CTLA);
-	entries[17].Set(wxACCEL_CTRL, 'V', ID_CTLV);
-	entries[18].Set(wxACCEL_CTRL, 'C', ID_CTLC);
-	entries[19].Set(wxACCEL_CTRL, 'X', ID_CTLX);
+	entries[16].Set(wxACCEL_CTRL, L'A', ID_CTLA);
+	entries[17].Set(wxACCEL_CTRL, L'V', ID_CTLV);
+	entries[18].Set(wxACCEL_CTRL, L'C', ID_CTLC);
+	entries[19].Set(wxACCEL_CTRL, L'X', ID_CTLX);
 	entries[20].Set(wxACCEL_NORMAL, WXK_WINDOWS_MENU, ID_WMENU);
 	entries[21].Set(wxACCEL_NORMAL, WXK_RETURN, ID_ENTER);
 	int numEntries = 22;
@@ -176,7 +176,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 						while (j < textLen && forwardNotFound){
 							if (wrapchars.Find(MText[j]) != -1){
 								nwrap = j;
-								if (MText[j] == ' '){ nwrap++; }
+								if (MText[j] == L' '){ nwrap++; }
 								forward = true;
 								break;
 							}
@@ -190,7 +190,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 						while (k > podz && backwardNotFound){
 							if (wrapchars.Find(MText[k]) != -1){
 								nwrap = k;
-								if (MText[k] == ' '){ nwrap++; }
+								if (MText[k] == L' '){ nwrap++; }
 								backward = true;
 								break;
 							}
@@ -220,7 +220,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 void TextEditor::OnCharPress(wxKeyEvent& event)
 {
 	wxUniChar wkey = event.GetUnicodeKey();
-	if (wkey == '\t'){ return; }
+	if (wkey == L'\t'){ return; }
 	if (wkey){
 		if (Cursor != Selend){
 			int curx = Cursor.x;
@@ -287,7 +287,7 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 	bool ctrl = event.ControlDown();
 	bool alt = event.AltDown();
 	bool shift = event.ShiftDown();
-	if (ctrl && key == '0'){
+	if (ctrl && key == L'0'){
 		font.SetPointSize(10);
 		int fw, fh;
 		GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
@@ -311,7 +311,7 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 		return;
 	}
 	if (tagList){
-		if (key == WXK_ESCAPE || key == WXK_HOME || key == WXK_END || (ctrl && key == '0')){
+		if (key == WXK_ESCAPE || key == WXK_HOME || key == WXK_END || (ctrl && key == L'0')){
 			tagList->Destroy();
 			tagList = NULL;
 		}
@@ -339,7 +339,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		Selend.x = Cursor.x;
 		if (ID == ID_CBACK){
 			FindWord((Cursor.x < 2) ? 0 : Cursor.x - 1, &Cursor.x, &len);
-			if (Cursor.x == 1 && MText[0] == ' '){ Cursor.x--; }
+			if (Cursor.x == 1 && MText[0] == L' '){ Cursor.x--; }
 		}
 		else{
 			FindWord(Cursor.x, &len, &Selend.x);
@@ -798,25 +798,25 @@ void TextEditor::DrawField(wxDC &dc, int w, int h, int windowh)
 	wxString alltext = MText + " ";
 	int len = alltext.Len();
 	const wxUniChar &bchar = alltext[Cursor.x];
-	if (bchar == '{')
+	if (bchar == L'{')
 	{
 		Brackets.x = Cursor.x;
-		Brackets.y = FindBracket('{', '}', Cursor.x + 1);
+		Brackets.y = FindBracket(L'{', L'}', Cursor.x + 1);
 	}
-	else if (bchar == '}')
+	else if (bchar == L'}')
 	{
 		Brackets.y = Cursor.x;
-		Brackets.x = FindBracket('}', '{', Cursor.x - 1, true);
+		Brackets.x = FindBracket(L'}', L'{', Cursor.x - 1, true);
 	}
-	else if (bchar == '(')
+	else if (bchar == L'(')
 	{
 		Brackets.x = Cursor.x;
-		Brackets.y = FindBracket('(', ')', Cursor.x + 1);
+		Brackets.y = FindBracket(L'(', L')', Cursor.x + 1);
 	}
-	else if (bchar == ')')
+	else if (bchar == L')')
 	{
 		Brackets.y = Cursor.x;
-		Brackets.x = FindBracket(')', '(', Cursor.x - 1, true);
+		Brackets.x = FindBracket(L')', L'(', Cursor.x - 1, true);
 	}
 	else{ Brackets.x = -1; Brackets.y = -1; }
 
@@ -887,7 +887,7 @@ void TextEditor::DrawField(wxDC &dc, int w, int h, int windowh)
 			if (parttext != ""){
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				wxColour kol = (val || (isTemplateLine && parttext.IsNumber())) ? cvalues : (slash) ? cnames :
-					(templateString) ? ctstrings : (isTemplateLine && ch == '(') ? ctfunctions :
+					(templateString) ? ctstrings : (isTemplateLine && ch == L'(') ? ctfunctions :
 					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : templateCode ? ctvariables : ctext;
 				dc.SetTextForeground(kol);
 				mestext << parttext;
@@ -902,9 +902,9 @@ void TextEditor::DrawField(wxDC &dc, int w, int h, int windowh)
 			mestext = "";
 		}
 		/*if (posY + Fheight<0){
-			if (ch == '{')
+			if (ch == L'{')
 			tagi = true;
-			else if (ch == '}')
+			else if (ch == L'}')
 			tagi = false;
 
 			wchar++;
@@ -932,32 +932,32 @@ void TextEditor::DrawField(wxDC &dc, int w, int h, int windowh)
 			wxFont fnt = dc.GetFont();
 			fnt = fnt.Bold();
 			dc.SetFont(fnt);
-			dc.SetTextForeground((ch == '{' || ch == '}') ? ccurlybraces : coperators);
+			dc.SetTextForeground((ch == L'{' || ch == L'}') ? ccurlybraces : coperators);
 			dc.DrawText(MText[i], fw + 3, ((bry*fontHeight) + 2) - scrollPositionV);
 			dc.SetFont(font);
 
 		}
 		if (isTemplateLine){
-			if (!templateString && (ch == '!' || ch == '.' || ch == ',' || ch == '+' || ch == '-' || ch == '=' || ch == '(' ||
-				ch == ')' || ch == '>' || ch == '<' || ch == '[' || ch == ']' || ch == '*' || ch == '/' || ch == ':' || ch == ';')){
+			if (!templateString && (ch == L'!' || ch == L'.' || ch == L',' || ch == L'+' || ch == L'-' || ch == L'=' || ch == L'(' ||
+				ch == L')' || ch == L'>' || ch == L'<' || ch == L'[' || ch == L']' || ch == L'*' || ch == L'/' || ch == L':' || ch == L';')){
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground((parttext.IsNumber() || val) ? cvalues : (slash) ? cnames :
-					(ch == '(' && !slash) ? ctfunctions : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
+					(ch == L'(' && !slash) ? ctfunctions : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				dc.DrawText(parttext, fw + 3, posY);
 				mestext << parttext;
 				parttext = "";
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
-				dc.SetTextForeground((ch == '!') ? ctcodemarks : coperators);
+				dc.SetTextForeground((ch == L'!') ? ctcodemarks : coperators);
 				dc.DrawText(ch, fw + 3, posY);
 				mestext << ch;
-				if (state == 2 && ch == '!')
+				if (state == 2 && ch == L'!')
 					templateCode = !templateCode;
 				slash = val = false;
 				wchar++;
 				continue;
 			}
 
-			if (ch == '"'){
+			if (ch == L'"'){
 				if (templateString){
 					parttext << ch;
 					GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
@@ -971,7 +971,7 @@ void TextEditor::DrawField(wxDC &dc, int w, int h, int windowh)
 				}
 				templateString = !templateString;
 			}
-			if (!templateString && ch == ' '){
+			if (!templateString && ch == L' '){
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground((!templateCode && !val && !slash) ? ctext : (parttext.IsNumber() || val) ? cvalues :
 					(slash) ? cnames : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
@@ -984,7 +984,7 @@ void TextEditor::DrawField(wxDC &dc, int w, int h, int windowh)
 				continue;
 			}
 		}
-		if (ch != '\t'){
+		if (ch != L'\t'){
 			parttext << ch;
 
 		}
@@ -993,10 +993,10 @@ void TextEditor::DrawField(wxDC &dc, int w, int h, int windowh)
 			wchar++;
 			continue;
 		}
-		if (ch == '{' || ch == '}'){
-			if (ch == '{'){
+		if (ch == L'{' || ch == L'}'){
+			if (ch == L'{'){
 				tags = true;
-				wxString bef = parttext.BeforeLast('{');
+				wxString bef = parttext.BeforeLast(L'{');
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground(ctext);
 				dc.DrawText(bef, fw + 3, posY);
@@ -1022,7 +1022,7 @@ void TextEditor::DrawField(wxDC &dc, int w, int h, int windowh)
 
 		if (slash){
 			tagtest += ch;
-			if ((znaki.Find(ch) != -1 && tagtest != "1"&&tagtest != "2"&&tagtest != "3"&&tagtest != "4") || tagtest == "fn" || ch == '('){
+			if ((znaki.Find(ch) != -1 && tagtest != "1"&&tagtest != "2"&&tagtest != "3"&&tagtest != "4") || tagtest == "fn" || ch == L'('){
 				slash = false;
 				wxString tmp = (tagtest == "fn") ? parttext : parttext.RemoveLast(1);
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
@@ -1036,21 +1036,21 @@ void TextEditor::DrawField(wxDC &dc, int w, int h, int windowh)
 			}
 		}
 
-		if ((ch == '\\' || ((ch == '(' || ch == ')' || ch == ',') && val)) && tags){
+		if ((ch == L'\\' || ((ch == L'(' || ch == L')' || ch == L',') && val)) && tags){
 			wxString tmp = parttext.RemoveLast(1);
 			GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
-			dc.SetTextForeground((val && (ch == '\\' || ch == ')' || ch == ',')) ? cvalues : slash ? cnames : ctext);
+			dc.SetTextForeground((val && (ch == L'\\' || ch == L')' || ch == L',')) ? cvalues : slash ? cnames : ctext);
 			dc.DrawText(tmp, fw + 3, posY);
 			mestext << tmp;
 			parttext = ch;
-			if (ch == '\\'){ slash = true; }
+			if (ch == L'\\'){ slash = true; }
 			GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 			dc.SetTextForeground(coperators);
 			dc.DrawText(parttext, fw + 3, posY);
 			mestext << parttext;
 			parttext = "";
-			if (ch == '('){ val = true; slash = false; }
-			else if (ch != ','){ val = false; }
+			if (ch == L'('){ val = true; slash = false; }
+			else if (ch != L','){ val = false; }
 			//continue;
 		}
 
@@ -1183,7 +1183,7 @@ void TextEditor::CheckText()
 	for (size_t i = 0; i < text.Len(); i++)
 	{
 		wxUniChar ch = text.GetChar(i);
-		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch != '\''/*notchar.Find(ch)!=-1*/ && !block){
+		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch != L'\''/*notchar.Find(ch)!=-1*/ && !block){
 			if (word.Len() > 1){
 				if (word.StartsWith("'")){ word = word.Remove(0, 1); }
 				if (word.EndsWith("'")){ word = word.RemoveLast(1); }
@@ -1194,16 +1194,16 @@ void TextEditor::CheckText()
 			word = ""; firsti = i + 1;
 		}
 		if (block){
-			if (ch == '{'){ errors.push_back(lastStartCBracket); errors.push_back(lastStartCBracket); misspels.Add(""); }
-			if (ch == '\\' && text[(i == 0) ? 0 : i - 1] == '\\'){ errors.push_back(i); errors.push_back(i); misspels.Add(""); }
-			if (ch == '('){
-				if (i > 1 && text[i - 2] == '\\' && text[i - 1]){ lastStartTBracket = i; continue; }
+			if (ch == L'{'){ errors.push_back(lastStartCBracket); errors.push_back(lastStartCBracket); misspels.Add(""); }
+			if (ch == L'\\' && text[(i == 0) ? 0 : i - 1] == L'\\'){ errors.push_back(i); errors.push_back(i); misspels.Add(""); }
+			if (ch == L'('){
+				if (i > 1 && text[i - 2] == L'\\' && text[i - 1]){ lastStartTBracket = i; continue; }
 				if (lastStartBracket > lastEndBracket){
 					errors.push_back(lastStartBracket); errors.push_back(lastStartBracket); misspels.Add("");
 				}
 				lastStartBracket = i;
 			}
-			if (ch == ')'){
+			if (ch == L')'){
 				if (lastStartBracket < lastEndBracket || lastStartBracket < 0){
 					if (lastStartTBracket > 0 && (lastStartTBracket < lastEndBracket || lastStartBracket < lastStartTBracket)){
 						lastStartTBracket = -1; continue;
@@ -1213,23 +1213,23 @@ void TextEditor::CheckText()
 				lastEndBracket = i;
 			}
 		}
-		if (!block && ch == '}'){
+		if (!block && ch == L'}'){
 			errors.push_back(i); errors.push_back(i); misspels.Add("");
 		}
-		if (lastStartTBracket >= 0 && ch == '{' || ch == '}'){
+		if (lastStartTBracket >= 0 && ch == L'{' || ch == L'}'){
 			errors.push_back(lastStartTBracket); errors.push_back(lastStartTBracket); misspels.Add("");
 			lastStartTBracket = -1;
 		}
-		if (ch == '{'){ block = true; lastStartCBracket = i; continue; }
-		else if (ch == '}'){ block = false; lastEndCBracket = i; firsti = i + 1; word = ""; continue; }
+		if (ch == L'{'){ block = true; lastStartCBracket = i; continue; }
+		else if (ch == L'}'){ block = false; lastEndCBracket = i; firsti = i + 1; word = ""; continue; }
 
-		if (!block && /*notchar.Find(ch)==-1*/ (!iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) || ch == '\'') &&
-			text.GetChar((i == 0) ? 0 : i - 1) != '\\'){
+		if (!block && /*notchar.Find(ch)==-1*/ (!iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) || ch == L'\'') &&
+			text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){
 			word << ch; lasti = i;
 		}
-		else if (!block && text.GetChar((i == 0) ? 0 : i - 1) == '\\'){
+		else if (!block && text.GetChar((i == 0) ? 0 : i - 1) == L'\\'){
 			word = "";
-			if (ch == 'N' || ch == 'n' || ch == 'h'){
+			if (ch == L'N' || ch == L'n' || ch == L'h'){
 				firsti = i + 1;
 			}
 			else{
@@ -1279,20 +1279,20 @@ void TextEditor::FindWord(int pos, int *start, int *end)
 		*start = (fromend) ? 0 : len;
 		for (int i = pos; i >= 0; i--){
 			int res = wfind.Find(MText[i]);
-			if (lastres == 0 && res != 0 && i + 2 <= pos && MText[i + 1] == ' '){
+			if (lastres == 0 && res != 0 && i + 2 <= pos && MText[i + 1] == L' '){
 				*start = i + 2;
 				break;
 			}
 			if (res != -1){ lastres = res; }
 			if (res != -1 && !hasres){
 				if (i == pos){ hasres = true; continue; }
-				bool isen = (MText[i] == '\\' && MText[i + 1] == 'N');
+				bool isen = (MText[i] == L'\\' && MText[i + 1] == L'N');
 				*start = (isen && pos == i + 1) ? i : (isen) ? i + 2 : i + 1;
 				break;
 			}
 			else if (hasres && res == -1){
 				if (lastres < 1 && (i + 2 == pos || i + 1 == pos)){ hasres = false; continue; }
-				*start = ((lastres>3 && lastres < 6 && i + 2 <= pos) || i + 1 == pos || MText[i + 2] == ' ') ? i + 1 : i + 2;
+				*start = ((lastres>3 && lastres < 6 && i + 2 <= pos) || i + 1 == pos || MText[i + 2] == L' ') ? i + 1 : i + 2;
 				break;
 			}
 		}
@@ -1311,7 +1311,7 @@ void TextEditor::FindWord(int pos, int *start, int *end)
 			break;
 		}
 		else if (hasres && res == -1){
-			*end = (i > 0 && MText[i - 1] == '\\' && MText[i] == 'N') ? i + 1 : i;
+			*end = (i > 0 && MText[i - 1] == L'\\' && MText[i] == L'N') ? i + 1 : i;
 			break;
 		}
 	}

@@ -26,8 +26,8 @@ wxString getdouble(double num)
 	int rmv = 0;
 	for (int i = strnum.Len() - 1; i > 0; i--)
 	{
-		if (strnum[i] == '0'){ rmv++; }
-		else if (strnum[i] == '.'){ rmv++; break; }
+		if (strnum[i] == L'0'){ rmv++; }
+		else if (strnum[i] == L'.'){ rmv++; break; }
 		else{ break; }
 	}
 	if (rmv){ strnum.RemoveLast(rmv); }
@@ -133,10 +133,10 @@ void NumCtrl::SetString(wxString val)
 {
 	if (!val.ToDouble(&value)){ val.ToCDouble(&value); }
 	if (oint){
-		int finds = val.Find('.', true);
-		if (finds != -1){ val = val.BeforeFirst('.'); }
-		finds = val.Find(',', true);
-		if (finds != -1){ val = val.BeforeFirst(','); }
+		int finds = val.Find(L'.', true);
+		if (finds != -1){ val = val.BeforeFirst(L'.'); }
+		finds = val.Find(L',', true);
+		if (finds != -1){ val = val.BeforeFirst(L','); }
 	}
 	else{
 		val.Replace(",", ".");
@@ -185,8 +185,8 @@ wxString NumCtrl::GetString()
 	wxString val = GetValue();
 	val.Replace(",", ".");
 	if (val == "-"){ val = oldval; }
-	if (val.StartsWith('.')){ val.Prepend("0"); }
-	if (val.EndsWith('.')){ val.Append("0"); }
+	if (val.StartsWith(L'.')){ val.Prepend("0"); }
+	if (val.EndsWith(L'.')){ val.Append("0"); }
 	if (!val.ToCDouble(&value)){
 		val = oldval;
 	}

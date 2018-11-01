@@ -703,13 +703,13 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 
 void SubsGrid::OnPasteTextTl()
 {
-	wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"), Kai->GetTab()->SubsPath.BeforeLast('\\'), L"", _("Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"), wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, L"wxFileDialog");
+	wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"), Kai->GetTab()->SubsPath.BeforeLast(L'\\'), L"", _("Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"), wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, L"wxFileDialog");
 	if (FileDialog1->ShowModal() == wxID_OK){
 		OpenWrite op;
 		wxString pathh = FileDialog1->GetPath();
 		wxString txt;
 		if (!op.FileOpen(pathh, &txt)){ return; }
-		wxString ext = pathh.AfterLast('.');
+		wxString ext = pathh.AfterLast(L'.');
 		int iline = 0;
 
 		//for(int i=0;i<GetCount();i++){file->subs.dials[i]->spells.Clear();}
@@ -892,8 +892,8 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 		if (subsFormat < SRT){ Edit->TlMode->Enable(); }
 		else{ Edit->TlMode->Enable(false); }
 
-		tab->SubsPath = mkvpath.BeforeLast('.') + L"." + ext;
-		tab->SubsName = tab->SubsPath.AfterLast('\\');
+		tab->SubsPath = mkvpath.BeforeLast(L'.') + L"." + ext;
+		tab->SubsName = tab->SubsPath.AfterLast(L'\\');
 		//Kai->SetRecent();
 		Kai->UpdateToolbar();
 		Edit->RefreshStyle(true);
@@ -980,10 +980,6 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		resized->Spacing = getfloat(fsp);
 	}
 
-	//dialogi, największy hardkor, wszystkie tagi zależne od rozdzielczości trzeba zmienić
-	//tu zacznie się potęga szukaczki tagów
-	//wxRegEx onenum(L"\\\\(fax|fay|fs|bord|shad|pos|move|iclip|clip|org)([^\\\\}\\)]*)",wxRE_ADVANCED);
-	//wxRegEx drawing(L"\\\\p([0-9]+)[\\\\}\\)]",wxRE_ADVANCED);
 	wxString tags[] = { L"pos", L"move", L"bord", L"shad", L"org", L"fsp", L"fscx", L"fs", L"clip", L"iclip", L"p", L"xbord", L"ybord", L"xshad", L"yshad" };
 	File *Subs = file->GetSubs();
 	for (int i = 0; i < Subs->dials.size(); i++){
@@ -1016,10 +1012,10 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 			double tagValue = 0.0;
 			int ii = 0;
 			wxString resizedTag;
-			if (tag->tagName != L"fsp" && tag->tagName.EndsWith('p') && tag->value.find('m') != -1){
-				int mPos = tag->value.find('m');
+			if (tag->tagName != L"fsp" && tag->tagName.EndsWith(L'p') && tag->value.find(L'm') != -1){
+				int mPos = tag->value.find(L'm');
 				resizedTag = tag->value.Left(mPos) + L"m ";
-				wxStringTokenizer tknzr(tag->value.AfterFirst('m'), L" ", wxTOKEN_STRTOK);
+				wxStringTokenizer tknzr(tag->value.AfterFirst(L'm'), L" ", wxTOKEN_STRTOK);
 				
 				float xscale = (tag->tagName == L"p") ? vectorXScale : xnsize;
 
@@ -1070,15 +1066,15 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 						ii++;
 					}
 				}
-				resizedTag = resizedTag.BeforeLast(',');
+				resizedTag = resizedTag.BeforeLast(L',');
 
 			}
 			else if (tag->tagName != L"p"){
 				if (tag->value.ToCDouble(&tagValue)){
 					tagValue *= (tag->tagName == L"fscx") ? valFscx :
 						(tag->tagName == L"fs") ? val1 :
-						(tag->tagName.StartsWith('x')) ? xnsize :
-						(tag->tagName.StartsWith('y')) ? ynsize : val;
+						(tag->tagName.StartsWith(L'x')) ? xnsize :
+						(tag->tagName.StartsWith(L'y')) ? ynsize : val;
 					resizedTag = getfloat(tagValue);
 				}
 				else{

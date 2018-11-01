@@ -25,6 +25,7 @@
 #include "Stylelistbox.h"
 #include <vector>
 #include <utility>
+#include <wx/regex.h>
 
 class TabPanel;
 
@@ -75,14 +76,15 @@ private:
 	void ReplaceOnTab(TabPanel *tab);
 	void ReplaceOnActualTab();
 	void ReplaceOnAllTabs();
+	bool ReplaceBlock(std::vector<ReplacerSeekResults *> &results, std::vector<wxRegEx*> &rxrules);
 	void GetCheckedRules(std::vector<int> &checkedRules);
 	void SaveRules();
 	void MoveCase(const wxString &originalCase, wxString *result, int options);
 	int GetRuleOptions();
 	void FillWithDefaultRules(wxString &rules);
 	bool KeepFinding(const wxString &text, int textPos, int options);
-	KaiCheckBox *PutWordBoundary;
-	KaiCheckBox *ShowBuiltInRules;
+	//KaiCheckBox *PutWordBoundary;
+	//KaiCheckBox *ShowBuiltInRules;
 	KaiCheckBox *MatchCase;
 	KaiCheckBox *ReplaceAsLower;
 	KaiCheckBox *ReplaceAsUpper;

@@ -688,7 +688,7 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 
 
 			wxRegEx srttag(L"\\{" + text + L"}", wxRE_ADVANCED | wxRE_ICASE);
-			int wheres = txt.SubString(0, from).Find('|', true);
+			int wheres = txt.SubString(0, from).Find(L'|', true);
 			if (wheres == -1){ wheres = 0; }
 			if (srttag.Matches(txt.Mid(wheres))){
 				if (srttag.GetMatch(&start, &len, 0))
@@ -760,7 +760,7 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 			txt = TextEditOrig->GetValue();
 		}
 
-		if (txt[Placed.x] != '}'){
+		if (txt[Placed.x] != L'}'){
 			int bracketPos = txt.find(L"}", Placed.x);
 			if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
 		}
@@ -866,7 +866,7 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 			//wywołane tylko by dodać kolor do recent;
 			ColourDialog->GetColor();
 			wxString txt = Editor->GetValue();
-			if (txt[Placed.x] != '}'){
+			if (txt[Placed.x] != L'}'){
 				int bracketPos = txt.find(L"}", Placed.x);
 				if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
 			}
@@ -890,7 +890,7 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		AssColor ret;
 		if (scp.PickColor(&ret)){
 			wxString txt = Editor->GetValue();
-			if (txt[Placed.x] != '}'){
+			if (txt[Placed.x] != L'}'){
 				int bracketPos = txt.find(L"}", Placed.x);
 				if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
 			}
@@ -1249,8 +1249,8 @@ void EditBox::OnSplit(wxCommandEvent& event)
 	wxString txt = tedit->GetValue();
 	long strt, ennd;
 	tedit->GetSelection(&strt, &ennd);
-	if (strt > 0 && txt[strt - 1] == ' '){ strt--; }
-	if (ennd < (int)txt.Len() && txt[ennd] == ' '){ ennd++; }
+	if (strt > 0 && txt[strt - 1] == L' '){ strt--; }
+	if (ennd < (int)txt.Len() && txt[ennd] == L' '){ ennd++; }
 
 	if (strt != ennd){ txt.Remove(strt, ennd - strt); }
 	txt.insert(strt, Splitchar);
@@ -1310,8 +1310,8 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 	wxRegEx rex("^" + tag, wxRE_ADVANCED);
 
 
-	int bracketStart = txt.SubString(0, from).Find('{', true);
-	int bracketEnd = txt.SubString(0, (from - 2 < 1) ? 1 : (from - 2)).Find('}', true);
+	int bracketStart = txt.SubString(0, from).Find(L'{', true);
+	int bracketEnd = txt.SubString(0, (from - 2 < 1) ? 1 : (from - 2)).Find(L'}', true);
 	if (bracketStart == -1 || (bracketStart < bracketEnd && bracketEnd != -1)){ 
 		InBracket = false; 
 		inbrkt = false; 
@@ -1322,9 +1322,9 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 		InBracket = true;
 		int tmpfrom = from - 2;
 		do{
-			bracketEnd = txt.find('}', (tmpfrom < 1) ? 1 : tmpfrom);
+			bracketEnd = txt.find(L'}', (tmpfrom < 1) ? 1 : tmpfrom);
 			tmpfrom = bracketEnd + 1;
-		} while (bracketEnd != -1 && bracketEnd < (int)txt.Len() - 1 && txt[bracketEnd + 1] == '{');
+		} while (bracketEnd != -1 && bracketEnd < (int)txt.Len() - 1 && txt[bracketEnd + 1] == L'{');
 		if (bracketEnd < 0){ bracketEnd = txt.Len() - 1; }
 	}
 
@@ -1351,7 +1351,7 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 
 	for (int i = bracketEnd; i >= 0; i--){
 		wxUniChar ch = txt[i];
-		if (ch == '\\' && brkt){
+		if (ch == L'\\' && brkt){
 			//tag is placed on begining of tags in bracket
 			lastTag = i;
 			wxString ftag = txt.SubString(i + 1, lslash - 1);
@@ -1359,7 +1359,7 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 				hasR = true;
 			}
 			if (ftag.EndsWith(")")){
-				if (ftag.Find('(') == -1 || ftag.Freq(')') >= 2 || ftag.StartsWith("t(")){
+				if (ftag.Find(L'(') == -1 || ftag.Freq(L')') >= 2 || ftag.StartsWith("t(")){
 					isT = true;
 					endT = lslash - 1;
 				}
@@ -1421,22 +1421,22 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 
 			lslash = i;
 		}
-		else if (ch == '{' && i > 0){
+		else if (ch == L'{' && i > 0){
 			wxString textBeforeBracket = txt.SubString(0, i - 1);
-			int startBracket = textBeforeBracket.Find('{', true);
-			int endBracket = textBeforeBracket.Find('}', true);
+			int startBracket = textBeforeBracket.Find(L'{', true);
+			int endBracket = textBeforeBracket.Find(L'}', true);
 			if (endBracket >= startBracket){
 				brkt = false;
-				if (txt[i - 1] != '}'){ inbrkt = false; if (hasR){ break; } }
+				if (txt[i - 1] != L'}'){ inbrkt = false; if (hasR){ break; } }
 			}
 			else{
 				lslash = i - 1;
 			}
 		}
-		else if (ch == '}' && i > 0){
+		else if (ch == L'}' && i > 0){
 			wxString textBeforeBracket = txt.SubString(0, i - 1);
-			int startBracket = textBeforeBracket.Find('{', true);
-			int endBracket = textBeforeBracket.Find('}', true);
+			int startBracket = textBeforeBracket.Find(L'{', true);
+			int endBracket = textBeforeBracket.Find(L'}', true);
 			if (endBracket < startBracket){
 				lslash = i;
 				brkt = true;
@@ -1592,9 +1592,9 @@ void EditBox::OnColorChange(ColorEvent& event)
 void EditBox::OnButtonTag(wxCommandEvent& event)
 {
 	wxString type;
-	wxString tag = Options.GetString((CONFIG)(event.GetId() - EDITBOX_TAG_BUTTON1 + EditboxTagButton1)).BeforeFirst('\f', &type);
+	wxString tag = Options.GetString((CONFIG)(event.GetId() - EDITBOX_TAG_BUTTON1 + EditboxTagButton1)).BeforeFirst(L'\f', &type);
 	if (tag.IsEmpty()){ wxBell(); return; }
-	type = type.BeforeFirst('\f');
+	type = type.BeforeFirst(L'\f');
 
 	if (type != L"2"){
 		//if(type==L"1"){TextEdit->SetSelection(0,0);}
@@ -1611,7 +1611,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 				break;
 			}
 		}
-		if (!found){ findtag = tag.AfterFirst('\\'); }
+		if (!found){ findtag = tag.AfterFirst(L'\\'); }
 		wxString result;
 		//fn and r do not have number value we have to treat it special \r works good only when return itself as a value
 		//we did not need this value at all.
@@ -1632,8 +1632,8 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 			if (from != to){
 				txt.erase(txt.begin() + from, txt.begin() + to);
 			}
-			int klamras = txt.Mid(from).Find('{');
-			int klamrae = txt.Mid(from).Find('}');
+			int klamras = txt.Mid(from).Find(L'{');
+			int klamrae = txt.Mid(from).Find(L'}');
 
 			if (klamrae != -1 && (klamras == -1 || klamras > klamrae) && klamras<from && klamrae>from){
 				from += klamrae + 1;
@@ -1650,8 +1650,8 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 				long cpyfrom = from;
 				Dialogue *dialc = grid->CopyDialogueByKey(sels[i]);
 				wxString &txt = dialc->Text.CheckTlRef(dialc->TextTl, grid->hasTLMode && dialc->TextTl != L"");
-				int klamras = txt.Mid(from).Find('{');
-				int klamrae = txt.Mid(from).Find('}');
+				int klamras = txt.Mid(from).Find(L'{');
+				int klamrae = txt.Mid(from).Find(L'}');
 
 				if (klamrae != -1 && (klamras == -1 || klamras > klamrae) && klamras<from && klamrae>from){
 					cpyfrom += klamrae + 1;
@@ -1741,7 +1741,7 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 	if (grid->hasTLMode && line->TextTl == L"" && AutoMoveTags->GetValue()){
 		wxString Text = line->Text;
 		Text.Replace(L"}{", L"");
-		int getr = Text.Find('}');
+		int getr = Text.Find(L'}');
 		if (getr > -1){
 			int brackets = Text.find(L"{");
 			wxString restText;
@@ -1763,7 +1763,7 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 
 			while (1){
 				brackets = restText.find(L"{");
-				getr = restText.Find('}');
+				getr = restText.Find(L'}');
 				if (brackets != -1 && getr != -1){
 					txtOrg += restText.substr(0, brackets);
 					txtTl += restText.SubString(brackets, getr);
@@ -1862,7 +1862,7 @@ bool EditBox::IsCursorOnStart()
 	Editor->GetSelection(&from, &to);
 	if(from == 0 || txt.StartsWith("{")){
 	txt.Replace("}{","");
-	int endBracket = txt.Find('}');
+	int endBracket = txt.Find(L'}');
 	if(endBracket == -1 || endBracket <= from+1){
 	return true;
 	}

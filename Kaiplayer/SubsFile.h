@@ -113,6 +113,8 @@ private:
 	int iter;
 	File *subs;
 	int lastSave = 0;
+	Dialogue *&operator[](int i);
+
 public:
 	SubsFile();
 	~SubsFile();
@@ -129,7 +131,8 @@ public:
 	Dialogue *CopyDialogueByKey(int i, bool push = true, bool keepstate = false);
 	Dialogue *GetDialogue(int i, int *key=NULL);
 	Dialogue *GetDialogueByKey(int i);
-	Dialogue *&operator[](int i);
+	void SetDialogue(int i, Dialogue *dial);
+	void SetDialogueByKey(int i, Dialogue *dial);
 	void DeleteDialogues(int from, int to);
 	void DeleteDialoguesByKeys(int from, int to);
 	Styles *CopyStyle(int i, bool push = true);

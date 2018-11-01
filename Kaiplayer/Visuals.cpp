@@ -506,7 +506,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				wxString tmp = L"clip(";
 				wxString txt = Editor->GetValue();
 				bool fv = edit->FindValue(L"(i?clip.)[^)]*\\)", &tmp, txt, 0, true);
-				wxString tmp1 = (tmp[0] == 'c') ? L"iclip(" : L"clip(";
+				wxString tmp1 = (tmp[0] == L'c') ? L"iclip(" : L"clip(";
 				wxString tclip = L"\\" + tmp + clip + L")";
 				edit->Placed.x += tmp.Len() + 1 + ChangeText(&txt, tclip, edit->InBracket, edit->Placed);
 				edit->Placed.y = edit->Placed.x + clip.Len();
@@ -611,8 +611,8 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 			textplaced.y += (dumplaced.y - oldy);
 			if (Visual == VECTORCLIP){
 				//zmieniamy clip tła przyciemniena w clipach
-				int endclip = dummytext->Find(')', true);
-				int startclip = dummytext->Find('(', true);
+				int endclip = dummytext->Find(L')', true);
+				int startclip = dummytext->Find(L'(', true);
 				dummytext->replace(startclip + 1, endclip - (startclip + 1), clip);
 			}
 			//wyciągamy sam tekst linijki
@@ -782,8 +782,8 @@ D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *Te
 		wxString txtpos = pos.GetMatch(txt, 2);
 		double posx = 0, posy = 0;
 		wxString rest, rest1;
-		bool res1 = txtpos.BeforeFirst(',', &rest).ToCDouble(&posx);
-		bool res2 = rest.BeforeFirst(',', &rest1).ToCDouble(&posy);
+		bool res1 = txtpos.BeforeFirst(L',', &rest).ToCDouble(&posx);
+		bool res2 = rest.BeforeFirst(L',', &rest1).ToCDouble(&posy);
 		size_t startMatch, lenMatch;
 		if (pos.GetMatch(&startMatch, &lenMatch, 0)){
 			TextPos->x = startMatch;
@@ -798,7 +798,7 @@ D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *Te
 	result.x = (tab->Edit->line->MarginL != 0) ? tab->Edit->line->MarginL : wxAtoi(acstyl->MarginL);
 	result.y = (tab->Edit->line->MarginV != 0) ? tab->Edit->line->MarginV : wxAtoi(acstyl->MarginV);
 
-	if (txt != L"" && txt[0] == '{'){
+	if (txt != L"" && txt[0] == L'{'){
 		TextPos->x = 1;
 		TextPos->y = 0;
 	}
@@ -841,7 +841,7 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 	wxPoint strPos;
 	if (tab->Edit->FindValue(L"org\\((.+)\\)", &val, *txt, 0, true)){
 		wxString orgystr;
-		wxString orgxstr = val.BeforeFirst(',', &orgystr);
+		wxString orgxstr = val.BeforeFirst(L',', &orgystr);
 		orgxstr.ToCDouble(&orgx);
 		orgystr.ToCDouble(&orgy);
 		PutinBrackets = false;
