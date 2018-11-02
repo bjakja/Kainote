@@ -42,6 +42,7 @@ public:
 	virtual void Save(){};
 	virtual void OnChangeHistory(){/* modified = true;*/ };
 	virtual int OnVisibilityChange(int mode){ return VISIBLE; }
+	virtual wxSize GetTextExtents(KaiListCtrl *theList);
 	virtual Item* Copy(){return NULL;}
 	bool modified;
 	bool needTooltip = false;

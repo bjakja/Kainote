@@ -18,7 +18,7 @@
 #include "KainoteMain.h"
 
 
-
+// header element of the results list
 void ReplacerResultsHeader::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
 {
 	if (event.GetX() < 19 && event.LeftDown() || event.LeftDClick()){
@@ -62,6 +62,15 @@ void ReplacerResultsHeader::OnPaint(wxMemoryDC *dc, int x, int y, int width, int
 	dc->SetBackgroundMode(wxTRANSPARENT);
 }
 
+wxSize ReplacerResultsHeader::GetTextExtents(KaiListCtrl *theList){
+	wxSize size = theList->GetTextExtent(name);
+	size.x += 28;
+	size.y += 4;
+	return size;
+}
+
+
+// Seek results element
 void ReplacerSeekResults::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
 {
 	if (event.GetX() < 19 && event.LeftDown() || event.LeftDClick()){
@@ -103,6 +112,16 @@ void ReplacerSeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int h
 
 	dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WindowText : WindowTextInactive));
 }
+
+wxSize ReplacerSeekResults::GetTextExtents(KaiListCtrl *theList){
+	wxString lineNum = wxString::Format(_("Linia %i: "), idLine);
+	wxString lineAndNum = lineNum + name;
+	wxSize size = theList->GetTextExtent(lineAndNum);
+	size.x += 28;
+	size.y += 4;
+	return size;
+}
+
 
 FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
 	:KaiDialog(parent, -1, _("Wyniki szukania"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)

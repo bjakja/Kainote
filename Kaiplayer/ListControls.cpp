@@ -42,8 +42,7 @@ inline void KaiChoice::CalcMaxWidth(wxSize *result, bool changex, bool changey){
 		else if (!changex){ break; }
 	}
 	if (changex){ 
-		// there is needed more space to keep gap between text and arrow
-		result->x += 30/*26*/; 
+		result->x += 26; 
 		if (result->x > 300){ result->x = 300; } 
 	}
 	if (changey){

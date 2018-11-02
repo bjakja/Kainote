@@ -249,9 +249,11 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 
 	TextEdit = new TextEditor(this, 16667, true, wxDefaultPosition, wxSize(-1, 30));
 	TextEdit->EB = this;
+	//TextEdit->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnNewline, this);
 
 	TextEditOrig = new TextEditor(this, 16667, false, wxDefaultPosition, wxSize(-1, 30));
 	TextEditOrig->EB = this;
+	//TextEditOrig->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnNewline, this);
 
 	TextEditOrig->Hide();
 	Comment = new KaiCheckBox(this, ID_COMMENT, _("Komentarz"), wxDefaultPosition, wxSize(82, -1));

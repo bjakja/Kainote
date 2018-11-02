@@ -41,7 +41,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	posY = 0;
 	scrollPositionV = 0;
 	SetCursor(wxCURSOR_IBEAM);
-	wxAcceleratorEntry entries[31];
+	wxAcceleratorEntry entries[32];
 	entries[0].Set(wxACCEL_NORMAL, WXK_DELETE, ID_DEL);
 	entries[1].Set(wxACCEL_NORMAL, WXK_BACK, ID_BACK);
 	entries[2].Set(wxACCEL_CTRL, WXK_BACK, ID_CBACK);
@@ -63,7 +63,9 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	entries[18].Set(wxACCEL_CTRL, L'C', ID_CTLC);
 	entries[19].Set(wxACCEL_CTRL, L'X', ID_CTLX);
 	entries[20].Set(wxACCEL_NORMAL, WXK_WINDOWS_MENU, ID_WMENU);
-	entries[21].Set(wxACCEL_NORMAL, WXK_RETURN, ID_ENTER);
+	// fix for not working enter for confirm and go to next line
+	// but it's not a ideal fix, after change enter it will still work in this field
+	entries[21].Set(wxACCEL_NORMAL, WXK_RETURN, EDITBOX_COMMIT_GO_NEXT_LINE);
 	int numEntries = 22;
 	bool setNumpadAccels = !Options.GetBool(TextFieldAllowNumpadHotkeys);
 	if (setNumpadAccels){
@@ -472,11 +474,14 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		//Selend=Cursor;
 		ContextMenu(PosFromCursor(Cursor), FindError(Cursor, false));
 		break;
-	case ID_ENTER:
+	case EDITBOX_COMMIT_GO_NEXT_LINE:
 		if (tagList)
 			PutTag();
 		else
 			event.Skip();
+			//EB->OnNewline(event);
+
+		return;
 	default:
 
 		break;

@@ -24,6 +24,13 @@ wxDEFINE_EVENT(LIST_ITEM_LEFT_CLICK, wxCommandEvent);
 wxDEFINE_EVENT(LIST_ITEM_DOUBLECLICKED, wxCommandEvent);
 wxDEFINE_EVENT(LIST_ITEM_RIGHT_CLICK, wxCommandEvent);
 
+wxSize Item::GetTextExtents(KaiListCtrl *theList){
+	wxSize size = theList->GetTextExtent(name);
+	size.x += 10;
+	size.y += 4;
+	return size;
+}
+
 void ItemText::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /*= NULL*/)
 {
 	if (enter){
@@ -346,8 +353,7 @@ int KaiListCtrl::AppendItemWithExtent(Item *item)
 {
 	ItemRow *newitem = new ItemRow(0, item);
 	itemList->push_back(newitem);
-	wxSize textSize = GetTextExtent(item->name);
-	textSize.x += 10;
+	wxSize textSize = item->GetTextExtents(this);
 	if (!widths.size())
 		widths.push_back(textSize.x);
 	else if (textSize.x > widths[0]){ widths[0] = textSize.x; }

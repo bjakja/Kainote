@@ -143,7 +143,24 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 
 	if (evt.ButtonUp()){
 		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
-		SetVisual(false, 0);
+		if (showClip ){
+			if (Corner[1].y == Corner[0].y || Corner[1].x < Corner[0].x)
+				showClip = false;
+
+			if (Corner[1].y < Corner[0].y){
+				float tmpy = Corner[0].y;
+				Corner[0].y = Corner[1].y;
+				Corner[1].y = tmpy;
+			}
+			if (Corner[1].x < Corner[0].x){
+				float tmpy = Corner[0].x;
+				Corner[0].x = Corner[1].x;
+				Corner[1].x = tmpy;
+			}
+		}
+		if (showClip)
+			SetVisual(false, 0);
+
 		if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 	}
 

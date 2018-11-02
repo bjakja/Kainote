@@ -66,8 +66,9 @@ void KaiToolbar::InitToolbar()
 		IDS.Add(SaveSubs); IDS.Add(SaveSubsAs); IDS.Add(SaveAllSubs);
 		IDS.Add(RemoveSubs); IDS.Add(Editor); IDS.Add(GLOBAL_FIND_REPLACE);
 		IDS.Add(StyleManager); IDS.Add(ASSProperties); IDS.Add(ChangeTime);
+		IDS.Add(SetVideoAtStart); IDS.Add(SetVideoAtEnd); IDS.Add(SetStartTime); IDS.Add(SetEndTime);
 		IDS.Add(ConvertToASS); IDS.Add(ConvertToSRT); IDS.Add(VideoZoom);
-		IDS.Add(SubsResample); IDS.Add(Settings);
+		IDS.Add(SubsResample); IDS.Add(HideTags); IDS.Add(Settings);
 	}
 	for (size_t i = 0; i < IDS.size(); i++)
 	{

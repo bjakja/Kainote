@@ -42,6 +42,7 @@ public:
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	Item* Copy(){ return new ReplacerResultsHeader(*this); }
+	wxSize GetTextExtents(KaiListCtrl *theList);
 private:
 	int positionInTable = 0;
 	bool isVisible = true;
@@ -68,6 +69,7 @@ public:
 	int keyLine;
 	int numOfRule;
 	wxPoint findPosition;
+	wxSize GetTextExtents(KaiListCtrl *theList);
 private:
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);

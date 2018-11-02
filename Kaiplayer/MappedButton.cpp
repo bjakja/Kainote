@@ -43,7 +43,7 @@ wxString AddText(int id)
 
 //w tooltipach nie należy ustawiać () bo zostaną usunięte
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, const wxString& toolTip,
-             const wxPoint& pos, const wxSize& size, int window, long style)
+			 const wxPoint& pos, const wxSize& size, int window, long style)
 			 :wxWindow(parent, id, pos, size, style|wxWANTS_CHARS)
 			 ,Window(window)
 			 ,twoHotkeys(false)
@@ -94,7 +94,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 }
 
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int window,
-            const wxPoint& pos, const wxSize& size, long style)
+			const wxPoint& pos, const wxSize& size, long style)
 			:wxWindow(parent, id, pos, size, style/*|wxWANTS_CHARS*/)
 			 ,Window(window)
 			 ,twoHotkeys(false)
@@ -148,7 +148,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 }
 
 MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, const wxBitmap& bitmap, const wxPoint& pos,
-            const wxSize& size, int window, long style, const wxString &text)
+			const wxSize& size, int window, long style, const wxString &text)
 			 :wxWindow(parent, id, pos, size, style|wxWANTS_CHARS)
 			 ,Window(window)
 			 ,twoHotkeys(false)
@@ -362,6 +362,9 @@ void MappedButton::CalculateSize(int *w, int *h)
 		if (resultw < fw)
 			resultw = fw;
 	}
+	if (!resultw || !resulth)
+		GetTextExtent(L"TEXT", &resultw, &resulth);
+
 	if (w)
 		*w = resultw;
 	if (h)
@@ -393,7 +396,7 @@ bool MappedButton::Enable(bool enable)
 }
 
 ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, const wxString& tooltip,
-             const wxPoint& pos, const wxSize& size, long style)
+			 const wxPoint& pos, const wxSize& size, long style)
 			 :wxWindow(parent, id, pos, size, style|wxWANTS_CHARS)
 			 ,bmp(0)
 			 ,enter(false)
