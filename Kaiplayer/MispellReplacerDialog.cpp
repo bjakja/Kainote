@@ -21,16 +21,17 @@
 // header element of the results list
 void ReplacerResultsHeader::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
 {
-	if (_enter){
+	bool isOnCheckbox = event.GetX() < 19;
+	if ((_enter && isOnCheckbox) || (!enter && isOnCheckbox)){
 		enter = true;
 		theList->Refresh(false);
 	}
-	else if (leave){
+	else if (leave || (enter && !isOnCheckbox)){
 		enter = false;
 		theList->Refresh(false);
 	}
 
-	if (event.GetX() < 19 && event.LeftDown() || event.LeftDClick()){
+	if (isOnCheckbox && (event.LeftDown() || event.LeftDClick())){
 		modified = !modified;
 		int i = positionInTable;
 		while (theList->GetType(i, 0) == TYPE_TEXT){
@@ -83,16 +84,17 @@ wxSize ReplacerResultsHeader::GetTextExtents(KaiListCtrl *theList){
 // Seek results element
 void ReplacerSeekResults::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
 {
-	if (_enter){
+	bool isOnCheckbox = event.GetX() < 19;
+	if ((_enter && isOnCheckbox) || (!enter && isOnCheckbox)){
 		enter = true;
 		theList->Refresh(false);
 	}
-	else if (leave){
+	else if (leave || (enter && !isOnCheckbox)){
 		enter = false;
 		theList->Refresh(false);
 	}
 
-	if (event.GetX() < 19 && event.LeftDown() || event.LeftDClick()){
+	if (isOnCheckbox && (event.LeftDown() || event.LeftDClick())){
 		modified = !modified;
 		int i = theList->FindItem(0, this);
 		int j = i - 1;

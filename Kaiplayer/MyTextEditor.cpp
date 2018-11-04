@@ -84,6 +84,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	wxAcceleratorTable accel(numEntries, entries);
 	SetAcceleratorTable(accel);
 	Connect(ID_DEL, ID_WMENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&TextEditor::OnAccelerator);
+	Connect(EDITBOX_COMMIT_GO_NEXT_LINE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&TextEditor::OnAccelerator);
 	if (setNumpadAccels){
 		Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 			int key = evt.GetId() - 10276;
@@ -329,7 +330,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 	if (selectionWords.size())
 		selectionWords.clear();
 	//maybe only for now
-	if (tagList && ID != ID_DOWN && ID != ID_UP && ID != ID_ENTER){
+	if (tagList && ID != ID_DOWN && ID != ID_UP && ID != EDITBOX_COMMIT_GO_NEXT_LINE){
 		tagList->Destroy();
 		tagList = NULL;
 	}

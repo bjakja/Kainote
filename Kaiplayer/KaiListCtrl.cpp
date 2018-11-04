@@ -668,7 +668,7 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 			UnsetToolTip();
 		//tu ju¿ nic nie zrobimy, jesteœmy poza elemetami na samym dole
 		if (lastSelX != -1 && lastSelY != -1 && lastSelY < filteredList.size() && lastSelX < filteredList[lastSelY]->row.size()){
-			filteredList[lastSelY]->row[lastSelX]->OnMouseEvent(wxMouseEvent(), false, true, this, &copy);
+			filteredList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this, &copy);
 			lastSelX = -1; lastSelY = -1;
 		}
 		if (copy){ delete copy; }
@@ -709,7 +709,7 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 	if ((elemX != lastSelX || elemY != lastSelY || evt.Leaving())
 		&& lastSelX != -1 && lastSelY != -1 && lastSelY < filteredList.size()
 		&& lastSelX < filteredList[lastSelY]->row.size()){
-		filteredList[lastSelY]->row[lastSelX]->OnMouseEvent(wxMouseEvent(), false, true, this, &copy);
+		filteredList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this, &copy);
 		if (copy){ delete copy; copy = NULL; }
 	}
 

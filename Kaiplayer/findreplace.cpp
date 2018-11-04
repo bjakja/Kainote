@@ -156,7 +156,7 @@ void FindReplace::ReplaceChecked()
 		TabPanel *oldtab = NULL;
 		TabPanel *tab = NULL;
 		int oldKeyLine = -1;
-		bool somethingWasChanged = false;
+		int numOfChanges = 0;
 		size_t size = List->GetCount();
 		for (size_t tt = 0; tt < size; tt++){
 			Item *item = List->GetItem(tt, 0);
@@ -166,20 +166,20 @@ void FindReplace::ReplaceChecked()
 			SeekResults *SeekResult = (SeekResults *)item;
 			tab = SeekResult->tab;
 
-			Dialogue *Dialc = tab->Grid->file->CopyDialogueByKey(SeekResult->keyLine, true, true);
+			Dialogue *Dialc = tab->Grid->file->CopyDialogueByKey(SeekResult->keyLine, true, false);
 
 			wxString & lineText = Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != L"");
 
 			if (oldKeyLine != SeekResult->keyLine)
 				replacementDiff = 0;
 
-			somethingWasChanged |= ReplaceCheckedLine(&lineText, SeekResult->keyLine, SeekResult->findPosition, &replacementDiff);
+			numOfChanges += ReplaceCheckedLine(&lineText, SeekResult->findPosition, &replacementDiff);
 
-			if (tab != oldtab && oldtab && somethingWasChanged){
+			if (tab != oldtab && oldtab && numOfChanges){
 				tab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
 				tab->Grid->SpellErrors.clear();
 				tab->Grid->Refresh(false);
-				somethingWasChanged = false;
+				numOfChanges = 0;
 			}
 
 
@@ -187,7 +187,7 @@ void FindReplace::ReplaceChecked()
 			oldKeyLine = SeekResult->keyLine;
 		}
 
-		if (tab && somethingWasChanged){
+		if (tab && numOfChanges){
 			tab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
 			tab->Grid->SpellErrors.clear();
 			tab->Grid->Refresh(false);
@@ -196,20 +196,20 @@ void FindReplace::ReplaceChecked()
 
 }
 
-int FindReplace::ReplaceCheckedLine(wxString *line, int keyLine, const wxPoint &pos, int *replacementDiff)
+int FindReplace::ReplaceCheckedLine(wxString *line, const wxPoint &pos, int *replacementDiff)
 {
 	int reps = 1;
 	if (regEx){
-		wxString foundString = line->Mid(pos.x + (*replacementDiff), pos.y);
+		wxString foundString = line->Mid(pos.x - (*replacementDiff), pos.y);
 		reps = findReplaceRegEx.Replace(&foundString, replaceString);
 		if (reps > 0){
-			line->replace(pos.x + (*replacementDiff), pos.y, foundString);
-			*replacementDiff = pos.y - foundString.length();
+			line->replace(pos.x - (*replacementDiff), pos.y, foundString);
+			*replacementDiff += pos.y - foundString.length();
 		}
 	}
 	else{
-		line->replace(pos.x + (*replacementDiff), pos.y, replaceString);
-		*replacementDiff = pos.y - replaceString.length();
+		line->replace(pos.x - (*replacementDiff), pos.y, replaceString);
+		*replacementDiff += pos.y - replaceString.length();
 	}
 
 	return reps;
@@ -306,7 +306,7 @@ seekFromStart:
 				foundLength = lfind.length();
 			}
 
-			if (foundPosition != -1 && onlyOption && KeepFinding(txt, foundPosition, onlyText)){
+			if (foundPosition != -1){
 				textPosition = foundPosition + foundLength;
 				findstart = foundPosition;
 				findend = textPosition;
@@ -379,21 +379,22 @@ void FindReplace::OnFind(TabWindow *window)
 //returns true if regex is not valid
 //it will inform if pattern is not valid
 //instead of ignoring all seeking
+//tabLinePosition and positionId must be set
 bool FindReplace::FindAllInTab(TabPanel *tab, TabWindow *window)
 {
 	bool isfirst = true;
 	if (UpdateValues(window, tab->Grid->hasTLMode))
-		return;
+		return true;
 
 	wxString txt;
 	int foundPosition = -1;
 	size_t foundLength = 0;
 	bool foundsome = false;
-	int positionId = 0;
+	positionId = 0;
+	subsPath = tab->SubsName;
 	
 	int firstSelectedId = tab->Grid->FirstSelection();
-	int tabLinePosition = (!window->AllLines->GetValue() && firstSelectedId >= 0) ? tab->Grid->file->GetElementById(firstSelectedId) : 0;
-	int tabTextPosition = 0;
+	tabLinePosition = (!window->AllLines->GetValue() && firstSelectedId >= 0) ? tab->Grid->file->GetElementById(firstSelectedId) : 0;
 	if (tabLinePosition > 0)
 		positionId = firstSelectedId;
 	
@@ -402,22 +403,20 @@ bool FindReplace::FindAllInTab(TabPanel *tab, TabWindow *window)
 	bool onlySelections = window->SelectedLines->GetValue();
 	File *Subs = tab->Grid->file->GetSubs();
 
-	while (tabLinePosition < Subs->dials.size())
+	for (; tabLinePosition < Subs->dials.size(); tabLinePosition++)
 	{
 		Dialogue *Dial = Subs->dials[tabLinePosition];
-		if (!Dial->isVisible){ tabLinePosition++; tabTextPosition = 0; continue; }
-		if (skipComments && Dial->IsComment){ tabTextPosition = 0; tabLinePosition++; positionId++; continue; }
+		if (!Dial->isVisible){ continue; }
+		if (skipComments && Dial->IsComment){ positionId++; continue; }
 
 		if ((!styles && !onlySelections) ||
-			(styles && stylesAsText.Find("," + Dial->Style + ",") != -1) ||
+			(styles && stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
 			(onlySelections && tab->Grid->file->IsSelectedByKey(tabLinePosition))){
 
 			Dial->GetTextElement(dialogueColumn, &txt);
 
-			FindInSubsLine(&txt, &isfirst);
+			FindInSubsLine(&txt, tab, &isfirst);
 		}
-		tabTextPosition = 0;
-		tabLinePosition++;
 		positionId++;
 	}
 	return false;
@@ -506,8 +505,10 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 	if (find){
 		if (!FRRD)
 			FRRD = new FindReplaceResultsDialog(Kai, this, true);
-		else
+		else{
+			FRRD->findInFiles = true;
 			FRRD->ClearList();
+		}
 	}
 	int AllReplacements = 0;
 
@@ -591,12 +592,16 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 			//here we got dial or plain text
 			//we have to get only text
 			dial->GetTextElement(dialogueColumn, &dialtxt);
+			if (dial->IsComment && skipComments){
+				delete dial;
+				continue;
+			}
 			/*else{
 				dialtxt = token;
 			}*/
 
 			if (find){
-				FindInSubsLine(&dialtxt, &isFirst);
+				FindInSubsLine(&dialtxt, NULL, &isFirst);
 			}
 			else{
 				int numOfReps = ReplaceInSubsLine(&dialtxt);
@@ -651,7 +656,7 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 	AddRecent(window);
 }
 
-void FindReplace::FindInSubsLine(wxString *txt, bool *isFirst)
+void FindReplace::FindInSubsLine(wxString *onlyString, TabPanel *tab, bool *isFirst)
 {
 	int foundPosition = 0;
 	size_t foundLength = 0;
@@ -660,16 +665,16 @@ void FindReplace::FindInSubsLine(wxString *txt, bool *isFirst)
 	while (1){
 		foundPosition = -1;
 
-		if (!(startLine || endLine) && (findString.empty() || txt->empty()))
+		if (!(startLine || endLine) && (findString.empty() || onlyString->empty()))
 		{
-			if (txt->empty() && findString.empty()){
+			if (onlyString->empty() && findString.empty()){
 				foundPosition = 0; foundLength = 0;
 			}
 			else{ break; }
 
 		}
 		else if (regEx){
-			wxString cuttext = txt->Mid(tabTextPosition);
+			wxString cuttext = onlyString->Mid(tabTextPosition);
 			if (findReplaceRegEx.Matches(cuttext)) {
 				size_t regexStart = 0;
 				findReplaceRegEx.GetMatch(&regexStart, &foundLength, 0);
@@ -678,7 +683,7 @@ void FindReplace::FindInSubsLine(wxString *txt, bool *isFirst)
 			else{ break; }
 		}
 		else{
-			wxString ltext = (!matchCase) ? txt->Lower() : *txt;
+			wxString ltext = (!matchCase) ? onlyString->Lower() : *onlyString;
 			wxString lfind = (!matchCase) ? findString.Lower() : findString;
 			if (startLine){
 				if (ltext.StartsWith(lfind) || lfind.empty()){
@@ -688,7 +693,7 @@ void FindReplace::FindInSubsLine(wxString *txt, bool *isFirst)
 			}
 			if (endLine){
 				if (ltext.EndsWith(lfind) || lfind.empty()){
-					foundPosition = txt->length() - lfind.length();
+					foundPosition = onlyString->length() - lfind.length();
 					tabTextPosition = 0;
 				}
 			}
@@ -703,9 +708,10 @@ void FindReplace::FindInSubsLine(wxString *txt, bool *isFirst)
 				FRRD->SetHeader(subsPath);
 				*isFirst = false;
 			}
-			FRRD->SetResults((*txt), wxPoint(foundPosition, foundLength), NULL, positionId + 1, tabLinePosition, subsPath);
+			FRRD->SetResults((*onlyString), wxPoint(foundPosition, foundLength), tab, 
+				positionId + 1, tabLinePosition, (tab)? L"" : subsPath);
 
-			if ((size_t)tabTextPosition >= txt->length() || startLine){
+			if ((size_t)tabTextPosition >= onlyString->length() || startLine){
 				tabTextPosition = 0;
 			}
 			else
@@ -853,7 +859,7 @@ int FindReplace::ReplaceAllInTab(TabPanel *tab, TabWindow *window)
 	File *Subs = tab->Grid->file->GetSubs();
 	bool skipFiltered = !tab->Grid->ignoreFiltered;
 
-	for (int i = (!window->AllLines->GetValue() && firstSelectionId >= 0) ?
+	for (size_t i = (!window->AllLines->GetValue() && firstSelectionId >= 0) ?
 		tab->Grid->file->GetElementById(firstSelectionId) : 0; i < Subs->dials.size(); i++)
 	{
 		Dialogue *Dial = Subs->dials[i];
@@ -1149,13 +1155,13 @@ bool FindReplace::KeepFinding(const wxString &text, int textPos, bool findText)
 
 bool FindReplace::GetNextBlock(wxString *text, wxString *block)
 {
-	//if ()
+	return false;//if ()
 }
 
 bool FindReplace::UpdateValues(TabWindow *window, bool hasTlMode)
 {
-	searchInOriginal = window->CollumnTextOriginal->GetValue() && hasTlMode;
-	dialogueColumn = (!searchInOriginal) ? TXTTL : TXT;
+	searchInOriginal = window->CollumnTextOriginal->GetValue();
+	dialogueColumn = (!searchInOriginal && hasTlMode) ? TXTTL : TXT;
 	if (window->CollumnStyle->GetValue()){ dialogueColumn = STYLE; }
 	else if (window->CollumnActor->GetValue()){ dialogueColumn = ACTOR; }
 	else if (window->CollumnEffect->GetValue()){ dialogueColumn = EFFECT; }
@@ -1199,7 +1205,7 @@ bool FindReplace::UpdateValues(TabWindow *window, bool hasTlMode)
 int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const wxString &copyPath)
 {
 	if (!results.size())
-		return;
+		return 0;
 
 	wxString path;
 	wxString replacedText;
@@ -1266,49 +1272,53 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 		}
 
 		if (SeekResult->keyLine != lineNum){
-			lineNum++;
-			continue;
-		}
-		
-		replacementDiff = 0;
-		dial = new Dialogue(token);
 
-		if (!dial){
-			continue;
-		}
-
-		dial->GetTextElement(dialogueColumn, &dialtxt);
-
-		int numOfReps = ReplaceCheckedLine(&dialtxt, SeekResult->keyLine, SeekResult->findPosition, &replacementDiff);
-
-		if (numOfReps){
 			if (isSRT)
-				replacedText << (tabLinePosition + 1) << L"\r\n";
-
-			dial->SetTextElement(dialogueColumn, dialtxt);
-			//else{ replacedText << dialtxt << L"\r\n"; }
-			//if (replaceColumn)
-			dial->GetRaw(&replacedText);
-			numOfChanges += numOfReps;
-		}
-		else{
-			if (isSRT)
-				replacedText << (tabLinePosition + 1) << L"\r\n";
+				replacedText << (lineNum + 1) << L"\r\n";
 
 			replacedText << token << L"\r\n";
 
 			if (isSRT)
 				replacedText << L"\r\n";
+
+			lineNum++;
+			token = L"";
+			continue;
+		}
+		
+		dial = new Dialogue(token);
+		token = L"";
+		if (!dial){
+			continue;
 		}
 
-		numOfResult++;
-		if (numOfResult >= results.size())
-			break;
+		dial->GetTextElement(dialogueColumn, &dialtxt);
+		replacementDiff = 0;
+		while (SeekResult->keyLine == lineNum){
+			int numOfReps = ReplaceCheckedLine(&dialtxt, SeekResult->findPosition, &replacementDiff);
 
-		SeekResult = results[numOfResult];
+			numOfChanges += numOfReps;
+
+
+			numOfResult++;
+			if (numOfResult < results.size())
+				SeekResult = results[numOfResult];
+			else
+				break;
+		}
+		if (isSRT)
+			replacedText << (lineNum + 1) << L"\r\n";
+
+		dial->SetTextElement(dialogueColumn, dialtxt);
+		//else{ replacedText << dialtxt << L"\r\n"; }
+		//if (replaceColumn)
+		dial->GetRaw(&replacedText);
+		delete dial;
+
 		lineNum++;
 		
 	}
+	done:
 
 	if (numOfChanges){
 		wxCopyFile(path, copyPath + path.AfterLast('\\'));

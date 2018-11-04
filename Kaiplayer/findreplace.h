@@ -88,7 +88,7 @@ public:
 	void FindAllInCurrentSubs(TabWindow *window);
 	void FindInSubs(TabWindow *window);
 	void FindReplaceInSubs(TabWindow *window, bool find);
-	void FindInSubsLine(wxString *onlyString, bool *isFirst);
+	void FindInSubsLine(wxString *onlyString, TabPanel *tab, bool *isFirst);
 	int ReplaceInSubsLine(wxString *onlyString);
 	void Replace(TabWindow *window);
 	int ReplaceAllInTab(TabPanel *tab, TabWindow *window);
@@ -107,7 +107,7 @@ private:
 	bool GetNextBlock(wxString *text, wxString *block);
 	bool UpdateValues(TabWindow *window, bool hasTlMode);
 	int ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const wxString &copyPath);
-	int ReplaceCheckedLine(wxString *line, int keyLine, const wxPoint &pos, int *replacementDiff);
+	int ReplaceCheckedLine(wxString *line, const wxPoint &pos, int *replacementDiff);
 	FindReplaceDialog *FRD = NULL;
 	FindReplaceResultsDialog *FRRD = NULL;
 };

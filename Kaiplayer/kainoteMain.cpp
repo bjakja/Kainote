@@ -1744,8 +1744,7 @@ void KainoteFrame::SaveAll()
 	{
 		if (!Tabs->Page(i)->Grid->IsModified()){ continue; }
 		Save(false, i, false);
-		if (i == Tabs->iter)
-			Label(0, false, i);
+		Label(0, false, i);
 	}
 }
 

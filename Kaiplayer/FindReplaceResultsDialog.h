@@ -18,13 +18,15 @@
 #include "KaiDialog.h"
 #include "KaiListCtrl.h"
 #include "kainoteMain.h"
+#include "MispellReplacerDialog.h"
 
 wxDECLARE_EVENT(CHOOSE_RESULT, wxCommandEvent);
+
 
 class ResultsHeader : public Item
 {
 public:
-	ResultsHeader(const wxString &text, int _positionInTable) : Item(TYPE_TEXT){
+	ResultsHeader(const wxString &text, int _positionInTable) : Item(TYPE_HEADER){
 		name = text;
 		positionInTable = _positionInTable;
 		modified = true;
@@ -93,13 +95,14 @@ public:
 		hasRegEx = _hasRegEx;
 		matchCase = matchcase;
 		needToAddPrefix = needPrefix;
-		findString = findString;
+		findString = _findString;
 	}
 	void GetReplaceString(wxString *replaceString);
 	KaiListCtrl *resultsList;
 	bool findInFiles = false;
 private:
 	KaiChoice* ReplaceText;
+	MappedButton *replaceChecked;
 	int resultsCounter = 0;
 	//config for replace
 	bool hasRegEx = false;

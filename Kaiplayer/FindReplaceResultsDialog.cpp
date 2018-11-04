@@ -39,7 +39,7 @@ FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace
 
 	MappedButton *checkAll = new MappedButton(this, ID_CHECK_ALL, _("Zahacz wszystko"));
 	MappedButton *unCheckAll = new MappedButton(this, ID_UNCHECK_ALL, _("Odhacz wszystko"));
-	MappedButton *replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("Zamień"));
+	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("Zamień"));
 	ReplaceText = new KaiChoice(this, -1, FR->actualReplace, wxDefaultPosition, wxDefaultSize, FR->replaceRecent);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		CheckUncheckAll(true);
@@ -48,6 +48,7 @@ FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace
 		CheckUncheckAll(false);
 	}, ID_UNCHECK_ALL);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+		replaceChecked->Enable(false);
 		FR->ReplaceChecked();
 	}, ID_REPLACE_CHECKED);
 	buttonsSizer->Add(checkAll, 1, wxALL, 2);
@@ -90,6 +91,7 @@ void FindReplaceResultsDialog::FilterList()
 	//mode here is 1 visible blocks 0 hidden blocks
 	resultsList->FilterList(0, 1);
 	resultsList->Refresh(false);
+	replaceChecked->Enable(true);
 }
 
 void FindReplaceResultsDialog::CheckUncheckAll(bool check /*= true*/)
@@ -111,16 +113,17 @@ void FindReplaceResultsDialog::GetReplaceString(wxString *replaceString)
 
 void ResultsHeader::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
 {
-	if (_enter){
+	bool isOnCheckbox = event.GetX() < 19;
+	if ((_enter && isOnCheckbox) || (!enter && isOnCheckbox)){
 		enter = true;
 		theList->Refresh(false);
 	}
-	else if (leave){
+	else if (leave || (enter && !isOnCheckbox)){
 		enter = false;
 		theList->Refresh(false);
 	}
 
-	if (event.GetX() < 19 && event.LeftDown() || event.LeftDClick()){
+	if (isOnCheckbox && (event.LeftDown() || event.LeftDClick())){
 		modified = !modified;
 		int i = positionInTable;
 		while (theList->GetType(i, 0) == TYPE_TEXT){
@@ -164,16 +167,17 @@ void ResultsHeader::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height,
 
 void SeekResults::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
 {
-	if (_enter){
+	bool isOnCheckbox = event.GetX() < 19;
+	if ((_enter && isOnCheckbox) || (!enter && isOnCheckbox && !leave)){
 		enter = true;
 		theList->Refresh(false);
 	}
-	else if (leave){
+	else if (leave || (enter && !isOnCheckbox)){
 		enter = false;
 		theList->Refresh(false);
 	}
 
-	if (event.GetX() < 19 && event.LeftDown() || event.LeftDClick()){
+	if (isOnCheckbox && (event.LeftDown() || event.LeftDClick())){
 		modified = !modified;
 		int i = theList->FindItem(0, this);
 		int j = i - 1;
