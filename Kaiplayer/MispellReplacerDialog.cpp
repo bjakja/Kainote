@@ -19,8 +19,17 @@
 
 
 // header element of the results list
-void ReplacerResultsHeader::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
+void ReplacerResultsHeader::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
 {
+	if (_enter){
+		enter = true;
+		theList->Refresh(false);
+	}
+	else if (leave){
+		enter = false;
+		theList->Refresh(false);
+	}
+
 	if (event.GetX() < 19 && event.LeftDown() || event.LeftDClick()){
 		modified = !modified;
 		int i = positionInTable;
@@ -40,6 +49,7 @@ void ReplacerResultsHeader::OnMouseEvent(wxMouseEvent &event, bool enter, bool l
 			i++;
 		}
 		isVisible = !isVisible;
+		theList->FinalizeFiltering();
 	}
 }
 
@@ -71,12 +81,47 @@ wxSize ReplacerResultsHeader::GetTextExtents(KaiListCtrl *theList){
 
 
 // Seek results element
-void ReplacerSeekResults::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
+void ReplacerSeekResults::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
 {
+	if (_enter){
+		enter = true;
+		theList->Refresh(false);
+	}
+	else if (leave){
+		enter = false;
+		theList->Refresh(false);
+	}
+
 	if (event.GetX() < 19 && event.LeftDown() || event.LeftDClick()){
 		modified = !modified;
+		int i = theList->FindItem(0, this);
+		int j = i - 1;
+		if (i < 0){
+			theList->Refresh(false);
+			return;
+		}
+		bool somethingChecked = false;
+		while (theList->GetType(j, 0) == TYPE_TEXT){
+			Item *item = theList->GetItem(j, 0);
+			if (item && item->modified){
+				somethingChecked = true;
+			}
+			j--;
+		}
+		while (theList->GetType(i, 0) == TYPE_TEXT){
+			Item *item = theList->GetItem(i, 0);
+			if (item && item->modified){
+				somethingChecked = true;
+				goto done;
+			}
+			i++;
+		}
+	done:
+		Item *header = theList->GetItem(j, 0);
+		if (header/* && header->type == TYPE_HEADER*/){
+			header->modified = somethingChecked;
+		}
 		theList->Refresh(false);
-		//here should be a function that will change state of header
 	}
 	else if (event.LeftDClick()){
 		wxCommandEvent *evt = new wxCommandEvent(CHOOSE_RESULT, theList->GetId());
@@ -140,7 +185,7 @@ FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
 			return;
 		}
 		//maybe some day I will add changing in folder
-		MR->ShowResult(results->tab/*, results->path*/, results->keyLine);
+		MR->ShowResult(results->tab, results->keyLine, results->findPosition);
 	}, 23323);
 
 	wxBoxSizer *buttonsSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -195,4 +240,9 @@ void FindResultDialog::CheckUncheckAll(bool check /*= true*/)
 	ResultsList->Refresh(false);
 }
 
+void FindResultDialog::FilterList()
+{
+	ResultsList->FilterList(0, 1);
+	ResultsList->Refresh(false);
+}
 

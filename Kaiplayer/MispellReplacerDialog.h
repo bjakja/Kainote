@@ -94,6 +94,7 @@ public:
 	void SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _keyLine, int idLine, int numOfRule);
 	void ClearList();
 	void CheckUncheckAll(bool check = true);
+	void FilterList();
 	KaiListCtrl *ResultsList;
 private:
 	int resultsCounter = 0;

@@ -55,6 +55,9 @@ public:
 	KaiCheckBox* RegEx;
 	KaiCheckBox* StartLine;
 	KaiCheckBox* EndLine;
+	KaiCheckBox* UseComments;
+	KaiCheckBox* OnlyText;
+	KaiCheckBox* OnlyTags;
 	KaiCheckBox *SeekInSubFolders = NULL;
 	KaiCheckBox *SeekInHiddenFolders = NULL;
 	FindReplace *FR;
@@ -70,11 +73,11 @@ public:
 	void ShowDialog(int whichWindow);
 	void SaveOptions();
 	void Reset();
+	TabWindow *GetTab();
 private:
 	void OnActivate(wxActivateEvent& event);
 	void OnEnterConfirm(wxCommandEvent& event);
 	void SetSelection(TabWindow *tab);
-	TabWindow *GetTab();
 	FindReplace *FR = NULL;
 	KainoteFrame *Kai = NULL;
 	KaiTabBar * findReplaceTabs = NULL;

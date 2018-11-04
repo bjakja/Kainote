@@ -57,8 +57,8 @@ class KainoteFrame: public KaiFrame
 		bool OpenFile(const wxString &filename,bool fulls=false, bool freeze = true);
 		void Label(int iter=0,bool video=false, int wtab=-1, bool onlyTabs = false);
 		
-		void SetRecent(short what=0);
-		void AppendRecent(short what=0,Menu *Menu=0);
+		void SetRecent(short what=0, int tab = -1);
+		void AppendRecent(short what=0, Menu *Menu=0);
 		void SetAccels(bool all=true);
 		bool FindFile(const wxString &fn, wxString &foundFile,bool video);
 

@@ -22,9 +22,11 @@ class KaiCheckBox : public wxWindow
 {
 public:
 	KaiCheckBox(wxWindow *parent, int id, const wxString& label,
-             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+			 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
 	virtual ~KaiCheckBox(){};
-	bool GetValue(){return value;}
+	//return false if not enabled
+	bool GetValue(){return (IsEnabled())? value : false;}
+	bool GetRealValue(){ return value; }
 	void SetValue(bool _value){value = _value; Refresh(false);}
 	bool SetBackgroundColour(COLOR bgcolor){
 		background = bgcolor;

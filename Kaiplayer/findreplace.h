@@ -17,6 +17,8 @@
 #pragma once
 #include <wx/regex.h>
 #include <wx/arrstr.h>
+#include <wx/gdicmn.h>
+#include <vector>
 
 class KainoteFrame;
 class TabWindow;
@@ -24,6 +26,7 @@ class FindReplaceDialog;
 class FindReplaceResultsDialog;
 class TabPanel;
 class Dialogue;
+class SeekResults;
 
 class FindReplace
 {
@@ -33,7 +36,8 @@ public:
 
 	FindReplace(KainoteFrame* kfparent, FindReplaceDialog *FRD);
 	~FindReplace(){};
-	void ShowResult(TabPanel *tab, const wxString &path, int keyLine);
+	void ShowResult(TabPanel *tab, const wxString &path, int keyLine, const wxPoint &pos);
+	void ReplaceChecked();
 	KainoteFrame *Kai;
 	int linePosition;
 	int reprow;
@@ -55,7 +59,6 @@ public:
 	wxString actualReplace;
 	wxString actualFilters;
 	wxString actualPaths;
-	wxRegEx rgx;
 	// find replace styles
 	wxString stylesAsText;
 	bool wasIngored = false;
@@ -64,6 +67,12 @@ public:
 	bool endLine;
 	bool regEx;
 	bool matchCase;
+	bool skipComments;
+	bool onlyText;
+	bool onlyOption;
+	bool searchInOriginal;
+	long dialogueColumn;
+
 	int tabTextPosition;
 	int tabLinePosition;
 	int positionId;
@@ -82,7 +91,7 @@ public:
 	void FindInSubsLine(wxString *onlyString, bool *isFirst);
 	int ReplaceInSubsLine(wxString *onlyString);
 	void Replace(TabWindow *window);
-	int ReplaceAllInTab(TabPanel *tab, TabWindow *window, long replaceColumn);
+	int ReplaceAllInTab(TabPanel *tab, TabWindow *window);
 	void ReplaceAll(TabWindow *window);
 	void ReplaceInAllOpenedSubs(TabWindow *window);
 	void ReplaceInSubs(TabWindow *window);
@@ -90,8 +99,15 @@ public:
 	void AddRecent(TabWindow *window);
 	void OnClose();
 	void GetFolderFiles(const wxString &path, const wxString &filters, wxArrayString *paths, bool subFolders, bool hiddenFolders);
+	
 private:
 	bool CheckStyles(TabWindow *window, TabPanel *tab);
+	bool KeepFinding(const wxString &text, int textPos, bool findText);
+	//when no only option it returns whole text without copying
+	bool GetNextBlock(wxString *text, wxString *block);
+	bool UpdateValues(TabWindow *window, bool hasTlMode);
+	int ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const wxString &copyPath);
+	int ReplaceCheckedLine(wxString *line, int keyLine, const wxPoint &pos, int *replacementDiff);
 	FindReplaceDialog *FRD = NULL;
 	FindReplaceResultsDialog *FRRD = NULL;
 };
@@ -112,5 +128,8 @@ enum
 	IN_LINES_FROM_SELECTION = 2048,
 	SEARCH_SUBFOLDERS = 4096,
 	SEARCH_HIDDEN_FOLDERS = 8192,
+	SEEK_IN_COMMENTS = 1 << 14,
+	SEEK_ONLY_IN_TEXT = 1 << 15,
+	SEEK_ONLY_IN_TAGS = 1 << 16,
 };
 

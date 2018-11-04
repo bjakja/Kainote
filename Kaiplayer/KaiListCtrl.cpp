@@ -20,6 +20,8 @@
 #include "Menu.h"
 #include "wx/clipbrd.h"
 
+//std::vector< ItemRow*> List::filteredList = std::vector< ItemRow*>();
+
 wxDEFINE_EVENT(LIST_ITEM_LEFT_CLICK, wxCommandEvent);
 wxDEFINE_EVENT(LIST_ITEM_DOUBLECLICKED, wxCommandEvent);
 wxDEFINE_EVENT(LIST_ITEM_RIGHT_CLICK, wxCommandEvent);
@@ -102,26 +104,7 @@ void ItemColor::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, Kai
 
 void ItemColor::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed)
 {
-	if (event.LeftDClick()){
-		DialogColorPicker *dcp = DialogColorPicker::Get(theList, col);
-		wxPoint mst = wxGetMousePosition();
-		wxSize siz = dcp->GetSize();
-		siz.x;
-		wxRect rc = wxGetClientDisplayRect();
-		mst.x -= (siz.x / 2);
-		mst.x = MID(rc.x, mst.x, rc.width - siz.x);
-		mst.y += 15;
-		mst.y = MID(rc.y, mst.y, rc.height - siz.y);
-		dcp->Move(mst);
-		if (dcp->ShowModal() == wxID_OK) {
-			ItemColor *copy = new ItemColor(*this);
-			copy->col = dcp->GetColor();
-			theList->SetModified(true);
-			copy->modified = true;
-			(*changed) = copy;
-		}
-	}
-	else if (event.RightUp()){
+	if (event.RightUp()){
 		Menu menut;
 		menut.Append(7786, _("&Kopiuj"));
 		menut.Append(7787, _("&Wklej"));
@@ -158,6 +141,11 @@ void ItemColor::Save(){
 		Options.SetColor((COLOR)colOptNum, col);
 		modified = false;
 	}
+}
+
+void ItemColor::OnChangeHistory()
+{
+	modified = (col != Options.GetColor((COLOR)colOptNum));
 }
 
 void ItemCheckBox::OnPaint(wxMemoryDC *dc, int x, int y, int w, int h, KaiListCtrl *theList)
@@ -305,12 +293,28 @@ void KaiListCtrl::SetTextArray(const wxArrayString &Array)
 	Refresh(false);
 }
 
-void KaiListCtrl::FilterRow(int row, int visibility)
+void KaiListCtrl::FilterRow(int rowkey, int visibility)
 {
-	if (row < 0 || row >= itemList->size())
+	if (rowkey < 0 || rowkey >= itemList->size())
 		return;
 
-	(*itemList)[row]->isVisible = visibility;
+	(*itemList)[rowkey]->isVisible = visibility;
+}
+
+void KaiListCtrl::FinalizeFiltering()
+{
+	RebuildFiltered();
+	isFiltered = (filteredList.size() != itemList->size());
+	if (!isFiltered){
+		for (size_t i = 0; i < itemList->size(); i++){
+			if ((*itemList)[i]->isVisible != VISIBLE){
+				isFiltered = true;
+				return;
+			}
+
+		}
+	}
+	//Refresh(false);
 }
 
 void KaiListCtrl::DeleteItem(int row, bool save)
@@ -345,6 +349,9 @@ int KaiListCtrl::AppendItem(Item *item)
 {
 	ItemRow *newitem = new ItemRow(0, item);
 	itemList->push_back(newitem);
+	if (newitem->isVisible != NOT_VISIBLE)
+		filteredList.push_back(newitem);
+
 	return itemList->size() - 1;
 }
 
@@ -353,6 +360,9 @@ int KaiListCtrl::AppendItemWithExtent(Item *item)
 {
 	ItemRow *newitem = new ItemRow(0, item);
 	itemList->push_back(newitem);
+	if (newitem->isVisible != NOT_VISIBLE)
+		filteredList.push_back(newitem);
+
 	wxSize textSize = item->GetTextExtents(this);
 	if (!widths.size())
 		widths.push_back(textSize.x);
@@ -391,9 +401,8 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	int h = 0;
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
-	if (isFiltered)
-		w -= 12;
-	int visibleSize = GetVisibleSize();
+	
+	int visibleSize = filteredList.size();//GetVisibleSize();
 	size_t maxVisible = ((h - headerHeight) / lineHeight) + 1;
 	size_t itemsize = visibleSize + 1;
 	if ((size_t)scPosV >= itemsize - maxVisible){
@@ -414,21 +423,29 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 		}
 	}
 	int maxWidth = GetMaxWidth();
+	if (isFiltered)
+		maxWidth += 12;
+
 	if (widths.size() > 1){ maxWidth += 10; }
 	else if (maxWidth < w - 1){ maxWidth = w - 1; if (widths.size() == 1){ widths[0] = w - 4; } }
-	int bitmapw = w;
+	
 
 	if (SetScrollBar(wxHORIZONTAL, scPosH, w, maxWidth, w - 2)){
 		GetClientSize(&w, &h);
 		if (maxWidth <= w){ scPosH = 0; SetScrollPos(wxHORIZONTAL, 0); }
 	}
 
+	//if (isFiltered)
+		//w -= 12;
+
+	int bitmapw = w;
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < bitmapw || bmp->GetHeight() < h)) {
 		delete bmp;
 		bmp = NULL;
 	}
 	if (!bmp){ bmp = new wxBitmap(bitmapw, h); }
+
 	tdc.SelectObject(*bmp);
 	wxMemoryDC fdc;
 	bool enabled = IsThisEnabled();
@@ -455,11 +472,6 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	int posY = headerHeight;
 	bool startBlock = false;
 	int startDrawPosYFromPlus = 0;
-	size_t startI = 0;
-	int visibleStart = FindItemsRow(scPosV, startI);
-	if (visibleStart < 0)
-		visibleStart = 0;
-	size_t visibleI = 0;
 
 	if (headerHeight > 4){
 		tdc.SetPen(wxPen(border));
@@ -498,11 +510,9 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 		}
 	}
 
-	for (size_t i = visibleStart; visibleI < maxsize && i < itemList->size(); i++){
-		if (!(*itemList)[i]->isVisible)
-			continue;
+	for (size_t i = scPosV; i < maxsize; i++){;
 		
-		auto row = (*itemList)[i]->row;
+		auto &row = filteredList[i]->row;
 		
 		for (size_t j = 0; j < widths.size(); j++){
 			int rowsize = row.size();
@@ -510,7 +520,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 				continue;
 			}
 			//drawing
-			if (visibleI + scPosV == sel){
+			if (i == sel){
 				tdc.SetPen(wxPen(highlight));
 				tdc.SetBrush(wxBrush(highlight));
 				tdc.DrawRectangle(posX - 5, posY, widths[j]+2, lineHeight);
@@ -521,7 +531,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 		}
 
 		if (isFiltered){
-			unsigned char hasHiddenBlock = CheckIfHasHiddenBlock(visibleI + scPosV);
+			unsigned char hasHiddenBlock = CheckIfHasHiddenBlock(i);
 			if (hasHiddenBlock){
 				fdc.SetBrush(*wxTRANSPARENT_BRUSH);
 				fdc.SetPen(txt);
@@ -538,11 +548,11 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 				fdc.DrawLine(10, newPosY - 1, 13, newPosY - 1);
 				tdc.DrawLine(0, newPosY - 1, w + scPosH, newPosY - 1);
 			}
-			if (!startBlock && (*itemList)[i]->isVisible == VISIBLE_BLOCK){
+			if (!startBlock && filteredList[i]->isVisible == VISIBLE_BLOCK){
 				startDrawPosYFromPlus = posY + 4; startBlock = true;
 			}
-			bool isLastLine = (visibleI + scPosV >= maxsize - 1);
-			bool notVisibleBlock = (*itemList)[i]->isVisible != VISIBLE_BLOCK;
+			bool isLastLine = (i >= maxsize - 1);
+			bool notVisibleBlock = filteredList[i]->isVisible != VISIBLE_BLOCK;
 			if (startBlock && (notVisibleBlock || isLastLine)){
 				tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 				tdc.SetPen(txt);
@@ -558,7 +568,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 		}
 		posY += lineHeight;
 		posX = filteringHeader - scPosH;
-		visibleI++;
+		//visibleI++;
 	}
 	
 	tdc.SetPen(wxPen(border));
@@ -604,7 +614,7 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 			int mode = CheckIfHasHiddenBlock(elemYID);
 			if (mode){
 				size_t startI = 0;
-				int elemY = FindItemsRow(elemYID, startI);
+				int elemY = FindKey(elemYID);
 				ShowOrHideBlock(elemY);
 				return;
 			}
@@ -613,9 +623,9 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 	}
 
 	int elemYID = ((cursor.y - headerHeight) / lineHeight) + scPosV;
-	size_t startI = 0;
-	int elemY = FindItemsRow(elemYID, startI);
-	if ((elemY < 0 && startI == 0) || cursor.y <= headerHeight){
+	//size_t startI = 0;
+	int elemY = elemYID;//FindItemsRow(elemYID, startI);
+	if ((elemY < 0) || cursor.y <= headerHeight){
 		//if header < 5 wtedy nic nie robimy
 		if (headerHeight > 5){
 			if (HasToolTips())
@@ -653,12 +663,12 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 	}
 	if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 	Item *copy = NULL;
-	if (elemY < 0){
+	if (elemY < 0 || elemY >= filteredList.size()){
 		if (HasToolTips())
 			UnsetToolTip();
 		//tu ju¿ nic nie zrobimy, jesteœmy poza elemetami na samym dole
-		if (lastSelX != -1 && lastSelY != -1 && lastSelY < itemList->size() && lastSelX < (*itemList)[lastSelY]->row.size()){
-			(*itemList)[lastSelY]->row[lastSelX]->OnMouseEvent(wxMouseEvent(), false, true, this, &copy);
+		if (lastSelX != -1 && lastSelY != -1 && lastSelY < filteredList.size() && lastSelX < filteredList[lastSelY]->row.size()){
+			filteredList[lastSelY]->row[lastSelX]->OnMouseEvent(wxMouseEvent(), false, true, this, &copy);
 			lastSelX = -1; lastSelY = -1;
 		}
 		if (copy){ delete copy; }
@@ -667,24 +677,29 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 	int elemX = -1;
 	int startX = (isFiltered) ? 17 - scPosH : 5 - scPosH;
 	for (size_t i = 0; i < widths.size(); i++){
-		if (cursor.x > startX && cursor.x <= startX + widths[i] && i < (*itemList)[elemY]->row.size()){
+		if (cursor.x > startX && cursor.x <= startX + widths[i] && i < filteredList[elemY]->row.size()){
 			elemX = i;
 			bool enter = (elemX != lastSelX || elemY != lastSelY) || evt.Entering();
-			(*itemList)[elemY]->row[elemX]->OnMouseEvent(evt, enter, false, this, &copy);
+			if (isFiltered)
+				evt.SetX(evt.GetX() - 12);
+			filteredList[elemY]->row[elemX]->OnMouseEvent(evt, enter, false, this, &copy);
 			if (copy != NULL){
 				ItemRow *newRow = new ItemRow();
-				for (size_t g = 0; g < (*itemList)[elemY]->row.size(); g++){
+				for (size_t g = 0; g < filteredList[elemY]->row.size(); g++){
 					if (g == elemX){
 						newRow->row.push_back(copy);
 						continue;
 					}
-					newRow->row.push_back((*itemList)[elemY]->row[g]->Copy());
+					newRow->row.push_back(filteredList[elemY]->row[g]->Copy());
 					newRow->row[g]->modified = true;
 				}
-				//(*itemList)[elemY]=newRow;
-				itemList->Change(elemY, newRow);
-				PushHistory();
-				Refresh(false);
+				int elemY = FindKey(elemYID);
+				if (elemY >= 0){
+					itemList->Change(elemY, newRow);
+					filteredList[elemYID] = newRow;
+					PushHistory();
+					Refresh(false);
+				}
 				copy = NULL;
 			}
 			break;
@@ -692,9 +707,9 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 		startX += widths[i];
 	}
 	if ((elemX != lastSelX || elemY != lastSelY || evt.Leaving())
-		&& lastSelX != -1 && lastSelY != -1 && lastSelY < itemList->size()
-		&& lastSelX < (*itemList)[lastSelY]->row.size()){
-		(*itemList)[lastSelY]->row[lastSelX]->OnMouseEvent(wxMouseEvent(), false, true, this, &copy);
+		&& lastSelX != -1 && lastSelY != -1 && lastSelY < filteredList.size()
+		&& lastSelX < filteredList[lastSelY]->row.size()){
+		filteredList[lastSelY]->row[lastSelX]->OnMouseEvent(wxMouseEvent(), false, true, this, &copy);
 		if (copy){ delete copy; copy = NULL; }
 	}
 
@@ -754,7 +769,7 @@ void KaiListCtrl::SetWidth(size_t j)
 		Item * item = (*itemList)[i]->Get(j);
 		if (!item) continue;
 
-		wxSize textSize = GetTextExtent(item->name);
+		wxSize textSize = item->GetTextExtents(this);
 		if (textSize.x > maxwidth){ maxwidth = textSize.x; }
 	}
 	widths[j] = maxwidth + 28;
@@ -771,15 +786,17 @@ void KaiListCtrl::FilterList(int column, int mode)
 	isFiltered = false;
 
 	for (size_t i = 0; i < itemList->size(); i++){
-		if ((*itemList)[i]->row.size() <= (size_t)column){ continue; }
+		ItemRow * keyRow = (*itemList)[i];
+		if (keyRow->row.size() <= (size_t)column){ continue; }
 		else{
-			int visibility = (*itemList)[i]->row[column]->OnVisibilityChange(mode);
+			int visibility = keyRow->row[column]->OnVisibilityChange(mode);
 			if (visibility != VISIBLE){
 				isFiltered = true;
 			}
-			(*itemList)[i]->isVisible = visibility;
+			keyRow->isVisible = visibility;
 		}
 	}
+	RebuildFiltered();
 	Refresh(false);
 }
 
@@ -798,32 +815,32 @@ int KaiListCtrl::GetType(int row, int column)
 
 //when startI > 0 pass elemX decreased of elems before startI
 //startI increases automatically
-int KaiListCtrl::FindItemsRow(int elemX, size_t &startI /*= 0*/)
-{
-	if (elemX < 0)
-		return elemX;
-
-	int visibleElemX = 0;
-	for (size_t i = startI; i < itemList->size(); i++){
-		ItemRow * irow = (*itemList)[i];
-		if (irow->isVisible != NOT_VISIBLE){
-			if (visibleElemX == elemX){
-				startI = i + 1;
-				return i;
-			}
-			visibleElemX++;
-		}
-	}
-	startI = itemList->size();
-	return -1;
-}
+//int KaiListCtrl::FindItemsRow(int elemX, size_t &startI /*= 0*/)
+//{
+//	if (elemX < 0)
+//		return elemX;
+//
+//	int visibleElemX = 0;
+//	for (size_t i = startI; i < itemList->size(); i++){
+//		ItemRow * irow = (*itemList)[i];
+//		if (irow->isVisible != NOT_VISIBLE){
+//			if (visibleElemX == elemX){
+//				startI = i + 1;
+//				return i;
+//			}
+//			visibleElemX++;
+//		}
+//	}
+//	startI = itemList->size();
+//	return -1;
+//}
 
 int KaiListCtrl::CheckIfHasHiddenBlock(int elemX, size_t startI /*= 0*/)
 {
-	size_t newStartI = startI;
+	//size_t newStartI = startI;
 	// now we need only one lines as elemX
-	int lineActual = FindItemsRow(elemX, newStartI);
-	int linePlusOne = FindItemsRow(0, newStartI);
+	int lineActual = FindKey(elemX);
+	int linePlusOne = FindKey(elemX + 1);
 	int linePlusOneSafe = (linePlusOne < 0) ? itemList->size() : linePlusOne;
 
 	if (lineActual + 1 < linePlusOneSafe)
@@ -832,7 +849,8 @@ int KaiListCtrl::CheckIfHasHiddenBlock(int elemX, size_t startI /*= 0*/)
 	if (linePlusOne < 0)
 		return 0;
 
-	if ((lineActual < 0 || (*itemList)[lineActual]->isVisible != VISIBLE_BLOCK) && (*itemList)[linePlusOne]->isVisible == VISIBLE_BLOCK)
+	if ((lineActual < 0 || (*itemList)[lineActual]->isVisible != VISIBLE_BLOCK) &&
+		(*itemList)[linePlusOne]->isVisible == VISIBLE_BLOCK)
 		return 2;
 
 	return 0;
@@ -840,7 +858,7 @@ int KaiListCtrl::CheckIfHasHiddenBlock(int elemX, size_t startI /*= 0*/)
 
 void KaiListCtrl::ShowOrHideBlock(int elemRealX)
 {
-	for (size_t i = elemRealX+1; i < itemList->size(); i++){
+	for (size_t i = elemRealX + 1; i < itemList->size(); i++){
 		ItemRow * irow = (*itemList)[i];
 		if (irow->isVisible == NOT_VISIBLE)
 			irow->isVisible = VISIBLE_BLOCK;
@@ -849,20 +867,20 @@ void KaiListCtrl::ShowOrHideBlock(int elemRealX)
 		else
 			break;
 	}
-
+	RebuildFiltered();
 	Refresh(false);
 }
 
 size_t KaiListCtrl::GetVisibleSize()
 {
-	int visibleElemX = 0;
+	/*int visibleElemX = 0;
 	for (size_t i = 0; i < itemList->size(); i++){
 		ItemRow * irow = (*itemList)[i];
 		if (irow->isVisible != NOT_VISIBLE){
 			visibleElemX++;
 		}
-	}
-	return visibleElemX;
+	}*/
+	return filteredList.size();//visibleElemX;
 }
 
 void KaiListCtrl::SaveAll(int col)
@@ -891,6 +909,24 @@ int KaiListCtrl::FindItem(int column, const wxString &textItem, int row /*= 0*/)
 		}
 		else if ((*itemList)[i]->row.size() <= (size_t)column){ continue; }
 		else if ((*itemList)[i]->row[column]->name == textItem){
+			return i;
+		}
+	}
+	return -1;
+}
+
+int KaiListCtrl::FindItem(int column, Item *item, int row /*= 0*/)
+{
+	for (size_t i = row; i < itemList->size(); i++){
+		if (column < 0){
+			for (size_t j = 0; j < (*itemList)[i]->row.size(); j++){
+				if ((*itemList)[i]->row[j] == item){
+					return i;
+				}
+			}
+		}
+		else if ((*itemList)[i]->row.size() <= (size_t)column){ continue; }
+		else if ((*itemList)[i]->row[column] == item){
 			return i;
 		}
 	}
@@ -938,6 +974,7 @@ void KaiListCtrl::Undo(wxCommandEvent &evt)
 		}
 		delete itemList;
 		itemList = actual;
+		RebuildFiltered();
 		Refresh(false);
 	}
 }
@@ -957,6 +994,7 @@ void KaiListCtrl::Redo(wxCommandEvent &evt)
 		}
 		delete itemList;
 		itemList = actual;
+		RebuildFiltered();
 		Refresh(false);
 	}
 }
@@ -969,20 +1007,25 @@ Item *KaiListCtrl::CopyRow(int y, int x, bool pushBack)
 	}
 	if (pushBack){
 		itemList->push_back(newRow);
+		filteredList.push_back(newRow);
 		int newy = itemList->size() - 1;
 		if (x < 0 || x >= (int)(*itemList)[newy]->row.size()){ return NULL; }
 		return (*itemList)[newy]->row[x];
 	}
 	else{
+		size_t id = FindId(y);
 		itemList->Change(y, newRow);
+		if (id != -1)
+			filteredList[id] = newRow;
 	}
 	if (x < 0 || x >= (int)(*itemList)[y]->row.size()){ return NULL; }
 	return (*itemList)[y]->row[x];
 }
 
+//set selection as key everything form list is get as key
 void KaiListCtrl::SetSelection(int selection, bool center)
 {
-	sel = selection;
+	sel = FindId(selection);
 	if (center){
 		int w = 0;
 		int h = 0;
@@ -994,10 +1037,74 @@ void KaiListCtrl::SetSelection(int selection, bool center)
 	Refresh(false);
 }
 
+//GetSelection as key rather not possible to get invisible element
 int KaiListCtrl::GetSelection()
 {
-	size_t startI = 0;
-	return FindItemsRow(sel, startI);
+	//check why this is key
+	//getItem no longer uses keys return only id
+	return FindKey(sel);
+}
+
+//rebuild filtered table after undo redo or som mass actions
+void KaiListCtrl::RebuildFiltered(){
+	filteredList.clear();
+	for (size_t i = 0; i < itemList->size(); i++){
+		ItemRow * itemrow = (*itemList)[i];
+		if (itemrow->isVisible > NOT_VISIBLE)
+			filteredList.push_back(itemrow);
+	}
+
+}
+
+size_t KaiListCtrl::FindKey(size_t id){
+	if (id >= filteredList.size())
+		return -1;
+
+	//size_t diff = 0;
+	//size_t fsize = filteredList.size() - 1;
+	/*if (id > fsize){
+		diff = id - fsize;
+		id = fsize;
+	}*/
+
+	ItemRow * row = filteredList[id];
+	for (size_t i = id; i < itemList->size(); i++){
+		if (row == (*itemList)[i]){
+			/*size_t key = i;
+			if (diff){
+				key += diff;
+				if (i < itemList->size())
+					return key;
+				else
+					return -1;
+			}*/
+
+			return i;
+
+		}
+	}
+	
+	// it should not happen but with bugs it's possible
+	return -1;
+}
+
+size_t KaiListCtrl::FindId(size_t key)
+{
+	if (key >= itemList->size() || key < 0)
+		return -1;
+
+	ItemRow * row = (*itemList)[key];
+	if (row->isVisible == NOT_VISIBLE)
+		return -1;
+
+	size_t i = (key < filteredList.size()) ? key : filteredList.size() - 1;
+	while(i + 1 > 0){
+		if (row == filteredList[i])
+			return i;
+
+		i--;
+	}
+	return -1;
 }
 
 BEGIN_EVENT_TABLE(KaiListCtrl, KaiScrolledWindow)

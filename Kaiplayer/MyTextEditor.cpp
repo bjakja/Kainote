@@ -124,8 +124,8 @@ void TextEditor::SetTextS(const wxString &text, bool modif, bool resetsel, bool 
 	if (SpellCheckerOnOff){ CheckText(); }
 	if (resetsel){ SetSelection(0, 0); }
 	else{
-		if ((size_t)Cursor.x > MText.Len()){ Cursor.x = MText.Len(); Cursor.y = FindY(Cursor.x); }
-		if ((size_t)Selend.x > MText.Len()){ Selend.x = MText.Len(); Selend.y = FindY(Selend.x); }
+		if ((size_t)Cursor.x > MText.length()){ Cursor.x = MText.length(); Cursor.y = FindY(Cursor.x); }
+		if ((size_t)Selend.x > MText.length()){ Selend.x = MText.length(); Selend.y = FindY(Selend.x); }
 		Refresh(false);
 	}
 	//else{Refresh(false);}
@@ -149,7 +149,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 			w -= sw;
 		}
 		size_t i = 0;
-		size_t textLen = MText.Len();
+		size_t textLen = MText.length();
 		if (w < 20){
 			while (i < textLen){ i++; wraps.Add(i); }
 		}
@@ -212,7 +212,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 		}
 	}
 	else{
-		wraps.Add(MText.Len());
+		wraps.Add(MText.length());
 	}
 	//
 	if (updatechars){ EB->UpdateChars(MText); }
@@ -232,7 +232,7 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 			if (Cursor.x<Selend.x){ Selend = Cursor; }
 			else{ Cursor = Selend; }
 		}
-		int len = MText.Len();
+		int len = MText.length();
 		if (wkey == L'"' && changeQuotes)
 			wkey = CheckQuotes();
 
@@ -302,7 +302,7 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 
 	if ((key == WXK_HOME || key == WXK_END) && !alt){
 		Cursor.x = wraps[(key == WXK_END && !ctrl) ? Cursor.y + 1 : Cursor.y];
-		if (key == WXK_END && ctrl){ Cursor.x = MText.Len(); Cursor.y = wraps.size() - 2; }
+		if (key == WXK_END && ctrl){ Cursor.x = MText.length(); Cursor.y = wraps.size() - 2; }
 		else if (key == WXK_HOME && ctrl){ Cursor.x = 0; Cursor.y = 0; }
 		if (!shift){ Selend = Cursor; }
 		if (selectionWords.size())
@@ -336,8 +336,8 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 	switch (ID){
 	case ID_CDELETE:
 	case ID_CBACK:
-		//len = MText.Len();
-		if ((ID == ID_CBACK && Cursor.x == 0) || (ID == ID_CDELETE && Cursor.x >= (int)MText.Len())){ return; }
+		//len = MText.length();
+		if ((ID == ID_CBACK && Cursor.x == 0) || (ID == ID_CDELETE && Cursor.x >= (int)MText.length())){ return; }
 		Selend.x = Cursor.x;
 		if (ID == ID_CBACK){
 			FindWord((Cursor.x < 2) ? 0 : Cursor.x - 1, &Cursor.x, &len);
@@ -364,7 +364,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 				if (Cursor.x < 1){ return; }
 				Cursor.x--;
 			}
-			if (ID == ID_DEL && Cursor.x >= (int)MText.Len()){ return; }
+			if (ID == ID_DEL && Cursor.x >= (int)MText.length()){ return; }
 			MText.Remove(Cursor.x, 1);
 		}
 		len = wraps.size();
@@ -400,9 +400,9 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 	case ID_SRIGHT:
 	case ID_CSRIGHT:
 		if (ID == ID_RIGHT && Selend.x>Cursor.x){ Cursor = Selend; Refresh(false); return; }
-		if (Cursor.x >= (int)MText.Len()){ return; }
+		if (Cursor.x >= (int)MText.length()){ return; }
 		if (ID == ID_CRIGHT || ID == ID_CSRIGHT){
-			if (Cursor.x == MText.Len() - 1){
+			if (Cursor.x == MText.length() - 1){
 				Cursor.x++;
 			}
 			else{
@@ -424,7 +424,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 			tagList->SetSelection(sel);
 			break;
 		}
-		len = MText.Len();
+		len = MText.length();
 		if (Cursor.y >= (int)wraps.size() - 2){ Cursor.y = wraps.size() - 2; Cursor.x = len; }
 		else{
 			Cursor.x -= wraps[Cursor.y];
@@ -458,7 +458,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 	case ID_CTLA:
 
 		Cursor.x = Cursor.y = 0;
-		Selend.x = MText.Len(); Selend.y = wraps.size() - 2;
+		Selend.x = MText.length(); Selend.y = wraps.size() - 2;
 		Refresh(false);
 		break;
 	case ID_CTLV:
@@ -536,7 +536,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 				modified = true;
 				CalcWrap();
 				if (SpellCheckerOnOff){ CheckText(); }
-				int newto = from + txt.Len();
+				int newto = from + txt.length();
 				SetSelection(newto, newto);
 				EB->Send(EDITBOX_SPELL_CHECKER, false);
 				modified = false;
@@ -550,10 +550,10 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 		HitTest(mousePosition, &ht);
 		FindWord(ht.x, &start, &end);
 		wxString wordstriped = MText.SubString(start, end - 1);
-		size_t wlen = wordstriped.Len();
+		size_t wlen = wordstriped.length();
 		wordstriped.Trim();
 		SeekSelected(wordstriped);
-		end -= (wlen - wordstriped.Len());
+		end -= (wlen - wordstriped.length());
 		oldend = tmpend = end;
 		oldstart = tmpstart = start;
 		SetSelection(start, end);
@@ -576,7 +576,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 			if (timeGetTime() - time < 800 && dclickCurPos == mousePosition){
 				Cursor.x = 0;
 				Cursor.y = 0;
-				Selend.x = MText.Len();
+				Selend.x = MText.length();
 				Selend.y = FindY(Selend.x);
 				MakeCursorVisible();
 				return;
@@ -801,7 +801,7 @@ void TextEditor::DrawField(wxDC &dc, int w, int h, int windowh)
 
 	dc.SetFont(font);
 	wxString alltext = MText + " ";
-	int len = alltext.Len();
+	int len = alltext.length();
 	const wxUniChar &bchar = alltext[Cursor.x];
 	if (bchar == L'{')
 	{
@@ -1103,7 +1103,7 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 	bool find = false;
 	wxString txt = MText + " ";
 
-	int wlen = MText.Len();
+	int wlen = MText.length();
 	int fww;
 	for (int i = cur->x; i<wraps[cur->y + 1] + 1; i++)
 	{
@@ -1137,7 +1137,7 @@ void TextEditor::GetSelection(long *start, long *end)
 
 void TextEditor::SetSelection(int start, int end, bool noEvent)
 {
-	int len = MText.Len();
+	int len = MText.length();
 	end = MID(0, end, len);
 	start = MID(0, start, len);
 	if ((Cursor.x != end || Selend.x != start) && !noEvent){ wxCommandEvent evt(CURSOR_MOVED, GetId()); AddPendingEvent(evt); }
@@ -1185,11 +1185,11 @@ void TextEditor::CheckText()
 	int lastStartCBracket = -1;
 	int lastStartTBracket = -1;
 	int lastEndCBracket = -1;
-	for (size_t i = 0; i < text.Len(); i++)
+	for (size_t i = 0; i < text.length(); i++)
 	{
 		wxUniChar ch = text.GetChar(i);
 		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch != L'\''/*notchar.Find(ch)!=-1*/ && !block){
-			if (word.Len() > 1){
+			if (word.length() > 1){
 				if (word.StartsWith("'")){ word = word.Remove(0, 1); }
 				if (word.EndsWith("'")){ word = word.RemoveLast(1); }
 				word.Trim(false); word.Trim(true);
@@ -1272,7 +1272,7 @@ void TextEditor::OnKillFocus(wxFocusEvent& event)
 void TextEditor::FindWord(int pos, int *start, int *end)
 {
 	wxString wfind = " ]})({[-—'`\"\\;:,.><?!*~@#$%^&/+=";
-	int len = MText.Len();
+	int len = MText.length();
 	if (len < 1){ Cursor.x = Cursor.y = 0; *start = 0; *end = 0; return; }
 	bool fromend = (start != NULL);
 
@@ -1402,7 +1402,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 		modified = true;
 		CalcWrap();
 		if (SpellCheckerOnOff){ CheckText(); }
-		int newto = from + suggs[id - 30200].Len();
+		int newto = from + suggs[id - 30200].length();
 		SetSelection(newto, newto);
 		EB->Send(EDITBOX_SPELL_CHECKER, false);
 		modified = false;
@@ -1515,7 +1515,7 @@ void TextEditor::Paste()
 			modified = true;
 			CalcWrap();
 			if (SpellCheckerOnOff){ CheckText(); }
-			int whre = curx + whatpaste.Len();
+			int whre = curx + whatpaste.length();
 			SetSelection(whre, whre);
 
 		}
@@ -1570,7 +1570,7 @@ int TextEditor::FindBracket(wxUniChar sbrkt, wxUniChar ebrkt, int pos, bool from
 {
 	int i = pos;
 	int brkts = 0;
-	while ((fromback) ? i >= 0 : i < (int)MText.Len())
+	while ((fromback) ? i >= 0 : i < (int)MText.length())
 	{
 		if (MText[i] == sbrkt){ brkts++; }
 		else if (MText[i] == ebrkt){ if (brkts == 0){ return i; }brkts--; }
@@ -1631,7 +1631,7 @@ bool TextEditor::CheckIfKeyword(const wxString &word)
 
 void TextEditor::SeekSelected(const wxString &word)
 {
-	if (word.Len() < 1 || (word.Len() < 2 && !wxIsalnum(word[0])))
+	if (word.length() < 1 || (word.length() < 2 && !wxIsalnum(word[0])))
 		return;
 
 	

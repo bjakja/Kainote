@@ -142,7 +142,7 @@ public:
 	void SetGrid(SubsGrid *_grid, bool isPreview = false);
 	bool LoadAudio(const wxString &audioFileName, bool fromVideo);
 	void CloseAudio();
-	void OnNewline(wxCommandEvent& event);
+	TextEditor *GetEditor();
 
 
 	wxBoxSizer* BoxSizer1;
@@ -169,6 +169,7 @@ private:
 
 	void ChangeFont(Styles *retStyle, Styles *editedStyle);
 	void OnCommit(wxCommandEvent& event);
+	void OnNewline(wxCommandEvent& event);
 	void OnFontClick(wxCommandEvent& event);
 	void OnColorClick(wxCommandEvent& event);
 	void OnColorRightClick(wxMouseEvent& event);

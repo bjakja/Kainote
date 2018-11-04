@@ -82,8 +82,9 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	}
 	//checkboxes
 	wxBoxSizer* frbsizer1 = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer* checksSizer = new wxBoxSizer(wxVERTICAL);
 	MatchCase = new KaiCheckBox(this, -1, _("Uwzględniaj wielkość liter"));
-	MatchCase->SetValue(options & CASE_SENSITIVE);
+	MatchCase->SetValue((options & CASE_SENSITIVE) > 0);
 	RegEx = new KaiCheckBox(this, -1, _("Wyrażenia regularne"));
 	RegEx->SetValue((options & REG_EX) > 0);
 	StartLine = new KaiCheckBox(this, ID_START_OF_LINE, _("Początek tekstu"));
@@ -94,6 +95,15 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	frbsizer1->Add(RegEx, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	frbsizer1->Add(StartLine, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	frbsizer1->Add(EndLine, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
+	UseComments = new KaiCheckBox(this, -1, _("Uwzględnij komentarze"));
+	UseComments->SetValue((options & SEEK_IN_COMMENTS) > 0);
+	OnlyText = new KaiCheckBox(this, -1, _("Pomiń tagi"));
+	OnlyText->SetValue((options & SEEK_ONLY_IN_TEXT) > 0);
+	OnlyTags = new KaiCheckBox(this, ID_START_OF_LINE, _("Pomiń tekst"));
+	OnlyTags->SetValue((options & SEEK_ONLY_IN_TAGS) > 0);
+	checksSizer->Add(UseComments, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
+	checksSizer->Add(OnlyText, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
+	checksSizer->Add(OnlyTags, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &TabWindow::OnRecheck, this, ID_START_OF_LINE);
 	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &TabWindow::OnRecheck, this, ID_END_OF_LINE);
 	//in field
@@ -104,7 +114,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	if (options & IN_FIELD_TEXT)
 		CollumnText->SetValue(true);
 	CollumnTextOriginal = new KaiRadioButton(this, -1, /*(tabNum == WINDOW_FIND_IN_SUBS) ? _("Zwykły tekst") : */_("Tekst oryginału"));
-	CollumnTextOriginal->Enable((tabNum == WINDOW_FIND_IN_SUBS) ? false/*true*/ : FR->Kai->GetTab()->Grid->hasTLMode);
+	CollumnTextOriginal->Enable((tabNum == WINDOW_FIND_IN_SUBS) ? false : FR->Kai->GetTab()->Grid->hasTLMode);
 	if (options & IN_FIELD_TEXT_ORIGINAL && CollumnTextOriginal->IsEnabled())
 		CollumnTextOriginal->SetValue(true);
 	frbsizer2->Add(CollumnText, 1, wxALL, 1);
@@ -129,8 +139,9 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	frsbsizer2->Add(frbsizer2, 1, wxEXPAND | wxLEFT, 2);
 	frsbsizer2->Add(frbsizer3, 1, wxEXPAND | wxLEFT, 2);
 	//link checkboxes and in field radiobuttons
-	mainfrbsizer2->Add(frbsizer1, 1, wxEXPAND, 0);
-	mainfrbsizer2->Add(frsbsizer2, 1, wxEXPAND, 0);
+	mainfrbsizer2->Add(frbsizer1, 0, wxEXPAND, 0);
+	mainfrbsizer2->Add(checksSizer, 0, wxEXPAND, 0);
+	mainfrbsizer2->Add(frsbsizer2, 0, wxEXPAND, 0);
 
 	mainfrbsizer1->Add(mainfrbsizer2, 0, wxEXPAND | wxLEFT, 1);
 	//buttons
@@ -280,6 +291,12 @@ void TabWindow::SaveValues()
 		options |= SEARCH_SUBFOLDERS;
 	if (SeekInHiddenFolders && SeekInHiddenFolders->GetValue())
 		options |= SEARCH_HIDDEN_FOLDERS;
+	if (UseComments->GetValue())
+		options |= SEEK_IN_COMMENTS;
+	if (OnlyText->GetValue())
+		options |= SEEK_ONLY_IN_TEXT;
+	if (OnlyTags->GetValue())
+		options |= SEEK_ONLY_IN_TAGS;
 
 	Options.SetInt(FindReplaceOptions, options);
 
@@ -315,8 +332,10 @@ void TabWindow::SetValues()
 		SelectedLines->SetValue((options & IN_LINES_SELECTED) > 0);
 	if (FromSelection)
 		FromSelection->SetValue((options & IN_LINES_FROM_SELECTION) > 0);
-	//if (SeekInSubFolders)
-		//SeekInSubFolders->SetValue((options & SEARCH_SUBFOLDERS) > 0);
+	
+	UseComments->SetValue((options & SEEK_IN_COMMENTS) > 0);
+	OnlyText->SetValue((options & SEEK_ONLY_IN_TEXT) > 0);
+	OnlyTags->SetValue((options & SEEK_ONLY_IN_TAGS) > 0);
 
 	FindText->SetValue(FR->actualFind);
 	FindText->PutArray(&FR->findRecent);

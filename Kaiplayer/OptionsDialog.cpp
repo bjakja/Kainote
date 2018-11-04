@@ -818,6 +818,35 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		List->StartEdition();
 		List->SetSelection(0);
 		ConOpt(List, (CONFIG)1000);
+		Bind(LIST_ITEM_DOUBLECLICKED, [=](wxCommandEvent &evt){
+			int selection = List->GetSelection();
+			Item *item = List->GetItem(selection, 1);
+			if (!item)
+				return;
+
+			ItemColor *itemc = (ItemColor*)item;
+
+			DialogColorPicker *dcp = DialogColorPicker::Get(List, itemc->col);
+			wxPoint mst = wxGetMousePosition();
+			wxSize siz = dcp->GetSize();
+			siz.x;
+			wxRect rc = wxGetClientDisplayRect();
+			mst.x -= (siz.x / 2);
+			mst.x = MID(rc.x, mst.x, rc.width - siz.x);
+			mst.y += 15;
+			mst.y = MID(rc.y, mst.y, rc.height - siz.y);
+			dcp->Move(mst);
+			if (dcp->ShowModal() == wxID_OK) {
+				ItemColor *copy = (ItemColor*)List->CopyRow(selection, 1);
+				if (copy){
+					copy->col = dcp->GetColor();
+					copy->modified = true;
+					List->SetModified(true);
+					List->PushHistory();
+					List->Refresh(false);
+				}
+			}
+		}, List->GetId());
 	}
 	//associations
 	{

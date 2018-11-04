@@ -873,7 +873,7 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 			wxString ext = (atab->Grid->subsFormat < SRT) ? "ass" : (atab->Grid->subsFormat == SRT) ? "srt" : "txt";
 			if (!atab->SubsPath.EndsWith(ext)){ atab->SubsPath << "." << ext; }
 			atab->SubsName = atab->SubsPath.AfterLast(L'\\');
-			SetRecent();
+			SetRecent(0, wtab);
 		}
 		else{ return; }
 	}
@@ -1156,13 +1156,14 @@ void KainoteFrame::ShowBadResolutionDialog(const wxSize &videoRes, const wxSize 
 }
 
 //0 - subs, 1 - vids, 2 - auds
-void KainoteFrame::SetRecent(short what)
+void KainoteFrame::SetRecent(short what/*=0*/, int numtab /*= -1*/)
 {
 	int idd = 30000 + (20 * what);
+	TabPanel *tab = (numtab < 0) ? GetTab() : Tabs->Page(numtab);
 	Menu *wmenu = (what == 0) ? SubsRecMenu : (what == 1) ? VidsRecMenu : (what == 2) ? AudsRecMenu : KeyframesRecentMenu;
 	int size = (what == 0) ? subsrec.size() : (what == 1) ? videorec.size() : (what == 2) ? audsrec.size() : keyframesRecent.size();
 	wxArrayString &recs = (what == 0) ? subsrec : (what == 1) ? videorec : (what == 2) ? audsrec : keyframesRecent;
-	wxString path = (what == 0) ? GetTab()->SubsPath : (what == 1) ? GetTab()->VideoPath : (what == 2) ? GetTab()->Edit->ABox->audioName : GetTab()->KeyframesPath;
+	wxString path = (what == 0) ? tab->SubsPath : (what == 1) ? tab->VideoPath : (what == 2) ? tab->Edit->ABox->audioName : tab->KeyframesPath;
 
 	for (int i = 0; i < size; i++){
 		if (recs[i] == path){
@@ -1742,10 +1743,10 @@ void KainoteFrame::SaveAll()
 	for (size_t i = 0; i < Tabs->Size(); i++)
 	{
 		if (!Tabs->Page(i)->Grid->IsModified()){ continue; }
-		Save(false, i);
-		Label(0, false, i);
+		Save(false, i, false);
+		if (i == Tabs->iter)
+			Label(0, false, i);
 	}
-
 }
 
 //return anulowanie operacji

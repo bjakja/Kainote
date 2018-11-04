@@ -40,7 +40,7 @@ public:
 	virtual void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL){};
 	virtual void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList){};
 	virtual void Save(){};
-	virtual void OnChangeHistory(){/* modified = true;*/ };
+	virtual void OnChangeHistory(){/*modified = true;*/};
 	virtual int OnVisibilityChange(int mode){ return VISIBLE; }
 	virtual wxSize GetTextExtents(KaiListCtrl *theList);
 	virtual Item* Copy(){return NULL;}
@@ -69,6 +69,7 @@ public:
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	void Save();
 	Item* Copy(){return new ItemColor(*this);}
+	void OnChangeHistory();
 	AssColor col;
 	int colOptNum;
 };
@@ -110,6 +111,7 @@ public:
 	std::vector< Item*> row;
 	StoreHelper isVisible;
 };
+
 class List{
 public:
 	List(){};
@@ -125,7 +127,8 @@ public:
 	ItemRow* operator [](const size_t num){
 		return itemList[num];
 	}
-	const size_t size(){return itemList.size();}
+
+	const size_t size(){ return itemList.size(); }
 	List *Copy(){
 		List *copy = new List();
 		copy->itemList = itemList;
@@ -138,8 +141,10 @@ public:
 	void Erase(size_t pos){
 		itemList.erase(itemList.begin() + pos);
 	}
+
 	const std::vector< ItemRow*> & GetGarbage(){ return garbage; }
 private:
+
 	std::vector< ItemRow*> itemList;
 	std::vector< ItemRow*> garbage;
 };
@@ -172,6 +177,7 @@ public:
 	void SetModified(bool modif){modified = modif; /*if(modif){PushHistory();}*/}
 	bool GetModified(){return modified;}
 	int FindItem(int column, const wxString &textItem, int row = 0);
+	int FindItem(int column, Item *item, int row = 0);
 	//collumn must be set
 	void FilterList(int column, int mode);
 	int GetType(int row, int column);
@@ -185,7 +191,8 @@ public:
 	void StartEdition();
 	Item *CopyRow(int y, int x, bool pushBack = false);
 	void SetTextArray(const wxArrayString &Array);
-	void FilterRow(int row, int visibility);
+	void FilterRow(int rowkey, int visibility);
+	void FinalizeFiltering();
 	void DeleteItem(int row, bool save);
 	void ClearList(){
 		for (auto it = historyList.begin(); it != historyList.end(); it++){
@@ -194,6 +201,7 @@ public:
 		historyList.clear();
 		delete itemList;
 		itemList = new List();
+		filteredList.clear();
 	}
 	void SetHeaderHeight(int height);
 private:
@@ -204,13 +212,17 @@ private:
 	void OnEraseBackground(wxEraseEvent &evt){};
 	int GetMaxWidth();
 	void SetWidth(size_t i=0);
-	int FindItemsRow(int elemX, size_t &startI);
+	//int FindItemsRow(int elemX, size_t &startI);
 //return 0 nothing, 1 hidden block, 2 visible block
 	int CheckIfHasHiddenBlock(int elemX, size_t startI = 0);
-	void ShowOrHideBlock(int elemRealX);
+	void ShowOrHideBlock(int elemKeyX);
+	void RebuildFiltered();
+	size_t FindKey(size_t id);
+	size_t FindId(size_t key);
 	size_t GetVisibleSize();
 	ItemRow header;
 	List *itemList;
+	std::vector< ItemRow*> filteredList;
 	std::vector<List*> historyList;
 	wxArrayInt widths;
 	wxBitmap *bmp;
@@ -227,6 +239,7 @@ private:
 	bool modified;
 	bool hasArrow;
 	bool isFiltered = false;
+	
 	//bool hasTooltip = false;
 	DECLARE_EVENT_TABLE()
 	wxDECLARE_ABSTRACT_CLASS(KaiListCtrl);

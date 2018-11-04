@@ -251,6 +251,11 @@ class Dialogue
 {
 private:
 	char State;
+	void AddResetOnMDVDWraps(const wxString & prefix);
+	void ReplaceSlashesToItalics();
+	bool StartsWith(const wxString &text, wxUniChar ch, size_t *pos);
+	bool StartsWithNoBlock(const wxString &text, wxUniChar ch, size_t *pos);
+	bool EndsWith(const wxString &text, wxUniChar ch, size_t *pos);
 public:
 	StoreTextHelper Style, Actor, Effect, Text, TextTl;
 	STime Start, End;
@@ -276,17 +281,27 @@ public:
 	void ParseTags(wxString *tags, size_t n, bool plainText = false);
 	void ChangeTimes(int start, int end);
 	void ClearParse();
-	void AddResetOnMDVDWraps(const wxString & prefix);
-	void ReplaceSlashesToItalics();
-	bool StartsWith(const wxString &text, wxUniChar ch, size_t *pos);
-	bool StartsWithNoBlock(const wxString &text, wxUniChar ch, size_t *pos);
-	bool EndsWith(const wxString &text, wxUniChar ch, size_t *pos);
+	void GetTextElement(int element, wxString *elementText);
+	void SetTextElement(int element, const wxString &elementText);
 	Dialogue();
 	Dialogue(const wxString &ldial, const wxString &txttl = "");
 	~Dialogue();
 };
 
 enum{
+	LAYER = 1,
+	START = 2,
+	END = 4,
+	STYLE = 8,
+	ACTOR = 16,
+	MARGINL = 32,
+	MARGINR = 64,
+	MARGINV = 128,
+	EFFECT = 256,
+	CPS = 512,
+	TXT = 1024,
+	TXTTL = 2048,
+	COMMENT = 4096,
 	NOT_VISIBLE = 0,
 	VISIBLE,
 	VISIBLE_BLOCK,

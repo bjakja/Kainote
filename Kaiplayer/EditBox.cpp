@@ -2079,3 +2079,11 @@ void EditBox::CloseAudio()
 	ABox = NULL;
 	Layout();
 }
+
+TextEditor * EditBox::GetEditor()
+{
+	if (grid->hasTLMode && TextEdit->GetValue() == L"")
+		return TextEditOrig;
+
+	return TextEdit;
+}

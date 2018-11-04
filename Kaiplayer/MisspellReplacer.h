@@ -60,7 +60,7 @@ public:
 	MisspellReplacer(wxWindow *parent);
 	virtual ~MisspellReplacer();
 	void ReplaceChecked();
-	void ShowResult(TabPanel *tab, int keyLine);
+	void ShowResult(TabPanel *tab, int keyLine, const wxPoint &pos);
 	void RemoveDialog(){ resultDialog = NULL; };
 private:
 	

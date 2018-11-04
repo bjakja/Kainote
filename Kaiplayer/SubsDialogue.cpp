@@ -202,6 +202,24 @@ bool Dialogue::EndsWith(const wxString &text, wxUniChar ch, size_t *pos)
 	return false;
 }
 
+void Dialogue::GetTextElement(int replaceColumn, wxString *elementText)
+{
+	if (replaceColumn == TXT){ *elementText = Text; }
+	else if (replaceColumn == TXTTL){ *elementText = TextTl; }
+	else if (replaceColumn == STYLE){ *elementText = Style; }
+	else if (replaceColumn == ACTOR){ *elementText = Actor; }
+	else if (replaceColumn == EFFECT){ *elementText = Effect; }
+}
+
+void Dialogue::SetTextElement(int replaceColumn, const wxString &elementText)
+{
+	if (replaceColumn == TXT){ Text = elementText; }
+	else if (replaceColumn == TXTTL){ TextTl = elementText; }
+	else if (replaceColumn == STYLE){ Style = elementText; }
+	else if (replaceColumn == ACTOR){ Actor = elementText; }
+	else if (replaceColumn == EFFECT){ Effect = elementText; }
+}
+
 Dialogue::Dialogue(const wxString &ldial, const wxString &txttl)
 {
 	parseData = NULL;
@@ -610,7 +628,7 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 	size_t pos = 0;
 	size_t plainStart = 0;
 	bool hasDrawing = false;
-	size_t len = txt.Len();
+	size_t len = txt.length();
 	bool tagsBlock = false;
 	parseData = new ParseData();
 	if (len < 1){ return; }
@@ -639,7 +657,7 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 			if (tag.EndsWith(L')')){ tag.RemoveLast(); }
 			for (size_t i = 0; i < ntags; i++){
 				wxString tagName = tags[i];
-				int tagLen = tagName.Len();
+				int tagLen = tagName.length();
 				if (tag.StartsWith(tagName) && (tag[tagLen] == L'(' ||
 					wxIsdigit(tag[tagLen]) || tagName == L"fn")){
 
@@ -696,12 +714,12 @@ void Dialogue::ChangeTimes(int start, int end)
 				numToken++;
 				continue;
 			}
-			size_t t1Len = token.Len();
+			size_t t1Len = token.length();
 
 			int t1 = wxAtoi(token);
 			size_t t1Pos = splitValues.GetPosition() + tdata->startTextPos - t1Len - replaceMismatch - 1;
 			token = splitValues.GetNextToken();
-			size_t t2Len = token.Len();
+			size_t t2Len = token.length();
 
 			size_t totalLen = t1Len + t2Len + 1;
 			int t2 = wxAtoi(token);
@@ -710,7 +728,7 @@ void Dialogue::ChangeTimes(int start, int end)
 
 			wxString timesString;
 			timesString << t1 << L"," << t2;
-			replaceMismatch += totalLen - timesString.Len();
+			replaceMismatch += totalLen - timesString.length();
 			if (TextTl != L""){
 				TextTl->replace(t1Pos, totalLen, timesString);
 			}

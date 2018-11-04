@@ -21,22 +21,22 @@
 
 class AssColor
 {
-    public:
-    long r,g,b,a;
+	public:
+	long r,g,b,a;
 	wxString GetAss(bool alpha, bool style = false) const;
 	wxColour GetWX() const;
 	//no const cause it replaces this string
-    void SetAss(wxString color);
-    void SetWX(const wxColour &color, int alpha);
+	void SetAss(wxString color);
+	void SetWX(const wxColour &color, int alpha);
 	wxString GetHex(bool alpha) const;
 	void Copy(const AssColor& color, bool alpha = false);
 	bool NotEqual(const AssColor& color, bool alpha = false);
 	//no const cause it replaces this string
 	void SetAlphaString(wxString alpha);
-    AssColor();
+	AssColor();
 	AssColor(const wxString &col);
 	AssColor(const wxColour &col, int alpha = -1);
-    ~AssColor();
+	~AssColor();
 	bool operator == (const AssColor &col){return (a==col.a && r==col.r && g==col.g && b==col.b);}
 	bool operator != (const AssColor &col){return (a!=col.a || r!=col.r || g!=col.g || b!=col.b);}
 
@@ -52,10 +52,10 @@ public:
 	AssColor PrimaryColour, SecondaryColour, OutlineColour, BackColour;
 	bool Bold, Italic, Underline, StrikeOut, BorderStyle;
 	wxString GetRaw();
-    Styles();
-    Styles(wxString styledata,char format=1);
-    ~Styles();
-    bool parseStyle(const wxString &styledata, char form);
+	Styles();
+	Styles(wxString styledata,char format=1);
+	~Styles();
+	bool parseStyle(const wxString &styledata, char form);
 	//no releasing here changes of style is copied to multiple styles
 	//int list of changes needed
 	//also enum with style element names 

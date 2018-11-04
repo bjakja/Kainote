@@ -42,12 +42,12 @@ public:
 	
 protected:
 
-    wxArrayInt selections;
+	wxArrayInt selections;
 	wxArrayString filterStyles;
 
 private:
 	void CopyRows(int id);
-    void OnInsertBefore();
+	void OnInsertBefore();
 	void OnInsertAfter();
 	void OnDuplicate();
 	void OnJoinF(int id);

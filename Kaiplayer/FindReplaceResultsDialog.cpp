@@ -18,7 +18,7 @@
 
 wxDEFINE_EVENT(CHOOSE_RESULT, wxCommandEvent);
 
-FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace *FR)
+FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace *FR, bool _findInFiles)
 	: KaiDialog(parent, -1, _("Wyniki szukania"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 {
 	DialogSizer * main = new DialogSizer(wxVERTICAL);
@@ -26,7 +26,6 @@ FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace
 	resultsList->InsertColumn(0, "", TYPE_TEXT, -1);
 	resultsList->SetHeaderHeight(0);
 	main->Add(resultsList, 1, wxEXPAND | wxALL, 2);
-	SetSizerAndFit(main);
 	Bind(CHOOSE_RESULT, [=](wxCommandEvent &evt){
 		SeekResults *results = (SeekResults*)evt.GetClientData();
 		if (!results){
@@ -34,8 +33,31 @@ FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace
 			return;
 		}
 
-		FR->ShowResult(results->tab, results->path, results->keyLine);
+		FR->ShowResult(results->tab, results->path, results->keyLine, results->findPosition);
 	}, 23323);
+	wxBoxSizer *buttonsSizer = new wxBoxSizer(wxHORIZONTAL);
+
+	MappedButton *checkAll = new MappedButton(this, ID_CHECK_ALL, _("Zahacz wszystko"));
+	MappedButton *unCheckAll = new MappedButton(this, ID_UNCHECK_ALL, _("Odhacz wszystko"));
+	MappedButton *replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("Zamień"));
+	ReplaceText = new KaiChoice(this, -1, FR->actualReplace, wxDefaultPosition, wxDefaultSize, FR->replaceRecent);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+		CheckUncheckAll(true);
+	}, ID_CHECK_ALL);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+		CheckUncheckAll(false);
+	}, ID_UNCHECK_ALL);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+		FR->ReplaceChecked();
+	}, ID_REPLACE_CHECKED);
+	buttonsSizer->Add(checkAll, 1, wxALL, 2);
+	buttonsSizer->Add(unCheckAll, 1, wxALL, 2);
+	buttonsSizer->Add(replaceChecked, 1, wxALL, 2);
+	buttonsSizer->Add(ReplaceText, 0, wxALL | wxEXPAND, 2);
+	main->Add(buttonsSizer, 0, wxALL, 2);
+	SetSizerAndFit(main);
+
+	findInFiles = _findInFiles;
 }
 
 FindReplaceResultsDialog::~FindReplaceResultsDialog()
@@ -45,18 +67,15 @@ FindReplaceResultsDialog::~FindReplaceResultsDialog()
 
 void FindReplaceResultsDialog::SetHeader(const wxString &text)
 {
-	if (header)
-		header->SetLastFilteredLine(resultsCounter);
-
 	resultsCounter++;
-	header = new ResultsHeader(text, resultsCounter);
+	ResultsHeader *header = new ResultsHeader(text, resultsCounter);
 	resultsList->AppendItemWithExtent(header);
 }
 
-void FindReplaceResultsDialog::SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _keyLine, const wxString &_path)
+void FindReplaceResultsDialog::SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _idLine, int _keyLine, const wxString &_path)
 {
 	resultsCounter++;
-	SeekResults *results = new SeekResults(text, pos, _tab, _keyLine, _path);
+	SeekResults *results = new SeekResults(text, pos, _tab, _idLine, _keyLine, _path);
 	resultsList->AppendItemWithExtent(results);
 }
 
@@ -69,29 +88,73 @@ void FindReplaceResultsDialog::ClearList()
 void FindReplaceResultsDialog::FilterList()
 {
 	//mode here is 1 visible blocks 0 hidden blocks
-	if (header)
-		header->SetLastFilteredLine(resultsCounter);
 	resultsList->FilterList(0, 1);
+	resultsList->Refresh(false);
 }
 
-void ResultsHeader::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
+void FindReplaceResultsDialog::CheckUncheckAll(bool check /*= true*/)
 {
-	if (event.LeftDown()){
-		for (int i = firstFilteredLine; i < lastFilteredLine; i++){
-			theList->FilterRow(i, (isVisible)? NOT_VISIBLE : VISIBLE_BLOCK);
+	for (size_t i = 0; i < resultsList->GetCount(); i++){
+		Item *item = resultsList->GetItem(i, 0);
+		if (item){
+			item->modified = check;
+		}
+	}
+	resultsList->Refresh(false);
+}
+
+
+void FindReplaceResultsDialog::GetReplaceString(wxString *replaceString)
+{
+	*replaceString = ReplaceText->GetValue();
+}
+
+void ResultsHeader::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
+{
+	if (_enter){
+		enter = true;
+		theList->Refresh(false);
+	}
+	else if (leave){
+		enter = false;
+		theList->Refresh(false);
+	}
+
+	if (event.GetX() < 19 && event.LeftDown() || event.LeftDClick()){
+		modified = !modified;
+		int i = positionInTable;
+		while (theList->GetType(i, 0) == TYPE_TEXT){
+			Item *item = theList->GetItem(i, 0);
+			if (item){
+				item->modified = modified;
+			}
+			i++;
+		}
+		theList->Refresh(false);
+	}
+	else if (event.LeftDown() || event.LeftDClick()){
+		int i = positionInTable;
+		while (theList->GetType(i, 0) == TYPE_TEXT){
+			theList->FilterRow(i, (isVisible) ? NOT_VISIBLE : VISIBLE_BLOCK);
+			i++;
 		}
 		isVisible = !isVisible;
+		theList->FinalizeFiltering();
 	}
 }
 
 void ResultsHeader::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
 {
 	wxSize ex = theList->GetTextExtent(name);
+	wxString bitmapName = (modified) ? "checkbox_selected" : "checkbox";
+	wxBitmap checkboxBmp = wxBITMAP_PNG(bitmapName);
+	if (enter){ BlueUp(&checkboxBmp); }
+	dc->DrawBitmap(checkboxBmp, x + 1, y + (height - 13) / 2);
 	dc->SetTextForeground(Options.GetColour(FIND_RESULT_FILENAME_FOREGROUND));
 	dc->SetTextBackground(Options.GetColour(FIND_RESULT_FILENAME_BACKGROUND));
 	dc->SetBackgroundMode(wxSOLID);
-	needTooltip = ex.x > width - 8;
-	wxRect cur(x, y, width - 8, height);
+	needTooltip = ex.x + 18 > width - 8;
+	wxRect cur(x + 18, y, width - 8, height);
 	dc->SetClippingRegion(cur);
 	dc->DrawLabel(name, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
@@ -99,9 +162,49 @@ void ResultsHeader::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height,
 	dc->SetBackgroundMode(wxTRANSPARENT);
 }
 
-void SeekResults::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
+void SeekResults::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
 {
-	if (event.LeftDClick()){
+	if (_enter){
+		enter = true;
+		theList->Refresh(false);
+	}
+	else if (leave){
+		enter = false;
+		theList->Refresh(false);
+	}
+
+	if (event.GetX() < 19 && event.LeftDown() || event.LeftDClick()){
+		modified = !modified;
+		int i = theList->FindItem(0, this);
+		int j = i - 1;
+		if (i < 0){
+			theList->Refresh(false);
+			return;
+		}
+		bool somethingChecked = false;
+		while (theList->GetType(j, 0) == TYPE_TEXT){
+			Item *item = theList->GetItem(j, 0);
+			if (item && item->modified){
+				somethingChecked = true;
+			}
+			j--;
+		}
+		while (theList->GetType(i, 0) == TYPE_TEXT){
+			Item *item = theList->GetItem(i, 0);
+			if (item && item->modified){
+				somethingChecked = true;
+				goto done;
+			}
+			i++;
+		}
+	done:
+		Item *header = theList->GetItem(j, 0);
+		if (header/* && header->type == TYPE_HEADER*/){
+			header->modified = somethingChecked;
+		}
+		theList->Refresh(false);
+	}
+	else if (event.LeftDClick()){
 		wxCommandEvent *evt = new wxCommandEvent(CHOOSE_RESULT, theList->GetId());
 		evt->SetClientData(this);
 		wxQueueEvent(theList->GetParent(), evt);
@@ -110,22 +213,37 @@ void SeekResults::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiL
 
 void SeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
 {
-	wxSize ex = theList->GetTextExtent(name);
-	wxSize exOfFound = theList->GetTextExtent(name.Mid(0, findPosition.x));
+	wxString lineNum = wxString::Format(_("Linia %i: "), idLine);
+	wxString lineAndNum = lineNum + name;
+	wxSize ex = theList->GetTextExtent(lineAndNum);
+	wxSize exOfFound = theList->GetTextExtent(lineAndNum.Mid(0, findPosition.x + lineNum.length()));
+	wxString bitmapName = (modified) ? "checkbox_selected" : "checkbox";
+	wxBitmap checkboxBmp = wxBITMAP_PNG(bitmapName);
+	if (enter){ BlueUp(&checkboxBmp); }
+	dc->DrawBitmap(checkboxBmp, x + 1, y + (height - 13) / 2);
 
-	needTooltip = ex.x > width - 8;
-	wxRect cur(x, y, width - 8, height);
+	needTooltip = ex.x + 18 > width - 8;
+	wxRect cur(x + 18, y, width - 8, height);
 	dc->SetClippingRegion(cur);
-	dc->DrawLabel(name, cur, wxALIGN_CENTER_VERTICAL);
+	dc->DrawLabel(lineAndNum, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
 	dc->SetTextForeground(Options.GetColour(FIND_RESULT_FOUND_PHRASE_FOREGROUND));
 	const wxColour &background = Options.GetColour(FIND_RESULT_FOUND_PHRASE_BACKGROUND);
 	dc->SetBrush(wxBrush(background));
 	dc->SetPen(wxPen(background));
-	wxString foundText = name.Mid(findPosition.x, findPosition.y);
+	wxString foundText = lineAndNum.Mid(findPosition.x + lineNum.length(), findPosition.y);
 	wxSize exFoundText = theList->GetTextExtent(foundText);
-	dc->DrawRectangle(x + exOfFound.x, y + ((height - exOfFound.y) / 2), exFoundText.x, height);
-	dc->DrawText(foundText, x + exOfFound.x, y + ((height - exOfFound.y) / 2));
+	dc->DrawRectangle(x + exOfFound.x + 18, y + ((height - exOfFound.y) / 2), exFoundText.x, height);
+	dc->DrawText(foundText, x + exOfFound.x + 18, y + ((height - exOfFound.y) / 2));
 
 	dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WindowText : WindowTextInactive));
+}
+
+wxSize SeekResults::GetTextExtents(KaiListCtrl *theList){
+	wxString lineNum = wxString::Format(_("Linia %i: "), idLine);
+	wxString lineAndNum = lineNum + name;
+	wxSize size = theList->GetTextExtent(lineAndNum);
+	size.x += 28;
+	size.y += 4;
+	return size;
 }

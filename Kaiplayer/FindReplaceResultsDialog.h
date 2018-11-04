@@ -24,35 +24,40 @@ wxDECLARE_EVENT(CHOOSE_RESULT, wxCommandEvent);
 class ResultsHeader : public Item
 {
 public:
-	ResultsHeader(const wxString &text, int _startFilteredLine) : Item(TYPE_TEXT){
+	ResultsHeader(const wxString &text, int _positionInTable) : Item(TYPE_TEXT){
 		name = text;
-		firstFilteredLine = _startFilteredLine;
+		positionInTable = _positionInTable;
+		modified = true;
 	}
 	virtual ~ResultsHeader(){};
-	void SetLastFilteredLine(int lastfiltered){ lastFilteredLine = lastfiltered; }
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	Item* Copy(){ return new ResultsHeader(*this); }
 private:
-	int firstFilteredLine = 0;
-	int lastFilteredLine = 0;
+	int positionInTable = 0;
 	bool isVisible = true;
+	bool enter = false;
 };
 
 class SeekResults : public Item
 {
 public:
-	SeekResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _keyLine, const wxString &_path) : Item(TYPE_TEXT){
+	SeekResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _idLine, int _keyLine, const wxString &_path) : Item(TYPE_TEXT){
 		name = text;
 		findPosition = pos;
 		tab = _tab;
 		path = _path;
 		keyLine = _keyLine;
+		idLine = _idLine;
+		modified = true;
 	}
 	virtual ~SeekResults(){};
 	TabPanel *tab = NULL;
 	wxString path;
 	int keyLine;
+	int idLine;
+	wxPoint findPosition;
+	wxSize GetTextExtents(KaiListCtrl *theList);
 private:
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
@@ -63,8 +68,7 @@ private:
 		else
 			return NOT_VISIBLE;
 	}
-	wxPoint findPosition;
-	
+	bool enter = false;
 };
 
 class FindReplaceDialog;
@@ -72,14 +76,35 @@ class FindReplaceDialog;
 class FindReplaceResultsDialog : public KaiDialog
 {
 public:
-	FindReplaceResultsDialog(wxWindow *parent, FindReplace *FR);
+	FindReplaceResultsDialog(wxWindow *parent, FindReplace *FR, bool findInFiles = false);
 	virtual ~FindReplaceResultsDialog();
 	void SetHeader(const wxString &text);
-	void SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _keyLine, const wxString &_path);
+	void SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _idLine, int _keyLine, const wxString &_path);
 	void ClearList();
 	void FilterList();
-private:
+	void CheckUncheckAll(bool check = true);
+	void GetFindOptions(bool *_hasRegEx, bool *matchcase, bool *needPrefix, wxString *_findString){
+		*_hasRegEx = hasRegEx;
+		*_findString = findString;
+		*matchcase = matchCase;
+		*needPrefix = needToAddPrefix;
+	}
+	void SetFindOptions(bool _hasRegEx, bool matchcase, bool needPrefix, const wxString &_findString){
+		hasRegEx = _hasRegEx;
+		matchCase = matchcase;
+		needToAddPrefix = needPrefix;
+		findString = findString;
+	}
+	void GetReplaceString(wxString *replaceString);
 	KaiListCtrl *resultsList;
-	ResultsHeader *header = NULL;
+	bool findInFiles = false;
+private:
+	KaiChoice* ReplaceText;
 	int resultsCounter = 0;
+	//config for replace
+	bool hasRegEx = false;
+	bool matchCase = false;
+	bool needToAddPrefix = false;
+	//only for regex
+	wxString findString;
 };

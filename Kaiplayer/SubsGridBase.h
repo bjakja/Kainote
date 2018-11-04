@@ -156,18 +156,5 @@ protected:
 bool sortstart(Dialogue *i,Dialogue *j);
 
 enum{
-	LAYER = 1,
-	START = 2,
-	END = 4,
-	STYLE = 8,
-	ACTOR = 16,
-	MARGINL = 32,
-	MARGINR = 64,
-	MARGINV = 128,
-	EFFECT = 256,
-	CPS = 512,
-	TXT = 1024,
-	TXTTL = 2048,
-	COMMENT = 4096,
 	ID_AUTIMER
 };

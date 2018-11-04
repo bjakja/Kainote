@@ -226,7 +226,7 @@ void MisspellReplacer::ReplaceChecked()
 
 }
 
-void MisspellReplacer::ShowResult(TabPanel *tab, int keyLine)
+void MisspellReplacer::ShowResult(TabPanel *tab, int keyLine, const wxPoint &pos)
 {
 	Notebook *nb = Notebook::GetTabs();
 	for (size_t i = 0; i < nb->Size(); i++){
@@ -239,6 +239,7 @@ void MisspellReplacer::ShowResult(TabPanel *tab, int keyLine)
 				tab->Edit->SetLine(lineId);
 				tab->Grid->SelectRow(lineId);
 				tab->Grid->ScrollTo(lineId, true);
+				tab->Edit->GetEditor()->SetSelection(pos.x, pos.x + pos.y);
 			}
 			break;
 		}
@@ -435,6 +436,7 @@ void MisspellReplacer::SeekOnActualTab()
 		resultDialog = new FindResultDialog(GetParent(), this);
 	}
 	SeekOnTab(Notebook::GetTab());
+	resultDialog->FilterList();
 	if (!resultDialog->IsShown())
 		resultDialog->Show();
 }
@@ -451,6 +453,7 @@ void MisspellReplacer::SeekOnAllTabs()
 	for (size_t i = 0; i < nb->Size(); i++){
 		SeekOnTab(nb->Page(i));
 	}
+	resultDialog->FilterList();
 	if (!resultDialog->IsShown())
 		resultDialog->Show();
 }
