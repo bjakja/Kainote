@@ -394,6 +394,8 @@ done:
 		height = propframe->EncodedHeight;
 		arwidth = (videoprops->SARNum == 0) ? width : (float)width*((float)videoprops->SARNum / (float)videoprops->SARDen);
 		arheight = height;
+		CS = propframe->ColorSpace;
+		CR = propframe->ColorRange;
 		while (1){
 			bool divided = false;
 			for (int i = 10; i > 1; i--){
@@ -416,16 +418,17 @@ done:
 		}
 
 		if (rend){
-			CS = propframe->ColorSpace;
-			CR = propframe->ColorRange;
-
-			if (CS == FFMS_CS_UNSPECIFIED)
-				CS = width > 1024 || height >= 600 ? FFMS_CS_BT709 : FFMS_CS_BT470BG;
-			ColorSpace = RealColorSpace = ColorCatrixDescription(CS, CR);
 			SubsGrid *grid = ((TabPanel*)rend->GetParent())->Grid;
 			const wxString &colormatrix = grid->GetSInfo("YCbCr Matrix");
-			if ((CS == FFMS_CS_BT709 && colormatrix == "TV.601") || (ColorSpace != colormatrix && CS == FFMS_CS_BT470BG)) {
-				if (FFMS_SetInputFormatV(videosource, CS == FFMS_CS_BT709 ? FFMS_CS_BT470BG : FFMS_CS_BT470BG, CR, FFMS_GetPixFmt(""), &errinfo)){
+			bool changeMatrix = false;
+			if (CS == FFMS_CS_UNSPECIFIED){
+				CS = width > 1024 || height >= 600 ? FFMS_CS_BT709 : FFMS_CS_BT470BG;
+				if (CS == FFMS_CS_BT709 && colormatrix == "TV.709")
+					changeMatrix = true;
+			}
+			ColorSpace = RealColorSpace = ColorCatrixDescription(CS, CR);
+			if ((CS == FFMS_CS_BT709 && colormatrix == "TV.601") || (ColorSpace != colormatrix && CS == FFMS_CS_BT470BG) || changeMatrix) {
+				if (FFMS_SetInputFormatV(videosource, (CS == FFMS_CS_BT709 && !changeMatrix) ? FFMS_CS_BT470BG : FFMS_CS_BT709, CR, FFMS_GetPixFmt(""), &errinfo)){
 					KaiLog(_("Nie można zmienić macierzy YCbCr"));
 				}
 			}

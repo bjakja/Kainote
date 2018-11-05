@@ -306,7 +306,7 @@ seekFromStart:
 				foundLength = lfind.length();
 			}
 
-			if (foundPosition != -1){
+			if (foundPosition != -1 && (!onlyOption || KeepFinding(txt, foundPosition))){
 				textPosition = foundPosition + foundLength;
 				findstart = foundPosition;
 				findend = textPosition;
@@ -703,16 +703,17 @@ void FindReplace::FindInSubsLine(wxString *onlyString, TabPanel *tab, bool *isFi
 			foundLength = lfind.length();
 		}
 
-		if (foundPosition != -1){
+		if (foundPosition != -1 && (!onlyOption || KeepFinding(*onlyString, foundPosition))){
 			if (*isFirst){
 				FRRD->SetHeader(subsPath);
 				*isFirst = false;
 			}
-			FRRD->SetResults((*onlyString), wxPoint(foundPosition, foundLength), tab, 
+			FRRD->SetResults(*onlyString, wxPoint(foundPosition, foundLength), tab, 
 				positionId + 1, tabLinePosition, (tab)? L"" : subsPath);
 
 			if ((size_t)tabTextPosition >= onlyString->length() || startLine){
 				tabTextPosition = 0;
+				break;
 			}
 			else
 				tabTextPosition = foundPosition + 1;
@@ -726,64 +727,83 @@ void FindReplace::FindInSubsLine(wxString *onlyString, TabPanel *tab, bool *isFi
 
 int FindReplace::ReplaceInSubsLine(wxString *onlyString)
 {
-	int allreps = 0;
 	if (!(startLine || endLine) && (findString.empty() || onlyString->empty()))
 	{
 		if (onlyString->empty() && findString.empty())
 		{
-			*onlyString = replaceString; allreps = 1;
+			*onlyString = replaceString;
+			return 1;
 		}
 		else{ return 0; }
-	}
-	else if (regEx){
-		allreps = findReplaceRegEx.ReplaceAll(onlyString, replaceString);
 	}
 	else if (startLine || endLine){
 
 		wxString ltext = (!matchCase) ? onlyString->Lower() : *onlyString;
 		wxString lfind = (!matchCase) ? findString.Lower() : findString;
-		if (startLine){
+		bool startsTagBlock = ltext.StartsWith(L"{");
+		bool endsTagBlock = ltext.EndsWith(L"}");
+		if (startLine && (!onlyOption || (!startsTagBlock && onlyText) || (startsTagBlock && !onlyText))){
 			if (ltext.StartsWith(lfind) || lfind.empty()){
 				onlyString->replace(0, lfind.length(), replaceString);
-				allreps = 1;
+				return 1;
 			}
+			return 0;
 		}
-		if (endLine){
+		if (endLine && (!onlyOption || (!endsTagBlock && onlyText) || (endsTagBlock && !onlyText))){
 			if (ltext.EndsWith(lfind) || lfind.empty()){
 				int lenn = onlyString->length();
 				onlyString->replace(lenn - lfind.length(), lenn, replaceString);
-				allreps = 1;
+				return 1;
 			}
+			return 0;
 		}
-
+		return 0;
 	}
-	else if (!matchCase){
-		wxString lfind = findString.Lower();
-		wxString ltext = *onlyString;
-		ltext.MakeLower();
+	int linereps = 0;
+	
+	wxString lfind = (matchCase) ? findString : findString.Lower();
+	wxString ltext = (matchCase) ? *onlyString : onlyString->Lower();
 
-		int newpos = 0;
-		int flen = lfind.length();
-		allreps = 0;
-		while (1){
-			size_t poss = ltext.find(lfind, newpos);
-			if (poss == -1){ break; }
+	int newpos = 0;
+	size_t flen = lfind.length();
+	size_t textPos = 0;
+	int repsDiff = 0;
+
+	// especially for tags or text elimination I made replace by match
+	// should be faster than generate text blocks and replace it within
+	while (1){
+		if (regEx){
+			if (!findReplaceRegEx.Matches(ltext.Mid(newpos)) || !findReplaceRegEx.GetMatch(&textPos, &flen))
+				break;
+
+			textPos += newpos;
+		}
+		else
+			textPos = ltext.find(lfind, newpos);
+
+		if (textPos == -1){ break; }
+		newpos = textPos + lfind.length();
+		//diff for replacing and checking function
+		textPos += repsDiff;
+
+		if (!onlyOption || KeepFinding(*onlyString, textPos)){
+			
+			if (regEx){
+				wxString match = onlyString->Mid(textPos, flen);
+				findReplaceRegEx.Replace(&match, replaceString);
+				onlyString->replace(textPos, flen, match);
+				repsDiff += match.length() - flen;
+			}
 			else{
-				if (poss < 0){ poss = 0; }
-				if (poss > onlyString->length()){ poss = onlyString->length(); }
-				wxString hhh;
-				ltext.Remove(poss, flen);
-				ltext.insert(poss, replaceString);
-				onlyString->Remove(poss, flen);
-				onlyString->insert(poss, replaceString);
-				allreps++;
-				newpos = poss + replaceString.length();
+				onlyString->replace(textPos, flen, replaceString);
+				repsDiff += replaceString.length() - flen;
 			}
 
+			linereps++;
 		}
 	}
-	else{ allreps = onlyString->Replace(findString, replaceString); }
-	return allreps;
+	
+	return linereps;
 }
 
 void FindReplace::Replace(TabWindow *window)
@@ -874,9 +894,7 @@ int FindReplace::ReplaceAllInTab(TabPanel *tab, TabWindow *window)
 				Dialogue *Dialc = tab->Grid->file->CopyDialogueByKey(i);
 				Dialc->SetTextElement(dialogueColumn, txt);
 				allRelpacements += allreps;
-
 			}
-
 		}
 
 	}
@@ -1132,22 +1150,26 @@ bool FindReplace::CheckStyles(TabWindow *window, TabPanel *tab)
 	return false;
 }
 
-bool FindReplace::KeepFinding(const wxString &text, int textPos, bool findText)
+bool FindReplace::KeepFinding(const wxString &text, int textPos)
 {
 	bool findStart = false;
 	//I don't even need to check end cause when there's no end start will take all line
-	for (int i = textPos; i >= 0; i--){
-		if (text[i] == L'}')
+	for (int i = (textPos >= text.length()) ? text.length() - 1 : textPos; i >= 0; i--){
+		if (text[i] == L'}'){
+			if (endLine && i == text.length() - 1)
+				findStart = true;
+
 			break;
-		if (text[i] == L'{'){
+		}
+		else if (text[i] == L'{'){
 			findStart = true;
 			break;
 		}
 	}
-	if (!findText && findStart)
+	if (!onlyText && findStart)
 		return true;
 
-	if (findText && !findStart)
+	if (onlyText && !findStart)
 		return true;
 
 	return false;
@@ -1155,7 +1177,62 @@ bool FindReplace::KeepFinding(const wxString &text, int textPos, bool findText)
 
 bool FindReplace::GetNextBlock(wxString *text, wxString *block)
 {
-	return false;//if ()
+	if (nextBlockPosition >= text->length())
+		return false;
+
+	*block = L"";
+
+	if (!onlyOption){
+		*block = *text;
+		nextBlockPosition = blockLen = text->length();
+	}
+	else if (onlyText){
+		bool isblocked = false;
+		for (; nextBlockPosition < text->length(); nextBlockPosition++){
+			if ((*text)[nextBlockPosition] == L'}'){
+				isblocked = false;
+				if (!block->empty())
+					break;
+			}
+			else if ((*text)[nextBlockPosition] == L'{'){
+				isblocked = true;
+			}
+			else if (!isblocked){
+				if (block->empty())
+					blockPosition = nextBlockPosition;
+
+				*block << (*text)[nextBlockPosition];
+			}
+		}
+		blockLen = block->length();
+		if (blockLen)
+			return true;
+	}
+	else{
+		bool isblocked = false;
+		for (; nextBlockPosition < text->length(); nextBlockPosition++){
+			if ((*text)[nextBlockPosition] == L'{'){
+				isblocked = true;
+				if (!block->empty()){
+					nextBlockPosition--;
+					break;
+				}
+			}
+			if (isblocked){
+				if (block->empty())
+					blockPosition = nextBlockPosition;
+
+				*block << (*text)[nextBlockPosition];
+
+			}
+			if ((*text)[nextBlockPosition] == L'}')
+				isblocked = false;
+		}
+		blockLen = block->length();
+		if (blockLen)
+			return true;
+	}
+	return false;
 }
 
 bool FindReplace::UpdateValues(TabWindow *window, bool hasTlMode)
@@ -1172,7 +1249,7 @@ bool FindReplace::UpdateValues(TabWindow *window, bool hasTlMode)
 	endLine = window->EndLine->GetValue();
 	skipComments = !window->UseComments->GetValue();
 	onlyText = window->OnlyText->GetValue();
-	bool onlyTags = window->OnlyText->GetValue();
+	bool onlyTags = window->OnlyTags->GetValue();
 	onlyOption = onlyText || onlyTags;
 
 	findString = window->FindText->GetValue();

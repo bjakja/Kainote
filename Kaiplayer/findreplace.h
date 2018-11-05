@@ -76,6 +76,9 @@ public:
 	int tabTextPosition;
 	int tabLinePosition;
 	int positionId;
+	int blockPosition;
+	int blockLen;
+	int nextBlockPosition;
 	wxString findString;
 	wxString replaceString;
 	wxString subsPath;
@@ -102,7 +105,7 @@ public:
 	
 private:
 	bool CheckStyles(TabWindow *window, TabPanel *tab);
-	bool KeepFinding(const wxString &text, int textPos, bool findText);
+	bool KeepFinding(const wxString &text, int textPos);
 	//when no only option it returns whole text without copying
 	bool GetNextBlock(wxString *text, wxString *block);
 	bool UpdateValues(TabWindow *window, bool hasTlMode);

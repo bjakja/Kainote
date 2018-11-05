@@ -97,15 +97,14 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	frbsizer1->Add(EndLine, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	UseComments = new KaiCheckBox(this, -1, _("Uwzględnij komentarze"));
 	UseComments->SetValue((options & SEEK_IN_COMMENTS) > 0);
-	OnlyText = new KaiCheckBox(this, -1, _("Pomiń tagi"));
+	OnlyText = new KaiCheckBox(this, ID_ONLY_TEXT, _("Pomiń tagi"));
 	OnlyText->SetValue((options & SEEK_ONLY_IN_TEXT) > 0);
-	OnlyTags = new KaiCheckBox(this, ID_START_OF_LINE, _("Pomiń tekst"));
+	OnlyTags = new KaiCheckBox(this, ID_ONLY_TAGS, _("Pomiń tekst"));
 	OnlyTags->SetValue((options & SEEK_ONLY_IN_TAGS) > 0);
 	checksSizer->Add(UseComments, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	checksSizer->Add(OnlyText, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	checksSizer->Add(OnlyTags, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
-	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &TabWindow::OnRecheck, this, ID_START_OF_LINE);
-	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &TabWindow::OnRecheck, this, ID_END_OF_LINE);
+	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &TabWindow::OnRecheck, this, ID_START_OF_LINE, ID_ONLY_TAGS);
 	//in field
 	KaiStaticBoxSizer* frsbsizer2 = new KaiStaticBoxSizer(wxVERTICAL, this, _("W polu"));
 	wxBoxSizer* frbsizer2 = new wxBoxSizer(wxHORIZONTAL);
@@ -362,6 +361,12 @@ void TabWindow::OnRecheck(wxCommandEvent& event)
 	}
 	else if (id == ID_END_OF_LINE && StartLine->GetValue()){
 		StartLine->SetValue(false);
+	}
+	else if (id == ID_ONLY_TEXT && OnlyText->GetValue()){
+		OnlyTags->SetValue(false);
+	}
+	else if (id == ID_ONLY_TAGS && OnlyTags->GetValue()){
+		OnlyText->SetValue(false);
 	}
 
 }

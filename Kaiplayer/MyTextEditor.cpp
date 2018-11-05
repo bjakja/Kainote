@@ -256,7 +256,7 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 				if (MText[i] == L'{'){
 					tagList = new PopupTagList(this);
 					if (wkey != L'\\')
-						tagList->FilterListViaKeyword(wkey);
+						tagList->AppendToKeyword(wkey);
 					//calculate position of popup list
 					wxPoint pos;
 					pos.y = (Cursor.y * fontHeight) + fontHeight + 5;

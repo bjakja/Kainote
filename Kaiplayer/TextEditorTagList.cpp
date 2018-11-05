@@ -58,6 +58,9 @@ void PopupTagList::Popup(const wxPoint &pos, const wxSize &controlSize, int sele
 	wxSize size;
 	CalcPosAndSize(&npos, &size, controlSize);
 	SetPosition(npos);
+	if (size.y < 10)
+		size.y = 50;
+
 	SetSize(size);
 	Show();
 	
@@ -292,7 +295,7 @@ int PopupTagList::FindItemById(int id)
 
 		keyCount++;
 	}
-	if (idCount == id)
+	if (idCount == id && keyCount < itemsList.size())
 		return keyCount;
 
 	return -1;
