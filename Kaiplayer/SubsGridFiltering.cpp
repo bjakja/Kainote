@@ -63,8 +63,8 @@ void SubsGridFiltering::Filter(bool autoFiltering)
 		else{ grid->file->GetSelectionsAsKeys(keySelections); }
 	}
 	Dialogue *lastDial = NULL;
-	for (int i = 0; i < Subs->dials.size(); i++){
-		Dialogue *dial = Subs->dials[i];
+	for (int i = 0; i < Subs->dialogues.size(); i++){
+		Dialogue *dial = Subs->dialogues[i];
 		if (dial->NonDialogue) continue;
 		bool hideDialogue = CheckHiding(dial, i);
 		if (hideDialogue && !Invert || !hideDialogue && Invert){
@@ -94,8 +94,8 @@ void SubsGridFiltering::FilterPartial(int from)
 	bool hide = true;
 	bool changed = false;
 	
-	for (int i = keyFrom; i < Subs->dials.size(); i++){
-		Dialogue *dial = Subs->dials[i];
+	for (int i = keyFrom; i < Subs->dialogues.size(); i++){
+		Dialogue *dial = Subs->dialogues[i];
 		if (!dial->NonDialogue){
 			if (lastDial && dial->isVisible == VISIBLE){
 				keyTo = i - 1;
@@ -108,7 +108,7 @@ void SubsGridFiltering::FilterPartial(int from)
 		}
 	}
 	if (!changed){
-		keyTo = Subs->dials.size() - 1; 
+		keyTo = Subs->dialogues.size() - 1; 
 		KaiLogDebug("Something went wrong with partially hiding it is better to check it for potencial bugs."); 
 	}
 	grid->file->ReloadVisibleDialogues(keyFrom, keyTo);
@@ -123,8 +123,8 @@ void SubsGridFiltering::HideSelections()
 	Dialogue *lastDial = NULL;
 	int selssize = keySelections.size();
 	int j = 0;
-	for (int i = 0; i < Subs->dials.size(); i++){
-		Dialogue *dial = Subs->dials[i];
+	for (int i = 0; i < Subs->dialogues.size(); i++){
+		Dialogue *dial = Subs->dialogues[i];
 		if (dial->NonDialogue) continue;
 		bool isSelected = false;
 		if (j < selssize){ isSelected = keySelections[j] == i; if (isSelected){ j++; } }
@@ -147,8 +147,8 @@ void SubsGridFiltering::MakeTree()
 	int j = 0;
 	int treeDiff = 0;
 	bool startSelection = true;
-	for (int i = 0; i < Subs->dials.size() - treeDiff; i++){
-		Dialogue *dial = Subs->dials[i + treeDiff];
+	for (int i = 0; i < Subs->dialogues.size() - treeDiff; i++){
+		Dialogue *dial = Subs->dialogues[i + treeDiff];
 		if (dial->NonDialogue || !dial->isVisible) continue;
 		bool isSelected = false;
 		if (j < selssize){ isSelected = keySelections[j] == i; if (isSelected){ j++; } }
@@ -187,7 +187,7 @@ void SubsGridFiltering::TurnOffFiltering()
 	int keyActiveLine = grid->file->GetElementById(activeLine);
 	File *Subs = grid->file->GetSubs();
 	int i = 0;
-	for (auto dial : Subs->dials){
+	for (auto dial : Subs->dialogues){
 		if (dial->isVisible != VISIBLE && !dial->NonDialogue){
 			//if (i <= keyActiveLine && dial->isVisible < 1){ activeLineDiff++; }
 			dial->isVisible = VISIBLE; 

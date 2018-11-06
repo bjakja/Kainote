@@ -231,7 +231,7 @@ void MisspellReplacer::ShowResult(TabPanel *tab, int keyLine, const wxPoint &pos
 	Notebook *nb = Notebook::GetTabs();
 	for (size_t i = 0; i < nb->Size(); i++){
 		if (nb->Page(i) == tab){
-			if (keyLine < tab->Grid->file->GetAllCount()){
+			if (keyLine < tab->Grid->file->GetKeyCount()){
 				if (i != nb->iter)
 					nb->ChangePage(i);
 
@@ -377,9 +377,9 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 
 	bool isfirst = true;
 
-	while (tabLinePosition < Subs->dials.size())
+	while (tabLinePosition < Subs->dialogues.size())
 	{
-		Dialogue *Dial = Subs->dials[tabLinePosition];
+		Dialogue *Dial = Subs->dialogues[tabLinePosition];
 		if (!Dial->isVisible){ tabLinePosition++; continue; }
 
 		if ((!selectedOption) ||
@@ -499,9 +499,9 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 
 	File *Subs = tab->Grid->file->GetSubs();
 
-	while (tabLinePosition < Subs->dials.size())
+	while (tabLinePosition < Subs->dialogues.size())
 	{
-		Dialogue *Dial = Subs->dials[tabLinePosition];
+		Dialogue *Dial = Subs->dialogues[tabLinePosition];
 		if (!Dial->isVisible){ tabLinePosition++; continue; }
 
 		if ((!selectedOption) ||

@@ -254,9 +254,9 @@ seekFromStart:
 	bool onlysel = window->SelectedLines->GetValue();
 	File *Subs = tab->Grid->file->GetSubs();
 
-	while (linePosition < Subs->dials.size())
+	while (linePosition < Subs->dialogues.size())
 	{
-		Dialogue *Dial = Subs->dials[linePosition];
+		Dialogue *Dial = Subs->dialogues[linePosition];
 		if (!Dial->isVisible || (skipComments && Dial->IsComment)){ linePosition++; textPosition = 0; continue; }
 		
 		if ((!styles && !onlysel) ||
@@ -346,7 +346,7 @@ seekFromStart:
 
 		}
 		else{ textPosition = 0; linePosition++; }
-		if (!foundsome && linePosition > Subs->dials.size() - 1){
+		if (!foundsome && linePosition > Subs->dialogues.size() - 1){
 			break;
 		}
 	}
@@ -403,9 +403,9 @@ bool FindReplace::FindAllInTab(TabPanel *tab, TabWindow *window)
 	bool onlySelections = window->SelectedLines->GetValue();
 	File *Subs = tab->Grid->file->GetSubs();
 
-	for (; tabLinePosition < Subs->dials.size(); tabLinePosition++)
+	for (; tabLinePosition < Subs->dialogues.size(); tabLinePosition++)
 	{
-		Dialogue *Dial = Subs->dials[tabLinePosition];
+		Dialogue *Dial = Subs->dialogues[tabLinePosition];
 		if (!Dial->isVisible){ continue; }
 		if (skipComments && Dial->IsComment){ positionId++; continue; }
 
@@ -880,9 +880,9 @@ int FindReplace::ReplaceAllInTab(TabPanel *tab, TabWindow *window)
 	bool skipFiltered = !tab->Grid->ignoreFiltered;
 
 	for (size_t i = (!window->AllLines->GetValue() && firstSelectionId >= 0) ?
-		tab->Grid->file->GetElementById(firstSelectionId) : 0; i < Subs->dials.size(); i++)
+		tab->Grid->file->GetElementById(firstSelectionId) : 0; i < Subs->dialogues.size(); i++)
 	{
-		Dialogue *Dial = Subs->dials[i];
+		Dialogue *Dial = Subs->dialogues[i];
 		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue || (skipComments && Dial->IsComment)){ continue; }
 		
 		if ((notstyles || stylesAsText.Find("," + Dial->Style + ",") != -1) &&

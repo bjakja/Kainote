@@ -184,7 +184,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	int i = file->GetElementById(scPos)-1;
 	int k = scPos-1;
 
-	while (i < file->GetAllCount() && k < scrows-1){
+	while (i < file->GetKeyCount() && k < scrows-1){
 		bool isHeadline = (k < scPos);
 		if (!isHeadline){
 			Dial = file->GetDialogueByKey(i);
@@ -443,7 +443,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				tdc.SetPen(*wxTRANSPARENT_PEN);
 				tdc.DrawRectangle(posX + 1, posY, w - 1, GridHeight);
 				// GetDialogueKey was made for loops no checks
-				Dialogue *nextDial = (i < file->GetAllCount() - 1)? file->GetDialogueByKey(i + 1) : NULL;
+				Dialogue *nextDial = (i < file->GetKeyCount() - 1)? file->GetDialogueByKey(i + 1) : NULL;
 				if (nextDial && nextDial->treeState == TREE_CLOSED)
 					tdc.DrawBitmap(wxBITMAP_PNG(L"arrow_list"),posX + 6, posY + 5);
 				else{
@@ -520,7 +520,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 	bool shml = false, shmr = false, shmv = false;
 
 	File *Subs = file->GetSubs();
-	int maxx = Subs->dials.size();
+	int maxx = Subs->dialogues.size();
 
 	dc.GetTextExtent(wxString::Format(L"%i", maxx), &fw, &fh);
 	GridWidth[0] = fw + 10;
@@ -529,7 +529,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 
 	Dialogue *dial;
 	for (int i = 0; i<maxx; i++){
-		dial = Subs->dials[i];
+		dial = Subs->dialogues[i];
 		if (!dial->isVisible){ continue; }
 		if (first){
 			if (dial->Format != subsFormat){ dial->Convert(subsFormat); }

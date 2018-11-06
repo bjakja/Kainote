@@ -595,9 +595,9 @@ void FontCollector::GetAssFonts(File *subs, int tab)
 
 	wxString tags[] = { L"fn", L"b", L"i", L"p" };
 
-	for (size_t i = 0; i < subs->dials.size(); i++)
+	for (size_t i = 0; i < subs->dialogues.size(); i++)
 	{
-		Dialogue *dial = subs->dials[i];
+		Dialogue *dial = subs->dialogues[i];
 		if (dial->IsComment){ continue; }
 		dial->ParseTags(tags, 4, true);
 		ParseData *pdata = dial->parseData;

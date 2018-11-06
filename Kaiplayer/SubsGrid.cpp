@@ -141,13 +141,13 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 
 	//styles menu
 	Menu *stylesMenu = new Menu();
-	std::vector<Styles*> &styles = file->GetSubs()->styles;
+	std::vector<Styles*> *styles = file->GetStyleTable();
 	wxArrayString optionsFilterStyles;
 	Options.GetTable(GridFilterStyles, optionsFilterStyles, L",");
 	filterStyles.clear();
 	for (int i = 0; i < StylesSize(); i++){
-		MenuItem * styleItem = stylesMenu->Append(4448, styles[i]->Name, L"", true, NULL, NULL, ITEM_CHECK);
-		if (optionsFilterStyles.Index(styles[i]->Name) != -1){ styleItem->Check(); filterStyles.Add(styles[i]->Name); }
+		MenuItem * styleItem = stylesMenu->Append(4448, (*styles)[i]->Name, L"", true, NULL, NULL, ITEM_CHECK);
+		if (optionsFilterStyles.Index((*styles)[i]->Name) != -1){ styleItem->Check(); filterStyles.Add((*styles)[i]->Name); }
 	}
 	//filter submenu
 	int filterBy = Options.GetInt(GridFilterBy);
@@ -981,11 +981,10 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 	}
 
 	wxString tags[] = { L"pos", L"move", L"bord", L"shad", L"org", L"fsp", L"fscx", L"fs", L"clip", L"iclip", L"p", L"xbord", L"ybord", L"xshad", L"yshad" };
-	File *Subs = file->GetSubs();
-	for (int i = 0; i < Subs->dials.size(); i++){
+	for (int i = 0; i < file->GetKeyCount(); i++){
 		//zaczniemy od najłatwiejszego, marginesy
 
-		Dialogue *diall = Subs->dials[i];
+		Dialogue *diall = file->GetDialogue(i);
 		if (diall->IsComment){ continue; }
 		diall = diall->Copy(false, false);
 		bool marginChanged = false;
@@ -994,7 +993,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		if (diall->MarginR){ diall->MarginR *= xnsize; marginChanged = true; }
 		if (diall->MarginV){ diall->MarginV *= ynsize; marginChanged = true; }
 
-		wxString txt = (diall->TextTl != L"") ? diall->TextTl : diall->Text;
+		wxString &txt = diall->GetText();
 		/*long long replaceMismatch = 0;*/
 		size_t pos = 0;
 
@@ -1093,15 +1092,8 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		if (marginChanged || textChanged){
 			if (textChanged){
 				if (SpellErrors.size() >= (size_t)i) SpellErrors[i].clear();
-				if (diall->TextTl != L""){
-					diall->TextTl = txt;
-				}
-				else{
-					diall->Text = txt;
-				}
 			}
-			Subs->ddials.push_back(diall);
-			Subs->dials[i] = diall;
+			file->SetDialogueByKey(i, diall);
 			diall->ClearParse();
 		}
 		else{
@@ -1328,13 +1320,7 @@ void SubsGrid::TreeAddLines(int treeLine)
 
 	}
 	//Delete selected rows
-	File *subs = file->GetSubs();
-	for (auto i = subs->Selections.rbegin(); i != subs->Selections.rend(); i++)
-	{
-		int sel = *i;
-		subs->dials.erase(subs->dials.begin() + sel);
-		file->IdConverter->deleteItemByKey(sel);
-	}
+	file->DeleteSelectedDialogues();
 	//decrease keystart by num of selected lines before of tree
 	keystart -= beforeLinesDiff;
 	//insert before lines on tree start 
@@ -1343,7 +1329,7 @@ void SubsGrid::TreeAddLines(int treeLine)
 	}
 	//insert after lines need to find end of tree
 	if (afterTreeLines.size()){
-		for (int i = keystart; i < file->GetAllCount(); i++){
+		for (int i = keystart; i < file->GetKeyCount(); i++){
 			Dialogue *dial = file->GetDialogueByKey(i);
 			if ((!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart))){
 				InsertRows(i, afterTreeLines, false, true);
@@ -1351,6 +1337,7 @@ void SubsGrid::TreeAddLines(int treeLine)
 			}
 		}
 	}
+	file->ReloadVisibleDialogues();
 	//if something changed set modified and stuff
 	if (beforeTreeLines.size() || afterTreeLines.size()){
 		SaveSelections();
@@ -1369,7 +1356,7 @@ void SubsGrid::TreeCopy(int treeLine)
 {
 	wxString whattocopy;
 	int keystart = file->GetElementById(treeLine);
-	for (int i = keystart; i < file->GetAllCount(); i++){
+	for (int i = keystart; i < file->GetKeyCount(); i++){
 		Dialogue *dial = file->GetDialogueByKey(i);
 		if (!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart))
 			break;
@@ -1399,7 +1386,7 @@ void SubsGrid::TreeRemove(int treeLine)
 	int keystart = file->GetElementById(treeLine);
 	int keyend = keystart;
 	//tree changing need to be save to history instead of visibility
-	for (int i = keystart; i < file->GetAllCount(); i++){
+	for (int i = keystart; i < file->GetKeyCount(); i++){
 		Dialogue *dial = file->GetDialogueByKey(i);
 		if (!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart)){
 			keyend = i - 1;

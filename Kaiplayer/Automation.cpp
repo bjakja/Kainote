@@ -813,8 +813,8 @@ namespace Auto{
 		// Check for a new active row
 		if (lua_isnumber(L, -1)) {
 			active_idx = lua_tointeger(L, -1) - original_offset;
-			if (active_idx < 0 || active_idx >= subs->dials.size()) {
-				KaiLog(wxString::Format("Active row %d is out of bounds (must be 1-%u)", active_idx, subs->dials.size()));
+			if (active_idx < 0 || active_idx >= subs->dialogues.size()) {
+				KaiLog(wxString::Format("Active row %d is out of bounds (must be 1-%u)", active_idx, subs->dialogues.size()));
 				active_idx = original_active;
 			}
 			else
@@ -831,8 +831,8 @@ namespace Auto{
 				if (!lua_isnumber(L, -1))
 					return;
 				int cur = lua_tointeger(L, -1) - original_offset;
-				if (cur < 0 || cur >= subs->dials.size()) {
-					KaiLog(wxString::Format("Selected row %d is out of bounds (must be 1-%u)", cur, subs->dials.size()));
+				if (cur < 0 || cur >= subs->dialogues.size()) {
+					KaiLog(wxString::Format("Selected row %d is out of bounds (must be 1-%u)", cur, subs->dialogues.size()));
 					throw LuaForEachBreak();
 				}
 				if (active_idx == -1)

@@ -49,23 +49,23 @@ public:
 	//wxMutex mutex;
 	void AddLine(Dialogue *line);
 	void AddStyle(Styles *nstyl);
-	void ChangeLine(unsigned char editionType, Dialogue *line1, int wline, long cells, bool selline=false, bool dummy=false);
-	void ChangeCell(long cells, int wline, Dialogue *what);
-	void ChangeStyle(Styles *nstyl,int i);
+	void ChangeLine(unsigned char editionType, Dialogue *line1, size_t wline, long cells, bool selline=false, bool dummy=false);
+	void ChangeCell(long cells, size_t wline, Dialogue *what);
+	void ChangeStyle(Styles *nstyl,size_t i);
 	void Clearing();
 	void Convert(char type);
 
 	int FindStyle(const wxString &name,int *multiplication=NULL);
 	void GetStyles(wxString &stylesText, bool tld=false);
 	//this function is safe, do not return NULL, when failed returns i
-	Styles *GetStyle(int i, const wxString &name="");
+	Styles *GetStyle(size_t i, const wxString &name="");
 	std::vector<Styles*> *GetStyleTable();
 	bool IsModified();
 	
 	void SaveFile(const wxString &filename, bool cstat = true, bool loadFromEditbox = false);
 	wxString *SaveText();
 	
-	int StylesSize();
+	size_t StylesSize();
 	void DelStyle(int i);
 	void ChangeTimes(bool byFrame = false);
 	
@@ -92,8 +92,8 @@ public:
 	bool SetTlMode(bool mode);
 	void LoadDefault(bool line=true,bool sav=true, bool endload=true);
 	void GetASSRes(int *x,int *y);
-	int SInfoSize();
-	int GetCount();
+	size_t SInfoSize();
+	size_t GetCount();
 	void NextLine(int dir=1);
 	void SaveSelections(bool clear=false);
 	Dialogue *CopyDialogue(int i, bool push=true);

@@ -283,6 +283,10 @@ public:
 	void ClearParse();
 	void GetTextElement(int element, wxString *elementText);
 	void SetTextElement(int element, const wxString &elementText);
+	const wxString & GetTextNoCopy();
+	//ref value after copy dialogue it can by modifiable
+	wxString & GetText();
+	void SetText(const wxString &text);
 	Dialogue();
 	Dialogue(const wxString &ldial, const wxString &txttl = "");
 	~Dialogue();

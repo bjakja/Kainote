@@ -202,6 +202,23 @@ bool Dialogue::EndsWith(const wxString &text, wxUniChar ch, size_t *pos)
 	return false;
 }
 
+const wxString & Dialogue::GetTextNoCopy()
+{
+	return (TextTl != L"") ? TextTl : Text;
+}
+wxString & Dialogue::GetText()
+{
+	return Text.CheckTlRef(TextTl, TextTl != L"");
+}
+
+void Dialogue::SetText(const wxString &text)
+{
+	if (TextTl != L"")
+		TextTl = text;
+	else
+		Text = text;
+}
+
 void Dialogue::GetTextElement(int replaceColumn, wxString *elementText)
 {
 	if (replaceColumn == TXT){ *elementText = Text; }

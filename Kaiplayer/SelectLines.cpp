@@ -288,9 +288,9 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 	File *Subs = tab->Grid->file->GetSubs();
 	bool skipFiltered = !tab->Grid->ignoreFiltered;
 
-	for (int i = 0; i < Subs->dials.size(); i++)
+	for (int i = 0; i < Subs->dialogues.size(); i++)
 	{
-		Dialogue *Dial = Subs->dials[i];
+		Dialogue *Dial = Subs->dialogues[i];
 		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue){ continue; }
 
 		if (selectColumn == STYLE){

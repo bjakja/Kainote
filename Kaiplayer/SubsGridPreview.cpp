@@ -204,7 +204,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	int i = previewGrid->file->GetElementById(scPos) - 1;
 	int k = scPos - 1;
 
-	while (i < previewGrid->file->GetAllCount() && k < scrows){
+	while (i < previewGrid->file->GetKeyCount() && k < scrows){
 		bool isHeadline = (k < scPos);
 		if (!isHeadline){
 			Dial = previewGrid->file->GetDialogueByKey(i);
@@ -808,12 +808,12 @@ void SubsGridPreview::SeekForOccurences()
 	int startTime = actualDial->Start.mstime;
 	int endTime = actualDial->End.mstime;
 	Notebook * nb = Notebook::GetTabs();
-	File *thisSubs = parent->file->GetSubs();
+	SubsFile *thisSubs = parent->file;
 	previewData.clear();
 	int tabI = 0;
 	for (int i = 0; i < nb->Size(); i++){
 		TabPanel *tab = nb->Page(i);
-		File *subs = tab->Grid->file->GetSubs();
+		SubsFile *subs = tab->Grid->file;
 		if (thisSubs == subs){ continue; }
 		int lastLine = -2;
 		int startMin = INT_MAX;
@@ -821,8 +821,8 @@ void SubsGridPreview::SeekForOccurences()
 		int endMin = INT_MAX;
 		int endMax = -1;
 		int keyStartMin = 0, keyStartMax = 0, keyEndMin = 0, keyEndMax = 0;
-		for (size_t j = 0; j < subs->dials.size(); j++){
-			Dialogue *dial = subs->dials[j];
+		for (size_t j = 0; j < subs->GetKeyCount(); j++){
+			Dialogue *dial = subs->GetDialogueByKey(j);
 			if (!dial->isVisible){ continue; }
 			if (dial->Start.mstime < endTime && dial->End.mstime > startTime){
 				if (lastLine+1 == j){

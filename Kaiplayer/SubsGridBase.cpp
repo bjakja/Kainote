@@ -124,14 +124,10 @@ void SubsGridBase::Clearing()
 }
 void SubsGridBase::AddLine(Dialogue *line)
 {
-	file->subs->ddials.push_back(line);
-	file->subs->dials.push_back(line);
-	if (*line->isVisible){
-		file->IdConverter->insert(file->subs->dials.size() - 1);
-	}
+	file->AppendDialogue(line);
 }
 
-void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, int wline, long cells, bool selline, bool dummy)
+void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, size_t wline, long cells, bool selline/*=false*/, bool dummy/*=false*/)
 {
 	lastRow = wline;
 	wxArrayInt sels;
@@ -154,43 +150,43 @@ void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, int wl
 	SetModified(editionType, false, dummy);
 }
 
-void SubsGridBase::ChangeCell(long wcell, int wline, Dialogue *what)
+void SubsGridBase::ChangeCell(long cells, size_t wline, Dialogue *what)
 {
 	Dialogue *dial = CopyDialogue(wline);
-	if (wcell & LAYER){
+	if (cells & LAYER){
 		dial->Layer = what->Layer;
 	}
-	if (wcell & START){
+	if (cells & START){
 		dial->Start = what->Start;
 	}
-	if (wcell & END){
+	if (cells & END){
 		dial->End = what->End;
 	}
-	if (wcell & STYLE){
+	if (cells & STYLE){
 		dial->Style = what->Style;
 	}
-	if (wcell & ACTOR){
+	if (cells & ACTOR){
 		dial->Actor = what->Actor;
 	}
-	if (wcell & MARGINL){
+	if (cells & MARGINL){
 		dial->MarginL = what->MarginL;
 	}
-	if (wcell & MARGINR){
+	if (cells & MARGINR){
 		dial->MarginR = what->MarginR;
 	}
-	if (wcell & MARGINV){
+	if (cells & MARGINV){
 		dial->MarginV = what->MarginV;
 	}
-	if (wcell & EFFECT){
+	if (cells & EFFECT){
 		dial->Effect = what->Effect;
 	}
-	if (wcell & TXT){
+	if (cells & TXT){
 		dial->Text = what->Text;
 	}
-	if (wcell & COMMENT){
+	if (cells & COMMENT){
 		dial->IsComment = what->IsComment;
 	}
-	if (wcell & TXTTL){
+	if (cells & TXTTL){
 		dial->TextTl = what->TextTl;
 	}
 }
@@ -215,12 +211,11 @@ void SubsGridBase::Convert(char type)
 	const wxString & prefix = Options.GetString(ConvertASSTagsOnLineStart);
 
 	int i = 0;
-	File *subs = file->GetSubs();
-	auto &dials = subs->dials;
-	while (i<dials.size())
+	Dialogue *lastDialc = NULL;
+	while (i < file->GetKeyCount())
 	{
-		if ((type>ASS) && (subsFormat < SRT) && dials[i]->IsComment){
-			while (dials[i]->IsComment){
+		if ((type>ASS) && (subsFormat < SRT) && file->GetDialogueByKey(i)->IsComment){
+			while (file->GetDialogueByKey(i)->IsComment){
 				file->DeleteDialoguesByKeys(i, i + 1);
 			}
 		}
@@ -228,9 +223,9 @@ void SubsGridBase::Convert(char type)
 		dialc->Convert(type, prefix);
 		if ((newendtimes && type != TMP) || subsFormat == TMP)
 		{
-			if (i > 0){
-				if (dials[i - 1]->End.mstime > dialc->Start.mstime){
-					dials[i - 1]->End = dialc->Start;
+			if (lastDialc){
+				if (lastDialc->End.mstime > dialc->Start.mstime){
+					lastDialc->End = dialc->Start;
 				}
 			}
 
@@ -240,6 +235,7 @@ void SubsGridBase::Convert(char type)
 			dialc->End.NewTime(newend);
 		}
 
+		lastDialc = dialc;
 		i++;
 	}
 
@@ -266,7 +262,7 @@ void SubsGridBase::Convert(char type)
 		Edit->RefreshStyle();
 	}
 	if (subsFormat == ASS){
-		std::sort(file->subs->dials.begin(), file->subs->dials.end(), [](Dialogue *i, Dialogue *j){
+		file->SortAll([](Dialogue *i, Dialogue *j){
 			if (i->Start.mstime != j->Start.mstime){
 				return (i->Start.mstime < j->Start.mstime);
 			}
@@ -275,10 +271,10 @@ void SubsGridBase::Convert(char type)
 			}
 			return (i->Text.CmpNoCase(j->Text) < 0);
 		});
-		Dialogue *lastDialogue = dials[0];
+		Dialogue *lastDialogue = file->GetDialogueByKey(0);
 		int i = 1;
-		while (i < dials.size()){
-			Dialogue *actualDialogue = dials[i];
+		while (i < file->GetKeyCount()){
+			Dialogue *actualDialogue = file->GetDialogueByKey(i);
 			if (lastDialogue->Start == actualDialogue->Start &&
 				lastDialogue->End == actualDialogue->End &&
 				lastDialogue->Text == actualDialogue->Text){
@@ -357,9 +353,9 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 	wxString raw;
 	if (loadFromEditbox){
 		int activeLineKey = file->GetElementById(currentLine);
-		for (int i = 0; i < file->subs->dials.size(); i++)
+		for (int i = 0; i < file->GetKeyCount(); i++)
 		{
-			Dialogue *dial = file->subs->dials[i];
+			Dialogue *dial = file->GetDialogueByKey(i);
 			if (!ignoreFiltered && !dial->isVisible || dial->NonDialogue){ continue; }
 			//a tu trzeba w przypadku ebrow pobrać editbox line
 			if (i == activeLineKey){ dial = Edit->line; };
@@ -390,9 +386,9 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 		}
 	}
 	else{
-		for (int i = 0; i < file->subs->dials.size(); i++)
+		for (int i = 0; i < file->GetKeyCount(); i++)
 		{
-			Dialogue *dial = file->subs->dials[i];
+			Dialogue *dial = file->GetDialogueByKey[i];
 
 			if (tlmodeOn){
 				bool hasTextTl = dial->TextTl != L"";
@@ -429,75 +425,48 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 
 void SubsGridBase::AddStyle(Styles *nstyl)
 {
-	file->subs->dstyles.push_back(nstyl);
-	file->subs->styles.push_back(nstyl);
+	file->AddStyle(nstyl);
 }
 
-void SubsGridBase::ChangeStyle(Styles *nstyl, int i)
+void SubsGridBase::ChangeStyle(Styles *nstyl, size_t i)
 {
-	file->subs->dstyles.push_back(nstyl);
-	file->subs->styles[i] = nstyl;
+	file->ChangeStyle(nstyl, i);
 }
 
-int SubsGridBase::StylesSize()
+size_t SubsGridBase::StylesSize()
 {
-	return file->subs->styles.size();
+	return file->StylesSize();
 }
 
-Styles *SubsGridBase::GetStyle(int i, const wxString &name)
+Styles * SubsGridBase::GetStyle(size_t i, const wxString &name/*=""*/)
 {
-	if (name != L""){
-		for (unsigned int j = 0; j < file->subs->styles.size(); j++)
-		{
-			if (name == file->subs->styles[j]->Name){ return file->subs->styles[j]; }
-		}
-	}
-	return file->subs->styles[i];
+	return file->GetStyle(i, name);
 }
 
 std::vector<Styles*> *SubsGridBase::GetStyleTable()
 {
-	return &file->subs->styles;
+	return GetStyleTable();
 }
 
 //multiplication musi być ustawione na zero, wtedy zwróci ilość multiplikacji
 int SubsGridBase::FindStyle(const wxString &name, int *multip)
 {
-	int isfound = -1;
-	for (unsigned int j = 0; j < file->subs->styles.size(); j++)
-	{
-		if (name == file->subs->styles[j]->Name){
-			isfound = j;
-			if (multip){
-				*multip++;
-			}
-			else{ break; }
-		}
-	}
-	return isfound;
+	return file->FindStyle(name, multip);
 }
 
 void SubsGridBase::GetStyles(wxString &stylesText, bool tld/*=false*/)
 {
-	wxString tmpst;
-	if (tld){ tmpst = GetSInfo(L"TLMode Style"); }
-	for (size_t i = 0; i < file->subs->styles.size(); i++)
-	{
-		if (!(tld&&file->subs->styles[i]->Name == tmpst)){
-			stylesText << file->subs->styles[i]->GetRaw();
-		}
-	}
+	file->GetStyles(stylesText, tld);
 }
 
 void SubsGridBase::DelStyle(int i)
 {
-	file->edited = true;
-	file->subs->styles.erase(file->subs->styles.begin() + i);
+	file->DeleleStyle(i);
 }
 
-int SubsGridBase::GetCount()
+size_t SubsGridBase::GetCount()
 {
-	return file->IdConverter->size();
+	return file->GetCount();
 }
 
 class compare { // simple comparison function
@@ -599,16 +568,15 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 		}
 	}
 
-	File *Subs = file->GetSubs();
 	int firsttime = GetDialogue(firstSelection)->Start.mstime;
 	Dialogue *dialc;
 	Dialogue *Dial;
 	bool skipFiltered = !ignoreFiltered;
 	if (PostprocessorOptions){ time = 0; frame = 0; VAS = 0; whichTimes = 0; correctEndTimes = 0; moveTimeOptions = 0; }
 
-	for (int i = 0; i < Subs->dials.size(); i++)
+	for (int i = 0; i < file->GetKeyCount(); i++)
 	{
-		Dial = Subs->dials[i];
+		Dial = file->GetDialogueByKey(i);
 		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue){ continue; }
 
 		if (whichLines == 0
@@ -789,28 +757,16 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 void SubsGridBase::SortIt(short what, bool all)
 {
 	SaveSelections();
-	std::vector<Dialogue*> selected;
 	if (all){
-		for (int i = 0; i < GetCount(); i++){ file->GetDialogue(i)->ChangeDialogueState(1); }
+		for (size_t i = 0; i < GetCount(); i++){ file->GetDialogue(i)->ChangeDialogueState(1); }
+		file->SortAll((what == 0) ? sortstart : (what == 1) ? sortend : (what == 2) ? sortstyle :
+			(what == 3) ? sortactor : (what == 4) ? sorteffect : sortlayer);
 	}
 	else{
-		for (auto cur = file->subs->Selections.begin(); cur != file->subs->Selections.end(); cur++){
-			Dialogue *dial = file->subs->dials[*cur];
-			dial->ChangeDialogueState(1);
-			selected.push_back(dial);
-		}
+		file->SortSelected((what == 0) ? sortstart : (what == 1) ? sortend : (what == 2) ? sortstyle :
+			(what == 3) ? sortactor : (what == 4) ? sorteffect : sortlayer);
 	}
-	std::sort((all) ? file->subs->dials.begin() : selected.begin(), (all) ? file->subs->dials.end() : selected.end(),
-		(what == 0) ? sortstart : (what == 1) ? sortend : (what == 2) ? sortstyle :
-		(what == 3) ? sortactor : (what == 4) ? sorteffect : sortlayer);
-
-	if (!all){
-		int ii = 0;
-		for (auto cur = file->subs->Selections.begin(); cur != file->subs->Selections.end(); cur++){
-			file->subs->dials[*cur] = selected[ii++];
-		}
-		selected.clear();
-	}
+	
 	file->edited = true;
 	file->ReloadVisibleDialogues();
 	SpellErrors.clear();
@@ -830,15 +786,9 @@ void SubsGridBase::DeleteRow(int rw, int len)
 void SubsGridBase::DeleteRows()
 {
 	Freeze();
-	int sel = 0;
-	for (auto i = file->subs->Selections.rbegin(); i != file->subs->Selections.rend(); i++)
-	{
-		sel = *i;
-		file->subs->dials.erase(file->subs->dials.begin() + sel);
-		file->IdConverter->deleteItemByKey(sel);
-	}
+	file->DeleteSelectedDialogues();
+	int sel = FirstSelection();
 	SpellErrors.clear();
-	if (file->subs->Selections.size() > 0){ file->edited = true; }
 	SaveSelections(true);
 	if (GetCount() < 1){ AddLine(new Dialogue()); }
 	SetModified(GRID_DELETE_LINES, true, false, file->GetElementByKey(sel));
@@ -911,7 +861,7 @@ void SubsGridBase::UpdateUR(bool toolbar)
 	file->GetURStatus(&undo, &_redo);
 	Kai->Menubar->Enable(Undo, undo);
 	Kai->Menubar->Enable(Redo, _redo);
-	Kai->Menubar->Enable(UndoToLastSave, file->GetActualHistoryIter() != 0 && file->lastSave != -1);
+	Kai->Menubar->Enable(UndoToLastSave, file->GetActualHistoryIter() != 0 && file->GetLastSaveIter() != -1);
 	Kai->Menubar->Enable(SaveSubs, true);
 	if (toolbar){
 		Kai->Toolbar->UpdateId(Undo, undo);
@@ -960,7 +910,7 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 
 	if (StyleStore::HasStore()){
 		StyleStore *SS = StyleStore::Get();
-		SS->ASSList->SetArray(&file->subs->styles);
+		SS->ASSList->SetArray(file->GetStyleTable());
 		SS->ASSList->Refresh(false);
 	}
 	SpellErrors.clear();
@@ -973,11 +923,11 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	}
 	//Odtąd nie będzie trzeba tego zabezpieczać, FindIdFromKey nie zwróci -1;
 	int corrected = -1;
-	Edit->SetLine(file->FindIdFromKey(file->subs->activeLine, &corrected));
-	markedLine = file->FindIdFromKey(file->subs->markerLine);
-	scPos = file->FindIdFromKey(file->subs->scrollPosition);
+	Edit->SetLine(file->FindIdFromKey(file->GetActiveLine(), &corrected));
+	markedLine = file->FindIdFromKey(file->GetMarkerLine());
+	scPos = file->FindIdFromKey(file->GetScrollPosition());
 	if (corrected >= 0){
-		file->EraseSelectionKey(file->subs->activeLine);
+		file->EraseSelectionKey(file->GetActiveLine());
 		file->InsertSelectionKey(corrected);
 	}
 
@@ -1044,15 +994,7 @@ void SubsGridBase::DummyUndo(int newIter)
 
 int SubsGridBase::FirstSelection()
 {
-	if (!file->subs->Selections.empty()){
-		// return only visible element when nothing is visible, return -1;
-		for (auto it = file->subs->Selections.begin(); it != file->subs->Selections.end(); it++){
-			int sel = file->IdConverter->getElementByKey(*it);
-			if (sel >= 0)
-				return sel;
-		}
-	}
-	return -1;
+	return file->FirstSelection();
 }
 
 
@@ -1063,22 +1005,12 @@ void SubsGridBase::InsertRows(int Row,
 	const std::vector<Dialogue *> &RowsTable,
 	bool AddToDestroy, bool asKey)
 {
-	int convertedRow = (asKey) ? Row : file->IdConverter->getElementById(Row);
-	if (convertedRow < 0){ convertedRow = file->subs->dials.size(); }
-	file->subs->dials.insert(file->subs->dials.begin() + convertedRow, RowsTable.begin(), RowsTable.end());
-	//file->ReloadVisibleDialogues(convertedRow, convertedRow + RowsTable.size());
-	for (int i = 0; i < RowsTable.size(); i++){
-		file->IdConverter->insert(i + convertedRow);
-		if (!RowsTable[i]->isVisible){
-			file->IdConverter->deleteItemByKey(i + convertedRow, false);
-		}
-	}
-	if (asKey){ Row = file->IdConverter->getElementByKey(Row); }
-	if (Row >= 0){
+	file->InsertRows(Row, RowsTable, AddToDestroy, asKey);
+	if (asKey){ Row = file->GetElementByKey(Row); }
+	if (Row != -1){
 		wxArrayInt emptyarray;
 		SpellErrors.insert(SpellErrors.begin() + Row, RowsTable.size(), emptyarray);
 	}
-	if (AddToDestroy){ file->subs->ddials.insert(file->subs->ddials.end(), RowsTable.begin(), RowsTable.end()); }
 }
 
 //Uważaj na dodawanie do niszczarki, 
@@ -1086,25 +1018,18 @@ void SubsGridBase::InsertRows(int Row,
 //a podwójne dodanie to krasz przy niszczeniu obiektu.
 void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save, bool asKey)
 {
-	//SaveSelections();
-	int convertedRow = (asKey) ? Row : file->IdConverter->getElementById(Row);
-	if (convertedRow < 0){ convertedRow = file->subs->dials.size(); }
-	file->subs->dials.insert(file->subs->dials.begin() + convertedRow, NumRows, Dialog);
-	for (int i = convertedRow; i < convertedRow + NumRows; i++){
-		file->IdConverter->insert(i);
-		if (!file->subs->dials[i]->isVisible){
-			file->IdConverter->deleteItemByKey(i, false);
-		}
-	}
-	//file->ReloadVisibleDialogues(convertedRow, convertedRow + NumRows);
-	if (asKey){ Row = file->IdConverter->getElementByKey(Row); }
-	if (Row >= 0){
+	file->InsertRows(Row, NumRows, Dialog, AddToDestroy, Save, asKey);
+	if (asKey){ Row = file->GetElementByKey(Row); }
+	if (Row != -1){
 		wxArrayInt emptyarray;
 		SpellErrors.insert(SpellErrors.begin() + Row, NumRows, emptyarray);
 	}
-	if (AddToDestroy){ file->subs->ddials.push_back(Dialog); }
 	if (Save){
-		file->InsertSelectionKey(convertedRow);
+		if (asKey)
+			file->InsertSelectionKey(Row);
+		else
+			file->InsertSelection(Row);
+
 		SetModified(GRID_INSERT_ROW);
 		Refresh(false);
 	}
@@ -1127,46 +1052,14 @@ void SubsGridBase::SetSubsFormat(wxString ext)
 
 void SubsGridBase::AddSInfo(const wxString &SI, wxString val, bool save)
 {
-	wxString key;
-	if (val == L""){
-		key = SI.BeforeFirst(L':');
-		key.Trim(false);
-		key.Trim(true);
-		val = SI.AfterFirst(L':');
-		val.Trim(false);
-		val.Trim(true);
-	}
-	else{ key = SI; }
-	SInfo *oldinfo = NULL;
-	int ii = -1;
-	oldinfo = GetSInfoP(key, &ii);
-
-	if (!oldinfo || save){
-		oldinfo = new SInfo(key, val);
-		if (ii < 0){
-			file->subs->sinfo.push_back(oldinfo);
-		}
-		else{
-			file->subs->sinfo[ii] = oldinfo;
-		}
-		file->subs->dsinfo.push_back(oldinfo);
-	}
-	else{
-		oldinfo->Val = val;
-	}
-	//if(save){
-
-	//}
+	file->AddSInfo(SI, val, save);
 }
 
 void SubsGridBase::GetSInfos(wxString &textSinfo, bool tld/*=false*/)
 {
-	for (std::vector<SInfo*>::iterator cur = file->subs->sinfo.begin(); cur != file->subs->sinfo.end(); cur++) {
-		if (!(tld && (*cur)->Name.StartsWith(L"TLMode"))){
-			textSinfo << (*cur)->Name << L": " << (*cur)->Val << L"\r\n";
-		}
-	}
+	file->GetSInfos(textSinfo, tld);
 }
+
 //wszystkie set modified trzeba znaleźć i dodać editiontype.
 void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
 {
@@ -1228,10 +1121,7 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 
 void SubsGridBase::SwapRows(int frst, int scnd, bool sav)
 {
-
-	Dialogue *tmp = file->GetDialogue(frst);
-	(*file)[frst] = file->GetDialogue(scnd);
-	(*file)[scnd] = tmp;
+	file->SwapRows(frst, scnd);
 	wxArrayInt tmpspell = SpellErrors[frst];
 	SpellErrors[frst] = SpellErrors[scnd];
 	SpellErrors[scnd] = tmpspell;
@@ -1275,7 +1165,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 		if (ext != L"ass"){ originalFormat = 0; if (StylesSize() < 1){ AddStyle(new Styles()); } }
 		Edit->TlMode->Enable(true); Edit->RefreshStyle();
 		if (Options.GetBool(GridLoadSortedSubs)){
-			std::sort(file->subs->dials.begin(), file->subs->dials.end(), sortstart);
+			file->SortAll(sortstart);
 		}
 		active = wxAtoi(GetSInfo(L"Active Line"));
 		if (active >= GetCount()){ active = 0; }
@@ -1348,7 +1238,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 		if (GetSInfo(L"TLMode") == L""){
 			//for(int i=0;i<GetCount();i++){file->GetDialogue(i)->spells.clear();}
 
-			int ssize = file->subs->styles.size();
+			int ssize = file->StylesSize();
 			if (ssize > 0){
 				Styles *tlstyl = GetStyle(0, L"Default")->Copy();
 				for (int i = 0; i < ssize; i++){
@@ -1378,17 +1268,17 @@ bool SubsGridBase::SetTlMode(bool mode)
 		int iinf = -1;
 		GetSInfo(L"TLMode", &iinf);
 		if (iinf >= 0){
-			file->subs->sinfo.erase(file->subs->sinfo.begin() + iinf);
+			file->DeleteSInfo(iinf);
 		}
 		iinf = -1;
 		const wxString &vall = GetSInfo(L"TLMode Style", &iinf);
 		if (iinf >= 0){
 			int g = FindStyle(vall);
 			if (g >= 0){ DelStyle(g); }
-			file->subs->sinfo.erase(file->subs->sinfo.begin() + iinf);
+			file->DeleteSInfo(iinf);
 		}
 
-		for (int i = 0; i < file->GetAllCount(); i++)
+		for (int i = 0; i < file->GetKeyCount(); i++)
 		{
 			Dialogue *dial = file->GetDialogueByKey(i);
 			Dialogue *dialc = NULL;
@@ -1483,38 +1373,22 @@ Dialogue *SubsGridBase::CopyDialogueByKey(int i, bool push)
 
 Dialogue *SubsGridBase::GetDialogue(int i)
 {
-	if (i >= (int)file->subs->dials.size()){
-		return NULL;
-	}
 	return file->GetDialogue(i);
 }
 
 const wxString & SubsGridBase::GetSInfo(const wxString &key, int *ii/*=0*/)
 {
-	int i = 0;
-	for (std::vector<SInfo*>::iterator it = file->subs->sinfo.begin(); it != file->subs->sinfo.end(); it++)
-	{
-		if (key == (*it)->Name) { if (ii){ *ii = i; } return (*it)->Val; }
-		i++;
-	}
-	return emptyString;
+	return file->GetSInfo(key, ii);
 }
 
 SInfo *SubsGridBase::GetSInfoP(const wxString &key, int *ii)
 {
-	int i = 0;
-	for (std::vector<SInfo*>::iterator it = file->subs->sinfo.begin(); it != file->subs->sinfo.end(); it++)
-	{
-		if (key == (*it)->Name) { if (ii){ *ii = i; }; return (*it); }
-		i++;
-	}
-	*ii = -1;
-	return NULL;
+	return file->GetSInfoP(key, ii);
 }
 
-int SubsGridBase::SInfoSize()
+size_t SubsGridBase::SInfoSize()
 {
-	return file->subs->sinfo.size();
+	return file->SInfoSize();
 }
 
 wxString *SubsGridBase::SaveText()
@@ -1559,9 +1433,9 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 	int j = 1;
 	int activeLineKey = file->GetElementById(currentLine);
 	
-	for (int i = 0; i < file->subs->dials.size(); i++)
+	for (int i = 0; i < file->GetKeyCount(); i++)
 	{
-		Dialogue *dial = file->subs->dials[i];
+		Dialogue *dial = file->GetDialogueByKey(i);
 		if (!ignoreFiltered && !dial->isVisible || dial->NonDialogue){ continue; }
 		if (i == activeLineKey){
 			dial = Edit->line;
@@ -1658,21 +1532,16 @@ void SubsGridBase::GetASSRes(int *x, int *y)
 
 void SubsGridBase::SaveSelections(bool clear)
 {
-	file->undo[file->iter]->Selections = file->subs->Selections;
-	//tutaj muszą być przeróbki na klucze
-	file->undo[file->iter]->activeLine = file->GetElementById(currentLine);
-	file->undo[file->iter]->markerLine = file->GetElementById(markedLine);
-	file->undo[file->iter]->scrollPosition = file->GetElementById(scPos);
-	if (clear){ file->ClearSelections(); }
+	file->SaveSelections(clear, currentLine, markedLine, scPos);
 	savedSelections = true;
 }
 
 void SubsGridBase::GetCommonStyles(SubsGridBase *_grid, wxArrayString &styleTable)
 {
-	std::vector<Styles *> &styles1 = file->subs->styles;
-	std::vector<Styles *> &styles2 = _grid->file->subs->styles;
-	for (auto style1 : styles1){
-		for (auto style2 : styles2){
+	std::vector<Styles *> *styles1 = file->GetStyleTable();
+	std::vector<Styles *> *styles2 = _grid->file->GetStyleTable();
+	for (auto style1 : *styles1){
+		for (auto style2 : *styles2){
 			if (style1->Name == style2->Name){
 				styleTable.Add(style1->Name); break;
 			}
@@ -1689,7 +1558,7 @@ void SubsGridBase::SubsComparison()
 	bool compareByStyles = (comparisonType & COMPARE_BY_STYLES) != 0;
 	bool compareByChosenStyles = compareStyles.size() > 0;
 	bool compareBySelections = (comparisonType & COMPARE_BY_SELECTIONS) != 0;
-	int firstSize = CG1->file->GetAllCount(), secondSize = CG2->file->GetAllCount();
+	int firstSize = CG1->file->GetKeyCount(), secondSize = CG2->file->GetKeyCount();
 	if (CG1->Comparison){ CG1->Comparison->clear(); }
 	else{ CG1->Comparison = new std::vector<compareData>; }
 	if (CG2->Comparison){ CG2->Comparison->clear(); }

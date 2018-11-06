@@ -84,7 +84,7 @@ namespace Auto{
 
 		int sinfo = Subs->sinfo.size();
 		int styles = sinfo + Subs->styles.size();
-		int dials = styles + Subs->dials.size();
+		int dials = styles + Subs->dialogues.size();
 		if (i < 0 || i >= dials){
 			return false;
 		}
@@ -193,7 +193,7 @@ namespace Auto{
 		else if (i < dials)
 		{
 			//to jest odczyt wiêc nie kopiujemy
-			Dialogue *adial = Subs->dials[i - styles];
+			Dialogue *adial = Subs->dialogues[i - styles];
 
 			lua_pushstring(L, "[Events]");
 			lua_setfield(L, -2, "section");
@@ -460,7 +460,7 @@ namespace Auto{
 
 			if (strcmp(idx, "n") == 0) {
 				// get number of items
-				lua_pushnumber(L, Subs->dials.size() + Subs->sinfo.size() + Subs->styles.size());
+				lua_pushnumber(L, Subs->dialogues.size() + Subs->sinfo.size() + Subs->styles.size());
 				return 1;
 
 			}
@@ -569,7 +569,7 @@ namespace Auto{
 				int i = n - 1;
 				int sinfo = Subs->sinfo.size();
 				int styles = sinfo + Subs->styles.size();
-				int dials = styles + Subs->dials.size();
+				int dials = styles + Subs->dialogues.size();
 				if (i < 0 || i >= dials){
 					SAFE_DELETE(e);
 					lua_pushstring(L, "Line index is out of range");
@@ -578,20 +578,20 @@ namespace Auto{
 				}
 				if (i < sinfo && e->lclass == L"info"){
 					SInfo *inf = e->info->Copy();
-					Subs->dsinfo.push_back(inf);
+					Subs->deleteSinfo.push_back(inf);
 					Subs->sinfo[i] = inf;
 				}
 				else if (i < styles && e->lclass == L"style")
 				{
 					Styles *styl = e->astyle->Copy();
-					Subs->dstyles.push_back(styl);
+					Subs->deleteStyles.push_back(styl);
 					Subs->styles[i - sinfo] = styl;
 				}
 				else if (i < dials && e->lclass == L"dialogue")
 				{
 					Dialogue *dial = e->adial->Copy(false, false);
-					Subs->ddials.push_back(dial);
-					Subs->dials[i - styles] = dial;
+					Subs->deleteDialogues.push_back(dial);
+					Subs->dialogues[i - styles] = dial;
 				}
 				else
 				{
@@ -621,7 +621,7 @@ namespace Auto{
 	int AutoToFile::ObjectGetLen(lua_State *L)
 	{
 		File *Subs = laf->file;
-		lua_pushnumber(L, Subs->dials.size() + Subs->sinfo.size() + Subs->styles.size());
+		lua_pushnumber(L, Subs->dialogues.size() + Subs->sinfo.size() + Subs->styles.size());
 		return 1;
 	}
 
@@ -630,7 +630,7 @@ namespace Auto{
 		File *Subs = laf->file;
 		lua_pushinteger(L, (int)Subs->sinfo.size());
 		lua_pushinteger(L, (int)Subs->styles.size());
-		lua_pushinteger(L, (int)Subs->dials.size());
+		lua_pushinteger(L, (int)Subs->dialogues.size());
 
 		return 3;
 	}
@@ -648,7 +648,7 @@ namespace Auto{
 		//dorobiæ wstawianie do tablic spellerrors i charspersec podczas rysowania
 		int sinfo = Subs->sinfo.size();
 		int styles = sinfo + Subs->styles.size();
-		int dials = styles + Subs->dials.size();
+		int dials = styles + Subs->dialogues.size();
 		// sort the item id's so we can delete from last to first to preserve original numbering
 		if (itemcount == 1 && lua_istable(L, 1)) {
 			lua_pushvalue(L, 1);
@@ -683,7 +683,7 @@ namespace Auto{
 				Subs->styles.erase(Subs->styles.begin() + (ids[i] - sinfo));
 			}
 			else if (ids[i] < dials){
-				Subs->dials.erase(Subs->dials.begin() + (ids[i] - styles));
+				Subs->dialogues.erase(Subs->dialogues.begin() + (ids[i] - styles));
 			}
 		}
 
@@ -705,7 +705,7 @@ namespace Auto{
 		int a = lua_tointeger(L, 1), b = lua_tointeger(L, 2);
 		int sinfo = Subs->sinfo.size();
 		int styles = sinfo + Subs->styles.size();
-		int dials = styles + Subs->dials.size();
+		int dials = styles + Subs->dialogues.size();
 		int all = dials + 1;
 
 		if (a < 1) a = 1;
@@ -724,7 +724,7 @@ namespace Auto{
 				Subs->styles.erase(Subs->styles.begin() + (i - sinfo));
 			}
 			else{
-				Subs->dials.erase(Subs->dials.begin() + (i - styles));
+				Subs->dialogues.erase(Subs->dialogues.begin() + (i - styles));
 			}
 		}
 		return 0;
@@ -746,18 +746,18 @@ namespace Auto{
 			{
 				SInfo *inf = e->info->Copy();
 				Subs->sinfo.push_back(inf);
-				Subs->dsinfo.push_back(inf);
+				Subs->deleteSinfo.push_back(inf);
 			}
 			else if (e->lclass == L"style")
 			{
 				Styles *styl = e->astyle->Copy();
 				Subs->styles.push_back(styl);
-				Subs->dstyles.push_back(styl);
+				Subs->deleteStyles.push_back(styl);
 			}
 			if (e->lclass == L"dialogue"){
 				Dialogue *dial = e->adial->Copy();
-				Subs->ddials.push_back(dial);
-				Subs->dials.push_back(dial);
+				Subs->deleteDialogues.push_back(dial);
+				Subs->dialogues.push_back(dial);
 			}
 			SAFE_DELETE(e);
 		}
@@ -781,7 +781,7 @@ namespace Auto{
 
 		int start = int(lua_tonumber(L, 1) - 1);
 
-		if (start<0 || start>(int)(Subs->sinfo.size() + Subs->styles.size() + Subs->dials.size()))
+		if (start<0 || start>(int)(Subs->sinfo.size() + Subs->styles.size() + Subs->dialogues.size()))
 		{
 			lua_pushstring(L, "Out of range line index");
 			lua_error(L);
@@ -796,7 +796,7 @@ namespace Auto{
 			int sinfo = Subs->sinfo.size();
 			int stylsize = Subs->styles.size();
 			int styles = sinfo + stylsize;
-			int dialsize = Subs->dials.size();
+			int dialsize = Subs->dialogues.size();
 			int dials = styles + dialsize;
 
 			if (e->lclass == L"info")
@@ -804,22 +804,22 @@ namespace Auto{
 				SInfo *inf = e->info->Copy();
 				if (start >= sinfo){ Subs->sinfo.push_back(inf); }
 				else{ Subs->sinfo.insert(Subs->sinfo.begin() + start, inf); }
-				Subs->dsinfo.push_back(inf);
+				Subs->deleteSinfo.push_back(inf);
 			}
 			else if (e->lclass == L"style")
 			{
 				Styles *styl = e->astyle->Copy();
 				if (start - sinfo >= stylsize){ Subs->styles.push_back(styl); }
 				else{ Subs->styles.insert(Subs->styles.begin() + (start - sinfo), styl); }
-				Subs->dstyles.push_back(styl);
+				Subs->deleteStyles.push_back(styl);
 			}
 			else if (e->lclass == L"dialogue")
 			{
 				int newStart = start - styles;
 				Dialogue *dial = e->adial->Copy(false, newStart >= dialsize);
-				if (newStart >= dialsize){ Subs->dials.push_back(dial); }
-				else{ Subs->dials.insert(Subs->dials.begin() + newStart, dial); }
-				Subs->ddials.push_back(dial);
+				if (newStart >= dialsize){ Subs->dialogues.push_back(dial); }
+				else{ Subs->dialogues.insert(Subs->dialogues.begin() + newStart, dial); }
+				Subs->deleteDialogues.push_back(dial);
 			}
 			else{
 				SAFE_DELETE(e);
@@ -954,7 +954,7 @@ namespace Auto{
 	{
 		File *Subs = laf->file;
 		size_t i = check_uint(L, 2);
-		if (i >= Subs->dials.size() + Subs->sinfo.size() + Subs->styles.size()) {
+		if (i >= Subs->dialogues.size() + Subs->sinfo.size() + Subs->styles.size()) {
 			lua_pushnil(L);
 			return 1;
 		}

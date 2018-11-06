@@ -21,8 +21,8 @@
 //pamiętaj ilość elementów tablicy musi być równa ilości enumów
 //wxString 
 
-HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<void(int)> func )
-	: KaiDialog(parent, -1, _("Historia"),wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
+HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<void(int)> func)
+	: KaiDialog(parent, -1, _("Historia"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 {
 	wxArrayString history;
 	file->GetHistoryTable(&history);
@@ -43,15 +43,15 @@ HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<voi
 		Hide();
 	}, ID_SET_HISTORY_AND_CLOSE);
 	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
-	buttonSizer->Add(Set,1,wxALL,3);
-	buttonSizer->Add(Ok,1,wxALL,3);
-	buttonSizer->Add(Cancel,1,wxALL,3);
-	main->Add(HistoryList,1,wxEXPAND|wxALL,3);
-	main->Add(buttonSizer,0, wxCENTER);
-	main->SetMinSize(300,400);
+	buttonSizer->Add(Set, 1, wxALL, 3);
+	buttonSizer->Add(Ok, 1, wxALL, 3);
+	buttonSizer->Add(Cancel, 1, wxALL, 3);
+	main->Add(HistoryList, 1, wxEXPAND | wxALL, 3);
+	main->Add(buttonSizer, 0, wxCENTER);
+	main->SetMinSize(300, 400);
 	SetSizerAndFit(main);
 	CenterOnParent();
-	HistoryList->SetSelection(file->Iter(),true);
+	HistoryList->SetSelection(file->Iter(), true);
 	SetLabel(_("Historia") + " (" +
 		MakePolishPlural(history.GetCount(), _("element"), _("elementy"), _("elementów")) + ")");
 }
@@ -59,40 +59,36 @@ HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<voi
 
 File::File()
 	:editionType(0)
-	,activeLine(0)
+	, activeLine(0)
 {
 }
 
 File::~File()
 {
-	dials.clear();
+	dialogues.clear();
 	styles.clear();
 	sinfo.clear();
-	ddials.clear();
-	dstyles.clear();
-	dsinfo.clear();
+	deleteDialogues.clear();
+	deleteStyles.clear();
+	deleteSinfo.clear();
 	Selections.clear();
 }
 void File::Clear()
 {
-	
-	for(std::vector<Dialogue*>::iterator it = ddials.begin(); it != ddials.end(); it++)
+
+	for (std::vector<Dialogue*>::iterator it = deleteDialogues.begin(); it != deleteDialogues.end(); it++)
 	{
-		
 		delete (*it);
-		
 	}
-	
-	for(std::vector<Styles*>::iterator it = dstyles.begin(); it != dstyles.end(); it++)
+
+	for (std::vector<Styles*>::iterator it = deleteStyles.begin(); it != deleteStyles.end(); it++)
 	{
 		delete (*it);
-		
 	}
-	
-	for(std::vector<SInfo*>::iterator it = dsinfo.begin(); it != dsinfo.end(); it++)
+
+	for (std::vector<SInfo*>::iterator it = deleteSinfo.begin(); it != deleteSinfo.end(); it++)
 	{
 		delete (*it);
-		
 	}
 }
 
@@ -100,12 +96,11 @@ void File::Clear()
 
 File *File::Copy(bool copySelections)
 {
-	File *file=new File();
-	file->dials = dials;
-	file->styles= styles;
+	File *file = new File();
+	file->dialogues = dialogues;
+	file->styles = styles;
 	file->sinfo = sinfo;
-	//if (copySelections)
-		file->Selections = Selections;
+	file->Selections = Selections;
 	file->activeLine = activeLine;
 	file->markerLine = markerLine;
 	file->scrollPosition = scrollPosition;
@@ -114,81 +109,79 @@ File *File::Copy(bool copySelections)
 
 SubsFile::SubsFile()
 {
-	historyNames = new wxString[AUTOMATION_SCRIPT+1]{
+	historyNames = new wxString[AUTOMATION_SCRIPT + 1]{
 		"",//pierwszy element którego nie używamy a musi być ostatni enum weszedł a także ochronić nas przed potencjalnym 0
-		_("Otwarcie napisów"),
-		_("Nowe napisy"),
-		_("Edycja linii"),
-		_("Edycja wielu linii"),
-		_("Poprawa błędu pisowni w polu tekstowym"),
-		_("Powielenie linijek"),
-		_("Połączenie linijek"),
-		_("Połączenie linijki z poprzednią"),
-		_("Połączenie linijki z następną"),
-		/*10*/_("Połączenie linijek pozostawienie pierszej"),
-		_("Połączenie linijek pozostawienie ostatniej"),
-		_("Wklejenie linijek"),
-		_("Wklejenie kolumn"),
-		_("Wklejenie tłumaczenia"),
-		_("Przesunięcie tekstu tłumaczenia"),
-		_("Ustawienie czasów linii jako ciągłych"),
-		_("Ustawienie FPSu obliczonego z wideo"),
-		_("Ustawienie własnego FPSu"),
-		_("Zamiana linijek"),
-		/*20*/_("Konwersja napisów"),
-		_("Sortowanie napisów"),
-		_("Usunięcie linijek"),
-		_("Usunięcie tekstu"),
-		_("Ustawienie czasu początkowego"),
-		_("Ustawienie czasu końcowego"),
-		_("Włączenie trybu tłumaczenia"),
-		_("Wyłączenie trybu tłumaczenia"),
-		_("Dodanie nowej linii"),
-		_("Wstawienie linii"),
-		/*30*/_("Zmiana czasu na wykresie audio"),
-		_("Przyklejenie do klatki kluczowej"),
-		_("Zmiana nagłówku napisów"),
-		_("Akcja zaznacz linijki"),
-		_("Przesunięcie czasów"),
-		_("Poprawa błędu pisowni"),
-		_("Edycja stylów"),
-		_("Zmiana rozdzielczości napisów"),
-		_("Narzędzie pozycjonowania"),
-		_("Narzędzie ruchu"),
-		/*40*/_("Narzędzie skalowania"),
-		_("Narzędzie obrotów w osi Z"),
-		_("Narzędzie obrotów w osiach X i Y"),
-		_("Narzędzie wycinów prostokątnych"),
-		_("Narzędzie wycinów wektorowych"),
-		_("Narzędzie rysunków wektorowych"),
-		_("Narzędzie zmieniacz pozycji"),
-		_("Narzędzie zmieniacz skali i obrotów"),
-		_("Zamień"),
-		_("Zamień wszystko"),
-		/*50*/_("Poprawa drobnych błędów"),
-		_("Wstawienie drzewka"),
-		_("Ustawienie opisu"),
-		_("Dodanie linii do drzewka"),
-		_("Usunięcie drzewka"),
-		_("Skrypt automatyzacji")
+			_("Otwarcie napisów"),
+			_("Nowe napisy"),
+			_("Edycja linii"),
+			_("Edycja wielu linii"),
+			_("Poprawa błędu pisowni w polu tekstowym"),
+			_("Powielenie linijek"),
+			_("Połączenie linijek"),
+			_("Połączenie linijki z poprzednią"),
+			_("Połączenie linijki z następną"),
+			/*10*/_("Połączenie linijek pozostawienie pierszej"),
+			_("Połączenie linijek pozostawienie ostatniej"),
+			_("Wklejenie linijek"),
+			_("Wklejenie kolumn"),
+			_("Wklejenie tłumaczenia"),
+			_("Przesunięcie tekstu tłumaczenia"),
+			_("Ustawienie czasów linii jako ciągłych"),
+			_("Ustawienie FPSu obliczonego z wideo"),
+			_("Ustawienie własnego FPSu"),
+			_("Zamiana linijek"),
+			/*20*/_("Konwersja napisów"),
+			_("Sortowanie napisów"),
+			_("Usunięcie linijek"),
+			_("Usunięcie tekstu"),
+			_("Ustawienie czasu początkowego"),
+			_("Ustawienie czasu końcowego"),
+			_("Włączenie trybu tłumaczenia"),
+			_("Wyłączenie trybu tłumaczenia"),
+			_("Dodanie nowej linii"),
+			_("Wstawienie linii"),
+			/*30*/_("Zmiana czasu na wykresie audio"),
+			_("Przyklejenie do klatki kluczowej"),
+			_("Zmiana nagłówku napisów"),
+			_("Akcja zaznacz linijki"),
+			_("Przesunięcie czasów"),
+			_("Poprawa błędu pisowni"),
+			_("Edycja stylów"),
+			_("Zmiana rozdzielczości napisów"),
+			_("Narzędzie pozycjonowania"),
+			_("Narzędzie ruchu"),
+			/*40*/_("Narzędzie skalowania"),
+			_("Narzędzie obrotów w osi Z"),
+			_("Narzędzie obrotów w osiach X i Y"),
+			_("Narzędzie wycinów prostokątnych"),
+			_("Narzędzie wycinów wektorowych"),
+			_("Narzędzie rysunków wektorowych"),
+			_("Narzędzie zmieniacz pozycji"),
+			_("Narzędzie zmieniacz skali i obrotów"),
+			_("Zamień"),
+			_("Zamień wszystko"),
+			/*50*/_("Poprawa drobnych błędów"),
+			_("Wstawienie drzewka"),
+			_("Ustawienie opisu"),
+			_("Dodanie linii do drzewka"),
+			_("Usunięcie drzewka"),
+			_("Skrypt automatyzacji")
 	};
-	iter=0;
-	edited=false;
+	iter = 0;
+	edited = false;
 	subs = new File();
-	IdConverter = new AVLtree();
 }
 
 SubsFile::~SubsFile()
 {
 	subs->Clear();
 	delete subs;
-	for(std::vector<File*>::iterator it = undo.begin(); it != undo.end(); it++)
+	for (std::vector<File*>::iterator it = undo.begin(); it != undo.end(); it++)
 	{
 		(*it)->Clear();
 		delete (*it);
 	}
 	undo.clear();
-	delete IdConverter;
 	delete[] historyNames;
 }
 
@@ -196,31 +189,31 @@ SubsFile::~SubsFile()
 void SubsFile::SaveUndo(unsigned char editionType, int activeLine, int markerLine)
 {
 	if (iter != maxx()){
-		for(std::vector<File*>::iterator it = undo.begin()+iter+1; it != undo.end(); it++)
+		for (std::vector<File*>::iterator it = undo.begin() + iter + 1; it != undo.end(); it++)
 		{
 			(*it)->Clear();
 			delete (*it);
 		}
-		undo.erase(undo.begin()+iter+1, undo.end());
+		undo.erase(undo.begin() + iter + 1, undo.end());
 		if (lastSave >= undo.size()){ lastSave = -1; }
 	}
 	subs->activeLine = GetElementById(activeLine);
 	//subs->markerLine = markerLine;
 	subs->editionType = editionType;
 	undo.push_back(subs);
-	subs=subs->Copy();
+	subs = subs->Copy();
 	iter++;
-	edited=false;
+	edited = false;
 }
 
 
 bool SubsFile::Redo()
 {
-	if(iter<maxx()){
+	if (iter < maxx()){
 		iter++;
 		subs->Clear();
 		delete subs;
-		subs=undo[iter]->Copy();
+		subs = undo[iter]->Copy();
 		ReloadVisibleDialogues();
 		return false;
 	}
@@ -229,11 +222,11 @@ bool SubsFile::Redo()
 
 bool SubsFile::Undo()
 {
-	if(iter>0){
+	if (iter > 0){
 		iter--;
 		subs->Clear();
 		delete subs;
-		subs=undo[iter]->Copy();
+		subs = undo[iter]->Copy();
 		ReloadVisibleDialogues();
 		return false;
 	}
@@ -242,11 +235,11 @@ bool SubsFile::Undo()
 
 bool SubsFile::SetHistory(int _iter)
 {
-	if(_iter < undo.size() && _iter>=0){
+	if (_iter < undo.size() && _iter >= 0){
 		iter = _iter;
 		subs->Clear();
 		delete subs;
-		subs=undo[iter]->Copy();
+		subs = undo[iter]->Copy();
 		ReloadVisibleDialogues();
 		return false;
 	}
@@ -257,37 +250,37 @@ void SubsFile::DummyUndo()
 {
 	subs->Clear();
 	delete subs;
-	subs=undo[iter]->Copy();
+	subs = undo[iter]->Copy();
 	ReloadVisibleDialogues();
 }
 
 void SubsFile::DummyUndo(int newIter)
 {
-	if(newIter < 0 || newIter >= undo.size()){return;}
+	if (newIter < 0 || newIter >= undo.size()){ return; }
 	subs->Clear();
 	delete subs;
-	subs=undo[newIter]->Copy();
+	subs = undo[newIter]->Copy();
 	ReloadVisibleDialogues();
 	iter = newIter;
-	if(iter < undo.size() - 1){
-		for(std::vector<File*>::iterator it = undo.begin()+iter+1; it != undo.end(); it++)
+	if (iter < undo.size() - 1){
+		for (std::vector<File*>::iterator it = undo.begin() + iter + 1; it != undo.end(); it++)
 		{
 			(*it)->Clear();
 			delete (*it);
 		}
-		undo.erase(undo.begin()+iter+1, undo.end());
+		undo.erase(undo.begin() + iter + 1, undo.end());
 	}
 }
 
 bool SubsFile::IsNotSaved()
 {
-	if((subs->ddials.size()==0 && subs->dstyles.size()==0 && subs->dsinfo.size()==0 && !edited)){return false;}
+	if ((subs->deleteDialogues.size() == 0 && subs->deleteStyles.size() == 0 && subs->deleteSinfo.size() == 0 && !edited)){ return false; }
 	return true;
 }
 
 int SubsFile::maxx()
 {
-	return undo.size()-1;
+	return undo.size() - 1;
 }
 
 int SubsFile::Iter()
@@ -295,111 +288,185 @@ int SubsFile::Iter()
 	return iter;
 }
 
-int SubsFile::GetAllCount()
+size_t SubsFile::GetKeyCount()
 {
-	return subs->dials.size();
+	return subs->dialogues.size();
 }
 
-Dialogue *SubsFile::CopyDialogue(int i, bool push, bool keepstate)
+size_t SubsFile::GetCount()
+{
+	return filtered.size();
+}
+
+void SubsFile::AppendDialogue(Dialogue *dial)
+{
+	subs->deleteDialogues.push_back(dial);
+	subs->dialogues.push_back(dial);
+	if (*dial->isVisible){
+		filtered.push_back(dial);
+	}
+}
+
+Dialogue * SubsFile::CopyDialogue(size_t i, bool push/*=true*/, bool keepstate/*=false*/)
 {
 	Dialogue *dial = GetDialogue(i)->Copy(keepstate, !push);
-	subs->ddials.push_back(dial);
-	if (push){ (*this)[i] = dial; }
+	subs->deleteDialogues.push_back(dial);
+	if (push){ 
+		size_t key = GetElementById(i);
+		if (key == -1){
+			//ReloadVisibleDialogues();
+			//size_t key = GetElementById(i);
+			KaiLog(wxString::Format("Cannot find key by id %llu filtered table not rebuilt. Dialogue not added", (unsigned long long)i));
+		}
+		else{
+			subs->dialogues[key] = dial;
+		}
+		filtered[i] = dial;
+	}
 	return dial;
 }
 
-Dialogue *SubsFile::CopyDialogueByKey(int i, bool push, bool keepstate)
+Dialogue * SubsFile::CopyDialogueByKey(size_t i, bool push /*= true*/, bool keepstate /*= false*/)
 {
-	Dialogue *dial = subs->dials[i]->Copy(keepstate, !push);
-	subs->ddials.push_back(dial);
-	if (push){ subs->dials[i] = dial; }
+	Dialogue *dial = subs->dialogues[i]->Copy(keepstate, !push);
+	subs->deleteDialogues.push_back(dial);
+	if (push){ 
+		subs->dialogues[i] = dial; 
+		if (dial->isVisible != NOT_VISIBLE){
+			size_t id = GetElementByKey(i);
+			if (id == -1)
+				ReloadVisibleDialogues();
+			else
+				filtered[i];
+		}
+	}
 	return dial;
 }
 
-Dialogue *SubsFile::GetDialogue(int i, int *key)
+Dialogue * SubsFile::GetDialogue(size_t i)
 {
-	int Key = IdConverter->getElementById(i);
-	if (Key < 0){
-		Key = (*IdConverter)[IdConverter->size() - 1];
+	if (i >= filtered.size()){
+		//KaiLog(wxString::Format("tablica dialogów przekroczona %i, %i", Key, (int)subs->dials.size()));
+		i = filtered.size() - 1;
+	}
+	return subs->dialogues[i];
+}
+
+Dialogue *SubsFile::GetDialogueByKey(size_t Key)
+{
+	return subs->dialogues[Key];
+}
+
+void SubsFile::SetDialogue(size_t i, Dialogue *dial)
+{
+	if (i >= filtered.size()){
+		filtered.push_back(dial);
+		subs->dialogues.push_back(dial);
+	}
+
+	filtered[i] = dial;
+	size_t Key = GetElementById(i);
+	if (Key >= subs->dialogues.size()){
+		KaiLog(wxString::Format("Cannot find key by id %llu filtered table not rebuilt. Dialogue not added", (unsigned long long)i));
+		return;
+	}
+	subs->dialogues[Key] = dial;
+}
+
+void SubsFile::SetDialogueByKey(size_t i, Dialogue *dial)
+{
+	subs->deleteDialogues.push_back(dial);
+	subs->dialogues[i] = dial;
+	if (dial->isVisible != NOT_VISIBLE){
+		size_t id = GetElementByKey(i);
+		if (id < filtered.size())
+			filtered[id] = dial;
+	}
+}
+
+Dialogue *&SubsFile::operator[](size_t i)
+{
+	size_t Key = GetElementById(i);
+	if (Key == -1){
+		Key = filtered.size() - 1;
 		//KaiLog(wxString::Format("przekroczone drzewko %i, %i", i, IdConverter->size()));
 	}
-	if (Key >= subs->dials.size()){
+	if (Key >= subs->dialogues.size()){
 		//KaiLog(wxString::Format("tablica dialogów przekroczona %i, %i", Key, (int)subs->dials.size()));
-		Key = subs->dials.size() - 1;
+		Key = subs->dialogues.size() - 1;
 	}
-	if (key){ *key = Key; }
-	return subs->dials[Key];
+	return subs->dialogues[Key];
 }
 
-Dialogue *SubsFile::GetDialogueByKey(int Key)
-{
-	return subs->dials[Key];
-}
-
-void SubsFile::SetDialogue(int i, Dialogue *dial)
-{
-	int Key = IdConverter->getElementById(i);
-	if (Key < 0){
-		Key = (*IdConverter)[IdConverter->size() - 1];
-		//KaiLog(wxString::Format("przekroczone drzewko %i, %i", i, IdConverter->size()));
-	}
-	if (Key >= subs->dials.size()){
-		//KaiLog(wxString::Format("tablica dialogów przekroczona %i, %i", Key, (int)subs->dials.size()));
-		Key = subs->dials.size() - 1;
-	}
-	subs->ddials.push_back(dial);
-	subs->dials[Key] = dial;
-}
-
-void SubsFile::SetDialogueByKey(int i, Dialogue *dial)
-{
-	subs->ddials.push_back(dial);
-	subs->dials[i] = dial;
-}
-
-Dialogue *&SubsFile::operator[](int i)
-{
-	int Key = IdConverter->getElementById(i);
-	if (Key < 0){
-		Key = (*IdConverter)[IdConverter->size() - 1];
-		//KaiLog(wxString::Format("przekroczone drzewko %i, %i", i, IdConverter->size()));
-	}
-	if (Key >= subs->dials.size()){
-		//KaiLog(wxString::Format("tablica dialogów przekroczona %i, %i", Key, (int)subs->dials.size()));
-		Key = subs->dials.size() - 1;
-	}
-	return subs->dials[Key];
-}
-
-void SubsFile::DeleteDialogues(int from, int to)
+void SubsFile::DeleteDialogues(size_t from, size_t to)
 {
 	edited = true;
-	if (to < IdConverter->size()){
-		subs->dials.erase(subs->dials.begin() + IdConverter->getElementById(from), subs->dials.begin() + IdConverter->getElementById(to));
+	if (from >= filtered.size())
+		return;
+	if (to >= filtered.size())
+		to = filtered.size() - 1;
+	
+	size_t kfrom = GetElementById(from);
+	size_t kto = GetElementById(to);
+	//when in filter range it should work but when in filtered are old dialogues it may not find key
+	if (kfrom == -1 || kto == -1){
+		KaiLog(L"Filtered not rebuilt or other code bugs, delete aborted");
+		return;
 	}
-	else{
-		subs->dials.erase(subs->dials.begin() + IdConverter->getElementById(from), subs->dials.end());
-	}
-	for (int i = from; i < to; i++){
-		IdConverter->deleteItemById(i);
+	for (size_t i = to, k = kto; k + 1 > kfrom; i--, k--){
+		if (subs->dialogues[k]->isVisible != NOT_VISIBLE){
+			subs->dialogues.erase(subs->dialogues.begin() + k);
+			filtered.erase(subs->dialogues.begin() + i);
+		}
 	}
 }
 
-void SubsFile::DeleteDialoguesByKeys(int from, int to)
+void SubsFile::DeleteDialoguesByKeys(size_t from, size_t to)
 {
 	edited = true;
-	subs->dials.erase(subs->dials.begin() + from, subs->dials.begin() + to);
-	for (int i = from; i < to; i++){
-		IdConverter->deleteItemByKey(i);
+	subs->dialogues.erase(subs->dialogues.begin() + from, subs->dialogues.begin() + to);
+	ReloadVisibleDialogues(from, to);
+}
+
+void SubsFile::DeleteSelectedDialogues()
+{
+	for (auto i = subs->Selections.rbegin(); i != subs->Selections.rend(); i++)
+	{
+		subs->dialogues.erase(subs->dialogues.begin() + (*i));
 	}
+	if (subs->Selections.size() > 0){ 
+		ReloadVisibleDialogues();
+		edited = true; 
+	}
+}
+
+void SubsFile::SortAll(bool func(Dialogue *i, Dialogue *j))
+{
+	std::sort(subs->dialogues.begin(), subs->dialogues.end(), func);
+}
+
+void SubsFile::SortSelected(bool func(Dialogue *i, Dialogue *j))
+{
+	std::vector<Dialogue*> selected;
+	for (auto cur = subs->Selections.begin(); cur != subs->Selections.end(); cur++){
+		Dialogue *dial = subs->dialogues[*cur];
+		dial->ChangeDialogueState(1);
+		selected.push_back(dial);
+	}
+	std::sort(selected.begin(), selected.end(), func);
+	int ii = 0;
+	for (auto cur = subs->Selections.begin(); cur != subs->Selections.end(); cur++){
+		subs->dialogues[*cur] = selected[ii++];
+	}
+	selected.clear();
 }
 
 void SubsFile::GetSelections(wxArrayInt &selections, bool deselect)
 {
 	selections.clear();
 	for (std::set<int>::iterator i = subs->Selections.begin(); i != subs->Selections.end(); i++){
-		int sel = IdConverter->getElementByKey(*i);
-		if(sel >= 0) 
+		int sel = GetElementByKey(*i);
+		if (sel >= 0)
 			selections.Add(sel);
 	}
 	if (deselect){ subs->Selections.clear(); }
@@ -414,72 +481,72 @@ void SubsFile::GetSelectionsAsKeys(wxArrayInt &selectionsKeys, bool deselect)
 	if (deselect){ subs->Selections.clear(); }
 }
 
-void SubsFile::InsertSelection(int i)
+void SubsFile::InsertSelection(size_t i)
 {
 	//insert -1 raczej nic nie zaszkodzi bo przechowujemy int
-	subs->Selections.insert(IdConverter->getElementById(i));
+	subs->Selections.insert(GetElementById(i));
 }
 
-void SubsFile::InsertSelections(int from, int to, bool deselect /*= false*/)
+void SubsFile::InsertSelections(size_t from, size_t to, bool deselect /*= false*/)
 {
 	if (deselect){ subs->Selections.clear(); }
-	int fromKey = IdConverter->getElementById(from);
-	if (fromKey < 0 ){ return; }
-	int toKey = IdConverter->getElementById(to);
-	if (toKey < 0 ){ toKey = subs->dials.size()-1; }
-	for (int i = fromKey; i <= toKey; i++){
-		if (*subs->dials[i]->isVisible){
+	size_t fromKey = GetElementById(from);
+	if (fromKey < 0){ return; }
+	size_t toKey = GetElementById(to);
+	if (toKey < 0){ toKey = subs->dialogues.size() - 1; }
+	for (size_t i = fromKey; i <= toKey; i++){
+		if (*subs->dialogues[i]->isVisible){
 			subs->Selections.insert(i);
 		}
 	}
 }
-void SubsFile::InsertKeySelections(int from, int to, bool deselect /*= false*/)
+void SubsFile::InsertKeySelections(size_t from, size_t to, bool deselect /*= false*/)
 {
 	if (deselect){ subs->Selections.clear(); }
-	if (to < 0){ to = subs->dials.size()-1; }
-	for (int i = from; i <= to; i++){
-		if (*subs->dials[i]->isVisible){
+	if (to < 0){ to = subs->dialogues.size() - 1; }
+	for (size_t i = from; i <= to; i++){
+		if (*subs->dialogues[i]->isVisible){
 			subs->Selections.insert(i);
 		}
 	}
 }
 
-void SubsFile::InsertSelectionKey(int i)
+void SubsFile::InsertSelectionKey(size_t i)
 {
 	subs->Selections.insert(i);
 }
 
-void SubsFile::EraseSelection(int i)
+void SubsFile::EraseSelection(size_t i)
 {
 	//trzeba to sprawdzić czy erase skraszuje gdy dostanie -1
-	subs->Selections.erase(IdConverter->getElementById(i));
+	subs->Selections.erase(GetElementById(i));
 }
 
-void SubsFile::EraseSelectionKey(int i)
+void SubsFile::EraseSelectionKey(size_t i)
 {
 	subs->Selections.erase(i);
 }
 
-int SubsFile::FindIdFromKey(int key, int *corrected)
+size_t SubsFile::FindIdFromKey(size_t key, int *corrected)
 {
-	int Id = IdConverter->getElementByKey(key);
-	if (Id < 0){
+	size_t Id = GetElementByKey(key);
+	if (Id == -1){
 		Id = 0;
-		int size = subs->dials.size();
+		size_t size = subs->dialogues.size();
 		if (key >= size){ key = size - 1; }
-		int i = key-1;
+		size_t i = key - 1;
 		while (i >= 0){
-			if (subs->dials[i]->isVisible != NOT_VISIBLE){
+			if (subs->dialogues[i]->isVisible != NOT_VISIBLE){
 				if (corrected){ *corrected = i; }
-				return IdConverter->getElementByKey(i);
+				return GetElementByKey(i);
 			}
 			i--;
 		}
-		i = key+1;
+		i = key + 1;
 		while (i < size){
-			if (subs->dials[i]->isVisible != NOT_VISIBLE){
+			if (subs->dialogues[i]->isVisible != NOT_VISIBLE){
 				if (corrected){ *corrected = i; }
-				return IdConverter->getElementByKey(i);
+				return GetElementByKey(i);
 			}
 			i++;
 		}
@@ -487,17 +554,17 @@ int SubsFile::FindIdFromKey(int key, int *corrected)
 	return Id;
 }
 
-bool SubsFile::IsSelectedByKey(int key)
+bool SubsFile::IsSelectedByKey(size_t key)
 {
 	return subs->Selections.find(key) != subs->Selections.end();
 }
 
-bool SubsFile::IsSelected(int i)
+bool SubsFile::IsSelected(size_t i)
 {
-	return subs->Selections.find(IdConverter->getElementById(i)) != subs->Selections.end();
+	return subs->Selections.find(GetElementById(i)) != subs->Selections.end();
 }
 
-int SubsFile::SelectionsSize()
+size_t SubsFile::SelectionsSize()
 {
 	return subs->Selections.size();
 }
@@ -507,29 +574,58 @@ void SubsFile::ClearSelections()
 	subs->Selections.clear();
 }
 
-int SubsFile::GetElementById(int Id)
+size_t SubsFile::GetElementById(size_t id)
 {
-	return IdConverter->getElementById(Id);
+	if (id >= filtered.size())
+		return -1;
+
+	Dialogue * row = filtered[id];
+	for (size_t i = id; i < subs->dialogues.size(); i++){
+		if (row == subs->dialogues[i]){
+			return i;
+		}
+	}
+
+	// it should not happen but with bugs it's possible
+	return -1;
 }
 
-int SubsFile::GetElementByKey(int Key)
+size_t SubsFile::GetElementByKey(size_t key)
 {
-	return IdConverter->getElementByKey(Key);
+	if (key >= subs->dialogues.size() || key < 0)
+		return -1;
+
+	Dialogue * row = subs->dialogues[key];
+	if (row->isVisible == NOT_VISIBLE)
+		return -1;
+
+	size_t i = (key < filtered.size()) ? key : filtered.size() - 1;
+	while (i + 1 > 0){
+		if (row == filtered[i])
+			return i;
+
+		i--;
+	}
+	return -1;
 }
-	
-Styles *SubsFile::CopyStyle(int i, bool push)
+
+Styles *SubsFile::CopyStyle(size_t i, bool push)
 {
-	Styles *styl=subs->styles[i]->Copy();
-	subs->dstyles.push_back(styl);
-	if(push){subs->styles[i]=styl;}
+	Styles *styl = subs->styles[i]->Copy();
+	subs->deleteStyles.push_back(styl);
+	if (push){
+		subs->styles[i] = styl;
+	}
 	return styl;
 }
-	
-SInfo *SubsFile::CopySinfo(int i, bool push)
+
+SInfo *SubsFile::CopySinfo(size_t i, bool push)
 {
-	SInfo *sinf=subs->sinfo[i]->Copy();
-	subs->dsinfo.push_back(sinf);
-	if(push){subs->sinfo[i]=sinf;}
+	SInfo *sinf = subs->sinfo[i]->Copy();
+	subs->deleteSinfo.push_back(sinf);
+	if (push){
+		subs->sinfo[i] = sinf;
+	}
 	return sinf;
 }
 
@@ -542,68 +638,57 @@ void SubsFile::EndLoad(unsigned char editionType, int activeLine, bool initialSa
 
 	subs->editionType = editionType;
 	undo.push_back(subs);
-	subs=subs->Copy();
+	subs = subs->Copy();
 }
 
 void SubsFile::RemoveFirst(int num)
 {
 	//uwaga pierwszym elementem tablicy są napisy zaraz po wczytaniu dlatego też nie należy go usuwać
-	for(std::vector<File*>::iterator it = undo.begin()+1; it != undo.begin()+num; it++)
+	for (std::vector<File*>::iterator it = undo.begin() + 1; it != undo.begin() + num; it++)
 	{
 		(*it)->Clear();
 		delete (*it);
 	}
-	undo.erase(undo.begin()+1, undo.begin()+num);
-	if (lastSave>iter){ lastSave -= (num - 1); }
-	iter-=(num-1);
+	undo.erase(undo.begin() + 1, undo.begin() + num);
+	if (lastSave > iter){ lastSave -= (num - 1); }
+	iter -= (num - 1);
 }
 
 void SubsFile::GetURStatus(bool *_undo, bool *_redo)
 {
-	*_redo= (iter<(int)undo.size()-1);
-	*_undo= (iter>0);
+	*_redo = (iter < (int)undo.size() - 1);
+	*_undo = (iter > 0);
 }
 
-File *SubsFile::GetSubs()
-{
-	return subs;
-}
+//File *SubsFile::GetSubs()
+//{
+//	return subs;
+//}
 
-void SubsFile::ReloadVisibleDialogues(int keyfrom, int keyto)
+void SubsFile::ReloadVisibleDialogues(size_t keyfrom, size_t keyto)
 {
 	int i = keyfrom;
-	int size = subs->dials.size();
+	int size = subs->dialogues.size();
+	if (keyfrom >= size)
+		return;
+	if (keyto >= size)
+		keyto = size - 1;
+
 	while (i <= keyto){
-		bool visible = (i < size) ? subs->dials[i]->isVisible > 0 : false;
-		if (visible && IdConverter->getElementByKey(i) == -1){
-			IdConverter->insert(i,false);
-		}
-		else if (!visible && IdConverter->getElementByKey(i) != -1){
-			IdConverter->deleteItemByKey(i,false);
-		}
+		filtered.push_back(subs->dialogues[i]);
 		i++;
 	}
 }
 
 void SubsFile::ReloadVisibleDialogues()
 {
-	int i = 0;
-	int size = subs->dials.size();
-	int lastElem = IdConverter->getElementById(IdConverter->size() - 1);
-	while (i <= lastElem || i < size){
-		bool visible = (i<size)? subs->dials[i]->isVisible > 0 : false;
-		if (visible && IdConverter->getElementByKey(i) == -1){
-			IdConverter->insert(i, false);
-		}
-		else if (!visible && IdConverter->getElementByKey(i) != -1){
-			IdConverter->deleteItemByKey(i,false);
-		}
-		i++;
+	for (int i = 0; i < subs->dialogues.size(); i++){
+		filtered.push_back(subs->dialogues[i]);
 	}
 }
 
-unsigned char SubsFile::CheckIfHasHiddenBlock(int i){
-	int size = IdConverter->size();
+unsigned char SubsFile::CheckIfHasHiddenBlock(size_t i){
+	int size = filtered.size();
 	if (i + 1 < size){
 		int j = i + 1;
 		Dialogue * dial = GetDialogue(j);
@@ -615,40 +700,40 @@ unsigned char SubsFile::CheckIfHasHiddenBlock(int i){
 		}
 	}
 	if (i >= size){ return 0; }
-	int keyFirst = (i < 0) ? -1 : IdConverter->getElementById(i);
-	int keySecond = IdConverter->getElementById(i + 1);
+	int keyFirst = (i < 0) ? -1 : GetElementById(i);
+	int keySecond = GetElementById(i + 1);
 	if ((keyFirst + 1) != keySecond){
 		int j = keyFirst + 1;
-		if (keySecond < 0){ keySecond = subs->dials.size(); }
+		if (keySecond < 0){ keySecond = subs->dialogues.size(); }
 		while (j < keySecond){
-			if (!subs->dials[j]->NonDialogue){ return 1; }
+			if (!subs->dialogues[j]->NonDialogue){ return 1; }
 			j++;
 		}
 	}
-	
+
 	return 0;
 }
 
-bool SubsFile::CheckIfIsTree(int i){
+bool SubsFile::CheckIfIsTree(size_t i){
 	int ikey = GetElementById(i);
 	if (ikey < 0)
 		return 0;
 
-	Dialogue *dial = subs->dials[ikey];
+	Dialogue *dial = subs->dialogues[ikey];
 	return dial->treeState == TREE_DESCRIPTION;
 }
 
-int SubsFile::OpenCloseTree(int i){
-	int ikey = GetElementById(i);
-	int endOfTree = -1;
+size_t SubsFile::OpenCloseTree(size_t i){
+	size_t ikey = GetElementById(i);
+	size_t endOfTree = -1;
 	int visibility = NOT_VISIBLE;
-	for (int k = ikey+1; k < subs->dials.size(); k++){
-		Dialogue *dial = subs->dials[k];
+	for (size_t k = ikey + 1; k < subs->dialogues.size(); k++){
+		Dialogue *dial = subs->dialogues[k];
 		if (dial->treeState < TREE_CLOSED){
 			endOfTree = k - 1;
 			break;
 		}
-		if(dial->treeState == TREE_CLOSED){
+		if (dial->treeState == TREE_CLOSED){
 			dial->isVisible = visibility = VISIBLE;
 			dial->treeState = TREE_OPENED;
 		}
@@ -658,20 +743,20 @@ int SubsFile::OpenCloseTree(int i){
 		}
 	}
 	if (endOfTree < 0){
-		endOfTree = subs->dials.size() - 1;
+		endOfTree = subs->dialogues.size() - 1;
 	}
 	if (ikey + 1 < endOfTree){
 		ReloadVisibleDialogues(ikey + 1, endOfTree);
 		int diff = endOfTree - (ikey + 1);
-		return (visibility)? diff : -diff;
+		return (visibility) ? diff : -diff;
 	}
 	return 0;
 }
 
 void SubsFile::GetHistoryTable(wxArrayString *history)
 {
-	for(size_t i = 0; i < undo.size(); i++){
-		history->push_back(historyNames[undo[i]->editionType] + 
+	for (size_t i = 0; i < undo.size(); i++){
+		history->push_back(historyNames[undo[i]->editionType] +
 			wxString::Format(_(", aktywna linia %i"), GetElementByKey(undo[i]->activeLine) + 1));
 	}
 }
@@ -708,4 +793,212 @@ const wxString & SubsFile::GetRedoName()
 		return emptyString;
 
 	return historyNames[undo[iter + 1]->editionType];
+}
+
+void SubsFile::AddStyle(Styles *nstyl)
+{
+	subs->deleteStyles.push_back(nstyl);
+	subs->styles.push_back(nstyl);
+}
+
+void SubsFile::ChangeStyle(Styles *nstyl, size_t i)
+{
+	subs->deleteStyles.push_back(nstyl);
+	subs->styles[i] = nstyl;
+}
+
+size_t SubsFile::StylesSize()
+{
+	return subs->styles.size();
+}
+
+Styles *SubsFile::GetStyle(size_t i, const wxString &name = L"")
+{
+	if (name != L""){
+		for (size_t j = 0; j < subs->styles.size(); j++)
+		{
+			if (name == subs->styles[j]->Name){ return subs->styles[j]; }
+		}
+	}
+	return subs->styles[i];
+}
+
+std::vector<Styles*> *SubsFile::GetStyleTable()
+{
+	return &subs->styles;
+}
+
+//multiplication musi być ustawione na zero, wtedy zwróci ilość multiplikacji
+size_t SubsFile::FindStyle(const wxString &name, int *multip)
+{
+	size_t isfound = -1;
+	for (size_t j = 0; j < subs->styles.size(); j++)
+	{
+		if (name == subs->styles[j]->Name){
+			isfound = j;
+			if (multip){
+				*multip++;
+			}
+			else{ break; }
+		}
+	}
+	return isfound;
+}
+
+void SubsFile::GetStyles(wxString &stylesText, bool tld = false)
+{
+	wxString tmpst;
+	if (tld){ tmpst = GetSInfo(L"TLMode Style"); }
+	for (size_t i = 0; i < subs->styles.size(); i++)
+	{
+		if (!(tld && subs->styles[i]->Name == tmpst)){
+			stylesText << subs->styles[i]->GetRaw();
+		}
+	}
+}
+
+void SubsFile::DeleleStyle(size_t i)
+{
+	edited = true;
+	subs->styles.erase(subs->styles.begin() + i);
+}
+
+const wxString & SubsFile::GetSInfo(const wxString &key, int *ii = 0)
+{
+	int i = 0;
+	for (std::vector<SInfo*>::iterator it = subs->sinfo.begin(); it != subs->sinfo.end(); it++)
+	{
+		if (key == (*it)->Name) { if (ii){ *ii = i; } return (*it)->Val; }
+		i++;
+	}
+	return emptyString;
+}
+
+SInfo *SubsFile::GetSInfoP(const wxString &key, int *ii)
+{
+	int i = 0;
+	for (std::vector<SInfo*>::iterator it = subs->sinfo.begin(); it != subs->sinfo.end(); it++)
+	{
+		if (key == (*it)->Name) { if (ii){ *ii = i; }; return (*it); }
+		i++;
+	}
+	*ii = -1;
+	return NULL;
+}
+
+void SubsFile::DeleteSInfo(size_t i)
+{
+	subs->sinfo.erase(subs->sinfo.begin() + i);
+	edited = true;
+}
+
+size_t SubsFile::SInfoSize()
+{
+	return subs->sinfo.size();
+}
+
+void SubsFile::SaveSelections(bool clear, int currentLine, int markedLine, int scrollPos)
+{
+	undo[iter]->Selections = subs->Selections;
+	//tutaj muszą być przeróbki na klucze
+	undo[iter]->activeLine = GetElementById(currentLine);
+	undo[iter]->markerLine = GetElementById(markedLine);
+	undo[iter]->scrollPosition = GetElementById(scrollPos);
+	if (clear){ ClearSelections(); }
+}
+
+int SubsFile::FirstSelection()
+{
+	if (!subs->Selections.empty()){
+		// return only visible element when nothing is visible, return -1;
+		for (auto it = subs->Selections.begin(); it != subs->Selections.end(); it++){
+			size_t sel = GetElementByKey(*it);
+			if (sel != -1)
+				return sel;
+		}
+	}
+	return -1;
+}
+
+void SubsFile::InsertRows(int Row,
+	const std::vector<Dialogue *> &RowsTable,
+	bool AddToDestroy, bool asKey)
+{
+	size_t convertedRow = (asKey) ? Row : GetElementById(Row);
+	if (convertedRow >= subs->dialogues.size()){ convertedRow = subs->dialogues.size(); }
+	subs->dialogues.insert(subs->dialogues.begin() + convertedRow, RowsTable.begin(), RowsTable.end());
+	ReloadVisibleDialogues(convertedRow, convertedRow + RowsTable.size());
+	if (AddToDestroy){ subs->deleteDialogues.insert(subs->deleteDialogues.end(), RowsTable.begin(), RowsTable.end()); }
+}
+
+//Uważaj na dodawanie do niszczarki, 
+//bo brak dodania gdy trzeba to wycieki pamięci,
+//a podwójne dodanie to krasz przy niszczeniu obiektu.
+void SubsFile::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save, bool asKey)
+{
+	size_t convertedRow = (asKey) ? Row : GetElementById(Row);
+	if (convertedRow >= subs->dialogues.size()){ convertedRow = subs->dialogues.size(); }
+	subs->dialogues.insert(subs->dialogues.begin() + convertedRow, NumRows, Dialog);
+	ReloadVisibleDialogues(convertedRow, convertedRow + NumRows);
+	if (AddToDestroy){ subs->deleteDialogues.push_back(Dialog); }
+}
+
+void SubsFile::SwapRows(int frst, int scnd)
+{
+
+	Dialogue *tmp = filtered[frst];
+	filtered[frst] = filtered[scnd];
+	filtered[scnd] = tmp;
+	size_t firstKey = GetElementById(frst);
+	size_t secondKey = GetElementById(scnd);
+	if (firstKey == -1 || secondKey == -1){
+		//ReloadVisibleDialogues();
+		//size_t key = GetElementById(i);
+		KaiLog(wxString::Format("Cannot find key by id %llu, %llu filtered table not rebuilt. Dialogue not swapped", (unsigned long long)firstKey, (unsigned long long)secondKey));
+	}
+	else{
+		Dialogue *tmp = subs->dialogues[firstKey];
+		subs->dialogues[firstKey] = subs->dialogues[secondKey];
+		subs->dialogues[secondKey] = tmp;
+	}
+}
+
+void SubsFile::AddSInfo(const wxString &SI, wxString val, bool save)
+{
+	wxString key;
+	if (val == L""){
+		key = SI.BeforeFirst(L':');
+		key.Trim(false);
+		key.Trim(true);
+		val = SI.AfterFirst(L':');
+		val.Trim(false);
+		val.Trim(true);
+	}
+	else{ key = SI; }
+	SInfo *oldinfo = NULL;
+	int ii = -1;
+	oldinfo = GetSInfoP(key, &ii);
+
+	if (!oldinfo || save){
+		oldinfo = new SInfo(key, val);
+		if (ii < 0){
+			subs->sinfo.push_back(oldinfo);
+		}
+		else{
+			subs->sinfo[ii] = oldinfo;
+		}
+		subs->deleteSinfo.push_back(oldinfo);
+	}
+	else{
+		oldinfo->Val = val;
+	}
+}
+
+void SubsFile::GetSInfos(wxString &textSinfo, bool tld = false)
+{
+	for (std::vector<SInfo*>::iterator cur = subs->sinfo.begin(); cur != subs->sinfo.end(); cur++) {
+		if (!(tld && (*cur)->Name.StartsWith(L"TLMode"))){
+			textSinfo << (*cur)->Name << L": " << (*cur)->Val << L"\r\n";
+		}
+	}
 }

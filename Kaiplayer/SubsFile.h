@@ -19,7 +19,6 @@
 #include "Styles.h"
 #include "SubsDialogue.h"
 #include "KaiDialog.h"
-#include "AVLtree.h"
 #include <vector>
 #include <set>
 #include <functional>
@@ -87,12 +86,12 @@ enum{
 class File
 {
 public:
-	std::vector<Dialogue*> dials;
+	std::vector<Dialogue*> dialogues;
 	std::vector<Styles*> styles;
 	std::vector<SInfo*> sinfo;
-	std::vector<Dialogue*> ddials;
-	std::vector<Styles*> dstyles;
-	std::vector<SInfo*> dsinfo;
+	std::vector<Dialogue*> deleteDialogues;
+	std::vector<Styles*> deleteStyles;
+	std::vector<SInfo*> deleteSinfo;
 	std::set<int> Selections;
 
 	unsigned char editionType;
@@ -107,13 +106,14 @@ public:
 
 class SubsFile
 {
-	friend class SubsGridBase;
+	//friend class SubsGridBase;
 private:
 	std::vector<File*> undo;
+	std::vector<Dialogue*> filtered;
 	int iter;
 	File *subs;
 	int lastSave = 0;
-	Dialogue *&operator[](int i);
+	Dialogue *&operator[](size_t i);
 
 public:
 	SubsFile();
@@ -123,44 +123,74 @@ public:
 	bool Undo();
 	void DummyUndo();
 	void DummyUndo(int newIter);
-	void ReloadVisibleDialogues(int keyFrom, int keyTo);
+	void ReloadVisibleDialogues(size_t keyFrom, size_t keyTo);
 	void ReloadVisibleDialogues();
 	void EndLoad(unsigned char editionType, int activeLine, bool initialSave = false);
-	int GetAllCount();
-	Dialogue *CopyDialogue(int i, bool push=true, bool keepstate=false);
-	Dialogue *CopyDialogueByKey(int i, bool push = true, bool keepstate = false);
-	Dialogue *GetDialogue(int i, int *key=NULL);
-	Dialogue *GetDialogueByKey(int i);
-	void SetDialogue(int i, Dialogue *dial);
-	void SetDialogueByKey(int i, Dialogue *dial);
-	void DeleteDialogues(int from, int to);
-	void DeleteDialoguesByKeys(int from, int to);
-	Styles *CopyStyle(int i, bool push = true);
-	SInfo *CopySinfo(int i, bool push = true);
+	size_t GetKeyCount();
+	size_t GetCount();
+	void AppendDialogue(Dialogue *dial);
+	Dialogue *CopyDialogue(size_t i, bool push=true, bool keepstate=false);
+	Dialogue *CopyDialogueByKey(size_t i, bool push = true, bool keepstate = false);
+	Dialogue *GetDialogue(size_t i);
+	Dialogue *GetDialogueByKey(size_t i);
+	void SetDialogue(size_t i, Dialogue *dial);
+	void SetDialogueByKey(size_t i, Dialogue *dial);
+	void DeleteDialogues(size_t from, size_t to);
+	void DeleteDialoguesByKeys(size_t from, size_t to);
+	void DeleteSelectedDialogues();
+	void InsertRows(int Row, const std::vector<Dialogue *> &RowsTable, bool AddToDestroy, bool asKey);
+	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save, bool asKey);
+	void SwapRows(int frst, int scnd);
+	void SortAll(bool func(Dialogue *i, Dialogue *j));
+	void SortSelected(bool func(Dialogue *i, Dialogue *j));
+	Styles *CopyStyle(size_t i, bool push = true);
+	SInfo *CopySinfo(size_t i, bool push = true);
+	void AddStyle(Styles *nstyl);
+	void ChangeStyle(Styles *nstyl, size_t i);
+	size_t StylesSize();
+	Styles *GetStyle(size_t i, const wxString &name = L"");
+	std::vector<Styles*> *GetStyleTable();
+
+	//multiplication musi byæ ustawione na zero, wtedy zwróci iloœæ multiplikacji
+	size_t FindStyle(const wxString &name, int *multip);
+	void GetStyles(wxString &stylesText, bool addTlModeStyle = false);
+	void DeleleStyle(size_t i);
+	const wxString & GetSInfo(const wxString &key, int *ii = 0);
+	SInfo *GetSInfoP(const wxString &key, int *ii);
+	void DeleteSInfo(size_t i);
+	void AddSInfo(const wxString &SI, wxString val, bool save);
+	void GetSInfos(wxString &textSinfo, bool addTlMode = false);
+	size_t SInfoSize();
+	void SaveSelections(bool clear, int currentLine, int markedLine, int scrollPos);
+	int FirstSelection();
+
 	void GetSelections(wxArrayInt &selections, bool deselect=false);
 	void GetSelectionsAsKeys(wxArrayInt &selectionsKeys, bool deselect=false);
-	void InsertSelection(int i);
-	void InsertSelections(int from, int to, bool deselect = false);
-	void InsertKeySelections(int from, int to, bool deselect = false);
-	void InsertSelectionKey(int i);
-	void EraseSelection(int i);
-	void EraseSelectionKey(int i);
-	int FindIdFromKey(int key, int *corrected = NULL);
-	bool IsSelectedByKey(int key);
-	bool IsSelected(int i);
-	int SelectionsSize();
+	void InsertSelection(size_t i);
+	void InsertSelections(size_t from, size_t to, bool deselect = false);
+	void InsertKeySelections(size_t from, size_t to, bool deselect = false);
+	void InsertSelectionKey(size_t i);
+	void EraseSelection(size_t i);
+	void EraseSelectionKey(size_t i);
+	size_t FindIdFromKey(size_t key, int *corrected = NULL);
+	bool IsSelectedByKey(size_t key);
+	bool IsSelected(size_t i);
+	size_t SelectionsSize();
+	int GetActiveLine(){ subs->activeLine; }
+	int GetMarkerLine(){ subs->markerLine; }
+	int GetScrollPosition(){ subs->scrollPosition; }
 	void ClearSelections();
-	int GetElementById(int Id);
-	int GetElementByKey(int Key);
-	unsigned char CheckIfHasHiddenBlock(int i);
-	bool CheckIfIsTree(int i);
-	int OpenCloseTree(int i);
+	size_t GetElementById(size_t Id);
+	size_t GetElementByKey(size_t Key);
+	unsigned char CheckIfHasHiddenBlock(size_t i);
+	bool CheckIfIsTree(size_t i);
+	size_t OpenCloseTree(size_t i);
 	void GetURStatus(bool *_undo, bool *_redo);
 	bool IsNotSaved();
 	int maxx();
 	int Iter();
 	void RemoveFirst(int num);
-	File *GetSubs();
+	//File *GetSubs();
 	void ShowHistory(wxWindow *parent, std::function<void(int)> functionAfterChangeHistory);
 	void GetHistoryTable(wxArrayString *history);
 	bool SetHistory(int iter);
@@ -171,7 +201,6 @@ public:
 	const wxString &GetUndoName();
 	const wxString &GetRedoName();
 	bool edited;
-	AVLtree *IdConverter;
 	wxString *historyNames=NULL;
 };
 
