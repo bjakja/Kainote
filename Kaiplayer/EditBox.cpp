@@ -618,7 +618,7 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 	else{
 		wxString tmp;
 		wxArrayInt sels;
-		grid->file->GetSelectionsAsKeys(sels);
+		grid->file->GetSelections(sels);
 		for (size_t i = 0; i < sels.size(); i++){
 			Dialogue *dialc = grid->CopyDialogueByKey(sels[i]);
 			wxString txt = (grid->hasTLMode && dialc->TextTl != L"") ? dialc->TextTl : dialc->Text;
@@ -714,10 +714,10 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 		wxString chars = (grid->subsFormat == SRT) ? L"<" : L"{";
 		wxString chare = (grid->subsFormat == SRT) ? L">" : L"}";
 		wxArrayInt sels;
-		grid->file->GetSelectionsAsKeys(sels);
+		grid->file->GetSelections(sels);
 		for (size_t i = 0; i < sels.size(); i++)
 		{
-			Dialogue *dialc = grid->file->CopyDialogueByKey(sels[i]);
+			Dialogue *dialc = grid->file->CopyDialogue(sels[i]);
 			wxString txt = dialc->Text;
 			//dialc->spells.Clear();
 			if (txt.StartsWith(chars))
@@ -1880,7 +1880,7 @@ void EditBox::OnDoubtfulTl(wxCommandEvent& event)
 	wxArrayInt sels;
 	grid->file->GetSelectionsAsKeys(sels);
 	for (size_t i = 0; i < sels.size(); i++){
-		Dialogue *dial = grid->file->CopyDialogueByKey(sels[i]);
+		Dialogue *dial = grid->file->CopyDialogue(sels[i]);
 		dial->ChangeState(4);
 	}
 	if (event.GetId() == SetDoubtful){

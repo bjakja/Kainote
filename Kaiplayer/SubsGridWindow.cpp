@@ -181,13 +181,13 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	visibleLines.clear();
 
 	std::vector<wxString> strings;
-	int i = file->GetElementById(scPos)-1;
+	int i = scPos-1;
 	int k = scPos-1;
 
-	while (i < file->GetKeyCount() && k < scrows-1){
+	while (i + 1 <= file->GetCount() && k < scrows - 1){
 		bool isHeadline = (k < scPos);
 		if (!isHeadline){
-			Dial = file->GetDialogueByKey(i);
+			Dial = file->GetDialogue(i);
 			if (!Dial->isVisible){ i++; continue; }
 		}
 		bool comparison = false;
@@ -287,12 +287,12 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					CheckText((isTl) ? txttl : txt, SpellErrors[k], chtag);
 				}
 			}
-			if (txt.Len() > 1000){ txt = txt.SubString(0, 1000) + L"..."; }
-			if (txttl.Len() > 1000){ txttl = txttl.SubString(0, 1000) + L"..."; }
+			if (txt.length() > 1000){ txt = txt.SubString(0, 1000) + L"..."; }
+			if (txttl.length() > 1000){ txttl = txttl.SubString(0, 1000) + L"..."; }
 			strings.push_back((!showOriginal && isTl) ? txttl : txt);
 			if (showOriginal){ strings.push_back(txttl); }
 
-			isSelected = file->IsSelectedByKey(i);
+			isSelected = file->IsSelected(i);
 			comparison = (Comparison && Comparison->at(i).size()>0);
 			bool comparisonMatch = (Comparison && !Comparison->at(i).differences);
 			bool visibleLine = (Dial->Start.mstime <= VideoPos && Dial->End.mstime > VideoPos);
@@ -443,7 +443,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				tdc.SetPen(*wxTRANSPARENT_PEN);
 				tdc.DrawRectangle(posX + 1, posY, w - 1, GridHeight);
 				// GetDialogueKey was made for loops no checks
-				Dialogue *nextDial = (i < file->GetKeyCount() - 1)? file->GetDialogueByKey(i + 1) : NULL;
+				Dialogue *nextDial = (i < file->GetCount() - 1)? file->GetDialogue(i + 1) : NULL;
 				if (nextDial && nextDial->treeState == TREE_CLOSED)
 					tdc.DrawBitmap(wxBITMAP_PNG(L"arrow_list"),posX + 6, posY + 5);
 				else{
@@ -519,8 +519,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 	int law = 0, startMax = 0, endMax = 0, stw = 0, edw = 0, syw = 0, acw = 0, efw = 0, fw = 0, fh = 0;
 	bool shml = false, shmr = false, shmv = false;
 
-	File *Subs = file->GetSubs();
-	int maxx = Subs->dialogues.size();
+	int maxx = file->GetCount();
 
 	dc.GetTextExtent(wxString::Format(L"%i", maxx), &fw, &fh);
 	GridWidth[0] = fw + 10;
@@ -529,7 +528,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 
 	Dialogue *dial;
 	for (int i = 0; i<maxx; i++){
-		dial = Subs->dialogues[i];
+		dial = file->GetDialogue(i);
 		if (!dial->isVisible){ continue; }
 		if (first){
 			if (dial->Format != subsFormat){ dial->Convert(subsFormat); }
@@ -1081,7 +1080,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 		dir = h / GridHeight - 1;
 	}
 	if (key == WXK_HOME) {
-		dir = -GetCount();
+		dir = -((signed)GetCount());
 	}
 	if (key == WXK_END) {
 		dir = GetCount();
@@ -1178,7 +1177,7 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 {
 
 	//wxString notchar = "/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{} ";
-	bool repltags = hideOverrideTags && tagsReplacement.Len() > 0;
+	bool repltags = hideOverrideTags && tagsReplacement.length() > 0;
 	text += L" ";
 	bool block = false;
 	wxString word;
@@ -1191,11 +1190,11 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 	int lastStartCBracket = -1;
 	int lastEndCBracket = -1;
 
-	for (size_t i = 0; i<text.Len(); i++)
+	for (size_t i = 0; i<text.length(); i++)
 	{
 		const wxUniChar &ch = text[i];
 		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch != L'\''/*notchar.Find(ch) != -1*/ && !block){
-			if (word.Len()>1){
+			if (word.length()>1){
 				if (word.StartsWith(L"'")){ word = word.Remove(0, 1); }
 				if (word.EndsWith(L"'")){ word = word.RemoveLast(1); }
 				word.Trim(false);
@@ -1235,8 +1234,8 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 		}
 		if (ch == L'{'){ block = true; lastStartCBracket = i; continue; }
 		else if (ch == L'}'){ block = false; lastEndCBracket = i; firsti = i + 1; word = L""; continue; }
-		else if (repltags && tagsReplacement[0] == ch && text.Mid(i, tagsReplacement.Len()) == tagsReplacement){
-			firsti = i + tagsReplacement.Len(); word = L""; continue;
+		else if (repltags && tagsReplacement[0] == ch && text.Mid(i, tagsReplacement.length()) == tagsReplacement){
+			firsti = i + tagsReplacement.length(); word = L""; continue;
 		}
 		
 		if (!block && (!iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) || ch == L'\'') /*notchar.Find(ch) == -1*/ && text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){ word << ch; lasti = i; }

@@ -81,7 +81,7 @@ enum{
 	AUTOMATION_SCRIPT
 };
 
-
+//Filtering is treated as keys, every dialogue get/set functions use keys, ids are only for paint or mouse using
 
 class File
 {
@@ -104,16 +104,19 @@ public:
 	File *Copy(bool copySelections = true);
 };
 
+namespace Auto{
+	class LuaCommand;
+}
+
 class SubsFile
 {
 	//friend class SubsGridBase;
+	friend class Auto::LuaCommand;
 private:
 	std::vector<File*> undo;
-	std::vector<Dialogue*> filtered;
 	int iter;
 	File *subs;
 	int lastSave = 0;
-	Dialogue *&operator[](size_t i);
 
 public:
 	SubsFile();
@@ -123,20 +126,17 @@ public:
 	bool Undo();
 	void DummyUndo();
 	void DummyUndo(int newIter);
-	void ReloadVisibleDialogues(size_t keyFrom, size_t keyTo);
-	void ReloadVisibleDialogues();
+	//void ReloadVisibleDialogues(size_t keyFrom, size_t keyTo);
+	//void ReloadVisibleDialogues();
 	void EndLoad(unsigned char editionType, int activeLine, bool initialSave = false);
-	size_t GetKeyCount();
 	size_t GetCount();
+	//size_t GetCount();
 	void AppendDialogue(Dialogue *dial);
-	Dialogue *CopyDialogue(size_t i, bool push=true, bool keepstate=false);
-	Dialogue *CopyDialogueByKey(size_t i, bool push = true, bool keepstate = false);
+	//Dialogue *CopyDialogue(size_t i, bool push=true, bool keepstate=false);
+	Dialogue *CopyDialogue(size_t i, bool push = true, bool keepstate = false);
 	Dialogue *GetDialogue(size_t i);
-	Dialogue *GetDialogueByKey(size_t i);
 	void SetDialogue(size_t i, Dialogue *dial);
-	void SetDialogueByKey(size_t i, Dialogue *dial);
 	void DeleteDialogues(size_t from, size_t to);
-	void DeleteDialoguesByKeys(size_t from, size_t to);
 	void DeleteSelectedDialogues();
 	void InsertRows(int Row, const std::vector<Dialogue *> &RowsTable, bool AddToDestroy, bool asKey);
 	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save, bool asKey);
@@ -165,32 +165,33 @@ public:
 	int FirstSelection();
 
 	void GetSelections(wxArrayInt &selections, bool deselect=false);
-	void GetSelectionsAsKeys(wxArrayInt &selectionsKeys, bool deselect=false);
+	const std::set<int> & GetSelectionsAsKeys(){ return subs->Selections; };
 	void InsertSelection(size_t i);
 	void InsertSelections(size_t from, size_t to, bool deselect = false);
-	void InsertKeySelections(size_t from, size_t to, bool deselect = false);
-	void InsertSelectionKey(size_t i);
 	void EraseSelection(size_t i);
-	void EraseSelectionKey(size_t i);
-	size_t FindIdFromKey(size_t key, int *corrected = NULL);
-	bool IsSelectedByKey(size_t key);
+	//size_t FindIdFromKey(size_t key, int *corrected = NULL);
 	bool IsSelected(size_t i);
 	size_t SelectionsSize();
-	int GetActiveLine(){ subs->activeLine; }
-	int GetMarkerLine(){ subs->markerLine; }
-	int GetScrollPosition(){ subs->scrollPosition; }
+	int GetActiveLine(){ return subs->activeLine; }
+	int GetMarkerLine(){ return subs->markerLine; }
+	int GetScrollPosition(){ return subs->scrollPosition; }
 	void ClearSelections();
-	size_t GetElementById(size_t Id);
-	size_t GetElementByKey(size_t Key);
+	//size_t GetElementById(size_t Id);
+	//size_t GetElementByKey(size_t Key);
 	unsigned char CheckIfHasHiddenBlock(size_t i);
+	//Get line key from scrollPosition.
+	//Every value will be stored as key.
+	//Simple function to convert key to id from scroll position
+	//to use with mouse, scroll events
+	size_t GetKeyFromScrollPos(size_t numOfLines);
+	size_t GetKeyFromPos(size_t position, size_t numOfLines);
 	bool CheckIfIsTree(size_t i);
-	size_t OpenCloseTree(size_t i);
+	int OpenCloseTree(size_t i);
 	void GetURStatus(bool *_undo, bool *_redo);
 	bool IsNotSaved();
 	int maxx();
 	int Iter();
 	void RemoveFirst(int num);
-	//File *GetSubs();
 	void ShowHistory(wxWindow *parent, std::function<void(int)> functionAfterChangeHistory);
 	void GetHistoryTable(wxArrayString *history);
 	bool SetHistory(int iter);

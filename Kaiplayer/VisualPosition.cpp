@@ -199,22 +199,16 @@ void Position::ChangeMultiline(bool all)
 		if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){ continue; }
 		wxString visual = GetVisual(i);
 
-		bool istxttl = (tab->Grid->hasTLMode && Dial->TextTl != L"");
-		wxString txt = (istxttl) ? Dial->TextTl : Dial->Text;
+		wxString txt = Dial->GetTextNoCopy();
 
 		if (data[i].putinBracket){ visual = L"{" + visual + L"}"; }
 		txt.replace(data[i].TextPos.x, data[i].TextPos.y, visual);
 		if (all){
-			if (istxttl){
-				tab->Grid->CopyDialogue(data[i].numpos)->TextTl = txt;
-			}
-			else{
-				tab->Grid->CopyDialogue(data[i].numpos)->Text = txt;
-			}
+			tab->Grid->CopyDialogue(data[i].numpos)->SetText(txt);
 		}
 		else{
 			Dialogue Cpy = Dialogue(*Dial);
-			if (istxttl) {
+			if (Dial->TextTl != L"" && tab->Grid->hasTLMode) {
 				Cpy.TextTl = txt;
 				wxString tlLines;
 				if (showOriginalOnVideo)
@@ -222,14 +216,14 @@ void Position::ChangeMultiline(bool all)
 
 				Cpy.GetRaw(&tlLines, true);
 				dtxt->insert(selPositions[i] + moveLength, tlLines);
-				moveLength += tlLines.Len();
+				moveLength += tlLines.length();
 			}
 			else{
 				Cpy.Text = txt;
 				wxString thisLine;
 				Cpy.GetRaw(&thisLine);
 				dtxt->insert(selPositions[i] + moveLength, thisLine);
-				moveLength += thisLine.Len();
+				moveLength += thisLine.length();
 			}
 		}
 

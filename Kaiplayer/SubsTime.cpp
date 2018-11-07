@@ -43,10 +43,10 @@ void STime::ParseMS(wxString raw)
 {
 
 	int csec1 = 0, sec1, min1, godz1;
-	if (raw.Trim() == ""){ mstime = 0; orgframe = 0; }
+	if (raw.Trim() == L""){ mstime = 0; orgframe = 0; }
 	else if (form < MDVD){
 		wxString csec, sec, min, godz;
-		size_t godz11 = raw.find(_T(":"), 0);
+		size_t godz11 = raw.find(L":", 0);
 		godz = raw.SubString(0, godz11 - 1);
 		//kkk<<godz;
 		godz1 = wxAtoi(godz);
@@ -94,25 +94,25 @@ wxString STime::raw(char ft)//,float custfps
 		int sec = mstime / 1000;
 		int min = mstime / 60000;
 		int godz = mstime / 3600000;
-		rawtxt = wxString::Format(_T("%01i:%02i:%02i.%02i"), godz, (min % 60), (sec % 60), (csec % 100));
+		rawtxt = wxString::Format(L"%01i:%02i:%02i.%02i", godz, (min % 60), (sec % 60), (csec % 100));
 	}
 	else if (ft == TMP){
 		int sec = mstime / 1000;
 		int min = mstime / 60000;
 		int godz = mstime / 3600000;
-		rawtxt = wxString::Format(_T("%02i:%02i:%02i"), godz, (min % 60), (sec % 60));
+		rawtxt = wxString::Format(L"%02i:%02i:%02i", godz, (min % 60), (sec % 60));
 	}
 	else if (ft == SRT){
 		int sec = mstime / 1000;
 		int min = mstime / 60000;
 		int godz = mstime / 3600000;
-		rawtxt = wxString::Format(_T("%02i:%02i:%02i,%03i"), godz, (min % 60), (sec % 60), (mstime % 1000));
+		rawtxt = wxString::Format(L"%02i:%02i:%02i,%03i", godz, (min % 60), (sec % 60), (mstime % 1000));
 	}
 	else{
 		if (ft == MDVD && !orgframe && mstime){
 			orgframe = ceil(mstime * (25.f / 1000.f));
 		}
-		rawtxt = wxString::Format(_T("%i"), (ft != MPL2) ? orgframe : (int)ceil(mstime * (10.0f / 1000.0f)));
+		rawtxt = wxString::Format(L"%i", (ft != MPL2) ? orgframe : (int)ceil(mstime * (10.0f / 1000.0f)));
 	}
 	//form=ft;
 	return rawtxt;

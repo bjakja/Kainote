@@ -556,15 +556,18 @@ FontCollector::~FontCollector()
 	//fcd->Destroy();
 };
 
-void FontCollector::GetAssFonts(File *subs, int tab)
+void FontCollector::GetAssFonts(SubsFile *subs, int tab)
 {
 	std::map<wxString, Styles*> stylesfonts;
 
-	for (size_t i = 0; i < subs->styles.size(); i++)
+	std::vector<Styles*> * styles = subs->GetStyleTable();
+
+	for (size_t i = 0; i < styles->size(); i++)
 	{
-		wxString fn = subs->styles[i]->Fontname;
-		bool bold = subs->styles[i]->Bold;
-		bool italic = subs->styles[i]->Italic;
+		Styles *style = (*styles)[i];
+		wxString fn = style->Fontname;
+		bool bold = style->Bold;
+		bool italic = style->Italic;
 		wxString fnl = fn.Lower() << (int)bold << (int)italic;
 		int iresult = facenames.Index(fn, false);
 		if (iresult == -1){
@@ -573,7 +576,7 @@ void FontCollector::GetAssFonts(File *subs, int tab)
 				nflc = new FontLogContent(_("Nie znaleziono czcionki \"") + fn + L"\".\n", true);
 				notFindFontsLog[fn] = nflc;
 			}
-			nflc->SetStyle(tab, subs->styles[i]->Name);
+			nflc->SetStyle(tab, style->Name);
 			//continue;
 		}
 		else
@@ -587,23 +590,23 @@ void FontCollector::GetAssFonts(File *subs, int tab)
 				flc = new FontLogContent(wxString::Format(_("Znaleziono czcionkę \"%s\"\n"), fn));
 				findFontsLog[fn] = flc;
 			}
-			flc->SetStyle(tab, subs->styles[i]->Name);
+			flc->SetStyle(tab, style->Name);
 		}
-		stylesfonts[subs->styles[i]->Name] = subs->styles[i];
+		stylesfonts[style->Name] = style;
 
 	}
 
 	wxString tags[] = { L"fn", L"b", L"i", L"p" };
 
-	for (size_t i = 0; i < subs->dialogues.size(); i++)
+	for (size_t i = 0; i < subs->GetCount(); i++)
 	{
-		Dialogue *dial = subs->dialogues[i];
+		Dialogue *dial = subs->GetDialogue(i);
 		if (dial->IsComment){ continue; }
 		dial->ParseTags(tags, 4, true);
 		ParseData *pdata = dial->parseData;
 		if (!pdata){ continue; }
 
-		wxString text = (dial->TextTl != L"") ? dial->TextTl : dial->Text;
+		const wxString &text = dial->GetTextNoCopy();
 
 		Styles *lstyle = stylesfonts[dial->Style];
 
@@ -724,11 +727,11 @@ void FontCollector::CheckOrCopyFonts()
 	if (operation & ON_ALL_TABS){
 		Notebook * tabs = Notebook::GetTabs();
 		for (size_t i = 0; i < tabs->Size(); i++){
-			GetAssFonts(tabs->Page(i)->Grid->file->GetSubs(), i);
+			GetAssFonts(tabs->Page(i)->Grid->file, i);
 		}
 	}
 	else{
-		GetAssFonts(Notebook::GetTab()->Grid->file->GetSubs(), Notebook::GetTabs()->iter);
+		GetAssFonts(Notebook::GetTab()->Grid->file, Notebook::GetTabs()->iter);
 	}
 	bool allglyphs = CheckPathAndGlyphs(&found, &notFound, &notCopied);
 

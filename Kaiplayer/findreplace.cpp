@@ -59,7 +59,7 @@ void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, c
 	if (tab){
 		for (size_t i = 0; i < Kai->Tabs->Size(); i++){
 			if (Kai->Tabs->Page(i) == tab){
-				if (keyLine < tab->Grid->file->GetAllCount()){
+				if (keyLine < tab->Grid->file->GetCount()){
 					if (i != Kai->Tabs->iter)
 						Kai->Tabs->ChangePage(i);
 
@@ -166,7 +166,7 @@ void FindReplace::ReplaceChecked()
 			SeekResults *SeekResult = (SeekResults *)item;
 			tab = SeekResult->tab;
 
-			Dialogue *Dialc = tab->Grid->file->CopyDialogueByKey(SeekResult->keyLine, true, false);
+			Dialogue *Dialc = tab->Grid->file->CopyDialogue(SeekResult->keyLine, true, false);
 
 			wxString & lineText = Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != L"");
 
@@ -252,11 +252,11 @@ seekFromStart:
 	bool styles = !stylesAsText.empty();
 		
 	bool onlysel = window->SelectedLines->GetValue();
-	File *Subs = tab->Grid->file->GetSubs();
+	SubsFile *Subs = tab->Grid->file;
 
-	while (linePosition < Subs->dialogues.size())
+	while (linePosition < Subs->GetCount())
 	{
-		Dialogue *Dial = Subs->dialogues[linePosition];
+		Dialogue *Dial = Subs->GetDialogue(linePosition);
 		if (!Dial->isVisible || (skipComments && Dial->IsComment)){ linePosition++; textPosition = 0; continue; }
 		
 		if ((!styles && !onlysel) ||
@@ -346,7 +346,7 @@ seekFromStart:
 
 		}
 		else{ textPosition = 0; linePosition++; }
-		if (!foundsome && linePosition > Subs->dialogues.size() - 1){
+		if (!foundsome && linePosition > Subs->GetCount() - 1){
 			break;
 		}
 	}
@@ -401,11 +401,11 @@ bool FindReplace::FindAllInTab(TabPanel *tab, TabWindow *window)
 	bool styles = !stylesAsText.empty();
 
 	bool onlySelections = window->SelectedLines->GetValue();
-	File *Subs = tab->Grid->file->GetSubs();
+	SubsFile *Subs = tab->Grid->file;
 
-	for (; tabLinePosition < Subs->dialogues.size(); tabLinePosition++)
+	for (; tabLinePosition < Subs->GetCount(); tabLinePosition++)
 	{
-		Dialogue *Dial = Subs->dialogues[tabLinePosition];
+		Dialogue *Dial = Subs->GetDialogue(tabLinePosition);
 		if (!Dial->isVisible){ continue; }
 		if (skipComments && Dial->IsComment){ positionId++; continue; }
 
@@ -876,13 +876,13 @@ int FindReplace::ReplaceAllInTab(TabPanel *tab, TabWindow *window)
 	bool onlysel = window->SelectedLines->GetValue();
 
 	int firstSelectionId = tab->Grid->FirstSelection();
-	File *Subs = tab->Grid->file->GetSubs();
+	SubsFile *Subs = tab->Grid->file;
 	bool skipFiltered = !tab->Grid->ignoreFiltered;
 
 	for (size_t i = (!window->AllLines->GetValue() && firstSelectionId >= 0) ?
-		tab->Grid->file->GetElementById(firstSelectionId) : 0; i < Subs->dialogues.size(); i++)
+		tab->Grid->file->GetElementById(firstSelectionId) : 0; i < Subs->GetCount(); i++)
 	{
-		Dialogue *Dial = Subs->dialogues[i];
+		Dialogue *Dial = Subs->GetDialogue(i);
 		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue || (skipComments && Dial->IsComment)){ continue; }
 		
 		if ((notstyles || stylesAsText.Find("," + Dial->Style + ",") != -1) &&
@@ -891,7 +891,7 @@ int FindReplace::ReplaceAllInTab(TabPanel *tab, TabWindow *window)
 			Dial->GetTextElement(dialogueColumn, &txt);
 			allreps = ReplaceInSubsLine(&txt);
 			if (allreps > 0){
-				Dialogue *Dialc = tab->Grid->file->CopyDialogueByKey(i);
+				Dialogue *Dialc = tab->Grid->file->CopyDialogue(i);
 				Dialc->SetTextElement(dialogueColumn, txt);
 				allRelpacements += allreps;
 			}
@@ -1395,7 +1395,6 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 		lineNum++;
 		
 	}
-	done:
 
 	if (numOfChanges){
 		wxCopyFile(path, copyPath + path.AfterLast('\\'));

@@ -981,7 +981,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 	}
 
 	wxString tags[] = { L"pos", L"move", L"bord", L"shad", L"org", L"fsp", L"fscx", L"fs", L"clip", L"iclip", L"p", L"xbord", L"ybord", L"xshad", L"yshad" };
-	for (int i = 0; i < file->GetKeyCount(); i++){
+	for (int i = 0; i < file->GetCount(); i++){
 		//zaczniemy od najłatwiejszego, marginesy
 
 		Dialogue *diall = file->GetDialogue(i);
@@ -1093,7 +1093,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 			if (textChanged){
 				if (SpellErrors.size() >= (size_t)i) SpellErrors[i].clear();
 			}
-			file->SetDialogueByKey(i, diall);
+			file->SetDialogue(i, diall);
 			diall->ClearParse();
 		}
 		else{
@@ -1293,12 +1293,12 @@ void SubsGrid::TreeAddLines(int treeLine)
 	std::vector<Dialogue*> beforeTreeLines;
 	std::vector<Dialogue*> afterTreeLines;
 	int beforeLinesDiff = 0;
-	Dialogue *dialwithstate = file->GetDialogueByKey(keystart+1);
+	Dialogue *dialwithstate = file->GetDialogue(keystart+1);
 	bool closed = (dialwithstate->treeState == TREE_CLOSED);
 
 	for (int i = 0; i < selections.GetCount(); i++){
 		int sel = selections[i];
-		Dialogue *dial = file->GetDialogueByKey(sel);
+		Dialogue *dial = file->GetDialogue(sel);
 		//we must deselect lines from this tree;
 		if (sel >= keystart && !(!dial->treeState || (dial->treeState == TREE_DESCRIPTION && sel != keystart)))
 			file->EraseSelectionKey(sel);
@@ -1329,8 +1329,8 @@ void SubsGrid::TreeAddLines(int treeLine)
 	}
 	//insert after lines need to find end of tree
 	if (afterTreeLines.size()){
-		for (int i = keystart; i < file->GetKeyCount(); i++){
-			Dialogue *dial = file->GetDialogueByKey(i);
+		for (int i = keystart; i < file->GetCount(); i++){
+			Dialogue *dial = file->GetDialogue(i);
 			if ((!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart))){
 				InsertRows(i, afterTreeLines, false, true);
 				break;
@@ -1356,8 +1356,8 @@ void SubsGrid::TreeCopy(int treeLine)
 {
 	wxString whattocopy;
 	int keystart = file->GetElementById(treeLine);
-	for (int i = keystart; i < file->GetKeyCount(); i++){
-		Dialogue *dial = file->GetDialogueByKey(i);
+	for (int i = keystart; i < file->GetCount(); i++){
+		Dialogue *dial = file->GetDialogue(i);
 		if (!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart))
 			break;
 		dial->GetRaw(&whattocopy, hasTLMode && dial->TextTl != L"");
@@ -1386,13 +1386,13 @@ void SubsGrid::TreeRemove(int treeLine)
 	int keystart = file->GetElementById(treeLine);
 	int keyend = keystart;
 	//tree changing need to be save to history instead of visibility
-	for (int i = keystart; i < file->GetKeyCount(); i++){
-		Dialogue *dial = file->GetDialogueByKey(i);
+	for (int i = keystart; i < file->GetCount(); i++){
+		Dialogue *dial = file->GetDialogue(i);
 		if (!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart)){
 			keyend = i - 1;
 			break;
 		}
-		dial = file->CopyDialogueByKey(i);
+		dial = file->CopyDialogue(i);
 		dial->treeState = 0;
 		if (!dial->isVisible)
 			dial->isVisible = VISIBLE;

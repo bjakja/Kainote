@@ -204,10 +204,10 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	int i = previewGrid->file->GetElementById(scPos) - 1;
 	int k = scPos - 1;
 
-	while (i < previewGrid->file->GetKeyCount() && k < scrows){
+	while (i < previewGrid->file->GetCount() && k < scrows){
 		bool isHeadline = (k < scPos);
 		if (!isHeadline){
-			Dial = previewGrid->file->GetDialogueByKey(i);
+			Dial = previewGrid->file->GetDialogue(i);
 			if (!Dial->isVisible){ i++; continue; }
 		}
 		bool comparison = false;
@@ -310,7 +310,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 					previewGrid->CheckText(strings[strings.size() - 1], previewGrid->SpellErrors[k], chtag);
 				}
 			}
-			isSelected = previewGrid->file->IsSelectedByKey(i);
+			isSelected = previewGrid->file->IsSelected(i);
 			comparison = (previewGrid->Comparison && previewGrid->Comparison->at(i).size() > 0);
 			bool comparisonMatch = (previewGrid->Comparison && !previewGrid->Comparison->at(i).differences);
 			bool visibleLine = (Dial->Start.mstime <= VideoPos && Dial->End.mstime > VideoPos);
@@ -326,7 +326,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 
 		if (previewGrid->isFiltered){
 			posX = 15;
-			unsigned char hasHiddenBlock = previewGrid->file->CheckIfHasHiddenBlock(k);
+			unsigned char hasHiddenBlock = previewGrid->file->CheckIfHasHiddenBlock(i);
 			if (hasHiddenBlock){
 				tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 				tdc.SetPen(textcol);
@@ -371,7 +371,9 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		bool isCenter;
 		wxColour label = (states == 0) ? labelBkColN : (states == 2) ? labelBkCol :
 			(states == 1) ? labelBkColM : labelBkColD;
-		if (i >= lastData.lineRangeStart && i< lastData.lineRangeStart + lastData.lineRangeLen){ label = GetColorWithAlpha(wxColour(0,0,255,60), kol); }
+		if (i >= lastData.lineRangeStart && i < lastData.lineRangeStart + lastData.lineRangeLen){ 
+			label = GetColorWithAlpha(wxColour(0,0,255,60), kol); 
+		}
 		for (int j = 0; j < ilcol; j++){
 			if (previewGrid->showOriginal&&j == ilcol - 2){
 				int podz = (w + scHor - posX) / 2;
@@ -442,7 +444,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			}
 
 
-			bool collis = (!isHeadline && acdial && k != previewGrid->currentLine &&
+			bool collis = (!isHeadline && acdial && i != previewGrid->currentLine &&
 				(Dial->Start < acdial->End && Dial->End > acdial->Start));
 
 			if (previewGrid->subsFormat < SRT){ isCenter = !(j == 4 || j == 5 || j == 9 || j == 11 || j == 12); }
@@ -821,8 +823,8 @@ void SubsGridPreview::SeekForOccurences()
 		int endMin = INT_MAX;
 		int endMax = -1;
 		int keyStartMin = 0, keyStartMax = 0, keyEndMin = 0, keyEndMax = 0;
-		for (size_t j = 0; j < subs->GetKeyCount(); j++){
-			Dialogue *dial = subs->GetDialogueByKey(j);
+		for (size_t j = 0; j < subs->GetCount(); j++){
+			Dialogue *dial = subs->GetDialogue(j);
 			if (!dial->isVisible){ continue; }
 			if (dial->Start.mstime < endTime && dial->End.mstime > startTime){
 				if (lastLine+1 == j){

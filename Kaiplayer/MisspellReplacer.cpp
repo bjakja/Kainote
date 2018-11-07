@@ -231,14 +231,13 @@ void MisspellReplacer::ShowResult(TabPanel *tab, int keyLine, const wxPoint &pos
 	Notebook *nb = Notebook::GetTabs();
 	for (size_t i = 0; i < nb->Size(); i++){
 		if (nb->Page(i) == tab){
-			if (keyLine < tab->Grid->file->GetKeyCount()){
+			if (keyLine < tab->Grid->file->GetCount()){
 				if (i != nb->iter)
 					nb->ChangePage(i);
 
-				int lineId = tab->Grid->file->GetElementByKey(keyLine);
-				tab->Edit->SetLine(lineId);
-				tab->Grid->SelectRow(lineId);
-				tab->Grid->ScrollTo(lineId, true);
+				tab->Edit->SetLine(keyLine);
+				tab->Grid->SelectRow(keyLine);
+				tab->Grid->ScrollTo(keyLine, true);
 				tab->Edit->GetEditor()->SetSelection(pos.x, pos.x + pos.y);
 			}
 			break;
@@ -372,19 +371,19 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 	if (tabLinePosition > 0)
 		positionId = firstSelectedId;
 
-	File *Subs = tab->Grid->file->GetSubs();
+	SubsFile *Subs = tab->Grid->file;
 	
 
 	bool isfirst = true;
 
-	while (tabLinePosition < Subs->dialogues.size())
+	while (tabLinePosition < Subs->GetCount())
 	{
-		Dialogue *Dial = Subs->dialogues[tabLinePosition];
+		Dialogue *Dial = Subs->GetDialogue(tabLinePosition);
 		if (!Dial->isVisible){ tabLinePosition++; continue; }
 
 		if ((!selectedOption) ||
 			(selectedOption == 3 && stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
-			(selectedOption == 1 && tab->Grid->file->IsSelectedByKey(tabLinePosition))){
+			(selectedOption == 1 && tab->Grid->file->IsSelected(tabLinePosition))){
 			const wxString & lineText = (Dial->TextTl != L"") ? Dial->TextTl : Dial->Text;
 
 			for (size_t k = 0; k < rxrules.size(); k++){
@@ -491,22 +490,22 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 	int selectedOption = WhichLines->GetSelection();
 	int firstSelectedId = tab->Grid->FirstSelection();
 	int positionId = 0;
-	int tabLinePosition = (selectedOption == 2 && firstSelectedId >= 0) ? tab->Grid->file->GetElementById(firstSelectedId) : 0;
+	int tabLinePosition = (selectedOption == 2 && firstSelectedId >= 0) ? firstSelectedId : 0;
 	if (tabLinePosition > 0)
 		positionId = firstSelectedId;
 
 	bool changedAnything = false;
 
-	File *Subs = tab->Grid->file->GetSubs();
+	SubsFile *Subs = tab->Grid->file;
 
-	while (tabLinePosition < Subs->dialogues.size())
+	while (tabLinePosition < Subs->GetCount())
 	{
-		Dialogue *Dial = Subs->dialogues[tabLinePosition];
+		Dialogue *Dial = Subs->GetDialogue(tabLinePosition);
 		if (!Dial->isVisible){ tabLinePosition++; continue; }
 
 		if ((!selectedOption) ||
 			(selectedOption == 3 && stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
-			(selectedOption == 1 && tab->Grid->file->IsSelectedByKey(tabLinePosition))){
+			(selectedOption == 1 && tab->Grid->file->IsSelected(tabLinePosition))){
 			const wxString & lineText = Dial->Text.CheckTl(Dial->TextTl, Dial->TextTl != L"");
 			wxString stringChanged = lineText;
 			bool changed = false;
@@ -547,7 +546,7 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 				
 			}
 			if (changed){
-				Dialogue *Dialc = tab->Grid->file->CopyDialogueByKey(tabLinePosition);
+				Dialogue *Dialc = tab->Grid->file->CopyDialogue(tabLinePosition);
 				Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != L"") = stringChanged;
 				changedAnything = true;
 			}
@@ -583,7 +582,7 @@ bool MisspellReplacer::ReplaceBlock(std::vector<ReplacerSeekResults *> &results,
 	if (!results.size())
 		return false;
 
-	Dialogue *Dialc = results[0]->tab->Grid->file->CopyDialogueByKey(results[0]->keyLine, true, true);
+	Dialogue *Dialc = results[0]->tab->Grid->file->CopyDialogue(results[0]->keyLine, true, true);
 
 	wxString & lineText = Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != L"");
 	//method maybe not too good but even if there is a 6 replaces in one place then 

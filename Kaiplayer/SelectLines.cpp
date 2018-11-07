@@ -285,12 +285,21 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 	std::vector<Dialogue *> mdial;
 	if (!matchcase){ find.MakeLower(); }
 	tab->Grid->SaveSelections(selectOptions == 0);
-	File *Subs = tab->Grid->file->GetSubs();
+	SubsFile *Subs = tab->Grid->file;
 	bool skipFiltered = !tab->Grid->ignoreFiltered;
+	wxRegEx rgx;
+	if (regex){
+		int rxflags = wxRE_ADVANCED;
+		if (!matchcase){ rxflags |= wxRE_ICASE; }
+		wxRegEx rgx(find, rxflags);
+		if (!rgx.IsValid()) {
+			return 0;
+		}
+	}
 
-	for (int i = 0; i < Subs->dialogues.size(); i++)
+	for (int i = 0; i < Subs->GetCount(); i++)
 	{
-		Dialogue *Dial = Subs->dialogues[i];
+		Dialogue *Dial = Subs->GetDialogue(i);
 		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue){ continue; }
 
 		if (selectColumn == STYLE){
@@ -317,13 +326,8 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 
 		if (txt != L"" && find != L""){
 			if (regex){
-				int rxflags = wxRE_ADVANCED;
-				if (!matchcase){ rxflags |= wxRE_ICASE; }
-				wxRegEx rgx(find, rxflags);
-				if (rgx.IsValid()) {
-					if (rgx.Matches(txt)) {
-						isfound = true;
-					}
+				if (rgx.Matches(txt)) {
+					isfound = true;
 				}
 			}
 			else{
@@ -356,7 +360,7 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 				mdial.push_back(Dial);
 			}
 			else if (action < 6){
-				Dialogue *dialc = tab->Grid->file->CopyDialogueByKey(i);
+				Dialogue *dialc = tab->Grid->file->CopyDialogue(i);
 				dialc->ChangeDialogueState(1);
 				dialc->IsComment = true;
 			}

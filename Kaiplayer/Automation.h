@@ -43,6 +43,7 @@ struct lua_State;
 
 
 class Menu;
+class SubsFile;
 
 
 namespace Auto {
@@ -95,6 +96,7 @@ namespace Auto {
 	
 
 	class LuaCommand : private LuaFeature {
+		friend class SubsFile;
 		//wxString cmd_name;
 		wxString display;
 		wxString help;
@@ -175,7 +177,6 @@ namespace Auto {
 
 	class Automation
 	{
-
 	public:
 		Automation(bool loadSubsScripts=false, bool loadNow = false);
 		~Automation();

@@ -256,6 +256,7 @@ private:
 	bool StartsWith(const wxString &text, wxUniChar ch, size_t *pos);
 	bool StartsWithNoBlock(const wxString &text, wxUniChar ch, size_t *pos);
 	bool EndsWith(const wxString &text, wxUniChar ch, size_t *pos);
+	//StoreTextHelper Text, TextTl;
 public:
 	StoreTextHelper Style, Actor, Effect, Text, TextTl;
 	STime Start, End;
@@ -274,9 +275,9 @@ public:
 	void ChangeDialogueState(char state);
 	bool IsDoubtful(){ return (State & 4) > 0; };
 	void SetRaw(const wxString &ldial);
-	void GetRaw(wxString *txt, bool tl = false, const wxString &style = "", bool hideOriginalOnVideo = false);
-	wxString GetCols(int cols, bool tl = false, const wxString &style = "");
-	void Convert(char type, const wxString &pref = "");
+	void GetRaw(wxString *txt, bool tl = false, const wxString &style = L"", bool hideOriginalOnVideo = false);
+	wxString GetCols(int cols, bool tl = false, const wxString &style = L"");
+	void Convert(char type, const wxString &pref = L"");
 	Dialogue *Copy(bool keepstate = false, bool copyIsVisible = true);
 	void ParseTags(wxString *tags, size_t n, bool plainText = false);
 	void ChangeTimes(int start, int end);

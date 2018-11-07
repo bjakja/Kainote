@@ -33,7 +33,7 @@ public:
 	virtual ~SelectLines(){};
 	void SaveOptions();
 
-    KainoteFrame* Kai;
+	KainoteFrame* Kai;
 
 	KaiRadioButton* Contains;
 	KaiRadioButton* NotContains;

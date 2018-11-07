@@ -92,14 +92,14 @@ void Visuals::GetDialoguesWithoutPosition()
 
 	wxRegEx pos(L"\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
 	bool tlMode = tab->Grid->hasTLMode;
-	int activeLineKey = tab->Grid->file->GetElementById(tab->Grid->currentLine);
+	int activeLineKey = tab->Grid->currentLine;
 
-	for (int i = 0; i < grid->file->GetAllCount(); i++){
-		Dialogue *dial = grid->file->GetDialogueByKey(i);
+	for (int i = 0; i < grid->file->GetCount(); i++){
+		Dialogue *dial = grid->file->GetDialogue(i);
 		if (!grid->ignoreFiltered && !dial->isVisible || dial->NonDialogue || activeLineKey == i){ continue; }
 
 		if (time >= dial->Start.mstime && time < dial->End.mstime){
-			const wxString &text = (tlMode && dial->TextTl != L"") ? dial->TextTl : dial->Text;
+			const wxString &text = dial->GetTextNoCopy();
 			if (!pos.Matches(text)){
 				dialoguesWithoutPosition.push_back(dial);
 			}
@@ -117,7 +117,7 @@ int Visuals::GetDialoguePosition()
 	for (size_t i = 0; i < dialoguesWithoutPosition.size(); i++){
 		Dialogue *dial = dialoguesWithoutPosition[i];
 		Styles *acstyle = tab->Grid->GetStyle(0, dial->Style);
-		const wxString &txt = (tlMode && dial->TextTl != L"") ? dial->TextTl : dial->Text;
+		const wxString &txt = dial->GetTextNoCopy();
 		int newan = wxAtoi(acstyle->Alignment);
 		wxRegEx an(L"\\\\an([0-9]+)", wxRE_ADVANCED);
 		if (an.Matches(txt)){
@@ -508,17 +508,18 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				bool fv = edit->FindValue(L"(i?clip.)[^)]*\\)", &tmp, txt, 0, true);
 				wxString tmp1 = (tmp[0] == L'c') ? L"iclip(" : L"clip(";
 				wxString tclip = L"\\" + tmp + clip + L")";
-				edit->Placed.x += tmp.Len() + 1 + ChangeText(&txt, tclip, edit->InBracket, edit->Placed);
-				edit->Placed.y = edit->Placed.x + clip.Len();
+				edit->Placed.x += tmp.length() + 1 + ChangeText(&txt, tclip, edit->InBracket, edit->Placed);
+				edit->Placed.y = edit->Placed.x + clip.length();
 
 				dummytext->replace(textplaced.x, textplaced.y, txt);
-				textplaced.y = txt.Len();
+				textplaced.y = txt.length();
 				int nx = 0, ny = 0;
 				grid->GetASSRes(&nx, &ny);
 				Dialogue *visdl = edit->line->Copy();
-				visdl->Text = L"";
-				visdl->Text << L"{\\p1\\bord0\\shad0\\fscx100\\fscy100\\1c&H000000&\\1a&H77&\\pos(0,0)\\an7\\" << tmp1 << clip << L")}m 0 0 l " <<
+				wxString text;
+				text << L"{\\p1\\bord0\\shad0\\fscx100\\fscy100\\1c&H000000&\\1a&H77&\\pos(0,0)\\an7\\" << tmp1 << clip << L")}m 0 0 l " <<
 					nx << L" 0 " << nx << L" " << ny << L" 0 " << ny;
+				visdl->SetText(text);
 				visdl->GetRaw(dummytext);
 				dumplaced.x = edit->Placed.x + textplaced.x; dumplaced.y = edit->Placed.y + textplaced.x;
 				delete visdl;
@@ -532,7 +533,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				wxString tmp = L"";
 				bool isf;
 				bool hasP1 = true;
-				size_t cliplen = clip.Len();
+				size_t cliplen = clip.length();
 				wxString txt = Editor->GetValue();
 				isf = edit->FindValue(L"p([0-9]+)", &tmp, txt, 0, true);
 				if (!isf){
@@ -555,7 +556,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				int bracketPos = 0;
 				while (1){
 					bracketPos = txt.find(L"}", bracketPos);
-					if (bracketPos < 0 || bracketPos == txt.Len() - 1){
+					if (bracketPos < 0 || bracketPos == txt.length() - 1){
 						break;
 					}
 					bracketPos++;
@@ -582,7 +583,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				wxString startM = afterP1.Mid(Mpos);
 				int endClip = startM.find(L"{");
 				if (endClip == -1){
-					if (isf){ endClip = startM.Len(); }
+					if (isf){ endClip = startM.length(); }
 					else{ endClip = 0; }
 					clip += L"{\\p0}";
 				}
@@ -597,7 +598,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				}
 
 				dummytext->replace(textplaced.x, textplaced.y, txt);
-				textplaced.y = txt.Len();
+				textplaced.y = txt.length();
 				dumplaced.x = edit->Placed.y + Mpos + textplaced.x; dumplaced.y = dumplaced.x + cliplen;
 
 			}
@@ -607,7 +608,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 			dummytext->replace(dumplaced.x, dumplaced.y - dumplaced.x, clip);
 			//ustawiamy nowe pozycje dla następnej operacji zmiany
 			int oldy = dumplaced.y;
-			dumplaced.y = dumplaced.x + clip.Len();
+			dumplaced.y = dumplaced.x + clip.length();
 			textplaced.y += (dumplaced.y - oldy);
 			if (Visual == VECTORCLIP){
 				//zmieniamy clip tła przyciemniena w clipach
@@ -674,18 +675,14 @@ void Visuals::SetVisual(bool dummy, int type)
 			Dialogue *Dial = grid->GetDialogue(sels[i]);
 			if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){ continue; }
 
-			bool istxttl = (tab->Grid->hasTLMode && Dial->TextTl != L"");
-			wxString txt = (istxttl) ? Dial->TextTl : Dial->Text;
+			wxString txt = Dial->GetTextNoCopy();
 			ChangeVisual(&txt, Dial);
 			if (!dummy){
-				if (istxttl)
-					tab->Grid->CopyDialogue(sels[i])->TextTl = txt;
-				else
-					tab->Grid->CopyDialogue(sels[i])->Text = txt;
+				tab->Grid->CopyDialogue(sels[i])->SetText(txt);
 			}
 			else{
 				Dialogue Cpy = Dialogue(*Dial);
-				if (istxttl) {
+				if (Dial->TextTl != L"" && tab->Grid->hasTLMode) {
 					Cpy.TextTl = txt;
 					wxString tlLines;
 					if (showOriginalOnVideo)
@@ -693,14 +690,14 @@ void Visuals::SetVisual(bool dummy, int type)
 
 					Cpy.GetRaw(&tlLines, true);
 					dtxt->insert(selPositions[i] + moveLength, tlLines);
-					moveLength += tlLines.Len();
+					moveLength += tlLines.length();
 				}
 				else{
 					Cpy.Text = txt;
 					wxString thisLine;
 					Cpy.GetRaw(&thisLine);
 					dtxt->insert(selPositions[i] + moveLength, thisLine);
-					moveLength += thisLine.Len();
+					moveLength += thisLine.length();
 				}
 			}
 
@@ -752,7 +749,7 @@ void Visuals::SetVisual(bool dummy, int type)
 		Editor->SetTextS(txt, false, false);
 		Editor->SetSelection(edit->Placed.x, edit->Placed.x, true);
 		dummytext->replace(dumplaced.x, dumplaced.y, txt);
-		dumplaced.y = txt.Len();
+		dumplaced.y = txt.length();
 		wxString *dtxt = new wxString(*dummytext);
 		RenderSubs(dtxt);
 	}
@@ -774,8 +771,7 @@ D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *Te
 	*putinBracket = false;
 	D3DXVECTOR2 result;
 	Styles *acstyl = tab->Grid->GetStyle(0, Dial->Style);
-	bool istxttl = (tab->Grid->hasTLMode && Dial->TextTl != L"");
-	wxString txt = (istxttl) ? Dial->TextTl : Dial->Text;
+	const wxString &txt = Dial->GetText();
 	bool foundpos = false;
 	wxRegEx pos(L"\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
 	if (pos.Matches(txt)){
@@ -854,7 +850,7 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 		if (strPos.y == 0){
 			wxString posTag = L"\\pos(" + getfloat(pos.x) + L"," + getfloat(pos.y) + L")";
 			int append = ChangeText(txt, posTag, !PutinBrackets, strPos);
-			strPos.x += posTag.Len() + append;
+			strPos.x += posTag.length() + append;
 			PutinBrackets = false;
 		}
 	}

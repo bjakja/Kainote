@@ -685,8 +685,8 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 	SubsGrid *grid = Notebook::GetTab()->Grid;
 	const wxString &tlStyle = grid->GetSInfo("TLMode Style");
 
-	for (int i = 0; i < grid->file->GetAllCount(); i++){
-		lineStyles[grid->file->GetDialogueByKey(i)->Style] = true;
+	for (int i = 0; i < grid->file->GetCount(); i++){
+		lineStyles[grid->file->GetDialogue(i)->Style] = true;
 	}
 
 	int j = 0;

@@ -722,13 +722,12 @@ namespace Auto{
 
 	static std::vector<int> selected_rows(const TabPanel *c)
 	{
-		auto const& sels = c->Grid->file->GetSubs()->Selections;
+		auto const& sels = c->Grid->file->GetSelectionsAsKeys();
 		int offset = c->Grid->SInfoSize() + c->Grid->StylesSize() + 1;
 		std::vector<int> rows;
 		rows.reserve(sels.size());
 		for (auto line : sels)
 			rows.push_back(line + offset);
-		//sort(rows.begin(), rows.end());
 		return rows;
 	}
 
@@ -740,10 +739,10 @@ namespace Auto{
 		lua_pushcclosure(L, add_stack_trace, 0);
 
 		GetFeatureFunction("validate");
-		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true, c->Grid->subsFormat);
+		auto subsobj = new AutoToFile(L, c->Grid->file->subs, true, c->Grid->subsFormat);
 
 		push_value(L, selected_rows(c));
-		push_value(L, c->Grid->file->GetElementById(c->Grid->currentLine) + c->Grid->SInfoSize() + c->Grid->StylesSize() + 1);
+		push_value(L, c->Grid->currentLine + c->Grid->SInfoSize() + c->Grid->StylesSize() + 1);
 
 		int err = lua_pcall(L, 3, 2, -5 /* three args, function, error handler */);
 		SAFE_DELETE(subsobj);
@@ -774,13 +773,13 @@ namespace Auto{
 		stackcheck.check_stack(0);
 
 		GetFeatureFunction("run");
-		File *subs = c->Grid->file->GetSubs();
+		File *subs = c->Grid->file->subs;
 		auto subsobj = new AutoToFile(L, subs, true, c->Grid->subsFormat);
 
 		int original_offset = c->Grid->SInfoSize() + c->Grid->StylesSize() + 1;
 		auto original_sel = selected_rows(c);
 		// original active do not have offset
-		int original_active = c->Grid->file->GetElementById(c->Grid->currentLine);
+		int original_active = c->Grid->currentLine;
 
 		push_value(L, original_sel);
 		push_value(L, original_active + original_offset);
@@ -804,17 +803,19 @@ namespace Auto{
 			return;
 		}
 
-		c->Grid->file->ReloadVisibleDialogues();
+		//c->Grid->file->ReloadVisibleDialogues();
 		//if(ps->lpd->cancelled && ps->lpd->IsModal()){ps->lpd->EndModal(0);}
 		//c->Grid->SaveSelections(true);
 		original_offset = c->Grid->SInfoSize() + c->Grid->StylesSize() + 1;
 		int active_idx = -1;
 
+		size_t dialsCount = c->Grid->file->GetCount();
+
 		// Check for a new active row
 		if (lua_isnumber(L, -1)) {
 			active_idx = lua_tointeger(L, -1) - original_offset;
-			if (active_idx < 0 || active_idx >= subs->dialogues.size()) {
-				KaiLog(wxString::Format("Active row %d is out of bounds (must be 1-%u)", active_idx, subs->dialogues.size()));
+			if (active_idx < 0 || active_idx >= dialsCount) {
+				KaiLog(wxString::Format("Active row %d is out of bounds (must be 1-%u)", active_idx, dialsCount));
 				active_idx = original_active;
 			}
 			else
@@ -831,13 +832,13 @@ namespace Auto{
 				if (!lua_isnumber(L, -1))
 					return;
 				int cur = lua_tointeger(L, -1) - original_offset;
-				if (cur < 0 || cur >= subs->dialogues.size()) {
-					KaiLog(wxString::Format("Selected row %d is out of bounds (must be 1-%u)", cur, subs->dialogues.size()));
+				if (cur < 0 || cur >= dialsCount) {
+					KaiLog(wxString::Format("Selected row %d is out of bounds (must be 1-%u)", cur, dialsCount));
 					throw LuaForEachBreak();
 				}
 				if (active_idx == -1)
 					active_idx = cur;
-				c->Grid->file->InsertSelectionKey(cur);
+				c->Grid->file->InsertSelection(cur);
 			});
 
 		}
@@ -848,7 +849,7 @@ namespace Auto{
 		if (active_idx == -1)
 			active_idx = original_active;
 		c->Grid->SpellErrors.clear();
-		c->Grid->SetModified(AUTOMATION_SCRIPT, true, false, c->Grid->file->GetElementByKey(active_idx));
+		c->Grid->SetModified(AUTOMATION_SCRIPT, true, false, active_idx);
 		c->Grid->RefreshColumns();
 		SAFE_DELETE(subsobj);
 		SAFE_DELETE(ps);
@@ -864,9 +865,9 @@ namespace Auto{
 		stackcheck.check_stack(0);
 
 		GetFeatureFunction("isactive");
-		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true, c->Grid->subsFormat);
+		auto subsobj = new AutoToFile(L, c->Grid->file->subs, true, c->Grid->subsFormat);
 		push_value(L, selected_rows(c));
-		push_value(L, c->Grid->file->GetElementById(c->Grid->currentLine) + c->Grid->SInfoSize() + c->Grid->StylesSize() + 1);
+		push_value(L, c->Grid->currentLine + c->Grid->SInfoSize() + c->Grid->StylesSize() + 1);
 
 		int err = lua_pcall(L, 3, 1, 0);
 

@@ -27,7 +27,7 @@
 #include <wx/zipstrm.h>
 #include <wx/thread.h>
 
-class File;
+class SubsFile;
 
 class SubsFont{
 public:
@@ -155,7 +155,7 @@ private:
 	typedef std::set<wxUniChar> CharMap;
 	std::map<wxString, CharMap> FontMap;
 	void PutChars(const wxString &txt, const wxString &fn);
-	void GetAssFonts(File *subs, int tab);
+	void GetAssFonts(SubsFile *subs, int tab);
 	bool CheckPathAndGlyphs(int *found, int *notfound, int *notcopied);
 	bool SaveFont(const wxString &fontname, FontLogContent *flc);
 	void EnumerateFonts();
