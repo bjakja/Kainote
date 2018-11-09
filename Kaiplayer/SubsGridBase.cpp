@@ -118,7 +118,8 @@ void SubsGridBase::Clearing()
 	isFiltered = false;
 	showOriginal = false;
 	first = true;
-	scPos = 0;
+	scrollPosition = 0;
+	scrollPositionId = 0;
 	lastRow = 0;
 	scHor = 0;
 }
@@ -537,7 +538,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 	//bool fromStyle = false;
 
-	int firstSelection = FirstSelection();
+	size_t firstSelection = FirstSelection();
 	if (firstSelection == -1 && whichLines != 0 && whichLines != 4){
 		KaiMessageBox(_("Nie zaznaczono linii do przesunięcia"), _("Uwaga")); return;
 	}
@@ -920,9 +921,9 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	}
 	//Odtąd nie będzie trzeba tego zabezpieczać, FindIdFromKey nie zwróci -1;
 	int corrected = -1;
-	Edit->SetLine(file->FindIdFromKey(file->GetActiveLine(), &corrected));
-	markedLine = file->FindIdFromKey(file->GetMarkerLine());
-	scPos = file->FindIdFromKey(file->GetScrollPosition());
+	Edit->SetLine(file->FindVisibleKey(file->GetActiveLine(), &corrected));
+	markedLine = file->FindVisibleKey(file->GetMarkerLine());
+	scrollPosition = file->FindVisibleKey(file->GetScrollPosition());
 	if (corrected >= 0){
 		file->EraseSelection(file->GetActiveLine());
 		file->InsertSelection(corrected);
@@ -989,7 +990,7 @@ void SubsGridBase::DummyUndo(int newIter)
 	}
 }
 
-int SubsGridBase::FirstSelection()
+size_t SubsGridBase::FirstSelection(size_t *firstSelectionId /*= NULL*/)
 {
 	return file->FirstSelection();
 }
@@ -1003,11 +1004,9 @@ void SubsGridBase::InsertRows(int Row,
 	bool AddToDestroy, bool asKey)
 {
 	file->InsertRows(Row, RowsTable, AddToDestroy, asKey);
-	if (asKey){ Row = file->GetElementByKey(Row); }
-	if (Row != -1){
-		wxArrayInt emptyarray;
-		SpellErrors.insert(SpellErrors.begin() + Row, RowsTable.size(), emptyarray);
-	}
+	//spellErrors Array take all dialogues for compatybility
+	wxArrayInt emptyarray;
+	SpellErrors.insert(SpellErrors.begin() + Row, RowsTable.size(), emptyarray);
 }
 
 //Uważaj na dodawanie do niszczarki, 
@@ -1016,11 +1015,9 @@ void SubsGridBase::InsertRows(int Row,
 void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save, bool asKey)
 {
 	file->InsertRows(Row, NumRows, Dialog, AddToDestroy, Save, asKey);
-	Row = file->GetElementByKey(Row);
-	if (Row != -1){
-		wxArrayInt emptyarray;
-		SpellErrors.insert(SpellErrors.begin() + Row, NumRows, emptyarray);
-	}
+	//spellErrors Array take all dialogues for compatybility
+	wxArrayInt emptyarray;
+	SpellErrors.insert(SpellErrors.begin() + Row, NumRows, emptyarray);
 	if (Save){
 		file->InsertSelection(Row);
 		SetModified(GRID_INSERT_ROW);
@@ -1068,21 +1065,17 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 			SaveSelections();
 		}
 		savedSelections = false;
-		int ebrow = currentLine;
 		if (redit){
-			int erow = (SetEditBoxLine >= 0) ? SetEditBoxLine : ebrow;
-			if (erow >= GetCount()){ erow = GetCount() - 1; }
-			lastRow = erow;
+			int newCurrentLine = (SetEditBoxLine >= 0) ? SetEditBoxLine : currentLine;
+			if (newCurrentLine >= GetCount()){ newCurrentLine = GetCount() - 1; }
+			lastRow = newCurrentLine;
 			int w, h;
 			GetClientSize(&w, &h);
-			//this need to be calculated for keys;
-			if ((scPos > erow || scPos + (h / (GridHeight + 1)) < erow + 2) && Scroll){
-				scPos = MAX(0, erow - ((h / (GridHeight + 1)) / 2));
-			}
-			Edit->SetLine(erow);
-			file->InsertSelection(erow);
+			MakeVisible();
+			Edit->SetLine(newCurrentLine);
+			file->InsertSelection(newCurrentLine);
 		}
-		file->SaveUndo(editionType, ebrow, markedLine);
+		file->SaveUndo(editionType, currentLine, markedLine);
 		Kai->Label(file->GetActualHistoryIter());
 		if (!dummy){
 			VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
@@ -1167,12 +1160,11 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 	else{ Edit->TlMode->Enable(false); }
 
 
-
 	file->InsertSelection(active);
 	lastRow = active;
 	markedLine = active;
 
-	scPos = MAX(0, active - 3);
+	MakeVisible();
 	file->EndLoad(OPEN_SUBTITLES, active);
 
 	RefreshColumns();
@@ -1283,7 +1275,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 				dialc->TextTl = L"";
 			}
 			if (dial->IsDoubtful()){
-				if (!dialc){ dialc = CopyDialogueByKey(i); }
+				if (!dialc){ dialc = CopyDialogue(i); }
 				dialc->ChangeState(4);
 			}
 		}
@@ -1318,7 +1310,7 @@ void SubsGridBase::NextLine(int dir)
 	}
 	int h, w;
 	GetClientSize(&w, &h);
-	scPos = MID(0, nebrow - ((h / (GridHeight + 1)) / 2), GetCount() - 1);
+	MakeVisible();
 	file->ClearSelections();
 	file->InsertSelection(nebrow);
 	lastRow = nebrow;
@@ -1355,11 +1347,6 @@ void SubsGridBase::LoadDefault(bool line, bool sav, bool endload)
 }
 
 Dialogue *SubsGridBase::CopyDialogue(int i, bool push)
-{
-	if (push && (int)SpellErrors.size() > i){ SpellErrors[i].Clear(); }
-	return file->CopyDialogue(i, push);
-}
-Dialogue *SubsGridBase::CopyDialogueByKey(int i, bool push)
 {
 	if (push && (int)SpellErrors.size() > i){ SpellErrors[i].Clear(); }
 	return file->CopyDialogue(i, push);
@@ -1525,7 +1512,7 @@ void SubsGridBase::GetASSRes(int *x, int *y)
 
 void SubsGridBase::SaveSelections(bool clear)
 {
-	file->SaveSelections(clear, currentLine, markedLine, scPos);
+	file->SaveSelections(clear, currentLine, markedLine, scrollPosition);
 	savedSelections = true;
 }
 
@@ -1706,6 +1693,55 @@ void SubsGridBase::RemoveComparison()
 		hasCompare = false;
 	}
 }
+
+size_t SubsGridBase::GetKeyFromScrollPos(size_t numOfLines)
+{
+	size_t visibleLines = 0;
+	for (size_t i = scrollPosition; i < GetCount(); i++){
+		if (numOfLines == visibleLines)
+			return i;
+
+		if (*GetDialogue(i)->isVisible)
+			visibleLines++;
+	}
+
+	return -1;
+}
+
+
+size_t SubsGridBase::GetKeyFromPosition(size_t position, int delta)
+{
+	int visibleLines = 0;
+	if (delta > 0){
+		size_t i = position + 1;
+		while (i < GetCount()){
+			if (*GetDialogue(i)->isVisible)
+				visibleLines++;
+
+			if (delta == visibleLines)
+				return i;
+
+			i++;
+		}
+		return GetCount() - 1;
+	}
+	else if (delta < 0){
+		size_t i = position - 1;
+		while (i + 1 > 0){
+			if (*GetDialogue(i)->isVisible)
+				visibleLines--;
+
+			if (delta == visibleLines)
+				return i;
+
+			i--;
+		}
+		return 0;
+	}
+	
+	return position;
+}
+
 
 SubsGrid* SubsGridBase::CG1 = NULL;
 SubsGrid* SubsGridBase::CG2 = NULL;

@@ -2013,8 +2013,9 @@ void KainoteFrame::OnAudioSnap(wxCommandEvent& event)
 
 		// Get range
 		if (inactiveType == 1) {
-			shadeFrom = MAX(0, tab->Grid->currentLine - 1);
-			shadeTo = MIN(shadeFrom + 3, tab->Grid->GetCount());
+			//this function is safe, not return -1 or more then size - 1
+			shadeFrom = tab->Grid->GetKeyFromPosition(tab->Grid->currentLine, -1);
+			shadeTo = tab->Grid->GetKeyFromPosition(tab->Grid->currentLine, 1);
 		}
 		else {
 			shadeFrom = 0;

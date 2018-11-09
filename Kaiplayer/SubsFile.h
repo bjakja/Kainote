@@ -130,6 +130,7 @@ public:
 	//void ReloadVisibleDialogues();
 	void EndLoad(unsigned char editionType, int activeLine, bool initialSave = false);
 	size_t GetCount();
+	size_t GetIdCount();
 	//size_t GetCount();
 	void AppendDialogue(Dialogue *dial);
 	//Dialogue *CopyDialogue(size_t i, bool push=true, bool keepstate=false);
@@ -162,28 +163,24 @@ public:
 	void GetSInfos(wxString &textSinfo, bool addTlMode = false);
 	size_t SInfoSize();
 	void SaveSelections(bool clear, int currentLine, int markedLine, int scrollPos);
-	int FirstSelection();
+	size_t FirstSelection(size_t *id = NULL);
 
 	void GetSelections(wxArrayInt &selections, bool deselect=false);
 	const std::set<int> & GetSelectionsAsKeys(){ return subs->Selections; };
 	void InsertSelection(size_t i);
 	void InsertSelections(size_t from, size_t to, bool deselect = false);
 	void EraseSelection(size_t i);
-	//size_t FindIdFromKey(size_t key, int *corrected = NULL);
+	size_t FindVisibleKey(size_t key, int *corrected = NULL);
 	bool IsSelected(size_t i);
 	size_t SelectionsSize();
 	int GetActiveLine(){ return subs->activeLine; }
 	int GetMarkerLine(){ return subs->markerLine; }
 	int GetScrollPosition(){ return subs->scrollPosition; }
 	void ClearSelections();
-	//size_t GetElementById(size_t Id);
-	//size_t GetElementByKey(size_t Key);
-	unsigned char CheckIfHasHiddenBlock(size_t i);
-	//Get line key from scrollPosition.
-	//Every value will be stored as key.
-	//Simple function to convert key to id from scroll position
-	//to use with mouse, scroll events
-	size_t GetKeyFromScrollPos(size_t numOfLines);
+	size_t GetElementById(size_t Id);
+	size_t GetElementByKey(size_t Key);
+	unsigned char CheckIfHasHiddenBlock(int i);
+	
 	size_t GetKeyFromPos(size_t position, size_t numOfLines);
 	bool CheckIfIsTree(size_t i);
 	int OpenCloseTree(size_t i);

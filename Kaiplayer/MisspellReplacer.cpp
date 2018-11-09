@@ -365,9 +365,10 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 	//0-all lines 1-selected lines 2-from selected 3-by styles
 	wxString stylesAsText = L"," + ChoosenStyles->GetValue() + L",";
 	int selectedOption = WhichLines->GetSelection();
-	int firstSelectedId = tab->Grid->FirstSelection();
+	size_t firstSelectedId = -1;
+	size_t tabLinePosition = tab->Grid->FirstSelection(&firstSelectedId);
 	int positionId = 0;
-	int tabLinePosition = (selectedOption == 2 && firstSelectedId >= 0) ? tab->Grid->file->GetElementById(firstSelectedId) : 0;
+	tabLinePosition = (selectedOption == 2 && tabLinePosition != -1) ? tabLinePosition : 0;
 	if (tabLinePosition > 0)
 		positionId = firstSelectedId;
 

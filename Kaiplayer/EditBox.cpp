@@ -379,7 +379,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	grid->currentLine = Row;
 	wxDELETE(line);
 	line = grid->GetDialogue(currentLine)->Copy();
-	LineNumber->SetLabelText(wxString::Format(_("Linia: %i"), currentLine + 1));
+	LineNumber->SetLabelText(wxString::Format(_("Linia: %i"), (int)grid->file->GetElementByKey(currentLine) + 1));
 	Comment->SetValue(line->IsComment);
 	LayerEdit->SetInt(line->Layer);
 	StartEdit->SetTime(line->Start, false, 1);
@@ -433,7 +433,7 @@ done:
 		}
 		else{
 			if (tab->Video->IsShown() || tab->Video->isFullscreen){
-				Dialogue *next = grid->GetDialogue(MIN(currentLine + 1, grid->GetCount() - 1));
+				Dialogue *next = grid->GetDialogue(grid->GetKeyFromPosition(currentLine, 1));
 				int ed = line->End.mstime, nst = next->Start.mstime;
 				int playend = (nst > ed && pas > 2) ? nst : ed;
 				tab->Video->PlayLine(line->Start.mstime, tab->Video->GetPlayEndTime(playend));
@@ -613,24 +613,21 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 		}
 		Editor->SetTextS(txt, true);
 		if (focus){ Editor->SetFocus(); }
-		Editor->SetSelection(whre, whre);//}else{Placed.x=whre;}CopyDialogueByKey
+		Editor->SetSelection(whre, whre);
 	}
 	else{
 		wxString tmp;
 		wxArrayInt sels;
 		grid->file->GetSelections(sels);
 		for (size_t i = 0; i < sels.size(); i++){
-			Dialogue *dialc = grid->CopyDialogueByKey(sels[i]);
-			wxString txt = (grid->hasTLMode && dialc->TextTl != L"") ? dialc->TextTl : dialc->Text;
+			Dialogue *dialc = grid->CopyDialogue(sels[i]);
+			wxString txt = dialc->GetTextNoCopy();
 			FindValue(lasttag, &tmp, txt);
 
 			if (InBracket && txt != L""){
 				if (Placed.x < Placed.y){ txt.erase(txt.begin() + Placed.x, txt.begin() + Placed.y + 1); }
 				txt.insert(Placed.x, text);
-				if (grid->hasTLMode && dialc->TextTl != L""){
-					dialc->TextTl = txt;
-				}
-				else{ dialc->Text = txt; }
+				dialc->SetText(txt);
 			}
 			else{
 				if (grid->hasTLMode && dialc->TextTl != L""){
@@ -1314,11 +1311,11 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 
 	int bracketStart = txt.SubString(0, from).Find(L'{', true);
 	int bracketEnd = txt.SubString(0, (from - 2 < 1) ? 1 : (from - 2)).Find(L'}', true);
-	if (bracketStart == -1 || (bracketStart < bracketEnd && bracketEnd != -1)){ 
-		InBracket = false; 
-		inbrkt = false; 
-		bracketEnd = from; 
-		brkt = false; 
+	if (bracketStart == -1 || (bracketStart < bracketEnd && bracketEnd != -1)){
+		InBracket = false;
+		inbrkt = false;
+		bracketEnd = from;
+		brkt = false;
 	}
 	else{
 		InBracket = true;
@@ -1373,8 +1370,8 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 				if (i <= from && from <= endT){
 
 					if (found[1] != "" && fpoints[1].y <= endT){
-						Placed = fpoints[1]; 
-						*Found = found[1]; 
+						Placed = fpoints[1];
+						*Found = found[1];
 						return true;
 					}
 					else if (found[0] != ""){
@@ -1399,20 +1396,20 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 			int reps = rex.ReplaceAll(&ftag, "\\1");
 			if (reps > 0){
 
-				if ((ftag.EndsWith(")") && !ftag.StartsWith("(")) || ftag.EndsWith("}")){ 
-					ftag.RemoveLast(1); 
-					lslash--; 
+				if ((ftag.EndsWith(")") && !ftag.StartsWith("(")) || ftag.EndsWith("}")){
+					ftag.RemoveLast(1);
+					lslash--;
 				}
 
-				if (found[0] == "" && !isT){ 
-					found[0] = ftag; 
-					fpoints[0].x = i; 
-					fpoints[0].y = lslash - 1; 
+				if (found[0] == "" && !isT){
+					found[0] = ftag;
+					fpoints[0].x = i;
+					fpoints[0].y = lslash - 1;
 				}
-				else{ 
-					found[1] = ftag; 
-					fpoints[1].x = i; 
-					fpoints[1].y = lslash - 1; 
+				else{
+					found[1] = ftag;
+					fpoints[1].x = i;
+					fpoints[1].y = lslash - 1;
 				}
 				//block break till i <= from cause of test if cursor is in \t tag
 				//else it will fail if there is value without \t on the end
@@ -1451,9 +1448,9 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 		//In bracket here blocks changing position of tag putting in plain text
 		//inbrkt here changing value when plain text is on start, not use it here
 		if (InBracket){
-			Placed = fpoints[0]; 
-		} 
-		*Found = found[0]; 
+			Placed = fpoints[0];
+		}
+		*Found = found[0];
 		return true;
 	}
 	else if (lastTag >= 0 && InBracket){
@@ -1637,7 +1634,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 			int klamras = txt.Mid(from).Find(L'{');
 			int klamrae = txt.Mid(from).Find(L'}');
 
-			if (klamrae != -1 && (klamras == -1 || klamras > klamrae) && klamras<from && klamrae>from){
+			if (klamrae != -1 && (klamras == -1 || klamras > klamrae) && klamras < from && klamrae > from){
 				from += klamrae + 1;
 			}
 			txt.insert(from, tag);
@@ -1647,11 +1644,11 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		}
 		else{
 			wxArrayInt sels;
-			grid->file->GetSelectionsAsKeys(sels);
+			grid->file->GetSelections(sels);
 			for (size_t i = 0; i < sels.size(); i++){
 				long cpyfrom = from;
-				Dialogue *dialc = grid->CopyDialogueByKey(sels[i]);
-				wxString &txt = dialc->Text.CheckTlRef(dialc->TextTl, grid->hasTLMode && dialc->TextTl != L"");
+				Dialogue *dialc = grid->CopyDialogue(sels[i]);
+				wxString &txt = dialc->GetText();
 				int klamras = txt.Mid(from).Find(L'{');
 				int klamrae = txt.Mid(from).Find(L'}');
 
@@ -1878,7 +1875,7 @@ void EditBox::OnDoubtfulTl(wxCommandEvent& event)
 	if (!grid->hasTLMode){ wxBell(); return; }
 	line->ChangeState(4);
 	wxArrayInt sels;
-	grid->file->GetSelectionsAsKeys(sels);
+	grid->file->GetSelections(sels);
 	for (size_t i = 0; i < sels.size(); i++){
 		Dialogue *dial = grid->file->CopyDialogue(sels[i]);
 		dial->ChangeState(4);
@@ -1897,6 +1894,9 @@ void EditBox::FindNextDoubtfulTl(wxCommandEvent& event)
 SeekDoubtful:
 	for (int i = CurrentDoubtful; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDialogue(i);
+		if (!dial->isVisible)
+			continue;
+
 		if (dial->IsDoubtful()){
 			SetLine(i);
 			grid->SelectRow(i);
@@ -1916,6 +1916,9 @@ void EditBox::FindNextUnTranslated(wxCommandEvent& event)
 SeekUntranslated:
 	for (int i = CurrentUntranslated; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDialogue(i);
+		if (!dial->isVisible)
+			continue;
+
 		if (dial->TextTl == L""/* && !dial->IsComment*/){
 			SetLine(i);
 			grid->SelectRow(i);

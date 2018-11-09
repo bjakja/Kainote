@@ -293,6 +293,17 @@ size_t SubsFile::GetCount()
 	return subs->dialogues.size();
 }
 
+size_t SubsFile::GetIdCount()
+{
+	size_t idCount = 0;
+	for (Dialogue * dial : subs->dialogues){
+		if (*dial->isVisible)
+			idCount++;
+	}
+
+	return idCount;
+}
+
 void SubsFile::AppendDialogue(Dialogue *dial)
 {
 	subs->deleteDialogues.push_back(dial);
@@ -319,9 +330,9 @@ Dialogue * SubsFile::CopyDialogue(size_t i, bool push /*= true*/, bool keepstate
 	return dial;
 }
 
-Dialogue *SubsFile::GetDialogue(size_t Key)
+Dialogue *SubsFile::GetDialogue(size_t i)
 {
-	return subs->dialogues[Key];
+	return subs->dialogues[i];
 }
 
 void SubsFile::SetDialogue(size_t i, Dialogue *dial)
@@ -412,32 +423,31 @@ void SubsFile::EraseSelection(size_t i)
 	subs->Selections.erase(i);
 }
 
-//size_t SubsFile::FindIdFromKey(size_t key, int *corrected)
-//{
-//	size_t Id = GetElementByKey(key);
-//	if (Id == -1){
-//		Id = 0;
-//		size_t size = subs->dialogues.size();
-//		if (key >= size){ key = size - 1; }
-//		size_t i = key - 1;
-//		while (i >= 0){
-//			if (subs->dialogues[i]->isVisible != NOT_VISIBLE){
-//				if (corrected){ *corrected = i; }
-//				return GetElementByKey(i);
-//			}
-//			i--;
-//		}
-//		i = key + 1;
-//		while (i < size){
-//			if (subs->dialogues[i]->isVisible != NOT_VISIBLE){
-//				if (corrected){ *corrected = i; }
-//				return GetElementByKey(i);
-//			}
-//			i++;
-//		}
-//	}
-//	return Id;
-//}
+size_t SubsFile::FindVisibleKey(size_t key, int *corrected)
+{
+	Dialogue *dial = subs->dialogues[key];
+	if (!dial->isVisible){
+		size_t i = key - 1;
+		while (i + 1 > 0){
+			if (subs->dialogues[i]->isVisible != NOT_VISIBLE){
+				if (corrected){ *corrected = i; }
+				return i;
+			}
+			i--;
+		}
+		i = key + 1;
+		while (i < subs->dialogues.size()){
+			if (subs->dialogues[i]->isVisible != NOT_VISIBLE){
+				if (corrected){ *corrected = i; }
+				return i;
+			}
+			i++;
+		}
+	}else
+		return key;
+
+	return 0;
+}
 
 bool SubsFile::IsSelected(size_t i)
 {
@@ -454,40 +464,37 @@ void SubsFile::ClearSelections()
 	subs->Selections.clear();
 }
 
-//size_t SubsFile::GetElementById(size_t id)
-//{
-//	if (id >= filtered.size())
-//		return -1;
-//
-//	Dialogue * row = filtered[id];
-//	for (size_t i = id; i < subs->dialogues.size(); i++){
-//		if (row == subs->dialogues[i]){
-//			return i;
-//		}
-//	}
-//
-//	// it should not happen but with bugs it's possible
-//	return -1;
-//}
-//
-//size_t SubsFile::GetElementByKey(size_t key)
-//{
-//	if (key >= subs->dialogues.size() || key < 0)
-//		return -1;
-//
-//	Dialogue * row = subs->dialogues[key];
-//	if (row->isVisible == NOT_VISIBLE)
-//		return -1;
-//
-//	size_t i = (key < filtered.size()) ? key : filtered.size() - 1;
-//	while (i + 1 > 0){
-//		if (row == filtered[i])
-//			return i;
-//
-//		i--;
-//	}
-//	return -1;
-//}
+size_t SubsFile::GetElementById(size_t id)
+{
+	size_t countid = 0;
+	for (size_t i = 0; i < subs->dialogues.size(); i++){
+		if (countid == id){
+			return i;
+		}
+		if (*subs->dialogues[i]->isVisible)
+			countid++;
+	}
+
+	// it's possible when id >= size
+	return -1;
+}
+
+size_t SubsFile::GetElementByKey(size_t key)
+{
+	if (key >= subs->dialogues.size())
+		return -1;
+
+	size_t countid = 0;
+	for (size_t i = 0; i < subs->dialogues.size(); i++){
+		if (i == key){
+			return countid;
+		}
+		if (*subs->dialogues[i]->isVisible)
+			countid++;
+	}
+	//it's possible to get here?
+	return -1;
+}
 
 Styles *SubsFile::CopyStyle(size_t i, bool push)
 {
@@ -545,34 +552,15 @@ void SubsFile::GetURStatus(bool *_undo, bool *_redo)
 //	return subs;
 //}
 
-//void SubsFile::ReloadVisibleDialogues(size_t keyfrom, size_t keyto)
-//{
-//	int i = keyfrom;
-//	int size = subs->dialogues.size();
-//	if (keyfrom >= size)
-//		return;
-//	if (keyto >= size)
-//		keyto = size - 1;
-//
-//	while (i <= keyto){
-//		filtered.push_back(subs->dialogues[i]);
-//		i++;
-//	}
-//}
-//
-//void SubsFile::ReloadVisibleDialogues()
-//{
-//	for (int i = 0; i < subs->dialogues.size(); i++){
-//		filtered.push_back(subs->dialogues[i]);
-//	}
-//}
-
-unsigned char SubsFile::CheckIfHasHiddenBlock(size_t i){
+unsigned char SubsFile::CheckIfHasHiddenBlock(int i){
 	int size = subs->dialogues.size();
 	if (i + 1 < size){
 		int j = i + 1;
 		Dialogue * dial = subs->dialogues[j];
 		if (dial->isVisible == VISIBLE_BLOCK){
+			if (j == 0)
+				return 2;
+
 			Dialogue * dialPrev = subs->dialogues[j - 1];
 			if (dialPrev->isVisible != VISIBLE_BLOCK) return 2;
 			return 0;
@@ -597,17 +585,25 @@ unsigned char SubsFile::CheckIfHasHiddenBlock(size_t i){
 	return 0;
 }
 
-size_t SubsFile::GetKeyFromScrollPos(size_t numOfLines)
-{
-
-}
 
 size_t SubsFile::GetKeyFromPos(size_t position, size_t numOfLines)
 {
+	size_t visibleLines = 0;
+	for (size_t i = position; i < subs->dialogues.size(); i++){
+		if (numOfLines == visibleLines)
+			return i;
 
+		if (*subs->dialogues[i]->isVisible)
+			visibleLines++;
+	}
+
+	return -1;
 }
 
 bool SubsFile::CheckIfIsTree(size_t i){
+	if (i >= subs->dialogues.size())
+		return false;
+
 	Dialogue *dial = subs->dialogues[i];
 	return dial->treeState == TREE_DESCRIPTION;
 }
@@ -644,7 +640,7 @@ void SubsFile::GetHistoryTable(wxArrayString *history)
 {
 	for (size_t i = 0; i < undo.size(); i++){
 		history->push_back(historyNames[undo[i]->editionType] +
-			wxString::Format(_(", aktywna linia %i"), GetElementByKey(undo[i]->activeLine) + 1));
+			wxString::Format(_(", aktywna linia %i"), (int)GetElementByKey(undo[i]->activeLine) + 1));
 	}
 }
 
@@ -794,16 +790,23 @@ void SubsFile::SaveSelections(bool clear, int currentLine, int markedLine, int s
 	if (clear){ ClearSelections(); }
 }
 
-int SubsFile::FirstSelection()
+size_t SubsFile::FirstSelection(size_t *id /*= NULL*/)
 {
 	if (!subs->Selections.empty()){
 		// return only visible element when nothing is visible, return -1;
 		for (auto it = subs->Selections.begin(); it != subs->Selections.end(); it++){
 			int sel = (*it);
-			if (*subs->dialogues[sel]->isVisible)
-				return sel;
+			if (*subs->dialogues[sel]->isVisible){
+				if (id)
+					*id = GetElementByKey(sel);
+
+				return (*id != -1)? sel : -1;
+			}
 		}
 	}
+	if (id)
+		*id = -1;
+
 	return -1;
 }
 

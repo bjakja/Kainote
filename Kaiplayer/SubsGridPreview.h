@@ -60,7 +60,8 @@ private:
 	SubsGrid *previewGrid;
 	SubsGrid *parent;
 	wxBitmap *bmp=NULL;
-	int scPos = 0;
+	int scrollPosition = 0;
+	int scrollPositionId = 0;
 	int scHor = 0;
 	int oldX = -1;
 	//int selectedItem = 0;

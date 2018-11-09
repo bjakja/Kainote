@@ -342,18 +342,18 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 			&& ((selectDialogues && !Dial->IsComment) || (selectComments && Dial->IsComment))){
 			bool select = (selectOptions == 2) ? false : true;
 			if (select){
-				tab->Grid->file->InsertSelectionKey(i);
+				tab->Grid->file->InsertSelection(i);
 				allSelections++;
 			}
 			else{
-				if (tab->Grid->file->IsSelectedByKey(i)){
-					tab->Grid->file->EraseSelectionKey(i);
+				if (tab->Grid->file->IsSelected(i)){
+					tab->Grid->file->EraseSelection(i);
 					allSelections++;
 				}
 			}
 		}
 
-		if (tab->Grid->file->IsSelectedByKey(i) && action != 0){
+		if (tab->Grid->file->IsSelected(i) && action != 0){
 			if (action < 3){ Dial->GetRaw(&whatcopy, tab->Grid->hasTLMode && Dial->TextTl != L""); }
 			else if (action < 5){
 				Dial->ChangeDialogueState(1);
@@ -384,8 +384,8 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 			mdial.clear();
 		}
 	}
-	int firstSelected = tab->Grid->FirstSelection();
-	int newCurrentLine = (firstSelected < 0) ? tab->Grid->currentLine : firstSelected;
+	size_t firstSelected = tab->Grid->FirstSelection();
+	int newCurrentLine = (firstSelected == -1) ? tab->Grid->currentLine : firstSelected;
 	tab->Edit->SetLine(newCurrentLine);
 	if (action > 1 && allSelections){
 		tab->Grid->SetModified(SELECT_LINES, false);

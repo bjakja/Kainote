@@ -34,13 +34,15 @@ public:
 	void HideOverrideTags();
 	void RefreshColumns(int cell = 8191);
 	void RefreshIfVisible(int time);
-	void ScrollTo(int y, bool center = false);
-	void SelectRow(int row, bool addToSelected = false, bool select = true, bool norefresh = false, bool refreshOnVisual = true);
+	void ScrollTo(int y, bool center = false, int offset = 0);
+	void MakeVisible(int rowKey = -1);
+	void SelectRow(int row, bool addToSelected = false, bool select = true, bool norefresh = false);
 	void SelVideoLine(int time = -1);
 	void SetStyle();
 	void SetVideoLineTime(wxMouseEvent &evt, int mvtal);
 	void ShowSecondComparedLine(int Line, bool showPreview = false, bool fromPreview = false);
 	void RefreshPreview();
+	
 	SubsGridPreview *preview = NULL;
 	
 protected:

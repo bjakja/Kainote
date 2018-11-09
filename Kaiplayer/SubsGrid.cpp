@@ -490,7 +490,7 @@ void SubsGrid::OnPaste(int id)
 		InsertRows(row, tmpdial, true);
 		file->InsertSelections(startline, rws - 1);
 	}
-	scPos += cttkns;
+	scrollPosition += cttkns;
 	SetModified((id == Paste) ? GRID_PASTE : GRID_PASTE_COLLUMNS, true, false, FirstSelection());
 	Thaw();
 	RefreshColumns();
@@ -1136,7 +1136,7 @@ void SubsGrid::OnShowPreview()
 		ShowSecondComparedLine(currentLine, true);
 	}
 	else{
-		ShowPreviewWindow(NULL, this, currentLine, currentLine - scPos);
+		ShowPreviewWindow(NULL, this, currentLine, currentLine - scrollPosition);
 	}
 }
 
@@ -1284,10 +1284,10 @@ void SubsGrid::Filter(int id)
 
 void SubsGrid::TreeAddLines(int treeLine)
 {
-	file->GetSelectionsAsKeys(selections);
+	file->GetSelections(selections);
 	if (selections.GetCount() < 1) return;
 
-	int keystart = file->GetElementById(treeLine);
+	int keystart = treeLine;
 	//need collect selected dialogues before and after tree
 	//in tree all dialogues are deselected
 	std::vector<Dialogue*> beforeTreeLines;
@@ -1301,16 +1301,16 @@ void SubsGrid::TreeAddLines(int treeLine)
 		Dialogue *dial = file->GetDialogue(sel);
 		//we must deselect lines from this tree;
 		if (sel >= keystart && !(!dial->treeState || (dial->treeState == TREE_DESCRIPTION && sel != keystart)))
-			file->EraseSelectionKey(sel);
+			file->EraseSelection(sel);
 		else if (sel > keystart){//adding after lines
-			dial = CopyDialogueByKey(sel);
+			dial = CopyDialogue(sel);
 			dial->treeState = closed ? TREE_CLOSED : TREE_OPENED;
 			if (closed)
 				dial->isVisible = NOT_VISIBLE;
 			afterTreeLines.push_back(dial);
 		}
 		else if (sel < keystart){//adding before lines
-			dial = CopyDialogueByKey(sel);
+			dial = CopyDialogue(sel);
 			dial->treeState = closed ? TREE_CLOSED : TREE_OPENED;
 			if (closed)
 				dial->isVisible = NOT_VISIBLE;
@@ -1337,7 +1337,6 @@ void SubsGrid::TreeAddLines(int treeLine)
 			}
 		}
 	}
-	file->ReloadVisibleDialogues();
 	//if something changed set modified and stuff
 	if (beforeTreeLines.size() || afterTreeLines.size()){
 		SaveSelections();
@@ -1355,7 +1354,7 @@ void SubsGrid::TreeAddLines(int treeLine)
 void SubsGrid::TreeCopy(int treeLine)
 {
 	wxString whattocopy;
-	int keystart = file->GetElementById(treeLine);
+	int keystart = treeLine;
 	for (int i = keystart; i < file->GetCount(); i++){
 		Dialogue *dial = file->GetDialogue(i);
 		if (!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart))
@@ -1383,7 +1382,7 @@ void SubsGrid::TreeChangeName(int treeLine)
 
 void SubsGrid::TreeRemove(int treeLine)
 {
-	int keystart = file->GetElementById(treeLine);
+	int keystart = treeLine;
 	int keyend = keystart;
 	//tree changing need to be save to history instead of visibility
 	for (int i = keystart; i < file->GetCount(); i++){
@@ -1397,7 +1396,6 @@ void SubsGrid::TreeRemove(int treeLine)
 		if (!dial->isVisible)
 			dial->isVisible = VISIBLE;
 	}
-	file->ReloadVisibleDialogues(keystart, keyend);
 	DeleteRow(treeLine, 1);
 	SetModified(TREE_REMOVE);
 	Refresh(false);
@@ -1408,7 +1406,7 @@ void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 	file->ClearSelections();
 	SpellErrors.clear();
 	int corrected = -1;
-	int newActiveLine = file->FindIdFromKey(newActiveLineKey, &corrected);
+	int newActiveLine = file->FindVisibleKey(newActiveLineKey, &corrected);
 	if (corrected >= 0){
 		newActiveLineKey = corrected;
 	}
@@ -1417,7 +1415,7 @@ void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 		currentLine = newActiveLine;
 		if (scroll){ ScrollTo(newActiveLine, true); }
 	}
-	file->InsertSelectionKey(newActiveLineKey);
+	file->InsertSelection(newActiveLine);
 	Edit->SetLine(newActiveLine);
 	if (Comparison && (Options.GetInt(SubsComparisonType) & COMPARE_BY_VISIBLE)){ SubsComparison(); }
 	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;

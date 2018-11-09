@@ -699,8 +699,8 @@ void AudioDisplay::DrawInactiveLines() {
 
 	// Only previous
 	if (shadeType == 1) {
-		shadeFrom = this->line_n - 1;
-		shadeTo = shadeFrom + 3;
+		shadeFrom = grid->GetKeyFromPosition(grid->currentLine, -1);
+		shadeTo = grid->GetKeyFromPosition(grid->currentLine, 1);
 	}
 
 	// All
@@ -718,7 +718,8 @@ void AudioDisplay::DrawInactiveLines() {
 		if (j == line_n) continue;
 		if (j < 0 || j >= grid->GetCount()) continue;
 		shade = grid->GetDialogue(j);
-
+		if (!shade->isVisible)
+			continue;
 
 		// Get coordinates
 		shadeX1 = GetXAtMS(shade->Start.mstime);
@@ -1508,8 +1509,9 @@ void AudioDisplay::SetDialogue(Dialogue *diag, int n, bool moveToEnd) {
 			curEndMS = e;
 		}
 		else{
-			if (isNextLine && line_n > 0){
-				Dialogue *pdial = grid->GetDialogue(line_n - 1);
+			size_t prevPos = grid->GetKeyFromPosition(line_n, -1);
+			if (isNextLine && line_n != prevPos){
+				Dialogue *pdial = grid->GetDialogue(prevPos);
 				curStartMS = pdial->End.mstime;
 			}
 			else
@@ -2130,8 +2132,8 @@ int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start
 
 		// Get range
 		if (shadeType == 1) {
-			shadeFrom = MAX(0, this->line_n - 1);
-			shadeTo = MIN(shadeFrom + 3, grid->GetCount());
+			shadeFrom = grid->GetKeyFromPosition(grid->currentLine, -1);
+			shadeTo = grid->GetKeyFromPosition(grid->currentLine, 1);
 		}
 		else {
 			shadeFrom = 0;
@@ -2141,7 +2143,8 @@ int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start
 		for (int j = shadeFrom; j < shadeTo; j++) {
 			if (j == line_n) continue;
 			shade = grid->GetDialogue(j);
-
+			if (!shade->isVisible)
+				continue;
 
 			// Get coordinates
 			shadeX1 = GetXAtMS(shade->Start.mstime);
@@ -2303,11 +2306,11 @@ void AudioDisplay::ChangeLine(int delta, bool block) {
 
 	// Get next line number and make sure it's within bounds
 
-	if (line_n == 0 && delta < 0 || line_n == grid->GetCount() - 1 && delta>0) { return; }
-	int next = line_n + delta;
+	if (line_n == 0 && delta < 0 || line_n == grid->GetCount() - 1 && delta > 0) { return; }
+	int next = grid->GetKeyFromPosition(line_n, delta);
 	// Set stuff
 	grid->SelectRow(next);
-	grid->ScrollTo(next - 4);
+	grid->MakeVisible();
 	Edit->SetLine(next);
 
 }

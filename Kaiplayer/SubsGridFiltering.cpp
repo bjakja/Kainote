@@ -53,7 +53,10 @@ void SubsGridFiltering::Filter(bool autoFiltering)
 		}
 		if (styles.size() < 1){
 			grid->isFiltered = false;
-			return;
+			if (filterBy == FILTER_BY_STYLES)
+				return;
+			else
+				filterBy ^= FILTER_BY_STYLES;
 		}
 
 	}
@@ -62,7 +65,7 @@ void SubsGridFiltering::Filter(bool autoFiltering)
 		else{ grid->file->GetSelections(keySelections); }
 	}
 	Dialogue *lastDial = NULL;
-	for (int i = 0; i < grid->file->GetCount(); i++){
+	for (size_t i = 0; i < grid->file->GetCount(); i++){
 		Dialogue *dial = grid->file->GetDialogue(i);
 		if (dial->NonDialogue) continue;
 		bool hideDialogue = CheckHiding(dial, i);
@@ -92,7 +95,7 @@ void SubsGridFiltering::FilterPartial(int from)
 	bool hide = true;
 	bool changed = false;
 
-	for (int i = keyFrom; i < grid->file->GetCount(); i++){
+	for (size_t i = keyFrom; i < grid->file->GetCount(); i++){
 		Dialogue *dial = grid->file->GetDialogue(i);
 		if (!dial->NonDialogue){
 			if (lastDial && dial->isVisible == VISIBLE){

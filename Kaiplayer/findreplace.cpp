@@ -63,10 +63,9 @@ void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, c
 					if (i != Kai->Tabs->iter)
 						Kai->Tabs->ChangePage(i);
 
-					int lineId = tab->Grid->file->GetElementByKey(keyLine);
-					tab->Edit->SetLine(lineId);
-					tab->Grid->SelectRow(lineId);
-					tab->Grid->ScrollTo(lineId, true);
+					tab->Edit->SetLine(keyLine);
+					tab->Grid->SelectRow(keyLine);
+					tab->Grid->ScrollTo(keyLine, true);
 					tab->Edit->GetEditor()->SetSelection(pos.x, pos.x + pos.y);
 				}
 				break;
@@ -89,10 +88,10 @@ void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, c
 		}
 		TabPanel *ntab = Kai->GetTab();
 		if (keyLine < ntab->Grid->GetCount()){
-			int lineId = ntab->Grid->file->GetElementByKey(keyLine);
-			ntab->Edit->SetLine(lineId);
-			ntab->Grid->SelectRow(lineId);
-			ntab->Grid->ScrollTo(lineId, true);
+			ntab->Edit->SetLine(keyLine);
+			ntab->Grid->SelectRow(keyLine);
+			ntab->Grid->ScrollTo(keyLine, true);
+			tab->Edit->GetEditor()->SetSelection(pos.x, pos.x + pos.y);
 		}
 	}
 }
@@ -242,9 +241,9 @@ seekFromStart:
 
 	bool foundsome = false;
 	if (fromstart){
-		int firstSelectionId = tab->Grid->FirstSelection();
+		linePosition = tab->Grid->FirstSelection();
 		//is it possible to get it -1 if id exists, key also should exist
-		linePosition = (!window->AllLines->GetValue() && firstSelectionId >= 0) ? tab->Grid->file->GetElementById(firstSelectionId) : 0;
+		linePosition = (!window->AllLines->GetValue() && linePosition != -1) ? linePosition : 0;
 		textPosition = 0;
 	}
 	if (CheckStyles(window, tab))
@@ -261,7 +260,7 @@ seekFromStart:
 		
 		if ((!styles && !onlysel) ||
 			(styles && stylesAsText.Find("," + Dial->Style + ",") != -1) ||
-			(onlysel && tab->Grid->file->IsSelectedByKey(linePosition))){
+			(onlysel && tab->Grid->file->IsSelected(linePosition))){
 			Dial->GetTextElement(dialogueColumn, &txt);
 
 			foundPosition = -1;
@@ -311,10 +310,9 @@ seekFromStart:
 				findstart = foundPosition;
 				findend = textPosition;
 				lastActive = reprow = linePosition;
-				int posrowId = tab->Grid->file->GetElementByKey(linePosition);
-				if (!onlysel){ tab->Grid->SelectRow(posrowId, false, true); }
-				tab->Edit->SetLine(posrowId);
-				tab->Grid->ScrollTo(posrowId, true);
+				if (!onlysel){ tab->Grid->SelectRow(linePosition, false, true); }
+				tab->Edit->SetLine(linePosition);
+				tab->Grid->ScrollTo(linePosition, true);
 				if (onlysel){ tab->Grid->Refresh(false); }
 				if (dialogueColumn == STYLE){
 					//pan->Edit->StyleChoice->SetFocus();
@@ -392,10 +390,11 @@ bool FindReplace::FindAllInTab(TabPanel *tab, TabWindow *window)
 	bool foundsome = false;
 	positionId = 0;
 	subsPath = tab->SubsName;
-	
-	int firstSelectedId = tab->Grid->FirstSelection();
-	tabLinePosition = (!window->AllLines->GetValue() && firstSelectedId >= 0) ? tab->Grid->file->GetElementById(firstSelectedId) : 0;
-	if (tabLinePosition > 0)
+
+	size_t firstSelectedId = 0;
+	tabLinePosition = tab->Grid->FirstSelection(&firstSelectedId);
+	tabLinePosition = (!window->AllLines->GetValue() && tabLinePosition != -1) ? tabLinePosition : 0;
+	if (tabLinePosition > 0 && firstSelectedId != -1)
 		positionId = firstSelectedId;
 	
 	bool styles = !stylesAsText.empty();
@@ -411,7 +410,7 @@ bool FindReplace::FindAllInTab(TabPanel *tab, TabWindow *window)
 
 		if ((!styles && !onlySelections) ||
 			(styles && stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
-			(onlySelections && tab->Grid->file->IsSelectedByKey(tabLinePosition))){
+			(onlySelections && tab->Grid->file->IsSelected(tabLinePosition))){
 
 			Dial->GetTextElement(dialogueColumn, &txt);
 
@@ -832,7 +831,7 @@ void FindReplace::Replace(TabWindow *window)
 	wxString rep = window->ReplaceText->GetValue();
 	SubsGrid *grid = tab->Grid;
 
-	Dialogue *Dialc = grid->CopyDialogueByKey(reprow);
+	Dialogue *Dialc = grid->CopyDialogue(reprow);
 	bool hasRegEx = window->RegEx->GetValue();
 	wxString replacedText;
 	Dialc->GetTextElement(wrep, &replacedText);
@@ -875,18 +874,17 @@ int FindReplace::ReplaceAllInTab(TabPanel *tab, TabWindow *window)
 
 	bool onlysel = window->SelectedLines->GetValue();
 
-	int firstSelectionId = tab->Grid->FirstSelection();
+	size_t firstSelection = tab->Grid->FirstSelection();
 	SubsFile *Subs = tab->Grid->file;
 	bool skipFiltered = !tab->Grid->ignoreFiltered;
 
-	for (size_t i = (!window->AllLines->GetValue() && firstSelectionId >= 0) ?
-		tab->Grid->file->GetElementById(firstSelectionId) : 0; i < Subs->GetCount(); i++)
+	for (size_t i = (!window->AllLines->GetValue() && firstSelection != -1) ? firstSelection : 0; i < Subs->GetCount(); i++)
 	{
 		Dialogue *Dial = Subs->GetDialogue(i);
 		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue || (skipComments && Dial->IsComment)){ continue; }
 		
 		if ((notstyles || stylesAsText.Find("," + Dial->Style + ",") != -1) &&
-			!(onlysel && !(tab->Grid->file->IsSelectedByKey(i)))){
+			!(onlysel && !(tab->Grid->file->IsSelected(i)))){
 
 			Dial->GetTextElement(dialogueColumn, &txt);
 			allreps = ReplaceInSubsLine(&txt);

@@ -83,7 +83,7 @@ public:
 	void GetSInfos(wxString &textSinfo, bool tld=false);
 	const wxString &GetSInfo(const wxString &key, int *ii=0);
 	SInfo *GetSInfoP(const wxString &key, int *ii=0);
-	int FirstSelection();
+	size_t FirstSelection(size_t *firstSelectionId = NULL);
 	void SwapRows(int frst, int scnd, bool sav=false);
 	void LoadSubtitles(const wxString &str, wxString &ext);
 	void MoveRows(int step, bool sav=false);
@@ -97,10 +97,15 @@ public:
 	void NextLine(int dir=1);
 	void SaveSelections(bool clear=false);
 	Dialogue *CopyDialogue(int i, bool push=true);
-	Dialogue *CopyDialogueByKey(int i, bool push = true);
 	Dialogue *GetDialogue(int i);
 	wxString *GetVisible(bool *visible=0, wxPoint *point = NULL, wxArrayInt *selected = NULL);
-	
+	//Get line key from scrollPosition.
+	//Every value will be stored as key.
+	//Simple function to convert key to id from scroll position
+	//to use with mouse, scroll events
+	size_t GetKeyFromScrollPos(size_t numOfLines);
+	size_t GetKeyFromPosition(size_t position, int delta);
+
 	void DummyUndo(int newIter);
 	void GetCommonStyles(SubsGridBase *grid, wxArrayString &styleTable);
 	
@@ -132,6 +137,7 @@ public:
 private:
 	virtual void AdjustWidths(int cell = 8191){};
 	virtual void RefreshColumns(int cell = 8191){};
+	virtual void MakeVisible(int row = -1){};
 protected:
 	static void CompareTexts(compareData &firstTable, compareData &secondTable, const wxString &first, const wxString &second);
 	short numsave;
@@ -142,7 +148,8 @@ protected:
 	int panelrows = 0;
 	int lastActiveLine = 0;
 	int lastRow = 0;
-	int scPos = 0;
+	int scrollPosition = 0;
+	int scrollPositionId = 0;
 	int scHor = 0;
 	int GridHeight = 0;
 	KainoteFrame* Kai;
