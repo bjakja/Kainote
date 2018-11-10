@@ -310,15 +310,13 @@ void SubsFile::AppendDialogue(Dialogue *dial)
 	subs->dialogues.push_back(dial);
 }
 
-//Dialogue * SubsFile::CopyDialogue(size_t i, bool push/*=true*/, bool keepstate/*=false*/)
-//{
-//	Dialogue *dial = subs->dialogues[i]->Copy(keepstate, !push);
-//	subs->deleteDialogues.push_back(dial);
-//	if (push){
-//		subs->dialogues[i] = dial;
-//	}
-//	return dial;
-//}
+Dialogue * SubsFile::CopyVisibleDialogue(size_t i, bool push /*= true*/, bool keepstate/*=false*/)
+{
+	if (i >= subs->dialogues.size() || !subs->dialogues[i]->isVisible)
+		return NULL;
+
+	return CopyDialogue(i, push, keepstate);
+}
 
 Dialogue * SubsFile::CopyDialogue(size_t i, bool push /*= true*/, bool keepstate /*= false*/)
 {
@@ -328,6 +326,14 @@ Dialogue * SubsFile::CopyDialogue(size_t i, bool push /*= true*/, bool keepstate
 		subs->dialogues[i] = dial;
 	}
 	return dial;
+}
+
+Dialogue * SubsFile::GetVisibleDialogue(size_t i)
+{
+	if (i >= subs->dialogues.size() || !subs->dialogues[i]->isVisible)
+		return NULL;
+
+	return subs->dialogues[i];
 }
 
 Dialogue *SubsFile::GetDialogue(size_t i)
@@ -388,12 +394,12 @@ void SubsFile::SortSelected(bool func(Dialogue *i, Dialogue *j))
 	selected.clear();
 }
 
-void SubsFile::GetSelections(wxArrayInt &selections, bool deselect)
+void SubsFile::GetSelections(wxArrayInt &selections, bool deselect/*=false*/, bool checkVisible /*= true*/)
 {
 	selections.clear();
 	for (std::set<int>::iterator i = subs->Selections.begin(); i != subs->Selections.end(); i++){
 		int sel = (*i);
-		if(*subs->dialogues[sel]->isVisible)
+		if (!checkVisible || *subs->dialogues[sel]->isVisible)
 			selections.Add(sel);
 	}
 	if (deselect){ subs->Selections.clear(); }
@@ -404,14 +410,14 @@ void SubsFile::InsertSelection(size_t i)
 	subs->Selections.insert(i);
 }
 
-void SubsFile::InsertSelections(size_t from, size_t to, bool deselect /*= false*/)
+void SubsFile::InsertSelections(size_t from, size_t to, bool deselect /*= false*/, bool skipHidden /*= false*/)
 {
 	if (deselect){ subs->Selections.clear(); }
 	size_t dialsize = subs->dialogues.size();
 	if (from >= dialsize){ return; }
 	if (to >= dialsize){ to = dialsize - 1; }
 	for (size_t i = from; i <= to; i++){
-		if (*subs->dialogues[i]->isVisible){
+		if (!skipHidden || *subs->dialogues[i]->isVisible){
 			subs->Selections.insert(i);
 		}
 	}
@@ -576,13 +582,14 @@ unsigned char SubsFile::CheckIfHasHiddenBlock(int i){
 			else
 				return 0;
 		}
-		keyFirst++;
 
 		if (!subs->dialogues[keyFirst]->NonDialogue)
 			numOfLines++;
+
+		keyFirst++;
 	}
 
-	return 0;
+	return (numOfLines) ? 1 : 0;
 }
 
 
@@ -797,10 +804,13 @@ size_t SubsFile::FirstSelection(size_t *id /*= NULL*/)
 		for (auto it = subs->Selections.begin(); it != subs->Selections.end(); it++){
 			int sel = (*it);
 			if (*subs->dialogues[sel]->isVisible){
-				if (id)
+				if (id){
 					*id = GetElementByKey(sel);
+					if (*id == -1)
+						return -1;
+				}
 
-				return (*id != -1)? sel : -1;
+				return sel;
 			}
 		}
 	}
@@ -812,7 +822,7 @@ size_t SubsFile::FirstSelection(size_t *id /*= NULL*/)
 
 void SubsFile::InsertRows(int Row,
 	const std::vector<Dialogue *> &RowsTable,
-	bool AddToDestroy, bool asKey)
+	bool AddToDestroy)
 {
 	size_t convertedRow = Row;
 	if (convertedRow >= subs->dialogues.size()){ convertedRow = subs->dialogues.size(); }
@@ -820,10 +830,7 @@ void SubsFile::InsertRows(int Row,
 	if (AddToDestroy){ subs->deleteDialogues.insert(subs->deleteDialogues.end(), RowsTable.begin(), RowsTable.end()); }
 }
 
-//Uważaj na dodawanie do niszczarki, 
-//bo brak dodania gdy trzeba to wycieki pamięci,
-//a podwójne dodanie to krasz przy niszczeniu obiektu.
-void SubsFile::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save, bool asKey)
+void SubsFile::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save)
 {
 	size_t convertedRow = Row;
 	if (convertedRow >= subs->dialogues.size()){ convertedRow = subs->dialogues.size(); }
@@ -837,7 +844,8 @@ void SubsFile::SwapRows(int frst, int scnd)
 	Dialogue *tmp = subs->dialogues[frst];
 	subs->dialogues[frst] = subs->dialogues[scnd];
 	subs->dialogues[scnd] = tmp;
-
+	subs->dialogues[frst]->ChangeDialogueState(1);
+	tmp->ChangeDialogueState(1);
 }
 
 void SubsFile::AddSInfo(const wxString &SI, wxString val, bool save)

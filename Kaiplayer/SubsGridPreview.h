@@ -56,6 +56,7 @@ private:
 	void SeekForOccurences();
 	void ContextMenu(const wxPoint &pos);
 	void OnFocus(wxFocusEvent &evt);
+	size_t GetKeyFromScrollPos(size_t numOfLines);
 
 	SubsGrid *previewGrid;
 	SubsGrid *parent;

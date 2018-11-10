@@ -794,53 +794,80 @@ void SubsGridBase::DeleteRows()
 	RefreshColumns();
 }
 
-void SubsGridBase::MoveRows(int step, bool sav)
+bool SubsGridBase::MoveRows(int step)
 {
 	SaveSelections();
 	wxArrayInt sels;
 	file->GetSelections(sels);
 
-	if (sels.GetCount() < 1){ return; }
+	if (sels.GetCount() < 1 && step == 0){ return false; }
+	int blocker = 0;
+	int backblocker = 0;
 	if (step < 0){
+		for (auto cur = sels.begin(); cur != sels.end(); cur++){
+			if (blocker == file->GetElementByKey(*cur)){
+				blocker++;
+			}
+			else
+				break;
+		}
+	}
+	int size = GetKeyFromPosition(GetCount(), -1);
+	int blockersize = size;
+	std::vector<std::pair<Dialogue*, int>> selectedDialogs;
+	for (auto cur = sels.rbegin(); cur != (sels.rend() - blocker); cur++)
+	{
+		int sel = *cur;
+		if (step > 0 && blockersize == sel){
+			blockersize = GetKeyFromPosition(blockersize, -1);
+			backblocker++;
+			continue;
+		}
+		selectedDialogs.push_back(std::make_pair(GetDialogue(sel), sel));
+		DeleteRow(sel);
+		file->EraseSelection(sel);
+	}
+	if (!selectedDialogs.size())
+		return false;
 
-		for (size_t i = 0; i < sels.GetCount(); i++)
+
+	if (step < 0){
+		for (auto cur = selectedDialogs.rbegin(); cur != selectedDialogs.rend(); cur++)
 		{
-			int sel = sels[i];
-			int istep = sel + step;
-			if (istep < 0){ break; }
-			file->InsertSelection(istep);
-			file->EraseSelection(sel);
-			if (step != -1){
-				InsertRows(istep, 1, GetDialogue(sel), false);
-				DeleteRow(sel, 1);
+			const std::pair<Dialogue*, int> &dialPair = *cur;
+			int sel = GetKeyFromPosition(dialPair.second, step);
+			if (sel < blocker){
+				sel = blocker;
+				blocker++;
 			}
-			else{
-				SwapRows(sel, istep);
-			}
-
+			Dialogue *Dialc = dialPair.first->Copy();
+			Dialc->ChangeDialogueState(1);
+			InsertRows(sel, 1, Dialc);
+			file->InsertSelection(sel);
 		}
 	}
 	else
 	{
-		for (int i = sels.GetCount() - 1; i >= 0; i--)
+		for (auto cur = selectedDialogs.rbegin(); cur != selectedDialogs.rend(); cur++)
 		{
-			int sel = sels[i];
-			int istep = sel + step;
-			if (istep > GetCount() - 1) break;
-			file->InsertSelection(istep);
-			file->EraseSelection(sel);
-			if (step != 1){
-				Dialogue *dial = GetDialogue(sel);
-				DeleteRow(sel, 1);
-				InsertRows(istep, 1, dial, false);
+			const std::pair<Dialogue*, int> &dialPair = *cur;
+			int sel = GetKeyFromPosition(dialPair.second, step);
+			if (sel - step != dialPair.second){ 
+				sel++; 
 			}
-			else{
-				SwapRows(sel, istep);
+			if (sel > size - backblocker){
+				sel = size - backblocker;
+				backblocker++;
 			}
+			Dialogue *Dialc = dialPair.first->Copy();
+			Dialc->ChangeDialogueState(1);
+			InsertRows(sel, 1, Dialc);
+			file->InsertSelection(sel);
 		}
 	}
 	Edit->SetLine(FirstSelection());
 	Refresh(false);
+	return true;
 }
 
 void SubsGridBase::DeleteText()
@@ -1000,10 +1027,9 @@ size_t SubsGridBase::FirstSelection(size_t *firstSelectionId /*= NULL*/)
 //bo brak dodania gdy trzeba to wycieki pamięci,
 //a podwójne dodanie to krasz przy niszczeniu obiektu.
 void SubsGridBase::InsertRows(int Row,
-	const std::vector<Dialogue *> &RowsTable,
-	bool AddToDestroy, bool asKey)
+	const std::vector<Dialogue *> &RowsTable, bool AddToDestroy)
 {
-	file->InsertRows(Row, RowsTable, AddToDestroy, asKey);
+	file->InsertRows(Row, RowsTable, AddToDestroy);
 	//spellErrors Array take all dialogues for compatybility
 	wxArrayInt emptyarray;
 	SpellErrors.insert(SpellErrors.begin() + Row, RowsTable.size(), emptyarray);
@@ -1012,9 +1038,9 @@ void SubsGridBase::InsertRows(int Row,
 //Uważaj na dodawanie do niszczarki, 
 //bo brak dodania gdy trzeba to wycieki pamięci,
 //a podwójne dodanie to krasz przy niszczeniu obiektu.
-void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save, bool asKey)
+void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save)
 {
-	file->InsertRows(Row, NumRows, Dialog, AddToDestroy, Save, asKey);
+	file->InsertRows(Row, NumRows, Dialog, AddToDestroy, Save);
 	//spellErrors Array take all dialogues for compatybility
 	wxArrayInt emptyarray;
 	SpellErrors.insert(SpellErrors.begin() + Row, NumRows, emptyarray);
@@ -1164,7 +1190,6 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 	lastRow = active;
 	markedLine = active;
 
-	MakeVisible();
 	file->EndLoad(OPEN_SUBTITLES, active);
 
 	RefreshColumns();
@@ -1181,7 +1206,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 		}
 		Edit->RebuildActorEffectLists();
 	}
-
+	MakeVisible();
 }
 
 void SubsGridBase::SetStartTime(int stime)
@@ -1294,11 +1319,13 @@ void SubsGridBase::NextLine(int dir)
 {
 	if (Edit->ABox && Edit->ABox->audioDisplay->hold != 0){ return; }
 	int size = GetCount();
-	if (size < 1){ dir = 0; }
-	int nebrow = currentLine + dir;
-	if (nebrow < 0){ return; }
-	if (nebrow >= size){
-		Dialogue *tmp = GetDialogue(size - 1)->Copy();
+	size_t nebrow = GetKeyFromPosition(currentLine, dir, false);
+	if (nebrow == -1){
+		if (dir < 0)
+			return;
+
+		size_t lastvisible = file->GetElementByKey(size - 1);
+		Dialogue *tmp = GetDialogue(lastvisible)->Copy();
 		int eend = tmp->End.mstime;
 		tmp->Start.NewTime(eend);
 		tmp->End.NewTime(eend + 5000);
@@ -1310,7 +1337,7 @@ void SubsGridBase::NextLine(int dir)
 	}
 	int h, w;
 	GetClientSize(&w, &h);
-	MakeVisible();
+	MakeVisible(nebrow);
 	file->ClearSelections();
 	file->InsertSelection(nebrow);
 	lastRow = nebrow;
@@ -1346,15 +1373,33 @@ void SubsGridBase::LoadDefault(bool line, bool sav, bool endload)
 	}
 }
 
-Dialogue *SubsGridBase::CopyDialogue(int i, bool push)
+Dialogue *SubsGridBase::CopyDialogue(size_t i, bool push)
 {
 	if (push && (int)SpellErrors.size() > i){ SpellErrors[i].Clear(); }
 	return file->CopyDialogue(i, push);
 }
 
-Dialogue *SubsGridBase::GetDialogue(int i)
+Dialogue * SubsGridBase::CopyDialogueWithOffset(size_t i, int offset, bool push /*= true*/)
+{
+	size_t newPos = GetKeyFromPosition(i, offset, false);
+	if (newPos != -1){
+		return CopyDialogue(newPos);
+	}
+	return NULL;
+}
+
+Dialogue *SubsGridBase::GetDialogue(size_t i)
 {
 	return file->GetDialogue(i);
+}
+
+Dialogue * SubsGridBase::GetDialogueWithOffset(size_t i, int offset)
+{
+	size_t newPos = GetKeyFromPosition(i, offset, false);
+	if (newPos != -1){
+		return GetDialogue(newPos);
+	}
+	return NULL;
 }
 
 const wxString & SubsGridBase::GetSInfo(const wxString &key, int *ii/*=0*/)
@@ -1709,21 +1754,23 @@ size_t SubsGridBase::GetKeyFromScrollPos(size_t numOfLines)
 }
 
 
-size_t SubsGridBase::GetKeyFromPosition(size_t position, int delta)
+size_t SubsGridBase::GetKeyFromPosition(size_t position, int delta, bool safe /*= true*/)
 {
 	int visibleLines = 0;
 	if (delta > 0){
 		size_t i = position + 1;
 		while (i < GetCount()){
+
 			if (*GetDialogue(i)->isVisible)
 				visibleLines++;
-
+			
 			if (delta == visibleLines)
 				return i;
 
 			i++;
+
 		}
-		return GetCount() - 1;
+		return (safe) ? GetKeyFromPosition(GetCount(), -1) : -1;
 	}
 	else if (delta < 0){
 		size_t i = position - 1;
@@ -1736,7 +1783,7 @@ size_t SubsGridBase::GetKeyFromPosition(size_t position, int delta)
 
 			i--;
 		}
-		return 0;
+		return (safe) ? file->GetElementById(0) : -1;
 	}
 	
 	return position;

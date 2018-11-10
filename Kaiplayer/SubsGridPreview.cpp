@@ -64,6 +64,7 @@ void SubsGridPreview::MakeVisible()
 	int erow = previewGrid->currentLine;
 	if ((scrollPosition > erow || previewGrid->GetKeyFromPosition(scrollPosition, (h / (previewGrid->GridHeight + 1))) < erow + 2)){
 		scrollPosition = previewGrid->GetKeyFromPosition(erow, -((h / (previewGrid->GridHeight + 1)) / 2) + 1);
+		scrollPositionId = previewGrid->file->GetElementByKey(scrollPosition);
 	}
 	if (!lastData.grid){
 		lastData.lineRangeStart = erow;
@@ -113,7 +114,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	int size = previewGrid->file->GetIdCount();
 	int panelrows = (h / (previewGrid->GridHeight + 1));
 	if (scrollPosition < 0){ scrollPosition = 0; scrollPositionId = 0; }
-	int scrows = scrollPosition + panelrows;
+	int scrows = scrollPositionId + panelrows;
 	//gdy widzimy koniec napisów
 	if (scrows >= size + 2){
 		bg = true;
@@ -205,6 +206,8 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	std::vector<wxString> strings;
 	int key = scrollPosition - 1;
 	int id = scrollPositionId - 1;
+	int idmarkerPos = -1;
+	int idcurrentLine = -1;
 
 	while (key + 1 <= keySize && id < scrows){
 		bool isHeadline = (key < scrollPosition);
@@ -245,7 +248,11 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			strings.push_back(wxString::Format("%i", id + 1));
 
 			isComment = Dial->IsComment;
-			//gdy zrobisz inaczej niepewne to u¿yj ^ 4 by wywaliæ 4 ze state.
+			if (key == previewGrid->markedLine)
+				idmarkerPos = id;
+			if (key == previewGrid->currentLine)
+				idcurrentLine = id;
+
 			states = Dial->GetState();
 			if (previewGrid->subsFormat < SRT){
 				strings.push_back(wxString::Format("%i", Dial->Layer));
@@ -335,13 +342,13 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 				int halfGridHeight = (previewGrid->GridHeight / 2);
 				int newPosY = posY + previewGrid->GridHeight + 1;
 				int startDrawPosY = newPosY + ((previewGrid->GridHeight - 10) / 2) - halfGridHeight;
-				tdc.DrawRectangle(1, startDrawPosY, 9, 9);
-				tdc.DrawLine(3, newPosY - 1, 8, newPosY - 1);
+				tdc.DrawRectangle(5, startDrawPosY, 9, 9);
+				tdc.DrawLine(7, newPosY - 1, 12, newPosY - 1);
 				if (hasHiddenBlock == 1){
-					tdc.DrawLine(5, startDrawPosY + 2, 5, startDrawPosY + 7);
+					tdc.DrawLine(9, startDrawPosY + 2, 9, startDrawPosY + 7);
 				}
 				//tdc.SetPen(SpelcheckerCol);
-				tdc.DrawLine(10, newPosY - 1, w + scHor, newPosY - 1);
+				tdc.DrawLine(14, newPosY - 1, w + scHor, newPosY - 1);
 			}
 			if (Dial){
 				if (!startBlock && Dial->isVisible == VISIBLE_BLOCK){
@@ -354,8 +361,8 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 					tdc.SetPen(textcol);
 					int halfLine = posY - 1;
 					if (isLastLine && !notVisibleBlock){ halfLine = posY + previewGrid->GridHeight; }
-					tdc.DrawLine(5, startDrawPosYFromPlus, 5, halfLine);
-					tdc.DrawLine(5, halfLine, w + scHor, halfLine);
+					tdc.DrawLine(9, startDrawPosYFromPlus, 9, halfLine);
+					tdc.DrawLine(9, halfLine, w + scHor, halfLine);
 					startBlock = false;
 				}
 			}
@@ -476,16 +483,16 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		tdc.DrawRectangle(posX, posY, w + scHor - 8, h);
 	}
 	if (size > 0){
-		if (previewGrid->markedLine >= scrollPosition && previewGrid->markedLine <= scrows){
+		if (idmarkerPos != -1){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine), 3));
-			tdc.DrawRectangle(posX + 1, ((previewGrid->markedLine - scrollPosition + 1)*(previewGrid->GridHeight + 1)) - 1, (previewGrid->GridWidth[0] - 1), previewGrid->GridHeight + 2);
+			tdc.DrawRectangle(posX + 1, ((idmarkerPos - scrollPositionId + 1)*(previewGrid->GridHeight + 1)) - 1, (previewGrid->GridWidth[0] - 1), previewGrid->GridHeight + 2);
 		}
 
-		if (previewGrid->currentLine >= scrollPosition && previewGrid->currentLine <= scrows){
+		if (idcurrentLine != -1){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine)));
-			tdc.DrawRectangle(posX, ((previewGrid->currentLine - scrollPosition + 1)*(previewGrid->GridHeight + 1)) - 1, w + scHor - posX - 21, previewGrid->GridHeight + 2);
+			tdc.DrawRectangle(posX, ((idcurrentLine - scrollPositionId + 1)*(previewGrid->GridHeight + 1)) - 1, w + scHor - posX - 21, previewGrid->GridHeight + 2);
 		}
 	}
 	tdc.SetBrush(wxBrush(Options.GetColour(hasFocus ? WindowBorderBackground : WindowBorderBackgroundInactive)));
@@ -561,7 +568,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	}
 	if (curX < 0 || curX > w-4){ return; }
 
-	int row = previewGrid->GetKeyFromScrollPos(curY / (previewGrid->GridHeight + 1)) - 1;
+	int row = GetKeyFromScrollPos(curY / (previewGrid->GridHeight + 1)) - 1;
 	int hideColumnWidth = (previewGrid->isFiltered) ? 12 : 0;
 	bool isNumerizeColumn = (curX >= hideColumnWidth && curX < previewGrid->GridWidth[0] + hideColumnWidth);
 
@@ -636,17 +643,19 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	// Mouse wheel
 	if (event.GetWheelRotation() != 0 && row >= scrollPosition) {
 		int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();
-		previewGrid->ScrollTo(scrollPosition, false, -step);
+		scrollPosition = previewGrid->GetKeyFromPosition(scrollPosition, - step);
+		scrollPositionId = previewGrid->file->GetElementByKey(scrollPosition);
 		Refresh(false);
 		return;
 	}
 
 	if (curX < hideColumnWidth){
-		int filterRow = previewGrid->GetKeyFromScrollPos((curY + (previewGrid->GridHeight / 2)) / (previewGrid->GridHeight + 1)) + scrollPosition - 2;
+		int filterRow = GetKeyFromScrollPos(((curY + (previewGrid->GridHeight / 2)) / (previewGrid->GridHeight + 1)) - 1) - 1;
 		if (!(filterRow < scrollPosition || filterRow >= previewGrid->GetCount()) || filterRow == -1) {
 			if ((click || dclick) && previewGrid->file->CheckIfHasHiddenBlock(filterRow)){
-				SubsGridFiltering filter((SubsGrid*)this, previewGrid->currentLine);
+				SubsGridFiltering filter(previewGrid, previewGrid->currentLine);
 				filter.FilterPartial(filterRow);
+				Refresh(false);
 			}
 		}
 		return;
@@ -662,7 +671,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	
 	if (holding && oldX != -1){
 		int diff = (oldX - curX);
-		if ((scHor == 0 && diff < 0) || diff == 0 || (scHor>1500 && diff>0)){ return; }
+		if ((scHor == 0 && diff < 0) || diff == 0 || (scHor > 1500 && diff > 0)){ return; }
 		scHor = scHor + diff;
 		oldX = curX;
 		if (scHor < 0){ scHor = 0; }
@@ -784,9 +793,10 @@ void SubsGridPreview::OnSize(wxSizeEvent &evt)
 
 void SubsGridPreview::OnScroll(wxScrollEvent& event)
 {
-	int newPos = previewGrid->file->GetElementById(event.GetPosition());
+	int newPos = event.GetPosition();
 	if (scrollPosition != newPos) {
-		scrollPosition = newPos;
+		scrollPositionId = newPos;
+		scrollPosition = previewGrid->file->GetElementById(newPos);
 		Refresh(false);
 	}
 }
@@ -902,3 +912,16 @@ void SubsGridPreview::OnFocus(wxFocusEvent &evt)
 	Refresh(false);
 }
 
+size_t SubsGridPreview::GetKeyFromScrollPos(size_t numOfLines)
+{
+	size_t visibleLines = 0;
+	for (size_t i = scrollPosition; i < previewGrid->GetCount(); i++){
+		if (numOfLines == visibleLines)
+			return i;
+
+		if (*previewGrid->GetDialogue(i)->isVisible)
+			visibleLines++;
+	}
+
+	return -1;
+}

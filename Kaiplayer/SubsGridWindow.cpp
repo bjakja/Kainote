@@ -737,7 +737,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 	if (ismenushown){ ScreenToClient(&curX, &curY); }
 	int row = GetKeyFromScrollPos(curY / (GridHeight + 1)) - 1;
-	int rowId = curY / (GridHeight + 1) + scrollPosition - 1;
+	//int rowId = curY / (GridHeight + 1) + scrollPosition - 1;
 	bool outOfPosition = (row < scrollPosition || row >= size);
 	int hideColumnWidth = (isFiltered) ? 12 : 0;
 	bool isNumerizeColumn = (curX >= hideColumnWidth && curX < GridWidth[0] + hideColumnWidth);
@@ -871,11 +871,9 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		if (holding && alt && lastsel != row)
 		{
 			if (lastsel != -1) {
-				file->edited = true;
-				MoveRows(row - lastsel);
+				file->edited = MoveRows(row - lastsel);
 			}
 			lastsel = row;
-			//return;
 		}
 
 
@@ -1115,11 +1113,13 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 
 		// Move selected
 		else if (alt && !shift) {
-			/*if ((dir == 1 || dir == -1) && FirstSelection() != -1){
-				MoveRows(dir, true);
-				ScrollTo(scrollPosition + dir);
-			}*/
-			//return;
+			if (FirstSelection() != -1){
+				if (MoveRows(dir)){
+					file->edited = true;
+					SetModified(GRID_SWAP_LINES);
+				}
+			}
+			return;
 		}
 
 		// Shift-selection
@@ -1237,11 +1237,11 @@ void SubsGridWindow::RefreshIfVisible(int time)
 			continue;
 
 		bool isVisible = dial->Start.mstime <= time && dial->End.mstime > time;
-		if (isVisible != visibleLines[counter++]){
+		if (isVisible != visibleLines[counter]){
 			Refresh(false);
 			break;
 		}
-
+		counter++;
 	}
 
 }
@@ -1336,34 +1336,37 @@ void SubsGridWindow::SelVideoLine(int curtime)
 	int prevtime = 0;
 	int durtime = (curtime < 0) ? Kai->GetTab()->Video->GetDuration() : 36000000;
 	int idr = 0, ip = 0;
-	//wxLogMessage("time %i, durtime %i",time,durtime);
+
 	for (int i = 0; i < GetCount(); i++)
 	{
 		Dialogue *dial = GetDialogue(i);
+		if (!dial->isVisible)
+			continue;
+
 		if (!dial->IsComment && (dial->Text != L"" || dial->TextTl != L"")){
-			if (time >= dial->Start.mstime&&time <= dial->End.mstime)
+			if (time >= dial->Start.mstime && time <= dial->End.mstime)
 			{
 				Edit->SetLine(i); 
 				SelectRow(i); 
 				MakeVisible(i);
-				break;
+				return;
 			}
 			if (dial->Start.mstime > prevtime && dial->Start.mstime < time){ prevtime = dial->Start.mstime; ip = i; }
 			if (dial->Start.mstime < durtime && dial->Start.mstime > time){ durtime = dial->Start.mstime; idr = i; }
 
 		}
-		if (i == GetCount() - 1){
-			if ((time - prevtime) > (durtime - time)){ 
-				Edit->SetLine(idr); 
-				SelectRow(idr); 
-				MakeVisible(idr);
-			}
-			else{ 
-				Edit->SetLine(ip); 
-				SelectRow(ip); 
-				MakeVisible(ip);
-			}
-		}
+		
+	}
+	
+	if ((time - prevtime) > (durtime - time)){
+		Edit->SetLine(idr);
+		SelectRow(idr);
+		MakeVisible(idr);
+	}
+	else{
+		Edit->SetLine(ip);
+		SelectRow(ip);
+		MakeVisible(ip);
 	}
 
 }
@@ -1435,15 +1438,17 @@ void SubsGridWindow::MakeVisible(int rowKey /*= -1*/)
 	GetClientSize(&w, &h);
 	// Find direction
 	int scdelta = 3;
-	int minVis = scrollPosition + 1;
-	int maxVis = scrollPosition + h / (GridHeight + 1) - 2;
+	int minVis = GetKeyFromPosition(scrollPosition, 1);
+	int maxDelta = (h / (GridHeight + 1)) - 2;
 	if (preview){
 		wxSize previewsize = preview->GetSize();
-		maxVis -= (previewsize.y / (GridHeight + 1)) + 1;
+		maxDelta -= (previewsize.y / (GridHeight + 1)) + 1;
 	}
+	int maxVis = GetKeyFromPosition(scrollPosition, maxDelta);
 	int delta = 0;
-	if (position < minVis && position != 0) delta = -scdelta;
-	if (position > maxVis) delta = scdelta;
+	//scdelta = (position - scrollPosition) + 3;
+	if (position < minVis) delta = -((position - scrollPosition) + scdelta);
+	if (position > maxVis) delta = scdelta + position - maxVis - 1;
 
 	if (delta) {
 		ScrollTo(scrollPosition, false, delta);

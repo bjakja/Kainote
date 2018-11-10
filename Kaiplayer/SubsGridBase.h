@@ -74,8 +74,12 @@ public:
 	void DeleteRow(int rw,int len=1);
 	void DeleteText();
 	void GetUndo(bool redo, int iter = -2);
-	void InsertRows(int Row, const std::vector<Dialogue *> &RowsTable, bool AddToDestroy=false, bool asKey = false);
-	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy = true, bool Save = false, bool asKey = false);
+	//Warning!! Adding the same dialogue pointer to destroyer cause crash
+	//not adding it when needed cause memory leaks.
+	void InsertRows(int Row, const std::vector<Dialogue *> &RowsTable, bool AddToDestroy=false);
+	//Warning!! Adding the same dialogue pointer to destroyer cause crash
+	//not adding it when needed cause memory leaks.
+	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy = true, bool Save = false);
 	void SetSubsFormat(wxString ext="");
 	void AddSInfo(const wxString &SI, wxString val="", bool save=true);
 	void SetModified(unsigned char editionType, bool redit = true, bool dummy = false, int SetEditBoxLine = -1, bool Scroll = true);
@@ -86,7 +90,7 @@ public:
 	size_t FirstSelection(size_t *firstSelectionId = NULL);
 	void SwapRows(int frst, int scnd, bool sav=false);
 	void LoadSubtitles(const wxString &str, wxString &ext);
-	void MoveRows(int step, bool sav=false);
+	bool MoveRows(int step);
 	void SetStartTime(int stime);
 	void SetEndTime(int etime);
 	bool SetTlMode(bool mode);
@@ -96,15 +100,23 @@ public:
 	size_t GetCount();
 	void NextLine(int dir=1);
 	void SaveSelections(bool clear=false);
-	Dialogue *CopyDialogue(int i, bool push=true);
-	Dialogue *GetDialogue(int i);
+	// no checks, check if value is unsure
+	Dialogue *CopyDialogue(size_t i, bool push=true);
+	// returns null when there's no visible dialogue with that offset or it is out of the table
+	Dialogue *CopyDialogueWithOffset(size_t i, int offset, bool push = true);
+	// no checks, check if value is unsure
+	Dialogue *GetDialogue(size_t i);
+	// returns null when there's no visible dialogue with that offset or it is out of the table
+	Dialogue *GetDialogueWithOffset(size_t i, int offset);
+	// returns visible lines as string for Vsfilter
 	wxString *GetVisible(bool *visible=0, wxPoint *point = NULL, wxArrayInt *selected = NULL);
 	//Get line key from scrollPosition.
 	//Every value will be stored as key.
 	//Simple function to convert key to id from scroll position
 	//to use with mouse, scroll events
 	size_t GetKeyFromScrollPos(size_t numOfLines);
-	size_t GetKeyFromPosition(size_t position, int delta);
+	//it should works without checks;
+	size_t GetKeyFromPosition(size_t position, int delta, bool safe = true);
 
 	void DummyUndo(int newIter);
 	void GetCommonStyles(SubsGridBase *grid, wxArrayString &styleTable);

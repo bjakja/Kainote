@@ -2023,8 +2023,8 @@ void KainoteFrame::OnAudioSnap(wxCommandEvent& event)
 		}
 
 		for (int j = shadeFrom; j < shadeTo; j++) {
-			if (j == tab->Grid->currentLine) continue;
 			shade = tab->Grid->GetDialogue(j);
+			if (!shade->isVisible || j == tab->Grid->currentLine) continue;
 
 			int start = shade->Start.mstime;
 			int end = shade->End.mstime;

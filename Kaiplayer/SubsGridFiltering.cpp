@@ -158,7 +158,7 @@ void SubsGridFiltering::MakeTree()
 				treeStart->treeState = TREE_DESCRIPTION;
 				treeStart->Text = "";
 				treeStart->TextTl = "";
-				grid->InsertRows(i + treeDiff, 1, treeStart, true, false, true);
+				grid->InsertRows(i + treeDiff, 1, treeStart, true, false);
 				treeDiff++;
 				startSelection = false;
 			}

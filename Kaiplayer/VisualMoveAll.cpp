@@ -317,10 +317,7 @@ void MoveAll::ChangeInLines(bool all)
 
 		}
 		if (all){
-			if (istexttl)
-				tab->Grid->CopyDialogue(sels[i])->TextTl = txt;
-			else
-				tab->Grid->CopyDialogue(sels[i])->Text = txt;
+			tab->Grid->CopyDialogue(sels[i])->SetText(txt);
 		}
 		else{
 			Dialogue Cpy = Dialogue(*Dial);
@@ -332,14 +329,14 @@ void MoveAll::ChangeInLines(bool all)
 
 				Cpy.GetRaw(&tlLines, true);
 				dtxt->insert(selPositions[i] + moveLength, tlLines);
-				moveLength += tlLines.Len();
+				moveLength += tlLines.length();
 			}
 			else{
 				Cpy.Text = txt;
 				wxString thisLine;
 				Cpy.GetRaw(&thisLine);
 				dtxt->insert(selPositions[i] + moveLength, thisLine);
-				moveLength += thisLine.Len();
+				moveLength += thisLine.length();
 			}
 
 

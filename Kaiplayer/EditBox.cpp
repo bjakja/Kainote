@@ -360,10 +360,12 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	if (Options.GetInt(GridSaveAfterCharacterCount) > 1 && rowChanged && save){
 		Send(EDITBOX_LINE_EDITION, false);
 	}
-	Dialogue *prevDial = grid->GetDialogue(currentLine);
-	if (prevDial && prevDial->Start.mstime > prevDial->End.mstime){
-		prevDial->End = prevDial->Start;
-		grid->Refresh(false);
+	if (currentLine < grid->GetCount()){
+		Dialogue *prevDial = grid->GetDialogue(currentLine);
+		if (prevDial->Start.mstime > prevDial->End.mstime){
+			prevDial->End = prevDial->Start;
+			grid->Refresh(false);
+		}
 	}
 	if (StartEdit->changedBackGround){
 		StartEdit->SetForegroundColour(WindowText);
@@ -405,10 +407,16 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 		DoubtfulTL->SetValue(line->IsDoubtful());
 	}
 
-	if (setaudio && ABox && ABox->IsShown()){ ABox->audioDisplay->SetDialogue(line, currentLine); }
-
-	//ustawia znaki na sekundę i ilość linii
+	
+	//set characters per seconds and wraps
 	UpdateChars((TextEditOrig->IsShown() && line->TextTl != L"") ? line->TextTl : line->Text);
+
+	//block show audio and video when preview enabled
+	//and editbox shows line from preview grid != tab->Grid
+	if (tab->Grid->preview && tab->Grid != grid)
+		return;
+
+	if (setaudio && ABox && ABox->IsShown()){ ABox->audioDisplay->SetDialogue(line, currentLine); }
 
 done:
 	VideoCtrl *vb = tab->Video;

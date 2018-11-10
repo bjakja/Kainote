@@ -699,14 +699,14 @@ void AudioDisplay::DrawInactiveLines() {
 
 	// Only previous
 	if (shadeType == 1) {
-		shadeFrom = grid->GetKeyFromPosition(grid->currentLine, -1);
-		shadeTo = grid->GetKeyFromPosition(grid->currentLine, 1);
+		shadeFrom = grid->GetKeyFromPosition(line_n, -1);
+		shadeTo = grid->GetKeyFromPosition(line_n, 1);
 	}
 
 	// All
 	else {
 		shadeFrom = 0;
-		shadeTo = grid->GetCount();
+		shadeTo = grid->GetCount() -1;
 	}
 	D3DXVECTOR2 v2[2];
 	Dialogue *ADial = grid->GetDialogue(line_n);
@@ -714,7 +714,7 @@ void AudioDisplay::DrawInactiveLines() {
 	int aS = GetXAtMS(ADial->Start.mstime);
 	int aE = GetXAtMS(ADial->End.mstime);
 
-	for (int j = shadeFrom; j < shadeTo; j++) {
+	for (int j = shadeFrom; j <= shadeTo; j++) {
 		if (j == line_n) continue;
 		if (j < 0 || j >= grid->GetCount()) continue;
 		shade = grid->GetDialogue(j);
@@ -1871,16 +1871,20 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 					selStart = MAX(0, selStart);
 					selEnd = MAX(0, selEnd);
 					int nn = grid->currentLine;
-					//automatyczne ustawianie czasów następnej linijki (Chwyt myszą end + ctrl)
-					if (hold == 2 && nn < grid->GetCount() - 1 && event.ControlDown() && event.AltDown()){
-						Dialogue *dialc = grid->CopyDialogue(nn + 1);
-						dialc->Start.NewTime(curEndMS);
-						if (dialc->End < dialc->Start){ dialc->End.NewTime(curEndMS + 5000); }
+					//automatic setting times of previous or next line(right alt + left click or drag)
+					if (hold == 2 && event.ControlDown() && event.AltDown()){
+						Dialogue *dialc = grid->CopyDialogueWithOffset(nn, 1);
+						if (dialc){
+							dialc->Start.NewTime(curEndMS);
+							if (dialc->End < dialc->Start){ dialc->End.NewTime(curEndMS + 5000); }
+						}
 					}
-					else if (hold == 1 && nn>0 && event.ControlDown() && event.AltDown()){
-						Dialogue *dialc = grid->CopyDialogue(nn - 1);
-						dialc->End.NewTime(curStartMS);
-						if (dialc->End < dialc->Start){ dialc->Start.NewTime(curStartMS - 5000); }
+					else if (hold == 1 && event.ControlDown() && event.AltDown()){
+						Dialogue *dialc = grid->CopyDialogueWithOffset(nn, -1);
+						if (dialc){
+							dialc->End.NewTime(curStartMS);
+							if (dialc->End < dialc->Start){ dialc->Start.NewTime(curStartMS - 5000); }
+						}
 					}
 				}
 
@@ -2132,15 +2136,15 @@ int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start
 
 		// Get range
 		if (shadeType == 1) {
-			shadeFrom = grid->GetKeyFromPosition(grid->currentLine, -1);
-			shadeTo = grid->GetKeyFromPosition(grid->currentLine, 1);
+			shadeFrom = grid->GetKeyFromPosition(line_n, -1);
+			shadeTo = grid->GetKeyFromPosition(line_n, 1);
 		}
 		else {
 			shadeFrom = 0;
-			shadeTo = grid->GetCount();
+			shadeTo = grid->GetCount() -1;
 		}
 
-		for (int j = shadeFrom; j < shadeTo; j++) {
+		for (int j = shadeFrom; j <= shadeTo; j++) {
 			if (j == line_n) continue;
 			shade = grid->GetDialogue(j);
 			if (!shade->isVisible)

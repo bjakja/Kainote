@@ -264,8 +264,9 @@ void SubsGrid::OnInsertBefore()
 	dialog->Text = L"";
 	dialog->TextTl = L"";
 	dialog->End = dialog->Start;
-	if (rw > 0 && GetDialogue(rw - 1)->End > dialog->Start){
-		dialog->Start = GetDialogue(rw - 1)->End;
+	Dialogue *previousDialogue = GetDialogueWithOffset(rw, -1);
+	if (previousDialogue && previousDialogue->End > dialog->Start){
+		dialog->Start = previousDialogue->End;
 	}
 	else{ dialog->Start.Change(-4000); }
 	markedLine = currentLine;
@@ -280,8 +281,9 @@ void SubsGrid::OnInsertAfter()
 	dialog->Text = L"";
 	dialog->TextTl = L"";
 	dialog->Start = dialog->End;
-	if (rw<GetCount() - 1 && GetDialogue(rw + 1)->End > dialog->Start){
-		dialog->End = GetDialogue(rw + 1)->Start;
+	Dialogue *nextDialogue = GetDialogueWithOffset(rw, +1);
+	if (nextDialogue && nextDialogue->Start > dialog->End){
+		dialog->End = nextDialogue->Start;
 	}
 	else{ dialog->End.Change(4000); }
 	currentLine = markedLine = rw + 1;
@@ -292,19 +294,27 @@ void SubsGrid::OnDuplicate()
 {
 	SaveSelections(true);
 	int rw = selections[0];
-	int rw1 = rw + 1;
-	for (size_t i = 1; i < selections.GetCount(); i++){ if (rw1 == selections[i]){ rw1++; } else{ break; } }
-	int rw2 = rw1 - rw;
+	int rw1 = rw;
+	size_t i = 0;
 	std::vector<Dialogue *> dupl;
-	for (int i = 0; i < rw2; i++){
-		dupl.push_back(file->CopyDialogue(i + rw, false));
+	while (i < selections.GetCount()){
+		if (rw1 == selections[i]){ 
+			Dialogue *dial = file->CopyDialogue(rw1, false);
+			dupl.push_back(dial);
+			i++; rw1++; 
+		}
+		else if (*GetDialogue(rw1)->isVisible){ 
+			break; 
+		}
+		else
+			rw1++;
 	}
 
 	if (dupl.size() > 0){
 		InsertRows(rw1, dupl);
 		dupl.clear();
 	}
-	file->InsertSelections(rw1, rw1 + rw2 - 1);
+	file->InsertSelections(rw1, rw1 + i - 1, false, true);
 	SetModified(GRID_DUPLICATE, true, false, rw1);
 	Refresh(false);
 }
@@ -321,18 +331,19 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	wxString en1;
 	int idd = event.GetId();
 	if (idd == JoinWithPrevious){
-		if (currentLine == 0){ return; }
+		size_t prevLine = GetKeyFromPosition(currentLine, -1);
+		if (currentLine <= prevLine){ return; }
 		selections.Clear();
-		selections.Add(currentLine - 1);
+		selections.Add(prevLine);
 		selections.Add(currentLine);
 		en1 = L" ";
 	}
 	else if (idd == JoinWithNext){
-		int sizegrid = GetCount();
-		if (currentLine >= sizegrid - 1 || sizegrid < 2){ return; }
+		size_t nextLine = GetKeyFromPosition(currentLine, -1);
+		if (currentLine >= nextLine){ return; }
 		selections.Clear();
 		selections.Add(currentLine);
-		selections.Add(currentLine + 1);
+		selections.Add(nextLine);
 		en1 = L" ";
 	}
 	else{ en1 = L"\\N"; }
@@ -390,8 +401,8 @@ void SubsGrid::OnJoinToFirst(int id)
 
 void SubsGrid::OnPaste(int id)
 {
-	int row = FirstSelection();
-	if (row < 0){ wxBell(); return; }
+	size_t row = FirstSelection();
+	if (row == -1){ wxBell(); return; }
 	SaveSelections(id != PasteCollumns);
 	int collumns = 0;
 	if (id == PasteCollumns){
@@ -712,8 +723,6 @@ void SubsGrid::OnPasteTextTl()
 		wxString ext = pathh.AfterLast(L'.');
 		int iline = 0;
 
-		//for(int i=0;i<GetCount();i++){file->subs.dials[i]->spells.Clear();}
-
 		if (ext == L"srt"){
 			//wxString dbg;
 			wxStringTokenizer tokenizer(txt, L"\n", wxTOKEN_STRTOK);
@@ -738,7 +747,9 @@ void SubsGrid::OnPasteTextTl()
 							diall.Text = L"";
 							AddLine(diall.Copy());
 						}
-						iline++; text1 = L"";
+						//todo write here skipping 
+						iline++; 
+						text1 = L"";
 					}
 				}
 				else{ text1 << text << L"\r\n"; }
@@ -789,7 +800,10 @@ void SubsGrid::MoveTextTL(char mode)
 	file->GetSelections(selections);
 	if (selections.GetCount() < 1 || !showOriginal || !hasTLMode) return;
 	SaveSelections(true);
+
+	//key
 	int firstSelected = selections[0];
+	//use for offsets
 	int numSelected = 1;
 	if (selections.GetCount() > 1){
 		numSelected = selections[1] - firstSelected;
@@ -798,28 +812,36 @@ void SubsGrid::MoveTextTL(char mode)
 	if (mode < 3){// w górę ^
 		//tryb 2 gdzie dodaje puste linijki a tekst pl pozostaje bez zmian
 		if (mode == 2){
-			Dialogue *insdial = GetDialogue(firstSelected)->Copy();
-			insdial->Text = L"";
-			InsertRows(firstSelected, numSelected, insdial);
+			Dialogue *insertDial = GetDialogue(firstSelected)->Copy();
+			insertDial->Text = L"";
+			InsertRows(firstSelected, numSelected, insertDial);
 		}
 		file->InsertSelection(firstSelected);
 		for (int i = firstSelected; i < GetCount(); i++)
 		{
+			Dialogue *dial = GetDialogue(i);
+			if (!dial->isVisible)
+				continue;
+
+			Dialogue *nextDial = GetDialogueWithOffset(i, 1);
+			Dialogue *lastDial = GetDialogueWithOffset(i, numSelected);
 			if (i < firstSelected + numSelected){
 				//tryb1 gdzie łączy wszystkie nachodzące linijki w jedną
 				if (mode == 1){
-					wxString mid = (GetDialogue(firstSelected)->TextTl != L"" && GetDialogue(i + 1)->TextTl != L"") ? L"\\N" : L"";
-					CopyDialogue(firstSelected)->TextTl << mid << GetDialogue(i + 1)->TextTl;
-					if (i != firstSelected){ CopyDialogue(i)->TextTl = GetDialogue(i + numSelected)->TextTl; }
+					if (nextDial){
+						wxString mid = (GetDialogue(firstSelected)->TextTl != L"" && nextDial->TextTl != L"") ? L"\\N" : L"";
+						CopyDialogue(firstSelected)->TextTl << mid << nextDial->TextTl;
+						if (i != firstSelected && lastDial){ CopyDialogue(i)->TextTl = lastDial->TextTl; }
+					}
 				}
-				else if (i + numSelected < GetCount()){
-					CopyDialogue(i)->TextTl = GetDialogue(i + numSelected)->TextTl;
+				else if (lastDial){
+					CopyDialogue(i)->TextTl = lastDial->TextTl;
 				}
 			}
-			else if (i < GetCount() - numSelected){
-				CopyDialogue(i)->TextTl = GetDialogue(i + numSelected)->TextTl;
+			else if (lastDial){
+				CopyDialogue(i)->TextTl = lastDial->TextTl;
 			}
-			else if (GetDialogue(i)->Text != L""){ numSelected--; }
+			else if (dial->Text != L""){ numSelected--; }
 
 		}
 
@@ -842,6 +864,7 @@ void SubsGrid::MoveTextTL(char mode)
 		//sel.insert(first+mrow);
 		for (int i = GetCount() - 1; i >= firstSelected; i--)
 		{
+
 			if (i < firstSelected + numSelected){
 				if (mode == 3){
 					CopyDialogue(i)->TextTl = L"";
@@ -1325,14 +1348,14 @@ void SubsGrid::TreeAddLines(int treeLine)
 	keystart -= beforeLinesDiff;
 	//insert before lines on tree start 
 	if (beforeTreeLines.size()){
-		InsertRows(keystart + 1, beforeTreeLines, false, true);
+		InsertRows(keystart + 1, beforeTreeLines, false);
 	}
 	//insert after lines need to find end of tree
 	if (afterTreeLines.size()){
 		for (int i = keystart; i < file->GetCount(); i++){
 			Dialogue *dial = file->GetDialogue(i);
 			if ((!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart))){
-				InsertRows(i, afterTreeLines, false, true);
+				InsertRows(i, afterTreeLines, false);
 				break;
 			}
 		}

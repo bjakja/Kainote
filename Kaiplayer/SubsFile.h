@@ -131,16 +131,22 @@ public:
 	void EndLoad(unsigned char editionType, int activeLine, bool initialSave = false);
 	size_t GetCount();
 	size_t GetIdCount();
-	//size_t GetCount();
 	void AppendDialogue(Dialogue *dial);
-	//Dialogue *CopyDialogue(size_t i, bool push=true, bool keepstate=false);
+	//check if exceeds tabe or if dialogue is not visible can return null
+	Dialogue *CopyVisibleDialogue(size_t i, bool push = true, bool keepstate = false);
 	Dialogue *CopyDialogue(size_t i, bool push = true, bool keepstate = false);
+	//check if exceeds tabe or if dialogue is not visible can return null
+	Dialogue *GetVisibleDialogue(size_t i);
 	Dialogue *GetDialogue(size_t i);
 	void SetDialogue(size_t i, Dialogue *dial);
 	void DeleteDialogues(size_t from, size_t to);
 	void DeleteSelectedDialogues();
-	void InsertRows(int Row, const std::vector<Dialogue *> &RowsTable, bool AddToDestroy, bool asKey);
-	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save, bool asKey);
+	//Warning!! Adding the same dialogue pointer to destroyer cause crash
+	//not adding it when needed cause memory leaks.
+	void InsertRows(int Row, const std::vector<Dialogue *> &RowsTable, bool AddToDestroy);
+	//Warning!! Adding the same dialogue pointer to destroyer cause crash
+	//not adding it when needed cause memory leaks.
+	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save);
 	void SwapRows(int frst, int scnd);
 	void SortAll(bool func(Dialogue *i, Dialogue *j));
 	void SortSelected(bool func(Dialogue *i, Dialogue *j));
@@ -165,10 +171,10 @@ public:
 	void SaveSelections(bool clear, int currentLine, int markedLine, int scrollPos);
 	size_t FirstSelection(size_t *id = NULL);
 
-	void GetSelections(wxArrayInt &selections, bool deselect=false);
+	void GetSelections(wxArrayInt &selections, bool deselect=false, bool checkVisible = true);
 	const std::set<int> & GetSelectionsAsKeys(){ return subs->Selections; };
 	void InsertSelection(size_t i);
-	void InsertSelections(size_t from, size_t to, bool deselect = false);
+	void InsertSelections(size_t from, size_t to, bool deselect = false, bool skipHidden = true);
 	void EraseSelection(size_t i);
 	size_t FindVisibleKey(size_t key, int *corrected = NULL);
 	bool IsSelected(size_t i);

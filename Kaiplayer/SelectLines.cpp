@@ -380,7 +380,7 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 		tab->Grid->DeleteRows();
 		if (action == 3 || action == 4)
 		{
-			tab->Grid->InsertRows((action == 3) ? 0 : -1, mdial, false, true);
+			tab->Grid->InsertRows((action == 3) ? 0 : -1, mdial, false);
 			mdial.clear();
 		}
 	}
