@@ -764,7 +764,9 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 			if (click){
 				int diff = file->OpenCloseTree(row);
 				RefreshColumns();
-				SpellErrors.erase(SpellErrors.begin() + (row + 1), SpellErrors.end());
+				if (SpellErrors.size() > (row + 1))
+					SpellErrors.erase(SpellErrors.begin() + (row + 1), SpellErrors.end());
+
 				if (currentLine > row){
 					size_t firstSel = FirstSelection();
 					if (firstSel == -1){
@@ -827,7 +829,9 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	if (left_up && holding) {
 		holding = false;
 		//Save swap lines after alt release 
-		if (event.AltDown() && lastsel != -1 && file->IsNotSaved()){ SetModified(GRID_SWAP_LINES); }
+		if (event.AltDown() && file->IsNotSaved()){ 
+			SetModified(GRID_SWAP_LINES); 
+		}
 		ReleaseMouse();
 		if (oldX != -1){ return; }
 	}
@@ -867,13 +871,17 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	int mvtal = video->vToolbar->videoSeekAfter->GetSelection();
 	int pas = video->vToolbar->videoPlayAfter->GetSelection();
 	if (!outOfPosition) {
-
-		if (holding && alt && lastsel != row)
+		if (holding && alt)
 		{
-			if (lastsel != -1) {
-				file->edited = MoveRows(row - lastsel);
+			if (lastsel != -1 && lastsel != row) {	
+				if (!file->edited)
+					SaveSelections();
+				file->edited |= MoveRows(file->GetElementByKey(row) - file->GetElementByKey(lastsel));
 			}
 			lastsel = row;
+			if (click){
+				return;
+			}
 		}
 
 
@@ -1037,6 +1045,7 @@ void SubsGridWindow::ScrollTo(int y, bool center /*= false*/, int offset /*= 0*/
 	int nextY = y;// MID(0, y, size - h / (GridHeight + 1));
 
 	if (scrollPosition != nextY) {
+		//KaiLog(wxString::Format("scrollpos = %i, %i, %i", scrollPosition, y, offset));
 		scrollPosition = nextY;
 		scrollPositionId = file->GetElementByKey(nextY);
 		Refresh(false);
@@ -1114,6 +1123,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 		// Move selected
 		else if (alt && !shift) {
 			if (FirstSelection() != -1){
+				SaveSelections();
 				if (MoveRows(dir)){
 					file->edited = true;
 					SetModified(GRID_SWAP_LINES);
@@ -1431,9 +1441,9 @@ bool SubsGridWindow::ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowTo
 	return true;
 }
 
-void SubsGridWindow::MakeVisible(int rowKey /*= -1*/)
+void SubsGridWindow::MakeVisible(int rowKey)
 {
-	int position = (rowKey != -1) ? rowKey : currentLine;
+	int position = rowKey;//(rowKey != -1) ? rowKey : currentLine;
 	int w, h;
 	GetClientSize(&w, &h);
 	// Find direction
@@ -1447,10 +1457,18 @@ void SubsGridWindow::MakeVisible(int rowKey /*= -1*/)
 	int maxVis = GetKeyFromPosition(scrollPosition, maxDelta);
 	int delta = 0;
 	//scdelta = (position - scrollPosition) + 3;
-	if (position < minVis) delta = -((position - scrollPosition) + scdelta);
-	if (position > maxVis) delta = scdelta + position - maxVis - 1;
+	int newPosition = 0;
+	if (position < minVis) {
+		delta = -scdelta;
+		newPosition = position;
+	}
+
+	if (position > maxVis){
+		delta = scdelta - maxDelta;
+		newPosition = position;
+	}
 
 	if (delta) {
-		ScrollTo(scrollPosition, false, delta);
+		ScrollTo(newPosition, false, delta);
 	}
 }

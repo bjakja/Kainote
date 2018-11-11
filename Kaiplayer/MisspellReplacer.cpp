@@ -198,9 +198,9 @@ void MisspellReplacer::ReplaceChecked()
 			
 		results.push_back(SeekResult);
 		if (tab != oldtab && oldtab && somethingWasChanged){
-			tab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
-			tab->Grid->SpellErrors.clear();
-			tab->Grid->Refresh(false);
+			oldtab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
+			oldtab->Grid->SpellErrors.clear();
+			oldtab->Grid->Refresh(false);
 			somethingWasChanged = false;
 		}
 	
@@ -606,7 +606,8 @@ bool MisspellReplacer::ReplaceBlock(std::vector<ReplacerSeekResults *> &results,
 			somethingChanged = true;
 		}
 		else{
-			KaiLog(L"Cannot replace: \"" + matchResult + L"\" to \"" + actualrule.replaceRule + L"\" using rule: \"" + actualrule.findRule + L"\"");
+			KaiLog(wxString::Format(_("Nie mo¿na zamieniæ \"%s\" na \"%s\", wykorzystuj¹c regu³ê \"%s\"."), 
+				matchResult, actualrule.replaceRule, actualrule.findRule));
 		}
 	}
 

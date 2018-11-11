@@ -90,7 +90,7 @@ public:
 	size_t FirstSelection(size_t *firstSelectionId = NULL);
 	void SwapRows(int frst, int scnd, bool sav=false);
 	void LoadSubtitles(const wxString &str, wxString &ext);
-	bool MoveRows(int step);
+	bool MoveRows(int step, bool keyStep = false);
 	void SetStartTime(int stime);
 	void SetEndTime(int etime);
 	bool SetTlMode(bool mode);
@@ -114,7 +114,7 @@ public:
 	//Every value will be stored as key.
 	//Simple function to convert key to id from scroll position
 	//to use with mouse, scroll events
-	size_t GetKeyFromScrollPos(size_t numOfLines);
+	size_t GetKeyFromScrollPos(int numOfLines);
 	//it should works without checks;
 	size_t GetKeyFromPosition(size_t position, int delta, bool safe = true);
 
@@ -149,7 +149,7 @@ public:
 private:
 	virtual void AdjustWidths(int cell = 8191){};
 	virtual void RefreshColumns(int cell = 8191){};
-	virtual void MakeVisible(int row = -1){};
+	virtual void MakeVisible(int row){};
 protected:
 	static void CompareTexts(compareData &firstTable, compareData &secondTable, const wxString &first, const wxString &second);
 	short numsave;
