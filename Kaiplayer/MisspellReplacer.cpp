@@ -380,7 +380,7 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 	while (tabLinePosition < Subs->GetCount())
 	{
 		Dialogue *Dial = Subs->GetDialogue(tabLinePosition);
-		if (!Dial->isVisible){ tabLinePosition++; continue; }
+		if (!Dial->isVisible || (tab->Grid->ignoreFiltered && Dial->NonDialogue)){ tabLinePosition++; continue; }
 
 		if ((!selectedOption) ||
 			(selectedOption == 3 && stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
@@ -502,7 +502,7 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 	while (tabLinePosition < Subs->GetCount())
 	{
 		Dialogue *Dial = Subs->GetDialogue(tabLinePosition);
-		if (!Dial->isVisible){ tabLinePosition++; continue; }
+		if (!Dial->isVisible || (tab->Grid->ignoreFiltered && Dial->NonDialogue)){ tabLinePosition++; continue; }
 
 		if ((!selectedOption) ||
 			(selectedOption == 3 && stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
@@ -698,6 +698,7 @@ void MisspellReplacer::FillWithDefaultRules(wxString &rules)
 		_("Usuwanie japoñskich zwrotów grzecznoœciowych") + L"\f ?- ?(san|chan|kun|sama|nee|dono|senpai|sensei)\\M\f\f0\n" +
 		_("Zamiana \"sie\" na \"siê\"") + L"\f\\msie\\M\fsiê\f0\n" +
 		_("Zamiana \"nie mo¿liwe\" na \"niemo¿liwe\"") + L"\f\\mnie mo¿liwe\\M\fniemo¿liwe\f0\n" +
+		_("Zamiana \"nie wa¿ne\" na \"niewa¿ne\"") + L"\f\\mnie wa¿ne\\M\fniewa¿ne\f0\n" +
 		_("Zamiana b³êdów wyra¿enia \"w ogóle\"") + L"\f\\mw ?og[uo]le\\M\fw ogóle\f0\n" +
 		_("Zamiana b³êdów wyra¿enia \"w ogóle\"") + L"\f\\mwogóle\\M\fw ogóle\f0\n" +
 		_("Zamiana b³êdów wyrazu \"bêdê\"") + L"\f\\mbed[eê]\\M\fbêdê\f0\n" +

@@ -104,14 +104,8 @@ public:
 	File *Copy(bool copySelections = true);
 };
 
-namespace Auto{
-	class LuaCommand;
-}
-
 class SubsFile
 {
-	//friend class SubsGridBase;
-	friend class Auto::LuaCommand;
 private:
 	std::vector<File*> undo;
 	int iter;
@@ -126,8 +120,6 @@ public:
 	bool Undo();
 	void DummyUndo();
 	void DummyUndo(int newIter);
-	//void ReloadVisibleDialogues(size_t keyFrom, size_t keyTo);
-	//void ReloadVisibleDialogues();
 	void EndLoad(unsigned char editionType, int activeLine, bool initialSave = false);
 	size_t GetCount();
 	size_t GetIdCount();
@@ -158,7 +150,7 @@ public:
 	Styles *GetStyle(size_t i, const wxString &name = L"");
 	std::vector<Styles*> *GetStyleTable();
 
-	//multiplication musi byæ ustawione na zero, wtedy zwróci iloœæ multiplikacji
+	//multiplication must be set to 0
 	size_t FindStyle(const wxString &name, int *multip);
 	void GetStyles(wxString &stylesText, bool addTlModeStyle = false);
 	void DeleleStyle(size_t i);
@@ -170,7 +162,7 @@ public:
 	size_t SInfoSize();
 	void SaveSelections(bool clear, int currentLine, int markedLine, int scrollPos);
 	size_t FirstSelection(size_t *id = NULL);
-
+	File *GetSubs(){ return subs; }
 	void GetSelections(wxArrayInt &selections, bool deselect=false, bool checkVisible = true);
 	const std::set<int> & GetSelectionsAsKeys(){ return subs->Selections; };
 	void InsertSelection(size_t i);

@@ -28,6 +28,7 @@
 class EditBox;
 class KainoteFrame;
 class SubsGrid;
+class SubsGridPreview;
 
 class compareData{
 public:
@@ -43,7 +44,7 @@ private:
 
 class SubsGridBase : public KaiScrolledWindow
 {
-	friend class SubsFile;
+	friend class SubsGridPreview;
 public:
 
 	//wxMutex mutex;

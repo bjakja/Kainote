@@ -1685,18 +1685,12 @@ void SubsGridBase::CompareTexts(compareData &firstCompare, compareData &secondCo
 	size_t i1, i2;
 	dpt = new size_t[sz];
 
-	if (//sz / (l1 + 1) / (l2 + 1) != sizeof(size_t) ||
-		//(
-		dpt == NULL)
+	if (dpt == NULL)
 	{
 		KaiLog(L"memory allocation failed");
 		return;
 	}
 
-	/*for (i1 = 0; i1 <= l1; i1++)
-	dpt[w * i1 + 0] = 0;
-	for (i2 = 0; i2 <= l2; i2++)
-	dpt[w * 0 + i2] = 0;*/
 	memset(dpt, 0, sz);
 
 	for (i1 = 1; i1 <= l1; i1++){
@@ -1814,7 +1808,6 @@ size_t SubsGridBase::GetKeyFromPosition(size_t position, int delta, bool safe /*
 			i++;
 
 		}
-		//KaiLog(wxString::Format("return delta > 0 %i", (safe) ? (int)GetKeyFromPosition(GetCount(), -1) : -1));
 		return (safe) ? GetKeyFromPosition(GetCount(), -1) : -1;
 	}
 	else if (delta < 0 && position > 0){
@@ -1828,10 +1821,8 @@ size_t SubsGridBase::GetKeyFromPosition(size_t position, int delta, bool safe /*
 
 			i--;
 		}
-		//KaiLog(wxString::Format("return delta < 0 %i", (safe) ? (int)file->GetElementById(0) : -1));
 		return (safe) ? file->GetElementById(0) : -1;
 	}
-	//KaiLog(wxString::Format("return last %i", (int)position));
 	return position;
 }
 

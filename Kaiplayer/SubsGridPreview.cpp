@@ -31,7 +31,6 @@ SubsGridPreview::SubsGridPreview(SubsGrid *_previewGrid, SubsGrid *windowToDraw,
 	else{
 		previewGrid->thisPreview = this;
 	}
-	scrollPosition = previewGrid->scrollPosition;
 	scrollbar = new KaiScrollbar(this, 5432, wxDefaultPosition, wxDefaultSize,wxVERTICAL);
 	Bind(wxEVT_PAINT, &SubsGridPreview::OnPaint, this);
 	Bind(wxEVT_SIZE, &SubsGridPreview::OnSize, this);
@@ -62,9 +61,9 @@ void SubsGridPreview::MakeVisible()
 	int w, h;
 	GetClientSize(&w, &h);
 	int erow = previewGrid->currentLine;
-	if ((scrollPosition > erow || previewGrid->GetKeyFromPosition(scrollPosition, (h / (previewGrid->GridHeight + 1))) < erow + 2)){
-		scrollPosition = previewGrid->GetKeyFromPosition(erow, -((h / (previewGrid->GridHeight + 1)) / 2) + 1);
-		scrollPositionId = previewGrid->file->GetElementByKey(scrollPosition);
+	if ((previewGrid->scrollPosition > erow || previewGrid->GetKeyFromPosition(previewGrid->scrollPosition, (h / (previewGrid->GridHeight + 1))) < erow + 2)){
+		previewGrid->scrollPosition = previewGrid->GetKeyFromPosition(erow, -((h / (previewGrid->GridHeight + 1)) / 2) + 1);
+		previewGrid->scrollPositionId = previewGrid->file->GetElementByKey(previewGrid->scrollPosition);
 	}
 	if (!lastData.grid){
 		lastData.lineRangeStart = erow;
@@ -80,7 +79,7 @@ void SubsGridPreview::DestroyPreview(bool refresh)
 	tab->Edit->SetGrid(tab->Grid);
 	if (tab->Edit->TextEditOrig->IsShown())
 		tab->Edit->SetTlMode(false, true);
-	tab->Edit->SetLine(tab->Grid->currentLine);
+	//tab->Edit->SetLine(tab->Grid->currentLine);
 
 	if(refresh)
 		parent->Refresh(false);
@@ -113,15 +112,15 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	bool bg = false;
 	int size = previewGrid->file->GetIdCount();
 	int panelrows = (h / (previewGrid->GridHeight + 1));
-	if (scrollPosition < 0){ scrollPosition = 0; scrollPositionId = 0; }
-	int scrows = scrollPositionId + panelrows;
+	if (previewGrid->scrollPosition < 0){ previewGrid->scrollPosition = 0; previewGrid->scrollPositionId = 0; }
+	int scrows = previewGrid->scrollPositionId + panelrows;
 	//gdy widzimy koniec napisów
 	if (scrows >= size + 2){
 		bg = true;
 		scrows = size;
-		scrollPositionId = (scrows - panelrows) + 2;// dojechanie do koñca napisów
-		scrollPosition = previewGrid->file->GetElementById(scrollPositionId);
-		if (panelrows > size + 3){ scrollPosition = 0; scrollPositionId = 0; }// w przypadku gdy ca³e napisy s¹ widoczne, wtedy nie skrollujemy i pozycja =0
+		previewGrid->scrollPositionId = (scrows - panelrows) + 2;// dojechanie do koñca napisów
+		previewGrid->scrollPosition = previewGrid->file->GetElementById(previewGrid->scrollPositionId);
+		if (panelrows > size + 3){ previewGrid->scrollPosition = 0; previewGrid->scrollPositionId = 0; }// w przypadku gdy ca³e napisy s¹ widoczne, wtedy nie skrollujemy i pozycja =0
 	}
 	else if (scrows >= size + 1){
 		bg = true;
@@ -129,7 +128,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	}
 	//umiejscowienie gridheight+1 od góry, wysokoœæ to co u góry - 4 pasek u do³u
 	scrollbar->SetSize(w - 21, previewGrid->GridHeight, 17, h - previewGrid->GridHeight - 4);
-	scrollbar->SetScrollbar(scrollPositionId, panelrows, size + 3, panelrows - 3);
+	scrollbar->SetScrollbar(previewGrid->scrollPositionId, panelrows, size + 3, panelrows - 3);
 
 	// Prepare bitmap
 	if (bmp) {
@@ -204,13 +203,13 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	wxColour kol;
 
 	std::vector<wxString> strings;
-	int key = scrollPosition - 1;
-	int id = scrollPositionId - 1;
+	int key = previewGrid->scrollPosition - 1;
+	int id = previewGrid->scrollPositionId - 1;
 	int idmarkerPos = -1;
 	int idcurrentLine = -1;
 
 	while (key + 1 <= keySize && id < scrows){
-		bool isHeadline = (key < scrollPosition);
+		bool isHeadline = (key < previewGrid->scrollPosition);
 		if (!isHeadline){
 			Dial = previewGrid->file->GetDialogue(key);
 			if (!Dial->isVisible){ key++; continue; }
@@ -486,13 +485,13 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		if (idmarkerPos != -1){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine), 3));
-			tdc.DrawRectangle(posX + 1, ((idmarkerPos - scrollPositionId + 1)*(previewGrid->GridHeight + 1)) - 1, (previewGrid->GridWidth[0] - 1), previewGrid->GridHeight + 2);
+			tdc.DrawRectangle(posX + 1, ((idmarkerPos - previewGrid->scrollPositionId + 1)*(previewGrid->GridHeight + 1)) - 1, (previewGrid->GridWidth[0] - 1), previewGrid->GridHeight + 2);
 		}
 
 		if (idcurrentLine != -1){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine)));
-			tdc.DrawRectangle(posX, ((idcurrentLine - scrollPositionId + 1)*(previewGrid->GridHeight + 1)) - 1, w + scHor - posX - 21, previewGrid->GridHeight + 2);
+			tdc.DrawRectangle(posX, ((idcurrentLine - previewGrid->scrollPositionId + 1)*(previewGrid->GridHeight + 1)) - 1, w + scHor - posX - 21, previewGrid->GridHeight + 2);
 		}
 	}
 	tdc.SetBrush(wxBrush(Options.GetColour(hasFocus ? WindowBorderBackground : WindowBorderBackgroundInactive)));
@@ -568,7 +567,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	}
 	if (curX < 0 || curX > w-4){ return; }
 
-	int row = GetKeyFromScrollPos(curY / (previewGrid->GridHeight + 1)) - 1;
+	int row = previewGrid->GetKeyFromScrollPos(curY / (previewGrid->GridHeight + 1)) - 1;
 	int hideColumnWidth = (previewGrid->isFiltered) ? 12 : 0;
 	bool isNumerizeColumn = (curX >= hideColumnWidth && curX < previewGrid->GridWidth[0] + hideColumnWidth);
 
@@ -609,7 +608,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	}
 	// Seeking video by click on numeration column
 	if (click && isNumerizeColumn){
-		if (tabp->Video->GetState() != None && !(row < scrollPosition || row >= previewGrid->GetCount())){
+		if (tabp->Video->GetState() != None && !(row < previewGrid->scrollPosition || row >= previewGrid->GetCount())){
 			if (tabp->Video->GetState() != Paused){
 				if (tabp->Video->GetState() == Stopped){ tabp->Video->Play(); }
 				tabp->Video->Pause();
@@ -641,17 +640,17 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	}
 
 	// Mouse wheel
-	if (event.GetWheelRotation() != 0 && row >= scrollPosition) {
+	if (event.GetWheelRotation() != 0 && row >= previewGrid->scrollPosition) {
 		int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();
-		scrollPosition = previewGrid->GetKeyFromPosition(scrollPosition, - step);
-		scrollPositionId = previewGrid->file->GetElementByKey(scrollPosition);
+		previewGrid->scrollPosition = previewGrid->GetKeyFromPosition(previewGrid->scrollPosition, - step);
+		previewGrid->scrollPositionId = previewGrid->file->GetElementByKey(previewGrid->scrollPosition);
 		Refresh(false);
 		return;
 	}
 
 	if (curX < hideColumnWidth){
-		int filterRow = GetKeyFromScrollPos(((curY + (previewGrid->GridHeight / 2)) / (previewGrid->GridHeight + 1)) - 1) - 1;
-		if (!(filterRow < scrollPosition || filterRow >= previewGrid->GetCount()) || filterRow == -1) {
+		int filterRow = previewGrid->GetKeyFromScrollPos(((curY + (previewGrid->GridHeight / 2)) / (previewGrid->GridHeight + 1)) - 1) - 1;
+		if (!(filterRow < previewGrid->scrollPosition || filterRow >= previewGrid->GetCount()) || filterRow == -1) {
 			if ((click || dclick) && previewGrid->file->CheckIfHasHiddenBlock(filterRow)){
 				SubsGridFiltering filter(previewGrid, previewGrid->currentLine);
 				filter.FilterPartial(filterRow);
@@ -682,7 +681,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	bool changeActive = Options.GetBool(GridChangeActiveOnSelection);
 	int mvtal = video->vToolbar->videoSeekAfter->GetSelection();
 	int pas = video->vToolbar->videoPlayAfter->GetSelection();
-	if (!(row < scrollPosition || row >= previewGrid->GetCount())) {
+	if (!(row < previewGrid->scrollPosition || row >= previewGrid->GetCount())) {
 
 		
 		// Toggle selected
@@ -794,9 +793,9 @@ void SubsGridPreview::OnSize(wxSizeEvent &evt)
 void SubsGridPreview::OnScroll(wxScrollEvent& event)
 {
 	int newPos = event.GetPosition();
-	if (scrollPosition != newPos) {
-		scrollPositionId = newPos;
-		scrollPosition = previewGrid->file->GetElementById(newPos);
+	if (previewGrid->scrollPosition != newPos) {
+		previewGrid->scrollPositionId = newPos;
+		previewGrid->scrollPosition = previewGrid->file->GetElementById(newPos);
 		Refresh(false);
 	}
 }
@@ -912,16 +911,16 @@ void SubsGridPreview::OnFocus(wxFocusEvent &evt)
 	Refresh(false);
 }
 
-size_t SubsGridPreview::GetKeyFromScrollPos(size_t numOfLines)
-{
-	size_t visibleLines = 0;
-	for (size_t i = scrollPosition; i < previewGrid->GetCount(); i++){
-		if (numOfLines == visibleLines)
-			return i;
-
-		if (*previewGrid->GetDialogue(i)->isVisible)
-			visibleLines++;
-	}
-
-	return -1;
-}
+//size_t SubsGridPreview::GetKeyFromScrollPos(size_t numOfLines)
+//{
+//	size_t visibleLines = 0;
+//	for (size_t i = previewGrid->scrollPosition; i < previewGrid->GetCount(); i++){
+//		if (numOfLines == visibleLines)
+//			return i;
+//
+//		if (*previewGrid->GetDialogue(i)->isVisible)
+//			visibleLines++;
+//	}
+//
+//	return -1;
+//}

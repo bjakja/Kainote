@@ -39,6 +39,7 @@ public:
 
 class SubsGridPreview : public wxWindow
 {
+	friend class SubsGridBase;
 	friend class SubsGrid;
 public:
 	SubsGridPreview(SubsGrid *_previewGrid, SubsGrid *windowToDraw, int posY, const wxSize &size);
@@ -56,13 +57,13 @@ private:
 	void SeekForOccurences();
 	void ContextMenu(const wxPoint &pos);
 	void OnFocus(wxFocusEvent &evt);
-	size_t GetKeyFromScrollPos(size_t numOfLines);
+	//size_t GetKeyFromScrollPos(size_t numOfLines);
 
 	SubsGrid *previewGrid;
 	SubsGrid *parent;
 	wxBitmap *bmp=NULL;
-	int scrollPosition = 0;
-	int scrollPositionId = 0;
+	//int scrollPosition = 0;
+	//int scrollPositionId = 0;
 	int scHor = 0;
 	int oldX = -1;
 	//int selectedItem = 0;
