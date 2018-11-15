@@ -84,6 +84,7 @@ void FindReplaceResultsDialog::ClearList()
 {
 	resultsCounter = 0;
 	resultsList->ClearList();
+	replaceChecked->Enable();
 }
 
 void FindReplaceResultsDialog::FilterList()
@@ -91,7 +92,6 @@ void FindReplaceResultsDialog::FilterList()
 	//mode here is 1 visible blocks 0 hidden blocks
 	resultsList->FilterList(0, 1);
 	resultsList->Refresh(false);
-	replaceChecked->Enable(true);
 }
 
 void FindReplaceResultsDialog::CheckUncheckAll(bool check /*= true*/)

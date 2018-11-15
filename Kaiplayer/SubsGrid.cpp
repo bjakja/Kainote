@@ -721,7 +721,11 @@ void SubsGrid::OnPasteTextTl()
 		wxString txt;
 		if (!op.FileOpen(pathh, &txt)){ return; }
 		wxString ext = pathh.AfterLast(L'.');
-		int iline = 0;
+		// get first visible key
+		int iline = (ignoreFiltered)? 0 : file->GetElementById(0);
+		// last visible key
+		int lastKey = (ignoreFiltered) ? GetCount() : GetKeyFromPosition(GetCount(), -1) + 1;
+		wxString styleName = GetStyle(0, L"Default")->Name;
 
 		if (ext == L"srt"){
 			//wxString dbg;
@@ -734,7 +738,7 @@ void SubsGrid::OnPasteTextTl()
 				if (IsNumber(text)){
 					if (text1 != L""){
 						Dialogue diall = Dialogue(text1.Trim());
-						if (iline < GetCount()){
+						if (iline < lastKey){
 							diall.Convert(subsFormat);
 							CopyDialogue(iline)->TextTl = diall.Text;
 						}
@@ -742,13 +746,13 @@ void SubsGrid::OnPasteTextTl()
 							diall.Convert(subsFormat);
 							diall.Start.NewTime(0);
 							diall.End.NewTime(0);
-							diall.Style = GetSInfo(L"TLMode Style");
+							diall.Style = styleName;
 							diall.TextTl = diall.Text;
 							diall.Text = L"";
 							AddLine(diall.Copy());
 						}
-						//todo write here skipping 
-						iline++; 
+						// get next visible key
+						iline = (ignoreFiltered) ? iline + 1 : GetKeyFromPosition(iline, 1);
 						text1 = L"";
 					}
 				}
@@ -764,7 +768,7 @@ void SubsGrid::OnPasteTextTl()
 				wxString token = tokenizer.GetNextToken();
 				if (!(ext == L"ass" && !token.StartsWith(L"Dialogue"))){
 					Dialogue diall = Dialogue(token);
-					if (iline < GetCount()){
+					if (iline < lastKey){
 						diall.Convert(subsFormat);
 						CopyDialogue(iline)->TextTl = diall.Text;
 					}
@@ -772,12 +776,12 @@ void SubsGrid::OnPasteTextTl()
 						diall.Convert(subsFormat);
 						diall.Start.NewTime(0);
 						diall.End.NewTime(0);
-						diall.Style = GetSInfo(L"TLMode Style");
+						diall.Style = styleName;
 						diall.TextTl = diall.Text;
 						diall.Text = L"";
 						AddLine(diall.Copy());
 					}
-					iline++;
+					iline = (ignoreFiltered) ? iline + 1 : GetKeyFromPosition(iline, 1);
 				}
 			}
 		}

@@ -17,6 +17,7 @@
 
 #include "KaiDialog.h"
 #include "KaiListCtrl.h"
+#include "MappedButton.h"
 
 
 wxDECLARE_EVENT(CHOOSE_RESULT, wxCommandEvent);
@@ -99,5 +100,6 @@ public:
 private:
 	int resultsCounter = 0;
 	MisspellReplacer *MR;
+	MappedButton *replaceChecked;
 };
 

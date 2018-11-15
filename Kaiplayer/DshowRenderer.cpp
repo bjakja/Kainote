@@ -117,7 +117,7 @@ HRESULT CD2DVideoRender::CheckMediaType(const CMediaType *pmt)
 	if (*SubType != MEDIASUBTYPE_YV12 &&
 		//*SubType != WMMEDIASUBTYPE_I420 &&
 		//*SubType != MEDIASUBTYPE_IYUV //&&
-		//*SubType != MEDIASUBTYPE_NV12 &&
+		*SubType != MEDIASUBTYPE_NV12 &&
 		*SubType != MEDIASUBTYPE_YUY2
 		/*SubType != MEDIASUBTYPE_RGB555 &&
 		*SubType != MEDIASUBTYPE_RGB565 &&*/
@@ -209,10 +209,10 @@ HRESULT CD2DVideoRender::SetMediaType(const CMediaType *pmt)
 	/*else if(*pmt->Subtype()==WMMEDIASUBTYPE_I420 || *pmt->Subtype()== MEDIASUBTYPE_IYUV){
 		Vinfo.bytes=1.5;
 		Vinfo.CT= IYUV;}*/
-	/*else if (*pmt->Subtype() == MEDIASUBTYPE_NV12){
+	else if (*pmt->Subtype() == MEDIASUBTYPE_NV12){
 		Vinfo.bytes = 1.5;
 		Vinfo.CT = NV12;
-	}*/
+	}
 	else if (*pmt->Subtype() == MEDIASUBTYPE_YUY2){
 		Vinfo.bytes = 2;
 		Vinfo.CT = YUY2;

@@ -54,7 +54,7 @@ SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoin
 SubsGridWindow::~SubsGridWindow()
 {
 	if (bmp){ delete bmp; bmp = NULL; }
-	if (preview){ preview->DestroyPreview(); }
+	if (preview){ preview->DestroyPreview(); preview = NULL; }
 	if (thisPreview){ thisPreview->DestroyPreview(); thisPreview = NULL; }
 }
 
@@ -320,7 +320,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 		if (isFiltered){
 			posX = 11;
-			unsigned char hasHiddenBlock = file->CheckIfHasHiddenBlock(key);
+			unsigned char hasHiddenBlock = file->CheckIfHasHiddenBlock(key, isHeadline);
 			if (hasHiddenBlock){
 				tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 				tdc.SetPen(textcol);
@@ -840,10 +840,27 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 	if (curX < hideColumnWidth){
 		int filterRow = GetKeyFromScrollPos(((curY + (GridHeight / 2)) / (GridHeight + 1)) - 1) - 1;
-		if (!(filterRow < scrollPosition || filterRow >= size) || filterRow == -1) {
-			if ((click || dclick) && file->CheckIfHasHiddenBlock(filterRow)){
-				SubsGridFiltering filter((SubsGrid*)this, currentLine);
-				filter.FilterPartial(filterRow);
+		if (filterRow < size && curY > (GridHeight / 2)) {
+			//hack for first line it's lame solution
+			if ((click || dclick)){
+				unsigned char state = file->CheckIfHasHiddenBlock(filterRow, filterRow < scrollPosition);
+				if (state){
+					SubsGridFiltering filter((SubsGrid*)this, currentLine);
+					//second part of hack
+					if (filterRow < scrollPosition){
+						if (state == 1){
+							filterRow = GetKeyFromPosition(filterRow, -1, false);
+							scrollPosition = filterRow + 1;
+							scrollPositionId = file->GetElementByKey(scrollPosition);
+						}
+						else{
+							scrollPositionId += 1;
+							scrollPosition = GetKeyFromPosition(scrollPosition, 1);
+						}
+					}
+
+					filter.FilterPartial(filterRow);
+				}
 			}
 		}
 		return;

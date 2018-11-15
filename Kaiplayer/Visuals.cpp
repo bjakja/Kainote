@@ -721,7 +721,7 @@ void Visuals::SetVisual(bool dummy, int type)
 	if (dummy){
 		wxString txt = Editor->GetValue();
 		bool fromStart = false;
-		if (Visual == MOVE || Visual == CLIPRECT){ fromStart = true; }
+		if (Visual == MOVE){ fromStart = true; }
 		wxString tmp;
 		wxString xytype = (type == 0) ? L"x" : L"y";
 		wxString frxytype = (type == 1) ? L"x" : L"y";

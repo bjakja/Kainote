@@ -283,7 +283,7 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 	int allSelections = 0;
 	wxString txt, whatcopy;
 	std::vector<Dialogue *> mdial;
-	if (!matchcase){ find.MakeLower(); }
+	if (!matchcase && !regex){ find.MakeLower(); }
 	tab->Grid->SaveSelections(selectOptions == 0);
 	SubsFile *Subs = tab->Grid->file;
 	bool skipFiltered = !tab->Grid->ignoreFiltered;
@@ -291,7 +291,7 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 	if (regex){
 		int rxflags = wxRE_ADVANCED;
 		if (!matchcase){ rxflags |= wxRE_ICASE; }
-		wxRegEx rgx(find, rxflags);
+		rgx.Compile(find, rxflags);
 		if (!rgx.IsValid()) {
 			return 0;
 		}

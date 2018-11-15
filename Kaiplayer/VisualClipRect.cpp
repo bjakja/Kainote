@@ -328,6 +328,6 @@ void ClipRect::ChangeVisual(wxString *txt, Dialogue *dial)
 	}
 	wxString val;
 	wxString tag = wxString::Format("\\%sclip(%i,%i,%i,%i)", (invClip) ? "i" : "", x1, y1, x2, y2);
-	tab->Edit->FindValue("i?clip(.+)", &val, *txt, 0, true);
+	tab->Edit->FindValue("i?clip(.+)", &val, *txt);
 	ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 }

@@ -474,6 +474,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 	byte *texbuf;
 	byte bytes = (vformat == RGB32) ? 4 : (vformat == YUY2) ? 2 : 1;
 	DWORD black = (vformat == RGB32) ? 0 : (vformat == YUY2) ? 0x80108010 : 0x10101010;
+	DWORD blackuv = (vformat == RGB32) ? 0 : (vformat == YUY2) ? 0x80108010 : 0x8080;
 
 	D3DLOCKED_RECT d3dlr;
 
@@ -514,7 +515,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 				memcpy(texbuf, fdata, vwidth);
 				texbuf += vwidth;
 				fdata += vwidth;
-				memset(texbuf, black, diff);
+				//memset(texbuf-4, black, diff + 4);
 				texbuf += diff;
 			}
 			int hheight = vheight / 2;
@@ -525,7 +526,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 				memcpy(texbuf, fdata, fwidth);
 				texbuf += fwidth;
 				fdata += fwidth;
-				memset(texbuf, black, fdiff);
+				//memset(texbuf-2, blackuv, fdiff + 2);
 				texbuf += fdiff;
 			}
 			if (vformat < NV12){
@@ -533,7 +534,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 					memcpy(texbuf, fdata, fwidth);
 					texbuf += fwidth;
 					fdata += fwidth;
-					memset(texbuf, black, fdiff);
+					//memset(texbuf-2, blackuv, fdiff + 2);
 					texbuf += fdiff;
 				}
 			}
@@ -1087,6 +1088,7 @@ bool VideoRenderer::UpdateRects(bool changeZoom)
 	if (arwidth > rt.width)
 	{
 		int onebar = (rt.height - arheight) / 2;
+		//KaiLog(wxString::Format("onebar w %i, h %i, %i", onebar, rt.height, arheight));
 		/*if(zoomParcent>1){
 			int zoomARHeight = ((zoomRect.width - zoomRect.x)) * AR;
 			onebar = (zoomRect.width - zoomRect.x > rt.width)? (rt.height - zoomARHeight)/2 : 0;
@@ -1101,6 +1103,7 @@ bool VideoRenderer::UpdateRects(bool changeZoom)
 	else if (arheight > rt.height)
 	{
 		int onebar = (rt.width - arwidth) / 2;
+		//KaiLog(wxString::Format("onebar w %i, h %i, %i", onebar, rt.width, arwidth));
 		/*if(zoomParcent>1){
 			int zoomARWidth = ((zoomRect.height - zoomRect.y)) / AR;
 			onebar = (zoomRect.height - zoomRect.y > rt.height)? (rt.width - zoomARWidth)/2 : 0;
@@ -1114,6 +1117,7 @@ bool VideoRenderer::UpdateRects(bool changeZoom)
 	}
 	else
 	{
+		//KaiLog(wxString::Format("equal %i %i", windowRect.right, windowRect.bottom));
 		backBufferRect = windowRect;
 	}
 	//}

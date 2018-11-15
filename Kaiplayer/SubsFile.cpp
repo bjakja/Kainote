@@ -472,13 +472,14 @@ void SubsFile::ClearSelections()
 
 size_t SubsFile::GetElementById(size_t id)
 {
-	size_t countid = 0;
+	size_t countid = -1;
 	for (size_t i = 0; i < subs->dialogues.size(); i++){
+		if (*subs->dialogues[i]->isVisible)
+			countid++;
+
 		if (countid == id){
 			return i;
 		}
-		if (*subs->dialogues[i]->isVisible)
-			countid++;
 	}
 
 	// it's possible when id >= size
@@ -558,10 +559,12 @@ void SubsFile::GetURStatus(bool *_undo, bool *_redo)
 //	return subs;
 //}
 
-unsigned char SubsFile::CheckIfHasHiddenBlock(int i){
+unsigned char SubsFile::CheckIfHasHiddenBlock(int i, bool firstLine /*= false*/){
 	int size = subs->dialogues.size();
-	if (i + 1 < size){
-		int j = i + 1;
+	size_t keyFirst = i + 1;
+
+	if (keyFirst < size){
+		int j = keyFirst;
 		Dialogue * dial = subs->dialogues[j];
 		if (dial->isVisible == VISIBLE_BLOCK){
 			if (j == 0)
@@ -573,7 +576,9 @@ unsigned char SubsFile::CheckIfHasHiddenBlock(int i){
 		}
 	}
 	if (i >= size){ return 0; }
-	size_t keyFirst = i + 1;
+	if (firstLine && i >= 0)
+		keyFirst--;
+
 	size_t numOfLines = 0;
 	while (keyFirst < subs->dialogues.size()){
 		if (*subs->dialogues[keyFirst]->isVisible){ 

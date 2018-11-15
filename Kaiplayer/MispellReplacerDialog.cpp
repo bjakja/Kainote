@@ -194,7 +194,7 @@ FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
 
 	MappedButton *checkAll = new MappedButton(this, ID_CHECK_ALL, _("Zahacz wszystko"));
 	MappedButton *unCheckAll = new MappedButton(this, ID_UNCHECK_ALL, _("Odhacz wszystko"));
-	MappedButton *replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("Zamieñ"));
+	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("Zamieñ"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		CheckUncheckAll(true);
 	}, ID_CHECK_ALL);
@@ -203,6 +203,7 @@ FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
 	}, ID_UNCHECK_ALL);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		MR->ReplaceChecked();
+		replaceChecked->Enable(false);
 	}, ID_REPLACE_CHECKED);
 	buttonsSizer->Add(checkAll, 1, wxALL, 2);
 	buttonsSizer->Add(unCheckAll, 1, wxALL, 2);
@@ -229,6 +230,7 @@ void FindResultDialog::ClearList()
 {
 	resultsCounter = 0;
 	ResultsList->ClearList();
+	replaceChecked->Enable();
 }
 
 void FindResultDialog::CheckUncheckAll(bool check /*= true*/)

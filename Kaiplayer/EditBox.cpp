@@ -1404,7 +1404,7 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 			int reps = rex.ReplaceAll(&ftag, "\\1");
 			if (reps > 0){
 
-				if ((ftag.EndsWith(")") && !ftag.StartsWith("(")) || ftag.EndsWith("}")){
+				if (ftag.EndsWith(")") && (!ftag.StartsWith("(") || ftag.Freq(L')') >= 2) || ftag.EndsWith("}")){
 					ftag.RemoveLast(1);
 					lslash--;
 				}
@@ -1417,7 +1417,7 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 				else{
 					found[1] = ftag;
 					fpoints[1].x = i;
-					fpoints[1].y = lslash - 1;
+					fpoints[1].y = (isT && txt[lslash - 1] == L')') ? lslash - 2 : lslash - 1;
 				}
 				//block break till i <= from cause of test if cursor is in \t tag
 				//else it will fail if there is value without \t on the end

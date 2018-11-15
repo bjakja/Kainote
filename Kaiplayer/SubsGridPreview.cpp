@@ -77,9 +77,10 @@ void SubsGridPreview::DestroyPreview(bool refresh)
 	previewGrid->thisPreview = NULL;
 	TabPanel *tab = (TabPanel*)parent->GetParent();
 	tab->Edit->SetGrid(tab->Grid);
-	if (tab->Edit->TextEditOrig->IsShown())
+	if (tab->Edit->TextEditOrig->IsShown()){
 		tab->Edit->SetTlMode(false, true);
-	//tab->Edit->SetLine(tab->Grid->currentLine);
+		//tab->Edit->SetLine(tab->Grid->currentLine);
+	}
 
 	if(refresh)
 		parent->Refresh(false);
@@ -214,6 +215,48 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			Dial = previewGrid->file->GetDialogue(key);
 			if (!Dial->isVisible){ key++; continue; }
 		}
+
+		if (previewGrid->isFiltered){
+			posX = 15;
+			unsigned char hasHiddenBlock = previewGrid->file->CheckIfHasHiddenBlock(key, isHeadline);
+			if (hasHiddenBlock){
+				tdc.SetBrush(*wxTRANSPARENT_BRUSH);
+				tdc.SetPen(textcol);
+				int halfGridHeight = (previewGrid->GridHeight / 2);
+				int newPosY = posY + previewGrid->GridHeight + 1;
+				int startDrawPosY = newPosY + ((previewGrid->GridHeight - 10) / 2) - halfGridHeight;
+				tdc.DrawRectangle(5, startDrawPosY, 9, 9);
+				tdc.DrawLine(7, newPosY - 1, 12, newPosY - 1);
+				if (hasHiddenBlock == 1){
+					tdc.DrawLine(9, startDrawPosY + 2, 9, startDrawPosY + 7);
+				}
+				//tdc.SetPen(SpelcheckerCol);
+				tdc.DrawLine(14, newPosY - 1, w + scHor, newPosY - 1);
+			}
+			if (Dial){
+				if (!startBlock && Dial->isVisible == VISIBLE_BLOCK){
+					startDrawPosYFromPlus = posY + 4; startBlock = true;
+				}
+				bool isLastLine = (id >= scrows - 2);
+				bool notVisibleBlock = Dial->isVisible != VISIBLE_BLOCK;
+				if (startBlock && (notVisibleBlock || isLastLine)){
+					tdc.SetBrush(*wxTRANSPARENT_BRUSH);
+					tdc.SetPen(textcol);
+					int halfLine = posY - 1;
+					if (isLastLine && !notVisibleBlock){ halfLine = posY + previewGrid->GridHeight; }
+					tdc.DrawLine(9, startDrawPosYFromPlus, 9, halfLine);
+					if (notVisibleBlock || key + 1 >= keySize || previewGrid->file->GetDialogue(key + 1)->isVisible != VISIBLE_BLOCK)
+						tdc.DrawLine(9, halfLine, w + scHor, halfLine);
+					startBlock = false;
+				}
+			}
+
+
+		}
+		else{
+			posX = 4;
+		}
+
 		bool comparison = false;
 		bool isSelected = false;
 		strings.clear();
@@ -332,45 +375,6 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			}
 		}
 
-		if (previewGrid->isFiltered){
-			posX = 15;
-			unsigned char hasHiddenBlock = previewGrid->file->CheckIfHasHiddenBlock(key);
-			if (hasHiddenBlock){
-				tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-				tdc.SetPen(textcol);
-				int halfGridHeight = (previewGrid->GridHeight / 2);
-				int newPosY = posY + previewGrid->GridHeight + 1;
-				int startDrawPosY = newPosY + ((previewGrid->GridHeight - 10) / 2) - halfGridHeight;
-				tdc.DrawRectangle(5, startDrawPosY, 9, 9);
-				tdc.DrawLine(7, newPosY - 1, 12, newPosY - 1);
-				if (hasHiddenBlock == 1){
-					tdc.DrawLine(9, startDrawPosY + 2, 9, startDrawPosY + 7);
-				}
-				//tdc.SetPen(SpelcheckerCol);
-				tdc.DrawLine(14, newPosY - 1, w + scHor, newPosY - 1);
-			}
-			if (Dial){
-				if (!startBlock && Dial->isVisible == VISIBLE_BLOCK){
-					startDrawPosYFromPlus = posY + 4; startBlock = true;
-				}
-				bool isLastLine = (id >= scrows - 2);
-				bool notVisibleBlock = Dial->isVisible != VISIBLE_BLOCK;
-				if (startBlock && (notVisibleBlock || isLastLine)){
-					tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-					tdc.SetPen(textcol);
-					int halfLine = posY - 1;
-					if (isLastLine && !notVisibleBlock){ halfLine = posY + previewGrid->GridHeight; }
-					tdc.DrawLine(9, startDrawPosYFromPlus, 9, halfLine);
-					tdc.DrawLine(9, halfLine, w + scHor, halfLine);
-					startBlock = false;
-				}
-			}
-
-
-		}
-		else{
-			posX = 4;
-		}
 
 		ilcol = strings.size();
 
@@ -650,11 +654,25 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 
 	if (curX < hideColumnWidth){
 		int filterRow = previewGrid->GetKeyFromScrollPos(((curY + (previewGrid->GridHeight / 2)) / (previewGrid->GridHeight + 1)) - 1) - 1;
-		if (!(filterRow < previewGrid->scrollPosition || filterRow >= previewGrid->GetCount()) || filterRow == -1) {
-			if ((click || dclick) && previewGrid->file->CheckIfHasHiddenBlock(filterRow)){
-				SubsGridFiltering filter(previewGrid, previewGrid->currentLine);
-				filter.FilterPartial(filterRow);
-				Refresh(false);
+		if (filterRow < previewGrid->GetCount() && curY > (previewGrid->GridHeight / 2)) {
+			if (click || dclick){
+				unsigned char state = previewGrid->file->CheckIfHasHiddenBlock(filterRow, filterRow < previewGrid->scrollPosition);
+				if (state){
+					SubsGridFiltering filter(previewGrid, previewGrid->currentLine);
+					if (filterRow < previewGrid->scrollPosition){
+						if (state == 1){
+							filterRow = previewGrid->GetKeyFromPosition(filterRow, -1, false);
+							previewGrid->scrollPosition = filterRow + 1;
+							previewGrid->scrollPositionId = previewGrid->file->GetElementByKey(previewGrid->scrollPosition);
+						}
+						else{
+							previewGrid->scrollPositionId += 1;
+							previewGrid->scrollPosition = previewGrid->GetKeyFromPosition(previewGrid->scrollPosition, 1);
+						}
+					}
+					filter.FilterPartial(filterRow);
+					Refresh(false);
+				}
 			}
 		}
 		return;

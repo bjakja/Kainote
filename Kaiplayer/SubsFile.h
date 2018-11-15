@@ -177,7 +177,7 @@ public:
 	void ClearSelections();
 	size_t GetElementById(size_t Id);
 	size_t GetElementByKey(size_t Key);
-	unsigned char CheckIfHasHiddenBlock(int i);
+	unsigned char CheckIfHasHiddenBlock(int i, bool firstLine = false);
 	
 	size_t GetKeyFromPos(size_t position, size_t numOfLines);
 	bool CheckIfIsTree(size_t i);
