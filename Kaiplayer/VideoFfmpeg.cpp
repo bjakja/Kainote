@@ -423,12 +423,10 @@ done:
 			bool changeMatrix = false;
 			if (CS == FFMS_CS_UNSPECIFIED){
 				CS = width > 1024 || height >= 600 ? FFMS_CS_BT709 : FFMS_CS_BT470BG;
-				if (CS == FFMS_CS_BT709 && colormatrix == "TV.709")
-					changeMatrix = true;
 			}
 			ColorSpace = RealColorSpace = ColorCatrixDescription(CS, CR);
-			if ((CS == FFMS_CS_BT709 && colormatrix == "TV.601") || (ColorSpace != colormatrix && CS == FFMS_CS_BT470BG) || changeMatrix) {
-				if (FFMS_SetInputFormatV(videosource, (CS == FFMS_CS_BT709 && !changeMatrix) ? FFMS_CS_BT470BG : FFMS_CS_BT709, CR, FFMS_GetPixFmt(""), &errinfo)){
+			if (CS == FFMS_CS_BT709 && colormatrix == "TV.709") {
+				if (FFMS_SetInputFormatV(videosource, FFMS_CS_BT709, CR, FFMS_GetPixFmt(""), &errinfo)){
 					KaiLog(_("Nie można zmienić macierzy YCbCr"));
 				}
 			}

@@ -281,6 +281,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, co
 void KaiListCtrl::SetTextArray(const wxArrayString &Array)
 {
 	delete itemList;
+	filteredList.clear();
 	itemList = new List();
 	int maxwidth = -1;
 	for (size_t i = 0; i < Array.size(); i++){

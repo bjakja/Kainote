@@ -76,7 +76,7 @@ txtdialog::txtdialog(wxWindow *parent, int id, const wxString &txtt, const wxStr
 	type->SetSelection(_type);
 	name = new KaiTextCtrl(this, -1, _name, wxDefaultPosition, wxSize(150, 25), wxTE_PROCESS_ENTER);
 	txt = new KaiTextCtrl(this, -1, txtt, wxDefaultPosition, wxSize(150, 25), wxTE_PROCESS_ENTER);
-	txt->SetSelection(0, txtt.Len());
+	txt->SetSelection(0, txtt.length());
 	txt->SetFocus();
 	siz->Add(type, 0, wxEXPAND | wxALL, 4);
 	siz->Add(new KaiStaticText(this, -1, _("Nazwa przycisku")), 0, wxEXPAND | wxALL, 4);
@@ -604,14 +604,14 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 		}
 		if (!InBracket){
 			txt.insert(Placed.x, L"{" + text + L"}");
-			whre = cursorpos + text.Len() + 2;
+			whre = cursorpos + text.length() + 2;
 		}
 		else{
 			if (Placed.x < Placed.y){
 				txt.erase(txt.begin() + Placed.x, txt.begin() + Placed.y + 1);
-				whre = (focus) ? cursorpos + text.Len() - (Placed.y - Placed.x) : Placed.x;
+				whre = (focus) ? cursorpos + text.length() - (Placed.y - Placed.x) : Placed.x;
 			}
-			else{ whre = (focus) ? cursorpos + 1 + text.Len() : Placed.x; }
+			else{ whre = (focus) ? cursorpos + 1 + text.length() : Placed.x; }
 			txt.insert(Placed.x, text);
 		}
 		if (text == L""){ txt.Replace(L"{}", L""); }
@@ -1097,7 +1097,7 @@ void EditBox::OnCopySelection(wxCommandEvent& event)
 		txt1.insert(fromtl, txtt);
 		TextEdit->SetTextS(txt1, true);
 		TextEdit->SetFocus();
-		long whre = txtt.Len();
+		long whre = txtt.length();
 		TextEdit->SetSelection(fromtl + whre, fromtl + whre);
 	}
 }
@@ -1257,12 +1257,12 @@ void EditBox::OnSplit(wxCommandEvent& event)
 	long strt, ennd;
 	tedit->GetSelection(&strt, &ennd);
 	if (strt > 0 && txt[strt - 1] == L' '){ strt--; }
-	if (ennd < (int)txt.Len() && txt[ennd] == L' '){ ennd++; }
+	if (ennd < (int)txt.length() && txt[ennd] == L' '){ ennd++; }
 
 	if (strt != ennd){ txt.Remove(strt, ennd - strt); }
 	txt.insert(strt, Splitchar);
 	tedit->SetTextS(txt, true);
-	long whre = strt + Splitchar.Len();
+	long whre = strt + Splitchar.length();
 	tedit->SetSelection(whre, whre);
 }
 
@@ -1331,8 +1331,8 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 		do{
 			bracketEnd = txt.find(L'}', (tmpfrom < 1) ? 1 : tmpfrom);
 			tmpfrom = bracketEnd + 1;
-		} while (bracketEnd != -1 && bracketEnd < (int)txt.Len() - 1 && txt[bracketEnd + 1] == L'{');
-		if (bracketEnd < 0){ bracketEnd = txt.Len() - 1; }
+		} while (bracketEnd != -1 && bracketEnd < (int)txt.length() - 1 && txt[bracketEnd + 1] == L'{');
+		if (bracketEnd < 0){ bracketEnd = txt.length() - 1; }
 	}
 
 	Placed.x = bracketEnd;
@@ -1354,13 +1354,15 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 	int lastTag = -1;
 	wxString found[2];
 	wxPoint fpoints[2];
-	if (bracketEnd == txt.Len()){ bracketEnd--; }
+	if (bracketEnd == txt.length()){ bracketEnd--; }
 
 	for (int i = bracketEnd; i >= 0; i--){
 		wxUniChar ch = txt[i];
 		if (ch == L'\\' && brkt){
 			//tag is placed on begining of tags in bracket
-			lastTag = i;
+			if (i >= bracketStart)
+				lastTag = i;
+
 			wxString ftag = txt.SubString(i + 1, lslash - 1);
 			if (ftag == "r"){
 				hasR = true;
@@ -1411,8 +1413,8 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 
 				if (found[0] == "" && !isT){
 					found[0] = ftag;
-					fpoints[0].x = i;
-					fpoints[0].y = lslash - 1;
+					fpoints[0].x = (i < lastTag)? lastTag : i;
+					fpoints[0].y = (i < lastTag) ? lastTag : lslash - 1;
 				}
 				else{
 					found[1] = ftag;
@@ -1609,7 +1611,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		wxString delims = L"1234567890-&()[]";
 		bool found = false;
 		wxString findtag;
-		for (int i = 2; i < (int)tag.Len(); i++)
+		for (int i = 2; i < (int)tag.length(); i++)
 		{
 			if (delims.Find(tag[i]) != -1)
 			{
@@ -1646,7 +1648,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 				from += klamrae + 1;
 			}
 			txt.insert(from, tag);
-			from += tag.Len();
+			from += tag.length();
 			Editor->SetTextS(txt, true);
 			Editor->SetSelection(from, from);
 		}
@@ -1752,13 +1754,13 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 		if (getr > -1){
 			int brackets = Text.find(L"{");
 			wxString restText;
-			if (Text.Len() > (size_t)getr + 1){ restText = Text.Mid(getr + 1); }
+			if (Text.length() > (size_t)getr + 1){ restText = Text.Mid(getr + 1); }
 			int pos = 0;
 			wxString txtOrg;
 			wxString txtTl;
 			if (Text.StartsWith(L"{")){
 				txtTl = Text.substr(0, getr + 1);
-				pos = txtTl.Len();
+				pos = txtTl.length();
 			}
 			else if (brackets > 0){
 				txtOrg = Text.substr(0, brackets - 1);
@@ -1774,7 +1776,7 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 				if (brackets != -1 && getr != -1){
 					txtOrg += restText.substr(0, brackets);
 					txtTl += restText.SubString(brackets, getr);
-					if (restText.Len() > (size_t)getr + 1){ restText = restText.Mid(getr + 1); }
+					if (restText.length() > (size_t)getr + 1){ restText = restText.Mid(getr + 1); }
 					else{ break; }
 				}
 				else{
@@ -1964,10 +1966,10 @@ void EditBox::SetTagButtons()
 			}
 			if (i >= numofButtons){
 				if (!TagButtonManager){
-					BoxSizer4->Add(new TagButton(this, EDITBOX_TAG_BUTTON1 + i, name, tag, type, wxSize((name.Len()) > 2 ? -1 : 24, 24)), 0, wxALL, 2);
+					BoxSizer4->Add(new TagButton(this, EDITBOX_TAG_BUTTON1 + i, name, tag, type, wxSize((name.length()) > 2 ? -1 : 24, 24)), 0, wxALL, 2);
 				}
 				else if (i >= numofButtons){
-					BoxSizer4->Insert(10 + i, new TagButton(this, EDITBOX_TAG_BUTTON1 + i, name, tag, type, wxSize((name.Len()) > 3 ? -1 : 24, 24)), 0, wxALL, 2);
+					BoxSizer4->Insert(10 + i, new TagButton(this, EDITBOX_TAG_BUTTON1 + i, name, tag, type, wxSize((name.length()) > 3 ? -1 : 24, 24)), 0, wxALL, 2);
 				}
 				Connect(EDITBOX_TAG_BUTTON1 + i, TAG_BUTTON_EDITION, (wxObjectEventFunction)&EditBox::OnEditTag);
 				Connect(EDITBOX_TAG_BUTTON1 + i, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnButtonTag);
