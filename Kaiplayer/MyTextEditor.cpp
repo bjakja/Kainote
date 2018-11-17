@@ -257,6 +257,13 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 					tagList = new PopupTagList(this);
 					if (wkey != L'\\')
 						tagList->AppendToKeyword(wkey);
+
+					if (!tagList->GetCount()){
+						delete tagList;
+						tagList = NULL;
+						return;
+					}
+
 					//calculate position of popup list
 					wxPoint pos;
 					pos.y = (Cursor.y * fontHeight) + fontHeight + 5;
@@ -279,6 +286,11 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 		}
 		else if (tagList){
 			tagList->AppendToKeyword(wkey);
+			if (!tagList->GetCount()){
+				delete tagList;
+				tagList = NULL;
+				return;
+			}
 		}
 	}
 
@@ -1012,7 +1024,7 @@ void TextEditor::DrawField(wxDC &dc, int w, int h, int windowh)
 			else{
 				wxString &tmp = parttext.RemoveLast(1);
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
-				dc.SetTextForeground((val) ? cvalues : ctext);
+				dc.SetTextForeground((val) ? cvalues : (slash) ? cnames : ctext);
 				dc.DrawText(tmp, fw + 3, posY);
 				mestext << tmp;
 				parttext = "}";
@@ -1042,7 +1054,7 @@ void TextEditor::DrawField(wxDC &dc, int w, int h, int windowh)
 			}
 		}
 
-		if ((ch == L'\\' || ((ch == L'(' || ch == L')' || ch == L',') && val)) && tags){
+		if ((ch == L'\\' || ch == L'(' || ch == L')' || ch == L',') && tags){
 			wxString tmp = parttext.RemoveLast(1);
 			GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 			dc.SetTextForeground((val && (ch == L'\\' || ch == L')' || ch == L',')) ? cvalues : slash ? cnames : ctext);

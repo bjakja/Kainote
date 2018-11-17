@@ -54,8 +54,7 @@ private:
 	void OnPaste(int id);
 	void OnPasteTextTl();
 	void OnJoinToFirst(int id);
-	void OnInsertBeforeVideo(bool frameTime = false);
-	void OnInsertAfterVideo(bool frameTime = false);
+	void InsertWithVideoTime(bool before, bool frameTime = false);
 	void OnSetFPSFromVideo();
 	void OnSetNewFPS();
 	void OnMakeContinous(int id);

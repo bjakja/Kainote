@@ -560,7 +560,8 @@ void SubsGrid::CopyRows(int id)
 	}
 }
 
-void SubsGrid::OnInsertBeforeVideo(bool frameTime)
+
+void SubsGrid::InsertWithVideoTime(bool before, bool frameTime /*= false*/)
 {
 	SaveSelections(true);
 	int rw = currentLine;
@@ -571,29 +572,13 @@ void SubsGrid::OnInsertBeforeVideo(bool frameTime)
 		dialog->TextTl = L"";
 	}
 	int time = Kai->GetTab()->Video->GetFrameTime();
-	dialog->Start.NewTime(time);
-	dialog->End.NewTime(frameTime ? Kai->GetTab()->Video->GetFrameTime(false) : time + 4000);
-	markedLine = currentLine;
-	InsertRows(rw, 1, dialog, false, true);
+	dialog->Start.NewTime(ZEROIT(time));
+	int endtime = frameTime ? Kai->GetTab()->Video->GetFrameTime(false) : time + 4000;
+	dialog->End.NewTime(ZEROIT(endtime));
+	int newCurrentLine = (before) ? rw : rw + 1;
+	markedLine = currentLine = newCurrentLine;
+	InsertRows(newCurrentLine, 1, dialog, false, true);
 }
-
-void SubsGrid::OnInsertAfterVideo(bool frameTime)
-{
-	SaveSelections(true);
-	int rw = currentLine;
-	file->EraseSelection(rw);
-	Dialogue *dialog = CopyDialogue(rw, false);
-	if (!frameTime){
-		dialog->Text = L"";
-		dialog->TextTl = L"";
-	}
-	int time = Kai->GetTab()->Video->GetFrameTime();
-	dialog->Start.NewTime(time);
-	dialog->End.NewTime(frameTime ? Kai->GetTab()->Video->GetFrameTime(false) : time + 4000);
-	currentLine = markedLine = rw + 1;
-	InsertRows(rw + 1, 1, dialog, false, true);
-}
-
 
 void SubsGrid::OnAccelerator(wxCommandEvent &event)
 {
@@ -608,10 +593,10 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	case Minus5Second: vb->Seek(vb->Tell() - 5000); break;
 	case InsertBeforeVideo:
 	case InsertBeforeWithVideoFrame:
-		if (sels > 0 && hasVideo) OnInsertBeforeVideo(id == InsertBeforeWithVideoFrame); break;
+		if (sels > 0 && hasVideo) InsertWithVideoTime(true, id == InsertBeforeWithVideoFrame); break;
 	case InsertAfterVideo:
 	case InsertAfterWithVideoFrame:
-		if (sels > 0 && hasVideo) OnInsertAfterVideo(id == InsertAfterWithVideoFrame); break;
+		if (sels > 0 && hasVideo) InsertWithVideoTime(false, id == InsertAfterWithVideoFrame); break;
 	case InsertBefore: if (sels > 0) OnInsertBefore(); break;
 	case InsertAfter: if (sels > 0) OnInsertAfter(); break;
 	case Duplicate: if (sels > 0) OnDuplicate(); break;
