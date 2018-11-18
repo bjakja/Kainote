@@ -25,7 +25,7 @@ public:
 			 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
 	virtual ~KaiCheckBox(){};
 	//return false if not enabled
-	bool GetValue(){return (IsEnabled())? value : false;}
+	bool GetValue(){return value;}
 	bool GetRealValue(){ return value; }
 	void SetValue(bool _value){value = _value; Refresh(false);}
 	bool SetBackgroundColour(COLOR bgcolor){

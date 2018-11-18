@@ -620,7 +620,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 			if (correctEndTimes > 0 || PostprocessorOptions > 16){
 				/*if (correctEndTimes > 1){
 					int endt = Options.GetInt(ConvertTimePerLetter);
-					int newend = (endt*dialc->Text.Len());
+					int newend = (endt*dialc->Text.length());
 					if (newend < 1000){ newend = 1000; }
 					newend += dialc->Start.mstime;
 					dialc->End.NewTime(newend);
@@ -1504,7 +1504,7 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 			dial = Edit->line;
 		}
 		if (selected && file->IsSelected(i)){
-			selected->Add(txt->Len());
+			selected->Add(txt->length());
 			continue;
 		}
 		if ((toEnd && _time <= dial->Start.mstime) || (_time >= dial->Start.mstime && _time < dial->End.mstime)){
@@ -1678,7 +1678,7 @@ void SubsGridBase::CompareTexts(compareData &firstCompare, compareData &secondCo
 	secondCompare.push_back(1);
 
 
-	size_t l1 = first.Len(), l2 = second.Len();
+	size_t l1 = first.length(), l2 = second.length();
 	size_t sz = (l1 + 1) * (l2 + 1) * sizeof(size_t);
 	size_t w = l2 + 1;
 	size_t* dpt;

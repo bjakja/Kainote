@@ -248,7 +248,7 @@ void DrawingAndClip::SetCurVisual()
 			Points[i].y -= xyoffset.y;
 		}
 	}
-	pointArea = 5.f / zoomScale.x;
+	pointArea = 4.f / zoomScale.x;
 }
 
 wxString DrawingAndClip::GetVisual()
@@ -526,7 +526,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 
 	if (!event.ButtonDown() && !leftisdown){
 		int pos = CheckPos(xy);
-		if (pos != -1 && hasArrow/* && !ctrl*/){
+		if (pos != -1/* && hasArrow*//* && !ctrl*/){
 			acpoint = Points[pos];
 			hasArrow = false;
 			lastpos = pos;
