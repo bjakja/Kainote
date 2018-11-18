@@ -174,7 +174,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		SpellErrors.resize(KeySize);
 	}
 
-	Dialogue *acdial = (size > 0) ? GetDialogue(MID(0, currentLine, size - 1)) : NULL;
+	Dialogue *acdial = /*(size > 0) ? */GetDialogue(MID(0, currentLine, size - 1));/* : NULL;*/
 	Dialogue *Dial = NULL;
 	TabPanel *tab = (TabPanel*)GetParent();
 	int VideoPos = tab->Video->vstate != None ? tab->Video->Tell() : -1;
@@ -437,7 +437,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			}
 
 
-			bool collis = (!isHeadline && acdial && id != currentLine &&
+			bool collis = (!isHeadline && acdial && key != currentLine &&
 				(Dial->Start < acdial->End && Dial->End > acdial->Start));
 
 			if (subsFormat < SRT){ isCenter = !(j == 4 || j == 5 || j == 9 || j == 11 || j == 12); }

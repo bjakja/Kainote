@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2018-09-29 11:49+0200\n"
-"PO-Revision-Date: 2018-09-29 11:51+0200\n"
+"PO-Revision-Date: 2018-11-18 22:36+0100\n"
 "Last-Translator: Bakura, Areki, duplex, Kostek00, Sacredus\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -2253,7 +2253,7 @@ msgstr "Open keyframes"
 
 #: HotkeysNaming.cpp:174 kainoteMain.cpp:231
 msgid "Uruchom ostatnio zaczytany skrypt"
-msgstr "Recent script"
+msgstr "Run recent script"
 
 #: HotkeysNaming.cpp:178 SubsGrid.cpp:197
 msgid "Ustaw nowy FPS"

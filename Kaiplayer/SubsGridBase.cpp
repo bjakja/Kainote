@@ -1372,6 +1372,7 @@ void SubsGridBase::NextLine(int dir)
 		AddLine(tmp);
 		SetModified(GRID_APPEND_LINE, false);
 		AdjustWidths(subsFormat > TMP ? (START | END) : 0);
+		nebrow = GetCount() - 1;
 	}
 	int h, w;
 	GetClientSize(&w, &h);
