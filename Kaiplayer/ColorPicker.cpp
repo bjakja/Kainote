@@ -652,6 +652,10 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	screen_dropper_icon->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DialogColorPicker::OnDropperMouse), 0, this);
 	screen_dropper_icon->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(DialogColorPicker::OnDropperMouse), 0, this);
 	screen_dropper_icon->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(DialogColorPicker::OnDropperMouse), 0, this);
+	screen_dropper_icon->Bind(wxEVT_MOUSE_CAPTURE_LOST, [=](wxMouseCaptureLostEvent &evt){
+		if (screen_dropper_icon->HasCapture())
+			screen_dropper_icon->ReleaseMouse();
+	});
 	Connect(SELECTOR_RGB_R, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeRGB);
 	Connect(SELECTOR_RGB_G, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeRGB);
 	Connect(SELECTOR_RGB_B, NUMBER_CHANGED, (wxObjectEventFunction)&DialogColorPicker::OnChangeRGB);
@@ -1094,7 +1098,7 @@ void DialogColorPicker::OnDropperMouse(wxMouseEvent &evt)
 	if (evt.LeftUp()) {
 #define ABS(x) (x < 0 ? -x : x)
 		wxPoint ptdiff = evt.GetPosition() - eyedropper_grab_point;
-		bool release_now = /*eyedropper_is_grabbed || */ABS(ptdiff.x) + ABS(ptdiff.y) > 7;
+		bool release_now = /*eyedropper_is_grabbed || */ABS(ptdiff.x) + ABS(ptdiff.y) > 0;
 		if (release_now) {
 			screen_dropper_icon->ReleaseMouse();
 			eyedropper_is_grabbed = false;
