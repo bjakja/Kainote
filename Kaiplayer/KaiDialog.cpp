@@ -151,6 +151,11 @@ bool KaiDialog::IsButtonFocused()
 void KaiDialog::OnCharHook(wxKeyEvent &evt)
 {
 	const int key = evt.GetKeyCode();
+	if (evt.GetModifiers() != 0){
+		evt.Skip();
+		return;
+	}
+
 	if(key == WXK_ESCAPE || key == WXK_RETURN){
 		if(key == WXK_RETURN && IsButtonFocused()){evt.Skip(); return;}
 		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, (key == WXK_ESCAPE)? escapeId : enterId);

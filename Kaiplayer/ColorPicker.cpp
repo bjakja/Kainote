@@ -1082,7 +1082,7 @@ void DialogColorPicker::OnRecentSelect(wxCommandEvent &evt)
 
 void DialogColorPicker::OnDropperMouse(wxMouseEvent &evt)
 {
-	if (evt.LeftDown() && !screen_dropper_icon->HasCapture()) {
+	if ((evt.LeftDown() || evt.LeftDClick()) && !screen_dropper_icon->HasCapture()) {
 
 		screen_dropper_icon->SetCursor(wxCursor("eyedropper_cursor"));
 		screen_dropper_icon->SetBitmap(wxNullBitmap);
@@ -1094,7 +1094,7 @@ void DialogColorPicker::OnDropperMouse(wxMouseEvent &evt)
 	if (evt.LeftUp()) {
 #define ABS(x) (x < 0 ? -x : x)
 		wxPoint ptdiff = evt.GetPosition() - eyedropper_grab_point;
-		bool release_now = eyedropper_is_grabbed || ABS(ptdiff.x) + ABS(ptdiff.y) > 7;
+		bool release_now = /*eyedropper_is_grabbed || */ABS(ptdiff.x) + ABS(ptdiff.y) > 7;
 		if (release_now) {
 			screen_dropper_icon->ReleaseMouse();
 			eyedropper_is_grabbed = false;

@@ -195,7 +195,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 
 	TabPanel *tab = (TabPanel*)previewGrid->GetParent();
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
-	Dialogue *acdial = (size > 0) ? previewGrid->GetDialogue(previewGrid->currentLine) : NULL;
+	Dialogue *acdial = /*(size > 0) ? */previewGrid->GetDialogue(previewGrid->currentLine)/* : NULL*/;
 	Dialogue *Dial = NULL;
 	
 	int VideoPos = tab->Video->vstate != None ? tab->Video->Tell() : -1;

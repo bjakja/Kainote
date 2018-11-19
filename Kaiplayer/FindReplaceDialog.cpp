@@ -507,16 +507,17 @@ void FindReplaceDialog::OnEnterConfirm(wxCommandEvent& event)
 {
 	TabWindow *currentTab = GetTab();
 	if (currentTab->windowType){
-		if (currentTab->windowType == WINDOW_FIND_IN_SUBS && currentTab->ReplaceText->HasFocus() ||
-			currentTab->FindInSubsPattern->HasFocus() || currentTab->FindInSubsPath->HasFocus())
+		if (currentTab->windowType == WINDOW_FIND_IN_SUBS && currentTab->ReplaceText->HasFocus()){
 			FR->ReplaceInSubs(currentTab);
-		if (currentTab->ReplaceText->HasFocus())
+			return;
+		}
+		if (currentTab->ReplaceText->HasFocus()){
 			FR->Replace(currentTab);
-
-		return;
+			return;
+		}
 	}
 	if (currentTab->windowType == WINDOW_FIND_IN_SUBS)
-		FR->FindAllInCurrentSubs(currentTab);
+		FR->FindInSubs(currentTab);
 	else{
 		FR->Find(currentTab);
 		FR->fnext = false;
