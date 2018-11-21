@@ -331,7 +331,7 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 			tagList = NULL;
 		}
 	}
-	if (((ctrl && alt) || shift) && (key > 30 || key == 0)){ 
+	if (((!ctrl && !alt) || (ctrl && alt)) && (key > 30 || key == 0)){
 		event.Skip(); return; 
 	}
 }

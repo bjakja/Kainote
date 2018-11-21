@@ -398,7 +398,9 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 void KaiTextCtrl::OnCharPress(wxKeyEvent& event)
 {
 	int key = event.GetKeyCode();
-	if (!(((event.ControlDown() && event.AltDown()) || event.ShiftDown()) && (key>30 || key == 0))){
+	bool ctrl = event.ControlDown();
+	bool alt = event.AltDown();
+	if (!(((!ctrl && !alt) || (ctrl && alt)) && (key>30 || key == 0))){
 		event.Skip(); return;
 	}
 	wxUniChar wkey = event.GetUnicodeKey();
