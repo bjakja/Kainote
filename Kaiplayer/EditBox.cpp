@@ -1347,6 +1347,7 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 	bool isT = false;
 	bool firstT = false;
 	bool hasR = false;
+	bool placedInT = false;
 	// maybe this name is wrong, it's for end posiotion for \t without end bracket
 	int endT;
 	int lastT = endT = bracketEnd - 1;
@@ -1391,7 +1392,8 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 						Placed.x = endT;
 						Placed.y = Placed.x;
 						InBracket = true;
-						return false;
+						placedInT = true;
+						//return false;
 					}
 
 				}
@@ -1436,7 +1438,10 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 			int endBracket = textBeforeBracket.Find(L'}', true);
 			if (endBracket >= startBracket){
 				brkt = false;
-				if (txt[i - 1] != L'}'){ inbrkt = false; if (hasR){ break; } }
+				if (txt[i - 1] != L'}'){ 
+					inbrkt = false; 
+					if (hasR){ break; } 
+				}
 			}
 			else{
 				lslash = i - 1;
@@ -1457,13 +1462,13 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 	if (!isT && found[0] != ""){
 		//In bracket here blocks changing position of tag putting in plain text
 		//inbrkt here changing value when plain text is on start, not use it here
-		if (InBracket){
+		if (InBracket && !placedInT){
 			Placed = fpoints[0];
 		}
 		*Found = found[0];
 		return true;
 	}
-	else if (lastTag >= 0 && InBracket){
+	else if (lastTag >= 0 && InBracket && !placedInT){
 		Placed.x = lastTag;
 		Placed.y = lastTag;
 	}
