@@ -247,3 +247,8 @@ void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 	tagPos.y += tagPos.x - 1;
 	ChangeText(txt, tag, !putinbracket, tagPos);
 }
+
+void Move::OnKeyPress(wxKeyEvent &evt)
+{
+
+}

@@ -327,8 +327,8 @@ D3DXVECTOR2 Visuals::CalcMovePos()
 	if (time < moveValues[4]){ distx = moveValues[0], disty = moveValues[1]; }
 	else if (time > moveValues[5]){ distx = moveValues[2], disty = moveValues[3]; }
 	else {
-		distx = moveValues[0] - ((moveValues[0] - moveValues[2])*actime);
-		disty = moveValues[1] - ((moveValues[1] - moveValues[3])*actime);
+		distx = moveValues[0] - ((moveValues[0] - moveValues[2]) * actime);
+		disty = moveValues[1] - ((moveValues[1] - moveValues[3]) * actime);
 	}
 	ppos.x = distx, ppos.y = disty;
 	return ppos;

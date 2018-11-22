@@ -25,42 +25,26 @@ Scale::Scale()
 
 void Scale::DrawVisual(int time)
 {
-	int addy = (AN > 3) ? 60 : -60, addx = (AN % 3 == 0) ? -60 : 60;
-
+	
 	if (time != oldtime && moveValues[6] > 3){
 		from = CalcMovePos();
-		from.x = ((from.x / coeffW) - zoomMove.x)*zoomScale.x;
-		from.y = ((from.y / coeffH) - zoomMove.y)*zoomScale.y;
-		to.x = from.x + (scale.x*addx);
-		to.y = from.y + (scale.y*addy);
+		from.x = ((from.x / coeffW) - zoomMove.x) * zoomScale.x;
+		from.y = ((from.y / coeffH) - zoomMove.y) * zoomScale.y;
+		to.x = from.x + (scale.x * arrowLengths.x);
+		to.y = from.y + (scale.y * arrowLengths.y);
 	}
 
 	D3DXVECTOR2 v4[15];
 	
-	float movex = from.x + addx, movey = from.y + addy;
-
-	if (type != 1){ movex = to.x; }//strza³ka w poziomie i czêœæ strza³ki po skosie
-	else{ movex = from.x + (scale.x*addx); }
-	if (type > 0){ movey = to.y; }//strza³ka w pionie i czêœæ strza³ki po skosie
-	else{ movey = from.y + (scale.y*addy); }
-	if (movex == from.x){ 
-		movex = from.x + addx; 
-	}
-	else if (movey == from.y){ 
-		movey = from.y + addy; 
-	}
-
-	lastmove.x = movex;
-	lastmove.y = movey;
-	v4[0] = from;//strza³ka pozioma
-	v4[1].x = movex;
-	v4[1].y = from.y;//strza³ka pozioma
-	v4[2] = from;//strza³ka skoœna
-	v4[3].x = movex;
-	v4[3].y = movey;//strza³ka skoœna
-	v4[4] = from;//strza³ka pionowa
+	v4[0] = from;//horizontal arrow
+	v4[1].x = to.x;
+	v4[1].y = from.y;//horizontal arrow
+	v4[2] = from;//skew arrow
+	v4[3].x = to.x;
+	v4[3].y = to.y;//skew arrow
+	v4[4] = from;//vertical arrow
 	v4[5].x = from.x;
-	v4[5].y = movey;//strza³ka pionowa
+	v4[5].y = to.y;//vertical arrow
 
 	for (int i = 1; i < 6; i += 2){
 		DrawArrow(v4[0], &v4[i]);
@@ -81,17 +65,11 @@ void Scale::DrawVisual(int time)
 wxString Scale::GetVisual()
 {
 	wxString result;
-	if (to.x == from.x){ to.x = from.x + 60.f; }
-	if (to.y == from.y){ to.y = from.y + 60.f; }
-
+	
 	if (type != 1){
-		float res = (abs(to.x - from.x)) / 60.f;
-		result += "\\fscx" + getfloat(res * 100);
-		scale.x = res;
+		result += "\\fscx" + getfloat(scale.x * 100);
 	}if (type != 0){
-		float res = (abs(to.y - from.y)) / 60.f;
-		result += "\\fscy" + getfloat(res * 100);
-		scale.y = res;
+		result += "\\fscy" + getfloat(scale.y * 100);
 	}
 
 	return result;
@@ -116,42 +94,35 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 	}
 
 	if (!holding){
-		if (abs(lastmove.x - x) < 8 && abs(lastmove.y - y) < 8){ if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZING); hasArrow = false; } }
-		else if (abs(lastmove.x - x) < 8 && abs(from.y - y) < 8){ if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZEWE); hasArrow = false; } }
-		else if (abs(lastmove.y - y) < 8 && abs(from.x - x) < 8){ if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZENS); hasArrow = false; } }
+		if (abs(to.x - x) < 11 && abs(to.y - y) < 11){ if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZING); hasArrow = false; } }
+		else if (abs(to.x - x) < 11 && abs(from.y - y) < 11){ if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZEWE); hasArrow = false; } }
+		else if (abs(to.y - y) < 11 && abs(from.x - x) < 11){ if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZENS); hasArrow = false; } }
 		else if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 	}
 	if (click){
 		if (leftc){ type = 0; }
 		if (rightc){ type = 1; }
 		if (middlec || leftc && evt.ShiftDown()){ type = 2; }
-		if (abs(lastmove.x - x) < 8 && abs(from.y - y) < 8){ grabbed = 0; type = 0; }
-		else if (abs(lastmove.y - y) < 8 && abs(from.x - x) < 8){ grabbed = 1; type = 1; }
-		else if (abs(lastmove.x - x) < 8 && abs(lastmove.y - y) < 8){ grabbed = 2; type = 2; }
-		diffs.x = lastmove.x - x;
-		diffs.y = lastmove.y - y;
+		if (abs(to.x - x) < 11 && abs(from.y - y) < 11){ grabbed = 0; type = 0; }
+		else if (abs(to.y - y) < 11 && abs(from.x - x) < 11){ grabbed = 1; type = 1; }
+		else if (abs(to.x - x) < 11 && abs(to.y - y) < 11){ grabbed = 2; type = 2; }
+		diffs.x = to.x - x;
+		diffs.y = to.y - y;
 		if (type == 0){ tab->Video->SetCursor(wxCURSOR_SIZEWE); }
 		if (type == 1){ tab->Video->SetCursor(wxCURSOR_SIZENS); }
 		if (type == 2){ tab->Video->SetCursor(wxCURSOR_SIZING); }
 		hasArrow = false;
-		int addy = (AN > 3) ? 60 : -60, addx = (AN % 3 == 0) ? -60 : 60;
 		if (leftc && evt.ShiftDown()){
 			type = 2;
 			diffs.x = x;
 			diffs.y = y;
-			to.x = from.x;
-			to.y = from.y;
-			to.x += (addx*scale.x);
-			to.y += (addy*scale.y);
 			return;
 		}
 		if (grabbed == -1){
 
-			diffs.x = (from.x - x) + (addx*scale.x);
-			diffs.y = (from.y - y) + (addy*scale.y);
+			diffs.x = (from.x - x) + (arrowLengths.x * scale.x);
+			diffs.y = (from.y - y) + (arrowLengths.y * scale.y);
 		}
-		to.x = x; to.y = y;
-
 	}
 	else if (holding){
 		if (evt.ShiftDown()){
@@ -173,7 +144,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 			to.y = to.y - move;
 			diffs.x = x;
 			diffs.y = y;
-			if ((!an3 && to.x - from.x<1) || (an3 && to.x - from.x>-1)){
+			if ((!an3 && (to.x - from.x) < 1 ) || (an3 && (to.x - from.x) > -1)){
 				diffs = copydiffs;
 				to = copyto;
 			}
@@ -186,6 +157,8 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 				to.y = y + diffs.y;
 			}
 		}
+		scale.x = abs((to.x - from.x) / arrowLengths.x);
+		scale.y = abs((to.y - from.y) / arrowLengths.y);
 
 		SetVisual(true, type);
 	}
@@ -195,12 +168,12 @@ void Scale::SetCurVisual()
 {
 	D3DXVECTOR2 linepos = GetPosnScale(&scale, &AN, moveValues);
 	if (moveValues[6] > 3){ linepos = CalcMovePos(); }
-	from = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x)*zoomScale.x,
-		((linepos.y / coeffH) - zoomMove.y)*zoomScale.y);
+	from = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x) * zoomScale.x,
+		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);
 
-	int addy = (AN > 3) ? 60 : -60, addx = (AN % 3 == 0) ? -60 : 60;
-	to.x = from.x + (scale.x*addx);
-	to.y = from.y + (scale.y*addy);
+	arrowLengths.y = (AN > 3) ? 100.f : -100.f, arrowLengths.x = (AN % 3 == 0) ? -100.f : 100.f;
+	to.x = from.x + (scale.x * arrowLengths.x);
+	to.y = from.y + (scale.y * arrowLengths.y);
 
 }
 
@@ -208,25 +181,58 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 {
 	wxString tag;
 	wxString val;
-	if (to.x == from.x){ to.x = from.x + 60.f; }
-	if (to.y == from.y){ to.y = from.y + 60.f; }
 
 	if (type != 1){
-		float res = (abs(to.x - from.x)) / 60.f;
-		tag = "\\fscx" + getfloat(res * 100);
+		tag = "\\fscx" + getfloat(scale.x * 100);
 
 		tab->Edit->FindValue("fscx([0-9.-]+)", &val, *txt, 0, true);
 		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
-		scale.x = res;
 	}
 	if (type != 0){
-		float res = (abs(to.y - from.y)) / 60.f;
-		tag = "\\fscy" + getfloat(res * 100);
+		tag = "\\fscy" + getfloat(scale.y * 100);
 
 		tab->Edit->FindValue("fscy([0-9.-]+)", &val, *txt, 0, true);
 		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
-		scale.y = res;
 	}
 
 
+}
+
+void Scale::OnKeyPress(wxKeyEvent &evt)
+{
+	int key = evt.GetKeyCode();
+	bool left = key == 'A';
+	bool right = key == 'D';
+	bool up = key == 'W';
+	bool down = key == 'S';
+	
+	if ((left || right || up || down) && evt.GetModifiers() != wxMOD_ALT){
+
+		float unitx = abs(arrowLengths.x / 100);
+		float unity = abs(arrowLengths.y / 100);
+		float directionX = (left) ? -unitx : (right) ? unitx : 0;
+		float directionY = (up) ? -unity : (down) ? unity : 0;
+		type = (directionX) ? 0 : 1;
+		if (evt.ShiftDown()){
+			/*if (directionX)
+			directionY = directionX;
+			else if (directionY)
+			directionX = directionY;*/
+			directionX /= 10.f;
+			directionY /= 10.f;
+		}
+		/*if (evt.ControlDown()){
+		directionX /= 10;
+		directionY /= 10;
+		}*/
+		to.x += directionX;
+		to.y += directionY;
+		scale.x = abs((to.x - from.x) / arrowLengths.x);
+		scale.y = abs((to.y - from.y) / arrowLengths.y);
+		
+		SetVisual(true, type);
+		SetVisual(false, type);
+		return;
+	}
+	evt.Skip();
 }

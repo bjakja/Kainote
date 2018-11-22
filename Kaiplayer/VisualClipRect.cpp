@@ -331,3 +331,42 @@ void ClipRect::ChangeVisual(wxString *txt, Dialogue *dial)
 	tab->Edit->FindValue("i?clip(.+)", &val, *txt);
 	ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 }
+
+void ClipRect::OnKeyPress(wxKeyEvent &evt)
+{
+	int key = evt.GetKeyCode();
+	bool left = key == 'A';
+	bool right = key == 'D';
+	bool up = key == 'W';
+	bool down = key == 'S';
+
+	if ((left || right || up || down) && evt.GetModifiers() != wxMOD_ALT && showClip){
+		float directionX = (left) ? -1 : (right) ? 1 : 0;
+		float directionY = (up) ? -1 : (down) ? 1 : 0;
+		if (evt.ShiftDown()){
+			/*if (directionX)
+			directionY = directionX;
+			else if (directionY)
+			directionX = directionY;*/
+			directionX /= 10.f;
+			directionY /= 10.f;
+		}
+		/*if (evt.ControlDown()){
+		directionX /= 10;
+		directionY /= 10;
+		}*/
+		if (left)
+			Corner[0].x += directionX;
+		if (up)
+			Corner[0].y += directionY;
+		if (right)
+			Corner[1].x += directionX;
+		if (down)
+			Corner[1].y += directionY;
+
+		SetVisual(true, 0);
+		SetVisual(false, 0);
+		return;
+	}
+	evt.Skip();
+}

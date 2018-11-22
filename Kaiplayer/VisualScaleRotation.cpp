@@ -779,3 +779,7 @@ void ScaleRotation::ChangeTool(int _tool)
 	tab->Video->Render(false);
 }
 
+void ScaleRotation::OnKeyPress(wxKeyEvent &evt)
+{
+
+}

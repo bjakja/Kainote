@@ -365,3 +365,40 @@ void MoveAll::ChangeTool(int _tool)
 	}
 	tab->Video->Render(false);
 }
+
+void MoveAll::OnKeyPress(wxKeyEvent &evt)
+{
+	int key = evt.GetKeyCode();
+	bool left = key == 'A';
+	bool right = key == 'D';
+	bool up = key == 'W';
+	bool down = key == 'S';
+
+	if ((left || right || up || down) && evt.GetModifiers() != wxMOD_ALT){
+		float directionX = (left) ? -1 : (right) ? 1 : 0;
+		float directionY = (up) ? -1 : (down) ? 1 : 0;
+		if (evt.ShiftDown()){
+			/*if (directionX)
+			directionY = directionX;
+			else if (directionY)
+			directionX = directionY;*/
+			directionX /= 10.f;
+			directionY /= 10.f;
+		}
+		directionX = ((directionX / coeffW) - zoomMove.x) * zoomScale.x;
+		directionY = ((directionY / coeffH) - zoomMove.y) * zoomScale.y;
+		for (size_t j = 0; j < elems.size(); j++){
+			if (!(selectedTags & elems[j].type)){ continue; }
+			if (numElem == -1){
+				numElem = j;
+			}
+			beforeMove = elems[j].elem;
+			elems[j].elem.x += directionX;
+			elems[j].elem.y += directionY;
+		}
+		if (numElem != -1)
+			ChangeInLines(true);
+		return;
+	}
+	evt.Skip();
+}

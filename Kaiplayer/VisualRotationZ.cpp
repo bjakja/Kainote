@@ -227,3 +227,8 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 	tab->Edit->FindValue("frz?([0-9.-]+)", &val, *txt, 0, true);
 	ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 }
+
+void RotationZ::OnKeyPress(wxKeyEvent &evt)
+{
+
+}

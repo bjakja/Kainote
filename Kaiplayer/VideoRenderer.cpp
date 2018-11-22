@@ -1687,6 +1687,7 @@ void VideoRenderer::SetVisual(bool remove/*=false*/, bool settext/*=false*/, boo
 		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
 		SetVisualZoom();
 		Visual->SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime, pan->Edit->line->IsComment, noRefresh);
+		SetFocus();
 		hasVisualEdition = true;
 	}
 }

@@ -82,6 +82,8 @@ public:
 	virtual void SetCurVisual(){};
 	virtual void ChangeTool(int _tool){};
 	virtual void OnMouseEvent(wxMouseEvent &evt){};
+	//function should skip events when not use it;
+	virtual void OnKeyPress(wxKeyEvent &evt){};
 	virtual wxString GetVisual(){ return ""; };
 	virtual void ChangeVisual(wxString *txt, Dialogue *_dial){};
 	void DrawWarning(bool comment);
@@ -158,6 +160,7 @@ public:
 	void SetCurVisual();
 	void Draw(int time);
 	void ChangeTool(int _tool){};
+	void OnKeyPress(wxKeyEvent &evt);
 	//void SetVisual(int _start,int _end);
 	std::vector<PosData> data;
 	wxPoint helperLinePos;
@@ -175,6 +178,7 @@ public:
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
+	void OnKeyPress(wxKeyEvent &evt);
 	int moveStart;
 	int moveEnd;
 	byte type;
@@ -205,6 +209,7 @@ public:
 	void SetCurVisual();
 	void ChangeInLines(bool all);
 	void ChangeTool(int _tool);
+	void OnKeyPress(wxKeyEvent &evt);
 	std::vector<moveElems> elems;
 	int numElem;
 	int elemsToMove;
@@ -224,11 +229,13 @@ public:
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
+	void OnKeyPress(wxKeyEvent &evt);
 	byte type;
 	int grabbed;
 	byte AN;
 	D3DXVECTOR2 scale;
 	wxPoint diffs;
+	D3DXVECTOR2 arrowLengths = D3DXVECTOR2(100.f, 100.f);
 };
 
 
@@ -242,6 +249,7 @@ public:
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
+	void OnKeyPress(wxKeyEvent &evt);
 	bool isOrg;
 	D3DXVECTOR2 org;
 	D3DXVECTOR2 lastOrg;
@@ -258,6 +266,7 @@ public:
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
+	void OnKeyPress(wxKeyEvent &evt);
 	bool isOrg;
 	D3DXVECTOR2 angle;
 	D3DXVECTOR2 oldAngle;
@@ -279,6 +288,7 @@ public:
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
 	int HitTest(D3DXVECTOR2 pos, bool diff = true);
+	void OnKeyPress(wxKeyEvent &evt);
 	D3DXVECTOR2 Corner[2];
 	bool invClip;
 	bool showClip;
@@ -315,6 +325,7 @@ public:
 		tool = _tool;
 	};
 	int FindPoint(int pos, wxString type, bool nextStart = false, bool fromEnd = false);
+	void OnKeyPress(wxKeyEvent &evt);
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
 	ClipPoint lastpoint;
@@ -366,6 +377,7 @@ private:
 	void OnClickRotationXY(int x, int y, bool leftClick, bool rightClick, bool middleClick);
 	void OnClickScaling(int x, int y, bool leftClick, bool rightClick, bool middleClick, bool shiftDown);
 	bool SeekTags(const wxString &text, const wxString &pattern, wxString *result);
+	void OnKeyPress(wxKeyEvent &evt);
 	bool isOrg = false;
 	bool hasOrg = false;
 	bool onlyFirst = false;

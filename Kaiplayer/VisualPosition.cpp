@@ -242,3 +242,38 @@ void Position::ChangeMultiline(bool all)
 
 }
 
+void Position::OnKeyPress(wxKeyEvent &evt)
+{
+	int key = evt.GetKeyCode();
+	bool left = key == 'A';
+	bool right = key == 'D';
+	bool up = key == 'W';
+	bool down = key == 'S';
+
+	if ((left || right || up || down) && evt.GetModifiers() != wxMOD_ALT){
+		float directionX = (left) ? -1 : (right) ? 1 : 0;
+		float directionY = (up) ? -1 : (down) ? 1 : 0;
+		if (evt.ShiftDown()){
+			/*if (directionX)
+				directionY = directionX;
+			else if (directionY)
+				directionX = directionY;*/
+			directionX /= 10.f;
+			directionY /= 10.f;
+		}
+		/*if (evt.ControlDown()){
+			directionX /= 10;
+			directionY /= 10;
+		}*/
+		directionX = ((directionX / coeffW) - zoomMove.x) * zoomScale.x;
+		directionY = ((directionY / coeffH) - zoomMove.y) * zoomScale.y;
+
+		for (size_t i = 0; i < data.size(); i++){
+			data[i].pos.x = data[i].lastpos.x + directionX;
+			data[i].pos.y = data[i].lastpos.y + directionY;
+		}
+		ChangeMultiline(true);
+		return;
+	}
+	evt.Skip();
+}

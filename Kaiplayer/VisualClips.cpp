@@ -851,3 +851,14 @@ int DrawingAndClip::FindPoint(int pos, wxString type, bool nextStart, bool fromE
 	}
 	return j;
 }
+
+void DrawingAndClip::OnKeyPress(wxKeyEvent &evt)
+{
+
+	if (evt.ControlDown() && evt.GetKeyCode() == L'A'){
+		ChangeSelection(true);
+		tab->Video->Render(false);
+	}
+	//if strzałki then
+
+}

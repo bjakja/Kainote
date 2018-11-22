@@ -562,8 +562,12 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 			Kai->GetTab()->Edit->Send(EDITBOX_LINE_EDITION, false);
 			Kai->GetTab()->Grid->SelVideoLine();
 		}
-		if (key == L'B'){ if (GetState() == Playing){ Pause(); }ShowWindow(Kai->GetHWND(), SW_SHOWMINNOACTIVE); }
+		if (key == L'B'){ 
+			if (GetState() == Playing){ Pause(); }
+			ShowWindow(Kai->GetHWND(), SW_SHOWMINNOACTIVE); 
+		}
 	}
+	//probably made for fullscreen
 	else if (key == L'S' && event.m_controlDown){ Kai->Save(false); }
 	else if (key == WXK_RETURN && hasZoom){
 		SetZoom();
@@ -571,9 +575,8 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 	else if (key == L'Z' && event.ControlDown() && event.ShiftDown()){
 		ResetZoom();
 	}
-	else if (event.ControlDown() && key == L'A' && Visual && (Visual->Visual == VECTORCLIP || Visual->Visual == VECTORDRAW)){
-		((DrawingAndClip*)Visual)->ChangeSelection(true);
-		Render(false);
+	else if (Visual){
+		Visual->OnKeyPress(event);
 	}
 }
 

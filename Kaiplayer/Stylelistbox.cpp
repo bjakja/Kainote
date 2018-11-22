@@ -72,7 +72,7 @@ CustomCheckListBox::CustomCheckListBox(wxWindow* parent, const wxArrayString &li
 	DialogSizer *Main = new DialogSizer(wxVERTICAL);
 	KaiStaticBoxSizer *sizer1 = new KaiStaticBoxSizer(wxVERTICAL, this, title);
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
-	int numelem = listElems.size();
+	size_t numelem = listElems.size();
 	wxString *arr = new wxString[numelem];
 	for (size_t i = 0; i < numelem; i++){
 		arr[i] = listElems[i];

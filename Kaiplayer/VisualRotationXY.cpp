@@ -295,3 +295,8 @@ void RotationXY::ChangeVisual(wxString *txt, Dialogue *dial)
 	}
 
 }
+
+void RotationXY::OnKeyPress(wxKeyEvent &evt)
+{
+
+}
