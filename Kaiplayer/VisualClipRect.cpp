@@ -328,7 +328,7 @@ void ClipRect::ChangeVisual(wxString *txt, Dialogue *dial)
 	}
 	wxString val;
 	wxString tag = wxString::Format("\\%sclip(%i,%i,%i,%i)", (invClip) ? "i" : "", x1, y1, x2, y2);
-	tab->Edit->FindValue("i?clip(.+)", &val, *txt);
+	tab->Edit->FindValue("i?clip(.+)", &val, *txt, 0, 1);
 	ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 }
 
@@ -355,14 +355,9 @@ void ClipRect::OnKeyPress(wxKeyEvent &evt)
 		directionX /= 10;
 		directionY /= 10;
 		}*/
-		if (left)
-			Corner[0].x += directionX;
-		if (up)
-			Corner[0].y += directionY;
-		if (right)
-			Corner[1].x += directionX;
-		if (down)
-			Corner[1].y += directionY;
+
+		Corner[1].x += directionX;
+		Corner[1].y += directionY;
 
 		SetVisual(true, 0);
 		SetVisual(false, 0);

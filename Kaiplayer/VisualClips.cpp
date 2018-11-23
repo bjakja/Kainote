@@ -167,7 +167,7 @@ void DrawingAndClip::SetCurVisual()
 	D3DXVECTOR2 linepos = GetPosnScale(&scale, &alignment, (Visual == VECTORDRAW) ? moveValues : NULL);
 
 	if (Visual != VECTORDRAW){
-		bool found = tab->Edit->FindValue("(i?clip[^)]+\\))", &clip, "", 0, true);
+		bool found = tab->Edit->FindValue("(i?clip[^)]+\\))", &clip, "", 0, 1);
 		if (found){
 			int rres = clip.Replace(",", ",");
 			if (rres >= 3) { clip = ""; scale = D3DXVECTOR2(1.f, 1.f); vectorScale = 1; }
@@ -850,6 +850,29 @@ int DrawingAndClip::FindPoint(int pos, wxString type, bool nextStart, bool fromE
 		}
 	}
 	return j;
+}
+
+D3DXVECTOR2 DrawingAndClip::FindSnapPoint(const D3DXVECTOR2 &pos, bool coeff)
+{
+	bool xfound = false, yfound = false;
+	float modPosx = coeff? (pos.x * coeffW) - _x : pos.x;
+	float modPosy = coeff? (pos.y * coeffH) - _y : pos.y;
+	const float maxdiff = 10.f;
+	for (size_t i = 0; i < Points.size(); i++){
+		if (!xfound && abs(Points[i].x - modPosx) <= maxdiff){
+			xfound = true;
+			modPosx = Points[i].x;
+		}
+		if (!yfound && abs(Points[i].y - modPosy) <= maxdiff){
+			yfound = true;
+			modPosy = Points[i].y;
+		}
+	}
+	if (coeff){
+		modPosx = (modPosx + _x) / coeffW;
+		modPosy = (modPosy + _y) / coeffH;
+	}
+	return D3DXVECTOR2(modPosx, modPosy);
 }
 
 void DrawingAndClip::OnKeyPress(wxKeyEvent &evt)

@@ -1432,8 +1432,9 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 		SetVisual();
 		if (vis >= VECTORCLIP){ Visual->ChangeTool(vTB->GetItemToggled()); }
 		if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		SetFocus();
 	}
-
+	
 }
 
 bool VideoCtrl::SetBackgroundColour(const wxColour &col)

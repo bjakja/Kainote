@@ -71,7 +71,7 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 
 			wxString &name = item->label;
 			bool found = false;
-			for (int i = 0; i < filterStyles.size(); i++){
+			for (size_t i = 0; i < filterStyles.size(); i++){
 				if (filterStyles[i] == name){
 					if (!item->check){ filterStyles.RemoveAt(i); found = true; }
 					break;
@@ -145,7 +145,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	wxArrayString optionsFilterStyles;
 	Options.GetTable(GridFilterStyles, optionsFilterStyles, L",");
 	filterStyles.clear();
-	for (int i = 0; i < StylesSize(); i++){
+	for (size_t i = 0; i < StylesSize(); i++){
 		MenuItem * styleItem = stylesMenu->Append(4448, (*styles)[i]->Name, L"", true, NULL, NULL, ITEM_CHECK);
 		if (optionsFilterStyles.Index((*styles)[i]->Name) != -1){ styleItem->Check(); filterStyles.Add((*styles)[i]->Name); }
 	}
@@ -806,7 +806,7 @@ void SubsGrid::MoveTextTL(char mode)
 			InsertRows(firstSelected, numSelected, insertDial);
 		}
 		file->InsertSelection(firstSelected);
-		for (int i = firstSelected; i < GetCount(); i++)
+		for (size_t i = firstSelected; i < GetCount(); i++)
 		{
 			Dialogue *dial = GetDialogue(i);
 			if (!dial->isVisible)
@@ -953,7 +953,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 	}
 
 
-	for (int i = 0; i < StylesSize(); i++){
+	for (size_t i = 0; i < StylesSize(); i++){
 		Styles *resized = file->CopyStyle(i);
 		int ml = wxAtoi(resized->MarginL);
 		ml *= xnsize;
@@ -993,7 +993,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 	}
 
 	wxString tags[] = { L"pos", L"move", L"bord", L"shad", L"org", L"fsp", L"fscx", L"fs", L"clip", L"iclip", L"p", L"xbord", L"ybord", L"xshad", L"yshad" };
-	for (int i = 0; i < file->GetCount(); i++){
+	for (size_t i = 0; i < file->GetCount(); i++){
 		//zaczniemy od najłatwiejszego, marginesy
 
 		Dialogue *diall = file->GetDialogue(i);
@@ -1169,7 +1169,7 @@ void SubsGrid::OnSetFPSFromVideo()
 	float diffVideo = (videoTime - secondTime);
 	float diffLines = (secondTime - firstTime);
 
-	for (int i = 0; i < GetCount(); i++){
+	for (size_t i = 0; i < GetCount(); i++){
 		Dialogue *dialc = CopyDialogue(i);
 		dialc->Start.Change(diffVideo *((dialc->Start.mstime - firstTime) / diffLines));
 		dialc->End.Change(diffVideo *((dialc->End.mstime - firstTime) / diffLines));
@@ -1185,7 +1185,7 @@ void SubsGrid::OnSetNewFPS()
 	if (nfps.ShowModal() == 1){
 		double sub = nfps.ofps / nfps.nfps;
 
-		for (int i = 0; i < GetCount(); i++){
+		for (size_t i = 0; i < GetCount(); i++){
 			Dialogue *dialc = CopyDialogue(i);
 			dialc->Start.NewTime(dialc->Start.mstime*sub);
 			dialc->End.NewTime(dialc->End.mstime*sub);
@@ -1309,7 +1309,7 @@ void SubsGrid::TreeAddLines(int treeLine)
 	Dialogue *dialwithstate = file->GetDialogue(keystart+1);
 	bool closed = (dialwithstate->treeState == TREE_CLOSED);
 
-	for (int i = 0; i < selections.GetCount(); i++){
+	for (size_t i = 0; i < selections.GetCount(); i++){
 		int sel = selections[i];
 		Dialogue *dial = file->GetDialogue(sel);
 		//we must deselect lines from this tree;
@@ -1342,7 +1342,7 @@ void SubsGrid::TreeAddLines(int treeLine)
 	}
 	//insert after lines need to find end of tree
 	if (afterTreeLines.size()){
-		for (int i = keystart; i < file->GetCount(); i++){
+		for (size_t i = keystart; i < file->GetCount(); i++){
 			Dialogue *dial = file->GetDialogue(i);
 			if ((!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart))){
 				InsertRows(i, afterTreeLines, false);
@@ -1367,10 +1367,9 @@ void SubsGrid::TreeAddLines(int treeLine)
 void SubsGrid::TreeCopy(int treeLine)
 {
 	wxString whattocopy;
-	int keystart = treeLine;
-	for (int i = keystart; i < file->GetCount(); i++){
+	for (size_t i = treeLine; i < file->GetCount(); i++){
 		Dialogue *dial = file->GetDialogue(i);
-		if (!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart))
+		if (!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != treeLine))
 			break;
 		dial->GetRaw(&whattocopy, hasTLMode && dial->TextTl != L"");
 	}
@@ -1398,7 +1397,7 @@ void SubsGrid::TreeRemove(int treeLine)
 	int keystart = treeLine;
 	int keyend = keystart;
 	//tree changing need to be save to history instead of visibility
-	for (int i = keystart; i < file->GetCount(); i++){
+	for (size_t i = keystart; i < file->GetCount(); i++){
 		Dialogue *dial = file->GetDialogue(i);
 		if (!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != keystart)){
 			keyend = i - 1;

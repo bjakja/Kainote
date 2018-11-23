@@ -185,13 +185,13 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 	if (type != 1){
 		tag = "\\fscx" + getfloat(scale.x * 100);
 
-		tab->Edit->FindValue("fscx([0-9.-]+)", &val, *txt, 0, true);
+		tab->Edit->FindValue("fscx([0-9.-]+)", &val, *txt, 0, 1);
 		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 	}
 	if (type != 0){
 		tag = "\\fscy" + getfloat(scale.y * 100);
 
-		tab->Edit->FindValue("fscy([0-9.-]+)", &val, *txt, 0, true);
+		tab->Edit->FindValue("fscy([0-9.-]+)", &val, *txt, 0, 1);
 		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 	}
 

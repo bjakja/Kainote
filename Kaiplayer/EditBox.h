@@ -83,7 +83,8 @@ public:
 	void SetTlMode(bool tl, bool dummyTlMode = false);
 	void Send(unsigned char editionType, bool selline=true, bool dummy=false, bool visualdummy=false);
 	void RefreshStyle(bool resetline=false);
-	bool FindValue(const wxString &wval, wxString *returnval, const wxString &text="", bool *endsel=0, bool fromstart=false);
+	// mode 0 in place of cursor, 1 on start of line, 2 in first bracket for clip rectangle
+	bool FindValue(const wxString &wval, wxString *returnval, const wxString &text="", bool *endsel=0, int mode = 0);
 	void HideControls();
 	void UpdateChars(const wxString &text);
 
@@ -198,6 +199,7 @@ private:
 	void OnFontChange(wxCommandEvent& event);
 	void SetTagButtons();
 	void DoTooltips();
+	wxPoint FindBrackets(const wxString & text, long from);
 
 	bool isdetached;
 	bool hasPreviewGrid = false;

@@ -94,7 +94,7 @@ void Visuals::GetDialoguesWithoutPosition()
 	bool tlMode = tab->Grid->hasTLMode;
 	int activeLineKey = tab->Grid->currentLine;
 
-	for (int i = 0; i < grid->file->GetCount(); i++){
+	for (size_t i = 0; i < grid->file->GetCount(); i++){
 		Dialogue *dial = grid->file->GetDialogue(i);
 		if (!grid->ignoreFiltered && !dial->isVisible || dial->NonDialogue || activeLineKey == i){ continue; }
 
@@ -480,7 +480,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 
 		wxString tmp;
 		wxString txt = Editor->GetValue();
-		if (edit->FindValue(L"(i?clip.)[^)]*\\)", &tmp, txt, 0, true)){
+		if (edit->FindValue(L"(i?clip.)[^)]*\\)", &tmp, txt, 0, 1)){
 			ChangeText(&txt, L"", edit->InBracket, edit->Placed);
 			txt.Replace(L"{}", L"");
 			if (changeEditorText){
@@ -505,7 +505,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				//wxPoint pos;
 				wxString tmp = L"clip(";
 				wxString txt = Editor->GetValue();
-				bool fv = edit->FindValue(L"(i?clip.)[^)]*\\)", &tmp, txt, 0, true);
+				bool fv = edit->FindValue(L"(i?clip.)[^)]*\\)", &tmp, txt, 0, 1);
 				wxString tmp1 = (tmp[0] == L'c') ? L"iclip(" : L"clip(";
 				wxString tclip = L"\\" + tmp + clip + L")";
 				edit->Placed.x += tmp.length() + 1 + ChangeText(&txt, tclip, edit->InBracket, edit->Placed);
@@ -535,19 +535,19 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				bool hasP1 = true;
 				size_t cliplen = clip.length();
 				wxString txt = Editor->GetValue();
-				isf = edit->FindValue(L"p([0-9]+)", &tmp, txt, 0, true);
+				isf = edit->FindValue(L"p([0-9]+)", &tmp, txt, 0, 1);
 				if (!isf){
 					ChangeText(&txt, L"\\p1", edit->InBracket, edit->Placed);
 					hasP1 = false;
 				}
-				isf = edit->FindValue(L"pos\\(([,. 0-9-]+)\\)", &tmp, txt, 0, true);
+				isf = edit->FindValue(L"pos\\(([,. 0-9-]+)\\)", &tmp, txt, 0, 1);
 				if (!isf){
 					DrawingAndClip *drawing = (DrawingAndClip*)this;
 					float xx = drawing->_x * drawing->scale.x;
 					float yy = drawing->_y * drawing->scale.y;
 					ChangeText(&txt, L"\\pos(" + getfloat(xx) + L"," + getfloat(yy) + L")", edit->InBracket, edit->Placed);
 				}
-				isf = edit->FindValue(L"an([0-9])", &tmp, txt, 0, true);
+				isf = edit->FindValue(L"an([0-9])", &tmp, txt, 0, 1);
 				if (!isf){
 					DrawingAndClip *drawing = (DrawingAndClip*)this;
 					ChangeText(&txt, L"\\an" + getfloat(drawing->alignment, L"1.0f"), edit->InBracket, edit->Placed);
@@ -720,8 +720,9 @@ void Visuals::SetVisual(bool dummy, int type)
 	//gdy pierwszy zawiedzie, mamy drugi czyli w jednej linii
 	if (dummy){
 		wxString txt = Editor->GetValue();
-		bool fromStart = false;
-		if (Visual == MOVE){ fromStart = true; }
+		int mode = false;
+		if (Visual == MOVE){ mode = 1; }
+		else if (Visual == CLIPRECT){ mode = 2; }
 		wxString tmp;
 		wxString xytype = (type == 0) ? L"x" : L"y";
 		wxString frxytype = (type == 1) ? L"x" : L"y";
@@ -732,12 +733,12 @@ void Visuals::SetVisual(bool dummy, int type)
 			(Visual == ROTATEZ) ? L"(frz?)[.0-9-]+" :
 			(Visual == ROTATEXY) ? L"(fr" + frxytype + L").+" :
 			L"(i?clip).+";
-		edit->FindValue(tagpattern, &tmp, txt, 0, fromStart);
+		edit->FindValue(tagpattern, &tmp, txt, 0, mode);
 
 		if (type == 2 && Visual > 0){
 			if (edit->Placed.x < edit->Placed.y){ txt.erase(txt.begin() + edit->Placed.x, txt.begin() + edit->Placed.y + 1); }
 			wxString tagpattern = (Visual == SCALE) ? L"(fscx).+" : (Visual == ROTATEZ) ? L"(frz?)[.0-9-]+" : L"(frx).+";
-			edit->FindValue(tagpattern, &tmp, txt, 0, fromStart);
+			edit->FindValue(tagpattern, &tmp, txt, 0, mode);
 		}
 
 		ChangeText(&txt, GetVisual(), edit->InBracket, edit->Placed);
@@ -835,7 +836,7 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 	double orgx = 0, orgy = 0;
 	bool PutinBrackets = false;
 	wxPoint strPos;
-	if (tab->Edit->FindValue(L"org\\((.+)\\)", &val, *txt, 0, true)){
+	if (tab->Edit->FindValue(L"org\\((.+)\\)", &val, *txt, 0, 1)){
 		wxString orgystr;
 		wxString orgxstr = val.BeforeFirst(L',', &orgystr);
 		orgxstr.ToCDouble(&orgx);
@@ -857,3 +858,4 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 	strPos.y += strPos.x - 1;
 	ChangeText(txt, L"\\org(" + getfloat(orgx + coordx) + L"," + getfloat(orgy + coordy) + L")", !PutinBrackets, strPos);
 }
+

@@ -801,11 +801,10 @@ void TextEditor::DrawField(wxDC &dc, int w, int h, int windowh)
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.DrawRectangle(0, 0, w, h);
 
-	wxString znaki = "(0123456789-&+";
-	wxString cyfry = "-0123456789ABCDEFabcdef.";
-	wxString tagtest = "";
-	wxString parttext = "";
-	wxString mestext = "";
+	wxString digits = "(0123456789-&+";
+	wxString tagtest;
+	wxString parttext;
+	wxString mestext;
 
 	posY = 2;
 	posY -= scrollPositionV;
@@ -1042,7 +1041,7 @@ void TextEditor::DrawField(wxDC &dc, int w, int h, int windowh)
 
 		if (slash){
 			tagtest += ch;
-			if ((znaki.Find(ch) != -1 && tagtest != "1"&&tagtest != "2"&&tagtest != "3"&&tagtest != "4") || tagtest == "fn" || ch == L'('){
+			if ((digits.Find(ch) != -1 && tagtest != "1" && tagtest != "2" && tagtest != "3" && tagtest != "4") || tagtest == "fn" || ch == L'('){
 				slash = false;
 				wxString tmp = (tagtest == "fn") ? parttext : parttext.RemoveLast(1);
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);

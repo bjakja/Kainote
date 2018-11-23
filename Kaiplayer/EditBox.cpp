@@ -1146,6 +1146,66 @@ void EditBox::DoTooltips()
 	Chtime->SetToolTip(_("Znaki na sekundę.\nNie powinny przekraczać 15 znaków na sekundę"));
 }
 
+wxPoint EditBox::FindBrackets(const wxString & text, long from)
+{
+	bool haveStartBracket = false;
+	bool haveEndBracket = false;
+	int endBrakcetPos = -1;
+	int startBrakcetPos = -1;
+	size_t i = (from - 2 < 1) ? 1 : from - 2;
+	size_t len = text.length();
+	for (; i < len; i++){
+		const wxUniChar & ch = text[i];
+		if (ch == L'}'){
+			haveEndBracket = true;
+			endBrakcetPos = i;
+		}
+		else if (ch == L'{'){
+			if (!haveEndBracket)
+				break;
+			else
+				haveEndBracket = false;
+		}
+		else if (haveEndBracket){
+			break;
+		}
+	}
+	size_t k = from < len ? from : len - 1;
+	for (; k + 1 > 0; k--){
+		const wxUniChar & ch = text[k];
+		if (ch == L'{'){
+			haveStartBracket = true;
+			startBrakcetPos = k;
+		}
+		else if (ch == L'}'){
+			if (!haveStartBracket)
+				break;
+			else
+				haveStartBracket = false;
+		}
+		else if (haveStartBracket){
+			break;
+		}
+		
+	}
+	// no end bracket after block ...}{...cursor}
+	// no need to correct it, end bracket without start is displayed as text
+	//if (haveStartBracket && k == -1 && startBrakcetPos > 0)
+		//startBrakcetPos = 0;
+	
+	// no first bracket after block {cursor...}{...
+	if (haveEndBracket && i >= len && endBrakcetPos + 1 < len)
+		endBrakcetPos = len - 1;
+	// no end bracket
+	if (startBrakcetPos != -1 && endBrakcetPos == -1)
+		endBrakcetPos = len - 1;
+	// no start bracket
+	if (startBrakcetPos == -1 && endBrakcetPos != -1)
+		endBrakcetPos = -1;
+
+	return wxPoint(startBrakcetPos, endBrakcetPos);
+}
+
 void EditBox::OnSize(wxSizeEvent& event)
 {
 	int w, h;
@@ -1291,7 +1351,7 @@ void EditBox::OnPasteDifferents(wxCommandEvent& event)
 }
 //znajduje tagi w polu tekstowym
 //w wyszukiwaniu nie używać // a także szukać tylko do końca taga, nie do następnego taga
-bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &text, bool *endsel, bool fromStart)
+bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &text, bool *endsel, int mode)
 {
 	lasttag = tag;
 	long from = 0, to = 0;
@@ -1307,19 +1367,25 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 		}
 	}
 	else{ txt = text; }
-	if (txt == ""){ Placed.x = 0; Placed.y = 0; InBracket = false; cursorpos = 0; if (endsel){ *endsel = false; } return false; }
+	if (txt == L""){ Placed.x = 0; Placed.y = 0; InBracket = false; cursorpos = 0; if (endsel){ *endsel = false; } return false; }
 	if (grid->file->SelectionsSize() < 2){
 		TextEditor *Editor = (fromOriginal) ? TextEditOrig : TextEdit;
-		if (!fromStart){ Editor->GetSelection(&from, &to); }
+		if (mode != 1){ Editor->GetSelection(&from, &to); }
+		if (mode == 2){
+			wxPoint brackets = FindBrackets(txt, from);
+			if (brackets.x != 0){
+				from = to = 0;
+			}
+		}
 	}
 
 	if (endsel && from == to){ *endsel = false; }
-	wxRegEx rex("^" + tag, wxRE_ADVANCED);
+	wxRegEx rex(L"^" + tag, wxRE_ADVANCED);
 
-
-	int bracketStart = txt.SubString(0, from).Find(L'{', true);
-	int bracketEnd = txt.SubString(0, (from - 2 < 1) ? 1 : (from - 2)).Find(L'}', true);
-	if (bracketStart == -1 || (bracketStart < bracketEnd && bracketEnd != -1)){
+	wxPoint brackets = FindBrackets(txt, from);
+	int bracketStart = brackets.x;
+	int bracketEnd = brackets.y;
+	if (bracketStart == -1 || (bracketStart > bracketEnd)){
 		InBracket = false;
 		inbrkt = false;
 		bracketEnd = from;
@@ -1327,12 +1393,6 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 	}
 	else{
 		InBracket = true;
-		int tmpfrom = from - 2;
-		do{
-			bracketEnd = txt.find(L'}', (tmpfrom < 1) ? 1 : tmpfrom);
-			tmpfrom = bracketEnd + 1;
-		} while (bracketEnd != -1 && bracketEnd < (int)txt.length() - 1 && txt[bracketEnd + 1] == L'{');
-		if (bracketEnd < 0){ bracketEnd = txt.length() - 1; }
 	}
 
 	Placed.x = bracketEnd;
@@ -1365,27 +1425,27 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 				lastTag = i;
 
 			wxString ftag = txt.SubString(i + 1, lslash - 1);
-			if (ftag == "r"){
+			if (ftag == L"r"){
 				hasR = true;
 			}
-			if (ftag.EndsWith(")")){
-				if (ftag.Find(L'(') == -1 || ftag.Freq(L')') >= 2 || ftag.StartsWith("t(")){
+			if (ftag.EndsWith(L")")){
+				if (ftag.Find(L'(') == -1 || ftag.Freq(L')') >= 2 || ftag.StartsWith(L"t(")){
 					isT = true;
 					endT = lslash - 1;
 				}
 			}
-			if (ftag.StartsWith("t(")){
+			if (ftag.StartsWith(L"t(")){
 				if (endT == -1)
 					endT = lastT;
 
 				if (i <= from && from <= endT){
 
-					if (found[1] != "" && fpoints[1].y <= endT){
+					if (!found[1].empty() && fpoints[1].y <= endT){
 						Placed = fpoints[1];
 						*Found = found[1];
 						return true;
 					}
-					else if (found[0] != ""){
+					else if (!found[0].empty()){
 						if (fpoints[0].y <= endT){ break; }
 					}
 					else{
@@ -1405,10 +1465,10 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 				continue;
 			}
 
-			int reps = rex.ReplaceAll(&ftag, "\\1");
+			int reps = rex.ReplaceAll(&ftag, L"\\1");
 			if (reps > 0){
 
-				if (ftag.EndsWith(")") && (!ftag.StartsWith("(") || ftag.Freq(L')') >= 2) || ftag.EndsWith("}")){
+				if (ftag.EndsWith(L")") && (!ftag.StartsWith(L"(") || ftag.Freq(L')') >= 2) || ftag.EndsWith(L"}")){
 					ftag.RemoveLast(1);
 					lslash--;
 				}
@@ -1459,7 +1519,7 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 
 	}
 
-	if (!isT && found[0] != ""){
+	if (!isT && found[0] != L""){
 		//In bracket here blocks changing position of tag putting in plain text
 		//inbrkt here changing value when plain text is on start, not use it here
 		if (InBracket && !placedInT){
@@ -1472,7 +1532,6 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 		Placed.x = lastTag;
 		Placed.y = lastTag;
 	}
-
 
 
 	return false;

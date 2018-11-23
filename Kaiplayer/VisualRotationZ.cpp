@@ -224,7 +224,7 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 
 	wxString tag = "\\frz" + getfloat(angle);
 	wxString val;
-	tab->Edit->FindValue("frz?([0-9.-]+)", &val, *txt, 0, true);
+	tab->Edit->FindValue("frz?([0-9.-]+)", &val, *txt, 0, 1);
 	ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 }
 

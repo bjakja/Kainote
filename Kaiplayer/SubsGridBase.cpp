@@ -211,7 +211,7 @@ void SubsGridBase::Convert(char type)
 	int endt = Options.GetInt(ConvertTimePerLetter);
 	const wxString & prefix = Options.GetString(ConvertASSTagsOnLineStart);
 
-	int i = 0;
+	size_t i = 0;
 	Dialogue *lastDialc = NULL;
 	while (i < file->GetCount())
 	{
@@ -273,7 +273,7 @@ void SubsGridBase::Convert(char type)
 			return (i->Text.CmpNoCase(j->Text) < 0);
 		});
 		Dialogue *lastDialogue = file->GetDialogue(0);
-		int i = 1;
+		size_t i = 1;
 		while (i < file->GetCount()){
 			Dialogue *actualDialogue = file->GetDialogue(i);
 			if (lastDialogue->Start == actualDialogue->Start &&
@@ -352,7 +352,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 	txt = GetSInfo(L"TLMode Style");
 	wxString raw;
 	if (loadFromEditbox){
-		for (int i = 0; i < file->GetCount(); i++)
+		for (size_t i = 0; i < file->GetCount(); i++)
 		{
 			Dialogue *dial = file->GetDialogue(i);
 			if (!ignoreFiltered && !dial->isVisible || dial->NonDialogue){ continue; }
@@ -385,7 +385,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 		}
 	}
 	else{
-		for (int i = 0; i < file->GetCount(); i++)
+		for (size_t i = 0; i < file->GetCount(); i++)
 		{
 			Dialogue *dial = file->GetDialogue(i);
 
@@ -573,7 +573,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 	bool skipFiltered = !ignoreFiltered;
 	if (PostprocessorOptions){ time = 0; frame = 0; VAS = 0; whichTimes = 0; correctEndTimes = 0; moveTimeOptions = 0; }
 
-	for (int i = 0; i < file->GetCount(); i++)
+	for (size_t i = 0; i < file->GetCount(); i++)
 	{
 		Dial = file->GetDialogue(i);
 		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue){ continue; }
@@ -1092,7 +1092,7 @@ void SubsGridBase::SetSubsFormat(wxString ext)
 	subsFormat = ASS;
 	int rw = 0;
 	char subsext = (ext == L"ass" || ext == L"ssa") ? ASS : (ext == L"srt") ? SRT : TMP;
-	while (rw<GetCount())
+	while (rw < GetCount())
 	{
 		Dialogue *dial = GetDialogue(rw);
 		if (dial->NonDialogue || dial->Format == 0){ rw++; }
@@ -1196,7 +1196,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 
 	if (subsFormat == MDVD || subsFormat == MPL2){
 		int endt = Options.GetInt(ConvertTimePerLetter);
-		for (int i = 0; i < GetCount(); i++){
+		for (size_t i = 0; i < GetCount(); i++){
 			Dialogue *dial = GetDialogue(i);
 
 			if (dial->End.mstime == 0){
@@ -1327,7 +1327,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 			file->DeleteSInfo(iinf);
 		}
 
-		for (int i = 0; i < file->GetCount(); i++)
+		for (size_t i = 0; i < file->GetCount(); i++)
 		{
 			Dialogue *dial = file->GetDialogue(i);
 			Dialogue *dialc = NULL;
@@ -1497,7 +1497,7 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 	const wxString &tlStyle = GetSInfo(L"TLMode Style");
 	int j = 1;
 
-	for (int i = 0; i < file->GetCount(); i++)
+	for (size_t i = 0; i < file->GetCount(); i++)
 	{
 		Dialogue *dial = file->GetDialogue(i);
 		if (!ignoreFiltered && !dial->isVisible || dial->NonDialogue){ continue; }
