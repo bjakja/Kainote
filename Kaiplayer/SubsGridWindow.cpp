@@ -1258,7 +1258,7 @@ void SubsGridWindow::RefreshIfVisible(int time)
 {
 	int counter = 0;
 	//make it work properly
-	for (int i = scrollPosition; i < file->GetCount() && counter < visibleLines.size(); i++){
+	for (size_t i = scrollPosition; i < file->GetCount() && counter < visibleLines.size(); i++){
 		Dialogue *dial = GetDialogue(i);
 		if (!dial->isVisible)
 			continue;
@@ -1364,7 +1364,7 @@ void SubsGridWindow::SelVideoLine(int curtime)
 	int durtime = (curtime < 0) ? Kai->GetTab()->Video->GetDuration() : 36000000;
 	int idr = 0, ip = 0;
 
-	for (int i = 0; i < GetCount(); i++)
+	for (size_t i = 0; i < GetCount(); i++)
 	{
 		Dialogue *dial = GetDialogue(i);
 		if (!dial->isVisible)

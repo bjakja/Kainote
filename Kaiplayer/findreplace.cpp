@@ -62,11 +62,13 @@ void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, c
 				if (keyLine < tab->Grid->file->GetCount()){
 					if (i != Kai->Tabs->iter)
 						Kai->Tabs->ChangePage(i);
-
-					tab->Edit->SetLine(keyLine);
-					tab->Grid->SelectRow(keyLine);
-					tab->Grid->ScrollTo(keyLine, true);
-					tab->Edit->GetEditor()->SetSelection(pos.x, pos.x + pos.y);
+					//check if it's not out of range
+					if (keyLine < tab->Grid->GetCount()){
+						tab->Edit->SetLine(keyLine);
+						tab->Grid->SelectRow(keyLine);
+						tab->Grid->ScrollTo(keyLine, true);
+						tab->Edit->GetEditor()->SetSelection(pos.x, pos.x + pos.y);
+					}
 				}
 				break;
 			}
@@ -156,6 +158,7 @@ void FindReplace::ReplaceChecked()
 		TabPanel *tab = NULL;
 		int oldKeyLine = -1;
 		int numOfChanges = 0;
+		bool skipTab = false;
 		size_t size = List->GetCount();
 		for (size_t tt = 0; tt < size; tt++){
 			Item *item = List->GetItem(tt, 0);
@@ -164,6 +167,13 @@ void FindReplace::ReplaceChecked()
 
 			SeekResults *SeekResult = (SeekResults *)item;
 			tab = SeekResult->tab;
+			// check if skip lines when tab not exist
+			if (tab != oldtab){
+				skipTab = Kai->Tabs->FindPanel(tab, false) == -1;
+			}
+			//skip lines when are out of table range and not existed tab
+			if (skipTab || SeekResult->keyLine >= tab->Grid->file->GetCount())
+				continue;
 
 			Dialogue *Dialc = tab->Grid->file->CopyDialogue(SeekResult->keyLine, true, false);
 
@@ -1293,7 +1303,8 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 	path = SeekResult->path;
 	wxString ext = path.AfterLast('.').Lower();
 	OpenWrite ow;
-	ow.FileOpen(path, &subsText);
+	if (!ow.FileOpen(path, &subsText))
+		return 0;
 
 	bool isSRT = (ext == "srt");
 

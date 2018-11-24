@@ -900,7 +900,7 @@ int Notebook::FindTab(int x, int *_num)
 	*_num = num;
 	int restab = -1;
 	for (size_t i = firstVisibleTab; i < Tabsizes.size(); i++){
-		if (x > num&&x < num + Tabsizes[i]){
+		if (x > num && x < num + Tabsizes[i]){
 			restab = i;
 			*_num = num;
 			break;
@@ -959,7 +959,7 @@ TabPanel *Notebook::GetTab()
 	return sthis->Pages[sthis->iter];
 }
 
-int Notebook::FindPanel(TabPanel* pan)
+int Notebook::FindPanel(TabPanel* pan, bool safe /*= true*/)
 {
 	int i = 0;
 	for (std::vector<TabPanel*>::iterator it = Pages.begin(); it != Pages.end(); it++)
@@ -967,7 +967,7 @@ int Notebook::FindPanel(TabPanel* pan)
 		if ((*it) == pan){ return i; }
 		i++;
 	}
-	return iter;
+	return safe? iter : -1;
 }
 
 

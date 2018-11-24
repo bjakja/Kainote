@@ -399,7 +399,7 @@ void SubsFile::GetSelections(wxArrayInt &selections, bool deselect/*=false*/, bo
 	selections.clear();
 	for (std::set<int>::iterator i = subs->Selections.begin(); i != subs->Selections.end(); i++){
 		int sel = (*i);
-		if (!checkVisible || *subs->dialogues[sel]->isVisible)
+		if (!checkVisible || (sel < subs->dialogues.size() && *subs->dialogues[sel]->isVisible))
 			selections.Add(sel);
 	}
 	if (deselect){ subs->Selections.clear(); }
@@ -808,7 +808,7 @@ size_t SubsFile::FirstSelection(size_t *id /*= NULL*/)
 		// return only visible element when nothing is visible, return -1;
 		for (auto it = subs->Selections.begin(); it != subs->Selections.end(); it++){
 			int sel = (*it);
-			if (*subs->dialogues[sel]->isVisible){
+			if (sel < subs->dialogues.size() && *subs->dialogues[sel]->isVisible){
 				if (id){
 					*id = GetElementByKey(sel);
 					if (*id == -1)

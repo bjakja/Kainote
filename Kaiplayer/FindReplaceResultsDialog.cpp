@@ -54,8 +54,8 @@ FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace
 	buttonsSizer->Add(checkAll, 1, wxALL, 2);
 	buttonsSizer->Add(unCheckAll, 1, wxALL, 2);
 	buttonsSizer->Add(replaceChecked, 1, wxALL, 2);
-	buttonsSizer->Add(ReplaceText, 0, wxALL | wxEXPAND, 2);
-	main->Add(buttonsSizer, 0, wxALL, 2);
+	buttonsSizer->Add(ReplaceText, 3, wxALL | wxEXPAND, 2);
+	main->Add(buttonsSizer, 0, wxALL | wxEXPAND, 2);
 	SetSizerAndFit(main);
 
 	findInFiles = _findInFiles;

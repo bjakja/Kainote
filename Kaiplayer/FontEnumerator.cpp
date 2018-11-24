@@ -157,9 +157,6 @@ int CALLBACK FontEnumerator::FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lpt
 
 void FontEnumerator::RefreshVideo()
 {
-	//na razie tak, ale trzeba zrobić to tak by żaden idiota przy odświeżaniu nie zmienił zakładki.
-	//TODO: Możliwy błąd Devilkana, czyli mix napisów w zakładkach, pamiętaj o tym.
-	// nigdy nie pozwól by zmieniła się zakładka gdy odświeżamy albo odświeżamy napisy na innej zakładce niż widoczna.
 	for (int i = 0; i < parent->Tabs->Size(); i++){
 		TabPanel *tab = parent->Tabs->Page(i);
 		if (tab->Video->GetState() != None){
@@ -167,12 +164,7 @@ void FontEnumerator::RefreshVideo()
 			tab->Video->Render();
 		}
 	}
-	//błąd deviklana powinien zostać już zażegnany więc na razie daję całość, a p
-	/*TabPanel *tab = parent->GetTab();
-	if(tab->Video->GetState()!=None){
-		tab->Video->OpenSubs(tab->Grid->SaveText(),true,true);
-		tab->Video->Render();
-	}*/
+	
 }
 
 DWORD FontEnumerator::CheckFontsProc(void* fontEnum)

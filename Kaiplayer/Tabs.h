@@ -42,7 +42,7 @@ public:
 	void DeletePage(int page);
 	void Split(size_t page);
 	int FindTab(int x, int *num);
-	int FindPanel(TabPanel* pan);
+	int FindPanel(TabPanel* pan, bool safe = true);
 	int GetHeight();
 	void ChangeActive();
 	void RefreshBar();
