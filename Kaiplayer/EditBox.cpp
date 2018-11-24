@@ -1152,15 +1152,16 @@ wxPoint EditBox::FindBrackets(const wxString & text, long from)
 	bool haveEndBracket = false;
 	int endBrakcetPos = -1;
 	int startBrakcetPos = -1;
-	size_t i = (from - 2 < 1) ? 1 : from - 2;
 	size_t len = text.length();
+	size_t i = (from - 1 < 1) ? 1 : (from - 1);
+	//size_t k = i < len ? i : len - 1;
 	for (; i < len; i++){
 		const wxUniChar & ch = text[i];
 		if (ch == L'}'){
 			haveEndBracket = true;
 			endBrakcetPos = i;
 		}
-		else if (ch == L'{'){
+		else if (ch == L'{' && i + 1 > from && i != from){
 			if (!haveEndBracket)
 				break;
 			else
@@ -1170,14 +1171,15 @@ wxPoint EditBox::FindBrackets(const wxString & text, long from)
 			break;
 		}
 	}
-	size_t k = from < len ? from : len - 1;
+	size_t k = from < len ? from : len - 1;//(from - 2 < 1) ? 1 : (from - 2);
+	
 	for (; k + 1 > 0; k--){
 		const wxUniChar & ch = text[k];
 		if (ch == L'{'){
 			haveStartBracket = true;
 			startBrakcetPos = k;
 		}
-		else if (ch == L'}'){
+		else if (ch == L'}' && k + 1 < from){
 			if (!haveStartBracket)
 				break;
 			else
