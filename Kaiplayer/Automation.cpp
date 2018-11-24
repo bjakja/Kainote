@@ -849,6 +849,12 @@ namespace Auto{
 		if (active_idx == -1)
 			active_idx = original_active;
 		c->Grid->SpellErrors.clear();
+		//refresh styles in style manager
+		if (StyleStore::HasStore() && StyleStore::Get()->IsShown())
+			StyleStore::ShowStore();
+		//refresh styles in editbox
+		c->Edit->RefreshStyle();
+
 		c->Grid->SetModified(AUTOMATION_SCRIPT, true, false, active_idx);
 		c->Grid->RefreshColumns();
 		SAFE_DELETE(subsobj);
