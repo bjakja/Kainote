@@ -345,11 +345,11 @@ void config::LoadDefaultColors(bool dark, wxColour *table)
 	colours[GridLabelSaved].Set((dark) ? "#202225" : "#BFBFBF");
 	colours[GridLabelDoubtful].Set((dark) ? "#925B1F" : "#925B1F");
 	colours[GridSpellchecker].Set((dark) ? "#940000" : "#FF6968");
-	colours[GridComparisonOutline].Set((dark) ? "#000000" : "#FFFFFF");
-	colours[GridComparisonBackgroundNotMatch].Set((dark) ? "#FF000C" : "#FF000C");
-	colours[GridComparisonBackgroundMatch].Set((dark) ? "#B7AC00" : "#B7AC00");
-	colours[GridComparisonCommentBackgroundNotMatch].Set((dark) ? "#9C0000" : "#9C0000");
-	colours[GridComparisonCommentBackgroundMatch].Set((dark) ? "#817900" : "#817900");
+	colours[GridComparisonOutline].Set((dark) ? "#2700FF" : "#FFFFFF");
+	colours[GridComparisonBackgroundNotMatch].Set((dark) ? "#272B32" : "#FF000C");
+	colours[GridComparisonBackgroundMatch].Set((dark) ? "#3A3E45" : "#B7AC00");
+	colours[GridComparisonCommentBackgroundNotMatch].Set((dark) ? "#003176" : "#9C0000");
+	colours[GridComparisonCommentBackgroundMatch].Set((dark) ? "#3662A1" : "#817900");
 	colours[EditorText].Set((dark) ? "#F4F4F4" : "#000000");
 	colours[EditorTagNames].Set((dark) ? "#00C3FF" : "#787600");
 	colours[EditorTagValues].Set((dark) ? "#0076FF" : "#34C200");
@@ -430,7 +430,7 @@ void config::LoadDefaultColors(bool dark, wxColour *table)
 	colours[TabsBackgroundActive].Set((dark) ? "#53516B" : "#BFBFBF");
 	colours[TabsBackgroundInactive].Set((dark) ? "#2F3136" : "#A0A0A0");
 	colours[TabsBackgroundInactiveHover].Set((dark) ? "#53516B" : "#BFBFBF");
-	colours[TabsBackgroundSecondWindow].Set((dark) ? "#38FF00" : "#BFBFBF");
+	colours[TabsBackgroundSecondWindow].Set((dark) ? "#383654" : "#BFBFBF");
 	colours[TabsTextActive].Set((dark) ? "#FFFFFF" : "#000000");
 	colours[TabsTextInactive].Set((dark) ? "#7D7F83" : "#EEEEEE");
 	colours[TabsCloseHover].Set((dark) ? "#A22525" : "#925B1F");
@@ -445,7 +445,7 @@ void config::LoadDefaultColors(bool dark, wxColour *table)
 	colours[SliderBackground].Set((dark) ? "#5C5889" : "#ACACAC");
 	colours[SliderBackgroundHover].Set((dark) ? "#8982D5" : "#C5C5C5");
 	colours[SliderBackgroundPushed].Set((dark) ? "#9E96FF" : "#DDDDDD");
-	colours[WINDOW_RESIZER_DOTS].Set((dark) ? "#AEAFB2" : "#FFFFFF");
+	colours[WINDOW_RESIZER_DOTS].Set((dark) ? "#2F3136" : "#FFFFFF");
 	colours[FIND_RESULT_FILENAME_FOREGROUND].Set((dark) ? "#BB0099" : "#5D67CF");
 	colours[FIND_RESULT_FILENAME_BACKGROUND].Set((dark) ? "#440033" : "#000000");
 	colours[FIND_RESULT_FOUND_PHRASE_FOREGROUND].Set((dark) ? "#FFFFFF" : "#FFFFFF");

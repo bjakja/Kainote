@@ -201,8 +201,11 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 		}
 		wxString CodecID = wxString(trackInfo->CodecID,*wxConvCurrent);
 		int codecType = 0;
-		if (CodecID == "S_TEXT/UTF8") codecType = 1;
-
+		if (CodecID == "S_TEXT/UTF8") { 
+			codecType = 1; 
+		}
+		// to force saving to show choose name dialog
+		target->originalFormat = -1;
 
 
 		// Read timecode scale

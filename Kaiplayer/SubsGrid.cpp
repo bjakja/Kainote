@@ -898,7 +898,12 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 	mw.Close();
 
 	if (isgood){
-		if (hasTLMode){ Edit->SetTlMode(false); hasTLMode = false; showOriginal = false; Kai->Menubar->Enable(SaveTranslation, false); }
+		if (hasTLMode){ 
+			Edit->SetTlMode(false); 
+			hasTLMode = false; 
+			showOriginal = false; 
+			Kai->Menubar->Enable(SaveTranslation, false); 
+		}
 		SetSubsFormat();
 		wxString ext = (subsFormat < SRT) ? L"ass" : L"srt";
 		if (subsFormat < SRT){ Edit->TlMode->Enable(); }
@@ -915,7 +920,11 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 		if (tab->Video->GetState() != None){
 			tab->Video->OpenSubs(SaveText(), true, true);
 			if (!isgood){ KaiMessageBox(_("Otwieranie napisów nie powiodło się"), _("Uwaga")); }
-			if (tab->Video->GetState() == Paused){ tab->Video->Render(); }
+			//pause when changing matrix to avoid crash on slow computers
+			if (tab->Video->GetState() == Playing){ 
+				tab->Video->Pause();//Render(); 
+			}
+			tab->Video->SetColorSpace(tab->Grid->GetSInfo("YCbCr Matrix"));
 		}
 
 		if (!tab->editor&&!tab->Video->isFullscreen){ Kai->HideEditor(); }
