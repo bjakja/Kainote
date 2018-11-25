@@ -58,12 +58,12 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 		bool seekSpace = true;
 		int mesureSize = (*w > 10)? *w : 1000;
 		size_t i = 0;
-		//size_t len = text.Len();
-		while (i < text.Len()){
+		//size_t len = text.length();
+		while (i < text.length()){
 			size_t nfound = text.find(wxUniChar('\n'), i);
-			i = (nfound != -1) ? nfound : text.Len() - 1;
+			i = (nfound != -1) ? nfound : text.length() - 1;
 			wxString stringToMesure = text.Mid(currentPosition, i - currentPosition + 1);
-			GetTextExtent((stringToMesure.Len()) ? stringToMesure : L"|", &fw, &fh);
+			GetTextExtent((stringToMesure.length()) ? stringToMesure : L"|", &fw, &fh);
 			if (fw > mesureSize){
 				size_t j = currentPosition+1;
 				bool foundWrap = false;

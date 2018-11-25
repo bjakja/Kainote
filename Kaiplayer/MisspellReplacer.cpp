@@ -177,7 +177,9 @@ void MisspellReplacer::ReplaceChecked()
 	KaiListCtrl *List = resultDialog->ResultsList;
 	TabPanel *oldtab = NULL;
 	TabPanel *tab = NULL;
+	Notebook * tabs = Notebook::GetTabs();
 	int oldKeyLine = -1;
+	bool skipTab = false;
 	bool somethingWasChanged = false;
 	size_t size = List->GetCount();
 	for (size_t tt = 0; tt < size; tt++){
@@ -187,6 +189,14 @@ void MisspellReplacer::ReplaceChecked()
 
 		ReplacerSeekResults *SeekResult = (ReplacerSeekResults *)item;
 		tab = SeekResult->tab;
+		// check if skip lines when tab not exist
+		if (tab != oldtab){
+			skipTab = tabs->FindPanel(tab, false) == -1;
+			oldKeyLine = -1;
+		}
+		//skip lines when are out of table range and not existed tab
+		if (skipTab || SeekResult->keyLine >= tab->Grid->file->GetCount())
+			continue;
 
 		if (SeekResult->keyLine != oldKeyLine){
 			std::sort(results.begin(), results.end(), [=](ReplacerSeekResults *i, ReplacerSeekResults *j){
@@ -589,6 +599,11 @@ bool MisspellReplacer::ReplaceBlock(std::vector<ReplacerSeekResults *> &results,
 	//method maybe not too good but even if there is a 6 replaces in one place then 
 	//one of it should be changed.
 	//It means that dialogue will be changed and no need to read and change if needed
+	if (lineText != results[0]->name){
+		KaiLog(wxString::Format(_("Linia %i nie mo¿e byæ zamieniona,\nbo zosta³a zedytowana."), 
+			results[0]->idLine));
+		return false;
+	}
 
 	bool somethingChanged = false;
 	for (auto & SeekResult : results){
@@ -606,8 +621,8 @@ bool MisspellReplacer::ReplaceBlock(std::vector<ReplacerSeekResults *> &results,
 			somethingChanged = true;
 		}
 		else{
-			KaiLog(wxString::Format(_("Nie mo¿na zamieniæ \"%s\" na \"%s\", wykorzystuj¹c regu³ê \"%s\"."), 
-				matchResult, actualrule.replaceRule, actualrule.findRule));
+			KaiLog(wxString::Format(_("Nie mo¿na zamieniæ \"%s\" na \"%s\", wykorzystuj¹c regu³ê \"%s\" w linii %i."), 
+				matchResult, actualrule.replaceRule, actualrule.findRule, SeekResult->idLine));
 		}
 	}
 

@@ -159,6 +159,7 @@ void FindReplace::ReplaceChecked()
 		int oldKeyLine = -1;
 		int numOfChanges = 0;
 		bool skipTab = false;
+		bool skipLine = false;
 		size_t size = List->GetCount();
 		for (size_t tt = 0; tt < size; tt++){
 			Item *item = List->GetItem(tt, 0);
@@ -170,6 +171,7 @@ void FindReplace::ReplaceChecked()
 			// check if skip lines when tab not exist
 			if (tab != oldtab){
 				skipTab = Kai->Tabs->FindPanel(tab, false) == -1;
+				oldKeyLine = -1;
 			}
 			//skip lines when are out of table range and not existed tab
 			if (skipTab || SeekResult->keyLine >= tab->Grid->file->GetCount())
@@ -178,9 +180,19 @@ void FindReplace::ReplaceChecked()
 			Dialogue *Dialc = tab->Grid->file->CopyDialogue(SeekResult->keyLine, true, false);
 
 			wxString & lineText = Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != L"");
-
-			if (oldKeyLine != SeekResult->keyLine)
+			//skip lines with different texts
+			if (oldKeyLine != SeekResult->keyLine){
 				replacementDiff = 0;
+				if (lineText != SeekResult->name){
+					KaiLog(wxString::Format(_("Linia %i nie może być zamieniona,\nbo została zedytowana."),
+						SeekResult->idLine));
+					skipLine = true;
+					continue;
+				}
+				skipLine = false;
+			}
+			if (skipLine)
+				continue;
 
 			numOfChanges += ReplaceCheckedLine(&lineText, SeekResult->findPosition, &replacementDiff);
 
@@ -1356,7 +1368,6 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 			token = tokenizer.GetNextToken();
 			token.Trim();
 		}
-
 		if (SeekResult->keyLine != lineNum){
 
 			if (isSRT)
@@ -1380,6 +1391,11 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 
 		dial->GetTextElement(dialogueColumn, &dialtxt);
 		replacementDiff = 0;
+		//need checks
+		if (dialtxt != SeekResult->name){
+			KaiLog(wxString::Format(_("Linia %i nie może być zamieniona,\nbo została zedytowana."),
+				SeekResult->idLine));
+		}
 		while (SeekResult->keyLine == lineNum){
 			int numOfReps = ReplaceCheckedLine(&dialtxt, SeekResult->findPosition, &replacementDiff);
 
