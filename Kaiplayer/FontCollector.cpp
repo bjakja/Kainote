@@ -465,7 +465,7 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 			path->SetFocus();
 			return;
 		}
-		if (subsdir->GetValue()){
+		if (subsDirectory){
 			wxString rest;
 			copypath = (subsfromMkv) ? Notebook::GetTab()->VideoPath.BeforeLast(L'\\', &rest) : Notebook::GetTab()->SubsPath.BeforeLast(L'\\', &rest);
 			copypath << L"\\Czcionki\\";

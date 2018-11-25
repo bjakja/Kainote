@@ -339,7 +339,7 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 		en1 = L" ";
 	}
 	else if (idd == JoinWithNext){
-		size_t nextLine = GetKeyFromPosition(currentLine, -1);
+		size_t nextLine = GetKeyFromPosition(currentLine, 1);
 		if (currentLine >= nextLine){ return; }
 		selections.Clear();
 		selections.Add(currentLine);
