@@ -802,10 +802,11 @@ int FindReplace::ReplaceInSubsLine(wxString *onlyString)
 		else
 			textPos = ltext.find(lfind, newpos);
 
-		if (textPos == -1){ break; }
+		
 		newpos = textPos + lfind.length();
 		//diff for replacing and checking function
 		textPos += repsDiff;
+		if (textPos >= onlyString->length()){ break; }
 
 		if (!onlyOption || KeepFinding(*onlyString, textPos)){
 			
