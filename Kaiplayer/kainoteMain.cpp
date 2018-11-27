@@ -990,8 +990,11 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 			wxString prompt;
 			if (hasVideoPath || hasAudioPath || hasKeyframePath){
 				if (hasVideoPath && tab->VideoPath != videopath){ prompt += _("Wideo: ") + videopath + "\n"; }
+				else if (hasVideoPath){ hasVideoPath = false; }
 				if (hasAudioPath && tab->AudioPath != audiopath){ prompt += _("Audio: ") + audiopath + "\n"; }
+				else if (hasAudioPath){ hasAudioPath = false; }
 				if (hasKeyframePath && tab->KeyframesPath != keyframespath){ prompt += _("Klatki kluczowe: ") + keyframespath + "\n"; }
+				else if (hasKeyframePath){ hasKeyframePath = false; }
 				if (!prompt.empty()){ prompt.Prepend(_("Skojarzone pliki:\n")); flags |= wxOK; }
 			}
 			if (!secondFileName.empty()){
