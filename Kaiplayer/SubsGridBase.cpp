@@ -836,7 +836,7 @@ bool SubsGridBase::MoveRows(int step, bool keyStep /*= false*/)
 
 	
 	if (step < 0){
-		int lastSel = file->GetElementById(0);
+		int lastSel = -1;
 		for (auto cur = selectedDialogs.rbegin(); cur != selectedDialogs.rend(); cur++)
 		{
 			const std::pair<Dialogue*, int> &dialPair = *cur;
@@ -893,7 +893,9 @@ bool SubsGridBase::MoveRows(int step, bool keyStep /*= false*/)
 			lastSel = sel;
 		}
 	}
-	Edit->SetLine(FirstSelection());
+	size_t firstSelection = FirstSelection();
+	Edit->SetLine(firstSelection);
+	ScrollTo(firstSelection, true);
 	Refresh(false);
 	return true;
 }
@@ -979,6 +981,7 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	Edit->SetLine(file->FindVisibleKey(file->GetActiveLine(), &corrected));
 	markedLine = file->FindVisibleKey(file->GetMarkerLine());
 	scrollPosition = file->FindVisibleKey(file->GetScrollPosition());
+	scrollPositionId = file->GetElementByKey(scrollPosition);
 	if (corrected >= 0){
 		file->EraseSelection(file->GetActiveLine());
 		file->InsertSelection(corrected);
@@ -1133,7 +1136,8 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 			lastRow = newCurrentLine;
 			int w, h;
 			GetClientSize(&w, &h);
-			MakeVisible(newCurrentLine);
+			ScrollTo(newCurrentLine, true);
+			//MakeVisible(newCurrentLine);
 			Edit->SetLine(newCurrentLine);
 			file->InsertSelection(newCurrentLine);
 		}
@@ -1376,7 +1380,8 @@ void SubsGridBase::NextLine(int dir)
 	}
 	int h, w;
 	GetClientSize(&w, &h);
-	MakeVisible(nebrow);
+	//MakeVisible(nebrow);
+	ScrollTo(nebrow, true);
 	file->ClearSelections();
 	file->InsertSelection(nebrow);
 	lastRow = nebrow;

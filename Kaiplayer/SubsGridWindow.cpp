@@ -1059,7 +1059,7 @@ void SubsGridWindow::ScrollTo(int y, bool center /*= false*/, int offset /*= 0*/
 		size += (previewsize.y / (GridHeight + 1)) + 1;
 	}*/
 	// need to calculate this
-	int nextY = y;// MID(0, y, size - h / (GridHeight + 1));
+	int nextY = MID(0, y, GetCount() - 1);
 
 	if (scrollPosition != nextY) {
 		//KaiLog(wxString::Format("scrollpos = %i, %i, %i", scrollPosition, y, offset));
@@ -1084,7 +1084,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 	if (key == WXK_WINDOWS_MENU) {
 		wxPoint pos;
 		pos.x = w / 2;
-		pos.y = (currentLine + 1 - scrollPosition) * GridHeight + GridHeight / 2;
+		pos.y = h / 2;
 		ContextMenu(pos);
 		return;
 	}
