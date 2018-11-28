@@ -93,7 +93,7 @@ void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, c
 			ntab->Edit->SetLine(keyLine);
 			ntab->Grid->SelectRow(keyLine);
 			ntab->Grid->ScrollTo(keyLine, true);
-			tab->Edit->GetEditor()->SetSelection(pos.x, pos.x + pos.y);
+			ntab->Edit->GetEditor()->SetSelection(pos.x, pos.x + pos.y);
 		}
 	}
 }
