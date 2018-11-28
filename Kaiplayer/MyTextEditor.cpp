@@ -1371,7 +1371,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 		numOfLanguages = dics.size();
 		const wxString &language = Options.GetString(DictionaryLanguage);
 		Menu *languageMenu = new Menu();
-		menut.Append(MENU_SPELLCHECKER_ON, _("Sprawdzanie pisowni"), "", true, NULL, NULL, ITEM_CHECK_AND_HIDE)->Check(SpellCheckerOnOff);
+		menut.Append(MENU_SPELLCHECKER_ON, _("Sprawdzanie pisowni"), "", true, NULL, NULL, ITEM_CHECK_AND_HIDE)->Check(Options.GetBool(SpellcheckerOn));
 		for (int k = 0; k < numOfLanguages; k++){
 			languageMenu->Append(MENU_SPELLCHECKER_ON + k + 1, dics[k], "", true, NULL, NULL, (language == dics[k])? ITEM_RADIO : ITEM_NORMAL);
 		}
@@ -1771,13 +1771,13 @@ void TextEditor::SetState(int _state, bool refresh){
 		return;
 
 	state = _state;
-	if (refresh){
+	//if (refresh){
 		SpellCheckerOnOff = (!state) ? Options.GetBool(SpellcheckerOn) : false;
 		if (SpellCheckerOnOff)
 			CheckText();
 		EB->UpdateChars(MText);
 		Refresh(false);
-	}
+	//}
 };
 
 BEGIN_EVENT_TABLE(TextEditor, wxWindow)
