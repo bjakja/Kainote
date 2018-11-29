@@ -53,7 +53,7 @@ SpellCheckerDialog::SpellCheckerDialog(KainoteFrame *parent)
 	ignoreAll = new MappedButton(this, ID_IGNORE_ALL, _("Ignoruj wszystko"));
 	addWord = new MappedButton(this, ID_ADD_WORD, _("Dodaj do słownika"));
 	removeWord = new MappedButton(this, ID_REMOVE_WORD, _("Usuń ze słownika"));
-	removeWord->SetToolTip(_("Usuwa ze słownika słowa dodane przez użytkownika\npo wpisaniu go w pole \"Zmień na\"."));
+	removeWord->SetToolTip(_("Usuwa ze słownika słowa dodane przez użytkownika."));
 
 	close = new MappedButton(this, ID_CLOSE_DIALOG, _("Zamknij"));
 	buttonSizer->Add(ignoreComments, 0, wxEXPAND|wxALL, 2);

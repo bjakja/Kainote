@@ -1,4 +1,4 @@
-//  Copyright (c) 2018, Marcin Drob
+ï»¿//  Copyright (c) 2018, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -117,9 +117,9 @@ int UpdateChecker::CheckAsynchronously(UpdateChecker *checker, bool closeProgram
 		checker->server = link.BeforeFirst('/', &checker->page);
 		int result = wxYES;
 		if (!checker->dontAskForUpdate){
-			KaiMessageDialog dlgmsg(0, wxString::Format(_("Dostêpna jest nowa wersja programu %s zaktualizowaæ?"), version), _("Aktualizacja"), wxYES_NO | wxOK | wxHELP);
-			dlgmsg.SetHelpLabel(_("Wy³¹cz aktualizacje"));
-			dlgmsg.SetOkLabel(_("Zakutalizuj po zamkniêciu"));
+			KaiMessageDialog dlgmsg(0, wxString::Format(_("DostÄ™pna jest nowa wersja programu %s zaktualizowaÄ‡?"), version), _("Aktualizacja"), wxYES_NO | wxOK | wxHELP);
+			dlgmsg.SetHelpLabel(_("WyÅ‚Ä…cz aktualizacje"));
+			dlgmsg.SetOkLabel(_("Zakutalizuj po zamkniÄ™ciu"));
 			int result = dlgmsg.ShowModal();
 		}
 		if (result == wxYES){
@@ -230,12 +230,12 @@ int UpdateChecker::DownloadZip()
 void UpdateChecker::Update(bool closeProgram /*= true*/)
 {
 	if (DownloadZip()){
-		KaiMessageBox(_("Nie mo¿na pobraæ nowej wersji Kainote"));
+		KaiMessageBox(_("Nie moÅ¼na pobraÄ‡ nowej wersji Kainote"));
 		return;
 	}
 	wxString updater = Options.pathfull + "\\Updater.exe";
 	if (!wxFileExists(updater)){
-		KaiMessageBox(_("Nie mo¿na znaleŸæ updatera Kainote"));
+		KaiMessageBox(_("Nie moÅ¼na znaleÅºÄ‡ updatera Kainote"));
 		return;
 	}
 	wxString ver = "Kainote v" + wxString(VersionKainote);
@@ -243,12 +243,12 @@ void UpdateChecker::Update(bool closeProgram /*= true*/)
 	if (closeProgram){
 		kainoteApp *Kaia = (kainoteApp *)wxTheApp;
 		if (!Kaia){
-			KaiMessageBox(_("Nie mo¿na zamkn¹æ Kainote"));
+			KaiMessageBox(_("Nie moÅ¼na zamknÄ…Ä‡ Kainote"));
 			updateOnClose = true;
 			return;
 		}
 		if (!Kaia->Frame->Close()){
-			KaiMessageBox(_("Nie mo¿na zamkn¹æ Kainote"));
+			KaiMessageBox(_("Nie moÅ¼na zamknÄ…Ä‡ Kainote"));
 			updateOnClose = true;
 			return;
 		}

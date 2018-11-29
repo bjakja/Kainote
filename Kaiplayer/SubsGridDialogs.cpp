@@ -1,4 +1,4 @@
-//  Copyright (c) 2018, Marcin Drob
+ï»¿//  Copyright (c) 2018, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -45,11 +45,11 @@ FPSDialog::FPSDialog(wxWindow *parent)
 	oldfps->SetSelection(0);
 	newfps = new KaiChoice(this, -1, "", wxDefaultPosition, wxSize(80, -1), fpsy, 0, valid);
 	newfps->SetSelection(2);
-	sizer->Add(new KaiStaticText(this, -1, _("FPS napisów")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 4);
+	sizer->Add(new KaiStaticText(this, -1, _("FPS napisÃ³w")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 4);
 	sizer->Add(oldfps, 0, wxEXPAND | wxALL, 4);
-	sizer->Add(new KaiStaticText(this, -1, _("Nowy FPS napisów")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 4);
+	sizer->Add(new KaiStaticText(this, -1, _("Nowy FPS napisÃ³w")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 4);
 	sizer->Add(newfps, 0, wxEXPAND | wxALL, 4);
-	MappedButton *ok = new MappedButton(this, 15555, _("Zmieñ FPS"));
+	MappedButton *ok = new MappedButton(this, 15555, _("ZmieÅ„ FPS"));
 	Connect(15555, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&FPSDialog::OkClick);
 	MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	sizer->Add(ok, 0, wxEXPAND | wxALL, 4);
@@ -66,7 +66,7 @@ void FPSDialog::OkClick(wxCommandEvent &evt)
 	if (oldfps->GetValue().ToDouble(&ofps) && newfps->GetValue().ToDouble(&nfps)){
 		EndModal(1);
 	}
-	else{ KaiMessageBox(_("Niew³aœciwy fps")); }
+	else{ KaiMessageBox(_("NiewÅ‚aÅ›ciwy fps")); }
 }
 
 TreeDialog::TreeDialog(wxWindow *parent, const wxString & currentName)
@@ -80,7 +80,7 @@ TreeDialog::TreeDialog(wxWindow *parent, const wxString & currentName)
 	treeDescription->SetMaxLength(500);
 	descriptionSizer->Add(treeDescription, 0, wxEXPAND);
 	mainSizer->Add(descriptionSizer, 0, wxEXPAND|wxALL, 2);
-	MappedButton *ok = new MappedButton(this, 15555, currentName.empty() ? _("Ustaw nazwê drzewka") : _("Zmieñ nazwê drzewka"));
+	MappedButton *ok = new MappedButton(this, 15555, currentName.empty() ? _("Ustaw nazwÄ™ drzewka") : _("ZmieÅ„ nazwÄ™ drzewka"));
 	Connect(15555, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&TreeDialog::OkClick);
 	MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	buttonSizer->Add(ok, 0, wxALL, 4);

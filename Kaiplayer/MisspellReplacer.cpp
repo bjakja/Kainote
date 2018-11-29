@@ -1,4 +1,4 @@
-//  Copyright (c) 2018, Marcin Drob
+ï»¿//  Copyright (c) 2018, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -23,15 +23,15 @@
 
 
 MisspellReplacer::MisspellReplacer(wxWindow *parent)
-	:KaiDialog(parent, -1, _("Korekcja drobnych b³êdów"))
+	:KaiDialog(parent, -1, _("Korekcja drobnych bÅ‚Ä™dÃ³w"))
 	, resultDialog(NULL)
 {
 	DialogSizer *MainSizer = new DialogSizer(wxHORIZONTAL);
 	wxBoxSizer *ListSizer = new wxBoxSizer(wxVERTICAL);
-	//PutWordBoundary = new KaiCheckBox(this, ID_PUT_WORD_BOUNDARY, _("Wstawiaj automatycznie granice\npocz¹tku s³owa \\m i koñca s³owa \\M"));
-	//ShowBuiltInRules = new KaiCheckBox(this, ID_SHOW_BUILT_IN_RULES, _("Poka¿ wbudowane zasady"));
+	//PutWordBoundary = new KaiCheckBox(this, ID_PUT_WORD_BOUNDARY, _("Wstawiaj automatycznie granice\npoczÄ…tku sÅ‚owa \\m i koÅ„ca sÅ‚owa \\M"));
+	//ShowBuiltInRules = new KaiCheckBox(this, ID_SHOW_BUILT_IN_RULES, _("PokaÅ¼ wbudowane zasady"));
 
-	KaiStaticBoxSizer *RuleEdition = new KaiStaticBoxSizer(wxVERTICAL, this, _("Edycja regu³y"));
+	KaiStaticBoxSizer *RuleEdition = new KaiStaticBoxSizer(wxVERTICAL, this, _("Edycja reguÅ‚y"));
 	wxBoxSizer *PhrasesDescriptionSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *PhrasesSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *PhrasesOptionsSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -42,14 +42,14 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	PhraseToFind->SetMaxLength(MAXINT);
 	PhraseToReplace = new KaiTextCtrl(this, ID_PHRASE_TO_REPLACE);
 	PhraseToReplace->SetMaxLength(MAXINT);
-	MatchCase = new KaiCheckBox(this, ID_MATCH_CASE, _("Rozró¿niaj wielkoœæ znaków"));
-	ReplaceAsLower = new KaiCheckBox(this, ID_REPLACE_LOWER, _("Zmieniaj na tekst z ma³ej litery"));
-	ReplaceAsUpper = new KaiCheckBox(this, ID_REPLACE_UPPER, _("Zmieniaj na tekst z du¿ej litery"));
-	ReplaceWithUnchangedCase = new KaiCheckBox(this, ID_REPLACE_UPPER, _("Nie zmieniaj wielkoœci liter"));
+	MatchCase = new KaiCheckBox(this, ID_MATCH_CASE, _("RozrÃ³Å¼niaj wielkoÅ›Ä‡ znakÃ³w"));
+	ReplaceAsLower = new KaiCheckBox(this, ID_REPLACE_LOWER, _("Zmieniaj na tekst z maÅ‚ej litery"));
+	ReplaceAsUpper = new KaiCheckBox(this, ID_REPLACE_UPPER, _("Zmieniaj na tekst z duÅ¼ej litery"));
+	ReplaceWithUnchangedCase = new KaiCheckBox(this, ID_REPLACE_UPPER, _("Nie zmieniaj wielkoÅ›ci liter"));
 	ReplaceOnlyTags = new KaiCheckBox(this, ID_REPLACE_ONLY_TAGS, _("Zmieniaj tylko w tagach"));
-	ReplaceOnlyText = new KaiCheckBox(this, ID_REPLACE_ONLY_TEXT, _("Zmieniaj tylko w tekœcie"));
+	ReplaceOnlyText = new KaiCheckBox(this, ID_REPLACE_ONLY_TEXT, _("Zmieniaj tylko w tekÅ›cie"));
 
-	PhrasesDescriptionSizer->Add(new KaiStaticText(this,-1,_("Szukana fraza (wyra¿enia regularne)")), 1, wxALL | wxEXPAND, 2);
+	PhrasesDescriptionSizer->Add(new KaiStaticText(this,-1,_("Szukana fraza (wyraÅ¼enia regularne)")), 1, wxALL | wxEXPAND, 2);
 	PhrasesDescriptionSizer->Add(new KaiStaticText(this, -1, _("Zmieniana fraza")), 1, wxALL | wxEXPAND, 2);
 	PhrasesSizer->Add(PhraseToFind, 1, wxALL | wxEXPAND, 2);
 	PhrasesSizer->Add(PhraseToReplace, 1, wxALL | wxEXPAND, 2);
@@ -59,7 +59,7 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	PhrasesOptionsSizer1->Add(ReplaceWithUnchangedCase, 1, wxALL | wxEXPAND, 2);
 	PhrasesOptionsSizer2->Add(ReplaceOnlyTags, 1, wxALL | wxEXPAND, 2);
 	PhrasesOptionsSizer2->Add(ReplaceOnlyText, 1, wxALL | wxEXPAND, 2);
-	RuleEdition->Add(new KaiStaticText(this, -1, _("Opis regu³y")), 0, wxLEFT | wxBOTTOM | wxEXPAND, 2);
+	RuleEdition->Add(new KaiStaticText(this, -1, _("Opis reguÅ‚y")), 0, wxLEFT | wxBOTTOM | wxEXPAND, 2);
 	RuleEdition->Add(RuleDescription, 0, wxALL | wxEXPAND, 2);
 	RuleEdition->Add(PhrasesDescriptionSizer, 0, wxEXPAND);
 	RuleEdition->Add(PhrasesSizer, 0, wxEXPAND);
@@ -69,8 +69,8 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	RulesList = new KaiListCtrl(this, ID_RULES_LIST,wxDefaultPosition, wxSize(320, 300));
 	RulesList->InsertColumn(0, L"", TYPE_CHECKBOX, 20);
 	RulesList->InsertColumn(1, _("Opis"), TYPE_TEXT, 290);
-	RulesList->InsertColumn(2, _("Regu³a znajdŸ"), TYPE_TEXT, 100);
-	RulesList->InsertColumn(3, _("Regu³a zamieñ"), TYPE_TEXT, 100);
+	RulesList->InsertColumn(2, _("ReguÅ‚a znajdÅº"), TYPE_TEXT, 100);
+	RulesList->InsertColumn(3, _("ReguÅ‚a zamieÅ„"), TYPE_TEXT, 100);
 	Bind(LIST_ITEM_LEFT_CLICK, [=](wxCommandEvent &evt){
 		int sel = RulesList->GetSelection();
 		if (sel < 0 || sel >= rules.size())
@@ -95,8 +95,8 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	//ListSizer->Add(PutWordBoundary, 0, wxALL, 2);
 	//ListSizer->Add(ShowBuiltInRules, 0, wxALL, 2);
 
-	KaiStaticBoxSizer *WhichLinesSizer = new KaiStaticBoxSizer(wxVERTICAL, this, _("Które linijki"));
-	wxString choices[] = { _("Wszystkie linijki"), _("Zaznaczone linijki"), _("Od zaznaczonej linijki"), _("Wed³ug wybranych stylów") };
+	KaiStaticBoxSizer *WhichLinesSizer = new KaiStaticBoxSizer(wxVERTICAL, this, _("KtÃ³re linijki"));
+	wxString choices[] = { _("Wszystkie linijki"), _("Zaznaczone linijki"), _("Od zaznaczonej linijki"), _("WedÅ‚ug wybranych stylÃ³w") };
 	WhichLines = new KaiChoice(this, ID_WHICH_LINES_LIST, wxDefaultPosition, wxDefaultSize, 4, choices);
 	WhichLines->SetSelection(0);
 	wxBoxSizer *styleChooseSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -110,17 +110,17 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	WhichLinesSizer->Add(styleChooseSizer, 0, wxEXPAND);
 
 	wxBoxSizer *ButtonsSizer = new wxBoxSizer(wxVERTICAL);
-	MappedButton *AddRuleToList = new MappedButton(this, ID_ADD_RULE, _("Dodaj regu³ê"));
-	MappedButton *EditRuleFromList = new MappedButton(this, ID_EDIT_RULE, _("Edytuj regu³ê"));
-	MappedButton *RemoveRuleFromList = new MappedButton(this, ID_REMOVE_RULE, _("Usuñ regu³ê"));
-	MappedButton *FindRule = new MappedButton(this, ID_FIND_RULE, _("ZnajdŸ b³¹d"));
+	MappedButton *AddRuleToList = new MappedButton(this, ID_ADD_RULE, _("Dodaj reguÅ‚Ä™"));
+	MappedButton *EditRuleFromList = new MappedButton(this, ID_EDIT_RULE, _("Edytuj reguÅ‚Ä™"));
+	MappedButton *RemoveRuleFromList = new MappedButton(this, ID_REMOVE_RULE, _("UsuÅ„ reguÅ‚Ä™"));
+	MappedButton *FindRule = new MappedButton(this, ID_FIND_RULE, _("ZnajdÅº bÅ‚Ä…d"));
 	FindRule->Enable(false);
-	MappedButton *FindRulesOnTab = new MappedButton(this, ID_FIND_ALL_RULES, _("ZnajdŸ b³êdy\nw bie¿¹cej zak³adce"));
-	MappedButton *FindRulesOnAllTabs = new MappedButton(this, ID_FIND_ALL_RULES_ON_ALL_TABS, _("ZnajdŸ b³êdy\nwe wszystkich zak³adkach"));
-	MappedButton *ReplaceRule = new MappedButton(this, ID_REPLACE_RULE, _("Zmieñ b³¹d"));
+	MappedButton *FindRulesOnTab = new MappedButton(this, ID_FIND_ALL_RULES, _("ZnajdÅº bÅ‚Ä™dy\nw bieÅ¼Ä…cej zakÅ‚adce"));
+	MappedButton *FindRulesOnAllTabs = new MappedButton(this, ID_FIND_ALL_RULES_ON_ALL_TABS, _("ZnajdÅº bÅ‚Ä™dy\nwe wszystkich zakÅ‚adkach"));
+	MappedButton *ReplaceRule = new MappedButton(this, ID_REPLACE_RULE, _("ZmieÅ„ bÅ‚Ä…d"));
 	ReplaceRule->Enable(false);
-	MappedButton *ReplaceRules = new MappedButton(this, ID_REPLACE_ALL_RULES, _("Zamieñ wszystkie b³êdy\nw bie¿¹cej zak³adce"));
-	MappedButton *ReplaceRulesOnAllTabs = new MappedButton(this, ID_REPLACE_ALL_RULES_ON_ALL_TABS, _("Zamieñ wszystkie b³êdy\nwe wszystkich zak³adkach"));
+	MappedButton *ReplaceRules = new MappedButton(this, ID_REPLACE_ALL_RULES, _("ZamieÅ„ wszystkie bÅ‚Ä™dy\nw bieÅ¼Ä…cej zakÅ‚adce"));
+	MappedButton *ReplaceRulesOnAllTabs = new MappedButton(this, ID_REPLACE_ALL_RULES_ON_ALL_TABS, _("ZamieÅ„ wszystkie bÅ‚Ä™dy\nwe wszystkich zakÅ‚adkach"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){AddRule(); }, ID_ADD_RULE);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EditRule(); }, ID_EDIT_RULE);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){RemoveRule(); }, ID_REMOVE_RULE);
@@ -166,7 +166,7 @@ void MisspellReplacer::ReplaceChecked()
 
 		wxRegEx *rule = new wxRegEx(rules[i].findRule, flags);
 		if (!rule->IsValid()){
-			//KaiLog(wxString::Format("Szablon wyra¿eñ regularnych \"%s\" jest nieprawid³owy", rules[checkedRules[i]].first));
+			//KaiLog(wxString::Format("Szablon wyraÅ¼eÅ„ regularnych \"%s\" jest nieprawidÅ‚owy", rules[checkedRules[i]].first));
 			delete rule;
 			continue;
 		}
@@ -286,7 +286,7 @@ void MisspellReplacer::FillRulesList()
 void MisspellReplacer::EditRule()
 {
 	if (resultDialog && resultDialog->IsShown()){
-		KaiLog(_("Nie mo¿na zmieniaæ regu³,\ngdy okno wyników szukania jest otwarte"));
+		KaiLog(_("Nie moÅ¼na zmieniaÄ‡ reguÅ‚,\ngdy okno wynikÃ³w szukania jest otwarte"));
 		return;
 	}
 	int sel = RulesList->GetSelection();
@@ -311,7 +311,7 @@ void MisspellReplacer::EditRule()
 void MisspellReplacer::AddRule()
 {
 	if (resultDialog && resultDialog->IsShown()){
-		KaiLog(_("Nie mo¿na zmieniaæ regu³,\ngdy okno wyników szukania jest otwarte"));
+		KaiLog(_("Nie moÅ¼na zmieniaÄ‡ reguÅ‚,\ngdy okno wynikÃ³w szukania jest otwarte"));
 		return;
 	}
 	wxString phraseToFind = PhraseToFind->GetValue();
@@ -330,7 +330,7 @@ void MisspellReplacer::AddRule()
 void MisspellReplacer::RemoveRule()
 {
 	if (resultDialog && resultDialog->IsShown()){
-		KaiLog(_("Nie mo¿na zmieniaæ regu³,\ngdy okno wyników szukania jest otwarte"));
+		KaiLog(_("Nie moÅ¼na zmieniaÄ‡ reguÅ‚,\ngdy okno wynikÃ³w szukania jest otwarte"));
 		return;
 	}
 	int sel = RulesList->GetSelection();
@@ -365,7 +365,7 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 
 		wxRegEx *rule = new wxRegEx(actualRule.findRule, flags);
 		if (!rule->IsValid()){
-			//KaiLog(wxString::Format("Szablon wyra¿eñ regularnych \"%s\" jest nieprawid³owy", rules[checkedRules[i]].first));
+			//KaiLog(wxString::Format("Szablon wyraÅ¼eÅ„ regularnych \"%s\" jest nieprawidÅ‚owy", rules[checkedRules[i]].first));
 			delete rule;
 			continue;
 		}
@@ -489,7 +489,7 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 
 		wxRegEx *rule = new wxRegEx(rules[checkedRules[i]].findRule, flags);
 		if (!rule->IsValid()){
-			//KaiLog(wxString::Format("Szablon wyra¿eñ regularnych \"%s\" jest nieprawid³owy", rules[checkedRules[i]].first));
+			//KaiLog(wxString::Format("Szablon wyraÅ¼eÅ„ regularnych \"%s\" jest nieprawidÅ‚owy", rules[checkedRules[i]].first));
 			delete rule;
 			continue;
 		}
@@ -600,7 +600,7 @@ bool MisspellReplacer::ReplaceBlock(std::vector<ReplacerSeekResults *> &results,
 	//one of it should be changed.
 	//It means that dialogue will be changed and no need to read and change if needed
 	if (lineText != results[0]->name){
-		KaiLog(wxString::Format(_("Linia %i nie mo¿e byæ zamieniona,\nbo zosta³a zedytowana."), 
+		KaiLog(wxString::Format(_("Linia %i nie moÅ¼e byÄ‡ zamieniona,\nbo zostaÅ‚a zedytowana."), 
 			results[0]->idLine));
 		return false;
 	}
@@ -621,7 +621,7 @@ bool MisspellReplacer::ReplaceBlock(std::vector<ReplacerSeekResults *> &results,
 			somethingChanged = true;
 		}
 		else{
-			KaiLog(wxString::Format(_("Nie mo¿na zamieniæ \"%s\" na \"%s\", wykorzystuj¹c regu³ê \"%s\" w linii %i."), 
+			KaiLog(wxString::Format(_("Nie moÅ¼na zamieniÄ‡ \"%s\" na \"%s\", wykorzystujÄ…c reguÅ‚Ä™ \"%s\" w linii %i."), 
 				matchResult, actualrule.replaceRule, actualrule.findRule, SeekResult->idLine));
 		}
 	}
@@ -705,19 +705,19 @@ int MisspellReplacer::GetRuleOptions()
 void MisspellReplacer::FillWithDefaultRules(wxString &rules)
 {
 	rules = L"#Kainote rules file\n0|0|0|0|0|0|0|0|0|0|0|0\n" +
-		_("Usuwanie spacji przed przecinkiem b¹dŸ kropk¹") + L"\f ([,.!?%])\f\\1\f0\n" +
-		_("Usuwanie podwójnych spacji") + L"\f(  +)\f \f0\n" +
-		_("Zmiana \"....\" i wiêcej na wielokropek") + L"\f\\.{4,}\f...\f0\n" +
+		_("Usuwanie spacji przed przecinkiem bÄ…dÅº kropkÄ…") + L"\f ([,.!?%])\f\\1\f0\n" +
+		_("Usuwanie podwÃ³jnych spacji") + L"\f(  +)\f \f0\n" +
+		_("Zmiana \"....\" i wiÄ™cej na wielokropek") + L"\f\\.{4,}\f...\f0\n" +
 		_("Zmiana \"..\" na wielokropek") + L"\f([^.])\\.\\.([^.])\f\\1...\\2\f0\n" +
 		_("Zmiana braku spacji po przecinku czy kropce") + L"\f([^.])([,.!?%])([^ ,.!?%\\\"\\\\0-9-])\f\\1\\2 \\3\f0\n" +
-		_("Usuwanie japoñskich zwrotów grzecznoœciowych") + L"\f ?- ?(san|chan|kun|sama|nee|dono|senpai|sensei)\\M\f\f0\n" +
-		_("Zamiana \"sie\" na \"siê\"") + L"\f\\msie\\M\fsiê\f0\n" +
-		_("Zamiana \"nie mo¿liwe\" na \"niemo¿liwe\"") + L"\f\\mnie mo¿liwe\\M\fniemo¿liwe\f0\n" +
-		_("Zamiana \"nie wa¿ne\" na \"niewa¿ne\"") + L"\f\\mnie wa¿ne\\M\fniewa¿ne\f0\n" +
-		_("Zamiana b³êdów wyra¿enia \"w ogóle\"") + L"\f\\mw ?og[uo]le\\M\fw ogóle\f0\n" +
-		_("Zamiana b³êdów wyra¿enia \"w ogóle\"") + L"\f\\mwogóle\\M\fw ogóle\f0\n" +
-		_("Zamiana b³êdów wyrazu \"bêdê\"") + L"\f\\mbed[eê]\\M\fbêdê\f0\n" +
-		_("Zamiana b³êdów wyrazu \"bêdê\"") + L"\f\\mbêde\\M\fbêdê\f0";
+		_("Usuwanie japoÅ„skich zwrotÃ³w grzecznoÅ›ciowych") + L"\f ?- ?(san|chan|kun|sama|nee|dono|senpai|sensei)\\M\f\f0\n" +
+		_("Zamiana \"sie\" na \"siÄ™\"") + L"\f\\msie\\M\fsiÄ™\f0\n" +
+		_("Zamiana \"nie moÅ¼liwe\" na \"niemoÅ¼liwe\"") + L"\f\\mnie moÅ¼liwe\\M\fniemoÅ¼liwe\f0\n" +
+		_("Zamiana \"nie waÅ¼ne\" na \"niewaÅ¼ne\"") + L"\f\\mnie waÅ¼ne\\M\fniewaÅ¼ne\f0\n" +
+		_("Zamiana bÅ‚Ä™dÃ³w wyraÅ¼enia \"w ogÃ³le\"") + L"\f\\mw ?og[uo]le\\M\fw ogÃ³le\f0\n" +
+		_("Zamiana bÅ‚Ä™dÃ³w wyraÅ¼enia \"w ogÃ³le\"") + L"\f\\mwogÃ³le\\M\fw ogÃ³le\f0\n" +
+		_("Zamiana bÅ‚Ä™dÃ³w wyrazu \"bÄ™dÄ™\"") + L"\f\\mbed[eÄ™]\\M\fbÄ™dÄ™\f0\n" +
+		_("Zamiana bÅ‚Ä™dÃ³w wyrazu \"bÄ™dÄ™\"") + L"\f\\mbÄ™de\\M\fbÄ™dÄ™\f0";
 		
 }
 
@@ -766,7 +766,7 @@ Rule::Rule(const wxString & stringRule)
 	return;
 
 fail:
-	KaiLog(wxString::Format(_("Regu³a \"%s\" jest nieprawid³owa."), stringRule));
+	KaiLog(wxString::Format(_("ReguÅ‚a \"%s\" jest nieprawidÅ‚owa."), stringRule));
 }
 
 //CheckBoxListButton::CheckBoxListButton(wxWindow *parent, int id, const wxString &name, const wxArrayString &listElements, const wxPoint &pos, const wxSize &size, long style) 

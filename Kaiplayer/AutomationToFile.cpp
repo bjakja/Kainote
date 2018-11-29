@@ -1,4 +1,4 @@
-
+ï»¿
 // Copyright (c) 2006, 2007, Niels Martin Hansen
 // Copyright (c) 2016, Marcin Drob
 // All rights reserved.
@@ -91,7 +91,7 @@ namespace Auto{
 
 		lua_newtable(L);
 		if (i < sinfo){
-			//to jest odczyt wiêc nie kopiujemy
+			//to jest odczyt wiÄ™c nie kopiujemy
 			SInfo *info = Subs->sinfo[i];
 
 			lua_pushstring(L, "[Script Info]");
@@ -112,7 +112,7 @@ namespace Auto{
 		}
 		else if (i < styles)
 		{
-			//to jest odczyt wiêc nie kopiujemy
+			//to jest odczyt wiÄ™c nie kopiujemy
 			Styles *astyle = Subs->styles[i - sinfo];
 
 			lua_pushstring(L, "[V4+ Styles]");
@@ -192,7 +192,7 @@ namespace Auto{
 		}
 		else if (i < dials)
 		{
-			//to jest odczyt wiêc nie kopiujemy
+			//to jest odczyt wiÄ™c nie kopiujemy
 			Dialogue *adial = Subs->dialogues[i - styles];
 
 			lua_pushstring(L, "[Events]");
@@ -256,7 +256,7 @@ namespace Auto{
 		SubsEntry *e = NULL;
 
 		if (!lua_istable(L, -1)) {
-			lua_pushstring(L, "Cannot convert non table value");//nie mo¿na przekonwertowaæ wartoœci która nie jest tablic¹");
+			lua_pushstring(L, "Cannot convert non table value");//nie moÅ¼na przekonwertowaÄ‡ wartoÅ›ci ktÃ³ra nie jest tablicÄ…");
 			lua_error(L);
 			return e;
 		}
@@ -595,9 +595,9 @@ namespace Auto{
 				}
 				else
 				{
-					wxString fclass = (e->lclass == L"info") ? L"info" : (e->lclass == L"style") ? _("stylów") : _("dialogów");
-					wxString sclass = (i < sinfo) ? L"info" : (i < styles) ? L"stylów" : _("dialogów");
-					wxString all = wxString::Format(_("Nie mo¿na dodaæ linii klasy: %s w pole klasy: %s"), fclass, sclass);
+					wxString fclass = (e->lclass == L"info") ? L"info" : (e->lclass == L"style") ? _("stylÃ³w") : _("dialogÃ³w");
+					wxString sclass = (i < sinfo) ? L"info" : (i < styles) ? L"stylÃ³w" : _("dialogÃ³w");
+					wxString all = wxString::Format(_("Nie moÅ¼na dodaÄ‡ linii klasy: %s w pole klasy: %s"), fclass, sclass);
 					SAFE_DELETE(e);
 					lua_pushstring(L, all.mb_str(wxConvUTF8).data());
 					lua_error(L);
@@ -645,7 +645,7 @@ namespace Auto{
 		std::vector<int> ids;
 		//ids.reserve(itemcount);
 
-		//dorobiæ wstawianie do tablic spellerrors i charspersec podczas rysowania
+		//dorobiÄ‡ wstawianie do tablic spellerrors i charspersec podczas rysowania
 		int sinfo = Subs->sinfo.size();
 		int styles = sinfo + Subs->styles.size();
 		int dials = styles + Subs->dialogues.size();

@@ -1,4 +1,4 @@
-//  Copyright (c) 2018, Marcin Drob
+Ôªø//  Copyright (c) 2018, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -68,24 +68,24 @@ void ScaleRotation::DrawScale(int time)
 
 	float movex = from.x + addx, movey = from.y + addy;
 
-	if (type != 1){ movex = to.x; }//strza≥ka w poziomie i czÍúÊ strza≥ki po skosie
+	if (type != 1){ movex = to.x; }//strza≈Çka w poziomie i czƒô≈õƒá strza≈Çki po skosie
 	else{ movex = from.x + (scale.x*addx); }
-	if (type > 0){ movey = to.y; }//strza≥ka w pionie i czÍúÊ strza≥ki po skosie
+	if (type > 0){ movey = to.y; }//strza≈Çka w pionie i czƒô≈õƒá strza≈Çki po skosie
 	else{ movey = from.y + (scale.y*addy); }
 	if (movex == from.x){ movex = from.x + addx; }
 	else if (movey == from.y){ movey = from.y + addy; }
 
 	lastmove.x = movex;
 	lastmove.y = movey;
-	v4[0] = from;//strza≥ka pozioma
+	v4[0] = from;//strza≈Çka pozioma
 	v4[1].x = movex;
-	v4[1].y = from.y;//strza≥ka pozioma
-	v4[2] = from;//strza≥ka skoúna
+	v4[1].y = from.y;//strza≈Çka pozioma
+	v4[2] = from;//strza≈Çka sko≈õna
 	v4[3].x = movex;
-	v4[3].y = movey;//strza≥ka skoúna
-	v4[4] = from;//strza≥ka pionowa
+	v4[3].y = movey;//strza≈Çka sko≈õna
+	v4[4] = from;//strza≈Çka pionowa
 	v4[5].x = from.x;
-	v4[5].y = movey;//strza≥ka pionowa
+	v4[5].y = movey;//strza≈Çka pionowa
 
 	for (int i = 1; i < 6; i += 2){
 		DrawArrow(v4[0], &v4[i]);
@@ -288,9 +288,9 @@ void ScaleRotation::DrawRotationXY(int time)
 	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, s.x, s.y, 0, 0.0f, 1.0f);
 	D3DXMatrixIdentity(&matIdentity);
 
-	HRN(device->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie moøna ustawiÊ macierzy projekcji"));
-	HRN(device->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie moøna ustawiÊ macierzy úwiata"));
-	HRN(device->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie moøna ustawiÊ macierzy widoku"));
+	HRN(device->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie mo≈ºna ustawiƒá macierzy projekcji"));
+	HRN(device->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie mo≈ºna ustawiƒá macierzy ≈õwiata"));
+	HRN(device->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie mo≈ºna ustawiƒá macierzy widoku"));
 	if (!hasOrg)
 		return;
 
@@ -479,8 +479,8 @@ void ScaleRotation::OnHoldingRotation(int x, int y)
 		}
 		if (type > 0){
 			// fry use x axis moving mouse left right
-			float angy = (to.x - firstmove.x) + oldAngle.y;// zmieniony plus na minus by nie trzeba by≥o 
-			angle.y = fmodf(angy + 360.f, 360.f);//przetrzymywaÊ oldAngle i angle w minusach.
+			float angy = (to.x - firstmove.x) + oldAngle.y;// zmieniony plus na minus by nie trzeba by≈Ço 
+			angle.y = fmodf(angy + 360.f, 360.f);//przetrzymywaƒá oldAngle i angle w minusach.
 		}
 		afterMove = angle;
 	}
@@ -490,9 +490,9 @@ void ScaleRotation::OnHoldingRotation(int x, int y)
 void ScaleRotation::OnHoldingScaling(int x, int y, bool hasShift)
 {
 	if (hasShift){
-		//zamieniamy te wartoúci by przesuwanie w osi x dzia≥a≥o poprawnie, a nie na odwrÛt.
-		//drgawki nawet w photoshopie wystÍpujπ bo wtedy jedna oú ma + druga - i w zaleønoúci od tego ktÛra jest uøyta
-		//zwiÍksza bπdü zmniejsza nam tekst/rysunek.
+		//zamieniamy te warto≈õci by przesuwanie w osi x dzia≈Ça≈Ço poprawnie, a nie na odwr√≥t.
+		//drgawki nawet w photoshopie wystƒôpujƒÖ bo wtedy jedna o≈õ ma + druga - i w zale≈ºno≈õci od tego kt√≥ra jest u≈ºyta
+		//zwiƒôksza bƒÖd≈∫ zmniejsza nam tekst/rysunek.
 		int diffx = abs(x - diffs.x);
 		int diffy = abs(diffs.y - y);
 		int move = (diffx > diffy) ? x - diffs.x : diffs.y - y;

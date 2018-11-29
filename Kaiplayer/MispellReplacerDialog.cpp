@@ -1,4 +1,4 @@
-//  Copyright (c) 2018, Marcin Drob
+Ôªø//  Copyright (c) 2018, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -183,7 +183,7 @@ FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
 	Bind(CHOOSE_RESULT, [=](wxCommandEvent &evt){
 		ReplacerSeekResults *results = (ReplacerSeekResults*)evt.GetClientData();
 		if (!results){
-			KaiLogDebug("chujnia, ktoú ukrad≥ rezultat wyszukiwania");
+			KaiLogDebug("chujnia, kto≈õ ukrad≈Ç rezultat wyszukiwania");
 			return;
 		}
 		//maybe some day I will add changing in folder
@@ -194,7 +194,7 @@ FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
 
 	MappedButton *checkAll = new MappedButton(this, ID_CHECK_ALL, _("Zahacz wszystko"));
 	MappedButton *unCheckAll = new MappedButton(this, ID_UNCHECK_ALL, _("Odhacz wszystko"));
-	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("ZamieÒ"));
+	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("Zamie≈Ñ"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		CheckUncheckAll(true);
 	}, ID_CHECK_ALL);

@@ -351,9 +351,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		MainSizer2->Add(gridSaveAfter, 0, wxEXPAND);
 		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Maksymalna ilość plików autozapisu"), wxDefaultPosition, wxSize(256, -1)), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
 		MainSizer2->Add(autoSaveMax, 0, wxEXPAND);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Przyspieszenie klatek początkowych w ms:"), wxDefaultPosition, wxSize(256, -1)), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
+		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Przyspieszenie klatki początkowej w ms:"), wxDefaultPosition, wxSize(256, -1)), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
 		MainSizer2->Add(sc, 0, wxEXPAND);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Przyspieszenie klatek końcowych w ms:")), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
+		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Przyspieszenie klatki końcowej w ms:")), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
 		MainSizer2->Add(sc1, 0, wxEXPAND);
 		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Znak podmiany tagów ASS:")), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
 		MainSizer2->Add(sc2, 0, wxEXPAND);

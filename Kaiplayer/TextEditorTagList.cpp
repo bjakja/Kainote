@@ -1,4 +1,4 @@
-//  Copyright (c) 2018, Marcin Drob
+ï»¿//  Copyright (c) 2018, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -132,9 +132,9 @@ void PopupTagList::OnMouseEvent(wxMouseEvent &evt)
 	else if (evt.RightUp()){
 		int options = Options.GetInt(TEXT_EDITOR_TAG_LIST_OPTIONS);
 		Menu listMenu;
-		listMenu.Append(ID_SHOW_DESCRIPTION, _("Poka¿ opis"), NULL, L"", ITEM_CHECK_AND_HIDE)->Check((options & SHOW_DESCRIPTION) != 0);
-		listMenu.Append(ID_SHOW_ALL_TAGS, _("Poka¿ wszystkie tagi"), NULL, L"", ITEM_CHECK_AND_HIDE)->Check((options & TYPE_TAG_USED_IN_VISUAL) != 0);
-		listMenu.Append(ID_SHOW_VSFILTER_MOD_TAGS, _("Poka¿ tagi VSfiltermoda"), NULL, L"", ITEM_CHECK_AND_HIDE)->Check((options & TYPE_TAG_VSFILTER_MOD) != 0);
+		listMenu.Append(ID_SHOW_DESCRIPTION, _("PokaÅ¼ opis"), NULL, L"", ITEM_CHECK_AND_HIDE)->Check((options & SHOW_DESCRIPTION) != 0);
+		listMenu.Append(ID_SHOW_ALL_TAGS, _("PokaÅ¼ wszystkie tagi"), NULL, L"", ITEM_CHECK_AND_HIDE)->Check((options & TYPE_TAG_USED_IN_VISUAL) != 0);
+		listMenu.Append(ID_SHOW_VSFILTER_MOD_TAGS, _("PokaÅ¼ tagi VSFiltermoda"), NULL, L"", ITEM_CHECK_AND_HIDE)->Check((options & TYPE_TAG_VSFILTER_MOD) != 0);
 		
 		int id = listMenu.GetPopupMenuSelection(evt.GetPosition(), this);
 		if (id < 1)
@@ -328,83 +328,83 @@ void PopupTagList::OnScroll(wxScrollEvent& event)
 
 void PopupTagList::InitList(int option)
 {
-	itemsList.push_back(new TagListItem(L"1a", _("Przezroczystoœæ koloru podstawowego"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"2a", _("Przezroczystoœæ koloru pomocniczego"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"3a", _("Przezroczystoœæ koloru obwódki"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"4a", _("Przezroczystoœæ koloru cienia"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"1a", _("PrzezroczystoÅ›Ä‡ koloru podstawowego"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"2a", _("PrzezroczystoÅ›Ä‡ koloru pomocniczego"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"3a", _("PrzezroczystoÅ›Ä‡ koloru obwÃ³dki"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"4a", _("PrzezroczystoÅ›Ä‡ koloru cienia"), TYPE_TAG_USED_IN_VISUAL, option));
 	itemsList.push_back(new TagListItem(L"1c", _("Kolor podstawowy"), TYPE_TAG_USED_IN_VISUAL, option));
 	itemsList.push_back(new TagListItem(L"2c", _("Kolor pomocniczy"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"3c", _("Kolor obwódki"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"3c", _("Kolor obwÃ³dki"), TYPE_TAG_USED_IN_VISUAL, option));
 	itemsList.push_back(new TagListItem(L"4c", _("Kolor cienia"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"1img", _("Maska PNG pierwszego koloru"), TYPE_TAG_VSFILTER_MOD, option, true));
-	itemsList.push_back(new TagListItem(L"2img", _("Maska PNG drugiego koloru"), TYPE_TAG_VSFILTER_MOD, option, true));
-	itemsList.push_back(new TagListItem(L"3img", _("Maska PNG trzeciego koloru"), TYPE_TAG_VSFILTER_MOD, option, true));
-	itemsList.push_back(new TagListItem(L"4img", _("Maska PNG czwartego koloru"), TYPE_TAG_VSFILTER_MOD, option, true));
-	itemsList.push_back(new TagListItem(L"1va", _("Gradient przezroczystoœci koloru podstawowego"), TYPE_TAG_VSFILTER_MOD, option, true));
-	itemsList.push_back(new TagListItem(L"2va", _("Gradient przezroczystoœci koloru pomocniczego"), TYPE_TAG_VSFILTER_MOD, option, true));
-	itemsList.push_back(new TagListItem(L"3va", _("Gradient przezroczystoœci koloru obwódki"), TYPE_TAG_VSFILTER_MOD, option, true));
-	itemsList.push_back(new TagListItem(L"4va", _("Gradient przezroczystoœci koloru cienia"), TYPE_TAG_VSFILTER_MOD, option, true));
+	itemsList.push_back(new TagListItem(L"1img", _("Maska PNG koloru podstawowego"), TYPE_TAG_VSFILTER_MOD, option, true));
+	itemsList.push_back(new TagListItem(L"2img", _("Maska PNG koloru pomocniczego"), TYPE_TAG_VSFILTER_MOD, option, true));
+	itemsList.push_back(new TagListItem(L"3img", _("Maska PNG koloru obwÃ³dki"), TYPE_TAG_VSFILTER_MOD, option, true));
+	itemsList.push_back(new TagListItem(L"4img", _("Maska PNG koloru cienia"), TYPE_TAG_VSFILTER_MOD, option, true));
+	itemsList.push_back(new TagListItem(L"1va", _("Gradient przezroczystoÅ›ci koloru podstawowego"), TYPE_TAG_VSFILTER_MOD, option, true));
+	itemsList.push_back(new TagListItem(L"2va", _("Gradient przezroczystoÅ›ci koloru pomocniczego"), TYPE_TAG_VSFILTER_MOD, option, true));
+	itemsList.push_back(new TagListItem(L"3va", _("Gradient przezroczystoÅ›ci koloru obwÃ³dki"), TYPE_TAG_VSFILTER_MOD, option, true));
+	itemsList.push_back(new TagListItem(L"4va", _("Gradient przezroczystoÅ›ci koloru cienia"), TYPE_TAG_VSFILTER_MOD, option, true));
 	itemsList.push_back(new TagListItem(L"1vc", _("Gradient koloru podstawowego"), TYPE_TAG_VSFILTER_MOD, option, true));
 	itemsList.push_back(new TagListItem(L"2vc", _("Gradient koloru pomocniczego"), TYPE_TAG_VSFILTER_MOD, option, true));
-	itemsList.push_back(new TagListItem(L"3vc", _("Gradient koloru obwódki"), TYPE_TAG_VSFILTER_MOD, option, true));
+	itemsList.push_back(new TagListItem(L"3vc", _("Gradient koloru obwÃ³dki"), TYPE_TAG_VSFILTER_MOD, option, true));
 	itemsList.push_back(new TagListItem(L"4vc", _("Gradient koloru cienia"), TYPE_TAG_VSFILTER_MOD, option, true));
-	itemsList.push_back(new TagListItem(L"a", _("Po³o¿enie tekstu (uk³ad SSA)"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"alpha", _("Przezroczystoœæ ca³ego tekstu"), TYPE_NORMAL, option));
-	itemsList.push_back(new TagListItem(L"an", _("Po³o¿enie tekstu"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"a", _("PoÅ‚oÅ¼enie tekstu (ukÅ‚ad SSA)"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"alpha", _("PrzezroczystoÅ›Ä‡ caÅ‚ego tekstu"), TYPE_NORMAL, option));
+	itemsList.push_back(new TagListItem(L"an", _("PoÅ‚oÅ¼enie tekstu"), TYPE_TAG_USED_IN_VISUAL, option));
 	itemsList.push_back(new TagListItem(L"b", _("Pogrubienie tekstu"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"be", _("Rozmycie krawêdzi"), TYPE_NORMAL, option));
+	itemsList.push_back(new TagListItem(L"be", _("Rozmycie krawÄ™dzi"), TYPE_NORMAL, option));
 	itemsList.push_back(new TagListItem(L"blur", _("Rozmycie"), TYPE_NORMAL, option));
-	itemsList.push_back(new TagListItem(L"bord", _("Gruboœæ obwódki"), TYPE_NORMAL, option));
-	itemsList.push_back(new TagListItem(L"clip", _("Wyciknki wektorowe / prostok¹tne"), TYPE_TAG_USED_IN_VISUAL, option, true));
+	itemsList.push_back(new TagListItem(L"bord", _("GruboÅ›Ä‡ obwÃ³dki"), TYPE_NORMAL, option));
+	itemsList.push_back(new TagListItem(L"clip", _("Wyciknki wektorowe / prostokÄ…tne"), TYPE_TAG_USED_IN_VISUAL, option, true));
 	itemsList.push_back(new TagListItem(L"distort", _("Deformacja czcionki"), TYPE_TAG_VSFILTER_MOD, option, true));
 	itemsList.push_back(new TagListItem(L"fad", _("Pojawianie / znikanie tekstu"), TYPE_NORMAL, option, true));
 	itemsList.push_back(new TagListItem(L"fade", _("Pojawianie / znikanie tekstu (zaawansowana wersja)"), TYPE_NORMAL, option, true));
 	itemsList.push_back(new TagListItem(L"fax", _("Pochylenie w osi X"), TYPE_NORMAL, option));
 	itemsList.push_back(new TagListItem(L"fay", _("Pochylenie w osi Y"), TYPE_NORMAL, option));
-	itemsList.push_back(new TagListItem(L"fe", _("Kodowanie znaków tekstu"), TYPE_NORMAL, option));
+	itemsList.push_back(new TagListItem(L"fe", _("Kodowanie znakÃ³w tekstu"), TYPE_NORMAL, option));
 	itemsList.push_back(new TagListItem(L"fn", _("Nazwa czcionki"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"frs", _("Zaokr¹glenie tekstu"), TYPE_TAG_VSFILTER_MOD, option));
-	itemsList.push_back(new TagListItem(L"frx", _("Obrót w osi X"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"fry", _("Obrót w osi Y"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"frz", _("Obrót w osi Z"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"fs", _("Wielkoœæ czcionki"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"frs", _("ZaokrÄ…glenie tekstu"), TYPE_TAG_VSFILTER_MOD, option));
+	itemsList.push_back(new TagListItem(L"frx", _("ObrÃ³t w osi X"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"fry", _("ObrÃ³t w osi Y"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"frz", _("ObrÃ³t w osi Z"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"fs", _("WielkoÅ›Ä‡ czcionki"), TYPE_TAG_USED_IN_VISUAL, option));
 	itemsList.push_back(new TagListItem(L"fsc", _("Skala w osi X i Y"), TYPE_TAG_VSFILTER_MOD, option));
 	itemsList.push_back(new TagListItem(L"fscx", _("Skala w osi X"), TYPE_TAG_USED_IN_VISUAL, option));
 	itemsList.push_back(new TagListItem(L"fscy", _("Skala w osi Y"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"fsp", _("Odstêpy miêdzy znakami"), TYPE_NORMAL, option));
-	itemsList.push_back(new TagListItem(L"fsvp", _("Odstêp miêdzy znakami w pionie"), TYPE_TAG_VSFILTER_MOD, option));
-	itemsList.push_back(new TagListItem(L"i", _("Pochylenie tekstu"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"iclip", _("Odwrócone wycinki wektorowe / prostok¹tne"), TYPE_TAG_USED_IN_VISUAL, option, true));
-	itemsList.push_back(new TagListItem(L"jitter", _("Trzêsienie tekstu"), TYPE_TAG_VSFILTER_MOD, option, true));
+	itemsList.push_back(new TagListItem(L"fsp", _("OdstÄ™py miÄ™dzy znakami"), TYPE_NORMAL, option));
+	itemsList.push_back(new TagListItem(L"fsvp", _("OdstÄ™p miÄ™dzy znakami w pionie"), TYPE_TAG_VSFILTER_MOD, option));
+	itemsList.push_back(new TagListItem(L"i", _("Kursywa / pochylenie tekstu"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"iclip", _("OdwrÃ³cone wycinki wektorowe / prostokÄ…tne"), TYPE_TAG_USED_IN_VISUAL, option, true));
+	itemsList.push_back(new TagListItem(L"jitter", _("TrzÄ™sienie tekstu"), TYPE_TAG_VSFILTER_MOD, option, true));
 	itemsList.push_back(new TagListItem(L"k", _("Timing karaoke"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"K", _("Timing karaoke p³ynne przejœcie"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"ko", _("Timing karaoke obwódka"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"kt", _("Timing karaoke??"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"K", _("Timing karaoke pÅ‚ynne przejÅ›cie"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"ko", _("Timing karaoke obwÃ³dka"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"kt", _("Timing karaoke (nieobsÅ‚ugiwane)"), TYPE_TAG_USED_IN_VISUAL, option));
 	itemsList.push_back(new TagListItem(L"move", _("Ruch tekstu"), TYPE_TAG_USED_IN_VISUAL, option, true));
-	itemsList.push_back(new TagListItem(L"mover", _("Ruch po okrêgu"), TYPE_TAG_VSFILTER_MOD, option, true));
+	itemsList.push_back(new TagListItem(L"mover", _("Ruch po okrÄ™gu"), TYPE_TAG_VSFILTER_MOD, option, true));
 	itemsList.push_back(new TagListItem(L"moves3", _("Ruch po krzywej (3 punkty)"), TYPE_TAG_VSFILTER_MOD, option, true));
 	itemsList.push_back(new TagListItem(L"moves4", _("Ruch po krzywej (4 punkty)"), TYPE_TAG_VSFILTER_MOD, option, true));
 	itemsList.push_back(new TagListItem(L"movevc", _("Ruch rysunku wektorowego"), TYPE_TAG_VSFILTER_MOD, option, true));
-	itemsList.push_back(new TagListItem(L"org", _("Kotwica dla obrotów"), TYPE_TAG_USED_IN_VISUAL, option, true));
+	itemsList.push_back(new TagListItem(L"org", _("Kotwica dla obrotÃ³w"), TYPE_TAG_USED_IN_VISUAL, option, true));
 	itemsList.push_back(new TagListItem(L"p", _("Rysunek wektorowy i skala"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"pbo", _("Przesuniêcie punktów wektora w osi Y??"), TYPE_NORMAL, option));
+	itemsList.push_back(new TagListItem(L"pbo", _("PrzesuniÄ™cie punktÃ³w wektora w osi Y??"), TYPE_NORMAL, option));
 	itemsList.push_back(new TagListItem(L"pos", _("Pozycja tekstu"), TYPE_TAG_USED_IN_VISUAL, option, true));
-	itemsList.push_back(new TagListItem(L"q", _("Sposób ³amania linii"), TYPE_NORMAL, option));
-	itemsList.push_back(new TagListItem(L"r", _("Reset tagów"), TYPE_NORMAL, option));
-	itemsList.push_back(new TagListItem(L"rnd", _("Losowoœæ punktów czcionki"), TYPE_TAG_VSFILTER_MOD, option));
-	itemsList.push_back(new TagListItem(L"rnds", _("Losowoœæ punktów czcionki??"), TYPE_TAG_VSFILTER_MOD, option));
-	itemsList.push_back(new TagListItem(L"rndx", _("Losowoœæ punktów czcionki oœ X"), TYPE_TAG_VSFILTER_MOD, option));
-	itemsList.push_back(new TagListItem(L"rndy", _("Losowoœæ punktów czcionki oœ Y"), TYPE_TAG_VSFILTER_MOD, option));
-	itemsList.push_back(new TagListItem(L"rndz", _("Losowoœæ punktów czcionki oœ Z"), TYPE_TAG_VSFILTER_MOD, option));
-	itemsList.push_back(new TagListItem(L"s", _("Przekreœlenie tekstu"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"shad", _("Cieñ tekstu"), TYPE_NORMAL, option));
+	itemsList.push_back(new TagListItem(L"q", _("SposÃ³b Å‚amania linii"), TYPE_NORMAL, option));
+	itemsList.push_back(new TagListItem(L"r", _("Reset tagÃ³w"), TYPE_NORMAL, option));
+	itemsList.push_back(new TagListItem(L"rnd", _("LosowoÅ›Ä‡ punktÃ³w czcionki"), TYPE_TAG_VSFILTER_MOD, option));
+	itemsList.push_back(new TagListItem(L"rnds", _("LosowoÅ›Ä‡ punktÃ³w czcionki??"), TYPE_TAG_VSFILTER_MOD, option));
+	itemsList.push_back(new TagListItem(L"rndx", _("LosowoÅ›Ä‡ punktÃ³w czcionki oÅ› X"), TYPE_TAG_VSFILTER_MOD, option));
+	itemsList.push_back(new TagListItem(L"rndy", _("LosowoÅ›Ä‡ punktÃ³w czcionki oÅ› Y"), TYPE_TAG_VSFILTER_MOD, option));
+	itemsList.push_back(new TagListItem(L"rndz", _("LosowoÅ›Ä‡ punktÃ³w czcionki oÅ› Z"), TYPE_TAG_VSFILTER_MOD, option));
+	itemsList.push_back(new TagListItem(L"s", _("PrzekreÅ›lenie tekstu"), TYPE_TAG_USED_IN_VISUAL, option));
+	itemsList.push_back(new TagListItem(L"shad", _("CieÅ„ tekstu"), TYPE_NORMAL, option));
 	itemsList.push_back(new TagListItem(L"t", _("Animacja tekstu"), TYPE_NORMAL, option, true));
-	itemsList.push_back(new TagListItem(L"u", _("Podkreœlenie tekstu"), TYPE_NORMAL, option));
-	itemsList.push_back(new TagListItem(L"xbord", _("Obwódka w osi X"), TYPE_NORMAL, option));
-	itemsList.push_back(new TagListItem(L"ybord", _("Obwódka w osi Y"), TYPE_NORMAL, option));
-	itemsList.push_back(new TagListItem(L"xshad", _("Cieñ w osi X"), TYPE_NORMAL, option));
-	itemsList.push_back(new TagListItem(L"yshad", _("Cieñ w osi Y"), TYPE_NORMAL, option));
-	itemsList.push_back(new TagListItem(L"z", _("koordynata Z dla tagów frx i fry"), TYPE_TAG_VSFILTER_MOD, option));
+	itemsList.push_back(new TagListItem(L"u", _("PodkreÅ›lenie tekstu"), TYPE_NORMAL, option));
+	itemsList.push_back(new TagListItem(L"xbord", _("ObwÃ³dka w osi X"), TYPE_NORMAL, option));
+	itemsList.push_back(new TagListItem(L"ybord", _("ObwÃ³dka w osi Y"), TYPE_NORMAL, option));
+	itemsList.push_back(new TagListItem(L"xshad", _("CieÅ„ w osi X"), TYPE_NORMAL, option));
+	itemsList.push_back(new TagListItem(L"yshad", _("CieÅ„ w osi Y"), TYPE_NORMAL, option));
+	itemsList.push_back(new TagListItem(L"z", _("koordynata Z dla tagÃ³w frx i fry"), TYPE_TAG_VSFILTER_MOD, option));
 }
 
 

@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+ï»¿//  Copyright (c) 2016, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ void BitmapButton::SetToolTip(const wxString &_toolTip)
 		toolTip = toolTip + " (" + key + ")";
 	}
 	toolTip << L"\n";
-	toolTip << _("Skrót mo¿na ustawiæ Shift + Klik");
+	toolTip << _("SkrÃ³t moÅ¼na ustawiÄ‡ Shift + Klik");
 	wxWindow::SetToolTip(toolTip);
 
 }
