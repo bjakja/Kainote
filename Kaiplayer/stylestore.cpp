@@ -470,7 +470,7 @@ bool StyleStore::ChangeStyle(Styles *changedStyle, int cellsToChange /*= -1*/)
 	if (oldname != changedStyle->Name && ASSStyle && !dummy){
 		int res = KaiMessageBox(_("Nazwa stylu została zmieniona, czy chcesz zmienić ją także w napisach?"), _("Potwierdzenie"), wxYES_NO);
 		if (res == wxYES){
-			for (int i = 0; i < grid->GetCount(); i++){
+			for (size_t i = 0; i < grid->GetCount(); i++){
 				if (grid->GetDialogue(i)->Style == oldname)
 				{
 					grid->CopyDialogue(i)->Style = changedStyle->Name;
@@ -685,11 +685,11 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 	SubsGrid *grid = Notebook::GetTab()->Grid;
 	const wxString &tlStyle = grid->GetSInfo("TLMode Style");
 
-	for (int i = 0; i < grid->file->GetCount(); i++){
+	for (size_t i = 0; i < grid->file->GetCount(); i++){
 		lineStyles[grid->file->GetDialogue(i)->Style] = true;
 	}
 
-	int j = 0;
+	size_t j = 0;
 	while (j < grid->StylesSize()){
 		wxString styleName = grid->GetStyle(j)->Name;
 		if (lineStyles.find(styleName) != lineStyles.end()){

@@ -103,7 +103,7 @@ wxString SpellCheckerDialog::FindNextMisspell()
 		lastLine = lastActiveLine = tab->Grid->currentLine;
 		lastMisspell = 0;
 	}
-	for(int i = lastLine; i < tab->Grid->GetCount(); i++){
+	for(size_t i = lastLine; i < tab->Grid->GetCount(); i++){
 		errors.clear();
 		Dialogue *Dial = tab->Grid->GetDialogue(i);
 		if(Dial->IsComment && noComments){continue;}

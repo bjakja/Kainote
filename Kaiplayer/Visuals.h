@@ -325,7 +325,7 @@ public:
 		tool = _tool;
 	};
 	int FindPoint(int pos, wxString type, bool nextStart = false, bool fromEnd = false);
-	D3DXVECTOR2 FindSnapPoint(const D3DXVECTOR2 &pos, bool coeff = true);
+	ClipPoint FindSnapPoint(const ClipPoint &pos, size_t pointToSkip/*, bool coeff = false*/);
 	void OnKeyPress(wxKeyEvent &evt);
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;

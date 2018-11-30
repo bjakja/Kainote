@@ -713,6 +713,11 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		zy = MID(0, zy, VideoSize.height - VideoSize.y);
 		Points[grabbed].x = ((zx + diffs.x)*coeffW) - _x;
 		Points[grabbed].y = ((zy + diffs.y)*coeffH) - _y;
+		//new feature snapping to other points
+		//add some method to turn it on
+		if (event.AltDown())
+			Points[grabbed] = FindSnapPoint(Points[grabbed], grabbed);
+
 		if (!Points[grabbed].isSelected){ Points[grabbed].isSelected = true; }
 
 		if (event.ShiftDown()){
@@ -852,13 +857,16 @@ int DrawingAndClip::FindPoint(int pos, wxString type, bool nextStart, bool fromE
 	return j;
 }
 
-D3DXVECTOR2 DrawingAndClip::FindSnapPoint(const D3DXVECTOR2 &pos, bool coeff)
+ClipPoint DrawingAndClip::FindSnapPoint(const ClipPoint &pos, size_t pointToSkip/*bool coeff*/)
 {
 	bool xfound = false, yfound = false;
-	float modPosx = coeff? (pos.x * coeffW) - _x : pos.x;
-	float modPosy = coeff? (pos.y * coeffH) - _y : pos.y;
+	float modPosx = /*coeff? (pos.x * coeffW) - _x : */pos.x;
+	float modPosy = /*coeff? (pos.y * coeffH) - _y : */pos.y;
 	const float maxdiff = 10.f;
 	for (size_t i = 0; i < Points.size(); i++){
+		if (i == pointToSkip)
+			continue;
+
 		if (!xfound && abs(Points[i].x - modPosx) <= maxdiff){
 			xfound = true;
 			modPosx = Points[i].x;
@@ -868,11 +876,14 @@ D3DXVECTOR2 DrawingAndClip::FindSnapPoint(const D3DXVECTOR2 &pos, bool coeff)
 			modPosy = Points[i].y;
 		}
 	}
-	if (coeff){
+	/*if (coeff){
 		modPosx = (modPosx + _x) / coeffW;
 		modPosy = (modPosy + _y) / coeffH;
-	}
-	return D3DXVECTOR2(modPosx, modPosy);
+	}*/
+	ClipPoint returncp = pos;
+	returncp.x = modPosx;
+	returncp.y = modPosy;
+	return returncp;
 }
 
 void DrawingAndClip::OnKeyPress(wxKeyEvent &evt)

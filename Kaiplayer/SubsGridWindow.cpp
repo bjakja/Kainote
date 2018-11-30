@@ -1256,7 +1256,7 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 
 void SubsGridWindow::RefreshIfVisible(int time)
 {
-	int counter = 0;
+	size_t counter = 0;
 	//make it work properly
 	for (size_t i = scrollPosition; i < file->GetCount() && counter < visibleLines.size(); i++){
 		Dialogue *dial = GetDialogue(i);

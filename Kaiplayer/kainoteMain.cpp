@@ -40,7 +40,6 @@
 #include "SubsResampleDialog.h"
 #include "SpellCheckerDialog.h"
 #include <ShlObj.h>
-#include "PngTest.h"
 
 #undef IsMaximized
 #if _DEBUG

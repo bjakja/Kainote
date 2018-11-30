@@ -69,7 +69,7 @@ Notebook::Notebook(wxWindow *parent, int id)
 
 			wxString &name = item->label;
 			bool found = false;
-			for (int i = 0; i < SubsGridBase::compareStyles.size(); i++){
+			for (size_t i = 0; i < SubsGridBase::compareStyles.size(); i++){
 				if (SubsGridBase::compareStyles[i] == name){
 					if (!item->check){ SubsGridBase::compareStyles.RemoveAt(i); }
 					found = true;
@@ -300,7 +300,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	int x = event.GetX(), y = event.GetY();
 	bool click = event.LeftDown();
 	bool dclick = event.LeftDClick();
-	bool mdown = event.MiddleDown();
+	bool middleDown = event.MiddleDown();
 
 
 	int w, h, hh;
@@ -382,7 +382,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	int i = FindTab(x, &num);
 
 	// klik, dwuklik i środkowy
-	if (click || dclick || mdown){
+	if (click || dclick || middleDown){
 		oldI = i;
 
 		if (!allTabsVisible && (click || dclick) && x < 20){
@@ -419,11 +419,17 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			AddPendingEvent(evt2);
 			onx = false;
 		}
-		else if (mdown)
+		else if (middleDown)
 		{
 			int tmpiter = iter;
 			DeletePage(i);
 			if (i == tmpiter){ AddPendingEvent(evt2); }
+			int tabAfterClose = FindTab(x, &num);
+			if (tabAfterClose >= 0)
+				SetToolTip(Pages[tabAfterClose]->SubsName + "\n" + Pages[tabAfterClose]->VideoName);
+			else
+				UnsetToolTip();
+			return;
 		}
 
 	}
@@ -749,7 +755,7 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 		Pages[iter]->Grid->GetCommonStyles(Pages[i]->Grid, availableStyles);
 		wxArrayString optionsCompareStyles;
 		Options.GetTable(SubsComparisonStyles, optionsCompareStyles, ",");
-		for (int i = 0; i < availableStyles.size(); i++){
+		for (size_t i = 0; i < availableStyles.size(); i++){
 			MenuItem * styleItem = styleComparisonMenu->Append(4448, availableStyles[i], "", true, NULL, NULL, ITEM_CHECK);
 			if (optionsCompareStyles.Index(availableStyles[i]) != -1){ 
 				styleItem->Check(); 
