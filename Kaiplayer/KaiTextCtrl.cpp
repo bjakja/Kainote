@@ -400,7 +400,8 @@ void KaiTextCtrl::OnCharPress(wxKeyEvent& event)
 	int key = event.GetKeyCode();
 	bool ctrl = event.ControlDown();
 	bool alt = event.AltDown();
-	if (!(((!ctrl && !alt) || (ctrl && alt)) && (key>30 || key == 0))){
+	if (!(((!ctrl && !alt) || (ctrl && alt)) && (key > 30 || key == 0) || 
+		(alt && (key >= WXK_NUMPAD0 && key <= WXK_NUMPAD9)))){
 		event.Skip(); return;
 	}
 	wxUniChar wkey = event.GetUnicodeKey();

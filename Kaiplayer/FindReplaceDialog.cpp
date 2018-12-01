@@ -479,7 +479,8 @@ void FindReplaceDialog::OnActivate(wxActivateEvent& event)
 	}
 	TabWindow *currentTab = GetTab();
 	long from, to, fromO, toO;
-	EditBox *edit = Kai->GetTab()->Edit;
+	TabPanel *tab = Kai->GetTab();
+	EditBox *edit = tab->Edit;
 	edit->TextEdit->GetSelection(&from, &to);
 	edit->TextEditOrig->GetSelection(&fromO, &toO);
 	KaiChoice * findOrReplace = (currentTab->FindText->GetValue().Len() > 0 && 
@@ -500,6 +501,10 @@ void FindReplaceDialog::OnActivate(wxActivateEvent& event)
 		FR->textPosition = FR->linePosition = 0;
 	}
 	findOrReplace->SetFocus();
+	//check if is TlMode and change text oryginal enabling
+	if (currentTab->CollumnTextOriginal && tab->Grid->hasTLMode != currentTab->CollumnTextOriginal->IsEnabled())
+		currentTab->CollumnTextOriginal->Enable(tab->Grid->hasTLMode);
+
 	FR->findTextReset = false;
 }
 

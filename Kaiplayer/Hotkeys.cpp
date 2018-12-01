@@ -175,8 +175,8 @@ void Hotkeys::LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio)
 		_hkeys[idAndType(VolumeMinus, VIDEO_HOTKEY)] = hdata(_("Dźwięk ciszej"), "Num 0");
 		_hkeys[idAndType(NextChapter, VIDEO_HOTKEY)] = hdata(_("Następny rozdział"), "M");
 		_hkeys[idAndType(PreviousChapter, VIDEO_HOTKEY)] = hdata(_("Poprzedni rozdział"), "N");
-		_hkeys[idAndType(PutBold, EDITBOX_HOTKEY)] = hdata(_("Wstaw pogrubienie"), "Ctrl-I");
-		_hkeys[idAndType(PutItalic, EDITBOX_HOTKEY)] = hdata(_("Wstaw kursywę"), "Ctrl-B");
+		_hkeys[idAndType(PutBold, EDITBOX_HOTKEY)] = hdata(_("Wstaw pogrubienie"), "Ctrl-B");
+		_hkeys[idAndType(PutItalic, EDITBOX_HOTKEY)] = hdata(_("Wstaw kursywę"), "Ctrl-I");
 		_hkeys[idAndType(SplitLine, EDITBOX_HOTKEY)] = hdata(_("Wstaw znak podziału"), "Shift-Enter");
 		_hkeys[idAndType(StartDifference, EDITBOX_HOTKEY)] = hdata(_("Wstaw różnicę początkową"), "Ctrl-,");
 		_hkeys[idAndType(EndDifference, EDITBOX_HOTKEY)] = hdata(_("Wstaw różnicę końcową"), "Ctrl-.");
