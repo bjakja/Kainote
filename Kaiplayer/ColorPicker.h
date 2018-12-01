@@ -235,6 +235,7 @@ public:
 
 	void SetColor(AssColor new_color, int numColor = 0, bool SendVideoEvent = true, bool setAlpha = true);
 	AssColor GetColor();
+	int GetColorType();
 
 	static DialogColorPicker *DCP;
 	static DialogColorPicker *Get(wxWindow *parent, AssColor color = wxColour("#000000"), int colorType = -1);
@@ -280,6 +281,7 @@ public:
 	ColorPickerScreenDropper *dropper;
 	KaiCheckBox *moveWindowToMousePosition;
 	const AssColor &GetColor(){ return color; };
+	int GetColorType();
 	void SetColor(const AssColor &color);
 	void Colorize();
 private:

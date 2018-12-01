@@ -872,7 +872,7 @@ void StyleStore::ReloadFonts()
 	wxArrayString *fontList = (!Options.GetBool(StyleFilterTextOn)) ?
 		FontEnum.GetFonts(0, [](){}) :
 		FontEnum.GetFilteredFonts(0, [](){}, cc->fontFilter->GetValue());
-	cc->sfont->PutArray(fontList);
+	cc->styleFont->PutArray(fontList);
 	Store->Refresh(false);
 	ASSList->Refresh(false);
 	cc->UpdatePreview();

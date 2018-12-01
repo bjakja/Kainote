@@ -34,47 +34,47 @@ class StyleChange: public wxWindow
 		StyleChange(wxWindow* parent, bool window=true, const wxPoint& pos=wxDefaultPosition);
 		virtual ~StyleChange();
 
-		KaiCheckBox* sob;
-		KaiRadioButton* rb1;
-		KaiRadioButton* rb2;
-		KaiRadioButton* rb3;
-		KaiRadioButton* rb4;
-		KaiRadioButton* rb5;
-		KaiRadioButton* rb6;
-		KaiRadioButton* rb7;
-		KaiRadioButton* rb8;
-		KaiRadioButton* rb9;
-		KaiCheckBox* si;
+		KaiCheckBox* borderStyle;
+		KaiRadioButton* alignment1;
+		KaiRadioButton* alignment2;
+		KaiRadioButton* alignment3;
+		KaiRadioButton* alignment4;
+		KaiRadioButton* alignment5;
+		KaiRadioButton* alignment6;
+		KaiRadioButton* alignment7;
+		KaiRadioButton* alignment8;
+		KaiRadioButton* alignment9;
+		KaiCheckBox* textItalic;
 		MappedButton* btnOk;
-		KaiTextCtrl* sname;
-		MappedButton* s2;
-		MappedButton* s3;
-		NumCtrl* ssize;
+		KaiTextCtrl* styleName;
+		MappedButton* color2;
+		MappedButton* color3;
+		NumCtrl* fontSize;
 		MappedButton* btnCommit;
 		MappedButton* btnCancel;
 		MappedButton* btnCommitOnStyles;
-		KaiChoice* sfont;
+		KaiChoice* styleFont;
 		KaiTextCtrl *fontFilter;
 		ToggleButton *Filter;
 		NumCtrl* alpha1;
 		NumCtrl* alpha2;
 		NumCtrl* alpha3;
 		NumCtrl* alpha4;
-		NumCtrl* ssx;
-		NumCtrl* ssy;
-		NumCtrl* sou;
-		NumCtrl* ssh;
-		NumCtrl* san;
-		NumCtrl* ssp;
-		MappedButton* s4;
-		MappedButton* s1;
-		KaiCheckBox* ss;
-		KaiCheckBox* su;
-		KaiCheckBox* sb;
-		KaiChoice* senc;
-		NumCtrl* smr;
-		NumCtrl* smv;
-		NumCtrl* sml;
+		NumCtrl* scaleX;
+		NumCtrl* scaleY;
+		NumCtrl* outline;
+		NumCtrl* shadow;
+		NumCtrl* angle;
+		NumCtrl* spacing;
+		MappedButton* color4;
+		MappedButton* color1;
+		KaiCheckBox* textStrikeout;
+		KaiCheckBox* textUnderline;
+		KaiCheckBox* textBold;
+		KaiChoice* textEncoding;
+		NumCtrl* rightMargin;
+		NumCtrl* verticalMargin;
+		NumCtrl* leftMargin;
 		StylePreview* Preview;
 		bool allowMultiEdition = true;
 
@@ -92,11 +92,15 @@ class StyleChange: public wxWindow
 
 	private:
 
-		void OnAllCols(int kol);
-		void Ons1Click(wxCommandEvent& event);
-		void Ons2Click(wxCommandEvent& event);
-		void Ons3Click(wxCommandEvent& event);
-		void Ons4Click(wxCommandEvent& event);
+		void OnAllCols(int kol, bool leftClick = true);
+		void OnColor1Click(wxCommandEvent& event);
+		void OnColor2Click(wxCommandEvent& event);
+		void OnColor3Click(wxCommandEvent& event);
+		void OnColor4Click(wxCommandEvent& event);
+		void OnColor1RightClick(wxMouseEvent& event);
+		void OnColor2RightClick(wxMouseEvent& event);
+		void OnColor3RightClick(wxMouseEvent& event);
+		void OnColor4RightClick(wxMouseEvent& event);
 		void OnChangeAllSelectedStyles(wxCommandEvent& event);
 		void OnCommit(wxCommandEvent& event);
 		void UpdateStyle();
@@ -105,9 +109,12 @@ class StyleChange: public wxWindow
 		void OnSetFocus(wxFocusEvent& event);
 
 		void DoTooltips();
+		void GetColorControls(MappedButton** color, NumCtrl** alpha, int numColor);
+		void UpdateColor(const AssColor &color, int numColor);
 		
 		Styles *updateStyle;
 		Styles *CompareStyle = NULL;
+		AssColor lastColor;
 		wxArrayString encs;
 		KaiDialog *SCD;
 		

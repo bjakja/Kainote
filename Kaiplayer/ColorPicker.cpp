@@ -711,6 +711,15 @@ AssColor DialogColorPicker::GetColor()
 }
 
 
+int DialogColorPicker::GetColorType()
+{
+	if (colorType->IsEnabled()){
+		//colors starts from 1 selection from 0
+		return colorType->GetSelection() + 1;
+	}
+	return -1;
+}
+
 // Use the values entered in the RGB controls to update the other controls
 void DialogColorPicker::UpdateFromRGB(bool SendVideoEvent /*= true*/)
 {
@@ -1374,6 +1383,15 @@ SimpleColorPickerDialog::SimpleColorPickerDialog(wxWindow *parent, const AssColo
 	Colorize();
 	//dropper->CaptureMouse();
 	Bind(wxEVT_IDLE, &SimpleColorPickerDialog::OnIdle, this);
+}
+
+int SimpleColorPickerDialog::GetColorType()
+{
+	if (colorType->IsEnabled()){
+		return colorType->GetSelection() + 1;
+	}
+	// this should not happen when colorType is set
+	return -1;
 }
 
 void SimpleColorPickerDialog::SetColor(const AssColor &_color)
