@@ -103,8 +103,6 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	: VideoRenderer(parent, size)
 	, Kai(kfpar)
 	, hasArrow(true)
-	, seekfiles(true)
-	//, fullarrow(true)
 	, ismenu(false)
 	, eater(false)
 	, actualFile(0)
@@ -315,17 +313,17 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 	Kai->SetStatusText(tab->VideoName, 8);
 	if (TD){ TD->Videolabel->SetLabelText(tab->VideoName); }
 	if (!tab->editor){ Kai->Label(0, true); }
-	Kai->SetStatusText(getfloat(fps) + " FPS", 4);
+	Kai->SetStatusText(getfloat(fps) + L" FPS", 4);
 	wxString tar;
-	tar << ax << " : " << ay;
+	tar << ax << L" : " << ay;
 	Kai->SetStatusText(tar, 6);
-	STime kkk1;
-	kkk1.mstime = GetDuration();
-	Kai->SetStatusText(kkk1.raw(SRT), 3);
+	STime duration;
+	duration.mstime = GetDuration();
+	Kai->SetStatusText(duration.raw(SRT), 3);
 	Kai->SetRecent(1);
 	
 	if (tab->editor && (!isFullscreen || IsShown()) &&
-		tab->SubsPath != "" && Options.GetBool(OpenVideoAtActiveLine)){
+		tab->SubsPath != L"" && Options.GetBool(OpenVideoAtActiveLine)){
 		Seek(tab->Edit->line->Start.mstime);
 	}
 	if (Options.GetBool(EDITBOX_TIMES_TO_FRAMES_SWITCH)){
@@ -626,7 +624,6 @@ void VideoCtrl::NextFile(bool next)
 			bool isload = Kai->OpenFile(files[k]);
 			if (isload){
 				actualFile = k;
-				seekfiles = false;
 				if (isFullscreen){ SetFocus(); }
 				return;
 			}

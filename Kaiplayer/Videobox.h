@@ -30,18 +30,18 @@ class VideoCtrl : public VideoRenderer
 {
 public:
 
-    VideoCtrl(wxWindow *parent, KainoteFrame *kfparent, const wxSize &size=wxDefaultSize);
-    virtual ~VideoCtrl();
-    bool Play();
+	VideoCtrl(wxWindow *parent, KainoteFrame *kfparent, const wxSize &size=wxDefaultSize);
+	virtual ~VideoCtrl();
+	bool Play();
 	void PlayLine(int start, int end);
-    bool Pause(bool burstbl=true);
-    bool Stop();
+	bool Pause(bool burstbl=true);
+	bool Stop();
 
 	bool LoadVideo(const wxString& fileName, wxString *subsName, bool fulls = false, bool changeAudio = true);
-    PlaybackState GetState();
+	PlaybackState GetState();
 
-    bool Seek(int whre,bool starttime=true,bool disp=true, bool reloadSubs=true, bool correct = true);
-    int Tell();
+	bool Seek(int whre,bool starttime=true,bool disp=true, bool reloadSubs=true, bool correct = true);
+	int Tell();
 	bool CalcSize(int *width, int *height,int wwidth=0,int wheight=0,bool setstatus=false,bool calcH=false);
 
 	void NextFile(bool next=true);
@@ -51,7 +51,6 @@ public:
 	void ChangeOnScreenResolution(TabPanel *tab);
 	VideoSlider* vslider;
 	wxWindow* panel;
-	bool seekfiles;
 	bool eater;
 	//bool fullarrow;
 	bool blockpaint;
@@ -64,7 +63,7 @@ public:
 	void OpenEditor(bool esc=true);
 	void OnEndFile(wxCommandEvent& event);
 	void OnPrew();
-    void OnNext();
+	void OnNext();
 	void OnAccelerator(wxCommandEvent& event);
 	//void OnVButton(wxCommandEvent& event);
 	void OnVolume(wxScrollEvent& event);
@@ -93,13 +92,13 @@ public:
 	bool isOnAnotherMonitor;
 private:
 
-    BitmapButton* bprev;
+	BitmapButton* bprev;
 	BitmapButton* bpause;
 	BitmapButton* bstop;
 	BitmapButton* bnext;
 	BitmapButton* bpline;
 	
-    KainoteFrame *Kai;
+	KainoteFrame *Kai;
 	int actualFile;
 	int id;
 	int prevchap;

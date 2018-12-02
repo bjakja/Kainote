@@ -916,7 +916,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 		Edit->RefreshStyle(true);
 
 		Kai->Label();
-		LoadStyleCatalog();
+		//LoadStyleCatalog();
 		if (tab->Video->GetState() != None){
 			tab->Video->OpenSubs(SaveText(), true, true);
 			if (!isgood){ KaiMessageBox(_("Otwieranie napisów nie powiodło się"), _("Uwaga")); }
@@ -1446,25 +1446,6 @@ void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 	}
 }
 
-void SubsGrid::LoadStyleCatalog()
-{
-	if (subsFormat != ASS){ return; }
-	const wxString &catalog = GetSInfo(L"Last Style Storage");
-
-	if (catalog.empty()){ return; }
-	for (size_t i = 0; i < Options.dirs.size(); i++){
-		if (catalog == Options.dirs[i]){
-			Options.LoadStyles(catalog);
-			if (StyleStore::HasStore()){
-				StyleStore *ss = StyleStore::Get();
-				ss->Store->SetSelection(0, true);
-				int chc = ss->catalogList->FindString(Options.actualStyleDir);
-				ss->catalogList->SetSelection(chc);
-			}
-		}
-	}
-
-}
 
 BEGIN_EVENT_TABLE(SubsGrid, SubsGridBase)
 EVT_MENU(Cut, SubsGrid::OnAccelerator)

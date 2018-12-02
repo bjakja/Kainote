@@ -121,6 +121,7 @@ public:
 
 	void DummyUndo(int newIter);
 	void GetCommonStyles(SubsGridBase *grid, wxArrayString &styleTable);
+	int GetScrollPosition(){ return scrollPosition; }
 	
 	SubsGridBase(wxWindow *parent, const long int id ,const wxPoint& pos,const wxSize& size, long style);
 	virtual ~SubsGridBase();

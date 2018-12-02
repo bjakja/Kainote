@@ -489,21 +489,26 @@ bool StyleStore::ChangeStyle(Styles *changedStyle, int cellsToChange /*= -1*/)
 void StyleStore::OnChangeCatalog(wxCommandEvent& event)
 {
 	Options.SaveOptions(false);
-	Options.LoadStyles(catalogList->GetString(catalogList->GetSelection()));
+	wxString catalogName = catalogList->GetString(catalogList->GetSelection());
+	Options.LoadStyles(catalogName);
 
 	Store->SetSelection(0, true);
+	SubsGrid* grid = Notebook::GetTab()->Grid;
+	grid->AddSInfo(L"Last Style Storage", catalogName);
 }
 
 void StyleStore::OnNewCatalog(wxCommandEvent& event)
 {
 	NewCatalog nc(this);
 	if (nc.ShowModal() == wxID_OK){
-		wxString nkat = nc.TextCtrl1->GetValue();
-		catalogList->SetSelection(catalogList->Append(nkat));
-		Options.dirs.Add(nkat);
-		Options.actualStyleDir = nkat;
+		wxString catalogName = nc.TextCtrl1->GetValue();
+		catalogList->SetSelection(catalogList->Append(catalogName));
+		Options.dirs.Add(catalogName);
+		Options.actualStyleDir = catalogName;
 		Options.clearstyles();
 		Store->Refresh(false);
+		SubsGrid* grid = Notebook::GetTab()->Grid;
+		grid->AddSInfo(L"Last Style Storage", catalogName);
 	}
 }
 
@@ -522,6 +527,8 @@ void StyleStore::OnDelCatalog(wxCommandEvent& event)
 	wxRemoveFile(path);
 	Options.LoadStyles(Options.actualStyleDir);
 	Store->Refresh(false);
+	SubsGrid* grid = Notebook::GetTab()->Grid;
+	grid->AddSInfo(L"Last Style Storage", Options.actualStyleDir);
 }
 
 void StyleStore::OnStoreLoad(wxCommandEvent& event)
@@ -863,6 +870,19 @@ void StyleStore::LoadAssStyles(const wxString &styleName /*= ""*/)
 	{
 		wxCommandEvent evt;
 		OnAssStyleChange(evt);
+	}
+	//grid->LoadStyleCatalog();
+	if (grid->subsFormat != ASS){ return; }
+	const wxString &catalog = grid->GetSInfo(L"Last Style Storage");
+
+	if (catalog.empty() || catalog == Options.actualStyleDir){ return; }
+	for (size_t i = 0; i < Options.dirs.size(); i++){
+		if (catalog == Options.dirs[i]){
+			Options.LoadStyles(catalog);
+			Store->SetSelection(0, true);
+			int chc = catalogList->FindString(Options.actualStyleDir);
+			catalogList->SetSelection(chc);
+		}
 	}
 
 }

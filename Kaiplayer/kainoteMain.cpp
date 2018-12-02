@@ -138,6 +138,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	FileMenu->Append(SaveWithVideoName, _("Zapisuj napisy z nazwą wideo"), _("Zapisuj napisy z nazwą wideo"), true, PTR_BITMAP_PNG("SAVEWITHVIDEONAME"), NULL, ITEM_CHECK)->Check(Options.GetBool(SubsAutonaming));
 	Toolbar->AddID(SaveWithVideoName);
 	FileMenu->Append(9989, _("Pokaż / Ukryj okno logów"))->DisableMapping();
+	FileMenu->AppendTool(Toolbar, GLOBAL_LOAD_LAST_SESSION, _("Wczytaj ostatnią sesję"), _("Wczytuje poprzednio zaczytane pliki"), PTR_BITMAP_PNG("SETTINGS"));
 	FileMenu->AppendTool(Toolbar, Settings, _("&Ustawienia"), _("Ustawienia programu"), PTR_BITMAP_PNG("SETTINGS"));
 	FileMenu->AppendTool(Toolbar, Quit, _("Wyjści&e\tAlt-F4"), _("Zakończ działanie programu"), PTR_BITMAP_PNG("exit"))->DisableMapping();
 	Menubar->Append(FileMenu, _("&Plik"));
@@ -319,7 +320,7 @@ KainoteFrame::~KainoteFrame()
 	Options.SetTable(VideoRecent, videorec);
 	Options.SetTable(AudioRecent, audsrec);
 	Options.SetInt(VideoVolume, GetTab()->Video->volslider->GetValue());
-
+	Notebook::SaveLastSession(true);
 	//destroy findreplace before saving options it saving findreplace options in destructor
 	if (FR){ FR->SaveOptions(); FR->Destroy(); FR = NULL; }
 	if (SL){ SL->SaveOptions(); SL->Destroy(); SL = NULL; }
@@ -606,6 +607,9 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}
 	else if (id == UndoToLastSave){
 		tab->Grid->GetUndo(false, tab->Grid->file->GetLastSaveIter());
+	}
+	else if (id == GLOBAL_LOAD_LAST_SESSION){
+		Tabs->LoadLastSession(this);
 	}
 	else if (id == GLOBAL_SHIFT_TIMES){
 		tab->ShiftTimes->OnOKClick(event);
@@ -969,8 +973,6 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		else{ tab->SubsPath = fname; }
 		tab->SubsName = tab->SubsPath.AfterLast(L'\\');
 
-		tab->Grid->LoadStyleCatalog();
-		
 		//here we seek for video / audio and (rest writed in future)
 		if (issubs && !fulls && !tab->Video->isFullscreen){
 			wxString videopath = tab->Grid->GetSInfo(L"Video File");
@@ -1073,7 +1075,6 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 			tab->Thaw(); 
 		return false; 
 	}
-	tab->Video->seekfiles = true;
 	tab->Edit->Frames->Enable(!tab->Video->IsDshow);
 	tab->Edit->Times->Enable(!tab->Video->IsDshow);
 
@@ -1083,10 +1084,11 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 done:
 	tab->ShiftTimes->Contents();
 	UpdateToolbar();
-	if (freeze)
+	if (freeze){
 		tab->Thaw();
-
-	Options.SaveOptions(true, false);
+		// do not save options, cause it load many files and save options after it.
+		Options.SaveOptions(true, false);
+	}
 	return true;
 }
 
@@ -1540,8 +1542,6 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 			}
 			tab->Edit->Frames->Enable(!tab->Video->IsDshow);
 			tab->Edit->Times->Enable(!tab->Video->IsDshow);
-
-			tab->Video->seekfiles = true;
 
 		}
 		tab->ShiftTimes->Contents();

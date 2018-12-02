@@ -22,6 +22,7 @@
 
 class TabPanel;
 class SubsGrid;
+class KainoteFrame;
 
 class Notebook : public wxWindow
 {
@@ -46,6 +47,8 @@ public:
 	int GetHeight();
 	void ChangeActive();
 	void RefreshBar();
+	bool LoadSubtitles(TabPanel *tab, const wxString & path, int active = -1, int scroll = -1);
+	bool LoadVideo(TabPanel *tab, const wxString & path, int position = -1);
 
 	int iter;
 	bool block;
@@ -53,6 +56,10 @@ public:
 	static Notebook *GetTabs();
 	static Notebook *sthis;
 	static TabPanel *GetTab();
+	static void SaveLastSession(bool beforeClose = false);
+	static void LoadLastSession(KainoteFrame *main);
+	//results 0 - no session, 1 - normal session saved at end, 2 crash or bad close session
+	static int CheckLastSession();
 
 private:
 	void ContextMenu(const wxPoint &pos, int i);

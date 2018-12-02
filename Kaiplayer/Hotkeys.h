@@ -194,6 +194,7 @@
 	XX( Redo,)\
 	XX( Undo,)\
 	XX( UndoToLastSave,)\
+	XX( GLOBAL_LOAD_LAST_SESSION,)\
 	XX( History,)\
 	XX( OpenSubs,=6800)\
 	XX( OpenVideo,)\

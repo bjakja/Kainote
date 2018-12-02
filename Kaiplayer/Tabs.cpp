@@ -19,7 +19,7 @@
 #include "kainoteApp.h"
 #include "Menu.h"
 #include "KaiMessageBox.h"
-
+#include "OpennWrite.h"
 
 Notebook::Notebook(wxWindow *parent, int id)
 	: wxWindow(parent, id)
@@ -117,7 +117,7 @@ TabPanel *Notebook::GetPage()
 
 void Notebook::AddPage(bool refresh)
 {
-	if (Pages[iter]->Video->GetState() == Playing){ Pages[iter]->Video->Pause(); }
+	if (iter < Pages.size() && Pages[iter]->Video->GetState() == Playing){ Pages[iter]->Video->Pause(); }
 	int w, h;
 	GetClientSize(&w, &h);
 	//if(refresh){Freeze();}
@@ -135,7 +135,7 @@ void Notebook::AddPage(bool refresh)
 	Names.Add(name);
 
 	Pages[iter]->SetPosition(Pages[olditer]->GetPosition());
-	Pages[iter]->SetSize(Pages[olditer]->GetSize());
+	Pages[iter]->SetSize(olditer != iter ? Pages[olditer]->GetSize() : wxSize(w, h - TabHeight));
 	CalcSizes(true);
 	if (refresh){
 		if (!Options.GetBool(EditorOn)){ KainoteFrame *kai = (KainoteFrame *)GetParent(); kai->HideEditor(false); }
@@ -941,6 +941,47 @@ void Notebook::RefreshBar()
 	RefreshRect(wxRect(0, h - 25, w, 25), false);
 }
 
+bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*= -1*/, int scroll /*= -1*/)
+{
+	wxString ext = path.AfterLast(L'.').Lower();
+	OpenWrite ow;
+	wxString s;
+	if (!ow.FileOpen(path, &s)){
+		return false;
+	}
+	else{
+		tab->Grid->LoadSubtitles(s, ext);
+	}
+
+	tab->SubsPath = path;
+	if (ext == "ssa"){ ext = "ass"; tab->SubsPath = tab->SubsPath.BeforeLast(L'.') + ".ass"; }
+	tab->SubsName = tab->SubsPath.AfterLast(L'\\');
+	tab->Video->vToolbar->DisableVisuals(ext != "ass");
+	if (active != -1 && active != tab->Grid->currentLine && active < tab->Grid->GetCount()){
+		tab->Grid->SelectRow(active);
+		tab->Edit->SetLine(active);
+	}
+	if (scroll != -1)
+		tab->Grid->ScrollTo(scroll);
+
+	return true;
+}
+
+bool Notebook::LoadVideo(TabPanel *tab, const wxString & path, int position /*= -1*/)
+{
+	bool isload = tab->Video->LoadVideo(path, (tab->editor) ? tab->Grid->GetVisible() : 0);
+
+	if (!isload){
+		return false;
+	}
+	tab->Edit->Frames->Enable(!tab->Video->IsDshow);
+	tab->Edit->Times->Enable(!tab->Video->IsDshow);
+	if (position != -1)
+		tab->Video->Seek(position);
+
+	return true;
+}
+
 void Notebook::OnSave(int id)
 {
 	id -= MENU_SAVE;
@@ -963,6 +1004,122 @@ Notebook *Notebook::GetTabs()
 TabPanel *Notebook::GetTab()
 {
 	return sthis->Pages[sthis->iter];
+}
+
+void Notebook::SaveLastSession(bool beforeClose)
+{
+	wxString result = L"[" + Options.progname + L"]\r\n";
+	if (beforeClose)
+		result << L"[Close session]\r\n";
+	int numtab = 0;
+	for (std::vector<TabPanel*>::iterator it = sthis->Pages.begin(); it != sthis->Pages.end(); it++){
+		TabPanel *tab = *it;
+		result << L"Tab: " << numtab << L"\r\nVideo: " << tab->VideoPath << L"\r\nPosition: " << tab->Video->Tell() <<
+			L"\r\nSubtitles: " << tab->SubsPath << L"\r\nActive: " << tab->Grid->currentLine <<
+			L"\r\nScroll: " << tab->Grid->GetScrollPosition() << L"\r\n";
+		numtab++;
+	}
+	OpenWrite op;
+	op.FileWrite(Options.pathfull + L"\\LastSession.txt", result);
+
+}
+
+void Notebook::LoadLastSession(KainoteFrame* main)
+{
+	wxString riddenSession;
+	OpenWrite op;
+	if (op.FileOpen(Options.pathfull + L"\\LastSession.txt", &riddenSession, false) && !riddenSession.empty()){
+		wxStringTokenizer tokenizer(riddenSession, L"\n", wxTOKEN_STRTOK);
+		wxString header = tokenizer.GetNextToken();
+		if (!header.StartsWith(L"[Kainote")){
+			KaiLog(_("Nieprawidłowy plik sesji"));
+			return;
+		}
+
+		
+
+		wxString GoodSession = tokenizer.GetNextToken();
+		if (!GoodSession.StartsWith(L"[")){
+			//We can make some steps here to load subtitles from subs
+		}
+		//else{
+
+		//}
+
+		for (std::vector<TabPanel*>::iterator i = sthis->Pages.begin(); i != sthis->Pages.end(); i++)
+		{
+			(*i)->Destroy();
+		}
+		sthis->Pages.clear();
+		sthis->Tabsizes.Clear();
+		sthis->Names.Clear();
+		sthis->iter = 0;
+		wxString video;
+		int videoPosition = 0;
+		wxString subtitles;
+		int activeLine = 0;
+		int scrollPosition = 0;
+		wxString rest;
+		while (true)
+		{
+			
+			wxString token = tokenizer.GetNextToken();
+			if (token.StartsWith(L"Video: ", &rest))
+				video = rest;
+			else if (token.StartsWith(L"Position: ", &rest))
+				videoPosition = wxAtoi(rest);
+			else if (token.StartsWith(L"Subtitles: ", &rest))
+				subtitles = rest;
+			else if (token.StartsWith(L"Active: ", &rest))
+				activeLine = wxAtoi(rest);
+			else if (token.StartsWith(L"Scroll: ", &rest))
+				scrollPosition = wxAtoi(rest);
+			// no else cause hasMoreTokens have to be checked everytime
+			bool hasnotMoreTokens = !tokenizer.HasMoreTokens();
+			if (token.StartsWith(L"Tab: ", &rest) || hasnotMoreTokens){
+				if (rest != L"0" || hasnotMoreTokens){
+					sthis->AddPage(false);
+					int lastTab = sthis->Size() - 1;
+					TabPanel *tab = sthis->Pages[lastTab];
+					if (!subtitles.empty()){
+						sthis->LoadSubtitles(tab, subtitles, activeLine, scrollPosition);
+						main->SetRecent();
+					}
+					if (!video.empty()){
+						sthis->LoadVideo(tab, video, videoPosition);
+					}
+					main->Label();
+
+					video = L"";
+					videoPosition = 0;
+					subtitles = L"";
+					activeLine = 0;
+					scrollPosition = 0;
+				}
+			}
+			if (hasnotMoreTokens)
+				break;
+		}
+		if (sthis->Pages.size() < 1)
+			sthis->AddPage(true);
+	
+		sthis->GetTab()->Show();
+		main->SetSubsResolution(false);
+	}
+}
+
+int Notebook::CheckLastSession()
+{
+	wxString riddenSession;
+	OpenWrite op;
+	if (op.FileOpen(Options.pathfull + L"\\LastSession.txt", &riddenSession, false)){
+		size_t CloseSession = riddenSession.find(L"]\n[Close session]\n");
+		if (CloseSession != -1)
+			return 1;
+		else
+			return 2;
+	}
+	return 0;
 }
 
 int Notebook::FindPanel(TabPanel* pan, bool safe /*= true*/)
