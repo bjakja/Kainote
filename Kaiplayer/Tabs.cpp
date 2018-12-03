@@ -1103,8 +1103,13 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 		if (sthis->Pages.size() < 1)
 			sthis->AddPage(true);
 	
-		sthis->GetTab()->Show();
+		TabPanel *tab = sthis->GetTab();
+		tab->Show();
+		tab->Video->DeleteAudioCache();
+		tab->ShiftTimes->Contents();
 		main->SetSubsResolution(false);
+		main->UpdateToolbar();
+		Options.SaveOptions(true, false);
 	}
 }
 
