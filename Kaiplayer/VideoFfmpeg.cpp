@@ -111,15 +111,14 @@ void VideoFfmpeg::Processing()
 			isBusy = false;
 			while (1){
 
-				//rend->lastframe = GetFramefromMS(timeGetTime() - rend->lasttime, rend->lastframe);
-				if (rend->lastframe != lastframe){
-					rend->time = Timecodes[rend->lastframe];
-					lastframe = rend->lastframe;
+				if (numframe != lastframe){
+					rend->time = Timecodes[numframe];
+					lastframe = rend->lastframe = numframe;
 				}
 				if (lockGetFrame)
-					GetFFMSFrame(rend->lastframe);
+					GetFFMSFrame();
 				else{
-					fframe = FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
+					fframe = FFMS_GetFrame(videosource, numframe, &errinfo);
 				}
 
 				if (!fframe){
@@ -130,7 +129,7 @@ void VideoFfmpeg::Processing()
 				rend->DrawTexture(buff);
 				rend->Render(false);
 
-				if (rend->time >= rend->playend || rend->lastframe >= NumFrames - 1){
+				if (time >= rend->playend || numframe >= NumFrames - 1){
 					wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, 23333);
 					wxQueueEvent(rend, evt);
 					break;
@@ -138,24 +137,26 @@ void VideoFfmpeg::Processing()
 				else if (rend->vstate != Playing){
 					break;
 				}
-				acttime = timeGetTime() - rend->lasttime; //rend->player->player->GetCurPositionMS();//
-				//acttime = rend->lasttime + std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - rend->startTime).count();
+				acttime = timeGetTime() - playingLastTime;
+				
+				numframe++;
+				rend->time = time = Timecodes[numframe];
 
-				rend->lastframe++;
-				rend->time = Timecodes[rend->lastframe];
-
-				tdiff = rend->time - acttime;
+				tdiff = time - acttime;
 
 				if (tdiff > 0){ Sleep(tdiff); }
 				else{
 					while (1){
-						int frameTime = Timecodes[rend->lastframe];
-						if (frameTime >= acttime || frameTime >= rend->playend || rend->lastframe >= NumFrames){
-							if (rend->lastframe >= NumFrames){ rend->lastframe = NumFrames - 1; rend->time = rend->playend; }
+						int frameTime = Timecodes[numframe];
+						if (frameTime >= acttime || frameTime >= rend->playend || numframe >= NumFrames){
+							if (numframe >= NumFrames){ 
+								rend->lastframe = numframe = NumFrames - 1; 
+								rend->time = time = rend->playend; 
+							}
 							break;
 						}
 						else{
-							rend->lastframe++;
+							numframe++;
 						}
 					}
 
@@ -164,25 +165,31 @@ void VideoFfmpeg::Processing()
 			}
 		}
 		else if (wait_result == WAIT_OBJECT_0 + 1){
+		//render:
+			renderAgain = false;
 			byte *buff = (byte*)rend->datas;
-			if (rend->lastframe != lastframe){
+			if (numframe != lastframe){
 				if (lockGetFrame)
-					GetFFMSFrame(rend->lastframe);
+					GetFFMSFrame();
 				else{
-					fframe = FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
+					fframe = FFMS_GetFrame(videosource, numframe, &errinfo);
 				}
-				lastframe = rend->lastframe;
+				lastframe = rend->lastframe = numframe;
+				rend->time = time;
 			}
 			if (!fframe){
-				SetEvent(eventComplete); isBusy = false; continue;
+				//isBusy = false; 
+				continue;
 			}
 			memcpy(&buff[0], fframe->Data[0], fplane);
 
 			rend->DrawTexture(buff);
 			rend->Render(false);
 
-			SetEvent(eventComplete);
-			isBusy = false;
+			//if (renderAgain)
+				//goto render;
+
+			//isBusy = false;
 		}
 		else{
 			break;
@@ -572,17 +579,15 @@ done:
 
 void VideoFfmpeg::GetFrame(int ttime, byte *buff)
 {
-	//if(lastframe!=ttime){fframe=FFMS_GetFrame(videosource, ttime, &errinfo);}//fframe=FFMS_GetFrameByTime(videosource, (double)ttime/1000.0, &errinfo);}
-	//lastframe=ttime;
 	byte* cpy = (byte *)fframe->Data[0];
 	memcpy(&buff[0], cpy, height*width * 4);
 
 }
 
-void VideoFfmpeg::GetFFMSFrame(int numframe)
+void VideoFfmpeg::GetFFMSFrame()
 {
 	wxCriticalSectionLocker lock(blockaudio);
-	fframe = FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
+	fframe = FFMS_GetFrame(videosource, numframe, &errinfo);
 	//memcpy(buff, fframe->Data[0], fplane);
 }
 
@@ -947,30 +952,15 @@ void VideoFfmpeg::DeleteOldAudioCache()
 
 }
 
-void VideoFfmpeg::Refresh(bool wait){
-	if (isBusy) return;
-	isBusy = true;
-	ResetEvent(eventComplete);
-	SetEvent(eventRefresh);
-	if (rend->vstate == Paused && wait){
-		WaitForSingleObject(eventComplete, 4000);
-	}
-	/*byte *buff = (byte*)rend->datas;
-	if (rend->lastframe != lastframe){
-		if (lockGetFrame)
-			GetFFMSFrame(rend->lastframe);
-		else{
-			fframe = FFMS_GetFrame(videosource, rend->lastframe, &errinfo);
-		}
-		lastframe = rend->lastframe;
-	}
-	if (!fframe){
+void VideoFfmpeg::Render(bool wait){
+	/*if (isBusy) {
+		renderAgain = true;
 		return;
-	}
-	memcpy(&buff[0], fframe->Data[0], fplane);
-
-	rend->DrawTexture(buff);
-	rend->Render(false);*/
+		}
+		isBusy = true;*/
+	//ResetEvent(eventComplete);
+	SetEvent(eventRefresh);
+	
 };
 
 wxString VideoFfmpeg::ColorCatrixDescription(int cs, int cr) {
@@ -1028,3 +1018,37 @@ void VideoFfmpeg::OpenKeyframes(const wxString & filename)
 	}
 }
 
+void VideoFfmpeg::SetPosition(int _time, bool starttime)
+{
+	numframe = GetFramefromMS(_time, (time > _time) ? 0 : numframe);
+	if (!starttime){ 
+		numframe--; 
+		if (Timecodes[numframe] >= _time){ numframe--; } 
+	}
+	time = Timecodes[numframe];
+	/*if (rend){
+		rend->time = time;
+		rend->lastframe = numframe;
+		}*/
+	playingLastTime = timeGetTime() - time;
+}
+
+void VideoFfmpeg::ChangePositionByFrame(int step)
+{
+	numframe = MID(0, numframe + step, NumFrames - 1);
+	time = Timecodes[numframe];
+	/*if (rend){
+		rend->time = time;
+		rend->lastframe = numframe;
+	}*/
+	playingLastTime = timeGetTime() - time;
+}
+
+void VideoFfmpeg::Play(){ 
+	playingLastTime = timeGetTime() - time;
+	time = Timecodes[numframe];
+	if (rend)
+		rend->time = time;
+
+	SetEvent(eventStartPlayback); 
+};

@@ -307,7 +307,11 @@ bool VideoRenderer::InitDX(bool reset)
 
 void VideoRenderer::Render(bool Frame, bool wait)
 {
-	if (Frame && !IsDshow && !devicelost){ VFF->Refresh(wait); resized = false; return; }
+	if (Frame && !IsDshow && !devicelost){ 
+		VFF->Render(wait); 
+		resized = false; 
+		return; 
+	}
 	wxCriticalSectionLocker lock(mutexRender);
 	resized = false;
 	HRESULT hr = S_OK;
@@ -765,13 +769,8 @@ bool VideoRenderer::Play(int end)
 	vstate = Playing;
 
 	if (!IsDshow){
-		lasttime = timeGetTime() - time;
-		//lasttime=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()).count()-time;
-		//startTime = std::chrono::steady_clock::now();
 		if (player){ player->Play(time, -1, false); }
-		time = VFF->Timecodes[lastframe];
 		VFF->Play();
-
 	}
 	return true;
 }
@@ -810,12 +809,17 @@ bool VideoRenderer::Stop()
 	if (vstate == Playing){
 		SetThreadExecutionState(ES_CONTINUOUS);
 		vstate = Stopped;
-		if (IsDshow){ vplayer->Stop(); }
-		if (!IsDshow && player){ player->Stop(); }
-
-		time = 0;
-		playend = (IsDshow) ? 0 : GetDuration();
-
+		if (IsDshow){ 
+			vplayer->Stop(); 
+			time = 0; 
+			playend = 0;
+		}
+		if (!IsDshow && player){ 
+			player->Stop(); 
+			VFF->SetPosition(0, true);
+			playend = GetDuration();
+		}
+		
 		return true;
 	}
 	return false;
@@ -835,7 +839,8 @@ void VideoRenderer::SetPosition(int _time, bool starttime, bool corect, bool rel
 		//albo to przypadek albo ustawianie pozycji przed ustawianiem clipów jest rozwiązaniem dość częstego krasza
 		//przy wielu plikach jednocześnie, był zawsze po seekingu
 		playend = 0;
-		seek = true; vplayer->SetPosition(time);
+		seek = true; 
+		vplayer->SetPosition(time);
 		if (hasVisualEdition){
 			SAFE_DELETE(Visual->dummytext);
 			if (Visual->Visual == VECTORCLIP){
@@ -851,36 +856,32 @@ void VideoRenderer::SetPosition(int _time, bool starttime, bool corect, bool rel
 		}
 	}
 	else{
-		if (!VFF->isBusy || vstate == Playing){
-			lastframe = VFF->GetFramefromMS(_time, (time > _time) ? 0 : lastframe); //- decr;
-			if (!starttime){ lastframe--; if (VFF->Timecodes[lastframe] >= _time){ lastframe--; } }
-			time = VFF->Timecodes[lastframe];
-			lasttime = timeGetTime() - time;
-			playend = GetDuration();
+		VFF->SetPosition(_time, starttime);
+		playend = GetDuration();
 
-			if (hasVisualEdition){
-				SAFE_DELETE(Visual->dummytext);
-				if (Visual->Visual == VECTORCLIP){
-					Visual->SetClip(Visual->GetVisual(), true, false, false);
-				}
-				else{
-					OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
-					if (playing){ hasVisualEdition = false; }
-				}
-			}
-			else if (hasDummySubs){
-				OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
-			}
-			if (vstate == Playing){
-				if (player){
-					player->player->SetCurrentPosition(player->GetSampleAtMS(time));
-				}
+		if (hasVisualEdition){
+			SAFE_DELETE(Visual->dummytext);
+			if (Visual->Visual == VECTORCLIP){
+				Visual->SetClip(Visual->GetVisual(), true, false, false);
 			}
 			else{
-				if (player){ player->UpdateImage(true, true); }
-				Render(true, false);
+				OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
+				if (playing){ hasVisualEdition = false; }
 			}
 		}
+		else if (hasDummySubs){
+			OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
+		}
+		if (vstate == Playing){
+			if (player){
+				player->player->SetCurrentPosition(player->GetSampleAtMS(_time));
+			}
+		}
+		else{
+			if (player){ player->UpdateImage(true, true); }
+			Render(true, false);
+		}
+		
 	}
 }
 
@@ -1587,17 +1588,14 @@ void VideoRenderer::ChangePositionByFrame(int cpos)
 {
 	if (vstate == Playing || vstate == None){ return; }
 	if (!IsDshow){
-		if (!VFF->isBusy){
-			lastframe = MID(0, lastframe + cpos, VFF->NumFrames - 1);
-			time = VFF->Timecodes[lastframe];
-			TabPanel* pan = (TabPanel*)GetParent();
-			if (hasVisualEdition || hasDummySubs){
-				OpenSubs(pan->Grid->SaveText(), false, true);
-				hasVisualEdition = false;
-			}
-			if (player){ player->UpdateImage(true, true); }
-			Render(true, false);
+		VFF->ChangePositionByFrame(cpos);
+		TabPanel* pan = (TabPanel*)GetParent();
+		if (hasVisualEdition || hasDummySubs){
+			OpenSubs(pan->Grid->SaveText(), false, true);
+			hasVisualEdition = false;
 		}
+		if (player){ player->UpdateImage(true, true); }
+		Render(true, false);
 	}
 	else{
 		time += (frameDuration * cpos);

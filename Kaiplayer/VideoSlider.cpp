@@ -152,11 +152,11 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 		if (left_up && holding) {
 			holding = false;
 			if (block){
-				if (VB->VFF){
-					while (VB->VFF->isBusy){
-						Sleep(10);
-					}
-				}
+				//if (VB->VFF){
+					//while (VB->VFF->isBusy){
+						//Sleep(10);
+					//}
+				//}
 				SendTime(msTimePosition);
 				block = false;
 			}
