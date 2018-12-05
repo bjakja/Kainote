@@ -21,7 +21,6 @@
 VideoSlider::VideoSlider(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
 	: wxWindow(parent, id, pos, size, style, name)
 {
-	//SetBackgroundColour(wxColor("#808080"));
 	holding = block = false;
 	position = 0;
 	//bmp=0;
@@ -29,11 +28,6 @@ VideoSlider::VideoSlider(wxWindow *parent, const long int id, const wxPoint& pos
 	prbh = CreateBitmapFromPngResource("pbarhandle");
 	showlabel = false;
 	onslider = false;
-	//blockpaint=false;
-	videoSeekTimer.SetOwner(this, 12456);
-	Bind(wxEVT_TIMER, [=](wxTimerEvent & evt){
-		SendTime(msTimePosition);
-	}, 12456);
 }
 
 VideoSlider::~VideoSlider()
@@ -45,10 +39,6 @@ VideoSlider::~VideoSlider()
 
 void VideoSlider::OnPaint(wxPaintEvent& event)
 {
-	//if(blockpaint){return;}
-	//blockpaint=true;
-
-
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
@@ -117,7 +107,6 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 	}
 	wxPaintDC dc(this);
 	dc.Blit(0, 0, w, h, &tdc, 0, 0);
-	//blockpaint=false;
 }
 
 void VideoSlider::SetValue(float pos)
@@ -189,7 +178,7 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 		if (holding && isOnSlider || (holding && block)){
 			block = true;
 			position = MID(0, curX - 15 + positionDiff, w - 30);
-			if (!VB->IsDshow){ /*SendTime(msTimePosition);*/ videoSeekTimer.Start(10, true); }
+			if (!VB->IsDshow){ SendTime(msTimePosition); }
 			//Refresh(false);
 		}
 		//przesuwanie suwaka klikniêciem

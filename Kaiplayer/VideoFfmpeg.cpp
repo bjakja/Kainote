@@ -34,6 +34,7 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRenderer *renderer, bool
 	: rend(renderer)
 	, eventStartPlayback(CreateEvent(0, FALSE, FALSE, 0))
 	, eventRefresh(CreateEvent(0, FALSE, FALSE, 0))
+	, eventSetPosition(CreateEvent(0, FALSE, FALSE, 0))
 	, eventKillSelf(CreateEvent(0, FALSE, FALSE, 0))
 	, eventComplete(CreateEvent(0, FALSE, FALSE, 0))
 	, eventAudioComplete(CreateEvent(0, FALSE, FALSE, 0))
@@ -88,6 +89,7 @@ void VideoFfmpeg::Processing()
 	HANDLE events_to_wait[] = {
 		eventStartPlayback,
 		eventRefresh,
+		eventSetPosition,
 		eventKillSelf
 	};
 
@@ -184,6 +186,10 @@ void VideoFfmpeg::Processing()
 			rend->Render(false);
 
 			isBusy = false;
+		}
+		else if (wait_result == WAIT_OBJECT_0 + 2){
+			//entire seeking have to be in this thread or subtitles will out of sync
+			rend->SetFFMS2Position(changedTime, isStartTime);
 		}
 		else{
 			break;
@@ -1022,20 +1028,12 @@ void VideoFfmpeg::OpenKeyframes(const wxString & filename)
 	}
 }
 
-//void VideoFfmpeg::SetPosition(int _time, bool starttime)
-//{
-//	numframe = GetFramefromMS(_time, (time > _time) ? 0 : numframe);
-//	if (!starttime){ 
-//		numframe--; 
-//		if (Timecodes[numframe] >= _time){ numframe--; } 
-//	}
-//	time = Timecodes[numframe];
-//	/*if (rend){
-//		rend->time = time;
-//		rend->lastframe = numframe;
-//		}*/
-//	playingLastTime = timeGetTime() - time;
-//}
+void VideoFfmpeg::SetPosition(int _time, bool starttime)
+{
+	changedTime = _time;
+	isStartTime = starttime;
+	SetEvent(eventSetPosition);
+}
 //
 //void VideoFfmpeg::ChangePositionByFrame(int step)
 //{

@@ -119,7 +119,8 @@ class VideoRenderer : public wxWindow
 		bool PlayLine(int start, int end);
 		bool Pause();
 		bool Stop();
-		void SetPosition(int time, bool starttime=true, bool corect=true, bool reloadSubs=true);
+		void SetPosition(int time, bool starttime=true, bool corect=true);
+		void SetFFMS2Position(int time, bool starttime);
 		void GoToNextKeyframe();
 		void GoToPrevKeyframe();
 		int GetCurrentPosition();
@@ -159,7 +160,7 @@ class VideoRenderer : public wxWindow
 		void SetZoom();
 		void ResetZoom();
 		void SetVisualZoom();
-		int GetPreciseTime(bool start = true);
+		//int GetPreciseTime(bool start = true);
 		void DeleteAudioCache(){if(VFF){VFF->DeleteOldAudioCache();}}
 		void SetColorSpace(const wxString& matrix, bool render=true){
 			if(VFF){
@@ -173,6 +174,7 @@ class VideoRenderer : public wxWindow
 		virtual void ReleaseMouse(){};
 		virtual bool HasCapture(){return true;};
 		virtual bool SetCursor(const wxCursor &cursor){return true;};
+		virtual void RefreshTime(){};
 		LPDIRECT3DSURFACE9 MainStream;
 		LPDIRECT3DDEVICE9 d3device;
 		D3DFORMAT d3dformat;

@@ -477,8 +477,8 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 	byte *fdata = NULL;
 	byte *texbuf;
 	byte bytes = (vformat == RGB32) ? 4 : (vformat == YUY2) ? 2 : 1;
-	DWORD black = (vformat == RGB32) ? 0 : (vformat == YUY2) ? 0x80108010 : 0x10101010;
-	DWORD blackuv = (vformat == RGB32) ? 0 : (vformat == YUY2) ? 0x80108010 : 0x8080;
+	//DWORD black = (vformat == RGB32) ? 0 : (vformat == YUY2) ? 0x80108010 : 0x10101010;
+	//DWORD blackuv = (vformat == RGB32) ? 0 : (vformat == YUY2) ? 0x80108010 : 0x8080;
 
 	D3DLOCKED_RECT d3dlr;
 
@@ -486,7 +486,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 		fdata = nframe;
 		if (copy){
 			byte *cpy = (byte*)datas;
-			memcpy(cpy, fdata, vheight*pitch);
+			memcpy(cpy, fdata, vheight * pitch);
 		}
 	}
 	else{
@@ -615,7 +615,6 @@ void VideoRenderer::Clear()
 bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, bool vobsub, bool changeAudio)
 {
 	wxMutexLocker lock(mutexOpenFile);
-	//block=true;
 	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
 	TabPanel *tab = ((TabPanel*)GetParent());
 	VideoFfmpeg *tmpvff = NULL;
@@ -634,7 +633,6 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		if (tmpvff->width < 0 && tmpvff->GetSampleRate() > 0){
 			VideoFfmpeg *tmp = VFF;
 			VFF = tmpvff;
-			//TabPanel *pan = ((TabPanel*)GetParent());
 			Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
 			player = tab->Edit->ABox->audioDisplay;
 			VFF = tmp;
@@ -645,7 +643,8 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 
 	if (vstate != None){
 		resized = seek = cross = pbar = false;
-		vstate = None; Clear();
+		vstate = None; 
+		Clear();
 	}
 	IsDshow = Dshow;
 	time = 0;
@@ -664,7 +663,6 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		if (vwidth % 2 != 0){ vwidth++; }
 		pitch = vwidth * 4;
 		if (changeAudio){
-			//TabPanel *pan = ((TabPanel*)GetParent());
 			if (VFF->GetSampleRate() > 0){
 				Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
 				player = tab->Edit->ABox->audioDisplay;
@@ -682,11 +680,11 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		if (!vplayer->OpenFile(fname, vobsub)){ 
 			return false; 
 		}
-		wxSize siz = vplayer->GetVideoSize();
-		vwidth = siz.x; vheight = siz.y;
+		wxSize videoSize = vplayer->GetVideoSize();
+		vwidth = videoSize.x; vheight = videoSize.y;
 		if (vwidth % 2 != 0){ vwidth++; }
 
-		pitch = vwidth*vplayer->inf.bytes;
+		pitch = vwidth * vplayer->inf.bytes;
 		fps = vplayer->inf.fps;
 		vformat = vplayer->inf.CT;
 		ax = vplayer->inf.ARatioX;
@@ -708,7 +706,7 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 	if (datas){ delete[] datas; datas = NULL; }
 	datas = new char[vheight*pitch];
 
-	if (!InitDX()){/*block=false;*/return false; }
+	if (!InitDX()){ return false; }
 	UpdateRects();
 
 	if (!framee){ framee = new csri_frame; }
@@ -732,7 +730,6 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		SAFE_DELETE(textsubs);
 		OpenSubs(0, false);
 	}
-	/*block=false;*/
 	vstate = Stopped;
 	if (IsDshow && vplayer) 
 		vplayer->GetChapters(&chapters); 
@@ -826,11 +823,12 @@ bool VideoRenderer::Stop()
 	return false;
 }
 
-void VideoRenderer::SetPosition(int _time, bool starttime, bool corect, bool reloadSubs)
+void VideoRenderer::SetPosition(int _time, bool starttime/*=true*/, bool corect/*=true*/)
 {
-	TabPanel* tab = (TabPanel*)GetParent();
-	bool playing = vstate == Playing;
+	
 	if (IsDshow){
+		bool playing = vstate == Playing;
+		TabPanel* tab = (TabPanel*)GetParent();
 		time = MID(0, _time, GetDuration());
 		if (corect){
 			time /= frameDuration;
@@ -857,41 +855,46 @@ void VideoRenderer::SetPosition(int _time, bool starttime, bool corect, bool rel
 		}
 	}
 	else{
-		//VFF->SetPosition(_time, starttime);
-		numframe = VFF->GetFramefromMS(_time, (time > _time) ? 0 : numframe);
-		time = VFF->Timecodes[numframe];
-		if (!starttime){
-			numframe--;
-			if (time >= _time){ numframe--; time = VFF->Timecodes[numframe]; }
-		}
-		
-		lasttime = timeGetTime() - time;
-		playend = GetDuration();
+		VFF->SetPosition(_time, starttime);
+	}
+}
 
-		if (hasVisualEdition){
-			SAFE_DELETE(Visual->dummytext);
-			if (Visual->Visual == VECTORCLIP){
-				Visual->SetClip(Visual->GetVisual(), true, false, false);
-			}
-			else{
-				OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
-				if (playing){ hasVisualEdition = false; }
-			}
-		}
-		else if (hasDummySubs){
-			OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
-		}
-		if (vstate == Playing){
-			if (player){
-				player->player->SetCurrentPosition(player->GetSampleAtMS(time));
-			}
+void VideoRenderer::SetFFMS2Position(int _time, bool starttime){
+	TabPanel* tab = (TabPanel*)GetParent();
+	bool playing = vstate == Playing;
+	numframe = VFF->GetFramefromMS(_time, (time > _time) ? 0 : numframe);
+	time = VFF->Timecodes[numframe];
+	if (!starttime){
+		numframe--;
+		if (time >= _time){ numframe--; time = VFF->Timecodes[numframe]; }
+	}
+
+	lasttime = timeGetTime() - time;
+	playend = GetDuration();
+
+	if (hasVisualEdition){
+		SAFE_DELETE(Visual->dummytext);
+		if (Visual->Visual == VECTORCLIP){
+			Visual->SetClip(Visual->GetVisual(), true, false, false);
 		}
 		else{
-			if (player){ player->UpdateImage(true, true); }
-			//Render(true, false);
-			VFF->RenderFromWorker();
+			OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
+			if (playing){ hasVisualEdition = false; }
 		}
-		
+	}
+	else if (hasDummySubs){
+		OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
+	}
+	if (vstate == Playing){
+		if (player){
+			player->player->SetCurrentPosition(player->GetSampleAtMS(time));
+		}
+	}
+	else{
+		if (player){ player->UpdateImage(true, true); }
+		//Render(true, false);
+		VFF->Render();
+		RefreshTime();
 	}
 }
 

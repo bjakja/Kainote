@@ -351,8 +351,8 @@ bool VideoCtrl::Seek(int whre, bool starttime/*=true*/, bool disp/*=true*/, bool
 {
 	wxMutexLocker lock(vbmutex);
 	if (GetState() == None){ return false; }
-	SetPosition(whre, starttime, correct, reloadSubs);
-	if (disp && !IsDshow){ RefreshTime(); }
+	SetPosition(whre, starttime, correct);
+	//if (disp && !IsDshow){ RefreshTime(); }
 	return true;
 }
 

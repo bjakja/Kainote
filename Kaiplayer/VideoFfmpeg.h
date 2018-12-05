@@ -74,7 +74,7 @@ public:
 	wxString ColorCatrixDescription(int cs, int cr);
 	void SetColorSpace(const wxString& matrix);
 	void OpenKeyframes(const wxString & filename);
-	//void SetPosition(int time, bool starttime);
+	void SetPosition(int time, bool starttime);
 	//void ChangePositionByFrame(int step);
 	bool disccache;
 	volatile bool success;
@@ -102,6 +102,7 @@ public:
 	HANDLE thread;
 	HANDLE eventStartPlayback,
 		eventRefresh,
+		eventSetPosition,
 		eventKillSelf,
 		eventComplete,
 		eventAudioComplete;
@@ -126,8 +127,9 @@ private:
 	static unsigned int __stdcall FFMS2Proc(void* cls);
 	void Processing();
 	volatile bool stopLoadingAudio = false;
-	volatile bool renderAgain;
-	//int time = 0;
+	//volatile bool renderAgain;
+	volatile int changedTime = 0;
+	volatile bool isStartTime = true;
 	//int numframe = 0;
 	//int playingLastTime;
 	wxCriticalSection blockaudio;

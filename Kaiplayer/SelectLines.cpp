@@ -297,7 +297,7 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 		}
 	}
 
-	for (int i = 0; i < Subs->GetCount(); i++)
+	for (size_t i = 0; i < Subs->GetCount(); i++)
 	{
 		Dialogue *Dial = Subs->GetDialogue(i);
 		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue){ continue; }

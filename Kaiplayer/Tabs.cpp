@@ -1015,7 +1015,7 @@ void Notebook::SaveLastSession(bool beforeClose)
 	for (std::vector<TabPanel*>::iterator it = sthis->Pages.begin(); it != sthis->Pages.end(); it++){
 		TabPanel *tab = *it;
 		result << L"Tab: " << numtab << L"\r\nVideo: " << tab->VideoPath << 
-			L"\r\nPosition: " << tab->Video->Tell() << L"\r\nFFMS2: " << tab->Video->IsDshow <<
+			L"\r\nPosition: " << tab->Video->Tell() << L"\r\nFFMS2: " << !tab->Video->IsDshow <<
 			L"\r\nSubtitles: " << tab->SubsPath << L"\r\nActive: " << tab->Grid->currentLine <<
 			L"\r\nScroll: " << tab->Grid->GetScrollPosition() << L"\r\n";
 		numtab++;
