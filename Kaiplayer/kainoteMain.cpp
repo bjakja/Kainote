@@ -1200,7 +1200,7 @@ void KainoteFrame::AppendRecent(short what, Menu *_Menu)
 	for (int j = wmenu->GetMenuItemCount() - 1; j >= 0; j--){
 		wmenu->Destroy(wmenu->FindItemByPosition(j));
 	}
-	int i = 0;
+	size_t i = 0;
 	bool changedRecent = false;
 	while (i < recs.size())
 	{

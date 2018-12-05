@@ -30,6 +30,10 @@ VideoSlider::VideoSlider(wxWindow *parent, const long int id, const wxPoint& pos
 	showlabel = false;
 	onslider = false;
 	//blockpaint=false;
+	videoSeekTimer.SetOwner(this, 12456);
+	Bind(wxEVT_TIMER, [=](wxTimerEvent & evt){
+		SendTime(msTimePosition);
+	}, 12456);
 }
 
 VideoSlider::~VideoSlider()
@@ -185,7 +189,7 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 		if (holding && isOnSlider || (holding && block)){
 			block = true;
 			position = MID(0, curX - 15 + positionDiff, w - 30);
-			if (!VB->IsDshow){ SendTime(msTimePosition); }
+			if (!VB->IsDshow){ /*SendTime(msTimePosition);*/ videoSeekTimer.Start(10, true); }
 			//Refresh(false);
 		}
 		//przesuwanie suwaka klikniêciem

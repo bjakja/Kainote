@@ -184,7 +184,7 @@ void VideoCtrl::PlayLine(int start, int end)
 	ChangeButtonBMP(false);
 }
 
-bool VideoCtrl::Pause(bool burstbl)
+bool VideoCtrl::Pause(bool skipWhenOnEnd)
 {
 	wxMutexLocker lock(vbmutex);
 
@@ -201,7 +201,7 @@ bool VideoCtrl::Pause(bool burstbl)
 		LoadVideo(Kai->videorec[Kai->videorec.size() - 1], NULL);
 		return true;
 	}
-	if (time >= GetDuration() && burstbl){ return false; }
+	if (time >= GetDuration() && skipWhenOnEnd){ return false; }
 	if (!VideoRenderer::Pause()){ return false; }
 	if (GetState() == Paused){
 		vtime.Stop(); RefreshTime();
@@ -229,12 +229,18 @@ bool VideoCtrl::Stop()
 	return true;
 }
 
-bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool fulls /*= false*/, bool changeAudio)
+bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool fulls /*= false*/, bool changeAudio, int customFFMS2)
 {
 	if (fulls){ SetFullscreen(); }
 	prevchap = -1;
-	MenuItem *index = Kai->Menubar->FindItem(VideoIndexing);
-	bool byFFMS2 = index->IsChecked() && index->IsEnabled() && !fulls && !isFullscreen;
+	bool byFFMS2;
+	if (customFFMS2 == -1){
+		MenuItem *index = Kai->Menubar->FindItem(VideoIndexing);
+		byFFMS2 = index->IsChecked() && index->IsEnabled() && !fulls && !isFullscreen;
+	}
+	else
+		byFFMS2 = customFFMS2 == 1;
+
 	bool shown = true;
 	block = true;
 	if (!OpenFile(fileName, subsName, !byFFMS2, !Kai->GetTab()->editor, changeAudio)){
@@ -1189,19 +1195,19 @@ void VideoCtrl::ChangeOnScreenResolution(TabPanel *tab)
 
 void VideoCtrl::RefreshTime()
 {
-	STime kkk;
-	kkk.mstime = time;
+	STime videoTime;
+	videoTime.mstime = time;
 	float dur = GetDuration();
-	float val = (dur > 0) ? kkk.mstime / dur : 0.0;
+	float val = (dur > 0) ? videoTime.mstime / dur : 0.0;
 
 	if (isFullscreen){
 		TD->vslider->SetValue(val);
 		if (TD->panel->IsShown()){
 			wxString times;
-			times << kkk.raw(SRT) << L";  ";
+			times << videoTime.raw(SRT) << L";  ";
 			TabPanel *pan = (TabPanel*)GetParent();
 			if (!IsDshow){
-				times << lastframe << L";  ";
+				times << numframe << L";  ";
 				if (VFF){
 					if (VFF->KeyFrames.Index(time) != -1){
 						shownKeyframe = true;
@@ -1215,8 +1221,8 @@ void VideoCtrl::RefreshTime()
 			}
 			if (pan->editor){
 				Dialogue *line = pan->Edit->line;
-				int sdiff = kkk.mstime - ZEROIT(line->Start.mstime);
-				int ediff = kkk.mstime - ZEROIT(line->End.mstime);
+				int sdiff = videoTime.mstime - ZEROIT(line->Start.mstime);
+				int ediff = videoTime.mstime - ZEROIT(line->End.mstime);
 				times << sdiff << L" ms, " << ediff << L" ms";
 			}
 			TD->mstimes->SetValue(times);
@@ -1225,17 +1231,17 @@ void VideoCtrl::RefreshTime()
 		if (!pbar){ return; }
 		STime kkk1;
 		kkk1.mstime = dur;
-		pbtime = kkk.raw(TMP) + L" / " + kkk1.raw(TMP);
+		pbtime = videoTime.raw(TMP) + L" / " + kkk1.raw(TMP);
 		DrawProgBar();
 	}
 	else{
 		vslider->SetValue(val);
 		vslider->Update();
 		wxString times;
-		times << kkk.raw(SRT) << L";  ";
+		times << videoTime.raw(SRT) << L";  ";
 		TabPanel *pan = (TabPanel*)GetParent();
 		if (!IsDshow){
-			times << lastframe << L";  ";
+			times << numframe << L";  ";
 			if (VFF){
 				if (VFF->KeyFrames.Index(time) != -1){
 					shownKeyframe = true;
@@ -1249,10 +1255,10 @@ void VideoCtrl::RefreshTime()
 		}
 		if (pan->editor){
 			Dialogue *line = pan->Edit->line;
-			int sdiff = kkk.mstime - ZEROIT(line->Start.mstime);
-			int ediff = kkk.mstime - ZEROIT(line->End.mstime);
+			int sdiff = videoTime.mstime - ZEROIT(line->Start.mstime);
+			int ediff = videoTime.mstime - ZEROIT(line->End.mstime);
 			times << sdiff << L" ms, " << ediff << L" ms";
-			pan->Grid->RefreshIfVisible(kkk.mstime);
+			pan->Grid->RefreshIfVisible(videoTime.mstime);
 		}
 		mstimes->SetValue(times);
 		mstimes->Update();

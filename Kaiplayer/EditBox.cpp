@@ -1967,7 +1967,7 @@ void EditBox::FindNextDoubtfulTl(wxCommandEvent& event)
 {
 	if (!grid->hasTLMode){ wxBell(); return; }
 SeekDoubtful:
-	for (int i = CurrentDoubtful; i < grid->GetCount(); i++){
+	for (size_t i = CurrentDoubtful; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDialogue(i);
 		if (!dial->isVisible)
 			continue;
@@ -1989,7 +1989,7 @@ void EditBox::FindNextUnTranslated(wxCommandEvent& event)
 {
 	if (!grid->hasTLMode){ wxBell(); return; }
 SeekUntranslated:
-	for (int i = CurrentUntranslated; i < grid->GetCount(); i++){
+	for (size_t i = CurrentUntranslated; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDialogue(i);
 		if (!dial->isVisible)
 			continue;
@@ -2078,7 +2078,7 @@ void EditBox::RebuildActorEffectLists()
 {
 	ActorEdit->Clear();
 	EffectEdit->Clear();
-	for (int i = 0; i < grid->GetCount(); i++){
+	for (size_t i = 0; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDialogue(i);
 		if (!dial->Actor.empty() && ActorEdit->FindString(dial->Actor, true) < 0){
 			ActorEdit->Append(dial->Actor);

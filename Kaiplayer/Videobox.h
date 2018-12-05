@@ -30,22 +30,22 @@ class VideoCtrl : public VideoRenderer
 {
 public:
 
-	VideoCtrl(wxWindow *parent, KainoteFrame *kfparent, const wxSize &size=wxDefaultSize);
+	VideoCtrl(wxWindow *parent, KainoteFrame *kfparent, const wxSize &size = wxDefaultSize);
 	virtual ~VideoCtrl();
 	bool Play();
 	void PlayLine(int start, int end);
-	bool Pause(bool burstbl=true);
+	bool Pause(bool burstbl = true);
 	bool Stop();
-
-	bool LoadVideo(const wxString& fileName, wxString *subsName, bool fulls = false, bool changeAudio = true);
+	//custom FFMS2 -1 turn off, 0 Direct Show, 1 FFMS2
+	bool LoadVideo(const wxString& fileName, wxString *subsName, bool fullscreen = false, bool changeAudio = true, int customFFMS2 = -1);
 	PlaybackState GetState();
 
-	bool Seek(int whre,bool starttime=true,bool disp=true, bool reloadSubs=true, bool correct = true);
+	bool Seek(int newPosition, bool starttime = true, bool refreshTime = true, bool reloadSubs = true, bool correct = true);
 	int Tell();
-	bool CalcSize(int *width, int *height,int wwidth=0,int wheight=0,bool setstatus=false,bool calcH=false);
+	bool CalcSize(int *width, int *height, int wwidth = 0, int wheight = 0, bool setstatus = false, bool calcH = false);
 
-	void NextFile(bool next=true);
-	void SetFullscreen(int wmonitor=0);
+	void NextFile(bool next = true);
+	void SetFullscreen(int wmonitor = 0);
 	void SetAspectRatio(float AR);
 	void SetScaleAndZoom();
 	void ChangeOnScreenResolution(TabPanel *tab);
@@ -60,7 +60,7 @@ public:
 	KaiTextCtrl* mstimes;
 	VolSlider* volslider;
 	VideoToolbar *vToolbar;
-	void OpenEditor(bool esc=true);
+	void OpenEditor(bool esc = true);
 	void OnEndFile(wxCommandEvent& event);
 	void OnPrew();
 	void OnNext();
@@ -77,12 +77,12 @@ public:
 	wxRect GetMonitorRect(int wmonitor);
 	void ContextMenu(const wxPoint &pos);
 	void OnMouseEvent(wxMouseEvent& event);
-	void CaptureMouse(){if(isFullscreen && TD){TD->CaptureMouse();}else{wxWindow::CaptureMouse();}}
-	void ReleaseMouse(){if(isFullscreen && TD){TD->ReleaseMouse();}else{wxWindow::ReleaseMouse();}}
-	bool HasCapture(){if(isFullscreen && TD){return TD->HasCapture();}else{return wxWindow::HasCapture();}}
-	bool SetCursor(const wxCursor &cursor){if(isFullscreen && TD){return TD->SetCursor(cursor);}else{return wxWindow::SetCursor(cursor);}};
+	void CaptureMouse(){ if (isFullscreen && TD){ TD->CaptureMouse(); } else{ wxWindow::CaptureMouse(); } }
+	void ReleaseMouse(){ if (isFullscreen && TD){ TD->ReleaseMouse(); } else{ wxWindow::ReleaseMouse(); } }
+	bool HasCapture(){ if (isFullscreen && TD){ return TD->HasCapture(); } else{ return wxWindow::HasCapture(); } }
+	bool SetCursor(const wxCursor &cursor){ if (isFullscreen && TD){ return TD->SetCursor(cursor); } else{ return wxWindow::SetCursor(cursor); } };
 	bool SetBackgroundColour(const wxColour &col);
-	float coeffX,coeffY;
+	float coeffX, coeffY;
 	wxSize lastSize;
 	Fullscreen *TD;
 	bool hasArrow;
@@ -97,7 +97,7 @@ private:
 	BitmapButton* bstop;
 	BitmapButton* bnext;
 	BitmapButton* bpline;
-	
+
 	KainoteFrame *Kai;
 	int actualFile;
 	int id;
@@ -106,7 +106,7 @@ private:
 	int y;
 	wxArrayString files;
 	bool ismenu;
-	
+
 	void OnSize(wxSizeEvent& event);
 	void OnKeyPress(wxKeyEvent& event);
 	void OnPlaytime(wxTimerEvent& event);
@@ -119,15 +119,15 @@ private:
 	void OnCopyCoords(const wxPoint &pos);
 	void OnErase(wxEraseEvent& event){};
 	void OnChangeVisual(wxCommandEvent &evt);
-	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
-	void ChangeButtonBMP(bool play=false);
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
+	void ChangeButtonBMP(bool play = false);
 	wxTimer idletime;
 	DECLARE_EVENT_TABLE()
 };
 
 enum
-	{
-	idvtime=2000,
+{
+	idvtime = 2000,
 	ID_BPREV,
 	ID_BPAUSE,
 	ID_BSTOP,
@@ -138,8 +138,8 @@ enum
 	ID_MRECSUBS,
 	ID_MRECVIDEO,
 	ID_IDLE,
-	MENU_STREAMS=3333,
-	MENU_CHAPTERS=12000,
-	MENU_MONITORS=15000,
-	};
+	MENU_STREAMS = 3333,
+	MENU_CHAPTERS = 12000,
+	MENU_MONITORS = 15000,
+};
 

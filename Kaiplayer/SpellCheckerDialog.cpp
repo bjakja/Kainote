@@ -199,7 +199,7 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 		int lenMismatch = 0;
 		int textPos = 0;
 
-		for (int i = 0; i < tab->Grid->GetCount(); i++){
+		for (size_t i = 0; i < tab->Grid->GetCount(); i++){
 			Dialogue *Dial = tab->Grid->GetDialogue(i);
 			if (Dial->IsComment && noComments){ continue; }
 			wxString lineText = (tab->Grid->hasTLMode && Dial->TextTl != L"") ? Dial->TextTl : Dial->Text;

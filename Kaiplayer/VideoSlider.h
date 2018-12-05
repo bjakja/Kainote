@@ -48,6 +48,7 @@ protected:
 	bool onslider;
 	wxBitmap prb;
 	wxBitmap prbh;
+	//wxTimer videoSeekTimer;
 	DECLARE_EVENT_TABLE()
 };
 

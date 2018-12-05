@@ -87,7 +87,7 @@ VideoRenderer::VideoRenderer(wxWindow *_parent, const wxSize &size)
 	windowRect.left = 0;
 	windowRect.top = 0;
 	m_font = NULL;
-	lastframe = 0;
+	numframe = 0;
 	diff = 0;
 	avframetime = 42;
 	zoomParcent = 1.f;
@@ -649,7 +649,7 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 	}
 	IsDshow = Dshow;
 	time = 0;
-	lastframe = 0;
+	numframe = 0;
 
 	if (!Dshow){
 		SAFE_DELETE(vplayer);
@@ -769,6 +769,8 @@ bool VideoRenderer::Play(int end)
 	vstate = Playing;
 
 	if (!IsDshow){
+		time = VFF->Timecodes[numframe];
+		lasttime = timeGetTime() - time;
 		if (player){ player->Play(time, -1, false); }
 		VFF->Play();
 	}
@@ -810,16 +812,15 @@ bool VideoRenderer::Stop()
 		SetThreadExecutionState(ES_CONTINUOUS);
 		vstate = Stopped;
 		if (IsDshow){ 
-			vplayer->Stop(); 
-			time = 0; 
+			vplayer->Stop();  
 			playend = 0;
 		}
 		if (!IsDshow && player){ 
 			player->Stop(); 
-			VFF->SetPosition(0, true);
+			//VFF->SetPosition(0, true);
 			playend = GetDuration();
 		}
-		
+		time = 0;
 		return true;
 	}
 	return false;
@@ -856,7 +857,15 @@ void VideoRenderer::SetPosition(int _time, bool starttime, bool corect, bool rel
 		}
 	}
 	else{
-		VFF->SetPosition(_time, starttime);
+		//VFF->SetPosition(_time, starttime);
+		numframe = VFF->GetFramefromMS(_time, (time > _time) ? 0 : numframe);
+		time = VFF->Timecodes[numframe];
+		if (!starttime){
+			numframe--;
+			if (time >= _time){ numframe--; time = VFF->Timecodes[numframe]; }
+		}
+		
+		lasttime = timeGetTime() - time;
 		playend = GetDuration();
 
 		if (hasVisualEdition){
@@ -874,12 +883,13 @@ void VideoRenderer::SetPosition(int _time, bool starttime, bool corect, bool rel
 		}
 		if (vstate == Playing){
 			if (player){
-				player->player->SetCurrentPosition(player->GetSampleAtMS(_time));
+				player->player->SetCurrentPosition(player->GetSampleAtMS(time));
 			}
 		}
 		else{
 			if (player){ player->UpdateImage(true, true); }
-			Render(true, false);
+			//Render(true, false);
+			VFF->RenderFromWorker();
 		}
 		
 	}
@@ -946,18 +956,18 @@ int VideoRenderer::GetCurrentPosition()
 
 int VideoRenderer::GetCurrentFrame()
 {
-	return lastframe;
+	return numframe;
 }
 
 int VideoRenderer::GetFrameTime(bool start)
 {
 	if (VFF){
 		if (start){
-			int prevFrameTime = VFF->GetMSfromFrame(lastframe - 1);
+			int prevFrameTime = VFF->GetMSfromFrame(numframe - 1);
 			return time + ((prevFrameTime - time) / 2);
 		}
 		else{
-			int nextFrameTime = VFF->GetMSfromFrame(lastframe + 1);
+			int nextFrameTime = VFF->GetMSfromFrame(numframe + 1);
 			return time + ((nextFrameTime - time) / 2);
 		}
 	}
@@ -1584,21 +1594,24 @@ int VideoRenderer::GetVolume()
 	return 0;
 }
 
-void VideoRenderer::ChangePositionByFrame(int cpos)
+void VideoRenderer::ChangePositionByFrame(int step)
 {
 	if (vstate == Playing || vstate == None){ return; }
 	if (!IsDshow){
-		VFF->ChangePositionByFrame(cpos);
-		TabPanel* pan = (TabPanel*)GetParent();
-		if (hasVisualEdition || hasDummySubs){
-			OpenSubs(pan->Grid->SaveText(), false, true);
-			hasVisualEdition = false;
+		if (!VFF->isBusy){
+			numframe = MID(0, numframe + step, VFF->NumFrames - 1);
+			time = VFF->Timecodes[numframe];
+			TabPanel* pan = (TabPanel*)GetParent();
+			if (hasVisualEdition || hasDummySubs){
+				OpenSubs(pan->Grid->SaveText(), false, true);
+				hasVisualEdition = false;
+			}
+			if (player){ player->UpdateImage(true, true); }
+			Render(true, false);
 		}
-		if (player){ player->UpdateImage(true, true); }
-		Render(true, false);
 	}
 	else{
-		time += (frameDuration * cpos);
+		time += (frameDuration * step);
 		SetPosition(time, true, false);
 	}
 	VideoCtrl *vb = (VideoCtrl*)this;

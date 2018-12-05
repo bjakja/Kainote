@@ -199,14 +199,14 @@ namespace Auto{
 		path.Replace(L'/', L'\\');
 		wxString firstAutomation = Options.pathfull + "\\Automation";
 		if (path[0] == L'?'){
-			if (path[1] == L'a'&&path[4] == L'i') path.replace(0, 6, pan->VideoPath.BeforeLast(L'\\'));
+			if (path[1] == L'a' && path[4] == L'i') path.replace(0, 6, (pan)? pan->VideoPath.BeforeLast(L'\\') : L"");
 			else if (path[1] == L'd' && path[4] == L'a') path.replace(0, 5, firstAutomation);
 			else if (path[1] == L'd' && path[4] == L't') path.replace(0, 11, Options.pathfull + "\\Dictionary");
 			else if (path[1] == L'l' && path[4] == L'a') path.replace(0, 6, firstAutomation);
-			else if (path[1] == L's' && path[4] == L'i') path.replace(0, 7, pan->SubsPath.BeforeLast(L'\\'));
+			else if (path[1] == L's' && path[4] == L'i') path.replace(0, 7, (pan) ? pan->SubsPath.BeforeLast(L'\\') : L"");
 			else if (path[1] == L't' && path[4] == L'p') path.replace(0, 5, firstAutomation + "\\temp");
 			else if (path[1] == L'u' && path[4] == L'r') path.replace(0, 5, firstAutomation);
-			else if (path[1] == L'v' && path[4] == L'e') path.replace(0, 6, pan->VideoPath.BeforeLast(L'\\'));
+			else if (path[1] == L'v' && path[4] == L'e') path.replace(0, 6, (pan) ? pan->VideoPath.BeforeLast(L'\\') : L"");
 		}
 		push_value(L, path);
 		return 1;

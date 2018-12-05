@@ -157,7 +157,7 @@ int Notebook::GetOldSelection()
 	return olditer;
 }
 
-int Notebook::Size()
+size_t Notebook::Size()
 {
 	return Pages.size();
 }
@@ -392,7 +392,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			return;
 		}
 		else if (!allTabsVisible && (click || dclick) && x > w - 17 && x <= w){
-			if (firstVisibleTab<Size() - 1){
+			if (firstVisibleTab < Size() - 1){
 				firstVisibleTab++; RefreshRect(wxRect(w - 17, hh, 17, 25), false);
 			}
 			return;
@@ -744,7 +744,7 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 	tabsMenu.Append(MENU_SAVE + i, _("Zapisz"), _("Zapisz"))->Enable(i >= 0 && Pages[i]->Grid->file->CanSave());
 	tabsMenu.Append(MENU_SAVE - 1, _("Zapisz wszystko"), _("Zapisz wszystko"));
 	tabsMenu.Append(MENU_CHOOSE - 1, _("Zamknij wszystkie zakładki"), _("Zamknij wszystkie zakładki"));
-	if ((i != iter && Size()>1 && i != -1) || split){
+	if ((i != iter && Size() > 1 && i != -1) || split){
 		wxString txt = (split) ? _("Wyświetl jedną zakładkę") : _("Wyświetl dwie zakładki");
 		tabsMenu.Append((MENU_CHOOSE - 2) - i, txt);
 	}
@@ -967,9 +967,9 @@ bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*
 	return true;
 }
 
-bool Notebook::LoadVideo(TabPanel *tab, const wxString & path, int position /*= -1*/)
+bool Notebook::LoadVideo(TabPanel *tab, const wxString & path, int position /*= -1*/, bool isFFMS2)
 {
-	bool isload = tab->Video->LoadVideo(path, (tab->editor) ? tab->Grid->GetVisible() : 0);
+	bool isload = tab->Video->LoadVideo(path, (tab->editor) ? tab->Grid->GetVisible() : 0, false, true, (position != -1)? isFFMS2 : -1);
 
 	if (!isload){
 		return false;
@@ -1000,10 +1000,10 @@ Notebook *Notebook::GetTabs()
 {
 	return sthis;
 }
-
+//checking and return null when all tabs removed or iter is >= then size
 TabPanel *Notebook::GetTab()
 {
-	return sthis->Pages[sthis->iter];
+	return (sthis->iter < sthis->Size())? sthis->Pages[sthis->iter] : NULL;
 }
 
 void Notebook::SaveLastSession(bool beforeClose)
@@ -1014,7 +1014,8 @@ void Notebook::SaveLastSession(bool beforeClose)
 	int numtab = 0;
 	for (std::vector<TabPanel*>::iterator it = sthis->Pages.begin(); it != sthis->Pages.end(); it++){
 		TabPanel *tab = *it;
-		result << L"Tab: " << numtab << L"\r\nVideo: " << tab->VideoPath << L"\r\nPosition: " << tab->Video->Tell() <<
+		result << L"Tab: " << numtab << L"\r\nVideo: " << tab->VideoPath << 
+			L"\r\nPosition: " << tab->Video->Tell() << L"\r\nFFMS2: " << tab->Video->IsDshow <<
 			L"\r\nSubtitles: " << tab->SubsPath << L"\r\nActive: " << tab->Grid->currentLine <<
 			L"\r\nScroll: " << tab->Grid->GetScrollPosition() << L"\r\n";
 		numtab++;
@@ -1059,10 +1060,10 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 		wxString subtitles;
 		int activeLine = 0;
 		int scrollPosition = 0;
+		bool isFFMS2 = true;
 		wxString rest;
 		while (true)
 		{
-			
 			wxString token = tokenizer.GetNextToken();
 			if (token.StartsWith(L"Video: ", &rest))
 				video = rest;
@@ -1074,6 +1075,8 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 				activeLine = wxAtoi(rest);
 			else if (token.StartsWith(L"Scroll: ", &rest))
 				scrollPosition = wxAtoi(rest);
+			else if (token.StartsWith(L"FFMS2: ", &rest))
+				isFFMS2 = !!wxAtoi(rest);
 			// no else cause hasMoreTokens have to be checked everytime
 			bool hasnotMoreTokens = !tokenizer.HasMoreTokens();
 			if (token.StartsWith(L"Tab: ", &rest) || hasnotMoreTokens){
@@ -1086,7 +1089,7 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 						main->SetRecent();
 					}
 					if (!video.empty()){
-						sthis->LoadVideo(tab, video, videoPosition);
+						sthis->LoadVideo(tab, video, videoPosition, isFFMS2);
 					}
 					main->Label();
 
@@ -1095,6 +1098,7 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 					subtitles = L"";
 					activeLine = 0;
 					scrollPosition = 0;
+					isFFMS2 = true;
 				}
 			}
 			if (hasnotMoreTokens)

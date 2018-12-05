@@ -36,6 +36,7 @@ public:
 	VideoFfmpeg(const wxString &filename, VideoRenderer *renderer, bool *success);
 	~VideoFfmpeg();
 	void Render(bool wait=true);
+	void RenderFromWorker();
 	void Play();
 	void GetFrame(int frame, byte* buff);
 	void GetBuffer(void *buf, int64_t start, int64_t count, double vol=1.0);
@@ -73,12 +74,13 @@ public:
 	wxString ColorCatrixDescription(int cs, int cr);
 	void SetColorSpace(const wxString& matrix);
 	void OpenKeyframes(const wxString & filename);
-	void SetPosition(int time, bool starttime);
-	void ChangePositionByFrame(int step);
+	//void SetPosition(int time, bool starttime);
+	//void ChangePositionByFrame(int step);
 	bool disccache;
 	volatile bool success;
 	volatile bool audioNotInitialized = true;
 	volatile bool lockGetFrame = true;
+	volatile bool isBusy;
 	volatile float audioProgress = 0;
 	int width;
 	int height;
@@ -97,7 +99,6 @@ public:
 	double Delay;
 	float fps;
 	int64_t NumSamples;
-	wxCriticalSection blockaudio;
 	HANDLE thread;
 	HANDLE eventStartPlayback,
 		eventRefresh,
@@ -125,10 +126,11 @@ private:
 	static unsigned int __stdcall FFMS2Proc(void* cls);
 	void Processing();
 	volatile bool stopLoadingAudio = false;
-	volatile bool isBusy;
 	volatile bool renderAgain;
-	int time = 0;
-	int numframe = 0;
-	int playingLastTime;
+	//int time = 0;
+	//int numframe = 0;
+	//int playingLastTime;
+	wxCriticalSection blockaudio;
+	wxCriticalSection blockframe;
 };
 

@@ -38,7 +38,7 @@ public:
 	int GetIterByPos(const wxPoint &pos);
 	int GetSelection();
 	int GetOldSelection();
-	int Size();
+	size_t Size();
 	TabPanel *Page(size_t i);
 	void DeletePage(int page);
 	void Split(size_t page);
@@ -48,7 +48,7 @@ public:
 	void ChangeActive();
 	void RefreshBar();
 	bool LoadSubtitles(TabPanel *tab, const wxString & path, int active = -1, int scroll = -1);
-	bool LoadVideo(TabPanel *tab, const wxString & path, int position = -1);
+	bool LoadVideo(TabPanel *tab, const wxString & path, int position = -1, bool isFFMS2 = true);
 
 	int iter;
 	bool block;

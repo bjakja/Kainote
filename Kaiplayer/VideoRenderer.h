@@ -91,7 +91,7 @@ public:
 	FloatRect(float _x, float _y, float _width, float _height){x=_x; y=_y; width = _width; height = _height;};
 	FloatRect(){x=0; y=0; width = 0; height = 0;}
 	float GetBottom() const { return y - height - 1; }
-    float GetRight()  const { return x - width - 1; }
+	float GetRight()  const { return x - width - 1; }
 	float x;
 	float y;
 	float width;
@@ -119,9 +119,9 @@ class VideoRenderer : public wxWindow
 		bool PlayLine(int start, int end);
 		bool Pause();
 		bool Stop();
-        void SetPosition(int time, bool starttime=true, bool corect=true, bool reloadSubs=true);
+		void SetPosition(int time, bool starttime=true, bool corect=true, bool reloadSubs=true);
 		void GoToNextKeyframe();
-        void GoToPrevKeyframe();
+		void GoToPrevKeyframe();
 		int GetCurrentPosition();
 		int GetCurrentFrame();
 		int GetFrameTime(bool start = true);
@@ -191,7 +191,7 @@ class VideoRenderer : public wxWindow
 		int vheight;
 		int pitch;
 		int time;
-		int lastframe;
+		int numframe;
 		int panelHeight;
 		long ax,ay;
 		float AR, fps;
