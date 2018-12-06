@@ -408,6 +408,12 @@
     <ClCompile Include="TextEditorTagList.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="VideoPlayer.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="FFMS2Player.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -730,6 +736,12 @@
     </ClInclude>
     <ClInclude Include="TextEditorTagList.h">
       <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoPlayer.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="FFMS2Player.h">
+      <Filter>Header Files\Video</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

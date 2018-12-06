@@ -214,7 +214,7 @@ class VideoRenderer : public wxWindow
 		PlaybackState vstate;
 		Visuals *Visual;
 		int playend;
-		size_t lasttime;
+		int lasttime;
 		std::vector<chapter> chapters;
 		FloatRect zoomRect;
 		wxString keyframesFileName;

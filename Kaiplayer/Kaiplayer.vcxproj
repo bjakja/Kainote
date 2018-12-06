@@ -391,6 +391,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="ColorSpace.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DShowPlayer.cpp" />
+    <ClCompile Include="FFMS2Player.cpp" />
     <ClCompile Include="FindReplace.cpp" />
     <ClCompile Include="FindReplaceDialog.cpp" />
     <ClCompile Include="FindReplaceResultsDialog.cpp" />
@@ -436,6 +437,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="SubsLoader.cpp" />
     <ClCompile Include="SubsResampleDialog.cpp" />
     <ClCompile Include="TextEditorTagList.cpp" />
+    <ClCompile Include="VideoPlayer.cpp" />
     <ClCompile Include="VideoToolbar.cpp" />
     <ClCompile Include="VisualMoveAll.cpp" />
     <ClCompile Include="VisualClipRect.cpp" />
@@ -505,6 +507,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="ColorSpace.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="DShowPlayer.h" />
+    <ClInclude Include="FFMS2Player.h" />
     <ClInclude Include="FindReplace.h" />
     <ClInclude Include="FindReplaceDialog.h" />
     <ClInclude Include="FindReplaceResultsDialog.h" />
@@ -590,6 +593,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="Videobox.h" />
     <ClInclude Include="VideoFfmpeg.h" />
     <ClInclude Include="VideoFullscreen.h" />
+    <ClInclude Include="VideoPlayer.h" />
     <ClInclude Include="VideoRenderer.h" />
     <ClInclude Include="VideoSlider.h" />
     <ClInclude Include="VideoToolbar.h" />
