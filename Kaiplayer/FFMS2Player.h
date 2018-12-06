@@ -54,7 +54,7 @@ public:
 	void Render(bool RecreateFrame = true);
 	void ChangePositionByFrame(int cpos);
 	void DeleteAudioCache(){ VFF->DeleteOldAudioCache(); }
-	
+	byte *GetFramewithSubs(bool subs, bool *del);
 	
 	VideoFfmpeg *VFF;
 	AudioDisplay *player;

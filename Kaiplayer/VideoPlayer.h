@@ -138,16 +138,15 @@ public:
 	virtual void GetFpsnRatio(float *fps, long *arx, long *ary){};
 	virtual void SetVolume(int vol){};
 	virtual void ChangePositionByFrame(int step){};
-	wxArrayString GetStreams();
-	byte *GetFramewithSubs(bool subs, bool *del);
-
-	//virtual functions for FFMS2
-	virtual void GoToNextKeyframe(){};
-	virtual void GoToPrevKeyframe(){};
 	virtual int GetFrameTime(bool start = true){ return 0; };
 	virtual void GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd){};
 	virtual int GetFrameTimeFromTime(int time, bool start = true){ return 0; };
 	virtual int GetFrameTimeFromFrame(int frame, bool start = true){ return 0; };
+	virtual byte *GetFramewithSubs(bool subs, bool *del){ return NULL; };
+
+	//virtual functions for FFMS2
+	virtual void GoToNextKeyframe(){};
+	virtual void GoToPrevKeyframe(){};
 	virtual void DeleteAudioCache(){}
 	virtual void SetColorSpace(const wxString& matrix){}
 	virtual void OpenKeyframes(const wxString &filename){};
@@ -157,7 +156,7 @@ public:
 	void ChangeVobsub(bool vobsub = false);
 	bool EnumFilters(Menu *menu);
 	bool FilterConfig(wxString name, int idx, wxPoint pos);
-
+	wxArrayString GetStreams();
 	//rest
 	void UpdateVideoWindow();
 	

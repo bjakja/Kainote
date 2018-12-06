@@ -268,3 +268,168 @@ bool FFMS2Player::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 	delete textsubs;
 	return true;
 }
+
+int FFMS2Player::GetFrameTime(bool start)
+{
+	if (start){
+		int prevFrameTime = VFF->GetMSfromFrame(numframe - 1);
+		return time + ((prevFrameTime - time) / 2);
+	}
+	else{
+		int nextFrameTime = VFF->GetMSfromFrame(numframe + 1);
+		return time + ((nextFrameTime - time) / 2);
+	}
+}
+
+void FFMS2Player::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
+{
+	if (!retStart || !retEnd){ return; }
+	int frameStartTime = VFF->GetFramefromMS(startTime);
+	int frameEndTime = VFF->GetFramefromMS(endTime, frameStartTime);
+	*retStart = VFF->GetMSfromFrame(frameStartTime) - startTime;
+	*retEnd = VFF->GetMSfromFrame(frameEndTime) - endTime;
+}
+
+int FFMS2Player::GetFrameTimeFromTime(int _time, bool start)
+{
+
+	if (start){
+		int frameFromTime = VFF->GetFramefromMS(_time);
+		int prevFrameTime = VFF->GetMSfromFrame(frameFromTime - 1);
+		int frameTime = VFF->GetMSfromFrame(frameFromTime);
+		return frameTime + ((prevFrameTime - frameTime) / 2);
+	}
+	else{
+		int frameFromTime = VFF->GetFramefromMS(_time);
+		int nextFrameTime = VFF->GetMSfromFrame(frameFromTime + 1);
+		int frameTime = VFF->GetMSfromFrame(frameFromTime);
+		return frameTime + ((nextFrameTime - frameTime) / 2);
+	}
+
+}
+
+int FFMS2Player::GetFrameTimeFromFrame(int frame, bool start)
+{
+
+	if (start){
+		int prevFrameTime = VFF->GetMSfromFrame(frame - 1);
+		int frameTime = VFF->GetMSfromFrame(frame);
+		return frameTime + ((prevFrameTime - frameTime) / 2);
+	}
+	else{
+		int nextFrameTime = VFF->GetMSfromFrame(frame + 1);
+		int frameTime = VFF->GetMSfromFrame(frame);
+		return frameTime + ((nextFrameTime - frameTime) / 2);
+	}
+	
+}
+
+int FFMS2Player::GetPlayEndTime(int _time)
+{
+	
+	int frameFromTime = VFF->GetFramefromMS(_time);
+	int prevFrameTime = VFF->GetMSfromFrame(frameFromTime - 1);
+	return prevFrameTime;
+	
+}
+
+int FFMS2Player::GetDuration()
+{
+	return VFF->Duration * 1000.0;
+}
+
+void FFMS2Player::GetFpsnRatio(float *fps, long *arx, long *ary)
+{
+	*fps = VFF->fps;
+	*arx = VFF->arwidth;
+	*ary = VFF->arheight;
+}
+
+void FFMS2Player::GetVideoSize(int *width, int *height)
+{
+	*width = VFF->width;
+	*height = VFF->height;
+}
+
+wxSize FFMS2Player::GetVideoSize()
+{
+	wxSize sz;
+	sz.x = VFF->width;
+	sz.y = VFF->height;
+	return sz;
+}
+
+void FFMS2Player::SetVolume(int vol)
+{
+	vol = 7600 + vol;
+	double dvol = vol / 7600.0;
+	int sliderValue = (dvol * 99) + 1;
+	TabPanel *tab = (TabPanel*)videoWindow->GetParent();
+	if (tab->Edit->ABox){
+		tab->Edit->ABox->SetVolume(sliderValue);
+	}
+	
+}
+
+int FFMS2Player::GetVolume()
+{
+	if (player){
+		double dvol = player->player->GetVolume();
+		dvol = sqrt(dvol);
+		dvol *= 8100.0;
+		dvol -= 8100.0;
+		return dvol;
+	}
+	return 0;
+}
+
+void FFMS2Player::ChangePositionByFrame(int step)
+{
+	if (vstate == Playing){ return; }
+	if (!VFF->isBusy){
+		numframe = MID(0, numframe + step, VFF->NumFrames - 1);
+		time = VFF->Timecodes[numframe];
+		TabPanel* tab = (TabPanel*)videoWindow->GetParent();
+		if (hasVisualEdition || hasDummySubs){
+			OpenSubs(tab->Grid->SaveText(), false, true);
+			hasVisualEdition = false;
+		}
+		if (player){ player->UpdateImage(true, true); }
+		Render(true);
+	}
+	
+	videoWindow->RefreshTime();
+
+}
+
+byte *FFMS2Player::GetFramewithSubs(bool subs, bool *del)
+{
+	int all = vheight*pitch;
+	
+	*del = true;
+	byte *cpy = new byte[all];
+	
+	VFF->GetFrame(time, cpy);
+	return cpy;
+}
+
+void FFMS2Player::GoToNextKeyframe()
+{
+	for (size_t i = 0; i < VFF->KeyFrames.size(); i++){
+		if (VFF->KeyFrames[i] > time){
+			SetPosition(VFF->KeyFrames[i]);
+			return;
+		}
+	}
+	SetPosition(VFF->KeyFrames[0]);
+}
+void FFMS2Player::GoToPrevKeyframe()
+{
+	for (int i = VFF->KeyFrames.size() - 1; i >= 0; i--){
+		if (VFF->KeyFrames[i] < time){
+			SetPosition(VFF->KeyFrames[i]);
+			return;
+		}
+	}
+	SetPosition(VFF->KeyFrames[VFF->KeyFrames.size() - 1]);
+}

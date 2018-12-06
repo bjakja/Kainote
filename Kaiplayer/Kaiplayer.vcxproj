@@ -390,6 +390,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="ChangeTime.cpp" />
     <ClCompile Include="ColorSpace.cpp" />
     <ClCompile Include="Config.cpp" />
+    <ClCompile Include="DirectShowPlayer.cpp" />
     <ClCompile Include="DShowPlayer.cpp" />
     <ClCompile Include="FFMS2Player.cpp" />
     <ClCompile Include="FindReplace.cpp" />
@@ -506,6 +507,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="ChangeTime.h" />
     <ClInclude Include="ColorSpace.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="DirectShowPlayer.h" />
     <ClInclude Include="DShowPlayer.h" />
     <ClInclude Include="FFMS2Player.h" />
     <ClInclude Include="FindReplace.h" />

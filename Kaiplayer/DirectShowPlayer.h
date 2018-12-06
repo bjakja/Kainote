@@ -1,4 +1,4 @@
-//  Copyright (c) 2016, Marcin Drob
+//  Copyright (c) 2016-2018, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "VideoRenderer.h"
+#include "VideoPlayer.h"
 
 #include <wx/wx.h>
 #include <dshow.h>
@@ -24,48 +24,44 @@
 #include "DshowRenderer.h"
 
 
-class DShowPlayer
+class DShowPlayer : public VideoPlayer
 {
 public:
 
-	DShowPlayer(wxWindow*_parent);
+	DShowPlayer(VideoCtrl* _parent);
 	~DShowPlayer();
 	bool OpenFile(wxString fname, bool vobsub=false);
 	void Play();
-	void Pause();
-	void Stop();
+	bool Pause();
+	bool Stop();
 	void SetPosition(int pos);
 
 	int GetPosition();
 	int GetDuration();
 
-	void SetVolume(long volume);
-	long GetVolume();
+	void SetVolume(int volume);
+	int GetVolume();
 
 	void GetFpsnRatio(float *fps, long *arx, long *ary);
 	bool EnumFilters(Menu *menu);
 	bool FilterConfig(wxString name, int idx, wxPoint pos);
 	void GetChapters(std::vector<chapter> *chapters);
+	void GetVideoSize(int *width, int *height);
 	wxSize GetVideoSize();
+	wxArrayString GetStreams();
+	void RecreateSurface();
 	void TearDownGraph();
-	PlaybackState m_state;
 	VideoInf inf;
 	IMediaControl *m_pControl;
-	wxArrayString GetStreams();
 	IAMStreamSelect *stream;
 	IAMExtendedSeeking *chapters;
 private:
-	bool InitializeGraph();
-	HWND hwndVid;			
+	bool InitializeGraph();		
 
 	IGraphBuilder	*m_pGraph;
 	IMediaSeeking	*m_pSeek;
 	IBasicAudio		*m_pBA;
 	//IBaseFilter		*frend;
-
-
-
-	wxWindow *parent;
 
 };
 

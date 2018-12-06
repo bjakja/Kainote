@@ -414,6 +414,9 @@
     <ClCompile Include="FFMS2Player.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
+    <ClCompile Include="DirectShowPlayer.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -741,6 +744,9 @@
       <Filter>Header Files\Video</Filter>
     </ClInclude>
     <ClInclude Include="FFMS2Player.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectShowPlayer.h">
       <Filter>Header Files\Video</Filter>
     </ClInclude>
   </ItemGroup>
