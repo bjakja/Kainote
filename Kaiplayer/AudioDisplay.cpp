@@ -262,7 +262,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 
 	if (d3dDevice){
 		hr = d3dDevice->Reset(&d3dpp);
-		if (FAILED(hr)){ KaiLog(_("Nie można zresetować Direct3D")); }
+		if (FAILED(hr)){ return false; }
 	}
 	else{
 		hr = d3dObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
@@ -330,10 +330,16 @@ void AudioDisplay::DoUpdateImage() {
 	//if (!needImageUpdate) return;
 	bool weak = needImageUpdateWeak;
 
-	if (LastSize.x != w || LastSize.y != h || !d3dDevice) {
+	if (LastSize.x != w || LastSize.y != h || !d3dDevice || needToReset) {
 		LastSize = wxSize(w, h);
-		if (!InitDX(wxSize(w, displayH)))
-			return;
+		if (!InitDX(wxSize(w, displayH))){
+			ClearDX();
+			if (!InitDX(wxSize(w, displayH))){
+				KaiLog(_("Nie można zresetować Direct3D"));
+				needToReset = true;
+				return;
+			}
+		}
 	}
 
 

@@ -645,7 +645,7 @@ void MisspellReplacer::GetCheckedRules(std::vector<int> &checkedRules)
 void MisspellReplacer::SaveRules()
 {
 	wxString rulesText = L"#Kainote rules file\r\n";
-	for (int i = 0; i < RulesList->GetCount(); i++){
+	for (size_t i = 0; i < RulesList->GetCount(); i++){
 		Item *item = RulesList->GetItem(i, 0);
 		if (item)
 			rulesText << (int)item->modified << L"|";

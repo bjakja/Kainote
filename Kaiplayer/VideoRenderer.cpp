@@ -855,7 +855,10 @@ void VideoRenderer::SetPosition(int _time, bool starttime/*=true*/, bool corect/
 		}
 	}
 	else{
-		VFF->SetPosition(_time, starttime);
+		if (vstate == Playing)
+			SetFFMS2Position(_time, starttime);
+		else
+			VFF->SetPosition(_time, starttime);
 	}
 }
 
@@ -863,12 +866,11 @@ void VideoRenderer::SetFFMS2Position(int _time, bool starttime){
 	TabPanel* tab = (TabPanel*)GetParent();
 	bool playing = vstate == Playing;
 	numframe = VFF->GetFramefromMS(_time, (time > _time) ? 0 : numframe);
-	time = VFF->Timecodes[numframe];
 	if (!starttime){
 		numframe--;
-		if (time >= _time){ numframe--; time = VFF->Timecodes[numframe]; }
+		if (VFF->Timecodes[numframe] >= _time){ numframe--;}
 	}
-
+	time = VFF->Timecodes[numframe];
 	lasttime = timeGetTime() - time;
 	playend = GetDuration();
 

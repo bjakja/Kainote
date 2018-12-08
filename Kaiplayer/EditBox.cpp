@@ -1107,7 +1107,7 @@ void EditBox::OnCopySelection(wxCommandEvent& event)
 void EditBox::RefreshStyle(bool resetline)
 {
 	StyleChoice->Clear();
-	for (int i = 0; i < grid->StylesSize(); i++){
+	for (size_t i = 0; i < grid->StylesSize(); i++){
 		StyleChoice->Append(grid->GetStyle(i)->Name);
 	}
 	int selection = grid->FindStyle(line->Style);

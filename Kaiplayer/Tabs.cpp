@@ -1092,7 +1092,7 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 						sthis->LoadVideo(tab, video, videoPosition, isFFMS2);
 					}
 					main->Label();
-
+					tab->ShiftTimes->Contents();
 					video = L"";
 					videoPosition = 0;
 					subtitles = L"";
@@ -1110,7 +1110,6 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 		TabPanel *tab = sthis->GetTab();
 		tab->Show();
 		tab->Video->DeleteAudioCache();
-		tab->ShiftTimes->Contents();
 		main->SetSubsResolution(false);
 		main->UpdateToolbar();
 		Options.SaveOptions(true, false);

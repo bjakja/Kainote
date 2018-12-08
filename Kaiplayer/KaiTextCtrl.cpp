@@ -337,7 +337,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 										GetTextExtent(KText.Mid(currentPosition, j - currentPosition + 1), &fw, &fh);
 										pos = (stylewrap == 1) ? ((w - fw) / 2) : (w - fw) - 5;
 									}
-									positioning.Add(pos);
+									positioning.push_back(pos);
 									wraps.push_back(j);
 									currentPosition = j + 1;
 									step = 10;
@@ -354,7 +354,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 						GetTextExtent(KText.Mid(currentPosition, newWrap - currentPosition + 1), &fw, &fh);
 						pos = (stylewrap == 1) ? ((w - fw) / 2) : (w - fw) - 5;
 					}
-					positioning.Add(pos);
+					positioning.push_back(pos);
 					wraps.push_back((newWrap > len) ? len : newWrap);
 					currentPosition = newWrap;
 					foundWrap = false;
@@ -367,7 +367,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 					GetTextExtent(KText.Mid(currentPosition, wrap - currentPosition + 1), &fw, &fh);
 					pos = (stylewrap == 1) ? ((w - fw) / 2) : (w - fw) - 5;
 				}
-				positioning.Add(pos);
+				positioning.push_back(pos);
 				wraps.push_back(wrap);
 				currentPosition = wrap;
 			}
@@ -378,7 +378,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 		wraps.clear();
 		wraps.push_back(0);
 		positioning.clear();
-		positioning.Add(0);
+		positioning.push_back(0);
 		wraps.push_back(KText.length());
 		GetTextExtent(KText, &fw, &fh);
 		int rightPos = (w - fw);
@@ -386,7 +386,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 			(style & wxALIGN_RIGHT) ? rightPos - 5 : 5;
 
 		if (pos < 5){ pos = 5; }
-		positioning.Add(pos);
+		positioning.push_back(pos);
 	}
 	int rightPos = h - Fheight;
 	posY = (style & wxALIGN_CENTER_VERTICAL) ? (rightPos / 2) : (style & wxALIGN_BOTTOM) ? rightPos - 2 : 2;

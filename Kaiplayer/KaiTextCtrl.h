@@ -86,7 +86,7 @@ protected:
 	void OnAccelerator(wxCommandEvent& event);
 	void OnCharPress(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
-    void OnSize(wxSizeEvent& event);
+	void OnSize(wxSizeEvent& event);
 	void OnPaint(wxPaintEvent& event);
 	void OnKillFocus(wxFocusEvent& event);
 	void OnEraseBackground(wxEraseEvent& event){};
@@ -97,7 +97,7 @@ protected:
 	void SendEvent();
 	void GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight, bool correct=false);
 	void MakeCursorVisible(bool refresh=true);
-    wxString KText;
+	wxString KText;
 	wxBitmap* bmp;
 	wxFont font;
 	wxCaret *caret;
@@ -116,7 +116,7 @@ protected:
 	int tmpstart, tmpend;
 	size_t maxSize;
 	std::vector<int> wraps;
-	wxArrayInt positioning;
+	std::vector<int> positioning;
 	std::vector<TextStyle> textStyles;
 	std::vector<int> charmap;
 	wxSize lastSize;

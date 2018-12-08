@@ -124,6 +124,7 @@ private:
 	LPD3DXFONT d3dFont8;
 	LPD3DXFONT d3dFont9;
 	bool deviceLost;
+	bool needToReset = false;
 	//config
 	int selWidth;
 	int shadeType;
