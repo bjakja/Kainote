@@ -231,7 +231,7 @@ int Hotkeys::LoadHkeys(bool Audio)
 	wxString acctxt;
 	//failedowało z tak błachego powodu jak brak ścieżki
 	//trzeba uważać na kolejność, opcje mają zdecydowane pierwszeństwo
-	if (!ow.FileOpen(Options.pathfull + hkpath, &acctxt, true)){ LoadDefault(hkeys, Audio); return 1; }
+	if (!ow.FileOpen(Options.configPath + hkpath, &acctxt, true)){ LoadDefault(hkeys, Audio); return 1; }
 
 	wxStringTokenizer hk(acctxt, "\n", wxTOKEN_STRTOK);
 
@@ -314,7 +314,7 @@ void Hotkeys::SaveHkeys(bool Audio)
 	}
 	OpenWrite ow;
 	wxString hkpath = (Audio) ? "\\AudioHotkeys.txt" : "\\Hotkeys.txt";
-	ow.FileWrite(Options.pathfull + hkpath, Texthk);
+	ow.FileWrite(Options.configPath + hkpath, Texthk);
 
 }
 

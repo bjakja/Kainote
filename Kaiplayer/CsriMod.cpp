@@ -179,7 +179,7 @@ static void csrilib_enum_dir(const wchar_t *dir)
 
 void csrilib_os_init()
 {
-	/*wchar_t filename[MAX_PATH], *slash;
+	wchar_t filename[MAX_PATH], *slash;
 	DWORD rv = GetModuleFileNameW(NULL, filename, MAX_PATH);
 	if (!rv)
 		*filename = L'\0';
@@ -187,8 +187,8 @@ void csrilib_os_init()
 	slash = slash ? slash + 1 : filename;
 	*slash = L'\0';
 	wcsncpy(slash, L"csri", filename + MAX_PATH - slash);
-	csrilib_enum_dir(filename);*/
-	csrilib_do_load(L"vsfilter_kainote.dll");
+	csrilib_enum_dir(filename);
+	//csrilib_do_load(L"vsfilter_kainote.dll");
 }
 
 struct csri_wrap_rend *wraprends = NULL;
@@ -315,11 +315,10 @@ csri_rend *csri_renderer_byext(unsigned n_ext, csri_ext_id *ext)
 	return NULL;
 }
 
-int *csri_close_renderer(csri_rend *renderer)
+void csri_close_renderer(csri_rend *renderer)
 {
 	std::unique_lock<std::mutex> lck (mtx);
-	if(wraprends){free(wraprends);wraprends=NULL;}
-	return 0;
+	if(wraprends){free(wraprends); wraprends=NULL;}
 }
 
 csri_inst *csri_open_file(csri_rend *rend,

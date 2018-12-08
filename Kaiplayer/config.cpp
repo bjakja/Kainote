@@ -25,7 +25,7 @@
 #include <wx/log.h>
 #include <wx/mstream.h>
 #include <wx/bitmap.h>
-//#include <wx/msgdlg.h>
+#include "CsriMod.h"
 #include "Tabs.h"//<windows.h>
 #include "gitparams.h"
 #include <windows.h>
@@ -57,6 +57,8 @@ config::~config()
 		delete (*it);
 	}
 	assstore.clear();
+	if (vsfilter)
+		csri_close_renderer(vsfilter);
 }
 
 wxString config::GetReleaseDate()
@@ -64,6 +66,39 @@ wxString config::GetReleaseDate()
 	return wxString(__DATE__) + "  " + wxString(__TIME__);
 }
 
+
+csri_rend * config::GetVSFilter()
+{
+	if (!vsfilter){
+		vsfilter = csri_renderer_default();
+		csri_info *info = csri_renderer_info(vsfilter);
+		wxString name = GetString(VSFILTER_INSTANCE);
+		while (info->name != name){
+			vsfilter = csri_renderer_next(vsfilter);
+			if (!vsfilter)
+				break;
+			info = csri_renderer_info(vsfilter);
+		}
+	}
+	return vsfilter;
+}
+
+wxArrayString config::GetVSFiltersList()
+{
+	wxArrayString filtersList;
+	csri_rend *filter = csri_renderer_default();
+	if (!filter)
+		return filtersList;
+	csri_info *info = csri_renderer_info(filter);
+	filtersList.Add(info->name);
+	while (1){
+		filter = csri_renderer_next(vsfilter);
+		if (!filter)
+			break;
+		info = csri_renderer_info(filter);
+		filtersList.Add(info->name);
+	}
+}
 
 bool config::SetRawOptions(const wxString &textconfig)
 {
@@ -254,7 +289,7 @@ void config::SaveOptions(bool cfg, bool style)
 		wxString textfile;
 		GetRawOptions(textfile);
 		wxString path;
-		path << pathfull << _T("\\Config.txt");
+		path << configPath << _T("\\Config.txt");
 		ow.FileWrite(path, textfile);
 	}
 
@@ -459,6 +494,7 @@ int config::LoadOptions()
 {
 	wxStandardPathsBase &paths = wxStandardPaths::Get();
 	pathfull = paths.GetExecutablePath().BeforeLast(L'\\');
+	configPath = pathfull + L"\\Config";
 	wxString path;
 	path << pathfull << _T("\\Config.txt");
 	OpenWrite ow;
@@ -688,7 +724,7 @@ bool config::LoadAudioOpts()
 {
 	OpenWrite ow;
 	wxString txt;
-	if (!ow.FileOpen(pathfull + _T("\\AudioConfig.txt"), &txt, false)){
+	if (!ow.FileOpen(configPath + _T("\\AudioConfig.txt"), &txt, false)){
 		LoadDefaultAudioConfig();
 		return true;
 	}
@@ -704,7 +740,7 @@ void config::SaveAudioOpts()
 	OpenWrite ow;
 	wxString audioOpts;
 	GetRawOptions(audioOpts, true);
-	ow.FileWrite(pathfull + _T("\\AudioConfig.txt"), audioOpts);
+	ow.FileWrite(configPath + _T("\\AudioConfig.txt"), audioOpts);
 }
 
 void config::SetHexColor(const wxString &nameAndColor)

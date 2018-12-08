@@ -34,10 +34,9 @@
 #ifndef _CSRI_H
 /** \cond */
 #define _CSRI_H 20070119
-#include <stddef.h>	
 /** \endcond */
 
-
+#include <stddef.h>			/* ptrdiff_t */
 
 #ifdef __cplusplus
 extern "C" {
@@ -96,8 +95,6 @@ struct csri_fmt {
 	 * Specifying the video sub-size (in case of added black
 	 * borders) is left to an extension.
 	 */
-	float fps;
-
 	unsigned width;
 	/** image height */
 	unsigned height;
@@ -341,8 +338,6 @@ CSRIAPI csri_rend *csri_renderer_default();
  *   renderer installed.
  */
 CSRIAPI csri_rend *csri_renderer_next(csri_rend *prev);
-
-CSRIAPI int *csri_close_renderer(csri_rend *renderer);
 
 /*@}*/
 

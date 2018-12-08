@@ -721,7 +721,6 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 	format->width = vwidth;
 	format->height = vheight;
 	format->pixfmt = framee->pixfmt;
-	format->fps = 25.0f;
 
 	if (!vobsub){
 		OpenSubs(textsubs, false);
@@ -933,7 +932,7 @@ bool VideoRenderer::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 
 
 	// Select renderer
-	vobsub = csri_renderer_default();
+	vobsub = Options.GetVSFilter();
 	if (!vobsub){ KaiLog(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false; }
 
 	instance = (fromFile) ? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub, buffer, size, NULL);
@@ -1603,7 +1602,7 @@ void VideoRenderer::ChangePositionByFrame(int step)
 {
 	if (vstate == Playing || vstate == None){ return; }
 	if (!IsDshow){
-		if (!VFF->isBusy){
+		//if (!VFF->isBusy){
 			numframe = MID(0, numframe + step, VFF->NumFrames - 1);
 			time = VFF->Timecodes[numframe];
 			TabPanel* pan = (TabPanel*)GetParent();
@@ -1613,7 +1612,7 @@ void VideoRenderer::ChangePositionByFrame(int step)
 			}
 			if (player){ player->UpdateImage(true, true); }
 			Render(true, false);
-		}
+		//}
 	}
 	else{
 		time += (frameDuration * step);

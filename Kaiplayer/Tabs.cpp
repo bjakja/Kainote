@@ -1021,7 +1021,7 @@ void Notebook::SaveLastSession(bool beforeClose)
 		numtab++;
 	}
 	OpenWrite op;
-	op.FileWrite(Options.pathfull + L"\\LastSession.txt", result);
+	op.FileWrite(Options.configPath + L"\\LastSession.txt", result);
 
 }
 
@@ -1029,7 +1029,7 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 {
 	wxString riddenSession;
 	OpenWrite op;
-	if (op.FileOpen(Options.pathfull + L"\\LastSession.txt", &riddenSession, false) && !riddenSession.empty()){
+	if (op.FileOpen(Options.configPath + L"\\LastSession.txt", &riddenSession, false) && !riddenSession.empty()){
 		wxStringTokenizer tokenizer(riddenSession, L"\n", wxTOKEN_STRTOK);
 		wxString header = tokenizer.GetNextToken();
 		if (!header.StartsWith(L"[Kainote")){
@@ -1120,7 +1120,7 @@ int Notebook::CheckLastSession()
 {
 	wxString riddenSession;
 	OpenWrite op;
-	if (op.FileOpen(Options.pathfull + L"\\LastSession.txt", &riddenSession, false)){
+	if (op.FileOpen(Options.configPath + L"\\LastSession.txt", &riddenSession, false)){
 		size_t CloseSession = riddenSession.find(L"]\n[Close session]\n");
 		if (CloseSession != -1)
 			return 1;

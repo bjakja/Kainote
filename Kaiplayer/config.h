@@ -212,6 +212,7 @@
 	CG(VideoVolume,)\
 	CG(VideoWindowSize,)\
 	CG(VisualWarningsOff,)\
+	CG(VSFILTER_INSTANCE,)\
 	CG(WindowMaximized,)\
 	CG(WindowPosition,)\
 	CG(WindowSize,)\
@@ -372,6 +373,8 @@ DECLARE_ENUM(CONFIG,CFG)
 	//jeœli tu coœ dopiszesz, to musisz zmieniæ przy porównaniu (504 cpp) czy rozmiar tablicy kolorów jest w³aœciwy
 DECLARE_ENUM(COLOR,CLR)
 
+class csri_rend;
+
 class config
 {
 private:
@@ -385,7 +388,7 @@ private:
 	std::vector<Styles*> assstore;
 	wxString progname;
 	//aktualny katalog --- œcie¿ka do folderu programu
-	wxString actualStyleDir, pathfull;
+	wxString actualStyleDir, pathfull, configPath;
 	wxArrayString dirs;
 	bool AudioOpts;
 
@@ -435,9 +438,12 @@ private:
 	//wxString GetStringColor(unsigned int);
 	wxString GetStringColor(size_t optionName);
 	wxString GetReleaseDate();
+	csri_rend *GetVSFilter();
+	wxArrayString GetVSFiltersList();
 	config();
 	~config();
 	wxColour defaultColour;
+	csri_rend *vsfilter = NULL;
 };
 bool sortfunc(Styles *styl1,Styles *styl2);
 //formatowanie w tym przypadku wygl¹da tak, 

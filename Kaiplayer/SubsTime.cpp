@@ -48,22 +48,17 @@ void STime::ParseMS(wxString raw)
 		wxString csec, sec, min, godz;
 		size_t godz11 = raw.find(L":", 0);
 		godz = raw.SubString(0, godz11 - 1);
-		//kkk<<godz;
 		godz1 = wxAtoi(godz);
 		min = raw.SubString(godz11 + 1, godz11 + 2);
-		//kkk<<min;
 		min1 = wxAtoi(min);
 		sec = raw.SubString(godz11 + 4, godz11 + 5);
-		//kkk<<sec;
 		sec1 = wxAtoi(sec);
 		if (form < SRT){
 			csec = raw.SubString(godz11 + 7, godz11 + 8);
-			//kkk<<csec;
 			csec1 = wxAtoi(csec) * 10;
 		}
 		else if (form == SRT){
 			csec = raw.SubString(godz11 + 7, godz11 + 9);
-			//kkk<<csec;
 			csec1 = wxAtoi(csec);
 		}
 

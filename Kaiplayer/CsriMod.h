@@ -185,6 +185,10 @@ extern void csrilib_inst_remove(struct csri_wrap_inst *winst);
 
 extern void csrilib_os_init();
 
+extern void csri_close_renderer(csri_rend *renderer);
+
+static void csrilib_load(const wchar_t *filename);
+
 #ifdef __cplusplus
 }
 #endif

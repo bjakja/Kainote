@@ -1483,6 +1483,8 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 	int _time = pan->Video->Tell();
 	bool toEnd = pan->Video->GetState() == Playing;
 	wxString *txt = new wxString();
+	wchar_t bom = 0xFEFF;
+	*txt << wxString(bom);
 	if (subsFormat == ASS){
 		(*txt) << L"[Script Info]\r\n";
 		GetSInfos(*txt, false);
