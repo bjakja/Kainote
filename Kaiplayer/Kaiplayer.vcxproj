@@ -391,7 +391,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="ColorSpace.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DirectShowPlayer.cpp" />
-    <ClCompile Include="DShowPlayer.cpp" />
     <ClCompile Include="FFMS2Player.cpp" />
     <ClCompile Include="FindReplace.cpp" />
     <ClCompile Include="FindReplaceDialog.cpp" />
@@ -446,7 +445,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="ColorSpaceConverter.cpp" />
     <ClCompile Include="ColorPicker.cpp" />
     <ClCompile Include="DropFiles.cpp" />
-    <ClCompile Include="DshowRenderer.cpp" />
+    <ClCompile Include="DirectShowRenderer.cpp" />
     <ClCompile Include="EditBox.cpp" />
     <ClCompile Include="FontCollector.cpp" />
     <ClCompile Include="FontDialog.cpp" />
@@ -478,7 +477,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="Videobox.cpp" />
     <ClCompile Include="VideoFfmpeg.cpp" />
     <ClCompile Include="VideoFullscreen.cpp" />
-    <ClCompile Include="VideoRenderer.cpp" />
     <ClCompile Include="VideoSlider.cpp" />
     <ClCompile Include="VisualClips.cpp" />
     <ClCompile Include="VisualMove.cpp" />
@@ -508,7 +506,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="ColorSpace.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="DirectShowPlayer.h" />
-    <ClInclude Include="DShowPlayer.h" />
     <ClInclude Include="FFMS2Player.h" />
     <ClInclude Include="FindReplace.h" />
     <ClInclude Include="FindReplaceDialog.h" />
@@ -550,7 +547,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="ColorSpaceConverter.h" />
     <ClInclude Include="ColorPicker.h" />
     <ClInclude Include="DropFiles.h" />
-    <ClInclude Include="DshowRenderer.h" />
+    <ClInclude Include="DirectShowRenderer.h" />
     <ClInclude Include="EditBox.h" />
     <ClInclude Include="EnumFactory.h" />
     <ClInclude Include="FontCollector.h" />
@@ -596,7 +593,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="VideoFfmpeg.h" />
     <ClInclude Include="VideoFullscreen.h" />
     <ClInclude Include="VideoPlayer.h" />
-    <ClInclude Include="VideoRenderer.h" />
     <ClInclude Include="VideoSlider.h" />
     <ClInclude Include="VideoToolbar.h" />
     <ClInclude Include="Visuals.h" />

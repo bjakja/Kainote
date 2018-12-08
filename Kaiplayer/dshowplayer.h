@@ -49,7 +49,7 @@ public:
 	wxSize GetVideoSize();
 	void TearDownGraph();
 	PlaybackState m_state;
-	VideoInf inf;
+	VideoInfo inf;
 	IMediaControl *m_pControl;
 	wxArrayString GetStreams();
 	IAMStreamSelect *stream;

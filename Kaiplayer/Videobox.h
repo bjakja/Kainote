@@ -19,14 +19,14 @@
 #include <wx/wx.h>
 #include "VideoSlider.h"
 #include "BitmapButton.h"
-#include "VideoRenderer.h"
+#include "VideoPlayer.h"
 #include "VideoFullscreen.h"
 #include "VideoToolbar.h"
 #include "KaiTextCtrl.h"
 
 class KainoteFrame;
 
-class VideoCtrl : public VideoRenderer
+class VideoCtrl : public wxWindow
 {
 public:
 
@@ -61,14 +61,14 @@ public:
 	VolSlider* volslider;
 	VideoToolbar *vToolbar;
 	void OpenEditor(bool esc = true);
-	void OnEndFile(wxCommandEvent& event);
+	void OnEndFile();
 	void OnPrew();
 	void OnNext();
 	void OnAccelerator(wxCommandEvent& event);
 	//void OnVButton(wxCommandEvent& event);
 	void OnVolume(wxScrollEvent& event);
-	void OnSMinus();
-	void OnSPlus();
+	void OnVolumeMinus();
+	void OnVolumePlus();
 	void ChangeStream();
 	void RefreshTime();
 	void NextChap();
@@ -80,8 +80,15 @@ public:
 	void CaptureMouse(){ if (isFullscreen && TD){ TD->CaptureMouse(); } else{ wxWindow::CaptureMouse(); } }
 	void ReleaseMouse(){ if (isFullscreen && TD){ TD->ReleaseMouse(); } else{ wxWindow::ReleaseMouse(); } }
 	bool HasCapture(){ if (isFullscreen && TD){ return TD->HasCapture(); } else{ return wxWindow::HasCapture(); } }
-	bool SetCursor(const wxCursor &cursor){ if (isFullscreen && TD){ return TD->SetCursor(cursor); } else{ return wxWindow::SetCursor(cursor); } };
+	bool SetCursor(const wxCursor &cursor){ 
+		if (isFullscreen && TD){ 
+			return TD->SetCursor(cursor); 
+		} else{ 
+			return wxWindow::SetCursor(cursor); 
+		} 
+	};
 	bool SetBackgroundColour(const wxColour &col);
+	bool HasVideo(){ return vplayer != NULL; };
 	float coeffX, coeffY;
 	wxSize lastSize;
 	Fullscreen *TD;
@@ -89,7 +96,12 @@ public:
 	bool shownKeyframe;
 	wxString oldpath;
 	std::vector<RECT> MonRects;
+	std::vector<chapter> chapters;
 	bool isOnAnotherMonitor;
+	bool isFullscreen = false;
+	bool panelOnFullscreen = false;
+	bool IsDshow = true;
+	int panelHeight = 66;
 private:
 
 	BitmapButton* bprev;
@@ -111,10 +123,10 @@ private:
 	void OnKeyPress(wxKeyEvent& event);
 	void OnPlaytime(wxTimerEvent& event);
 	void OnIdle(wxTimerEvent& event);
-	void OnHidePB();
+	void OnHideProgressBar();
 	void OnDeleteVideo();
-	void OnOpVideo();
-	void OnOpSubs();
+	void OnOpenVideo();
+	void OnOpenSubs();
 	void OnPaint(wxPaintEvent& event);
 	void OnCopyCoords(const wxPoint &pos);
 	void OnErase(wxEraseEvent& event){};
@@ -122,6 +134,7 @@ private:
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
 	void ChangeButtonBMP(bool play = false);
 	wxTimer idletime;
+	VideoPlayer *vplayer = NULL;
 	DECLARE_EVENT_TABLE()
 };
 

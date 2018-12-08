@@ -15,10 +15,84 @@
 
 
 #include "VideoPlayer.h"
+#include "DirectShowPlayer.h"
+#include "FFMS2Player.h"
 #include "Videobox.h"
 #include "CsriMod.h"
-#include "DshowRenderer.h"
+#include "DirectShowRenderer.h"
 #include "kainoteMain.h"
+
+void CreateVERTEX(VERTEX *v, float X, float Y, D3DCOLOR Color, float Z)
+{
+	v->fX = X;
+	v->fY = Y;
+	v->fZ = Z;
+	v->Color = Color;
+}
+
+VideoPlayer::VideoPlayer(VideoCtrl *window)
+	: videoWindow(window)
+	, hwnd(window->GetHWND())
+{
+	windowRect.bottom = 0;
+	windowRect.right = 0;
+	windowRect.left = 0;
+	windowRect.top = 0;
+	vformat = NV12;
+}
+
+VideoPlayer::~VideoPlayer()
+{
+	Stop();
+
+	vstate = None;
+
+	Clear();
+	SAFE_DELETE(Visual);
+	SAFE_DELETE(framee);
+	SAFE_DELETE(format);
+	if (instance) { csri_close(instance); }
+	if (vobsub) { csri_close_renderer(vobsub); }
+
+	if (datas){ delete[] datas; datas = NULL; }
+}
+
+bool VideoPlayer::Get(VideoPlayer **vplayer, VideoCtrl* ctrl, const wxString &fname, wxString *textsubs, bool isFFMS2, bool vobsub, bool changeAudio /*= true*/)
+{
+	
+	VideoPlayer *newplayer = NULL; 
+	if (isFFMS2)
+		newplayer = new FFMS2Player(ctrl);
+	else
+		newplayer = new DirectShowPlayer(ctrl);
+
+	if (newplayer->OpenFile(fname, textsubs, vobsub, changeAudio)){
+		delete (*vplayer);
+		*vplayer = newplayer;
+		return false;
+	}
+	else if (*vplayer){
+		delete newplayer;
+	}
+	return false;
+}
+
+void VideoPlayer::Clear()
+{
+	SAFE_RELEASE(MainStream);
+	SAFE_RELEASE(bars);
+#if byvertices
+	SAFE_RELEASE(vertex);
+	SAFE_RELEASE(texture);
+#endif
+	SAFE_RELEASE(dxvaProcessor);
+	SAFE_RELEASE(dxvaService);
+	SAFE_RELEASE(d3device);
+	SAFE_RELEASE(d3dobject);
+	SAFE_RELEASE(lines);
+	SAFE_RELEASE(overlayFont);
+	hasZoom = false;
+}
 
 bool VideoPlayer::PlayLine(int start, int eend)
 {
@@ -50,7 +124,7 @@ void VideoPlayer::DrawLines(wxPoint point)
 	vectors[3].x = backBufferRect.right;
 	vectors[3].y = point.y;
 	cross = true;
-	if (vstate == Paused && !block){
+	if (vstate == Paused && !videoWindow->block){
 		Render(resized);
 	}
 }
@@ -202,17 +276,17 @@ bool VideoPlayer::UpdateRects(bool changeZoom)
 {
 	wxRect rt;
 	TabPanel* tab = (TabPanel*)videoWindow->GetParent();
-	if (isFullscreen){
+	if (videoWindow->isFullscreen){
 		hwnd = videoWindow->TD->GetHWND();
 		rt = videoWindow->TD->GetClientRect();
-		if (panelOnFullscreen){ rt.height -= panelHeight; }
+		if (videoWindow->panelOnFullscreen){ rt.height -= videoWindow->panelHeight; }
 		pbar = Options.GetBool(VideoProgressBar);
 		cross = false;
 	}
 	else{
 		hwnd = videoWindow->GetHWND();
 		rt = videoWindow->GetClientRect();
-		rt.height -= panelHeight;
+		rt.height -= videoWindow->panelHeight;
 		pbar = false;
 	}
 	if (!rt.height || !rt.width){ return false; }
@@ -363,14 +437,12 @@ void VideoPlayer::ZoomMouseHandle(wxMouseEvent &evt)
 	int y = evt.GetY();
 	//wxWindow *win = this;
 	VideoCtrl *vb = videoWindow;
-	//if(isFullscreen){win = vb->TD; wxGetMousePosition(&x,&y);}
 
 	wxSize s(backBufferRect.right, backBufferRect.bottom);
 	wxSize s1(backBufferRect.right - backBufferRect.left, backBufferRect.bottom - backBufferRect.top);
 	float ar = (float)s1.x / (float)s1.y;
 
 	FloatRect tmp = zoomRect;
-	//wxWindow *window = (isFullscreen)? (wxWindow*)((VideoCtrl*)this)->TD : this; 
 
 	bool rotation = evt.GetWheelRotation() != 0;
 
@@ -541,7 +613,7 @@ void VideoPlayer::Zoom(const wxSize &size)
 	mainStreamRect.right = (zoomRect.width - backBufferRect.left) / videoToScreenXX;
 	mainStreamRect.bottom = (zoomRect.height - backBufferRect.top) / videoToScreenYY;
 	zoomParcent = size.x / (zoomRect.width - zoomRect.x/* + backBufferRect.left*/);
-	if (isFullscreen){ UpdateRects(false); }
+	if (videoWindow->isFullscreen){ UpdateRects(false); }
 	if (Visual){
 		SetVisualZoom();
 		if (Visual && (Visual->Visual < CLIPRECT || Visual->Visual > VECTORDRAW)){

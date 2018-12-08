@@ -252,9 +252,6 @@
     <ClCompile Include="VideoFullscreen.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
-    <ClCompile Include="VideoRenderer.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
     <ClCompile Include="VideoSlider.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
@@ -286,12 +283,6 @@
       <Filter>Source Files\Video</Filter>
     </ClCompile>
     <ClCompile Include="VisualScale.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
-    <ClCompile Include="DShowPlayer.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
-    <ClCompile Include="DshowRenderer.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
     <ClCompile Include="ColorSpaceConverter.cpp">
@@ -415,6 +406,9 @@
       <Filter>Source Files\Video</Filter>
     </ClCompile>
     <ClCompile Include="DirectShowPlayer.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectShowRenderer.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
   </ItemGroup>
@@ -542,9 +536,6 @@
     <ClInclude Include="VideoFullscreen.h">
       <Filter>Header Files\Video</Filter>
     </ClInclude>
-    <ClInclude Include="VideoRenderer.h">
-      <Filter>Header Files\Video</Filter>
-    </ClInclude>
     <ClInclude Include="VideoSlider.h">
       <Filter>Header Files\Video</Filter>
     </ClInclude>
@@ -571,12 +562,6 @@
     </ClInclude>
     <ClInclude Include="StyleStore.h">
       <Filter>Header Files\Styles</Filter>
-    </ClInclude>
-    <ClInclude Include="DShowPlayer.h">
-      <Filter>Header Files\Video</Filter>
-    </ClInclude>
-    <ClInclude Include="DshowRenderer.h">
-      <Filter>Header Files\Video</Filter>
     </ClInclude>
     <ClInclude Include="FontCollector.h">
       <Filter>Header Files\Fonts</Filter>
@@ -747,6 +732,9 @@
       <Filter>Header Files\Video</Filter>
     </ClInclude>
     <ClInclude Include="DirectShowPlayer.h">
+      <Filter>Header Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectShowRenderer.h">
       <Filter>Header Files\Video</Filter>
     </ClInclude>
   </ItemGroup>

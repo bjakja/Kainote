@@ -19,12 +19,12 @@
 class FFMS2Player : public VideoPlayer
 {
 public:
-	FFMS2Player();
+	FFMS2Player(VideoCtrl *window);
 	virtual ~FFMS2Player();
 	bool OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio = true);
 	bool OpenSubs(wxString *textsubs, bool redraw = true, bool fromFile = false);
 	bool Play(int end = -1);
-	bool Pause();
+	bool Pause(bool skipWhenOnEnd = true);
 	bool Stop();
 	void SetPosition(int time, bool starttime = true, bool corect = true);
 	void SetFFMS2Position(int time, bool starttime);
@@ -35,8 +35,6 @@ public:
 	}
 	void GoToNextKeyframe();
 	void GoToPrevKeyframe();
-	int GetCurrentPosition();
-	int GetCurrentFrame();
 	int GetFrameTime(bool start = true);
 	void GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd);
 	int GetFrameTimeFromTime(int time, bool start = true);
@@ -56,6 +54,8 @@ public:
 	void DeleteAudioCache(){ VFF->DeleteOldAudioCache(); }
 	byte *GetFramewithSubs(bool subs, bool *del);
 	
-	VideoFfmpeg *VFF;
-	AudioDisplay *player;
+	VideoFfmpeg *VFF = NULL;
+private:
+	bool InitDX(bool reset = false);
+	AudioDisplay *player = NULL;
 };

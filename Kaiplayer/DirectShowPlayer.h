@@ -21,21 +21,24 @@
 #include <dshow.h>
 #include <qnetwork.h>
 
-#include "DshowRenderer.h"
+#include "DirectShowRenderer.h"
 
 
-class DShowPlayer : public VideoPlayer
+class DirectShowPlayer : public VideoPlayer
 {
 public:
 
-	DShowPlayer(VideoCtrl* _parent);
-	~DShowPlayer();
+	DirectShowPlayer(VideoCtrl* _parent);
+	virtual ~DirectShowPlayer();
 	bool OpenFile(wxString fname, bool vobsub=false);
-	void Play();
-	bool Pause();
+	bool OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio);
+	bool OpenSubs(wxString *textsubs, bool redraw = true, bool fromFile = false);
+	void Render(bool RecreateFrame = true);
+	bool Play(int end = -1);
+	bool Pause(bool skipWhenOnEnd = true);
 	bool Stop();
-	void SetPosition(int pos);
-
+	void SetPosition(int _time, bool starttime = true, bool corect =true);
+	void ChangePositionByFrame(int step);
 	int GetPosition();
 	int GetDuration();
 
@@ -43,20 +46,30 @@ public:
 	int GetVolume();
 
 	void GetFpsnRatio(float *fps, long *arx, long *ary);
+	int GetFrameTime(bool start = true);
+	void GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd);
+	int GetFrameTimeFromTime(int time, bool start = true);
+	int GetFrameTimeFromFrame(int frame, bool start = true);
+	int GetPlayEndTime(int time);
+
 	bool EnumFilters(Menu *menu);
 	bool FilterConfig(wxString name, int idx, wxPoint pos);
 	void GetChapters(std::vector<chapter> *chapters);
 	void GetVideoSize(int *width, int *height);
 	wxSize GetVideoSize();
 	wxArrayString GetStreams();
+	void EnableStream(long index);
+	void ChangeVobsub(bool vobsub);
 	void RecreateSurface();
+	byte *DirectShowPlayer::GetFramewithSubs(bool subs, bool *del);
 	void TearDownGraph();
-	VideoInf inf;
+	VideoInfo videoInfo;
 	IMediaControl *m_pControl;
 	IAMStreamSelect *stream;
-	IAMExtendedSeeking *chapters;
+	IAMExtendedSeeking *chaptersControl;
 private:
-	bool InitializeGraph();		
+	bool InitializeGraph();	
+	bool InitDX(bool reset = false);
 
 	IGraphBuilder	*m_pGraph;
 	IMediaSeeking	*m_pSeek;

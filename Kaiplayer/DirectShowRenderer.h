@@ -17,7 +17,7 @@
 
 typedef wchar_t* PTCHAR;
 
-#include "VideoRenderer.h"
+#include "VideoPlayer.h"
 #include <Dvdmedia.h>
 #include <streams.h>
 
@@ -30,7 +30,7 @@ enum {
 	NV12,
 };
 
-struct VideoInf{
+struct VideoInfo{
 	int width;
 	int height;
 	float fps;
@@ -38,7 +38,7 @@ struct VideoInf{
 	int ARatioY;
 	byte CT;
 	float bytes;
-	};
+};
 
 #define HR1(x) if(FAILED(x)) { return x; }
 
@@ -51,7 +51,7 @@ class CD2DVideoRender : public CBaseVideoRenderer
 {
 public:
 
-	CD2DVideoRender(VideoRenderer *_Vrend, HRESULT* phr);
+	CD2DVideoRender(VideoPlayer *_Vplayer, HRESULT* phr);
 	virtual ~CD2DVideoRender();
 
 	HRESULT Render(IMediaSample *pMediaSample);
@@ -62,11 +62,11 @@ public:
 	HRESULT StopStreaming();
 	void OnReceiveFirstSample(IMediaSample *pMediaSample);
 	
-	HRESULT GetVidInfo(VideoInf &vi);
+	HRESULT GetVidInfo(VideoInfo &vi);
 
 private:
-	VideoRenderer *Vrend;
-	VideoInf Vinfo;
+	VideoPlayer *Vplayer;
+	VideoInfo Vinfo;
 	int time;
 	bool norender;
 	bool noRefresh;

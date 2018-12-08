@@ -68,13 +68,13 @@
 typedef void csri_inst;
 typedef void csri_rend;
 
-enum PlaybackState
-{
-	Playing,
-	Paused,
-	Stopped,
-	None
-};
+//enum PlaybackState
+//{
+//	Playing,
+//	Paused,
+//	Stopped,
+//	None
+//};
 
 
 struct VERTEX

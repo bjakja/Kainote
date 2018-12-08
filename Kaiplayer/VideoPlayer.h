@@ -93,9 +93,18 @@ public:
 
 void CreateVERTEX(VERTEX *v, float X, float Y, D3DCOLOR Color, float Z = 0.0f);
 
+#if byvertices
+struct CUSTOMVERTEX
+{
+	D3DXVECTOR3 position; // The position
+	FLOAT       tu, tv;   // The texture coordinates
+};
+#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_TEX1)
+#endif
+
 
 class AudioDisplay;
-class DShowPlayer;
+class DirectShowPlayer;
 class VideoCtrl;
 struct csri_fmt;
 struct csri_frame;
@@ -105,6 +114,7 @@ public:
 	//constructor / destructor
 	VideoPlayer(VideoCtrl *window);
 	~VideoPlayer();
+	static bool Get(VideoPlayer **vplayer, VideoCtrl* ctrl, const wxString &fname, wxString *textsubs, bool isFFMS2, bool vobsub, bool changeAudio = true);
 
 	//common functions
 	void DrawLines(wxPoint point);
@@ -124,10 +134,10 @@ public:
 	void ZoomMouseHandle(wxMouseEvent &evt);
 
 	//virtual functions for both FFMS2 and Direct Show
-	virtual bool OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio = true){ return true; };
-	virtual bool OpenSubs(wxString *textsubs, bool redraw = true, bool fromFile = false){ return true; };
+	virtual bool OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio = true){ return false; };
+	virtual bool OpenSubs(wxString *textsubs, bool redraw = true, bool fromFile = false){ return false; };
 	virtual bool Play(int end = -1){ return true; };
-	virtual bool Pause(){ return true; };
+	virtual bool Pause(bool skipWhenOnEnd = true){ return true; };
 	virtual bool Stop(){ return true; };
 	virtual void SetPosition(int time, bool starttime = true, bool corect = true){};
 	virtual int GetPlayEndTime(int time){ return 0; };
@@ -145,6 +155,7 @@ public:
 	virtual byte *GetFramewithSubs(bool subs, bool *del){ return NULL; };
 
 	//virtual functions for FFMS2
+	virtual void SetFFMS2Position(int time, bool starttime){};
 	virtual void GoToNextKeyframe(){};
 	virtual void GoToPrevKeyframe(){};
 	virtual void DeleteAudioCache(){}
@@ -165,75 +176,67 @@ public:
 	
 	void RecreateSurface();
 	
-	
-	
-	LPDIRECT3DSURFACE9 MainStream;
-	LPDIRECT3DDEVICE9 d3device;
-	D3DFORMAT d3dformat;
-	volatile bool block;
-	bool IsDshow;
-	bool seek;
-	bool hasVisualEdition;
+	LPDIRECT3DSURFACE9 MainStream = NULL;
+	LPDIRECT3DDEVICE9 d3device = NULL;
+	D3DFORMAT d3dformat = D3DFORMAT('21VN');
+	volatile bool block = false;
+	bool seek = false;
+	bool hasVisualEdition = false;
 	bool hasDummySubs = true;
-	bool cross;
-	bool pbar;
-	bool resized;
-	bool isFullscreen;
-	bool panelOnFullscreen;
-	bool hasZoom;
-	int vwidth;
-	int vheight;
-	int pitch;
-	int time;
-	int numframe;
-	int panelHeight;
+	bool cross = false;
+	bool pbar = false;
+	bool resized = false;
+	bool hasZoom = false;
+	int vwidth = 0;
+	int vheight = 0;
+	int pitch = 0;
+	int time = 0;
+	int numframe = 0;
 	long ax, ay;
-	float AR, fps;
-	byte *datas;
+	float AR = 0.f, fps = 0.f;
+	byte *datas = NULL;
 	byte vformat;
-	float frameDuration;
-	float zoomParcent;
+	float frameDuration = 42;
+	float zoomParcent = 1.f;
 	wxString coords;
 	wxString pbtime;
-	ID3DXLine *lines;
-	LPD3DXFONT overlayFont;
+	ID3DXLine *lines = NULL;
+	LPD3DXFONT overlayFont = NULL;
 	wxCriticalSection mutexRender;
 	wxMutex mutexLines;
 	wxMutex mutexProgBar;
 	wxMutex mutexOpenFile;
-	PlaybackState vstate;
-	Visuals *Visual;
-	int playend;
-	size_t lasttime;
-	std::vector<chapter> chapters;
+	PlaybackState vstate = None;
+	Visuals *Visual = NULL;
+	int playend = 0;
+	size_t lasttime = 0;
 	FloatRect zoomRect;
 	wxString keyframesFileName;
 	
-//protected:
-	//virtual void SetScaleAndZoom(){}
+	VideoCtrl *videoWindow = NULL;
 protected:
 	bool InitDX(bool reset = false);
 
 	void Clear();
 
 
-	LPDIRECT3D9 d3dobject;
-	LPDIRECT3DSURFACE9 bars;
+	LPDIRECT3D9 d3dobject = NULL;
+	LPDIRECT3DSURFACE9 bars = NULL;
 
 
 #if byvertices
-	LPDIRECT3DVERTEXBUFFER9 vertex;
-	LPDIRECT3DTEXTURE9 texture;
+	LPDIRECT3DVERTEXBUFFER9 vertex = NULL;
+	LPDIRECT3DTEXTURE9 texture = NULL;
 #endif
-	IDirectXVideoProcessorService *dxvaService;
-	IDirectXVideoProcessor *dxvaProcessor;
+	IDirectXVideoProcessorService *dxvaService = NULL;
+	IDirectXVideoProcessor *dxvaProcessor = NULL;
 
 	HWND hwnd;
-	bool devicelost;
-	char grabbed;
+	bool devicelost = false;
+	char grabbed = -1;
 
-	csri_inst *instance;
-	csri_rend *vobsub;
+	csri_inst *instance = NULL;
+	csri_rend *vobsub = NULL;
 	RECT crossRect;
 	RECT progressBarRect;
 	RECT windowRect;
@@ -245,7 +248,22 @@ protected:
 
 	D3DXVECTOR2 vectors[16];
 
-	csri_frame *framee;
-	csri_fmt *format;
-	VideoCtrl *videoWindow;
+	csri_frame *framee = NULL;
+	csri_fmt *format = NULL;
+private:
+	bool IsFFMS2 = false;
 };
+
+#ifndef DRAWOUTTEXT
+#define DRAWOUTTEXT(font,text,rect,align,color)\
+	RECT tmpr=rect;\
+	tmpr.top--;tmpr.bottom--;\
+	tmpr.left--;tmpr.right--;\
+	for(int i=0; i<9; i++)\
+			{\
+		if(i%3==0 && i>0){tmpr.left=rect.left-1; tmpr.right=rect.right-1; tmpr.top++;tmpr.bottom++;}\
+		if(i!=4){font->DrawTextW(NULL, text.wchar_str(), -1, &tmpr, align, 0xFF000000 );}\
+		tmpr.left++;tmpr.right++;\
+			}\
+	font->DrawTextW(NULL, text.wchar_str(), -1, &rect, align, color );
+#endif
