@@ -188,7 +188,7 @@ DWORD FontEnumerator::CheckFontsProc(void* fontEnum)
 		if(wait_result == WAIT_OBJECT_0+0){
 			fe->EnumerateFonts(true);
 			fe->RefreshClientsFonts();
-			fe->RefreshVideo();
+			Notebook::RefreshVideo();
 			if( FindNextChangeNotification( hDir ) == 0 ){
 				KaiLog(_("Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."));
 				return 0;

@@ -48,7 +48,7 @@ static csri_rend csri_vsfilter = "vsfilter";
 
 CSRIAPI csri_inst *csri_open_file(csri_rend *renderer, const char *filename, struct csri_openflag *flags)
 {
-    //AMTRACE((TEXT(__FUNCTION__),0));
+	//AMTRACE((TEXT(__FUNCTION__),0));
 	int namesize;
 	wchar_t *namebuf;
 
@@ -79,7 +79,7 @@ CSRIAPI csri_inst *csri_open_file(csri_rend *renderer, const char *filename, str
 
 CSRIAPI csri_inst *csri_open_mem(csri_rend *renderer, const void *data, size_t length, struct csri_openflag *flags)
 {
-    //AMTRACE((TEXT(__FUNCTION__),0));
+	//AMTRACE((TEXT(__FUNCTION__),0));
 	// This is actually less effecient than opening a file, since this first writes the memory data to a temp file,
 	// then opens that file and parses from that.
 	csri_inst *inst = new csri_inst();
@@ -151,7 +151,7 @@ CSRIAPI int csri_request_fmt(csri_inst *inst, const struct csri_fmt *fmt)
 	inst->spp=new SimpleSubPicProvider(col,inst->screen_res,inst->video_rect,NULL,&hr);
 	inst->spp->AddRef();
 	hr = inst->spp->SetSubPicProvider((ISubPicProviderEx*)inst->rts);
-	hr = inst->spp->SetFPS(fmt->fps);
+	hr = inst->spp->SetFPS(25.f);
 	return (hr==S_OK)?0 : -1;
 }
 
@@ -202,7 +202,7 @@ CSRIAPI void csri_render(csri_inst *inst, struct csri_frame *frame, double time)
 			//MessageBox(0,L"yv12",L"",0);
 			break;
 		default:
-            //MessageBox(0,L"Brak formatu",L"",0);
+			//MessageBox(0,L"Brak formatu",L"",0);
 			return;
 		break;
 	}

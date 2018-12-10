@@ -66,7 +66,7 @@
 
 
 typedef void csri_inst;
-typedef void csri_rend;
+//typedef void csri_rend;
 
 enum PlaybackState
 {
@@ -248,7 +248,7 @@ class VideoRenderer : public wxWindow
 		char grabbed;
 		
 		csri_inst *instance;
-		csri_rend *vobsub;
+		//csri_rend *vobsub;
 		RECT crossRect;
 		RECT progressBarRect;
 		RECT windowRect;

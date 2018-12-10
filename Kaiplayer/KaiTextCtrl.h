@@ -116,9 +116,10 @@ protected:
 	int tmpstart, tmpend;
 	size_t maxSize;
 	std::vector<int> wraps;
-	std::vector<int> positioning;
+	wxArrayInt positioning;
 	std::vector<TextStyle> textStyles;
 	std::vector<int> charmap;
+	wxMutex mutex;
 	wxSize lastSize;
 	long style;
 	COLOR background;

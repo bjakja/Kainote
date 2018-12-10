@@ -186,7 +186,7 @@ void csrilib_os_init()
 	slash = wcsrchr(filename, L'\\');
 	slash = slash ? slash + 1 : filename;
 	*slash = L'\0';
-	wcsncpy(slash, L"csri", filename + MAX_PATH - slash);
+	wcsncpy(slash, L"Csri", filename + MAX_PATH - slash);
 	csrilib_enum_dir(filename);
 	//csrilib_do_load(L"vsfilter_kainote.dll");
 }
@@ -317,8 +317,17 @@ csri_rend *csri_renderer_byext(unsigned n_ext, csri_ext_id *ext)
 
 void csri_close_renderer(csri_rend *renderer)
 {
-	std::unique_lock<std::mutex> lck (mtx);
-	if(wraprends){free(wraprends); wraprends=NULL;}
+	//std::unique_lock<std::mutex> lck (mtx);
+	if(wraprends){
+		csri_wrap_rend * wraprend = wraprends;
+		csri_wrap_rend * next = NULL;
+		while (wraprend){
+			next = wraprend->next;
+			free(wraprend);
+			wraprend = next;
+		}
+		wraprends=NULL;
+	}
 }
 
 csri_inst *csri_open_file(csri_rend *rend,

@@ -373,7 +373,7 @@ DECLARE_ENUM(CONFIG,CFG)
 	//jeœli tu coœ dopiszesz, to musisz zmieniæ przy porównaniu (504 cpp) czy rozmiar tablicy kolorów jest w³aœciwy
 DECLARE_ENUM(COLOR,CLR)
 
-class csri_rend;
+typedef void csri_rend;
 
 class config
 {
@@ -439,7 +439,8 @@ private:
 	wxString GetStringColor(size_t optionName);
 	wxString GetReleaseDate();
 	csri_rend *GetVSFilter();
-	wxArrayString GetVSFiltersList();
+	void ChangeVsfilter();
+	void GetVSFiltersList(wxArrayString &filters);
 	config();
 	~config();
 	wxColour defaultColour;

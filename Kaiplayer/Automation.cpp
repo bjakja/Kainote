@@ -62,9 +62,9 @@ namespace Auto{
 
 	int get_file_name(lua_State *L)
 	{
-		TabPanel *pan = Notebook::GetTab();
-		if (pan->SubsPath != "")
-			push_value(L, pan->SubsName);
+		TabPanel *tab = Notebook::GetTab();
+		if (tab && tab->SubsPath != "")
+			push_value(L, tab->SubsName);
 		else
 			lua_pushnil(L);
 		return 1;
@@ -131,9 +131,9 @@ namespace Auto{
 	{
 		int ms = (int)lua_tonumber(L, -1);
 		lua_pop(L, 1);
-		VideoCtrl *video = Notebook::GetTab()->Video;
-		if (video->GetState() != None) {
-			int frame = (video->IsDshow) ? ((float)ms / 1000.f) * video->fps : video->VFF->GetFramefromMS(ms);
+		TabPanel *tab = Notebook::GetTab();
+		if (tab && tab->Video->GetState() != None) {
+			int frame = (tab->Video->IsDshow) ? ((float)ms / 1000.f) * tab->Video->fps : tab->Video->VFF->GetFramefromMS(ms);
 			lua_pushnumber(L, frame);
 		}
 		else {
@@ -147,9 +147,9 @@ namespace Auto{
 	{
 		int frame = (int)lua_tonumber(L, -1);
 		lua_pop(L, 1);
-		VideoCtrl *video = Notebook::GetTab()->Video;
-		if (video->GetState() != None) {
-			int ms = (video->IsDshow) ? ((frame * 1000) / video->fps) : video->VFF->GetMSfromFrame(frame);
+		TabPanel *tab = Notebook::GetTab();
+		if (tab && tab->Video->GetState() != None) {
+			int ms = (tab->Video->IsDshow) ? ((frame * 1000) / tab->Video->fps) : tab->Video->VFF->GetMSfromFrame(frame);
 			lua_pushnumber(L, ms);
 		}
 		else {
@@ -160,10 +160,10 @@ namespace Auto{
 
 	int video_size(lua_State *L)
 	{
-		VideoCtrl *video = Notebook::GetTab()->Video;
-		if (video->GetState() != None) {
-			wxSize sz = video->GetVideoSize();
-			float AR = (float)video->ax / video->ay;
+		TabPanel *tab = Notebook::GetTab();
+		if (tab && tab->Video->GetState() != None) {
+			wxSize sz = tab->Video->GetVideoSize();
+			float AR = (float)tab->Video->ax / tab->Video->ay;
 			lua_pushnumber(L, sz.x);
 			lua_pushnumber(L, sz.y);
 			lua_pushnumber(L, AR);
@@ -178,9 +178,9 @@ namespace Auto{
 
 	int get_keyframes(lua_State *L)
 	{
-		VideoCtrl *video = Notebook::GetTab()->Video;
-		if (video->GetState() != None && video->VFF){
-			wxArrayInt & value = video->VFF->KeyFrames;
+		TabPanel *tab = Notebook::GetTab();
+		if (tab->Video->GetState() != None && tab->Video->VFF){
+			wxArrayInt & value = tab->Video->VFF->KeyFrames;
 			lua_createtable(L, value.size(), 0);
 			for (size_t i = 0; i < value.size(); ++i) {
 				push_value(L, value[i]);
@@ -195,18 +195,18 @@ namespace Auto{
 	int decode_path(lua_State *L)
 	{
 		wxString path = check_string(L, 1);
-		TabPanel *pan = Notebook::GetTab();
+		TabPanel *tab = Notebook::GetTab();
 		path.Replace(L'/', L'\\');
 		wxString firstAutomation = Options.pathfull + "\\Automation";
 		if (path[0] == L'?'){
-			if (path[1] == L'a' && path[4] == L'i') path.replace(0, 6, (pan)? pan->VideoPath.BeforeLast(L'\\') : L"");
+			if (path[1] == L'a' && path[4] == L'i') path.replace(0, 6, (tab)? tab->VideoPath.BeforeLast(L'\\') : L"");
 			else if (path[1] == L'd' && path[4] == L'a') path.replace(0, 5, firstAutomation);
 			else if (path[1] == L'd' && path[4] == L't') path.replace(0, 11, Options.pathfull + "\\Dictionary");
 			else if (path[1] == L'l' && path[4] == L'a') path.replace(0, 6, firstAutomation);
-			else if (path[1] == L's' && path[4] == L'i') path.replace(0, 7, (pan) ? pan->SubsPath.BeforeLast(L'\\') : L"");
+			else if (path[1] == L's' && path[4] == L'i') path.replace(0, 7, (tab) ? tab->SubsPath.BeforeLast(L'\\') : L"");
 			else if (path[1] == L't' && path[4] == L'p') path.replace(0, 5, firstAutomation + "\\temp");
 			else if (path[1] == L'u' && path[4] == L'r') path.replace(0, 5, firstAutomation);
-			else if (path[1] == L'v' && path[4] == L'e') path.replace(0, 6, (pan) ? pan->VideoPath.BeforeLast(L'\\') : L"");
+			else if (path[1] == L'v' && path[4] == L'e') path.replace(0, 6, (tab) ? tab->VideoPath.BeforeLast(L'\\') : L"");
 		}
 		push_value(L, path);
 		return 1;
@@ -896,7 +896,7 @@ namespace Auto{
 
 
 		TabPanel *pan = Notebook::GetTab();
-		if (Validate(pan)){ Run(pan); }
+		if (pan && Validate(pan)){ Run(pan); }
 
 
 
@@ -1120,6 +1120,9 @@ namespace Auto{
 	void Automation::BuildMenu(Menu **bar, bool all)
 	{
 		TabPanel* c = Notebook::GetTab();
+		if (!c)
+			return;
+
 		KainoteFrame *Kai = (KainoteFrame*)c->GetGrandParent();
 		for (int j = (*bar)->GetMenuItemCount() - 1; j >= 4; j--){
 			(*bar)->Delete(j);

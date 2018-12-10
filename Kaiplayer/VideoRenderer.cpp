@@ -69,7 +69,7 @@ VideoRenderer::VideoRenderer(wxWindow *_parent, const wxSize &size)
 	bars = NULL;
 	VFF = NULL;
 	instance = NULL;
-	vobsub = NULL;
+	//vobsub = NULL;
 	framee = NULL;
 	format = NULL;
 	lines = NULL;
@@ -587,7 +587,6 @@ VideoRenderer::~VideoRenderer()
 	SAFE_DELETE(framee);
 	SAFE_DELETE(format);
 	if (instance) { csri_close(instance); }
-	if (vobsub) { csri_close_renderer(vobsub); }
 
 	if (datas){ delete[] datas; datas = NULL; }
 
@@ -932,7 +931,7 @@ bool VideoRenderer::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 
 
 	// Select renderer
-	vobsub = Options.GetVSFilter();
+	csri_rend *vobsub = Options.GetVSFilter();
 	if (!vobsub){ KaiLog(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false; }
 
 	instance = (fromFile) ? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub, buffer, size, NULL);

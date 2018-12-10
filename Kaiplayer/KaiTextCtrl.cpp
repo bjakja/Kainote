@@ -140,6 +140,7 @@ KaiTextCtrl::~KaiTextCtrl()
 
 void KaiTextCtrl::SetValue(const wxString &text, bool modif, bool newSel)
 {
+	wxMutexLocker lock(mutex);
 	if (modif){ modified = modif; }
 	KText = text;
 	if (!(style & wxTE_MULTILINE)){
@@ -717,6 +718,8 @@ int KaiTextCtrl::FindY(int x)
 
 void KaiTextCtrl::OnPaint(wxPaintEvent& event)
 {
+	//block to avoid crashes when update from other thread
+	wxMutexLocker lock(mutex);
 	int w = 0, h = 0;
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }

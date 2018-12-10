@@ -326,8 +326,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		}
 		Editor->SetSizerAndFit(MainSizer);
 
-		//Main1
-
+		
 		wxBoxSizer *Main1Sizer = new wxBoxSizer(wxVERTICAL);
 		wxFlexGridSizer *MainSizer2 = new wxFlexGridSizer(8, 2, wxSize(5, 5));
 		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieć inny id
@@ -379,7 +378,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		EditorAdvanced->SetSizerAndFit(Main1Sizer);
 	}
 
-	//Ustawienia konwersji
+	//conversion settings
 	{
 		wxBoxSizer *ConvOptSizer1 = new wxBoxSizer(wxVERTICAL);
 
@@ -476,9 +475,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	{
 		wxString voptspl[] = { _("Otwórz wideo z menu kontekstowego na pełnym ekranie"), _("Lewy przycisk myszy pauzuje wideo"),
 			_("Otwieraj wideo z czasem aktywnej linii"), _("Preferowane ścieżki audio (oddzielone średnikiem)"),
-			_("Sposób szukania wideo w FFMS2 (wymaga ponownego wczytania)") };
+			_("Sposób szukania wideo w FFMS2 (wymaga ponownego wczytania)"), _("Filtr wyświetlania napisów") };
 		CONFIG vopts[] = { VideoFullskreenOnStart, VideoPauseOnClick, OpenVideoAtActiveLine,
-			AcceptedAudioStream, FFMS2VideoSeeking };
+			AcceptedAudioStream, FFMS2VideoSeeking, VSFILTER_INSTANCE };
 		wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
 		for (int i = 0; i < 3; i++)
 		{
@@ -493,12 +492,26 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		prefaudio->Add(tc, 1, wxALL | wxALIGN_CENTER | wxEXPAND, 2);
 		MainSizer->Add(prefaudio, 0, wxRIGHT | wxEXPAND, 5);
 		KaiStaticBoxSizer *seekingsizer = new KaiStaticBoxSizer(wxHORIZONTAL, Video, voptspl[4]);
+
 		wxString seekingOpts[] = { _("Liniowe"), _("Normalne"), _("Niebezpieczne (szybkie w każdym przypadku)"), _("Agresywne (szybkie przy cofaniu)") };
 		KaiChoice *sopts = new KaiChoice(Video, 10000, wxDefaultPosition, wxSize(200, -1), 4, seekingOpts, wxTE_PROCESS_ENTER);
 		sopts->SetSelection(Options.GetInt(vopts[4]));
 		seekingsizer->Add(sopts, 1, wxALL | wxALIGN_CENTER | wxEXPAND, 2);
 		MainSizer->Add(seekingsizer, 0, wxRIGHT | wxEXPAND, 5);
 		ConOpt(sopts, vopts[4]);
+
+		KaiStaticBoxSizer *filtersizer = new KaiStaticBoxSizer(wxHORIZONTAL, Video, voptspl[5]);
+		wxArrayString vsfilters;
+		Options.GetVSFiltersList(vsfilters);
+		KaiChoice *vsfiltersList = new KaiChoice(Video, 10002, wxDefaultPosition, wxSize(200, -1), vsfilters, wxTE_PROCESS_ENTER);
+		wxString name = Options.GetString(vopts[5]);
+		int result = vsfilters.Index(name);
+		if (result < 0)
+			result = 0;
+		vsfiltersList->SetSelection(result);
+		filtersizer->Add(vsfiltersList, 1, wxALL | wxALIGN_CENTER | wxEXPAND, 2);
+		MainSizer->Add(filtersizer, 0, wxRIGHT | wxEXPAND, 5);
+		ConOpt(vsfiltersList, vopts[5]);
 		Video->SetSizerAndFit(MainSizer);
 	}
 	//Hotkeys
@@ -1008,6 +1021,11 @@ void OptionsDialog::SetOptions(bool saveall)
 						SpellChecker::Destroy();
 						Kai->Tabs->GetTab()->Edit->ClearErrs();
 					}
+					else if (cbx->GetId() == 10002){
+						Options.ChangeVsfilter();
+						Notebook::RefreshVideo();
+					}
+
 				}
 			}
 			else{

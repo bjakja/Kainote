@@ -73,26 +73,46 @@ csri_rend * config::GetVSFilter()
 		vsfilter = csri_renderer_default();
 		csri_info *info = csri_renderer_info(vsfilter);
 		wxString name = GetString(VSFILTER_INSTANCE);
+		if (!name.empty()){
+			while (info->name != name){
+				vsfilter = csri_renderer_next(vsfilter);
+				if (!vsfilter)
+					break;
+				info = csri_renderer_info(vsfilter);
+			}
+			if (!vsfilter)
+				vsfilter = csri_renderer_default();
+		}
+	}
+	return vsfilter;
+}
+
+void config::ChangeVsfilter()
+{
+	vsfilter = csri_renderer_default();
+	csri_info *info = csri_renderer_info(vsfilter);
+	wxString name = GetString(VSFILTER_INSTANCE);
+	if (!name.empty()){
 		while (info->name != name){
 			vsfilter = csri_renderer_next(vsfilter);
 			if (!vsfilter)
 				break;
 			info = csri_renderer_info(vsfilter);
 		}
+		if (!vsfilter)
+			vsfilter = csri_renderer_default();
 	}
-	return vsfilter;
 }
 
-wxArrayString config::GetVSFiltersList()
+void config::GetVSFiltersList(wxArrayString &filtersList)
 {
-	wxArrayString filtersList;
 	csri_rend *filter = csri_renderer_default();
 	if (!filter)
-		return filtersList;
+		return;
 	csri_info *info = csri_renderer_info(filter);
 	filtersList.Add(info->name);
 	while (1){
-		filter = csri_renderer_next(vsfilter);
+		filter = csri_renderer_next(filter);
 		if (!filter)
 			break;
 		info = csri_renderer_info(filter);
@@ -496,7 +516,7 @@ int config::LoadOptions()
 	pathfull = paths.GetExecutablePath().BeforeLast(L'\\');
 	configPath = pathfull + L"\\Config";
 	wxString path;
-	path << pathfull << _T("\\Config.txt");
+	path << configPath << _T("\\Config.txt");
 	OpenWrite ow;
 	wxString txt;
 	int isgood = 0;
@@ -941,8 +961,11 @@ wxRect GetMonitorRect(int wmonitor, std::vector<tagRECT> *MonitorRects, const wx
 		bool ktos_ukradl_ci_monitor = false;
 		assert(ktos_ukradl_ci_monitor);
 	}
-	wxRect rt(MonRects[0].left, MonRects[0].top, abs(MonRects[0].right - MonRects[0].left), abs(MonRects[0].bottom - MonRects[0].top));
-	if (wmonitor == -1 || MonRects.size() == 1){ return rt; }
+	wxRect rt(MonRects[0].left, MonRects[0].top, 
+		abs(MonRects[0].right - MonRects[0].left), abs(MonRects[0].bottom - MonRects[0].top));
+	if (wmonitor == -1 || MonRects.size() == 1){ 
+		return rt; 
+	}
 	else if (wmonitor == 0){
 		int x = position.x;
 		int y = position.y;
@@ -950,14 +973,16 @@ wxRect GetMonitorRect(int wmonitor, std::vector<tagRECT> *MonitorRects, const wx
 			if (MonRects[i].left <= x && x < MonRects[i].right && MonRects[i].top <= y && y < MonRects[i].bottom){
 				if (MonitorRects)
 					*MonitorRects = MonRects;
-				return wxRect(MonRects[i].left, MonRects[i].top, abs(MonRects[i].right - MonRects[i].left), abs(MonRects[wmonitor].bottom - MonRects[wmonitor].top));
+				return wxRect(MonRects[i].left, MonRects[i].top, 
+					abs(MonRects[i].right - MonRects[i].left), abs(MonRects[i].bottom - MonRects[i].top));
 			}
 		}
 	}
 	else{
 		if (MonitorRects)
 			*MonitorRects = MonRects;
-		return wxRect(MonRects[wmonitor].left, MonRects[wmonitor].top, abs(MonRects[wmonitor].right - MonRects[wmonitor].left), abs(MonRects[wmonitor].bottom - MonRects[wmonitor].top));
+		return wxRect(MonRects[wmonitor].left, MonRects[wmonitor].top, 
+			abs(MonRects[wmonitor].right - MonRects[wmonitor].left), abs(MonRects[wmonitor].bottom - MonRects[wmonitor].top));
 	}
 	return rt;
 }

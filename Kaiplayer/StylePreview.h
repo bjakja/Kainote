@@ -21,7 +21,7 @@
 #include "KaiTextCtrl.h"
 #include <vector>
 typedef void csri_inst;
-typedef void csri_rend;
+//typedef void csri_rend;
 //class VobsubApi;
 
 class StylePreview : public wxWindow
@@ -37,7 +37,7 @@ class StylePreview : public wxWindow
 
 	private:
 		csri_inst *instance;
-		csri_rend *vobsub;
+		//csri_rend *vobsub;
 		wxMutex mutex;
 		int pitch,width,height,b,g,r,b1,g1,r1;
 		

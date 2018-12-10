@@ -23,6 +23,7 @@
 #include "KaiDialog.h"
 #include "config.h"
 #include <vector>
+
 class KainoteFrame;
 
 class ItemHotkey : public Item{

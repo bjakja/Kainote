@@ -26,7 +26,7 @@ StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const w
 	bmpframe = NULL;
 	instance = NULL;
 	PrevText = NULL;
-	vobsub = NULL;
+	//vobsub = NULL;
 	previewStyle = NULL;
 	Bind(wxEVT_SIZE, [=](wxSizeEvent &evt){DrawPreview(0); });
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
@@ -34,7 +34,6 @@ StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const w
 StylePreview::~StylePreview()
 {
 	if (instance) csri_close(instance);
-	if (vobsub) csri_close_renderer(vobsub);//csri_renderer_byname(0,0);
 
 	wxDELETE(previewStyle);
 	wxDELETE(bmpframe);
@@ -57,7 +56,7 @@ void StylePreview::DrawPreview(Styles *style)
 
 	// Select renderer
 	//if(!vobsub){
-	vobsub = Options.GetVSFilter();
+	csri_rend *vobsub = Options.GetVSFilter();
 	if (!vobsub){ KaiLog(_("CSRI odmówiło posłuszeństwa.")); return; }
 	//}
 

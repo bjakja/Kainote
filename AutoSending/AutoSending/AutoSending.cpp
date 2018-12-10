@@ -65,7 +65,7 @@ int _tmain(int argc, TCHAR* argv[])
 	char * prependFolder = (isX86) ? "Kainote" : "Kainote_x64";
 	wchar_t * path = (isX86) ? L"H:\\Kainote\\Win32\\Release\\Kainote x86.zip" : L"H:\\Kainote\\x64\\Release\\Kainote x64.zip";*/
 
-	int filenamessize = (isX86) ? 137 : 139;//tyle policzy³ visual studio
+	int filenamessize = (isX86) ? 138 : 140;//tyle policzy³ visual studio
 	wchar_t * filenames[] = { 
 		L"\\Automation\\automation\\Autoload\\Aegisub-Motion.moon\0",
 		L"\\Automation\\automation\\Autoload\\cleantags-autoload.lua\0",
@@ -208,7 +208,8 @@ int _tmain(int argc, TCHAR* argv[])
 		L"\\Themes\\DeepDark.txt\0",
 		L"\\Themes\\DeepLight.txt\0",
 		L"\\Themes\\MyDeepDark.txt\0",
-		L"\\VSFilter_kainote.dll\0",
+		L"\\Csri\\VSFiltermod.dll\0",
+		L"\\Csri\\xy-VSFilter_kainote.dll\0",
 		L"\\KaiNote_AVX.exe\0",
 		L"\\KaiNote_AVX.pdb\0"
 	};

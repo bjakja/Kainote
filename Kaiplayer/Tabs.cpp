@@ -1220,6 +1220,18 @@ int Notebook::GetIterByPos(const wxPoint &pos){
 		return iter;
 }
 
+void Notebook::RefreshVideo()
+{
+	for (int i = 0; i < sthis->Size(); i++){
+		TabPanel *tab = sthis->Page(i);
+		if (tab->Video->GetState() != None){
+			tab->Video->OpenSubs(tab->Grid->GetVisible());
+			tab->Video->Render();
+		}
+	}
+
+}
+
 
 BEGIN_EVENT_TABLE(Notebook, wxWindow)
 EVT_CHAR_HOOK(Notebook::OnCharHook)

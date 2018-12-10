@@ -146,10 +146,13 @@ void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool cli
 	wxRect workArea = GetMonitorRect(0, NULL, wxPoint(pos->x + size->x, pos->y), true);
 	w = workArea.width + workArea.x;
 	h = workArea.height + workArea.y;
-	//zostawiê jeszcze te logi, gdyby jeszcze jakiœ b³¹d tego typu siê przypl¹ta³.
-	//wLogStatus("workarea x %i %i y %i %i", workArea.x, workArea.width, workArea.y, workArea.height);
+	//It was probably the last bug of this element or maybe there are some wonder monitors combination
+	//that make it failed in the future
+	//KaiLog(wxString::Format("workarea x %i %i y %i %i pos %i, size %i", workArea.x, workArea.width, workArea.y, workArea.height, pos->x + size->x, pos->y));
 	if (size->y > workArea.height){
 		size->y = workArea.height;
+		maxVisible = size->y / height;
+		size->x += 20;
 	}
 	if ((pos->x + size->x) > w){
 		pos->x -= size->x;
