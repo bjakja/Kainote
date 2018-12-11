@@ -302,7 +302,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 				while (currentPosition < i)
 				{
 					size_t spacePos = KText.find(wxUniChar(L' '), j);
-					if (spacePos == -1 || currentPosition >= spacePos)
+					if (spacePos == -1 || spacePos > i)
 						spacePos = i;
 
 					j = spacePos + 1;

@@ -550,8 +550,20 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 		wxString replacedText;
 		tabLinePosition = positionId = 0;
 		bool isSRT = (ext == "srt");
+		bool isASS = (ext == "ass");
+		wxString TlModeStyle;
+		bool hasTlMode = false;
 
-		if ((ext == "ass"/* || ext == "ssa"*/) && !plainText){
+		if ((isASS/* || ext == "ssa"*/) && !plainText){
+			size_t tlModeStylePos = subsText.find(L"TLMode Style:");
+			if (tlModeStylePos != -1){
+				hasTlMode = true;
+				size_t nposition = subsText.find(L"\n", tlModeStylePos + 13);
+				if (nposition != -1){
+					TlModeStyle = subsText.Mid(tlModeStylePos + 13, nposition - (tlModeStylePos + 13));
+					TlModeStyle.Trim(true).Trim(false);
+				}
+			}
 			size_t result = subsText.find(/*(ext == "ass") ? */L"Dialogue:"/* : L"Marked="*/);
 			size_t result1 = subsText.find(/*(ext == "ass") ? */L"Comment:"/* : L"Marked="*/);
 			if (result == -1 && result1 == -1)// no dialogues;
@@ -614,12 +626,16 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 			//we have to get only text
 			dial->GetTextElement(dialogueColumn, &dialtxt);
 			if (dial->IsComment && skipComments){
+				tabLinePosition++;
+				if (!isASS || !hasTlMode || !dial || dial->Style != TlModeStyle)
+					positionId++;
 				delete dial;
 				continue;
 			}
 			/*else{
 				dialtxt = token;
 			}*/
+			KaiLog(wxString::Format("text main %s, posid %i, poskey %i", dialtxt, positionId + 1, tabLinePosition));
 
 			if (find){
 				FindInSubsLine(&dialtxt, NULL, &isFirst);
@@ -649,6 +665,7 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 			}
 
 			tabLinePosition++;
+			if (!isASS || !hasTlMode || !dial || dial->Style != TlModeStyle)
 			positionId++;
 
 			if (dial){
@@ -729,6 +746,7 @@ void FindReplace::FindInSubsLine(wxString *onlyString, TabPanel *tab, bool *isFi
 				FRRD->SetHeader(subsPath);
 				*isFirst = false;
 			}
+			KaiLog(wxString::Format("text fis %s, posid %i, poskey %i", *onlyString, positionId + 1, tabLinePosition));
 			FRRD->SetResults(*onlyString, wxPoint(foundPosition, foundLength), tab, 
 				positionId + 1, tabLinePosition, (tab)? L"" : subsPath);
 

@@ -35,6 +35,7 @@ public:
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	Item* Copy(){ return new ResultsHeader(*this); }
+	wxSize GetTextExtents(KaiListCtrl *theList);
 private:
 	int positionInTable = 0;
 	bool isVisible = true;

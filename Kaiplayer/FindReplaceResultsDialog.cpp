@@ -165,6 +165,13 @@ void ResultsHeader::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height,
 	dc->SetBackgroundMode(wxTRANSPARENT);
 }
 
+wxSize ResultsHeader::GetTextExtents(KaiListCtrl *theList){
+	wxSize size = theList->GetTextExtent(name);
+	size.x += 28;
+	size.y += 4;
+	return size;
+}
+
 void SeekResults::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
 {
 	bool isOnCheckbox = event.GetX() < 19;
