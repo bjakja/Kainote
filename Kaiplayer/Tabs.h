@@ -48,7 +48,7 @@ public:
 	void ChangeActive();
 	void RefreshBar();
 	bool LoadSubtitles(TabPanel *tab, const wxString & path, int active = -1, int scroll = -1);
-	bool LoadVideo(TabPanel *tab, const wxString & path, int position = -1, bool isFFMS2 = true);
+	bool LoadVideo(TabPanel *tab, KainoteFrame *main, const wxString & path, int position = -1, bool isFFMS2 = true);
 
 	int iter;
 	bool block;

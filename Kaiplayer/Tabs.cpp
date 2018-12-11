@@ -967,13 +967,32 @@ bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*
 	return true;
 }
 
-bool Notebook::LoadVideo(TabPanel *tab, const wxString & path, int position /*= -1*/, bool isFFMS2)
+bool Notebook::LoadVideo(TabPanel *tab, KainoteFrame *main, const wxString & path, int position /*= -1*/, bool isFFMS2)
 {
 	bool isload = tab->Video->LoadVideo(path, (tab->editor) ? tab->Grid->GetVisible() : 0, false, true, (position != -1)? isFFMS2 : -1);
 
 	if (!isload){
 		return false;
 	}
+
+	wxString audiopath = tab->Grid->GetSInfo(L"Audio File");
+	wxString keyframespath = tab->Grid->GetSInfo(L"Keyframes File");
+	if (audiopath.StartsWith("?")){ audiopath = path; }
+	bool hasAudioPath = (!audiopath.empty() && ((wxFileExists(audiopath) && audiopath.find(L':') == 1) ||
+		wxFileExists(audiopath.Prepend(path.BeforeLast(L'\\') + "\\"))));
+	bool hasKeyframePath = (!keyframespath.empty() && ((wxFileExists(keyframespath) && keyframespath.find(L':') == 1) ||
+		wxFileExists(keyframespath.Prepend(path.BeforeLast(L'\\') + "\\"))));
+
+	if (hasAudioPath && audiopath != path){
+		audiopath.Replace("/", "\\");
+		main->OpenAudioInTab(tab, 30040, audiopath);
+	}
+
+	if (hasKeyframePath){
+		tab->Video->OpenKeyframes(keyframespath);
+		tab->KeyframesPath = keyframespath;
+	}
+
 	tab->Edit->Frames->Enable(!tab->Video->IsDshow);
 	tab->Edit->Times->Enable(!tab->Video->IsDshow);
 	if (position != -1)
@@ -1089,7 +1108,7 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 						main->SetRecent();
 					}
 					if (!video.empty()){
-						sthis->LoadVideo(tab, video, videoPosition, isFFMS2);
+						sthis->LoadVideo(tab, main, video, videoPosition, isFFMS2);
 					}
 					main->Label();
 					tab->ShiftTimes->Contents();
