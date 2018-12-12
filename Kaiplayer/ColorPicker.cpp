@@ -720,6 +720,27 @@ int DialogColorPicker::GetColorType()
 	return -1;
 }
 
+void DialogColorPicker::AddRecent(const AssColor &color)
+{
+	if (DCP){
+		DCP->recent_box->AddColor(color.GetWX());
+		Options.SetString(ColorpickerRecent, DCP->recent_box->StoreToString());
+	}
+	else{
+		wxString recentString = Options.GetString(ColorpickerRecent);
+		wxString stringColor = color.GetAss(true);
+		size_t reps = recentString.Replace(stringColor, L"");
+		if (reps){
+			recentString.Replace(L"  ", L" ");
+		}
+		recentString = stringColor + " " + recentString;
+		while (recentString.Freq(L' ') > 31){
+			recentString = recentString.BeforeLast(L' ');
+		}
+		Options.SetString(ColorpickerRecent, recentString);
+	}
+}
+
 // Use the values entered in the RGB controls to update the other controls
 void DialogColorPicker::UpdateFromRGB(bool SendVideoEvent /*= true*/)
 {
@@ -1345,6 +1366,7 @@ SimpleColorPickerDialog::SimpleColorPickerDialog(wxWindow *parent, const AssColo
 	else
 		colorType->SetSelection(colorNum - 1);
 	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
+		AddRecent();
 		wxCommandEvent ctcevt(COLOR_TYPE_CHANGED, GetId());
 		//selections starts from 0, colors from 1
 		ctcevt.SetInt(colorType->GetSelection() + 1);
@@ -1400,6 +1422,12 @@ void SimpleColorPickerDialog::SetColor(const AssColor &_color)
 	HexColor->SetValue(color.GetAss(false));
 	Colorize();
 }
+
+void SimpleColorPickerDialog::AddRecent()
+{
+	DialogColorPicker::AddRecent(color.GetWX());
+}
+
 
 void SimpleColorPickerDialog::Colorize()
 {

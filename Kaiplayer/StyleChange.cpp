@@ -377,6 +377,7 @@ void StyleChange::OnAllCols(int numColor, bool leftClick /*= true*/)
 
 		AssColor ret;
 		if (scp.PickColor(&ret)){
+			scpd->AddRecent();
 			//looks like when COLOR_CHANGED is bind it's no need to do something in here
 			//UpdateColor(scpd->GetColor(), scpd->GetColorType());
 		}

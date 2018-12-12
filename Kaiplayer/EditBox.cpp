@@ -896,6 +896,7 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 
 		AssColor ret;
 		if (scp.PickColor(&ret)){
+			scpd->AddRecent();
 			wxString txt = Editor->GetValue();
 			if (txt[Placed.x] != L'}'){
 				int bracketPos = txt.find(L"}", Placed.x);

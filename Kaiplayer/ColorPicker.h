@@ -236,7 +236,8 @@ public:
 	void SetColor(AssColor new_color, int numColor = 0, bool SendVideoEvent = true, bool setAlpha = true);
 	AssColor GetColor();
 	int GetColorType();
-
+	//instead of getting unnecessery color there will be better add function for that
+	static void AddRecent(const AssColor &color);
 	static DialogColorPicker *DCP;
 	static DialogColorPicker *Get(wxWindow *parent, AssColor color = wxColour("#000000"), int colorType = -1);
 
@@ -283,6 +284,7 @@ public:
 	const AssColor &GetColor(){ return color; };
 	int GetColorType();
 	void SetColor(const AssColor &color);
+	void AddRecent();
 	void Colorize();
 private:
 	void OnIdle(wxIdleEvent& event);
