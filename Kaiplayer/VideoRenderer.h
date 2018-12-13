@@ -119,7 +119,7 @@ class VideoRenderer : public wxWindow
 		bool PlayLine(int start, int end);
 		bool Pause();
 		bool Stop();
-		void SetPosition(int time, bool starttime=true, bool corect=true);
+		void SetPosition(int time, bool starttime=true, bool corect=true, bool async = true);
 		void SetFFMS2Position(int time, bool starttime);
 		void GoToNextKeyframe();
 		void GoToPrevKeyframe();

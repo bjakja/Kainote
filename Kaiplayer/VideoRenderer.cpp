@@ -777,7 +777,7 @@ bool VideoRenderer::PlayLine(int start, int eend)
 	int duration = GetDuration();
 	if (vstate == None || start >= eend || start >= duration){ return false; }
 	if (duration < eend){ eend = duration; }
-	SetPosition(start);
+	SetPosition(start, true, true, false);
 	Play(eend);
 	return true;
 }
@@ -821,13 +821,13 @@ bool VideoRenderer::Stop()
 	return false;
 }
 
-void VideoRenderer::SetPosition(int _time, bool starttime/*=true*/, bool corect/*=true*/)
+void VideoRenderer::SetPosition(int time, bool starttime/*=true*/, bool corect/*=true*/, bool async /*= true*/)
 {
 	
 	if (IsDshow){
 		bool playing = vstate == Playing;
 		TabPanel* tab = (TabPanel*)GetParent();
-		time = MID(0, _time, GetDuration());
+		time = MID(0, time, GetDuration());
 		if (corect){
 			time /= frameDuration;
 			if (starttime){ time++; }
@@ -853,10 +853,10 @@ void VideoRenderer::SetPosition(int _time, bool starttime/*=true*/, bool corect/
 		}
 	}
 	else{
-		if (vstate == Playing)
-			SetFFMS2Position(_time, starttime);
+		if (vstate == Playing || !async)
+			SetFFMS2Position(time, starttime);
 		else
-			VFF->SetPosition(_time, starttime);
+			VFF->SetPosition(time, starttime);
 	}
 }
 

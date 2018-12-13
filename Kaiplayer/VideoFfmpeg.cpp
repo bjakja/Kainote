@@ -110,7 +110,7 @@ void VideoFfmpeg::Processing()
 		{
 			byte *buff = (byte*)rend->datas;
 			int acttime;
-			isBusy = false;
+			//isBusy = false;
 			while (1){
 
 				if (rend->numframe != lastframe){

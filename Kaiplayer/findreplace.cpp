@@ -635,7 +635,7 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 			/*else{
 				dialtxt = token;
 			}*/
-			KaiLog(wxString::Format("text main %s, posid %i, poskey %i", dialtxt, positionId + 1, tabLinePosition));
+			//KaiLog(wxString::Format("text main %s, posid %i, poskey %i", dialtxt, positionId + 1, tabLinePosition));
 
 			if (find){
 				FindInSubsLine(&dialtxt, NULL, &isFirst);
@@ -746,7 +746,7 @@ void FindReplace::FindInSubsLine(wxString *onlyString, TabPanel *tab, bool *isFi
 				FRRD->SetHeader(subsPath);
 				*isFirst = false;
 			}
-			KaiLog(wxString::Format("text fis %s, posid %i, poskey %i", *onlyString, positionId + 1, tabLinePosition));
+			//KaiLog(wxString::Format("text fis %s, posid %i, poskey %i", *onlyString, positionId + 1, tabLinePosition));
 			FRRD->SetResults(*onlyString, wxPoint(foundPosition, foundLength), tab, 
 				positionId + 1, tabLinePosition, (tab)? L"" : subsPath);
 
