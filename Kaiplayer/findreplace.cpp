@@ -626,9 +626,10 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 			//we have to get only text
 			dial->GetTextElement(dialogueColumn, &dialtxt);
 			if (dial->IsComment && skipComments){
-				tabLinePosition++;
-				if (!isASS || !hasTlMode || !dial || dial->Style != TlModeStyle)
+				if (!isASS || !hasTlMode || !dial || dial->Style != TlModeStyle){
+					tabLinePosition++;
 					positionId++;
+				}
 				delete dial;
 				continue;
 			}
@@ -664,9 +665,10 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 				}
 			}
 
-			tabLinePosition++;
-			if (!isASS || !hasTlMode || !dial || dial->Style != TlModeStyle)
-			positionId++;
+			if (!isASS || !hasTlMode || !dial || dial->Style != TlModeStyle){
+				tabLinePosition++;
+				positionId++;
+			}
 
 			if (dial){
 				delete dial;

@@ -46,9 +46,9 @@ public:
 	int findend;
 	int lastActive;
 	wxString oldfind;
-	bool fnext;
-	bool fromstart;
-	bool blockTextChange;
+	bool fnext = false;
+	bool fromstart = false;
+	bool blockTextChange = false;
 	bool findTextReset = false;
 	bool wasResetToStart = false;
 	wxArrayString findRecent;
@@ -63,10 +63,10 @@ public:
 	wxString stylesAsText;
 	bool wasIngored = false;
 	// find replace in tab / subs config
-	bool startLine;
-	bool endLine;
-	bool regEx;
-	bool matchCase;
+	bool startLine = false;
+	bool endLine = false;
+	bool regEx = false;
+	bool matchCase = false;
 	bool skipComments;
 	bool onlyText;
 	bool onlyOption;
