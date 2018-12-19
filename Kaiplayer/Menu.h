@@ -254,6 +254,7 @@ private:
 	int sel;
 	bool clicked;
 	bool altDown;
+	bool blockMenu = false;
 	int shownMenu;
 	int oldelem;
 	Menu *md;

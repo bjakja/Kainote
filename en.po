@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2018-11-29 12:00+0100\n"
-"PO-Revision-Date: 2018-11-29 12:40+0100\n"
+"PO-Revision-Date: 2018-12-15 17:05+0100\n"
 "Last-Translator: Bakura, Areki, duplex, Kostek00, Sacredus\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -1420,7 +1420,7 @@ msgstr "Find and replace"
 
 #: FindReplaceResultsDialog.cpp:22 MispellReplacerDialog.cpp:174
 msgid "Wyniki szukania"
-msgstr "Seeking Results"
+msgstr "Seeking results"
 
 #: FindReplaceResultsDialog.cpp:40 MispellReplacerDialog.cpp:195
 msgid "Zahacz wszystko"

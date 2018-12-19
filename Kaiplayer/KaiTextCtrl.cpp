@@ -175,7 +175,7 @@ void KaiTextCtrl::AppendText(const wxString &text)
 	}
 	CalcWrap(false, (len < 1) ? 0 : (KText[len - 1] == L'\n') ? len : len - 1);
 	Cursor.x = Selend.x = KText.length() - 1;
-	Cursor.y = Selend.y = FindY(Cursor.x);
+	Cursor.y = Selend.y = wraps.size() - 2;
 	MakeCursorVisible();
 }
 
@@ -266,8 +266,6 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 
 	int w, h, fw = 0, fh = 0;
 	GetSize(&w, &h);
-	wxMemoryDC dc((bmp) ? *bmp : wxBitmap(10, 10));
-	dc.SetFont(font);
 	if (KText != "" && multiline){
 		if (wraps.size() == 0){
 			wraps.push_back(0);

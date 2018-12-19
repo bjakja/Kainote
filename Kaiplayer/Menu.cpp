@@ -899,14 +899,18 @@ void MenuBar::OnMouseEvent(wxMouseEvent &evt)
 
 	wxPoint pos = evt.GetPosition();
 	int elem = CalcMousePos(&pos);
-	if ((evt.Leaving() || elem == -1) && shownMenu == -1/*!md*/){
+	if ((evt.Leaving() || elem == -1) && shownMenu == -1 && !showMnemonics){
 		oldelem = sel = -1; Refresh(false);
 		return;
 	}
 	if (evt.Entering() || elem == -1){
 		if (shownMenu != -1 && Menus[shownMenu]->dialog == NULL){ shownMenu = -1; }
 		oldelem = -1;
-		if (shownMenu == elem){ oldelem = sel = elem; Refresh(false); return; }
+		if (shownMenu == elem && !showMnemonics){
+			oldelem = sel = elem; 
+			Refresh(false); 
+			return; 
+		}
 	}
 	//poprawiæ to nieszczêsne menu by nie odpala³o siê wiele razy ani te¿ obwódka z helpa nie znika³a.
 	if (elem != oldelem){
@@ -1046,6 +1050,7 @@ LRESULT CALLBACK MenuBar::OnKey(int code, WPARAM wParam, LPARAM lParam){
 		CallNextHookEx(Menubar->HookKey, code, wParam, lParam);
 		return 0;
 	}
+
 	if (wParam == VK_MENU && !(lParam & 1073741824)){//536870912 1073741824 lparam mówi nam o altup, który ma specjalny bajt 
 		byte state[256];
 		if (GetKeyboardState(state) == FALSE){ return 0; }
@@ -1059,15 +1064,17 @@ LRESULT CALLBACK MenuBar::OnKey(int code, WPARAM wParam, LPARAM lParam){
 		}
 		Menubar->sel = -1;
 		Menubar->Refresh(false);
+		Menubar->blockMenu = false;
 		return 1;
 	}
 	else if (wParam == VK_MENU && !(lParam & 536870912)){
 		if (!Menubar->altDown){ showMnemonics = false; }
 		if (Menubar->sel == -1 || !showMnemonics){
-			Menubar->sel = (showMnemonics) ? 0 : -1;
+			Menubar->sel = (showMnemonics && !Menubar->blockMenu) ? 0 : -1;
 			Menubar->Refresh(false);
 		}
 		Menubar->altDown = false;
+		Menubar->blockMenu = false;
 	}
 	else if (showMnemonics){
 		if ((wParam >= 0x41 && wParam <= 0x5A) && !(lParam & 2147483648)){//lparam mówi o keyup
@@ -1075,6 +1082,9 @@ LRESULT CALLBACK MenuBar::OnKey(int code, WPARAM wParam, LPARAM lParam){
 			auto foundmnemonics = mn.find(wParam);
 
 			if (foundmnemonics != mn.end()){
+				byte state[256];
+				if (GetKeyboardState(state) == FALSE){ return 0; }
+				if (!(state[VK_LMENU] > 1 && state[VK_LSHIFT] < 2 && state[VK_RSHIFT] < 2 && state[VK_LCONTROL] < 2 && state[VK_RCONTROL] < 2)){ return 0; }
 				if (Menubar->md){
 					if (Menubar->md->items[foundmnemonics->second]->submenu){
 						Menubar->md->dialog->sel = Menubar->md->dialog->submenuShown = foundmnemonics->second;
@@ -1101,9 +1111,17 @@ LRESULT CALLBACK MenuBar::OnKey(int code, WPARAM wParam, LPARAM lParam){
 				}
 				return 1;
 			}
-
+			return 0;
 		}
-		if (wParam != VK_MENU){ Menubar->altDown = false; }
+		//if (Menubar->blockMenu && (wParam != VK_CONTROL && wParam != VK_SHIFT)){
+		//	Menubar->blockMenu = false;
+		//}
+		else if ((wParam == VK_CONTROL || wParam == VK_SHIFT)/* && (lParam & 536870912)*/){
+			Menubar->blockMenu = true;
+		}
+		//else if (wParam != VK_MENU){ 
+			//Menubar->altDown = false;
+		//}
 	}
 
 	if ((wParam == VK_DOWN || wParam == VK_UP || wParam == VK_LEFT || wParam == VK_RIGHT) && !(lParam & 2147483648)){

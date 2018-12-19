@@ -49,7 +49,8 @@ bool kainoteApp::OnInit()
 	{
 
 		setlocale(LC_NUMERIC, "C");
-		setlocale(LC_CTYPE, "C");
+		//on x64 it makes not working unicode toupper tolower conversion
+		//setlocale(LC_CTYPE, "C");
 
 		wxImage::AddHandler(new wxPNGHandler);
 		wxImage::AddHandler(new wxICOHandler);
