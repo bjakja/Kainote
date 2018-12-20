@@ -1114,7 +1114,7 @@ LRESULT CALLBACK MenuBar::OnKey(int code, WPARAM wParam, LPARAM lParam){
 		//if (Menubar->blockMenu && (wParam != VK_CONTROL && wParam != VK_SHIFT)){
 		//	Menubar->blockMenu = false;
 		//}
-		else if ((wParam == VK_CONTROL || wParam == VK_SHIFT)/* && (lParam & 536870912)*/){
+		else if (wParam != VK_MENU/*(wParam == VK_CONTROL || wParam == VK_SHIFT)*//* && (lParam & 536870912)*/){
 			Menubar->blockMenu = true;
 		}
 		//else if (wParam != VK_MENU){ 
