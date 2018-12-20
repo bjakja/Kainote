@@ -500,9 +500,8 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 			bool vis = false;
 			dummytext = grid->GetVisible(&vis, &textplaced);
 			if (!vis){ SAFE_DELETE(dummytext); return; }
-
+			//vector clip
 			if (Visual == VECTORCLIP){
-				//wxPoint pos;
 				wxString tmp = L"clip(";
 				wxString txt = Editor->GetValue();
 				bool fv = edit->FindValue(L"(i?clip.)[^)]*\\)", &tmp, txt, 0, 1);
@@ -515,21 +514,21 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				textplaced.y = txt.length();
 				int nx = 0, ny = 0;
 				grid->GetASSRes(&nx, &ny);
-				Dialogue *visdl = edit->line->Copy();
+				Dialogue *maskDialogue = edit->line->Copy();
 				wxString text;
 				text << L"{\\p1\\bord0\\shad0\\fscx100\\fscy100\\1c&H000000&\\1a&H77&\\pos(0,0)\\an7\\" << tmp1 << clip << L")}m 0 0 l " <<
 					nx << L" 0 " << nx << L" " << ny << L" 0 " << ny;
-				visdl->SetText(text);
-				visdl->GetRaw(dummytext);
+				maskDialogue->SetTextElement(TXT, text);
+				maskDialogue->GetRaw(dummytext);
 				dumplaced.x = edit->Placed.x + textplaced.x; dumplaced.y = edit->Placed.y + textplaced.x;
-				delete visdl;
+				delete maskDialogue;
 				if (changeEditorText){
 					Editor->SetTextS(txt, false, true);
 					Editor->SetModified();
 				}
 
 			}
-			else{//rysunki wektorowe
+			else{//vector drawings
 				wxString tmp = L"";
 				bool isf;
 				bool hasP1 = true;
@@ -572,8 +571,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 						txt.insert(bracketPos, L"}");
 					}
 				}
-				//isf = edit->FindVal(L"p([0-9]+)", &tmp, txt, 0, true);
-
+				
 				wxString afterP1 = txt.Mid(edit->Placed.y);
 				int Mpos = -1;
 				//do poprawki usuwanie pierwszego nawiasu
@@ -604,21 +602,21 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 			}
 		}
 		else{
-			//zmieniamy clip
+			//clip change
 			dummytext->replace(dumplaced.x, dumplaced.y - dumplaced.x, clip);
-			//ustawiamy nowe pozycje dla następnej operacji zmiany
+			//new positions for new change
 			int oldy = dumplaced.y;
 			dumplaced.y = dumplaced.x + clip.length();
 			textplaced.y += (dumplaced.y - oldy);
 			if (Visual == VECTORCLIP){
-				//zmieniamy clip tła przyciemniena w clipach
+				//change mask clip
 				int endclip = dummytext->Find(L')', true);
 				int startclip = dummytext->Find(L'(', true);
 				dummytext->replace(startclip + 1, endclip - (startclip + 1), clip);
 			}
-			//wyciągamy sam tekst linijki
+			//get line text
 			wxString txt = dummytext->Mid(textplaced.x, textplaced.y);
-			//wstawiamy w edytor
+			//put in text field
 			if (changeEditorText){
 				Editor->SetTextS(txt, false, true);
 				Editor->SetModified();
@@ -640,17 +638,16 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 	}
 }
 
-//Wstawianie visuali do tekstu linijki
+//Put visuals in line text
 void Visuals::SetVisual(bool dummy, int type)
 {
-	//wstawianie wisuali ale najpierw muszę sobie dać ich rozróżnianie
 	EditBox *edit = tab->Edit;
 	SubsGrid *grid = tab->Grid;
 
 	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == L"");
-	//Editor
+	//Get editor
 	TextEditor *Editor = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
-	//działanie dwuetapowe, pierwszy etap podmieniamy w wielu linijkach
+	//two stages, stage first selected lines
 	if (edit->IsCursorOnStart()){
 		bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 		wxString *dtxt;
@@ -717,7 +714,7 @@ void Visuals::SetVisual(bool dummy, int type)
 		}
 		return;
 	}
-	//gdy pierwszy zawiedzie, mamy drugi czyli w jednej linii
+	//put it on to editor
 	if (dummy){
 		wxString txt = Editor->GetValue();
 		int mode = false;

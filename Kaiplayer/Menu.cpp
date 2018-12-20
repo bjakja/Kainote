@@ -961,8 +961,6 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 		Options.GetColour(MenuBarBackground2),
 		Options.GetColour(MenuBarBackground1), wxTOP);
 	tdc.SetTextForeground(Options.GetColour(WindowText));
-	//tdc.SetPen(wxPen(Options.GetColour("Menu Bar Background 1")));
-	//tdc.DrawLine(0,h-1,w,h-1);
 	int posX = halfIndent;
 	wxSize mnbefsize;
 	wxSize linesize;

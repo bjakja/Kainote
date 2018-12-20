@@ -1782,8 +1782,17 @@ void SubsGridBase::RemoveComparison()
 
 size_t SubsGridBase::GetKeyFromScrollPos(int numOfLines)
 {
-	if (numOfLines < 0)
-		return numOfLines;
+	if (numOfLines < 0){
+		int visibleLines = 0;
+		for (size_t i = scrollPosition; i + 1 > 0; i--){
+			if (numOfLines == visibleLines)
+				return i;
+
+			if (*GetDialogue(i)->isVisible)
+				visibleLines--;
+		}
+		return 0;
+	}
 
 	size_t visibleLines = 0;
 	for (size_t i = scrollPosition; i < GetCount(); i++){
