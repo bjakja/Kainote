@@ -184,7 +184,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	Bund->SetBitmap(wxBITMAP_PNG(L"UNDER"));
 	Bstrike = new MappedButton(this, EDITBOX_CHANGE_STRIKEOUT, L"", _("Przekreślenie"), wxDefaultPosition, wxSize(24, 24));
 	Bstrike->SetBitmap(wxBITMAP_PNG(L"STRIKE"));
-	Ban = new KaiChoice(this, ID_AN, wxDefaultPosition, wxSize(48, 24), ans);
+	Ban = new KaiChoice(this, ID_AN, wxDefaultPosition, wxDefaultSize, ans);
 	Ban->Select(1);
 
 	BoxSizer4 = new wxBoxSizer(wxHORIZONTAL);
@@ -256,7 +256,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	//TextEditOrig->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnNewline, this);
 
 	TextEditOrig->Hide();
-	Comment = new KaiCheckBox(this, ID_COMMENT, _("Komentarz"), wxDefaultPosition, wxSize(82, -1));
+	Comment = new KaiCheckBox(this, ID_COMMENT, _("Komentarz")/*, wxDefaultPosition, wxSize(82, -1)*/);
 	Comment->SetValue(false);
 	LayerEdit = new NumCtrl(this, 16668, L"", -10000000, 10000000, true, wxDefaultPosition, wxSize(50, -1));
 	StartEdit = new TimeCtrl(this, 16668, L"", wxDefaultPosition, wxSize(82, -1), wxTE_CENTER);
@@ -265,7 +265,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	wxArrayString styles;
 	styles.Add(L"Default");
 	StyleChoice = new KaiChoice(this, ID_STYLE, wxDefaultPosition, wxSize(100, -1), styles);//wxSize(145,-1)
-	StyleEdit = new MappedButton(this, 19989, _("Edytuj"), EDITBOX_HOTKEY, wxDefaultPosition, wxSize(45, -1));
+	StyleEdit = new MappedButton(this, 19989, _("Edytuj"), EDITBOX_HOTKEY/*, wxDefaultPosition, wxSize(45, -1)*/);
 	//druga linia
 	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	valid.SetCharExcludes(L",");

@@ -830,24 +830,14 @@ void AudioDisplay::DrawTimescale() {
 	int64_t start = Position*samples;
 	int rate = provider->GetSampleRate();
 	int lastTextPos = -1000;
-	int lastLinePos = -1;
+	int lastLinePos = -20;
 	auto drawTime = [=](int x, int64_t pos, int *lastTextPos, bool drawMS){
 		wxCoord textW;
-		//int hr = 0;
-		//int m = 0;
 		int s = pos / rate;
 		int hr = s / 3600;
 		int m = s / 60;
 		m = m % 60;
 		s = s % 60;
-		/*while (s >= 3600) {
-			s -= 3600;
-			hr++;
-		}
-		while (s >= 60) {
-			s -= 60;
-			m++;
-		}*/
 		wxString text;
 		if (hr) text = wxString::Format(_T("%i:%02i:%02i"), hr, m, s);
 		else if (m) text = wxString::Format(_T("%i:%02i"), m, s);
@@ -858,6 +848,8 @@ void AudioDisplay::DrawTimescale() {
 				text << wxString::Format(_T(".%i"), ms);
 		}
 		GetTextExtent(text, &textW, NULL, NULL, NULL, &scaleFont);
+		//if (drawMS)
+			//textW += 20;
 		if (x > (*lastTextPos) + textW){
 			RECT rect;
 			rect.left = x - 50;//MAX(0,x-textW/2)+1;
@@ -877,33 +869,29 @@ void AudioDisplay::DrawTimescale() {
 		else{
 			pixBounds = (pixBounds / 2) * 2;
 		}
-		//if (pixBounds >= 8) {
-			for (int x = 0; x < w; x++) {
-				int64_t pos = (x * samples) + start;
-				// Second boundary
-				if (pos % rate < samples) {
-					v2[0] = D3DXVECTOR2(x, h + 2);
-					v2[1] = D3DXVECTOR2(x, h + 8);
-					d3dLine->Draw(v2, 2, timescaleText);
-					lastLinePos = x;
-					// Draw text
-					drawTime(x, pos, &lastTextPos, false);
-				}
-
-				// Other
-				else if (pos % (rate / pixBounds * i) < samples) {
-					//if (lastLinePos + 8 <= x){
-						v2[0] = D3DXVECTOR2(x, h + 2);
-						v2[1] = D3DXVECTOR2(x, h + 5);
-						d3dLine->Draw(v2, 2, timescaleText);
-						if (lastLinePos + 80 <= x)
-							drawTime(x, pos, &lastTextPos, true);
-					//}
-					lastLinePos = x;
-				}
+		for (int x = 0; x < w; x++) {
+			int64_t pos = (x * samples) + start;
+			// Second boundary
+			if (pos % rate < samples) {
+				v2[0] = D3DXVECTOR2(x, h + 2);
+				v2[1] = D3DXVECTOR2(x, h + 8);
+				d3dLine->Draw(v2, 2, timescaleText);
+				lastLinePos = x;
+				// Draw text
+				drawTime(x, pos, &lastTextPos, false);
 			}
-			break;
-		//}
+
+			// Other
+			else if (pos % (rate / pixBounds * i) < samples) {
+				v2[0] = D3DXVECTOR2(x, h + 2);
+				v2[1] = D3DXVECTOR2(x, h + 5);
+				d3dLine->Draw(v2, 2, timescaleText);
+				if (lastLinePos + 20 <= x)
+					drawTime(x, pos, &lastTextPos, true);
+				lastLinePos = x;
+			}
+		}
+		break;
 	}
 	d3dLine->End();
 }

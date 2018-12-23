@@ -202,8 +202,8 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		//ramka czasu
 		KaiStaticBoxSizer *timesizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Czas"));
 		wxGridSizer *timegrid = new wxGridSizer(2, 0, 0);
-		MoveTime = new MappedButton(panel, GLOBAL_SHIFT_TIMES, _("Przesuń"), _("Przesuń czas napisów"), wxDefaultPosition, wxSize(60, 22), GLOBAL_HOTKEY);
-		TimeText = new TimeCtrl(panel, -1, "0:00:00.00", wxDefaultPosition, wxSize(60, 20), wxALIGN_CENTER | wxTE_PROCESS_ENTER);
+		MoveTime = new MappedButton(panel, GLOBAL_SHIFT_TIMES, _("Przesuń"), _("Przesuń czas napisów"), wxDefaultPosition, wxSize(60, -1), GLOBAL_HOTKEY);
+		TimeText = new TimeCtrl(panel, -1, "0:00:00.00", wxDefaultPosition, wxSize(60, -1), wxALIGN_CENTER | wxTE_PROCESS_ENTER);
 		Forward = new KaiRadioButton(panel, -1, _("W przód"));
 		Backward = new KaiRadioButton(panel, -1, _("W tył"));
 		DisplayFrames = new KaiCheckBox(panel, 31221, _("Klatki"));
