@@ -21,8 +21,9 @@
 #include "wx/msw/private.h"
 #include "KainoteApp.h"
 
-static wxFont font = wxFont(10, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma");
-const static int height = 22;
+//cannot use font outside class cause it create before it can get font scale from system
+//static wxFont font = wxFont(10, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma");
+static int height = 22;
 static bool showMnemonics = false;
 static bool secondAlt = false;
 static bool showIcons = true;
@@ -134,7 +135,7 @@ void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool cli
 	if (clientPos){ *pos = parent->ClientToScreen(*pos); }
 	size_t isize = items.size();
 	for (size_t i = 0; i < isize; i++){
-		parent->GetTextExtent(items[i]->label, &tx, &ty, 0, 0, &font);
+		parent->GetTextExtent(items[i]->label, &tx, &ty, 0, 0, &MenuBar::font);
 		if (tx > size->x){ size->x = tx; }
 	}
 
@@ -643,7 +644,7 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	const wxColour & graytext = Options.GetColour(WindowTextInactive);
 	const wxColour & background = Options.GetColour(MenuBackground);
 	const wxColour & menuhighlight = Options.GetColour(MenuBackgroundSelection);
-	tdc.SetFont(font);
+	tdc.SetFont(MenuBar::font);
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(Options.GetColour(WindowBorder)));
 	tdc.DrawRectangle(0, 0, ow, h);
@@ -820,6 +821,7 @@ END_EVENT_TABLE()
 static int menuIndent = 20;
 static int halfIndent = 10;
 MenuBar *MenuBar::Menubar = NULL;
+wxFont MenuBar::font = wxFont();
 
 MenuBar::MenuBar(wxWindow *_parent)
 	:wxWindow(_parent, -1, wxDefaultPosition, wxSize(-1, height))
@@ -832,8 +834,17 @@ MenuBar::MenuBar(wxWindow *_parent)
 	, shownMenu(-1)
 	, altDown(false)
 {
+	int x = 0, y = 0;
+	font = wxFont(10, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, L"Tahoma");
 	SetFont(font);
-	Refresh(false);
+	GetTextExtent(L"#TWFfGHj", &x, &y);
+	y += 6;
+	if (y > height){
+		SetMinSize(wxSize(200, y));
+		SetSize(wxSize(-1, y));
+		height = y;
+	}
+	//Refresh(false);
 	
 	Menubar = this;
 	HookKey = NULL;
@@ -988,7 +999,7 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 			tdc.SetPen(wxPen(Options.GetColour(MenuBarBorderSelection)));
 			tdc.DrawRoundedRectangle(posX - 4, 1, te.x + 8, h - 3, 3.0);
 		}
-		tdc.DrawText(desc, posX, 2);//(h-te.y)/2.0
+		tdc.DrawText(desc, posX, (h - te.y) / 2);
 		if (hasMnemonics){
 			tdc.SetPen(wxPen(Options.GetColour(WindowText)));
 			tdc.DrawLine(posX + mnbefsize.x, h - 4, posX + mnbefsize.x + linesize.x, h - 4);
@@ -998,6 +1009,22 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 
 	wxPaintDC dc(this);
 	dc.Blit(0, 0, w, h, &tdc, 0, 0);
+}
+
+void MenuBar::OnSize(wxSizeEvent& event)
+{
+	/*if (height < 1){
+		int x = 0, y = 0;
+		font = wxFont(9, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, L"Tahoma");
+		GetTextExtent(L"#TWFfGH", &x, &y);
+		y += 4;
+		if (y > 26){
+			SetMinSize(wxSize(200, y));
+			SetSize(wxSize(-1, y));
+		}
+		height = y;
+	}
+	Refresh(false);*/
 }
 
 int MenuBar::CalcMousePos(wxPoint *pos)
@@ -1263,4 +1290,5 @@ void MenuBar::HideMnemonics()
 BEGIN_EVENT_TABLE(MenuBar, wxWindow)
 EVT_MOUSE_EVENTS(MenuBar::OnMouseEvent)
 EVT_PAINT(MenuBar::OnPaint)
+//EVT_SIZE(MenuBar::OnSize)
 END_EVENT_TABLE()

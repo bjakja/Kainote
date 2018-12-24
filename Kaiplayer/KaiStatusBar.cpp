@@ -20,17 +20,25 @@
 
 KaiStatusBar::KaiStatusBar(wxWindow *parent, int id, int style)
 	:wxWindow(parent, id, wxDefaultPosition, wxSize(-1, 26))
-	,bmp(NULL)
+	, bmp(NULL)
 {
 	Bind(wxEVT_SIZE, &KaiStatusBar::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiStatusBar::OnPaint, this);
 	Bind(wxEVT_MOTION, &KaiStatusBar::OnMouseMove, this);
-	SetMinSize(wxSize(200,26));
+	SetMinSize(wxSize(200, 26));
+	int x = 0, y = 0;
+	//SetFont(wxFont(13, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, L"Tahoma"));
+	GetTextExtent(L"#TWFfGHj", &x, &y);
+	y += 8;
+	if (y > 26){
+		SetMinSize(wxSize(200, y));
+		SetSize(wxSize(-1, y));
+	}
 }
 
 void KaiStatusBar::SetFieldsCount(int num, int *fields)
 {
-	for(int i = 0; i < num; i++){
+	for (int i = 0; i < num; i++){
 		sizes.Add(fields[i]);
 	}
 	labels.resize(num);
@@ -39,7 +47,7 @@ void KaiStatusBar::SetFieldsCount(int num, int *fields)
 
 void KaiStatusBar::SetTooltips(wxString *_tips, int count)
 {
-	for(int i = 0; i < count; i++){
+	for (int i = 0; i < count; i++){
 		tips[i] = _tips[i];
 	}
 }
@@ -51,16 +59,16 @@ void KaiStatusBar::OnSize(wxSizeEvent& event)
 
 void KaiStatusBar::OnPaint(wxPaintEvent& event)
 {
-	int w=0;
-	int h=0;
-	GetClientSize (&w, &h);
-	if(w==0||h==0){return;}
+	int w = 0;
+	int h = 0;
+	GetClientSize(&w, &h);
+	if (w == 0 || h == 0){ return; }
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;
 		bmp = NULL;
 	}
-	if(!bmp){bmp=new wxBitmap(w,h);}
+	if (!bmp){ bmp = new wxBitmap(w, h); }
 	tdc.SelectObject(*bmp);
 	tdc.SetFont(GetFont());
 	bool enabled = IsThisEnabled();
@@ -69,32 +77,32 @@ void KaiStatusBar::OnPaint(wxPaintEvent& event)
 	const wxColour & border = Options.GetColour(StatusBarBorder);
 	tdc.SetBrush(wxBrush(wbg));
 	tdc.SetPen(wxPen(border));
-	tdc.DrawRectangle(0,0,w,h);
+	tdc.DrawRectangle(0, 0, w, h);
 	wxArrayInt widths;
 	CalcWidths(&widths);
 	int posX = 1;
 	int widthsSize = widths.size();
 	for (size_t i = 0; i < widthsSize; i++){
-		if(widths[i]>0 && i>0){
+		if (widths[i] > 0 && i > 0){
 			tdc.SetPen(border);
-			tdc.DrawLine(posX-1, 1, posX-1, h-1);
+			tdc.DrawLine(posX - 1, 1, posX - 1, h - 1);
 		}
-		if(labels[i]==""){posX += widths[i]; continue;}
-		wxColour bg = (background.size() > i && background[i]>0)? Options.GetColour(background[i]) : wbg;
-		tdc.SetTextForeground((foreground.size() > i && foreground[i]>0)? Options.GetColour(foreground[i]) : wfg);
+		if (labels[i] == ""){ posX += widths[i]; continue; }
+		wxColour bg = (background.size() > i && background[i] > 0) ? Options.GetColour(background[i]) : wbg;
+		tdc.SetTextForeground((foreground.size() > i && foreground[i] > 0) ? Options.GetColour(foreground[i]) : wfg);
 		tdc.SetBrush(bg);
 		tdc.SetPen(bg);
-		tdc.DrawRectangle(posX,1,widths[i]-1,h-2);
+		tdc.DrawRectangle(posX, 1, widths[i] - 1, h - 2);
 		wxRect cur(posX + 4, 1, (i >= widthsSize - 1) ? widths[i] - 20 : widths[i] - 5, h - 2);
 		tdc.SetClippingRegion(cur);
-		tdc.DrawLabel(labels[i],cur,wxALIGN_CENTER_VERTICAL);
+		tdc.DrawLabel(labels[i], cur, wxALIGN_CENTER_VERTICAL);
 		tdc.DestroyClippingRegion();
 		posX += widths[i];
 
 	}
-	tdc.DrawBitmap(wxBITMAP_PNG("gripper"), w-18, h-18);
+	tdc.DrawBitmap(wxBITMAP_PNG("gripper"), w - 18, h - 18);
 	wxPaintDC dc(this);
-	dc.Blit(0,0,w,h,&tdc,0,0);
+	dc.Blit(0, 0, w, h, &tdc, 0, 0);
 }
 
 void KaiStatusBar::OnMouseMove(wxMouseEvent &evt)
@@ -103,11 +111,11 @@ void KaiStatusBar::OnMouseMove(wxMouseEvent &evt)
 	CalcWidths(&widths);
 	int x = evt.GetX();
 	int posX = 1;
-	for(size_t i = 0; i<widths.size(); i++){
-		if(widths[i]>0 && posX < x && posX+widths[i] > x ){
-			
-			if(tips[i]!=tip){
-				tip = (labels[i].IsEmpty())? "" : tips[i];
+	for (size_t i = 0; i < widths.size(); i++){
+		if (widths[i] > 0 && posX < x && posX + widths[i] > x){
+
+			if (tips[i] != tip){
+				tip = (labels[i].IsEmpty()) ? "" : tips[i];
 				SetToolTip(tip);
 			}
 			break;
@@ -120,44 +128,44 @@ void KaiStatusBar::OnMouseMove(wxMouseEvent &evt)
 void KaiStatusBar::CalcWidths(wxArrayInt *widths)
 {
 	widths->resize(sizes.size());
-	int w, h, wRest=0, perspective = 0;
+	int w, h, wRest = 0, perspective = 0;
 	GetClientSize(&w, &h);
 	wRest = w;
-	for( size_t i = 0; i < sizes.size(); i++){
-		if(sizes[i] < 0){perspective += sizes[i]; continue;}
-		if(labels[i]=="" || sizes[i]){(*widths)[i] = sizes[i]; wRest -= sizes[i]; continue;}
+	for (size_t i = 0; i < sizes.size(); i++){
+		if (sizes[i] < 0){ perspective += sizes[i]; continue; }
+		if (labels[i] == "" || sizes[i]){ (*widths)[i] = sizes[i]; wRest -= sizes[i]; continue; }
 		wxSize size = GetTextExtent(labels[i]);
 		(*widths)[i] = size.x + 10; wRest -= size.x + 10;
 	}
-	for( size_t i = 0; i < sizes.size(); i++){
-		if(sizes[i] >= 0){continue;}
+	for (size_t i = 0; i < sizes.size(); i++){
+		if (sizes[i] >= 0){ continue; }
 		(*widths)[i] = ((float)sizes[i] / (float)perspective) * wRest;
 	}
 }
 
 void KaiStatusBar::SetLabelText(size_t field, const wxString &label)
 {
-	if(field >= labels.size()){return;}
+	if (field >= labels.size()){ return; }
 	labels[field] = label;
 	Refresh(false);
 }
-	
+
 wxString KaiStatusBar::GetStatusText(size_t field) const
 {
-	if(field >= labels.size()){return "";}
+	if (field >= labels.size()){ return ""; }
 	return labels[field];
 }
-	
+
 void KaiStatusBar::SetLabelTextColour(size_t field, COLOR textColour)
 {
-	if(field >= foreground.size()){foreground.resize(field+1, (COLOR)0);}
+	if (field >= foreground.size()){ foreground.resize(field + 1, (COLOR)0); }
 	foreground[field] = textColour;
 	Refresh(false);
 }
-	
+
 void KaiStatusBar::SetLabelBackgroundColour(size_t field, COLOR backgroundColour)
 {
-	if(field >= background.size()){background.resize(field+1, (COLOR)0);}
+	if (field >= background.size()){ background.resize(field + 1, (COLOR)0); }
 	background[field] = backgroundColour;
 	Refresh(false);
 }

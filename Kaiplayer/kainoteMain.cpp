@@ -1658,7 +1658,7 @@ void KainoteFrame::HideEditor(bool save)
 
 		cur->Video->panelHeight = 66;
 		cur->Video->vToolbar->Show();
-		if (cur->Video->GetState() != None&&!cur->Video->isFullscreen){
+		if (cur->Video->GetState() != None && !cur->Video->isFullscreen){
 			int sx, sy, vw, vh;
 			Options.GetCoords(VideoWindowSize, &vw, &vh);
 			if (vh < 350){ vh = 350, vw = 500; }

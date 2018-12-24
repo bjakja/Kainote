@@ -44,6 +44,12 @@ KaiTabBar::KaiTabBar(wxWindow * parent, int id, const wxPoint & position /*= wxD
 		SetTab(newTab);
 	}, NextTab, PreviousTab);
 
+	int x = 0, y = 0;
+	GetTextExtent(L"#TWFfGHj", &x, &y);
+	y += 8;
+	if (y > tabHeader){
+		tabHeader = y;
+	}
 }
 
 KaiTabBar::~KaiTabBar()

@@ -45,7 +45,7 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VideoVolume), wxPoint(size.x - 110, 17), wxSize(110, 25));
 	KaiCheckBox *showToolbar = new KaiCheckBox(panel, 7777, _("Pokaż pasek narzędzi"), wxPoint(180, 21), wxSize(150, -1));
 	showToolbar->SetValue(!vc->IsDshow);
-	mstimes = new KaiTextCtrl(panel, -1, "", wxPoint(340, 21), wxSize(300, -1), wxTE_READONLY);
+	mstimes = new KaiTextCtrl(panel, -1, "", wxPoint(340, 16), wxSize(300, 26), wxTE_READONLY);
 	mstimes->SetWindowStyle(wxBORDER_NONE);
 	mstimes->SetCursor(wxCURSOR_ARROW);
 	mstimes->SetBackgroundColour(WindowBackground);
@@ -84,7 +84,7 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 Fullscreen::~Fullscreen()
 {
 	this->SetEventHandler(this);
-    //Zwolnić event handler
+	//Zwolnić event handler
 }
 
 void Fullscreen::OnSize()

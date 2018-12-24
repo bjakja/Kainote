@@ -243,6 +243,7 @@ private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnCharHook(wxKeyEvent &evt);
 	void OnPaint(wxPaintEvent &event);
+	void OnSize(wxSizeEvent& event);
 	//void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
 	//bool CheckMouse();
 	int CalcMousePos(wxPoint *pos);
@@ -251,6 +252,7 @@ private:
 	
 	std::vector< Menu* > Menus;
 	wxBitmap *bmp;
+	static wxFont font;
 	int sel;
 	bool clicked;
 	bool altDown;

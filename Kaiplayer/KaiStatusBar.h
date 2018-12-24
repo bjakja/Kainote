@@ -22,7 +22,7 @@
 class KaiStatusBar : public wxWindow{
 public:
 	KaiStatusBar(wxWindow *parent, int id = -1, int style = 0);
-	virtual ~KaiStatusBar(){wxDELETE(bmp);};
+	virtual ~KaiStatusBar(){ wxDELETE(bmp); };
 
 	void SetFieldsCount(int num, int *fields);
 	void SetLabelText(size_t field, const wxString &label);
@@ -36,11 +36,12 @@ private:
 	void OnPaint(wxPaintEvent& event);
 	void OnMouseMove(wxMouseEvent &evt);
 	void CalcWidths(wxArrayInt *widths);
-	bool AcceptsFocus( ) const{return false;}
-	bool AcceptsFocusFromKeyboard () const {return false;}
-	bool AcceptsFocusRecursively () const{return false;}
+	bool AcceptsFocus() const { return false; }
+	bool AcceptsFocusFromKeyboard() const { return false; }
+	bool AcceptsFocusRecursively() const { return false; }
 	wxBitmap *bmp;
 	wxString tip;
+	int height = -1;
 	wxArrayInt sizes;
 	wxArrayString labels;
 	wxArrayString tips;

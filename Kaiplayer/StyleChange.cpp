@@ -107,14 +107,14 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 		Options.SetBool(StyleFilterTextOn, filterOn);
 	}, 21342);
 
-	textBold = new KaiCheckBox(this, ID_CBOLD, _("Pogrubienie")/*, wxDefaultPosition, wxSize(73, 15)*/);
-	textItalic = new KaiCheckBox(this, ID_CBOLD, _("Kursywa")/*, wxDefaultPosition, wxSize(73, 15)*/);
-	textUnderline = new KaiCheckBox(this, ID_CBOLD, _("Podkreślenie")/*, wxDefaultPosition, wxSize(73, 15)*/);
-	textStrikeout = new KaiCheckBox(this, ID_CBOLD, _("Przekreślenie")/*, wxDefaultPosition, wxSize(73, 15)*/);
+	textBold = new KaiCheckBox(this, ID_CBOLD, _("Pogrubienie"));
+	textItalic = new KaiCheckBox(this, ID_CBOLD, _("Kursywa"));
+	textUnderline = new KaiCheckBox(this, ID_CBOLD, _("Podkreślenie"));
+	textStrikeout = new KaiCheckBox(this, ID_CBOLD, _("Przekreślenie"));
 
-	fntsizer->Add(styleFont, 3, wxEXPAND | wxALL, 2);
+	fntsizer->Add(styleFont, 4, wxEXPAND | wxALL, 2);
 	fntsizer->Add(fontSize, 1, wxEXPAND | wxALL, 2);
-	filtersizer->Add(fontFilter, 3, wxEXPAND | wxALL, 2);
+	filtersizer->Add(fontFilter, 4, wxEXPAND | wxALL, 2);
 	filtersizer->Add(Filter, 1, wxEXPAND | wxALL, 2);
 
 	biussizer->Add(textBold, 1, wxEXPAND | wxALL, 2);
