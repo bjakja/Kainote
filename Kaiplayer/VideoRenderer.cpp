@@ -891,8 +891,9 @@ void VideoRenderer::SetFFMS2Position(int _time, bool starttime){
 		}
 	}
 	else{
-		if (player){ player->UpdateImage(true, true); }
-		//Render(true, false);
+		//rebuild spectrum cause position can be changed
+		//and it causes random bugs
+		if (player){ player->UpdateImage(false, true); }
 		VFF->Render();
 		RefreshTime();
 	}

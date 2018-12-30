@@ -1056,8 +1056,8 @@ void AudioDisplay::Update(bool moveToEnd) {
 	if (loaded) {
 		if (Options.GetBool(AudioAutoScroll))
 			MakeDialogueVisible(false, moveToEnd);
-		else
-			UpdateImage(true);
+		else//it is possible to change position before without refresh and refresh it here without redrawing spectrum
+			UpdateImage(/*true*/);
 	}
 }
 
