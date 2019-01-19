@@ -897,10 +897,10 @@ int VideoFfmpeg::GetMSfromFrame(int frame)
 	return Timecodes[frame];
 }
 
-int VideoFfmpeg::GetFramefromMS(int MS, int seekfrom)
+int VideoFfmpeg::GetFramefromMS(int MS, int seekfrom, bool safe)
 {
 	if (MS <= 0) return 0;
-	int result = NumFrames - 1;
+	int result = (safe) ? NumFrames - 1 : NumFrames;
 	for (int i = seekfrom; i < NumFrames; i++)
 	{
 		if (Timecodes[i] >= MS)

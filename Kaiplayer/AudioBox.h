@@ -115,6 +115,7 @@ private:
 	bool holding;
 	bool arrows;
 	int oldy;
+	unsigned char lastVerticalZoom = -1;
 
 public:
 	AudioDisplay *audioDisplay;

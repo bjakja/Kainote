@@ -971,8 +971,14 @@ int VideoRenderer::GetFrameTime(bool start)
 			return time + ((prevFrameTime - time) / 2);
 		}
 		else{
-			int nextFrameTime = VFF->GetMSfromFrame(numframe + 1);
-			return time + ((nextFrameTime - time) / 2);
+			if (numframe + 1 >= VFF->NumFrames){
+				int prevFrameTime = VFF->GetMSfromFrame(numframe - 1);
+				return time + ((time - prevFrameTime) / 2);
+			}
+			else{
+				int nextFrameTime = VFF->GetMSfromFrame(numframe + 1);
+				return time + ((nextFrameTime - time) / 2);
+			}
 		}
 	}
 	else{

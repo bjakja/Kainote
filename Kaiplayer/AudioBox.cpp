@@ -470,20 +470,21 @@ void AudioBox::OnCommit(wxCommandEvent &event) {
 void AudioBox::OnKaraoke(wxCommandEvent &event) {
 	audioDisplay->SetFocus();
 	audioDisplay->hasKara = !audioDisplay->hasKara;
-	int value = 50;
+	int value = -1;
 	if (audioDisplay->hasKara){
+		lastVerticalZoom = HorizontalZoom->GetValue();
 		if (!audioDisplay->karaoke){ audioDisplay->karaoke = new Karaoke(audioDisplay); }
 		audioDisplay->karaoke->Split();
-		value = MAX(HorizontalZoom->GetValue() - 20, 30);
-		audioDisplay->SetSamplesPercent(value);
-		HorizontalZoom->SetValue(value);
+		value = MAX(lastVerticalZoom - 20, 30);
 	}
 	else{
-		value = MIN(HorizontalZoom->GetValue() + 20, 60);
+		value = lastVerticalZoom;
+	}
+	if (value > -1){
 		audioDisplay->SetSamplesPercent(value);
 		HorizontalZoom->SetValue(value);
+		Options.SetInt(AudioVerticalZoom, value);
 	}
-	Options.SetInt(AudioVerticalZoom, value);
 
 	audioDisplay->MakeDialogueVisible();
 

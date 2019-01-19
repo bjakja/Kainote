@@ -48,6 +48,13 @@ SubsGridPreview::SubsGridPreview(SubsGrid *_previewGrid, SubsGrid *windowToDraw,
 	Bind(wxEVT_ENTER_WINDOW, &SubsGridPreview::OnMouseEvent, this);
 	Bind(wxEVT_SET_FOCUS, &SubsGridPreview::OnFocus, this);
 	Bind(wxEVT_KILL_FOCUS, &SubsGridPreview::OnFocus, this);
+	wxAcceleratorEntry gentries[2];
+	gentries[0].Set(wxACCEL_CTRL, (int)L'C', PREVIEW_COPY);
+	gentries[1].Set(wxACCEL_CTRL, (int)L'V', PREVIEW_PASTE);
+	wxAcceleratorTable accelg(2, gentries);
+	SetAcceleratorTable(accelg);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &SubsGridPreview::OnAccelerator, this);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &SubsGridPreview::OnAccelerator, this);
 	MakeVisible();
 }
 
@@ -818,6 +825,16 @@ void SubsGridPreview::OnScroll(wxScrollEvent& event)
 	}
 }
 
+
+void SubsGridPreview::OnAccelerator(wxCommandEvent &evt)
+{
+	int id = evt.GetId();
+
+	previewGrid->file->GetSelections(previewGrid->selections);
+	int sels = previewGrid->selections.size();
+	if (id == PREVIEW_COPY && sels > 0) previewGrid->CopyRows(Copy);
+	if (id == PREVIEW_PASTE && sels > 0){ previewGrid->OnPaste(Paste); MakeVisible(); }
+}
 
 void SubsGridPreview::SeekForOccurences()
 {

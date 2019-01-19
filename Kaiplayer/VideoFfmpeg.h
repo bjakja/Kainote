@@ -50,7 +50,7 @@ public:
 	int TimefromFrame(int nframe);
 	int FramefromTime(int time);
 	int GetMSfromFrame(int frame);
-	int GetFramefromMS(int MS, int seekfrom=0);
+	int GetFramefromMS(int MS, int seekfrom = 0, bool safe = true);
 	int Init();
 	void GetChapters(std::vector<chapter> *_chapters){
 		if (_chapters){

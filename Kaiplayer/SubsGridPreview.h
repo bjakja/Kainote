@@ -54,6 +54,7 @@ private:
 	void OnScroll(wxScrollEvent &evt);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } holding = false; };
 	void OnOccurenceChanged(wxCommandEvent &evt);
+	void OnAccelerator(wxCommandEvent &evt);
 	void SeekForOccurences();
 	void ContextMenu(const wxPoint &pos);
 	void OnFocus(wxFocusEvent &evt);
@@ -74,4 +75,9 @@ private:
 	KaiListCtrl *occurencesList = NULL;
 	std::vector<MultiPreviewData> previewData;
 	MultiPreviewData lastData;
+};
+
+enum{
+	PREVIEW_COPY=5432,
+	PREVIEW_PASTE
 };

@@ -25,7 +25,7 @@ wxDEFINE_EVENT(SELECTION_CHANGED, wxCommandEvent);
 bool sortf(int i,int j){ return (i < j);}
 
 StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, const wxPoint &pos, const wxSize &size, long style)
-	      :KaiScrolledWindow(parent,id,pos,size, style|wxVERTICAL)
+		  :KaiScrolledWindow(parent,id,pos,size, style|wxVERTICAL)
 {
 	
 	stylenames=stylearray;
@@ -37,8 +37,8 @@ StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray
 	entries[1].Set(wxACCEL_NORMAL, WXK_DOWN,15556);
 	entries[2].Set(wxACCEL_SHIFT, WXK_UP,15557);
 	entries[3].Set(wxACCEL_SHIFT, WXK_DOWN,15558);
-    wxAcceleratorTable accel(4, entries);
-    SetAcceleratorTable(accel);
+	wxAcceleratorTable accel(4, entries);
+	SetAcceleratorTable(accel);
 
 	wxClientDC dc(this);
 	dc.SetFont(font);
@@ -235,7 +235,7 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 
 	if(holding && alt && !shift && lastsel!=row)
 	{
-	    if (lastsel != -1) {
+		if (lastsel != -1) {
 			
 			int diff=(row-lastsel);
 			if(diff>0){
@@ -264,9 +264,9 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 			}
 			Refresh(false);
 			Switchlines=true;
-        }
-	    lastsel=row;
-	    //return;
+		}
+		lastsel=row;
+		//return;
 	}
 
 	if ((click && shift && !alt) || (holding && !ctrl && !alt && !shift && lastsel != row)) {

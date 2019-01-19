@@ -1052,12 +1052,17 @@ void SubsGridWindow::ScrollTo(int y, bool center /*= false*/, int offset /*= 0*/
 	int w, h;
 	GetClientSize(&w, &h);
 	if (offset){ y = GetKeyFromPosition(y, offset); }
-	else if (center){ y = GetKeyFromPosition(y, -(h / (GridHeight + 1)) / 2); }
-	/*int size = GetCount() + 2;
-	if (preview){
-		wxSize previewsize = preview->GetSize();
-		size += (previewsize.y / (GridHeight + 1)) + 1;
-	}*/
+	else if (center){ 
+		y = GetKeyFromPosition(y, -(h / (GridHeight + 1)) / 2); 
+		if (preview){
+			wxSize previewsize = preview->GetSize();
+			int previewMovement = (previewsize.y / (GridHeight + 1)) + 1;
+			if (scrollPositionId > previewMovement)
+				y = GetKeyFromPosition(y, (previewMovement / 2));
+		}
+	}
+	//int size = GetCount() + 2;
+	
 	// need to calculate this
 	int nextY = MID(0, y, GetCount() - 1);
 

@@ -133,7 +133,7 @@ namespace Auto{
 		lua_pop(L, 1);
 		TabPanel *tab = Notebook::GetTab();
 		if (tab && tab->Video->GetState() != None) {
-			int frame = (tab->Video->IsDshow) ? ((float)ms / 1000.f) * tab->Video->fps : tab->Video->VFF->GetFramefromMS(ms);
+			int frame = (tab->Video->IsDshow) ? ((float)ms / 1000.f) * tab->Video->fps : tab->Video->VFF->GetFramefromMS(ms, 0, false);
 			lua_pushnumber(L, frame);
 		}
 		else {
