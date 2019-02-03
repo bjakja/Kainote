@@ -82,15 +82,17 @@ void SubsGridPreview::DestroyPreview(bool refresh)
 {
 	parent->preview = NULL;
 	previewGrid->thisPreview = NULL;
-	TabPanel *tab = (TabPanel*)parent->GetParent();
-	tab->Edit->SetGrid(tab->Grid);
-	if (tab->Edit->TextEditOrig->IsShown()){
-		tab->Edit->SetTlMode(false, true);
-		//tab->Edit->SetLine(tab->Grid->currentLine);
-	}
+	if (!Options.GetClosing()){
+		TabPanel *tab = (TabPanel*)parent->GetParent();
+		tab->Edit->SetGrid(tab->Grid);
+		if (tab->Edit->TextEditOrig->IsShown() != tab->Grid->hasTLMode){
+			tab->Edit->SetTlMode(tab->Grid->hasTLMode, true);
+		}
+		tab->Edit->SetLine(tab->Grid->currentLine);
 
-	if(refresh)
-		parent->Refresh(false);
+		if (refresh)
+			parent->Refresh(false);
+	}
 	Destroy();
 }
 
@@ -932,6 +934,8 @@ void SubsGridPreview::ContextMenu(const wxPoint &pos)
 	int line = result - 4880;
 	if (lastData.grid){ lastData.grid->thisPreview = NULL; }
 	lastData = previewData[line];
+	TabPanel *tabp = (TabPanel*)parent->GetParent();
+	tabp->Edit->SetGrid(parent);
 	previewGrid = previewData[line].grid;
 	previewGrid->thisPreview = this;
 	previewGrid->ChangeActiveLine(previewData[line].lineRangeStart);

@@ -382,16 +382,18 @@ private:
 	wxString stringConfig[configSize];
 	static const unsigned int colorsSize = StylePreviewColor2 + 1;
 	wxColour colors[colorsSize];
-	
+	bool isClosing = false;
 
 	public:
 	std::vector<Styles*> assstore;
 	wxString progname;
-	//aktualny katalog --- œcie¿ka do folderu programu
+	//actual style catalog --- path to program exe
 	wxString actualStyleDir, pathfull, configPath;
 	wxArrayString dirs;
 	bool AudioOpts;
-
+	
+	void SetClosing(){ isClosing = true; }
+	bool GetClosing(){ return isClosing; }
 
 	const wxString &GetString(CONFIG opt);
 	bool GetBool(CONFIG opt);

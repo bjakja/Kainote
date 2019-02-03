@@ -301,6 +301,9 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 
 KainoteFrame::~KainoteFrame()
 {
+	//this will prevent crashes when function want to use relesed elements
+	//when closing it can be skipped
+	Options.SetClosing();
 	Unbind(wxEVT_ACTIVATE, &KainoteFrame::OnActivate, this);
 	bool im = IsMaximized();
 	if (!im && !IsIconized()){
@@ -321,6 +324,8 @@ KainoteFrame::~KainoteFrame()
 	Options.SetTable(AudioRecent, audsrec);
 	Options.SetInt(VideoVolume, GetTab()->Video->volslider->GetValue());
 	Notebook::SaveLastSession(true);
+	//Tabs->Destroy();
+	//Tabs = NULL;
 	//destroy findreplace before saving options it saving findreplace options in destructor
 	if (FR){ FR->SaveOptions(); FR->Destroy(); FR = NULL; }
 	if (SL){ SL->SaveOptions(); SL->Destroy(); SL = NULL; }
