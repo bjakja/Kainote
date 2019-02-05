@@ -341,13 +341,15 @@ Dialogue *SubsFile::GetDialogue(size_t i)
 	return subs->dialogues[i];
 }
 
-void SubsFile::SetDialogue(size_t i, Dialogue *dial)
+void SubsFile::SetDialogue(size_t i, Dialogue *dial, bool addToDestroyer)
 {
-	if (i >= subs->dialogues.size()){
+	if (i >= subs->dialogues.size())
 		subs->dialogues.push_back(dial);
-	}
+	else
+		subs->dialogues[i] = dial;
 
-	subs->dialogues[i] = dial;
+	if (addToDestroyer)
+		subs->deleteDialogues.push_back(dial);
 }
 
 void SubsFile::DeleteDialogues(size_t from, size_t to)

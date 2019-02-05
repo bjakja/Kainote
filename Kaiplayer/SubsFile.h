@@ -130,7 +130,7 @@ public:
 	//check if exceeds tabe or if dialogue is not visible can return null
 	Dialogue *GetVisibleDialogue(size_t i);
 	Dialogue *GetDialogue(size_t i);
-	void SetDialogue(size_t i, Dialogue *dial);
+	void SetDialogue(size_t i, Dialogue *dial, bool addToDestroyer = false);
 	void DeleteDialogues(size_t from, size_t to);
 	void DeleteSelectedDialogues();
 	//Warning!! Adding the same dialogue pointer to destroyer cause crash

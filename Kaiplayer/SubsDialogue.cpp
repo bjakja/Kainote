@@ -648,6 +648,7 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 	size_t len = txt.length();
 	bool tagsBlock = false;
 	parseData = new ParseData();
+	double tmpValue;
 	if (len < 1){ return; }
 	while (pos < len){
 		wxUniChar ch = txt[pos];
@@ -675,34 +676,37 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 			for (size_t i = 0; i < ntags; i++){
 				wxString tagName = tags[i];
 				int tagLen = tagName.length();
-				if (tag.StartsWith(tagName) && (tag[tagLen] == L'(' ||
-					wxIsdigit(tag[tagLen]) || tagName == L"fn")){
+				if (tag.StartsWith(tagName)){
+					wxUniChar firstValueChar = tag[tagLen];
+					if (firstValueChar == L'(' || wxIsdigit(firstValueChar) || tagName == L"fn" ||
+						firstValueChar == L'.' || firstValueChar == L'-' || firstValueChar == L'+'){
 
-					TagData *newTag = new TagData(tagName, pos + tagLen);
-					wxString tagValue = tag.Mid(tagLen);
-					if (tagName == L"p"){
-						hasDrawing = (tagValue.Trim().Trim(false) == L"0") ? false : true;
-						newTag->PutValue(tagValue);
-					}
-					else if (tag[tagLen] == L'('){
-						newTag->startTextPos++;
-						newTag->PutValue(tagValue.After(L'(').BeforeFirst(L')'), true);
-					}
-					else{
-						if (!tagValue.IsNumber() && tagName != L"fn"){
-							wxString newTagValue;
-							for (auto & ch : tagValue){
-								if (!wxIsdigit(ch))
-									break;
-								newTagValue += ch;
-							}
-							tagValue = newTagValue;
+						TagData *newTag = new TagData(tagName, pos + tagLen);
+						wxString tagValue = tag.Mid(tagLen);
+						if (tagName == L"p"){
+							hasDrawing = (tagValue.Trim().Trim(false) == L"0") ? false : true;
+							newTag->PutValue(tagValue);
 						}
-						newTag->PutValue(tagValue);
+						else if (tag[tagLen] == L'('){
+							newTag->startTextPos++;
+							newTag->PutValue(tagValue.After(L'(').BeforeFirst(L')'), true);
+						}
+						else{
+							if (tagName != L"fn" && !tagValue.ToCDouble(&tmpValue)){
+								wxString newTagValue;
+								for (auto & ch : tagValue){
+									if (!wxIsdigit(ch) && ch != L'.' && ch != L'-' && ch != L'+')
+										break;
+									newTagValue += ch;
+								}
+								tagValue = newTagValue;
+							}
+							newTag->PutValue(tagValue);
+						}
+						parseData->AddData(newTag);
+						pos = tagEnd - 1;
+						break;
 					}
-					parseData->AddData(newTag);
-					pos = tagEnd - 1;
-					break;
 				}
 			}
 		}
