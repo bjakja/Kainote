@@ -433,6 +433,7 @@ void SubsFile::EraseSelection(size_t i)
 
 size_t SubsFile::FindVisibleKey(size_t key, int *corrected)
 {
+	key = MID(0, key, GetCount() - 1);
 	Dialogue *dial = subs->dialogues[key];
 	if (!dial->isVisible){
 		size_t i = key - 1;

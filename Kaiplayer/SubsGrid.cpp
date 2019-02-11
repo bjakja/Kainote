@@ -1028,9 +1028,6 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		while (j >= 0){
 			TagData *tag = pdata->tags[j--];
 			size_t tagValueLen = tag->value.Len();
-			if (tag->tagName == L"fs"){
-				KaiLog(wxString::Format(L"fs: %s, %i", tag->value, (int)tagValueLen));
-			}
 			pos = tag->startTextPos;
 			double tagValue = 0.0;
 			int ii = 0;
