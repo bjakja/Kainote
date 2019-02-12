@@ -1639,8 +1639,8 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	}
 
 	// Buttons
-	bool leftDown = event.LeftDown();
-	bool rightDown = event.RightDown();
+	bool leftDown = event.LeftDown() || event.LeftDClick();
+	bool rightDown = event.RightDown() || event.RightDClick();
 	bool buttonDown = leftDown || rightDown;
 	bool buttonUP = event.LeftUp() || event.RightUp();
 	bool middleDown = event.MiddleDown();
@@ -1911,8 +1911,11 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 				// Drag from nothing or straight timing
 				if (hold == 3) {
 
-					if (leftDown) curStartMS = GetBoundarySnap(GetMSAtX(x), 16, event.ShiftDown(), true);
-					else curEndMS = GetMSAtX(x);
+					if (leftDown) 
+						curStartMS = GetBoundarySnap(GetMSAtX(x), 16, event.ShiftDown(), true);
+					else if(rightDown)
+						curEndMS = GetMSAtX(x); 
+
 					updated = true;
 					NeedCommit = true;
 

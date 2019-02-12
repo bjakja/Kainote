@@ -372,7 +372,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 
 	if (!allTabsVisible && event.GetWheelRotation() != 0) {
 		int step = 1 * event.GetWheelRotation() / event.GetWheelDelta();
-		firstVisibleTab = MID(0, firstVisibleTab - step, Size() - 1);
+		firstVisibleTab = MID(0, firstVisibleTab - step, ((int)Size() - 1));
 		over = -1;
 		RefreshBar();
 		return;
