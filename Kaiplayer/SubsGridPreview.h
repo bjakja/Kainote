@@ -45,7 +45,7 @@ public:
 	SubsGridPreview(SubsGrid *_previewGrid, SubsGrid *windowToDraw, int posY, const wxSize &size);
 	virtual ~SubsGridPreview();
 	void MakeVisible();
-	void DestroyPreview(bool refresh = false);
+	void DestroyPreview(bool refresh = false, bool destroyingPreviewTab = false);
 	void NewSeeking(bool makeVisible = true);
 private:
 	void OnPaint(wxPaintEvent &evt);

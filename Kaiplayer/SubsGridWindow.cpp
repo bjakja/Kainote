@@ -54,7 +54,7 @@ SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoin
 SubsGridWindow::~SubsGridWindow()
 {
 	if (bmp){ delete bmp; bmp = NULL; }
-	if (preview){ preview->DestroyPreview(); preview = NULL; }
+	if (preview){ preview->DestroyPreview(false, true); preview = NULL; }
 	if (thisPreview){ thisPreview->DestroyPreview(); thisPreview = NULL; }
 }
 

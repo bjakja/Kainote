@@ -78,12 +78,12 @@ void SubsGridPreview::MakeVisible()
 	Refresh(false);
 }
 
-void SubsGridPreview::DestroyPreview(bool refresh)
+void SubsGridPreview::DestroyPreview(bool refresh, bool destroyingPreviewTab)
 {
 	parent->preview = NULL;
 	previewGrid->thisPreview = NULL;
 	if (!Options.GetClosing()){
-		TabPanel *tab = (TabPanel*)parent->GetParent();
+		TabPanel *tab = (destroyingPreviewTab) ? (TabPanel*)previewGrid->GetParent():  (TabPanel*)parent->GetParent();
 		tab->Edit->SetGrid(tab->Grid);
 		if (tab->Edit->TextEditOrig->IsShown() != tab->Grid->hasTLMode){
 			tab->Edit->SetTlMode(tab->Grid->hasTLMode, true);
