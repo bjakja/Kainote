@@ -646,9 +646,9 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			Refresh(false);
 
 		}
-		else if(lastData.grid){
+		//else if(lastData.grid){
 			ContextMenu(event.GetPosition());
-		}
+		//}
 		return;
 	}
 

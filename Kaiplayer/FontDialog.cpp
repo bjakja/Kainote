@@ -334,7 +334,7 @@ END_EVENT_TABLE()
 FontDialog *FontDialog::FDialog = NULL;
 
 FontDialog::FontDialog(wxWindow *parent, Styles *acst)
-	:KaiDialog(parent,-1,_("Wybierz czcionkę"))
+	:KaiDialog(parent,-1,_("Wybierz czcionkę"),wxDefaultPosition,wxDefaultSize,wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
 	editedStyle = acst;
 	SetForegroundColour(Options.GetColour(WindowText));
@@ -383,17 +383,17 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst)
 	Fattr->Add(Underl,1,wxEXPAND|wxALL,5);
 	Fattr->Add(Strike,1,wxEXPAND|wxALL,5);
 
-	Cfont->Add(Fonts,0,wxEXPAND);
+	Cfont->Add(Fonts,1,wxEXPAND);
 	Cfont->Add(Fattr,0,wxEXPAND);
 
-	prev->Add(Preview,0,wxEXPAND|wxALL,5);
+	prev->Add(Preview,1,wxEXPAND|wxALL,5);
 
 	//Bsizer->Add(ButtApply, 1, wxALL, 5);
 	Bsizer->Add(Buttok,1,wxALL,5);
 	Bsizer->Add(Buttcancel,1,wxALL,5);
 
 	Main->Add(Cfont,0,wxEXPAND|wxALL,5);
-	Main->Add(prev,0,wxEXPAND|wxBOTTOM|wxLEFT|wxRIGHT,5);
+	Main->Add(prev,1,wxEXPAND|wxBOTTOM|wxLEFT|wxRIGHT,5);
 	Main->Add(Bsizer,0,wxBOTTOM|wxALIGN_CENTER,5);
 
 	SetSizerAndFit(Main);

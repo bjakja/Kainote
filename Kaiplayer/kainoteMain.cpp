@@ -277,9 +277,9 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 		else if (tab->Grid->IsShown()){
 			tab->Grid->SetFocus();
 		}
-		else if (tab->Video->IsShown()){
-			tab->Video->SetFocus();
-		}
+		//else if (tab->Video->IsShown()){
+			//tab->Video->SetFocus();
+		//}
 	});
 	Bind(wxEVT_ACTIVATE, &KainoteFrame::OnActivate, this);
 	Connect(SnapWithStart, SnapWithEnd, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnAudioSnap);
