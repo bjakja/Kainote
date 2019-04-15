@@ -534,12 +534,14 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 
 	if (event.LeftDClick() && MText != "" && isInField){
 		wasDoubleClick = true;
+		dclickCurPos = mousePosition;
 		time = timeGetTime();
 		int errn = FindError(mousePosition);
 		if (Options.GetBool(EditboxSugestionsOnDoubleClick) && errn >= 0){
 			wxString err = misspels[errn];
 
-			wxArrayString suggs = SpellChecker::Get()->Suggestions(err);
+			wxArrayString suggs;
+			SpellChecker::Get()->Suggestions(err, suggs);
 
 			KaiListBox lw(this, suggs, _("Sugestie poprawy"));
 			if (lw.ShowModal() == wxID_OK)
@@ -1184,14 +1186,12 @@ void TextEditor::Replace(int start, int end, const wxString &rep)
 void TextEditor::CheckText()
 {
 	if (MText == ""){ return; }
-	//wxString notchar="/?<>|\\!@#$%^&*()_+=[]\t~ :;.,\"{} ";
 	wxString text = MText;
 	errors.clear();
 	misspels.Clear();
 	text += " ";
 	bool block = false;
 	wxString word = "";
-	//bool slash=false;
 	int lasti = 0;
 	int firsti = 0;
 	int lastStartBracket = -1;
@@ -1202,7 +1202,7 @@ void TextEditor::CheckText()
 	for (size_t i = 0; i < text.length(); i++)
 	{
 		wxUniChar ch = text.GetChar(i);
-		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch != L'\''/*notchar.Find(ch)!=-1*/ && !block){
+		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch != L'\'' && !block){
 			if (word.length() > 1){
 				if (word.StartsWith("'")){ word = word.Remove(0, 1); }
 				if (word.EndsWith("'")){ word = word.RemoveLast(1); }
@@ -1285,7 +1285,7 @@ void TextEditor::OnKillFocus(wxFocusEvent& event)
 
 void TextEditor::FindWord(int pos, int *start, int *end)
 {
-	wxString wfind = " ]})({[-—'`\"\\;:,.><?!*~@#$%^&/+=";
+	//wxString wfind = " ]})({[-—'`\"\\;:,.><?!*~@#$%^&/+=";
 	int len = MText.length();
 	if (len < 1){ Cursor.x = Cursor.y = 0; *start = 0; *end = 0; return; }
 	bool fromend = (start != NULL);
@@ -1297,19 +1297,20 @@ void TextEditor::FindWord(int pos, int *start, int *end)
 	if (fromend){
 		*start = (fromend) ? 0 : len;
 		for (int i = pos; i >= 0; i--){
-			int res = wfind.Find(MText[i]);
-			if (lastres == 0 && res != 0 && i + 2 <= pos && MText[i + 1] == L' '){
+			const wxUniChar &ch = MText[i];
+			int res = iswctype(WXWCHAR_T_CAST(ch), _SPACE | _PUNCT);
+			if (lastres == 8 && res != 0 && i + 2 <= pos && MText[i + 1] == L' '){
 				*start = i + 2;
 				break;
 			}
-			if (res != -1){ lastres = res; }
-			if (res != -1 && !hasres){
+			if (res != 0){ lastres = res; }
+			if (res != 0 && !hasres){
 				if (i == pos){ hasres = true; continue; }
 				bool isen = (MText[i] == L'\\' && MText[i + 1] == L'N');
 				*start = (isen && pos == i + 1) ? i : (isen) ? i + 2 : i + 1;
 				break;
 			}
-			else if (hasres && res == -1){
+			else if (hasres && res == 0){
 				if (lastres < 1 && (i + 2 == pos || i + 1 == pos)){ hasres = false; continue; }
 				*start = ((lastres>3 && lastres < 6 && i + 2 <= pos) || i + 1 == pos || MText[i + 2] == L' ') ? i + 1 : i + 2;
 				break;
@@ -1319,17 +1320,18 @@ void TextEditor::FindWord(int pos, int *start, int *end)
 	if (!end){ return; }
 	*end = (fromend && end == NULL) ? 0 : len;
 	for (int i = pos; i < len; i++){
-		int res = wfind.Find(MText[i]);
-		if (res == 0 /*&& i > pos*/){
+		const wxUniChar &ch = MText[i];
+		int res = iswctype(WXWCHAR_T_CAST(ch), _SPACE | _PUNCT);
+		if (res == 8 /*&& i > pos*/){
 			*end = i + 1;
 			break;
 		}
-		if (res != -1 && !hasres){
+		if (res != 0 && !hasres){
 			if (i == pos){ hasres = true; continue; }
-			*end = (res < 1) ? i + 1 : i;
+			*end = (res == 8) ? i + 1 : i;
 			break;
 		}
-		else if (hasres && res == -1){
+		else if (hasres && res == 0){
 			*end = (i > 0 && MText[i - 1] == L'\\' && MText[i] == L'N') ? i + 1 : i;
 			break;
 		}
@@ -1345,7 +1347,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	wxArrayString suggs;
 	if (error >= 0){ err = misspels[error]; }
 	if (!err.IsEmpty()){
-		suggs = SpellChecker::Get()->Suggestions(err);
+		SpellChecker::Get()->Suggestions(err, suggs);
 		for (size_t i = 0; i < suggs.size(); i++){
 			menut.Append(i + 30200, suggs[i]);
 		}
@@ -1649,8 +1651,11 @@ void TextEditor::SeekSelected(const wxString &word)
 		return;
 
 	
-	wxRegEx r(L"\\m" + word + L"\\M", wxRE_ADVANCED | wxRE_ICASE); // the pattern \b matches a word boundary
+	wxRegEx r(L"\\m" + word + L"\\M", wxRE_ADVANCED | wxRE_ICASE); // the pattern \m and \M matches a word boundary
 	if (!r.IsValid())
+		return;
+	wxRegEx r1(L"\\\\N" + word + L"\\M", wxRE_ADVANCED | wxRE_ICASE); // the pattern \m and \M matches a word boundary
+	if (!r1.IsValid())
 		return;
 		
 	int textPos = 0;
@@ -1670,7 +1675,24 @@ void TextEditor::SeekSelected(const wxString &word)
 		textPos = pos + len;
 		text = MText.Mid(textPos);
 	}
-	
+	textPos = 0;
+	text = MText;
+	while (r1.Matches(text)) {
+		size_t pos = 0, len = 0;
+		if (r1.GetMatch(&pos, &len)){
+			pos += textPos;
+			//skip \N
+			selectionWords.Add(pos + 2);
+			selectionWords.Add(pos + len - 1);
+		}
+		else
+			break;
+
+
+		textPos = pos + len;
+		text = MText.Mid(textPos);
+	}
+	std::sort(selectionWords.begin(), selectionWords.end());
 }
 
 void TextEditor::DrawWordRectangles(int type, wxDC &dc)

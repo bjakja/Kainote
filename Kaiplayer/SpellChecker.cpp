@@ -142,15 +142,14 @@ bool SpellChecker::CheckWord(wxString word) {
 	return false;
 }
 
-wxArrayString SpellChecker::Suggestions(wxString word)
+void SpellChecker::Suggestions(wxString word, wxArrayString &results)
 {
-	wxArrayString Results;
-	if(!hunspell) return Results;
+	if(!hunspell) return;
 
 	char **result;
 
 	wxCharBuffer buf = word.mb_str(*conv);
-	if (!buf) return Results;
+	if (!buf) return;
 
 	int n=hunspell->suggest(&result,buf);
 
@@ -158,12 +157,10 @@ wxArrayString SpellChecker::Suggestions(wxString word)
 	{
 
 		wxString cur(result[i],*conv);
-		Results.Add(cur);
+		results.Add(cur);
 	}
 
 	hunspell->free_list(&result, n);
-
-	return Results;
 }
 
 bool SpellChecker::AddWord(wxString word)

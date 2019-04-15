@@ -139,7 +139,8 @@ void SpellCheckerDialog::SetNextMisspell()
 		KaiMessageBox(_("Nie znaleziono więcej błędów pisowni"), _("Uwaga"), wxOK, this);
 		return;
 	}else{
-		wxArrayString suggestions = SpellChecker::Get()->Suggestions(misspellWord);
+		wxArrayString suggestions;
+		SpellChecker::Get()->Suggestions(misspellWord, suggestions);
 		suggestionsList->SetTextArray(suggestions);
 		replaceWord->SetValue((suggestions.GetCount())? suggestions[0] : L"", true);
 	}
