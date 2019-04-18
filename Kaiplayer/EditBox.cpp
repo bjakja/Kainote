@@ -1607,11 +1607,12 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	if (panel->Video->GetState() != None){
 		//visible=true;
 		text = grid->GetVisible(&visible);
-		if (!visible && lastVisible != visible){ visible = true; lastVisible = false; }
+		if (!visible && (lastVisible != visible || grid->file->IsSelected(currentLine))){ visible = true; lastVisible = false; }
 		else{ lastVisible = visible; }
 		//make sure that dummy edition is true when line is not visible
-		if (!visible)
+		if (!visible){
 			panel->Video->hasDummySubs = true;
+		}
 	}
 
 	if (visible && (panel->Video->IsShown() || panel->Video->isFullscreen)){

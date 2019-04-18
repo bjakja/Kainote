@@ -166,7 +166,7 @@ void Position::SetCurVisual()
 	wxPoint textPosition;
 
 	for (size_t i = 0; i < sels.size(); i++){
-		//fix by uzyskać reakcję na edycję w editboxie
+		//fix to work with editbox changes
 		Dialogue *dial = (sels[i] == tab->Grid->currentLine) ? tab->Edit->line : tab->Grid->GetDialogue(sels[i]);
 		if (dial->IsComment){ continue; }
 		D3DXVECTOR2 pos = GetPosition(dial, &putInBracket, &textPosition);
@@ -184,7 +184,8 @@ void Position::ChangeMultiline(bool all)
 		selPositions.clear();
 		dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
 		if (selPositions.size() != data.size()){
-			KaiLog(L"Sizes mismatch");
+			//do not show info cause it popup only when a comment is selected with other lines
+			//and only first time it don't change anything it can be disabled.
 			return;
 		}
 	}
