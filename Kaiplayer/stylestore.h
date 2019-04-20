@@ -103,6 +103,7 @@ class StyleStore: public KaiDialog
 		bool ASSStyle;
 		bool dummy;
 		bool detachedEtit;
+		bool isStoreChanged = false;
 		int selnum;
 		int prompt;
 		bool stayOnTop;

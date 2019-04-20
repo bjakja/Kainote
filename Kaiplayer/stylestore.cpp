@@ -268,7 +268,7 @@ void StyleStore::OnAddToStore(wxCommandEvent& event)
 		}
 		else{ Options.AddStyle(stylc); Store->SetSelection(Options.StoreSize() - 1); }
 	}
-
+	isStoreChanged = true;
 }
 
 void StyleStore::OnAddToAss(wxCommandEvent& event)
@@ -357,6 +357,7 @@ void StyleStore::OnStoreDelete(wxCommandEvent& event)
 		Options.DelStyle(sels[ii]);
 	}
 	Store->SetSelection(0, true);
+	isStoreChanged = true;
 }
 
 void StyleStore::OnAssDelete(wxCommandEvent& event)
@@ -483,6 +484,9 @@ bool StyleStore::ChangeStyle(Styles *changedStyle, int cellsToChange /*= -1*/)
 	oldname = changedStyle->Name;
 	dummy = false;
 	SetModified(refreshActiveLine);
+	if (!ASSStyle)
+		isStoreChanged = true;
+
 	return true;
 }
 
@@ -495,12 +499,18 @@ void StyleStore::OnChangeCatalog(wxCommandEvent& event)
 	Store->SetSelection(0, true);
 	SubsGrid* grid = Notebook::GetTab()->Grid;
 	grid->AddSInfo(L"Last Style Storage", catalogName);
+	isStoreChanged = false;
 }
 
 void StyleStore::OnNewCatalog(wxCommandEvent& event)
 {
 	NewCatalog nc(this);
 	if (nc.ShowModal() == wxID_OK){
+		if (isStoreChanged){
+			Options.SaveOptions(false);
+			isStoreChanged = false;
+		}
+
 		wxString catalogName = nc.TextCtrl1->GetValue();
 		catalogList->SetSelection(catalogList->Append(catalogName));
 		Options.dirs.Add(catalogName);
@@ -878,6 +888,10 @@ void StyleStore::LoadAssStyles(const wxString &styleName /*= ""*/)
 	if (catalog.empty() || catalog == Options.actualStyleDir){ return; }
 	for (size_t i = 0; i < Options.dirs.size(); i++){
 		if (catalog == Options.dirs[i]){
+			if (isStoreChanged){
+				Options.SaveOptions(false);
+				isStoreChanged = false;
+			}
 			Options.LoadStyles(catalog);
 			Store->SetSelection(0, true);
 			int chc = catalogList->FindString(Options.actualStyleDir);
