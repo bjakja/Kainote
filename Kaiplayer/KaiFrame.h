@@ -30,7 +30,11 @@ public:
 	wxSize GetClientSize() const;
 	void SetClientSize(const wxSize &size);
 	void SetClientSize(int x, int y);
-
+	void GetBorders(int *borders, int *topBorder){
+		*borders = frameBorder;
+		*topBorder = frameTopBorder;
+	};
+	bool SetFont(const wxFont &font);
 private:
 	void OnPaint(wxPaintEvent &evt);
 	void OnSize(wxSizeEvent &evt);
@@ -47,6 +51,8 @@ private:
 	bool enterMinimize;
 	bool pushedMinimize;
 	bool isActive;
+	int frameBorder = 7;
+	int frameTopBorder = 26;
 
 	wxDECLARE_ABSTRACT_CLASS(KaiFrame);
 };

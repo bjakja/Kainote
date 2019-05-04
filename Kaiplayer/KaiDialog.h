@@ -34,22 +34,23 @@ class KaiDialog : public wxTopLevelWindow
 {
 public:
 	KaiDialog(wxWindow *parent, wxWindowID id,
-             const wxString& title,
-             const wxPoint& pos = wxDefaultPosition,
-             const wxSize& size = wxDefaultSize,
-             long _style = wxDEFAULT_DIALOG_STYLE);
+			 const wxString& title,
+			 const wxPoint& pos = wxDefaultPosition,
+			 const wxSize& size = wxDefaultSize,
+			 long _style = wxDEFAULT_DIALOG_STYLE);
 	virtual ~KaiDialog();
 	bool Show(bool show=true);
 	bool Hide();
 	int ShowModal();
-    void EndModal(int retCode);
-    bool IsModal() const;
+	void EndModal(int retCode);
+	bool IsModal() const;
 	void SetEnterId(int _enterId);
 	void SetEscapeId(int _escapeId, bool setFocus=false);
-    int GetEnterId() const { return enterId; }
+	int GetEnterId() const { return enterId; }
 	int GetEscapeId() const { return escapeId; }
 	void SetSizerAndFit1(wxSizer *sizer, bool deleteOld = true);
 	void SetLabel(const wxString &text);
+	bool SetFont(const wxFont &font);
 private:
 	bool IsButtonFocused();
 	void OnCharHook(wxKeyEvent &evt);

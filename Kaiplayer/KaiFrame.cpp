@@ -24,12 +24,8 @@
 #pragma comment(lib, "Dwmapi.lib")
 
 
-int fborder = 7;
-int ftopBorder = 26;
-
 
 KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title/*=""*/, const wxPoint& pos/*=wxDefaultPosition*/, const wxSize& size/*=wxDefaultSize*/, long _style/*=0*/, const wxString &name /*= ""*/)
-	//:wxTopLevelWindow(parent, id, title, wxDefaultPosition, wxDefaultSize,/*wxBORDER_NONE|*/wxMAXIMIZE_BOX | wxMINIMIZE_BOX |/*wxCLOSE_BOX|*/wxRESIZE_BORDER | wxCAPTION, name)
 	: style(_style)
 	, enterClose(false)
 	, pushedClose(false)
@@ -72,30 +68,21 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title/*=""*/
 	MARGINS borderless = { 0, 0, 0, 0 };
 	DwmExtendFrameIntoClientArea(m_hWnd, &borderless);
 	SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
-	//Bind(wxEVT_SIZE, &KaiFrame::OnSize, this);
+
 	Bind(wxEVT_PAINT, &KaiFrame::OnPaint, this);
 	Bind(wxEVT_LEFT_DOWN, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_DCLICK, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiFrame::OnMouseEvent, this);
-	//do not needed implement in main loop
-	//Bind(wxEVT_ACTIVATE, &KaiFrame::OnActivate, this);
 	SetSize(pos.x, pos.y, size.x, size.y);
-	//DWM_TIMING_INFO ti;
-	//ti.cbSize = sizeof(ti);
-	//WinStruct<DWM_TIMING_INFO> ti;
-	//HRESULT hr = DwmEnableMMCSS(TRUE);//DwmGetCompositionTimingInfo(m_hWnd, &ti);
-	//if (FAILED(hr)){
-	//wLogStatus("nie mo¿na pobraæ timing info");
-	//}
 }
 
 KaiFrame::~KaiFrame()
 {
-
 }
 
 void KaiFrame::OnPaint(wxPaintEvent &evt)
@@ -115,70 +102,79 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 	mdc.SetTextForeground(text);
 	int maximizeDiff = (IsMaximized()) ? 3 : 0;
 	wxIconBundle icons = GetIcons();
+	int iconScale = ((frameTopBorder - 10) / 2) * 2;
+	iconScale = (iconScale < 16) ? 16 : iconScale;
 	if (icons.GetIconCount()){
 		//if(icons.GetIconByIndex(0).GetHeight()!=16){
 		wxImage img = wxBitmap(icons.GetIconByIndex(0)).ConvertToImage();
-		img = img.Scale(16, 16, wxIMAGE_QUALITY_BILINEAR);
-		mdc.DrawBitmap(wxBitmap(img), 8 + maximizeDiff, 5 + maximizeDiff);
+		img = img.Scale(iconScale, iconScale, wxIMAGE_QUALITY_BICUBIC);
+		mdc.DrawBitmap(wxBitmap(img), 8 + maximizeDiff, ((frameTopBorder - iconScale) / 2) + maximizeDiff + 1);
 		//}else{
 		//mdc.DrawIcon(icons.GetIconByIndex(0), 4, 4);
 		//}
 	}
 	if (GetTitle() != ""){
-		int startX = icons.GetIconCount() ? 30 : 6 + maximizeDiff;
+		int startX = icons.GetIconCount() ? iconScale + 14 : 6 + maximizeDiff;
 		int maxWidth = w - 75 - maximizeDiff - startX;
 		mdc.DrawText(GetTruncateText(GetTitle(), maxWidth, this), startX, 5 + maximizeDiff);
 	}
+
+	int buttonScale = ((frameTopBorder - 8) / 2) * 2;
+	buttonScale = (buttonScale < 18) ? 18 : buttonScale;
+
 	if (enterClose || pushedClose){
 		wxColour buttonxbg = (enterClose && !pushedClose) ? Options.GetColour(WindowHoverCloseButton) :
 			Options.GetColour(WindowPushedCloseButton);
 		mdc.SetBrush(buttonxbg);
 		mdc.SetPen(buttonxbg);
-		mdc.DrawRectangle(w - 25 - maximizeDiff, 4 + maximizeDiff, 18, 18);
+		mdc.DrawRectangle(w - frameTopBorder - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
 	}
 	else if (enterMaximize || pushedMaximize){
 		wxColour buttonxbg = (enterMaximize && !pushedMaximize) ? Options.GetColour(WindowHoverHeaderElement) :
 			Options.GetColour(WindowPushedHeaderElement);
 		mdc.SetBrush(buttonxbg);
 		mdc.SetPen(buttonxbg);
-		mdc.DrawRectangle(w - 50 - maximizeDiff, 4 + maximizeDiff, 18, 18);
+		mdc.DrawRectangle(w - (frameTopBorder * 2) - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
 	}
 	else if (enterMinimize || pushedMinimize){
 		wxColour buttonxbg = (enterMinimize && !pushedMinimize) ? Options.GetColour(WindowHoverHeaderElement) :
 			Options.GetColour(WindowPushedHeaderElement);
 		mdc.SetBrush(buttonxbg);
 		mdc.SetPen(buttonxbg);
-		mdc.DrawRectangle(w - 75 - maximizeDiff, 4 + maximizeDiff, 18, 18);
+		mdc.DrawRectangle(w - (frameTopBorder * 3) - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
 	}
 	mdc.SetPen(wxPen(text, 2));
 	mdc.SetBrush(wxBrush(text));
 	//draw X
-	mdc.DrawLine(w - 21 - maximizeDiff, 8 + maximizeDiff, w - 12 - maximizeDiff, 16 + maximizeDiff);
-	mdc.DrawLine(w - 12 - maximizeDiff, 8 + maximizeDiff, w - 21 - maximizeDiff, 16 + maximizeDiff);
+	mdc.DrawLine(w - frameTopBorder + 3 - maximizeDiff, 8 + maximizeDiff, w - (frameBorder + 6) - maximizeDiff, frameTopBorder - 8 + maximizeDiff);
+	mdc.DrawLine(w - (frameBorder + 6) - maximizeDiff, 8 + maximizeDiff, w - frameTopBorder + 3 - maximizeDiff, frameTopBorder - 8 + maximizeDiff);
 	//draw maximize
 
 	if (IsMaximized()){
+		int realButtonScale = (buttonScale - 6);
+		int processScale = (realButtonScale / 3);
+		int processScalex2 = processScale * 2;
 		mdc.SetPen(text);
 		mdc.SetBrush(*wxTRANSPARENT_BRUSH);
-		mdc.DrawRectangle(w - 44 - maximizeDiff, 8 + maximizeDiff, 9, 7);
-		mdc.DrawRectangle(w - 47 - maximizeDiff, 11 + maximizeDiff, 9, 7);
+		mdc.DrawRectangle(w - (frameTopBorder * 2) + 3 + realButtonScale - processScalex2 - 1 - maximizeDiff, 8 + maximizeDiff, processScalex2 + 1, processScalex2 - 1);
+		mdc.DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 8 + realButtonScale - processScalex2 + 0 + maximizeDiff, processScalex2 + 1, processScalex2 - 1);
 		mdc.SetPen(*wxTRANSPARENT_PEN);
 	}
 	else{
 		mdc.SetPen(*wxTRANSPARENT_PEN);
-		mdc.DrawRectangle(w - 47 - maximizeDiff, 7 + maximizeDiff, 1, 12);
-		mdc.DrawRectangle(w - 47 - maximizeDiff, 7 + maximizeDiff, 12, 2);
-		mdc.DrawRectangle(w - 47 - maximizeDiff, 18 + maximizeDiff, 12, 1);
-		mdc.DrawRectangle(w - 36 - maximizeDiff, 7 + maximizeDiff, 1, 12);
+		mdc.DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 7 + maximizeDiff, 1, buttonScale - 6);
+		mdc.DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 7 + maximizeDiff, buttonScale - 6, 2);
+		mdc.DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 7 + maximizeDiff + buttonScale - 6 + maximizeDiff, buttonScale - 6, 1);
+		mdc.DrawRectangle(w - (frameTopBorder * 2) + (buttonScale - 4) - maximizeDiff, 7 + maximizeDiff, 1, buttonScale - 6);
 	}
 	//draw minimize
 	mdc.SetBrush(wxBrush(text));
-	mdc.DrawRectangle(w - 72 - maximizeDiff, 17 + maximizeDiff, 12, 2);
+	mdc.DrawRectangle(w - (frameTopBorder * 3) + 3 - maximizeDiff, buttonScale - 1 + maximizeDiff, buttonScale - 6, 2);
 
-	dc.Blit(0, 0, w, ftopBorder, &mdc, 0, 0);
-	dc.Blit(0, ftopBorder, fborder, h - ftopBorder - fborder, &mdc, 0, ftopBorder);
-	dc.Blit(w - fborder, ftopBorder, fborder, h - ftopBorder - fborder, &mdc, w - fborder, ftopBorder);
-	dc.Blit(0, h - fborder, w, fborder, &mdc, 0, h - fborder);
+	dc.Blit(0, 0, w, frameTopBorder, &mdc, 0, 0);
+	dc.Blit(0, frameTopBorder, frameBorder, h - frameTopBorder - frameBorder, &mdc, 0, frameTopBorder);
+	dc.Blit(w - frameBorder, frameTopBorder, frameBorder, h - frameTopBorder - frameBorder, &mdc, w - frameBorder, frameTopBorder);
+	dc.Blit(0, h - frameBorder, w, frameBorder, &mdc, 0, h - frameBorder);
 }
 
 void KaiFrame::SetLabel(const wxString &text)
@@ -186,28 +182,28 @@ void KaiFrame::SetLabel(const wxString &text)
 	wxTopLevelWindow::SetLabel(text);
 	int w, h;
 	GetSize(&w, &h);
-	wxRect rc(0, 0, w, ftopBorder);
+	wxRect rc(0, 0, w, frameTopBorder);
 	Refresh(false, &rc);
 }
 
-void KaiFrame::OnSize(wxSizeEvent &evt)
-{
-	//Refresh(false);
-	int w, h;
-	GetSize(&w, &h);
-	wxRect rc(0, 0, w, ftopBorder);
-	Refresh(false, &rc);
-	if (!IsMaximized()){
-		wxRect rc1(0, ftopBorder, fborder, h - fborder - ftopBorder);
-		Refresh(false, &rc1);
-		wxRect rc2(w - fborder, ftopBorder, fborder, h - fborder - ftopBorder);
-		Refresh(false, &rc2);
-		wxRect rc3(0, h - fborder, w, fborder);
-		Refresh(false, &rc3);
-	}
-	//Update();
-	evt.Skip();
-}
+//void KaiFrame::OnSize(wxSizeEvent &evt)
+//{
+//	//Refresh(false);
+//	int w, h;
+//	GetSize(&w, &h);
+//	wxRect rc(0, 0, w, ftopBorder);
+//	Refresh(false, &rc);
+//	if (!IsMaximized()){
+//		wxRect rc1(0, ftopBorder, fborder, h - fborder - ftopBorder);
+//		Refresh(false, &rc1);
+//		wxRect rc2(w - fborder, ftopBorder, fborder, h - fborder - ftopBorder);
+//		Refresh(false, &rc2);
+//		wxRect rc3(0, h - fborder, w, fborder);
+//		Refresh(false, &rc3);
+//	}
+//	//Update();
+//	evt.Skip();
+//}
 
 void KaiFrame::OnMouseEvent(wxMouseEvent &evt)
 {
@@ -215,7 +211,8 @@ void KaiFrame::OnMouseEvent(wxMouseEvent &evt)
 	GetSize(&w, &h);
 	int x = evt.GetX();
 	int y = evt.GetY();
-	wxRect rc(w - 78, 0, 73, ftopBorder);
+	int maximizeDiff = (IsMaximized()) ? 3 : 0;
+	wxRect rc(w - (frameTopBorder * 3.5), 0, (frameTopBorder * 3.5), frameTopBorder);
 	if (evt.Leaving()){
 		pushedClose = enterClose = pushedMinimize = enterMinimize = pushedMaximize = enterMaximize = false;
 		Refresh(false, &rc);
@@ -226,7 +223,8 @@ void KaiFrame::OnMouseEvent(wxMouseEvent &evt)
 		wxActivateEvent evt(wxEVT_ACTIVATE, true);
 		OnActivate(evt);
 	}
-	if (x >= w - 25 && x < w - 5 && y >= 6 && y < 21){
+	if (x >= w - frameTopBorder - maximizeDiff && x < w - frameBorder - 1 - maximizeDiff && 
+		y >= 5 + maximizeDiff && y < frameTopBorder - 3 + maximizeDiff){
 		pushedMinimize = enterMinimize = pushedMaximize = enterMaximize = false;
 		if (leftdown){ pushedClose = true; Refresh(false, &rc); }
 		if (!enterClose){ enterClose = true; Refresh(false, &rc); }
@@ -237,7 +235,8 @@ void KaiFrame::OnMouseEvent(wxMouseEvent &evt)
 		}
 		return;
 	}
-	else if (x >= w - 50 && x < w - 30 && y >= 6 && y < 21){
+	else if (x >= w - (frameTopBorder * 2) - maximizeDiff && x < w - frameTopBorder - 8 - maximizeDiff && 
+		y >= 5 + maximizeDiff && y < frameTopBorder - 3 + maximizeDiff){
 		pushedClose = enterClose = pushedMinimize = enterMinimize = false;
 		if (leftdown){ pushedMaximize = true; Refresh(false, &rc); }
 		if (!enterMaximize){ enterMaximize = true; Refresh(false, &rc); }
@@ -248,7 +247,8 @@ void KaiFrame::OnMouseEvent(wxMouseEvent &evt)
 		}
 		return;
 	}
-	else if (x >= w - 75 && x < w - 55 && y >= 6 && y < 21){
+	else if (x >= w - (frameTopBorder * 3) - maximizeDiff && x < w - (frameTopBorder * 2) - 8 - maximizeDiff && 
+		y >= 5 + maximizeDiff && y < frameTopBorder - 3 + maximizeDiff){
 		pushedClose = enterClose = pushedMaximize = enterMaximize = false;
 		if (leftdown){ pushedMinimize = true; Refresh(false, &rc); }
 		if (!enterMinimize){ enterMinimize = true; Refresh(false, &rc); }
@@ -276,14 +276,14 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 		/*if(width<800 || height < 600){
 			return 1;
 			}*/
-		wxRect rc(0, 0, w, ftopBorder);
+		wxRect rc(0, 0, w, frameTopBorder);
 		Refresh(false, &rc);
 		if (!IsMaximized()){
-			wxRect rc1(0, ftopBorder, fborder, h - fborder - ftopBorder);
+			wxRect rc1(0, frameTopBorder, frameBorder, h - frameBorder - frameTopBorder);
 			Refresh(false, &rc1);
-			wxRect rc2(w - fborder, ftopBorder, fborder, h - fborder - ftopBorder);
+			wxRect rc2(w - frameBorder, frameTopBorder, frameBorder, h - frameBorder - frameTopBorder);
 			Refresh(false, &rc2);
-			wxRect rc3(0, h - fborder, w, fborder);
+			wxRect rc3(0, h - frameBorder, w, frameBorder);
 			Refresh(false, &rc3);
 		}
 		//tutaj nie mo¿e byæ update bo zostawia jakieœ œmieci w górnym rogu okna
@@ -298,14 +298,14 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 		isActive = wParam > 0;
 		int w, h;
 		GetSize(&w, &h);
-		wxRect rc(0, 0, w, ftopBorder);
+		wxRect rc(0, 0, w, frameTopBorder);
 		Refresh(false, &rc);
 		if (!IsMaximized()){
-			wxRect rc1(0, ftopBorder, fborder, h - fborder - ftopBorder);
+			wxRect rc1(0, frameTopBorder, frameBorder, h - frameBorder - frameTopBorder);
 			Refresh(false, &rc1);
-			wxRect rc2(w - fborder, ftopBorder, fborder, h - fborder - ftopBorder);
+			wxRect rc2(w - frameBorder, frameTopBorder, frameBorder, h - frameBorder - frameTopBorder);
 			Refresh(false, &rc2);
-			wxRect rc3(0, h - fborder, w, fborder);
+			wxRect rc3(0, h - frameBorder, w, frameBorder);
 			Refresh(false, &rc3);
 		}
 		return 1;
@@ -336,26 +336,26 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 		int result = 0;
 		//int w = WindowRect.right - WindowRect.left;
 		//int h = WindowRect.bottom - WindowRect.top;
-		if (x >= fborder && x <= WindowRect.right - WindowRect.left - 76 && y >= fborder && y <= ftopBorder){
+		if (x >= frameBorder && x <= WindowRect.right - WindowRect.left - (frameTopBorder * 3.5) && y >= frameBorder && y <= frameTopBorder){
 			result = HTCAPTION;
 		}
 		else if (style & wxRESIZE_BORDER && !IsMaximized()){
 
-			if (x < fborder && y < fborder)
+			if (x < frameBorder && y < frameBorder)
 				result = HTTOPLEFT;
-			else if (x > WindowRect.right - WindowRect.left - fborder && y < fborder)
+			else if (x > WindowRect.right - WindowRect.left - frameBorder && y < frameBorder)
 				result = HTTOPRIGHT;
-			else if (x > WindowRect.right - WindowRect.left - fborder && y > WindowRect.bottom - WindowRect.top - fborder)
+			else if (x > WindowRect.right - WindowRect.left - frameBorder && y > WindowRect.bottom - WindowRect.top - frameBorder)
 				result = HTBOTTOMRIGHT;
-			else if (x < fborder && y > WindowRect.bottom - WindowRect.top - fborder)
+			else if (x < frameBorder && y > WindowRect.bottom - WindowRect.top - frameBorder)
 				result = HTBOTTOMLEFT;
-			else if (x < fborder)
+			else if (x < frameBorder)
 				result = HTLEFT;
-			else if (y < fborder)
+			else if (y < frameBorder)
 				result = HTTOP;
-			else if (x > WindowRect.right - WindowRect.left - fborder)
+			else if (x > WindowRect.right - WindowRect.left - frameBorder)
 				result = HTRIGHT;
-			else if (y > WindowRect.bottom - WindowRect.top - fborder)
+			else if (y > WindowRect.bottom - WindowRect.top - frameBorder)
 				result = HTBOTTOM;
 			else
 				result = HTCLIENT;
@@ -365,7 +365,7 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 		}
 		if (result != HTCLIENT && (enterClose || pushedClose || enterMaximize || pushedMaximize || enterMinimize || pushedMinimize)){
 			pushedClose = enterClose = pushedMinimize = enterMinimize = pushedMaximize = enterMaximize = false;
-			wxRect rc(0, 0, WindowRect.right - WindowRect.left, ftopBorder);
+			wxRect rc(0, 0, WindowRect.right - WindowRect.left, frameTopBorder);
 			Refresh(false, &rc);
 			//Update();
 		}
@@ -393,15 +393,15 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 void KaiFrame::GetClientSize(int *w, int *h) const
 {
 	wxTopLevelWindow::GetClientSize(w, h);
-	*w -= (fborder * 2);
-	*h -= (ftopBorder + fborder);
+	*w -= (frameBorder * 2);
+	*h -= (frameTopBorder + frameBorder);
 }
 
 wxSize KaiFrame::GetClientSize() const
 {
 	wxSize size = wxTopLevelWindow::GetClientSize();
-	size.x -= (fborder * 2);
-	size.y -= (ftopBorder + fborder);
+	size.x -= (frameBorder * 2);
+	size.y -= (frameTopBorder + frameBorder);
 	return size;
 }
 void KaiFrame::SetClientSize(const wxSize &size)
@@ -410,10 +410,18 @@ void KaiFrame::SetClientSize(const wxSize &size)
 }
 void KaiFrame::SetClientSize(int x, int y)
 {
-	x += (fborder * 2);
-	y += (ftopBorder + fborder);
+	x += (frameBorder * 2);
+	y += (frameTopBorder + frameBorder);
 	wxWindow::SetClientSize(x, y);
 }
 
+
+bool KaiFrame::SetFont(const wxFont &font)
+{
+	int fw, fh;
+	GetTextExtent(GetTitle(), &fw, &fh, 0, 0, &font);
+	frameTopBorder = (fh + 10 < 26) ? 26 : fh + 10;
+	return wxWindow::SetFont(font);
+}
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiFrame, wxTopLevelWindow);

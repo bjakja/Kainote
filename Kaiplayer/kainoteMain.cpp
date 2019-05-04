@@ -1300,8 +1300,11 @@ void KainoteFrame::OnRecent(wxCommandEvent& event)
 void KainoteFrame::OnSize(wxSizeEvent& event)
 {
 	wxSize size = GetSize();
-	int fborder = borders.left = borders.right = borders.bottom = 7;
-	int ftopBorder = borders.top = 26;
+	int fborder, ftopBorder;
+	GetBorders(&fborder, &ftopBorder);
+	borders.left = borders.right = borders.bottom = fborder;
+	borders.top = ftopBorder;
+
 	int menuHeight = Menubar->GetSize().GetHeight();
 	int toolbarWidth = Toolbar->GetThickness();
 	int statusbarHeight = StatusBar->GetSize().GetHeight();

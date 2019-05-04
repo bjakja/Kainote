@@ -32,10 +32,10 @@ DialogSizer::DialogSizer(int orient)
 
 void DialogSizer::RecalcSizes()
 {
-	wxSize old_size( m_size );
-	m_size.x -= 2*border;
+	wxSize old_size(m_size);
+	m_size.x -= 2 * border;
 	m_size.y -= border + topBorder;
-	wxPoint old_pos( m_position );
+	wxPoint old_pos(m_position);
 	m_position.x += border;
 	m_position.y += topBorder;
 
@@ -47,8 +47,8 @@ void DialogSizer::RecalcSizes()
 
 wxSize DialogSizer::CalcMin()
 {
-	wxSize ret( wxBoxSizer::CalcMin() );
-	ret.x += 2*border;
+	wxSize ret(wxBoxSizer::CalcMin());
+	ret.x += 2 * border;
 
 	ret.y += border + topBorder;
 
@@ -57,27 +57,29 @@ wxSize DialogSizer::CalcMin()
 }
 
 KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
-					 const wxString& title,
-					 const wxPoint& pos,
-					 const wxSize& size,
-					 long _style)
-					 :loop(NULL)
-					 ,escapeId(wxID_CANCEL)
-					 ,enterId(wxID_OK)
-					 ,enter(false)
-					 ,pushed(false)
-					 ,isActive(true)
-					 ,style(_style)
+	const wxString& title,
+	const wxPoint& pos,
+	const wxSize& size,
+	long _style)
+	:loop(NULL)
+	, escapeId(wxID_CANCEL)
+	, enterId(wxID_OK)
+	, enter(false)
+	, pushed(false)
+	, isActive(true)
+	, style(_style)
 {
 	SetExtraStyle(GetExtraStyle() | wxTOPLEVEL_EX_DIALOG | wxWS_EX_BLOCK_EVENTS);// | wxCLIP_CHILDREN
-	Create(parent,id, title, pos, size, wxBORDER_NONE|wxTAB_TRAVERSAL);
-	if ( !m_hasFont )
-		SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+	Create(parent, id, title, pos, size, wxBORDER_NONE | wxTAB_TRAVERSAL);
+	//if ( !m_hasFont )
+		//SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+	wxFont font(16, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT);
+	SetFont(font);
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
 	Bind(wxEVT_SIZE, &KaiDialog::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiDialog::OnPaint, this);
-	if(!(_style & wxWANTS_CHARS)){Bind(wxEVT_CHAR_HOOK, &KaiDialog::OnCharHook, this);}
+	if (!(_style & wxWANTS_CHARS)){ Bind(wxEVT_CHAR_HOOK, &KaiDialog::OnCharHook, this); }
 	Bind(wxEVT_LEFT_DOWN, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_DCLICK, &KaiDialog::OnMouseEvent, this);
@@ -98,9 +100,9 @@ int KaiDialog::ShowModal()
 {
 	int result = wxID_CANCEL;
 	Show();
-	if(IsShown()){
+	if (IsShown()){
 		loop = new wxModalEventLoop(this);
-		if(!loop){return result;}
+		if (!loop){ return result; }
 		result = loop->Run();
 		delete loop;
 		loop = NULL;
@@ -110,7 +112,7 @@ int KaiDialog::ShowModal()
 
 void KaiDialog::EndModal(int retCode)
 {
-	if(loop)loop->Exit(retCode);
+	if (loop)loop->Exit(retCode);
 	wxTopLevelWindow::Show(false);
 }
 
@@ -121,13 +123,14 @@ bool KaiDialog::IsModal() const
 
 bool KaiDialog::Show(bool show)
 {
-	if(IsShown() == show){
+	if (IsShown() == show){
 		return false;
 	}
-	if(!show){
+	if (!show){
 		return Hide();
-	}else{
-		wxWindow *win = FindWindow((setEscapeIdWithFocus) ?escapeId : enterId);
+	}
+	else{
+		wxWindow *win = FindWindow((setEscapeIdWithFocus) ? escapeId : enterId);
 		bool wasShown = wxTopLevelWindow::Show();
 		if (win){ win->SetFocus(); }
 		return wasShown;
@@ -136,8 +139,8 @@ bool KaiDialog::Show(bool show)
 
 bool KaiDialog::Hide()
 {
-	if(IsShown() || loop){
-		EndModal(escapeId);return true;
+	if (IsShown() || loop){
+		EndModal(escapeId); return true;
 	}
 	return false;
 }
@@ -156,12 +159,13 @@ void KaiDialog::OnCharHook(wxKeyEvent &evt)
 		return;
 	}
 
-	if(key == WXK_ESCAPE || key == WXK_RETURN){
-		if(key == WXK_RETURN && IsButtonFocused()){evt.Skip(); return;}
-		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, (key == WXK_ESCAPE)? escapeId : enterId);
+	if (key == WXK_ESCAPE || key == WXK_RETURN){
+		if (key == WXK_RETURN && IsButtonFocused()){ evt.Skip(); return; }
+		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, (key == WXK_ESCAPE) ? escapeId : enterId);
 		ProcessEvent(evt);
 		return;
-	}else if(key == WXK_TAB){
+	}
+	else if (key == WXK_TAB){
 		const wxWindowList list = GetChildren();
 		wxWindow *focused = FindFocus();
 		auto result = list.Find(focused);
@@ -171,19 +175,20 @@ void KaiDialog::OnCharHook(wxKeyEvent &evt)
 			result = list.Find(focused->GetParent());
 			//if still no result, it's mean thats nothing to do
 		}
-		if(result){
+		if (result){
 			auto nextWindow = result->GetNext();
-			while(1){
-				if(!nextWindow){
+			while (1){
+				if (!nextWindow){
 					nextWindow = list.GetFirst();
 					wxObject *data = nextWindow->GetData();
-					if(data){
-						wxWindow *win = wxDynamicCast(data,wxWindow);
-						if (win && win->IsFocusable()){ 
-							win->SetFocus(); return; 
+					if (data){
+						wxWindow *win = wxDynamicCast(data, wxWindow);
+						if (win && win->IsFocusable()){
+							win->SetFocus(); return;
 						}
 					}
-				}else if(nextWindow->GetData()->IsFocusable()){
+				}
+				else if (nextWindow->GetData()->IsFocusable()){
 					nextWindow->GetData()->SetFocus();
 					return;
 				}
@@ -198,52 +203,57 @@ void KaiDialog::OnCharHook(wxKeyEvent &evt)
 void KaiDialog::OnPaint(wxPaintEvent &evt)
 {
 	int w, h;
-	GetClientSize(&w,&h);
-	if(w<1 || h<1){return;}
+	GetClientSize(&w, &h);
+	if (w < 1 || h < 1){ return; }
 	wxPaintDC dc(this);
 	wxMemoryDC mdc;
-	mdc.SelectObject(wxBitmap(w,h));
+	mdc.SelectObject(wxBitmap(w, h));
 	mdc.SetFont(GetFont());
-	wxColour bg = (isActive)? Options.GetColour(WindowBorderBackground) : Options.GetColour(WindowBorderBackgroundInactive);
+	wxColour bg = (isActive) ? Options.GetColour(WindowBorderBackground) : Options.GetColour(WindowBorderBackgroundInactive);
 	mdc.SetBrush(bg);
-	mdc.SetPen((isActive)? Options.GetColour(WindowBorder) : Options.GetColour(WindowBorderInactive));
-	mdc.DrawRectangle(0,0,w,h);
-	wxColour text = (isActive)? Options.GetColour(WindowHeaderText) : Options.GetColour(WindowHeaderTextInactive);
+	mdc.SetPen((isActive) ? Options.GetColour(WindowBorder) : Options.GetColour(WindowBorderInactive));
+	mdc.DrawRectangle(0, 0, w, h);
+	wxColour text = (isActive) ? Options.GetColour(WindowHeaderText) : Options.GetColour(WindowHeaderTextInactive);
 	mdc.SetTextForeground(text);
 	wxIconBundle icon = GetIcons();
-	if(icon.GetIconCount()){
-		mdc.DrawIcon(icon.GetIconByIndex(0), 4, 4);
+	if (icon.GetIconCount()){
+		mdc.DrawIcon(icon.GetIconByIndex(0), 4, (topBorder - 16) / 2);
 	}
 	wxString title = GetTitle();
-	if(title!=""){
-		int start = icon.GetIconCount()? 26 : 6;
-		int removed = 0, fw=0, fh=0;
+	if (title != ""){
+		int start = icon.GetIconCount() ? 26 : 6;
+		int removed = 0, fw = 0, fh = 0;
 		mdc.GetTextExtent(title, &fw, &fh);
-		while(fw > w - 22 - start && title!=""){
+		while (fw > w - 22 - start && title != ""){
 			mdc.GetTextExtent(title, &fw, &fh);
 			title = title.RemoveLast();
 			removed++;
 		}
-		if(removed>0){
-			title = title.RemoveLast(2).Trim()+"...";
+		if (removed > 0){
+			title = title.RemoveLast(2).Trim() + "...";
 		}
 		mdc.DrawText(title, start, 4);
 	}
-	if(enter || pushed){
-		wxColour buttonxbg = (enter && !pushed)? Options.GetColour(WindowHoverCloseButton) : 
+	if (enter || pushed){
+		wxColour buttonxbg = (enter && !pushed) ? Options.GetColour(WindowHoverCloseButton) :
 			Options.GetColour(WindowPushedCloseButton);
 		mdc.SetBrush(buttonxbg);
 		mdc.SetPen(buttonxbg);
-		mdc.DrawRectangle(w-25, 3, 18, 18);
+		//mdc.DrawRectangle(w - 25, 3, 18, 18);
+		int buttonScale = ((topBorder - 8) / 2) * 2;
+		buttonScale = (buttonScale < 18) ? 18 : buttonScale;
+		mdc.DrawRectangle(w - topBorder, 4, buttonScale, buttonScale);
 	}
 	//mdc.DrawText("X", w-20, 4);
-	mdc.SetPen(wxPen(text,2));
-	mdc.DrawLine(w-21,7, w-12,16);
-	mdc.DrawLine(w-12,7, w-21,16);
-	dc.Blit(0,0,w,topBorder, &mdc, 0, 0);
-	dc.Blit(0,topBorder,border,h-topBorder-border, &mdc, 0, topBorder);
-	dc.Blit(w-border,topBorder,border,h-topBorder-border, &mdc, w-border, topBorder);
-	dc.Blit(0,h-border,w,border, &mdc, 0, h-border);
+	mdc.SetPen(wxPen(text, 2));
+	mdc.DrawLine(w - topBorder + 3, 8, w - (border + 8), topBorder - 8);
+	mdc.DrawLine(w - (border + 8), 8, w - topBorder + 3, topBorder - 8);
+	//mdc.DrawLine(w - 21, 7, w - 12, 16);
+	//mdc.DrawLine(w - 12, 7, w - 21, 16);
+	dc.Blit(0, 0, w, topBorder, &mdc, 0, 0);
+	dc.Blit(0, topBorder, border, h - topBorder - border, &mdc, 0, topBorder);
+	dc.Blit(w - border, topBorder, border, h - topBorder - border, &mdc, w - border, topBorder);
+	dc.Blit(0, h - border, w, border, &mdc, 0, h - border);
 }
 
 void KaiDialog::OnSize(wxSizeEvent &evt)
@@ -255,37 +265,38 @@ void KaiDialog::OnSize(wxSizeEvent &evt)
 void KaiDialog::OnMouseEvent(wxMouseEvent &evt)
 {
 	int w, h;
-	GetClientSize(&w,&h);
+	GetClientSize(&w, &h);
 	int x = evt.GetX();
 	int y = evt.GetY();
-	wxRect rc(w-25, 3, 18, 18);
-	if(evt.Leaving()){
+	wxRect rc(w - topBorder - 5, 0, topBorder - 3, topBorder - 3);
+	if (evt.Leaving()){
 		pushed = enter = false;
-		Refresh(false,&rc);
+		Refresh(false, &rc);
 		return;
 	}
-	bool leftdown= evt.LeftDown() || evt.LeftDClick();
-	if(leftdown){
+	bool leftdown = evt.LeftDown() || evt.LeftDClick();
+	if (leftdown){
 		wxActivateEvent evt(wxEVT_ACTIVATE, true);
 		OnActivate(evt);
 	}
-	if(x>=w-25 && x<w-5 && y>=6 && y<21){
-		if(leftdown){pushed=true; Refresh(false,&rc);}
-		if(!enter){enter = true; Refresh(false,&rc);}
-		if(evt.LeftUp()){
+	if (x >= w - topBorder - 1 && x < w - border - 3 && y >= 5 && y < topBorder - 3){
+		if (leftdown){ pushed = true; Refresh(false, &rc); }
+		if (!enter){ enter = true; Refresh(false, &rc); }
+		if (evt.LeftUp()){
 			pushed = enter = false;
-			Refresh(false,&rc);
+			Refresh(false, &rc);
 			MappedButton *btn = wxDynamicCast(FindWindow(escapeId), MappedButton);
-			if(btn && btn->IsShown() && btn->IsEnabled()){
+			if (btn && btn->IsShown() && btn->IsEnabled()){
 				wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, escapeId);
 				ProcessEvent(evt);
 				return;
 			}
 			EndModal(escapeId);
-			
+
 		}
 		return;
-	}else if (enter || pushed){
+	}
+	else if (enter || pushed){
 		pushed = enter = false;
 		Refresh(false, &rc);
 	}
@@ -299,7 +310,7 @@ void KaiDialog::SetSizerAndFit1(wxSizer *sizer, bool deleteOld)
 {
 	SetSizer(sizer, deleteOld);
 	wxSize siz = sizer->GetMinSize();
-	sizer->SetDimension(border, topBorder, siz.x+(2*border), siz.y+border+topBorder);
+	sizer->SetDimension(border, topBorder, siz.x + (2 * border), siz.y + border + topBorder);
 	//sizer->SetSizeHints(this);
 }
 
@@ -323,8 +334,8 @@ void KaiDialog::SetEnterId(int _enterId)
 {
 	Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter, this, enterId);
 	enterId = _enterId;
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter, this,enterId);
-	
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter, this, enterId);
+
 }
 void KaiDialog::SetEscapeId(int _escapeId, bool setFocus)
 {
@@ -336,8 +347,8 @@ void KaiDialog::SetEscapeId(int _escapeId, bool setFocus)
 
 void KaiDialog::OnEnter(wxCommandEvent &evt)
 {
-	if(IsModal())
-		EndModal(enterId); 
+	if (IsModal())
+		EndModal(enterId);
 
 	evt.Skip();
 }
@@ -350,8 +361,8 @@ void KaiDialog::SetLabel(const wxString &text)
 {
 	wxTopLevelWindow::SetLabel(text);
 	int w, h;
-	GetSize(&w,&h);
-	wxRect rc(0,0,w,topBorder);
+	GetSize(&w, &h);
+	wxRect rc(0, 0, w, topBorder);
 	Refresh(false, &rc);
 }
 WXLRESULT KaiDialog::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
@@ -359,21 +370,21 @@ WXLRESULT KaiDialog::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam
 	//if(uMsg == WM_SIZING){
 	//	RedrawWindow(m_hWnd, NULL, NULL, RDW_INVALIDATE | RDW_INTERNALPAINT);//| RDW_NOERASE
 	//}
-	if(uMsg == WM_ACTIVATE){
+	if (uMsg == WM_ACTIVATE){
 		isActive = (wParam != 0);//evt.GetActive();
 		int w, h;
-		GetClientSize(&w,&h);
-		wxRect rc(0,0,w,topBorder);
+		GetClientSize(&w, &h);
+		wxRect rc(0, 0, w, topBorder);
 		Refresh(false, &rc);
-		wxRect rc1(0,topBorder,border,h-border-topBorder);
+		wxRect rc1(0, topBorder, border, h - border - topBorder);
 		Refresh(false, &rc1);
-		wxRect rc2(w-border,topBorder,border,h-border-topBorder);
+		wxRect rc2(w - border, topBorder, border, h - border - topBorder);
 		Refresh(false, &rc2);
-		wxRect rc3(0,h-border,w,border);
+		wxRect rc3(0, h - border, w, border);
 		Refresh(false, &rc3);
 		Update();
 	}
-	if(uMsg == WM_NCHITTEST){
+	if (uMsg == WM_NCHITTEST){
 		RECT WindowRect;
 		int x, y;
 
@@ -381,7 +392,7 @@ WXLRESULT KaiDialog::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam
 		x = GET_X_LPARAM(lParam) - WindowRect.left;
 		y = GET_Y_LPARAM(lParam) - WindowRect.top;
 
-		if (x >= border && x <= WindowRect.right - WindowRect.left - 30 && y >= border && y <= topBorder)
+		if (x >= border && x <= WindowRect.right - WindowRect.left - topBorder - 5 && y >= border && y <= topBorder)
 			return HTCAPTION;
 		else if (style & wxRESIZE_BORDER){
 			int result = 0;
@@ -404,18 +415,27 @@ WXLRESULT KaiDialog::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam
 			else
 				result = HTCLIENT;
 
-			if(result != HTCLIENT && (enter || pushed)){
-				enter = pushed = false; 
-				wxRect rc(0,0,WindowRect.right - WindowRect.left,topBorder);
+			if (result != HTCLIENT && (enter || pushed)){
+				enter = pushed = false;
+				wxRect rc(0, 0, WindowRect.right - WindowRect.left, topBorder);
 				Refresh(false, &rc);
 			}
 			return result;
-		}else 
+		}
+		else
 			return HTCLIENT;
 
 	}
 
 	return wxTopLevelWindow::MSWWindowProc(uMsg, wParam, lParam);
+}
+
+bool KaiDialog::SetFont(const wxFont &font)
+{
+	int fw, fh;
+	GetTextExtent(GetTitle(), &fw, &fh, 0, 0, &font);
+	topBorder = (fh + 8 < 24) ? 24 : fh + 8;
+	return wxWindow::SetFont(font);
 }
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiDialog, wxTopLevelWindow);
