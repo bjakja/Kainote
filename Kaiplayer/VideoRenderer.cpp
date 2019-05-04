@@ -104,7 +104,7 @@ bool VideoRenderer::InitDX(bool reset)
 
 	if (!reset){
 		d3dobject = Direct3DCreate9(D3D_SDK_VERSION);
-		PTR(d3dobject, _("Nie można utwożyć objektu Direct3D"));
+		PTR(d3dobject, _("Nie można utworzyć objektu Direct3D"));
 	}
 	else{
 		SAFE_RELEASE(MainStream);

@@ -17,6 +17,14 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Rel_AVX2|Win32">
+      <Configuration>Rel_AVX2</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Rel_AVX2|x64">
+      <Configuration>Rel_AVX2</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Rel_AVX|Win32">
       <Configuration>Rel_AVX</Configuration>
       <Platform>Win32</Platform>
@@ -38,6 +46,12 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
@@ -45,6 +59,12 @@
     <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -74,10 +94,16 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'" Label="PropertySheets">
@@ -95,24 +121,32 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">$(Platform)\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'">$(Configuration)\</IntDir>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">I:\Programy\Spell\src\hunspell;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">I:\Programy\Spell\src\hunspell;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'">I:\Programy\Spell\src\hunspell;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">I:\Programy\Spell\src\hunspell;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">I:\Programy\Spell\src\hunspell;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">I:\Programy\Spell\src\hunspell;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">I:\Programy\Spell\src\win_api\Release_dll\libhunspell;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">I:\Programy\Spell\src\win_api\Release_dll\libhunspell;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'">I:\Programy\Spell\src\win_api\Release_dll\libhunspell;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">I:\Programy\Spell\src\win_api\Release_dll\libhunspell;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">I:\Programy\Spell\src\win_api\Release_dll\libhunspell;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">I:\Programy\Spell\src\win_api\Release_dll\libhunspell;$(LibraryPath)</LibraryPath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(LibraryPath)</LibraryPath>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -127,6 +161,11 @@
     <TargetName>$(ProjectName)_AVX</TargetName>
     <OutDir>$(SolutionDir)$(Platform)\Release\</OutDir>
     <IntDir>$(Platform)\Release\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
+    <TargetName>$(ProjectName)_AVX2</TargetName>
+    <IntDir>$(Platform)\Release\</IntDir>
+    <OutDir>$(SolutionDir)$(Platform)\Release\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -245,6 +284,48 @@ echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
 git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;..\Thirdparty\BaseClasses;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\zlib-1.2.8;..\Thirdparty\luajit\include;..\Thirdparty\luabins\include;..\Thirdparty\icu\source\common;..\Thirdparty\icu\source\i18n;..\Thirdparty\boost_1_61_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;HUNSPELL_STATIC;WIN32;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <MinimalRebuild>false</MinimalRebuild>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;core.lib;base.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregex.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmbase.lib;Boost.lib;libhunspell.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib;..\Thirdparty\BaseClasses\Release;..\Thirdparty\wxWidgets\build\msw\$(Platform)\$(Configuration);..\Thirdparty\Hunspell\msvc\Win32\Release\libhunspell;..\Thirdparty\luabins\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\luajit\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\boost_1_61_0\BoostBuild\$(Platform)\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc120-mt-1_61.lib;libboost_regex-vc120-mt-1_61.lib;libboost_filesystem-vc120-mt-1_61.lib;libboost_system-vc120-mt-1_61.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+    <PostBuildEvent>
+      <Command>$(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)Win32\Release\Kainote x86.zip" "C:\Users\Bakura\Dropbox\Kainote x86.zip" "x86"</Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
+git rev-parse --verify HEAD &gt;&gt;  gitparams.h
+
+echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
+git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'">
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
@@ -321,6 +402,48 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <PostBuildEvent>
       <Command>$(SolutionDir)AutoVersioning "$(ProjectDir)VersionKainote.h"
 $(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)x64\Release\Kainote x64.zip" "C:\Users\Bakura\Dropbox\Kainote x64.zip" "x64"</Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
+git rev-parse --verify HEAD &gt;&gt;  gitparams.h
+
+echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
+git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\BaseClasses;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\zlib-1.2.8;..\Thirdparty\freetype-2.6\include;..\Thirdparty\luajit\include;..\Thirdparty\luabins\include;..\Thirdparty\icu\source\common;..\Thirdparty\icu\source\i18n;..\Thirdparty\boost_1_61_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <MinimalRebuild>false</MinimalRebuild>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;core.lib;base.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2_x64.lib;strmbase.lib;Boost.lib;libhunspell.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;c:\Program Files %28x86%29\Microsoft SDKs\Windows\v7.1A\Lib\x64;..\Thirdparty\BaseClasses\x64\Release;..\Thirdparty\wxWidgets\build\msw\x64\Release;..\Thirdparty\Hunspell\msvc\x64\Release\libhunspell;..\Thirdparty\luabins\LuaBins\x64\Release;..\Thirdparty\luajit\LuaJit\x64\Release;..\Thirdparty\boost_1_61_0\BoostBuild\$(Platform)\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc120-mt-1_61.lib;libboost_regex-vc120-mt-1_61.lib;libboost_filesystem-vc120-mt-1_61.lib;libboost_system-vc120-mt-1_61.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h

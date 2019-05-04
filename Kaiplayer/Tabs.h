@@ -80,6 +80,7 @@ private:
 	int over;
 	int firstVisibleTab;
 	int start;
+	int xWidth;
 	bool onx;
 	bool farr;
 	bool rarr;
