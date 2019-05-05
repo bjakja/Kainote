@@ -925,9 +925,10 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 				tab->Video->Pause();//Render(); 
 			}
 			tab->Video->SetColorSpace(tab->Grid->GetSInfo("YCbCr Matrix"));
+			tab->Video->vToolbar->DisableVisuals(subsFormat == SRT);
 		}
 
-		if (!tab->editor&&!tab->Video->isFullscreen){ Kai->HideEditor(); }
+		if (!tab->editor && !tab->Video->isFullscreen){ Kai->HideEditor(); }
 		tab->ShiftTimes->Contents();
 		file->InsertSelection(currentLine);
 		RefreshColumns();
