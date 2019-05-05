@@ -694,7 +694,7 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		ay = vplayer->inf.ARatioY;
 		d3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') : (vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
 		//KaiLog(wxString::Format(L"vformat %i", (int)vformat));
-		swapFrame = (vformat == 0 && !vobsub);
+		swapFrame = (vformat == 0 && !vplayer->HasVobsub());
 		if (player){
 			Kaia->Frame->OpenAudioInTab(((TabPanel*)GetParent()), CloseAudio, "");
 		}
@@ -1667,6 +1667,7 @@ void VideoRenderer::ChangeVobsub(bool vobsub)
 	vplayer->OpenFile(pan->VideoPath, vobsub);
 	vformat = vplayer->inf.CT;
 	D3DFORMAT tmpd3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') : (vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
+	swapFrame = (vformat == 0 && !vplayer->HasVobsub());
 	if (tmpd3dformat != d3dformat){
 		d3dformat = tmpd3dformat;
 		int tmppitch = vwidth * vplayer->inf.bytes;

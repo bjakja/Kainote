@@ -105,6 +105,7 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 	HR(m_pGraph->AddFilter(pAudioRenderer.obj, L"Direct Sound Renderer"), _("Nie można dodać renderera Direct Sound"));
 
 	bool hasstream = false;
+	hasVobsub = false;
 
 	if (vobsub){
 		Selfdest<IBaseFilter> pVobsub;
@@ -135,16 +136,15 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 		SAFE_RELEASE(pEnum.obj);
 		Selfdest<IPin> tmpPin;
 		HR(hr = pVobsub->EnumPins(&pEnum.obj), _("Nie można wyliczyć pinów źródła"));
-		bool connected = false;
 		while (S_OK == pEnum->Next(1, &pPin.obj, NULL))
 		{
 			if (SUCCEEDED(pPin->ConnectedTo(&tmpPin.obj)))
 			{
-				connected = true;
+				hasVobsub = true;
 				break;
 			}
 		}
-		if (!connected){ m_pGraph->RemoveFilter(pVobsub.obj); }
+		if (!hasVobsub){ m_pGraph->RemoveFilter(pVobsub.obj); }
 
 	}
 	else{

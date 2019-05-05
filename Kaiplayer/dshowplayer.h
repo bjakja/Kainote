@@ -48,6 +48,7 @@ public:
 	void GetChapters(std::vector<chapter> *chapters);
 	wxSize GetVideoSize();
 	void TearDownGraph();
+	bool HasVobsub(){ return hasVobsub; }
 	PlaybackState m_state;
 	VideoInf inf;
 	IMediaControl	*m_pControl;
@@ -66,6 +67,6 @@ private:
 
 
 	wxWindow *parent;
-
+	bool hasVobsub;
 };
 
