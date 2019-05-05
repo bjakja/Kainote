@@ -495,8 +495,9 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 
 
 	if (instance){
-		framee->strides[0] = vwidth * bytes;
-		framee->planes[0] = fdata;
+		//for swap -pitch and buffer set to last element - pitch
+		framee->strides[0] = (swapFrame) ? -(vwidth * bytes) : vwidth * bytes;
+		framee->planes[0] = (swapFrame) ? fdata + (vwidth * (vheight - 1) * bytes)  : fdata;
 		csri_render(instance, framee, (time / 1000.0));
 	}
 
@@ -509,18 +510,25 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 	texbuf = static_cast<byte *>(d3dlr.pBits);
 
 	diff = d3dlr.Pitch - (vwidth*bytes);
-	if (!diff){
-		memcpy(texbuf, fdata, (vheight*pitch));
+	if (swapFrame){
+		int framePitch = vwidth * bytes;
+		byte * reversebyte = fdata + (framePitch * vheight) - framePitch;
+		for (int j = 0; j < vheight; ++j){
+			memcpy(texbuf, reversebyte, framePitch);
+			texbuf += framePitch + diff;
+			reversebyte -= framePitch;
+		}
+	}
+	else if (!diff){
+		memcpy(texbuf, fdata, (vheight * pitch));
 	}
 	else if (diff > 0){
 
 		if (vformat >= YV12){
-			for (int i = 0; i < vheight; i++){
+			for (int i = 0; i < vheight; ++i){
 				memcpy(texbuf, fdata, vwidth);
-				texbuf += vwidth;
+				texbuf += (vwidth + diff);
 				fdata += vwidth;
-				//memset(texbuf-4, black, diff + 4);
-				texbuf += diff;
 			}
 			int hheight = vheight / 2;
 			int fwidth = (vformat == NV12) ? vwidth : vwidth / 2;
@@ -528,18 +536,14 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 
 			for (int i = 0; i < hheight; i++){
 				memcpy(texbuf, fdata, fwidth);
-				texbuf += fwidth;
+				texbuf += (fwidth + fdiff);
 				fdata += fwidth;
-				//memset(texbuf-2, blackuv, fdiff + 2);
-				texbuf += fdiff;
 			}
 			if (vformat < NV12){
-				for (int i = 0; i < hheight; i++){
+				for (int i = 0; i < hheight; ++i){
 					memcpy(texbuf, fdata, fwidth);
-					texbuf += fwidth;
+					texbuf += (fwidth + fdiff);
 					fdata += fwidth;
-					//memset(texbuf-2, blackuv, fdiff + 2);
-					texbuf += fdiff;
 				}
 			}
 		}
@@ -689,6 +693,8 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		ax = vplayer->inf.ARatioX;
 		ay = vplayer->inf.ARatioY;
 		d3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') : (vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
+		//KaiLog(wxString::Format(L"vformat %i", (int)vformat));
+		swapFrame = (vformat == 0 && !vobsub);
 		if (player){
 			Kaia->Frame->OpenAudioInTab(((TabPanel*)GetParent()), CloseAudio, "");
 		}

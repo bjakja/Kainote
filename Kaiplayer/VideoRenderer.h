@@ -189,6 +189,7 @@ class VideoRenderer : public wxWindow
 		bool isFullscreen;
 		bool panelOnFullscreen;
 		bool hasZoom;
+		bool swapFrame = false;
 		int vwidth;
 		int vheight;
 		int pitch;

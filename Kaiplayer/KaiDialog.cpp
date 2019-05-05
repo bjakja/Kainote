@@ -71,10 +71,10 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 {
 	SetExtraStyle(GetExtraStyle() | wxTOPLEVEL_EX_DIALOG | wxWS_EX_BLOCK_EVENTS);// | wxCLIP_CHILDREN
 	Create(parent, id, title, pos, size, wxBORDER_NONE | wxTAB_TRAVERSAL);
-	//if ( !m_hasFont )
-		//SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-	wxFont font(16, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT);
-	SetFont(font);
+	if ( !m_hasFont )
+		SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+	//wxFont font(16, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT);
+	//SetFont(font);
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
 	Bind(wxEVT_SIZE, &KaiDialog::OnSize, this);
