@@ -65,19 +65,30 @@ bool kainoteApp::OnInit()
 			//0x0415 	Polish (pl) 	0x15 	LANG_POLISH 	Poland (PL) 	0x01 	SUBLANG_POLISH_POLAND
 			if (isGood == 2 && GetSystemDefaultUILanguage() != 0x415){
 				//what a lame language system, I need to change it.
-				Options.SetInt(ProgramLanguage, 1);
+				Options.SetString(ProgramLanguage, L"en");
 				Options.SetString(DictionaryLanguage, L"en_US");
 			}
 
 			locale = NULL;
-			if (Options.GetInt(ProgramLanguage) != 0){
+			wxString lang = Options.GetString(ProgramLanguage);
+			if (lang == L"0"){
+				lang = L""; Options.SetString(ProgramLanguage, lang);
+			}
+			if (lang == L"1"){
+				lang = L"en"; Options.SetString(ProgramLanguage, lang);
+			}
+			if (lang != L""){
 				locale = new wxLocale();
-				if (!locale->Init(wxLANGUAGE_ENGLISH, wxLOCALE_DONT_LOAD_DEFAULT)){
-					KaiMessageBox("wxLocale cannot initialize, language change failed");
+				const  wxLanguageInfo * li = locale->FindLanguageInfo(lang);
+				if (!li)
+					KaiMessageBox(L"Cannot find language, language change failed");
+
+				if (!locale->Init(li->Language, wxLOCALE_DONT_LOAD_DEFAULT)){
+					KaiMessageBox(L"wxLocale cannot initialize, language change failed");
 				}
 				locale->AddCatalogLookupPathPrefix(Options.pathfull + L"\\Locale\\");
-				if (!locale->AddCatalog(L"en", wxLANGUAGE_POLISH, L"UTF-8")){//
-					KaiMessageBox("Cannot find translation, language change failed");
+				if (!locale->AddCatalog(lang, wxLANGUAGE_POLISH, L"UTF-8")){
+					KaiMessageBox(L"Cannot find translation, language change failed");
 				}
 			}
 

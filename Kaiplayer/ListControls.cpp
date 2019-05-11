@@ -491,6 +491,9 @@ void KaiChoice::EnableItem(int numItem, bool enable)
 
 int KaiChoice::FindString(const wxString &text, bool caseSensitive)
 {
+	if (text.empty())
+		return -1;
+
 	return list->Index(text, caseSensitive);
 }
 

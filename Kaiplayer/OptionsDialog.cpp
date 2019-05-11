@@ -295,11 +295,24 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			GridChangeActiveOnSelection, TlModeShowOriginal, TL_MODE_HIDE_ORIGINAL_ON_VIDEO,
 			TextFieldAllowNumpadHotkeys, VisualWarningsOff,
 			DontAskForBadResolution, AutomationOldScriptsCompatybility };
-
-		wxString langopts[2] = { "Polski", "English" };
+		wxString localePath = Options.pathfull + "\\Locale";
+		wxDir kat(localePath);
+		wxArrayString langs;
+		if (kat.IsOpened()){
+			kat.GetAllFiles(localePath, &langs, "*.mo", wxDIR_FILES);
+		}
+		//wxString langopts[2] = { "Polski", "English" };
+		for (size_t i = 0; i < langs.GetCount(); i++){
+			wxString fulllang = langs[i].AfterLast(L'\\');
+			langs[i] = fulllang.BeforeLast(L'.');
+		}
+		langs.Insert(L"pl", 0);
 		KaiStaticBoxSizer *langSizer = new KaiStaticBoxSizer(wxVERTICAL, Editor, _("Język (wymaga restartu programu)"));
-		KaiChoice *lang = new KaiChoice(Editor, 10000, wxDefaultPosition, wxDefaultSize, 2, langopts);
-		lang->SetSelection(Options.GetInt(ProgramLanguage));
+		KaiChoice *lang = new KaiChoice(Editor, 10005, wxDefaultPosition, wxDefaultSize, langs);
+		int sel = lang->FindString(Options.GetString(ProgramLanguage));
+		if (sel < 0)
+			sel = 0;
+		lang->SetSelection(sel);
 		lang->SetFocus();
 		ConOpt(lang, ProgramLanguage);
 		langSizer->Add(lang, 0, wxALL | wxEXPAND, 2);
@@ -1007,7 +1020,7 @@ void OptionsDialog::SetOptions(bool saveall)
 		}
 		else if (OB.ctrl->IsKindOf(CLASSINFO(KaiChoice))){
 			KaiChoice *cbx = (KaiChoice*)OB.ctrl;
-			if (cbx->GetWindowStyle()&KAI_COMBO_BOX){
+			if (cbx->GetWindowStyle() & KAI_COMBO_BOX){
 				wxString kol = cbx->GetValue();
 				if (Options.GetString(OB.option) != kol){
 					Options.SetString(OB.option, kol);
@@ -1025,7 +1038,9 @@ void OptionsDialog::SetOptions(bool saveall)
 						Options.ChangeVsfilter();
 						Notebook::RefreshVideo();
 					}
-
+					/*else if (cbx->GetId() == 10005){
+					nothing to do here
+					}*/
 				}
 			}
 			else{
