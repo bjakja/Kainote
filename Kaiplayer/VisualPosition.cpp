@@ -266,8 +266,8 @@ void Position::OnKeyPress(wxKeyEvent &evt)
 			directionX /= 10;
 			directionY /= 10;
 		}*/
-		directionX = ((directionX / coeffW) - zoomMove.x) * zoomScale.x;
-		directionY = ((directionY / coeffH) - zoomMove.y) * zoomScale.y;
+		directionX = (directionX / coeffW);
+		directionY = (directionY / coeffH);
 
 		for (size_t i = 0; i < data.size(); i++){
 			data[i].pos.x = data[i].lastpos.x + directionX;

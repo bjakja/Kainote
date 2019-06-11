@@ -652,14 +652,17 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			float pointx = Points[i].wx(this), pointy = Points[i].wy(this);
 			if (abs(pointx - zx) < pointArea && abs(pointy - zy) < pointArea)
 			{
-				if (!acpoint.isSelected && !ctrl){ ChangeSelection(); }
 				lastpoint = acpoint = Points[i];
+				if (!acpoint.isSelected && !ctrl){
+					ChangeSelection();
+				}
 				Points[i].isSelected = (right)? false : (ctrl) ? !Points[i].isSelected : true;
 				grabbed = i;
 				diffs.x = pointx - zx;
 				diffs.y = pointy - zy;
 				tab->Video->CaptureMouse();
-				snapYminus = false; snapYplus = false; snapXminus = false; snapXplus = false;
+				//snapYminus = false; snapYplus = false; snapXminus = false; snapXplus = false;
+				//KaiLog(wxString::Format(L"left down on point %i %i", grabbed, (int)drawSelection));
 				firstmove = D3DXVECTOR2(zx, zy);
 				break;
 			}
@@ -667,6 +670,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 
 		if (tool >= 1 && tool <= 3 && (grabbed == -1 || right))
 		{
+			//KaiLog(wxString::Format(L"tool apply %i", tool));
 			if (Points.empty()){ AddMove(xy, 0); SetClip(GetVisual(), true); return; }
 			int pos = CheckPos(xy, true);
 			switch (tool){
@@ -677,6 +681,8 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 					AddCurvePoint(xy, pos); break;//bspline point
 				}
 				AddCurve(xy, pos, "s"); break;//bspline
+			default:
+				KaiLog(wxString::Format(L"Bad tool %i", tool));
 			}
 			SetClip(GetVisual(), true);
 			return;
@@ -685,6 +691,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 
 		if (tool == 4 && grabbed == -1)
 		{
+			//KaiLog(wxString::Format(L"move apply %i", tool));
 			int pos = CheckPos(xy, true);
 			if (psize > 0 && Points[(pos == (int)psize) ? psize - 1 : pos].type == "m"){
 				KaiMessageBox(_("Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie została zablokowana."), _("Uwaga"));
@@ -697,6 +704,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			tab->Video->vToolbar->SetItemToggled(&tool);
 		}
 		else if (grabbed == -1){
+			//KaiLog(wxString::Format(L"sel apply %i", tool));
 			tab->Video->CaptureMouse();
 			drawSelection = true;
 			drawCross = false;
@@ -756,6 +764,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		lastpos = -1;
 	}
 	if (drawSelection){
+		//KaiLog(wxString::Format(L"drawsel sel apply %i", (int)drawSelection));
 		selection.width = x;
 		selection.height = y;
 		SelectPoints();

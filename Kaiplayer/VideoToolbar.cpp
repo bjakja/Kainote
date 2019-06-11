@@ -113,8 +113,10 @@ int VideoToolbar::GetItemToggled()
 
 void VideoToolbar::SetItemToggled(int *toggled)
 {
-	if (visualItems[Toggled])
+	if (visualItems[Toggled]){
 		visualItems[Toggled]->SetItemToggled(toggled);
+		Refresh(false);
+	}
 }
 
 void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
