@@ -356,8 +356,9 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 		if (tab->Grid->file->IsSelected(i) && action != 0){
 			if (action < 3){ Dial->GetRaw(&whatcopy, tab->Grid->hasTLMode && Dial->TextTl != L""); }
 			else if (action < 5){
-				Dial->ChangeDialogueState(1);
-				mdial.push_back(Dial);
+				Dialogue *copydial = Dial->Copy();
+				//Dial->ChangeDialogueState(1);
+				mdial.push_back(copydial);
 			}
 			else if (action < 6){
 				Dialogue *dialc = tab->Grid->file->CopyDialogue(i);
@@ -377,12 +378,20 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 		}
 	}//przenoszenie na początek / koniec
 	if (action == 2 || action == 6 || action == 3 || action == 4){
-		tab->Grid->DeleteRows();
+		tab->Grid->file->DeleteSelectedDialogues();
+		tab->Grid->SaveSelections(true);
+		tab->Grid->SpellErrors.clear();
 		if (action == 3 || action == 4)
 		{
-			tab->Grid->InsertRows((action == 3) ? 0 : -1, mdial, false);
+			// we add lines to destroyer cause of it must be copied
+			tab->Grid->InsertRows((action == 3) ? 0 : -1, mdial, true);
+			size_t size = tab->Grid->GetCount();
+			size_t mdialsize = size - mdial.size();
+			tab->Grid->file->InsertSelections((action == 3) ? 0 : mdialsize, (action == 3) ? mdial.size() - 1 : size - 1);
+
 			mdial.clear();
 		}
+		if (tab->Grid->GetCount() < 1){ tab->Grid->AddLine(new Dialogue()); }
 	}
 	size_t firstSelected = tab->Grid->FirstSelection();
 	int newCurrentLine = (firstSelected == -1) ? tab->Grid->currentLine : firstSelected;
