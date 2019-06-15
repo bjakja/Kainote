@@ -36,8 +36,6 @@
 
 IMPLEMENT_APP(kainoteApp);
 
-
-
 bool kainoteApp::OnInit()
 {
 
@@ -48,7 +46,7 @@ bool kainoteApp::OnInit()
 	if (!m_checker->IsAnotherRunning())
 	{
 
-		setlocale(LC_NUMERIC, "C");
+		
 		//on x64 it makes not working unicode toupper tolower conversion
 		//setlocale(LC_CTYPE, "C");
 
@@ -58,6 +56,7 @@ bool kainoteApp::OnInit()
 
 		if (wxsOK)
 		{
+			//do not load here float options cause here is polish or another default locale with ',' instead of '.'
 			//wxHandleFatalExceptions(true);
 			//0 - failed, 1 - succeeded, 2 - no config
 			int isGood = Options.LoadOptions();
@@ -68,7 +67,7 @@ bool kainoteApp::OnInit()
 				Options.SetString(ProgramLanguage, L"en");
 				Options.SetString(DictionaryLanguage, L"en_US");
 			}
-
+			
 			locale = NULL;
 			wxString lang = Options.GetString(ProgramLanguage);
 			if (lang == L"0"){
@@ -77,7 +76,7 @@ bool kainoteApp::OnInit()
 			if (lang == L"1"){
 				lang = L"en"; Options.SetString(ProgramLanguage, lang);
 			}
-			if (lang != L""){
+			if (lang != L"" && lang != L"pl"){
 				locale = new wxLocale();
 				const  wxLanguageInfo * li = locale->FindLanguageInfo(lang);
 				if (!li)
@@ -91,6 +90,8 @@ bool kainoteApp::OnInit()
 					KaiMessageBox(L"Cannot find translation, language change failed");
 				}
 			}
+			//locale numbers changes here cause of it is set with wxlocale, I have to change it back
+			setlocale(LC_NUMERIC, "C");
 
 			if (!Hkeys.LoadHkeys()){
 				KaiMessageBox(_("Nie udało się wczytać skrótów.\nDziałanie programu zostanie zakończone."), _("Uwaga"));
