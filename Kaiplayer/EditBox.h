@@ -86,7 +86,7 @@ public:
 	// mode 0 in place of cursor, 1 on start of line, 2 in first bracket for clip rectangle
 	bool FindValue(const wxString &wval, wxString *returnval, const wxString &text="", bool *endsel=0, int mode = 0);
 	void HideControls();
-	void UpdateChars(const wxString &text);
+	void UpdateChars();
 
 	AudioBox* ABox;
 	TextEditor* TextEdit;

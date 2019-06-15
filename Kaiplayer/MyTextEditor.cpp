@@ -216,7 +216,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 		wraps.Add(MText.length());
 	}
 	//
-	if (updatechars){ EB->UpdateChars(MText); }
+	if (updatechars){ EB->UpdateChars(); }
 	if (sendevent){ wxCommandEvent evt2(wxEVT_COMMAND_TEXT_UPDATED, GetId()); AddPendingEvent(evt2); }
 }
 
@@ -1797,7 +1797,7 @@ void TextEditor::SetState(int _state, bool refresh){
 		SpellCheckerOnOff = (!state) ? Options.GetBool(SpellcheckerOn) : false;
 		if (SpellCheckerOnOff)
 			CheckText();
-		EB->UpdateChars(MText);
+		EB->UpdateChars();
 		Refresh(false);
 	//}
 };

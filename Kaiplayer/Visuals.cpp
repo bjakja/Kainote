@@ -631,7 +631,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 	else{
 
 		Editor->SetModified();
-		edit->UpdateChars(Editor->GetValue());
+		edit->UpdateChars();
 		tab->Video->hasVisualEdition = true;
 		if (edit->splittedTags){ edit->TextEditOrig->SetModified(); }
 		edit->Send((Visual == VECTORCLIP) ? VISUAL_VECTOR_CLIP : VISUAL_DRAWING, false, false, true);

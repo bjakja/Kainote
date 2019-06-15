@@ -409,7 +409,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 
 	
 	//set characters per seconds and wraps
-	UpdateChars((TextEditOrig->IsShown() && line->TextTl != L"") ? line->TextTl : line->Text);
+	UpdateChars();
 
 	//block show audio and video when preview enabled
 	//and editbox shows line from preview grid != tab->Grid
@@ -460,7 +460,7 @@ done:
 
 }
 
-void EditBox::UpdateChars(const wxString &text)
+void EditBox::UpdateChars()
 {
 
 	if (line->IsComment){
@@ -470,7 +470,7 @@ void EditBox::UpdateChars(const wxString &text)
 	else{
 		wxString result;
 		bool isbad = false;
-		int ilzn = grid->CalcChars(text, &result, &isbad);
+		int ilzn = grid->CalcChars((TextEditOrig->IsShown() && line->TextTl != L"") ? line->TextTl : line->Text, &result, &isbad);
 		Chars->SetLabelText(_("Łamania: ") + result + L"43");
 		Chars->SetForegroundColour((isbad) ? WindowWarningElements : WindowText);
 		int chtime = ilzn / ((line->End.mstime - line->Start.mstime) / 1000.0f);
@@ -1548,7 +1548,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	TabPanel* panel = (TabPanel*)grid->GetParent();
 	bool startEndFocus = StartEdit->HasFocus() || EndEdit->HasFocus();
 	bool durFocus = DurEdit->HasFocus();
-
+	
 	bool visible = true;
 	if (startEndFocus){
 		line->End = EndEdit->GetTime(2);
@@ -1581,7 +1581,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	}
 	if (durFocus || startEndFocus){
 		if (ABox && ABox->IsShown()){ ABox->audioDisplay->SetDialogue(line, currentLine); }
-		UpdateChars((TextEditOrig->IsShown() && line->TextTl != L"") ? line->TextTl : line->Text);
+		UpdateChars();
 	}
 
 	int saveAfter = Options.GetInt(GridSaveAfterCharacterCount);

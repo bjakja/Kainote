@@ -1547,7 +1547,7 @@ void AudioDisplay::CommitChanges(bool nextLine, bool Save, bool moveToEnd) {
 	Edit->DurEdit->SetTime(gtime, true, 1);
 	if (Save){
 		Edit->Send(AUDIO_CHANGE_TIME, nextLine);
-		if (!nextLine){ Edit->UpdateChars(Edit->TextEdit->GetValue()); }
+		if (!nextLine){ Edit->UpdateChars(); }
 		VideoCtrl *vb = ((TabPanel *)Edit->GetParent())->Video;
 		if (vb && vb->vstate != None)
 			vb->RefreshTime();
