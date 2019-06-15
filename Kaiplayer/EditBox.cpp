@@ -1431,7 +1431,8 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 				hasR = true;
 			}
 			if (ftag.EndsWith(L")")){
-				if (ftag.Find(L'(') == -1 || ftag.Freq(L')') >= 2 || ftag.StartsWith(L"t(")){
+				//fixes \fn(name)
+				if (/*ftag.Find(L'(') == -1 || ftag.Freq(L')') >= 2 && */ftag.Freq(L')') > ftag.Freq(L'(') || ftag.StartsWith(L"t(")){
 					isT = true;
 					endT = lslash - 1;
 				}
@@ -1466,11 +1467,12 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 				lastT = i;
 				continue;
 			}
-
+			//fixes fontnames with (...) on end
+			bool isFN = ftag.StartsWith(L"fn");
 			int reps = rex.ReplaceAll(&ftag, L"\\1");
 			if (reps > 0){
-
-				if (ftag.EndsWith(L")") && (!ftag.StartsWith(L"(") || ftag.Freq(L')') >= 2) || ftag.EndsWith(L"}")){
+				//maybe better for fix fn bug would be ftag.Freq(L')') > ftag.Freq(L'(') cause it also can prevent it for another tags
+				if (ftag.EndsWith(L")") && !isFN && (!ftag.StartsWith(L"(") || ftag.Freq(L')') >= 2) || ftag.EndsWith(L"}")){
 					ftag.RemoveLast(1);
 					lslash--;
 				}
