@@ -470,7 +470,8 @@ void EditBox::UpdateChars()
 	else{
 		wxString result;
 		bool isbad = false;
-		int ilzn = grid->CalcChars((TextEditOrig->IsShown() && line->TextTl != L"") ? line->TextTl : line->Text, &result, &isbad);
+		TextEditor * Editor = GetEditor();
+		int ilzn = grid->CalcChars(Editor->GetValue(), &result, &isbad);
 		Chars->SetLabelText(_("Łamania: ") + result + L"43");
 		Chars->SetForegroundColour((isbad) ? WindowWarningElements : WindowText);
 		int chtime = ilzn / ((line->End.mstime - line->Start.mstime) / 1000.0f);
