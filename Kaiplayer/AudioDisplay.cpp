@@ -1209,6 +1209,9 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 	// Unload
 	if (player) {
 		try {
+			if (player->IsPlaying()){
+				Stop();
+			}
 			try {
 				player->CloseStream();
 			}

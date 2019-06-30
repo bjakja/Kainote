@@ -939,7 +939,16 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		}
 
 		if (middle){
-			if (video->GetState() != None){
+			if (ctrl){
+				lastActiveLine = currentLine;
+				Edit->SetLine(row, true, true, true, !ctrl);
+				if (hasTLMode){ Edit->SetActiveLineToDoubtful(); }
+				Refresh(false);
+				extendRow = -1;
+				if (Comparison){ ShowSecondComparedLine(row); }
+				else if (preview){ preview->NewSeeking(); }
+			}
+			else if (video->GetState() != None){
 				video->PlayLine(GetDialogue(row)->Start.mstime, video->GetPlayEndTime(GetDialogue(row)->End.mstime));
 			}
 

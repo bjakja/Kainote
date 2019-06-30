@@ -1065,7 +1065,7 @@ void SubsGridBase::InsertRows(int Row,
 	file->InsertRows(Row, RowsTable, AddToDestroy);
 	//spellErrors Array take all dialogues for compatybility
 	//but can be simply cleared
-	if (SpellErrors.size() > Row + RowsTable.size()){
+	if (SpellErrors.size() > Row){
 		wxArrayInt emptyarray;
 		SpellErrors.insert(SpellErrors.begin() + Row, RowsTable.size(), emptyarray);
 	}
@@ -1079,7 +1079,7 @@ void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddTo
 	file->InsertRows(Row, NumRows, Dialog, AddToDestroy, Save);
 	//spellErrors Array take all dialogues for compatybility
 	//but can be simply cleared
-	if (SpellErrors.size() > Row + NumRows){
+	if (SpellErrors.size() > Row){
 		wxArrayInt emptyarray;
 		SpellErrors.insert(SpellErrors.begin() + Row, NumRows, emptyarray);
 	}
