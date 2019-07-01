@@ -347,11 +347,11 @@ PlaybackState VideoCtrl::GetState()
 	return vstate;
 }
 
-bool VideoCtrl::Seek(int whre, bool starttime/*=true*/, bool disp/*=true*/, bool reloadSubs/*=true*/, bool correct /*= true*/)
+bool VideoCtrl::Seek(int whre, bool starttime/*=true*/, bool disp/*=true*/, bool reloadSubs/*=true*/, bool correct /*= true*/, bool asynchonize /*= true*/)
 {
 	wxMutexLocker lock(vbmutex);
 	if (GetState() == None){ return false; }
-	SetPosition(whre, starttime, correct);
+	SetPosition(whre, starttime, correct, asynchonize);
 	//if (disp && !IsDshow){ RefreshTime(); }
 	return true;
 }

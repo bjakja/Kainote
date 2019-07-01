@@ -40,7 +40,7 @@ public:
 	bool LoadVideo(const wxString& fileName, wxString *subsName, bool fullscreen = false, bool changeAudio = true, int customFFMS2 = -1);
 	PlaybackState GetState();
 
-	bool Seek(int newPosition, bool starttime = true, bool refreshTime = true, bool reloadSubs = true, bool correct = true);
+	bool Seek(int newPosition, bool starttime = true, bool refreshTime = true, bool reloadSubs = true, bool correct = true, bool asynchonize = true);
 	int Tell();
 	bool CalcSize(int *width, int *height, int wwidth = 0, int wheight = 0, bool setstatus = false, bool calcH = false);
 

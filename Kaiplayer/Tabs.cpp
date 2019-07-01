@@ -972,8 +972,7 @@ bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*
 	tab->SubsName = tab->SubsPath.AfterLast(L'\\');
 	tab->Video->vToolbar->DisableVisuals(ext != "ass");
 	if (active != -1 && active != tab->Grid->currentLine && active < tab->Grid->GetCount()){
-		tab->Grid->SelectRow(active);
-		tab->Edit->SetLine(active);
+		tab->Grid->SetActive(active);
 	}
 	if (scroll != -1)
 		tab->Grid->ScrollTo(scroll);

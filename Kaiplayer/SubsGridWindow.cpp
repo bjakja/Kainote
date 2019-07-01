@@ -697,6 +697,14 @@ void SubsGridWindow::SetVideoLineTime(wxMouseEvent &evt, int mvtal)
 	}
 }
 
+void SubsGridWindow::SetActive(int active)
+{
+	SelectRow(active);
+	lastRow = active;
+	markedLine = active;
+	Edit->SetLine(active);
+}
+
 void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 	int w, h;
@@ -796,7 +804,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 				vtime = GetDialogue(row)->Start.mstime; isstart = true;
 			}
 			if (ctrl){ vtime -= 1000; }
-			tab->Video->Seek(MAX(0, vtime), isstart, true, false);
+			tab->Video->Seek(MAX(0, vtime), isstart, true, false, true, false);
 			if (Edit->ABox){ Edit->ABox->audioDisplay->Update(shift && subsFormat != TMP); }
 			if (Edit->Visual > CHANGEPOS){
 				tab->Video->SetVisual(false, true, true);

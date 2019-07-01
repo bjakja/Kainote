@@ -42,6 +42,7 @@ public:
 	void SelVideoLine(int time = -1);
 	void SetStyle();
 	void SetVideoLineTime(wxMouseEvent &evt, int mvtal);
+	void SetActive(int line);
 	void ShowSecondComparedLine(int Line, bool showPreview = false, bool fromPreview = false);
 	void RefreshPreview();
 	
