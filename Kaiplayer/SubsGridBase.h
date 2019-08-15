@@ -153,7 +153,7 @@ private:
 	virtual void RefreshColumns(int cell = 8191){};
 	//virtual void MakeVisible(int row){};
 	// no need method MakeVisible cause we need to center it
-	virtual void ScrollTo(int y, bool center = false, int offset = 0){};
+	virtual void ScrollTo(int y, bool center = false, int offset = 0, bool useUpdate = false){};
 protected:
 	static void CompareTexts(compareData &firstTable, compareData &secondTable, const wxString &first, const wxString &second);
 	short numsave;

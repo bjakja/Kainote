@@ -551,7 +551,7 @@ void StyleStore::OnAssSort(wxCommandEvent& event)
 	SubsGrid* grid = Notebook::GetTab()->Grid;
 	std::sort(grid->GetStyleTable()->begin(), grid->GetStyleTable()->end(), sortfunc);
 	ASSList->SetSelection(0, true);
-
+	grid->file->edited = true;
 	SetModified();
 }
 

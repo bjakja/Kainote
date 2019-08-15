@@ -755,7 +755,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	// Mouse wheel
 	if (event.GetWheelRotation() != 0) {
 		int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();
-		ScrollTo(scrollPosition, false, -step);
+		ScrollTo(scrollPosition, false, -step, true);
 		return;
 	}
 
@@ -1058,7 +1058,7 @@ void SubsGridWindow::SelectRow(int row, bool addToSelected /*= false*/, bool sel
 	}
 }
 
-void SubsGridWindow::ScrollTo(int y, bool center /*= false*/, int offset /*= 0*/){
+void SubsGridWindow::ScrollTo(int y, bool center /*= false*/, int offset /*= 0*/, bool useUpdate/* = false*/){
 	int w, h;
 	GetClientSize(&w, &h);
 	if (offset){ y = GetKeyFromPosition(y, offset); }
@@ -1081,6 +1081,8 @@ void SubsGridWindow::ScrollTo(int y, bool center /*= false*/, int offset /*= 0*/
 		scrollPosition = nextY;
 		scrollPositionId = file->GetElementByKey(nextY);
 		Refresh(false);
+		if (useUpdate)
+			Update();
 	}
 }
 

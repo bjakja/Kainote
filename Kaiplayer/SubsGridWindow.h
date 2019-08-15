@@ -34,7 +34,7 @@ public:
 	void HideOverrideTags();
 	void RefreshColumns(int cell = 8191);
 	void RefreshIfVisible(int time);
-	void ScrollTo(int y, bool center = false, int offset = 0);
+	void ScrollTo(int y, bool center = false, int offset = 0, bool useUpdate = false);
 	// default value -1 can cause problems with scrolling
 	// that I removed it currentLine is easy to obtain
 	void MakeVisible(int rowKey);

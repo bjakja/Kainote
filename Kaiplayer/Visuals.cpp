@@ -486,7 +486,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 			if (changeEditorText){
 				Editor->SetTextS(txt, false, true);
 				Editor->SetModified();
-				edit->Send((Visual == VECTORCLIP) ? VISUAL_VECTOR_CLIP : VISUAL_DRAWING, false);
+				edit->Send(VISUAL_VECTOR_CLIP, false);
 			}
 			return;
 		}
@@ -520,7 +520,8 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 					nx << L" 0 " << nx << L" " << ny << L" 0 " << ny;
 				maskDialogue->SetTextElement(TXT, text);
 				maskDialogue->GetRaw(dummytext);
-				dumplaced.x = edit->Placed.x + textplaced.x; dumplaced.y = edit->Placed.y + textplaced.x;
+				dumplaced.x = edit->Placed.x + textplaced.x; 
+				dumplaced.y = edit->Placed.y + textplaced.x;
 				delete maskDialogue;
 				if (changeEditorText){
 					Editor->SetTextS(txt, false, true);
@@ -659,7 +660,7 @@ void Visuals::SetVisual(bool dummy, int type)
 			selPositions.clear();
 			dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
 			if (selPositions.size() != sels.size()){
-				KaiLog(L"Sizes mismatch");
+				//KaiLog(L"Sizes mismatch");
 				return;
 			}
 		}
