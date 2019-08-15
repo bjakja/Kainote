@@ -1352,6 +1352,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 		showOriginal = false;
 		Kai->Menubar->Enable(SaveTranslation, false);
 	}
+	Edit->RefreshStyle();
 	SpellErrors.clear();
 	Refresh(false);
 	SetModified((mode) ? GRID_TURN_ON_TLMODE : GRID_TURN_OFF_TLMODE);
