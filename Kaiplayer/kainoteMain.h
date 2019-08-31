@@ -133,6 +133,7 @@ class KainoteFrame: public KaiFrame
 		bool badResolution;
 		
 		wxMutex blockOpen;
+		wxTimer sendFocus;
 };
 
 

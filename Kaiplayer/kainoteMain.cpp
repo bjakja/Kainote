@@ -269,18 +269,22 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
 		LogHandler::ShowLogWindow();
 	}, 9989);
-	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &event){
+
+	auto focusFunction = [=](wxFocusEvent &event) -> void {
 		TabPanel *tab = GetTab();
 		if (tab->lastFocusedWindow){
 			tab->lastFocusedWindow->SetFocus();
 		}
 		else if (tab->Grid->IsShown()){
 			tab->Grid->SetFocus();
+		}//test why it was disabled or fix this bug
+		else if (tab->Video->IsShown()){
+			tab->Video->SetFocus();
 		}
-		//else if (tab->Video->IsShown()){
-			//tab->Video->SetFocus();
-		//}
-	});
+
+	};
+
+	Bind(wxEVT_SET_FOCUS, focusFunction);
 	Bind(wxEVT_ACTIVATE, &KainoteFrame::OnActivate, this);
 	Connect(SnapWithStart, SnapWithEnd, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnAudioSnap);
 	Tabs->SetDropTarget(new DragnDrop(this));
@@ -297,6 +301,13 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Auto = new Auto::Automation();
 
 	EnableCrashingOnCrashes();
+	sendFocus.SetOwner(this, 6789);
+	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
+		//if it will crash on last focused window
+		//we need to remove last focused window
+		//it's not needed here
+		focusFunction(wxFocusEvent());
+	}, 6789);
 }
 
 KainoteFrame::~KainoteFrame()
@@ -1983,6 +1994,10 @@ void KainoteFrame::OnActivate(wxActivateEvent &evt)
 		if (win && tab->IsDescendant(win)){
 			tab->lastFocusedWindow = win;
 		}
+		
+	}
+	if (evt.GetActive()){
+		sendFocus.Start(50, true);
 	}
 }
 

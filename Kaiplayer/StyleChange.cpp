@@ -450,7 +450,7 @@ void StyleChange::OnCancelClick(wxCommandEvent& event)
 	SS->Mainall->Fit(SS);
 }
 
-void StyleChange::UpdateValues(Styles *style, bool allowMultiEdition, bool enableNow)
+void StyleChange::UpdateValues(Styles *style, bool allowMultiEdit, bool enableNow)
 {
 	block = true;
 	wxDELETE(updateStyle);
@@ -510,9 +510,9 @@ void StyleChange::UpdateValues(Styles *style, bool allowMultiEdition, bool enabl
 		if (encs[i].StartsWith(updateStyle->Encoding + " ")){ choice = i; break; }
 	}
 	if (choice == -1){ choice = 1; }
-	if (allowMultiEdition != allowMultiEdition){
-		btnCommitOnStyles->Enable(allowMultiEdition);
-		allowMultiEdition = allowMultiEdition;
+	if (allowMultiEdition != allowMultiEdit){
+		btnCommitOnStyles->Enable(allowMultiEdit);
+		allowMultiEdition = allowMultiEdit;
 	}
 	if (allowMultiEdition){
 		if (CompareStyle)

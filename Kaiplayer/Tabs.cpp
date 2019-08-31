@@ -1183,7 +1183,7 @@ LRESULT CALLBACK Notebook::PauseOnMinimalize(int code, WPARAM wParam, LPARAM lPa
 		}
 	}
 	//if (wParam == SC_RESTORE){
-	//sthis->GetTab()->Refresh(false);
+		//sthis->GetTab()->Grid->SetFocus();//Refresh(false);
 	//}
 	return CallNextHookEx(0, code, wParam, lParam);
 }
