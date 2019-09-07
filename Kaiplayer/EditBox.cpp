@@ -1833,7 +1833,7 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 				pos = txtTl.length();
 			}
 			else if (brackets > 0){
-				txtOrg = Text.substr(0, brackets - 1);
+				txtOrg = Text.substr(0, brackets);
 				txtTl = Text.SubString(brackets, getr);
 			}
 			else{
@@ -1846,7 +1846,9 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 				if (brackets != -1 && getr != -1){
 					txtOrg += restText.substr(0, brackets);
 					txtTl += restText.SubString(brackets, getr);
-					if (restText.length() > (size_t)getr + 1){ restText = restText.Mid(getr + 1); }
+					if (restText.length() > (size_t)getr + 1){ 
+						restText = restText.Mid(getr + 1); 
+					}
 					else{ break; }
 				}
 				else{
