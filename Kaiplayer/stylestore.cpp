@@ -995,7 +995,7 @@ void StyleStore::ShowStore()
 void StyleStore::ShowStyleEdit(const wxString &styleName /*= ""*/)
 {
 	StyleStore *SS = Get();
-	if (!SS->detachedEtit){
+	if (!SS->detachedEtit && SS->IsShown() && !SS->cc->IsShown()){
 		SS->Mainall->Detach(SS->cc);
 		SS->cc->Destroy();
 		SS->cc = new StyleChange(SS, false);

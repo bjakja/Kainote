@@ -101,7 +101,7 @@ class StyleStore: public KaiDialog
 		void OnSelectionChanged(wxCommandEvent& event);
 
 		bool ASSStyle;
-		bool dummy;
+		bool dummy = false;
 		bool detachedEtit;
 		bool isStoreChanged = false;
 		int selnum;

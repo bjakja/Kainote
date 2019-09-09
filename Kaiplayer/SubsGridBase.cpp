@@ -1236,7 +1236,9 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 	file->EndLoad(OPEN_SUBTITLES, active);
 
 	RefreshColumns();
-	Edit->SetLine(active, false, false);
+	//it's faster to change load audio to true than setting audio from kainoteMain 
+	//to avoid not changed line when loaded only subtitles.
+	Edit->SetLine(active, true, false);
 
 	Edit->HideControls();
 

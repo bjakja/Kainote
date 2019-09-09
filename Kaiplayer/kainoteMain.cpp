@@ -989,7 +989,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		else{ tab->SubsPath = fname; }
 		tab->SubsName = tab->SubsPath.AfterLast(L'\\');
 
-		//here we seek for video / audio and (rest writed in future)
+		//seek for video / audio and (rest writed in future)
 		if (issubs && !fulls && !tab->Video->isFullscreen){
 			wxString videopath = tab->Grid->GetSInfo(L"Video File");
 			wxString audiopath = tab->Grid->GetSInfo(L"Audio File");
@@ -1063,6 +1063,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 			}
 		}
 
+		//open subs and disable visuals when needed
 		if (tab->Video->GetState() != None){
 			if (!found){
 				bool isgood = tab->Video->OpenSubs((tab->editor) ? tab->Grid->GetVisible() : 0);
@@ -1072,10 +1073,12 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 			tab->Video->vToolbar->DisableVisuals(ext != "ass");
 		}
 		SetRecent();
-
+		//set texts on window title and tab
 		Label();
 		SetSubsResolution(!Options.GetBool(DontAskForBadResolution));
+		//turn on editor
 		if (!tab->editor && !fulls && !tab->Video->isFullscreen){ HideEditor(); }
+		//set color space
 		if (!found){
 			if (tab->Video->VFF && tab->Video->vstate != None && tab->Grid->subsFormat == ASS){
 				tab->Video->SetColorSpace(tab->Grid->GetSInfo("YCbCr Matrix"));

@@ -510,18 +510,16 @@ void StyleChange::UpdateValues(Styles *style, bool allowMultiEdit, bool enableNo
 		if (encs[i].StartsWith(updateStyle->Encoding + " ")){ choice = i; break; }
 	}
 	if (choice == -1){ choice = 1; }
-	if (allowMultiEdition != allowMultiEdit){
-		btnCommitOnStyles->Enable(allowMultiEdit);
-		allowMultiEdition = allowMultiEdit;
+	bool enableMultiEdition = (allowMultiEdit && enableNow);
+	if (btnCommitOnStyles->IsEnabled() != enableMultiEdition){
+		btnCommitOnStyles->Enable(enableMultiEdition);
 	}
+	allowMultiEdition = allowMultiEdit;
 	if (allowMultiEdition){
 		if (CompareStyle)
 			delete CompareStyle;
 
 		CompareStyle = style->Copy();
-		if (!enableNow){
-			btnCommitOnStyles->Enable(false);
-		}
 	}
 	textEncoding->SetSelection(choice);
 	block = false;
