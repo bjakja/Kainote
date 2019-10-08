@@ -179,7 +179,9 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	menu->SetAccMenu(Swap, _("Za&mień"))->Enable(isEnabled);
 	isEnabled = (sels >= 2 && sels <= 20);
 	menu->SetAccMenu(Join, _("Złącz &linijki"))->Enable(isEnabled);
-	isEnabled = (sels >= 2 && sels <= 50);
+	//maybe unblock it at all good to join lines of Aegisub Motion unneeded transitions
+	//there is nothing that can do mess in this case
+	isEnabled = (sels >= 2 && sels <= 500);
 	menu->SetAccMenu(JoinToFirst, _("Złącz linijki zostaw pierwszą"))->Enable(isEnabled);
 	menu->SetAccMenu(JoinToLast, _("Złącz linijki zostaw ostatnią"))->Enable(isEnabled);
 	isEnabled = (sels > 0);
@@ -199,7 +201,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	menu->SetAccMenu(NewFPS, _("Ustaw nowy FPS"));
 	menu->SetAccMenu(FPSFromVideo, _("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState() != None && sels == 2);
 	menu->SetAccMenu(PasteTranslation, _("Wklej tekst tłumaczenia"))->Enable(subsFormat < SRT && ((TabPanel*)GetParent())->SubsPath != "");
-	menu->SetAccMenu(TranslationDialog, _("Okno przesuwania dialogów"))->Enable(showOriginal);
+	menu->SetAccMenu(TranslationDialog, _("Okno przesuwania dialogów"))->Enable(GetSInfo("TLMode Showtl") == L"Yes");
 	menu->AppendSeparator();
 
 	menu->SetAccMenu(RemoveText, _("Usuń tekst"))->Enable(isEnabled);
@@ -613,7 +615,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	case FPSFromVideo: if (hasVideo && sels == 2){ OnSetFPSFromVideo(); } break;
 	case Join: if (sels > 1 && sels <= 20){ OnJoin(event); } break;
 	case JoinToFirst:
-	case JoinToLast: if (sels > 1 && sels <= 50){ OnJoinToFirst(id); } break;
+	case JoinToLast: if (sels > 1 && sels <= 500){ OnJoinToFirst(id); } break;
 	case HideSelected:
 	{
 		SubsGridFiltering filter(this, currentLine);
@@ -684,7 +686,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 		break;
 	}
 
-	if (id == TranslationDialog && showOriginal){
+	if (id == TranslationDialog && GetSInfo("TLMode Showtl") == L"Yes"){
 		static TLDialog *tld = new TLDialog(this, this);
 		tld->Show();
 	}

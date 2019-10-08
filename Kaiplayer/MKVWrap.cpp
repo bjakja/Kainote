@@ -386,14 +386,14 @@ std::map<int, wxString> MatroskaWrapper::GetFontList()
 
 	for(size_t i=0; i<count; i++)
 	{
-		wxString mimetype(atts[i].MimeType,wxConvUTF8);
-		if(mimetype== "application/x-truetype-font" || mimetype== "application/vnd.ms-opentype"){
-			attsname[i]=(wxString(atts[i].Name,wxConvUTF8));}
+		wxString mimetype(atts[i].MimeType, wxConvUTF8);
+		if (mimetype == "font/ttf" || mimetype == "font/otf" || mimetype == "application/x-truetype-font" || mimetype == "application/vnd.ms-opentype"){
+			attsname[i] = (wxString(atts[i].Name, wxConvUTF8));}
 	}
 	return attsname;
 }
 
-bool MatroskaWrapper::SaveFont(int id,const wxString &path, wxZipOutputStream *zip)
+bool MatroskaWrapper::SaveFont(int id, const wxString &path, wxZipOutputStream *zip)
 {
 
 	char *tmp = new char[atts[id].Length];
@@ -415,11 +415,11 @@ bool MatroskaWrapper::SaveFont(int id,const wxString &path, wxZipOutputStream *z
 	else
 	{
 		wxFile file;
-		file.Create(path,true,wxS_DEFAULT);
+		file.Create(path, true, wxS_DEFAULT);
 		if (file.IsOpened()){
 			file.Write(tmp, atts[id].Length);
 			file.Close();
-		}else{isgood=false;}
+		}else{ isgood=false; }
 
 	}
 	delete[] tmp;
