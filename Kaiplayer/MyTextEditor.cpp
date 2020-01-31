@@ -1647,7 +1647,7 @@ bool TextEditor::CheckIfKeyword(const wxString &word)
 
 void TextEditor::SeekSelected(const wxString &word)
 {
-	if (word.length() < 1 || (word.length() < 2 && !wxIsalnum(word[0])))
+	if (word.length() < 1 || (/*word.length() < 2 && */!wxIsalnum(word[0])))
 		return;
 
 	

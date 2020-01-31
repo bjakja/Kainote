@@ -357,7 +357,7 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 			}
 
 			//progress->Update(99,"Wstawianie napisów do okna");
-			for (unsigned int i=0;i<subList.size();i++) {
+			for (unsigned int i=0; i<subList.size(); i++) {
 				target->AddLine(new Dialogue(subList[i]));
 			}
 			const wxString &matrix = target->GetSInfo("YCbCr Matrix");
@@ -382,7 +382,7 @@ std::map<int, wxString> MatroskaWrapper::GetFontList()
 {
 	std::map<int, wxString> attsname;
 	mkv_GetAttachments(file, &atts, &count);
-	if(!atts || count==0){return attsname;}
+	if(!atts || count==0){ return attsname; }
 
 	for(size_t i=0; i<count; i++)
 	{
@@ -398,14 +398,14 @@ bool MatroskaWrapper::SaveFont(int id, const wxString &path, wxZipOutputStream *
 
 	char *tmp = new char[atts[id].Length];
 	_fseeki64(input->fp, atts[id].Position, SEEK_SET);
-	fread(tmp,1,atts[id].Length,input->fp);
-	bool isgood=true;
+	fread(tmp, 1, atts[id].Length,input->fp);
+	bool isgood = true;
 
 	if(zip){
 		wxString fn = path.AfterLast('\\');
 		try{
 			isgood=zip->PutNextEntry(fn);
-			zip->Write((void*)tmp,atts[id].Length);
+			zip->Write((void*)tmp, atts[id].Length);
 		}
 		catch(...)
 		{
@@ -419,7 +419,7 @@ bool MatroskaWrapper::SaveFont(int id, const wxString &path, wxZipOutputStream *
 		if (file.IsOpened()){
 			file.Write(tmp, atts[id].Length);
 			file.Close();
-		}else{ isgood=false; }
+		}else{ isgood = false; }
 
 	}
 	delete[] tmp;
