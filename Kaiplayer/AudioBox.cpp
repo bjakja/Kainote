@@ -472,13 +472,16 @@ void AudioBox::OnKaraoke(wxCommandEvent &event) {
 	audioDisplay->hasKara = !audioDisplay->hasKara;
 	int value = -1;
 	if (audioDisplay->hasKara){
-		lastVerticalZoom = HorizontalZoom->GetValue();
+		lastHorizontalZoom = HorizontalZoom->GetValue();
 		if (!audioDisplay->karaoke){ audioDisplay->karaoke = new Karaoke(audioDisplay); }
 		audioDisplay->karaoke->Split();
-		value = MAX(lastVerticalZoom - 20, 30);
+		value = MAX(lastHorizontalZoom - 20, 30);
 	}
 	else{
-		value = lastVerticalZoom;
+		if (lastHorizontalZoom > -1)
+			value = lastHorizontalZoom;
+		else
+			value = MIN(HorizontalZoom->GetValue() + 20, 70);
 	}
 	if (value > -1){
 		audioDisplay->SetSamplesPercent(value);

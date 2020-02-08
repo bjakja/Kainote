@@ -35,13 +35,15 @@
 #define ADD_QUOTES_HELPER(s) #s
 #define ADD_QUOTES(s) ADD_QUOTES_HELPER(s)
 
+
+
 config::config()
 {
 	wxString gitVersion;
 #ifdef GIT_CUR_COMMIT
-	gitVersion = "  " + wxString(ADD_QUOTES(GIT_BRANCH)) + " " + wxString(ADD_QUOTES(GIT_CUR_COMMIT)).Left(7);
+	gitVersion = L"  " + wxString(ADD_QUOTES(GIT_BRANCH)) + L" " + wxString(ADD_QUOTES(GIT_CUR_COMMIT)).Left(7);
 #endif
-	progname = _T("Kainote v") + wxString(VersionKainote) + gitVersion;
+	progname = L"Kainote v" + wxString(VersionKainote) + gitVersion;
 #if _DEBUG
 	progname += " DEBUG";
 #endif

@@ -416,7 +416,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\BaseClasses;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\zlib-1.2.8;..\Thirdparty\freetype-2.6\include;..\Thirdparty\luajit\include;..\Thirdparty\luabins\include;..\Thirdparty\icu\source\common;..\Thirdparty\icu\source\i18n;..\Thirdparty\boost_1_61_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;INSTRUCTIONS="AVX2";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
@@ -458,7 +458,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\BaseClasses;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\zlib-1.2.8;..\Thirdparty\freetype-2.6\include;..\Thirdparty\luajit\include;..\Thirdparty\luabins\include;..\Thirdparty\icu\source\common;..\Thirdparty\icu\source\i18n;..\Thirdparty\boost_1_61_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;INSTRUCTIONS="AVX";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>

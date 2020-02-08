@@ -243,7 +243,8 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 		HR(strpin.obj->QueryPinInfo(&pinfo), _("Nie można pobrać informacji o pinie splittera"));
 		if (FAILED(pinfo.pFilter->QueryInterface(IID_IAMStreamSelect, (void**)&stream)))
 		{
-			KaiLog(_("Błąd interfejsu wyboru ścieżek"));
+			//No need to inform cause it will spam on avi/wmv
+			//KaiLog(_("Błąd interfejsu wyboru ścieżek"));
 		}
 	}
 	hr = pSource->QueryInterface(IID_IAMExtendedSeeking, (void**)&chapters);

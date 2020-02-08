@@ -46,6 +46,10 @@
 #define logging 5
 #endif
 
+#if !defined INSTRUCTIONS
+#define INSTRUCTIONS L""
+#endif
+
 void EnableCrashingOnCrashes()
 {
 	typedef BOOL(WINAPI *tGetPolicy)(LPDWORD lpFlags);
@@ -69,7 +73,7 @@ void EnableCrashingOnCrashes()
 }
 
 KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
-	: KaiFrame(0, -1, _("Bez nazwy - ") + Options.progname, pos, size, wxDEFAULT_FRAME_STYLE, "Kainote_main_window")
+	: KaiFrame(0, -1, _("Bez nazwy - ") + Options.progname + L" " + wxString(INSTRUCTIONS), pos, size, wxDEFAULT_FRAME_STYLE, "Kainote_main_window")
 	, badResolution(false)
 	, fc(NULL)
 {
@@ -1397,11 +1401,12 @@ TabPanel* KainoteFrame::GetTab()
 	return Tabs->GetPage();
 }
 
+
 void KainoteFrame::Label(int iter/*=0*/, bool video/*=false*/, int wtab/*=-1*/, bool onlyTabs /*= false*/)
 {
 	TabPanel* atab = (wtab < 0) ? GetTab() : Tabs->Page(wtab);
 	wxString whiter;
-	if (atab->Grid->IsModified()){ whiter << iter << "*"; }
+	if (atab->Grid->IsModified()){ whiter << iter << L"*"; }
 
 	/*MEMORYSTATUSEX statex;
 	statex.dwLength = sizeof (statex);
@@ -1412,8 +1417,8 @@ void KainoteFrame::Label(int iter/*=0*/, bool video/*=false*/, int wtab/*=-1*/, 
 	wxString memtxt= wxString::Format(" RAM: %i KB / %i KB", totalmem-availmem, totalmem);*/
 	wxString name = (video) ? atab->VideoName : whiter + atab->SubsName;
 	if (!onlyTabs)
-		SetLabel(name + " - " + Options.progname /*+ memtxt*/);
-	if (name.Len()>35){ name = name.SubString(0, 35) + "..."; }
+		SetLabel(name + L" - " + Options.progname + L" " + wxString(INSTRUCTIONS));
+	if (name.Len()>35){ name = name.SubString(0, 35) + L"..."; }
 	Tabs->SetPageText((wtab < 0) ? Tabs->GetSelection() : wtab, name);
 }
 
@@ -1604,7 +1609,7 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 		whiter << iter << "*";
 	}
 	wxString name = (!cur->editor) ? cur->VideoName : cur->SubsName;
-	SetLabel(whiter + name + " - " + Options.progname);
+	SetLabel(whiter + name + " - " + Options.progname + L" " + wxString(INSTRUCTIONS));
 	if (cur->Video->GetState() != None){
 		SetStatusText(getfloat(cur->Video->fps) + " FPS", 4);
 		wxString tar;
