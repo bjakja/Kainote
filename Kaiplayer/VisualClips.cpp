@@ -694,7 +694,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			//KaiLog(wxString::Format(L"move apply %i", tool));
 			int pos = CheckPos(xy, true);
 			if (psize > 0 && Points[(pos == (int)psize) ? psize - 1 : pos].type == "m"){
-				KaiMessageBox(_("Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie została zablokowana."), _("Uwaga"));
+				KaiMessageBox(_("Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie została zablokowana"), _("Uwaga"));
 				return;
 			}
 			AddMove(xy, pos);

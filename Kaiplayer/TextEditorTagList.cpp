@@ -387,12 +387,12 @@ void PopupTagList::InitList(int option)
 	itemsList.push_back(new TagListItem(L"movevc", _("Ruch rysunku wektorowego"), TYPE_TAG_VSFILTER_MOD, option, true));
 	itemsList.push_back(new TagListItem(L"org", _("Kotwica dla obrotów"), TYPE_TAG_USED_IN_VISUAL, option, true));
 	itemsList.push_back(new TagListItem(L"p", _("Rysunek wektorowy i skala"), TYPE_TAG_USED_IN_VISUAL, option));
-	itemsList.push_back(new TagListItem(L"pbo", _("Przesunięcie punktów wektora w osi Y??"), TYPE_NORMAL, option));
+	itemsList.push_back(new TagListItem(L"pbo", _("Przesunięcie punktów wektora w osi Y"), TYPE_NORMAL, option));
 	itemsList.push_back(new TagListItem(L"pos", _("Pozycja tekstu"), TYPE_TAG_USED_IN_VISUAL, option, true));
 	itemsList.push_back(new TagListItem(L"q", _("Sposób łamania linii"), TYPE_NORMAL, option));
 	itemsList.push_back(new TagListItem(L"r", _("Reset tagów"), TYPE_NORMAL, option));
 	itemsList.push_back(new TagListItem(L"rnd", _("Losowość punktów czcionki"), TYPE_TAG_VSFILTER_MOD, option));
-	itemsList.push_back(new TagListItem(L"rnds", _("Losowość punktów czcionki??"), TYPE_TAG_VSFILTER_MOD, option));
+	itemsList.push_back(new TagListItem(L"rnds", _("Losowość punktów czcionki seed"), TYPE_TAG_VSFILTER_MOD, option));
 	itemsList.push_back(new TagListItem(L"rndx", _("Losowość punktów czcionki oś X"), TYPE_TAG_VSFILTER_MOD, option));
 	itemsList.push_back(new TagListItem(L"rndy", _("Losowość punktów czcionki oś Y"), TYPE_TAG_VSFILTER_MOD, option));
 	itemsList.push_back(new TagListItem(L"rndz", _("Losowość punktów czcionki oś Z"), TYPE_TAG_VSFILTER_MOD, option));
@@ -404,7 +404,7 @@ void PopupTagList::InitList(int option)
 	itemsList.push_back(new TagListItem(L"ybord", _("Obwódka w osi Y"), TYPE_NORMAL, option));
 	itemsList.push_back(new TagListItem(L"xshad", _("Cień w osi X"), TYPE_NORMAL, option));
 	itemsList.push_back(new TagListItem(L"yshad", _("Cień w osi Y"), TYPE_NORMAL, option));
-	itemsList.push_back(new TagListItem(L"z", _("koordynata Z dla tagów frx i fry"), TYPE_TAG_VSFILTER_MOD, option));
+	itemsList.push_back(new TagListItem(L"z", _("Koordynata Z dla tagów \\frx i \\fry"), TYPE_TAG_VSFILTER_MOD, option));
 }
 
 
