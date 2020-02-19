@@ -246,6 +246,7 @@ private:
 	void OnSize(wxSizeEvent& event);
 	//void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
 	//bool CheckMouse();
+	void OnEraseBackground(wxEraseEvent &evt){}
 	int CalcMousePos(wxPoint *pos);
 	void HideMnemonics();
 	void ShowMenu();

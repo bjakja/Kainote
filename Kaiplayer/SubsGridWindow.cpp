@@ -419,10 +419,10 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 						GetTextExtent(cmp, &fw, &fh, NULL, NULL, &font);
 
-						tdc.DrawText(cmp, posX + bfw + 2, posY);
-						tdc.DrawText(cmp, posX + bfw + 4, posY);
-						tdc.DrawText(cmp, posX + bfw + 2, posY + 2);
-						tdc.DrawText(cmp, posX + bfw + 4, posY + 2);
+						tdc.DrawTextW(cmp, posX + bfw + 2, posY);
+						tdc.DrawTextW(cmp, posX + bfw + 4, posY);
+						tdc.DrawTextW(cmp, posX + bfw + 2, posY + 2);
+						tdc.DrawTextW(cmp, posX + bfw + 4, posY + 2);
 					}
 
 				}
@@ -454,7 +454,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					img = img.Rotate180();
 					tdc.DrawBitmap(img, posX + 6, posY + 5);
 				}
-				tdc.DrawText(Dial->Text, posX + 23, posY + 1);
+				tdc.DrawTextW(Dial->Text, posX + 23, posY + 1);
 				break;
 			}
 			cur = wxRect(posX + 3, posY, GridWidth[j] - 6, GridHeight);
@@ -1207,7 +1207,7 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 	for (size_t i = 0; i < text.length(); i++)
 	{
 		const wxUniChar &ch = text[i];
-		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch != L'\''/*notchar.Find(ch) != -1*/ && !block){
+		if (iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT) && ch != L'\''/*notchar.Find(ch) != -1*/ && !block){
 			if (word.length() > 1){
 				if (word.StartsWith(L"'")){ word = word.Remove(0, 1); }
 				if (word.EndsWith(L"'")){ word = word.RemoveLast(1); }
@@ -1252,7 +1252,7 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 			firsti = i + tagsReplacement.length(); word = L""; continue;
 		}
 
-		if (!block && (!iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) || ch == L'\'') /*notchar.Find(ch) == -1*/ && text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){ word << ch; lasti = i; }
+		if (!block && (!iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT) || ch == L'\'') /*notchar.Find(ch) == -1*/ && text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){ word << ch; lasti = i; }
 		else if (!block && text.GetChar((i == 0) ? 0 : i - 1) == L'\\'){
 			word = L"";
 			if (ch == L'N' || ch == L'n' || ch == L'h'){

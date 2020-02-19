@@ -90,10 +90,10 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 	catalogButtonsSizer->Add(storeDelete, 1, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	catalogButtonsSizer->Add(storeSort, 1, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 
-	MappedButton *storeMoveToStart = new MappedButton(this, ID_STORE_MOVE_TO_START, _("Przesuń zaznaczone style na sam początek"), arrowUpDouble, wxDefaultPosition, wxSize(24, 24), -1);
-	MappedButton *storeMoveUp = new MappedButton(this, ID_STORE_MOVE_UP, _("Przesuń zaznaczone style w górę"), arrowUp, wxDefaultPosition, wxSize(24, 24), -1);
-	MappedButton *storeMoveDown = new MappedButton(this, ID_STORE_MOVE_DOWN, _("Przesuń zaznaczone style w dół"), arrowDown, wxDefaultPosition, wxSize(24, 24), -1);
-	MappedButton *storeMoveToEnd = new MappedButton(this, ID_STORE_MOVE_TO_END, _("Przesuń zaznaczone style na sam koniec"), arrowDownDouble, wxDefaultPosition, wxSize(24, 24), -1);
+	MappedButton *storeMoveToStart = new MappedButton(this, ID_STORE_MOVE_TO_START, _("Przesuń zaznaczone style na sam początek"), arrowUpDouble, wxDefaultPosition, wxSize(23, 24), -1);
+	MappedButton *storeMoveUp = new MappedButton(this, ID_STORE_MOVE_UP, _("Przesuń zaznaczone style w górę"), arrowUp, wxDefaultPosition, wxSize(23, 24), -1);
+	MappedButton *storeMoveDown = new MappedButton(this, ID_STORE_MOVE_DOWN, _("Przesuń zaznaczone style w dół"), arrowDown, wxDefaultPosition, wxSize(23, 24), -1);
+	MappedButton *storeMoveToEnd = new MappedButton(this, ID_STORE_MOVE_TO_END, _("Przesuń zaznaczone style na sam koniec"), arrowDownDouble, wxDefaultPosition, wxSize(23, 24), -1);
 
 	catalogMoveButtonsSizer->Add(storeMoveToStart, 0, wxTOP | wxBOTTOM, 2);
 	catalogMoveButtonsSizer->Add(storeMoveUp, 0, wxTOP | wxBOTTOM, 2);
@@ -139,10 +139,10 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 	ASSButtonsSizer->Add(assSort, 1, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	ASSButtonsSizer->Add(SClean, 1, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 
-	MappedButton *ASSMoveToStart = new MappedButton(this, ID_ASS_MOVE_TO_START, _("Przesuń zaznaczone style na sam początek"), arrowUpDouble, wxDefaultPosition, wxSize(24, 24), -1);
-	MappedButton *ASSMoveUp = new MappedButton(this, ID_ASS_MOVE_UP, _("Przesuń zaznaczone style w górę"), arrowUp, wxDefaultPosition, wxSize(24, 24), -1);
-	MappedButton *ASSMoveDown = new MappedButton(this, ID_ASS_MOVE_DOWN, _("Przesuń zaznaczone style w dół"), arrowDown, wxDefaultPosition, wxSize(24, 24), -1);
-	MappedButton *ASSMoveToEnd = new MappedButton(this, ID_ASS_MOVE_TO_END, _("Przesuń zaznaczone style na sam koniec"), arrowDownDouble, wxDefaultPosition, wxSize(24, 24), -1);
+	MappedButton *ASSMoveToStart = new MappedButton(this, ID_ASS_MOVE_TO_START, _("Przesuń zaznaczone style na sam początek"), arrowUpDouble, wxDefaultPosition, wxSize(23, 24), -1);
+	MappedButton *ASSMoveUp = new MappedButton(this, ID_ASS_MOVE_UP, _("Przesuń zaznaczone style w górę"), arrowUp, wxDefaultPosition, wxSize(23, 24), -1);
+	MappedButton *ASSMoveDown = new MappedButton(this, ID_ASS_MOVE_DOWN, _("Przesuń zaznaczone style w dół"), arrowDown, wxDefaultPosition, wxSize(23, 24), -1);
+	MappedButton *ASSMoveToEnd = new MappedButton(this, ID_ASS_MOVE_TO_END, _("Przesuń zaznaczone style na sam koniec"), arrowDownDouble, wxDefaultPosition, wxSize(23, 24), -1);
 
 	ASSMoveButtonsSizer->Add(ASSMoveToStart, 0, wxTOP | wxBOTTOM, 2);
 	ASSMoveButtonsSizer->Add(ASSMoveUp, 0, wxTOP | wxBOTTOM, 2);

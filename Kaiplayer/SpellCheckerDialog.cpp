@@ -289,7 +289,7 @@ wxString SpellCheckerDialog::GetRightCase(const wxString &replaceWord, const wxS
 	wxString result = replaceWord;
 	size_t len = misspellWord.length();
 	for (size_t i = 0; i < len; i++){
-		if (iswupper(WXWCHAR_T_CAST(misspellWord[i])) != 0)
+		if (iswupper(wint_t(misspellWord[i])) != 0)
 			upperCase++;
 	}
 	if (upperCase == len)
@@ -305,7 +305,7 @@ bool SpellCheckerDialog::IsAllUpperCase(const wxString &word)
 	size_t len = word.length();
 	int upperCase = 0;
 	for (size_t i = 0; i < len; i++){
-		if (iswupper(WXWCHAR_T_CAST(word[i])) != 0)
+		if (iswupper(wint_t(word[i])) != 0)
 			upperCase++;
 	}
 	return (upperCase == len);
@@ -322,7 +322,7 @@ void SpellCheckerDialog::CheckText(wxString Text)
 	for (size_t i = 0; i < Text.Len(); i++)
 	{
 		const wxUniChar &ch = Text[i];
-		if (iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) && ch != L'\''/*notchar.Find(ch) != -1*/ && !block){
+		if (iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT) && ch != L'\''/*notchar.Find(ch) != -1*/ && !block){
 			if (word.Len() > 1){
 				if (word.StartsWith(L"'")){ word = word.Remove(0, 1); }
 				if (word.EndsWith(L"'")){ word = word.RemoveLast(1); }
@@ -348,7 +348,7 @@ void SpellCheckerDialog::CheckText(wxString Text)
 			continue; 
 		}
 
-		if (!block && (!iswctype(WXWCHAR_T_CAST(ch), _SPACE | _DIGIT | _PUNCT) || ch == L'\'') /*notchar.Find(ch) == -1*/ 
+		if (!block && (!iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT) || ch == L'\'') /*notchar.Find(ch) == -1*/
 			&& Text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){ word << ch; lasti = i; }
 		else if (!block && Text.GetChar((i == 0) ? 0 : i - 1) == L'\\'){
 			word = L"";

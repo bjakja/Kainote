@@ -154,11 +154,7 @@ SubsMismatchResolutionDialog::SubsMismatchResolutionDialog(wxWindow *parent, con
 {
 	DialogSizer *mainSizer = new DialogSizer(wxVERTICAL);
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-	//dont change to L"" cause get text can't load it, macro add L on start automatically
-	wxString info= wxString::Format(_("Rozdzielczości wideo i napisów różnią się."
-		"\nMożesz zmienić je teraz lub skorzystać ze 'zmień rozdzielczość napisów'.\n\n"
-		"Rozdzielczość wideo: %i x %i\nRozdzielczość napisów: %i x %i\n\n"
-		"Dopasować rozdzielczość do wideo?\n"),videoSize.x, videoSize.y, subsSize.x, subsSize.y);
+	wxString info= wxString::Format(_("Rozdzielczości wideo i napisów różnią się.\nMożesz zmienić je teraz lub skorzystać ze 'zmień rozdzielczość napisów'.\n\nRozdzielczość wideo: %i x %i\nRozdzielczość napisów: %i x %i\n\nDopasować rozdzielczość do wideo?\n"),videoSize.x, videoSize.y, subsSize.x, subsSize.y);
 	float resizeX = (videoSize.x/(float)subsSize.x);
 	float resizeY = (videoSize.y/(float)subsSize.y);
 

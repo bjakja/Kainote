@@ -678,7 +678,7 @@ void MisspellReplacer::MoveCase(const wxString &originalCase, wxString *result, 
 	int upperCase = 0;
 	size_t len = originalCase.length();
 	for (size_t i = 0; i < len; i++){
-		if (iswupper(WXWCHAR_T_CAST(originalCase[i])) != 0)
+		if (iswupper(wint_t(originalCase[i])) != 0)
 			upperCase++;
 	}
 	if (upperCase > 1)

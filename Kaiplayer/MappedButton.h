@@ -48,6 +48,7 @@ private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void SendEvent();
 	void CalculateSize(int *w, int *h);
+	void PaintGDI(int w, int h);
 	int Window;
 	int textHeight = 0;
 	bool twoHotkeys;
@@ -82,6 +83,7 @@ private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void SendEvent();
 	void CalculateSize(int *w, int *h);
+	void PaintGDI(int w, int h);
 	wxBitmap *bmp;
 	wxBitmap icon;
 	wxString name;

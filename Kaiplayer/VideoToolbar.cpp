@@ -94,7 +94,7 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos)
 		Options.SetInt(PlayAfterSelection, videoPlayAfter->GetSelection());
 		Options.SaveOptions(true, false);
 	}, ID_PLAY_AFTER);
-
+	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
 
 }
 

@@ -29,6 +29,7 @@ BitmapButton::BitmapButton(wxWindow* parent, wxBitmap bitmap, wxBitmap bitmap1, 
 	Bind(wxEVT_LEFT_UP, &BitmapButton::OnLeftDown, this);
 	Bind(wxEVT_LEAVE_WINDOW, &BitmapButton::OnLeftDown, this);
 	Bind(wxEVT_ENTER_WINDOW, &BitmapButton::OnLeftDown, this);
+	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
 	SetToolTip(tooltip);
 }
 

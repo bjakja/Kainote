@@ -16,6 +16,26 @@
 #include "KaiStaticBoxSizer.h"
 #include "config.h"
 
+namespace
+{
+
+	// Offset of the first pixel of the label from the box left border.
+	//
+	// FIXME: value is hardcoded as this is what it is on my system, no idea if
+	//        it's true everywhere
+	const int LABEL_HORZ_OFFSET = 9;
+
+	// Extra borders around the label on left/right and bottom sides.
+	const int LABEL_HORZ_BORDER = 2;
+	const int LABEL_VERT_BORDER = 2;
+
+	// Offset of the box contents from left/right/bottom edge (top one is
+	// different, see GetBordersForSizer()). This one is completely arbitrary.
+	const int CHILDREN_OFFSET = 5;
+
+} // anonymous namespace
+
+
 KaiStaticBox::KaiStaticBox(wxWindow *parent, const wxString& _label)
 	: wxStaticBox(parent,-1,_label)
 	, label(_label)
@@ -35,12 +55,27 @@ KaiStaticBox::KaiStaticBox(wxWindow *parent, const wxString& _label)
 //	Refresh(false);
 //}
 //	
-void KaiStaticBox::PaintForeground(wxDC& tdc, const struct tagRECT& rc)
+void KaiStaticBox::PaintForeground(wxDC& tdc, const RECT& rc)
 {
 	int w=0;
 	int h=0;
-	w=rc.right - rc.left;
-	h=rc.bottom - rc.top;
+	int width, height;
+	tdc.GetTextExtent(label, &width, &height);
+
+	// first we need to correctly paint the background of the label
+	// as Windows ignores the brush offset when doing it
+	const int x = FromDIP(LABEL_HORZ_OFFSET);
+	RECT dimensions = { x, 0, 0, height };
+	dimensions.left = x;
+	dimensions.right = x + width;
+
+	// need to adjust the rectangle to cover all the label background
+	dimensions.left -= FromDIP(LABEL_HORZ_BORDER);
+	dimensions.right += FromDIP(LABEL_HORZ_BORDER);
+	dimensions.bottom += FromDIP(LABEL_VERT_BORDER);
+	w = dimensions.right - dimensions.left;
+	h = dimensions.bottom - dimensions.top;
+	KaiLog(wxString::Format(L"right: %i; left: %i; bottom: %i; top: %i", dimensions.right, dimensions.left, dimensions.bottom, dimensions.top));
 	if(w==0||h==0|| !IsShown() || !IsShownOnScreen()){return;}
 	
 	wxColour background = GetParent()->GetBackgroundColour();
@@ -79,7 +114,7 @@ KaiStaticBoxSizer::KaiStaticBoxSizer(int orient, wxWindow *parent, const wxStrin
 }
 
 KaiStaticBoxSizer::~KaiStaticBoxSizer(){
-	if(box){delete box;box=NULL;}
+	if(box){delete box; box=NULL;}
 };
 
 void KaiStaticBoxSizer::RecalcSizes()
@@ -105,7 +140,7 @@ wxSize KaiStaticBoxSizer::CalcMin()
 	wxSize borders = box->CalcBorders();
 
     wxSize ret( wxBoxSizer::CalcMin() );
-    ret.x += 2*borders.x;
+    ret.x += 2 * borders.x;
 
     // ensure that we're wide enough to show the static box label (there is no
     // need to check for the static box best size in vertical direction though)

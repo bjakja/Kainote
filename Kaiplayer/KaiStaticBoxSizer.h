@@ -27,7 +27,7 @@ public:
 private:
 	//void OnSize(wxSizeEvent& event);
 	//void OnPaint(wxPaintEvent& event);
-	void PaintForeground(wxDC& dc, const struct tagRECT& rc);
+	void PaintForeground(wxDC& dc, const RECT& rc);
 	wxString label;
 	int heightText;
 };

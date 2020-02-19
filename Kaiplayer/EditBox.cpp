@@ -220,9 +220,9 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, &EditBox::OnChangeTimeDisplay, this, ID_TIMES_FRAMES);
 
 	BoxSizer5 = new wxBoxSizer(wxHORIZONTAL);
-	BoxSizer5->Add(LineNumber, 0, wxALIGN_CENTER | wxLEFT | wxEXPAND, 2);
-	BoxSizer5->Add(Chars, 0, wxALIGN_CENTER | wxLEFT | wxEXPAND, 6);
-	BoxSizer5->Add(Chtime, 0, wxALIGN_CENTER | wxLEFT | wxEXPAND, 6);
+	BoxSizer5->Add(LineNumber, 0, /*wxALIGN_CENTER | */wxLEFT | wxEXPAND, 2);
+	BoxSizer5->Add(Chars, 0, /*wxALIGN_CENTER |*/ wxLEFT | wxEXPAND, 6);
+	BoxSizer5->Add(Chtime, 0, /*wxALIGN_CENTER | */wxLEFT | wxEXPAND, 6);
 	BoxSizer5->Add(TlMode, 0, wxALIGN_CENTER | wxLEFT, 6);
 	BoxSizer5->Add(Times, 0, wxALIGN_CENTER | wxLEFT, 2);
 	BoxSizer5->Add(Frames, 0, wxALIGN_CENTER | wxLEFT, 2);

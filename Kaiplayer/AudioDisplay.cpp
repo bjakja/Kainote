@@ -53,7 +53,9 @@
 #include "Hotkeys.h"
 #include "SubsGrid.h"
 #include "kainoteApp.h"
+#include "VideoRenderer.h"
 #include <math.h>
+//#undef DrawText
 
 inline D3DCOLOR D3DCOLOR_FROM_WX(const wxColour &col){
 	return (D3DCOLOR)((((col.Alpha()) & 0xff) << 24) | (((col.Red()) & 0xff) << 16) | (((col.Green()) & 0xff) << 8) | ((col.Blue()) & 0xff));

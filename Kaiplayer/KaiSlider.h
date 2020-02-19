@@ -34,6 +34,7 @@ private:
 	void OnPaint(wxPaintEvent& evt);
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();} holding = false;};
+	void OnEraseBackground(wxEraseEvent& rEvent){};
 	void SendEvent();
 	wxTimer pageLoop;
 	int value;

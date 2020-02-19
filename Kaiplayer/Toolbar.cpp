@@ -384,6 +384,7 @@ EVT_MOUSE_EVENTS(KaiToolbar::OnMouseEvent)
 EVT_PAINT(KaiToolbar::OnPaint)
 EVT_SIZE(KaiToolbar::OnSize)
 EVT_MENU(32566, KaiToolbar::OnToolbarOpts)
+EVT_ERASE_BACKGROUND(KaiToolbar::OnEraseBackground)
 END_EVENT_TABLE()
 
 ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos)
@@ -536,9 +537,9 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 			accel.Prepend("(");
 			int fw, fhh;
 			tdc.GetTextExtent(accel, &fw, &fhh);
-			tdc.DrawText(accel, w - fw - 8, posY);
+			tdc.DrawTextW(accel, w - fw - 8, posY);
 		}
-		tdc.DrawText(label, (fh * 2) + 15, posY);
+		tdc.DrawTextW(label, (fh * 2) + 15, posY);
 
 
 	}

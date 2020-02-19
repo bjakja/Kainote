@@ -21,6 +21,10 @@
 #include "wx/msw/private.h"
 #include <Dwmapi.h>
 #pragma comment(lib, "Dwmapi.lib")
+
+#define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
+#define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
+
 int border = 5;
 int topBorder = 24;
 

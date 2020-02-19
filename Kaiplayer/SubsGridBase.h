@@ -33,7 +33,8 @@ class SubsGridPreview;
 class compareData{
 public:
 	compareData(){};
-	_wxArraywxArrayInt &operator [](size_t i)const{ return lineCompare[i]; }
+	//_wxArraywxArrayInt &operator [](size_t i)const{ return lineCompare[i]; }
+	const int &operator [](size_t i)const{ return lineCompare[i]; }
 	size_t size()const{ return lineCompare.size(); }
 	void push_back(const int &elem){ lineCompare.Add(elem); }
 	int secondComparedLine = -1;

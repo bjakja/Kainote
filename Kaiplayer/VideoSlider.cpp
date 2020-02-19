@@ -98,12 +98,12 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 		if (fh < w / 2){ fh += 15; }
 		else{ fh -= (fw + 15); }
 		tdc.SetTextForeground(wxColour("#0C2B87"));
-		tdc.DrawText(label, fh + 1, -1);
-		tdc.DrawText(label, fh - 1, -1);
-		tdc.DrawText(label, fh + 1, -3);
-		tdc.DrawText(label, fh - 1, -3);
+		tdc.DrawTextW(label, fh + 1, -1);
+		tdc.DrawTextW(label, fh - 1, -1);
+		tdc.DrawTextW(label, fh + 1, -3);
+		tdc.DrawTextW(label, fh - 1, -3);
 		tdc.SetTextForeground(wxColour("#FFFFFF"));
-		tdc.DrawText(label, fh, -2);
+		tdc.DrawTextW(label, fh, -2);
 	}
 	wxPaintDC dc(this);
 	dc.Blit(0, 0, w, h, &tdc, 0, 0);
@@ -443,6 +443,7 @@ void VolSlider::OnMouseEvent(wxMouseEvent& event)
 BEGIN_EVENT_TABLE(VolSlider, wxWindow)
 EVT_PAINT(VolSlider::OnPaint)
 EVT_MOUSE_EVENTS(VolSlider::OnMouseEvent)
+EVT_ERASE_BACKGROUND(VolSlider::OnEraseBackground)
 END_EVENT_TABLE()
 
 BEGIN_EVENT_TABLE(VideoSlider, wxWindow)
@@ -451,4 +452,5 @@ EVT_PAINT(VideoSlider::OnPaint)
 EVT_MOUSE_EVENTS(VideoSlider::OnMouseEvent)
 EVT_MOUSE_CAPTURE_LOST(VideoSlider::OnMouseLeave)
 EVT_KEY_DOWN(VideoSlider::OnKeyPress)
+EVT_ERASE_BACKGROUND(VideoSlider::OnEraseBackground)
 END_EVENT_TABLE()

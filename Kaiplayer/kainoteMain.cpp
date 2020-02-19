@@ -80,7 +80,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	LogHandler::Create(this);
 	//when need log window on start uncomment this
 #ifdef _DEBUG
-	//LogHandler::ShowLogWindow();
+	LogHandler::ShowLogWindow();
 #endif
 
 	FR = NULL;
@@ -275,16 +275,16 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	}, 9989);
 
 	auto focusFunction = [=](wxFocusEvent &event) -> void {
-		TabPanel *tab = GetTab();
-		if (tab->lastFocusedWindow){
-			tab->lastFocusedWindow->SetFocus();
-		}
-		else if (tab->Grid->IsShown()){
-			tab->Grid->SetFocus();
-		}//test why it was disabled or fix this bug
-		else if (tab->Video->IsShown()){
-			tab->Video->SetFocus();
-		}
+		//TabPanel *tab = GetTab();
+		//if (tab->lastFocusedWindow){
+		//	tab->lastFocusedWindow->SetFocus();
+		//}
+		//else if (tab->Grid->IsShown()){
+		//	tab->Grid->SetFocus();
+		//}//test why it was disabled or fix this bug
+		//else if (tab->Video->IsShown()){
+		//	tab->Video->SetFocus();
+		//}
 
 	};
 

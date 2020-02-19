@@ -18,6 +18,7 @@
 #include "AudioDisplay.h"
 #include <math.h>
 #include <wx/regex.h>
+//#undef DrawText
 
 Karaoke::Karaoke(AudioDisplay *_AD)
 {

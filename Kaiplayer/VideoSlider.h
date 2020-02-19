@@ -34,6 +34,7 @@ protected:
 	void OnMouseLeave(wxMouseCaptureLostEvent& event);
 	void OnKeyPress(wxKeyEvent& event);
 	void OnSize(wxSizeEvent& event);
+	void OnEraseBackground(wxEraseEvent& rEvent){}
 	int position = 0;
 	int msTimePosition = 0;
 	int labelpos;
@@ -63,7 +64,7 @@ public:
 	void OnMouseEvent(wxMouseEvent& event);
 protected:
 	void OnPaint(wxPaintEvent& event);
-	
+	void OnEraseBackground(wxEraseEvent& rEvent){}
 	int position;
 	bool block;
 	bool holding;
