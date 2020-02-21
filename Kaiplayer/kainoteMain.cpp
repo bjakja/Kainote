@@ -80,7 +80,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	LogHandler::Create(this);
 	//when need log window on start uncomment this
 #ifdef _DEBUG
-	LogHandler::ShowLogWindow();
+	//LogHandler::ShowLogWindow();
 #endif
 
 	FR = NULL;

@@ -769,7 +769,7 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 
 	bmpDC.SelectObject(*bmp);
 
-	wxGraphicsContext *gc = NULL;//wxGraphicsContext::Create(bmpDC);
+	wxGraphicsContext *gc = wxGraphicsContext::Create(bmpDC);
 
 	if (!gc){
 		DrawFieldGDI(bmpDC, w, h - statusBarHeight, h);
@@ -778,6 +778,14 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 		DrawFieldGDIPlus(gc, w, h - statusBarHeight, h);
 		delete gc;
 	}
+	//gc1->SetPen(wxPen("#FF0000"));
+	//gc1->SetBrush(wxBrush("#0000FF"));
+	//gc1->DrawRoundedRectangle(0, 0, 20, 20, 3);
+
+	////wxGraphicsFont font = gc1->CreateFont(font);
+	//wxGraphicsFont font1 = gc1->CreateFont(font);
+	//gc1->DrawText(L"testowy tekst", 0, 0);
+	//delete gc1;
 		dc.Blit(0, 0, w, h, &bmpDC, 0, 0);	
 }
 

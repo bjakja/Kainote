@@ -462,24 +462,24 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 		NumCtrl *sc = new NumCtrl(ConvOpt, 20000, Options.GetString(ConvertTimePerLetter), 30, 1000, true, wxDefaultPosition, wxSize(250, -1), wxTE_PROCESS_ENTER);
 		ConOpt(sc, ConvertTimePerLetter);
-		obr2->Add(sc, 1, wxALL | wxALIGN_CENTER | wxEXPAND, 2);
+		obr2->Add(sc, 1, wxALL /*| wxALIGN_CENTER*/ | wxEXPAND, 2);
 		ConvOptSizer1->Add(obr2, 0, wxRIGHT | wxEXPAND, 5);
 
 		sc = new NumCtrl(ConvOpt, 20000, Options.GetString(ConvertResolutionWidth), 1, 3000, true, wxDefaultPosition, wxSize(115, -1), wxTE_PROCESS_ENTER);
 		ConOpt(sc, ConvertResolutionWidth);
-		obr4->Add(sc, 1, wxALL | wxALIGN_CENTER | wxEXPAND, 2);
+		obr4->Add(sc, 1, wxALL /*| wxALIGN_CENTER*/ | wxEXPAND, 2);
 
 		KaiStaticText* txt = new KaiStaticText(ConvOpt, -1, " X ");
 		obr4->Add(txt, 0, wxTOP, 5);
 
 		sc = new NumCtrl(ConvOpt, 20000, Options.GetString(ConvertResolutionHeight), 1, 3000, true, wxDefaultPosition, wxSize(115, -1), wxTE_PROCESS_ENTER);
 		ConOpt(sc, ConvertResolutionHeight);
-		obr4->Add(sc, 1, wxALL | wxALIGN_CENTER | wxEXPAND, 2);
+		obr4->Add(sc, 1, wxALL /*| wxALIGN_CENTER*/ | wxEXPAND, 2);
 		ConvOptSizer1->Add(obr4, 0, wxRIGHT | wxEXPAND, 5);
 
 		KaiTextCtrl *tc = new KaiTextCtrl(ConvOpt, -1, Options.GetString(ConvertASSTagsOnLineStart), wxDefaultPosition, wxSize(250, -1), wxTE_PROCESS_ENTER);
 		ConOpt(tc, ConvertASSTagsOnLineStart);
-		obr3->Add(tc, 1, wxALL | wxALIGN_CENTER | wxEXPAND, 2);
+		obr3->Add(tc, 1, wxALL /*| wxALIGN_CENTER*/ | wxEXPAND, 2);
 		ConvOptSizer1->Add(obr3, 0, wxRIGHT | wxEXPAND, 5);
 
 		ConvOpt->SetSizerAndFit(ConvOptSizer1);
@@ -502,14 +502,14 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		KaiStaticBoxSizer *prefaudio = new KaiStaticBoxSizer(wxHORIZONTAL, Video, voptspl[3]);
 		KaiTextCtrl *tc = new KaiTextCtrl(Video, -1, Options.GetString(vopts[3]), wxDefaultPosition, wxSize(250, -1), wxTE_PROCESS_ENTER);
 		ConOpt(tc, vopts[3]);
-		prefaudio->Add(tc, 1, wxALL | wxALIGN_CENTER | wxEXPAND, 2);
+		prefaudio->Add(tc, 1, wxALL /*| wxALIGN_CENTER*/ | wxEXPAND, 2);
 		MainSizer->Add(prefaudio, 0, wxRIGHT | wxEXPAND, 5);
 		KaiStaticBoxSizer *seekingsizer = new KaiStaticBoxSizer(wxHORIZONTAL, Video, voptspl[4]);
 
 		wxString seekingOpts[] = { _("Liniowe"), _("Normalne"), _("Niebezpieczne (szybkie w każdym przypadku)"), _("Agresywne (szybkie przy cofaniu)") };
 		KaiChoice *sopts = new KaiChoice(Video, 10000, wxDefaultPosition, wxSize(200, -1), 4, seekingOpts, wxTE_PROCESS_ENTER);
 		sopts->SetSelection(Options.GetInt(vopts[4]));
-		seekingsizer->Add(sopts, 1, wxALL | wxALIGN_CENTER | wxEXPAND, 2);
+		seekingsizer->Add(sopts, 1, wxALL /*| wxALIGN_CENTER*/ | wxEXPAND, 2);
 		MainSizer->Add(seekingsizer, 0, wxRIGHT | wxEXPAND, 5);
 		ConOpt(sopts, vopts[4]);
 
@@ -522,7 +522,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		if (result < 0)
 			result = 0;
 		vsfiltersList->SetSelection(result);
-		filtersizer->Add(vsfiltersList, 1, wxALL | wxALIGN_CENTER | wxEXPAND, 2);
+		filtersizer->Add(vsfiltersList, 1, wxALL /*| wxALIGN_CENTER*/ | wxEXPAND, 2);
 		MainSizer->Add(filtersizer, 0, wxRIGHT | wxEXPAND, 5);
 		ConOpt(vsfiltersList, vopts[5]);
 		Video->SetSizerAndFit(MainSizer);
@@ -911,8 +911,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		}
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, changeSelections, 17777, 17780);
 		sizer->Add(CheckListBox, 1, wxEXPAND | wxALL, 4);
-		sizer->Add(buttonSizer, 0, wxEXPAND | wxALIGN_CENTER | wxALL,2);
-		sizer->Add(buttonSizer1, 0, wxEXPAND | wxALIGN_CENTER | wxALL, 2);
+		sizer->Add(buttonSizer, 0, wxEXPAND /*| wxALIGN_CENTER_VERTICAL*/ | wxALL,2);
+		sizer->Add(buttonSizer1, 0, wxEXPAND /*| wxALIGN_CENTER_VERTICAL*/ | wxALL, 2);
 		ConOpt(CheckListBox, (CONFIG)3000);
 		Assocs->SetSizerAndFit(sizer);
 	}

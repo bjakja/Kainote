@@ -124,7 +124,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 
 	stylefont->Add(fntsizer, 0, wxEXPAND, 0);
 	stylefont->Add(filtersizer, 0, wxEXPAND, 0);
-	stylefont->Add(biussizer, 0, wxEXPAND | wxALIGN_CENTER, 0);
+	stylefont->Add(biussizer, 0, wxEXPAND /*| wxALIGN_CENTER*/, 0);
 
 	KaiStaticBoxSizer *stylekol = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Kolory i przezroczystość:"));
 

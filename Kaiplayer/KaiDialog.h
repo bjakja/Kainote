@@ -24,7 +24,7 @@ class DialogSizer : public wxBoxSizer
 public:
 	DialogSizer(int orient);
 	virtual ~DialogSizer(){};
-	void RecalcSizes();
+	void RepositionChildren(const wxSize& minSize);
 	wxSize CalcMin();
 };
 

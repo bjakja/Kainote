@@ -36,7 +36,7 @@ void Mnemonics::findMnemonics(const wxString &label, int pos){
 	int result = label.Find('&');
 	if (result != -1){
 		wxString rawmnemonics = label.Mid(result + 1, 1);
-		char mn = rawmnemonics.Upper()[0];
+		wchar_t mn = rawmnemonics.Upper()[0];
 		mnemonics[mn] = pos;
 	}
 }

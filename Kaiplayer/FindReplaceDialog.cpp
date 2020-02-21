@@ -37,7 +37,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	FindText->SetToolTip(_("Szukany tekst:"));
 	FindText->SetMaxLength(MAXINT);
 	FindText->SetSelection(0);
-	frsbsizer->Add(new KaiStaticText(this, -1, _("Szukany tekst:"), wxDefaultPosition, wxSize(-1/*80*/, -1)), 1, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxRIGHT, 4, 0);
+	frsbsizer->Add(new KaiStaticText(this, -1, _("Szukany tekst:"), wxDefaultPosition, wxSize(-1/*80*/, -1)), 1, wxALIGN_CENTER_VERTICAL/* | wxALIGN_RIGHT*/ | wxRIGHT, 4, 0);
 	frsbsizer->Add(FindText, 3, wxEXPAND, 0);
 	mainfrbsizer1->Add(frsbsizer, 0, wxEXPAND | wxALL, 4);
 	
@@ -49,7 +49,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		ReplaceText->SetMaxLength(MAXINT);
 		ReplaceText->SetSelection(0);
 		KaiStaticText *repDescText = new KaiStaticText(this, -1, _("Zamień na:"), wxDefaultPosition, wxSize(-1/*80*/, -1));
-		ReplaceStaticSizer->Add(repDescText, 1, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxRIGHT, 4);
+		ReplaceStaticSizer->Add(repDescText, 1, wxALIGN_CENTER_VERTICAL /*| wxALIGN_RIGHT*/ | wxRIGHT, 4);
 		ReplaceStaticSizer->Add(ReplaceText, 3, wxEXPAND, 0);
 		mainfrbsizer1->Add(ReplaceStaticSizer, 0, wxEXPAND | wxALL, 4);
 	}
@@ -60,7 +60,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		FindInSubsPattern->SetToolTip(_("Filtry wyszukiwania windows:"));
 		FindInSubsPattern->SetMaxLength(1000);
 		FindInSubsPattern->SetSelection(0);
-		SubsFilterStaticSizer->Add(new KaiStaticText(this, -1, _("Filtry:"), wxDefaultPosition, wxSize(-1/*80*/, -1)), 1, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxRIGHT, 4);
+		SubsFilterStaticSizer->Add(new KaiStaticText(this, -1, _("Filtry:"), wxDefaultPosition, wxSize(-1/*80*/, -1)), 1, wxALIGN_CENTER_VERTICAL/* | wxALIGN_RIGHT*/ | wxRIGHT, 4);
 		SubsFilterStaticSizer->Add(FindInSubsPattern, 3, wxEXPAND, 0);
 		mainfrbsizer1->Add(SubsFilterStaticSizer, 0, wxEXPAND | wxALL, 4);
 
@@ -76,7 +76,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 			if (!destdir.empty())
 				FindInSubsPath->SetValue(destdir);
 		}, 21345);
-		FindInSubsPathStaticSizer->Add(new KaiStaticText(this, -1, _("Katalog:"), wxDefaultPosition, wxSize(-1/*80*/, -1)), 1, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxRIGHT, 4);
+		FindInSubsPathStaticSizer->Add(new KaiStaticText(this, -1, _("Katalog:"), wxDefaultPosition, wxSize(-1/*80*/, -1)), 1, wxALIGN_CENTER_VERTICAL/* | wxALIGN_RIGHT*/ | wxRIGHT, 4);
 		FindInSubsPathAndChooseSizer->Add(FindInSubsPath, 3, wxEXPAND, 0);
 		FindInSubsPathAndChooseSizer->Add(selectFolder, 0, wxEXPAND | wxLEFT, 4);
 		FindInSubsPathStaticSizer->Add(FindInSubsPathAndChooseSizer, 3, wxEXPAND, 0);

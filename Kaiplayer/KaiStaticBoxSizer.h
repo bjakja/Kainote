@@ -25,8 +25,6 @@ public:
 	wxSize CalcBorders();
 	bool Enable(bool enable = true);
 private:
-	//void OnSize(wxSizeEvent& event);
-	//void OnPaint(wxPaintEvent& event);
 	void PaintForeground(wxDC& dc, const RECT& rc);
 	wxString label;
 	int heightText;
@@ -39,8 +37,9 @@ public:
 	virtual ~KaiStaticBoxSizer();
 	void ShowItems( bool show );
 	bool Enable(bool enable);
+
 private:
-	void RecalcSizes();
+	void RepositionChildren(const wxSize& minSize);
 	wxSize CalcMin();
 	bool Detach( wxWindow *window );
 	KaiStaticBox *box;
