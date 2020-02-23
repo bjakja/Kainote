@@ -62,7 +62,7 @@ protected:
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
 	void OnScroll(wxScrollEvent& event);
 	void DrawFieldGDI(wxDC &dc, int w, int h, int windowh);
-	void DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windowh);
+	void DrawFieldGDIPlus(GDIPlus *gc, int w, int h, int windowh);
 	bool HitTest(wxPoint pos, wxPoint *cur);
 	void CalcWrap(bool updatechars = true, bool sendevent = true);
 	void FindWord(int pos, int *start, int *end);
@@ -71,7 +71,7 @@ protected:
 	bool CheckIfKeyword(const wxString &word);
 	void SeekSelected(const wxString &word);
 	void DrawWordRectangles(int type, wxDC &dc);
-	void DrawWordRectangles(int type, wxGraphicsContext *gc);
+	void DrawWordRectangles(int type, GDIPlus *gc);
 	bool GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &number, float &step);
 	void PutTag();
 

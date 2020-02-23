@@ -518,6 +518,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="FindReplaceDialog.cpp" />
     <ClCompile Include="FindReplaceResultsDialog.cpp" />
     <ClCompile Include="FontEnumerator.cpp" />
+    <ClCompile Include="GDIPlusContext.cpp" />
     <ClCompile Include="GFFT\GFFT.cpp" />
     <ClCompile Include="HotkeysNaming.cpp" />
     <ClCompile Include="KaiCheckBox.cpp" />
@@ -632,6 +633,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="FindReplaceDialog.h" />
     <ClInclude Include="FindReplaceResultsDialog.h" />
     <ClInclude Include="FontEnumerator.h" />
+    <ClInclude Include="GDIPlusContext.h" />
     <ClInclude Include="GFFT\GFFT.h" />
     <ClInclude Include="KaiWindowResizer.h" />
     <ClInclude Include="KeyframesLoader.h" />

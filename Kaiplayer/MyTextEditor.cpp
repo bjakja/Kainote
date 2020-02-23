@@ -24,7 +24,7 @@
 #include "Stylelistbox.h"
 #include "SubsFile.h"
 #include <regex>
-#include <wx/graphics.h>
+#include "GDIPlusContext.h"
 
 //#undef DrawText
 
@@ -769,7 +769,7 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 
 	bmpDC.SelectObject(*bmp);
 
-	wxGraphicsContext *gc = wxGraphicsContext::Create(bmpDC);
+	GDIPlus *gc = GDIPlus::Create(bmpDC);
 
 	if (!gc){
 		DrawFieldGDI(bmpDC, w, h - statusBarHeight, h);
@@ -778,20 +778,13 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 		DrawFieldGDIPlus(gc, w, h - statusBarHeight, h);
 		delete gc;
 	}
-	//gc1->SetPen(wxPen("#FF0000"));
-	//gc1->SetBrush(wxBrush("#0000FF"));
-	//gc1->DrawRoundedRectangle(0, 0, 20, 20, 3);
-
-	////wxGraphicsFont font = gc1->CreateFont(font);
-	//wxGraphicsFont font1 = gc1->CreateFont(font);
-	//gc1->DrawText(L"testowy tekst", 0, 0);
-	//delete gc1;
-		dc.Blit(0, 0, w, h, &bmpDC, 0, 0);	
+	
+	dc.Blit(0, 0, w, h, &bmpDC, 0, 0);	
 }
 
-void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windowh)
+void TextEditor::DrawFieldGDIPlus(GDIPlus *gc, int w, int h, int windowh)
 {
-	double fw = 0.0, fh = 0.0;
+	float fw = 0.f, fh = 0.f;
 	bool tags = false;
 	bool slash = false;
 	bool val = false;
@@ -857,8 +850,8 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 	}
 	else{ Brackets.x = -1; Brackets.y = -1; }
 
-	gc->SetFont(font, ctext);
-	double fww;
+	gc->SetFont(font);
+	float fww;
 	gc->SetPen(*wxTRANSPARENT_PEN);
 	//rysowanie spellcheckera
 	if (SpellCheckerOnOff){
@@ -901,7 +894,7 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 				stext.Replace(L"\t", L"");
 				gc->GetTextExtent(stext, &fww, &fh);
 			}
-			gc->DrawRectangle(fw + 3, ((j*fontHeight) + 1) - scrollPositionV, fww, fontHeight);
+			gc->DrawRectangle(fw + 3, ((j * fontHeight) + 1) - scrollPositionV, fww, fontHeight);
 			//if(j==scd.y)break;
 		}
 	}
@@ -916,7 +909,7 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 
 		if (i == wraps[wline + 1]){
 			if (Cursor.x + Cursor.y == wchar){
-				double fww = 0.0;
+				float fww = 0.f;
 				gc->GetTextExtent(mestext + parttext, &fww, &fh);
 				caret->Move(fww + 2, posY);
 				cursorWasSet = true;
@@ -927,7 +920,7 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 				wxColour fontColor = (val || (isTemplateLine && parttext.IsNumber())) ? cvalues : (slash) ? cnames :
 					(templateString) ? ctstrings : (isTemplateLine && ch == L'(') ? ctfunctions :
 					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : templateCode ? ctvariables : ctext;
-				gc->SetFont(font, fontColor);
+				gc->SetFontBrush(fontColor);
 				mestext << parttext;
 				gc->DrawText(parttext, fw + 3, posY);
 			}
@@ -969,22 +962,23 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 			gc->DrawRectangle(fw + 3, ((bry*fontHeight) + 2) - scrollPositionV, fww, fontHeight);
 			wxFont fnt = font;
 			fnt = fnt.Bold();
-			gc->SetFont(fnt, (ch == L'{' || ch == L'}') ? ccurlybraces : coperators);
+			gc->SetFont(fnt);
+			gc->SetFontBrush((ch == L'{' || ch == L'}') ? ccurlybraces : coperators);
 			gc->DrawText(MText[i], fw + 3, ((bry*fontHeight) + 2) - scrollPositionV);
-			gc->SetFont(font, ctext);
+			gc->SetFont(font);
 
 		}
 		if (isTemplateLine){
 			if (!templateString && (ch == L'!' || ch == L'.' || ch == L',' || ch == L'+' || ch == L'-' || ch == L'=' || ch == L'(' ||
 				ch == L')' || ch == L'>' || ch == L'<' || ch == L'[' || ch == L']' || ch == L'*' || ch == L'/' || ch == L':' || ch == L';')){
 				gc->GetTextExtent(mestext, &fw, &fh);
-				gc->SetFont(font, (parttext.IsNumber() || val) ? cvalues : (slash) ? cnames :
+				gc->SetFontBrush((parttext.IsNumber() || val) ? cvalues : (slash) ? cnames :
 					(ch == L'(' && !slash) ? ctfunctions : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				gc->DrawText(parttext, fw + 3, posY);
 				mestext << parttext;
 				parttext = "";
 				gc->GetTextExtent(mestext, &fw, &fh);
-				gc->SetFont(font, (ch == L'!') ? ctcodemarks : coperators);
+				gc->SetFontBrush((ch == L'!') ? ctcodemarks : coperators);
 				gc->DrawText(ch, fw + 3, posY);
 				mestext << ch;
 				if (state == 2 && ch == L'!')
@@ -998,7 +992,7 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 				if (templateString){
 					parttext << ch;
 					gc->GetTextExtent(mestext, &fw, &fh);
-					gc->SetFont(font, ctstrings);
+					gc->SetFontBrush(ctstrings);
 					gc->DrawText(parttext, fw + 3, posY);
 					mestext << parttext;
 					parttext = "";
@@ -1010,7 +1004,7 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 			}
 			if (!templateString && ch == L' '){
 				gc->GetTextExtent(mestext, &fw, &fh);
-				gc->SetFont(font, (!templateCode && !val && !slash) ? ctext : (parttext.IsNumber() || val) ? cvalues :
+				gc->SetFontBrush((!templateCode && !val && !slash) ? ctext : (parttext.IsNumber() || val) ? cvalues :
 					(slash) ? cnames : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				gc->DrawText(parttext, fw + 3, posY);
 				mestext << parttext;
@@ -1035,7 +1029,7 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 				tags = true;
 				wxString bef = parttext.BeforeLast(L'{');
 				gc->GetTextExtent(mestext, &fw, &fh);
-				gc->SetFont(font, ctext);
+				gc->SetFontBrush(ctext);
 				gc->DrawText(bef, fw + 3, posY);
 				mestext << bef;
 				parttext = "{";
@@ -1043,14 +1037,14 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 			else{
 				wxString &tmp = parttext.RemoveLast(1);
 				gc->GetTextExtent(mestext, &fw, &fh);
-				gc->SetFont(font, (val) ? cvalues : (slash) ? cnames : ctext);
+				gc->SetFontBrush((val) ? cvalues : (slash) ? cnames : ctext);
 				gc->DrawText(tmp, fw + 3, posY);
 				mestext << tmp;
 				parttext = "}";
 				tags = slash = val = false;
 			}
 			gc->GetTextExtent(mestext, &fw, &fh);
-			gc->SetFont(font, ccurlybraces);
+			gc->SetFontBrush(ccurlybraces);
 			gc->DrawText(parttext, fw + 3, posY);
 			mestext << parttext;
 			parttext = "";
@@ -1063,7 +1057,7 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 				slash = false;
 				wxString tmp = (tagtest == "fn") ? parttext : parttext.RemoveLast(1);
 				gc->GetTextExtent(mestext, &fw, &fh);
-				gc->SetFont(font, cnames);
+				gc->SetFontBrush(cnames);
 				gc->DrawText(tmp, fw + 3, posY);
 				mestext << tmp;
 				if (tagtest == "fn"){ parttext = ""; }
@@ -1076,13 +1070,13 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 		if ((ch == L'\\' || ch == L'(' || ch == L')' || ch == L',') && tags){
 			wxString tmp = parttext.RemoveLast(1);
 			gc->GetTextExtent(mestext, &fw, &fh);
-			gc->SetFont(font, (val && (ch == L'\\' || ch == L')' || ch == L',')) ? cvalues : slash ? cnames : ctext);
+			gc->SetFontBrush((val && (ch == L'\\' || ch == L')' || ch == L',')) ? cvalues : slash ? cnames : ctext);
 			gc->DrawText(tmp, fw + 3, posY);
 			mestext << tmp;
 			parttext = ch;
 			if (ch == L'\\'){ slash = true; }
 			gc->GetTextExtent(mestext, &fw, &fh);
-			gc->SetFont(font, coperators);
+			gc->SetFontBrush(coperators);
 			gc->DrawText(parttext, fw + 3, posY);
 			mestext << parttext;
 			parttext = "";
@@ -1101,7 +1095,7 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 	if (statusBarHeight > 0){
 		gc->SetBrush(cbackground);
 		gc->SetPen(wxPen(border));
-		gc->SetFont(font, ctext);
+		gc->SetFontBrush(ctext);
 		gc->DrawRectangle(0, h, w, statusBarHeight);
 		int ypos = ((statusBarHeight - fontHeight) / 2) + h;
 		gc->DrawText(wxString::Format("Length: %i", (int)MText.length()), 5, ypos);
@@ -2071,11 +2065,11 @@ void TextEditor::DrawWordRectangles(int type, wxDC &dc)
 	}
 }
 
-void TextEditor::DrawWordRectangles(int type, wxGraphicsContext *gc)
+void TextEditor::DrawWordRectangles(int type, GDIPlus *gc)
 {
 	const wxArrayInt & words = (type == 0) ? errors : selectionWords;
 	size_t len = words.size();
-	double fw = 0.0, fh = 0.0, fww = 0.0, fwww = 0.0;
+	float fw = 0.0, fh = 0.0, fww = 0.0, fwww = 0.0;
 
 	for (size_t g = 0; g < len; g += 2)
 	{

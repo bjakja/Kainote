@@ -1,4 +1,4 @@
-﻿//  Copyright (c) 2016, Marcin Drob
+﻿//  Copyright (c) 2016 - 2020, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -936,6 +936,8 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 	auto it = foundFonts.begin();
 	wxString lastfn;
 	for (size_t k = 0; k < foundFonts.size(); k++){
+		// reference can a bit make it faster, when create indirect font
+		// not release it
 		LOGFONTW mlf = it->second->GetLogFont(dc);
 		wxString fn = it->second->name;
 		bool isNewFont = lastfn != fn;
