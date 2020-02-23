@@ -11,22 +11,21 @@
 #pragma once
 
 
-#include <wx/wx.h>
 #include "wx/stack.h"
-#include <GdiPlus.h>
+#include "GDIPlusInitializer.h"
 
 using namespace Gdiplus;
 
 class GDIPlus{
 protected:
-	Gdiplus::Graphics *m_context;
+	GDIPlus();
+	Graphics *m_context;
 	wxStack<GraphicsState> m_stateStack;
 	GraphicsState m_state1;
 	GraphicsState m_state2;
 	int m_width;
 	int m_height;
 	float m_penWidth = 1.f;
-	bool m_loaded = false;
 	Font *m_font = NULL;
 	Pen *m_pen = NULL;
 	Brush *m_brush = NULL;
@@ -34,17 +33,15 @@ protected:
 	Brush *m_fontBrush = NULL;
 	Bitmap *m_bitmap = NULL;
 	Bitmap *m_helper = NULL;
-	ULONG_PTR m_gditoken;
+	
 
-	void Init(Graphics* graphics, int width, int height);
+	void Init(int width, int height);
 	void InitFont(const wxFont &font);
-	void InitBrush(const wxBrush &brush);
+	void InitBrush(const wxBrush &brush, bool textBrush);
 	void InitPen(const wxPen &pen);
 	void InitBitmap(const wxBitmap &bitmap);
-	void LoadGDIPlus();
-	void UnloadGDIPlus();
+	
 public:
-	GDIPlus();
 	~GDIPlus();
 	static GDIPlus *Create(wxWindow *win);
 	static GDIPlus *Create(const wxMemoryDC &dc);

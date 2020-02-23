@@ -10,10 +10,9 @@
 
 #include "GDIPlusContext.h"
 #include "wx/msw/private.h"
+#include "wx/msw/dc.h"
 #include "wx/rawbmp.h"
-
-PrivateFontCollection g_fontCollection;
-FontFamily *g_fontFamilies = NULL;
+#include "GDIPlusInitializer.h"
 
 //-----------------------------------------------------------------------------
 // Local functions
@@ -28,44 +27,29 @@ namespace{
 	{
 		return Color(col.Alpha(), col.Red(), col.Green(), col.Blue());
 	}
-
-	// Do not use this pointer directly, it's only used by
-	// GetDrawTextStringFormat() and the cleanup code in wxGDIPlusRendererModule.
-	StringFormat* gs_drawTextStringFormat = NULL;
-
-	// Get the string format used for the text drawing and measuring functions:
-	// notice that it must be the same one for all of them, otherwise the drawn
-	// text might be of different size than what measuring it returned.
-	inline StringFormat* GetDrawTextStringFormat()
-	{
-		if (!gs_drawTextStringFormat)
-		{
-			gs_drawTextStringFormat = new StringFormat(StringFormat::GenericTypographic());
-
-			// This doesn't make any difference for DrawText() actually but we want
-			// this behaviour when measuring text.
-			gs_drawTextStringFormat->SetFormatFlags
-				(
-				gs_drawTextStringFormat->GetFormatFlags()
-				| StringFormatFlagsMeasureTrailingSpaces
-				);
-		}
-
-		return gs_drawTextStringFormat;
-	}
-
 }
+
+#define CHECK_IF_INITIALIZED()\
+	if(!Initializer.Check())\
+		return NULL;
 
 GDIPlus::GDIPlus(){}
 
-GDIPlus *Create(wxWindow *win)
+GDIPlus *GDIPlus::Create(wxWindow *win)
 {
+	CHECK_IF_INITIALIZED();
+	HWND hwnd = win->GetHWND();
+	RECT rect = wxGetWindowRect(hwnd);
 	GDIPlus* context = new GDIPlus();
+	context->m_context = new Graphics(hwnd);
+	context->Init(rect.right - rect.left, rect.bottom - rect.top);
 	//context->EnableOffset(true);
 	return context;
 }
-static GDIPlus *Create(const wxMemoryDC &dc)
+
+GDIPlus *GDIPlus::Create(const wxMemoryDC &dc)
 {
+	CHECK_IF_INITIALIZED();
 #if wxUSE_WXDIB
 	// It seems that GDI+ sets invalid values for alpha channel when used with
 	// a compatible bitmap (DDB). So we need to convert the currently selected
@@ -120,52 +104,40 @@ static GDIPlus *Create(const wxMemoryDC &dc)
 		const_cast<wxMemoryDC&>(dc).SelectObjectAsSource(bmp);
 	}
 #endif // wxUSE_WXDIB
-
+	wxMSWDCImpl *msw = wxDynamicCast(dc.GetImpl(), wxMSWDCImpl);
+	HDC hdc = (HDC)msw->GetHDC();
+	wxSize sz = dc.GetSize();
 	GDIPlus* context = new GDIPlus();
+	context->m_context = new Graphics(hdc);
+	context->Init(sz.x, sz.y);
 	//context->EnableOffset(true);
 	return context;
 }
-static GDIPlus *Create(const wxWindowDC &dc)
+
+GDIPlus *GDIPlus::Create(const wxWindowDC &dc)
 {
+	CHECK_IF_INITIALIZED();
+
+	wxMSWDCImpl *msw = wxDynamicCast(dc.GetImpl(), wxMSWDCImpl);
+	HDC hdc = (HDC)msw->GetHDC();
+	wxSize sz = dc.GetSize();
+	
 	GDIPlus* context = new GDIPlus();
+	context->m_context = new Graphics(hdc);
+	context->Init(sz.x, sz.y);
 	//context->EnableOffset(true);
 	return context;
 }
 
-void GDIPlus::LoadGDIPlus()
-{
-	GdiplusStartupInput input;
-	GdiplusStartupOutput output;
-	if (GdiplusStartup(&m_gditoken, &input, &output) == Gdiplus::Ok)
-	{
-		wxLogTrace("gdiplus", "successfully initialized GDI+");
-		m_loaded = true;
-	}
-	else
-	{
-		wxLogTrace("gdiplus", "failed to initialize GDI+, missing gdiplus.dll?");
-		//m_loaded = 0;
-	}
-}
-void GDIPlus::UnloadGDIPlus()
-{
-	if (m_gditoken)
-	{
-		GdiplusShutdown(m_gditoken);
-		m_gditoken = 0;
-	}
-	m_loaded = -1;
-}
 
-void GDIPlus::Init(Gdiplus::Graphics* graphics, int width, int height)
+void GDIPlus::Init(int width, int height)
 {
-	m_context = graphics;
 	m_state1 = 0;
 	m_state2 = 0;
 	m_width = width;
 	m_height = height;
 
-	m_context->SetTextRenderingHint(TextRenderingHintAntiAlias);
+	m_context->SetTextRenderingHint(TextRenderingHintSystemDefault);
 	m_context->SetPixelOffsetMode(PixelOffsetModeHalf);
 	m_context->SetSmoothingMode(SmoothingModeHighQuality);
 
@@ -211,21 +183,21 @@ void GDIPlus::InitFont(const wxFont &font)
 		style |= FontStyleBold;
 
 	REAL fontSize = (REAL)font.GetPixelSize().GetHeight();
-		
-	const int count = g_fontCollection.GetFamilyCount();
+
+	const int count = Initializer.m_fontCollection->GetFamilyCount();
 
 	// We should find all the families, i.e. "found" should be "count".
 	int found = 0;
-	g_fontCollection.GetFamilies(count, g_fontFamilies, &found);
+	Initializer.m_fontCollection->GetFamilies(count, Initializer.m_fontFamilies, &found);
 	wxString name = font.GetFaceName();
 	for (int j = 0; j < found; j++)
 	{
 		wchar_t familyName[LF_FACESIZE];
-		int rc = g_fontFamilies[j].GetFamilyName(familyName);
+		int rc = Initializer.m_fontFamilies[j].GetFamilyName(familyName);
 		if (rc == 0 && name == familyName)
 		{
 			//need to test if it opens file from collection
-			m_font = new Font(&g_fontFamilies[j], fontSize, style, UnitPixel);
+			m_font = new Font(&Initializer.m_fontFamilies[j], fontSize, style, UnitPixel);
 			return;
 		}
 	}
@@ -233,46 +205,59 @@ void GDIPlus::InitFont(const wxFont &font)
 	HDC dc = ::CreateCompatibleDC(NULL);
 	HFONT hf = font.GetHFONT();
 	SelectObject(dc, hf);
-
-	DWORD ttcf = 0x66637474;
-	auto size = GetFontData(dc, ttcf, 0, nullptr, 0);
-	if (size == GDI_ERROR) {
-		ttcf = 0;
-		size = GetFontData(dc, 0, 0, nullptr, 0);
-	}
-	if (size == GDI_ERROR || size == 0){
-		//slow version of loading font
-		m_font = new Font(name, fontSize, style, UnitPixel);
-		goto done;
-	}
-	std::string buffer;
-	buffer.resize(size);
-	GetFontData(dc, ttcf, 0, &buffer[0], (int)size);
-
-	Status nResults = g_fontCollection.AddMemoryFont(&buffer[0], size);
-
-	if (nResults != Ok)
 	{
-		//slow version of loading font
-		m_font = new Font(name, fontSize, style, UnitPixel);
-		goto done;
+		DWORD ttcf = 0x66637474;
+		auto size = GetFontData(dc, ttcf, 0, nullptr, 0);
+		if (size == GDI_ERROR) {
+			ttcf = 0;
+			size = GetFontData(dc, 0, 0, nullptr, 0);
+		}
+		if (size == GDI_ERROR || size == 0){
+			//slow version of loading font
+			m_font = new Font(name, fontSize, style, UnitPixel);
+			goto done;
+		}
+		std::string buffer;
+		buffer.resize(size);
+		GetFontData(dc, ttcf, 0, &buffer[0], (int)size);
+
+		Status nResults = Initializer.m_fontCollection->AddMemoryFont(&buffer[0], size);
+
+		if (nResults != Ok)
+		{
+			//slow version of loading font
+			m_font = new Font(name, fontSize, style, UnitPixel);
+			goto done;
+		}
 	}
 	done:
-	//fast version of loading font from memory
-	m_font = new Font(name, fontSize, style, UnitPixel, &g_fontCollection);
+		//fast version of loading font from memory
+		m_font = new Font(name, fontSize, style, UnitPixel, Initializer.m_fontCollection);
 
-	SelectObject(dc, NULL);
-	DeleteObject(hf);
+		SelectObject(dc, NULL);
+		DeleteObject(hf);
+	
 }
 
-void GDIPlus::InitBrush(const wxBrush &brush)
+void GDIPlus::InitBrush(const wxBrush &brush, bool textBrush)
 {
-	if (m_brush)
-		delete m_brush;
+	if (textBrush){
+		if (m_fontBrush){
+			delete m_fontBrush;
+			m_fontBrush = NULL;
+		}
+	}
+	else{
+		if (m_brush){
+			delete m_brush;
+			m_brush = NULL;
+		}
+	}
+	Brush *newbrush = NULL;
 
 	if (brush.GetStyle() == wxBRUSHSTYLE_SOLID)
 	{
-		m_brush = new SolidBrush(wxColourToColor(brush.GetColour()));
+		newbrush = new SolidBrush(wxColourToColor(brush.GetColour()));
 	}
 	else if (brush.IsHatch())
 	{
@@ -300,7 +285,7 @@ void GDIPlus::InitBrush(const wxBrush &brush)
 		default:
 			style = HatchStyleHorizontal;
 		}
-		m_brush = new HatchBrush
+		newbrush = new HatchBrush
 			(
 			style,
 			wxColourToColor(brush.GetColour()),
@@ -320,15 +305,24 @@ void GDIPlus::InitBrush(const wxBrush &brush)
 				NULL
 #endif
 				);
-			m_brush = new TextureBrush(m_image);
+			newbrush = new TextureBrush(m_image);
 		}
 	}
+	if (textBrush){
+		m_fontBrush = newbrush;
+	}
+	else{
+		m_brush = newbrush;
+	}
+
 }
 
 void GDIPlus::InitPen(const wxPen &pen)
 {
-	if (m_pen)
+	if (m_pen){
 		delete m_pen;
+		m_pen = NULL;
+	}
 
 	if (m_penWidth <= 0.0)
 		m_penWidth = 0.1;
@@ -786,6 +780,9 @@ void GDIPlus::DrawText(const wxString& str,
 	if (!m_font)
 		return;
 
+	if (!m_fontBrush)
+		return;
+
 	if (str.IsEmpty())
 		return;
 
@@ -795,7 +792,7 @@ void GDIPlus::DrawText(const wxString& str,
 		-1,                     // length: string is NUL-terminated
 		m_font,
 		PointF(x, y),
-		GetDrawTextStringFormat(),
+		Initializer.GetDrawTextStringFormat(),
 		m_fontBrush
 		);
 }
@@ -844,7 +841,7 @@ void GDIPlus::GetTextExtent(const wxString &str, float *width, float *height,
 		RectF layoutRect(0, 0, 100000.0f, 100000.0f);
 
 		RectF bounds;
-		m_context->MeasureString((const wchar_t *)s, wcslen(s), m_font, layoutRect, GetDrawTextStringFormat(), &bounds);
+		m_context->MeasureString((const wchar_t *)s, wcslen(s), m_font, layoutRect, Initializer.GetDrawTextStringFormat(), &bounds);
 		if (width)
 			*width = bounds.Width;
 		if (height)
@@ -859,7 +856,7 @@ Graphics* GDIPlus::GetNativeContext()
 
 void GDIPlus::SetBrush(const wxBrush &brush)
 {
-	InitBrush(brush);
+	InitBrush(brush, false);
 }
 void GDIPlus::SetFont(const wxFont &font)
 {
@@ -867,7 +864,7 @@ void GDIPlus::SetFont(const wxFont &font)
 }
 void GDIPlus::SetFontBrush(const wxBrush &fontbrush)
 {
-	InitBrush(fontbrush);
+	InitBrush(fontbrush, true);
 }
 void GDIPlus::SetPen(const wxPen &pen, float width)
 {

@@ -22,6 +22,7 @@
 
 class EditBox;
 class KainoteFrame;
+class GDIPlus;
 wxDECLARE_EVENT(CURSOR_MOVED, wxCommandEvent);
 
 class TextEditor : public wxWindow

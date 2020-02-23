@@ -18,7 +18,7 @@
 #include "Config.h"
 #include "wx/dcmemory.h"
 #include "wx/dcclient.h"
-#include <wx/graphics.h>
+#include "GDIPlusContext.h"
 //static wxFont font;
 
 wxColour WhiteUp(const wxColour &color)
@@ -250,15 +250,16 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	int h = 0;
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
-	wxGraphicsContext *gc = NULL;//wxGraphicsContext::Create(this);
+	GDIPlus *gc = GDIPlus::Create(this);
 	if (!gc)
 		PaintGDI(w, h);
 	else{
 		bool enabled = IsThisEnabled();
 
-		gc->SetFont(GetFont(), (enabled && changedForeground) ? GetForegroundColour() :
+		gc->SetFont(GetFont());
+		gc->SetFontBrush(wxBrush((enabled && changedForeground) ? GetForegroundColour() :
 			(enabled) ? Options.GetColour(WindowText) :
-			Options.GetColour(WindowTextInactive));
+			Options.GetColour(WindowTextInactive)));
 
 		gc->SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(ButtonBackgroundHover) :
 			(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
@@ -274,7 +275,7 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 
 		gc->DrawRectangle(0.0, 0.0, w-1, h-1);
 		if (w > 10){
-			double fw, fh, iw = 0;
+			float fw, fh, iw = 0;
 			gc->GetTextExtent(name, &fw, &fh);
 			if (icon.IsOk()){
 				iw = icon.GetWidth();
@@ -299,8 +300,10 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 					gc->DrawText(name, ((w - fw) / 2) + iw + 5, ((h - textHeight) / 2));
 				}
 				else{
-					//wxRect cur(5, ((h - textHeight) / 2), w - 10, textHeight);
+					wxRect cur(5, ((h - textHeight) / 2), w - 10, textHeight);
+					gc->Clip(cur);
 					gc->DrawText(name, ((w - fw) / 2) + iw, ((h - textHeight) / 2));
+					gc->ResetClip();
 					//gc->SetClippingRegion(cur);
 					//gc->DrawLabel(name, cur, iw ? wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL : wxALIGN_CENTER);
 					//gc->DestroyClippingRegion();
@@ -516,13 +519,14 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 	int h = 0;
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
-	wxGraphicsContext *gc = NULL;//wxGraphicsContext::Create(this);
+	GDIPlus *gc = GDIPlus::Create(this);
 	if (!gc)
 		PaintGDI(w, h);
 	else{
 		wxColour background = GetParent()->GetBackgroundColour();
 		bool enabled = IsThisEnabled();
-		gc->SetFont(GetFont(), (enabled && changedForeground) ? GetForegroundColour() :
+		gc->SetFont(GetFont());
+		gc->SetFontBrush((enabled && changedForeground) ? GetForegroundColour() :
 			(enabled) ? Options.GetColour(WindowText) :
 			Options.GetColour(WindowTextInactive));
 		gc->SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(ButtonBackgroundHover) :
@@ -540,16 +544,19 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 
 
 		if (w > 10){
-			double fw, fh;
+			float fw, fh;
 			if (icon.IsOk()){
 				fw = icon.GetWidth(); fh = icon.GetHeight();
 				gc->DrawBitmap(icon, (w - fw) / 2, (h - fh) / 2, fw, fh);
 			}
 			else{
 				gc->GetTextExtent(name, &fw, &fh);
+				wxRect cur(5, (h - textHeight) / 2, w - 10, textHeight);
+				gc->Clip(cur);
 				gc->DrawText(name, ((w - fw) / 2), ((h - textHeight) / 2));
+				gc->ResetClip();
 				//tdc.GetTextExtent(name, &fw, &fh);
-				//wxRect cur(5, (h - textHeight) / 2, w - 10, textHeight);
+				//
 				//tdc.SetClippingRegion(cur);
 				//tdc.DrawLabel(name, cur, wxALIGN_CENTER);
 				//tdc.DestroyClippingRegion();

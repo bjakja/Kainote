@@ -411,6 +411,9 @@
     <ClCompile Include="GDIPlusContext.cpp">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClCompile>
+    <ClCompile Include="GDIPlusInitializer.cpp">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -735,6 +738,9 @@
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
     <ClInclude Include="GDIPlusContext.h">
+      <Filter>Header Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="GDIPlusInitializer.h">
       <Filter>Header Files\Utils &amp; Config</Filter>
     </ClInclude>
   </ItemGroup>
