@@ -169,7 +169,7 @@ void ShiftTimesWindow::SaveOptions()
 
 void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 {
-	wxFont thisFont(8, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT);
+	wxFont thisFont(8, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
 	panel->SetFont(thisFont);
 	panel->SetForegroundColour(Options.GetColour(WindowText));
 	panel->SetBackgroundColour(Options.GetColour(WindowBackground));

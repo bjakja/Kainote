@@ -16,7 +16,7 @@
 
 #pragma once
 #include <wx/wx.h>
-#define NOMINMAX 1
+//#define NOMINMAX 1
 
 //  override byte to prevent clashes with <cstddef>
 //#define byte win_byte_override
@@ -37,7 +37,7 @@
 #endif
 
 #include <GdiPlus.h>
-
+#include <map>
 #undef min
 #undef max
 
@@ -62,8 +62,7 @@ public:
 	void UnloadGDIPlus();
 	bool Check();
 	StringFormat* GetDrawTextStringFormat();
-	PrivateFontCollection *m_fontCollection = NULL;
-	FontFamily *m_fontFamilies = NULL;
+	std::map<wxString, std::string*> fontsData;
 };
 
 extern GDIPlusInitializer Initializer;

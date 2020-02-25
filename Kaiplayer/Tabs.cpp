@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <wx/graphics.h>
+//#include <wx/graphics.h>
 #include "Tabs.h"
 #include "TabPanel.h"
 #include "kainoteApp.h"
@@ -581,7 +581,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	start = (allTabsVisible) ? 2 : 20;
 
 
-	wxGraphicsContext *gc = wxGraphicsContext::Create(dc);
+	//wxGraphicsContext *gc = NULL;//wxGraphicsContext::Create(dc);
 	//pętla do rysowania zakładek
 	for (size_t i = firstVisibleTab; i < Tabsizes.size(); i++){
 		//wybrana zakładka
@@ -621,7 +621,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		}
 
 		//rysowanie konturów zakładki
-		if (gc){
+		/*if (gc){
 			gc->SetPen(wxPen(Options.GetColour((i == iter) ? TabsBorderActive : TabsBorderInactive)));
 			gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
 			wxGraphicsPath path = gc->CreatePath();
@@ -635,14 +635,14 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			path.AddLineToPoint(strt, 0);
 			gc->StrokePath(path);
 		}
-		else{
+		else{*/
 			dc.SetPen(wxPen(Options.GetColour((i == iter) ? TabsBorderActive : TabsBorderInactive)));
 			dc.DrawLine(start, 0, start, TabHeight - 4);
 			dc.DrawLine(start, TabHeight - 4, start + 2, TabHeight - 2);
 			dc.DrawLine(start + 2, TabHeight - 2, start + Tabsizes[i] - 2, TabHeight - 2);
 			dc.DrawLine(start + Tabsizes[i] - 2, TabHeight - 2, start + Tabsizes[i], TabHeight - 4);
 			dc.DrawLine(start + Tabsizes[i], TabHeight - 4, start + Tabsizes[i], 0);
-		}
+		//}
 		dc.DrawTextW(Names[i], start + 4, 4);
 
 		start += Tabsizes[i] + 2;
@@ -688,7 +688,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	dc.DrawRectangle(start + 6, (TabHeight / 2) - 2, TabHeight - 16, 2);
 	dc.DrawRectangle(start + (TabHeight / 2) - 3, 7, 2, TabHeight - 16);
 
-	if (gc){
+	/*if (gc){
 		gc->SetPen(wxPen(Options.GetColour(TabsBorderInactive)));
 		gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
 		wxGraphicsPath path = gc->CreatePath();
@@ -701,14 +701,14 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		path.AddLineToPoint(strt + TabHeight - 5, 0);
 		gc->StrokePath(path);
 	}
-	else{
+	else{*/
 		dc.SetPen(wxPen(Options.GetColour(TabsBorderInactive)));
 		dc.DrawLine(start, 0, start, TabHeight - 4);
 		dc.DrawLine(start, TabHeight - 4, start + 2, TabHeight - 2);
 		dc.DrawLine(start + 2, TabHeight - 2, start + TabHeight - 7, TabHeight - 2);
 		dc.DrawLine(start + TabHeight - 7, TabHeight - 2, start + TabHeight - 5, TabHeight - 4);
 		dc.DrawLine(start + TabHeight - 5, TabHeight - 4, start + TabHeight - 5, 0);
-	}
+	//}
 
 
 	cdc.Blit(0, h - TabHeight, w, TabHeight, &dc, 0, 0);
@@ -741,7 +741,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		}
 	}
 
-	if (gc){ delete gc; }
+	//if (gc){ delete gc; }
 }
 
 

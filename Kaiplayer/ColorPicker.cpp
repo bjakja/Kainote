@@ -546,7 +546,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 
 	// Arrange the controls in a nice way
 	wxSizer *spectop_sizer = new wxBoxSizer(wxHORIZONTAL);
-	spectop_sizer->Add(colorType, 1, wxALIGN_CENTER_VERTICAL | wxLEFT | wxEXPAND, 2);
+	spectop_sizer->Add(colorType, 1, /*wxALIGN_CENTER_VERTICAL | */wxLEFT | wxEXPAND, 2);
 	spectop_sizer->Add(new KaiStaticText(this, -1, _("Wybrany kolor:")), 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 17);
 	spectop_sizer->Add(preview_box);
 	wxSizer *spectrum_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -566,7 +566,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	rgb_sizer->Add(new KaiStaticText(this, -1, _("Niebieski:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	rgb_sizer->Add(rgb_input[2], 0);
 	rgb_sizer->AddGrowableCol(0, 1);
-	rgb_box->Add(rgb_sizer, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL, 3);
+	rgb_box->Add(rgb_sizer, 1, wxEXPAND | wxALL /*| wxALIGN_CENTER_VERTICAL*/, 3);
 
 	wxFlexGridSizer *ass_input_sizer = new wxFlexGridSizer(2, 5, 5);
 	ass_input_sizer->Add(new KaiStaticText(this, -1, "ASS:", wxDefaultPosition, textinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
@@ -577,7 +577,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	ass_input_sizer->Add(alpha_input, 0);
 	//ass_input_sizer->AddStretchSpacer();
 	ass_input_sizer->AddGrowableCol(0, 1);
-	rgb_box->Add(ass_input_sizer, 0, wxALL | wxALIGN_CENTER_VERTICAL | wxEXPAND, 3);
+	rgb_box->Add(ass_input_sizer, 0, wxALL | /*wxALIGN_CENTER_VERTICAL | */wxEXPAND, 3);
 
 	wxFlexGridSizer *hsl_sizer = new wxFlexGridSizer(2, 5, 5);
 	hsl_sizer->Add(new KaiStaticText(this, -1, _("Odcień:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
@@ -587,7 +587,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	hsl_sizer->Add(new KaiStaticText(this, -1, _("Jaskrawość:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	hsl_sizer->Add(hsl_input[2], 0);
 	hsl_sizer->AddGrowableCol(0, 1);
-	hsl_box->Add(hsl_sizer, 0, wxALL | wxALIGN_CENTER_VERTICAL | wxEXPAND, 3);
+	hsl_box->Add(hsl_sizer, 0, wxALL | /*wxALIGN_CENTER_VERTICAL |*/ wxEXPAND, 3);
 
 	wxFlexGridSizer *hsv_sizer = new wxFlexGridSizer(2, 5, 5);
 	hsv_sizer->Add(new KaiStaticText(this, -1, _("Odcień:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
@@ -597,7 +597,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	hsv_sizer->Add(new KaiStaticText(this, -1, _("Wartość:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	hsv_sizer->Add(hsv_input[2], 0);
 	hsv_sizer->AddGrowableCol(0, 1);
-	hsv_box->Add(hsv_sizer, 0, wxALL | wxALIGN_CENTER_VERTICAL | wxEXPAND, 3);
+	hsv_box->Add(hsv_sizer, 0, wxALL | /*wxALIGN_CENTER_VERTICAL |*/ wxEXPAND, 3);
 
 	wxSizer *hsx_sizer = new wxBoxSizer(wxHORIZONTAL);
 	hsx_sizer->Add(hsl_box);
@@ -620,11 +620,11 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	button_sizer->Add(new MappedButton(this, wxID_CANCEL, _("Anuluj")), 1, wxALL, 4);
 
 	wxSizer *input_sizer = new wxBoxSizer(wxVERTICAL);
-	input_sizer->Add(rgb_box, 0, wxALIGN_CENTER | wxEXPAND);
+	input_sizer->Add(rgb_box, 0, /*wxALIGN_CENTER | */wxEXPAND);
 	input_sizer->AddSpacer(5);
-	input_sizer->Add(hsx_sizer, 0, wxALIGN_CENTER | wxEXPAND);
+	input_sizer->Add(hsx_sizer, 0, /*wxALIGN_CENTER | */wxEXPAND);
 	input_sizer->AddStretchSpacer(1);
-	input_sizer->Add(picker_sizer, 0, wxALIGN_CENTER | wxEXPAND);
+	input_sizer->Add(picker_sizer, 0, /*wxALIGN_CENTER | */wxEXPAND);
 	input_sizer->AddStretchSpacer(2);
 	input_sizer->Add(button_sizer, 0, wxALIGN_RIGHT | wxALIGN_BOTTOM);
 	wxBoxSizer *secondSpectrumBox = new wxBoxSizer(wxVERTICAL);

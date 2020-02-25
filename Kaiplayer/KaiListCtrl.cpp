@@ -202,7 +202,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 	SetBackgroundColour(parent->GetBackgroundColour());
 	SetForegroundColour(parent->GetForegroundColour());
 	SetMinSize(size);
-	SetFont(wxFont(9, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT));
+	SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT));
 	wxAcceleratorEntry entries[2];
 	entries[0].Set(wxACCEL_CTRL, 'Z', 11642);
 	entries[1].Set(wxACCEL_CTRL, 'Y', 11643);

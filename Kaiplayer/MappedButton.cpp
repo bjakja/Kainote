@@ -256,11 +256,6 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	else{
 		bool enabled = IsThisEnabled();
 
-		gc->SetFont(GetFont());
-		gc->SetFontBrush(wxBrush((enabled && changedForeground) ? GetForegroundColour() :
-			(enabled) ? Options.GetColour(WindowText) :
-			Options.GetColour(WindowTextInactive)));
-
 		gc->SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(ButtonBackgroundHover) :
 			(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
 			(HasFocus()) ? Options.GetColour(ButtonBackgroundOnFocus) :
@@ -275,6 +270,11 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 
 		gc->DrawRectangle(0.0, 0.0, w-1, h-1);
 		if (w > 10){
+			gc->SetFont(GetFont());
+			gc->SetFontBrush(wxBrush((enabled && changedForeground) ? GetForegroundColour() :
+				(enabled) ? Options.GetColour(WindowText) :
+				Options.GetColour(WindowTextInactive)));
+
 			float fw, fh, iw = 0;
 			gc->GetTextExtent(name, &fw, &fh);
 			if (icon.IsOk()){
@@ -300,10 +300,10 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 					gc->DrawText(name, ((w - fw) / 2) + iw + 5, ((h - textHeight) / 2));
 				}
 				else{
-					wxRect cur(5, ((h - textHeight) / 2), w - 10, textHeight);
-					gc->Clip(cur);
+					//wxRect cur(5, ((h - textHeight) / 2), w - 10, textHeight);
+					//gc->Clip(cur);
 					gc->DrawText(name, ((w - fw) / 2) + iw, ((h - textHeight) / 2));
-					gc->ResetClip();
+					//gc->ResetClip();
 					//gc->SetClippingRegion(cur);
 					//gc->DrawLabel(name, cur, iw ? wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL : wxALIGN_CENTER);
 					//gc->DestroyClippingRegion();
@@ -551,10 +551,10 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 			}
 			else{
 				gc->GetTextExtent(name, &fw, &fh);
-				wxRect cur(5, (h - textHeight) / 2, w - 10, textHeight);
-				gc->Clip(cur);
+				//wxRect cur(5, (h - textHeight) / 2, w - 10, textHeight);
+				//gc->Clip(cur);
 				gc->DrawText(name, ((w - fw) / 2), ((h - textHeight) / 2));
-				gc->ResetClip();
+				//gc->ResetClip();
 				//tdc.GetTextExtent(name, &fw, &fh);
 				//
 				//tdc.SetClippingRegion(cur);

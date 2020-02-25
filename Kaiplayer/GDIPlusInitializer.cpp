@@ -29,7 +29,7 @@ void GDIPlusInitializer::LoadGDIPlus()
 	GdiplusStartupOutput output;
 	if (GdiplusStartup(&m_gditoken, &input, &output) == Gdiplus::Ok)
 	{
-		m_fontCollection = new PrivateFontCollection();
+		//m_fontCollection = new PrivateFontCollection();
 		//wxLogTrace("gdiplus", "successfully initialized GDI+");
 		m_loaded = 1;
 	}
@@ -43,10 +43,9 @@ void GDIPlusInitializer::UnloadGDIPlus()
 {
 	if (m_drawTextStringFormat)
 		delete m_drawTextStringFormat;
-	//if (m_fontCollection)
-		//delete m_fontCollection;
-	if (m_fontFamilies)
-		delete m_fontFamilies;
+	
+	for (auto it = fontsData.begin(); it != fontsData.end(); it++)
+		delete it->second;
 
 	if (m_gditoken)
 	{

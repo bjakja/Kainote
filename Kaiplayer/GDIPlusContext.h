@@ -11,16 +11,17 @@
 #pragma once
 
 
-#include "wx/stack.h"
+//#include "wx/stack.h"
 #include "GDIPlusInitializer.h"
 
 using namespace Gdiplus;
 
 class GDIPlus{
 protected:
+	PrivateFontCollection m_fontCollection;
 	GDIPlus();
 	Graphics *m_context;
-	wxStack<GraphicsState> m_stateStack;
+	//wxStack<GraphicsState> m_stateStack;
 	GraphicsState m_state1;
 	GraphicsState m_state2;
 	int m_width;

@@ -98,8 +98,8 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	Cursor.x = Cursor.y = Selend.x = Selend.y = oldstart = oldend = 0;
 
 	holding = dholding = firstdhold = modified = wasDoubleClick = false;
-
-	font = wxFont(10, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT);
+	//font = wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Verdana");
+	font = wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
 	int fw, fh;
 	GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	fontHeight = fh;
@@ -136,14 +136,15 @@ void TextEditor::SetTextS(const wxString &text, bool modif, bool resetsel, bool 
 
 void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 {
-	//Wrapped=MText;
+	
 	if (selectionWords.size())
 		selectionWords.clear();
 
 	wraps.clear();
 	wraps.Add(0);
 	if (MText != ""){
-		int w, h, fw, fh;
+		int w, h, fw = 0, fh = 0;
+		float gcfw = 0.f, gcfh = 0.f;
 		GetClientSize(&w, &h);
 		//if (w < 30){ return; }
 		if (scroll->IsShown()){
@@ -157,6 +158,10 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 			while (i < textLen){ i++; wraps.Add(i); }
 		}
 		else{
+			GDIPlus *gc = GDIPlus::Create(this);
+			if (gc)
+				gc->SetFont(font);
+
 			int podz = 0;
 			wxString wrapchars = " \\,;:}{()";
 
@@ -174,9 +179,15 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 				while (1)
 				{
 					wxString wrap = MText.SubString(podz, i);
-					GetTextExtent(wrap, &fw, &fh, NULL, NULL, &font);
+					if (gc){
+						gc->GetTextExtent(wrap, &gcfw, &gcfh);
+					}
+					else{
+						GetTextExtent(wrap, &fw, &fh, NULL, NULL, &font);
+						gcfw = fh;
+					}
 					allwrap = i;
-					if (fw < w - 7 && !backward && backwardNotFound && i < textLen - 1){
+					if (gcfw < w - 7 && !backward && backwardNotFound && i < textLen - 1){
 						int j = i + 1;
 						while (j < textLen && forwardNotFound){
 							if (wrapchars.Find(MText[j]) != -1){
@@ -190,7 +201,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 						if (!forward){ i++; forwardNotFound = false; }
 						else{ i = j; }
 					}
-					else if (fw > w - 7 && i > podz){
+					else if (gcfw > w - 7 && i > podz){
 						size_t k = i - 1;
 						while (k > podz && backwardNotFound){
 							if (wrapchars.Find(MText[k]) != -1){
@@ -212,12 +223,14 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 					}
 				}
 			}
+			if (gc)
+				delete gc;
 		}
 	}
 	else{
 		wraps.Add(MText.length());
 	}
-	//
+		
 	if (updatechars){ EB->UpdateChars(); }
 	if (sendevent){ wxCommandEvent evt2(wxEVT_COMMAND_TEXT_UPDATED, GetId()); AddPendingEvent(evt2); }
 }
@@ -247,6 +260,7 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 		Selend = Cursor;
 		if (SpellCheckerOnOff){ CheckText();}
 		Refresh(false);
+		Update();
 		modified = true;
 		//tag list
 		if (!tagList && (wkey == L'\\' || (Cursor.x - 2 >= 0 && MText[Cursor.x - 2] == L'\\'))){
@@ -273,9 +287,19 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 					pos.x = 3;
 					int wrap = wraps[Cursor.y];
 					if (wrap < Cursor.x){
+						GDIPlus *gc = GDIPlus::Create(this);
+						gc->SetFont(font);
 						wxString textBeforeCursor = MText.Mid(wrap, Cursor.x - wrap + 1);
-						wxSize te = GetTextExtent(textBeforeCursor);
-						pos.x += te.x;
+						if (gc){
+							float fw, fh;
+							gc->GetTextExtent(textBeforeCursor, &fw, &fh);
+							pos.x += fw;
+							delete gc;
+						}
+						else{
+							wxSize te = GetTextExtent(textBeforeCursor);
+							pos.x += te.x;
+						}
 					}
 					tagList->Popup(pos, wxSize(100, fontHeight+10), 0);
 					Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
@@ -932,15 +956,15 @@ void TextEditor::DrawFieldGDIPlus(GDIPlus *gc, int w, int h, int windowh)
 			parttext = "";
 			mestext = "";
 		}
-		/*if (posY + Fheight<0){
+		if (posY + fontHeight<0){
 		if (ch == L'{')
-		tagi = true;
+			tags = true;
 		else if (ch == L'}')
-		tagi = false;
+			tags = false;
 
 		wchar++;
 		continue;
-		}*/
+		}
 
 		if (hasFocus && (Cursor.x + Cursor.y == wchar)){
 			if (mestext + parttext == ""){ fw = 0.0; }
@@ -1442,8 +1466,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 
 bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 {
-	int /*w, h, */fw = 0, fh = 0;
-	//GetClientSize(&w, &h);
+	int fw = 0, fh = 0;
 	pos.y += (scrollPositionV);
 	pos.x -= 2;
 
@@ -1459,17 +1482,31 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 	wxString txt = MText + " ";
 
 	int wlen = MText.length();
-	int fww;
+	int fww = 0;
+	float gcfw = 0.f, gcfh = 0.f, gcfw1 = 0.f;
+	GDIPlus *gc = GDIPlus::Create(this);
+	if (gc)
+		gc->SetFont(font);
+
 	for (int i = cur->x; i<wraps[cur->y + 1] + 1; i++)
 	{
 		wxString text = txt.SubString(cur->x, i);
 		text.Replace("\t", "");
-		GetTextExtent(text, &fw, &fh, NULL, NULL, &font);
-		GetTextExtent(txt[i], &fww, &fh, NULL, NULL, &font);
-		if (fw + 1 - (fww / 2)>pos.x){ cur->x = i; find = true; break; }
+		if (gc){
+			gc->GetTextExtent(text, &gcfw, &gcfh);
+			gc->GetTextExtent(txt[i], &gcfw1, &gcfh);
+			if (gcfw + 1.f - (gcfw1 / 2.f) > pos.x){ cur->x = i; find = true; break; }
+		}
+		else{
+			GetTextExtent(text, &fw, &fh, NULL, NULL, &font);
+			GetTextExtent(txt[i], &fww, &fh, NULL, NULL, &font);
+			if (fw + 1 - (fww / 2)>pos.x){ cur->x = i; find = true; break; }
+		}
 	}
 	if (!find){ cur->x = wraps[cur->y + 1]; }
 
+	if (gc)
+		delete gc;
 	return find;
 }
 
@@ -1903,7 +1940,19 @@ wxPoint TextEditor::PosFromCursor(wxPoint cur)
 	//if(wraps[cur.y]==cur.x){fw=0;}
 	//if(cur.x<=0||cur.y<0){return wxPoint(-scPos+2, (Fheight-scPos));}
 	if (wraps.size() < 2 || wraps[cur.y] == cur.x){ fw = 0; }
-	else{ GetTextExtent(MText.SubString(wraps[cur.y], cur.x), &fw, &fh, NULL, NULL, &font); }
+	else{ 
+		GDIPlus *gc = GDIPlus::Create(this);
+		if (gc){
+			gc->SetFont(font);
+			float gcfw, gcfh;
+			gc->GetTextExtent(MText.SubString(wraps[cur.y], cur.x), &gcfw, &gcfh);
+			delete gc;
+			fw = gcfw + 0.5f;
+		}
+		else{
+			GetTextExtent(MText.SubString(wraps[cur.y], cur.x), &fw, &fh, NULL, NULL, &font);
+		}
+	}
 	wxPoint result;
 	result.x = fw + 3;
 	result.y = (cur.y + 1)*fontHeight;

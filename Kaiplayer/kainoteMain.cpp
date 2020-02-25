@@ -90,7 +90,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Options.GetTable(VideoRecent, videorec);
 	Options.GetTable(AudioRecent, audsrec);
 	Options.GetTable(KEYFRAMES_RECENT, keyframesRecent);
-	wxFont thisFont(10, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT);
+	wxFont thisFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Tahoma");
 	SetFont(thisFont);
 	wxIcon KaiIcon("KAI_SMALL_ICON", wxBITMAP_TYPE_ICO_RESOURCE);
 	//::SendMessage(GetHwnd(), WM_SETICON, ICON_SMALL, (LPARAM)GetHiconOf(KaiIcon));

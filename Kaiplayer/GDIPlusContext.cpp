@@ -13,6 +13,7 @@
 #include "wx/msw/dc.h"
 #include "wx/rawbmp.h"
 #include "GDIPlusInitializer.h"
+#include <map>
 
 //-----------------------------------------------------------------------------
 // Local functions
@@ -27,7 +28,10 @@ namespace{
 	{
 		return Color(col.Alpha(), col.Red(), col.Green(), col.Blue());
 	}
+
 }
+
+//std::map<wxString, std::string> fontsData;
 
 #define CHECK_IF_INITIALIZED()\
 	if(!Initializer.Check())\
@@ -137,12 +141,13 @@ void GDIPlus::Init(int width, int height)
 	m_width = width;
 	m_height = height;
 
-	m_context->SetTextRenderingHint(TextRenderingHintSystemDefault);
-	m_context->SetPixelOffsetMode(PixelOffsetModeHalf);
+	m_context->SetTextRenderingHint(TextRenderingHintAntiAlias);
+	//m_context->SetPixelOffsetMode(PixelOffsetModeHalf);
 	m_context->SetSmoothingMode(SmoothingModeHighQuality);
 
 	m_state1 = m_context->Save();
 	m_state2 = m_context->Save();
+	//m_fontCollection = new PrivateFontCollection();
 }
 
 GDIPlus::~GDIPlus()
@@ -160,7 +165,7 @@ GDIPlus::~GDIPlus()
 	wxDELETE(m_image);
 	wxDELETE(m_fontBrush);
 	wxDELETE(m_bitmap);
-	
+	//wxDELETE(m_fontCollection);
 }
 
 void GDIPlus::InitFont(const wxFont &font)
@@ -183,31 +188,35 @@ void GDIPlus::InitFont(const wxFont &font)
 		style |= FontStyleBold;
 
 	REAL fontSize = (REAL)font.GetPixelSize().GetHeight();
-
-	const int count = Initializer.m_fontCollection->GetFamilyCount();
-
-	// We should find all the families, i.e. "found" should be "count".
-	int found = 0;
-	Initializer.m_fontCollection->GetFamilies(count, Initializer.m_fontFamilies, &found);
 	wxString name = font.GetFaceName();
-	for (int j = 0; j < found; j++)
-	{
-		wchar_t familyName[LF_FACESIZE];
-		int rc = Initializer.m_fontFamilies[j].GetFamilyName(familyName);
-		if (rc == 0 && name == familyName)
-		{
-			//need to test if it opens file from collection
-			m_font = new Font(&Initializer.m_fontFamilies[j], fontSize, style, UnitPixel);
-			return;
-		}
-	}
+	wxString nameWithStyle = name + L"_" + std::to_string(style);
+	//const int count = g_fontCollection->GetFamilyCount();
 
-	HDC dc = ::CreateCompatibleDC(NULL);
-	HFONT hf = font.GetHFONT();
-	SelectObject(dc, hf);
-	{
+	////// We should find all the families, i.e. "found" should be "count".
+	//int found = 0;
+	//g_fontCollection->GetFamilies(count, g_fontFamilies, &found);
+	//
+	//for (int j = 0; j < found; j++)
+	//{
+	//	wchar_t familyName[LF_FACESIZE];
+	//	int rc = g_fontFamilies[j].GetFamilyName(familyName);
+	//	if (rc == 0 && name == familyName)
+	//	{
+	//		//need to test if it opens file from collection
+	//		m_font = new Font(&g_fontFamilies[j], fontSize, style, UnitPixel);
+	//		return;
+	//	}
+	//}
+	Status nResults;
+	
+	auto it = Initializer.fontsData.find(nameWithStyle);
+	if (it == Initializer.fontsData.end()){
+		HDC dc = ::CreateCompatibleDC(NULL);
+		HFONT hf = font.GetHFONT();
+		SelectObject(dc, hf);
+		//{
 		DWORD ttcf = 0x66637474;
-		auto size = GetFontData(dc, ttcf, 0, nullptr, 0);
+		unsigned long size = GetFontData(dc, ttcf, 0, nullptr, 0);
 		if (size == GDI_ERROR) {
 			ttcf = 0;
 			size = GetFontData(dc, 0, 0, nullptr, 0);
@@ -215,28 +224,34 @@ void GDIPlus::InitFont(const wxFont &font)
 		if (size == GDI_ERROR || size == 0){
 			//slow version of loading font
 			m_font = new Font(name, fontSize, style, UnitPixel);
-			goto done;
+			SelectObject(dc, NULL);
+			DeleteObject(hf);
+			return;
+			//goto done;
 		}
-		std::string buffer;
-		buffer.resize(size);
-		GetFontData(dc, ttcf, 0, &buffer[0], (int)size);
-
-		Status nResults = Initializer.m_fontCollection->AddMemoryFont(&buffer[0], size);
-
-		if (nResults != Ok)
-		{
-			//slow version of loading font
-			m_font = new Font(name, fontSize, style, UnitPixel);
-			goto done;
-		}
-	}
-	done:
-		//fast version of loading font from memory
-		m_font = new Font(name, fontSize, style, UnitPixel, Initializer.m_fontCollection);
-
+		std::string *buffer = new std::string();
+		buffer->resize(size);
+		GetFontData(dc, ttcf, 0, &(*buffer)[0], (int)size);
+		Initializer.fontsData.insert(std::pair<wxString, std::string*>(nameWithStyle, buffer));
 		SelectObject(dc, NULL);
 		DeleteObject(hf);
+		nResults = m_fontCollection.AddMemoryFont(&(*buffer)[0], size);
+	}
+	else{
+		std::string *buffer = it->second;
+		unsigned long size = buffer->size();
+		nResults = m_fontCollection.AddMemoryFont(&(*buffer)[0], size);
+	}
+	if (nResults != Ok)
+	{
+		//slow version of loading font
+		m_font = new Font(name, fontSize, style, UnitPixel);
+		return;
+	}
 	
+		//fast version of loading font from memory
+		m_font = new Font(name, fontSize, style, UnitPixel, &m_fontCollection);
+
 }
 
 void GDIPlus::InitBrush(const wxBrush &brush, bool textBrush)
@@ -324,8 +339,11 @@ void GDIPlus::InitPen(const wxPen &pen)
 		m_pen = NULL;
 	}
 
-	if (m_penWidth <= 0.0)
-		m_penWidth = 0.1;
+	if (pen.GetStyle() == wxPENSTYLE_TRANSPARENT)
+		return;
+
+	if (m_penWidth <= 0.f)
+		m_penWidth = 0.f;
 
 	m_pen = new Pen(wxColourToColor(pen.GetColour()), m_penWidth);
 
@@ -805,28 +823,28 @@ void GDIPlus::GetTextExtent(const wxString &str, float *width, float *height,
 
 	wxWCharBuffer s = str.wc_str(*wxConvUI);
 
-	// Get the font metrics if we actually need them.
-	if (descent || externalLeading || (height && str.empty()))
-	{
-		FontFamily ffamily;
-		m_font->GetFamily(&ffamily);
+	//// Get the font metrics if we actually need them.
+	//if (descent || externalLeading || (height && str.empty()))
+	//{
+	//	FontFamily ffamily;
+	//	m_font->GetFamily(&ffamily);
 
-		// Notice that we must use the real font style or the results would be
-		// incorrect for italic/bold fonts.
-		const INT style = m_font->GetStyle();
-		const REAL size = m_font->GetSize();
-		const REAL emHeight = ffamily.GetEmHeight(style);
-		REAL rDescent = ffamily.GetCellDescent(style) * size / emHeight;
-		REAL rAscent = ffamily.GetCellAscent(style) * size / emHeight;
-		REAL rHeight = ffamily.GetLineSpacing(style) * size / emHeight;
+	//	// Notice that we must use the real font style or the results would be
+	//	// incorrect for italic/bold fonts.
+	//	const INT style = m_font->GetStyle();
+	//	const REAL size = m_font->GetSize();
+	//	const REAL emHeight = ffamily.GetEmHeight(style);
+	//	REAL rDescent = ffamily.GetCellDescent(style) * size / emHeight;
+	//	REAL rAscent = ffamily.GetCellAscent(style) * size / emHeight;
+	//	REAL rHeight = ffamily.GetLineSpacing(style) * size / emHeight;
 
-		if (height && str.empty())
-			*height = rHeight;
-		if (descent)
-			*descent = rDescent;
-		if (externalLeading)
-			*externalLeading = rHeight - rAscent - rDescent;
-	}
+	//	if (height && str.empty())
+	//		*height = rHeight;
+	//	if (descent)
+	//		*descent = rDescent;
+	//	if (externalLeading)
+	//		*externalLeading = rHeight - rAscent - rDescent;
+	//}
 
 	// measuring empty strings is not guaranteed, so do it by hand
 	if (str.IsEmpty())
@@ -868,6 +886,6 @@ void GDIPlus::SetFontBrush(const wxBrush &fontbrush)
 }
 void GDIPlus::SetPen(const wxPen &pen, float width)
 {
-	m_width = width;
+	m_penWidth = width;
 	InitPen(pen);
 }

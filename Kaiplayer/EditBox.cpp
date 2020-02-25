@@ -143,7 +143,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
-	SetFont(wxFont(9, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, L"Tahoma"));
+	SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma"));
 	currentLine = 0;
 	grid = grid1;
 	grid->Edit = this;
