@@ -141,8 +141,9 @@ void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, size_t
 			ChangeCell(cells, sels[i], line1);
 		}
 	}
+	if (cells != TXT && cells != TXTTL && cells != TXT + TXTTL)
+		AdjustWidths(cells);
 
-	AdjustWidths(cells);
 	if (selline)
 		NextLine();
 	else{

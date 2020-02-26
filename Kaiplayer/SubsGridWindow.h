@@ -20,6 +20,7 @@
 
 class SubsGridPreview;
 class SubsGrid;
+class wxGraphicsContext;
 
 class SubsGridWindow : public SubsGridBase
 {
@@ -27,6 +28,7 @@ public:
 	SubsGridWindow(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style);
 	virtual ~SubsGridWindow();
 	void AdjustWidths(int cell = 8191);
+	void AdjustWidthsGDIPlus(wxGraphicsContext *gc, int cell);
 	int CalcChars(const wxString &txt, wxString *lines = NULL, bool *bad = NULL);
 	void ChangeActiveLine(int newActiveLine, bool refresh = false, bool scroll = false, bool changeEditboxLine = true);
 	void ChangeTimeDisplay(bool frame);
@@ -56,7 +58,7 @@ protected:
 	void OnSize(wxSizeEvent& event);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } holding = false; };
 	bool ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowToDraw, int activeLine, int diffPosition);
-
+	void PaintGDIPlus(wxGraphicsContext *gc, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg);
 	int GridWidth[13];
 	int posY=0;
 	int posX=0;

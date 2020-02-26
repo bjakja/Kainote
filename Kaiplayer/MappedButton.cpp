@@ -18,7 +18,7 @@
 #include "Config.h"
 #include "wx/dcmemory.h"
 #include "wx/dcclient.h"
-#include "GDIPlusContext.h"
+//#include "GDIPlusContext.h"
 //static wxFont font;
 
 wxColour WhiteUp(const wxColour &color)
@@ -250,69 +250,69 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	int h = 0;
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
-	GDIPlus *gc = GDIPlus::Create(this);
-	if (!gc)
+	/*GDIPlus *gc = GDIPlus::Create(this);
+	if (!gc)*/
 		PaintGDI(w, h);
-	else{
-		bool enabled = IsThisEnabled();
+	//else{
+	//	bool enabled = IsThisEnabled();
 
-		gc->SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(ButtonBackgroundHover) :
-			(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
-			(HasFocus()) ? Options.GetColour(ButtonBackgroundOnFocus) :
-			(enabled) ? Options.GetColour(ButtonBackground) :
-			Options.GetColour(WindowBackgroundInactive)));
+	//	gc->SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(ButtonBackgroundHover) :
+	//		(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
+	//		(HasFocus()) ? Options.GetColour(ButtonBackgroundOnFocus) :
+	//		(enabled) ? Options.GetColour(ButtonBackground) :
+	//		Options.GetColour(WindowBackgroundInactive)));
 
-		gc->SetPen(wxPen((enter && !clicked) ? Options.GetColour(ButtonBorderHover) :
-			(clicked) ? Options.GetColour(ButtonBorderPushed) :
-			(HasFocus()) ? Options.GetColour(ButtonBorderOnFocus) :
-			(enabled) ? Options.GetColour(ButtonBorder) :
-			Options.GetColour(ButtonBorderInactive)));
+	//	gc->SetPen(wxPen((enter && !clicked) ? Options.GetColour(ButtonBorderHover) :
+	//		(clicked) ? Options.GetColour(ButtonBorderPushed) :
+	//		(HasFocus()) ? Options.GetColour(ButtonBorderOnFocus) :
+	//		(enabled) ? Options.GetColour(ButtonBorder) :
+	//		Options.GetColour(ButtonBorderInactive)));
 
-		gc->DrawRectangle(0.0, 0.0, w-1, h-1);
-		if (w > 10){
-			gc->SetFont(GetFont());
-			gc->SetFontBrush(wxBrush((enabled && changedForeground) ? GetForegroundColour() :
-				(enabled) ? Options.GetColour(WindowText) :
-				Options.GetColour(WindowTextInactive)));
+	//	gc->DrawRectangle(0.0, 0.0, w-1, h-1);
+	//	if (w > 10){
+	//		gc->SetFont(GetFont());
+	//		gc->SetFontBrush(wxBrush((enabled && changedForeground) ? GetForegroundColour() :
+	//			(enabled) ? Options.GetColour(WindowText) :
+	//			Options.GetColour(WindowTextInactive)));
 
-			float fw, fh, iw = 0;
-			gc->GetTextExtent(name, &fw, &fh);
-			if (icon.IsOk()){
-				iw = icon.GetWidth();
-				if (name != ""){
-					fw += iw + 5;
-				}
-				else{
-					fw = iw;
-				}
-				//to prevent a messed icons set integer position
-				gc->DrawBitmap((enabled) ? icon : icon.ConvertToDisabled(), 
-					floor((w - fw) / 2), (h - icon.GetHeight()) / 2, icon.GetWidth(), icon.GetHeight());
-			}
-			else if (isColorButton){
-				gc->SetBrush(wxBrush(buttonColor));
-				gc->SetPen(wxPen(Options.GetColour(ButtonBorder)));
-				gc->DrawRectangle(4.0, 4.0, w - 8, h - 8);
-			}
-			
-			if (name != ""){
-				if (iw){
-					gc->DrawText(name, ((w - fw) / 2) + iw + 5, ((h - textHeight) / 2));
-				}
-				else{
-					//wxRect cur(5, ((h - textHeight) / 2), w - 10, textHeight);
-					//gc->Clip(cur);
-					gc->DrawText(name, ((w - fw) / 2) + iw, ((h - textHeight) / 2));
-					//gc->ResetClip();
-					//gc->SetClippingRegion(cur);
-					//gc->DrawLabel(name, cur, iw ? wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL : wxALIGN_CENTER);
-					//gc->DestroyClippingRegion();
-				}
-			}
+	//		float fw, fh, iw = 0;
+	//		gc->GetTextExtent(name, &fw, &fh);
+	//		if (icon.IsOk()){
+	//			iw = icon.GetWidth();
+	//			if (name != ""){
+	//				fw += iw + 5;
+	//			}
+	//			else{
+	//				fw = iw;
+	//			}
+	//			//to prevent a messed icons set integer position
+	//			gc->DrawBitmap((enabled) ? icon : icon.ConvertToDisabled(), 
+	//				floor((w - fw) / 2), (h - icon.GetHeight()) / 2, icon.GetWidth(), icon.GetHeight());
+	//		}
+	//		else if (isColorButton){
+	//			gc->SetBrush(wxBrush(buttonColor));
+	//			gc->SetPen(wxPen(Options.GetColour(ButtonBorder)));
+	//			gc->DrawRectangle(4.0, 4.0, w - 8, h - 8);
+	//		}
+	//		
+	//		if (name != ""){
+	//			if (iw){
+	//				gc->DrawTextU(name, ((w - fw) / 2) + iw + 5, ((h - textHeight) / 2));
+	//			}
+	//			else{
+	//				//wxRect cur(5, ((h - textHeight) / 2), w - 10, textHeight);
+	//				//gc->Clip(cur);
+	//				gc->DrawTextU(name, ((w - fw) / 2) + iw, ((h - textHeight) / 2));
+	//				//gc->ResetClip();
+	//				//gc->SetClippingRegion(cur);
+	//				//gc->DrawLabel(name, cur, iw ? wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL : wxALIGN_CENTER);
+	//				//gc->DestroyClippingRegion();
+	//			}
+	//		}
 
-		}
-		delete gc;
-	}
+	//	}
+	//	delete gc;
+	//}
 }
 
 void MappedButton::PaintGDI(int w, int h){
@@ -519,52 +519,52 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 	int h = 0;
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
-	GDIPlus *gc = GDIPlus::Create(this);
-	if (!gc)
+	//GDIPlus *gc = GDIPlus::Create(this);
+	//if (!gc)
 		PaintGDI(w, h);
-	else{
-		wxColour background = GetParent()->GetBackgroundColour();
-		bool enabled = IsThisEnabled();
-		gc->SetFont(GetFont());
-		gc->SetFontBrush((enabled && changedForeground) ? GetForegroundColour() :
-			(enabled) ? Options.GetColour(WindowText) :
-			Options.GetColour(WindowTextInactive));
-		gc->SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(ButtonBackgroundHover) :
-			(toggled && !clicked) ? Options.GetColour(TogglebuttonBackgroundToggled) :
-			(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
-			(enabled) ? Options.GetColour(ButtonBackground) :
-			Options.GetColour(WindowBackgroundInactive)));
-		gc->SetPen(wxPen((enter && !clicked) ? Options.GetColour(ButtonBorderHover) :
-			(toggled && !clicked) ? Options.GetColour(TogglebuttonBorderToggled) :
-			(clicked) ? Options.GetColour(ButtonBorderPushed) :
-			(enabled) ? Options.GetColour(ButtonBorder) :
-			Options.GetColour(ButtonBorderInactive)));
+	//else{
+	//	wxColour background = GetParent()->GetBackgroundColour();
+	//	bool enabled = IsThisEnabled();
+	//	gc->SetFont(GetFont());
+	//	gc->SetFontBrush((enabled && changedForeground) ? GetForegroundColour() :
+	//		(enabled) ? Options.GetColour(WindowText) :
+	//		Options.GetColour(WindowTextInactive));
+	//	gc->SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(ButtonBackgroundHover) :
+	//		(toggled && !clicked) ? Options.GetColour(TogglebuttonBackgroundToggled) :
+	//		(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
+	//		(enabled) ? Options.GetColour(ButtonBackground) :
+	//		Options.GetColour(WindowBackgroundInactive)));
+	//	gc->SetPen(wxPen((enter && !clicked) ? Options.GetColour(ButtonBorderHover) :
+	//		(toggled && !clicked) ? Options.GetColour(TogglebuttonBorderToggled) :
+	//		(clicked) ? Options.GetColour(ButtonBorderPushed) :
+	//		(enabled) ? Options.GetColour(ButtonBorder) :
+	//		Options.GetColour(ButtonBorderInactive)));
 
-		gc->DrawRectangle(0.0, 0.0, w - 1, h - 1);
+	//	gc->DrawRectangle(0.0, 0.0, w - 1, h - 1);
 
 
-		if (w > 10){
-			float fw, fh;
-			if (icon.IsOk()){
-				fw = icon.GetWidth(); fh = icon.GetHeight();
-				gc->DrawBitmap(icon, (w - fw) / 2, (h - fh) / 2, fw, fh);
-			}
-			else{
-				gc->GetTextExtent(name, &fw, &fh);
-				//wxRect cur(5, (h - textHeight) / 2, w - 10, textHeight);
-				//gc->Clip(cur);
-				gc->DrawText(name, ((w - fw) / 2), ((h - textHeight) / 2));
-				//gc->ResetClip();
-				//tdc.GetTextExtent(name, &fw, &fh);
-				//
-				//tdc.SetClippingRegion(cur);
-				//tdc.DrawLabel(name, cur, wxALIGN_CENTER);
-				//tdc.DestroyClippingRegion();
-			}
+	//	if (w > 10){
+	//		float fw, fh;
+	//		if (icon.IsOk()){
+	//			fw = icon.GetWidth(); fh = icon.GetHeight();
+	//			gc->DrawBitmap(icon, (w - fw) / 2, (h - fh) / 2, fw, fh);
+	//		}
+	//		else{
+	//			gc->GetTextExtent(name, &fw, &fh);
+	//			//wxRect cur(5, (h - textHeight) / 2, w - 10, textHeight);
+	//			//gc->Clip(cur);
+	//			gc->DrawTextU(name, ((w - fw) / 2), ((h - textHeight) / 2));
+	//			//gc->ResetClip();
+	//			//tdc.GetTextExtent(name, &fw, &fh);
+	//			//
+	//			//tdc.SetClippingRegion(cur);
+	//			//tdc.DrawLabel(name, cur, wxALIGN_CENTER);
+	//			//tdc.DestroyClippingRegion();
+	//		}
 
-		}
-		delete gc;
-	}
+	//	}
+	//	delete gc;
+	//}
 }
 
 void ToggleButton::PaintGDI(int w, int h){

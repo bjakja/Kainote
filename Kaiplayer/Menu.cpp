@@ -835,7 +835,7 @@ MenuBar::MenuBar(wxWindow *_parent)
 	, altDown(false)
 {
 	int x = 0, y = 0;
-	font = wxFont(10, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, L"Tahoma");
+	font = wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma");
 	SetFont(font);
 	GetTextExtent(L"#TWFfGHj", &x, &y);
 	y += 6;
