@@ -45,7 +45,7 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 	if (w == 0 || h == 0){ return; }
 	wxMemoryDC tdc;
 	tdc.SelectObject(wxBitmap(w, h));
-	tdc.SetFont(wxFont(10, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma"));
+	tdc.SetFont(wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Tahoma"));
 	wxColour background = GetParent()->GetBackgroundColour();
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
@@ -98,12 +98,12 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 		if (fh < w / 2){ fh += 15; }
 		else{ fh -= (fw + 15); }
 		tdc.SetTextForeground(wxColour("#0C2B87"));
-		tdc.DrawTextW(label, fh + 1, -1);
-		tdc.DrawTextW(label, fh - 1, -1);
-		tdc.DrawTextW(label, fh + 1, -3);
-		tdc.DrawTextW(label, fh - 1, -3);
+		tdc.DrawText(label, fh + 1, -1);
+		tdc.DrawText(label, fh - 1, -1);
+		tdc.DrawText(label, fh + 1, -3);
+		tdc.DrawText(label, fh - 1, -3);
 		tdc.SetTextForeground(wxColour("#FFFFFF"));
-		tdc.DrawTextW(label, fh, -2);
+		tdc.DrawText(label, fh, -2);
 	}
 	wxPaintDC dc(this);
 	dc.Blit(0, 0, w, h, &tdc, 0, 0);

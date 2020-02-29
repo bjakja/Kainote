@@ -1135,7 +1135,7 @@ void VideoCtrl::OnPaint(wxPaintEvent& event)
 		dc.SetBrush(wxBrush("#000000"));
 		dc.SetPen(wxPen("#000000"));
 		dc.DrawRectangle(0, 0, x, y);
-		wxFont font1(72, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, L"Tahoma");
+		wxFont font1(72, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma");
 		dc.SetFont(font1);
 		wxSize size = dc.GetTextExtent(L"KaiNote");
 		dc.SetTextForeground("#2EA6E2");

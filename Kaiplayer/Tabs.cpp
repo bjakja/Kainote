@@ -30,7 +30,7 @@ Notebook::Notebook(wxWindow *parent, int id)
 	block = split = onx = farr = rarr = plus = false;
 	allTabsVisible = arrow = true;
 	sline = NULL;
-	font = wxFont(9, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT);
+	font = wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT);
 	sthis = this;
 	int fx, fy;
 	GetTextExtent(L"X",&fx, &fy, 0, 0, &font);

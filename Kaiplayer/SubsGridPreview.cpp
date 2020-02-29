@@ -277,7 +277,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			GetTextExtent(tab->SubsName, &fw, &fh, NULL, NULL, &previewGrid->font);
 			int center = ((w - fw) / 2) + scHor;
 			tdc.SetTextForeground(Options.GetColour(WindowHeaderText));
-			tdc.DrawTextW(tab->SubsName, center, 1);
+			tdc.DrawText(tab->SubsName, center, 1);
 			int xHeight = previewGrid->GridHeight - 6;
 			int wPos = w + scHor - 21;
 			if (onX || pushedX){
@@ -454,10 +454,10 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 						else{ bfw = 0; }
 
 						GetTextExtent(cmp, &fw, &fh, NULL, NULL, &previewGrid->font);
-						tdc.DrawTextW(cmp, posX + bfw + 2, posY);
-						tdc.DrawTextW(cmp, posX + bfw + 4, posY);
-						tdc.DrawTextW(cmp, posX + bfw + 2, posY + 2);
-						tdc.DrawTextW(cmp, posX + bfw + 4, posY + 2);
+						tdc.DrawText(cmp, posX + bfw + 2, posY);
+						tdc.DrawText(cmp, posX + bfw + 4, posY);
+						tdc.DrawText(cmp, posX + bfw + 2, posY + 2);
+						tdc.DrawText(cmp, posX + bfw + 4, posY + 2);
 					}
 
 				}

@@ -397,7 +397,7 @@ void ColorPickerScreenDropper::OnPaint(wxPaintEvent &evt)
 		wxBrush cbrush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 		pdc.SetBrush(cbrush);
 		pdc.DrawRectangle(0, 0, magnification, magnification);
-		cbrush.SetStyle(wxCROSSDIAG_HATCH);
+		cbrush.SetStyle(wxBRUSHSTYLE_CROSSDIAG_HATCH);
 		cbrush.SetColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
 		pdc.SetBrush(cbrush);
 		pdc.DrawRectangle(0, 0, magnification, magnification);
@@ -612,7 +612,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	picker_sizer->Add(screen_dropper_icon, 0, wxALIGN_CENTER | wxRIGHT, 10);
 	picker_sizer->Add(screen_dropper, 0, wxALIGN_CENTER);
 	picker_sizer->AddStretchSpacer();
-	picker_sizer->Add(recent_sizer, 0, wxALIGN_RIGHT | wxRIGHT | wxTOP | wxBOTTOM, 4);
+	picker_sizer->Add(recent_sizer, 0, /*wxALIGN_RIGHT | */wxRIGHT | wxTOP | wxBOTTOM, 4);
 	//picker_sizer->AddStretchSpacer();
 
 	wxSizer *button_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -626,7 +626,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	input_sizer->AddStretchSpacer(1);
 	input_sizer->Add(picker_sizer, 0, /*wxALIGN_CENTER | */wxEXPAND);
 	input_sizer->AddStretchSpacer(2);
-	input_sizer->Add(button_sizer, 0, wxALIGN_RIGHT | wxALIGN_BOTTOM);
+	input_sizer->Add(button_sizer, 0, wxALIGN_RIGHT /*| wxALIGN_BOTTOM*/);
 	wxBoxSizer *secondSpectrumBox = new wxBoxSizer(wxVERTICAL);
 	secondSpectrumBox->Add(spectrum_box, 0, wxBOTTOM, 5);
 	secondSpectrumBox->Add(SwitchClicks, 0, wxLEFT | wxBOTTOM, 3);

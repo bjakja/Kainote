@@ -19,6 +19,7 @@
 #include <wx/caret.h>
 #include "KaiScrollbar.h"
 #include "TextEditorTagList.h"
+#include <map>
 
 class EditBox;
 class KainoteFrame;
@@ -66,6 +67,7 @@ protected:
 	void DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windowh);
 	bool HitTest(wxPoint pos, wxPoint *cur);
 	void CalcWrap(bool updatechars = true, bool sendevent = true);
+	void CalcWrapsD2D(wxGraphicsContext *gc, int w, int h);
 	void FindWord(int pos, int *start, int *end);
 	int FindBracket(wxUniChar sbrkt, wxUniChar ebrkt, int pos, bool fromback = false);
 	void MakeCursorVisible();
@@ -86,7 +88,7 @@ protected:
 	wxFont font;
 	wxArrayString misspels;
 	wxCaret *caret;
-	wxArrayInt wraps;
+	std::vector<int> wraps;
 	wxArrayInt errors;
 	wxArrayInt selectionWords;
 	//adding new keywords change its num in CheckIfKeyword
@@ -110,6 +112,7 @@ protected:
 	int fsize;
 	int tmpstart, tmpend;
 	int statusBarHeight;
+	std::map<wxUniChar, double> fontSizes;
 	DECLARE_EVENT_TABLE()
 };
 

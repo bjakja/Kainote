@@ -34,7 +34,7 @@ FontList::FontList(wxWindow *parent,long id,const wxPoint &pos, const wxSize &si
 		Refresh(false);
 	});
 
-	font= wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
+	font= wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
 
 	wxClientDC dc(this);
 	dc.SetFont(font);

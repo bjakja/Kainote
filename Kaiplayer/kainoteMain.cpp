@@ -274,21 +274,6 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 		LogHandler::ShowLogWindow();
 	}, 9989);
 
-	auto focusFunction = [=](wxFocusEvent &event) -> void {
-		//TabPanel *tab = GetTab();
-		//if (tab->lastFocusedWindow){
-		//	tab->lastFocusedWindow->SetFocus();
-		//}
-		//else if (tab->Grid->IsShown()){
-		//	tab->Grid->SetFocus();
-		//}//test why it was disabled or fix this bug
-		//else if (tab->Video->IsShown()){
-		//	tab->Video->SetFocus();
-		//}
-
-	};
-
-	Bind(wxEVT_SET_FOCUS, focusFunction);
 	Bind(wxEVT_ACTIVATE, &KainoteFrame::OnActivate, this);
 	Connect(SnapWithStart, SnapWithEnd, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnAudioSnap);
 	Tabs->SetDropTarget(new DragnDrop(this));
@@ -306,6 +291,21 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	EnableCrashingOnCrashes();
 	sendFocus.SetOwner(this, 6789);
+	auto focusFunction = [=](wxFocusEvent &event) -> void {
+		TabPanel *tab = GetTab();
+		if (tab->lastFocusedWindow){
+			tab->lastFocusedWindow->SetFocus();
+		}
+		else if (tab->Grid->IsShown()){
+			tab->Grid->SetFocus();
+		}//test why it was disabled or fix this bug
+		else if (tab->Video->IsShown()){
+			tab->Video->SetFocus();
+		}
+
+	};
+
+	Bind(wxEVT_SET_FOCUS, focusFunction);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
 		//if it will crash on last focused window
 		//we need to remove last focused window

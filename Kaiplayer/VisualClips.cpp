@@ -782,8 +782,8 @@ D3DXVECTOR2 DrawingAndClip::CalcWH()
 	float offx = 0, offy = 0;
 	if (textwithclip != ""){
 		Styles *textstyle = tab->Grid->GetStyle(0, tab->Edit->line->Style);
-		wxFont stylefont(wxAtoi(textstyle->Fontsize), wxSWISS, (textstyle->Italic) ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
-			(textstyle->Bold) ? wxBOLD : wxNORMAL, textstyle->Underline, textstyle->Fontname);//, textstyle->Encoding
+		wxFont stylefont(wxAtoi(textstyle->Fontsize), wxFONTFAMILY_SWISS, (textstyle->Italic) ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
+			(textstyle->Bold) ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, textstyle->Underline, textstyle->Fontname);//, textstyle->Encoding
 		int ex = 0, ey = 0, eb = 0, et = 0;
 		wxClientDC dc(tab);
 		dc.GetTextExtent(textwithclip, &ex, &ey, &eb, &et, &stylefont);

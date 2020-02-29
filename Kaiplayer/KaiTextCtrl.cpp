@@ -17,6 +17,7 @@
 #include "Menu.h"
 #include <wx/clipbrd.h>
 #include <wx/msw/private.h>
+#include <wx/graphics.h>
 
 
 KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const wxPoint& pos, const wxSize& size, long _style, const wxValidator & validator, const wxString & name)
@@ -261,8 +262,18 @@ void KaiTextCtrl::DeleteStyles(size_t textStart, size_t textEnd)
 
 void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 {
-	//Wrapped=KText;
+	
 	long multiline = (style & wxTE_MULTILINE);
+
+	wxBitmap bmp(10, 10);
+	wxMemoryDC dc;
+	dc.SelectObject(bmp);
+	wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
+	wxGraphicsContext *gc = renderer->CreateContext(dc);
+	if (gc){
+		gc->SetFont(font, L"#000000");
+	}
+	double gfw = 0, gfh = 0;
 
 	int w, h, fw = 0, fh = 0;
 	GetSize(&w, &h);
@@ -290,7 +301,11 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 		{
 			size_t nfound = KText.find(wxUniChar(L'\n'), i);
 			i = (nfound != -1) ? nfound : len - 1;
-			GetTextExtent(KText.Mid(currentPosition, i - currentPosition + 1), &fw, &fh);
+			if (gc){
+				GetTextExtent(gc, KText.Mid(currentPosition, i - currentPosition + 1), &gfw, &gfh);
+				fw = gfw + 0.5;
+			}else
+				GetTextExtent(KText.Mid(currentPosition, i - currentPosition + 1), &fw, &fh);
 			//check text to \n
 			if (fw > mesureSize){
 				size_t j = currentPosition + 1;
@@ -304,7 +319,12 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 						spacePos = i;
 
 					j = spacePos + 1;
-					GetTextExtent(KText.Mid(textPosition, spacePos - textPosition + 1), &fw, &fh);
+					if (gc){
+						GetTextExtent(gc, KText.Mid(textPosition, spacePos - textPosition + 1), &gfw, &gfh);
+						fw = gfw + 0.5;
+					}
+					else
+						GetTextExtent(KText.Mid(textPosition, spacePos - textPosition + 1), &fw, &fh);
 					textPosition = spacePos + 1;
 					currentFW += fw;
 					//check text to space
@@ -321,7 +341,12 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 						fw = currentFW = 0;
 						int newmessure = mesureSize - 12;
 						while (j <= spacePos){
-							GetTextExtent(KText.Mid(textPosition, j - textPosition + 1), &fw, &fh);
+							if (gc){
+								GetTextExtent(gc, KText.Mid(textPosition, j - textPosition + 1), &gfw, &gfh);
+								fw = gfw + 0.5;
+							}
+							else
+								GetTextExtent(KText.Mid(textPosition, j - textPosition + 1), &fw, &fh);
 							textPosition = j + 1;
 							currentFW += fw;
 							if (currentFW > newmessure){
@@ -333,7 +358,12 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 								}
 								else if (j < spacePos){
 									if (stylewrap){
-										GetTextExtent(KText.Mid(currentPosition, j - currentPosition + 1), &fw, &fh);
+										if (gc){
+											GetTextExtent(gc, KText.Mid(currentPosition, j - currentPosition + 1), &gfw, &gfh);
+											fw = gfw + 0.5;
+										}
+										else
+											GetTextExtent(KText.Mid(currentPosition, j - currentPosition + 1), &fw, &fh);
 										pos = (stylewrap == 1) ? ((w - fw) / 2) : (w - fw) - 5;
 									}
 									positioning.push_back(pos);
@@ -350,7 +380,12 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 					currentPosition = textPosition = newWrap;
 					currentFW = 0;
 					if (stylewrap){
-						GetTextExtent(KText.Mid(currentPosition, newWrap - currentPosition + 1), &fw, &fh);
+						if (gc){
+							GetTextExtent(gc, KText.Mid(currentPosition, newWrap - currentPosition + 1), &gfw, &gfh);
+							fw = gfw + 0.5;
+						}
+						else
+							GetTextExtent(KText.Mid(currentPosition, newWrap - currentPosition + 1), &fw, &fh);
 						pos = (stylewrap == 1) ? ((w - fw) / 2) : (w - fw) - 5;
 					}
 					positioning.push_back(pos);
@@ -363,7 +398,12 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 			else{
 				size_t wrap = i + 1;
 				if (stylewrap){
-					GetTextExtent(KText.Mid(currentPosition, wrap - currentPosition + 1), &fw, &fh);
+					if (gc){
+						GetTextExtent(gc, KText.Mid(currentPosition, wrap - currentPosition + 1), &gfw, &gfh);
+						fw = gfw + 0.5;
+					}
+					else
+						GetTextExtent(KText.Mid(currentPosition, wrap - currentPosition + 1), &fw, &fh);
 					pos = (stylewrap == 1) ? ((w - fw) / 2) : (w - fw) - 5;
 				}
 				positioning.push_back(pos);
@@ -379,7 +419,13 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 		positioning.clear();
 		positioning.push_back(0);
 		wraps.push_back(KText.length());
-		GetTextExtent(KText, &fw, &fh);
+		if (gc){
+			GetTextExtent(gc, KText, &gfw, &gfh);
+			fw = gfw + 0.5;
+		}
+		else
+			GetTextExtent(KText, &fw, &fh);
+
 		int rightPos = (w - fw);
 		int pos = (style & wxALIGN_CENTER_HORIZONTAL) ? (rightPos / 2) :
 			(style & wxALIGN_RIGHT) ? rightPos - 5 : 5;
@@ -387,6 +433,8 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 		if (pos < 5){ pos = 5; }
 		positioning.push_back(pos);
 	}
+	if (gc)
+		delete gc;
 	int rightPos = h - Fheight;
 	posY = (style & wxALIGN_CENTER_VERTICAL) ? (rightPos / 2) : (style & wxALIGN_BOTTOM) ? rightPos - 2 : 2;
 	if (posY < 2){ posY = 2; }
@@ -751,29 +799,37 @@ void KaiTextCtrl::OnPaint(wxPaintEvent& event)
 		}
 
 	}
-	// Prepare bitmap
-	if (bmp) {
-		if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
-			delete bmp;
-			bmp = NULL;
+	wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
+	wxGraphicsContext *gc = renderer->CreateContext(this);
+	if (!gc){
+		// Prepare bitmap
+		if (bmp) {
+			if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
+				delete bmp;
+				bmp = NULL;
+			}
 		}
+
+		if (!bmp) bmp = new wxBitmap(w, h);
+
+		// Draw bitmap
+		wxMemoryDC bmpDC;
+
+		bmpDC.SelectObject(*bmp);
+
+		DrawFld(bmpDC, w, h);
+
+
+		dc.Blit(0, 0, w, h, &bmpDC, 0, 0);
 	}
-
-	if (!bmp) bmp = new wxBitmap(w, h);
-
-	// Draw bitmap
-	wxMemoryDC bmpDC;
-
-	bmpDC.SelectObject(*bmp);
-
-	DrawFld(bmpDC, w, h, w, h);
-
-
-	dc.Blit(0, 0, w, h, &bmpDC, 0, 0);
+	else{
+		DrawFieldD2D(gc, w, h);
+		delete gc;
+	}
 
 }
 
-void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h, int windoww, int windowh)
+void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h)
 {
 	int fw = 0, fh = 0;
 	bool enabled = IsThisEnabled();
@@ -970,9 +1026,205 @@ void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h, int windoww, int windowh)
 
 }
 
+void KaiTextCtrl::DrawFieldD2D(wxGraphicsContext *gc, int w, int h)
+{
+	double fw = 0, fh = 0;
+	bool enabled = IsThisEnabled();
+	wxColour bg = (enabled && UseBgCol()) ? wxWindowBase::GetBackgroundColour() :
+		(enabled) ? Options.GetColour(background) : Options.GetColour(WindowBackgroundInactive);
+	wxColour fg = (foreground) ? Options.GetColour(foreground) : wxWindowBase::GetForegroundColour();
+	wxColour border = (style & wxBORDER_NONE) ? bg :
+		(HasFocus()) ? Options.GetColour(TextFieldBorderOnFocus) :
+		(enabled) ? Options.GetColour(TextFieldBorder) :
+		Options.GetColour((style & wxBORDER_NONE) ? WindowBackgroundInactive : ButtonBorderInactive);
+	gc->SetBrush(wxBrush(bg));
+	gc->SetPen(wxPen(border));
+	gc->DrawRectangle(0, 0, w - 1, h - 1);
+	if (wraps.size() < 2 || positioning.size() < 2){ return; }
+	const wxColour &cselection = (HasFocus()) ? Options.GetColour(TextFieldSelection) :
+		Options.GetColour(TextFieldSelectionNoFocus);
+	const wxColour &textInactive = Options.GetColour(WindowTextInactive);
+
+	//Contsel=false;
+	//posY=2;
+	long multiline = (style & wxTE_MULTILINE);
+	int tmpPosY = posY;
+	int tmpPosX = (multiline) ? 0 : -scPos;
+	if (multiline){ tmpPosY -= scPos; }
+	bool isfirst = true;
+	int wline = 0;
+	int wchar = 0;
+
+	gc->SetFont(font, L"#000000");
+	wxString alltext = KText + " ";
+	int len = alltext.length();
+	wxUniChar bchar = alltext[Cursor.x];
+
+
+	double fww;
+	gc->SetPen(*wxTRANSPARENT_PEN);
+
+	if (Cursor.x != Selend.x || Cursor.y != Selend.y){
+		wxPoint fst, scd;
+		if ((Cursor.x + Cursor.y) > (Selend.x + Selend.y)){ fst = Selend; scd = Cursor; }
+		else{ fst = Cursor, scd = Selend; }
+
+		gc->SetBrush(wxBrush(wxColour(cselection)));
+		fww = 0;
+		//rysowanie zaznaczenia
+		for (int j = fst.y; j <= scd.y; j++){
+			if (multiline && ((j * Fheight) + Fheight - scPos < 0 || (j * Fheight) - scPos > h)){
+				continue;
+			}
+			if (j == fst.y){
+				wxString ftext = KText.SubString(wraps[j], fst.x - 1);
+				if (wraps[j] > fst.x - 1){ fw = 0; }
+				else{
+					GetTextExtent(gc, ftext, &fw, &fh);
+				}
+				wxString stext = KText.SubString(fst.x, (fst.y == scd.y) ? scd.x - 1 : wraps[j + 1] - 1);
+				GetTextExtent(gc, stext, &fww, &fh);
+
+			}
+			else{
+				fw = 0;
+				wxString selText = KText.SubString(wraps[j], (j == scd.y) ? scd.x - 1 : wraps[j + 1] - 1);
+				GetTextExtent(gc, selText, &fww, &fh);
+			}
+			gc->DrawRectangle(positioning[j + 1] + fw + tmpPosX, (j*Fheight) + tmpPosY, fww, Fheight);
+		}
+	}
+	int cursorPos = Cursor.x;
+	int cursorI = Cursor.y;
+	//if(cursorI<0){Cursor.y=0; cursorI=0;}
+	if (HasFocus() && (cursorPos >= wraps[cursorI] && cursorPos <= wraps[cursorI + 1])){
+		double fww = -1.0;
+		if (cursorPos != wraps[cursorI]){
+			size_t start = wraps[cursorI];
+			size_t end = (cursorPos < wraps[cursorI + 1]) ? cursorPos - 1 : wraps[cursorI + 1] - 1;
+			wxString beforeCursor = KText.SubString(start, end);
+			GetTextExtent(gc, beforeCursor, &fww, &fh);
+		}
+		caret->Move(positioning[cursorI + 1] + fww + tmpPosX, tmpPosY + (Fheight * cursorI));
+
+	}
+	size_t k = 0;
+	bool blockSkip = false;
+	//rysowanie tesktu
+	for (size_t i = 1; i < wraps.size(); i++){
+		if (multiline && (tmpPosY + Fheight < 0 || tmpPosY > h)){
+			tmpPosY += Fheight;
+			continue;
+		}
+		size_t linefrom = wraps[i - 1];
+		size_t lineto = wraps[i] - 1;
+		wxString line = KText.SubString(linefrom, lineto);
+
+		bool drawed = false;
+		int drawX = 0;
+		size_t lastto = linefrom;
+		while (k < textStyles.size() && enabled){
+			size_t from = textStyles[k].from;
+			size_t to = textStyles[k].to;
+			if (to < linefrom && !blockSkip){
+				k++;
+			}
+			else if (/*from >= linefrom && */from <= lineto || blockSkip){
+				//draw
+				if (from - 1 > linefrom && from > 0){
+					size_t newto = (from - linefrom) - 1;
+					if (lastto < from - 1){
+						if (lastto > linefrom + 1){
+							wxString normalstyle = line.SubString(0, lastto - linefrom - 1);
+							GetTextExtent(gc, normalstyle, &fww, 0);
+						}
+						else{ fww = 0; }
+						gc->SetFont(font, fg);
+						wxString normalText = line.SubString((lastto < linefrom) ? 0 : lastto - linefrom, newto);
+						normalText.Replace("\r", "");
+						normalText.Replace("\n", "");
+						normalText.Replace("\t", "        ");
+						gc->DrawText(normalText, positioning[i] + tmpPosX + fww, tmpPosY);
+					}
+					wxString preline = line.SubString(0, newto);
+					GetTextExtent(preline, &drawX, 0);
+				}
+				else{ drawX = 0; }
+				gc->SetFont(font, textStyles[k].color);
+				wxString colorizedText = line.SubString((from < linefrom) ? 0 : from - linefrom, (to < lineto) ? to - linefrom : line.length() - 1);
+				colorizedText.Replace("\r", "");
+				colorizedText.Replace("\n", "");
+				colorizedText.Replace("\t", "        ");
+				gc->DrawText(colorizedText, positioning[i] + tmpPosX + drawX, tmpPosY);
+				drawed = true;
+				if (to <= lineto){
+					blockSkip = false;
+					k++;
+				}
+				else{
+					blockSkip = true;
+					lastto = to + 1;
+					break;
+				}
+			}
+			else{
+				//lastto = to + 1;
+				break;
+			}
+			lastto = to + 1;
+		}
+
+		if (drawed){
+			if (lastto < lineto){
+				if (lastto - 1 >= linefrom){
+					wxString preline = line.SubString(0, (lastto - linefrom) - 1);
+					GetTextExtent(preline, &drawX, NULL);
+				}
+				else{ drawX = 0; }
+				gc->SetFont(font, fg);
+				wxString normalText = line.SubString(lastto >= linefrom ? lastto - linefrom : 0, line.length() - 1);
+				normalText.Replace("\r", "");
+				normalText.Replace("\n", "");
+				normalText.Replace("\t", "        ");
+				gc->DrawText(normalText, positioning[i] + tmpPosX + drawX, tmpPosY);
+			}
+		}
+		else{
+			line.Replace("\r", "");
+			line.Replace("\n", "");
+			line.Replace("\t", "        ");
+			gc->SetFont(font, (enabled) ? fg : textInactive);
+			size_t tlen = line.length();
+			int posx = positioning[i] + tmpPosX;
+			if (posx > -100){
+				gc->DrawText(line.Mid(0, (1000 < tlen) ? 1000 : wxString::npos), posx, tmpPosY);
+			}
+			else{
+				int tmpfw = 0;
+				size_t startPos = 0;
+				while (posx < -200){
+					GetTextExtent(line.Mid(startPos, 50), &tmpfw, NULL);
+					if (posx + tmpfw > 0)
+						break;
+					posx += tmpfw;
+					startPos += 50;
+				}
+				gc->DrawText(line.Mid(startPos, (startPos + 1000 < tlen) ? 1000 : wxString::npos), posx, tmpPosY);
+			}
+		}
+
+		tmpPosY += Fheight;
+
+	}
+	gc->SetBrush(*wxTRANSPARENT_BRUSH);
+	gc->SetPen(wxPen(border));
+	gc->DrawRectangle(0, 0, w, h);
+}
+
 bool KaiTextCtrl::HitTest(wxPoint pos, wxPoint *cur)
 {
 	int w, h, fw = 0, fh = 0;
+	double gfw = 0., gfh = 0.;
 	GetClientSize(&w, &h);
 	if (style & wxTE_MULTILINE){ pos.y += (scPos); }
 	if (!(style & wxTE_MULTILINE)){ pos.x += (scPos); }
@@ -988,17 +1240,37 @@ bool KaiTextCtrl::HitTest(wxPoint pos, wxPoint *cur)
 	wxString txt = KText + " ";
 
 	int wlen = KText.length();
-	int fww;
-	for (int i = cur->x; i<wraps[cur->y + 1] + 1; i++)
+	int fww = 0;
+	double gfww = 0.;
+	wxBitmap bmp(10, 10);
+	wxMemoryDC dc;
+	dc.SelectObject(bmp);
+	wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
+	wxGraphicsContext *gc = renderer->CreateContext(dc);
+	if (gc)
+		gc->SetFont(font, L"#000000");
+
+	for (int i = cur->x; i < wraps[cur->y + 1] + 1; i++)
 	{
-		GetTextExtent(txt.SubString(cur->x, i), &fw, &fh);
-		GetTextExtent(txt[i], &fww, &fh);//}
-		fw += positioning[cur->y + 1];
-		if (fw - (fww / 2) - 1>pos.x){ cur->x = i; find = true; break; }
+		if (gc){
+			GetTextExtent(gc, txt.SubString(cur->x, i), &gfw, &gfh);
+			GetTextExtent(gc, txt[i], &gfww, &gfh);
+			gfw += positioning[cur->y + 1];
+			if (gfw - (gfww / 2) - 1 > pos.x){ cur->x = i; find = true; break; }
+		}
+		else{
+			GetTextExtent(txt.SubString(cur->x, i), &fw, &fh);
+			GetTextExtent(txt[i], &fww, &fh);//}
+			fw += positioning[cur->y + 1];
+			if (fw - (fww / 2) - 1 > pos.x){ cur->x = i; find = true; break; }
+		}
 	}
 	if (!find){
 		cur->x = wraps[cur->y + 1];
 	}
+	if (gc)
+		delete gc;
+
 	return find;
 }
 
@@ -1228,6 +1500,18 @@ wxPoint KaiTextCtrl::PosFromCursor(wxPoint cur, bool correctToScroll)
 	if (wraps.size() < 2 || wraps[cur.y] == cur.x){ fw = 0; }
 	else{
 		wxString beforeCursor = KText.SubString(wraps[cur.y], cur.x - 1);
+		wxBitmap bmp(10, 10);
+		wxMemoryDC dc;
+		dc.SelectObject(bmp);
+		wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
+		wxGraphicsContext *gc = renderer->CreateContext(dc);
+		if (gc){
+			gc->SetFont(font, L"#000000");
+			double gfw = 0, gfh;
+			GetTextExtent(gc, beforeCursor, &gfw, &gfh);
+			fw = gfw + 0.5;
+			delete gc;
+		}
 		GetTextExtent(beforeCursor, &fw, &fh);
 	}
 	wxPoint result;
@@ -1276,7 +1560,7 @@ void KaiTextCtrl::OnScroll(wxScrollWinEvent& event)
 	}
 }
 
-void KaiTextCtrl::GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight, bool correct/*=false*/)
+void KaiTextCtrl::GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight)
 {
 	wxString txt = textToMesure;
 	txt.Replace("\r", "");
@@ -1284,6 +1568,14 @@ void KaiTextCtrl::GetTextExtent(const wxString &textToMesure, int *textWidth, in
 	txt.Replace("\t", "        ");
 	wxWindow::GetTextExtent(txt, textWidth, textHeight, 0, 0, &font);
 
+}
+void KaiTextCtrl::GetTextExtent(wxGraphicsContext *gc, const wxString &textToMesure, double *textWidth, double *textHeight)
+{
+	wxString txt = textToMesure;
+	txt.Replace("\r", "");
+	txt.Replace("\n", "");
+	txt.Replace("\t", "        ");
+	gc->GetTextExtent(txt, textWidth, textHeight);
 }
 
 void KaiTextCtrl::SetWindowStyle(long _style){
@@ -1310,6 +1602,18 @@ void KaiTextCtrl::MakeCursorVisible(bool refreshit)
 		else if (pixelPos.x > size.x - 6) {
 
 			int fh, fw;
+			wxBitmap bmp(10, 10);
+			wxMemoryDC dc;
+			dc.SelectObject(bmp);
+			wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
+			wxGraphicsContext *gc = renderer->CreateContext(dc);
+			if (gc){
+				gc->SetFont(font, L"#000000");
+				double gfw = 0, gfh;
+				GetTextExtent(gc, KText, &gfw, &gfh);
+				delete gc;
+				fw = gfw + 0.5;
+			}
 			GetTextExtent(KText, &fw, &fh);
 			fw -= (size.x - 10);
 			if (fw >= 0){

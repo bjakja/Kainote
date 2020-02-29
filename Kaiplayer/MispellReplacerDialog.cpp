@@ -155,7 +155,7 @@ void ReplacerSeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int h
 	wxString foundText = lineAndNum.Mid(findPosition.x + lineNum.length(), findPosition.y);
 	wxSize exFoundText = theList->GetTextExtent(foundText);
 	dc->DrawRectangle(x + exOfFound.x + 18, y + ((height - exOfFound.y) / 2), exFoundText.x, height);
-	dc->DrawTextW(foundText, x + exOfFound.x + 18, y + ((height - exOfFound.y) / 2));
+	dc->DrawText(foundText, x + exOfFound.x + 18, y + ((height - exOfFound.y) / 2));
 
 	dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WindowText : WindowTextInactive));
 }

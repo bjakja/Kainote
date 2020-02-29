@@ -22,6 +22,7 @@
 #include "kainoteApp.h"
 #include "wx/msw/private.h"
 #include <Dwmapi.h>
+#include <wx/graphics.h>
 #pragma comment(lib, "Dwmapi.lib")
 #define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
@@ -92,16 +93,112 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 	int w, h;
 	GetSize(&w, &h);
 	if (w < 1 || h < 1){ return; }
-	wxPaintDC dc(this);
+	
 	wxMemoryDC mdc;
 	mdc.SelectObject(wxBitmap(w, h));
-	mdc.SetFont(GetFont());
-	wxColour bg = (isActive) ? Options.GetColour(WindowBorderBackground) : Options.GetColour(WindowBorderBackgroundInactive);
-	mdc.SetBrush(bg);
-	mdc.SetPen((isActive) ? Options.GetColour(WindowBorder) : Options.GetColour(WindowBorderInactive));
-	mdc.DrawRectangle(0, 0, w, h);
+
+	wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
+	wxGraphicsContext *gc = renderer->CreateContext(mdc);
+	if (!gc){
+		mdc.SetFont(GetFont());
+		wxColour bg = (isActive) ? Options.GetColour(WindowBorderBackground) : Options.GetColour(WindowBorderBackgroundInactive);
+		mdc.SetBrush(bg);
+		mdc.SetPen((isActive) ? Options.GetColour(WindowBorder) : Options.GetColour(WindowBorderInactive));
+		mdc.DrawRectangle(0, 0, w, h);
+		wxColour text = (isActive) ? Options.GetColour(WindowHeaderText) : Options.GetColour(WindowHeaderTextInactive);
+		mdc.SetTextForeground(text);
+		int maximizeDiff = (IsMaximized()) ? 3 : 0;
+		wxIconBundle icons = GetIcons();
+		int iconScale = ((frameTopBorder - 10) / 2) * 2;
+		iconScale = (iconScale < 16) ? 16 : iconScale;
+		if (icons.GetIconCount()){
+			//if(icons.GetIconByIndex(0).GetHeight()!=16){
+			wxImage img = wxBitmap(icons.GetIconByIndex(0)).ConvertToImage();
+			img = img.Scale(iconScale, iconScale, wxIMAGE_QUALITY_BICUBIC);
+			mdc.DrawBitmap(wxBitmap(img), 8 + maximizeDiff, ((frameTopBorder - iconScale) / 2) + maximizeDiff + 1);
+			//}else{
+			//mdc.DrawIcon(icons.GetIconByIndex(0), 4, 4);
+			//}
+		}
+		if (GetTitle() != ""){
+			int startX = icons.GetIconCount() ? iconScale + 14 : 6 + maximizeDiff;
+			int maxWidth = w - 75 - maximizeDiff - startX;
+			mdc.DrawText(GetTruncateText(GetTitle(), maxWidth, this), startX, 5 + maximizeDiff);
+		}
+
+		int buttonScale = ((frameTopBorder - 8) / 2) * 2;
+		buttonScale = (buttonScale < 18) ? 18 : buttonScale;
+
+		if (enterClose || pushedClose){
+			wxColour buttonxbg = (enterClose && !pushedClose) ? Options.GetColour(WindowHoverCloseButton) :
+				Options.GetColour(WindowPushedCloseButton);
+			mdc.SetBrush(buttonxbg);
+			mdc.SetPen(buttonxbg);
+			mdc.DrawRectangle(w - frameTopBorder - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
+		}
+		else if (enterMaximize || pushedMaximize){
+			wxColour buttonxbg = (enterMaximize && !pushedMaximize) ? Options.GetColour(WindowHoverHeaderElement) :
+				Options.GetColour(WindowPushedHeaderElement);
+			mdc.SetBrush(buttonxbg);
+			mdc.SetPen(buttonxbg);
+			mdc.DrawRectangle(w - (frameTopBorder * 2) - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
+		}
+		else if (enterMinimize || pushedMinimize){
+			wxColour buttonxbg = (enterMinimize && !pushedMinimize) ? Options.GetColour(WindowHoverHeaderElement) :
+				Options.GetColour(WindowPushedHeaderElement);
+			mdc.SetBrush(buttonxbg);
+			mdc.SetPen(buttonxbg);
+			mdc.DrawRectangle(w - (frameTopBorder * 3) - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
+		}
+		mdc.SetPen(wxPen(text, 2));
+		mdc.SetBrush(wxBrush(text));
+		//draw X
+		mdc.DrawLine(w - frameTopBorder + 3 - maximizeDiff, 8 + maximizeDiff, w - (frameBorder + 6) - maximizeDiff, frameTopBorder - 8 + maximizeDiff);
+		mdc.DrawLine(w - (frameBorder + 6) - maximizeDiff, 8 + maximizeDiff, w - frameTopBorder + 3 - maximizeDiff, frameTopBorder - 8 + maximizeDiff);
+		//draw maximize
+
+		if (IsMaximized()){
+			int realButtonScale = (buttonScale - 6);
+			int processScale = (realButtonScale / 3);
+			int processScalex2 = processScale * 2;
+			mdc.SetPen(text);
+			mdc.SetBrush(*wxTRANSPARENT_BRUSH);
+			mdc.DrawRectangle(w - (frameTopBorder * 2) + 3 + realButtonScale - processScalex2 - 1 - maximizeDiff, 8 + maximizeDiff, processScalex2 + 1, processScalex2 - 1);
+			mdc.DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 8 + realButtonScale - processScalex2 + 0 + maximizeDiff, processScalex2 + 1, processScalex2 - 1);
+			mdc.SetPen(*wxTRANSPARENT_PEN);
+		}
+		else{
+			mdc.SetPen(*wxTRANSPARENT_PEN);
+			mdc.DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 7 + maximizeDiff, 1, buttonScale - 6);
+			mdc.DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 7 + maximizeDiff, buttonScale - 6, 2);
+			mdc.DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 7 + maximizeDiff + buttonScale - 6 + maximizeDiff, buttonScale - 6, 1);
+			mdc.DrawRectangle(w - (frameTopBorder * 2) + (buttonScale - 4) - maximizeDiff, 7 + maximizeDiff, 1, buttonScale - 6);
+		}
+		//draw minimize
+		mdc.SetBrush(wxBrush(text));
+		mdc.DrawRectangle(w - (frameTopBorder * 3) + 3 - maximizeDiff, buttonScale - 1 + maximizeDiff, buttonScale - 6, 2);
+	}
+	else{
+		PaintD2D(gc, w, h);
+		delete gc;
+	}
+
+	wxPaintDC dc(this);
+	dc.Blit(0, 0, w, frameTopBorder, &mdc, 0, 0);
+	dc.Blit(0, frameTopBorder, frameBorder, h - frameTopBorder - frameBorder, &mdc, 0, frameTopBorder);
+	dc.Blit(w - frameBorder, frameTopBorder, frameBorder, h - frameTopBorder - frameBorder, &mdc, w - frameBorder, frameTopBorder);
+	dc.Blit(0, h - frameBorder, w, frameBorder, &mdc, 0, h - frameBorder);
+}
+
+void KaiFrame::PaintD2D(wxGraphicsContext *gc, int w, int h)
+{
 	wxColour text = (isActive) ? Options.GetColour(WindowHeaderText) : Options.GetColour(WindowHeaderTextInactive);
-	mdc.SetTextForeground(text);
+	gc->SetFont(GetFont(), text);
+	wxColour bg = (isActive) ? Options.GetColour(WindowBorderBackground) : Options.GetColour(WindowBorderBackgroundInactive);
+	gc->SetBrush(bg);
+	gc->SetPen((isActive) ? Options.GetColour(WindowBorder) : Options.GetColour(WindowBorderInactive));
+	gc->DrawRectangle(0, 0, w - 1, h - 1);
+	
 	int maximizeDiff = (IsMaximized()) ? 3 : 0;
 	wxIconBundle icons = GetIcons();
 	int iconScale = ((frameTopBorder - 10) / 2) * 2;
@@ -110,15 +207,15 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 		//if(icons.GetIconByIndex(0).GetHeight()!=16){
 		wxImage img = wxBitmap(icons.GetIconByIndex(0)).ConvertToImage();
 		img = img.Scale(iconScale, iconScale, wxIMAGE_QUALITY_BICUBIC);
-		mdc.DrawBitmap(wxBitmap(img), 8 + maximizeDiff, ((frameTopBorder - iconScale) / 2) + maximizeDiff + 1);
+		gc->DrawBitmap(wxBitmap(img), 8 + maximizeDiff, ((frameTopBorder - iconScale) / 2) + maximizeDiff + 1, img.GetWidth(), img.GetHeight());
 		//}else{
-		//mdc.DrawIcon(icons.GetIconByIndex(0), 4, 4);
+		//gc->DrawIcon(icons.GetIconByIndex(0), 4, 4);
 		//}
 	}
 	if (GetTitle() != ""){
 		int startX = icons.GetIconCount() ? iconScale + 14 : 6 + maximizeDiff;
 		int maxWidth = w - 75 - maximizeDiff - startX;
-		mdc.DrawText(GetTruncateText(GetTitle(), maxWidth, this), startX, 5 + maximizeDiff);
+		gc->DrawText(GetTruncateText(GetTitle(), maxWidth, this), startX, 5 + maximizeDiff);
 	}
 
 	int buttonScale = ((frameTopBorder - 8) / 2) * 2;
@@ -127,56 +224,56 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 	if (enterClose || pushedClose){
 		wxColour buttonxbg = (enterClose && !pushedClose) ? Options.GetColour(WindowHoverCloseButton) :
 			Options.GetColour(WindowPushedCloseButton);
-		mdc.SetBrush(buttonxbg);
-		mdc.SetPen(buttonxbg);
-		mdc.DrawRectangle(w - frameTopBorder - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
+		gc->SetBrush(buttonxbg);
+		gc->SetPen(buttonxbg);
+		gc->DrawRectangle(w - frameTopBorder - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
 	}
 	else if (enterMaximize || pushedMaximize){
 		wxColour buttonxbg = (enterMaximize && !pushedMaximize) ? Options.GetColour(WindowHoverHeaderElement) :
 			Options.GetColour(WindowPushedHeaderElement);
-		mdc.SetBrush(buttonxbg);
-		mdc.SetPen(buttonxbg);
-		mdc.DrawRectangle(w - (frameTopBorder * 2) - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
+		gc->SetBrush(buttonxbg);
+		gc->SetPen(buttonxbg);
+		gc->DrawRectangle(w - (frameTopBorder * 2) - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
 	}
 	else if (enterMinimize || pushedMinimize){
 		wxColour buttonxbg = (enterMinimize && !pushedMinimize) ? Options.GetColour(WindowHoverHeaderElement) :
 			Options.GetColour(WindowPushedHeaderElement);
-		mdc.SetBrush(buttonxbg);
-		mdc.SetPen(buttonxbg);
-		mdc.DrawRectangle(w - (frameTopBorder * 3) - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
+		gc->SetBrush(buttonxbg);
+		gc->SetPen(buttonxbg);
+		gc->DrawRectangle(w - (frameTopBorder * 3) - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
 	}
-	mdc.SetPen(wxPen(text, 2));
-	mdc.SetBrush(wxBrush(text));
+	gc->SetPen(wxPen(text, 2));
+	gc->SetBrush(wxBrush(text));
 	//draw X
-	mdc.DrawLine(w - frameTopBorder + 3 - maximizeDiff, 8 + maximizeDiff, w - (frameBorder + 6) - maximizeDiff, frameTopBorder - 8 + maximizeDiff);
-	mdc.DrawLine(w - (frameBorder + 6) - maximizeDiff, 8 + maximizeDiff, w - frameTopBorder + 3 - maximizeDiff, frameTopBorder - 8 + maximizeDiff);
+	wxGraphicsPath path = gc->CreatePath();
+	path.MoveToPoint(w - frameTopBorder + 3 - maximizeDiff, 8 + maximizeDiff);
+	path.AddLineToPoint(w - (frameBorder + 6) - maximizeDiff, frameTopBorder - 8 + maximizeDiff);
+	path.MoveToPoint(w - (frameBorder + 6) - maximizeDiff, 8 + maximizeDiff);
+	path.AddLineToPoint(w - frameTopBorder + 3 - maximizeDiff, frameTopBorder - 8 + maximizeDiff);
+	gc->StrokePath(path);
+
 	//draw maximize
 
 	if (IsMaximized()){
 		int realButtonScale = (buttonScale - 6);
 		int processScale = (realButtonScale / 3);
 		int processScalex2 = processScale * 2;
-		mdc.SetPen(text);
-		mdc.SetBrush(*wxTRANSPARENT_BRUSH);
-		mdc.DrawRectangle(w - (frameTopBorder * 2) + 3 + realButtonScale - processScalex2 - 1 - maximizeDiff, 8 + maximizeDiff, processScalex2 + 1, processScalex2 - 1);
-		mdc.DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 8 + realButtonScale - processScalex2 + 0 + maximizeDiff, processScalex2 + 1, processScalex2 - 1);
-		mdc.SetPen(*wxTRANSPARENT_PEN);
+		gc->SetPen(text);
+		gc->SetBrush(*wxTRANSPARENT_BRUSH);
+		gc->DrawRectangle(w - (frameTopBorder * 2) + 3 + realButtonScale - processScalex2 - 1 - maximizeDiff, 8 + maximizeDiff, processScalex2 + 1, processScalex2 - 1);
+		gc->DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 8 + realButtonScale - processScalex2 + 0 + maximizeDiff, processScalex2 + 1, processScalex2 - 1);
+		gc->SetPen(*wxTRANSPARENT_PEN);
 	}
 	else{
-		mdc.SetPen(*wxTRANSPARENT_PEN);
-		mdc.DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 7 + maximizeDiff, 1, buttonScale - 6);
-		mdc.DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 7 + maximizeDiff, buttonScale - 6, 2);
-		mdc.DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 7 + maximizeDiff + buttonScale - 6 + maximizeDiff, buttonScale - 6, 1);
-		mdc.DrawRectangle(w - (frameTopBorder * 2) + (buttonScale - 4) - maximizeDiff, 7 + maximizeDiff, 1, buttonScale - 6);
+		gc->SetPen(*wxTRANSPARENT_PEN);
+		gc->DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 7 + maximizeDiff, 1, buttonScale - 6);
+		gc->DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 7 + maximizeDiff, buttonScale - 6, 2);
+		gc->DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 7 + maximizeDiff + buttonScale - 6 + maximizeDiff, buttonScale - 6, 1);
+		gc->DrawRectangle(w - (frameTopBorder * 2) + (buttonScale - 4) - maximizeDiff, 7 + maximizeDiff, 1, buttonScale - 6);
 	}
 	//draw minimize
-	mdc.SetBrush(wxBrush(text));
-	mdc.DrawRectangle(w - (frameTopBorder * 3) + 3 - maximizeDiff, buttonScale - 1 + maximizeDiff, buttonScale - 6, 2);
-
-	dc.Blit(0, 0, w, frameTopBorder, &mdc, 0, 0);
-	dc.Blit(0, frameTopBorder, frameBorder, h - frameTopBorder - frameBorder, &mdc, 0, frameTopBorder);
-	dc.Blit(w - frameBorder, frameTopBorder, frameBorder, h - frameTopBorder - frameBorder, &mdc, w - frameBorder, frameTopBorder);
-	dc.Blit(0, h - frameBorder, w, frameBorder, &mdc, 0, h - frameBorder);
+	gc->SetBrush(wxBrush(text));
+	gc->DrawRectangle(w - (frameTopBorder * 3) + 3 - maximizeDiff, buttonScale - 1 + maximizeDiff, buttonScale - 6, 2);
 }
 
 void KaiFrame::SetLabel(const wxString &text)
@@ -288,7 +385,8 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 			wxRect rc3(0, h - frameBorder, w, frameBorder);
 			Refresh(false, &rc3);
 		}
-		//tutaj nie mo¿e byæ update bo zostawia jakieœ œmieci w górnym rogu okna
+		//Cannot use update here cause window blinking even when video is paused
+		//and there is some trash on left top border
 		//Update();
 	}
 	if (uMsg == WM_ERASEBKGND){

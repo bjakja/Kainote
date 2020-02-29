@@ -374,7 +374,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 		//MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
 
-		FontPickerButton *optf = new FontPickerButton(EditorAdvanced, -1, wxFont(Options.GetInt(GridFontSize), wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, Options.GetString(GridFontName)));
+		FontPickerButton *optf = new FontPickerButton(EditorAdvanced, -1, wxFont(Options.GetInt(GridFontSize), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Options.GetString(GridFontName)));
 		ConOpt(optf, GridFontName);
 		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Czcionka pola napisów:")), 3, wxRIGHT | /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND, 10);
 		MainSizer2->Add(optf, 1, wxEXPAND);

@@ -423,10 +423,10 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 							GetTextExtent(cmp, &fw, &fh, NULL, NULL, &font);
 
-							tdc.DrawTextW(cmp, posX + bfw + 2, posY);
-							tdc.DrawTextW(cmp, posX + bfw + 4, posY);
-							tdc.DrawTextW(cmp, posX + bfw + 2, posY + 2);
-							tdc.DrawTextW(cmp, posX + bfw + 4, posY + 2);
+							tdc.DrawText(cmp, posX + bfw + 2, posY);
+							tdc.DrawText(cmp, posX + bfw + 4, posY);
+							tdc.DrawText(cmp, posX + bfw + 2, posY + 2);
+							tdc.DrawText(cmp, posX + bfw + 4, posY + 2);
 						}
 
 					}
@@ -458,7 +458,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 						img = img.Rotate180();
 						tdc.DrawBitmap(img, posX + 6, posY + 5);
 					}
-					tdc.DrawTextW(Dial->Text, posX + 23, posY + 1);
+					tdc.DrawText(Dial->Text, posX + 23, posY + 1);
 					break;
 				}
 				cur = wxRect(posX + 3, posY, GridWidth[j] - 6, GridHeight);
@@ -539,7 +539,7 @@ void SubsGridWindow::PaintGDIPlus(wxGraphicsContext *gc, int w, int h, int size,
 	//gc->SetFont(font);
 	gc->SetPen(*wxTRANSPARENT_PEN);
 	gc->SetBrush(wxBrush(linesCol));
-	gc->DrawRectangle(0, 0, w + scHor - 1, h - 1);
+	gc->DrawRectangle(0, 0, w + scHor, h);
 
 	int ilcol;
 	posY = 0;
@@ -709,13 +709,13 @@ void SubsGridWindow::PaintGDIPlus(wxGraphicsContext *gc, int w, int h, int size,
 				int halfGridHeight = (GridHeight / 2);
 				int newPosY = posY + GridHeight + 1;
 				int startDrawPosY = newPosY + ((GridHeight - 10) / 2) - halfGridHeight;
-				gc->DrawRectangle(1, startDrawPosY, 9, 9);
-				//gc->DrawLine(3, newPosY - 1, 8, newPosY - 1);
-				//if (hasHiddenBlock == 1){
-				//	gc->DrawLine(5, startDrawPosY + 2, 5, startDrawPosY + 7);
-				//}
-				////gc->SetPen(SpelcheckerCol);
-				//gc->DrawLine(10, newPosY - 1, w + scHor, newPosY - 1);
+				gc->DrawRectangle(1, startDrawPosY, 8, 8);
+				gc->StrokeLine(3, newPosY - 1, 7, newPosY - 1);
+				if (hasHiddenBlock == 1){
+					gc->StrokeLine(5, startDrawPosY + 2, 5, startDrawPosY + 6);
+				}
+				//gc->SetPen(SpelcheckerCol);
+				gc->StrokeLine(9, newPosY - 1, w + scHor, newPosY - 1);
 			}
 			if (Dial){
 				if (!startBlock && Dial->isVisible == VISIBLE_BLOCK){
@@ -728,8 +728,8 @@ void SubsGridWindow::PaintGDIPlus(wxGraphicsContext *gc, int w, int h, int size,
 					gc->SetPen(textcol);
 					int halfLine = posY - 1;
 					if (isLastLine && !notVisibleBlock){ halfLine = posY + GridHeight; }
-					/*gc->DrawLine(5, startDrawPosYFromPlus, 5, halfLine);
-					gc->DrawLine(5, halfLine, w + scHor, halfLine);*/
+					gc->StrokeLine(5, startDrawPosYFromPlus, 5, halfLine);
+					gc->StrokeLine(5, halfLine, w + scHor, halfLine);
 					startBlock = false;
 				}
 			}

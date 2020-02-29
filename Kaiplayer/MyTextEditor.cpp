@@ -141,7 +141,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 		selectionWords.clear();
 
 	wraps.clear();
-	wraps.Add(0);
+	wraps.push_back(0);
 	if (MText != ""){
 		int w, h, fw = 0, fh = 0;
 		double gcfw = 0.f, gcfh = 0.f;
@@ -155,7 +155,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 		size_t i = 0;
 		size_t textLen = MText.length();
 		if (w < 20){
-			while (i < textLen){ i++; wraps.Add(i); }
+			while (i < textLen){ i++; wraps.push_back(i); }
 		}
 		else{
 			wxBitmap bmp(10, 10);
@@ -163,80 +163,115 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 			dc.SelectObject(bmp);
 			wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
 			wxGraphicsContext *gc = renderer->CreateContext(dc);
-			if (gc)
+			if (gc){
 				gc->SetFont(font, "L#000000");
+				CalcWrapsD2D(gc, w, h);
+				delete gc;
+			}
+			else{
 
-			int podz = 0;
-			wxString wrapchars = " \\,;:}{()";
+				int podz = 0;
+				wxString wrapchars = " \\,;:}{()";
 
-			int nwrap = -1;
-			int allwrap = 0;
-			int approxSize = w / fsize;
-			while (i < textLen)
-			{
-				i = podz + approxSize;
-				if (i >= textLen){ i = textLen - 1; }
-				bool forward = false;
-				bool forwardNotFound = true;
-				bool backward = false;
-				bool backwardNotFound = true;
-				while (1)
+				int nwrap = -1;
+				int allwrap = 0;
+				int approxSize = w / fsize;
+				while (i < textLen)
 				{
-					wxString wrap = MText.SubString(podz, i);
-					if (gc){
-						gc->GetTextExtent(wrap, &gcfw, &gcfh);
-					}
-					else{
+					i = podz + approxSize;
+					if (i >= textLen){ i = textLen - 1; }
+					bool forward = false;
+					bool forwardNotFound = true;
+					bool backward = false;
+					bool backwardNotFound = true;
+					while (1)
+					{
+						wxString wrap = MText.SubString(podz, i);
+						/*if (gc){
+							gc->GetTextExtent(wrap, &gcfw, &gcfh);
+							}
+							else{*/
 						GetTextExtent(wrap, &fw, &fh, NULL, NULL, &font);
-						gcfw = fh;
-					}
-					allwrap = i;
-					if (gcfw < w - 7 && !backward && backwardNotFound && i < textLen - 1){
-						int j = i + 1;
-						while (j < textLen && forwardNotFound){
-							if (wrapchars.Find(MText[j]) != -1){
-								nwrap = j;
-								if (MText[j] == L' '){ nwrap++; }
-								forward = true;
-								break;
+						//gcfw = fh;
+						//}
+						allwrap = i;
+						if (fw < w - 7 && !backward && backwardNotFound && i < textLen - 1){
+							int j = i + 1;
+							while (j < textLen && forwardNotFound){
+								if (wrapchars.Find(MText[j]) != -1){
+									nwrap = j;
+									if (MText[j] == L' '){ nwrap++; }
+									forward = true;
+									break;
+								}
+								j++;
 							}
-							j++;
+							if (!forward){ i++; forwardNotFound = false; }
+							else{ i = j; }
 						}
-						if (!forward){ i++; forwardNotFound = false; }
-						else{ i = j; }
-					}
-					else if (gcfw > w - 7 && i > podz){
-						size_t k = i - 1;
-						while (k > podz && backwardNotFound){
-							if (wrapchars.Find(MText[k]) != -1){
-								nwrap = k;
-								if (MText[k] == L' '){ nwrap++; }
-								backward = true;
-								break;
+						else if (fw > w - 7 && i > podz){
+							size_t k = i - 1;
+							while (k > podz && backwardNotFound){
+								if (wrapchars.Find(MText[k]) != -1){
+									nwrap = k;
+									if (MText[k] == L' '){ nwrap++; }
+									backward = true;
+									break;
+								}
+								k--;
 							}
-							k--;
+							if (!backward){ if (i > podz) i--; backwardNotFound = false; }
+							else{ i = k; }
 						}
-						if (!backward){ if (i > podz) i--; backwardNotFound = false; }
-						else{ i = k; }
-					}
-					else{
-						int wwrap = (nwrap > 0 && nwrap > wraps[wraps.size() - 1] && nwrap <= allwrap && i < textLen - 1) ? nwrap : (i >= textLen - 1) ? textLen : allwrap + 1;
-						wraps.Add(wwrap); podz = wwrap; nwrap = -1; allwrap = i;
-						i++;
-						break;
+						else{
+							int wwrap = (nwrap > 0 && nwrap > wraps[wraps.size() - 1] && nwrap <= allwrap && i < textLen - 1) ? nwrap : (i >= textLen - 1) ? textLen : allwrap + 1;
+							wraps.push_back(wwrap); podz = wwrap; nwrap = -1; allwrap = i;
+							i++;
+							break;
+						}
 					}
 				}
+				//if (gc)
+				//delete gc;
 			}
-			if (gc)
-				delete gc;
 		}
 	}
 	else{
-		wraps.Add(MText.length());
+		wraps.push_back(MText.length());
 	}
 		
 	if (updatechars){ EB->UpdateChars(); }
 	if (sendevent){ wxCommandEvent evt2(wxEVT_COMMAND_TEXT_UPDATED, GetId()); AddPendingEvent(evt2); }
+}
+
+void TextEditor::CalcWrapsD2D(wxGraphicsContext *gc, int w, int h)
+{
+	//wxString wrapchars = L" \\,;:}{()";
+	double gfw, gfh;
+	size_t i = 0;
+	size_t textLen = MText.length();
+	double widthCount = 0.0;
+	while (i < textLen)
+	{
+		const wxUniChar &ch = MText[i];
+		auto &it = fontSizes.find(ch);
+		if (it != fontSizes.end()){
+			widthCount += it->second;
+		}
+		else{
+			gc->GetTextExtent(ch, &gfw, &gfh);
+			fontSizes.insert(std::pair<wxUniChar, double>(ch, gfw));
+			widthCount += gfw;
+		}
+		if (widthCount > w - 7){
+			wraps.push_back(i - 1);
+			widthCount = 0;
+			i--;
+		}
+		i++;
+	}
+	if (wraps[wraps.size() - 1] != textLen)
+		wraps.push_back(textLen);
 }
 
 void TextEditor::OnCharPress(wxKeyEvent& event)
@@ -946,7 +981,9 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 				if (!text.empty())
 					gc->GetTextExtent(mestext + parttext, &fww, &fh);
 
+				//gc->SetPen(ctext);
 				caret->Move(fww + 3, posY);
+				//gc->StrokeLine(fww + 3, posY, fww + 3, posY + fontHeight);
 				cursorWasSet = true;
 			}
 
@@ -981,6 +1018,8 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 			if (mestext + parttext == L""){ fw = 0.0; }
 			else{ gc->GetTextExtent(mestext + parttext, &fw, &fh); }
 			caret->Move(fw + 3, posY);
+			//gc->SetPen(ctext);
+			//gc->StrokeLine(fw + 3, posY, fw + 3, posY + fontHeight);
 			cursorWasSet = true;
 		}
 		if (hasFocus && (i == Brackets.x || i == Brackets.y)){
@@ -1133,7 +1172,7 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 		gc->DrawRectangle(0, h, w, statusBarHeight);
 		int ypos = ((statusBarHeight - fontHeight) / 2) + h;
 		gc->DrawText(wxString::Format("Length: %i", (int)MText.length()), 5, ypos);
-		gc->DrawText(wxString::Format("Lines: %i", (int)wraps.GetCount() - 1), 105, ypos);
+		gc->DrawText(wxString::Format("Lines: %i", (int)wraps.size() - 1), 105, ypos);
 		gc->DrawText(wxString::Format("Ln: %i", Cursor.y + 1), 185, ypos);
 		gc->DrawText(wxString::Format("Col: %i", Cursor.x - wraps[Cursor.y] + 1), 245, ypos);
 		gc->DrawText(wxString::Format("Sel: %i", abs(Selend.x - Cursor.x)), 305, ypos);
@@ -1462,7 +1501,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 		dc.DrawRectangle(0, h, w, statusBarHeight);
 		int ypos = ((statusBarHeight - fontHeight) / 2) + h;
 		dc.DrawText(wxString::Format("Length: %i", (int)MText.length()), 5, ypos);
-		dc.DrawText(wxString::Format("Lines: %i", (int)wraps.GetCount() - 1), 105, ypos);
+		dc.DrawText(wxString::Format("Lines: %i", (int)wraps.size() - 1), 105, ypos);
 		dc.DrawText(wxString::Format("Ln: %i", Cursor.y + 1), 185, ypos);
 		dc.DrawText(wxString::Format("Col: %i", Cursor.x - wraps[Cursor.y] + 1), 245, ypos);
 		dc.DrawText(wxString::Format("Sel: %i", abs(Selend.x - Cursor.x)), 305, ypos);

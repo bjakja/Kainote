@@ -17,6 +17,7 @@
 
 #include <wx/toplevel.h>
 #include <wx/sizer.h>
+class wxGraphicsContext;
 
 
 class KaiFrame : public wxTopLevelWindow
@@ -37,6 +38,7 @@ public:
 	bool SetFont(const wxFont &font);
 private:
 	void OnPaint(wxPaintEvent &evt);
+	void PaintD2D(wxGraphicsContext *gc, int w, int h);
 	void OnSize(wxSizeEvent &evt);
 	void OnMouseEvent(wxMouseEvent &evt);
 	WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);

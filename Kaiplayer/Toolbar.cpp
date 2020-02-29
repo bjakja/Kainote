@@ -491,7 +491,7 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	if (!bmp){ bmp = new wxBitmap(ow, h); }
 	tdc.SelectObject(*bmp);
 	wxBitmap checkbmp = wxBITMAP_PNG("check");
-	tdc.SetFont(wxFont(9, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma"));
+	tdc.SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Tahoma"));
 	const wxColour & background = Options.GetColour(MenuBackground);
 	const wxColour & txt = Options.GetColour(WindowText);
 	tdc.SetBrush(wxBrush(background));
