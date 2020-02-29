@@ -537,9 +537,9 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 			accel.Prepend("(");
 			int fw, fhh;
 			tdc.GetTextExtent(accel, &fw, &fhh);
-			tdc.DrawTextW(accel, w - fw - 8, posY);
+			tdc.DrawText(accel, w - fw - 8, posY);
 		}
-		tdc.DrawTextW(label, (fh * 2) + 15, posY);
+		tdc.DrawText(label, (fh * 2) + 15, posY);
 
 
 	}

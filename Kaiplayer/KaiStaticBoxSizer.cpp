@@ -79,7 +79,7 @@ KaiStaticBoxSizer::~KaiStaticBoxSizer(){
 	if(box){delete box; box=NULL;}
 };
 
-void KaiStaticBoxSizer::RepositionChildren(const wxSize& minSize)
+void KaiStaticBoxSizer::RecalcSizes()
 {
 	wxSize borders = box->CalcBorders();
 
@@ -91,7 +91,7 @@ void KaiStaticBoxSizer::RepositionChildren(const wxSize& minSize)
 	m_position.x += borders.x;
     m_position.y += borders.y;
 
-	wxBoxSizer::RepositionChildren(minSize);
+	wxBoxSizer::RecalcSizes();
 
     m_position = old_pos;
     m_size = old_size;

@@ -17,7 +17,7 @@
 #include "Menu.h"
 #include <wx/clipbrd.h>
 #include <wx/msw/private.h>
-#include <wx/graphics.h>
+#include "GraphicsD2D.h"
 
 
 KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const wxPoint& pos, const wxSize& size, long _style, const wxValidator & validator, const wxString & name)
@@ -265,11 +265,8 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 	
 	long multiline = (style & wxTE_MULTILINE);
 
-	wxBitmap bmp(10, 10);
-	wxMemoryDC dc;
-	dc.SelectObject(bmp);
-	wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-	wxGraphicsContext *gc = renderer->CreateContext(dc);
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateMeasuringContext();
 	if (gc){
 		gc->SetFont(font, L"#000000");
 	}
@@ -799,8 +796,8 @@ void KaiTextCtrl::OnPaint(wxPaintEvent& event)
 		}
 
 	}
-	wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-	wxGraphicsContext *gc = renderer->CreateContext(this);
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateContext(this);
 	if (!gc){
 		// Prepare bitmap
 		if (bmp) {
@@ -1026,7 +1023,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h)
 
 }
 
-void KaiTextCtrl::DrawFieldD2D(wxGraphicsContext *gc, int w, int h)
+void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
 {
 	double fw = 0, fh = 0;
 	bool enabled = IsThisEnabled();
@@ -1144,7 +1141,7 @@ void KaiTextCtrl::DrawFieldD2D(wxGraphicsContext *gc, int w, int h)
 						normalText.Replace("\r", "");
 						normalText.Replace("\n", "");
 						normalText.Replace("\t", "        ");
-						gc->DrawText(normalText, positioning[i] + tmpPosX + fww, tmpPosY);
+						gc->DrawTextU(normalText, positioning[i] + tmpPosX + fww, tmpPosY);
 					}
 					wxString preline = line.SubString(0, newto);
 					GetTextExtent(preline, &drawX, 0);
@@ -1155,7 +1152,7 @@ void KaiTextCtrl::DrawFieldD2D(wxGraphicsContext *gc, int w, int h)
 				colorizedText.Replace("\r", "");
 				colorizedText.Replace("\n", "");
 				colorizedText.Replace("\t", "        ");
-				gc->DrawText(colorizedText, positioning[i] + tmpPosX + drawX, tmpPosY);
+				gc->DrawTextU(colorizedText, positioning[i] + tmpPosX + drawX, tmpPosY);
 				drawed = true;
 				if (to <= lineto){
 					blockSkip = false;
@@ -1186,7 +1183,7 @@ void KaiTextCtrl::DrawFieldD2D(wxGraphicsContext *gc, int w, int h)
 				normalText.Replace("\r", "");
 				normalText.Replace("\n", "");
 				normalText.Replace("\t", "        ");
-				gc->DrawText(normalText, positioning[i] + tmpPosX + drawX, tmpPosY);
+				gc->DrawTextU(normalText, positioning[i] + tmpPosX + drawX, tmpPosY);
 			}
 		}
 		else{
@@ -1197,7 +1194,7 @@ void KaiTextCtrl::DrawFieldD2D(wxGraphicsContext *gc, int w, int h)
 			size_t tlen = line.length();
 			int posx = positioning[i] + tmpPosX;
 			if (posx > -100){
-				gc->DrawText(line.Mid(0, (1000 < tlen) ? 1000 : wxString::npos), posx, tmpPosY);
+				gc->DrawTextU(line.Mid(0, (1000 < tlen) ? 1000 : wxString::npos), posx, tmpPosY);
 			}
 			else{
 				int tmpfw = 0;
@@ -1209,7 +1206,7 @@ void KaiTextCtrl::DrawFieldD2D(wxGraphicsContext *gc, int w, int h)
 					posx += tmpfw;
 					startPos += 50;
 				}
-				gc->DrawText(line.Mid(startPos, (startPos + 1000 < tlen) ? 1000 : wxString::npos), posx, tmpPosY);
+				gc->DrawTextU(line.Mid(startPos, (startPos + 1000 < tlen) ? 1000 : wxString::npos), posx, tmpPosY);
 			}
 		}
 
@@ -1242,11 +1239,8 @@ bool KaiTextCtrl::HitTest(wxPoint pos, wxPoint *cur)
 	int wlen = KText.length();
 	int fww = 0;
 	double gfww = 0.;
-	wxBitmap bmp(10, 10);
-	wxMemoryDC dc;
-	dc.SelectObject(bmp);
-	wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-	wxGraphicsContext *gc = renderer->CreateContext(dc);
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateMeasuringContext();
 	if (gc)
 		gc->SetFont(font, L"#000000");
 
@@ -1500,11 +1494,8 @@ wxPoint KaiTextCtrl::PosFromCursor(wxPoint cur, bool correctToScroll)
 	if (wraps.size() < 2 || wraps[cur.y] == cur.x){ fw = 0; }
 	else{
 		wxString beforeCursor = KText.SubString(wraps[cur.y], cur.x - 1);
-		wxBitmap bmp(10, 10);
-		wxMemoryDC dc;
-		dc.SelectObject(bmp);
-		wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-		wxGraphicsContext *gc = renderer->CreateContext(dc);
+		GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+		GraphicsContext *gc = renderer->CreateMeasuringContext();
 		if (gc){
 			gc->SetFont(font, L"#000000");
 			double gfw = 0, gfh;
@@ -1569,7 +1560,7 @@ void KaiTextCtrl::GetTextExtent(const wxString &textToMesure, int *textWidth, in
 	wxWindow::GetTextExtent(txt, textWidth, textHeight, 0, 0, &font);
 
 }
-void KaiTextCtrl::GetTextExtent(wxGraphicsContext *gc, const wxString &textToMesure, double *textWidth, double *textHeight)
+void KaiTextCtrl::GetTextExtent(GraphicsContext *gc, const wxString &textToMesure, double *textWidth, double *textHeight)
 {
 	wxString txt = textToMesure;
 	txt.Replace("\r", "");
@@ -1602,11 +1593,8 @@ void KaiTextCtrl::MakeCursorVisible(bool refreshit)
 		else if (pixelPos.x > size.x - 6) {
 
 			int fh, fw;
-			wxBitmap bmp(10, 10);
-			wxMemoryDC dc;
-			dc.SelectObject(bmp);
-			wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-			wxGraphicsContext *gc = renderer->CreateContext(dc);
+			GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+			GraphicsContext *gc = renderer->CreateMeasuringContext();
 			if (gc){
 				gc->SetFont(font, L"#000000");
 				double gfw = 0, gfh;

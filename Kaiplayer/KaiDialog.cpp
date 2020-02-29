@@ -34,7 +34,8 @@ DialogSizer::DialogSizer(int orient)
 }
 
 
-void DialogSizer::RepositionChildren(const wxSize& minSize)
+//void DialogSizer::RepositionChildren(const wxSize& minSize)
+void DialogSizer::RecalcSizes()
 {
 	wxSize old_size(m_size);
 	m_size.x -= 2 * border;
@@ -43,7 +44,7 @@ void DialogSizer::RepositionChildren(const wxSize& minSize)
 	m_position.x += border;
 	m_position.y += topBorder;
 
-	wxBoxSizer::RepositionChildren(minSize);
+	wxBoxSizer::RecalcSizes();
 
 	m_position = old_pos;
 	m_size = old_size;

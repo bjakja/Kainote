@@ -602,7 +602,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			}
 			//dc.SetTextForeground(Options.GetColour("Tabs Close Hover"));
 			dc.SetTextForeground(activeText);
-			dc.DrawTextW("X", start + Tabsizes[i] - xWidth + 4, 4);
+			dc.DrawText("X", start + Tabsizes[i] - xWidth + 4, 4);
 
 
 		}
@@ -643,7 +643,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.DrawLine(start + Tabsizes[i] - 2, TabHeight - 2, start + Tabsizes[i], TabHeight - 4);
 			dc.DrawLine(start + Tabsizes[i], TabHeight - 4, start + Tabsizes[i], 0);
 		//}
-		dc.DrawTextW(Names[i], start + 4, 4);
+		dc.DrawText(Names[i], start + 4, 4);
 
 		start += Tabsizes[i] + 2;
 	}

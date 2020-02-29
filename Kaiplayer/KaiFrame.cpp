@@ -22,7 +22,7 @@
 #include "kainoteApp.h"
 #include "wx/msw/private.h"
 #include <Dwmapi.h>
-#include <wx/graphics.h>
+#include "GraphicsD2D.h"
 #pragma comment(lib, "Dwmapi.lib")
 #define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
@@ -97,8 +97,8 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 	wxMemoryDC mdc;
 	mdc.SelectObject(wxBitmap(w, h));
 
-	wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-	wxGraphicsContext *gc = renderer->CreateContext(mdc);
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateContext(mdc);
 	if (!gc){
 		mdc.SetFont(GetFont());
 		wxColour bg = (isActive) ? Options.GetColour(WindowBorderBackground) : Options.GetColour(WindowBorderBackgroundInactive);
@@ -190,7 +190,7 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 	dc.Blit(0, h - frameBorder, w, frameBorder, &mdc, 0, h - frameBorder);
 }
 
-void KaiFrame::PaintD2D(wxGraphicsContext *gc, int w, int h)
+void KaiFrame::PaintD2D(GraphicsContext *gc, int w, int h)
 {
 	wxColour text = (isActive) ? Options.GetColour(WindowHeaderText) : Options.GetColour(WindowHeaderTextInactive);
 	gc->SetFont(GetFont(), text);
@@ -215,7 +215,7 @@ void KaiFrame::PaintD2D(wxGraphicsContext *gc, int w, int h)
 	if (GetTitle() != ""){
 		int startX = icons.GetIconCount() ? iconScale + 14 : 6 + maximizeDiff;
 		int maxWidth = w - 75 - maximizeDiff - startX;
-		gc->DrawText(GetTruncateText(GetTitle(), maxWidth, this), startX, 5 + maximizeDiff);
+		gc->DrawTextU(GetTruncateText(GetTitle(), maxWidth, this), startX, 5 + maximizeDiff);
 	}
 
 	int buttonScale = ((frameTopBorder - 8) / 2) * 2;
@@ -245,11 +245,11 @@ void KaiFrame::PaintD2D(wxGraphicsContext *gc, int w, int h)
 	gc->SetPen(wxPen(text, 2));
 	gc->SetBrush(wxBrush(text));
 	//draw X
-	wxGraphicsPath path = gc->CreatePath();
-	path.MoveToPoint(w - frameTopBorder + 3 - maximizeDiff, 8 + maximizeDiff);
-	path.AddLineToPoint(w - (frameBorder + 6) - maximizeDiff, frameTopBorder - 8 + maximizeDiff);
-	path.MoveToPoint(w - (frameBorder + 6) - maximizeDiff, 8 + maximizeDiff);
-	path.AddLineToPoint(w - frameTopBorder + 3 - maximizeDiff, frameTopBorder - 8 + maximizeDiff);
+	GraphicsPathData *path = gc->CreatePath();
+	path->MoveToPoint(w - frameTopBorder + 3 - maximizeDiff, 8 + maximizeDiff);
+	path->AddLineToPoint(w - (frameBorder + 6) - maximizeDiff, frameTopBorder - 8 + maximizeDiff);
+	path->MoveToPoint(w - (frameBorder + 6) - maximizeDiff, 8 + maximizeDiff);
+	path->AddLineToPoint(w - frameTopBorder + 3 - maximizeDiff, frameTopBorder - 8 + maximizeDiff);
 	gc->StrokePath(path);
 
 	//draw maximize

@@ -408,6 +408,9 @@
     <ClCompile Include="TextEditorTagList.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsD2D.cpp">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -730,6 +733,12 @@
     </ClInclude>
     <ClInclude Include="TextEditorTagList.h">
       <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsD2D.h">
+      <Filter>Header Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="D2DInit.h">
+      <Filter>Header Files\Utils &amp; Config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

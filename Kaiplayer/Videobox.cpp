@@ -1139,7 +1139,7 @@ void VideoCtrl::OnPaint(wxPaintEvent& event)
 		dc.SetFont(font1);
 		wxSize size = dc.GetTextExtent(L"KaiNote");
 		dc.SetTextForeground("#2EA6E2");
-		dc.DrawTextW(L"KaiNote", (x - size.x) / 2, (y - size.y - panelHeight) / 2);
+		dc.DrawText(L"KaiNote", (x - size.x) / 2, (y - size.y - panelHeight) / 2);
 	}
 
 }

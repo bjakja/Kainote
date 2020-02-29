@@ -23,7 +23,7 @@
 #include "SubsGridFiltering.h"
 #include "SubsGridPreview.h"
 #include <wx/regex.h>
-#include <wx/graphics.h>
+#include "GraphicsD2D.h"
 
 SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style)
 	:SubsGridBase(parent, id, pos, size, style)
@@ -122,8 +122,8 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	tdc.SelectObject(*bmp);
 
 	int firstCol = GridWidth[0] + 1;
-	wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-	wxGraphicsContext *gc = renderer->CreateContext(tdc);
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateContext(tdc);
 	if (gc)
 		PaintGDIPlus(gc, w, h, size, scrows, previewpos, previewsize, bg);
 	else
@@ -511,7 +511,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	dc.Blit(firstCol + posX, 0, w + scHor, h, &tdc, scHor + firstCol + posX, 0);
 }
 
-void SubsGridWindow::PaintGDIPlus(wxGraphicsContext *gc, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg)
+void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg)
 {
 	
 	const wxColour &header = Options.GetColour(GridHeader);
@@ -808,10 +808,10 @@ void SubsGridWindow::PaintGDIPlus(wxGraphicsContext *gc, int w, int h, int size,
 
 						gc->GetTextExtent(cmp, &fw, &fh);
 
-						gc->DrawText(cmp, posX + bfw + 2, posY);
-						gc->DrawText(cmp, posX + bfw + 4, posY);
-						gc->DrawText(cmp, posX + bfw + 2, posY + 2);
-						gc->DrawText(cmp, posX + bfw + 4, posY + 2);
+						gc->DrawTextU(cmp, posX + bfw + 2, posY);
+						gc->DrawTextU(cmp, posX + bfw + 4, posY);
+						gc->DrawTextU(cmp, posX + bfw + 2, posY + 2);
+						gc->DrawTextU(cmp, posX + bfw + 4, posY + 2);
 					}
 
 				}
@@ -845,7 +845,7 @@ void SubsGridWindow::PaintGDIPlus(wxGraphicsContext *gc, int w, int h, int size,
 					img = img.Rotate180();
 					gc->DrawBitmap(img, posX + 6, posY + 5, img.GetWidth(), img.GetHeight());
 				}
-				gc->DrawText(Dial->Text, posX + 23, posY + 1);
+				gc->DrawTextU(Dial->Text, posX + 23, posY + 1);
 				break;
 			}
 			cur = wxRect(posX + 3, posY, GridWidth[j] - 6, GridHeight);
@@ -859,7 +859,7 @@ void SubsGridWindow::PaintGDIPlus(wxGraphicsContext *gc, int w, int h, int size,
 				gc->GetTextExtent(strings[j], &fw, &fh);
 				centerPos = ((GridWidth[j] - fw) / 2) - 3;
 			}
-			gc->DrawText(strings[j], posX + 3 + centerPos, posY + 2);
+			gc->DrawTextU(strings[j], posX + 3 + centerPos, posY + 2);
 			gc->ResetClip();
 			posX += GridWidth[j] + 1;
 
@@ -909,7 +909,7 @@ void SubsGridWindow::RefreshColumns(int cell)
 	Refresh(false);
 }
 
-void SubsGridWindow::AdjustWidthsGDIPlus(wxGraphicsContext *gc, int cell)
+void SubsGridWindow::AdjustWidthsGDIPlus(GraphicsContext *gc, int cell)
 {
 
 	int law = 0, startMax = 0, endMax = 0, stw = 0, edw = 0, syw = 0, acw = 0, efw = 0;
@@ -1065,8 +1065,8 @@ void SubsGridWindow::AdjustWidths(int cell)
 	wxBitmap bmp(10, 10);
 	wxMemoryDC dc1;
 	dc1.SelectObject(bmp);
-	wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-	wxGraphicsContext *gc = renderer->CreateContext(dc1);
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateContext(dc1);
 	if (gc){
 		gc->SetFont(font, "#FFFFFF");
 		AdjustWidthsGDIPlus(gc, cell);

@@ -24,9 +24,9 @@
 #include "Stylelistbox.h"
 #include "SubsFile.h"
 #include <regex>
-#include <wx/graphics.h>
+#include "GraphicsD2D.h"
 
-//#undef DrawText
+#undef DrawText
 
 wxDEFINE_EVENT(CURSOR_MOVED, wxCommandEvent);
 
@@ -158,11 +158,8 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 			while (i < textLen){ i++; wraps.push_back(i); }
 		}
 		else{
-			wxBitmap bmp(10, 10);
-			wxMemoryDC dc;
-			dc.SelectObject(bmp);
-			wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-			wxGraphicsContext *gc = renderer->CreateContext(dc);
+			GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+			GraphicsContext *gc = renderer->CreateMeasuringContext();
 			if (gc){
 				gc->SetFont(font, "L#000000");
 				CalcWrapsD2D(gc, w, h);
@@ -244,7 +241,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 	if (sendevent){ wxCommandEvent evt2(wxEVT_COMMAND_TEXT_UPDATED, GetId()); AddPendingEvent(evt2); }
 }
 
-void TextEditor::CalcWrapsD2D(wxGraphicsContext *gc, int w, int h)
+void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int w, int h)
 {
 	//wxString wrapchars = L" \\,;:}{()";
 	double gfw, gfh;
@@ -326,11 +323,8 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 					pos.x = 3;
 					int wrap = wraps[Cursor.y];
 					if (wrap < Cursor.x){
-						wxBitmap bmp(10, 10);
-						wxMemoryDC dc;
-						dc.SelectObject(bmp);
-						wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-						wxGraphicsContext *gc = renderer->CreateContext(dc);
+						GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+						GraphicsContext *gc = renderer->CreateMeasuringContext();
 						wxString textBeforeCursor = MText.Mid(wrap, Cursor.x - wrap + 1);
 						if (gc){
 							gc->SetFont(font, L"#FFFFFF");
@@ -822,8 +816,8 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 	}
 
 
-	wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-	wxGraphicsContext *gc = renderer->CreateContext(this);
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateContext(this);
 
 	if (!gc){
 		if (bmp) {
@@ -849,7 +843,7 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 		
 }
 
-void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windowh)
+void TextEditor::DrawFieldGDIPlus(GraphicsContext *gc, int w, int h, int windowh)
 {
 	double fw = 0.f, fh = 0.f;
 	bool tags = false;
@@ -994,7 +988,7 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : templateCode ? ctvariables : ctext;
 				gc->SetFont(font, fontColor);
 				mestext << parttext;
-				gc->DrawText(parttext, fw + 3, posY);
+				gc->DrawTextU(parttext, fw + 3, posY);
 			}
 
 			//posX=4;
@@ -1037,7 +1031,7 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 			wxFont fnt = font;
 			fnt = fnt.Bold();
 			gc->SetFont(fnt, (ch == L'{' || ch == L'}') ? ccurlybraces : coperators);
-			gc->DrawText(MText[i], fw + 3, ((bry*fontHeight) + 2) - scrollPositionV);
+			gc->DrawTextU(MText[i], fw + 3, ((bry*fontHeight) + 2) - scrollPositionV);
 			gc->SetFont(font, ctext);
 
 		}
@@ -1047,12 +1041,12 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 				gc->GetTextExtent(mestext, &fw, &fh);
 				gc->SetFont(font, (parttext.IsNumber() || val) ? cvalues : (slash) ? cnames :
 					(ch == L'(' && !slash) ? ctfunctions : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
-				gc->DrawText(parttext, fw + 3, posY);
+				gc->DrawTextU(parttext, fw + 3, posY);
 				mestext << parttext;
 				parttext = "";
 				gc->GetTextExtent(mestext, &fw, &fh);
 				gc->SetFont(font, (ch == L'!') ? ctcodemarks : coperators);
-				gc->DrawText(ch, fw + 3, posY);
+				gc->DrawTextU(ch, fw + 3, posY);
 				mestext << ch;
 				if (state == 2 && ch == L'!')
 					templateCode = !templateCode;
@@ -1066,7 +1060,7 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 					parttext << ch;
 					gc->GetTextExtent(mestext, &fw, &fh);
 					gc->SetFont(font, ctstrings);
-					gc->DrawText(parttext, fw + 3, posY);
+					gc->DrawTextU(parttext, fw + 3, posY);
 					mestext << parttext;
 					parttext = "";
 					templateString = !templateString;
@@ -1079,7 +1073,7 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 				gc->GetTextExtent(mestext, &fw, &fh);
 				gc->SetFont(font, (!templateCode && !val && !slash) ? ctext : (parttext.IsNumber() || val) ? cvalues :
 					(slash) ? cnames : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
-				gc->DrawText(parttext, fw + 3, posY);
+				gc->DrawTextU(parttext, fw + 3, posY);
 				mestext << parttext;
 				parttext = "";
 				mestext << ch;
@@ -1103,7 +1097,7 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 				wxString bef = parttext.BeforeLast(L'{');
 				gc->GetTextExtent(mestext, &fw, &fh);
 				gc->SetFont(font, ctext);
-				gc->DrawText(bef, fw + 3, posY);
+				gc->DrawTextU(bef, fw + 3, posY);
 				mestext << bef;
 				parttext = "{";
 			}
@@ -1111,14 +1105,14 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 				wxString &tmp = parttext.RemoveLast(1);
 				gc->GetTextExtent(mestext, &fw, &fh);
 				gc->SetFont(font, (val) ? cvalues : (slash) ? cnames : ctext);
-				gc->DrawText(tmp, fw + 3, posY);
+				gc->DrawTextU(tmp, fw + 3, posY);
 				mestext << tmp;
 				parttext = "}";
 				tags = slash = val = false;
 			}
 			gc->GetTextExtent(mestext, &fw, &fh);
 			gc->SetFont(font, ccurlybraces);
-			gc->DrawText(parttext, fw + 3, posY);
+			gc->DrawTextU(parttext, fw + 3, posY);
 			mestext << parttext;
 			parttext = "";
 			val = false;
@@ -1131,7 +1125,7 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 				wxString tmp = (tagtest == "fn") ? parttext : parttext.RemoveLast(1);
 				gc->GetTextExtent(mestext, &fw, &fh);
 				gc->SetFont(font, cnames);
-				gc->DrawText(tmp, fw + 3, posY);
+				gc->DrawTextU(tmp, fw + 3, posY);
 				mestext << tmp;
 				if (tagtest == "fn"){ parttext = ""; }
 				else{ parttext = ch; }
@@ -1144,13 +1138,13 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 			wxString tmp = parttext.RemoveLast(1);
 			gc->GetTextExtent(mestext, &fw, &fh);
 			gc->SetFont(font, (val && (ch == L'\\' || ch == L')' || ch == L',')) ? cvalues : slash ? cnames : ctext);
-			gc->DrawText(tmp, fw + 3, posY);
+			gc->DrawTextU(tmp, fw + 3, posY);
 			mestext << tmp;
 			parttext = ch;
 			if (ch == L'\\'){ slash = true; }
 			gc->GetTextExtent(mestext, &fw, &fh);
 			gc->SetFont(font, coperators);
-			gc->DrawText(parttext, fw + 3, posY);
+			gc->DrawTextU(parttext, fw + 3, posY);
 			mestext << parttext;
 			parttext = "";
 			if (ch == L'('){ val = true; slash = false; }
@@ -1171,12 +1165,12 @@ void TextEditor::DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windo
 		gc->SetFont(font, ctext);
 		gc->DrawRectangle(0, h, w, statusBarHeight);
 		int ypos = ((statusBarHeight - fontHeight) / 2) + h;
-		gc->DrawText(wxString::Format("Length: %i", (int)MText.length()), 5, ypos);
-		gc->DrawText(wxString::Format("Lines: %i", (int)wraps.size() - 1), 105, ypos);
-		gc->DrawText(wxString::Format("Ln: %i", Cursor.y + 1), 185, ypos);
-		gc->DrawText(wxString::Format("Col: %i", Cursor.x - wraps[Cursor.y] + 1), 245, ypos);
-		gc->DrawText(wxString::Format("Sel: %i", abs(Selend.x - Cursor.x)), 305, ypos);
-		gc->DrawText(wxString::Format("Ch: %i", Cursor.x + 1), 375, ypos);
+		gc->DrawTextU(wxString::Format("Length: %i", (int)MText.length()), 5, ypos);
+		gc->DrawTextU(wxString::Format("Lines: %i", (int)wraps.size() - 1), 105, ypos);
+		gc->DrawTextU(wxString::Format("Ln: %i", Cursor.y + 1), 185, ypos);
+		gc->DrawTextU(wxString::Format("Col: %i", Cursor.x - wraps[Cursor.y] + 1), 245, ypos);
+		gc->DrawTextU(wxString::Format("Sel: %i", abs(Selend.x - Cursor.x)), 305, ypos);
+		gc->DrawTextU(wxString::Format("Ch: %i", Cursor.x + 1), 375, ypos);
 	}
 	//text field border
 	gc->SetBrush(*wxTRANSPARENT_BRUSH);
@@ -1533,11 +1527,8 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 	int wlen = MText.length();
 	int fww = 0;
 	double gcfw = 0.f, gcfh = 0.f, gcfw1 = 0.f;
-	wxBitmap bmp(10, 10);
-	wxMemoryDC dc;
-	dc.SelectObject(bmp);
-	wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-	wxGraphicsContext *gc = renderer->CreateContext(dc);
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateMeasuringContext();
 	if (gc)
 		gc->SetFont(font, L"#000000");
 
@@ -1994,11 +1985,8 @@ wxPoint TextEditor::PosFromCursor(wxPoint cur)
 	//if(cur.x<=0||cur.y<0){return wxPoint(-scPos+2, (Fheight-scPos));}
 	if (wraps.size() < 2 || wraps[cur.y] == cur.x){ fw = 0; }
 	else{ 
-		wxBitmap bmp(10, 10);
-		wxMemoryDC dc;
-		dc.SelectObject(bmp);
-		wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-		wxGraphicsContext *gc = renderer->CreateContext(dc);
+		GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+		GraphicsContext *gc = renderer->CreateMeasuringContext();
 		if (gc){
 			gc->SetFont(font, L"#000000");
 			double gcfw, gcfh;
@@ -2171,7 +2159,7 @@ void TextEditor::DrawWordRectangles(int type, wxDC &dc)
 	}
 }
 
-void TextEditor::DrawWordRectangles(int type, wxGraphicsContext *gc)
+void TextEditor::DrawWordRectangles(int type, GraphicsContext *gc)
 {
 	const wxArrayInt & words = (type == 0) ? errors : selectionWords;
 	size_t len = words.size();

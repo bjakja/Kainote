@@ -39,7 +39,8 @@ public:
 	bool Enable(bool enable);
 
 private:
-	void RepositionChildren(const wxSize& minSize);
+	//void RepositionChildren(const wxSize& minSize);
+	void RecalcSizes();
 	wxSize CalcMin();
 	bool Detach( wxWindow *window );
 	KaiStaticBox *box;

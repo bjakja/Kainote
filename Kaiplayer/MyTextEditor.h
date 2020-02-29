@@ -23,7 +23,7 @@
 
 class EditBox;
 class KainoteFrame;
-class wxGraphicsContext;
+class GraphicsContext;
 wxDECLARE_EVENT(CURSOR_MOVED, wxCommandEvent);
 
 class TextEditor : public wxWindow
@@ -64,17 +64,17 @@ protected:
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
 	void OnScroll(wxScrollEvent& event);
 	void DrawFieldGDI(wxDC &dc, int w, int h, int windowh);
-	void DrawFieldGDIPlus(wxGraphicsContext *gc, int w, int h, int windowh);
+	void DrawFieldGDIPlus(GraphicsContext *gc, int w, int h, int windowh);
 	bool HitTest(wxPoint pos, wxPoint *cur);
 	void CalcWrap(bool updatechars = true, bool sendevent = true);
-	void CalcWrapsD2D(wxGraphicsContext *gc, int w, int h);
+	void CalcWrapsD2D(GraphicsContext *gc, int w, int h);
 	void FindWord(int pos, int *start, int *end);
 	int FindBracket(wxUniChar sbrkt, wxUniChar ebrkt, int pos, bool fromback = false);
 	void MakeCursorVisible();
 	bool CheckIfKeyword(const wxString &word);
 	void SeekSelected(const wxString &word);
 	void DrawWordRectangles(int type, wxDC &dc);
-	void DrawWordRectangles(int type, wxGraphicsContext *gc);
+	void DrawWordRectangles(int type, GraphicsContext *gc);
 	bool GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &number, float &step);
 	void PutTag();
 

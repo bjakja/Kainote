@@ -18,7 +18,7 @@
 #include "Config.h"
 #include "wx/dcmemory.h"
 #include "wx/dcclient.h"
-#include "wx/graphics.h"
+#include "GraphicsD2D.h"
 
 
 wxColour WhiteUp(const wxColour &color)
@@ -250,8 +250,8 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	int h = 0;
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
-	wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-	wxGraphicsContext *gc = renderer->CreateContext(this);
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateContext(this);
 	if (!gc)
 		PaintGDI(w, h);
 	else{
@@ -297,12 +297,12 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 			
 			if (name != ""){
 				if (iw){
-					gc->DrawText(name, ((w - fw) / 2) + iw + 5, ((h - textHeight) / 2));
+					gc->DrawTextU(name, ((w - fw) / 2) + iw + 5, ((h - textHeight) / 2));
 				}
 				else{
 					//wxRect cur(5, ((h - textHeight) / 2), w - 10, textHeight);
 					//gc->Clip(cur);
-					gc->DrawText(name, ((w - fw) / 2) + iw, ((h - textHeight) / 2));
+					gc->DrawTextU(name, ((w - fw) / 2) + iw, ((h - textHeight) / 2));
 					//gc->ResetClip();
 					//gc->SetClippingRegion(cur);
 					//gc->DrawLabel(name, cur, iw ? wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL : wxALIGN_CENTER);
@@ -519,8 +519,8 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 	int h = 0;
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
-	wxGraphicsRenderer *renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-	wxGraphicsContext *gc = renderer->CreateContext(this);
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateContext(this);
 	if (!gc)
 		PaintGDI(w, h);
 	else{
@@ -555,7 +555,7 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 				gc->GetTextExtent(name, &fw, &fh);
 				//wxRect cur(5, (h - textHeight) / 2, w - 10, textHeight);
 				//gc->Clip(cur);
-				gc->DrawText(name, ((w - fw) / 2), ((h - textHeight) / 2));
+				gc->DrawTextU(name, ((w - fw) / 2), ((h - textHeight) / 2));
 				//gc->ResetClip();
 				//tdc.GetTextExtent(name, &fw, &fh);
 				//

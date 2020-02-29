@@ -31,7 +31,7 @@ public:
 	wxColour color;
 	//maybe later I add font when I make custom dc class with GDI plus
 };
-class wxGraphicsContext;
+class GraphicsContext;
 
 class KaiTextCtrl : public KaiScrolledWindow
 {
@@ -94,11 +94,11 @@ protected:
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
 	void OnScroll(wxScrollWinEvent& event);
 	void DrawFld(wxDC &dc,int w, int h);
-	void DrawFieldD2D(wxGraphicsContext *gc, int w, int h);
+	void DrawFieldD2D(GraphicsContext *gc, int w, int h);
 	void CalcWrap(bool sendevent=true, size_t position = 0);
 	void SendEvent();
 	void GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight);
-	void GetTextExtent(wxGraphicsContext *gc, const wxString &textToMesure, double *textWidth, double *textHeight);
+	void GetTextExtent(GraphicsContext *gc, const wxString &textToMesure, double *textWidth, double *textHeight);
 	void MakeCursorVisible(bool refresh=true);
 	wxString KText;
 	wxBitmap* bmp;

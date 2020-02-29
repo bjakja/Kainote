@@ -706,10 +706,10 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 			int fw, fhh;
 			wxString accel = desc.AfterLast('\t');
 			tdc.GetTextExtent(accel, &fw, &fhh);
-			tdc.DrawTextW(accel, w - fw - 20, (height*i) + 4);
+			tdc.DrawText(accel, w - fw - 20, (height*i) + 4);
 			desc = desc.BeforeLast('\t');
 		}
-		tdc.DrawTextW(desc, textStart, (height*i) + 4);
+		tdc.DrawText(desc, textStart, (height*i) + 4);
 		if (hasMnemonics){
 			tdc.SetPen(wxPen((item->enabled) ? text : graytext));
 			tdc.DrawLine(textStart + mnbefsize.x, (height*(i + 1)) - 3, textStart + mnbefsize.x + linesize.x, (height*(i + 1)) - 3);
@@ -999,7 +999,7 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 			tdc.SetPen(wxPen(Options.GetColour(MenuBarBorderSelection)));
 			tdc.DrawRoundedRectangle(posX - 4, 1, te.x + 8, h - 3, 3.0);
 		}
-		tdc.DrawTextW(desc, posX, (h - te.y) / 2);
+		tdc.DrawText(desc, posX, (h - te.y) / 2);
 		if (hasMnemonics){
 			tdc.SetPen(wxPen(Options.GetColour(WindowText)));
 			tdc.DrawLine(posX + mnbefsize.x, h - 4, posX + mnbefsize.x + linesize.x, h - 4);
