@@ -1061,14 +1061,10 @@ void SubsGridWindow::AdjustWidthsGDIPlus(GraphicsContext *gc, int cell)
 
 void SubsGridWindow::AdjustWidths(int cell)
 {
-	
-	wxBitmap bmp(10, 10);
-	wxMemoryDC dc1;
-	dc1.SelectObject(bmp);
 	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = renderer->CreateContext(dc1);
+	GraphicsContext *gc = renderer->CreateMeasuringContext();
 	if (gc){
-		gc->SetFont(font, "#FFFFFF");
+		gc->SetFont(font, L"#FFFFFF");
 		AdjustWidthsGDIPlus(gc, cell);
 		return;
 	}

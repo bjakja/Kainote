@@ -417,23 +417,23 @@ private:
 
 class wxD2DRenderer;
 
-class GraphicsObjectRefData : public wxObjectRefData
+//class GraphicsObjectRefData : public wxObjectRefData
+//{
+//public:
+//	GraphicsObjectRefData(wxD2DRenderer* renderer);
+//	GraphicsObjectRefData(const GraphicsObjectRefData* data);
+//	wxD2DRenderer* GetRenderer() const;
+//	virtual GraphicsObjectRefData* Clone() const;
+//
+//protected:
+//	wxD2DRenderer* m_renderer;
+//};
+
+class GraphicsBitmapData //: public GraphicsObjectRefData
 {
 public:
-	GraphicsObjectRefData(wxD2DRenderer* renderer);
-	GraphicsObjectRefData(const GraphicsObjectRefData* data);
-	wxD2DRenderer* GetRenderer() const;
-	virtual GraphicsObjectRefData* Clone() const;
-
-protected:
-	wxD2DRenderer* m_renderer;
-};
-
-class GraphicsBitmapData : public GraphicsObjectRefData
-{
-public:
-	GraphicsBitmapData(wxD2DRenderer* renderer) :
-		GraphicsObjectRefData(renderer) {}
+	GraphicsBitmapData(wxD2DRenderer* renderer) /*:
+		GraphicsObjectRefData(renderer) */{}
 
 	virtual ~GraphicsBitmapData() {}
 
@@ -441,11 +441,11 @@ public:
 	virtual void * GetNativeBitmap() const = 0;
 };
 
-class GraphicsMatrixData : public GraphicsObjectRefData
+class GraphicsMatrixData// : public GraphicsObjectRefData
 {
 public:
-	GraphicsMatrixData(wxD2DRenderer* renderer) :
-		GraphicsObjectRefData(renderer) {}
+	GraphicsMatrixData(wxD2DRenderer* renderer) /*:
+		GraphicsObjectRefData(renderer) */{}
 
 	virtual ~GraphicsMatrixData() {}
 
@@ -496,10 +496,10 @@ public:
 	virtual void * GetNativeMatrix() const = 0;
 };
 
-class GraphicsPathData : public GraphicsObjectRefData
+class GraphicsPathData/* : public GraphicsObjectRefData*/
 {
 public:
-	GraphicsPathData(wxD2DRenderer* renderer) : GraphicsObjectRefData(renderer) {}
+	GraphicsPathData(wxD2DRenderer* renderer)/* : GraphicsObjectRefData(renderer) */{}
 	virtual ~GraphicsPathData() {}
 
 	//
@@ -533,22 +533,22 @@ public:
 	//
 
 	// adds a quadratic Bezier curve from the current point, using a control point and an end point
-	virtual void AddQuadCurveToPoint(wxDouble cx, wxDouble cy, wxDouble x, wxDouble y);
+	virtual void AddQuadCurveToPoint(wxDouble cx, wxDouble cy, wxDouble x, wxDouble y){};
 
 	// appends a rectangle as a new closed subpath
-	virtual void AddRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h);
+	virtual void AddRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h){};
 
 	// appends an ellipsis as a new closed subpath fitting the passed rectangle
-	virtual void AddCircle(wxDouble x, wxDouble y, wxDouble r);
+	virtual void AddCircle(wxDouble x, wxDouble y, wxDouble r){};
 
 	// appends a an arc to two tangents connecting (current) to (x1,y1) and (x1,y1) to (x2,y2), also a straight line from (current) to (x1,y1)
-	virtual void AddArcToPoint(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble y2, wxDouble r);
+	virtual void AddArcToPoint(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble y2, wxDouble r){};
 
 	// appends an ellipse
-	virtual void AddEllipse(wxDouble x, wxDouble y, wxDouble w, wxDouble h);
+	virtual void AddEllipse(wxDouble x, wxDouble y, wxDouble w, wxDouble h){};
 
 	// appends a rounded rectangle
-	virtual void AddRoundedRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h, wxDouble radius);
+	virtual void AddRoundedRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h, wxDouble radius){};
 
 	// returns the native path
 	virtual void * GetNativePath() const = 0;
@@ -572,7 +572,7 @@ public:
 	static wxGraphicsContext * Create(const wxMemoryDC& dc);
 	static wxGraphicsContext * Create(wxWindow* window);
 
-	~GraphicsContext(){};
+	virtual ~GraphicsContext(){};
 
 	virtual void Clip(const wxRegion& region){};
 
@@ -645,7 +645,7 @@ public:
 
 	void DrawTextU(const wxString& str, wxDouble x, wxDouble y);
 private:
-	void DoDrawText(const wxString& str, wxDouble x, wxDouble y);
+	virtual void DoDrawText(const wxString& str, wxDouble x, wxDouble y){};
 };
 
 //-----------------------------------------------------------------------------
@@ -657,27 +657,27 @@ class GraphicsRenderer
 public:
 	GraphicsRenderer(){};
 
-	virtual ~GraphicsRenderer();
+	virtual ~GraphicsRenderer(){};
 
-	static GraphicsRenderer* GetDirect2DRenderer();
+	static GraphicsRenderer * GetDirect2DRenderer();
 
-	virtual GraphicsContext * CreateContext(const wxWindowDC& dc);
+	virtual GraphicsContext * CreateContext(const wxWindowDC& dc){ return NULL; };
 
-	virtual GraphicsContext * CreateContext(const wxMemoryDC& dc);
+	virtual GraphicsContext * CreateContext(const wxMemoryDC& dc){ return NULL; };
 
-	virtual GraphicsContext * CreateContextFromNativeContext(void* context);
+	virtual GraphicsContext * CreateContextFromNativeContext(void* context){ return NULL; };
 
-	virtual GraphicsContext * CreateContextFromNativeWindow(void* window);
+	virtual GraphicsContext * CreateContextFromNativeWindow(void* window){ return NULL; };
 
-	virtual GraphicsContext * CreateContextFromNativeHDC(WXHDC dc);
+	virtual GraphicsContext * CreateContextFromNativeHDC(WXHDC dc){ return NULL; };
 
-	virtual GraphicsContext * CreateContext(wxWindow* window);
+	virtual GraphicsContext * CreateContext(wxWindow* window){ return NULL; };
 
 #if wxUSE_IMAGE
-	virtual GraphicsContext * CreateContextFromImage(wxImage& image);
+	virtual GraphicsContext * CreateContextFromImage(wxImage& image){ return NULL; };
 #endif // wxUSE_IMAGE
 
-	virtual GraphicsContext * CreateMeasuringContext();
+	virtual GraphicsContext * CreateMeasuringContext(){ return NULL; };
 
 };
 
