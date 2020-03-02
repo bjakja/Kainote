@@ -562,7 +562,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 	int VideoPos = tab->Video->vstate != None ? tab->Video->Tell() : -1;
 
 	double fw, fh, bfw, bfh;
-	wxColour kol;
+	wxColour col;
 	visibleLines.clear();
 
 	std::vector<wxString> strings;
@@ -603,7 +603,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 			if (subsFormat != TMP){ strings.push_back(_("ZNS")); }
 			strings.push_back(showOriginal ? _("Tekst oryginalny") : _("Tekst"));
 			if (showOriginal){ strings.push_back(_("Tekst tłumaczenia")); }
-			kol = header;
+			col = header;
 		}
 		else{
 
@@ -655,7 +655,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 				if (SpellErrors[key].size() < 1){
 					chtime = CalcChars((isTl) ? txttl : txt) /
 						((Dial->End.mstime - Dial->Start.mstime) / 1000.0f);
-					if (chtime < 0 || chtime>999){ chtime = 999; }
+					if (chtime < 0 || chtime > 999){ chtime = 999; }
 					SpellErrors[key].push_back(chtime);
 
 				}
@@ -689,13 +689,13 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 			comparison = (Comparison && Comparison->at(key).size() > 0);
 			bool comparisonMatch = (Comparison && !Comparison->at(key).differences);
 			bool visibleLine = (Dial->Start.mstime <= VideoPos && Dial->End.mstime > VideoPos);
-			kol = (comparison) ? ComparisonBG :
+			col = (comparison) ? ComparisonBG :
 				(comparisonMatch) ? ComparisonBGMatch :
 				(visibleLine) ? visibleOnVideo :
 				subsBkCol;
-			if (isComment){ kol = (comparison) ? ComparisonBGCmnt : (comparisonMatch) ? ComparisonBGCmntMatch : comm; }
+			if (isComment){ col = (comparison) ? ComparisonBGCmnt : (comparisonMatch) ? ComparisonBGCmntMatch : comm; }
 			if (isSelected){
-				kol = seldial;//GetColorWithAlpha(seldial, kol);
+				col = GetColorWithAlpha(seldial, col);
 			}
 			visibleLines.push_back(visibleLine);
 		}
@@ -762,7 +762,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 			}
 			gc->SetPen(*wxTRANSPARENT_PEN);
 
-			gc->SetBrush(wxBrush((j == 0 && !isHeadline) ? label : kol));
+			gc->SetBrush(wxBrush((j == 0 && !isHeadline) ? label : col));
 			if (unkstyle && j == 4 || shorttime && (j == 10 || (j == 3 && subsFormat>ASS))){
 				gc->SetBrush(wxBrush(SpelcheckerCol));
 			}
@@ -774,6 +774,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 					wxString & text = strings[j];
 					text.Replace(L"\t", L" ");
 					gc->SetBrush(wxBrush(SpelcheckerCol));
+					int cellSize = GridWidth[j];
 					for (size_t s = 1; s < SpellErrors[key].size(); s += 2){
 						wxString err = text.SubString(SpellErrors[key][s], SpellErrors[key][s + 1]);
 						err.Trim();
@@ -783,7 +784,9 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 							gc->GetTextExtent(berr, &bfw, &bfh);
 						}
 						else{ bfw = 0; }
-
+						if (bfw + 3 > cellSize){
+							break;
+						}
 						gc->GetTextExtent(err, &fw, &fh);
 						gc->DrawRectangle(posX + bfw + 3, posY, fw, GridHeight);
 					}
@@ -793,6 +796,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 				if (comparison){
 					gc->SetFont(font, ComparisonCol);
 					const wxString & text = strings[j];
+					int cellSize = GridWidth[j];
 					for (size_t c = 1; c < Comparison->at(key).size(); c += 2){
 						//if(Comparison->at(i-1)[k]==Comparison->at(i-1)[k+1]){continue;}
 						wxString cmp = text.SubString(Comparison->at(key)[c], Comparison->at(key)[c + 1]);
@@ -805,7 +809,9 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 							gc->GetTextExtent(bcmp, &bfw, &bfh);
 						}
 						else{ bfw = 0; }
-
+						if (bfw + 3 > cellSize){
+							break;
+						}
 						gc->GetTextExtent(cmp, &fw, &fh);
 
 						gc->DrawTextU(cmp, posX + bfw + 2, posY);

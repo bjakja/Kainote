@@ -84,7 +84,7 @@ private:
 	void OnToolbarOpts(wxCommandEvent &event);
 	void OnPaint(wxPaintEvent &event);
 	void OnSize(wxSizeEvent &evt);
-	void OnEraseBackground(wxEraseEvent &evt){};
+	//void OnEraseBackground(wxEraseEvent &evt){};
 	wxPoint FindElem(wxPoint pos);
 	std::vector<toolitem*> tools;
 	

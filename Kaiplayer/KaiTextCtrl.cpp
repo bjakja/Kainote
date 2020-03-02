@@ -796,34 +796,31 @@ void KaiTextCtrl::OnPaint(wxPaintEvent& event)
 		}
 
 	}
-	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = renderer->CreateContext(this);
-	if (!gc){
-		// Prepare bitmap
-		if (bmp) {
-			if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
-				delete bmp;
-				bmp = NULL;
-			}
+	// Prepare bitmap
+	if (bmp) {
+		if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
+			delete bmp;
+			bmp = NULL;
 		}
+	}
 
-		if (!bmp) bmp = new wxBitmap(w, h);
+	if (!bmp) bmp = new wxBitmap(w, h);
 
-		// Draw bitmap
-		wxMemoryDC bmpDC;
+	// Draw bitmap
+	wxMemoryDC bmpDC;
 
-		bmpDC.SelectObject(*bmp);
+	bmpDC.SelectObject(*bmp);
 
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateContext(bmpDC);
+	if (!gc){
 		DrawFld(bmpDC, w, h);
-
-
-		dc.Blit(0, 0, w, h, &bmpDC, 0, 0);
 	}
 	else{
 		DrawFieldD2D(gc, w, h);
 		delete gc;
 	}
-
+	dc.Blit(0, 0, w, h, &bmpDC, 0, 0);
 }
 
 void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h)

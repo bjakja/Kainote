@@ -61,9 +61,9 @@ int _tmain(int argc, TCHAR* argv[])
 	wchar_t * path = argv[1];
 	if (!check_exist_file(path)){ std::wcerr << L"Kainote zip path don't exist " << path; return 1; }
 
-	bool isX86 = false;
-	char * prependFolder = (isX86) ? "Kainote" : "Kainote_x64";
-	wchar_t * path = (isX86) ? L"H:\\Kainote\\Win32\\Release\\Kainote x86.zip" : L"H:\\Kainote\\x64\\Release\\Kainote x64.zip";
+	//bool isX86 = false;
+	//char * prependFolder = (isX86) ? "Kainote" : "Kainote_x64";
+	//wchar_t * path = (isX86) ? L"H:\\Kainote\\Win32\\Release\\Kainote x86.zip" : L"H:\\Kainote\\x64\\Release\\Kainote x64.zip";
 
 	std::vector<wchar_t *> filenames;
 	//used vector cause i always forget to add sizes;

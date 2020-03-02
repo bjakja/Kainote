@@ -2515,7 +2515,7 @@ private:
 // wxD2DBrushData declaration
 //-----------------------------------------------------------------------------
 
-class wxD2DBrushData //: /*public GraphicsObjectRefData, */public wxD2DManagedGraphicsData
+class wxD2DBrushData : /*public GraphicsObjectRefData, */public wxD2DManagedGraphicsData
 {
 public:
     wxD2DBrushData(wxD2DRenderer* renderer, const wxBrush brush);
@@ -2538,10 +2538,10 @@ public:
         return (ID2D1Brush*)(m_brushResourceHolder->GetResource());
     }
 
-    /*wxD2DManagedObject* GetManagedObject() override
+    wxD2DManagedObject* GetManagedObject() override
     {
         return m_brushResourceHolder.get();
-    }*/
+    }
 
 private:
     wxSharedPtr<wxManagedResourceHolder> m_brushResourceHolder;
@@ -2745,16 +2745,13 @@ private:
 // wxD2DPenData declaration
 //-----------------------------------------------------------------------------
 
-class wxD2DPenData //: /*public GraphicsObjectRefData, *///public wxD2DManagedGraphicsData
+class wxD2DPenData : /*public GraphicsObjectRefData, */public wxD2DManagedGraphicsData
 {
 public:
     wxD2DPenData(wxD2DRenderer* renderer,
                  ID2D1Factory* direct2dFactory,
                  const wxGraphicsPenInfo& info);
 
-	~wxD2DPenData(){
-		wxDELETE(m_stippleBrush);
-	}
 
     void CreateStrokeStyle(ID2D1Factory* const direct2dfactory);
 
@@ -2764,10 +2761,10 @@ public:
 
     ID2D1StrokeStyle* GetStrokeStyle();
 
-    /*wxD2DManagedObject* GetManagedObject() override
+    wxD2DManagedObject* GetManagedObject() override
     {
         return m_stippleBrush->GetManagedObject();
-    }*/
+    }
 
 private:
     // We store the original pen description for later when we need to recreate
@@ -2779,7 +2776,7 @@ private:
     wxCOMPtr<ID2D1StrokeStyle> m_strokeStyle;
 
     // Drawing outlines with Direct2D requires a brush for the color or stipple.
-    wxD2DBrushData *m_stippleBrush = NULL;
+	wxSharedPtr<wxD2DBrushData> m_stippleBrush;
 
     // The width of the stroke
     FLOAT m_width;
@@ -4210,11 +4207,12 @@ void wxD2DContext::StrokePath(GraphicsPathData * p)
     if (m_pen)
     {
         //wxD2DPenData* penData = wxGetD2DPenData(m_pen);
-		//m_pen->Bind(this);
+		m_pen->Bind(this);
 
 		ID2D1Brush* nativeBrush = m_pen->GetBrush();
 		GetRenderTarget()->DrawGeometry((ID2D1Geometry*)pathData->GetNativePath(), nativeBrush, m_pen->GetWidth(), m_pen->GetStrokeStyle());
     }
+	delete pathData;
 }
 
 void wxD2DContext::FillPath(GraphicsPathData * p, wxPolygonFillMode fillStyle)
@@ -4611,7 +4609,7 @@ void wxD2DContext::SetPen(const wxD2DPenData& pen)
         EnsureInitialized();
 
         //wxD2DPenData* penData = wxGetD2DPenData(pen);
-		//m_pen->Bind(this);
+		m_pen->Bind(this);
     }
 }
 
@@ -4658,7 +4656,7 @@ void wxD2DContext::DrawRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h)
     if (m_pen)
     {
         //wxD2DPenData* penData = m_pen;
-        //m_pen->Bind(this);
+        m_pen->Bind(this);
 		GetRenderTarget()->DrawRectangle(rect, m_pen->GetBrush(), m_pen->GetWidth(), m_pen->GetStrokeStyle());
     }
 }
@@ -4687,7 +4685,7 @@ void wxD2DContext::DrawRoundedRectangle(wxDouble x, wxDouble y, wxDouble w, wxDo
     if (m_pen)
     {
         //wxD2DPenData* penData = m_pen;
-		//m_pen->Bind(this);
+		m_pen->Bind(this);
 		GetRenderTarget()->DrawRoundedRectangle(roundedRect, m_pen->GetBrush(), m_pen->GetWidth(), m_pen->GetStrokeStyle());
     }
 }
@@ -4718,7 +4716,7 @@ void wxD2DContext::DrawEllipse(wxDouble x, wxDouble y, wxDouble w, wxDouble h)
     if (m_pen)
     {
         //wxD2DPenData* penData = m_pen;
-		//m_pen->Bind(this);
+		m_pen->Bind(this);
 		GetRenderTarget()->DrawEllipse(ellipse, m_pen->GetBrush(), m_pen->GetWidth(), m_pen->GetStrokeStyle());
     }
 }
@@ -4897,7 +4895,7 @@ GraphicsPathData * wxD2DContext::CreatePath(){ return m_renderer->CreatePath(); 
 
 void wxD2DContext::SetPen(const wxPen& pen, double width){
 	wxGraphicsPenInfo info(pen.GetColour(), width, pen.GetStyle());
-	wxDELETE(m_brush);
+	wxDELETE(m_pen);
 	m_pen = m_renderer->CreatePen(info);
 }
 

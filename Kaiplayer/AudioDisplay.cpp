@@ -80,9 +80,9 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	, d3dDevice(NULL)
 	, d3dObject(NULL)
 	, d3dLine(NULL)
-	, d3dFont(NULL)
-	, d3dFont8(NULL)
-	, d3dFont9(NULL)
+	, d3dFontTahoma13(NULL)
+	, d3dFontTahoma8(NULL)
+	, d3dFontVerdana11(NULL)
 	, backBuffer(NULL)
 {
 	// Set variables
@@ -125,10 +125,15 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	needImageUpdateWeak = true;
 	playingToEnd = false;
 	LastSize = wxSize(-1, -1);
-	// Init
+	verdana11 = wxFont(11, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, L"Verdana");
+	tahoma13 = wxFont(13, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, L"Tahoma");
+	tahoma8 = wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma");
+	int fh;
+	GetTextExtent("#TWFfGH", NULL, &fh, NULL, NULL, &tahoma8);
+	timelineHeight = fh + 8;
 	UpdateTimer.SetOwner(this, Audio_Update_Timer);
 	GetClientSize(&w, &h);
-	h -= 20;
+	h -= timelineHeight;
 	ProgressTimer.SetOwner(this, 7654);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
 		if (!provider->audioNotInitialized){
@@ -142,7 +147,6 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	// Set cursor
 	//wxCursor cursor(wxCURSOR_BLANK);
 	//SetCursor(cursor);
-
 
 }
 
@@ -226,9 +230,9 @@ void AudioDisplay::ClearDX()
 	SAFE_RELEASE(d3dDevice);
 	SAFE_RELEASE(d3dObject);
 	SAFE_RELEASE(d3dLine);
-	SAFE_RELEASE(d3dFont);
-	SAFE_RELEASE(d3dFont8);
-	SAFE_RELEASE(d3dFont9);
+	SAFE_RELEASE(d3dFontTahoma13);
+	SAFE_RELEASE(d3dFontTahoma8);
+	SAFE_RELEASE(d3dFontVerdana11);
 }
 
 bool AudioDisplay::InitDX(const wxSize &size)
@@ -242,9 +246,9 @@ bool AudioDisplay::InitDX(const wxSize &size)
 		SAFE_RELEASE(spectrumSurface);
 		SAFE_RELEASE(backBuffer);
 		SAFE_RELEASE(d3dLine);
-		SAFE_RELEASE(d3dFont);
-		SAFE_RELEASE(d3dFont8);
-		SAFE_RELEASE(d3dFont9);
+		SAFE_RELEASE(d3dFontTahoma13);
+		SAFE_RELEASE(d3dFontTahoma8);
+		SAFE_RELEASE(d3dFontVerdana11);
 	}
 
 	HRESULT hr;
@@ -306,10 +310,14 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	HR(d3dDevice->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie można ustawić macierzy widoku"));
 	HR(d3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer), _("Nie można stworzyć powierzchni"));
 
+	
 	HR(D3DXCreateLine(d3dDevice, &d3dLine), _("Nie można stworzyć linii D3DX"));
-	HR(D3DXCreateFontW(d3dDevice, 18, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFont), _("Nie można stworzyć czcionki D3DX"));
-	HR(D3DXCreateFontW(d3dDevice, 12, 0, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFont8), _("Nie można stworzyć czcionki D3DX"));
-	HR(D3DXCreateFontW(d3dDevice, 16, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Verdana"), &d3dFont9), _("Nie można stworzyć czcionki D3DX"));
+	wxSize sizeTahoma13 = tahoma13.GetPixelSize();
+	wxSize sizeTahoma8 = tahoma8.GetPixelSize();
+	wxSize sizeVerdana11 = verdana11.GetPixelSize();
+	HR(D3DXCreateFontW(d3dDevice, sizeTahoma13.y, sizeTahoma13.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFontTahoma13), _("Nie można stworzyć czcionki D3DX"));
+	HR(D3DXCreateFontW(d3dDevice, sizeTahoma8.y, sizeTahoma8.x, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFontTahoma8), _("Nie można stworzyć czcionki D3DX"));
+	HR(D3DXCreateFontW(d3dDevice, sizeVerdana11.y, sizeVerdana11.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Verdana"), &d3dFontVerdana11), _("Nie można stworzyć czcionki D3DX"));
 	//HR(d3dLine->SetAntialias(TRUE), _("Linia nie ustawi AA"));
 	HR(d3dDevice->CreateOffscreenPlainSurface(size.x, size.y, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &spectrumSurface, 0), _("Nie można stworzyć plain surface"));
 	//HR(d3dDevice->CreateTexture(size.x, size.y, 1, D3DUSAGE_RENDERTARGET,
@@ -321,7 +329,6 @@ bool AudioDisplay::InitDX(const wxSize &size)
 
 void AudioDisplay::DoUpdateImage() {
 	// Prepare bitmap
-	int timelineHeight = 20;
 	int displayH = h + timelineHeight;
 	// Invalid dimensions
 	if (w < 1 || displayH < 1 || isHidden) return;
@@ -540,7 +547,7 @@ void AudioDisplay::DoUpdateImage() {
 						d3dLine->End();
 						d3dLine->SetWidth(1);
 						RECT rect = { center + karstart, 0, center + karstart + fw, fh };
-						d3dFont9->DrawTextW(NULL, acsyl.wchar_str(), -1, &rect, DT_LEFT, syllableTextColor);
+						d3dFontVerdana11->DrawTextW(NULL, acsyl.wchar_str(), -1, &rect, DT_LEFT, syllableTextColor);
 						//obramowanie aktywynej sylaby
 						if (letter >= 0 && syll >= 0 && syll == j){
 							int start, end;
@@ -588,11 +595,11 @@ void AudioDisplay::DoUpdateImage() {
 			wxString text;
 			if (selStart <= selEnd) {
 				text = _("Zmodyfikowano");
-				DRAWOUTTEXT(d3dFont9, text, rect, DT_LEFT | DT_TOP, 0xFFFF0000);
+				DRAWOUTTEXT(d3dFontVerdana11, text, rect, DT_LEFT | DT_TOP, 0xFFFF0000);
 			}
 			else {
 				text = _("Czas ujemny");
-				DRAWOUTTEXT(d3dFont9, text, rect, DT_LEFT | DT_TOP, 0xFFFF0000);
+				DRAWOUTTEXT(d3dFontVerdana11, text, rect, DT_LEFT | DT_TOP, 0xFFFF0000);
 			}
 		}
 
@@ -611,9 +618,8 @@ void AudioDisplay::DoUpdateImage() {
 				//dc.DrawRectangle(selMark,0,2,h);
 				STime time(curMarkMS);
 				wxString text = time.raw();
-				wxFont font(9, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, _T("Verdana"));
 				int dx, dy;
-				GetTextExtent(text, &dx, &dy, 0, 0, &font);
+				GetTextExtent(text, &dx, &dy, 0, 0, &verdana11);
 				//dx=selMark-(dx/2);
 				dy = h - dy - 2;
 				RECT rect;
@@ -621,7 +627,7 @@ void AudioDisplay::DoUpdateImage() {
 				rect.top = dy;
 				rect.right = rect.left + 300;
 				rect.bottom = rect.top + 100;
-				DRAWOUTTEXT(d3dFont9, text, rect, DT_CENTER, 0xFFFFFFFF);
+				DRAWOUTTEXT(d3dFontVerdana11, text, rect, DT_CENTER, 0xFFFFFFFF);
 			}
 		}
 		// Draw current frame
@@ -659,7 +665,7 @@ void AudioDisplay::DoUpdateImage() {
 				rect.top = (hasKara) ? 20 : 5;
 				rect.right = rect.left + 300;
 				rect.bottom = rect.top + 100;
-				DRAWOUTTEXT(d3dFont, text, rect, DT_CENTER, 0xFFFFFFFF);
+				DRAWOUTTEXT(d3dFontTahoma13, text, rect, DT_CENTER, 0xFFFFFFFF);
 			}
 		}
 
@@ -801,9 +807,7 @@ void AudioDisplay::DrawInactiveLines() {
 //////////////////
 // Draw timescale
 void AudioDisplay::DrawTimescale() {
-	// Set size
-	int timelineHeight = 20;
-
+	
 	// Set colours
 	VERTEX v9[4];
 	D3DXVECTOR2 v2[2];
@@ -822,11 +826,11 @@ void AudioDisplay::DrawTimescale() {
 	v2[1]=D3DXVECTOR2(w,h+1);
 	d3dLine->Draw(v2,2,timescale3dHighLight);*/
 
-	wxFont scaleFont;
-	scaleFont.SetFaceName(_T("Tahoma")); // FIXME: hardcoded font name
-	if (!scaleFont.IsOk())
-		scaleFont.SetFamily(wxFONTFAMILY_SWISS);
-	scaleFont.SetPointSize(8);
+	//wxFont scaleFont;
+	//scaleFont.SetFaceName(_T("Tahoma")); // FIXME: hardcoded font name
+	//if (!scaleFont.IsOk())
+	//	scaleFont.SetFamily(wxFONTFAMILY_SWISS);
+	//scaleFont.SetPointSize(8);
 
 	// Timescale ticks
 	int64_t start = Position*samples;
@@ -849,7 +853,7 @@ void AudioDisplay::DrawTimescale() {
 			if (ms)
 				text << wxString::Format(_T(".%i"), ms);
 		}
-		GetTextExtent(text, &textW, NULL, NULL, NULL, &scaleFont);
+		GetTextExtent(text, &textW, NULL, NULL, NULL, &tahoma8);
 		//if (drawMS)
 			//textW += 20;
 		if (x > (*lastTextPos) + textW){
@@ -858,7 +862,7 @@ void AudioDisplay::DrawTimescale() {
 			rect.top = h + 8;
 			rect.right = rect.left + 100;
 			rect.bottom = rect.top + 40;
-			d3dFont8->DrawTextW(NULL, text.wchar_str(), -1, &rect, DT_CENTER, timescaleText);
+			d3dFontTahoma8->DrawTextW(NULL, text.wchar_str(), -1, &rect, DT_CENTER, timescaleText);
 			(*lastTextPos) = x;
 		}
 	};
@@ -1030,7 +1034,7 @@ void AudioDisplay::DrawProgress()
 	d3dLine->Draw(&vectors[14], 2, 0xFFFFFFFF);
 	d3dLine->End();
 
-	DRAWOUTTEXT(d3dFont, txt, textParcent, DT_CENTER | DT_VCENTER, 0xFFFFFFFF)
+	DRAWOUTTEXT(d3dFontTahoma13, txt, textParcent, DT_CENTER | DT_VCENTER, 0xFFFFFFFF)
 		//} catch (...){}
 }
 
@@ -1069,7 +1073,7 @@ void AudioDisplay::Update(bool moveToEnd) {
 void AudioDisplay::RecreateImage() {
 	LastSize = wxSize(w, h);
 	GetClientSize(&w, &h);
-	h -= 20;
+	h -= timelineHeight;
 	//delete origImage;
 	//origImage = NULL;
 	UpdateImage(false);
@@ -1603,7 +1607,6 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	int64_t y = event.GetY();
 
 	bool shiftDown = event.m_shiftDown;
-	int timelineHeight = 20;
 	if (box->arrows){ box->SetCursor(wxCURSOR_ARROW); box->arrows = false; }
 	// Leaving event
 	if (event.Leaving()) {
@@ -2185,7 +2188,7 @@ int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start
 void AudioDisplay::GetTextExtentPixel(const wxString &text, int *x, int *y)
 {
 	RECT rcRect = { 0, 0, 0, 0 };
-	d3dFont9->DrawTextW(NULL, text.wchar_str(), -1, &rcRect, DT_CALCRECT, 0xFF000000);
+	d3dFontVerdana11->DrawTextW(NULL, text.wchar_str(), -1, &rcRect, DT_CALCRECT, 0xFF000000);
 	*x = rcRect.right - rcRect.left;
 	*y = rcRect.bottom - rcRect.top;
 	if (text.StartsWith(" "))
@@ -2200,7 +2203,7 @@ void AudioDisplay::OnSize(wxSizeEvent &event) {
 	// Set size
 	LastSize = wxSize(w, h);
 	GetClientSize(&w, &h);
-	h -= 20;
+	h -= timelineHeight;
 	if (LastSize.x == w && LastSize.y == h)
 		return;
 

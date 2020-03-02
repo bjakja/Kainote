@@ -723,7 +723,8 @@ void PopupList::CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &control
 	wxPoint ScreenPos = Parent->ClientToScreen(*pos);
 	wxRect workArea = GetMonitorRect(0, NULL, ScreenPos, true);
 	int h = workArea.height + workArea.y;
-	*pos = ScreenPos;
+	//fix for new wxWidgets
+	//*pos = ScreenPos;
 	if ((ScreenPos.y + size->y) > h){
 		pos->y -= (size->y + controlSize.y);
 	}

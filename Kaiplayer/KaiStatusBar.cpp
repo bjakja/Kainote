@@ -17,6 +17,7 @@
 #include <wx\dcmemory.h>
 #include <wx\dcclient.h>
 #include <wx\log.h>
+#include "graphicsD2D.h"
 
 KaiStatusBar::KaiStatusBar(wxWindow *parent, int id, int style)
 	:wxWindow(parent, id, wxDefaultPosition, wxSize(-1, 26))
@@ -25,7 +26,7 @@ KaiStatusBar::KaiStatusBar(wxWindow *parent, int id, int style)
 	Bind(wxEVT_SIZE, &KaiStatusBar::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiStatusBar::OnPaint, this);
 	Bind(wxEVT_MOTION, &KaiStatusBar::OnMouseMove, this);
-	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent evt){});
+	//Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent evt){});
 	SetMinSize(wxSize(200, 26));
 	int x = 0, y = 0;
 	//SetFont(wxFont(13, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, L"Tahoma"));
@@ -71,37 +72,80 @@ void KaiStatusBar::OnPaint(wxPaintEvent& event)
 	}
 	if (!bmp){ bmp = new wxBitmap(w, h); }
 	tdc.SelectObject(*bmp);
-	tdc.SetFont(GetFont());
-	bool enabled = IsThisEnabled();
-	const wxColour & wbg = Options.GetColour(WindowBackground);
-	const wxColour & wfg = Options.GetColour(WindowText);
-	const wxColour & border = Options.GetColour(StatusBarBorder);
-	tdc.SetBrush(wxBrush(wbg));
-	tdc.SetPen(wxPen(border));
-	tdc.DrawRectangle(0, 0, w, h);
-	wxArrayInt widths;
-	CalcWidths(&widths);
-	int posX = 1;
-	int widthsSize = widths.size();
-	for (size_t i = 0; i < widthsSize; i++){
-		if (widths[i] > 0 && i > 0){
-			tdc.SetPen(border);
-			tdc.DrawLine(posX - 1, 1, posX - 1, h - 1);
-		}
-		if (labels[i] == ""){ posX += widths[i]; continue; }
-		wxColour bg = (background.size() > i && background[i] > 0) ? Options.GetColour(background[i]) : wbg;
-		tdc.SetTextForeground((foreground.size() > i && foreground[i] > 0) ? Options.GetColour(foreground[i]) : wfg);
-		tdc.SetBrush(bg);
-		tdc.SetPen(bg);
-		tdc.DrawRectangle(posX, 1, widths[i] - 1, h - 2);
-		wxRect cur(posX + 4, 1, (i >= widthsSize - 1) ? widths[i] - 20 : widths[i] - 5, h - 2);
-		tdc.SetClippingRegion(cur);
-		tdc.DrawLabel(labels[i], cur, wxALIGN_CENTER_VERTICAL);
-		tdc.DestroyClippingRegion();
-		posX += widths[i];
 
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateContext(tdc);
+	if (!gc){
+		tdc.SetFont(GetFont());
+		bool enabled = IsThisEnabled();
+		const wxColour & wbg = Options.GetColour(WindowBackground);
+		const wxColour & wfg = Options.GetColour(WindowText);
+		const wxColour & border = Options.GetColour(StatusBarBorder);
+		tdc.SetBrush(wxBrush(wbg));
+		tdc.SetPen(wxPen(border));
+		tdc.DrawRectangle(0, 0, w, h);
+		wxArrayInt widths;
+		CalcWidths(&widths);
+		int posX = 1;
+		int widthsSize = widths.size();
+		for (size_t i = 0; i < widthsSize; i++){
+			if (widths[i] > 0 && i > 0){
+				tdc.SetPen(border);
+				tdc.DrawLine(posX - 1, 1, posX - 1, h - 1);
+			}
+			if (labels[i] == ""){ posX += widths[i]; continue; }
+			wxColour bg = (background.size() > i && background[i] > 0) ? Options.GetColour(background[i]) : wbg;
+			tdc.SetTextForeground((foreground.size() > i && foreground[i] > 0) ? Options.GetColour(foreground[i]) : wfg);
+			tdc.SetBrush(bg);
+			tdc.SetPen(bg);
+			tdc.DrawRectangle(posX, 1, widths[i] - 1, h - 2);
+			wxRect cur(posX + 4, 1, (i >= widthsSize - 1) ? widths[i] - 20 : widths[i] - 5, h - 2);
+			tdc.SetClippingRegion(cur);
+			tdc.DrawLabel(labels[i], cur, wxALIGN_CENTER_VERTICAL);
+			tdc.DestroyClippingRegion();
+			posX += widths[i];
+
+		}
+		tdc.DrawBitmap(wxBITMAP_PNG("gripper"), w - 18, h - 18);
 	}
-	tdc.DrawBitmap(wxBITMAP_PNG("gripper"), w - 18, h - 18);
+	else{
+		
+		bool enabled = IsThisEnabled();
+		const wxColour & wbg = Options.GetColour(WindowBackground);
+		const wxColour & wfg = Options.GetColour(WindowText);
+		const wxColour & border = Options.GetColour(StatusBarBorder);
+		gc->SetBrush(wxBrush(wbg));
+		gc->SetPen(wxPen(border));
+		gc->DrawRectangle(0, 0, w - 1, h - 1);
+		wxArrayInt widths;
+		CalcWidths(&widths);
+		int posX = 1;
+		int widthsSize = widths.size();
+		for (size_t i = 0; i < widthsSize; i++){
+			if (widths[i] > 0 && i > 0){
+				gc->SetPen(border);
+				gc->StrokeLine(posX - 1, 1, posX - 1, h - 1);
+			}
+			if (labels[i] == ""){ posX += widths[i]; continue; }
+			wxColour bg = (background.size() > i && background[i] > 0) ? Options.GetColour(background[i]) : wbg;
+			gc->SetFont(GetFont(), (foreground.size() > i && foreground[i] > 0) ? Options.GetColour(foreground[i]) : wfg);
+			gc->SetBrush(bg);
+			gc->SetPen(bg);
+			gc->DrawRectangle(posX, 1, widths[i] - 2, h - 3);
+			wxRect cur(posX + 4, 1, (i >= widthsSize - 1) ? widths[i] - 20 : widths[i] - 5, h - 2);
+			/*gc->SetClippingRegion(cur);
+			gc->DrawLabel(labels[i], cur, wxALIGN_CENTER_VERTICAL);
+			gc->DestroyClippingRegion();*/
+			gc->Clip(cur);
+			gc->DrawTextU(labels[i], posX + 4., 4.);
+			gc->ResetClip();
+			posX += widths[i];
+
+		}
+		wxBitmap bmp = wxBITMAP_PNG("gripper");
+		gc->DrawBitmap(bmp, w - 18, h - 18, bmp.GetWidth(), bmp.GetHeight());
+		delete gc;
+	}
 	wxPaintDC dc(this);
 	dc.Blit(0, 0, w, h, &tdc, 0, 0);
 }

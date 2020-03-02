@@ -384,7 +384,7 @@ EVT_MOUSE_EVENTS(KaiToolbar::OnMouseEvent)
 EVT_PAINT(KaiToolbar::OnPaint)
 EVT_SIZE(KaiToolbar::OnSize)
 EVT_MENU(32566, KaiToolbar::OnToolbarOpts)
-EVT_ERASE_BACKGROUND(KaiToolbar::OnEraseBackground)
+//EVT_ERASE_BACKGROUND(KaiToolbar::OnEraseBackground)
 END_EVENT_TABLE()
 
 ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos)

@@ -120,19 +120,23 @@ private:
 	LPDIRECT3DSURFACE9 spectrumSurface;
 
 	ID3DXLine *d3dLine;
-	LPD3DXFONT d3dFont;
-	LPD3DXFONT d3dFont8;
-	LPD3DXFONT d3dFont9;
+	LPD3DXFONT d3dFontTahoma13;
+	LPD3DXFONT d3dFontTahoma8;
+	LPD3DXFONT d3dFontVerdana11;
 	bool deviceLost;
 	bool needToReset = false;
 	//config
 	int selWidth;
 	int shadeType;
+	int timelineHeight;
 	bool drawVideoPos;
 	bool spectrumOn;
 	bool drawSelectionBackground;
 	bool drawKeyframes;
 	bool drawBoundaryLines;
+	wxFont verdana11;
+	wxFont tahoma13;
+	wxFont tahoma8;
 
 	D3DCOLOR keyframe;
 	D3DCOLOR background;

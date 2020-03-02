@@ -279,18 +279,6 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Tabs->SetDropTarget(new DragnDrop(this));
 	Bind(wxEVT_SIZE, &KainoteFrame::OnSize, this);
 
-
-	bool im = Options.GetBool(WindowMaximized);
-	if (im){ Maximize(Options.GetBool(WindowMaximized)); }
-
-	if (!Options.GetBool(EditorOn)){ HideEditor(false); }
-	std::set_new_handler(OnOutofMemory);
-	FontEnum.StartListening(this);
-	SetSubsResolution(false);
-	Auto = new Auto::Automation();
-
-	EnableCrashingOnCrashes();
-	sendFocus.SetOwner(this, 6789);
 	auto focusFunction = [=](wxFocusEvent &event) -> void {
 		TabPanel *tab = GetTab();
 		if (tab->lastFocusedWindow){
@@ -304,6 +292,18 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 		}
 
 	};
+	bool im = Options.GetBool(WindowMaximized);
+	if (im){ Maximize(Options.GetBool(WindowMaximized)); }
+
+	if (!Options.GetBool(EditorOn)){ HideEditor(false); }
+	std::set_new_handler(OnOutofMemory);
+	FontEnum.StartListening(this);
+	SetSubsResolution(false);
+	Auto = new Auto::Automation();
+
+	EnableCrashingOnCrashes();
+	sendFocus.SetOwner(this, 6789);
+	
 
 	Bind(wxEVT_SET_FOCUS, focusFunction);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){

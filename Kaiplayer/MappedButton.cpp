@@ -78,7 +78,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	Bind(wxEVT_SIZE, &MappedButton::OnSize, this);
 	Bind(wxEVT_PAINT, &MappedButton::OnPaint, this);
 	Bind(wxEVT_KEY_DOWN, [=](wxKeyEvent &evt){
-		if(evt.GetKeyCode()==WXK_RETURN){
+		if(evt.GetKeyCode() == WXK_RETURN){
 			SendEvent();
 		}
 	});
@@ -250,10 +250,17 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	int h = 0;
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
+	wxMemoryDC tdc;
+	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
+		delete bmp;
+		bmp = NULL;
+	}
+	if (!bmp){ bmp = new wxBitmap(w, h); }
+	tdc.SelectObject(*bmp);
 	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = renderer->CreateContext(this);
+	GraphicsContext *gc = renderer->CreateContext(tdc);
 	if (!gc)
-		PaintGDI(w, h);
+		PaintGDI(tdc, w, h);
 	else{
 		bool enabled = IsThisEnabled();
 
@@ -300,10 +307,10 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 					gc->DrawTextU(name, ((w - fw) / 2) + iw + 5, ((h - textHeight) / 2));
 				}
 				else{
-					//wxRect cur(5, ((h - textHeight) / 2), w - 10, textHeight);
-					//gc->Clip(cur);
+					wxRect cur(5, ((h - textHeight) / 2), w - 10, textHeight);
+					gc->Clip(cur);
 					gc->DrawTextU(name, ((w - fw) / 2) + iw, ((h - textHeight) / 2));
-					//gc->ResetClip();
+					gc->ResetClip();
 					//gc->SetClippingRegion(cur);
 					//gc->DrawLabel(name, cur, iw ? wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL : wxALIGN_CENTER);
 					//gc->DestroyClippingRegion();
@@ -313,16 +320,12 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 		}
 		delete gc;
 	}
+	wxPaintDC dc(this);
+	dc.Blit(0, 0, w, h, &tdc, 0, 0);
 }
 
-void MappedButton::PaintGDI(int w, int h){
-	wxMemoryDC tdc;
-	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
-		delete bmp;
-		bmp = NULL;
-	}
-	if(!bmp){bmp=new wxBitmap(w,h);}
-	tdc.SelectObject(*bmp);
+void MappedButton::PaintGDI(wxDC &tdc, int w, int h){
+	
 	tdc.SetFont(GetFont());
 	bool enabled = IsThisEnabled();
 	tdc.SetBrush(wxBrush((enter && !clicked)? Options.GetColour(ButtonBackgroundHover) :
@@ -368,8 +371,6 @@ void MappedButton::PaintGDI(int w, int h){
 		}
 		
 	}
-	wxPaintDC dc(this);
-	dc.Blit(0,0,w,h,&tdc,0,0);
 }
 
 void MappedButton::OnMouseEvent(wxMouseEvent &event)
@@ -519,10 +520,17 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 	int h = 0;
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
+	wxMemoryDC tdc;
+	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
+		delete bmp;
+		bmp = NULL;
+	}
+	if (!bmp){ bmp = new wxBitmap(w, h); }
+	tdc.SelectObject(*bmp);
 	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = renderer->CreateContext(this);
+	GraphicsContext *gc = renderer->CreateContext(tdc);
 	if (!gc)
-		PaintGDI(w, h);
+		PaintGDI(tdc, w, h);
 	else{
 		wxColour background = GetParent()->GetBackgroundColour();
 		bool enabled = IsThisEnabled();
@@ -553,8 +561,8 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 					Options.GetColour(WindowTextInactive));
 
 				gc->GetTextExtent(name, &fw, &fh);
-				//wxRect cur(5, (h - textHeight) / 2, w - 10, textHeight);
-				//gc->Clip(cur);
+				wxRect cur(5, (h - textHeight) / 2, w - 10, textHeight);
+				gc->Clip(cur);
 				gc->DrawTextU(name, ((w - fw) / 2), ((h - textHeight) / 2));
 				//gc->ResetClip();
 				//tdc.GetTextExtent(name, &fw, &fh);
@@ -567,16 +575,11 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 		}
 		delete gc;
 	}
+	wxPaintDC dc(this);
+	dc.Blit(0, 0, w, h, &tdc, 0, 0);
 }
 
-void ToggleButton::PaintGDI(int w, int h){
-	wxMemoryDC tdc;
-	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
-		delete bmp;
-		bmp = NULL;
-	}
-	if(!bmp){bmp=new wxBitmap(w,h);}
-	tdc.SelectObject(*bmp);
+void ToggleButton::PaintGDI(wxDC &tdc, int w, int h){
 	tdc.SetFont(GetFont());
 	wxColour background = GetParent()->GetBackgroundColour();
 	bool enabled = IsThisEnabled();
@@ -611,8 +614,6 @@ void ToggleButton::PaintGDI(int w, int h){
 		}
 		
 	}
-	wxPaintDC dc(this);
-	dc.Blit(0,0,w,h,&tdc,0,0);
 }
 
 void ToggleButton::OnMouseEvent(wxMouseEvent &event)

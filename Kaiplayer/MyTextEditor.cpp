@@ -815,32 +815,32 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 		scrollPositionV = 0;
 	}
 
+	if (bmp) {
+		if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
+			delete bmp;
+			bmp = NULL;
+		}
+	}
+
+	if (!bmp) bmp = new wxBitmap(w, h);
+	// Draw bitmap
+	wxMemoryDC bmpDC;
+	bmpDC.SelectObject(*bmp);
 
 	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = renderer->CreateContext(this);
+	GraphicsContext *gc = renderer->CreateContext(bmpDC);
 
 	if (!gc){
-		if (bmp) {
-			if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
-				delete bmp;
-				bmp = NULL;
-			}
-		}
-
-		if (!bmp) bmp = new wxBitmap(w, h);
-		// Draw bitmap
-		wxMemoryDC bmpDC;
-		bmpDC.SelectObject(*bmp);
 		DrawFieldGDI(bmpDC, w, h - statusBarHeight, h);
-		wxPaintDC dc(this);
-		dc.Blit(0, 0, w, h, &bmpDC, 0, 0);
+		
 	}
 	else{
 		DrawFieldGDIPlus(gc, w, h - statusBarHeight, h);
 		delete gc;
 	}
-	
-		
+	wxPaintDC dc(this);
+	dc.Blit(0, 0, w, h, &bmpDC, 0, 0);
+	//caret->Move(3, 3);
 }
 
 void TextEditor::DrawFieldGDIPlus(GraphicsContext *gc, int w, int h, int windowh)
@@ -973,9 +973,10 @@ void TextEditor::DrawFieldGDIPlus(GraphicsContext *gc, int w, int h, int windowh
 				double fww = 0.f;
 				wxString text = mestext + parttext;
 				if (!text.empty())
-					gc->GetTextExtent(mestext + parttext, &fww, &fh);
+					gc->GetTextExtent(text, &fww, &fh);
 
 				//gc->SetPen(ctext);
+				//caret->Move(3, 3);
 				caret->Move(fww + 3, posY);
 				//gc->StrokeLine(fww + 3, posY, fww + 3, posY + fontHeight);
 				cursorWasSet = true;
@@ -1011,6 +1012,7 @@ void TextEditor::DrawFieldGDIPlus(GraphicsContext *gc, int w, int h, int windowh
 		if (hasFocus && (Cursor.x + Cursor.y == wchar)){
 			if (mestext + parttext == L""){ fw = 0.0; }
 			else{ gc->GetTextExtent(mestext + parttext, &fw, &fh); }
+			//caret->Move(3, 3);
 			caret->Move(fw + 3, posY);
 			//gc->SetPen(ctext);
 			//gc->StrokeLine(fw + 3, posY, fw + 3, posY + fontHeight);
@@ -1156,6 +1158,7 @@ void TextEditor::DrawFieldGDIPlus(GraphicsContext *gc, int w, int h, int windowh
 	}
 	if (!cursorWasSet){
 		caret->Move(0, -50);
+		//caret->Move(10, 10);
 	}
 	const wxColour &border = Options.GetColour(hasFocus ? EditorBorderOnFocus : EditorBorder);
 	//here we go our status bar
