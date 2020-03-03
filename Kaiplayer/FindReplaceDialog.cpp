@@ -231,8 +231,8 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, &TabWindow::Reset, this, 23158);
 
 		wxBoxSizer* frbsizer4 = new wxBoxSizer(wxHORIZONTAL);
-		MappedButton *ButtonChooseStyle = new MappedButton(this, ID_BUTTON_CHOOSE_STYLE, "+", -1, wxDefaultPosition, wxSize(22, -1/*22*/));
-		ChoosenStyleText = new KaiTextCtrl(this, ID_CHOOSEN_STYLE_TEXT, Options.GetString(FIND_REPLACE_STYLES)/*, wxDefaultPosition, wxSize(-1, 22)*/);
+		MappedButton *ButtonChooseStyle = new MappedButton(this, ID_BUTTON_CHOOSE_STYLE, L"+", -1, wxDefaultPosition, wxDefaultSize, (long)MAKE_SQUARE_BUTTON);
+		ChoosenStyleText = new KaiTextCtrl(this, ID_CHOOSEN_STYLE_TEXT, Options.GetString(FIND_REPLACE_STYLES));
 		frbsizer4->Add(ButtonChooseStyle, 0, 0, 0);
 		frbsizer4->Add(ChoosenStyleText, 0, wxLEFT, 3);
 

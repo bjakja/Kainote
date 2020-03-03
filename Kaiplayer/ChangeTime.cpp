@@ -190,8 +190,8 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 	WhichLines = new KaiChoice(panel, -1, wxDefaultPosition, wxDefaultSize, choices, KAI_SCROLL_ON_FOCUS);
 
 	wxBoxSizer *stylesizer = new wxBoxSizer(wxHORIZONTAL);
-	AddStyles = new MappedButton(panel, ID_BSTYLE, "+", "", wxDefaultPosition, wxSize(22, 22), -1);
-	Stylestext = new KaiTextCtrl(panel, -1, "", wxDefaultPosition, wxSize(22, 22), wxTE_PROCESS_ENTER);
+	AddStyles = new MappedButton(panel, ID_BSTYLE, L"+", L"", wxDefaultPosition, wxDefaultSize, -1, MAKE_SQUARE_BUTTON);
+	Stylestext = new KaiTextCtrl(panel, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	stylesizer->Add(AddStyles, 0, wxALL, 2);
 	stylesizer->Add(Stylestext, 1, wxEXPAND | wxBOTTOM | wxTOP | wxRIGHT, 2);
 

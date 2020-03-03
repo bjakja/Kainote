@@ -61,12 +61,17 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	SetFont(parent->GetFont());
 	int fw;
 	CalculateSize(&fw, &textHeight);
-	if(size.x <1){
-		newSize.x = fw+10;
-		//if(newSize.x<60){newSize.x=60;}
+	bool makeSquare = (style & MAKE_SQUARE_BUTTON) != 0;
+	int controlHeight = textHeight + 10;
+	if (makeSquare){
+		newSize.x = controlHeight;
+	}else if(size.x < 1){
+		newSize.x = fw + 10;
+		if (newSize.x < controlHeight){ newSize.x = controlHeight; }
 	}
-	if(size.y <1){
-		newSize.y = textHeight + 10;
+	
+	if (size.y < 1 || makeSquare){
+		newSize.y = controlHeight;
 	}
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
@@ -112,12 +117,18 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	SetFont(parent->GetFont());
 	int fw;
 	CalculateSize(&fw, &textHeight);
-	if(size.x <1){
-		newSize.x = fw+16;
-		//if(newSize.x<60){newSize.x=60;}
+	bool makeSquare = (style & MAKE_SQUARE_BUTTON) != 0;
+	int controlHeight = textHeight + 10;
+	if (makeSquare){
+		newSize.x = controlHeight;
 	}
-	if(size.y <1){
-		newSize.y = textHeight + 10;
+	else if (size.x < 1){
+		newSize.x = fw + 16;
+		if (newSize.x < controlHeight){ newSize.x = controlHeight; }
+	}
+
+	if (size.y < 1 || makeSquare){
+		newSize.y = controlHeight;
 	}
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
@@ -161,19 +172,26 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 {
 	icon = bitmap;
 	wxSize newSize=size;
-	int fw=0;
-	if(text!=""){
-		name = text;
-		CalculateSize(&fw, &textHeight);
-		fw+=15;
-	}
-	if(size.x <1){
-		fw += icon.GetWidth();
-		newSize.x = fw+10;
-	}
-	if(size.y <1){
-		textHeight = (textHeight > icon.GetHeight()) ? textHeight : icon.GetHeight();
+	int fw = 0;
+	if (style & MAKE_SQUARE_BUTTON){
+		GetTextExtent(L"TEXT", &fw, &textHeight);
+		newSize.x = textHeight + 10;
 		newSize.y = textHeight + 10;
+	}
+	else{
+		if (text != ""){
+			name = text;
+			CalculateSize(&fw, &textHeight);
+			fw += 15;
+		}
+		if (size.x < 1){
+			fw += icon.GetWidth();
+			newSize.x = fw + 10;
+		}
+		if (size.y < 1){
+			textHeight = (textHeight > icon.GetHeight()) ? textHeight : icon.GetHeight();
+			newSize.y = textHeight + 10;
+		}
 	}
 	SetMinSize(newSize);
 	//SetBestSize(newSize);
@@ -430,7 +448,7 @@ void MappedButton::CalculateSize(int *w, int *h)
 		if (resultw < fw)
 			resultw = fw;
 	}
-	if (!resultw || !resulth)
+	if (!resultw && !resulth)
 		GetTextExtent(L"TEXT", &resultw, &resulth);
 
 	if (w)
@@ -475,16 +493,22 @@ ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, cons
 	name = label;
 	if(name.IsEmpty()){name = AddText(id);}
 	name.Replace("&","");
-	wxSize newSize=size;
+	wxSize newSize = size;
 	SetFont(parent->GetFont());
 	int fw;
 	CalculateSize(&fw, &textHeight);
-	if(size.x <1){
-		newSize.x = fw+10;
-		if(newSize.x<60){newSize.x=60;}
-	}
-	if(size.y <1){
+	if (style & MAKE_SQUARE_BUTTON){
+		newSize.x = textHeight + 10;
 		newSize.y = textHeight + 10;
+	}
+	else{
+		if (size.x < 1){
+			newSize.x = fw + 10;
+			if (newSize.x < 60){ newSize.x = 60; }
+		}
+		if (size.y < 1){
+			newSize.y = textHeight + 10;
+		}
 	}
 	SetMinSize(newSize);
 	Bind(wxEVT_LEFT_DOWN, &ToggleButton::OnMouseEvent, this);
@@ -667,6 +691,8 @@ void ToggleButton::CalculateSize(int *w, int *h)
 		if (resultw < fw)
 			resultw = fw;
 	}
+	if (!resultw && !resulth)
+		GetTextExtent(L"TEXT", &resultw, &resulth);
 	if (w)
 		*w = resultw;
 	if (h)
