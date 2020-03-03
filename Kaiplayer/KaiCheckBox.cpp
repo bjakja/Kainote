@@ -17,17 +17,18 @@
 #include "KaiCheckBox.h"
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
+#include "GraphicsD2D.h"
 
 void BlueUp(wxBitmap *bmp)
 {
-	wxImage img=bmp->ConvertToImage();
-	int size=bmp->GetWidth()*bmp->GetHeight()*3;
-	unsigned char *data=img.GetData();
+	wxImage img = bmp->ConvertToImage();
+	int size = bmp->GetWidth() * bmp->GetHeight() * 3;
+	unsigned char *data = img.GetData();
 			
-	for(int i=0; i<size; i++)
+	for(int i = 0; i < size; i++)
 	{
-		if(i % 3 == 0 && data[i]>=50){data[i]-=50;}
-		if(i % 3 == 1 && data[i]>=20){data[i]-=20;}
+		if(i % 3 == 0 && data[i] >= 50){data[i] -= 50;}
+		if(i % 3 == 1 && data[i] >= 20){data[i] -= 20;}
 	}
 	*bmp = wxBitmap(img);
 }
@@ -44,23 +45,23 @@ KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
 			 ,fontHeight(0)
 {
 	label = _label;
-	label.Replace("&", "");
+	label.Replace(L"&", L"");
 	wxSize newSize=size;
 	SetFont(parent->GetFont());
 	int fullw=0;
-	wxArrayString lines = wxStringTokenize(label, "\n",wxTOKEN_RET_EMPTY_ALL);
+	wxArrayString lines = wxStringTokenize(label, L"\n",wxTOKEN_RET_EMPTY_ALL);
 	for(size_t i=0; i < lines.size(); i++){
 		int fw, fh;
-		GetTextExtent((lines[i]=="")? L"|" : lines[i], &fw, &fh);
+		GetTextExtent((lines[i].empty())? L"|" : lines[i], &fw, &fh);
 		fontHeight += fh;
 		if(fullw < fw){fullw = fw;}
 	}
 	if(size.x <1){
-		newSize.x = fullw+20;
+		newSize.x = fullw + 20;
 	}
 	if(size.y <1){
-		newSize.y = fontHeight+2;
-		if(fontHeight<17){newSize.y=17;}
+		newSize.y = fontHeight + 2;
+		if(fontHeight < 17){newSize.y = 17;}
 	}
 	SetMinSize(newSize);
 	
@@ -85,64 +86,68 @@ KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
 void KaiCheckBox::OnPaint(wxPaintEvent& event)
 {
 	
-	int w=0;
-	int h=0;
+	int w = 0;
+	int h = 0;
 	GetClientSize (&w, &h);
-	if(w==0||h==0){return;}
-	wxMemoryDC tdc;
-	tdc.SelectObject(wxBitmap(w,h));
-	tdc.SetFont(GetFont());
-	const wxColour & background = Options.GetColour(this->background);
-	tdc.SetBrush(wxBrush(background));
-	tdc.SetPen(wxPen(background));
-	tdc.DrawRectangle(0,0,w,h);
+	if(w == 0 || h == 0){return;}
+
 	bool enabled = IsThisEnabled();
-
-	//wxString bitmapName = (enabled && value)? "radio_selected" : (enabled)? "radio" : (value)? "radio_selected_inactive" : "radio_inactive";
-	wxString secondName = (enabled && value)? "_selected" : (enabled)? "" : (value)? "_selected_inactive" : "_inactive";
-	wxString bitmapName = (isCheckBox)? "checkbox" + secondName : "radio" + secondName;
+	wxString secondName = (enabled && value) ? "_selected" : (enabled) ? "" : (value) ? "_selected_inactive" : "_inactive";
+	wxString bitmapName = (isCheckBox) ? "checkbox" + secondName : "radio" + secondName;
 	wxBitmap checkboxBmp = wxBITMAP_PNG(bitmapName);
-	if(enter){BlueUp(&checkboxBmp);}
-	tdc.DrawBitmap(checkboxBmp, 1, (h-13)/2);
+	if (enter){ BlueUp(&checkboxBmp); }
 
-	if(w>18){
-		//if(!enabled){
-			//tdc.SetTextForeground("#000000");
-			/*wxRect cur(18, ((h-fh)/2)+1, w - 20, fh-1);
-			tdc.SetClippingRegion(cur);
-			tdc.DrawLabel(label,cur,wxALIGN_LEFT);
-			tdc.DestroyClippingRegion();*/
-			//tdc.DrawText(label,18, ((h-fontHeight)/2)+1);
-		//}
-		tdc.SetTextForeground((enabled)? Options.GetColour(foreground) : Options.GetColour(WindowTextInactive));
-		//wxRect cur(18, (h-fh)/2, w - 20, fh);
-		//tdc.SetClippingRegion(cur);
-		tdc.DrawText(label,18, (h-fontHeight)/2);
-		//tdc.DestroyClippingRegion();
-		
-		
-	}
+	wxMemoryDC tdc;
+	tdc.SelectObject(wxBitmap(w, h));
+	/*GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateContext(tdc);
+	if (!gc){*/
+		tdc.SetFont(GetFont());
+		const wxColour & background = Options.GetColour(this->background);
+		tdc.SetBrush(wxBrush(background));
+		tdc.SetPen(wxPen(background));
+		tdc.DrawRectangle(0, 0, w, h);
+		tdc.DrawBitmap(checkboxBmp, 1, (h - 13) / 2);
+
+		if (w > 18){
+			tdc.SetTextForeground((enabled) ? Options.GetColour(foreground) : Options.GetColour(WindowTextInactive));
+			tdc.DrawText(label, 18, (h - fontHeight) / 2);
+		}
+	/*}
+	else{
+		const wxColour & background = Options.GetColour(this->background);
+		gc->SetBrush(wxBrush(background));
+		gc->SetPen(wxPen(background));
+		gc->DrawRectangle(0, 0, w - 1, h - 1);
+		gc->DrawBitmap(checkboxBmp, 1, (h - 13) / 2, checkboxBmp.GetWidth(), checkboxBmp.GetHeight());
+
+		if (w > 18){
+			gc->SetFont(GetFont(), (enabled) ? Options.GetColour(foreground) : Options.GetColour(WindowTextInactive));
+			gc->DrawTextU(label, 18, (h - fontHeight) / 2);
+		}
+		delete gc;
+	}*/
 	wxPaintDC dc(this);
-	dc.Blit(0,0,w,h,&tdc,0,0);
+	dc.Blit(0, 0, w, h, &tdc, 0, 0);
 }
 
 void KaiCheckBox::OnMouseEvent(wxMouseEvent &event)
 {
 	if(event.Entering()){
-		enter=true;
+		enter = true;
 		Refresh(false);
 		return;
 	}
-	if(event.Leaving()&&enter){
-		enter=false;
-		clicked=false;
+	if(event.Leaving() && enter){
+		enter = false;
+		clicked = false;
 		Refresh(false);
 		return;
 	}
 	
 	if(event.LeftDown() || event.LeftDClick()){
 		//if(event.LeftDown()){
-		clicked=true;//}
+		clicked = true;//}
 		value = !value;
 		wxCommandEvent evt((isCheckBox)? wxEVT_COMMAND_CHECKBOX_CLICKED : wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
 		this->ProcessEvent(evt);
@@ -152,7 +157,7 @@ void KaiCheckBox::OnMouseEvent(wxMouseEvent &event)
 	}
 	if(event.LeftUp()){
 		//bool oldclicked = clicked;
-		clicked=false;
+		clicked = false;
 		Refresh(false);
 		//if(oldclicked){
 			

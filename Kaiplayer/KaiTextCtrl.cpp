@@ -265,8 +265,8 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 	
 	long multiline = (style & wxTE_MULTILINE);
 
-	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = renderer->CreateMeasuringContext();
+	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
 	if (gc){
 		gc->SetFont(font, L"#000000");
 	}
@@ -811,8 +811,8 @@ void KaiTextCtrl::OnPaint(wxPaintEvent& event)
 
 	bmpDC.SelectObject(*bmp);
 
-	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = renderer->CreateContext(bmpDC);
+	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = NULL;//renderer->CreateContext(bmpDC);
 	if (!gc){
 		DrawFld(bmpDC, w, h);
 	}
@@ -1236,8 +1236,8 @@ bool KaiTextCtrl::HitTest(wxPoint pos, wxPoint *cur)
 	int wlen = KText.length();
 	int fww = 0;
 	double gfww = 0.;
-	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = renderer->CreateMeasuringContext();
+	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
 	if (gc)
 		gc->SetFont(font, L"#000000");
 
@@ -1491,8 +1491,8 @@ wxPoint KaiTextCtrl::PosFromCursor(wxPoint cur, bool correctToScroll)
 	if (wraps.size() < 2 || wraps[cur.y] == cur.x){ fw = 0; }
 	else{
 		wxString beforeCursor = KText.SubString(wraps[cur.y], cur.x - 1);
-		GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-		GraphicsContext *gc = renderer->CreateMeasuringContext();
+		//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+		GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
 		if (gc){
 			gc->SetFont(font, L"#000000");
 			double gfw = 0, gfh;
@@ -1590,8 +1590,8 @@ void KaiTextCtrl::MakeCursorVisible(bool refreshit)
 		else if (pixelPos.x > size.x - 6) {
 
 			int fh, fw;
-			GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-			GraphicsContext *gc = renderer->CreateMeasuringContext();
+			//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+			GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
 			if (gc){
 				gc->SetFont(font, L"#000000");
 				double gfw = 0, gfh;

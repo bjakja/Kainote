@@ -754,7 +754,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 				GridWidth[j + 1] = podz;
 			}
 
-			if (!showOriginal&&j == ilcol - 1){ GridWidth[j] = w + scHor - posX; }
+			if (!showOriginal && j == ilcol - 1){ GridWidth[j] = w + scHor - posX; }
 
 
 			if (GridWidth[j] < 1){
@@ -763,7 +763,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 			gc->SetPen(*wxTRANSPARENT_PEN);
 
 			gc->SetBrush(wxBrush((j == 0 && !isHeadline) ? label : col));
-			if (unkstyle && j == 4 || shorttime && (j == 10 || (j == 3 && subsFormat>ASS))){
+			if (unkstyle && j == 4 || shorttime && (j == 10 || (j == 3 && subsFormat > ASS))){
 				gc->SetBrush(wxBrush(SpelcheckerCol));
 			}
 
@@ -858,7 +858,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 			/*gc->SetClippingRegion(cur);
 			gc->DrawLabel(strings[j], cur, isCenter ? wxALIGN_CENTER : (wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT));
 			gc->DestroyClippingRegion();*/
-			gc->Clip(cur);
+			//gc->Clip(cur);
 			float centerPos = 0.f;
 			if (isCenter){
 				double fw, fh;
@@ -866,7 +866,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 				centerPos = ((GridWidth[j] - fw) / 2) - 3;
 			}
 			gc->DrawTextU(strings[j], posX + 3 + centerPos, posY + 2);
-			gc->ResetClip();
+			//gc->ResetClip();
 			posX += GridWidth[j] + 1;
 
 

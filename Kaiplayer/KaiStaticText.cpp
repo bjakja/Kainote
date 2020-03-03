@@ -17,6 +17,7 @@
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 #include <wx/sizer.h>
+#include "GraphicsD2D.h"
 
 KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, const wxPoint &pos, const wxSize &size, int style)
 	: wxWindow(parent, id, pos, size, style)
@@ -127,7 +128,7 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 		}
 			
 	}
-	int heightMesure = (*h>0) ? *h : 600;
+	int heightMesure = (*h > 0) ? *h : 600;
 	*h = textHeight;
 	if (textHeight > heightMesure){ *h = heightMesure; fullw += 20; }
 	*w = fullw;
@@ -186,13 +187,26 @@ void KaiStaticText::OnPaint(wxPaintEvent &evt)
 	
 	wxMemoryDC tdc;
 	tdc.SelectObject(wxBitmap(w,h));
-	tdc.SetFont(GetFont());
-	tdc.SetBrush(Options.GetColour(WindowBackground));
-	tdc.SetPen(*wxTRANSPARENT_PEN);
-	tdc.DrawRectangle(0,0,w,h);
-	tdc.SetTextForeground(Options.GetColour(textColour));
-	int center = (textHeight < h) ? (h - textHeight) / 2 : 0;
-	tdc.DrawText(text, 0, -scPos + center);
+	/*GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateContext(tdc);
+	if (!gc){*/
+		tdc.SetFont(GetFont());
+		tdc.SetBrush(Options.GetColour(WindowBackground));
+		tdc.SetPen(*wxTRANSPARENT_PEN);
+		tdc.DrawRectangle(0, 0, w, h);
+		tdc.SetTextForeground(Options.GetColour(textColour));
+		int center = (textHeight < h) ? (h - textHeight) / 2 : 0;
+		tdc.DrawText(text, 0, -scPos + center);
+//}
+//	else{
+//		gc->SetFont(GetFont(), Options.GetColour(textColour));
+//		gc->SetBrush(Options.GetColour(WindowBackground));
+//		gc->SetPen(*wxTRANSPARENT_PEN);
+//		gc->DrawRectangle(0, 0, w, h);
+//		int center = (textHeight < h) ? (h - textHeight) / 2 : 0;
+//		gc->DrawTextU(text, 0, -scPos + center);
+//		delete gc;
+//	}
 	wxPaintDC dc(this);
 	dc.Blit(0,0,w,h,&tdc,0,0);
 }
