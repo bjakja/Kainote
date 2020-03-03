@@ -14,4 +14,12 @@ ffms2000/
 xy-VSFilter-master-old/
 Hunspell new/
 zlib/
+wxWidgets2/
+luajit2/
+LuaJITbeta/
+LuaJITbeta3/
+zlib-1.2.8/
+ffms2000/
+VSFilterMod-r5.2/
+xy-VSFilter-master/src/filters/transform/vsfilter/csri2.h
 *.gz
