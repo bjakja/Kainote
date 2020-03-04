@@ -30,8 +30,9 @@ private:
 	static LogHandler *sthis;
 	wxString logToAppend;
 	wxString lastLog;
-	LogWindow *lWindow;
+	LogWindow *lWindow = NULL;
 	wxMutex mutex;
+	wxWindow *parent;
 public:
 	static void Create(wxWindow *parent);
 	static LogHandler *Get(){ return sthis; }

@@ -20,6 +20,7 @@
 #include "MappedButton.h"
 
 wxDEFINE_EVENT(EVT_DO_LOG, wxThreadEvent);
+wxDEFINE_EVENT(EVT_DO_CREATE_LOG_WINDOW, wxThreadEvent);
 
 class LogWindow : public KaiDialog
 {
@@ -76,9 +77,9 @@ LogWindow::LogWindow(wxWindow *parent, LogHandler *_handler)
 void LogWindow::OnGetLog(wxThreadEvent &evt)
 {
 	isReady = false;
-	if (!IsShown()){ 
+	bool notIsShown = !IsShown();
+	if (notIsShown){
 		Show(); 
-		CenterOnParent(); 
 		if (hiddenLastLog){
 			lastLogText->Show();
 			logText->Show(false);
@@ -89,14 +90,25 @@ void LogWindow::OnGetLog(wxThreadEvent &evt)
 	logText->AppendText(handler->logToAppend);
 	handler->logToAppend = "";
 	sizer->Fit(this);
+	if (notIsShown)
+		CenterOnParent();
 	isReady = true;
 }
 
 LogHandler *LogHandler::sthis = NULL;
 
-LogHandler::LogHandler(wxWindow *parent)
+LogHandler::LogHandler(wxWindow *_parent)
 {
-	lWindow = new LogWindow(parent, this);
+	//lWindow = new LogWindow(parent, this);
+	parent = _parent;
+	parent->Bind(EVT_DO_CREATE_LOG_WINDOW, [=](wxThreadEvent &evt){
+		if (!lWindow){
+			lWindow = new LogWindow(parent, this);
+		}
+		if (lWindow->isReady){
+			lWindow->OnGetLog(wxThreadEvent());
+		}
+	});
 }
 
 LogHandler::~LogHandler()
@@ -127,6 +139,11 @@ void LogHandler::LogMessage(const wxString &message)
 	GetSystemTime(&st);
 	logToAppend << wxString::Format(L"%02i:%02i:%02i ", st.wHour, st.wMinute, st.wSecond);
 	logToAppend << lastLog << L"\n";
+	if (!lWindow){
+		wxThreadEvent *evt = new wxThreadEvent(EVT_DO_CREATE_LOG_WINDOW, parent->GetId());
+		wxQueueEvent(parent, evt);
+		return;
+	}
 	if (lWindow->isReady){
 		wxThreadEvent *evt = new wxThreadEvent(EVT_DO_LOG, lWindow->GetId());
 		wxQueueEvent(lWindow, evt);
@@ -136,6 +153,9 @@ void LogHandler::LogMessage(const wxString &message)
 void LogHandler::ShowLogWindow()
 {
 	if (sthis){
+		if (!sthis->lWindow){
+			sthis->lWindow = new LogWindow(sthis->parent, sthis);
+		}
 		if (!sthis->lWindow->hiddenLastLog){
 			sthis->lWindow->logText->Show();
 			sthis->lWindow->lastLogText->Show(false);

@@ -770,6 +770,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 			gc->DrawRectangle(posX, posY, GridWidth[j], GridHeight);
 
 			if (!isHeadline && j == ilcol - 1){
+				KaiLog(wxString::Format(L"textgrid width %i font pixelsize %i", GridWidth[j], font.GetPixelSize().GetHeight()));
 				if (SpellErrors[key].size() > 2){
 					wxString & text = strings[j];
 					text.Replace(L"\t", L" ");
@@ -892,7 +893,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 	if (size > 0){
 		if (idmarkerPos != -1){
 			gc->SetBrush(*wxTRANSPARENT_BRUSH);
-			gc->SetPen(wxPen(Options.GetColour(GridActiveLine), 3));
+			gc->SetPen(wxPen(Options.GetColour(GridActiveLine)), 3.);
 			int ypos = ((idmarkerPos - scrollPositionId + 1) * (GridHeight + 1));
 			if (preview && ypos >= previewpos.y - 2){ ypos += previewsize.y + 5; }
 			gc->DrawRectangle(posX + 1, ypos - 1, (GridWidth[0] - 1), GridHeight + 2);
