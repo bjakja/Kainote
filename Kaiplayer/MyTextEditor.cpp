@@ -106,7 +106,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	scroll = new KaiScrollbar(this, 3333, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
 	scroll->SetCursor(wxCURSOR_DEFAULT);
 	scroll->SetScrollRate(30);
-	statusBarHeight = (Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR)) ? 0 : 22;
+	statusBarHeight = (Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR)) ? 0 : fontHeight + 10;
 	changeQuotes = Options.GetBool(TEXT_EDITOR_CHANGE_QUOTES);
 	caret = new wxCaret(this, 1, fontHeight);
 	SetCaret(caret);
@@ -835,7 +835,7 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 		
 	}
 	else{
-		DrawFieldGDIPlus(gc, w, h - statusBarHeight, h);
+		DrawFieldD2D(gc, w, h - statusBarHeight, h);
 		delete gc;
 	}
 	wxPaintDC dc(this);
@@ -843,7 +843,7 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 	//caret->Move(3, 3);
 }
 
-void TextEditor::DrawFieldGDIPlus(GraphicsContext *gc, int w, int h, int windowh)
+void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 {
 	double fw = 0.f, fh = 0.f;
 	bool tags = false;
@@ -1168,12 +1168,18 @@ void TextEditor::DrawFieldGDIPlus(GraphicsContext *gc, int w, int h, int windowh
 		gc->SetFont(font, ctext);
 		gc->DrawRectangle(0, h, w, statusBarHeight);
 		int ypos = ((statusBarHeight - fontHeight) / 2) + h;
-		gc->DrawTextU(wxString::Format("Length: %i", (int)MText.length()), 5, ypos);
-		gc->DrawTextU(wxString::Format("Lines: %i", (int)wraps.size() - 1), 105, ypos);
-		gc->DrawTextU(wxString::Format("Ln: %i", Cursor.y + 1), 185, ypos);
-		gc->DrawTextU(wxString::Format("Col: %i", Cursor.x - wraps[Cursor.y] + 1), 245, ypos);
-		gc->DrawTextU(wxString::Format("Sel: %i", abs(Selend.x - Cursor.x)), 305, ypos);
-		gc->DrawTextU(wxString::Format("Ch: %i", Cursor.x + 1), 375, ypos);
+		double lnfw, lifw, lfw, colfw, selfw;
+		gc->GetTextExtent(L"Length: 10000000", &lnfw);
+		gc->GetTextExtent(L"Lines: 100000", &lifw);
+		gc->GetTextExtent(L"Ln: 100000", &lfw);
+		gc->GetTextExtent(L"Col: 10000", &colfw);
+		gc->GetTextExtent(L"Sel: 10000000", &selfw);
+		gc->DrawTextU(wxString::Format(L"Length: %i", (int)MText.length()), 5, ypos);
+		gc->DrawTextU(wxString::Format(L"Lines: %i", (int)wraps.size() - 1), lnfw + 5, ypos);
+		gc->DrawTextU(wxString::Format(L"Ln: %i", Cursor.y + 1), lnfw + lifw + 5, ypos);
+		gc->DrawTextU(wxString::Format(L"Col: %i", Cursor.x - wraps[Cursor.y] + 1), lnfw + lifw + lfw + 5, ypos);
+		gc->DrawTextU(wxString::Format(L"Sel: %i", abs(Selend.x - Cursor.x)), lnfw + lifw + lfw + colfw + 5, ypos);
+		gc->DrawTextU(wxString::Format(L"Ch: %i", Cursor.x + 1), lnfw + lifw + lfw + colfw + selfw + 5, ypos);
 	}
 	//text field border
 	gc->SetBrush(*wxTRANSPARENT_BRUSH);
@@ -1497,12 +1503,18 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 		dc.SetTextForeground(ctext);
 		dc.DrawRectangle(0, h, w, statusBarHeight);
 		int ypos = ((statusBarHeight - fontHeight) / 2) + h;
-		dc.DrawText(wxString::Format("Length: %i", (int)MText.length()), 5, ypos);
-		dc.DrawText(wxString::Format("Lines: %i", (int)wraps.size() - 1), 105, ypos);
-		dc.DrawText(wxString::Format("Ln: %i", Cursor.y + 1), 185, ypos);
-		dc.DrawText(wxString::Format("Col: %i", Cursor.x - wraps[Cursor.y] + 1), 245, ypos);
-		dc.DrawText(wxString::Format("Sel: %i", abs(Selend.x - Cursor.x)), 305, ypos);
-		dc.DrawText(wxString::Format("Ch: %i", Cursor.x + 1), 375, ypos);
+		int fh, lnfw, lifw, lfw, colfw, selfw;
+		dc.GetTextExtent(L"Length: 10000000", &lnfw, &fh);
+		dc.GetTextExtent(L"Lines: 100000", &lifw, &fh);
+		dc.GetTextExtent(L"Ln: 100000", &lfw, &fh);
+		dc.GetTextExtent(L"Col: 10000", &colfw, &fh);
+		dc.GetTextExtent(L"Sel: 10000000", &selfw, &fh);
+		dc.DrawText(wxString::Format(L"Length: %i", (int)MText.length()), 5, ypos);
+		dc.DrawText(wxString::Format(L"Lines: %i", (int)wraps.size() - 1), lnfw + 5, ypos);
+		dc.DrawText(wxString::Format(L"Ln: %i", Cursor.y + 1), lnfw + lifw + 5, ypos);
+		dc.DrawText(wxString::Format(L"Col: %i", Cursor.x - wraps[Cursor.y] + 1), lnfw + lifw + lfw + 5, ypos);
+		dc.DrawText(wxString::Format(L"Sel: %i", abs(Selend.x - Cursor.x)), lnfw + lifw + lfw + colfw + 5, ypos);
+		dc.DrawText(wxString::Format(L"Ch: %i", Cursor.x + 1), lnfw + lifw + lfw + colfw + selfw + 5, ypos);
 	}
 	//text field border
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);

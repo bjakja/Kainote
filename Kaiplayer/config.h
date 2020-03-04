@@ -227,6 +227,16 @@
 	CG(EditboxTagButton8,)\
 	CG(EditboxTagButton9,)\
 	CG(EditboxTagButton10,)\
+	CG(EditboxTagButton11,)\
+	CG(EditboxTagButton12,)\
+	CG(EditboxTagButton13,)\
+	CG(EditboxTagButton14,)\
+	CG(EditboxTagButton15,)\
+	CG(EditboxTagButton16,)\
+	CG(EditboxTagButton17,)\
+	CG(EditboxTagButton18,)\
+	CG(EditboxTagButton19,)\
+	CG(EditboxTagButton20,)\
 	//if you write here a new enum then change configSize
 	
 DECLARE_ENUM(CONFIG,CFG)
@@ -378,7 +388,7 @@ typedef void csri_rend;
 class config
 {
 private:
-	static const unsigned int configSize = EditboxTagButton10 + 1;
+	static const unsigned int configSize = EditboxTagButton20 + 1;
 	wxString stringConfig[configSize];
 	static const unsigned int colorsSize = StylePreviewColor2 + 1;
 	wxColour colors[colorsSize];

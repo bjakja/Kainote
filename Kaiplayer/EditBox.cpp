@@ -1756,7 +1756,7 @@ public:
 	{
 		DialogSizer *sizer = new DialogSizer(wxVERTICAL);
 		wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-		numTagButtons = new NumCtrl(this, -1, Options.GetString(EditboxTagButtons), 0, 10, true);
+		numTagButtons = new NumCtrl(this, -1, Options.GetString(EditboxTagButtons), 0, 20, true);
 		MappedButton *ok = new MappedButton(this, wxID_OK, L"OK");
 		MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 		buttonSizer->Add(ok, 1, wxEXPAND | wxALL, 4);

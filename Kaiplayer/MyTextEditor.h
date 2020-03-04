@@ -64,7 +64,7 @@ protected:
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
 	void OnScroll(wxScrollEvent& event);
 	void DrawFieldGDI(wxDC &dc, int w, int h, int windowh);
-	void DrawFieldGDIPlus(GraphicsContext *gc, int w, int h, int windowh);
+	void DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh);
 	bool HitTest(wxPoint pos, wxPoint *cur);
 	void CalcWrap(bool updatechars = true, bool sendevent = true);
 	void CalcWrapsD2D(GraphicsContext *gc, int w, int h);

@@ -32,7 +32,7 @@ for japanese lirycs.
 
 Newest beta build:
 
-https://www.dropbox.com/s/t8pkey94ruakyox/Kainote%20x64.zip?dl=0
+https://drive.google.com/uc?id=1ECqsrLo5d1jPoz-FKvJrS0279YeTKrmS&export=download
 
 Official releases:
 
