@@ -2104,6 +2104,12 @@ void EditBox::SetGrid(SubsGrid *_grid, bool isPreview){
 		hasPreviewGrid = isPreview;
 		RebuildActorEffectLists();
 		RefreshStyle();
+		
+		TabPanel *tab = (TabPanel*)GetParent();
+		if (isPreview && tab->Video->Visual){
+			tab->Video->SetVisual(true);
+		}
+		tab->Video->vToolbar->DisableVisuals(isPreview);
 	}
 }
 
