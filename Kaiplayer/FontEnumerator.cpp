@@ -108,7 +108,7 @@ void FontEnumerator::AddClient(const wxWindow *client, std::function<void()> fun
 void FontEnumerator::RemoveClient(const wxWindow *client)
 {
 	auto it = observers.find(client);
-	if(it!=observers.end()){
+	if(it != observers.end()){
 		observers.erase(it);
 	}
 }
@@ -117,7 +117,7 @@ void FontEnumerator::RemoveClient(const wxWindow *client)
 void FontEnumerator::RemoveFilteredClient(const wxWindow *client, bool clearFiltered)
 {
 	auto it = observers.find(client);
-	if(it!=observers.end()){
+	if(it != observers.end()){
 		observers.erase(it);
 	}
 	if(clearFiltered){
@@ -138,10 +138,16 @@ int CALLBACK FontEnumerator::FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lpt
 												DWORD WXUNUSED(dwStyle), LPARAM lParam)
 {
 	FontEnumerator *Enum = (FontEnumerator*)lParam;
-	if(Enum->FontsTmp->Index(lplf->lfFaceName,false)==wxNOT_FOUND){
+	if (lplf->lfOutPrecision == 1){
+		// remove some .fon fonts but not all, modern, roman, script still there
+		// these fonts not working with Vobsub nor D2D
+		return true;
+	//KaiLog(wxString::Format(L"fn: %s fixed pitch: %i vector: %i device: %i, tt: %i, precision %i", lplf->lfFaceName, (int)(lptm->tmPitchAndFamily & TMPF_FIXED_PITCH), (int)(lptm->tmPitchAndFamily & TMPF_VECTOR), (int)(lptm->tmPitchAndFamily & TMPF_DEVICE), (int)(lptm->tmPitchAndFamily & TMPF_TRUETYPE), (int)lplf->lfOutPrecision));
+	}
+	if(Enum->FontsTmp->Index(lplf->lfFaceName, false) == wxNOT_FOUND){
 		Enum->FontsTmp->Add(lplf->lfFaceName);
 	}
-	if(Enum->FilteredFontsTmp && Enum->FilteredFontsTmp->Index(lplf->lfFaceName,false)==wxNOT_FOUND)
+	if(Enum->FilteredFontsTmp && Enum->FilteredFontsTmp->Index(lplf->lfFaceName, false) == wxNOT_FOUND)
 	{
 		wxString missing;
 		auto hfont = CreateFontIndirectW(lplf);

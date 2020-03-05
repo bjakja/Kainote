@@ -572,6 +572,8 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 	int id = scrollPositionId - 1;
 	int idmarkerPos = -1;
 	int idcurrentLine = -1;
+	float fontApproxSize = ((float)font.GetPixelSize().GetHeight()) / 2.5f;
+	int maxTextLength = 100;
 
 	while (key + 1 <= KeySize && id < scrows - 1){
 		bool isHeadline = (key < scrollPosition);
@@ -680,8 +682,8 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 					CheckText((isTl) ? txttl : txt, SpellErrors[key], chtag);
 				}
 			}
-			if (txt.length() > 1000){ txt = txt.SubString(0, 1000) + L"..."; }
-			if (txttl.length() > 1000){ txttl = txttl.SubString(0, 1000) + L"..."; }
+			if (txt.length() > maxTextLength){ txt = txt.SubString(0, maxTextLength) + L"..."; }
+			if (txttl.length() > maxTextLength){ txttl = txttl.SubString(0, maxTextLength) + L"..."; }
 			strings.push_back((!showOriginal && isTl) ? txttl : txt);
 			if (showOriginal){ strings.push_back(txttl); }
 
@@ -748,13 +750,19 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 		wxColour label = (states == 0) ? labelBkColN : (states == 2) ? labelBkCol :
 			(states == 1) ? labelBkColM : labelBkColD;
 		for (int j = 0; j < ilcol; j++){
-			if (showOriginal && j == ilcol - 2){
-				int podz = (w + scHor - posX) / 2;
-				GridWidth[j] = podz;
-				GridWidth[j + 1] = podz;
-			}
+			if (key < scrollPosition){
+				if (showOriginal && j == ilcol - 2){
+					int half = (w + scHor - posX) / 2;
+					GridWidth[j] = half;
+					GridWidth[j + 1] = half;
+					maxTextLength = (float)half / fontApproxSize;
+				}
 
-			if (!showOriginal && j == ilcol - 1){ GridWidth[j] = w + scHor - posX; }
+				if (!showOriginal && j == ilcol - 1){
+					GridWidth[j] = w + scHor - posX;
+					maxTextLength = (float)GridWidth[j] / fontApproxSize;
+				}
+			}
 
 
 			if (GridWidth[j] < 1){
@@ -770,7 +778,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 			gc->DrawRectangle(posX, posY, GridWidth[j], GridHeight);
 
 			if (!isHeadline && j == ilcol - 1){
-				KaiLog(wxString::Format(L"textgrid width %i font pixelsize %i", GridWidth[j], font.GetPixelSize().GetHeight()));
+				//KaiLog(wxString::Format(L"textgrid width %i font pixelsize %i", GridWidth[j], font.GetPixelSize().GetHeight()));
 				if (SpellErrors[key].size() > 2){
 					wxString & text = strings[j];
 					text.Replace(L"\t", L" ");

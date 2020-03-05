@@ -464,7 +464,7 @@ void MappedButton::SetLabelText(const wxString &label)
 	CalculateSize(&fw, &textHeight);
 	wxSize minSize = GetMinSize();
 	if (minSize.x != fw + 16 || minSize.y != (textHeight + 10)){
-		minSize.x = fw+16;
+		minSize.x = fw + 16;
 		minSize.y = textHeight + 10;
 		SetMinSize(minSize);
 		GetParent()->Layout();

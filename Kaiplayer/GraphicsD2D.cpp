@@ -3641,6 +3641,9 @@ public:
 
     static void GetTextExtent(wxD2DFontData* fontData, const wxString& str, wxDouble* width, wxDouble* height, wxDouble* descent, wxDouble* externalLeading)
     {
+		if (!fontData)
+			return;
+
         wxCOMPtr<IDWriteTextLayout> textLayout = fontData->CreateTextLayout(str);
         wxCOMPtr<IDWriteFont> font = fontData->GetFont();
 
@@ -4533,8 +4536,10 @@ void wxD2DContext::GetTextExtent(
     wxDouble* descent,
     wxDouble* externalLeading) const
 {
-    wxCHECK_RET(m_font,
-        wxS("wxD2DContext::GetTextExtent - no valid font set"));
+    //wxCHECK_RET(m_font,
+        //wxS("wxD2DContext::GetTextExtent - no valid font set"));
+	if (!m_font)
+		return;
 
     wxD2DMeasuringContext::GetTextExtent(
         m_font, str, width, height, descent, externalLeading);
@@ -4568,8 +4573,10 @@ bool wxD2DContext::ShouldOffset() const
 
 void wxD2DContext::DoDrawText(const wxString& str, wxDouble x, wxDouble y)
 {
-    wxCHECK_RET(m_font,
-        wxS("wxD2DContext::DrawText - no valid font set"));
+    //wxCHECK_RET(m_font,
+        //wxS("wxD2DContext::DrawText - no valid font set"));
+	if (!m_font)
+		return;
 
     if (m_composition == wxCOMPOSITION_DEST)
         return;

@@ -161,7 +161,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 			GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
 			GraphicsContext *gc = renderer->CreateMeasuringContext();
 			if (gc){
-				gc->SetFont(font, "L#000000");
+				gc->SetFont(font, L"#000000");
 				CalcWrapsD2D(gc, w, h);
 				delete gc;
 			}
