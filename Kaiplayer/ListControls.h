@@ -98,6 +98,11 @@ public:
 	bool HasFocus();
 	void SetFocus();
 	void SetMaxLength(int maxLen);
+	wxSize GetBestSize(){
+		wxSize newSize;
+		CalcMaxWidth(&newSize, true, true);
+		return newSize;
+	}
 	KaiTextCtrl *choiceText;
 private:
 	void OnSize(wxSizeEvent& event);

@@ -49,7 +49,7 @@ void CreateVERTEX(VERTEX *v, float X, float Y, D3DCOLOR Color, float Z)
 
 VideoRenderer::VideoRenderer(wxWindow *_parent, const wxSize &size)
 	:wxWindow(_parent, -1, wxDefaultPosition, size)//wxFULL_REPAINT_ON_RESIZE
-	, panelHeight(66)
+	, panelHeight(44)
 	, AR(0.0)
 	, fps(0.0)
 	, isFullscreen(false)
@@ -1087,7 +1087,7 @@ bool VideoRenderer::UpdateRects(bool changeZoom)
 	if (isFullscreen){
 		hwnd = Video->TD->GetHWND();
 		rt = Video->TD->GetClientRect();
-		if (panelOnFullscreen){ rt.height -= panelHeight; }
+		if (panelOnFullscreen){ rt.height -= Video->TD->panelsize; }
 		pbar = Options.GetBool(VideoProgressBar);
 		cross = false;
 	}

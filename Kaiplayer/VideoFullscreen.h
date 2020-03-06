@@ -42,9 +42,10 @@ public:
     VideoToolbar *vToolbar;
 	void OnSize();	
 	void HideToolbar(bool hide);
+	int panelsize;
 private:
 	
     wxWindow *vb;
-	int panelsize;
+	int toolBarHeight;
 };
 

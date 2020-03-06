@@ -104,6 +104,7 @@ private:
 	int prevchap;
 	int x;
 	int y;
+	int toolBarHeight = 22;
 	wxArrayString files;
 	bool ismenu;
 

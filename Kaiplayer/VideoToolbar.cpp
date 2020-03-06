@@ -17,11 +17,10 @@
 #include "Config.h"
 
 
-static int startDrawPos = 146;
 std::vector<itemdata*> VideoToolbar::icons;
 
-VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos)
-	:wxWindow(parent, -1, pos, wxSize(-1, 22))
+VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &size)
+	:wxWindow(parent, -1, pos, size)
 	, Toggled(0)
 	, sel(-1)
 	, clicked(false)
@@ -29,7 +28,7 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos)
 	, bmp(NULL)
 {
 	if (icons.size() == 0){
-		//pamiętaj, dodając tutaj elementy, zmień ich wartość w pliku h!!
+		//Remember! Adding here elements you must change all in h file!!
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("cross"), _("Wskaźnik pozycji")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("position"), _("Przesuwanie tekstu")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("move"), _("Ruch")));
@@ -41,22 +40,25 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos)
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("drawing"), _("Rysunki wektorowe")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEAll"), _("Zmieniacz pozycji")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("SCALE_ROTATION"), _("Zmieniacz skali i obrotów")));
-		//tutaj mamy ikony dla clipa
+		//11
+		//Here clip icons
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorDrag"), _("Przesuń punkty")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorLine"), _("Dodaj linię")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorBezier"), _("Dodaj krzywą Beziera")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VECTORBSPLINE"), _("Dodaj krzywą B-sklejaną")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorMove"), _("Dodaj nowy oddzielny punkt")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorDelete"), _("Usuń element")));
-		//ikony move all
+		//6
+		//icons move all
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEPOS"), _("Przenieś punkty pozycjonowania")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEMOVESTART"), _("Przenieś startowe punkty ruchu")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVE"), _("Przenieś końcowe punkty ruchu")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVECLIPS"), _("Przenieś wycinki")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEDRAWINGS"), _("Przenieś rysunki,\nużywać tylko w przypadku,\ngdy chcemy przesunąć punkty rysunku,\nnie łączyć z trzema pierwszymi opcjami")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEORGS"), _("Przenieś punkty org")));
+		//6
 	}
-
+	//adding visual second toolbar elements
 	visualItems.push_back(NULL);
 	visualItems.push_back(NULL);
 	visualItems.push_back(NULL);
@@ -70,6 +72,7 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos)
 	visualItems.push_back(new ScaleRotationItem());
 
 	Connect(wxEVT_PAINT, (wxObjectEventFunction)&VideoToolbar::OnPaint);
+	Connect(wxEVT_SIZE, (wxObjectEventFunction)&VideoToolbar::OnSize);
 	Connect(wxEVT_LEFT_DOWN, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
 	Connect(wxEVT_LEFT_UP, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
 	Connect(wxEVT_MOTION, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
@@ -80,12 +83,16 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos)
 		_("Edycji na pauzie"), _("Edycji") };
 	wxString playopts[4] = { _("Nic"), _("Audio do końca linii"), _("Wideo do końca linii"),
 		_("Wideo do początku następnej linii") };
-	videoSeekAfter = new KaiChoice(this, ID_SEEK_AFTER, wxPoint(2, 0), wxSize(70, 22), 6, movopts);
+	videoSeekAfter = new KaiChoice(this, ID_SEEK_AFTER, wxPoint(2, 1), wxDefaultSize, 6, movopts);
 	videoSeekAfter->SetSelection(Options.GetInt(MoveVideoToActiveLine));
 	videoSeekAfter->SetToolTip(_("Przesuwaj wideo do aktualnej linii po:"));
-	videoPlayAfter = new KaiChoice(this, ID_PLAY_AFTER, wxPoint(72, 0), wxSize(70, 22), 4, playopts);
+	wxSize seekMinSize = videoSeekAfter->GetMinSize();
+	videoPlayAfter = new KaiChoice(this, ID_PLAY_AFTER, wxPoint(seekMinSize.GetWidth() + 2, 1), wxDefaultSize, 4, playopts);
 	videoPlayAfter->SetSelection(Options.GetInt(PlayAfterSelection));
 	videoPlayAfter->SetToolTip(_("Odtwarzaj po zmianie linii:"));
+	//wxSize playMinSize = videoPlayAfter->GetMinSize();
+	//SetMinSize(wxSize(100, seekMinSize.GetHeight() + 2));
+
 	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
 		Options.SetInt(MoveVideoToActiveLine, videoSeekAfter->GetSelection());
 		Options.SaveOptions(true, false);
@@ -192,7 +199,8 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 				tdc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
 
-			tdc.DrawBitmap((iconsEnabled) ? *icon : icon->ConvertToDisabled(), posX + 2, 3);
+			tdc.DrawBitmap((iconsEnabled) ? *icon : icon->ConvertToDisabled(), 
+				posX + ((h - icon->GetHeight()) / 2) - 1, ((h - icon->GetWidth()) / 2));
 			posX += h;
 		}
 		i++;
@@ -206,6 +214,35 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 
 void VideoToolbar::OnSize(wxSizeEvent &evt)
 {
+	//int minSize = 70;
+	int w, h;
+	GetSize(&w, &h);
+
+	wxSize seekMinSize = videoSeekAfter->GetBestSize();
+	wxSize playMinSize = videoPlayAfter->GetBestSize();
+	int seekMinWidth = seekMinSize.GetWidth();
+	int playMinWidth = playMinSize.GetWidth();
+	int height = h - 2;
+	int allToolsSize = 18.f * (float)h;
+	//one square for spacing
+	int spaceForLists = (w - allToolsSize - 6);
+	if (spaceForLists < seekMinWidth + playMinWidth){
+		seekMinWidth = spaceForLists / 2;
+		playMinWidth = seekMinWidth;
+		if (seekMinWidth < 70)
+			seekMinWidth = 70;
+		if (playMinWidth < 70)
+			playMinWidth = 70;
+	}
+	//if (seekMinWidth != videoSeekAfter->GetMinSize().GetWidth()){
+		videoSeekAfter->SetSize(seekMinWidth, height);
+		videoPlayAfter->SetSize(seekMinWidth + 2, 1, playMinWidth, height);
+	//}
+	startDrawPos = playMinWidth + seekMinWidth + 6;
+	//if (height + 2 != GetMinSize().GetHeight()){
+		//SetMinSize(wxSize(100, height + 2));
+	//}
+
 	Refresh(false);
 }
 
@@ -274,7 +311,7 @@ void MoveAllItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
 
-			dc.DrawBitmap(*icon, posX + 2, 3);
+			dc.DrawBitmap(*icon, posX + ((h - icon->GetHeight()) / 2) - 1, ((h - icon->GetWidth()) / 2));
 			posX += h;
 		}
 		i++;
@@ -343,7 +380,7 @@ void VectorItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
 
-			dc.DrawBitmap(*icon, posX + 2, 3);
+			dc.DrawBitmap(*icon, posX + ((h - icon->GetHeight()) / 2) - 1, ((h - icon->GetWidth()) / 2));
 			posX += h;
 		}
 		i++;
@@ -412,7 +449,7 @@ void ScaleRotationItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
 
-			dc.DrawBitmap(*icon, posX + 2, 3);
+			dc.DrawBitmap(*icon, posX + ((h - icon->GetHeight()) / 2) - 1, ((h - icon->GetWidth()) / 2));
 			posX += h;
 		}
 		i++;

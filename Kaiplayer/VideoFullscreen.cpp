@@ -26,7 +26,13 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	vb = parent;
 	VideoCtrl *vc = (VideoCtrl*)parent;
 	SetBackgroundColour("#000000");
-	if (!vc->IsDshow){ panelsize = 66; vc->panelOnFullscreen = true; }
+	int fw;
+	GetTextExtent("#TWFfGH", &fw, &toolBarHeight);
+	toolBarHeight += 8;
+	if (!vc->IsDshow){ 
+		panelsize = 44 + toolBarHeight;
+		vc->panelOnFullscreen = true; 
+	}
 	else{ panelsize = 44; }
 	panel = new wxPanel(this, -1, wxPoint(0, size.y - panelsize), wxSize(size.x, panelsize));
 	panel->SetForegroundColour(Options.GetColour(WindowText));
@@ -54,14 +60,20 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 		panel->SetFocus();
 		evt.Skip();
 	});
-	vToolbar = new VideoToolbar(panel, wxPoint(0, 44));
-	vToolbar->SetSize(wxSize(size.x, 22));
+	vToolbar = new VideoToolbar(panel, wxPoint(0, 44), wxSize(-1, -1));
+	vToolbar->SetSize(wxSize(size.x, toolBarHeight));
 	vToolbar->Show(!vc->IsDshow);
 	showToolbar->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, [=](wxCommandEvent &evt){
 		bool show = showToolbar->GetValue();
 		vToolbar->Show(show);
-		if (show){ panelsize = 66; vc->panelOnFullscreen = true; }
-		else{ panelsize = 44; vc->panelOnFullscreen = false; }
+		if (show){ 
+			panelsize = 44 + toolBarHeight; 
+			vc->panelOnFullscreen = true; 
+		}
+		else{ 
+			panelsize = 44; 
+			vc->panelOnFullscreen = false; 
+		}
 		OnSize();
 		vc->UpdateVideoWindow();
 	}, 7777);
@@ -92,25 +104,36 @@ void Fullscreen::OnSize()
 	wxSize asize = GetClientSize();
 	VideoCtrl *vc = (VideoCtrl*)vb;
 	//if(vc->lastSize == asize){return;}
-	vc->lastSize=asize;
+	vc->lastSize = asize;
+	int fw;
+	if (panelsize > 44){
+		GetTextExtent("#TWFfGH", &fw, &toolBarHeight);
+		toolBarHeight += 8;
+		panelsize = 44 + toolBarHeight;
+	}
 	
-	vslider->SetSize(wxSize(asize.x,14));
-	if(vc->IsDshow){volslider->Show(); volslider->SetPosition(wxPoint(asize.x-110,17));}
+	vslider->SetSize(wxSize(asize.x, 14));
+	if(vc->IsDshow){
+		volslider->Show(); 
+		volslider->SetPosition(wxPoint(asize.x - 110, 17));
+	}
 	else{volslider->Show(false);}
-	Videolabel->SetSize(asize.x-758,-1);
-	if(vToolbar->IsShown()){vToolbar->SetSize(asize.x, 22);}
+	Videolabel->SetSize(asize.x - 758, -1);
+	if (vToolbar->IsShown()){ 
+		vToolbar->SetSize(asize.x, toolBarHeight); 
+	}
 	panel->SetSize(0, asize.y - panelsize, asize.x, panelsize);
 }
 
 void Fullscreen::HideToolbar(bool hide){
-	if (hide && panelsize == 44 || !hide && panelsize == 66)
+	if (hide && panelsize == 44 || !hide && panelsize != 44)
 		return;
 	Videolabel->Show(!hide);
 	if (hide){
 		panelsize = 44;
 	}
 	else{
-		panelsize = 66;
+		panelsize = 44 + toolBarHeight;
 	}
 	OnSize();
 	VideoCtrl *vc = (VideoCtrl*)vb;

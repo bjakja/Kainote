@@ -121,7 +121,7 @@ public:
 
 class VideoToolbar: public wxWindow {
 public:
-	VideoToolbar (wxWindow *parent, const wxPoint &pos);
+	VideoToolbar (wxWindow *parent, const wxPoint &pos, const wxSize &size);
 	virtual ~VideoToolbar(){
 		for (auto cur = visualItems.begin(); cur != visualItems.end(); cur++){
 			delete (*cur);
@@ -147,6 +147,9 @@ public:
 		blockScroll = false;
 		Refresh(false); 
 	}
+	int GetStartDrawPos(){
+		return startDrawPos;
+	}
 	KaiChoice *videoSeekAfter;
 	KaiChoice *videoPlayAfter;
 	static std::vector<itemdata*> icons;
@@ -163,6 +166,7 @@ private:
 	bool iconsEnabled = true;
 	wxBitmap *bmp;
 	std::vector<VisualItem*> visualItems;
+	int startDrawPos = 146;
 };
 
 enum{

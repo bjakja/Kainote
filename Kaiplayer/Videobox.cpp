@@ -114,6 +114,10 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	, isOnAnotherMonitor(false)
 	, shownKeyframe(false)
 {
+	int fw;
+	GetTextExtent("#TWFfGH", &fw, &toolBarHeight);
+	toolBarHeight += 8;
+	panelHeight = 44 + toolBarHeight;
 
 	panel = new wxWindow(this, -1, wxPoint(0, size.y - panelHeight), wxSize(size.x, panelHeight));
 	panel->SetBackgroundColour(Options.GetColour(WindowBackground));
@@ -132,7 +136,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	mstimes->SetCursor(wxCURSOR_ARROW);
 	mstimes->SetBackgroundColour(WindowBackground);
 
-	vToolbar = new VideoToolbar(panel, wxPoint(0, panelHeight - 22));
+	vToolbar = new VideoToolbar(panel, wxPoint(0, panelHeight - toolBarHeight), wxSize(-1, toolBarHeight));
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnChangeVisual, this, ID_VIDEO_TOOLBAR_EVENT);
 
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
@@ -367,12 +371,16 @@ void VideoCtrl::OnSize(wxSizeEvent& event)
 	wxSize asize = GetClientSize();
 	if (lastSize == asize){ return; }
 	lastSize = asize;
+	int fw;
+	GetTextExtent("#TWFfGH", &fw, &toolBarHeight);
+	toolBarHeight += 8;
+	panelHeight = 44 + toolBarHeight;
 	panel->SetSize(0, asize.y - panelHeight, asize.x, panelHeight);
 	vslider->SetSize(wxSize(asize.x, 14));
 	volslider->SetPosition(wxPoint(asize.x - 110, 17));
 	int difSize = (volslider->IsShown()) ? 290 : 185;
 	mstimes->SetSize(asize.x - difSize, -1);
-	vToolbar->SetSize(asize.x, 22);
+	vToolbar->SetSize(asize.x, toolBarHeight);
 	if (vstate != None){
 		UpdateVideoWindow();
 	}
