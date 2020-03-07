@@ -1682,7 +1682,7 @@ void VideoRenderer::ChangeVobsub(bool vobsub)
 	if (vstate == Paused){ vplayer->Play(); vplayer->Pause(); }
 	else if (vstate == Playing){ vplayer->Play(); }
 	int pos = pan->Video->volslider->GetValue();
-	SetVolume(-(pos*pos));
+	SetVolume(-(pos * pos));
 	pan->Video->ChangeStream();
 }
 

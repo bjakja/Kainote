@@ -977,7 +977,10 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 		showOriginal = (GetSInfo(L"TLMode Showtl") == L"Yes" || (hasTLMode && Options.GetBool(TlModeShowOriginal) != 0));
 		Edit->SetTlMode(hasTLMode);
 	}
-	//Odtąd nie będzie trzeba tego zabezpieczać, FindIdFromKey nie zwróci -1;
+	if (Comparison){
+		SubsComparison();
+	}
+
 	int corrected = -1;
 	Edit->SetLine(file->FindVisibleKey(file->GetActiveLine(), &corrected));
 	markedLine = file->FindVisibleKey(file->GetMarkerLine());

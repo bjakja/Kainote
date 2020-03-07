@@ -110,41 +110,43 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 	if (vobsub){
 		Selfdest<IBaseFilter> pVobsub;
 		CoCreateInstance(CLSID_VobsubAutoload, NULL, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID *)&pVobsub.obj);
-		m_pGraph->AddFilter(pVobsub.obj, L"VSFilter Autoload");//}
-		Selfdest<IEnumPins> pEnum;
-		Selfdest<IPin> pPin;
-		//m_pGraph->RenderFile(sFileName.wc_str(),NULL);
-		HR(hr = pSource->EnumPins(&pEnum.obj), _("Nie można wyliczyć pinów źródła"));
-		//MessageBox(NULL, L"enumpins Initialized!", L"Open file", MB_OK);
-		// Loop through all the pins
-		bool anypin = false;
+		if (pVobsub.obj){
+			m_pGraph->AddFilter(pVobsub.obj, L"VSFilter Autoload");//}
+			Selfdest<IEnumPins> pEnum;
+			Selfdest<IPin> pPin;
+			//m_pGraph->RenderFile(sFileName.wc_str(),NULL);
+			HR(hr = pSource->EnumPins(&pEnum.obj), _("Nie można wyliczyć pinów źródła"));
+			//MessageBox(NULL, L"enumpins Initialized!", L"Open file", MB_OK);
+			// Loop through all the pins
+			bool anypin = false;
 
-		while (S_OK == pEnum->Next(1, &pPin.obj, NULL))
-		{
-			// Try to render this pin.
-			// It's OK if we fail some pins, if at least one pin renders.
-			HRESULT hr2 = m_pGraph->Render(pPin.obj);
-
-			SAFE_RELEASE(pPin.obj);
-
-			if (SUCCEEDED(hr2))
+			while (S_OK == pEnum->Next(1, &pPin.obj, NULL))
 			{
-				anypin = true;
+				// Try to render this pin.
+				// It's OK if we fail some pins, if at least one pin renders.
+				HRESULT hr2 = m_pGraph->Render(pPin.obj);
+
+				SAFE_RELEASE(pPin.obj);
+
+				if (SUCCEEDED(hr2))
+				{
+					anypin = true;
+				}
 			}
-		}
-		if (!anypin){ return false; }
-		SAFE_RELEASE(pEnum.obj);
-		Selfdest<IPin> tmpPin;
-		HR(hr = pVobsub->EnumPins(&pEnum.obj), _("Nie można wyliczyć pinów źródła"));
-		while (S_OK == pEnum->Next(1, &pPin.obj, NULL))
-		{
-			if (SUCCEEDED(pPin->ConnectedTo(&tmpPin.obj)))
+			if (!anypin){ return false; }
+			SAFE_RELEASE(pEnum.obj);
+			Selfdest<IPin> tmpPin;
+			HR(hr = pVobsub->EnumPins(&pEnum.obj), _("Nie można wyliczyć pinów źródła"));
+			while (S_OK == pEnum->Next(1, &pPin.obj, NULL))
 			{
-				hasVobsub = true;
-				break;
+				if (SUCCEEDED(pPin->ConnectedTo(&tmpPin.obj)))
+				{
+					hasVobsub = true;
+					break;
+				}
 			}
+			if (!hasVobsub){ m_pGraph->RemoveFilter(pVobsub.obj); }
 		}
-		if (!hasVobsub){ m_pGraph->RemoveFilter(pVobsub.obj); }
 
 	}
 	else{

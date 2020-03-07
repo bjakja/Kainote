@@ -340,7 +340,8 @@ done:
 		//in this moment indexer was released, there no need to release it
 		if (index == NULL) {
 			if (wxString(errinfo.Buffer).StartsWith("Cancelled")){
-				KaiLog(_("Indeksowanie anulowane przez użytkownika"));
+				//No need spam user that he clicked cancel button
+				//KaiLog(_("Indeksowanie anulowane przez użytkownika"));
 			}
 			else{
 				KaiLog(wxString::Format(_("Wystąpił błąd indeksowania: %s"), errinfo.Buffer));

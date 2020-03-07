@@ -864,9 +864,6 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 				break;
 			}
 			cur = wxRect(posX + 3, posY, GridWidth[j] - 6, GridHeight);
-			/*gc->SetClippingRegion(cur);
-			gc->DrawLabel(strings[j], cur, isCenter ? wxALIGN_CENTER : (wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT));
-			gc->DestroyClippingRegion();*/
 			//gc->Clip(cur);
 			float centerPos = 0.f;
 			if (isCenter){
@@ -874,7 +871,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 				gc->GetTextExtent(strings[j], &fw, &fh);
 				centerPos = ((GridWidth[j] - fw) / 2) - 3;
 			}
-			gc->DrawTextU(strings[j], posX + 3 + centerPos, posY + 2);
+			gc->DrawTextU(strings[j], posX + 3 + centerPos, posY + 1);
 			//gc->ResetClip();
 			posX += GridWidth[j] + 1;
 

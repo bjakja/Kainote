@@ -106,7 +106,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	scroll = new KaiScrollbar(this, 3333, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
 	scroll->SetCursor(wxCURSOR_DEFAULT);
 	scroll->SetScrollRate(30);
-	statusBarHeight = (Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR)) ? 0 : fontHeight + 10;
+	statusBarHeight = (Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR)) ? 0 : fontHeight + 8;
 	changeQuotes = Options.GetBool(TEXT_EDITOR_CHANGE_QUOTES);
 	caret = new wxCaret(this, 1, fontHeight);
 	SetCaret(caret);
@@ -765,7 +765,7 @@ void TextEditor::OnSize(wxSizeEvent& event)
 	if (size.y < 80 && statusBarHeight > 0)
 		statusBarHeight = 0;
 	else if (size.y >= 80 && !Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR))
-		statusBarHeight = 22;
+		statusBarHeight = fontHeight + 8;
 
 	CalcWrap(false, false);
 	Cursor.y = FindY(Cursor.x);
@@ -1831,7 +1831,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 		//value swapped for working without default config
 		bool itemChecked = item->IsChecked();
 		if (optionName == TEXT_EDITOR_HIDE_STATUS_BAR){
-			statusBarHeight = (itemChecked) ? 22 : 0;
+			statusBarHeight = (itemChecked) ? fontHeight + 8 : 0;
 			Options.SetBool(optionName, !itemChecked);
 			Refresh(false);
 		}
