@@ -183,6 +183,7 @@
 	CG(SelectionsRecent,)\
 	CG(SelectionsOptions,)\
 	CG(SelectVisibleLineAfterFullscreen,)\
+	CG(SHIFT_TIMES_PROFILES,)\
 	CG(SpellcheckerOn,)\
 	CG(StyleEditFilterText,)\
 	CG(StyleFilterTextOn,)\

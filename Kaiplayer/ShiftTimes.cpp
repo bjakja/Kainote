@@ -14,20 +14,89 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "ChangeTime.h"
+#include "ShiftTimes.h"
 #include "Config.h"
 #include "Stylelistbox.h"
 #include "KainoteMain.h"
 #include "EditBox.h"
-//#include "ColorPicker.h"
+#include "KaiDialog.h"
+#include "KaiMessageBox.h"
+
+class ProfileEdition : public KaiDialog
+{
+public:
+	ProfileEdition(wxWindow* parent, const wxArrayString &profiles);
+	virtual ~ProfileEdition(){};
+	wxString GetProfileName(bool *exist){ 
+		*exist = overwrite;
+
+		return profilesList->GetValue(); 
+	};
+private:
+	void OnOKClick(wxCommandEvent &evt);
+	KaiChoice *profilesList;
+	const wxArrayString &profilesNames;
+	bool overwrite = false;
+};
+
+ProfileEdition::ProfileEdition(wxWindow* parent, const wxArrayString &profiles)
+	:KaiDialog(parent, -1, _("Wybierz nazwę profilu"))
+	, profilesNames(profiles)
+{
+	DialogSizer *dSizer = new DialogSizer(wxVERTICAL);
+	KaiStaticText *description = new KaiStaticText(this, -1, _("Wprowadź nazwę profilu,\nbądź wybierz istniejący, by nadpisać"));
+	KaiTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
+	wxArrayString excludes;
+	excludes.Add("\\");
+	excludes.Add("/");
+	excludes.Add(":");
+	excludes.Add("|");
+	excludes.Add("\f");
+	valid.SetExcludes(excludes);
+	profilesList = new KaiChoice(this, -1, L"", wxDefaultPosition, wxDefaultSize, profiles, 0, valid);
+	profilesList->SetMaxLength(25);
+	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+	MappedButton *OK = new MappedButton(this, wxID_OK, L"OK");
+	MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ProfileEdition::OnOKClick, this, wxID_OK);
+	buttonSizer->Add(OK, 1, wxALL | wxEXPAND, 2);
+	buttonSizer->Add(cancel, 1, wxALL | wxEXPAND, 2);
+	dSizer->Add(description, 0, wxALL | wxEXPAND, 2);
+	dSizer->Add(profilesList, 0, wxALL | wxEXPAND, 2);
+	dSizer->Add(buttonSizer, 0, wxALL, 2);
+	SetSizerAndFit(dSizer);
+	CenterOnParent();
+}
+
+void ProfileEdition::OnOKClick(wxCommandEvent &evt)
+{
+	wxString thisName = profilesList->GetValue();
+	for (auto name : profilesNames){
+		if (name == thisName){
+			int result = KaiMessageBox(wxString::Format(_("Na pewno chcesz nadpisać profil o nazwie %s"),
+				profilesList->GetString(profilesList->GetSelection())), _("Informacja"), wxYES_NO, GetParent());
+			if (result != wxYES)
+				return;
+
+			overwrite = true;
+			break;
+		}
+	}
+	//if (profilesList->GetSelection() >= 0){
+		
+	//}
+
+	EndModal(wxID_OK);
+
+}
 
 
 ShiftTimesWindow::ShiftTimesWindow(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-	: wxWindow/*wxScrolled<wxWindow>*/(parent, id, pos, size, style | wxVERTICAL)
+	: wxWindow(parent, id, pos, size, style | wxVERTICAL)
 {
 	Kai = kfparent;
 	form = ASS;
-	panel = new wxWindow(this, 1);
+	panel = new wxWindow(this, -1);
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
 	scroll = new KaiScrollbar(this, 5558, wxDefaultPosition, wxDefaultSize, wxVERTICAL);
@@ -104,9 +173,9 @@ void ShiftTimesWindow::Contents(bool addopts)
 		WhichTimes->Enable(form != TMP);
 		if (vb->GetState() != None){ state = true; }
 		else{ state = false; }
-		videotime->Enable(state);
+		MoveToVideoTime->Enable(state);
 		state = (Kai->GetTab()->Edit->ABox && Kai->GetTab()->Edit->ABox->audioDisplay->hasMark);
-		audiotime->Enable(state);
+		MoveToAudioTime->Enable(state);
 	}
 	if (LeadIn){
 		state = (form != TMP);
@@ -141,11 +210,11 @@ void ShiftTimesWindow::SaveOptions()
 		//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 
 		//8 Move to audio time 16 display times / frames 32 move tag times;
 		Options.SetInt(MoveTimesOptions, (int)Forward->GetValue() | ((int)StartVAtime->GetValue() << 1) |
-			((int)videotime->GetValue() << 2) | ((int)(audiotime->GetValue()) << 3) |
+			((int)MoveToVideoTime->GetValue() << 2) | ((int)(MoveToAudioTime->GetValue()) << 3) |
 			((int)DisplayFrames->GetValue() << 4) | ((int)MoveTagTimes->GetValue() << 5));
 
 		Options.SetInt(MoveTimesWhichTimes, WhichTimes->GetSelection());
-		Options.SetInt(MoveTimesCorrectEndTimes, CorTime->GetSelection());
+		Options.SetInt(MoveTimesCorrectEndTimes, EndTimeCorrection->GetSelection());
 	}
 	Options.SetInt(MoveTimesWhichLines, WhichLines->GetSelection());
 	if (form == ASS){
@@ -197,9 +266,24 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 
 	linesizer->Add(WhichLines, 0, wxEXPAND | wxRIGHT | wxTOP | wxLEFT, 2);
 	linesizer->Add(stylesizer, 1, wxEXPAND);
-
+	
 	if (normal){
-		//ramka czasu
+		//profiles
+		profileSizer = new KaiStaticBoxSizer(wxHORIZONTAL, panel, _("Edycja profilów"));
+		NewProfile = new MappedButton(panel, 31229, L"+", -1);
+		NewProfile->SetToolTip(_("Dodawanie i edycja profilów"));
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShiftTimesWindow::OnAddProfile, this, 31229);
+		RemoveProfile = new MappedButton(panel, 31230, L"-", -1);
+		NewProfile->SetToolTip(_("Usuwanie profilów"));
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShiftTimesWindow::OnRemoveProfile, this, 31230);
+		wxArrayString profileList;
+		GetProfilesNames(profileList);
+		ProfilesList = new KaiChoice(panel, 31231, wxDefaultPosition, wxDefaultSize, profileList);
+		Bind(wxEVT_COMMAND_CHOICE_SELECTED, &ShiftTimesWindow::OnChangeProfile, this, 31231);
+		profileSizer->Add(NewProfile, 0, wxALL, 2);
+		profileSizer->Add(RemoveProfile, 0, wxBOTTOM | wxTOP | wxRIGHT, 2);
+		profileSizer->Add(ProfilesList, 1, wxEXPAND | wxBOTTOM | wxTOP | wxRIGHT, 2);
+		//time frame
 		KaiStaticBoxSizer *timesizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Czas"));
 		wxGridSizer *timegrid = new wxGridSizer(2, 0, 0);
 		MoveTime = new MappedButton(panel, GLOBAL_SHIFT_TIMES, _("Przesuń"), _("Przesuń czas napisów"), wxDefaultPosition, wxSize(60, -1), GLOBAL_HOTKEY);
@@ -229,19 +313,19 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		SE->Add(StartVAtime, 1, wxEXPAND | wxLEFT | wxRIGHT, 2);
 		SE->Add(EndVAtime, 1, wxEXPAND | wxRIGHT, 2);
 
-		videotime = new KaiCheckBox(panel, ID_VIDEO, _("Przesuń znacznik\ndo czasu wideo"));
-		videotime->SetForegroundColour(WindowWarningElements);
-		videotime->Enable(false);
+		MoveToVideoTime = new KaiCheckBox(panel, ID_VIDEO, _("Przesuń znacznik\ndo czasu wideo"));
+		MoveToVideoTime->SetForegroundColour(WindowWarningElements);
+		MoveToVideoTime->Enable(false);
 
-		audiotime = new KaiCheckBox(panel, ID_AUDIO, _("Przesuń znacznik\ndo czasu audio"));
-		audiotime->SetForegroundColour(WindowWarningElements);
-		audiotime->Enable(false);
+		MoveToAudioTime = new KaiCheckBox(panel, ID_AUDIO, _("Przesuń znacznik\ndo czasu audio"));
+		MoveToAudioTime->SetForegroundColour(WindowWarningElements);
+		MoveToAudioTime->Enable(false);
 
 		Connect(ID_VIDEO, ID_AUDIO, wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&ShiftTimesWindow::AudioVideoTime);
 		//TextColorPicker *picker = new TextColorPicker(this, AssColor(wxString("#AABBCC")));
 		VAtiming->Add(SE, 0, wxEXPAND | wxTOP, 2);
-		VAtiming->Add(videotime, 1, wxEXPAND | wxLEFT, 2);
-		VAtiming->Add(audiotime, 1, wxEXPAND | wxLEFT, 2);
+		VAtiming->Add(MoveToVideoTime, 1, wxEXPAND | wxLEFT, 2);
+		VAtiming->Add(MoveToAudioTime, 1, wxEXPAND | wxLEFT, 2);
 		//VAtiming->Add(picker,0,wxEXPAND|wxLEFT,2);
 
 		KaiStaticBoxSizer *timessizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Sposób przesuwania czasów"));
@@ -260,12 +344,12 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		choices.Add(_("Pozostaw bez zmian"));
 		choices.Add(_("Skoryguj nachodzące czasy"));
 		choices.Add(_("Nowe czasy"));
-		CorTime = new KaiChoice(panel, -1, wxDefaultPosition, wxSize(130, -1), choices, KAI_SCROLL_ON_FOCUS);
-		CorTime->SetSelection(0);
-		cesizer->Add(CorTime, 0, wxEXPAND | wxLEFT | wxRIGHT, 2);
+		EndTimeCorrection = new KaiChoice(panel, -1, wxDefaultPosition, wxSize(130, -1), choices, KAI_SCROLL_ON_FOCUS);
+		EndTimeCorrection->SetSelection(0);
+		cesizer->Add(EndTimeCorrection, 0, wxEXPAND | wxLEFT | wxRIGHT, 2);
 
 		LeadIn = NULL;
-
+		Main->Add(profileSizer, 0, wxEXPAND | wxALL, 2);
 		Main->Add(timesizer, 0, wxEXPAND | wxALL, 2);
 		Main->Add(VAtiming, 0, wxEXPAND | wxALL, 2);
 		Main->Add(linesizer, 0, wxEXPAND | wxALL, 2);
@@ -410,6 +494,10 @@ void ShiftTimesWindow::OnSize(wxSizeEvent& event)
 			//panel->Refresh(false);
 		}
 	}
+	else if (!scroll->IsShown() && ctw != w){
+		SetMinSize(wxSize(w, h));
+		cur->BoxSizer3->Layout();
+	}
 
 }
 
@@ -420,8 +508,8 @@ void ShiftTimesWindow::DoTooltips(bool normal /*= true*/)
 	Stylestext->SetToolTip(_("Przesuń według następujących stylów (oddzielone średnikiem)"));
 	if (normal){
 		TimeText->SetToolTip(_("Czas przesunięcia"));
-		videotime->SetToolTip(_("Przesuwanie zaznaczonej linijki\ndo czasu wideo ± czas przesunięcia"));
-		audiotime->SetToolTip(_("Przesuwanie zaznaczonej linijki do czasu\nznacznika audio ± czas przesunięcia"));
+		MoveToVideoTime->SetToolTip(_("Przesuwanie zaznaczonej linijki\ndo czasu wideo ± czas przesunięcia"));
+		MoveToAudioTime->SetToolTip(_("Przesuwanie zaznaczonej linijki do czasu\nznacznika audio ± czas przesunięcia"));
 		StartVAtime->SetToolTip(_("Przesuwa czas początkowy do czasu wideo / audio"));
 		EndVAtime->SetToolTip(_("Przesuwa czas końcowy do czasu wideo / audio"));
 		Forward->SetToolTip(_("Opóźnia napisy"));
@@ -429,7 +517,7 @@ void ShiftTimesWindow::DoTooltips(bool normal /*= true*/)
 		DisplayFrames->SetToolTip(_("Przesuwa napisy o ustawiony czas / klatki"));
 		MoveTagTimes->SetToolTip(_("Przesuwa czasy tagów \\move, \\t, \\fad tak,\nby ich pozycja na wideo się nie zmieniła\n(spowalnia przesuwanie czasów)"));
 		WhichTimes->SetToolTip(_("Wybór czasów do przesunięcia"));
-		CorTime->SetToolTip(_("Korekcja czasów końcowych, gdy są niewłaściwe albo nachodzą na siebie"));
+		EndTimeCorrection->SetToolTip(_("Korekcja czasów końcowych, gdy są niewłaściwe albo nachodzą na siebie"));
 	}
 	else{
 		LeadIn->SetToolTip(_("Wstawia wstęp do czasu początkowego, dobre przy stosowaniu fad"));
@@ -448,11 +536,11 @@ void ShiftTimesWindow::DoTooltips(bool normal /*= true*/)
 void ShiftTimesWindow::AudioVideoTime(wxCommandEvent &event)
 {
 	int id = event.GetId();
-	if (id == ID_VIDEO && videotime->GetValue()){
-		audiotime->SetValue(false);
+	if (id == ID_VIDEO && MoveToVideoTime->GetValue()){
+		MoveToAudioTime->SetValue(false);
 	}
-	else if (id == ID_AUDIO && audiotime->GetValue()){
-		videotime->SetValue(false);
+	else if (id == ID_AUDIO && MoveToAudioTime->GetValue()){
+		MoveToVideoTime->SetValue(false);
 	}
 }
 
@@ -476,23 +564,23 @@ void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
 		DisplayFrames->SetValue((secondWindow) ? secondWindow->DisplayFrames->GetValue() : (mto & 16) > 0);
 		TabPanel *tab = ((TabPanel*)GetParent());
 		if (secondWindow && (secondWindow->DisplayFrames->GetValue() != dispTimes)){
-			if (DisplayFrames->GetValue()){
-				ChangeDisplayUnits(false);
-			}
-			else if (!DisplayFrames->GetValue()){
-				ChangeDisplayUnits(true);
-			}
-
-
+			//it uses times as true
+			ChangeDisplayUnits(!DisplayFrames->GetValue());
+			
 		}
 		else if (!tab->Video->VFF){
 			if (DisplayFrames->GetValue()){ ChangeDisplayUnits(true); }
 			DisplayFrames->Enable(false);
 		}
+		if (secondWindow){
+			wxArrayString list;
+			secondWindow->ProfilesList->GetArray(&list);
+			ProfilesList->PutArray(&list);	
+			ProfilesList->SetSelection(secondWindow->ProfilesList->GetSelection());
+		}
 		TimeText->SetTime(ct);
-
-		videotime->SetValue((secondWindow) ? secondWindow->videotime->GetValue() : (mto & 4) > 0);
-		audiotime->SetValue((secondWindow) ? secondWindow->audiotime->GetValue() : (mto & 8) > 0);
+		MoveToVideoTime->SetValue((secondWindow) ? secondWindow->MoveToVideoTime->GetValue() : (mto & 4) > 0);
+		MoveToAudioTime->SetValue((secondWindow) ? secondWindow->MoveToAudioTime->GetValue() : (mto & 8) > 0);
 		Forward->SetValue((secondWindow) ? secondWindow->Forward->GetValue() : (mto & 1) > 0);
 		Backward->SetValue((secondWindow) ? secondWindow->Backward->GetValue() : (mto & 1) == 0);
 		DisplayFrames->SetValue((secondWindow) ? secondWindow->DisplayFrames->GetValue() : (mto & 16) > 0);
@@ -509,7 +597,7 @@ void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
 		if ((secondWindow) ? secondWindow->StartVAtime->GetValue() : (mto & 2) > 0){ StartVAtime->SetValue(true); }
 		else{ EndVAtime->SetValue(true); }
 
-		CorTime->SetSelection((secondWindow) ? secondWindow->CorTime->GetSelection() : Options.GetInt(MoveTimesCorrectEndTimes));
+		EndTimeCorrection->SetSelection((secondWindow) ? secondWindow->EndTimeCorrection->GetSelection() : Options.GetInt(MoveTimesCorrectEndTimes));
 	}
 	int enables = Options.GetInt(PostprocessorEnabling);
 
@@ -548,11 +636,12 @@ void ShiftTimesWindow::CollapsePane(wxCommandEvent &event)
 		//int peres= (LeadIn->GetValue())? 1 : 0
 		Options.SetInt(PostprocessorEnabling, (int)LeadIn->GetValue() + ((int)LeadOut->GetValue() * 2) + ((int)Continous->GetValue() * 4) + ((int)SnapKF->GetValue() * 8));
 	}
+	Freeze();
 	panel->Destroy();
 	LeadIn = NULL;
-	panel = new wxWindow(this, 1);
+	panel = new wxWindow(this, -1);
 	CreateControls(!collapsed);
-
+	Thaw();
 	if (collapsed){
 
 		if (event.GetId() == 22999){
@@ -638,6 +727,213 @@ void ShiftTimesWindow::ChangeDisplayUnits(bool times)
 		ct.orgframe = Options.GetInt(MoveTimesFrames);
 		TimeText->SetTime(ct);
 	}
+}
+
+void ShiftTimesWindow::GetProfilesNames(wxArrayString &list)
+{
+	wxArrayString fullProfiles;
+	Options.GetTable(SHIFT_TIMES_PROFILES, fullProfiles, L"\f", wxTOKEN_STRTOK);
+	for (auto profile : fullProfiles){
+		wxString profileName = profile.BeforeFirst(':');
+		list.Add(profileName);
+	}
+}
+
+void ShiftTimesWindow::CreateProfile(const wxString &name, bool overwrite)
+{
+	wxString moveToAudioTime = (MoveToAudioTime->GetValue()) ? L"1" : L"0";
+	wxString moveToVideoTime = (MoveToVideoTime->GetValue()) ? L"1" : L"0";
+	wxString moveToStartTimes = (StartVAtime->GetValue()) ? L"1" : L"0";
+	wxString moveTagTimes = (MoveTagTimes->GetValue()) ? L"1" : L"0";
+	wxString forward = (Forward->GetValue()) ? L"1" : L"0";
+	wxString frames = (DisplayFrames->GetValue()) ? L"1" : L"0";
+	wxString profile = Options.GetString(SHIFT_TIMES_PROFILES);
+	
+	wxString newProfile;
+	newProfile << name << L": Time: " << TimeText->GetTime().mstime <<
+		L" Forward: " << forward << L" Frames: " << frames <<
+		L" MoveTagTimes: " << moveTagTimes << L" MoveToStartTimes: " <<
+		moveToStartTimes << L" MoveToVideoTime: " << moveToVideoTime <<
+		L" MoveToVideoTime: " << moveToAudioTime << L" WhichLines: " <<
+		WhichLines->GetSelection() << L" StylesText: " <<
+		Stylestext->GetValue() << L" WhichTimes: " << WhichTimes->GetSelection() <<
+		L" EndTimeCorrection: " << EndTimeCorrection->GetSelection() << L"\f";
+
+	if (overwrite){
+		wxStringTokenizer tokenizer(profile, "\f", wxTOKEN_STRTOK);
+		while (tokenizer.HasMoreTokens()){
+			wxString token = tokenizer.GetNextToken();
+			if (!token.StartsWith(name + L":")){
+				newProfile << token << L"\f";
+			}
+		}
+		profile.Empty();
+	}
+
+	Options.SetString(SHIFT_TIMES_PROFILES, profile.Prepend(newProfile));
+	wxArrayString profilesList;
+	GetProfilesNames(profilesList);
+	ProfilesList->PutArray(&profilesList);
+	ProfilesList->SetSelection(0);
+}
+
+void ShiftTimesWindow::SetProfile(const wxString &name)
+{
+	wxArrayString fullProfiles;
+	wxString profileWithoutName;
+	Options.GetTable(SHIFT_TIMES_PROFILES, fullProfiles, L"\f", wxTOKEN_STRTOK);
+	//get text profile by name
+	for (auto profile : fullProfiles){
+		wxString profileName = profile.BeforeFirst(L':');
+		if (profileName == name){
+			profileWithoutName = profile.AfterFirst(L':');
+			profileWithoutName.Remove(0, 1);
+			break;
+		}
+	}
+	wxStringTokenizer tokenizer(profileWithoutName, " ", wxTOKEN_RET_EMPTY_ALL);
+	tokenizer.GetNextToken();
+	//time
+	if (tokenizer.HasMoreTokens()){
+		TimeText->SetTime(STime(wxAtoi(tokenizer.GetNextToken()), Options.GetInt(MoveTimesFrames)));
+		tokenizer.GetNextToken();
+	}
+	//forward backward
+	if (tokenizer.HasMoreTokens()){
+		wxString token = tokenizer.GetNextToken();
+		if (token == L"1"){
+			Forward->SetValue(true);
+		}
+		else{
+			Backward->SetValue(true);
+		}
+		tokenizer.GetNextToken();
+	}
+	//frames
+	if (tokenizer.HasMoreTokens()){
+		wxString token = tokenizer.GetNextToken();
+		bool displayFrames = DisplayFrames->GetValue();
+		bool newDisplayFrames = token == L"1";
+		if (displayFrames != newDisplayFrames){
+			TabPanel *tab = (TabPanel *)GetParent();
+			if (tab->Video->VFF){
+				//there are times as true
+				ChangeDisplayUnits(!newDisplayFrames);
+			}
+			else if (displayFrames){
+				ChangeDisplayUnits(true);
+			}
+		}
+		DisplayFrames->SetValue(token == L"1");
+		tokenizer.GetNextToken();
+	}
+	//move tag times
+	if (tokenizer.HasMoreTokens()){
+		wxString token = tokenizer.GetNextToken();
+		MoveTagTimes->SetValue(token == L"1");
+		tokenizer.GetNextToken();
+	}
+	//move to start/end time video/audio
+	if (tokenizer.HasMoreTokens()){
+		wxString token = tokenizer.GetNextToken();
+		if (token == L"1"){
+			StartVAtime->SetValue(true);
+		}
+		else{
+			EndVAtime->SetValue(true);
+		}
+		tokenizer.GetNextToken();
+	}
+	//move to video time
+	if (tokenizer.HasMoreTokens()){
+		wxString token = tokenizer.GetNextToken();
+		MoveToVideoTime->SetValue(token == L"1");
+		tokenizer.GetNextToken();
+	}
+	//move to audio time
+	if (tokenizer.HasMoreTokens()){
+		wxString token = tokenizer.GetNextToken();
+		MoveToAudioTime->SetValue(token == L"1");
+		tokenizer.GetNextToken();
+	}
+	//which lines
+	if (tokenizer.HasMoreTokens()){
+		wxString token = tokenizer.GetNextToken();
+		WhichLines->SetSelection(wxAtoi(token));
+		tokenizer.GetNextToken();
+	}
+	//chosen styles as text
+	if (tokenizer.HasMoreTokens()){
+		wxString token = tokenizer.GetNextToken();
+		Stylestext->SetValue(token);
+		tokenizer.GetNextToken();
+	}
+	//which times
+	if (tokenizer.HasMoreTokens()){
+		wxString token = tokenizer.GetNextToken();
+		WhichTimes->SetSelection(wxAtoi(token));
+		tokenizer.GetNextToken();
+	}
+	//which times
+	if (tokenizer.HasMoreTokens()){
+		wxString token = tokenizer.GetNextToken();
+		EndTimeCorrection->SetSelection(wxAtoi(token));
+		tokenizer.GetNextToken();
+	}
+}
+
+void ShiftTimesWindow::OnAddProfile(wxCommandEvent& event)
+{
+	wxArrayString profilesNames;
+	GetProfilesNames(profilesNames);
+	ProfileEdition pe(this, profilesNames);
+	if (pe.ShowModal() == wxID_OK){
+		bool exist = false;
+		wxString profileName = pe.GetProfileName(&exist);
+		CreateProfile(profileName, exist);
+	}
+}
+
+void ShiftTimesWindow::OnRemoveProfile(wxCommandEvent& event)
+{
+	int selectedProfile = ProfilesList->GetSelection();
+	//here it's possible rather it needs info
+	if (selectedProfile < 0){
+		KaiMessageBox(_("Na liście nie wybrano profilu do usunięcia"), _("Informacja"), wxOK, this);
+		return;
+	}
+	wxString profileName = ProfilesList->GetString(selectedProfile);
+	int result = KaiMessageBox(wxString::Format(_("Na pewno chcesz usunąć profil o nazwie \"%s\""), profileName), _("Informacja"), wxYES_NO, this);
+	if (result != wxYES){
+		return;
+	}
+	
+	wxArrayString fullProfiles;
+	Options.GetTable(SHIFT_TIMES_PROFILES, fullProfiles, L"\f", wxTOKEN_STRTOK);
+	wxString newProfiles;
+	//make a new profiles
+	for (auto profile : fullProfiles){
+		wxString profileName1 = profile.BeforeFirst(L':');
+		//add olny different profiles then removed
+		if (profileName1 != profileName){
+			newProfiles << profile << L"\f";
+		}
+	}
+	Options.SetString(SHIFT_TIMES_PROFILES, newProfiles);
+	wxArrayString profilesList;
+	GetProfilesNames(profilesList);
+	ProfilesList->PutArray(&profilesList);
+	ProfilesList->SetSelection(-1);
+}
+
+void ShiftTimesWindow::OnChangeProfile(wxCommandEvent& event)
+{
+	int selectedProfile = ProfilesList->GetSelection();
+	if (selectedProfile < 0)
+		return;
+	//no error for now I do not know if it's possible
+	wxString profileName = ProfilesList->GetString(selectedProfile);
+	SetProfile(profileName);
 }
 
 BEGIN_EVENT_TABLE(ShiftTimesWindow, wxWindow)

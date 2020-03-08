@@ -20,7 +20,7 @@
 #include "SubsGrid.h"
 #include "Videobox.h"
 #include "EditBox.h"
-#include "ChangeTime.h"
+#include "ShiftTimes.h"
 #include <wx/statline.h>
 #include "KaiWindowResizer.h"
 

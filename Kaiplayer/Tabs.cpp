@@ -123,7 +123,7 @@ void Notebook::AddPage(bool refresh)
 	if (iter < Pages.size() && Pages[iter]->Video->GetState() == Playing){ Pages[iter]->Video->Pause(); }
 	int w, h;
 	GetClientSize(&w, &h);
-	//if(refresh){Freeze();}
+	if(refresh){Freeze();}
 	Pages.push_back(new TabPanel(this, (KainoteFrame*)GetParent(), wxPoint(0, 0), wxSize(0, 0)));
 	olditer = iter;
 	iter = Size() - 1;
@@ -141,10 +141,13 @@ void Notebook::AddPage(bool refresh)
 	Pages[iter]->SetSize(olditer != iter ? Pages[olditer]->GetSize() : wxSize(w, h - TabHeight));
 	CalcSizes(true);
 	if (refresh){
-		if (!Options.GetBool(EditorOn)){ KainoteFrame *kai = (KainoteFrame *)GetParent(); kai->HideEditor(false); }
+		if (!Options.GetBool(EditorOn)){ 
+			KainoteFrame *kai = (KainoteFrame *)GetParent(); 
+			kai->HideEditor(false); 
+		}
 		wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 		AddPendingEvent(evt2);
-		//Thaw();
+		Thaw();
 		RefreshRect(wxRect(0, h - TabHeight, w, TabHeight), false);
 	}
 	else{ Pages[iter]->ShiftTimes->RefVals(Pages[olditer]->ShiftTimes); }
@@ -1078,7 +1081,7 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 		//else{
 
 		//}
-
+		sthis->Freeze();
 		for (std::vector<TabPanel*>::iterator i = sthis->Pages.begin(); i != sthis->Pages.end(); i++)
 		{
 			(*i)->Destroy();
@@ -1139,6 +1142,7 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 		if (sthis->Pages.size() < 1)
 			sthis->AddPage(true);
 	
+		sthis->Thaw();
 		TabPanel *tab = sthis->GetTab();
 		tab->Show();
 		tab->Video->DeleteAudioCache();
@@ -1204,10 +1208,12 @@ void Notebook::ChangePage(int page, bool makeActiveVisible /*= false*/)
 		Pages[page]->SetPosition(Pages[iter]->GetPosition());
 		Pages[page]->SetSize(Pages[iter]->GetSize());
 	}
-	Pages[page]->Show();
-	Tabsizes[page] += xWidth;
+	Freeze();
 	Pages[iter]->Hide();
 	Tabsizes[iter] -= xWidth;
+	Pages[page]->Show();
+	Tabsizes[page] += xWidth;
+	Thaw();
 	iter = page;
 	over = -1;
 	if (makeActiveVisible)

@@ -297,9 +297,6 @@
     <ClCompile Include="ColorSpaceConverter.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
-    <ClCompile Include="ChangeTime.cpp">
-      <Filter>Source Files\Windows &amp; Dialogs</Filter>
-    </ClCompile>
     <ClCompile Include="ColorPicker.cpp">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClCompile>
@@ -410,6 +407,9 @@
     </ClCompile>
     <ClCompile Include="GraphicsD2D.cpp">
       <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="ShiftTimes.cpp">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -614,9 +614,6 @@
     <ClInclude Include="TLDialog.h">
       <Filter>Header Files\Windows &amp; Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="ChangeTime.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
-    </ClInclude>
     <ClInclude Include="Toolbar.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
@@ -739,6 +736,9 @@
     </ClInclude>
     <ClInclude Include="D2DInit.h">
       <Filter>Header Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="ShiftTimes.h">
+      <Filter>Header Files\Windows &amp; Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

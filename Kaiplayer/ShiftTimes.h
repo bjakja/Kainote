@@ -29,16 +29,18 @@ class KainoteFrame;
 
 
 
-class ShiftTimesWindow: public wxWindow//wxScrolled<wxWindow>
+class ShiftTimesWindow: public wxWindow
 {
 public:
 	
-	ShiftTimesWindow(wxWindow* parent,KainoteFrame* kfparent,wxWindowID id=-1,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize,long style=0);
+	ShiftTimesWindow(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id = -1, 
+		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style=0);
 	virtual ~ShiftTimesWindow();
 	KaiRadioButton* StartVAtime;
 	KaiRadioButton* EndVAtime;
 	KaiChoice *WhichLines;
 	KaiChoice *WhichTimes;
+	KaiChoice *ProfilesList;
 	KaiRadioButton* Forward;
 	KaiRadioButton* Backward;
 	KaiCheckBox* DisplayFrames;
@@ -46,11 +48,14 @@ public:
 
 	MappedButton* AddStyles;
 	MappedButton* MoveTime;
+	MappedButton* NewProfile;
+	MappedButton* RemoveProfile;
 	TimeCtrl* TimeText;
 	KaiTextCtrl* Stylestext;
-	KaiCheckBox* videotime;
-	KaiCheckBox* audiotime;
-	KaiChoice* CorTime;
+	KaiCheckBox* MoveToVideoTime;
+	KaiCheckBox* MoveToAudioTime;
+	KaiChoice* EndTimeCorrection;
+	//postprocessor controls
 	KaiCheckBox* LeadIn;
 	KaiCheckBox* LeadOut;
 	KaiCheckBox* Continous;
@@ -63,14 +68,16 @@ public:
 	NumCtrl* AfterStart;
 	NumCtrl* BeforeEnd;
 	NumCtrl* AfterEnd;
+
 	KaiStaticBoxSizer *liosizer;
 	KaiStaticBoxSizer *consizer;
 	KaiStaticBoxSizer *snapsizer;
+	KaiStaticBoxSizer *profileSizer;
 	KaiScrollbar *scroll;
 	wxWindow *panel; 
 
-	void Contents(bool addopts=true);
-	void RefVals(ShiftTimesWindow *from=NULL);
+	void Contents(bool addopts = true);
+	void RefVals(ShiftTimesWindow *from = NULL);
 	void OnOKClick(wxCommandEvent& event);
 	wxBoxSizer *Main;
 	bool SetBackgroundColour(const wxColour &col);
@@ -86,6 +93,9 @@ private:
 
 	void OnAddStyles(wxCommandEvent& event);
 	void OnChangeDisplayUnits(wxCommandEvent& event);
+	void OnAddProfile(wxCommandEvent& event);
+	void OnRemoveProfile(wxCommandEvent& event);
+	void OnChangeProfile(wxCommandEvent& event);
 	void ChangeDisplayUnits(bool times);
 	void OnSize(wxSizeEvent& event);
 	void OnScroll(wxScrollEvent& event);
@@ -95,23 +105,13 @@ private:
 	void DoTooltips(bool normal = true);
 	void SaveOptions();
 	void CreateControls(bool normal = true);
+	void GetProfilesNames(wxArrayString &list);
+	void CreateProfile(const wxString &name, bool overwrite = false);
+	void SetProfile(const wxString &name);
 
 	DECLARE_EVENT_TABLE()
 };
-/*
-class mypanel: public wxPanel
-{
-public:
-mypanel(wxWindow* parent);
-virtual ~mypanel();
-private:
-void OnMouseEvent(wxMouseEvent& event);
 
-CTwindow *CTwin;
-wxWindow *focused;
-DECLARE_EVENT_TABLE()
-};
-*/
 
 enum{
 	ID_RADIOBUTTON1 = 11124, 

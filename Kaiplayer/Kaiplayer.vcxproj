@@ -441,6 +441,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc120-mt-1_61.lib;libboost_regex-vc120-mt-1_61.lib;libboost_filesystem-vc120-mt-1_61.lib;libboost_system-vc120-mt-1_61.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
+      <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -511,7 +512,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="AutomationToFile.cpp" />
     <ClCompile Include="AutomationUtils.cpp" />
     <ClCompile Include="BitmapButton.cpp" />
-    <ClCompile Include="ChangeTime.cpp" />
+    <ClCompile Include="ShiftTimes.cpp" />
     <ClCompile Include="ColorSpace.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="DShowPlayer.cpp" />
@@ -626,7 +627,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="AutomationToFile.h" />
     <ClInclude Include="AutomationUtils.h" />
     <ClInclude Include="BitmapButton.h" />
-    <ClInclude Include="ChangeTime.h" />
+    <ClInclude Include="ShiftTimes.h" />
     <ClInclude Include="ColorSpace.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="D2DInit.h" />
