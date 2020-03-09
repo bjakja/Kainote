@@ -494,7 +494,7 @@ void ShiftTimesWindow::OnSize(wxSizeEvent& event)
 			//panel->Refresh(false);
 		}
 	}
-	else if (!scroll->IsShown() && ctw != w){
+	else if (!isscrollbar && ctw != w){
 		SetMinSize(wxSize(w, h));
 		cur->BoxSizer3->Layout();
 	}

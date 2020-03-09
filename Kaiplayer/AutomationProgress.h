@@ -37,6 +37,7 @@
 #include "KaiTextCtrl.h"
 #include <utility>
 #include "KaiStaticText.h"
+#include "KaiGauge.h"
 
 namespace Auto{
 	wxDECLARE_EVENT(EVT_MESSAGE, wxThreadEvent);
@@ -46,7 +47,7 @@ namespace Auto{
 		LuaProgressDialog(wxWindow *parent,lua_State *L);
 		virtual ~LuaProgressDialog();
 		wxBoxSizer *sizer;
-		wxGauge *progress_display;
+		KaiGauge *progress_display;
 		KaiStaticText *title_display;
 		KaiStaticText *task_display;
 		KaiTextCtrl *debug_output;

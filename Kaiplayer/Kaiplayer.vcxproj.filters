@@ -411,6 +411,9 @@
     <ClCompile Include="ShiftTimes.cpp">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClCompile>
+    <ClCompile Include="KaiGauge.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -739,6 +742,9 @@
     </ClInclude>
     <ClInclude Include="ShiftTimes.h">
       <Filter>Header Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiGauge.h">
+      <Filter>Header Files\Controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

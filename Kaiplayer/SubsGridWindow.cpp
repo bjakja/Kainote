@@ -901,7 +901,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 			gc->SetPen(wxPen(Options.GetColour(GridActiveLine)), 3.);
 			int ypos = ((idmarkerPos - scrollPositionId + 1) * (GridHeight + 1));
 			if (preview && ypos >= previewpos.y - 2){ ypos += previewsize.y + 5; }
-			gc->DrawRectangle(posX + 1, ypos - 1, (GridWidth[0] - 1), GridHeight + 2);
+			gc->DrawRectangle(posX + 1, ypos - 1, (GridWidth[0] - 1), GridHeight + 1);
 		}
 
 		if (idcurrentLine != -1){
@@ -909,7 +909,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 			gc->SetPen(wxPen(Options.GetColour(GridActiveLine)));
 			int ypos = ((idcurrentLine - scrollPositionId + 1) * (GridHeight + 1));
 			if (preview && ypos >= previewpos.y - 2){ ypos += previewsize.y + 5; }
-			gc->DrawRectangle(posX, ypos - 1, w + scHor - posX, GridHeight + 2);
+			gc->DrawRectangle(posX, ypos - 1, w + scHor - posX, GridHeight + 1);
 		}
 	}
 	delete gc;

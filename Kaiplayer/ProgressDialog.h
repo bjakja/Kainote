@@ -17,7 +17,7 @@
 #pragma once
 
 #include <wx/wx.h>
-#include <wx/gauge.h>
+#include "KaiGauge.h"
 #include <functional>
 #include "MappedButton.h"
 #include "KaiStaticText.h"
@@ -26,7 +26,7 @@ struct ITaskbarList3;
 class ProgresDialog : public wxDialog
 {
 private:
-	wxGauge *gauge;
+	KaiGauge *gauge;
 	KaiStaticText *text;
 	KaiStaticText *text1;
 	

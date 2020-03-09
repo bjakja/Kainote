@@ -874,7 +874,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 	gc->SetPen(*wxTRANSPARENT_PEN);
 	gc->DrawRectangle(0, 0, w, h);
 
-	wxString digits = "(0123456789-&+";
+	wxString digits = L"(0123456789-&+";
 	wxString tagtest;
 	wxString parttext;
 	wxString mestext;
@@ -886,7 +886,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 	int wchar = 0;
 	bool hasFocus = HasFocus();
 
-	wxString alltext = MText + " ";
+	wxString alltext = MText + L" ";
 	int len = alltext.length();
 	const wxUniChar &bchar = alltext[Cursor.x];
 	if (bchar == L'{')
@@ -914,7 +914,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 	gc->SetFont(font, L"#000000");
 	double fww;
 	gc->SetPen(*wxTRANSPARENT_PEN);
-	//rysowanie spellcheckera
+	//drawing spellchecker
 	if (SpellCheckerOnOff){
 		gc->SetBrush(cspellerrors);
 		DrawWordRectangles(0, gc);
@@ -931,7 +931,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 
 		gc->SetBrush(wxBrush(wxColour(hasFocus ? cselection : cselnofocus)));
 		fww = 0.0;
-		//rysowanie zaznaczenia
+		//drawing selection
 		for (int j = fst.y; j <= scd.y; j++){
 
 			if (j == fst.y){
@@ -982,7 +982,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				cursorWasSet = true;
 			}
 
-			if (parttext != ""){
+			if (parttext != L""){
 				gc->GetTextExtent(mestext, &fw, &fh);
 				wxColour fontColor = (val || (isTemplateLine && parttext.IsNumber())) ? cvalues : (slash) ? cnames :
 					(templateString) ? ctstrings : (isTemplateLine && ch == L'(') ? ctfunctions :
@@ -996,17 +996,17 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			posY += fontHeight;
 			wline++;
 			wchar++;
-			parttext = "";
-			mestext = "";
+			parttext.clear();
+			mestext.clear();
 		}
-		if (posY + fontHeight<0){
-		if (ch == L'{')
-			tags = true;
-		else if (ch == L'}')
-			tags = false;
+		if (posY + fontHeight < 0){
+			if (ch == L'{')
+				tags = true;
+			else if (ch == L'}')
+				tags = false;
 
-		wchar++;
-		continue;
+			wchar++;
+			continue;
 		}
 
 		if (hasFocus && (Cursor.x + Cursor.y == wchar)){
@@ -1045,7 +1045,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 					(ch == L'(' && !slash) ? ctfunctions : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				gc->DrawTextU(parttext, fw + 3, posY);
 				mestext << parttext;
-				parttext = "";
+				parttext.clear();
 				gc->GetTextExtent(mestext, &fw, &fh);
 				gc->SetFont(font, (ch == L'!') ? ctcodemarks : coperators);
 				gc->DrawTextU(ch, fw + 3, posY);
@@ -1064,7 +1064,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 					gc->SetFont(font, ctstrings);
 					gc->DrawTextU(parttext, fw + 3, posY);
 					mestext << parttext;
-					parttext = "";
+					parttext.clear();
 					templateString = !templateString;
 					wchar++;
 					continue;
@@ -1077,7 +1077,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 					(slash) ? cnames : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				gc->DrawTextU(parttext, fw + 3, posY);
 				mestext << parttext;
-				parttext = "";
+				parttext.clear();
 				mestext << ch;
 				slash = val = false;
 				wchar++;
@@ -1101,7 +1101,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				gc->SetFont(font, ctext);
 				gc->DrawTextU(bef, fw + 3, posY);
 				mestext << bef;
-				parttext = "{";
+				parttext = L"{";
 			}
 			else{
 				wxString &tmp = parttext.RemoveLast(1);
@@ -1109,30 +1109,30 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				gc->SetFont(font, (val) ? cvalues : (slash) ? cnames : ctext);
 				gc->DrawTextU(tmp, fw + 3, posY);
 				mestext << tmp;
-				parttext = "}";
+				parttext = L"}";
 				tags = slash = val = false;
 			}
 			gc->GetTextExtent(mestext, &fw, &fh);
 			gc->SetFont(font, ccurlybraces);
 			gc->DrawTextU(parttext, fw + 3, posY);
 			mestext << parttext;
-			parttext = "";
+			parttext.clear();
 			val = false;
 		}
 
 		if (slash){
 			tagtest += ch;
-			if ((digits.Find(ch) != -1 && tagtest != "1" && tagtest != "2" && tagtest != "3" && tagtest != "4") || tagtest == "fn" || ch == L'('){
+			if ((digits.Find(ch) != -1 && tagtest != L"1" && tagtest != L"2" && tagtest != L"3" && tagtest != L"4") || tagtest == L"fn" || ch == L'('){
 				slash = false;
-				wxString tmp = (tagtest == "fn") ? parttext : parttext.RemoveLast(1);
+				wxString tmp = (tagtest == L"fn") ? parttext : parttext.RemoveLast(1);
 				gc->GetTextExtent(mestext, &fw, &fh);
 				gc->SetFont(font, cnames);
 				gc->DrawTextU(tmp, fw + 3, posY);
 				mestext << tmp;
-				if (tagtest == "fn"){ parttext = ""; }
+				if (tagtest == L"fn"){ parttext.clear(); }
 				else{ parttext = ch; }
 				val = true;
-				tagtest = "";
+				tagtest.clear();
 			}
 		}
 
@@ -1148,7 +1148,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			gc->SetFont(font, coperators);
 			gc->DrawTextU(parttext, fw + 3, posY);
 			mestext << parttext;
-			parttext = "";
+			parttext.clear();
 			if (ch == L'('){ val = true; slash = false; }
 			else if (ch != L','){ val = false; }
 			//continue;
@@ -1158,7 +1158,6 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 	}
 	if (!cursorWasSet){
 		caret->Move(0, -50);
-		//caret->Move(10, 10);
 	}
 	const wxColour &border = Options.GetColour(hasFocus ? EditorBorderOnFocus : EditorBorder);
 	//here we go our status bar
@@ -1218,7 +1217,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.DrawRectangle(0, 0, w, h);
 
-	wxString digits = "(0123456789-&+";
+	wxString digits = L"(0123456789-&+";
 	wxString tagtest;
 	wxString parttext;
 	wxString mestext;
@@ -1280,23 +1279,23 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 
 			if (j == fst.y){
 				wxString ftext = MText.SubString(wraps[j], fst.x - 1);
-				ftext.Replace("\t", "");
+				ftext.Replace(L"\t", L"");
 				if (wraps[j] > fst.x - 1){ fw = 0; }
 				else{ GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font); }
 				wxString stext = MText.SubString(fst.x, (fst.y == scd.y) ? scd.x - 1 : wraps[j + 1] - 1);
-				stext.Replace("\t", "");
+				stext.Replace(L"\t", L"");
 				GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
 			}
 			else if (j == scd.y){
 				fw = 0;
 				wxString stext = MText.SubString(wraps[j], scd.x - 1);
-				stext.Replace("\t", "");
+				stext.Replace(L"\t", L"");
 				GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
 			}
 			else{
 				fw = 0;
 				wxString stext = MText.SubString(wraps[j], wraps[j + 1] - 1);
-				stext.Replace("\t", "");
+				stext.Replace(L"\t", L"");
 				GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
 			}
 			dc.DrawRectangle(fw + 3, ((j*fontHeight) + 1) - scrollPositionV, fww, fontHeight);
@@ -1334,8 +1333,8 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 			posY += fontHeight;
 			wline++;
 			wchar++;
-			parttext = "";
-			mestext = "";
+			parttext.clear();
+			mestext.clear();
 		}
 		/*if (posY + Fheight<0){
 			if (ch == L'{')
@@ -1348,7 +1347,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 			}*/
 
 		if (hasFocus && (Cursor.x + Cursor.y == wchar)){
-			if (mestext + parttext == ""){ fw = 0; }
+			if (mestext + parttext == L""){ fw = 0; }
 			else{ GetTextExtent(mestext + parttext, &fw, &fh, NULL, NULL, &font); }
 			caret->Move(fw + 3, posY);
 			cursorWasSet = true;
@@ -1360,7 +1359,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 			dc.SetBrush(wxBrush(col));
 			//dc.SetPen(wxPen(col));
 			wxString text = MText.SubString(wraps[bry], i - 1);
-			text.Replace("\t", "");
+			text.Replace(L"\t", L"");
 			if (i > 0){ GetTextExtent(text, &fw, &fh, NULL, NULL, &font); }
 			else{ fw = 0; }
 			GetTextExtent(MText[i], &fww, &fh, NULL, NULL, &font);
@@ -1381,7 +1380,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 					(ch == L'(' && !slash) ? ctfunctions : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				dc.DrawText(parttext, fw + 3, posY);
 				mestext << parttext;
-				parttext = "";
+				parttext.clear();
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground((ch == L'!') ? ctcodemarks : coperators);
 				dc.DrawText(ch, fw + 3, posY);
@@ -1400,7 +1399,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 					dc.SetTextForeground(ctstrings);
 					dc.DrawText(parttext, fw + 3, posY);
 					mestext << parttext;
-					parttext = "";
+					parttext.clear();
 					templateString = !templateString;
 					wchar++;
 					continue;
@@ -1413,7 +1412,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 					(slash) ? cnames : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				dc.DrawText(parttext, fw + 3, posY);
 				mestext << parttext;
-				parttext = "";
+				parttext.clear();
 				mestext << ch;
 				slash = val = false;
 				wchar++;
@@ -1437,7 +1436,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 				dc.SetTextForeground(ctext);
 				dc.DrawText(bef, fw + 3, posY);
 				mestext << bef;
-				parttext = "{";
+				parttext = L"{";
 			}
 			else{
 				wxString &tmp = parttext.RemoveLast(1);
@@ -1445,30 +1444,31 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 				dc.SetTextForeground((val) ? cvalues : (slash) ? cnames : ctext);
 				dc.DrawText(tmp, fw + 3, posY);
 				mestext << tmp;
-				parttext = "}";
+				parttext = L"}";
 				tags = slash = val = false;
 			}
 			GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 			dc.SetTextForeground(ccurlybraces);
 			dc.DrawText(parttext, fw + 3, posY);
 			mestext << parttext;
-			parttext = "";
+			parttext.clear();
 			val = false;
 		}
 
 		if (slash){
 			tagtest += ch;
-			if ((digits.Find(ch) != -1 && tagtest != "1" && tagtest != "2" && tagtest != "3" && tagtest != "4") || tagtest == "fn" || ch == L'('){
+			if ((digits.Find(ch) != -1 && tagtest != L"1" && tagtest != L"2" && tagtest != L"3" && tagtest != L"4") || 
+				tagtest == L"fn" || ch == L'('){
 				slash = false;
-				wxString tmp = (tagtest == "fn") ? parttext : parttext.RemoveLast(1);
+				wxString tmp = (tagtest == L"fn") ? parttext : parttext.RemoveLast(1);
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground(cnames);
 				dc.DrawText(tmp, fw + 3, posY);
 				mestext << tmp;
-				if (tagtest == "fn"){ parttext = ""; }
+				if (tagtest == L"fn"){ parttext.clear(); }
 				else{ parttext = ch; }
 				val = true;
-				tagtest = "";
+				tagtest.clear();
 			}
 		}
 
@@ -1484,7 +1484,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 			dc.SetTextForeground(coperators);
 			dc.DrawText(parttext, fw + 3, posY);
 			mestext << parttext;
-			parttext = "";
+			parttext.clear();
 			if (ch == L'('){ val = true; slash = false; }
 			else if (ch != L','){ val = false; }
 			//continue;

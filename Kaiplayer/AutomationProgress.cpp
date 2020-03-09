@@ -311,7 +311,7 @@ namespace Auto{
 
 
 	LuaProgressDialog::LuaProgressDialog(wxWindow *parent,lua_State *_L)
-		:wxDialog(parent,-1,"",wxDefaultPosition,wxDefaultSize,0)
+		:wxDialog(parent, -1, L"", wxDefaultPosition, wxDefaultSize, 0)
 		,cancelled(false)
 		,finished(false)
 		,closedialog(false)
@@ -319,7 +319,7 @@ namespace Auto{
 	{
 		SetForegroundColour(Options.GetColour(WindowText));
 		SetBackgroundColour(Options.GetColour(WindowBackground));
-		progress_display = new wxGauge(this, -1, 100, wxDefaultPosition, wxSize(600, 20));
+		progress_display = new KaiGauge(this, -1, wxDefaultPosition, wxSize(600, 20));
 		title_display = new KaiStaticText(this, -1, _T("")/*, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE|wxST_NO_AUTORESIZE*/);
 		task_display = new KaiStaticText(this, -1, _T("")/*, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE|wxST_NO_AUTORESIZE*/);
 		cancel_button = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
@@ -365,6 +365,7 @@ namespace Auto{
 	LuaProgressDialog::~LuaProgressDialog(){
 		update_timer.Stop();
 	}
+
 	void LuaProgressDialog::ShowProgressDialog(wxThreadEvent &evt)
 	{
 		LuaProgressDialog *dlg=evt.GetPayload<LuaProgressDialog*>();
@@ -395,7 +396,7 @@ namespace Auto{
 	void LuaProgressDialog::SetProgress(wxThreadEvent &evt)
 	{
 		wxMutexLocker lock(data_mutex);
-		int prg=evt.GetPayload<int>();
+		int prg = evt.GetPayload<int>();
 		progress_display->SetValue(prg);
 		//progress_display->Pulse();
 	}
@@ -412,13 +413,16 @@ namespace Auto{
 			update_timer.Stop();
 			cancel_button->SetLabelText(_("Zamknij"));
 		}
-		if(cancelled||closedialog){update_timer.Stop();EndModal(0);}
+		if(cancelled || closedialog){
+			update_timer.Stop();
+			EndModal(0);
+		}
 	}
 	void LuaProgressDialog::ShowConfigDialog(wxThreadEvent &evt)
 	{
 		//cfgclosed=false;
 		update_timer.Stop();
-		LuaDialog dlg(L,true); // magically creates the config dialog structure etc
+		LuaDialog dlg(L, true); // magically creates the config dialog structure etc
 		KaiDialog* window = dlg.CreateWindow(this,title_display->GetLabelText());
 		window->ShowModal();
 		update_timer.Start();
