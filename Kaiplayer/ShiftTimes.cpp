@@ -256,7 +256,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 	choices.Add(_("Czasy wyższe i równe"));
 	choices.Add(_("Czasy niższe i równe"));
 	choices.Add(_("Według wybranych stylów"));
-	WhichLines = new KaiChoice(panel, -1, wxDefaultPosition, wxDefaultSize, choices, KAI_SCROLL_ON_FOCUS);
+	WhichLines = new KaiChoice(panel, 22888, wxDefaultPosition, wxDefaultSize, choices, KAI_SCROLL_ON_FOCUS);
 
 	wxBoxSizer *stylesizer = new wxBoxSizer(wxHORIZONTAL);
 	AddStyles = new MappedButton(panel, ID_BSTYLE, L"+", L"", wxDefaultPosition, wxDefaultSize, -1, MAKE_SQUARE_BUTTON);
@@ -287,11 +287,11 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		KaiStaticBoxSizer *timesizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Czas"));
 		wxGridSizer *timegrid = new wxGridSizer(2, 0, 0);
 		MoveTime = new MappedButton(panel, GLOBAL_SHIFT_TIMES, _("Przesuń"), _("Przesuń czas napisów"), wxDefaultPosition, wxSize(60, -1), GLOBAL_HOTKEY);
-		TimeText = new TimeCtrl(panel, -1, "0:00:00.00", wxDefaultPosition, wxSize(60, -1), wxALIGN_CENTER | wxTE_PROCESS_ENTER);
-		Forward = new KaiRadioButton(panel, -1, _("W przód"));
-		Backward = new KaiRadioButton(panel, -1, _("W tył"));
+		TimeText = new TimeCtrl(panel, 22890, L"0:00:00.00", wxDefaultPosition, wxSize(60, -1), wxALIGN_CENTER | wxTE_PROCESS_ENTER);
+		Forward = new KaiRadioButton(panel, 22891, _("W przód"));
+		Backward = new KaiRadioButton(panel, 22891, _("W tył"));
 		DisplayFrames = new KaiCheckBox(panel, 31221, _("Klatki"));
-		MoveTagTimes = new KaiCheckBox(panel, -1, _("Czasy tagów"));
+		MoveTagTimes = new KaiCheckBox(panel, 22889, _("Czasy tagów"));
 		Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &ShiftTimesWindow::OnChangeDisplayUnits, this, 31221);
 		timegrid->Add(TimeText, 0, wxEXPAND | wxLEFT | wxRIGHT, 2);
 		timegrid->Add(MoveTime, 0, wxEXPAND | wxRIGHT, 2);
@@ -307,8 +307,8 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		KaiStaticBoxSizer *VAtiming = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Przesuwanie wg wideo / audio"));
 
 		wxBoxSizer *SE = new wxBoxSizer(wxHORIZONTAL);
-		StartVAtime = new KaiRadioButton(panel, -1, _("Początek"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-		EndVAtime = new KaiRadioButton(panel, -1, _("Koniec"));
+		StartVAtime = new KaiRadioButton(panel, 22891, _("Początek"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+		EndVAtime = new KaiRadioButton(panel, 22891, _("Koniec"));
 
 		SE->Add(StartVAtime, 1, wxEXPAND | wxLEFT | wxRIGHT, 2);
 		SE->Add(EndVAtime, 1, wxEXPAND | wxRIGHT, 2);
@@ -334,7 +334,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		choices.Add(_("Czas początkowy"));
 		choices.Add(_("Czas końcowy"));
 
-		WhichTimes = new KaiChoice(panel, -1, wxDefaultPosition, wxDefaultSize, choices, KAI_SCROLL_ON_FOCUS);
+		WhichTimes = new KaiChoice(panel, 22888, wxDefaultPosition, wxDefaultSize, choices, KAI_SCROLL_ON_FOCUS);
 		WhichTimes->Enable(form != TMP);
 
 		timessizer->Add(WhichTimes, 0, wxEXPAND | wxRIGHT | wxTOP | wxLEFT, 2);
@@ -344,7 +344,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		choices.Add(_("Pozostaw bez zmian"));
 		choices.Add(_("Skoryguj nachodzące czasy"));
 		choices.Add(_("Nowe czasy"));
-		EndTimeCorrection = new KaiChoice(panel, -1, wxDefaultPosition, wxSize(130, -1), choices, KAI_SCROLL_ON_FOCUS);
+		EndTimeCorrection = new KaiChoice(panel, 22888, wxDefaultPosition, wxSize(130, -1), choices, KAI_SCROLL_ON_FOCUS);
 		EndTimeCorrection->SetSelection(0);
 		cesizer->Add(EndTimeCorrection, 0, wxEXPAND | wxLEFT | wxRIGHT, 2);
 
@@ -357,6 +357,10 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		Main->Add(cesizer, 0, wxEXPAND | wxALL, 2);
 
 		panel->SetSizerAndFit(Main);
+		Bind(wxEVT_COMMAND_CHOICE_SELECTED, &ShiftTimesWindow::OnEdition, this, 22888);
+		Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &ShiftTimesWindow::OnEdition, this, 22889);
+		Bind(wxEVT_COMMAND_TEXT_UPDATED, &ShiftTimesWindow::OnEdition, this, 22890);
+		Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, &ShiftTimesWindow::OnEdition, this, 22891);
 	}
 	else{
 		int pe = Options.GetInt(PostprocessorEnabling);
@@ -542,6 +546,7 @@ void ShiftTimesWindow::AudioVideoTime(wxCommandEvent &event)
 	else if (id == ID_AUDIO && MoveToAudioTime->GetValue()){
 		MoveToVideoTime->SetValue(false);
 	}
+	OnEdition(event);
 }
 
 void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
@@ -712,6 +717,7 @@ void ShiftTimesWindow::OnMouseScroll(wxMouseEvent& event)
 void ShiftTimesWindow::OnChangeDisplayUnits(wxCommandEvent& event)
 {
 	ChangeDisplayUnits(!DisplayFrames->GetValue());
+	OnEdition(event);
 }
 
 void ShiftTimesWindow::ChangeDisplayUnits(bool times)
@@ -934,6 +940,14 @@ void ShiftTimesWindow::OnChangeProfile(wxCommandEvent& event)
 	//no error for now I do not know if it's possible
 	wxString profileName = ProfilesList->GetString(selectedProfile);
 	SetProfile(profileName);
+}
+
+void ShiftTimesWindow::OnEdition(wxCommandEvent& event)
+{
+	if (LeadIn || ProfilesList->GetSelection() < 0)
+		return;
+
+	ProfilesList->SetSelection(-1);
 }
 
 BEGIN_EVENT_TABLE(ShiftTimesWindow, wxWindow)

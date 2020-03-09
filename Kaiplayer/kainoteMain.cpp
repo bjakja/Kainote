@@ -1433,7 +1433,7 @@ void KainoteFrame::SetAccels(bool _all)
 	for (auto cur = hkeys.begin(); cur != hkeys.end(); cur++){
 		if (cur->first.Type != GLOBAL_HOTKEY){ continue; }
 		int id = cur->first.id;
-		bool emptyAccel = cur->second.Accel == "";
+		bool emptyAccel = cur->second.Accel == L"";
 		if (id > 6000 && id < 6850){
 			MenuItem *item = Menubar->FindItem(id);
 			if (!item){ /*KaiLog(wxString::Format("no id %i", id));*/ continue; }
@@ -1596,7 +1596,7 @@ void KainoteFrame::OnPageChange(wxCommandEvent& event)
 	int step = (event.GetId() == NextTab) ? Tabs->iter + 1 : Tabs->iter - 1;
 	if (step < 0){ step = Tabs->Size() - 1; }
 	else if (step >= (int)Tabs->Size()){ step = 0; }
-	Tabs->ChangePage(step);
+	Tabs->ChangePage(step, true);
 }
 
 

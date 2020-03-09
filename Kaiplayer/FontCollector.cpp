@@ -700,7 +700,8 @@ void FontCollector::CheckOrCopyFonts()
 			SendMessageD(_("Nie można pobrać rozmiarów i nazw plików czcionek\nkopiowanie zostaje przerwane.\n"), fcd->warning);
 			return;
 		}
-		fontSizes.insert(std::pair<long, wxString>(data.nFileSizeLow, wxString(data.cFileName)));
+		//first file is "." second ".." after there are a font files
+		//fontSizes.insert(std::pair<long, wxString>(data.nFileSizeLow, wxString(data.cFileName)));
 		while (1){
 			int result = FindNextFile(h, &data);
 			if (result == ERROR_NO_MORE_FILES || result == 0){ break; }
@@ -708,6 +709,24 @@ void FontCollector::CheckOrCopyFonts()
 			fontSizes.insert(std::pair<long, wxString>(data.nFileSizeLow, wxString(data.cFileName)));
 		}
 		FindClose(h);
+
+		WCHAR appDataPath[MAX_PATH];
+		
+		if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, appDataPath))){
+			wxString localPath = wxString(appDataPath) + L"\\Microsoft\\Windows\\Fonts\\*";
+			WIN32_FIND_DATAW data1;
+			HANDLE h1 = FindFirstFileW(localPath.wc_str(), &data1);
+			if (h1 != INVALID_HANDLE_VALUE){
+				//fontSizes.insert(std::pair<long, wxString>(data1.nFileSizeLow, wxString(data1.cFileName)));
+				while (1){
+					int result = FindNextFile(h1, &data1);
+					if (result == ERROR_NO_MORE_FILES || result == 0){ break; }
+					else if (data1.nFileSizeLow == 0){ continue; }
+					fontSizes.insert(std::pair<long, wxString>(data1.nFileSizeLow, wxString(data1.cFileName)));
+				}
+				FindClose(h1);
+			}
+		}
 		STime processTime(sw.Time());
 		SendMessageD(wxString::Format(_("Pobrano rozmiary i nazwy %i czcionek upłynęło %sms.\n\n"), (int)fontSizes.size() - 2, processTime.GetFormatted(SRT)), fcd->normal);
 	}

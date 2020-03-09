@@ -96,6 +96,7 @@ private:
 	void OnAddProfile(wxCommandEvent& event);
 	void OnRemoveProfile(wxCommandEvent& event);
 	void OnChangeProfile(wxCommandEvent& event);
+	void OnEdition(wxCommandEvent& event);
 	void ChangeDisplayUnits(bool times);
 	void OnSize(wxSizeEvent& event);
 	void OnScroll(wxScrollEvent& event);

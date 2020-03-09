@@ -175,12 +175,12 @@ void FontEnumerator::RefreshVideo()
 
 DWORD FontEnumerator::CheckFontsProc(void* fontEnum)
 {
-	FontEnumerator *fe=(FontEnumerator*)fontEnum;
+	FontEnumerator *fe = (FontEnumerator*)fontEnum;
 	if(!fontEnum){wxLogMessage(_("Brak wskaźnika klasy magazynu stylów.")); return 0;}
 
 	HANDLE hDir  = NULL; 
 	fe->eventKillSelf = CreateEvent(0, FALSE, FALSE, 0);
-	wxString fontrealpath=wxGetOSDirectory() + "\\fonts\\";
+	wxString fontrealpath = wxGetOSDirectory() + "\\fonts\\";
 
 	hDir = FindFirstChangeNotification( fontrealpath.wc_str(), TRUE, FILE_NOTIFY_CHANGE_FILE_NAME);// | FILE_NOTIFY_CHANGE_LAST_WRITE
 
