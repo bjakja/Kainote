@@ -44,8 +44,8 @@ public:
 private:
 	void RefreshClientsFonts();
 	static int CALLBACK FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lptm,
-                                  DWORD WXUNUSED(dwStyle), LPARAM lParam);
-	static DWORD FontEnumerator::CheckFontsProc(void* cls);
+		DWORD WXUNUSED(dwStyle), LPARAM lParam);
+	static DWORD FontEnumerator::CheckFontsProc(int *threadNum);
 	void RefreshVideo();
 	wxArrayString *Fonts;
 	wxArrayString *FontsTmp;
@@ -54,10 +54,11 @@ private:
 	wxString filter;
 	std::map<const wxWindow*, std::function<void()>> observers;
 	KainoteFrame* parent;
-	HANDLE eventKillSelf;
+	HANDLE eventKillSelf[2];
 	HANDLE checkFontsThread;
 	wxMutex enumerateMutex;
 	HDC hdc;
+	//bool hasLocalFonts = false;
 };
 
 extern FontEnumerator FontEnum;

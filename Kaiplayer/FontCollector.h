@@ -50,20 +50,30 @@ class FontLogContent{
 public:
 	FontLogContent();
 	FontLogContent(const wxString &_info, bool _notFound = false){
+		cs.Enter();
 		info = _info;
 		notFound = _notFound;
+		cs.Leave();
 	}
 	void SetStyle(int tab, const wxString &style){
+		cs.Enter();
 		styles[style].Add(tab);
+		cs.Leave();
 	}
 	void SetLine(int tab, int line){
+		cs.Enter();
 		lines[line].Add(tab);
+		cs.Leave();
 	}
 	void AppendInfo(const wxString &_info){
+		cs.Enter();
 		info << _info << L"\n";
+		cs.Leave();
 	}
 	void AppendWarnings(const wxString &warning){
+		cs.Enter();
 		warnings << warning << L"\n";
+		cs.Leave();
 	}
 	void DoLog(FontCollector *fc);
 	void SetNotFound(bool _notFound = true){
@@ -89,6 +99,7 @@ public:
 	bool notFound = false;
 	wxPoint stylesArea = wxPoint(-1, -1);
 	wxPoint linesArea = wxPoint(-1, -1);
+	wxCriticalSection cs;
 };
 
 
@@ -131,6 +142,7 @@ class FontCollector
 {
 	friend class FontCollectorDialog;
 	friend class FontCollectorThread;
+	friend class TabFontSeekThread;
 public:
 	FontCollector(wxWindow *parent);
 	~FontCollector();
@@ -140,6 +152,7 @@ public:
 	void StartCollect(int operation);
 	void ShowDialog(wxWindow *parent);
 	void SendMessageD(const wxString &string, const wxColour &col);
+	void GetAssFonts(SubsFile *subs, int tab);
 
 	FontCollectorDialog *fcd;
 	enum{
@@ -155,7 +168,7 @@ private:
 	typedef std::set<wxUniChar> CharMap;
 	std::map<wxString, CharMap> FontMap;
 	void PutChars(const wxString &txt, const wxString &fn);
-	void GetAssFonts(SubsFile *subs, int tab);
+	
 	bool CheckPathAndGlyphs(int *found, int *notfound, int *notcopied);
 	bool SaveFont(const wxString &fontname, FontLogContent *flc);
 	void EnumerateFonts();
@@ -171,6 +184,7 @@ private:
 	std::map<wxString, SubsFont*> foundFonts;
 	std::multimap<long, wxString> fontSizes;
 	wxString fontfolder;
+	wxString fontFolderLocal;
 	wxString muxerpath;
 	wxZipOutputStream *zip;
 	wxStopWatch sw;
@@ -189,3 +203,16 @@ public:
 private:
 	FontCollector *fc;
 };
+
+//class TabFontSeekThread : public wxThread
+//{
+//	friend class FontCollector;
+//public:
+//	TabFontSeekThread(FontCollector *fc, SubsFile *file, int num);
+//	virtual ~TabFontSeekThread(){};
+//	wxThread::ExitCode Entry();
+//private:
+//	FontCollector *fc;
+//	SubsFile *file;
+//	int numTab;
+//};

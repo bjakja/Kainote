@@ -24,10 +24,22 @@
 #include <wx/regex.h>
 #include "KaiMessageBox.h"
 #include <ShlObj.h>
+#include <thread>
 
 wxDEFINE_EVENT(EVT_APPEND_MESSAGE, wxThreadEvent);
 wxDEFINE_EVENT(EVT_ENABLE_BUTTONS, wxThreadEvent);
 wxDEFINE_EVENT(EVT_ENABLE_OPEN_FOLDER, wxThreadEvent);
+
+void ThreadFunction(std::tuple<FontCollector*, SubsFile*, int*> *data)
+{
+	FontCollector *fc = std::get<0>(*data);
+	SubsFile *file = std::get<1>(*data);
+	int *num = std::get<2>(*data);
+	//fc->SendMessageD(wxString::Format(_("Wystartował wątek %i.\n\n"), *num), wxColour("#FFFFFF"));
+	fc->GetAssFonts(file, *num);
+	delete data;
+	delete num;
+}
 
 SubsFont::SubsFont(const wxString &_name, const LOGFONTW &_logFont, int _bold, bool _italic){
 	name = _name;
@@ -641,10 +653,6 @@ void FontCollector::GetAssFonts(SubsFile *subs, int tab)
 				}
 				else
 				{
-					textHavingFont.Replace(L"\\N", L"");
-					textHavingFont.Replace(L"\\n", L"");
-					textHavingFont.Replace(L"\\h", L" ");
-					PutChars(textHavingFont, ifont);
 					if (!(foundFonts.find(fnl) != foundFonts.end())){
 						foundFonts[fnl] = new SubsFont(ifont, logFonts[iresult], bold, (italic != 0));
 					}
@@ -658,7 +666,13 @@ void FontCollector::GetAssFonts(SubsFile *subs, int tab)
 						newFont = false;
 					}
 				}
-				textHavingFont.Empty();
+				//we add all texts to check if even not found font is even needed
+				//when is not needed leave only info cause not inform on the end.
+				textHavingFont.Replace(L"\\N", L"");
+				textHavingFont.Replace(L"\\n", L"");
+				textHavingFont.Replace(L"\\h", L" ");
+				PutChars(textHavingFont, ifont);
+				textHavingFont.clear();
 			}
 			else{
 				if (tag->tagName == L"fn"){
@@ -713,7 +727,8 @@ void FontCollector::CheckOrCopyFonts()
 		WCHAR appDataPath[MAX_PATH];
 		
 		if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, appDataPath))){
-			wxString localPath = wxString(appDataPath) + L"\\Microsoft\\Windows\\Fonts\\*";
+			fontFolderLocal = wxString(appDataPath) + L"\\Microsoft\\Windows\\Fonts\\";
+			wxString localPath = fontFolderLocal + L"*";
 			WIN32_FIND_DATAW data1;
 			HANDLE h1 = FindFirstFileW(localPath.wc_str(), &data1);
 			if (h1 != INVALID_HANDLE_VALUE){
@@ -740,14 +755,24 @@ void FontCollector::CheckOrCopyFonts()
 	int notFound = 0;
 	int notCopied = 0;
 
-	if (facenames.size()<1 || reloadFonts){ EnumerateFonts(); }
+	if (facenames.size() < 1 || reloadFonts){ EnumerateFonts(); }
 	
 
 	if (operation & ON_ALL_TABS){
 		Notebook * tabs = Notebook::GetTabs();
-		for (size_t i = 0; i < tabs->Size(); i++){
-			GetAssFonts(tabs->Page(i)->Grid->file, i);
+		size_t tabsSize = tabs->Size();
+		HANDLE *threads = new HANDLE[tabsSize];
+
+		for (size_t i = 0; i < tabsSize; i++){
+			//GetAssFonts(tabs->Page(i)->Grid->file, i);
+			std::tuple<FontCollector*, SubsFile*, int*> *data = 
+				new std::tuple<FontCollector *, SubsFile *, int*>(this, tabs->Page(i)->Grid->file, new int(i));
+			
+			threads[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ThreadFunction, data, 0, 0);
+			
 		}
+		WaitForMultipleObjects(tabsSize, threads, TRUE, INFINITE);
+		delete[] threads;
 	}
 	else{
 		GetAssFonts(Notebook::GetTab()->Grid->file, Notebook::GetTabs()->iter);
@@ -760,6 +785,13 @@ void FontCollector::CheckOrCopyFonts()
 		cur->second->DoLog(this);
 	}
 	for (auto cur = notFindFontsLog.begin(); cur != notFindFontsLog.end(); cur++){
+		CharMap &ch = FontMap[cur->first];
+		if (!ch.size()){
+			cur->second->AppendWarnings(
+				wxString::Format(_("Czcionka \"%s\" należy do stylu,\nktóry nie jest wykorzystywany."), 
+				cur->first));
+			notFound--;
+		}
 		cur->second->DoLog(this);
 	}
 	
@@ -1034,14 +1066,23 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 			for (auto fontSize = fontSizes.equal_range(size).first; fontSize != fontSizes.equal_range(size).second; ++fontSize){
 				wxString fullpath = fontfolder + fontSize->second;
 				FILE *fp = _wfopen(fullpath.wc_str(), L"rb");
-				if (!fp){ goto done; }
+				if (!fp){
+					fullpath = fontFolderLocal + fontSize->second;
+					fp = _wfopen(fullpath.wc_str(), L"rb");
+				}
+				if (!fp){ 
+					flc->AppendWarnings(wxString::Format(_("Nie można otworzyć pliku \"%s\"."), fontSize->second));
+					//goto done; 
+					continue;
+				}
 				fseek(fp, 0, SEEK_END);
 				long lSize = ftell(fp);
 				rewind(fp);
 				if (lSize != size){
 					flc->AppendWarnings(wxString::Format(_("Rozmiar czcionki \"%s\" się różni."), fn));
 					fclose(fp);
-					goto done;
+					//goto done;
+					continue;
 				}
 				int result = fread(&file_buffer[0], 1, size, fp);
 				if (result != size){
@@ -1197,3 +1238,18 @@ wxThread::ExitCode FontCollectorThread::Entry()
 	}
 	return 0;
 }
+
+//TabFontSeekThread::TabFontSeekThread(FontCollector *_fc, SubsFile *_file, int num)
+//	:wxThread(wxTHREAD_JOINABLE)
+//{
+//	fc = _fc;
+//	file = _file;
+//	numTab = num;
+//	Create();
+//	Run();
+//}
+//
+//wxThread::ExitCode TabFontSeekThread::Entry()
+//{
+//	fc->GetAssFonts(file, numTab);
+//}

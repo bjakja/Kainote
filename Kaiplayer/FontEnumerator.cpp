@@ -20,6 +20,7 @@
 #include <wx/filefn.h>
 #include <Usp10.h>
 #include <unicode/utf16.h>
+#include <ShlObj.h>
 //#pragma comment(lib,"Usp10.lib")
 	
 
@@ -35,7 +36,10 @@ FontEnumerator::FontEnumerator()
 
 FontEnumerator::~FontEnumerator()
 {
-	SetEvent(eventKillSelf);
+	SetEvent(eventKillSelf[0]);
+	//if (hasLocalFonts)
+	//
+	SetEvent(eventKillSelf[1]);
 	WaitForSingleObject(checkFontsThread, 2000);
 	delete Fonts;
 	delete FontsTmp;
@@ -46,8 +50,13 @@ FontEnumerator::~FontEnumerator()
 void FontEnumerator::StartListening(KainoteFrame* _parent)
 {
 	parent = _parent;
-	checkFontsThread = CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)CheckFontsProc, this, 0, 0);
-	SetThreadPriority(checkFontsThread,THREAD_PRIORITY_LOWEST);
+	//Here check Windows Version and save it
+	//without manifest I get only version 6.2
+	for (int i = 0; i < 2; i++){
+		int * threadNum = new int(i);
+		checkFontsThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)CheckFontsProc, threadNum, 0, 0);
+		SetThreadPriority(checkFontsThread, THREAD_PRIORITY_LOWEST);
+	}
 }
 
 void FontEnumerator::EnumerateFonts(bool reenumerate)
@@ -173,33 +182,55 @@ void FontEnumerator::RefreshVideo()
 	
 }
 
-DWORD FontEnumerator::CheckFontsProc(void* fontEnum)
+DWORD FontEnumerator::CheckFontsProc(int *threadNum)
 {
-	FontEnumerator *fe = (FontEnumerator*)fontEnum;
-	if(!fontEnum){wxLogMessage(_("Brak wskaźnika klasy magazynu stylów.")); return 0;}
+	/*FontEnumerator *fe = (FontEnumerator*)fontEnum;
+	if(!fontEnum){
+		KaiLog(_("Brak wskaźnika klasy magazynu stylów.")); 
+		return 0;
+	}*/
 
-	HANDLE hDir  = NULL; 
-	fe->eventKillSelf = CreateEvent(0, FALSE, FALSE, 0);
-	wxString fontrealpath = wxGetOSDirectory() + "\\fonts\\";
+	FontEnum.eventKillSelf[*threadNum] = CreateEvent(0, FALSE, FALSE, 0);
+	wxString fontrealpath;
+	if (*threadNum == 0)
+		fontrealpath = wxGetOSDirectory() + "\\fonts\\";
+	else{
+		WCHAR appDataPath[MAX_PATH];
+		if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, appDataPath))){
+			fontrealpath = wxString(appDataPath) + L"\\Microsoft\\Windows\\Fonts\\";
+		}
+		else{
+			//for now only checks if works, after disable for win7 and 8 and older 10
+			//KaiLog(_("Nie można pobrać ścieżki czcionek lokalnych.")); 
+			return 0;
+		}
+	}
 
+	HANDLE hDir = NULL;
 	hDir = FindFirstChangeNotification( fontrealpath.wc_str(), TRUE, FILE_NOTIFY_CHANGE_FILE_NAME);// | FILE_NOTIFY_CHANGE_LAST_WRITE
 
-	if(hDir == INVALID_HANDLE_VALUE ){wxLogMessage(_("Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek.")); return 0;}
+	if (hDir == INVALID_HANDLE_VALUE){ 
+		KaiLog(_("Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek.")); 
+		return 0; 
+	}
 	HANDLE events_to_wait[] = {
 		hDir,
-		fe->eventKillSelf
+		FontEnum.eventKillSelf[*threadNum]
 	};
+
+	delete threadNum;
+
 	while(1){
 		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait)/sizeof(HANDLE), events_to_wait, FALSE, INFINITE);
-		if(wait_result == WAIT_OBJECT_0+0){
-			fe->EnumerateFonts(true);
-			fe->RefreshClientsFonts();
+		if(wait_result == WAIT_OBJECT_0 + 0){
+			FontEnum.EnumerateFonts(true);
+			FontEnum.RefreshClientsFonts();
 			Notebook::RefreshVideo();
-			if( FindNextChangeNotification( hDir ) == 0 ){
+			if(FindNextChangeNotification( hDir ) == 0){
 				KaiLog(_("Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."));
 				return 0;
 			}
-		}else {
+		}else{
 			break;
 		}
 	}
@@ -226,12 +257,12 @@ bool FontEnumerator::CheckGlyphsExists(HDC dc, const wxString &textForCheck, wxS
 	// Uniscribe doesn't like some types of fonts, so fall back to GDI
 	//if (hr == E_HANDLE) {
 		succeeded = (GetGlyphIndicesW(dc, utf16characters.data(), utf16characters.size(),
-			indices, GGI_MARK_NONEXISTING_GLYPHS)!=GDI_ERROR);
+			indices, GGI_MARK_NONEXISTING_GLYPHS) != GDI_ERROR);
 		for (size_t i = 0; i < utf16characters.size(); ++i) {
 			if (U16_IS_SURROGATE(utf16characters[i]))
 				continue;
 			if (indices[i] == 65535)
-				missing<<utf16characters[i];
+				missing << utf16characters[i];
 		}
 	//}
 	//else if (hr == S_FALSE) {

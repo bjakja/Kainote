@@ -66,8 +66,7 @@ ProgresDialog::ProgresDialog(wxWindow *_parent, const wxString &title, const wxP
 	DWORD windowsVersion = GetVersion();
 	DWORD dwMajor = LOBYTE(LOWORD(windowsVersion));
 	DWORD dwMinor = HIBYTE(LOWORD(windowsVersion));
-	if ( dwMajor > 6 || ( dwMajor == 6 && dwMinor > 0 ) )
-	{
+	if (dwMajor > 6 || (dwMajor == 6 && dwMinor > 0)){
 		CoCreateInstance ( CLSID_TaskbarList, 0, CLSCTX_INPROC_SERVER, __uuidof(ITaskbarList3), (void**)&taskbar);
 		kainoteApp * Kaia = (kainoteApp *)wxTheApp;
 		if(taskbar){
