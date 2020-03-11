@@ -66,23 +66,25 @@ FindReplaceResultsDialog::~FindReplaceResultsDialog()
 
 }
 
-void FindReplaceResultsDialog::SetHeader(const wxString &text)
+void FindReplaceResultsDialog::SetHeader(const wxString &text, int thread)
 {
-	resultsCounter++;
-	ResultsHeader *header = new ResultsHeader(text, resultsCounter);
-	resultsList->AppendItemWithExtent(header);
+	//resultsCounter++;
+	ResultsHeader *header = new ResultsHeader(text/*, resultsCounter*/);
+	//resultsList->AppendItemWithExtent(header);
+	multiThreadList[thread].push_back(header);
 }
 
-void FindReplaceResultsDialog::SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _idLine, int _keyLine, const wxString &_path)
+void FindReplaceResultsDialog::SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _idLine, int _keyLine, const wxString &_path, int thread)
 {
-	resultsCounter++;
+	//resultsCounter++;
 	SeekResults *results = new SeekResults(text, pos, _tab, _idLine, _keyLine, _path);
-	resultsList->AppendItemWithExtent(results);
+	//resultsList->AppendItemWithExtent(results);
+	multiThreadList[thread].push_back(results);
 }
 
 void FindReplaceResultsDialog::ClearList()
 {
-	resultsCounter = 0;
+	//resultsCounter = 0;
 	resultsList->ClearList();
 	replaceChecked->Enable();
 }
@@ -92,6 +94,25 @@ void FindReplaceResultsDialog::FilterList()
 	//mode here is 1 visible blocks 0 hidden blocks
 	resultsList->FilterList(0, 1);
 	resultsList->Refresh(false);
+}
+
+void FindReplaceResultsDialog::SetupMultiThreading(int numThreads)
+{
+	multiThreadListSize = numThreads;
+	multiThreadList = new ItemList[numThreads];
+}
+
+void FindReplaceResultsDialog::EndMultiThreading()
+{
+	for (int i = 0; i < multiThreadListSize; i++){
+		for (int j = 0; j < multiThreadList[i].size(); j++){
+			resultsList->AppendItemWithExtent(multiThreadList[i][j]);
+		}
+	}
+	if (multiThreadList)
+		delete[] multiThreadList;
+	multiThreadList = NULL;
+	multiThreadListSize = 0;
 }
 
 void FindReplaceResultsDialog::CheckUncheckAll(bool check /*= true*/)
@@ -125,7 +146,8 @@ void ResultsHeader::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, K
 
 	if (isOnCheckbox && (event.LeftDown() || event.LeftDClick())){
 		modified = !modified;
-		int i = positionInTable;
+		//int i = positionInTable;
+		int i = theList->FindItem(0, this) + 1;
 		while (theList->GetType(i, 0) == TYPE_TEXT){
 			Item *item = theList->GetItem(i, 0);
 			if (item){
@@ -136,7 +158,8 @@ void ResultsHeader::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, K
 		theList->Refresh(false);
 	}
 	else if (event.LeftDown() || event.LeftDClick()){
-		int i = positionInTable;
+		//int i = positionInTable;
+		int i = theList->FindItem(0, this) + 1;
 		while (theList->GetType(i, 0) == TYPE_TEXT){
 			theList->FilterRow(i, (isVisible) ? NOT_VISIBLE : VISIBLE_BLOCK);
 			i++;

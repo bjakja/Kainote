@@ -26,9 +26,9 @@ wxDECLARE_EVENT(CHOOSE_RESULT, wxCommandEvent);
 class ResultsHeader : public Item
 {
 public:
-	ResultsHeader(const wxString &text, int _positionInTable) : Item(TYPE_HEADER){
+	ResultsHeader(const wxString &text/*, int _positionInTable*/) : Item(TYPE_HEADER){
 		name = text;
-		positionInTable = _positionInTable;
+		//positionInTable = _positionInTable;
 		modified = true;
 	}
 	virtual ~ResultsHeader(){};
@@ -81,10 +81,14 @@ class FindReplaceResultsDialog : public KaiDialog
 public:
 	FindReplaceResultsDialog(wxWindow *parent, FindReplace *FR, bool findInFiles = false);
 	virtual ~FindReplaceResultsDialog();
-	void SetHeader(const wxString &text);
-	void SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _idLine, int _keyLine, const wxString &_path);
+	void SetHeader(const wxString &text, int thread);
+	void SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _idLine, int _keyLine, const wxString &_path, int thread);
 	void ClearList();
 	void FilterList();
+	//use before run multithreading
+	void SetupMultiThreading(int numThreads);
+	//use after runing threads
+	void EndMultiThreading();
 	void CheckUncheckAll(bool check = true);
 	void GetFindOptions(bool *_hasRegEx, bool *matchcase, bool *needPrefix, wxString *_findString){
 		*_hasRegEx = hasRegEx;
@@ -104,11 +108,14 @@ public:
 private:
 	KaiChoice* ReplaceText;
 	MappedButton *replaceChecked;
-	int resultsCounter = 0;
+	//int resultsCounter = 0;
 	//config for replace
 	bool hasRegEx = false;
 	bool matchCase = false;
 	bool needToAddPrefix = false;
 	//only for regex
 	wxString findString;
+	typedef std::vector<Item*> ItemList;
+	ItemList *multiThreadList = NULL;
+	int multiThreadListSize = 0;
 };

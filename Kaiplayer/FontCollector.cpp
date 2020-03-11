@@ -24,22 +24,21 @@
 #include <wx/regex.h>
 #include "KaiMessageBox.h"
 #include <ShlObj.h>
-#include <thread>
 
 wxDEFINE_EVENT(EVT_APPEND_MESSAGE, wxThreadEvent);
 wxDEFINE_EVENT(EVT_ENABLE_BUTTONS, wxThreadEvent);
 wxDEFINE_EVENT(EVT_ENABLE_OPEN_FOLDER, wxThreadEvent);
 
-void ThreadFunction(std::tuple<FontCollector*, SubsFile*, int*> *data)
-{
-	FontCollector *fc = std::get<0>(*data);
-	SubsFile *file = std::get<1>(*data);
-	int *num = std::get<2>(*data);
-	//fc->SendMessageD(wxString::Format(_("Wystartował wątek %i.\n\n"), *num), wxColour("#FFFFFF"));
-	fc->GetAssFonts(file, *num);
-	delete data;
-	delete num;
-}
+//void ThreadFunction(std::tuple<FontCollector*, SubsFile*, int*> *data)
+//{
+//	FontCollector *fc = std::get<0>(*data);
+//	SubsFile *file = std::get<1>(*data);
+//	int *num = std::get<2>(*data);
+//	//fc->SendMessageD(wxString::Format(_("Wystartował wątek %i.\n\n"), *num), wxColour("#FFFFFF"));
+//	fc->GetAssFonts(file, *num);
+//	delete data;
+//	delete num;
+//}
 
 SubsFont::SubsFont(const wxString &_name, const LOGFONTW &_logFont, int _bold, bool _italic){
 	name = _name;
@@ -761,18 +760,18 @@ void FontCollector::CheckOrCopyFonts()
 	if (operation & ON_ALL_TABS){
 		Notebook * tabs = Notebook::GetTabs();
 		size_t tabsSize = tabs->Size();
-		HANDLE *threads = new HANDLE[tabsSize];
+		//HANDLE *threads = new HANDLE[tabsSize];
 
 		for (size_t i = 0; i < tabsSize; i++){
-			//GetAssFonts(tabs->Page(i)->Grid->file, i);
-			std::tuple<FontCollector*, SubsFile*, int*> *data = 
-				new std::tuple<FontCollector *, SubsFile *, int*>(this, tabs->Page(i)->Grid->file, new int(i));
+			GetAssFonts(tabs->Page(i)->Grid->file, i);
+			//std::tuple<FontCollector*, SubsFile*, int*> *data = 
+				//new std::tuple<FontCollector *, SubsFile *, int*>(this, tabs->Page(i)->Grid->file, new int(i));
 			
-			threads[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ThreadFunction, data, 0, 0);
+			//threads[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ThreadFunction, data, 0, 0);
 			
 		}
-		WaitForMultipleObjects(tabsSize, threads, TRUE, INFINITE);
-		delete[] threads;
+		//WaitForMultipleObjects(tabsSize, threads, TRUE, INFINITE);
+		//delete[] threads;
 	}
 	else{
 		GetAssFonts(Notebook::GetTab()->Grid->file, Notebook::GetTabs()->iter);

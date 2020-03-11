@@ -46,34 +46,38 @@ public:
 
 class FontCollector;
 
+//for now I disabled multithreading
+//it needs mor changes, every new or table editing must 
+//be secured by critical section
+//It can replace one elements by another, fonts will randomly disappear
 class FontLogContent{
 public:
 	FontLogContent();
 	FontLogContent(const wxString &_info, bool _notFound = false){
-		cs.Enter();
+		//cs.Enter();
 		info = _info;
 		notFound = _notFound;
-		cs.Leave();
+		//cs.Leave();
 	}
 	void SetStyle(int tab, const wxString &style){
-		cs.Enter();
+		//cs.Enter();
 		styles[style].Add(tab);
-		cs.Leave();
+		//cs.Leave();
 	}
 	void SetLine(int tab, int line){
-		cs.Enter();
+		//cs.Enter();
 		lines[line].Add(tab);
-		cs.Leave();
+		//cs.Leave();
 	}
 	void AppendInfo(const wxString &_info){
-		cs.Enter();
+		//cs.Enter();
 		info << _info << L"\n";
-		cs.Leave();
+		//cs.Leave();
 	}
 	void AppendWarnings(const wxString &warning){
-		cs.Enter();
+		//cs.Enter();
 		warnings << warning << L"\n";
-		cs.Leave();
+		//cs.Leave();
 	}
 	void DoLog(FontCollector *fc);
 	void SetNotFound(bool _notFound = true){
@@ -99,7 +103,7 @@ public:
 	bool notFound = false;
 	wxPoint stylesArea = wxPoint(-1, -1);
 	wxPoint linesArea = wxPoint(-1, -1);
-	wxCriticalSection cs;
+	//wxCriticalSection cs;
 };
 
 

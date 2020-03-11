@@ -33,25 +33,30 @@ FindReplace::FindReplace(KainoteFrame* kfparent, FindReplaceDialog *_FRD)
 	fnext = blockTextChange = false;
 	fromstart = true;
 
-	Options.GetTable(FindRecent, findRecent, "\f", wxTOKEN_RET_EMPTY_ALL);
+	Options.GetTable(FindRecent, findRecent, L"\f", wxTOKEN_RET_EMPTY_ALL);
 	if (findRecent.size() > 20){ findRecent.RemoveAt(20, findRecent.size() - 20); }
 	if (findRecent.size())
 		actualFind = findRecent[0];
 
-	Options.GetTable(ReplaceRecent, replaceRecent, "\f", wxTOKEN_RET_EMPTY_ALL);
+	Options.GetTable(ReplaceRecent, replaceRecent, L"\f", wxTOKEN_RET_EMPTY_ALL);
 	if (replaceRecent.size() > 20){ replaceRecent.RemoveAt(20, replaceRecent.size() - 20); }
 	if (replaceRecent.size())
 		actualReplace = replaceRecent[0];
 	
-	Options.GetTable(FIND_IN_SUBS_FILTERS_RECENT, subsFindingFilters, "\f", wxTOKEN_RET_EMPTY_ALL);
+	Options.GetTable(FIND_IN_SUBS_FILTERS_RECENT, subsFindingFilters, L"\f", wxTOKEN_RET_EMPTY_ALL);
 	if (subsFindingFilters.size() > 20){ subsFindingFilters.RemoveAt(20, subsFindingFilters.size() - 20); }
 	if (subsFindingFilters.size())
 		actualFilters = subsFindingFilters[0];
 
-	Options.GetTable(FIND_IN_SUBS_PATHS_RECENT, subsFindingPaths, "\f", wxTOKEN_RET_EMPTY_ALL);
+	Options.GetTable(FIND_IN_SUBS_PATHS_RECENT, subsFindingPaths, L"\f", wxTOKEN_RET_EMPTY_ALL);
 	if (subsFindingPaths.size() > 20){ subsFindingPaths.RemoveAt(20, subsFindingPaths.size() - 20); }
 	if (subsFindingPaths.size())
 		actualPaths = subsFindingPaths[0];
+
+	SYSTEM_INFO sysinfo;
+	GetSystemInfo(&sysinfo);
+	numOfProcessors = (sysinfo.dwNumberOfProcessors > 0) ? sysinfo.dwNumberOfProcessors : 4;
+	CopyPath = Options.pathfull + L"\\ReplaceBackup\\";
 }
 
 void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, const wxPoint &pos)
@@ -113,7 +118,7 @@ void FindReplace::ReplaceChecked()
 		if (!findReplaceRegEx.IsValid()) {
 			return;
 		}
-		if (needPrefix){ replaceString.Prepend("\\1"); }
+		if (needPrefix){ replaceString.Prepend(L"\\1"); }
 	}
 	bool plainText = false;
 
@@ -123,7 +128,7 @@ void FindReplace::ReplaceChecked()
 	if (FRRD->findInFiles){
 		wxString path;
 		wxString oldPath;
-		wxString copyPath = Options.pathfull + "\\ReplaceBackup\\";
+		wxString copyPath = Options.pathfull + L"\\ReplaceBackup\\";
 		DWORD ftyp = GetFileAttributesW(copyPath.wc_str());
 		if (ftyp == INVALID_FILE_ATTRIBUTES){
 			wxMkDir(copyPath);
@@ -239,7 +244,7 @@ int FindReplace::ReplaceCheckedLine(wxString *line, const wxPoint &pos, int *rep
 void FindReplace::Find(TabWindow *window)
 {
 	if (window->windowType == WINDOW_FIND_IN_SUBS){
-		KaiLogDebug("chujnia replace all wywołane z okna find in subs");
+		KaiLogDebug(L"chujnia replace all wywołane z okna find in subs");
 		return;
 	}
 	TabPanel *tab = Kai->GetTab();
@@ -281,7 +286,7 @@ seekFromStart:
 		if (!Dial->isVisible || (skipComments && Dial->IsComment)){ linePosition++; textPosition = 0; continue; }
 		
 		if ((!styles && !onlysel) ||
-			(styles && stylesAsText.Find("," + Dial->Style + ",") != -1) ||
+			(styles && stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
 			(onlysel && tab->Grid->file->IsSelected(linePosition))){
 			Dial->GetTextElement(dialogueColumn, &txt);
 
@@ -382,7 +387,7 @@ seekFromStart:
 			}
 		}
 		else{
-			KaiMessageBox(_("Nie znaleziono podanej frazy \"") + window->FindText->GetValue() + "\".", _("Potwierdzenie"));
+			KaiMessageBox(_("Nie znaleziono podanej frazy \"") + window->FindText->GetValue() + L"\".", _("Potwierdzenie"));
 			wasResetToStart = false;
 		}
 	}
@@ -400,47 +405,59 @@ void FindReplace::OnFind(TabWindow *window)
 //it will inform if pattern is not valid
 //instead of ignoring all seeking
 //tabLinePosition and positionId must be set
-bool FindReplace::FindAllInTab(TabPanel *tab, TabWindow *window)
+DWORD FindReplace::FindAllInTab(void *data)
 {
-	bool isfirst = true;
-	if (UpdateValues(window, tab->Grid->hasTLMode))
-		return true;
+	std::tuple<FindReplace*, wxPoint, TabWindow*, int> *actualData = 
+		(std::tuple<FindReplace*, wxPoint, TabWindow*, int>*)data;
+	FindReplace* fr = std::get<0>(*actualData);
+	wxPoint tabRange = std::get<1>(*actualData);
+	TabWindow* window = std::get<2>(*actualData);
+	int thread = std::get<3>(*actualData);
 
-	wxString txt;
-	int foundPosition = -1;
-	size_t foundLength = 0;
-	bool foundsome = false;
-	positionId = 0;
-	subsPath = tab->SubsName;
-
-	size_t firstSelectedId = 0;
-	tabLinePosition = tab->Grid->FirstSelection(&firstSelectedId);
-	tabLinePosition = (!window->AllLines->GetValue() && tabLinePosition != -1) ? tabLinePosition : 0;
-	if (tabLinePosition > 0 && firstSelectedId != -1)
-		positionId = firstSelectedId;
+	long dialogueColumn = fr->dialogueColumn;
 	
-	bool styles = !stylesAsText.empty();
+	wxString txt;
+	Notebook *tabs = fr->Kai->Tabs;
+	//<= for range from 1 to 1 
+	for (int i = tabRange.x; i <= tabRange.y; i++){
+		TabPanel *tab = tabs->Page(i);
+		if (fr->dialogueColumn == TXT && !fr->searchInOriginal && tab->Grid->hasTLMode)
+			dialogueColumn = TXTTL;
 
-	bool onlySelections = window->SelectedLines->GetValue();
-	SubsFile *Subs = tab->Grid->file;
+		int positionId = 0;
+		wxString subsPath = tab->SubsName;
+		bool isfirst = true;
 
-	for (; tabLinePosition < Subs->GetCount(); tabLinePosition++)
-	{
-		Dialogue *Dial = Subs->GetDialogue(tabLinePosition);
-		if (!Dial->isVisible){ continue; }
-		if (skipComments && Dial->IsComment){ positionId++; continue; }
+		size_t firstSelectedId = 0;
+		int tabLinePosition = tab->Grid->FirstSelection(&firstSelectedId);
+		tabLinePosition = (!window->AllLines->GetValue() && tabLinePosition != -1) ? tabLinePosition : 0;
+		if (tabLinePosition > 0 && firstSelectedId != -1)
+			positionId = firstSelectedId;
 
-		if ((!styles && !onlySelections) ||
-			(styles && stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
-			(onlySelections && tab->Grid->file->IsSelected(tabLinePosition))){
+		bool styles = !fr->stylesAsText.empty();
 
-			Dial->GetTextElement(dialogueColumn, &txt);
+		bool onlySelections = window->SelectedLines->GetValue();
+		SubsFile *Subs = tab->Grid->file;
 
-			FindInSubsLine(&txt, tab, &isfirst);
+		for (; tabLinePosition < Subs->GetCount(); tabLinePosition++)
+		{
+			Dialogue *Dial = Subs->GetDialogue(tabLinePosition);
+			if (!Dial->isVisible){ continue; }
+			if (fr->skipComments && Dial->IsComment){ positionId++; continue; }
+
+			if ((!styles && !onlySelections) ||
+				(styles && fr->stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
+				(onlySelections && tab->Grid->file->IsSelected(tabLinePosition))){
+
+				Dial->GetTextElement(dialogueColumn, &txt);
+
+				fr->FindInSubsLine(&txt, tab, &isfirst, tabLinePosition, positionId, subsPath, thread);
+			}
+			positionId++;
 		}
-		positionId++;
 	}
-	return false;
+	delete actualData;
+	return 0;
 }
 
 void FindReplace::FindInAllOpenedSubs(TabWindow *window)
@@ -453,11 +470,37 @@ void FindReplace::FindInAllOpenedSubs(TabWindow *window)
 	if (CheckStyles(window, Kai->GetTab()))
 		return;
 
-	for (size_t i = 0; i < Kai->Tabs->Size(); i++){
+	if (UpdateValues(window, false))
+		return;
+
+	int sizeOfTabs = Kai->Tabs->Size();
+
+	/*for (size_t i = 0; i < sizeOfTabs; i++){
 		if (FindAllInTab(Kai->Tabs->Page(i), window)){
 			return;
 		}
-	}
+	}*/
+
+	int pathsPerThreads = sizeOfTabs / numOfProcessors;
+	int moduloPerThreads = sizeOfTabs % numOfProcessors;
+	int loopNumber = (!pathsPerThreads) ? sizeOfTabs : numOfProcessors;
+
+	FRRD->SetupMultiThreading(loopNumber);
+	HANDLE *threads = new HANDLE[loopNumber];
+	int tabPos = 0;
+	for (int i = 0; i < loopNumber; i++){
+		int diff = (i < moduloPerThreads) ? 1 : 0;
+		wxPoint tabRange(tabPos, tabPos + (pathsPerThreads + diff) - 1);
+		
+		std::tuple<FindReplace*, wxPoint, TabWindow*, int> *data =
+			new std::tuple<FindReplace *, wxPoint, TabWindow*, int>(this, tabRange, window, i);
+		threads[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)FindAllInTab, data, 0, 0);
+		tabPos += (pathsPerThreads + diff);
+	}//for
+	WaitForMultipleObjects(loopNumber, threads, TRUE, INFINITE);
+	delete[] threads;
+
+	FRRD->EndMultiThreading();
 	FRRD->FilterList();
 	bool needPrefix = endLine && regEx && findString.empty();
 	FRRD->SetFindOptions(regEx, matchCase, needPrefix, findString);
@@ -478,9 +521,21 @@ void FindReplace::FindAllInCurrentSubs(TabWindow *window)
 	if (CheckStyles(window, tab))
 		return;
 
-	if (FindAllInTab(tab, window)){
+	if (UpdateValues(window, tab->Grid->hasTLMode))
 		return;
-	}
+
+	FRRD->SetupMultiThreading(1);
+
+	/*if (FindAllInTab(tab, window)){
+		return;
+	}*/
+	int iter = Kai->Tabs->iter;
+	std::tuple<FindReplace*, wxPoint, TabWindow*, int> *data =
+		new std::tuple<FindReplace *, wxPoint, TabWindow*, int>(this, wxPoint(iter, iter), window, 0);
+
+	FindAllInTab(data);
+
+	FRRD->EndMultiThreading();
 	bool needPrefix = endLine && regEx && findString.empty();
 	FRRD->SetFindOptions(regEx, matchCase, needPrefix, findString);
 	FRRD->FilterList();
@@ -492,65 +547,42 @@ void FindReplace::FindAllInCurrentSubs(TabWindow *window)
 
 void FindReplace::FindInSubs(TabWindow *window)
 {
-	FindReplaceInSubs(window, true);
+	find = true;
+	FindReplaceInSubs(window);
 }
 
-void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
+DWORD FindReplace::FindReplaceInFiles(void *data)
 {
-	wxString path = window->FindInSubsPath->GetValue();
-	wxArrayString paths;
-	wxString filters = window->FindInSubsPattern->GetValue();
-	//if (filters.empty())
-		//filters = L"*.ass;*.srt;*.sub;*.txt";
-
-	GetFolderFiles(path, filters, &paths,
-		window->SeekInSubFolders->GetValue(), window->SeekInHiddenFolders->GetValue());
-
-	if (!paths.size())
-		return;
-
-	wxString CopyPath = Options.pathfull + "\\ReplaceBackup\\";
-	DWORD ftyp = GetFileAttributesW(CopyPath.wc_str());
-	if (ftyp == INVALID_FILE_ATTRIBUTES){
-		wxMkDir(CopyPath);
-	}
-	
-	bool onlyAss = !(window->CollumnText->GetValue());
-	bool plainText = false;//(window->CollumnTextOriginal->GetValue());
-	//no tlmode here
-
-	if (UpdateValues(window, false))
-		return;
-	//else if (plainText){ replaceColumn = 0; }
-
-	if (find){
-		if (!FRRD)
-			FRRD = new FindReplaceResultsDialog(Kai, this, true);
-		else{
-			FRRD->findInFiles = true;
-			FRRD->ClearList();
-		}
-	}
-	int AllReplacements = 0;
+	std::tuple<FindReplace*, wxArrayString*, int> *actualData = (std::tuple<FindReplace*, wxArrayString*, int>*)data;
+	FindReplace* fr = std::get<0>(*actualData);
+	wxArrayString* paths = std::get<1>(*actualData);
+	int thread = std::get<2>(*actualData);
 
 	OpenWrite ow;
-	for (size_t i = 0; i < paths.size(); i++){
+	bool plainText = false;
+	wxString subsPath;
+
+	for (size_t i = 0; i < paths->size(); i++){
 		int SubsAllReplacements = 0;
 		wxString subsText;
-		subsPath = paths[i];
+		subsPath = (*paths)[i];
 
-		wxString ext = subsPath.AfterLast('.').Lower();
-		if (onlyAss && ext != "ass"/* && ext != "ssa"*/)
-			continue;
-		else if (ext != "ass"/* && ext == "ssa"*/ && ext != "srt" && ext != "mpl2" && ext != "sub" && ext != "txt")
-			continue;
+		//we must not remove files from table
+		//every thread need to get about the same number of files +-1
+		//filters must remove unneeded files
+		//especially video
+		wxString ext = subsPath.AfterLast(L'.').Lower();
+		//if (onlyAss && ext != L"ass"/* && ext != "ssa"*/)
+		//	continue;
+		//else if (ext != L"ass"/* && ext == "ssa"*/ && ext != L"srt" && ext != L"mpl2" && ext != L"sub" && ext != L"txt")
+		//	continue;
 
 		ow.FileOpen(subsPath, &subsText);
 
 		wxString replacedText;
-		tabLinePosition = positionId = 0;
-		bool isSRT = (ext == "srt");
-		bool isASS = (ext == "ass");
+		int tabLinePosition = 0; int positionId = 0;
+		bool isSRT = (ext == L"srt");
+		bool isASS = (ext == L"ass");
 		wxString TlModeStyle;
 		bool hasTlMode = false;
 
@@ -571,7 +603,7 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 			else{
 				if (result1 < result)
 					result = result1;
-				if (!find){
+				if (!fr->find){
 					replacedText = subsText.Mid(0, result);
 					replacedText.Replace(L"\n", L"\r\n");
 				}
@@ -579,12 +611,12 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 			}
 		}
 
-		wxStringTokenizer tokenizer(subsText, "\n", wxTOKEN_STRTOK);
+		wxStringTokenizer tokenizer(subsText, L"\n", wxTOKEN_STRTOK);
 		wxString token;
 		wxString dialtxt;
 		Dialogue *dial = NULL;
 		bool isFirst = true;
-		
+
 		while (tokenizer.HasMoreTokens()){
 
 			if (isSRT){
@@ -594,7 +626,7 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 					if (noMoreTokens)
 						token << text << L"\r\n";
 
-					if (token != ""){
+					if (token != L""){
 						token.Trim();
 						if (!plainText)
 							dial = new Dialogue(token);
@@ -604,10 +636,10 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 						continue;
 					}
 				}
-				else{ 
+				else{
 					//lol why I got text without \r?
 					//I have to put it myself
-					token << text << L"\r\n"; 
+					token << text << L"\r\n";
 					continue;
 				}
 			}
@@ -620,12 +652,11 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 			if (!dial || (plainText && token.empty())){
 				continue;
 			}
-			//if (styles && stylesList.find(L"," + dial->Style + L",") == -1)
-				//continue;
+
 			//here we got dial or plain text
 			//we have to get only text
-			dial->GetTextElement(dialogueColumn, &dialtxt);
-			if (dial->IsComment && skipComments){
+			dial->GetTextElement(fr->dialogueColumn, &dialtxt);
+			if (dial->IsComment && fr->skipComments){
 				if (!isASS || !hasTlMode || !dial || dial->Style != TlModeStyle){
 					tabLinePosition++;
 					positionId++;
@@ -633,23 +664,18 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 				delete dial;
 				continue;
 			}
-			/*else{
-				dialtxt = token;
-			}*/
-			//KaiLog(wxString::Format("text main %s, posid %i, poskey %i", dialtxt, positionId + 1, tabLinePosition));
 
-			if (find){
-				FindInSubsLine(&dialtxt, NULL, &isFirst);
+
+			if (fr->find){
+				fr->FindInSubsLine(&dialtxt, NULL, &isFirst, tabLinePosition, positionId, subsPath, thread);
 			}
 			else{
-				int numOfReps = ReplaceInSubsLine(&dialtxt);
+				int numOfReps = fr->ReplaceInSubsLine(&dialtxt);
 				if (numOfReps){
 					if (isSRT)
 						replacedText << (tabLinePosition + 1) << L"\r\n";
 
-					dial->SetTextElement(dialogueColumn, dialtxt);
-					//else{ replacedText << dialtxt << L"\r\n"; }
-					//if (replaceColumn)
+					dial->SetTextElement(fr->dialogueColumn, dialtxt);
 					dial->GetRaw(&replacedText);
 
 					SubsAllReplacements += numOfReps;
@@ -674,21 +700,92 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 				delete dial;
 				dial = NULL;
 			}
-			token = "";
+			token.clear();
 		}//while
 		if (SubsAllReplacements){
-			wxCopyFile(subsPath, CopyPath + subsPath.AfterLast('\\'));
+			wxCopyFile(subsPath, fr->CopyPath + subsPath.AfterLast(L'\\'));
 			ow.FileWrite(subsPath, replacedText);
-			AllReplacements += SubsAllReplacements;
+			fr->AllReplacements.fetch_add(SubsAllReplacements);
 		}
+	}
+	delete actualData;
+	delete paths;
+	return 0;
+}
+
+void FindReplace::FindReplaceInSubs(TabWindow *window)
+{
+	wxString path = window->FindInSubsPath->GetValue();
+	wxArrayString paths;
+
+	bool onlyAss = !(window->CollumnText->GetValue());
+	//block to manual edition of filters cause
+	//program will not check if it is valid
+	wxString filters = window->FindInSubsPattern->GetValue();
+	if (filters.empty())
+		filters = L"*.ass;*.srt;*.sub;*.txt";
+	if (onlyAss)
+		filters = L"*.ass";
+
+	GetFolderFiles(path, filters, &paths,
+		window->SeekInSubFolders->GetValue(), window->SeekInHiddenFolders->GetValue());
+
+	if (!paths.size())
+		return;
+
+	if (!find){
+		DWORD ftyp = GetFileAttributesW(CopyPath.wc_str());
+		if (ftyp == INVALID_FILE_ATTRIBUTES){
+			wxMkDir(CopyPath);
+		}
+	}
+	//bool plainText = false;//(window->CollumnTextOriginal->GetValue());
+	//no tlmode here
+
+	if (UpdateValues(window, false))
+		return;
+	//else if (plainText){ replaceColumn = 0; }
+
+	size_t pathsSize = paths.size();
+	int pathsPerThreads = pathsSize / numOfProcessors;
+	int moduloPerThreads = pathsSize % numOfProcessors;
+	int loopNumber = (!pathsPerThreads) ? pathsSize : numOfProcessors;
+
+	if (find){
+		if (!FRRD)
+			FRRD = new FindReplaceResultsDialog(Kai, this, true);
+		else{
+			FRRD->findInFiles = true;
+			FRRD->ClearList();
+		}
+		FRRD->SetupMultiThreading(loopNumber);
+	}
+	AllReplacements = 0;
+	
+	HANDLE *threads = new HANDLE[loopNumber];
+	int filePos = 0;
+	for (int i = 0; i < loopNumber; i++){
+		int diff = (i < moduloPerThreads) ? 1 : 0;
+		wxArrayString *threadPaths = new wxArrayString(
+			paths.begin() + filePos,
+			paths.begin() + filePos + (pathsPerThreads + diff));
+		std::tuple<FindReplace*, wxArrayString*, int> *data =
+			new std::tuple<FindReplace *, wxArrayString *, int>(this, threadPaths, i);
+		threads[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)FindReplaceInFiles, data, 0, 0);
+		filePos += (pathsPerThreads + diff);
 	}//for
+	WaitForMultipleObjects(numOfProcessors, threads, TRUE, INFINITE);
+
+	delete[] threads;
+
 	if (!find && AllReplacements){
 		blockTextChange = true;
-		KaiMessageBox(wxString::Format(_("Zmieniono %i razy."), AllReplacements), _("Szukaj Zamień"));
+		KaiMessageBox(wxString::Format(_("Zmieniono %i razy."), AllReplacements.load()), _("Szukaj Zamień"));
 		AddRecent(window);
 		findTextReset = true;
 	}
 	else if (find){
+		FRRD->EndMultiThreading();
 		FRRD->FilterList();
 		if (!FRRD->IsShown())
 			FRRD->Show();
@@ -696,11 +793,11 @@ void FindReplace::FindReplaceInSubs(TabWindow *window, bool find)
 	AddRecent(window);
 }
 
-void FindReplace::FindInSubsLine(wxString *onlyString, TabPanel *tab, bool *isFirst)
+void FindReplace::FindInSubsLine(wxString *onlyString, TabPanel *tab, bool *isFirst, int linePos, int linePosId, const wxString &subsPath, int thread)
 {
 	int foundPosition = 0;
 	size_t foundLength = 0;
-	tabTextPosition = 0;
+	int tabTextPosition = 0;
 
 	while (1){
 		foundPosition = -1;
@@ -745,12 +842,11 @@ void FindReplace::FindInSubsLine(wxString *onlyString, TabPanel *tab, bool *isFi
 
 		if (foundPosition != -1 && (!onlyOption || KeepFinding(*onlyString, foundPosition))){
 			if (*isFirst){
-				FRRD->SetHeader(subsPath);
+				FRRD->SetHeader(subsPath, thread);
 				*isFirst = false;
 			}
-			//KaiLog(wxString::Format("text fis %s, posid %i, poskey %i", *onlyString, positionId + 1, tabLinePosition));
 			FRRD->SetResults(*onlyString, wxPoint(foundPosition, foundLength), tab, 
-				positionId + 1, tabLinePosition, (tab)? L"" : subsPath);
+				linePosId + 1, linePos, (tab) ? L"" : subsPath, thread);
 
 			if ((size_t)tabTextPosition >= onlyString->length() || startLine){
 				tabTextPosition = 0;
@@ -851,7 +947,7 @@ int FindReplace::ReplaceInSubsLine(wxString *onlyString)
 void FindReplace::Replace(TabWindow *window)
 {
 	if (window->windowType != WINDOW_REPLACE){
-		KaiLog("chujnia replace all wywołane nie z okna replace");
+		KaiLog(L"chujnia replace all wywołane nie z okna replace");
 		return;
 	}
 	TabPanel *tab = Kai->GetTab();
@@ -926,7 +1022,7 @@ int FindReplace::ReplaceAllInTab(TabPanel *tab, TabWindow *window)
 		Dialogue *Dial = Subs->GetDialogue(i);
 		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue || (skipComments && Dial->IsComment)){ continue; }
 		
-		if ((notstyles || stylesAsText.Find("," + Dial->Style + ",") != -1) &&
+		if ((notstyles || stylesAsText.Find(L"," + Dial->Style + L",") != -1) &&
 			!(onlysel && !(tab->Grid->file->IsSelected(i)))){
 
 			Dial->GetTextElement(dialogueColumn, &txt);
@@ -946,7 +1042,7 @@ int FindReplace::ReplaceAllInTab(TabPanel *tab, TabWindow *window)
 void FindReplace::ReplaceAll(TabWindow *window)
 {
 	if (window->windowType != WINDOW_REPLACE){
-		KaiLogDebug("chujnia replace all wywołane nie z okna replace");
+		KaiLogDebug(L"chujnia replace all wywołane nie z okna replace");
 		return;
 	}
 
@@ -979,7 +1075,7 @@ void FindReplace::ReplaceAll(TabWindow *window)
 void FindReplace::ReplaceInAllOpenedSubs(TabWindow *window)
 {
 	if (window->windowType != WINDOW_REPLACE){
-		KaiLogDebug("chujnia replace all we wszystkich otwartch subach wywołane nie z okna replace");
+		KaiLogDebug(L"chujnia replace all we wszystkich otwartch subach wywołane nie z okna replace");
 		return;
 	}
 
@@ -1018,7 +1114,9 @@ void FindReplace::ReplaceInAllOpenedSubs(TabWindow *window)
 
 void FindReplace::ReplaceInSubs(TabWindow *window)
 {
-	FindReplaceInSubs(window, false);
+	KaiMessageBox(_("Czy na pewno dokonać zmian we wszystkich napisach?\nW razie pomyłki kopie zapasowe są w folderze 'ReplaceBackup'"), _("Informacja"), wxOK, FRD);
+	find = false;
+	FindReplaceInSubs(window);
 }
 
 void FindReplace::AddRecent(TabWindow *window)
@@ -1044,7 +1142,7 @@ void FindReplace::AddRecent(TabWindow *window)
 		findRecent.RemoveAt(20, findSize - 20);
 	}
 
-	Options.SetTable(FindRecent, findRecent, "\f");
+	Options.SetTable(FindRecent, findRecent, L"\f");
 	if (window->windowType != WINDOW_FIND){
 		wxString text = window->ReplaceText->GetValue();
 
@@ -1067,7 +1165,7 @@ void FindReplace::AddRecent(TabWindow *window)
 			replaceRecent.RemoveAt(20, replaceSize - 20);
 		}
 
-		Options.SetTable(ReplaceRecent, replaceRecent, "\f");
+		Options.SetTable(ReplaceRecent, replaceRecent, L"\f");
 	}
 	if (window->windowType == WINDOW_FIND_IN_SUBS){
 		wxString filter = window->FindInSubsPattern->GetValue();
@@ -1106,8 +1204,8 @@ void FindReplace::AddRecent(TabWindow *window)
 			subsFindingPaths.RemoveAt(20, pathsSize - 20);
 		}
 
-		Options.SetTable(FIND_IN_SUBS_FILTERS_RECENT, subsFindingFilters, "\f");
-		Options.SetTable(FIND_IN_SUBS_PATHS_RECENT, subsFindingPaths, "\f");
+		Options.SetTable(FIND_IN_SUBS_FILTERS_RECENT, subsFindingFilters, L"\f");
+		Options.SetTable(FIND_IN_SUBS_PATHS_RECENT, subsFindingPaths, L"\f");
 	}
 }
 
@@ -1140,7 +1238,7 @@ bool FindReplace::CheckStyles(TabWindow *window, TabPanel *tab)
 	if (stylesAsText.empty())
 		return false;
 
-	wxStringTokenizer tknzr(stylesAsText, ",", wxTOKEN_STRTOK);
+	wxStringTokenizer tknzr(stylesAsText, L",", wxTOKEN_STRTOK);
 	wxString notFoundStyles;
 	wxString foundStyles;
 
@@ -1185,7 +1283,7 @@ bool FindReplace::CheckStyles(TabWindow *window, TabPanel *tab)
 		//if (result != wxNO)
 			//wasIngored = false;
 	}
-	if (!stylesAsText.empty() && !stylesAsText.StartsWith(","))
+	if (!stylesAsText.empty() && !stylesAsText.StartsWith(L","))
 		stylesAsText = L"," + stylesAsText + L",";
 
 	return false;
@@ -1221,7 +1319,7 @@ bool FindReplace::GetNextBlock(wxString *text, wxString *block)
 	if (nextBlockPosition >= text->length())
 		return false;
 
-	*block = L"";
+	block->clear();
 
 	if (!onlyOption){
 		*block = *text;
@@ -1297,15 +1395,15 @@ bool FindReplace::UpdateValues(TabWindow *window, bool hasTlMode)
 	replaceString = (window->ReplaceText)? window->ReplaceText->GetValue() : L"";
 
 	if (startLine && regEx){
-		findString = "^" + findString;
+		findString = L"^" + findString;
 	}
 	if (endLine && regEx){
-		if (findString == ""){
-			findString = "^(.*)$";
-			replaceString = "\\1" + replaceString;
+		if (findString.empty()){
+			findString = L"^(.*)$";
+			replaceString = L"\\1" + replaceString;
 		}
 		else{
-			findString << "$";
+			findString << L"$";
 		}
 	}
 
@@ -1339,9 +1437,9 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 	if (!ow.FileOpen(path, &subsText))
 		return 0;
 
-	bool isSRT = (ext == "srt");
+	bool isSRT = (ext == L"srt");
 
-	if ((ext == "ass"/* || ext == "ssa"*/)){
+	if ((ext == L"ass"/* || ext == "ssa"*/)){
 		size_t result = subsText.find(/*(ext == "ass") ? */L"Dialogue:"/* : L"Marked="*/);
 		size_t result1 = subsText.find(/*(ext == "ass") ? */L"Comment:"/* : L"Marked="*/);
 		if (result == -1 && result1 == -1)// no dialogues;
@@ -1357,7 +1455,7 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 		}
 	}
 
-	wxStringTokenizer tokenizer(subsText, "\n", wxTOKEN_STRTOK);
+	wxStringTokenizer tokenizer(subsText, L"\n", wxTOKEN_STRTOK);
 	wxString token;
 	wxString dialtxt;
 	Dialogue *dial = NULL;
@@ -1371,7 +1469,7 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 				if (noMoreTokens)
 					token << text << L"\r\n";
 
-				if (token != ""){
+				if (token != L""){
 					token.Trim();
 				}
 				else{
@@ -1443,7 +1541,7 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 	}
 
 	if (numOfChanges){
-		wxCopyFile(path, copyPath + path.AfterLast('\\'));
+		wxCopyFile(path, copyPath + path.AfterLast(L'\\'));
 		ow.FileWrite(path, replacedText);
 	}
 

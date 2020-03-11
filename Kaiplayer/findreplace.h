@@ -19,6 +19,9 @@
 #include <wx/arrstr.h>
 #include <wx/gdicmn.h>
 #include <vector>
+#include <atomic> 
+#include <windows.h>
+
 
 class KainoteFrame;
 class TabWindow;
@@ -71,9 +74,10 @@ public:
 	bool onlyText;
 	bool onlyOption;
 	bool searchInOriginal;
+	bool find = false;
 	long dialogueColumn;
 
-	int tabTextPosition;
+	//int tabTextPosition;
 	int tabLinePosition;
 	int positionId;
 	int blockPosition;
@@ -81,7 +85,8 @@ public:
 	int nextBlockPosition;
 	wxString findString;
 	wxString replaceString;
-	wxString subsPath;
+	//wxString subsPath;
+	wxString CopyPath;
 	wxRegEx findReplaceRegEx;
 	// everythin should be set before FindInSubsLine or ReplaceInSubsLine called
 
@@ -90,15 +95,16 @@ public:
 	void FindInAllOpenedSubs(TabWindow *window);
 	void FindAllInCurrentSubs(TabWindow *window);
 	void FindInSubs(TabWindow *window);
-	void FindReplaceInSubs(TabWindow *window, bool find);
-	void FindInSubsLine(wxString *onlyString, TabPanel *tab, bool *isFirst);
+	void FindReplaceInSubs(TabWindow *window);
+	void FindInSubsLine(wxString *onlyString, TabPanel *tab, bool *isFirst, int linePos, int linePosId, const wxString &subsPath, int thread);
+	static DWORD FindReplaceInFiles(void *data);
+	static DWORD FindAllInTab(void *data);
 	int ReplaceInSubsLine(wxString *onlyString);
 	void Replace(TabWindow *window);
 	int ReplaceAllInTab(TabPanel *tab, TabWindow *window);
 	void ReplaceAll(TabWindow *window);
 	void ReplaceInAllOpenedSubs(TabWindow *window);
 	void ReplaceInSubs(TabWindow *window);
-	bool FindAllInTab(TabPanel *tab, TabWindow *window);
 	void AddRecent(TabWindow *window);
 	void OnClose();
 	void GetFolderFiles(const wxString &path, const wxString &filters, wxArrayString *paths, bool subFolders, bool hiddenFolders);
@@ -113,6 +119,8 @@ private:
 	int ReplaceCheckedLine(wxString *line, const wxPoint &pos, int *replacementDiff);
 	FindReplaceDialog *FRD = NULL;
 	FindReplaceResultsDialog *FRRD = NULL;
+	std::atomic<int> AllReplacements = 0;
+	int numOfProcessors = 4;
 };
 
 enum
