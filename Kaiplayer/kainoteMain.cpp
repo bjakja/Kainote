@@ -1418,7 +1418,7 @@ void KainoteFrame::Label(int iter/*=0*/, bool video/*=false*/, int wtab/*=-1*/, 
 	wxString name = (video) ? atab->VideoName : whiter + atab->SubsName;
 	if (!onlyTabs)
 		SetLabel(name + L" - " + Options.progname + L" " + wxString(INSTRUCTIONS));
-	if (name.Len()>35){ name = name.SubString(0, 35) + L"..."; }
+	//if (name.length() > 40){ name = name.SubString(0, 40); }
 	Tabs->SetPageText((wtab < 0) ? Tabs->GetSelection() : wtab, name);
 }
 

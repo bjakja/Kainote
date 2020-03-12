@@ -20,6 +20,7 @@
 #include "Menu.h"
 #include "KaiMessageBox.h"
 #include "OpennWrite.h"
+#include "Utils.h"
 
 Notebook::Notebook(wxWindow *parent, int id)
 	: wxWindow(parent, id)
@@ -41,7 +42,6 @@ Notebook::Notebook(wxWindow *parent, int id)
 
 	wxString name = Pages[0]->SubsName;
 
-	if (name.length() > 40){ name = name.SubString(0, 40) + L"..."; }
 	Names.Add(name);
 
 	CalcSizes();
@@ -134,7 +134,6 @@ void Notebook::AddPage(bool refresh)
 		Pages[iter]->Hide();
 	}
 	wxString name = Pages[iter]->SubsName;
-	if (name.Len() > 40){ name = name.SubString(0, 40) + L"..."; }
 	Names.Add(name);
 
 	Pages[iter]->SetPosition(Pages[olditer]->GetPosition());
@@ -278,7 +277,12 @@ void Notebook::CalcSizes(bool makeActiveVisible)
 	int newHeight = 0;
 	for (size_t i = 0; i < Size(); i++){
 		int fw, fh;
-		GetTextExtent(Names[i], &fw, &fh, NULL, NULL, &font);
+		wxString name = Names[i];
+		if (name.length() > maxCharPerTab){
+			name = name.Mid(0, maxCharPerTab);
+		}
+
+		GetTextExtent(name, &fw, &fh, NULL, NULL, &font);
 		if (i == iter){ fw += xWidth; }
 		if (i < Tabsizes.size()){ Tabsizes[i] = fw + 10; }
 		else{ Tabsizes.Add(fw + 10); }
@@ -594,29 +598,31 @@ void Notebook::OnPaint(wxPaintEvent& event)
 
 	start = (allTabsVisible) ? 2 : 20;
 
-
 	//wxGraphicsContext *gc = NULL;//wxGraphicsContext::Create(dc);
-	//pętla do rysowania zakładek
+	//loop for tabs drawing
 	for (size_t i = firstVisibleTab; i < Tabsizes.GetCount(); i++){
-		//wybrana zakładka
+
+		int tabSize = Tabsizes[i];
+		wxString tabName = Names[i];
+		//choosen tab
 		if (i == iter){
 			//rysowanie linii po obu stronach aktywnej zakładki
 			dc.SetPen(wxPen(activeLines, 1));
 			dc.DrawLine(0, 0, start, 0);
-			dc.DrawLine(start + Tabsizes[i], 0, w, 0);
+			dc.DrawLine(start + tabSize, 0, w, 0);
 			dc.SetPen(*wxTRANSPARENT_PEN);
 			dc.SetBrush(Options.GetColour(TabsBackgroundActive));
-			dc.DrawRectangle(start + 1, 0, Tabsizes[i] - 1, TabHeight - 2);
+			dc.DrawRectangle(start + 1, 0, tabSize - 1, TabHeight - 2);
 
 
 			//najechany x na wybranej zakładce
 			if (onx){
 				dc.SetBrush(Options.GetColour(TabsCloseHover));
-				dc.DrawRectangle(start + Tabsizes[i] - xWidth, 4, xWidth - 2, TabHeight - 10);
+				dc.DrawRectangle(start + tabSize - xWidth, 4, xWidth - 2, TabHeight - 10);
+				dc.SetBrush(Options.GetColour(TabsBackgroundActive));
 			}
-			//dc.SetTextForeground(Options.GetColour("Tabs Close Hover"));
 			dc.SetTextForeground(activeText);
-			dc.DrawText(L"X", start + Tabsizes[i] - xWidth + 4, 4);
+			dc.DrawText(L"X", start + tabSize - xWidth + 4, 4);
 
 
 		}
@@ -625,7 +631,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.SetPen(*wxTRANSPARENT_PEN);
 			dc.SetBrush(Options.GetColour((i == (size_t)over && !rightArrowHover && !rightArrowClicked) ? 
 				TabsBackgroundInactiveHover : TabsBackgroundSecondWindow));
-			dc.DrawRectangle(start + 1, 1, Tabsizes[i] - 1, TabHeight - 2);
+			dc.DrawRectangle(start + 1, 1, tabSize - 1, TabHeight - 2);
 		}
 		else{
 			//nonactive and hover nonactive 
@@ -633,7 +639,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.SetPen(*wxTRANSPARENT_PEN);
 			dc.SetBrush(wxBrush(Options.GetColour((i == (size_t)over && !rightArrowHover && !rightArrowClicked) ? 
 				TabsBackgroundInactiveHover : TabsBackgroundInactive)));
-			dc.DrawRectangle(start + 1, 1, Tabsizes[i] - 1, TabHeight - 3);
+			dc.DrawRectangle(start + 1, 1, tabSize - 1, TabHeight - 3);
 		}
 
 		//rysowanie konturów zakładki
@@ -645,7 +651,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			path.AddLineToPoint(start, TabHeight - 5);
 			double strt = start;
 			path.AddCurveToPoint(strt, TabHeight - 3.5, strt + 1.5, TabHeight - 2, strt + 3.0, TabHeight - 2);
-			strt += Tabsizes[i];
+			strt += tabSize;
 			path.AddLineToPoint(strt - 3.0, TabHeight - 2);
 			path.AddCurveToPoint(strt - 1.5, TabHeight - 2, strt, TabHeight - 3.5, strt, TabHeight - 5);
 			path.AddLineToPoint(strt, 0);
@@ -655,13 +661,33 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.SetPen(wxPen(Options.GetColour((i == iter) ? TabsBorderActive : TabsBorderInactive)));
 			dc.DrawLine(start, 0, start, TabHeight - 4);
 			dc.DrawLine(start, TabHeight - 4, start + 2, TabHeight - 2);
-			dc.DrawLine(start + 2, TabHeight - 2, start + Tabsizes[i] - 2, TabHeight - 2);
-			dc.DrawLine(start + Tabsizes[i] - 2, TabHeight - 2, start + Tabsizes[i], TabHeight - 4);
-			dc.DrawLine(start + Tabsizes[i], TabHeight - 4, start + Tabsizes[i], 0);
+			dc.DrawLine(start + 2, TabHeight - 2, start + tabSize - 2, TabHeight - 2);
+			dc.DrawLine(start + tabSize - 2, TabHeight - 2, start + tabSize, TabHeight - 4);
+			dc.DrawLine(start + tabSize, TabHeight - 4, start + tabSize, 0);
 		//}
-		dc.DrawText(Names[i], start + 4, 4);
 
-		start += Tabsizes[i] + 2;
+			int tabsDiff = (tabName.length() < maxCharPerTab) ? 0 : (i == iter) ? 28 + xWidth : 28;
+			dc.SetClippingRegion(start, 0, tabSize - tabsDiff, TabHeight);
+			dc.DrawText(tabName, start + 4, 4);
+		dc.DestroyClippingRegion();
+		if ((tabName.length() >= maxCharPerTab)){
+			int pos = start + tabSize - tabsDiff;
+			wxColour fadColour = dc.GetTextForeground();
+			wxColour fadSecond = dc.GetBrush().GetColour();
+			unsigned char alpha = 255;
+			for (int k = 0; k < 20; k++){
+				fadColour = wxColour(fadColour.Red(), fadColour.Green(), fadColour.Blue(), alpha - (255.f / 20.f) * k);
+
+				dc.SetClippingRegion(pos, 0, 1, TabHeight);
+				dc.SetTextForeground(GetColorWithAlpha(fadColour, fadSecond));
+				dc.DrawText(tabName, start + 4, 4);
+				dc.DestroyClippingRegion();
+				pos++;
+			}
+			//dc.SetTextForeground(inactiveText);
+		}
+
+		start += tabSize + 2;
 	}
 
 	dc.SetPen(*wxTRANSPARENT_PEN);

@@ -94,6 +94,7 @@ private:
 	int splititer;
 	int oldtab;
 	int oldI;
+	int maxCharPerTab = 40;
 	wxDialog* sline;
 	wxFont font;
 	std::vector<TabPanel*> Pages;
