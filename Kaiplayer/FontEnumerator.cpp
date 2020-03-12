@@ -52,6 +52,7 @@ void FontEnumerator::StartListening(KainoteFrame* _parent)
 	parent = _parent;
 	//Here check Windows Version and save it
 	//without manifest I get only version 6.2
+	//it means that user have Windows 8 without SP
 	for (int i = 0; i < 2; i++){
 		int * threadNum = new int(i);
 		checkFontsThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)CheckFontsProc, threadNum, 0, 0);

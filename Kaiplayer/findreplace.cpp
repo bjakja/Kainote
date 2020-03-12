@@ -561,9 +561,10 @@ DWORD FindReplace::FindReplaceInFiles(void *data)
 	OpenWrite ow;
 	bool plainText = false;
 	wxString subsPath;
+	int SubsAllReplacements = 0;
 
 	for (size_t i = 0; i < paths->size(); i++){
-		int SubsAllReplacements = 0;
+		
 		wxString subsText;
 		subsPath = (*paths)[i];
 
@@ -774,11 +775,11 @@ void FindReplace::FindReplaceInSubs(TabWindow *window)
 		threads[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)FindReplaceInFiles, data, 0, 0);
 		filePos += (pathsPerThreads + diff);
 	}//for
-	WaitForMultipleObjects(numOfProcessors, threads, TRUE, INFINITE);
+	WaitForMultipleObjects(loopNumber, threads, TRUE, INFINITE);
 
 	delete[] threads;
 
-	if (!find && AllReplacements){
+	if (!find && AllReplacements.load()){
 		blockTextChange = true;
 		KaiMessageBox(wxString::Format(_("Zmieniono %i razy."), AllReplacements.load()), _("Szukaj Zamień"));
 		AddRecent(window);

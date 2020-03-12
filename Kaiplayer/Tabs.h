@@ -82,9 +82,11 @@ private:
 	int start;
 	int xWidth;
 	bool onx;
-	bool farr;
-	bool rarr;
-	bool plus;
+	bool leftArrowHover;
+	bool rightArrowHover;
+	bool leftArrowClicked = false;
+	bool rightArrowClicked = false;
+	bool newTabHover;
 	bool allTabsVisible;
 	bool arrow;
 	bool splitLineHolding = false;

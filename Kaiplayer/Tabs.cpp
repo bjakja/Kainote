@@ -27,13 +27,13 @@ Notebook::Notebook(wxWindow *parent, int id)
 	firstVisibleTab = olditer = iter = 0;
 	splitline = splititer = 0;
 	oldtab = oldI = over = -1;
-	block = split = onx = farr = rarr = plus = false;
+	block = split = onx = leftArrowHover = rightArrowHover = newTabHover = false;
 	allTabsVisible = arrow = true;
 	sline = NULL;
-	font = wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT);
+	font = wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
 	sthis = this;
 	int fx, fy;
-	GetTextExtent(L"X",&fx, &fy, 0, 0, &font);
+	GetTextExtent(L"X", &fx, &fy, 0, 0, &font);
 	TabHeight = fy + 12;
 	xWidth = fx + 10;
 
@@ -41,7 +41,7 @@ Notebook::Notebook(wxWindow *parent, int id)
 
 	wxString name = Pages[0]->SubsName;
 
-	if (name.length() > 35){ name = name.SubString(0, 35) + "..."; }
+	if (name.length() > 40){ name = name.SubString(0, 40) + L"..."; }
 	Names.Add(name);
 
 	CalcSizes();
@@ -80,7 +80,7 @@ Notebook::Notebook(wxWindow *parent, int id)
 				}
 			}
 			if (!found && item->check){ SubsGridBase::compareStyles.Add(name); }
-			Options.SetTable(SubsComparisonStyles, SubsGridBase::compareStyles, ",");
+			Options.SetTable(SubsComparisonStyles, SubsGridBase::compareStyles, L",");
 			if ((SubsGridBase::compareStyles.size() > 0 && !(compareBy & COMPARE_BY_CHOSEN_STYLES)) ||
 				(SubsGridBase::compareStyles.size() < 1 && compareBy & COMPARE_BY_CHOSEN_STYLES)){
 				compareBy ^= COMPARE_BY_CHOSEN_STYLES;
@@ -134,7 +134,7 @@ void Notebook::AddPage(bool refresh)
 		Pages[iter]->Hide();
 	}
 	wxString name = Pages[iter]->SubsName;
-	if (name.Len() > 35){ name = name.SubString(0, 35) + "..."; }
+	if (name.Len() > 40){ name = name.SubString(0, 40) + L"..."; }
 	Names.Add(name);
 
 	Pages[iter]->SetPosition(Pages[olditer]->GetPosition());
@@ -326,8 +326,8 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 
 
 	if (event.Leaving()){
-		if (over != -1 || onx || farr || rarr || plus){
-			over = -1; onx = farr = rarr = plus = false;
+		if (over != -1 || onx || leftArrowHover || rightArrowHover || newTabHover){
+			over = -1; onx = leftArrowHover = rightArrowHover = newTabHover = false;
 			RefreshRect(wxRect(0, h - TabHeight, w, TabHeight), false);
 		}
 		oldtab = -1;
@@ -342,8 +342,8 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			CaptureMouse();
 			int px = x, py = 2;
 			ClientToScreen(&px, &py);
-			sline = new wxDialog(this, -1, "", wxPoint(px, py), wxSize(3, h - 27), wxSTAY_ON_TOP | wxBORDER_NONE);
-			sline->SetBackgroundColour("#000000");
+			sline = new wxDialog(this, -1, L"", wxPoint(px, py), wxSize(3, h - 27), wxSTAY_ON_TOP | wxBORDER_NONE);
+			sline->SetBackgroundColour(L"#000000");
 			sline->Show();
 			splitLineHolding = true;
 		}
@@ -402,13 +402,17 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 
 		if (!allTabsVisible && (click || dclick) && x < 20){
 			if (firstVisibleTab > 0){
-				firstVisibleTab--; RefreshRect(wxRect(0, hh, w, TabHeight), false);
+				firstVisibleTab--;
+				leftArrowClicked = true;
+				RefreshRect(wxRect(0, hh, w, TabHeight), false);
 			}
 			return;
 		}
 		else if (!allTabsVisible && (click || dclick) && x > w - 17 && x <= w){
 			if (firstVisibleTab < Size() - 1){
-				firstVisibleTab++; RefreshRect(wxRect(w - 17, hh, 17, TabHeight), false);
+				firstVisibleTab++; 
+				rightArrowClicked = true;
+				RefreshRect(wxRect(w - 17, hh, 17, TabHeight), false);
 			}
 			return;
 		}
@@ -441,7 +445,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			if (i == tmpiter){ AddPendingEvent(evt2); }
 			int tabAfterClose = FindTab(x, &num);
 			if (tabAfterClose >= 0)
-				SetToolTip(Pages[tabAfterClose]->SubsName + "\n" + Pages[tabAfterClose]->VideoName);
+				SetToolTip(Pages[tabAfterClose]->SubsName + L"\n" + Pages[tabAfterClose]->VideoName);
 			else
 				UnsetToolTip();
 			return;
@@ -471,6 +475,11 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		oldI = i;
 		return;
 	}
+	if (event.LeftUp() && (rightArrowClicked || leftArrowClicked)){
+		rightArrowClicked = leftArrowClicked = false;
+		RefreshRect(wxRect(0, hh, w, TabHeight), false); 
+		return;
+	}
 
 	//ożywienie zakładek
 	if (event.Moving()){
@@ -478,27 +487,29 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		if (x > start + TabHeight - 4 && HasToolTips()){ UnsetToolTip(); }
 
 
-		if (!allTabsVisible && x<20){
-			if (farr) return;
-			farr = true;
+		if (!allTabsVisible && x < 20){
+			if (leftArrowHover) return;
+			leftArrowHover = true;
 			RefreshRect(wxRect(0, hh, 20, TabHeight), false); return;
 		}
 		else if (!allTabsVisible && x > w - 17 && x <= w){
-			if (rarr) return;
-			rarr = true; plus = false;
+			if (rightArrowHover) return;
+			rightArrowHover = true; 
+			newTabHover = false;
 			RefreshRect(wxRect(w - 17, hh, 17, TabHeight), false); return;
 		}
 		else if (x > start && x < start + TabHeight - 4){
-			if (plus) return;
-			plus = true; rarr = false;
+			if (newTabHover) return;
+			newTabHover = true; 
+			rightArrowHover = false;
 			RefreshRect(wxRect(start, hh, start + TabHeight - 4, TabHeight), false);
 			//if(oldtab!=i){
 			SetToolTip(_("Otwórz nową zakładkę"));
 			//oldtab=i;}
 			return;
 		}
-		else if (farr || rarr || plus){
-			farr = rarr = plus = false;
+		else if (leftArrowHover || rightArrowHover || newTabHover){
+			leftArrowHover = rightArrowHover = newTabHover = false;
 			RefreshRect(wxRect(w - 19, hh, 19, TabHeight), false); return;
 		}
 
@@ -528,7 +539,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			onx = false;
 			RefreshRect(wxRect(num + Tabsizes[i] - xWidth, hh, xWidth, TabHeight), false);
 		}
-		if (i != -1 && i != oldtab){ SetToolTip(Pages[i]->SubsName + "\n" + Pages[i]->VideoName); oldtab = i; }
+		if (i != -1 && i != oldtab){ SetToolTip(Pages[i]->SubsName + L"\n" + Pages[i]->VideoName); oldtab = i; }
 	}
 
 	//Context menu		
@@ -586,7 +597,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 
 	//wxGraphicsContext *gc = NULL;//wxGraphicsContext::Create(dc);
 	//pętla do rysowania zakładek
-	for (size_t i = firstVisibleTab; i < Tabsizes.size(); i++){
+	for (size_t i = firstVisibleTab; i < Tabsizes.GetCount(); i++){
 		//wybrana zakładka
 		if (i == iter){
 			//rysowanie linii po obu stronach aktywnej zakładki
@@ -605,21 +616,23 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			}
 			//dc.SetTextForeground(Options.GetColour("Tabs Close Hover"));
 			dc.SetTextForeground(activeText);
-			dc.DrawText("X", start + Tabsizes[i] - xWidth + 4, 4);
+			dc.DrawText(L"X", start + Tabsizes[i] - xWidth + 4, 4);
 
 
 		}
 		else if (split && i == splititer){
 			dc.SetTextForeground(inactiveText);
 			dc.SetPen(*wxTRANSPARENT_PEN);
-			dc.SetBrush(Options.GetColour((i == (size_t)over) ? TabsBackgroundInactiveHover : TabsBackgroundSecondWindow));
+			dc.SetBrush(Options.GetColour((i == (size_t)over && !rightArrowHover && !rightArrowClicked) ? 
+				TabsBackgroundInactiveHover : TabsBackgroundSecondWindow));
 			dc.DrawRectangle(start + 1, 1, Tabsizes[i] - 1, TabHeight - 2);
 		}
 		else{
-			//nieaktywna lub najechana nieaktywna zakładka
+			//nonactive and hover nonactive 
 			dc.SetTextForeground(inactiveText);
 			dc.SetPen(*wxTRANSPARENT_PEN);
-			dc.SetBrush(wxBrush(Options.GetColour((i == (size_t)over) ? TabsBackgroundInactiveHover : TabsBackgroundInactive)));
+			dc.SetBrush(wxBrush(Options.GetColour((i == (size_t)over && !rightArrowHover && !rightArrowClicked) ? 
+				TabsBackgroundInactiveHover : TabsBackgroundInactive)));
 			dc.DrawRectangle(start + 1, 1, Tabsizes[i] - 1, TabHeight - 3);
 		}
 
@@ -652,35 +665,58 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	}
 
 	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(wxBrush(Options.GetColour(TabsBarArrowBackground)));
+	const wxColour & background = Options.GetColour(TabsBarArrowBackground);
+	dc.SetBrush(wxBrush(background));
 	//strzałki do przesuwania zakładek
 	if (!allTabsVisible){
 		const wxColour & backgroundHover = Options.GetColour(TabsBarArrowBackgroundHover);
+		//make new color
+		const wxColour & backgroundClicked = Options.GetColour(ButtonBackgroundPushed);
 		const wxColour & arrow = Options.GetColour(TabsBarArrow);
-		dc.DrawRectangle(w - 16, 0, 16, TabHeight);
-		if (farr){ dc.SetBrush(wxBrush(backgroundHover)); }
-		dc.DrawRectangle(0, 0, 16, TabHeight);
-
-		if (rarr){
-			dc.SetBrush(wxBrush(backgroundHover));
-			dc.DrawRectangle(w - 16, 0, 16, TabHeight);
-		}
 
 		dc.SetPen(wxPen(arrow, 2));
-
+		//left vertical line
 		dc.DrawLine(17, 0, 17, TabHeight);
-		int arrowStart = (TabHeight - 14) / 2;
-		dc.DrawLine(11, arrowStart, 4, arrowStart + 7);
-		dc.DrawLine(4, arrowStart + 7, 11, arrowStart + 14);
-
+		//right vertical line
 		dc.DrawLine(w - 17, 0, w - 17, TabHeight);
-		dc.DrawLine(w - 11, arrowStart, w - 4, arrowStart + 7);
-		dc.DrawLine(w - 4, arrowStart + 7, w - 11, arrowStart + 14);
+
+		dc.SetPen(*wxTRANSPARENT_PEN);
+		//left arrow
+		int arrowStart = (TabHeight - 14) / 2;
+		wxPoint triangle[3];
+		if (firstVisibleTab != 0){
+			dc.SetBrush(wxBrush((leftArrowClicked) ? backgroundClicked : (leftArrowHover) ? backgroundHover : background));
+			dc.DrawRectangle(0, 0, 16, TabHeight);
+			dc.SetBrush(wxBrush(arrow));
+			triangle[0] = wxPoint(11, arrowStart);
+			triangle[1] = wxPoint(4, arrowStart + 7);
+			triangle[2] = wxPoint(11, arrowStart + 14);
+			dc.DrawPolygon(3, triangle);
+		}
+		else{
+			dc.SetBrush(wxBrush(background));
+			dc.DrawRectangle(0, 0, 16, TabHeight);
+		}
+
+		//right arrow
+		if (firstVisibleTab < Tabsizes.GetCount() - 1){
+			dc.SetBrush(wxBrush((rightArrowClicked) ? backgroundClicked : (rightArrowHover) ? backgroundHover : background));
+			dc.DrawRectangle(w - 16, 0, 16, TabHeight);
+			dc.SetBrush(wxBrush(arrow));
+			triangle[0] = wxPoint(w - 11, arrowStart);
+			triangle[1] = wxPoint(w - 4, arrowStart + 7);
+			triangle[2] = wxPoint(w - 11, arrowStart + 14);
+			dc.DrawPolygon(3, triangle);
+		}
+		else{
+			dc.SetBrush(wxBrush(background));
+			dc.DrawRectangle(w - 16, 0, 16, TabHeight);
+		}
 	}
 
 	//plus który jest zawsze widoczny
 
-	dc.SetBrush(wxBrush(Options.GetColour((plus) ? TabsBackgroundInactiveHover : TabsBackgroundInactive)));
+	dc.SetBrush(wxBrush(Options.GetColour((newTabHover) ? TabsBackgroundInactiveHover : TabsBackgroundInactive)));
 	//if(plus){
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.DrawRectangle(start + 1, 1, TabHeight - 6, TabHeight - 3);
@@ -726,7 +762,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			cdc.DrawLine(splitline + 1, 0, w, 0);
 			cdc.DrawLine(w - 1, 0, w - 1, h - heightplus);
 			cdc.DrawLine(splitline + 1, h - heightplus, w, h - heightplus);
-			cdc.SetPen(wxPen("#FF0000"));
+			cdc.SetPen(wxPen(L"#FF0000"));
 			cdc.DrawLine(0, 0, 0, h - heightplus);
 			cdc.DrawLine(0, 0, splitline - 1, 0);
 			cdc.DrawLine(splitline - 1, 0, splitline - 1, h - heightplus);
@@ -736,7 +772,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			cdc.DrawLine(0, 0, splitline - 1, 0);
 			cdc.DrawLine(0, h - heightplus, splitline - 1, h - heightplus);
 			cdc.DrawLine(0, 0, 0, h - heightplus);
-			cdc.SetPen(wxPen("#FF0000"));
+			cdc.SetPen(wxPen(L"#FF0000"));
 			cdc.DrawLine(splitline + 1, 0, w, 0);
 			cdc.DrawLine(splitline + 1, 0, splitline + 1, h - heightplus);
 			cdc.DrawLine(w - 1, 0, w - 1, h - heightplus);
@@ -782,11 +818,11 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 	}
 	int compareBy = Options.GetInt(SubsComparisonType);
 	Menu *comparisonMenu = new Menu();
-	comparisonMenu->Append(MENU_COMPARE + 1, _("Porównaj według czasów"), NULL, "", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_TIMES);
-	comparisonMenu->Append(MENU_COMPARE + 2, _("Porównaj według widocznych linijek"), NULL, "", ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_VISIBLE)>0);
-	comparisonMenu->Append(MENU_COMPARE + 3, _("Porównaj według zaznaczeń"), NULL, "", ITEM_CHECK, canCompare && Pages[iter]->Grid->file->SelectionsSize() > 0 && Pages[i]->Grid->file->SelectionsSize() > 0)->Check((compareBy & COMPARE_BY_SELECTIONS) > 0);
-	comparisonMenu->Append(MENU_COMPARE + 4, _("Porównaj według stylów"), NULL, "", ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_STYLES) > 0);
-	comparisonMenu->Append(MENU_COMPARE + 5, _("Porównaj według wybranych stylów"), styleComparisonMenu, "", ITEM_CHECK, canCompare)->Check(SubsGridBase::compareStyles.size() > 0);
+	comparisonMenu->Append(MENU_COMPARE + 1, _("Porównaj według czasów"), NULL, L"", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_TIMES);
+	comparisonMenu->Append(MENU_COMPARE + 2, _("Porównaj według widocznych linijek"), NULL, L"", ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_VISIBLE)>0);
+	comparisonMenu->Append(MENU_COMPARE + 3, _("Porównaj według zaznaczeń"), NULL, L"", ITEM_CHECK, canCompare && Pages[iter]->Grid->file->SelectionsSize() > 0 && Pages[i]->Grid->file->SelectionsSize() > 0)->Check((compareBy & COMPARE_BY_SELECTIONS) > 0);
+	comparisonMenu->Append(MENU_COMPARE + 4, _("Porównaj według stylów"), NULL, L"", ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_STYLES) > 0);
+	comparisonMenu->Append(MENU_COMPARE + 5, _("Porównaj według wybranych stylów"), styleComparisonMenu, L"", ITEM_CHECK, canCompare)->Check(SubsGridBase::compareStyles.size() > 0);
 	comparisonMenu->Append(MENU_COMPARE, _("Porównaj"))->Enable(canCompare);
 	comparisonMenu->Append(MENU_COMPARE - 1, _("Wyłącz porównanie"))->Enable(SubsGridBase::hasCompare);
 	tabsMenu.Append(MENU_COMPARE + 6, _("Porównanie napisów"), comparisonMenu, _("Porównanie napisów"))->Enable(canCompare || SubsGridBase::hasCompare);
@@ -971,9 +1007,9 @@ bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*
 	}
 
 	tab->SubsPath = path;
-	if (ext == "ssa"){ ext = "ass"; tab->SubsPath = tab->SubsPath.BeforeLast(L'.') + ".ass"; }
+	if (ext == L"ssa"){ ext = L"ass"; tab->SubsPath = tab->SubsPath.BeforeLast(L'.') + L".ass"; }
 	tab->SubsName = tab->SubsPath.AfterLast(L'\\');
-	tab->Video->vToolbar->DisableVisuals(ext != "ass");
+	tab->Video->vToolbar->DisableVisuals(ext != L"ass");
 	if (active != -1 && active != tab->Grid->currentLine && active < tab->Grid->GetCount()){
 		tab->Grid->SetActive(active);
 	}
@@ -993,14 +1029,14 @@ bool Notebook::LoadVideo(TabPanel *tab, KainoteFrame *main, const wxString & pat
 
 	wxString audiopath = tab->Grid->GetSInfo(L"Audio File");
 	wxString keyframespath = tab->Grid->GetSInfo(L"Keyframes File");
-	if (audiopath.StartsWith("?")){ audiopath = path; }
+	if (audiopath.StartsWith(L"?")){ audiopath = path; }
 	bool hasAudioPath = (!audiopath.empty() && ((wxFileExists(audiopath) && audiopath.find(L':') == 1) ||
-		wxFileExists(audiopath.Prepend(path.BeforeLast(L'\\') + "\\"))));
+		wxFileExists(audiopath.Prepend(path.BeforeLast(L'\\') + L"\\"))));
 	bool hasKeyframePath = (!keyframespath.empty() && ((wxFileExists(keyframespath) && keyframespath.find(L':') == 1) ||
-		wxFileExists(keyframespath.Prepend(path.BeforeLast(L'\\') + "\\"))));
+		wxFileExists(keyframespath.Prepend(path.BeforeLast(L'\\') + L"\\"))));
 
 	if (hasAudioPath && audiopath != path){
-		audiopath.Replace("/", "\\");
+		audiopath.Replace(L"/", L"\\");
 		main->OpenAudioInTab(tab, 30040, audiopath);
 	}
 
