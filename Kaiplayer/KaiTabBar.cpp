@@ -95,7 +95,7 @@ wxString KaiTabBar::GetTabName(int i /*= -1*/)
 	if (i < 0)
 		i = currentTab;
 	if (i < 0 || i >= tabs.size())
-		return "";
+		return L"";
 
 	return tabs[i]->tabName;
 }
@@ -114,7 +114,7 @@ void KaiTabBar::Fit()
 		}
 		tabs[i]->tab->SetPosition(wxPoint(0, tabHeader));
 	}
-	SetMinSize(wxSize(width, height+tabHeader));
+	SetMinSize(wxSize(width, height + tabHeader));
 	SetColours(Options.GetColour(WindowBackground), Options.GetColour(WindowText));
 	tabs[currentTab]->tab->Show();
 }

@@ -23,6 +23,7 @@
 #include <wx/msw/popupwin.h>
 #include <map>
 #include "Hotkeys.h"
+
 class MenuEvent;
 class Menu;
 class KaiToolbar;
@@ -52,7 +53,7 @@ public:
 	virtual wxEvent *Clone() const { return new MenuEvent(*this); }
 
 private:
-	int     m_menuId;
+	int m_menuId;
 	Menu* m_menu;
 
 	//DECLARE_DYNAMIC_CLASS_NO_ASSIGN(MenuEvent)
@@ -62,7 +63,7 @@ class MenuItem
 {
 	//friend class MenuBar;
 public:
-	MenuItem(int _id, const wxString& _label, const wxString& _help="", bool _enable = true, wxBitmap *_icon = NULL, Menu *Submenu = 0, byte _type = 0);
+	MenuItem(int _id, const wxString& _label, const wxString& _help = L"", bool _enable = true, wxBitmap *_icon = NULL, Menu *Submenu = 0, byte _type = 0);
 	~MenuItem();
 	bool Enable(bool enable);
 	wxBitmap GetBitmap();
@@ -74,14 +75,14 @@ public:
 	}
 	wxString GetLabelText(){
 		wxString desc = label;
-		desc.Replace("&","");
-		if(desc.find("\t")!= -1){desc= desc.BeforeFirst('\t');}
+		desc.Replace(L"&", L"");
+		if(desc.find(L"\t") != -1){desc = desc.BeforeFirst(L'\t');}
 		return desc;
 	}
 	wxString GetHelp(){
 		return help;
 	}
-	void Check(bool _check=true){
+	void Check(bool _check = true){
 		check = _check;
 	}
 	bool IsEnabled(){
@@ -100,7 +101,7 @@ public:
 		disableMapping = disable;
 	}
 	wxString GetAccel();
-	void SetAccel(wxAcceleratorEntry *entry, const wxString &stringAccel = "");
+	void SetAccel(wxAcceleratorEntry *entry, const wxString &stringAccel = L"");
 	wxBitmap *icon;
 	wxString label;
 	wxString help;
@@ -176,15 +177,20 @@ class Menu : public Mnemonics
 	virtual ~Menu(){
 		Clear();
 	};
-	MenuItem *AppendTool(KaiToolbar *ktb, int id, wxString text, wxString help, wxBitmap *bitmap, bool enable=true, Menu *SubMenu=0);
-	MenuItem *Append(int _id,const wxString& _label, const wxString& _help="", bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
-	MenuItem *Append(int _id,const wxString& _label, Menu* Submenu, const wxString& _help="", byte _type = 0, bool _enable = true, wxBitmap *_icon = NULL);
+	MenuItem *AppendTool(KaiToolbar *ktb, int id, wxString text, wxString help, 
+		wxBitmap *bitmap, bool enable = true, Menu *SubMenu = 0);
+	MenuItem *Append(int _id,const wxString& _label, const wxString& _help = L"", 
+		bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
+	MenuItem *Append(int _id,const wxString& _label, Menu* Submenu, const wxString& _help = L"", 
+		byte _type = 0, bool _enable = true, wxBitmap *_icon = NULL);
 	MenuItem *Append(MenuItem *item);
-	MenuItem *Prepend(int _id, const wxString& _label, const wxString& _help="", bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
+	MenuItem *Prepend(int _id, const wxString& _label, const wxString& _help = L"", 
+		bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
 	MenuItem *Prepend(MenuItem *item);
-	MenuItem *Insert(int position, int _id, const wxString& _label, const wxString& _help="", bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
+	MenuItem *Insert(int position, int _id, const wxString& _label, const wxString& _help = L"", 
+		bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
 	MenuItem *Insert(int position, MenuItem *item);
-	MenuItem *SetAccMenu(int id, const wxString &txt, const wxString &help="", bool enable=true, int kind=0);
+	MenuItem *SetAccMenu(int id, const wxString &txt, const wxString &help = "", bool enable = true, int kind = 0);
 	MenuItem *SetAccMenu(MenuItem *menuitem, const wxString &name);
 	void Delete(int position);
 	void Clear(){
@@ -195,14 +201,14 @@ class Menu : public Mnemonics
 	}
 	bool Destroy(MenuItem *item);
 	int GetMenuItemCount();
-	MenuItem *FindItem(int id, Menu **menu=NULL);
+	MenuItem *FindItem(int id, Menu **menu = NULL);
 	static MenuItem *FindItemGlobally(int id, Menu **menu = NULL);
 	MenuItem *FindItem(const wxString& label);
 	MenuItem *FindItemByPosition(int pos);
 	void Check(int id, bool check);
 	void AppendSeparator();
 	int GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accels = 0, bool clientPos=true, bool center = false);
-	void PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos=true, bool center = false);
+	void PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos = true, bool center = false);
 	void SetMaxVisible(byte maxVisible);
 	void SetShowIcons(bool showIcons);
 	void SetMinWidth(int width);
@@ -237,7 +243,7 @@ public:
 	void Prepend(Menu *menu, const wxString &title);
 	void Insert(int position, Menu *menu, const wxString &title);
 	MenuItem *FindItem(int id); 
-	void Enable(int id, bool enable=true);
+	void Enable(int id, bool enable = true);
 	//void AppendAccelerators(std::vector <wxAcceleratorEntry> *entries);
 private:
 	void OnMouseEvent(wxMouseEvent &evt);

@@ -68,54 +68,54 @@ Hotkeys::Hotkeys()
 
 void Hotkeys::FillTable()
 {
-	keys[WXK_BACK] = "Backspace";
-	keys[WXK_SPACE] = "Space";
-	keys[WXK_RETURN] = "Enter";
-	keys[WXK_TAB] = "Tab";
-	keys[WXK_PAUSE] = "Pause";
+	keys[WXK_BACK] = L"Backspace";
+	keys[WXK_SPACE] = L"Space";
+	keys[WXK_RETURN] = L"Enter";
+	keys[WXK_TAB] = L"Tab";
+	keys[WXK_PAUSE] = L"Pause";
 
-	keys[WXK_LEFT] = "Left";
-	keys[WXK_RIGHT] = "Right";
-	keys[WXK_UP] = "Up";
-	keys[WXK_DOWN] = "Down";
+	keys[WXK_LEFT] = L"Left";
+	keys[WXK_RIGHT] = L"Right";
+	keys[WXK_UP] = L"Up";
+	keys[WXK_DOWN] = L"Down";
 
-	keys[WXK_INSERT] = "Insert";
-	keys[WXK_DELETE] = "Delete";
-	keys[WXK_HOME] = "Home";
-	keys[WXK_END] = "End";
-	keys[WXK_PAGEUP] = "PgUp";
-	keys[WXK_PAGEDOWN] = "PgDn";
+	keys[WXK_INSERT] = L"Insert";
+	keys[WXK_DELETE] = L"Delete";
+	keys[WXK_HOME] = L"Home";
+	keys[WXK_END] = L"End";
+	keys[WXK_PAGEUP] = L"PgUp";
+	keys[WXK_PAGEDOWN] = L"PgDn";
 
-	keys[WXK_NUMPAD0] = "Num 0";
-	keys[WXK_NUMPAD1] = "Num 1";
-	keys[WXK_NUMPAD2] = "Num 2";
-	keys[WXK_NUMPAD3] = "Num 3";
-	keys[WXK_NUMPAD4] = "Num 4";
-	keys[WXK_NUMPAD5] = "Num 5";
-	keys[WXK_NUMPAD6] = "Num 6";
-	keys[WXK_NUMPAD7] = "Num 7";
-	keys[WXK_NUMPAD8] = "Num 8";
-	keys[WXK_NUMPAD9] = "Num 9";
-	keys[WXK_NUMPAD_ADD] = "Num +";
-	keys[WXK_NUMPAD_SUBTRACT] = "Num -";
-	keys[WXK_NUMPAD_SEPARATOR] = "Num |";
-	keys[WXK_NUMPAD_MULTIPLY] = "Num *";
-	keys[WXK_NUMPAD_DIVIDE] = "Num /";
-	keys[WXK_NUMPAD_DECIMAL] = "Num .";
-	keys[WXK_NUMPAD_ENTER] = "Num Enter";
+	keys[WXK_NUMPAD0] = L"Num 0";
+	keys[WXK_NUMPAD1] = L"Num 1";
+	keys[WXK_NUMPAD2] = L"Num 2";
+	keys[WXK_NUMPAD3] = L"Num 3";
+	keys[WXK_NUMPAD4] = L"Num 4";
+	keys[WXK_NUMPAD5] = L"Num 5";
+	keys[WXK_NUMPAD6] = L"Num 6";
+	keys[WXK_NUMPAD7] = L"Num 7";
+	keys[WXK_NUMPAD8] = L"Num 8";
+	keys[WXK_NUMPAD9] = L"Num 9";
+	keys[WXK_NUMPAD_ADD] = L"Num +";
+	keys[WXK_NUMPAD_SUBTRACT] = L"Num -";
+	keys[WXK_NUMPAD_SEPARATOR] = L"Num |";
+	keys[WXK_NUMPAD_MULTIPLY] = L"Num *";
+	keys[WXK_NUMPAD_DIVIDE] = L"Num /";
+	keys[WXK_NUMPAD_DECIMAL] = L"Num .";
+	keys[WXK_NUMPAD_ENTER] = L"Num Enter";
 
-	keys[WXK_F1] = "F1";
-	keys[WXK_F2] = "F2";
-	keys[WXK_F3] = "F3";
-	keys[WXK_F4] = "F4";
-	keys[WXK_F5] = "F5";
-	keys[WXK_F6] = "F6";
-	keys[WXK_F7] = "F7";
-	keys[WXK_F8] = "F8";
-	keys[WXK_F9] = "F9";
-	keys[WXK_F10] = "F10";
-	keys[WXK_F11] = "F11";
-	keys[WXK_F12] = "F12";
+	keys[WXK_F1] = L"F1";
+	keys[WXK_F2] = L"F2";
+	keys[WXK_F3] = L"F3";
+	keys[WXK_F4] = L"F4";
+	keys[WXK_F5] = L"F5";
+	keys[WXK_F6] = L"F6";
+	keys[WXK_F7] = L"F7";
+	keys[WXK_F8] = L"F8";
+	keys[WXK_F9] = L"F9";
+	keys[WXK_F10] = L"F10";
+	keys[WXK_F11] = L"F11";
+	keys[WXK_F12] = L"F12";
 
 	AudioKeys = false;
 }
@@ -123,93 +123,93 @@ void Hotkeys::FillTable()
 void Hotkeys::LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio)
 {
 	if (!Audio){
-		_hkeys[idAndType(Quit, GLOBAL_HOTKEY)] = hdata(_("Wyjście"), "Alt-F4");
-		_hkeys[idAndType(ChangeTime, GLOBAL_HOTKEY)] = hdata(_("Okno zmiany czasów"), "Ctrl-I");
-		_hkeys[idAndType(ConvertToASS, GLOBAL_HOTKEY)] = hdata(_("Konwertuj do ASS"), "F9");
-		_hkeys[idAndType(ConvertToSRT, GLOBAL_HOTKEY)] = hdata(_("Konwertuj do SRT"), "F8");
-		_hkeys[idAndType(ConvertToMDVD, GLOBAL_HOTKEY)] = hdata(_("Konwertuj do MDVD"), "F10");
-		_hkeys[idAndType(ConvertToMPL2, GLOBAL_HOTKEY)] = hdata(_("Konwertuj do MPL2"), "F11");
-		_hkeys[idAndType(ConvertToTMP, GLOBAL_HOTKEY)] = hdata(_("Konwertuj do TMP"), "Ctrl-F12");
-		_hkeys[idAndType(StyleManager, GLOBAL_HOTKEY)] = hdata(_("Menedżer stylów"), "Ctrl-M");
-		_hkeys[idAndType(Editor, GLOBAL_HOTKEY)] = hdata(_("Włącz / Wyłącz edytor"), "Ctrl-E");
-		_hkeys[idAndType(OpenVideo, GLOBAL_HOTKEY)] = hdata(_("Otwórz wideo"), "Ctrl-Shift-O");
-		_hkeys[idAndType(Search, GLOBAL_HOTKEY)] = hdata(_("Znajdź"), "Ctrl-F");
-		_hkeys[idAndType(GLOBAL_FIND_REPLACE, GLOBAL_HOTKEY)] = hdata(_("Znajdź i zmień"), "Ctrl-H");
-		_hkeys[idAndType(Undo, GLOBAL_HOTKEY)] = hdata(_("Cofnij"), "Ctrl-Z");
-		_hkeys[idAndType(Redo, GLOBAL_HOTKEY)] = hdata(_("Ponów"), "Ctrl-Y");
-		_hkeys[idAndType(History, GLOBAL_HOTKEY)] = hdata(_("Historia"), "Ctrl-Shift-H");
-		_hkeys[idAndType(OpenSubs, GLOBAL_HOTKEY)] = hdata(_("Otwórz napisy"), "Ctrl-O");
-		_hkeys[idAndType(SaveSubs, GLOBAL_HOTKEY)] = hdata(_("Zapisz"), "Ctrl-S");
-		_hkeys[idAndType(SaveSubsAs, GLOBAL_HOTKEY)] = hdata(_("Zapisz jako..."), "Ctrl-Shift-S");
-		_hkeys[idAndType(RemoveText, GLOBAL_HOTKEY)] = hdata(_("Usuń tekst"), "Alt-Delete");
-		_hkeys[idAndType(Remove, GLOBAL_HOTKEY)] = hdata(_("Usuń linijkę"), "Shift-Delete");
-		_hkeys[idAndType(SetStartTime, GLOBAL_HOTKEY)] = hdata(_("Wstaw czas początkowy z wideo"), "Ctrl-Left");
-		_hkeys[idAndType(SetEndTime, GLOBAL_HOTKEY)] = hdata(_("Wstaw czas końcowy z wideo"), "Ctrl-Right");
-		_hkeys[idAndType(PlayPauseG, GLOBAL_HOTKEY)] = hdata(_("Odtwórz / Pauza"), "Alt-Space");
-		_hkeys[idAndType(Minus5SecondG, GLOBAL_HOTKEY)] = hdata(_("Wideo minus 5 sekund"), "Alt-Left");//Lewo
-		_hkeys[idAndType(Plus5SecondG, GLOBAL_HOTKEY)] = hdata(_("Wideo plus 5 sekund"), "Alt-Right");//prawo
-		_hkeys[idAndType(PreviousFrame, GLOBAL_HOTKEY)] = hdata(_("Klatka w tył"), "Left");
-		_hkeys[idAndType(NextFrame, GLOBAL_HOTKEY)] = hdata(_("Klatka w przód"), "Right");
-		_hkeys[idAndType(PreviousLine, GLOBAL_HOTKEY)] = hdata(_("Poprzednia linijka"), "Ctrl-Up");//góra
-		_hkeys[idAndType(NextLine, GLOBAL_HOTKEY)] = hdata(_("Następna linijka"), "Ctrl-Down");//dół
-		_hkeys[idAndType(JoinWithPrevious, GLOBAL_HOTKEY)] = hdata(_("Scal z poprzednią linijką"), "F3");
-		_hkeys[idAndType(JoinWithNext, GLOBAL_HOTKEY)] = hdata(_("Scal z następną linijką"), "F4");
-		_hkeys[idAndType(SnapWithStart, GLOBAL_HOTKEY)] = hdata(_("Przyklej start do klatki kluczowej"), "Shift-Left");//lewo
-		_hkeys[idAndType(SnapWithEnd, GLOBAL_HOTKEY)] = hdata(_("Przyklej koniec do klatki kluczowej"), "Shift-Right");//prawo
-		_hkeys[idAndType(NextTab, GLOBAL_HOTKEY)] = hdata(_("Następna karta"), "Ctrl-PgDn");
-		_hkeys[idAndType(PreviousTab, GLOBAL_HOTKEY)] = hdata(_("Poprzednia karta"), "Ctrl-PgUp");
-		_hkeys[idAndType(SelectFromVideo, GLOBAL_HOTKEY)] = hdata(_("Zaznacz linię z czasem wideo"), "F2");
-		_hkeys[idAndType(Help, GLOBAL_HOTKEY)] = hdata(_("Pomoc (niekompletna, ale jednak)"), "F1");
-		_hkeys[idAndType(Duplicate, GRID_HOTKEY)] = hdata(_("Duplikuj linie"), "Ctrl-D");
-		_hkeys[idAndType(CopyCollumns, GRID_HOTKEY)] = hdata(_("Kopiuj kolumny"), "Ctrl-Shift-C");
-		_hkeys[idAndType(PasteCollumns, GRID_HOTKEY)] = hdata(_("Wklej kolumny"), "Ctrl-Shift-V");
-		_hkeys[idAndType(ShowPreview, GRID_HOTKEY)] = hdata(_("Pokaż podgląd napisów"), "Ctrl-Q");
-		_hkeys[idAndType(PlayPause, VIDEO_HOTKEY)] = hdata(_("Odtwórz / Pauza"), "Space");
-		_hkeys[idAndType(Plus5Second, VIDEO_HOTKEY)] = hdata(_("5 sekund do przodu"), "L");
-		_hkeys[idAndType(Minus5Second, VIDEO_HOTKEY)] = hdata(_("5 sekund do tyłu"), ";");
-		_hkeys[idAndType(PlusMinute, VIDEO_HOTKEY)] = hdata(_("Minuta do przodu"), "Up");
-		_hkeys[idAndType(MinusMinute, VIDEO_HOTKEY)] = hdata(_("Minuta do tyłu"), "Down");
-		_hkeys[idAndType(NextVideo, VIDEO_HOTKEY)] = hdata(_("Następny plik"), ".");
-		_hkeys[idAndType(PreviousVideo, VIDEO_HOTKEY)] = hdata(_("Poprzedni plik"), ",");
-		_hkeys[idAndType(VolumePlus, VIDEO_HOTKEY)] = hdata(_("Dźwięk głośniej"), "Num .");
-		_hkeys[idAndType(VolumeMinus, VIDEO_HOTKEY)] = hdata(_("Dźwięk ciszej"), "Num 0");
-		_hkeys[idAndType(NextChapter, VIDEO_HOTKEY)] = hdata(_("Następny rozdział"), "M");
-		_hkeys[idAndType(PreviousChapter, VIDEO_HOTKEY)] = hdata(_("Poprzedni rozdział"), "N");
-		_hkeys[idAndType(PutBold, EDITBOX_HOTKEY)] = hdata(_("Wstaw pogrubienie"), "Ctrl-B");
-		_hkeys[idAndType(PutItalic, EDITBOX_HOTKEY)] = hdata(_("Wstaw kursywę"), "Ctrl-I");
-		_hkeys[idAndType(SplitLine, EDITBOX_HOTKEY)] = hdata(_("Wstaw znak podziału"), "Shift-Enter");
-		_hkeys[idAndType(StartDifference, EDITBOX_HOTKEY)] = hdata(_("Wstaw różnicę początkową"), "Ctrl-,");
-		_hkeys[idAndType(EndDifference, EDITBOX_HOTKEY)] = hdata(_("Wstaw różnicę końcową"), "Ctrl-.");
-		_hkeys[idAndType(FindNextDoubtful, EDITBOX_HOTKEY)] = hdata(_("Następne niepewne"), "Ctrl-D");
-		_hkeys[idAndType(FindNextUntranslated, EDITBOX_HOTKEY)] = hdata(_("Następne nieprzetłumaczone"), "Ctrl-R");
-		_hkeys[idAndType(SetDoubtful, EDITBOX_HOTKEY)] = hdata(_("Ustaw jako niepewne i przejdź dalej"), "Alt-Down");
-		_hkeys[idAndType(EDITBOX_COMMIT, EDITBOX_HOTKEY)] = hdata(_("Zatwierdź zmiany"), "Ctrl-Enter");
-		_hkeys[idAndType(EDITBOX_COMMIT_GO_NEXT_LINE, EDITBOX_HOTKEY)] = hdata(_("Zatwierdź zmiany idź do następnej linii"), "Enter");
+		_hkeys[idAndType(Quit, GLOBAL_HOTKEY)] = hdata(_("Wyjście"), L"Alt-F4");
+		_hkeys[idAndType(ChangeTime, GLOBAL_HOTKEY)] = hdata(_("Okno zmiany czasów"), L"Ctrl-I");
+		_hkeys[idAndType(ConvertToASS, GLOBAL_HOTKEY)] = hdata(_("Konwertuj do ASS"), L"F9");
+		_hkeys[idAndType(ConvertToSRT, GLOBAL_HOTKEY)] = hdata(_("Konwertuj do SRT"), L"F8");
+		_hkeys[idAndType(ConvertToMDVD, GLOBAL_HOTKEY)] = hdata(_("Konwertuj do MDVD"), L"F10");
+		_hkeys[idAndType(ConvertToMPL2, GLOBAL_HOTKEY)] = hdata(_("Konwertuj do MPL2"), L"F11");
+		_hkeys[idAndType(ConvertToTMP, GLOBAL_HOTKEY)] = hdata(_("Konwertuj do TMP"), L"Ctrl-F12");
+		_hkeys[idAndType(StyleManager, GLOBAL_HOTKEY)] = hdata(_("Menedżer stylów"), L"Ctrl-M");
+		_hkeys[idAndType(Editor, GLOBAL_HOTKEY)] = hdata(_("Włącz / Wyłącz edytor"), L"Ctrl-E");
+		_hkeys[idAndType(OpenVideo, GLOBAL_HOTKEY)] = hdata(_("Otwórz wideo"), L"Ctrl-Shift-O");
+		_hkeys[idAndType(Search, GLOBAL_HOTKEY)] = hdata(_("Znajdź"), L"Ctrl-F");
+		_hkeys[idAndType(GLOBAL_FIND_REPLACE, GLOBAL_HOTKEY)] = hdata(_("Znajdź i zmień"), L"Ctrl-H");
+		_hkeys[idAndType(Undo, GLOBAL_HOTKEY)] = hdata(_("Cofnij"), L"Ctrl-Z");
+		_hkeys[idAndType(Redo, GLOBAL_HOTKEY)] = hdata(_("Ponów"), L"Ctrl-Y");
+		_hkeys[idAndType(History, GLOBAL_HOTKEY)] = hdata(_("Historia"), L"Ctrl-Shift-H");
+		_hkeys[idAndType(OpenSubs, GLOBAL_HOTKEY)] = hdata(_("Otwórz napisy"), L"Ctrl-O");
+		_hkeys[idAndType(SaveSubs, GLOBAL_HOTKEY)] = hdata(_("Zapisz"), L"Ctrl-S");
+		_hkeys[idAndType(SaveSubsAs, GLOBAL_HOTKEY)] = hdata(_("Zapisz jako..."), L"Ctrl-Shift-S");
+		_hkeys[idAndType(RemoveText, GLOBAL_HOTKEY)] = hdata(_("Usuń tekst"), L"Alt-Delete");
+		_hkeys[idAndType(Remove, GLOBAL_HOTKEY)] = hdata(_("Usuń linijkę"), L"Shift-Delete");
+		_hkeys[idAndType(SetStartTime, GLOBAL_HOTKEY)] = hdata(_("Wstaw czas początkowy z wideo"), L"Ctrl-Left");
+		_hkeys[idAndType(SetEndTime, GLOBAL_HOTKEY)] = hdata(_("Wstaw czas końcowy z wideo"), L"Ctrl-Right");
+		_hkeys[idAndType(PlayPauseG, GLOBAL_HOTKEY)] = hdata(_("Odtwórz / Pauza"), L"Alt-Space");
+		_hkeys[idAndType(Minus5SecondG, GLOBAL_HOTKEY)] = hdata(_("Wideo minus 5 sekund"), L"Alt-Left");//Lewo
+		_hkeys[idAndType(Plus5SecondG, GLOBAL_HOTKEY)] = hdata(_("Wideo plus 5 sekund"), L"Alt-Right");//prawo
+		_hkeys[idAndType(PreviousFrame, GLOBAL_HOTKEY)] = hdata(_("Klatka w tył"), L"Left");
+		_hkeys[idAndType(NextFrame, GLOBAL_HOTKEY)] = hdata(_("Klatka w przód"), L"Right");
+		_hkeys[idAndType(PreviousLine, GLOBAL_HOTKEY)] = hdata(_("Poprzednia linijka"), L"Ctrl-Up");//góra
+		_hkeys[idAndType(NextLine, GLOBAL_HOTKEY)] = hdata(_("Następna linijka"), L"Ctrl-Down");//dół
+		_hkeys[idAndType(JoinWithPrevious, GLOBAL_HOTKEY)] = hdata(_("Scal z poprzednią linijką"), L"F3");
+		_hkeys[idAndType(JoinWithNext, GLOBAL_HOTKEY)] = hdata(_("Scal z następną linijką"), L"F4");
+		_hkeys[idAndType(SnapWithStart, GLOBAL_HOTKEY)] = hdata(_("Przyklej start do klatki kluczowej"), L"Shift-Left");//lewo
+		_hkeys[idAndType(SnapWithEnd, GLOBAL_HOTKEY)] = hdata(_("Przyklej koniec do klatki kluczowej"), L"Shift-Right");//prawo
+		_hkeys[idAndType(NextTab, GLOBAL_HOTKEY)] = hdata(_("Następna karta"), L"Ctrl-PgDn");
+		_hkeys[idAndType(PreviousTab, GLOBAL_HOTKEY)] = hdata(_("Poprzednia karta"), L"Ctrl-PgUp");
+		_hkeys[idAndType(SelectFromVideo, GLOBAL_HOTKEY)] = hdata(_("Zaznacz linię z czasem wideo"), L"F2");
+		_hkeys[idAndType(Help, GLOBAL_HOTKEY)] = hdata(_("Pomoc (niekompletna, ale jednak)"), L"F1");
+		_hkeys[idAndType(Duplicate, GRID_HOTKEY)] = hdata(_("Duplikuj linie"), L"Ctrl-D");
+		_hkeys[idAndType(CopyCollumns, GRID_HOTKEY)] = hdata(_("Kopiuj kolumny"), L"Ctrl-Shift-C");
+		_hkeys[idAndType(PasteCollumns, GRID_HOTKEY)] = hdata(_("Wklej kolumny"), L"Ctrl-Shift-V");
+		_hkeys[idAndType(ShowPreview, GRID_HOTKEY)] = hdata(_("Pokaż podgląd napisów"), L"Ctrl-Q");
+		_hkeys[idAndType(PlayPause, VIDEO_HOTKEY)] = hdata(_("Odtwórz / Pauza"), L"Space");
+		_hkeys[idAndType(Plus5Second, VIDEO_HOTKEY)] = hdata(_("5 sekund do przodu"), L"L");
+		_hkeys[idAndType(Minus5Second, VIDEO_HOTKEY)] = hdata(_("5 sekund do tyłu"), L";");
+		_hkeys[idAndType(PlusMinute, VIDEO_HOTKEY)] = hdata(_("Minuta do przodu"), L"Up");
+		_hkeys[idAndType(MinusMinute, VIDEO_HOTKEY)] = hdata(_("Minuta do tyłu"), L"Down");
+		_hkeys[idAndType(NextVideo, VIDEO_HOTKEY)] = hdata(_("Następny plik"), L".");
+		_hkeys[idAndType(PreviousVideo, VIDEO_HOTKEY)] = hdata(_("Poprzedni plik"), L",");
+		_hkeys[idAndType(VolumePlus, VIDEO_HOTKEY)] = hdata(_("Dźwięk głośniej"), L"Num .");
+		_hkeys[idAndType(VolumeMinus, VIDEO_HOTKEY)] = hdata(_("Dźwięk ciszej"), L"Num 0");
+		_hkeys[idAndType(NextChapter, VIDEO_HOTKEY)] = hdata(_("Następny rozdział"), L"M");
+		_hkeys[idAndType(PreviousChapter, VIDEO_HOTKEY)] = hdata(_("Poprzedni rozdział"), L"N");
+		_hkeys[idAndType(PutBold, EDITBOX_HOTKEY)] = hdata(_("Wstaw pogrubienie"), L"Ctrl-B");
+		_hkeys[idAndType(PutItalic, EDITBOX_HOTKEY)] = hdata(_("Wstaw kursywę"), L"Ctrl-I");
+		_hkeys[idAndType(SplitLine, EDITBOX_HOTKEY)] = hdata(_("Wstaw znak podziału"), L"Shift-Enter");
+		_hkeys[idAndType(StartDifference, EDITBOX_HOTKEY)] = hdata(_("Wstaw różnicę początkową"), L"Ctrl-,");
+		_hkeys[idAndType(EndDifference, EDITBOX_HOTKEY)] = hdata(_("Wstaw różnicę końcową"), L"Ctrl-.");
+		_hkeys[idAndType(FindNextDoubtful, EDITBOX_HOTKEY)] = hdata(_("Następne niepewne"), L"Ctrl-D");
+		_hkeys[idAndType(FindNextUntranslated, EDITBOX_HOTKEY)] = hdata(_("Następne nieprzetłumaczone"), L"Ctrl-R");
+		_hkeys[idAndType(SetDoubtful, EDITBOX_HOTKEY)] = hdata(_("Ustaw jako niepewne i przejdź dalej"), L"Alt-Down");
+		_hkeys[idAndType(EDITBOX_COMMIT, EDITBOX_HOTKEY)] = hdata(_("Zatwierdź zmiany"), L"Ctrl-Enter");
+		_hkeys[idAndType(EDITBOX_COMMIT_GO_NEXT_LINE, EDITBOX_HOTKEY)] = hdata(_("Zatwierdź zmiany idź do następnej linii"), L"Enter");
 	}
 	else{
-		_hkeys[idAndType(AudioCommit, AUDIO_HOTKEY)] = hdata(_("Zatwierdź"), "Enter");
-		_hkeys[idAndType(AudioCommitAlt, AUDIO_HOTKEY)] = hdata(_("Zatwierdź zastępcze"), "G");
-		_hkeys[idAndType(AudioPrevious, AUDIO_HOTKEY)] = hdata(_("Poprzednia linijka"), "Left");
-		_hkeys[idAndType(AudioPreviousAlt, AUDIO_HOTKEY)] = hdata(_("Poprzednia linijka zastępcze"), "Z");
-		_hkeys[idAndType(AudioNext, AUDIO_HOTKEY)] = hdata(_("Następna linijka"), "Right");
-		_hkeys[idAndType(AudioNextAlt, AUDIO_HOTKEY)] = hdata(_("Następna linijka zastępcze"), "X");
-		_hkeys[idAndType(AudioPlay, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj"), "Down");
-		_hkeys[idAndType(AudioPlayAlt, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj zastępcze"), "S");
-		_hkeys[idAndType(AudioPlayLine, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj linię"), "Up");
-		_hkeys[idAndType(AudioPlayLineAlt, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj linię zastępcze"), "R");
-		_hkeys[idAndType(AudioStop, AUDIO_HOTKEY)] = hdata(_("Zatrzymaj"), "H");
-		_hkeys[idAndType(AudioGoto, AUDIO_HOTKEY)] = hdata(_("Przejdź do zaznaczenia"), "B");
-		_hkeys[idAndType(AudioScrollRight, AUDIO_HOTKEY)] = hdata(_("Przewiń w lewo"), "A");
-		_hkeys[idAndType(AudioScrollLeft, AUDIO_HOTKEY)] = hdata(_("Przewiń w prawo"), "F");
-		_hkeys[idAndType(AudioPlayBeforeMark, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj przed znacznikem"), "Num 0");
-		_hkeys[idAndType(AudioPlayAfterMark, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj po znaczniku"), "Num .");
-		_hkeys[idAndType(AudioPlay500MSFirst, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj pierwsze 500ms"), "E");
-		_hkeys[idAndType(AudioPlay500MSLast, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj końcowe 500ms"), "D");
-		_hkeys[idAndType(AudioPlay500MSBefore, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj 500ms przed"), "Q");
-		_hkeys[idAndType(AudioPlay500MSAfter, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj 500ms po"), "W");
-		_hkeys[idAndType(AudioPlayToEnd, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj do końca"), "T");
-		_hkeys[idAndType(AudioLeadin, AUDIO_HOTKEY)] = hdata(_("Dodaj wstęp"), "C");
-		_hkeys[idAndType(AudioLeadout, AUDIO_HOTKEY)] = hdata(_("Dodaj zakończenie"), "V");
+		_hkeys[idAndType(AudioCommit, AUDIO_HOTKEY)] = hdata(_("Zatwierdź"), L"Enter");
+		_hkeys[idAndType(AudioCommitAlt, AUDIO_HOTKEY)] = hdata(_("Zatwierdź zastępcze"), L"G");
+		_hkeys[idAndType(AudioPrevious, AUDIO_HOTKEY)] = hdata(_("Poprzednia linijka"), L"Left");
+		_hkeys[idAndType(AudioPreviousAlt, AUDIO_HOTKEY)] = hdata(_("Poprzednia linijka zastępcze"), L"Z");
+		_hkeys[idAndType(AudioNext, AUDIO_HOTKEY)] = hdata(_("Następna linijka"), L"Right");
+		_hkeys[idAndType(AudioNextAlt, AUDIO_HOTKEY)] = hdata(_("Następna linijka zastępcze"), L"X");
+		_hkeys[idAndType(AudioPlay, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj"), L"Down");
+		_hkeys[idAndType(AudioPlayAlt, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj zastępcze"), L"S");
+		_hkeys[idAndType(AudioPlayLine, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj linię"), L"Up");
+		_hkeys[idAndType(AudioPlayLineAlt, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj linię zastępcze"), L"R");
+		_hkeys[idAndType(AudioStop, AUDIO_HOTKEY)] = hdata(_("Zatrzymaj"), L"H");
+		_hkeys[idAndType(AudioGoto, AUDIO_HOTKEY)] = hdata(_("Przejdź do zaznaczenia"), L"B");
+		_hkeys[idAndType(AudioScrollRight, AUDIO_HOTKEY)] = hdata(_("Przewiń w lewo"), L"A");
+		_hkeys[idAndType(AudioScrollLeft, AUDIO_HOTKEY)] = hdata(_("Przewiń w prawo"), L"F");
+		_hkeys[idAndType(AudioPlayBeforeMark, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj przed znacznikem"), L"Num 0");
+		_hkeys[idAndType(AudioPlayAfterMark, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj po znaczniku"), L"Num .");
+		_hkeys[idAndType(AudioPlay500MSFirst, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj pierwsze 500ms"), L"E");
+		_hkeys[idAndType(AudioPlay500MSLast, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj końcowe 500ms"), L"D");
+		_hkeys[idAndType(AudioPlay500MSBefore, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj 500ms przed"), L"Q");
+		_hkeys[idAndType(AudioPlay500MSAfter, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj 500ms po"), L"W");
+		_hkeys[idAndType(AudioPlayToEnd, AUDIO_HOTKEY)] = hdata(_("Odtwarzaj do końca"), L"T");
+		_hkeys[idAndType(AudioLeadin, AUDIO_HOTKEY)] = hdata(_("Dodaj wstęp"), L"C");
+		_hkeys[idAndType(AudioLeadout, AUDIO_HOTKEY)] = hdata(_("Dodaj zakończenie"), L"V");
 	}
 }
 
@@ -227,16 +227,16 @@ int Hotkeys::LoadHkeys(bool Audio)
 {
 	if (keys.empty()){ FillTable(); }
 	OpenWrite ow;
-	wxString hkpath = (Audio) ? "\\AudioHotkeys.txt" : "\\Hotkeys.txt";
+	wxString hkpath = (Audio) ? L"\\AudioHotkeys.txt" : L"\\Hotkeys.txt";
 	wxString acctxt;
 	//failedowało z tak błachego powodu jak brak ścieżki
 	//trzeba uważać na kolejność, opcje mają zdecydowane pierwszeństwo
 	if (!ow.FileOpen(Options.configPath + hkpath, &acctxt, true)){ LoadDefault(hkeys, Audio); return 1; }
 
-	wxStringTokenizer hk(acctxt, "\n", wxTOKEN_STRTOK);
+	wxStringTokenizer hk(acctxt, L"\n", wxTOKEN_STRTOK);
 
 	bool checkVer = false;
-	if (acctxt.StartsWith("[")){
+	if (acctxt.StartsWith(L"[")){
 		wxString token = hk.NextToken();
 		wxString ver = token.BeforeFirst(L']').Mid(1);
 		if (ver != Options.progname){
@@ -263,7 +263,7 @@ int Hotkeys::LoadHkeys(bool Audio)
 		wxString token = hk.NextToken();
 		token.Trim(false);
 		token.Trim(true);
-		if (token.StartsWith("Script")){
+		if (token.StartsWith(L"Script")){
 			wxString rest;
 			wxString name = token.BeforeFirst(L'=', &rest).Trim(false).Trim(true);
 			rest = rest.Trim(false).Trim(true);
@@ -275,7 +275,7 @@ int Hotkeys::LoadHkeys(bool Audio)
 		}
 
 		wxString Values = token.AfterFirst(L' ').Trim(false).Trim(true);
-		int type = wxString("GNEWA").find(Values[0]);
+		int type = wxString(L"GNEWA").find(Values[0]);
 		Values = Values.Remove(0, 2);
 		wxString Labels = token.BeforeFirst(L' ').Trim(false).Trim(true);
 		if (Values != ""){
@@ -297,23 +297,23 @@ int Hotkeys::LoadHkeys(bool Audio)
 
 void Hotkeys::SaveHkeys(bool Audio)
 {
-	wxString gnewa = "GNEWA";
-	wxString Texthk = "[" + Options.progname + "]\r\n";
+	wxString gnewa = L"GNEWA";
+	wxString Texthk = L"[" + Options.progname + L"]\r\n";
 	for (std::map<idAndType, hdata>::iterator cur = hkeys.begin(); cur != hkeys.end(); cur++) {
 		if ((!Audio && cur->first.Type == AUDIO_HOTKEY) ||
 			(Audio && !(cur->first.Type == AUDIO_HOTKEY)) ||
 			cur->first.id < 100 || cur->second.Accel.empty()) {
 			continue;
 		}
-		if (cur->first >= 30100){ Texthk << cur->second.Name << "=" << cur->second.Accel << "\r\n"; }
+		if (cur->first >= 30100){ Texthk << cur->second.Name << L"=" << cur->second.Accel << L"\r\n"; }
 		else{
 			wxString idstring = GetString((Id)cur->first.id);
-			if (idstring == ""){ idstring << cur->first.id; }
-			Texthk << idstring << " " << gnewa[cur->first.Type] << "=" << cur->second.Accel << "\r\n";
+			if (idstring == L""){ idstring << cur->first.id; }
+			Texthk << idstring << L" " << gnewa[cur->first.Type] << L"=" << cur->second.Accel << L"\r\n";
 		}
 	}
 	OpenWrite ow;
-	wxString hkpath = (Audio) ? "\\AudioHotkeys.txt" : "\\Hotkeys.txt";
+	wxString hkpath = (Audio) ? L"\\AudioHotkeys.txt" : L"\\Hotkeys.txt";
 	ow.FileWrite(Options.configPath + hkpath, Texthk);
 
 }
@@ -335,20 +335,20 @@ wxAcceleratorEntry Hotkeys::GetHKey(const idAndType itype, const hdata *data)
 
 
 
-	if (accel == ""){ return accelkey;/*ResetKey(itemid);accel=hkeys[idAndType(itemid];*/ }
+	if (accel == L""){ return accelkey;/*ResetKey(itemid);accel=hkeys[idAndType(itemid];*/ }
 	int modif = 0;
-	if (accel.Find("Alt-") != -1){
+	if (accel.Find(L"Alt-") != -1){
 		modif |= 1;
 	}
-	if (accel.Find("Shift-") != -1){
+	if (accel.Find(L"Shift-") != -1){
 		modif |= 4;
 	}
-	if (accel.Find("Ctrl-") != -1){
+	if (accel.Find(L"Ctrl-") != -1){
 		modif |= 2;
 	}
 
 
-	wxString akey = (accel.EndsWith("-")) ? "-" : accel.AfterLast(L'-');
+	wxString akey = (accel.EndsWith(L"-")) ? L"-" : accel.AfterLast(L'-');
 	int key = 0;
 
 	std::map<int, wxString>::iterator cur;
@@ -376,8 +376,8 @@ void Hotkeys::SetHKey(const idAndType &itype, wxString name, wxString hotkey)
 wxString Hotkeys::GetStringHotkey(const idAndType &itype, const wxString &name)
 {
 	auto it = hkeys.find(itype);
-	if (it != hkeys.end()){ if (name != ""){ it->second.Name = name; } return it->second.Accel; }
-	return "";
+	if (it != hkeys.end()){ if (name != L""){ it->second.Name = name; } return it->second.Accel; }
+	return L"";
 }
 
 void Hotkeys::ResetKey(const idAndType *itype, int id, char type)
@@ -404,7 +404,7 @@ wxString Hotkeys::GetDefaultKey(const idAndType &itype)
 	{
 		return it->second.Accel;
 	}
-	return "";
+	return L"";
 }
 //return -2 anulowano zmianę skrótów, -1 nowy skrót, 1+ id do zmiany skrótu.
 void Hotkeys::OnMapHkey(int id, wxString name, wxWindow *parent, char hotkeyWindow /*= GLOBAL_HOTKEY*/, bool showWindowSelection/*=true*/)
@@ -489,11 +489,11 @@ void Hotkeys::OnMapHkey(int id, wxString name, wxWindow *parent, char hotkeyWind
 
 					if (result == wxOK){
 						auto finditer = hkeys.find(idAndType(id, hkd->type));
-						idtype->second.Accel = "";
-						idtype->second.Accel = (finditer != hkeys.end()) ? finditer->second.Accel : "";
+						idtype->second.Accel = L"";
+						idtype->second.Accel = (finditer != hkeys.end()) ? finditer->second.Accel : L"";
 					}
 					else if (result == wxYES){
-						idtype->second.Accel = "";
+						idtype->second.Accel = L"";
 					}
 				}
 			}
@@ -522,7 +522,7 @@ wxString Hotkeys::GetName(const idAndType itype)
 		return it->second.Name;
 	}
 
-	return "";
+	return L"";
 }
 
 const wxString & Hotkeys::GetName(int id)
@@ -564,13 +564,16 @@ HkeysDialog::HkeysDialog(wxWindow *parent, wxString name, char hotkeyWindow, boo
 	SetBackgroundColour(Options.GetColour(WindowBackground));
 	global = NULL;
 	const int elems = 5;
-	wxString windows[elems] = { _("Skrót globalny"), _("Skrót pola napisów"), _("Skrót pola edycji"), _("Skrót wideo"), _("Skrót audio") };
+	wxString windows[elems] = { _("Skrót globalny"), _("Skrót pola napisów"), 
+		_("Skrót pola edycji"), _("Skrót wideo"), _("Skrót audio") };
 	if (showWindowSelection && hotkeyWindow == GLOBAL_HOTKEY){
 		global = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, elems, windows, wxWANTS_CHARS);
 		global->SetSelection(hotkeyWindow);
 		global->Connect(wxEVT_KEY_DOWN, (wxObjectEventFunction)&HkeysDialog::OnKeyPress, 0, this);
 	}
-	KaiStaticText *txt = new KaiStaticText(this, -1, wxString::Format(_("Proszę wcisnąć klawisze skrótu dla \"%s\"."), name), wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
+	KaiStaticText *txt = new KaiStaticText(this, -1, 
+		wxString::Format(_("Proszę wcisnąć klawisze skrótu dla \"%s\"."), name), 
+		wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
 	txt->Connect(wxEVT_KEY_DOWN, (wxObjectEventFunction)&HkeysDialog::OnKeyPress, 0, this);
 
 	DialogSizer *MainSizer = new DialogSizer(wxVERTICAL);
@@ -596,11 +599,11 @@ void HkeysDialog::OnKeyPress(wxKeyEvent& event)
 	hotkey = "";
 	if (key != WXK_SHIFT && key != WXK_ALT && key != WXK_CONTROL){
 
-		if (event.AltDown()){ hotkey << "Alt-"; }
-		if (event.ControlDown()){ hotkey << "Ctrl-"; }
-		if (event.ShiftDown()){ hotkey << "Shift-"; }
+		if (event.AltDown()){ hotkey << L"Alt-"; }
+		if (event.ControlDown()){ hotkey << L"Ctrl-"; }
+		if (event.ShiftDown()){ hotkey << L"Shift-"; }
 
-		if (hotkey == "" && (type == GLOBAL_HOTKEY || type == EDITBOX_HOTKEY) && (key > 30 && key < 127 /*|| key>313 && key<318*/))
+		if (hotkey == L"" && (type == GLOBAL_HOTKEY || type == EDITBOX_HOTKEY) && (key > 30 && key < 127 /*|| key>313 && key<318*/))
 		{
 			KaiMessageBox(_("Skróty globalne i edytora muszą zawierać modyfikatory (np. Shift, Ctrl, Alt).")); return;
 		}
@@ -612,7 +615,7 @@ void HkeysDialog::OnKeyPress(wxKeyEvent& event)
 		}
 
 		wxString keytxt = Hkeys.keys[key];
-		if (keytxt == ""){
+		if (keytxt == L""){
 			if (key >= 36 && key <= 96)
 				keytxt = wchar_t(key);
 			else

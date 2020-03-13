@@ -52,8 +52,8 @@ void KaiToolbar::InitToolbar()
 	wxArrayInt IDS;
 	const wxString & idnames = Options.GetString(ToolbarIDs);
 
-	if (idnames != ""){
-		wxStringTokenizer cfgtable(idnames, "|", wxTOKEN_STRTOK);
+	if (idnames != L""){
+		wxStringTokenizer cfgtable(idnames, L"|", wxTOKEN_STRTOK);
 		while (cfgtable.HasMoreTokens()){
 			int val = GetIdValue(cfgtable.NextToken().data());
 			if (val > 0){
@@ -76,7 +76,8 @@ void KaiToolbar::InitToolbar()
 		if (!item){ KaiLog(wxString::Format(_("Nie można znaleźć elementu o id %i"), IDS[i])); continue; }
 		wxString desc = item->GetLabelText();
 		bool isToogleButton = item->type == ITEM_CHECK;
-		AddItem(IDS[i], desc, item->icon, item->IsEnabled(), (isToogleButton) ? 2 : (item->GetSubMenu() != NULL) ? 1 : 0, (isToogleButton) ? item->check : false);
+		AddItem(IDS[i], desc, item->icon, item->IsEnabled(), (isToogleButton) ? 2 : 
+			(item->GetSubMenu() != NULL) ? 1 : 0, (isToogleButton) ? item->check : false);
 	}
 	tools.push_back(new toolitem(3, 16, 32566, true));
 
@@ -162,7 +163,7 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 	else if (sel != elem && tools[elem]->type < 3 && !event.LeftIsDown()){
 		wxString shkeyadd;
 		wxString shkey = Hkeys.GetStringHotkey(tools[elem]->id);
-		if (shkey != ""){ shkeyadd << " (" << shkey << ")"; }
+		if (shkey != L""){ shkeyadd << L" (" << shkey << L")"; }
 		SetToolTip(tools[elem]->label + shkeyadd);
 		sel = elem;
 		//RefreshRect(wxRect(0,elem*iconsize,iconsize,(elem+1)*iconsize),false);
@@ -244,9 +245,14 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 		if (pos + tools[i]->size>maxx){ pos1 += iconsize; pos = 4; }
 		bool toggled = tools[i]->toggled;
 		if (i == sel || toggled){
-			tdc.SetPen(wxPen((Clicked || toggled) ? Options.GetColour(ButtonBorderPushed) : Options.GetColour(ButtonBorderHover)));
-			tdc.SetBrush(wxBrush((Clicked || toggled) ? Options.GetColour(ButtonBackgroundPushed) : Options.GetColour(ButtonBackgroundHover)));
-			tdc.DrawRoundedRectangle((vertical) ? pos1 + 2 : pos - 2, (vertical) ? pos - 2 : (i >= (int)tools.size() - 1) ? pos1 + 2 + (iconsize - (tools[i]->size)) : pos1 + 2, iconsize - 4, tools[i]->size - 4, 1.1);
+			tdc.SetPen(wxPen((Clicked || toggled) ? 
+				Options.GetColour(ButtonBorderPushed) : Options.GetColour(ButtonBorderHover)));
+			tdc.SetBrush(wxBrush((Clicked || toggled) ? 
+				Options.GetColour(ButtonBackgroundPushed) : Options.GetColour(ButtonBackgroundHover)));
+			tdc.DrawRoundedRectangle((vertical) ? pos1 + 2 : pos - 2, 
+				(vertical) ? pos - 2 : (i >= (int)tools.size() - 1) ? 
+				pos1 + 2 + (iconsize - (tools[i]->size)) : 
+				pos1 + 2, iconsize - 4, tools[i]->size - 4, 1.1);
 		}
 		if (tools[i]->type < 3){
 			//wxImage img=tools[i]->GetBitmap().ConvertToImage();
@@ -388,7 +394,7 @@ EVT_MENU(32566, KaiToolbar::OnToolbarOpts)
 END_EVENT_TABLE()
 
 ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos)
-:wxDialog(_parent, -1, "", pos, wxSize(350, 510), wxBORDER_NONE)
+:wxDialog(_parent, -1, L"", pos, wxSize(350, 510), wxBORDER_NONE)
 , sel(-1)
 , scPos(0)
 , parent(_parent)
@@ -459,8 +465,8 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 		if (result == -1){
 			MenuItem *item = parent->mb->FindItem(parent->ids[elem]);
 			wxString desc = item->GetLabel();
-			desc.Replace("&", "");
-			desc = desc.BeforeFirst('\t');
+			desc.Replace(L"&", L"");
+			desc = desc.BeforeFirst(L'\t');
 			bool isToogleButton = item->type == ITEM_CHECK;
 			parent->AddItem(parent->ids[elem], desc, item->icon, item->IsEnabled(),
 				(isToogleButton) ? 2 : (item->GetSubMenu() != NULL) ? 1 : 0, (isToogleButton) ? item->check : false);
@@ -490,8 +496,8 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	}
 	if (!bmp){ bmp = new wxBitmap(ow, h); }
 	tdc.SelectObject(*bmp);
-	wxBitmap checkbmp = wxBITMAP_PNG("check");
-	tdc.SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Tahoma"));
+	wxBitmap checkbmp = wxBITMAP_PNG(L"check");
+	tdc.SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma"));
 	const wxColour & background = Options.GetColour(MenuBackground);
 	const wxColour & txt = Options.GetColour(WindowText);
 	tdc.SetBrush(wxBrush(background));
@@ -527,14 +533,14 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 
 		tdc.DrawBitmap(item->GetBitmap(), fh + 8, posY);
 		wxString desc = item->GetLabel();
-		desc.Replace("&", "");
-		size_t reps = desc.Replace("\t", " (");
+		desc.Replace(L"&", L"");
+		size_t reps = desc.Replace(L"\t", L" (");
 		wxString accel;
 		wxString label = desc;
 		if (reps){
-			desc.Append(")");
-			label = desc.BeforeFirst('(', &accel);
-			accel.Prepend("(");
+			desc.Append(L")");
+			label = desc.BeforeFirst(L'(', &accel);
+			accel.Prepend(L"(");
 			int fw, fhh;
 			tdc.GetTextExtent(accel, &fw, &fhh);
 			tdc.DrawText(accel, w - fw - 8, posY);

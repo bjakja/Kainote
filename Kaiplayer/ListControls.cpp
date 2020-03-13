@@ -48,7 +48,7 @@ inline void KaiChoice::CalcMaxWidth(wxSize *result, bool changex, bool changey){
 			result->x += 100;
 	}
 	if (changey){
-		GetTextExtent("TEX{}", &tx, &ty);
+		GetTextExtent(L"TEX{}", &tx, &ty);
 		result->y = ty + 10;
 	}
 }
@@ -149,7 +149,8 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 		choice = FindString(comboBoxText);
 		return;
 	}
-	choiceText = new KaiTextCtrl(this, 27789, comboBoxText, wxPoint(1, 1), wxSize(newSize.x - 22, newSize.y - 2), wxBORDER_NONE, validator);
+	choiceText = new KaiTextCtrl(this, 27789, comboBoxText, wxPoint(1, 1), 
+		wxSize(newSize.x - 22, newSize.y - 2), wxBORDER_NONE, validator);
 	choiceText->Bind(wxEVT_ENTER_WINDOW, &KaiChoice::OnMouseEvent, this, 27789);
 	choiceText->Bind(wxEVT_LEAVE_WINDOW, &KaiChoice::OnMouseEvent, this, 27789);
 	choiceText->Bind(wxEVT_MOUSEWHEEL, &KaiChoice::OnMouseEvent, this, 27789);
@@ -210,10 +211,11 @@ KaiChoice::~KaiChoice()
 
 void KaiChoice::SetToolTip(const wxString &tooltip)
 {
-	if (tooltip != ""){ toolTip = tooltip; }
-	wxString tt = (choice >= 0 || (choiceText && !choiceText->GetValue().empty())) ? toolTip + "\n" + GetString(choice) : tooltip;
+	if (tooltip != L""){ toolTip = tooltip; }
+	wxString tt = (choice >= 0 || (choiceText && !choiceText->GetValue().empty())) ? 
+		toolTip + L"\n" + GetString(choice) : tooltip;
 	if (tt.length() > 1000){
-		tt = tt.Mid(0, 1000) + "...";
+		tt = tt.Mid(0, 1000) + L"...";
 	}
 	wxWindow::SetToolTip(tt);
 	if (choiceText){ choiceText->SetToolTip(tt); }
@@ -273,14 +275,14 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 	tdc.DrawRectangle(0, 0, w, h);
 
 	if (w > 15){
-		wxBitmap arrow = wxBITMAP_PNG("arrow_list");
+		wxBitmap arrow = wxBITMAP_PNG(L"arrow_list");
 		tdc.DrawBitmap((enabled && list->size() > 0) ? arrow : arrow.ConvertToDisabled(), w - 17, (h - 10) / 2);
 
 		if ((choice >= 0 || !txtchoice.IsEmpty()) && choice < (int)list->size()){
 			int fh = 0, fw = w, ex = 0, et = 0;
 			wxString txt = (txtchoice.IsEmpty()) ? (*list)[choice] : txtchoice;
 			int removed = 0;
-			while (fw > w - 22 && txt != ""){
+			while (fw > w - 22 && txt != L""){
 				tdc.GetTextExtent(txt, &fw, &fh, &ex, &et/*, &font*/);
 				txt = txt.RemoveLast();
 				removed++;
@@ -289,7 +291,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 				txt = (txtchoice.IsEmpty()) ? (*list)[choice] : txtchoice;
 			}
 			else{
-				txt = txt.RemoveLast(2) + "...";
+				txt = txt.RemoveLast(2) + L"...";
 			}
 			if (!choiceText){
 				tdc.SetTextForeground((enabled) ? Options.GetColour(foreground) :
@@ -423,7 +425,7 @@ void KaiChoice::SetSelection(int sel, bool changeText)
 {
 	if (sel >= (int)list->size()){ return; }
 	choice = sel;
-	txtchoice = (sel < 0) ? "" : (*list)[sel];
+	txtchoice = (sel < 0) ? L"" : (*list)[sel];
 
 	if (itemList && itemList->IsShown()){
 		itemList->SetSelection(choice);
@@ -459,7 +461,7 @@ void KaiChoice::PutArray(wxArrayString *arr)
 	wxString ce = (choice >= 0 && choice < (int)list->size()) ? (*list)[choice] : L"";
 	if (list){ delete list; }
 	list = new wxArrayString(*arr);
-	if (list->size() < 1){ choice = -1; ce = ""; }
+	if (list->size() < 1){ choice = -1; ce = L""; }
 	if (itemList){ itemList->Destroy(); itemList = NULL; }
 	if (ce != ""){
 		if (choice >= (int)list->size()){
@@ -529,7 +531,7 @@ void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool setT
 	wxString PrtName = PartialName.Lower();
 	size_t k = 0;
 	int lastMatch = 0;
-	if (PartialName == ""){
+	if (PartialName == L""){
 		goto done;
 	}
 	for (size_t i = 0; i < list->size(); i++){
@@ -681,7 +683,7 @@ PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, 
 {
 	int fw = 0;
 	SetFont(DialogParent->GetFont());
-	GetTextExtent("#TWFfGH", &fw, &height);
+	GetTextExtent(L"#TWFfGH", &fw, &height);
 	height += 6;
 }
 

@@ -91,13 +91,14 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	panelrows = (h / (GridHeight + 1)) + 1;
 	if (scrollPosition < 0){ scrollPosition = 0; scrollPositionId = 0; }
 	int scrows = scrollPositionId + panelrows;
-	//gdy widzimy koniec napisów
+	//get to end of subtitles
 	if (scrows >= size + 3){
 		bg = true;
 		scrows = size + 1;
-		scrollPositionId = (scrows - panelrows) + 2;// dojechanie do końca napisów
+		scrollPositionId = (scrows - panelrows) + 2;// end of subtitles
 		scrollPosition = file->GetElementById(scrollPositionId);
-		if (panelrows > size + 3){ scrollPosition = 0; scrollPositionId = 0; }// w przypadku gdy całe napisy są widoczne, wtedy nie skrollujemy i pozycja =0
+		// when all subtitles are visible do not scrolling position = 0
+		if (panelrows > size + 3){ scrollPosition = 0; scrollPositionId = 0; }
 	}
 	else if (scrows >= size + 2){
 		bg = true;
@@ -1817,7 +1818,8 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 			firsti = i + tagsReplacement.length(); word = L""; continue;
 		}
 
-		if (!block && (!iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT) || ch == L'\'') /*notchar.Find(ch) == -1*/ && text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){ word << ch; lasti = i; }
+		if (!block && (!iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT) || ch == L'\'') /*notchar.Find(ch) == -1*/ && 
+			text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){ word << ch; lasti = i; }
 		else if (!block && text.GetChar((i == 0) ? 0 : i - 1) == L'\\'){
 			word = L"";
 			if (ch == L'N' || ch == L'n' || ch == L'h'){

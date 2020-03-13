@@ -119,7 +119,7 @@ void STime::Change(int ms)
 	if (mstime < 0){ mstime = 0; }
 	if (form == MDVD){
 		//MDVD format normally will take 25fps same as in Vobsub
-		orgframe = ceil(mstime*(25.f / 1000.f));
+		orgframe = ceil(mstime * (25.f / 1000.f));
 	}
 }
 void STime::ChangeFrame(int frame)
@@ -132,7 +132,7 @@ void STime::NewTime(int ms)
 	mstime = ms; if (mstime < 0){ mstime = 0; }
 	if (form == MDVD){
 		//MDVD format normally will take 25fps same as in Vobsub
-		orgframe = ceil(mstime*(25.f / 1000.f));
+		orgframe = ceil(mstime * (25.f / 1000.f));
 	}
 
 }
@@ -155,12 +155,12 @@ void STime::ChangeFormat(char format, float fps)
 	if (form == MDVD && format != FRAME){
 		float fpsa = (fps) ? fps : Options.GetFloat(ConvertFPS);
 		if (fpsa < 1){ fpsa = 23.976f; }
-		mstime = (orgframe / fpsa)*(1000);
+		mstime = (orgframe / fpsa) * (1000);
 	}
 	else if (format == MDVD && form != FRAME){
 		float fpsa = (fps) ? fps : Options.GetFloat(ConvertFPS);
 		if (fpsa<1){ fpsa = 23.976f; }
-		orgframe = ceil(mstime*(fpsa / 1000));
+		orgframe = ceil(mstime * (fpsa / 1000));
 	}
 	form = format;
 }

@@ -33,7 +33,7 @@ static int minWidth = 0;
 wxDEFINE_EVENT(EVT_MENU_OPENED, MenuEvent);
 
 void Mnemonics::findMnemonics(const wxString &label, int pos){
-	int result = label.Find('&');
+	int result = label.Find(L'&');
 	if (result != -1){
 		wxString rawmnemonics = label.Mid(result + 1, 1);
 		wchar_t mn = rawmnemonics.Upper()[0];
@@ -75,17 +75,17 @@ wxBitmap MenuItem::GetBitmap()
 
 void MenuItem::SetAccel(wxAcceleratorEntry *entry, const wxString &stringAccel /*= ""*/)
 {
-	if (label.find("\t") != -1){ label = label.BeforeFirst('\t'); }
-	label += "\t";
+	if (label.find(L"\t") != -1){ label = label.BeforeFirst(L'\t'); }
+	label += L"\t";
 	label += (entry && entry->IsOk()) ? entry->ToString() : stringAccel;
-	label.Replace("+", "-");
+	label.Replace(L"+", L"-");
 }
 
 wxString MenuItem::GetAccel(){
-	if (label.find("\t") == -1)
+	if (label.find(L"\t") == -1)
 		return emptyString;
 
-	return label.AfterFirst('\t');
+	return label.AfterFirst(L'\t');
 }
 
 Menu::Menu(char window)
@@ -342,7 +342,7 @@ void Menu::Check(int id, bool check)
 
 void Menu::AppendSeparator()
 {
-	MenuItem *item = new MenuItem(-2, "", "", false, 0, 0, ITEM_SEPARATOR);
+	MenuItem *item = new MenuItem(-2, L"", L"", false, 0, 0, ITEM_SEPARATOR);
 	items.push_back(item);
 }
 
@@ -362,9 +362,9 @@ MenuItem *Menu::SetAccMenu(int id, const wxString &txt, const wxString &help, bo
 {
 	idAndType itype(id, wnd);
 	wxString txtcopy = txt;
-	txtcopy.Replace("&", "");
+	txtcopy.Replace(L"&", L"");
 	wxString hkey = Hkeys.GetStringHotkey(itype, txtcopy);
-	wxString mtext = (hkey != "") ? txt.BeforeFirst('\t') + "\t" + hkey : txt;
+	wxString mtext = (hkey != L"") ? txt.BeforeFirst(L'\t') + L"\t" + hkey : txt;
 	return Append(id, mtext, help, enable, 0, 0, kind);
 }
 
@@ -521,7 +521,7 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 		}
 		if (sel != submenuToHide){ sel = -1; Refresh(false); }
 		KainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
-		frame->SetStatusText("", 0);
+		frame->SetStatusText(L"", 0);
 		return;
 	}
 	else if (evt.Entering()){
@@ -635,10 +635,10 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	}
 	if (!bmp){ bmp = new wxBitmap(ow, h); }
 	tdc.SelectObject(*bmp);
-	wxBitmap checkbmp = wxBITMAP_PNG("check");
-	wxBitmap dot = wxBITMAP_PNG("dot");
-	wxBitmap separator = wxBITMAP_PNG("separator");
-	wxBitmap arrow = wxBITMAP_PNG("arrow");
+	wxBitmap checkbmp = wxBITMAP_PNG(L"check");
+	wxBitmap dot = wxBITMAP_PNG(L"dot");
+	wxBitmap separator = wxBITMAP_PNG(L"separator");
+	wxBitmap arrow = wxBITMAP_PNG(L"arrow");
 	const wxColour & highlight = Options.GetColour(MenuBorderSelection);
 	const wxColour & text = Options.GetColour(WindowText);
 	const wxColour & graytext = Options.GetColour(WindowTextInactive);
@@ -689,9 +689,9 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 		}
 		wxString desc = item->GetLabel();
 		tdc.SetTextForeground((item->enabled) ? text : graytext);
-		if (showMnemonics && desc.Find('&') != -1){
+		if (showMnemonics && desc.Find(L'&') != -1){
 			wxString rest;
-			wxString beforemn = desc.BeforeFirst('&', &rest);
+			wxString beforemn = desc.BeforeFirst(L'&', &rest);
 			mnbefsize = tdc.GetTextExtent(beforemn);
 
 			linesize = tdc.GetTextExtent(rest[0]);
@@ -699,15 +699,15 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 		}
 		else{ hasMnemonics = false; }
 
-		desc.Replace("&", "");
-		int find = desc.find("\t");
+		desc.Replace(L"&", L"");
+		int find = desc.find(L"\t");
 		//tdc.SetPen(wxPen("#497CB0"));
 		if (find != -1){
 			int fw, fhh;
-			wxString accel = desc.AfterLast('\t');
+			wxString accel = desc.AfterLast(L'\t');
 			tdc.GetTextExtent(accel, &fw, &fhh);
 			tdc.DrawText(accel, w - fw - 20, (height*i) + 4);
-			desc = desc.BeforeLast('\t');
+			desc = desc.BeforeLast(L'\t');
 		}
 		tdc.DrawText(desc, textStart, (height*i) + 4);
 		if (hasMnemonics){
@@ -737,7 +737,7 @@ void MenuDialog::HideMenus(int id)
 {
 	if (!ParentMenu){ return; }
 	KainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
-	frame->SetStatusText("", 0);
+	frame->SetStatusText(L"", 0);
 	MenuBar::Menubar->md = NULL;
 	int subMenu = ParentMenu->submenuToHide;
 	Menu *menu = ParentMenu->parent;
@@ -874,7 +874,7 @@ void MenuBar::ShowMenu(){
 	for (int i = 0; i < shownMenu; i++){
 		Menu *menu = Menus[i];
 		wxString desc = menu->GetTitle();
-		desc.Replace("&", "");
+		desc.Replace(L"&", L"");
 		wxSize te = GetTextExtent(desc);
 		posX += te.x + menuIndent;
 	}
@@ -981,9 +981,9 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 		wxString desc = menu->GetTitle();
 
 
-		if (showMnemonics && desc.Find('&') != -1){
+		if (showMnemonics && desc.Find(L'&') != -1){
 			wxString rest;
-			wxString beforemn = desc.BeforeFirst('&', &rest);
+			wxString beforemn = desc.BeforeFirst(L'&', &rest);
 			mnbefsize = tdc.GetTextExtent(beforemn);
 
 			linesize = tdc.GetTextExtent(rest[0]);
@@ -991,7 +991,7 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 		}
 		else{ hasMnemonics = false; }
 
-		desc.Replace("&", "");
+		desc.Replace(L"&", L"");
 		wxSize te = tdc.GetTextExtent(desc);
 
 		if (i == sel){
@@ -1033,7 +1033,7 @@ int MenuBar::CalcMousePos(wxPoint *pos)
 	for (size_t i = 0; i < Menus.size(); i++){
 		Menu *menu = Menus[i];
 		wxString desc = menu->GetTitle();
-		desc.Replace("&", "");
+		desc.Replace(L"&", L"");
 		wxSize te = GetTextExtent(desc);
 		if (pos->x > posX && (posX + te.x + menuIndent) > pos->x){
 			pos->x = posX, pos->y = posX + te.x + halfIndent;
@@ -1058,7 +1058,7 @@ void MenuBar::Enable(int id, bool enable)
 {
 	MenuItem * item = FindItem(id);
 	if (item){ item->Enable(enable); }
-	else{ KaiLog(wxString::Format("Cannot enable item with id %i", id)); }
+	else{ KaiLog(wxString::Format(L"Cannot enable item with id %i", id)); }
 }
 
 //void MenuBar::AppendAccelerators(std::vector <wxAcceleratorEntry> *entries)

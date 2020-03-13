@@ -30,14 +30,14 @@
 
 wxDEFINE_EVENT(CURSOR_MOVED, wxCommandEvent);
 
-wxString TextEditor::LuaKeywords[] = { "function", "for", "if", "while", "do", "then", "end", "or", "and", "repeat", "until", "math", "local" };
+wxString TextEditor::LuaKeywords[] = { L"function", L"for", L"if", L"while", L"do", L"then", L"end", L"or", L"and", L"repeat", L"until", L"math", L"local" };
 
 TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos, const wxSize& size, long style)
 	:wxWindow(parent, id, pos, size, style)
 {
 	useSpellchecker = _spell;
 	SpellCheckerOnOff = (_spell)? Options.GetBool(SpellcheckerOn) : false;
-	MText = "";
+	MText = L"";
 	bmp = NULL;
 	fsize = 10;
 	posY = 0;
@@ -101,7 +101,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	//font = wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Verdana");
 	font = wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
 	int fw, fh;
-	GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
+	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	fontHeight = fh;
 	scroll = new KaiScrollbar(this, 3333, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
 	scroll->SetCursor(wxCURSOR_DEFAULT);
@@ -142,7 +142,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 
 	wraps.clear();
 	wraps.push_back(0);
-	if (MText != ""){
+	if (MText != L""){
 		int w, h, fw = 0, fh = 0;
 		double gcfw = 0.f, gcfh = 0.f;
 		GetClientSize(&w, &h);
@@ -168,7 +168,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 			else{
 
 				int podz = 0;
-				wxString wrapchars = " \\,;:}{()";
+				wxString wrapchars = L" \\,;:}{()";
 
 				int nwrap = -1;
 				int allwrap = 0;
@@ -368,7 +368,7 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 	if (ctrl && key == L'0'){
 		font.SetPointSize(10);
 		int fw, fh;
-		GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
+		GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 		fontHeight = fh;
 		caret->SetSize(1, fh);
 		CalcWrap(false, false);
@@ -596,7 +596,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 
 
 
-	if (event.LeftDClick() && MText != "" && isInField){
+	if (event.LeftDClick() && MText != L"" && isInField){
 		wasDoubleClick = true;
 		dclickCurPos = mousePosition;
 		time = timeGetTime();
@@ -733,7 +733,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 
 				floatNumber += step;
 
-				Replace(numberPos.x, numberPos.y + 1, getfloat(floatNumber, "10.3f"));
+				Replace(numberPos.x, numberPos.y + 1, getfloat(floatNumber, L"10.3f"));
 			}
 		}
 	}
@@ -744,7 +744,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 			if (fsize < 7 || fsize>70){ fsize = MID(7, fsize, 70); return; }
 			font.SetPointSize(fsize);
 			int fw, fh;
-			GetTextExtent("#TWFfGH", &fw, &fh, NULL, NULL, &font);
+			GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 			fontHeight = fh;
 			caret->SetSize(1, fh);
 			CalcWrap(false, false);
@@ -1025,7 +1025,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			gc->SetBrush(wxBrush(col));
 			//dc.SetPen(wxPen(col));
 			wxString text = MText.SubString(wraps[bry], i - 1);
-			text.Replace("\t", "");
+			text.Replace(L"\t", L"");
 			if (i > 0){ gc->GetTextExtent(text, &fw, &fh); }
 			else{ fw = 0; }
 			gc->GetTextExtent(MText[i], &fww, &fh);
@@ -1230,7 +1230,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 	bool hasFocus = HasFocus();
 
 	dc.SetFont(font);
-	wxString alltext = MText + " ";
+	wxString alltext = MText + L" ";
 	int len = alltext.length();
 	const wxUniChar &bchar = alltext[Cursor.x];
 	if (bchar == L'{')
@@ -1319,7 +1319,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 				cursorWasSet = true;
 			}
 
-			if (parttext != ""){
+			if (parttext != L""){
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				wxColour kol = (val || (isTemplateLine && parttext.IsNumber())) ? cvalues : (slash) ? cnames :
 					(templateString) ? ctstrings : (isTemplateLine && ch == L'(') ? ctfunctions :
@@ -1537,7 +1537,7 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 	else{ cur->x = wraps[cur->y]; }
 
 	bool find = false;
-	wxString txt = MText + " ";
+	wxString txt = MText + L" ";
 
 	int wlen = MText.length();
 	int fww = 0;
@@ -1550,7 +1550,7 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 	for (int i = cur->x; i<wraps[cur->y + 1] + 1; i++)
 	{
 		wxString text = txt.SubString(cur->x, i);
-		text.Replace("\t", "");
+		text.Replace(L"\t", L"");
 		if (gc){
 			gc->GetTextExtent(text, &gcfw, &gcfh);
 			gc->GetTextExtent(txt[i], &gcfw1, &gcfh);
@@ -1620,13 +1620,13 @@ void TextEditor::Replace(int start, int end, const wxString &rep)
 
 void TextEditor::CheckText()
 {
-	if (MText == ""){ return; }
+	if (MText == L""){ return; }
 	wxString text = MText;
 	errors.clear();
 	misspels.Clear();
-	text += " ";
+	text += L" ";
 	bool block = false;
-	wxString word = "";
+	wxString word = L"";
 	int lasti = 0;
 	int firsti = 0;
 	int lastStartBracket = -1;
@@ -1639,21 +1639,21 @@ void TextEditor::CheckText()
 		wxUniChar ch = text.GetChar(i);
 		if (iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT) && ch != L'\'' && !block){
 			if (word.length() > 1){
-				if (word.StartsWith("'")){ word = word.Remove(0, 1); }
-				if (word.EndsWith("'")){ word = word.RemoveLast(1); }
+				if (word.StartsWith(L"'")){ word = word.Remove(0, 1); }
+				if (word.EndsWith(L"'")){ word = word.RemoveLast(1); }
 				word.Trim(false); word.Trim(true);
 				bool isgood = SpellChecker::Get()->CheckWord(word);
 				if (!isgood){ misspels.Add(word); errors.push_back(firsti); errors.push_back(lasti); }
 			}
-			word = ""; firsti = i + 1;
+			word = L""; firsti = i + 1;
 		}
 		if (block){
-			if (ch == L'{'){ errors.push_back(lastStartCBracket); errors.push_back(lastStartCBracket); misspels.Add(""); }
-			if (ch == L'\\' && text[(i == 0) ? 0 : i - 1] == L'\\'){ errors.push_back(i); errors.push_back(i); misspels.Add(""); }
+			if (ch == L'{'){ errors.push_back(lastStartCBracket); errors.push_back(lastStartCBracket); misspels.Add(L""); }
+			if (ch == L'\\' && text[(i == 0) ? 0 : i - 1] == L'\\'){ errors.push_back(i); errors.push_back(i); misspels.Add(L""); }
 			if (ch == L'('){
 				if (i > 1 && text[i - 2] == L'\\' && text[i - 1]){ lastStartTBracket = i; continue; }
 				if (lastStartBracket > lastEndBracket){
-					errors.push_back(lastStartBracket); errors.push_back(lastStartBracket); misspels.Add("");
+					errors.push_back(lastStartBracket); errors.push_back(lastStartBracket); misspels.Add(L"");
 				}
 				lastStartBracket = i;
 			}
@@ -1662,27 +1662,27 @@ void TextEditor::CheckText()
 					if (lastStartTBracket > 0 && (lastStartTBracket < lastEndBracket || lastStartBracket < lastStartTBracket)){
 						lastStartTBracket = -1; continue;
 					}
-					errors.push_back(i); errors.push_back(i); misspels.Add("");
+					errors.push_back(i); errors.push_back(i); misspels.Add(L"");
 				}
 				lastEndBracket = i;
 			}
 		}
 		if (!block && ch == L'}'){
-			errors.push_back(i); errors.push_back(i); misspels.Add("");
+			errors.push_back(i); errors.push_back(i); misspels.Add(L"");
 		}
 		if (lastStartTBracket >= 0 && ch == L'{' || ch == L'}'){
-			errors.push_back(lastStartTBracket); errors.push_back(lastStartTBracket); misspels.Add("");
+			errors.push_back(lastStartTBracket); errors.push_back(lastStartTBracket); misspels.Add(L"");
 			lastStartTBracket = -1;
 		}
 		if (ch == L'{'){ block = true; lastStartCBracket = i; continue; }
-		else if (ch == L'}'){ block = false; lastEndCBracket = i; firsti = i + 1; word = ""; continue; }
+		else if (ch == L'}'){ block = false; lastEndCBracket = i; firsti = i + 1; word = L""; continue; }
 
 		if (!block && /*notchar.Find(ch)==-1*/ (!iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT) || ch == L'\'') &&
 			text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){
 			word << ch; lasti = i;
 		}
 		else if (!block && text.GetChar((i == 0) ? 0 : i - 1) == L'\\'){
-			word = "";
+			word = L"";
 			if (ch == L'N' || ch == L'n' || ch == L'h'){
 				firsti = i + 1;
 			}
@@ -1693,9 +1693,21 @@ void TextEditor::CheckText()
 		}
 	}
 
-	if (lastStartCBracket > lastEndCBracket){ errors.push_back(lastStartCBracket); errors.push_back(lastStartCBracket); misspels.Add(""); }
-	if (lastStartBracket > lastEndBracket){ errors.push_back(lastStartBracket); errors.push_back(lastStartBracket); misspels.Add(""); }
-	if (lastStartTBracket >= 0){ errors.push_back(lastStartTBracket); errors.push_back(lastStartTBracket); misspels.Add(""); }
+	if (lastStartCBracket > lastEndCBracket){ 
+		errors.push_back(lastStartCBracket); 
+		errors.push_back(lastStartCBracket); 
+		misspels.Add(L""); 
+	}
+	if (lastStartBracket > lastEndBracket){ 
+		errors.push_back(lastStartBracket); 
+		errors.push_back(lastStartBracket); 
+		misspels.Add(L""); 
+	}
+	if (lastStartTBracket >= 0){ 
+		errors.push_back(lastStartTBracket); 
+		errors.push_back(lastStartTBracket); 
+		misspels.Add(L""); 
+	}
 }
 
 wxUniChar TextEditor::CheckQuotes()
@@ -1808,9 +1820,11 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 		numOfLanguages = dics.size();
 		const wxString &language = Options.GetString(DictionaryLanguage);
 		Menu *languageMenu = new Menu();
-		menut.Append(MENU_SPELLCHECKER_ON, _("Sprawdzanie pisowni"), "", true, NULL, NULL, ITEM_CHECK_AND_HIDE)->Check(Options.GetBool(SpellcheckerOn));
+		menut.Append(MENU_SPELLCHECKER_ON, _("Sprawdzanie pisowni"), L"", true, 
+			NULL, NULL, ITEM_CHECK_AND_HIDE)->Check(Options.GetBool(SpellcheckerOn));
 		for (int k = 0; k < numOfLanguages; k++){
-			languageMenu->Append(MENU_SPELLCHECKER_ON + k + 1, dics[k], "", true, NULL, NULL, (language == dics[k])? ITEM_RADIO : ITEM_NORMAL);
+			languageMenu->Append(MENU_SPELLCHECKER_ON + k + 1, dics[k], L"", true, 
+				NULL, NULL, (language == dics[k])? ITEM_RADIO : ITEM_NORMAL);
 		}
 		menut.Append(MENU_SPELLCHECKER_ON - 1, _("Zainstalowane języki"), languageMenu);
 	}
@@ -1820,8 +1834,10 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	}
 
 	menut.Append(TEXTM_DEL, _("&Usuń"))->Enable(Selend.x != Cursor.x);
-	menut.Append(MENU_SHOW_STATUS_BAR, _("Pokaż pasek stanu"), NULL, L"", ITEM_CHECK)->Check(!Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR));
-	menut.Append(MENU_CHANGE_QUOTES, _("Automatycznie zamieniaj cydzysłów"), NULL, L"", ITEM_CHECK)->Check(Options.GetBool(TEXT_EDITOR_CHANGE_QUOTES));
+	menut.Append(MENU_SHOW_STATUS_BAR, _("Pokaż pasek stanu"), NULL, L"", 
+		ITEM_CHECK)->Check(!Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR));
+	menut.Append(MENU_CHANGE_QUOTES, _("Automatycznie zamieniaj cydzysłów"), 
+		NULL, L"", ITEM_CHECK)->Check(Options.GetBool(TEXT_EDITOR_CHANGE_QUOTES));
 	
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		MenuItem * item = (MenuItem*)evt.GetClientData();
@@ -1888,11 +1904,11 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 		GetSelection(&from, &to);
 		wxString word = MText.SubString(from, to - 1).Trim();
 
-		word.Replace(" ", "+");
+		word.Replace(L" ", L"+");
 		wxString url = page + word;
 		WinStruct<SHELLEXECUTEINFO> sei;
 		sei.lpFile = url.c_str();
-		sei.lpVerb = wxT("open");
+		sei.lpVerb = L"open";
 		sei.nShow = SW_RESTORE;
 		sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
 
@@ -1953,10 +1969,10 @@ void TextEditor::Paste()
 			wxTextDataObject data;
 			wxTheClipboard->GetData(data);
 			wxString whatpaste = data.GetText();
-			whatpaste.Replace("\n", " ");
-			whatpaste.Replace("\r", "");
-			whatpaste.Replace("\f", "");
-			whatpaste.Replace("\t", " ");
+			whatpaste.Replace(L"\n", L" ");
+			whatpaste.Replace(L"\r", L"");
+			whatpaste.Replace(L"\f", L"");
+			whatpaste.Replace(L"\t", L" ");
 			int curx = Cursor.x;
 			int selx = Selend.x; if (curx > selx){ int tmp = curx; curx = selx; selx = tmp; }
 			if (Selend.x != Cursor.x){
@@ -2156,17 +2172,17 @@ void TextEditor::DrawWordRectangles(int type, wxDC &dc)
 		if (wraps[fsty] >= words[g]){ fw = 0; }
 		else{
 			wxString ftext = MText.SubString(wraps[fsty], words[g] - 1);
-			ftext.Replace("\t", "");
+			ftext.Replace(L"\t", L"");
 			GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font);
 		}
 		int scndy = FindY(words[g + 1]);
 		wxString etext = MText.SubString(words[g], (fsty == scndy) ? words[g + 1] : wraps[fsty + 1]);
-		etext.Replace("\t", "");
+		etext.Replace(L"\t", L"");
 		GetTextExtent(etext, &fww, &fh, NULL, NULL, &font);
 		for (int q = fsty + 1; q <= scndy; q++){
 			int rest = (q == scndy) ? words[g + 1] : wraps[q + 1];
 			wxString btext = MText.SubString(wraps[q], rest);
-			btext.Replace("\t", "");
+			btext.Replace(L"\t", L"");
 			GetTextExtent(btext, &fwww, &fh, NULL, NULL, &font);
 			dc.DrawRectangle(3, ((q*fontHeight) + 1) - scrollPositionV, fwww, fontHeight);
 		}
@@ -2186,17 +2202,17 @@ void TextEditor::DrawWordRectangles(int type, GraphicsContext *gc)
 		if (wraps[fsty] >= words[g]){ fw = 0.0; }
 		else{
 			wxString ftext = MText.SubString(wraps[fsty], words[g] - 1);
-			ftext.Replace("\t", "");
+			ftext.Replace(L"\t", L"");
 			gc->GetTextExtent(ftext, &fw, &fh);
 		}
 		int scndy = FindY(words[g + 1]);
 		wxString etext = MText.SubString(words[g], (fsty == scndy) ? words[g + 1] : wraps[fsty + 1]);
-		etext.Replace("\t", "");
+		etext.Replace(L"\t", L"");
 		gc->GetTextExtent(etext, &fww, &fh);
 		for (int q = fsty + 1; q <= scndy; q++){
 			int rest = (q == scndy) ? words[g + 1] : wraps[q + 1];
 			wxString btext = MText.SubString(wraps[q], rest);
-			btext.Replace("\t", "");
+			btext.Replace(L"\t", L"");
 			gc->GetTextExtent(btext, &fwww, &fh);
 			gc->DrawRectangle(3, ((q * fontHeight) + 1) - scrollPositionV, fwww, fontHeight);
 		}
@@ -2206,7 +2222,7 @@ void TextEditor::DrawWordRectangles(int type, GraphicsContext *gc)
 
 bool TextEditor::GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &number, float &step)
 {
-	wxString digits = "0123456789.-";
+	wxString digits = L"0123456789.-";
 	int endPos = cursorPos;
 	for (size_t i = endPos; i < MText.length(); i++){
 		if (digits.find(MText[i]) == -1)
@@ -2223,7 +2239,7 @@ bool TextEditor::GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &n
 	}
 	if (startPos <= endPos){
 		wxString strNum = MText.Mid(startPos, endPos - startPos + 1);
-		if (strNum != "." && strNum != "-"){
+		if (strNum != L"." && strNum != L"-"){
 			double result = 0.;
 			if (!strNum.ToCDouble(&result))
 				return false;

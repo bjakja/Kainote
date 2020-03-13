@@ -29,27 +29,28 @@ public:
 	size_t from=0;
 	size_t to=0;
 	wxColour color;
-	//maybe later I add font when I make custom dc class with GDI plus
+	//maybe later I add font when I make custom dc class with D2D
 };
 class GraphicsContext;
 
 class KaiTextCtrl : public KaiScrolledWindow
 {
 public:
-	KaiTextCtrl(wxWindow *parent, int id, const wxString &text="", const wxPoint& pos=wxDefaultPosition,
-		const wxSize& size=wxDefaultSize, long style=0, const wxValidator & validator = wxDefaultValidator, const wxString & name = ""); 
+	KaiTextCtrl(wxWindow *parent, int id, const wxString &text = L"", const wxPoint& pos = wxDefaultPosition,
+		const wxSize& size = wxDefaultSize, long style = 0, 
+		const wxValidator & validator = wxDefaultValidator, const wxString & name = L""); 
 	virtual ~KaiTextCtrl();
-	void SetValue(const wxString &text,bool modif=false, bool newSel = true);
+	void SetValue(const wxString &text, bool modif = false, bool newSel = true);
 	bool Modified();
 	void GetSelection(long *start, long* end);
 	void SetSelection(unsigned int start, unsigned int end, bool noEvent = false);
 	void SetWindowStyle(long style);
 	void Replace(int start, int end, const wxString & rep, bool sendEvent = true);
-	void Copy(bool cut=false);
+	void Copy(bool cut = false);
 	void Paste();
 	wxString GetValue() const;
 	bool IsModified(){return modified;};
-	void MarkDirty(){modified=true;}
+	void MarkDirty(){modified = true;}
 	bool modified;
 	bool SetForegroundColour(COLOR color){ foreground = color; Refresh(false); return true; }
 	bool SetBackgroundColour(COLOR color){ background = color; Refresh(false); return true; }
@@ -74,7 +75,7 @@ public:
 	void MoveStyles(size_t textPos, int moveIndex);
 	void DeleteStyles(size_t textStart, size_t textEnd);
 	//void SetValidator(const wxValidator &validator){};
-	size_t GetLength(){ return KText.Len(); }
+	size_t GetLength(){ return KText.length(); }
 	bool Enable(bool enable=true);
 	bool HitTest(wxPoint pos, wxPoint *cur);
 	void FindWord(int pos, int *start, int *end);
@@ -95,11 +96,11 @@ protected:
 	void OnScroll(wxScrollWinEvent& event);
 	void DrawFld(wxDC &dc,int w, int h);
 	void DrawFieldD2D(GraphicsContext *gc, int w, int h);
-	void CalcWrap(bool sendevent=true, size_t position = 0);
+	void CalcWrap(bool sendevent = true, size_t position = 0);
 	void SendEvent();
 	void GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight);
 	void GetTextExtent(GraphicsContext *gc, const wxString &textToMesure, double *textWidth, double *textHeight);
-	void MakeCursorVisible(bool refresh=true);
+	void MakeCursorVisible(bool refresh = true);
 	wxString KText;
 	wxBitmap* bmp;
 	wxFont font;
@@ -144,8 +145,8 @@ protected:
 //};
 
 enum{
-	SCROLL_ON_FOCUS=2,
-	TEXT_COPY=16545,
+	SCROLL_ON_FOCUS = 2,
+	TEXT_COPY = 16545,
 	TEXT_PASTE,
 	TEXT_CUT,
 	TEXT_DEL,

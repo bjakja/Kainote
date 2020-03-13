@@ -30,7 +30,7 @@ PopupTagList::PopupTagList(wxWindow *DialogParent)
 {
 	int fw = 0;
 	SetFont(DialogParent->GetFont());
-	GetTextExtent("#TWFfGH", &fw, &height);
+	GetTextExtent(L"#TWFfGH", &fw, &height);
 	height += 6;
 	Bind(wxEVT_MOTION, &PopupTagList::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &PopupTagList::OnMouseEvent, this);

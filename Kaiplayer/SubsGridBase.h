@@ -51,16 +51,16 @@ public:
 	//wxMutex mutex;
 	void AddLine(Dialogue *line);
 	void AddStyle(Styles *nstyl);
-	void ChangeLine(unsigned char editionType, Dialogue *line1, size_t wline, long cells, bool selline=false, bool dummy=false);
+	void ChangeLine(unsigned char editionType, Dialogue *line1, size_t wline, long cells, bool selline = false, bool dummy = false);
 	void ChangeCell(long cells, size_t wline, Dialogue *what);
 	void ChangeStyle(Styles *nstyl,size_t i);
 	void Clearing();
 	void Convert(char type);
 
-	int FindStyle(const wxString &name,int *multiplication=NULL);
-	void GetStyles(wxString &stylesText, bool tld=false);
+	int FindStyle(const wxString &name,int *multiplication = NULL);
+	void GetStyles(wxString &stylesText, bool tld = false);
 	//this function is safe, do not return NULL, when failed returns i
-	Styles *GetStyle(size_t i, const wxString &name="");
+	Styles *GetStyle(size_t i, const wxString &name = L"");
 	std::vector<Styles*> *GetStyleTable();
 	bool IsModified();
 	
@@ -71,39 +71,39 @@ public:
 	void DelStyle(int i);
 	void ChangeTimes(bool byFrame = false);
 	
-	void SortIt(short what,bool all=true);
+	void SortIt(short what, bool all = true);
 	void DeleteRows();
-	void DeleteRow(int rw,int len=1);
+	void DeleteRow(int rw,int len = 1);
 	void DeleteText();
 	void GetUndo(bool redo, int iter = -2);
 	//Warning!! Adding the same dialogue pointer to destroyer cause crash
 	//not adding it when needed cause memory leaks.
-	void InsertRows(int Row, const std::vector<Dialogue *> &RowsTable, bool AddToDestroy=false);
+	void InsertRows(int Row, const std::vector<Dialogue *> &RowsTable, bool AddToDestroy = false);
 	//Warning!! Adding the same dialogue pointer to destroyer cause crash
 	//not adding it when needed cause memory leaks.
 	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy = true, bool Save = false);
-	void SetSubsFormat(wxString ext="");
-	void AddSInfo(const wxString &SI, wxString val="", bool save=true);
+	void SetSubsFormat(wxString ext = L"");
+	void AddSInfo(const wxString &SI, wxString val = L"", bool save = true);
 	void SetModified(unsigned char editionType, bool redit = true, bool dummy = false, int SetEditBoxLine = -1, bool Scroll = true);
-	void UpdateUR(bool tolbar=true);
-	void GetSInfos(wxString &textSinfo, bool tld=false);
-	const wxString &GetSInfo(const wxString &key, int *ii=0);
-	SInfo *GetSInfoP(const wxString &key, int *ii=0);
+	void UpdateUR(bool tolbar = true);
+	void GetSInfos(wxString &textSinfo, bool tld = false);
+	const wxString &GetSInfo(const wxString &key, int *ii = 0);
+	SInfo *GetSInfoP(const wxString &key, int *ii = 0);
 	size_t FirstSelection(size_t *firstSelectionId = NULL);
-	void SwapRows(int frst, int scnd, bool sav=false);
+	void SwapRows(int frst, int scnd, bool sav = false);
 	void LoadSubtitles(const wxString &str, wxString &ext);
 	bool MoveRows(int step, bool keyStep = false);
 	void SetStartTime(int stime);
 	void SetEndTime(int etime);
 	bool SetTlMode(bool mode);
-	void LoadDefault(bool line=true,bool sav=true, bool endload=true);
+	void LoadDefault(bool line = true,bool sav = true, bool endload = true);
 	void GetASSRes(int *x,int *y);
 	size_t SInfoSize();
 	size_t GetCount();
-	void NextLine(int dir=1);
-	void SaveSelections(bool clear=false);
+	void NextLine(int dir = 1);
+	void SaveSelections(bool clear = false);
 	// no checks, check if value is unsure
-	Dialogue *CopyDialogue(size_t i, bool push=true);
+	Dialogue *CopyDialogue(size_t i, bool push = true);
 	// returns null when there's no visible dialogue with that offset or it is out of the table
 	Dialogue *CopyDialogueWithOffset(size_t i, int offset, bool push = true);
 	// no checks, check if value is unsure
@@ -111,7 +111,7 @@ public:
 	// returns null when there's no visible dialogue with that offset or it is out of the table
 	Dialogue *GetDialogueWithOffset(size_t i, int offset);
 	// returns visible lines as string for Vsfilter
-	wxString *GetVisible(bool *visible=0, wxPoint *point = NULL, wxArrayInt *selected = NULL);
+	wxString *GetVisible(bool *visible = 0, wxPoint *point = NULL, wxArrayInt *selected = NULL);
 	//Get line key from scrollPosition.
 	//Every value will be stored as key.
 	//Simple function to convert key to id from scroll position

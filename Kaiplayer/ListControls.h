@@ -76,7 +76,7 @@ public:
 		long style = 0, const wxValidator& validator = wxDefaultValidator);
 
 	virtual ~KaiChoice();
-	void SetSelection(int sel, bool changeText=true);
+	void SetSelection(int sel, bool changeText = true);
 	void Clear();
 	/*void Prepend(wxString what);*/
 	void Insert(const wxString &what, int position);
@@ -92,8 +92,8 @@ public:
 	void Append(const wxArrayString &itemsArray);
 	void PutArray(wxArrayString *arr);
 	void GetArray(wxArrayString *arr){ if (arr) *arr = *list; }
-	void Delete(int num, int nRemove=1);
-	void SetToolTip(const wxString &tooltip="");
+	void Delete(int num, int nRemove = 1);
+	void SetToolTip(const wxString &tooltip = L"");
 	void Sort();
 	bool SetBackgroundColour(COLOR col);
 	bool SetForegroundColour(COLOR col);
@@ -116,7 +116,7 @@ private:
 	void ShowList();
 	void SendEvent(int choice);
 	void SetSelectionByPartialName(const wxString &partialName, bool setText = false, bool selectOnList = false);
-	void SelectChoice(int sel, bool select = true, bool sendEvent=true);
+	void SelectChoice(int sel, bool select = true, bool sendEvent = true);
 	inline void CalcMaxWidth(wxSize *result, bool changex, bool changey);
 	void OnArrow(wxCommandEvent &evt);
 	void OnActivate(wxFocusEvent &evt);

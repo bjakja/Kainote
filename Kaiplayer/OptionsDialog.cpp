@@ -461,23 +461,26 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 		for (int i = 0; i < 3; i++)
 		{
-			KaiCheckBox *opt = new KaiCheckBox(ConvOpt, -1, (i == 0) ? _("FPS z wideo") : (i == 1) ? _("Nowe czasy końcowe") : _("Pokaż okno przed konwersją"));
+			KaiCheckBox *opt = new KaiCheckBox(ConvOpt, -1, (i == 0) ? _("FPS z wideo") : 
+				(i == 1) ? _("Nowe czasy końcowe") : _("Pokaż okno przed konwersją"));
 			CONFIG optname = (i == 0) ? ConvertFPSFromVideo : (i == 1) ? ConvertNewEndTimes : ConvertShowSettings;
 			opt->SetValue(Options.GetBool(optname));
 			ConOpt(opt, optname);
 			ConvOptSizer1->Add(opt, 0, wxRIGHT | wxEXPAND, 5);
 		}
 
-		NumCtrl *sc = new NumCtrl(ConvOpt, 20000, Options.GetString(ConvertTimePerLetter), 30, 1000, true, wxDefaultPosition, wxSize(250, -1), wxTE_PROCESS_ENTER);
+		NumCtrl *sc = new NumCtrl(ConvOpt, 20000, Options.GetString(ConvertTimePerLetter), 30, 1000, true, 
+			wxDefaultPosition, wxSize(250, -1), wxTE_PROCESS_ENTER);
 		ConOpt(sc, ConvertTimePerLetter);
 		obr2->Add(sc, 1, wxALL /*| wxALIGN_CENTER*/ | wxEXPAND, 2);
 		ConvOptSizer1->Add(obr2, 0, wxRIGHT | wxEXPAND, 5);
 
-		sc = new NumCtrl(ConvOpt, 20000, Options.GetString(ConvertResolutionWidth), 1, 3000, true, wxDefaultPosition, wxSize(115, -1), wxTE_PROCESS_ENTER);
+		sc = new NumCtrl(ConvOpt, 20000, Options.GetString(ConvertResolutionWidth), 1, 3000, true, 
+			wxDefaultPosition, wxSize(115, -1), wxTE_PROCESS_ENTER);
 		ConOpt(sc, ConvertResolutionWidth);
 		obr4->Add(sc, 1, wxALL /*| wxALIGN_CENTER*/ | wxEXPAND, 2);
 
-		KaiStaticText* txt = new KaiStaticText(ConvOpt, -1, " X ");
+		KaiStaticText* txt = new KaiStaticText(ConvOpt, -1, L" X ");
 		obr4->Add(txt, 0, wxTOP, 5);
 
 		sc = new NumCtrl(ConvOpt, 20000, Options.GetString(ConvertResolutionHeight), 1, 3000, true, wxDefaultPosition, wxSize(115, -1), wxTE_PROCESS_ENTER);
@@ -508,14 +511,17 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			MainSizer->Add(opt, 0, wxALL, 2);
 		}
 		KaiStaticBoxSizer *prefaudio = new KaiStaticBoxSizer(wxHORIZONTAL, Video, voptspl[3]);
-		KaiTextCtrl *tc = new KaiTextCtrl(Video, -1, Options.GetString(vopts[3]), wxDefaultPosition, wxSize(250, -1), wxTE_PROCESS_ENTER);
+		KaiTextCtrl *tc = new KaiTextCtrl(Video, -1, Options.GetString(vopts[3]), 
+			wxDefaultPosition, wxSize(250, -1), wxTE_PROCESS_ENTER);
 		ConOpt(tc, vopts[3]);
 		prefaudio->Add(tc, 1, wxALL /*| wxALIGN_CENTER*/ | wxEXPAND, 2);
 		MainSizer->Add(prefaudio, 0, wxRIGHT | wxEXPAND, 5);
 		KaiStaticBoxSizer *seekingsizer = new KaiStaticBoxSizer(wxHORIZONTAL, Video, voptspl[4]);
 
-		wxString seekingOpts[] = { _("Liniowe"), _("Normalne"), _("Niebezpieczne (szybkie w każdym przypadku)"), _("Agresywne (szybkie przy cofaniu)") };
-		KaiChoice *sopts = new KaiChoice(Video, 10000, wxDefaultPosition, wxSize(200, -1), 4, seekingOpts, wxTE_PROCESS_ENTER);
+		wxString seekingOpts[] = { _("Liniowe"), _("Normalne"), 
+			_("Niebezpieczne (szybkie w każdym przypadku)"), _("Agresywne (szybkie przy cofaniu)") };
+		KaiChoice *sopts = new KaiChoice(Video, 10000, 
+			wxDefaultPosition, wxSize(200, -1), 4, seekingOpts, wxTE_PROCESS_ENTER);
 		sopts->SetSelection(Options.GetInt(vopts[4]));
 		seekingsizer->Add(sopts, 1, wxALL /*| wxALIGN_CENTER*/ | wxEXPAND, 2);
 		MainSizer->Add(seekingsizer, 0, wxRIGHT | wxEXPAND, 5);
@@ -524,7 +530,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		KaiStaticBoxSizer *filtersizer = new KaiStaticBoxSizer(wxHORIZONTAL, Video, voptspl[5]);
 		wxArrayString vsfilters;
 		Options.GetVSFiltersList(vsfilters);
-		KaiChoice *vsfiltersList = new KaiChoice(Video, 10002, wxDefaultPosition, wxSize(200, -1), vsfilters, wxTE_PROCESS_ENTER);
+		KaiChoice *vsfiltersList = new KaiChoice(Video, 10002, 
+			wxDefaultPosition, wxSize(200, -1), vsfilters, wxTE_PROCESS_ENTER);
 		wxString name = Options.GetString(vopts[5]);
 		int result = vsfilters.Index(name);
 		if (result < 0)
@@ -554,7 +561,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		Connect(26667, LIST_ITEM_DOUBLECLICKED, (wxObjectEventFunction)&OptionsDialog::OnMapHkey);
 		//Connect(26667,LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);
 
-		if (!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){ KaiMessageBox(_("Nie można wczytać skrótów klawiszowych audio"), _("Błąd")); }
+		if (!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){ 
+			KaiMessageBox(_("Nie można wczytać skrótów klawiszowych audio"), _("Błąd")); 
+		}
 
 		std::map<idAndType, hdata> mappedhkeys = std::map<idAndType, hdata>(Hkeys.GetHotkeysMap());
 		const std::map<int, wxString> &hkeysNames = Hkeys.GetNamesTable();
@@ -653,7 +662,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	{
 		wxBoxSizer *audio2 = new wxBoxSizer(wxVERTICAL);
 
-		CONFIG opts1[7] = { AudioDelay, AudioMarkPlayTime, AudioInactiveLinesDisplayMode, AudioLineBoundariesThickness, AUDIO_CACHE_FILES_LIMIT, AudioLeadIn, AudioLeadOut };
+		CONFIG opts1[7] = { AudioDelay, AudioMarkPlayTime, AudioInactiveLinesDisplayMode, 
+			AudioLineBoundariesThickness, AUDIO_CACHE_FILES_LIMIT, AudioLeadIn, AudioLeadOut };
 		NumCtrl *Delay = new NumCtrl(AudioSecond, 20000, Options.GetString(opts1[0]), -50000000, 50000000, true, wxDefaultPosition, wxSize(300, -1), 0);
 		NumCtrl *markPlayTime = new NumCtrl(AudioSecond, 20000, Options.GetString(opts1[1]), 400, 5000, true, wxDefaultPosition, wxSize(300, -1), 0);
 		NumCtrl *lineThickness = new NumCtrl(AudioSecond, 20000, Options.GetString(opts1[3]), 1, 5, true, wxDefaultPosition, wxSize(300, -1), 0);
@@ -712,14 +722,14 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			_("Napisy nagłówek"), _("Napisy tekst nagłówka"),
 			_("Napisy etykieta"), _("Napisy etykieta zmodyfikowanej linii"), _("Napisy etykieta zapisanej linii"),
 			_("Napisy etykieta niepewnej linii"), _("Napisy tło błędów pisowni"), _("Napisy obramowanie porównania"),
-			_("Napisy tło porównania brak zgodności"), _("Napisy tło porównania zgodność"), _("Napisy tło komentarza por. brak zgodności"),
-			_("Napisy tło komentarza por. zgodność"),
+			_("Napisy tło porównania brak zgodności"), _("Napisy tło porównania zgodność"), 
+			_("Napisy tło komentarza por. brak zgodności"), _("Napisy tło komentarza por. zgodność"),
 			//edytor
 			_("Edytor tekst"), _("Edytor nazwy tagów"), _("Edytor wartości tagów"),
 			_("Edytor nawiasy klamrowe"), _("Edytor operatory tagów"), _("Edytor zmienne template"),
-			_("Edytor znaczniki kodu template"), _("Edytor funkcje template"), _("Edytor słowa kluczowe template"), _("Edytor ciągi znaków template"),
-			_("Edytor zaznaczenie znalezionej frazy"), _("Edytor tło nawiasów"), _("Edytor tło"),
-			_("Edytor zaznaczenie"), _("Edytor zaznaczenie w nieaktywnym oknie"),
+			_("Edytor znaczniki kodu template"), _("Edytor funkcje template"), _("Edytor słowa kluczowe template"), 
+			_("Edytor ciągi znaków template"), _("Edytor zaznaczenie znalezionej frazy"), _("Edytor tło nawiasów"), 
+			_("Edytor tło"), _("Edytor zaznaczenie"), _("Edytor zaznaczenie w nieaktywnym oknie"),
 			_("Edytor obramowanie"), _("Edytor obramowanie aktywnego okna"), _("Edytor błędy pisowni"),
 			//audio
 			_("Audio tło"), _("Audio znacznik start"), _("Audio znacznik koniec"), _("Audio znacznik przesuwania czasów"),
@@ -769,20 +779,20 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
 		wxArrayString choices;
 		wxArrayString files;
-		wxString pathwn = Options.pathfull + "\\Themes\\";
+		wxString pathwn = Options.pathfull + L"\\Themes\\";
 		const wxString & programTheme = Options.GetString(ProgramTheme);
 		wxDir kat(pathwn);
 		if (kat.IsOpened()){
-			kat.GetAllFiles(pathwn, &files, "*.txt", wxDIR_FILES);
+			kat.GetAllFiles(pathwn, &files, L"*.txt", wxDIR_FILES);
 		}
 		for (size_t i = 0; i < files.size(); i++){
 			choices.Add(files[i].AfterLast(L'\\').BeforeLast(L'.'));
 		}
-		if (choices.Index("DarkSentro", false) == -1){
-			choices.Insert("DarkSentro", 0);
+		if (choices.Index(L"DarkSentro", false) == -1){
+			choices.Insert(L"DarkSentro", 0);
 		}
-		if (choices.Index("LightSentro", false) == -1){
-			choices.Insert("LightSentro", 1);
+		if (choices.Index(L"LightSentro", false) == -1){
+			choices.Insert(L"LightSentro", 1);
 		}
 		KaiChoice *themeList = new KaiChoice(Themes, 14567, wxDefaultPosition, wxDefaultSize, choices);
 		themeList->SetSelection(themeList->FindString(programTheme));
@@ -814,9 +824,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			wxString themeName = newTheme->GetValue();
 			if (themeName.IsEmpty() || choices.Index(themeName, false) != -1){ wxBell(); return; }
 			wxString originalName = themeList->GetString(themeList->GetSelection());
-			wxString dir = Options.pathfull + "\\Themes\\";
-			wxString copyPath = dir + themeName + ".txt";
-			if (originalName == "DarkSentro" || originalName == "LightSentro"){
+			wxString dir = Options.pathfull + L"\\Themes\\";
+			wxString copyPath = dir + themeName + L".txt";
+			if (originalName == L"DarkSentro" || originalName == L"LightSentro"){
 				Options.SaveColors(copyPath);
 				List->Enable(true);
 				List->Refresh(false);
@@ -826,12 +836,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 				if (!wxDirExists(dir)){
 					wxBell(); return;
 				}
-				wxString originalPath = dir + originalName + ".txt";
+				wxString originalPath = dir + originalName + L".txt";
 				wxCopyFile(originalPath, copyPath, false);
 			}
 			Options.SetString(ProgramTheme, themeName);
 			if (!List->IsEnabled()){ List->Enable(false); }
-			newTheme->SetValue("");
+			newTheme->SetValue(L"");
 			int size = themeList->Append(themeName);
 			themeList->SetSelection(size);
 		}, 14566);
@@ -845,9 +855,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 				item->col = Options.GetColor((COLOR)item->colOptNum);
 			}
 			ChangeColors();
-			List->Enable(themeName != "DarkSentro" && themeName != "LightSentro");
+			List->Enable(themeName != L"DarkSentro" && themeName != L"LightSentro");
 		}, 14567);
-		if (programTheme == "DarkSentro" || programTheme == "LightSentro"){ List->Enable(false); }
+		if (programTheme == L"DarkSentro" || programTheme == L"LightSentro"){ List->Enable(false); }
 		Themes->SetSizerAndFit(sizer);
 		List->StartEdition();
 		List->SetSelection(0);
@@ -884,15 +894,19 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	}
 	//associations
 	{
-		wxString extensions[] = { ".ass", ".ssa", ".srt", ".sub", ".txt", ".mkv", ".mp4", ".avi", ".ogm", ".wmv", ".asf", ".rmvb", ".rm", ".3gp", ".mpg", ".mpeg", ".ts", ".m2ts" };
-		wxString extensionsDesc[] = { _("Napisy ASS"), _("Napisy SSA"), _("Napisy SRT"), _("Napisy SUB"), _("Napisy TXT"), _("Wideo MKV"), _("Wideo MP4"), _("Wideo AVI"), _("Wideo OGM"),
-			_("Wideo WMV"), _("Wideo ASF"), _("Wideo RMVB"), _("Wideo RM"), _("Wideo 3GP"), _("Wideo MPG"), _("Wideo MPEG"), _("Wideo TS"), _("Wideo M2TS") };
+		wxString extensions[] = { L"ass", L"ssa", L"srt", L"sub", L"txt", L"mkv", L"mp4", L"avi", L"ogm", 
+			L"wmv", L"asf", L"rmvb", L"rm", L"3gp", L"mpg", L"mpeg", L"ts", L"m2ts" };
+		wxString extensionsDesc[] = { _("Napisy ASS"), _("Napisy SSA"), _("Napisy SRT"), _("Napisy SUB"), 
+			_("Napisy TXT"), _("Wideo MKV"), _("Wideo MP4"), _("Wideo AVI"), _("Wideo OGM"),
+			_("Wideo WMV"), _("Wideo ASF"), _("Wideo RMVB"), _("Wideo RM"), _("Wideo 3GP"), 
+			_("Wideo MPG"), _("Wideo MPEG"), _("Wideo TS"), _("Wideo M2TS") };
 		int numExtensions = 18;
 
 		Registry::CheckFileAssociation(extensions, numExtensions, registeredExts);
 
 		wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-		KaiStaticText *warning = new KaiStaticText(Assocs, -1, _("UWAGA! Działanie na każdym Windowsie jest inne.\nPrzykładowo na Windows7 WMP zablokował\nmożliwość zmiany skojarzeń wideo."));
+		KaiStaticText *warning = new KaiStaticText(Assocs, -1, 
+			_("UWAGA! Działanie na każdym Windowsie jest inne.\nPrzykładowo na Windows7 WMP zablokował\nmożliwość zmiany skojarzeń wideo."));
 		sizer->Add(warning, 0, wxEXPAND | wxALL, 4);
 		KaiListCtrl *CheckListBox = new KaiListCtrl(Assocs, -1, numExtensions, extensionsDesc);
 		for (int i = 0; i < numExtensions; i++){
@@ -902,7 +916,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		auto changeSelections = [=](wxCommandEvent &evt){
 			int type = evt.GetId() - 17776;
 			for (int i = 0; i < numExtensions; i++){
-				CheckListBox->GetItem(i, 0)->modified = (type == 1 || (type == 2 && i < 4) || (type == 3 && i>4)) ? true : false;
+				CheckListBox->GetItem(i, 0)->modified = 
+					(type == 1 || (type == 2 && i < 4) || (type == 3 && i>4)) ? true : false;
 			}
 			CheckListBox->SetModified(true);
 			CheckListBox->Refresh(false);
@@ -941,7 +956,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	//adding buttons
 	wxBoxSizer *ButtonsSizer = new wxBoxSizer(wxHORIZONTAL);
 
-	okok = new MappedButton(this, wxID_OK, "OK");
+	okok = new MappedButton(this, wxID_OK, L"OK");
 	MappedButton *oknow = new MappedButton(this, ID_BCOMMIT, _("Zastosuj"));
 	MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 
@@ -1104,9 +1119,12 @@ void OptionsDialog::SetOptions(bool saveall)
 					}
 				}
 				else{
-					wxString extensions[] = { ".ass", ".ssa", ".srt", ".sub", ".txt", ".mkv", ".mp4", ".avi", ".ogm", ".wmv", ".asf", ".rmvb", ".rm", ".3gp", ".mpg", ".mpeg", ".ts", ".m2ts" };
-					wxString extensionsDesc[] = { "Napisy ASS", "Napisy SSA", "Napisy SRT", "Napisy SUB", "Napisy TXT", "Wideo MKV", "Wideo MP4", "Wideo AVI", "Wideo OGM",
-						"Wideo WMV", "Wideo ASF", "Wideo RMVB", "Wideo RM", "Wideo 3GP", "Wideo MPG", "Wideo MPEG", "Wideo TS", "Wideo M2TS" };
+					wxString extensions[] = { L"ass", L"ssa", L"srt", L"sub", L"txt", L"mkv", L"mp4", L"avi", 
+						L"ogm", L"wmv", L"asf", L"rmvb", L"rm", L"3gp", L"mpg", L"mpeg", L"ts", L"m2ts" };
+					wxString extensionsDesc[] = { _("Napisy ASS"), _("Napisy SSA"), _("Napisy SRT"), _("Napisy SUB"),
+						_("Napisy TXT"), _("Wideo MKV"), _("Wideo MP4"), _("Wideo AVI"), _("Wideo OGM"),
+						_("Wideo WMV"), _("Wideo ASF"), _("Wideo RMVB"), _("Wideo RM"), _("Wideo 3GP"),
+						_("Wideo MPG"), _("Wideo MPEG"), _("Wideo TS"), _("Wideo M2TS") };
 
 					for (size_t i = 0; i < registeredExts.size(); i++){
 						if (list->GetItem(i, 0)->modified != registeredExts[i]){

@@ -413,8 +413,8 @@ private:
 	AssColor GetColor(COLOR opt);
 	int GetInt(CONFIG opt);
 	float GetFloat(CONFIG opt);
-	void GetTable(CONFIG opt, wxArrayString &tbl, wxString split="|", int mode = 4);
-	void GetIntTable(CONFIG opt, wxArrayInt &tbl, wxString split="|", int mode = 4);
+	void GetTable(CONFIG opt, wxArrayString &tbl, wxString split = L"|", int mode = 4);
+	void GetIntTable(CONFIG opt, wxArrayInt &tbl, wxString split = L"|", int mode = 4);
 	void GetCoords(CONFIG opt, int* coordx, int* coordy);
 
 	void SetString(CONFIG opt, const wxString &sopt);
@@ -423,28 +423,28 @@ private:
 	void SetColor(COLOR opt, AssColor &copt);
 	void SetInt(CONFIG opt, int iopt);
 	void SetFloat(CONFIG opt, float fopt);
-	void SetTable(CONFIG opt, wxArrayString &iopt,wxString split="|");
-	void SetIntTable(CONFIG opt, wxArrayInt &iopt,wxString split="|");
+	void SetTable(CONFIG opt, wxArrayString &iopt,wxString split = L"|");
+	void SetIntTable(CONFIG opt, wxArrayInt &iopt,wxString split = L"|");
 	void SetCoords(CONFIG opt, int coordx, int coordy);
 	void GetRawOptions(wxString &options, bool Audio=false);
 	void AddStyle(Styles *styl);
 	void ChangeStyle(Styles *styl,int i);
-	Styles *GetStyle(int i,const wxString &name=_T(""), Styles* styl=NULL);
+	Styles *GetStyle(int i, const wxString &name = L"", Styles* styl=NULL);
 	int FindStyle(const wxString &name, int *multiplication=NULL);
 	void DelStyle(int i);
 	int StoreSize();
 	void CatchValsLabs(const wxString &rawoptions);
 	bool SetRawOptions(const wxString &textconfig);
 	int LoadOptions();
-	void LoadColors(const wxString &themeName="");
+	void LoadColors(const wxString &themeName = L"");
 	void LoadDefaultConfig();
 	void LoadDefaultColors(bool dark = true, wxColour *table = NULL);
 	void LoadDefaultAudioConfig();
 	void LoadMissingColours(const wxString &path);
 	bool LoadAudioOpts();
 	void SaveAudioOpts();
-	void SaveOptions(bool cfg=true, bool style=true);
-	void SaveColors(const wxString &path="");
+	void SaveOptions(bool cfg = true, bool style = true);
+	void SaveColors(const wxString &path = L"");
 	void LoadStyles(const wxString &katalog);
 	void clearstyles();
 	void Sortstyles();
@@ -483,12 +483,12 @@ void SetThreadName(size_t id, const char *name);
 #endif
 
 enum{
-	ASS=1,
+	ASS = 1,
 	SRT,
 	TMP,
 	MDVD,
 	MPL2,
-	FRAME=10
+	FRAME = 10
 };
 
 extern config Options;

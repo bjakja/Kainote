@@ -29,7 +29,8 @@ wxDECLARE_EVENT(CURSOR_MOVED, wxCommandEvent);
 class TextEditor : public wxWindow
 {
 public:
-	TextEditor(wxWindow *parent, int id, bool spell, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxWANTS_CHARS);
+	TextEditor(wxWindow *parent, int id, bool spell, const wxPoint& pos = wxDefaultPosition, 
+		const wxSize& size = wxDefaultSize, long style = wxWANTS_CHARS);
 	virtual ~TextEditor();
 	void SetTextS(const wxString &text, bool modif = false, bool resetsel = true, bool noevent = false);
 	bool IsModified();

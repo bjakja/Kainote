@@ -299,7 +299,7 @@ public:
 class HkeysDialog : public KaiDialog
 {
 	public:
-	HkeysDialog(wxWindow *parent, wxString name, char hotkeyWindow = GLOBAL_HOTKEY, bool showWindowSelection=true);
+	HkeysDialog(wxWindow *parent, wxString name, char hotkeyWindow = GLOBAL_HOTKEY, bool showWindowSelection = true);
 	virtual ~HkeysDialog();
 	wxString hotkey;
 	wxString hkname;
@@ -318,16 +318,16 @@ public:
 	Hotkeys();
 	~Hotkeys();
 	int LoadHkeys(bool Audio=false);
-	void LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio=false);
+	void LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio = false);
 	void SaveHkeys(bool Audio=false);
 	void SetHKey(const idAndType &itype, wxString name, wxString hotkey);
 	wxAcceleratorEntry GetHKey(const idAndType itype, const hdata *hkey=0);
-	wxString GetStringHotkey(const idAndType &itype, const wxString &name="");
+	wxString GetStringHotkey(const idAndType &itype, const wxString &name = L"");
 	void FillTable();
-	void ResetKey(const idAndType *itype, int id=0, char type=GLOBAL_HOTKEY);
+	void ResetKey(const idAndType *itype, int id = 0, char type = GLOBAL_HOTKEY);
 	wxString GetDefaultKey(const idAndType &itype);
-	void OnMapHkey(int id, wxString name,wxWindow *parent, char hotkeyWindow = GLOBAL_HOTKEY, bool showWindowSelection=true);
-	void SetAccels(bool all=false);
+	void OnMapHkey(int id, wxString name,wxWindow *parent, char hotkeyWindow = GLOBAL_HOTKEY, bool showWindowSelection = true);
+	void SetAccels(bool all = false);
 	wxString GetName(const idAndType itype);
 	const std::map<int, wxString> &GetNamesTable();
 	const wxString &GetName(int id);

@@ -195,7 +195,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	menu->Append(4444, _("Ukryj kolumny"), hidemenu);
 	menu->SetAccMenu(HideSelected, _("Ukryj zaznaczone linijki"))->Enable(sels > 0);
 	menu->Append(4445, _("Filtrowanie"), filterMenu);
-	menu->SetAccMenu(GRID_FILTER_IGNORE_IN_ACTIONS, _("Ignoruj filtrowanie przy akcjach"), "", true, ITEM_CHECK)->Check(ignoreFiltered); 
+	menu->SetAccMenu(GRID_FILTER_IGNORE_IN_ACTIONS, _("Ignoruj filtrowanie przy akcjach"), L"", true, ITEM_CHECK)->Check(ignoreFiltered); 
 	menu->SetAccMenu(GRID_TREE_MAKE, _("Stwórz drzewko"))->Enable(sels > 0);
 	menu->SetAccMenu(ShowPreview, _("Pokaż podgląd napisów"))->Enable(Notebook::GetTabs()->Size() > 1 && !preview);
 	menu->SetAccMenu(NewFPS, _("Ustaw nowy FPS"));
@@ -410,7 +410,9 @@ void SubsGrid::OnPaste(int id)
 	if (id == PasteCollumns){
 		int numCollumns = (hasTLMode) ? 11 : 10;
 		wxString pasteText = (hasTLMode) ? _("Tekst do oryginału") : _("Tekst");
-		wxString arr[11] = { _("Warstwa"), _("Czas początkowy"), _("Czas końcowy"), _("Aktor"), _("Styl"), _("Margines lewy"), _("Margines prawy"), _("Margines pionowy"), _("Efekt"), pasteText, _("Tekst do tłumaczenia") };
+		wxString arr[11] = { _("Warstwa"), _("Czas początkowy"), _("Czas końcowy"), 
+			_("Aktor"), _("Styl"), _("Margines lewy"), _("Margines prawy"), 
+			_("Margines pionowy"), _("Efekt"), pasteText, _("Tekst do tłumaczenia") };
 		int vals[11] = { LAYER, START, END, ACTOR, STYLE, MARGINL, MARGINR, MARGINV, EFFECT, TXT, TXTTL };
 		Stylelistbox slx(this, false, numCollumns, arr);
 		int PasteCollumnsSelections = Options.GetInt(PasteCollumnsSelection);
@@ -513,7 +515,9 @@ void SubsGrid::CopyRows(int id)
 {
 	int cols = 0;
 	if (id == CopyCollumns){
-		wxString arr[] = { _("Warstwa"), _("Czas początkowy"), _("Czas końcowy"), _("Aktor"), _("Styl"), _("Margines lewy"), _("Margines prawy"), _("Margines pionowy"), _("Efekt"), _("Tekst"), _("Tekst bez tagów") };
+		wxString arr[] = { _("Warstwa"), _("Czas początkowy"), _("Czas końcowy"), 
+			_("Aktor"), _("Styl"), _("Margines lewy"), _("Margines prawy"), 
+			_("Margines pionowy"), _("Efekt"), _("Tekst"), _("Tekst bez tagów") };
 		int vals[] = { LAYER, START, END, ACTOR, STYLE, MARGINL, MARGINR, MARGINV, EFFECT, TXT, TXTTL };
 		Stylelistbox slx(this, false, 11, arr);
 		int PasteCollumnsSelections = Options.GetInt(CopyCollumnsSelection);
@@ -686,7 +690,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 		break;
 	}
 
-	if (id == TranslationDialog && GetSInfo("TLMode Showtl") == L"Yes"){
+	if (id == TranslationDialog && GetSInfo(L"TLMode Showtl") == L"Yes"){
 		static TLDialog *tld = new TLDialog(this, this);
 		tld->Show();
 	}
@@ -701,7 +705,10 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 
 void SubsGrid::OnPasteTextTl()
 {
-	wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"), Kai->GetTab()->SubsPath.BeforeLast(L'\\'), L"", _("Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"), wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, L"wxFileDialog");
+	wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"), 
+		Kai->GetTab()->SubsPath.BeforeLast(L'\\'), L"", 
+		_("Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"), 
+		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 	if (FileDialog1->ShowModal() == wxID_OK){
 		OpenWrite op;
 		wxString pathh = FileDialog1->GetPath();
@@ -862,8 +869,12 @@ void SubsGrid::MoveTextTL(char mode)
 				}
 				else if (mode == 4 || mode == 5){
 					if (mode == 4){
-						if (onlyo){ CopyDialogue(firstSelected + numSelected)->Start = GetDialogue(firstSelected)->Start; onlyo = false; }
-						CopyDialogue(firstSelected + numSelected)->Text->Prepend(GetDialogue(i)->Text + L"\\N"); numSelected--;
+						if (onlyo){ 
+							CopyDialogue(firstSelected + numSelected)->Start = GetDialogue(firstSelected)->Start; 
+							onlyo = false; 
+						}
+						CopyDialogue(firstSelected + numSelected)->Text->Prepend(GetDialogue(i)->Text + L"\\N"); 
+						numSelected--;
 					}
 					DeleteRow(i);
 				}
@@ -926,7 +937,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 			if (tab->Video->GetState() == Playing){ 
 				tab->Video->Pause();//Render(); 
 			}
-			tab->Video->SetColorSpace(tab->Grid->GetSInfo("YCbCr Matrix"));
+			tab->Video->SetColorSpace(tab->Grid->GetSInfo(L"YCbCr Matrix"));
 			tab->Video->vToolbar->DisableVisuals(subsFormat == SRT);
 		}
 
@@ -1004,7 +1015,8 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		resized->Spacing = getfloat(fsp);
 	}
 
-	wxString tags[] = { L"pos", L"move", L"bord", L"shad", L"org", L"fsp", L"fscx", L"fs", L"clip", L"iclip", L"p", L"xbord", L"ybord", L"xshad", L"yshad" };
+	wxString tags[] = { L"pos", L"move", L"bord", L"shad", L"org", L"fsp", L"fscx", 
+		L"fs", L"clip", L"iclip", L"p", L"xbord", L"ybord", L"xshad", L"yshad" };
 	for (size_t i = 0; i < file->GetCount(); i++){
 		//zaczniemy od najłatwiejszego, marginesy
 
