@@ -670,7 +670,7 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 		if (scrollPos == sel){
 			tdc.SetPen(wxPen(highlight));
 			tdc.SetBrush(wxBrush(menuhighlight));
-			tdc.DrawRectangle(2, (height*i) + 2, w - 4, height);
+			tdc.DrawRectangle(2, (height * i) + 2, w - 4, height);
 		}
 		//tdc.SetPen(wxPen("#497CB0",2));
 		//tdc.SetBrush(*wxTRANSPARENT_BRUSH);
@@ -706,16 +706,17 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 			int fw, fhh;
 			wxString accel = desc.AfterLast(L'\t');
 			tdc.GetTextExtent(accel, &fw, &fhh);
-			tdc.DrawText(accel, w - fw - 20, (height*i) + 4);
+			tdc.DrawText(accel, w - fw - 20, (height * i) + 4);
 			desc = desc.BeforeLast(L'\t');
 		}
-		tdc.DrawText(desc, textStart, (height*i) + 4);
+		tdc.DrawText(desc, textStart, (height * i) + 4);
 		if (hasMnemonics){
 			tdc.SetPen(wxPen((item->enabled) ? text : graytext));
-			tdc.DrawLine(textStart + mnbefsize.x, (height*(i + 1)) - 3, textStart + mnbefsize.x + linesize.x, (height*(i + 1)) - 3);
+			tdc.DrawLine(textStart + mnbefsize.x, (height * (i + 1)) - 3, 
+				textStart + mnbefsize.x + linesize.x, (height * (i + 1)) - 3);
 		}
 		if (item->submenu){
-			tdc.DrawBitmap(arrow, w - 18, (height*i) + 5);
+			tdc.DrawBitmap(arrow, w - 18, (height * i) + 5);
 		}
 
 	}
@@ -824,7 +825,7 @@ MenuBar *MenuBar::Menubar = NULL;
 wxFont MenuBar::font = wxFont();
 
 MenuBar::MenuBar(wxWindow *_parent)
-	:wxWindow(_parent, -1, wxDefaultPosition, wxSize(-1, height))
+	: wxWindow(_parent, -1, wxDefaultPosition, wxSize(-1, height))
 	, Mnemonics()
 	, bmp(NULL)
 	, sel(-1)

@@ -191,8 +191,8 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 	, lastSelY(-1)
 	, scPosV(0)
 	, scPosH(0)
-	, lineHeight(17)
-	, headerHeight(25)
+	//, lineHeight(17)
+	//, headerHeight(25)
 	, lastCollumn(0)
 	, modified(false)
 	, hasArrow(true)
@@ -210,6 +210,10 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 	SetAcceleratorTable(accel);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &KaiListCtrl::Undo, this, 11642);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &KaiListCtrl::Redo, this, 11643);
+	int fw, fh;
+	GetTextExtent(L"TEX{}", &fw, &fh);
+	lineHeight = fh + 3;
+	headerHeight = fh + 8;
 }
 
 //checkboxList
@@ -222,7 +226,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, 
 	, lastSelY(-1)
 	, scPosV(0)
 	, scPosH(0)
-	, lineHeight(17)
+	//, lineHeight(17)
 	, headerHeight(3)
 	, lastCollumn(0)
 	, modified(false)
@@ -240,9 +244,13 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, 
 		AppendItem(new ItemCheckBox(false, list[i]));
 		wxSize textSize = GetTextExtent(list[i]);
 		if (textSize.x > maxwidth){ maxwidth = textSize.x; }
+		//if (textSize.y + 2 > lineHeight){ lineHeight = textSize.y + 2; }
 	}
 	if (numelem)
 		widths[0] = maxwidth + 28;
+	int fw, fh;
+	GetTextExtent(L"TEX{}", &fw, &fh);
+	lineHeight = fh + 3;
 }
 
 //textList
@@ -255,7 +263,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, co
 	, lastSelY(-1)
 	, scPosV(0)
 	, scPosH(0)
-	, lineHeight(17)
+	//, lineHeight(17)
 	, headerHeight(3)
 	, lastCollumn(0)
 	, modified(false)
@@ -273,9 +281,13 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, co
 		AppendItem(new ItemText(list[i]));
 		wxSize textSize = GetTextExtent(list[i]);
 		if (textSize.x > maxwidth){ maxwidth = textSize.x; }
+		//if (textSize.y + 2 > lineHeight){ lineHeight = textSize.y + 2; }
 	}
 	if (list.size())
 		widths[0] = maxwidth + 10;
+	int fw, fh;
+	GetTextExtent(L"TEX{}", &fw, &fh);
+	lineHeight = fh + 3;
 }
 
 void KaiListCtrl::SetTextArray(const wxArrayString &Array)
@@ -368,6 +380,7 @@ int KaiListCtrl::AppendItemWithExtent(Item *item)
 	if (!widths.size())
 		widths.push_back(textSize.x);
 	else if (textSize.x > widths[0]){ widths[0] = textSize.x; }
+	//if (textSize.y + 2 > lineHeight){ lineHeight = textSize.y + 2; }
 	return itemList->size() - 1;
 }
 

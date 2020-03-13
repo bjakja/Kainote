@@ -84,7 +84,7 @@ void FontEnumerator::EnumerateFonts(bool reenumerate)
 	}
 
 	::ReleaseDC(NULL, hdc);
-	hdc=NULL;
+	hdc = NULL;
 }
 
 wxArrayString *FontEnumerator::GetFonts(const wxWindow *client, std::function<void()> func)
@@ -194,7 +194,7 @@ DWORD FontEnumerator::CheckFontsProc(int *threadNum)
 	FontEnum.eventKillSelf[*threadNum] = CreateEvent(0, FALSE, FALSE, 0);
 	wxString fontrealpath;
 	if (*threadNum == 0)
-		fontrealpath = wxGetOSDirectory() + "\\fonts\\";
+		fontrealpath = wxGetOSDirectory() + L"\\fonts\\";
 	else{
 		WCHAR appDataPath[MAX_PATH];
 		if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, appDataPath))){

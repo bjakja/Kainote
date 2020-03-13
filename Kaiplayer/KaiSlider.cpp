@@ -22,56 +22,61 @@
 #include <wx\log.h>
 
 KaiSlider::KaiSlider(wxWindow *parent, int id, int _value, int _minRange, int _maxRange,
-             const wxPoint& pos, const wxSize& size, long _style)
-			 : wxWindow(parent, id, pos, size)
-			 ,style(_style)
-			 ,minRange(_minRange)
-			 ,maxRange(_maxRange)
-			 ,thumbPos(0)
-			 ,thumbSize(10)
-			 ,bmp(NULL)
-			 ,enter(false)
-			 ,holding(false)
-			 ,pushed(false)
-			 ,isUpDirection(false)
+	const wxPoint& pos, const wxSize& size, long _style)
+	: wxWindow(parent, id, pos, size)
+	,style(_style)
+	,minRange(_minRange)
+	,maxRange(_maxRange)
+	,thumbPos(0)
+	,thumbSize(10)
+	,bmp(NULL)
+	,enter(false)
+	,holding(false)
+	,pushed(false)
+	,isUpDirection(false)
 {
 	SetBackgroundColour(parent->GetBackgroundColour());
-	if(style & wxVERTICAL){
-		SetMinSize(wxSize((size.x<1)? 26 : size.x, (size.y<1)? 150 : size.y));
+	if (style & wxVERTICAL){
+		SetMinSize(wxSize((size.x < 1)? 26 : size.x, (size.y < 1)? 150 : size.y));
 	}else{
-		SetMinSize(wxSize((size.x<1)? 150 : size.x, (size.y<1)? 26 : size.y));
+		SetMinSize(wxSize((size.x < 1)? 150 : size.x, (size.y < 1)? 26 : size.y));
 	}
-	if(maxRange < minRange){maxRange = _minRange; minRange = _maxRange;}
+	if (maxRange < minRange){maxRange = _minRange; minRange = _maxRange;}
 	//value = MID(0.f, ((float)(_value - minRange)/(float)(maxRange - minRange)), 1.f);
 	//if(style & wxSL_INVERSE){
 		//value = 1.f - value;
 	//}
-	value = MID(0,_value-minRange,(maxRange-minRange));
-	if(style & wxSL_INVERSE){
-		value = (maxRange-minRange) - value;
+	value = MID(0, _value - minRange, (maxRange - minRange));
+	if (style & wxSL_INVERSE){
+		value = (maxRange - minRange) - value;
 	}
 	pageLoop.SetOwner(this, 2345);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
-		if(value == 0.f || value == (maxRange-minRange)){pageLoop.Stop();return;}
+		if (value == 0.f || value == (maxRange - minRange)){ pageLoop.Stop(); return; }
 		//int thumbRange = size - thumbSize;
 		float pageSize = thumbRange / 10.f;
-		if(diff<=thumbPos && isUpDirection){thumbPos -= pageSize;}
-		else if(diff>=thumbPos+thumbSize && !isUpDirection){thumbPos += pageSize;}
-		else{pageLoop.Stop();pushed = true;Refresh(false);return;}
-		if(thumbPos < 0.f){thumbPos = 0.f;}
-		if(thumbPos > thumbRange){thumbPos = thumbRange;}
+		if (diff <= thumbPos && isUpDirection){thumbPos -= pageSize;}
+		else if (diff >= thumbPos + thumbSize && !isUpDirection){ thumbPos += pageSize; }
+		else{ 
+			pageLoop.Stop(); 
+			pushed = true;
+			Refresh(false);
+			return;
+		}
+		if (thumbPos < 0.f){ thumbPos = 0.f; }
+		if (thumbPos > thumbRange){ thumbPos = thumbRange; }
 		SendEvent();
-		if(pageLoop.GetInterval()==500){pageLoop.Start(100);}
+		if (pageLoop.GetInterval() == 500){ pageLoop.Start(100); }
 	}, 2345);
 
 }
 	
 void KaiSlider::OnSize(wxSizeEvent& evt)
 {
-	int w=0;
-	int h=0;
+	int w = 0;
+	int h = 0;
 	GetClientSize (&w, &h);
-	int size = ((style & wxVERTICAL)!=0)? h : w;
+	int size = ((style & wxVERTICAL) != 0)? h : w;
 	thumbRange = size - thumbSize;
 	valueDivide = (float)thumbRange / (float)(maxRange - minRange);
 	thumbPos = (value * valueDivide) + 0.5f;
@@ -80,20 +85,20 @@ void KaiSlider::OnSize(wxSizeEvent& evt)
 	
 void KaiSlider::OnPaint(wxPaintEvent& evt)
 {
-	int w=0;
-	int h=0;
+	int w = 0;
+	int h = 0;
 	GetClientSize (&w, &h);
-	if(w==0||h==0){return;}
+	if (w==0 || h==0){ return; }
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;
 		bmp = NULL;
 	}
-	if(!bmp){bmp=new wxBitmap(w,h);}
+	if (!bmp){ bmp = new wxBitmap(w, h); }
 	tdc.SelectObject(*bmp);
 	tdc.SetPen(*wxTRANSPARENT_PEN);
 	tdc.SetBrush(Options.GetColour(WindowBackground));
-	tdc.DrawRectangle(0,0,w,h);
+	tdc.DrawRectangle(0, 0, w, h);
 	bool enabled = IsThisEnabled();
 	wxColour slider = (enter && !pushed)? Options.GetColour(SliderBackgroundHover) :
 		(pushed)? Options.GetColour(SliderBackgroundPushed) : 
@@ -107,22 +112,22 @@ void KaiSlider::OnPaint(wxPaintEvent& evt)
 	tdc.SetBrush(wxBrush(Options.GetColour(SliderPathBackground)));
 	if(style & wxVERTICAL){
 		int thumbMove = (style & wxSL_INVERSE)? 2 : 1;
-		tdc.DrawRectangle((w/2)-2, thumbSize/2, 4, h - thumbSize);
+		tdc.DrawRectangle((w / 2) - 2, thumbSize / 2, 4, h - thumbSize);
 		tdc.SetPen(wxPen(sliderBorder));
 		tdc.SetBrush(wxBrush(slider));
-		tdc.DrawRectangle(2, thumbPos+1, w-4, thumbSize-2);
+		tdc.DrawRectangle(2, thumbPos + 1, w - 4, thumbSize - 2);
 
 	}else{
 		//int thumbMove = (style & wxSL_INVERSE)? 2 : 1;
-		tdc.DrawRectangle(thumbSize/2, (h/2)-2, w - thumbSize, 4);
+		tdc.DrawRectangle(thumbSize / 2, (h / 2) - 2, w - thumbSize, 4);
 		tdc.SetPen(wxPen(sliderBorder));
 		tdc.SetBrush(wxBrush(slider));
-		tdc.DrawRectangle(thumbPos+1,2 , thumbSize-2, h-4);
+		tdc.DrawRectangle(thumbPos + 1, 2, thumbSize - 2, h - 4);
 
 	}
 
 	wxPaintDC dc(this);
-	dc.Blit(0,0,w,h,&tdc,0,0);
+	dc.Blit(0, 0, w, h, &tdc, 0, 0);
 }
 	
 void KaiSlider::OnMouseEvent(wxMouseEvent &evt)
@@ -140,10 +145,10 @@ void KaiSlider::OnMouseEvent(wxMouseEvent &evt)
 	
 	int x = evt.GetX();
 	int y = evt.GetY();
-	int w=0;
-	int h=0;
+	int w = 0;
+	int h = 0;
 	GetClientSize (&w, &h);
-	bool isVertical = ((style & wxVERTICAL)!=0); 
+	bool isVertical = ((style & wxVERTICAL) != 0); 
 	int coord = (isVertical)? y : x;
 	int coord2 = (isVertical)? x : y;
 	int size = (isVertical)? h : w;
@@ -151,18 +156,18 @@ void KaiSlider::OnMouseEvent(wxMouseEvent &evt)
 	thumbRange = size - thumbSize;
 	if (evt.GetWheelRotation() != 0) {
 		float step = evt.GetWheelRotation() / evt.GetWheelDelta();
-		thumbPos -= (step*3);
-		if(thumbPos< 0.f){thumbPos = 0.f;}
-		if(thumbPos> thumbRange){thumbPos = thumbRange;}
-		if(coord >= thumbPos && coord <= thumbPos+thumbSize){
-			enter=true;
-		}else if(enter){enter=false;}
+		thumbPos -= (step * 3);
+		if (thumbPos < 0.f){ thumbPos = 0.f; }
+		if (thumbPos > thumbRange){ thumbPos = thumbRange; }
+		if (coord >= thumbPos && coord <= thumbPos + thumbSize){
+			enter = true;
+		}else if (enter){ enter = false; }
 		SendEvent();
 		return;
 	}
-	if(evt.ButtonUp()){
-		if(pageLoop.IsRunning()){pageLoop.Stop();}
-		if(HasCapture()){ReleaseMouse();}
+	if (evt.ButtonUp()){
+		if (pageLoop.IsRunning()){ pageLoop.Stop(); }
+		if (HasCapture()){ ReleaseMouse(); }
 		enter = false;
 		pushed = false;
 		holding = false;
@@ -172,22 +177,22 @@ void KaiSlider::OnMouseEvent(wxMouseEvent &evt)
 		evt2.SetPosition(GetValue());
 		AddPendingEvent(evt2);
 	}
-	if(evt.RightDown() || evt.RightIsDown() || //prawy przycisk
+	if (evt.RightDown() || evt.RightIsDown() || //prawy przycisk
 		(evt.ShiftDown() && (evt.LeftDown() || evt.LeftIsDown()))){ 
-		thumbPos = coord-(thumbSize/2);
+		thumbPos = coord - (thumbSize / 2);
 		thumbPos = MID(0, thumbPos, thumbRange);
 		enter = true;
-		holding =true;
+		holding = true;
 		pushed = true;
 		SendEvent();
-		if(!HasCapture()){CaptureMouse();}
+		if (!HasCapture()){ CaptureMouse(); }
 		return;
 	}
 	
 	if(!holding){
-		if(!enter && coord >= thumbPos && coord <= thumbPos+thumbSize && coord2 >= 0 && coord2 <= size2 ){
+		if(!enter && coord >= thumbPos && coord <= thumbPos+thumbSize && coord2 >= 0 && coord2 <= size2){
 			enter = true;
-			wxWindow::SetToolTip(std::to_string(GetValue()));
+			wxWindow::SetToolTip(std::to_wstring(GetValue()));
 			Refresh(false);
 		}else if(enter && (coord < thumbPos || coord > thumbPos+thumbSize || coord2 < 0 || coord2 > size2)){
 			enter = false;
@@ -198,25 +203,26 @@ void KaiSlider::OnMouseEvent(wxMouseEvent &evt)
 	
 	if(evt.LeftDown() || (!holding && evt.LeftIsDown())){
 		
-		if(coord >= thumbPos && coord <= thumbPos+thumbSize){
+		if(coord >= thumbPos && coord <= thumbPos + thumbSize){
 			pushed = true;
 			holding = true;
 		}else{
 			float pageSize = thumbRange / 10.f;
-			if(coord<thumbPos){isUpDirection=true;}else{isUpDirection=false;}
-			thumbPos+= (coord<thumbPos)? -pageSize : pageSize;
-			if(thumbPos < 0){thumbPos = 0;}
-			if(thumbPos > thumbRange){thumbPos = thumbRange;}
+			if (coord < thumbPos){ isUpDirection = true; }
+			else{ isUpDirection = false; }
+			thumbPos += (coord < thumbPos)? -pageSize : pageSize;
+			if (thumbPos < 0){thumbPos = 0;}
+			if (thumbPos > thumbRange){thumbPos = thumbRange;}
 			diff = coord;
 			SendEvent();
 			pageLoop.Start(500);
 			return;
 		}
 		diff = coord - thumbPos;
-		if(!HasCapture()){CaptureMouse();}
+		if (!HasCapture()){ CaptureMouse(); }
 	}
 
-	if(holding){
+	if (holding){
 		thumbPos = coord - diff;
 		thumbPos = MID(0, thumbPos, thumbRange);
 		SendEvent();
@@ -224,7 +230,7 @@ void KaiSlider::OnMouseEvent(wxMouseEvent &evt)
 }
 
 int KaiSlider::GetValue(){
-	if(style & wxSL_INVERSE){
+	if (style & wxSL_INVERSE){
 		int invvalue = (maxRange-minRange) - value;
 		return invvalue + minRange;
 	}else{
@@ -233,11 +239,11 @@ int KaiSlider::GetValue(){
 }
 
 void KaiSlider::SetValue(int _value){
-	value = MID(0,_value-minRange,(maxRange-minRange));
+	value = MID(0, _value - minRange, (maxRange - minRange));
 	if(style & wxSL_INVERSE){
 		value = (maxRange-minRange) - value;
 	}
-	thumbPos = (value * valueDivide)+0.5f;
+	thumbPos = (value * valueDivide) + 0.5f;
 	Refresh(false);
 	Update();
 }
@@ -250,17 +256,17 @@ int KaiSlider::GetThumbPosition()
 void KaiSlider::SetThumbPosition(int position)
 {
 	thumbPos = position;
-	value = (thumbPos / valueDivide)+0.5f;
+	value = (thumbPos / valueDivide) + 0.5f;
 	Refresh(false);
 	Update();
 }
 
 void KaiSlider::SendEvent()
 {
-	value = (thumbPos / valueDivide)+0.5f;
+	value = (thumbPos / valueDivide) + 0.5f;
 	Refresh(false);
 	Update();
-	wxWindow::SetToolTip(std::to_string(GetValue()));
+	wxWindow::SetToolTip(std::to_wstring(GetValue()));
 	wxScrollEvent evt2(wxEVT_SCROLL_THUMBTRACK, GetId()); 
 	evt2.SetPosition(GetValue());
 	AddPendingEvent(evt2);

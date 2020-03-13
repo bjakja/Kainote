@@ -39,7 +39,7 @@ public:
 	wxArrayString *GetFilteredFonts(const wxWindow *client, std::function<void()> func, const wxString &filter);
 	void AddClient(const wxWindow *client, std::function<void()> func);
 	void RemoveClient(const wxWindow *client);
-	void RemoveFilteredClient(const wxWindow *client, bool clearFiltered=true);
+	void RemoveFilteredClient(const wxWindow *client, bool clearFiltered = true);
 	bool CheckGlyphsExists(HDC dc, const wxString &textForCheck, wxString &missing); 
 private:
 	void RefreshClientsFonts();

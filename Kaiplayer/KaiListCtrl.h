@@ -212,7 +212,7 @@ private:
 	void OnScroll(wxScrollWinEvent& event);
 	void OnEraseBackground(wxEraseEvent &evt){};
 	int GetMaxWidth();
-	void SetWidth(size_t i=0);
+	void SetWidth(size_t i = 0);
 	//int FindItemsRow(int elemX, size_t &startI);
 //return 0 nothing, 1 hidden block, 2 visible block
 	int CheckIfHasHiddenBlock(int elemX, size_t startI = 0);
@@ -234,7 +234,7 @@ private:
 	int lastCollumn;
 	int scPosV;
 	int scPosH;
-	int lineHeight;
+	int lineHeight = 0;
 	int headerHeight;
 	int iter;
 	bool modified;

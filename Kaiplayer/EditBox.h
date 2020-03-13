@@ -79,12 +79,12 @@ class EditBox : public wxWindow
 public:
 	EditBox(wxWindow *parent, SubsGrid *grid, int idd);
 	virtual ~EditBox();
-	void SetLine(int Row, bool setaudio=true, bool save=true, bool nochangeline=false, bool autoPlay = false);
+	void SetLine(int Row, bool setaudio = true, bool save = true, bool nochangeline = false, bool autoPlay = false);
 	void SetTlMode(bool tl, bool dummyTlMode = false);
-	void Send(unsigned char editionType, bool selline=true, bool dummy=false, bool visualdummy=false);
-	void RefreshStyle(bool resetline=false);
+	void Send(unsigned char editionType, bool selline = true, bool dummy = false, bool visualdummy = false);
+	void RefreshStyle(bool resetline = false);
 	// mode 0 in place of cursor, 1 on start of line, 2 in first bracket for clip rectangle
-	bool FindValue(const wxString &wval, wxString *returnval, const wxString &text="", bool *endsel=0, int mode = 0);
+	bool FindValue(const wxString &wval, wxString *returnval, const wxString &text = L"", bool *endsel = 0, int mode = 0);
 	void HideControls();
 	void UpdateChars();
 
@@ -127,12 +127,12 @@ public:
 	KaiChoice* Ban;
 
 
-	void PutinText(const wxString &text, bool focus=true, bool onlysel=false, wxString *texttoPutin=0);
+	void PutinText(const wxString &text, bool focus = true, bool onlysel = false, wxString *texttoPutin = NULL);
 	void PutinNonass(const wxString &text, const wxString &tag);
-	//ustawia tekst i gdy trzeba wstawia tagi z orygina³u ustawiaj¹c w³aœciw¹ pozycjê kursora.
+	//set text and needed tags from original and right position of cursor
 	void SetTextWithTags(bool RefreshVideo = false);
 	//second bool works only when spellcheckeronoff is true
-	void ClearErrs(bool spellcheckerOnOff=false, bool enableSpellchecker = false);
+	void ClearErrs(bool spellcheckerOnOff = false, bool enableSpellchecker = false);
 	void OnEdit(wxCommandEvent& event);
 	bool SetBackgroundColour(const wxColour &col);
 	bool IsCursorOnStart();
@@ -211,7 +211,7 @@ private:
 };
 
 
-//uwaga nie zmieniaæ kolejnoœci bo szlag trafi¹ skróty zapisane w hotkeys.txt
+//Warning cannot swap cause hotkeys from hotkeys.txt will stop working
 enum{
 	ID_COMMENT=3979,
 	ID_STYLE,

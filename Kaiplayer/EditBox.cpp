@@ -162,27 +162,36 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	ans.Add(L"an9");
 
 
-	Bfont = new MappedButton(this, EDITBOX_CHANGE_FONT, L"", _("Wybór czcionki"), wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
+	Bfont = new MappedButton(this, EDITBOX_CHANGE_FONT, L"", _("Wybór czcionki"), 
+		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bfont->SetBitmap(wxBITMAP_PNG(L"FONTS"));
-	Bcol1 = new MappedButton(this, EDITBOX_CHANGE_COLOR_PRIMARY, L"", _("Kolor podstawowy"), wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
+	Bcol1 = new MappedButton(this, EDITBOX_CHANGE_COLOR_PRIMARY, L"", _("Kolor podstawowy"), 
+		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bcol1->SetBitmap(wxBITMAP_PNG(L"Kolor1"));
 	Bcol1->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
-	Bcol2 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SECONDARY, L"", _("Kolor zastępczy do karaoke"), wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
+	Bcol2 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SECONDARY, L"", _("Kolor zastępczy do karaoke"), 
+		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bcol2->SetBitmap(wxBITMAP_PNG(L"Kolor2"));
 	Bcol2->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
-	Bcol3 = new MappedButton(this, EDITBOX_CHANGE_COLOR_OUTLINE, L"", _("Kolor obwódki"), wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
+	Bcol3 = new MappedButton(this, EDITBOX_CHANGE_COLOR_OUTLINE, L"", _("Kolor obwódki"), 
+		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bcol3->SetBitmap(wxBITMAP_PNG(L"Kolor3"));
 	Bcol3->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
-	Bcol4 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SHADOW, L"", _("Kolor cienia"), wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
+	Bcol4 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SHADOW, L"", _("Kolor cienia"), 
+		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bcol4->SetBitmap(wxBITMAP_PNG(L"Kolor4"));
 	Bcol4->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
-	Bbold = new MappedButton(this, PutBold, L"", _("Pogrubienie"), wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
+	Bbold = new MappedButton(this, PutBold, L"", _("Pogrubienie"), 
+		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bbold->SetBitmap(wxBITMAP_PNG(L"BOLD"));
-	Bital = new MappedButton(this, PutItalic, L"", _("Pochylenie"), wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
+	Bital = new MappedButton(this, PutItalic, L"", _("Pochylenie"), 
+		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bital->SetBitmap(wxBITMAP_PNG(L"ITALIC"));
-	Bund = new MappedButton(this, EDITBOX_CHANGE_UNDERLINE, L"", _("Podkreślenie"), wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
+	Bund = new MappedButton(this, EDITBOX_CHANGE_UNDERLINE, L"", _("Podkreślenie"), 
+		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bund->SetBitmap(wxBITMAP_PNG(L"UNDER"));
-	Bstrike = new MappedButton(this, EDITBOX_CHANGE_STRIKEOUT, L"", _("Przekreślenie"), wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
+	Bstrike = new MappedButton(this, EDITBOX_CHANGE_STRIKEOUT, L"", _("Przekreślenie"), 
+		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bstrike->SetBitmap(wxBITMAP_PNG(L"STRIKE"));
 	Ban = new KaiChoice(this, ID_AN, wxDefaultPosition, wxDefaultSize, ans);
 	Ban->Select(1);
@@ -751,10 +760,22 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 	int tmpIter = grid->file->Iter();
 	if (form < SRT){
 
-		if (FindValue(L"b(0|1)", &tmp)){ if (mstyle->Bold&&tmp == L"0"){ mstyle->Bold = false; } else if (!mstyle->Bold&&tmp == L"1"){ mstyle->Bold = true; } }
-		if (FindValue(L"i(0|1)", &tmp)){ if (mstyle->Italic&&tmp == L"0"){ mstyle->Italic = false; } else if (!mstyle->Italic&&tmp == L"1"){ mstyle->Italic = true; } }
-		if (FindValue(L"u(0|1)", &tmp)){ if (mstyle->Underline&&tmp == L"0"){ mstyle->Underline = false; } else if (!mstyle->Underline&&tmp == L"1"){ mstyle->Underline = true; } }
-		if (FindValue(L"s(0|1)", &tmp)){ if (mstyle->StrikeOut&&tmp == L"0"){ mstyle->StrikeOut = false; } else if (!mstyle->StrikeOut&&tmp == L"1"){ mstyle->StrikeOut = true; } }
+		if (FindValue(L"b(0|1)", &tmp)){ 
+			if (mstyle->Bold&&tmp == L"0"){ mstyle->Bold = false; } 
+			else if (!mstyle->Bold&&tmp == L"1"){ mstyle->Bold = true; } 
+		}
+		if (FindValue(L"i(0|1)", &tmp)){ 
+			if (mstyle->Italic&&tmp == L"0"){ mstyle->Italic = false; } 
+			else if (!mstyle->Italic&&tmp == L"1"){ mstyle->Italic = true; } 
+		}
+		if (FindValue(L"u(0|1)", &tmp)){ 
+			if (mstyle->Underline&&tmp == L"0"){ mstyle->Underline = false; } 
+			else if (!mstyle->Underline&&tmp == L"1"){ mstyle->Underline = true; } 
+		}
+		if (FindValue(L"s(0|1)", &tmp)){ 
+			if (mstyle->StrikeOut&&tmp == L"0"){ mstyle->StrikeOut = false; } 
+			else if (!mstyle->StrikeOut&&tmp == L"1"){ mstyle->StrikeOut = true; } 
+		}
 		if (FindValue(L"fs([0-9]+)", &tmp)){ mstyle->Fontsize = tmp; }
 		if (FindValue(L"fn(.*)", &tmp)){ mstyle->Fontname = tmp; }
 	}
@@ -1312,8 +1333,8 @@ void EditBox::ClearErrs(bool spellcheckerOnOff/*=false*/, bool enableSpellchecke
 
 void EditBox::OnSplit(wxCommandEvent& event)
 {
-	wxString Splitchar = (grid->subsFormat <= SRT) ? "\\N" : "|";
-	bool isOriginal = (grid->hasTLMode && TextEdit->GetValue() == "" && !TextEdit->HasFocus());
+	wxString Splitchar = (grid->subsFormat <= SRT) ? L"\\N" : L"|";
+	bool isOriginal = (grid->hasTLMode && TextEdit->GetValue() == L"" && !TextEdit->HasFocus());
 	//Editor
 	TextEditor *tedit = (isOriginal) ? TextEditOrig : TextEdit;
 	wxString txt = tedit->GetValue();
@@ -1332,7 +1353,7 @@ void EditBox::OnSplit(wxCommandEvent& event)
 void EditBox::OnHideOriginal(wxCommandEvent& event)
 {
 	wxString texttl = TextEditOrig->GetValue();
-	texttl = "{" + texttl + "}";
+	texttl = L"{" + texttl + L"}";
 	TextEdit->SetFocus();
 	TextEditOrig->SetTextS(texttl, true);
 }
@@ -1352,8 +1373,8 @@ void EditBox::OnPasteDifferents(wxCommandEvent& event)
 	int npos = startPosition + diffAsString.length();
 	TextEdit->SetSelection(npos, npos);
 }
-//znajduje tagi w polu tekstowym
-//w wyszukiwaniu nie używać // a także szukać tylko do końca taga, nie do następnego taga
+//find tags in text field
+//in seeking not use // and seek only to end of tag, not next tag
 bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &text, bool *endsel, int mode)
 {
 	lasttag = tag;
@@ -1362,9 +1383,9 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 	bool inbrkt = true;
 	bool fromOriginal = false;
 	wxString txt;
-	if (text == ""){
+	if (text == L""){
 		txt = TextEdit->GetValue();
-		if (grid->hasTLMode && txt == ""){
+		if (grid->hasTLMode && txt == L""){
 			fromOriginal = true;
 			txt = TextEditOrig->GetValue();
 		}
@@ -1433,7 +1454,8 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 			}
 			if (ftag.EndsWith(L")")){
 				//fixes \fn(name)
-				if (/*ftag.Find(L'(') == -1 || ftag.Freq(L')') >= 2 && */ftag.Freq(L')') > ftag.Freq(L'(') || ftag.StartsWith(L"t(")){
+				if (/*ftag.Find(L'(') == -1 || ftag.Freq(L')') >= 2 && */ftag.Freq(L')') > ftag.Freq(L'(') 
+					|| ftag.StartsWith(L"t(")){
 					isT = true;
 					endT = lslash - 1;
 				}
@@ -1478,7 +1500,7 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 					lslash--;
 				}
 
-				if (found[0] == "" && !isT){
+				if (found[0] == L"" && !isT){
 					found[0] = ftag;
 					fpoints[0].x = (i < lastTag)? lastTag : i;
 					fpoints[0].y = (i < lastTag) ? lastTag : lslash - 1;
@@ -1490,7 +1512,7 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 				}
 				//block break till i <= from cause of test if cursor is in \t tag
 				//else it will fail if there is value without \t on the end
-				if (!isT && found[0] != "" && i <= from){
+				if (!isT && found[0] != L"" && i <= from){
 					break;
 				}
 			}
@@ -1610,7 +1632,10 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	if (panel->Video->GetState() != None){
 		//visible=true;
 		text = grid->GetVisible(&visible);
-		if (!visible && (lastVisible != visible || grid->file->IsSelected(currentLine))){ visible = true; lastVisible = false; }
+		if (!visible && (lastVisible != visible || grid->file->IsSelected(currentLine))){ 
+			visible = true; 
+			lastVisible = false; 
+		}
 		else{ lastVisible = visible; }
 		//make sure that dummy edition is true when line is not visible
 		if (!visible){
@@ -1694,7 +1719,8 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		wxString result;
 		//fn and r do not have number value we have to treat it special \r works good only when return itself as a value
 		//we did not need this value at all.
-		wxString pattern = (findtag.StartsWith(L"fn")) ? L"fn(.*)" : (findtag.StartsWith(L"r")) ? L"(r.*)" : findtag + L"([0-9\\(&-].*)";
+		wxString pattern = (findtag.StartsWith(L"fn")) ? L"fn(.*)" : 
+			(findtag.StartsWith(L"r")) ? L"(r.*)" : findtag + L"([0-9\\(&-].*)";
 		FindValue(pattern, &result, L"", 0, type == L"1");
 
 		PutinText(tag);
@@ -1801,7 +1827,8 @@ void EditBox::OnEditTag(wxCommandEvent &event)
 			}
 		}
 		wxString svtag = tb->tag;
-		Options.SetString((CONFIG)(id - EDITBOX_TAG_BUTTON1 + EditboxTagButton1), svtag << L"\f" << tb->type << L"\f" << tb->name);
+		Options.SetString((CONFIG)(id - EDITBOX_TAG_BUTTON1 + EditboxTagButton1), 
+			svtag << L"\f" << tb->type << L"\f" << tb->name);
 		Options.SaveOptions(true, false);
 		if (tb->tag != L""){ tb->SetToolTip(tb->tag); }
 	}
@@ -2038,10 +2065,10 @@ void EditBox::SetTagButtons()
 			}
 			if (i >= numofButtons){
 				if (!TagButtonManager){
-					BoxSizer4->Add(new TagButton(this, EDITBOX_TAG_BUTTON1 + i, name, tag, type, wxDefaultSize/*wxSize((name.length()) > 2 ? -1 : 24, 24)*/), 0, wxALL, 2);
+					BoxSizer4->Add(new TagButton(this, EDITBOX_TAG_BUTTON1 + i, name, tag, type, wxDefaultSize), 0, wxALL, 2);
 				}
 				else if (i >= numofButtons){
-					BoxSizer4->Insert(10 + i, new TagButton(this, EDITBOX_TAG_BUTTON1 + i, name, tag, type, wxDefaultSize/*wxSize((name.length()) > 3 ? -1 : 24, 24)*/), 0, wxALL, 2);
+					BoxSizer4->Insert(10 + i, new TagButton(this, EDITBOX_TAG_BUTTON1 + i, name, tag, type, wxDefaultSize), 0, wxALL, 2);
 				}
 				Connect(EDITBOX_TAG_BUTTON1 + i, TAG_BUTTON_EDITION, (wxObjectEventFunction)&EditBox::OnEditTag);
 				Connect(EDITBOX_TAG_BUTTON1 + i, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnButtonTag);

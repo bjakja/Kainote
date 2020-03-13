@@ -120,7 +120,7 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 			//mdc.DrawIcon(icons.GetIconByIndex(0), 4, 4);
 			//}
 		}
-		if (GetTitle() != ""){
+		if (GetTitle() != L""){
 			int startX = icons.GetIconCount() ? iconScale + 14 : 6 + maximizeDiff;
 			int maxWidth = w - 75 - maximizeDiff - startX;
 			mdc.DrawText(GetTruncateText(GetTitle(), maxWidth, this), startX, 5 + maximizeDiff);
@@ -212,7 +212,7 @@ void KaiFrame::PaintD2D(GraphicsContext *gc, int w, int h)
 		//gc->DrawIcon(icons.GetIconByIndex(0), 4, 4);
 		//}
 	}
-	if (GetTitle() != ""){
+	if (GetTitle() != L""){
 		int startX = icons.GetIconCount() ? iconScale + 14 : 6 + maximizeDiff;
 		int maxWidth = w - 75 - maximizeDiff - startX;
 		gc->DrawTextU(GetTruncateText(GetTitle(), maxWidth, this), startX, 5 + maximizeDiff);
@@ -475,7 +475,7 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 		PCOPYDATASTRUCT pMyCDS = (PCOPYDATASTRUCT)lParam;
 		wxArrayString paths;
 		wchar_t * _paths = (wchar_t*)pMyCDS->lpData;
-		wxStringTokenizer tkn(_paths, "|");
+		wxStringTokenizer tkn(_paths, L"|");
 		while (tkn.HasMoreTokens()){
 			paths.Add(tkn.NextToken());
 		}

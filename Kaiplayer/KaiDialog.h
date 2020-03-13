@@ -46,7 +46,7 @@ public:
 	void EndModal(int retCode);
 	bool IsModal() const;
 	void SetEnterId(int _enterId);
-	void SetEscapeId(int _escapeId, bool setFocus=false);
+	void SetEscapeId(int _escapeId, bool setFocus = false);
 	int GetEnterId() const { return enterId; }
 	int GetEscapeId() const { return escapeId; }
 	void SetSizerAndFit1(wxSizer *sizer, bool deleteOld = true);

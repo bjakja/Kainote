@@ -17,7 +17,7 @@
 #include <wx\dcmemory.h>
 #include <wx\dcclient.h>
 #include <wx\log.h>
-#include "graphicsD2D.h"
+//#include "graphicsD2D.h"
 
 KaiStatusBar::KaiStatusBar(wxWindow *parent, int id, int style)
 	:wxWindow(parent, id, wxDefaultPosition, wxSize(-1, 26))

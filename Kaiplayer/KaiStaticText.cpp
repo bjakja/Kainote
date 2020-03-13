@@ -17,7 +17,7 @@
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 #include <wx/sizer.h>
-#include "GraphicsD2D.h"
+//#include "GraphicsD2D.h"
 
 KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, const wxPoint &pos, const wxSize &size, int style)
 	: wxWindow(parent, id, pos, size, style)
@@ -208,7 +208,7 @@ void KaiStaticText::OnPaint(wxPaintEvent &evt)
 //		delete gc;
 //	}
 	wxPaintDC dc(this);
-	dc.Blit(0,0,w,h,&tdc,0,0);
+	dc.Blit(0, 0, w, h, &tdc, 0, 0);
 }
 
 void KaiStaticText::OnScroll(wxScrollEvent& event)

@@ -22,7 +22,7 @@ class KaiSlider :public wxWindow
 {
 public:
 	KaiSlider(wxWindow *parent, int id, int value, int minRange = 0, int maxRange = 100,
-             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxHORIZONTAL);
+			 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxHORIZONTAL);
 	virtual ~KaiSlider(){wxDELETE(bmp);}
 	int GetValue();
 	void SetValue(int _value);
@@ -33,7 +33,10 @@ private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);
 	void OnMouseEvent(wxMouseEvent &evt);
-	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();} holding = false;};
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){
+		if (HasCapture()){ ReleaseMouse(); } 
+		holding = false;
+	};
 	void OnEraseBackground(wxEraseEvent& rEvent){};
 	void SendEvent();
 	wxTimer pageLoop;
