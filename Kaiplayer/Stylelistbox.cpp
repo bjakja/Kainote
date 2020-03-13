@@ -25,7 +25,7 @@ Stylelistbox::Stylelistbox(wxWindow* parent, bool styles, int numelem, wxString 
 	KaiStaticBoxSizer *sizer1 = new KaiStaticBoxSizer(wxVERTICAL, this, (styles) ? _("Wybierz style") : _("Wybierz kolumny"));
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 	CheckListBox = new KaiListCtrl(this, -1, numelem, arr, wxDefaultPosition, wxSize(200, 300), style);
-	OK = new MappedButton(this, wxID_OK, "Ok");
+	OK = new MappedButton(this, wxID_OK, L"Ok");
 	Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	sizer->Add(OK, 1, wxALL, 2);
 	sizer->Add(Cancel, 1, wxALL, 2);
@@ -43,7 +43,7 @@ Stylelistbox::~Stylelistbox()
 wxString GetCheckedElements(wxWindow *parent)
 {
 
-	wxString styletext = "";
+	wxString styletext;
 	wxString *elems;
 	const std::vector<Styles*> *styles = Notebook::GetTab()->Grid->file->GetStyleTable();
 	elems = new wxString[styles->size()];
@@ -58,12 +58,12 @@ wxString GetCheckedElements(wxWindow *parent)
 		{
 
 			if (slx.CheckListBox->GetItem(v, 0)->modified){
-				styletext << slx.CheckListBox->GetItem(v, 0)->name << ",";
+				styletext << slx.CheckListBox->GetItem(v, 0)->name << L",";
 			}
 		}
 	}
 	delete[] elems;
-	return styletext.BeforeLast(',');
+	return styletext.BeforeLast(L',');
 }
 
 CustomCheckListBox::CustomCheckListBox(wxWindow* parent, const wxArrayString &listElems, const wxString &title, const wxPoint& pos, int style)
@@ -79,7 +79,7 @@ CustomCheckListBox::CustomCheckListBox(wxWindow* parent, const wxArrayString &li
 	}
 	CheckListBox = new KaiListCtrl(this, -1, numelem, arr, wxDefaultPosition, wxSize(200, 300), style);
 	delete[] arr;
-	OK = new MappedButton(this, wxID_OK, "Ok");
+	OK = new MappedButton(this, wxID_OK, L"Ok");
 	Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	sizer->Add(OK, 1, wxALL, 2);
 	sizer->Add(Cancel, 1, wxALL, 2);
@@ -114,7 +114,7 @@ KaiListBox::KaiListBox(wxWindow *parent, const wxArrayString &items, const wxStr
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	list = new KaiListCtrl(this, 29886, items, wxDefaultPosition, wxSize(220, 160));
 	list->SetSelection(0);
-	MappedButton *OK = new MappedButton(this, 8888, "OK");
+	MappedButton *OK = new MappedButton(this, 8888, L"OK");
 	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	sizer->Add(list, 1, wxEXPAND | wxALL, 2);
 	buttonSizer->Add(OK, 1, wxALL, 4);

@@ -193,6 +193,7 @@
 	CG(SubsComparisonType,)\
 	CG(SubsComparisonStyles,)\
 	CG(SubsRecent,)\
+	CG(TAB_TEXT_MAX_CHARS,)\
 	CG(TEXT_EDITOR_HIDE_STATUS_BAR,)\
 	CG(TEXT_EDITOR_CHANGE_QUOTES,)\
 	CG(TEXT_EDITOR_TAG_LIST_OPTIONS,)\
@@ -238,7 +239,7 @@
 	CG(EditboxTagButton18,)\
 	CG(EditboxTagButton19,)\
 	CG(EditboxTagButton20,)\
-	//if you write here a new enum then change configSize
+	//if you write here a new enum then change configSize below after colors
 	
 DECLARE_ENUM(CONFIG,CFG)
 
@@ -381,7 +382,7 @@ DECLARE_ENUM(CONFIG,CFG)
 	CR(FIND_RESULT_FOUND_PHRASE_BACKGROUND,)\
 	CR(StylePreviewColor1,)\
 	CR(StylePreviewColor2,)\
-	//jeœli tu coœ dopiszesz, to musisz zmieniæ przy porównaniu (504 cpp) czy rozmiar tablicy kolorów jest w³aœciwy
+	//if you write here a new enum then change colorsSize below
 DECLARE_ENUM(COLOR,CLR)
 
 typedef void csri_rend;
@@ -460,9 +461,9 @@ private:
 	csri_rend *vsfilter = NULL;
 };
 bool sortfunc(Styles *styl1,Styles *styl2);
-//formatowanie w tym przypadku wygl¹da tak, 
-//liczba która mówi ile cyfr przed przecinkiem i ile po, np 5.3f;
-wxString getfloat(float num, const wxString &format="5.3f", bool Truncate=true);
+//formating here works like this, 
+//first digit - digits before dot, second digit - digits after dot, for example 5.3f;
+wxString getfloat(float num, const wxString &format = L"5.3f", bool Truncate=true);
 wxBitmap CreateBitmapFromPngResource(const wxString& t_name);
 wxBitmap *CreateBitmapPointerFromPngResource(const wxString& t_name);
 wxImage CreateImageFromPngResource(const wxString& t_name);

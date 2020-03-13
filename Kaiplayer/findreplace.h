@@ -96,7 +96,8 @@ public:
 	void FindAllInCurrentSubs(TabWindow *window);
 	void FindInSubs(TabWindow *window);
 	void FindReplaceInSubs(TabWindow *window);
-	void FindInSubsLine(wxString *onlyString, TabPanel *tab, bool *isFirst, int linePos, int linePosId, const wxString &subsPath, int thread);
+	void FindInSubsLine(wxString *onlyString, Dialogue *dial, TabPanel *tab, bool *isFirst, 
+		int linePos, int linePosId, const wxString &subsPath, int thread);
 	static DWORD FindReplaceInFiles(void *data);
 	static DWORD FindAllInTab(void *data);
 	int ReplaceInSubsLine(wxString *onlyString);

@@ -73,7 +73,7 @@ void EnableCrashingOnCrashes()
 }
 
 KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
-	: KaiFrame(0, -1, _("Bez nazwy - ") + Options.progname + L" " + wxString(INSTRUCTIONS), pos, size, wxDEFAULT_FRAME_STYLE, "Kainote_main_window")
+	: KaiFrame(0, -1, _("Bez nazwy - ") + Options.progname + L" " + wxString(INSTRUCTIONS), pos, size, wxDEFAULT_FRAME_STYLE, L"Kainote_main_window")
 	, badResolution(false)
 	, fc(NULL)
 {
@@ -90,14 +90,14 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Options.GetTable(VideoRecent, videorec);
 	Options.GetTable(AudioRecent, audsrec);
 	Options.GetTable(KEYFRAMES_RECENT, keyframesRecent);
-	wxFont thisFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Tahoma");
+	wxFont thisFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma");
 	SetFont(thisFont);
-	wxIcon KaiIcon("KAI_SMALL_ICON", wxBITMAP_TYPE_ICO_RESOURCE);
+	wxIcon KaiIcon(L"KAI_SMALL_ICON", wxBITMAP_TYPE_ICO_RESOURCE);
 	//::SendMessage(GetHwnd(), WM_SETICON, ICON_SMALL, (LPARAM)GetHiconOf(KaiIcon));
 	SetIcon(KaiIcon);
 	const wxSize bigIconSize(::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
 	if (bigIconSize.x > 32){
-		wxIcon KaiLargeIcon("KAI_TLARGE_ICON", wxBITMAP_TYPE_ICO_RESOURCE);
+		wxIcon KaiLargeIcon(L"KAI_TLARGE_ICON", wxBITMAP_TYPE_ICO_RESOURCE);
 		::SendMessage(GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)GetHiconOf(KaiLargeIcon));
 	}
 	else{
@@ -118,7 +118,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	StatusBar = new KaiStatusBar(this, ID_STATUSBAR1);
 	int StatusBarWidths[9] = { -12, 0, 0, 0, 0, 0, 0, 0, -22 };
 	StatusBar->SetFieldsCount(9, StatusBarWidths);
-	wxString tooltips[] = { "", _("Skala obrazu wideo"), _("Powiększenie wideo"), _("Czas trwania wideo"),
+	wxString tooltips[] = { L"", _("Skala obrazu wideo"), _("Powiększenie wideo"), _("Czas trwania wideo"),
 		_("Klatki na Sekundę"), _("Rozdzielczość wideo"), _("Proporcje wideo"), _("Rozdzielczość napisów"), _("Nazwa pliku wideo") };
 	StatusBar->SetTooltips(tooltips, 9);
 	//StatusBar->SetLabelBackgroundColour(2,"#FF0000");
@@ -364,7 +364,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	
 	TabPanel *tab = GetTab();
 	if (Modif == wxMOD_SHIFT && item){
-		Hkeys.OnMapHkey(id, "", this, GLOBAL_HOTKEY);
+		Hkeys.OnMapHkey(id, L"", this, GLOBAL_HOTKEY);
 		return;
 	}
 	if (item && !item->enabled)
@@ -381,15 +381,15 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		SaveAll();
 	}
 	else if (id == SaveTranslation){
-		GetTab()->Grid->AddSInfo("TLMode", "Translated", false);
+		GetTab()->Grid->AddSInfo(L"TLMode", L"Translated", false);
 		Save(true, -1, false);
-		GetTab()->Grid->AddSInfo("TLMode", "Yes", false);
+		GetTab()->Grid->AddSInfo(L"TLMode", L"Yes", false);
 	}
 	else if (id == RemoveSubs){
 		if (SavePrompt(3)){ event.SetInt(-1); return; }
-		if (tab->SubsPath != ("")){
+		if (tab->SubsPath != L""){
 			tab->SubsName = _("Bez tytułu");
-			tab->SubsPath = "";
+			tab->SubsPath = L"";
 			Label();
 
 			tab->Grid->Clearing();
@@ -504,7 +504,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		MR->Show(!MR->IsShown());
 	}
 	else if (id >= ConvertToASS && id <= ConvertToMPL2){
-		if (tab->Grid->GetSInfo("TLMode") != "Yes"){
+		if (tab->Grid->GetSInfo(L"TLMode") != L"Yes"){
 			OnConversion((id - ConvertToASS) + 1);
 		}
 	}
@@ -567,7 +567,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			Auto->AddFromSubs();
 		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz sktypt"),
 			Options.GetString(AutomationRecent),
-			"", _("Pliki skryptów (*.lua),(*.moon)|*.lua;*.moon;"), wxFD_OPEN);
+			L"", _("Pliki skryptów (*.lua),(*.moon)|*.lua;*.moon;"), wxFD_OPEN);
 		if (FileDialog1->ShowModal() == wxID_OK){
 			wxString file = FileDialog1->GetPath();
 			Options.SetString(AutomationRecent, file.AfterLast(L'\\'));
@@ -587,7 +587,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if (Auto->ASSScripts.size() < 1)
 			Auto->AddFromSubs();
 		int size = Auto->ASSScripts.size();
-		if (!size){ KaiMessageBox(_("Ten plik napisów nie ma dodanych żadnych skryptów")); return; }
+		if (!size){ KaiMessageBox(_("Ten plik napisów nie ma dodanych żadnych skryptów"), _("Informacja"), wxOK, this); return; }
 		auto script = Auto->ASSScripts[size - 1];
 		if (script->CheckLastModified(true)){ script->Reload(); }
 		auto macro = script->GetMacro(0);
@@ -596,11 +596,11 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 				macro->Run(tab);
 			}
 			else{
-				KaiMessageBox(wxString::Format(_("Warunki skryptu Lua '%s' nie zostały spełnione"), script->GetPrettyFilename()), _("Błąd"));
+				KaiMessageBox(wxString::Format(_("Warunki skryptu Lua '%s' nie zostały spełnione"), script->GetPrettyFilename()), _("Błąd"), wxOK, this);
 			}
 		}
 		else{
-			KaiMessageBox(wxString::Format(_("Błąd wczytywania skryptu Lua: %s\n%s"), script->GetPrettyFilename(), script->GetDescription()), _("Błąd"));
+			KaiMessageBox(wxString::Format(_("Błąd wczytywania skryptu Lua: %s\n%s"), script->GetPrettyFilename(), script->GetDescription()), _("Błąd"), wxOK, this);
 			Auto->OnEdit(script->GetFilename());
 		}
 	}
@@ -644,7 +644,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	TabPanel *pan = GetTab();
 
 	if (Modif == wxMOD_SHIFT){
-		Hkeys.OnMapHkey(id, "", this, GLOBAL_HOTKEY);
+		Hkeys.OnMapHkey(id, L"", this, GLOBAL_HOTKEY);
 		return;
 	}
 	if (id == OpenSubs){
@@ -652,17 +652,18 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		//if(SavePrompt(2)){return;}
 
 		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"),
-			(GetTab()->VideoPath != "") ? GetTab()->VideoPath.BeforeLast(L'\\') :
-			(subsrec.size() > 0) ? subsrec[0].BeforeLast(L'\\') : "",
-			"", _("Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv)|*.mkv"), wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
+			(GetTab()->VideoPath != L"") ? GetTab()->VideoPath.BeforeLast(L'\\') :
+			(subsrec.size() > 0) ? subsrec[0].BeforeLast(L'\\') : L"",
+			L"", _("Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv)|*.mkv"), 
+			wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
 		if (FileDialog1->ShowModal() == wxID_OK){
 			wxArrayString paths;
 			FileDialog1->GetPaths(paths);
 			Freeze();
 			GetTab()->Hide();
 			for (auto &file : paths){
-				if (GetTab()->SubsPath != ""){ InsertTab(false); }
-				if (file.AfterLast(L'.') == "mkv"){
+				if (GetTab()->SubsPath != L""){ InsertTab(false); }
+				if (file.AfterLast(L'.') == L"mkv"){
 					event.SetString(file);
 					GetTab()->Grid->OnMkvSubs(event);
 				}
@@ -677,8 +678,9 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	}
 	else if (id == OpenVideo){
 		wxFileDialog* FileDialog2 = new wxFileDialog(this, _("Wybierz plik wideo"),
-			(videorec.size() > 0) ? videorec[0].BeforeLast(L'\\') : "",
-			"", _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN|wxFD_FILE_MUST_EXIST|wxFD_MULTIPLE, wxDefaultPosition, wxDefaultSize, "wxFileDialog");
+			(videorec.size() > 0) ? videorec[0].BeforeLast(L'\\') : L"",
+			L"", _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"), 
+			wxFD_OPEN|wxFD_FILE_MUST_EXIST|wxFD_MULTIPLE);
 		if (FileDialog2->ShowModal() == wxID_OK){
 			wxArrayString paths;
 			FileDialog2->GetPaths(paths);
@@ -691,9 +693,9 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	}
 	else if (id == GLOBAL_KEYFRAMES_OPEN){
 		wxFileDialog* FileDialog2 = new wxFileDialog(this, _("Wybierz plik wideo"),
-			(keyframesRecent.size() > 0) ? keyframesRecent[0].BeforeLast(L'\\') : "",
-			"", _("Pliki klatek kluczowych (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|Wszystkie pliki (*.*)|*.*"), 
-			wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "wxFileDialog");
+			(keyframesRecent.size() > 0) ? keyframesRecent[0].BeforeLast(L'\\') : L"",
+			L"", _("Pliki klatek kluczowych (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|Wszystkie pliki (*.*)|*.*"), 
+			wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 		if (FileDialog2->ShowModal() == wxID_OK){
 			wxString path = FileDialog2->GetPath();
 			GetTab()->KeyframesPath = path;
@@ -737,7 +739,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			L"FFMPEGSource2 - Copyright © Fredrik Mellbin.\n"\
 			L"ICU - Copyright © 1995-2016 International Business Machines Corporation and others.\n"\
 			L"Boost - Copyright © Joe Coder 2004 - 2006.",
-			"O Kainote");
+			_("O Kainote"));
 		//L"FreeType - Copyright ©  David Turner, Robert Wilhelm, and Werner Lemberg;\n"\
 				//L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.\n"
 	}
@@ -781,7 +783,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 void KainoteFrame::OnConversion(char form)
 {
 	TabPanel *tab = GetTab();
-	if (tab->Grid->GetSInfo("TLMode") == "Yes"){ return; }
+	if (tab->Grid->GetSInfo(L"TLMode") == L"Yes"){ return; }
 	if (form != ASS && tab->Edit->Visual){
 		tab->Video->SetVisual(true,false,true);
 	}
@@ -799,17 +801,17 @@ void KainoteFrame::OnAssProps()
 	if (GetTab()->Video->GetState() != None){ GetTab()->Video->GetVideoSize(&x, &y); }
 	ScriptInfo sci(this, x, y);
 	SubsGrid *ngrid = GetTab()->Grid;
-	sci.title->SetValue(ngrid->GetSInfo("Title"));
-	sci.script->SetValue(ngrid->GetSInfo("Original Script"));
-	sci.translation->SetValue(ngrid->GetSInfo("Original Translation"));
-	sci.editing->SetValue(ngrid->GetSInfo("Original Editing"));
-	sci.timing->SetValue(ngrid->GetSInfo("Original Timing"));
-	sci.update->SetValue(ngrid->GetSInfo("Script Updated By"));
+	sci.title->SetValue(ngrid->GetSInfo(L"Title"));
+	sci.script->SetValue(ngrid->GetSInfo(L"Original Script"));
+	sci.translation->SetValue(ngrid->GetSInfo(L"Original Translation"));
+	sci.editing->SetValue(ngrid->GetSInfo(L"Original Editing"));
+	sci.timing->SetValue(ngrid->GetSInfo(L"Original Timing"));
+	sci.update->SetValue(ngrid->GetSInfo(L"Script Updated By"));
 	int nx = 0, ny = 0;
 	ngrid->GetASSRes(&nx, &ny);
 	sci.width->SetInt(nx);
 	sci.height->SetInt(ny);
-	const wxString &matrix = ngrid->GetSInfo("YCbCr Matrix");
+	const wxString &matrix = ngrid->GetSInfo(L"YCbCr Matrix");
 	int result = sci.matrix->FindString(matrix);
 	if (matrix.IsEmpty() || result < 0){
 		sci.matrix->SetSelection(0);
@@ -818,13 +820,13 @@ void KainoteFrame::OnAssProps()
 	else{
 		sci.matrix->SetSelection(result);
 	}
-	const wxString &wraps = ngrid->GetSInfo("WrapStyle");
+	const wxString &wraps = ngrid->GetSInfo(L"WrapStyle");
 	int ws = wxAtoi(wraps);
 	sci.wrapstyle->SetSelection(ws);
-	const wxString &colls = ngrid->GetSInfo("Collisions");
-	if (colls == "Reverse"){ sci.collision->SetSelection(1); }
-	const wxString &bords = ngrid->GetSInfo("ScaledBorderAndShadow");
-	if (bords == "no"){ sci.scaleBorderAndShadow->SetValue(false); }
+	const wxString &colls = ngrid->GetSInfo(L"Collisions");
+	if (colls == L"Reverse"){ sci.collision->SetSelection(1); }
+	const wxString &bords = ngrid->GetSInfo(L"ScaledBorderAndShadow");
+	if (bords == L"no"){ sci.scaleBorderAndShadow->SetValue(false); }
 
 	if (sci.ShowModal() == wxID_OK)
 	{
@@ -834,28 +836,28 @@ void KainoteFrame::OnAssProps()
 		else if (newx < 1){ newx = (float)newy*(4.0 / 3.0); }
 		else if (newy < 1){ newy = (float)newx*(3.0 / 4.0); if (newx == 1280){ newy = 1024; } }
 
-		if (sci.title->GetValue() != ""){ if (sci.title->IsModified()){ ngrid->AddSInfo("Title", sci.title->GetValue()); } }
-		else{ ngrid->AddSInfo("Title", "Kainote Ass File"); }
-		if (sci.script->IsModified()){ ngrid->AddSInfo("Original Script", sci.script->GetValue()); }
-		if (sci.translation->IsModified()){ ngrid->AddSInfo("Original Translation", sci.translation->GetValue()); }
-		if (sci.editing->IsModified()){ ngrid->AddSInfo("Original Editing", sci.editing->GetValue()); }
-		if (sci.timing->IsModified()){ ngrid->AddSInfo("Original Timing", sci.timing->GetValue()); }
-		if (sci.update->IsModified()){ ngrid->AddSInfo("Script Updated By", sci.update->GetValue()); }
+		if (sci.title->GetValue() != L""){ if (sci.title->IsModified()){ ngrid->AddSInfo(L"Title", sci.title->GetValue()); } }
+		else{ ngrid->AddSInfo(L"Title", L"Kainote Ass File"); }
+		if (sci.script->IsModified()){ ngrid->AddSInfo(L"Original Script", sci.script->GetValue()); }
+		if (sci.translation->IsModified()){ ngrid->AddSInfo(L"Original Translation", sci.translation->GetValue()); }
+		if (sci.editing->IsModified()){ ngrid->AddSInfo(L"Original Editing", sci.editing->GetValue()); }
+		if (sci.timing->IsModified()){ ngrid->AddSInfo(L"Original Timing", sci.timing->GetValue()); }
+		if (sci.update->IsModified()){ ngrid->AddSInfo(L"Script Updated By", sci.update->GetValue()); }
 
-		if (sci.width->IsModified()){ ngrid->AddSInfo("PlayResX", wxString::Format("%i", newx)); }
-		if (sci.height->IsModified()){ ngrid->AddSInfo("PlayResY", wxString::Format("%i", newy)); }
+		if (sci.width->IsModified()){ ngrid->AddSInfo(L"PlayResX", wxString::Format(L"%i", newx)); }
+		if (sci.height->IsModified()){ ngrid->AddSInfo(L"PlayResY", wxString::Format(L"%i", newy)); }
 		int newMatrix = sci.matrix->GetSelection();
 		if (newMatrix != result){
 			wxString val = sci.matrix->GetString(sci.matrix->GetSelection());
-			ngrid->AddSInfo("YCbCr Matrix", val);
+			ngrid->AddSInfo(L"YCbCr Matrix", val);
 			GetTab()->Video->SetColorSpace(val);
 		}
 
-		if (ws != sci.wrapstyle->GetSelection()){ ngrid->AddSInfo("WrapStyle", wxString::Format("%i", sci.wrapstyle->GetSelection())); }
-		wxString collis = (sci.collision->GetSelection() == 0) ? "Normal" : "Reverse";
-		if (colls != collis){ ngrid->AddSInfo("Collisions", collis); }
-		wxString bordas = (sci.scaleBorderAndShadow->GetValue()) ? "yes" : "no";
-		if (bords != bordas){ ngrid->AddSInfo("ScaledBorderAndShadow", bordas); }
+		if (ws != sci.wrapstyle->GetSelection()){ ngrid->AddSInfo(L"WrapStyle", wxString::Format(L"%i", sci.wrapstyle->GetSelection())); }
+		wxString collis = (sci.collision->GetSelection() == 0) ? L"Normal" : L"Reverse";
+		if (colls != collis){ ngrid->AddSInfo(L"Collisions", collis); }
+		wxString bordas = (sci.scaleBorderAndShadow->GetValue()) ? L"yes" : L"no";
+		if (bords != bordas){ ngrid->AddSInfo(L"ScaledBorderAndShadow", bordas); }
 		ngrid->SetModified(ASS_PROPERTIES);
 		SetSubsResolution();
 	}
@@ -865,17 +867,18 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 {
 	TabPanel* atab = (wtab < 0) ? GetTab() : Tabs->Page(wtab);
 	if (atab->Grid->originalFormat != atab->Grid->subsFormat
-		|| (Options.GetBool(SubsAutonaming) && atab->SubsName.BeforeLast(L'.') != atab->VideoName.BeforeLast(L'.') && atab->VideoName != "")
-		|| atab->SubsPath == "" || dial)
+		|| (Options.GetBool(SubsAutonaming) 
+		&& atab->SubsName.BeforeLast(L'.') != atab->VideoName.BeforeLast(L'.') && atab->VideoName != L"")
+		|| atab->SubsPath == L"" || dial)
 	{
 		repeatOpening:
 		wxString extens = _("Plik napisów ");
 
-		if (atab->Grid->subsFormat < SRT){ extens += "(*.ass)|*.ass"; }
-		else if (atab->Grid->subsFormat == SRT){ extens += "(*.srt)|*.srt"; }
-		else{ extens += "(*.txt, *.sub)|*.txt;*.sub"; };
+		if (atab->Grid->subsFormat < SRT){ extens += L"(*.ass)|*.ass"; }
+		else if (atab->Grid->subsFormat == SRT){ extens += L"(*.srt)|*.srt"; }
+		else{ extens += L"(*.txt, *.sub)|*.txt;*.sub"; };
 
-		wxString path = (atab->VideoPath != "" && Options.GetBool(SubsAutonaming)) ? atab->VideoPath : atab->SubsPath;
+		wxString path = (atab->VideoPath != L"" && Options.GetBool(SubsAutonaming)) ? atab->VideoPath : atab->SubsPath;
 		wxString name = path.BeforeLast(L'.');
 		path = path.BeforeLast(L'\\');
 
@@ -892,8 +895,8 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 			}
 
 			atab->SubsPath = path;
-			wxString ext = (atab->Grid->subsFormat < SRT) ? "ass" : (atab->Grid->subsFormat == SRT) ? "srt" : "txt";
-			if (!atab->SubsPath.EndsWith(ext)){ atab->SubsPath << "." << ext; }
+			wxString ext = (atab->Grid->subsFormat < SRT) ? L"ass" : (atab->Grid->subsFormat == SRT) ? L"srt" : L"txt";
+			if (!atab->SubsPath.EndsWith(ext)){ atab->SubsPath << L"." << ext; }
 			atab->SubsName = atab->SubsPath.AfterLast(L'\\');
 			SetRecent(0, wtab);
 		}
@@ -923,8 +926,8 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 {
 	wxMutexLocker lock(blockOpen);
 	wxString ext = filename.AfterLast(L'.').Lower();
-	if (ext == "exe" || ext == "zip" || ext == "rar" || ext == "7z"){ return false; }
-	if (ext == "lua" || ext == "moon"){ 
+	if (ext == L"exe" || ext == L"zip" || ext == L"rar" || ext == L"7z"){ return false; }
+	if (ext == L"lua" || ext == L"moon"){ 
 		//if (!Auto){ Auto = new Auto::Automation(false); }
 		if (Auto->ASSScripts.size() < 1)
 			Auto->AddFromSubs();
@@ -937,7 +940,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 	bool nonewtab = true;
 	bool changeAudio = true;
 	wxString secondFileName;
-	bool issubs = (ext == "ass" || ext == "txt" || ext == "sub" || ext == "srt" || ext == "ssa");
+	bool issubs = (ext == L"ass" || ext == L"txt" || ext == L"sub" || ext == L"srt" || ext == L"ssa");
 
 	/*if (tab->editor && !(issubs && tab->VideoPath.BeforeLast(L'.') == filename.BeforeLast(L'.'))
 		&& !(!issubs && tab->SubsPath.BeforeLast(L'.') == filename.BeforeLast(L'.'))){*/
@@ -954,7 +957,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		} 
 	}
 
-	if (Options.GetBool(OpenSubsInNewCard) && tab->SubsPath != "" &&
+	if (Options.GetBool(OpenSubsInNewCard) && tab->SubsPath != L"" &&
 		!tab->Video->isFullscreen && issubs){
 		Tabs->AddPage(true); 
 		tab = Tabs->Page(Tabs->Size() - 1);
@@ -989,7 +992,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		}
 		tab->Grid->LoadSubtitles(s, ext);
 
-		if (ext == "ssa"){ ext = "ass"; tab->SubsPath = fname.BeforeLast(L'.') + ".ass"; }
+		if (ext == L"ssa"){ ext = L"ass"; tab->SubsPath = fname.BeforeLast(L'.') + L".ass"; }
 		else{ tab->SubsPath = fname; }
 		tab->SubsName = tab->SubsPath.AfterLast(L'\\');
 
@@ -998,29 +1001,29 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 			wxString videopath = tab->Grid->GetSInfo(L"Video File");
 			wxString audiopath = tab->Grid->GetSInfo(L"Audio File");
 			wxString keyframespath = tab->Grid->GetSInfo(L"Keyframes File");
-			if (audiopath.StartsWith("?")){ audiopath = videopath; }
-			if (videopath.StartsWith("?dummy")){ videopath = ""; }
+			if (audiopath.StartsWith(L"?")){ audiopath = videopath; }
+			if (videopath.StartsWith(L"?dummy")){ videopath = L""; }
 			//fix for wxFileExists which working without path when program run from command line
 			bool hasVideoPath = (!videopath.empty() && ((wxFileExists(videopath) && videopath.find(L':') == 1) ||
-				wxFileExists(videopath.Prepend(filename.BeforeLast(L'\\') + "\\"))));
+				wxFileExists(videopath.Prepend(filename.BeforeLast(L'\\') + L"\\"))));
 			bool hasAudioPath = (!audiopath.empty() && ((wxFileExists(audiopath) && audiopath.find(L':') == 1) ||
-				wxFileExists(audiopath.Prepend(filename.BeforeLast(L'\\') + "\\"))));
+				wxFileExists(audiopath.Prepend(filename.BeforeLast(L'\\') + L"\\"))));
 			bool hasKeyframePath = (!keyframespath.empty() && ((wxFileExists(keyframespath) && keyframespath.find(L':') == 1) ||
-				wxFileExists(keyframespath.Prepend(filename.BeforeLast(L'\\') + "\\"))));
+				wxFileExists(keyframespath.Prepend(filename.BeforeLast(L'\\') + L"\\"))));
 			int flags = wxNO;
 			wxString prompt;
 			if (hasVideoPath || hasAudioPath || hasKeyframePath){
-				if (hasVideoPath && tab->VideoPath != videopath){ prompt += _("Wideo: ") + videopath + "\n"; }
+				if (hasVideoPath && tab->VideoPath != videopath){ prompt += _("Wideo: ") + videopath + L"\n"; }
 				else if (hasVideoPath){ hasVideoPath = false; }
-				if (hasAudioPath && tab->AudioPath != audiopath){ prompt += _("Audio: ") + audiopath + "\n"; }
+				if (hasAudioPath && tab->AudioPath != audiopath){ prompt += _("Audio: ") + audiopath + L"\n"; }
 				else if (hasAudioPath){ hasAudioPath = false; }
-				if (hasKeyframePath && tab->KeyframesPath != keyframespath){ prompt += _("Klatki kluczowe: ") + keyframespath + "\n"; }
+				if (hasKeyframePath && tab->KeyframesPath != keyframespath){ prompt += _("Klatki kluczowe: ") + keyframespath + L"\n"; }
 				else if (hasKeyframePath){ hasKeyframePath = false; }
 				if (!prompt.empty()){ prompt.Prepend(_("Skojarzone pliki:\n")); flags |= wxOK; }
 			}
 			if (!secondFileName.empty()){
 				if (tab->VideoPath != secondFileName){
-					if (!prompt.empty()){ prompt += "\n"; }
+					if (!prompt.empty()){ prompt += L"\n"; }
 					prompt += _("Wideo z folderu:\n") + secondFileName.AfterLast(L'\\'); flags |= wxYES;
 				}
 				else
@@ -1040,7 +1043,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 				else if (result == wxOK){
 					if (!audiopath.empty()){
 						if (hasAudioPath && audiopath != videopath){
-							audiopath.Replace("/", "\\");
+							audiopath.Replace(L"/", L"\\");
 							OpenAudioInTab(tab, 30040, audiopath);
 							found = changeAudio = false;
 						}
@@ -1055,7 +1058,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 						}
 					}
 					if (hasVideoPath){ 
-						videopath.Replace("/", "\\");
+						videopath.Replace(L"/", L"\\");
 						secondFileName = videopath; 
 						found = true; 
 					}
@@ -1074,7 +1077,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 				if (!isgood){ KaiMessageBox(_("Nie można otworzyć napisów"), _("Uwaga")); }
 				else{ tab->Video->Render(); }
 			}
-			tab->Video->vToolbar->DisableVisuals(ext != "ass");
+			tab->Video->vToolbar->DisableVisuals(ext != L"ass");
 		}
 		SetRecent();
 		//set texts on window title and tab
@@ -1085,7 +1088,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		//set color space
 		if (!found){
 			if (tab->Video->VFF && tab->Video->vstate != None && tab->Grid->subsFormat == ASS){
-				tab->Video->SetColorSpace(tab->Grid->GetSInfo("YCbCr Matrix"));
+				tab->Video->SetColorSpace(tab->Grid->GetSInfo(L"YCbCr Matrix"));
 			}
 			goto done;
 		}
@@ -1125,14 +1128,14 @@ void KainoteFrame::SetSubsResolution(bool showDialog)
 	}
 	int x = 0, y = 0;
 	cur->Grid->GetASSRes(&x, &y);
-	wxString resolution = std::to_string(x) + " x " + std::to_string(y);
+	wxString resolution = std::to_string(x) + L" x " + std::to_string(y);
 	SetStatusText(resolution, 7);
 	wxSize vsize;
 
 	if (cur->Video->GetState() != None && cur->editor){
 		vsize = cur->Video->GetVideoSize();
 		wxString vres;
-		vres << vsize.x << " x " << vsize.y;
+		vres << vsize.x << L" x " << vsize.y;
 		if (vres != resolution){
 			StatusBar->SetLabelTextColour(5, WindowWarningElements);
 			StatusBar->SetLabelTextColour(7, WindowWarningElements);
@@ -1155,11 +1158,11 @@ void KainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
 {
 	TabPanel *cur = GetTab();
 	wxString resolution;
-	resolution << w << " x " << h;
+	resolution << w << L" x " << h;
 	SetStatusText(resolution, 5);
 	int x = 0, y = 0;
 	cur->Grid->GetASSRes(&x, &y);
-	wxString sres = std::to_string(x) + " x " + std::to_string(y);
+	wxString sres = std::to_string(x) + L" x " + std::to_string(y);
 	if (resolution != sres && sres.Len() > 3 && cur->editor){
 		StatusBar->SetLabelTextColour(5, WindowWarningElements);
 		StatusBar->SetLabelTextColour(7, WindowWarningElements);
@@ -1368,15 +1371,16 @@ bool KainoteFrame::FindFile(const wxString &fn, wxString &foundFile, bool video)
 
 	wxDir kat(path);
 	if (kat.IsOpened()){
-		kat.GetAllFiles(path, &files, filespec.BeforeLast(L'.') + ".*", wxDIR_FILES);
+		kat.GetAllFiles(path, &files, filespec.BeforeLast(L'.') + L".*", wxDIR_FILES);
 	}
 	if (files.size() < 2){ return false; }
 
 	for (int i = 0; i < (int)files.size(); i++){
 		wxString ext = files[i].AfterLast(L'.');
-		if ((!video && (ext != "ass"&&ext != "txt"&&ext != "sub"&&ext != "srt"&&ext != "ssa"))
-			|| (video && (ext != "avi"&&ext != "mp4"&&ext != "mkv"&&ext != "ogm"&&ext != "wmv"&&ext != "asf"&&ext != "rmvb"
-			&&ext != "rm"&&ext != "3gp"&&ext != "ts"&&ext != "m2ts"&&ext != "m4v"&&ext != "flv"))  //&&ext!="avs" przynajmniej do momentu dorobienia obsługi przez avisynth
+		if ((!video && (ext != L"ass" && ext != L"txt" && ext != L"sub" && ext != L"srt" && ext != L"ssa"))
+			|| (video && (ext != L"avi" && ext != L"mp4" && ext != L"mkv" && ext != L"ogm" && ext != L"wmv" 
+			&& ext != L"asf" && ext != L"rmvb" && ext != L"rm" && ext != L"3gp" &&ext != L"ts" 
+			&&ext != L"m2ts" &&ext != L"m4v" &&ext != L"flv"))  //&&ext!=L"avs" przynajmniej do momentu dorobienia obsługi przez avisynth
 			){
 		}
 		else{ foundFile = files[i]; return true; }
@@ -1418,7 +1422,7 @@ void KainoteFrame::Label(int iter/*=0*/, bool video/*=false*/, int wtab/*=-1*/, 
 	wxString name = (video) ? atab->VideoName : whiter + atab->SubsName;
 	if (!onlyTabs)
 		SetLabel(name + L" - " + Options.progname + L" " + wxString(INSTRUCTIONS));
-	//if (name.length() > 40){ name = name.SubString(0, 40); }
+	
 	Tabs->SetPageText((wtab < 0) ? Tabs->GetSelection() : wtab, name);
 }
 
@@ -1490,16 +1494,16 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 	wxArrayString videos;
 	for (size_t i = 0; i < files.size(); i++){
 		wxString ext = files[i].AfterLast(L'.').Lower();
-		if (ext == "ass" || ext == "ssa" || ext == "txt" || ext == "srt" || ext == "sub"){
+		if (ext == L"ass" || ext == L"ssa" || ext == L"txt" || ext == L"srt" || ext == L"sub"){
 			subs.Add(files[i]);
 		}
-		else if (ext == "lua" || ext == "moon"){
+		else if (ext == L"lua" || ext == L"moon"){
 			//if (!Auto){ Auto = new Auto::Automation(false); }
 			if (Auto->ASSScripts.size() < 1)
 				Auto->AddFromSubs();
 			Auto->Add(files[i]);
 		}
-		else if (ext != "exe" && ext != "zip" && ext != "rar" && ext != "7z"){
+		else if (ext != L"exe" && ext != L"zip" && ext != L"rar" && ext != L"7z"){
 			videos.Add(files[i]);
 		}
 
@@ -1520,8 +1524,8 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 	for (size_t i = 0; i < maxx; i++)
 	{
 
-		if ((i >= Tabs->Size() || Tabs->Page(Tabs->iter)->SubsPath != "" ||
-			Tabs->Page(Tabs->iter)->VideoPath != "") && !intab){
+		if ((i >= Tabs->Size() || Tabs->Page(Tabs->iter)->SubsPath != L"" ||
+			Tabs->Page(Tabs->iter)->VideoPath != L"") && !intab){
 			InsertTab(false);
 		}
 		else if (GetTab()->Video->Visual){
@@ -1551,7 +1555,7 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 				tab->Grid->LoadSubtitles(s, ext);
 			}
 
-			if (ext == "ssa"){ ext = "ass"; subs[i] = subs[i].BeforeLast(L'.') + ".ass"; }
+			if (ext == L"ssa"){ ext = L"ass"; subs[i] = subs[i].BeforeLast(L'.') + L".ass"; }
 			tab->SubsPath = subs[i];
 			tab->SubsName = tab->SubsPath.AfterLast(L'\\');
 			if (!tab->editor){ HideEditor(); }
@@ -1559,7 +1563,7 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 
 			Label();
 			SetSubsResolution(askForRes);
-			tab->Video->vToolbar->DisableVisuals(ext != "ass");
+			tab->Video->vToolbar->DisableVisuals(ext != L"ass");
 		}
 		if (i < videosSize){
 			bool isload = tab->Video->LoadVideo(videos[i], (tab->editor) ? tab->Grid->GetVisible() : 0);
@@ -1577,9 +1581,10 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 
 	Thaw();
 	//taka kolejność naprawia błąd znikających zakładek
-	int w, h;
+	/*int w, h;
 	Tabs->GetClientSize(&w, &h);
-	Tabs->RefreshRect(wxRect(0, h - 25, w, 25), false);
+	Tabs->RefreshRect(wxRect(0, h - 25, w, 25), false);*/
+	Tabs->RefreshBar();
 	GetTab()->Show();
 	UpdateToolbar();
 
@@ -1597,6 +1602,7 @@ void KainoteFrame::OnPageChange(wxCommandEvent& event)
 	if (step < 0){ step = Tabs->Size() - 1; }
 	else if (step >= (int)Tabs->Size()){ step = 0; }
 	Tabs->ChangePage(step, true);
+	Tabs->Update();
 }
 
 
@@ -1606,19 +1612,19 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 	TabPanel *cur = Tabs->GetPage();
 	int iter = cur->Grid->file->Iter();
 	if (cur->Grid->IsModified()){
-		whiter << iter << "*";
+		whiter << iter << L"*";
 	}
 	wxString name = (!cur->editor) ? cur->VideoName : cur->SubsName;
-	SetLabel(whiter + name + " - " + Options.progname + L" " + wxString(INSTRUCTIONS));
+	SetLabel(whiter + name + L" - " + Options.progname + L" " + wxString(INSTRUCTIONS));
 	if (cur->Video->GetState() != None){
-		SetStatusText(getfloat(cur->Video->fps) + " FPS", 4);
+		SetStatusText(getfloat(cur->Video->fps) + L" FPS", 4);
 		wxString tar;
-		tar << cur->Video->ax << " : " << cur->Video->ay;
+		tar << cur->Video->ax << L" : " << cur->Video->ay;
 		SetStatusText(tar, 6);
 		int x, y;
 		cur->Video->GetVideoSize(&x, &y);
 		tar.Empty();
-		tar << x << " x " << y;
+		tar << x << L" x " << y;
 		SetStatusText(tar, 5);
 		cur->Video->RefreshTime();
 
@@ -1628,17 +1634,17 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 		if (cur->editor){
 			SetStatusText(cur->VideoName, 8);
 		}
-		else{ SetStatusText("", 8); }
+		else{ SetStatusText(L"", 8); }
 		cur->Video->SetScaleAndZoom();
 	}
 	else{
-		SetStatusText("", 8);
-		SetStatusText("", 6);
-		SetStatusText("", 5);
-		SetStatusText("", 4);
-		SetStatusText("", 3);
-		SetStatusText("", 2);
-		SetStatusText("", 1);
+		SetStatusText(L"", 8);
+		SetStatusText(L"", 6);
+		SetStatusText(L"", 5);
+		SetStatusText(L"", 4);
+		SetStatusText(L"", 3);
+		SetStatusText(L"", 2);
+		SetStatusText(L"", 1);
 	}
 	SetSubsResolution();
 	
@@ -1735,11 +1741,11 @@ void KainoteFrame::HideEditor(bool save)
 
 		cur->BoxSizer1->Layout();
 
-		if (cur->VideoName != ""){ Label(0, true); }
+		if (cur->VideoName != L""){ Label(0, true); }
 		if (cur->Video->GetState() != None){ cur->Video->ChangeVobsub(true); }
 		//cur->Video->vToolbar->Enable(false);
 		StatusBar->SetLabelTextColour(5, WindowText);
-		SetStatusText("", 7);
+		SetStatusText(L"", 7);
 		if (cur->Video->isFullscreen)
 			cur->Video->TD->HideToolbar(true);
 
@@ -1824,7 +1830,7 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 	if (id == CloseAudio && tab->Edit->ABox){
 		tab->Video->player = NULL;
 		tab->Edit->CloseAudio();
-		tab->AudioPath = "";
+		tab->AudioPath.clear();
 	}
 	else{
 
@@ -1834,10 +1840,10 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 		wxString Path;
 		if (id == OpenAudio){
 			wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik audio"),
-				(tab->VideoPath != "") ? tab->VideoPath.BeforeLast(L'\\') :
-				(videorec.size() > 0) ? subsrec[0].BeforeLast(L'\\') : "", "",
+				(tab->VideoPath != L"") ? tab->VideoPath.BeforeLast(L'\\') :
+				(videorec.size() > 0) ? subsrec[0].BeforeLast(L'\\') : L"", L"",
 				_("Pliki audio i wideo") +
-				" (*.wav),(*.w64),(*.flac),(*.ac3),(*.aac),(*.ogg),(*.mp3),(*.mp4),(*.m4a),(*.mkv),(*.avi)|*.wav;*.w64;*.flac;*.ac3;*.aac;*.ogg;*.mp3;*.mp4;*.m4a;*.mkv;*.avi|" +
+				L" (*.wav),(*.w64),(*.flac),(*.ac3),(*.aac),(*.ogg),(*.mp3),(*.mp4),(*.m4a),(*.mkv),(*.avi)|*.wav;*.w64;*.flac;*.ac3;*.aac;*.ogg;*.mp3;*.mp4;*.m4a;*.mkv;*.avi|" +
 				_("Wszystkie pliki") + " |*.*", wxFD_OPEN);
 			int result = FileDialog1->ShowModal();
 			if (result == wxID_OK){
@@ -1892,8 +1898,8 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 		MenuItem *redoItem = EditMenu->FindItem(Redo);
 		if (undoItem){
 			wxString accel = undoItem->GetAccel();
-			wxString accelName = (accel.empty()) ? "" : "\t" + accel;
-			accelName.Replace("+", "-");
+			wxString accelName = (accel.empty()) ? L"" : L"\t" + accel;
+			accelName.Replace(L"+", L"-");
 			if (!undoName.empty()){
 				wxString lowerUndoName = wxString(undoName[0]).Lower() + undoName.Mid(1);
 				undoItem->label = _("&Cofnij do ") + lowerUndoName + accelName;
@@ -1904,7 +1910,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 		if (redoItem){
 			wxString accel = redoItem->GetAccel();
 			wxString accelName = (accel.empty()) ? "" : "\t" + accel;
-			accelName.Replace("+", "-");
+			accelName.Replace(L"+", L"-");
 			if (!redoName.empty()){
 				wxString lowerRedoName = wxString(redoName[0]).Lower() + redoName.Mid(1);
 				redoItem->label = _("&Ponów do ") + lowerRedoName + accelName;
@@ -1953,7 +1959,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 		Menubar->Enable(i, editor && enable);
 	}
 	//specjalna poprawka do zapisywania w trybie tłumaczenia, jeśli jest tlmode, to zawsze ma działać.
-	tab->Edit->TlMode->Enable((editor && form == ASS && tab->SubsPath != ""));
+	tab->Edit->TlMode->Enable((editor && form == ASS && tab->SubsPath != L""));
 	//if(curMenu){Menubar->ShowMenu();}
 }
 
@@ -2127,14 +2133,14 @@ void KainoteFrame::OnRunScript(wxCommandEvent& event)
 	//else 
 	if (Auto->Scripts.size() < 1){ Auto->ReloadScripts(true); }
 	wxString name = Hkeys.GetName(idAndType(event.GetId()));
-	if (!name.StartsWith("Script ")){ KaiMessageBox(wxString::Format(_("Skrót o nazwie '%s' nie należy do skrypru.")), _("Błąd")); return; }
+	if (!name.StartsWith(L"Script ")){ KaiMessageBox(wxString::Format(_("Skrót o nazwie '%s' nie należy do skrypru.")), _("Błąd")); return; }
 	else{ name = name.Mid(7); }
 	wxString path = name.BeforeLast(L'-');
 	int wmacro = 0;
 	if (path.IsEmpty()){ path = name; }
 	else{ wmacro = wxAtoi(name.AfterLast(L'-')); }
 	if (!wxFileExists(path)){
-		Hkeys.SetHKey(idAndType(event.GetId()), "Script " + name, "");
+		Hkeys.SetHKey(idAndType(event.GetId()), L"Script " + name, L"");
 		Hkeys.SaveHkeys(false);
 		return;
 	}

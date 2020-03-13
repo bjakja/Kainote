@@ -150,7 +150,7 @@ void ItemColor::OnChangeHistory()
 
 void ItemCheckBox::OnPaint(wxMemoryDC *dc, int x, int y, int w, int h, KaiListCtrl *theList)
 {
-	wxString bitmapName = (modified) ? "checkbox_selected" : "checkbox";
+	wxString bitmapName = (modified) ? L"checkbox_selected" : L"checkbox";
 	wxBitmap checkboxBmp = wxBITMAP_PNG(bitmapName);
 	if (enter){ BlueUp(&checkboxBmp); }
 	dc->DrawBitmap(checkboxBmp, x + 1, y + (h - 13) / 2);
@@ -202,10 +202,10 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 	SetBackgroundColour(parent->GetBackgroundColour());
 	SetForegroundColour(parent->GetForegroundColour());
 	SetMinSize(size);
-	SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT));
+	SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT));
 	wxAcceleratorEntry entries[2];
-	entries[0].Set(wxACCEL_CTRL, 'Z', 11642);
-	entries[1].Set(wxACCEL_CTRL, 'Y', 11643);
+	entries[0].Set(wxACCEL_CTRL, L'Z', 11642);
+	entries[1].Set(wxACCEL_CTRL, L'Y', 11643);
 	wxAcceleratorTable accel(2, entries);
 	SetAcceleratorTable(accel);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &KaiListCtrl::Undo, this, 11642);
@@ -233,8 +233,8 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, 
 	SetBackgroundColour(parent->GetBackgroundColour());
 	SetForegroundColour(parent->GetForegroundColour());
 	SetMinSize(size);
-	SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT));
-	InsertColumn(0, "", TYPE_CHECKBOX, -1);
+	SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT));
+	InsertColumn(0, L"", TYPE_CHECKBOX, -1);
 	int maxwidth = -1;
 	for (int i = 0; i < numelem; i++){
 		AppendItem(new ItemCheckBox(false, list[i]));
@@ -266,8 +266,8 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, co
 	SetBackgroundColour(parent->GetBackgroundColour());
 	SetForegroundColour(parent->GetForegroundColour());
 	SetMinSize(size);
-	SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT));
-	InsertColumn(0, "", TYPE_TEXT, -1);
+	SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT));
+	InsertColumn(0, L"", TYPE_TEXT, -1);
 	int maxwidth = -1;
 	for (size_t i = 0; i < list.size(); i++){
 		AppendItem(new ItemText(list[i]));
@@ -427,8 +427,18 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	if (isFiltered)
 		maxWidth += 12;
 
+	bool shouldStretch = false;
+	int stretched = maxWidth;
+
 	if (widths.size() > 1){ maxWidth += 10; }
-	else if (maxWidth < w - 1){ maxWidth = w - 1; if (widths.size() == 1){ widths[0] = w - 4; } }
+	else if (maxWidth < w - 1){ 
+		maxWidth = w - 1; 
+		//With one collumn it should stretch it when is smaller than window
+		shouldStretch = (widths.size() == 1);
+		stretched = (isFiltered) ? w - 16 : w - 4;
+	}
+	
+	//if (widths.size() == 1){ widths[0] = (isFiltered) ? w - 16 : w - 4; }
 	
 
 	if (SetScrollBar(wxHORIZONTAL, scPosH, w, maxWidth, w - 2)){
@@ -520,14 +530,15 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 			if (j >= rowsize){
 				continue;
 			}
+			int colSize = (shouldStretch) ? stretched : widths[j];
 			//drawing
 			if (i == sel){
 				tdc.SetPen(wxPen(highlight));
 				tdc.SetBrush(wxBrush(highlight));
-				tdc.DrawRectangle(posX - 5, posY, widths[j]+2, lineHeight);
+				tdc.DrawRectangle(posX - 5, posY, colSize + 3, lineHeight);
 			}
-			row[j]->OnPaint(&tdc, posX, posY, widths[j], lineHeight, this);
-			posX += widths[j];
+			row[j]->OnPaint(&tdc, posX, posY, colSize, lineHeight, this);
+			posX += colSize;
 
 		}
 
@@ -574,7 +585,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	
 	tdc.SetPen(wxPen(border));
 	tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-	tdc.DrawRectangle(0, 0, w, h);
+	tdc.DrawRectangle(0, 0, (isFiltered) ? w - 12 : w, h);
 
 	wxPaintDC dc(this);
 	if (isFiltered){
@@ -667,7 +678,7 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 	if (elemY < 0 || elemY >= filteredList.size()){
 		if (HasToolTips())
 			UnsetToolTip();
-		//tu ju¿ nic nie zrobimy, jesteœmy poza elemetami na samym dole
+		//Nothing to do here below elements on the bottom
 		if (lastSelX != -1 && lastSelY != -1 && lastSelY < filteredList.size() && lastSelX < filteredList[lastSelY]->row.size()){
 			filteredList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this, &copy);
 			lastSelX = -1; lastSelY = -1;

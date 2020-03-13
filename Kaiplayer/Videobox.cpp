@@ -455,7 +455,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 
 	if (event.LeftDClick() && event.GetModifiers() == 0){
 		SetFullscreen();
-		if (!isFullscreen && tab->SubsPath != "" && Options.GetBool(SelectVisibleLineAfterFullscreen)){
+		if (!isFullscreen && tab->SubsPath != L"" && Options.GetBool(SelectVisibleLineAfterFullscreen)){
 			tab->Edit->Send(EDITBOX_LINE_EDITION, false);
 			tab->Grid->SelVideoLine();
 		}
@@ -501,8 +501,8 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		}
 		int posx = (float)x * coeffX;
 		int posy = (float)y * coeffY;
-		coords = "";
-		coords << posx << ", " << posy;
+		coords = L"";
+		coords << posx << L", " << posy;
 		DrawLines(wxPoint(x, y));
 	}
 	else if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }

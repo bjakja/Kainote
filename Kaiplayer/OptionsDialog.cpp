@@ -347,6 +347,11 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		gridSaveAfter->SetToolTip(_("Zero całkowicie wyłacza zapis przy edycji"));
 		NumCtrl *autoSaveMax = new NumCtrl(EditorAdvanced, 20000, Options.GetString(AutoSaveMaxFiles), 2, 1000000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
 		autoSaveMax->SetToolTip(_("Liczbę plików autozapisu można ustawić od 2 do 1000000"));
+		int numMaxChars = Options.GetInt(TAB_TEXT_MAX_CHARS);
+		if (!numMaxChars)
+			numMaxChars = 40;
+		NumCtrl *maxTabChars = new NumCtrl(EditorAdvanced, 20000, std::to_wstring(numMaxChars), 20, 150, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
+		maxTabChars->SetToolTip(_("Liczbę znaków widocznych na zakładce można ustawić od 20 do 150"));
 		NumCtrl *ltl = new NumCtrl(EditorAdvanced, 20000, Options.GetString(AutomationTraceLevel), 0, 5, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc = new NumCtrl(EditorAdvanced, 20000, Options.GetString(InsertStartOffset), -100000, 100000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
 		NumCtrl *sc1 = new NumCtrl(EditorAdvanced, 20000, Options.GetString(InsertEndOffset), -100000, 100000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
@@ -355,6 +360,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		ConOpt(gridSaveAfter, GridSaveAfterCharacterCount);
 		ConOpt(autoSaveMax, AutoSaveMaxFiles);
 		ConOpt(ltl, AutomationTraceLevel);
+		ConOpt(maxTabChars, TAB_TEXT_MAX_CHARS);
 		ConOpt(sc, InsertStartOffset);
 		ConOpt(sc1, InsertEndOffset);
 		ConOpt(sc2, GridTagsSwapChar);
@@ -369,6 +375,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		MainSizer2->Add(sc1, 0, wxEXPAND);
 		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Znak podmiany tagów ASS:")), 3, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
 		MainSizer2->Add(sc2, 0, wxEXPAND);
+		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Ilość znaków widocznych na zakładce")), 3, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
+		MainSizer2->Add(maxTabChars, 0, wxEXPAND);
 		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Poziom śledzenia logów skryptów LUA")), 3, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
 		MainSizer2->Add(ltl, 0, wxEXPAND);
 
@@ -402,11 +410,11 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		KaiStaticBoxSizer *obr3 = new KaiStaticBoxSizer(wxHORIZONTAL, ConvOpt, _("Tagi wstawiane na początku każdej linijki ass"));
 		KaiStaticBoxSizer *obr4 = new KaiStaticBoxSizer(wxHORIZONTAL, ConvOpt, _("Rozdzielczość przy konwersji na ASS"));
 		wxArrayString styles;
-		wxArrayString fpsy;
+		wxArrayString FPSes;
 
 
 
-		fpsy.Add("23.976"); fpsy.Add("24"); fpsy.Add("25"); fpsy.Add("29.97"); fpsy.Add("30"); fpsy.Add("60");
+		FPSes.Add(L"23.976"); FPSes.Add(L"24"); FPSes.Add(L"25"); FPSes.Add(L"29.97"); FPSes.Add(L"30"); FPSes.Add(L"60");
 
 		for (int i = 0; i < 2; i++){
 			wxString optname = (i == 0) ? Options.GetString(ConvertStyleCatalog) : Options.GetString(ConvertStyle);
@@ -423,8 +431,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			else{
 				if (i == 0){ sel = cmb->FindString(Options.actualStyleDir); }
 				cmb->SetSelection(MAX(0, sel));
-				wxString co = (i == 0) ? _("katalog dla stylu") : _("styl");
-				KaiMessageBox(wxString::Format(_("Wybrany %s konwersji nie istnieje,\nzostanie zmieniony na domyślny"), co), _("Uwaga"));
+				wxString what = (i == 0) ? _("katalog dla stylu") : _("styl");
+				KaiMessageBox(wxString::Format(_("Wybrany %s konwersji nie istnieje,\nzostanie zmieniony na domyślny"), what), _("Uwaga"));
 			}
 
 			ConOpt(cmb, (i == 0) ? ConvertStyleCatalog : ConvertStyle);
@@ -441,7 +449,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			}
 		}
 		const wxString & convFPS = Options.GetString(ConvertFPS);
-		KaiChoice *cmb = new KaiChoice(ConvOpt, -1, convFPS, wxDefaultPosition, wxSize(200, -1), fpsy, wxTE_PROCESS_ENTER);
+		KaiChoice *cmb = new KaiChoice(ConvOpt, -1, convFPS, wxDefaultPosition, wxSize(200, -1), FPSes, wxTE_PROCESS_ENTER);
 		int sel = cmb->FindString(convFPS);
 		if (sel >= 0){ cmb->SetSelection(sel); }
 		else{ cmb->SetValue(convFPS); }

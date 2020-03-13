@@ -46,7 +46,7 @@ public:
 	int FindPanel(TabPanel* pan, bool safe = true);
 	int GetHeight();
 	void ChangeActive();
-	void RefreshBar();
+	void RefreshBar(bool checkSizes = false);
 	bool LoadSubtitles(TabPanel *tab, const wxString & path, int active = -1, int scroll = -1);
 	bool LoadVideo(TabPanel *tab, KainoteFrame *main, const wxString & path, int position = -1, bool isFFMS2 = true);
 

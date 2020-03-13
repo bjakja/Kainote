@@ -148,7 +148,8 @@ bool VideoRenderer::InitDX(bool reset)
 			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &d3device);//| D3DCREATE_FPU_PRESERVE
 		if (FAILED(hr)){
 			HR(d3dobject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
-				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &d3device), _("Nie można utworzyć urządzenia D3D9"));
+				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &d3device), 
+				_("Nie można utworzyć urządzenia D3D9"));
 		}
 	}
 
@@ -225,7 +226,8 @@ bool VideoRenderer::InitDX(bool reset)
 	//}
 	if (IsDshow){
 		HR(d3device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &bars), _("Nie można stworzyć powierzchni"));
-		HR(DXVA2CreateVideoService(d3device, IID_IDirectXVideoProcessorService, (VOID**)&dxvaService), _("Nie można stworzyć DXVA processor service"));
+		HR(DXVA2CreateVideoService(d3device, IID_IDirectXVideoProcessorService, (VOID**)&dxvaService), 
+			_("Nie można stworzyć DXVA processor service"));
 		DXVA2_VideoDesc videoDesc;
 		videoDesc.SampleWidth = vwidth;
 		videoDesc.SampleHeight = vheight;
@@ -275,7 +277,8 @@ bool VideoRenderer::InitDX(bool reset)
 			}
 
 			//if(DXVAcaps.DeviceCaps!=4){continue;}//DXVAcaps.InputPool
-			hr = dxvaService->CreateSurface(vwidth, vheight, 0, d3dformat, D3DPOOL_DEFAULT, 0, DXVA2_VideoSoftwareRenderTarget, &MainStream, NULL);
+			hr = dxvaService->CreateSurface(vwidth, vheight, 0, d3dformat, D3DPOOL_DEFAULT, 0, 
+				DXVA2_VideoSoftwareRenderTarget, &MainStream, NULL);
 			if (FAILED(hr)){ KaiLog(wxString::Format(_("Nie można stworzyć powierzchni DXVA %i"), (int)i)); continue; }
 
 			hr = dxvaService->CreateVideoProcessor(guids[i], &videoDesc, D3DFMT_X8R8G8B8, 0, &dxvaProcessor);
@@ -284,7 +287,7 @@ bool VideoRenderer::InitDX(bool reset)
 			break;
 		}
 		CoTaskMemFree(guids);
-		PTR(isgood, "Nie ma żadnych guidów");
+		PTR(isgood, L"Nie ma żadnych guidów");
 
 
 
@@ -293,12 +296,14 @@ bool VideoRenderer::InitDX(bool reset)
 #ifndef byvertices
 		HR(d3device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &bars), _("Nie można stworzyć powierzchni"));
 
-		HR(d3device->CreateOffscreenPlainSurface(vwidth, vheight, d3dformat, D3DPOOL_DEFAULT, &MainStream, 0), _("Nie można stworzyć plain surface"));//D3DPOOL_DEFAULT
+		HR(d3device->CreateOffscreenPlainSurface(vwidth, vheight, d3dformat, D3DPOOL_DEFAULT, &MainStream, 0), 
+			_("Nie można stworzyć plain surface"));//D3DPOOL_DEFAULT
 #endif
 	}
 
 	HR(D3DXCreateLine(d3device, &lines), _("Nie można stworzyć linii D3DX"));
-	HR(D3DXCreateFont(d3device, 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &m_font), _("Nie można stworzyć czcionki D3DX"));
+	HR(D3DXCreateFont(d3device, 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, 
+		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_font), _("Nie można stworzyć czcionki D3DX"));
 
 	return true;
 }
@@ -332,7 +337,8 @@ void VideoRenderer::Render(bool Frame, bool wait)
 				InitDX();
 				if (IsDshow){ RecreateSurface(); }
 				if (Visual){
-					Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
+					Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, 
+						backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
 				}
 				devicelost = false;
 				Render(true, false);
@@ -559,7 +565,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 
 	}
 	else{
-		KaiLog(wxString::Format("bad pitch diff %i pitch %i dxpitch %i", diff, pitch, d3dlr.Pitch));
+		KaiLog(wxString::Format(L"bad pitch diff %i pitch %i dxpitch %i", diff, pitch, d3dlr.Pitch));
 	}
 
 	MainStream->UnlockRect();
@@ -670,7 +676,7 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 				Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
 				player = tab->Edit->ABox->audioDisplay;
 			}
-			else if (player){ Kaia->Frame->OpenAudioInTab(tab, CloseAudio, ""); }
+			else if (player){ Kaia->Frame->OpenAudioInTab(tab, CloseAudio, L""); }
 		}
 		if (!VFF || VFF->width < 0){ 
 			return false; 
@@ -692,7 +698,8 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		vformat = vplayer->inf.CT;
 		ax = vplayer->inf.ARatioX;
 		ay = vplayer->inf.ARatioY;
-		d3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') : (vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
+		d3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') : 
+			(vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
 		//KaiLog(wxString::Format(L"vformat %i", (int)vformat));
 		swapFrame = (vformat == 0 && !vplayer->HasVobsub());
 		if (player){
@@ -721,7 +728,8 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		framee->strides[i] = NULL;
 	}
 
-	framee->pixfmt = (vformat == 5) ? CSRI_F_YV12A : (vformat == 3) ? CSRI_F_YV12 : (vformat == 2) ? CSRI_F_YUY2 : CSRI_F_BGR_;
+	framee->pixfmt = (vformat == 5) ? CSRI_F_YV12A : (vformat == 3) ? CSRI_F_YV12 : 
+		(vformat == 2) ? CSRI_F_YUY2 : CSRI_F_BGR_;
 
 	format->width = vwidth;
 	format->height = vheight;
@@ -741,7 +749,8 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		VFF->GetChapters(&chapters);
 
 	if (Visual){
-		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
+		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, 
+			backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
 	}
 	return true;
 }
@@ -1077,7 +1086,7 @@ int VideoRenderer::GetDuration()
 }
 
 
-//ustawia nowe recty po zmianie rozdzielczości wideo
+//sets new rects after change video resolution
 bool VideoRenderer::UpdateRects(bool changeZoom)
 {
 
@@ -1163,7 +1172,7 @@ bool VideoRenderer::UpdateRects(bool changeZoom)
 	return true;
 }
 
-//funkcja zmiany rozdziałki okna wideo
+//Changing resolution of video window
 void VideoRenderer::UpdateVideoWindow()
 {
 
@@ -1538,8 +1547,8 @@ void VideoRenderer::DrawProgBar()
 	//pozycja zegara
 	wxMutexLocker lock(mutexProgBar);
 	int w, h;
-	VideoCtrl *vc = (VideoCtrl*)this;
-	vc->TD->GetClientSize(&w, &h);
+	VideoCtrl *vb = (VideoCtrl*)this;
+	vb->TD->GetClientSize(&w, &h);
 	progressBarRect.top = 16;
 	progressBarRect.bottom = 60;
 	progressBarRect.left = w - 167;
@@ -1649,7 +1658,7 @@ void VideoRenderer::EnableStream(long index)
 		seek = true;
 		auto hr = vplayer->stream->Enable(index, AMSTREAMSELECTENABLE_ENABLE);
 		if (FAILED(hr)){
-			KaiLog("Cannot change stream");
+			KaiLog(L"Cannot change stream");
 		}
 	}
 }
@@ -1666,7 +1675,8 @@ void VideoRenderer::ChangeVobsub(bool vobsub)
 	OpenSubs((vobsub) ? NULL : pan->Grid->SaveText(), true, true);
 	vplayer->OpenFile(pan->VideoPath, vobsub);
 	vformat = vplayer->inf.CT;
-	D3DFORMAT tmpd3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') : (vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
+	D3DFORMAT tmpd3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') : 
+		(vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
 	swapFrame = (vformat == 0 && !vplayer->HasVobsub());
 	if (tmpd3dformat != d3dformat){
 		d3dformat = tmpd3dformat;
@@ -1712,9 +1722,11 @@ void VideoRenderer::SetVisual(bool remove/*=false*/, bool settext/*=false*/, boo
 		}
 		else{ SAFE_DELETE(Visual->dummytext); }
 		if (settext){ OpenSubs(pan->Grid->GetVisible()); }
-		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
+		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, 
+			backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
 		SetVisualZoom();
-		Visual->SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime, pan->Edit->line->IsComment, noRefresh);
+		Visual->SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime, 
+			pan->Edit->line->IsComment, noRefresh);
 		hasVisualEdition = true;
 	}
 }

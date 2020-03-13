@@ -38,10 +38,13 @@ Notebook::Notebook(wxWindow *parent, int id)
 	TabHeight = fy + 12;
 	xWidth = fx + 10;
 
+	int maxTextChars = Options.GetInt(TAB_TEXT_MAX_CHARS);
+	if (maxTextChars > 19)
+		maxCharPerTab = maxTextChars;
+
 	Pages.push_back(new TabPanel(this, (KainoteFrame*)parent));
 
 	wxString name = Pages[0]->SubsName;
-
 	Names.Add(name);
 
 	CalcSizes();
@@ -170,7 +173,7 @@ size_t Notebook::Size()
 void Notebook::SetPageText(int page, const wxString &label)
 {
 	Names[page] = label;
-	CalcSizes();
+	CalcSizes(true);
 	int w, h;
 	GetClientSize(&w, &h);
 	RefreshRect(wxRect(0, h - TabHeight, w, TabHeight), false);
@@ -295,15 +298,20 @@ void Notebook::CalcSizes(bool makeActiveVisible)
 	if (allTabsVisible){ firstVisibleTab = 0; }
 	if (makeActiveVisible && !allTabsVisible){
 		int tabsWidth = 0;
-		for (int i = iter; i >= 0; i--){
+		if (firstVisibleTab > iter)
+			firstVisibleTab = 0;
+
+		for (size_t i = firstVisibleTab; i < Tabsizes.size(); i++){
+
 			tabsWidth += Tabsizes[i];
-			if (tabsWidth > w - 52 || i == 0){
-				if (firstVisibleTab < i || firstVisibleTab > iter){
-					firstVisibleTab = i + ((iter - i) / 2);
-				}
+
+			if (tabsWidth > w - 22){
+				firstVisibleTab = i - 1;
 				break;
 			}
-
+			if (i == iter)
+				break;
+			
 		}
 	}
 	if (newHeight != TabHeight){
@@ -604,6 +612,10 @@ void Notebook::OnPaint(wxPaintEvent& event)
 
 		int tabSize = Tabsizes[i];
 		wxString tabName = Names[i];
+		if (iter < firstVisibleTab){
+			dc.SetPen(wxPen(activeLines, 1));
+			dc.DrawLine(0, 0, w, 0);
+		}
 		//choosen tab
 		if (i == iter){
 			//rysowanie linii po obu stronach aktywnej zakładki
@@ -666,9 +678,9 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.DrawLine(start + tabSize, TabHeight - 4, start + tabSize, 0);
 		//}
 
-			int tabsDiff = (tabName.length() < maxCharPerTab) ? 0 : (i == iter) ? 28 + xWidth : 28;
-			dc.SetClippingRegion(start, 0, tabSize - tabsDiff, TabHeight);
-			dc.DrawText(tabName, start + 4, 4);
+		int tabsDiff = (tabName.length() < maxCharPerTab) ? 0 : (i == iter) ? 28 + xWidth : 28;
+		dc.SetClippingRegion(start, 0, tabSize - tabsDiff, TabHeight);
+		dc.DrawText(tabName, start + 4, 4);
 		dc.DestroyClippingRegion();
 		if ((tabName.length() >= maxCharPerTab)){
 			int pos = start + tabSize - tabsDiff;
@@ -1013,8 +1025,11 @@ void Notebook::ChangeActive()
 	RefreshBar();
 }
 
-void Notebook::RefreshBar()
+void Notebook::RefreshBar(bool checkSizes)
 {
+	if (checkSizes)
+		CalcSizes(true);
+
 	int w, h;
 	GetClientSize(&w, &h);
 	RefreshRect(wxRect(0, h - TabHeight, w, TabHeight), false);

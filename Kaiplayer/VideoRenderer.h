@@ -110,16 +110,16 @@ class VideoRenderer : public wxWindow
 {
 	
 	public:
-		VideoRenderer(wxWindow *parent, const wxSize &size=wxDefaultSize);
+		VideoRenderer(wxWindow *parent, const wxSize &size = wxDefaultSize);
 		virtual ~VideoRenderer();
 
 		bool OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, bool vobsub, bool changeAudio = true);
-		bool OpenSubs(wxString *textsubs, bool redraw=true, bool fromFile = false);
-		bool Play(int end=-1);
+		bool OpenSubs(wxString *textsubs, bool redraw = true, bool fromFile = false);
+		bool Play(int end = -1);
 		bool PlayLine(int start, int end);
 		bool Pause();
 		bool Stop();
-		void SetPosition(int _time, bool starttime=true, bool corect=true, bool async = true);
+		void SetPosition(int _time, bool starttime = true, bool corect = true, bool async = true);
 		void SetFFMS2Position(int time, bool starttime);
 		void GoToNextKeyframe();
 		void GoToPrevKeyframe();
@@ -141,19 +141,19 @@ class VideoRenderer : public wxWindow
 		void UpdateVideoWindow();
 		void SetVolume(int vol);
 		
-		void Render(bool RecreateFrame=true, bool wait = true);
+		void Render(bool RecreateFrame = true, bool wait = true);
 		void DrawLines(wxPoint point);
 		void DrawProgBar();
-		bool DrawTexture(byte *nframe=NULL, bool copy=false);
+		bool DrawTexture(byte *nframe = NULL, bool copy = false);
 		void RecreateSurface();
 		void EnableStream(long index);
 		void ChangePositionByFrame(int cpos);
-		void ChangeVobsub(bool vobsub=false);
+		void ChangeVobsub(bool vobsub = false);
 		wxArrayString GetStreams();
-		void SetVisual(bool remove=false, bool settext=false, bool noRefresh = false);
+		void SetVisual(bool remove = false, bool settext = false, bool noRefresh = false);
 		void ResetVisual();
 		byte *GetFramewithSubs(bool subs, bool *del);
-		bool UpdateRects(bool changeZoom=true);
+		bool UpdateRects(bool changeZoom = true);
 		void Zoom(const wxSize &size);
 		void DrawZoom();
 		void ZoomMouseHandle(wxMouseEvent &evt);
@@ -162,10 +162,10 @@ class VideoRenderer : public wxWindow
 		void SetVisualZoom();
 		//int GetPreciseTime(bool start = true);
 		void DeleteAudioCache(){if(VFF){VFF->DeleteOldAudioCache();}}
-		void SetColorSpace(const wxString& matrix, bool render=true){
+		void SetColorSpace(const wxString& matrix, bool render = true){
 			if(VFF){
 				VFF->SetColorSpace(matrix);
-				if(vstate==Paused)
+				if(vstate == Paused)
 					Render();
 			}
 		}
@@ -225,7 +225,7 @@ class VideoRenderer : public wxWindow
 	protected:
 		virtual void SetScaleAndZoom(){}
 	private:
-		bool InitDX(bool reset=false);
+		bool InitDX(bool reset = false);
 		
 		void Clear();
 		

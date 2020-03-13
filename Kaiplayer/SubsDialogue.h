@@ -289,7 +289,7 @@ public:
 	wxString & GetText();
 	void SetText(const wxString &text);
 	Dialogue();
-	Dialogue(const wxString &ldial, const wxString &txttl = "");
+	Dialogue(const wxString &ldial, const wxString &txttl = L"");
 	~Dialogue();
 };
 

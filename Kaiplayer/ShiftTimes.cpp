@@ -47,11 +47,11 @@ ProfileEdition::ProfileEdition(wxWindow* parent, const wxArrayString &profiles)
 	KaiStaticText *description = new KaiStaticText(this, -1, _("Wprowadź nazwę profilu,\nbądź wybierz istniejący, by nadpisać"));
 	KaiTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	wxArrayString excludes;
-	excludes.Add("\\");
-	excludes.Add("/");
-	excludes.Add(":");
-	excludes.Add("|");
-	excludes.Add("\f");
+	excludes.Add(L"\\");
+	excludes.Add(L"/");
+	excludes.Add(L":");
+	excludes.Add(L"|");
+	excludes.Add(L"\f");
 	valid.SetExcludes(excludes);
 	profilesList = new KaiChoice(this, -1, L"", wxDefaultPosition, wxDefaultSize, profiles, 0, valid);
 	profilesList->SetMaxLength(25);
@@ -740,7 +740,7 @@ void ShiftTimesWindow::GetProfilesNames(wxArrayString &list)
 	wxArrayString fullProfiles;
 	Options.GetTable(SHIFT_TIMES_PROFILES, fullProfiles, L"\f", wxTOKEN_STRTOK);
 	for (auto profile : fullProfiles){
-		wxString profileName = profile.BeforeFirst(':');
+		wxString profileName = profile.BeforeFirst(L':');
 		list.Add(profileName);
 	}
 }
@@ -797,7 +797,7 @@ void ShiftTimesWindow::SetProfile(const wxString &name)
 			break;
 		}
 	}
-	wxStringTokenizer tokenizer(profileWithoutName, " ", wxTOKEN_RET_EMPTY_ALL);
+	wxStringTokenizer tokenizer(profileWithoutName, L" ", wxTOKEN_RET_EMPTY_ALL);
 	tokenizer.GetNextToken();
 	//time
 	if (tokenizer.HasMoreTokens()){

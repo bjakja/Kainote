@@ -254,10 +254,10 @@ void SeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, K
 	wxString bitmapName = (modified) ? "checkbox_selected" : "checkbox";
 	wxBitmap checkboxBmp = wxBITMAP_PNG(bitmapName);
 	if (enter){ BlueUp(&checkboxBmp); }
-	dc->DrawBitmap(checkboxBmp, x + 1, y + (height - 13) / 2);
+	dc->DrawBitmap(checkboxBmp, x + 5, y + (height - 13) / 2);
 
-	needTooltip = ex.x + 18 > width - 8;
-	wxRect cur(x + 18, y, width - 8, height);
+	needTooltip = ex.x + 22 > width - 8;
+	wxRect cur(x + 22, y, width - 8, height);
 	dc->SetClippingRegion(cur);
 	dc->DrawLabel(lineAndNum, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
@@ -267,8 +267,8 @@ void SeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, K
 	dc->SetPen(wxPen(background));
 	wxString foundText = lineAndNum.Mid(findPosition.x + lineNum.length(), findPosition.y);
 	wxSize exFoundText = theList->GetTextExtent(foundText);
-	dc->DrawRectangle(x + exOfFound.x + 18, y + ((height - exOfFound.y) / 2), exFoundText.x, height);
-	dc->DrawText(foundText, x + exOfFound.x + 18, y + ((height - exOfFound.y) / 2));
+	dc->DrawRectangle(x + exOfFound.x + 22, y + ((height - exOfFound.y) / 2), exFoundText.x, height);
+	dc->DrawText(foundText, x + exOfFound.x + 22, y + ((height - exOfFound.y) / 2));
 
 	dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WindowText : WindowTextInactive));
 }
@@ -277,7 +277,7 @@ wxSize SeekResults::GetTextExtents(KaiListCtrl *theList){
 	wxString lineNum = wxString::Format(_("Linia %i: "), idLine);
 	wxString lineAndNum = lineNum + name;
 	wxSize size = theList->GetTextExtent(lineAndNum);
-	size.x += 28;
+	size.x += 32;
 	size.y += 4;
 	return size;
 }

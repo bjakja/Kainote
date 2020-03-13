@@ -202,6 +202,7 @@ public:
 		delete itemList;
 		itemList = new List();
 		filteredList.clear();
+		widths.clear();
 	}
 	void SetHeaderHeight(int height);
 private:

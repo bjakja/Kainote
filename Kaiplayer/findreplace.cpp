@@ -451,7 +451,7 @@ DWORD FindReplace::FindAllInTab(void *data)
 
 				Dial->GetTextElement(dialogueColumn, &txt);
 
-				fr->FindInSubsLine(&txt, tab, &isfirst, tabLinePosition, positionId, subsPath, thread);
+				fr->FindInSubsLine(&txt, Dial, tab, &isfirst, tabLinePosition, positionId, subsPath, thread);
 			}
 			positionId++;
 		}
@@ -668,7 +668,7 @@ DWORD FindReplace::FindReplaceInFiles(void *data)
 
 
 			if (fr->find){
-				fr->FindInSubsLine(&dialtxt, NULL, &isFirst, tabLinePosition, positionId, subsPath, thread);
+				fr->FindInSubsLine(&dialtxt, dial, NULL, &isFirst, tabLinePosition, positionId, subsPath, thread);
 			}
 			else{
 				int numOfReps = fr->ReplaceInSubsLine(&dialtxt);
@@ -794,7 +794,7 @@ void FindReplace::FindReplaceInSubs(TabWindow *window)
 	AddRecent(window);
 }
 
-void FindReplace::FindInSubsLine(wxString *onlyString, TabPanel *tab, bool *isFirst, int linePos, int linePosId, const wxString &subsPath, int thread)
+void FindReplace::FindInSubsLine(wxString *onlyString, Dialogue *dial, TabPanel *tab, bool *isFirst, int linePos, int linePosId, const wxString &subsPath, int thread)
 {
 	int foundPosition = 0;
 	size_t foundLength = 0;
@@ -846,8 +846,14 @@ void FindReplace::FindInSubsLine(wxString *onlyString, TabPanel *tab, bool *isFi
 				FRRD->SetHeader(subsPath, thread);
 				*isFirst = false;
 			}
-			FRRD->SetResults(*onlyString, wxPoint(foundPosition, foundLength), tab, 
-				linePosId + 1, linePos, (tab) ? L"" : subsPath, thread);
+			if (dialogueColumn < TXT){
+				FRRD->SetResults(*onlyString + L"  ->  " + dial->GetTextNoCopy(), wxPoint(foundPosition, foundLength), tab,
+					linePosId + 1, linePos, (tab) ? L"" : subsPath, thread);
+			}
+			else{
+				FRRD->SetResults(*onlyString, wxPoint(foundPosition, foundLength), tab,
+					linePosId + 1, linePos, (tab) ? L"" : subsPath, thread);
+			}
 
 			if ((size_t)tabTextPosition >= onlyString->length() || startLine){
 				tabTextPosition = 0;
@@ -1115,9 +1121,11 @@ void FindReplace::ReplaceInAllOpenedSubs(TabWindow *window)
 
 void FindReplace::ReplaceInSubs(TabWindow *window)
 {
-	KaiMessageBox(_("Czy na pewno dokonać zmian we wszystkich napisach?\nW razie pomyłki kopie zapasowe są w folderze 'ReplaceBackup'"), _("Informacja"), wxOK, FRD);
-	find = false;
-	FindReplaceInSubs(window);
+	int result = KaiMessageBox(_("Czy na pewno dokonać zmian we wszystkich napisach?\nW razie pomyłki kopie zapasowe są w folderze 'ReplaceBackup'"), _("Informacja"), wxYES_NO, FRD);
+	if (result == wxYES){
+		find = false;
+		FindReplaceInSubs(window);
+	}
 }
 
 void FindReplace::AddRecent(TabWindow *window)

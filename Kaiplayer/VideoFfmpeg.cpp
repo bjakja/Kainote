@@ -228,7 +228,7 @@ int VideoFfmpeg::Init()
 		}
 	}
 	wxString ext = fname.AfterLast('.').Lower();
-	bool ismkv = (ext == "mkv");
+	bool ismkv = (ext == L"mkv");
 	bool hasMoreAudioTracks = audiotable.size() > 1;
 
 	if (hasMoreAudioTracks || ismkv){
@@ -252,7 +252,7 @@ int VideoFfmpeg::Init()
 				}
 				if (hasMoreAudioTracks){
 					wxArrayString enabled;
-					Options.GetTable(AcceptedAudioStream, enabled, ";");
+					Options.GetTable(AcceptedAudioStream, enabled, L";");
 					int enabledSize = enabled.GetCount();
 					int lowestIndex = enabledSize;
 					for (size_t j = 0; j < audiotable.GetCount(); j++){
@@ -270,7 +270,7 @@ int VideoFfmpeg::Init()
 						wxString all;
 						char *description = (ti->Name) ? ti->Name : ti->Language;
 						wxString codec = wxString(ti->CodecID, wxConvUTF8);
-						if (codec.StartsWith("A_"))
+						if (codec.StartsWith(L"A_"))
 							codec = codec.Mid(2);
 						all << audiotable[j] << L": " << wxString(description, wxConvUTF8) << 
 							L" (" << codec << L")";
@@ -291,7 +291,7 @@ int VideoFfmpeg::Init()
 			for (size_t j = 0; j < audiotable.size(); j++){
 				wxString CodecName(FFMS_GetCodecNameI(Indexer, audiotable[j]), wxConvUTF8);
 				wxString all;
-				all << audiotable[j] << ": " << CodecName;
+				all << audiotable[j] << L": " << CodecName;
 				tracks.Add(all);
 			}
 		}
@@ -317,7 +317,8 @@ int VideoFfmpeg::Init()
 	}
 done:
 
-	indexPath = Options.pathfull + "\\Indices\\" + fname.AfterLast('\\').BeforeLast('.') + wxString::Format("_%i.ffindex", audiotrack);
+	indexPath = Options.pathfull + L"\\Indices\\" + fname.AfterLast(L'\\').BeforeLast(L'.') + 
+		wxString::Format(L"_%i.ffindex", audiotrack);
 
 	if (wxFileExists(indexPath)){
 		index = FFMS_ReadIndex(indexPath.utf8_str(), &errinfo);
@@ -339,7 +340,7 @@ done:
 		index = FFMS_DoIndexing2(Indexer, FFMS_IEH_IGNORE, &errinfo);
 		//in this moment indexer was released, there no need to release it
 		if (index == NULL) {
-			if (wxString(errinfo.Buffer).StartsWith("Cancelled")){
+			if (wxString(errinfo.Buffer).StartsWith(L"Cancelled")){
 				//No need spam user that he clicked cancel button
 				//KaiLog(_("Indeksowanie anulowane przez użytkownika"));
 			}
@@ -349,9 +350,9 @@ done:
 			//FFMS_CancelIndexing(Indexer);
 			return 0;
 		}
-		if (!wxDir::Exists(indexPath.BeforeLast('\\')))
+		if (!wxDir::Exists(indexPath.BeforeLast(L'\\')))
 		{
-			wxDir::Make(indexPath.BeforeLast('\\'));
+			wxDir::Make(indexPath.BeforeLast(L'\\'));
 		}
 		if (FFMS_WriteIndex(indexPath.utf8_str(), index, &errinfo))
 		{
@@ -427,21 +428,21 @@ done:
 
 		if (rend){
 			SubsGrid *grid = ((TabPanel*)rend->GetParent())->Grid;
-			const wxString &colormatrix = grid->GetSInfo("YCbCr Matrix");
+			const wxString &colormatrix = grid->GetSInfo(L"YCbCr Matrix");
 			bool changeMatrix = false;
 			if (CS == FFMS_CS_UNSPECIFIED){
 				CS = width > 1024 || height >= 600 ? FFMS_CS_BT709 : FFMS_CS_BT470BG;
 			}
 			ColorSpace = RealColorSpace = ColorCatrixDescription(CS, CR);
-			if (CS == FFMS_CS_BT709 && colormatrix == "TV.709") {
+			if (CS == FFMS_CS_BT709 && colormatrix == L"TV.709") {
 				if (FFMS_SetInputFormatV(videosource, FFMS_CS_BT709, CR, FFMS_GetPixFmt(""), &errinfo)){
 					KaiLog(_("Nie można zmienić macierzy YCbCr"));
 				}
 			}
-			if (colormatrix == "TV.601"){
+			if (colormatrix == L"TV.601"){
 				ColorSpace = ColorCatrixDescription(FFMS_CS_BT470BG, CR);
 			}
-			else if (colormatrix == "TV.709"){
+			else if (colormatrix == L"TV.709"){
 				ColorSpace = ColorCatrixDescription(FFMS_CS_BT709, CR);
 			}
 		}
@@ -475,7 +476,7 @@ done:
 		}
 		if (rend && !rend->keyframesFileName.empty()){
 			OpenKeyframes(rend->keyframesFileName);
-			rend->keyframesFileName = "";
+			rend->keyframesFileName.clear();
 		}
 	}
 audio:
@@ -543,7 +544,7 @@ VideoFfmpeg::~VideoFfmpeg()
 
 	if (disccache){ Cleardiskc(); }
 	else{ Clearcache(); }
-	if (!stopLoadingAudio && disccache && diskCacheFilename.EndsWith(".part")){
+	if (!stopLoadingAudio && disccache && diskCacheFilename.EndsWith(L".part")){
 		wxString discCacheNameWithGoodExt = diskCacheFilename;
 		discCacheNameWithGoodExt.RemoveLast(5);
 		_wrename(diskCacheFilename.wc_str(), discCacheNameWithGoodExt.wc_str());
@@ -562,8 +563,9 @@ int FFMS_CC VideoFfmpeg::UpdateProgress(int64_t Current, int64_t Total, void *IC
 void VideoFfmpeg::AudioLoad(VideoFfmpeg *vf, bool newIndex, int audiotrack)
 {
 	if (vf->disccache){
-		vf->diskCacheFilename = "";
-		vf->diskCacheFilename << Options.pathfull << "\\AudioCache\\" << vf->fname.AfterLast('\\').BeforeLast('.') << "_track" << audiotrack << ".w64";
+		vf->diskCacheFilename = L"";
+		vf->diskCacheFilename << Options.pathfull << L"\\AudioCache\\" << 
+			vf->fname.AfterLast(L'\\').BeforeLast(L'.') << L"_track" << audiotrack << L".w64";
 		if (!vf->DiskCache(newIndex)){ goto done; }
 	}
 	else{
@@ -611,7 +613,7 @@ void VideoFfmpeg::GetAudio(void *buf, int64_t start, int64_t count)
 	}
 	wxCriticalSectionLocker lock(blockaudio);
 	if (FFMS_GetAudio(audiosource, buf, start, count, &errinfo)){
-		KaiLog("error audio" + wxString(errinfo.Buffer));
+		KaiLog(L"error audio" + wxString(errinfo.Buffer));
 	}
 
 }
@@ -831,7 +833,7 @@ bool VideoFfmpeg::DiskCache(bool newIndex)
 	bool good = true;
 	wxFileName discCacheFile;
 	discCacheFile.Assign(diskCacheFilename);
-	if (!discCacheFile.DirExists()){ wxMkdir(diskCacheFilename.BeforeLast('\\')); }
+	if (!discCacheFile.DirExists()){ wxMkdir(diskCacheFilename.BeforeLast(L'\\')); }
 	bool fileExists = discCacheFile.FileExists();
 	if (!newIndex && fileExists){
 		fp = _wfopen(diskCacheFilename.wc_str(), L"rb");
@@ -844,7 +846,7 @@ bool VideoFfmpeg::DiskCache(bool newIndex)
 		if (fileExists){
 			_wremove(diskCacheFilename.wc_str());
 		}
-		diskCacheFilename << ".part";
+		diskCacheFilename << L".part";
 		fp = _wfopen(diskCacheFilename.wc_str(), L"w+b");
 		if (!fp)
 			return false;
@@ -915,7 +917,7 @@ int VideoFfmpeg::GetFramefromMS(int MS, int seekfrom, bool safe)
 
 void VideoFfmpeg::DeleteOldAudioCache()
 {
-	wxString path = Options.pathfull + "\\AudioCache";
+	wxString path = Options.pathfull + L"\\AudioCache";
 	size_t maxAudio = Options.GetInt(AUDIO_CACHE_FILES_LIMIT);
 	if (maxAudio < 1)
 		return;
@@ -923,7 +925,7 @@ void VideoFfmpeg::DeleteOldAudioCache()
 	wxDir kat(path);
 	wxArrayString audioCaches;
 	if (kat.IsOpened()){
-		kat.GetAllFiles(path, &audioCaches, "", wxDIR_FILES);
+		kat.GetAllFiles(path, &audioCaches, L"", wxDIR_FILES);
 	}
 	if (audioCaches.size() <= maxAudio){ return; }
 	FILETIME ft;
@@ -976,20 +978,20 @@ void VideoFfmpeg::Render(bool wait){
 
 wxString VideoFfmpeg::ColorCatrixDescription(int cs, int cr) {
 	// Assuming TV for unspecified
-	wxString str = cr == FFMS_CR_JPEG ? "PC" : "TV";
+	wxString str = cr == FFMS_CR_JPEG ? L"PC" : L"TV";
 
 	switch (cs) {
 	case FFMS_CS_RGB:
 		return _("Brak");
 	case FFMS_CS_BT709:
-		return str + ".709";
+		return str + L".709";
 	case FFMS_CS_FCC:
-		return str + ".FCC";
+		return str + L".FCC";
 	case FFMS_CS_BT470BG:
 	case FFMS_CS_SMPTE170M:
-		return str + ".601";
+		return str + L".601";
 	case FFMS_CS_SMPTE240M:
-		return str + ".240M";
+		return str + L".240M";
 	default:
 		return _("Brak");
 	}
@@ -1000,9 +1002,9 @@ void VideoFfmpeg::SetColorSpace(const wxString& matrix)
 	wxCriticalSectionLocker lock(blockframe);
 	if (matrix == ColorSpace) return;
 	//lockGetFrame = true;
-	if (matrix == RealColorSpace || (matrix != "TV.601" && matrix != "TV.709"))
+	if (matrix == RealColorSpace || (matrix != L"TV.601" && matrix != L"TV.709"))
 		FFMS_SetInputFormatV(videosource, CS, CR, FFMS_GetPixFmt(""), nullptr);
-	else if (matrix == "TV.601")
+	else if (matrix == L"TV.601")
 		FFMS_SetInputFormatV(videosource, FFMS_CS_BT470BG, CR, FFMS_GetPixFmt(""), nullptr);
 	else{
 		//lockGetFrame = false;
