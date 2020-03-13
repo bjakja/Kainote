@@ -43,7 +43,7 @@ private:
 	void OnPaint(wxPaintEvent &event);
 	void OnScroll(wxScrollEvent& event);
 	void OnIdle(wxIdleEvent& event);
-	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
 	int sel;
 	int scPos;
 	
@@ -81,13 +81,13 @@ public:
 	/*void Prepend(wxString what);*/
 	void Insert(const wxString &what, int position);
 	wxString GetString(int pos);
-	int GetSelection(){return choice;};
+	int GetSelection(){ return choice; };
 	void SetValue(const wxString &text);
 	wxString GetValue();
-	void Select(int sel){choice=sel;}
+	void Select(int sel){ choice = sel; }
 	int GetCount();
 	int FindString(const wxString &text, bool caseSensitive = false);
-	void EnableItem(int numItem, bool enable=true);
+	void EnableItem(int numItem, bool enable = true);
 	int Append(const wxString &item);
 	void Append(const wxArrayString &itemsArray);
 	void PutArray(wxArrayString *arr);

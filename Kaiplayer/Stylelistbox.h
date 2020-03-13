@@ -24,7 +24,8 @@ class Stylelistbox: public KaiDialog
 {
 	public:
 
-		Stylelistbox(wxWindow* parent, bool styles=true, int numelem = 0, wxString *arr=0, const wxPoint& pos=wxDefaultPosition, int style=0);
+		Stylelistbox(wxWindow* parent, bool styles = true, int numelem = 0, 
+			wxString *arr = 0, const wxPoint& pos = wxDefaultPosition, int style = 0);
 		virtual ~Stylelistbox();
 
 		
@@ -38,7 +39,8 @@ class CustomCheckListBox : public KaiDialog
 {
 public:
 
-	CustomCheckListBox(wxWindow* parent, const wxArrayString &listElems, const wxString &title, const wxPoint& pos = wxDefaultPosition, int style = 0);
+	CustomCheckListBox(wxWindow* parent, const wxArrayString &listElems, 
+		const wxString &title, const wxPoint& pos = wxDefaultPosition, int style = 0);
 	virtual ~CustomCheckListBox(){};
 
 	void GetCheckedElements(wxArrayString &checkedElements);
@@ -54,7 +56,7 @@ wxString GetCheckedElements(wxWindow *parent);
 class KaiListBox : public KaiDialog
 {
 public:
-	KaiListBox(wxWindow *parent, const wxArrayString &list, const wxString &title, bool centerOnParent=false);
+	KaiListBox(wxWindow *parent, const wxArrayString &list, const wxString &title, bool centerOnParent = false);
 	virtual ~KaiListBox(){};
 	KaiListCtrl *list;
 	wxString GetSelection() const{return result;};

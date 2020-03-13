@@ -57,7 +57,7 @@ void ReplacerResultsHeader::OnMouseEvent(wxMouseEvent &event, bool _enter, bool 
 void ReplacerResultsHeader::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
 {
 	wxSize ex = theList->GetTextExtent(name);
-	wxString bitmapName = (modified) ? "checkbox_selected" : "checkbox";
+	wxString bitmapName = (modified) ? L"checkbox_selected" : L"checkbox";
 	wxBitmap checkboxBmp = wxBITMAP_PNG(bitmapName);
 	if (enter){ BlueUp(&checkboxBmp); }
 	dc->DrawBitmap(checkboxBmp, x + 1, y + (height - 13) / 2);
@@ -138,7 +138,7 @@ void ReplacerSeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int h
 	wxString lineAndNum = lineNum + name;
 	wxSize ex = theList->GetTextExtent(lineAndNum);
 	wxSize exOfFound = theList->GetTextExtent(lineAndNum.Mid(0, findPosition.x + lineNum.length()));
-	wxString bitmapName = (modified) ? "checkbox_selected" : "checkbox";
+	wxString bitmapName = (modified) ? L"checkbox_selected" : L"checkbox";
 	wxBitmap checkboxBmp = wxBITMAP_PNG(bitmapName);
 	if (enter){ BlueUp(&checkboxBmp); }
 	dc->DrawBitmap(checkboxBmp, x + 1, y + (height - 13) / 2);
@@ -176,7 +176,7 @@ FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
 {
 	DialogSizer * main = new DialogSizer(wxVERTICAL);
 	ResultsList = new KaiListCtrl(this, 23323, wxDefaultPosition, wxSize(700, 300));
-	ResultsList->InsertColumn(0, "", TYPE_TEXT, -1);
+	ResultsList->InsertColumn(0, L"", TYPE_TEXT, -1);
 	ResultsList->SetHeaderHeight(0);
 	main->Add(ResultsList, 1, wxEXPAND | wxALL, 2);
 	

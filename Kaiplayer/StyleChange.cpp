@@ -32,8 +32,8 @@ wxColour Blackorwhite(wxColour kol)
 
 StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 //: wxWindow(parent,-1,pos)
-:SCD(NULL)
-, SS((StyleStore*)parent)
+	: SCD(NULL)
+	, SS((StyleStore*)parent)
 {
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
@@ -62,8 +62,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 
 	KaiStaticBoxSizer *stylename = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Nazwa stylu:"));
 	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
-	valid.SetCharExcludes(",");
-	styleName = new KaiTextCtrl(this, -1, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, valid);
+	valid.SetCharExcludes(L",");
+	styleName = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, valid);
 	styleName->SetMaxLength(500);
 	stylename->Add(styleName, 1, wxEXPAND | wxALL, 2);
 
@@ -73,7 +73,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	wxBoxSizer *biussizer = new wxBoxSizer(wxHORIZONTAL);
 	const wxString & fontFilterText = Options.GetString(StyleEditFilterText);
 	bool fontFilterOn = Options.GetBool(StyleFilterTextOn);
-	styleFont = new KaiChoice(this, ID_FONTNAME, "", wxDefaultPosition, wxDefaultSize, wxArrayString());
+	styleFont = new KaiChoice(this, ID_FONTNAME, L"", wxDefaultPosition, wxDefaultSize, wxArrayString());
 	if (fontFilterText.IsEmpty() || !fontFilterOn){
 		styleFont->PutArray(FontEnum.GetFonts(this, [=](){
 			SS->ReloadFonts();
@@ -84,7 +84,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 			SS->ReloadFonts();
 		}, fontFilterText));
 	}
-	fontSize = new NumCtrl(this, ID_TOUTLINE, "32", 1, 10000, false, wxDefaultPosition, wxSize(66, -1), wxTE_PROCESS_ENTER);
+	fontSize = new NumCtrl(this, ID_TOUTLINE, L"32", 1, 10000, false, wxDefaultPosition, wxSize(66, -1), wxTE_PROCESS_ENTER);
 	fontFilter = new KaiTextCtrl(this, -1, fontFilterText);
 	Filter = new ToggleButton(this, 21342, _("Filtruj"));
 	Filter->SetToolTip(_("Filtruje czcionki, by zawierały wpisane znaki"));
@@ -139,10 +139,10 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	color4 = new MappedButton(this, ID_BCOLOR4, _("Cień"));
 	color4->Bind(wxEVT_RIGHT_UP, &StyleChange::OnColor4RightClick, this);
 
-	alpha1 = new NumCtrl(this, ID_TOUTLINE, "0", 0, 255, true, wxDefaultPosition, wxSize(80, -1), wxTE_PROCESS_ENTER);
-	alpha2 = new NumCtrl(this, ID_TOUTLINE, "0", 0, 255, true, wxDefaultPosition, wxSize(80, -1), wxTE_PROCESS_ENTER);
-	alpha3 = new NumCtrl(this, ID_TOUTLINE, "0", 0, 255, true, wxDefaultPosition, wxSize(80, -1), wxTE_PROCESS_ENTER);
-	alpha4 = new NumCtrl(this, ID_TOUTLINE, "0", 0, 255, true, wxDefaultPosition, wxSize(80, -1), wxTE_PROCESS_ENTER);
+	alpha1 = new NumCtrl(this, ID_TOUTLINE, L"0", 0, 255, true, wxDefaultPosition, wxSize(80, -1), wxTE_PROCESS_ENTER);
+	alpha2 = new NumCtrl(this, ID_TOUTLINE, L"0", 0, 255, true, wxDefaultPosition, wxSize(80, -1), wxTE_PROCESS_ENTER);
+	alpha3 = new NumCtrl(this, ID_TOUTLINE, L"0", 0, 255, true, wxDefaultPosition, wxSize(80, -1), wxTE_PROCESS_ENTER);
+	alpha4 = new NumCtrl(this, ID_TOUTLINE, L"0", 0, 255, true, wxDefaultPosition, wxSize(80, -1), wxTE_PROCESS_ENTER);
 
 	kolgrid->Add(color1, 1, wxEXPAND | wxALL, 2);
 	kolgrid->Add(color2, 1, wxEXPAND | wxALL, 2);
@@ -158,10 +158,10 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 
 	KaiStaticBoxSizer *styleattr = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Obwódka:               Cień:                      Skala X:                 Skala Y:"));
 
-	outline = new NumCtrl(this, ID_TOUTLINE, "", 0, 1000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
-	shadow = new NumCtrl(this, ID_TOUTLINE, "", 0, 1000000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
-	scaleX = new NumCtrl(this, ID_TOUTLINE, "", 1, 10000000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
-	scaleY = new NumCtrl(this, ID_TOUTLINE, "", 1, 10000000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
+	outline = new NumCtrl(this, ID_TOUTLINE, L"", 0, 1000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
+	shadow = new NumCtrl(this, ID_TOUTLINE, L"", 0, 1000000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
+	scaleX = new NumCtrl(this, ID_TOUTLINE, L"", 1, 10000000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
+	scaleY = new NumCtrl(this, ID_TOUTLINE, L"", 1, 10000000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
 
 	styleattr->Add(outline, 1, wxEXPAND | wxALL, 2);
 	styleattr->Add(shadow, 1, wxEXPAND | wxALL, 2);
@@ -172,8 +172,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	wxBoxSizer *sizer2 = new wxBoxSizer(wxHORIZONTAL);
 	KaiStaticBoxSizer *styleattr1 = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Kąt:                     Odstępy:              Typ obwódki:"));
 
-	angle = new NumCtrl(this, ID_TOUTLINE, "", -1000000, 1000000, false, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
-	spacing = new NumCtrl(this, ID_TOUTLINE, "", -1000000, 1000000, false, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
+	angle = new NumCtrl(this, ID_TOUTLINE, L"", -1000000, 1000000, false, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
+	spacing = new NumCtrl(this, ID_TOUTLINE, L"", -1000000, 1000000, false, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
 	borderStyle = new KaiCheckBox(this, ID_CBOLD, _("Prost. obw."));
 
 	styleattr1->Add(angle, 1, wxEXPAND | wxALL, 2);
@@ -182,9 +182,9 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 
 	KaiStaticBoxSizer *stylemargs = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Margines lewy:     Prawy:                Pionowy:"));
 
-	leftMargin = new NumCtrl(this, ID_TOUTLINE, "", 0, 9999, true, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
-	rightMargin = new NumCtrl(this, ID_TOUTLINE, "", 0, 9999, true, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
-	verticalMargin = new NumCtrl(this, ID_TOUTLINE, "", 0, 9999, true, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
+	leftMargin = new NumCtrl(this, ID_TOUTLINE, L"", 0, 9999, true, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
+	rightMargin = new NumCtrl(this, ID_TOUTLINE, L"", 0, 9999, true, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
+	verticalMargin = new NumCtrl(this, ID_TOUTLINE, L"", 0, 9999, true, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
 
 	stylemargs->Add(leftMargin, 1, wxEXPAND | wxALL, 2);
 	stylemargs->Add(rightMargin, 1, wxEXPAND | wxALL, 2);
@@ -197,15 +197,15 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 
 	wxGridSizer *angrid = new wxGridSizer(3, 5, 2);
 
-	alignment7 = new KaiRadioButton(this, ID_RAN7, "7", wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	alignment8 = new KaiRadioButton(this, ID_RAN8, "8");
-	alignment9 = new KaiRadioButton(this, ID_RAN9, "9");
-	alignment4 = new KaiRadioButton(this, ID_RAN4, "4");
-	alignment5 = new KaiRadioButton(this, ID_RAN5, "5");
-	alignment6 = new KaiRadioButton(this, ID_RAN6, "6");
-	alignment1 = new KaiRadioButton(this, ID_RAN1, "1");
-	alignment2 = new KaiRadioButton(this, ID_RAN2, "2");
-	alignment3 = new KaiRadioButton(this, ID_RAN3, "3");
+	alignment7 = new KaiRadioButton(this, ID_RAN7, L"7", wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	alignment8 = new KaiRadioButton(this, ID_RAN8, L"8");
+	alignment9 = new KaiRadioButton(this, ID_RAN9, L"9");
+	alignment4 = new KaiRadioButton(this, ID_RAN4, L"4");
+	alignment5 = new KaiRadioButton(this, ID_RAN5, L"5");
+	alignment6 = new KaiRadioButton(this, ID_RAN6, L"6");
+	alignment1 = new KaiRadioButton(this, ID_RAN1, L"1");
+	alignment2 = new KaiRadioButton(this, ID_RAN2, L"2");
+	alignment3 = new KaiRadioButton(this, ID_RAN3, L"3");
 
 	angrid->Add(alignment7, 1, wxEXPAND | wxALL, 2);
 	angrid->Add(alignment8, 1, wxEXPAND | wxALL, 2);
@@ -252,7 +252,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	styleprev->Add(Preview, 1, wxEXPAND | wxALL, 2);
 
 	wxBoxSizer *buttons = new wxBoxSizer(wxHORIZONTAL);
-	btnOk = new MappedButton(this, ID_BOK, "Ok");
+	btnOk = new MappedButton(this, ID_BOK, L"Ok");
 	btnCommit = new MappedButton(this, ID_B_COMMIT, _("Zastosuj"));
 	btnCommitOnStyles = new MappedButton(this, ID_B_CHANGE_ALL_SELECTED_STYLES, _("Zastosuj na zaznaczonych"));
 	btnCancel = new MappedButton(this, ID_BCANCEL, _("Anuluj"));
@@ -491,15 +491,15 @@ void StyleChange::UpdateValues(Styles *style, bool allowMultiEdit, bool enableNo
 	borderStyle->SetValue(updateStyle->BorderStyle);
 	//if(tab->BorderStyle){sob->SetValue(true);}else{sob->SetValue(false);};
 	wxString an = updateStyle->Alignment;
-	if (an == "1"){ alignment1->SetValue(true); }
-	else if (an == "2"){ alignment2->SetValue(true); }
-	else if (an == "3"){ alignment3->SetValue(true); }
-	else if (an == "4"){ alignment4->SetValue(true); }
-	else if (an == "5"){ alignment5->SetValue(true); }
-	else if (an == "6"){ alignment6->SetValue(true); }
-	else if (an == "7"){ alignment7->SetValue(true); }
-	else if (an == "8"){ alignment8->SetValue(true); }
-	else if (an == "9"){ alignment9->SetValue(true); };
+	if (an == L"1"){ alignment1->SetValue(true); }
+	else if (an == L"2"){ alignment2->SetValue(true); }
+	else if (an == L"3"){ alignment3->SetValue(true); }
+	else if (an == L"4"){ alignment4->SetValue(true); }
+	else if (an == L"5"){ alignment5->SetValue(true); }
+	else if (an == L"6"){ alignment6->SetValue(true); }
+	else if (an == L"7"){ alignment7->SetValue(true); }
+	else if (an == L"8"){ alignment8->SetValue(true); }
+	else if (an == L"9"){ alignment9->SetValue(true); };
 	scaleX->SetString(updateStyle->ScaleX);
 	scaleY->SetString(updateStyle->ScaleY);
 	leftMargin->SetString(updateStyle->MarginL);
@@ -507,7 +507,7 @@ void StyleChange::UpdateValues(Styles *style, bool allowMultiEdit, bool enableNo
 	verticalMargin->SetString(updateStyle->MarginV);
 	int choice = -1;
 	for (size_t i = 0; i < encs.size(); i++){
-		if (encs[i].StartsWith(updateStyle->Encoding + " ")){ choice = i; break; }
+		if (encs[i].StartsWith(updateStyle->Encoding + L" ")){ choice = i; break; }
 	}
 	if (choice == -1){ choice = 1; }
 	bool enableMultiEdition = (allowMultiEdit && enableNow);
@@ -530,7 +530,7 @@ void StyleChange::UpdateValues(Styles *style, bool allowMultiEdit, bool enableNo
 void StyleChange::OnChangeAllSelectedStyles(wxCommandEvent& event)
 {
 	if (!updateStyle || !allowMultiEdition || !CompareStyle){
-		KaiLog("Style was released or not allowed");
+		KaiLog(L"Style was released or not allowed");
 		return;
 	}
 	UpdateStyle();
@@ -569,15 +569,15 @@ void StyleChange::UpdateStyle()
 	updateStyle->Shadow = shadow->GetString();
 	updateStyle->BorderStyle = borderStyle->GetValue();
 	wxString an;
-	if (alignment1->GetValue()){ an = "1"; }
-	else if (alignment2->GetValue()){ an = "2"; }
-	else if (alignment3->GetValue()){ an = "3"; }
-	else if (alignment4->GetValue()){ an = "4"; }
-	else if (alignment5->GetValue()){ an = "5"; }
-	else if (alignment6->GetValue()){ an = "6"; }
-	else if (alignment7->GetValue()){ an = "7"; }
-	else if (alignment8->GetValue()){ an = "8"; }
-	else if (alignment9->GetValue()){ an = "9"; };
+	if (alignment1->GetValue()){ an = L"1"; }
+	else if (alignment2->GetValue()){ an = L"2"; }
+	else if (alignment3->GetValue()){ an = L"3"; }
+	else if (alignment4->GetValue()){ an = L"4"; }
+	else if (alignment5->GetValue()){ an = L"5"; }
+	else if (alignment6->GetValue()){ an = L"6"; }
+	else if (alignment7->GetValue()){ an = L"7"; }
+	else if (alignment8->GetValue()){ an = L"8"; }
+	else if (alignment9->GetValue()){ an = L"9"; };
 	updateStyle->Alignment = an;
 	updateStyle->ScaleX = scaleX->GetString();
 	updateStyle->ScaleY = scaleY->GetString();

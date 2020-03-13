@@ -56,7 +56,8 @@ private:
 	Hunspell *hunspell;
 	wxCSConv *conv;
 	static SpellChecker *SC;
-
+	wxString dictionaryPath;
+	wxString userDictionaryPath;
 };
 
 

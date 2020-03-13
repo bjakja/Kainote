@@ -168,12 +168,12 @@ void SpellCheckerDialog::Replace(wxCommandEvent &evt)
 		}
 	}
 	wxString replaceTxt = replaceWord->GetValue();
-	if(replaceTxt.IsEmpty() || errors.size()<2){return;}
+	if(replaceTxt.IsEmpty() || errors.size() < 2){return;}
 	tab = Kai->GetTab();
 	Dialogue *Dial = tab->Grid->CopyDialogue(lastLine);
 	wxString &Text = Dial->Text.CheckTlRef(Dial->TextTl, tab->Grid->hasTLMode);
-	int start = errors[lastMisspell-2];
-	int end = errors[lastMisspell-1]+1;
+	int start = errors[lastMisspell - 2];
+	int end = errors[lastMisspell - 1] + 1;
 	Text.replace(start, end - start, replaceTxt);
 	tab->Grid->SetModified(SPELL_CHECKER);
 	tab->Grid->Refresh(false);

@@ -37,7 +37,7 @@ HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<voi
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		func(HistoryList->GetSelection());
 	}, ID_SET_HISTORY);
-	MappedButton *Ok = new MappedButton(this, ID_SET_HISTORY_AND_CLOSE, "OK");
+	MappedButton *Ok = new MappedButton(this, ID_SET_HISTORY_AND_CLOSE, L"OK");
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		func(HistoryList->GetSelection());
 		Hide();
@@ -52,8 +52,8 @@ HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<voi
 	SetSizerAndFit(main);
 	CenterOnParent();
 	HistoryList->SetSelection(file->Iter(), true);
-	SetLabel(_("Historia") + " (" +
-		MakePolishPlural(history.GetCount(), _("element"), _("elementy"), _("elementów")) + ")");
+	SetLabel(_("Historia") + L" (" +
+		MakePolishPlural(history.GetCount(), _("element"), _("elementy"), _("elementów")) + L")");
 }
 
 
@@ -540,7 +540,7 @@ void SubsFile::EndLoad(unsigned char editionType, int activeLine, bool initialSa
 
 void SubsFile::RemoveFirst(int num)
 {
-	//uwaga pierwszym elementem tablicy są napisy zaraz po wczytaniu dlatego też nie należy go usuwać
+	//Warning first element of table is subtitles after loading cannot delete it
 	for (std::vector<File*>::iterator it = undo.begin() + 1; it != undo.begin() + num; it++)
 	{
 		(*it)->Clear();

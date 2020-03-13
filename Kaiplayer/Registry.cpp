@@ -59,9 +59,9 @@ void Registry::SetStringValue(const wxString &strKey, const wxString &value)
 	if (!regHKey) return;
 
 	const wchar_t *data = value.wc_str();
-	LONG nError = RegSetValueExW(regHKey, (strKey!="")? strKey.wc_str() : NULL, NULL, REG_SZ, (LPBYTE)data, (wcslen(data) + 1) * 2);
+	LONG nError = RegSetValueExW(regHKey, (strKey != L"")? strKey.wc_str() : NULL, NULL, REG_SZ, (LPBYTE)data, (wcslen(data) + 1) * 2);
 	if (nError){
-		KaiLog(wxString::Format("cannot create key %s", strKey));
+		KaiLog(wxString::Format(L"cannot create key %s", strKey));
 	}
 }
 
@@ -71,7 +71,7 @@ bool Registry::GetStringValue(const wxString &strKey, wxString &outValue)
 	DWORD type = REG_SZ;
 	wchar_t data[20048];
 	DWORD size = 20048;
-	LONG nError = RegQueryValueExW(regHKey, (strKey!="") ? strKey.wc_str() : NULL, NULL, &type, (LPBYTE)&data, &size);
+	LONG nError = RegQueryValueExW(regHKey, (strKey != L"") ? strKey.wc_str() : NULL, NULL, &type, (LPBYTE)&data, &size);
 	if (nError){
 		return false;
 	}
@@ -83,31 +83,31 @@ bool Registry::AddFileAssociation(const wxString &extension, const wxString &ext
 {
 	wxStandardPathsBase &paths = wxStandardPaths::Get();
 	wxString pathfull = paths.GetExecutablePath();
-	wxString progName = pathfull.AfterLast('\\').BeforeFirst('.');
-	wxString mainPath = "Software\\Classes\\";
+	wxString progName = pathfull.AfterLast(L'\\').BeforeFirst(L'.');
+	wxString mainPath = L"Software\\Classes\\";
 	bool success = false;//HKEY_CURRENT_USER//HKEY_LOCAL_MACHINE
 	Registry reg(HKEY_CURRENT_USER, mainPath + extension, success, true);
 	if (success){
-		reg.SetStringValue("", progName + extension);
+		reg.SetStringValue(L"", progName + extension);
 		reg.CloseRegistry();
 	}
 	else{ KaiLog(wxString::Format("Nie mo¿na utowrzyæ rozszerzenia %s", extension)); return false; }
 	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension, true)){
-		reg.SetStringValue("", extName);
+		reg.SetStringValue(L"", extName);
 		reg.CloseRegistry();
 	}
 	else{
 		KaiLog("Nie mo¿na otowrzyæ klasy rozszerzenia"); return false;
 	}
-	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension + "\\DefaultIcon", true)){
-		reg.SetStringValue("", pathfull.BeforeLast('\\') + "\\Icons.dll," + std::to_string(icon));
+	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension + L"\\DefaultIcon", true)){
+		reg.SetStringValue(L"", pathfull.BeforeLast(L'\\') + L"\\Icons.dll," + std::to_wstring(icon));
 		reg.CloseRegistry();
 	}
 	else{
 		KaiLog("Nie mo¿na dodaæ ikony"); return false;
 	}
-	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension + "\\Shell\\Open\\Command", true)){
-		reg.SetStringValue("", "\""+pathfull + "\" \"%1\"");
+	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension + L"\\Shell\\Open\\Command", true)){
+		reg.SetStringValue(L"", L"\""+pathfull + L"\" \"%1\"");
 		reg.CloseRegistry();
 	}
 	else{
@@ -119,14 +119,14 @@ bool Registry::AddFileAssociation(const wxString &extension, const wxString &ext
 
 bool Registry::RemoveFileAssociation(const wxString &extension)
 {
-	wxString mainPath = "Software\\Classes\\";
+	wxString mainPath = L"Software\\Classes\\";
 	bool success = false;
 	Registry reg(HKEY_CURRENT_USER, mainPath + extension, success, true);
 	if (success){
-		reg.SetStringValue("", "");
+		reg.SetStringValue(L"", L"");
 		reg.CloseRegistry();
 	}
-	else{ KaiLog(wxString::Format("Nie mo¿na usun¹æ rozszerzenia %s", extension)); return false; }
+	else{ KaiLog(wxString::Format(L"Can not remove extension %s", extension)); return false; }
 	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, NULL, NULL);
 	return true;
 }
@@ -135,14 +135,14 @@ void Registry::CheckFileAssociation(const wxString *extensions, int numExt, std:
 {
 	wxStandardPathsBase &paths = wxStandardPaths::Get();
 	wxString pathfull = paths.GetExecutablePath();
-	wxString progName = pathfull.AfterLast('\\').BeforeFirst('.');
-	wxString mainPath = "Software\\Classes\\";
+	wxString progName = pathfull.AfterLast(L'\\').BeforeFirst(L'.');
+	wxString mainPath = L"Software\\Classes\\";
 	for (int i = 0; i < numExt; i++){
 		bool success = false;
 		Registry reg(HKEY_CURRENT_USER, mainPath + extensions[i], success, false);
 		if (success){
 			wxString out;
-			reg.GetStringValue("", out);
+			reg.GetStringValue(L"", out);
 			if (out == progName + extensions[i]){
 				output.push_back(true);
 			}

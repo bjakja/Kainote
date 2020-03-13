@@ -31,7 +31,7 @@ class StyleChange: public wxWindow
 {
 	public:
 
-		StyleChange(wxWindow* parent, bool window=true, const wxPoint& pos=wxDefaultPosition);
+		StyleChange(wxWindow* parent, bool window = true, const wxPoint& pos = wxDefaultPosition);
 		virtual ~StyleChange();
 
 		KaiCheckBox* borderStyle;

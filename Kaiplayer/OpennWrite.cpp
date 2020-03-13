@@ -30,13 +30,13 @@ OpenWrite::OpenWrite(const wxString &fileName, bool clear)
 {
 	wxFileName fname;
 	fname.Assign(fileName);
-	if(!fname.DirExists()){wxMkdir(fileName.BeforeLast('\\'));}
-	if(fname.FileExists()&&!fname.IsFileReadable()){return;}
-	if(!file.Exists(fileName)){
-		if(!file.Create(fileName,false,wxS_DEFAULT)){KaiLog(_("Nie można utworzyć pliku."));}
+	if (!fname.DirExists()){ wxMkdir(fileName.BeforeLast('\\')); }
+	if (fname.FileExists() && !fname.IsFileReadable()){ return; }
+	if (!file.Exists(fileName)){
+		if (!file.Create(fileName, false, wxS_DEFAULT)){ KaiLog(_("Nie można utworzyć pliku.")); }
 	}
 	else{
-		if(!file.Open(fileName,(clear)?wxFile::write : wxFile::write_append,wxS_DEFAULT)){KaiLog(_("Nie można otworzyć pliku."));};
+		if (!file.Open(fileName, (clear) ? wxFile::write : wxFile::write_append, wxS_DEFAULT)){ KaiLog(_("Nie można otworzyć pliku.")); };
 	}
 	isfirst=clear;
 }
@@ -49,28 +49,28 @@ OpenWrite::~OpenWrite()
 bool OpenWrite::FileOpen(const wxString &filename, wxString *riddenText, bool test)
 {
 
-	bool utf8=true;
+	bool utf8 = true;
 	wxFile filetest;
 	wxFileName fname;
 	fname.Assign(filename);
-	if(!fname.IsFileReadable()){return false;}
+	if (!fname.IsFileReadable()){ return false; }
 	if (test){
 		wchar_t b[4];
-		filetest.Open(filename,wxFile::read,wxS_DEFAULT);
+		filetest.Open(filename, wxFile::read, wxS_DEFAULT);
 		filetest.Read (b, 4);
 		
-		utf8 =((static_cast < int >(b[0]) > 48000))? true : false;
-		if(!utf8){
-			size_t size = filetest.Length ();
-			char *buff=new char[size];
+		utf8 = ((static_cast <int>(b[0]) > 48000))? true : false;
+		if (!utf8){
+			size_t size = filetest.Length();
+			char *buff = new char[size];
 			filetest.Read(buff, size);
-			utf8=IsUTF8withoutBOM(buff, size);
+			utf8 = IsUTF8withoutBOM(buff, size);
 			delete[] buff;
 		}
 		filetest.Close();
 	}
 	wxFFile fileo;
-	fileo.Open(filename, wxT("r"));
+	fileo.Open(filename, L"r");
 	if (fileo.IsOpened()){
 		if(utf8){
 			fileo.ReadAll(riddenText);
@@ -88,34 +88,37 @@ void OpenWrite::FileWrite(const wxString &fileName, const wxString &textfile, bo
 
 	wxFileName fname;
 	fname.Assign(fileName);
-	if(!fname.DirExists()){wxMkdir(fileName.BeforeLast('\\'));}
-	if(fname.FileExists()&&!fname.IsFileReadable()){KaiLog(_("Nie można odczytać pliku."));return;}
+	if (!fname.DirExists()){ wxMkdir(fileName.BeforeLast(L'\\')); }
+	if (fname.FileExists() && !fname.IsFileReadable()){ 
+		KaiLog(_("Nie można odczytać pliku.")); 
+		return; 
+	}
 	
 	wxFile file;
 	if(!file.Exists(fileName)){
-		file.Create(fileName,false,wxS_DEFAULT);
+		file.Create(fileName, false, wxS_DEFAULT);
 	}
 	else{
-		file.Open(fileName,wxFile::write,wxS_DEFAULT);}
+		file.Open(fileName, wxFile::write, wxS_DEFAULT);}
 	if (file.IsOpened()){
-		if(utf){
+		if (utf){
 			wchar_t bom = 0xFEFF;
-			file.Write(wxString(bom) + textfile,wxConvUTF8);
+			file.Write(wxString(bom) + textfile, wxConvUTF8);
 		}
-		else{file.Write(textfile,wxConvLocal);}
+		else{ file.Write(textfile, wxConvLocal); }
 		file.Close();}
 
 }
 void OpenWrite::PartFileWrite(const wxString &parttext)
 {
-	if(!file.IsOpened()){KaiLog(_("Plik nie został otwarty."));return;}
-	if(isfirst){
+	if (!file.IsOpened()){ KaiLog(_("Plik nie został otwarty.")); return; }
+	if (isfirst){
 		wchar_t bom = 0xFEFF;
-		if(!file.Write(wxString(bom) + parttext/*,wxConvUTF8*/)){KaiLog(_("Nie można zapisać do pliku."));};
-		isfirst=false;
+		if (!file.Write(wxString(bom) + parttext/*,wxConvUTF8*/)){ KaiLog(_("Nie można zapisać do pliku.")); };
+		isfirst = false;
 		return;
 	}
-	if(!file.Write(parttext/*,wxConvUTF8*/)){KaiLog(_("Nie można zapisać do pliku."));};
+	if (!file.Write(parttext/*,wxConvUTF8*/)){ KaiLog(_("Nie można zapisać do pliku.")); };
 }
 
 void OpenWrite::CloseFile()
@@ -125,8 +128,8 @@ void OpenWrite::CloseFile()
 
 bool OpenWrite::IsUTF8withoutBOM(const char* buf, size_t size)
 {
-	bool	only_saw_ascii_range = true;
-	size_t	pos = 0;
+	bool only_saw_ascii_range = true;
+	size_t pos = 0;
 	int	more_chars = 0;
 	while (pos < size)
 	{
@@ -171,7 +174,7 @@ bool OpenWrite::IsUTF8withoutBOM(const char* buf, size_t size)
 		}
 	}
 
-	if(only_saw_ascii_range){ return false;}
+	if (only_saw_ascii_range){ return false; }
 
 	return true;
 

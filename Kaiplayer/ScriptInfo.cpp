@@ -26,52 +26,52 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	SetBackgroundColour(Options.GetColour(WindowBackground));
 	res=wxSize(w,h);
 	wxIcon icn;
-	icn.CopyFromBitmap(CreateBitmapFromPngResource("ASSPROPS"));
+	icn.CopyFromBitmap(CreateBitmapFromPngResource(L"ASSPROPS"));
 	SetIcon(icn);
-	DialogSizer *mainsizer=new DialogSizer(wxVERTICAL);
+	DialogSizer *mainsizer = new DialogSizer(wxVERTICAL);
 	KaiStaticBoxSizer *StaticBox1 = new KaiStaticBoxSizer(wxVERTICAL,this, _("Informacje o napisach"));
-	wxGridSizer *GridSizer=new wxGridSizer(2,5,5);
-	title = new KaiTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
-	script = new KaiTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
-	translation = new KaiTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
-	editing = new KaiTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
-	timing = new KaiTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
-	update = new KaiTextCtrl(this, -1,"",wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
+	wxGridSizer *GridSizer = new wxGridSizer(2,5,5);
+	title = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	script = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	translation = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	editing = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	timing = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	update = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 
-	GridSizer->Add(new KaiStaticText(this, -1, _("Tytuł")),0,wxEXPAND);
-	GridSizer->Add(title,0,wxEXPAND);
-	GridSizer->Add(new KaiStaticText(this, -1, _("Autor")),0,wxEXPAND);
-	GridSizer->Add(script,0,wxEXPAND);
-	GridSizer->Add(new KaiStaticText(this, -1, _("Tłumaczenie")),0,wxEXPAND);
-	GridSizer->Add(translation,0,wxEXPAND);
-	GridSizer->Add(new KaiStaticText(this, -1, _("Korekta")),0,wxEXPAND);
-	GridSizer->Add(editing,0,wxEXPAND);
-	GridSizer->Add(new KaiStaticText(this, -1, _("Timing")),0,wxEXPAND);
-	GridSizer->Add(timing,0,wxEXPAND);
-	GridSizer->Add(new KaiStaticText(this, -1, _("Edycja")),0,wxEXPAND);
-	GridSizer->Add(update,0,wxEXPAND);
+	GridSizer->Add(new KaiStaticText(this, -1, _("Tytuł")), 0, wxEXPAND);
+	GridSizer->Add(title, 0, wxEXPAND);
+	GridSizer->Add(new KaiStaticText(this, -1, _("Autor")), 0, wxEXPAND);
+	GridSizer->Add(script, 0, wxEXPAND);
+	GridSizer->Add(new KaiStaticText(this, -1, _("Tłumaczenie")), 0, wxEXPAND);
+	GridSizer->Add(translation, 0, wxEXPAND);
+	GridSizer->Add(new KaiStaticText(this, -1, _("Korekta")), 0, wxEXPAND);
+	GridSizer->Add(editing, 0, wxEXPAND);
+	GridSizer->Add(new KaiStaticText(this, -1, _("Timing")), 0, wxEXPAND);
+	GridSizer->Add(timing, 0, wxEXPAND);
+	GridSizer->Add(new KaiStaticText(this, -1, _("Edycja")), 0, wxEXPAND);
+	GridSizer->Add(update, 0, wxEXPAND);
 
-	StaticBox1->Add(GridSizer,0,wxEXPAND|wxALL,5);
+	StaticBox1->Add(GridSizer, 0, wxEXPAND | wxALL, 5);
 
-	KaiStaticBoxSizer *StaticBox2 = new KaiStaticBoxSizer(wxVERTICAL,this, _("Rozdzielczość"));
+	KaiStaticBoxSizer *StaticBox2 = new KaiStaticBoxSizer(wxVERTICAL, this, _("Rozdzielczość"));
 	wxBoxSizer *boxsizer= new wxBoxSizer(wxHORIZONTAL);
 
-	width = new NumCtrl(this, -1,"",100,10000,true,wxDefaultPosition,wxSize(60,-1),wxTE_PROCESS_ENTER);
-	height = new NumCtrl(this, -1,"",100,10000,true,wxDefaultPosition,wxSize(60,-1),wxTE_PROCESS_ENTER);
-	resolutionFromVideo= new MappedButton(this,25456,_("Z wideo"),-1,wxDefaultPosition,wxSize(85,-1));
-	resolutionFromVideo->Enable(w>0);
+	width = new NumCtrl(this, -1, L"", 100, 10000, true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
+	height = new NumCtrl(this, -1, L"", 100, 10000, true, wxDefaultPosition, wxSize(60,-1), wxTE_PROCESS_ENTER);
+	resolutionFromVideo= new MappedButton(this, 25456, _("Z wideo"), -1, wxDefaultPosition, wxSize(85,-1));
+	resolutionFromVideo->Enable(w > 0);
 
-	boxsizer->Add(new KaiStaticText(this, -1, _("Szerokość"),wxDefaultPosition,wxSize(60,-1)),0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	boxsizer->Add(width,0,wxALL,5);
-	boxsizer->Add(new KaiStaticText(this, -1, _("Wysokość"),wxDefaultPosition,wxSize(60,-1)),0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	boxsizer->Add(height,0,wxALL,5);
-	boxsizer->Add(resolutionFromVideo,0,wxALL,5);
+	boxsizer->Add(new KaiStaticText(this, -1, _("Szerokość"), wxDefaultPosition, wxSize(60,-1)), 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+	boxsizer->Add(width, 0, wxALL, 5);
+	boxsizer->Add(new KaiStaticText(this, -1, _("Wysokość"), wxDefaultPosition, wxSize(60,-1)), 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+	boxsizer->Add(height, 0, wxALL, 5);
+	boxsizer->Add(resolutionFromVideo, 0, wxALL, 5);
 
-	StaticBox2->Add(boxsizer,0,wxEXPAND);
+	StaticBox2->Add(boxsizer, 0, wxEXPAND);
 	
 
-	matrix = new KaiChoice(this, -1 , wxDefaultPosition, wxSize(160,-1) );
-	matrix->SetSelection( matrix->Append(_("Brak")) );
+	matrix = new KaiChoice(this, -1 , wxDefaultPosition, wxSize(160, -1));
+	matrix->SetSelection(matrix->Append(_("Brak")));
 	matrix->Append("TV.601");
 	matrix->Append("PC.601");
 	matrix->Append("TV.709");
@@ -80,13 +80,13 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	matrix->Append("PC.FCC");
 	matrix->Append("TV.240M");
 	matrix->Append("PC.240M");
-	wxBoxSizer *boxsizer2= new wxBoxSizer(wxHORIZONTAL);
-	boxsizer2->Add(new KaiStaticText(this, -1, _("Macierz YCbCr"),wxDefaultPosition),1);
-	boxsizer2->Add(matrix,1,wxLEFT,3);
-	StaticBox2->Add(boxsizer2,1,wxEXPAND|wxALL, 5);
+	wxBoxSizer *boxsizer2 = new wxBoxSizer(wxHORIZONTAL);
+	boxsizer2->Add(new KaiStaticText(this, -1, _("Macierz YCbCr"), wxDefaultPosition), 1);
+	boxsizer2->Add(matrix, 1, wxLEFT, 3);
+	StaticBox2->Add(boxsizer2, 1, wxEXPAND | wxALL, 5);
 
-	KaiStaticBoxSizer *StaticBox3 = new KaiStaticBoxSizer(wxVERTICAL,this, _("Opcje"));
-	wxGridSizer *GridSizer1=new wxGridSizer(2,5,5);
+	KaiStaticBoxSizer *StaticBox3 = new KaiStaticBoxSizer(wxVERTICAL, this, _("Opcje"));
+	wxGridSizer *GridSizer1 = new wxGridSizer(2, 5, 5);
 
 	wrapstyle = new KaiChoice(this, -1/*, wxDefaultPosition, wxSize(160,-1)*/);
 	wrapstyle->SetSelection( wrapstyle->Append(_("0: Autopodział, górna linijka jest szersza")) );
@@ -97,33 +97,33 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	collision->SetSelection( collision->Append(_("Normalne")) );
 	collision->Append(_("Odwrócone"));
 
-	GridSizer1->Add(new KaiStaticText(this, -1, _("Styl dzielenia linijek")), 1 , wxEXPAND|wxLEFT, 5);
-	GridSizer1->Add(wrapstyle,1,wxEXPAND|wxRIGHT, 5);
+	GridSizer1->Add(new KaiStaticText(this, -1, _("Styl dzielenia linijek")), 1, wxEXPAND | wxLEFT, 5);
+	GridSizer1->Add(wrapstyle, 1, wxEXPAND | wxRIGHT, 5);
 	GridSizer1->Add(new KaiStaticText(this, -1, _("Kolidowanie linijek")), 1, wxEXPAND | wxLEFT, 5);
-	GridSizer1->Add(collision,1,wxEXPAND|wxRIGHT, 5);
+	GridSizer1->Add(collision, 1, wxEXPAND | wxRIGHT, 5);
 
 	scaleBorderAndShadow = new KaiCheckBox(this, -1, _("Skaluj obwódkę i cień"));
 	scaleBorderAndShadow->SetValue(true);
 
-	StaticBox3->Add(GridSizer1,1,wxEXPAND);
-	StaticBox3->Add(scaleBorderAndShadow,0,wxEXPAND|wxALL,5);
+	StaticBox3->Add(GridSizer1, 1, wxEXPAND);
+	StaticBox3->Add(scaleBorderAndShadow, 0, wxEXPAND | wxALL, 5);
 
 	wxBoxSizer *boxsizer1= new wxBoxSizer(wxHORIZONTAL);
 	save = new MappedButton(this, wxID_OK, _("Zapisz"));
 	cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	save->SetFocus();
 	SetTmpDefaultItem(save);
-	boxsizer1->Add(save,1,wxALL,5);
-	boxsizer1->Add(cancel,1,wxALL,5);
+	boxsizer1->Add(save, 1, wxALL, 5);
+	boxsizer1->Add(cancel, 1, wxALL, 5);
 
-	mainsizer->Add(StaticBox1,0,wxEXPAND|wxALL,4);
-	mainsizer->Add(StaticBox2,0,wxEXPAND|wxALL,4);
-	mainsizer->Add(StaticBox3,1,wxEXPAND|wxALL,4);
-	mainsizer->Add(boxsizer1,0,wxBOTTOM|wxALIGN_CENTER,3);
+	mainsizer->Add(StaticBox1, 0, wxEXPAND | wxALL, 4);
+	mainsizer->Add(StaticBox2, 0, wxEXPAND | wxALL, 4);
+	mainsizer->Add(StaticBox3, 1, wxEXPAND | wxALL, 4);
+	mainsizer->Add(boxsizer1, 0, wxBOTTOM | wxALIGN_CENTER, 3);
 
 	SetSizerAndFit(mainsizer);
 
-	Connect(25456,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&ScriptInfo::OnVideoRes);
+	Connect(25456, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&ScriptInfo::OnVideoRes);
 	DoTooltips();
 	CenterOnParent();
 }
@@ -135,9 +135,9 @@ ScriptInfo::~ScriptInfo()
 void ScriptInfo::OnVideoRes(wxCommandEvent& event)
 {
 	wxString tmp;
-	width->SetValue(tmp<<res.x);
-	tmp="";
-	height->SetValue(tmp<<res.y);
+	width->SetValue(tmp << res.x);
+	tmp = L"";
+	height->SetValue(tmp << res.y);
 	width->SetModified(true);
 	height->SetModified(true);
 }

@@ -133,26 +133,26 @@ struct TrackInfo {
   unsigned int  CompEnabled:1;
 
   union {
-    struct {
-      unsigned char   StereoMode;
-      unsigned char   DisplayUnit;
-      unsigned char   AspectRatioType;
-      unsigned int    PixelWidth;
-      unsigned int    PixelHeight;
-      unsigned int    DisplayWidth;
-      unsigned int    DisplayHeight;
-      unsigned int    CropL, CropT, CropR, CropB;
-      unsigned int    ColourSpace;
-      MKFLOAT	      GammaValue;
+	struct {
+	  unsigned char   StereoMode;
+	  unsigned char   DisplayUnit;
+	  unsigned char   AspectRatioType;
+	  unsigned int    PixelWidth;
+	  unsigned int    PixelHeight;
+	  unsigned int    DisplayWidth;
+	  unsigned int    DisplayHeight;
+	  unsigned int    CropL, CropT, CropR, CropB;
+	  unsigned int    ColourSpace;
+	  MKFLOAT	      GammaValue;
 
-      unsigned int  Interlaced:1;
-    } Video;
-    struct {
-      MKFLOAT	      SamplingFreq;
-      MKFLOAT	      OutputSamplingFreq;
-      unsigned char   Channels;
-      unsigned char   BitDepth;
-    } Audio;
+	  unsigned int  Interlaced:1;
+	} Video;
+	struct {
+	  MKFLOAT	      SamplingFreq;
+	  MKFLOAT	      OutputSamplingFreq;
+	  unsigned char   Channels;
+	  unsigned char   BitDepth;
+	} Audio;
   } AV;
 
   /* various strings */
@@ -299,8 +299,8 @@ X void	      mkv_GetAttachments(/* in */   MatroskaFile *mf,
 				 /* out */  Attachment **at,
 				 /* out */  unsigned *count);
 X void	      mkv_GetChapters(/* in */	MatroskaFile *mf,
-			      /* out */	Chapter **ch,
-			      /* out */ unsigned *count);
+				  /* out */	Chapter **ch,
+				  /* out */ unsigned *count);
 X void	      mkv_GetTags(/* in */  MatroskaFile *mf,
 			  /* out */ Tag **tag,
 			  /* out */ unsigned *count);
@@ -316,8 +316,8 @@ X ulonglong   mkv_GetSegmentTop(MatroskaFile *mf);
 #define	MKVF_SEEK_TO_PREV_KEYFRAME_STRICT   2
 
 X void	      mkv_Seek(/* in */ MatroskaFile *mf,
-		       /* in */	ulonglong timecode /* in ns */,
-		       /* in */ unsigned flags);
+			   /* in */	ulonglong timecode /* in ns */,
+			   /* in */ unsigned flags);
 
 X void	      mkv_SkipToKeyframe(MatroskaFile *mf);
 
@@ -350,13 +350,13 @@ X void	      mkv_SetTrackMask(/* in */ MatroskaFile *mf,/* in */ unsigned int ma
  * set of tracks, 0 on success
  */
 X int	      mkv_ReadFrame(/* in */  MatroskaFile *mf,
-			    /* in */  unsigned int mask,
-			    /* out */ unsigned int *track,
-			    /* out */ ulonglong *StartTime /* in ns */,
-			    /* out */ ulonglong *EndTime /* in ns */,
-			    /* out */ ulonglong *FilePos /* in bytes from start of file */,
-			    /* out */ unsigned int *FrameSize /* in bytes */,
-			    /* out */ unsigned int *FrameFlags);
+				/* in */  unsigned int mask,
+				/* out */ unsigned int *track,
+				/* out */ ulonglong *StartTime /* in ns */,
+				/* out */ ulonglong *EndTime /* in ns */,
+				/* out */ ulonglong *FilePos /* in bytes from start of file */,
+				/* out */ unsigned int *FrameSize /* in bytes */,
+				/* out */ unsigned int *FrameFlags);
 
 #ifdef MATROSKA_COMPRESSION_SUPPORT
 /* Compressed streams support */
@@ -365,16 +365,16 @@ struct CompressedStream;
 typedef struct CompressedStream CompressedStream;
 
 X CompressedStream  *cs_Create(/* in */	MatroskaFile *mf,
-			     /* in */	unsigned tracknum,
-			     /* out */	char *errormsg,
-			     /* in */	unsigned msgsize);
+				 /* in */	unsigned tracknum,
+				 /* out */	char *errormsg,
+				 /* in */	unsigned msgsize);
 X void		  cs_Destroy(/* in */ CompressedStream *cs);
 
 /* advance to the next frame in matroska stream, you need to pass values returned
  * by mkv_ReadFrame */
 X void		  cs_NextFrame(/* in */ CompressedStream *cs,
-			       /* in */ ulonglong pos,
-			       /* in */ unsigned size);
+				   /* in */ ulonglong pos,
+				   /* in */ unsigned size);
 
 /* read and decode more data from current frame, return number of bytes decoded,
  * 0 on end of frame, or -1 on error */

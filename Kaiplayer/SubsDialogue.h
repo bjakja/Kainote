@@ -181,7 +181,7 @@ public:
 		else{ *stored << text; }
 		return *stored;
 	};
-	//Operator kopiuje wskaŸnik gdy mamy dodatkowe u¿ycia w przeciwnym razie to nie jest w ogóle potrzebne.
+	//Operator copy pointer only when it was used elsewere
 	wxString *operator ->(){
 		if ((*deleteReference) > 0){ StoreText(*stored); }
 		return stored;

@@ -417,7 +417,8 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 								isfirst = false;
 							}
 
-							resultDialog->SetResults(lineText, wxPoint(matchstart + textPos, matchlen), tab, tabLinePosition, positionId + 1, checkedRules[k]);
+							resultDialog->SetResults(lineText, wxPoint(matchstart + textPos, matchlen), 
+								tab, tabLinePosition, positionId + 1, checkedRules[k]);
 						}
 					}
 					else

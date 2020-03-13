@@ -39,7 +39,7 @@ class StylePreview : public wxWindow
 		csri_inst *instance;
 		//csri_rend *vobsub;
 		wxMutex mutex;
-		int pitch,width,height,b,g,r,b1,g1,r1;
+		int pitch, width, height, b, g, r, b1, g1, r1;
 		
 
 		wxBitmap *bmpframe;

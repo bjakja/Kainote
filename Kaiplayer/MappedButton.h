@@ -26,20 +26,26 @@ class MappedButton :public wxWindow
 {
 public:
 	MappedButton(wxWindow *parent, int id, const wxString& label, int window = -1,
-             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+			 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
 	MappedButton(wxWindow *parent, int id, const wxString& label, const wxString& tooltip,
-             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, int window = EDITBOX_HOTKEY, long style = 0);
+			 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, int window = EDITBOX_HOTKEY, long style = 0);
 	MappedButton(wxWindow *parent, int id, const wxString& tooltip, const wxBitmap& bitmap, const wxPoint& pos,
-                   const wxSize& size = wxDefaultSize, int window = AUDIO_HOTKEY, long style = 0, const wxString &text="");
+				   const wxSize& size = wxDefaultSize, int window = AUDIO_HOTKEY, long style = 0, const wxString &text = L"");
 	void SetTwoHotkeys(){twoHotkeys=true;}
 	virtual ~MappedButton();
-	void SetToolTip(const wxString &toolTip="");
+	void SetToolTip(const wxString &toolTip = L"");
 	void SetBitmap(const wxBitmap & bitmap){icon = bitmap; Refresh(false);};
-	bool SetBackgroundColour(const wxColour &color){isColorButton = true; buttonColor = color; Refresh(false);return true;}
+	bool SetBackgroundColour(const wxColour &color){
+		isColorButton = true; 
+		buttonColor = color; 
+		Refresh(false); 
+		return true;
+	}
 	wxColour GetBackgroundColour(){return buttonColor;}
 	bool SetForegroundColour(const wxColour &fgcolor){
 		changedForeground = true;
-		wxWindow::SetForegroundColour(fgcolor); return true;
+		wxWindow::SetForegroundColour(fgcolor); 
+		return true;
 	}
 	bool changedForeground;
 	wxString GetLabelText() const {return name;}
@@ -69,8 +75,8 @@ class ToggleButton :public wxWindow
 {
 public:
 	ToggleButton(wxWindow *parent, int id, const wxString& label, const wxString& tooltip = wxEmptyString,
-             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
-	~ToggleButton(){if(bmp){delete bmp;}}
+			 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+	~ToggleButton(){if (bmp){ delete bmp; }}
 	void SetBitmap(const wxBitmap &bmp){icon = bmp; Refresh(false);}
 	bool GetValue(){return toggled;}
 	void SetValue(bool toggle){toggled = toggle; Refresh(false);}

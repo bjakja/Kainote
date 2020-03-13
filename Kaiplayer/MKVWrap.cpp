@@ -192,16 +192,16 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 
 		// Get codec type (0 = ASS/SSA, 1 = SRT)
 		trackInfo = mkv_GetTrackInfo(file,trackToRead);
-		CompressedStream *cs=NULL;
+		CompressedStream *cs = NULL;
 		if(trackInfo->CompEnabled && trackInfo->CompMethod==0){
 			char msg[201];
 			msg[200]=0;
 			cs=cs_Create(file,trackToRead,msg,200);
 			if (!cs){ KaiLog(wxString::Format(_("Błąd zlib: %s"), msg)); }
 		}
-		wxString CodecID = wxString(trackInfo->CodecID,*wxConvCurrent);
+		wxString CodecID = wxString(trackInfo->CodecID, *wxConvCurrent);
 		int codecType = 0;
-		if (CodecID == "S_TEXT/UTF8") { 
+		if (CodecID == L"S_TEXT/UTF8") { 
 			codecType = 1; 
 		}
 		// to force saving to show choose name dialog
@@ -214,10 +214,10 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 		longlong timecodeScale = mkv_TruncFloat(trackInfo->TimecodeScale) * segInfo->TimecodeScale;
 
 
-		ProgressSink *progress = new ProgressSink(target->GetParent(),_("Odczyt napisów z pliku Matroska."));
+		ProgressSink *progress = new ProgressSink(target->GetParent(), _("Odczyt napisów z pliku Matroska."));
 		progress->SetAndRunTask([=](){
 
-			char form=1;
+			char form = 1;
 			// Haali's library variables
 			ulonglong startTime, endTime, filePos;
 			unsigned int rt, frameSize, frameFlags;
@@ -246,28 +246,30 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 				// Read to temp
 				char *tmp;
 				if(cs){
-					int oscfs=frameSize*10;
-					tmp=new char[oscfs+1];
-					cs_NextFrame(cs,filePos,frameSize);
-					int rdata= cs_ReadData(cs,tmp,oscfs);
+					int oscfs = frameSize * 10;
+					tmp = new char[oscfs + 1];
+					cs_NextFrame(cs, filePos, frameSize);
+					int rdata = cs_ReadData(cs, tmp, oscfs);
 					tmp[rdata] = 0;
 				}else{
-					tmp=new char[frameSize+1];
+					tmp = new char[frameSize + 1];
 					_fseeki64(input->fp, filePos, SEEK_SET);
-					fread(tmp,1,frameSize,input->fp);
+					fread(tmp, 1, frameSize, input->fp);
 					tmp[frameSize] = 0;
 				}
 
-				wxString blockString(tmp,wxConvUTF8);
+				wxString blockString(tmp, wxConvUTF8);
 				delete[] tmp;
 
 				// Get start and end times
 				//longlong timecodeScaleLow = timecodeScale / 100;
 				longlong timecodeScaleLow = 1000000;
-				STime subStart,subEnd;
-				startTime /=timecodeScaleLow;
-				endTime /=timecodeScaleLow;
-				if (codecType == 0) { startTime=ZEROIT(startTime); endTime=ZEROIT(endTime);}
+				STime subStart, subEnd;
+				startTime /= timecodeScaleLow;
+				endTime /= timecodeScaleLow;
+				if (codecType == 0) { 
+					startTime = ZEROIT(startTime); 
+					endTime = ZEROIT(endTime);}
 				subStart.NewTime(startTime);
 				subEnd.NewTime(endTime);
 				//wxLogMessage(subStart.GetASSFormated() + "-" + subEnd.GetASSFormated() + ": " + blockString);
@@ -275,30 +277,31 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 				// Process SSA/ASS
 				if (codecType == 0) {
 					// Get order number
-					int pos = blockString.Find(",");
+					int pos = blockString.Find(L",");
 					wxString orderString = blockString.Left(pos);
 					orderString.ToLong(&order);
 					blockString = blockString.Mid(pos+1);
 
 					// Get layer number
-					pos = blockString.Find(",");
+					pos = blockString.Find(L",");
 					long int layer = 0;
 					if (pos) {
 						wxString layerString = blockString.Left(pos);
 						layerString.ToLong(&layer);
-						blockString = blockString.Mid(pos+1);
+						blockString = blockString.Mid(pos + 1);
 					}
-					if(blockString==""){blockString<<"Default,,0000,0000,0000,,";}
+					if (blockString == L""){blockString << L"Default,,0000,0000,0000,,";}
 					// Assemble final
-					if(!blockString.StartsWith(",")){blockString.Prepend(",");}
-					blockString = wxString::Format("Dialogue: %li,",layer) + subStart.raw() + "," + subEnd.raw() + blockString;
+					if (!blockString.StartsWith(L",")){ blockString.Prepend(L","); }
+					blockString = wxString::Format(L"Dialogue: %li,",layer) + subStart.raw() + 
+						L"," + subEnd.raw() + blockString;
 
 				}
 
 				// Process SRT
 				else {
 
-					blockString = subStart.raw(SRT) + " --> " + subEnd.raw(SRT) + "\r\n" + blockString;
+					blockString = subStart.raw(SRT) + L" --> " + subEnd.raw(SRT) + L"\r\n" + blockString;
 
 					order++;
 				}
@@ -313,7 +316,7 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 
 				// Update progress bar
 				//progress->SetProgress(int(double(startTime) / 1000000.0),totalTime);
-				int prog=((double(startTime))/double(totalTime))*100;
+				int prog = ((double(startTime)) / double(totalTime)) * 100;
 				progress->Progress(prog);
 			}
 
@@ -321,7 +324,7 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 				return 0;
 
 			target->Clearing();
-			target->file=new SubsFile();
+			target->file = new SubsFile();
 
 			// Read private data if it's ASS/SSA
 			if (codecType == 0) {
@@ -329,26 +332,26 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 				TrackInfo *trackInfo = mkv_GetTrackInfo(file,trackToRead);
 				unsigned int privSize = trackInfo->CodecPrivateSize;
 				char *privData = new char[privSize+1];
-				memcpy(privData,trackInfo->CodecPrivate,privSize);
+				memcpy(privData, trackInfo->CodecPrivate, privSize);
 				privData[privSize] = 0;
-				wxString privString(privData,wxConvUTF8);
+				wxString privString(privData, wxConvUTF8);
 				delete[] privData;
 
 				// Load into file
 				int type = 0;
-				if (CodecID == "S_TEXT/SSA") form = 2;
-				wxStringTokenizer token(privString,"\r\n",wxTOKEN_STRTOK);
+				if (CodecID == L"S_TEXT/SSA") form = 2;
+				wxStringTokenizer token(privString, L"\r\n", wxTOKEN_STRTOK);
 				while (token.HasMoreTokens()) {
 					wxString next = token.GetNextToken();
-					if(next.StartsWith("Style:")){
+					if(next.StartsWith(L"Style:")){
 						target->AddStyle(new Styles(next,form));
 						type = 1;
 					}
-					else if(next.StartsWith("Comment:")){
+					else if(next.StartsWith(L"Comment:")){
 						target->AddLine(new Dialogue(next));
 						type = 2;
 					}
-					else if(type == 0 && !next.StartsWith(";") && !next.StartsWith("[") && !next.StartsWith("Format:")){
+					else if(type == 0 && !next.StartsWith(L";") && !next.StartsWith(L"[") && !next.StartsWith(L"Format:")){
 						target->AddSInfo(next);
 					}
 				}
@@ -356,20 +359,20 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 
 			}
 
-			//progress->Update(99,"Wstawianie napisów do okna");
-			for (unsigned int i=0; i<subList.size(); i++) {
+			
+			for (unsigned int i = 0; i < subList.size(); i++) {
 				target->AddLine(new Dialogue(subList[i]));
 			}
-			const wxString &matrix = target->GetSInfo("YCbCr Matrix");
-			if ((matrix == "" || matrix == "None") && codecType < 1){ target->AddSInfo("YCbCr Matrix", "TV.601"); }
+			const wxString &matrix = target->GetSInfo(L"YCbCr Matrix");
+			if ((matrix == L"" || matrix == L"None") && codecType < 1){ target->AddSInfo(L"YCbCr Matrix", "TV.601"); }
 			target->file->EndLoad(OPEN_SUBTITLES, 0, true);
 			subList.clear();
 			return 1;
 		});
 		progress->ShowDialog();
-		bool isgood =((int)progress->Wait() == 1 );
-		delete progress; progress=0;
-		if(cs){cs_Destroy(cs);}
+		bool isgood = ((int)progress->Wait() == 1);
+		delete progress; progress = NULL;
+		if (cs){ cs_Destroy(cs); }
 		return isgood;
 	}
 
@@ -387,7 +390,8 @@ std::map<int, wxString> MatroskaWrapper::GetFontList()
 	for(size_t i=0; i<count; i++)
 	{
 		wxString mimetype(atts[i].MimeType, wxConvUTF8);
-		if (mimetype == "font/ttf" || mimetype == "font/otf" || mimetype == "application/x-truetype-font" || mimetype == "application/vnd.ms-opentype"){
+		if (mimetype == L"font/ttf" || mimetype == L"font/otf" || 
+			mimetype == L"application/x-truetype-font" || mimetype == L"application/vnd.ms-opentype"){
 			attsname[i] = (wxString(atts[i].Name, wxConvUTF8));}
 	}
 	return attsname;
@@ -398,11 +402,11 @@ bool MatroskaWrapper::SaveFont(int id, const wxString &path, wxZipOutputStream *
 
 	char *tmp = new char[atts[id].Length];
 	_fseeki64(input->fp, atts[id].Position, SEEK_SET);
-	fread(tmp, 1, atts[id].Length,input->fp);
+	fread(tmp, 1, atts[id].Length, input->fp);
 	bool isgood = true;
 
 	if(zip){
-		wxString fn = path.AfterLast('\\');
+		wxString fn = path.AfterLast(L'\\');
 		try{
 			isgood=zip->PutNextEntry(fn);
 			zip->Write((void*)tmp, atts[id].Length);
@@ -528,7 +532,7 @@ MkvStdIO::MkvStdIO(const wxString &filename) {
 	memfree = StdIoFree;
 	progress = StdIoProgress;
 	getfilesize = StdIoGetFileSize;
-	fp = _wfopen(filename.wc_str (),L"rb");
+	fp = _wfopen(filename.wc_str(), L"rb");
 	if (fp) {
 		setvbuf(fp, NULL, _IOFBF, CACHESIZE);
 	}
