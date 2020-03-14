@@ -90,8 +90,8 @@ HRESULT CD2DVideoRender::Render(IMediaSample *pMediaSample)
 		//Vrend->Pause();
 	}
 	Vrend->time = time + (start / 10000.0);
-	//kończąc odtwarzanie trzeba skopiować klatkę bo będzie później edytować na pierwszej, 
-	//stop streaming nie działa, first sample jest zablokowane
+	//On the end of playing need to copy frame cause edition get first frame
+	//stop streaming not working, first sample is blocked
 	Vrend->DrawTexture(pBuffer, endOfPlaying || Vrend->resized);
 	Vrend->Render();
 	/*}else{byte *cpy = (byte*) Vrend->datas; memcpy(cpy,pBuffer,pMediaSample->GetSize());}*/

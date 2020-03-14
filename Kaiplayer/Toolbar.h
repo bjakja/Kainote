@@ -26,23 +26,23 @@ class toolitem
 public:
 	toolitem(wxBitmap *_icon, const wxString& _label, short _id, bool _enable, byte _type, bool _toggled)
 	{
-		icon=_icon; label=_label; id=_id; enabled=_enable;type=_type;size=iconsize;
+		icon = _icon; label = _label; id = _id; enabled = _enable; type = _type; size = iconsize;
 		if (type == 2){ toggled = _toggled; }
 	}
 	//types 0 - normal icon, 1 -icon with submenu, 2 - togglebutton, 3 - clickable element, 4 - spacer
 	toolitem(byte _type, byte _size, short _id = -1, bool enable = false)
 	{
-		type = _type; size=_size; enabled=enable; id=_id;
+		type = _type; size = _size; enabled = enable; id = _id;
 	}
 	bool Enable(bool enable)
 	{
-		if(enabled!=enable){enabled=enable;return true;}
+		if (enabled != enable){ enabled = enable; return true; }
 		return false;
 	}
 	wxBitmap GetBitmap()
 	{
-		if(!icon){return wxBitmap();}
-		if(!enabled){
+		if (!icon){ return wxBitmap(); }
+		if (!enabled){
 			return wxBitmap(icon->ConvertToImage().ConvertToGreyscale());
 		}
 		return *icon;
@@ -66,7 +66,7 @@ public:
 	KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id);
 	virtual ~KaiToolbar();
 
-	void AddItem(int id, const wxString &label, wxBitmap *normal,bool enable, byte type=0, bool toggled = false);
+	void AddItem(int id, const wxString &label, wxBitmap *normal, bool enable, byte type = 0, bool toggled = false);
 	void InsertItem(int id, int index, const wxString &label, wxBitmap *normal, bool enable, byte type = 0, bool toggled = false);
 	void AddSpacer();
 	void InsertSpacer(int index);
@@ -105,13 +105,13 @@ class ToolbarMenu :public wxDialog
 	friend class KaiToolbar;
 public:
 	ToolbarMenu(KaiToolbar*parent, const wxPoint &pos);
-	virtual ~ToolbarMenu(){wxDELETE(bmp);};
+	virtual ~ToolbarMenu(){ wxDELETE(bmp); };
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent &event);
 	void OnScroll(wxScrollEvent& event);
 	void OnIdle(wxIdleEvent& event);
-	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
 	KaiToolbar*parent;
 	wxBitmap *bmp;
 	KaiScrollbar *scroll;

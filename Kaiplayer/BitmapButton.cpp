@@ -40,9 +40,9 @@ BitmapButton::~BitmapButton()
 
 void BitmapButton::ChangeBitmap(bool play)
 {
-	wxString fbmp = (play) ? "play" : "pause";
+	wxString fbmp = (play) ? L"play" : L"pause";
 	bmp = CreateBitmapFromPngResource(fbmp);
-	bmp1 = CreateBitmapFromPngResource(fbmp + "1");
+	bmp1 = CreateBitmapFromPngResource(fbmp + L"1");
 	if (enter){
 		img = bmp.ConvertToImage();
 		int size = bmp.GetWidth()*bmp.GetHeight() * 3;
@@ -84,7 +84,7 @@ void BitmapButton::OnLeftDown(wxMouseEvent& event)
 	if (event.LeftDown()){
 		if (event.ShiftDown()){
 			//wxString buttonName = (name!="")? name : GetToolTipText().BeforeFirst('(').Trim();
-			Hkeys.OnMapHkey(hotkeyId, "", this, window);
+			Hkeys.OnMapHkey(hotkeyId, L"", this, window);
 			SetToolTip();
 			//Hkeys.SetAccels(true);
 			//Hkeys.SaveHkeys();
@@ -103,15 +103,15 @@ void BitmapButton::OnLeftDown(wxMouseEvent& event)
 
 void BitmapButton::SetToolTip(const wxString &_toolTip)
 {
-	wxString toolTip = (_toolTip == "") ? name : _toolTip;
+	wxString toolTip = (_toolTip == L"") ? name : _toolTip;
 	if (!_toolTip.empty()){ name = _toolTip; }
 
 	idAndType itype(hotkeyId, window);
 	wxString key = Hkeys.GetStringHotkey(itype);
 
-	if (key != "")
+	if (key != L"")
 	{
-		toolTip = toolTip + " (" + key + ")";
+		toolTip = toolTip + L" (" + key + L")";
 	}
 	toolTip << L"\n";
 	toolTip << _("Skrót można ustawić Shift + Klik");

@@ -63,7 +63,7 @@ namespace Auto{
 	int get_file_name(lua_State *L)
 	{
 		TabPanel *tab = Notebook::GetTab();
-		if (tab && tab->SubsPath != "")
+		if (tab && tab->SubsPath != L"")
 			push_value(L, tab->SubsName);
 		else
 			lua_pushnil(L);
@@ -133,7 +133,8 @@ namespace Auto{
 		lua_pop(L, 1);
 		TabPanel *tab = Notebook::GetTab();
 		if (tab && tab->Video->GetState() != None) {
-			int frame = (tab->Video->IsDshow) ? ((float)ms / 1000.f) * tab->Video->fps : tab->Video->VFF->GetFramefromMS(ms, 0, false);
+			int frame = (tab->Video->IsDshow) ? ((float)ms / 1000.f) * tab->Video->fps : 
+				tab->Video->VFF->GetFramefromMS(ms, 0, false);
 			lua_pushnumber(L, frame);
 		}
 		else {
@@ -149,7 +150,8 @@ namespace Auto{
 		lua_pop(L, 1);
 		TabPanel *tab = Notebook::GetTab();
 		if (tab && tab->Video->GetState() != None) {
-			int ms = (tab->Video->IsDshow) ? ((frame * 1000) / tab->Video->fps) : tab->Video->VFF->GetMSfromFrame(frame);
+			int ms = (tab->Video->IsDshow) ? ((frame * 1000) / tab->Video->fps) : 
+				tab->Video->VFF->GetMSfromFrame(frame);
 			lua_pushnumber(L, ms);
 		}
 		else {
@@ -167,7 +169,8 @@ namespace Auto{
 			lua_pushnumber(L, sz.x);
 			lua_pushnumber(L, sz.y);
 			lua_pushnumber(L, AR);
-			lua_pushnumber(L, (AR == 1.0f) ? 0 : (AR<1.34f && AR>1.33f) ? 1 : (AR<1.78f && AR>1.77f) ? 2 : (AR<2.35f && AR>2.36f) ? 3 : 4);
+			lua_pushnumber(L, (AR == 1.0f) ? 0 : (AR < 1.34f && AR > 1.33f) ? 1 : 
+				(AR < 1.78f && AR > 1.77f) ? 2 : (AR < 2.35f && AR > 2.36f) ? 3 : 4);
 			return 4;
 		}
 		else {
@@ -201,10 +204,10 @@ namespace Auto{
 		if (path[0] == L'?'){
 			if (path[1] == L'a' && path[4] == L'i') path.replace(0, 6, (tab)? tab->VideoPath.BeforeLast(L'\\') : L"");
 			else if (path[1] == L'd' && path[4] == L'a') path.replace(0, 5, firstAutomation);
-			else if (path[1] == L'd' && path[4] == L't') path.replace(0, 11, Options.pathfull + "\\Dictionary");
+			else if (path[1] == L'd' && path[4] == L't') path.replace(0, 11, Options.pathfull + L"\\Dictionary");
 			else if (path[1] == L'l' && path[4] == L'a') path.replace(0, 6, firstAutomation);
 			else if (path[1] == L's' && path[4] == L'i') path.replace(0, 7, (tab) ? tab->SubsPath.BeforeLast(L'\\') : L"");
-			else if (path[1] == L't' && path[4] == L'p') path.replace(0, 5, firstAutomation + "\\temp");
+			else if (path[1] == L't' && path[4] == L'p') path.replace(0, 5, firstAutomation + L"\\temp");
 			else if (path[1] == L'u' && path[4] == L'r') path.replace(0, 5, firstAutomation);
 			else if (path[1] == L'v' && path[4] == L'e') path.replace(0, 6, (tab) ? tab->VideoPath.BeforeLast(L'\\') : L"");
 		}
@@ -232,7 +235,7 @@ namespace Auto{
 		lua_pushvalue(L, 1);
 		SubsEntry *e = AutoToFile::LuaToLine(L);
 		if (!e){ return 0; }
-		if (e->lclass != "style"){ SAFE_DELETE(e); return 0; }
+		if (e->lclass != L"style"){ SAFE_DELETE(e); return 0; }
 		Styles *st = e->astyle;
 		lua_pop(L, 1);
 		//lua_pushstring(L, "Not a style entry");
@@ -348,8 +351,8 @@ namespace Auto{
 		: filename(filename)
 		, L(NULL)
 	{
-		include_path.push_back(filename.BeforeLast(L'\\') + "\\");
-		include_path.push_back(Options.pathfull + "\\Automation\\automation\\Include\\");
+		include_path.push_back(filename.BeforeLast(L'\\') + L"\\");
+		include_path.push_back(Options.pathfull + L"\\Automation\\automation\\Include\\");
 		//include_path[0].Replace("\\","/");
 		//include_path[1].Replace("\\","/");
 		Create();
@@ -364,7 +367,7 @@ namespace Auto{
 		// create lua environment
 		L = luaL_newstate();
 		if (!L) {
-			description = "Could not initialize Lua state";
+			description = L"Could not initialize Lua state";
 			return;
 		}
 
@@ -622,7 +625,7 @@ namespace Auto{
 
 
 		lua_gc(L, LUA_GCCOLLECT, 0);
-		if (ps->Log == "" && !hasMessage){ ps->lpd->closedialog = true; }
+		if (ps->Log == L"" && !hasMessage){ ps->lpd->closedialog = true; }
 		else{ ps->lpd->finished = true; }
 
 		if (failed){ return (wxThread::ExitCode) 1; }
@@ -912,7 +915,7 @@ namespace Auto{
 	Automation::Automation(bool loadSubsScripts, bool loadNow)
 	{
 		initialized = false;
-		AutoloadPath = Options.pathfull + "\\Automation\\automation\\Autoload";
+		AutoloadPath = Options.pathfull + L"\\Automation\\automation\\Autoload";
 		if (loadSubsScripts){ return; }
 		int loadMethod = Options.GetInt(AutomationLoadingMethod);
 		if (loadMethod < 2){
@@ -947,9 +950,9 @@ namespace Auto{
 		scripts.push_back(ls);
 		if (!autoload && addToSinfo){
 			SubsGrid *grid = Notebook::GetTab()->Grid;
-			wxString scriptpaths = grid->GetSInfo("Automation Scripts");
-			scriptpaths << "|" << filename;
-			grid->AddSInfo("Automation Scripts", scriptpaths);
+			wxString scriptpaths = grid->GetSInfo(L"Automation Scripts");
+			scriptpaths << L"|" << filename;
+			grid->AddSInfo(L"Automation Scripts", scriptpaths);
 			grid->SetModified(ASS_PROPERTIES, false, true, -1, false);
 		}
 		HasChanges = true;
@@ -1008,7 +1011,7 @@ namespace Auto{
 
 
 		wxString fn;
-		wxFileName script_path(AutoloadPath, "");
+		wxFileName script_path(AutoloadPath, L"");
 		bool more = dir.GetFirst(&fn, wxEmptyString, wxDIR_FILES);
 
 		while (more) {
@@ -1020,7 +1023,7 @@ namespace Auto{
 				wxString fullpath = script_path.GetFullPath();
 				wxString ext = fullpath.AfterLast(L'.').Lower();
 
-				if ((ext != "lua" && ext != "moon") || !Add(fullpath, false, true)){ more = dir.GetNext(&fn); continue; }
+				if ((ext != L"lua" && ext != L"moon") || !Add(fullpath, false, true)){ more = dir.GetNext(&fn); continue; }
 
 				if (!Scripts[Scripts.size() - 1]->GetLoadedState()) { error_count++; }
 
@@ -1157,7 +1160,8 @@ namespace Auto{
 			auto macros = script->GetMacros();
 			for (size_t p = 0; p < macros.size(); p++){
 				auto macro = macros[p];
-				wxString text; text << "Script " << script->GetFilename() << "-" << p;
+				wxString text; 
+				text << L"Script " << script->GetFilename() << L"-" << p;
 				MenuItem *mi = submenu->SetAccMenu(new MenuItem(start, macro->StrDisplay(), macro->StrHelp()), text);
 				mi->Enable(macro->Validate(c));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
@@ -1172,8 +1176,8 @@ namespace Auto{
 			}
 			if (macros.size() < 1){
 				wxString strippedbug = script->GetDescription();
-				strippedbug.Replace("\n", "");
-				if (strippedbug.Len() > 100){ strippedbug = strippedbug.SubString(0, 100) + "..."; }
+				strippedbug.Replace(L"\n", L"");
+				if (strippedbug.Len() > 100){ strippedbug = strippedbug.SubString(0, 100) + L"..."; }
 				submenu->Append(start, strippedbug, _("Błąd"));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 					KaiMessageBox(script->GetDescription(), _("Pełny opis błędu Lua"));
@@ -1204,7 +1208,7 @@ namespace Auto{
 			auto macros = script->GetMacros();
 			for (size_t p = 0; p < macros.size(); p++){
 				auto macro = macros[p];
-				wxString text; text << "Script " << script->GetFilename() << "-" << p;
+				wxString text; text << L"Script " << script->GetFilename() << L"-" << p;
 				MenuItem *mi = submenu->SetAccMenu(new MenuItem(start, macro->StrDisplay(), macro->StrHelp()), text);
 				mi->Enable(macro->Validate(c));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
@@ -1219,8 +1223,8 @@ namespace Auto{
 			}
 			if (macros.size() < 1){
 				wxString strippedbug = script->GetDescription();
-				strippedbug.Replace("\n", "");
-				if (strippedbug.Len() > 100){ strippedbug = strippedbug.SubString(0, 100) + "..."; }
+				strippedbug.Replace(L"\n", L"");
+				if (strippedbug.Len() > 100){ strippedbug = strippedbug.SubString(0, 100) + L"..."; }
 				submenu->Append(start, strippedbug, _("Błąd"));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 					KaiMessageBox(script->GetDescription(), _("Pełny opis błędu Lua"));

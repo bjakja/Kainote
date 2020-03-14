@@ -102,7 +102,7 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 
 	holding = dholding = firstdhold = modified = false;
 
-	font = parent->GetFont();//wxFont(9,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
+	font = parent->GetFont();
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh);
 	Fheight = fh;

@@ -394,19 +394,21 @@ EVT_MENU(32566, KaiToolbar::OnToolbarOpts)
 END_EVENT_TABLE()
 
 ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos)
-:wxDialog(_parent, -1, L"", pos, wxSize(350, 510), wxBORDER_NONE)
-, sel(-1)
-, scPos(0)
-, parent(_parent)
-, bmp(NULL)
+	:wxDialog(_parent, -1, L"", pos, wxSize(350, 510), wxBORDER_NONE)
+	, sel(-1)
+	, scPos(0)
+	, parent(_parent)
+	, bmp(NULL)
 {
-	fh = 20;
+	int fw;
+	GetTextExtent(L"TEX{}", &fw, &fh);
+	fh += 6;
+
 	int ysize = parent->ids.size();
-	//uważaj gdy kiedyś zechcesz zmienić rozmiar tego okna, to ustaw odpowiednio scrollbar
 	scroll = new KaiScrollbar(this, -1, wxDefaultPosition, wxDefaultSize, wxVERTICAL);
 	Bind(wxEVT_IDLE, &ToolbarMenu::OnIdle, this);
 	wxString ans[] = { _("Po lewej"), _("U góry"), _("Po prawej"), _("Na dole") };
-	alignments = new KaiChoice(this, 32213, wxPoint(4, 4), wxSize(342, 24), 4, ans);
+	alignments = new KaiChoice(this, 32213, wxPoint(4, 4), wxSize(342, fh), 4, ans);
 	if (parent->alignment > 3 || parent->alignment < 0)
 		parent->alignment = 0;
 	alignments->SetSelection(parent->alignment);
@@ -422,6 +424,7 @@ ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos)
 		}
 		Destroy();
 	}, 32213);
+	SetFont(parent->GetFont());
 }
 
 void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
@@ -432,7 +435,7 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 	int w = 0;
 	int h = 0;
 	GetSize(&w, &h);
-	if ((x<0 || y<0 || x>w || y>h)){
+	if ((x < 0 || y < 0 || x > w || y > h)){
 		if (leftdown){
 			Unbind(wxEVT_IDLE, &ToolbarMenu::OnIdle, this);
 			if (HasCapture()){
@@ -497,13 +500,13 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	if (!bmp){ bmp = new wxBitmap(ow, h); }
 	tdc.SelectObject(*bmp);
 	wxBitmap checkbmp = wxBITMAP_PNG(L"check");
-	tdc.SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma"));
+	tdc.SetFont(GetFont());//wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma"));
 	const wxColour & background = Options.GetColour(MenuBackground);
 	const wxColour & txt = Options.GetColour(WindowText);
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(Options.GetColour(WindowBorder)));
 	tdc.DrawRectangle(0, 0, ow, h);
-	int visible = 25;
+	int visible = (h - 32) / fh;
 	int idssize = parent->ids.size();
 	if (scPos >= idssize - visible){ scPos = idssize - visible; }
 	else if (scPos < 0){ scPos = 0; }
@@ -513,7 +516,7 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	tdc.SetTextForeground(txt);
 	for (int i = 0; i < visible; i++)
 	{
-		int posY = (fh*i) + 32;
+		int posY = (fh * i) + 32;
 		MenuItem *item = parent->mb->FindItem(parent->ids[i + scPos]);
 		bool check = false;
 		for (size_t j = 0; j < parent->tools.size(); j++)

@@ -25,40 +25,40 @@ wxDEFINE_EVENT(SELECTION_CHANGED, wxCommandEvent);
 bool sortf(int i,int j){ return (i < j);}
 
 StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, const wxPoint &pos, const wxSize &size, long style)
-		  :KaiScrolledWindow(parent,id,pos,size, style|wxVERTICAL)
+		  :KaiScrolledWindow(parent,id,pos,size, style | wxVERTICAL)
 {
 	
 	stylenames=stylearray;
 	//SetMinSize(size);
 	
-	font= wxFont(10,wxSWISS,wxFONTSTYLE_NORMAL,wxNORMAL,false,"Tahoma",wxFONTENCODING_DEFAULT);
+	font = wxFont(10, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
 	wxAcceleratorEntry entries[4];
-	entries[0].Set(wxACCEL_NORMAL, WXK_UP,15555);
-	entries[1].Set(wxACCEL_NORMAL, WXK_DOWN,15556);
-	entries[2].Set(wxACCEL_SHIFT, WXK_UP,15557);
-	entries[3].Set(wxACCEL_SHIFT, WXK_DOWN,15558);
+	entries[0].Set(wxACCEL_NORMAL, WXK_UP, 15555);
+	entries[1].Set(wxACCEL_NORMAL, WXK_DOWN, 15556);
+	entries[2].Set(wxACCEL_SHIFT, WXK_UP, 15557);
+	entries[3].Set(wxACCEL_SHIFT, WXK_DOWN, 15558);
 	wxAcceleratorTable accel(4, entries);
 	SetAcceleratorTable(accel);
 
 	wxClientDC dc(this);
 	dc.SetFont(font);
-	int fw,fh;
-	dc.GetTextExtent(_T("#TWFfGH"), &fw, &fh, NULL, NULL, &font);
-	Height=fh;
+	int fw , fh;
+	dc.GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
+	Height = fh;
 
-	bmp=NULL;
-	scPos=0;
-	lastsel=0;
-	lastRow=0;
-	holding=Switchlines=false;
+	bmp = NULL;
+	scPos = 0;
+	lastsel = 0;
+	lastRow = 0;
+	holding = Switchlines = false;
 	sels.Add(0);
-	SetMinSize(wxSize(150,150));
+	SetMinSize(wxSize(150, 150));
 	Refresh();
 
 }
 
 StyleList::~StyleList(){
-	if(bmp)delete bmp; bmp=0;
+	if (bmp){ delete bmp; bmp = NULL; }
 }
 
 
@@ -67,18 +67,19 @@ void StyleList::OnPaint(wxPaintEvent& event)
 {
 	int w = 0;
 	int h = 0;
-	GetClientSize(&w,&h);
-	if(w==0||h==0){return;}
-	int panelrows=(h/Height)+1;
+	GetClientSize(&w, &h);
+	if (w == 0 || h == 0){ return; }
+	int panelrows = (h / Height) + 1;
 	int scrows;
-	if((scPos+panelrows)>=(int)stylenames->size()+1){
-		scrows=stylenames->size();scPos=(scrows-panelrows)+1;
-		if(panelrows>(int)stylenames->size()+1){scPos=0;}	
+	if((scPos + panelrows) >= (int)stylenames->size() + 1){
+		scrows = stylenames->size();
+		scPos = (scrows - panelrows) + 1;
+		if (panelrows > (int)stylenames->size() + 1){ scPos = 0; }	
 	}else{
-		scrows=(scPos+panelrows);
+		scrows = (scPos + panelrows);
 	}
-	if(SetScrollBar(wxVERTICAL,scPos,panelrows,stylenames->size()+1, panelrows-2)){
-		GetClientSize(&w,&h);
+	if(SetScrollBar(wxVERTICAL, scPos, panelrows, stylenames->size() + 1, panelrows - 2)){
+		GetClientSize(&w, &h);
 	}
 
 	if (bmp) {
@@ -87,45 +88,47 @@ void StyleList::OnPaint(wxPaintEvent& event)
 			bmp = NULL;
 		}
 	}
-	if (!bmp) bmp = new wxBitmap(w,h);
+	if (!bmp) bmp = new wxBitmap(w, h);
 
 	// Draw bitmap
 	wxMemoryDC bdc;
 	bdc.SelectObject(*bmp);
 
-	int fw=0,fh=0,posX=1,posY=1;
+	int fw = 0, fh = 0, posX = 1, posY = 1;
 	bdc.Clear();
 	bdc.SetFont(font);
 	const wxColour & background = Options.GetColour(StaticListBackground);
 	bdc.SetPen(wxPen(Options.GetColour(StaticListBorder)));
 	bdc.SetBrush(wxBrush(background));
-	bdc.DrawRectangle(0,0,w,h);
+	bdc.DrawRectangle(0, 0, w, h);
 	wxArrayString *fonts = FontEnum.GetFonts(NULL, [](){});
 
-	for(int i=scPos; i<scrows; i++)
+	for(int i = scPos; i < scrows; i++)
 	{
-		if(sels.Index(i)!=-1){
+		if (sels.Index(i) != -1){
 			bdc.SetPen(*wxTRANSPARENT_PEN);
 			bdc.SetBrush(wxBrush(Options.GetColour(StaticListSelection))); 
-			bdc.DrawRectangle(posX,posY,w-2,Height);
-			}else{bdc.SetBrush(wxBrush(background));}
-		if(fonts->Index(stylenames->at(i)->Fontname,false)==-1){
+			bdc.DrawRectangle(posX, posY, w-2, Height);
+		}else{
+			bdc.SetBrush(wxBrush(background));
+		}
+		if (fonts->Index(stylenames->at(i)->Fontname, false) == -1){
 			bdc.SetTextForeground(Options.GetColour(WindowWarningElements));
 		}else{
 			bdc.SetTextForeground(Options.GetColour(WindowText));
 		}
 		
 
-		wxRect cur(posX+4,posY,w-8,Height);	
+		wxRect cur(posX + 4, posY, w - 8, Height);	
 		bdc.SetClippingRegion(cur);
-		bdc.DrawLabel(stylenames->at(i)->Name,cur,wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
+		bdc.DrawLabel(stylenames->at(i)->Name, cur, wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
 		bdc.DestroyClippingRegion();
 
-		posY+=Height;
+		posY += Height;
 	}
 
 	wxPaintDC dc(this);
-	dc.Blit(0,0,w,h,&bdc,0,0);
+	dc.Blit(0, 0, w, h, &bdc, 0, 0);
 }
 
 void StyleList::OnSize(wxSizeEvent& event)
@@ -142,32 +145,32 @@ void StyleList::OnScroll(wxScrollWinEvent& event)
 		scPos = newPos;
 		Refresh(false);
 	}*/
-	int newPos=0;
-	if(event.GetEventType()==wxEVT_SCROLLWIN_LINEUP)
+	int newPos = 0;
+	if(event.GetEventType() == wxEVT_SCROLLWIN_LINEUP)
 	{
-		newPos=scPos-1;
-		if(newPos<0){newPos=0;return;}
+		newPos = scPos - 1;
+		if (newPos < 0){ newPos = 0; return; }
 	}
-	else if(event.GetEventType()==wxEVT_SCROLLWIN_LINEDOWN)
+	else if (event.GetEventType() == wxEVT_SCROLLWIN_LINEDOWN)
 	{
-		newPos=scPos+1;
-		if(newPos>=(int)stylenames->size()){newPos=(int)stylenames->size()-1;return;}
+		newPos = scPos + 1;
+		if (newPos >= (int)stylenames->size()){ newPos = (int)stylenames->size() - 1; return; }
 	}
-	else if(event.GetEventType()==wxEVT_SCROLLWIN_PAGEUP)
+	else if (event.GetEventType() == wxEVT_SCROLLWIN_PAGEUP)
 	{
-		wxSize size=GetClientSize();
-		newPos=scPos;
-		newPos-=(size.y/Height - 1);
-		newPos=MAX(0,newPos);
+		wxSize size = GetClientSize();
+		newPos = scPos;
+		newPos -= (size.y / Height - 1);
+		newPos = MAX(0, newPos);
 	}
-	else if(event.GetEventType()==wxEVT_SCROLLWIN_PAGEDOWN)
+	else if (event.GetEventType() == wxEVT_SCROLLWIN_PAGEDOWN)
 	{
-		wxSize size=GetClientSize();
-		newPos=scPos;
-		newPos+=(size.y/Height - 1);
-		newPos=MIN(newPos,(int)stylenames->size()-1);
+		wxSize size = GetClientSize();
+		newPos = scPos;
+		newPos += (size.y / Height - 1);
+		newPos = MIN(newPos, (int)stylenames->size() - 1);
 	}
-	else{newPos = event.GetPosition();}
+	else{ newPos = event.GetPosition(); }
 	if (scPos != newPos) {
 		scPos = newPos;
 		Refresh(false);
@@ -176,7 +179,7 @@ void StyleList::OnScroll(wxScrollWinEvent& event)
 
 void StyleList::OnMouseEvent(wxMouseEvent& event)
 {
-	int w,h;
+	int w, h;
 	GetClientSize (&w, &h);
 	bool shift = event.ShiftDown();
 	bool alt = event.AltDown();
@@ -184,8 +187,8 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 	bool click = event.LeftDown();
 	bool left_up = event.LeftUp();
 	bool dclick = event.LeftDClick();
-	int curY=(event.GetY());
-	int row = (curY / Height)+scPos;
+	int curY = event.GetY();
+	int row = (curY / Height) + scPos;
 	
 	if (left_up && !holding) {
 		return;
@@ -207,10 +210,10 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 	
 	if (event.GetWheelRotation() != 0) {
 		int step = scPos - ((event.GetWheelRotation() / event.GetWheelDelta()));
-		if(step<0){step=0;}
-		if(step>(int)stylenames->size()-1){step=stylenames->size()-1;}
-		if(scPos!=step){
-			scPos=step;
+		if (step < 0){ step = 0; }
+		if (step > (int)stylenames->size() - 1){ step = stylenames->size() - 1; }
+		if (scPos != step){
+			scPos = step;
 			Refresh(false);
 		}
 		return;
@@ -233,39 +236,39 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 		AddPendingEvent(evt);
 	}
 
-	if(holding && alt && !shift && lastsel!=row)
+	if(holding && alt && !shift && lastsel != row)
 	{
 		if (lastsel != -1) {
 			
-			int diff=(row-lastsel);
-			if(diff>0){
-				for(int i=sels.size()-1; i>=0; i--){
-					if((sels[i]+diff)>=(int)stylenames->size()){break;}
-					Styles *tmp=stylenames->at(sels[i]);
-					stylenames->erase(stylenames->begin()+sels[i]);
-					stylenames->insert(stylenames->begin()+sels[i]+diff,tmp);
-					sels[i]+=diff;
+			int diff = (row - lastsel);
+			if(diff > 0){
+				for(int i = sels.size() - 1; i >= 0; i--){
+					if((sels[i] + diff) >= (int)stylenames->size()){break;}
+					Styles *tmp = stylenames->at(sels[i]);
+					stylenames->erase(stylenames->begin() + sels[i]);
+					stylenames->insert(stylenames->begin() + sels[i] + diff, tmp);
+					sels[i] += diff;
 				}
 			}else{
-				for(int i=0; i<(int)sels.size(); i++){
-					if((sels[i]+diff)<0){break;}
+				for(int i = 0; i < (int)sels.size(); i++){
+					if((sels[i] + diff) < 0){ break; }
 					//int fst=sels[i]-1;
 					//int snd=sels[i];
 					
 					//Styles *tmp=stylenames->at(fst);
 					//stylenames->at(fst)=stylenames->at(snd);
 					//stylenames->at(snd)=tmp;
-					Styles *tmp=stylenames->at(sels[i]);
-					stylenames->erase(stylenames->begin()+sels[i]);
-					stylenames->insert(stylenames->begin()+sels[i]+diff,tmp);
-					sels[i]+=diff;
+					Styles *tmp = stylenames->at(sels[i]);
+					stylenames->erase(stylenames->begin() + sels[i]);
+					stylenames->insert(stylenames->begin() + sels[i] + diff, tmp);
+					sels[i] += diff;
 				}
 
 			}
 			Refresh(false);
-			Switchlines=true;
+			Switchlines = true;
 		}
-		lastsel=row;
+		lastsel = row;
 		//return;
 	}
 
@@ -285,12 +288,12 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 
 			// Toggle each
 			bool notFirst = false;
-			for (int i=i1;i<=i2;i++) {
+			for (int i = i1; i <= i2; i++) {
 				if(!notFirst){sels.clear();}
 				sels.Add(i);
 				notFirst = true;
 			}
-			lastsel=row;
+			lastsel = row;
 			Refresh(false);
 			SendSelectionEvent();
 		}
@@ -300,11 +303,11 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 		// Toggle selected
 	if (click && ctrl && !shift && !alt) {
 		int idx=sels.Index(row);
-		if(idx!=-1){
+		if(idx != -1){
 			sels.RemoveAt(idx);
 		}else{
 			sels.Add(row);}
-		std::sort(sels.begin(),sels.end(),sortf);
+		std::sort(sels.begin(), sels.end(), sortf);
 		Refresh(false);
 		SendSelectionEvent();
 		return;
@@ -340,7 +343,7 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 
 void StyleList::SetArray(std::vector<Styles*> *stylearray)
 {
-	stylenames=stylearray;
+	stylenames = stylearray;
 	Refresh(false);
 }
 
@@ -351,15 +354,16 @@ void StyleList::SendSelectionEvent()
 	ProcessEvent(evt);
 }
 
-//Ta funkcja dodaje do zaznaczenia albo resetuje
-//i zaznacza nowe odœwie¿aj¹c przy okazji
-void StyleList::SetSelection(int _sel,bool reset)
+//This method adding to selection or reset
+//and select new elements and refresh list
+void StyleList::SetSelection(int _sel, bool reset)
 {
 
-	if(_sel==-1||reset){sels.clear();}
-	if(_sel!=-1){sels.Add(_sel);}
-	if(sels.size()>0){
-		scPos=MAX(0,sels[0]-2);}
+	if (_sel == -1 || reset){ sels.clear(); }
+	if(_sel != -1){ sels.Add(_sel); }
+	if( sels.size() > 0 ){
+		scPos = MAX(0, sels[0] - 2);
+	}
 	Refresh(false);
 	SendSelectionEvent();
 }
@@ -367,11 +371,12 @@ void StyleList::SetSelection(int _sel,bool reset)
 void StyleList::SetSelections(const wxArrayInt &_sels)
 {
 	sels.clear();
-	for(size_t i = 0; i< _sels.size(); i++){
+	for(size_t i = 0; i < _sels.size(); i++){
 		sels.push_back(_sels[i]);
 	}
-	if(sels.size()>0){
-		scPos=MAX(0,sels[0]-2);}
+	if(sels.size() > 0){
+		scPos=MAX(0, sels[0] - 2);
+	}
 	Refresh(false);
 	SendSelectionEvent();
 }
@@ -379,49 +384,49 @@ void StyleList::SetSelections(const wxArrayInt &_sels)
 
 int StyleList::GetSelections(wxArrayInt &_sels)
 {
-	if(stylenames->size()<1){
+	if(stylenames->size() < 1){
 		sels.Clear();
 		SendSelectionEvent();
 	}
-	std::sort(sels.begin(),sels.end(),sortf);
-	_sels=sels;
+	std::sort(sels.begin(), sels.end(), sortf);
+	_sels = sels;
 	return sels.size();
 }
 
 void StyleList::Scroll(int step)
 {
-	scPos+=step;
-	if(scPos<0||scPos>(int)stylenames->size()){return;}
+	scPos += step;
+	if (scPos < 0 || scPos > (int)stylenames->size()){ return; }
 	Refresh(false);
 }
 
 void StyleList::OnArrow(wxCommandEvent& event)
 {
-	int id=event.GetId();
-	if(id==15555||id==15557)//up -> shift up
+	int id = event.GetId();
+	if (id == 15555 || id == 15557)//up -> shift up
 	{
-		if(lastsel==0){return;}
-		if(id==15557 && sels[0]!=lastsel){
-			lastsel=sels[0];
+		if (lastsel == 0){ return; }
+		if (id == 15557 && sels[0] != lastsel){
+			lastsel = sels[0];
 		}
 		lastsel--;
-		if(lastsel<0){lastsel=(sels.size()>0)? sels[0] : 0;}
-		if(id==15555){sels.clear();}
-		if(scPos>lastsel){scPos--;}
+		if (lastsel < 0){ lastsel = (sels.size() > 0) ? sels[0] : 0; }
+		if (id == 15555){ sels.clear(); }
+		if (scPos > lastsel){ scPos--; }
 		sels.Add(lastsel);
-	}else if(id==15556||id==15558){//down -> shift down
-		if(id==15558 && sels[sels.size()-1]!=lastsel){
-			lastsel=sels[sels.size()-1];
+	}else if (id == 15556 || id == 15558){//down -> shift down
+		if (id == 15558 && sels[sels.size() - 1] != lastsel){
+			lastsel = sels[sels.size() - 1];
 		}
 		lastsel++;
-		if(lastsel>=(int)stylenames->size()){lastsel=stylenames->size()-1;return;}
+		if (lastsel >= (int)stylenames->size()){ lastsel = stylenames->size() - 1; return; }
 		
-		if(id==15556){sels.clear();}
-		wxSize size =GetClientSize();
-		if((scPos + (size.y/Height)) <= lastsel){scPos++;}
+		if (id == 15556){ sels.clear(); }
+		wxSize size = GetClientSize();
+		if ((scPos + (size.y / Height)) <= lastsel){ scPos++; }
 		sels.Add(lastsel);
 	}
-	std::sort(sels.begin(),sels.end(),sortf);
+	std::sort(sels.begin(), sels.end(), sortf);
 	Refresh(false);
 }
 

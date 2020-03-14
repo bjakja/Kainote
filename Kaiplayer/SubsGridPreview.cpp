@@ -99,16 +99,6 @@ void SubsGridPreview::DestroyPreview(bool refresh, bool destroyingPreviewTab)
 void SubsGridPreview::NewSeeking(bool makeVisible/*=true*/)
 {
 	SeekForOccurences();
-	/*if (!occurencesList){
-		wxSize size = GetClientSize();
-		occurencesList = new KaiListCtrl(this, 3232, occurences, wxPoint(size.x - 304, previewGrid->GridHeight + 1), wxSize(300, size.y - (previewGrid->GridHeight + 5)));
-		occurencesList->SetFont(wxFont(7, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT));
-		Bind(LIST_ITEM_LEFT_CLICK, &SubsGridPreview::OnOccurenceChanged, this, 3232);
-	}
-	else{
-		occurencesList->SetTextArray(occurences);
-	}
-	occurencesList->SetSelection(0);*/
 	previewGrid->ChangeActiveLine(lastData.lineRangeStart);
 	if (makeVisible)
 		MakeVisible();
@@ -124,19 +114,21 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	int panelrows = (h / (previewGrid->GridHeight + 1));
 	if (previewGrid->scrollPosition < 0){ previewGrid->scrollPosition = 0; previewGrid->scrollPositionId = 0; }
 	int scrows = previewGrid->scrollPositionId + panelrows;
-	//gdy widzimy koniec napisów
+	//On the end of subtitles
 	if (scrows >= size + 2){
 		bg = true;
 		scrows = size;
-		previewGrid->scrollPositionId = (scrows - panelrows) + 2;// dojechanie do koñca napisów
+		previewGrid->scrollPositionId = (scrows - panelrows) + 2;//end of subtitles
 		previewGrid->scrollPosition = previewGrid->file->GetElementById(previewGrid->scrollPositionId);
-		if (panelrows > size + 3){ previewGrid->scrollPosition = 0; previewGrid->scrollPositionId = 0; }// w przypadku gdy ca³e napisy s¹ widoczne, wtedy nie skrollujemy i pozycja =0
+		//when all subtitles are visible do not scrolling position = 0
+		if (panelrows > size + 3){ previewGrid->scrollPosition = 0; previewGrid->scrollPositionId = 0; }
 	}
 	else if (scrows >= size + 1){
 		bg = true;
-		scrows--;//w przypadku gdy mamy liniê przed koñcem napisów musimy zani¿yæ wynik bo przekroczy tablicê.
+		scrows--;
+		//reduced to avoid crash or maybe now not needed cause is key + i < getcount()
 	}
-	//umiejscowienie gridheight+1 od góry, wysokoœæ to co u góry - 4 pasek u do³u
+	
 	scrollbar->SetSize(w - 21, previewGrid->GridHeight, 17, h - previewGrid->GridHeight - 4);
 	scrollbar->SetScrollbar(previewGrid->scrollPositionId, panelrows, size + 3, panelrows - 3);
 
@@ -282,11 +274,11 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			int wPos = w + scHor - 21;
 			if (onX || pushedX){
 				tdc.SetBrush(Options.GetColour(pushedX ? WindowPushedCloseButton : WindowHoverCloseButton));
-				tdc.DrawRectangle(wPos, 3, xHeight+2, xHeight+2);
+				tdc.DrawRectangle(wPos, 3, xHeight + 2, xHeight + 2);
 			}
-			tdc.SetPen(wxPen(Options.GetColour(WindowHeaderText),2));
-			tdc.DrawLine(wPos + 2, 5, wPos + xHeight-2, xHeight+1);
-			tdc.DrawLine(wPos + xHeight-2, 5, wPos + 2, xHeight+1);
+			tdc.SetPen(wxPen(Options.GetColour(WindowHeaderText), 2));
+			tdc.DrawLine(wPos + 2, 5, wPos + xHeight - 2, xHeight + 1);
+			tdc.DrawLine(wPos + xHeight - 2, 5, wPos + 2, xHeight + 1);
 
 			posY += previewGrid->GridHeight + 1;
 			id++;
@@ -296,7 +288,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		else{
 
 
-			strings.push_back(wxString::Format("%i", id + 1));
+			strings.push_back(wxString::Format(L"%i", id + 1));
 
 			isComment = Dial->IsComment;
 			if (key == previewGrid->markedLine)
@@ -306,7 +298,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 
 			states = Dial->GetState();
 			if (previewGrid->subsFormat < SRT){
-				strings.push_back(wxString::Format("%i", Dial->Layer));
+				strings.push_back(wxString::Format(L"%i", Dial->Layer));
 			}
 
 			if (previewGrid->showFrames && tab->Video->VFF){
@@ -315,7 +307,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 				frame << VFF->GetFramefromMS(Dial->Start.mstime);
 				strings.push_back(frame);
 				if (previewGrid->subsFormat != TMP){
-					frame = "";
+					frame = L"";
 					frame << VFF->GetFramefromMS(Dial->End.mstime) - 1;
 					strings.push_back(frame);
 				}
@@ -330,9 +322,9 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 				else{ unkstyle = false; }
 				strings.push_back(Dial->Style);
 				strings.push_back(Dial->Actor);
-				strings.push_back(wxString::Format("%i", Dial->MarginL));
-				strings.push_back(wxString::Format("%i", Dial->MarginR));
-				strings.push_back(wxString::Format("%i", Dial->MarginV));
+				strings.push_back(wxString::Format(L"%i", Dial->MarginL));
+				strings.push_back(wxString::Format(L"%i", Dial->MarginR));
+				strings.push_back(wxString::Format(L"%i", Dial->MarginV));
 				strings.push_back(Dial->Effect);
 			}
 			wxString txt = Dial->Text;
@@ -341,31 +333,31 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			if (previewGrid->subsFormat != TMP && !(CPS & previewGrid->visibleColumns)){
 				int chtime;
 				if (previewGrid->SpellErrors[key].size() < 1){
-					chtime = previewGrid->CalcChars((previewGrid->hasTLMode && txttl != "") ? txttl : txt) /
+					chtime = previewGrid->CalcChars((previewGrid->hasTLMode && txttl != L"") ? txttl : txt) /
 						((Dial->End.mstime - Dial->Start.mstime) / 1000.0f);
-					if (chtime < 0 || chtime>999){ chtime = 999; }
+					if (chtime < 0 || chtime > 999){ chtime = 999; }
 					previewGrid->SpellErrors[key].push_back(chtime);
 
 				}
 				else{ chtime = previewGrid->SpellErrors[key][0]; }
-				strings.push_back(wxString::Format("%i", chtime));
+				strings.push_back(wxString::Format(L"%i", chtime));
 				shorttime = chtime > 15;
 			}
 			else{
-				if (previewGrid->subsFormat != TMP){ strings.push_back(""); }
+				if (previewGrid->subsFormat != TMP){ strings.push_back(L""); }
 				if (previewGrid->SpellErrors[key].size() == 0){ previewGrid->SpellErrors[key].push_back(0); }
 			}
 
 			if (previewGrid->hideOverrideTags){
-				wxRegEx reg("\\{[^\\{]*\\}", wxRE_ADVANCED);
+				wxRegEx reg(L"\\{[^\\{]*\\}", wxRE_ADVANCED);
 				reg.ReplaceAll(&txt, chtag);
 				if (previewGrid->showOriginal){ reg.ReplaceAll(&txttl, chtag); }
 			}
-			if (txt.Len() > 1000){ txt = txt.SubString(0, 1000) + "..."; }
-			strings.push_back((!previewGrid->showOriginal && previewGrid->hasTLMode && txttl != "") ? txttl : txt);
+			if (txt.Len() > 1000){ txt = txt.SubString(0, 1000) + L"..."; }
+			strings.push_back((!previewGrid->showOriginal && previewGrid->hasTLMode && txttl != L"") ? txttl : txt);
 			if (previewGrid->showOriginal){ strings.push_back(txttl); }
 
-			if (SpellCheckerOn && (!previewGrid->hasTLMode && txt != "" || previewGrid->hasTLMode && txttl != "")){
+			if (SpellCheckerOn && (!previewGrid->hasTLMode && txt != L"" || previewGrid->hasTLMode && txttl != L"")){
 				if (previewGrid->SpellErrors[key].size() < 2){
 					previewGrid->CheckText(strings[strings.size() - 1], previewGrid->SpellErrors[key], chtag);
 				}
@@ -393,7 +385,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		wxColour label = (states == 0) ? labelBkColN : (states == 2) ? labelBkCol :
 			(states == 1) ? labelBkColM : labelBkColD;
 		if (key >= lastData.lineRangeStart && key < lastData.lineRangeStart + lastData.lineRangeLen){ 
-			label = GetColorWithAlpha(wxColour(0,0,255,60), kol); 
+			label = GetColorWithAlpha(wxColour(0, 0, 255, 60), kol); 
 		}
 		for (int j = 0; j < ilcol; j++){
 			if (previewGrid->showOriginal&&j == ilcol - 2){
@@ -442,10 +434,11 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 
 					for (size_t c = 1; c < previewGrid->Comparison->at(key).size(); c += 2){
 						//if(Comparison->at(i-1)[k]==Comparison->at(i-1)[k+1]){continue;}
-						wxString cmp = strings[j].SubString(previewGrid->Comparison->at(key)[c], previewGrid->Comparison->at(key)[c + 1]);
+						wxString cmp = strings[j].SubString(previewGrid->Comparison->at(key)[c], 
+							previewGrid->Comparison->at(key)[c + 1]);
 
-						if (cmp == ""){ continue; }
-						if (cmp == " "){ cmp = "_"; }
+						if (cmp == L""){ continue; }
+						if (cmp == L" "){ cmp = L"_"; }
 						wxString bcmp;
 						if (previewGrid->Comparison->at(key)[c]>0){
 							bcmp = strings[j].Mid(0, previewGrid->Comparison->at(key)[c]);
@@ -498,13 +491,15 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		if (idmarkerPos != -1){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine), 3));
-			tdc.DrawRectangle(posX + 1, ((idmarkerPos - previewGrid->scrollPositionId + 1)*(previewGrid->GridHeight + 1)) - 1, (previewGrid->GridWidth[0] - 1), previewGrid->GridHeight + 2);
+			tdc.DrawRectangle(posX + 1, ((idmarkerPos - previewGrid->scrollPositionId + 1) * 
+				(previewGrid->GridHeight + 1)) - 1, (previewGrid->GridWidth[0] - 1), previewGrid->GridHeight + 2);
 		}
 
 		if (idcurrentLine != -1){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine)));
-			tdc.DrawRectangle(posX, ((idcurrentLine - previewGrid->scrollPositionId + 1)*(previewGrid->GridHeight + 1)) - 1, w + scHor - posX - 21, previewGrid->GridHeight + 2);
+			tdc.DrawRectangle(posX, ((idcurrentLine - previewGrid->scrollPositionId + 1) * 
+				(previewGrid->GridHeight + 1)) - 1, w + scHor - posX - 21, previewGrid->GridHeight + 2);
 		}
 	}
 	tdc.SetBrush(wxBrush(Options.GetColour(hasFocus ? WindowBorderBackground : WindowBorderBackgroundInactive)));
@@ -554,7 +549,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	if (curY < previewGrid->GridHeight){
 		if (curX + 4 >= w - 21){
 			int Width = (previewGrid->GridHeight - 4);
-			if (curX + 4 >= (w - 21) + Width || curY<2 || curY>Width+2){ return; }
+			if (curX + 4 >= (w - 21) + Width || curY < 2 || curY > Width + 2){ return; }
 			if (left_up){
 				DestroyPreview(true);
 			}
@@ -578,7 +573,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 		ReleaseMouse();
 		if (oldX != -1){ return; }
 	}
-	if (curX < 0 || curX > w-4){ return; }
+	if (curX < 0 || curX > w - 4){ return; }
 
 	int row = previewGrid->GetKeyFromScrollPos(curY / (previewGrid->GridHeight + 1)) - 1;
 	int hideColumnWidth = (previewGrid->isFiltered) ? 12 : 0;
@@ -629,10 +624,12 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			int vtime = 0;
 			bool isstart = true;
 			if (shift && previewGrid->subsFormat != TMP){
-				vtime = previewGrid->GetDialogue(row)->End.mstime; isstart = false;
+				vtime = previewGrid->GetDialogue(row)->End.mstime; 
+				isstart = false;
 			}
 			else{
-				vtime = previewGrid->GetDialogue(row)->Start.mstime; isstart = true;
+				vtime = previewGrid->GetDialogue(row)->Start.mstime; 
+				isstart = true;
 			}
 			if (ctrl){ vtime -= 1000; }
 			tabp->Video->Seek(MAX(0, vtime), isstart, true, false);
@@ -763,7 +760,8 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 
 		if (middle){
 			if (video->GetState() != None){
-				video->PlayLine(previewGrid->GetDialogue(row)->Start.mstime, video->GetPlayEndTime(previewGrid->GetDialogue(row)->End.mstime));
+				video->PlayLine(previewGrid->GetDialogue(row)->Start.mstime, 
+					video->GetPlayEndTime(previewGrid->GetDialogue(row)->End.mstime));
 			}
 
 		}
@@ -925,8 +923,9 @@ void SubsGridPreview::ContextMenu(const wxPoint &pos)
 	Menu *menu = new Menu();
 	SeekForOccurences();
 	for (int i = 0; i < previewData.size(); i++){
-		wxString name = previewData[i].tab->SubsName + " (" + std::to_string(previewData[i].lineRangeStart) + " " + std::to_string(previewData[i].lineRangeLen) + ")";
-		MenuItem * Item = menu->Append(4880 + i, name, "", true, NULL, NULL, (lastData == previewData[i]) ? ITEM_RADIO : ITEM_NORMAL);
+		wxString name = previewData[i].tab->SubsName + L" (" + std::to_wstring(previewData[i].lineRangeStart) + 
+			L" " + std::to_wstring(previewData[i].lineRangeLen) + L")";
+		MenuItem * Item = menu->Append(4880 + i, name, L"", true, NULL, NULL, (lastData == previewData[i]) ? ITEM_RADIO : ITEM_NORMAL);
 	}
 	int result = menu->GetPopupMenuSelection(pos, this);
 	delete menu;

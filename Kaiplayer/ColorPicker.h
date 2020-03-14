@@ -239,7 +239,7 @@ public:
 	//instead of getting unnecessery color there will be better add function for that
 	static void AddRecent(const AssColor &color);
 	static DialogColorPicker *DCP;
-	static DialogColorPicker *Get(wxWindow *parent, AssColor color = wxColour("#000000"), int colorType = -1);
+	static DialogColorPicker *Get(wxWindow *parent, AssColor color = wxColour(L"#000000"), int colorType = -1);
 
 	DECLARE_EVENT_TABLE()
 };
@@ -247,7 +247,7 @@ public:
 class ButtonColorPicker : public MappedButton
 {
 public:
-	ButtonColorPicker(wxWindow *parent, AssColor color, wxSize size=wxDefaultSize);
+	ButtonColorPicker(wxWindow *parent, AssColor color, wxSize size = wxDefaultSize);
 	virtual ~ButtonColorPicker(){ };
 	AssColor GetColor();
 	void SetColor(const AssColor& color);
@@ -303,7 +303,6 @@ public:
 	bool PickColor(AssColor *returnColor);
 };
 
-//Uwa¿aj aby nie stosowaæ idów
 enum {
 	SELECTOR_SPECTRUM = 14000,
 	SELECTOR_SLIDER,

@@ -160,13 +160,13 @@ void AudioSpectrum::SetupSpectrum(int _overlaps)
 void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, unsigned char *img, int imgwidth, int imgpitch, int imgheight, int percent)
 {
 	wxCriticalSectionLocker locker(CritSec);
-	int newOverlaps = ceil(((float)imgwidth / ((float)(range_end - range_start) / (float)doublelen)) * ((100 - percent) / 100.f))+1;
-	if(newOverlaps<1){newOverlaps=1;}
-	if(newOverlaps>24){
-		newOverlaps=24;
+	int newOverlaps = ceil(((float)imgwidth / ((float)(range_end - range_start) / (float)doublelen)) * ((100 - percent) / 100.f)) + 1;
+	if (newOverlaps < 1){ newOverlaps = 1; }
+	if (newOverlaps > 24){
+		newOverlaps = 24;
 	}
 	
-	if(newOverlaps!=overlaps){ 
+	if(newOverlaps != overlaps){ 
 		for (size_t i = 0; i < sub_caches.size(); ++i){
 			sub_caches[i]->start = -1;
 		}
@@ -188,7 +188,7 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, unsigned
 	int last_imgcol_rendered = -1;
 	float factor = pow(line_length, 1.f / (imgheight - 1));
 	// Some scaling constants
-	const int maxpower = (1 << (16 - 1))*256;
+	const int maxpower = (1 << (16 - 1)) * 256;
 
 	const double upscale = power_scale * 16384 / line_length;
 	AudioThreads->CreateCache(startcache, endcache);
@@ -213,14 +213,14 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, unsigned
 #define WRITE_PIXEL \
 	if (intensity < 0) intensity = 0; \
 	if (intensity > 255) intensity = 255; \
-	img[((imgheight-y-1)*imgpitch+x)*4 + 2] = palette[intensity*3+0]; \
-	img[((imgheight-y-1)*imgpitch+x)*4 + 1] = palette[intensity*3+1]; \
-	img[((imgheight-y-1)*imgpitch+x)*4 + 0] = palette[intensity*3+2];
+	img[((imgheight - y - 1) * imgpitch + x) * 4 + 2] = palette[intensity * 3 + 0]; \
+	img[((imgheight - y - 1) * imgpitch + x) * 4 + 1] = palette[intensity * 3 + 1]; \
+	img[((imgheight - y - 1) * imgpitch + x) * 4 + 0] = palette[intensity * 3 + 2];
 
 		// Handle horizontal expansion
 		int next_line_imgcol = imgwidth * (k + 1) / sampleRange;
 		if (next_line_imgcol >= imgpitch)
-			next_line_imgcol = imgpitch-1;
+			next_line_imgcol = imgpitch - 1;
 
 		//last_imgcol_rendered = next_line_imgcol;
 
@@ -267,11 +267,11 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, unsigned
 
 				// Iterate over pixels, picking the nearest power values
 				for (int y = 0; y < imgheight; ++y) {
-					float ideal = (float)(y+1.)/imgheight * maxband;
-					float sample1 = line[(int)floor(ideal)+minband]/* * upscale*/;
-					float sample2 = line[(int)ceil(ideal)+minband]/* * upscale*/;
+					float ideal = (float)(y + 1.)/imgheight * maxband;
+					float sample1 = line[(int)floor(ideal) + minband]/* * upscale*/;
+					float sample2 = line[(int)ceil(ideal) + minband]/* * upscale*/;
 					float frac = ideal - floor(ideal);
-					int intensity = int(((1 - frac)*sample1 + frac*sample2) * upscale / maxpower * 256);
+					int intensity = int(((1 - frac) * sample1 + frac * sample2) * upscale / maxpower * 256);
 					WRITE_PIXEL
 				}
 			}
@@ -373,9 +373,9 @@ void AudioSpectrum::ChangeColours()
 	const wxColour & firstcolor = Options.GetColour(AudioSpectrumBackground); 
 	const wxColour & secondcolor = Options.GetColour(AudioSpectrumEcho); 
 	const wxColour & thirdcolor = Options.GetColour(AudioSpectrumInner); 
-	float r2=thirdcolor.Red(), r1= secondcolor.Red(), r= firstcolor.Red(), 
-		g2=thirdcolor.Green(), g1=secondcolor.Green(), g=firstcolor.Green(), 
-		b2=thirdcolor.Blue(), b1=secondcolor.Blue(), b=firstcolor.Blue();
+	float r2 = thirdcolor.Red(), r1 = secondcolor.Red(), r = firstcolor.Red(), 
+		g2 = thirdcolor.Green(), g1 = secondcolor.Green(), g = firstcolor.Green(), 
+		b2 = thirdcolor.Blue(), b1 = secondcolor.Blue(), b = firstcolor.Blue();
 	
 	// Generate colour maps
 	unsigned char *palptr = palette;
@@ -383,15 +383,15 @@ void AudioSpectrum::ChangeColours()
 	float i = 0;
 	int j = 0;
 	while (j < 256) {
-		int pointr = (i<0.5f)? (r - (( r - r1) * (i*2))) : (r1 - (( r1 - r2) * ((i*2)-1.f)));
-		int pointg = (i<0.5f)? (g - (( g - g1) * (i*2))) : (g1 - (( g1 - g2) * ((i*2)-1.f)));
-		int pointb = (i<0.5f)? (b - (( b - b1) * (i*2))) : (b1 - (( b1 - b2) * ((i*2)-1.f)));
+		int pointr = (i < 0.5f)? (r - (( r - r1) * (i * 2))) : (r1 - ((r1 - r2) * ((i * 2) - 1.f)));
+		int pointg = (i < 0.5f)? (g - (( g - g1) * (i * 2))) : (g1 - ((g1 - g2) * ((i * 2) - 1.f)));
+		int pointb = (i < 0.5f)? (b - (( b - b1) * (i * 2))) : (b1 - ((b1 - b2) * ((i * 2) - 1.f)));
 
 		*palptr = (unsigned char)pointr;
-		*(palptr+1) = (unsigned char)pointg;
-		*(palptr+2) = (unsigned char)pointb;
+		*(palptr + 1) = (unsigned char)pointg;
+		*(palptr + 2) = (unsigned char)pointb;
 		
-		if(j<128){i += div;}
+		if(j < 128){i += div;}
 		
 		palptr += 3;
 		j++;
@@ -496,8 +496,8 @@ void AudioSpectrumMultiThreading::AudioPorocessing(int numOfTread)
 	while (1){
 		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait) / sizeof(HANDLE), events_to_wait, FALSE, INFINITE);
 		if (wait_result == WAIT_OBJECT_0 + 0){
-			unsigned long threadStart = start + len *numOfTread;
-			unsigned long startcache = lastCachePosition + (len *numOfTread);
+			unsigned long threadStart = start + len * numOfTread;
+			unsigned long startcache = lastCachePosition + (len * numOfTread);
 			bool audioSet = false;
 			size_t sssize = sub_caches->size();
 			for (unsigned long i = threadStart; i < threadStart + len; i++){

@@ -23,11 +23,11 @@ typedef wchar_t* PTCHAR;
 
 enum {    
 	RGB32,
-    RGB24,
+	RGB24,
 	YUY2,
 	YV12,
-    IYUV,
-    NV12,
+	IYUV,
+	NV12,
 };
 
 struct VideoInf{
@@ -38,13 +38,13 @@ struct VideoInf{
 	int ARatioY;
 	byte CT;
 	float bytes;
-	};
+};
 
 #define HR1(x) if(FAILED(x)) { return x; }
 
-#ifndef SRELEASE
-#define SRELEASE(x) if (x != NULL) { x->Release(); x = NULL; }
-#endif
+//#ifndef SRELEASE
+//#define SRELEASE(x) if (x != NULL) { x->Release(); x = NULL; }
+//#endif
 
 
 class CD2DVideoRender : public CBaseVideoRenderer
@@ -56,7 +56,7 @@ public:
 
 	HRESULT Render(IMediaSample *pMediaSample);
 	HRESULT DoRenderSample(IMediaSample *pMediaSample){return 0;}
-    HRESULT CheckMediaType(const CMediaType *pmt);
+	HRESULT CheckMediaType(const CMediaType *pmt);
 	HRESULT SetMediaType(const CMediaType *pmt);
 	HRESULT EndOfStream();
 	HRESULT StopStreaming();

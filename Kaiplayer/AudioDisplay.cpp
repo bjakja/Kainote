@@ -129,7 +129,7 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	tahoma13 = wxFont(13, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, L"Tahoma");
 	tahoma8 = wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma");
 	int fh;
-	GetTextExtent("#TWFfGH", NULL, &fh, NULL, NULL, &tahoma8);
+	GetTextExtent(L"#TWFfGH", NULL, &fh, NULL, NULL, &tahoma8);
 	timelineHeight = fh + 8;
 	UpdateTimer.SetOwner(this, Audio_Update_Timer);
 	GetClientSize(&w, &h);
@@ -322,7 +322,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	HR(d3dDevice->CreateOffscreenPlainSurface(size.x, size.y, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &spectrumSurface, 0), _("Nie można stworzyć plain surface"));
 	//HR(d3dDevice->CreateTexture(size.x, size.y, 1, D3DUSAGE_RENDERTARGET,
 	//D3DFMT_R8G8B8,D3DPOOL_DEFAULT,&texture, NULL), "Nie można utworzyć tekstury" );
-	HR(d3dDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), "fvf failed");
+	HR(d3dDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"FVF failed");
 
 	return true;
 }
@@ -424,7 +424,7 @@ void AudioDisplay::DoUpdateImage() {
 			CreateVERTEX(&v9[1], drawSelEnd + 1, 0, fill);
 			CreateVERTEX(&v9[2], drawSelStart, h, fill);
 			CreateVERTEX(&v9[3], drawSelEnd + 1, h, fill);
-			HRN(hr = d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), "primitive failed");
+			HRN(hr = d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"primitive failed");
 
 		}
 
@@ -491,10 +491,10 @@ void AudioDisplay::DoUpdateImage() {
 			CreateVERTEX(&v6[4], startDraw + 10, h, lineStartBondaryColor);
 			CreateVERTEX(&v6[5], startDraw, h, lineStartBondaryColor);
 
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v6, sizeof(VERTEX)), "primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(VERTEX)), "primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, v6, sizeof(VERTEX)), "primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, &v6[3], sizeof(VERTEX)), "primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v6, sizeof(VERTEX)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(VERTEX)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, v6, sizeof(VERTEX)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, &v6[3], sizeof(VERTEX)), L"primitive failed");
 
 			// Draw end boundary
 
@@ -512,10 +512,10 @@ void AudioDisplay::DoUpdateImage() {
 			CreateVERTEX(&v6[4], startDraw - 10, h, lineEndBondaryColor);
 			CreateVERTEX(&v6[5], startDraw, h, lineEndBondaryColor);
 
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v6, sizeof(VERTEX)), "primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(VERTEX)), "primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, v6, sizeof(VERTEX)), "primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, &v6[3], sizeof(VERTEX)), "primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v6, sizeof(VERTEX)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(VERTEX)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, v6, sizeof(VERTEX)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, &v6[3], sizeof(VERTEX)), L"primitive failed");
 
 			// Draw karaoke
 			if (hasKara) {
@@ -762,12 +762,12 @@ void AudioDisplay::DrawInactiveLines() {
 		CreateVERTEX(&v9[1], x2 + 1, 0, inactiveLinesBackground);
 		CreateVERTEX(&v9[2], x1, h, inactiveLinesBackground);
 		CreateVERTEX(&v9[3], x2 + 1, h, inactiveLinesBackground);
-		HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), "inactive lines primitive failed");
+		HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"inactive lines primitive failed");
 		CreateVERTEX(&v9[0], x3, 0, inactiveLinesBackground);
 		CreateVERTEX(&v9[1], x4 + 1, 0, inactiveLinesBackground);
 		CreateVERTEX(&v9[2], x3, h, inactiveLinesBackground);
 		CreateVERTEX(&v9[3], x4 + 1, h, inactiveLinesBackground);
-		HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), "inactive lines primitive failed");
+		HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"inactive lines primitive failed");
 
 		if (!spectrum) {
 			d3dLine->Begin();
@@ -816,7 +816,7 @@ void AudioDisplay::DrawTimescale() {
 	CreateVERTEX(&v9[2], 0, h + timelineHeight, timescaleBackground);
 	CreateVERTEX(&v9[3], w, h + timelineHeight, timescaleBackground);
 
-	HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), "primitive failed");
+	HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"primitive failed");
 	d3dLine->Begin();
 	v2[0] = D3DXVECTOR2(0, h);
 	v2[1] = D3DXVECTOR2(w, h);
@@ -1095,7 +1095,7 @@ void AudioDisplay::MakeDialogueVisible(bool force, bool moveToEnd) {
 	int endX = GetXAtMS(endShow);
 	if (hasKara){
 		if (startX < 50 || endX >(w - 100)) {
-			UpdatePosition((startPos + endPos - w*samples) / 2, true);
+			UpdatePosition((startPos + endPos - w * samples) / 2, true);
 		}
 	}
 	else if (force || (startX < 50 && endX < w) || (endX > w - 50 && startX > 0)) {
@@ -1103,7 +1103,7 @@ void AudioDisplay::MakeDialogueVisible(bool force, bool moveToEnd) {
 
 			if (moveToEnd && (endX >= w - 50 || endX < 50)){
 				// Make sure the right edge of the selection is at least 50 pixels from the edge of the display
-				UpdatePosition(endPos - ((w - 50)*samples), true);
+				UpdatePosition(endPos - ((w - 50) * samples), true);
 			}
 			else if (!moveToEnd){
 				// Make sure the left edge of the selection is at least 50 pixels from the edge of the display
@@ -1112,7 +1112,7 @@ void AudioDisplay::MakeDialogueVisible(bool force, bool moveToEnd) {
 		}
 		else {
 			// Otherwise center the selection in display
-			UpdatePosition((startPos + endPos - w*samples) / 2, true);
+			UpdatePosition((startPos + endPos - w * samples) / 2, true);
 		}
 	}
 
@@ -1316,7 +1316,7 @@ void AudioDisplay::UpdateScrollbar() {
 	int page = w / 12;
 	int len = provider->GetNumSamples() / samples / 12;
 	Position = (PositionSample / samples);
-	ScrollBar->SetScrollbar(Position / 12, page, len, int(page*0.7), true);
+	ScrollBar->SetScrollbar(Position / 12, page, len, int(page * 0.7), true);
 }
 
 
@@ -1780,7 +1780,8 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 				if (!karaoke->CheckIfOver(x, &Grabbed)){
 					int tmpsyl = -1;
 					bool hasSyl = karaoke->GetSylAtX(x, &tmpsyl);
-					if (Options.GetBool(AudioKaraokeMoveOnClick) && hasSyl && !(tmpsyl<whichsyl - 1 || tmpsyl>whichsyl + 1) && (leftDown || rightDown)){
+					if (Options.GetBool(AudioKaraokeMoveOnClick) && hasSyl && 
+						!(tmpsyl<whichsyl - 1 || tmpsyl>whichsyl + 1) && (leftDown || rightDown)){
 						Grabbed = (tmpsyl < whichsyl) ? whichsyl - 1 : whichsyl;
 						hold = 5;
 					}
@@ -2101,7 +2102,7 @@ int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start
 	if (rangeX <= 0) return ms;
 
 	// Convert range into miliseconds
-	int rangeMS = rangeX*samples * 1000 / provider->GetSampleRate();
+	int rangeMS = rangeX * samples * 1000 / provider->GetSampleRate();
 	//int halfframe=Notebook::GetTab()->Video->avtpf/2;
 	//VideoCtrl *vb = (VideoCtrl*)box->GetGrandParent();
 	// Keyframe boundaries
@@ -2118,7 +2119,8 @@ int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start
 			if (keyX >= 0 && keyX < w) {
 				int frameTime = 0;
 				if (provider->Timecodes.size() < 1){
-					//cóż wiele zrobić nie możemy gdy nie mamy wideo;
+					//there is nothing to do when video is not loaded
+					//put half of frame 23.976FPS
 					frameTime = keyMS - 21;
 				}
 				else{
@@ -2191,9 +2193,9 @@ void AudioDisplay::GetTextExtentPixel(const wxString &text, int *x, int *y)
 	d3dFontVerdana11->DrawTextW(NULL, text.wchar_str(), -1, &rcRect, DT_CALCRECT, 0xFF000000);
 	*x = rcRect.right - rcRect.left;
 	*y = rcRect.bottom - rcRect.top;
-	if (text.StartsWith(" "))
+	if (text.StartsWith(L" "))
 		*x += 4;
-	if (text.EndsWith(" "))
+	if (text.EndsWith(L" "))
 		*x += 4;
 }
 

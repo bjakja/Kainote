@@ -19,7 +19,7 @@
 
 DragnDrop::DragnDrop(KainoteFrame* kfparent)
 {
-	Kai=kfparent;
+	Kai = kfparent;
 }
 
 bool DragnDrop::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames)
@@ -28,10 +28,10 @@ bool DragnDrop::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames
 		Kai->OpenFiles(wxArrayString(filenames));
 	}
 	else if(filenames.size()>0){
-		wxString ext = filenames[0].AfterLast('.').Lower();
-		bool isLuaScript = ext == "lua" || ext == "moon";
-		int w,h;
-		Kai->Tabs->GetClientSize(&w,&h);
+		wxString ext = filenames[0].AfterLast(L'.').Lower();
+		bool isLuaScript = ext == L"lua" || ext == L"moon";
+		int w, h;
+		Kai->Tabs->GetClientSize(&w, &h);
 		//h -= (Kai->Menubar->GetSize().y);
 		//x -= iconsize;
 		if (!isLuaScript){

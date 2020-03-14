@@ -219,10 +219,10 @@ void DirectSoundPlayer2Thread::Run()
 	waveFormat.cbSize = sizeof(waveFormat);
 
 	// And the buffer itself
-	int aim = waveFormat.nAvgBytesPerSec * (wanted_latency*buffer_length)/1000;
+	int aim = waveFormat.nAvgBytesPerSec * (wanted_latency * buffer_length) / 1000;
 	int min = DSBSIZE_MIN;
 	int max = DSBSIZE_MAX;
-	DWORD bufSize = MIN(MAX(min,aim),max); // size of entier playback buffer
+	DWORD bufSize = MIN(MAX(min, aim), max); // size of entier playback buffer
 	DSBUFFERDESC desc;
 	desc.dwSize = sizeof(DSBUFFERDESC);
 	desc.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS;
@@ -260,7 +260,7 @@ void DirectSoundPlayer2Thread::Run()
 	DWORD buffer_offset = 0;
 	bool playback_should_be_running = false;
 	int current_latency = wanted_latency;
-	const DWORD wanted_latency_bytes = wanted_latency*waveFormat.nSamplesPerSec*provider->GetBytesPerSample()/1000;
+	const DWORD wanted_latency_bytes = wanted_latency * waveFormat.nSamplesPerSec * provider->GetBytesPerSample() / 1000;
 
 	while (running)
 	{
@@ -268,7 +268,7 @@ void DirectSoundPlayer2Thread::Run()
 
 		switch (wait_result)
 		{
-		case WAIT_OBJECT_0+0:
+		case WAIT_OBJECT_0 + 0:
 			{
 				// Start or restart playback
 				bfr->Stop();
@@ -314,7 +314,7 @@ void DirectSoundPlayer2Thread::Run()
 					if (bytes_filled < wanted_latency_bytes)
 					{
 						// Very short playback length, do without streaming playback
-						current_latency = (bytes_filled*1000) / (waveFormat.nSamplesPerSec*provider->GetBytesPerSample());
+						current_latency = (bytes_filled * 1000) / (waveFormat.nSamplesPerSec*provider->GetBytesPerSample());
 						if (FAILED(bfr->Play(0, 0, 0)))
 							REPORT_ERROR("Could not start single-buffer playback.")
 					}
@@ -332,7 +332,7 @@ void DirectSoundPlayer2Thread::Run()
 					break;
 			}
 
-		case WAIT_OBJECT_0+1:
+		case WAIT_OBJECT_0 + 1:
 			{
 				// Stop playing
 				bfr->Stop();
@@ -341,7 +341,7 @@ void DirectSoundPlayer2Thread::Run()
 				break;
 			}
 
-		case WAIT_OBJECT_0+2:
+		case WAIT_OBJECT_0 + 2:
 			{
 				// Set end frame
 				if (end_frame <= next_input_frame)
@@ -360,7 +360,7 @@ void DirectSoundPlayer2Thread::Run()
 				break;
 			}
 
-		case WAIT_OBJECT_0+3:
+		case WAIT_OBJECT_0 + 3:
 			{
 				// Change volume
 				// We aren't thread safe right now, filling the buffers grabs volume directly
@@ -369,7 +369,7 @@ void DirectSoundPlayer2Thread::Run()
 				goto do_fill_buffer;
 			}
 
-		case WAIT_OBJECT_0+4:
+		case WAIT_OBJECT_0 + 4:
 			{
 				// Perform suicide
 				bfr->Stop();
@@ -464,7 +464,7 @@ do_fill_buffer:
 					else if (bytes_filled < wanted_latency_bytes)
 					{
 						// Didn't fill as much as we wanted to, let's get back to filling sooner than normal
-						current_latency = (bytes_filled*1000) / (waveFormat.nSamplesPerSec*provider->GetBytesPerSample());
+						current_latency = (bytes_filled * 1000) / (waveFormat.nSamplesPerSec * provider->GetBytesPerSample());
 					}
 					else
 					{

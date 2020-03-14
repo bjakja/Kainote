@@ -485,7 +485,7 @@ wxArrayString DShowPlayer::GetStreams()
 		for (DWORD i = 0; i < streams; i++){
 			stream->Info(i, NULL, &st, NULL, NULL, &text, NULL, NULL);
 			wxString enable = (st != 0) ? L"1" : L"0";
-			streamnames.Add(wxString(text) + " " + enable);
+			streamnames.Add(wxString(text) + L" " + enable);
 			CoTaskMemFree(text);
 		}
 	}

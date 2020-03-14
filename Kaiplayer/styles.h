@@ -22,7 +22,7 @@
 class AssColor
 {
 	public:
-	long r,g,b,a;
+	long r, g, b, a;
 	wxString GetAss(bool alpha, bool style = false) const;
 	wxColour GetWX() const;
 	//no const cause it replaces this string
@@ -37,8 +37,8 @@ class AssColor
 	AssColor(const wxString &col);
 	AssColor(const wxColour &col, int alpha = -1);
 	~AssColor();
-	bool operator == (const AssColor &col){return (a==col.a && r==col.r && g==col.g && b==col.b);}
-	bool operator != (const AssColor &col){return (a!=col.a || r!=col.r || g!=col.g || b!=col.b);}
+	bool operator == (const AssColor &col){ return (a == col.a && r == col.r && g == col.g && b == col.b); }
+	bool operator != (const AssColor &col){ return (a != col.a || r != col.r || g != col.g || b != col.b); }
 
 };
 
@@ -53,7 +53,7 @@ public:
 	bool Bold, Italic, Underline, StrikeOut, BorderStyle;
 	wxString GetRaw();
 	Styles();
-	Styles(wxString styledata,char format=1);
+	Styles(wxString styledata, char format = 1);
 	~Styles();
 	bool parseStyle(const wxString &styledata, char form);
 	//no releasing here changes of style is copied to multiple styles

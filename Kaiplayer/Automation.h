@@ -110,7 +110,7 @@ namespace Auto {
 		wxString StrDisplay() const { return display; }
 		wxString StrHelp() const { return help; }
 		wxString StrHotkey() const { return hotkey; }
-		void SetHotkey(const wxString &_hotkey){hotkey = _hotkey;}
+		void SetHotkey(const wxString &_hotkey){ hotkey = _hotkey; }
 
 		int Type() const { return cmd_type; }
 
@@ -147,7 +147,7 @@ namespace Auto {
 
 		wxString GetFilename() const { return filename; }
 		/// The script's file name without path
-		wxString GetPrettyFilename() const { return filename.AfterLast('\\'); }
+		wxString GetPrettyFilename() const { return filename.AfterLast(L'\\'); }
 		/// The script's name. Not required to be unique.
 
 		void RegisterCommand(LuaCommand *command);
@@ -164,9 +164,13 @@ namespace Auto {
 		wxString GetVersion() const { return version; }
 		bool GetLoadedState() const { return L != nullptr; }
 
-		LuaCommand* GetMacro(int macro) const{ if(macro<(int)macros.size()){return macros[macro];}else{return NULL;} }
+		LuaCommand* GetMacro(int macro) const{ 
+			if (macro < (int)macros.size()){ 
+				return macros[macro];
+			}else{ return NULL; } 
+		}
 		std::vector<LuaCommand*> GetMacros() const{ return macros; }
-		bool CheckLastModified(bool check=true);
+		bool CheckLastModified(bool check = true);
 	};
 	// @class Automation
 	// @brief manage lua scripts Lua
@@ -179,16 +183,16 @@ namespace Auto {
 		Automation(bool loadSubsScripts=false, bool loadNow = false);
 		~Automation();
 
-		bool Add(wxString filename, bool addToSinfo= true, bool autoload=false);
+		bool Add(wxString filename, bool addToSinfo = true, bool autoload = false);
 		void Remove(int script);
-		void RemoveAll(bool autoload=false);
-		void ReloadMacro(int script, bool autoload=false);
-		void ReloadScripts(bool first=false);
+		void RemoveAll(bool autoload = false);
+		void ReloadMacro(int script, bool autoload = false);
+		void ReloadScripts(bool first = false);
 		bool AddFromSubs();
 		static void OnEdit(wxString &Filename);
 		bool CheckChanges();
 		// make menu with all macros or error message
-		void BuildMenu(Menu **bar, bool all=false);
+		void BuildMenu(Menu **bar, bool all = false);
 		void ShowScriptHotkeysWindow(wxWindow *parent);
 		LuaScript *FindScript(const wxString &path);
 

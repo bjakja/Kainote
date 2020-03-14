@@ -125,7 +125,7 @@ public:
 	void SetFile(wxString file,bool fromvideo);
 	void SetKeyframes(const wxArrayInt &keyframes);
 	//true when could be loaded else false to store name for later
-	bool OpenKeyframes(const wxString & filename);
+	bool OpenKeyframes(const wxString &filename);
 	void SetAccels();
 	void OnPlaySelection(wxCommandEvent &event);
 	void SetVolume(int vol);

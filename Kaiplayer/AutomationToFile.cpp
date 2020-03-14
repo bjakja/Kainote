@@ -309,7 +309,7 @@ namespace Auto{
 	bool varname = !!lua_toboolean(L, -1);				\
 	lua_pop(L, 1);
 
-		if (e->lclass == "dialogue"){
+		if (e->lclass == L"dialogue"){
 			GETBOOL(IsComment, "comment", "dialogue")
 				GETINT(Layer, "layer", "dialogue")
 				GETINT(Start, "start_time", "dialogue")
@@ -352,7 +352,7 @@ namespace Auto{
 			e->adial->ChangeDialogueState(1);
 		}
 
-		else if (e->lclass == "style"){
+		else if (e->lclass == L"style"){
 
 			GETSTRING(name, "name", "style")
 				GETSTRING(fontname, "fontname", "style")
@@ -596,7 +596,7 @@ namespace Auto{
 				else
 				{
 					wxString fclass = (e->lclass == L"info") ? L"info" : (e->lclass == L"style") ? _("stylów") : _("dialogów");
-					wxString sclass = (i < sinfo) ? L"info" : (i < styles) ? L"stylów" : _("dialogów");
+					wxString sclass = (i < sinfo) ? L"info" : (i < styles) ? _("stylów") : _("dialogów");
 					wxString all = wxString::Format(_("Nie można dodać linii klasy: %s w pole klasy: %s"), fclass, sclass);
 					SAFE_DELETE(e);
 					lua_pushstring(L, all.mb_str(wxConvUTF8).data());
@@ -853,9 +853,9 @@ namespace Auto{
 		int kcount = 0;
 		int kdur = 0;
 		int ktime = 0;
-		wxString ktag = _T("");
-		wxString ktext = _T("");
-		wxString ktext_stripped = _T("");
+		wxString ktag = L"";
+		wxString ktext = L"";
+		wxString ktext_stripped = L"";
 
 		lua_createtable(L, 0, 6);
 		set_field(L, "duration", 0);
@@ -873,7 +873,7 @@ namespace Auto{
 		size_t lastPosition = 0;
 		wxString rest;
 		//wxString deb;
-		wxRegEx reg(_T("\\{[^\\}]*\\}"), wxRE_ADVANCED);
+		wxRegEx reg(L"\\{[^\\}]*\\}", wxRE_ADVANCED);
 		size_t tagssize = Data->tags.size();
 		for (size_t i = 0; i < tagssize; i++) {
 
@@ -910,7 +910,7 @@ namespace Auto{
 				ktext.Replace(L"{}", L"");
 			}
 			ktext_stripped = ktext;
-			reg.ReplaceAll(&ktext_stripped, _T(""));
+			reg.ReplaceAll(&ktext_stripped, L"");
 			lua_createtable(L, 0, 6);
 			set_field(L, "duration", kdur);
 			set_field(L, "start_time", ktime);

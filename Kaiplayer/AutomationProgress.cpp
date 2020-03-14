@@ -320,10 +320,10 @@ namespace Auto{
 		SetForegroundColour(Options.GetColour(WindowText));
 		SetBackgroundColour(Options.GetColour(WindowBackground));
 		progress_display = new KaiGauge(this, -1, wxDefaultPosition, wxSize(600, 20));
-		title_display = new KaiStaticText(this, -1, _T("")/*, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE|wxST_NO_AUTORESIZE*/);
-		task_display = new KaiStaticText(this, -1, _T("")/*, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE|wxST_NO_AUTORESIZE*/);
+		title_display = new KaiStaticText(this, -1, L"");
+		task_display = new KaiStaticText(this, -1, L"");
 		cancel_button = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
-		debug_output = new KaiTextCtrl(this, -1, _T(""), wxDefaultPosition, wxSize(600, 220), wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH2);
+		debug_output = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxSize(600, 220), wxTE_MULTILINE | wxTE_READONLY);
 		//debug_output->Hide();
 		// put it in a sizer
 		sizer = new wxBoxSizer(wxVERTICAL);
@@ -337,15 +337,15 @@ namespace Auto{
 		// make the title a slightly larger font
 		wxFont title_font = title_display->GetFont();
 		int fontsize = title_font.GetPointSize();
-		title_font.SetPointSize(fontsize + fontsize/4 + fontsize/8);
+		title_font.SetPointSize(fontsize + fontsize / 4 + fontsize / 8);
 		title_font.SetWeight(wxFONTWEIGHT_BOLD);
 		title_display->SetFont(title_font);
 
 		// Set up a timer to regularly update the status
 		// It doesn't need an event handler attached, as just a the timer in itself
 		// will ensure that the idle event is fired
-		Connect(44444,wxEVT_TIMER,(wxObjectEventFunction)&LuaProgressDialog::OnUpdate);
-		update_timer.SetOwner(this,44444);
+		Connect(44444, wxEVT_TIMER, (wxObjectEventFunction)&LuaProgressDialog::OnUpdate);
+		update_timer.SetOwner(this, 44444);
 		update_timer.Start(50);
 
 		//sizer->SetSizeHints(this);
@@ -368,7 +368,7 @@ namespace Auto{
 
 	void LuaProgressDialog::ShowProgressDialog(wxThreadEvent &evt)
 	{
-		LuaProgressDialog *dlg=evt.GetPayload<LuaProgressDialog*>();
+		LuaProgressDialog *dlg = evt.GetPayload<LuaProgressDialog*>();
 		dlg->ShowModal();
 	}
 
@@ -423,19 +423,19 @@ namespace Auto{
 		//cfgclosed=false;
 		update_timer.Stop();
 		LuaDialog dlg(L, true); // magically creates the config dialog structure etc
-		KaiDialog* window = dlg.CreateWindow(this,title_display->GetLabelText());
+		KaiDialog* window = dlg.CreateWindow(this, title_display->GetLabelText());
 		window->ShowModal();
 		update_timer.Start();
 		// more magic: puts two values on stack: button pushed and table with control results
 
 		dlg.LuaReadBack(L);
 		evt.GetPayload<wxSemaphore*>()->Post();
-		if(dlg.IsCancelled()){cancelled=true;}
+		if (dlg.IsCancelled()){ cancelled = true; }
 	}
 
 	void LuaProgressDialog::OnCancel(wxCommandEvent &evt)
 	{
-		cancelled=true;
+		cancelled = true;
 	}
 
 

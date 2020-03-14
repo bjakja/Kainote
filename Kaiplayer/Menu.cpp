@@ -22,7 +22,6 @@
 #include "KainoteApp.h"
 
 //cannot use font outside class cause it create before it can get font scale from system
-//static wxFont font = wxFont(10, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma");
 static int height = 22;
 static bool showMnemonics = false;
 static bool secondAlt = false;
@@ -659,32 +658,33 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	for (int i = 0; i < maxsize; i++)
 	{
 		int scrollPos = i + scPos;
+		int posY = (height * i) + 2;
 		MenuItem *item = parent->items[scrollPos];//+scPos
 		if (item->type == ITEM_SEPARATOR){
 			wxImage img = separator.ConvertToImage();
 			img = img.Scale(w - 36, 4, wxIMAGE_QUALITY_BILINEAR);
-			tdc.DrawBitmap(wxBitmap(img), 30, (height*i) + 8);
+			tdc.DrawBitmap(wxBitmap(img), 30, posY + ((height - img.GetHeight()) / 2));
 			noRadio = true;
 			continue;
 		}
 		if (scrollPos == sel){
 			tdc.SetPen(wxPen(highlight));
 			tdc.SetBrush(wxBrush(menuhighlight));
-			tdc.DrawRectangle(2, (height * i) + 2, w - 4, height);
+			tdc.DrawRectangle(2, posY, w - 4, height);
 		}
 		//tdc.SetPen(wxPen("#497CB0",2));
 		//tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 
 		if (showIcons){
 			if (item->type == ITEM_CHECK || item->type == ITEM_CHECK_AND_HIDE){
-				if (item->check) tdc.DrawBitmap(checkbmp, 5, (height*i) + 5);
+				if (item->check) tdc.DrawBitmap(checkbmp, 5, posY + ((height - checkbmp.GetHeight()) / 2));
 			}
 			else if (item->type == ITEM_RADIO && noRadio){
-				tdc.DrawBitmap(dot, 5, (height*i) + 4);
+				tdc.DrawBitmap(dot, 5, posY + ((height - checkbmp.GetHeight()) / 2));
 				noRadio = false;
 			}
 			else if (item->icon){
-				tdc.DrawBitmap(item->GetBitmap(), 5, (height*i) + 5);
+				tdc.DrawBitmap(item->GetBitmap(), 5, posY + ((height - item->icon->GetHeight()) / 2));
 			}
 		}
 		wxString desc = item->GetLabel();
@@ -706,17 +706,17 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 			int fw, fhh;
 			wxString accel = desc.AfterLast(L'\t');
 			tdc.GetTextExtent(accel, &fw, &fhh);
-			tdc.DrawText(accel, w - fw - 20, (height * i) + 4);
+			tdc.DrawText(accel, w - fw - 20, posY + 2);
 			desc = desc.BeforeLast(L'\t');
 		}
-		tdc.DrawText(desc, textStart, (height * i) + 4);
+		tdc.DrawText(desc, textStart, posY + 2);
 		if (hasMnemonics){
 			tdc.SetPen(wxPen((item->enabled) ? text : graytext));
 			tdc.DrawLine(textStart + mnbefsize.x, (height * (i + 1)) - 3, 
 				textStart + mnbefsize.x + linesize.x, (height * (i + 1)) - 3);
 		}
 		if (item->submenu){
-			tdc.DrawBitmap(arrow, w - 18, (height * i) + 5);
+			tdc.DrawBitmap(arrow, w - 18, posY + ((height - arrow.GetHeight()) / 2));
 		}
 
 	}

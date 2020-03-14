@@ -26,10 +26,11 @@ wxDECLARE_EVENT(SELECTION_CHANGED, wxCommandEvent);
 class StyleList : public KaiScrolledWindow
 {
 	public:
-		StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=wxWANTS_CHARS);
+		StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, 
+			const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxWANTS_CHARS);
 		virtual ~StyleList();
 
-		void SetSelection(int sel,bool reset=false);
+		void SetSelection(int sel, bool reset = false);
 		void SetSelections(const wxArrayInt &sels);
 		void Scroll(int step);
 		int GetSelections(wxArrayInt &sels);
@@ -45,7 +46,10 @@ class StyleList : public KaiScrolledWindow
 		void OnScroll(wxScrollWinEvent& event);
 		void OnMouseEvent(wxMouseEvent& event);
 		void OnArrow(wxCommandEvent& event);
-		void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();};holding = false;};
+		void OnLostCapture(wxMouseCaptureLostEvent &evt){ 
+			if (HasCapture()){ ReleaseMouse(); }; 
+			holding = false; 
+		};
 
 		int lastsel;
 		int lastRow;

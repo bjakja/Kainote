@@ -90,13 +90,13 @@ namespace Auto{
 		FILETIME ft;
 		GetSystemTime(&st);
 		if(!SystemTimeToFileTime(&st, &ft))
-			throw wxString("SystemTimeToFileTime failed with error: " + ErrorString(GetLastError()));
+			throw wxString(L"SystemTimeToFileTime failed with error: " + ErrorString(GetLastError()));
 
 		scoped_holder<HANDLE, BOOL (__stdcall *)(HANDLE)>
 			h(CreateFile(file.c_str(), GENERIC_WRITE, 0, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr), CloseHandle);
 		// error handling etc.
 		if (!SetFileTime(h, nullptr, nullptr, &ft))
-			throw wxString("SetFileTime failed with error: " + ErrorString(GetLastError()));
+			throw wxString(L"SetFileTime failed with error: " + ErrorString(GetLastError()));
 	}
 
 	void Copy(wxString const& from, wxString const& to) {
@@ -107,11 +107,11 @@ namespace Auto{
 		if (!CopyFile(from.wc_str(), to.wc_str(), false)) {
 			switch (GetLastError()) {
 			case ERROR_FILE_NOT_FOUND:
-				throw wxString("File not found: "+ from +".");
+				throw wxString(L"File not found: " + from + L".");
 			case ERROR_ACCESS_DENIED:
-				throw wxString("Could not overwrite " + to +".");
+				throw wxString(L"Could not overwrite " + to + L".");
 			default:
-				throw wxString("Could not copy: " + ErrorString(GetLastError()));
+				throw wxString(L"Could not copy: " + ErrorString(GetLastError()));
 			}
 		}
 	}
@@ -189,7 +189,7 @@ namespace Auto{
 		return *this;
 	}
 
-	DirectoryIterator::~DirectoryIterator() { if(handle){FindClose(handle); handle=NULL;}}
+	DirectoryIterator::~DirectoryIterator() { if (handle){ FindClose(handle); handle=NULL; }}
 
 	template<typename Func>
 	auto wrap(char **err, Func f) -> decltype(f()) {
