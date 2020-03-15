@@ -133,7 +133,7 @@ namespace Auto{
 		lua_pop(L, 1);
 		TabPanel *tab = Notebook::GetTab();
 		if (tab && tab->Video->GetState() != None) {
-			int frame = (tab->Video->IsDshow) ? ((float)ms / 1000.f) * tab->Video->fps : 
+			int frame = (tab->Video->IsDshow) ? ((float)ms / 1000.f) * tab->Video->fps :
 				tab->Video->VFF->GetFramefromMS(ms, 0, false);
 			lua_pushnumber(L, frame);
 		}
@@ -150,7 +150,7 @@ namespace Auto{
 		lua_pop(L, 1);
 		TabPanel *tab = Notebook::GetTab();
 		if (tab && tab->Video->GetState() != None) {
-			int ms = (tab->Video->IsDshow) ? ((frame * 1000) / tab->Video->fps) : 
+			int ms = (tab->Video->IsDshow) ? ((frame * 1000) / tab->Video->fps) :
 				tab->Video->VFF->GetMSfromFrame(frame);
 			lua_pushnumber(L, ms);
 		}
@@ -169,7 +169,7 @@ namespace Auto{
 			lua_pushnumber(L, sz.x);
 			lua_pushnumber(L, sz.y);
 			lua_pushnumber(L, AR);
-			lua_pushnumber(L, (AR == 1.0f) ? 0 : (AR < 1.34f && AR > 1.33f) ? 1 : 
+			lua_pushnumber(L, (AR == 1.0f) ? 0 : (AR < 1.34f && AR > 1.33f) ? 1 :
 				(AR < 1.78f && AR > 1.77f) ? 2 : (AR < 2.35f && AR > 2.36f) ? 3 : 4);
 			return 4;
 		}
@@ -202,7 +202,7 @@ namespace Auto{
 		path.Replace(L'/', L'\\');
 		wxString firstAutomation = Options.pathfull + "\\Automation";
 		if (path[0] == L'?'){
-			if (path[1] == L'a' && path[4] == L'i') path.replace(0, 6, (tab)? tab->VideoPath.BeforeLast(L'\\') : L"");
+			if (path[1] == L'a' && path[4] == L'i') path.replace(0, 6, (tab) ? tab->VideoPath.BeforeLast(L'\\') : L"");
 			else if (path[1] == L'd' && path[4] == L'a') path.replace(0, 5, firstAutomation);
 			else if (path[1] == L'd' && path[4] == L't') path.replace(0, 11, Options.pathfull + L"\\Dictionary");
 			else if (path[1] == L'l' && path[4] == L'a') path.replace(0, 6, firstAutomation);
@@ -1052,12 +1052,12 @@ namespace Auto{
 
 	bool Automation::AddFromSubs()
 	{
-		wxString paths = Notebook::GetTab()->Grid->GetSInfo("Automation Scripts");
+		wxString paths = Notebook::GetTab()->Grid->GetSInfo(L"Automation Scripts");
 
-		if (paths == ""){ return false; }
+		if (paths == L""){ return false; }
 		if (paths == scriptpaths && ASSScripts.size() > 0){ return false; }
 		paths.Trim(false);
-		wxStringTokenizer token(paths, "|~$", wxTOKEN_RET_EMPTY_ALL);
+		wxStringTokenizer token(paths, L"|~$", wxTOKEN_RET_EMPTY_ALL);
 		int error_count = 0;
 		while (token.HasMoreTokens())
 		{
@@ -1089,9 +1089,9 @@ namespace Auto{
 	void Automation::OnEdit(wxString &Filename)
 	{
 		wxString editor = Options.GetString(AutomationScriptEditor);
-		if (editor == "" || wxGetKeyState(WXK_SHIFT)){
-			editor = wxFileSelector(_("Wybierz edytor skryptów"), "",
-				"C:\\Windows\\Notepad.exe", "exe", _("Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+		if (editor == L"" || wxGetKeyState(WXK_SHIFT)){
+			editor = wxFileSelector(_("Wybierz edytor skryptów"), L"",
+				L"C:\\Windows\\Notepad.exe", L"exe", _("Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 			if (!wxFileExists(editor)){ return; }
 			Options.SetString(AutomationScriptEditor, editor);
 			Options.SaveOptions();
@@ -1160,7 +1160,7 @@ namespace Auto{
 			auto macros = script->GetMacros();
 			for (size_t p = 0; p < macros.size(); p++){
 				auto macro = macros[p];
-				wxString text; 
+				wxString text;
 				text << L"Script " << script->GetFilename() << L"-" << p;
 				MenuItem *mi = submenu->SetAccMenu(new MenuItem(start, macro->StrDisplay(), macro->StrHelp()), text);
 				mi->Enable(macro->Validate(c));

@@ -29,7 +29,7 @@ public:
 
 };
 
-
+//position set 0 to center position -1 not works
 int KaiMessageBox(const wxString& msg, const wxString &caption = L"", long elems = wxOK, wxWindow *parent = 0, const wxPoint &pos = wxDefaultPosition);
 
 #define wxYES_TO_ALL 64

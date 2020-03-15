@@ -29,7 +29,7 @@ struct tm;
 
 
 namespace Auto{
-	
+
 	/// Clamp `b` to the range [`a`,`c`]
 	template<typename T>
 	static inline T mid(T a, T b, T c) {
@@ -59,7 +59,7 @@ namespace Auto{
 		std::vector<std::pair<size_t, size_t>> blocks;
 		size_t start;
 		//upewniæ siê, ¿e ta klase bêdzie mia³a start na 0;
-		tagless_find_helper(){start=0;}
+		tagless_find_helper(){ start = 0; }
 	public:
 		/// Strip ASS override tags at or after `start` in `str`, and initialize
 		/// state for mapping ranges back to the input string
@@ -131,7 +131,7 @@ namespace Auto{
 
 	struct error_tag {};
 
-	
+
 	// Below are functionally equivalent to the luaL_ functions, but using a C++
 	// exception for stack unwinding
 	int error(lua_State *L, const char *fmt, ...);
@@ -147,7 +147,7 @@ namespace Auto{
 
 	template<typename Integer>
 	typename std::enable_if<std::is_integral<Integer>::value>::type
-	push_value(lua_State *L, Integer value) {
+		push_value(lua_State *L, Integer value) {
 		lua_pushinteger(L, static_cast<lua_Integer>(value));
 	}
 
@@ -173,10 +173,10 @@ namespace Auto{
 		}
 	}
 
-	int exception_wrapper(lua_State *L, int (*func)(lua_State *L));
+	int exception_wrapper(lua_State *L, int(*func)(lua_State *L));
 	/// Wrap a function which may throw exceptions and make it trigger lua errors
 	/// whenever it throws
-	template<int (*func)(lua_State *L)>
+	template<int(*func)(lua_State *L)>
 	int exception_wrapper(lua_State *L) {
 		return exception_wrapper(L, func);
 	}
@@ -187,7 +187,7 @@ namespace Auto{
 		lua_setfield(L, -2, name);
 	}
 
-	template<int (*func)(lua_State *L)>
+	template<int(*func)(lua_State *L)>
 	void set_field(lua_State *L, const char *name) {
 		push_value(L, exception_wrapper<func>);
 		lua_setfield(L, -2, name);
@@ -204,11 +204,11 @@ namespace Auto{
 
 	/*template<typename T, typename... Args>
 	T *make(lua_State *L, const char *mt, Args&&... args) {
-		auto obj = static_cast<T*>(lua_newuserdata(L, sizeof(T)));
-		new(obj) T(std::forward<Args>(args)...);
-		luaL_getmetatable(L, mt);
-		lua_setmetatable(L, -2);
-		return obj;
+	auto obj = static_cast<T*>(lua_newuserdata(L, sizeof(T)));
+	new(obj) T(std::forward<Args>(args)...);
+	luaL_getmetatable(L, mt);
+	lua_setmetatable(L, -2);
+	return obj;
 	}*/
 
 	template<typename T>
@@ -216,7 +216,7 @@ namespace Auto{
 		return *static_cast<T *>(check_udata(L, idx, mt));
 	}
 
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	struct LuaStackcheck {
 		lua_State *L;
 		int startstack;
@@ -227,13 +227,13 @@ namespace Auto{
 		LuaStackcheck(lua_State *L) : L(L), startstack(lua_gettop(L)) { }
 		~LuaStackcheck() { check_stack(0); }
 	};
-	#else
+#else
 	struct LuaStackcheck {
 		void check_stack(int) { }
 		void dump() { }
 		LuaStackcheck(lua_State*) { }
 	};
-	#endif
+#endif
 
 	struct LuaForEachBreak {};
 
@@ -259,7 +259,7 @@ namespace Auto{
 
 	/*template<typename T, typename... Args>
 	std::unique_ptr<T> make_unique(Args&&... args) {
-		return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+	return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 	}*/
 
 	/// Lua error handler which adds the stack trace to the error message, with

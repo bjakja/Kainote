@@ -107,7 +107,7 @@ AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automat
 			int id = -1;
 			wxString accel;
 			wxString scriptHotkeyName;
-			scriptHotkeyName << "Script " << script->GetFilename() << "-" << k;
+			scriptHotkeyName << L"Script " << script->GetFilename() << L"-" << k;
 			findHotkey(scriptHotkeyName, &accel, &id);
 			hotkeysList->SetItem(pos, 2, new AutomationHotkeyItem(accel, scriptHotkeyName, id));
 		}
@@ -124,7 +124,7 @@ AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automat
 			int id = -1;
 			wxString accel;
 			wxString scriptHotkeyName;
-			scriptHotkeyName << "Script " << script->GetFilename() << "-" << k;
+			scriptHotkeyName << L"Script " << script->GetFilename() << L"-" << k;
 			findHotkey(scriptHotkeyName, &accel, &id);
 			hotkeysList->SetItem(pos, 2, new AutomationHotkeyItem(accel, scriptHotkeyName, id));
 		}
@@ -134,7 +134,7 @@ AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automat
 	Connect(ID_HOTKEYS_LIST, LIST_ITEM_DOUBLECLICKED, (wxObjectEventFunction)&AutomationHotkeysDialog::OnMapHkey);
 
 	wxBoxSizer *buttonsSizer = new wxBoxSizer(wxHORIZONTAL);
-	MappedButton *OK = new MappedButton(this, ID_HOTKEYS_OK, "OK");
+	MappedButton *OK = new MappedButton(this, ID_HOTKEYS_OK, L"OK");
 	Connect(ID_HOTKEYS_OK, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&AutomationHotkeysDialog::OnOK);
 	MappedButton *setHotkey = new MappedButton(this, ID_HOTKEYS_MAP, _("Mapuj skrót"));
 	Connect(ID_HOTKEYS_MAP, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&AutomationHotkeysDialog::OnMapHkey);
@@ -249,7 +249,7 @@ void AutomationHotkeysDialog::OnMapHkey(wxCommandEvent &evt)
 				result = msg.ShowModal();
 			}
 			if (result == wxYES || result == wxOK){
-				if (result == wxYES){ hotkey = ""; }
+				if (result == wxYES){ hotkey = L""; }
 				for (auto &idtype : idtypes){
 					if (doubledHotkey && idtype->first.Type != hkd.type)
 						continue;
@@ -284,10 +284,10 @@ void AutomationHotkeysDialog::OnDeleteHkey(wxCommandEvent &evt)
 	if (id < 0)
 		return;
 
-	ChangeHotkey(inum, id, "");
+	ChangeHotkey(inum, id, L"");
 	hotkeysList->SetModified(true);
 	hotkeysList->PushHistory();
-	allHotkeys[idAndType(id, GLOBAL_HOTKEY)] = hdata(name, "");
+	allHotkeys[idAndType(id, GLOBAL_HOTKEY)] = hdata(name, L"");
 }
 
 void AutomationHotkeysDialog::ChangeHotkey(int row, int id, const wxString &hotkey)

@@ -41,7 +41,7 @@ extern "C" {
 
 namespace Auto{
 
-class LuaDialogControl {
+	class LuaDialogControl {
 	public:
 		/// Name of this control in the output table
 		wxString name;
@@ -66,7 +66,7 @@ class LuaDialogControl {
 
 		/// Serialize the control's current value so that it can be stored
 		/// in the script
-		virtual wxString SerialiseValue() const { return ""; }
+		virtual wxString SerialiseValue() const { return L""; }
 
 		/// Restore the control's value from a saved value in the script
 		virtual void UnserialiseValue(const wxString &serialised) { }
@@ -93,16 +93,16 @@ class LuaDialogControl {
 
 	public:
 		LuaDialog(lua_State *L, bool include_buttons);
-		~LuaDialog(){ 
-			window->Destroy(); 
+		~LuaDialog(){
+			window->Destroy();
 			for (size_t i = 0; i < controls.size(); ++i)
 				delete controls[i];
-		
+
 		};
 		/// Push the values of the controls in this dialog onto the lua stack
 		/// in a single table
 		int LuaReadBack(lua_State *L);
-		bool IsCancelled(){return (button_pushed<0);};
+		bool IsCancelled(){ return (button_pushed < 0); };
 
 		// ScriptDialog implementation
 		KaiDialog* CreateWindow(wxWindow *parent, wxString name);

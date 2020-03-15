@@ -49,7 +49,7 @@ namespace Auto {
 
 	enum CommandFlags {
 		/// Default command type
-		COMMAND_NORMAL       = 0,
+		COMMAND_NORMAL = 0,
 
 		/// Invoking this command toggles a setting of some sort. Any command
 		/// of this type should have IsActive implemented to signal the
@@ -57,17 +57,17 @@ namespace Auto {
 		/// twice should be a no-op
 		///
 		/// This is mutually exclusive with COMMAND_RADIO
-		COMMAND_TOGGLE       = 1,
+		COMMAND_TOGGLE = 1,
 
 		/// Invoking this command sets a setting to a specific value. Any
 		/// command of this type should have IsActive implemented, and if
 		/// IsActive returns true, invoking the command should have no effect
 		///
 		/// This is mutually exclusive with COMMAND_TOGGLE
-		COMMAND_RADIO        = 2,
+		COMMAND_RADIO = 2,
 
 		/// This command has an overridden Validate method
-		COMMAND_VALIDATE     = 4,
+		COMMAND_VALIDATE = 4,
 
 		/// This command's name may change based on the state of the project
 		COMMAND_DYNAMIC_NAME = 8,
@@ -92,7 +92,7 @@ namespace Auto {
 		LuaFeature(lua_State *L) : L(L) { }
 	};
 
-	
+
 
 	class LuaCommand : private LuaFeature {
 		//wxString cmd_name;
@@ -141,7 +141,7 @@ namespace Auto {
 		static int LuaInclude(lua_State *L);
 
 	public:
-		
+
 		LuaScript(wxString const& filename);
 		~LuaScript() { Destroy(); }
 
@@ -164,10 +164,11 @@ namespace Auto {
 		wxString GetVersion() const { return version; }
 		bool GetLoadedState() const { return L != nullptr; }
 
-		LuaCommand* GetMacro(int macro) const{ 
-			if (macro < (int)macros.size()){ 
+		LuaCommand* GetMacro(int macro) const{
+			if (macro < (int)macros.size()){
 				return macros[macro];
-			}else{ return NULL; } 
+			}
+			else{ return NULL; }
 		}
 		std::vector<LuaCommand*> GetMacros() const{ return macros; }
 		bool CheckLastModified(bool check = true);
@@ -175,12 +176,12 @@ namespace Auto {
 	// @class Automation
 	// @brief manage lua scripts Lua
 
-	
+
 
 	class Automation
 	{
 	public:
-		Automation(bool loadSubsScripts=false, bool loadNow = false);
+		Automation(bool loadSubsScripts = false, bool loadNow = false);
 		~Automation();
 
 		bool Add(wxString filename, bool addToSinfo = true, bool autoload = false);
@@ -208,10 +209,10 @@ namespace Auto {
 		volatile bool breakLoading = false;
 	};
 
-// Run a lua function on a background thread
+	// Run a lua function on a background thread
 
 
-class LuaThreadedCall : public wxThread {
+	class LuaThreadedCall : public wxThread {
 	private:
 		lua_State *L;
 	public:

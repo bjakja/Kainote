@@ -1065,20 +1065,20 @@ void EditBox::OnStrikeClick(wxCommandEvent& event)
 		PutinText(L"\\s" + wart);
 		if (!issel)return;
 		wart = (mstyle->StrikeOut) ? L"0" : L"1";
-		if (FindValue("s(0|1)", &wart)){ if (wart == "1"){ wart = "0"; } else{ wart = "1"; } }
-		PutinText("\\s" + wart);
+		if (FindValue(L"s(0|1)", &wart)){ if (wart == L"1"){ wart = L"0"; } else{ wart = L"1"; } }
+		PutinText(L"\\s" + wart);
 	}
-	else if (grid->subsFormat == SRT){ PutinNonass("s", "s"); }
+	else if (grid->subsFormat == SRT){ PutinNonass(L"s", L"s"); }
 }
 
 void EditBox::OnAnChoice(wxCommandEvent& event)
 {
 	TextEdit->SetSelection(0, 0);
 	if (grid->hasTLMode){ TextEditOrig->SetSelection(0, 0); }
-	lasttag = "an([0-9])";
+	lasttag = L"an([0-9])";
 	wxString tag;
-	FindValue("an([0-9])", &tag);
-	PutinText("\\" + Ban->GetString(Ban->GetSelection()), true);
+	FindValue(L"an([0-9])", &tag);
+	PutinText(L"\\" + Ban->GetString(Ban->GetSelection()), true);
 }
 
 void EditBox::OnTlMode(wxCommandEvent& event)

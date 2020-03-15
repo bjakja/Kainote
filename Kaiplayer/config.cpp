@@ -330,7 +330,6 @@ void config::SaveOptions(bool cfg, bool style)
 
 void config::LoadDefaultConfig()
 {
-	//rawcfg[ASSPropertiesAskForChange] = "true";
 	stringConfig[MoveTimesTime] = L"2000";
 	stringConfig[MoveTimesWhichLines] = L"0";
 	stringConfig[ConvertResolutionWidth] = L"1280";

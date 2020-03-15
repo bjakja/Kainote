@@ -364,8 +364,8 @@ namespace Auto{
 		}
 
 		bool CanSerialiseValue() const { return true; }
-		wxString SerialiseValue() const { return value ? "1" : "0"; }
-		void UnserialiseValue(const wxString &serialised) { value = serialised != "0"; }
+		wxString SerialiseValue() const { return value ? L"1" : L"0"; }
+		void UnserialiseValue(const wxString &serialised) { value = serialised != L"0"; }
 
 		wxWindow *Create(wxWindow *parent) {
 			cw = new KaiCheckBox(parent, -1, wxString(label));
@@ -472,8 +472,8 @@ namespace Auto{
 		}
 
 		if (buttons.size() == 0) {
-			buttons.emplace_back(wxID_OK, "");
-			buttons.emplace_back(wxID_CANCEL, "");
+			buttons.emplace_back(wxID_OK, L"");
+			buttons.emplace_back(wxID_CANCEL, L"");
 		}
 
 		auto bs = new wxBoxSizer(wxHORIZONTAL);
@@ -538,8 +538,8 @@ namespace Auto{
 		for (auto& control : controls) {
 			if (control->CanSerialiseValue()) {
 				if (!res.empty())
-					res += "|";
-				res += inline_string_encode(control->name) + ":" + control->SerialiseValue();
+					res += L"|";
+				res += inline_string_encode(control->name) + L":" + control->SerialiseValue();
 			}
 		}
 
@@ -547,10 +547,10 @@ namespace Auto{
 	}
 
 	void LuaDialog::Unserialise(const wxString &serialised) {
-		wxStringTokenizer tok(serialised, "|", wxTOKEN_STRTOK);
+		wxStringTokenizer tok(serialised, L"|", wxTOKEN_STRTOK);
 		while (tok.HasMoreTokens()) {
 			wxString token = tok.GetNextToken();
-			int pos = token.Find(':');
+			int pos = token.Find(L':');
 			if (pos == -1) continue;
 
 			wxString name = inline_string_decode(token.SubString(0, pos + 1));

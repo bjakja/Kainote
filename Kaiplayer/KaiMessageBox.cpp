@@ -78,15 +78,18 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 	sizer2->Add(sizer1, 0, wxALL | wxALIGN_RIGHT, 3);
 	sizer2->SetMinSize(180, -1);
 	SetSizerAndFit(sizer2);
-	if (pos.x == 0 || pos.y == 0){
-		int dir = 0;
+	int dir = 0;
+	if (pos != wxDefaultPosition){
 		if (pos.x == 0)
 			dir |= wxHORIZONTAL;
 		if (pos.y == 0)
 			dir |= wxVERTICAL;
 
-		CenterOnParent(dir);
 	}
+	else{
+		dir = wxBOTH;
+	}
+	CenterOnParent(dir);
 	//Bind(wxEVT_CLOSE_WINDOW,[=](wxCloseEvent &evt){EndModal((elems & wxCANCEL)? wxCANCEL : (elems & wxNO)? wxNO : wxOK);});
 	//here is the main problem id number is different than returned value
 	SetEscapeId((elems & wxCANCEL) ? 9010 : (elems & wxNO) ? wxID_NO : 9009);
