@@ -53,11 +53,11 @@ void AssColor::SetAss(wxString color)
 	}
 	else{
 		color.Upper();
-		bool ishtml = color.StartsWith("#");
+		bool ishtml = color.StartsWith(L"#");
 		wxString astr, rstr, gstr, bstr;
-		color.Replace("&", ""); 
-		color.Replace("H", ""); 
-		color.Replace("#", "");
+		color.Replace(L"&", L""); 
+		color.Replace(L"H", L""); 
+		color.Replace(L"#", L"");
 		if (color.Len() > 7){ astr = color.SubString(0, 1); astr.ToLong(&a, 16); color = color.Mid(2); }
 		rstr = color.SubString(4, 5), gstr = color.SubString(2, 3), bstr = color.SubString(0, 1);
 		if (ishtml){ wxString tmp = rstr; rstr = bstr; bstr = tmp; }
@@ -70,8 +70,8 @@ void AssColor::SetAss(wxString color)
 
 void AssColor::SetAlphaString(wxString alpha)
 {
-	alpha.Replace("&", "");
-	alpha.Replace("H", "");
+	alpha.Replace(L"&", L"");
+	alpha.Replace(L"H", L"");
 	alpha.ToLong(&a, 16);
 }
 void AssColor::SetWX(const wxColour &kolor, int alpha)
@@ -102,8 +102,8 @@ wxColour AssColor::GetWX() const
 wxString AssColor::GetHex(bool alpha) const
 {
 	if (alpha && a)
-		return wxString::Format("#%02X%02X%02X%02X", a, r, g, b);
-	return wxString::Format("#%02X%02X%02X", r, g, b);
+		return wxString::Format(L"#%02X%02X%02X%02X", a, r, g, b);
+	return wxString::Format(L"#%02X%02X%02X", r, g, b);
 }
 
 void AssColor::Copy(const AssColor& color, bool alpha)
@@ -252,10 +252,10 @@ bool Styles::parseStyle(const wxString &styledata, char form)
 	else{
 		Underline = false;
 		StrikeOut = false;
-		ScaleX = "100";
-		ScaleY = "100";
-		Spacing = "0";
-		Angle = "0";
+		ScaleX = L"100";
+		ScaleY = L"100";
+		Spacing = L"0";
+		Angle = L"0";
 	}
 
 	if (!assstyle.HasMoreTokens())return false;
@@ -276,12 +276,12 @@ bool Styles::parseStyle(const wxString &styledata, char form)
 
 	if (form == 2)
 	{
-		if (Alignment == "9"){ Alignment = "4"; }
-		else if (Alignment == "10"){ Alignment = "5"; }
-		else if (Alignment == "11"){ Alignment = "6"; }
-		else if (Alignment == "5"){ Alignment = "7"; }
-		else if (Alignment == "6"){ Alignment = "8"; }
-		else if (Alignment == "7"){ Alignment = "9"; }
+		if (Alignment == L"9"){ Alignment = L"4"; }
+		else if (Alignment == L"10"){ Alignment = L"5"; }
+		else if (Alignment == L"11"){ Alignment = L"6"; }
+		else if (Alignment == L"5"){ Alignment = L"7"; }
+		else if (Alignment == L"6"){ Alignment = L"8"; }
+		else if (Alignment == L"7"){ Alignment = L"9"; }
 	}
 
 

@@ -195,12 +195,14 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	menu->Append(4444, _("Ukryj kolumny"), hidemenu);
 	menu->SetAccMenu(HideSelected, _("Ukryj zaznaczone linijki"))->Enable(sels > 0);
 	menu->Append(4445, _("Filtrowanie"), filterMenu);
-	menu->SetAccMenu(GRID_FILTER_IGNORE_IN_ACTIONS, _("Ignoruj filtrowanie przy akcjach"), L"", true, ITEM_CHECK)->Check(ignoreFiltered); 
+	menu->SetAccMenu(GRID_FILTER_IGNORE_IN_ACTIONS, _("Ignoruj filtrowanie przy akcjach"), L"", true, ITEM_CHECK)->
+		Check(ignoreFiltered); 
 	menu->SetAccMenu(GRID_TREE_MAKE, _("Stwórz drzewko"))->Enable(sels > 0);
 	menu->SetAccMenu(ShowPreview, _("Pokaż podgląd napisów"))->Enable(Notebook::GetTabs()->Size() > 1 && !preview);
 	menu->SetAccMenu(NewFPS, _("Ustaw nowy FPS"));
 	menu->SetAccMenu(FPSFromVideo, _("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState() != None && sels == 2);
-	menu->SetAccMenu(PasteTranslation, _("Wklej tekst tłumaczenia"))->Enable(subsFormat < SRT && ((TabPanel*)GetParent())->SubsPath != "");
+	menu->SetAccMenu(PasteTranslation, _("Wklej tekst tłumaczenia"))->
+		Enable(subsFormat < SRT && ((TabPanel*)GetParent())->SubsPath != L"");
 	menu->SetAccMenu(TranslationDialog, _("Okno przesuwania dialogów"))->Enable(GetSInfo("TLMode Showtl") == L"Yes");
 	menu->AppendSeparator();
 
@@ -208,7 +210,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	menu->SetAccMenu(Remove, _("Usuń"))->Enable(isEnabled);
 	menu->AppendSeparator();
 	menu->SetAccMenu(FontCollectorID, _("Kolekcjoner czcionek"))->Enable(subsFormat < SRT);
-	menu->SetAccMenu(SubsFromMKV, _("Wczytaj napisy z pliku MKV"))->Enable(Kai->GetTab()->VideoName.EndsWith(".mkv"));
+	menu->SetAccMenu(SubsFromMKV, _("Wczytaj napisy z pliku MKV"))->Enable(Kai->GetTab()->VideoName.EndsWith(L".mkv"));
 
 	int Modifiers = 0;
 	int id = menu->GetPopupMenuSelection(pos, this, &Modifiers);

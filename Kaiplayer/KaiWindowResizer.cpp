@@ -18,7 +18,7 @@
 #include "wx/dcmemory.h"
 
 KaiWindowResizer::KaiWindowResizer(wxWindow *parent/*, wxWindow *_windowBeforeResizer*/, std::function<bool(int)> _canResize, std::function<void(int, bool)> _doResize)
-	:wxWindow(parent, -1, wxDefaultPosition, wxSize(-1,5))
+	:wxWindow(parent, -1, wxDefaultPosition, wxSize(-1, 5))
 	, canResize(_canResize)
 	, doResize(_doResize)
 	, resizerParent(parent)
@@ -27,8 +27,8 @@ KaiWindowResizer::KaiWindowResizer(wxWindow *parent/*, wxWindow *_windowBeforeRe
 	SetMinSize(wxSize(-1, 5));
 	SetCursor(wxCURSOR_SIZENS);
 	SetBackgroundColour(Options.GetColour(WindowBackground));
-	Bind(wxEVT_MOUSE_CAPTURE_LOST, [=](wxMouseCaptureLostEvent &evt){ 
-		holding = false; 
+	Bind(wxEVT_MOUSE_CAPTURE_LOST, [=](wxMouseCaptureLostEvent &evt){
+		holding = false;
 		if (splitLine){
 			splitLine->Destroy();
 			splitLine = NULL;
@@ -75,7 +75,7 @@ void KaiWindowResizer::OnMouseEvent(wxMouseEvent &evt)
 		CaptureMouse();
 		int px = 2, py = newPosition;
 		ClientToScreen(&px, &py);
-		splitLine = new wxDialog(this, -1, "", wxPoint(px, py), wxSize(GetSize().GetWidth(), 2), wxSTAY_ON_TOP | wxBORDER_NONE);
+		splitLine = new wxDialog(this, -1, L"", wxPoint(px, py), wxSize(GetSize().GetWidth(), 2), wxSTAY_ON_TOP | wxBORDER_NONE);
 		splitLine->SetBackgroundColour(Options.GetColour(WindowText));
 		splitLine->Show();
 	}

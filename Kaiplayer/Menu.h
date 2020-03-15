@@ -190,7 +190,7 @@ class Menu : public Mnemonics
 	MenuItem *Insert(int position, int _id, const wxString& _label, const wxString& _help = L"", 
 		bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
 	MenuItem *Insert(int position, MenuItem *item);
-	MenuItem *SetAccMenu(int id, const wxString &txt, const wxString &help = "", bool enable = true, int kind = 0);
+	MenuItem *SetAccMenu(int id, const wxString &txt, const wxString &help = L"", bool enable = true, int kind = 0);
 	MenuItem *SetAccMenu(MenuItem *menuitem, const wxString &name);
 	void Delete(int position);
 	void Clear(){

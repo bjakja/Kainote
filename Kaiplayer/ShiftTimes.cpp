@@ -194,7 +194,7 @@ void ShiftTimesWindow::OnAddStyles(wxCommandEvent& event)
 {
 	wxString result = GetCheckedElements(Kai);
 	Stylestext->SetValue(result);
-	if (result != ""){ WhichLines->SetSelection(5); }
+	if (result != L""){ WhichLines->SetSelection(5); }
 }
 
 void ShiftTimesWindow::SaveOptions()
@@ -766,7 +766,7 @@ void ShiftTimesWindow::CreateProfile(const wxString &name, bool overwrite)
 		L" EndTimeCorrection: " << EndTimeCorrection->GetSelection() << L"\f";
 
 	if (overwrite){
-		wxStringTokenizer tokenizer(profile, "\f", wxTOKEN_STRTOK);
+		wxStringTokenizer tokenizer(profile, L"\f", wxTOKEN_STRTOK);
 		while (tokenizer.HasMoreTokens()){
 			wxString token = tokenizer.GetNextToken();
 			if (!token.StartsWith(name + L":")){

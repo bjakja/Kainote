@@ -61,7 +61,7 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 		size_t i = 0;
 		//size_t len = text.length();
 		while (i < text.length()){
-			size_t nfound = text.find(wxUniChar('\n'), i);
+			size_t nfound = text.find(wxUniChar(L'\n'), i);
 			i = (nfound != -1) ? nfound : text.length() - 1;
 			wxString stringToMesure = text.Mid(currentPosition, i - currentPosition + 1);
 			GetTextExtent((stringToMesure.length()) ? stringToMesure : L"|", &fw, &fh);
@@ -73,7 +73,7 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 				int currentFW = 0;
 				while (currentPosition < i)
 				{
-					size_t spacePos = text.find(wxUniChar(' '), j);
+					size_t spacePos = text.find(wxUniChar(L' '), j);
 					if (spacePos == -1 || i < spacePos)
 						spacePos = i;
 

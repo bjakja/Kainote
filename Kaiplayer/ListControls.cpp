@@ -463,7 +463,7 @@ void KaiChoice::PutArray(wxArrayString *arr)
 	list = new wxArrayString(*arr);
 	if (list->size() < 1){ choice = -1; ce = L""; }
 	if (itemList){ itemList->Destroy(); itemList = NULL; }
-	if (ce != ""){
+	if (ce != L""){
 		if (choice >= (int)list->size()){
 			choice = 0;
 		}
@@ -618,7 +618,7 @@ wxString KaiChoice::GetString(int pos){
 		return choiceText->GetValue();
 	}
 	else if (pos < 0 || pos >= (int)list->size()){
-		return "";
+		return L"";
 	}
 	return (*list)[pos];
 }

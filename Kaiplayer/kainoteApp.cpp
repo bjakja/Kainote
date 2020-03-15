@@ -147,14 +147,14 @@ bool kainoteApp::OnInit()
 		wxString subs;
 		for (int i = 1; i < argc; i++) {
 			subs.Append(argv[i]);
-			if (i + 1 != argc){ subs += "|"; }
+			if (i + 1 != argc){ subs += L"|"; }
 		}
 
 		delete m_checker; // OnExit() won't be called if we return false
 		m_checker = NULL;
 		//damn wxwidgets, why class name is not customizable?    
 		HWND hWnd = FindWindow(L"Kainote_main_windowNR", 0);/**///wxWindow
-		if (hWnd && subs != ""){
+		if (hWnd && subs != L""){
 			const wchar_t *text = subs.wc_str();
 			COPYDATASTRUCT cds;
 			cds.cbData = (subs.Len() + 1) * sizeof(wchar_t);

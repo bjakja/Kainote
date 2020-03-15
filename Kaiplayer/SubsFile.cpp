@@ -110,7 +110,8 @@ File *File::Copy(bool copySelections)
 SubsFile::SubsFile()
 {
 	historyNames = new wxString[AUTOMATION_SCRIPT + 1]{
-		"",//pierwszy element którego nie używamy a musi być ostatni enum weszedł a także ochronić nas przed potencjalnym 0
+		//first element is not used but is to sacure from number 0
+		L"",
 			_("Otwarcie napisów"),
 			_("Nowe napisy"),
 			_("Edycja linii"),

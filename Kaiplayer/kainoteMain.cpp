@@ -132,28 +132,28 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	FileMenu = new Menu();
 	SubsRecMenu = new Menu();
-	FileMenu->AppendTool(Toolbar, OpenSubs, _("&Otwórz napisy"), _("Otwórz plik napisów"), PTR_BITMAP_PNG("opensubs"));
-	FileMenu->AppendTool(Toolbar, SaveSubs, _("&Zapisz"), _("Zapisz aktualny plik"), PTR_BITMAP_PNG("save"), false);
-	FileMenu->AppendTool(Toolbar, SaveAllSubs, _("Zapisz &wszystko"), _("Zapisz wszystkie napisy"), PTR_BITMAP_PNG("saveall"));
-	FileMenu->AppendTool(Toolbar, SaveSubsAs, _("Zapisz &jako..."), _("Zapisz jako"), PTR_BITMAP_PNG("saveas"));
-	FileMenu->AppendTool(Toolbar, SaveTranslation, _("Zapisz &tłumaczenie"), _("Zapisz tłumaczenie"), PTR_BITMAP_PNG("savetl"), false);
-	FileMenu->AppendTool(Toolbar, RecentSubs, _("Ostatnio otwa&rte napisy"), _("Ostatnio otwarte napisy"), PTR_BITMAP_PNG("recentsubs"), true, SubsRecMenu);
-	FileMenu->AppendTool(Toolbar, RemoveSubs, _("Usuń napisy z e&dytora"), _("Usuń napisy z edytora"), PTR_BITMAP_PNG("close"));
-	FileMenu->Append(SaveWithVideoName, _("Zapisuj napisy z nazwą wideo"), _("Zapisuj napisy z nazwą wideo"), true, PTR_BITMAP_PNG("SAVEWITHVIDEONAME"), NULL, ITEM_CHECK)->Check(Options.GetBool(SubsAutonaming));
+	FileMenu->AppendTool(Toolbar, OpenSubs, _("&Otwórz napisy"), _("Otwórz plik napisów"), PTR_BITMAP_PNG(L"opensubs"));
+	FileMenu->AppendTool(Toolbar, SaveSubs, _("&Zapisz"), _("Zapisz aktualny plik"), PTR_BITMAP_PNG(L"save"), false);
+	FileMenu->AppendTool(Toolbar, SaveAllSubs, _("Zapisz &wszystko"), _("Zapisz wszystkie napisy"), PTR_BITMAP_PNG(L"saveall"));
+	FileMenu->AppendTool(Toolbar, SaveSubsAs, _("Zapisz &jako..."), _("Zapisz jako"), PTR_BITMAP_PNG(L"saveas"));
+	FileMenu->AppendTool(Toolbar, SaveTranslation, _("Zapisz &tłumaczenie"), _("Zapisz tłumaczenie"), PTR_BITMAP_PNG(L"savetl"), false);
+	FileMenu->AppendTool(Toolbar, RecentSubs, _("Ostatnio otwa&rte napisy"), _("Ostatnio otwarte napisy"), PTR_BITMAP_PNG(L"recentsubs"), true, SubsRecMenu);
+	FileMenu->AppendTool(Toolbar, RemoveSubs, _("Usuń napisy z e&dytora"), _("Usuń napisy z edytora"), PTR_BITMAP_PNG(L"close"));
+	FileMenu->Append(SaveWithVideoName, _("Zapisuj napisy z nazwą wideo"), _("Zapisuj napisy z nazwą wideo"), true, PTR_BITMAP_PNG(L"SAVEWITHVIDEONAME"), NULL, ITEM_CHECK)->Check(Options.GetBool(SubsAutonaming));
 	Toolbar->AddID(SaveWithVideoName);
 	FileMenu->Append(9989, _("Pokaż / Ukryj okno logów"))->DisableMapping();
-	FileMenu->AppendTool(Toolbar, GLOBAL_LOAD_LAST_SESSION, _("Wczytaj ostatnią sesję"), _("Wczytuje poprzednio zaczytane pliki"), PTR_BITMAP_PNG("OPEN_LAST_SESSION"));
-	FileMenu->AppendTool(Toolbar, Settings, _("&Ustawienia"), _("Ustawienia programu"), PTR_BITMAP_PNG("SETTINGS"));
-	FileMenu->AppendTool(Toolbar, Quit, _("Wyjści&e\tAlt-F4"), _("Zakończ działanie programu"), PTR_BITMAP_PNG("exit"))->DisableMapping();
+	FileMenu->AppendTool(Toolbar, GLOBAL_LOAD_LAST_SESSION, _("Wczytaj ostatnią sesję"), _("Wczytuje poprzednio zaczytane pliki"), PTR_BITMAP_PNG(L"OPEN_LAST_SESSION"));
+	FileMenu->AppendTool(Toolbar, Settings, _("&Ustawienia"), _("Ustawienia programu"), PTR_BITMAP_PNG(L"SETTINGS"));
+	FileMenu->AppendTool(Toolbar, Quit, _("Wyjści&e\tAlt-F4"), _("Zakończ działanie programu"), PTR_BITMAP_PNG(L"exit"))->DisableMapping();
 	Menubar->Append(FileMenu, _("&Plik"));
 
 	EditMenu = new Menu();
-	EditMenu->AppendTool(Toolbar, Undo, _("&Cofnij"), _("Cofnij"), PTR_BITMAP_PNG("undo"), false);
-	EditMenu->AppendTool(Toolbar, UndoToLastSave, _("Cofnij do ostatniego zapisu"), _("Cofnij do ostatniego zapisu"), PTR_BITMAP_PNG("UNDOTOLASTSAVE"), false);
-	EditMenu->AppendTool(Toolbar, Redo, _("&Ponów"), _("Ponów"), PTR_BITMAP_PNG("redo"), false);
-	EditMenu->AppendTool(Toolbar, History, _("&Historia"), _("Historia"), PTR_BITMAP_PNG("history"), true);
-	EditMenu->AppendTool(Toolbar, GLOBAL_FIND_REPLACE, _("Znajdź i za&mień"), _("Szuka i podmienia dane frazy tekstu"), PTR_BITMAP_PNG("findreplace"));
-	EditMenu->AppendTool(Toolbar, Search, _("Z&najdź"), _("Szuka dane frazy tekstu"), PTR_BITMAP_PNG("search"));
+	EditMenu->AppendTool(Toolbar, Undo, _("&Cofnij"), _("Cofnij"), PTR_BITMAP_PNG(L"undo"), false);
+	EditMenu->AppendTool(Toolbar, UndoToLastSave, _("Cofnij do ostatniego zapisu"), _("Cofnij do ostatniego zapisu"), PTR_BITMAP_PNG(L"UNDOTOLASTSAVE"), false);
+	EditMenu->AppendTool(Toolbar, Redo, _("&Ponów"), _("Ponów"), PTR_BITMAP_PNG(L"redo"), false);
+	EditMenu->AppendTool(Toolbar, History, _("&Historia"), _("Historia"), PTR_BITMAP_PNG(L"history"), true);
+	EditMenu->AppendTool(Toolbar, GLOBAL_FIND_REPLACE, _("Znajdź i za&mień"), _("Szuka i podmienia dane frazy tekstu"), PTR_BITMAP_PNG(L"findreplace"));
+	EditMenu->AppendTool(Toolbar, Search, _("Z&najdź"), _("Szuka dane frazy tekstu"), PTR_BITMAP_PNG(L"search"));
 	Menu *SortMenu[2];
 	for (int i = 0; i < 2; i++){
 		SortMenu[i] = new Menu();
@@ -165,43 +165,43 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_LAYER + (6 * i), _("Warstwa"), _("Sortuj według warstwy"));
 	}
 
-	EditMenu->AppendTool(Toolbar, SortLines, _("Sort&uj wszystkie linie"), _("Sortuje wszystkie linie napisów ASS"), PTR_BITMAP_PNG("sort"), true, SortMenu[0]);
-	EditMenu->AppendTool(Toolbar, SortSelected, _("Sortu&j zaznaczone linie"), _("Sortuje zaznaczone linie napisów ASS"), PTR_BITMAP_PNG("sortsel"), true, SortMenu[1]);
-	EditMenu->AppendTool(Toolbar, GLOBAL_MISSPELLS_REPLACER, _("Popraw drobne błędy (eksperymentalne)"), _("Włącza okno poprawiania błędów"), PTR_BITMAP_PNG("sellines"));
-	EditMenu->AppendTool(Toolbar, SelectLinesDialog, _("Zaznacz &linijki"), _("Zaznacza linijki wg danej frazy tekstu"), PTR_BITMAP_PNG("sellines"));
+	EditMenu->AppendTool(Toolbar, SortLines, _("Sort&uj wszystkie linie"), _("Sortuje wszystkie linie napisów ASS"), PTR_BITMAP_PNG(L"sort"), true, SortMenu[0]);
+	EditMenu->AppendTool(Toolbar, SortSelected, _("Sortu&j zaznaczone linie"), _("Sortuje zaznaczone linie napisów ASS"), PTR_BITMAP_PNG(L"sortsel"), true, SortMenu[1]);
+	EditMenu->AppendTool(Toolbar, GLOBAL_MISSPELLS_REPLACER, _("Popraw drobne błędy (eksperymentalne)"), _("Włącza okno poprawiania błędów"), PTR_BITMAP_PNG(L"sellines"));
+	EditMenu->AppendTool(Toolbar, SelectLinesDialog, _("Zaznacz &linijki"), _("Zaznacza linijki wg danej frazy tekstu"), PTR_BITMAP_PNG(L"sellines"));
 	Menubar->Append(EditMenu, _("&Edycja"));
 
 	VidMenu = new Menu();
-	VidMenu->AppendTool(Toolbar, OpenVideo, _("Otwórz wideo"), _("Otwiera wybrane wideo"), PTR_BITMAP_PNG("openvideo"));
+	VidMenu->AppendTool(Toolbar, OpenVideo, _("Otwórz wideo"), _("Otwiera wybrane wideo"), PTR_BITMAP_PNG(L"openvideo"));
 	VidsRecMenu = new Menu();
-	VidMenu->AppendTool(Toolbar, RecentVideo, _("Ostatnio otwarte wideo"), _("Ostatnio otwarte video"), PTR_BITMAP_PNG("recentvideo"), true, VidsRecMenu);
-	VidMenu->AppendTool(Toolbar, GLOBAL_KEYFRAMES_OPEN, _("Otwórz klatki kluczowe"), _("Otwórz klatki kluczowe"), PTR_BITMAP_PNG("OPEN_KEYFRAMES"));
+	VidMenu->AppendTool(Toolbar, RecentVideo, _("Ostatnio otwarte wideo"), _("Ostatnio otwarte video"), PTR_BITMAP_PNG(L"recentvideo"), true, VidsRecMenu);
+	VidMenu->AppendTool(Toolbar, GLOBAL_KEYFRAMES_OPEN, _("Otwórz klatki kluczowe"), _("Otwórz klatki kluczowe"), PTR_BITMAP_PNG(L"OPEN_KEYFRAMES"));
 	KeyframesRecentMenu = new Menu();
-	VidMenu->AppendTool(Toolbar, GLOBAL_KEYFRAMES_RECENT, _("Ostatnio otwarte klatki kluczowe"), _("Ostatnio otwarte klatki kluczowe"), PTR_BITMAP_PNG("RECENT_KEYFRAMES"), true, KeyframesRecentMenu);
-	VidMenu->AppendTool(Toolbar, SetStartTime, _("Wstaw czas początkowy z wideo"), _("Wstawia czas początkowy z wideo"), PTR_BITMAP_PNG("setstarttime"), false);
-	VidMenu->AppendTool(Toolbar, SetEndTime, _("Wstaw czas końcowy z wideo"), _("Wstawia czas końcowy z wideo"), PTR_BITMAP_PNG("setendtime"), false);
-	VidMenu->AppendTool(Toolbar, PreviousFrame, _("Klatka w tył"), _("Przechodzi o jedną klatkę w tył"), PTR_BITMAP_PNG("prevframe"), false);
-	VidMenu->AppendTool(Toolbar, NextFrame, _("Klatka w przód"), _("Przechodzi o jedną klatkę w przód"), PTR_BITMAP_PNG("nextframe"), false);
-	VidMenu->AppendTool(Toolbar, SetVideoAtStart, _("Przejdź do czasu początkowego linii"), _("Przechodzi wideo do czasu początkowego linii"), PTR_BITMAP_PNG("videoonstime"));
-	VidMenu->AppendTool(Toolbar, SetVideoAtEnd, _("Przejdź do czasu końcowego linii"), _("Przechodzi wideo do czasu końcowego linii"), PTR_BITMAP_PNG("videoonetime"));
-	VidMenu->AppendTool(Toolbar, PlayPauseG, _("Odtwarzaj / Pauza"), _("Odtwarza lub pauzuje wideo"), PTR_BITMAP_PNG("pausemenu"), false);
-	VidMenu->AppendTool(Toolbar, GoToPrewKeyframe, _("Przejdź do poprzedniej klatki kluczowej"), "", PTR_BITMAP_PNG("prevkeyframe"));
-	VidMenu->AppendTool(Toolbar, GoToNextKeyframe, _("Przejdź do następnej klatki kluczowej"), "", PTR_BITMAP_PNG("nextkeyframe"));
-	VidMenu->AppendTool(Toolbar, SetAudioFromVideo, _("Ustaw audio z czasem wideo"), "", PTR_BITMAP_PNG("SETVIDEOTIMEONAUDIO"));
-	VidMenu->AppendTool(Toolbar, SetAudioMarkFromVideo, _("Ustaw znacznik audio z czasem wideo"), "", PTR_BITMAP_PNG("SETVIDEOTIMEONAUDIOMARK"));
-	VidMenu->AppendTool(Toolbar, VideoZoom, _("Powiększ wideo"), "", PTR_BITMAP_PNG("zoom"));
+	VidMenu->AppendTool(Toolbar, GLOBAL_KEYFRAMES_RECENT, _("Ostatnio otwarte klatki kluczowe"), _("Ostatnio otwarte klatki kluczowe"), PTR_BITMAP_PNG(L"RECENT_KEYFRAMES"), true, KeyframesRecentMenu);
+	VidMenu->AppendTool(Toolbar, SetStartTime, _("Wstaw czas początkowy z wideo"), _("Wstawia czas początkowy z wideo"), PTR_BITMAP_PNG(L"setstarttime"), false);
+	VidMenu->AppendTool(Toolbar, SetEndTime, _("Wstaw czas końcowy z wideo"), _("Wstawia czas końcowy z wideo"), PTR_BITMAP_PNG(L"setendtime"), false);
+	VidMenu->AppendTool(Toolbar, PreviousFrame, _("Klatka w tył"), _("Przechodzi o jedną klatkę w tył"), PTR_BITMAP_PNG(L"prevframe"), false);
+	VidMenu->AppendTool(Toolbar, NextFrame, _("Klatka w przód"), _("Przechodzi o jedną klatkę w przód"), PTR_BITMAP_PNG(L"nextframe"), false);
+	VidMenu->AppendTool(Toolbar, SetVideoAtStart, _("Przejdź do czasu początkowego linii"), _("Przechodzi wideo do czasu początkowego linii"), PTR_BITMAP_PNG(L"videoonstime"));
+	VidMenu->AppendTool(Toolbar, SetVideoAtEnd, _("Przejdź do czasu końcowego linii"), _("Przechodzi wideo do czasu końcowego linii"), PTR_BITMAP_PNG(L"videoonetime"));
+	VidMenu->AppendTool(Toolbar, PlayPauseG, _("Odtwarzaj / Pauza"), _("Odtwarza lub pauzuje wideo"), PTR_BITMAP_PNG(L"pausemenu"), false);
+	VidMenu->AppendTool(Toolbar, GoToPrewKeyframe, _("Przejdź do poprzedniej klatki kluczowej"), L"", PTR_BITMAP_PNG(L"prevkeyframe"));
+	VidMenu->AppendTool(Toolbar, GoToNextKeyframe, _("Przejdź do następnej klatki kluczowej"), L"", PTR_BITMAP_PNG(L"nextkeyframe"));
+	VidMenu->AppendTool(Toolbar, SetAudioFromVideo, _("Ustaw audio z czasem wideo"), L"", PTR_BITMAP_PNG(L"SETVIDEOTIMEONAUDIO"));
+	VidMenu->AppendTool(Toolbar, SetAudioMarkFromVideo, _("Ustaw znacznik audio z czasem wideo"), L"", PTR_BITMAP_PNG(L"SETVIDEOTIMEONAUDIOMARK"));
+	VidMenu->AppendTool(Toolbar, VideoZoom, _("Powiększ wideo"), "", PTR_BITMAP_PNG(L"zoom"));
 	bool videoIndex = Options.GetBool(VideoIndex);
-	VidMenu->Append(VideoIndexing, _("Otwieraj wideo przez FFMS2"), _("Otwiera wideo przez FFMS2, co daje dokładność klatkową"), true, PTR_BITMAP_PNG("FFMS2INDEXING"), 0, ITEM_CHECK)->Check(videoIndex);
+	VidMenu->Append(VideoIndexing, _("Otwieraj wideo przez FFMS2"), _("Otwiera wideo przez FFMS2, co daje dokładność klatkową"), true, PTR_BITMAP_PNG(L"FFMS2INDEXING"), 0, ITEM_CHECK)->Check(videoIndex);
 	Toolbar->AddID(VideoIndexing);
 	Menubar->Append(VidMenu, _("&Wideo"));
 
 	AudMenu = new Menu();
-	AudMenu->AppendTool(Toolbar, OpenAudio, _("Otwórz audio"), _("Otwiera wybrane audio"), PTR_BITMAP_PNG("openaudio"));
+	AudMenu->AppendTool(Toolbar, OpenAudio, _("Otwórz audio"), _("Otwiera wybrane audio"), PTR_BITMAP_PNG(L"openaudio"));
 	AudsRecMenu = new Menu();
 
-	AudMenu->AppendTool(Toolbar, RecentAudio, _("Ostatnio otwarte audio"), _("Ostatnio otwarte audio"), PTR_BITMAP_PNG("recentaudio"), true, AudsRecMenu);
-	AudMenu->AppendTool(Toolbar, AudioFromVideo, _("Otwórz audio z wideo"), _("Otwiera audio z wideo"), PTR_BITMAP_PNG("audiofromvideo"));
-	AudMenu->AppendTool(Toolbar, CloseAudio, _("Zamknij audio"), _("Zamyka audio"), PTR_BITMAP_PNG("closeaudio"));
+	AudMenu->AppendTool(Toolbar, RecentAudio, _("Ostatnio otwarte audio"), _("Ostatnio otwarte audio"), PTR_BITMAP_PNG(L"recentaudio"), true, AudsRecMenu);
+	AudMenu->AppendTool(Toolbar, AudioFromVideo, _("Otwórz audio z wideo"), _("Otwiera audio z wideo"), PTR_BITMAP_PNG(L"audiofromvideo"));
+	AudMenu->AppendTool(Toolbar, CloseAudio, _("Zamknij audio"), _("Zamyka audio"), PTR_BITMAP_PNG(L"closeaudio"));
 	Menubar->Append(AudMenu, _("A&udio"));
 
 	ViewMenu = new Menu();
@@ -213,36 +213,36 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Menubar->Append(ViewMenu, _("Wido&k"));
 
 	SubsMenu = new Menu();
-	SubsMenu->AppendTool(Toolbar, Editor, _("Włącz / Wyłącz edytor"), _("Włączanie bądź wyłączanie edytora"), PTR_BITMAP_PNG("editor"));
-	SubsMenu->AppendTool(Toolbar, ASSProperties, _("Właściwości ASS"), _("Właściwości napisów ASS"), PTR_BITMAP_PNG("ASSPROPS"));
-	SubsMenu->AppendTool(Toolbar, StyleManager, _("&Menedżer stylów"), _("Służy do zarządzania stylami ASS"), PTR_BITMAP_PNG("styles"));
+	SubsMenu->AppendTool(Toolbar, Editor, _("Włącz / Wyłącz edytor"), _("Włączanie bądź wyłączanie edytora"), PTR_BITMAP_PNG(L"editor"));
+	SubsMenu->AppendTool(Toolbar, ASSProperties, _("Właściwości ASS"), _("Właściwości napisów ASS"), PTR_BITMAP_PNG(L"ASSPROPS"));
+	SubsMenu->AppendTool(Toolbar, StyleManager, _("&Menedżer stylów"), _("Służy do zarządzania stylami ASS"), PTR_BITMAP_PNG(L"styles"));
 	ConvMenu = new Menu();
-	ConvMenu->AppendTool(Toolbar, ConvertToASS, _("Konwertuj do ASS"), _("Konwertuje do formatu ASS"), PTR_BITMAP_PNG("convass"), false);
-	ConvMenu->AppendTool(Toolbar, ConvertToSRT, _("Konwertuj do SRT"), _("Konwertuje do formatu SRT"), PTR_BITMAP_PNG("convsrt"));
-	ConvMenu->AppendTool(Toolbar, ConvertToMDVD, _("Konwertuj do MDVD"), _("Konwertuje do formatu microDVD"), PTR_BITMAP_PNG("convmdvd"));
-	ConvMenu->AppendTool(Toolbar, ConvertToMPL2, _("Konwertuj do MPL2"), _("Konwertuje do formatu MPL2"), PTR_BITMAP_PNG("convmpl2"));
-	ConvMenu->AppendTool(Toolbar, ConvertToTMP, _("Konwertuj do TMP"), _("Konwertuje do formatu TMPlayer (niezalecene)"), PTR_BITMAP_PNG("convtmp"));
+	ConvMenu->AppendTool(Toolbar, ConvertToASS, _("Konwertuj do ASS"), _("Konwertuje do formatu ASS"), PTR_BITMAP_PNG(L"convass"), false);
+	ConvMenu->AppendTool(Toolbar, ConvertToSRT, _("Konwertuj do SRT"), _("Konwertuje do formatu SRT"), PTR_BITMAP_PNG(L"convsrt"));
+	ConvMenu->AppendTool(Toolbar, ConvertToMDVD, _("Konwertuj do MDVD"), _("Konwertuje do formatu microDVD"), PTR_BITMAP_PNG(L"convmdvd"));
+	ConvMenu->AppendTool(Toolbar, ConvertToMPL2, _("Konwertuj do MPL2"), _("Konwertuje do formatu MPL2"), PTR_BITMAP_PNG(L"convmpl2"));
+	ConvMenu->AppendTool(Toolbar, ConvertToTMP, _("Konwertuj do TMP"), _("Konwertuje do formatu TMPlayer (niezalecene)"), PTR_BITMAP_PNG(L"convtmp"));
 
-	SubsMenu->Append(ID_CONV, _("Konwersja"), _("Konwersja z jednego formatu napisów na inny"), true, PTR_BITMAP_PNG("convert"), ConvMenu);
-	SubsMenu->AppendTool(Toolbar, ChangeTime, _("Okno zmiany &czasów\tCtrl-I"), _("Przesuwanie czasów napisów"), PTR_BITMAP_PNG("times"));
-	SubsMenu->AppendTool(Toolbar, FontCollectorID, _("Kolekcjoner czcionek"), _("Kolekcjoner czcionek"), PTR_BITMAP_PNG("fontcollector"));
-	SubsMenu->AppendTool(Toolbar, SubsResample, _("Zmień rozdzielczość napisów"), _("Zmień rozdzielczość napisów"), PTR_BITMAP_PNG("subsresample"));
-	SubsMenu->AppendTool(Toolbar, SpellcheckerDialog, _("Sprawdź poprawność pisowni"), _("Sprawdź poprawność pisowni"), PTR_BITMAP_PNG("spellchecker"));
-	SubsMenu->AppendTool(Toolbar, HideTags, _("Ukryj tagi w nawiasach"), _("Ukrywa tagi w nawiasach ASS i MDVD"), PTR_BITMAP_PNG("hidetags"));
+	SubsMenu->Append(ID_CONV, _("Konwersja"), _("Konwersja z jednego formatu napisów na inny"), true, PTR_BITMAP_PNG(L"convert"), ConvMenu);
+	SubsMenu->AppendTool(Toolbar, ChangeTime, _("Okno zmiany &czasów\tCtrl-I"), _("Przesuwanie czasów napisów"), PTR_BITMAP_PNG(L"times"));
+	SubsMenu->AppendTool(Toolbar, FontCollectorID, _("Kolekcjoner czcionek"), _("Kolekcjoner czcionek"), PTR_BITMAP_PNG(L"fontcollector"));
+	SubsMenu->AppendTool(Toolbar, SubsResample, _("Zmień rozdzielczość napisów"), _("Zmień rozdzielczość napisów"), PTR_BITMAP_PNG(L"subsresample"));
+	SubsMenu->AppendTool(Toolbar, SpellcheckerDialog, _("Sprawdź poprawność pisowni"), _("Sprawdź poprawność pisowni"), PTR_BITMAP_PNG(L"spellchecker"));
+	SubsMenu->AppendTool(Toolbar, HideTags, _("Ukryj tagi w nawiasach"), _("Ukrywa tagi w nawiasach ASS i MDVD"), PTR_BITMAP_PNG(L"hidetags"));
 	Menubar->Append(SubsMenu, _("&Napisy"));
 
 	AutoMenu = new Menu();
-	AutoMenu->AppendTool(Toolbar, AutoLoadScript, _("Wczytaj skrypt"), _("Wczytaj skrypt"), PTR_BITMAP_PNG("automation"));
-	AutoMenu->Append(AutoReloadAutoload, _("Odśwież skrypty autoload"), _("Odśwież skrypty autoload"), true, PTR_BITMAP_PNG("automation"));
+	AutoMenu->AppendTool(Toolbar, AutoLoadScript, _("Wczytaj skrypt"), _("Wczytaj skrypt"), PTR_BITMAP_PNG(L"automation"));
+	AutoMenu->Append(AutoReloadAutoload, _("Odśwież skrypty autoload"), _("Odśwież skrypty autoload"), true, PTR_BITMAP_PNG(L"automation"));
 	AutoMenu->Append(LoadLastScript, _("Uruchom ostatnio zaczytany skrypt"), _("Uruchom ostatnio zaczytany skrypt"));
 	AutoMenu->Append(AUTOMATION_OPEN_HOTKEYS_WINDOW, _("Otwórz okno mapowania skrótów"), _("Otwórz okno mapowania skrótów"));
 	Menubar->Append(AutoMenu, _("Au&tomatyzacja"));
 
 	HelpMenu = new Menu();
-	HelpMenu->AppendTool(Toolbar, Help, _("&Pomoc (niekompletna, ale jednak)"), _("Otwiera pomoc w domyślnej przeglądarce"), PTR_BITMAP_PNG("help"));
-	HelpMenu->AppendTool(Toolbar, ANSI, _("&Wątek programu na forum AnimeSub.info"), _("Otwiera wątek programu na forum AnimeSub.info"), PTR_BITMAP_PNG("ansi"));
-	HelpMenu->AppendTool(Toolbar, About, _("&O programie"), _("Wyświetla informacje o programie"), PTR_BITMAP_PNG("about"));
-	HelpMenu->AppendTool(Toolbar, Helpers, _("&Lista osób pomocnych przy tworzeniu programu"), _("Wyświetla listę osób pomocnych przy tworzeniu programu"), PTR_BITMAP_PNG("helpers"));
+	HelpMenu->AppendTool(Toolbar, Help, _("&Pomoc (niekompletna, ale jednak)"), _("Otwiera pomoc w domyślnej przeglądarce"), PTR_BITMAP_PNG(L"help"));
+	HelpMenu->AppendTool(Toolbar, ANSI, _("&Wątek programu na forum AnimeSub.info"), _("Otwiera wątek programu na forum AnimeSub.info"), PTR_BITMAP_PNG(L"ansi"));
+	HelpMenu->AppendTool(Toolbar, About, _("&O programie"), _("Wyświetla informacje o programie"), PTR_BITMAP_PNG(L"about"));
+	HelpMenu->AppendTool(Toolbar, Helpers, _("&Lista osób pomocnych przy tworzeniu programu"), _("Wyświetla listę osób pomocnych przy tworzeniu programu"), PTR_BITMAP_PNG(L"helpers"));
 	Menubar->Append(HelpMenu, _("Pomo&c"));
 
 	Toolbar->InitToolbar();
@@ -492,7 +492,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		TabPanel *tab = GetTab();
 		int x = 0, y = 0;
 		tab->Grid->GetASSRes(&x, &y);
-		SubsResampleDialog SRD(this, wxSize(x, y), (tab->Video->GetState() == None) ? wxSize(x, y) : tab->Video->GetVideoSize(), "", "");
+		SubsResampleDialog SRD(this, wxSize(x, y), (tab->Video->GetState() == None) ? wxSize(x, y) : tab->Video->GetVideoSize(), L"", L"");
 		SRD.ShowModal();
 	}
 	else if (id == FontCollectorID && tab->Grid->subsFormat < SRT){
@@ -1844,7 +1844,7 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 				(videorec.size() > 0) ? subsrec[0].BeforeLast(L'\\') : L"", L"",
 				_("Pliki audio i wideo") +
 				L" (*.wav),(*.w64),(*.flac),(*.ac3),(*.aac),(*.ogg),(*.mp3),(*.mp4),(*.m4a),(*.mkv),(*.avi)|*.wav;*.w64;*.flac;*.ac3;*.aac;*.ogg;*.mp3;*.mp4;*.m4a;*.mkv;*.avi|" +
-				_("Wszystkie pliki") + " |*.*", wxFD_OPEN);
+				_("Wszystkie pliki") + L" |*.*", wxFD_OPEN);
 			int result = FileDialog1->ShowModal();
 			if (result == wxID_OK){
 				Path = FileDialog1->GetPath();
@@ -1909,7 +1909,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 		}
 		if (redoItem){
 			wxString accel = redoItem->GetAccel();
-			wxString accelName = (accel.empty()) ? "" : "\t" + accel;
+			wxString accelName = (accel.empty()) ? L"" : L"\t" + accel;
 			accelName.Replace(L"+", L"-");
 			if (!redoName.empty()){
 				wxString lowerRedoName = wxString(redoName[0]).Lower() + redoName.Mid(1);

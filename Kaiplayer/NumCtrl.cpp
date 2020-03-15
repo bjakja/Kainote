@@ -21,8 +21,8 @@ wxDEFINE_EVENT(NUMBER_CHANGED, wxCommandEvent);
 
 wxString getdouble(double num)
 {
-	wxString strnum = wxString::Format(_T("%f"), num);
-	strnum.Replace(",", ".");
+	wxString strnum = wxString::Format(L"%f", num);
+	strnum.Replace(L",", L".");
 	int rmv = 0;
 	for (int i = strnum.Len() - 1; i > 0; i--)
 	{
@@ -34,7 +34,8 @@ wxString getdouble(double num)
 	return strnum;
 }
 
-NumCtrl::NumCtrl(wxWindow *parent, long id, wxString text, int rangefrom, int rangeto, bool intonly, const wxPoint &pos, const wxSize &size, long style)
+NumCtrl::NumCtrl(wxWindow *parent, long id, wxString text, int rangefrom, int rangeto, 
+	bool intonly, const wxPoint &pos, const wxSize &size, long style)
 	:KaiTextCtrl(parent, id, text, pos, size, style)
 {
 
@@ -139,7 +140,7 @@ void NumCtrl::SetString(wxString val)
 		if (finds != -1){ val = val.BeforeFirst(L','); }
 	}
 	else{
-		val.Replace(",", ".");
+		val.Replace(L",", L".");
 	}
 	if (value > rto)
 	{
@@ -183,10 +184,10 @@ void NumCtrl::SetValue(const wxString &text, bool modif/* =false */, bool newSel
 wxString NumCtrl::GetString()
 {
 	wxString val = GetValue();
-	val.Replace(",", ".");
-	if (val == "-"){ val = oldval; }
-	if (val.StartsWith(L'.')){ val.Prepend("0"); }
-	if (val.EndsWith(L'.')){ val.Append("0"); }
+	val.Replace(L",", L".");
+	if (val == L"-"){ val = oldval; }
+	if (val.StartsWith(L'.')){ val.Prepend(L"0"); }
+	if (val.EndsWith(L'.')){ val.Append(L"0"); }
 	if (!val.ToCDouble(&value)){
 		val = oldval;
 	}
@@ -226,10 +227,10 @@ void NumCtrl::OnNumWrite(wxCommandEvent& event)
 	long from, to;
 	GetSelection(&from, &to);
 	wxString val = GetValue();
-	val.Replace(",", ".");
-	if (val == "-" || val == ""){}
-	else if (val.EndsWith(".")){ if (val.Replace(".", "") > 1){ KaiTextCtrl::SetValue(oldval); wxBell(); } }
-	else if (val.StartsWith(".")){ if (val.Replace(".", "") > 1){ KaiTextCtrl::SetValue(oldval); wxBell(); } }
+	val.Replace(L",", L".");
+	if (val == L"-" || val == L""){}
+	else if (val.EndsWith(L".")){ if (val.Replace(L".", L"") > 1){ KaiTextCtrl::SetValue(oldval); wxBell(); } }
+	else if (val.StartsWith(L".")){ if (val.Replace(L".", L"") > 1){ KaiTextCtrl::SetValue(oldval); wxBell(); } }
 	else if (!val.ToCDouble(&value) || value > rto || value < rfrom){
 		/*SetValue(oldval);wxBell();*/
 		//if(!isbad){SetForegroundColour(*wxRED);isbad=true;}
@@ -279,7 +280,7 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 				else if (nval < rfrom){ nval = rfrom; }
 				else if (nval > rto){ nval = rto; }
 				KaiTextCtrl::SetValue(getdouble(nval), true, false);
-				oldposx = posx; 
+				oldposx = posx;
 				//reset oldposx cause next time it will change it by 1
 				//even if it's still moved in one direction
 				oldposy = posy;

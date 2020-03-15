@@ -118,7 +118,7 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 				result = msg.ShowModal();
 			}
 			if (result == wxYES || result == wxOK){
-				if (result == wxYES){ hotkey = ""; }
+				if (result == wxYES){ hotkey = L""; }
 				for (auto &idtype : idtypes){
 					if (doubledHotkey && idtype->first.Type != hkd.type)
 						continue;
@@ -198,12 +198,12 @@ void ItemHotkey::OnDeleteHotkey(KaiListCtrl *theList, int y)
 	if (OptionsDialog::hotkeysCopy.size() == 0)
 		OptionsDialog::hotkeysCopy = std::map<idAndType, hdata>(Hkeys.GetHotkeysMap());
 	ItemHotkey *itemKey = (ItemHotkey*)theList->CopyRow(y, 1);
-	itemKey->accel = "";
+	itemKey->accel = L"";
 	itemKey->modified = true;
 	theList->SetModified(true);
 	theList->Refresh(false);
 	theList->PushHistory();
-	OptionsDialog::hotkeysCopy[hotkeyId] = hdata(name, "");
+	OptionsDialog::hotkeysCopy[hotkeyId] = hdata(name, L"");
 }
 
 void ItemHotkey::Save()
@@ -227,7 +227,7 @@ void ItemHotkey::OnChangeHistory(){
 int ItemHotkey::OnVisibilityChange(int mode){
 	switch (mode){
 	case 1:
-		return (accel != "") ? VISIBLE : NOT_VISIBLE;
+		return (accel != L"") ? VISIBLE : NOT_VISIBLE;
 	case 2:
 		return (hotkeyId.Type == GLOBAL_HOTKEY) ? VISIBLE : NOT_VISIBLE;
 	case 3:
@@ -257,7 +257,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	Katlist = NULL;
 
 	wxIcon icn;
-	icn.CopyFromBitmap(CreateBitmapFromPngResource("SETTINGS"));
+	icn.CopyFromBitmap(CreateBitmapFromPngResource(L"SETTINGS"));
 	SetIcon(icn);
 
 	wxWindow *Editor = new wxWindow(OptionsTree, -1);
@@ -295,11 +295,11 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			GridChangeActiveOnSelection, TlModeShowOriginal, TL_MODE_HIDE_ORIGINAL_ON_VIDEO,
 			TextFieldAllowNumpadHotkeys, VisualWarningsOff,
 			DontAskForBadResolution, AutomationOldScriptsCompatybility };
-		wxString localePath = Options.pathfull + "\\Locale";
+		wxString localePath = Options.pathfull + L"\\Locale";
 		wxDir kat(localePath);
 		wxArrayString langs;
 		if (kat.IsOpened()){
-			kat.GetAllFiles(localePath, &langs, "*.mo", wxDIR_FILES);
+			kat.GetAllFiles(localePath, &langs, L"*.mo", wxDIR_FILES);
 		}
 		//wxString langopts[2] = { "Polski", "English" };
 		for (size_t i = 0; i < langs.GetCount(); i++){
@@ -598,7 +598,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 				for (int p = 0; p < numdelete; p++)
 					mappedhkeys.erase(mappedhkeys.begin());
 			}
-			name = windowNames[htype] + " " + cur->second;
+			name = windowNames[htype] + L" " + cur->second;
 			auto & it = mappedhkeys.find(idAndType(cur->first, htype));
 			if (it != mappedhkeys.end()){
 				accel = it->second.Accel;
@@ -797,7 +797,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		KaiChoice *themeList = new KaiChoice(Themes, 14567, wxDefaultPosition, wxDefaultSize, choices);
 		themeList->SetSelection(themeList->FindString(programTheme));
 		themeList->SetToolTip(_("Nazwa motywu:"));
-		KaiTextCtrl *newTheme = new KaiTextCtrl(Themes, -1, "");
+		KaiTextCtrl *newTheme = new KaiTextCtrl(Themes, -1, L"");
 		newTheme->SetToolTip(_("Nazwa kopiowanego motywu.\nMotywów domyślnych: DarkSentro i LightSentro\nnie można edytować, należy je skopiować."));
 		MappedButton *copyTheme = new MappedButton(Themes, 14566, _("Kopiuj"));
 

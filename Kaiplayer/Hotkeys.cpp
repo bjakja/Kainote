@@ -278,7 +278,7 @@ int Hotkeys::LoadHkeys(bool Audio)
 		int type = wxString(L"GNEWA").find(Values[0]);
 		Values = Values.Remove(0, 2);
 		wxString Labels = token.BeforeFirst(L' ').Trim(false).Trim(true);
-		if (Values != ""){
+		if (Values != L""){
 			if (Labels.IsNumber()){
 				hkeys[idAndType(wxAtoi(Labels), type)] = Values;
 			}
@@ -596,7 +596,7 @@ void HkeysDialog::OnKeyPress(wxKeyEvent& event)
 	if (global) {
 		type = global->GetSelection();
 	}
-	hotkey = "";
+	hotkey = L"";
 	if (key != WXK_SHIFT && key != WXK_ALT && key != WXK_CONTROL){
 
 		if (event.AltDown()){ hotkey << L"Alt-"; }

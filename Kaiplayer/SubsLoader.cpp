@@ -26,27 +26,27 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 	grid->hasTLMode = false;
 	bool succeeded = false;
 	bool validFormat = false;
-	if (ext == "ass" || ext == "ssa"){
+	if (ext == L"ass" || ext == L"ssa"){
 		succeeded = LoadASS(text);
 		if (!succeeded){
 			succeeded = LoadSRT(text);
 			if (!succeeded){
 				succeeded = LoadTXT(text);
-				if (succeeded) ext = "txt";
+				if (succeeded) ext = L"txt";
 			}
-			else{ ext = "srt"; }
+			else{ ext = L"srt"; }
 		}
 		else{ validFormat = true; }
 	}
-	else if (ext == "srt"){
+	else if (ext == L"srt"){
 		succeeded = LoadSRT(text);
 		if (!succeeded){
 			succeeded = LoadASS(text);
 			if (!succeeded){
 				succeeded = LoadTXT(text);
-				if (succeeded) ext = "txt";
+				if (succeeded) ext = L"txt";
 			}
-			else{ ext = "ass"; }
+			else{ ext = L"ass"; }
 		}
 		else{ validFormat = true; }
 	}
@@ -57,13 +57,13 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 			grid->Clearing();
 			grid->file = new SubsFile();
 			succeeded = LoadSRT(text);
-			if (succeeded) ext = "srt";
+			if (succeeded) ext = L"srt";
 		}
 		else if (grid->subsFormat == ASS){
 			grid->Clearing();
 			grid->file = new SubsFile();
 			succeeded = LoadASS(text);
-			ext = "ass";
+			ext = L"ass";
 			if (!succeeded){
 				grid->LoadDefault(false,false,false);
 				succeeded = LoadTXT(text);
@@ -72,8 +72,8 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 		}
 		else{ validFormat = true; }
 	}
-	//PAMIĘTAJ nie możesz dopuścić pod żadnym pozorem by tablica pozostała pusta
-	//helper text class będzie kraszować, gdy dostaje null w operatorze =
+	//WARNING! table can not be empty
+	//text helper class will crash when gets NULL in = operator
 	if (!succeeded){ grid->LoadDefault(); KaiMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera błędy)")); grid->subsFormat = ASS; ext = "ass"; }
 	else{ 
 		grid->SetSubsFormat(); 
@@ -86,7 +86,7 @@ bool SubsLoader::LoadASS(const wxString &text)
 {
 	short section = 0;
 	char format = ASS;
-	wxStringTokenizer tokenizer(text, "\n", wxTOKEN_STRTOK);
+	wxStringTokenizer tokenizer(text, L"\n", wxTOKEN_STRTOK);
 
 	bool tlmode = false;
 	wxString tlstyle;
@@ -96,7 +96,7 @@ bool SubsLoader::LoadASS(const wxString &text)
 	{
 		wxString token = tokenizer.GetNextToken().Trim(false);
 		if (token.empty()){ continue; }
-		if ((token.StartsWith("Dial") || token.StartsWith("Comm") || (token[0] == L';' && section > 2))){
+		if ((token.StartsWith(L"Dial") || token.StartsWith(L"Comm") || (token[0] == L';' && section > 2))){
 			Dialogue *dl = new Dialogue(token);
 			if (!tlmode){
 				grid->AddLine(dl);
@@ -113,63 +113,66 @@ bool SubsLoader::LoadASS(const wxString &text)
 				delete dl;
 			}
 			else{
-				//stary tryb tłumaczenia nie istnieje od 2 lat, nie ma sensu usuwać pustych linii, zważywszy na to, że to może usunąć coś ważnego.
 				grid->AddLine(dl);
 			}
 		}
-		else if (token.StartsWith("Style:"))
+		else if (token.StartsWith(L"Style:"))
 		{
-			//1 = ASS, 2 = SSA, potrzebne tylko przy odczycie napisów.
+			//1 = ASS, 2 = SSA, needs only for subtitles loading.
 			grid->AddStyle(new Styles(token, format));
 			section = 2;
 		}
-		else if (token.StartsWith("[V4")){
-			if (!token.StartsWith("[V4+")){
+		else if (token.StartsWith(L"[V4")){
+			if (!token.StartsWith(L"[V4+")){
 				format = 2;
-				grid->AddSInfo("ScriptType", "4.00+");
-			}//ze względu na to, że wywaliłem ssa z formatów
-			//muszę posłać do konstruktora styli 2 jako format SSA, nie używam tu srt, 
-			//żeby później źle tego nie zinterpretować
+				grid->AddSInfo(L"ScriptType", L"4.00+");
+			}
+			//format SSA was removed from working formats
+			//need to send to constructor of styles 2 as format SSA, SRT has 3 to avoid bugs
 			section = 1;
 		}
-		else if (token[0] != L';' && token[0] != L'[' && token.Find(L':') != wxNOT_FOUND && !token.StartsWith("Format")){
+		else if (token[0] != L';' && token[0] != L'[' && token.Find(L':') != wxNOT_FOUND && !token.StartsWith(L"Format")){
 			grid->AddSInfo(token);
 		}
-		else if(token.StartsWith("[Eve")){
-			tlmode = (grid->GetSInfo("TLMode") == "Yes");
-			if (tlmode){ tlstyle = grid->GetSInfo("TLMode Style"); if (tlstyle == ""){ tlmode = false; } }
+		else if(token.StartsWith(L"[Eve")){
+			tlmode = (grid->GetSInfo(L"TLMode") == L"Yes");
+			if (tlmode){ tlstyle = grid->GetSInfo(L"TLMode Style"); if (tlstyle == L""){ tlmode = false; } }
 			section = 3;
 		}
 	}
 	grid->hasTLMode = tlmode;
-	const wxString &matrix = grid->GetSInfo("YCbCr Matrix");
-	if (matrix == "" || matrix == "None"){ grid->AddSInfo("YCbCr Matrix", "TV.601"); }
+	const wxString &matrix = grid->GetSInfo(L"YCbCr Matrix");
+	if (matrix == L"" || matrix == L"None"){ grid->AddSInfo(L"YCbCr Matrix", L"TV.601"); }
 	return grid->GetCount() > 0;
 }
 	
 bool SubsLoader::LoadSRT(const wxString &text)
 {
-	wxStringTokenizer tokenizer(text, "\n", wxTOKEN_STRTOK);
+	wxStringTokenizer tokenizer(text, L"\n", wxTOKEN_STRTOK);
 	tokenizer.GetNextToken();
 
 	wxString text1;
 	while (tokenizer.HasMoreTokens()){
 		wxString text = tokenizer.GetNextToken().Trim();
 		if (IsNumber(text)){
-			if (text1 != ""){
-				grid->AddLine(new Dialogue(text1.Trim())); text1 = "";
+			if (text1 != L""){
+				grid->AddLine(new Dialogue(text1.Trim())); 
+				text1 = L"";
 			}
 		}
-		else{ text1 << text << "\r\n"; }
+		else{ text1 << text << L"\r\n"; }
 	}
 
-	if (text1 != ""){ grid->AddLine(new Dialogue(text1.Trim())); text1 = ""; }
+	if (text1 != L""){ 
+		grid->AddLine(new Dialogue(text1.Trim())); 
+		text1 = L""; 
+	}
 	return grid->GetCount() > 0;
 }
 
 bool SubsLoader::LoadTXT(const wxString &text)
 {
-	wxStringTokenizer tokenizer(text, "\n", wxTOKEN_STRTOK);
+	wxStringTokenizer tokenizer(text, L"\n", wxTOKEN_STRTOK);
 	while (tokenizer.HasMoreTokens()){
 		wxString text = tokenizer.GetNextToken().Trim();
 		grid->AddLine(new Dialogue(text.Trim()));

@@ -643,7 +643,7 @@ void FontCollector::GetAssFonts(SubsFile *subs, int tab)
 				if (iresult == -1){
 					FontLogContent *nflc = notFindFontsLog[ifont];
 					if (!nflc){
-						nflc = new FontLogContent(_("Nie znaleziono czcionki \"") + ifont + "\".\n", true);
+						nflc = new FontLogContent(_("Nie znaleziono czcionki \"") + ifont + L"\".\n", true);
 						notFindFontsLog[ifont] = nflc;
 					}
 					if (newFont){
@@ -912,22 +912,23 @@ void FontCollector::CopyMKVFontsFromTab(const wxString &mkvpath)
 	size_t cpfonts = names.size();
 
 	for (auto fontI : names){
-		if (mw.SaveFont(fontI.first, fcd->copypath.BeforeLast(L'\\') + "\\" + fontI.second, zip))
+		if (mw.SaveFont(fontI.first, fcd->copypath.BeforeLast(L'\\') + L"\\" + fontI.second, zip))
 		{
-			SendMessageD(_("Zapisano czcionkę o nazwie \"") + fontI.second + "\".\n \n", fcd->normal);
+			SendMessageD(_("Zapisano czcionkę o nazwie \"") + fontI.second + L"\".\n \n", fcd->normal);
 		}
 		else
 		{
-			SendMessageD(_("Nie można zapisać czcionki o nazwie \"") + fontI.second + "\".\n \n", fcd->warning);
+			SendMessageD(_("Nie można zapisać czcionki o nazwie \"") + fontI.second + L"\".\n \n", fcd->warning);
 			cpfonts--;
 		}
 	}
 
 	if (cpfonts < names.size()){
-		SendMessageD(wxString::Format(_("Zakończono, skopiowano %i czcionek.\nNie udało się skopiować %i czcionek."), (int)cpfonts, (int)(names.size() - cpfonts)), fcd->warning);
+		SendMessageD(wxString::Format(_("Zakończono, skopiowano %i czcionek.\nNie udało się skopiować %i czcionek."), 
+			(int)cpfonts, (int)(names.size() - cpfonts)), fcd->warning);
 	}
 	else{
-		SendMessageD(wxString::Format(_("Zakończono powodzeniem, skopiowano %i czcionek."), (int)cpfonts), wxColour("#008000"));
+		SendMessageD(wxString::Format(_("Zakończono powodzeniem, skopiowano %i czcionek."), (int)cpfonts), wxColour(L"#008000"));
 	}
 
 	mw.Close();

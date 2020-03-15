@@ -382,9 +382,10 @@ void StyleStore::StylesWindow(wxString newname)
 	if (selnum < 0){ tab = new Styles(); }
 	else if (ASSStyle){ tab = grid->GetStyle(selnum)->Copy(); }
 	else{ tab = Options.GetStyle(selnum)->Copy(); }
-	if (newname != ""){ tab->Name = newname; }
+	if (newname != L""){ tab->Name = newname; }
 	oldname = tab->Name;
-	cc->UpdateValues(tab, !dummy, (ASSStyle && ASSList->GetNumSelections() > 1) || (!ASSStyle && Store->GetNumSelections() > 1));
+	cc->UpdateValues(tab, !dummy, (ASSStyle && ASSList->GetNumSelections() > 1) || 
+		(!ASSStyle && Store->GetNumSelections() > 1));
 	if (!detachedEtit){ Mainall->Fit(this); }
 
 }
@@ -527,13 +528,13 @@ void StyleStore::OnDelCatalog(wxCommandEvent& event)
 	int cat = catalogList->GetSelection();
 	if (cat == -1){ return; }
 	wxString Cat = catalogList->GetString(cat);
-	if (Cat == "Default"){ wxBell(); return; }
+	if (Cat == L"Default"){ wxBell(); return; }
 	catalogList->Delete(cat);
 	Options.dirs.RemoveAt(cat);
 	Options.actualStyleDir = Options.dirs[MAX(0, cat - 1)];
 	catalogList->SetSelection(MAX(0, cat - 1));
 	wxString path;
-	path << Options.pathfull << "\\Catalog\\" << Cat << ".sty";
+	path << Options.pathfull << L"\\Catalog\\" << Cat << L".sty";
 	wxRemoveFile(path);
 	Options.LoadStyles(Options.actualStyleDir);
 	Store->Refresh(false);
@@ -570,23 +571,23 @@ void StyleStore::LoadStylesS(bool isass)
 {
 	SubsGrid* grid = Notebook::GetTab()->Grid;
 	wxFileDialog *openFileDialog = new wxFileDialog(this, _("Wybierz plik ASS"),
-		Notebook::GetTab()->SubsPath.BeforeLast(L'\\'), "*.ass", _("Pliki napisów ASS(*.ass)|*.ass"),
-		wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "wxFileDialog");
+		Notebook::GetTab()->SubsPath.BeforeLast(L'\\'), L"*.ass", _("Pliki napisów ASS(*.ass)|*.ass"),
+		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 	if (openFileDialog->ShowModal() == wxID_OK){
 		OpenWrite op;
 		wxString ass;
 		op.FileOpen(openFileDialog->GetPath(), &ass);
-		size_t start = ass.find("\nStyle: ");
-		size_t end = ass.find("[Events]");
+		size_t start = ass.find(L"\nStyle: ");
+		size_t end = ass.find(L"[Events]");
 		if (end <= start){ return; }
 		std::vector<Styles*> tmps;
 		wxString styless = ass.SubString(start, end);
 		prompt = 0;
-		wxStringTokenizer styletkn(styless, "\n");
+		wxStringTokenizer styletkn(styless, L"\n");
 		while (styletkn.HasMoreTokens())
 		{
 			wxString token = styletkn.NextToken();
-			if (token.StartsWith("Style: ")){
+			if (token.StartsWith(L"Style: ")){
 				tmps.push_back(new Styles(token));
 			}
 		}
@@ -610,7 +611,8 @@ void StyleStore::LoadStylesS(bool isass)
 					else{
 						if (prompt != wxYES_TO_ALL && prompt != wxCANCEL){
 							prompt = KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"),
-								stl.CheckListBox->GetItem(v, 0)->name), _("Potwierdzenie"), wxYES_TO_ALL | wxYES | wxNO | wxCANCEL, this);
+								stl.CheckListBox->GetItem(v, 0)->name), _("Potwierdzenie"), 
+								wxYES_TO_ALL | wxYES | wxNO | wxCANCEL, this);
 							//if(prompt == wxID_CANCEL){return;}
 						}
 						if (prompt == wxYES || prompt == wxYES_TO_ALL){
@@ -700,7 +702,7 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 	wxString delStyles;
 	wxString existsStyles;
 	SubsGrid *grid = Notebook::GetTab()->Grid;
-	const wxString &tlStyle = grid->GetSInfo("TLMode Style");
+	const wxString &tlStyle = grid->GetSInfo(L"TLMode Style");
 
 	for (size_t i = 0; i < grid->file->GetCount(); i++){
 		lineStyles[grid->file->GetDialogue(i)->Style] = true;
@@ -728,7 +730,8 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 	}
 	if (existsStyles.IsEmpty()){ existsStyles = _("Brak"); }
 	if (delStyles.IsEmpty()){ delStyles = _("Brak"); }
-	KaiMessageBox(wxString::Format(_("Używane style:\n%s\nUsunięte style:\n%s"), existsStyles, delStyles), _("Status usuniętych stylów"));
+	KaiMessageBox(wxString::Format(_("Używane style:\n%s\nUsunięte style:\n%s"), existsStyles, delStyles), 
+		_("Status usuniętych stylów"));
 }
 
 //void StyleStore::StyleonVideo(Styles *styl, bool fullskreen)

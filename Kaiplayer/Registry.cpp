@@ -91,27 +91,27 @@ bool Registry::AddFileAssociation(const wxString &extension, const wxString &ext
 		reg.SetStringValue(L"", progName + extension);
 		reg.CloseRegistry();
 	}
-	else{ KaiLog(wxString::Format("Nie mo¿na utowrzyæ rozszerzenia %s", extension)); return false; }
+	else{ KaiLog(wxString::Format(L"Can not create extension %s", extension)); return false; }
 	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension, true)){
 		reg.SetStringValue(L"", extName);
 		reg.CloseRegistry();
 	}
 	else{
-		KaiLog("Nie mo¿na otowrzyæ klasy rozszerzenia"); return false;
+		KaiLog(L"Can not open extension class"); return false;
 	}
 	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension + L"\\DefaultIcon", true)){
 		reg.SetStringValue(L"", pathfull.BeforeLast(L'\\') + L"\\Icons.dll," + std::to_wstring(icon));
 		reg.CloseRegistry();
 	}
 	else{
-		KaiLog("Nie mo¿na dodaæ ikony"); return false;
+		KaiLog(L"Can not add icon"); return false;
 	}
 	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension + L"\\Shell\\Open\\Command", true)){
 		reg.SetStringValue(L"", L"\""+pathfull + L"\" \"%1\"");
 		reg.CloseRegistry();
 	}
 	else{
-		KaiLog(wxString::Format("Nie mo¿na dodaæ otwierania za pomoc¹ %s", progName)); return false;
+		KaiLog(wxString::Format(L"Can not add open with %s", progName)); return false;
 	}
 	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, NULL, NULL);
 	return true;

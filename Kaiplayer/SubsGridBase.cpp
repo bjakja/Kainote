@@ -1595,12 +1595,12 @@ void SubsGridBase::GetASSRes(int *x, int *y)
 	}
 	else if (nx < 1){
 		nx = (float)ny*(4.0 / 3.0); if (ny == 1024){ nx = 1280; }
-		AddSInfo(L"PlayResX", std::to_string(nx));
+		AddSInfo(L"PlayResX", std::to_wstring(nx));
 		changed = true;
 	}
 	else if (ny < 1){
 		ny = (float)nx*(3.0 / 4.0); if (nx == 1280){ ny = 1024; }
-		AddSInfo(L"PlayResY", std::to_string(ny));
+		AddSInfo(L"PlayResY", std::to_wstring(ny));
 		changed = true;
 	}
 	*x = nx;
