@@ -243,7 +243,7 @@ void MoveAll::ChangeInLines(bool all)
 			bool visible = false;
 			dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
 			if (selPositions.size() != sels.size()){
-				KaiLog(L"Sizes mismatch");
+				//KaiLog(L"Sizes mismatch");
 				return;
 			}
 		}
@@ -271,7 +271,9 @@ void MoveAll::ChangeInLines(bool all)
 			if (!type){ continue; }
 			bool vector = type == TAGCLIP || type == TAGP;
 			wxString delimiter = (vector) ? L" " : L",";
-			wxString tagpattern = (type == TAGPOS) ? L"pos\\(([^\\)]+)" : (type == TAGORG) ? L"org\\(([^\\)]+)" : (type == TAGCLIP) ? L"i?clip\\(([^\\)]+)" : (type == TAGP) ? L"p[0-9-]+[^}]*} ?m ([^{]+)" : L"move\\(([^\\)]+)";
+			wxString tagpattern = (type == TAGPOS) ? L"pos\\(([^\\)]+)" : 
+				(type == TAGORG) ? L"org\\(([^\\)]+)" : (type == TAGCLIP) ? L"i?clip\\(([^\\)]+)" : 
+				(type == TAGP) ? L"p[0-9-]+[^}]*} ?m ([^{]+)" : L"move\\(([^\\)]+)";
 			wxRegEx re(tagpattern, wxRE_ADVANCED);
 			size_t startMatch = 0, lenMatch = 0;
 			if (re.Matches(txt)){

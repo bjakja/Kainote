@@ -20,7 +20,7 @@
 class KaiMessageDialog : public KaiDialog
 {
 public:
-	KaiMessageDialog(wxWindow *parent, const wxString& msg, const wxString &caption, long elems = wxOK);
+	KaiMessageDialog(wxWindow *parent, const wxString& msg, const wxString &caption, long elems = wxOK, const wxPoint &pos = wxDefaultPosition);
 	virtual ~KaiMessageDialog(){}
 	void SetOkLabel(const wxString &label);
 	void SetYesLabel(const wxString &label);
@@ -30,6 +30,6 @@ public:
 };
 
 
-int KaiMessageBox(const wxString& msg, const wxString &caption="", long elems = wxOK, wxWindow *parent=0 );
+int KaiMessageBox(const wxString& msg, const wxString &caption = L"", long elems = wxOK, wxWindow *parent = 0, const wxPoint &pos = wxDefaultPosition);
 
 #define wxYES_TO_ALL 64

@@ -27,8 +27,8 @@ class VideoToolbar;
 class Fullscreen : public wxFrame
 {
 public:
-    Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size);
-    virtual ~Fullscreen();
+	Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size);
+	virtual ~Fullscreen();
 	BitmapButton* bprev;
 	BitmapButton* bpause;
 	BitmapButton* bstop;
@@ -39,13 +39,13 @@ public:
 	VideoSlider* vslider;
 	VolSlider* volslider;
 	wxPanel* panel;
-    VideoToolbar *vToolbar;
+	VideoToolbar *vToolbar;
 	void OnSize();	
 	void HideToolbar(bool hide);
 	int panelsize;
 private:
 	
-    wxWindow *vb;
+	wxWindow *vb;
 	int toolBarHeight;
 };
 

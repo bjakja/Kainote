@@ -30,7 +30,7 @@ OpenWrite::OpenWrite(const wxString &fileName, bool clear)
 {
 	wxFileName fname;
 	fname.Assign(fileName);
-	if (!fname.DirExists()){ wxMkdir(fileName.BeforeLast('\\')); }
+	if (!fname.DirExists()){ wxMkdir(fileName.BeforeLast(L'\\')); }
 	if (fname.FileExists() && !fname.IsFileReadable()){ return; }
 	if (!file.Exists(fileName)){
 		if (!file.Create(fileName, false, wxS_DEFAULT)){ KaiLog(_("Nie można utworzyć pliku.")); }
@@ -38,7 +38,7 @@ OpenWrite::OpenWrite(const wxString &fileName, bool clear)
 	else{
 		if (!file.Open(fileName, (clear) ? wxFile::write : wxFile::write_append, wxS_DEFAULT)){ KaiLog(_("Nie można otworzyć pliku.")); };
 	}
-	isfirst=clear;
+	isfirst = clear;
 }
 
 OpenWrite::~OpenWrite()
@@ -57,9 +57,9 @@ bool OpenWrite::FileOpen(const wxString &filename, wxString *riddenText, bool te
 	if (test){
 		wchar_t b[4];
 		filetest.Open(filename, wxFile::read, wxS_DEFAULT);
-		filetest.Read (b, 4);
-		
-		utf8 = ((static_cast <int>(b[0]) > 48000))? true : false;
+		filetest.Read(b, 4);
+
+		utf8 = ((static_cast <int>(b[0]) > 48000)) ? true : false;
 		if (!utf8){
 			size_t size = filetest.Length();
 			char *buff = new char[size];
@@ -72,11 +72,12 @@ bool OpenWrite::FileOpen(const wxString &filename, wxString *riddenText, bool te
 	wxFFile fileo;
 	fileo.Open(filename, L"r");
 	if (fileo.IsOpened()){
-		if(utf8){
+		if (utf8){
 			fileo.ReadAll(riddenText);
-		}else{fileo.ReadAll(riddenText, wxConvLocal);}
+		}
+		else{ fileo.ReadAll(riddenText, wxConvLocal); }
 		fileo.Close();
-		if(riddenText->IsEmpty()) return false;
+		if (riddenText->IsEmpty()) return false;
 		return true;
 	}
 
@@ -89,24 +90,26 @@ void OpenWrite::FileWrite(const wxString &fileName, const wxString &textfile, bo
 	wxFileName fname;
 	fname.Assign(fileName);
 	if (!fname.DirExists()){ wxMkdir(fileName.BeforeLast(L'\\')); }
-	if (fname.FileExists() && !fname.IsFileReadable()){ 
-		KaiLog(_("Nie można odczytać pliku.")); 
-		return; 
+	if (fname.FileExists() && !fname.IsFileReadable()){
+		KaiLog(_("Nie można odczytać pliku."));
+		return;
 	}
-	
+
 	wxFile file;
-	if(!file.Exists(fileName)){
+	if (!file.Exists(fileName)){
 		file.Create(fileName, false, wxS_DEFAULT);
 	}
 	else{
-		file.Open(fileName, wxFile::write, wxS_DEFAULT);}
+		file.Open(fileName, wxFile::write, wxS_DEFAULT);
+	}
 	if (file.IsOpened()){
 		if (utf){
 			wchar_t bom = 0xFEFF;
 			file.Write(wxString(bom) + textfile, wxConvUTF8);
 		}
 		else{ file.Write(textfile, wxConvLocal); }
-		file.Close();}
+		file.Close();
+	}
 
 }
 void OpenWrite::PartFileWrite(const wxString &parttext)
@@ -123,7 +126,7 @@ void OpenWrite::PartFileWrite(const wxString &parttext)
 
 void OpenWrite::CloseFile()
 {
-	if(file.IsOpened()){file.Close();}
+	if (file.IsOpened()){ file.Close(); }
 }
 
 bool OpenWrite::IsUTF8withoutBOM(const char* buf, size_t size)
@@ -138,25 +141,25 @@ bool OpenWrite::IsUTF8withoutBOM(const char* buf, size_t size)
 		{
 			// 1 byte
 			more_chars = 0;
-			
+
 		}
 		else if (ch >= 194 && ch <= 223)
 		{
 			// 2 Byte
 			more_chars = 1;
-			
+
 		}
 		else if (ch >= 224 && ch <= 239)
 		{
 			// 3 Byte
 			more_chars = 2;
-			
+
 		}
 		else if (ch >= 240 && ch <= 244)
 		{
 			// 4 Byte
 			more_chars = 3;
-			
+
 		}
 		else
 		{
@@ -169,7 +172,7 @@ bool OpenWrite::IsUTF8withoutBOM(const char* buf, size_t size)
 		{
 			only_saw_ascii_range = false; // Seen non-ascii chars now
 			ch = buf[pos++];
-			if (ch < 128 || ch > 205) {return false;} // Not utf8
+			if (ch < 128 || ch > 205) { return false; } // Not utf8
 			--more_chars;
 		}
 	}

@@ -41,7 +41,7 @@ void SubsGridFiltering::Filter(bool autoFiltering)
 		return;
 	}
 	if (filterBy & FILTER_BY_STYLES){
-		Options.GetTable(GridFilterStyles, styles, ",");
+		Options.GetTable(GridFilterStyles, styles, L",");
 
 		size_t i = 0;
 		while (i < styles.size()){
@@ -74,8 +74,12 @@ void SubsGridFiltering::Filter(bool autoFiltering)
 			dial->isVisible = NOT_VISIBLE;
 		}
 		else if (addToFilter){
-			if (lastDial && lastDial->isVisible == VISIBLE_BLOCK && dial->isVisible == NOT_VISIBLE){ dial->isVisible = VISIBLE_BLOCK; }
-			else if (lastDial && lastDial->isVisible == NOT_VISIBLE && dial->isVisible == VISIBLE_BLOCK){ lastDial->isVisible = VISIBLE_BLOCK; }
+			if (lastDial && lastDial->isVisible == VISIBLE_BLOCK && dial->isVisible == NOT_VISIBLE){ 
+				dial->isVisible = VISIBLE_BLOCK; 
+			}
+			else if (lastDial && lastDial->isVisible == NOT_VISIBLE && dial->isVisible == VISIBLE_BLOCK){ 
+				lastDial->isVisible = VISIBLE_BLOCK; 
+			}
 			lastDial = dial;
 		}
 		else{
@@ -130,8 +134,12 @@ void SubsGridFiltering::HideSelections()
 		if (isSelected && !Invert || !isSelected && Invert){
 			dial->isVisible = NOT_VISIBLE;
 		}
-		if (lastDial && lastDial->isVisible == VISIBLE_BLOCK && dial->isVisible == NOT_VISIBLE){ dial->isVisible = VISIBLE_BLOCK; }
-		else if (lastDial && lastDial->isVisible == NOT_VISIBLE && dial->isVisible == VISIBLE_BLOCK){ lastDial->isVisible = VISIBLE_BLOCK; }
+		if (lastDial && lastDial->isVisible == VISIBLE_BLOCK && dial->isVisible == NOT_VISIBLE){ 
+			dial->isVisible = VISIBLE_BLOCK; 
+		}
+		else if (lastDial && lastDial->isVisible == NOT_VISIBLE && dial->isVisible == VISIBLE_BLOCK){ 
+			lastDial->isVisible = VISIBLE_BLOCK; 
+		}
 		lastDial = dial;
 	}
 	FilteringFinalize();
@@ -156,8 +164,8 @@ void SubsGridFiltering::MakeTree()
 				treeStart->IsComment = true;
 				treeStart->isVisible = VISIBLE;
 				treeStart->treeState = TREE_DESCRIPTION;
-				treeStart->Text = "";
-				treeStart->TextTl = "";
+				treeStart->Text = L"";
+				treeStart->TextTl = L"";
 				grid->InsertRows(i + treeDiff, 1, treeStart, true, false);
 				treeDiff++;
 				startSelection = false;

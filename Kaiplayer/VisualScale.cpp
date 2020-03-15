@@ -67,9 +67,9 @@ wxString Scale::GetVisual()
 	wxString result;
 	
 	if (type != 1){
-		result += "\\fscx" + getfloat(scale.x * 100);
+		result += L"\\fscx" + getfloat(scale.x * 100);
 	}if (type != 0){
-		result += "\\fscy" + getfloat(scale.y * 100);
+		result += L"\\fscy" + getfloat(scale.y * 100);
 	}
 
 	return result;
@@ -94,9 +94,15 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 	}
 
 	if (!holding){
-		if (abs(to.x - x) < 11 && abs(to.y - y) < 11){ if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZING); hasArrow = false; } }
-		else if (abs(to.x - x) < 11 && abs(from.y - y) < 11){ if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZEWE); hasArrow = false; } }
-		else if (abs(to.y - y) < 11 && abs(from.x - x) < 11){ if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZENS); hasArrow = false; } }
+		if (abs(to.x - x) < 11 && abs(to.y - y) < 11){ 
+			if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZING); hasArrow = false; } 
+		}
+		else if (abs(to.x - x) < 11 && abs(from.y - y) < 11){ 
+			if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZEWE); hasArrow = false; } 
+		}
+		else if (abs(to.y - y) < 11 && abs(from.x - x) < 11){ 
+			if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZENS); hasArrow = false; } 
+		}
 		else if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 	}
 	if (click){
@@ -126,9 +132,6 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 	}
 	else if (holding){
 		if (evt.ShiftDown()){
-			//zamieniamy te wartoœci by przesuwanie w osi x dzia³a³o poprawnie, a nie na odwrót.
-			//drgawki nawet w photoshopie wystêpuj¹ bo wtedy jedna oœ ma + druga - i w zale¿noœci od tego która jest u¿yta
-			//zwiêksza b¹dŸ zmniejsza nam tekst/rysunek.
 			int diffx = abs(x - diffs.x);
 			int diffy = abs(diffs.y - y);
 			int move = (diffx > diffy) ? x - diffs.x : diffs.y - y;
@@ -183,15 +186,15 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 	wxString val;
 
 	if (type != 1){
-		tag = "\\fscx" + getfloat(scale.x * 100);
+		tag = L"\\fscx" + getfloat(scale.x * 100);
 
-		tab->Edit->FindValue("fscx([0-9.-]+)", &val, *txt, 0, 1);
+		tab->Edit->FindValue(L"fscx([0-9.-]+)", &val, *txt, 0, 1);
 		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 	}
 	if (type != 0){
-		tag = "\\fscy" + getfloat(scale.y * 100);
+		tag = L"\\fscy" + getfloat(scale.y * 100);
 
-		tab->Edit->FindValue("fscy([0-9.-]+)", &val, *txt, 0, 1);
+		tab->Edit->FindValue(L"fscy([0-9.-]+)", &val, *txt, 0, 1);
 		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 	}
 
@@ -201,10 +204,10 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 void Scale::OnKeyPress(wxKeyEvent &evt)
 {
 	int key = evt.GetKeyCode();
-	bool left = key == 'A';
-	bool right = key == 'D';
-	bool up = key == 'W';
-	bool down = key == 'S';
+	bool left = key == L'A';
+	bool right = key == L'D';
+	bool up = key == L'W';
+	bool down = key == L'S';
 	
 	if ((left || right || up || down) && evt.GetModifiers() != wxMOD_ALT){
 

@@ -71,12 +71,12 @@ void Move::DrawVisual(int time)
 wxString Move::GetVisual()
 {
 	int startTime = ZEROIT(tab->Edit->line->Start.mstime);
-	return "\\move(" + getfloat(((from.x / zoomScale.x) + zoomMove.x)*coeffW) + "," +
-		getfloat(((from.y / zoomScale.y) + zoomMove.y)*coeffH) + "," +
-		getfloat(((to.x / zoomScale.x) + zoomMove.x)*coeffW) + "," +
-		getfloat(((to.y / zoomScale.y) + zoomMove.y)*coeffH) + "," +
-		getfloat(moveValues[4] - startTime) + "," +
-		getfloat(moveValues[5] - startTime) + ")";
+	return L"\\move(" + getfloat(((from.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+		getfloat(((from.y / zoomScale.y) + zoomMove.y) * coeffH) + L"," +
+		getfloat(((to.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+		getfloat(((to.y / zoomScale.y) + zoomMove.y) * coeffH) + L"," +
+		getfloat(moveValues[4] - startTime) + L"," +
+		getfloat(moveValues[5] - startTime) + L")";
 }
 
 void Move::OnMouseEvent(wxMouseEvent &evt)
@@ -191,12 +191,12 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 void Move::SetCurVisual()
 {
 	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, moveValues);
-	from = to = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x)*zoomScale.x,
-		((linepos.y / coeffH) - zoomMove.y)*zoomScale.y);
+	from = to = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x) * zoomScale.x,
+		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);
 
 	if (moveValues[6] > 3){
-		to.x = ((moveValues[2] / coeffW) - zoomMove.x)*zoomScale.x;
-		to.y = ((moveValues[3] / coeffH) - zoomMove.y)*zoomScale.y;
+		to.x = ((moveValues[2] / coeffW) - zoomMove.x) * zoomScale.x;
+		to.y = ((moveValues[3] / coeffH) - zoomMove.y) * zoomScale.y;
 	}
 	moveDistance = to - from;
 	int startIter = 4, endIter = 5;
@@ -215,7 +215,7 @@ void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 	D3DXVECTOR2 moveTo = lastTo - to;
 	int moveStartTime = 0, moveEndTime = 0;
 	wxString tagBefore = putinbracket ? L"" : txt->SubString(tagPos.x, tagPos.y);
-	wxArrayString values = wxStringTokenize(tagBefore, ",", wxTOKEN_STRTOK);
+	wxArrayString values = wxStringTokenize(tagBefore, L",", wxTOKEN_STRTOK);
 	if (putinbracket || values.size() < 6){
 		VideoCtrl *video = tab->Video;
 		float fps = video->fps;
@@ -233,17 +233,17 @@ void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 	else{
 		wxString t2 = values[5];
 		wxString t1 = values[4];
-		t2.Replace(")", "");
+		t2.Replace(L")", L"");
 		moveStartTime = wxAtoi(t1);
 		moveEndTime = wxAtoi(t2);
 	}
-	wxString tag = "\\move(" + getfloat(textPosition.x - ((moveFrom.x / zoomScale.x) + zoomMove.x)*coeffW) + "," +
-		getfloat(textPosition.y - ((moveFrom.y / zoomScale.y) + zoomMove.y)*coeffH) + "," +
-		getfloat(textPosition.x + (((moveDistance.x - moveTo.x) / zoomScale.x) + zoomMove.x)*coeffW) + "," +
-		getfloat(textPosition.y + (((moveDistance.y - moveTo.y) / zoomScale.y) + zoomMove.y)*coeffH) + "," +
-		std::to_string(moveStartTime) + "," +
-		std::to_string(moveEndTime) + ")";
-	//jako ¿e pozycje zwracaj¹ len to potrzeba dodaæ jeszcze start;
+	wxString tag = L"\\move(" + getfloat(textPosition.x - ((moveFrom.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+		getfloat(textPosition.y - ((moveFrom.y / zoomScale.y) + zoomMove.y) * coeffH) + L"," +
+		getfloat(textPosition.x + (((moveDistance.x - moveTo.x) / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+		getfloat(textPosition.y + (((moveDistance.y - moveTo.y) / zoomScale.y) + zoomMove.y) * coeffH) + L"," +
+		std::to_wstring(moveStartTime) + L"," +
+		std::to_wstring(moveEndTime) + L")";
+	//positions returns length that need to add start
 	tagPos.y += tagPos.x - 1;
 	ChangeText(txt, tag, !putinbracket, tagPos);
 }

@@ -80,7 +80,10 @@ public:
 	void CaptureMouse(){ if (isFullscreen && TD){ TD->CaptureMouse(); } else{ wxWindow::CaptureMouse(); } }
 	void ReleaseMouse(){ if (isFullscreen && TD){ TD->ReleaseMouse(); } else{ wxWindow::ReleaseMouse(); } }
 	bool HasCapture(){ if (isFullscreen && TD){ return TD->HasCapture(); } else{ return wxWindow::HasCapture(); } }
-	bool SetCursor(const wxCursor &cursor){ if (isFullscreen && TD){ return TD->SetCursor(cursor); } else{ return wxWindow::SetCursor(cursor); } };
+	bool SetCursor(const wxCursor &cursor){ 
+		if (isFullscreen && TD){ return TD->SetCursor(cursor); } 
+		else{ return wxWindow::SetCursor(cursor); } 
+	};
 	bool SetBackgroundColour(const wxColour &col);
 	float coeffX, coeffY;
 	wxSize lastSize;

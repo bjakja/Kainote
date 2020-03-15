@@ -21,13 +21,13 @@
 
 
 Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
-	: wxFrame(parent, -1, "", pos, size, wxBORDER_NONE | wxSTAY_ON_TOP)//
+	: wxFrame(parent, -1, L"", pos, size, wxBORDER_NONE | wxSTAY_ON_TOP)//
 {
 	vb = parent;
 	VideoCtrl *vc = (VideoCtrl*)parent;
-	SetBackgroundColour("#000000");
+	SetBackgroundColour(L"#000000");
 	int fw;
-	GetTextExtent("#TWFfGH", &fw, &toolBarHeight);
+	GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
 	toolBarHeight += 8;
 	if (!vc->IsDshow){ 
 		panelsize = 44 + toolBarHeight;
@@ -43,11 +43,16 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 		panel->SetFocus();
 		evt.Skip();
 	});
-	bprev = new BitmapButton(panel, CreateBitmapFromPngResource("backward"), CreateBitmapFromPngResource("backward1"), PreviousVideo, _("Poprzedni plik wideo"), wxPoint(5, 16), wxSize(26, 26));
-	bpause = new BitmapButton(panel, CreateBitmapFromPngResource("play"), CreateBitmapFromPngResource("play1"), PlayPause, _("Odtwórz / Pauza"), wxPoint(40, 16), wxSize(26, 26));
-	bpline = new BitmapButton(panel, CreateBitmapFromPngResource("playline"), CreateBitmapFromPngResource("playline1"), PlayActualLine, _("Odtwórz aktywną linię"), wxPoint(75, 16), wxSize(26, 26));
-	bstop = new BitmapButton(panel, CreateBitmapFromPngResource("stop"), CreateBitmapFromPngResource("stop1"), StopPlayback, _("Zatrzymaj"), wxPoint(110, 16), wxSize(26, 26));
-	bnext = new BitmapButton(panel, CreateBitmapFromPngResource("forward"), CreateBitmapFromPngResource("forward1"), NextVideo, _("Następny plik"), wxPoint(145, 16), wxSize(26, 26));
+	bprev = new BitmapButton(panel, CreateBitmapFromPngResource(L"backward"), CreateBitmapFromPngResource(L"backward1"), 
+		PreviousVideo, _("Poprzedni plik wideo"), wxPoint(5, 16), wxSize(26, 26));
+	bpause = new BitmapButton(panel, CreateBitmapFromPngResource(L"play"), CreateBitmapFromPngResource(L"play1"), 
+		PlayPause, _("Odtwórz / Pauza"), wxPoint(40, 16), wxSize(26, 26));
+	bpline = new BitmapButton(panel, CreateBitmapFromPngResource(L"playline"), CreateBitmapFromPngResource(L"playline1"), 
+		PlayActualLine, _("Odtwórz aktywną linię"), wxPoint(75, 16), wxSize(26, 26));
+	bstop = new BitmapButton(panel, CreateBitmapFromPngResource(L"stop"), CreateBitmapFromPngResource(L"stop1"), 
+		StopPlayback, _("Zatrzymaj"), wxPoint(110, 16), wxSize(26, 26));
+	bnext = new BitmapButton(panel, CreateBitmapFromPngResource(L"forward"), CreateBitmapFromPngResource(L"forward1"), 
+		NextVideo, _("Następny plik"), wxPoint(145, 16), wxSize(26, 26));
 	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VideoVolume), wxPoint(size.x - 110, 17), wxSize(110, 25));
 	KaiCheckBox *showToolbar = new KaiCheckBox(panel, 7777, _("Pokaż pasek narzędzi"), wxPoint(180, 21), wxSize(150, -1));
 	showToolbar->SetValue(!vc->IsDshow);
@@ -55,7 +60,7 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	mstimes->SetWindowStyle(wxBORDER_NONE);
 	mstimes->SetCursor(wxCURSOR_ARROW);
 	mstimes->SetBackgroundColour(WindowBackground);
-	Videolabel = new KaiStaticText(panel, -1, "", wxPoint(644, 22),wxSize(1200,-1));
+	Videolabel = new KaiStaticText(panel, -1, L"", wxPoint(644, 22), wxSize(1200,-1));
 	Videolabel->Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){
 		panel->SetFocus();
 		evt.Skip();
@@ -107,7 +112,7 @@ void Fullscreen::OnSize()
 	vc->lastSize = asize;
 	int fw;
 	if (panelsize > 44){
-		GetTextExtent("#TWFfGH", &fw, &toolBarHeight);
+		GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
 		toolBarHeight += 8;
 		panelsize = 44 + toolBarHeight;
 	}

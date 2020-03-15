@@ -104,7 +104,7 @@ class ToolbarMenu :public wxDialog
 {
 	friend class KaiToolbar;
 public:
-	ToolbarMenu(KaiToolbar*parent, const wxPoint &pos);
+	ToolbarMenu(KaiToolbar *parent, const wxPoint &pos, const wxSize &size, int _height);
 	virtual ~ToolbarMenu(){ wxDELETE(bmp); };
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
@@ -112,7 +112,7 @@ private:
 	void OnScroll(wxScrollEvent& event);
 	void OnIdle(wxIdleEvent& event);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
-	KaiToolbar*parent;
+	KaiToolbar *parent;
 	wxBitmap *bmp;
 	KaiScrollbar *scroll;
 	KaiChoice *alignments;

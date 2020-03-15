@@ -22,7 +22,9 @@ class VideoCtrl;
 class VideoSlider : public wxWindow
 {
 public:
-	VideoSlider(wxWindow *parent, const long int id ,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=wxWANTS_CHARS, const wxString& name=wxPanelNameStr);
+	VideoSlider(wxWindow *parent, const long int id, 
+		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, 
+		long style = wxWANTS_CHARS, const wxString& name = wxPanelNameStr);
 	virtual ~VideoSlider();
 
 	void SetValue(float pos);
@@ -54,9 +56,11 @@ protected:
 };
 
 class VolSlider : public wxWindow
-	{
+{
 public:
-	VolSlider(wxWindow *parent, const long int id, int apos, const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, long style=wxWANTS_CHARS, const wxString& name=wxPanelNameStr);
+	VolSlider(wxWindow *parent, const long int id, int apos, 
+		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, 
+		long style = wxWANTS_CHARS, const wxString& name = wxPanelNameStr);
 	virtual ~VolSlider();
 
 	void SetValue(int pos);
@@ -75,5 +79,5 @@ protected:
 	wxBitmap* bmp;
 	//bool blockpaint;
 	DECLARE_EVENT_TABLE()
-	};
+};
 

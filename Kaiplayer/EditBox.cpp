@@ -268,9 +268,12 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	Comment = new KaiCheckBox(this, ID_COMMENT, _("Komentarz")/*, wxDefaultPosition, wxSize(82, -1)*/);
 	Comment->SetValue(false);
 	LayerEdit = new NumCtrl(this, 16668, L"", -10000000, 10000000, true, wxDefaultPosition, wxSize(50, -1));
-	StartEdit = new TimeCtrl(this, 16668, L"", wxDefaultPosition, wxSize(82, -1), wxTE_CENTER);
-	EndEdit = new TimeCtrl(this, 16668, L"", wxDefaultPosition, wxSize(82, -1), wxTE_CENTRE);
-	DurEdit = new TimeCtrl(this, 16668, L"", wxDefaultPosition, wxSize(82, -1), wxTE_CENTRE);
+	int fw, fh;
+	GetTextExtent(L"00:00:00,000", &fw, &fh);
+	fw += 6;
+	StartEdit = new TimeCtrl(this, 16668, L"", wxDefaultPosition, wxSize(fw, -1), wxTE_CENTER);
+	EndEdit = new TimeCtrl(this, 16668, L"", wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
+	DurEdit = new TimeCtrl(this, 16668, L"", wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
 	wxArrayString styles;
 	styles.Add(L"Default");
 	StyleChoice = new KaiChoice(this, ID_STYLE, wxDefaultPosition, wxSize(100, -1), styles);//wxSize(145,-1)
@@ -279,9 +282,11 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	valid.SetCharExcludes(L",");
 	ActorEdit = new DescTxtCtrl(this, 16658, wxSize(90, -1), _("Aktor"), valid);
-	MarginLEdit = new NumCtrl(this, 16668, L"", 0, 9999, true, wxDefaultPosition, wxSize(42, -1), wxTE_CENTRE);
-	MarginREdit = new NumCtrl(this, 16668, L"", 0, 9999, true, wxDefaultPosition, wxSize(42, -1), wxTE_CENTRE);
-	MarginVEdit = new NumCtrl(this, 16668, L"", 0, 9999, true, wxDefaultPosition, wxSize(42, -1), wxTE_CENTRE);
+	GetTextExtent(L"0000", &fw, &fh);
+	fw += 10;
+	MarginLEdit = new NumCtrl(this, 16668, L"", 0, 9999, true, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
+	MarginREdit = new NumCtrl(this, 16668, L"", 0, 9999, true, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
+	MarginVEdit = new NumCtrl(this, 16668, L"", 0, 9999, true, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
 	EffectEdit = new DescTxtCtrl(this, 16658, wxSize(90, -1), _("Efekt"), valid);
 
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
@@ -1234,7 +1239,7 @@ void EditBox::OnSize(wxSizeEvent& event)
 {
 	int w, h;
 	GetClientSize(&w, &h);
-	if (isdetached && w > 800){
+	if (isdetached && w > 850){
 		BoxSizer1->Detach(BoxSizer3);
 
 		for (int i = 5; i >= 0; i--){ BoxSizer3->Detach(i); }
@@ -1249,7 +1254,7 @@ void EditBox::OnSize(wxSizeEvent& event)
 
 		isdetached = false;
 	}
-	else if (!isdetached && w <= 800)
+	else if (!isdetached && w <= 850)
 	{
 		for (int i = 11; i >= 7; i--){ BoxSizer2->Detach(i); }
 		BoxSizer2->Detach(0);
@@ -1690,7 +1695,6 @@ void EditBox::OnColorChange(ColorEvent& event)
 
 	}
 	else{ PutinNonass(L"C:" + choosenColorAsString.Mid(2), L"C:([^}]*)"); }
-	//OnEdit(wxCommandEvent());
 }
 
 void EditBox::OnButtonTag(wxCommandEvent& event)

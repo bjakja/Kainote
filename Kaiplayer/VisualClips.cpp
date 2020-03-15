@@ -25,7 +25,7 @@ ClipPoint::ClipPoint()
 {
 	x = 0;
 	y = 0;
-	type = "m";
+	type = L"m";
 	start = true;
 	isSelected = false;
 }
@@ -84,7 +84,9 @@ DrawingAndClip::~DrawingAndClip()
 void DrawingAndClip::DrawVisual(int time)
 {
 	if (drawSelection){
-		D3DXVECTOR2 v5[5] = { D3DXVECTOR2(selection.x, selection.y), D3DXVECTOR2(selection.width, selection.y), D3DXVECTOR2(selection.width, selection.height), D3DXVECTOR2(selection.x, selection.height), D3DXVECTOR2(selection.x, selection.y) };
+		D3DXVECTOR2 v5[5] = { D3DXVECTOR2(selection.x, selection.y), 
+			D3DXVECTOR2(selection.width, selection.y), D3DXVECTOR2(selection.width, selection.height), 
+			D3DXVECTOR2(selection.x, selection.height), D3DXVECTOR2(selection.x, selection.y) };
 		line->Begin();
 		DrawDashedLine(v5, 5);
 		line->End();
@@ -94,36 +96,40 @@ void DrawingAndClip::DrawVisual(int time)
 
 	line->SetWidth(1.0f);
 	if (drawToolLines){
-		int mPoint = FindPoint(size - 1, "m", false, true);
+		int mPoint = FindPoint(size - 1, L"m", false, true);
 		if (mPoint >= 0 && mPoint < (int)size - 1){
 			D3DXVECTOR2 v3[3] = { Points[mPoint].GetVector(this), D3DXVECTOR2(x, y), Points[size - 1].GetVector(this) };
 			line->Begin();
-			DrawDashedLine(v3, (Points[size - 1].type != "m") ? 3 : 2);
+			DrawDashedLine(v3, (Points[size - 1].type != L"m") ? 3 : 2);
 			line->End();
 		}
 	}
-	if (Visual == VECTORDRAW && moveValues[6]>2){ D3DXVECTOR2 movePos = CalcMovePos(); _x = movePos.x; _y = movePos.y; }
-	//nie należy dopuścić przypadków typu brak "m" na początku by weszło zamiast tego l bądź b
-	if (Points[0].type != "m"){ Points[0].type = "m"; }
+	if (Visual == VECTORDRAW && moveValues[6]>2){ 
+		D3DXVECTOR2 movePos = CalcMovePos(); 
+		_x = movePos.x; 
+		_y = movePos.y; 
+	}
+	//cannot let to "l" or "b" to be used as missing "m" on start
+	if (Points[0].type != L"m"){ Points[0].type = L"m"; }
 	size_t g = (size < 2) ? 0 : 1;
 	size_t lastM = 0;
 	bool minusminus = false;
 	while (g < size){
 
-		if (Points[g].type == "l"){
+		if (Points[g].type == L"l"){
 			DrawLine(g);
 			g++;
 		}
-		else if (Points[g].type == "b" || Points[g].type == "s"){
-			g += DrawCurve(g, (Points[g].type == "s"));
+		else if (Points[g].type == L"b" || Points[g].type == L"s"){
+			g += DrawCurve(g, (Points[g].type == L"s"));
 		}
-		else if (Points[g].type != "m"){
+		else if (Points[g].type != L"m"){
 			g++;
 		}
 
-		if (g >= size || Points[g].type == "m"){
+		if (g >= size || Points[g].type == L"m"){
 
-			if (g < size && Points[g].type == "m"){ DrawRect(g); }
+			if (g < size && Points[g].type == L"m"){ DrawRect(g); }
 
 			if (g > 1){
 				line->Begin();
@@ -147,7 +153,7 @@ void DrawingAndClip::DrawVisual(int time)
 		CreateVERTEX(&v9[1], pos.x + rcsize, pos.y - rcsize, 0xAACC8748);
 		CreateVERTEX(&v9[2], pos.x - rcsize, pos.y + rcsize, 0xAACC8748);
 		CreateVERTEX(&v9[3], pos.x + rcsize, pos.y + rcsize, 0xAACC8748);
-		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), "primitive failed");
+		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"primitive failed");
 	}
 	if (drawCross){
 		D3DXVECTOR2 v2[2] = { D3DXVECTOR2(x, 0), D3DXVECTOR2(x, this->VideoSize.GetHeight()) };
@@ -167,11 +173,11 @@ void DrawingAndClip::SetCurVisual()
 	D3DXVECTOR2 linepos = GetPosnScale(&scale, &alignment, (Visual == VECTORDRAW) ? moveValues : NULL);
 
 	if (Visual != VECTORDRAW){
-		bool found = tab->Edit->FindValue("(i?clip[^)]+\\))", &clip, "", 0, 1);
+		bool found = tab->Edit->FindValue(L"(i?clip[^)]+\\))", &clip, L"", 0, 1);
 		if (found){
-			int rres = clip.Replace(",", ",");
-			if (rres >= 3) { clip = ""; scale = D3DXVECTOR2(1.f, 1.f); vectorScale = 1; }
-			else{ clip = clip.AfterFirst((rres > 0) ? ',' : '('); }
+			int rres = clip.Replace(L",", L",");
+			if (rres >= 3) { clip = L""; scale = D3DXVECTOR2(1.f, 1.f); vectorScale = 1; }
+			else{ clip = clip.AfterFirst((rres > 0) ? L',' : L'('); }
 		}
 		coeffW /= scale.x;
 		coeffH /= scale.y;
@@ -179,10 +185,10 @@ void DrawingAndClip::SetCurVisual()
 		_y = 0;
 	}
 	else{
-		bool isOriginal = (tab->Grid->hasTLMode && tab->Edit->TextEdit->GetValue() == "");
+		bool isOriginal = (tab->Grid->hasTLMode && tab->Edit->TextEdit->GetValue() == L"");
 		//Editor
 		TextEditor *Editor = (isOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
-		wxString tags[] = { "p" };
+		wxString tags[] = { L"p" };
 		tab->Edit->line->ParseTags(tags, 1);
 		ParseData *pdata = tab->Edit->line->parseData;
 		if (pdata->tags.size() >= 2){
@@ -203,28 +209,28 @@ void DrawingAndClip::SetCurVisual()
 	}
 
 	Points.clear();
-	wxStringTokenizer tokens(clip, " ");
+	wxStringTokenizer tokens(clip, L" ");
 	double tmpx = 0;
 	bool gotx = false;
 	bool start = false;
 	int pointsAfterStart = 1;
-	wxString type = "m";
+	wxString type = L"m";
 	while (tokens.HasMoreTokens()){
 		wxString token = tokens.GetNextToken();
-		if (token == "p"){ token = "s"; }
-		if (token == "m" || token == "l" || token == "b" || token == "s"){
+		if (token == L"p"){ token = L"s"; }
+		if (token == L"m" || token == L"l" || token == L"b" || token == L"s"){
 			type = token;
 			start = true;
 			pointsAfterStart = 1;
 		}
-		else if (token == "c"){ start = true; continue; }
+		else if (token == L"c"){ start = true; continue; }
 		else if (gotx){
 			double tmpy = 0;
 			if (!token.ToCDouble(&tmpy)){ gotx = false; continue; }
 			Points.push_back(ClipPoint(tmpx, tmpy, type, start));
 			gotx = false;
-			if ((type == "l" || type == "m" && pointsAfterStart == 1) || (type == "b" && pointsAfterStart == 3)){
-				if (type == "m"){ type = "l"; }
+			if ((type == L"l" || type == L"m" && pointsAfterStart == 1) || (type == L"b" && pointsAfterStart == 3)){
+				if (type == L"m"){ type = L"l"; }
 				start = true;
 				pointsAfterStart = 0;
 			}
@@ -253,10 +259,10 @@ void DrawingAndClip::SetCurVisual()
 
 wxString DrawingAndClip::GetVisual()
 {
-	wxString format = (Visual == VECTORDRAW) ? "6.2f" : "6.0f";
+	wxString format = (Visual == VECTORDRAW) ? L"6.2f" : L"6.0f";
 	wxString clip;
 	if (Visual == VECTORCLIP && vectorScale > 1){
-		clip << vectorScale << ",";
+		clip << vectorScale << L",";
 	}
 	wxString lasttype;
 	int cntb = 0;
@@ -269,23 +275,23 @@ wxString DrawingAndClip::GetVisual()
 		float x = pos.x + offsetxy.x;
 		float y = pos.y + offsetxy.y;
 		if (cntb && !pos.start){
-			clip << getfloat(x, format) << " " << getfloat(y, format) << " ";
+			clip << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
 			cntb++;
 			//if(cntb>2 && pos.type=="b"){cntb=0;}
 		}
 		else{
-			if (spline){ clip << "c "; spline = false; }
-			if (lasttype != pos.type || pos.type == "m"){ clip << pos.type << " "; lasttype = pos.type; }
-			clip << getfloat(x, format) << " " << getfloat(y, format) << " ";
-			if (pos.type == "b" || pos.type == "s"){ cntb = 1; if (pos.type == "s"){ spline = true; } }
+			if (spline){ clip << L"c "; spline = false; }
+			if (lasttype != pos.type || pos.type == L"m"){ clip << pos.type << L" "; lasttype = pos.type; }
+			clip << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
+			if (pos.type == L"b" || pos.type == L"s"){ cntb = 1; if (pos.type == L"s"){ spline = true; } }
 		}
 		//fix for m one after another
-		if (pos.type == "m" && psize>1 && ((i >= psize - 1) ||
-			(i < psize - 1 && Points[i + 1].type == "m"))){
-			clip << "l " << getfloat(x, format) << " " << getfloat(y, format) << " ";
+		if (pos.type == L"m" && psize > 1 && ((i >= psize - 1) ||
+			(i < psize - 1 && Points[i + 1].type == L"m"))){
+			clip << L"l " << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
 		}
 	}
-	if (spline){ clip << "c "; }
+	if (spline){ clip << L"c "; }
 	return clip.Trim();
 }
 
@@ -298,7 +304,10 @@ void DrawingAndClip::SetPos(int x, int y)
 // pos in screen position
 int DrawingAndClip::CheckPos(D3DXVECTOR2 pos, bool retlast, bool wsp)
 {
-	if (wsp){ pos.x = (pos.x*coeffW) - _x; pos.y = (pos.y*coeffH) - _y; }
+	if (wsp){ 
+		pos.x = (pos.x * coeffW) - _x; 
+		pos.y = (pos.y * coeffH) - _y; 
+	}
 	for (size_t i = 0; i < Points.size(); i++)
 	{
 		if (Points[i].IsInPos(pos, pointArea)){ return (retlast && i == 0) ? Points.size() : i; }
@@ -315,10 +324,12 @@ void DrawingAndClip::MovePoint(D3DXVECTOR2 pos, int point)
 // pos in screen position	
 void DrawingAndClip::AddCurve(D3DXVECTOR2 pos, int whereis, wxString type)
 {
-	pos.x = (pos.x*coeffW) - _x; pos.y = (pos.y*coeffH) - _y;
+	pos.x = (pos.x * coeffW) - _x; 
+	pos.y = (pos.y * coeffH) - _y;
 	wxPoint oldpos;
-	if (whereis != Points.size()){ whereis++; }//gdy wstawiamy beziera w środku to trzeba mu przesunąć punkt o 1,
-	//bo stworzy nam krzywą zamiast poprzedniej linii
+	//where put in bezier in the middle needs to move point for 1
+	//cause it puts curve as previous line
+	if (whereis != Points.size()){ whereis++; }
 	oldpos.x = Points[whereis - 1].x;
 	oldpos.y = Points[whereis - 1].y;
 	int diffx = (pos.x - oldpos.x) / 3.0f;
@@ -331,22 +342,22 @@ void DrawingAndClip::AddCurve(D3DXVECTOR2 pos, int whereis, wxString type)
 // pos in screen position
 void DrawingAndClip::AddCurvePoint(D3DXVECTOR2 pos, int whereis)
 {
-	if (Points[whereis - 1].type == "s" || ((int)Points.size() > whereis && Points[whereis].type == "s"))
+	if (Points[whereis - 1].type == L"s" || ((int)Points.size() > whereis && Points[whereis].type == L"s"))
 	{
-		Points.insert(Points.begin() + whereis, ClipPoint((pos.x*coeffW) - _x, (pos.y*coeffH) - _y, "s", false));
+		Points.insert(Points.begin() + whereis, ClipPoint((pos.x*coeffW) - _x, (pos.y*coeffH) - _y, L"s", false));
 	}
 	else{ wxBell(); }
 }
 // pos in screen position	
 void DrawingAndClip::AddLine(D3DXVECTOR2 pos, int whereis)
 {
-	Points.insert(Points.begin() + whereis, ClipPoint((pos.x*coeffW) - _x, (pos.y*coeffH) - _y, "l", true));
+	Points.insert(Points.begin() + whereis, ClipPoint((pos.x*coeffW) - _x, (pos.y*coeffH) - _y, L"l", true));
 	acpoint = Points[whereis];
 }
 // pos in screen position	
 void DrawingAndClip::AddMove(D3DXVECTOR2 pos, int whereis)
 {
-	Points.insert(Points.begin() + whereis, ClipPoint((pos.x*coeffW) - _x, (pos.y*coeffH) - _y, "m", true));
+	Points.insert(Points.begin() + whereis, ClipPoint((pos.x*coeffW) - _x, (pos.y*coeffH) - _y, L"m", true));
 	acpoint = Points[whereis];
 }
 
@@ -354,10 +365,10 @@ void DrawingAndClip::DrawLine(int i)
 {
 	line->Begin();
 	int diff = 1;
-	if (Points[i - 1].type == "s"){
+	if (Points[i - 1].type == L"s"){
 		int j = i - 2;
 		while (j >= 0){
-			if (Points[j].type != "s"){ break; }
+			if (Points[j].type != L"s"){ break; }
 			j--;
 		}
 		diff = (i - j) - 2;
@@ -418,11 +429,11 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 	}
 	else{
 		ClipPoint tmp = Points[i - 1];
-		if (Points[i - 1].type == "s"){
+		if (Points[i - 1].type == L"s"){
 			int diff = 2;
 			int j = i - 2;
 			while (j >= 0){
-				if (Points[j].type != "s"){ break; }
+				if (Points[j].type != L"s"){ break; }
 				j--;
 			}
 			diff = (i - j) - 2;
@@ -587,7 +598,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			{
 				int j = i;
 				int er = 1;
-				bool isM = (Points[i].type == "m");
+				bool isM = (Points[i].type == L"m");
 				if (isM){
 					Points.erase(Points.begin() + i, Points.begin() + i + 1);
 					if (i >= Points.size()){
@@ -603,7 +614,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 					}
 					if (j == 0 && !Points[j].start){ Points[j].start = true; }
 				}
-				if (Points[j].type == "s"){
+				if (Points[j].type == L"s"){
 					size_t k;
 					for (k = j + 1; k < psize; k++){
 						if (Points[k].start){ break; }
@@ -612,14 +623,14 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 					else { j = i; }
 				}
 
-				if (Points[j].type == "b" || er == 2){
+				if (Points[j].type == L"b" || er == 2){
 					er = 2;
 					if (j + 2 == i || isM){
 						er = 3;
 
 					}
 					else{
-						Points[j + 2].type = "l";
+						Points[j + 2].type = L"l";
 						Points[j + 2].start = true;
 					}
 				}
@@ -630,7 +641,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 					if (er > 1){
 						Points.erase(Points.begin() + j, Points.begin() + j + er - 1);
 					}
-					Points[i].type = "m";
+					Points[i].type = L"m";
 					Points[i].start = true;
 					if (i + 1 < Points.size()){ Points[i + 1].start = true; }
 				}
@@ -677,10 +688,10 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			case 1: AddLine(xy, pos); break;
 			case 2: AddCurve(xy, pos); break;
 			case 3:
-				if (Points[(pos == (int)psize) ? psize - 1 : pos].type == "s"){
+				if (Points[(pos == (int)psize) ? psize - 1 : pos].type == L"s"){
 					AddCurvePoint(xy, pos); break;//bspline point
 				}
-				AddCurve(xy, pos, "s"); break;//bspline
+				AddCurve(xy, pos, L"s"); break;//bspline
 			default:
 				KaiLog(wxString::Format(L"Bad tool %i", tool));
 			}
@@ -780,17 +791,18 @@ D3DXVECTOR2 DrawingAndClip::CalcWH()
 {
 	if (alignment == 7 || Points.size() < 1){ return D3DXVECTOR2(0, 0); }
 	float offx = 0, offy = 0;
-	if (textwithclip != ""){
+	if (textwithclip != L""){
 		Styles *textstyle = tab->Grid->GetStyle(0, tab->Edit->line->Style);
-		wxFont stylefont(wxAtoi(textstyle->Fontsize), wxFONTFAMILY_SWISS, (textstyle->Italic) ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
-			(textstyle->Bold) ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, textstyle->Underline, textstyle->Fontname);//, textstyle->Encoding
+		wxFont stylefont(wxAtoi(textstyle->Fontsize), wxFONTFAMILY_SWISS, 
+			(textstyle->Italic) ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
+			(textstyle->Bold) ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, 
+			textstyle->Underline, textstyle->Fontname);//, textstyle->Encoding
 		int ex = 0, ey = 0, eb = 0, et = 0;
 		wxClientDC dc(tab);
 		dc.GetTextExtent(textwithclip, &ex, &ey, &eb, &et, &stylefont);
 		offx = ex / coeffW;
 		offy = eb / coeffH;
 	}
-	//no i tutaj jeszcze zostało dopisać obliczanie rozmiaru
 	float minx = FLT_MAX;
 	float miny = FLT_MAX;
 	float maxx = -FLT_MAX;

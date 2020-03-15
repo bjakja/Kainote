@@ -24,8 +24,8 @@ VideoSlider::VideoSlider(wxWindow *parent, const long int id, const wxPoint& pos
 	holding = block = false;
 	position = 0;
 	//bmp=0;
-	prb = CreateBitmapFromPngResource("pbar");
-	prbh = CreateBitmapFromPngResource("pbarhandle");
+	prb = CreateBitmapFromPngResource(L"pbar");
+	prbh = CreateBitmapFromPngResource(L"pbarhandle");
 	showlabel = false;
 	onslider = false;
 }
@@ -45,13 +45,13 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 	if (w == 0 || h == 0){ return; }
 	wxMemoryDC tdc;
 	tdc.SelectObject(wxBitmap(w, h));
-	tdc.SetFont(wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Tahoma"));
+	tdc.SetFont(wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma"));
 	wxColour background = GetParent()->GetBackgroundColour();
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0, 0, w, h);
 	if (VB->GetState() != None){
-		tdc.SetPen(wxPen("#2EA6E2"));
+		tdc.SetPen(wxPen(L"#2EA6E2"));
 		int duration = VB->GetDuration();
 		float factor = (float)(w - 30) / (float)duration;
 		const std::vector<chapter> &chapters = VB->chapters;
@@ -65,9 +65,9 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 				STime kkk;
 				kkk.mstime = chapterTime;
 				wxString time = kkk.raw(SRT);
-				time.Prepend(ch.name + " ");
+				time.Prepend(ch.name + L" ");
 				label = time;
-				tdc.SetPen(wxPen("#2583C8"));
+				tdc.SetPen(wxPen(L"#2583C8"));
 			}
 			tdc.DrawLine(chpos, 0, chpos, 5);
 		}
@@ -84,10 +84,10 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 	wxBitmap end = prb.GetSubBitmap(wxRect(86 - diff, 0, diff, 5));
 	tdc.DrawBitmap(end, w - diff - 10, 5);
 	if (position > 5){
-		tdc.SetPen(wxPen("#2583C8"));
+		tdc.SetPen(wxPen(L"#2583C8"));
 		tdc.DrawLine(11, 6, position + 8, 6);
 		tdc.DrawLine(11, 8, position + 8, 8);
-		tdc.SetPen(wxPen("#2EA6E2"));
+		tdc.SetPen(wxPen(L"#2EA6E2"));
 		tdc.DrawLine(11, 7, position + 8, 7);
 	}
 	tdc.DrawBitmap(prbh, position + 5, 1);
@@ -97,12 +97,12 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 		fh = labelpos;
 		if (fh < w / 2){ fh += 15; }
 		else{ fh -= (fw + 15); }
-		tdc.SetTextForeground(wxColour("#0C2B87"));
+		tdc.SetTextForeground(wxColour(L"#0C2B87"));
 		tdc.DrawText(label, fh + 1, -1);
 		tdc.DrawText(label, fh - 1, -1);
 		tdc.DrawText(label, fh + 1, -3);
 		tdc.DrawText(label, fh - 1, -3);
-		tdc.SetTextForeground(wxColour("#FFFFFF"));
+		tdc.SetTextForeground(wxColour(L"#FFFFFF"));
 		tdc.DrawText(label, fh, -2);
 	}
 	wxPaintDC dc(this);
@@ -156,7 +156,7 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 			ReleaseMouse();
 			//return;
 		}
-		//najazd na uchwyt suwaka
+		//hover on thumb
 		if (!onslider && isOnSlider){
 			wxImage img = prbh.ConvertToImage();
 			int size = prbh.GetWidth()*prbh.GetHeight() * 3;
@@ -168,20 +168,20 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 			prbh = wxBitmap(img);
 			onslider = true;
 			//Refresh(false);
-		}//zjazd z uchwytu suwaka
+		}//move mouse of the thumb
 		else if (onslider && (!isOnSlider || event.Leaving())){
-			prbh = CreateBitmapFromPngResource("pbarhandle");
+			prbh = CreateBitmapFromPngResource(L"pbarhandle");
 			onslider = false;
 			//Refresh(false);
 		}
-		//przesuwanie suwaka chwytaj¹c go mysz¹
+		//move thumb dragging by mouse
 		if (holding && isOnSlider || (holding && block)){
 			block = true;
 			position = MID(0, curX - 15 + positionDiff, w - 30);
 			if (!VB->IsDshow){ SendTime(msTimePosition); }
 			//Refresh(false);
 		}
-		//przesuwanie suwaka klikniêciem
+		//move thumb by clicking on slider
 		else if (click && isInSliderRange){
 			if (!isOnSlider){
 				block = true;
@@ -203,13 +203,13 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 				positionDiff = position - (curX - 15);
 			}
 		}
-		//ukrywanie etykiety czasu
+		//hiding time label
 		if ((!isInSliderRange || event.Leaving()) && !holding){
 			showlabel = false;
 			Refresh(false);
 			return;
 		}
-		//umiejscawianie etykiety czasu
+		//showing time label
 		else if (isInSliderRange){
 			showlabel = true;
 			labelpos = curX;
@@ -257,7 +257,7 @@ void VideoSlider::OnMouseLeave(wxMouseCaptureLostEvent& event)
 	showlabel = false;
 	if (onslider)
 	{
-		prbh = CreateBitmapFromPngResource("pbarhandle");
+		prbh = CreateBitmapFromPngResource(L"pbarhandle");
 		onslider = false;
 	}
 	Refresh(false);
@@ -285,10 +285,10 @@ VolSlider::VolSlider(wxWindow *parent, const long int id, int apos, const wxPoin
 {
 	holding = block = false;
 	position = apos + 86;
-	wxBitmap prb = CreateBitmapFromPngResource("pbar");
+	wxBitmap prb = CreateBitmapFromPngResource(L"pbar");
 	start = wxBitmap(prb.GetSubBitmap(wxRect(0, 0, 80, 5)));
 	end = wxBitmap(prb.GetSubBitmap(wxRect(76, 0, 10, 5)));
-	prbh = CreateBitmapFromPngResource("pbarhandle");
+	prbh = CreateBitmapFromPngResource(L"pbarhandle");
 	onslider = false;
 	bmp = NULL;
 }
@@ -321,10 +321,10 @@ void VolSlider::OnPaint(wxPaintEvent& event)
 	tdc.DrawBitmap(start, 10, 10);
 	tdc.DrawBitmap(end, w - 20, 10);
 	if (position > 5){
-		tdc.SetPen(wxPen("#2583C8"));
+		tdc.SetPen(wxPen(L"#2583C8"));
 		tdc.DrawLine(11, 11, position + 5, 11);
 		tdc.DrawLine(11, 13, position + 5, 13);
-		tdc.SetPen(wxPen("#2EA6E2"));
+		tdc.SetPen(wxPen(L"#2EA6E2"));
 		tdc.DrawLine(11, 12, position + 5, 12);
 	}
 	tdc.DrawBitmap(prbh, position, 6);
@@ -386,8 +386,8 @@ void VolSlider::OnMouseEvent(wxMouseEvent& event)
 		}
 		ReleaseMouse();
 	}
-	//najazd na uchwyt suwaka
-	if (!onslider && curX > position&&curX < position + 20 && curY>5 && curY < 19){
+	//hover on slider thumb
+	if (!onslider && curX > position && curX < position + 20 && curY>5 && curY < 19){
 		wxImage img = prbh.ConvertToImage();
 		int size = prbh.GetWidth()*prbh.GetHeight() * 3;
 		byte *data = img.GetData();
@@ -398,27 +398,31 @@ void VolSlider::OnMouseEvent(wxMouseEvent& event)
 		prbh = wxBitmap(img);
 		onslider = true;
 		Refresh(false);
-	}//zjazd z uchwytu suwaka
-	else if (onslider && ((curX<position - 1 || curX>position + 19 || curY < 6 || curY>18) || event.Leaving())){
-		prbh = CreateBitmapFromPngResource("pbarhandle");
+	}//move mouse of the thumb
+	else if (onslider && ((curX < position - 1 || curX > position + 19 || curY < 6 || curY > 18) || event.Leaving())){
+		prbh = CreateBitmapFromPngResource(L"pbarhandle");
 		onslider = false;
 		Refresh(false);
 	}
-
-	//przesuwanie suwaka chwytaj¹c go mysz¹
-	if (holding&&curX > position&&curX < position + 20 || (holding&&block)){
-		block = true; position = MID(0, curX - 10, w - 24); Refresh(false);
+	//move mouse dragging of the thumb
+	if (holding && curX > position && curX < position + 20 || (holding && block)){
+		block = true; 
+		position = MID(0, curX - 10, w - 24); 
+		Refresh(false);
 		wxScrollEvent evt(wxEVT_COMMAND_SLIDER_UPDATED, GetId());
 		evt.SetPosition(position - 86);
 		AddPendingEvent(evt);
 	}
-	//przesuwanie suwaka klikniêciem
-	else if (click&&curX > 4 && curX<w - 6 && curY>h - 22 && curY < h - 2 && (curX<position || curX>position + 20)){
-		block = true; position = MID(0, curX - 10, w - 24);
+	//move thumb by click on slider
+	else if (click && curX > 4 && curX < w - 6 && curY > h - 22 && curY < h - 2 && (curX < position || curX > position + 20)){
+		block = true; 
+		position = MID(0, curX - 10, w - 24);
 		wxScrollEvent evt(wxEVT_COMMAND_SLIDER_UPDATED, GetId());
 		evt.SetPosition(position - 86);
 		AddPendingEvent(evt);
-		Refresh(false); block = false; return;
+		Refresh(false); 
+		block = false; 
+		return;
 	}
 
 	if (left_up && !holding) {

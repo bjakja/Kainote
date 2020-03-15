@@ -39,8 +39,8 @@ public:
 	void RenderFromWorker();
 	void Play();
 	void GetFrame(int frame, byte* buff);
-	void GetBuffer(void *buf, int64_t start, int64_t count, double vol=1.0);
-	void GetWaveForm(int *min,int *peak,int64_t start,int w,int h,int samples,float scale);
+	void GetBuffer(void *buf, int64_t start, int64_t count, double vol = 1.0);
+	void GetWaveForm(int *min, int *peak, int64_t start, int w, int h, int samples, float scale);
 	
 	int GetSampleRate();
 	int GetBytesPerSample();
@@ -89,12 +89,12 @@ public:
 	int NumFrames;
 	int CR;
 	int CS;
-	int SampleRate=-1;
+	int SampleRate = -1;
 	int BytesPerSample;
 	int Channels;
 	int lasttime;
 	int lastframe;
-	int fplane=0;
+	int fplane = 0;
 	double Duration;
 	double Delay;
 	float fps;
@@ -113,7 +113,7 @@ public:
 	wxString indexPath;
 	VideoRenderer *rend;
 	//wxFile file_cache;
-	FILE *fp=NULL;
+	FILE *fp = NULL;
 	wxArrayInt KeyFrames;
 	std::vector<int> Timecodes;
 	std::vector<chapter> chapters;

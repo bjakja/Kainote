@@ -31,8 +31,8 @@ void RotationXY::DrawVisual(int time)
 	if (time != oldtime && moveValues[6] > 3){
 		BOOL noOrg = (org == from);
 		from = CalcMovePos();
-		from.x = ((from.x / coeffW) - zoomMove.x)*zoomScale.x;
-		from.y = ((from.y / coeffH) - zoomMove.y)*zoomScale.y;
+		from.x = ((from.x / coeffW) - zoomMove.x) * zoomScale.x;
+		from.y = ((from.y / coeffH) - zoomMove.y) * zoomScale.y;
 		to = from;
 		if (noOrg)
 			org = from;
@@ -73,7 +73,7 @@ void RotationXY::DrawVisual(int time)
 		10000.0f);    // the far view-plane
 
 	D3DXMatrixTranslation(&matTramsate, xxx, -yyy, 0.0f);
-	device->SetTransform(D3DTS_PROJECTION, &(matProjection*matTramsate));    // set the projection
+	device->SetTransform(D3DTS_PROJECTION, &(matProjection * matTramsate));    // set the projection
 
 	device->SetTransform(D3DTS_WORLD, &matRotate);
 
@@ -111,24 +111,24 @@ void RotationXY::DrawVisual(int time)
 	device->DrawPrimitiveUP(D3DPT_LINELIST, 44, vertices, sizeof(VERTEX));
 	float addy = (AN < 4) ? 9.f : -9.f, addx = (AN % 3 == 0) ? -9.f : 9.f;
 	float add1y = (AN < 4) ? 10.f : -10.f, add1x = (AN % 3 == 0) ? -10.f : 10.f;
-	CreateVERTEX(&vertices[176], 0.f, addy, 0xFFBB0000);//linia y
+	CreateVERTEX(&vertices[176], 0.f, addy, 0xFFBB0000);//line y
 	CreateVERTEX(&vertices[177], 0.f, 0.f, 0xFFBB0000);
-	CreateVERTEX(&vertices[178], addx, 0.f, 0xFFBB0000); //linia x
-	CreateVERTEX(&vertices[179], 0.f, 0.f, 0xFFBB0000); //linia z
+	CreateVERTEX(&vertices[178], addx, 0.f, 0xFFBB0000); //line x
+	CreateVERTEX(&vertices[179], 0.f, 0.f, 0xFFBB0000); //line z
 	CreateVERTEX(&vertices[180], 0.f, 0.f, 0xFFBB0000, 9.f);
-	CreateVERTEX(&vertices[181], 0.f, add1y, 0xFFBB0000); //strzałka y
+	CreateVERTEX(&vertices[181], 0.f, add1y, 0xFFBB0000); //arrow y
 	CreateVERTEX(&vertices[182], 0.f, addy, 0xFFBB0000, -0.6f);
 	CreateVERTEX(&vertices[183], -0.6f, addy, 0xFFBB0000);
 	CreateVERTEX(&vertices[184], 0.f, addy, 0xFFBB0000, 0.6f);
 	CreateVERTEX(&vertices[185], 0.6f, addy, 0xFFBB0000);
 	CreateVERTEX(&vertices[186], 0.f, addy, 0xFFBB0000, -0.6f);
-	CreateVERTEX(&vertices[187], add1x, 0.f, 0xFFBB0000);//strzałka x
+	CreateVERTEX(&vertices[187], add1x, 0.f, 0xFFBB0000);//arrow x
 	CreateVERTEX(&vertices[188], addx, 0.f, 0xFFBB0000, -0.6f);
 	CreateVERTEX(&vertices[189], addx, -0.6f, 0xFFBB0000);
 	CreateVERTEX(&vertices[190], addx, 0.f, 0xFFBB0000, 0.6f);
 	CreateVERTEX(&vertices[191], addx, 0.6f, 0xFFBB0000, 0.f);
 	CreateVERTEX(&vertices[192], addx, 0.f, 0xFFBB0000, -0.6f);
-	CreateVERTEX(&vertices[193], 0.f, 0.f, 0xFFBB0000, 10.f); //strzałka z
+	CreateVERTEX(&vertices[193], 0.f, 0.f, 0xFFBB0000, 10.f); //arrow z
 	CreateVERTEX(&vertices[194], -0.6f, 0.f, 0xFFBB0000, 9.f);
 	CreateVERTEX(&vertices[195], 0.f, 0.6f, 0xFFBB0000, 9.f);
 	CreateVERTEX(&vertices[196], 0.6f, 0.f, 0xFFBB0000, 9.f);
@@ -169,21 +169,22 @@ wxString RotationXY::GetVisual()
 {
 	if (isOrg){
 		//return "\\org("+getfloat(org.x*wspw)+","+getfloat(org.y*wsph)+")";
-		return "\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x)*coeffW) + "," +
-			getfloat(((org.y / zoomScale.y) + zoomMove.y)*coeffH) + ")";
+		return "\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x) * coeffW) + "," +
+			getfloat(((org.y / zoomScale.y) + zoomMove.y) * coeffH) + ")";
 	}
 
 	wxString result;
 	if (type != 1){
 		angle.x = (to.x - firstmove.x) + oldAngle.x;
 		angle.x = fmodf(angle.x + 360.f, 360.f);
-		result += "\\fry" + getfloat(angle.x);
+		result += L"\\fry" + getfloat(angle.x);
 
 	}
 	if (type != 0){
-		float angy = (to.y - firstmove.y) - oldAngle.y;// zmieniony plus na minus by nie trzeba było 
-		angle.y = fmodf((-angy) + 360.f, 360.f);//przetrzymywać oldAngle i angle w minusach.
-		result += "\\frx" + getfloat(angle.y);
+		//swap plus to minus to not keep oldAngle and angle in minuses
+		float angy = (to.y - firstmove.y) - oldAngle.y;
+		angle.y = fmodf((-angy) + 360.f, 360.f);
+		result += L"\\frx" + getfloat(angle.y);
 
 	}
 	return result;
@@ -230,7 +231,7 @@ void RotationXY::OnMouseEvent(wxMouseEvent &evt)
 		if (isOrg){
 			org.x = x + diffs.x;
 			org.y = y + diffs.y;
-			SetVisual(true, 100);//type także ma liczbę 100 by było rozpoznawalne.
+			SetVisual(true, 100);//type also have number 100 for org.
 			return;
 		}
 		to.x = x; to.y = y;
@@ -243,24 +244,24 @@ void RotationXY::SetCurVisual()
 {
 	D3DXVECTOR2 linepos = GetPosnScale(NULL, &AN, moveValues);
 	if (moveValues[6] > 3){ linepos = CalcMovePos(); }
-	from = to = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x)*zoomScale.x,
-		((linepos.y / coeffH) - zoomMove.y)*zoomScale.y);
+	from = to = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x) * zoomScale.x,
+		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);
 
 	wxString res;
 	oldAngle = D3DXVECTOR2(0, 0);
-	if (tab->Edit->FindValue("frx([0-9.-]+)", &res)){
+	if (tab->Edit->FindValue(L"frx([0-9.-]+)", &res)){
 		double result = 0; res.ToDouble(&result);
 		oldAngle.y = result;
 	}
-	if (tab->Edit->FindValue("fry([0-9.-]+)", &res)){
+	if (tab->Edit->FindValue(L"fry([0-9.-]+)", &res)){
 		double result = 0; res.ToDouble(&result);
 		oldAngle.x = result;
 	}
-	if (tab->Edit->FindValue("org\\(([^\\)]+)", &res)){
+	if (tab->Edit->FindValue(L"org\\(([^\\)]+)", &res)){
 		wxString rest;
 		double orx, ory;
-		if (res.BeforeFirst(',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; }
-		if (rest.ToDouble(&ory)){ org.y = ((ory / coeffH) - zoomMove.y)*zoomScale.y; }
+		if (res.BeforeFirst(L',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x) * zoomScale.x; }
+		if (rest.ToDouble(&ory)){ org.y = ((ory / coeffH) - zoomMove.y) * zoomScale.y; }
 	}
 	else{ org = from; }
 	firstmove = to;
@@ -282,15 +283,16 @@ void RotationXY::ChangeVisual(wxString *txt, Dialogue *dial)
 	if (type != 1){
 		angle.x = (to.x - firstmove.x) + oldAngle.x;
 		angle.x = fmodf(angle.x + 360.f, 360.f);
-		tag = "\\fry" + getfloat(angle.x);
-		tab->Edit->FindValue("fry([0-9.-]+)", &val, *txt, 0, 1);
+		tag = L"\\fry" + getfloat(angle.x);
+		tab->Edit->FindValue(L"fry([0-9.-]+)", &val, *txt, 0, 1);
 		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 	}
 	if (type != 0){
-		float angy = (to.y - firstmove.y) - oldAngle.y;// zmieniony plus na minus by nie trzeba było 
-		angle.y = fmodf((-angy) + 360.f, 360.f);//przetrzymywać oldAngle i angle w minusach.
-		tag = "\\frx" + getfloat(angle.y);
-		tab->Edit->FindValue("frx([0-9.-]+)", &val, *txt, 0, 1);
+		//swap plus to minus to not keep oldAngle and angle in minuses
+		float angy = (to.y - firstmove.y) - oldAngle.y;
+		angle.y = fmodf((-angy) + 360.f, 360.f);
+		tag = L"\\frx" + getfloat(angle.y);
+		tab->Edit->FindValue(L"frx([0-9.-]+)", &val, *txt, 0, 1);
 		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 	}
 

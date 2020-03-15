@@ -79,7 +79,7 @@ public:
 };
 
 bars1::bars1(VideoCtrl *parent)
-	: KaiDialog((parent->isFullscreen) ? (wxWindow*)parent->TD : parent, -1, "", wxDefaultPosition, wxDefaultSize)
+	: KaiDialog((parent->isFullscreen) ? (wxWindow*)parent->TD : parent, -1, L"", wxDefaultPosition, wxDefaultSize)
 {
 	_parent = parent;
 	DialogSizer *sizer = new DialogSizer(wxVERTICAL);
@@ -115,7 +115,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	, shownKeyframe(false)
 {
 	int fw;
-	GetTextExtent("#TWFfGH", &fw, &toolBarHeight);
+	GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
 	toolBarHeight += 8;
 	panelHeight = 44 + toolBarHeight;
 
@@ -124,14 +124,19 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 
 	vslider = new VideoSlider(panel, ID_SLIDER, wxPoint(0, 1), wxSize(size.x, 14));
 	vslider->VB = this;
-	bprev = new BitmapButton(panel, CreateBitmapFromPngResource("backward"), CreateBitmapFromPngResource("backward1"), PreviousVideo, _("Poprzedni plik"), wxPoint(5, 16), wxSize(26, 26));
-	bpause = new BitmapButton(panel, CreateBitmapFromPngResource("play"), CreateBitmapFromPngResource("play1"), PlayPause, _("Odtwórz / Pauza"), wxPoint(40, 16), wxSize(26, 26));
-	bpline = new BitmapButton(panel, CreateBitmapFromPngResource("playline"), CreateBitmapFromPngResource("playline1"), PlayActualLine, _("Odtwórz aktywną linię"), wxPoint(75, 16), wxSize(26, 26), GLOBAL_HOTKEY);
-	bstop = new BitmapButton(panel, CreateBitmapFromPngResource("stop"), CreateBitmapFromPngResource("stop1"), StopPlayback, _("Zatrzymaj"), wxPoint(110, 16), wxSize(26, 26));
-	bnext = new BitmapButton(panel, CreateBitmapFromPngResource("forward"), CreateBitmapFromPngResource("forward1"), NextVideo, _("Następny plik"), wxPoint(145, 16), wxSize(26, 26));
+	bprev = new BitmapButton(panel, CreateBitmapFromPngResource(L"backward"), CreateBitmapFromPngResource(L"backward1"), 
+		PreviousVideo, _("Poprzedni plik"), wxPoint(5, 16), wxSize(26, 26));
+	bpause = new BitmapButton(panel, CreateBitmapFromPngResource(L"play"), CreateBitmapFromPngResource(L"play1"), 
+		PlayPause, _("Odtwórz / Pauza"), wxPoint(40, 16), wxSize(26, 26));
+	bpline = new BitmapButton(panel, CreateBitmapFromPngResource(L"playline"), CreateBitmapFromPngResource(L"playline1"), 
+		PlayActualLine, _("Odtwórz aktywną linię"), wxPoint(75, 16), wxSize(26, 26), GLOBAL_HOTKEY);
+	bstop = new BitmapButton(panel, CreateBitmapFromPngResource(L"stop"), CreateBitmapFromPngResource(L"stop1"), 
+		StopPlayback, _("Zatrzymaj"), wxPoint(110, 16), wxSize(26, 26));
+	bnext = new BitmapButton(panel, CreateBitmapFromPngResource(L"forward"), CreateBitmapFromPngResource(L"forward1"), 
+		NextVideo, _("Następny plik"), wxPoint(145, 16), wxSize(26, 26));
 
 	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VideoVolume), wxPoint(size.x - 110, 17), wxSize(110, 25));
-	mstimes = new KaiTextCtrl(panel, -1, "", wxPoint(180, 16), wxSize(360, 26), wxTE_READONLY);
+	mstimes = new KaiTextCtrl(panel, -1, L"", wxPoint(180, 16), wxSize(360, 26), wxTE_READONLY);
 	mstimes->SetWindowStyle(wxBORDER_NONE);
 	mstimes->SetCursor(wxCURSOR_ARROW);
 	mstimes->SetBackgroundColour(WindowBackground);
@@ -372,7 +377,7 @@ void VideoCtrl::OnSize(wxSizeEvent& event)
 	if (lastSize == asize){ return; }
 	lastSize = asize;
 	int fw;
-	GetTextExtent("#TWFfGH", &fw, &toolBarHeight);
+	GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
 	toolBarHeight += 8;
 	panelHeight = 44 + toolBarHeight;
 	panel->SetSize(0, asize.y - panelHeight, asize.x, panelHeight);
@@ -622,8 +627,18 @@ void VideoCtrl::NextFile(bool next)
 	{
 		if (files[j] == path){ actualFile = j; break; }
 	}
-	if (next && actualFile >= (int)files.GetCount() - 1){ Seek(0); Pause(false); actualFile = files.GetCount() - 1; return; }
-	else if (!next && actualFile <= 0){ Seek(0); Pause(false); actualFile = 0; return; }
+	if (next && actualFile >= (int)files.GetCount() - 1){ 
+		Seek(0); 
+		Pause(false); 
+		actualFile = files.GetCount() - 1; 
+		return; 
+	}
+	else if (!next && actualFile <= 0){ 
+		Seek(0); 
+		Pause(false); 
+		actualFile = 0; 
+		return; 
+	}
 
 	int k = (next) ? actualFile + 1 : actualFile - 1;
 	while ((next) ? k < (int)files.GetCount() : k >= 0)
@@ -655,7 +670,7 @@ void VideoCtrl::SetFullscreen(int monitor)
 	//wxMutexLocker lock(vbmutex);
 	isFullscreen = !isFullscreen;
 
-	//wyjście z fullskreena
+	//turn off full screen
 	if (!isFullscreen){
 
 		if (GetState() == Playing){ if (Kai->GetTab()->editor){ Pause(); } else{ vtime.Start(100); } }
@@ -692,9 +707,10 @@ void VideoCtrl::SetFullscreen(int monitor)
 		vToolbar->Synchronize(TD->vToolbar);
 		RefreshTime();
 		TD->Hide();
-		SetCursor(wxCURSOR_ARROW); hasArrow = true;
+		SetCursor(wxCURSOR_ARROW); 
+		hasArrow = true;
 	}
-	//przejście na fullskreena
+	//turn on fullscreen
 	else{
 		if (wxWindow::HasCapture()){ wxWindow::ReleaseMouse(); }
 		wxRect rt = GetMonitorRect(monitor);
@@ -762,7 +778,7 @@ void VideoCtrl::OnPrew()
 {
 	MenuItem *index = Kai->Menubar->FindItem(VideoIndexing);
 	if (index->IsChecked() && index->IsEnabled() && !isFullscreen){
-		if (KaiMessageBox(_("Czy na pewno chcesz zindeksować poprzednie wideo?"), _("Potwierdzenie"), wxYES_NO) == wxNO)return;
+		if (KaiMessageBox(_("Czy na pewno chcesz zindeksować poprzednie wideo?"), _("Potwierdzenie"), wxYES_NO) == wxNO) return;
 	}
 	NextFile(false);
 }
@@ -772,7 +788,7 @@ void VideoCtrl::OnNext()
 {
 	MenuItem *index = Kai->Menubar->FindItem(VideoIndexing);
 	if (index->IsChecked() && index->IsEnabled() && !isFullscreen){
-		if (KaiMessageBox(_("Czy na pewno chcesz zindeksować następne wideo?"), _("Potwierdzenie"), wxYES_NO) == wxNO)return;
+		if (KaiMessageBox(_("Czy na pewno chcesz zindeksować następne wideo?"), _("Potwierdzenie"), wxYES_NO) == wxNO) return;
 	}
 	NextFile();
 }
@@ -960,7 +976,7 @@ void VideoCtrl::OnOpVideo()
 	wxFileDialog* FileDialog2 = new wxFileDialog(this, _("Wybierz plik wideo"),
 		(Kai->videorec.size() > 0) ? Kai->videorec[Kai->videorec.size() - 1].BeforeLast(L'\\') : L"",
 		L"", _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"),
-		wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, L"wxFileDialog");
+		wxFD_DEFAULT_STYLE);
 	if (FileDialog2->ShowModal() == wxID_OK){
 		Kai->OpenFile(FileDialog2->GetPath());
 	}
@@ -973,7 +989,7 @@ void VideoCtrl::OnOpSubs()
 	wxFileDialog* FileDialog2 = new wxFileDialog(Kai, _("Wybierz plik napisów"),
 		(Kai->subsrec.size() > 0) ? Kai->subsrec[Kai->subsrec.size() - 1].BeforeLast(L'\\') : L"", L"",
 		_("Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"),
-		wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, L"wxFileDialog");
+		wxFD_DEFAULT_STYLE);
 
 	if (FileDialog2->ShowModal() == wxID_OK){
 		Kai->OpenFile(FileDialog2->GetPath());
@@ -1140,13 +1156,13 @@ void VideoCtrl::OnPaint(wxPaintEvent& event)
 		int x, y;
 		GetClientSize(&x, &y);
 		wxPaintDC dc(this);
-		dc.SetBrush(wxBrush("#000000"));
-		dc.SetPen(wxPen("#000000"));
+		dc.SetBrush(wxBrush(L"#000000"));
+		dc.SetPen(wxPen(L"#000000"));
 		dc.DrawRectangle(0, 0, x, y);
 		wxFont font1(72, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma");
 		dc.SetFont(font1);
 		wxSize size = dc.GetTextExtent(L"KaiNote");
-		dc.SetTextForeground("#2EA6E2");
+		dc.SetTextForeground(L"#2EA6E2");
 		dc.DrawText(L"KaiNote", (x - size.x) / 2, (y - size.y - panelHeight) / 2);
 	}
 

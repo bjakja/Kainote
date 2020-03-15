@@ -29,33 +29,33 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 {
 	if (icons.size() == 0){
 		//Remember! Adding here elements you must change all in h file!!
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("cross"), _("Wskaźnik pozycji")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("position"), _("Przesuwanie tekstu")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("move"), _("Ruch")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("scale"), _("Skalowanie")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("frz"), _("Obrót wokół osi Z")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("frxy"), _("Obrót wokół osi X / Y")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("cliprect"), _("Wycinki prostokątne")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("clip"), _("Wycinki wektorowe")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("drawing"), _("Rysunki wektorowe")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEAll"), _("Zmieniacz pozycji")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("SCALE_ROTATION"), _("Zmieniacz skali i obrotów")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"cross"), _("Wskaźnik pozycji")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"position"), _("Przesuwanie tekstu")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"move"), _("Ruch")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"scale"), _("Skalowanie")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"frz"), _("Obrót wokół osi Z")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"frxy"), _("Obrót wokół osi X / Y")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"cliprect"), _("Wycinki prostokątne")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"clip"), _("Wycinki wektorowe")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"drawing"), _("Rysunki wektorowe")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEAll"), _("Zmieniacz pozycji")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Zmieniacz skali i obrotów")));
 		//11
 		//Here clip icons
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorDrag"), _("Przesuń punkty")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorLine"), _("Dodaj linię")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorBezier"), _("Dodaj krzywą Beziera")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("VECTORBSPLINE"), _("Dodaj krzywą B-sklejaną")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorMove"), _("Dodaj nowy oddzielny punkt")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("VectorDelete"), _("Usuń element")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"VectorDrag"), _("Przesuń punkty")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"VectorLine"), _("Dodaj linię")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"VectorBezier"), _("Dodaj krzywą Beziera")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"VECTORBSPLINE"), _("Dodaj krzywą B-sklejaną")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"VectorMove"), _("Dodaj nowy oddzielny punkt")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"VectorDelete"), _("Usuń element")));
 		//6
 		//icons move all
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEPOS"), _("Przenieś punkty pozycjonowania")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEMOVESTART"), _("Przenieś startowe punkty ruchu")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVE"), _("Przenieś końcowe punkty ruchu")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVECLIPS"), _("Przenieś wycinki")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEDRAWINGS"), _("Przenieś rysunki,\nużywać tylko w przypadku,\ngdy chcemy przesunąć punkty rysunku,\nnie łączyć z trzema pierwszymi opcjami")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG("MOVEORGS"), _("Przenieś punkty org")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEPOS"), _("Przenieś punkty pozycjonowania")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEMOVESTART"), _("Przenieś startowe punkty ruchu")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVE"), _("Przenieś końcowe punkty ruchu")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVECLIPS"), _("Przenieś wycinki")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEDRAWINGS"), _("Przenieś rysunki,\nużywać tylko w przypadku,\ngdy chcemy przesunąć punkty rysunku,\nnie łączyć z trzema pierwszymi opcjami")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEORGS"), _("Przenieś punkty org")));
 		//6
 	}
 	//adding visual second toolbar elements

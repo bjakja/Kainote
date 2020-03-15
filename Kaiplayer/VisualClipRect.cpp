@@ -58,11 +58,11 @@ void ClipRect::DrawVisual(int time)
 
 	D3DXVECTOR2 v2[5];
 	wxSize s = VideoSize.GetSize();
-	v2[0].x = ((x1 / coeffW) - zoomMove.x)*zoomScale.x;
-	v2[0].y = ((y1 / coeffH) - zoomMove.y)*zoomScale.y;
+	v2[0].x = ((x1 / coeffW) - zoomMove.x) * zoomScale.x;
+	v2[0].y = ((y1 / coeffH) - zoomMove.y) * zoomScale.y;
 	v2[1].x = v2[0].x;
-	v2[1].y = (((y2 / coeffH) - zoomMove.y)*zoomScale.y) - 1;
-	v2[2].x = (((x2 / coeffW) - zoomMove.x)*zoomScale.x) - 1;
+	v2[1].y = (((y2 / coeffH) - zoomMove.y) * zoomScale.y) - 1;
+	v2[2].x = (((x2 / coeffW) - zoomMove.x) * zoomScale.x) - 1;
 	v2[2].y = v2[1].y;
 	v2[3].x = v2[2].x;
 	v2[3].y = v2[0].y;
@@ -92,9 +92,9 @@ void ClipRect::DrawVisual(int time)
 		CreateVERTEX(&v24[10], v2[2].x, v2[0].y, 0x88000000);
 		CreateVERTEX(&v24[11], s.x, 0, 0x88000000);
 
-		HRN(device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), "fvf failed");
-		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, v24, sizeof(VERTEX)), "primitive failed");
-		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(VERTEX)), "primitive failed");
+		HRN(device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"fvf failed");
+		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, v24, sizeof(VERTEX)), L"primitive failed");
+		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(VERTEX)), L"primitive failed");
 	}
 	else{
 		VERTEX v24[4];
@@ -102,7 +102,7 @@ void ClipRect::DrawVisual(int time)
 		CreateVERTEX(&v24[1], v2[2].x, v2[0].y, 0x88000000);
 		CreateVERTEX(&v24[2], v2[0].x, v2[2].y, 0x88000000);
 		CreateVERTEX(&v24[3], v2[2].x, v2[2].y, 0x88000000);
-		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v24, sizeof(VERTEX)), "primitive failed");
+		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v24, sizeof(VERTEX)), L"primitive failed");
 	}
 	line->SetWidth(1);
 	line->Begin();
@@ -129,7 +129,7 @@ wxString ClipRect::GetVisual()
 		y1 = Corner[1].y;
 		y2 = Corner[0].y;
 	}
-	return wxString::Format("\\%sclip(%i,%i,%i,%i)", (invClip) ? "i" : "", x1, y1, x2, y2);
+	return wxString::Format(L"\\%sclip(%i,%i,%i,%i)", (invClip) ? L"i" : L"", x1, y1, x2, y2);
 }
 
 void ClipRect::OnMouseEvent(wxMouseEvent &evt)
@@ -242,10 +242,10 @@ void ClipRect::SetCurVisual()
 {
 	int x1 = 0, x2 = SubsSize.x, y1 = 0, y2 = SubsSize.y;
 	wxString clip;
-	bool found = tab->Edit->FindValue("(i?clip[^\\)]+)", &clip);
-	if (found && clip.Freq(',') == 3){
+	bool found = tab->Edit->FindValue(L"(i?clip[^\\)]+)", &clip);
+	if (found && clip.Freq(L',') == 3){
 		int match = 1;
-		wxRegEx re("\\(([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)", wxRE_ADVANCED);
+		wxRegEx re(L"\\(([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)", wxRE_ADVANCED);
 
 		if (re.Matches(clip)){
 			x1 = wxAtoi(re.GetMatch(clip, match));
@@ -327,8 +327,8 @@ void ClipRect::ChangeVisual(wxString *txt, Dialogue *dial)
 		y2 = Corner[0].y;
 	}
 	wxString val;
-	wxString tag = wxString::Format("\\%sclip(%i,%i,%i,%i)", (invClip) ? "i" : "", x1, y1, x2, y2);
-	tab->Edit->FindValue("i?clip(.+)", &val, *txt, 0, 1);
+	wxString tag = wxString::Format(L"\\%sclip(%i,%i,%i,%i)", (invClip) ? L"i" : L"", x1, y1, x2, y2);
+	tab->Edit->FindValue(L"i?clip(.+)", &val, *txt, 0, 1);
 	ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 }
 

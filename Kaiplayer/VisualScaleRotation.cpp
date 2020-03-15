@@ -442,14 +442,14 @@ void ScaleRotation::OnClickScaling(int x, int y, bool leftClick, bool rightClick
 		diffs.y = y;
 		to.x = from.x;
 		to.y = from.y;
-		to.x += (addx*scale.x);
-		to.y += (addy*scale.y);
+		to.x += (addx * scale.x);
+		to.y += (addy * scale.y);
 		return;
 	}
 	if (grabbed == -1){
 
-		diffs.x = (from.x - x) + (addx*scale.x);
-		diffs.y = (from.y - y) + (addy*scale.y);
+		diffs.x = (from.x - x) + (addx * scale.x);
+		diffs.y = (from.y - y) + (addy * scale.y);
 	}
 	to.x = x; to.y = y;
 
@@ -650,7 +650,7 @@ void ScaleRotation::ChangeInLines(bool dummy)
 			bool visible = false;
 			dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
 			if (selPositions.size() != sels.size()){
-				KaiLog(L"Sizes mismatch");
+				//KaiLog(L"Sizes mismatch");
 				return;
 			}
 		}

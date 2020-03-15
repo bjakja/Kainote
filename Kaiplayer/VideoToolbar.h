@@ -126,7 +126,7 @@ public:
 		for (auto cur = visualItems.begin(); cur != visualItems.end(); cur++){
 			delete (*cur);
 		}
-		if(bmp)delete bmp; bmp=NULL;
+		if (bmp){ delete bmp; bmp = NULL; }
 	};
 
 	int GetToggled();

@@ -101,7 +101,7 @@ private:
 class FontPickerButton : public MappedButton{
 public:
 	FontPickerButton(wxWindow *parent, int id, const wxFont& font,
-             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+			 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
 	virtual ~FontPickerButton(){};
 	wxFont GetSelectedFont();
 	void OnClick(wxCommandEvent &evt);

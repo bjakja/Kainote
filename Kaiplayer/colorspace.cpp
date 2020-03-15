@@ -19,37 +19,37 @@ void hsl_to_rgb(int H, int S, int L, unsigned char *R, unsigned char *G, unsigne
 
 	if (L == 128 && S == 255) {
 		switch (H) {
-			case 0:
-			case 255: // actually this is wrong, since this is more like 359 degrees... but it's what you'd expect (sadly :)
-				*R = 255;
-				*G = 0;
-				*B = 0;
-				return;
-			case 43:
-				*R = 255;
-				*G = 255;
-				*B = 0;
-				return;
-			case 85:
-				*R = 0;
-				*G = 255;
-				*B = 0;
-				return;
-			case 128:
-				*R = 0;
-				*G = 255;
-				*B = 255;
-				return;
-			case 171:
-				*R = 0;
-				*G = 0;
-				*B = 255;
-				return;
-			case 213:
-				*R = 255;
-				*G = 0;
-				*B = 255;
-				return;
+		case 0:
+		case 255: // actually this is wrong, since this is more like 359 degrees... but it's what you'd expect (sadly :)
+			*R = 255;
+			*G = 0;
+			*B = 0;
+			return;
+		case 43:
+			*R = 255;
+			*G = 255;
+			*B = 0;
+			return;
+		case 85:
+			*R = 0;
+			*G = 255;
+			*B = 0;
+			return;
+		case 128:
+			*R = 0;
+			*G = 255;
+			*B = 255;
+			return;
+		case 171:
+			*R = 0;
+			*G = 0;
+			*B = 255;
+			return;
+		case 213:
+			*R = 255;
+			*G = 0;
+			*B = 255;
+			return;
 		}
 	}
 
@@ -61,7 +61,8 @@ void hsl_to_rgb(int H, int S, int L, unsigned char *R, unsigned char *G, unsigne
 	float temp2;
 	if (l < .5) {
 		temp2 = l * (1. + s);
-	} else {
+	}
+	else {
 		temp2 = l + s - l*s;
 	}
 
@@ -69,10 +70,10 @@ void hsl_to_rgb(int H, int S, int L, unsigned char *R, unsigned char *G, unsigne
 
 	// assume h is in range [0;1]
 	float temp3[3];
-	temp3[0] = h + 1.f/3.f;
+	temp3[0] = h + 1.f / 3.f;
 	if (temp3[0] > 1.f) temp3[0] -= 1.f;
 	temp3[1] = h;
-	temp3[2] = h - 1.f/3.f;
+	temp3[2] = h - 1.f / 3.f;
 	if (temp3[2] < 0.f) temp3[2] += 1.f;
 
 	if (6.f * temp3[0] < 1.f)
@@ -80,7 +81,7 @@ void hsl_to_rgb(int H, int S, int L, unsigned char *R, unsigned char *G, unsigne
 	else if (2.f * temp3[0] < 1.f)
 		r = temp2;
 	else if (3.f * temp3[0] < 2.f)
-		r = temp1 + (temp2 - temp1) * ((2.f/3.f) - temp3[0]) * 6.f;
+		r = temp1 + (temp2 - temp1) * ((2.f / 3.f) - temp3[0]) * 6.f;
 	else
 		r = temp1;
 
@@ -89,7 +90,7 @@ void hsl_to_rgb(int H, int S, int L, unsigned char *R, unsigned char *G, unsigne
 	else if (2.f * temp3[1] < 1.f)
 		g = temp2;
 	else if (3.f * temp3[1] < 2.f)
-		g = temp1 + (temp2 - temp1) * ((2.f/3.f) - temp3[1]) * 6.f;
+		g = temp1 + (temp2 - temp1) * ((2.f / 3.f) - temp3[1]) * 6.f;
 	else
 		g = temp1;
 
@@ -98,13 +99,13 @@ void hsl_to_rgb(int H, int S, int L, unsigned char *R, unsigned char *G, unsigne
 	else if (2.f * temp3[2] < 1.f)
 		b = temp2;
 	else if (3.f * temp3[2] < 2.f)
-		b = temp1 + (temp2 - temp1) * ((2.f/3.f) - temp3[2]) * 6.f;
+		b = temp1 + (temp2 - temp1) * ((2.f / 3.f) - temp3[2]) * 6.f;
 	else
 		b = temp1;
 
-	*R = clip_colorval((int)(r*255));
-	*G = clip_colorval((int)(g*255));
-	*B = clip_colorval((int)(b*255));
+	*R = clip_colorval((int)(r * 255));
+	*G = clip_colorval((int)(g * 255));
+	*B = clip_colorval((int)(b * 255));
 }
 
 
@@ -117,44 +118,44 @@ void hsv_to_rgb(int H, int S, int V, unsigned char *R, unsigned char *G, unsigne
 	// some special cases... oh yeah baby!
 	if (S == 255) {
 		switch (H) {
-			case 0:
-			case 255: // actually this is wrong, since this is more like 359 degrees... but it's what you'd expect (sadly :)
-				*R = V;
-				*G = 0;
-				*B = 0;
-				return;
-			case 43:
-				*R = V;
-				*G = V;
-				*B = 0;
-				return;
-			case 85:
-				*R = 0;
-				*G = V;
-				*B = 0;
-				return;
-			case 128:
-				*R = 0;
-				*G = V;
-				*B = V;
-				return;
-			case 171:
-				*R = 0;
-				*G = 0;
-				*B = V;
-				return;
-			case 213:
-				*R = V;
-				*G = 0;
-				*B = V;
-				return;
+		case 0:
+		case 255: // actually this is wrong, since this is more like 359 degrees... but it's what you'd expect (sadly :)
+			*R = V;
+			*G = 0;
+			*B = 0;
+			return;
+		case 43:
+			*R = V;
+			*G = V;
+			*B = 0;
+			return;
+		case 85:
+			*R = 0;
+			*G = V;
+			*B = 0;
+			return;
+		case 128:
+			*R = 0;
+			*G = V;
+			*B = V;
+			return;
+		case 171:
+			*R = 0;
+			*G = 0;
+			*B = V;
+			return;
+		case 213:
+			*R = V;
+			*G = 0;
+			*B = V;
+			return;
 		}
 	}
 
 	// Cap values
 	unsigned int h = H * 360;
-	unsigned int s = clip_colorval(S)*256;
-	unsigned int v = clip_colorval(V)*256;
+	unsigned int s = clip_colorval(S) * 256;
+	unsigned int v = clip_colorval(V) * 256;
 
 	// Saturation is zero, make grey
 	if (S == 0) {
@@ -168,47 +169,47 @@ void hsv_to_rgb(int H, int S, int V, unsigned char *R, unsigned char *G, unsigne
 
 	// Else, calculate color
 	unsigned int Hi = h / 60 / 256;
-	unsigned int f  = h / 60 - Hi * 256;
-	unsigned int p  = v * (65535 - s) / 65536;
-	unsigned int q  = v * (65535 - (f * s)/256) / 65536;
-	unsigned int t  = v * (65535 - ((255 - f) * s)/256) / 65536;
+	unsigned int f = h / 60 - Hi * 256;
+	unsigned int p = v * (65535 - s) / 65536;
+	unsigned int q = v * (65535 - (f * s) / 256) / 65536;
+	unsigned int t = v * (65535 - ((255 - f) * s) / 256) / 65536;
 	switch (Hi) {
-		case 0: 
-			r = v;
-			g = t;
-			b = p;
-			break;
-		case 1: 
-			r = q;
-			g = v;
-			b = p;
-			break;
-		case 2:
-			r = p;
-			g = v;
-			b = t;
-			break;
-		case 3:
-			r = p;
-			g = q;
-			b = v;
-			break;
-		case 4:
-			r = t;
-			g = p;
-			b = v;
-			break;
-		case 5:
-		default:
-			r = v;
-			g = p;
-			b = q;
-			break;
+	case 0:
+		r = v;
+		g = t;
+		b = p;
+		break;
+	case 1:
+		r = q;
+		g = v;
+		b = p;
+		break;
+	case 2:
+		r = p;
+		g = v;
+		b = t;
+		break;
+	case 3:
+		r = p;
+		g = q;
+		b = v;
+		break;
+	case 4:
+		r = t;
+		g = p;
+		b = v;
+		break;
+	case 5:
+	default:
+		r = v;
+		g = p;
+		b = q;
+		break;
 	}
 
-	*R = clip_colorval(r/256);
-	*G = clip_colorval(g/256);
-	*B = clip_colorval(b/256);
+	*R = clip_colorval(r / 256);
+	*G = clip_colorval(g / 256);
+	*B = clip_colorval(b / 256);
 }
 
 
@@ -218,7 +219,7 @@ void hsv_to_rgb(int H, int S, int V, unsigned char *R, unsigned char *G, unsigne
 // still keeping everything integer
 void rgb_to_hsl(int R, int G, int B, unsigned char *H, unsigned char *S, unsigned char *L)
 {
-	float r = R/255.f, g = G/255.f, b = B/255.f;
+	float r = R / 255.f, g = G / 255.f, b = B / 255.f;
 	float h, s, l;
 
 	float maxrgb = MAX(r, MAX(g, b)), minrgb = MIN(r, MIN(g, b));
@@ -228,34 +229,38 @@ void rgb_to_hsl(int R, int G, int B, unsigned char *H, unsigned char *S, unsigne
 	if (minrgb == maxrgb) {
 		h = 0;
 		s = 0;
-	} else {
+	}
+	else {
 		if (l < 0.5) {
 			s = (maxrgb - minrgb) / (maxrgb + minrgb);
-		} else {
+		}
+		else {
 			s = (maxrgb - minrgb) / (2.f - maxrgb - minrgb);
 		}
 		if (r == maxrgb) {
-			h = (g-b) / (maxrgb-minrgb) + 0;
-		} else if (g == maxrgb) {
-			h = (b-r) / (maxrgb-minrgb) + 2;
-		} else { // if b == maxrgb
-			h = (r-g) / (maxrgb-minrgb) + 4;
+			h = (g - b) / (maxrgb - minrgb) + 0;
+		}
+		else if (g == maxrgb) {
+			h = (b - r) / (maxrgb - minrgb) + 2;
+		}
+		else { // if b == maxrgb
+			h = (r - g) / (maxrgb - minrgb) + 4;
 		}
 	}
 
 	if (h < 0) h += 6;
 	if (h >= 6) h -= 6;
 
-	*H = clip_colorval(int(h*256/6));
-	*S = clip_colorval(int(s*255));
-	*L = clip_colorval(int(l*255));
+	*H = clip_colorval(int(h * 256 / 6));
+	*S = clip_colorval(int(s * 255));
+	*L = clip_colorval(int(l * 255));
 }
 
 
 // formulas from http://en.wikipedia.org/wiki/HSV_color_space
 void rgb_to_hsv(int R, int G, int B, unsigned char *H, unsigned char *S, unsigned char *V)
 {
-	float r = R/255.f, g = G/255.f, b = B/255.f;
+	float r = R / 255.f, g = G / 255.f, b = B / 255.f;
 	float h, s, v;
 
 	float maxrgb = MAX(r, MAX(g, b)), minrgb = MIN(r, MIN(g, b));
@@ -264,26 +269,30 @@ void rgb_to_hsv(int R, int G, int B, unsigned char *H, unsigned char *S, unsigne
 
 	if (maxrgb < .001f) {
 		s = 1;
-	} else {
+	}
+	else {
 		s = (maxrgb - minrgb) / maxrgb;
 	}
 
 	if (minrgb == maxrgb) {
 		h = 0;
-	} else if (maxrgb == r) {
-		h = (g-b) / (maxrgb-minrgb) + 0;
-	} else if (maxrgb == g) {
-		h = (b-r) / (maxrgb-minrgb) + 2;
-	} else { // if maxrgb == b
-		h = (r-g) / (maxrgb-minrgb) + 4;
+	}
+	else if (maxrgb == r) {
+		h = (g - b) / (maxrgb - minrgb) + 0;
+	}
+	else if (maxrgb == g) {
+		h = (b - r) / (maxrgb - minrgb) + 2;
+	}
+	else { // if maxrgb == b
+		h = (r - g) / (maxrgb - minrgb) + 4;
 	}
 
 	if (h < 0) h += 6;
 	if (h >= 6) h -= 6;
 
-	*H = clip_colorval(int(h*256/6));
-	*S = clip_colorval(int(s*255));
-	*V = clip_colorval(int(v*255));
+	*H = clip_colorval(int(h * 256 / 6));
+	*S = clip_colorval(int(s * 255));
+	*V = clip_colorval(int(v * 255));
 }
 
 
@@ -291,13 +300,15 @@ void hsv_to_hsl(int iH, int iS, int iV, unsigned char *oH, unsigned char *oS, un
 {
 	int p = iV * (255 - iS);
 	*oH = iH;
-	*oL = clip_colorval((p + iV*255)/255/2);
+	*oL = clip_colorval((p + iV * 255) / 255 / 2);
 	if (*oL == 0) {
 		*oS = iS; // oS is actually undefined, so any value should work ;)
-	} else if (*oL <= 128) {
-		*oS = clip_colorval((iV*255 - p) / (2 * *oL));
-	} else {
-		*oS = clip_colorval((iV*255 - p) / (511 - 2 * *oL));
+	}
+	else if (*oL <= 128) {
+		*oS = clip_colorval((iV * 255 - p) / (2 * *oL));
+	}
+	else {
+		*oS = clip_colorval((iV * 255 - p) / (511 - 2 * *oL));
 	}
 }
 
@@ -315,9 +326,10 @@ void hsl_to_hsv(int iH, int iS, int iL, unsigned char *oH, unsigned char *oS, un
 	if (iL < 128) {
 		*oV = iL * (255 + iS) / 255;
 		*oS = 2 * 255 * iS / (255 + iS);
-	} else {
-		*oV = (iL*255 + iS*255 - iL*iS)/255;
-		*oS = 2 * 255 * iS * (255 - iL) / (iL*255 + iS*255 - iL*iS);
+	}
+	else {
+		*oV = (iL * 255 + iS * 255 - iL*iS) / 255;
+		*oS = 2 * 255 * iS * (255 - iL) / (iL * 255 + iS * 255 - iL*iS);
 	}
 }
 
@@ -344,10 +356,12 @@ wxColour html_to_color(wxString html)
 		sb = html.Mid(4, 2);
 		if (sr.ToLong(&r, 16) && sg.ToLong(&g, 16) && sb.ToLong(&b, 16)) {
 			return wxColour(r, g, b);
-		} else {
+		}
+		else {
 			return wxColour(*wxBLACK);
 		}
-	} else if (html.size() == 3) {
+	}
+	else if (html.size() == 3) {
 		// 4 bit per channel
 		long r, g, b;
 		wxString sr, sg, sb;
@@ -355,11 +369,13 @@ wxColour html_to_color(wxString html)
 		sg = html.Mid(1, 1);
 		sb = html.Mid(2, 1);
 		if (sr.ToLong(&r, 16) && sg.ToLong(&g, 16) && sb.ToLong(&b, 16)) {
-			return wxColour(r*16+r, g*16+g, b*16+b);
-		} else {
+			return wxColour(r * 16 + r, g * 16 + g, b * 16 + b);
+		}
+		else {
 			return wxColour(*wxBLACK);
 		}
-	} else {
+	}
+	else {
 		// only care about valid colors
 		return wxColour(*wxBLACK);
 	}
@@ -367,7 +383,7 @@ wxColour html_to_color(wxString html)
 
 void rgb_to_yuv(int R, int G, int B, unsigned char *Y, unsigned char *U, unsigned char *V)
 {
-	*Y = clip_colorval(( int(0.299*65536) * R + int(0.587*65536) * G + int(0.114*65536) * B) / 65536);
-	*U = clip_colorval((-int(0.147*65536) * R - int(0.289*65536) * G + int(0.436*65536) * B) / 65536 + 128);
-	*V = clip_colorval(( int(0.615*65536) * R - int(0.515*65536) * G - int(0.100*65536) * B) / 65536 + 128);
+	*Y = clip_colorval((int(0.299 * 65536) * R + int(0.587 * 65536) * G + int(0.114 * 65536) * B) / 65536);
+	*U = clip_colorval((-int(0.147 * 65536) * R - int(0.289 * 65536) * G + int(0.436 * 65536) * B) / 65536 + 128);
+	*V = clip_colorval((int(0.615 * 65536) * R - int(0.515 * 65536) * G - int(0.100 * 65536) * B) / 65536 + 128);
 }

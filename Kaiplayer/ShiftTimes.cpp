@@ -25,7 +25,7 @@
 class ProfileEdition : public KaiDialog
 {
 public:
-	ProfileEdition(wxWindow* parent, const wxArrayString &profiles);
+	ProfileEdition(wxWindow* parent, const wxArrayString &profiles, const wxPoint &pos);
 	virtual ~ProfileEdition(){};
 	wxString GetProfileName(bool *exist){ 
 		*exist = overwrite;
@@ -37,10 +37,11 @@ private:
 	KaiChoice *profilesList;
 	const wxArrayString &profilesNames;
 	bool overwrite = false;
+	wxPoint dialogPos;
 };
 
-ProfileEdition::ProfileEdition(wxWindow* parent, const wxArrayString &profiles)
-	:KaiDialog(parent, -1, _("Wybierz nazwę profilu"))
+ProfileEdition::ProfileEdition(wxWindow* parent, const wxArrayString &profiles, const wxPoint &pos)
+	:KaiDialog(parent, -1, _("Wybierz nazwę profilu"), pos)
 	, profilesNames(profiles)
 {
 	DialogSizer *dSizer = new DialogSizer(wxVERTICAL);
@@ -65,7 +66,8 @@ ProfileEdition::ProfileEdition(wxWindow* parent, const wxArrayString &profiles)
 	dSizer->Add(profilesList, 0, wxALL | wxEXPAND, 2);
 	dSizer->Add(buttonSizer, 0, wxALL, 2);
 	SetSizerAndFit(dSizer);
-	CenterOnParent();
+	CenterOnParent(wxHORIZONTAL);
+	dialogPos = pos;
 }
 
 void ProfileEdition::OnOKClick(wxCommandEvent &evt)
@@ -74,7 +76,7 @@ void ProfileEdition::OnOKClick(wxCommandEvent &evt)
 	for (auto name : profilesNames){
 		if (name == thisName){
 			int result = KaiMessageBox(wxString::Format(_("Na pewno chcesz nadpisać profil o nazwie %s"),
-				profilesList->GetString(profilesList->GetSelection())), _("Informacja"), wxYES_NO, GetParent());
+				profilesList->GetString(profilesList->GetSelection())), _("Informacja"), wxYES_NO, GetParent(), dialogPos);
 			if (result != wxYES)
 				return;
 
@@ -82,9 +84,7 @@ void ProfileEdition::OnOKClick(wxCommandEvent &evt)
 			break;
 		}
 	}
-	//if (profilesList->GetSelection() >= 0){
-		
-	//}
+	
 
 	EndModal(wxID_OK);
 
@@ -892,7 +892,10 @@ void ShiftTimesWindow::OnAddProfile(wxCommandEvent& event)
 {
 	wxArrayString profilesNames;
 	GetProfilesNames(profilesNames);
-	ProfileEdition pe(this, profilesNames);
+	wxSize plSize = ProfilesList->GetClientSize();
+	wxPoint plPos = ProfilesList->GetPosition();
+	plPos = ClientToScreen(plPos);
+	ProfileEdition pe(this, profilesNames, wxPoint(plPos.x, plPos.y + plSize.y));
 	if (pe.ShowModal() == wxID_OK){
 		bool exist = false;
 		wxString profileName = pe.GetProfileName(&exist);
@@ -903,13 +906,18 @@ void ShiftTimesWindow::OnAddProfile(wxCommandEvent& event)
 void ShiftTimesWindow::OnRemoveProfile(wxCommandEvent& event)
 {
 	int selectedProfile = ProfilesList->GetSelection();
+	wxSize plSize = ProfilesList->GetClientSize();
+	wxPoint plPos = ProfilesList->GetPosition();
+	plPos = ClientToScreen(plPos);
 	//here it's possible rather it needs info
 	if (selectedProfile < 0){
-		KaiMessageBox(_("Na liście nie wybrano profilu do usunięcia"), _("Informacja"), wxOK, this);
+		KaiMessageBox(_("Na liście nie wybrano profilu do usunięcia"), 
+			_("Informacja"), wxOK, this, wxPoint(0, plPos.y + plSize.y));
 		return;
 	}
 	wxString profileName = ProfilesList->GetString(selectedProfile);
-	int result = KaiMessageBox(wxString::Format(_("Na pewno chcesz usunąć profil o nazwie \"%s\""), profileName), _("Informacja"), wxYES_NO, this);
+	int result = KaiMessageBox(wxString::Format(_("Na pewno chcesz usunąć profil o nazwie \"%s\""), profileName), 
+		_("Informacja"), wxYES_NO, this, wxPoint(0, plPos.y + plSize.y));
 	if (result != wxYES){
 		return;
 	}

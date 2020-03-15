@@ -32,7 +32,7 @@ void Position::Draw(int time)
 	bool nothintoshow = true;
 	for (size_t i = 0; i < data.size(); i++){
 		auto pos = data[i];
-		//pamiętaj sprawdzanie czy czasy mieszczą się w przedziale to czas >= start && czas < koniec
+		//don't forget to check if times are in range time >= start && time < end
 		if (time >= pos.dial->Start.mstime && time < pos.dial->End.mstime){
 			DrawCross(pos.pos);
 			DrawRect(pos.pos);
@@ -246,10 +246,10 @@ void Position::ChangeMultiline(bool all)
 void Position::OnKeyPress(wxKeyEvent &evt)
 {
 	int key = evt.GetKeyCode();
-	bool left = key == 'A';
-	bool right = key == 'D';
-	bool up = key == 'W';
-	bool down = key == 'S';
+	bool left = key == L'A';
+	bool right = key == L'D';
+	bool up = key == L'W';
+	bool down = key == L'S';
 
 	if ((left || right || up || down) && evt.GetModifiers() != wxMOD_ALT){
 		float directionX = (left) ? -1 : (right) ? 1 : 0;

@@ -94,9 +94,9 @@ void RotationZ::DrawVisual(int time)
 	v2[5].y = org.y + 10.0f;
 	line->SetWidth(5.f);
 
-	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 360, v5, sizeof(VERTEX)), "primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[364], sizeof(VERTEX)), "primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[545], sizeof(VERTEX)), "primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 360, v5, sizeof(VERTEX)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[364], sizeof(VERTEX)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[545], sizeof(VERTEX)), L"primitive failed");
 	line->SetWidth(2.f);
 	line->Begin();
 	line->Draw(&v2[2], 2, 0xFFBB0000);
@@ -114,15 +114,15 @@ void RotationZ::DrawVisual(int time)
 wxString RotationZ::GetVisual()
 {
 	if (isOrg){
-		return "\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x)*coeffW) + "," +
-			getfloat(((org.y / zoomScale.y) + zoomMove.y)*coeffH) + ")";
+		return L"\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+			getfloat(((org.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
 	}
 
 	float angle = lastmove.x - atan2((org.y - to.y), (org.x - to.x)) * (180.f / 3.1415926536f);
 	angle = fmodf(angle + 360.f, 360.f);
 	lastmove.y = angle;
 
-	return "\\frz" + getfloat(angle);
+	return L"\\frz" + getfloat(angle);
 }
 
 void RotationZ::OnMouseEvent(wxMouseEvent &evt)
@@ -186,7 +186,7 @@ void RotationZ::SetCurVisual()
 		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);
 	lastmove = D3DXVECTOR2(0, 0);
 	wxString res;
-	if (tab->Edit->FindValue("frz?([0-9.-]+)", &res)){
+	if (tab->Edit->FindValue(L"frz?([0-9.-]+)", &res)){
 		double result = 0.; 
 		res.ToDouble(&result);
 		lastmove.y = result;
@@ -199,10 +199,10 @@ void RotationZ::SetCurVisual()
 		lastmove.y = result;
 		lastmove.x += lastmove.y;
 	}
-	if (tab->Edit->FindValue("org\\(([^\\)]+)", &res)){
+	if (tab->Edit->FindValue(L"org\\(([^\\)]+)", &res)){
 		wxString rest;
 		double orx, ory;
-		if (res.BeforeFirst(',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x) * zoomScale.x; }
+		if (res.BeforeFirst(L',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x) * zoomScale.x; }
 		if (rest.ToDouble(&ory)){ org.y = ((ory / coeffH) - zoomMove.y) * zoomScale.y; }
 	}
 	else{ org = from; }
@@ -222,9 +222,9 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 	angle = fmodf(angle + 360.f, 360.f);
 	lastmove.y = angle;
 
-	wxString tag = "\\frz" + getfloat(angle);
+	wxString tag = L"\\frz" + getfloat(angle);
 	wxString val;
-	tab->Edit->FindValue("frz?([0-9.-]+)", &val, *txt, 0, 1);
+	tab->Edit->FindValue(L"frz?([0-9.-]+)", &val, *txt, 0, 1);
 	ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
 }
 

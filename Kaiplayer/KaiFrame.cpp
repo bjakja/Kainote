@@ -226,23 +226,23 @@ void KaiFrame::PaintD2D(GraphicsContext *gc, int w, int h)
 			Options.GetColour(WindowPushedCloseButton);
 		gc->SetBrush(buttonxbg);
 		gc->SetPen(buttonxbg);
-		gc->DrawRectangle(w - frameTopBorder - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
+		gc->DrawRectangle(w - frameTopBorder - maximizeDiff, 5 + maximizeDiff, buttonScale - 1, buttonScale - 1);
 	}
 	else if (enterMaximize || pushedMaximize){
 		wxColour buttonxbg = (enterMaximize && !pushedMaximize) ? Options.GetColour(WindowHoverHeaderElement) :
 			Options.GetColour(WindowPushedHeaderElement);
 		gc->SetBrush(buttonxbg);
 		gc->SetPen(buttonxbg);
-		gc->DrawRectangle(w - (frameTopBorder * 2) - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
+		gc->DrawRectangle(w - (frameTopBorder * 2) - maximizeDiff, 5 + maximizeDiff, buttonScale - 1, buttonScale - 1);
 	}
 	else if (enterMinimize || pushedMinimize){
 		wxColour buttonxbg = (enterMinimize && !pushedMinimize) ? Options.GetColour(WindowHoverHeaderElement) :
 			Options.GetColour(WindowPushedHeaderElement);
 		gc->SetBrush(buttonxbg);
 		gc->SetPen(buttonxbg);
-		gc->DrawRectangle(w - (frameTopBorder * 3) - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
+		gc->DrawRectangle(w - (frameTopBorder * 3) - maximizeDiff, 5 + maximizeDiff, buttonScale - 1, buttonScale - 1);
 	}
-	gc->SetPen(wxPen(text, 2));
+	gc->SetPen(wxPen(text), 2.);
 	gc->SetBrush(wxBrush(text));
 	//draw X
 	GraphicsPathData *path = gc->CreatePath();
