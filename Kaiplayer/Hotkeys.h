@@ -239,13 +239,13 @@
 	XX( GLOBAL_SORT_SELECTED_BY_EFFECT,)\
 	XX( GLOBAL_SORT_SELECTED_BY_LAYER,)\
 	XX( GLOBAL_SHIFT_TIMES,=11139)\
-	
+
 //
-DECLARE_ENUM(Id,IDS)
+DECLARE_ENUM(Id, IDS)
 
 
 enum{
-	GLOBAL_HOTKEY=0,
+	GLOBAL_HOTKEY = 0,
 	GRID_HOTKEY,
 	EDITBOX_HOTKEY,
 	VIDEO_HOTKEY,
@@ -253,13 +253,13 @@ enum{
 };
 class idAndType{
 public:
-	idAndType(int _id=0, char _type=GLOBAL_HOTKEY){id= _id; Type= _type;}
-	bool operator < (const idAndType match){ return id < match.id;};
-	bool operator > (const idAndType match){ return id > match.id;};
-	bool operator <= (const idAndType match){ return id <= match.id;};
-	bool operator >= (const idAndType match){ return id >= match.id;};
-	bool operator == (const idAndType match){ return id == match.id;};
-	bool operator != (const idAndType match){ return id != match.id;};
+	idAndType(int _id = 0, char _type = GLOBAL_HOTKEY){ id = _id; Type = _type; }
+	bool operator < (const idAndType match){ return id < match.id; };
+	bool operator >(const idAndType match){ return id > match.id; };
+	bool operator <= (const idAndType match){ return id <= match.id; };
+	bool operator >= (const idAndType match){ return id >= match.id; };
+	bool operator == (const idAndType match){ return id == match.id; };
+	bool operator != (const idAndType match){ return id != match.id; };
 	int id;
 	char Type;
 };
@@ -271,25 +271,25 @@ bool operator >= (const idAndType match, const idAndType match1);
 bool operator == (const idAndType match, const idAndType match1);
 bool operator != (const idAndType match, const idAndType match1);
 bool operator == (const idAndType &match, const int match1);
-bool operator == (const int match1 ,const idAndType &match);
+bool operator == (const int match1, const idAndType &match);
 bool operator >= (const idAndType &match, const int match1);
-bool operator >= ( const int match1, const idAndType &match);
+bool operator >= (const int match1, const idAndType &match);
 bool operator <= (const idAndType &match, const int match1);
-bool operator <= (const int match1 ,const idAndType &match);
+bool operator <= (const int match1, const idAndType &match);
 bool operator > (const idAndType &match, const int match1);
-bool operator > ( const int match1, const idAndType &match);
+bool operator > (const int match1, const idAndType &match);
 bool operator < (const idAndType &match, const int match1);
-bool operator < (const int match1 ,const idAndType &match);
+bool operator < (const int match1, const idAndType &match);
 bool operator != (const idAndType &match, const int match1);
-bool operator != ( const int match1, const idAndType &match);
+bool operator != (const int match1, const idAndType &match);
 
 class hdata{
 public:
 	hdata(const wxString &accName, const wxString &_Accel){
-		Name=accName; Accel=_Accel;
+		Name = accName; Accel = _Accel;
 	}
 	hdata(const wxString &acc){
-		Accel=acc;
+		Accel = acc;
 	}
 	hdata(){}
 	wxString Name;
@@ -298,7 +298,7 @@ public:
 
 class HkeysDialog : public KaiDialog
 {
-	public:
+public:
 	HkeysDialog(wxWindow *parent, wxString name, char hotkeyWindow = GLOBAL_HOTKEY, bool showWindowSelection = true);
 	virtual ~HkeysDialog();
 	wxString hotkey;
@@ -306,7 +306,7 @@ class HkeysDialog : public KaiDialog
 	KaiChoice *global;
 	char type;
 
-	private:
+private:
 	void OnKeyPress(wxKeyEvent& event);
 };
 
@@ -317,16 +317,16 @@ private:
 public:
 	Hotkeys();
 	~Hotkeys();
-	int LoadHkeys(bool Audio=false);
+	int LoadHkeys(bool Audio = false);
 	void LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio = false);
-	void SaveHkeys(bool Audio=false);
+	void SaveHkeys(bool Audio = false);
 	void SetHKey(const idAndType &itype, wxString name, wxString hotkey);
-	wxAcceleratorEntry GetHKey(const idAndType itype, const hdata *hkey=0);
+	wxAcceleratorEntry GetHKey(const idAndType itype, const hdata *hkey = 0);
 	wxString GetStringHotkey(const idAndType &itype, const wxString &name = L"");
 	void FillTable();
 	void ResetKey(const idAndType *itype, int id = 0, char type = GLOBAL_HOTKEY);
 	wxString GetDefaultKey(const idAndType &itype);
-	void OnMapHkey(int id, wxString name,wxWindow *parent, char hotkeyWindow = GLOBAL_HOTKEY, bool showWindowSelection = true);
+	void OnMapHkey(int id, wxString name, wxWindow *parent, char hotkeyWindow = GLOBAL_HOTKEY, bool showWindowSelection = true);
 	void SetAccels(bool all = false);
 	wxString GetName(const idAndType itype);
 	const std::map<int, wxString> &GetNamesTable();
@@ -337,7 +337,7 @@ public:
 	std::map<int, wxString> keys;
 	bool AudioKeys;
 	int lastScriptId;
-	HotkeysNaming *hotkeysNaming=NULL;
+	HotkeysNaming *hotkeysNaming = NULL;
 };
 
 

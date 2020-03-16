@@ -928,7 +928,7 @@ void PopupList::OnIdle(wxIdleEvent& event)
 }
 
 
-BEGIN_EVENT_TABLE(PopupList,/* wxFrame*/wxPopupWindow)
+BEGIN_EVENT_TABLE(PopupList, wxPopupWindow)
 EVT_MOUSE_EVENTS(PopupList::OnMouseEvent)
 EVT_PAINT(PopupList::OnPaint)
 EVT_SCROLL(PopupList::OnScroll)

@@ -85,7 +85,7 @@ static void csrilib_do_load(const wchar_t *filename)
 	if (!dlhandle) {
 		//subhelp_log(CSRI_LOG_ERROR, "LoadLibraryEx(\"%ls\") failed: "
 			//"%s", filename, get_errstr());
-		KaiLog(wxString::Format(_("LoadLibraryEx(\"%s, %s\") failed: "),filename, get_errstr()));
+		KaiLog(wxString::Format(_("LoadLibraryEx(\"%s, %s\") failed: "), filename, get_errstr()));
 		return;
 	}
 	if (GetProcAddress(dlhandle, "csri_library")) {

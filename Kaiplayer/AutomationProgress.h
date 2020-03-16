@@ -44,7 +44,7 @@ namespace Auto{
 	class LuaProgressDialog :public wxDialog
 	{
 	public:
-		LuaProgressDialog(wxWindow *parent,lua_State *L);
+		LuaProgressDialog(wxWindow *parent, lua_State *L);
 		virtual ~LuaProgressDialog();
 		wxBoxSizer *sizer;
 		KaiGauge *progress_display;

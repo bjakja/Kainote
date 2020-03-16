@@ -23,7 +23,7 @@
 
 
 MisspellReplacer::MisspellReplacer(wxWindow *parent)
-	:KaiDialog(parent, -1, _("Korekcja drobnych błędów"))
+	: KaiDialog(parent, -1, _("Korekcja drobnych błędów"))
 	, resultDialog(NULL)
 {
 	DialogSizer *MainSizer = new DialogSizer(wxHORIZONTAL);
@@ -49,7 +49,7 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	ReplaceOnlyTags = new KaiCheckBox(this, ID_REPLACE_ONLY_TAGS, _("Zmieniaj tylko w tagach"));
 	ReplaceOnlyText = new KaiCheckBox(this, ID_REPLACE_ONLY_TEXT, _("Zmieniaj tylko w tekście"));
 
-	PhrasesDescriptionSizer->Add(new KaiStaticText(this,-1,_("Szukana fraza (wyrażenia regularne)")), 1, wxALL | wxEXPAND, 2);
+	PhrasesDescriptionSizer->Add(new KaiStaticText(this, -1, _("Szukana fraza (wyrażenia regularne)")), 1, wxALL | wxEXPAND, 2);
 	PhrasesDescriptionSizer->Add(new KaiStaticText(this, -1, _("Zmieniana fraza")), 1, wxALL | wxEXPAND, 2);
 	PhrasesSizer->Add(PhraseToFind, 1, wxALL | wxEXPAND, 2);
 	PhrasesSizer->Add(PhraseToReplace, 1, wxALL | wxEXPAND, 2);
@@ -66,7 +66,7 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	RuleEdition->Add(PhrasesOptionsSizer, 0, wxEXPAND);
 	RuleEdition->Add(PhrasesOptionsSizer1, 0, wxEXPAND);
 	RuleEdition->Add(PhrasesOptionsSizer2, 0, wxEXPAND);
-	RulesList = new KaiListCtrl(this, ID_RULES_LIST,wxDefaultPosition, wxSize(320, 300));
+	RulesList = new KaiListCtrl(this, ID_RULES_LIST, wxDefaultPosition, wxSize(320, 300));
 	RulesList->InsertColumn(0, L"", TYPE_CHECKBOX, 20);
 	RulesList->InsertColumn(1, _("Opis"), TYPE_TEXT, 290);
 	RulesList->InsertColumn(2, _("Reguła znajdź"), TYPE_TEXT, 100);
@@ -101,7 +101,7 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	WhichLines->SetSelection(0);
 	wxBoxSizer *styleChooseSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton *ChooseStylesButton = new MappedButton(this, ID_STYLES_CHOOSE, L"+");
-	
+
 	ChoosenStyles = new KaiTextCtrl(this, -1);
 	styleChooseSizer->Add(ChooseStylesButton, 0, wxRIGHT, 2);
 	styleChooseSizer->Add(ChoosenStyles, 1, wxEXPAND);
@@ -172,7 +172,7 @@ void MisspellReplacer::ReplaceChecked()
 		}
 		rxrules.push_back(rule);
 	}
-	
+
 
 	KaiListCtrl *List = resultDialog->ResultsList;
 	TabPanel *oldtab = NULL;
@@ -205,7 +205,7 @@ void MisspellReplacer::ReplaceChecked()
 			somethingWasChanged |= ReplaceBlock(results, rxrules);
 			results.clear();
 		}
-			
+
 		results.push_back(SeekResult);
 		if (tab != oldtab && oldtab && somethingWasChanged){
 			oldtab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
@@ -213,7 +213,7 @@ void MisspellReplacer::ReplaceChecked()
 			oldtab->Grid->Refresh(false);
 			somethingWasChanged = false;
 		}
-	
+
 		oldtab = tab;
 		oldKeyLine = SeekResult->keyLine;
 	}
@@ -269,10 +269,10 @@ void MisspellReplacer::FillRulesList()
 		headertoken = tokenizer.GetNextToken();
 	wxStringTokenizer tokenizerOnOff(headertoken, L"|", wxTOKEN_STRTOK);
 
-	while(tokenizer.HasMoreTokens())
+	while (tokenizer.HasMoreTokens())
 	{
 		wxString token = tokenizer.GetNextToken();
-		wxString OnOff = (tokenizerOnOff.HasMoreTokens())? tokenizerOnOff.GetNextToken() : L"0";
+		wxString OnOff = (tokenizerOnOff.HasMoreTokens()) ? tokenizerOnOff.GetNextToken() : L"0";
 		Rule newRule(token);
 		rules.push_back(newRule);
 
@@ -317,7 +317,7 @@ void MisspellReplacer::AddRule()
 	wxString phraseToFind = PhraseToFind->GetValue();
 	wxString phraseToReplace = PhraseToReplace->GetValue();
 	//if (PutWordBoundary->GetValue())
-		//phraseToFind = L"\\m" + phraseToFind + L"\\M";
+	//phraseToFind = L"\\m" + phraseToFind + L"\\M";
 
 	rules.push_back(Rule(RuleDescription->GetValue(), phraseToFind, phraseToReplace, GetRuleOptions()));
 	int row = RulesList->AppendItem(new ItemCheckBox(false, L""));
@@ -383,7 +383,7 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 		positionId = firstSelectedId;
 
 	SubsFile *Subs = tab->Grid->file;
-	
+
 
 	bool isfirst = true;
 
@@ -398,14 +398,14 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 			const wxString & lineText = (Dial->TextTl != L"") ? Dial->TextTl : Dial->Text;
 
 			for (size_t k = 0; k < rxrules.size(); k++){
-				
+
 
 				int textPos = 0;
 				wxString text = lineText;
 				wxRegEx *r = rxrules[k].first;
 
 				while (r->Matches(text)) {
-					size_t matchstart=0, matchlen=0;
+					size_t matchstart = 0, matchlen = 0;
 					if (r->GetMatch(&matchstart, &matchlen)){
 						if (matchlen == 0)
 							matchlen++;
@@ -417,17 +417,17 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 								isfirst = false;
 							}
 
-							resultDialog->SetResults(lineText, wxPoint(matchstart + textPos, matchlen), 
+							resultDialog->SetResults(lineText, wxPoint(matchstart + textPos, matchlen),
 								tab, tabLinePosition, positionId + 1, checkedRules[k]);
 						}
 					}
 					else
 						break;
-						
+
 					textPos += (matchstart + matchlen);
 					text = lineText.Mid(textPos);
 				}
-				
+
 			}
 		}
 		positionId++;
@@ -555,7 +555,7 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 					textPos += (matchstart + matchlen);
 					text = stringChanged.Mid(textPos);
 				}
-				
+
 			}
 			if (changed){
 				Dialogue *Dialc = tab->Grid->file->CopyDialogue(tabLinePosition);
@@ -601,7 +601,7 @@ bool MisspellReplacer::ReplaceBlock(std::vector<ReplacerSeekResults *> &results,
 	//one of it should be changed.
 	//It means that dialogue will be changed and no need to read and change if needed
 	if (lineText != results[0]->name){
-		KaiLog(wxString::Format(_("Linia %i nie może być zamieniona,\nbo została zedytowana."), 
+		KaiLog(wxString::Format(_("Linia %i nie może być zamieniona,\nbo została zedytowana."),
 			results[0]->idLine));
 		return false;
 	}
@@ -622,7 +622,7 @@ bool MisspellReplacer::ReplaceBlock(std::vector<ReplacerSeekResults *> &results,
 			somethingChanged = true;
 		}
 		else{
-			KaiLog(wxString::Format(_("Nie można zamienić \"%s\" na \"%s\", wykorzystując regułę \"%s\" w linii %i."), 
+			KaiLog(wxString::Format(_("Nie można zamienić \"%s\" na \"%s\", wykorzystując regułę \"%s\" w linii %i."),
 				matchResult, actualrule.replaceRule, actualrule.findRule, SeekResult->idLine));
 		}
 	}
@@ -692,7 +692,7 @@ void MisspellReplacer::MoveCase(const wxString &originalCase, wxString *result, 
 int MisspellReplacer::GetRuleOptions()
 {
 	int result = 0;
-		
+
 	result |= (1 * (int)MatchCase->GetValue());
 	result |= (2 * (int)ReplaceAsLower->GetValue());
 	result |= (4 * (int)ReplaceAsUpper->GetValue());
@@ -719,7 +719,7 @@ void MisspellReplacer::FillWithDefaultRules(wxString &rules)
 		_("Zamiana błędów wyrażenia \"w ogóle\"") + L"\f\\mwogóle\\M\fw ogóle\f0\n" +
 		_("Zamiana błędów wyrazu \"będę\"") + L"\f\\mbed[eę]\\M\fbędę\f0\n" +
 		_("Zamiana błędów wyrazu \"będę\"") + L"\f\\mbęde\\M\fbędę\f0";
-		
+
 }
 
 //true skipping this find

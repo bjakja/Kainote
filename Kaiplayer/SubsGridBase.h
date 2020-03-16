@@ -53,27 +53,27 @@ public:
 	void AddStyle(Styles *nstyl);
 	void ChangeLine(unsigned char editionType, Dialogue *line1, size_t wline, long cells, bool selline = false, bool dummy = false);
 	void ChangeCell(long cells, size_t wline, Dialogue *what);
-	void ChangeStyle(Styles *nstyl,size_t i);
+	void ChangeStyle(Styles *nstyl, size_t i);
 	void Clearing();
 	void Convert(char type);
 
-	int FindStyle(const wxString &name,int *multiplication = NULL);
+	int FindStyle(const wxString &name, int *multiplication = NULL);
 	void GetStyles(wxString &stylesText, bool tld = false);
 	//this function is safe, do not return NULL, when failed returns i
 	Styles *GetStyle(size_t i, const wxString &name = L"");
 	std::vector<Styles*> *GetStyleTable();
 	bool IsModified();
-	
+
 	void SaveFile(const wxString &filename, bool cstat = true, bool loadFromEditbox = false);
 	wxString *SaveText();
-	
+
 	size_t StylesSize();
 	void DelStyle(int i);
 	void ChangeTimes(bool byFrame = false);
-	
+
 	void SortIt(short what, bool all = true);
 	void DeleteRows();
-	void DeleteRow(int rw,int len = 1);
+	void DeleteRow(int rw, int len = 1);
 	void DeleteText();
 	void GetUndo(bool redo, int iter = -2);
 	//Warning!! Adding the same dialogue pointer to destroyer cause crash
@@ -96,8 +96,8 @@ public:
 	void SetStartTime(int stime);
 	void SetEndTime(int etime);
 	bool SetTlMode(bool mode);
-	void LoadDefault(bool line = true,bool sav = true, bool endload = true);
-	void GetASSRes(int *x,int *y);
+	void LoadDefault(bool line = true, bool sav = true, bool endload = true);
+	void GetASSRes(int *x, int *y);
 	size_t SInfoSize();
 	size_t GetCount();
 	void NextLine(int dir = 1);
@@ -123,8 +123,8 @@ public:
 	void DummyUndo(int newIter);
 	void GetCommonStyles(SubsGridBase *grid, wxArrayString &styleTable);
 	int GetScrollPosition(){ return scrollPosition; }
-	
-	SubsGridBase(wxWindow *parent, const long int id ,const wxPoint& pos,const wxSize& size, long style);
+
+	SubsGridBase(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style);
 	virtual ~SubsGridBase();
 
 	bool hasTLMode = false;
@@ -174,10 +174,10 @@ protected:
 	wxTimer timer;
 	wxTimer nullifyTimer;
 	void OnBackupTimer(wxTimerEvent &event);
-	
+
 };
 
-bool sortstart(Dialogue *i,Dialogue *j);
+bool sortstart(Dialogue *i, Dialogue *j);
 
 enum{
 	ID_AUTIMER

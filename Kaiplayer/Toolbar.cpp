@@ -76,7 +76,7 @@ void KaiToolbar::InitToolbar()
 		if (!item){ KaiLog(wxString::Format(_("Nie można znaleźć elementu o id %i"), IDS[i])); continue; }
 		wxString desc = item->GetLabelText();
 		bool isToogleButton = item->type == ITEM_CHECK;
-		AddItem(IDS[i], desc, item->icon, item->IsEnabled(), (isToogleButton) ? 2 : 
+		AddItem(IDS[i], desc, item->icon, item->IsEnabled(), (isToogleButton) ? 2 :
 			(item->GetSubMenu() != NULL) ? 1 : 0, (isToogleButton) ? item->check : false);
 	}
 	tools.push_back(new toolitem(3, 16, 32566, true));
@@ -245,13 +245,13 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 		if (pos + tools[i]->size>maxx){ pos1 += iconsize; pos = 4; }
 		bool toggled = tools[i]->toggled;
 		if (i == sel || toggled){
-			tdc.SetPen(wxPen((Clicked || toggled) ? 
+			tdc.SetPen(wxPen((Clicked || toggled) ?
 				Options.GetColour(ButtonBorderPushed) : Options.GetColour(ButtonBorderHover)));
-			tdc.SetBrush(wxBrush((Clicked || toggled) ? 
+			tdc.SetBrush(wxBrush((Clicked || toggled) ?
 				Options.GetColour(ButtonBackgroundPushed) : Options.GetColour(ButtonBackgroundHover)));
-			tdc.DrawRoundedRectangle((vertical) ? pos1 + 2 : pos - 2, 
-				(vertical) ? pos - 2 : (i >= (int)tools.size() - 1) ? 
-				pos1 + 2 + (iconsize - (tools[i]->size)) : 
+			tdc.DrawRoundedRectangle((vertical) ? pos1 + 2 : pos - 2,
+				(vertical) ? pos - 2 : (i >= (int)tools.size() - 1) ?
+				pos1 + 2 + (iconsize - (tools[i]->size)) :
 				pos1 + 2, iconsize - 4, tools[i]->size - 4, 1.1);
 		}
 		if (tools[i]->type < 3){
@@ -357,7 +357,7 @@ void KaiToolbar::OnToolbarOpts(wxCommandEvent &event)
 {
 	wxPoint point = GetPosition();
 	point = GetParent()->ClientToScreen(point);
-	
+
 	int fw, fh, width = 0;
 
 	int ysize = ids.size();
@@ -409,11 +409,11 @@ EVT_MENU(32566, KaiToolbar::OnToolbarOpts)
 END_EVENT_TABLE()
 
 ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos, const wxSize &size, int height)
-	:wxDialog(_parent, -1, L"", pos, size, wxBORDER_NONE)
-	, sel(-1)
-	, scPos(0)
-	, parent(_parent)
-	, bmp(NULL)
+:wxDialog(_parent, -1, L"", pos, size, wxBORDER_NONE)
+, sel(-1)
+, scPos(0)
+, parent(_parent)
+, bmp(NULL)
 {
 	fh = height;
 
@@ -537,7 +537,7 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 			tdc.SetBrush(wxBrush(Options.GetColour(MenuBackgroundSelection)));
 			tdc.DrawRectangle(1, posY, w - 1, fh - 2);
 		}
-		
+
 
 		if (check){
 			tdc.DrawBitmap(checkbmp, 4, posY + (fh - checkbmp.GetHeight()) / 2);

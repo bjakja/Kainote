@@ -238,8 +238,10 @@ void config::GetRawOptions(wxString &options, bool Audio/*=false*/)
 {
 	options = L"[" + progname + L"]\r\n";
 	for (size_t i = 1; i < configSize; i++) {
-		if ((!Audio && i <= AudioWheelDefaultToZoom) || (Audio && i > AudioWheelDefaultToZoom) || 
-			stringConfig[i].empty()) { continue; }
+		if ((!Audio && i <= AudioWheelDefaultToZoom) || (Audio && i > AudioWheelDefaultToZoom) ||
+			stringConfig[i].empty()) {
+			continue;
+		}
 		options << ::GetString((CONFIG)i) << L"=" << stringConfig[i] << L"\r\n";
 	}
 }
@@ -539,7 +541,7 @@ int config::LoadOptions()
 	path << pathfull << L"\\Catalog\\";
 	wxDir kat(path);
 	if (!kat.IsOpened()){
-		ow.FileWrite(path << actualStyleDir << L".sty", 
+		ow.FileWrite(path << actualStyleDir << L".sty",
 			L"Style: Default,Garamond,30,&H00FFFFFF,&H000000FF,&H00FF0000,&H00000000,0,0,0,0,100,100,0,0,0,2,2,2,10,10,10,1");
 		AddStyle(new Styles()); dirs.Add(actualStyleDir);
 	}
@@ -965,10 +967,10 @@ wxRect GetMonitorRect(int wmonitor, std::vector<tagRECT> *MonitorRects, const wx
 		bool ktos_ukradl_ci_monitor = false;
 		assert(ktos_ukradl_ci_monitor);
 	}
-	wxRect rt(MonRects[0].left, MonRects[0].top, 
+	wxRect rt(MonRects[0].left, MonRects[0].top,
 		abs(MonRects[0].right - MonRects[0].left), abs(MonRects[0].bottom - MonRects[0].top));
-	if (wmonitor == -1 || MonRects.size() == 1){ 
-		return rt; 
+	if (wmonitor == -1 || MonRects.size() == 1){
+		return rt;
 	}
 	else if (wmonitor == 0){
 		int x = position.x;
@@ -977,7 +979,7 @@ wxRect GetMonitorRect(int wmonitor, std::vector<tagRECT> *MonitorRects, const wx
 			if (MonRects[i].left <= x && x < MonRects[i].right && MonRects[i].top <= y && y < MonRects[i].bottom){
 				if (MonitorRects)
 					*MonitorRects = MonRects;
-				return wxRect(MonRects[i].left, MonRects[i].top, 
+				return wxRect(MonRects[i].left, MonRects[i].top,
 					abs(MonRects[i].right - MonRects[i].left), abs(MonRects[i].bottom - MonRects[i].top));
 			}
 		}
@@ -985,7 +987,7 @@ wxRect GetMonitorRect(int wmonitor, std::vector<tagRECT> *MonitorRects, const wx
 	else{
 		if (MonitorRects)
 			*MonitorRects = MonRects;
-		return wxRect(MonRects[wmonitor].left, MonRects[wmonitor].top, 
+		return wxRect(MonRects[wmonitor].left, MonRects[wmonitor].top,
 			abs(MonRects[wmonitor].right - MonRects[wmonitor].left), abs(MonRects[wmonitor].bottom - MonRects[wmonitor].top));
 	}
 	return rt;

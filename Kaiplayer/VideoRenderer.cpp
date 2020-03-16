@@ -148,7 +148,7 @@ bool VideoRenderer::InitDX(bool reset)
 			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &d3device);//| D3DCREATE_FPU_PRESERVE
 		if (FAILED(hr)){
 			HR(d3dobject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
-				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &d3device), 
+				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &d3device),
 				_("Nie można utworzyć urządzenia D3D9"));
 		}
 	}
@@ -226,7 +226,7 @@ bool VideoRenderer::InitDX(bool reset)
 	//}
 	if (IsDshow){
 		HR(d3device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &bars), _("Nie można stworzyć powierzchni"));
-		HR(DXVA2CreateVideoService(d3device, IID_IDirectXVideoProcessorService, (VOID**)&dxvaService), 
+		HR(DXVA2CreateVideoService(d3device, IID_IDirectXVideoProcessorService, (VOID**)&dxvaService),
 			_("Nie można stworzyć DXVA processor service"));
 		DXVA2_VideoDesc videoDesc;
 		videoDesc.SampleWidth = vwidth;
@@ -246,7 +246,7 @@ bool VideoRenderer::InitDX(bool reset)
 
 		UINT count, count1;//, count2;
 		GUID* guids = NULL;
-		
+
 		HR(dxvaService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids), _("Nie moźna pobrać GUIDów DXVA"));
 		D3DFORMAT* formats = NULL;
 		//D3DFORMAT* formats2 = NULL;
@@ -277,7 +277,7 @@ bool VideoRenderer::InitDX(bool reset)
 			}
 
 			//if(DXVAcaps.DeviceCaps!=4){continue;}//DXVAcaps.InputPool
-			hr = dxvaService->CreateSurface(vwidth, vheight, 0, d3dformat, D3DPOOL_DEFAULT, 0, 
+			hr = dxvaService->CreateSurface(vwidth, vheight, 0, d3dformat, D3DPOOL_DEFAULT, 0,
 				DXVA2_VideoSoftwareRenderTarget, &MainStream, NULL);
 			if (FAILED(hr)){ KaiLog(wxString::Format(_("Nie można stworzyć powierzchni DXVA %i"), (int)i)); continue; }
 
@@ -296,13 +296,13 @@ bool VideoRenderer::InitDX(bool reset)
 #ifndef byvertices
 		HR(d3device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &bars), _("Nie można stworzyć powierzchni"));
 
-		HR(d3device->CreateOffscreenPlainSurface(vwidth, vheight, d3dformat, D3DPOOL_DEFAULT, &MainStream, 0), 
+		HR(d3device->CreateOffscreenPlainSurface(vwidth, vheight, d3dformat, D3DPOOL_DEFAULT, &MainStream, 0),
 			_("Nie można stworzyć plain surface"));//D3DPOOL_DEFAULT
 #endif
 	}
 
 	HR(D3DXCreateLine(d3device, &lines), _("Nie można stworzyć linii D3DX"));
-	HR(D3DXCreateFont(d3device, 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, 
+	HR(D3DXCreateFont(d3device, 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_font), _("Nie można stworzyć czcionki D3DX"));
 
 	return true;
@@ -312,10 +312,10 @@ bool VideoRenderer::InitDX(bool reset)
 
 void VideoRenderer::Render(bool Frame, bool wait)
 {
-	if (Frame && !IsDshow && !devicelost){ 
-		VFF->Render(wait); 
-		resized = false; 
-		return; 
+	if (Frame && !IsDshow && !devicelost){
+		VFF->Render(wait);
+		resized = false;
+		return;
 	}
 	wxCriticalSectionLocker lock(mutexRender);
 	resized = false;
@@ -337,7 +337,7 @@ void VideoRenderer::Render(bool Frame, bool wait)
 				InitDX();
 				if (IsDshow){ RecreateSurface(); }
 				if (Visual){
-					Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, 
+					Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top,
 						backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
 				}
 				devicelost = false;
@@ -503,7 +503,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 	if (instance){
 		//for swap -pitch and buffer set to last element - pitch
 		framee->strides[0] = (swapFrame) ? -(vwidth * bytes) : vwidth * bytes;
-		framee->planes[0] = (swapFrame) ? fdata + (vwidth * (vheight - 1) * bytes)  : fdata;
+		framee->planes[0] = (swapFrame) ? fdata + (vwidth * (vheight - 1) * bytes) : fdata;
 		csri_render(instance, framee, (time / 1000.0));
 	}
 
@@ -652,7 +652,7 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 
 	if (vstate != None){
 		resized = seek = cross = pbar = false;
-		vstate = None; 
+		vstate = None;
 		Clear();
 	}
 	IsDshow = Dshow;
@@ -678,16 +678,16 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 			}
 			else if (player){ Kaia->Frame->OpenAudioInTab(tab, CloseAudio, L""); }
 		}
-		if (!VFF || VFF->width < 0){ 
-			return false; 
+		if (!VFF || VFF->width < 0){
+			return false;
 		}
 	}
 	else{
 
 		if (!vplayer){ vplayer = new DShowPlayer(this); }
 
-		if (!vplayer->OpenFile(fname, vobsub)){ 
-			return false; 
+		if (!vplayer->OpenFile(fname, vobsub)){
+			return false;
 		}
 		wxSize videoSize = vplayer->GetVideoSize();
 		vwidth = videoSize.x; vheight = videoSize.y;
@@ -698,7 +698,7 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		vformat = vplayer->inf.CT;
 		ax = vplayer->inf.ARatioX;
 		ay = vplayer->inf.ARatioY;
-		d3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') : 
+		d3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') :
 			(vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
 		//KaiLog(wxString::Format(L"vformat %i", (int)vformat));
 		swapFrame = (vformat == 0 && !vplayer->HasVobsub());
@@ -728,7 +728,7 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		framee->strides[i] = NULL;
 	}
 
-	framee->pixfmt = (vformat == 5) ? CSRI_F_YV12A : (vformat == 3) ? CSRI_F_YV12 : 
+	framee->pixfmt = (vformat == 5) ? CSRI_F_YV12A : (vformat == 3) ? CSRI_F_YV12 :
 		(vformat == 2) ? CSRI_F_YUY2 : CSRI_F_BGR_;
 
 	format->width = vwidth;
@@ -743,13 +743,13 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		OpenSubs(0, false);
 	}
 	vstate = Stopped;
-	if (IsDshow && vplayer) 
-		vplayer->GetChapters(&chapters); 
+	if (IsDshow && vplayer)
+		vplayer->GetChapters(&chapters);
 	else if (!IsDshow)
 		VFF->GetChapters(&chapters);
 
 	if (Visual){
-		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, 
+		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top,
 			backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
 	}
 	return true;
@@ -821,12 +821,12 @@ bool VideoRenderer::Stop()
 	if (vstate == Playing){
 		SetThreadExecutionState(ES_CONTINUOUS);
 		vstate = Stopped;
-		if (IsDshow){ 
-			vplayer->Stop();  
+		if (IsDshow){
+			vplayer->Stop();
 			playend = 0;
 		}
-		if (!IsDshow && player){ 
-			player->Stop(); 
+		if (!IsDshow && player){
+			player->Stop();
 			//VFF->SetPosition(0, true);
 			playend = GetDuration();
 		}
@@ -838,7 +838,7 @@ bool VideoRenderer::Stop()
 
 void VideoRenderer::SetPosition(int _time, bool starttime/*=true*/, bool corect/*=true*/, bool async /*= true*/)
 {
-	
+
 	if (IsDshow){
 		bool playing = vstate == Playing;
 		TabPanel* tab = (TabPanel*)GetParent();
@@ -851,7 +851,7 @@ void VideoRenderer::SetPosition(int _time, bool starttime/*=true*/, bool corect/
 		//albo to przypadek albo ustawianie pozycji przed ustawianiem clipów jest rozwiązaniem dość częstego krasza
 		//przy wielu plikach jednocześnie, był zawsze po seekingu
 		playend = 0;
-		seek = true; 
+		seek = true;
 		vplayer->SetPosition(time);
 		if (hasVisualEdition){
 			SAFE_DELETE(Visual->dummytext);
@@ -881,7 +881,7 @@ void VideoRenderer::SetFFMS2Position(int _time, bool starttime){
 	numframe = VFF->GetFramefromMS(_time, (time > _time) ? 0 : numframe);
 	if (!starttime){
 		numframe--;
-		if (VFF->Timecodes[numframe] >= _time){ numframe--;}
+		if (VFF->Timecodes[numframe] >= _time){ numframe--; }
 	}
 	time = VFF->Timecodes[numframe];
 	lasttime = timeGetTime() - time;
@@ -939,7 +939,7 @@ bool VideoRenderer::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 			(*textsubs) << toAppend;
 		}
 	}
-	
+
 	hasDummySubs = !fromFile;
 
 	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
@@ -1624,15 +1624,15 @@ void VideoRenderer::ChangePositionByFrame(int step)
 	if (vstate == Playing || vstate == None){ return; }
 	if (!IsDshow){
 		//if (!VFF->isBusy){
-			numframe = MID(0, numframe + step, VFF->NumFrames - 1);
-			time = VFF->Timecodes[numframe];
-			TabPanel* pan = (TabPanel*)GetParent();
-			if (hasVisualEdition || hasDummySubs){
-				OpenSubs(pan->Grid->SaveText(), false, true);
-				hasVisualEdition = false;
-			}
-			if (player){ player->UpdateImage(true, true); }
-			Render(true, false);
+		numframe = MID(0, numframe + step, VFF->NumFrames - 1);
+		time = VFF->Timecodes[numframe];
+		TabPanel* pan = (TabPanel*)GetParent();
+		if (hasVisualEdition || hasDummySubs){
+			OpenSubs(pan->Grid->SaveText(), false, true);
+			hasVisualEdition = false;
+		}
+		if (player){ player->UpdateImage(true, true); }
+		Render(true, false);
 		//}
 	}
 	else{
@@ -1675,7 +1675,7 @@ void VideoRenderer::ChangeVobsub(bool vobsub)
 	OpenSubs((vobsub) ? NULL : pan->Grid->SaveText(), true, true);
 	vplayer->OpenFile(pan->VideoPath, vobsub);
 	vformat = vplayer->inf.CT;
-	D3DFORMAT tmpd3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') : 
+	D3DFORMAT tmpd3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') :
 		(vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
 	swapFrame = (vformat == 0 && !vplayer->HasVobsub());
 	if (tmpd3dformat != d3dformat){
@@ -1722,10 +1722,10 @@ void VideoRenderer::SetVisual(bool remove/*=false*/, bool settext/*=false*/, boo
 		}
 		else{ SAFE_DELETE(Visual->dummytext); }
 		if (settext){ OpenSubs(pan->Grid->GetVisible()); }
-		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top, 
+		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top,
 			backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
 		SetVisualZoom();
-		Visual->SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime, 
+		Visual->SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime,
 			pan->Edit->line->IsComment, noRefresh);
 		hasVisualEdition = true;
 	}

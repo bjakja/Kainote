@@ -31,16 +31,16 @@ KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, co
 	int windowHeight = size.y;
 	wxSize newSize = originalSize = size;
 	CalculateSize(&fullw, &windowHeight);
-	
-	if(size.x <1){
-		newSize.x = fullw+20;
+
+	if (size.x < 1){
+		newSize.x = fullw + 20;
 	}
-	if(size.y <1){
+	if (size.y < 1){
 		newSize.y = windowHeight + 2;
-		if (windowHeight<17){ newSize.y = 17; }
+		if (windowHeight < 17){ newSize.y = 17; }
 	}
 	SetMinSize(newSize);
-	Bind(wxEVT_ERASE_BACKGROUND,[=](wxEraseEvent &evt){});
+	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
 	//Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){});
 	Bind(wxEVT_PAINT, &KaiStaticText::OnPaint, this);
 }
@@ -57,7 +57,7 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 		//int allwrap = -1;
 		int currentPosition = 0;
 		bool seekSpace = true;
-		int mesureSize = (*w > 10)? *w : 1000;
+		int mesureSize = (*w > 10) ? *w : 1000;
 		size_t i = 0;
 		//size_t len = text.length();
 		while (i < text.length()){
@@ -66,7 +66,7 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 			wxString stringToMesure = text.Mid(currentPosition, i - currentPosition + 1);
 			GetTextExtent((stringToMesure.length()) ? stringToMesure : L"|", &fw, &fh);
 			if (fw > mesureSize){
-				size_t j = currentPosition+1;
+				size_t j = currentPosition + 1;
 				bool foundWrap = false;
 				//fullw = mesureSize;
 				size_t textPosition = currentPosition;
@@ -79,7 +79,7 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 
 					j = spacePos + 1;
 					GetTextExtent(text.Mid(textPosition, spacePos - textPosition + 1), &fw, &fh);
-					textPosition = spacePos+1;
+					textPosition = spacePos + 1;
 					currentFW += fw;
 					if (currentFW <= mesureSize){
 						newWrap = j;
@@ -108,25 +108,25 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 						currentPosition++;
 						i++;
 					}
-					j = currentPosition+1;
+					j = currentPosition + 1;
 					foundWrap = false;
 					if (fullw < fw){
 						fullw = fw;
 					}
 					textHeight += fh;
 				}
-				
+
 			}
 			else{
-				if (fullw < fw){ 
-					fullw = fw; 
+				if (fullw < fw){
+					fullw = fw;
 				}
 				textHeight += fh;
 				currentPosition = i + 1;
 			}
 			i++;
 		}
-			
+
 	}
 	int heightMesure = (*h > 0) ? *h : 600;
 	*h = textHeight;
@@ -135,10 +135,10 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 }
 
 void KaiStaticText::SetLabelText(const wxString &_text){
-	text = _text; 
+	text = _text;
 	int fullw = originalSize.x;
 	int windowHeight = originalSize.y;
-	wxSize size=GetClientSize();
+	wxSize size = GetClientSize();
 	CalculateSize(&fullw, &windowHeight);
 	if (size.x != fullw || size.y != windowHeight){
 		size.x = fullw;
@@ -147,7 +147,7 @@ void KaiStaticText::SetLabelText(const wxString &_text){
 		//SetSize(size);
 		//SetMaxSize(size);
 		wxSizer *sizer = GetSizer();
-		if(sizer){
+		if (sizer){
 			sizer->Layout();
 		}
 		//GetParent()->Layout();
@@ -155,10 +155,10 @@ void KaiStaticText::SetLabelText(const wxString &_text){
 		//Update();
 		return;
 	}
-	
+
 	Refresh(false);
 }
-	
+
 void KaiStaticText::OnPaint(wxPaintEvent &evt)
 {
 	int w = 0;
@@ -166,8 +166,8 @@ void KaiStaticText::OnPaint(wxPaintEvent &evt)
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
 	if (textHeight > 400){
-		if (!textScroll){ 
-			textScroll = new KaiScrollbar(this, 9999, wxDefaultPosition, wxDefaultSize, wxVERTICAL); 
+		if (!textScroll){
+			textScroll = new KaiScrollbar(this, 9999, wxDefaultPosition, wxDefaultSize, wxVERTICAL);
 			textScroll->SetScrollRate(10);
 			int sw = 0, sh = 0;
 			textScroll->GetSize(&sw, &sh);
@@ -177,36 +177,36 @@ void KaiStaticText::OnPaint(wxPaintEvent &evt)
 		int pageSize = h;
 		if (scPos<0){ scPos = 0; }
 		else if (scPos >(textHeight + 20) - pageSize){ scPos = (textHeight + 20) - pageSize; }
-		textScroll->SetScrollbar(scPos, pageSize, textHeight+20, pageSize - 1);
+		textScroll->SetScrollbar(scPos, pageSize, textHeight + 20, pageSize - 1);
 	}
 	else if (textScroll){
 		textScroll->Destroy();
 		textScroll = NULL;
 	}
 
-	
+
 	wxMemoryDC tdc;
-	tdc.SelectObject(wxBitmap(w,h));
+	tdc.SelectObject(wxBitmap(w, h));
 	/*GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
 	GraphicsContext *gc = renderer->CreateContext(tdc);
 	if (!gc){*/
-		tdc.SetFont(GetFont());
-		tdc.SetBrush(Options.GetColour(WindowBackground));
-		tdc.SetPen(*wxTRANSPARENT_PEN);
-		tdc.DrawRectangle(0, 0, w, h);
-		tdc.SetTextForeground(Options.GetColour(textColour));
-		int center = (textHeight < h) ? (h - textHeight) / 2 : 0;
-		tdc.DrawText(text, 0, -scPos + center);
-//}
-//	else{
-//		gc->SetFont(GetFont(), Options.GetColour(textColour));
-//		gc->SetBrush(Options.GetColour(WindowBackground));
-//		gc->SetPen(*wxTRANSPARENT_PEN);
-//		gc->DrawRectangle(0, 0, w, h);
-//		int center = (textHeight < h) ? (h - textHeight) / 2 : 0;
-//		gc->DrawTextU(text, 0, -scPos + center);
-//		delete gc;
-//	}
+	tdc.SetFont(GetFont());
+	tdc.SetBrush(Options.GetColour(WindowBackground));
+	tdc.SetPen(*wxTRANSPARENT_PEN);
+	tdc.DrawRectangle(0, 0, w, h);
+	tdc.SetTextForeground(Options.GetColour(textColour));
+	int center = (textHeight < h) ? (h - textHeight) / 2 : 0;
+	tdc.DrawText(text, 0, -scPos + center);
+	//}
+	//	else{
+	//		gc->SetFont(GetFont(), Options.GetColour(textColour));
+	//		gc->SetBrush(Options.GetColour(WindowBackground));
+	//		gc->SetPen(*wxTRANSPARENT_PEN);
+	//		gc->DrawRectangle(0, 0, w, h);
+	//		int center = (textHeight < h) ? (h - textHeight) / 2 : 0;
+	//		gc->DrawTextU(text, 0, -scPos + center);
+	//		delete gc;
+	//	}
 	wxPaintDC dc(this);
 	dc.Blit(0, 0, w, h, &tdc, 0, 0);
 }

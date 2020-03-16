@@ -22,15 +22,15 @@
 
 wxDEFINE_EVENT(SELECTION_CHANGED, wxCommandEvent);
 
-bool sortf(int i,int j){ return (i < j);}
+bool sortf(int i, int j){ return (i < j); }
 
 StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, const wxPoint &pos, const wxSize &size, long style)
-		  :KaiScrolledWindow(parent,id,pos,size, style | wxVERTICAL)
+	:KaiScrolledWindow(parent, id, pos, size, style | wxVERTICAL)
 {
-	
-	stylenames=stylearray;
+
+	stylenames = stylearray;
 	//SetMinSize(size);
-	
+
 	font = wxFont(10, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
 	wxAcceleratorEntry entries[4];
 	entries[0].Set(wxACCEL_NORMAL, WXK_UP, 15555);
@@ -42,7 +42,7 @@ StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray
 
 	wxClientDC dc(this);
 	dc.SetFont(font);
-	int fw , fh;
+	int fw, fh;
 	dc.GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	Height = fh;
 
@@ -71,14 +71,15 @@ void StyleList::OnPaint(wxPaintEvent& event)
 	if (w == 0 || h == 0){ return; }
 	int panelrows = (h / Height) + 1;
 	int scrows;
-	if((scPos + panelrows) >= (int)stylenames->size() + 1){
+	if ((scPos + panelrows) >= (int)stylenames->size() + 1){
 		scrows = stylenames->size();
 		scPos = (scrows - panelrows) + 1;
-		if (panelrows > (int)stylenames->size() + 1){ scPos = 0; }	
-	}else{
+		if (panelrows > (int)stylenames->size() + 1){ scPos = 0; }
+	}
+	else{
 		scrows = (scPos + panelrows);
 	}
-	if(SetScrollBar(wxVERTICAL, scPos, panelrows, stylenames->size() + 1, panelrows - 2)){
+	if (SetScrollBar(wxVERTICAL, scPos, panelrows, stylenames->size() + 1, panelrows - 2)){
 		GetClientSize(&w, &h);
 	}
 
@@ -103,23 +104,25 @@ void StyleList::OnPaint(wxPaintEvent& event)
 	bdc.DrawRectangle(0, 0, w, h);
 	wxArrayString *fonts = FontEnum.GetFonts(NULL, [](){});
 
-	for(int i = scPos; i < scrows; i++)
+	for (int i = scPos; i < scrows; i++)
 	{
 		if (sels.Index(i) != -1){
 			bdc.SetPen(*wxTRANSPARENT_PEN);
-			bdc.SetBrush(wxBrush(Options.GetColour(StaticListSelection))); 
-			bdc.DrawRectangle(posX, posY, w-2, Height);
-		}else{
+			bdc.SetBrush(wxBrush(Options.GetColour(StaticListSelection)));
+			bdc.DrawRectangle(posX, posY, w - 2, Height);
+		}
+		else{
 			bdc.SetBrush(wxBrush(background));
 		}
 		if (fonts->Index(stylenames->at(i)->Fontname, false) == -1){
 			bdc.SetTextForeground(Options.GetColour(WindowWarningElements));
-		}else{
+		}
+		else{
 			bdc.SetTextForeground(Options.GetColour(WindowText));
 		}
-		
 
-		wxRect cur(posX + 4, posY, w - 8, Height);	
+
+		wxRect cur(posX + 4, posY, w - 8, Height);
 		bdc.SetClippingRegion(cur);
 		bdc.DrawLabel(stylenames->at(i)->Name, cur, wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
 		bdc.DestroyClippingRegion();
@@ -142,11 +145,11 @@ void StyleList::OnScroll(wxScrollWinEvent& event)
 
 	//if(newPos<0 || newPos>(int)stylenames->size()-1){return;}
 	if (scPos != newPos) {
-		scPos = newPos;
-		Refresh(false);
+	scPos = newPos;
+	Refresh(false);
 	}*/
 	int newPos = 0;
-	if(event.GetEventType() == wxEVT_SCROLLWIN_LINEUP)
+	if (event.GetEventType() == wxEVT_SCROLLWIN_LINEUP)
 	{
 		newPos = scPos - 1;
 		if (newPos < 0){ newPos = 0; return; }
@@ -180,7 +183,7 @@ void StyleList::OnScroll(wxScrollWinEvent& event)
 void StyleList::OnMouseEvent(wxMouseEvent& event)
 {
 	int w, h;
-	GetClientSize (&w, &h);
+	GetClientSize(&w, &h);
 	bool shift = event.ShiftDown();
 	bool alt = event.AltDown();
 	bool ctrl = event.CmdDown();
@@ -189,17 +192,18 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 	bool dclick = event.LeftDClick();
 	int curY = event.GetY();
 	int row = (curY / Height) + scPos;
-	
+
 	if (left_up && !holding) {
 		return;
 	}
 
 	// Get focus
 	if (event.ButtonDown()) {
-		SetFocus();}
+		SetFocus();
+	}
 
 	if (left_up && holding) {
-		if(Switchlines){wxCommandEvent evt(wxEVT_COMMAND_LISTBOX_SELECTED, GetId()); AddPendingEvent(evt);}
+		if (Switchlines){ wxCommandEvent evt(wxEVT_COMMAND_LISTBOX_SELECTED, GetId()); AddPendingEvent(evt); }
 		holding = false;
 		ReleaseMouse();
 	}
@@ -207,7 +211,7 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 	if (row < scPos || row >= (int)stylenames->size()) {
 		return;
 	}
-	
+
 	if (event.GetWheelRotation() != 0) {
 		int step = scPos - ((event.GetWheelRotation() / event.GetWheelDelta()));
 		if (step < 0){ step = 0; }
@@ -219,42 +223,43 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 		return;
 	}
 
-	
+
 
 	if (click) {
 		holding = true;
-		if (!shift) {lastRow = row;}
-		lastsel=-1;
+		if (!shift) { lastRow = row; }
+		lastsel = -1;
 		//wxCommandEvent evt(wxEVT_COMMAND_LISTBOX_SELECTED, GetId());
 		//AddPendingEvent(evt);
 		Refresh(false);
 		CaptureMouse();
 	}
 
-	if(dclick){
+	if (dclick){
 		wxCommandEvent evt(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, GetId());
 		AddPendingEvent(evt);
 	}
 
-	if(holding && alt && !shift && lastsel != row)
+	if (holding && alt && !shift && lastsel != row)
 	{
 		if (lastsel != -1) {
-			
+
 			int diff = (row - lastsel);
-			if(diff > 0){
-				for(int i = sels.size() - 1; i >= 0; i--){
-					if((sels[i] + diff) >= (int)stylenames->size()){break;}
+			if (diff > 0){
+				for (int i = sels.size() - 1; i >= 0; i--){
+					if ((sels[i] + diff) >= (int)stylenames->size()){ break; }
 					Styles *tmp = stylenames->at(sels[i]);
 					stylenames->erase(stylenames->begin() + sels[i]);
 					stylenames->insert(stylenames->begin() + sels[i] + diff, tmp);
 					sels[i] += diff;
 				}
-			}else{
-				for(int i = 0; i < (int)sels.size(); i++){
-					if((sels[i] + diff) < 0){ break; }
+			}
+			else{
+				for (int i = 0; i < (int)sels.size(); i++){
+					if ((sels[i] + diff) < 0){ break; }
 					//int fst=sels[i]-1;
 					//int snd=sels[i];
-					
+
 					//Styles *tmp=stylenames->at(fst);
 					//stylenames->at(fst)=stylenames->at(snd);
 					//stylenames->at(snd)=tmp;
@@ -289,7 +294,7 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 			// Toggle each
 			bool notFirst = false;
 			for (int i = i1; i <= i2; i++) {
-				if(!notFirst){sels.clear();}
+				if (!notFirst){ sels.clear(); }
 				sels.Add(i);
 				notFirst = true;
 			}
@@ -300,13 +305,15 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 		return;
 	}
 
-		// Toggle selected
+	// Toggle selected
 	if (click && ctrl && !shift && !alt) {
-		int idx=sels.Index(row);
-		if(idx != -1){
+		int idx = sels.Index(row);
+		if (idx != -1){
 			sels.RemoveAt(idx);
-		}else{
-			sels.Add(row);}
+		}
+		else{
+			sels.Add(row);
+		}
 		std::sort(sels.begin(), sels.end(), sortf);
 		Refresh(false);
 		SendSelectionEvent();
@@ -316,7 +323,7 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 	if (!shift && !ctrl && !alt) {
 		if (click && !dclick) {
 			sels.clear();
-			
+
 			sels.Add(row);
 			Refresh(false);
 			SendSelectionEvent();
@@ -337,7 +344,7 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 			Refresh(false);
 		}
 	}
-	
+
 
 }
 
@@ -360,8 +367,8 @@ void StyleList::SetSelection(int _sel, bool reset)
 {
 
 	if (_sel == -1 || reset){ sels.clear(); }
-	if(_sel != -1){ sels.Add(_sel); }
-	if( sels.size() > 0 ){
+	if (_sel != -1){ sels.Add(_sel); }
+	if (sels.size() > 0){
 		scPos = MAX(0, sels[0] - 2);
 	}
 	Refresh(false);
@@ -371,11 +378,11 @@ void StyleList::SetSelection(int _sel, bool reset)
 void StyleList::SetSelections(const wxArrayInt &_sels)
 {
 	sels.clear();
-	for(size_t i = 0; i < _sels.size(); i++){
+	for (size_t i = 0; i < _sels.size(); i++){
 		sels.push_back(_sels[i]);
 	}
-	if(sels.size() > 0){
-		scPos=MAX(0, sels[0] - 2);
+	if (sels.size() > 0){
+		scPos = MAX(0, sels[0] - 2);
 	}
 	Refresh(false);
 	SendSelectionEvent();
@@ -384,7 +391,7 @@ void StyleList::SetSelections(const wxArrayInt &_sels)
 
 int StyleList::GetSelections(wxArrayInt &_sels)
 {
-	if(stylenames->size() < 1){
+	if (stylenames->size() < 1){
 		sels.Clear();
 		SendSelectionEvent();
 	}
@@ -396,7 +403,7 @@ int StyleList::GetSelections(wxArrayInt &_sels)
 void StyleList::Scroll(int step)
 {
 	scPos += step;
-	if (scPos < 0 || scPos > (int)stylenames->size()){ return; }
+	if (scPos < 0 || scPos >(int)stylenames->size()){ return; }
 	Refresh(false);
 }
 
@@ -414,13 +421,14 @@ void StyleList::OnArrow(wxCommandEvent& event)
 		if (id == 15555){ sels.clear(); }
 		if (scPos > lastsel){ scPos--; }
 		sels.Add(lastsel);
-	}else if (id == 15556 || id == 15558){//down -> shift down
+	}
+	else if (id == 15556 || id == 15558){//down -> shift down
 		if (id == 15558 && sels[sels.size() - 1] != lastsel){
 			lastsel = sels[sels.size() - 1];
 		}
 		lastsel++;
 		if (lastsel >= (int)stylenames->size()){ lastsel = stylenames->size() - 1; return; }
-		
+
 		if (id == 15556){ sels.clear(); }
 		wxSize size = GetClientSize();
 		if ((scPos + (size.y / Height)) <= lastsel){ scPos++; }
@@ -431,10 +439,10 @@ void StyleList::OnArrow(wxCommandEvent& event)
 }
 
 BEGIN_EVENT_TABLE(StyleList, KaiScrolledWindow)
-	EVT_PAINT(StyleList::OnPaint)
-	EVT_SIZE(StyleList::OnSize)
-	EVT_SCROLLWIN(StyleList::OnScroll)
-	EVT_MOUSE_EVENTS(StyleList::OnMouseEvent)
-	EVT_MENU_RANGE(15555,15558,StyleList::OnArrow)
-	EVT_MOUSE_CAPTURE_LOST(StyleList::OnLostCapture)
+EVT_PAINT(StyleList::OnPaint)
+EVT_SIZE(StyleList::OnSize)
+EVT_SCROLLWIN(StyleList::OnScroll)
+EVT_MOUSE_EVENTS(StyleList::OnMouseEvent)
+EVT_MENU_RANGE(15555, 15558, StyleList::OnArrow)
+EVT_MOUSE_CAPTURE_LOST(StyleList::OnLostCapture)
 END_EVENT_TABLE()

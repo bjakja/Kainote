@@ -22,16 +22,16 @@
 
 SubsGridPreview::SubsGridPreview(SubsGrid *_previewGrid, SubsGrid *windowToDraw, int posY, const wxSize &size)
 	:wxWindow((wxWindow*)windowToDraw, -1, wxPoint(0, posY), size)
-	,previewGrid(_previewGrid)
+	, previewGrid(_previewGrid)
 	, parent(windowToDraw)
 {
-	if (!previewGrid){ 
+	if (!previewGrid){
 		NewSeeking(false);
 	}
 	else{
 		previewGrid->thisPreview = this;
 	}
-	scrollbar = new KaiScrollbar(this, 5432, wxDefaultPosition, wxDefaultSize,wxVERTICAL);
+	scrollbar = new KaiScrollbar(this, 5432, wxDefaultPosition, wxDefaultSize, wxVERTICAL);
 	Bind(wxEVT_PAINT, &SubsGridPreview::OnPaint, this);
 	Bind(wxEVT_SIZE, &SubsGridPreview::OnSize, this);
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
@@ -83,7 +83,7 @@ void SubsGridPreview::DestroyPreview(bool refresh, bool destroyingPreviewTab)
 	parent->preview = NULL;
 	previewGrid->thisPreview = NULL;
 	if (!Options.GetClosing()){
-		TabPanel *tab = (destroyingPreviewTab) ? (TabPanel*)previewGrid->GetParent():  (TabPanel*)parent->GetParent();
+		TabPanel *tab = (destroyingPreviewTab) ? (TabPanel*)previewGrid->GetParent() : (TabPanel*)parent->GetParent();
 		tab->Edit->SetGrid(tab->Grid);
 		if (tab->Edit->TextEditOrig->IsShown() != tab->Grid->hasTLMode){
 			tab->Edit->SetTlMode(tab->Grid->hasTLMode, true);
@@ -128,7 +128,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		scrows--;
 		//reduced to avoid crash or maybe now not needed cause is key + i < getcount()
 	}
-	
+
 	scrollbar->SetSize(w - 21, previewGrid->GridHeight, 17, h - previewGrid->GridHeight - 4);
 	scrollbar->SetScrollbar(previewGrid->scrollPositionId, panelrows, size + 3, panelrows - 3);
 
@@ -198,7 +198,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
 	Dialogue *acdial = /*(size > 0) ? */previewGrid->GetDialogue(previewGrid->currentLine)/* : NULL*/;
 	Dialogue *Dial = NULL;
-	
+
 	int VideoPos = tab->Video->vstate != None ? tab->Video->Tell() : -1;
 
 	int fw, fh, bfw, bfh;
@@ -384,8 +384,8 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		bool isCenter;
 		wxColour label = (states == 0) ? labelBkColN : (states == 2) ? labelBkCol :
 			(states == 1) ? labelBkColM : labelBkColD;
-		if (key >= lastData.lineRangeStart && key < lastData.lineRangeStart + lastData.lineRangeLen){ 
-			label = GetColorWithAlpha(wxColour(0, 0, 255, 60), kol); 
+		if (key >= lastData.lineRangeStart && key < lastData.lineRangeStart + lastData.lineRangeLen){
+			label = GetColorWithAlpha(wxColour(0, 0, 255, 60), kol);
 		}
 		for (int j = 0; j < ilcol; j++){
 			if (previewGrid->showOriginal&&j == ilcol - 2){
@@ -434,7 +434,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 
 					for (size_t c = 1; c < previewGrid->Comparison->at(key).size(); c += 2){
 						//if(Comparison->at(i-1)[k]==Comparison->at(i-1)[k+1]){continue;}
-						wxString cmp = strings[j].SubString(previewGrid->Comparison->at(key)[c], 
+						wxString cmp = strings[j].SubString(previewGrid->Comparison->at(key)[c],
 							previewGrid->Comparison->at(key)[c + 1]);
 
 						if (cmp == L""){ continue; }
@@ -491,14 +491,14 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		if (idmarkerPos != -1){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine), 3));
-			tdc.DrawRectangle(posX + 1, ((idmarkerPos - previewGrid->scrollPositionId + 1) * 
+			tdc.DrawRectangle(posX + 1, ((idmarkerPos - previewGrid->scrollPositionId + 1) *
 				(previewGrid->GridHeight + 1)) - 1, (previewGrid->GridWidth[0] - 1), previewGrid->GridHeight + 2);
 		}
 
 		if (idcurrentLine != -1){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine)));
-			tdc.DrawRectangle(posX, ((idcurrentLine - previewGrid->scrollPositionId + 1) * 
+			tdc.DrawRectangle(posX, ((idcurrentLine - previewGrid->scrollPositionId + 1) *
 				(previewGrid->GridHeight + 1)) - 1, w + scHor - posX - 21, previewGrid->GridHeight + 2);
 		}
 	}
@@ -532,7 +532,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	bool right = event.RightDown();
 	//border on left 4px
 	int curY = (event.GetY());
-	int curX = (event.GetX())-4;
+	int curX = (event.GetX()) - 4;
 
 	TabPanel *tab = (TabPanel*)previewGrid->GetParent();
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
@@ -566,7 +566,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			return;
 		}
 	}
-	
+
 	if (left_up && holding) {
 		holding = false;
 		//Save swap lines after alt release 
@@ -587,8 +587,8 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	if (event.ButtonDown()) {
 		SetFocus();
 	}
-	
-	
+
+
 	//Check if it is tree description line
 	if (previewGrid->file->CheckIfIsTree(row)){
 		if (event.GetModifiers() == 0){
@@ -624,11 +624,11 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			int vtime = 0;
 			bool isstart = true;
 			if (shift && previewGrid->subsFormat != TMP){
-				vtime = previewGrid->GetDialogue(row)->End.mstime; 
+				vtime = previewGrid->GetDialogue(row)->End.mstime;
 				isstart = false;
 			}
 			else{
-				vtime = previewGrid->GetDialogue(row)->Start.mstime; 
+				vtime = previewGrid->GetDialogue(row)->Start.mstime;
 				isstart = true;
 			}
 			if (ctrl){ vtime -= 1000; }
@@ -644,7 +644,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 
 		}
 		//else if(lastData.grid){
-			ContextMenu(event.GetPosition());
+		ContextMenu(event.GetPosition());
 		//}
 		return;
 	}
@@ -652,7 +652,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	// Mouse wheel
 	if (event.GetWheelRotation() != 0 && row >= previewGrid->scrollPosition) {
 		int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();
-		previewGrid->scrollPosition = previewGrid->GetKeyFromPosition(previewGrid->scrollPosition, - step);
+		previewGrid->scrollPosition = previewGrid->GetKeyFromPosition(previewGrid->scrollPosition, -step);
 		previewGrid->scrollPositionId = previewGrid->file->GetElementByKey(previewGrid->scrollPosition);
 		Refresh(false);
 		return;
@@ -660,7 +660,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 
 	if (curX < hideColumnWidth){
 		int filterRow = previewGrid->GetKeyFromScrollPos(((curY + (previewGrid->GridHeight / 2)) / (previewGrid->GridHeight + 1)) - 1) - 1;
-		if (filterRow < previewGrid->GetCount() && curY > (previewGrid->GridHeight / 2)) {
+		if (filterRow < previewGrid->GetCount() && curY >(previewGrid->GridHeight / 2)) {
 			if (click || dclick){
 				unsigned char state = previewGrid->file->CheckIfHasHiddenBlock(filterRow, filterRow < previewGrid->scrollPosition);
 				if (state){
@@ -691,7 +691,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 		oldX = (curY < previewGrid->GridHeight) ? curX : -1;
 		CaptureMouse();
 	}
-	
+
 	if (holding && oldX != -1){
 		int diff = (oldX - curX);
 		if ((scHor == 0 && diff < 0) || diff == 0 || (scHor > 1500 && diff > 0)){ return; }
@@ -707,7 +707,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	int pas = video->vToolbar->videoPlayAfter->GetSelection();
 	if (!(row < previewGrid->scrollPosition || row >= previewGrid->GetCount())) {
 
-		
+
 		// Toggle selected
 		if (left_up && ctrl && !shift && !alt) {
 			if (!(previewGrid->currentLine == row && previewGrid->file->SelectionsSize() == 1 && previewGrid->file->IsSelected(row))){
@@ -730,7 +730,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 				tabp->Edit->SetLine(row, true, true, true, !ctrl);
 				if (!previewGrid->Comparison)
 					tab->Edit->SetLine(row, true, true, true, !ctrl);
-				
+
 				if (previewGrid->hasTLMode){ tab->Edit->SetActiveLineToDoubtful(); }
 				if (changeActive)
 					Refresh(false);
@@ -751,7 +751,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			//3-klikniêcie lewym i edycja na pauzie i odtwarzaniu
 
 			//if (dclick || (click && previewGrid->lastActiveLine != row && mvtal < 4 && mvtal > 0) && pas < 2){
-				//tabp->Grid->SetVideoLineTime(event, mvtal);
+			//tabp->Grid->SetVideoLineTime(event, mvtal);
 			//}
 
 			if (click || dclick || left_up)
@@ -760,7 +760,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 
 		if (middle){
 			if (video->GetState() != None){
-				video->PlayLine(previewGrid->GetDialogue(row)->Start.mstime, 
+				video->PlayLine(previewGrid->GetDialogue(row)->Start.mstime,
 					video->GetPlayEndTime(previewGrid->GetDialogue(row)->End.mstime));
 			}
 
@@ -801,7 +801,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 				previewGrid->lastActiveLine = previewGrid->currentLine;
 				tab->Edit->SetLine(row, true, true, false);
 				if (previewGrid->hasTLMode){ tab->Edit->SetActiveLineToDoubtful(); }
-				
+
 			}
 			previewGrid->lastsel = row;
 			Refresh(false);
@@ -861,7 +861,7 @@ void SubsGridPreview::SeekForOccurences()
 			Dialogue *dial = subs->GetDialogue(j);
 			if (!dial->isVisible){ continue; }
 			if (dial->Start.mstime < endTime && dial->End.mstime > startTime){
-				if (lastLine+1 == j){
+				if (lastLine + 1 == j){
 					lastLine = j;
 					int lastData = previewData.size() - 1;
 					previewData[lastData].lineRangeLen = (j - previewData[lastData].lineRangeStart) + 1;
@@ -883,12 +883,12 @@ void SubsGridPreview::SeekForOccurences()
 			else if (dial->End.mstime < endMin && dial->End.mstime > endTime){
 				endMin = dial->End.mstime; keyEndMin = j;
 			}
-			
+
 		}
 		if (lastLine == -2){
 			int bestStart, bestJ;
 			int bestEnd, bestJE;
-			
+
 			if (abs(startTime - startMax) > abs(startTime - startMin)){
 				bestStart = startMin; bestJ = keyStartMin;
 			}
@@ -915,7 +915,7 @@ void SubsGridPreview::SeekForOccurences()
 			break;
 		}
 	}
-	
+
 }
 
 void SubsGridPreview::ContextMenu(const wxPoint &pos)
@@ -923,7 +923,7 @@ void SubsGridPreview::ContextMenu(const wxPoint &pos)
 	Menu *menu = new Menu();
 	SeekForOccurences();
 	for (int i = 0; i < previewData.size(); i++){
-		wxString name = previewData[i].tab->SubsName + L" (" + std::to_wstring(previewData[i].lineRangeStart) + 
+		wxString name = previewData[i].tab->SubsName + L" (" + std::to_wstring(previewData[i].lineRangeStart) +
 			L" " + std::to_wstring(previewData[i].lineRangeLen) + L")";
 		MenuItem * Item = menu->Append(4880 + i, name, L"", true, NULL, NULL, (lastData == previewData[i]) ? ITEM_RADIO : ITEM_NORMAL);
 	}

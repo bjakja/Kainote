@@ -20,7 +20,7 @@
 #include "GraphicsD2D.h"
 
 
-KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const wxPoint& pos, 
+KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const wxPoint& pos,
 	const wxSize& size, long _style, const wxValidator & validator, const wxString & name)
 	:KaiScrolledWindow(parent, id, pos, size, _style | wxWANTS_CHARS, name)
 	, background(WindowBackground)
@@ -263,7 +263,7 @@ void KaiTextCtrl::DeleteStyles(size_t textStart, size_t textEnd)
 
 void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 {
-	
+
 	long multiline = (style & wxTE_MULTILINE);
 
 	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
@@ -302,7 +302,8 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 			if (gc){
 				GetTextExtent(gc, KText.Mid(currentPosition, i - currentPosition + 1), &gfw, &gfh);
 				fw = gfw + 0.5;
-			}else
+			}
+			else
 				GetTextExtent(KText.Mid(currentPosition, i - currentPosition + 1), &fw, &fh);
 			//check text to \n
 			if (fw > mesureSize){
@@ -445,7 +446,7 @@ void KaiTextCtrl::OnCharPress(wxKeyEvent& event)
 	int key = event.GetKeyCode();
 	bool ctrl = event.ControlDown();
 	bool alt = event.AltDown();
-	if (!(((!ctrl && !alt) || (ctrl && alt)) && (key > 30 || key == 0) || 
+	if (!(((!ctrl && !alt) || (ctrl && alt)) && (key > 30 || key == 0) ||
 		(alt && (key >= WXK_NUMPAD0 && key <= WXK_NUMPAD9)))){
 		event.Skip(); return;
 	}
@@ -828,8 +829,8 @@ void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h)
 {
 	int fw = 0, fh = 0;
 	bool enabled = IsThisEnabled();
-	wxColour bg = (enabled && UseBgCol()) ? wxWindowBase::GetBackgroundColour() : 
-		(enabled)? Options.GetColour(background) : Options.GetColour(WindowBackgroundInactive);
+	wxColour bg = (enabled && UseBgCol()) ? wxWindowBase::GetBackgroundColour() :
+		(enabled) ? Options.GetColour(background) : Options.GetColour(WindowBackgroundInactive);
 	wxColour fg = (foreground) ? Options.GetColour(foreground) : wxWindowBase::GetForegroundColour();
 	wxColour border = (style & wxBORDER_NONE) ? bg :
 		(HasFocus()) ? Options.GetColour(TextFieldBorderOnFocus) :

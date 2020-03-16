@@ -19,22 +19,22 @@
 #include "config.h"
 
 KaiRadioButton::KaiRadioButton(wxWindow *parent, int id, const wxString& label,
-			 const wxPoint& pos, const wxSize& size, long style)
-			 : KaiCheckBox(parent, id, label, pos, size, style)
-			 //, hasGroup(style & wxRB_GROUP)
-			 //,isCheckBox(true)
+	const wxPoint& pos, const wxSize& size, long style)
+	: KaiCheckBox(parent, id, label, pos, size, style)
+	//, hasGroup(style & wxRB_GROUP)
+	//,isCheckBox(true)
 {
-	isCheckBox=false;
+	isCheckBox = false;
 	Bind(wxEVT_LEFT_DOWN, &KaiRadioButton::OnMouseLeft, this);
 	Bind(wxEVT_LEFT_DCLICK, &KaiRadioButton::OnMouseLeft, this);
-	if(style & wxRB_GROUP){SetValue(true);}
+	if (style & wxRB_GROUP){ SetValue(true); }
 	wxAcceleratorEntry entries[2];
-	entries[0].Set(wxACCEL_NORMAL, WXK_LEFT,ID_ACCEL_LEFT);
-	entries[1].Set(wxACCEL_NORMAL, WXK_RIGHT,ID_ACCEL_RIGHT);
+	entries[0].Set(wxACCEL_NORMAL, WXK_LEFT, ID_ACCEL_LEFT);
+	entries[1].Set(wxACCEL_NORMAL, WXK_RIGHT, ID_ACCEL_RIGHT);
 	wxAcceleratorTable accel(2, entries);
 	SetAcceleratorTable(accel);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){SelectPrev(false);}, ID_ACCEL_LEFT);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){SelectNext(false);}, ID_ACCEL_RIGHT);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){SelectPrev(false); }, ID_ACCEL_LEFT);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){SelectNext(false); }, ID_ACCEL_RIGHT);
 }
 
 void KaiRadioButton::OnMouseLeft(wxMouseEvent &evt)
@@ -54,7 +54,7 @@ void KaiRadioButton::SetValue(bool _value)
 {
 	value = _value;
 	Refresh(false);
-	if(!value){return;}
+	if (!value){ return; }
 	DeselectRest();
 }
 
@@ -62,38 +62,38 @@ void KaiRadioButton::DeselectRest()
 {
 	const wxWindowList& siblings = GetParent()->GetChildren();
 	wxWindowList::compatibility_iterator nodeThis = siblings.Find(this);
-	wxCHECK_RET( nodeThis, wxT("radio button not a child of its parent?") );
+	wxCHECK_RET(nodeThis, wxT("radio button not a child of its parent?"));
 
-	if ( !HasFlag(wxRB_GROUP) )
+	if (!HasFlag(wxRB_GROUP))
 	{
 		// ... turn off all radio buttons before it
-		for ( wxWindowList::compatibility_iterator nodeBefore = nodeThis->GetPrevious();
-			  nodeBefore;
-			  nodeBefore = nodeBefore->GetPrevious() )
+		for (wxWindowList::compatibility_iterator nodeBefore = nodeThis->GetPrevious();
+			nodeBefore;
+			nodeBefore = nodeBefore->GetPrevious())
 		{
 			KaiRadioButton *btn = wxDynamicCast(nodeBefore->GetData(),
-											   KaiRadioButton);
-			if ( !btn )
+				KaiRadioButton);
+			if (!btn)
 			{
 				// don't stop on non radio buttons, we could have intermixed
 				// buttons and e.g. static labels
 				continue;
 			}
 
-			if ( btn->HasFlag(wxRB_SINGLE) )
-				{
-					// A wxRB_SINGLE button isn't part of this group
-					break;
-				}
+			if (btn->HasFlag(wxRB_SINGLE))
+			{
+				// A wxRB_SINGLE button isn't part of this group
+				break;
+			}
 
 			/*if ( btn == focus )
 				shouldSetFocus = true;
-			else if ( btn == focusInTLW )
+				else if ( btn == focusInTLW )
 				shouldSetTLWFocus = true;*/
 
 			btn->SetValue(false);
 
-			if ( btn->HasFlag(wxRB_GROUP) )
+			if (btn->HasFlag(wxRB_GROUP))
 			{
 				// even if there are other radio buttons before this one,
 				// they're not in the same group with us
@@ -101,18 +101,18 @@ void KaiRadioButton::DeselectRest()
 			}
 		}
 	}
-	 // ... and also turn off all buttons after this one
-	for ( wxWindowList::compatibility_iterator nodeAfter = nodeThis->GetNext();
-		  nodeAfter;
-		  nodeAfter = nodeAfter->GetNext() )
+	// ... and also turn off all buttons after this one
+	for (wxWindowList::compatibility_iterator nodeAfter = nodeThis->GetNext();
+		nodeAfter;
+		nodeAfter = nodeAfter->GetNext())
 	{
 		KaiRadioButton *btn = wxDynamicCast(nodeAfter->GetData(),
-										   KaiRadioButton);
+			KaiRadioButton);
 
-		if ( !btn )
+		if (!btn)
 			continue;
 
-		if ( btn->HasFlag(wxRB_GROUP | wxRB_SINGLE) )
+		if (btn->HasFlag(wxRB_GROUP | wxRB_SINGLE))
 		{
 			// no more buttons or the first button of the next group
 			break;
@@ -120,7 +120,7 @@ void KaiRadioButton::DeselectRest()
 
 		/*if ( btn == focus )
 			shouldSetFocus = true;
-		else if ( btn == focusInTLW )
+			else if ( btn == focusInTLW )
 			shouldSetTLWFocus = true;*/
 
 		btn->SetValue(false);
@@ -132,33 +132,33 @@ void KaiRadioButton::SelectPrev(bool first)
 {
 	const wxWindowList& siblings = GetParent()->GetChildren();
 	wxWindowList::compatibility_iterator nodeThis = siblings.Find(this);
-	wxCHECK_RET( nodeThis, wxT("radio button not a child of its parent?") );
+	wxCHECK_RET(nodeThis, wxT("radio button not a child of its parent?"));
 
-	if ( !HasFlag(wxRB_GROUP) )
+	if (!HasFlag(wxRB_GROUP))
 	{
 		// ... turn off all radio buttons before it
-		for ( wxWindowList::compatibility_iterator nodeBefore = nodeThis->GetPrevious();
-			  nodeBefore;
-			  nodeBefore = nodeBefore->GetPrevious() )
+		for (wxWindowList::compatibility_iterator nodeBefore = nodeThis->GetPrevious();
+			nodeBefore;
+			nodeBefore = nodeBefore->GetPrevious())
 		{
 			KaiRadioButton *btn = wxDynamicCast(nodeBefore->GetData(),
-											   KaiRadioButton);
-			if ( !btn )
+				KaiRadioButton);
+			if (!btn)
 			{
 				// don't stop on non radio buttons, we could have intermixed
 				// buttons and e.g. static labels
 				continue;
 			}
-			
-			if ( btn->HasFlag(wxRB_SINGLE))
+
+			if (btn->HasFlag(wxRB_SINGLE))
 			{
 				// A wxRB_SINGLE button isn't part of this group
 				SelectNext(true);
 				break;
 			}
 
-			if(first){
-				if ( btn->HasFlag(wxRB_GROUP) )
+			if (first){
+				if (btn->HasFlag(wxRB_GROUP))
 				{
 					btn->SetValue(true);
 					btn->SetFocus();
@@ -166,7 +166,8 @@ void KaiRadioButton::SelectPrev(bool first)
 					this->ProcessEvent(evt);
 					break;
 				}
-			}else if(btn->CanBeFocused()){
+			}
+			else if (btn->CanBeFocused()){
 				btn->SetValue(true);
 				btn->SetFocus();
 				wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
@@ -174,31 +175,32 @@ void KaiRadioButton::SelectPrev(bool first)
 				break;
 			}
 		}
-	}else{
+	}
+	else{
 		SelectNext(true);
 	}
 
-	
+
 }
 
 void KaiRadioButton::SelectNext(bool last)
 {
 	const wxWindowList& siblings = GetParent()->GetChildren();
 	wxWindowList::compatibility_iterator nodeThis = siblings.Find(this);
-	wxCHECK_RET( nodeThis, wxT("radio button not a child of its parent?") );
+	wxCHECK_RET(nodeThis, wxT("radio button not a child of its parent?"));
 	bool done = false;
 	KaiRadioButton *btntmp = NULL;
 
-	for ( wxWindowList::compatibility_iterator nodeAfter = nodeThis->GetNext();
-		  nodeAfter;
-		  nodeAfter = nodeAfter->GetNext() )
+	for (wxWindowList::compatibility_iterator nodeAfter = nodeThis->GetNext();
+		nodeAfter;
+		nodeAfter = nodeAfter->GetNext())
 	{
 		KaiRadioButton *btn = wxDynamicCast(nodeAfter->GetData(),
-										   KaiRadioButton);
+			KaiRadioButton);
 
-		if ( !btn){
+		if (!btn){
 			if (btntmp && btntmp->CanBeFocused()){
-				btntmp->SetValue(true); done = true; 
+				btntmp->SetValue(true); done = true;
 				btntmp->SetFocus();
 				wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
 				this->ProcessEvent(evt);
@@ -206,8 +208,8 @@ void KaiRadioButton::SelectNext(bool last)
 			}
 			continue;
 		}
-			
-		if ( btn->HasFlag(wxRB_GROUP | wxRB_SINGLE) )
+
+		if (btn->HasFlag(wxRB_GROUP | wxRB_SINGLE))
 		{
 			// no more buttons or the first button of the next group
 			if (last && btn->CanBeFocused()){
@@ -215,10 +217,11 @@ void KaiRadioButton::SelectNext(bool last)
 				btn->SetFocus();
 				wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
 				this->ProcessEvent(evt);
-			}else{
+			}
+			else{
 				SelectPrev(true);
 			}
-			done=true;
+			done = true;
 			break;
 		}
 
@@ -227,12 +230,12 @@ void KaiRadioButton::SelectNext(bool last)
 			btn->SetFocus();
 			wxCommandEvent evt(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
 			this->ProcessEvent(evt);
-			done=true;
+			done = true;
 			break;
 		}
 		btntmp = btn;
 	}
-	if(!done){
+	if (!done){
 		SelectPrev(true);
 	}
 }
@@ -240,15 +243,15 @@ void KaiRadioButton::SelectNext(bool last)
 wxIMPLEMENT_ABSTRACT_CLASS(KaiRadioButton, wxWindow);
 
 KaiRadioBox::KaiRadioBox(wxWindow *parent, int id, const wxString& label,
-			 const wxPoint& pos, const wxSize& size, const wxArrayString &names, int spacing, long style)
-			 :wxWindow(parent, id, pos, size)
+	const wxPoint& pos, const wxSize& size, const wxArrayString &names, int spacing, long style)
+	: wxWindow(parent, id, pos, size)
 {
 	SetBackgroundColour(parent->GetBackgroundColour());
 	SetForegroundColour(parent->GetForegroundColour());
-	box = new KaiStaticBoxSizer(style,this,label);
+	box = new KaiStaticBoxSizer(style, this, label);
 	selected = 0;
 	for (size_t i = 0; i < names.size(); i++){
-		buttons.push_back(new KaiRadioButton(this, 9876+i, names[i], wxDefaultPosition, wxDefaultSize, (i == 0)? wxRB_GROUP : 0));
+		buttons.push_back(new KaiRadioButton(this, 9876 + i, names[i], wxDefaultPosition, wxDefaultSize, (i == 0) ? wxRB_GROUP : 0));
 		box->Add(buttons[i], 1, wxALL, spacing);
 	}
 	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, [=](wxCommandEvent &evt){
@@ -265,7 +268,7 @@ int KaiRadioBox::GetSelection()
 {
 	return selected;
 }
-	
+
 void KaiRadioBox::SetSelection(int sel)
 {
 	selected = MID(0, (size_t)sel, buttons.size() - 1);
@@ -274,7 +277,7 @@ void KaiRadioBox::SetSelection(int sel)
 
 bool KaiRadioBox::Enable(bool enable)
 {
-	for(size_t i = 0; i < buttons.size(); i++){
+	for (size_t i = 0; i < buttons.size(); i++){
 		buttons[i]->Enable(enable);
 	}
 	box->Enable(enable);

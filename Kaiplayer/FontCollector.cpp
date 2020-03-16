@@ -1150,10 +1150,7 @@ void FontCollector::MuxVideoWithSubs()
 		L"\" ) ";// odtąd trzeba dodać czcionki
 	for (size_t i = 0; i < fontnames.size(); i++){
 		wxString ext = fontnames[i].AfterLast(L'.').Lower();
-		/*if(ext!="ttf" && ext!="ttc" && ext!="otf"){
-		KaiMessageBox(wxString::Format(_("Rozszerzenie czcionki \"%s\" nie jest obsługiwane"),ext));
-		continue;
-		}*/
+		
 		command << L"\"--attachment-name\" \"";
 		wxString name = fontnames[i].AfterLast(L'\\');
 		command << name << L"\" ";

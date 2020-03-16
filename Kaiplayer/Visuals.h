@@ -24,7 +24,7 @@
 
 
 enum{
-	CHANGEPOS = 1,//w przypadku zmiany, zmieniæ w subsgridzie w selectrow;
+	CHANGEPOS = 1,//in case of changing change in SubsGrid selectrow
 	MOVE,
 	SCALE,
 	ROTATEZ,
@@ -350,7 +350,7 @@ public:
 	wxPoint diffs;
 	wxRect selection;
 	D3DXVECTOR2 scale;
-	// _x i _y to punkt przemieszczenia w przypadku rysunków.
+	// _x and _y points of move of drawings
 	float _x, _y;
 	D3DXVECTOR2 offsetxy;
 	wxString textwithclip;

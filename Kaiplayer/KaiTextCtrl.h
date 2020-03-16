@@ -26,8 +26,8 @@ public:
 	TextStyle(){};
 	TextStyle(size_t _from, size_t _to, const wxColour & col){ from = _from; to = _to; color = col; };
 
-	size_t from=0;
-	size_t to=0;
+	size_t from = 0;
+	size_t to = 0;
 	wxColour color;
 	//maybe later I add font when I make custom dc class with D2D
 };
@@ -37,8 +37,8 @@ class KaiTextCtrl : public KaiScrolledWindow
 {
 public:
 	KaiTextCtrl(wxWindow *parent, int id, const wxString &text = L"", const wxPoint& pos = wxDefaultPosition,
-		const wxSize& size = wxDefaultSize, long style = 0, 
-		const wxValidator & validator = wxDefaultValidator, const wxString & name = L""); 
+		const wxSize& size = wxDefaultSize, long style = 0,
+		const wxValidator & validator = wxDefaultValidator, const wxString & name = L"");
 	virtual ~KaiTextCtrl();
 	void SetValue(const wxString &text, bool modif = false, bool newSel = true);
 	bool Modified();
@@ -49,8 +49,8 @@ public:
 	void Copy(bool cut = false);
 	void Paste();
 	wxString GetValue() const;
-	bool IsModified(){return modified;};
-	void MarkDirty(){modified = true;}
+	bool IsModified(){ return modified; };
+	void MarkDirty(){ modified = true; }
 	bool modified;
 	bool SetForegroundColour(COLOR color){ foreground = color; Refresh(false); return true; }
 	bool SetBackgroundColour(COLOR color){ background = color; Refresh(false); return true; }
@@ -63,9 +63,9 @@ public:
 		foreground = (COLOR)0;
 		Refresh(false); return true;
 	}
-	COLOR GetForegroundColour() const {return foreground;}
-	COLOR GetBackgroundColour() const {return background;}
-	void SetModified(bool modif){modified = modif;}
+	COLOR GetForegroundColour() const { return foreground; }
+	COLOR GetBackgroundColour() const { return background; }
+	void SetModified(bool modif){ modified = modif; }
 	void SetMaxLength(int maxLen);
 	void AppendText(const wxString &text);
 	//now only color;font later
@@ -76,7 +76,7 @@ public:
 	void DeleteStyles(size_t textStart, size_t textEnd);
 	//void SetValidator(const wxValidator &validator){};
 	size_t GetLength(){ return KText.length(); }
-	bool Enable(bool enable=true);
+	bool Enable(bool enable = true);
 	bool HitTest(wxPoint pos, wxPoint *cur);
 	void FindWord(int pos, int *start, int *end);
 
@@ -92,9 +92,9 @@ protected:
 	void OnPaint(wxPaintEvent& event);
 	void OnKillFocus(wxFocusEvent& event);
 	void OnEraseBackground(wxEraseEvent& event){};
-	void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
 	void OnScroll(wxScrollWinEvent& event);
-	void DrawFld(wxDC &dc,int w, int h);
+	void DrawFld(wxDC &dc, int w, int h);
 	void DrawFieldD2D(GraphicsContext *gc, int w, int h);
 	void CalcWrap(bool sendevent = true, size_t position = 0);
 	void SendEvent();

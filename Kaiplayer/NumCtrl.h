@@ -22,38 +22,38 @@ wxDECLARE_EVENT(NUMBER_CHANGED, wxCommandEvent);
 wxString getdouble(double num);
 
 class NumCtrl : public KaiTextCtrl
-	{
-	public:
-		NumCtrl(wxWindow *parent,long id,wxString text, int rangefrom, int rangeto, bool intonly,
-			const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=0);
-		NumCtrl(wxWindow *parent,long id,double value, double rangefrom, double rangeto, bool intonly,
-			const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=0);
+{
+public:
+	NumCtrl(wxWindow *parent, long id, wxString text, int rangefrom, int rangeto, bool intonly,
+		const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
+	NumCtrl(wxWindow *parent, long id, double value, double rangefrom, double rangeto, bool intonly,
+		const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
 
-		virtual ~NumCtrl();
+	virtual ~NumCtrl();
 
-		void SetString(wxString val);
-		void SetInt(int val);
-		void SetDouble(double val);
-		void SetValue(const wxString &text, bool modif = false, bool newSel = true);
-		wxString GetString();
-		int GetInt();
-		double GetDouble();
+	void SetString(wxString val);
+	void SetInt(int val);
+	void SetDouble(double val);
+	void SetValue(const wxString &text, bool modif = false, bool newSel = true);
+	wxString GetString();
+	int GetInt();
+	double GetDouble();
 
-	private:
+private:
 
-		void OnNumWrite(wxCommandEvent& event);
-		void OnMouseEvent(wxMouseEvent &event);
-		void OnPaste(wxCommandEvent& event);
-		void OnMouseLost(wxMouseCaptureLostEvent& event);
-		double rfrom;
-		double rto;
-		bool oint;
-		double value;
-		wxString oldval;
-		bool holding;
-		int oldposy;
-		int oldposx;
-		int curpos;
-		DECLARE_EVENT_TABLE()
-	};
+	void OnNumWrite(wxCommandEvent& event);
+	void OnMouseEvent(wxMouseEvent &event);
+	void OnPaste(wxCommandEvent& event);
+	void OnMouseLost(wxMouseCaptureLostEvent& event);
+	double rfrom;
+	double rto;
+	bool oint;
+	double value;
+	wxString oldval;
+	bool holding;
+	int oldposy;
+	int oldposx;
+	int curpos;
+	DECLARE_EVENT_TABLE()
+};
 

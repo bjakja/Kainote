@@ -22,7 +22,7 @@ FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace
 	: KaiDialog(parent, -1, _("Wyniki szukania"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 {
 	DialogSizer * main = new DialogSizer(wxVERTICAL);
-	resultsList = new KaiListCtrl(this, 23323, wxDefaultPosition, wxSize(700,300));
+	resultsList = new KaiListCtrl(this, 23323, wxDefaultPosition, wxSize(700, 300));
 	resultsList->InsertColumn(0, L"", TYPE_TEXT, -1);
 	resultsList->SetHeaderHeight(0);
 	main->Add(resultsList, 1, wxEXPAND | wxALL, 2);

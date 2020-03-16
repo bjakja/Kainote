@@ -75,11 +75,11 @@ TreeDialog::TreeDialog(wxWindow *parent, const wxString & currentName)
 	DialogSizer *mainSizer = new DialogSizer(wxVERTICAL);
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	KaiStaticBoxSizer *descriptionSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Opis drzewka"));
-	treeDescription = new KaiTextCtrl(this, -1, currentName, wxDefaultPosition, wxSize(400,-1));
+	treeDescription = new KaiTextCtrl(this, -1, currentName, wxDefaultPosition, wxSize(400, -1));
 	treeDescription->SetSelection(0, currentName.Len());
 	treeDescription->SetMaxLength(500);
 	descriptionSizer->Add(treeDescription, 0, wxEXPAND);
-	mainSizer->Add(descriptionSizer, 0, wxEXPAND|wxALL, 2);
+	mainSizer->Add(descriptionSizer, 0, wxEXPAND | wxALL, 2);
 	MappedButton *ok = new MappedButton(this, 15555, currentName.empty() ? _("Ustaw nazwę drzewka") : _("Zmień nazwę drzewka"));
 	Connect(15555, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&TreeDialog::OkClick);
 	MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));

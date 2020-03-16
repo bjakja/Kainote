@@ -39,8 +39,8 @@ private:
 };
 
 LogWindow::LogWindow(wxWindow *parent, LogHandler *_handler)
-	:KaiDialog(parent, -1, _("Okno Logów"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
-	,handler(_handler)
+	: KaiDialog(parent, -1, _("Okno Logów"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+	, handler(_handler)
 {
 	sizer = new DialogSizer(wxVERTICAL);
 	lastLogText = new KaiStaticText(this, -1, L"", wxDefaultPosition, wxSize(500, -1));

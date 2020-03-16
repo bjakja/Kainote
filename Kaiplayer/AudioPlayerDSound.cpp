@@ -841,7 +841,7 @@ void DirectSoundPlayer2::SetProvider(VideoFfmpeg *_provider)
 }
 
 
-void DirectSoundPlayer2::Play(int64_t start,int64_t count)
+void DirectSoundPlayer2::Play(int64_t start, int64_t count)
 {
 	try
 	{

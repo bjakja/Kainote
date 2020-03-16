@@ -62,8 +62,8 @@ public:
 	void CloseStream();
 	void SetProvider(VideoFfmpeg *_provider);
 
-	void Play(int64_t start,int64_t count);
-	void Stop(bool timerToo=true);
+	void Play(int64_t start, int64_t count);
+	void Stop(bool timerToo = true);
 	bool IsPlaying();
 
 	int64_t GetStartPosition();

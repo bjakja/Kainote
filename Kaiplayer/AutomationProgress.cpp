@@ -42,15 +42,15 @@ namespace Auto{
 	wxDEFINE_EVENT(EVT_MESSAGE, wxThreadEvent);
 	wxDEFINE_EVENT(EVT_SHOW_PRGS_DIAL, wxThreadEvent);
 	wxDEFINE_EVENT(EVT_SHOW_CFG_DIAL, wxThreadEvent);
-	LuaProgressSink *LuaProgressSink::ps=NULL;
+	LuaProgressSink *LuaProgressSink::ps = NULL;
 
 	LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
 		: wxEvtHandler()
-		,L(_L)
-		,lpd(NULL)
+		, L(_L)
+		, lpd(NULL)
 	{
 		ps = this;
-		_parent=parent;
+		_parent = parent;
 		// Init trace level
 		trace_level = Options.GetInt(AutomationTraceLevel);
 
@@ -89,7 +89,7 @@ namespace Auto{
 		lua_setfield(L, -2, "log");
 
 		//if (allow_config_dialog) {
-		lua_createtable(L,0,3);
+		lua_createtable(L, 0, 3);
 		lua_pushvalue(L, -3);
 		lua_pushcclosure(L, LuaDisplayDialog, 1);
 		lua_setfield(L, -2, "display");
@@ -107,7 +107,7 @@ namespace Auto{
 		//lua_setfield(L, LUA_REGISTRYINDEX, "progress_sink");
 
 		lua_pop(L, 1);//lua_pop(L, 2);
-		lpd=new LuaProgressDialog(_parent,L);
+		lpd = new LuaProgressDialog(_parent, L);
 	}
 
 	void LuaProgressSink::Destroy()
@@ -130,7 +130,7 @@ namespace Auto{
 		//lua_pushnil(L);
 		//lua_setfield(L, LUA_REGISTRYINDEX, "progress_sink");
 		wxDELETE(lpd);
-		ps=NULL;
+		ps = NULL;
 	}
 
 	template<class T>
@@ -152,8 +152,8 @@ namespace Auto{
 
 	void LuaProgressSink::ShowDialog(wxString Title)
 	{
-		SafeQueue(EVT_SHOW_PRGS_DIAL,lpd);
-		SafeQueue(EVT_TITLE,Title);
+		SafeQueue(EVT_SHOW_PRGS_DIAL, lpd);
+		SafeQueue(EVT_TITLE, Title);
 	}
 
 
@@ -161,7 +161,7 @@ namespace Auto{
 	{
 		//LuaProgressSink *ps = GetObjPointer(L, lua_upvalueindex(1));
 		int progress = lua_tonumber(L, 1);
-		ps->SafeQueue(EVT_PROGRESS,progress);
+		ps->SafeQueue(EVT_PROGRESS, progress);
 		return 0;
 	}
 
@@ -169,7 +169,7 @@ namespace Auto{
 	{
 		//LuaProgressSink *ps = GetObjPointer(L, lua_upvalueindex(1));
 		wxString task(lua_tostring(L, 1), wxConvUTF8);
-		ps->SafeQueue(EVT_TASK,task);
+		ps->SafeQueue(EVT_TASK, task);
 		return 0;
 	}
 
@@ -177,14 +177,14 @@ namespace Auto{
 	{
 		//LuaProgressSink *ps = GetObjPointer(L, lua_upvalueindex(1));
 		wxString title(lua_tostring(L, 1), wxConvUTF8);
-		ps->SafeQueue(EVT_TITLE,title);
+		ps->SafeQueue(EVT_TITLE, title);
 		return 0;
 	}
 
 	int LuaProgressSink::LuaGetCancelled(lua_State *L)
 	{
 		//LuaProgressSink *ps = GetObjPointer(L, lua_upvalueindex(1));
-		bool val=(ps->lpd)? ps->lpd->cancelled : false;
+		bool val = (ps->lpd) ? ps->lpd->cancelled : false;
 		lua_pushboolean(L, val);
 		return 1;
 	}
@@ -215,12 +215,12 @@ namespace Auto{
 			// put the format function into place
 			lua_insert(L, 1);
 			// call format function
-			lua_call(L, lua_gettop(L)-1, 1);
+			lua_call(L, lua_gettop(L) - 1, 1);
 		}
 		// Top of stack is now a string to output
 		wxString msg(lua_tostring(L, 1), wxConvUTF8);
-		ps->Log<<msg;
-		ps->SafeQueue(EVT_MESSAGE,msg);
+		ps->Log << msg;
+		ps->SafeQueue(EVT_MESSAGE, msg);
 		return 0;
 	}
 
@@ -238,8 +238,8 @@ namespace Auto{
 		}
 
 
-		wxSemaphore sema(0,1);
-		ps->SafeQueue(EVT_SHOW_CFG_DIAL,&sema);
+		wxSemaphore sema(0, 1);
+		ps->SafeQueue(EVT_SHOW_CFG_DIAL, &sema);
 
 		// more magic: puts two values on stack: button pushed and table with control results
 		sema.Wait();
@@ -310,12 +310,12 @@ namespace Auto{
 	}
 
 
-	LuaProgressDialog::LuaProgressDialog(wxWindow *parent,lua_State *_L)
+	LuaProgressDialog::LuaProgressDialog(wxWindow *parent, lua_State *_L)
 		:wxDialog(parent, -1, L"", wxDefaultPosition, wxDefaultSize, 0)
-		,cancelled(false)
-		,finished(false)
-		,closedialog(false)
-		,L(_L)
+		, cancelled(false)
+		, finished(false)
+		, closedialog(false)
+		, L(_L)
 	{
 		SetForegroundColour(Options.GetColour(WindowText));
 		SetBackgroundColour(Options.GetColour(WindowBackground));
@@ -403,8 +403,8 @@ namespace Auto{
 
 	void LuaProgressDialog::OnUpdate(wxTimerEvent &event)
 	{
-		
-		if(finished){
+
+		if (finished){
 			if (!pending_debug_output.empty()){
 				//wxMutexLocker lock(data_mutex);
 				debug_output->AppendText(pending_debug_output);
@@ -413,7 +413,7 @@ namespace Auto{
 			update_timer.Stop();
 			cancel_button->SetLabelText(_("Zamknij"));
 		}
-		if(cancelled || closedialog){
+		if (cancelled || closedialog){
 			update_timer.Stop();
 			EndModal(0);
 		}

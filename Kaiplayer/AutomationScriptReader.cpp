@@ -36,27 +36,28 @@ namespace Auto {
 		char *cpybuff;
 		int size;
 		bool compatybility = Options.GetBool(AutomationOldScriptsCompatybility);
-		if(compatybility){
+		if (compatybility){
 			OpenWrite ow;
-			if(!ow.FileOpen(filename, &script)){return false;}
-			script.Replace("kainote","aegisub");
-		
+			if (!ow.FileOpen(filename, &script)){ return false; }
+			script.Replace("kainote", "aegisub");
+
 			constbuff = script.mb_str(wxConvUTF8).data();
-			size= strlen(constbuff);
-		}else{
-			FILE *f=NULL;
+			size = strlen(constbuff);
+		}
+		else{
+			FILE *f = NULL;
 			f = _wfopen(filename.wc_str(), L"rb");
-			if(!f){return false;}
-			fseek(f,0,SEEK_END);
-			size=ftell (f);
+			if (!f){ return false; }
+			fseek(f, 0, SEEK_END);
+			size = ftell(f);
 			rewind(f);
 			cpybuff = buff = new char[size];
 			size = fread(buff, 1, size, f);
 			fclose(f);
 			/*wxFile f(filename, wxFile::read);
 			if(f.IsOpened()){
-				size = f.Length();
-				f.Read(buff,size);
+			size = f.Length();
+			f.Read(buff,size);
 			}*/
 			if (size >= 3 && buff[0] == -17 && buff[1] == -69 && buff[2] == -65) {
 				buff += 3;
@@ -66,11 +67,11 @@ namespace Auto {
 		wxString name = filename.AfterLast('\\');
 		if (!filename.EndsWith("moon")){
 			//LuaScriptReader script_reader(filename);
-			bool ret = luaL_loadbuffer(L, (compatybility)? constbuff : buff, size, name.utf8_str().data()) == 0;
+			bool ret = luaL_loadbuffer(L, (compatybility) ? constbuff : buff, size, name.utf8_str().data()) == 0;
 
-			if(!compatybility){delete[] cpybuff;}
+			if (!compatybility){ delete[] cpybuff; }
 			return ret;
-			
+
 		}
 		// We have a MoonScript file, so we need to load it with that
 		// It might be nice to have a dedicated lua state for compiling
@@ -79,10 +80,10 @@ namespace Auto {
 
 		// Save the text we'll be loading for the line number rewriting in the
 		// error handling
-		lua_pushlstring(L, (compatybility)? constbuff : buff, size);
+		lua_pushlstring(L, (compatybility) ? constbuff : buff, size);
 		lua_pushvalue(L, -1);
 		lua_setfield(L, LUA_REGISTRYINDEX, ("raw moonscript: " + name).utf8_str().data());
-		if(!compatybility){delete[] cpybuff;}
+		if (!compatybility){ delete[] cpybuff; }
 
 		push_value(L, name);
 		if (lua_pcall(L, 2, 2, 0))
@@ -112,13 +113,13 @@ namespace Auto {
 		wxStringTokenizer token(package_paths, ";", wxTOKEN_STRTOK);
 
 		while (token.HasMoreTokens()) {
-		
-			wxString filename=token.NextToken();
+
+			wxString filename = token.NextToken();
 			filename.Replace("?", module);
 
 			// If there's a .moon file at that path, load it instead of the
 			// .lua file
-			
+
 			if (filename.EndsWith("lua")) {
 				wxString moonpath = filename.BeforeLast('.') + ".moon";
 				if (wxFileExists(moonpath))
@@ -128,11 +129,11 @@ namespace Auto {
 			if (!wxFileExists(filename))
 				continue;
 
-			
+
 			if (!LoadFile(L, filename))
 				return error(L, "Error loading Lua module \"%s\":\n%s", filename.utf8_str().data(), check_string(L, 1).utf8_str().data());
 			break;
-			
+
 		}
 
 		return lua_gettop(L) - pretop;
@@ -142,7 +143,7 @@ namespace Auto {
 		// set the module load path to include_path
 		//if(LoadFile(L,include_path[include_path.size()-1]+"\\moonscript.lua"))
 		//{
-			
+
 		//}
 		lua_getglobal(L, "package");
 		push_value(L, "path");
@@ -169,4 +170,4 @@ namespace Auto {
 		lua_setfield(L, LUA_REGISTRYINDEX, "moonscript");
 		return true;
 	}
-} 
+}

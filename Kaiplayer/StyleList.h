@@ -25,47 +25,47 @@ wxDECLARE_EVENT(SELECTION_CHANGED, wxCommandEvent);
 
 class StyleList : public KaiScrolledWindow
 {
-	public:
-		StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray, 
-			const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxWANTS_CHARS);
-		virtual ~StyleList();
+public:
+	StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray,
+		const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxWANTS_CHARS);
+	virtual ~StyleList();
 
-		void SetSelection(int sel, bool reset = false);
-		void SetSelections(const wxArrayInt &sels);
-		void Scroll(int step);
-		int GetSelections(wxArrayInt &sels);
-		int GetNumSelections(){ return sels.size(); }
-		void SetArray(std::vector<Styles*> *stylearray);
-		void SendSelectionEvent();
+	void SetSelection(int sel, bool reset = false);
+	void SetSelections(const wxArrayInt &sels);
+	void Scroll(int step);
+	int GetSelections(wxArrayInt &sels);
+	int GetNumSelections(){ return sels.size(); }
+	void SetArray(std::vector<Styles*> *stylearray);
+	void SendSelectionEvent();
 
-	private:
+private:
 
-		void OnPaint(wxPaintEvent& event);
-		void OnSize(wxSizeEvent& event);
-		void DrawFld(wxDC &dc,int w, int h);
-		void OnScroll(wxScrollWinEvent& event);
-		void OnMouseEvent(wxMouseEvent& event);
-		void OnArrow(wxCommandEvent& event);
-		void OnLostCapture(wxMouseCaptureLostEvent &evt){ 
-			if (HasCapture()){ ReleaseMouse(); }; 
-			holding = false; 
-		};
+	void OnPaint(wxPaintEvent& event);
+	void OnSize(wxSizeEvent& event);
+	void DrawFld(wxDC &dc, int w, int h);
+	void OnScroll(wxScrollWinEvent& event);
+	void OnMouseEvent(wxMouseEvent& event);
+	void OnArrow(wxCommandEvent& event);
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){
+		if (HasCapture()){ ReleaseMouse(); };
+		holding = false;
+	};
 
-		int lastsel;
-		int lastRow;
-		bool Switchlines;
-		wxArrayInt sels;
-		int scPos;
-		int Height;
-		bool holding;
-		std::vector<Styles*> *stylenames;
-		//wxArrayString *fontseeker;
+	int lastsel;
+	int lastRow;
+	bool Switchlines;
+	wxArrayInt sels;
+	int scPos;
+	int Height;
+	bool holding;
+	std::vector<Styles*> *stylenames;
+	//wxArrayString *fontseeker;
 
-		//wxScrollBar *scrollBar;
-		wxBitmap *bmp;
-		wxFont font;
+	//wxScrollBar *scrollBar;
+	wxBitmap *bmp;
+	wxFont font;
 
-		DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE()
 };
 
 

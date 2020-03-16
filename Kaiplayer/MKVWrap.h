@@ -74,19 +74,19 @@ class MatroskaWrapper {
 public:
 	MkvStdIO *input;
 	MatroskaFile *file;
-	
+
 
 	MatroskaWrapper();
 	~MatroskaWrapper();
 
 	bool IsOpen() { return file != NULL; }
-	bool Open(const wxString &filename,bool parse=true);
+	bool Open(const wxString &filename, bool parse = true);
 	void Close();
-	
+
 	bool GetSubtitles(SubsGrid *target);
 
 	std::map<int, wxString> GetFontList();
-	bool SaveFont(int id, const wxString &path, wxZipOutputStream *zip=NULL);
+	bool SaveFont(int id, const wxString &path, wxZipOutputStream *zip = NULL);
 
 	static MatroskaWrapper wrapper;
 	Attachment *atts;

@@ -48,10 +48,8 @@
 // Constructor
 //
 AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
-wxPanel(parent, -1, wxDefaultPosition, wxSize(0, 0)/*,wxBORDER_SIMPLE*/)
+wxPanel(parent, -1, wxDefaultPosition, wxSize(0, 0))
 {
-	//SetForegroundColour(Options.GetColour(WindowText));
-	//SetBackgroundColour(Options.GetColour(WindowBackground));
 	// Setup
 	loaded = false;
 	arrows = holding = false;
@@ -60,7 +58,6 @@ wxPanel(parent, -1, wxDefaultPosition, wxSize(0, 0)/*,wxBORDER_SIMPLE*/)
 	SetMinSize(wxSize(-1, height));
 	// Display
 	audioScroll = new KaiScrollbar(this, Audio_Scrollbar, wxPoint(0, height - 17), wxSize(100, 17));
-	//audioScroll->PushEventHandler(new FocusEvent());
 	audioScroll->SetToolTip(_("Pasek szukania"));
 
 	audioDisplay = new AudioDisplay(this);
@@ -695,20 +692,7 @@ int AudioBox::GetVolume()
 {
 	return VolumeBar->GetValue();
 }
-/*
 
-//////////////////////////////////////////
-// Focus event handling for the scrollbar
-BEGIN_EVENT_TABLE(FocusEvent,wxEvtHandler)
-EVT_SET_FOCUS(FocusEvent::OnSetFocus)
-END_EVENT_TABLE()
-
-void FocusEvent::OnSetFocus(wxFocusEvent &event) {
-wxWindow *previous = event.GetWindow();
-if (previous) previous->SetFocus();
-}
-
-*/
 
 ///////////////
 // Event table

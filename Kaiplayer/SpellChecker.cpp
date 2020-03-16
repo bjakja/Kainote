@@ -51,13 +51,13 @@ SpellChecker *SpellChecker::Get()
 	if (!SC){
 		SC = new SpellChecker();
 		bool isgood = SC->Initialize();
-		if (!isgood) {Options.SetBool(SpellcheckerOn, false);}
+		if (!isgood) { Options.SetBool(SpellcheckerOn, false); }
 	}
 	return SC;
 }
 void SpellChecker::Destroy()
 {
-	if (SC){ delete SC; SC=NULL; }
+	if (SC){ delete SC; SC = NULL; }
 }
 
 SpellChecker::~SpellChecker()
@@ -67,8 +67,8 @@ SpellChecker::~SpellChecker()
 
 void SpellChecker::Cleaning()
 {
-	if (hunspell){ delete hunspell; hunspell=NULL; }
-	if (conv){ delete conv; conv=NULL; }
+	if (hunspell){ delete hunspell; hunspell = NULL; }
+	if (conv){ delete conv; conv = NULL; }
 
 }
 
@@ -101,18 +101,18 @@ bool SpellChecker::Initialize()
 	wxString dic = dictionaryPath + name + L".dic";
 	wxString aff = dictionaryPath + name + L".aff";
 	// Check if language is available
-	if(!wxFileExists(dic) || !wxFileExists(aff)) 
+	if (!wxFileExists(dic) || !wxFileExists(aff))
 	{
-		Options.SetBool(SpellcheckerOn,false);
-		KaiMessageBox(wxString::Format(_("Brak plików słownika w folderze \"%s\\Dictionary\".\nSprawdzanie pisowni zostanie wyłączone"), Options.pathfull)); 
+		Options.SetBool(SpellcheckerOn, false);
+		KaiMessageBox(wxString::Format(_("Brak plików słownika w folderze \"%s\\Dictionary\".\nSprawdzanie pisowni zostanie wyłączone"), Options.pathfull));
 		return false;
 	}
 	// Load
 	hunspell = new Hunspell(aff.mb_str(wxConvLocal), dic.mb_str(wxConvLocal));
-	
+
 	if (hunspell) {
 		conv = new wxCSConv(wxString(hunspell->get_dic_encoding(), wxConvUTF8));
-		if(!conv){KaiMessageBox(_("Nie można odczytać formatu konwersji słownika."));}
+		if (!conv){ KaiMessageBox(_("Nie można odczytać formatu konwersji słownika.")); }
 		// Load user dictionary
 		//wxString userpath = pathhh + L"UserDic.udic";
 		if (wxFileExists(userDictionaryPath)) {
@@ -132,7 +132,8 @@ bool SpellChecker::Initialize()
 		}
 
 		return true;
-	}else{ KaiMessageBox(_("Nie można zainicjalizować sprawdzania pisowni.")); }
+	}
+	else{ KaiMessageBox(_("Nie można zainicjalizować sprawdzania pisowni.")); }
 	return false;
 }
 
@@ -147,7 +148,7 @@ bool SpellChecker::CheckWord(wxString word) {
 
 void SpellChecker::Suggestions(wxString word, wxArrayString &results)
 {
-	if(!hunspell) return;
+	if (!hunspell) return;
 
 	char **result;
 
@@ -156,7 +157,7 @@ void SpellChecker::Suggestions(wxString word, wxArrayString &results)
 
 	int n = hunspell->suggest(&result, buf);
 
-	for(int i = 0; i < n; ++i)
+	for (int i = 0; i < n; ++i)
 	{
 
 		wxString cur(result[i], *conv);
@@ -175,7 +176,7 @@ bool SpellChecker::AddWord(wxString word)
 	OpenWrite ow;
 	wxString txt;
 	if (!ow.FileOpen(userDictionaryPath, &txt, false)){ txt = word; }
-	else{txt += L"\n" + word;}
+	else{ txt += L"\n" + word; }
 	ow.FileWrite(userDictionaryPath, txt);
 
 	return true;

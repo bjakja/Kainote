@@ -36,10 +36,14 @@ class  MenuEvent : public wxEvent
 public:
 	MenuEvent(wxEventType type = wxEVT_NULL, int winid = 0, Menu* menu = NULL)
 		: wxEvent(winid, type)
-		{ m_menuId = winid; m_menu = menu; }
+	{
+		m_menuId = winid; m_menu = menu;
+	}
 	MenuEvent(const MenuEvent& event)
 		: wxEvent(event)
-	{ m_menuId = event.m_menuId; m_menu = event.m_menu; }
+	{
+		m_menuId = event.m_menuId; m_menu = event.m_menu;
+	}
 
 	// only for wxEVT_MENU_HIGHLIGHT
 	int GetMenuId() const { return m_menuId; }
@@ -76,7 +80,7 @@ public:
 	wxString GetLabelText(){
 		wxString desc = label;
 		desc.Replace(L"&", L"");
-		if(desc.find(L"\t") != -1){desc = desc.BeforeFirst(L'\t');}
+		if (desc.find(L"\t") != -1){ desc = desc.BeforeFirst(L'\t'); }
 		return desc;
 	}
 	wxString GetHelp(){
@@ -125,9 +129,9 @@ private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent &event);
 	void OnScroll(wxScrollEvent& event);
-	bool AcceptsFocus() const {return false;};
-	bool AcceptsFocusRecursively() const {return false;};
-	bool AcceptsFocusFromKeyboard() const {return false;};
+	bool AcceptsFocus() const { return false; };
+	bool AcceptsFocusRecursively() const { return false; };
+	bool AcceptsFocusFromKeyboard() const { return false; };
 	void OnShowSubmenu(wxTimerEvent &evt);
 	void OnHideSubmenu(wxTimerEvent &evt);
 	int ShowPartialModal();
@@ -171,30 +175,30 @@ class Menu : public Mnemonics
 {
 	friend class MenuDialog;
 	friend class MenuBar;
-	public:
+public:
 	Menu(char window = 0);
 	//Menu(const wxString& title);
 	virtual ~Menu(){
 		Clear();
 	};
-	MenuItem *AppendTool(KaiToolbar *ktb, int id, wxString text, wxString help, 
+	MenuItem *AppendTool(KaiToolbar *ktb, int id, wxString text, wxString help,
 		wxBitmap *bitmap, bool enable = true, Menu *SubMenu = 0);
-	MenuItem *Append(int _id,const wxString& _label, const wxString& _help = L"", 
+	MenuItem *Append(int _id, const wxString& _label, const wxString& _help = L"",
 		bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
-	MenuItem *Append(int _id,const wxString& _label, Menu* Submenu, const wxString& _help = L"", 
+	MenuItem *Append(int _id, const wxString& _label, Menu* Submenu, const wxString& _help = L"",
 		byte _type = 0, bool _enable = true, wxBitmap *_icon = NULL);
 	MenuItem *Append(MenuItem *item);
-	MenuItem *Prepend(int _id, const wxString& _label, const wxString& _help = L"", 
+	MenuItem *Prepend(int _id, const wxString& _label, const wxString& _help = L"",
 		bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
 	MenuItem *Prepend(MenuItem *item);
-	MenuItem *Insert(int position, int _id, const wxString& _label, const wxString& _help = L"", 
+	MenuItem *Insert(int position, int _id, const wxString& _label, const wxString& _help = L"",
 		bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
 	MenuItem *Insert(int position, MenuItem *item);
 	MenuItem *SetAccMenu(int id, const wxString &txt, const wxString &help = L"", bool enable = true, int kind = 0);
 	MenuItem *SetAccMenu(MenuItem *menuitem, const wxString &name);
 	void Delete(int position);
 	void Clear(){
-		for(auto cur = items.begin(); cur!= items.end(); cur++){
+		for (auto cur = items.begin(); cur != items.end(); cur++){
 			delete (*cur);
 		}
 		items.clear();
@@ -212,9 +216,9 @@ class Menu : public Mnemonics
 	void SetMaxVisible(byte maxVisible);
 	void SetShowIcons(bool showIcons);
 	void SetMinWidth(int width);
-	void SetTitle(const wxString &_title){title = _title;};
-	wxString GetTitle() const {return title;};
-	void HideMenu(){dialog->HideMenus();}
+	void SetTitle(const wxString &_title){ title = _title; };
+	wxString GetTitle() const { return title; };
+	void HideMenu(){ dialog->HideMenus(); }
 	void SelectOnStart(int numitem);
 	void RefreshMenu();
 private:
@@ -242,7 +246,7 @@ public:
 	void Append(Menu *menu, const wxString &title);
 	void Prepend(Menu *menu, const wxString &title);
 	void Insert(int position, Menu *menu, const wxString &title);
-	MenuItem *FindItem(int id); 
+	MenuItem *FindItem(int id);
 	void Enable(int id, bool enable = true);
 	//void AppendAccelerators(std::vector <wxAcceleratorEntry> *entries);
 private:
@@ -256,7 +260,7 @@ private:
 	int CalcMousePos(wxPoint *pos);
 	void HideMnemonics();
 	void ShowMenu();
-	
+
 	std::vector< Menu* > Menus;
 	wxBitmap *bmp;
 	static wxFont font;
@@ -269,18 +273,18 @@ private:
 	Menu *md;
 	static MenuBar *Menubar;
 	HHOOK HookKey;
-	static LRESULT CALLBACK OnKey( int code, WPARAM wParam, LPARAM lParam );
+	static LRESULT CALLBACK OnKey(int code, WPARAM wParam, LPARAM lParam);
 	HHOOK HookMouse;
-	static LRESULT CALLBACK OnMouseClick( int code, WPARAM wParam, LPARAM lParam );
+	static LRESULT CALLBACK OnMouseClick(int code, WPARAM wParam, LPARAM lParam);
 	DECLARE_EVENT_TABLE()
 };
 
 enum{
-	ITEM_NORMAL=0,
+	ITEM_NORMAL = 0,
 	ITEM_CHECK,
 	ITEM_RADIO,
 	ITEM_SEPARATOR,
 	ITEM_CHECK_AND_HIDE,
-	ID_CHECK_EVENT=29595
+	ID_CHECK_EVENT = 29595
 };
 

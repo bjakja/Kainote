@@ -24,22 +24,22 @@ class STime
 private:
 
 	char form;
-	
+
 public:
 	int orgframe;
 	//wxString raw;
 	int mstime;
 
 	STime();
-	STime(int ms, int orgFrame=0);
+	STime(int ms, int orgFrame = 0);
 	~STime();
 	void SetRaw(wxString rawtime, char format);
 	void NewTime(int ms);
 	void NewFrame(int frame);
 	void ParseMS(wxString time);
-	wxString raw(char format=0);//, float fps=0
+	wxString raw(char format = 0);//, float fps=0
 	char GetFormat();
-	void ChangeFormat(char format,float fps=0);
+	void ChangeFormat(char format, float fps = 0);
 	wxString GetFormatted(char format);
 	void Change(int ms);
 	void ChangeFrame(int ms);

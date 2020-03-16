@@ -45,7 +45,7 @@ void ReplacerResultsHeader::OnMouseEvent(wxMouseEvent &event, bool _enter, bool 
 	}
 	else if (event.LeftDown() || event.LeftDClick()){
 		int i = positionInTable;
-		while(theList->GetType(i, 0) == TYPE_TEXT){
+		while (theList->GetType(i, 0) == TYPE_TEXT){
 			theList->FilterRow(i, (isVisible) ? NOT_VISIBLE : VISIBLE_BLOCK);
 			i++;
 		}
@@ -171,15 +171,15 @@ wxSize ReplacerSeekResults::GetTextExtents(KaiListCtrl *theList){
 
 
 FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
-	:KaiDialog(parent, -1, _("Wyniki szukania"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
-	,MR(_MR)
+	: KaiDialog(parent, -1, _("Wyniki szukania"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
+	, MR(_MR)
 {
 	DialogSizer * main = new DialogSizer(wxVERTICAL);
 	ResultsList = new KaiListCtrl(this, 23323, wxDefaultPosition, wxSize(700, 300));
 	ResultsList->InsertColumn(0, L"", TYPE_TEXT, -1);
 	ResultsList->SetHeaderHeight(0);
 	main->Add(ResultsList, 1, wxEXPAND | wxALL, 2);
-	
+
 	Bind(CHOOSE_RESULT, [=](wxCommandEvent &evt){
 		ReplacerSeekResults *results = (ReplacerSeekResults*)evt.GetClientData();
 		if (!results){

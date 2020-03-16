@@ -155,8 +155,8 @@ void MoveAll::SetCurVisual()
 {
 	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, moveValues);
 	if (moveValues[6] > 3){ linepos = CalcMovePos(); }
-	from = to = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x)*zoomScale.x,
-		((linepos.y / coeffH) - zoomMove.y)*zoomScale.y);
+	from = to = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x) * zoomScale.x,
+		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);
 	elems.clear();
 
 	wxString res;
@@ -165,8 +165,8 @@ void MoveAll::SetCurVisual()
 		double orx, ory;
 
 		moveElems elem;
-		if (res.BeforeFirst(L',', &rest).ToDouble(&orx)){ elem.elem.x = ((orx / coeffW) - zoomMove.x)*zoomScale.x; }
-		if (rest.ToDouble(&ory)){ elem.elem.y = ((ory / coeffH) - zoomMove.y)*zoomScale.y; }
+		if (res.BeforeFirst(L',', &rest).ToDouble(&orx)){ elem.elem.x = ((orx / coeffW) - zoomMove.x) * zoomScale.x; }
+		if (rest.ToDouble(&ory)){ elem.elem.y = ((ory / coeffH) - zoomMove.y) * zoomScale.y; }
 		elem.type = TAGORG;
 		elems.push_back(elem);
 	}
@@ -174,16 +174,16 @@ void MoveAll::SetCurVisual()
 		wxRegEx re(L"m ([0-9.-]+) ([0-9.-]+)", wxRE_ADVANCED);
 		moveElems elem;
 		if (re.Matches(res)){
-			elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res, 1)) / coeffW) - zoomMove.x)*zoomScale.x,
-				((wxAtoi(re.GetMatch(res, 2)) / coeffH) - zoomMove.y)*zoomScale.y);
+			elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res, 1)) / coeffW) - zoomMove.x) * zoomScale.x,
+				((wxAtoi(re.GetMatch(res, 2)) / coeffH) - zoomMove.y) * zoomScale.y);
 		}
 		else{
 			//wxString txt = tab->Edit->TextEdit->GetValue();
 			int repl = res.Replace(L",", L",");
 			wxRegEx re(L"\\(([0-9.-]+)[, ]*([0-9.-]+)", wxRE_ADVANCED);
 			if (repl >= 3 && re.Matches(res)){
-				elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res, 1)) / coeffW) - zoomMove.x)*zoomScale.x,
-					((wxAtoi(re.GetMatch(res, 2)) / coeffH) - zoomMove.y)*zoomScale.y);
+				elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res, 1)) / coeffW) - zoomMove.x) * zoomScale.x,
+					((wxAtoi(re.GetMatch(res, 2)) / coeffH) - zoomMove.y) * zoomScale.y);
 			}
 		}
 		elem.type = TAGCLIP;
@@ -195,8 +195,8 @@ void MoveAll::SetCurVisual()
 		if (re.Matches(res)){
 			moveElems elem;
 
-			elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res, 1)) / coeffW) - zoomMove.x)*zoomScale.x,
-				((wxAtoi(re.GetMatch(res, 2)) / coeffH) - zoomMove.y)*zoomScale.y);
+			elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res, 1)) / coeffW) - zoomMove.x) * zoomScale.x,
+				((wxAtoi(re.GetMatch(res, 2)) / coeffH) - zoomMove.y) * zoomScale.y);
 			elem.type = TAGP;
 			elems.push_back(elem);
 		}
@@ -204,20 +204,20 @@ void MoveAll::SetCurVisual()
 	}
 	if (moveValues[6] == 2){
 		moveElems elem;
-		elem.elem = D3DXVECTOR2(((moveValues[0] / coeffW) - zoomMove.x)*zoomScale.x,
-			((moveValues[1] / coeffH) - zoomMove.y)*zoomScale.y);
+		elem.elem = D3DXVECTOR2(((moveValues[0] / coeffW) - zoomMove.x) * zoomScale.x,
+			((moveValues[1] / coeffH) - zoomMove.y) * zoomScale.y);
 		elem.type = TAGPOS;
 		elems.push_back(elem);
 	}
 	if (moveValues[6] >= 4){
 		moveElems elem;
-		elem.elem = D3DXVECTOR2(((moveValues[0] / coeffW) - zoomMove.x)*zoomScale.x,
-			((moveValues[1] / coeffH) - zoomMove.y)*zoomScale.y);
+		elem.elem = D3DXVECTOR2(((moveValues[0] / coeffW) - zoomMove.x) * zoomScale.x,
+			((moveValues[1] / coeffH) - zoomMove.y) * zoomScale.y);
 		elem.type = TAGMOVES;
 		elems.push_back(elem);
 		elem.type = TAGMOVEE;
-		elem.elem = D3DXVECTOR2(((moveValues[2] / coeffW) - zoomMove.x)*zoomScale.x,
-			((moveValues[3] / coeffH) - zoomMove.y)*zoomScale.y);
+		elem.elem = D3DXVECTOR2(((moveValues[2] / coeffW) - zoomMove.x) * zoomScale.x,
+			((moveValues[3] / coeffH) - zoomMove.y) * zoomScale.y);
 		elems.push_back(elem);
 	}
 

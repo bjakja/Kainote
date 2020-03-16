@@ -240,8 +240,8 @@
 	CG(EditboxTagButton19,)\
 	CG(EditboxTagButton20,)\
 	//if you write here a new enum then change configSize below after colors
-	
-DECLARE_ENUM(CONFIG,CFG)
+
+DECLARE_ENUM(CONFIG, CFG)
 
 #define CLR(CR) \
 	CR(WindowBackground,=1)\
@@ -383,7 +383,7 @@ DECLARE_ENUM(CONFIG,CFG)
 	CR(StylePreviewColor1,)\
 	CR(StylePreviewColor2,)\
 	//if you write here a new enum then change colorsSize below
-DECLARE_ENUM(COLOR,CLR)
+DECLARE_ENUM(COLOR, CLR)
 
 typedef void csri_rend;
 
@@ -396,14 +396,14 @@ private:
 	wxColour colors[colorsSize];
 	bool isClosing = false;
 
-	public:
+public:
 	std::vector<Styles*> assstore;
 	wxString progname;
 	//actual style catalog --- path to program exe
 	wxString actualStyleDir, pathfull, configPath;
 	wxArrayString dirs;
 	bool AudioOpts;
-	
+
 	void SetClosing(){ isClosing = true; }
 	bool GetClosing(){ return isClosing; }
 
@@ -423,14 +423,14 @@ private:
 	void SetColor(COLOR opt, AssColor &copt);
 	void SetInt(CONFIG opt, int iopt);
 	void SetFloat(CONFIG opt, float fopt);
-	void SetTable(CONFIG opt, wxArrayString &iopt,wxString split = L"|");
-	void SetIntTable(CONFIG opt, wxArrayInt &iopt,wxString split = L"|");
+	void SetTable(CONFIG opt, wxArrayString &iopt, wxString split = L"|");
+	void SetIntTable(CONFIG opt, wxArrayInt &iopt, wxString split = L"|");
 	void SetCoords(CONFIG opt, int coordx, int coordy);
-	void GetRawOptions(wxString &options, bool Audio=false);
+	void GetRawOptions(wxString &options, bool Audio = false);
 	void AddStyle(Styles *styl);
-	void ChangeStyle(Styles *styl,int i);
-	Styles *GetStyle(int i, const wxString &name = L"", Styles* styl=NULL);
-	int FindStyle(const wxString &name, int *multiplication=NULL);
+	void ChangeStyle(Styles *styl, int i);
+	Styles *GetStyle(int i, const wxString &name = L"", Styles* styl = NULL);
+	int FindStyle(const wxString &name, int *multiplication = NULL);
 	void DelStyle(int i);
 	int StoreSize();
 	void CatchValsLabs(const wxString &rawoptions);
@@ -460,10 +460,10 @@ private:
 	wxColour defaultColour;
 	csri_rend *vsfilter = NULL;
 };
-bool sortfunc(Styles *styl1,Styles *styl2);
+bool sortfunc(Styles *styl1, Styles *styl2);
 //formating here works like this, 
 //first digit - digits before dot, second digit - digits after dot, for example 5.3f;
-wxString getfloat(float num, const wxString &format = L"5.3f", bool Truncate=true);
+wxString getfloat(float num, const wxString &format = L"5.3f", bool Truncate = true);
 wxBitmap CreateBitmapFromPngResource(const wxString& t_name);
 wxBitmap *CreateBitmapPointerFromPngResource(const wxString& t_name);
 wxImage CreateImageFromPngResource(const wxString& t_name);

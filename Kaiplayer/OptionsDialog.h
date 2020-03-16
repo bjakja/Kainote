@@ -28,12 +28,12 @@ class KainoteFrame;
 
 class ItemHotkey : public Item{
 public:
-	ItemHotkey(const wxString &txt, const wxString &_accel, const idAndType &Id) : Item(){name = txt; accel = _accel; hotkeyId = Id;}
-	virtual ~ItemHotkey(){		
+	ItemHotkey(const wxString &txt, const wxString &_accel, const idAndType &Id) : Item(){ name = txt; accel = _accel; hotkeyId = Id; }
+	virtual ~ItemHotkey(){
 	}
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
-	wxString GetName(){return name;}
+	wxString GetName(){ return name; }
 	void OnMapHotkey(KaiListCtrl *theList, int y);
 	void OnResetHotkey(KaiListCtrl *theList, int y);
 	void OnDeleteHotkey(KaiListCtrl *theList, int y);
@@ -62,14 +62,14 @@ public:
 	KaiChoice* Stylelist;
 	KaiChoice* Katlist;
 	MappedButton *okok;
-	void ConOpt(wxWindow *ctrl,CONFIG option);
+	void ConOpt(wxWindow *ctrl, CONFIG option);
 	static wxString *windowNames;
 	static std::map<idAndType, hdata> hotkeysCopy;
 private:
 	std::vector<OptionsBind> handles;
 
 	void OnSaveClick(wxCommandEvent& event);
-	void SetOptions(bool saveall=true);
+	void SetOptions(bool saveall = true);
 	void OnMapHkey(wxCommandEvent& event);
 	void OnResetHkey(wxCommandEvent& event);
 	void OnDeleteHkey(wxCommandEvent& event);

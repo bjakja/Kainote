@@ -65,7 +65,7 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 			succeeded = LoadASS(text);
 			ext = L"ass";
 			if (!succeeded){
-				grid->LoadDefault(false,false,false);
+				grid->LoadDefault(false, false, false);
 				succeeded = LoadTXT(text);
 				KaiMessageBox(_("Ten plik napisów jest zwykłym tekstem, zostaje otwarty jako napisy ASS"));
 			}
@@ -75,8 +75,8 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 	//WARNING! table can not be empty
 	//text helper class will crash when gets NULL in = operator
 	if (!succeeded){ grid->LoadDefault(); KaiMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera błędy)")); grid->subsFormat = ASS; ext = "ass"; }
-	else{ 
-		grid->SetSubsFormat(); 
+	else{
+		grid->SetSubsFormat();
 		if (validFormat)
 			grid->originalFormat = grid->subsFormat;
 	}
@@ -90,8 +90,8 @@ bool SubsLoader::LoadASS(const wxString &text)
 
 	bool tlmode = false;
 	wxString tlstyle;
-	
-	
+
+
 	while (tokenizer.HasMoreTokens())
 	{
 		wxString token = tokenizer.GetNextToken().Trim(false);
@@ -134,7 +134,7 @@ bool SubsLoader::LoadASS(const wxString &text)
 		else if (token[0] != L';' && token[0] != L'[' && token.Find(L':') != wxNOT_FOUND && !token.StartsWith(L"Format")){
 			grid->AddSInfo(token);
 		}
-		else if(token.StartsWith(L"[Eve")){
+		else if (token.StartsWith(L"[Eve")){
 			tlmode = (grid->GetSInfo(L"TLMode") == L"Yes");
 			if (tlmode){ tlstyle = grid->GetSInfo(L"TLMode Style"); if (tlstyle == L""){ tlmode = false; } }
 			section = 3;
@@ -145,7 +145,7 @@ bool SubsLoader::LoadASS(const wxString &text)
 	if (matrix == L"" || matrix == L"None"){ grid->AddSInfo(L"YCbCr Matrix", L"TV.601"); }
 	return grid->GetCount() > 0;
 }
-	
+
 bool SubsLoader::LoadSRT(const wxString &text)
 {
 	wxStringTokenizer tokenizer(text, L"\n", wxTOKEN_STRTOK);
@@ -156,16 +156,16 @@ bool SubsLoader::LoadSRT(const wxString &text)
 		wxString text = tokenizer.GetNextToken().Trim();
 		if (IsNumber(text)){
 			if (text1 != L""){
-				grid->AddLine(new Dialogue(text1.Trim())); 
+				grid->AddLine(new Dialogue(text1.Trim()));
 				text1 = L"";
 			}
 		}
 		else{ text1 << text << L"\r\n"; }
 	}
 
-	if (text1 != L""){ 
-		grid->AddLine(new Dialogue(text1.Trim())); 
-		text1 = L""; 
+	if (text1 != L""){
+		grid->AddLine(new Dialogue(text1.Trim()));
+		text1 = L"";
 	}
 	return grid->GetCount() > 0;
 }

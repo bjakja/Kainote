@@ -25,42 +25,42 @@
 #include "KaiWindowResizer.h"
 
 class TabPanel : public wxWindow
-	{
-	public:
-		TabPanel(wxWindow *parent,KainoteFrame *kai, const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize);
-		virtual ~TabPanel();
-		bool Hide();
-		//bool Show(bool show=true);
+{
+public:
+	TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize);
+	virtual ~TabPanel();
+	bool Hide();
+	//bool Show(bool show=true);
 
-		SubsGrid* Grid;
-		EditBox* Edit;
-		VideoCtrl* Video;
-		ShiftTimesWindow* ShiftTimes;
+	SubsGrid* Grid;
+	EditBox* Edit;
+	VideoCtrl* Video;
+	ShiftTimesWindow* ShiftTimes;
 
-		wxBoxSizer* BoxSizer1;
-		wxBoxSizer* BoxSizer2;
-		wxBoxSizer* BoxSizer3;
+	wxBoxSizer* BoxSizer1;
+	wxBoxSizer* BoxSizer2;
+	wxBoxSizer* BoxSizer3;
 
-		void SetAccels(bool onlyGridAudio = false);
-		void SetVideoWindowSizes(int w, int h);
+	void SetAccels(bool onlyGridAudio = false);
+	void SetVideoWindowSizes(int w, int h);
 
-		bool editor;
-		bool audioHotkeysLoaded = false;
-		
+	bool editor;
+	bool audioHotkeysLoaded = false;
 
-		wxString SubsName;
-		wxString VideoName;
-		wxString SubsPath;
-		wxString VideoPath;
-		wxString AudioPath;
-		wxString KeyframesPath;
-		wxWindow *lastFocusedWindow = NULL;
-		KaiWindowResizer* windowResizer;
-	private:
-		
-		bool holding;
-		//void OnMouseEvent(wxMouseEvent& event);
-		void OnFocus(wxChildFocusEvent& event);
-		DECLARE_EVENT_TABLE()
-	};
+
+	wxString SubsName;
+	wxString VideoName;
+	wxString SubsPath;
+	wxString VideoPath;
+	wxString AudioPath;
+	wxString KeyframesPath;
+	wxWindow *lastFocusedWindow = NULL;
+	KaiWindowResizer* windowResizer;
+private:
+
+	bool holding;
+	//void OnMouseEvent(wxMouseEvent& event);
+	void OnFocus(wxChildFocusEvent& event);
+	DECLARE_EVENT_TABLE()
+};
 

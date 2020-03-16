@@ -310,7 +310,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	HR(d3dDevice->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie można ustawić macierzy widoku"));
 	HR(d3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer), _("Nie można stworzyć powierzchni"));
 
-	
+
 	HR(D3DXCreateLine(d3dDevice, &d3dLine), _("Nie można stworzyć linii D3DX"));
 	wxSize sizeTahoma13 = tahoma13.GetPixelSize();
 	wxSize sizeTahoma8 = tahoma8.GetPixelSize();
@@ -720,7 +720,7 @@ void AudioDisplay::DrawInactiveLines() {
 	// All
 	else {
 		shadeFrom = 0;
-		shadeTo = grid->GetCount() -1;
+		shadeTo = grid->GetCount() - 1;
 	}
 	D3DXVECTOR2 v2[2];
 	Dialogue *ADial = grid->GetDialogue(line_n);
@@ -807,7 +807,7 @@ void AudioDisplay::DrawInactiveLines() {
 //////////////////
 // Draw timescale
 void AudioDisplay::DrawTimescale() {
-	
+
 	// Set colours
 	VERTEX v9[4];
 	D3DXVECTOR2 v2[2];
@@ -821,17 +821,7 @@ void AudioDisplay::DrawTimescale() {
 	v2[0] = D3DXVECTOR2(0, h);
 	v2[1] = D3DXVECTOR2(w, h);
 	d3dLine->Draw(v2, 2, timescaleText);
-	/*D3DCOLOR timescale3dHighLight = D3DCOLOR_FROM_WX(wxSystemSettings::GetColour(wxSYS_COLOUR_3DHIGHLIGHT));
-	v2[0]=D3DXVECTOR2(0,h+1);
-	v2[1]=D3DXVECTOR2(w,h+1);
-	d3dLine->Draw(v2,2,timescale3dHighLight);*/
-
-	//wxFont scaleFont;
-	//scaleFont.SetFaceName(_T("Tahoma")); // FIXME: hardcoded font name
-	//if (!scaleFont.IsOk())
-	//	scaleFont.SetFamily(wxFONTFAMILY_SWISS);
-	//scaleFont.SetPointSize(8);
-
+	
 	// Timescale ticks
 	int64_t start = Position*samples;
 	int rate = provider->GetSampleRate();
@@ -855,7 +845,7 @@ void AudioDisplay::DrawTimescale() {
 		}
 		GetTextExtent(text, &textW, NULL, NULL, NULL, &tahoma8);
 		//if (drawMS)
-			//textW += 20;
+		//textW += 20;
 		if (x > (*lastTextPos) + textW){
 			RECT rect;
 			rect.left = x - 50;//MAX(0,x-textW/2)+1;
@@ -1250,7 +1240,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 			VideoCtrl *vb = pan->Video;
 			bool success = true;
 			if (vb->VFF && fromvideo){
-				provider = vb->VFF; 
+				provider = vb->VFF;
 				ownProvider = (provider->videosource == NULL);
 				if (ownProvider){ vb->VFF = NULL; }
 			}
@@ -1780,7 +1770,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 				if (!karaoke->CheckIfOver(x, &Grabbed)){
 					int tmpsyl = -1;
 					bool hasSyl = karaoke->GetSylAtX(x, &tmpsyl);
-					if (Options.GetBool(AudioKaraokeMoveOnClick) && hasSyl && 
+					if (Options.GetBool(AudioKaraokeMoveOnClick) && hasSyl &&
 						!(tmpsyl<whichsyl - 1 || tmpsyl>whichsyl + 1) && (leftDown || rightDown)){
 						Grabbed = (tmpsyl < whichsyl) ? whichsyl - 1 : whichsyl;
 						hold = 5;
@@ -1920,10 +1910,10 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 				// Drag from nothing or straight timing
 				if (hold == 3) {
 
-					if (leftDown) 
+					if (leftDown)
 						curStartMS = GetBoundarySnap(GetMSAtX(x), 16, event.ShiftDown(), true);
-					else if(rightDown)
-						curEndMS = GetMSAtX(x); 
+					else if (rightDown)
+						curEndMS = GetMSAtX(x);
 
 					updated = true;
 					NeedCommit = true;
@@ -2148,7 +2138,7 @@ int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start
 		}
 		else {
 			shadeFrom = 0;
-			shadeTo = grid->GetCount() -1;
+			shadeTo = grid->GetCount() - 1;
 		}
 
 		for (int j = shadeFrom; j <= shadeTo; j++) {
@@ -2224,7 +2214,7 @@ void AudioDisplay::OnSize(wxSizeEvent &event) {
 ///////////////
 // Timer event
 void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
-//VOID CALLBACK AudioDisplay::OnUpdateTimer(PVOID pointer, BOOLEAN timerOrWaitFaired){
+	//VOID CALLBACK AudioDisplay::OnUpdateTimer(PVOID pointer, BOOLEAN timerOrWaitFaired){
 
 	//wxMutexLocker lock(mutex);
 	//AudioDisplay * ad = (AudioDisplay *)pointer;
@@ -2302,7 +2292,7 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 		//Refresh(false);
 		//KaiLog("Uuu update timer was not stopped");
 		//if (UpdateTimer.IsRunning()) 
-			//UpdateTimer.Stop();
+		//UpdateTimer.Stop();
 	}
 	oldCurPos = curpos;
 	if (oldCurPos < 0) oldCurPos = 0;

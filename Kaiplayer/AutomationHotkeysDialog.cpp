@@ -21,8 +21,10 @@
 
 class AutomationHotkeyItem : public Item{
 public:
-	AutomationHotkeyItem(const wxString &_accelerator, const wxString &_name, int _id) 
-		:Item(ITEM_NORMAL){ accelerator = _accelerator; id = _id; name = _name; };
+	AutomationHotkeyItem(const wxString &_accelerator, const wxString &_name, int _id)
+		:Item(ITEM_NORMAL){
+		accelerator = _accelerator; id = _id; name = _name;
+	};
 	void Save(){
 		if (modified){
 			modified = false;
@@ -65,7 +67,7 @@ AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automat
 	, automation(Auto)
 {
 	DialogSizer *mainSizer = new DialogSizer(wxVERTICAL);
-	hotkeysList = new KaiListCtrl(this, ID_HOTKEYS_LIST, wxDefaultPosition, wxSize(800,300));
+	hotkeysList = new KaiListCtrl(this, ID_HOTKEYS_LIST, wxDefaultPosition, wxSize(800, 300));
 	hotkeysList->InsertColumn(1, _("Ścieżka i nazwa skryptu"), TYPE_TEXT, 400);
 	hotkeysList->InsertColumn(2, _("Makro"), TYPE_TEXT, 300);
 	hotkeysList->InsertColumn(3, _("Skrót"), TYPE_TEXT, 80);
@@ -74,7 +76,7 @@ AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automat
 	std::map<idAndType, hdata> mappedhkeys;
 	std::map<idAndType, hdata>::iterator end;
 	auto cur = end = allHotkeys.find(idAndType(30100));
-	while(cur != allHotkeys.end()){
+	while (cur != allHotkeys.end()){
 		if (end->first.id < 30100){
 			mappedhkeys.insert(cur, end);
 			break;
@@ -140,13 +142,13 @@ AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automat
 	Connect(ID_HOTKEYS_MAP, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&AutomationHotkeysDialog::OnMapHkey);
 	MappedButton *deleteHotkey = new MappedButton(this, ID_HOTKEYS_DELETE, _("Usuń skrót"));
 	Connect(ID_HOTKEYS_DELETE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&AutomationHotkeysDialog::OnDeleteHkey);
-	MappedButton *cancel= new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 
 	buttonsSizer->Add(OK, 0, wxALL, 2);
 	buttonsSizer->Add(setHotkey, 0, wxALL, 2);
 	buttonsSizer->Add(deleteHotkey, 0, wxALL, 2);
 	buttonsSizer->Add(cancel, 0, wxALL, 2);
-	
+
 	mainSizer->Add(hotkeysList, 1, wxEXPAND | wxALL, 4);
 	mainSizer->Add(buttonsSizer, 0, wxALL | wxALIGN_CENTER, 2);
 	SetSizerAndFit(mainSizer);
@@ -264,7 +266,7 @@ void AutomationHotkeysDialog::OnMapHkey(wxCommandEvent &evt)
 		}
 		ChangeHotkey(inum, id, hkd.hotkey);
 		hotkeysList->Refresh(false);
-		allHotkeys[idAndType(id,GLOBAL_HOTKEY)] = hdata(name, hkd.hotkey);
+		allHotkeys[idAndType(id, GLOBAL_HOTKEY)] = hdata(name, hkd.hotkey);
 		hotkeysList->SetModified(true);
 		hotkeysList->PushHistory();
 	}

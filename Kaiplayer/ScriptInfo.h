@@ -23,33 +23,33 @@
 #include "KaiCheckBox.h"
 
 
-class ScriptInfo: public KaiDialog
+class ScriptInfo : public KaiDialog
 {
-	public:
+public:
 
-		ScriptInfo(wxWindow* parent,int w, int h);
-		virtual ~ScriptInfo();
+	ScriptInfo(wxWindow* parent, int w, int h);
+	virtual ~ScriptInfo();
 
-		NumCtrl* height;
-		KaiTextCtrl* script;
-		NumCtrl* width;
-		KaiTextCtrl* update;
-		MappedButton* save;
-		KaiChoice* wrapstyle;
-		KaiChoice* matrix;
-		KaiCheckBox* scaleBorderAndShadow;
-		KaiChoice* collision;
-		KaiTextCtrl* editing;
-		KaiTextCtrl* title;
-		MappedButton* cancel;
-		KaiTextCtrl* timing;
-		KaiTextCtrl* translation;
-		MappedButton* resolutionFromVideo;
+	NumCtrl* height;
+	KaiTextCtrl* script;
+	NumCtrl* width;
+	KaiTextCtrl* update;
+	MappedButton* save;
+	KaiChoice* wrapstyle;
+	KaiChoice* matrix;
+	KaiCheckBox* scaleBorderAndShadow;
+	KaiChoice* collision;
+	KaiTextCtrl* editing;
+	KaiTextCtrl* title;
+	MappedButton* cancel;
+	KaiTextCtrl* timing;
+	KaiTextCtrl* translation;
+	MappedButton* resolutionFromVideo;
 
-		void DoTooltips();
+	void DoTooltips();
 private:
-		wxSize res;
-		void OnVideoRes(wxCommandEvent& event);
+	wxSize res;
+	void OnVideoRes(wxCommandEvent& event);
 };
 
 

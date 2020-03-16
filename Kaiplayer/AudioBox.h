@@ -122,7 +122,7 @@ public:
 	AudioBox(wxWindow *parent, wxWindow *Wgrid);
 	virtual ~AudioBox();
 
-	void SetFile(wxString file,bool fromvideo);
+	void SetFile(wxString file, bool fromvideo);
 	void SetKeyframes(const wxArrayInt &keyframes);
 	//true when could be loaded else false to store name for later
 	bool OpenKeyframes(const wxString &filename);
