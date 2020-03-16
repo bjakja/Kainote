@@ -80,9 +80,9 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 					wxTheClipboard->Close();
 					return;
 				}
-				wxString pattern = (form == ASS) ? "^[0-9]\\:[0-5][0-9]\\:[0-5][0-9]\\.[0-9][0-9]$" :
-					(form == SRT) ? "^[0-9][0-9]\\:[0-5][0-9]\\:[0-5][0-9]\\,[0-9][0-9][0-9]$" :
-					"^[0-9][0-9]\\:[0-5][0-9]\\:[0-5][0-9]$";
+				wxString pattern = (form == ASS) ? L"^[0-9]\\:[0-5][0-9]\\:[0-5][0-9]\\.[0-9][0-9]$" :
+					(form == SRT) ? L"^[0-9][0-9]\\:[0-5][0-9]\\:[0-5][0-9]\\,[0-9][0-9][0-9]$" :
+					L"^[0-9][0-9]\\:[0-5][0-9]\\:[0-5][0-9]$";
 				wxRegEx timeCheck(pattern, wxRE_ADVANCED);
 				if (timeCheck.Matches(whatpaste)){
 					SetValue(whatpaste, true, false);
@@ -169,7 +169,7 @@ void TimeCtrl::OnTimeWrite(wxCommandEvent& event)
 		wxString nChar = txt.Mid(selst, 1);
 
 
-		if (nChar == ":" || nChar == "." || nChar == ",") {
+		if (nChar == L":" || nChar == L"." || nChar == L",") {
 			wxString tmp = txt;
 			txt = tmp.Left(selst - 1);
 			txt += nChar;
@@ -181,7 +181,8 @@ void TimeCtrl::OnTimeWrite(wxCommandEvent& event)
 		}
 		else if (nChar.IsEmpty()) { txt.Remove(selst - 1, 1); }
 		else{ txt.Remove(selst, 1); }
-		if (selst > 1 && txt[selst - 2] == L':' &&  wxAtoi(wxString(txt[selst - 1])) > 5){ txt = txt.replace(selst - 1, 1, "5"); }
+		if (selst > 1 && txt[selst - 2] == L':' &&  wxAtoi(wxString(txt[selst - 1])) > 5){ 
+			txt = txt.replace(selst - 1, 1, L"5"); }
 
 
 		SetValue(txt, true, false);
@@ -205,7 +206,7 @@ void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
 		if (to != from && (key > 47 && key < 59 || key > 323 && key < 334)) {
 
 			wxString seltxt = txt.SubString(from, to - 1);
-			wxRegEx reg("[0-9]", wxRE_ADVANCED);
+			wxRegEx reg(L"[0-9]", wxRE_ADVANCED);
 			reg.ReplaceAll(&seltxt, _T("0"));
 			//txt.erase(from,to);
 			wxString all = txt.Left(from);

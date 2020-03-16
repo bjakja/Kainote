@@ -168,18 +168,17 @@ void Visuals::SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDI
 	coeffW = ((float)SubsSize.x / (float)(wsize.width - wsize.x));
 	coeffH = ((float)SubsSize.y / (float)(wsize.height - wsize.y));
 
-	HRN(device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"fvf failed");
+	HRN(device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"FVF failed");
 }
-
-//drawarrow od razu przesuwa punkt tak by linia kończyła się przed strzałką
-//from i to są koordynatami linii
-//diff można przesunąć strzałkę w tył od punktu "to"
+//DrawArrow moves point "to" to end before arrow
+//from and to are line coordinates
+//diff for move arrow backward from point "to"
 void Visuals::DrawArrow(D3DXVECTOR2 from, D3DXVECTOR2 *to, int diff)
 {
 	D3DXVECTOR2 pdiff = from - (*to);
-	float len = sqrt((pdiff.x * pdiff.x) + (pdiff.y*pdiff.y));
+	float len = sqrt((pdiff.x * pdiff.x) + (pdiff.y * pdiff.y));
 	D3DXVECTOR2 diffUnits = (len == 0) ? D3DXVECTOR2(0, 0) : pdiff / len;
-	// długość może przyjmnować wartości ujemne, dlatego dajemy + strzałka nie była odwrotnie
+	//length can have values less than zero, change to plus to pravent bad arrow drawing
 	D3DXVECTOR2 pend = (*to) + (diffUnits * (12 + diff));
 	D3DXVECTOR2 halfbase = D3DXVECTOR2(-diffUnits.y, diffUnits.x) * 5.f;
 
@@ -338,9 +337,7 @@ D3DXVECTOR2 Visuals::CalcMovePos()
 	return ppos;
 }
 
-
-//pobieranie pozycji i skali, trzeba tu zrobić rozróznienie na tagi działające na całą linię i tagi miejscowe.
-//W przypadku rysowania wektorowego, należy podać scale, w reszcie przypadków mozna olać wszystko bądź jedną wartość.
+//Getting position and scale with vector drawing need to put scale in rest of cases can put one value or none
 D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 {
 	bool beforeCursor = !(Visual >= VECTORCLIP || Visual == MOVE || Visual == CHANGEPOS);
@@ -460,7 +457,8 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 
 	return ppos;
 }
-//funkcja zwraca 1 gdy mamy przesunięcie o nawias, 0 w przeciwhnym przypadku
+
+//function return 1 when need to add bracket or 0
 int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoint &pos)
 {
 	if (!inbracket){
@@ -579,8 +577,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				
 				wxString afterP1 = txt.Mid(edit->Placed.y);
 				int Mpos = -1;
-				//do poprawki usuwanie pierwszego nawiasu
-
+				//FIXME: removing first bracket
 				if (hasP1){ Mpos = afterP1.find(L"m "); }
 				if (Mpos == -1){ Mpos = afterP1.find(L"}") + 1; }
 				wxString startM = afterP1.Mid(Mpos);
@@ -768,9 +765,12 @@ void Visuals::SetVisual(bool dummy, int type)
 	}
 }
 
-D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos){
-	//aby w miarę naprawić błąd pozycjonowania wielu linii bez pos należy zrobić funkcję, która przeszuka napisy na obecność tych linii
-	//obliczyć w niej właściwą pozycję i zastosować do pozycjonowania i move.
+D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos)
+{
+	
+	//to fix bug with positioning multiple lines without \pos
+	//need to make method that seek for these lines
+	//calculate right position and pass results to positioning and move.
 	*putinBracket = false;
 	D3DXVECTOR2 result;
 	Styles *acstyl = tab->Grid->GetStyle(0, Dial->Style);

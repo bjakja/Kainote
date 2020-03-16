@@ -59,7 +59,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 		int w, h;
 		Edit->GetClientSize(&w, &h);
 		
-		if (Video->GetState() != None&&Video->IsShown()){
+		if (Video->GetState() != None && Video->IsShown()){
 			Options.GetCoords(VideoWindowSize, &w, &h);
 			int ww, hh;
 			Video->CalcSize(&ww, &hh, w, newpos, false, true);
@@ -110,7 +110,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 	// extended filtering has less performance
 	for (auto cur = hkeys.begin(); cur != hkeys.end(); cur++){
 		int id = cur->first.id;
-		if (cur->second.Accel == "" /*|| cur->first.Type == AUDIO_HOTKEY*/ || cur->first.Type == GLOBAL_HOTKEY ){/*||
+		if (cur->second.Accel == L"" /*|| cur->first.Type == AUDIO_HOTKEY*/ || cur->first.Type == GLOBAL_HOTKEY ){/*||
 			(onlyGridAudio && ((cur->first.Type != GRID_HOTKEY && cur->first.Type != AUDIO_HOTKEY) || 
 			(id < PlayPause && id <= Minus5Second)))){*/
 			continue;
@@ -159,84 +159,6 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 	if (Edit->ABox && !onlyGridAudio)
 		Edit->ABox->SetAccels();
 }
-
-//void TabPanel::OnMouseEvent(wxMouseEvent& event)
-//{
-//	bool click = event.LeftDown();
-//	bool left_up = event.LeftUp();
-//	int w, h;
-//	Edit->GetClientSize(&w, &h);
-//	int npos = event.GetY();
-//	if (event.Leaving()){
-//		SetCursor(wxCURSOR_ARROW);
-//	}
-//	else if (npos < h && !click && !holding && !left_up){
-//		SetCursor(wxCURSOR_SIZENS);/*SetCursor(wxCURSOR_NO_ENTRY);*/ return;
-//	}
-//	else{
-//		SetCursor(wxCURSOR_SIZENS);
-//	}
-//
-//	if (!holding && HasCapture())
-//		ReleaseMouse();
-//
-//	if (left_up && holding) {
-//		holding = false;
-//		ReleaseMouse();
-//		if (sline){
-//			int x;
-//			sline->GetPosition(&x, &npos);
-//			ScreenToClient(&x, &npos);
-//			sline->Destroy();
-//			sline = NULL;
-//		}
-//
-//		int mw, mh;
-//		GetClientSize(&mw, &mh);
-//		if (npos >= mh){
-//			npos = mh - 3;
-//		}
-//
-//		if (Video->GetState() != None&&Video->IsShown()){
-//			Options.GetCoords(VideoWindowSize, &w, &h);
-//			int ww, hh;
-//			Video->CalcSize(&ww, &hh, w, npos, false, true);
-//			Video->SetMinSize(wxSize(ww, hh + Video->panelHeight));
-//			Options.SetCoords(VideoWindowSize, ww, hh + Video->panelHeight);
-//		}
-//		Edit->SetMinSize(wxSize(-1, npos));
-//		BoxSizer1->Layout();
-//		if (event.ShiftDown()){
-//			SetVideoWindowSizes(w, npos);
-//		}
-//	}
-//
-//	if (left_up && !holding) {
-//		return;
-//	}
-//
-//	if (click && !holding) {
-//		holding = true;
-//		CaptureMouse();
-//		int px = 2, py = npos;
-//		ClientToScreen(&px, &py);
-//		sline = new wxDialog(this, -1, "", wxPoint(px, py), wxSize(GetSize().GetWidth(), 2), wxSTAY_ON_TOP | wxBORDER_NONE);
-//		sline->SetBackgroundColour(Options.GetColour(WindowText));
-//		sline->Show();
-//	}
-//
-//	if (holding){
-//		int w = 0, h = 0;
-//		Video->GetClientSize(&w, &h);
-//		int limit = (Video->GetState() != None && Video->IsShown()) ? 350 : 150;
-//		if (npos != h&&npos > limit){
-//			int px = 2, py = npos;
-//			ClientToScreen(&px, &py);
-//			sline->SetPosition(wxPoint(px, py));
-//		}
-//
-//	}
-//}
 
 void TabPanel::OnFocus(wxChildFocusEvent& event)
 {

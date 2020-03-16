@@ -84,7 +84,7 @@ public:
 	virtual void OnMouseEvent(wxMouseEvent &evt){};
 	//function should skip events when not use it;
 	virtual void OnKeyPress(wxKeyEvent &evt){};
-	virtual wxString GetVisual(){ return ""; };
+	virtual wxString GetVisual(){ return L""; };
 	virtual void ChangeVisual(wxString *txt, Dialogue *_dial){};
 	void DrawWarning(bool comment);
 	void SetClip(wxString clip, bool dummy, bool redraw = true, bool changeEditorText = true);
@@ -153,7 +153,7 @@ public:
 	Position();
 	//~Position();
 	void OnMouseEvent(wxMouseEvent &event);
-	wxString GetVisual(){ return ""; };
+	wxString GetVisual(){ return L""; };
 	void ChangeVisual(wxString *txt, Dialogue *_dial){};
 	wxString GetVisual(int datapos);
 	void ChangeMultiline(bool all);
@@ -309,7 +309,7 @@ public:
 	void SetPos(int x, int y);
 	int CheckPos(D3DXVECTOR2 pos, bool retlast = false, bool wsp = true);
 	void MovePoint(D3DXVECTOR2 pos, int point);
-	void AddCurve(D3DXVECTOR2 pos, int whereis, wxString type = "b");
+	void AddCurve(D3DXVECTOR2 pos, int whereis, wxString type = L"b");
 	void AddCurvePoint(D3DXVECTOR2 pos, int whereis);
 	void AddLine(D3DXVECTOR2 pos, int whereis);
 	void AddMove(D3DXVECTOR2 pos, int whereis);

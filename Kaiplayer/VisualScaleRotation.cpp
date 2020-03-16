@@ -162,9 +162,9 @@ void ScaleRotation::DrawRotationZ(int time)
 	v2[5].y = org.y + 10.0f;
 	line->SetWidth(5.f);
 
-	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 360, v5, sizeof(VERTEX)), "primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[364], sizeof(VERTEX)), "primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[545], sizeof(VERTEX)), "primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 360, v5, sizeof(VERTEX)), L"Primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[364], sizeof(VERTEX)), L"Primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[545], sizeof(VERTEX)), L"Primitive failed");
 
 	line->SetWidth(2.f);
 	if (hasOrg){

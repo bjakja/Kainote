@@ -703,7 +703,7 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		//KaiLog(wxString::Format(L"vformat %i", (int)vformat));
 		swapFrame = (vformat == 0 && !vplayer->HasVobsub());
 		if (player){
-			Kaia->Frame->OpenAudioInTab(((TabPanel*)GetParent()), CloseAudio, "");
+			Kaia->Frame->OpenAudioInTab(((TabPanel*)GetParent()), CloseAudio, L"");
 		}
 	}
 	diff = 0;
@@ -1308,9 +1308,9 @@ void VideoRenderer::DrawZoom()
 	CreateVERTEX(&v24[10], v2[2].x, v2[0].y, 0x88000000);
 	CreateVERTEX(&v24[11], s.x, 0, 0x88000000);
 
-	HRN(d3device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), "fvf failed");
-	HRN(d3device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, v24, sizeof(VERTEX)), "primitive failed");
-	HRN(d3device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(VERTEX)), "primitive failed");
+	HRN(d3device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"FVF failed");
+	HRN(d3device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, v24, sizeof(VERTEX)), L"Primitive failed");
+	HRN(d3device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(VERTEX)), L"Primitive failed");
 	lines->SetWidth(1);
 	lines->Begin();
 	lines->Draw(v2, 5, 0xFFBB0000);

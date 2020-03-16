@@ -168,9 +168,8 @@ void RotationXY::DrawVisual(int time)
 wxString RotationXY::GetVisual()
 {
 	if (isOrg){
-		//return "\\org("+getfloat(org.x*wspw)+","+getfloat(org.y*wsph)+")";
-		return "\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x) * coeffW) + "," +
-			getfloat(((org.y / zoomScale.y) + zoomMove.y) * coeffH) + ")";
+		return L"\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+			getfloat(((org.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
 	}
 
 	wxString result;

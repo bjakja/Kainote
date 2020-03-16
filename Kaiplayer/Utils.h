@@ -40,7 +40,7 @@ inline wxString GetTruncateText(const wxString &textToTruncate, int width, wxWin
 			window->GetTextExtent(textToTruncate.SubString(0, len), &w, &h);
 			len--;
 		}
-		return textToTruncate.SubString(0, len - 2) + "...";
+		return textToTruncate.SubString(0, len - 2) + L"...";
 	}
 	return textToTruncate;
 }

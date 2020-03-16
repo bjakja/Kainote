@@ -828,7 +828,7 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 
 	for (int g = 0; g < Size(); g++)
 	{
-		tabsMenu.Append(MENU_CHOOSE + g, Page(g)->SubsName, "", true, 0, 0, (g == iter) ? ITEM_RADIO : ITEM_NORMAL);
+		tabsMenu.Append(MENU_CHOOSE + g, Page(g)->SubsName, L"", true, 0, 0, (g == iter) ? ITEM_RADIO : ITEM_NORMAL);
 	}
 	//może to jednak przerobić na checki, tak by pokazywało nam jednak dwie wyświetlone zakładki
 	tabsMenu.AppendSeparator();
@@ -845,9 +845,9 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 		wxArrayString availableStyles;
 		Pages[iter]->Grid->GetCommonStyles(Pages[i]->Grid, availableStyles);
 		wxArrayString optionsCompareStyles;
-		Options.GetTable(SubsComparisonStyles, optionsCompareStyles, ",");
+		Options.GetTable(SubsComparisonStyles, optionsCompareStyles, L",");
 		for (size_t i = 0; i < availableStyles.size(); i++){
-			MenuItem * styleItem = styleComparisonMenu->Append(4448, availableStyles[i], "", true, NULL, NULL, ITEM_CHECK);
+			MenuItem * styleItem = styleComparisonMenu->Append(4448, availableStyles[i], L"", true, NULL, NULL, ITEM_CHECK);
 			if (optionsCompareStyles.Index(availableStyles[i]) != -1){ 
 				styleItem->Check(); 
 				SubsGridBase::compareStyles.Add(availableStyles[i]); 

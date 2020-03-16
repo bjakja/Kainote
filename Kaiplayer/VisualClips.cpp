@@ -702,10 +702,10 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 
 		if (tool == 4 && grabbed == -1)
 		{
-			//KaiLog(wxString::Format(L"move apply %i", tool));
 			int pos = CheckPos(xy, true);
-			if (psize > 0 && Points[(pos == (int)psize) ? psize - 1 : pos].type == "m"){
-				KaiMessageBox(_("Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie została zablokowana"), _("Uwaga"));
+			if (psize > 0 && Points[(pos == (int)psize) ? psize - 1 : pos].type == L"m"){
+				KaiMessageBox(_("Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie została zablokowana"), 
+					_("Uwaga"));
 				return;
 			}
 			AddMove(xy, pos);
@@ -715,7 +715,6 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			tab->Video->vToolbar->SetItemToggled(&tool);
 		}
 		else if (grabbed == -1){
-			//KaiLog(wxString::Format(L"sel apply %i", tool));
 			tab->Video->CaptureMouse();
 			drawSelection = true;
 			drawCross = false;
@@ -740,25 +739,18 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		if (!Points[grabbed].isSelected){ Points[grabbed].isSelected = true; }
 
 		if (event.ShiftDown()){
-			/*int grabbedPlus1 = (grabbed >= (int)psize-1)? 0 : grabbed+1;
-			int grabbedMinus1 = (grabbed < 1)? psize-1 : grabbed-1;
-			if(Points[grabbed].y == Points[grabbedMinus1].y || snapYminus){snapYminus=true;Points[grabbedMinus1].y = Points[grabbed].y;}
-			if(Points[grabbed].y == Points[grabbedPlus1].y || snapYplus){snapYplus=true;Points[grabbedPlus1].y = Points[grabbed].y;}
-			if(Points[grabbed].x == Points[grabbedMinus1].x || snapXminus){snapXminus=true;Points[grabbedMinus1].x = Points[grabbed].x;}
-			if(Points[grabbed].x == Points[grabbedPlus1].x || snapXplus){snapXplus=true;Points[grabbedPlus1].x = Points[grabbed].x;}*/
-			//if(!(snapYminus||snapYplus||snapXminus||snapXminus)){
-			//if(axis == 0){
+			
 			int diffx = abs(firstmove.x - x);
 			int diffy = abs(firstmove.y - y);
 			if (diffx != diffy){ if (diffx > diffy){ axis = 2; } else{ axis = 1; } }
-			//}
+			
 			if (axis == 1){
 				Points[grabbed].x = lastpoint.x;
 			}
 			if (axis == 2){
 				Points[grabbed].y = lastpoint.y;
 			}
-			//}
+			
 		}
 		if (Points[grabbed].isSelected){
 			float movementx = acpoint.x - Points[grabbed].x;
@@ -775,7 +767,6 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		lastpos = -1;
 	}
 	if (drawSelection){
-		//KaiLog(wxString::Format(L"drawsel sel apply %i", (int)drawSelection));
 		selection.width = x;
 		selection.height = y;
 		SelectPoints();

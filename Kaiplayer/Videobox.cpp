@@ -124,15 +124,15 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 
 	vslider = new VideoSlider(panel, ID_SLIDER, wxPoint(0, 1), wxSize(size.x, 14));
 	vslider->VB = this;
-	bprev = new BitmapButton(panel, CreateBitmapFromPngResource(L"backward"), CreateBitmapFromPngResource(L"backward1"), 
+	bprev = new BitmapButton(panel, CreateBitmapFromPngResource(L"backward"), CreateBitmapFromPngResource(L"backward1"),
 		PreviousVideo, _("Poprzedni plik"), wxPoint(5, 16), wxSize(26, 26));
-	bpause = new BitmapButton(panel, CreateBitmapFromPngResource(L"play"), CreateBitmapFromPngResource(L"play1"), 
+	bpause = new BitmapButton(panel, CreateBitmapFromPngResource(L"play"), CreateBitmapFromPngResource(L"play1"),
 		PlayPause, _("Odtwórz / Pauza"), wxPoint(40, 16), wxSize(26, 26));
-	bpline = new BitmapButton(panel, CreateBitmapFromPngResource(L"playline"), CreateBitmapFromPngResource(L"playline1"), 
+	bpline = new BitmapButton(panel, CreateBitmapFromPngResource(L"playline"), CreateBitmapFromPngResource(L"playline1"),
 		PlayActualLine, _("Odtwórz aktywną linię"), wxPoint(75, 16), wxSize(26, 26), GLOBAL_HOTKEY);
-	bstop = new BitmapButton(panel, CreateBitmapFromPngResource(L"stop"), CreateBitmapFromPngResource(L"stop1"), 
+	bstop = new BitmapButton(panel, CreateBitmapFromPngResource(L"stop"), CreateBitmapFromPngResource(L"stop1"),
 		StopPlayback, _("Zatrzymaj"), wxPoint(110, 16), wxSize(26, 26));
-	bnext = new BitmapButton(panel, CreateBitmapFromPngResource(L"forward"), CreateBitmapFromPngResource(L"forward1"), 
+	bnext = new BitmapButton(panel, CreateBitmapFromPngResource(L"forward"), CreateBitmapFromPngResource(L"forward1"),
 		NextVideo, _("Następny plik"), wxPoint(145, 16), wxSize(26, 26));
 
 	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VideoVolume), wxPoint(size.x - 110, 17), wxSize(110, 25));
@@ -253,7 +253,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 	bool shown = true;
 	block = true;
 	if (!OpenFile(fileName, subsName, !byFFMS2, !Kai->GetTab()->editor, changeAudio)){
-		delete subsName; block = false; 
+		delete subsName; block = false;
 		if (!byFFMS2){ KaiMessageBox(_("Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\nbądź brakuje kodeków czy też splittera"), _("Uwaga")); }
 		return false;
 	}
@@ -336,7 +336,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 	duration.mstime = GetDuration();
 	Kai->SetStatusText(duration.raw(SRT), 3);
 	Kai->SetRecent(1);
-	
+
 	if (tab->editor && (!isFullscreen || IsShown()) &&
 		tab->SubsPath != L"" && Options.GetBool(OpenVideoAtActiveLine)){
 		Seek(tab->Edit->line->Start.mstime);
@@ -408,7 +408,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		ZoomMouseHandle(event);
 		return;
 	}
-	x = event.GetX(); 
+	x = event.GetX();
 	y = event.GetY();
 	TabPanel *tab = Kai->GetTab();
 	if (event.GetWheelRotation() != 0) {
@@ -579,9 +579,9 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 			Kai->GetTab()->Edit->Send(EDITBOX_LINE_EDITION, false);
 			Kai->GetTab()->Grid->SelVideoLine();
 		}
-		if (key == L'B'){ 
+		if (key == L'B'){
 			if (GetState() == Playing){ Pause(); }
-			ShowWindow(Kai->GetHWND(), SW_SHOWMINNOACTIVE); 
+			ShowWindow(Kai->GetHWND(), SW_SHOWMINNOACTIVE);
 		}
 	}
 	//probably made for fullscreen
@@ -627,17 +627,17 @@ void VideoCtrl::NextFile(bool next)
 	{
 		if (files[j] == path){ actualFile = j; break; }
 	}
-	if (next && actualFile >= (int)files.GetCount() - 1){ 
-		Seek(0); 
-		Pause(false); 
-		actualFile = files.GetCount() - 1; 
-		return; 
+	if (next && actualFile >= (int)files.GetCount() - 1){
+		Seek(0);
+		Pause(false);
+		actualFile = files.GetCount() - 1;
+		return;
 	}
-	else if (!next && actualFile <= 0){ 
-		Seek(0); 
-		Pause(false); 
-		actualFile = 0; 
-		return; 
+	else if (!next && actualFile <= 0){
+		Seek(0);
+		Pause(false);
+		actualFile = 0;
+		return;
 	}
 
 	int k = (next) ? actualFile + 1 : actualFile - 1;
@@ -707,7 +707,7 @@ void VideoCtrl::SetFullscreen(int monitor)
 		vToolbar->Synchronize(TD->vToolbar);
 		RefreshTime();
 		TD->Hide();
-		SetCursor(wxCURSOR_ARROW); 
+		SetCursor(wxCURSOR_ARROW);
 		hasArrow = true;
 	}
 	//turn on fullscreen
@@ -906,7 +906,8 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 		if (j == 0){ menu->AppendSeparator(); }
 		timee.NewTime(chapters[j].time);
 		int ntime = (j >= chapters.size() - 1) ? INT_MAX : chapters[(j + 1)].time;
-		menu->Append(MENU_CHAPTERS + j, chapters[j].name + L"\t[" + timee.raw() + L"]", L"", true, 0, 0, (ntime >= time) ? ITEM_RADIO : ITEM_NORMAL);
+		menu->Append(MENU_CHAPTERS + j, chapters[j].name + L"\t[" + timee.raw() + L"]", 
+			L"", true, 0, 0, (ntime >= time) ? ITEM_RADIO : ITEM_NORMAL);
 	}
 	id = 0;
 	int Modifiers = 0;
@@ -1461,7 +1462,7 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 		if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 		SetFocus();
 	}
-	
+
 }
 
 bool VideoCtrl::SetBackgroundColour(const wxColour &col)

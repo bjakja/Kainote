@@ -33,7 +33,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 	fromSubs->Enable(false);
 
 #ifdef whithMatrix	
-	wxString matrices[] = {"TV.601", "PC.601", "TV.709", "PC.709", "TV.FCC", "PC.FCC", "TV.240M", "PC.240M"};
+	wxString matrices[] = {L"TV.601", L"PC.601", L"TV.709", L"PC.709", L"TV.FCC", L"PC.FCC", L"TV.240M", L"PC.240M"};
 	subsMatrix = new KaiChoice(this, -1 , wxDefaultPosition, wxSize(160,-1), 8, matrices);
 #endif
 	subsResolutionSizer->Add(subsResolutionX, 0, wxALL, 2);
